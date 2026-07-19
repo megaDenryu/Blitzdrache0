@@ -1,0 +1,14 @@
+[package]
+name = "blitz_render"
+edition.workspace = true
+version.workspace = true
+
+# ワークスペース内で ash に依存してよいのはこのクレートだけ。
+# unsafe な Vulkan 呼び出しはこのクレートの実装内部に封じ込め、
+# 公開APIからは ash の型を一切露出しない。
+[dependencies]
+ash = { workspace = true }
+ash-window = { workspace = true }
+raw-window-handle = { workspace = true }
+glam = { workspace = true }
+thiserror = { workspace = true }

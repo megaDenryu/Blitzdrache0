@@ -1,0 +1,9 @@
+[package]
+name = "blitz_engine"
+edition.workspace = true
+version.workspace = true
+
+[dependencies]
+blitz_render = { path = "../blitz_render" }
+glam = { workspace = true }
+thiserror = { workspace = true }
