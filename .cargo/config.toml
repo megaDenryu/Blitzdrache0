@@ -1,0 +1,4 @@
+# 参照: _doc/設計/開発ループとコンパイル時間.md
+# リンクが差分ビルドのボトルネックになりやすいため高速リンカを使う
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld"
