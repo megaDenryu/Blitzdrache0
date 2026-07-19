@@ -3,6 +3,9 @@ name = "blitz_app"
 edition.workspace = true
 version.workspace = true
 
+[lints]
+workspace = true
+
 [dependencies]
 blitz_engine = { path = "../blitz_engine" }
 blitz_render = { path = "../blitz_render" }

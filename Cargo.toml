@@ -10,6 +10,12 @@ members = [
 edition = "2024"
 version = "0.1.0"
 
+# 参照: CLAUDE.md「機械的強制」。緩和する変更は禁止（テストモジュールでの局所allowのみ可）
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+as_conversions = "deny"
+
 # 依存はワークスペースで一元管理し、各クレートは workspace = true で参照する。
 # どの層がどの外部依存に触れるかを Cargo.toml の差分だけで監査できるようにするため。
 [workspace.dependencies]
