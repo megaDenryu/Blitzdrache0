@@ -2,3 +2,7 @@
 # リンクが差分ビルドのボトルネックになりやすいため高速リンカを使う
 [target.x86_64-pc-windows-msvc]
 linker = "rust-lld"
+
+# 開発ツールの唯一の入口。cargo xtask で一覧表示
+[alias]
+xtask = "run -p xtask --"

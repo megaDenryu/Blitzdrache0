@@ -1,0 +1,10 @@
+[package]
+name = "xtask"
+edition.workspace = true
+version.workspace = true
+
+# 開発ツールの唯一の入口。外部依存ゼロ（std のみ）を保つ
+[dependencies]
+
+[lints]
+workspace = true

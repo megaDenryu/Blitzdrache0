@@ -158,13 +158,17 @@ unsafe が blitz_render の外に書かれることも機械的に禁止され�
 - Slang はライブラリではなくシェーダーコンパイラ（Khronos 管轄のツールチェーン）。
   ビルド時にコンパイラとして呼び出す外部ツールの扱いで、リンクされずランタイムに入らない
 
-## ビルド
+## ビルドとツール
 
 ```
-cargo build        # 全クレート
-cargo run -p blitz_app
+cargo build             # 全クレート
+cargo run -p blitz_app  # 実行
+cargo xtask             # 開発ツールの一覧表示（ツールの唯一の入口）
+cargo xtask verify      # 検証の標準列 (check -> clippy -D warnings -> test)
 ```
 
+リポジトリ内ツールはすべて `xtask` クレートにコマンドとして登録されている
+（`参照: CLAUDE.md「ツールとドキュメントの配置」`）。
 開発時は Vulkan validation layer（VK_LAYER_KHRONOS_validation、同期検証含む）を常時有効にする。
 
 ## ドキュメント
