@@ -13,6 +13,7 @@ pub(super) fn 実行する(
     particles: bool,
     dev_ui: bool,
     no_post: bool,
+    cloth: bool,
 ) -> bool {
     let mut 引数一覧 = vec![
         "run".to_string(),
@@ -42,6 +43,9 @@ pub(super) fn 実行する(
     // 厳密ピクセル判定を使うステージはポストを外し、期待値をトーンマップ導入前のまま保つ(判断39)。
     if no_post {
         引数一覧.push("--no-post".to_string());
+    }
+    if cloth {
+        引数一覧.push("--cloth".to_string());
     }
 
     println!("[xtask] cargo {} を実行", 引数一覧.join(" "));

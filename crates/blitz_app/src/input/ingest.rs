@@ -17,6 +17,11 @@ pub(super) fn 取り込む(状態: &mut 入力状態, event: &WindowEvent) {
             button: MouseButton::Left,
             ..
         } => 左ボタンを反映する(状態, *state),
+        WindowEvent::MouseInput {
+            state,
+            button: MouseButton::Right,
+            ..
+        } => 状態.右ボタン押下中 = *state == ElementState::Pressed,
         WindowEvent::CursorMoved { position, .. } => カーソル移動を反映する(状態, *position),
         WindowEvent::MouseWheel { delta, .. } => ホイールを反映する(状態, delta),
         WindowEvent::KeyboardInput { event, .. } => キー入力を反映する(状態, event),
@@ -33,6 +38,7 @@ fn 左ボタンを反映する(状態: &mut 入力状態, state: ElementState) {
 
 fn カーソル移動を反映する(状態: &mut 入力状態, 位置: PhysicalPosition<f64>) {
     let 位置f32 = 位置.cast::<f32>();
+    状態.現在カーソル位置 = Some((位置f32.x, 位置f32.y));
     if !状態.左ボタン押下中 {
         状態.直前カーソル位置 = Some((位置f32.x, 位置f32.y));
         return;
