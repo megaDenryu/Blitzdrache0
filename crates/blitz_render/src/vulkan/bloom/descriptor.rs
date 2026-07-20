@@ -1,68 +1,83 @@
-//! ブルーム用ディスクリプタ: binding0のcombined image sampler 1個のlayoutと、
-//! そこから割り当てる3セット(抽出=HDR読み・横ぼかし=a読み・縦ぼかし=b読み)。
+//! ブルーム用ディスクリプタ: 単一読み(binding0のみ)と二読み(binding0+1)の2レイアウトと、
+//! 段数に応じたプール+セット群(前処理1・縮小 段数-1・拡大 段数-1)の割り当て。
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
 
-const セット数: u32 = 3;
-
-pub(super) struct ブルームディスクリプタ {
-    pub(super) layout: vk::DescriptorSetLayout,
+pub(super) struct ブルームセット群 {
     pub(super) pool: vk::DescriptorPool,
-    pub(super) set一覧: [vk::DescriptorSet; 3],
+    pub(super) 前処理set: vk::DescriptorSet,
+    pub(super) 縮小set一覧: Vec<vk::DescriptorSet>,
+    pub(super) 拡大set一覧: Vec<vk::DescriptorSet>,
 }
 
-impl ブルームディスクリプタ {
-    pub(super) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: 各ハンドルはこの構造体が唯一の所有者。poolの破棄がsetの解放を暗黙に行う。
-        unsafe {
-            device.destroy_descriptor_pool(self.pool, None);
-            device.destroy_descriptor_set_layout(self.layout, None);
+/// 単一読み(前処理・縮小用)と二読み(拡大用)のレイアウトを作る。失敗時は前者を片付ける。
+pub(super) fn レイアウト2種を作る(
+    device: &ash::Device,
+) -> Result<(vk::DescriptorSetLayout, vk::DescriptorSetLayout), レンダラーエラー> {
+    let 単一読み = 読みレイアウトを作る(device, 1)?;
+    match 読みレイアウトを作る(device, 2) {
+        Ok(二読み) => Ok((単一読み, 二読み)),
+        Err(誤り) => {
+            // 安全性: 単一読みはこのスコープの唯一の所有者で、以降使用しない。
+            unsafe { device.destroy_descriptor_set_layout(単一読み, None) };
+            Err(誤り)
         }
     }
 }
 
-pub(super) fn 生成する(device: &ash::Device) -> Result<ブルームディスクリプタ, レンダラーエラー> {
-    let binding = vk::DescriptorSetLayoutBinding::default()
-        .binding(0)
-        .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-        .descriptor_count(1)
-        .stage_flags(vk::ShaderStageFlags::FRAGMENT);
-    let binding一覧 = [binding];
+fn 読みレイアウトを作る(device: &ash::Device, バインディング数: u32) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
+    let binding一覧: Vec<vk::DescriptorSetLayoutBinding<'_>> = (0..バインディング数)
+        .map(|添字| {
+            vk::DescriptorSetLayoutBinding::default()
+                .binding(添字)
+                .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
+                .descriptor_count(1)
+                .stage_flags(vk::ShaderStageFlags::FRAGMENT)
+        })
+        .collect();
     let layout_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&binding一覧);
     // 安全性: deviceは生成済みで有効。
-    let layout = unsafe { device.create_descriptor_set_layout(&layout_info, None)? };
+    Ok(unsafe { device.create_descriptor_set_layout(&layout_info, None)? })
+}
 
-    let pool_size =
-        vk::DescriptorPoolSize::default().ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER).descriptor_count(セット数);
+pub(super) fn 生成する(
+    device: &ash::Device,
+    単一読みlayout: vk::DescriptorSetLayout,
+    二読みlayout: vk::DescriptorSetLayout,
+    段数: usize,
+) -> Result<ブルームセット群, レンダラーエラー> {
+    let 拡大段数 = 段数.saturating_sub(1);
+    let セット数 = 1 + 拡大段数 * 2;
+    let ディスクリプタ数 = 1 + 拡大段数 + 拡大段数 * 2;
+    let pool_size = vk::DescriptorPoolSize::default()
+        .ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
+        .descriptor_count(usizeをu32へ(ディスクリプタ数));
     let pool_size一覧 = [pool_size];
-    let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(セット数).pool_sizes(&pool_size一覧);
-    // 安全性: deviceは生成済みで有効。失敗時はlayoutを片付ける。
-    let pool = match unsafe { device.create_descriptor_pool(&pool_info, None) } {
-        Ok(pool) => pool,
-        Err(誤り) => {
-            // 安全性: layoutはこのスコープの唯一の所有者で、以降使用しない。
-            unsafe { device.destroy_descriptor_set_layout(layout, None) };
-            return Err(誤り.into());
-        }
-    };
+    let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(usizeをu32へ(セット数)).pool_sizes(&pool_size一覧);
+    // 安全性: deviceは生成済みで有効。
+    let pool = unsafe { device.create_descriptor_pool(&pool_info, None)? };
 
-    let layout一覧 = [layout; 3];
+    let mut layout一覧 = vec![単一読みlayout; 1 + 拡大段数];
+    layout一覧.extend(std::iter::repeat_n(二読みlayout, 拡大段数));
     let alloc_info = vk::DescriptorSetAllocateInfo::default().descriptor_pool(pool).set_layouts(&layout一覧);
-    // 安全性: pool・layoutは直前に生成済み。
+    // 安全性: pool・layoutは生成済み。失敗時はpoolを片付ける。
     match unsafe { device.allocate_descriptor_sets(&alloc_info) } {
-        Ok(一覧) => match <[vk::DescriptorSet; 3]>::try_from(一覧) {
-            Ok(set一覧) => Ok(ブルームディスクリプタ { layout, pool, set一覧 }),
-            Err(_) => panic!("allocate_descriptor_setsが成功したのにセットが3個でなかった(Vulkan実装の契約違反)"),
-        },
+        Ok(一覧) => Ok(ブルームセット群 {
+            pool,
+            前処理set: 一覧[0],
+            縮小set一覧: 一覧[1..1 + 拡大段数].to_vec(),
+            拡大set一覧: 一覧[1 + 拡大段数..].to_vec(),
+        }),
         Err(誤り) => {
-            // 安全性: pool・layoutはこのスコープの唯一の所有者で、以降使用しない。
-            unsafe {
-                device.destroy_descriptor_pool(pool, None);
-                device.destroy_descriptor_set_layout(layout, None);
-            }
+            // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
+            unsafe { device.destroy_descriptor_pool(pool, None) };
             Err(誤り.into())
         }
     }
+}
+
+fn usizeをu32へ(値: usize) -> u32 {
+    u32::try_from(値).unwrap_or_else(|_| panic!("ディスクリプタ数がu32に収まらない: {値}"))
 }

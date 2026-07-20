@@ -24,9 +24,11 @@ const トーンマップ頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DI
 const トーンマップフラグメントSPIRV: &[u8] =
     include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_fragment.spv"));
 
-const ブルーム頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_vertex.spv"));
-const ブルーム抽出SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_extract.spv"));
-const ブルームぼかしSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_blur.spv"));
+const ブルーム縮小側頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_down_vertex.spv"));
+const ブルーム前処理SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_prefilter.spv"));
+const ブルーム縮小SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_downsample.spv"));
+const ブルーム拡大側頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_up_vertex.spv"));
+const ブルーム拡大SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_upsample.spv"));
 
 /// レンダラー生成に渡す全シェーダーを埋め込みSPIR-Vから組み立てる(判断38)。
 /// 粒子シェーダーは`--particles`指定時のみ含める(判断29)。
@@ -44,8 +46,9 @@ pub(crate) fn 埋め込みシェーダー束を生成する(粒子有効: bool) 
         シーン: シェーダー一式::生成する(頂点SPIRV.to_vec(), フラグメントSPIRV.to_vec())?,
         シャドウ: シェーダー一式::生成する(シャドウ頂点SPIRV.to_vec(), シャドウフラグメントSPIRV.to_vec())?,
         トーンマップ: シェーダー一式::生成する(トーンマップ頂点SPIRV.to_vec(), トーンマップフラグメントSPIRV.to_vec())?,
-        ブルーム抽出: シェーダー一式::生成する(ブルーム頂点SPIRV.to_vec(), ブルーム抽出SPIRV.to_vec())?,
-        ブルームぼかし: シェーダー一式::生成する(ブルーム頂点SPIRV.to_vec(), ブルームぼかしSPIRV.to_vec())?,
+        ブルーム前処理: シェーダー一式::生成する(ブルーム縮小側頂点SPIRV.to_vec(), ブルーム前処理SPIRV.to_vec())?,
+        ブルーム縮小: シェーダー一式::生成する(ブルーム縮小側頂点SPIRV.to_vec(), ブルーム縮小SPIRV.to_vec())?,
+        ブルーム拡大: シェーダー一式::生成する(ブルーム拡大側頂点SPIRV.to_vec(), ブルーム拡大SPIRV.to_vec())?,
         ui: シェーダー一式::生成する(UI頂点SPIRV.to_vec(), UIフラグメントSPIRV.to_vec())?,
         粒子,
     })

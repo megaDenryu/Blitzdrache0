@@ -44,16 +44,18 @@ pub(crate) struct 粒子描画入力 {
     pub(crate) バッファ: vk::Buffer,
 }
 
-/// ブルームパス(判断39)1フレームぶんの入力。ポストプロセス有効時のみ`Some`で渡す。
-/// ぼかしパイプラインは横/縦で共用し、方向はプッシュ定数で切り替える。
+/// ブルームピラミッド(判断41)1フレームぶんの入力。ポストプロセス有効時のみ`Some`で渡す。
+/// セット一覧の長さは段数-1(縮小set[i]は縮小[i+1]へのパスの読み元、拡大set[i]は拡大[i]へのパスの読み元)。
 pub(crate) struct ブルーム描画入力 {
-    pub(crate) 抽出pipeline: vk::Pipeline,
-    pub(crate) 抽出layout: vk::PipelineLayout,
-    pub(crate) ぼかしpipeline: vk::Pipeline,
-    pub(crate) ぼかしlayout: vk::PipelineLayout,
-    pub(crate) 抽出set: vk::DescriptorSet,
-    pub(crate) 横set: vk::DescriptorSet,
-    pub(crate) 縦set: vk::DescriptorSet,
+    pub(crate) 前処理pipeline: vk::Pipeline,
+    pub(crate) 前処理layout: vk::PipelineLayout,
+    pub(crate) 縮小pipeline: vk::Pipeline,
+    pub(crate) 縮小layout: vk::PipelineLayout,
+    pub(crate) 拡大pipeline: vk::Pipeline,
+    pub(crate) 拡大layout: vk::PipelineLayout,
+    pub(crate) 前処理set: vk::DescriptorSet,
+    pub(crate) 縮小set一覧: Vec<vk::DescriptorSet>,
+    pub(crate) 拡大set一覧: Vec<vk::DescriptorSet>,
 }
 
 /// トーンマップパス(判断38・39)1フレームぶんの入力。ポストプロセス有効時のみ`Some`で渡す。

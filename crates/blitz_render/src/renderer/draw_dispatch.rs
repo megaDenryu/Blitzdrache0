@@ -46,13 +46,15 @@ impl レンダラー {
             露出,
         });
         let ブルーム入力 = self.ブルーム.as_ref().map(|一式| ブルーム描画入力 {
-            抽出pipeline: 一式.抽出pipeline,
-            抽出layout: 一式.抽出layout,
-            ぼかしpipeline: 一式.ぼかしpipeline,
-            ぼかしlayout: 一式.ぼかしlayout,
-            抽出set: 一式.抽出set,
-            横set: 一式.横set,
-            縦set: 一式.縦set,
+            前処理pipeline: 一式.前処理pipeline,
+            前処理layout: 一式.前処理layout,
+            縮小pipeline: 一式.縮小pipeline,
+            縮小layout: 一式.縮小layout,
+            拡大pipeline: 一式.拡大pipeline,
+            拡大layout: 一式.拡大layout,
+            前処理set: 一式.前処理set,
+            縮小set一覧: 一式.縮小set一覧.clone(),
+            拡大set一覧: 一式.拡大set一覧.clone(),
         });
         let 画像一式 = フレーム画像一式 {
             スワップチェーン画像: self.swapchain.画像一覧[添字usize],
@@ -62,12 +64,10 @@ impl レンダラー {
             シャドウマップ画像: self.シャドウマップ.画像,
             シャドウマップビュー: self.シャドウマップ.画像ビュー,
             hdr: self.hdrターゲット.as_ref().map(|hdr| (hdr.画像, hdr.画像ビュー)),
-            ブルーム: self.ブルームターゲット.as_ref().map(|一式| ブルーム画像 {
-                a画像: 一式.a.画像,
-                aビュー: 一式.a.画像ビュー,
-                b画像: 一式.b.画像,
-                bビュー: 一式.b.画像ビュー,
-                寸法: 一式.寸法,
+            ブルーム: self.ブルームピラミッド.as_ref().map(|ピラミッド| ブルーム画像 {
+                縮小一覧: ピラミッド.縮小一覧.iter().map(|画像| (画像.画像, 画像.画像ビュー)).collect(),
+                拡大一覧: ピラミッド.拡大一覧.iter().map(|画像| (画像.画像, 画像.画像ビュー)).collect(),
+                寸法一覧: ピラミッド.寸法一覧.clone(),
             }),
         };
 

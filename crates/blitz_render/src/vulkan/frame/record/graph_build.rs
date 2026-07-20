@@ -3,14 +3,12 @@
 //! ポストプロセス画像の登録は`post_setup`へ分離。
 
 mod base_images;
+mod post_passes;
 mod post_setup;
 
 use ash::vk;
 
-use super::{
-    bloom_blur_pass, bloom_extract_pass, particle_draw_pass, particle_update_pass, readback_pass, scene_pass,
-    shadow_pass, tonemap_pass, ui_pass,
-};
+use super::{particle_draw_pass, particle_update_pass, readback_pass, scene_pass, shadow_pass, ui_pass};
 use crate::clear_color::クリアカラー;
 use crate::vulkan::frame::{
     シャドウ描画入力, ジオメトリ入力, トーンマップ描画入力, ブルーム描画入力, フレーム画像一式, 描画方式,
@@ -58,24 +56,9 @@ pub(super) fn グラフを構築する<'a>(
         グラフ.パスを積む(particle_draw_pass::作る(シーンカラーハンドル, 基本.深度, 粒子ハンドル, 粒子入力, 寸法));
     }
 
-    // ポスト列: 抽出(HDR→a) → 横ぼかし(a→b) → 縦ぼかし(b→a) → トーンマップ(HDR+a→スワップチェーン)(判断39)。
+    // ポスト列(判断41)の積み込みはpost_passesへ委ねる。
     if let Some(構成) = &ポスト {
-        グラフ.パスを積む(bloom_extract_pass::作る(構成.hdrハンドル, 構成.aハンドル, 構成.ブルーム, 構成.半解像度));
-        グラフ.パスを積む(bloom_blur_pass::作る(
-            構成.aハンドル,
-            構成.bハンドル,
-            構成.ブルーム,
-            bloom_blur_pass::横ぼかし,
-            構成.半解像度,
-        ));
-        グラフ.パスを積む(bloom_blur_pass::作る(
-            構成.bハンドル,
-            構成.aハンドル,
-            構成.ブルーム,
-            bloom_blur_pass::縦ぼかし,
-            構成.半解像度,
-        ));
-        グラフ.パスを積む(tonemap_pass::作る(構成.hdrハンドル, 構成.aハンドル, 基本.スワップチェーン, 構成.トーンマップ, 寸法));
+        post_passes::積む(&mut グラフ, 構成, 基本.スワップチェーン, 寸法);
     }
 
     if let Some(ui入力) = ui入力 {

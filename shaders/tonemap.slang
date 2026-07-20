@@ -43,11 +43,15 @@ float3 acesFilm(float3 x)
     return saturate((x * (a * x + b)) / (x * (c * x + d) + e));
 }
 
+// ピラミッド結果に掛ける合成強度(判断41)。拡大チェーンは段ごとに加算して値が積み上がるため
+// 小さい係数で戻す。厳密なエネルギー保存(元からの減算)は行わず、ソフト閾値+小強度で過剰を避ける。
+static const float bloomStrength = 0.06;
+
 [shader("fragment")]
 float4 fragmentMain(VertexOutput input) : SV_Target
 {
     // ブルームはリニアHDRのまま加算し、露出・トーンカーブは合成後の値に一度だけ掛ける(判断38の色の流れ)。
-    float3 hdr = hdrTexture.Sample(input.uv).rgb + bloomTexture.Sample(input.uv).rgb;
+    float3 hdr = hdrTexture.Sample(input.uv).rgb + bloomTexture.Sample(input.uv).rgb * bloomStrength;
     float3 exposed = hdr * exposurePush.exposure;
     return float4(acesFilm(exposed), 1.0);
 }

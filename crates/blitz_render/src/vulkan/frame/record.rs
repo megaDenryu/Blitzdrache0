@@ -3,8 +3,8 @@
 //! `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`判断27〜28）。グラフの
 //! 組み立て自体は`graph_build`に委ねる。
 
-mod bloom_blur_pass;
-mod bloom_extract_pass;
+mod bloom_down_pass;
+mod bloom_up_pass;
 mod fullscreen_draw;
 mod graph_build;
 mod particle_draw_pass;

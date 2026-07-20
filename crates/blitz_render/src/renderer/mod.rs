@@ -62,7 +62,7 @@ pub struct レンダラー {
     // 注意: 以下4つのポストプロセス資源はポスト処理有効時のみすべて`Some`(判断38・39)。
     // 有無は常に一致させる(不一致はgraph_build側のpanicで検出される)。
     hdrターゲット: Option<vulkan::hdr_target::HDRターゲット>,
-    ブルームターゲット: Option<vulkan::bloom_targets::ブルームターゲット>,
+    ブルームピラミッド: Option<vulkan::bloom_targets::ブルームピラミッド>,
     ブルーム: Option<vulkan::bloom::ブルーム一式>,
     トーンマップ: Option<vulkan::tonemap::トーンマップ一式>,
     /// `--particles`指定時のみ`Some`(判断29)。有無でコンピュート更新+粒子描画パスの追加を決める。

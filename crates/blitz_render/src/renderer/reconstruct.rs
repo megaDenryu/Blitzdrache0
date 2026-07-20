@@ -19,8 +19,8 @@ impl レンダラー {
         if let Some(hdr) = self.hdrターゲット.take() {
             hdr.破棄する(&self.device);
         }
-        if let Some(ブルームターゲット) = self.ブルームターゲット.take() {
-            ブルームターゲット.破棄する(&self.device);
+        if let Some(ピラミッド) = self.ブルームピラミッド.take() {
+            ピラミッド.破棄する(&self.device);
         }
         self.swapchain.破棄する(&self.device, &self.swapchain_loader);
 
@@ -38,13 +38,13 @@ impl レンダラー {
             unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
         self.深度バッファ =
             vulkan::depth::深度バッファ::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)?;
-        // HDR/ブルーム画像はスワップチェーン寸法に連動するため作り直し、ブルーム・トーンマップの
-        // ディスクリプタを新ビューへ束縛し直す(判断38・39)。ポスト有効の目印には、破棄されず
-        // 残っているトーンマップ一式を使う(hdrターゲットは上でtake済みのため使えない)。
+        // HDR/ブルームピラミッドはスワップチェーン寸法に連動するため作り直す(判断38・41)。
+        // 段数が解像度依存のためブルームのディスクリプタも作り直し、トーンマップは新ビューへ束縛し直す。
+        // ポスト有効の目印には、破棄されず残っているトーンマップ一式を使う(hdrターゲットは上でtake済みのため使えない)。
         if self.トーンマップ.is_some() {
             let 新hdr =
                 vulkan::hdr_target::HDRターゲット::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)?;
-            let 新ブルーム = match vulkan::bloom_targets::ブルームターゲット::生成する(
+            let 新ピラミッド = match vulkan::bloom_targets::ブルームピラミッド::生成する(
                 &self.device,
                 &メモリプロパティ,
                 self.swapchain.寸法,
@@ -55,14 +55,18 @@ impl レンダラー {
                     return Err(誤り);
                 }
             };
-            if let Some(ブルーム) = &self.ブルーム {
-                ブルーム.ビューを再束縛する(&self.device, 新hdr.画像ビュー, 新ブルーム.a.画像ビュー, 新ブルーム.b.画像ビュー);
+            if let Some(ブルーム) = &mut self.ブルーム
+                && let Err(誤り) = ブルーム.ディスクリプタを作り直す(&self.device, 新hdr.画像ビュー, &新ピラミッド)
+            {
+                新ピラミッド.破棄する(&self.device);
+                新hdr.破棄する(&self.device);
+                return Err(誤り);
             }
             if let Some(トーンマップ) = &self.トーンマップ {
-                トーンマップ.ビューを再束縛する(&self.device, 新hdr.画像ビュー, 新ブルーム.a.画像ビュー);
+                トーンマップ.ビューを再束縛する(&self.device, 新hdr.画像ビュー, 新ピラミッド.最終ビュー());
             }
             self.hdrターゲット = Some(新hdr);
-            self.ブルームターゲット = Some(新ブルーム);
+            self.ブルームピラミッド = Some(新ピラミッド);
         }
         self.提示同期 = vulkan::sync::提示同期::生成する(&self.device, self.swapchain.画像数())?;
         self.再構築が必要 = false;

@@ -16,7 +16,8 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::sync::フレームインフライト数;
 
 /// グラフが1フレームに持てるパス数の上限(クエリプール容量の元になる)。
-pub(crate) const パス数上限: u32 = 8;
+/// M7のブルームピラミッド(判断41: 前処理1+縮小4+拡大4)で8を超えたため16へ拡張。
+pub(crate) const パス数上限: u32 = 16;
 const クエリ数上限: u32 = パス数上限 * 2;
 
 pub(crate) struct パス別GPU計測 {

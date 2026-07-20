@@ -30,8 +30,8 @@ impl レンダラー {
         if let Some(ブルーム) = &self.ブルーム {
             ブルーム.破棄する(&self.device);
         }
-        if let Some(ブルームターゲット) = &self.ブルームターゲット {
-            ブルームターゲット.破棄する(&self.device);
+        if let Some(ピラミッド) = &self.ブルームピラミッド {
+            ピラミッド.破棄する(&self.device);
         }
         if let Some(hdr) = &self.hdrターゲット {
             hdr.破棄する(&self.device);

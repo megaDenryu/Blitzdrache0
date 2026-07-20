@@ -11,16 +11,14 @@ pub(crate) struct フレーム画像一式 {
     pub(crate) シャドウマップビュー: vk::ImageView,
     /// ポストプロセス有効時のみ`Some`(判断38)。シーン・粒子の描画先になり、トーンマップパスが読む。
     pub(crate) hdr: Option<(vk::Image, vk::ImageView)>,
-    /// ポストプロセス有効時のみ`Some`(判断39)。1/2解像度のピンポン2枚。
+    /// ポストプロセス有効時のみ`Some`(判断41)。ブルームピラミッドの全段。
     pub(crate) ブルーム: Option<ブルーム画像>,
 }
 
-/// ブルームの中間画像(判断39)。aは抽出結果と縦ぼかし後の最終結果、bは横ぼかしの中間結果。
-#[derive(Clone, Copy)]
+/// ブルームピラミッドの中間画像(判断41)。縮小一覧[0]が1/2解像度で以降1/2ずつ小さくなり、
+/// 拡大一覧[i]は縮小一覧[i]と同解像度(長さは縮小一覧の長さ-1)。
 pub(crate) struct ブルーム画像 {
-    pub(crate) a画像: vk::Image,
-    pub(crate) aビュー: vk::ImageView,
-    pub(crate) b画像: vk::Image,
-    pub(crate) bビュー: vk::ImageView,
-    pub(crate) 寸法: vk::Extent2D,
+    pub(crate) 縮小一覧: Vec<(vk::Image, vk::ImageView)>,
+    pub(crate) 拡大一覧: Vec<(vk::Image, vk::ImageView)>,
+    pub(crate) 寸法一覧: Vec<vk::Extent2D>,
 }

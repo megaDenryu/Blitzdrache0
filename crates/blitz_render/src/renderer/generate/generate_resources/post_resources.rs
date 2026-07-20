@@ -9,7 +9,7 @@ use crate::vulkan;
 
 pub(super) struct ポスト資源 {
     pub(super) hdrターゲット: Option<vulkan::hdr_target::HDRターゲット>,
-    pub(super) ブルームターゲット: Option<vulkan::bloom_targets::ブルームターゲット>,
+    pub(super) ブルームピラミッド: Option<vulkan::bloom_targets::ブルームピラミッド>,
     pub(super) ブルーム: Option<vulkan::bloom::ブルーム一式>,
     pub(super) トーンマップ: Option<vulkan::tonemap::トーンマップ一式>,
 }
@@ -22,12 +22,12 @@ pub(super) fn 組み立てる(
     ポスト処理有効: bool,
 ) -> Result<ポスト資源, レンダラーエラー> {
     if !ポスト処理有効 {
-        return Ok(ポスト資源 { hdrターゲット: None, ブルームターゲット: None, ブルーム: None, トーンマップ: None });
+        return Ok(ポスト資源 { hdrターゲット: None, ブルームピラミッド: None, ブルーム: None, トーンマップ: None });
     }
 
     let hdr = vulkan::hdr_target::HDRターゲット::生成する(device, メモリプロパティ, swapchain.寸法)?;
-    let ブルームターゲット =
-        match vulkan::bloom_targets::ブルームターゲット::生成する(device, メモリプロパティ, swapchain.寸法) {
+    let ピラミッド =
+        match vulkan::bloom_targets::ブルームピラミッド::生成する(device, メモリプロパティ, swapchain.寸法) {
             Ok(一式) => 一式,
             Err(誤り) => {
                 hdr.破棄する(device);
@@ -36,15 +36,15 @@ pub(super) fn 組み立てる(
         };
     let ブルーム = match vulkan::bloom::ブルーム一式::生成する(
         device,
-        &シェーダー.ブルーム抽出,
-        &シェーダー.ブルームぼかし,
+        &シェーダー.ブルーム前処理,
+        &シェーダー.ブルーム縮小,
+        &シェーダー.ブルーム拡大,
         hdr.画像ビュー,
-        ブルームターゲット.a.画像ビュー,
-        ブルームターゲット.b.画像ビュー,
+        &ピラミッド,
     ) {
         Ok(一式) => 一式,
         Err(誤り) => {
-            ブルームターゲット.破棄する(device);
+            ピラミッド.破棄する(device);
             hdr.破棄する(device);
             return Err(誤り);
         }
@@ -54,19 +54,19 @@ pub(super) fn 組み立てる(
         swapchain.画像形式,
         &シェーダー.トーンマップ,
         hdr.画像ビュー,
-        ブルームターゲット.a.画像ビュー,
+        ピラミッド.最終ビュー(),
     ) {
         Ok(一式) => 一式,
         Err(誤り) => {
             ブルーム.破棄する(device);
-            ブルームターゲット.破棄する(device);
+            ピラミッド.破棄する(device);
             hdr.破棄する(device);
             return Err(誤り);
         }
     };
     Ok(ポスト資源 {
         hdrターゲット: Some(hdr),
-        ブルームターゲット: Some(ブルームターゲット),
+        ブルームピラミッド: Some(ピラミッド),
         ブルーム: Some(ブルーム),
         トーンマップ: Some(トーンマップ),
     })
