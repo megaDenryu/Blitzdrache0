@@ -6,7 +6,7 @@ mod spirv_compile;
 use std::env;
 use std::path::PathBuf;
 
-const シェーダーソース相対パス: &str = "../../shaders/cube.slang";
+const シェーダーソース相対パス: &str = "../../shaders/scene.slang";
 
 pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     let manifest_dir = env::var("CARGO_MANIFEST_DIR")

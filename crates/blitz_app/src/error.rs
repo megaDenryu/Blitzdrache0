@@ -1,4 +1,4 @@
-//! blitz_app（起動バイナリ）の型付きエラー。
+//! blitz_app(起動バイナリ)の型付きエラー。
 
 use thiserror::Error;
 
@@ -23,14 +23,32 @@ pub(crate) enum 起動エラー {
     #[error("シェーダー一式の生成に失敗した: {0}")]
     シェーダー一式不正(#[from] blitz_render::シェーダー一式エラー),
 
+    #[error("ベースカラーテクスチャの生成に失敗した: {0}")]
+    テクスチャ素材不正(#[from] blitz_render::テクスチャ素材エラー),
+
+    #[error("シーン名の生成に失敗した: {0}")]
+    シーン名不正(#[from] blitz_engine::アセットIDエラー),
+
+    #[error("シーンの読込に失敗した: {0}(標準サンプルが無い場合は`cargo xtask fetch-assets`を試すこと)")]
+    シーン読込失敗(blitz_engine::アセットエラー),
+
     #[error("--frames引数が不正だった: {0}")]
     フレーム数引数不正(String),
 
     #[error("--shader-source引数が不正だった: {0}")]
     シェーダーソース引数不正(String),
 
+    #[error("--scene引数が不正だった: {0}")]
+    シーン名引数不正(String),
+
+    #[error("--asset-root引数が不正だった: {0}")]
+    アセットルート引数不正(String),
+
     #[error("スモークのシェーダー書き換えに失敗した: {0}")]
     シェーダー書き換え失敗(String),
+
+    #[error("スモークのアセット書き換えに失敗した: {0}")]
+    アセット書き換え失敗(String),
 
     #[error("スモークのピクセル判定に失敗した: {0}")]
     ピクセル判定失敗(String),

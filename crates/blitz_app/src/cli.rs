@@ -4,29 +4,36 @@ use std::path::PathBuf;
 
 use crate::error::起動エラー;
 
-const 既定シェーダー監視パス: &str = "shaders/cube.slang";
+const 既定シェーダー監視パス: &str = "shaders/scene.slang";
+const 既定シーン名: &str = "quad";
+const 既定アセットルート: &str = "assets";
 
 /// 起動時に指定できる実行モード。
 #[derive(Debug, Clone, Copy)]
 pub(crate) enum 起動モード {
     /// ユーザーが閉じるまで無期限に実行する。
     無期限実行,
-    /// 指定フレーム数を描画したら自動終了する（DoDのスモーク検証用）。
+    /// 指定フレーム数を描画したら自動終了する(DoDのスモーク検証用)。
     スモーク実行 { フレーム数: u32 },
 }
 
 /// CLI引数から得た起動設定一式。
 pub(crate) struct 起動設定 {
     pub(crate) モード: 起動モード,
-    /// ホットリロードの監視対象。既定は`shaders/triangle.slang`(存在しなければ監視無効)。
+    /// ホットリロードの監視対象。既定は`shaders/scene.slang`(存在しなければ監視無効)。
     pub(crate) シェーダー監視パス: PathBuf,
+    /// 表示するシーンのアセットID。既定は`quad`(常に存在し決定的)。
+    pub(crate) シーン名: String,
+    /// カタログの各アセットパスの基準ディレクトリ。既定は`assets`。
+    pub(crate) アセットルート: PathBuf,
 }
 
-/// `--frames N` と `--shader-source <path>` を解析する。
-/// `--frames`指定が無ければ無期限実行、`--shader-source`指定が無ければ既定パス。
+/// `--frames N` `--shader-source <path>` `--scene <id>` `--asset-root <dir>` を解析する。
 pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設定, 起動エラー> {
     let mut モード = 起動モード::無期限実行;
     let mut シェーダー監視パス = PathBuf::from(既定シェーダー監視パス);
+    let mut シーン名 = 既定シーン名.to_string();
+    let mut アセットルート = PathBuf::from(既定アセットルート);
 
     let mut 引数 = 引数一覧.iter();
     while let Some(引数値) = 引数.next() {
@@ -48,9 +55,21 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
                 })?;
                 シェーダー監視パス = PathBuf::from(値);
             }
+            "--scene" => {
+                let 値 = 引数.next().ok_or_else(|| {
+                    起動エラー::シーン名引数不正("--sceneに値が指定されていない".to_string())
+                })?;
+                シーン名 = 値.clone();
+            }
+            "--asset-root" => {
+                let 値 = 引数.next().ok_or_else(|| {
+                    起動エラー::アセットルート引数不正("--asset-rootに値が指定されていない".to_string())
+                })?;
+                アセットルート = PathBuf::from(値);
+            }
             _ => {}
         }
     }
 
-    Ok(起動設定 { モード, シェーダー監視パス })
+    Ok(起動設定 { モード, シェーダー監視パス, シーン名, アセットルート })
 }

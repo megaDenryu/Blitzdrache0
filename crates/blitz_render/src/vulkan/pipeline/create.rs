@@ -11,6 +11,7 @@ pub(super) fn 生成する(
     device: &ash::Device,
     カラー形式: vk::Format,
     深度形式: vk::Format,
+    ディスクリプタlayout: vk::DescriptorSetLayout,
     シェーダー: &シェーダー一式,
 ) -> Result<パイプライン, レンダラーエラー> {
     let 頂点モジュール = shader_module::生成する(device, シェーダー.頂点コード())?;
@@ -23,8 +24,14 @@ pub(super) fn 生成する(
         }
     };
 
-    let 結果 =
-        graphics_pipeline::組み立てる(device, カラー形式, 深度形式, 頂点モジュール, フラグメントモジュール);
+    let 結果 = graphics_pipeline::組み立てる(
+        device,
+        カラー形式,
+        深度形式,
+        ディスクリプタlayout,
+        頂点モジュール,
+        フラグメントモジュール,
+    );
 
     // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
     unsafe {

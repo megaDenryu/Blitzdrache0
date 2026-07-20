@@ -54,6 +54,11 @@ pub enum レンダラーエラー {
     /// Vulkan仕様上は到達しないはずの経路）。
     #[error("デバイスローカルなメモリ型が見つからなかった")]
     デバイスローカルメモリ型なし,
+
+    /// R8G8B8A8_SRGBのリニアフィルタblitに物理デバイスが対応していない
+    /// （判断20: ミップマップ生成はvkCmdBlitImageの連鎖で行うため必須）。
+    #[error("物理デバイスがR8G8B8A8_SRGBのリニアフィルタblitに対応していない")]
+    テクスチャblit非対応,
 }
 
 impl From<ash::LoadingError> for レンダラーエラー {

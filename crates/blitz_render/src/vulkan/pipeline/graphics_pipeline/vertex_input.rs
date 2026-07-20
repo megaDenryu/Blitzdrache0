@@ -4,11 +4,13 @@ use ash::vk;
 
 use crate::vertex::頂点;
 
-pub(super) fn 記述する() -> (vk::VertexInputBindingDescription, [vk::VertexInputAttributeDescription; 2]) {
+pub(super) fn 記述する() -> (vk::VertexInputBindingDescription, [vk::VertexInputAttributeDescription; 3]) {
     let stride = u32::try_from(std::mem::size_of::<頂点>())
         .unwrap_or_else(|_| panic!("頂点のサイズがu32に収まらない"));
-    let 色オフセット = u32::try_from(std::mem::offset_of!(頂点, 色))
-        .unwrap_or_else(|_| panic!("頂点の色オフセットがu32に収まらない"));
+    let 法線オフセット = u32::try_from(std::mem::offset_of!(頂点, 法線))
+        .unwrap_or_else(|_| panic!("頂点の法線オフセットがu32に収まらない"));
+    let uvオフセット = u32::try_from(std::mem::offset_of!(頂点, uv))
+        .unwrap_or_else(|_| panic!("頂点のuvオフセットがu32に収まらない"));
 
     let バインド記述 = vk::VertexInputBindingDescription::default()
         .binding(0)
@@ -24,7 +26,12 @@ pub(super) fn 記述する() -> (vk::VertexInputBindingDescription, [vk::VertexI
             .location(1)
             .binding(0)
             .format(vk::Format::R32G32B32_SFLOAT)
-            .offset(色オフセット),
+            .offset(法線オフセット),
+        vk::VertexInputAttributeDescription::default()
+            .location(2)
+            .binding(0)
+            .format(vk::Format::R32G32_SFLOAT)
+            .offset(uvオフセット),
     ];
     (バインド記述, 属性記述一覧)
 }

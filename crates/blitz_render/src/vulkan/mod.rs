@@ -6,9 +6,12 @@
 pub(crate) mod commands;
 pub(crate) mod debug_messenger;
 pub(crate) mod depth;
+pub(crate) mod descriptor;
 pub(crate) mod device;
+pub(crate) mod device_buffer;
 pub(crate) mod frame;
 pub(crate) mod geometry;
+pub(crate) mod host_buffer;
 pub(crate) mod instance;
 pub(crate) mod memory;
 pub(crate) mod physical_device;
@@ -17,3 +20,5 @@ pub(crate) mod readback;
 pub(crate) mod surface;
 pub(crate) mod swapchain;
 pub(crate) mod sync;
+pub(crate) mod texture;
+pub(crate) mod transfer;

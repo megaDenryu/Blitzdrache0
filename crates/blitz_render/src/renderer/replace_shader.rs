@@ -17,6 +17,7 @@ impl レンダラー {
             &self.device,
             self.swapchain.画像形式,
             深度形式,
+            self.ディスクリプタ.layout,
             &シェーダー,
         )?;
 

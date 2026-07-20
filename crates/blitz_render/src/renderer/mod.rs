@@ -9,6 +9,7 @@ mod draw_dispatch;
 mod generate;
 mod readback_buffer;
 mod reconstruct;
+mod replace_scene;
 mod replace_shader;
 
 use ash::vk;
@@ -39,7 +40,10 @@ pub struct レンダラー {
     swapchain_loader: ash::khr::swapchain::Device,
     swapchain: vulkan::swapchain::スワップチェーン,
     深度バッファ: vulkan::depth::深度バッファ,
+    転送環境: vulkan::transfer::転送実行環境,
     ジオメトリ: vulkan::geometry::ジオメトリバッファ,
+    テクスチャ: vulkan::texture::テクスチャ,
+    ディスクリプタ: vulkan::descriptor::ディスクリプタ一式,
     command_pool: vk::CommandPool,
     command_buffer一覧: [vk::CommandBuffer; フレームインフライト数],
     フレーム同期: vulkan::sync::フレーム同期,

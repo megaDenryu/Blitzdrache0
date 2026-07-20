@@ -20,6 +20,7 @@ pub(super) fn 組み立てる(
     device: &ash::Device,
     カラー形式: vk::Format,
     深度形式: vk::Format,
+    ディスクリプタlayout: vk::DescriptorSetLayout,
     頂点モジュール: vk::ShaderModule,
     フラグメントモジュール: vk::ShaderModule,
 ) -> Result<パイプライン, レンダラーエラー> {
@@ -65,8 +66,10 @@ pub(super) fn 組み立てる(
         .stage_flags(vk::ShaderStageFlags::VERTEX)
         .offset(0)
         .size(プッシュ定数バイト数)];
-    let layout_create_info =
-        vk::PipelineLayoutCreateInfo::default().push_constant_ranges(&プッシュ定数範囲一覧);
+    let ディスクリプタlayout一覧 = [ディスクリプタlayout];
+    let layout_create_info = vk::PipelineLayoutCreateInfo::default()
+        .push_constant_ranges(&プッシュ定数範囲一覧)
+        .set_layouts(&ディスクリプタlayout一覧);
     // 安全性: deviceは生成済みで有効。layout_create_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };
 

@@ -4,13 +4,19 @@
 
 use crate::vertex::頂点;
 
+/// 頂点1つぶんのバイト長(位置12 + 法線12 + uv8)。
+const 頂点バイト長: usize = 32;
+
 pub(super) fn 頂点をバイト列にする(頂点一覧: &[頂点]) -> Vec<u8> {
-    let mut バイト列 = Vec::with_capacity(頂点一覧.len() * 24);
+    let mut バイト列 = Vec::with_capacity(頂点一覧.len() * 頂点バイト長);
     for 頂点 in 頂点一覧 {
         for 成分 in 頂点.位置 {
             バイト列.extend_from_slice(&成分.to_le_bytes());
         }
-        for 成分 in 頂点.色 {
+        for 成分 in 頂点.法線 {
+            バイト列.extend_from_slice(&成分.to_le_bytes());
+        }
+        for 成分 in 頂点.uv {
             バイト列.extend_from_slice(&成分.to_le_bytes());
         }
     }

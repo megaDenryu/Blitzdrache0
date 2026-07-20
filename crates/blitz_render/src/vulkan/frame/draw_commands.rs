@@ -29,7 +29,9 @@ pub(super) fn 描画コマンドを積む(
     let オフセット一覧 = [0u64];
     let 行列バイト列 = 行列をバイト列にする(ジオメトリ入力.ビュー射影行列);
 
-    // 安全性: command_bufferは記録中で、pipeline・各バッファは生成済み。
+    let ディスクリプタセット一覧 = [ジオメトリ入力.ディスクリプタセット];
+
+    // 安全性: command_bufferは記録中で、pipeline・各バッファ・ディスクリプタセットは生成済み。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, pipeline);
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
@@ -40,6 +42,14 @@ pub(super) fn 描画コマンドを積む(
             vk::ShaderStageFlags::VERTEX,
             0,
             &行列バイト列,
+        );
+        device.cmd_bind_descriptor_sets(
+            command_buffer,
+            vk::PipelineBindPoint::GRAPHICS,
+            ジオメトリ入力.layout,
+            0,
+            &ディスクリプタセット一覧,
+            &[],
         );
         device.cmd_bind_vertex_buffers(command_buffer, 0, &頂点バッファ一覧, &オフセット一覧);
         device.cmd_bind_index_buffer(command_buffer, ジオメトリ入力.インデックスバッファ, 0, vk::IndexType::UINT32);

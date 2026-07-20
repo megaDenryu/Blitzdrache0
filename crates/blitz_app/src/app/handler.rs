@@ -14,7 +14,12 @@ impl ApplicationHandler for アプリ {
         if self.レンダラー.is_some() {
             return;
         }
-        match super::window_setup::ウィンドウとレンダラーを作る(event_loop) {
+        match super::window_setup::ウィンドウとレンダラーを作る(
+            event_loop,
+            &self.シーン名,
+            &self.アセットルート,
+            &mut self.ホットリローダー,
+        ) {
             Ok((window, レンダラー)) => {
                 self.window = Some(window);
                 self.レンダラー = Some(レンダラー);

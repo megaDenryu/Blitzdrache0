@@ -19,14 +19,16 @@ pub(crate) struct パイプライン {
 
 impl パイプライン {
     /// `カラー形式` はスワップチェーンの、`深度形式` は深度バッファの
-    /// dynamic renderingの出力形式。
+    /// dynamic renderingの出力形式。`ディスクリプタlayout` はベースカラーテクスチャの
+    /// combined image sampler(判断21)。
     pub(crate) fn 生成する(
         device: &ash::Device,
         カラー形式: vk::Format,
         深度形式: vk::Format,
+        ディスクリプタlayout: vk::DescriptorSetLayout,
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, カラー形式, 深度形式, シェーダー)
+        create::生成する(device, カラー形式, 深度形式, ディスクリプタlayout, シェーダー)
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

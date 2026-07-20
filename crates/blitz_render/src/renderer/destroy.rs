@@ -21,7 +21,10 @@ impl レンダラー {
         // 安全性: command_bufferはcommand_poolの破棄で暗黙に解放されるため、
         // 個別のfree_command_buffersは不要。
         unsafe { self.device.destroy_command_pool(self.command_pool, None) };
+        self.ディスクリプタ.破棄する(&self.device);
+        self.テクスチャ.破棄する(&self.device);
         self.ジオメトリ.破棄する(&self.device);
+        self.転送環境.破棄する(&self.device);
         self.深度バッファ.破棄する(&self.device);
         self.swapchain.破棄する(&self.device, &self.swapchain_loader);
         // 安全性: deviceはSelfが唯一の所有者で、上記の全依存リソースは破棄済み。

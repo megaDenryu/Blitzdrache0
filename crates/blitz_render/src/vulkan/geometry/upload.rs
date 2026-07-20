@@ -1,61 +1,59 @@
-//! ホスト可視バッファの確保とホストからの書き込み。
+//! ステージングバッファ経由でデバイスローカルバッファへアップロードする
+//! (判断20: 頂点/インデックス共通の転送基盤)。
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::memory;
+use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::{device_buffer, host_buffer};
 
-pub(super) fn 確保して書き込む(
+pub(super) fn ステージング経由でアップロードする(
     device: &ash::Device,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    転送環境: &転送実行環境,
     データ: &[u8],
     用途: vk::BufferUsageFlags,
 ) -> Result<(vk::Buffer, vk::DeviceMemory), レンダラーエラー> {
-    let create_info = vk::BufferCreateInfo::default()
-        .size(u64::try_from(データ.len()).unwrap_or_else(|_| panic!("バッファサイズがu64に収まらない")))
-        .usage(用途)
-        .sharing_mode(vk::SharingMode::EXCLUSIVE);
-    // 安全性: deviceは生成済みで有効。
-    let buffer = unsafe { device.create_buffer(&create_info, None)? };
-    // 安全性: bufferは直前に生成済み。
-    let 要件 = unsafe { device.get_buffer_memory_requirements(buffer) };
+    let (ステージングバッファ, ステージングメモリ) =
+        host_buffer::確保して書き込む(device, メモリプロパティ, データ, vk::BufferUsageFlags::TRANSFER_SRC)?;
 
-    let メモリ型添字 = match memory::ホスト可視メモリ型を選ぶ(メモリプロパティ, 要件.memory_type_bits) {
-        Ok(添字) => 添字,
+    let バイト数 = u64::try_from(データ.len()).unwrap_or_else(|_| panic!("転送データ長がu64に収まらない"));
+    let 確保結果 =
+        device_buffer::確保する(device, メモリプロパティ, バイト数, 用途 | vk::BufferUsageFlags::TRANSFER_DST);
+    let (先バッファ, 先メモリ) = match 確保結果 {
+        Ok(結果) => 結果,
         Err(誤り) => {
-            // 安全性: bufferはこのスコープの唯一の所有者で、以降使用しない。
-            unsafe { device.destroy_buffer(buffer, None) };
+            // 安全性: ステージングバッファ・メモリはこのスコープの唯一の所有者で、以降使用しない。
+            unsafe {
+                device.destroy_buffer(ステージングバッファ, None);
+                device.free_memory(ステージングメモリ, None);
+            }
             return Err(誤り);
         }
     };
-    let alloc_info = vk::MemoryAllocateInfo::default()
-        .allocation_size(要件.size)
-        .memory_type_index(メモリ型添字);
-    // 安全性: deviceは生成済みで有効。alloc_infoは直前に構築した値のみを参照する。
-    let memory = match unsafe { device.allocate_memory(&alloc_info, None) } {
-        Ok(memory) => memory,
-        Err(誤り) => {
-            // 安全性: bufferはこのスコープの唯一の所有者で、以降使用しない。
-            unsafe { device.destroy_buffer(buffer, None) };
-            return Err(誤り.into());
+
+    let コピー結果 = 転送環境.一括実行する(device, |command_buffer| {
+        let 領域 = vk::BufferCopy::default().size(バイト数);
+        // 安全性: command_bufferは転送実行環境が記録用に開始済み。両バッファは直前に
+        // 生成済みで、コピー長は両方の確保サイズ以下(同一データ長で確保しているため一致)。
+        unsafe { device.cmd_copy_buffer(command_buffer, ステージングバッファ, 先バッファ, &[領域]) };
+    });
+
+    // 安全性: ステージングバッファ・メモリはこのスコープの唯一の所有者で、
+    // 転送完了(一括実行するがfence待ち済み)後は不要。
+    unsafe {
+        device.destroy_buffer(ステージングバッファ, None);
+        device.free_memory(ステージングメモリ, None);
+    }
+
+    if let Err(誤り) = コピー結果 {
+        // 安全性: 先バッファ・先メモリはこのスコープの唯一の所有者で、以降使用しない。
+        unsafe {
+            device.destroy_buffer(先バッファ, None);
+            device.free_memory(先メモリ, None);
         }
-    };
-    // 安全性: buffer・memoryはともに直前に生成済みで、offsetは0(専用確保のため衝突しない)。
-    unsafe { device.bind_buffer_memory(buffer, memory, 0)? };
+        return Err(誤り);
+    }
 
-    書き込む(device, memory, データ)?;
-    Ok((buffer, memory))
-}
-
-fn 書き込む(device: &ash::Device, memory: vk::DeviceMemory, データ: &[u8]) -> Result<(), レンダラーエラー> {
-    // 安全性: memoryはHOST_VISIBLE|HOST_COHERENTで確保済み。WHOLE_SIZEでの
-    // マッピングは確保済み容量全体を対象にするため、データ長がバッファ容量以下である
-    // 限り常に安全。
-    let ポインタ = unsafe { device.map_memory(memory, 0, vk::WHOLE_SIZE, vk::MemoryMapFlags::empty())? };
-    // 安全性: ポインタはmap_memoryが返した有効な範囲を指し、データ長は生成時に
-    // 同じ長さで要求したバッファ容量以下(呼び出し元が長さを一致させて確保している)。
-    unsafe { std::ptr::copy_nonoverlapping(データ.as_ptr(), ポインタ.cast::<u8>(), データ.len()) };
-    // 安全性: memoryはこの直前にmap_memory済みの同一ハンドル。
-    unsafe { device.unmap_memory(memory) };
-    Ok(())
+    Ok((先バッファ, 先メモリ))
 }

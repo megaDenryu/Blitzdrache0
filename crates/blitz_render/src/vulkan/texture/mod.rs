@@ -1,0 +1,92 @@
+//! ベースカラーテクスチャ: R8G8B8A8_SRGB・OPTIMALタイリング・ステージング転送+
+//! vkCmdBlitImage連鎖のミップマップ生成(判断20)。
+
+mod format_support;
+mod image;
+mod mip_chain;
+mod mip_count;
+mod upload;
+mod view;
+
+use ash::vk;
+
+use crate::error::レンダラーエラー;
+use crate::texture_material::テクスチャ素材;
+use crate::vulkan::transfer::転送実行環境;
+
+pub(crate) const テクスチャ形式: vk::Format = vk::Format::R8G8B8A8_SRGB;
+
+pub(crate) struct テクスチャ {
+    image: vk::Image,
+    memory: vk::DeviceMemory,
+    pub(crate) image_view: vk::ImageView,
+    pub(crate) sampler: vk::Sampler,
+}
+
+impl テクスチャ {
+    pub(crate) fn 生成する(
+        device: &ash::Device,
+        instance: &ash::Instance,
+        physical_device: vk::PhysicalDevice,
+        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        転送環境: &転送実行環境,
+        素材: &テクスチャ素材,
+    ) -> Result<Self, レンダラーエラー> {
+        format_support::blitフィルタ対応を確認する(instance, physical_device)?;
+
+        let mip数 = mip_count::計算する(素材.幅(), 素材.高さ());
+        let (image, memory) = image::生成する(device, メモリプロパティ, 素材.幅(), 素材.高さ(), mip数)?;
+
+        if let Err(誤り) = upload::記録して転送する(
+            device,
+            メモリプロパティ,
+            転送環境,
+            image,
+            素材.幅(),
+            素材.高さ(),
+            mip数,
+            素材.rgba8(),
+        ) {
+            画像を破棄する(device, image, memory);
+            return Err(誤り);
+        }
+
+        let image_view = match view::画像ビューを作る(device, image, mip数) {
+            Ok(view) => view,
+            Err(誤り) => {
+                画像を破棄する(device, image, memory);
+                return Err(誤り);
+            }
+        };
+        let sampler = match view::サンプラーを作る(device, mip数) {
+            Ok(sampler) => sampler,
+            Err(誤り) => {
+                // 安全性: image・image_view・memoryはこのスコープの唯一の所有者で、以降使用しない。
+                unsafe { device.destroy_image_view(image_view, None) };
+                画像を破棄する(device, image, memory);
+                return Err(誤り);
+            }
+        };
+
+        Ok(Self { image, memory, image_view, sampler })
+    }
+
+    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+        // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
+        // device_wait_idle済みであることを呼び出し元が保証する。
+        unsafe {
+            device.destroy_sampler(self.sampler, None);
+            device.destroy_image_view(self.image_view, None);
+            device.destroy_image(self.image, None);
+            device.free_memory(self.memory, None);
+        }
+    }
+}
+
+fn 画像を破棄する(device: &ash::Device, image: vk::Image, memory: vk::DeviceMemory) {
+    // 安全性: image・memoryはこのスコープの唯一の所有者で、以降使用しない。
+    unsafe {
+        device.destroy_image(image, None);
+        device.free_memory(memory, None);
+    }
+}

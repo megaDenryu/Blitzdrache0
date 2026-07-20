@@ -1,5 +1,5 @@
-//! 立方体メッシュ用の頂点・インデックスバッファ。ホスト可視・コヒーレントで
-//! 起動時に一度だけ書き込む（ステージング転送はM3で導入。判断14）。
+//! glTFメッシュ用の頂点・インデックスバッファ。ステージング+デバイスローカル転送で
+//! 確保する(判断20)。アセットホットリロード(`シーンを差し替える`)のたびに破棄・再生成する。
 
 mod bytes;
 mod upload;
@@ -8,6 +8,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vertex::頂点;
+use crate::vulkan::transfer::転送実行環境;
 
 pub(crate) struct ジオメトリバッファ {
     pub(crate) 頂点バッファ: vk::Buffer,
@@ -21,21 +22,24 @@ impl ジオメトリバッファ {
     pub(crate) fn 生成する(
         device: &ash::Device,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        転送環境: &転送実行環境,
         頂点一覧: &[頂点],
         インデックス一覧: &[u32],
     ) -> Result<Self, レンダラーエラー> {
         let 頂点バイト列 = bytes::頂点をバイト列にする(頂点一覧);
-        let (頂点バッファ, 頂点メモリ) = upload::確保して書き込む(
+        let (頂点バッファ, 頂点メモリ) = upload::ステージング経由でアップロードする(
             device,
             メモリプロパティ,
+            転送環境,
             &頂点バイト列,
             vk::BufferUsageFlags::VERTEX_BUFFER,
         )?;
 
         let インデックスバイト列 = bytes::インデックスをバイト列にする(インデックス一覧);
-        let (インデックスバッファ, インデックスメモリ) = match upload::確保して書き込む(
+        let (インデックスバッファ, インデックスメモリ) = match upload::ステージング経由でアップロードする(
             device,
             メモリプロパティ,
+            転送環境,
             &インデックスバイト列,
             vk::BufferUsageFlags::INDEX_BUFFER,
         ) {

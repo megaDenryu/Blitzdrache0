@@ -22,13 +22,15 @@ pub(crate) enum 描画方式 {
     読み戻し { バッファ: vk::Buffer },
 }
 
-/// 頂点/インデックスバッファとプッシュ定数(ビュー射影行列)。パイプラインのlayoutは
-/// プッシュ定数の送信先を指定するために必要。
+/// 頂点/インデックスバッファとプッシュ定数(ビュー射影行列)、ベースカラーテクスチャの
+/// ディスクリプタセット。パイプラインのlayoutはプッシュ定数・ディスクリプタセットの
+/// 送信先を指定するために必要。
 pub(crate) struct ジオメトリ入力<'a> {
     pub(crate) 頂点バッファ: vk::Buffer,
     pub(crate) インデックスバッファ: vk::Buffer,
     pub(crate) インデックス数: u32,
     pub(crate) layout: vk::PipelineLayout,
+    pub(crate) ディスクリプタセット: vk::DescriptorSet,
     pub(crate) ビュー射影行列: &'a [[f32; 4]; 4],
 }
 
