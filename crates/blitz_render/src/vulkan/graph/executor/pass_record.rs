@@ -13,7 +13,6 @@ pub(super) fn パスを記録する(
     command_buffer: vk::CommandBuffer,
     画像レジストリ: &画像レジストリ,
     バッファレジストリ: &バッファレジストリ,
-    寸法: vk::Extent2D,
     パス: パス宣言<'_>,
 ) {
     let 宣言済み画像 = パス.宣言済み画像一覧();
@@ -30,7 +29,7 @@ pub(super) fn パスを記録する(
 
     match パス.種別 {
         パス種別::グラフィックス { カラー, 深度, クリア指定 } => {
-            rendering_setup::開始する(device, command_buffer, 画像レジストリ, カラー, 深度, &クリア指定, 寸法);
+            rendering_setup::開始する(device, command_buffer, 画像レジストリ, カラー, 深度, &クリア指定);
             (パス.記録)(&記録文脈);
             rendering_setup::終了する(device, command_buffer);
         }

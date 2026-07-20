@@ -24,7 +24,7 @@ pub(crate) fn 実行する(
     グラフ: グラフ<'_>,
     クエリプール: Option<vk::QueryPool>,
 ) -> Vec<(&'static str, u32)> {
-    let (寸法, 画像レジストリ, バッファレジストリ, 画像初期状態表, バッファ初期状態表, 最終用途表, パス列) =
+    let (画像レジストリ, バッファレジストリ, 画像初期状態表, バッファ初期状態表, 最終用途表, パス列) =
         グラフ.分解する();
 
     let リソース使用列: Vec<パスリソース使用> = パス列.iter().map(パスリソース使用::from).collect();
@@ -55,7 +55,7 @@ pub(crate) fn 実行する(
             タイムスタンプを書く(device, command_buffer, pool, クエリ開始添字);
             計測マッピング.push((パス名, クエリ開始添字));
         }
-        pass_record::パスを記録する(device, command_buffer, &画像レジストリ, &バッファレジストリ, 寸法, パス);
+        pass_record::パスを記録する(device, command_buffer, &画像レジストリ, &バッファレジストリ, パス);
         if let Some(pool) = クエリプール {
             タイムスタンプを書く(device, command_buffer, pool, クエリ開始添字 + 1);
         }
