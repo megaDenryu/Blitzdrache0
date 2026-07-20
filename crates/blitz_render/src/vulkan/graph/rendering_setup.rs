@@ -17,13 +17,11 @@ pub(crate) fn 開始する(
     クリア指定: &クリア指定,
     寸法: vk::Extent2D,
 ) {
-    let カラークリア値 = vk::ClearValue {
-        color: vk::ClearColorValue { float32: クリア指定.カラー.rgba配列() },
-    };
+    let (load_op, カラークリア値) = ロードオペレーションとカラークリア値(クリア指定);
     let カラーアタッチメント = vk::RenderingAttachmentInfo::default()
         .image_view(レジストリ.ビューを取得する(カラー))
         .image_layout(vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL)
-        .load_op(vk::AttachmentLoadOp::CLEAR)
+        .load_op(load_op)
         .store_op(vk::AttachmentStoreOp::STORE)
         .clear_value(カラークリア値);
     let カラーアタッチメント一覧 = [カラーアタッチメント];
@@ -35,7 +33,7 @@ pub(crate) fn 開始する(
         vk::RenderingAttachmentInfo::default()
             .image_view(レジストリ.ビューを取得する(深度ハンドル))
             .image_layout(vk::ImageLayout::DEPTH_ATTACHMENT_OPTIMAL)
-            .load_op(vk::AttachmentLoadOp::CLEAR)
+            .load_op(load_op)
             .store_op(vk::AttachmentStoreOp::DONT_CARE)
             .clear_value(深度クリア値)
     });
@@ -51,6 +49,16 @@ pub(crate) fn 開始する(
     // 安全性: command_bufferは記録中で、各画像は直前のバリア発行でOPTIMALレイアウトへ
     // 遷移済み。
     unsafe { device.cmd_begin_rendering(command_buffer, &rendering_info) };
+}
+
+fn ロードオペレーションとカラークリア値(クリア指定: &クリア指定) -> (vk::AttachmentLoadOp, vk::ClearValue) {
+    match クリア指定 {
+        クリア指定::クリアする { カラー } => (
+            vk::AttachmentLoadOp::CLEAR,
+            vk::ClearValue { color: vk::ClearColorValue { float32: カラー.rgba配列() } },
+        ),
+        クリア指定::ロードする => (vk::AttachmentLoadOp::LOAD, vk::ClearValue::default()),
+    }
 }
 
 pub(crate) fn 終了する(device: &ash::Device, command_buffer: vk::CommandBuffer) {

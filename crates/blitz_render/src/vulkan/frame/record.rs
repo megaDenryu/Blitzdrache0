@@ -1,16 +1,21 @@
 //! コマンド記録: レンダーグラフを構築して実行するだけにする。バリア発行・
 //! begin/end renderingはグラフ実行器に集約する（参照: `_doc/設計/レンダーグラフ.md`、
-//! `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`判断27〜28）。
+//! `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`判断27〜28）。グラフの
+//! 組み立て自体は`graph_build`に委ねる。
 
+mod graph_build;
+mod particle_draw_pass;
+mod particle_update_pass;
 mod readback_pass;
 mod scene_pass;
 
 use ash::vk;
 
-use super::{ジオメトリ入力, 描画方式};
+use super::{ジオメトリ入力, 描画方式, 粒子描画入力};
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
 use crate::vulkan::graph;
+use crate::vulkan::gpu_timing;
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn コマンドを記録する(
@@ -24,15 +29,24 @@ pub(super) fn コマンドを記録する(
     クリア色: クリアカラー,
     pipeline: vk::Pipeline,
     ジオメトリ入力: &ジオメトリ入力,
+    粒子入力: Option<&粒子描画入力>,
     描画方式: &描画方式,
-) -> Result<(), レンダラーエラー> {
+    クエリプール: Option<vk::QueryPool>,
+) -> Result<Vec<(&'static str, u32)>, レンダラーエラー> {
     let begin_info =
         vk::CommandBufferBeginInfo::default().flags(vk::CommandBufferUsageFlags::ONE_TIME_SUBMIT);
     // 安全性: command_bufferはRESET_COMMAND_BUFFERフラグ付きプール由来で、
     // ここでの開始が暗黙的に前回の記録をリセットする。
     unsafe { device.begin_command_buffer(command_buffer, &begin_info)? };
 
-    let グラフ = グラフを構築する(
+    if let Some(pool) = クエリプール {
+        // 安全性: command_bufferは記録開始済みで、poolはこのスロット専用に生成済み。
+        // このフレームで書くクエリより前に必ずリセットする(未リセットのクエリへの
+        // 書き込みはVulkanの契約違反になる)。
+        unsafe { device.cmd_reset_query_pool(command_buffer, pool, 0, gpu_timing::パス数上限 * 2) };
+    }
+
+    let グラフ = graph_build::グラフを構築する(
         画像,
         画像ビュー,
         深度画像,
@@ -41,54 +55,12 @@ pub(super) fn コマンドを記録する(
         クリア色,
         pipeline,
         ジオメトリ入力,
+        粒子入力,
         描画方式,
     );
-    graph::実行する(device, command_buffer, グラフ);
+    let 計測マッピング = graph::実行する(device, command_buffer, グラフ, クエリプール);
 
     // 安全性: command_bufferは記録開始済みで、対応するend呼び出し。
     unsafe { device.end_command_buffer(command_buffer)? };
-    Ok(())
-}
-
-#[allow(clippy::too_many_arguments)]
-fn グラフを構築する<'a>(
-    画像: vk::Image,
-    画像ビュー: vk::ImageView,
-    深度画像: vk::Image,
-    深度画像ビュー: vk::ImageView,
-    寸法: vk::Extent2D,
-    クリア色: クリアカラー,
-    pipeline: vk::Pipeline,
-    ジオメトリ入力: &'a ジオメトリ入力,
-    描画方式: &'a 描画方式,
-) -> graph::グラフ<'a> {
-    let mut グラフ = graph::グラフ::新規(寸法);
-    let カラーハンドル = グラフ.画像を登録する(
-        画像,
-        画像ビュー,
-        graph::画像アスペクト::カラー,
-        graph::取得直後の色画像状態(),
-    );
-    let 深度ハンドル = グラフ.画像を登録する(
-        深度画像,
-        深度画像ビュー,
-        graph::画像アスペクト::深度,
-        graph::前フレーム深度書き込み直後状態(),
-    );
-
-    グラフ.パスを積む(scene_pass::作る(
-        カラーハンドル,
-        深度ハンドル,
-        クリア色,
-        pipeline,
-        ジオメトリ入力,
-        寸法,
-    ));
-
-    if let 描画方式::読み戻し { バッファ } = 描画方式 {
-        グラフ.パスを積む(readback_pass::作る(カラーハンドル, *バッファ, 寸法));
-    }
-
-    グラフ.最終用途を宣言する(カラーハンドル, graph::画像用途::提示);
-    グラフ
+    Ok(計測マッピング)
 }

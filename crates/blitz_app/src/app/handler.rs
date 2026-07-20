@@ -19,6 +19,7 @@ impl ApplicationHandler for アプリ {
             &self.シーン名,
             &self.アセットルート,
             &mut self.ホットリローダー,
+            self.粒子有効,
         ) {
             Ok((window, レンダラー)) => {
                 self.window = Some(window);

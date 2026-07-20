@@ -15,6 +15,12 @@ impl レンダラー {
         if let Some(バッファ) = &self.読み戻しバッファ {
             バッファ.破棄する(&self.device);
         }
+        if let Some(粒子) = &self.粒子 {
+            粒子.破棄する(&self.device);
+        }
+        if let Some(計測) = &self.gpu計測 {
+            計測.破棄する(&self.device);
+        }
         self.pipeline.破棄する(&self.device);
         self.フレーム同期.破棄する(&self.device);
         self.提示同期.破棄する(&self.device);

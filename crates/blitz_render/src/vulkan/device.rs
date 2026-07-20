@@ -8,6 +8,7 @@ pub(crate) fn 生成する(
     instance: &ash::Instance,
     物理デバイス: vk::PhysicalDevice,
     キューファミリ添字: u32,
+    大点描画対応: bool,
 ) -> Result<(ash::Device, vk::Queue), レンダラーエラー> {
     let キュー優先度 = [1.0_f32];
     let キュー生成情報 = [vk::DeviceQueueCreateInfo::default()
@@ -22,10 +23,14 @@ pub(crate) fn 生成する(
     let mut vulkan13機能 = vk::PhysicalDeviceVulkan13Features::default()
         .dynamic_rendering(true)
         .synchronization2(true);
+    // 対応デバイスでのみ有効化する(粒子描画のPointSize指定、判断29)。未対応でも
+    // 描画自体は続行できるため物理デバイス選定は左右しない(`大きな点描画に対応するか`)。
+    let 基本機能 = vk::PhysicalDeviceFeatures::default().large_points(大点描画対応);
 
     let create_info = vk::DeviceCreateInfo::default()
         .queue_create_infos(&キュー生成情報)
         .enabled_extension_names(&拡張一覧)
+        .enabled_features(&基本機能)
         .push_next(&mut vulkan11機能)
         .push_next(&mut vulkan13機能);
 

@@ -28,11 +28,15 @@ pub(crate) enum スモークアクション {
     アセット反映後判定,
     最終判定,
     ヘルメット判定,
+    粒子判定,
 }
 
-/// `シーン名`が"helmet"ならhelmet計画、それ以外(既定"quad")ならquad計画で判定する。
-pub(crate) fn 判定する(現在フレーム: u32, 総フレーム数: u32, シーン名: &str) -> スモークアクション {
-    if シーン名 == "helmet" {
+/// `粒子有効`ならparticles計画、`シーン名`が"helmet"ならhelmet計画、
+/// それ以外(既定"quad")ならquad計画で判定する(判断29のparticlesステージ)。
+pub(crate) fn 判定する(現在フレーム: u32, 総フレーム数: u32, シーン名: &str, 粒子有効: bool) -> スモークアクション {
+    if 粒子有効 {
+        plan::particles計画(現在フレーム, 総フレーム数)
+    } else if シーン名 == "helmet" {
         plan::helmet計画(現在フレーム, 総フレーム数)
     } else {
         plan::quad計画(現在フレーム, 総フレーム数)

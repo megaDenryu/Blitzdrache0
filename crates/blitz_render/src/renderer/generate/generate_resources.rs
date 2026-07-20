@@ -1,30 +1,17 @@
-//! スワップチェーン生成後に組み立てる残りの資源
+//! スワップチェーン生成後に組み立てる残り資源の組み立て手順
 //! (深度バッファ・転送環境・ジオメトリ・テクスチャ・ユニフォーム・ディスクリプタ・
-//! コマンド・同期・パイプライン)。
+//! コマンド・同期・パイプライン)。束の型は`frame_resources`。
 
 use ash::vk;
 
+use super::frame_resources::フレーム資源;
 use crate::error::レンダラーエラー;
 use crate::material::マテリアル素材;
+use crate::particle_shader_set::粒子シェーダー一式;
 use crate::shader_set::シェーダー一式;
 use crate::vertex::頂点;
 use crate::vulkan;
 use crate::vulkan::depth::深度形式;
-use crate::vulkan::sync::フレームインフライト数;
-
-pub(super) struct フレーム資源 {
-    pub(super) 深度バッファ: vulkan::depth::深度バッファ,
-    pub(super) 転送環境: vulkan::transfer::転送実行環境,
-    pub(super) ジオメトリ: vulkan::geometry::ジオメトリバッファ,
-    pub(super) テクスチャ: vulkan::texture::マテリアルテクスチャ一式,
-    pub(super) ユニフォーム: vulkan::uniform::フレームユニフォーム一式,
-    pub(super) ディスクリプタ: vulkan::descriptor::ディスクリプタ一式,
-    pub(super) command_pool: vk::CommandPool,
-    pub(super) command_buffer一覧: [vk::CommandBuffer; フレームインフライト数],
-    pub(super) フレーム同期: vulkan::sync::フレーム同期,
-    pub(super) 提示同期: vulkan::sync::提示同期,
-    pub(super) pipeline: vulkan::pipeline::パイプライン,
-}
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn 組み立てる(
@@ -38,6 +25,9 @@ pub(super) fn 組み立てる(
     頂点一覧: &[頂点],
     インデックス一覧: &[u32],
     マテリアル: &マテリアル素材,
+    粒子シェーダー: Option<&粒子シェーダー一式>,
+    タイムスタンプ対応か: bool,
+    タイムスタンプ周期ns: f32,
 ) -> Result<フレーム資源, レンダラーエラー> {
     // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
     let メモリプロパティ = unsafe { instance.get_physical_device_memory_properties(physical_device) };
@@ -73,6 +63,23 @@ pub(super) fn 組み立てる(
         シェーダー,
     )?;
 
+    let 粒子 = 粒子シェーダー
+        .map(|シェーダー| {
+            vulkan::particles::粒子リソース一式::生成する(
+                device,
+                &メモリプロパティ,
+                &転送環境,
+                swapchain.画像形式,
+                深度形式,
+                &ユニフォーム,
+                シェーダー,
+            )
+        })
+        .transpose()?;
+
+    let gpu計測 =
+        vulkan::gpu_timing::パス別GPU計測::生成する(device, タイムスタンプ対応か, タイムスタンプ周期ns)?;
+
     Ok(フレーム資源 {
         深度バッファ,
         転送環境,
@@ -85,5 +92,7 @@ pub(super) fn 組み立てる(
         フレーム同期,
         提示同期,
         pipeline,
+        粒子,
+        gpu計測,
     })
 }

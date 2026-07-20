@@ -10,6 +10,7 @@ pub(super) fn 実行する(
     アセットルート: Option<&Path>,
     シーン名: &str,
     unlit: bool,
+    particles: bool,
 ) -> bool {
     let mut 引数一覧 = vec![
         "run".to_string(),
@@ -29,6 +30,9 @@ pub(super) fn 実行する(
     }
     if unlit {
         引数一覧.push("--unlit".to_string());
+    }
+    if particles {
+        引数一覧.push("--particles".to_string());
     }
 
     println!("[xtask] cargo {} を実行", 引数一覧.join(" "));

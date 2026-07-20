@@ -31,18 +31,24 @@ pub(crate) struct 起動設定 {
     pub(crate) アセットルート: PathBuf,
     /// `--unlit`指定でfalse。既定はtrue(PBRライティング有効、判断26)。
     pub(crate) ライティング有効: bool,
+    /// `--particles`指定でtrue。既定はfalse(GPU粒子トイ、判断29)。
+    pub(crate) 粒子有効: bool,
+    /// `--report-gpu-times`指定でtrue。既定はfalse(パス別GPU時間の終了時コンソール出力、判断30)。
+    pub(crate) gpu時間報告: bool,
 }
 
 /// `--frames N` `--shader-source <path>` `--scene <id>` `--asset-root <dir>`
-/// `--unlit` を解析する。`--shader-source`は監視・再コンパイル対象のエントリ
-/// ファイルを指す。`import`先の他ファイルは常にエントリと同じディレクトリから
-/// 解決するため、このオプションでの指定は不要。
+/// `--unlit` `--particles` `--report-gpu-times` を解析する。`--shader-source`は
+/// 監視・再コンパイル対象のエントリファイルを指す。`import`先の他ファイルは常に
+/// エントリと同じディレクトリから解決するため、このオプションでの指定は不要。
 pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設定, 起動エラー> {
     let mut モード = 起動モード::無期限実行;
     let mut シェーダー監視パス = PathBuf::from(既定シェーダー監視パス);
     let mut シーン名 = 既定シーン名.to_string();
     let mut アセットルート = PathBuf::from(既定アセットルート);
     let mut ライティング有効 = true;
+    let mut 粒子有効 = false;
+    let mut gpu時間報告 = false;
 
     let mut 引数 = 引数一覧.iter();
     while let Some(引数値) = 引数.next() {
@@ -79,9 +85,15 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
             "--unlit" => {
                 ライティング有効 = false;
             }
+            "--particles" => {
+                粒子有効 = true;
+            }
+            "--report-gpu-times" => {
+                gpu時間報告 = true;
+            }
             _ => {}
         }
     }
 
-    Ok(起動設定 { モード, シェーダー監視パス, シーン名, アセットルート, ライティング有効 })
+    Ok(起動設定 { モード, シェーダー監視パス, シーン名, アセットルート, ライティング有効, 粒子有効, gpu時間報告 })
 }

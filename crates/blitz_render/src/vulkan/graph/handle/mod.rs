@@ -3,6 +3,5 @@
 mod buffer_handle;
 mod image_handle;
 
-#[allow(unused_imports)]
 pub(crate) use buffer_handle::バッファハンドル;
 pub(crate) use image_handle::画像ハンドル;

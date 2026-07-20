@@ -1,7 +1,9 @@
 //! M3のDoD自動検証: shaders/scene.slangとassets/smoke/を一時コピーへ複製し、
 //! quadステージ(600フレーム、リサイズ・最小化復帰・アセット/シェーダーホットリロード
-//! を機械検証)→ (DamagedHelmet取得済みなら)helmetステージ(120フレーム)を順に実行する。
-//! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断22」。
+//! を機械検証)→ (DamagedHelmet取得済みなら)helmetステージ(120フレーム)→
+//! particlesステージ(120フレーム、コンピュート→グラフィックスのバッファ共有実証、判断29)
+//! を順に実行する。
+//! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断22」「判断29」。
 
 mod copy_setup;
 mod run_stage;
@@ -11,6 +13,7 @@ use std::process::ExitCode;
 
 const 四角形フレーム数: &str = "600";
 const ヘルメットフレーム数: &str = "120";
+const 粒子フレーム数: &str = "120";
 const ヘルメット取得先: &str = "assets/samples/DamagedHelmet/DamagedHelmet.glb";
 
 pub fn 実行する() -> ExitCode {
@@ -30,7 +33,7 @@ pub fn 実行する() -> ExitCode {
     };
 
     println!("[xtask] quadステージ実行");
-    if !run_stage::実行する(四角形フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true) {
+    if !run_stage::実行する(四角形フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, false) {
         eprintln!("[xtask] smoke失敗: quadステージ");
         return ExitCode::FAILURE;
     }
@@ -38,7 +41,7 @@ pub fn 実行する() -> ExitCode {
 
     if Path::new(ヘルメット取得先).is_file() {
         println!("[xtask] helmetステージ実行");
-        if !run_stage::実行する(ヘルメットフレーム数, &シェーダーコピー先, None, "helmet", false) {
+        if !run_stage::実行する(ヘルメットフレーム数, &シェーダーコピー先, None, "helmet", false, false) {
             eprintln!("[xtask] smoke失敗: helmetステージ");
             return ExitCode::FAILURE;
         }
@@ -48,6 +51,13 @@ pub fn 実行する() -> ExitCode {
             "[xtask] helmetアセット未取得のためhelmetステージをスキップした(cargo xtask fetch-assetsで取得可)"
         );
     }
+
+    println!("[xtask] particlesステージ実行");
+    if !run_stage::実行する(粒子フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, true) {
+        eprintln!("[xtask] smoke失敗: particlesステージ");
+        return ExitCode::FAILURE;
+    }
+    println!("[xtask] particlesステージ成功");
 
     println!("[xtask] smoke成功: validation・ピクセル判定・ホットリロードすべて成功で終了した");
     ExitCode::SUCCESS

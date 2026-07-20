@@ -7,16 +7,19 @@ use super::レンダラー;
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
 use crate::vulkan;
-use crate::vulkan::frame::{ジオメトリ入力, 描画方式};
+use crate::vulkan::frame::{ジオメトリ入力, 描画方式, 粒子描画入力};
 
 impl レンダラー {
+    /// 戻り値: 提示劣化の有無と、このフレームで書いたGPUタイムスタンプの
+    /// 「パス名→クエリ開始添字」対応(判断30。計測無効なら空配列)。
+    #[allow(clippy::type_complexity)]
     pub(super) fn 現在の画像で描画する(
         &self,
         添字: u32,
         フレーム添字: usize,
         クリア色: クリアカラー,
         読み戻し要求: bool,
-    ) -> Result<bool, レンダラーエラー> {
+    ) -> Result<(bool, Vec<(&'static str, u32)>), レンダラーエラー> {
         let 添字usize = usize::try_from(添字)
             .unwrap_or_else(|_| panic!("スワップチェーン画像添字がusizeに収まらない: {添字}"));
 
@@ -38,6 +41,17 @@ impl レンダラー {
             ディスクリプタセット: self.ディスクリプタ.set(フレーム添字),
         };
 
+        let 粒子入力 = self.粒子.as_ref().map(|粒子| 粒子描画入力 {
+            コンピュートパイプライン: 粒子.コンピュートパイプライン.handle,
+            コンピュートlayout: 粒子.コンピュートパイプライン.layout,
+            描画パイプライン: 粒子.描画パイプライン.handle,
+            描画layout: 粒子.描画パイプライン.layout,
+            ディスクリプタセット: 粒子.ディスクリプタ.set(フレーム添字),
+            バッファ: 粒子.バッファ.buffer,
+        });
+
+        let クエリプール = self.gpu計測.as_ref().map(|計測| 計測.クエリプール(フレーム添字));
+
         vulkan::frame::描画する(
             &self.device,
             self.queue,
@@ -53,7 +67,9 @@ impl レンダラー {
             クリア色,
             self.pipeline.handle,
             &ジオメトリ入力,
+            粒子入力.as_ref(),
             描画方式,
+            クエリプール,
             self.フレーム同期.取得セマフォ(フレーム添字),
             self.提示同期.提示セマフォ(添字usize),
             self.フレーム同期.フェンス(フレーム添字),

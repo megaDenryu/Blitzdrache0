@@ -32,9 +32,22 @@ pub(crate) struct ジオメトリ入力 {
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
 }
 
+/// GPU粒子トイ(判断29)1フレームぶんの入力。`--particles`指定時のみ`Some`で渡す。
+/// 呼び出し元(renderer層)がフレーム添字に対応するディスクリプタセットを
+/// あらかじめ選んで渡す(`ジオメトリ入力`と同じ設計)。
+pub(crate) struct 粒子描画入力 {
+    pub(crate) コンピュートパイプライン: vk::Pipeline,
+    pub(crate) コンピュートlayout: vk::PipelineLayout,
+    pub(crate) 描画パイプライン: vk::Pipeline,
+    pub(crate) 描画layout: vk::PipelineLayout,
+    pub(crate) ディスクリプタセット: vk::DescriptorSet,
+    pub(crate) バッファ: vk::Buffer,
+}
+
 /// 取得済みの画像に対して1フレーム分のコマンドを記録し、送信・提示する。
-/// 戻り値は「提示まで到達したか（true）／スワップチェーンが陳腐化していたか（false）」。
-#[allow(clippy::too_many_arguments)]
+/// 戻り値は「提示まで到達したか（true）／スワップチェーンが陳腐化していたか（false）」と、
+/// このフレームで書いたGPUタイムスタンプの「パス名→クエリ開始添字」対応(判断30)。
+#[allow(clippy::too_many_arguments, clippy::type_complexity)]
 pub(crate) fn 描画する(
     device: &ash::Device,
     queue: vk::Queue,
@@ -50,13 +63,15 @@ pub(crate) fn 描画する(
     クリア色: クリアカラー,
     pipeline: vk::Pipeline,
     ジオメトリ入力: &ジオメトリ入力,
+    粒子入力: Option<&粒子描画入力>,
     描画方式: 描画方式,
+    クエリプール: Option<vk::QueryPool>,
     取得セマフォ: vk::Semaphore,
     提示セマフォ: vk::Semaphore,
     描画完了フェンス: vk::Fence,
-) -> Result<bool, レンダラーエラー> {
+) -> Result<(bool, Vec<(&'static str, u32)>), レンダラーエラー> {
     let 読み戻し待機が必要 = matches!(描画方式, 描画方式::読み戻し { .. });
-    record::コマンドを記録する(
+    let 計測マッピング = record::コマンドを記録する(
         device,
         command_buffer,
         画像,
@@ -67,9 +82,11 @@ pub(crate) fn 描画する(
         クリア色,
         pipeline,
         ジオメトリ入力,
+        粒子入力,
         &描画方式,
+        クエリプール,
     )?;
-    submit_present::送信して提示する(
+    let 提示劣化 = submit_present::送信して提示する(
         device,
         queue,
         command_buffer,
@@ -80,5 +97,6 @@ pub(crate) fn 描画する(
         提示セマフォ,
         描画完了フェンス,
         読み戻し待機が必要,
-    )
+    )?;
+    Ok((提示劣化, 計測マッピング))
 }

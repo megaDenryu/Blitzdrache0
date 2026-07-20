@@ -2,7 +2,7 @@
 //! 確保する(判断20)。アセットホットリロード(`シーンを差し替える`)のたびに破棄・再生成する。
 
 mod bytes;
-mod upload;
+pub(crate) mod upload;
 
 use ash::vk;
 

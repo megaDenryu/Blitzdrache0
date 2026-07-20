@@ -57,6 +57,15 @@ fn 機能要件を満たすか(instance: &ash::Instance, 物理デバイス: vk:
         && vulkan13機能.synchronization2 == vk::TRUE
 }
 
+/// 物理デバイスが`largePoints`(1.0を超えるSV_PointSize出力)に対応するか。
+/// 粒子描画のPointSize指定(判断29)が効くかどうかを左右するのみで、
+/// 未対応でも点は既定サイズで描かれ続けるため物理デバイス選定条件には含めない。
+pub(crate) fn 大きな点描画に対応するか(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> bool {
+    // 安全性: instance・物理デバイスは列挙済みで有効。
+    let 機能 = unsafe { instance.get_physical_device_features(物理デバイス) };
+    機能.large_points == vk::TRUE
+}
+
 fn 適合キューファミリを探す(
     instance: &ash::Instance,
     surface_loader: &ash::khr::surface::Instance,

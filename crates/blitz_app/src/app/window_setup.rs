@@ -25,6 +25,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     シーン名: &str,
     アセットルート: &std::path::Path,
     ホットリローダー: &mut ホットリローダー,
+    粒子有効: bool,
 ) -> Result<(Window, レンダラー), 起動エラー> {
     let window = event_loop.create_window(
         WindowAttributes::default()
@@ -37,6 +38,8 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let 物理寸法 = window.inner_size();
     let 寸法 = ウィンドウ寸法::生成する(物理寸法.width, 物理寸法.height);
     let シェーダー = embedded_shaders::埋め込みシェーダーを生成する()?;
+    let 粒子シェーダー =
+        if 粒子有効 { Some(embedded_shaders::埋め込み粒子シェーダーを生成する()?) } else { None };
 
     let カタログ = scene_load::カタログを構築する(アセットルート)?;
     let (シーン, 頂点一覧, インデックス一覧, マテリアル) =
@@ -50,6 +53,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
         &頂点一覧,
         &インデックス一覧,
         マテリアル,
+        粒子シェーダー,
     )?;
 
     ホットリローダー.アセット監視を設定する(カタログ, アセットID::生成する(シーン名)?, &シーン.参照ファイル一覧);

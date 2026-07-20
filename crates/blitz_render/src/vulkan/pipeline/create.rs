@@ -3,9 +3,10 @@
 
 use ash::vk;
 
-use super::{graphics_pipeline, shader_module, パイプライン};
+use super::{graphics_pipeline, パイプライン};
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
+use crate::vulkan::shader_module;
 
 pub(super) fn 生成する(
     device: &ash::Device,

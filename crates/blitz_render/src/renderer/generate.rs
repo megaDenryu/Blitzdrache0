@@ -4,6 +4,7 @@
 
 mod core_setup;
 mod debug_setup;
+mod frame_resources;
 mod generate_resources;
 
 use raw_window_handle::{RawDisplayHandle, RawWindowHandle};
@@ -12,6 +13,7 @@ use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::extent::ウィンドウ寸法;
 use crate::material::マテリアル素材;
+use crate::particle_shader_set::粒子シェーダー一式;
 use crate::shader_set::シェーダー一式;
 use crate::vertex::頂点;
 
@@ -32,6 +34,7 @@ impl レンダラー {
         頂点一覧: &[頂点],
         インデックス一覧: &[u32],
         マテリアル: マテリアル素材,
+        粒子シェーダー: Option<粒子シェーダー一式>,
     ) -> Result<Self, レンダラーエラー> {
         let コア = core_setup::組み立てる(表示ハンドル, ウィンドウハンドル, 寸法)?;
 
@@ -46,6 +49,9 @@ impl レンダラー {
             頂点一覧,
             インデックス一覧,
             &マテリアル,
+            粒子シェーダー.as_ref(),
+            コア.タイムスタンプ対応か,
+            コア.タイムスタンプ周期ns,
         )?;
 
         Ok(Self {
@@ -71,6 +77,8 @@ impl レンダラー {
             提示同期: 資源.提示同期,
             現在フレーム添字: 0,
             pipeline: 資源.pipeline,
+            粒子: 資源.粒子,
+            gpu計測: 資源.gpu計測,
             読み戻しバッファ: None,
             検証カウンタ: コア.検証カウンタ,
             現在の寸法: 寸法,

@@ -52,6 +52,11 @@ pub struct レンダラー {
     提示同期: vulkan::sync::提示同期,
     現在フレーム添字: usize,
     pipeline: vulkan::pipeline::パイプライン,
+    /// `--particles`指定時のみ`Some`(判断29)。グラフ構築時にコンピュート更新パス+
+    /// 粒子描画パスを追加するかどうかもこれの有無で決まる。
+    粒子: Option<vulkan::particles::粒子リソース一式>,
+    /// タイムスタンプ非対応デバイスでは`None`(判断30: 計測無効は型で表す)。
+    gpu計測: Option<vulkan::gpu_timing::パス別GPU計測>,
     読み戻しバッファ: Option<vulkan::readback::読み戻しバッファ>,
     検証カウンタ: 検証カウンタ,
     現在の寸法: ウィンドウ寸法,
@@ -75,6 +80,12 @@ impl レンダラー {
     pub fn サイズ変更を通知する(&mut self, 寸法: ウィンドウ寸法) {
         self.現在の寸法 = 寸法;
         self.再構築が必要 = true;
+    }
+
+    /// パス名ごとの移動平均GPU時間(ミリ秒)を返す(判断30)。タイムスタンプ非対応
+    /// デバイスでは空配列(計測できていないことの明示。無言の0ミリ秒は返さない)。
+    pub fn パス別gpu時間を取得する(&self) -> Vec<(&'static str, f64)> {
+        self.gpu計測.as_ref().map(vulkan::gpu_timing::パス別GPU計測::平均一覧を取得する).unwrap_or_default()
     }
 }
 

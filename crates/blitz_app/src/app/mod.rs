@@ -35,6 +35,8 @@ pub(crate) struct アプリ {
     現在フレーム: u32,
     クリア色: クリアカラー,
     ライティング有効: bool,
+    粒子有効: bool,
+    gpu時間報告: bool,
     起動時エラー: Option<起動エラー>,
 }
 
@@ -53,6 +55,8 @@ impl アプリ {
             現在フレーム: 0,
             クリア色,
             ライティング有効: 起動設定.ライティング有効,
+            粒子有効: 起動設定.粒子有効,
+            gpu時間報告: 起動設定.gpu時間報告,
             起動時エラー: None,
         }
     }
@@ -66,6 +70,16 @@ impl アプリ {
     /// (一度も描画していないためvalidationメッセージも発生し得ない)。
     pub(crate) fn 検証カウンタを取得する(&self) -> Option<検証カウンタ> {
         self.レンダラー.as_ref().map(レンダラー::検証カウンタを取得する)
+    }
+
+    /// `--report-gpu-times`が指定されたか。
+    pub(crate) fn gpu時間報告が必要か(&self) -> bool {
+        self.gpu時間報告
+    }
+
+    /// パス別の移動平均GPU時間(ミリ秒)。レンダラー破棄前に呼ぶこと(判断30)。
+    pub(crate) fn パス別gpu時間を取得する(&self) -> Vec<(&'static str, f64)> {
+        self.レンダラー.as_ref().map(レンダラー::パス別gpu時間を取得する).unwrap_or_default()
     }
 
     /// イベントループ終了後に呼び、破棄順序を明示する。

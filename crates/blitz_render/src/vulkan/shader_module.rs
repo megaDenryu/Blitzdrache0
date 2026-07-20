@@ -1,8 +1,9 @@
-//! SPIR-Vバイト列からVkShaderModuleを生成する。
+//! SPIR-Vバイト列からVkShaderModuleを生成する。グラフィックス・コンピュート・
+//! 粒子描画の全パイプライン生成が共有する(vulkanモジュール直下に置く理由)。
 //!
 //! 注意: `ash::util::read_spv` はマジックナンバーを検証し4バイト単位でu32語列へ変換する。
-//! `シェーダー一式` は生成時に4バイト整列を検証済みのため、ここでの失敗は
-//! slangcが不正なSPIR-Vを出力した場合のみ発生しうる。
+//! `シェーダー一式`・`粒子シェーダー一式` は生成時に4バイト整列を検証済みのため、
+//! ここでの失敗はslangcが不正なSPIR-Vを出力した場合のみ発生しうる。
 
 use std::io::Cursor;
 
@@ -11,7 +12,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 
-pub(super) fn 生成する(
+pub(crate) fn 生成する(
     device: &ash::Device,
     spirvバイト列: &[u8],
 ) -> Result<vk::ShaderModule, レンダラーエラー> {

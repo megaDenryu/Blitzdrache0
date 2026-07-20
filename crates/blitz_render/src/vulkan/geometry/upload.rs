@@ -7,7 +7,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::transfer::転送実行環境;
 use crate::vulkan::{device_buffer, host_buffer};
 
-pub(super) fn ステージング経由でアップロードする(
+pub(crate) fn ステージング経由でアップロードする(
     device: &ash::Device,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &転送実行環境,

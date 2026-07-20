@@ -1,8 +1,10 @@
-//! ビルド時シェーダーコンパイルの入口。slangcの発見と2エントリのコンパイルを束ねる。
+//! ビルド時シェーダーコンパイルの入口。slangcの発見と各エントリのコンパイルを束ねる。
 //! シェーダーはimportでモジュール分割されているため、rerun-if-changedはshaders/
 //! ディレクトリ内の全.slangファイルへ拡張する(scene.slang単体を見るだけでは
 //! pbr.slang等の変更を取りこぼす)。
 
+mod particle_spirv_compile;
+mod slangc_entry_compile;
 mod slangc_locate;
 mod spirv_compile;
 
@@ -11,6 +13,7 @@ use std::path::{Path, PathBuf};
 
 const シェーダーディレクトリ相対パス: &str = "../../shaders";
 const エントリファイル名: &str = "scene.slang";
+const 粒子エントリファイル名: &str = "particle.slang";
 
 pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     let manifest_dir = env::var("CARGO_MANIFEST_DIR")
@@ -18,13 +21,16 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     let シェーダーディレクトリ絶対パス = PathBuf::from(&manifest_dir).join(シェーダーディレクトリ相対パス);
     再ビルド対象を登録する(&シェーダーディレクトリ絶対パス)?;
 
-    let ソース絶対パス = シェーダーディレクトリ絶対パス.join(エントリファイル名);
     let out_dir =
         env::var("OUT_DIR").map_err(|誤り| format!("OUT_DIR環境変数が取得できない: {誤り}"))?;
     let 出力先ディレクトリ = PathBuf::from(out_dir);
-
     let slangc = slangc_locate::発見する()?;
-    spirv_compile::頂点とフラグメントをコンパイルする(&slangc, &ソース絶対パス, &出力先ディレクトリ)
+
+    let ソース絶対パス = シェーダーディレクトリ絶対パス.join(エントリファイル名);
+    spirv_compile::頂点とフラグメントをコンパイルする(&slangc, &ソース絶対パス, &出力先ディレクトリ)?;
+
+    let 粒子ソース絶対パス = シェーダーディレクトリ絶対パス.join(粒子エントリファイル名);
+    particle_spirv_compile::三エントリをコンパイルする(&slangc, &粒子ソース絶対パス, &出力先ディレクトリ)
 }
 
 /// shaders/ディレクトリ自体と、直下の全.slangファイルをrerun-if-changed対象にする。

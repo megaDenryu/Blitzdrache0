@@ -4,7 +4,6 @@
 
 mod create;
 mod graphics_pipeline;
-mod shader_module;
 
 use ash::vk;
 
