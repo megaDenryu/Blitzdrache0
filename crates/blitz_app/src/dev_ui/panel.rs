@@ -6,7 +6,11 @@ use super::stats::開発UI統計;
 
 pub(super) fn 内容を描く(ctx: &egui::Context, 統計: &開発UI統計, 露出: &mut f32, ブレンド: &mut f32) {
     egui::Window::new("Blitzdrache0 dev").resizable(false).show(ctx, |ui| {
-        ui.label(format!("frame time: {:.3} ms", 統計.フレーム時間ms));
+        // フレーム間隔はFIFO提示のvsync待ちを含むため、60Hz環境では常に約16.7msになる。
+        // GPUの実仕事量はパス別GPU時間の合計で読む(判断50: 両者の混同が「重い」誤読を生んだ)。
+        ui.label(format!("frame interval: {:.3} ms (vsync待ち込み。60Hzなら約16.7msが正常)", 統計.フレーム時間ms));
+        let gpu合計: f64 = 統計.パス別gpu時間.iter().map(|&(_, ミリ秒)| ミリ秒).sum();
+        ui.label(format!("GPU合計: {gpu合計:.4} ms"));
         ui.label(format!("validation issues: {}", 統計.validation件数));
         ui.separator();
         // 露出は倍率のため対数スケールで動かす(0.25〜4.0で上下2段の明暗を確認できる)。
