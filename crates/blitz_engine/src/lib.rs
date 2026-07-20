@@ -8,8 +8,13 @@
 
 #![forbid(unsafe_code)]
 
+mod asset;
 mod camera;
 mod mesh;
 
+pub use asset::{
+    アセットID, アセットIDエラー, アセットエラー, カタログ, シーンデータ, シーンを読み込む,
+    テクスチャデータ, メッシュデータ, メッシュ頂点属性, 白テクスチャデータを作る,
+};
 pub use camera::{カメラ, カメラインテント};
 pub use mesh::立方体メッシュを作る;

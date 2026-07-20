@@ -10,3 +10,6 @@ workspace = true
 blitz_math = { path = "../blitz_math" }
 blitz_render = { path = "../blitz_render" }
 thiserror = { workspace = true }
+# 参照: README「利用ライブラリ」gltf/image。asset モジュール群のみが依存してよい
+gltf = { workspace = true }
+image = { workspace = true }
