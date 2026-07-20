@@ -7,8 +7,15 @@
 use std::path::PathBuf;
 
 const エントリファイル名: &str = "scene.slang";
-const アセットファイル一覧: [&str; 4] =
-    ["quad.gltf", "quad.bin", "quad_base_color.png", "quad_alt_color.png"];
+const アセットファイル一覧: [&str; 7] = [
+    "quad.gltf",
+    "quad.bin",
+    "quad_base_color.png",
+    "quad_alt_color.png",
+    "shadow_scene.gltf",
+    "shadow_scene.bin",
+    "shadow_scene_white.png",
+];
 
 pub(super) fn シェーダーを一時コピーする() -> Result<PathBuf, String> {
     let コピー先ディレクトリ = PathBuf::from("target/smoke_shaders");

@@ -20,6 +20,18 @@ pub(crate) struct ジオメトリ入力 {
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
 }
 
+/// シャドウパス(判断35)1フレームぶんの入力。常に存在する(シーンパスと同じ
+/// 頂点/インデックスバッファ・ディスクリプタセットを、シャドウ専用の
+/// パイプライン/layoutで束ね直すだけのため`ジオメトリ入力`とは別型にする)。
+pub(crate) struct シャドウ描画入力 {
+    pub(crate) pipeline: vk::Pipeline,
+    pub(crate) layout: vk::PipelineLayout,
+    pub(crate) 頂点バッファ: vk::Buffer,
+    pub(crate) インデックスバッファ: vk::Buffer,
+    pub(crate) インデックス数: u32,
+    pub(crate) ディスクリプタセット: vk::DescriptorSet,
+}
+
 /// GPU粒子トイ(判断29)1フレームぶんの入力。`--particles`指定時のみ`Some`で渡す。
 /// 呼び出し元(renderer層)がフレーム添字に対応するディスクリプタセットを
 /// あらかじめ選んで渡す(`ジオメトリ入力`と同じ設計)。

@@ -12,19 +12,21 @@ pub(crate) fn 開始する(
     device: &ash::Device,
     command_buffer: vk::CommandBuffer,
     レジストリ: &画像レジストリ,
-    カラー: 画像ハンドル,
+    カラー: Option<画像ハンドル>,
     深度: Option<画像ハンドル>,
     クリア指定: &クリア指定,
     寸法: vk::Extent2D,
 ) {
     let (load_op, カラークリア値) = ロードオペレーションとカラークリア値(クリア指定);
-    let カラーアタッチメント = vk::RenderingAttachmentInfo::default()
-        .image_view(レジストリ.ビューを取得する(カラー))
-        .image_layout(vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL)
-        .load_op(load_op)
-        .store_op(vk::AttachmentStoreOp::STORE)
-        .clear_value(カラークリア値);
-    let カラーアタッチメント一覧 = [カラーアタッチメント];
+    let カラーアタッチメント = カラー.map(|カラーハンドル| {
+        vk::RenderingAttachmentInfo::default()
+            .image_view(レジストリ.ビューを取得する(カラーハンドル))
+            .image_layout(vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL)
+            .load_op(load_op)
+            .store_op(vk::AttachmentStoreOp::STORE)
+            .clear_value(カラークリア値)
+    });
+    let カラーアタッチメント一覧 = カラーアタッチメント.map_or_else(Vec::new, |アタッチメント| vec![アタッチメント]);
 
     let 深度クリア値 = vk::ClearValue {
         depth_stencil: vk::ClearDepthStencilValue { depth: 1.0, stencil: 0 },

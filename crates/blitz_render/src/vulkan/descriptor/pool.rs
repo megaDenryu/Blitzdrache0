@@ -1,5 +1,6 @@
-//! ディスクリプタプール: マテリアル1つぶんの3テクスチャ+1UBOを、
-//! フレームインフライトの数だけ確保する(セットごとに独立したUBOを持つため)。
+//! ディスクリプタプール: マテリアル1つぶんの3テクスチャ+1UBO+シャドウマップ
+//! 比較サンプラー1つを、フレームインフライトの数だけ確保する
+//! (セットごとに独立したUBOを持つため)。
 
 use ash::vk;
 
@@ -12,7 +13,7 @@ pub(super) fn 生成する(device: &ash::Device) -> Result<vk::DescriptorPool, �
     let プールサイズ一覧 = [
         vk::DescriptorPoolSize::default()
             .ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-            .descriptor_count(3 * セット数),
+            .descriptor_count(4 * セット数),
         vk::DescriptorPoolSize::default()
             .ty(vk::DescriptorType::UNIFORM_BUFFER)
             .descriptor_count(セット数),

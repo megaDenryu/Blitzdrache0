@@ -24,6 +24,11 @@ pub(crate) fn 状態へ写像する(用途: 画像用途) -> 画像状態 {
             vk::AccessFlags2::SHADER_SAMPLED_READ,
             vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL,
         ),
+        画像用途::深度シェーダー読み => 画像状態::生成する(
+            vk::PipelineStageFlags2::FRAGMENT_SHADER,
+            vk::AccessFlags2::SHADER_SAMPLED_READ,
+            vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL,
+        ),
         画像用途::転送元 => 画像状態::生成する(
             vk::PipelineStageFlags2::COPY,
             vk::AccessFlags2::TRANSFER_READ,

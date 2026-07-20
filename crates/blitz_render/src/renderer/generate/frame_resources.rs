@@ -8,6 +8,8 @@ use crate::vulkan::sync::フレームインフライト数;
 
 pub(super) struct フレーム資源 {
     pub(super) 深度バッファ: vulkan::depth::深度バッファ,
+    pub(super) シャドウマップ: vulkan::shadow_map::シャドウマップ,
+    pub(super) シャドウパイプライン: vulkan::pipeline::シャドウパイプライン,
     pub(super) 転送環境: vulkan::transfer::転送実行環境,
     pub(super) ジオメトリ: vulkan::geometry::ジオメトリバッファ,
     pub(super) テクスチャ: vulkan::texture::マテリアルテクスチャ一式,

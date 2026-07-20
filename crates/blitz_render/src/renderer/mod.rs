@@ -43,6 +43,8 @@ pub struct レンダラー {
     swapchain_loader: ash::khr::swapchain::Device,
     swapchain: vulkan::swapchain::スワップチェーン,
     深度バッファ: vulkan::depth::深度バッファ,
+    シャドウマップ: vulkan::shadow_map::シャドウマップ,
+    シャドウパイプライン: vulkan::pipeline::シャドウパイプライン,
     転送環境: vulkan::transfer::転送実行環境,
     ジオメトリ: vulkan::geometry::ジオメトリバッファ,
     テクスチャ: vulkan::texture::マテリアルテクスチャ一式,
@@ -54,8 +56,7 @@ pub struct レンダラー {
     提示同期: vulkan::sync::提示同期,
     現在フレーム添字: usize,
     pipeline: vulkan::pipeline::パイプライン,
-    /// `--particles`指定時のみ`Some`(判断29)。グラフ構築時にコンピュート更新パス+
-    /// 粒子描画パスを追加するかどうかもこれの有無で決まる。
+    /// `--particles`指定時のみ`Some`(判断29)。有無でコンピュート更新+粒子描画パスの追加を決める。
     粒子: Option<vulkan::particles::粒子リソース一式>,
     /// タイムスタンプ非対応デバイスでは`None`(判断30: 計測無効は型で表す)。
     gpu計測: Option<vulkan::gpu_timing::パス別GPU計測>,
@@ -65,8 +66,7 @@ pub struct レンダラー {
     検証カウンタ: 検証カウンタ,
     現在の寸法: ウィンドウ寸法,
     再構築が必要: bool,
-    // マテリアル係数(判断23)はメッシュ描画のたびにUBOへ書き込む(判断24)ため、
-    // シーン差し替えのたびにここも更新する。
+    // マテリアル係数(判断23)は毎フレームUBOへ書き込む(判断24)ため、シーン差し替え時も更新する。
     ベースカラー係数: [f32; 4],
     金属度係数: f32,
     粗さ係数: f32,

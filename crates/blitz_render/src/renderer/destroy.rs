@@ -23,6 +23,7 @@ impl レンダラー {
             計測.破棄する(&self.device);
         }
         self.pipeline.破棄する(&self.device);
+        self.シャドウパイプライン.破棄する(&self.device);
         self.フレーム同期.破棄する(&self.device);
         self.提示同期.破棄する(&self.device);
         // 安全性: command_bufferはcommand_poolの破棄で暗黙に解放されるため、
@@ -34,6 +35,7 @@ impl レンダラー {
         self.ジオメトリ.破棄する(&self.device);
         self.転送環境.破棄する(&self.device);
         self.深度バッファ.破棄する(&self.device);
+        self.シャドウマップ.破棄する(&self.device);
         self.swapchain.破棄する(&self.device, &self.swapchain_loader);
         // 安全性: deviceはSelfが唯一の所有者で、上記の全依存リソースは破棄済み。
         unsafe { self.device.destroy_device(None) };

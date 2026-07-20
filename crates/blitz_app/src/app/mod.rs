@@ -6,6 +6,7 @@ mod draw_dispatch;
 mod frame;
 mod handler;
 mod hot_reload_apply;
+mod scene_camera;
 mod scene_load;
 mod window_setup;
 
@@ -14,6 +15,8 @@ use std::path::PathBuf;
 use blitz_engine::カメラ;
 use blitz_render::{クリアカラー, レンダラー, 検証カウンタ};
 use winit::window::Window;
+
+use scene_camera::シーン初期カメラを作る;
 
 use crate::cli::{起動モード, 起動設定};
 use crate::dev_ui::開発UI;
@@ -53,9 +56,9 @@ impl アプリ {
             起動モード: 起動設定.モード,
             ホットリローダー: ホットリローダー::生成する(起動設定.シェーダー監視パス.clone()),
             シェーダー監視パス: 起動設定.シェーダー監視パス,
+            カメラ: シーン初期カメラを作る(&起動設定.シーン名),
             シーン名: 起動設定.シーン名,
             アセットルート: 起動設定.アセットルート,
-            カメラ: カメラ::生成する(),
             入力状態: 入力状態::生成する(),
             現在フレーム: 0,
             クリア色,

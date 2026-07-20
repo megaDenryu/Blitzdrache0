@@ -7,9 +7,11 @@ use crate::clear_color::クリアカラー;
 use crate::vulkan::frame::{draw_commands, ジオメトリ入力};
 use crate::vulkan::graph::{クリア指定, パス宣言, パス種別, 画像ハンドル, 画像用途};
 
+#[allow(clippy::too_many_arguments)]
 pub(super) fn 作る<'a>(
     カラー: 画像ハンドル,
     深度: 画像ハンドル,
+    シャドウマップ: 画像ハンドル,
     クリア色: クリアカラー,
     pipeline: vk::Pipeline,
     ジオメトリ入力: &'a ジオメトリ入力,
@@ -17,12 +19,12 @@ pub(super) fn 作る<'a>(
 ) -> パス宣言<'a> {
     パス宣言::生成する(
         "シーン描画",
-        Vec::new(),
+        vec![(シャドウマップ, 画像用途::深度シェーダー読み)],
         vec![(カラー, 画像用途::カラー出力), (深度, 画像用途::深度出力)],
         Vec::new(),
         Vec::new(),
         パス種別::グラフィックス {
-            カラー,
+            カラー: Some(カラー),
             深度: Some(深度),
             クリア指定: クリア指定::クリアする { カラー: クリア色 },
         },

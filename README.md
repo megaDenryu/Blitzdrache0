@@ -128,10 +128,14 @@ ash（unsafe は blitz_render の実装内部に封じ込め）
 
 ```
 cargo build             # 全クレート（build.rs が shaders/ を slangc で SPIR-V へコンパイル）
-cargo run -p blitz_app  # 実行
+cargo run -p blitz_app  # 実行（--scene <id> / --dev-ui / --particles / --report-gpu-times 等はcli.rs参照）
 cargo xtask             # 開発ツールの一覧表示（ツールの唯一の入口）
-cargo xtask verify      # 検証の標準列 (check -> clippy -D warnings -> test)
-cargo xtask smoke       # DoD自動検証: 自己操作つき実行 + validation件数 + ピクセル読み戻し判定
+cargo xtask verify      # 検証の標準列 (conform -> check -> clippy -D warnings -> test)
+cargo xtask conform     # 規約適合の機械検査（行数・禁止文字列・依存白リスト・参照パス実在）
+cargo xtask smoke       # DoD自動検証: 5ステージの自己操作つき実行 + validation件数 + ピクセル読み戻し判定
+cargo xtask bench       # 固定シーンのベンチマーク（パス別GPU時間。評価軸の性能計測）
+cargo xtask gen-smoke-asset  # スモーク用アセットの再生成
+cargo xtask fetch-assets     # DamagedHelmet等の標準サンプル取得
 ```
 
 リポジトリ内ツールはすべて `xtask` クレートにコマンドとして登録されている（`参照: CLAUDE.md「ツールとドキュメントの配置」`）。

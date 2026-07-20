@@ -7,5 +7,5 @@ mod transform;
 mod transform_construct;
 
 pub use position::位置;
-pub use space::{クリップ, ビュー, ローカル, ワールド, 空間};
+pub use space::{クリップ, ビュー, ローカル, ワールド, 光源クリップ, 空間};
 pub use transform::変換;

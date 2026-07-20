@@ -1,16 +1,16 @@
-// M4: PBR metallic-roughnessモデル。方向光+点光源+環境光。法線マップ(TBN)。
-// 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断23」〜「判断26」。
-// 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
-// 構成: エントリポイント・入出力構造体・FrameUniform/バインディング宣言はここに置く。
-// PBR関数群(GGX分布・幾何項・フレネル・shadeLight・applyNormalMap)は`pbr.slang`へ分割し、
-// `import pbr;`で使う(hot_reload::compileとsmoke::copy_setupがshaders/ディレクトリ
-// 単位でコピー・監視するため分割可能になった)。
+// PBR metallic-roughnessモデル(方向光+点光源+環境光+法線マップ)と、方向光の
+// シャドウマップ(binding4の比較サンプラー、PCF 3x3)の合成(判断23〜26・35)。
+// 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`。シェーダー内識別子はASCII。
+// エントリポイント・FrameUniformはここに置き、PBR関数群は`pbr.slang`、
+// ライティング合成+シャドウ判定は`lighting.slang`へ分割してimportする。
 
 import pbr;
+import lighting;
 
 struct FrameUniform
 {
-    // column_major明示: CPU側は列優先の生配列(blitz_mathのgpu境界用列優先配列)で送るため、シェーダー側の解釈をそれに一致させる。
+    // column_major明示(CPU側は列優先配列)。lightViewProjectionは先頭(shadow.slangと同じ配置、判断36)。
+    column_major float4x4 lightViewProjection;
     column_major float4x4 viewProjection;
     float4 cameraWorldPosition;
     float4 directionalLightDirection;
@@ -29,6 +29,11 @@ ConstantBuffer<FrameUniform> frameUniform;
 [[vk::binding(0, 0)]] Sampler2D baseColorTexture;
 [[vk::binding(1, 0)]] Sampler2D metallicRoughnessTexture;
 [[vk::binding(2, 0)]] Sampler2D normalMapTexture;
+
+// binding4: シャドウマップ(判断35)。テクスチャ+比較サンプラーを同一bindingへ束ねる。
+[[vk::binding(4, 0)]] [[vk::combinedImageSampler]] Texture2D shadowMapTexture;
+[[vk::binding(4, 0)]] [[vk::combinedImageSampler]] SamplerComparisonState shadowMapSampler;
+static const float shadowMapTexelSize = 1.0 / 2048.0;
 
 struct VertexInput
 {
@@ -77,24 +82,19 @@ float4 fragmentMain(VertexOutput input) : SV_Target
 
     // glTF規約: metallicRoughnessテクスチャはG=粗さ・B=金属度。
     float2 metallicRoughnessSample = metallicRoughnessTexture.Sample(input.uv).gb;
-    float roughness = saturate(metallicRoughnessSample.x * frameUniform.metallicRoughnessFactor.y);
-    float metallic = saturate(metallicRoughnessSample.y * frameUniform.metallicRoughnessFactor.x);
-
     float3 sampledNormal = normalMapTexture.Sample(input.uv).rgb * 2.0 - 1.0;
-    float3 normal = applyNormalMap(input.normal, input.tangent, sampledNormal);
-    float3 viewDir = normalize(frameUniform.cameraWorldPosition.xyz - input.worldPosition);
+    float shadowFactor = computeShadowFactor(
+        input.worldPosition, frameUniform.lightViewProjection,
+        shadowMapTexture, shadowMapSampler, shadowMapTexelSize);
 
-    float3 ambientTerm = albedo * frameUniform.ambientAndLighting.x;
+    float3 litColor = shadeLitSurface(
+        albedo, metallicRoughnessSample,
+        frameUniform.metallicRoughnessFactor.x, frameUniform.metallicRoughnessFactor.y,
+        sampledNormal, input.normal, input.tangent,
+        input.worldPosition, frameUniform.cameraWorldPosition.xyz, frameUniform.ambientAndLighting.x,
+        frameUniform.directionalLightDirection.xyz, frameUniform.directionalLightColor.rgb, frameUniform.directionalLightColor.w,
+        frameUniform.pointLightPosition.xyz, frameUniform.pointLightColor.rgb, frameUniform.pointLightColor.w,
+        shadowFactor);
 
-    float3 directionalLightDir = normalize(-frameUniform.directionalLightDirection.xyz);
-    float3 directionalRadiance = frameUniform.directionalLightColor.rgb * frameUniform.directionalLightColor.w;
-    float3 directionalTerm = shadeLight(normal, viewDir, directionalLightDir, directionalRadiance, albedo, metallic, roughness);
-
-    float3 toPointLight = frameUniform.pointLightPosition.xyz - input.worldPosition;
-    float pointLightDistance = max(length(toPointLight), 1e-4);
-    float3 pointLightDir = toPointLight / pointLightDistance;
-    float3 pointRadiance = frameUniform.pointLightColor.rgb * frameUniform.pointLightColor.w / (pointLightDistance * pointLightDistance);
-    float3 pointTerm = shadeLight(normal, viewDir, pointLightDir, pointRadiance, albedo, metallic, roughness);
-
-    return float4(ambientTerm + directionalTerm + pointTerm, 1.0);
+    return float4(litColor, 1.0);
 }

@@ -1,9 +1,10 @@
-//! M3のDoD自動検証: shaders/scene.slangとassets/smoke/を一時コピーへ複製し、
+//! M3のDoD自動検証: shaders/とassets/smoke/を一時コピーへ複製し、
 //! quadステージ(600フレーム、リサイズ・最小化復帰・アセット/シェーダーホットリロード
 //! を機械検証)→ (DamagedHelmet取得済みなら)helmetステージ(120フレーム)→
-//! particlesステージ(120フレーム、コンピュート→グラフィックスのバッファ共有実証、判断29)
-//! を順に実行する。
-//! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断22」「判断29」。
+//! particlesステージ(120フレーム、コンピュート→グラフィックスのバッファ共有実証、判断29)→
+//! dev-uiステージ(120フレーム、判断34)→ shadowステージ(120フレーム、床の影内外の
+//! 輝度相対比較、判断37)を順に実行する。
+//! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断22」「判断29」「判断37」。
 
 mod copy_setup;
 mod run_stage;
@@ -15,6 +16,7 @@ const 四角形フレーム数: &str = "600";
 const ヘルメットフレーム数: &str = "120";
 const 粒子フレーム数: &str = "120";
 const 開発UIフレーム数: &str = "120";
+const シャドウフレーム数: &str = "120";
 const ヘルメット取得先: &str = "assets/samples/DamagedHelmet/DamagedHelmet.glb";
 
 pub fn 実行する() -> ExitCode {
@@ -66,6 +68,13 @@ pub fn 実行する() -> ExitCode {
         return ExitCode::FAILURE;
     }
     println!("[xtask] dev-uiステージ成功");
+
+    println!("[xtask] shadowステージ実行");
+    if !run_stage::実行する(シャドウフレーム数, &シェーダーコピー先, Some(&アセットルート), "shadow_scene", false, false, false) {
+        eprintln!("[xtask] smoke失敗: shadowステージ");
+        return ExitCode::FAILURE;
+    }
+    println!("[xtask] shadowステージ成功");
 
     println!("[xtask] smoke成功: validation・ピクセル判定・ホットリロードすべて成功で終了した");
     ExitCode::SUCCESS

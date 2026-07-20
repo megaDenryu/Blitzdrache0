@@ -4,6 +4,7 @@
 
 pub(crate) mod content;
 mod bytes;
+pub(crate) mod light_transform;
 pub(crate) mod lighting_constants;
 
 use ash::vk;

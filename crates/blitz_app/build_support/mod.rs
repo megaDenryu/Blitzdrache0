@@ -4,6 +4,7 @@
 //! pbr.slang等の変更を取りこぼす)。
 
 mod particle_spirv_compile;
+mod shadow_spirv_compile;
 mod slangc_entry_compile;
 mod slangc_locate;
 mod spirv_compile;
@@ -16,6 +17,7 @@ const シェーダーディレクトリ相対パス: &str = "../../shaders";
 const エントリファイル名: &str = "scene.slang";
 const 粒子エントリファイル名: &str = "particle.slang";
 const UIエントリファイル名: &str = "ui.slang";
+const シャドウエントリファイル名: &str = "shadow.slang";
 
 pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     let manifest_dir = env::var("CARGO_MANIFEST_DIR")
@@ -35,7 +37,10 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     particle_spirv_compile::三エントリをコンパイルする(&slangc, &粒子ソース絶対パス, &出力先ディレクトリ)?;
 
     let uiソース絶対パス = シェーダーディレクトリ絶対パス.join(UIエントリファイル名);
-    ui_spirv_compile::頂点とフラグメントをコンパイルする(&slangc, &uiソース絶対パス, &出力先ディレクトリ)
+    ui_spirv_compile::頂点とフラグメントをコンパイルする(&slangc, &uiソース絶対パス, &出力先ディレクトリ)?;
+
+    let シャドウソース絶対パス = シェーダーディレクトリ絶対パス.join(シャドウエントリファイル名);
+    shadow_spirv_compile::頂点とフラグメントをコンパイルする(&slangc, &シャドウソース絶対パス, &出力先ディレクトリ)
 }
 
 /// shaders/ディレクトリ自体と、直下の全.slangファイルをrerun-if-changed対象にする。

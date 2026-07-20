@@ -8,11 +8,12 @@ mod particle_draw_pass;
 mod particle_update_pass;
 mod readback_pass;
 mod scene_pass;
+mod shadow_pass;
 mod ui_pass;
 
 use ash::vk;
 
-use super::{ジオメトリ入力, 描画方式, 粒子描画入力, UI描画入力};
+use super::{シャドウ描画入力, ジオメトリ入力, 描画方式, 粒子描画入力, UI描画入力};
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
 use crate::vulkan::graph;
@@ -26,10 +27,13 @@ pub(super) fn コマンドを記録する(
     画像ビュー: vk::ImageView,
     深度画像: vk::Image,
     深度画像ビュー: vk::ImageView,
+    シャドウマップ画像: vk::Image,
+    シャドウマップ画像ビュー: vk::ImageView,
     寸法: vk::Extent2D,
     クリア色: クリアカラー,
     pipeline: vk::Pipeline,
     ジオメトリ入力: &ジオメトリ入力,
+    シャドウ入力: &シャドウ描画入力,
     粒子入力: Option<&粒子描画入力>,
     ui入力: Option<&UI描画入力>,
     描画方式: &描画方式,
@@ -53,10 +57,13 @@ pub(super) fn コマンドを記録する(
         画像ビュー,
         深度画像,
         深度画像ビュー,
+        シャドウマップ画像,
+        シャドウマップ画像ビュー,
         寸法,
         クリア色,
         pipeline,
         ジオメトリ入力,
+        シャドウ入力,
         粒子入力,
         ui入力,
         描画方式,

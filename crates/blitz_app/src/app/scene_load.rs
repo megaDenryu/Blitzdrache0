@@ -13,9 +13,9 @@ use crate::error::起動エラー;
 
 const 四角形識別子: &str = "quad";
 const ヘルメット識別子: &str = "helmet";
+const シャドウシーン識別子: &str = "shadow_scene";
 
-/// `アセットルート`配下の`smoke/quad.gltf`・`samples/DamagedHelmet/DamagedHelmet.glb`を
-/// 登録したカタログを作る(判断7)。
+/// `アセットルート`配下のquad・DamagedHelmet・shadow_scene(判断37)を登録したカタログを作る(判断7)。
 pub(super) fn カタログを構築する(アセットルート: &Path) -> Result<カタログ, 起動エラー> {
     let mut カタログ = カタログ::空を作る();
     カタログ.登録する(
@@ -25,6 +25,10 @@ pub(super) fn カタログを構築する(アセットルート: &Path) -> Resul
     カタログ.登録する(
         アセットID::生成する(ヘルメット識別子)?,
         アセットルート.join("samples").join("DamagedHelmet").join("DamagedHelmet.glb"),
+    );
+    カタログ.登録する(
+        アセットID::生成する(シャドウシーン識別子)?,
+        アセットルート.join("smoke").join("shadow_scene.gltf"),
     );
     Ok(カタログ)
 }

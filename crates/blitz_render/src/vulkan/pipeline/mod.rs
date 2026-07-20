@@ -4,11 +4,14 @@
 
 mod create;
 mod graphics_pipeline;
+mod shadow_pipeline;
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
+
+pub(crate) use shadow_pipeline::シャドウパイプライン;
 
 /// 立方体描画1本ぶんのパイプラインと、プッシュ定数を送るためのパイプラインレイアウト。
 pub(crate) struct パイプライン {

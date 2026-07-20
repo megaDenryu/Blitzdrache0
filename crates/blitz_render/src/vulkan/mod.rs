@@ -21,6 +21,7 @@ pub(crate) mod physical_device;
 pub(crate) mod pipeline;
 pub(crate) mod readback;
 pub(crate) mod shader_module;
+pub(crate) mod shadow_map;
 pub(crate) mod surface;
 pub(crate) mod swapchain;
 pub(crate) mod sync;

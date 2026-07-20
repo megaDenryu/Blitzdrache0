@@ -5,10 +5,12 @@
 mod layout;
 mod pool;
 mod set;
+mod shadow_binding;
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::shadow_map::シャドウマップ;
 use crate::vulkan::sync::フレームインフライト数;
 use crate::vulkan::texture::マテリアルテクスチャ一式;
 use crate::vulkan::uniform::フレームユニフォーム一式;
@@ -24,6 +26,7 @@ impl ディスクリプタ一式 {
         device: &ash::Device,
         テクスチャ一式: &マテリアルテクスチャ一式,
         ユニフォーム: &フレームユニフォーム一式,
+        シャドウマップ: &シャドウマップ,
     ) -> Result<Self, レンダラーエラー> {
         let layout = layout::生成する(device)?;
         let pool = match pool::生成する(device) {
@@ -49,6 +52,7 @@ impl ディスクリプタ一式 {
         for (フレーム添字, &set) in set一覧.iter().enumerate() {
             set::テクスチャバインディングを書き込む(device, set, テクスチャ一式);
             set::ユニフォームバインディングを書き込む(device, set, ユニフォーム.buffer(フレーム添字));
+            shadow_binding::シャドウマップバインディングを書き込む(device, set, シャドウマップ);
         }
 
         Ok(Self { layout, pool, set一覧 })

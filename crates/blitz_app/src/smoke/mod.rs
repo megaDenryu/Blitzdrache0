@@ -30,10 +30,12 @@ pub(crate) enum スモークアクション {
     ヘルメット判定,
     粒子判定,
     開発UI判定,
+    シャドウ判定,
 }
 
 /// `開発ui有効`ならdevui計画、`粒子有効`ならparticles計画、`シーン名`が"helmet"なら
-/// helmet計画、それ以外(既定"quad")ならquad計画で判定する(判断29・判断34)。
+/// helmet計画、"shadow_scene"ならshadow計画、それ以外(既定"quad")ならquad計画で
+/// 判定する(判断29・判断34・判断37)。
 pub(crate) fn 判定する(
     現在フレーム: u32,
     総フレーム数: u32,
@@ -47,6 +49,8 @@ pub(crate) fn 判定する(
         plan::particles計画(現在フレーム, 総フレーム数)
     } else if シーン名 == "helmet" {
         plan::helmet計画(現在フレーム, 総フレーム数)
+    } else if シーン名 == "shadow_scene" {
+        plan::shadow計画(現在フレーム, 総フレーム数)
     } else {
         plan::quad計画(現在フレーム, 総フレーム数)
     }
