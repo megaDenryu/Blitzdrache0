@@ -6,8 +6,15 @@ use super::base_resources::基礎資源;
 use super::command_sync_resources::コマンド同期資源;
 use super::optional_resources::追加資源;
 use super::post_resources::ポスト資源;
+use crate::vulkan::skinning::スキニング一式;
 
-pub(super) fn 束ねる(基礎: 基礎資源, コマンド同期: コマンド同期資源, 追加: 追加資源, ポスト: ポスト資源) -> フレーム資源 {
+pub(super) fn 束ねる(
+    基礎: 基礎資源,
+    コマンド同期: コマンド同期資源,
+    追加: 追加資源,
+    ポスト: ポスト資源,
+    スキニング: Option<スキニング一式>,
+) -> フレーム資源 {
     フレーム資源 {
         深度バッファ: 基礎.深度バッファ,
         シャドウマップ: 基礎.シャドウマップ,
@@ -25,6 +32,7 @@ pub(super) fn 束ねる(基礎: 基礎資源, コマンド同期: コマンド�
         粒子: 追加.粒子,
         gpu計測: 追加.gpu計測,
         ui一式: 追加.ui一式,
+        スキニング,
         hdrターゲット: ポスト.hdrターゲット,
         ブルームピラミッド: ポスト.ブルームピラミッド,
         ブルーム: ポスト.ブルーム,

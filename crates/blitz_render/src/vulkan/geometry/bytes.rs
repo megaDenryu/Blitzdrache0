@@ -7,7 +7,7 @@ use crate::vertex::頂点;
 /// 頂点1つぶんのバイト長(位置12 + 法線12 + 接線16 + uv8)。
 const 頂点バイト長: usize = 48;
 
-pub(super) fn 頂点をバイト列にする(頂点一覧: &[頂点]) -> Vec<u8> {
+pub(crate) fn 頂点をバイト列にする(頂点一覧: &[頂点]) -> Vec<u8> {
     let mut バイト列 = Vec::with_capacity(頂点一覧.len() * 頂点バイト長);
     for 頂点 in 頂点一覧 {
         for 成分 in 頂点.位置 {

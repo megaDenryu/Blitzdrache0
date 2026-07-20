@@ -16,7 +16,7 @@ const 既定アセットルート: &str = "assets";
 
 /// `--frames N` `--shader-source <path>` `--scene <id>` `--asset-root <dir>`
 /// `--unlit` `--particles` `--report-gpu-times` `--dev-ui` `--dump-frame <base>`
-/// `--no-post` `--exposure <倍率>` を解析する。
+/// `--no-post` `--exposure <倍率>` `--blend <0..1>` を解析する。
 /// `--shader-source`は監視・再コンパイル対象のエントリファイルを指す。`import`先の
 /// 他ファイルは常にエントリと同じディレクトリから解決するため、このオプションでの
 /// 指定は不要。
@@ -32,6 +32,7 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
     let mut フレームダンプ先 = None;
     let mut ポスト処理有効 = true;
     let mut 露出 = 1.0f32;
+    let mut ブレンド = 0.0f32;
 
     let mut 引数 = 引数一覧.iter();
     while let Some(引数値) = 引数.next() {
@@ -69,6 +70,9 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
             "--exposure" => {
                 露出 = value_args::exposure引数を処理する(&mut 引数)?;
             }
+            "--blend" => {
+                ブレンド = value_args::blend引数を処理する(&mut 引数)?;
+            }
             _ => {}
         }
     }
@@ -85,5 +89,6 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
         フレームダンプ先,
         ポスト処理有効,
         露出,
+        ブレンド,
     })
 }

@@ -7,6 +7,7 @@
 //! 露出した瞬間、unsafe の封じ込めが破れて上位層に責任が漏れる。
 
 mod clear_color;
+mod compute_shader;
 mod draw_result;
 mod error;
 mod extent;
@@ -18,6 +19,7 @@ mod readback_result;
 mod renderer;
 mod shader_bundle;
 mod shader_set;
+mod skin_mesh;
 mod texture_material;
 mod ui_draw_data;
 mod ui_mesh;
@@ -31,6 +33,7 @@ mod vulkan;
 mod vulkan_failure;
 
 pub use clear_color::{クリアカラー, クリアカラーエラー};
+pub use compute_shader::コンピュートシェーダー;
 pub use draw_result::{描画結果, 見送り理由};
 pub use error::レンダラーエラー;
 pub use extent::ウィンドウ寸法;
@@ -42,6 +45,7 @@ pub use readback_result::読み戻し結果;
 pub use renderer::レンダラー;
 pub use shader_bundle::シェーダー束;
 pub use shader_set::{シェーダー一式, シェーダー一式エラー};
+pub use skin_mesh::{スキンメッシュ素材, スキンメッシュ素材エラー, スキン頂点属性};
 pub use texture_material::{テクスチャ素材, テクスチャ素材エラー, テクスチャ用途};
 pub use ui_draw_data::UI描画データ;
 pub use ui_mesh::UIメッシュ;

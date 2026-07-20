@@ -23,6 +23,7 @@ pub(super) struct フレーム資源 {
     pub(super) 粒子: Option<vulkan::particles::粒子リソース一式>,
     pub(super) gpu計測: Option<vulkan::gpu_timing::パス別GPU計測>,
     pub(super) ui一式: vulkan::ui::UIリソース一式,
+    pub(super) スキニング: Option<vulkan::skinning::スキニング一式>,
     pub(super) hdrターゲット: Option<vulkan::hdr_target::HDRターゲット>,
     pub(super) ブルームピラミッド: Option<vulkan::bloom_targets::ブルームピラミッド>,
     pub(super) ブルーム: Option<vulkan::bloom::ブルーム一式>,

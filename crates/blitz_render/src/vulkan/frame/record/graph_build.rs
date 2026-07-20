@@ -8,11 +8,11 @@ mod post_setup;
 
 use ash::vk;
 
-use super::{particle_draw_pass, particle_update_pass, readback_pass, scene_pass, shadow_pass, ui_pass};
+use super::{particle_draw_pass, particle_update_pass, readback_pass, scene_pass, shadow_pass, skinning_pass, ui_pass};
 use crate::clear_color::クリアカラー;
 use crate::vulkan::frame::{
-    シャドウ描画入力, ジオメトリ入力, トーンマップ描画入力, ブルーム描画入力, フレーム画像一式, 描画方式,
-    粒子描画入力, UI描画入力,
+    シャドウ描画入力, スキニング描画入力, ジオメトリ入力, トーンマップ描画入力, ブルーム描画入力,
+    フレーム画像一式, 描画方式, 粒子描画入力, UI描画入力,
 };
 use crate::vulkan::graph;
 
@@ -24,6 +24,7 @@ pub(super) fn グラフを構築する<'a>(
     pipeline: vk::Pipeline,
     ジオメトリ入力: &'a ジオメトリ入力,
     シャドウ入力: &'a シャドウ描画入力,
+    スキニング入力: Option<&'a スキニング描画入力>,
     粒子入力: Option<&'a 粒子描画入力>,
     ブルーム入力: Option<&'a ブルーム描画入力>,
     トーンマップ入力: Option<&'a トーンマップ描画入力>,
@@ -37,13 +38,21 @@ pub(super) fn グラフを構築する<'a>(
     let ポスト = post_setup::登録する(&mut グラフ, 画像一式, トーンマップ入力, ブルーム入力, 寸法);
     let シーンカラーハンドル = ポスト.as_ref().map_or(基本.スワップチェーン, |構成| 構成.hdrハンドル);
 
+    // スキニング(判断44)はシャドウ/シーンの頂点入力読みより先に積む。
+    let スキン済みハンドル = スキニング入力.map(|入力| {
+        let ハンドル = グラフ.バッファを登録する(入力.出力バッファ, graph::前フレーム頂点入力読み直後状態());
+        グラフ.パスを積む(skinning_pass::作る(ハンドル, 入力));
+        ハンドル
+    });
+
     // 実行順序=宣言順(判断27)。シャドウパスの深度書きをシーン描画の読みより先に積む(M6)。
-    グラフ.パスを積む(shadow_pass::作る(基本.シャドウマップ, シャドウ入力));
+    グラフ.パスを積む(shadow_pass::作る(基本.シャドウマップ, スキン済みハンドル, シャドウ入力));
 
     グラフ.パスを積む(scene_pass::作る(
         シーンカラーハンドル,
         基本.深度,
         基本.シャドウマップ,
+        スキン済みハンドル,
         クリア色,
         pipeline,
         ジオメトリ入力,

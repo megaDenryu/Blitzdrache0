@@ -5,7 +5,7 @@
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum バッファ用途 {
-    #[allow(dead_code)]
+    /// 頂点入力バインドとして読む(スキン済み頂点バッファ等。判断44)。
     頂点読み,
     #[allow(dead_code)]
     インデックス読み,

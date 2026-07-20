@@ -3,7 +3,7 @@
 //! 各コンパイルモジュールの出力名と一致させる。
 //! トーンマップシェーダーのホットリロードは粒子と同様に非対応(ビルド時コンパイルのみ)。
 
-use blitz_render::{シェーダー一式, シェーダー束, 粒子シェーダー一式};
+use blitz_render::{コンピュートシェーダー, シェーダー一式, シェーダー束, 粒子シェーダー一式};
 
 use crate::error::起動エラー;
 
@@ -30,6 +30,8 @@ const ブルーム縮小SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "
 const ブルーム拡大側頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_up_vertex.spv"));
 const ブルーム拡大SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_upsample.spv"));
 
+const スキニングSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/skinning_compute.spv"));
+
 /// レンダラー生成に渡す全シェーダーを埋め込みSPIR-Vから組み立てる(判断38)。
 /// 粒子シェーダーは`--particles`指定時のみ含める(判断29)。
 pub(crate) fn 埋め込みシェーダー束を生成する(粒子有効: bool) -> Result<シェーダー束, 起動エラー> {
@@ -50,6 +52,7 @@ pub(crate) fn 埋め込みシェーダー束を生成する(粒子有効: bool) 
         ブルーム縮小: シェーダー一式::生成する(ブルーム縮小側頂点SPIRV.to_vec(), ブルーム縮小SPIRV.to_vec())?,
         ブルーム拡大: シェーダー一式::生成する(ブルーム拡大側頂点SPIRV.to_vec(), ブルーム拡大SPIRV.to_vec())?,
         ui: シェーダー一式::生成する(UI頂点SPIRV.to_vec(), UIフラグメントSPIRV.to_vec())?,
+        スキニング: コンピュートシェーダー::生成する(スキニングSPIRV.to_vec())?,
         粒子,
     })
 }

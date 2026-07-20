@@ -12,7 +12,7 @@ mod window_operation;
 use winit::window::Window;
 
 pub(crate) use asset_rewrite::アセットを書き換える;
-pub(crate) use pixel_judgment::ピクセルを判定する;
+pub(crate) use pixel_judgment::{アニメーション差分を判定する, ピクセルを判定する};
 pub(crate) use shader_rewrite::シェーダーを書き換える;
 
 /// フレーム番号に応じて、このフレームで行う自己操作・検証を表す。
@@ -31,6 +31,10 @@ pub(crate) enum スモークアクション {
     粒子判定,
     開発UI判定,
     シャドウ判定,
+    /// foxステージ: このフレームの読み戻し画像を差分判定の基準として保存する(判断45)。
+    フォックス基準保存,
+    /// foxステージ: 保存済み基準とこのフレームの読み戻し画像を比較し、アニメーションで絵が動いたことを判定する。
+    フォックス差分判定,
 }
 
 /// `開発ui有効`ならdevui計画、`粒子有効`ならparticles計画、`シーン名`が"helmet"なら
@@ -51,6 +55,8 @@ pub(crate) fn 判定する(
         plan::helmet計画(現在フレーム, 総フレーム数)
     } else if シーン名 == "shadow_scene" {
         plan::shadow計画(現在フレーム, 総フレーム数)
+    } else if シーン名 == "fox" {
+        plan::フォックス計画(現在フレーム)
     } else {
         plan::quad計画(現在フレーム, 総フレーム数)
     }

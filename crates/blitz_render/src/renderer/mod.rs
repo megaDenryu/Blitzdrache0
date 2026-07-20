@@ -9,8 +9,10 @@ mod draw_dispatch;
 mod draw_execute;
 mod draw_inputs;
 mod generate;
+mod post_inputs;
 mod queries;
 mod readback_buffer;
+mod skin_write;
 mod reconstruct;
 mod replace_scene;
 mod replace_shader;
@@ -59,6 +61,8 @@ pub struct レンダラー {
     提示同期: vulkan::sync::提示同期,
     現在フレーム添字: usize,
     pipeline: vulkan::pipeline::パイプライン,
+    /// スキン付きシーンのときのみ`Some`(判断44)。有無はフレーム描画入力のスキン行列と常に一致させる。
+    スキニング: Option<vulkan::skinning::スキニング一式>,
     // 注意: 以下4つのポストプロセス資源はポスト処理有効時のみすべて`Some`(判断38・39)。
     // 有無は常に一致させる(不一致はgraph_build側のpanicで検出される)。
     hdrターゲット: Option<vulkan::hdr_target::HDRターゲット>,

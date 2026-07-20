@@ -24,6 +24,9 @@ impl レンダラー {
         }
         self.pipeline.破棄する(&self.device);
         self.シャドウパイプライン.破棄する(&self.device);
+        if let Some(スキニング) = &self.スキニング {
+            スキニング.破棄する(&self.device);
+        }
         if let Some(トーンマップ) = &self.トーンマップ {
             トーンマップ.破棄する(&self.device);
         }

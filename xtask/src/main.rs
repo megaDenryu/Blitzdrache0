@@ -34,6 +34,6 @@ fn 使い方を表示する() {
     println!("  conform          規約適合の機械検査 (100行制限/禁止文字列/不正allow/依存白リスト/参照パス実在)");
     println!("  smoke            blitz_appを--framesで自動実行し、validation件数0を終了コードで確認する");
     println!("  gen-smoke-asset  スモーク用極小glTFアセットをassets/smoke/へ生成する");
-    println!("  fetch-assets     DamagedHelmetサンプルをassets/samples/へ取得する(curl.exe使用)");
+    println!("  fetch-assets     標準サンプル(DamagedHelmet・Fox)をassets/samples/へ取得する(curl.exe使用)");
     println!("  bench            固定シーン+固定フレーム数でblitz_appを実行し、パス別GPU時間を表示する");
 }

@@ -1,7 +1,7 @@
 //! glTFメッシュ用の頂点・インデックスバッファ。ステージング+デバイスローカル転送で
 //! 確保する(判断20)。アセットホットリロード(`シーンを差し替える`)のたびに破棄・再生成する。
 
-mod bytes;
+pub(crate) mod bytes;
 pub(crate) mod upload;
 
 use ash::vk;

@@ -53,3 +53,14 @@ pub(super) fn exposure引数を処理する(引数: &mut Iter<String>) -> Result
     }
     Ok(露出)
 }
+
+pub(super) fn blend引数を処理する(引数: &mut Iter<String>) -> Result<f32, 起動エラー> {
+    let 値 = 引数
+        .next()
+        .ok_or_else(|| 起動エラー::ブレンド引数不正("--blendに値が指定されていない".to_string()))?;
+    let ブレンド = 値.parse::<f32>().map_err(|_| 起動エラー::ブレンド引数不正(値.clone()))?;
+    if !(0.0..=1.0).contains(&ブレンド) {
+        return Err(起動エラー::ブレンド引数不正(format!("0から1の範囲でない: {値}")));
+    }
+    Ok(ブレンド)
+}

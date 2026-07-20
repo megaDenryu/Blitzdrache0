@@ -73,3 +73,11 @@ pub(crate) fn 前フレームhdr読み直後状態() -> 画像状態 {
 pub(crate) fn 前フレーム粒子読み直後状態() -> バッファ状態 {
     バッファ状態::生成する(vk::PipelineStageFlags2::VERTEX_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ)
 }
+
+/// スキン済み頂点バッファの、前フレーム「頂点入力読み」直後を想定した状態(判断44)。
+///
+/// 注意: グラフ内で最後にこのバッファを使うパスは常にシーン描画(頂点入力読み)のため、
+/// 次フレーム冒頭のスキニング(コンピュート書き)との間のWARハザードをこの値で表現する。
+pub(crate) fn 前フレーム頂点入力読み直後状態() -> バッファ状態 {
+    バッファ状態::生成する(vk::PipelineStageFlags2::VERTEX_INPUT, vk::AccessFlags2::VERTEX_ATTRIBUTE_READ)
+}

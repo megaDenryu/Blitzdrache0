@@ -8,6 +8,7 @@ use winit::dpi::PhysicalSize;
 use winit::event_loop::ActiveEventLoop;
 use winit::window::{Window, WindowAttributes};
 
+use super::animation_state::アニメーション再生;
 use super::scene_load;
 use crate::dev_ui::開発UI;
 use crate::embedded_shaders;
@@ -30,7 +31,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     粒子有効: bool,
     開発ui初期有効: bool,
     ポスト処理有効: bool,
-) -> Result<(Window, レンダラー, 開発UI), 起動エラー> {
+) -> Result<(Window, レンダラー, 開発UI, Option<アニメーション再生>), 起動エラー> {
     let window = event_loop.create_window(
         WindowAttributes::default()
             .with_title("Blitzdrache0")
@@ -46,6 +47,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let カタログ = scene_load::カタログを構築する(アセットルート)?;
     let (シーン, 頂点一覧, インデックス一覧, マテリアル) =
         scene_load::シーンを読み込んで変換する(&カタログ, シーン名)?;
+    let スキン素材 = scene_load::スキン素材へ変換する(&シーン)?;
 
     let レンダラー = レンダラー::生成する(
         表示ハンドル,
@@ -55,11 +57,13 @@ pub(super) fn ウィンドウとレンダラーを作る(
         &頂点一覧,
         &インデックス一覧,
         マテリアル,
+        スキン素材,
         ポスト処理有効,
     )?;
 
     ホットリローダー.アセット監視を設定する(カタログ, アセットID::生成する(シーン名)?, &シーン.参照ファイル一覧);
 
+    let アニメーション = アニメーション再生::生成する(シーン.スキン, シーン.アニメーション一覧);
     let 開発ui = 開発UI::生成する(&window, 開発ui初期有効);
-    Ok((window, レンダラー, 開発ui))
+    Ok((window, レンダラー, 開発ui, アニメーション))
 }

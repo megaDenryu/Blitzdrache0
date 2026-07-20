@@ -5,8 +5,6 @@ use winit::event_loop::ActiveEventLoop;
 
 use super::アプリ;
 use crate::cli::起動モード;
-use crate::dev_ui::stats::開発UI統計;
-use crate::error::起動エラー;
 use crate::smoke::{self, スモークアクション};
 
 impl アプリ {
@@ -35,6 +33,8 @@ impl アプリ {
         // UI組み立てを描画入力の作成より先に行うのは、露出スライダーの変更を同じフレームの描画へ反映するため。
         let インテント = self.入力状態.インテントを確定する();
         self.カメラ.更新する(インテント);
+        // アニメーション時刻は固定歩進(判断47: スモークの決定性を保つ。実時間追従はしない)。
+        self.アニメ時刻秒 += 1.0 / 60.0;
         let ui描画 = match self.ui描画データを組み立てる() {
             Ok(データ) => データ,
             Err(誤り) => {
@@ -77,22 +77,12 @@ impl アプリ {
             カメラ位置: self.カメラ.視点ワールド位置(),
             ライティング有効: self.ライティング有効,
             露出: self.露出,
+            スキン行列一覧: self
+                .アニメーション
+                .as_ref()
+                .map(|再生| 再生.スキン行列を計算する(self.アニメ時刻秒, self.ブレンド)),
             ui描画: None,
         }
     }
 
-    /// 開発用UI(egui)の今フレームぶんの描画データを組み立てる。ウィンドウ・
-    /// レンダラー・開発UIのいずれかが未生成なら`None`(起動直後の1フレーム目のみ
-    /// 起こりうる)。
-    fn ui描画データを組み立てる(&mut self) -> Result<Option<blitz_render::UI描画データ>, 起動エラー> {
-        let Some(window) = &self.window else { return Ok(None) };
-        let Some(開発ui) = &mut self.開発ui else { return Ok(None) };
-        let Some(レンダラー) = &mut self.レンダラー else { return Ok(None) };
-        let 統計 = 開発UI統計 {
-            パス別gpu時間: レンダラー.パス別gpu時間を取得する(),
-            フレーム時間ms: 開発ui.フレーム時間を記録する(),
-            validation件数: レンダラー.検証カウンタを取得する().件数を読む(),
-        };
-        開発ui.描画データを作る(window, レンダラー, 統計, &mut self.露出)
-    }
 }

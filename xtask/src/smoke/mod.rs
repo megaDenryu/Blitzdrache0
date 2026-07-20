@@ -17,7 +17,9 @@ const ヘルメットフレーム数: &str = "120";
 const 粒子フレーム数: &str = "120";
 const 開発UIフレーム数: &str = "120";
 const シャドウフレーム数: &str = "120";
+const フォックスフレーム数: &str = "120";
 const ヘルメット取得先: &str = "assets/samples/DamagedHelmet/DamagedHelmet.glb";
+const フォックス取得先: &str = "assets/samples/Fox/Fox.glb";
 
 pub fn 実行する() -> ExitCode {
     let シェーダーコピー先 = match copy_setup::シェーダーを一時コピーする() {
@@ -75,6 +77,19 @@ pub fn 実行する() -> ExitCode {
         return ExitCode::FAILURE;
     }
     println!("[xtask] shadowステージ成功");
+
+    if Path::new(フォックス取得先).is_file() {
+        println!("[xtask] foxステージ実行");
+        if !run_stage::実行する(フォックスフレーム数, &シェーダーコピー先, None, "fox", false, false, false, false) {
+            eprintln!("[xtask] smoke失敗: foxステージ");
+            return ExitCode::FAILURE;
+        }
+        println!("[xtask] foxステージ成功");
+    } else {
+        println!(
+            "[xtask] Foxアセット未取得のためfoxステージをスキップした(cargo xtask fetch-assetsで取得可)"
+        );
+    }
 
     println!("[xtask] smoke成功: validation・ピクセル判定・ホットリロードすべて成功で終了した");
     ExitCode::SUCCESS

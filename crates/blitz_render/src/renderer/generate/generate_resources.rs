@@ -15,6 +15,7 @@ use super::frame_resources::フレーム資源;
 use crate::error::レンダラーエラー;
 use crate::material::マテリアル素材;
 use crate::shader_bundle::シェーダー束;
+use crate::skin_mesh::スキンメッシュ素材;
 use crate::vertex::頂点;
 use crate::vulkan;
 use crate::vulkan::depth::深度形式;
@@ -32,6 +33,7 @@ pub(super) fn 組み立てる(
     頂点一覧: &[頂点],
     インデックス一覧: &[u32],
     マテリアル: &マテリアル素材,
+    スキン: Option<&スキンメッシュ素材>,
     ポスト処理有効: bool,
     タイムスタンプ対応か: bool,
     タイムスタンプ周期ns: f32,
@@ -80,5 +82,19 @@ pub(super) fn 組み立てる(
 
     let ポスト = post_resources::組み立てる(device, &メモリプロパティ, swapchain, シェーダー, ポスト処理有効)?;
 
-    Ok(bundle::束ねる(基礎, コマンド同期, 追加資源, ポスト))
+    // GPUスキニング(判断44)はスキン付きシーンのときのみ生成する。
+    let スキニング = スキン
+        .map(|素材| {
+            vulkan::skinning::スキニング一式::生成する(
+                device,
+                &メモリプロパティ,
+                &基礎.転送環境,
+                頂点一覧,
+                素材,
+                &シェーダー.スキニング,
+            )
+        })
+        .transpose()?;
+
+    Ok(bundle::束ねる(基礎, コマンド同期, 追加資源, ポスト, スキニング))
 }

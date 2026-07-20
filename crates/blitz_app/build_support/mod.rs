@@ -6,6 +6,7 @@
 mod bloom_spirv_compile;
 mod particle_spirv_compile;
 mod shadow_spirv_compile;
+mod skinning_spirv_compile;
 mod slangc_entry_compile;
 mod slangc_locate;
 mod spirv_compile;
@@ -23,6 +24,7 @@ const シャドウエントリファイル名: &str = "shadow.slang";
 const トーンマップエントリファイル名: &str = "tonemap.slang";
 const ブルーム縮小側エントリファイル名: &str = "bloom_down.slang";
 const ブルーム拡大側エントリファイル名: &str = "bloom_up.slang";
+const スキニングエントリファイル名: &str = "skinning.slang";
 
 pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     let manifest_dir = env::var("CARGO_MANIFEST_DIR")
@@ -54,7 +56,10 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     bloom_spirv_compile::縮小側をコンパイルする(&slangc, &ブルーム縮小側パス, &出力先ディレクトリ)?;
 
     let ブルーム拡大側パス = シェーダーディレクトリ絶対パス.join(ブルーム拡大側エントリファイル名);
-    bloom_spirv_compile::拡大側をコンパイルする(&slangc, &ブルーム拡大側パス, &出力先ディレクトリ)
+    bloom_spirv_compile::拡大側をコンパイルする(&slangc, &ブルーム拡大側パス, &出力先ディレクトリ)?;
+
+    let スキニングパス = シェーダーディレクトリ絶対パス.join(スキニングエントリファイル名);
+    skinning_spirv_compile::コンピュートをコンパイルする(&slangc, &スキニングパス, &出力先ディレクトリ)
 }
 
 /// shaders/ディレクトリ自体と、直下の全.slangファイルをrerun-if-changed対象にする。

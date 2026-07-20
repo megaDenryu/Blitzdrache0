@@ -2,10 +2,13 @@
 //! で成分値は保存される)、隅=クリアカラーをsRGB8bit・許容誤差±8で判定する(判断22)。
 //! helmetは色を特定せず「中央がクリアカラーでない」ことのみ判定する。
 
+mod animation_diff;
 mod compare;
 mod expected_color;
 mod shadow_luminance;
 mod srgb_convert;
+
+pub(crate) use animation_diff::判定する as アニメーション差分を判定する;
 
 use blitz_render::読み戻し画像;
 

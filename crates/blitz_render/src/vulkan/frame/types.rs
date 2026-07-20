@@ -44,6 +44,16 @@ pub(crate) struct 粒子描画入力 {
     pub(crate) バッファ: vk::Buffer,
 }
 
+/// GPUスキニング(判断44)1フレームぶんの入力。スキン付きシーンのときのみ`Some`で渡す。
+pub(crate) struct スキニング描画入力 {
+    pub(crate) pipeline: vk::Pipeline,
+    pub(crate) layout: vk::PipelineLayout,
+    pub(crate) ディスクリプタセット: vk::DescriptorSet,
+    pub(crate) 頂点数: u32,
+    /// スキン済み頂点バッファ。グラフ登録とシーン/シャドウの頂点入力差し替えに使う。
+    pub(crate) 出力バッファ: vk::Buffer,
+}
+
 /// ブルームピラミッド(判断41)1フレームぶんの入力。ポストプロセス有効時のみ`Some`で渡す。
 /// セット一覧の長さは段数-1(縮小set[i]は縮小[i+1]へのパスの読み元、拡大set[i]は拡大[i]へのパスの読み元)。
 pub(crate) struct ブルーム描画入力 {

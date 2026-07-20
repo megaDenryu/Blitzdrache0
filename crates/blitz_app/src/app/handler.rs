@@ -24,10 +24,11 @@ impl ApplicationHandler for アプリ {
             self.開発ui初期有効,
             self.ポスト処理有効,
         ) {
-            Ok((window, レンダラー, 開発ui)) => {
+            Ok((window, レンダラー, 開発ui, アニメーション)) => {
                 self.window = Some(window);
                 self.レンダラー = Some(レンダラー);
                 self.開発ui = Some(開発ui);
+                self.アニメーション = アニメーション;
             }
             Err(誤り) => {
                 self.起動時エラー = Some(誤り);
