@@ -119,6 +119,7 @@ dependencies = [
  "blitz_engine",
  "blitz_render",
  "raw-window-handle",
+ "thiserror 2.0.19",
  "winit",
 ]
 

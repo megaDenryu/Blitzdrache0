@@ -3,12 +3,14 @@
 
 use std::process::ExitCode;
 
+mod smoke;
 mod verify;
 
 fn main() -> ExitCode {
     let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
     match 引数一覧.first().map(String::as_str) {
         Some("verify") => verify::検証列を実行する(),
+        Some("smoke") => smoke::実行する(),
         _ => {
             使い方を表示する();
             ExitCode::FAILURE
@@ -21,4 +23,5 @@ fn 使い方を表示する() {
     println!();
     println!("コマンド一覧:");
     println!("  verify   検証の標準列 (check -> clippy -D warnings -> test) を実行する");
+    println!("  smoke    blitz_appを--framesで自動実行し、validation件数0を終了コードで確認する");
 }

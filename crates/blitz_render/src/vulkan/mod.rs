@@ -1,0 +1,14 @@
+//! Vulkan(ash) の unsafe をこの階層の実装内部に封じ込める内部モジュール群。
+//! ここに置く型・関数はすべて `pub(crate)`。上位公開APIは親クレートの各ファイルが担う。
+//!
+//! 参照: CLAUDE.md「unsafe の規律」
+
+pub(crate) mod commands;
+pub(crate) mod debug_messenger;
+pub(crate) mod device;
+pub(crate) mod frame;
+pub(crate) mod instance;
+pub(crate) mod physical_device;
+pub(crate) mod surface;
+pub(crate) mod swapchain;
+pub(crate) mod sync;

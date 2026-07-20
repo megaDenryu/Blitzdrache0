@@ -1,0 +1,48 @@
+//! blitz_render 全体で使う型付きエラー。
+//!
+//! 参照: CLAUDE.md「エラー・パニック」。Vulkanの実行時失敗は握り潰さずここへ集約し、
+//! 呼び出し元へ `?` で伝播する。
+//!
+//! 注意: `From<ash::LoadingError>` / `From<ash::vk::Result>` はash型を「受け取って
+//! 自前表現へ変換する」だけであり、公開APIからash型を取り出せる経路にはならない。
+//! バリアント自体は自前表現（String・Vulkan失敗コード）のみを保持する。
+
+use thiserror::Error;
+
+use crate::vulkan_failure::Vulkan失敗コード;
+
+/// レンダラーの生成・描画・破棄で起こりうる失敗を表す層のエラー型。
+#[derive(Debug, Error)]
+pub enum レンダラーエラー {
+    /// Vulkanローダー(vulkan-1.dll)の動的読み込みに失敗した。
+    #[error("Vulkanローダーの読み込みに失敗した: {0}")]
+    ローダー読み込み失敗(String),
+
+    /// Vulkan API呼び出しがエラーコードを返した。
+    #[error("Vulkan呼び出しが失敗した: {0}")]
+    Vulkan呼び出し失敗(Vulkan失敗コード),
+
+    /// グラフィックス描画・提示、および必須機能(dynamicRendering・synchronization2)の
+    /// 両方に対応する物理デバイスが1つも見つからなかった。
+    #[error(
+        "グラフィックス表示・提示、および必須機能(dynamicRendering/synchronization2)に対応する物理デバイスが見つからなかった"
+    )]
+    適合物理デバイスなし,
+
+    /// サーフェスが提示可能な形式を1つも報告しなかった（Vulkan仕様上は
+    /// 到達しないはずの経路だが、外部デバイス由来のため型で防ぎきれない）。
+    #[error("サーフェスが提示形式を1つも報告しなかった")]
+    サーフェス形式なし,
+}
+
+impl From<ash::LoadingError> for レンダラーエラー {
+    fn from(誤り: ash::LoadingError) -> Self {
+        Self::ローダー読み込み失敗(誤り.to_string())
+    }
+}
+
+impl From<ash::vk::Result> for レンダラーエラー {
+    fn from(結果: ash::vk::Result) -> Self {
+        Self::Vulkan呼び出し失敗(Vulkan失敗コード::生成する(結果))
+    }
+}

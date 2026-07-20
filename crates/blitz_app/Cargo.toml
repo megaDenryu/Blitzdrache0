@@ -11,3 +11,4 @@ blitz_engine = { path = "../blitz_engine" }
 blitz_render = { path = "../blitz_render" }
 winit = { workspace = true }
 raw-window-handle = { workspace = true }
+thiserror = { workspace = true }
