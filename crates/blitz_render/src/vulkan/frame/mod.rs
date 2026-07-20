@@ -10,9 +10,10 @@ pub(crate) mod acquire;
 pub(crate) mod draw_commands;
 
 pub(crate) use acquire::取得結果;
-pub(crate) use images::フレーム画像一式;
+pub(crate) use images::{ブルーム画像, フレーム画像一式};
 pub(crate) use types::{
-    シャドウ描画入力, ジオメトリ入力, トーンマップ描画入力, 描画方式, 粒子描画入力, UI描画入力, UI描画項目,
+    シャドウ描画入力, ジオメトリ入力, トーンマップ描画入力, ブルーム描画入力, 描画方式, 粒子描画入力,
+    UI描画入力, UI描画項目,
 };
 
 use ash::vk;
@@ -38,6 +39,7 @@ pub(crate) fn 描画する(
     ジオメトリ入力: &ジオメトリ入力,
     シャドウ入力: &シャドウ描画入力,
     粒子入力: Option<&粒子描画入力>,
+    ブルーム入力: Option<&ブルーム描画入力>,
     トーンマップ入力: Option<&トーンマップ描画入力>,
     ui入力: Option<&UI描画入力>,
     描画方式: 描画方式,
@@ -57,6 +59,7 @@ pub(crate) fn 描画する(
         ジオメトリ入力,
         シャドウ入力,
         粒子入力,
+        ブルーム入力,
         トーンマップ入力,
         ui入力,
         &描画方式,

@@ -1,5 +1,5 @@
 // M7: トーンマップパス(判断38・39)。HDR中間画像(リニア)を全画面三角形でサンプリングし、
-// 露出乗算とACES近似トーンカーブで表示リニア0..1へ圧縮して出力する。
+// ブルーム(1/2解像度)を加算合成してから露出乗算とACES近似で表示リニア0..1へ圧縮する。
 // スワップチェーンはSRGB形式のため、sRGBへの符号化はハードウェアが行う。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
@@ -12,6 +12,7 @@ struct ExposurePush
 ExposurePush exposurePush;
 
 [[vk::binding(0, 0)]] Sampler2D hdrTexture;
+[[vk::binding(1, 0)]] Sampler2D bloomTexture;
 
 struct VertexOutput
 {
@@ -45,7 +46,8 @@ float3 acesFilm(float3 x)
 [shader("fragment")]
 float4 fragmentMain(VertexOutput input) : SV_Target
 {
-    float3 hdr = hdrTexture.Sample(input.uv).rgb;
+    // ブルームはリニアHDRのまま加算し、露出・トーンカーブは合成後の値に一度だけ掛ける(判断38の色の流れ)。
+    float3 hdr = hdrTexture.Sample(input.uv).rgb + bloomTexture.Sample(input.uv).rgb;
     float3 exposed = hdr * exposurePush.exposure;
     return float4(acesFilm(exposed), 1.0);
 }

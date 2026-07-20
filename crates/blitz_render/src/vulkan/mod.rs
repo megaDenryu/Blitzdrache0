@@ -3,6 +3,8 @@
 //!
 //! 参照: CLAUDE.md「unsafe の規律」
 
+pub(crate) mod bloom;
+pub(crate) mod bloom_targets;
 pub(crate) mod commands;
 pub(crate) mod debug_messenger;
 pub(crate) mod depth;
@@ -10,12 +12,14 @@ pub(crate) mod descriptor;
 pub(crate) mod device;
 pub(crate) mod device_buffer;
 pub(crate) mod frame;
+pub(crate) mod fullscreen_pipeline;
 pub(crate) mod geometry;
 pub(crate) mod gpu_timing;
 pub(crate) mod graph;
 pub(crate) mod hdr_target;
 pub(crate) mod host_buffer;
 pub(crate) mod instance;
+pub(crate) mod linear_sampler;
 pub(crate) mod memory;
 pub(crate) mod particles;
 pub(crate) mod physical_device;

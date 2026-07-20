@@ -7,7 +7,7 @@ use super::レンダラー;
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
 use crate::vulkan;
-use crate::vulkan::frame::{トーンマップ描画入力, フレーム画像一式, 描画方式, UI描画入力};
+use crate::vulkan::frame::{トーンマップ描画入力, ブルーム画像, ブルーム描画入力, フレーム画像一式, 描画方式, UI描画入力};
 
 impl レンダラー {
     /// 戻り値: 提示劣化の有無と、このフレームで書いたGPUタイムスタンプの
@@ -38,12 +38,21 @@ impl レンダラー {
         let 入力束 = self.描画入力束を組み立てる(フレーム添字);
         let クエリプール = self.gpu計測.as_ref().map(|計測| 計測.クエリプール(フレーム添字));
 
-        // トーンマップ入力とHDR画像は対で生成される(判断38。graph_build側の不変条件)。
+        // ポストプロセスの入力と画像は対で生成される(判断38。graph_build側の不変条件)。
         let トーンマップ入力 = self.トーンマップ.as_ref().map(|一式| トーンマップ描画入力 {
             pipeline: 一式.pipeline,
             layout: 一式.layout,
             ディスクリプタセット: 一式.descriptor_set,
             露出,
+        });
+        let ブルーム入力 = self.ブルーム.as_ref().map(|一式| ブルーム描画入力 {
+            抽出pipeline: 一式.抽出pipeline,
+            抽出layout: 一式.抽出layout,
+            ぼかしpipeline: 一式.ぼかしpipeline,
+            ぼかしlayout: 一式.ぼかしlayout,
+            抽出set: 一式.抽出set,
+            横set: 一式.横set,
+            縦set: 一式.縦set,
         });
         let 画像一式 = フレーム画像一式 {
             スワップチェーン画像: self.swapchain.画像一覧[添字usize],
@@ -53,6 +62,13 @@ impl レンダラー {
             シャドウマップ画像: self.シャドウマップ.画像,
             シャドウマップビュー: self.シャドウマップ.画像ビュー,
             hdr: self.hdrターゲット.as_ref().map(|hdr| (hdr.画像, hdr.画像ビュー)),
+            ブルーム: self.ブルームターゲット.as_ref().map(|一式| ブルーム画像 {
+                a画像: 一式.a.画像,
+                aビュー: 一式.a.画像ビュー,
+                b画像: 一式.b.画像,
+                bビュー: 一式.b.画像ビュー,
+                寸法: 一式.寸法,
+            }),
         };
 
         vulkan::frame::描画する(
@@ -69,6 +85,7 @@ impl レンダラー {
             &入力束.ジオメトリ,
             &入力束.シャドウ,
             入力束.粒子.as_ref(),
+            ブルーム入力.as_ref(),
             トーンマップ入力.as_ref(),
             ui入力,
             描画方式,

@@ -78,8 +78,7 @@ pub(super) fn 組み立てる(
         タイムスタンプ周期ns,
     )?;
 
-    let ポスト =
-        post_resources::組み立てる(device, &メモリプロパティ, swapchain, &シェーダー.トーンマップ, ポスト処理有効)?;
+    let ポスト = post_resources::組み立てる(device, &メモリプロパティ, swapchain, シェーダー, ポスト処理有効)?;
 
     Ok(bundle::束ねる(基礎, コマンド同期, 追加資源, ポスト))
 }

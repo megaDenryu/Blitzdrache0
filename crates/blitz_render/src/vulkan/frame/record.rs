@@ -3,6 +3,9 @@
 //! `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`判断27〜28）。グラフの
 //! 組み立て自体は`graph_build`に委ねる。
 
+mod bloom_blur_pass;
+mod bloom_extract_pass;
+mod fullscreen_draw;
 mod graph_build;
 mod particle_draw_pass;
 mod particle_update_pass;
@@ -14,7 +17,10 @@ mod ui_pass;
 
 use ash::vk;
 
-use super::{シャドウ描画入力, ジオメトリ入力, トーンマップ描画入力, フレーム画像一式, 描画方式, 粒子描画入力, UI描画入力};
+use super::{
+    シャドウ描画入力, ジオメトリ入力, トーンマップ描画入力, ブルーム描画入力, フレーム画像一式, 描画方式,
+    粒子描画入力, UI描画入力,
+};
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
 use crate::vulkan::graph;
@@ -31,6 +37,7 @@ pub(super) fn コマンドを記録する(
     ジオメトリ入力: &ジオメトリ入力,
     シャドウ入力: &シャドウ描画入力,
     粒子入力: Option<&粒子描画入力>,
+    ブルーム入力: Option<&ブルーム描画入力>,
     トーンマップ入力: Option<&トーンマップ描画入力>,
     ui入力: Option<&UI描画入力>,
     描画方式: &描画方式,
@@ -57,6 +64,7 @@ pub(super) fn コマンドを記録する(
         ジオメトリ入力,
         シャドウ入力,
         粒子入力,
+        ブルーム入力,
         トーンマップ入力,
         ui入力,
         描画方式,

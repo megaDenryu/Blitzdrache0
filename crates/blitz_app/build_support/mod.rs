@@ -3,6 +3,7 @@
 //! ディレクトリ内の全.slangファイルへ拡張する(scene.slang単体を見るだけでは
 //! pbr.slang等の変更を取りこぼす)。
 
+mod bloom_spirv_compile;
 mod particle_spirv_compile;
 mod shadow_spirv_compile;
 mod slangc_entry_compile;
@@ -20,6 +21,7 @@ const 粒子エントリファイル名: &str = "particle.slang";
 const UIエントリファイル名: &str = "ui.slang";
 const シャドウエントリファイル名: &str = "shadow.slang";
 const トーンマップエントリファイル名: &str = "tonemap.slang";
+const ブルームエントリファイル名: &str = "bloom.slang";
 
 pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     let manifest_dir = env::var("CARGO_MANIFEST_DIR")
@@ -45,7 +47,10 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     shadow_spirv_compile::頂点とフラグメントをコンパイルする(&slangc, &シャドウソース絶対パス, &出力先ディレクトリ)?;
 
     let トーンマップソース絶対パス = シェーダーディレクトリ絶対パス.join(トーンマップエントリファイル名);
-    tonemap_spirv_compile::頂点とフラグメントをコンパイルする(&slangc, &トーンマップソース絶対パス, &出力先ディレクトリ)
+    tonemap_spirv_compile::頂点とフラグメントをコンパイルする(&slangc, &トーンマップソース絶対パス, &出力先ディレクトリ)?;
+
+    let ブルームソース絶対パス = シェーダーディレクトリ絶対パス.join(ブルームエントリファイル名);
+    bloom_spirv_compile::三エントリをコンパイルする(&slangc, &ブルームソース絶対パス, &出力先ディレクトリ)
 }
 
 /// shaders/ディレクトリ自体と、直下の全.slangファイルをrerun-if-changed対象にする。

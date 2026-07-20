@@ -1,14 +1,20 @@
 //! フレーム1回ぶんのレンダーグラフ構築。画像・バッファの登録とパスの積み上げのみを行い、
-//! 実行(バリア導出・記録)は`graph::実行する`に委ねる。共通画像の登録は`base_images`へ分離。
+//! 実行(バリア導出・記録)は`graph::実行する`に委ねる。共通画像の登録は`base_images`、
+//! ポストプロセス画像の登録は`post_setup`へ分離。
 
 mod base_images;
+mod post_setup;
 
 use ash::vk;
 
-use super::{particle_draw_pass, particle_update_pass, readback_pass, scene_pass, shadow_pass, tonemap_pass, ui_pass};
+use super::{
+    bloom_blur_pass, bloom_extract_pass, particle_draw_pass, particle_update_pass, readback_pass, scene_pass,
+    shadow_pass, tonemap_pass, ui_pass,
+};
 use crate::clear_color::クリアカラー;
 use crate::vulkan::frame::{
-    シャドウ描画入力, ジオメトリ入力, トーンマップ描画入力, フレーム画像一式, 描画方式, 粒子描画入力, UI描画入力,
+    シャドウ描画入力, ジオメトリ入力, トーンマップ描画入力, ブルーム描画入力, フレーム画像一式, 描画方式,
+    粒子描画入力, UI描画入力,
 };
 use crate::vulkan::graph;
 
@@ -21,6 +27,7 @@ pub(super) fn グラフを構築する<'a>(
     ジオメトリ入力: &'a ジオメトリ入力,
     シャドウ入力: &'a シャドウ描画入力,
     粒子入力: Option<&'a 粒子描画入力>,
+    ブルーム入力: Option<&'a ブルーム描画入力>,
     トーンマップ入力: Option<&'a トーンマップ描画入力>,
     ui入力: Option<&'a UI描画入力>,
     描画方式: &'a 描画方式,
@@ -29,22 +36,8 @@ pub(super) fn グラフを構築する<'a>(
     let 基本 = base_images::登録する(&mut グラフ, 画像一式, 寸法);
 
     // シーン・粒子の描画先: ポストプロセス有効ならHDR中間画像、無効ならスワップチェーン(判断38・39)。
-    // トーンマップ入力とHDR画像の有無は常に一致する(レンダラーが対で生成する)。
-    let トーンマップ構成 = match (トーンマップ入力, 画像一式.hdr) {
-        (Some(入力), Some((hdr画像, hdrビュー))) => {
-            let hdrハンドル = グラフ.画像を登録する(
-                hdr画像,
-                hdrビュー,
-                graph::画像アスペクト::カラー,
-                graph::前フレームhdr読み直後状態(),
-                寸法,
-            );
-            Some((hdrハンドル, 入力))
-        }
-        (None, None) => None,
-        _ => panic!("トーンマップ入力とHDR画像の有無が一致しない(レンダラーの配線のバグ)"),
-    };
-    let シーンカラーハンドル = トーンマップ構成.map_or(基本.スワップチェーン, |(hdrハンドル, _)| hdrハンドル);
+    let ポスト = post_setup::登録する(&mut グラフ, 画像一式, トーンマップ入力, ブルーム入力, 寸法);
+    let シーンカラーハンドル = ポスト.as_ref().map_or(基本.スワップチェーン, |構成| 構成.hdrハンドル);
 
     // 実行順序=宣言順(判断27)。シャドウパスの深度書きをシーン描画の読みより先に積む(M6)。
     グラフ.パスを積む(shadow_pass::作る(基本.シャドウマップ, シャドウ入力));
@@ -65,8 +58,24 @@ pub(super) fn グラフを構築する<'a>(
         グラフ.パスを積む(particle_draw_pass::作る(シーンカラーハンドル, 基本.深度, 粒子ハンドル, 粒子入力, 寸法));
     }
 
-    if let Some((hdrハンドル, 入力)) = トーンマップ構成 {
-        グラフ.パスを積む(tonemap_pass::作る(hdrハンドル, 基本.スワップチェーン, 入力, 寸法));
+    // ポスト列: 抽出(HDR→a) → 横ぼかし(a→b) → 縦ぼかし(b→a) → トーンマップ(HDR+a→スワップチェーン)(判断39)。
+    if let Some(構成) = &ポスト {
+        グラフ.パスを積む(bloom_extract_pass::作る(構成.hdrハンドル, 構成.aハンドル, 構成.ブルーム, 構成.半解像度));
+        グラフ.パスを積む(bloom_blur_pass::作る(
+            構成.aハンドル,
+            構成.bハンドル,
+            構成.ブルーム,
+            bloom_blur_pass::横ぼかし,
+            構成.半解像度,
+        ));
+        グラフ.パスを積む(bloom_blur_pass::作る(
+            構成.bハンドル,
+            構成.aハンドル,
+            構成.ブルーム,
+            bloom_blur_pass::縦ぼかし,
+            構成.半解像度,
+        ));
+        グラフ.パスを積む(tonemap_pass::作る(構成.hdrハンドル, 構成.aハンドル, 基本.スワップチェーン, 構成.トーンマップ, 寸法));
     }
 
     if let Some(ui入力) = ui入力 {

@@ -1,50 +1,20 @@
-//! トーンマップパイプラインの組み立て: 全画面三角形(頂点入力なし)・深度なし・
-//! ブレンドなし・露出のプッシュ定数(FRAGMENT、4バイト)・動的ビューポート/シザー。
-
-mod finish;
+//! 全画面三角形パイプラインの固定機能構築。`fullscreen_pipeline`の行数分割のための切り出し。
 
 use ash::vk;
 
+use super::finish;
 use crate::error::レンダラーエラー;
-use crate::shader_set::シェーダー一式;
-use crate::vulkan::shader_module;
 
-const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
-const フラグメントエントリ名: &std::ffi::CStr = c"fragmentMain";
-pub(crate) const 露出プッシュ定数バイト数: u32 = 4;
-
+#[allow(clippy::too_many_arguments)]
 pub(super) fn 組み立てる(
     device: &ash::Device,
     カラー形式: vk::Format,
     ディスクリプタlayout: vk::DescriptorSetLayout,
-    シェーダー: &シェーダー一式,
-) -> Result<(vk::Pipeline, vk::PipelineLayout), レンダラーエラー> {
-    let 頂点モジュール = shader_module::生成する(device, シェーダー.頂点コード())?;
-    let フラグメントモジュール = match shader_module::生成する(device, シェーダー.フラグメントコード()) {
-        Ok(モジュール) => モジュール,
-        Err(誤り) => {
-            // 安全性: 頂点モジュールはこのスコープの唯一の所有者で、以降使用しない。
-            unsafe { device.destroy_shader_module(頂点モジュール, None) };
-            return Err(誤り);
-        }
-    };
-
-    let 結果 = 固定機能を組み立てる(device, カラー形式, ディスクリプタlayout, 頂点モジュール, フラグメントモジュール);
-
-    // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
-    unsafe {
-        device.destroy_shader_module(頂点モジュール, None);
-        device.destroy_shader_module(フラグメントモジュール, None);
-    }
-    結果
-}
-
-fn 固定機能を組み立てる(
-    device: &ash::Device,
-    カラー形式: vk::Format,
-    ディスクリプタlayout: vk::DescriptorSetLayout,
     頂点モジュール: vk::ShaderModule,
+    頂点エントリ名: &std::ffi::CStr,
     フラグメントモジュール: vk::ShaderModule,
+    フラグメントエントリ名: &std::ffi::CStr,
+    プッシュ定数バイト数: u32,
 ) -> Result<(vk::Pipeline, vk::PipelineLayout), レンダラーエラー> {
     let ステージ一覧 = [
         vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::VERTEX).module(頂点モジュール).name(頂点エントリ名),
@@ -67,11 +37,15 @@ fn 固定機能を組み立てる(
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
-    let プッシュ定数範囲 = vk::PushConstantRange::default()
-        .stage_flags(vk::ShaderStageFlags::FRAGMENT)
-        .offset(0)
-        .size(露出プッシュ定数バイト数);
-    let プッシュ定数範囲一覧 = [プッシュ定数範囲];
+    // プッシュ定数0バイトの範囲は無効のため、使わないパス(ブルーム抽出)では範囲自体を空にする。
+    let プッシュ定数範囲一覧 = if プッシュ定数バイト数 > 0 {
+        vec![vk::PushConstantRange::default()
+            .stage_flags(vk::ShaderStageFlags::FRAGMENT)
+            .offset(0)
+            .size(プッシュ定数バイト数)]
+    } else {
+        Vec::new()
+    };
     let layout一覧 = [ディスクリプタlayout];
     let layout_info =
         vk::PipelineLayoutCreateInfo::default().set_layouts(&layout一覧).push_constant_ranges(&プッシュ定数範囲一覧);

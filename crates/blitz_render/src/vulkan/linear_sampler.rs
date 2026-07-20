@@ -1,10 +1,11 @@
-//! HDR画像を読むサンプラー(LINEAR・CLAMP_TO_EDGE。1:1の全画面サンプリング用)。
+//! ポストプロセスの中間画像を読むサンプラー(LINEAR・CLAMP_TO_EDGE)。
+//! 全画面1:1サンプリングとブルームのダウンサンプル/ぼかしタップの両方に使う。
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
 
-pub(super) fn 作る(device: &ash::Device) -> Result<vk::Sampler, レンダラーエラー> {
+pub(crate) fn 作る(device: &ash::Device) -> Result<vk::Sampler, レンダラーエラー> {
     let create_info = vk::SamplerCreateInfo::default()
         .mag_filter(vk::Filter::LINEAR)
         .min_filter(vk::Filter::LINEAR)

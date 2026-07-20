@@ -44,6 +44,18 @@ pub(crate) struct 粒子描画入力 {
     pub(crate) バッファ: vk::Buffer,
 }
 
+/// ブルームパス(判断39)1フレームぶんの入力。ポストプロセス有効時のみ`Some`で渡す。
+/// ぼかしパイプラインは横/縦で共用し、方向はプッシュ定数で切り替える。
+pub(crate) struct ブルーム描画入力 {
+    pub(crate) 抽出pipeline: vk::Pipeline,
+    pub(crate) 抽出layout: vk::PipelineLayout,
+    pub(crate) ぼかしpipeline: vk::Pipeline,
+    pub(crate) ぼかしlayout: vk::PipelineLayout,
+    pub(crate) 抽出set: vk::DescriptorSet,
+    pub(crate) 横set: vk::DescriptorSet,
+    pub(crate) 縦set: vk::DescriptorSet,
+}
+
 /// トーンマップパス(判断38・39)1フレームぶんの入力。ポストプロセス有効時のみ`Some`で渡す。
 pub(crate) struct トーンマップ描画入力 {
     pub(crate) pipeline: vk::Pipeline,
