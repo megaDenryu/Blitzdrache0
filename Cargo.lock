@@ -117,6 +117,7 @@ name = "blitz_app"
 version = "0.1.0"
 dependencies = [
  "blitz_engine",
+ "blitz_math",
  "blitz_render",
  "raw-window-handle",
  "thiserror 2.0.19",
@@ -127,9 +128,16 @@ dependencies = [
 name = "blitz_engine"
 version = "0.1.0"
 dependencies = [
+ "blitz_math",
  "blitz_render",
- "glam",
  "thiserror 2.0.19",
+]
+
+[[package]]
+name = "blitz_math"
+version = "0.1.0"
+dependencies = [
+ "glam",
 ]
 
 [[package]]
@@ -138,6 +146,7 @@ version = "0.1.0"
 dependencies = [
  "ash",
  "ash-window",
+ "blitz_math",
  "glam",
  "raw-window-handle",
  "thiserror 2.0.19",

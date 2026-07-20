@@ -15,3 +15,5 @@ ash-window = { workspace = true }
 raw-window-handle = { workspace = true }
 glam = { workspace = true }
 thiserror = { workspace = true }
+# 数学DDDのフレーム型を公開APIで受け、生値への変換(GPU境界)をこのクレート内部で行うため。
+blitz_math = { path = "../blitz_math" }

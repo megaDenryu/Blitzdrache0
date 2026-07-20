@@ -4,7 +4,7 @@ use std::path::PathBuf;
 
 use crate::error::起動エラー;
 
-const 既定シェーダー監視パス: &str = "shaders/triangle.slang";
+const 既定シェーダー監視パス: &str = "shaders/cube.slang";
 
 /// 起動時に指定できる実行モード。
 #[derive(Debug, Clone, Copy)]

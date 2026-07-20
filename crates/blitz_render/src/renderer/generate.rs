@@ -1,26 +1,37 @@
 //! レンダラーの生成手順。各Vulkanオブジェクトを依存順に組み立てる。
+//! スワップチェーン生成後の資源組み立ては`generate_resources`に委ねる。
+
+mod debug_setup;
+mod generate_resources;
 
 use ash::vk;
 use raw_window_handle::{RawDisplayHandle, RawWindowHandle};
+
+use debug_setup::デバッグメッセンジャーを作る;
 
 use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::extent::ウィンドウ寸法;
 use crate::shader_set::シェーダー一式;
 use crate::validation_counter::検証カウンタ;
+use crate::vertex::頂点;
 use crate::vulkan;
 
 impl レンダラー {
-    /// Vulkanインスタンス・物理/論理デバイス・スワップチェーン・コマンドバッファ・
-    /// 同期プリミティブ・グラフィックスパイプラインを構築する。
+    /// Vulkanインスタンス・物理/論理デバイス・スワップチェーン・深度バッファ・
+    /// 頂点/インデックスバッファ・コマンドバッファ・同期プリミティブ・
+    /// グラフィックスパイプラインを構築する。
     ///
     /// 前提: `表示ハンドル` と `ウィンドウハンドル` の指すウィンドウは、
     /// 戻り値のレンダラーより長生きすること（呼び出し元のフィールド宣言順で担保する）。
+    #[allow(clippy::too_many_arguments)]
     pub fn 生成する(
         表示ハンドル: RawDisplayHandle,
         ウィンドウハンドル: RawWindowHandle,
         寸法: ウィンドウ寸法,
         シェーダー: シェーダー一式,
+        頂点一覧: &[頂点],
+        インデックス一覧: &[u32],
     ) -> Result<Self, レンダラーエラー> {
         let デバッグ有効か = cfg!(debug_assertions);
         // 安全性: プロセス内で他にVulkanローダーを読み込んでいないことは
@@ -48,9 +59,17 @@ impl レンダラー {
             寸法,
             vk::SwapchainKHR::null(),
         )?;
-        let (command_pool, command_buffer) = vulkan::commands::生成する(&device, queue_family_index)?;
-        let sync = vulkan::sync::同期プリミティブ::生成する(&device, swapchain.画像数())?;
-        let pipeline = vulkan::pipeline::パイプライン::生成する(&device, swapchain.画像形式, &シェーダー)?;
+
+        let 資源 = generate_resources::組み立てる(
+            &instance,
+            physical_device,
+            &device,
+            queue_family_index,
+            &swapchain,
+            &シェーダー,
+            頂点一覧,
+            インデックス一覧,
+        )?;
 
         Ok(Self {
             entry,
@@ -63,25 +82,18 @@ impl レンダラー {
             queue,
             swapchain_loader,
             swapchain,
-            command_pool,
-            command_buffer,
-            sync,
-            pipeline,
+            深度バッファ: 資源.深度バッファ,
+            ジオメトリ: 資源.ジオメトリ,
+            command_pool: 資源.command_pool,
+            command_buffer一覧: 資源.command_buffer一覧,
+            フレーム同期: 資源.フレーム同期,
+            提示同期: 資源.提示同期,
+            現在フレーム添字: 0,
+            pipeline: 資源.pipeline,
             読み戻しバッファ: None,
             検証カウンタ,
             現在の寸法: 寸法,
             再構築が必要: false,
         })
     }
-}
-
-fn デバッグメッセンジャーを作る(
-    entry: &ash::Entry,
-    instance: &ash::Instance,
-    検証カウンタ: &検証カウンタ,
-    デバッグ有効か: bool,
-) -> Result<Option<vulkan::debug_messenger::デバッグメッセンジャー>, レンダラーエラー> {
-    デバッグ有効か
-        .then(|| vulkan::debug_messenger::デバッグメッセンジャー::生成する(entry, instance, 検証カウンタ))
-        .transpose()
 }

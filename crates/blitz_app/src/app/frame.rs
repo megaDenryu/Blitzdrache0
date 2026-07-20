@@ -1,11 +1,10 @@
-//! 1フレーム実行: ホットリロード確認 → スモークアクション判定 → 描画/判定。
+//! 1フレーム実行: ホットリロード確認 → 自己操作判定 →
+//! 入力確定→世界更新→描画内容抽出→描画（フレーム内実行順序、コンポジションルートが明示）。
 
-use blitz_render::読み戻し結果;
 use winit::event_loop::ActiveEventLoop;
 
 use super::アプリ;
 use crate::cli::起動モード;
-use crate::error::起動エラー;
 use crate::hot_reload::ホットリロード結果;
 use crate::smoke::{self, スモークアクション};
 
@@ -25,7 +24,12 @@ impl アプリ {
             smoke::window自己操作を適用する(window, アクション);
         }
 
-        if let Err(誤り) = self.実行して判定する(アクション) {
+        // フレーム内実行順序: 入力確定→世界更新→描画内容抽出→描画。
+        let インテント = self.入力状態.インテントを確定する();
+        self.カメラ.更新する(インテント);
+        let ビュー射影 = self.ビュー射影変換を計算する();
+
+        if let Err(誤り) = self.実行して判定する(アクション, ビュー射影) {
             self.起動時エラー = Some(誤り);
             event_loop.exit();
             return;
@@ -37,6 +41,15 @@ impl アプリ {
         {
             event_loop.exit();
         }
+    }
+
+    fn ビュー射影変換を計算する(&self) -> blitz_math::変換<blitz_math::ワールド, blitz_math::クリップ> {
+        let アスペクト比 = self
+            .window
+            .as_ref()
+            .map(|window| super::aspect::計算する(window.inner_size()))
+            .unwrap_or(1.0);
+        self.カメラ.ビュー射影変換を作る(アスペクト比)
     }
 
     fn ホットリロードを確認する(&mut self) {
@@ -57,28 +70,4 @@ impl アプリ {
         }
     }
 
-    fn 実行して判定する(&mut self, アクション: スモークアクション) -> Result<(), 起動エラー> {
-        if アクション == スモークアクション::シェーダー書き換え {
-            smoke::シェーダーを書き換える(&self.シェーダー監視パス)?;
-        }
-
-        let Some(レンダラー) = &mut self.レンダラー else {
-            return Ok(());
-        };
-
-        match アクション {
-            スモークアクション::初期色判定 | スモークアクション::最終判定 => {
-                match レンダラー.一フレーム描画して読み戻す(self.クリア色)? {
-                    読み戻し結果::読み戻した(画像) => smoke::ピクセルを判定する(&画像, アクション),
-                    読み戻し結果::見送った(理由) => Err(起動エラー::ピクセル判定失敗(format!(
-                        "判定対象フレームで描画が見送られた: {理由:?}"
-                    ))),
-                }
-            }
-            _ => {
-                レンダラー.一フレーム描画する(self.クリア色)?;
-                Ok(())
-            }
-        }
-    }
 }

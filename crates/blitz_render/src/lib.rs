@@ -15,6 +15,7 @@ mod readback_result;
 mod renderer;
 mod shader_set;
 mod validation_counter;
+mod vertex;
 mod vulkan;
 mod vulkan_failure;
 
@@ -27,4 +28,5 @@ pub use readback_result::読み戻し結果;
 pub use renderer::レンダラー;
 pub use shader_set::{シェーダー一式, シェーダー一式エラー};
 pub use validation_counter::検証カウンタ;
+pub use vertex::頂点;
 pub use vulkan_failure::Vulkan失敗コード;

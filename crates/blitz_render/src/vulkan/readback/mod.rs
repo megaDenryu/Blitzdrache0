@@ -3,7 +3,6 @@
 //! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断9」。
 
 mod buffer;
-mod memory;
 mod read;
 
 pub(crate) use buffer::読み戻しバッファ;

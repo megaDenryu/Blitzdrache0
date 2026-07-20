@@ -5,9 +5,12 @@
 
 pub(crate) mod commands;
 pub(crate) mod debug_messenger;
+pub(crate) mod depth;
 pub(crate) mod device;
 pub(crate) mod frame;
+pub(crate) mod geometry;
 pub(crate) mod instance;
+pub(crate) mod memory;
 pub(crate) mod physical_device;
 pub(crate) mod pipeline;
 pub(crate) mod readback;

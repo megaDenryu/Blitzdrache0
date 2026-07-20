@@ -1,5 +1,6 @@
 //! グラフィックスパイプライン(dynamic rendering + 動的ビューポート/シザー)の生成・破棄。
-//! 頂点バッファ・頂点インデックスバッファは持たない(SV_VertexIDから3頂点を生成する)。
+//! 頂点/インデックスバッファから立方体を描画し、深度テストとプッシュ定数
+//! （ビュー射影行列）を持つ。
 
 mod create;
 mod graphics_pipeline;
@@ -10,20 +11,22 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 
-/// 三角形描画1本ぶんのパイプラインと、対応する空のパイプラインレイアウト。
+/// 立方体描画1本ぶんのパイプラインと、プッシュ定数を送るためのパイプラインレイアウト。
 pub(crate) struct パイプライン {
     pub(crate) handle: vk::Pipeline,
-    layout: vk::PipelineLayout,
+    pub(crate) layout: vk::PipelineLayout,
 }
 
 impl パイプライン {
-    /// `カラー形式` はスワップチェーンの画像形式(dynamic renderingの色出力形式)。
+    /// `カラー形式` はスワップチェーンの、`深度形式` は深度バッファの
+    /// dynamic renderingの出力形式。
     pub(crate) fn 生成する(
         device: &ash::Device,
         カラー形式: vk::Format,
+        深度形式: vk::Format,
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, カラー形式, シェーダー)
+        create::生成する(device, カラー形式, 深度形式, シェーダー)
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

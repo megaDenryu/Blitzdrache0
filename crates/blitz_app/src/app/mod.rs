@@ -1,18 +1,22 @@
 //! コンポジションルートが所有する `アプリ`（ApplicationHandler実装）。
 //! ウィンドウ生成・レンダラー生成・1フレーム実行の配線だけを行い、ロジックは書かない。
 
+mod aspect;
+mod draw_dispatch;
 mod frame;
 mod handler;
 mod window_setup;
 
 use std::path::PathBuf;
 
+use blitz_engine::カメラ;
 use blitz_render::{クリアカラー, レンダラー, 検証カウンタ};
 use winit::window::Window;
 
 use crate::cli::{起動モード, 起動設定};
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
+use crate::input::入力状態;
 
 /// 前提: `レンダラー` フィールドは `window` より前に宣言する。Rustは構造体フィールドを
 /// 宣言順にDropするため、この順序がレンダラー破棄(surface等の破棄)を
@@ -23,6 +27,8 @@ pub(crate) struct アプリ {
     起動モード: 起動モード,
     シェーダー監視パス: PathBuf,
     ホットリローダー: ホットリローダー,
+    カメラ: カメラ,
+    入力状態: 入力状態,
     現在フレーム: u32,
     クリア色: クリアカラー,
     起動時エラー: Option<起動エラー>,
@@ -36,6 +42,8 @@ impl アプリ {
             起動モード: 起動設定.モード,
             ホットリローダー: ホットリローダー::生成する(起動設定.シェーダー監視パス.clone()),
             シェーダー監視パス: 起動設定.シェーダー監視パス,
+            カメラ: カメラ::生成する(),
+            入力状態: 入力状態::生成する(),
             現在フレーム: 0,
             クリア色,
             起動時エラー: None,

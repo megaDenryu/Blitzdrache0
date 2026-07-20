@@ -1,0 +1,11 @@
+[package]
+name = "blitz_math"
+edition.workspace = true
+version.workspace = true
+
+[lints]
+workspace = true
+
+# 数学DDD最小セットの内部実装としてのみglamを使う。公開APIには一切露出しない。
+[dependencies]
+glam = { workspace = true }

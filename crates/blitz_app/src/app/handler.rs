@@ -32,6 +32,10 @@ impl ApplicationHandler for アプリ {
         _window_id: WindowId,
         event: WindowEvent,
     ) {
+        // 入力層はwinitイベントを蓄積するだけで、以降のmatchが既存の責務を続ける
+        // （カメラインテントへの写像は`入力状態`内部で完結し、blitz_engineはwinitを知らない）。
+        self.入力状態.winitイベントを取り込む(&event);
+
         match event {
             WindowEvent::RedrawRequested => self.一フレーム実行する(event_loop),
             WindowEvent::Resized(寸法) => {

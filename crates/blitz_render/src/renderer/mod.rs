@@ -16,9 +16,10 @@ use ash::vk;
 use crate::extent::ウィンドウ寸法;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
+use crate::vulkan::sync::フレームインフライト数;
 
 /// Vulkanインスタンス・デバイス・スワップチェーン・同期プリミティブを保持し、
-/// 毎フレームクリアカラーを提示するレンダラー。
+/// 毎フレーム立方体をカメラのビュー射影行列で提示するレンダラー。
 ///
 /// 前提: `生成する` に渡すハンドルの指すウィンドウは、このレンダラーより
 /// 長生きすることを呼び出し元が保証する（blitz_appはフィールド宣言順で担保する）。
@@ -37,9 +38,13 @@ pub struct レンダラー {
     queue: vk::Queue,
     swapchain_loader: ash::khr::swapchain::Device,
     swapchain: vulkan::swapchain::スワップチェーン,
+    深度バッファ: vulkan::depth::深度バッファ,
+    ジオメトリ: vulkan::geometry::ジオメトリバッファ,
     command_pool: vk::CommandPool,
-    command_buffer: vk::CommandBuffer,
-    sync: vulkan::sync::同期プリミティブ,
+    command_buffer一覧: [vk::CommandBuffer; フレームインフライト数],
+    フレーム同期: vulkan::sync::フレーム同期,
+    提示同期: vulkan::sync::提示同期,
+    現在フレーム添字: usize,
     pipeline: vulkan::pipeline::パイプライン,
     読み戻しバッファ: Option<vulkan::readback::読み戻しバッファ>,
     検証カウンタ: 検証カウンタ,

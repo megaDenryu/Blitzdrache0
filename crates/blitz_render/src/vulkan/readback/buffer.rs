@@ -2,8 +2,8 @@
 
 use ash::vk;
 
-use super::memory;
 use crate::error::レンダラーエラー;
+use crate::vulkan::memory;
 
 pub(crate) struct 読み戻しバッファ {
     pub(crate) handle: vk::Buffer,

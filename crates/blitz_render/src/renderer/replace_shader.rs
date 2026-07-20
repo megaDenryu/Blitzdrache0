@@ -5,6 +5,7 @@ use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan;
+use crate::vulkan::depth::深度形式;
 
 impl レンダラー {
     /// 新しいシェーダー一式で新パイプラインを生成し、GPU使用完了を待ってから
@@ -12,8 +13,12 @@ impl レンダラー {
     /// エラーを返す（呼び出し元のblitz_appはこれを「コンパイル失敗、旧パイプライン継続」
     /// として扱う）。
     pub fn シェーダーを差し替える(&mut self, シェーダー: シェーダー一式) -> Result<(), レンダラーエラー> {
-        let 新パイプライン =
-            vulkan::pipeline::パイプライン::生成する(&self.device, self.swapchain.画像形式, &シェーダー)?;
+        let 新パイプライン = vulkan::pipeline::パイプライン::生成する(
+            &self.device,
+            self.swapchain.画像形式,
+            深度形式,
+            &シェーダー,
+        )?;
 
         // 安全性: 旧パイプラインの使用完了を待ってから破棄する。
         unsafe { self.device.device_wait_idle()? };

@@ -1,12 +1,12 @@
 //! ホットリロード検証用の文字列置換。監視対象ファイル(xtaskが渡した一時コピー)の
-//! 三角形色定数を書き換えて保存する。表記はtriangle.slangの1行とそのまま一致させる。
+//! TINT定数を書き換えて保存する。表記はcube.slangの1行とそのまま一致させる。
 
 use std::path::Path;
 
 use crate::error::起動エラー;
 
-const 初期色の行: &str = "static const float3 TRIANGLE_COLOR = float3(1.0, 0.45, 0.1);";
-const 書き換え後の行: &str = "static const float3 TRIANGLE_COLOR = float3(0.1, 0.9, 0.2);";
+const 初期色の行: &str = "static const float3 TINT = float3(1.0, 1.0, 1.0);";
+const 書き換え後の行: &str = "static const float3 TINT = float3(0.1, 0.9, 0.2);";
 
 pub(crate) fn シェーダーを書き換える(パス: &Path) -> Result<(), 起動エラー> {
     let 内容 = std::fs::read_to_string(パス)

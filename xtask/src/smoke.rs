@@ -1,4 +1,4 @@
-//! M1のDoD自動検証: shaders/triangle.slangを一時コピーへ複製し、
+//! M2のDoD自動検証: shaders/cube.slangを一時コピーへ複製し、
 //! `--frames`付きでblitz_appを実行して終了コードで合否を報告する。
 //! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断4」「判断10」。
 
@@ -49,15 +49,15 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-/// リポジトリの`shaders/triangle.slang`を`target/smoke_shaders/`へ複製する。
+/// リポジトリの`shaders/cube.slang`を`target/smoke_shaders/`へ複製する。
 /// スモークシナリオが監視対象ファイルを書き換えるため、リポジトリ本体は汚さない。
 fn シェーダーを一時コピーする() -> Result<PathBuf, String> {
     let コピー先ディレクトリ = PathBuf::from("target/smoke_shaders");
     std::fs::create_dir_all(&コピー先ディレクトリ)
         .map_err(|誤り| format!("コピー先ディレクトリの作成に失敗した: {誤り}"))?;
 
-    let コピー先 = コピー先ディレクトリ.join("triangle.slang");
-    std::fs::copy("shaders/triangle.slang", &コピー先)
-        .map_err(|誤り| format!("shaders/triangle.slangのコピーに失敗した: {誤り}"))?;
+    let コピー先 = コピー先ディレクトリ.join("cube.slang");
+    std::fs::copy("shaders/cube.slang", &コピー先)
+        .map_err(|誤り| format!("shaders/cube.slangのコピーに失敗した: {誤り}"))?;
     Ok(コピー先)
 }

@@ -10,6 +10,7 @@ mod cli;
 mod embedded_shaders;
 mod error;
 mod hot_reload;
+mod input;
 mod smoke;
 
 use std::process::ExitCode;
