@@ -8,11 +8,11 @@ mod post_setup;
 
 use ash::vk;
 
-use super::{particle_draw_pass, particle_update_pass, readback_pass, scene_pass, shadow_pass, skinning_pass, ui_pass};
+use super::{cloth_passes, particle_draw_pass, particle_update_pass, readback_pass, scene_pass, shadow_pass, skinning_pass, ui_pass};
 use crate::clear_color::クリアカラー;
 use crate::vulkan::frame::{
     シャドウ描画入力, スキニング描画入力, ジオメトリ入力, トーンマップ描画入力, ブルーム描画入力,
-    フレーム画像一式, 描画方式, 粒子描画入力, UI描画入力,
+    フレーム画像一式, 布描画入力, 描画方式, 粒子描画入力, UI描画入力,
 };
 use crate::vulkan::graph;
 
@@ -25,6 +25,7 @@ pub(super) fn グラフを構築する<'a>(
     ジオメトリ入力: &'a ジオメトリ入力,
     シャドウ入力: &'a シャドウ描画入力,
     スキニング入力: Option<&'a スキニング描画入力>,
+    布入力: Option<&'a 布描画入力>,
     粒子入力: Option<&'a 粒子描画入力>,
     ブルーム入力: Option<&'a ブルーム描画入力>,
     トーンマップ入力: Option<&'a トーンマップ描画入力>,
@@ -45,14 +46,25 @@ pub(super) fn グラフを構築する<'a>(
         ハンドル
     });
 
+    // 布シミュ(判断52〜54)はスキニングの後(アタッチがスキン済み頂点を読む)、シャドウの前。
+    let 布 = 布入力.map(|入力| {
+        let ハンドル = cloth_passes::登録する(&mut グラフ, 入力);
+        let スキン済み = スキン済みハンドル
+            .unwrap_or_else(|| panic!("布はスキン付きシーン前提(レンダラー生成時に検証済みのはずの不変条件違反)"));
+        cloth_passes::積む(&mut グラフ, 入力, &ハンドル, スキン済み);
+        (入力, ハンドル.布頂点)
+    });
+    let 布ドロー = 布.map(|(入力, 頂点ハンドル)| scene_pass::布ドロー { 入力, 頂点ハンドル });
+
     // 実行順序=宣言順(判断27)。シャドウパスの深度書きをシーン描画の読みより先に積む(M6)。
-    グラフ.パスを積む(shadow_pass::作る(基本.シャドウマップ, スキン済みハンドル, シャドウ入力));
+    グラフ.パスを積む(shadow_pass::作る(基本.シャドウマップ, スキン済みハンドル, 布ドロー, シャドウ入力));
 
     グラフ.パスを積む(scene_pass::作る(
         シーンカラーハンドル,
         基本.深度,
         基本.シャドウマップ,
         スキン済みハンドル,
+        布ドロー,
         クリア色,
         pipeline,
         ジオメトリ入力,

@@ -5,6 +5,7 @@
 
 mod bloom_down_pass;
 mod bloom_up_pass;
+mod cloth_passes;
 mod fullscreen_draw;
 mod graph_build;
 mod particle_draw_pass;
@@ -20,7 +21,7 @@ use ash::vk;
 
 use super::{
     シャドウ描画入力, スキニング描画入力, ジオメトリ入力, トーンマップ描画入力, ブルーム描画入力,
-    フレーム画像一式, 描画方式, 粒子描画入力, UI描画入力,
+    フレーム画像一式, 布描画入力, 描画方式, 粒子描画入力, UI描画入力,
 };
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
@@ -38,6 +39,7 @@ pub(super) fn コマンドを記録する(
     ジオメトリ入力: &ジオメトリ入力,
     シャドウ入力: &シャドウ描画入力,
     スキニング入力: Option<&スキニング描画入力>,
+    布入力: Option<&布描画入力>,
     粒子入力: Option<&粒子描画入力>,
     ブルーム入力: Option<&ブルーム描画入力>,
     トーンマップ入力: Option<&トーンマップ描画入力>,
@@ -66,6 +68,7 @@ pub(super) fn コマンドを記録する(
         ジオメトリ入力,
         シャドウ入力,
         スキニング入力,
+        布入力,
         粒子入力,
         ブルーム入力,
         トーンマップ入力,

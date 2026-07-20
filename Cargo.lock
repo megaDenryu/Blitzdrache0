@@ -175,6 +175,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "blitz_sim"
+version = "0.1.0"
+dependencies = [
+ "blitz_math",
+ "thiserror 2.0.19",
+]
+
+[[package]]
 name = "block"
 version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"

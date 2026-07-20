@@ -5,6 +5,7 @@
 
 use ash::vk;
 
+use super::scene_pass::布ドロー;
 use crate::vulkan::frame::シャドウ描画入力;
 use crate::vulkan::graph::{クリア指定, バッファハンドル, バッファ用途, パス宣言, パス種別, 画像ハンドル, 画像用途};
 use crate::vulkan::shadow_map::シャドウマップ一辺;
@@ -12,6 +13,7 @@ use crate::vulkan::shadow_map::シャドウマップ一辺;
 pub(super) fn 作る<'a>(
     シャドウマップ: 画像ハンドル,
     スキン済み頂点: Option<バッファハンドル>,
+    布ドロー: Option<布ドロー<'a>>,
     入力: &'a シャドウ描画入力,
 ) -> パス宣言<'a> {
     // 注意: クリア指定のカラー値はカラーアタッチメントを持たないため使われない
@@ -20,8 +22,12 @@ pub(super) fn 作る<'a>(
     let ダミークリア色 = crate::clear_color::クリアカラー::生成する(0.0, 0.0, 0.0, 0.0)
         .unwrap_or_else(|誤り| panic!("シャドウパスのダミークリア色生成が失敗した(実装のバグ): {誤り}"));
     // スキン付きシーンでは頂点バッファがスキニングパスの出力のため、依存を読み宣言で表す(判断44)。
-    let 読みバッファ一覧 =
+    // 布があれば布頂点への依存も同様に宣言する(判断54: 布もシャドウを落とす)。
+    let mut 読みバッファ一覧 =
         スキン済み頂点.map_or(Vec::new(), |ハンドル| vec![(ハンドル, バッファ用途::頂点読み)]);
+    if let Some(布) = &布ドロー {
+        読みバッファ一覧.push((布.頂点ハンドル, バッファ用途::頂点読み));
+    }
 
     パス宣言::生成する(
         "シャドウ",
@@ -73,6 +79,13 @@ pub(super) fn 作る<'a>(
                 device.cmd_bind_vertex_buffers(command_buffer, 0, &頂点バッファ一覧, &オフセット一覧);
                 device.cmd_bind_index_buffer(command_buffer, 入力.インデックスバッファ, 0, vk::IndexType::UINT32);
                 device.cmd_draw_indexed(command_buffer, 入力.インデックス数, 1, 0, 0, 0);
+                // 布の第2ドロー(判断54)。布頂点は48バイト互換レイアウトのため同じシャドウパイプラインで描ける。
+                if let Some(布) = &布ドロー {
+                    let 布頂点一覧 = [布.入力.布頂点バッファ];
+                    device.cmd_bind_vertex_buffers(command_buffer, 0, &布頂点一覧, &オフセット一覧);
+                    device.cmd_bind_index_buffer(command_buffer, 布.入力.インデックスバッファ, 0, vk::IndexType::UINT32);
+                    device.cmd_draw_indexed(command_buffer, 布.入力.インデックス数, 1, 0, 0, 0);
+                }
             }
         },
     )

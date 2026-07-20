@@ -3,6 +3,7 @@
 //!
 //! 参照: CLAUDE.md「unsafe の規律」「封じ込め」。ash型は一切ここから公開しない。
 
+mod cloth_write;
 mod destroy;
 mod draw;
 mod draw_dispatch;
@@ -63,6 +64,8 @@ pub struct レンダラー {
     pipeline: vulkan::pipeline::パイプライン,
     /// スキン付きシーンのときのみ`Some`(判断44)。有無はフレーム描画入力のスキン行列と常に一致させる。
     スキニング: Option<vulkan::skinning::スキニング一式>,
+    /// 布付き起動のときのみ`Some`(判断52〜54)。有無はフレーム描画入力の布と常に一致させる。
+    布: Option<vulkan::cloth::布一式>,
     // 注意: 以下4つのポストプロセス資源はポスト処理有効時のみすべて`Some`(判断38・39)。
     // 有無は常に一致させる(不一致はgraph_build側のpanicで検出される)。
     hdrターゲット: Option<vulkan::hdr_target::HDRターゲット>,

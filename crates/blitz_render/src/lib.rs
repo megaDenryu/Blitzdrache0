@@ -7,6 +7,8 @@
 //! 露出した瞬間、unsafe の封じ込めが破れて上位層に責任が漏れる。
 
 mod clear_color;
+mod cloth_material;
+mod cloth_shader_set;
 mod compute_shader;
 mod draw_result;
 mod error;
@@ -33,11 +35,13 @@ mod vulkan;
 mod vulkan_failure;
 
 pub use clear_color::{クリアカラー, クリアカラーエラー};
+pub use cloth_material::{布定数, 布素材, 布素材エラー};
+pub use cloth_shader_set::布シェーダー一式;
 pub use compute_shader::コンピュートシェーダー;
 pub use draw_result::{描画結果, 見送り理由};
 pub use error::レンダラーエラー;
 pub use extent::ウィンドウ寸法;
-pub use frame_input::フレーム描画入力;
+pub use frame_input::{フレーム描画入力, 布フレーム入力};
 pub use material::{マテリアル素材, マテリアル素材エラー};
 pub use particle_shader_set::{粒子シェーダー一式, 粒子シェーダー一式エラー};
 pub use readback_image::読み戻し画像;

@@ -27,6 +27,9 @@ impl レンダラー {
         if let Some(スキニング) = &self.スキニング {
             スキニング.破棄する(&self.device);
         }
+        if let Some(布) = &self.布 {
+            布.破棄する(&self.device);
+        }
         if let Some(トーンマップ) = &self.トーンマップ {
             トーンマップ.破棄する(&self.device);
         }

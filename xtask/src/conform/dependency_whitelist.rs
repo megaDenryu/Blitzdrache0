@@ -7,13 +7,25 @@ use std::path::{Path, PathBuf};
 use super::cargo_toml_parse::{クレート名を取り出す, 依存名一覧を取り出す};
 use super::violation::違反;
 
-const 白リスト: [(&str, &[&str]); 5] = [
+const 白リスト: [(&str, &[&str]); 6] = [
     ("blitz_math", &["glam"]),
     ("blitz_engine", &["blitz_math", "blitz_render", "gltf", "image", "thiserror"]),
     ("blitz_render", &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"]),
+    // 判断51: シミュレーション基盤層。手法の数学のみでashもblitz_renderも知らない
+    ("blitz_sim", &["blitz_math", "thiserror"]),
     (
         "blitz_app",
-        &["blitz_engine", "blitz_math", "blitz_render", "winit", "raw-window-handle", "thiserror", "egui", "egui-winit"],
+        &[
+            "blitz_engine",
+            "blitz_math",
+            "blitz_render",
+            "blitz_sim",
+            "winit",
+            "raw-window-handle",
+            "thiserror",
+            "egui",
+            "egui-winit",
+        ],
     ),
     ("xtask", &[]),
 ];

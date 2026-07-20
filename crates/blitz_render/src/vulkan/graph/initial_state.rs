@@ -74,6 +74,12 @@ pub(crate) fn 前フレーム粒子読み直後状態() -> バッファ状態 {
     バッファ状態::生成する(vk::PipelineStageFlags2::VERTEX_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ)
 }
 
+/// 布シミュの中間バッファ(粒子・前位置・空間グリッド)の、前フレーム「コンピュート読み」直後を
+/// 想定した状態(判断54)。グラフ内で最後にこれらを使うパスはコンピュート読み(頂点生成・分離・仕上げ)のため。
+pub(crate) fn 前フレームコンピュート読み直後状態() -> バッファ状態 {
+    バッファ状態::生成する(vk::PipelineStageFlags2::COMPUTE_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ)
+}
+
 /// スキン済み頂点バッファの、前フレーム「頂点入力読み」直後を想定した状態(判断44)。
 ///
 /// 注意: グラフ内で最後にこのバッファを使うパスは常にシーン描画(頂点入力読み)のため、

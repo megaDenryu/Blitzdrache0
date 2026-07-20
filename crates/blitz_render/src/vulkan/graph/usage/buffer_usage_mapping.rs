@@ -26,6 +26,10 @@ pub(crate) fn 状態へ写像する(用途: バッファ用途) -> バッファ�
         バッファ用途::コンピュート書き => {
             バッファ状態::生成する(vk::PipelineStageFlags2::COMPUTE_SHADER, vk::AccessFlags2::SHADER_STORAGE_WRITE)
         }
+        バッファ用途::コンピュート読み書き => バッファ状態::生成する(
+            vk::PipelineStageFlags2::COMPUTE_SHADER,
+            vk::AccessFlags2::SHADER_STORAGE_READ | vk::AccessFlags2::SHADER_STORAGE_WRITE,
+        ),
         バッファ用途::頂点段シェーダー読み => {
             バッファ状態::生成する(vk::PipelineStageFlags2::VERTEX_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ)
         }

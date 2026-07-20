@@ -53,6 +53,7 @@ pub(crate) fn 埋め込みシェーダー束を生成する(粒子有効: bool) 
         ブルーム拡大: シェーダー一式::生成する(ブルーム拡大側頂点SPIRV.to_vec(), ブルーム拡大SPIRV.to_vec())?,
         ui: シェーダー一式::生成する(UI頂点SPIRV.to_vec(), UIフラグメントSPIRV.to_vec())?,
         スキニング: コンピュートシェーダー::生成する(スキニングSPIRV.to_vec())?,
+        布: crate::embedded_cloth_shaders::埋め込み布シェーダーを生成する()?,
         粒子,
     })
 }

@@ -1,0 +1,11 @@
+[package]
+name = "blitz_sim"
+edition.workspace = true
+version.workspace = true
+
+[dependencies]
+blitz_math = { path = "../blitz_math" }
+thiserror = { workspace = true }
+
+[lints]
+workspace = true

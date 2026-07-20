@@ -1,9 +1,8 @@
-//! スワップチェーン生成後に組み立てる残り資源の組み立て手順
-//! (基礎資源: `base_resources`、コマンド/同期/パイプライン: `command_sync_resources`、
-//! 粒子/GPU計測/UI: `optional_resources`、ポストプロセス: `post_resources`)。束の型は`frame_resources`。
+//! スワップチェーン生成後に組み立てる残り資源の組み立て手順。各段はサブモジュールへ分割(基礎/コマンド同期/追加/ポスト/布)。束の型は`frame_resources`。
 
 mod base_resources;
 mod bundle;
+mod cloth_resources;
 mod command_sync_resources;
 mod mesh_resources;
 mod optional_resources;
@@ -12,6 +11,7 @@ mod post_resources;
 use ash::vk;
 
 use super::frame_resources::フレーム資源;
+use crate::cloth_material::布素材;
 use crate::error::レンダラーエラー;
 use crate::material::マテリアル素材;
 use crate::shader_bundle::シェーダー束;
@@ -34,6 +34,7 @@ pub(super) fn 組み立てる(
     インデックス一覧: &[u32],
     マテリアル: &マテリアル素材,
     スキン: Option<&スキンメッシュ素材>,
+    布: Option<&布素材>,
     ポスト処理有効: bool,
     タイムスタンプ対応か: bool,
     タイムスタンプ周期ns: f32,
@@ -82,19 +83,15 @@ pub(super) fn 組み立てる(
 
     let ポスト = post_resources::組み立てる(device, &メモリプロパティ, swapchain, シェーダー, ポスト処理有効)?;
 
-    // GPUスキニング(判断44)はスキン付きシーンのときのみ生成する。
+    // GPUスキニング(判断44)はスキン付きシーンのみ。布(判断52〜54)は布素材があるときのみで、
+    // スキン必須・アタッチ添字検証はcloth_resourcesが行う。
     let スキニング = スキン
         .map(|素材| {
-            vulkan::skinning::スキニング一式::生成する(
-                device,
-                &メモリプロパティ,
-                &基礎.転送環境,
-                頂点一覧,
-                素材,
-                &シェーダー.スキニング,
-            )
+            vulkan::skinning::スキニング一式::生成する(device, &メモリプロパティ, &基礎.転送環境, 頂点一覧, 素材, &シェーダー.スキニング)
         })
         .transpose()?;
+    let 布一式 =
+        cloth_resources::組み立てる(device, &メモリプロパティ, &基礎.転送環境, シーンカラー形式, 基礎.ディスクリプタ.layout, 布, &シェーダー.布, スキニング.as_ref())?;
 
-    Ok(bundle::束ねる(基礎, コマンド同期, 追加資源, ポスト, スキニング))
+    Ok(bundle::束ねる(基礎, コマンド同期, 追加資源, ポスト, スキニング, 布一式))
 }

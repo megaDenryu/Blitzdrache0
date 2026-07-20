@@ -4,8 +4,15 @@
 use ash::vk;
 
 use crate::clear_color::クリアカラー;
-use crate::vulkan::frame::{draw_commands, ジオメトリ入力};
+use crate::vulkan::frame::{draw_commands, ジオメトリ入力, 布描画入力};
 use crate::vulkan::graph::{クリア指定, バッファハンドル, バッファ用途, パス宣言, パス種別, 画像ハンドル, 画像用途};
+
+/// シーン/シャドウパス内の布の第2ドロー(判断54)。頂点ハンドルは布頂点生成パスの出力。
+#[derive(Clone, Copy)]
+pub(super) struct 布ドロー<'a> {
+    pub(super) 入力: &'a 布描画入力,
+    pub(super) 頂点ハンドル: バッファハンドル,
+}
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn 作る<'a>(
@@ -13,19 +20,24 @@ pub(super) fn 作る<'a>(
     深度: 画像ハンドル,
     シャドウマップ: 画像ハンドル,
     スキン済み頂点: Option<バッファハンドル>,
+    布ドロー: Option<布ドロー<'a>>,
     クリア色: クリアカラー,
     pipeline: vk::Pipeline,
     ジオメトリ入力: &'a ジオメトリ入力,
     寸法: vk::Extent2D,
 ) -> パス宣言<'a> {
     // スキン付きシーンでは頂点バッファがスキニングパスの出力のため、依存を読み宣言で表す(判断44)。
-    let 読みバッファ一覧 =
+    // 布があれば布頂点(布頂点生成パスの出力)への依存も同様に宣言する(判断54)。
+    let mut 読みバッファ一覧ローカル =
         スキン済み頂点.map_or(Vec::new(), |ハンドル| vec![(ハンドル, バッファ用途::頂点読み)]);
+    if let Some(布) = &布ドロー {
+        読みバッファ一覧ローカル.push((布.頂点ハンドル, バッファ用途::頂点読み));
+    }
     パス宣言::生成する(
         "シーン描画",
         vec![(シャドウマップ, 画像用途::深度シェーダー読み)],
         vec![(カラー, 画像用途::カラー出力), (深度, 画像用途::深度出力)],
-        読みバッファ一覧,
+        読みバッファ一覧ローカル,
         Vec::new(),
         パス種別::グラフィックス {
             カラー: Some(カラー),
@@ -40,6 +52,20 @@ pub(super) fn 作る<'a>(
                 寸法,
                 ジオメトリ入力,
             );
+            // 布の第2ドロー(判断54)。ディスクリプタセットは直前のシーンドローと同レイアウトのため束縛が生きている。
+            if let Some(布) = &布ドロー {
+                let device = 文脈.device();
+                let command_buffer = 文脈.コマンドバッファ();
+                let 頂点バッファ一覧 = [布.入力.布頂点バッファ];
+                let オフセット一覧 = [0u64];
+                // 安全性: command_bufferは記録中で、布のパイプライン・バッファは生成済み。
+                unsafe {
+                    device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 布.入力.描画pipeline);
+                    device.cmd_bind_vertex_buffers(command_buffer, 0, &頂点バッファ一覧, &オフセット一覧);
+                    device.cmd_bind_index_buffer(command_buffer, 布.入力.インデックスバッファ, 0, vk::IndexType::UINT32);
+                    device.cmd_draw_indexed(command_buffer, 布.入力.インデックス数, 1, 0, 0, 0);
+                }
+            }
         },
     )
 }

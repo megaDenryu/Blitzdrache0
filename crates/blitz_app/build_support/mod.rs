@@ -4,6 +4,7 @@
 //! pbr.slang等の変更を取りこぼす)。
 
 mod bloom_spirv_compile;
+mod cloth_spirv_compile;
 mod particle_spirv_compile;
 mod shadow_spirv_compile;
 mod skinning_spirv_compile;
@@ -59,7 +60,9 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     bloom_spirv_compile::拡大側をコンパイルする(&slangc, &ブルーム拡大側パス, &出力先ディレクトリ)?;
 
     let スキニングパス = シェーダーディレクトリ絶対パス.join(スキニングエントリファイル名);
-    skinning_spirv_compile::コンピュートをコンパイルする(&slangc, &スキニングパス, &出力先ディレクトリ)
+    skinning_spirv_compile::コンピュートをコンパイルする(&slangc, &スキニングパス, &出力先ディレクトリ)?;
+
+    cloth_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)
 }
 
 /// shaders/ディレクトリ自体と、直下の全.slangファイルをrerun-if-changed対象にする。
