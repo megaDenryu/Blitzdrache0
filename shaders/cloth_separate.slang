@@ -40,6 +40,7 @@ void separateMain(uint3 id: SV_DispatchThreadID)
     float3 relative = (position - params.gridOrigin.xyz) / params.gridOrigin.w;
     int3 centerCell = int3(floor(relative));
     float3 correction = float3(0.0, 0.0, 0.0);
+    float activeCount = 0.0;
     for (int dz = -1; dz <= 1; dz++)
     {
         for (int dy = -1; dy <= 1; dy++)
@@ -68,9 +69,15 @@ void separateMain(uint3 id: SV_DispatchThreadID)
                     }
                     float distance = sqrt(distance2);
                     correction += difference * ((minDistance - distance) * 0.5 / distance);
+                    activeCount += 1.0;
                 }
             }
         }
     }
-    particles[index * 2].xyz = position + correction;
+    if (activeCount == 0.0)
+    {
+        return;
+    }
+    // 注意: 拘束gatherと同じ理由で、複数近傍からの押し出し合算は近傍数で平均する(過剰補正で発散する)。
+    particles[index * 2].xyz = position + correction * (1.0 / activeCount);
 }

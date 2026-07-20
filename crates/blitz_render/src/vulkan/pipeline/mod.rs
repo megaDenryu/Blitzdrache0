@@ -30,7 +30,18 @@ impl パイプライン {
         ディスクリプタlayout: vk::DescriptorSetLayout,
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, カラー形式, 深度形式, ディスクリプタlayout, シェーダー)
+        create::生成する(device, カラー形式, 深度形式, ディスクリプタlayout, シェーダー, graphics_pipeline::頂点属性選択::全属性)
+    }
+
+    /// 布描画用の変種(判断54): 接線を宣言しない3属性の頂点入力で生成する。
+    pub(crate) fn 布用に生成する(
+        device: &ash::Device,
+        カラー形式: vk::Format,
+        深度形式: vk::Format,
+        ディスクリプタlayout: vk::DescriptorSetLayout,
+        シェーダー: &シェーダー一式,
+    ) -> Result<Self, レンダラーエラー> {
+        create::生成する(device, カラー形式, 深度形式, ディスクリプタlayout, シェーダー, graphics_pipeline::頂点属性選択::布用)
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

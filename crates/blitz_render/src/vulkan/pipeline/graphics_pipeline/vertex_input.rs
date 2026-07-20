@@ -42,3 +42,22 @@ pub(super) fn 記述する() -> (vk::VertexInputBindingDescription, [vk::VertexI
     ];
     (バインド記述, 属性記述一覧)
 }
+
+/// 布描画用: 同じ48バイトレイアウトから位置・法線・uvの3属性だけを宣言する(判断54)。
+/// 布シェーダーは接線を消費しないため、宣言すると未消費属性のvalidation警告になる。
+pub(super) fn 布用記述する() -> (vk::VertexInputBindingDescription, Vec<vk::VertexInputAttributeDescription>) {
+    let (バインド記述, 全属性) = 記述する();
+    let uv = 全属性[3].location(2);
+    (バインド記述, vec![全属性[0], 全属性[1], uv])
+}
+
+/// 属性選択に応じたバインド・属性記述を返す(graphics_pipelineの行数分割のための集約)。
+pub(super) fn 選択して記述する(選択: super::頂点属性選択) -> (vk::VertexInputBindingDescription, Vec<vk::VertexInputAttributeDescription>) {
+    match 選択 {
+        super::頂点属性選択::全属性 => {
+            let (バインド, 属性) = 記述する();
+            (バインド, 属性.to_vec())
+        }
+        super::頂点属性選択::布用 => 布用記述する(),
+    }
+}

@@ -10,6 +10,7 @@ workspace = true
 blitz_engine = { path = "../blitz_engine" }
 blitz_math = { path = "../blitz_math" }
 blitz_render = { path = "../blitz_render" }
+blitz_sim = { path = "../blitz_sim" }
 winit = { workspace = true }
 raw-window-handle = { workspace = true }
 thiserror = { workspace = true }

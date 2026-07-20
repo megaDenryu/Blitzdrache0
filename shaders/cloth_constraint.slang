@@ -47,6 +47,7 @@ void constraintMain(uint3 id: SV_DispatchThreadID)
     }
     float3 position = positionInvMass.xyz;
     float3 correction = float3(0.0, 0.0, 0.0);
+    float activeCount = 0.0;
     for (uint slot = 0; slot < slotsPerParticle; slot++)
     {
         NeighborSlot neighbor = neighborConstraints[index * slotsPerParticle + slot];
@@ -65,6 +66,13 @@ void constraintMain(uint3 id: SV_DispatchThreadID)
         float violation = currentLength - neighbor.restLength;
         float weightSum = selfInvMass + otherPositionInvMass.w;
         correction += difference * (-(selfInvMass / weightSum) * violation / currentLength);
+        activeCount += 1.0;
     }
-    particles[index * 2].xyz = position + correction * params.misc.y;
+    if (activeCount == 0.0)
+    {
+        return;
+    }
+    // 注意: gather合算の補正は関与拘束数で平均する。平均しないと最大8本ぶんの補正が
+    // 重なって過剰補正になり、数フレームで発散する(実測で確認した)。
+    particles[index * 2].xyz = position + correction * (params.misc.y / activeCount);
 }

@@ -31,6 +31,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     粒子有効: bool,
     開発ui初期有効: bool,
     ポスト処理有効: bool,
+    布有効: bool,
 ) -> Result<(Window, レンダラー, 開発UI, Option<アニメーション再生>), 起動エラー> {
     let window = event_loop.create_window(
         WindowAttributes::default()
@@ -48,6 +49,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let (シーン, 頂点一覧, インデックス一覧, マテリアル) =
         scene_load::シーンを読み込んで変換する(&カタログ, シーン名)?;
     let スキン素材 = scene_load::スキン素材へ変換する(&シーン)?;
+    let 布素材 = if 布有効 { Some(super::cloth_setup::布素材を構築する(&頂点一覧)?) } else { None };
 
     let レンダラー = レンダラー::生成する(
         表示ハンドル,
@@ -58,7 +60,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
         &インデックス一覧,
         マテリアル,
         スキン素材,
-        None,
+        布素材,
         ポスト処理有効,
     )?;
 

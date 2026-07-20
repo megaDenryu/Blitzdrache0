@@ -23,6 +23,7 @@ impl ApplicationHandler for アプリ {
             self.粒子有効,
             self.開発ui初期有効,
             self.ポスト処理有効,
+            self.布有効,
         ) {
             Ok((window, レンダラー, 開発ui, アニメーション)) => {
                 self.window = Some(window);

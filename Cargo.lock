@@ -137,6 +137,7 @@ dependencies = [
  "blitz_engine",
  "blitz_math",
  "blitz_render",
+ "blitz_sim",
  "egui",
  "egui-winit",
  "raw-window-handle",

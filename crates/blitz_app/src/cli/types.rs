@@ -42,4 +42,6 @@ pub(crate) struct 起動設定 {
     pub(crate) 露出: f32,
     /// `--blend <0..1>`指定で変更。既定は0.0(アニメーションクリップ2本のブレンド係数、判断45)。
     pub(crate) ブレンド: f32,
+    /// `--cloth`指定でtrue。既定はfalse(XPBD布シミュレーション、判断52。スキン付きシーン限定)。
+    pub(crate) 布有効: bool,
 }

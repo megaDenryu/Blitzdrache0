@@ -33,6 +33,7 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
     let mut ポスト処理有効 = true;
     let mut 露出 = 1.0f32;
     let mut ブレンド = 0.0f32;
+    let mut 布有効 = false;
 
     let mut 引数 = 引数一覧.iter();
     while let Some(引数値) = 引数.next() {
@@ -67,6 +68,9 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
             "--no-post" => {
                 ポスト処理有効 = false;
             }
+            "--cloth" => {
+                布有効 = true;
+            }
             "--exposure" => {
                 露出 = value_args::exposure引数を処理する(&mut 引数)?;
             }
@@ -90,5 +94,6 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
         ポスト処理有効,
         露出,
         ブレンド,
+        布有効,
     })
 }

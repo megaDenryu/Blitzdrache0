@@ -1,7 +1,5 @@
-//! 固定機能ステートの組み立てとVkPipelineの生成。頂点入力(頂点バッファ)・
-//! TRIANGLE_LIST・深度テスト・プッシュ定数・dynamic rendering・
-//! 動的ビューポート/シザー。頂点入力記述は`vertex_input`、生成結果の取り出しは
-//! `finish`に委ねる。
+//! 固定機能ステートの組み立てとVkPipelineの生成。頂点入力・TRIANGLE_LIST・深度テスト・
+//! dynamic rendering・動的ビューポート/シザー。頂点入力記述は`vertex_input`、生成結果の取り出しは`finish`に委ねる。
 
 mod finish;
 mod vertex_input;
@@ -14,6 +12,14 @@ use crate::error::レンダラーエラー;
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 const フラグメントエントリ名: &std::ffi::CStr = c"fragmentMain";
 
+/// 頂点属性の宣言セット。布は接線を消費しないため3属性版を使う(判断54)。
+#[derive(Clone, Copy)]
+pub(crate) enum 頂点属性選択 {
+    全属性,
+    布用,
+}
+
+#[allow(clippy::too_many_arguments)]
 pub(super) fn 組み立てる(
     device: &ash::Device,
     カラー形式: vk::Format,
@@ -21,6 +27,7 @@ pub(super) fn 組み立てる(
     ディスクリプタlayout: vk::DescriptorSetLayout,
     頂点モジュール: vk::ShaderModule,
     フラグメントモジュール: vk::ShaderModule,
+    属性選択: 頂点属性選択,
 ) -> Result<パイプライン, レンダラーエラー> {
     let ステージ一覧 = [
         vk::PipelineShaderStageCreateInfo::default()
@@ -33,7 +40,7 @@ pub(super) fn 組み立てる(
             .name(フラグメントエントリ名),
     ];
 
-    let (バインド記述, 属性記述一覧) = vertex_input::記述する();
+    let (バインド記述, 属性記述一覧) = vertex_input::選択して記述する(属性選択);
     let バインド記述一覧 = [バインド記述];
     let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default()
         .vertex_binding_descriptions(&バインド記述一覧)

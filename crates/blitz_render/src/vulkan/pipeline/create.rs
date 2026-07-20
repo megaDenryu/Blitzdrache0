@@ -14,6 +14,7 @@ pub(super) fn 生成する(
     深度形式: vk::Format,
     ディスクリプタlayout: vk::DescriptorSetLayout,
     シェーダー: &シェーダー一式,
+    属性選択: graphics_pipeline::頂点属性選択,
 ) -> Result<パイプライン, レンダラーエラー> {
     let 頂点モジュール = shader_module::生成する(device, シェーダー.頂点コード())?;
     let フラグメントモジュール = match shader_module::生成する(device, シェーダー.フラグメントコード()) {
@@ -32,6 +33,7 @@ pub(super) fn 生成する(
         ディスクリプタlayout,
         頂点モジュール,
         フラグメントモジュール,
+        属性選択,
     );
 
     // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。

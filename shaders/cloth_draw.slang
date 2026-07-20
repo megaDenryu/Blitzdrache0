@@ -26,12 +26,12 @@ ConstantBuffer<FrameUniform> frameUniform;
 
 static const float3 clothColor = float3(0.55, 0.1, 0.12);
 
+// 頂点入力は3属性(位置・法線・uv)。接線は消費しないためパイプライン側も宣言しない(頂点属性選択::布用)。
 struct VertexInput
 {
     [[vk::location(0)]] float3 position : POSITION;
     [[vk::location(1)]] float3 normal : NORMAL;
-    [[vk::location(2)]] float4 tangent : TANGENT;
-    [[vk::location(3)]] float2 uv : TEXCOORD0;
+    [[vk::location(2)]] float2 uv : TEXCOORD0;
 };
 
 struct VertexOutput
@@ -39,6 +39,7 @@ struct VertexOutput
     float4 position : SV_Position;
     float3 worldPosition : TEXCOORD1;
     float3 normal : TEXCOORD2;
+    float2 uv : TEXCOORD0;
 };
 
 [shader("vertex")]
@@ -48,6 +49,7 @@ VertexOutput vertexMain(VertexInput input)
     output.position = mul(frameUniform.viewProjection, float4(input.position, 1.0));
     output.worldPosition = input.position;
     output.normal = input.normal;
+    output.uv = input.uv;
     return output;
 }
 
@@ -64,6 +66,7 @@ float shadowFactor(float3 worldPosition)
 }
 
 // 両面ランバート: 裏面から見た場合は法線を反転して照らす(布は薄い面のため)。
+// uvからごく薄い格子模様を付けて織り目風にする(uv消費の実用も兼ねる)。
 [shader("fragment")]
 float4 fragmentMain(VertexOutput input, bool isFrontFace: SV_IsFrontFace) : SV_Target
 {
@@ -73,5 +76,6 @@ float4 fragmentMain(VertexOutput input, bool isFrontFace: SV_IsFrontFace) : SV_T
     float shadow = shadowFactor(input.worldPosition);
     float3 direct = frameUniform.directionalLightColor.rgb * lambert * shadow;
     float3 ambient = float3(0.15, 0.15, 0.15);
-    return float4(clothColor * (direct + ambient), 1.0);
+    float weave = 0.94 + 0.06 * abs(sin(input.uv.x * 100.0) * sin(input.uv.y * 100.0));
+    return float4(clothColor * weave * (direct + ambient), 1.0);
 }
