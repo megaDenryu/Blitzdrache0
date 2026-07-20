@@ -15,6 +15,7 @@ impl レンダラー {
         if let Some(バッファ) = &self.読み戻しバッファ {
             バッファ.破棄する(&self.device);
         }
+        self.ui一式.破棄する(&self.device);
         if let Some(粒子) = &self.粒子 {
             粒子.破棄する(&self.device);
         }

@@ -13,6 +13,9 @@ const 粒子コンピュートSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DI
 const 粒子頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_vertex.spv"));
 const 粒子フラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_fragment.spv"));
 
+const UI頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/ui_vertex.spv"));
+const UIフラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/ui_fragment.spv"));
+
 pub(crate) fn 埋め込みシェーダーを生成する() -> Result<シェーダー一式, 起動エラー> {
     Ok(シェーダー一式::生成する(頂点SPIRV.to_vec(), フラグメントSPIRV.to_vec())?)
 }
@@ -23,4 +26,10 @@ pub(crate) fn 埋め込み粒子シェーダーを生成する() -> Result<粒�
         粒子頂点SPIRV.to_vec(),
         粒子フラグメントSPIRV.to_vec(),
     )?)
+}
+
+/// 開発用UI(egui)パイプライン用のシェーダー一式(判断33)。UIリソース一式は
+/// 常に生成する(判断34)ため、粒子シェーダーと異なり無条件で埋め込む。
+pub(crate) fn 埋め込みuiシェーダーを生成する() -> Result<シェーダー一式, 起動エラー> {
+    Ok(シェーダー一式::生成する(UI頂点SPIRV.to_vec(), UIフラグメントSPIRV.to_vec())?)
 }

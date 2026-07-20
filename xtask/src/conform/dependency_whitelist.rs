@@ -11,7 +11,10 @@ const 白リスト: [(&str, &[&str]); 5] = [
     ("blitz_math", &["glam"]),
     ("blitz_engine", &["blitz_math", "blitz_render", "gltf", "image", "thiserror"]),
     ("blitz_render", &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"]),
-    ("blitz_app", &["blitz_engine", "blitz_math", "blitz_render", "winit", "raw-window-handle", "thiserror"]),
+    (
+        "blitz_app",
+        &["blitz_engine", "blitz_math", "blitz_render", "winit", "raw-window-handle", "thiserror", "egui", "egui-winit"],
+    ),
     ("xtask", &[]),
 ];
 

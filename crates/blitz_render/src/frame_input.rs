@@ -5,8 +5,9 @@
 use blitz_math::{クリップ, ワールド, 位置, 変換};
 
 use crate::clear_color::クリアカラー;
+use crate::ui_draw_data::UI描画データ;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct フレーム描画入力 {
     pub クリア色: クリアカラー,
     pub ビュー射影: 変換<ワールド, クリップ>,
@@ -15,4 +16,7 @@ pub struct フレーム描画入力 {
     /// falseならunlit(albedo*TINTのみ)、trueならCook-Torrance GGX + Lambertの
     /// フルライティングを行う(判断26)。
     pub ライティング有効: bool,
+    /// 開発用UI(egui)の今フレームぶんの描画データ。`None`ならUIパス自体を
+    /// グラフへ積まない(判断34: 既定オフ時は既存スモークの厳密判定を無傷に保つ)。
+    pub ui描画: Option<UI描画データ>,
 }

@@ -8,10 +8,11 @@ mod particle_draw_pass;
 mod particle_update_pass;
 mod readback_pass;
 mod scene_pass;
+mod ui_pass;
 
 use ash::vk;
 
-use super::{ジオメトリ入力, 描画方式, 粒子描画入力};
+use super::{ジオメトリ入力, 描画方式, 粒子描画入力, UI描画入力};
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
 use crate::vulkan::graph;
@@ -30,6 +31,7 @@ pub(super) fn コマンドを記録する(
     pipeline: vk::Pipeline,
     ジオメトリ入力: &ジオメトリ入力,
     粒子入力: Option<&粒子描画入力>,
+    ui入力: Option<&UI描画入力>,
     描画方式: &描画方式,
     クエリプール: Option<vk::QueryPool>,
 ) -> Result<Vec<(&'static str, u32)>, レンダラーエラー> {
@@ -56,6 +58,7 @@ pub(super) fn コマンドを記録する(
         pipeline,
         ジオメトリ入力,
         粒子入力,
+        ui入力,
         描画方式,
     );
     let 計測マッピング = graph::実行する(device, command_buffer, グラフ, クエリプール);

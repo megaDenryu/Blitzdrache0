@@ -7,6 +7,7 @@
 
 mod app;
 mod cli;
+mod dev_ui;
 mod embedded_shaders;
 mod error;
 mod hot_reload;

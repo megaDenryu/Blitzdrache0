@@ -5,6 +5,7 @@ mod aspect;
 mod draw_dispatch;
 mod frame;
 mod handler;
+mod hot_reload_apply;
 mod scene_load;
 mod window_setup;
 
@@ -15,6 +16,7 @@ use blitz_render::{クリアカラー, レンダラー, 検証カウンタ};
 use winit::window::Window;
 
 use crate::cli::{起動モード, 起動設定};
+use crate::dev_ui::開発UI;
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
 use crate::input::入力状態;
@@ -37,6 +39,9 @@ pub(crate) struct アプリ {
     ライティング有効: bool,
     粒子有効: bool,
     gpu時間報告: bool,
+    /// resumed時にウィンドウ生成後に構築する(判断34)。それまでは`None`。
+    開発ui: Option<開発UI>,
+    開発ui初期有効: bool,
     起動時エラー: Option<起動エラー>,
 }
 
@@ -57,6 +62,8 @@ impl アプリ {
             ライティング有効: 起動設定.ライティング有効,
             粒子有効: 起動設定.粒子有効,
             gpu時間報告: 起動設定.gpu時間報告,
+            開発ui: None,
+            開発ui初期有効: 起動設定.開発ui初期有効,
             起動時エラー: None,
         }
     }

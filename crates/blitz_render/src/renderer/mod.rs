@@ -11,6 +11,8 @@ mod readback_buffer;
 mod reconstruct;
 mod replace_scene;
 mod replace_shader;
+mod ui_dispatch;
+mod ui_texture;
 mod uniform_write;
 
 use ash::vk;
@@ -57,6 +59,8 @@ pub struct レンダラー {
     粒子: Option<vulkan::particles::粒子リソース一式>,
     /// タイムスタンプ非対応デバイスでは`None`(判断30: 計測無効は型で表す)。
     gpu計測: Option<vulkan::gpu_timing::パス別GPU計測>,
+    /// 開発用UI(egui)描画一式(判断33・34)。表示のオン/オフは入力側の有無で決まるため、常に生成する。
+    ui一式: vulkan::ui::UIリソース一式,
     読み戻しバッファ: Option<vulkan::readback::読み戻しバッファ>,
     検証カウンタ: 検証カウンタ,
     現在の寸法: ウィンドウ寸法,

@@ -3,9 +3,9 @@
 
 use ash::vk;
 
-use super::{particle_draw_pass, particle_update_pass, readback_pass, scene_pass};
+use super::{particle_draw_pass, particle_update_pass, readback_pass, scene_pass, ui_pass};
 use crate::clear_color::クリアカラー;
-use crate::vulkan::frame::{ジオメトリ入力, 描画方式, 粒子描画入力};
+use crate::vulkan::frame::{ジオメトリ入力, 描画方式, 粒子描画入力, UI描画入力};
 use crate::vulkan::graph;
 
 #[allow(clippy::too_many_arguments)]
@@ -19,6 +19,7 @@ pub(super) fn グラフを構築する<'a>(
     pipeline: vk::Pipeline,
     ジオメトリ入力: &'a ジオメトリ入力,
     粒子入力: Option<&'a 粒子描画入力>,
+    ui入力: Option<&'a UI描画入力>,
     描画方式: &'a 描画方式,
 ) -> graph::グラフ<'a> {
     let mut グラフ = graph::グラフ::新規(寸法);
@@ -49,6 +50,10 @@ pub(super) fn グラフを構築する<'a>(
             グラフ.バッファを登録する(粒子入力.バッファ, graph::前フレーム粒子読み直後状態());
         グラフ.パスを積む(particle_update_pass::作る(粒子ハンドル, 粒子入力));
         グラフ.パスを積む(particle_draw_pass::作る(カラーハンドル, 深度ハンドル, 粒子ハンドル, 粒子入力, 寸法));
+    }
+
+    if let Some(ui入力) = ui入力 {
+        グラフ.パスを積む(ui_pass::作る(カラーハンドル, ui入力, 寸法));
     }
 
     if let 描画方式::読み戻し { バッファ } = 描画方式 {

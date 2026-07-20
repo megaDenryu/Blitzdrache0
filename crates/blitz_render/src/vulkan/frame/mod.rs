@@ -9,7 +9,7 @@ mod types;
 pub(crate) mod acquire;
 
 pub(crate) use acquire::取得結果;
-pub(crate) use types::{ジオメトリ入力, 描画方式, 粒子描画入力};
+pub(crate) use types::{ジオメトリ入力, 描画方式, 粒子描画入力, UI描画入力, UI描画項目};
 
 use ash::vk;
 
@@ -36,6 +36,7 @@ pub(crate) fn 描画する(
     pipeline: vk::Pipeline,
     ジオメトリ入力: &ジオメトリ入力,
     粒子入力: Option<&粒子描画入力>,
+    ui入力: Option<&UI描画入力>,
     描画方式: 描画方式,
     クエリプール: Option<vk::QueryPool>,
     取得セマフォ: vk::Semaphore,
@@ -55,6 +56,7 @@ pub(crate) fn 描画する(
         pipeline,
         ジオメトリ入力,
         粒子入力,
+        ui入力,
         &描画方式,
         クエリプール,
     )?;

@@ -2,8 +2,9 @@
 //! 参照: `_doc/設計/イベントループとフレームペーシング.md`
 
 use winit::application::ApplicationHandler;
-use winit::event::WindowEvent;
+use winit::event::{ElementState, KeyEvent, WindowEvent};
 use winit::event_loop::ActiveEventLoop;
+use winit::keyboard::{KeyCode, PhysicalKey};
 use winit::window::WindowId;
 
 use super::アプリ;
@@ -20,10 +21,12 @@ impl ApplicationHandler for アプリ {
             &self.アセットルート,
             &mut self.ホットリローダー,
             self.粒子有効,
+            self.開発ui初期有効,
         ) {
-            Ok((window, レンダラー)) => {
+            Ok((window, レンダラー, 開発ui)) => {
                 self.window = Some(window);
                 self.レンダラー = Some(レンダラー);
+                self.開発ui = Some(開発ui);
             }
             Err(誤り) => {
                 self.起動時エラー = Some(誤り);
@@ -38,9 +41,19 @@ impl ApplicationHandler for アプリ {
         _window_id: WindowId,
         event: WindowEvent,
     ) {
+        let egui消費済みか = self
+            .window
+            .as_ref()
+            .zip(self.開発ui.as_mut())
+            .is_some_and(|(window, 開発ui)| 開発ui.winitイベントを取り込む(window, &event));
+        self.f3押下を確認する(&event);
+
         // 入力層はwinitイベントを蓄積するだけで、以降のmatchが既存の責務を続ける
         // （カメラインテントへの写像は`入力状態`内部で完結し、blitz_engineはwinitを知らない）。
-        self.入力状態.winitイベントを取り込む(&event);
+        // eguiが消費したイベント(ポインタ/キーボードがUI操作中)はカメラ入力へ流さない。
+        if !egui消費済みか {
+            self.入力状態.winitイベントを取り込む(&event);
+        }
 
         match event {
             WindowEvent::RedrawRequested => self.一フレーム実行する(event_loop),
@@ -57,6 +70,28 @@ impl ApplicationHandler for アプリ {
     fn about_to_wait(&mut self, _event_loop: &ActiveEventLoop) {
         if let Some(window) = &self.window {
             window.request_redraw();
+        }
+    }
+}
+
+impl アプリ {
+    /// F3キー押下(リピートでない立ち上がりのみ)で開発用UIをトグルする(判断34)。
+    fn f3押下を確認する(&mut self, event: &WindowEvent) {
+        let WindowEvent::KeyboardInput {
+            event:
+                KeyEvent {
+                    physical_key: PhysicalKey::Code(KeyCode::F3),
+                    state: ElementState::Pressed,
+                    repeat: false,
+                    ..
+                },
+            ..
+        } = event
+        else {
+            return;
+        };
+        if let Some(開発ui) = &mut self.開発ui {
+            開発ui.トグルする();
         }
     }
 }

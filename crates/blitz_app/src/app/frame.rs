@@ -5,7 +5,8 @@ use winit::event_loop::ActiveEventLoop;
 
 use super::アプリ;
 use crate::cli::起動モード;
-use crate::hot_reload::ホットリロード結果;
+use crate::dev_ui::stats::開発UI統計;
+use crate::error::起動エラー;
 use crate::smoke::{self, スモークアクション};
 
 impl アプリ {
@@ -17,9 +18,13 @@ impl アプリ {
         self.ホットリロードを確認する();
 
         let アクション = match self.起動モード {
-            起動モード::スモーク実行 { フレーム数 } => {
-                smoke::判定する(self.現在フレーム, フレーム数, &self.シーン名, self.粒子有効)
-            }
+            起動モード::スモーク実行 { フレーム数 } => smoke::判定する(
+                self.現在フレーム,
+                フレーム数,
+                &self.シーン名,
+                self.粒子有効,
+                self.開発ui初期有効,
+            ),
             起動モード::無期限実行 => スモークアクション::通常描画,
         };
         if let Some(window) = &self.window {
@@ -29,7 +34,15 @@ impl アプリ {
         // フレーム内実行順序: 入力確定→世界更新→描画内容抽出→描画。
         let インテント = self.入力状態.インテントを確定する();
         self.カメラ.更新する(インテント);
-        let 描画入力 = self.描画入力を作る();
+        let mut 描画入力 = self.描画入力を作る();
+        match self.ui描画データを組み立てる() {
+            Ok(データ) => 描画入力.ui描画 = データ,
+            Err(誤り) => {
+                self.起動時エラー = Some(誤り);
+                event_loop.exit();
+                return;
+            }
+        }
 
         if let Err(誤り) = self.実行して判定する(アクション, 描画入力) {
             self.起動時エラー = Some(誤り);
@@ -56,41 +69,22 @@ impl アプリ {
             ビュー射影: self.カメラ.ビュー射影変換を作る(アスペクト比),
             カメラ位置: self.カメラ.視点ワールド位置(),
             ライティング有効: self.ライティング有効,
+            ui描画: None,
         }
     }
 
-    fn ホットリロードを確認する(&mut self) {
-        let 結果 = self.ホットリローダー.確認する();
-        let Some(レンダラー) = &mut self.レンダラー else {
-            return;
+    /// 開発用UI(egui)の今フレームぶんの描画データを組み立てる。ウィンドウ・
+    /// レンダラー・開発UIのいずれかが未生成なら`None`(起動直後の1フレーム目のみ
+    /// 起こりうる)。
+    fn ui描画データを組み立てる(&mut self) -> Result<Option<blitz_render::UI描画データ>, 起動エラー> {
+        let Some(window) = &self.window else { return Ok(None) };
+        let Some(開発ui) = &mut self.開発ui else { return Ok(None) };
+        let Some(レンダラー) = &mut self.レンダラー else { return Ok(None) };
+        let 統計 = 開発UI統計 {
+            パス別gpu時間: レンダラー.パス別gpu時間を取得する(),
+            フレーム時間ms: 開発ui.フレーム時間を記録する(),
+            validation件数: レンダラー.検証カウンタを取得する().件数を読む(),
         };
-        match 結果 {
-            ホットリロード結果::変化なし => {}
-            ホットリロード結果::シェーダー再コンパイル成功 { シェーダー } => {
-                if let Err(誤り) = レンダラー.シェーダーを差し替える(シェーダー) {
-                    eprintln!("[hot-reload] パイプライン差し替えに失敗した: {誤り}");
-                }
-            }
-            ホットリロード結果::シェーダー再コンパイル失敗 { メッセージ } => {
-                eprintln!("[hot-reload] シェーダーの再コンパイルに失敗した:\n{メッセージ}");
-            }
-            ホットリロード結果::アセット再読込成功 { シーン } => {
-                アセット再読込を反映する(レンダラー, &シーン);
-            }
-            ホットリロード結果::アセット再読込失敗 { メッセージ } => {
-                eprintln!("[hot-reload] アセットの再読込に失敗した:\n{メッセージ}");
-            }
-        }
-    }
-}
-
-fn アセット再読込を反映する(レンダラー: &mut blitz_render::レンダラー, シーン: &blitz_engine::シーンデータ) {
-    match super::scene_load::シーンをレンダラー入力に変換する(シーン) {
-        Ok((頂点一覧, インデックス一覧, マテリアル)) => {
-            if let Err(誤り) = レンダラー.シーンを差し替える(&頂点一覧, &インデックス一覧, マテリアル) {
-                eprintln!("[hot-reload] シーン差し替えに失敗した: {誤り}");
-            }
-        }
-        Err(誤り) => eprintln!("[hot-reload] 再読込したシーンの変換に失敗した: {誤り}"),
+        開発ui.描画データを作る(window, レンダラー, 統計)
     }
 }

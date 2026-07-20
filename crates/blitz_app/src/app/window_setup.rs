@@ -9,6 +9,7 @@ use winit::event_loop::ActiveEventLoop;
 use winit::window::{Window, WindowAttributes};
 
 use super::scene_load;
+use crate::dev_ui::開発UI;
 use crate::embedded_shaders;
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
@@ -16,17 +17,19 @@ use crate::hot_reload::ホットリローダー;
 const 初期幅: u32 = 1280;
 const 初期高さ: u32 = 720;
 
-/// ウィンドウを生成し、そのハンドルからレンダラーを生成する。
+/// ウィンドウを生成し、そのハンドルからレンダラー・開発用UIを生成する。
 ///
 /// 前提: 戻り値のタプルはこの順でアプリ構造体のフィールドへ格納され、
 /// windowがレンダラーより先にDropされないことをフィールド宣言順で保証する。
+#[allow(clippy::too_many_arguments)]
 pub(super) fn ウィンドウとレンダラーを作る(
     event_loop: &ActiveEventLoop,
     シーン名: &str,
     アセットルート: &std::path::Path,
     ホットリローダー: &mut ホットリローダー,
     粒子有効: bool,
-) -> Result<(Window, レンダラー), 起動エラー> {
+    開発ui初期有効: bool,
+) -> Result<(Window, レンダラー, 開発UI), 起動エラー> {
     let window = event_loop.create_window(
         WindowAttributes::default()
             .with_title("Blitzdrache0")
@@ -40,6 +43,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let シェーダー = embedded_shaders::埋め込みシェーダーを生成する()?;
     let 粒子シェーダー =
         if 粒子有効 { Some(embedded_shaders::埋め込み粒子シェーダーを生成する()?) } else { None };
+    let uiシェーダー = embedded_shaders::埋め込みuiシェーダーを生成する()?;
 
     let カタログ = scene_load::カタログを構築する(アセットルート)?;
     let (シーン, 頂点一覧, インデックス一覧, マテリアル) =
@@ -54,9 +58,11 @@ pub(super) fn ウィンドウとレンダラーを作る(
         &インデックス一覧,
         マテリアル,
         粒子シェーダー,
+        uiシェーダー,
     )?;
 
     ホットリローダー.アセット監視を設定する(カタログ, アセットID::生成する(シーン名)?, &シーン.参照ファイル一覧);
 
-    Ok((window, レンダラー))
+    let 開発ui = 開発UI::生成する(&window, 開発ui初期有効);
+    Ok((window, レンダラー, 開発ui))
 }

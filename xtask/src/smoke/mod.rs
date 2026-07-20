@@ -14,6 +14,7 @@ use std::process::ExitCode;
 const 四角形フレーム数: &str = "600";
 const ヘルメットフレーム数: &str = "120";
 const 粒子フレーム数: &str = "120";
+const 開発UIフレーム数: &str = "120";
 const ヘルメット取得先: &str = "assets/samples/DamagedHelmet/DamagedHelmet.glb";
 
 pub fn 実行する() -> ExitCode {
@@ -33,7 +34,7 @@ pub fn 実行する() -> ExitCode {
     };
 
     println!("[xtask] quadステージ実行");
-    if !run_stage::実行する(四角形フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, false) {
+    if !run_stage::実行する(四角形フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, false, false) {
         eprintln!("[xtask] smoke失敗: quadステージ");
         return ExitCode::FAILURE;
     }
@@ -41,7 +42,7 @@ pub fn 実行する() -> ExitCode {
 
     if Path::new(ヘルメット取得先).is_file() {
         println!("[xtask] helmetステージ実行");
-        if !run_stage::実行する(ヘルメットフレーム数, &シェーダーコピー先, None, "helmet", false, false) {
+        if !run_stage::実行する(ヘルメットフレーム数, &シェーダーコピー先, None, "helmet", false, false, false) {
             eprintln!("[xtask] smoke失敗: helmetステージ");
             return ExitCode::FAILURE;
         }
@@ -53,11 +54,18 @@ pub fn 実行する() -> ExitCode {
     }
 
     println!("[xtask] particlesステージ実行");
-    if !run_stage::実行する(粒子フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, true) {
+    if !run_stage::実行する(粒子フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, true, false) {
         eprintln!("[xtask] smoke失敗: particlesステージ");
         return ExitCode::FAILURE;
     }
     println!("[xtask] particlesステージ成功");
+
+    println!("[xtask] dev-uiステージ実行");
+    if !run_stage::実行する(開発UIフレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, true, true) {
+        eprintln!("[xtask] smoke失敗: dev-uiステージ");
+        return ExitCode::FAILURE;
+    }
+    println!("[xtask] dev-uiステージ成功");
 
     println!("[xtask] smoke成功: validation・ピクセル判定・ホットリロードすべて成功で終了した");
     ExitCode::SUCCESS

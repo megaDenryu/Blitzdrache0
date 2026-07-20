@@ -7,18 +7,19 @@ use super::レンダラー;
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
 use crate::vulkan;
-use crate::vulkan::frame::{ジオメトリ入力, 描画方式, 粒子描画入力};
+use crate::vulkan::frame::{ジオメトリ入力, 描画方式, 粒子描画入力, UI描画入力};
 
 impl レンダラー {
     /// 戻り値: 提示劣化の有無と、このフレームで書いたGPUタイムスタンプの
     /// 「パス名→クエリ開始添字」対応(判断30。計測無効なら空配列)。
-    #[allow(clippy::type_complexity)]
+    #[allow(clippy::type_complexity, clippy::too_many_arguments)]
     pub(super) fn 現在の画像で描画する(
         &self,
         添字: u32,
         フレーム添字: usize,
         クリア色: クリアカラー,
         読み戻し要求: bool,
+        ui入力: Option<&UI描画入力>,
     ) -> Result<(bool, Vec<(&'static str, u32)>), レンダラーエラー> {
         let 添字usize = usize::try_from(添字)
             .unwrap_or_else(|_| panic!("スワップチェーン画像添字がusizeに収まらない: {添字}"));
@@ -68,6 +69,7 @@ impl レンダラー {
             self.pipeline.handle,
             &ジオメトリ入力,
             粒子入力.as_ref(),
+            ui入力,
             描画方式,
             クエリプール,
             self.フレーム同期.取得セマフォ(フレーム添字),
