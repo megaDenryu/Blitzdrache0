@@ -1,9 +1,7 @@
 //! 1フレームの記録・送信・提示。dynamic rendering + synchronization2で行う。
 
-mod barrier;
 mod copy;
 mod draw_commands;
-mod readback_barrier;
 mod record;
 mod submit_present;
 

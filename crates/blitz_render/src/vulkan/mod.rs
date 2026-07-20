@@ -11,6 +11,7 @@ pub(crate) mod device;
 pub(crate) mod device_buffer;
 pub(crate) mod frame;
 pub(crate) mod geometry;
+pub(crate) mod graph;
 pub(crate) mod host_buffer;
 pub(crate) mod instance;
 pub(crate) mod memory;
