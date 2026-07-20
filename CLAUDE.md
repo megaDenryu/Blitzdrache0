@@ -75,8 +75,20 @@
 
 - ワークスペース `Cargo.toml` の `[workspace.lints]` で unwrap_used / expect_used /
   as_conversions を deny 済み。緩和する変更は禁止（テストモジュールでの局所allowのみ可）
-- 検証の標準列: `cargo check` → `cargo clippy --all-targets -- -D warnings` → `cargo test`。
+- `cargo xtask conform` が規約の機械検査（.rs/.slangの100行・禁止文字列・テスト外allow・
+  クレート依存の白リスト・参照パス実在）。依存を追加するときは採用審査 + conform の
+  白リスト更新が必須（Cargo.toml 変更だけでは通らない意図的な二重台帳）。
+  検査を緩める変更は規約改訂（本ファイルの改訂）とセットでのみ許す
+- 検証の標準列: `cargo xtask verify`（conform → check → clippy -D warnings → test）。
   この列が通らないコードはコミットしない
+
+## マイルストーン完了時の定点（省略禁止）
+
+マイルストーンの完了は DoD 充足だけでは成立しない。`_doc/計画/開発計画.md`
+「マイルストーン完了時の定点」の4項目（評価軸の予算表更新とギャップ検出 /
+性能アーキテクチャ方針9軸の該当節更新（触れないなら開発スレッドに1行明記）/
+生存型文書の実装一致確認 / 扉の定点）を完了報告の一部として実行する。
+`参照: _doc/計画/評価軸.md`、`_doc/設計/性能アーキテクチャ方針.md`
 
 ## 禁止事項（グローバル憲法から再掲）
 

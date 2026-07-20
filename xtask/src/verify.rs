@@ -2,7 +2,15 @@
 
 use std::process::{Command, ExitCode};
 
+use crate::conform;
+
 pub fn 検証列を実行する() -> ExitCode {
+    println!("[xtask] conform を実行");
+    if conform::実行する() != ExitCode::SUCCESS {
+        eprintln!("[xtask] conform が失敗した。ここで中断する");
+        return ExitCode::FAILURE;
+    }
+
     let 手順一覧: [(&str, &[&str]); 3] = [
         ("check", &["check", "--workspace"]),
         ("clippy", &["clippy", "--all-targets", "--", "-D", "warnings"]),

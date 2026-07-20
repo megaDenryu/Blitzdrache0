@@ -4,6 +4,7 @@
 use std::process::ExitCode;
 
 mod bench;
+mod conform;
 mod fetch_assets;
 mod gen_smoke_asset;
 mod smoke;
@@ -13,6 +14,7 @@ fn main() -> ExitCode {
     let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
     match 引数一覧.first().map(String::as_str) {
         Some("verify") => verify::検証列を実行する(),
+        Some("conform") => conform::実行する(),
         Some("smoke") => smoke::実行する(),
         Some("gen-smoke-asset") => gen_smoke_asset::実行する(),
         Some("fetch-assets") => fetch_assets::実行する(),
@@ -28,7 +30,8 @@ fn 使い方を表示する() {
     println!("使い方: cargo xtask <コマンド>");
     println!();
     println!("コマンド一覧:");
-    println!("  verify           検証の標準列 (check -> clippy -D warnings -> test) を実行する");
+    println!("  verify           検証の標準列 (conform -> check -> clippy -D warnings -> test) を実行する");
+    println!("  conform          規約適合の機械検査 (100行制限/禁止文字列/不正allow/依存白リスト/参照パス実在)");
     println!("  smoke            blitz_appを--framesで自動実行し、validation件数0を終了コードで確認する");
     println!("  gen-smoke-asset  スモーク用極小glTFアセットをassets/smoke/へ生成する");
     println!("  fetch-assets     DamagedHelmetサンプルをassets/samples/へ取得する(curl.exe使用)");
