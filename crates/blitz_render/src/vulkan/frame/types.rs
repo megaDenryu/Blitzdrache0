@@ -44,6 +44,15 @@ pub(crate) struct 粒子描画入力 {
     pub(crate) バッファ: vk::Buffer,
 }
 
+/// トーンマップパス(判断38・39)1フレームぶんの入力。ポストプロセス有効時のみ`Some`で渡す。
+pub(crate) struct トーンマップ描画入力 {
+    pub(crate) pipeline: vk::Pipeline,
+    pub(crate) layout: vk::PipelineLayout,
+    pub(crate) ディスクリプタセット: vk::DescriptorSet,
+    /// トーンマップ前にHDR輝度へ掛ける露出倍率(プッシュ定数で渡す)。
+    pub(crate) 露出: f32,
+}
+
 /// 開発用UI(egui)1フレームぶんの入力。呼び出し元(renderer層)が今フレームの
 /// メッシュ列をジオメトリバッファへ書き込み済みで、そのバッファハンドルと
 /// メッシュごとの描画項目一覧を渡す(判断33・34)。

@@ -36,7 +36,7 @@ pub fn 実行する() -> ExitCode {
     };
 
     println!("[xtask] quadステージ実行");
-    if !run_stage::実行する(四角形フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, false, false) {
+    if !run_stage::実行する(四角形フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, false, false, true) {
         eprintln!("[xtask] smoke失敗: quadステージ");
         return ExitCode::FAILURE;
     }
@@ -44,7 +44,7 @@ pub fn 実行する() -> ExitCode {
 
     if Path::new(ヘルメット取得先).is_file() {
         println!("[xtask] helmetステージ実行");
-        if !run_stage::実行する(ヘルメットフレーム数, &シェーダーコピー先, None, "helmet", false, false, false) {
+        if !run_stage::実行する(ヘルメットフレーム数, &シェーダーコピー先, None, "helmet", false, false, false, false) {
             eprintln!("[xtask] smoke失敗: helmetステージ");
             return ExitCode::FAILURE;
         }
@@ -56,21 +56,21 @@ pub fn 実行する() -> ExitCode {
     }
 
     println!("[xtask] particlesステージ実行");
-    if !run_stage::実行する(粒子フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, true, false) {
+    if !run_stage::実行する(粒子フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, true, false, true) {
         eprintln!("[xtask] smoke失敗: particlesステージ");
         return ExitCode::FAILURE;
     }
     println!("[xtask] particlesステージ成功");
 
     println!("[xtask] dev-uiステージ実行");
-    if !run_stage::実行する(開発UIフレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, true, true) {
+    if !run_stage::実行する(開発UIフレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, true, true, true) {
         eprintln!("[xtask] smoke失敗: dev-uiステージ");
         return ExitCode::FAILURE;
     }
     println!("[xtask] dev-uiステージ成功");
 
     println!("[xtask] shadowステージ実行");
-    if !run_stage::実行する(シャドウフレーム数, &シェーダーコピー先, Some(&アセットルート), "shadow_scene", false, false, false) {
+    if !run_stage::実行する(シャドウフレーム数, &シェーダーコピー先, Some(&アセットルート), "shadow_scene", false, false, false, false) {
         eprintln!("[xtask] smoke失敗: shadowステージ");
         return ExitCode::FAILURE;
     }

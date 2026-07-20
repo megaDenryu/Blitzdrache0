@@ -16,6 +16,7 @@ mod particle_shader_set;
 mod readback_image;
 mod readback_result;
 mod renderer;
+mod shader_bundle;
 mod shader_set;
 mod texture_material;
 mod ui_draw_data;
@@ -39,6 +40,7 @@ pub use particle_shader_set::{粒子シェーダー一式, 粒子シェーダー
 pub use readback_image::読み戻し画像;
 pub use readback_result::読み戻し結果;
 pub use renderer::レンダラー;
+pub use shader_bundle::シェーダー束;
 pub use shader_set::{シェーダー一式, シェーダー一式エラー};
 pub use texture_material::{テクスチャ素材, テクスチャ素材エラー, テクスチャ用途};
 pub use ui_draw_data::UI描画データ;

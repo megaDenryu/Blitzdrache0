@@ -22,6 +22,7 @@ impl ApplicationHandler for アプリ {
             &mut self.ホットリローダー,
             self.粒子有効,
             self.開発ui初期有効,
+            self.ポスト処理有効,
         ) {
             Ok((window, レンダラー, 開発ui)) => {
                 self.window = Some(window);

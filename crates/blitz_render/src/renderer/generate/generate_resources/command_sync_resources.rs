@@ -23,6 +23,7 @@ pub(super) fn 組み立てる(
     device: &ash::Device,
     queue_family_index: u32,
     swapchain: &vulkan::swapchain::スワップチェーン,
+    シーンカラー形式: vk::Format,
     ディスクリプタlayout: vk::DescriptorSetLayout,
     シェーダー: &シェーダー一式,
     シャドウシェーダー: &シェーダー一式,
@@ -32,7 +33,7 @@ pub(super) fn 組み立てる(
     let 提示同期 = vulkan::sync::提示同期::生成する(device, swapchain.画像数())?;
     let pipeline = vulkan::pipeline::パイプライン::生成する(
         device,
-        swapchain.画像形式,
+        シーンカラー形式,
         深度形式,
         ディスクリプタlayout,
         シェーダー,

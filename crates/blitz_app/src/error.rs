@@ -56,6 +56,9 @@ pub(crate) enum 起動エラー {
     #[error("--dump-frame引数が不正だった: {0}")]
     フレームダンプ引数不正(String),
 
+    #[error("--exposure引数が不正だった: {0}")]
+    露出引数不正(String),
+
     #[error("フレームダンプに失敗した: {0}")]
     フレームダンプ失敗(String),
 

@@ -1,15 +1,19 @@
 //! 1フレームの記録・送信・提示。dynamic rendering + synchronization2で行う。
 
 mod copy;
-mod draw_commands;
+mod images;
 mod record;
 mod submit_present;
 mod types;
 
 pub(crate) mod acquire;
+pub(crate) mod draw_commands;
 
 pub(crate) use acquire::取得結果;
-pub(crate) use types::{ジオメトリ入力, シャドウ描画入力, 描画方式, 粒子描画入力, UI描画入力, UI描画項目};
+pub(crate) use images::フレーム画像一式;
+pub(crate) use types::{
+    シャドウ描画入力, ジオメトリ入力, トーンマップ描画入力, 描画方式, 粒子描画入力, UI描画入力, UI描画項目,
+};
 
 use ash::vk;
 
@@ -27,18 +31,14 @@ pub(crate) fn 描画する(
     swapchain_loader: &ash::khr::swapchain::Device,
     swapchain: vk::SwapchainKHR,
     画像添字: u32,
-    画像: vk::Image,
-    画像ビュー: vk::ImageView,
-    深度画像: vk::Image,
-    深度画像ビュー: vk::ImageView,
-    シャドウマップ画像: vk::Image,
-    シャドウマップ画像ビュー: vk::ImageView,
+    画像一式: &フレーム画像一式,
     寸法: vk::Extent2D,
     クリア色: クリアカラー,
     pipeline: vk::Pipeline,
     ジオメトリ入力: &ジオメトリ入力,
     シャドウ入力: &シャドウ描画入力,
     粒子入力: Option<&粒子描画入力>,
+    トーンマップ入力: Option<&トーンマップ描画入力>,
     ui入力: Option<&UI描画入力>,
     描画方式: 描画方式,
     クエリプール: Option<vk::QueryPool>,
@@ -50,18 +50,14 @@ pub(crate) fn 描画する(
     let 計測マッピング = record::コマンドを記録する(
         device,
         command_buffer,
-        画像,
-        画像ビュー,
-        深度画像,
-        深度画像ビュー,
-        シャドウマップ画像,
-        シャドウマップ画像ビュー,
+        画像一式,
         寸法,
         クリア色,
         pipeline,
         ジオメトリ入力,
         シャドウ入力,
         粒子入力,
+        トーンマップ入力,
         ui入力,
         &描画方式,
         クエリプール,

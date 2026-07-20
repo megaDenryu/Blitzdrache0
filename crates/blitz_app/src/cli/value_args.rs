@@ -42,3 +42,14 @@ pub(super) fn dump_frame引数を処理する(引数: &mut Iter<String>) -> Resu
     })?;
     Ok(PathBuf::from(値))
 }
+
+pub(super) fn exposure引数を処理する(引数: &mut Iter<String>) -> Result<f32, 起動エラー> {
+    let 値 = 引数
+        .next()
+        .ok_or_else(|| 起動エラー::露出引数不正("--exposureに値が指定されていない".to_string()))?;
+    let 露出 = 値.parse::<f32>().map_err(|_| 起動エラー::露出引数不正(値.clone()))?;
+    if !露出.is_finite() || 露出 <= 0.0 {
+        return Err(起動エラー::露出引数不正(format!("正の有限値でない: {値}")));
+    }
+    Ok(露出)
+}

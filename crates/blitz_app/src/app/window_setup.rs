@@ -29,6 +29,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     ホットリローダー: &mut ホットリローダー,
     粒子有効: bool,
     開発ui初期有効: bool,
+    ポスト処理有効: bool,
 ) -> Result<(Window, レンダラー, 開発UI), 起動エラー> {
     let window = event_loop.create_window(
         WindowAttributes::default()
@@ -40,11 +41,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let ウィンドウハンドル = window.window_handle()?.as_raw();
     let 物理寸法 = window.inner_size();
     let 寸法 = ウィンドウ寸法::生成する(物理寸法.width, 物理寸法.height);
-    let シェーダー = embedded_shaders::埋め込みシェーダーを生成する()?;
-    let 粒子シェーダー =
-        if 粒子有効 { Some(embedded_shaders::埋め込み粒子シェーダーを生成する()?) } else { None };
-    let uiシェーダー = embedded_shaders::埋め込みuiシェーダーを生成する()?;
-    let シャドウシェーダー = embedded_shaders::埋め込みシャドウシェーダーを生成する()?;
+    let シェーダー束 = embedded_shaders::埋め込みシェーダー束を生成する(粒子有効)?;
 
     let カタログ = scene_load::カタログを構築する(アセットルート)?;
     let (シーン, 頂点一覧, インデックス一覧, マテリアル) =
@@ -54,13 +51,11 @@ pub(super) fn ウィンドウとレンダラーを作る(
         表示ハンドル,
         ウィンドウハンドル,
         寸法,
-        シェーダー,
+        シェーダー束,
         &頂点一覧,
         &インデックス一覧,
         マテリアル,
-        粒子シェーダー,
-        uiシェーダー,
-        シャドウシェーダー,
+        ポスト処理有効,
     )?;
 
     ホットリローダー.アセット監視を設定する(カタログ, アセットID::生成する(シーン名)?, &シーン.参照ファイル一覧);

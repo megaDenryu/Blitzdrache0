@@ -21,6 +21,7 @@ pub(super) fn 組み立てる(
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &vulkan::transfer::転送実行環境,
     swapchain: &vulkan::swapchain::スワップチェーン,
+    シーンカラー形式: vk::Format,
     深度形式: vk::Format,
     ユニフォーム: &vulkan::uniform::フレームユニフォーム一式,
     粒子シェーダー: Option<&粒子シェーダー一式>,
@@ -28,13 +29,14 @@ pub(super) fn 組み立てる(
     タイムスタンプ対応か: bool,
     タイムスタンプ周期ns: f32,
 ) -> Result<追加資源, レンダラーエラー> {
+    // 粒子はシーンと同じアタッチメント(ポスト有効時はHDR)へ追記描画するため、形式を合わせる(判断39)。
     let 粒子 = 粒子シェーダー
         .map(|シェーダー| {
             vulkan::particles::粒子リソース一式::生成する(
                 device,
                 メモリプロパティ,
                 転送環境,
-                swapchain.画像形式,
+                シーンカラー形式,
                 深度形式,
                 ユニフォーム,
                 シェーダー,

@@ -6,7 +6,10 @@
 mod destroy;
 mod draw;
 mod draw_dispatch;
+mod draw_execute;
+mod draw_inputs;
 mod generate;
+mod queries;
 mod readback_buffer;
 mod reconstruct;
 mod replace_scene;
@@ -56,6 +59,10 @@ pub struct レンダラー {
     提示同期: vulkan::sync::提示同期,
     現在フレーム添字: usize,
     pipeline: vulkan::pipeline::パイプライン,
+    /// ポストプロセス有効時のみ`Some`(判断38)。トーンマップと対で生成・破棄する。
+    hdrターゲット: Option<vulkan::hdr_target::HDRターゲット>,
+    /// ポストプロセス有効時のみ`Some`(判断38・39)。hdrターゲットと対で生成・破棄する。
+    トーンマップ: Option<vulkan::tonemap::トーンマップ一式>,
     /// `--particles`指定時のみ`Some`(判断29)。有無でコンピュート更新+粒子描画パスの追加を決める。
     粒子: Option<vulkan::particles::粒子リソース一式>,
     /// タイムスタンプ非対応デバイスでは`None`(判断30: 計測無効は型で表す)。
@@ -70,27 +77,6 @@ pub struct レンダラー {
     ベースカラー係数: [f32; 4],
     金属度係数: f32,
     粗さ係数: f32,
-}
-
-impl レンダラー {
-    /// 現在までのvalidationエラー・警告合計件数を読めるカウンタを複製して返す。
-    /// 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断3」。
-    /// 読み取りはレンダラー破棄後に行うこと。
-    pub fn 検証カウンタを取得する(&self) -> 検証カウンタ {
-        self.検証カウンタ.clone()
-    }
-
-    /// ウィンドウの寸法変更を通知する。次フレームでスワップチェーンを再構築する。
-    pub fn サイズ変更を通知する(&mut self, 寸法: ウィンドウ寸法) {
-        self.現在の寸法 = 寸法;
-        self.再構築が必要 = true;
-    }
-
-    /// パス名ごとの移動平均GPU時間(ミリ秒)を返す(判断30)。タイムスタンプ非対応
-    /// デバイスでは空配列(計測できていないことの明示。無言の0ミリ秒は返さない)。
-    pub fn パス別gpu時間を取得する(&self) -> Vec<(&'static str, f64)> {
-        self.gpu計測.as_ref().map(vulkan::gpu_timing::パス別GPU計測::平均一覧を取得する).unwrap_or_default()
-    }
 }
 
 impl Drop for レンダラー {

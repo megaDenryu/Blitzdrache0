@@ -24,6 +24,12 @@ impl レンダラー {
         }
         self.pipeline.破棄する(&self.device);
         self.シャドウパイプライン.破棄する(&self.device);
+        if let Some(トーンマップ) = &self.トーンマップ {
+            トーンマップ.破棄する(&self.device);
+        }
+        if let Some(hdr) = &self.hdrターゲット {
+            hdr.破棄する(&self.device);
+        }
         self.フレーム同期.破棄する(&self.device);
         self.提示同期.破棄する(&self.device);
         // 安全性: command_bufferはcommand_poolの破棄で暗黙に解放されるため、

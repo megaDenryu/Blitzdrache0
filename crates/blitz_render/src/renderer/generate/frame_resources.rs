@@ -23,4 +23,6 @@ pub(super) struct フレーム資源 {
     pub(super) 粒子: Option<vulkan::particles::粒子リソース一式>,
     pub(super) gpu計測: Option<vulkan::gpu_timing::パス別GPU計測>,
     pub(super) ui一式: vulkan::ui::UIリソース一式,
+    pub(super) hdrターゲット: Option<vulkan::hdr_target::HDRターゲット>,
+    pub(super) トーンマップ: Option<vulkan::tonemap::トーンマップ一式>,
 }

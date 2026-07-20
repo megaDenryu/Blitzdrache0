@@ -1,21 +1,24 @@
 //! スワップチェーン生成後に組み立てる残り資源の組み立て手順
-//! (深度バッファ・転送環境・ジオメトリ・テクスチャ・ユニフォーム・ディスクリプタ・
-//! コマンド・同期・パイプライン・粒子/GPU計測/開発用UI)。束の型は`frame_resources`。
+//! (基礎資源: `base_resources`、コマンド/同期/パイプライン: `command_sync_resources`、
+//! 粒子/GPU計測/UI: `optional_resources`、ポストプロセス: `post_resources`)。束の型は`frame_resources`。
 
+mod base_resources;
+mod bundle;
 mod command_sync_resources;
 mod mesh_resources;
 mod optional_resources;
+mod post_resources;
 
 use ash::vk;
 
 use super::frame_resources::フレーム資源;
 use crate::error::レンダラーエラー;
 use crate::material::マテリアル素材;
-use crate::particle_shader_set::粒子シェーダー一式;
-use crate::shader_set::シェーダー一式;
+use crate::shader_bundle::シェーダー束;
 use crate::vertex::頂点;
 use crate::vulkan;
 use crate::vulkan::depth::深度形式;
+use crate::vulkan::hdr_target::HDR形式;
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn 組み立てる(
@@ -25,68 +28,58 @@ pub(super) fn 組み立てる(
     queue: vk::Queue,
     queue_family_index: u32,
     swapchain: &vulkan::swapchain::スワップチェーン,
-    シェーダー: &シェーダー一式,
+    シェーダー: &シェーダー束,
     頂点一覧: &[頂点],
     インデックス一覧: &[u32],
     マテリアル: &マテリアル素材,
-    粒子シェーダー: Option<&粒子シェーダー一式>,
-    uiシェーダー: &シェーダー一式,
-    シャドウシェーダー: &シェーダー一式,
+    ポスト処理有効: bool,
     タイムスタンプ対応か: bool,
     タイムスタンプ周期ns: f32,
 ) -> Result<フレーム資源, レンダラーエラー> {
+    // シーン・粒子の描画先形式: ポストプロセス有効ならHDR中間画像、無効ならスワップチェーン(判断38・39)。
+    let シーンカラー形式 = if ポスト処理有効 { HDR形式 } else { swapchain.画像形式 };
+
     // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
     let メモリプロパティ = unsafe { instance.get_physical_device_memory_properties(physical_device) };
-    let 深度バッファ = vulkan::depth::深度バッファ::生成する(device, &メモリプロパティ, swapchain.寸法)?;
-    let シャドウマップ = vulkan::shadow_map::シャドウマップ::生成する(device, &メモリプロパティ)?;
-
-    let 転送環境 = vulkan::transfer::転送実行環境::生成する(device, queue, queue_family_index)?;
-    let メッシュ資源 =
-        mesh_resources::組み立てる(instance, physical_device, device, &メモリプロパティ, &転送環境, 頂点一覧, インデックス一覧, マテリアル)?;
-    let ジオメトリ = メッシュ資源.ジオメトリ;
-    let テクスチャ = メッシュ資源.テクスチャ;
-    let ユニフォーム = vulkan::uniform::フレームユニフォーム一式::生成する(device, &メモリプロパティ)?;
-    let ディスクリプタ =
-        vulkan::descriptor::ディスクリプタ一式::生成する(device, &テクスチャ, &ユニフォーム, &シャドウマップ)?;
+    let 基礎 = base_resources::組み立てる(
+        instance,
+        physical_device,
+        device,
+        queue,
+        queue_family_index,
+        &メモリプロパティ,
+        swapchain.寸法,
+        頂点一覧,
+        インデックス一覧,
+        マテリアル,
+    )?;
 
     let コマンド同期 = command_sync_resources::組み立てる(
         device,
         queue_family_index,
         swapchain,
-        ディスクリプタ.layout,
-        シェーダー,
-        シャドウシェーダー,
+        シーンカラー形式,
+        基礎.ディスクリプタ.layout,
+        &シェーダー.シーン,
+        &シェーダー.シャドウ,
     )?;
 
     let 追加資源 = optional_resources::組み立てる(
         device,
         &メモリプロパティ,
-        &転送環境,
+        &基礎.転送環境,
         swapchain,
+        シーンカラー形式,
         深度形式,
-        &ユニフォーム,
-        粒子シェーダー,
-        uiシェーダー,
+        &基礎.ユニフォーム,
+        シェーダー.粒子.as_ref(),
+        &シェーダー.ui,
         タイムスタンプ対応か,
         タイムスタンプ周期ns,
     )?;
 
-    Ok(フレーム資源 {
-        深度バッファ,
-        シャドウマップ,
-        シャドウパイプライン: コマンド同期.シャドウパイプライン,
-        転送環境,
-        ジオメトリ,
-        テクスチャ,
-        ユニフォーム,
-        ディスクリプタ,
-        command_pool: コマンド同期.command_pool,
-        command_buffer一覧: コマンド同期.command_buffer一覧,
-        フレーム同期: コマンド同期.フレーム同期,
-        提示同期: コマンド同期.提示同期,
-        pipeline: コマンド同期.pipeline,
-        粒子: 追加資源.粒子,
-        gpu計測: 追加資源.gpu計測,
-        ui一式: 追加資源.ui一式,
-    })
+    let ポスト =
+        post_resources::組み立てる(device, &メモリプロパティ, swapchain, &シェーダー.トーンマップ, ポスト処理有効)?;
+
+    Ok(bundle::束ねる(基礎, コマンド同期, 追加資源, ポスト))
 }

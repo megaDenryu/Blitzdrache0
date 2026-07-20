@@ -16,6 +16,8 @@ pub struct フレーム描画入力 {
     /// falseならunlit(albedo*TINTのみ)、trueならCook-Torrance GGX + Lambertの
     /// フルライティングを行う(判断26)。
     pub ライティング有効: bool,
+    /// トーンマッピング前にHDR輝度へ掛ける露出倍率(判断39)。ポストプロセス無効時は使われない。
+    pub 露出: f32,
     /// 開発用UI(egui)の今フレームぶんの描画データ。`None`ならUIパス自体を
     /// グラフへ積まない(判断34: 既定オフ時は既存スモークの厳密判定を無傷に保つ)。
     pub ui描画: Option<UI描画データ>,
