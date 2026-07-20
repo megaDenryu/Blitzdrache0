@@ -1,5 +1,6 @@
-//! ディスクリプタ一式: set=0 binding=0 combined image sampler(判断21)。
-//! レイアウト・プール・セットを1つにまとめて生成・破棄・更新する。
+//! ディスクリプタ一式: binding0-2=combined image sampler×3、binding3=uniform
+//! buffer(判断21・判断24)。セットはフレームインフライトごとに1つ(UBOがフレーム
+//! 固有のため)、テクスチャは全セットで共有する。
 
 mod layout;
 mod pool;
@@ -8,16 +9,22 @@ mod set;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::texture::テクスチャ;
+use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::texture::マテリアルテクスチャ一式;
+use crate::vulkan::uniform::フレームユニフォーム一式;
 
 pub(crate) struct ディスクリプタ一式 {
     pub(crate) layout: vk::DescriptorSetLayout,
     pool: vk::DescriptorPool,
-    pub(crate) set: vk::DescriptorSet,
+    set一覧: [vk::DescriptorSet; フレームインフライト数],
 }
 
 impl ディスクリプタ一式 {
-    pub(crate) fn 生成する(device: &ash::Device, テクスチャ: &テクスチャ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(
+        device: &ash::Device,
+        テクスチャ一式: &マテリアルテクスチャ一式,
+        ユニフォーム: &フレームユニフォーム一式,
+    ) -> Result<Self, レンダラーエラー> {
         let layout = layout::生成する(device)?;
         let pool = match pool::生成する(device) {
             Ok(pool) => pool,
@@ -27,8 +34,8 @@ impl ディスクリプタ一式 {
                 return Err(誤り);
             }
         };
-        let set = match set::割り当てる(device, pool, layout) {
-            Ok(set) => set,
+        let set一覧 = match set::割り当てる(device, pool, layout) {
+            Ok(set一覧) => set一覧,
             Err(誤り) => {
                 // 安全性: layout・poolはこのスコープの唯一の所有者で、以降使用しない。
                 unsafe {
@@ -38,14 +45,25 @@ impl ディスクリプタ一式 {
                 return Err(誤り);
             }
         };
-        set::書き込む(device, set, テクスチャ);
-        Ok(Self { layout, pool, set })
+
+        for (フレーム添字, &set) in set一覧.iter().enumerate() {
+            set::テクスチャバインディングを書き込む(device, set, テクスチャ一式);
+            set::ユニフォームバインディングを書き込む(device, set, ユニフォーム.buffer(フレーム添字));
+        }
+
+        Ok(Self { layout, pool, set一覧 })
     }
 
-    /// ホットリロード時、新しいテクスチャを指すよう既存セットの内容だけを更新する
-    /// (レイアウト・プール・セット自体は再確保しない)。
-    pub(crate) fn 更新する(&self, device: &ash::Device, テクスチャ: &テクスチャ) {
-        set::書き込む(device, self.set, テクスチャ);
+    pub(crate) fn set(&self, フレーム添字: usize) -> vk::DescriptorSet {
+        self.set一覧[フレーム添字]
+    }
+
+    /// ホットリロード時、新しいテクスチャを指すよう全セットのテクスチャ
+    /// バインディングだけを更新する(UBOバインディングは変わらないため触れない)。
+    pub(crate) fn テクスチャを更新する(&self, device: &ash::Device, テクスチャ一式: &マテリアルテクスチャ一式) {
+        for &set in &self.set一覧 {
+            set::テクスチャバインディングを書き込む(device, set, テクスチャ一式);
+        }
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

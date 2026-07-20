@@ -5,18 +5,17 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::vulkan::memory;
 
-use super::テクスチャ形式;
-
 pub(super) fn 生成する(
     device: &ash::Device,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     幅: u32,
     高さ: u32,
     mip数: u32,
+    形式: vk::Format,
 ) -> Result<(vk::Image, vk::DeviceMemory), レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
-        .format(テクスチャ形式)
+        .format(形式)
         .extent(vk::Extent3D { width: 幅, height: 高さ, depth: 1 })
         .mip_levels(mip数)
         .array_layers(1)

@@ -1,5 +1,7 @@
-//! パイプラインのバインドと動的ビューポート/シザー設定、プッシュ定数（ビュー射影行列）、
+//! パイプラインのバインドと動的ビューポート/シザー設定、
 //! 頂点/インデックスバッファのバインドとインデックス描画。
+//! ビュー射影行列等はフレームユニフォームバッファ(ディスクリプタセット)経由で
+//! 渡す(判断24。プッシュ定数は廃止)。
 
 use ash::vk;
 
@@ -27,8 +29,6 @@ pub(super) fn 描画コマンドを積む(
     let シザー一覧 = [シザー];
     let 頂点バッファ一覧 = [ジオメトリ入力.頂点バッファ];
     let オフセット一覧 = [0u64];
-    let 行列バイト列 = 行列をバイト列にする(ジオメトリ入力.ビュー射影行列);
-
     let ディスクリプタセット一覧 = [ジオメトリ入力.ディスクリプタセット];
 
     // 安全性: command_bufferは記録中で、pipeline・各バッファ・ディスクリプタセットは生成済み。
@@ -36,13 +36,6 @@ pub(super) fn 描画コマンドを積む(
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, pipeline);
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
         device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
-        device.cmd_push_constants(
-            command_buffer,
-            ジオメトリ入力.layout,
-            vk::ShaderStageFlags::VERTEX,
-            0,
-            &行列バイト列,
-        );
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,
@@ -63,16 +56,4 @@ fn u32を丸めずf32へ変換する(値: u32) -> f32 {
     let 値u16 =
         u16::try_from(値).unwrap_or_else(|_| panic!("ウィンドウ寸法がu16に収まらない: {値}"));
     f32::from(値u16)
-}
-
-/// 列優先4x4行列をプッシュ定数用の64バイト列へ変換する。
-fn 行列をバイト列にする(行列: &[[f32; 4]; 4]) -> [u8; 64] {
-    let mut バイト列 = [0u8; 64];
-    for (列添字, 列) in 行列.iter().enumerate() {
-        for (成分添字, 成分) in 列.iter().enumerate() {
-            let 開始 = (列添字 * 4 + 成分添字) * 4;
-            バイト列[開始..開始 + 4].copy_from_slice(&成分.to_le_bytes());
-        }
-    }
-    バイト列
 }

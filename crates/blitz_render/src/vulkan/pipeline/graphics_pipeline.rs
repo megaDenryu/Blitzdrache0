@@ -13,8 +13,6 @@ use crate::error::レンダラーエラー;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 const フラグメントエントリ名: &std::ffi::CStr = c"fragmentMain";
-/// ビュー射影行列(4x4 f32)ぶんのプッシュ定数バイト数。
-const プッシュ定数バイト数: u32 = 64;
 
 pub(super) fn 組み立てる(
     device: &ash::Device,
@@ -62,14 +60,10 @@ pub(super) fn 組み立てる(
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
-    let プッシュ定数範囲一覧 = [vk::PushConstantRange::default()
-        .stage_flags(vk::ShaderStageFlags::VERTEX)
-        .offset(0)
-        .size(プッシュ定数バイト数)];
+    // 注意: プッシュ定数は判断24で廃止。ビュー射影行列を含む全定数はbinding3の
+    // フレームユニフォームバッファ(ディスクリプタセット)経由で渡す。
     let ディスクリプタlayout一覧 = [ディスクリプタlayout];
-    let layout_create_info = vk::PipelineLayoutCreateInfo::default()
-        .push_constant_ranges(&プッシュ定数範囲一覧)
-        .set_layouts(&ディスクリプタlayout一覧);
+    let layout_create_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&ディスクリプタlayout一覧);
     // 安全性: deviceは生成済みで有効。layout_create_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };
 

@@ -44,11 +44,13 @@ pub(crate) fn 確保して書き込む(
     // 安全性: buffer・memoryはともに直前に生成済みで、offsetは0(専用確保のため衝突しない)。
     unsafe { device.bind_buffer_memory(buffer, memory, 0)? };
 
-    書き込む(device, memory, データ)?;
+    上書きする(device, memory, データ)?;
     Ok((buffer, memory))
 }
 
-fn 書き込む(device: &ash::Device, memory: vk::DeviceMemory, データ: &[u8]) -> Result<(), レンダラーエラー> {
+/// 確保済みのホスト可視メモリへ内容を書き込む(全置き換え)。フレームユニフォームの
+/// 毎フレーム更新(判断24)がこの関数を再利用する。
+pub(crate) fn 上書きする(device: &ash::Device, memory: vk::DeviceMemory, データ: &[u8]) -> Result<(), レンダラーエラー> {
     // 安全性: memoryはHOST_VISIBLE|HOST_COHERENTで確保済み。WHOLE_SIZEでの
     // マッピングは確保済み容量全体を対象にするため、データ長がバッファ容量以下である
     // 限り常に安全。

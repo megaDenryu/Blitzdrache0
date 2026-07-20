@@ -22,3 +22,4 @@ pub(crate) mod swapchain;
 pub(crate) mod sync;
 pub(crate) mod texture;
 pub(crate) mod transfer;
+pub(crate) mod uniform;

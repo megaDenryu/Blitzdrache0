@@ -29,9 +29,9 @@ impl アプリ {
         // フレーム内実行順序: 入力確定→世界更新→描画内容抽出→描画。
         let インテント = self.入力状態.インテントを確定する();
         self.カメラ.更新する(インテント);
-        let ビュー射影 = self.ビュー射影変換を計算する();
+        let 描画入力 = self.描画入力を作る();
 
-        if let Err(誤り) = self.実行して判定する(アクション, ビュー射影) {
+        if let Err(誤り) = self.実行して判定する(アクション, 描画入力) {
             self.起動時エラー = Some(誤り);
             event_loop.exit();
             return;
@@ -45,13 +45,18 @@ impl アプリ {
         }
     }
 
-    fn ビュー射影変換を計算する(&self) -> blitz_math::変換<blitz_math::ワールド, blitz_math::クリップ> {
+    fn 描画入力を作る(&self) -> blitz_render::フレーム描画入力 {
         let アスペクト比 = self
             .window
             .as_ref()
             .map(|window| super::aspect::計算する(window.inner_size()))
             .unwrap_or(1.0);
-        self.カメラ.ビュー射影変換を作る(アスペクト比)
+        blitz_render::フレーム描画入力 {
+            クリア色: self.クリア色,
+            ビュー射影: self.カメラ.ビュー射影変換を作る(アスペクト比),
+            カメラ位置: self.カメラ.視点ワールド位置(),
+            ライティング有効: self.ライティング有効,
+        }
     }
 
     fn ホットリロードを確認する(&mut self) {
@@ -81,8 +86,8 @@ impl アプリ {
 
 fn アセット再読込を反映する(レンダラー: &mut blitz_render::レンダラー, シーン: &blitz_engine::シーンデータ) {
     match super::scene_load::シーンをレンダラー入力に変換する(シーン) {
-        Ok((頂点一覧, インデックス一覧, テクスチャ素材)) => {
-            if let Err(誤り) = レンダラー.シーンを差し替える(&頂点一覧, &インデックス一覧, テクスチャ素材) {
+        Ok((頂点一覧, インデックス一覧, マテリアル)) => {
+            if let Err(誤り) = レンダラー.シーンを差し替える(&頂点一覧, &インデックス一覧, マテリアル) {
                 eprintln!("[hot-reload] シーン差し替えに失敗した: {誤り}");
             }
         }

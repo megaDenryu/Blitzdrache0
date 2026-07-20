@@ -11,6 +11,7 @@ mod readback_buffer;
 mod reconstruct;
 mod replace_scene;
 mod replace_shader;
+mod uniform_write;
 
 use ash::vk;
 
@@ -42,7 +43,8 @@ pub struct レンダラー {
     深度バッファ: vulkan::depth::深度バッファ,
     転送環境: vulkan::transfer::転送実行環境,
     ジオメトリ: vulkan::geometry::ジオメトリバッファ,
-    テクスチャ: vulkan::texture::テクスチャ,
+    テクスチャ: vulkan::texture::マテリアルテクスチャ一式,
+    ユニフォーム: vulkan::uniform::フレームユニフォーム一式,
     ディスクリプタ: vulkan::descriptor::ディスクリプタ一式,
     command_pool: vk::CommandPool,
     command_buffer一覧: [vk::CommandBuffer; フレームインフライト数],
@@ -54,6 +56,11 @@ pub struct レンダラー {
     検証カウンタ: 検証カウンタ,
     現在の寸法: ウィンドウ寸法,
     再構築が必要: bool,
+    // マテリアル係数(判断23)はメッシュ描画のたびにUBOへ書き込む(判断24)ため、
+    // シーン差し替えのたびにここも更新する。
+    ベースカラー係数: [f32; 4],
+    金属度係数: f32,
+    粗さ係数: f32,
 }
 
 impl レンダラー {

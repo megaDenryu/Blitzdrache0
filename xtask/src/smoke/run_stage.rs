@@ -3,11 +3,13 @@
 use std::path::Path;
 use std::process::Command;
 
+#[allow(clippy::too_many_arguments)]
 pub(super) fn 実行する(
     フレーム数: &str,
     シェーダーパス: &Path,
     アセットルート: Option<&Path>,
     シーン名: &str,
+    unlit: bool,
 ) -> bool {
     let mut 引数一覧 = vec![
         "run".to_string(),
@@ -24,6 +26,9 @@ pub(super) fn 実行する(
     if let Some(root) = アセットルート {
         引数一覧.push("--asset-root".to_string());
         引数一覧.push(root.display().to_string());
+    }
+    if unlit {
+        引数一覧.push("--unlit".to_string());
     }
 
     println!("[xtask] cargo {} を実行", 引数一覧.join(" "));

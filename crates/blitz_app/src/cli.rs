@@ -26,14 +26,18 @@ pub(crate) struct 起動設定 {
     pub(crate) シーン名: String,
     /// カタログの各アセットパスの基準ディレクトリ。既定は`assets`。
     pub(crate) アセットルート: PathBuf,
+    /// `--unlit`指定でfalse。既定はtrue(PBRライティング有効、判断26)。
+    pub(crate) ライティング有効: bool,
 }
 
-/// `--frames N` `--shader-source <path>` `--scene <id>` `--asset-root <dir>` を解析する。
+/// `--frames N` `--shader-source <path>` `--scene <id>` `--asset-root <dir>`
+/// `--unlit` を解析する。
 pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設定, 起動エラー> {
     let mut モード = 起動モード::無期限実行;
     let mut シェーダー監視パス = PathBuf::from(既定シェーダー監視パス);
     let mut シーン名 = 既定シーン名.to_string();
     let mut アセットルート = PathBuf::from(既定アセットルート);
+    let mut ライティング有効 = true;
 
     let mut 引数 = 引数一覧.iter();
     while let Some(引数値) = 引数.next() {
@@ -67,9 +71,12 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
                 })?;
                 アセットルート = PathBuf::from(値);
             }
+            "--unlit" => {
+                ライティング有効 = false;
+            }
             _ => {}
         }
     }
 
-    Ok(起動設定 { モード, シェーダー監視パス, シーン名, アセットルート })
+    Ok(起動設定 { モード, シェーダー監視パス, シーン名, アセットルート, ライティング有効 })
 }

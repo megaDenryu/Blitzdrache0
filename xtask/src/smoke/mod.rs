@@ -30,7 +30,7 @@ pub fn 実行する() -> ExitCode {
     };
 
     println!("[xtask] quadステージ実行");
-    if !run_stage::実行する(四角形フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad") {
+    if !run_stage::実行する(四角形フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true) {
         eprintln!("[xtask] smoke失敗: quadステージ");
         return ExitCode::FAILURE;
     }
@@ -38,7 +38,7 @@ pub fn 実行する() -> ExitCode {
 
     if Path::new(ヘルメット取得先).is_file() {
         println!("[xtask] helmetステージ実行");
-        if !run_stage::実行する(ヘルメットフレーム数, &シェーダーコピー先, None, "helmet") {
+        if !run_stage::実行する(ヘルメットフレーム数, &シェーダーコピー先, None, "helmet", false) {
             eprintln!("[xtask] smoke失敗: helmetステージ");
             return ExitCode::FAILURE;
         }

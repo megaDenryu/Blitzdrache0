@@ -4,8 +4,9 @@
 mod buffer;
 mod document;
 mod file;
+mod material;
 mod mesh;
-mod texture;
+mod texture_decode;
 
 use crate::asset::catalog::カタログ;
 use crate::asset::error::アセットエラー;
@@ -31,16 +32,14 @@ pub fn シーンを読み込む(カタログ: &カタログ, id: &アセットID
         .ok_or(アセットエラー::プリミティブなし)?;
 
     let メッシュ実体 = mesh::メッシュデータを取り出す(&開いた文書, &プリミティブ)?;
-    let (ベースカラー, テクスチャ参照パス) = texture::ベースカラーを取り出す(&開いた文書, &プリミティブ)?;
+    let (マテリアル, マテリアル参照ファイル一覧) = material::マテリアルを取り出す(&開いた文書, &プリミティブ)?;
 
     let mut 参照ファイル一覧 = 開いた文書.参照ファイル一覧;
-    if let Some(パス) = テクスチャ参照パス {
-        参照ファイル一覧.push(パス);
-    }
+    参照ファイル一覧.extend(マテリアル参照ファイル一覧);
 
     Ok(シーンデータ {
         メッシュ: メッシュ実体,
-        ベースカラー,
+        マテリアル,
         参照ファイル一覧,
     })
 }

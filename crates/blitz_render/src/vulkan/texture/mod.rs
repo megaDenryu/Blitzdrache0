@@ -1,8 +1,9 @@
-//! ベースカラーテクスチャ: R8G8B8A8_SRGB・OPTIMALタイリング・ステージング転送+
-//! vkCmdBlitImage連鎖のミップマップ生成(判断20)。
+//! テクスチャ: OPTIMALタイリング・ステージング転送+vkCmdBlitImage連鎖の
+//! ミップマップ生成(判断20)。色(SRGB)/線形データ(UNORM)は`用途`から選ぶ(判断23)。
 
 mod format_support;
 mod image;
+mod material_set;
 mod mip_chain;
 mod mip_count;
 mod upload;
@@ -14,7 +15,7 @@ use crate::error::レンダラーエラー;
 use crate::texture_material::テクスチャ素材;
 use crate::vulkan::transfer::転送実行環境;
 
-pub(crate) const テクスチャ形式: vk::Format = vk::Format::R8G8B8A8_SRGB;
+pub(crate) use material_set::マテリアルテクスチャ一式;
 
 pub(crate) struct テクスチャ {
     image: vk::Image,
@@ -32,10 +33,11 @@ impl テクスチャ {
         転送環境: &転送実行環境,
         素材: &テクスチャ素材,
     ) -> Result<Self, レンダラーエラー> {
-        format_support::blitフィルタ対応を確認する(instance, physical_device)?;
+        let 形式 = format_support::vulkan形式を選ぶ(素材.用途());
+        format_support::blitフィルタ対応を確認する(instance, physical_device, 形式)?;
 
         let mip数 = mip_count::計算する(素材.幅(), 素材.高さ());
-        let (image, memory) = image::生成する(device, メモリプロパティ, 素材.幅(), 素材.高さ(), mip数)?;
+        let (image, memory) = image::生成する(device, メモリプロパティ, 素材.幅(), 素材.高さ(), mip数, 形式)?;
 
         if let Err(誤り) = upload::記録して転送する(
             device,
@@ -51,7 +53,7 @@ impl テクスチャ {
             return Err(誤り);
         }
 
-        let image_view = match view::画像ビューを作る(device, image, mip数) {
+        let image_view = match view::画像ビューを作る(device, image, mip数, 形式) {
             Ok(view) => view,
             Err(誤り) => {
                 画像を破棄する(device, image, memory);

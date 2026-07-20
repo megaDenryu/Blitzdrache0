@@ -22,6 +22,7 @@ impl レンダラー {
         // 個別のfree_command_buffersは不要。
         unsafe { self.device.destroy_command_pool(self.command_pool, None) };
         self.ディスクリプタ.破棄する(&self.device);
+        self.ユニフォーム.破棄する(&self.device);
         self.テクスチャ.破棄する(&self.device);
         self.ジオメトリ.破棄する(&self.device);
         self.転送環境.破棄する(&self.device);
