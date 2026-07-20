@@ -1,9 +1,13 @@
 //! ホットリロード: シェーダーソースと、現在シーンの参照ファイル一覧を
 //! std のみのmtimeポーリングで監視する。新規依存クレートは追加しない。
+//! シェーダーはimportでモジュール分割されているため、監視はエントリファイル
+//! 単体でなくエントリが属するディレクトリ内の全.slangファイルを対象にする
+//! (dir_mtime参照)。
 //! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断7」「判断22」。
 
 mod asset_watch;
 mod compile;
+mod dir_mtime;
 mod mtime;
 mod shader_watch;
 mod slangc;

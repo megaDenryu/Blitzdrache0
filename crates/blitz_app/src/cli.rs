@@ -20,7 +20,10 @@ pub(crate) enum 起動モード {
 /// CLI引数から得た起動設定一式。
 pub(crate) struct 起動設定 {
     pub(crate) モード: 起動モード,
-    /// ホットリロードの監視対象。既定は`shaders/scene.slang`(存在しなければ監視無効)。
+    /// ホットリロードの監視対象となるエントリファイル。既定は`shaders/scene.slang`
+    /// (存在しなければ監視無効)。`import`で参照される他の.slangファイル
+    /// (`pbr.slang`等)はこのエントリファイルと同じディレクトリから解決される
+    /// ため、個別指定はしない。ディレクトリ全体をmtime走査で監視する。
     pub(crate) シェーダー監視パス: PathBuf,
     /// 表示するシーンのアセットID。既定は`quad`(常に存在し決定的)。
     pub(crate) シーン名: String,
@@ -31,7 +34,9 @@ pub(crate) struct 起動設定 {
 }
 
 /// `--frames N` `--shader-source <path>` `--scene <id>` `--asset-root <dir>`
-/// `--unlit` を解析する。
+/// `--unlit` を解析する。`--shader-source`は監視・再コンパイル対象のエントリ
+/// ファイルを指す。`import`先の他ファイルは常にエントリと同じディレクトリから
+/// 解決するため、このオプションでの指定は不要。
 pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設定, 起動エラー> {
     let mut モード = 起動モード::無期限実行;
     let mut シェーダー監視パス = PathBuf::from(既定シェーダー監視パス);

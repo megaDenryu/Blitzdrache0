@@ -1,23 +1,46 @@
 //! ビルド時シェーダーコンパイルの入口。slangcの発見と2エントリのコンパイルを束ねる。
+//! シェーダーはimportでモジュール分割されているため、rerun-if-changedはshaders/
+//! ディレクトリ内の全.slangファイルへ拡張する(scene.slang単体を見るだけでは
+//! pbr.slang等の変更を取りこぼす)。
 
 mod slangc_locate;
 mod spirv_compile;
 
 use std::env;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
-const シェーダーソース相対パス: &str = "../../shaders/scene.slang";
+const シェーダーディレクトリ相対パス: &str = "../../shaders";
+const エントリファイル名: &str = "scene.slang";
 
 pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     let manifest_dir = env::var("CARGO_MANIFEST_DIR")
         .map_err(|誤り| format!("CARGO_MANIFEST_DIR環境変数が取得できない: {誤り}"))?;
-    let ソース絶対パス = PathBuf::from(&manifest_dir).join(シェーダーソース相対パス);
-    println!("cargo:rerun-if-changed={}", ソース絶対パス.display());
+    let シェーダーディレクトリ絶対パス = PathBuf::from(&manifest_dir).join(シェーダーディレクトリ相対パス);
+    再ビルド対象を登録する(&シェーダーディレクトリ絶対パス)?;
 
+    let ソース絶対パス = シェーダーディレクトリ絶対パス.join(エントリファイル名);
     let out_dir =
         env::var("OUT_DIR").map_err(|誤り| format!("OUT_DIR環境変数が取得できない: {誤り}"))?;
     let 出力先ディレクトリ = PathBuf::from(out_dir);
 
     let slangc = slangc_locate::発見する()?;
     spirv_compile::頂点とフラグメントをコンパイルする(&slangc, &ソース絶対パス, &出力先ディレクトリ)
+}
+
+/// shaders/ディレクトリ自体と、直下の全.slangファイルをrerun-if-changed対象にする。
+/// ディレクトリ自体も登録することで、ファイルの追加・削除にも追従する
+/// (Cargoはディレクトリのmtimeでもこのトリガーを検知できる)。
+fn 再ビルド対象を登録する(ディレクトリ: &Path) -> Result<(), String> {
+    println!("cargo:rerun-if-changed={}", ディレクトリ.display());
+    let 読み取り結果 = std::fs::read_dir(ディレクトリ)
+        .map_err(|誤り| format!("shaders/ディレクトリの読み取りに失敗した: {誤り}"))?;
+    for エントリ結果 in 読み取り結果 {
+        let エントリ =
+            エントリ結果.map_err(|誤り| format!("shaders/ディレクトリの読み取りに失敗した: {誤り}"))?;
+        let パス = エントリ.path();
+        if パス.extension().and_then(|拡張子| 拡張子.to_str()) == Some("slang") {
+            println!("cargo:rerun-if-changed={}", パス.display());
+        }
+    }
+    Ok(())
 }
