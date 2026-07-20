@@ -31,12 +31,15 @@ pub enum アセットエラー {
     #[error("プリミティブに頂点位置(POSITION)が無い")]
     頂点位置なし,
 
-    #[error("プリミティブに法線が無い")]
-    法線なし,
-
     #[error("未対応のバッファ形式(data URI等)")]
     未対応バッファ形式,
 
     #[error("未対応の画像形式(data URI等)")]
     未対応画像形式,
+
+    #[error("スキン付きプリミティブにJOINTS_0またはWEIGHTS_0が無い")]
+    スキン頂点属性なし,
+
+    #[error("CUBICSPLINE補間は未対応(判断42のスコープ外)")]
+    補間CUBICSPLINE未対応,
 }

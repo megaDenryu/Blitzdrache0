@@ -36,6 +36,12 @@ impl<入力空間, 出力空間> 変換<入力空間, 出力空間> {
     pub fn gpu境界用列優先配列(&self) -> [[f32; 4]; 4] {
         self.内部.to_cols_array_2d()
     }
+
+    /// 外部データ(アセット読込・GPU境界)由来の列優先4x4行列から変換を作る。
+    /// glTFの逆バインド行列等、既に行列として渡されるデータの取り込み口(判断42)。
+    pub fn 列優先配列から生成する(列優先: [[f32; 4]; 4]) -> Self {
+        変換::内部から生成する(Mat4::from_cols_array_2d(&列優先))
+    }
 }
 
 impl<入力空間: 空間, 出力空間: 空間> 変換<入力空間, 出力空間> {
@@ -55,6 +61,12 @@ impl<入力空間, 出力空間> Clone for 変換<入力空間, 出力空間> {
 }
 
 impl<入力空間, 出力空間> Copy for 変換<入力空間, 出力空間> {}
+
+impl<入力空間, 出力空間> PartialEq for 変換<入力空間, 出力空間> {
+    fn eq(&self, other: &Self) -> bool {
+        self.内部 == other.内部
+    }
+}
 
 impl<入力空間, 出力空間> fmt::Debug for 変換<入力空間, 出力空間> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

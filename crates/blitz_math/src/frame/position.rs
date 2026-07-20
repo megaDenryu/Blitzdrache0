@@ -59,6 +59,12 @@ impl<空間種> Clone for 位置<空間種> {
 
 impl<空間種> Copy for 位置<空間種> {}
 
+impl<空間種> PartialEq for 位置<空間種> {
+    fn eq(&self, other: &Self) -> bool {
+        self.内部 == other.内部
+    }
+}
+
 impl<空間種> fmt::Debug for 位置<空間種> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("位置").field("内部", &self.内部).finish()
