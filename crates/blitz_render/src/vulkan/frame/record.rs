@@ -1,11 +1,12 @@
-//! コマンド記録: レイアウト遷移 → dynamic renderingでのクリア → レイアウト遷移。
+//! コマンド記録: レイアウト遷移 → dynamic renderingでの描画 → (通常|読み戻し)の後処理。
 
 use ash::vk;
 
-use super::barrier;
+use super::{barrier, copy, draw_commands, readback_barrier, 描画方式};
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
 
+#[allow(clippy::too_many_arguments)]
 pub(super) fn コマンドを記録する(
     device: &ash::Device,
     command_buffer: vk::CommandBuffer,
@@ -13,6 +14,8 @@ pub(super) fn コマンドを記録する(
     画像ビュー: vk::ImageView,
     寸法: vk::Extent2D,
     クリア色: クリアカラー,
+    pipeline: vk::Pipeline,
+    描画方式: &描画方式,
 ) -> Result<(), レンダラーエラー> {
     let begin_info = vk::CommandBufferBeginInfo::default()
         .flags(vk::CommandBufferUsageFlags::ONE_TIME_SUBMIT);
@@ -23,6 +26,23 @@ pub(super) fn コマンドを記録する(
     let 部分範囲 = barrier::部分範囲を作る();
     barrier::描画前バリアを積む(device, command_buffer, 画像, 部分範囲);
 
+    レンダリングを記録する(device, command_buffer, 画像ビュー, 寸法, クリア色, pipeline);
+
+    後処理バリアとコピーを積む(device, command_buffer, 画像, 部分範囲, 寸法, 描画方式);
+
+    // 安全性: command_bufferは記録開始済みで、対応するend呼び出し。
+    unsafe { device.end_command_buffer(command_buffer)? };
+    Ok(())
+}
+
+fn レンダリングを記録する(
+    device: &ash::Device,
+    command_buffer: vk::CommandBuffer,
+    画像ビュー: vk::ImageView,
+    寸法: vk::Extent2D,
+    クリア色: クリアカラー,
+    pipeline: vk::Pipeline,
+) {
     let クリア値 = vk::ClearValue {
         color: vk::ClearColorValue {
             float32: クリア色.rgba配列(),
@@ -47,12 +67,25 @@ pub(super) fn コマンドを記録する(
     // 遷移済み。
     unsafe {
         device.cmd_begin_rendering(command_buffer, &rendering_info);
+        draw_commands::描画コマンドを積む(device, command_buffer, pipeline, 寸法);
         device.cmd_end_rendering(command_buffer);
     }
+}
 
-    barrier::提示前バリアを積む(device, command_buffer, 画像, 部分範囲);
-
-    // 安全性: command_bufferは記録開始済みで、対応するend呼び出し。
-    unsafe { device.end_command_buffer(command_buffer)? };
-    Ok(())
+fn 後処理バリアとコピーを積む(
+    device: &ash::Device,
+    command_buffer: vk::CommandBuffer,
+    画像: vk::Image,
+    部分範囲: vk::ImageSubresourceRange,
+    寸法: vk::Extent2D,
+    描画方式: &描画方式,
+) {
+    match 描画方式 {
+        描画方式::通常 => barrier::提示前バリアを積む(device, command_buffer, 画像, 部分範囲),
+        描画方式::読み戻し { バッファ } => {
+            readback_barrier::コピー前バリアを積む(device, command_buffer, 画像, 部分範囲);
+            copy::コピーを記録する(device, command_buffer, 画像, *バッファ, 寸法);
+            readback_barrier::コピー後バリアを積む(device, command_buffer, 画像, 部分範囲);
+        }
+    }
 }

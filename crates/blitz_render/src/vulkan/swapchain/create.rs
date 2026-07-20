@@ -25,6 +25,14 @@ pub(super) fn 生成する(
     let 形式 = select::形式を選ぶ(&形式候補一覧)?;
     let 寸法 = select::寸法を決める(&能力, 要求寸法);
     let 画像数 = select::画像数を決める(&能力);
+    // 読み戻し(判断9)のため、対応していればTRANSFER_SRCを追加する。
+    // 非対応環境では`一フレーム描画して読み戻す`のコピーコマンドが検証エラーになりうるが、
+    // 通常描画(`一フレーム描画する`)には影響しない。
+    let 読み戻し対応 = 能力.supported_usage_flags.contains(vk::ImageUsageFlags::TRANSFER_SRC);
+    let mut 画像用途 = vk::ImageUsageFlags::COLOR_ATTACHMENT;
+    if 読み戻し対応 {
+        画像用途 |= vk::ImageUsageFlags::TRANSFER_SRC;
+    }
 
     let create_info = vk::SwapchainCreateInfoKHR::default()
         .surface(surface)
@@ -33,7 +41,7 @@ pub(super) fn 生成する(
         .image_color_space(形式.color_space)
         .image_extent(寸法)
         .image_array_layers(1)
-        .image_usage(vk::ImageUsageFlags::COLOR_ATTACHMENT)
+        .image_usage(画像用途)
         .image_sharing_mode(vk::SharingMode::EXCLUSIVE)
         .pre_transform(能力.current_transform)
         .composite_alpha(vk::CompositeAlphaFlagsKHR::OPAQUE)
@@ -51,6 +59,8 @@ pub(super) fn 生成する(
     Ok(スワップチェーン {
         handle,
         寸法,
+        画像形式: 形式.format,
+        読み戻し対応,
         画像一覧,
         画像ビュー一覧,
     })

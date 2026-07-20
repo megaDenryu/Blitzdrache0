@@ -16,6 +16,9 @@ pub(crate) fn 生成する(
 
     let 拡張一覧 = [ash::khr::swapchain::NAME.as_ptr()];
 
+    // shader_draw_parameters: SV_VertexIDの再現に使うSPIR-V DrawParameters機能に必要
+    // （`physical_device::機能要件を満たすか`の選定基準と対にする）。
+    let mut vulkan11機能 = vk::PhysicalDeviceVulkan11Features::default().shader_draw_parameters(true);
     let mut vulkan13機能 = vk::PhysicalDeviceVulkan13Features::default()
         .dynamic_rendering(true)
         .synchronization2(true);
@@ -23,6 +26,7 @@ pub(crate) fn 生成する(
     let create_info = vk::DeviceCreateInfo::default()
         .queue_create_infos(&キュー生成情報)
         .enabled_extension_names(&拡張一覧)
+        .push_next(&mut vulkan11機能)
         .push_next(&mut vulkan13機能);
 
     // 安全性: instance・物理デバイスは選定済みで有効。create_infoは本関数内で

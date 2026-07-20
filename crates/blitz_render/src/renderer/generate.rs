@@ -6,12 +6,13 @@ use raw_window_handle::{RawDisplayHandle, RawWindowHandle};
 use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::extent::ウィンドウ寸法;
+use crate::shader_set::シェーダー一式;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
 
 impl レンダラー {
     /// Vulkanインスタンス・物理/論理デバイス・スワップチェーン・コマンドバッファ・
-    /// 同期プリミティブを構築する。
+    /// 同期プリミティブ・グラフィックスパイプラインを構築する。
     ///
     /// 前提: `表示ハンドル` と `ウィンドウハンドル` の指すウィンドウは、
     /// 戻り値のレンダラーより長生きすること（呼び出し元のフィールド宣言順で担保する）。
@@ -19,6 +20,7 @@ impl レンダラー {
         表示ハンドル: RawDisplayHandle,
         ウィンドウハンドル: RawWindowHandle,
         寸法: ウィンドウ寸法,
+        シェーダー: シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
         let デバッグ有効か = cfg!(debug_assertions);
         // 安全性: プロセス内で他にVulkanローダーを読み込んでいないことは
@@ -48,6 +50,7 @@ impl レンダラー {
         )?;
         let (command_pool, command_buffer) = vulkan::commands::生成する(&device, queue_family_index)?;
         let sync = vulkan::sync::同期プリミティブ::生成する(&device, swapchain.画像数())?;
+        let pipeline = vulkan::pipeline::パイプライン::生成する(&device, swapchain.画像形式, &シェーダー)?;
 
         Ok(Self {
             entry,
@@ -63,6 +66,8 @@ impl レンダラー {
             command_pool,
             command_buffer,
             sync,
+            pipeline,
+            読み戻しバッファ: None,
             検証カウンタ,
             現在の寸法: 寸法,
             再構築が必要: false,

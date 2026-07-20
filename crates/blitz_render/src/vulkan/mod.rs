@@ -9,6 +9,8 @@ pub(crate) mod device;
 pub(crate) mod frame;
 pub(crate) mod instance;
 pub(crate) mod physical_device;
+pub(crate) mod pipeline;
+pub(crate) mod readback;
 pub(crate) mod surface;
 pub(crate) mod swapchain;
 pub(crate) mod sync;

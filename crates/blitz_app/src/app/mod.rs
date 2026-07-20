@@ -3,12 +3,16 @@
 
 mod frame;
 mod handler;
+mod window_setup;
+
+use std::path::PathBuf;
 
 use blitz_render::{クリアカラー, レンダラー, 検証カウンタ};
 use winit::window::Window;
 
-use crate::cli::起動モード;
+use crate::cli::{起動モード, 起動設定};
 use crate::error::起動エラー;
+use crate::hot_reload::ホットリローダー;
 
 /// 前提: `レンダラー` フィールドは `window` より前に宣言する。Rustは構造体フィールドを
 /// 宣言順にDropするため、この順序がレンダラー破棄(surface等の破棄)を
@@ -17,17 +21,21 @@ pub(crate) struct アプリ {
     レンダラー: Option<レンダラー>,
     window: Option<Window>,
     起動モード: 起動モード,
+    シェーダー監視パス: PathBuf,
+    ホットリローダー: ホットリローダー,
     現在フレーム: u32,
     クリア色: クリアカラー,
     起動時エラー: Option<起動エラー>,
 }
 
 impl アプリ {
-    pub(crate) fn 生成する(起動モード: 起動モード, クリア色: クリアカラー) -> Self {
+    pub(crate) fn 生成する(起動設定: 起動設定, クリア色: クリアカラー) -> Self {
         Self {
             レンダラー: None,
             window: None,
-            起動モード,
+            起動モード: 起動設定.モード,
+            ホットリローダー: ホットリローダー::生成する(起動設定.シェーダー監視パス.clone()),
+            シェーダー監視パス: 起動設定.シェーダー監視パス,
             現在フレーム: 0,
             クリア色,
             起動時エラー: None,

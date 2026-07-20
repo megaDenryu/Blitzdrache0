@@ -16,6 +16,7 @@ pub(super) fn 送信して提示する(
     取得セマフォ: vk::Semaphore,
     提示セマフォ: vk::Semaphore,
     描画完了フェンス: vk::Fence,
+    読み戻し待機が必要: bool,
 ) -> Result<bool, レンダラーエラー> {
     let 待機セマフォ情報 = [vk::SemaphoreSubmitInfo::default()
         .semaphore(取得セマフォ)
@@ -33,6 +34,13 @@ pub(super) fn 送信して提示する(
     // 安全性: command_bufferは記録済み。描画完了フェンスはこのフレーム開始時に
     // リセット済みで、GPU完了検知に使う唯一の待機対象。
     unsafe { device.queue_submit2(queue, &[submit_info], 描画完了フェンス)? };
+
+    if 読み戻し待機が必要 {
+        // 安全性: 直前に送信した同じフェンスを待つ。読み戻しバッファへのコピー完了を
+        // ホストが読む前に保証するため、通常経路と異なりここで同期的に待機する
+        // （判断9: GPU同期を伴うためスモーク用途）。
+        unsafe { device.wait_for_fences(&[描画完了フェンス], true, u64::MAX)? };
+    }
 
     let スワップチェーン一覧 = [swapchain];
     let 画像添字一覧 = [画像添字];

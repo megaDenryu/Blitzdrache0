@@ -42,11 +42,19 @@ pub(crate) fn 選定する(
 }
 
 fn 機能要件を満たすか(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> bool {
+    let mut vulkan11機能 = vk::PhysicalDeviceVulkan11Features::default();
     let mut vulkan13機能 = vk::PhysicalDeviceVulkan13Features::default();
-    let mut 機能 = vk::PhysicalDeviceFeatures2::default().push_next(&mut vulkan13機能);
+    let mut 機能 = vk::PhysicalDeviceFeatures2::default()
+        .push_next(&mut vulkan11機能)
+        .push_next(&mut vulkan13機能);
     // 安全性: instance・物理デバイスは列挙済みで有効。機能はスタック上の値へのmut参照。
     unsafe { instance.get_physical_device_features2(物理デバイス, &mut 機能) };
-    vulkan13機能.dynamic_rendering == vk::TRUE && vulkan13機能.synchronization2 == vk::TRUE
+    // shader_draw_parameters: 頂点シェーダーのSV_VertexIDをHLSL意味論(draw開始からの
+    // 0始まり)でSlangが再現するため、gl_BaseVertexを使うSPIR-V DrawParameters機能が
+    // 必須になる(Vulkan 1.1のコア機能)。
+    vulkan11機能.shader_draw_parameters == vk::TRUE
+        && vulkan13機能.dynamic_rendering == vk::TRUE
+        && vulkan13機能.synchronization2 == vk::TRUE
 }
 
 fn 適合キューファミリを探す(

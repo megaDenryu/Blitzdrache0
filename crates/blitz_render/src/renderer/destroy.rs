@@ -1,7 +1,7 @@
 //! レンダラーの明示的な破棄処理。フィールドのDrop順序に頼らず、
 //! 生成の逆順で全Vulkanリソースを破棄する:
-//! device_wait_idle → 同期・コマンド・スワップチェーン・デバイス → サーフェス →
-//! メッセンジャー → インスタンス。
+//! device_wait_idle → 読み戻しバッファ・パイプライン・同期・コマンド・スワップチェーン・
+//! デバイス → サーフェス → メッセンジャー → インスタンス。
 
 use super::レンダラー;
 
@@ -12,6 +12,10 @@ impl レンダラー {
         // 使用中リソースの破棄によるvalidationエラーを避ける。
         let _ = unsafe { self.device.device_wait_idle() };
 
+        if let Some(バッファ) = &self.読み戻しバッファ {
+            バッファ.破棄する(&self.device);
+        }
+        self.pipeline.破棄する(&self.device);
         self.sync.破棄する(&self.device);
         // 安全性: command_bufferはcommand_poolの破棄で暗黙に解放されるため、
         // 個別のfree_command_buffersは不要。

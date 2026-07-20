@@ -161,15 +161,20 @@ unsafe が blitz_render の外に書かれることも機械的に禁止され�
 ## ビルドとツール
 
 ```
-cargo build             # 全クレート
+cargo build             # 全クレート（build.rs が shaders/ を slangc で SPIR-V へコンパイル）
 cargo run -p blitz_app  # 実行
 cargo xtask             # 開発ツールの一覧表示（ツールの唯一の入口）
 cargo xtask verify      # 検証の標準列 (check -> clippy -D warnings -> test)
+cargo xtask smoke       # DoD自動検証: 自己操作つき実行 + validation件数 + ピクセル読み戻し判定
 ```
 
 リポジトリ内ツールはすべて `xtask` クレートにコマンドとして登録されている
 （`参照: CLAUDE.md「ツールとドキュメントの配置」`）。
 開発時は Vulkan validation layer（VK_LAYER_KHRONOS_validation、同期検証含む）を常時有効にする。
+
+ビルドには Vulkan SDK（`VULKAN_SDK` 環境変数、slangc 同梱）が必要。シェーダーは
+`shaders/` に Slang で書き、実行中に保存するとホットリロード（mtimeポーリング →
+slangc 再コンパイル → パイプライン再生成）で即反映される。
 
 ## ドキュメント
 
@@ -188,6 +193,7 @@ cargo xtask verify      # 検証の標準列 (check -> clippy -D warnings -> tes
   仕組みと施策（rust-lld等）、コードホットリロードの扉
 - [シミュレーション層](_doc/設計/シミュレーション層.md) — 3層構造（表現はドメイン・数学は基盤）と
   介入モデル
-- シェーダー言語は Slang を採用予定（SPIR-V/DXIL/Metal 出力可。API より移植性に効くため先に固定）
+- シェーダー言語は Slang を採用済み（M1で導入。SPIR-V/DXIL/Metal 出力可。API より移植性に効くため先に固定。
+  ビルド時は build.rs、実行中はホットリロードが slangc を呼ぶ）
 - 当面 Windows + Vulkan のみ。Vulkan 自体がポータブルなため Linux/Android/MoltenVK 展開は後から可能。
   RHI（マルチAPI抽象層）はコンソール対応が現実になった時点で切り出す

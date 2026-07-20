@@ -5,7 +5,11 @@
 
 mod destroy;
 mod draw;
+mod draw_dispatch;
 mod generate;
+mod readback_buffer;
+mod reconstruct;
+mod replace_shader;
 
 use ash::vk;
 
@@ -36,6 +40,8 @@ pub struct レンダラー {
     command_pool: vk::CommandPool,
     command_buffer: vk::CommandBuffer,
     sync: vulkan::sync::同期プリミティブ,
+    pipeline: vulkan::pipeline::パイプライン,
+    読み戻しバッファ: Option<vulkan::readback::読み戻しバッファ>,
     検証カウンタ: 検証カウンタ,
     現在の寸法: ウィンドウ寸法,
     再構築が必要: bool,

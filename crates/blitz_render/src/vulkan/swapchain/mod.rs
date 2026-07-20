@@ -11,6 +11,8 @@ use crate::extent::ウィンドウ寸法;
 pub(crate) struct スワップチェーン {
     pub(crate) handle: vk::SwapchainKHR,
     pub(crate) 寸法: vk::Extent2D,
+    pub(crate) 画像形式: vk::Format,
+    pub(crate) 読み戻し対応: bool,
     pub(crate) 画像一覧: Vec<vk::Image>,
     pub(crate) 画像ビュー一覧: Vec<vk::ImageView>,
 }
