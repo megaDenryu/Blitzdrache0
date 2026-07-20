@@ -35,3 +35,10 @@ pub(super) fn asset_root引数を処理する(引数: &mut Iter<String>) -> Resu
     })?;
     Ok(PathBuf::from(値))
 }
+
+pub(super) fn dump_frame引数を処理する(引数: &mut Iter<String>) -> Result<PathBuf, 起動エラー> {
+    let 値 = 引数.next().ok_or_else(|| {
+        起動エラー::フレームダンプ引数不正("--dump-frameに値が指定されていない".to_string())
+    })?;
+    Ok(PathBuf::from(値))
+}

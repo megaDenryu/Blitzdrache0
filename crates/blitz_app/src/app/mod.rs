@@ -4,7 +4,9 @@
 mod aspect;
 mod draw_dispatch;
 mod frame;
+mod frame_dump;
 mod handler;
+mod queries;
 mod hot_reload_apply;
 mod scene_camera;
 mod scene_load;
@@ -13,7 +15,7 @@ mod window_setup;
 use std::path::PathBuf;
 
 use blitz_engine::カメラ;
-use blitz_render::{クリアカラー, レンダラー, 検証カウンタ};
+use blitz_render::{クリアカラー, レンダラー};
 use winit::window::Window;
 
 use scene_camera::シーン初期カメラを作る;
@@ -45,6 +47,7 @@ pub(crate) struct アプリ {
     /// resumed時にウィンドウ生成後に構築する(判断34)。それまでは`None`。
     開発ui: Option<開発UI>,
     開発ui初期有効: bool,
+    フレームダンプ先: Option<PathBuf>,
     起動時エラー: Option<起動エラー>,
 }
 
@@ -67,33 +70,9 @@ impl アプリ {
             gpu時間報告: 起動設定.gpu時間報告,
             開発ui: None,
             開発ui初期有効: 起動設定.開発ui初期有効,
+            フレームダンプ先: 起動設定.フレームダンプ先,
             起動時エラー: None,
         }
     }
 
-    /// resumed/window_event内で発生した起動時エラーを取り出す。
-    pub(crate) fn 起動時エラーを取り出す(&mut self) -> Option<起動エラー> {
-        self.起動時エラー.take()
-    }
-
-    /// 破棄後に読むための検証カウンタ。レンダラー未生成なら`None`
-    /// (一度も描画していないためvalidationメッセージも発生し得ない)。
-    pub(crate) fn 検証カウンタを取得する(&self) -> Option<検証カウンタ> {
-        self.レンダラー.as_ref().map(レンダラー::検証カウンタを取得する)
-    }
-
-    /// `--report-gpu-times`が指定されたか。
-    pub(crate) fn gpu時間報告が必要か(&self) -> bool {
-        self.gpu時間報告
-    }
-
-    /// パス別の移動平均GPU時間(ミリ秒)。レンダラー破棄前に呼ぶこと(判断30)。
-    pub(crate) fn パス別gpu時間を取得する(&self) -> Vec<(&'static str, f64)> {
-        self.レンダラー.as_ref().map(レンダラー::パス別gpu時間を取得する).unwrap_or_default()
-    }
-
-    /// イベントループ終了後に呼び、破棄順序を明示する。
-    pub(crate) fn レンダラーを破棄する(&mut self) {
-        self.レンダラー = None;
-    }
 }

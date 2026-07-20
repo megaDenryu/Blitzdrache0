@@ -44,7 +44,12 @@ impl アプリ {
             }
         }
 
-        if let Err(誤り) = self.実行して判定する(アクション, 描画入力) {
+        let 実行結果 = if self.ダンプ対象フレームか() {
+            self.読み戻してダンプする(描画入力)
+        } else {
+            self.実行して判定する(アクション, 描画入力)
+        };
+        if let Err(誤り) = 実行結果 {
             self.起動時エラー = Some(誤り);
             event_loop.exit();
             return;

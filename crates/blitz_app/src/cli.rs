@@ -28,6 +28,7 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
     let mut 粒子有効 = false;
     let mut gpu時間報告 = false;
     let mut 開発ui初期有効 = false;
+    let mut フレームダンプ先 = None;
 
     let mut 引数 = 引数一覧.iter();
     while let Some(引数値) = 引数.next() {
@@ -56,6 +57,9 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
             "--dev-ui" => {
                 開発ui初期有効 = true;
             }
+            "--dump-frame" => {
+                フレームダンプ先 = Some(value_args::dump_frame引数を処理する(&mut 引数)?);
+            }
             _ => {}
         }
     }
@@ -69,5 +73,6 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
         粒子有効,
         gpu時間報告,
         開発ui初期有効,
+        フレームダンプ先,
     })
 }

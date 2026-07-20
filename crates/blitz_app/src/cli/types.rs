@@ -31,4 +31,8 @@ pub(crate) struct 起動設定 {
     pub(crate) gpu時間報告: bool,
     /// `--dev-ui`指定でtrue。既定はfalse(開発用UIの起動時有効化、判断34。実行中はF3でも切替可能)。
     pub(crate) 開発ui初期有効: bool,
+    /// `--dump-frame <ベース名>`指定で、最終フレーム(--frames必須)の読み戻し画像を
+    /// `<ベース名>.raw`(RGBA8連結)と`<ベース名>.size`(幅 高さ)へ書き出す。
+    /// 親エージェントの検収(絵の目視監査)用。既定はNone。
+    pub(crate) フレームダンプ先: Option<PathBuf>,
 }
