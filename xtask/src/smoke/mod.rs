@@ -81,18 +81,19 @@ pub fn 実行する() -> ExitCode {
         }
         println!("[xtask] foxステージ成功");
 
-        // clothステージ(判断55): 布込みのfoxで同じ差分判定を通す(布シミュが絵を壊さず動くことの実証)。
-        println!("[xtask] clothステージ実行");
-        if !run_stage::実行する(フォックスフレーム数, &シェーダーコピー先, None, "fox", false, false, false, false, true) {
-            eprintln!("[xtask] smoke失敗: clothステージ");
-            return ExitCode::FAILURE;
-        }
-        println!("[xtask] clothステージ成功");
     } else {
         println!(
             "[xtask] Foxアセット未取得のためfox/clothステージをスキップした(cargo xtask fetch-assetsで取得可)"
         );
     }
+
+    // clothステージ(判断55・56): quad+吊るし布でフレーム間差分判定(布シミュが動くことの実証。Fox不要)。
+    println!("[xtask] clothステージ実行");
+    if !run_stage::実行する(フォックスフレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, false, false, false, true) {
+        eprintln!("[xtask] smoke失敗: clothステージ");
+        return ExitCode::FAILURE;
+    }
+    println!("[xtask] clothステージ成功");
 
     println!("[xtask] smoke成功: validation・ピクセル判定・ホットリロードすべて成功で終了した");
     ExitCode::SUCCESS

@@ -1,5 +1,4 @@
-//! `ApplicationHandler` 実装。winit所有ループ（パターンA）の受け口。
-//! 参照: `_doc/設計/イベントループとフレームペーシング.md`
+//! `ApplicationHandler` 実装。winit所有ループ(パターンA)の受け口。参照: `_doc/設計/イベントループとフレームペーシング.md`
 
 use winit::application::ApplicationHandler;
 use winit::event::{ElementState, KeyEvent, WindowEvent};
@@ -23,13 +22,14 @@ impl ApplicationHandler for アプリ {
             self.粒子有効,
             self.開発ui初期有効,
             self.ポスト処理有効,
-            self.布有効,
+            self.布モード,
         ) {
-            Ok((window, レンダラー, 開発ui, アニメーション)) => {
+            Ok((window, レンダラー, 開発ui, アニメーション, 布プリセット)) => {
                 self.window = Some(window);
                 self.レンダラー = Some(レンダラー);
                 self.開発ui = Some(開発ui);
                 self.アニメーション = アニメーション;
+                self.布プリセット = 布プリセット;
             }
             Err(誤り) => {
                 self.起動時エラー = Some(誤り);

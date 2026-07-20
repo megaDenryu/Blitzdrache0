@@ -18,6 +18,9 @@ use crate::hot_reload::ホットリローダー;
 const 初期幅: u32 = 1280;
 const 初期高さ: u32 = 720;
 
+/// resumed時に構築してアプリのフィールドへ格納する一式。
+type 起動一式 = (Window, レンダラー, 開発UI, Option<アニメーション再生>, Option<super::cloth_setup::布プリセット>);
+
 /// ウィンドウを生成し、そのハンドルからレンダラー・開発用UIを生成する。
 ///
 /// 前提: 戻り値のタプルはこの順でアプリ構造体のフィールドへ格納され、
@@ -31,8 +34,8 @@ pub(super) fn ウィンドウとレンダラーを作る(
     粒子有効: bool,
     開発ui初期有効: bool,
     ポスト処理有効: bool,
-    布有効: bool,
-) -> Result<(Window, レンダラー, 開発UI, Option<アニメーション再生>), 起動エラー> {
+    布モード: crate::cli::布モード,
+) -> Result<起動一式, 起動エラー> {
     let window = event_loop.create_window(
         WindowAttributes::default()
             .with_title("Blitzdrache0")
@@ -49,7 +52,15 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let (シーン, 頂点一覧, インデックス一覧, マテリアル) =
         scene_load::シーンを読み込んで変換する(&カタログ, シーン名)?;
     let スキン素材 = scene_load::スキン素材へ変換する(&シーン)?;
-    let 布素材 = if 布有効 { Some(super::cloth_setup::布素材を構築する(&頂点一覧)?) } else { None };
+    let 布 = match 布モード {
+        crate::cli::布モード::なし => None,
+        crate::cli::布モード::吊るし布 => Some(super::cloth_setup::吊るし布を構築する()?),
+        crate::cli::布モード::マント => Some(super::cloth_setup::マントを構築する(&頂点一覧)?),
+    };
+    let (布素材, 布プリセット) = match 布 {
+        Some((素材, プリセット)) => (Some(素材), Some(プリセット)),
+        None => (None, None),
+    };
 
     let レンダラー = レンダラー::生成する(
         表示ハンドル,
@@ -68,5 +79,5 @@ pub(super) fn ウィンドウとレンダラーを作る(
 
     let アニメーション = アニメーション再生::生成する(シーン.スキン, シーン.アニメーション一覧);
     let 開発ui = 開発UI::生成する(&window, 開発ui初期有効);
-    Ok((window, レンダラー, 開発ui, アニメーション))
+    Ok((window, レンダラー, 開発ui, アニメーション, 布プリセット))
 }

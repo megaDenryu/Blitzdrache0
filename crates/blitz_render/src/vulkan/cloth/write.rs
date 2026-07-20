@@ -7,11 +7,13 @@ use ash::vk;
 use super::buffers::布バッファ;
 
 /// 前提: setは割り当て済みで、生成直後(GPU未使用)にのみ呼ばれる。
+/// スキン済み頂点が無い(吊るし布=アタッチ0件、判断56)場合はb8へ粒子バッファをダミー束縛する
+/// (アタッチパスが積まれないため読まれない。レイアウト上の束縛だけが必要)。
 pub(super) fn 書く(
     device: &ash::Device,
     set: vk::DescriptorSet,
     バッファ: &布バッファ,
-    スキン済み頂点buffer: vk::Buffer,
+    スキン済み頂点buffer: Option<vk::Buffer>,
     フレーム添字: usize,
 ) {
     let buffer一覧 = [
@@ -23,7 +25,7 @@ pub(super) fn 書く(
         バッファ.セルカウント.0,
         バッファ.セル格納.0,
         バッファ.布頂点.0,
-        スキン済み頂点buffer,
+        スキン済み頂点buffer.unwrap_or(バッファ.粒子.0),
         バッファ.アタッチ.0,
     ];
     let 情報一覧: Vec<[vk::DescriptorBufferInfo; 1]> = buffer一覧

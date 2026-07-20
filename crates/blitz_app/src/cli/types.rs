@@ -42,6 +42,14 @@ pub(crate) struct 起動設定 {
     pub(crate) 露出: f32,
     /// `--blend <0..1>`指定で変更。既定は0.0(アニメーションクリップ2本のブレンド係数、判断45)。
     pub(crate) ブレンド: f32,
-    /// `--cloth`指定でtrue。既定はfalse(XPBD布シミュレーション、判断52。スキン付きシーン限定)。
-    pub(crate) 布有効: bool,
+    /// 布シミュレーションの方式(判断52・56)。`--cloth`=吊るし布(全シーン可)、
+    /// `--cloth-cape`=マント(fox限定、キャラ追従)。既定はなし。
+    pub(crate) 布モード: 布モード,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum 布モード {
+    なし,
+    吊るし布,
+    マント,
 }

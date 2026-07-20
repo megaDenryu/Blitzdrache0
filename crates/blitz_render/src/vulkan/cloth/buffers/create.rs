@@ -42,10 +42,14 @@ pub(crate) fn 生成する(
     }
     let インデックス = 積む(&mut 確保済み, device, upload::ステージング経由でアップロードする(device, メモリプロパティ, 転送環境, &インデックスバイト列, vk::BufferUsageFlags::INDEX_BUFFER))?;
 
-    let mut アタッチバイト列 = Vec::with_capacity(素材.アタッチ対応一覧.len() * 8);
+    let mut アタッチバイト列 = Vec::with_capacity((素材.アタッチ対応一覧.len() * 8).max(8));
     for 対応 in &素材.アタッチ対応一覧 {
         アタッチバイト列.extend_from_slice(&対応[0].to_le_bytes());
         アタッチバイト列.extend_from_slice(&対応[1].to_le_bytes());
+    }
+    // アタッチ0件(吊るし布、判断56)でも0バイト確保はVulkanの契約違反のため、読まれない8バイトのダミーを置く。
+    if アタッチバイト列.is_empty() {
+        アタッチバイト列.extend_from_slice(&[0u8; 8]);
     }
     let アタッチ = 積む(&mut 確保済み, device, upload::ステージング経由でアップロードする(device, メモリプロパティ, 転送環境, &アタッチバイト列, ストレージ))?;
 

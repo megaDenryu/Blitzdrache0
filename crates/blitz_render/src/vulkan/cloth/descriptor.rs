@@ -28,7 +28,7 @@ impl 布ディスクリプタ {
 pub(super) fn 生成する(
     device: &ash::Device,
     バッファ: &布バッファ,
-    スキン済み頂点buffer: vk::Buffer,
+    スキン済み頂点buffer: Option<vk::Buffer>,
 ) -> Result<布ディスクリプタ, レンダラーエラー> {
     let mut binding一覧 = vec![
         vk::DescriptorSetLayoutBinding::default()
