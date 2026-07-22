@@ -10,6 +10,7 @@ use crate::particle_shader_set::粒子シェーダー一式;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan;
 use crate::vulkan::depth::深度形式;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct 追加資源 {
     pub(super) 粒子: Option<vulkan::particles::粒子リソース一式>,
@@ -19,7 +20,7 @@ pub(super) struct 追加資源 {
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn 組み立てる(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &vulkan::transfer::転送実行環境,
     swapchain: &vulkan::swapchain::スワップチェーン,

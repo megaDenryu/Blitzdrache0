@@ -3,10 +3,11 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) fn 積む(
     確保済み: &mut Vec<(vk::Buffer, vk::DeviceMemory)>,
-    device: &ash::Device,
+    device: &GPUデバイス,
     結果: Result<(vk::Buffer, vk::DeviceMemory), レンダラーエラー>,
 ) -> Result<(vk::Buffer, vk::DeviceMemory), レンダラーエラー> {
     match 結果 {
@@ -15,12 +16,10 @@ pub(super) fn 積む(
             Ok(組)
         }
         Err(誤り) => {
-            // 安全性: 確保済みバッファはこのスコープの唯一の所有者で、以降使用しない。
-            unsafe {
-                for &(buffer, memory) in 確保済み.iter() {
-                    device.destroy_buffer(buffer, None);
-                    device.free_memory(memory, None);
-                }
+            for &(buffer, memory) in 確保済み.iter() {
+                // 安全性: 生成途中のバッファはこのスコープの唯一の所有者で、以降使用しない。
+                unsafe { device.destroy_buffer(buffer, None) };
+                device.メモリを解放する(memory);
             }
             Err(誤り)
         }

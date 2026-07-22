@@ -3,6 +3,7 @@
 use super::cpu_timing::{CPU区間時間, CPU区間計測};
 use super::レンダラー;
 use crate::extent::ウィンドウ寸法;
+use crate::gpu_memory_stats::GPUメモリ統計;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
 
@@ -37,5 +38,10 @@ impl レンダラー {
             .as_ref()
             .map(vulkan::gpu_timing::パス別GPU計測::平均一覧を取得する)
             .unwrap_or_default()
+    }
+
+    /// 現在のVulkan専用メモリ確保数、最大同時数、デバイス上限、用途別確保量を返す。
+    pub fn gpuメモリ統計を取得する(&self) -> GPUメモリ統計 {
+        self.device.メモリ統計を取得する()
     }
 }

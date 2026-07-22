@@ -6,6 +6,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::shader_bundle::シェーダー束;
 use crate::vulkan;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct ポスト資源 {
     pub(super) hdrターゲット: Option<vulkan::hdr_target::HDRターゲット>,
@@ -15,7 +16,7 @@ pub(super) struct ポスト資源 {
 }
 
 pub(super) fn 組み立てる(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     swapchain: &vulkan::swapchain::スワップチェーン,
     シェーダー: &シェーダー束,

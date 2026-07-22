@@ -7,6 +7,7 @@ use crate::error::レンダラーエラー;
 use crate::material::マテリアル素材;
 use crate::vertex::頂点;
 use crate::vulkan;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct メッシュ資源 {
     pub(super) ジオメトリ: vulkan::geometry::ジオメトリバッファ,
@@ -17,7 +18,7 @@ pub(super) struct メッシュ資源 {
 pub(super) fn 組み立てる(
     instance: &ash::Instance,
     physical_device: vk::PhysicalDevice,
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &vulkan::transfer::転送実行環境,
     頂点一覧: &[頂点],

@@ -6,13 +6,14 @@ use super::allocation::積む;
 use crate::cloth_material::布素材;
 use crate::error::レンダラーエラー;
 use crate::vulkan::geometry::upload;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 type バッファとメモリ = (vk::Buffer, vk::DeviceMemory);
 
 pub(super) fn 生成する(
     確保済み: &mut Vec<バッファとメモリ>,
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &転送実行環境,
     素材: &布素材,

@@ -4,11 +4,12 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 use crate::vulkan::{device_buffer, host_buffer};
 
 pub(crate) fn ステージング経由でアップロードする(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &転送実行環境,
     データ: &[u8],
@@ -22,11 +23,9 @@ pub(crate) fn ステージング経由でアップロードする(
     let (先バッファ, 先メモリ) = match 確保結果 {
         Ok(結果) => 結果,
         Err(誤り) => {
-            // 安全性: ステージングバッファ・メモリはこのスコープの唯一の所有者で、以降使用しない。
-            unsafe {
-                device.destroy_buffer(ステージングバッファ, None);
-                device.free_memory(ステージングメモリ, None);
-            }
+            // 安全性: ステージングバッファはこのスコープの唯一の所有者で、以降使用しない。
+            unsafe { device.destroy_buffer(ステージングバッファ, None) };
+            device.メモリを解放する(ステージングメモリ);
             return Err(誤り);
         }
     };
@@ -38,19 +37,14 @@ pub(crate) fn ステージング経由でアップロードする(
         unsafe { device.cmd_copy_buffer(command_buffer, ステージングバッファ, 先バッファ, &[領域]) };
     });
 
-    // 安全性: ステージングバッファ・メモリはこのスコープの唯一の所有者で、
-    // 転送完了(一括実行するがfence待ち済み)後は不要。
-    unsafe {
-        device.destroy_buffer(ステージングバッファ, None);
-        device.free_memory(ステージングメモリ, None);
-    }
+    // 安全性: 転送実行は完了済みで、ステージングバッファは以降使用しない。
+    unsafe { device.destroy_buffer(ステージングバッファ, None) };
+    device.メモリを解放する(ステージングメモリ);
 
     if let Err(誤り) = コピー結果 {
-        // 安全性: 先バッファ・先メモリはこのスコープの唯一の所有者で、以降使用しない。
-        unsafe {
-            device.destroy_buffer(先バッファ, None);
-            device.free_memory(先メモリ, None);
-        }
+        // 安全性: 転送先バッファはこのスコープの唯一の所有者で、以降使用しない。
+        unsafe { device.destroy_buffer(先バッファ, None) };
+        device.メモリを解放する(先メモリ);
         return Err(誤り);
     }
 

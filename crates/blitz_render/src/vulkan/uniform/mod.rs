@@ -12,6 +12,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::vulkan::host_buffer;
 use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) use content::フレームユニフォーム内容;
 
@@ -22,7 +23,7 @@ pub(crate) struct フレームユニフォーム一式 {
 
 impl フレームユニフォーム一式 {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     ) -> Result<Self, レンダラーエラー> {
         let mut buffer一覧 = [vk::Buffer::null(); フレームインフライト数];
@@ -36,13 +37,10 @@ impl フレームユニフォーム一式 {
                     memory一覧[添字] = memory;
                 }
                 Err(誤り) => {
-                    // 安全性: これまでに確保済みのbuffer・memoryはこのスコープの
-                    // 唯一の所有者で、以降使用しない。
                     for 破棄添字 in 0..添字 {
-                        unsafe {
-                            device.destroy_buffer(buffer一覧[破棄添字], None);
-                            device.free_memory(memory一覧[破棄添字], None);
-                        }
+                        // 安全性: 生成途中のバッファはこのスコープの唯一の所有者で、以降使用しない。
+                        unsafe { device.destroy_buffer(buffer一覧[破棄添字], None) };
+                        device.メモリを解放する(memory一覧[破棄添字]);
                     }
                     return Err(誤り);
                 }
@@ -66,16 +64,16 @@ impl フレームユニフォーム一式 {
         host_buffer::上書きする(device, self.memory一覧[フレーム添字], &バイト列)
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
         // device_wait_idle済みであることを呼び出し元が保証する。
         unsafe {
             for &buffer in &self.buffer一覧 {
                 device.destroy_buffer(buffer, None);
             }
-            for &memory in &self.memory一覧 {
-                device.free_memory(memory, None);
-            }
+        }
+        for &memory in &self.memory一覧 {
+            device.メモリを解放する(memory);
         }
     }
 }

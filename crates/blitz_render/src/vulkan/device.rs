@@ -3,13 +3,14 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) fn 生成する(
     instance: &ash::Instance,
     物理デバイス: vk::PhysicalDevice,
     キューファミリ添字: u32,
     大点描画対応: bool,
-) -> Result<(ash::Device, vk::Queue), レンダラーエラー> {
+) -> Result<(GPUデバイス, vk::Queue), レンダラーエラー> {
     let キュー優先度 = [1.0_f32];
     let キュー生成情報 = [vk::DeviceQueueCreateInfo::default()
         .queue_family_index(キューファミリ添字)
@@ -40,6 +41,10 @@ pub(crate) fn 生成する(
     // 安全性: deviceは直前に生成済みで、キューファミリ添字は選定時に
     // グラフィックス対応が確認済みのインデックス。
     let queue = unsafe { device.get_device_queue(キューファミリ添字, 0) };
+    // 安全性: 物理デバイスは選定済みで、instanceの生存中に問い合わせる。
+    let メモリ確保上限 = unsafe { instance.get_physical_device_properties(物理デバイス) }
+        .limits
+        .max_memory_allocation_count;
 
-    Ok((device, queue))
+    Ok((GPUデバイス::生成する(device, メモリ確保上限), queue))
 }

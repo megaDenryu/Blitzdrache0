@@ -13,6 +13,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::texture_material::テクスチャ素材;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 pub(crate) use material_set::マテリアルテクスチャ一式;
@@ -26,7 +27,7 @@ pub(crate) struct テクスチャ {
 
 impl テクスチャ {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        device: &GPUデバイス,
         instance: &ash::Instance,
         physical_device: vk::PhysicalDevice,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
@@ -70,22 +71,22 @@ impl テクスチャ {
         })
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
         // device_wait_idle済みであることを呼び出し元が保証する。
         unsafe {
             device.destroy_sampler(self.sampler, None);
             device.destroy_image_view(self.image_view, None);
             device.destroy_image(self.image, None);
-            device.free_memory(self.memory, None);
         }
+        device.メモリを解放する(self.memory);
     }
 }
 
-fn 画像を破棄する(device: &ash::Device, image: vk::Image, memory: vk::DeviceMemory) {
+fn 画像を破棄する(device: &GPUデバイス, image: vk::Image, memory: vk::DeviceMemory) {
     // 安全性: image・memoryはこのスコープの唯一の所有者で、以降使用しない。
     unsafe {
         device.destroy_image(image, None);
-        device.free_memory(memory, None);
     }
+    device.メモリを解放する(memory);
 }

@@ -8,6 +8,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vertex::頂点;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 pub(crate) struct ジオメトリバッファ {
@@ -20,7 +21,7 @@ pub(crate) struct ジオメトリバッファ {
 
 impl ジオメトリバッファ {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         転送環境: &転送実行環境,
         頂点一覧: &[頂点],
@@ -45,11 +46,9 @@ impl ジオメトリバッファ {
         ) {
             Ok(結果) => 結果,
             Err(誤り) => {
-                // 安全性: 頂点バッファ・頂点メモリはこのスコープの唯一の所有者で、以降使用しない。
-                unsafe {
-                    device.destroy_buffer(頂点バッファ, None);
-                    device.free_memory(頂点メモリ, None);
-                }
+                // 安全性: 頂点バッファはこのスコープの唯一の所有者で、以降使用しない。
+                unsafe { device.destroy_buffer(頂点バッファ, None) };
+                device.メモリを解放する(頂点メモリ);
                 return Err(誤り);
             }
         };
@@ -66,14 +65,13 @@ impl ジオメトリバッファ {
         })
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
-        // device_wait_idle済みであることを呼び出し元が保証する。
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
+        // 安全性: 各バッファはSelfが唯一の所有者で、GPU側の使用は完了済み。
         unsafe {
             device.destroy_buffer(self.頂点バッファ, None);
-            device.free_memory(self.頂点メモリ, None);
             device.destroy_buffer(self.インデックスバッファ, None);
-            device.free_memory(self.インデックスメモリ, None);
         }
+        device.メモリを解放する(self.頂点メモリ);
+        device.メモリを解放する(self.インデックスメモリ);
     }
 }

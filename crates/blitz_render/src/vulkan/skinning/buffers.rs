@@ -9,6 +9,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::vulkan::host_buffer;
 use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct スキニングバッファ {
     レスト頂点: (vk::Buffer, vk::DeviceMemory),
@@ -48,13 +49,11 @@ impl スキニングバッファ {
         host_buffer::上書きする(device, self.行列一覧[フレーム添字].1, &バイト列)
     }
 
-    pub(super) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
-        unsafe {
-            for &(buffer, memory) in [self.レスト頂点, self.属性, self.出力].iter().chain(self.行列一覧.iter()) {
-                device.destroy_buffer(buffer, None);
-                device.free_memory(memory, None);
-            }
+    pub(super) fn 破棄する(&self, device: &GPUデバイス) {
+        for &(buffer, memory) in [self.レスト頂点, self.属性, self.出力].iter().chain(self.行列一覧.iter()) {
+            // 安全性: 各バッファはSelfが唯一の所有者で、GPU側の使用は完了済み。
+            unsafe { device.destroy_buffer(buffer, None) };
+            device.メモリを解放する(memory);
         }
     }
 }

@@ -9,8 +9,6 @@ mod optional_resources;
 mod post_resources;
 mod simulation_resources;
 
-use ash::vk;
-
 use super::frame_resources::フレーム資源;
 use crate::cloth_material::布素材;
 use crate::error::レンダラーエラー;
@@ -21,12 +19,14 @@ use crate::skin_mesh::スキンメッシュ素材;
 use crate::vertex::頂点;
 use crate::vulkan;
 use crate::vulkan::hdr_target::HDR形式;
+use crate::vulkan::tracked_device::GPUデバイス;
+use ash::vk;
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn 組み立てる(
     instance: &ash::Instance,
     physical_device: vk::PhysicalDevice,
-    device: &ash::Device,
+    device: &GPUデバイス,
     queue: vk::Queue,
     queue_family_index: u32,
     swapchain: &vulkan::swapchain::スワップチェーン,

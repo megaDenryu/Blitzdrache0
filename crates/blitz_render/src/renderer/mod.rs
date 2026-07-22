@@ -47,7 +47,7 @@ pub struct レンダラー {
     surface_loader: ash::khr::surface::Instance,
     surface: vk::SurfaceKHR,
     physical_device: vk::PhysicalDevice,
-    device: ash::Device,
+    device: vulkan::tracked_device::GPUデバイス,
     queue: vk::Queue,
     swapchain_loader: ash::khr::swapchain::Device,
     swapchain: vulkan::swapchain::スワップチェーン,

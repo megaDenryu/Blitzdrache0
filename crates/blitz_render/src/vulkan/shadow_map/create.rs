@@ -8,9 +8,10 @@ use self::image::{メモリを確保して結びつける, 画像を作る, 画�
 use super::sampler::比較サンプラーを作る;
 use super::シャドウマップ;
 use crate::error::レンダラーエラー;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) fn 生成する(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
 ) -> Result<シャドウマップ, レンダラーエラー> {
     let 画像 = 画像を作る(device)?;
@@ -25,23 +26,21 @@ pub(super) fn 生成する(
     let 画像ビュー = match 画像ビューを作る(device, 画像) {
         Ok(view) => view,
         Err(誤り) => {
-            // 安全性: 画像・memoryはこのスコープの唯一の所有者で、以降使用しない。
-            unsafe {
-                device.destroy_image(画像, None);
-                device.free_memory(memory, None);
-            }
+            // 安全性: 画像はこのスコープの唯一の所有者で、以降使用しない。
+            unsafe { device.destroy_image(画像, None) };
+            device.メモリを解放する(memory);
             return Err(誤り);
         }
     };
     let sampler = match 比較サンプラーを作る(device) {
         Ok(sampler) => sampler,
         Err(誤り) => {
-            // 安全性: 画像・画像ビュー・memoryはこのスコープの唯一の所有者で、以降使用しない。
+            // 安全性: 画像と画像ビューはこのスコープの唯一の所有者で、以降使用しない。
             unsafe {
                 device.destroy_image_view(画像ビュー, None);
                 device.destroy_image(画像, None);
-                device.free_memory(memory, None);
             }
+            device.メモリを解放する(memory);
             return Err(誤り);
         }
     };

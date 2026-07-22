@@ -7,6 +7,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::hdr_target::HDRターゲット;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) const 段数上限: usize = 5;
 const 最小辺PX: u32 = 16;
@@ -22,7 +23,7 @@ pub(crate) struct ブルームピラミッド {
 
 impl ブルームピラミッド {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         フル解像度: vk::Extent2D,
     ) -> Result<Self, レンダラーエラー> {
@@ -59,7 +60,7 @@ impl ブルームピラミッド {
         self.拡大一覧.first().unwrap_or_else(|| &self.縮小一覧[0]).画像ビュー
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         for 画像 in self.縮小一覧.iter().chain(self.拡大一覧.iter()) {
             画像.破棄する(device);
         }

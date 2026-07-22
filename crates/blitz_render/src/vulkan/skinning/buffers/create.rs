@@ -13,13 +13,14 @@ use crate::skin_mesh::スキンメッシュ素材;
 use crate::vertex::頂点;
 use crate::vulkan::geometry::{bytes, upload};
 use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 use crate::vulkan::{device_buffer, host_buffer};
 
 const 行列バイト長: usize = 64;
 
 pub(crate) fn 生成する(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &転送実行環境,
     頂点一覧: &[頂点],

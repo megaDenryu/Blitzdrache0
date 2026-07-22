@@ -11,6 +11,7 @@ mod pipeline;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) struct スキニング一式 {
     バッファ: buffers::スキニングバッファ,
@@ -41,7 +42,7 @@ impl スキニング一式 {
     /// このフレームのスキン行列(列優先4x4)を書き込む。呼び出しはフェンス待ち後(判断24と同じ規律)。
     pub(crate) fn 行列を書き込む(
         &self,
-        device: &ash::Device,
+        device: &GPUデバイス,
         フレーム添字: usize,
         行列一覧: &[[f32; 16]],
     ) -> Result<(), レンダラーエラー> {
@@ -55,7 +56,7 @@ impl スキニング一式 {
         self.バッファ.行列を書き込む(device, フレーム添字, 行列一覧)
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         self.パイプライン.破棄する(device);
         self.ディスクリプタ.破棄する(device);
         self.バッファ.破棄する(device);

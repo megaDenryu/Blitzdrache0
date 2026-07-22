@@ -13,6 +13,7 @@ mod write;
 use crate::error::レンダラーエラー;
 use crate::frame_input::布フレーム入力;
 use crate::vulkan::pipeline::パイプライン;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) use create::生成する as 布一式を生成する;
 
@@ -29,7 +30,7 @@ impl 布一式 {
     /// 前提: 呼び出しはフェンス待ち後(判断24と同じ規律)。介入バイト列の長さも検証する。
     pub(crate) fn フレーム入力を書き込む(
         &self,
-        device: &ash::Device,
+        device: &GPUデバイス,
         フレーム添字: usize,
         入力: &布フレーム入力,
     ) -> Result<(), レンダラーエラー> {
@@ -48,7 +49,7 @@ impl 布一式 {
             .定数を書き込む(device, フレーム添字, &params::バイト列にする(&self.固定部, 入力))
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         self.描画パイプライン.破棄する(device);
         self.パイプライン群.破棄する(device);
         self.ディスクリプタ.破棄する(device);

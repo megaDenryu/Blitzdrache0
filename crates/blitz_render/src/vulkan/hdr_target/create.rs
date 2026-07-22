@@ -4,10 +4,12 @@ use ash::vk;
 
 use super::{HDRターゲット, HDR形式};
 use crate::error::レンダラーエラー;
+use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::memory;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) fn 生成する(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     寸法: vk::Extent2D,
 ) -> Result<HDRターゲット, レンダラーエラー> {
@@ -23,11 +25,9 @@ pub(super) fn 生成する(
     let 画像ビュー = match 画像ビューを作る(device, 画像) {
         Ok(view) => view,
         Err(誤り) => {
-            // 安全性: 画像・memoryはこのスコープの唯一の所有者で、以降使用しない。
-            unsafe {
-                device.destroy_image(画像, None);
-                device.free_memory(memory, None);
-            }
+            // 安全性: 画像はこのスコープの唯一の所有者で、以降使用しない。
+            unsafe { device.destroy_image(画像, None) };
+            device.メモリを解放する(memory);
             return Err(誤り);
         }
     };
@@ -57,16 +57,19 @@ fn 画像を作る(device: &ash::Device, 寸法: vk::Extent2D) -> Result<vk::Ima
 }
 
 fn メモリを確保して結びつける(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     画像: vk::Image,
 ) -> Result<vk::DeviceMemory, レンダラーエラー> {
     // 安全性: 画像は直前に生成済み。
     let 要件 = unsafe { device.get_image_memory_requirements(画像) };
     let メモリ型添字 = memory::デバイスローカルメモリ型を選ぶ(メモリプロパティ, 要件.memory_type_bits)?;
-    let memory = memory::専用メモリを確保する(device, 要件.size, メモリ型添字)?;
+    let memory = memory::専用メモリを確保する(device, 要件.size, メモリ型添字, GPUメモリ用途::描画画像)?;
     // 安全性: 画像・memoryはともに直前に生成済みで、offsetは0(専用確保のため衝突しない)。
-    unsafe { device.bind_image_memory(画像, memory, 0)? };
+    if let Err(誤り) = unsafe { device.bind_image_memory(画像, memory, 0) } {
+        device.メモリを解放する(memory);
+        return Err(誤り.into());
+    }
     Ok(memory)
 }
 

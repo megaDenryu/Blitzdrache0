@@ -5,6 +5,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::host_buffer;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct バッファスロット {
     pub(super) buffer: vk::Buffer,
@@ -13,19 +14,19 @@ pub(super) struct バッファスロット {
 }
 
 impl バッファスロット {
-    pub(super) fn 破棄する(&self, device: &ash::Device) {
+    pub(super) fn 破棄する(&self, device: &GPUデバイス) {
         // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
         // device_wait_idle済みであることを呼び出し元が保証する。
         unsafe {
             device.destroy_buffer(self.buffer, None);
-            device.free_memory(self.memory, None);
         }
+        device.メモリを解放する(self.memory);
     }
 }
 
 pub(super) fn 書き込む(
     スロット: &mut Option<バッファスロット>,
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     データ: &[u8],
     用途: vk::BufferUsageFlags,

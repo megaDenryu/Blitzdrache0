@@ -17,6 +17,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::particle_material::粒子素材;
 use crate::particle_shader_set::粒子シェーダー一式;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 use crate::vulkan::uniform::フレームユニフォーム一式;
 
@@ -32,7 +33,7 @@ pub(crate) struct 粒子リソース一式 {
 impl 粒子リソース一式 {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         転送環境: &転送実行環境,
         カラー形式: vk::Format,
@@ -86,7 +87,7 @@ impl 粒子リソース一式 {
         })
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         self.描画パイプライン.破棄する(device);
         self.コンピュートパイプライン.破棄する(device);
         self.ディスクリプタ.破棄する(device);

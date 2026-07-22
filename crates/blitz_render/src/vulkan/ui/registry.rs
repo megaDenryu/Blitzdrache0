@@ -13,6 +13,7 @@ use super::texture::UIテクスチャ;
 use crate::error::レンダラーエラー;
 use crate::ui_texture_id::UIテクスチャID;
 use crate::ui_texture_material::UIテクスチャ素材;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 pub(crate) struct UIテクスチャレジストリ {
@@ -29,7 +30,7 @@ impl UIテクスチャレジストリ {
     /// テクスチャを新規登録、または既存IDを新しい内容で置き換える。
     pub(crate) fn 反映する(
         &mut self,
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         転送環境: &転送実行環境,
         id: UIテクスチャID,
@@ -54,7 +55,7 @@ impl UIテクスチャレジストリ {
         Ok(())
     }
 
-    pub(crate) fn 削除する(&mut self, device: &ash::Device, id: UIテクスチャID) {
+    pub(crate) fn 削除する(&mut self, device: &GPUデバイス, id: UIテクスチャID) {
         let Some((テクスチャ, set)) = self.表.remove(&id) else {
             return;
         };
@@ -74,7 +75,7 @@ impl UIテクスチャレジストリ {
             .unwrap_or_else(|| panic!("UIメッシュが未登録のUIテクスチャIDを参照した(テクスチャデルタの反映漏れ)"))
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         for (テクスチャ, _) in self.表.values() {
             テクスチャ.破棄する(device);
         }

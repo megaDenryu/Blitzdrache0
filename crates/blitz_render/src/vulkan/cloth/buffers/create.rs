@@ -11,6 +11,7 @@ use crate::cloth_material::布素材;
 use crate::error::レンダラーエラー;
 use crate::vulkan::geometry::upload;
 use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 use crate::vulkan::{device_buffer, host_buffer};
 
@@ -20,7 +21,7 @@ const セル総数: u64 = 32 * 32 * 32;
 const セル容量: u64 = 8;
 
 pub(crate) fn 生成する(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &転送実行環境,
     素材: &布素材,

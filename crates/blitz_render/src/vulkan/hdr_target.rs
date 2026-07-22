@@ -7,6 +7,7 @@ mod create;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 /// 前提: R16G16B16A16_SFLOATのカラーアタッチメント+サンプリング対応はVulkan仕様の
 /// 必須フォーマットのため、実行時の対応確認は行わない。
@@ -20,19 +21,19 @@ pub(crate) struct HDRターゲット {
 
 impl HDRターゲット {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         寸法: vk::Extent2D,
     ) -> Result<Self, レンダラーエラー> {
         create::生成する(device, メモリプロパティ, 寸法)
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         // 安全性: 画像・画像ビュー・memoryはSelfが唯一の所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
         unsafe {
             device.destroy_image_view(self.画像ビュー, None);
             device.destroy_image(self.画像, None);
-            device.free_memory(self.memory, None);
         }
+        device.メモリを解放する(self.memory);
     }
 }

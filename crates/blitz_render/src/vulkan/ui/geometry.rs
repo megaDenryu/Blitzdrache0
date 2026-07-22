@@ -10,6 +10,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::ui_vertex::UI頂点;
 use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::tracked_device::GPUデバイス;
 use slot::バッファスロット;
 
 pub(crate) struct UIジオメトリバッファ {
@@ -30,7 +31,7 @@ impl UIジオメトリバッファ {
     /// フレームでは本メソッド自体を呼ばない契約)。
     pub(crate) fn 書き込む(
         &mut self,
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         フレーム添字: usize,
         頂点一覧: &[UI頂点],
@@ -55,7 +56,7 @@ impl UIジオメトリバッファ {
         Ok((頂点バッファ, インデックスバッファ))
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         for スロット一覧 in [&self.頂点一覧, &self.インデックス一覧] {
             for スロット in スロット一覧.iter().flatten() {
                 スロット.破棄する(device);

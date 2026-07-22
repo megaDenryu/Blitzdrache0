@@ -12,7 +12,7 @@ pub(crate) struct コア資源 {
     pub(crate) surface_loader: ash::khr::surface::Instance,
     pub(crate) surface: vk::SurfaceKHR,
     pub(crate) physical_device: vk::PhysicalDevice,
-    pub(crate) device: ash::Device,
+    pub(crate) device: vulkan::tracked_device::GPUデバイス,
     pub(crate) queue: vk::Queue,
     pub(crate) queue_family_index: u32,
     pub(crate) swapchain_loader: ash::khr::swapchain::Device,

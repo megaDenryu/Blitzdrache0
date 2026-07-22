@@ -7,6 +7,7 @@ use crate::error::レンダラーエラー;
 use crate::material::マテリアル素材;
 use crate::vertex::頂点;
 use crate::vulkan;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 use super::mesh_resources;
 
@@ -24,7 +25,7 @@ pub(super) struct 基礎資源 {
 pub(super) fn 組み立てる(
     instance: &ash::Instance,
     physical_device: vk::PhysicalDevice,
-    device: &ash::Device,
+    device: &GPUデバイス,
     queue: vk::Queue,
     queue_family_index: u32,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,

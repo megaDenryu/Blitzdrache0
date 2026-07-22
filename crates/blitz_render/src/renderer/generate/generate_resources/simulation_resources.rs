@@ -9,13 +9,14 @@ use crate::shader_bundle::シェーダー束;
 use crate::skin_mesh::スキンメッシュ素材;
 use crate::vertex::頂点;
 use crate::vulkan;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 type シミュレーション資源 = (Option<vulkan::skinning::スキニング一式>, Option<vulkan::cloth::布一式>);
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn 組み立てる(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &転送実行環境,
     シーンカラー形式: vk::Format,

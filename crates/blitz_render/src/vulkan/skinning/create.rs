@@ -7,11 +7,12 @@ use crate::compute_shader::コンピュートシェーダー;
 use crate::error::レンダラーエラー;
 use crate::skin_mesh::スキンメッシュ素材;
 use crate::vertex::頂点;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 impl スキニング一式 {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         転送環境: &転送実行環境,
         頂点一覧: &[頂点],

@@ -3,7 +3,9 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::memory;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) struct 読み戻しバッファ {
     pub(crate) handle: vk::Buffer,
@@ -13,7 +15,7 @@ pub(crate) struct 読み戻しバッファ {
 
 impl 読み戻しバッファ {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         必要バイト数: u64,
     ) -> Result<Self, レンダラーエラー> {
@@ -35,7 +37,8 @@ impl 読み戻しバッファ {
             }
         };
 
-        let memory = match memory::専用メモリを確保する(device, 要件.size, メモリ型添字) {
+        let memory = match memory::専用メモリを確保する(device, 要件.size, メモリ型添字, GPUメモリ用途::読み戻しバッファ)
+        {
             Ok(memory) => memory,
             Err(誤り) => {
                 // 安全性: bufferはこのスコープの唯一の所有者で、以降使用しない。
@@ -45,7 +48,12 @@ impl 読み戻しバッファ {
         };
 
         // 安全性: handle・memoryはともに直前に生成済みで、offsetは0(専用確保のため衝突しない)。
-        unsafe { device.bind_buffer_memory(handle, memory, 0)? };
+        if let Err(誤り) = unsafe { device.bind_buffer_memory(handle, memory, 0) } {
+            // 安全性: handleはこのスコープの唯一の所有者で、結び付けに失敗したためGPUは使用していない。
+            unsafe { device.destroy_buffer(handle, None) };
+            device.メモリを解放する(memory);
+            return Err(誤り.into());
+        }
 
         Ok(Self {
             handle,
@@ -62,12 +70,12 @@ impl 読み戻しバッファ {
         self.memory
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         // 安全性: handle・memoryはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
         // 完了していることを呼び出し元(読み戻しは同期的にfence待機済み)が保証する。
         unsafe {
             device.destroy_buffer(self.handle, None);
-            device.free_memory(self.memory, None);
         }
+        device.メモリを解放する(self.memory);
     }
 }

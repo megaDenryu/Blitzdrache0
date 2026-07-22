@@ -7,11 +7,12 @@ use crate::cloth_material::布素材;
 use crate::cloth_shader_set::布シェーダー一式;
 use crate::error::レンダラーエラー;
 use crate::vulkan::pipeline::パイプライン;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn 生成する(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &転送実行環境,
     シーンカラー形式: vk::Format,

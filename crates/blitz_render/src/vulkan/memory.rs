@@ -4,17 +4,22 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::gpu_memory_stats::GPUメモリ用途;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) fn 専用メモリを確保する(
-    device: &ash::Device,
+    device: &GPUデバイス,
     バイト数: u64,
     メモリ型添字: u32,
+    用途: GPUメモリ用途,
 ) -> Result<vk::DeviceMemory, レンダラーエラー> {
     let alloc_info = vk::MemoryAllocateInfo::default()
         .allocation_size(バイト数)
         .memory_type_index(メモリ型添字);
     // 安全性: deviceは生成済みで有効。alloc_infoはこの関数内の値だけを参照する。
-    Ok(unsafe { device.allocate_memory(&alloc_info, None)? })
+    let memory = unsafe { device.allocate_memory(&alloc_info, None)? };
+    device.確保を記録する(memory, バイト数, 用途);
+    Ok(memory)
 }
 
 pub(crate) fn ホスト可視メモリ型を選ぶ(

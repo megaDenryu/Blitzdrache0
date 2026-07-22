@@ -8,6 +8,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::particle_material::粒子素材;
 use crate::vulkan::geometry::upload;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 pub(crate) struct 粒子バッファ {
@@ -17,7 +18,7 @@ pub(crate) struct 粒子バッファ {
 
 impl 粒子バッファ {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         転送環境: &転送実行環境,
         素材: &粒子素材,
@@ -32,12 +33,12 @@ impl 粒子バッファ {
         Ok(Self { buffer, memory })
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         // 安全性: buffer・memoryはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
         // device_wait_idle済みであることを呼び出し元が保証する。
         unsafe {
             device.destroy_buffer(self.buffer, None);
-            device.free_memory(self.memory, None);
         }
+        device.メモリを解放する(self.memory);
     }
 }

@@ -4,10 +4,12 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::memory;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) fn 確保して書き込む(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     データ: &[u8],
     用途: vk::BufferUsageFlags,
@@ -29,7 +31,7 @@ pub(crate) fn 確保して書き込む(
             return Err(誤り);
         }
     };
-    let memory = match memory::専用メモリを確保する(device, 要件.size, メモリ型添字) {
+    let memory = match memory::専用メモリを確保する(device, 要件.size, メモリ型添字, GPUメモリ用途::ホストバッファ) {
         Ok(memory) => memory,
         Err(誤り) => {
             // 安全性: bufferはこのスコープの唯一の所有者で、以降使用しない。
@@ -38,9 +40,19 @@ pub(crate) fn 確保して書き込む(
         }
     };
     // 安全性: buffer・memoryはともに直前に生成済みで、offsetは0(専用確保のため衝突しない)。
-    unsafe { device.bind_buffer_memory(buffer, memory, 0)? };
+    if let Err(誤り) = unsafe { device.bind_buffer_memory(buffer, memory, 0) } {
+        // 安全性: bufferはこのスコープの唯一の所有者で、結び付けに失敗したためGPUは使用していない。
+        unsafe { device.destroy_buffer(buffer, None) };
+        device.メモリを解放する(memory);
+        return Err(誤り.into());
+    }
 
-    上書きする(device, memory, データ)?;
+    if let Err(誤り) = 上書きする(device, memory, データ) {
+        // 安全性: bufferはこのスコープの唯一の所有者で、上位へ返していないため以降使用しない。
+        unsafe { device.destroy_buffer(buffer, None) };
+        device.メモリを解放する(memory);
+        return Err(誤り);
+    }
     Ok((buffer, memory))
 }
 

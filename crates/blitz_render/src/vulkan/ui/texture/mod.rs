@@ -8,6 +8,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::ui_texture_material::UIテクスチャ素材;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 pub(crate) struct UIテクスチャ {
@@ -19,7 +20,7 @@ pub(crate) struct UIテクスチャ {
 
 impl UIテクスチャ {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         転送環境: &転送実行環境,
         素材: &UIテクスチャ素材,
@@ -57,7 +58,7 @@ impl UIテクスチャ {
         })
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
         // 完了していることを呼び出し元(device_wait_idle)が保証する。
         unsafe {
@@ -68,10 +69,10 @@ impl UIテクスチャ {
     }
 }
 
-fn 画像を破棄する(device: &ash::Device, image: vk::Image, memory: vk::DeviceMemory) {
+fn 画像を破棄する(device: &GPUデバイス, image: vk::Image, memory: vk::DeviceMemory) {
     // 安全性: image・memoryはこのスコープの唯一の所有者で、以降使用しない。
     unsafe {
         device.destroy_image(image, None);
-        device.free_memory(memory, None);
     }
+    device.メモリを解放する(memory);
 }

@@ -5,6 +5,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::material::マテリアル素材;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 use super::テクスチャ;
@@ -17,7 +18,7 @@ pub(crate) struct マテリアルテクスチャ一式 {
 
 impl マテリアルテクスチャ一式 {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        device: &GPUデバイス,
         instance: &ash::Instance,
         physical_device: vk::PhysicalDevice,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
@@ -52,7 +53,7 @@ impl マテリアルテクスチャ一式 {
         })
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         self.ベースカラー.破棄する(device);
         self.金属粗さ.破棄する(device);
         self.法線マップ.破棄する(device);

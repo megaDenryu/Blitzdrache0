@@ -15,6 +15,7 @@ use crate::shader_set::シェーダー一式;
 use crate::ui_texture_id::UIテクスチャID;
 use crate::ui_texture_material::UIテクスチャ素材;
 use crate::ui_vertex::UI頂点;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 pub(crate) struct UIリソース一式 {
@@ -25,7 +26,7 @@ pub(crate) struct UIリソース一式 {
 
 impl UIリソース一式 {
     pub(crate) fn 生成する(
-        device: &ash::Device, カラー形式: vk::Format, シェーダー: &シェーダー一式
+        device: &GPUデバイス, カラー形式: vk::Format, シェーダー: &シェーダー一式
     ) -> Result<Self, レンダラーエラー> {
         let テクスチャ台帳 = registry::UIテクスチャレジストリ::生成する(device)?;
         let pipeline = match pipeline::UIパイプライン::生成する(device, カラー形式, テクスチャ台帳.layout(), シェーダー) {
@@ -44,7 +45,7 @@ impl UIリソース一式 {
 
     pub(crate) fn テクスチャを反映する(
         &mut self,
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         転送環境: &転送実行環境,
         id: UIテクスチャID,
@@ -53,7 +54,7 @@ impl UIリソース一式 {
         self.テクスチャ台帳.反映する(device, メモリプロパティ, 転送環境, id, 素材)
     }
 
-    pub(crate) fn テクスチャを削除する(&mut self, device: &ash::Device, id: UIテクスチャID) {
+    pub(crate) fn テクスチャを削除する(&mut self, device: &GPUデバイス, id: UIテクスチャID) {
         self.テクスチャ台帳.削除する(device, id);
     }
 
@@ -64,7 +65,7 @@ impl UIリソース一式 {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn ジオメトリを書き込む(
         &mut self,
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         フレーム添字: usize,
         頂点一覧: &[UI頂点],
@@ -82,7 +83,7 @@ impl UIリソース一式 {
         self.pipeline.layout
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         self.ジオメトリ.破棄する(device);
         self.pipeline.破棄する(device);
         self.テクスチャ台帳.破棄する(device);

@@ -3,12 +3,14 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::memory;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) const 形式: vk::Format = vk::Format::R8G8B8A8_UNORM;
 
 pub(super) fn 生成する(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     幅: u32,
     高さ: u32,
@@ -43,15 +45,18 @@ pub(super) fn 生成する(
 }
 
 fn メモリを確保して結びつける(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     image: vk::Image,
 ) -> Result<vk::DeviceMemory, レンダラーエラー> {
     // 安全性: imageは直前に生成済み。
     let 要件 = unsafe { device.get_image_memory_requirements(image) };
     let メモリ型添字 = memory::デバイスローカルメモリ型を選ぶ(メモリプロパティ, 要件.memory_type_bits)?;
-    let memory = memory::専用メモリを確保する(device, 要件.size, メモリ型添字)?;
+    let memory = memory::専用メモリを確保する(device, 要件.size, メモリ型添字, GPUメモリ用途::テクスチャ画像)?;
     // 安全性: image・memoryはともに直前に生成済みで、offsetは0(専用確保のため衝突しない)。
-    unsafe { device.bind_image_memory(image, memory, 0)? };
+    if let Err(誤り) = unsafe { device.bind_image_memory(image, memory, 0) } {
+        device.メモリを解放する(memory);
+        return Err(誤り.into());
+    }
     Ok(memory)
 }

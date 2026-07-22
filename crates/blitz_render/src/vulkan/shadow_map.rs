@@ -9,6 +9,7 @@ mod sampler;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) const シャドウマップ形式: vk::Format = vk::Format::D32_SFLOAT;
 pub(crate) const シャドウマップ一辺: u32 = 2048;
@@ -22,20 +23,20 @@ pub(crate) struct シャドウマップ {
 
 impl シャドウマップ {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     ) -> Result<Self, レンダラーエラー> {
         create::生成する(device, メモリプロパティ)
     }
 
-    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
         // device_wait_idle済みであることを呼び出し元が保証する。
         unsafe {
             device.destroy_sampler(self.sampler, None);
             device.destroy_image_view(self.画像ビュー, None);
             device.destroy_image(self.画像, None);
-            device.free_memory(self.memory, None);
         }
+        device.メモリを解放する(self.memory);
     }
 }

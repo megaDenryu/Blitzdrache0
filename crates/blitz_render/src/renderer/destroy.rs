@@ -55,6 +55,7 @@ impl レンダラー {
         self.深度バッファ.破棄する(&self.device);
         self.シャドウマップ.破棄する(&self.device);
         self.swapchain.破棄する(&self.device, &self.swapchain_loader);
+        self.device.全メモリ解放を確認する();
         // 安全性: deviceはSelfが唯一の所有者で、上記の全依存リソースは破棄済み。
         unsafe { self.device.destroy_device(None) };
         // 安全性: surfaceはSelfが唯一の所有者で、対応するinstanceはこの後に破棄する。

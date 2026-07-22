@@ -8,11 +8,12 @@ use crate::cloth_shader_set::布シェーダー一式;
 use crate::error::レンダラーエラー;
 use crate::vulkan;
 use crate::vulkan::skinning::スキニング一式;
+use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn 組み立てる(
-    device: &ash::Device,
+    device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &転送実行環境,
     シーンカラー形式: vk::Format,
