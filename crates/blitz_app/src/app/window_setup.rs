@@ -1,12 +1,13 @@
 //! resumed時のウィンドウ・レンダラー生成。カタログ構築・シーン読込・
 //! アセットホットリロード監視の初期設定もここで行う。
 
+mod window_create;
+
 use blitz_engine::アセットID;
 use blitz_render::{ウィンドウ寸法, レンダラー};
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
-use winit::dpi::PhysicalSize;
 use winit::event_loop::ActiveEventLoop;
-use winit::window::{Window, WindowAttributes};
+use winit::window::Window;
 
 use super::animation_state::アニメーション再生;
 use super::scene_load;
@@ -14,9 +15,6 @@ use crate::dev_ui::開発UI;
 use crate::embedded_shaders;
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
-
-const 初期幅: u32 = 1280;
-const 初期高さ: u32 = 720;
 
 /// resumed時に構築してアプリのフィールドへ格納する一式。
 type 起動一式 = (
@@ -36,17 +34,14 @@ pub(super) fn ウィンドウとレンダラーを作る(
     event_loop: &ActiveEventLoop,
     シーン名: &str,
     アセットルート: &std::path::Path,
+    描画対象数: Option<crate::cli::描画対象数>,
     ホットリローダー: &mut ホットリローダー,
     粒子表示: crate::cli::粒子表示モード,
     開発ui初期有効: bool,
     ポスト処理有効: bool,
     布モード: crate::cli::布モード,
 ) -> Result<起動一式, 起動エラー> {
-    let window = event_loop.create_window(
-        WindowAttributes::default()
-            .with_title("Blitzdrache0")
-            .with_inner_size(PhysicalSize::new(初期幅, 初期高さ)),
-    )?;
+    let window = window_create::生成する(event_loop)?;
 
     let 表示ハンドル = window.display_handle()?.as_raw();
     let ウィンドウハンドル = window.window_handle()?.as_raw();
@@ -56,7 +51,10 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let 粒子素材 = super::particle_setup::素材を作る(粒子表示)?;
 
     let カタログ = scene_load::カタログを構築する(アセットルート)?;
-    let (シーン, 描画シーン) = scene_load::シーンを読み込んで変換する(&カタログ, シーン名)?;
+    let (シーン, 描画シーン) = scene_load::シーンを読み込んで変換する(&カタログ, シーン名, 描画対象数)?;
+    if 描画対象数.is_some() {
+        crate::reports::描画対象構成を表示する(描画シーン.描画対象数());
+    }
     let スキン素材 = scene_load::スキン素材へ変換する(&シーン)?;
     let 布 = 布を構築する(布モード, &描画シーン)?;
     let (布素材, 布プリセット) = match 布 {

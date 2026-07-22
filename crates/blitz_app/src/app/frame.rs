@@ -1,11 +1,13 @@
 //! 1フレーム実行: ホットリロード確認 → 自己操作判定 →
 //! 入力確定→世界更新→描画内容抽出→描画(フレーム内実行順序、コンポジションルートが明示)。
 
+mod action;
+mod finish;
+
 use winit::event_loop::ActiveEventLoop;
 
 use super::アプリ;
-use crate::cli::起動モード;
-use crate::smoke::{self, スモークアクション};
+use crate::smoke;
 
 impl アプリ {
     /// RedrawRequestedのたびに1フレーム分の描画を実行する。
@@ -18,18 +20,7 @@ impl アプリ {
         }
         self.ホットリロードを確認する();
 
-        let アクション = match self.起動モード {
-            起動モード::スモーク実行 { フレーム数 } => smoke::判定する(
-                self.現在フレーム,
-                フレーム数,
-                &self.シーン名,
-                self.粒子表示,
-                self.開発ui初期有効,
-                self.布モード != crate::cli::布モード::なし,
-            ),
-            起動モード::ベンチ実行 { .. } => スモークアクション::通常描画,
-            起動モード::無期限実行 => スモークアクション::通常描画,
-        };
+        let アクション = action::選ぶ(self);
         if let Some(window) = &self.window {
             smoke::window自己操作を適用する(window, アクション);
         }
@@ -64,14 +55,7 @@ impl アプリ {
             return;
         }
 
-        self.現在フレーム += 1;
-        let 終了フレーム数 = match self.起動モード {
-            起動モード::スモーク実行 { フレーム数 } | 起動モード::ベンチ実行 { フレーム数 } => Some(フレーム数),
-            起動モード::無期限実行 => None,
-        };
-        if 終了フレーム数.is_some_and(|フレーム数| self.現在フレーム >= フレーム数) {
-            event_loop.exit();
-        }
+        finish::進めて必要なら終了する(self, event_loop);
     }
 
     fn 描画入力を作る(&self) -> blitz_render::フレーム描画入力 {

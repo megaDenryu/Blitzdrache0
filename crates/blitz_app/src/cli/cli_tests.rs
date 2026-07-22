@@ -13,6 +13,7 @@ fn 引数なしは既定値を保つ() {
     assert_eq!(設定.シェーダー監視パス, Path::new("shaders/scene.slang"));
     assert_eq!(設定.シーン名, "quad");
     assert_eq!(設定.アセットルート, Path::new("assets"));
+    assert!(設定.描画対象数.is_none());
     assert!(設定.ライティング有効);
     assert_eq!(設定.粒子表示, 粒子表示モード::なし);
     assert!(!設定.gpu時間報告);
@@ -49,4 +50,16 @@ fn スモーク用フレーム数をベンチ実行と区別する() {
         panic!("有効な引数は解析できるはず");
     };
     assert!(matches!(設定.モード, 起動モード::スモーク実行 { フレーム数: 60 }));
+}
+
+#[test]
+fn 描画対象数は1以上だけを受理する() {
+    let 有効 = ["--object-count".to_string(), "100".to_string()];
+    let Ok(設定) = 引数を解析する(&有効) else {
+        panic!("100件は解析できるはず");
+    };
+    assert_eq!(設定.描画対象数.map(super::描画対象数::usize値), Some(100));
+
+    let 無効 = ["--object-count".to_string(), "0".to_string()];
+    assert!(引数を解析する(&無効).is_err());
 }

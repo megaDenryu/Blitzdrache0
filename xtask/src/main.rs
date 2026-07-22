@@ -9,6 +9,7 @@ mod fetch_assets;
 mod gen_smoke_asset;
 mod m10_bench;
 mod m11_soak;
+mod object_bench;
 mod smoke;
 mod verify;
 
@@ -23,6 +24,7 @@ fn main() -> ExitCode {
         Some("bench") => bench::実行する(),
         Some("m10-bench") => m10_bench::実行する(),
         Some("m11-soak") => m11_soak::実行する(),
+        Some("object-bench") => object_bench::実行する(),
         _ => {
             使い方を表示する();
             ExitCode::FAILURE
@@ -42,4 +44,5 @@ fn 使い方を表示する() {
     println!("  bench            リリース版の固定シーンを600フレーム実行し、GPU時間とCPU側フレーム間隔分布を表示する");
     println!("  m10-bench        M10流体GPU試作を固定条件で実行し、検証件数とGPU時間を表示する");
     println!("  m11-soak         3600フレーム連続実行し、RAM・VRAM推移を約5秒間隔で表示する");
+    println!("  object-bench     二対象の画素判定後、1・10・100対象のGPU/CPU時間とGPUメモリを計測する");
 }

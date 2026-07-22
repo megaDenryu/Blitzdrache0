@@ -22,6 +22,10 @@ impl 描画シーン素材 {
         }
     }
 
+    pub fn 描画対象数(&self) -> usize {
+        self.描画対象一覧.len()
+    }
+
     pub(crate) fn 描画対象一覧(&self) -> &[描画対象素材] {
         &self.描画対象一覧
     }

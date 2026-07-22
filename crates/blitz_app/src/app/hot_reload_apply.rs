@@ -7,6 +7,7 @@ use crate::hot_reload::ホットリロード結果;
 impl アプリ {
     pub(super) fn ホットリロードを確認する(&mut self) {
         let 結果 = self.ホットリローダー.確認する();
+        let 描画対象数 = self.描画対象数;
         let Some(レンダラー) = &mut self.レンダラー else {
             return;
         };
@@ -21,7 +22,7 @@ impl アプリ {
                 eprintln!("[hot-reload] シェーダーの再コンパイルに失敗した:\n{メッセージ}");
             }
             ホットリロード結果::アセット再読込成功 { シーン } => {
-                アセット再読込を反映する(レンダラー, &シーン);
+                アセット再読込を反映する(レンダラー, &シーン, 描画対象数);
             }
             ホットリロード結果::アセット再読込失敗 { メッセージ } => {
                 eprintln!("[hot-reload] アセットの再読込に失敗した:\n{メッセージ}");
@@ -30,8 +31,12 @@ impl アプリ {
     }
 }
 
-fn アセット再読込を反映する(レンダラー: &mut blitz_render::レンダラー, シーン: &blitz_engine::シーンデータ) {
-    match super::scene_load::シーンをレンダラー入力に変換する(シーン) {
+fn アセット再読込を反映する(
+    レンダラー: &mut blitz_render::レンダラー,
+    シーン: &blitz_engine::シーンデータ,
+    描画対象数: Option<crate::cli::描画対象数>,
+) {
+    match super::scene_load::シーンをレンダラー入力に変換する(シーン, 描画対象数) {
         Ok(描画シーン) => {
             if let Err(誤り) = レンダラー.シーンを差し替える(描画シーン) {
                 eprintln!("[hot-reload] シーン差し替えに失敗した: {誤り}");

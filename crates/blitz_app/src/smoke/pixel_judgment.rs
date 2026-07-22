@@ -5,6 +5,7 @@
 mod animation_diff;
 mod compare;
 mod expected_color;
+mod multiple_objects;
 mod shadow_luminance;
 mod srgb_convert;
 
@@ -26,6 +27,7 @@ pub(crate) fn ピクセルを判定する(画像: &読み戻し画像, アクシ
         スモークアクション::粒子判定 => 隅がクリア色であることを判定する(画像),
         スモークアクション::開発UI判定 => 右下隅がクリア色であることを判定する(画像),
         スモークアクション::シャドウ判定 => shadow_luminance::影の相対輝度を判定する(画像),
+        スモークアクション::複数描画対象判定 => multiple_objects::判定する(画像),
         _ => 期待色を判定する(画像, アクション),
     }
 }

@@ -1,12 +1,11 @@
 //! `ApplicationHandler` 実装。winit所有ループ(パターンA)の受け口。参照: `_doc/設計/イベントループとフレームペーシング.md`
+use super::アプリ;
+use blitz_render::ウィンドウ寸法;
 use winit::application::ApplicationHandler;
 use winit::event::{ElementState, KeyEvent, WindowEvent};
 use winit::event_loop::ActiveEventLoop;
 use winit::keyboard::{KeyCode, PhysicalKey};
 use winit::window::WindowId;
-
-use super::アプリ;
-use blitz_render::ウィンドウ寸法;
 
 impl ApplicationHandler for アプリ {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
@@ -17,6 +16,7 @@ impl ApplicationHandler for アプリ {
             event_loop,
             &self.シーン名,
             &self.アセットルート,
+            self.描画対象数,
             &mut self.ホットリローダー,
             self.粒子表示,
             self.開発ui初期有効,

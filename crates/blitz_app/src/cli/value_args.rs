@@ -4,7 +4,7 @@
 use std::path::PathBuf;
 use std::slice::Iter;
 
-use super::起動モード;
+use super::{描画対象数, 起動モード};
 use crate::error::起動エラー;
 
 pub(super) fn frames引数を処理する(引数: &mut Iter<String>) -> Result<起動モード, 起動エラー> {
@@ -42,6 +42,14 @@ pub(super) fn asset_root引数を処理する(引数: &mut Iter<String>) -> Resu
         .next()
         .ok_or_else(|| 起動エラー::アセットルート引数不正("--asset-rootに値が指定されていない".to_string()))?;
     Ok(PathBuf::from(値))
+}
+
+pub(super) fn object_count引数を処理する(引数: &mut Iter<String>) -> Result<描画対象数, 起動エラー> {
+    let 値 = 引数
+        .next()
+        .ok_or_else(|| 起動エラー::描画対象数引数不正("--object-countに値が指定されていない".to_string()))?;
+    let 数 = 値.parse::<u32>().map_err(|_| 起動エラー::描画対象数引数不正(値.clone()))?;
+    描画対象数::生成する(数).map_err(起動エラー::描画対象数引数不正)
 }
 
 pub(super) fn dump_frame引数を処理する(引数: &mut Iter<String>) -> Result<PathBuf, 起動エラー> {

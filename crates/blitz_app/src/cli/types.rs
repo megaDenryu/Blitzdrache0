@@ -1,5 +1,6 @@
 //! CLI引数から得る型: 起動モード・起動設定一式。
 
+use super::描画対象数;
 use std::path::PathBuf;
 
 const 既定シェーダー監視パス: &str = "shaders/scene.slang";
@@ -29,6 +30,7 @@ pub(crate) struct 起動設定 {
     pub(crate) シーン名: String,
     /// カタログの各アセットパスの基準ディレクトリ。既定は`assets`。
     pub(crate) アセットルート: PathBuf,
+    pub(crate) 描画対象数: Option<描画対象数>,
     /// `--unlit`指定でfalse。既定はtrue(PBRライティング有効、判断26)。
     pub(crate) ライティング有効: bool,
     /// 粒子系GPUパスで表示する検証対象。既定はなし。
@@ -64,6 +66,7 @@ impl 起動設定 {
             シェーダー監視パス: PathBuf::from(既定シェーダー監視パス),
             シーン名: 既定シーン名.to_string(),
             アセットルート: PathBuf::from(既定アセットルート),
+            描画対象数: None,
             ライティング有効: true,
             粒子表示: 粒子表示モード::なし,
             gpu時間報告: false,

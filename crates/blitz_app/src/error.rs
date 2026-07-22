@@ -59,6 +59,9 @@ pub(crate) enum 起動エラー {
     #[error("--asset-root引数が不正だった: {0}")]
     アセットルート引数不正(String),
 
+    #[error("--object-count引数が不正だった: {0}")]
+    描画対象数引数不正(String),
+
     #[error("--dump-frame引数が不正だった: {0}")]
     フレームダンプ引数不正(String),
 
