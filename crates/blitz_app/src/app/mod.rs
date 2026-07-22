@@ -48,6 +48,7 @@ pub(crate) struct アプリ {
     ライティング有効: bool,
     粒子表示: 粒子表示モード,
     gpu時間報告: bool,
+    gpuメモリ報告: bool,
     フレーム間隔計測: Option<frame_timing::フレーム間隔計測>,
     開発ui: Option<開発UI>,
     開発ui初期有効: bool,

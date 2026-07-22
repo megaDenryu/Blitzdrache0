@@ -17,6 +17,7 @@ fn 引数なしは既定値を保つ() {
     assert_eq!(設定.粒子表示, 粒子表示モード::なし);
     assert!(!設定.gpu時間報告);
     assert!(!設定.フレーム時間報告);
+    assert!(!設定.gpuメモリ報告);
     assert!(!設定.開発ui初期有効);
     assert!(設定.フレームダンプ先.is_none());
     assert!(設定.ポスト処理有効);
@@ -27,12 +28,18 @@ fn 引数なしは既定値を保つ() {
 
 #[test]
 fn フレーム時間報告と固定フレーム数を解析する() {
-    let 引数一覧 = ["--benchmark-frames".to_string(), "600".to_string(), "--report-frame-times".to_string()];
+    let 引数一覧 = [
+        "--benchmark-frames".to_string(),
+        "600".to_string(),
+        "--report-frame-times".to_string(),
+        "--report-memory".to_string(),
+    ];
     let Ok(設定) = 引数を解析する(&引数一覧) else {
         panic!("有効な引数は解析できるはず");
     };
     assert!(matches!(設定.モード, 起動モード::ベンチ実行 { フレーム数: 600 }));
     assert!(設定.フレーム時間報告);
+    assert!(設定.gpuメモリ報告);
 }
 
 #[test]

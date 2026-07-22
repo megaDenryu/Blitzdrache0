@@ -1,6 +1,6 @@
 //! アプリ状態の読み出しと終了処理(main.rsの終了処理する等が使う照会メソッド群)。
 
-use blitz_render::{CPU区間時間, レンダラー, 検証カウンタ};
+use blitz_render::{CPU区間時間, GPUメモリ統計, レンダラー, 検証カウンタ};
 
 use super::アプリ;
 use crate::error::起動エラー;
@@ -23,6 +23,14 @@ impl アプリ {
 
     pub(crate) fn フレーム時間報告が必要か(&self) -> bool {
         self.フレーム間隔計測.is_some()
+    }
+
+    pub(crate) fn gpuメモリ報告が必要か(&self) -> bool {
+        self.gpuメモリ報告
+    }
+
+    pub(crate) fn gpuメモリ統計を取得する(&self) -> Option<GPUメモリ統計> {
+        self.レンダラー.as_ref().map(レンダラー::gpuメモリ統計を取得する)
     }
 
     /// パス別の移動平均GPU時間(ミリ秒)。レンダラー破棄前に呼ぶこと(判断30)。

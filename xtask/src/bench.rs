@@ -29,6 +29,7 @@ pub fn 実行する() -> ExitCode {
         "--particles",
         "--report-gpu-times",
         "--report-frame-times",
+        "--report-memory",
     ];
     println!("[xtask] cargo {} を実行", 引数一覧.join(" "));
     match Command::new("cargo").args(引数一覧).status() {

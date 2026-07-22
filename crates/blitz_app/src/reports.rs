@@ -2,6 +2,17 @@
 
 use crate::app::フレーム時間統計;
 
+pub(crate) fn gpuメモリ統計を表示する(統計: &blitz_render::GPUメモリ統計) {
+    println!("Vulkanメモリ確保:");
+    println!("  現在確保数: {}", 統計.現在確保数());
+    println!("  最大同時確保数: {}", 統計.最大同時確保数());
+    println!("  デバイス上限: {}", 統計.デバイス上限());
+    println!("  用途別現在量:");
+    for 確保量 in 統計.用途別確保量() {
+        println!("    {}: {} bytes", 確保量.用途().名称(), 確保量.バイト数());
+    }
+}
+
 pub(crate) fn レンダラーcpu区間を表示する(時間一覧: &[blitz_render::CPU区間時間]) {
     if 時間一覧.is_empty() {
         println!("レンダラーCPU区間: 計測できなかった");

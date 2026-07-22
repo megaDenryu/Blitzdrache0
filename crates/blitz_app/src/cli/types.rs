@@ -37,6 +37,8 @@ pub(crate) struct 起動設定 {
     pub(crate) gpu時間報告: bool,
     /// `--report-frame-times`指定でtrue。最初の120フレームを除いたCPU側フレーム間隔分布を終了時に出力する。
     pub(crate) フレーム時間報告: bool,
+    /// `--report-memory`指定でtrue。Vulkan専用メモリ確保の現在数・上限・用途別量を終了時に出力する。
+    pub(crate) gpuメモリ報告: bool,
     /// `--dev-ui`指定でtrue。既定はfalse(開発用UIの起動時有効化、判断34。実行中はF3でも切替可能)。
     pub(crate) 開発ui初期有効: bool,
     /// `--dump-frame <ベース名>`指定で、最終フレーム(--frames必須)の読み戻し画像を
@@ -66,6 +68,7 @@ impl 起動設定 {
             粒子表示: 粒子表示モード::なし,
             gpu時間報告: false,
             フレーム時間報告: false,
+            gpuメモリ報告: false,
             開発ui初期有効: false,
             フレームダンプ先: None,
             ポスト処理有効: true,

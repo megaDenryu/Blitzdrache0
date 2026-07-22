@@ -47,6 +47,9 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
             "--report-frame-times" => {
                 起動設定.フレーム時間報告 = true;
             }
+            "--report-memory" => {
+                起動設定.gpuメモリ報告 = true;
+            }
             "--dev-ui" => {
                 起動設定.開発ui初期有効 = true;
             }

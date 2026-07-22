@@ -135,7 +135,7 @@ cargo xtask             # 開発ツールの一覧表示（ツールの唯一の
 cargo xtask verify      # 検証の標準列 (conform -> check -> clippy -D warnings -> test)
 cargo xtask conform     # 規約適合の機械検査（行数・禁止文字列・依存白リスト・参照パス実在）
 cargo xtask smoke       # DoD自動検証: 7ステージの自己操作つき実行 + validation件数 + ピクセル読み戻し判定
-cargo xtask bench       # リリース版固定シーンのベンチマーク（パス別GPU時間 + CPU側フレーム間隔分布）
+cargo xtask bench       # リリース版固定シーンのベンチマーク（GPU時間 + CPU側フレーム間隔 + GPUメモリ確保統計）
 cargo xtask m11-soak    # 3600フレーム連続実行中のRAM・VRAM推移をテキスト採取
 cargo xtask gen-smoke-asset  # スモーク用アセットの再生成
 cargo xtask fetch-assets     # DamagedHelmet等の標準サンプル取得
