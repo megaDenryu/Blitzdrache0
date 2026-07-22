@@ -44,6 +44,9 @@ pub(crate) enum 起動エラー {
     #[error("シーン名の生成に失敗した: {0}")]
     シーン名不正(#[from] blitz_engine::アセットIDエラー),
 
+    #[error("アセットカタログの読込に失敗した: {0}(`cargo xtask compile-assets`で生成できる)")]
+    カタログ読込失敗(blitz_engine::実行時カタログ読込エラー),
+
     #[error("シーンの読込に失敗した: {0}(`cargo xtask compile-assets`で生成できる)")]
     シーン読込失敗(blitz_engine::実行時シーン読込エラー),
 

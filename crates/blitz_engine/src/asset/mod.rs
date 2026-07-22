@@ -1,7 +1,11 @@
 //! アセット層: 実行時形式、安定ID、カタログ、シーンデータ。
 
 mod animation_clip;
+mod asset_metadata;
 mod catalog;
+mod catalog_entry;
+mod catalog_load_error;
+mod catalog_loader;
 mod chunk_id;
 mod id;
 mod interpolation_kind;
@@ -13,6 +17,10 @@ mod mesh_data;
 mod pbr_material_data;
 mod render_object_data;
 mod render_object_id;
+#[cfg(test)]
+mod runtime_catalog_error_tests;
+#[cfg(test)]
+mod runtime_catalog_tests;
 mod runtime_format;
 #[cfg(test)]
 mod runtime_format_tests;
@@ -30,7 +38,11 @@ mod texture_data;
 mod vertex_attribute;
 
 pub use animation_clip::アニメーションクリップ;
+pub use asset_metadata::アセットメタデータ;
 pub use catalog::カタログ;
+pub use catalog_entry::カタログ項目;
+pub use catalog_load_error::実行時カタログ読込エラー;
+pub use catalog_loader::実行時カタログを読み込む;
 pub use chunk_id::チャンクID;
 pub use id::{アセットID, アセットIDエラー};
 pub use interpolation_kind::補間種別;
@@ -43,8 +55,8 @@ pub use pbr_material_data::金属粗さPBRデータ;
 pub use render_object_data::描画対象データ;
 pub use render_object_id::描画対象ID;
 pub use runtime_format::{
-    アセット実行時形式エラー, アセット形式版, シーンを実行時形式へ格納する, 実行時アセット, 実行時アセットを格納する, 実行時アセットを開く,
-    実行時アセット種別, 実行時形式からシーンを読む,
+    アセット実行時形式エラー, アセット形式版, カタログを実行時形式へ格納する, シーンを実行時形式へ格納する, 実行時アセット, 実行時アセットを格納する,
+    実行時アセットを開く, 実行時アセット種別, 実行時形式からカタログを読む, 実行時形式からシーンを読む,
 };
 pub use runtime_load_error::実行時シーン読込エラー;
 pub use runtime_loader::実行時シーンを読み込む;

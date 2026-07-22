@@ -1,9 +1,11 @@
 //! アセット実行時形式の共通ヘッダーと検証済みの読み取り結果。
 
+mod catalog_v1;
 mod error;
 mod header;
 mod scene_v1;
 
+pub use catalog_v1::{カタログを実行時形式へ格納する, 実行時形式からカタログを読む};
 pub use error::アセット実行時形式エラー;
 pub use header::{実行時アセットを格納する, 実行時アセットを開く};
 pub use scene_v1::{シーンを実行時形式へ格納する, 実行時形式からシーンを読む};
@@ -34,18 +36,21 @@ impl アセット形式版 {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum 実行時アセット種別 {
     シーン,
+    カタログ,
 }
 
 impl 実行時アセット種別 {
     pub fn 番号(self) -> u32 {
         match self {
             Self::シーン => 1,
+            Self::カタログ => 2,
         }
     }
 
     pub(super) fn 番号から読む(番号: u32) -> Result<Self, アセット実行時形式エラー> {
         match 番号 {
             1 => Ok(Self::シーン),
+            2 => Ok(Self::カタログ),
             未知 => Err(アセット実行時形式エラー::未知のアセット種別(未知)),
         }
     }

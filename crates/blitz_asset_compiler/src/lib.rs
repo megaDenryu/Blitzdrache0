@@ -2,18 +2,10 @@
 
 #![forbid(unsafe_code)]
 
+mod compile;
 mod error;
 mod loader;
 
+pub use compile::{コンパイル済みシーン, ソースシーンをコンパイルする};
 pub use error::アセットコンパイルエラー;
 pub use loader::ソースシーンを読み込む;
-
-use blitz_engine::{アセットID, カタログ, シーンを実行時形式へ格納する};
-
-/// カタログのソースアセットを検証し、版付きの実行時形式へ決定的に変換する。
-pub fn ソースシーンをコンパイルする(
-    カタログ: &カタログ, id: &アセットID
-) -> Result<Vec<u8>, アセットコンパイルエラー> {
-    let シーン = ソースシーンを読み込む(カタログ, id)?;
-    Ok(シーンを実行時形式へ格納する(&シーン)?)
-}

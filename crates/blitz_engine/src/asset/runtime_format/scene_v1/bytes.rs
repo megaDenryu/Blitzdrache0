@@ -3,5 +3,5 @@
 mod read;
 mod write;
 
-pub(super) use read::読取位置;
-pub(super) use write::書込先;
+pub(crate) use read::読取位置;
+pub(crate) use write::書込先;
