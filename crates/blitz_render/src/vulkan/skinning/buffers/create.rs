@@ -1,7 +1,12 @@
 //! スキニングバッファの生成手順。途中失敗時は確保済みのバッファを逆順で片付ける。
 
+mod allocation;
+mod attribute_bytes;
+
 use ash::vk;
 
+use self::allocation::積む;
+use self::attribute_bytes::属性をバイト列にする;
 use super::スキニングバッファ;
 use crate::error::レンダラーエラー;
 use crate::skin_mesh::スキンメッシュ素材;
@@ -77,41 +82,4 @@ pub(crate) fn 生成する(
         行列一覧,
         出力,
     })
-}
-
-/// 確保結果を台帳へ積む。失敗時は台帳の確保済みバッファを全部片付けてからエラーを返す。
-fn 積む(
-    確保済み: &mut Vec<(vk::Buffer, vk::DeviceMemory)>,
-    device: &ash::Device,
-    結果: Result<(vk::Buffer, vk::DeviceMemory), レンダラーエラー>,
-) -> Result<(vk::Buffer, vk::DeviceMemory), レンダラーエラー> {
-    match 結果 {
-        Ok(組) => {
-            確保済み.push(組);
-            Ok(組)
-        }
-        Err(誤り) => {
-            // 安全性: 確保済みバッファはこのスコープの唯一の所有者で、以降使用しない。
-            unsafe {
-                for &(buffer, memory) in 確保済み.iter() {
-                    device.destroy_buffer(buffer, None);
-                    device.free_memory(memory, None);
-                }
-            }
-            Err(誤り)
-        }
-    }
-}
-
-fn 属性をバイト列にする(素材: &スキンメッシュ素材) -> Vec<u8> {
-    let mut バイト列 = Vec::with_capacity(素材.属性一覧().len() * 32);
-    for 属性 in 素材.属性一覧() {
-        for 参照 in 属性.ジョイント {
-            バイト列.extend_from_slice(&参照.to_le_bytes());
-        }
-        for 重み in 属性.ウェイト {
-            バイト列.extend_from_slice(&重み.to_le_bytes());
-        }
-    }
-    バイト列
 }

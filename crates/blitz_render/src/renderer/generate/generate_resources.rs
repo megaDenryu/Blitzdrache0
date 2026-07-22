@@ -7,6 +7,7 @@ mod command_sync_resources;
 mod mesh_resources;
 mod optional_resources;
 mod post_resources;
+mod simulation_resources;
 
 use ash::vk;
 
@@ -19,7 +20,6 @@ use crate::shader_bundle::シェーダー束;
 use crate::skin_mesh::スキンメッシュ素材;
 use crate::vertex::頂点;
 use crate::vulkan;
-use crate::vulkan::depth::深度形式;
 use crate::vulkan::hdr_target::HDR形式;
 
 #[allow(clippy::too_many_arguments)]
@@ -75,7 +75,6 @@ pub(super) fn 組み立てる(
         &基礎.転送環境,
         swapchain,
         シーンカラー形式,
-        深度形式,
         &基礎.ユニフォーム,
         シェーダー.粒子.as_ref(),
         粒子素材,
@@ -85,22 +84,16 @@ pub(super) fn 組み立てる(
     )?;
 
     let ポスト = post_resources::組み立てる(device, &メモリプロパティ, swapchain, シェーダー, ポスト処理有効)?;
-    // GPUスキニング(判断44)はスキン付きシーンのみ。布(判断52〜54)は布素材があるときのみで、
-    // スキン必須・アタッチ添字検証はcloth_resourcesが行う。
-    let スキニング = スキン
-        .map(|素材| {
-            vulkan::skinning::スキニング一式::生成する(device, &メモリプロパティ, &基礎.転送環境, 頂点一覧, 素材, &シェーダー.スキニング)
-        })
-        .transpose()?;
-    let 布一式 = cloth_resources::組み立てる(
+    let (スキニング, 布一式) = simulation_resources::組み立てる(
         device,
         &メモリプロパティ,
         &基礎.転送環境,
         シーンカラー形式,
         基礎.ディスクリプタ.layout,
+        頂点一覧,
+        スキン,
         布,
-        &シェーダー.布,
-        スキニング.as_ref(),
+        シェーダー,
     )?;
 
     Ok(bundle::束ねる(基礎, コマンド同期, 追加資源, ポスト, スキニング, 布一式))

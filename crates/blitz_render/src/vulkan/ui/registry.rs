@@ -2,6 +2,8 @@
 //!
 //! 注意: 登録・削除は`device_wait_idle`を伴う。開発用UIのテクスチャ変化はフォントアトラス初期化時のごく少数回のみのため、この単純さを優先する設計判断。
 
+mod create;
+
 use std::collections::HashMap;
 
 use ash::vk;
@@ -22,23 +24,6 @@ pub(crate) struct UIテクスチャレジストリ {
 impl UIテクスチャレジストリ {
     pub(crate) fn layout(&self) -> vk::DescriptorSetLayout {
         self.layout
-    }
-
-    pub(crate) fn 生成する(device: &ash::Device) -> Result<Self, レンダラーエラー> {
-        let layout = descriptor::layoutを生成する(device)?;
-        let pool = match descriptor::poolを生成する(device) {
-            Ok(pool) => pool,
-            Err(誤り) => {
-                // 安全性: layoutはこのスコープの唯一の所有者で、以降使用しない。
-                unsafe { device.destroy_descriptor_set_layout(layout, None) };
-                return Err(誤り);
-            }
-        };
-        Ok(Self {
-            layout,
-            pool,
-            表: HashMap::new(),
-        })
     }
 
     /// テクスチャを新規登録、または既存IDを新しい内容で置き換える。

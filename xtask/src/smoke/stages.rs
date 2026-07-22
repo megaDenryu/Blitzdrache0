@@ -1,0 +1,82 @@
+//! スモーク検証の各ステージを既定の順序で実行する。
+
+use std::path::Path;
+
+use super::run_stage::{self, 起動設定};
+
+const 四角形フレーム数: &str = "600";
+const 短時間フレーム数: &str = "120";
+const ヘルメット取得先: &str = "assets/samples/DamagedHelmet/DamagedHelmet.glb";
+const フォックス取得先: &str = "assets/samples/Fox/Fox.glb";
+
+pub(super) fn すべてを実行する(シェーダー: &Path, アセット: &Path) -> bool {
+    四角形(シェーダー, アセット)
+        && ヘルメット(シェーダー)
+        && 粒子(シェーダー, アセット)
+        && 開発ui(シェーダー, アセット)
+        && シャドウ(シェーダー, アセット)
+        && フォックス(シェーダー)
+        && 布(シェーダー, アセット)
+}
+
+fn 必須ステージを実行する(名前: &str, 設定: 起動設定<'_>) -> bool {
+    println!("[xtask] {名前}ステージ実行");
+    if !run_stage::実行する(&設定) {
+        eprintln!("[xtask] smoke失敗: {名前}ステージ");
+        return false;
+    }
+    println!("[xtask] {名前}ステージ成功");
+    true
+}
+
+fn 四角形(シェーダー: &Path, アセット: &Path) -> bool {
+    let 設定 = 起動設定::生成する(四角形フレーム数, シェーダー, Some(アセット), "quad")
+        .照明なし()
+        .ポストなし();
+    必須ステージを実行する("quad", 設定)
+}
+
+fn ヘルメット(シェーダー: &Path) -> bool {
+    if !Path::new(ヘルメット取得先).is_file() {
+        println!("[xtask] helmetアセット未取得のためhelmetステージをスキップした(cargo xtask fetch-assetsで取得可)");
+        return true;
+    }
+    必須ステージを実行する("helmet", 起動設定::生成する(短時間フレーム数, シェーダー, None, "helmet"))
+}
+
+fn 粒子(シェーダー: &Path, アセット: &Path) -> bool {
+    let 設定 = 起動設定::生成する(短時間フレーム数, シェーダー, Some(アセット), "quad")
+        .照明なし()
+        .粒子あり()
+        .ポストなし();
+    必須ステージを実行する("particles", 設定)
+}
+
+fn 開発ui(シェーダー: &Path, アセット: &Path) -> bool {
+    let 設定 = 起動設定::生成する(短時間フレーム数, シェーダー, Some(アセット), "quad")
+        .照明なし()
+        .粒子あり()
+        .開発uiあり()
+        .ポストなし();
+    必須ステージを実行する("dev-ui", 設定)
+}
+
+fn シャドウ(シェーダー: &Path, アセット: &Path) -> bool {
+    let 設定 = 起動設定::生成する(短時間フレーム数, シェーダー, Some(アセット), "shadow_scene");
+    必須ステージを実行する("shadow", 設定)
+}
+
+fn フォックス(シェーダー: &Path) -> bool {
+    if !Path::new(フォックス取得先).is_file() {
+        println!("[xtask] Foxアセット未取得のためfox/clothステージをスキップした(cargo xtask fetch-assetsで取得可)");
+        return true;
+    }
+    必須ステージを実行する("fox", 起動設定::生成する(短時間フレーム数, シェーダー, None, "fox"))
+}
+
+fn 布(シェーダー: &Path, アセット: &Path) -> bool {
+    let 設定 = 起動設定::生成する(短時間フレーム数, シェーダー, Some(アセット), "quad")
+        .照明なし()
+        .布あり();
+    必須ステージを実行する("cloth", 設定)
+}

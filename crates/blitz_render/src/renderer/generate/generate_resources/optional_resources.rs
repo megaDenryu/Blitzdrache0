@@ -9,6 +9,7 @@ use crate::particle_material::粒子素材;
 use crate::particle_shader_set::粒子シェーダー一式;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan;
+use crate::vulkan::depth::深度形式;
 
 pub(super) struct 追加資源 {
     pub(super) 粒子: Option<vulkan::particles::粒子リソース一式>,
@@ -23,7 +24,6 @@ pub(super) fn 組み立てる(
     転送環境: &vulkan::transfer::転送実行環境,
     swapchain: &vulkan::swapchain::スワップチェーン,
     シーンカラー形式: vk::Format,
-    深度形式: vk::Format,
     ユニフォーム: &vulkan::uniform::フレームユニフォーム一式,
     粒子シェーダー: Option<&粒子シェーダー一式>,
     粒子素材: Option<&粒子素材>,
