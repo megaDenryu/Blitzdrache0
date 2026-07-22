@@ -7,7 +7,8 @@ mod render_input;
 
 use std::path::Path;
 
-use blitz_engine::{アセットID, カタログ, シーンを読み込む, シーンデータ};
+use blitz_asset_compiler::ソースシーンを読み込む;
+use blitz_engine::{アセットID, カタログ, シーンデータ};
 
 use crate::error::起動エラー;
 
@@ -71,7 +72,7 @@ pub(super) fn シーンを読み込んで変換する(
     描画対象数: Option<crate::cli::描画対象数>,
 ) -> Result<(シーンデータ, blitz_render::描画シーン素材), 起動エラー> {
     let id = アセットID::生成する(シーン名)?;
-    let シーン = シーンを読み込む(カタログ, &id).map_err(起動エラー::シーン読込失敗)?;
+    let シーン = ソースシーンを読み込む(カタログ, &id).map_err(起動エラー::シーン読込失敗)?;
     let 描画シーン = シーンをレンダラー入力に変換する(&シーン, 描画対象数)?;
     Ok((シーン, 描画シーン))
 }

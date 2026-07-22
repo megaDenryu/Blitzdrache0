@@ -7,9 +7,10 @@ use std::path::{Path, PathBuf};
 use super::cargo_toml_parse::{クレート名を取り出す, 依存名一覧を取り出す};
 use super::violation::違反;
 
-const 白リスト: [(&str, &[&str]); 6] = [
+const 白リスト: [(&str, &[&str]); 7] = [
     ("blitz_math", &["glam"]),
-    ("blitz_engine", &["blitz_math", "blitz_render", "gltf", "image", "thiserror"]),
+    ("blitz_engine", &["blitz_math", "blitz_render", "thiserror"]),
+    ("blitz_asset_compiler", &["blitz_engine", "blitz_math", "gltf", "image", "thiserror"]),
     (
         "blitz_render",
         &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"],
@@ -19,6 +20,7 @@ const 白リスト: [(&str, &[&str]); 6] = [
     (
         "blitz_app",
         &[
+            "blitz_asset_compiler",
             "blitz_engine",
             "blitz_math",
             "blitz_render",

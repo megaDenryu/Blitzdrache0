@@ -1,18 +1,13 @@
-//! アセット層: glTF読込・画像デコード・安定ID・カタログ。
-//!
-//! 注意: gltf/imageクレートに依存してよいのはこのモジュール配下だけ
-//! （README「利用ライブラリ」)。公開APIに両クレートの型を一切露出しない。
+//! アセット層: 実行時形式、安定ID、カタログ、シーンデータ。
 
 mod animation_clip;
 mod catalog;
 mod chunk_id;
-mod error;
 mod id;
 mod interpolation_kind;
 mod joint;
 mod joint_channel;
 mod keyframe_channel;
-mod loader;
 mod material_data;
 mod mesh_data;
 mod pbr_material_data;
@@ -33,13 +28,11 @@ mod vertex_attribute;
 pub use animation_clip::アニメーションクリップ;
 pub use catalog::カタログ;
 pub use chunk_id::チャンクID;
-pub use error::アセットエラー;
 pub use id::{アセットID, アセットIDエラー};
 pub use interpolation_kind::補間種別;
 pub use joint::ジョイント;
 pub use joint_channel::ジョイントアニメーションチャンネル;
 pub use keyframe_channel::チャンネル;
-pub use loader::シーンを読み込む;
 pub use material_data::マテリアルデータ;
 pub use mesh_data::メッシュデータ;
 pub use pbr_material_data::金属粗さPBRデータ;

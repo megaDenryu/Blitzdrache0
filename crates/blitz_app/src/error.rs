@@ -45,7 +45,7 @@ pub(crate) enum 起動エラー {
     シーン名不正(#[from] blitz_engine::アセットIDエラー),
 
     #[error("シーンの読込に失敗した: {0}(標準サンプルが無い場合は`cargo xtask fetch-assets`を試すこと)")]
-    シーン読込失敗(blitz_engine::アセットエラー),
+    シーン読込失敗(blitz_asset_compiler::アセットコンパイルエラー),
 
     #[error("--frames引数が不正だった: {0}")]
     フレーム数引数不正(String),
