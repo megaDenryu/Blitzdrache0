@@ -13,6 +13,9 @@ impl アプリ {
         if self.レンダラー.is_none() {
             return;
         }
+        if let Some(計測) = &mut self.フレーム間隔計測 {
+            計測.記録する();
+        }
         self.ホットリロードを確認する();
 
         let アクション = match self.起動モード {

@@ -13,6 +13,7 @@ mod embedded_shaders;
 mod error;
 mod hot_reload;
 mod input;
+mod reports;
 mod smoke;
 
 use std::process::ExitCode;
@@ -57,7 +58,13 @@ fn 終了処理する(mut アプリ: アプリ) -> Result<ExitCode, 起動エラ
     // 判断30: パス別GPU時間はレンダラー内部(クエリプール・移動平均)を読むため、
     // 破棄より前に取得する(検証カウンタとは逆に、破棄後では読めない)。
     if アプリ.gpu時間報告が必要か() {
-        gpu時間表を表示する(&アプリ.パス別gpu時間を取得する());
+        reports::gpu時間表を表示する(&アプリ.パス別gpu時間を取得する());
+    }
+    if アプリ.フレーム時間報告が必要か() {
+        match アプリ.フレーム時間統計を取得する() {
+            Some(統計) => reports::フレーム時間統計を表示する(&統計),
+            None => println!("CPU側フレーム間隔: 計測できなかった(ウォームアップ後のフレームがない)"),
+        }
     }
     // 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断3」。
     // 読み取りは必ずレンダラー破棄後に行う。
@@ -69,17 +76,4 @@ fn 終了処理する(mut アプリ: アプリ) -> Result<ExitCode, 起動エラ
     let 件数 = 検証カウンタ.件数を読む();
     println!("validationエラー・警告合計件数: {件数}");
     if 件数 > 0 { Ok(ExitCode::FAILURE) } else { Ok(ExitCode::SUCCESS) }
-}
-
-/// `--report-gpu-times`指定時の終了時コンソール出力(判断30)。計測無効(空配列)なら
-/// その旨を明示し、無言で何も出さないことを避ける。
-fn gpu時間表を表示する(表: &[(&'static str, f64)]) {
-    if 表.is_empty() {
-        println!("パス別GPU時間: 計測できなかった(タイムスタンプ非対応、または1フレームも計測が完了していない)");
-        return;
-    }
-    println!("パス別GPU時間(移動平均、60フレーム窓):");
-    for &(名前, 平均ミリ秒) in 表 {
-        println!("  {名前}: {平均ミリ秒:.4} ms");
-    }
 }

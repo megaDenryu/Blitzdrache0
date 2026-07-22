@@ -21,9 +21,18 @@ impl アプリ {
         self.gpu時間報告
     }
 
+    pub(crate) fn フレーム時間報告が必要か(&self) -> bool {
+        self.フレーム間隔計測.is_some()
+    }
+
     /// パス別の移動平均GPU時間(ミリ秒)。レンダラー破棄前に呼ぶこと(判断30)。
     pub(crate) fn パス別gpu時間を取得する(&self) -> Vec<(&'static str, f64)> {
         self.レンダラー.as_ref().map(レンダラー::パス別gpu時間を取得する).unwrap_or_default()
+    }
+
+    /// `--report-frame-times`で収集した、ウォームアップ後のCPU側フレーム間隔分布を返す。
+    pub(crate) fn フレーム時間統計を取得する(&self) -> Option<super::frame_timing::フレーム時間統計> {
+        self.フレーム間隔計測.as_ref().and_then(super::frame_timing::フレーム間隔計測::集計する)
     }
 
     /// イベントループ終了後に呼び、破棄順序を明示する。

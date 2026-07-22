@@ -2,6 +2,10 @@
 
 use std::path::PathBuf;
 
+const 既定シェーダー監視パス: &str = "shaders/scene.slang";
+const 既定シーン名: &str = "quad";
+const 既定アセットルート: &str = "assets";
+
 /// 起動時に指定できる実行モード。
 #[derive(Debug, Clone, Copy)]
 pub(crate) enum 起動モード {
@@ -29,6 +33,8 @@ pub(crate) struct 起動設定 {
     pub(crate) 粒子表示: 粒子表示モード,
     /// `--report-gpu-times`指定でtrue。既定はfalse(パス別GPU時間の終了時コンソール出力、判断30)。
     pub(crate) gpu時間報告: bool,
+    /// `--report-frame-times`指定でtrue。最初の120フレームを除いたCPU側フレーム間隔分布を終了時に出力する。
+    pub(crate) フレーム時間報告: bool,
     /// `--dev-ui`指定でtrue。既定はfalse(開発用UIの起動時有効化、判断34。実行中はF3でも切替可能)。
     pub(crate) 開発ui初期有効: bool,
     /// `--dump-frame <ベース名>`指定で、最終フレーム(--frames必須)の読み戻し画像を
@@ -45,6 +51,27 @@ pub(crate) struct 起動設定 {
     /// 布シミュレーションの方式(判断52・56)。`--cloth`=吊るし布(全シーン可)、
     /// `--cloth-cape`=マント(fox限定、キャラ追従)。既定はなし。
     pub(crate) 布モード: 布モード,
+}
+
+impl 起動設定 {
+    pub(super) fn 既定値() -> Self {
+        Self {
+            モード: 起動モード::無期限実行,
+            シェーダー監視パス: PathBuf::from(既定シェーダー監視パス),
+            シーン名: 既定シーン名.to_string(),
+            アセットルート: PathBuf::from(既定アセットルート),
+            ライティング有効: true,
+            粒子表示: 粒子表示モード::なし,
+            gpu時間報告: false,
+            フレーム時間報告: false,
+            開発ui初期有効: false,
+            フレームダンプ先: None,
+            ポスト処理有効: true,
+            露出: 1.0,
+            ブレンド: 0.0,
+            布モード: 布モード::なし,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

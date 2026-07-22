@@ -1,5 +1,5 @@
 //! 評価軸3.4節の最小ベンチ入口: 固定シーン(helmet)+固定カメラ(既定姿勢、入力なし)+
-//! 固定フレーム数で`blitz_app`を実行し、パス別GPU時間の表をそのまま表示する。
+//! 固定フレーム数で`blitz_app`を実行し、パス別GPU時間とCPU側フレーム間隔分布を表示する。
 //! スモークと同じ思想(繰り返す検証は資産化)で`cargo xtask bench`として登録する。
 //! 参照: `_doc/計画/評価軸.md`「3.4 計測の再現性」。
 
@@ -27,6 +27,7 @@ pub fn 実行する() -> ExitCode {
         フレーム数,
         "--particles",
         "--report-gpu-times",
+        "--report-frame-times",
     ];
     println!("[xtask] cargo {} を実行", 引数一覧.join(" "));
     match Command::new("cargo").args(引数一覧).status() {
