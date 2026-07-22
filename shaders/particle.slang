@@ -22,7 +22,7 @@ StructuredBuffer<Particle> particlesRO;
 
 struct ParticleFrameUniform
 {
-    // scene.slangのFrameUniformと先頭64バイト(viewProjection)を共有する同一バッファを束縛する。
+    column_major float4x4 lightViewProjection;
     column_major float4x4 viewProjection;
 };
 

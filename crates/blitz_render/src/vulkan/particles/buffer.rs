@@ -5,8 +5,8 @@
 
 use ash::vk;
 
-use super::initial_data;
 use crate::error::レンダラーエラー;
+use crate::particle_material::粒子素材;
 use crate::vulkan::geometry::upload;
 use crate::vulkan::transfer::転送実行環境;
 
@@ -20,13 +20,13 @@ impl 粒子バッファ {
         device: &ash::Device,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         転送環境: &転送実行環境,
+        素材: &粒子素材,
     ) -> Result<Self, レンダラーエラー> {
-        let 初期バイト列 = initial_data::初期バイト列を生成する();
         let (buffer, memory) = upload::ステージング経由でアップロードする(
             device,
             メモリプロパティ,
             転送環境,
-            &初期バイト列,
+            &素材.初期バイト列,
             vk::BufferUsageFlags::STORAGE_BUFFER,
         )?;
         Ok(Self { buffer, memory })

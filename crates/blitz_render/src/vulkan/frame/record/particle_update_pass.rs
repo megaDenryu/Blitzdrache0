@@ -5,7 +5,6 @@ use ash::vk;
 
 use crate::vulkan::frame::粒子描画入力;
 use crate::vulkan::graph::{バッファ用途, バッファハンドル, パス宣言, パス種別};
-use crate::vulkan::particles::粒子数;
 
 pub(super) fn 作る<'a>(粒子ハンドル: バッファハンドル, 粒子入力: &'a 粒子描画入力) -> パス宣言<'a> {
     パス宣言::生成する(
@@ -24,7 +23,7 @@ pub(super) fn 作る<'a>(粒子ハンドル: バッファハンドル, 粒子入
             let device = 文脈.device();
             let command_buffer = 文脈.コマンドバッファ();
             let set一覧 = [粒子入力.ディスクリプタセット];
-            let ワークグループ数 = 粒子数.div_ceil(64);
+            let ワークグループ数 = 粒子入力.更新スレッド数.div_ceil(64);
 
             // 安全性: command_bufferは記録中で、pipeline・ディスクリプタセットは生成済み。
             unsafe {

@@ -1,5 +1,4 @@
 //! コンポジションルートが所有する `アプリ`(ApplicationHandler実装)。ウィンドウ生成・レンダラー生成・1フレーム実行の配線だけを行い、ロジックは書かない。
-
 mod animation_state;
 mod aspect;
 mod cloth_frame;
@@ -11,10 +10,11 @@ mod frame_dump;
 mod handler;
 mod queries;
 mod hot_reload_apply;
+mod particle_setup;
 mod scene_camera;
 mod scene_load;
+mod sph_setup;
 mod window_setup;
-
 use std::path::PathBuf;
 
 use blitz_engine::カメラ;
@@ -23,7 +23,7 @@ use winit::window::Window;
 
 use scene_camera::シーン初期カメラを作る;
 
-use crate::cli::{布モード, 起動モード, 起動設定};
+use crate::cli::{布モード, 粒子表示モード, 起動モード, 起動設定};
 use crate::dev_ui::開発UI;
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
@@ -44,7 +44,7 @@ pub(crate) struct アプリ {
     現在フレーム: u32,
     クリア色: クリアカラー,
     ライティング有効: bool,
-    粒子有効: bool,
+    粒子表示: 粒子表示モード,
     gpu時間報告: bool,
     開発ui: Option<開発UI>,
     開発ui初期有効: bool,
@@ -79,7 +79,7 @@ impl アプリ {
             現在フレーム: 0,
             クリア色,
             ライティング有効: 起動設定.ライティング有効,
-            粒子有効: 起動設定.粒子有効,
+            粒子表示: 起動設定.粒子表示,
             gpu時間報告: 起動設定.gpu時間報告,
             開発ui: None,
             開発ui初期有効: 起動設定.開発ui初期有効,

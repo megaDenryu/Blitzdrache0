@@ -11,6 +11,8 @@ mod skinning_spirv_compile;
 mod slangc_entry_compile;
 mod slangc_locate;
 mod spirv_compile;
+mod sph_spirv_compile;
+mod surface_flow_spirv_compile;
 mod tonemap_spirv_compile;
 mod ui_spirv_compile;
 
@@ -20,6 +22,8 @@ use std::path::{Path, PathBuf};
 const シェーダーディレクトリ相対パス: &str = "../../shaders";
 const エントリファイル名: &str = "scene.slang";
 const 粒子エントリファイル名: &str = "particle.slang";
+const 表面流エントリファイル名: &str = "surface_flow.slang";
+const SPHエントリファイル名: &str = "sph.slang";
 const UIエントリファイル名: &str = "ui.slang";
 const シャドウエントリファイル名: &str = "shadow.slang";
 const トーンマップエントリファイル名: &str = "tonemap.slang";
@@ -43,6 +47,10 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
 
     let 粒子ソース絶対パス = シェーダーディレクトリ絶対パス.join(粒子エントリファイル名);
     particle_spirv_compile::三エントリをコンパイルする(&slangc, &粒子ソース絶対パス, &出力先ディレクトリ)?;
+    let 表面流ソース絶対パス = シェーダーディレクトリ絶対パス.join(表面流エントリファイル名);
+    surface_flow_spirv_compile::三エントリをコンパイルする(&slangc, &表面流ソース絶対パス, &出力先ディレクトリ)?;
+    let sphソース絶対パス = シェーダーディレクトリ絶対パス.join(SPHエントリファイル名);
+    sph_spirv_compile::三エントリをコンパイルする(&slangc, &sphソース絶対パス, &出力先ディレクトリ)?;
 
     let uiソース絶対パス = シェーダーディレクトリ絶対パス.join(UIエントリファイル名);
     ui_spirv_compile::頂点とフラグメントをコンパイルする(&slangc, &uiソース絶対パス, &出力先ディレクトリ)?;

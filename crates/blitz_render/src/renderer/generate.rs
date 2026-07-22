@@ -6,14 +6,13 @@ mod core_setup;
 mod debug_setup;
 mod frame_resources;
 mod generate_resources;
-
 use raw_window_handle::{RawDisplayHandle, RawWindowHandle};
-
 use super::レンダラー;
 use crate::cloth_material::布素材;
 use crate::error::レンダラーエラー;
 use crate::extent::ウィンドウ寸法;
 use crate::material::マテリアル素材;
+use crate::particle_material::粒子素材;
 use crate::shader_bundle::シェーダー束;
 use crate::skin_mesh::スキンメッシュ素材;
 use crate::vertex::頂点;
@@ -32,10 +31,10 @@ impl レンダラー {
         マテリアル: マテリアル素材,
         スキン: Option<スキンメッシュ素材>,
         布: Option<布素材>,
+        粒子: Option<粒子素材>,
         ポスト処理有効: bool,
     ) -> Result<Self, レンダラーエラー> {
         let コア = core_setup::組み立てる(表示ハンドル, ウィンドウハンドル, 寸法)?;
-
         let 資源 = generate_resources::組み立てる(
             &コア.instance,
             コア.physical_device,
@@ -49,6 +48,7 @@ impl レンダラー {
             &マテリアル,
             スキン.as_ref(),
             布.as_ref(),
+            粒子.as_ref(),
             ポスト処理有効,
             コア.タイムスタンプ対応か,
             コア.タイムスタンプ周期ns,

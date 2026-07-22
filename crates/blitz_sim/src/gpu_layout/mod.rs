@@ -6,7 +6,11 @@ mod constraint_bytes;
 #[cfg(test)]
 mod gpu_layout_tests;
 mod particle_bytes;
+mod surface_bytes;
+#[cfg(test)]
+mod surface_bytes_tests;
 
 pub use adjacency_bytes::隣接拘束バイト列にする;
 pub use constraint_bytes::拘束バイト列にする;
 pub use particle_bytes::粒子バイト列にする;
+pub use surface_bytes::表面流バイト列にする;

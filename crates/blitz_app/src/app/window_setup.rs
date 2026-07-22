@@ -31,7 +31,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     シーン名: &str,
     アセットルート: &std::path::Path,
     ホットリローダー: &mut ホットリローダー,
-    粒子有効: bool,
+    粒子表示: crate::cli::粒子表示モード,
     開発ui初期有効: bool,
     ポスト処理有効: bool,
     布モード: crate::cli::布モード,
@@ -46,7 +46,8 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let ウィンドウハンドル = window.window_handle()?.as_raw();
     let 物理寸法 = window.inner_size();
     let 寸法 = ウィンドウ寸法::生成する(物理寸法.width, 物理寸法.height);
-    let シェーダー束 = embedded_shaders::埋め込みシェーダー束を生成する(粒子有効)?;
+    let シェーダー束 = embedded_shaders::埋め込みシェーダー束を生成する(粒子表示)?;
+    let 粒子素材 = super::particle_setup::素材を作る(粒子表示)?;
 
     let カタログ = scene_load::カタログを構築する(アセットルート)?;
     let (シーン, 頂点一覧, インデックス一覧, マテリアル) =
@@ -72,6 +73,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
         マテリアル,
         スキン素材,
         布素材,
+        粒子素材,
         ポスト処理有効,
     )?;
 

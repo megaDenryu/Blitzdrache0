@@ -8,7 +8,6 @@ use crate::vulkan::frame::粒子描画入力;
 use crate::vulkan::graph::{
     クリア指定, バッファ用途, バッファハンドル, パス宣言, パス種別, 画像ハンドル, 画像用途,
 };
-use crate::vulkan::particles::粒子数;
 
 pub(super) fn 作る<'a>(
     カラー: 画像ハンドル,
@@ -52,7 +51,7 @@ pub(super) fn 作る<'a>(
                     &set一覧,
                     &[],
                 );
-                device.cmd_draw(command_buffer, 粒子数, 1, 0, 0);
+                device.cmd_draw(command_buffer, 粒子入力.描画要素数, 1, 0, 0);
             }
         },
     )

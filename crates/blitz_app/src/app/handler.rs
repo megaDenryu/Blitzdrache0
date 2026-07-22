@@ -19,7 +19,7 @@ impl ApplicationHandler for アプリ {
             &self.シーン名,
             &self.アセットルート,
             &mut self.ホットリローダー,
-            self.粒子有効,
+            self.粒子表示,
             self.開発ui初期有効,
             self.ポスト処理有効,
             self.布モード,

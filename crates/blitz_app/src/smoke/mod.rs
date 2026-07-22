@@ -11,6 +11,8 @@ mod window_operation;
 
 use winit::window::Window;
 
+use crate::cli::粒子表示モード;
+
 pub(crate) use asset_rewrite::アセットを書き換える;
 pub(crate) use pixel_judgment::{アニメーション差分を判定する, ピクセルを判定する};
 pub(crate) use shader_rewrite::シェーダーを書き換える;
@@ -38,13 +40,13 @@ pub(crate) enum スモークアクション {
 }
 
 /// `布有効`なら差分計画(布は厳密ピクセル判定と両立しないため。判断55・56)、`開発ui有効`なら
-/// devui計画、`粒子有効`ならparticles計画、シーン名がhelmet/shadow_scene/foxなら各計画、
+/// devui計画、粒子トイならparticles計画、表面流ならGPU計測だけ、シーン名がhelmet/shadow_scene/foxなら各計画、
 /// それ以外(既定"quad")ならquad計画で判定する(判断29・34・37・45)。
 pub(crate) fn 判定する(
     現在フレーム: u32,
     総フレーム数: u32,
     シーン名: &str,
-    粒子有効: bool,
+    粒子表示: 粒子表示モード,
     開発ui有効: bool,
     布有効: bool,
 ) -> スモークアクション {
@@ -52,7 +54,9 @@ pub(crate) fn 判定する(
         plan::フォックス計画(現在フレーム)
     } else if 開発ui有効 {
         plan::devui計画(現在フレーム, 総フレーム数)
-    } else if 粒子有効 {
+    } else if matches!(粒子表示, 粒子表示モード::表面流 | 粒子表示モード::Sph512 | 粒子表示モード::Sph1024 | 粒子表示モード::Sph2048) {
+        スモークアクション::通常描画
+    } else if 粒子表示 == 粒子表示モード::粒子トイ {
         plan::particles計画(現在フレーム, 総フレーム数)
     } else if シーン名 == "helmet" {
         plan::helmet計画(現在フレーム, 総フレーム数)

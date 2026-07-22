@@ -5,6 +5,7 @@
 
 use blitz_render::{コンピュートシェーダー, シェーダー一式, シェーダー束, 粒子シェーダー一式};
 
+use crate::cli::粒子表示モード;
 use crate::error::起動エラー;
 
 const 頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/vertex.spv"));
@@ -13,6 +14,12 @@ const フラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "
 const 粒子コンピュートSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_compute.spv"));
 const 粒子頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_vertex.spv"));
 const 粒子フラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_fragment.spv"));
+const 表面流コンピュートSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/surface_flow_compute.spv"));
+const 表面流頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/surface_flow_vertex.spv"));
+const 表面流フラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/surface_flow_fragment.spv"));
+const SPHコンピュートSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sph_compute.spv"));
+const SPH頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sph_vertex.spv"));
+const SPHフラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sph_fragment.spv"));
 
 const UI頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/ui_vertex.spv"));
 const UIフラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/ui_fragment.spv"));
@@ -21,8 +28,7 @@ const シャドウ頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "
 const シャドウフラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/shadow_fragment.spv"));
 
 const トーンマップ頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_vertex.spv"));
-const トーンマップフラグメントSPIRV: &[u8] =
-    include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_fragment.spv"));
+const トーンマップフラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_fragment.spv"));
 
 const ブルーム縮小側頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_down_vertex.spv"));
 const ブルーム前処理SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_prefilter.spv"));
@@ -33,16 +39,23 @@ const ブルーム拡大SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "
 const スキニングSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/skinning_compute.spv"));
 
 /// レンダラー生成に渡す全シェーダーを埋め込みSPIR-Vから組み立てる(判断38)。
-/// 粒子シェーダーは`--particles`指定時のみ含める(判断29)。
-pub(crate) fn 埋め込みシェーダー束を生成する(粒子有効: bool) -> Result<シェーダー束, 起動エラー> {
-    let 粒子 = if 粒子有効 {
-        Some(粒子シェーダー一式::生成する(
+/// 粒子系シェーダーは粒子トイまたは表面流の指定時だけ含める。
+pub(crate) fn 埋め込みシェーダー束を生成する(表示: 粒子表示モード) -> Result<シェーダー束, 起動エラー> {
+    let 粒子 = match 表示 {
+        粒子表示モード::なし => None,
+        粒子表示モード::粒子トイ => Some(粒子シェーダー一式::生成する(
             粒子コンピュートSPIRV.to_vec(),
             粒子頂点SPIRV.to_vec(),
             粒子フラグメントSPIRV.to_vec(),
-        )?)
-    } else {
-        None
+        )?),
+        粒子表示モード::表面流 => Some(粒子シェーダー一式::生成する(
+            表面流コンピュートSPIRV.to_vec(),
+            表面流頂点SPIRV.to_vec(),
+            表面流フラグメントSPIRV.to_vec(),
+        )?),
+        粒子表示モード::Sph512 | 粒子表示モード::Sph1024 | 粒子表示モード::Sph2048 => Some(
+            粒子シェーダー一式::生成する(SPHコンピュートSPIRV.to_vec(), SPH頂点SPIRV.to_vec(), SPHフラグメントSPIRV.to_vec())?,
+        ),
     };
     Ok(シェーダー束 {
         シーン: シェーダー一式::生成する(頂点SPIRV.to_vec(), フラグメントSPIRV.to_vec())?,

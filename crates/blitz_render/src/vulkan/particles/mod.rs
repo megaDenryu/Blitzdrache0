@@ -6,17 +6,16 @@ mod buffer;
 mod compute_pipeline;
 mod descriptor;
 mod draw_pipeline;
-mod initial_data;
 
 pub(crate) use buffer::粒子バッファ;
 pub(crate) use compute_pipeline::粒子コンピュートパイプライン;
 pub(crate) use descriptor::粒子ディスクリプタ一式;
 pub(crate) use draw_pipeline::粒子描画パイプライン;
-pub(crate) use initial_data::粒子数;
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::particle_material::粒子素材;
 use crate::particle_shader_set::粒子シェーダー一式;
 use crate::vulkan::transfer::転送実行環境;
 use crate::vulkan::uniform::フレームユニフォーム一式;
@@ -26,6 +25,8 @@ pub(crate) struct 粒子リソース一式 {
     pub(crate) ディスクリプタ: 粒子ディスクリプタ一式,
     pub(crate) コンピュートパイプライン: 粒子コンピュートパイプライン,
     pub(crate) 描画パイプライン: 粒子描画パイプライン,
+    pub(crate) 更新スレッド数: u32,
+    pub(crate) 描画要素数: u32,
 }
 
 impl 粒子リソース一式 {
@@ -38,8 +39,9 @@ impl 粒子リソース一式 {
         深度形式: vk::Format,
         ユニフォーム: &フレームユニフォーム一式,
         シェーダー: &粒子シェーダー一式,
+        素材: &粒子素材,
     ) -> Result<Self, レンダラーエラー> {
-        let バッファ = 粒子バッファ::生成する(device, メモリプロパティ, 転送環境)?;
+        let バッファ = 粒子バッファ::生成する(device, メモリプロパティ, 転送環境, 素材)?;
         let ディスクリプタ = match 粒子ディスクリプタ一式::生成する(device, バッファ.buffer, ユニフォーム) {
             Ok(ディスクリプタ) => ディスクリプタ,
             Err(誤り) => {
@@ -73,7 +75,14 @@ impl 粒子リソース一式 {
             }
         };
 
-        Ok(Self { バッファ, ディスクリプタ, コンピュートパイプライン, 描画パイプライン })
+        Ok(Self {
+            バッファ,
+            ディスクリプタ,
+            コンピュートパイプライン,
+            描画パイプライン,
+            更新スレッド数: 素材.更新スレッド数,
+            描画要素数: 素材.描画要素数,
+        })
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

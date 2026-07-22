@@ -5,6 +5,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::particle_material::粒子素材;
 use crate::particle_shader_set::粒子シェーダー一式;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan;
@@ -25,14 +26,14 @@ pub(super) fn 組み立てる(
     深度形式: vk::Format,
     ユニフォーム: &vulkan::uniform::フレームユニフォーム一式,
     粒子シェーダー: Option<&粒子シェーダー一式>,
+    粒子素材: Option<&粒子素材>,
     uiシェーダー: &シェーダー一式,
     タイムスタンプ対応か: bool,
     タイムスタンプ周期ns: f32,
 ) -> Result<追加資源, レンダラーエラー> {
     // 粒子はシーンと同じアタッチメント(ポスト有効時はHDR)へ追記描画するため、形式を合わせる(判断39)。
-    let 粒子 = 粒子シェーダー
-        .map(|シェーダー| {
-            vulkan::particles::粒子リソース一式::生成する(
+    let 粒子 = match (粒子シェーダー, 粒子素材) {
+        (Some(シェーダー), Some(素材)) => Some(vulkan::particles::粒子リソース一式::生成する(
                 device,
                 メモリプロパティ,
                 転送環境,
@@ -40,9 +41,11 @@ pub(super) fn 組み立てる(
                 深度形式,
                 ユニフォーム,
                 シェーダー,
-            )
-        })
-        .transpose()?;
+                素材,
+            )?),
+        (None, None) => None,
+        (Some(_), None) | (None, Some(_)) => return Err(レンダラーエラー::粒子入力不一致),
+    };
 
     let gpu計測 =
         vulkan::gpu_timing::パス別GPU計測::生成する(device, タイムスタンプ対応か, タイムスタンプ周期ns)?;

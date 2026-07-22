@@ -14,6 +14,7 @@ use super::frame_resources::フレーム資源;
 use crate::cloth_material::布素材;
 use crate::error::レンダラーエラー;
 use crate::material::マテリアル素材;
+use crate::particle_material::粒子素材;
 use crate::shader_bundle::シェーダー束;
 use crate::skin_mesh::スキンメッシュ素材;
 use crate::vertex::頂点;
@@ -35,6 +36,7 @@ pub(super) fn 組み立てる(
     マテリアル: &マテリアル素材,
     スキン: Option<&スキンメッシュ素材>,
     布: Option<&布素材>,
+    粒子素材: Option<&粒子素材>,
     ポスト処理有効: bool,
     タイムスタンプ対応か: bool,
     タイムスタンプ周期ns: f32,
@@ -76,13 +78,13 @@ pub(super) fn 組み立てる(
         深度形式,
         &基礎.ユニフォーム,
         シェーダー.粒子.as_ref(),
+        粒子素材,
         &シェーダー.ui,
         タイムスタンプ対応か,
         タイムスタンプ周期ns,
     )?;
 
     let ポスト = post_resources::組み立てる(device, &メモリプロパティ, swapchain, シェーダー, ポスト処理有効)?;
-
     // GPUスキニング(判断44)はスキン付きシーンのみ。布(判断52〜54)は布素材があるときのみで、
     // スキン必須・アタッチ添字検証はcloth_resourcesが行う。
     let スキニング = スキン

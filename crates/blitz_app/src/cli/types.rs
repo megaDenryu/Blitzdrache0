@@ -25,8 +25,8 @@ pub(crate) struct 起動設定 {
     pub(crate) アセットルート: PathBuf,
     /// `--unlit`指定でfalse。既定はtrue(PBRライティング有効、判断26)。
     pub(crate) ライティング有効: bool,
-    /// `--particles`指定でtrue。既定はfalse(GPU粒子トイ、判断29)。
-    pub(crate) 粒子有効: bool,
+    /// 粒子系GPUパスで表示する検証対象。既定はなし。
+    pub(crate) 粒子表示: 粒子表示モード,
     /// `--report-gpu-times`指定でtrue。既定はfalse(パス別GPU時間の終了時コンソール出力、判断30)。
     pub(crate) gpu時間報告: bool,
     /// `--dev-ui`指定でtrue。既定はfalse(開発用UIの起動時有効化、判断34。実行中はF3でも切替可能)。
@@ -52,4 +52,14 @@ pub(crate) enum 布モード {
     なし,
     吊るし布,
     マント,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum 粒子表示モード {
+    なし,
+    粒子トイ,
+    表面流,
+    Sph512,
+    Sph1024,
+    Sph2048,
 }

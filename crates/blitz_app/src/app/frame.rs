@@ -20,7 +20,7 @@ impl アプリ {
                 self.現在フレーム,
                 フレーム数,
                 &self.シーン名,
-                self.粒子有効,
+                self.粒子表示,
                 self.開発ui初期有効,
                 self.布モード != crate::cli::布モード::なし,
             ),

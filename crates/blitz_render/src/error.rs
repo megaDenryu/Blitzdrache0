@@ -8,7 +8,6 @@
 //! バリアント自体は自前表現（String・Vulkan失敗コード）のみを保持する。
 
 use thiserror::Error;
-
 use crate::vulkan_failure::Vulkan失敗コード;
 
 /// レンダラーの生成・描画・破棄で起こりうる失敗を表す層のエラー型。
@@ -85,8 +84,9 @@ pub enum レンダラーエラー {
     /// 布はスキン付きシーン(スキン済み頂点バッファ)を前提とする(判断52のアタッチ合流点)。
     #[error("布はスキン付きシーンでのみ使える(スキニング資源が無い)")]
     布にスキン必須,
+    #[error("粒子シェーダーと粒子素材の有無が一致しない")]
+    粒子入力不一致,
 }
-
 impl From<ash::LoadingError> for レンダラーエラー {
     fn from(誤り: ash::LoadingError) -> Self {
         Self::ローダー読み込み失敗(誤り.to_string())

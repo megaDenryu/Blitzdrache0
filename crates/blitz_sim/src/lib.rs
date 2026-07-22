@@ -15,7 +15,7 @@ mod surface_flow;
 mod xpbd;
 
 pub use cloth::{既定一辺粒子数, 布データ, 布仕様, 布を生成する, 布生成エラー, 距離拘束, 粒子, 空き添字, 隣接拘束エントリ};
-pub use gpu_layout::{拘束バイト列にする, 粒子バイト列にする, 隣接拘束バイト列にする};
+pub use gpu_layout::{拘束バイト列にする, 粒子バイト列にする, 表面流バイト列にする, 隣接拘束バイト列にする};
 pub use intervention::{バイト列にする, 介入};
 pub use sph::{sphを一ステップ進める, sph密度を計算する, Sph仕様, Sph仕様エラー, 流体粒子};
 pub use surface_flow::{表面セル, 表面流を一ステップ進める, 表面流仕様, 表面流仕様エラー, 表面流状態};
