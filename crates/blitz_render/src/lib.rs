@@ -15,6 +15,9 @@ mod error;
 mod extent;
 mod frame_input;
 mod gpu_memory_stats;
+mod lighting_input;
+#[cfg(test)]
+mod lighting_input_tests;
 mod material;
 mod particle_material;
 mod particle_shader_set;
@@ -51,6 +54,9 @@ pub use error::レンダラーエラー;
 pub use extent::ウィンドウ寸法;
 pub use frame_input::{フレーム描画入力, 布フレーム入力};
 pub use gpu_memory_stats::{GPUメモリ用途, GPUメモリ用途別確保量, GPUメモリ統計};
+pub use lighting_input::{
+    ライティング入力, ライティング入力エラー, 光強度, 光色, 影入力, 方向光入力, 点光源入力, 環境光係数
+};
 pub use material::マテリアル素材;
 pub use particle_material::{粒子素材, 粒子素材エラー};
 pub use particle_shader_set::{粒子シェーダー一式, 粒子シェーダー一式エラー};

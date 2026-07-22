@@ -8,7 +8,7 @@ use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::frame_input::フレーム描画入力;
 use crate::view_input::描画視点;
-use crate::vulkan::uniform::{light_transform, lighting_constants, フレームユニフォーム内容};
+use crate::vulkan::uniform::フレームユニフォーム内容;
 
 impl レンダラー {
     pub(super) fn ユニフォームを書き込む(
@@ -18,18 +18,20 @@ impl レンダラー {
         視点: &描画視点,
         ビュー射影行列: &[[f32; 4]; 4],
     ) -> Result<(), レンダラーエラー> {
+        let 方向光 = 入力.ライティング.方向光();
+        let 点光源 = 入力.ライティング.点光源();
         let 内容 = フレームユニフォーム内容 {
-            ライトビュー射影行列: light_transform::ライトビュー射影行列(),
+            ライトビュー射影行列: 入力.ライティング.影().ライトビュー射影().gpu境界用列優先配列(),
             ビュー射影行列: *ビュー射影行列,
             カメラワールド位置: 位置をgpu境界配列にする(視点.カメラ位置()),
-            方向光方向: lighting_constants::方向光方向(),
-            方向光色: lighting_constants::方向光色(),
-            方向光強度: lighting_constants::方向光強度(),
-            点光源位置: lighting_constants::点光源位置(),
-            点光源色: lighting_constants::点光源色(),
-            点光源強度: lighting_constants::点光源強度(),
-            環境光係数: lighting_constants::環境光係数(),
-            ライティング有効: 入力.ライティング有効,
+            方向光方向: 方向光.方向(),
+            方向光色: 方向光.色(),
+            方向光強度: 方向光.強度(),
+            点光源位置: 位置をgpu境界配列にする(点光源.位置()),
+            点光源色: 点光源.色(),
+            点光源強度: 点光源.強度(),
+            環境光係数: 入力.ライティング.環境光().値(),
+            ライティング有効: 入力.ライティング.有効か(),
         };
         self.ユニフォーム.書き込む(&self.device, フレーム添字, &内容)
     }
