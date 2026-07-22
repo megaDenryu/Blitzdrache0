@@ -17,6 +17,10 @@ mod frame_composition_tests;
 mod lighting;
 mod streaming;
 #[cfg(test)]
+mod streaming_ledger_cancel_tests;
+#[cfg(test)]
+mod streaming_ledger_tests;
+#[cfg(test)]
 mod streaming_tests;
 
 pub use animation::{スキン行列を計算する, スキン行列一覧, ブレンドする, 姿勢, 姿勢を評価する, 関節TRS};
@@ -31,4 +35,7 @@ pub use asset::{
 pub use camera::{カメラ, カメラインテント};
 pub use frame_composition::既定フレーム構成を作る;
 pub use lighting::既定ライティングを作る;
-pub use streaming::{チャンク座標, チャンク格子, チャンク格子エラー, チャンク要求};
+pub use streaming::{
+    GPU転送完了結果, チャンク台帳, チャンク台帳エラー, チャンク座標, チャンク格子, チャンク格子エラー, チャンク状態, チャンク要求, チャンク集合差分,
+    準備完了結果,
+};
