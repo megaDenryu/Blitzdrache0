@@ -17,6 +17,10 @@ mod frame_composition_tests;
 mod lighting;
 mod streaming;
 #[cfg(test)]
+mod streaming_budget_overflow_tests;
+#[cfg(test)]
+mod streaming_budget_tests;
+#[cfg(test)]
 mod streaming_ledger_cancel_tests;
 #[cfg(test)]
 mod streaming_ledger_tests;
@@ -38,6 +42,7 @@ pub use camera::{カメラ, カメラインテント};
 pub use frame_composition::既定フレーム構成を作る;
 pub use lighting::既定ライティングを作る;
 pub use streaming::{
-    GPU転送完了結果, チャンク台帳, チャンク台帳エラー, チャンク座標, チャンク格子, チャンク格子エラー, チャンク状態, チャンク要求,
-    チャンク読込エラー, チャンク読込器, チャンク読込完了, チャンク読込成果, チャンク集合差分, 準備完了結果,
+    GPU転送完了結果, ストリーミングメモリ量, ストリーミング予算, ストリーミング予算エラー, ストリーミング予算結果, チャンク予算候補, チャンク台帳,
+    チャンク台帳エラー, チャンク座標, チャンク格子, チャンク格子エラー, チャンク状態, チャンク要求, チャンク読込エラー, チャンク読込器,
+    チャンク読込完了, チャンク読込成果, チャンク集合差分, 予算判定, 準備完了結果,
 };
