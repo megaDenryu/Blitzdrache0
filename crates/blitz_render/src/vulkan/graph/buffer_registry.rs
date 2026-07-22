@@ -16,23 +16,23 @@ pub(crate) struct バッファレジストリ {
 
 impl バッファレジストリ {
     pub(crate) fn 新規() -> Self {
-        Self { エントリ一覧: Vec::new() }
+        Self {
+            エントリ一覧: Vec::new()
+        }
     }
 
     /// 外部持ち込みバッファをグラフへ登録する。グラフは毎フレーム新規作成するため
     /// 世代は常に0でよい(参照: `画像レジストリ::登録する`と同じ理由)。
     pub(crate) fn 登録する(&mut self, バッファ: vk::Buffer) -> バッファハンドル {
         let 添字 = self.エントリ一覧.len();
-        let 添字u32 = u32::try_from(添字)
-            .unwrap_or_else(|_| panic!("グラフへのバッファ登録数がu32に収まらない: {添字}"));
+        let 添字u32 = u32::try_from(添字).unwrap_or_else(|_| panic!("グラフへのバッファ登録数がu32に収まらない: {添字}"));
         let 世代 = 0;
         self.エントリ一覧.push(バッファエントリ { 世代, バッファ });
         バッファハンドル::生成する(添字u32, 世代)
     }
 
     fn 解決する(&self, ハンドル: バッファハンドル) -> &バッファエントリ {
-        let 添字usize = usize::try_from(ハンドル.添字())
-            .unwrap_or_else(|_| panic!("バッファハンドルの添字がusizeに収まらない"));
+        let 添字usize = usize::try_from(ハンドル.添字()).unwrap_or_else(|_| panic!("バッファハンドルの添字がusizeに収まらない"));
         let エントリ = self
             .エントリ一覧
             .get(添字usize)

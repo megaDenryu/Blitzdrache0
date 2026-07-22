@@ -68,11 +68,7 @@ fn 終了処理する(mut アプリ: アプリ) -> Result<ExitCode, 起動エラ
     };
     let 件数 = 検証カウンタ.件数を読む();
     println!("validationエラー・警告合計件数: {件数}");
-    if 件数 > 0 {
-        Ok(ExitCode::FAILURE)
-    } else {
-        Ok(ExitCode::SUCCESS)
-    }
+    if 件数 > 0 { Ok(ExitCode::FAILURE) } else { Ok(ExitCode::SUCCESS) }
 }
 
 /// `--report-gpu-times`指定時の終了時コンソール出力(判断30)。計測無効(空配列)なら

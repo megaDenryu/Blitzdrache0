@@ -21,8 +21,7 @@ pub(super) fn ジョイントチャンネル一覧を取り出す(
             continue;
         };
 
-        let 読み取り器 =
-            チャンネル.reader(|バッファ| 文書.バッファ一覧.get(バッファ.index()).map(Vec::as_slice));
+        let 読み取り器 = チャンネル.reader(|バッファ| 文書.バッファ一覧.get(バッファ.index()).map(Vec::as_slice));
         property::プロパティを反映する(
             読み取り器,
             チャンネル.target().property(),

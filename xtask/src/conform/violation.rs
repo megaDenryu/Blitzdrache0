@@ -11,11 +11,17 @@ pub struct 違反 {
 
 impl 違反 {
     pub fn ファイル単位(パス: PathBuf, 説明: String) -> Self {
-        Self { パス, 行番号: None, 説明 }
+        Self {
+            パス, 行番号: None, 説明
+        }
     }
 
     pub fn 行単位(パス: PathBuf, 行番号: usize, 説明: String) -> Self {
-        Self { パス, 行番号: Some(行番号), 説明 }
+        Self {
+            パス,
+            行番号: Some(行番号),
+            説明,
+        }
     }
 }
 

@@ -13,9 +13,7 @@ pub(super) fn 割り当てる(
     layout: vk::DescriptorSetLayout,
 ) -> Result<[vk::DescriptorSet; フレームインフライト数], レンダラーエラー> {
     let layout一覧 = [layout; フレームインフライト数];
-    let alloc_info = vk::DescriptorSetAllocateInfo::default()
-        .descriptor_pool(pool)
-        .set_layouts(&layout一覧);
+    let alloc_info = vk::DescriptorSetAllocateInfo::default().descriptor_pool(pool).set_layouts(&layout一覧);
     // 安全性: pool・layoutは生成済みで有効。
     let set一覧 = unsafe { device.allocate_descriptor_sets(&alloc_info)? };
     let 件数 = set一覧.len();
@@ -66,11 +64,7 @@ fn 画像情報(テクスチャ: &crate::vulkan::texture::テクスチャ) -> vk
         .image_layout(vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL)
 }
 
-fn 画像書き込み<'a>(
-    set: vk::DescriptorSet,
-    binding: u32,
-    情報: &'a [vk::DescriptorImageInfo],
-) -> vk::WriteDescriptorSet<'a> {
+fn 画像書き込み<'a>(set: vk::DescriptorSet, binding: u32, 情報: &'a [vk::DescriptorImageInfo]) -> vk::WriteDescriptorSet<'a> {
     vk::WriteDescriptorSet::default()
         .dst_set(set)
         .dst_binding(binding)

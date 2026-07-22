@@ -5,12 +5,9 @@ use ash::vk;
 use crate::ui_vertex::UI頂点;
 
 pub(super) fn 記述する() -> (vk::VertexInputBindingDescription, [vk::VertexInputAttributeDescription; 3]) {
-    let stride = u32::try_from(std::mem::size_of::<UI頂点>())
-        .unwrap_or_else(|_| panic!("UI頂点のサイズがu32に収まらない"));
-    let uvオフセット =
-        u32::try_from(std::mem::offset_of!(UI頂点, uv)).unwrap_or_else(|_| panic!("UI頂点のuvオフセットがu32に収まらない"));
-    let 色オフセット = u32::try_from(std::mem::offset_of!(UI頂点, 色rgba8))
-        .unwrap_or_else(|_| panic!("UI頂点の色オフセットがu32に収まらない"));
+    let stride = u32::try_from(std::mem::size_of::<UI頂点>()).unwrap_or_else(|_| panic!("UI頂点のサイズがu32に収まらない"));
+    let uvオフセット = u32::try_from(std::mem::offset_of!(UI頂点, uv)).unwrap_or_else(|_| panic!("UI頂点のuvオフセットがu32に収まらない"));
+    let 色オフセット = u32::try_from(std::mem::offset_of!(UI頂点, 色rgba8)).unwrap_or_else(|_| panic!("UI頂点の色オフセットがu32に収まらない"));
 
     let バインド記述 = vk::VertexInputBindingDescription::default()
         .binding(0)

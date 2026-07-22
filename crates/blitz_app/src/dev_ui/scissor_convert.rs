@@ -14,5 +14,7 @@ pub(super) fn 変換する(clip_rect: egui::Rect, pixels_per_point: f32) -> blit
 fn f32を非負u32へ丸める(値: f32) -> u32 {
     let 丸め済み = 値.round().clamp(0.0, 65535.0);
     let 文字列 = format!("{丸め済み:.0}");
-    文字列.parse::<u32>().unwrap_or_else(|_| panic!("ピクセル座標の整数変換に失敗した: {文字列}"))
+    文字列
+        .parse::<u32>()
+        .unwrap_or_else(|_| panic!("ピクセル座標の整数変換に失敗した: {文字列}"))
 }

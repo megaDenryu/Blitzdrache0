@@ -5,14 +5,10 @@ use ash::vk;
 use crate::vertex::頂点;
 
 pub(super) fn 記述する() -> (vk::VertexInputBindingDescription, [vk::VertexInputAttributeDescription; 4]) {
-    let stride = u32::try_from(std::mem::size_of::<頂点>())
-        .unwrap_or_else(|_| panic!("頂点のサイズがu32に収まらない"));
-    let 法線オフセット = u32::try_from(std::mem::offset_of!(頂点, 法線))
-        .unwrap_or_else(|_| panic!("頂点の法線オフセットがu32に収まらない"));
-    let 接線オフセット = u32::try_from(std::mem::offset_of!(頂点, 接線))
-        .unwrap_or_else(|_| panic!("頂点の接線オフセットがu32に収まらない"));
-    let uvオフセット = u32::try_from(std::mem::offset_of!(頂点, uv))
-        .unwrap_or_else(|_| panic!("頂点のuvオフセットがu32に収まらない"));
+    let stride = u32::try_from(std::mem::size_of::<頂点>()).unwrap_or_else(|_| panic!("頂点のサイズがu32に収まらない"));
+    let 法線オフセット = u32::try_from(std::mem::offset_of!(頂点, 法線)).unwrap_or_else(|_| panic!("頂点の法線オフセットがu32に収まらない"));
+    let 接線オフセット = u32::try_from(std::mem::offset_of!(頂点, 接線)).unwrap_or_else(|_| panic!("頂点の接線オフセットがu32に収まらない"));
+    let uvオフセット = u32::try_from(std::mem::offset_of!(頂点, uv)).unwrap_or_else(|_| panic!("頂点のuvオフセットがu32に収まらない"));
 
     let バインド記述 = vk::VertexInputBindingDescription::default()
         .binding(0)
@@ -52,7 +48,9 @@ pub(super) fn 布用記述する() -> (vk::VertexInputBindingDescription, Vec<vk
 }
 
 /// 属性選択に応じたバインド・属性記述を返す(graphics_pipelineの行数分割のための集約)。
-pub(super) fn 選択して記述する(選択: super::頂点属性選択) -> (vk::VertexInputBindingDescription, Vec<vk::VertexInputAttributeDescription>) {
+pub(super) fn 選択して記述する(
+    選択: super::頂点属性選択
+) -> (vk::VertexInputBindingDescription, Vec<vk::VertexInputAttributeDescription>) {
     match 選択 {
         super::頂点属性選択::全属性 => {
             let (バインド, 属性) = 記述する();

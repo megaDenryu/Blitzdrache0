@@ -17,7 +17,7 @@ impl カタログ {
     /// 空のカタログを作る。
     pub fn 空を作る() -> Self {
         Self {
-            登録一覧: HashMap::new(),
+            登録一覧: HashMap::new()
         }
     }
 

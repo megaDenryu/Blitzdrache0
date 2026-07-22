@@ -53,7 +53,6 @@ pub(super) fn 描画コマンドを積む(
 /// ウィンドウ寸法(u32、実運用では65535を超えない)をVkViewport用のf32へ変換する。
 /// u32→f32はFrom/TryFromが無いため、u16を経由してasキャストを避ける。
 pub(crate) fn u32を丸めずf32へ変換する(値: u32) -> f32 {
-    let 値u16 =
-        u16::try_from(値).unwrap_or_else(|_| panic!("ウィンドウ寸法がu16に収まらない: {値}"));
+    let 値u16 = u16::try_from(値).unwrap_or_else(|_| panic!("ウィンドウ寸法がu16に収まらない: {値}"));
     f32::from(値u16)
 }

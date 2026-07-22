@@ -10,7 +10,10 @@ use super::violation::違反;
 const 白リスト: [(&str, &[&str]); 6] = [
     ("blitz_math", &["glam"]),
     ("blitz_engine", &["blitz_math", "blitz_render", "gltf", "image", "thiserror"]),
-    ("blitz_render", &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"]),
+    (
+        "blitz_render",
+        &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"],
+    ),
     // 判断51: シミュレーション基盤層。手法の数学のみでashもblitz_renderも知らない
     ("blitz_sim", &["blitz_math", "thiserror"]),
     (
@@ -32,8 +35,7 @@ const 白リスト: [(&str, &[&str]); 6] = [
 
 pub fn 全クレートを検査する() -> Result<Vec<違反>, String> {
     let mut 対象一覧: Vec<PathBuf> = Vec::new();
-    let 読み取り結果 =
-        std::fs::read_dir("crates").map_err(|誤り| format!("crates/の読み取りに失敗した: {誤り}"))?;
+    let 読み取り結果 = std::fs::read_dir("crates").map_err(|誤り| format!("crates/の読み取りに失敗した: {誤り}"))?;
     for エントリ結果 in 読み取り結果 {
         let エントリ = エントリ結果.map_err(|誤り| format!("crates/の読み取りに失敗した: {誤り}"))?;
         let 候補 = エントリ.path().join("Cargo.toml");
@@ -45,8 +47,7 @@ pub fn 全クレートを検査する() -> Result<Vec<違反>, String> {
 
     let mut 違反一覧 = Vec::new();
     for パス in &対象一覧 {
-        let 内容 = std::fs::read_to_string(パス)
-            .map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", パス.display()))?;
+        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", パス.display()))?;
         違反一覧.extend(単一クレートを検査する(パス, &内容));
     }
     Ok(違反一覧)
@@ -66,9 +67,7 @@ fn 単一クレートを検査する(パス: &Path, 内容: &str) -> Vec<違反>
             .collect(),
         None => 依存名一覧
             .into_iter()
-            .map(|依存名| {
-                違反::ファイル単位(パス.to_path_buf(), format!("白リスト未登録クレート({クレート名})の依存: {依存名}"))
-            })
+            .map(|依存名| 違反::ファイル単位(パス.to_path_buf(), format!("白リスト未登録クレート({クレート名})の依存: {依存名}")))
             .collect(),
     }
 }

@@ -43,11 +43,7 @@ impl スワップチェーン {
         self.画像一覧.len()
     }
 
-    pub(crate) fn 破棄する(
-        &self,
-        device: &ash::Device,
-        swapchain_loader: &ash::khr::swapchain::Device,
-    ) {
+    pub(crate) fn 破棄する(&self, device: &ash::Device, swapchain_loader: &ash::khr::swapchain::Device) {
         // 安全性: 画像ビュー・スワップチェーンはSelfが唯一の所有者であり、
         // 破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
         unsafe {

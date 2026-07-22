@@ -39,11 +39,8 @@ pub(super) fn 組み立てる(
     let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default()
         .vertex_binding_descriptions(&バインド記述一覧)
         .vertex_attribute_descriptions(&属性記述一覧);
-    let 入力アセンブリstate =
-        vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::TRIANGLE_LIST);
-    let ビューポートstate = vk::PipelineViewportStateCreateInfo::default()
-        .viewport_count(1)
-        .scissor_count(1);
+    let 入力アセンブリstate = vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::TRIANGLE_LIST);
+    let ビューポートstate = vk::PipelineViewportStateCreateInfo::default().viewport_count(1).scissor_count(1);
     // 注意: カリングはNONEにする。シャドウ検証アセットの遮蔽quadは片面ポリゴンのため、
     // 表面カリング(判断35の「してよい」選択肢)を使うと光源から見える面が消え、
     // 影が生成できなくなる。depth biasのみで自己遮蔽を抑える。
@@ -55,8 +52,7 @@ pub(super) fn 組み立てる(
         .depth_bias_constant_factor(深度バイアス定数項)
         .depth_bias_slope_factor(深度バイアス傾き項)
         .depth_bias_clamp(0.0);
-    let マルチサンプルstate =
-        vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
+    let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
     let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default();
     let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
         .depth_test_enable(true)
@@ -90,8 +86,7 @@ pub(super) fn 組み立てる(
         .push_next(&mut rendering情報);
 
     // 安全性: 各stateは本関数内で構築した値のみを参照し、deviceは生成済みで有効。
-    let 生成結果 =
-        unsafe { device.create_graphics_pipelines(vk::PipelineCache::null(), &[create_info], None) };
+    let 生成結果 = unsafe { device.create_graphics_pipelines(vk::PipelineCache::null(), &[create_info], None) };
 
     パイプラインを取り出す(device, layout, 生成結果)
 }

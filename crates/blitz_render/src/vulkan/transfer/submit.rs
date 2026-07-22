@@ -38,8 +38,7 @@ fn 記録して送信する(
     command_buffer: vk::CommandBuffer,
     記録: impl FnOnce(vk::CommandBuffer),
 ) -> Result<(), レンダラーエラー> {
-    let begin_info =
-        vk::CommandBufferBeginInfo::default().flags(vk::CommandBufferUsageFlags::ONE_TIME_SUBMIT);
+    let begin_info = vk::CommandBufferBeginInfo::default().flags(vk::CommandBufferUsageFlags::ONE_TIME_SUBMIT);
     // 安全性: command_bufferは直前に確保済みで未記録状態。
     unsafe { device.begin_command_buffer(command_buffer, &begin_info)? };
     記録(command_buffer);

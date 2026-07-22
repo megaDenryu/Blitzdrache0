@@ -51,9 +51,7 @@ impl スキニングバッファ {
     pub(super) fn 破棄する(&self, device: &ash::Device) {
         // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
         unsafe {
-            for &(buffer, memory) in
-                [self.レスト頂点, self.属性, self.出力].iter().chain(self.行列一覧.iter())
-            {
+            for &(buffer, memory) in [self.レスト頂点, self.属性, self.出力].iter().chain(self.行列一覧.iter()) {
                 device.destroy_buffer(buffer, None);
                 device.free_memory(memory, None);
             }

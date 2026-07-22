@@ -16,14 +16,11 @@ pub(crate) fn 読み取る(
     形式: vk::Format,
 ) -> Result<読み戻し画像, レンダラーエラー> {
     let 必要バイト数: u64 = u64::from(寸法.width) * u64::from(寸法.height) * 4;
-    let 要素数 = usize::try_from(必要バイト数)
-        .unwrap_or_else(|_| panic!("読み戻しバイト数がusizeに収まらない: {必要バイト数}"));
+    let 要素数 = usize::try_from(必要バイト数).unwrap_or_else(|_| panic!("読み戻しバイト数がusizeに収まらない: {必要バイト数}"));
 
     // 安全性: バッファのメモリはHOST_VISIBLE|HOST_COHERENTで確保済みで、
     // 必要バイト数はバッファ容量以下であることを呼び出し元が保証する。
-    let ポインタ = unsafe {
-        device.map_memory(バッファ.memory(), 0, 必要バイト数, vk::MemoryMapFlags::empty())?
-    };
+    let ポインタ = unsafe { device.map_memory(バッファ.memory(), 0, 必要バイト数, vk::MemoryMapFlags::empty())? };
     // 安全性: ポインタはmap_memoryが返した有効な範囲を指し、要素数ぶんのみ読む。
     // HOST_COHERENTのためinvalidateは不要。
     let 生データ = unsafe { std::slice::from_raw_parts(ポインタ.cast::<u8>(), 要素数) }.to_vec();
@@ -49,10 +46,6 @@ fn 並び替える(データ: &[u8]) -> Vec<u8> {
 fn bgra形式か(形式: vk::Format) -> bool {
     matches!(
         形式,
-        vk::Format::B8G8R8A8_UNORM
-            | vk::Format::B8G8R8A8_SRGB
-            | vk::Format::B8G8R8A8_SNORM
-            | vk::Format::B8G8R8A8_UINT
-            | vk::Format::B8G8R8A8_SINT
+        vk::Format::B8G8R8A8_UNORM | vk::Format::B8G8R8A8_SRGB | vk::Format::B8G8R8A8_SNORM | vk::Format::B8G8R8A8_UINT | vk::Format::B8G8R8A8_SINT
     )
 }

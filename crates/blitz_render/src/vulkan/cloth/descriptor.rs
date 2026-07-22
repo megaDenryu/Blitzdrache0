@@ -52,8 +52,12 @@ pub(super) fn 生成する(
 
     let セット数 = u32::try_from(フレームインフライト数).unwrap_or_else(|_| panic!("フレームインフライト数がu32に収まらない"));
     let pool_size一覧 = [
-        vk::DescriptorPoolSize::default().ty(vk::DescriptorType::UNIFORM_BUFFER).descriptor_count(セット数),
-        vk::DescriptorPoolSize::default().ty(vk::DescriptorType::STORAGE_BUFFER).descriptor_count(ストレージ本数 * セット数),
+        vk::DescriptorPoolSize::default()
+            .ty(vk::DescriptorType::UNIFORM_BUFFER)
+            .descriptor_count(セット数),
+        vk::DescriptorPoolSize::default()
+            .ty(vk::DescriptorType::STORAGE_BUFFER)
+            .descriptor_count(ストレージ本数 * セット数),
     ];
     let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(セット数).pool_sizes(&pool_size一覧);
     // 安全性: deviceは生成済みで有効。失敗時はlayoutを片付ける。

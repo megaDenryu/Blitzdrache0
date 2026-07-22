@@ -8,7 +8,10 @@ pub(super) fn 内容を描く(ctx: &egui::Context, 統計: &開発UI統計, 露�
     egui::Window::new("Blitzdrache0 dev").resizable(false).show(ctx, |ui| {
         // フレーム間隔はFIFO提示のvsync待ちを含むため、60Hz環境では常に約16.7msになる。
         // GPUの実仕事量はパス別GPU時間の合計で読む(判断50: 両者の混同が「重い」誤読を生んだ)。
-        ui.label(format!("frame interval: {:.3} ms (vsync待ち込み。60Hzなら約16.7msが正常)", 統計.フレーム時間ms));
+        ui.label(format!(
+            "frame interval: {:.3} ms (vsync待ち込み。60Hzなら約16.7msが正常)",
+            統計.フレーム時間ms
+        ));
         let gpu合計: f64 = 統計.パス別gpu時間.iter().map(|&(_, ミリ秒)| ミリ秒).sum();
         ui.label(format!("GPU合計: {gpu合計:.4} ms"));
         ui.label(format!("validation issues: {}", 統計.validation件数));

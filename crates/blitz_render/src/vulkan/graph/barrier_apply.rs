@@ -21,10 +21,11 @@ pub(crate) fn 発行する(
     if 画像バリア一覧.is_empty() && バッファバリア一覧.is_empty() {
         return;
     }
-    let vk画像バリア一覧: Vec<vk::ImageMemoryBarrier2> =
-        画像バリア一覧.iter().map(|バリア| 画像バリアへ変換する(画像レジストリ, バリア)).collect();
-    let vkバッファバリア一覧: Vec<vk::BufferMemoryBarrier2> =
-        バッファバリア一覧.iter().map(|バリア| バッファバリアへ変換する(バッファレジストリ, バリア)).collect();
+    let vk画像バリア一覧: Vec<vk::ImageMemoryBarrier2> = 画像バリア一覧.iter().map(|バリア| 画像バリアへ変換する(画像レジストリ, バリア)).collect();
+    let vkバッファバリア一覧: Vec<vk::BufferMemoryBarrier2> = バッファバリア一覧
+        .iter()
+        .map(|バリア| バッファバリアへ変換する(バッファレジストリ, バリア))
+        .collect();
     let 依存情報 = vk::DependencyInfo::default()
         .image_memory_barriers(&vk画像バリア一覧)
         .buffer_memory_barriers(&vkバッファバリア一覧);
@@ -33,8 +34,7 @@ pub(crate) fn 発行する(
 }
 
 fn 画像バリアへ変換する<'a>(
-    レジストリ: &'a 画像レジストリ,
-    バリア: &'a 画像バリア記述,
+    レジストリ: &'a 画像レジストリ, バリア: &'a 画像バリア記述
 ) -> vk::ImageMemoryBarrier2<'a> {
     let 部分範囲 = レジストリ.アスペクトを取得する(バリア.ハンドル).部分範囲();
     vk::ImageMemoryBarrier2::default()
@@ -51,8 +51,7 @@ fn 画像バリアへ変換する<'a>(
 }
 
 fn バッファバリアへ変換する<'a>(
-    レジストリ: &'a バッファレジストリ,
-    バリア: &'a バッファバリア記述,
+    レジストリ: &'a バッファレジストリ, バリア: &'a バッファバリア記述
 ) -> vk::BufferMemoryBarrier2<'a> {
     vk::BufferMemoryBarrier2::default()
         .src_stage_mask(バリア.前.stage)

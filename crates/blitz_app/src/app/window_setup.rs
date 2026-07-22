@@ -19,7 +19,13 @@ const 初期幅: u32 = 1280;
 const 初期高さ: u32 = 720;
 
 /// resumed時に構築してアプリのフィールドへ格納する一式。
-type 起動一式 = (Window, レンダラー, 開発UI, Option<アニメーション再生>, Option<super::cloth_setup::布プリセット>);
+type 起動一式 = (
+    Window,
+    レンダラー,
+    開発UI,
+    Option<アニメーション再生>,
+    Option<super::cloth_setup::布プリセット>,
+);
 
 /// ウィンドウを生成し、そのハンドルからレンダラー・開発用UIを生成する。
 ///
@@ -50,8 +56,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let 粒子素材 = super::particle_setup::素材を作る(粒子表示)?;
 
     let カタログ = scene_load::カタログを構築する(アセットルート)?;
-    let (シーン, 頂点一覧, インデックス一覧, マテリアル) =
-        scene_load::シーンを読み込んで変換する(&カタログ, シーン名)?;
+    let (シーン, 頂点一覧, インデックス一覧, マテリアル) = scene_load::シーンを読み込んで変換する(&カタログ, シーン名)?;
     let スキン素材 = scene_load::スキン素材へ変換する(&シーン)?;
     let 布 = match 布モード {
         crate::cli::布モード::なし => None,

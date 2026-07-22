@@ -31,14 +31,20 @@ pub(super) fn 生成する(
             return Err(誤り);
         }
     };
-    Ok(HDRターゲット { 画像, 画像ビュー, memory })
+    Ok(HDRターゲット {
+        画像, 画像ビュー, memory
+    })
 }
 
 fn 画像を作る(device: &ash::Device, 寸法: vk::Extent2D) -> Result<vk::Image, レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
         .format(HDR形式)
-        .extent(vk::Extent3D { width: 寸法.width, height: 寸法.height, depth: 1 })
+        .extent(vk::Extent3D {
+            width: 寸法.width,
+            height: 寸法.height,
+            depth: 1,
+        })
         .mip_levels(1)
         .array_layers(1)
         .samples(vk::SampleCountFlags::TYPE_1)

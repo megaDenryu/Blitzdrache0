@@ -6,7 +6,7 @@ mod convert;
 
 use std::path::Path;
 
-use blitz_engine::{アセットID, カタログ, シーンデータ, シーンを読み込む};
+use blitz_engine::{アセットID, カタログ, シーンを読み込む, シーンデータ};
 use blitz_render::マテリアル素材;
 
 use crate::error::起動エラー;
@@ -19,10 +19,7 @@ const フォックス識別子: &str = "fox";
 /// `アセットルート`配下のquad・DamagedHelmet・shadow_scene(判断37)・Fox(判断42)を登録したカタログを作る(判断7)。
 pub(super) fn カタログを構築する(アセットルート: &Path) -> Result<カタログ, 起動エラー> {
     let mut カタログ = カタログ::空を作る();
-    カタログ.登録する(
-        アセットID::生成する(四角形識別子)?,
-        アセットルート.join("smoke").join("quad.gltf"),
-    );
+    カタログ.登録する(アセットID::生成する(四角形識別子)?, アセットルート.join("smoke").join("quad.gltf"));
     カタログ.登録する(
         アセットID::生成する(ヘルメット識別子)?,
         アセットルート.join("samples").join("DamagedHelmet").join("DamagedHelmet.glb"),
@@ -41,7 +38,7 @@ pub(super) fn カタログを構築する(アセットルート: &Path) -> Resul
 /// シーンのスキン情報をレンダラーのスキンメッシュ素材へ変換する(判断44)。
 /// スキンとスキン頂点属性の片方だけが存在するシーンは不整合として型付きエラーにする。
 pub(super) fn スキン素材へ変換する(
-    シーン: &シーンデータ,
+    シーン: &シーンデータ
 ) -> Result<Option<blitz_render::スキンメッシュ素材>, 起動エラー> {
     match (&シーン.スキン, &シーン.メッシュ.スキン頂点属性一覧) {
         (Some(スキン), Some(属性一覧)) => {
@@ -52,11 +49,18 @@ pub(super) fn スキン素材へ変換する(
                     ウェイト: 属性.ウェイト,
                 })
                 .collect();
-            Ok(Some(blitz_render::スキンメッシュ素材::生成する(変換済み, スキン.ジョイント一覧.len())?))
+            Ok(Some(blitz_render::スキンメッシュ素材::生成する(
+                変換済み,
+                スキン.ジョイント一覧.len(),
+            )?))
         }
         (None, None) => Ok(None),
-        (Some(_), None) => Err(起動エラー::スキン整合性不正("スキンはあるがスキン頂点属性が無い".to_string())),
-        (None, Some(_)) => Err(起動エラー::スキン整合性不正("スキン頂点属性はあるがスキンが無い".to_string())),
+        (Some(_), None) => Err(起動エラー::スキン整合性不正(
+            "スキンはあるがスキン頂点属性が無い".to_string(),
+        )),
+        (None, Some(_)) => Err(起動エラー::スキン整合性不正(
+            "スキン頂点属性はあるがスキンが無い".to_string(),
+        )),
     }
 }
 

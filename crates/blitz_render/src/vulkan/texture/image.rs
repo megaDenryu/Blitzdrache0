@@ -16,16 +16,16 @@ pub(super) fn 生成する(
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
         .format(形式)
-        .extent(vk::Extent3D { width: 幅, height: 高さ, depth: 1 })
+        .extent(vk::Extent3D {
+            width: 幅,
+            height: 高さ,
+            depth: 1,
+        })
         .mip_levels(mip数)
         .array_layers(1)
         .samples(vk::SampleCountFlags::TYPE_1)
         .tiling(vk::ImageTiling::OPTIMAL)
-        .usage(
-            vk::ImageUsageFlags::TRANSFER_SRC
-                | vk::ImageUsageFlags::TRANSFER_DST
-                | vk::ImageUsageFlags::SAMPLED,
-        )
+        .usage(vk::ImageUsageFlags::TRANSFER_SRC | vk::ImageUsageFlags::TRANSFER_DST | vk::ImageUsageFlags::SAMPLED)
         .sharing_mode(vk::SharingMode::EXCLUSIVE)
         .initial_layout(vk::ImageLayout::UNDEFINED);
     // 安全性: deviceは生成済みで有効。

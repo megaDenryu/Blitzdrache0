@@ -31,7 +31,9 @@ pub(super) fn 生成する(
             return Err(誤り);
         }
     };
-    Ok(深度バッファ { 画像, 画像ビュー, memory })
+    Ok(深度バッファ {
+        画像, 画像ビュー, memory
+    })
 }
 
 fn 画像を作る(device: &ash::Device, 寸法: vk::Extent2D) -> Result<vk::Image, レンダラーエラー> {

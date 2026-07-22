@@ -3,8 +3,8 @@
 
 use ash::vk;
 
-use super::finish;
 use super::UIパイプライン;
+use super::finish;
 use crate::error::レンダラーエラー;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
@@ -36,18 +36,15 @@ pub(super) fn 組み立てる(
     let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default()
         .vertex_binding_descriptions(&バインド記述一覧)
         .vertex_attribute_descriptions(&属性記述一覧);
-    let 入力アセンブリstate =
-        vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::TRIANGLE_LIST);
+    let 入力アセンブリstate = vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::TRIANGLE_LIST);
     let ビューポートstate = vk::PipelineViewportStateCreateInfo::default().viewport_count(1).scissor_count(1);
     let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default()
         .polygon_mode(vk::PolygonMode::FILL)
         .cull_mode(vk::CullModeFlags::NONE)
         .line_width(1.0);
-    let マルチサンプルstate =
-        vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
+    let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
     let カラーブレンドアタッチメント一覧 = [premultiplied_alphaブレンド状態()];
-    let カラーブレンドstate =
-        vk::PipelineColorBlendStateCreateInfo::default().attachments(&カラーブレンドアタッチメント一覧);
+    let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default().attachments(&カラーブレンドアタッチメント一覧);
     let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
         .depth_test_enable(false)
         .depth_write_enable(false);

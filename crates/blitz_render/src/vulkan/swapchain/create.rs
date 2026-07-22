@@ -17,11 +17,9 @@ pub(super) fn 生成する(
     旧スワップチェーン: vk::SwapchainKHR,
 ) -> Result<スワップチェーン, レンダラーエラー> {
     // 安全性: 物理デバイス・surfaceはいずれも生成・選定済みで有効。
-    let 能力 =
-        unsafe { surface_loader.get_physical_device_surface_capabilities(物理デバイス, surface)? };
+    let 能力 = unsafe { surface_loader.get_physical_device_surface_capabilities(物理デバイス, surface)? };
     // 安全性: 同上。
-    let 形式候補一覧 =
-        unsafe { surface_loader.get_physical_device_surface_formats(物理デバイス, surface)? };
+    let 形式候補一覧 = unsafe { surface_loader.get_physical_device_surface_formats(物理デバイス, surface)? };
     let 形式 = select::形式を選ぶ(&形式候補一覧)?;
     let 寸法 = select::寸法を決める(&能力, 要求寸法);
     let 画像数 = select::画像数を決める(&能力);

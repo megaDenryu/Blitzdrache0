@@ -32,20 +32,15 @@ pub(super) fn 組み立てる(
 
     // 頂点入力なし(SV_VertexIDでストレージバッファから読むため頂点バインドは不要)。
     let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default();
-    let 入力アセンブリstate =
-        vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::POINT_LIST);
-    let ビューポートstate =
-        vk::PipelineViewportStateCreateInfo::default().viewport_count(1).scissor_count(1);
+    let 入力アセンブリstate = vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::POINT_LIST);
+    let ビューポートstate = vk::PipelineViewportStateCreateInfo::default().viewport_count(1).scissor_count(1);
     let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default()
         .polygon_mode(vk::PolygonMode::FILL)
         .cull_mode(vk::CullModeFlags::NONE)
         .line_width(1.0);
-    let マルチサンプルstate =
-        vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
-    let カラーブレンドアタッチメント一覧 =
-        [vk::PipelineColorBlendAttachmentState::default().color_write_mask(vk::ColorComponentFlags::RGBA)];
-    let カラーブレンドstate =
-        vk::PipelineColorBlendStateCreateInfo::default().attachments(&カラーブレンドアタッチメント一覧);
+    let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
+    let カラーブレンドアタッチメント一覧 = [vk::PipelineColorBlendAttachmentState::default().color_write_mask(vk::ColorComponentFlags::RGBA)];
+    let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default().attachments(&カラーブレンドアタッチメント一覧);
     // 深度は読み取りのみ: シーンの深度に隠れる粒子は描かないが、粒子どうしの重なりで
     // 深度バッファを書き換えない(追記描画パスのため他の描画への副作用を避ける)。
     let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
@@ -79,8 +74,7 @@ pub(super) fn 組み立てる(
         .push_next(&mut rendering情報);
 
     // 安全性: 各stateは本関数内で構築した値のみを参照し、deviceは生成済みで有効。
-    let 生成結果 =
-        unsafe { device.create_graphics_pipelines(vk::PipelineCache::null(), &[create_info], None) };
+    let 生成結果 = unsafe { device.create_graphics_pipelines(vk::PipelineCache::null(), &[create_info], None) };
 
     finish::パイプラインを取り出す(device, layout, 生成結果)
 }

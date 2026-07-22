@@ -23,15 +23,39 @@ pub(crate) fn 生成する(
     let mut 確保済み: Vec<(vk::Buffer, vk::DeviceMemory)> = Vec::new();
 
     let 頂点バイト列 = bytes::頂点をバイト列にする(頂点一覧);
-    let レスト頂点 = 積む(&mut 確保済み, device, upload::ステージング経由でアップロードする(device, メモリプロパティ, 転送環境, &頂点バイト列, vk::BufferUsageFlags::STORAGE_BUFFER))?;
+    let レスト頂点 = 積む(
+        &mut 確保済み,
+        device,
+        upload::ステージング経由でアップロードする(
+            device,
+            メモリプロパティ,
+            転送環境,
+            &頂点バイト列,
+            vk::BufferUsageFlags::STORAGE_BUFFER,
+        ),
+    )?;
 
     let 属性バイト列 = 属性をバイト列にする(素材);
-    let 属性 = 積む(&mut 確保済み, device, upload::ステージング経由でアップロードする(device, メモリプロパティ, 転送環境, &属性バイト列, vk::BufferUsageFlags::STORAGE_BUFFER))?;
+    let 属性 = 積む(
+        &mut 確保済み,
+        device,
+        upload::ステージング経由でアップロードする(
+            device,
+            メモリプロパティ,
+            転送環境,
+            &属性バイト列,
+            vk::BufferUsageFlags::STORAGE_BUFFER,
+        ),
+    )?;
 
     let 行列初期値 = vec![0u8; 素材.ジョイント数() * 行列バイト長];
     let mut 行列一覧 = [(vk::Buffer::null(), vk::DeviceMemory::null()); フレームインフライト数];
     for 行列 in &mut 行列一覧 {
-        *行列 = 積む(&mut 確保済み, device, host_buffer::確保して書き込む(device, メモリプロパティ, &行列初期値, vk::BufferUsageFlags::STORAGE_BUFFER))?;
+        *行列 = 積む(
+            &mut 確保済み,
+            device,
+            host_buffer::確保して書き込む(device, メモリプロパティ, &行列初期値, vk::BufferUsageFlags::STORAGE_BUFFER),
+        )?;
     }
 
     // スキン済み頂点: コンピュートが書き、シーン/シャドウが頂点入力として読む(判断44の合流点)。
@@ -39,10 +63,20 @@ pub(crate) fn 生成する(
     let 出力 = 積む(
         &mut 確保済み,
         device,
-        device_buffer::確保する(device, メモリプロパティ, 出力サイズ, vk::BufferUsageFlags::STORAGE_BUFFER | vk::BufferUsageFlags::VERTEX_BUFFER),
+        device_buffer::確保する(
+            device,
+            メモリプロパティ,
+            出力サイズ,
+            vk::BufferUsageFlags::STORAGE_BUFFER | vk::BufferUsageFlags::VERTEX_BUFFER,
+        ),
     )?;
 
-    Ok(スキニングバッファ { レスト頂点, 属性, 行列一覧, 出力 })
+    Ok(スキニングバッファ {
+        レスト頂点,
+        属性,
+        行列一覧,
+        出力,
+    })
 }
 
 /// 確保結果を台帳へ積む。失敗時は台帳の確保済みバッファを全部片付けてからエラーを返す。

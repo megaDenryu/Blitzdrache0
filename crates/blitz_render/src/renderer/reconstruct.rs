@@ -34,27 +34,22 @@ impl レンダラー {
             vk::SwapchainKHR::null(),
         )?;
         // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
-        let メモリプロパティ =
-            unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
-        self.深度バッファ =
-            vulkan::depth::深度バッファ::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)?;
+        let メモリプロパティ = unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
+        self.深度バッファ = vulkan::depth::深度バッファ::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)?;
         // HDR/ブルームピラミッドはスワップチェーン寸法に連動するため作り直す(判断38・41)。
         // 段数が解像度依存のためブルームのディスクリプタも作り直し、トーンマップは新ビューへ束縛し直す。
         // ポスト有効の目印には、破棄されず残っているトーンマップ一式を使う(hdrターゲットは上でtake済みのため使えない)。
         if self.トーンマップ.is_some() {
-            let 新hdr =
-                vulkan::hdr_target::HDRターゲット::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)?;
-            let 新ピラミッド = match vulkan::bloom_targets::ブルームピラミッド::生成する(
-                &self.device,
-                &メモリプロパティ,
-                self.swapchain.寸法,
-            ) {
-                Ok(一式) => 一式,
-                Err(誤り) => {
-                    新hdr.破棄する(&self.device);
-                    return Err(誤り);
-                }
-            };
+            let 新hdr = vulkan::hdr_target::HDRターゲット::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)?;
+            let 新ピラミッド =
+                match vulkan::bloom_targets::ブルームピラミッド::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)
+                {
+                    Ok(一式) => 一式,
+                    Err(誤り) => {
+                        新hdr.破棄する(&self.device);
+                        return Err(誤り);
+                    }
+                };
             if let Some(ブルーム) = &mut self.ブルーム
                 && let Err(誤り) = ブルーム.ディスクリプタを作り直す(&self.device, 新hdr.画像ビュー, &新ピラミッド)
             {

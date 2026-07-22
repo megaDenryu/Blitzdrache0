@@ -30,19 +30,21 @@ impl アプリ {
 }
 
 fn 掴み介入(
-    掴み: Option<(f32, f32)>,
-    window: Option<&winit::window::Window>,
-    プリセット: &布プリセット,
-    掴み中だった: &mut bool,
+    掴み: Option<(f32, f32)>, window: Option<&winit::window::Window>, プリセット: &布プリセット, 掴み中だった: &mut bool
 ) -> Vec<介入> {
     match 掴み.zip(window.map(|w| w.inner_size())) {
         Some(((px, py), 寸法)) => {
             *掴み中だった = true;
-            vec![介入::掴む { 粒子添字: 掴み粒子添字, 目標位置: 目標位置へ写す(プリセット, px, py, 寸法.width, 寸法.height) }]
+            vec![介入::掴む {
+                粒子添字: 掴み粒子添字,
+                目標位置: 目標位置へ写す(プリセット, px, py, 寸法.width, 寸法.height),
+            }]
         }
         None if *掴み中だった => {
             *掴み中だった = false;
-            vec![介入::離す { 粒子添字: 掴み粒子添字 }]
+            vec![介入::離す {
+                粒子添字: 掴み粒子添字
+            }]
         }
         None => Vec::new(),
     }

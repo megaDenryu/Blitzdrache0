@@ -26,16 +26,10 @@ impl レンダラー {
         unsafe { self.device.device_wait_idle()? };
 
         // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
-        let メモリプロパティ =
-            unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
+        let メモリプロパティ = unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
 
-        let 新ジオメトリ = vulkan::geometry::ジオメトリバッファ::生成する(
-            &self.device,
-            &メモリプロパティ,
-            &self.転送環境,
-            頂点一覧,
-            インデックス一覧,
-        )?;
+        let 新ジオメトリ =
+            vulkan::geometry::ジオメトリバッファ::生成する(&self.device, &メモリプロパティ, &self.転送環境, 頂点一覧, インデックス一覧)?;
         let 新テクスチャ = match vulkan::texture::マテリアルテクスチャ一式::生成する(
             &self.device,
             &self.instance,

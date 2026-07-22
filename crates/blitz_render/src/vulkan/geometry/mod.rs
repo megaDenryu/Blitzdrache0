@@ -54,8 +54,8 @@ impl ジオメトリバッファ {
             }
         };
 
-        let インデックス数 = u32::try_from(インデックス一覧.len())
-            .unwrap_or_else(|_| panic!("インデックス数がu32に収まらない: {}", インデックス一覧.len()));
+        let インデックス数 =
+            u32::try_from(インデックス一覧.len()).unwrap_or_else(|_| panic!("インデックス数がu32に収まらない: {}", インデックス一覧.len()));
 
         Ok(Self {
             頂点バッファ,

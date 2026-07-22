@@ -5,12 +5,12 @@ mod cloth_frame;
 mod cloth_setup;
 mod draw_dispatch;
 mod frame;
-mod frame_ui;
 mod frame_dump;
+mod frame_ui;
 mod handler;
-mod queries;
 mod hot_reload_apply;
 mod particle_setup;
+mod queries;
 mod scene_camera;
 mod scene_load;
 mod sph_setup;
@@ -96,5 +96,4 @@ impl アプリ {
             起動時エラー: None,
         }
     }
-
 }

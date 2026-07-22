@@ -28,7 +28,9 @@ pub(super) fn パスを記録する(
     );
 
     match パス.種別 {
-        パス種別::グラフィックス { カラー, 深度, クリア指定 } => {
+        パス種別::グラフィックス {
+            カラー, 深度, クリア指定
+        } => {
             rendering_setup::開始する(device, command_buffer, 画像レジストリ, カラー, 深度, &クリア指定);
             (パス.記録)(&記録文脈);
             rendering_setup::終了する(device, command_buffer);

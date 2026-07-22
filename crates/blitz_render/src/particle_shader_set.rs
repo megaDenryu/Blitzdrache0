@@ -38,7 +38,11 @@ impl 粒子シェーダー一式 {
                 return Err(粒子シェーダー一式エラー::非4バイト整列(バイト列.len()));
             }
         }
-        Ok(Self { コンピュートspirv, 頂点spirv, フラグメントspirv })
+        Ok(Self {
+            コンピュートspirv,
+            頂点spirv,
+            フラグメントspirv,
+        })
     }
 
     pub(crate) fn コンピュートコード(&self) -> &[u8] {

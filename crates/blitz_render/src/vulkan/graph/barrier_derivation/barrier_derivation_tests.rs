@@ -4,7 +4,7 @@
 
 use std::collections::HashMap;
 
-use super::{地点別バリア, 差分を計算する, 導出する, 遷移地点};
+use super::{地点別バリア, 導出する, 差分を計算する, 遷移地点};
 use crate::vulkan::graph::handle::画像ハンドル;
 use crate::vulkan::graph::initial_state::{前フレーム深度書き込み直後状態, 取得直後の色画像状態};
 use crate::vulkan::graph::pass_resource_usage::パスリソース使用;
@@ -57,7 +57,12 @@ fn シーン描画から読み戻しコピー提示までの3パス列で期待�
     assert_eq!(カラー遷移.今.layout, ash::vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL);
 
     let コピー前 = &結果[1];
-    assert_eq!(コピー前.地点, 遷移地点::パスの前 { 名前: "読み戻しコピー" });
+    assert_eq!(
+        コピー前.地点,
+        遷移地点::パスの前 {
+            名前: "読み戻しコピー"
+        }
+    );
     assert_eq!(コピー前.バリア一覧.len(), 1, "コピー前はカラーのみ書き→読みで遷移する");
     assert_eq!(コピー前.バリア一覧[0].ハンドル, カラー);
     assert_eq!(コピー前.バリア一覧[0].今.layout, ash::vk::ImageLayout::TRANSFER_SRC_OPTIMAL);

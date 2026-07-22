@@ -24,10 +24,7 @@ pub struct シェーダー一式 {
 
 impl シェーダー一式 {
     /// 各バイト列が空でなく4の倍数長であることを検証して生成する。
-    pub fn 生成する(
-        頂点spirv: Vec<u8>,
-        フラグメントspirv: Vec<u8>,
-    ) -> Result<Self, シェーダー一式エラー> {
+    pub fn 生成する(頂点spirv: Vec<u8>, フラグメントspirv: Vec<u8>) -> Result<Self, シェーダー一式エラー> {
         for バイト列 in [&頂点spirv, &フラグメントspirv] {
             if バイト列.is_empty() {
                 return Err(シェーダー一式エラー::空のバイト列);

@@ -7,12 +7,7 @@ use super::トーンマップ一式;
 impl トーンマップ一式 {
     /// 生成直後と、スワップチェーン再構築でHDR/ブルーム画像を作り直した後に呼ぶ。
     /// 前提: 呼び出し時点でGPUがこのディスクリプタセットを使用していないこと(生成直後またはdevice_wait_idle後)。
-    pub(crate) fn ビューを再束縛する(
-        &self,
-        device: &ash::Device,
-        hdrビュー: vk::ImageView,
-        ブルームビュー: vk::ImageView,
-    ) {
+    pub(crate) fn ビューを再束縛する(&self, device: &ash::Device, hdrビュー: vk::ImageView, ブルームビュー: vk::ImageView) {
         let hdr情報一覧 = [vk::DescriptorImageInfo::default()
             .sampler(self.sampler)
             .image_view(hdrビュー)

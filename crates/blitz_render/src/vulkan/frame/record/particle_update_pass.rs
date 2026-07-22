@@ -4,7 +4,7 @@
 use ash::vk;
 
 use crate::vulkan::frame::粒子描画入力;
-use crate::vulkan::graph::{バッファ用途, バッファハンドル, パス宣言, パス種別};
+use crate::vulkan::graph::{バッファハンドル, バッファ用途, パス宣言, パス種別};
 
 pub(super) fn 作る<'a>(粒子ハンドル: バッファハンドル, 粒子入力: &'a 粒子描画入力) -> パス宣言<'a> {
     パス宣言::生成する(
@@ -27,11 +27,7 @@ pub(super) fn 作る<'a>(粒子ハンドル: バッファハンドル, 粒子入
 
             // 安全性: command_bufferは記録中で、pipeline・ディスクリプタセットは生成済み。
             unsafe {
-                device.cmd_bind_pipeline(
-                    command_buffer,
-                    vk::PipelineBindPoint::COMPUTE,
-                    粒子入力.コンピュートパイプライン,
-                );
+                device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::COMPUTE, 粒子入力.コンピュートパイプライン);
                 device.cmd_bind_descriptor_sets(
                     command_buffer,
                     vk::PipelineBindPoint::COMPUTE,

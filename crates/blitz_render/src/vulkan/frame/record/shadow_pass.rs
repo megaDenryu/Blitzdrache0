@@ -7,7 +7,9 @@ use ash::vk;
 
 use super::scene_pass::布ドロー;
 use crate::vulkan::frame::シャドウ描画入力;
-use crate::vulkan::graph::{クリア指定, バッファハンドル, バッファ用途, パス宣言, パス種別, 画像ハンドル, 画像用途};
+use crate::vulkan::graph::{
+    クリア指定, バッファハンドル, バッファ用途, パス宣言, パス種別, 画像ハンドル, 画像用途
+};
 use crate::vulkan::shadow_map::シャドウマップ一辺;
 
 pub(super) fn 作る<'a>(
@@ -23,8 +25,7 @@ pub(super) fn 作る<'a>(
         .unwrap_or_else(|誤り| panic!("シャドウパスのダミークリア色生成が失敗した(実装のバグ): {誤り}"));
     // スキン付きシーンでは頂点バッファがスキニングパスの出力のため、依存を読み宣言で表す(判断44)。
     // 布があれば布頂点への依存も同様に宣言する(判断54: 布もシャドウを落とす)。
-    let mut 読みバッファ一覧 =
-        スキン済み頂点.map_or(Vec::new(), |ハンドル| vec![(ハンドル, バッファ用途::頂点読み)]);
+    let mut 読みバッファ一覧 = スキン済み頂点.map_or(Vec::new(), |ハンドル| vec![(ハンドル, バッファ用途::頂点読み)]);
     if let Some(布) = &布ドロー {
         読みバッファ一覧.push((布.頂点ハンドル, バッファ用途::頂点読み));
     }
@@ -38,14 +39,15 @@ pub(super) fn 作る<'a>(
         パス種別::グラフィックス {
             カラー: None,
             深度: Some(シャドウマップ),
-            クリア指定: クリア指定::クリアする { カラー: ダミークリア色 },
+            クリア指定: クリア指定::クリアする {
+                カラー: ダミークリア色
+            },
         },
         move |文脈| {
             let device = 文脈.device();
             let command_buffer = 文脈.コマンドバッファ();
-            let 一辺 = f32::from(u16::try_from(シャドウマップ一辺).unwrap_or_else(|_| {
-                panic!("シャドウマップ一辺がu16に収まらない: {シャドウマップ一辺}")
-            }));
+            let 一辺 =
+                f32::from(u16::try_from(シャドウマップ一辺).unwrap_or_else(|_| panic!("シャドウマップ一辺がu16に収まらない: {シャドウマップ一辺}")));
             let viewport = vk::Viewport::default()
                 .x(0.0)
                 .y(0.0)
@@ -55,7 +57,10 @@ pub(super) fn 作る<'a>(
                 .max_depth(1.0);
             let シザー = vk::Rect2D {
                 offset: vk::Offset2D { x: 0, y: 0 },
-                extent: vk::Extent2D { width: シャドウマップ一辺, height: シャドウマップ一辺 },
+                extent: vk::Extent2D {
+                    width: シャドウマップ一辺,
+                    height: シャドウマップ一辺,
+                },
             };
             let viewport一覧 = [viewport];
             let シザー一覧 = [シザー];

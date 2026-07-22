@@ -26,12 +26,6 @@ pub(super) fn コピーを記録する(
     // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ遷移済み、
     // バッファは呼び出し元が寸法ぶんの容量で確保済み(読み戻しバッファの確保)。
     unsafe {
-        device.cmd_copy_image_to_buffer(
-            command_buffer,
-            画像,
-            vk::ImageLayout::TRANSFER_SRC_OPTIMAL,
-            バッファ,
-            &領域一覧,
-        );
+        device.cmd_copy_image_to_buffer(command_buffer, 画像, vk::ImageLayout::TRANSFER_SRC_OPTIMAL, バッファ, &領域一覧);
     }
 }

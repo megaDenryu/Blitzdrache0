@@ -28,20 +28,14 @@ pub(super) use create::生成する;
 impl 布バッファ {
     /// 前提: 呼び出しはフェンス待ち後(このスロットの前回GPU使用の完了後。判断24と同じ規律)。
     pub(super) fn 介入を書き込む(
-        &self,
-        device: &ash::Device,
-        フレーム添字: usize,
-        バイト列: &[u8],
+        &self, device: &ash::Device, フレーム添字: usize, バイト列: &[u8]
     ) -> Result<(), レンダラーエラー> {
         host_buffer::上書きする(device, self.介入一覧[フレーム添字].1, バイト列)
     }
 
     /// 前提: 同上。
     pub(super) fn 定数を書き込む(
-        &self,
-        device: &ash::Device,
-        フレーム添字: usize,
-        バイト列: &[u8],
+        &self, device: &ash::Device, フレーム添字: usize, バイト列: &[u8]
     ) -> Result<(), レンダラーエラー> {
         host_buffer::上書きする(device, self.定数一覧[フレーム添字].1, バイト列)
     }

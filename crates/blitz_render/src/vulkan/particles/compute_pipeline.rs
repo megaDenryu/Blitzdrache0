@@ -40,8 +40,7 @@ impl 粒子コンピュートパイプライン {
         let create_info = vk::ComputePipelineCreateInfo::default().stage(stage).layout(layout);
 
         // 安全性: stage・layoutは本関数内で構築・生成済みの値のみを参照し、deviceは生成済みで有効。
-        let 生成結果 =
-            unsafe { device.create_compute_pipelines(vk::PipelineCache::null(), &[create_info], None) };
+        let 生成結果 = unsafe { device.create_compute_pipelines(vk::PipelineCache::null(), &[create_info], None) };
 
         // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
         unsafe { device.destroy_shader_module(モジュール, None) };

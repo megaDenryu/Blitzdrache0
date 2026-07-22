@@ -24,17 +24,10 @@ impl マテリアルテクスチャ一式 {
         転送環境: &転送実行環境,
         マテリアル: &マテリアル素材,
     ) -> Result<Self, レンダラーエラー> {
-        let ベースカラー =
-            テクスチャ::生成する(device, instance, physical_device, メモリプロパティ, 転送環境, マテリアル.ベースカラー())?;
+        let ベースカラー = テクスチャ::生成する(device, instance, physical_device, メモリプロパティ, 転送環境, マテリアル.ベースカラー())?;
 
-        let 金属粗さ = match テクスチャ::生成する(
-            device,
-            instance,
-            physical_device,
-            メモリプロパティ,
-            転送環境,
-            マテリアル.金属粗さ(),
-        ) {
+        let 金属粗さ = match テクスチャ::生成する(device, instance, physical_device, メモリプロパティ, 転送環境, マテリアル.金属粗さ())
+        {
             Ok(テクスチャ) => テクスチャ,
             Err(誤り) => {
                 ベースカラー.破棄する(device);
@@ -42,14 +35,8 @@ impl マテリアルテクスチャ一式 {
             }
         };
 
-        let 法線マップ = match テクスチャ::生成する(
-            device,
-            instance,
-            physical_device,
-            メモリプロパティ,
-            転送環境,
-            マテリアル.法線マップ(),
-        ) {
+        let 法線マップ = match テクスチャ::生成する(device, instance, physical_device, メモリプロパティ, 転送環境, マテリアル.法線マップ())
+        {
             Ok(テクスチャ) => テクスチャ,
             Err(誤り) => {
                 ベースカラー.破棄する(device);
@@ -58,7 +45,11 @@ impl マテリアルテクスチャ一式 {
             }
         };
 
-        Ok(Self { ベースカラー, 金属粗さ, 法線マップ })
+        Ok(Self {
+            ベースカラー,
+            金属粗さ,
+            法線マップ,
+        })
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

@@ -34,8 +34,7 @@ pub(super) fn デコードする(
 }
 
 fn 画像バイト列を取り出す(
-    文書: &開いた文書,
-    画像: &gltf::image::Image<'_>,
+    文書: &開いた文書, 画像: &gltf::image::Image<'_>
 ) -> Result<(Vec<u8>, Option<PathBuf>), アセットエラー> {
     match 画像.source() {
         gltf::image::Source::Uri { uri, .. } => {
@@ -46,16 +45,10 @@ fn 画像バイト列を取り出す(
             Ok((バイト列, Some(パス)))
         }
         gltf::image::Source::View { view, .. } => {
-            let バッファ = 文書
-                .バッファ一覧
-                .get(view.buffer().index())
-                .ok_or(アセットエラー::未対応画像形式)?;
+            let バッファ = 文書.バッファ一覧.get(view.buffer().index()).ok_or(アセットエラー::未対応画像形式)?;
             let 開始 = view.offset();
             let 終了 = 開始 + view.length();
-            let バイト列 = バッファ
-                .get(開始..終了)
-                .map(<[u8]>::to_vec)
-                .ok_or(アセットエラー::未対応画像形式)?;
+            let バイト列 = バッファ.get(開始..終了).map(<[u8]>::to_vec).ok_or(アセットエラー::未対応画像形式)?;
             Ok((バイト列, None))
         }
     }

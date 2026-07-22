@@ -2,8 +2,8 @@
 //! フレームインフライトごと(2本)にホスト可視・コヒーレントで確保する(判断24)。
 //! 書き込みタイミングは呼び出し元(renderer/uniform_write.rs)がフェンス待ち後に行う。
 
-pub(crate) mod content;
 mod bytes;
+pub(crate) mod content;
 pub(crate) mod light_transform;
 pub(crate) mod lighting_constants;
 
@@ -30,12 +30,7 @@ impl フレームユニフォーム一式 {
         let 初期バイト列 = [0u8; bytes::バイト長];
 
         for 添字 in 0..フレームインフライト数 {
-            match host_buffer::確保して書き込む(
-                device,
-                メモリプロパティ,
-                &初期バイト列,
-                vk::BufferUsageFlags::UNIFORM_BUFFER,
-            ) {
+            match host_buffer::確保して書き込む(device, メモリプロパティ, &初期バイト列, vk::BufferUsageFlags::UNIFORM_BUFFER) {
                 Ok((buffer, memory)) => {
                     buffer一覧[添字] = buffer;
                     memory一覧[添字] = memory;

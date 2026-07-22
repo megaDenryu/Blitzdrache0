@@ -6,7 +6,6 @@ mod core_setup;
 mod debug_setup;
 mod frame_resources;
 mod generate_resources;
-use raw_window_handle::{RawDisplayHandle, RawWindowHandle};
 use super::レンダラー;
 use crate::cloth_material::布素材;
 use crate::error::レンダラーエラー;
@@ -16,6 +15,7 @@ use crate::particle_material::粒子素材;
 use crate::shader_bundle::シェーダー束;
 use crate::skin_mesh::スキンメッシュ素材;
 use crate::vertex::頂点;
+use raw_window_handle::{RawDisplayHandle, RawWindowHandle};
 
 impl レンダラー {
     /// Vulkanインスタンスからスワップチェーン・各バッファ・各パイプライン・開発用UI(判断33)・ポストプロセス(判断38)・スキニング(判断44)・布(判断54)までを構築する。

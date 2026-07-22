@@ -4,7 +4,7 @@
 use ash::vk;
 
 use crate::vulkan::frame::スキニング描画入力;
-use crate::vulkan::graph::{バッファ用途, バッファハンドル, パス宣言, パス種別};
+use crate::vulkan::graph::{バッファハンドル, バッファ用途, パス宣言, パス種別};
 
 pub(super) fn 作る<'a>(出力ハンドル: バッファハンドル, 入力: &'a スキニング描画入力) -> パス宣言<'a> {
     パス宣言::生成する(
@@ -28,14 +28,7 @@ pub(super) fn 作る<'a>(出力ハンドル: バッファハンドル, 入力: &
             // プッシュ定数の範囲(COMPUTE・4バイト)はパイプラインlayoutの宣言と一致する。
             unsafe {
                 device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::COMPUTE, 入力.pipeline);
-                device.cmd_bind_descriptor_sets(
-                    command_buffer,
-                    vk::PipelineBindPoint::COMPUTE,
-                    入力.layout,
-                    0,
-                    &set一覧,
-                    &[],
-                );
+                device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::COMPUTE, 入力.layout, 0, &set一覧, &[]);
                 device.cmd_push_constants(command_buffer, 入力.layout, vk::ShaderStageFlags::COMPUTE, 0, &頂点数バイト列);
                 device.cmd_dispatch(command_buffer, ワークグループ数, 1, 1);
             }

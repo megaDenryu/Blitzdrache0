@@ -9,14 +9,12 @@ use crate::ui_texture_material::UIテクスチャ素材;
 impl レンダラー {
     /// `id`のテクスチャを新規登録する、または既存なら新しい内容で置き換える。
     pub fn uiテクスチャを登録する(
-        &mut self,
-        id: UIテクスチャID,
-        素材: UIテクスチャ素材,
+        &mut self, id: UIテクスチャID, 素材: UIテクスチャ素材
     ) -> Result<(), レンダラーエラー> {
         // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
-        let メモリプロパティ =
-            unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
-        self.ui一式.テクスチャを反映する(&self.device, &メモリプロパティ, &self.転送環境, id, &素材)
+        let メモリプロパティ = unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
+        self.ui一式
+            .テクスチャを反映する(&self.device, &メモリプロパティ, &self.転送環境, id, &素材)
     }
 
     /// `id`のテクスチャを削除する。未登録IDへの呼び出しは無視する

@@ -9,14 +9,7 @@ mod mip_barrier;
 
 use ash::vk;
 
-pub(super) fn 記録する(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
-    image: vk::Image,
-    幅: u32,
-    高さ: u32,
-    mip数: u32,
-) {
+pub(super) fn 記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, image: vk::Image, 幅: u32, 高さ: u32, mip数: u32) {
     for mip in 1..mip数 {
         mip_barrier::レベルをsrcへ遷移する(device, command_buffer, image, mip - 1);
         blitを積む(device, command_buffer, image, 幅, 高さ, mip);
@@ -25,14 +18,7 @@ pub(super) fn 記録する(
     mip_barrier::最終レベルをshader_readへ遷移する(device, command_buffer, image, mip数 - 1);
 }
 
-fn blitを積む(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
-    image: vk::Image,
-    幅: u32,
-    高さ: u32,
-    mip: u32,
-) {
+fn blitを積む(device: &ash::Device, command_buffer: vk::CommandBuffer, image: vk::Image, 幅: u32, 高さ: u32, mip: u32) {
     let 元寸法 = 寸法を求める(幅, 高さ, mip - 1);
     let 先寸法 = 寸法を求める(幅, 高さ, mip);
     let blit = vk::ImageBlit::default()
@@ -45,7 +31,11 @@ fn blitを積む(
         )
         .src_offsets([
             vk::Offset3D::default(),
-            vk::Offset3D { x: 元寸法.0, y: 元寸法.1, z: 1 },
+            vk::Offset3D {
+                x: 元寸法.0,
+                y: 元寸法.1,
+                z: 1,
+            },
         ])
         .dst_subresource(
             vk::ImageSubresourceLayers::default()
@@ -56,7 +46,11 @@ fn blitを積む(
         )
         .dst_offsets([
             vk::Offset3D::default(),
-            vk::Offset3D { x: 先寸法.0, y: 先寸法.1, z: 1 },
+            vk::Offset3D {
+                x: 先寸法.0,
+                y: 先寸法.1,
+                z: 1,
+            },
         ]);
     // 安全性: command_bufferは記録中で、imageはこの直前のバリアでsrc/dstとも
     // 適切なレイアウトへ遷移済み。
@@ -77,9 +71,7 @@ fn blitを積む(
 fn 寸法を求める(幅: u32, 高さ: u32, mip: u32) -> (i32, i32) {
     let 幅段階 = (幅 >> mip).max(1);
     let 高さ段階 = (高さ >> mip).max(1);
-    let 幅i32 =
-        i32::try_from(幅段階).unwrap_or_else(|_| panic!("ミップ寸法がi32に収まらない: {幅段階}"));
-    let 高さi32 =
-        i32::try_from(高さ段階).unwrap_or_else(|_| panic!("ミップ寸法がi32に収まらない: {高さ段階}"));
+    let 幅i32 = i32::try_from(幅段階).unwrap_or_else(|_| panic!("ミップ寸法がi32に収まらない: {幅段階}"));
+    let 高さi32 = i32::try_from(高さ段階).unwrap_or_else(|_| panic!("ミップ寸法がi32に収まらない: {高さ段階}"));
     (幅i32, 高さi32)
 }

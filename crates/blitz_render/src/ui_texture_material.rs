@@ -23,8 +23,8 @@ impl UIテクスチャ素材 {
     /// `rgba8.len() == 幅 * 高さ * 4`であることを検証して生成する。
     pub fn 生成する(幅: u32, 高さ: u32, rgba8: Vec<u8>) -> Result<Self, UIテクスチャ素材エラー> {
         let 期待バイト数u64 = u64::from(幅) * u64::from(高さ) * 4;
-        let 期待バイト数 = usize::try_from(期待バイト数u64)
-            .unwrap_or_else(|_| panic!("UIテクスチャの期待バイト数がusizeに収まらない: {期待バイト数u64}"));
+        let 期待バイト数 =
+            usize::try_from(期待バイト数u64).unwrap_or_else(|_| panic!("UIテクスチャの期待バイト数がusizeに収まらない: {期待バイト数u64}"));
         if rgba8.len() != 期待バイト数 {
             return Err(UIテクスチャ素材エラー::バイト長不一致 {
                 期待バイト数,

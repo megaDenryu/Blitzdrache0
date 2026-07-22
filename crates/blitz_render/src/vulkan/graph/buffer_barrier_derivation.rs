@@ -10,7 +10,7 @@ use std::collections::HashMap;
 
 use super::handle::バッファハンドル;
 use super::pass_resource_usage::パスリソース使用;
-use super::usage::buffer_usage_mapping::{状態へ写像する, 書き込みを含むか};
+use super::usage::buffer_usage_mapping::{書き込みを含むか, 状態へ写像する};
 use super::usage::バッファ用途;
 use crate::vulkan::graph::buffer_state::バッファ状態;
 
@@ -25,8 +25,7 @@ pub(crate) struct バッファバリア記述 {
 /// パス列を宣言順に走査し、パスごとに発行すべきバッファバリア記述を求める。
 /// 戻り値は`パス列`と同じ長さ(添字が1対1対応)。
 pub(crate) fn 導出する(
-    初期状態: &HashMap<バッファハンドル, バッファ状態>,
-    パス列: &[パスリソース使用],
+    初期状態: &HashMap<バッファハンドル, バッファ状態>, パス列: &[パスリソース使用]
 ) -> Vec<Vec<バッファバリア記述>> {
     let mut 現在状態 = 初期状態.clone();
     パス列
@@ -61,5 +60,9 @@ fn 差分を計算する(
     if 省略可能 {
         return None;
     }
-    Some(バッファバリア記述 { ハンドル, 前: 前状態, 今: 今状態 })
+    Some(バッファバリア記述 {
+        ハンドル,
+        前: 前状態,
+        今: 今状態,
+    })
 }

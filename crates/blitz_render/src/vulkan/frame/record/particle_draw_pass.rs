@@ -6,7 +6,7 @@ use ash::vk;
 
 use crate::vulkan::frame::粒子描画入力;
 use crate::vulkan::graph::{
-    クリア指定, バッファ用途, バッファハンドル, パス宣言, パス種別, 画像ハンドル, 画像用途,
+    クリア指定, バッファハンドル, バッファ用途, パス宣言, パス種別, 画像ハンドル, 画像用途
 };
 
 pub(super) fn 作る<'a>(
@@ -22,7 +22,11 @@ pub(super) fn 作る<'a>(
         vec![(カラー, 画像用途::カラー出力), (深度, 画像用途::深度出力)],
         vec![(粒子ハンドル, バッファ用途::頂点段シェーダー読み)],
         Vec::new(),
-        パス種別::グラフィックス { カラー: Some(カラー), 深度: Some(深度), クリア指定: クリア指定::ロードする },
+        パス種別::グラフィックス {
+            カラー: Some(カラー),
+            深度: Some(深度),
+            クリア指定: クリア指定::ロードする,
+        },
         move |文脈| {
             let device = 文脈.device();
             let command_buffer = 文脈.コマンドバッファ();
@@ -34,7 +38,10 @@ pub(super) fn 作る<'a>(
                 .height(寸法幅をf32へ変換する(寸法.height))
                 .min_depth(0.0)
                 .max_depth(1.0);
-            let シザー = vk::Rect2D { offset: vk::Offset2D { x: 0, y: 0 }, extent: 寸法 };
+            let シザー = vk::Rect2D {
+                offset: vk::Offset2D { x: 0, y: 0 },
+                extent: 寸法,
+            };
             let viewport一覧 = [viewport];
             let シザー一覧 = [シザー];
 
@@ -43,14 +50,7 @@ pub(super) fn 作る<'a>(
                 device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 粒子入力.描画パイプライン);
                 device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
                 device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
-                device.cmd_bind_descriptor_sets(
-                    command_buffer,
-                    vk::PipelineBindPoint::GRAPHICS,
-                    粒子入力.描画layout,
-                    0,
-                    &set一覧,
-                    &[],
-                );
+                device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::GRAPHICS, 粒子入力.描画layout, 0, &set一覧, &[]);
                 device.cmd_draw(command_buffer, 粒子入力.描画要素数, 1, 0, 0);
             }
         },

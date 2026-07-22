@@ -20,9 +20,9 @@ pub(crate) fn 開始する(
     // 使い回すと、寸法の異なるアタッチメント(2048x2048のシャドウマップ等)への描画がその範囲へ
     // クリップされ、範囲外がクリアもされない未定義領域になる(M6で全面影バグとして実際に踏んだ。
     // validationはrender_areaの縮小を検出しない)。
-    let 基準ハンドル = カラー.or(深度).unwrap_or_else(|| {
-        panic!("グラフィックスパスにカラーも深度も無い(パス宣言の誤り)")
-    });
+    let 基準ハンドル = カラー
+        .or(深度)
+        .unwrap_or_else(|| panic!("グラフィックスパスにカラーも深度も無い(パス宣言の誤り)"));
     let 寸法 = レジストリ.寸法を取得する(基準ハンドル);
     let (load_op, カラークリア値) = ロードオペレーションとカラークリア値(クリア指定);
     let カラーアタッチメント = カラー.map(|カラーハンドル| {
@@ -52,7 +52,10 @@ pub(crate) fn 開始する(
     });
 
     let mut rendering_info = vk::RenderingInfo::default()
-        .render_area(vk::Rect2D { offset: vk::Offset2D { x: 0, y: 0 }, extent: 寸法 })
+        .render_area(vk::Rect2D {
+            offset: vk::Offset2D { x: 0, y: 0 },
+            extent: 寸法,
+        })
         .layer_count(1)
         .color_attachments(&カラーアタッチメント一覧);
     if let Some(深度アタッチメント) = &深度アタッチメント {
@@ -68,7 +71,11 @@ fn ロードオペレーションとカラークリア値(クリア指定: &ク�
     match クリア指定 {
         クリア指定::クリアする { カラー } => (
             vk::AttachmentLoadOp::CLEAR,
-            vk::ClearValue { color: vk::ClearColorValue { float32: カラー.rgba配列() } },
+            vk::ClearValue {
+                color: vk::ClearColorValue {
+                    float32: カラー.rgba配列()
+                },
+            },
         ),
         クリア指定::ロードする => (vk::AttachmentLoadOp::LOAD, vk::ClearValue::default()),
     }

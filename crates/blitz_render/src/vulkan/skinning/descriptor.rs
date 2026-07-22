@@ -28,7 +28,10 @@ impl スキニングディスクリプタ {
     }
 }
 
-pub(super) fn 生成する(device: &ash::Device, バッファ: &スキニングバッファ) -> Result<スキニングディスクリプタ, レンダラーエラー> {
+pub(super) fn 生成する(
+    device: &ash::Device,
+    バッファ: &スキニングバッファ,
+) -> Result<スキニングディスクリプタ, レンダラーエラー> {
     let binding一覧: Vec<vk::DescriptorSetLayoutBinding<'_>> = (0..バインディング数)
         .map(|添字| {
             vk::DescriptorSetLayoutBinding::default()

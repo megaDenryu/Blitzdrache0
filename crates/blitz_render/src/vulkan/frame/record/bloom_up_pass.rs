@@ -22,11 +22,18 @@ pub(super) fn 作る<'a>(
     let (pipeline, layout) = (入力.拡大pipeline, 入力.拡大layout);
     パス宣言::生成する(
         拡大パス名一覧[段],
-        vec![(小さい方, 画像用途::シェーダー読みフラグメント), (基準, 画像用途::シェーダー読みフラグメント)],
+        vec![
+            (小さい方, 画像用途::シェーダー読みフラグメント),
+            (基準, 画像用途::シェーダー読みフラグメント),
+        ],
         vec![(書き, 画像用途::カラー出力)],
         Vec::new(),
         Vec::new(),
-        パス種別::グラフィックス { カラー: Some(書き), 深度: None, クリア指定: fullscreen_draw::黒クリア() },
+        パス種別::グラフィックス {
+            カラー: Some(書き),
+            深度: None,
+            クリア指定: fullscreen_draw::黒クリア(),
+        },
         move |文脈| {
             fullscreen_draw::コマンドを積む(文脈.device(), 文脈.コマンドバッファ(), pipeline, layout, set, 寸法, None);
         },

@@ -9,8 +9,7 @@ impl レンダラー {
     /// 現在のスワップチェーン寸法ぶんの容量を持つ読み戻しバッファを確保する。
     /// 既存バッファの容量が足りていれば何もしない。
     pub(super) fn 読み戻しバッファを確保する(&mut self) -> Result<(), レンダラーエラー> {
-        let 必要バイト数 =
-            u64::from(self.swapchain.寸法.width) * u64::from(self.swapchain.寸法.height) * 4;
+        let 必要バイト数 = u64::from(self.swapchain.寸法.width) * u64::from(self.swapchain.寸法.height) * 4;
         let 再確保が必要 = match &self.読み戻しバッファ {
             Some(バッファ) => バッファ.容量バイト数() < 必要バイト数,
             None => true,
@@ -22,8 +21,7 @@ impl レンダラー {
             古い.破棄する(&self.device);
         }
         // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
-        let メモリプロパティ =
-            unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
+        let メモリプロパティ = unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
         self.読み戻しバッファ = Some(vulkan::readback::読み戻しバッファ::生成する(
             &self.device,
             &メモリプロパティ,

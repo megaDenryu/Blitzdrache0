@@ -20,15 +20,10 @@ pub(super) struct 開いた文書 {
 /// .gltf(JSON+外部バッファ)と.glb(バイナリ埋め込み)の両方を読む。
 /// 形式の判別は`gltf::Gltf::from_slice`のマジックバイト判定に委ねる。
 pub(super) fn 文書を開く(パス: &Path) -> Result<開いた文書, アセットエラー> {
-    let バイト列 = std::fs::read(パス)
-        .map_err(|誤り| アセットエラー::ファイル読込失敗(format!("{}: {誤り}", パス.display())))?;
-    let gltf::Gltf { document, blob } =
-        gltf::Gltf::from_slice(&バイト列).map_err(|誤り| アセットエラー::解析失敗(誤り.to_string()))?;
+    let バイト列 = std::fs::read(パス).map_err(|誤り| アセットエラー::ファイル読込失敗(format!("{}: {誤り}", パス.display())))?;
+    let gltf::Gltf { document, blob } = gltf::Gltf::from_slice(&バイト列).map_err(|誤り| アセットエラー::解析失敗(誤り.to_string()))?;
 
-    let 基準ディレクトリ = パス
-        .parent()
-        .map(Path::to_path_buf)
-        .unwrap_or_else(|| PathBuf::from("."));
+    let 基準ディレクトリ = パス.parent().map(Path::to_path_buf).unwrap_or_else(|| PathBuf::from("."));
     let (バッファ一覧, バッファ参照パス一覧) = バッファ一覧を解決する(&document, &基準ディレクトリ, blob)?;
 
     let mut 参照ファイル一覧 = vec![パス.to_path_buf()];

@@ -34,7 +34,11 @@ impl UIテクスチャレジストリ {
                 return Err(誤り);
             }
         };
-        Ok(Self { layout, pool, 表: HashMap::new() })
+        Ok(Self {
+            layout,
+            pool,
+            表: HashMap::new(),
+        })
     }
 
     /// テクスチャを新規登録、または既存IDを新しい内容で置き換える。
@@ -79,9 +83,10 @@ impl UIテクスチャレジストリ {
     /// (blitz_app)がテクスチャデルタを描画データより先に反映する契約に反しており、
     /// プログラムのバグとしてpanicする。
     pub(crate) fn setを取得する(&self, id: UIテクスチャID) -> vk::DescriptorSet {
-        self.表.get(&id).map(|(_, set)| *set).unwrap_or_else(|| {
-            panic!("UIメッシュが未登録のUIテクスチャIDを参照した(テクスチャデルタの反映漏れ)")
-        })
+        self.表
+            .get(&id)
+            .map(|(_, set)| *set)
+            .unwrap_or_else(|| panic!("UIメッシュが未登録のUIテクスチャIDを参照した(テクスチャデルタの反映漏れ)"))
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

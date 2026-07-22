@@ -23,10 +23,7 @@ pub(super) fn 親ノード添字表を作る(文書: &gltf::Document) -> HashMap
 }
 
 /// `旧グローバル一覧[旧添字]`が各ジョイントのグローバルノード添字。
-pub(super) fn トポロジカル順を求める(
-    旧グローバル一覧: &[usize],
-    親ノード添字表: &HashMap<usize, usize>,
-) -> 並べ替え {
+pub(super) fn トポロジカル順を求める(旧グローバル一覧: &[usize], 親ノード添字表: &HashMap<usize, usize>) -> 並べ替え {
     let グローバルから旧添字: HashMap<usize, usize> = 旧グローバル一覧
         .iter()
         .enumerate()
@@ -57,12 +54,7 @@ pub(super) fn トポロジカル順を求める(
 }
 
 /// 親が先に確定するよう再帰的に位置を割り当てる。
-fn 位置を確定する(
-    旧添字: usize,
-    旧親添字一覧: &[Option<usize>],
-    旧から新: &mut Vec<usize>,
-    新から旧: &mut Vec<usize>,
-) {
+fn 位置を確定する(旧添字: usize, 旧親添字一覧: &[Option<usize>], 旧から新: &mut Vec<usize>, 新から旧: &mut Vec<usize>) {
     if 旧から新[旧添字] != usize::MAX {
         return;
     }

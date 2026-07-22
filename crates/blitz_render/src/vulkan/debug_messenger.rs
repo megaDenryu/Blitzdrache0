@@ -2,8 +2,8 @@
 //! メッセージ全文をstderrへ出力する。
 
 use std::ffi::c_void;
-use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 use ash::vk;
 
@@ -20,18 +20,13 @@ pub(crate) struct デバッグメッセンジャー {
 
 impl デバッグメッセンジャー {
     pub(crate) fn 生成する(
-        entry: &ash::Entry,
-        instance: &ash::Instance,
-        カウンタ: &検証カウンタ,
+        entry: &ash::Entry, instance: &ash::Instance, カウンタ: &検証カウンタ
     ) -> Result<Self, レンダラーエラー> {
         let loader = ash::ext::debug_utils::Instance::new(entry, instance);
         let カウンタ保持 = カウンタ.内部参照を複製する();
 
         let create_info = vk::DebugUtilsMessengerCreateInfoEXT::default()
-            .message_severity(
-                vk::DebugUtilsMessageSeverityFlagsEXT::ERROR
-                    | vk::DebugUtilsMessageSeverityFlagsEXT::WARNING,
-            )
+            .message_severity(vk::DebugUtilsMessageSeverityFlagsEXT::ERROR | vk::DebugUtilsMessageSeverityFlagsEXT::WARNING)
             .message_type(
                 vk::DebugUtilsMessageTypeFlagsEXT::GENERAL
                     | vk::DebugUtilsMessageTypeFlagsEXT::VALIDATION

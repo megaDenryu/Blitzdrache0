@@ -4,12 +4,7 @@ use crate::asset::error::アセットエラー;
 
 use super::super::document::開いた文書;
 
-const 単位行列: [[f32; 4]; 4] = [
-    [1.0, 0.0, 0.0, 0.0],
-    [0.0, 1.0, 0.0, 0.0],
-    [0.0, 0.0, 1.0, 0.0],
-    [0.0, 0.0, 0.0, 1.0],
-];
+const 単位行列: [[f32; 4]; 4] = [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]];
 
 /// 戻り値は旧添字(スキンの`joints()`順)で並ぶ。
 pub(super) fn 逆バインド行列一覧を読む(
@@ -17,8 +12,7 @@ pub(super) fn 逆バインド行列一覧を読む(
     スキン: &gltf::Skin<'_>,
     ジョイント数: usize,
 ) -> Result<Vec<[[f32; 4]; 4]>, アセットエラー> {
-    let 読み取り器 =
-        スキン.reader(|バッファ| 文書.バッファ一覧.get(バッファ.index()).map(Vec::as_slice));
+    let 読み取り器 = スキン.reader(|バッファ| 文書.バッファ一覧.get(バッファ.index()).map(Vec::as_slice));
     let 一覧: Vec<[[f32; 4]; 4]> = match 読み取り器.read_inverse_bind_matrices() {
         Some(反復子) => 反復子.collect(),
         None => vec![単位行列; ジョイント数],

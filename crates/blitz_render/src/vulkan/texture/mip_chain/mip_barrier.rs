@@ -25,12 +25,7 @@ fn 積む(device: &ash::Device, command_buffer: vk::CommandBuffer, バリア: vk
 /// mip1以降なら前段のblit(BLIT段)であり、呼び出し側でどちらか判別しない。
 /// `ALL_TRANSFER`(COPY/BLIT両方を包含)をsrcStageMaskにすることで、
 /// 実際の書き手がどちらであっても同期スコープに含める。
-pub(super) fn レベルをsrcへ遷移する(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
-    image: vk::Image,
-    レベル: u32,
-) {
+pub(super) fn レベルをsrcへ遷移する(device: &ash::Device, command_buffer: vk::CommandBuffer, image: vk::Image, レベル: u32) {
     let バリア = vk::ImageMemoryBarrier2::default()
         .src_stage_mask(vk::PipelineStageFlags2::ALL_TRANSFER)
         .src_access_mask(vk::AccessFlags2::TRANSFER_WRITE)
@@ -46,12 +41,7 @@ pub(super) fn レベルをsrcへ遷移する(
 }
 
 /// TRANSFER_SRC_OPTIMAL(blit元として使用済み) → SHADER_READ_ONLY_OPTIMAL。
-pub(super) fn レベルをshader_readへ遷移する(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
-    image: vk::Image,
-    レベル: u32,
-) {
+pub(super) fn レベルをshader_readへ遷移する(device: &ash::Device, command_buffer: vk::CommandBuffer, image: vk::Image, レベル: u32) {
     let バリア = vk::ImageMemoryBarrier2::default()
         .src_stage_mask(vk::PipelineStageFlags2::BLIT)
         .src_access_mask(vk::AccessFlags2::TRANSFER_READ)
@@ -73,10 +63,7 @@ pub(super) fn レベルをshader_readへ遷移する(
 /// mip数が2以上ならblit(BLIT段)の書き込み。`レベルをsrcへ遷移する`と同じ理由で
 /// `ALL_TRANSFER`を使う。
 pub(super) fn 最終レベルをshader_readへ遷移する(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
-    image: vk::Image,
-    レベル: u32,
+    device: &ash::Device, command_buffer: vk::CommandBuffer, image: vk::Image, レベル: u32
 ) {
     let バリア = vk::ImageMemoryBarrier2::default()
         .src_stage_mask(vk::PipelineStageFlags2::ALL_TRANSFER)

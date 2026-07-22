@@ -23,4 +23,4 @@ pub use blend::ブレンドする;
 pub use evaluate::姿勢を評価する;
 pub use joint_pose::関節TRS;
 pub use pose::姿勢;
-pub use skin_matrix::{スキン行列一覧, スキン行列を計算する};
+pub use skin_matrix::{スキン行列を計算する, スキン行列一覧};

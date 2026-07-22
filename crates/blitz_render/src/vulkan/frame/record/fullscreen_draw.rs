@@ -25,7 +25,10 @@ pub(super) fn コマンドを積む(
         .min_depth(0.0)
         .max_depth(1.0);
     let viewport一覧 = [viewport];
-    let シザー一覧 = [vk::Rect2D { offset: vk::Offset2D { x: 0, y: 0 }, extent: 寸法 }];
+    let シザー一覧 = [vk::Rect2D {
+        offset: vk::Offset2D { x: 0, y: 0 },
+        extent: 寸法,
+    }];
     let ディスクリプタセット一覧 = [ディスクリプタセット];
 
     // 安全性: 上記前提のとおり。バインドとドローだけで、同期・レイアウト遷移はグラフ実行器が担う。
@@ -33,14 +36,7 @@ pub(super) fn コマンドを積む(
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, pipeline);
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
         device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
-        device.cmd_bind_descriptor_sets(
-            command_buffer,
-            vk::PipelineBindPoint::GRAPHICS,
-            layout,
-            0,
-            &ディスクリプタセット一覧,
-            &[],
-        );
+        device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::GRAPHICS, layout, 0, &ディスクリプタセット一覧, &[]);
         if let Some(バイト列) = プッシュ定数 {
             device.cmd_push_constants(command_buffer, layout, vk::ShaderStageFlags::FRAGMENT, 0, バイト列);
         }

@@ -19,8 +19,7 @@ pub(crate) fn 生成する(
 
     // 安全性: 表示ハンドル・ウィンドウハンドルの生存は呼び出し元(前提コメント参照)が
     // 保証する。entry・instanceはこの呼び出しの直前に生成済みで有効。
-    let surface =
-        unsafe { ash_window::create_surface(entry, instance, 表示ハンドル, ウィンドウハンドル, None)? };
+    let surface = unsafe { ash_window::create_surface(entry, instance, 表示ハンドル, ウィンドウハンドル, None)? };
 
     Ok((loader, surface))
 }

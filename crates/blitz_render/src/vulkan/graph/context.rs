@@ -28,7 +28,15 @@ impl<'a> 記録文脈<'a> {
         宣言済み画像: Vec<画像ハンドル>,
         宣言済みバッファ: Vec<バッファハンドル>,
     ) -> Self {
-        Self { device, command_buffer, 画像レジストリ, バッファレジストリ, パス名, 宣言済み画像, 宣言済みバッファ }
+        Self {
+            device,
+            command_buffer,
+            画像レジストリ,
+            バッファレジストリ,
+            パス名,
+            宣言済み画像,
+            宣言済みバッファ,
+        }
     }
 
     pub(crate) fn device(&self) -> &ash::Device {

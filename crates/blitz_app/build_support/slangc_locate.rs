@@ -33,10 +33,7 @@ pub(super) fn 発見する() -> Result<スランガー位置, String> {
         return Ok(スランガー位置::パス経由);
     }
 
-    Err(
-        "slangcが見つからない。VULKAN_SDK環境変数を確認するか、PATHにslangcを追加すること"
-            .to_string(),
-    )
+    Err("slangcが見つからない。VULKAN_SDK環境変数を確認するか、PATHにslangcを追加すること".to_string())
 }
 
 fn slangcがpathで動くか() -> bool {

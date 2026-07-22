@@ -26,16 +26,12 @@ pub(super) fn 組み立てる(
 
     let instance = vulkan::instance::生成する(&entry, 表示ハンドル, デバッグ有効か)?;
     let 検証カウンタ = 検証カウンタ::生成する();
-    let デバッグメッセンジャー =
-        デバッグメッセンジャーを作る(&entry, &instance, &検証カウンタ, デバッグ有効か)?;
+    let デバッグメッセンジャー = デバッグメッセンジャーを作る(&entry, &instance, &検証カウンタ, デバッグ有効か)?;
 
-    let (surface_loader, surface) =
-        vulkan::surface::生成する(&entry, &instance, 表示ハンドル, ウィンドウハンドル)?;
-    let (physical_device, queue_family_index) =
-        vulkan::physical_device::選定する(&instance, &surface_loader, surface)?;
+    let (surface_loader, surface) = vulkan::surface::生成する(&entry, &instance, 表示ハンドル, ウィンドウハンドル)?;
+    let (physical_device, queue_family_index) = vulkan::physical_device::選定する(&instance, &surface_loader, surface)?;
     let 大点描画対応 = vulkan::physical_device::大きな点描画に対応するか(&instance, physical_device);
-    let (device, queue) =
-        vulkan::device::生成する(&instance, physical_device, queue_family_index, 大点描画対応)?;
+    let (device, queue) = vulkan::device::生成する(&instance, physical_device, queue_family_index, 大点描画対応)?;
     let swapchain_loader = ash::khr::swapchain::Device::new(&instance, &device);
 
     let swapchain = vulkan::swapchain::スワップチェーン::生成する(

@@ -14,18 +14,24 @@ use crate::error::起動エラー;
 impl アプリ {
     /// `--dump-frame`が指定され、かつ`--frames`の最終フレームなら真。このフレームはスモーク判定の代わりに読み戻しとファイル書き出しを行う。
     pub(super) fn ダンプ対象フレームか(&self) -> bool {
-        let 起動モード::スモーク実行 { フレーム数 } = self.起動モード else { return false };
+        let 起動モード::スモーク実行 { フレーム数 } = self.起動モード else {
+            return false;
+        };
         self.フレームダンプ先.is_some() && self.現在フレーム + 1 == フレーム数
     }
 
     pub(super) fn 読み戻してダンプする(&mut self, 描画入力: blitz_render::フレーム描画入力) -> Result<(), 起動エラー> {
-        let Some(レンダラー) = &mut self.レンダラー else { return Ok(()) };
-        let Some(ダンプ先) = &self.フレームダンプ先 else { return Ok(()) };
+        let Some(レンダラー) = &mut self.レンダラー else {
+            return Ok(());
+        };
+        let Some(ダンプ先) = &self.フレームダンプ先 else {
+            return Ok(());
+        };
         match レンダラー.一フレーム描画して読み戻す(描画入力)? {
             blitz_render::読み戻し結果::読み戻した(画像) => 書き出す(&画像, ダンプ先),
-            blitz_render::読み戻し結果::見送った(理由) => {
-                Err(起動エラー::フレームダンプ失敗(format!("最終フレームで描画が見送られた: {理由:?}")))
-            }
+            blitz_render::読み戻し結果::見送った(理由) => Err(起動エラー::フレームダンプ失敗(format!(
+                "最終フレームで描画が見送られた: {理由:?}"
+            ))),
         }
     }
 }
@@ -43,8 +49,7 @@ fn 書き出す(画像: &読み戻し画像, ベース名: &Path) -> Result<(), 
 
     let rawパス = ベース名.with_extension("raw");
     let sizeパス = ベース名.with_extension("size");
-    std::fs::write(&rawパス, バイト列)
-        .map_err(|誤り| 起動エラー::フレームダンプ失敗(format!("{}: {誤り}", rawパス.display())))?;
+    std::fs::write(&rawパス, バイト列).map_err(|誤り| 起動エラー::フレームダンプ失敗(format!("{}: {誤り}", rawパス.display())))?;
     std::fs::write(&sizeパス, format!("{幅} {高さ}\n"))
         .map_err(|誤り| 起動エラー::フレームダンプ失敗(format!("{}: {誤り}", sizeパス.display())))?;
     println!("[dump-frame] 書き出した: {}", rawパス.display());

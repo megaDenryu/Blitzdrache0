@@ -38,12 +38,7 @@ pub(super) fn 記録して転送する(
 }
 
 fn コピーする(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
-    ステージングバッファ: vk::Buffer,
-    image: vk::Image,
-    幅: u32,
-    高さ: u32,
+    device: &ash::Device, command_buffer: vk::CommandBuffer, ステージングバッファ: vk::Buffer, image: vk::Image, 幅: u32, 高さ: u32
 ) {
     let 領域 = vk::BufferImageCopy::default()
         .image_subresource(
@@ -53,7 +48,11 @@ fn コピーする(
                 .base_array_layer(0)
                 .layer_count(1),
         )
-        .image_extent(vk::Extent3D { width: 幅, height: 高さ, depth: 1 });
+        .image_extent(vk::Extent3D {
+            width: 幅,
+            height: 高さ,
+            depth: 1,
+        });
     // 安全性: command_bufferは記録中。imageはTRANSFER_DST_OPTIMALへ遷移済み。
     unsafe {
         device.cmd_copy_buffer_to_image(

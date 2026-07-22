@@ -7,7 +7,7 @@ use crate::asset::joint_channel::ジョイントアニメーションチャン�
 use crate::asset::keyframe_channel::チャンネル;
 
 use super::keyframe;
-use super::output::{回転出力を読む, スケール出力を読む, 平行移動出力を読む};
+use super::output::{スケール出力を読む, 回転出力を読む, 平行移動出力を読む};
 
 pub(super) fn プロパティを反映する<'a, 's, F>(
     読み取り器: gltf::animation::util::Reader<'a, 's, F>,
@@ -47,9 +47,7 @@ fn 組み立てる<値>(時刻列: Vec<f32>, 値列: Vec<値>, 補間: 補間種
     }
 }
 
-fn 時刻列を読む<'a, 's, F>(
-    読み取り器: &gltf::animation::util::Reader<'a, 's, F>,
-) -> Result<Vec<f32>, アセットエラー>
+fn 時刻列を読む<'a, 's, F>(読み取り器: &gltf::animation::util::Reader<'a, 's, F>) -> Result<Vec<f32>, アセットエラー>
 where
     F: Clone + Fn(gltf::Buffer<'a>) -> Option<&'s [u8]>,
 {

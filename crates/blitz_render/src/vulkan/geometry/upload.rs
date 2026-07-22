@@ -18,8 +18,7 @@ pub(crate) fn ステージング経由でアップロードする(
         host_buffer::確保して書き込む(device, メモリプロパティ, データ, vk::BufferUsageFlags::TRANSFER_SRC)?;
 
     let バイト数 = u64::try_from(データ.len()).unwrap_or_else(|_| panic!("転送データ長がu64に収まらない"));
-    let 確保結果 =
-        device_buffer::確保する(device, メモリプロパティ, バイト数, 用途 | vk::BufferUsageFlags::TRANSFER_DST);
+    let 確保結果 = device_buffer::確保する(device, メモリプロパティ, バイト数, 用途 | vk::BufferUsageFlags::TRANSFER_DST);
     let (先バッファ, 先メモリ) = match 確保結果 {
         Ok(結果) => 結果,
         Err(誤り) => {

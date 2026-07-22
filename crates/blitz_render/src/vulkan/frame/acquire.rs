@@ -19,9 +19,7 @@ pub(crate) fn 取得する(
 ) -> Result<取得結果, レンダラーエラー> {
     // 安全性: swapchain・取得セマフォはいずれも生成済みで、呼び出し元が
     // フェンス待機によりセマフォが未シグナル状態であることを保証する。
-    let 結果 = unsafe {
-        swapchain_loader.acquire_next_image(swapchain, u64::MAX, 取得セマフォ, vk::Fence::null())
-    };
+    let 結果 = unsafe { swapchain_loader.acquire_next_image(swapchain, u64::MAX, 取得セマフォ, vk::Fence::null()) };
 
     match 結果 {
         Ok((添字, 劣化)) => Ok(取得結果::取得した { 添字, 劣化 }),

@@ -19,8 +19,7 @@ impl レンダラー {
         データ: Option<&UI描画データ>,
     ) -> Result<Option<vulkan::frame::UI描画入力>, レンダラーエラー> {
         let Some(データ) = データ else { return Ok(None) };
-        let 有効一覧: Vec<&UIメッシュ> =
-            データ.メッシュ一覧.iter().filter(|メッシュ| merge::有効なメッシュか(メッシュ)).collect();
+        let 有効一覧: Vec<&UIメッシュ> = データ.メッシュ一覧.iter().filter(|メッシュ| merge::有効なメッシュか(メッシュ)).collect();
         if 有効一覧.is_empty() {
             return Ok(None);
         }
@@ -29,15 +28,10 @@ impl レンダラー {
         let (頂点一覧結合, インデックス一覧結合, 項目一覧) = self.メッシュ列を結合する(&有効一覧, 寸法);
 
         // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
-        let メモリプロパティ =
-            unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
-        let (頂点バッファ, インデックスバッファ) = self.ui一式.ジオメトリを書き込む(
-            &self.device,
-            &メモリプロパティ,
-            フレーム添字,
-            &頂点一覧結合,
-            &インデックス一覧結合,
-        )?;
+        let メモリプロパティ = unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
+        let (頂点バッファ, インデックスバッファ) =
+            self.ui一式
+                .ジオメトリを書き込む(&self.device, &メモリプロパティ, フレーム添字, &頂点一覧結合, &インデックス一覧結合)?;
 
         Ok(Some(vulkan::frame::UI描画入力 {
             pipeline: self.ui一式.pipeline_handle(),

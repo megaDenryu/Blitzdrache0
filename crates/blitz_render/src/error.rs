@@ -7,8 +7,8 @@
 //! 自前表現へ変換する」だけであり、公開APIからash型を取り出せる経路にはならない。
 //! バリアント自体は自前表現（String・Vulkan失敗コード）のみを保持する。
 
-use thiserror::Error;
 use crate::vulkan_failure::Vulkan失敗コード;
+use thiserror::Error;
 
 /// レンダラーの生成・描画・破棄で起こりうる失敗を表す層のエラー型。
 #[derive(Debug, Error)]

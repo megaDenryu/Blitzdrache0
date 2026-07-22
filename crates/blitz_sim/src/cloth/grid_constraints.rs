@@ -30,14 +30,7 @@ pub(super) fn 距離拘束一覧を作る(仕様: &布仕様, 一辺粒子数: u
     拘束一覧
 }
 
-fn 拘束を作る(
-    一辺粒子数: usize,
-    行a: usize,
-    列a: usize,
-    行b: usize,
-    列b: usize,
-    静止長: f32,
-) -> 距離拘束 {
+fn 拘束を作る(一辺粒子数: usize, 行a: usize, 列a: usize, 行b: usize, 列b: usize, 静止長: f32) -> 距離拘束 {
     距離拘束 {
         粒子a添字: u32へ(線形添字(一辺粒子数, 行a, 列a)),
         粒子b添字: u32へ(線形添字(一辺粒子数, 行b, 列b)),

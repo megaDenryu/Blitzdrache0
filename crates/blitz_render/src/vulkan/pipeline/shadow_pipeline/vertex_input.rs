@@ -7,10 +7,8 @@ use ash::vk;
 use crate::vertex::頂点;
 
 pub(super) fn 記述する() -> (vk::VertexInputBindingDescription, [vk::VertexInputAttributeDescription; 1]) {
-    let stride = u32::try_from(std::mem::size_of::<頂点>())
-        .unwrap_or_else(|_| panic!("頂点のサイズがu32に収まらない"));
-    let 位置オフセット = u32::try_from(std::mem::offset_of!(頂点, 位置))
-        .unwrap_or_else(|_| panic!("頂点の位置オフセットがu32に収まらない"));
+    let stride = u32::try_from(std::mem::size_of::<頂点>()).unwrap_or_else(|_| panic!("頂点のサイズがu32に収まらない"));
+    let 位置オフセット = u32::try_from(std::mem::offset_of!(頂点, 位置)).unwrap_or_else(|_| panic!("頂点の位置オフセットがu32に収まらない"));
 
     let バインド記述 = vk::VertexInputBindingDescription::default()
         .binding(0)

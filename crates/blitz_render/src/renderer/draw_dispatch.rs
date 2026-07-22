@@ -7,7 +7,7 @@ use super::レンダラー;
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
 use crate::vulkan;
-use crate::vulkan::frame::{ブルーム画像, フレーム画像一式, 描画方式, UI描画入力};
+use crate::vulkan::frame::{UI描画入力, フレーム画像一式, ブルーム画像, 描画方式};
 
 impl レンダラー {
     /// 戻り値: 提示劣化の有無と、このフレームで書いたGPUタイムスタンプの
@@ -23,15 +23,16 @@ impl レンダラー {
         読み戻し要求: bool,
         ui入力: Option<&UI描画入力>,
     ) -> Result<(bool, Vec<(&'static str, u32)>), レンダラーエラー> {
-        let 添字usize = usize::try_from(添字)
-            .unwrap_or_else(|_| panic!("スワップチェーン画像添字がusizeに収まらない: {添字}"));
+        let 添字usize = usize::try_from(添字).unwrap_or_else(|_| panic!("スワップチェーン画像添字がusizeに収まらない: {添字}"));
 
         let 描画方式 = if 読み戻し要求 {
             let バッファ = self
                 .読み戻しバッファ
                 .as_ref()
                 .unwrap_or_else(|| panic!("読み戻し要求時に読み戻しバッファが未確保だった"));
-            描画方式::読み戻し { バッファ: バッファ.handle }
+            描画方式::読み戻し {
+                バッファ: バッファ.handle
+            }
         } else {
             描画方式::通常
         };

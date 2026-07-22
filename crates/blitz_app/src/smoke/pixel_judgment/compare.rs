@@ -6,17 +6,11 @@ use super::expected_color::許容誤差;
 use super::srgb_convert::linearをsrgb8bit相当のf32へ変換する;
 use crate::error::起動エラー;
 
-pub(super) fn 比較する(
-    画像: &読み戻し画像,
-    x: u32,
-    y: u32,
-    期待線形色: [f32; 3],
-    ラベル: &str,
-) -> Result<(), 起動エラー> {
+pub(super) fn 比較する(画像: &読み戻し画像, x: u32, y: u32, 期待線形色: [f32; 3], ラベル: &str) -> Result<(), 起動エラー> {
     let Some(実測) = 画像.ピクセル(x, y) else {
-        return Err(起動エラー::ピクセル判定失敗(format!(
-            "{ラベル}: 座標({x},{y})が画像範囲外だった"
-        )));
+        return Err(起動エラー::ピクセル判定失敗(
+            format!("{ラベル}: 座標({x},{y})が画像範囲外だった"),
+        ));
     };
     for (成分添字, 線形値) in 期待線形色.into_iter().enumerate() {
         // f32→u8の安全な変換規約が標準に無いため、u8→f32(From)方向へ揃えて

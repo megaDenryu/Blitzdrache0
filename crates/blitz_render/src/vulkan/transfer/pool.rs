@@ -6,10 +6,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 
-pub(super) fn 生成する(
-    device: &ash::Device,
-    キューファミリ添字: u32,
-) -> Result<vk::CommandPool, レンダラーエラー> {
+pub(super) fn 生成する(device: &ash::Device, キューファミリ添字: u32) -> Result<vk::CommandPool, レンダラーエラー> {
     let create_info = vk::CommandPoolCreateInfo::default()
         .flags(vk::CommandPoolCreateFlags::TRANSIENT)
         .queue_family_index(キューファミリ添字);

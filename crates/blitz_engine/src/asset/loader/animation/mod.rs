@@ -24,16 +24,9 @@ pub(super) fn アニメーション一覧を取り出す(
         .animations()
         .enumerate()
         .map(|(添字, アニメーション)| {
-            let 名前 = アニメーション
-                .name()
-                .map(str::to_string)
-                .unwrap_or_else(|| format!("animation_{添字}"));
-            let ジョイントチャンネル一覧 = channel_group::ジョイントチャンネル一覧を取り出す(
-                文書,
-                &アニメーション,
-                関節解決,
-                ジョイント数,
-            )?;
+            let 名前 = アニメーション.name().map(str::to_string).unwrap_or_else(|| format!("animation_{添字}"));
+            let ジョイントチャンネル一覧 =
+                channel_group::ジョイントチャンネル一覧を取り出す(文書, &アニメーション, 関節解決, ジョイント数)?;
             let 継続秒 = 継続秒を求める(&ジョイントチャンネル一覧);
             Ok(アニメーションクリップ {
                 名前,

@@ -10,9 +10,7 @@ use std::path::PathBuf;
 use blitz_engine::{アセットID, カタログ, シーンを読み込む};
 
 fn リポジトリルートからのパス(相対パス: &str) -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../..")
-        .join(相対パス)
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..").join(相対パス)
 }
 
 fn 試験用カタログ() -> (カタログ, アセットID) {
@@ -31,9 +29,7 @@ fn 極小四角形アセットを読み込める() {
 
     let シーン = match シーンを読み込む(&カタログ, &id) {
         Ok(シーン) => シーン,
-        Err(誤り) => panic!(
-            "assets/smoke/quad.gltfの読込に失敗した(cargo xtask gen-smoke-assetで生成済みか確認): {誤り}"
-        ),
+        Err(誤り) => panic!("assets/smoke/quad.gltfの読込に失敗した(cargo xtask gen-smoke-assetで生成済みか確認): {誤り}"),
     };
 
     assert_eq!(シーン.メッシュ.頂点一覧.len(), 4);

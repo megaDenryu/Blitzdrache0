@@ -3,7 +3,7 @@
 
 use ash::vk;
 
-use crate::vulkan::frame::{トーンマップ描画入力, ブルーム描画入力, フレーム画像一式};
+use crate::vulkan::frame::{トーンマップ描画入力, フレーム画像一式, ブルーム描画入力};
 use crate::vulkan::graph;
 
 pub(super) struct ポスト構成<'a> {

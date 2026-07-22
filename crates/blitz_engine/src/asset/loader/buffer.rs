@@ -17,9 +17,7 @@ pub(super) fn バッファ一覧を解決する(
     let mut 参照パス一覧 = Vec::new();
     for バッファ in 文書.buffers() {
         let データ = match バッファ.source() {
-            gltf::buffer::Source::Bin => 埋め込みバイナリ
-                .clone()
-                .ok_or(アセットエラー::未対応バッファ形式)?,
+            gltf::buffer::Source::Bin => 埋め込みバイナリ.clone().ok_or(アセットエラー::未対応バッファ形式)?,
             gltf::buffer::Source::Uri(uri) => {
                 if uri.starts_with("data:") {
                     return Err(アセットエラー::未対応バッファ形式);

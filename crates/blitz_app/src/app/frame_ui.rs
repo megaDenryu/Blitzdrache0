@@ -9,7 +9,9 @@ impl アプリ {
     pub(super) fn ui描画データを組み立てる(&mut self) -> Result<Option<blitz_render::UI描画データ>, 起動エラー> {
         let Some(window) = &self.window else { return Ok(None) };
         let Some(開発ui) = &mut self.開発ui else { return Ok(None) };
-        let Some(レンダラー) = &mut self.レンダラー else { return Ok(None) };
+        let Some(レンダラー) = &mut self.レンダラー else {
+            return Ok(None);
+        };
         let 統計 = 開発UI統計 {
             パス別gpu時間: レンダラー.パス別gpu時間を取得する(),
             フレーム時間ms: 開発ui.フレーム時間を記録する(),

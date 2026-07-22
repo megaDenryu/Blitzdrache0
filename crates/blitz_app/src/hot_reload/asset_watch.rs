@@ -4,7 +4,7 @@
 use std::path::PathBuf;
 use std::time::SystemTime;
 
-use blitz_engine::{アセットID, カタログ, シーンデータ, シーンを読み込む, アセットエラー};
+use blitz_engine::{アセットID, アセットエラー, カタログ, シーンを読み込む, シーンデータ};
 
 use super::mtime;
 
@@ -26,11 +26,10 @@ impl アセット監視状態 {
     /// 参照ファイルのいずれかが変化していれば再読込を試み、結果を返す。
     /// 変化が無ければ`None`(呼び出し元は`変化なし`として扱う)。
     pub(super) fn 変化を確認して再読込する(&mut self) -> Option<Result<シーンデータ, アセットエラー>> {
-        let 変化あり = self.参照ファイル一覧.iter().any(|(パス, 記録時刻)| {
-            mtime::取得する(パス)
-                .map(|現在時刻| 現在時刻 > *記録時刻)
-                .unwrap_or(false)
-        });
+        let 変化あり = self
+            .参照ファイル一覧
+            .iter()
+            .any(|(パス, 記録時刻)| mtime::取得する(パス).map(|現在時刻| 現在時刻 > *記録時刻).unwrap_or(false));
         if !変化あり {
             return None;
         }

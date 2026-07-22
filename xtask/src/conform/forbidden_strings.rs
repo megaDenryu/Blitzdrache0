@@ -6,11 +6,7 @@ use std::path::Path;
 
 use super::violation::違反;
 
-const 禁止語一覧: [&str; 3] = [
-    concat!("TO", "DO"),
-    concat!("FIX", "ME"),
-    concat!("HA", "CK"),
-];
+const 禁止語一覧: [&str; 3] = [concat!("TO", "DO"), concat!("FIX", "ME"), concat!("HA", "CK")];
 
 pub fn 行に禁止語を含むか(行: &str) -> Option<&'static str> {
     禁止語一覧.iter().find(|語| 行.contains(*語)).copied()

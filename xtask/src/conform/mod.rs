@@ -19,8 +19,7 @@ const 検査対象ディレクトリ一覧: [&str; 3] = ["crates", "xtask/src", 
 const 検査対象拡張子一覧: [&str; 3] = ["rs", "slang", "md"];
 
 pub fn 実行する() -> ExitCode {
-    let ファイル一覧 = match target_files::対象ファイル一覧を集める(&検査対象ディレクトリ一覧, &検査対象拡張子一覧)
-    {
+    let ファイル一覧 = match target_files::対象ファイル一覧を集める(&検査対象ディレクトリ一覧, &検査対象拡張子一覧) {
         Ok(一覧) => 一覧,
         Err(誤り) => {
             eprintln!("[xtask] conformのファイル走査に失敗した: {誤り}");
@@ -50,8 +49,7 @@ pub fn 実行する() -> ExitCode {
 fn ファイル単位の違反を集める(ファイル一覧: &[PathBuf]) -> Result<Vec<違反>, String> {
     let mut 違反一覧 = Vec::new();
     for パス in ファイル一覧 {
-        let 内容 = std::fs::read_to_string(パス)
-            .map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", パス.display()))?;
+        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", パス.display()))?;
         let 拡張子 = パス.extension().and_then(|拡張子| 拡張子.to_str()).unwrap_or("");
         if 拡張子 == "rs" || 拡張子 == "slang" {
             違反一覧.extend(line_count::検査する(パス, &内容));

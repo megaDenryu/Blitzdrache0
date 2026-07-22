@@ -11,8 +11,8 @@ use ash::vk;
 use super::{cloth_passes, particle_draw_pass, particle_update_pass, readback_pass, scene_pass, shadow_pass, skinning_pass, ui_pass};
 use crate::clear_color::クリアカラー;
 use crate::vulkan::frame::{
-    シャドウ描画入力, スキニング描画入力, ジオメトリ入力, トーンマップ描画入力, ブルーム描画入力,
-    フレーム画像一式, 布描画入力, 描画方式, 粒子描画入力, UI描画入力,
+    UI描画入力, シャドウ描画入力, ジオメトリ入力, スキニング描画入力, トーンマップ描画入力, フレーム画像一式, ブルーム描画入力, 布描画入力, 描画方式,
+    粒子描画入力,
 };
 use crate::vulkan::graph;
 

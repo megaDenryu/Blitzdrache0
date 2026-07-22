@@ -25,11 +25,31 @@ pub(crate) fn 生成する(
     let 粒子数 = u64::from(素材.粒子数);
     let ストレージ = vk::BufferUsageFlags::STORAGE_BUFFER;
 
-    let 粒子 = 積む(&mut 確保済み, device, upload::ステージング経由でアップロードする(device, メモリプロパティ, 転送環境, &素材.粒子バイト列, ストレージ))?;
-    let 前位置 = 積む(&mut 確保済み, device, device_buffer::確保する(device, メモリプロパティ, 粒子数 * 16, ストレージ))?;
-    let 隣接 = 積む(&mut 確保済み, device, upload::ステージング経由でアップロードする(device, メモリプロパティ, 転送環境, &素材.隣接バイト列, ストレージ))?;
-    let セルカウント = 積む(&mut 確保済み, device, device_buffer::確保する(device, メモリプロパティ, セル総数 * 4, ストレージ))?;
-    let セル格納 = 積む(&mut 確保済み, device, device_buffer::確保する(device, メモリプロパティ, セル総数 * セル容量 * 4, ストレージ))?;
+    let 粒子 = 積む(
+        &mut 確保済み,
+        device,
+        upload::ステージング経由でアップロードする(device, メモリプロパティ, 転送環境, &素材.粒子バイト列, ストレージ),
+    )?;
+    let 前位置 = 積む(
+        &mut 確保済み,
+        device,
+        device_buffer::確保する(device, メモリプロパティ, 粒子数 * 16, ストレージ),
+    )?;
+    let 隣接 = 積む(
+        &mut 確保済み,
+        device,
+        upload::ステージング経由でアップロードする(device, メモリプロパティ, 転送環境, &素材.隣接バイト列, ストレージ),
+    )?;
+    let セルカウント = 積む(
+        &mut 確保済み,
+        device,
+        device_buffer::確保する(device, メモリプロパティ, セル総数 * 4, ストレージ),
+    )?;
+    let セル格納 = 積む(
+        &mut 確保済み,
+        device,
+        device_buffer::確保する(device, メモリプロパティ, セル総数 * セル容量 * 4, ストレージ),
+    )?;
     let 布頂点 = 積む(
         &mut 確保済み,
         device,
@@ -40,7 +60,17 @@ pub(crate) fn 生成する(
     for 添字 in &素材.インデックス一覧 {
         インデックスバイト列.extend_from_slice(&添字.to_le_bytes());
     }
-    let インデックス = 積む(&mut 確保済み, device, upload::ステージング経由でアップロードする(device, メモリプロパティ, 転送環境, &インデックスバイト列, vk::BufferUsageFlags::INDEX_BUFFER))?;
+    let インデックス = 積む(
+        &mut 確保済み,
+        device,
+        upload::ステージング経由でアップロードする(
+            device,
+            メモリプロパティ,
+            転送環境,
+            &インデックスバイト列,
+            vk::BufferUsageFlags::INDEX_BUFFER,
+        ),
+    )?;
 
     let mut アタッチバイト列 = Vec::with_capacity((素材.アタッチ対応一覧.len() * 8).max(8));
     for 対応 in &素材.アタッチ対応一覧 {
@@ -51,18 +81,42 @@ pub(crate) fn 生成する(
     if アタッチバイト列.is_empty() {
         アタッチバイト列.extend_from_slice(&[0u8; 8]);
     }
-    let アタッチ = 積む(&mut 確保済み, device, upload::ステージング経由でアップロードする(device, メモリプロパティ, 転送環境, &アタッチバイト列, ストレージ))?;
+    let アタッチ = 積む(
+        &mut 確保済み,
+        device,
+        upload::ステージング経由でアップロードする(device, メモリプロパティ, 転送環境, &アタッチバイト列, ストレージ),
+    )?;
 
-    let 介入初期値 = vec![0u8; usize::try_from(params::介入上限件数).unwrap_or_else(|_| panic!("介入上限件数がusizeに収まらない")) * 32];
+    let 介入初期値 =
+        vec![0u8; usize::try_from(params::介入上限件数).unwrap_or_else(|_| panic!("介入上限件数がusizeに収まらない")) * 32];
     let 定数初期値 = vec![0u8; params::バイト長];
     let mut 介入一覧 = [(vk::Buffer::null(), vk::DeviceMemory::null()); フレームインフライト数];
     let mut 定数一覧 = [(vk::Buffer::null(), vk::DeviceMemory::null()); フレームインフライト数];
     for 添字 in 0..フレームインフライト数 {
-        介入一覧[添字] = 積む(&mut 確保済み, device, host_buffer::確保して書き込む(device, メモリプロパティ, &介入初期値, ストレージ))?;
-        定数一覧[添字] = 積む(&mut 確保済み, device, host_buffer::確保して書き込む(device, メモリプロパティ, &定数初期値, vk::BufferUsageFlags::UNIFORM_BUFFER))?;
+        介入一覧[添字] = 積む(
+            &mut 確保済み,
+            device,
+            host_buffer::確保して書き込む(device, メモリプロパティ, &介入初期値, ストレージ),
+        )?;
+        定数一覧[添字] = 積む(
+            &mut 確保済み,
+            device,
+            host_buffer::確保して書き込む(device, メモリプロパティ, &定数初期値, vk::BufferUsageFlags::UNIFORM_BUFFER),
+        )?;
     }
 
-    Ok(布バッファ { 粒子, 前位置, 隣接, セルカウント, セル格納, 布頂点, インデックス, アタッチ, 介入一覧, 定数一覧 })
+    Ok(布バッファ {
+        粒子,
+        前位置,
+        隣接,
+        セルカウント,
+        セル格納,
+        布頂点,
+        インデックス,
+        アタッチ,
+        介入一覧,
+        定数一覧,
+    })
 }
 
 /// 確保結果を台帳へ積む。失敗時は台帳の確保済みバッファを全部片付けてからエラーを返す。

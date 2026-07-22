@@ -31,15 +31,8 @@ pub(super) fn 組み立てる(
     let (command_pool, command_buffer一覧) = vulkan::commands::生成する(device, queue_family_index)?;
     let フレーム同期 = vulkan::sync::フレーム同期::生成する(device)?;
     let 提示同期 = vulkan::sync::提示同期::生成する(device, swapchain.画像数())?;
-    let pipeline = vulkan::pipeline::パイプライン::生成する(
-        device,
-        シーンカラー形式,
-        深度形式,
-        ディスクリプタlayout,
-        シェーダー,
-    )?;
-    let シャドウパイプライン =
-        vulkan::pipeline::シャドウパイプライン::生成する(device, ディスクリプタlayout, シャドウシェーダー)?;
+    let pipeline = vulkan::pipeline::パイプライン::生成する(device, シーンカラー形式, 深度形式, ディスクリプタlayout, シェーダー)?;
+    let シャドウパイプライン = vulkan::pipeline::シャドウパイプライン::生成する(device, ディスクリプタlayout, シャドウシェーダー)?;
 
     Ok(コマンド同期資源 {
         command_pool,

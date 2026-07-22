@@ -36,7 +36,11 @@ pub(super) fn 書く(
         .iter()
         .enumerate()
         .map(|(binding, 情報)| {
-            let 種別 = if binding == 0 { vk::DescriptorType::UNIFORM_BUFFER } else { vk::DescriptorType::STORAGE_BUFFER };
+            let 種別 = if binding == 0 {
+                vk::DescriptorType::UNIFORM_BUFFER
+            } else {
+                vk::DescriptorType::STORAGE_BUFFER
+            };
             vk::WriteDescriptorSet::default()
                 .dst_set(set)
                 .dst_binding(u32::try_from(binding).unwrap_or_else(|_| panic!("binding番号がu32に収まらない: {binding}")))

@@ -16,7 +16,11 @@ pub(super) fn 生成する(
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
         .format(形式)
-        .extent(vk::Extent3D { width: 幅, height: 高さ, depth: 1 })
+        .extent(vk::Extent3D {
+            width: 幅,
+            height: 高さ,
+            depth: 1,
+        })
         .mip_levels(1)
         .array_layers(1)
         .samples(vk::SampleCountFlags::TYPE_1)

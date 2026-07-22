@@ -43,11 +43,7 @@ impl レンダラー {
         self.布フレームを書き込む(フレーム添字, &入力)?;
 
         let 取得セマフォ = self.フレーム同期.取得セマフォ(フレーム添字);
-        let 添字 = match vulkan::frame::acquire::取得する(
-            &self.swapchain_loader,
-            self.swapchain.handle,
-            取得セマフォ,
-        )? {
+        let 添字 = match vulkan::frame::acquire::取得する(&self.swapchain_loader, self.swapchain.handle, 取得セマフォ)? {
             取得結果::取得した { 添字, 劣化 } => {
                 self.再構築が必要 |= 劣化;
                 添字
@@ -76,15 +72,8 @@ impl レンダラー {
         unsafe { self.device.reset_fences(&[フェンス])? };
 
         let 布介入件数 = 入力.布.as_ref().map_or(0, |布| 布.介入件数);
-        let (提示劣化, 計測マッピング) = self.現在の画像で描画する(
-            添字,
-            フレーム添字,
-            入力.クリア色,
-            入力.露出,
-            布介入件数,
-            読み戻し要求,
-            ui入力.as_ref(),
-        )?;
+        let (提示劣化, 計測マッピング) =
+            self.現在の画像で描画する(添字, フレーム添字, 入力.クリア色, 入力.露出, 布介入件数, 読み戻し要求, ui入力.as_ref())?;
         if let Some(計測) = &mut self.gpu計測 {
             計測.直近マッピングを記録する(フレーム添字, 計測マッピング);
         }

@@ -14,9 +14,8 @@ use crate::error::起動エラー;
 pub(crate) fn アセットを書き換える(アセットルート: &Path) -> Result<(), 起動エラー> {
     let 元 = アセットルート.join("smoke").join("quad_alt_color.png");
     let 先 = アセットルート.join("smoke").join("quad_base_color.png");
-    std::fs::copy(&元, &先).map_err(|誤り| {
-        起動エラー::アセット書き換え失敗(format!("{} -> {}: {誤り}", 元.display(), 先.display()))
-    })?;
+    std::fs::copy(&元, &先)
+        .map_err(|誤り| 起動エラー::アセット書き換え失敗(format!("{} -> {}: {誤り}", 元.display(), 先.display())))?;
 
     let ファイル = std::fs::File::options()
         .write(true)

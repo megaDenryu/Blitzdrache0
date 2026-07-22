@@ -34,14 +34,7 @@ impl 開発UI {
         let コンテキスト = egui::Context::default();
         font_setup::日本語フォントを追加する(&コンテキスト);
         let 初期ppp = egui_winit::pixels_per_point(&コンテキスト, window);
-        let winit統合 = egui_winit::State::new(
-            コンテキスト.clone(),
-            egui::ViewportId::ROOT,
-            window,
-            Some(初期ppp),
-            window.theme(),
-            None,
-        );
+        let winit統合 = egui_winit::State::new(コンテキスト.clone(), egui::ViewportId::ROOT, window, Some(初期ppp), window.theme(), None);
         Self {
             コンテキスト,
             winit統合,

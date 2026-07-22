@@ -21,12 +21,10 @@ impl レンダラー {
         let mut 項目一覧 = Vec::new();
 
         for メッシュ in メッシュ一覧 {
-            let 頂点要素オフセット = i32::try_from(頂点一覧結合.len())
-                .unwrap_or_else(|_| panic!("UI頂点オフセットがi32に収まらない"));
-            let インデックス要素オフセット = u32::try_from(インデックス一覧結合.len())
-                .unwrap_or_else(|_| panic!("UIインデックスオフセットがu32に収まらない"));
-            let インデックス数 = u32::try_from(メッシュ.インデックス一覧.len())
-                .unwrap_or_else(|_| panic!("UIインデックス数がu32に収まらない"));
+            let 頂点要素オフセット = i32::try_from(頂点一覧結合.len()).unwrap_or_else(|_| panic!("UI頂点オフセットがi32に収まらない"));
+            let インデックス要素オフセット =
+                u32::try_from(インデックス一覧結合.len()).unwrap_or_else(|_| panic!("UIインデックスオフセットがu32に収まらない"));
+            let インデックス数 = u32::try_from(メッシュ.インデックス一覧.len()).unwrap_or_else(|_| panic!("UIインデックス数がu32に収まらない"));
             項目一覧.push(vulkan::frame::UI描画項目 {
                 頂点要素オフセット,
                 インデックス要素オフセット,
@@ -53,8 +51,14 @@ fn シザーを組み立てる(矩形: UIシザー矩形px, 寸法: vk::Extent2D
     let 右端 = 矩形.x().saturating_add(矩形.幅()).min(寸法.width);
     let 下端 = 矩形.y().saturating_add(矩形.高さ()).min(寸法.height);
     vk::Rect2D {
-        offset: vk::Offset2D { x: 非負変換する(x), y: 非負変換する(y) },
-        extent: vk::Extent2D { width: 右端.saturating_sub(x), height: 下端.saturating_sub(y) },
+        offset: vk::Offset2D {
+            x: 非負変換する(x),
+            y: 非負変換する(y),
+        },
+        extent: vk::Extent2D {
+            width: 右端.saturating_sub(x),
+            height: 下端.saturating_sub(y),
+        },
     }
 }
 

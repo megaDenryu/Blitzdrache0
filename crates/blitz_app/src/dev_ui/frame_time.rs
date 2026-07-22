@@ -11,7 +11,10 @@ pub(crate) struct フレーム時間計測 {
 
 impl フレーム時間計測 {
     pub(crate) fn 生成する() -> Self {
-        Self { 直前時刻: Instant::now(), 移動平均ms: 0.0 }
+        Self {
+            直前時刻: Instant::now(),
+            移動平均ms: 0.0,
+        }
     }
 
     /// 前回呼び出しからの経過時間を反映し、更新後の移動平均(ミリ秒)を返す。

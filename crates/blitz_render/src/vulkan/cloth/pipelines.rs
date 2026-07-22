@@ -75,7 +75,17 @@ impl 布パイプライン群 {
     pub(super) fn 破棄する(&self, device: &ash::Device) {
         // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
         unsafe {
-            for handle in [self.介入, self.積分, self.アタッチ, self.拘束, self.ハッシュ消去, self.ハッシュ格納, self.分離, self.仕上げ, self.頂点生成] {
+            for handle in [
+                self.介入,
+                self.積分,
+                self.アタッチ,
+                self.拘束,
+                self.ハッシュ消去,
+                self.ハッシュ格納,
+                self.分離,
+                self.仕上げ,
+                self.頂点生成,
+            ] {
                 device.destroy_pipeline(handle, None);
             }
             device.destroy_pipeline_layout(self.layout, None);

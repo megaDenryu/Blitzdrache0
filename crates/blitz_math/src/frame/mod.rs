@@ -4,11 +4,11 @@
 mod position;
 mod rotation;
 mod space;
-#[cfg(test)]
-mod trs_tests;
 mod transform;
 mod transform_construct;
 mod trs;
+#[cfg(test)]
+mod trs_tests;
 
 pub use position::位置;
 pub use rotation::{クォータニオン, クォータニオンエラー};

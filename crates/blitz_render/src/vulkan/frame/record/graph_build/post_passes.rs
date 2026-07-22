@@ -9,10 +9,7 @@ use super::post_setup::ポスト構成;
 use crate::vulkan::graph;
 
 pub(super) fn 積む<'a>(
-    グラフ: &mut graph::グラフ<'a>,
-    構成: &ポスト構成<'a>,
-    スワップチェーン: graph::画像ハンドル,
-    寸法: vk::Extent2D,
+    グラフ: &mut graph::グラフ<'a>, 構成: &ポスト構成<'a>, スワップチェーン: graph::画像ハンドル, 寸法: vk::Extent2D
 ) {
     let 段数 = 構成.縮小ハンドル一覧.len();
     グラフ.パスを積む(bloom_down_pass::前処理を作る(
@@ -31,7 +28,11 @@ pub(super) fn 積む<'a>(
         ));
     }
     for 段 in (0..段数.saturating_sub(1)).rev() {
-        let 小さい方 = if 段 + 1 < 段数 - 1 { 構成.拡大ハンドル一覧[段 + 1] } else { 構成.縮小ハンドル一覧[段数 - 1] };
+        let 小さい方 = if 段 + 1 < 段数 - 1 {
+            構成.拡大ハンドル一覧[段 + 1]
+        } else {
+            構成.縮小ハンドル一覧[段数 - 1]
+        };
         グラフ.パスを積む(bloom_up_pass::作る(
             段,
             小さい方,

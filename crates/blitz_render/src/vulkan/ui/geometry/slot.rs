@@ -30,8 +30,7 @@ pub(super) fn 書き込む(
     データ: &[u8],
     用途: vk::BufferUsageFlags,
 ) -> Result<vk::Buffer, レンダラーエラー> {
-    let 必要バイト数 =
-        u64::try_from(データ.len()).unwrap_or_else(|_| panic!("UIジオメトリのバイト長がu64に収まらない"));
+    let 必要バイト数 = u64::try_from(データ.len()).unwrap_or_else(|_| panic!("UIジオメトリのバイト長がu64に収まらない"));
     let 再確保が必要 = match スロット {
         Some(既存) => 既存.容量バイト数 < 必要バイト数,
         None => true,
@@ -41,7 +40,11 @@ pub(super) fn 書き込む(
             古い.破棄する(device);
         }
         let (buffer, memory) = host_buffer::確保して書き込む(device, メモリプロパティ, データ, 用途)?;
-        *スロット = Some(バッファスロット { buffer, memory, 容量バイト数: 必要バイト数 });
+        *スロット = Some(バッファスロット {
+            buffer,
+            memory,
+            容量バイト数: 必要バイト数,
+        });
     } else if let Some(既存) = スロット {
         host_buffer::上書きする(device, 既存.memory, データ)?;
     }

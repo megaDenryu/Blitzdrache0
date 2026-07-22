@@ -52,7 +52,7 @@ pub use renderer::レンダラー;
 pub use shader_bundle::シェーダー束;
 pub use shader_set::{シェーダー一式, シェーダー一式エラー};
 pub use skin_mesh::{スキンメッシュ素材, スキンメッシュ素材エラー, スキン頂点属性};
-pub use texture_material::{テクスチャ素材, テクスチャ素材エラー, テクスチャ用途};
+pub use texture_material::{テクスチャ用途, テクスチャ素材, テクスチャ素材エラー};
 pub use ui_draw_data::UI描画データ;
 pub use ui_mesh::UIメッシュ;
 pub use ui_scissor::UIシザー矩形px;

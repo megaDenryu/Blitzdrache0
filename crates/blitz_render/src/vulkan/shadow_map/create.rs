@@ -3,7 +3,7 @@
 use ash::vk;
 
 use super::sampler::比較サンプラーを作る;
-use super::{シャドウマップ, シャドウマップ形式, シャドウマップ一辺};
+use super::{シャドウマップ, シャドウマップ一辺, シャドウマップ形式};
 use crate::error::レンダラーエラー;
 use crate::vulkan::memory;
 
@@ -43,14 +43,23 @@ pub(super) fn 生成する(
             return Err(誤り);
         }
     };
-    Ok(シャドウマップ { 画像, 画像ビュー, sampler, memory })
+    Ok(シャドウマップ {
+        画像,
+        画像ビュー,
+        sampler,
+        memory,
+    })
 }
 
 fn 画像を作る(device: &ash::Device) -> Result<vk::Image, レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
         .format(シャドウマップ形式)
-        .extent(vk::Extent3D { width: シャドウマップ一辺, height: シャドウマップ一辺, depth: 1 })
+        .extent(vk::Extent3D {
+            width: シャドウマップ一辺,
+            height: シャドウマップ一辺,
+            depth: 1,
+        })
         .mip_levels(1)
         .array_layers(1)
         .samples(vk::SampleCountFlags::TYPE_1)

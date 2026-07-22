@@ -43,8 +43,7 @@ impl<空間種: 空間> 位置<空間種> {
 
     pub(crate) fn 内部から生成する(内部: Vec3) -> Self {
         Self {
-            内部,
-            _空間: PhantomData,
+            内部, _空間: PhantomData
         }
     }
 }

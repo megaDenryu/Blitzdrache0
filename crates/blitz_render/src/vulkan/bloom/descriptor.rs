@@ -55,7 +55,9 @@ pub(super) fn 生成する(
         .ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
         .descriptor_count(usizeをu32へ(ディスクリプタ数));
     let pool_size一覧 = [pool_size];
-    let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(usizeをu32へ(セット数)).pool_sizes(&pool_size一覧);
+    let pool_info = vk::DescriptorPoolCreateInfo::default()
+        .max_sets(usizeをu32へ(セット数))
+        .pool_sizes(&pool_size一覧);
     // 安全性: deviceは生成済みで有効。
     let pool = unsafe { device.create_descriptor_pool(&pool_info, None)? };
 

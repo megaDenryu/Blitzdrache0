@@ -6,7 +6,12 @@ use super::super::buffers::スキニングバッファ;
 
 /// 前提: setは割り当て済みで、生成直後(GPU未使用)にのみ呼ばれる。
 pub(super) fn 書く(device: &ash::Device, set: vk::DescriptorSet, バッファ: &スキニングバッファ, フレーム添字: usize) {
-    let buffer一覧 = [バッファ.レスト頂点buffer(), バッファ.属性buffer(), バッファ.行列buffer(フレーム添字), バッファ.出力.0];
+    let buffer一覧 = [
+        バッファ.レスト頂点buffer(),
+        バッファ.属性buffer(),
+        バッファ.行列buffer(フレーム添字),
+        バッファ.出力.0,
+    ];
     let 情報一覧: Vec<[vk::DescriptorBufferInfo; 1]> = buffer一覧
         .iter()
         .map(|&buffer| [vk::DescriptorBufferInfo::default().buffer(buffer).range(vk::WHOLE_SIZE)])

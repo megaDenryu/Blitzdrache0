@@ -8,8 +8,7 @@ use super::primitive::未確定頂点属性;
 use super::tangent_fill::接線を確定する;
 
 pub(super) fn 頂点属性を確定する(
-    頂点一覧: Vec<未確定頂点属性>,
-    インデックス一覧: &[u32],
+    頂点一覧: Vec<未確定頂点属性>, インデックス一覧: &[u32]
 ) -> Vec<メッシュ頂点属性> {
     let 頂点数 = 頂点一覧.len();
     let mut 位置一覧 = Vec::with_capacity(頂点数);

@@ -33,13 +33,19 @@ impl 布一式 {
         フレーム添字: usize,
         入力: &布フレーム入力,
     ) -> Result<(), レンダラーエラー> {
-        if 入力.介入件数 > params::介入上限件数 || 入力.介入バイト列.len() != usize::try_from(入力.介入件数 * 32).unwrap_or_else(|_| panic!("介入バイト長がusizeに収まらない")) {
-            return Err(レンダラーエラー::布介入不正 { 件数: 入力.介入件数, バイト長: 入力.介入バイト列.len() });
+        if 入力.介入件数 > params::介入上限件数
+            || 入力.介入バイト列.len() != usize::try_from(入力.介入件数 * 32).unwrap_or_else(|_| panic!("介入バイト長がusizeに収まらない"))
+        {
+            return Err(レンダラーエラー::布介入不正 {
+                件数: 入力.介入件数,
+                バイト長: 入力.介入バイト列.len(),
+            });
         }
         if !入力.介入バイト列.is_empty() {
             self.バッファ.介入を書き込む(device, フレーム添字, &入力.介入バイト列)?;
         }
-        self.バッファ.定数を書き込む(device, フレーム添字, &params::バイト列にする(&self.固定部, 入力))
+        self.バッファ
+            .定数を書き込む(device, フレーム添字, &params::バイト列にする(&self.固定部, 入力))
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

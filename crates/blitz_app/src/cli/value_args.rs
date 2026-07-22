@@ -16,9 +16,9 @@ pub(super) fn frames引数を処理する(引数: &mut Iter<String>) -> Result<�
 }
 
 pub(super) fn shader_source引数を処理する(引数: &mut Iter<String>) -> Result<PathBuf, 起動エラー> {
-    let 値 = 引数.next().ok_or_else(|| {
-        起動エラー::シェーダーソース引数不正("--shader-sourceに値が指定されていない".to_string())
-    })?;
+    let 値 = 引数
+        .next()
+        .ok_or_else(|| 起動エラー::シェーダーソース引数不正("--shader-sourceに値が指定されていない".to_string()))?;
     Ok(PathBuf::from(値))
 }
 
@@ -30,16 +30,16 @@ pub(super) fn scene引数を処理する(引数: &mut Iter<String>) -> Result<St
 }
 
 pub(super) fn asset_root引数を処理する(引数: &mut Iter<String>) -> Result<PathBuf, 起動エラー> {
-    let 値 = 引数.next().ok_or_else(|| {
-        起動エラー::アセットルート引数不正("--asset-rootに値が指定されていない".to_string())
-    })?;
+    let 値 = 引数
+        .next()
+        .ok_or_else(|| 起動エラー::アセットルート引数不正("--asset-rootに値が指定されていない".to_string()))?;
     Ok(PathBuf::from(値))
 }
 
 pub(super) fn dump_frame引数を処理する(引数: &mut Iter<String>) -> Result<PathBuf, 起動エラー> {
-    let 値 = 引数.next().ok_or_else(|| {
-        起動エラー::フレームダンプ引数不正("--dump-frameに値が指定されていない".to_string())
-    })?;
+    let 値 = 引数
+        .next()
+        .ok_or_else(|| 起動エラー::フレームダンプ引数不正("--dump-frameに値が指定されていない".to_string()))?;
     Ok(PathBuf::from(値))
 }
 

@@ -27,7 +27,11 @@ impl ブルームピラミッド {
         フル解像度: vk::Extent2D,
     ) -> Result<Self, レンダラーエラー> {
         let 寸法一覧 = 段の寸法列(フル解像度);
-        let mut 一式 = Self { 縮小一覧: Vec::new(), 拡大一覧: Vec::new(), 寸法一覧 };
+        let mut 一式 = Self {
+            縮小一覧: Vec::new(),
+            拡大一覧: Vec::new(),
+            寸法一覧,
+        };
         for 添字 in 0..一式.寸法一覧.len() {
             let 寸法 = 一式.寸法一覧[添字];
             match HDRターゲット::生成する(device, メモリプロパティ, 寸法) {

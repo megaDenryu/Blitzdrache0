@@ -1,7 +1,7 @@
 //! validation layerが検出したエラー・警告件数を数える、複製可能な値オブジェクト。
 
-use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 /// debug utilsメッセンジャーのコールバックから加算される、エラー・警告の合計件数。
 /// clone しても同じ実体（同一のAtomicU64）を指す。

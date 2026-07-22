@@ -36,5 +36,5 @@ pub use scene_data::シーンデータ;
 pub use skin_data::スキンデータ;
 pub use skin_vertex_attribute::スキン頂点属性;
 pub use static_trs::静的TRS;
-pub use texture_data::{テクスチャデータ, 白テクスチャデータを作る, 法線マップ既定テクスチャを作る};
+pub use texture_data::{テクスチャデータ, 法線マップ既定テクスチャを作る, 白テクスチャデータを作る};
 pub use vertex_attribute::メッシュ頂点属性;

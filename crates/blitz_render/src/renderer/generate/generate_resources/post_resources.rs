@@ -22,18 +22,22 @@ pub(super) fn 組み立てる(
     ポスト処理有効: bool,
 ) -> Result<ポスト資源, レンダラーエラー> {
     if !ポスト処理有効 {
-        return Ok(ポスト資源 { hdrターゲット: None, ブルームピラミッド: None, ブルーム: None, トーンマップ: None });
+        return Ok(ポスト資源 {
+            hdrターゲット: None,
+            ブルームピラミッド: None,
+            ブルーム: None,
+            トーンマップ: None,
+        });
     }
 
     let hdr = vulkan::hdr_target::HDRターゲット::生成する(device, メモリプロパティ, swapchain.寸法)?;
-    let ピラミッド =
-        match vulkan::bloom_targets::ブルームピラミッド::生成する(device, メモリプロパティ, swapchain.寸法) {
-            Ok(一式) => 一式,
-            Err(誤り) => {
-                hdr.破棄する(device);
-                return Err(誤り);
-            }
-        };
+    let ピラミッド = match vulkan::bloom_targets::ブルームピラミッド::生成する(device, メモリプロパティ, swapchain.寸法) {
+        Ok(一式) => 一式,
+        Err(誤り) => {
+            hdr.破棄する(device);
+            return Err(誤り);
+        }
+    };
     let ブルーム = match vulkan::bloom::ブルーム一式::生成する(
         device,
         &シェーダー.ブルーム前処理,

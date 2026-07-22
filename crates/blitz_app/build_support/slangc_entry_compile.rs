@@ -45,10 +45,7 @@ fn エントリを1つコンパイルする(
 
     if !実行結果.status.success() {
         let stderr = String::from_utf8_lossy(&実行結果.stderr);
-        return Err(format!(
-            "slangcが{}のコンパイルに失敗した:\n{stderr}",
-            エントリ.エントリ名
-        ));
+        return Err(format!("slangcが{}のコンパイルに失敗した:\n{stderr}", エントリ.エントリ名));
     }
     Ok(())
 }

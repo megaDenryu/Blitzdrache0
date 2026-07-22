@@ -38,12 +38,7 @@ impl ApplicationHandler for アプリ {
         }
     }
 
-    fn window_event(
-        &mut self,
-        event_loop: &ActiveEventLoop,
-        _window_id: WindowId,
-        event: WindowEvent,
-    ) {
+    fn window_event(&mut self, event_loop: &ActiveEventLoop, _window_id: WindowId, event: WindowEvent) {
         let egui消費済みか = self
             .window
             .as_ref()

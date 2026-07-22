@@ -34,21 +34,20 @@ pub(super) fn 組み立てる(
     // 粒子はシーンと同じアタッチメント(ポスト有効時はHDR)へ追記描画するため、形式を合わせる(判断39)。
     let 粒子 = match (粒子シェーダー, 粒子素材) {
         (Some(シェーダー), Some(素材)) => Some(vulkan::particles::粒子リソース一式::生成する(
-                device,
-                メモリプロパティ,
-                転送環境,
-                シーンカラー形式,
-                深度形式,
-                ユニフォーム,
-                シェーダー,
-                素材,
-            )?),
+            device,
+            メモリプロパティ,
+            転送環境,
+            シーンカラー形式,
+            深度形式,
+            ユニフォーム,
+            シェーダー,
+            素材,
+        )?),
         (None, None) => None,
         (Some(_), None) | (None, Some(_)) => return Err(レンダラーエラー::粒子入力不一致),
     };
 
-    let gpu計測 =
-        vulkan::gpu_timing::パス別GPU計測::生成する(device, タイムスタンプ対応か, タイムスタンプ周期ns)?;
+    let gpu計測 = vulkan::gpu_timing::パス別GPU計測::生成する(device, タイムスタンプ対応か, タイムスタンプ周期ns)?;
 
     let ui一式 = vulkan::ui::UIリソース一式::生成する(device, swapchain.画像形式, uiシェーダー)?;
 

@@ -38,8 +38,9 @@ pub(super) fn 生成する(device: &ash::Device) -> Result<トーンマップデ
     // 安全性: deviceは生成済みで有効。
     let layout = unsafe { device.create_descriptor_set_layout(&layout_info, None)? };
 
-    let pool_size =
-        vk::DescriptorPoolSize::default().ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER).descriptor_count(2);
+    let pool_size = vk::DescriptorPoolSize::default()
+        .ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
+        .descriptor_count(2);
     let pool_size一覧 = [pool_size];
     let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(1).pool_sizes(&pool_size一覧);
     // 安全性: deviceは生成済みで有効。失敗時はlayoutを片付ける。

@@ -2,7 +2,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use crate::cloth::{布データ, 布仕様, 布を生成する};
+use crate::cloth::{布を生成する, 布データ, 布仕様};
 
 use super::adjacency_bytes::隣接拘束バイト列にする;
 use super::constraint_bytes::拘束バイト列にする;

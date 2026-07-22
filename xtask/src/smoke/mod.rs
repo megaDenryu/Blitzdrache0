@@ -33,7 +33,17 @@ pub fn 実行する() -> ExitCode {
     };
 
     println!("[xtask] quadステージ実行");
-    if !run_stage::実行する(四角形フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, false, false, true, false) {
+    if !run_stage::実行する(
+        四角形フレーム数,
+        &シェーダーコピー先,
+        Some(&アセットルート),
+        "quad",
+        true,
+        false,
+        false,
+        true,
+        false,
+    ) {
         eprintln!("[xtask] smoke失敗: quadステージ");
         return ExitCode::FAILURE;
     }
@@ -41,33 +51,71 @@ pub fn 実行する() -> ExitCode {
 
     if Path::new(ヘルメット取得先).is_file() {
         println!("[xtask] helmetステージ実行");
-        if !run_stage::実行する(ヘルメットフレーム数, &シェーダーコピー先, None, "helmet", false, false, false, false, false) {
+        if !run_stage::実行する(
+            ヘルメットフレーム数,
+            &シェーダーコピー先,
+            None,
+            "helmet",
+            false,
+            false,
+            false,
+            false,
+            false,
+        ) {
             eprintln!("[xtask] smoke失敗: helmetステージ");
             return ExitCode::FAILURE;
         }
         println!("[xtask] helmetステージ成功");
     } else {
-        println!(
-            "[xtask] helmetアセット未取得のためhelmetステージをスキップした(cargo xtask fetch-assetsで取得可)"
-        );
+        println!("[xtask] helmetアセット未取得のためhelmetステージをスキップした(cargo xtask fetch-assetsで取得可)");
     }
 
     println!("[xtask] particlesステージ実行");
-    if !run_stage::実行する(粒子フレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, true, false, true, false) {
+    if !run_stage::実行する(
+        粒子フレーム数,
+        &シェーダーコピー先,
+        Some(&アセットルート),
+        "quad",
+        true,
+        true,
+        false,
+        true,
+        false,
+    ) {
         eprintln!("[xtask] smoke失敗: particlesステージ");
         return ExitCode::FAILURE;
     }
     println!("[xtask] particlesステージ成功");
 
     println!("[xtask] dev-uiステージ実行");
-    if !run_stage::実行する(開発UIフレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, true, true, true, false) {
+    if !run_stage::実行する(
+        開発UIフレーム数,
+        &シェーダーコピー先,
+        Some(&アセットルート),
+        "quad",
+        true,
+        true,
+        true,
+        true,
+        false,
+    ) {
         eprintln!("[xtask] smoke失敗: dev-uiステージ");
         return ExitCode::FAILURE;
     }
     println!("[xtask] dev-uiステージ成功");
 
     println!("[xtask] shadowステージ実行");
-    if !run_stage::実行する(シャドウフレーム数, &シェーダーコピー先, Some(&アセットルート), "shadow_scene", false, false, false, false, false) {
+    if !run_stage::実行する(
+        シャドウフレーム数,
+        &シェーダーコピー先,
+        Some(&アセットルート),
+        "shadow_scene",
+        false,
+        false,
+        false,
+        false,
+        false,
+    ) {
         eprintln!("[xtask] smoke失敗: shadowステージ");
         return ExitCode::FAILURE;
     }
@@ -80,16 +128,23 @@ pub fn 実行する() -> ExitCode {
             return ExitCode::FAILURE;
         }
         println!("[xtask] foxステージ成功");
-
     } else {
-        println!(
-            "[xtask] Foxアセット未取得のためfox/clothステージをスキップした(cargo xtask fetch-assetsで取得可)"
-        );
+        println!("[xtask] Foxアセット未取得のためfox/clothステージをスキップした(cargo xtask fetch-assetsで取得可)");
     }
 
     // clothステージ(判断55・56): quad+吊るし布でフレーム間差分判定(布シミュが動くことの実証。Fox不要)。
     println!("[xtask] clothステージ実行");
-    if !run_stage::実行する(フォックスフレーム数, &シェーダーコピー先, Some(&アセットルート), "quad", true, false, false, false, true) {
+    if !run_stage::実行する(
+        フォックスフレーム数,
+        &シェーダーコピー先,
+        Some(&アセットルート),
+        "quad",
+        true,
+        false,
+        false,
+        false,
+        true,
+    ) {
         eprintln!("[xtask] smoke失敗: clothステージ");
         return ExitCode::FAILURE;
     }

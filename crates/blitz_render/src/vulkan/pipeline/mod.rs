@@ -30,7 +30,14 @@ impl パイプライン {
         ディスクリプタlayout: vk::DescriptorSetLayout,
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, カラー形式, 深度形式, ディスクリプタlayout, シェーダー, graphics_pipeline::頂点属性選択::全属性)
+        create::生成する(
+            device,
+            カラー形式,
+            深度形式,
+            ディスクリプタlayout,
+            シェーダー,
+            graphics_pipeline::頂点属性選択::全属性,
+        )
     }
 
     /// 布描画用の変種(判断54): 接線を宣言しない3属性の頂点入力で生成する。
@@ -41,7 +48,14 @@ impl パイプライン {
         ディスクリプタlayout: vk::DescriptorSetLayout,
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, カラー形式, 深度形式, ディスクリプタlayout, シェーダー, graphics_pipeline::頂点属性選択::布用)
+        create::生成する(
+            device,
+            カラー形式,
+            深度形式,
+            ディスクリプタlayout,
+            シェーダー,
+            graphics_pipeline::頂点属性選択::布用,
+        )
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

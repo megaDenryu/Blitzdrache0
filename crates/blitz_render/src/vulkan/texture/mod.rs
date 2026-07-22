@@ -39,16 +39,8 @@ impl テクスチャ {
         let mip数 = mip_count::計算する(素材.幅(), 素材.高さ());
         let (image, memory) = image::生成する(device, メモリプロパティ, 素材.幅(), 素材.高さ(), mip数, 形式)?;
 
-        if let Err(誤り) = upload::記録して転送する(
-            device,
-            メモリプロパティ,
-            転送環境,
-            image,
-            素材.幅(),
-            素材.高さ(),
-            mip数,
-            素材.rgba8(),
-        ) {
+        if let Err(誤り) = upload::記録して転送する(device, メモリプロパティ, 転送環境, image, 素材.幅(), 素材.高さ(), mip数, 素材.rgba8())
+        {
             画像を破棄する(device, image, memory);
             return Err(誤り);
         }
@@ -70,7 +62,12 @@ impl テクスチャ {
             }
         };
 
-        Ok(Self { image, memory, image_view, sampler })
+        Ok(Self {
+            image,
+            memory,
+            image_view,
+            sampler,
+        })
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

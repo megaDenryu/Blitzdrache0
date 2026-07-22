@@ -25,9 +25,7 @@ pub(crate) struct UIリソース一式 {
 
 impl UIリソース一式 {
     pub(crate) fn 生成する(
-        device: &ash::Device,
-        カラー形式: vk::Format,
-        シェーダー: &シェーダー一式,
+        device: &ash::Device, カラー形式: vk::Format, シェーダー: &シェーダー一式
     ) -> Result<Self, レンダラーエラー> {
         let テクスチャ台帳 = registry::UIテクスチャレジストリ::生成する(device)?;
         let pipeline = match pipeline::UIパイプライン::生成する(device, カラー形式, テクスチャ台帳.layout(), シェーダー) {
@@ -37,7 +35,11 @@ impl UIリソース一式 {
                 return Err(誤り);
             }
         };
-        Ok(Self { テクスチャ台帳, pipeline, ジオメトリ: geometry::UIジオメトリバッファ::生成する() })
+        Ok(Self {
+            テクスチャ台帳,
+            pipeline,
+            ジオメトリ: geometry::UIジオメトリバッファ::生成する(),
+        })
     }
 
     pub(crate) fn テクスチャを反映する(
@@ -68,7 +70,8 @@ impl UIリソース一式 {
         頂点一覧: &[UI頂点],
         インデックス一覧: &[u32],
     ) -> Result<(vk::Buffer, vk::Buffer), レンダラーエラー> {
-        self.ジオメトリ.書き込む(device, メモリプロパティ, フレーム添字, 頂点一覧, インデックス一覧)
+        self.ジオメトリ
+            .書き込む(device, メモリプロパティ, フレーム添字, 頂点一覧, インデックス一覧)
     }
 
     pub(crate) fn pipeline_handle(&self) -> vk::Pipeline {

@@ -25,7 +25,11 @@ pub fn 検査する(パス: &Path, 内容: &str) -> Vec<違反> {
     for (行番号, 行) in 内容.lines().enumerate() {
         for 参照パス in バッククォート内パスを抽出する(行) {
             if !Path::new(&参照パス).exists() {
-                違反一覧.push(違反::行単位(パス.to_path_buf(), 行番号 + 1, format!("参照パスが存在しない: {参照パス}")));
+                違反一覧.push(違反::行単位(
+                    パス.to_path_buf(),
+                    行番号 + 1,
+                    format!("参照パスが存在しない: {参照パス}"),
+                ));
             }
         }
     }

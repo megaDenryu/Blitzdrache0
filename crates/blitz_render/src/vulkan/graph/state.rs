@@ -12,11 +12,7 @@ pub(crate) struct 画像状態 {
 }
 
 impl 画像状態 {
-    pub(crate) fn 生成する(
-        stage: vk::PipelineStageFlags2,
-        access: vk::AccessFlags2,
-        layout: vk::ImageLayout,
-    ) -> Self {
+    pub(crate) fn 生成する(stage: vk::PipelineStageFlags2, access: vk::AccessFlags2, layout: vk::ImageLayout) -> Self {
         Self { stage, access, layout }
     }
 }

@@ -10,13 +10,7 @@ use super::slangc::{self, スランガー位置};
 pub(super) fn 頂点とフラグメントをコンパイルする(ソースパス: &Path) -> Result<シェーダー一式, String> {
     let slangc = slangc::発見する()?;
     let 頂点spirv = エントリを1つコンパイルする(&slangc, ソースパス, "vertexMain", "vertex", "vertex.spv")?;
-    let フラグメントspirv = エントリを1つコンパイルする(
-        &slangc,
-        ソースパス,
-        "fragmentMain",
-        "fragment",
-        "fragment.spv",
-    )?;
+    let フラグメントspirv = エントリを1つコンパイルする(&slangc, ソースパス, "fragmentMain", "fragment", "fragment.spv")?;
     シェーダー一式::生成する(頂点spirv, フラグメントspirv).map_err(|誤り| 誤り.to_string())
 }
 
@@ -27,9 +21,7 @@ fn エントリを1つコンパイルする(
     ステージ: &str,
     出力ファイル名: &str,
 ) -> Result<Vec<u8>, String> {
-    let 出力パス = std::env::temp_dir()
-        .join("blitzdrache0_hot_reload")
-        .join(出力ファイル名);
+    let 出力パス = std::env::temp_dir().join("blitzdrache0_hot_reload").join(出力ファイル名);
     if let Some(親) = 出力パス.parent() {
         std::fs::create_dir_all(親).map_err(|誤り| format!("一時ディレクトリの作成に失敗した: {誤り}"))?;
     }

@@ -59,8 +59,7 @@ impl ブルーム一式 {
             // 安全性: 旧プールと旧セットは前提によりGPU未使用。プールの破棄がセットの解放を暗黙に行う。
             unsafe { device.destroy_descriptor_pool(self.descriptor_pool, None) };
         }
-        let ディスクリプタ =
-            descriptor::生成する(device, self.単一読みlayout, self.二読みlayout, ピラミッド.縮小一覧.len())?;
+        let ディスクリプタ = descriptor::生成する(device, self.単一読みlayout, self.二読みlayout, ピラミッド.縮小一覧.len())?;
         self.descriptor_pool = ディスクリプタ.pool;
         self.前処理set = ディスクリプタ.前処理set;
         self.縮小set一覧 = ディスクリプタ.縮小set一覧;

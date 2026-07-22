@@ -16,7 +16,10 @@ pub(crate) struct 移動平均 {
 
 impl 移動平均 {
     pub(crate) fn 新規() -> Self {
-        Self { 値一覧: VecDeque::with_capacity(窓サイズ), 合計: 0.0 }
+        Self {
+            値一覧: VecDeque::with_capacity(窓サイズ),
+            合計: 0.0,
+        }
     }
 
     pub(crate) fn 追加する(&mut self, 値ミリ秒: f64) {
@@ -36,8 +39,7 @@ impl 移動平均 {
         if self.値一覧.is_empty() {
             return 0.0;
         }
-        let 件数u16 = u16::try_from(self.値一覧.len())
-            .unwrap_or_else(|_| panic!("移動平均の窓サイズがu16に収まらない"));
+        let 件数u16 = u16::try_from(self.値一覧.len()).unwrap_or_else(|_| panic!("移動平均の窓サイズがu16に収まらない"));
         self.合計 / f64::from(件数u16)
     }
 }

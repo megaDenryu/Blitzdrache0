@@ -20,24 +20,28 @@ impl テクスチャミラー {
     }
 
     /// パッチを鏡へ反映し、更新後の全体(幅・高さ・rgba8)を返す。
-    pub(super) fn 反映して全体を得る(
-        &mut self,
-        id: egui::TextureId,
-        delta: &egui::epaint::ImageDelta,
-    ) -> (usize, usize, Vec<u8>) {
+    pub(super) fn 反映して全体を得る(&mut self, id: egui::TextureId, delta: &egui::epaint::ImageDelta) -> (usize, usize, Vec<u8>) {
         let [パッチ幅, パッチ高さ] = delta.image.size();
         let パッチrgba8 = 画像データをrgba8へ変換する(&delta.image);
 
         match delta.pos {
             None => {
-                self.表.insert(id, 鏡像 { 幅: パッチ幅, 高さ: パッチ高さ, rgba8: パッチrgba8.clone() });
+                self.表.insert(
+                    id,
+                    鏡像 {
+                        幅: パッチ幅,
+                        高さ: パッチ高さ,
+                        rgba8: パッチrgba8.clone(),
+                    },
+                );
                 (パッチ幅, パッチ高さ, パッチrgba8)
             }
             Some([x, y]) => {
-                let 鏡 = self
-                    .表
-                    .entry(id)
-                    .or_insert_with(|| 鏡像 { 幅: パッチ幅, 高さ: パッチ高さ, rgba8: パッチrgba8.clone() });
+                let 鏡 = self.表.entry(id).or_insert_with(|| 鏡像 {
+                    幅: パッチ幅,
+                    高さ: パッチ高さ,
+                    rgba8: パッチrgba8.clone(),
+                });
                 部分書き込みする(&mut 鏡.rgba8, 鏡.幅, x, y, パッチ幅, パッチ高さ, &パッチrgba8);
                 (鏡.幅, 鏡.高さ, 鏡.rgba8.clone())
             }
@@ -50,19 +54,12 @@ impl テクスチャミラー {
 }
 
 fn 部分書き込みする(
-    全体rgba8: &mut [u8],
-    全体幅: usize,
-    x: usize,
-    y: usize,
-    パッチ幅: usize,
-    パッチ高さ: usize,
-    パッチrgba8: &[u8],
+    全体rgba8: &mut [u8], 全体幅: usize, x: usize, y: usize, パッチ幅: usize, パッチ高さ: usize, パッチrgba8: &[u8]
 ) {
     for 行 in 0..パッチ高さ {
         let 全体オフセット = ((y + 行) * 全体幅 + x) * 4;
         let パッチオフセット = 行 * パッチ幅 * 4;
-        全体rgba8[全体オフセット..全体オフセット + パッチ幅 * 4]
-            .copy_from_slice(&パッチrgba8[パッチオフセット..パッチオフセット + パッチ幅 * 4]);
+        全体rgba8[全体オフセット..全体オフセット + パッチ幅 * 4].copy_from_slice(&パッチrgba8[パッチオフセット..パッチオフセット + パッチ幅 * 4]);
     }
 }
 

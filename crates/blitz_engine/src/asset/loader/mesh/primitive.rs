@@ -27,13 +27,9 @@ pub(super) fn プリミティブから取り出す(
     文書: &開いた文書,
     プリミティブ: &gltf::Primitive<'_>,
 ) -> Result<未確定メッシュデータ, アセットエラー> {
-    let 読み取り器 =
-        プリミティブ.reader(|バッファ| 文書.バッファ一覧.get(バッファ.index()).map(Vec::as_slice));
+    let 読み取り器 = プリミティブ.reader(|バッファ| 文書.バッファ一覧.get(バッファ.index()).map(Vec::as_slice));
 
-    let 位置一覧: Vec<[f32; 3]> = 読み取り器
-        .read_positions()
-        .ok_or(アセットエラー::頂点位置なし)?
-        .collect();
+    let 位置一覧: Vec<[f32; 3]> = 読み取り器.read_positions().ok_or(アセットエラー::頂点位置なし)?.collect();
     let 頂点数 = 位置一覧.len();
 
     let 法線一覧: Option<Vec<[f32; 3]>> = 読み取り器.read_normals().map(Iterator::collect);
@@ -47,8 +43,8 @@ pub(super) fn プリミティブから取り出す(
     let インデックス一覧: Vec<u32> = match 読み取り器.read_indices() {
         Some(読み取り) => 読み取り.into_u32().collect(),
         None => {
-            let 頂点数u32 = u32::try_from(頂点数)
-                .map_err(|誤り| アセットエラー::解析失敗(format!("頂点数がu32の範囲を超えている: {誤り}")))?;
+            let 頂点数u32 =
+                u32::try_from(頂点数).map_err(|誤り| アセットエラー::解析失敗(format!("頂点数がu32の範囲を超えている: {誤り}")))?;
             (0..頂点数u32).collect()
         }
     };
@@ -56,8 +52,7 @@ pub(super) fn プリミティブから取り出す(
     let 頂点一覧 = 頂点一覧を組み立てる(位置一覧, 法線一覧, 接線一覧, uv一覧);
 
     Ok(未確定メッシュデータ {
-        頂点一覧,
-        インデックス一覧,
+        頂点一覧, インデックス一覧
     })
 }
 

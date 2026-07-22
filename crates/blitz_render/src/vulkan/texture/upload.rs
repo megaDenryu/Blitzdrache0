@@ -37,12 +37,7 @@ pub(super) fn 記録して転送する(
     実行結果
 }
 
-fn 全レベルを転送先レイアウトへ遷移する(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
-    image: vk::Image,
-    mip数: u32,
-) {
+fn 全レベルを転送先レイアウトへ遷移する(device: &ash::Device, command_buffer: vk::CommandBuffer, image: vk::Image, mip数: u32) {
     let 部分範囲 = vk::ImageSubresourceRange::default()
         .aspect_mask(vk::ImageAspectFlags::COLOR)
         .base_mip_level(0)
@@ -85,7 +80,11 @@ fn mip0へコピーする(
                 .base_array_layer(0)
                 .layer_count(1),
         )
-        .image_extent(vk::Extent3D { width: 幅, height: 高さ, depth: 1 });
+        .image_extent(vk::Extent3D {
+            width: 幅,
+            height: 高さ,
+            depth: 1,
+        });
     // 安全性: command_bufferは記録中。imageはTRANSFER_DST_OPTIMALへ遷移済み。
     // ステージングバッファは呼び出し元がrgba8と同じ長さで確保・書き込み済み。
     unsafe {

@@ -20,7 +20,10 @@ pub fn パスがテストまたは例か(パス: &Path) -> bool {
     let ディレクトリで許容 = パス
         .components()
         .any(|部品| matches!(部品, Component::Normal(名前) if 名前 == "tests" || 名前 == "examples"));
-    let ファイル名で許容 = パス.file_name().and_then(|名前| 名前.to_str()).is_some_and(|名前| 名前.ends_with("_tests.rs"));
+    let ファイル名で許容 = パス
+        .file_name()
+        .and_then(|名前| 名前.to_str())
+        .is_some_and(|名前| 名前.ends_with("_tests.rs"));
     ディレクトリで許容 || ファイル名で許容
 }
 

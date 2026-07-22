@@ -31,8 +31,7 @@ impl 読み戻し画像 {
             return None;
         }
         let 行あたりバイト数 = self.幅.checked_mul(4)?;
-        let 添字 = u64::from(y).checked_mul(u64::from(行あたりバイト数))?
-            + u64::from(x).checked_mul(4)?;
+        let 添字 = u64::from(y).checked_mul(u64::from(行あたりバイト数))? + u64::from(x).checked_mul(4)?;
         let 添字 = usize::try_from(添字).ok()?;
         let 成分 = self.rgba.get(添字..添字 + 4)?;
         Some([成分[0], 成分[1], 成分[2], 成分[3]])

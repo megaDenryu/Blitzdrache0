@@ -26,12 +26,7 @@ pub(super) fn 読み取る(
 /// `開始添字`・`開始添字+1`の2クエリを読み、経過ミリ秒を求める。availability無し、
 /// 逆転(終了<開始)、u32範囲を超えるtick差分のいずれかは「計測できなかった」として
 /// `None`を返す(無言のゼロ値・無言の巨大値を返さない)。
-fn 一組を読み取る(
-    device: &ash::Device,
-    pool: vk::QueryPool,
-    開始添字: u32,
-    タイムスタンプ周期ns: f32,
-) -> Option<f64> {
+fn 一組を読み取る(device: &ash::Device, pool: vk::QueryPool, 開始添字: u32, タイムスタンプ周期ns: f32) -> Option<f64> {
     let mut 結果: [[u64; 2]; 2] = [[0; 2]; 2];
     // 安全性: poolは生成済みで、開始添字・開始添字+1はプール容量内(呼び出し元が保証)。
     let 読み取り結果 = unsafe {

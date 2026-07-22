@@ -20,13 +20,13 @@ mod ui_pass;
 use ash::vk;
 
 use super::{
-    シャドウ描画入力, スキニング描画入力, ジオメトリ入力, トーンマップ描画入力, ブルーム描画入力,
-    フレーム画像一式, 布描画入力, 描画方式, 粒子描画入力, UI描画入力,
+    UI描画入力, シャドウ描画入力, ジオメトリ入力, スキニング描画入力, トーンマップ描画入力, フレーム画像一式, ブルーム描画入力, 布描画入力, 描画方式,
+    粒子描画入力,
 };
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
-use crate::vulkan::graph;
 use crate::vulkan::gpu_timing;
+use crate::vulkan::graph;
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn コマンドを記録する(
@@ -47,8 +47,7 @@ pub(super) fn コマンドを記録する(
     描画方式: &描画方式,
     クエリプール: Option<vk::QueryPool>,
 ) -> Result<Vec<(&'static str, u32)>, レンダラーエラー> {
-    let begin_info =
-        vk::CommandBufferBeginInfo::default().flags(vk::CommandBufferUsageFlags::ONE_TIME_SUBMIT);
+    let begin_info = vk::CommandBufferBeginInfo::default().flags(vk::CommandBufferUsageFlags::ONE_TIME_SUBMIT);
     // 安全性: command_bufferはRESET_COMMAND_BUFFERフラグ付きプール由来で、
     // ここでの開始が暗黙的に前回の記録をリセットする。
     unsafe { device.begin_command_buffer(command_buffer, &begin_info)? };
