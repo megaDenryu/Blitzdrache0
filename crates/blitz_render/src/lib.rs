@@ -13,6 +13,9 @@ mod compute_shader;
 mod draw_result;
 mod error;
 mod extent;
+mod frame_composition;
+#[cfg(test)]
+mod frame_composition_tests;
 mod frame_input;
 mod gpu_memory_stats;
 mod lighting_input;
@@ -52,6 +55,7 @@ pub use compute_shader::コンピュートシェーダー;
 pub use draw_result::{描画結果, 見送り理由};
 pub use error::レンダラーエラー;
 pub use extent::ウィンドウ寸法;
+pub use frame_composition::{フレーム構成, フレーム構成エラー, フレーム段階};
 pub use frame_input::{フレーム描画入力, 布フレーム入力};
 pub use gpu_memory_stats::{GPUメモリ用途, GPUメモリ用途別確保量, GPUメモリ統計};
 pub use lighting_input::{

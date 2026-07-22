@@ -14,11 +14,13 @@ pub(crate) struct 提示先<'a> {
     pub(crate) 画像添字: u32,
 }
 
+#[derive(Clone, Copy)]
 pub(crate) struct 描画対象入力<'a> {
     pub(crate) ジオメトリ: &'a [ジオメトリ入力],
     pub(crate) シャドウ: &'a [シャドウ描画入力],
 }
 
+#[derive(Clone, Copy)]
 pub(crate) struct 任意描画入力<'a> {
     pub(crate) スキニング: Option<&'a スキニング描画入力>,
     pub(crate) 布: Option<&'a 布描画入力>,

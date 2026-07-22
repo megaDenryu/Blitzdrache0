@@ -11,6 +11,9 @@
 mod animation;
 mod asset;
 mod camera;
+mod frame_composition;
+#[cfg(test)]
+mod frame_composition_tests;
 mod lighting;
 
 pub use animation::{スキン行列を計算する, スキン行列一覧, ブレンドする, 姿勢, 姿勢を評価する, 関節TRS};
@@ -20,4 +23,5 @@ pub use asset::{
     メッシュ頂点属性, 描画対象ID, 描画対象データ, 法線マップ既定テクスチャを作る, 白テクスチャデータを作る, 補間種別, 金属粗さPBRデータ, 静的TRS,
 };
 pub use camera::{カメラ, カメラインテント};
+pub use frame_composition::既定フレーム構成を作る;
 pub use lighting::既定ライティングを作る;

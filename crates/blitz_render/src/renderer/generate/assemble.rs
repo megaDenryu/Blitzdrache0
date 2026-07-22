@@ -3,9 +3,15 @@
 use super::core_setup::コア資源;
 use super::frame_resources::フレーム資源;
 use crate::extent::ウィンドウ寸法;
+use crate::frame_composition::フレーム構成;
 use crate::renderer::レンダラー;
 
-pub(super) fn レンダラーを組み立てる(コア: コア資源, 資源: フレーム資源, 寸法: ウィンドウ寸法) -> レンダラー {
+pub(super) fn レンダラーを組み立てる(
+    コア: コア資源,
+    資源: フレーム資源,
+    寸法: ウィンドウ寸法,
+    フレーム構成: フレーム構成,
+) -> レンダラー {
     let 描画対象数 = 資源.描画対象資源一覧.len();
     レンダラー {
         entry: コア.entry,
@@ -32,6 +38,7 @@ pub(super) fn レンダラーを組み立てる(コア: コア資源, 資源: �
         フレーム同期: 資源.フレーム同期,
         提示同期: 資源.提示同期,
         現在フレーム添字: 0,
+        フレーム構成,
         pipeline: 資源.pipeline,
         スキニング: 資源.スキニング,
         布: 資源.布,

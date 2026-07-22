@@ -23,6 +23,7 @@ use ash::vk;
 
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
+use crate::frame_composition::フレーム構成;
 
 /// 取得済みの画像に対して1フレーム分のコマンドを記録し、送信・提示する。
 /// 戻り値は「提示まで到達したか（true）／スワップチェーンが陳腐化していたか（false）」と、
@@ -32,6 +33,7 @@ pub(crate) fn 描画する(
     device: &ash::Device,
     queue: vk::Queue,
     command_buffer: vk::CommandBuffer,
+    フレーム構成: &フレーム構成,
     提示先: 提示先<'_>,
     画像一式: &フレーム画像一式,
     寸法: vk::Extent2D,
@@ -47,18 +49,13 @@ pub(crate) fn 描画する(
     let 計測マッピング = record::コマンドを記録する(
         device,
         command_buffer,
+        フレーム構成,
         画像一式,
         寸法,
         クリア色,
         pipeline,
-        描画対象.ジオメトリ,
-        描画対象.シャドウ,
-        任意入力.スキニング,
-        任意入力.布,
-        任意入力.粒子,
-        任意入力.ブルーム,
-        任意入力.トーンマップ,
-        任意入力.ui,
+        描画対象,
+        任意入力,
         &描画方式,
         クエリプール,
     )?;

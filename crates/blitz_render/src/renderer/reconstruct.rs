@@ -7,6 +7,7 @@ use ash::vk;
 
 use super::レンダラー;
 use crate::error::レンダラーエラー;
+use crate::frame_composition::フレーム段階;
 use crate::vulkan;
 
 impl レンダラー {
@@ -38,8 +39,7 @@ impl レンダラー {
         self.深度バッファ = vulkan::depth::深度バッファ::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)?;
         // HDR/ブルームピラミッドはスワップチェーン寸法に連動するため作り直す(判断38・41)。
         // 段数が解像度依存のためブルームのディスクリプタも作り直し、トーンマップは新ビューへ束縛し直す。
-        // ポスト有効の目印には、破棄されず残っているトーンマップ一式を使う(hdrターゲットは上でtake済みのため使えない)。
-        if self.トーンマップ.is_some() {
+        if self.フレーム構成.含む(フレーム段階::ブルームとトーンマップ) {
             let 新hdr = vulkan::hdr_target::HDRターゲット::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)?;
             let 新ピラミッド =
                 match vulkan::bloom_targets::ブルームピラミッド::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)

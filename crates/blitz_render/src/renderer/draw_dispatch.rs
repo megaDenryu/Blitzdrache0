@@ -6,6 +6,7 @@
 use super::レンダラー;
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
+use crate::frame_composition::フレーム段階;
 use crate::vulkan;
 use crate::vulkan::frame::{UI描画入力, 任意描画入力, 描画対象入力, 描画方式};
 
@@ -25,7 +26,7 @@ impl レンダラー {
     ) -> Result<(bool, Vec<(&'static str, u32)>), レンダラーエラー> {
         let 添字usize = usize::try_from(添字).unwrap_or_else(|_| panic!("スワップチェーン画像添字がusizeに収まらない: {添字}"));
 
-        let 描画方式 = self.描画方式を決める(読み戻し要求);
+        let 描画方式 = self.描画方式を決める(読み戻し要求)?;
         let ポスト入力 = self.ポスト入力束を組み立てる(フレーム添字, 露出);
         let 布入力 = self.布入力を組み立てる(フレーム添字, 布介入件数);
         let 粒子入力 = self.粒子描画入力を組み立てる(フレーム添字);
@@ -37,6 +38,7 @@ impl レンダラー {
             &self.device,
             self.queue,
             self.command_buffer一覧[フレーム添字],
+            &self.フレーム構成,
             self.提示先を組み立てる(添字),
             &画像一式,
             self.swapchain.寸法,
@@ -60,17 +62,20 @@ impl レンダラー {
         )
     }
 
-    fn 描画方式を決める(&self, 読み戻し要求: bool) -> 描画方式 {
+    fn 描画方式を決める(&self, 読み戻し要求: bool) -> Result<描画方式, レンダラーエラー> {
         if 読み戻し要求 {
+            if !self.フレーム構成.含む(フレーム段階::読み戻し) {
+                return Err(レンダラーエラー::読み戻し段階なし);
+            }
             let バッファ = self
                 .読み戻しバッファ
                 .as_ref()
                 .unwrap_or_else(|| panic!("読み戻し要求時に読み戻しバッファが未確保だった"));
-            描画方式::読み戻し {
+            Ok(描画方式::読み戻し {
                 バッファ: バッファ.handle
-            }
+            })
         } else {
-            描画方式::通常
+            Ok(描画方式::通常)
         }
     }
 }

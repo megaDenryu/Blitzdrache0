@@ -20,12 +20,10 @@ mod ui_pass;
 
 use ash::vk;
 
-use super::{
-    UI描画入力, シャドウ描画入力, ジオメトリ入力, スキニング描画入力, トーンマップ描画入力, フレーム画像一式, ブルーム描画入力, 布描画入力, 描画方式,
-    粒子描画入力,
-};
+use super::{フレーム画像一式, 任意描画入力, 描画対象入力, 描画方式};
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
+use crate::frame_composition::フレーム構成;
 use crate::vulkan::gpu_timing;
 use crate::vulkan::graph;
 
@@ -33,37 +31,18 @@ use crate::vulkan::graph;
 pub(super) fn コマンドを記録する(
     device: &ash::Device,
     command_buffer: vk::CommandBuffer,
+    フレーム構成: &フレーム構成,
     画像一式: &フレーム画像一式,
     寸法: vk::Extent2D,
     クリア色: クリアカラー,
     pipeline: vk::Pipeline,
-    ジオメトリ一覧: &[ジオメトリ入力],
-    シャドウ一覧: &[シャドウ描画入力],
-    スキニング入力: Option<&スキニング描画入力>,
-    布入力: Option<&布描画入力>,
-    粒子入力: Option<&粒子描画入力>,
-    ブルーム入力: Option<&ブルーム描画入力>,
-    トーンマップ入力: Option<&トーンマップ描画入力>,
-    ui入力: Option<&UI描画入力>,
+    描画対象: 描画対象入力<'_>,
+    任意入力: 任意描画入力<'_>,
     描画方式: &描画方式,
     クエリプール: Option<vk::QueryPool>,
 ) -> Result<Vec<(&'static str, u32)>, レンダラーエラー> {
     記録を開始する(device, command_buffer, クエリプール)?;
-    let グラフ = graph_build::グラフを構築する(
-        画像一式,
-        寸法,
-        クリア色,
-        pipeline,
-        ジオメトリ一覧,
-        シャドウ一覧,
-        スキニング入力,
-        布入力,
-        粒子入力,
-        ブルーム入力,
-        トーンマップ入力,
-        ui入力,
-        描画方式,
-    );
+    let グラフ = graph_build::グラフを構築する(画像一式, フレーム構成, 寸法, クリア色, pipeline, 描画対象, 任意入力, 描画方式);
     let 計測マッピング = graph::実行する(device, command_buffer, グラフ, クエリプール);
     // 安全性: command_bufferは記録開始済みで、対応するend呼び出し。
     unsafe { device.end_command_buffer(command_buffer)? };

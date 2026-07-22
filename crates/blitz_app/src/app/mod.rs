@@ -47,6 +47,7 @@ pub(crate) struct アプリ {
     現在フレーム: u32,
     クリア色: クリアカラー,
     ライティング: blitz_render::ライティング入力,
+    フレーム構成: blitz_render::フレーム構成,
     粒子表示: 粒子表示モード,
     gpu時間報告: bool,
     gpuメモリ報告: bool,
@@ -54,7 +55,6 @@ pub(crate) struct アプリ {
     開発ui: Option<開発UI>,
     開発ui初期有効: bool,
     フレームダンプ先: Option<PathBuf>,
-    ポスト処理有効: bool,
     /// 露出(判断39)とブレンド(判断45)はCLI初期値を開発用UIのスライダーが実行中に書き換える。
     露出: f32,
     ブレンド: f32,

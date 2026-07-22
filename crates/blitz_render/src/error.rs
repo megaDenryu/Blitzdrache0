@@ -11,7 +11,7 @@ use thiserror::Error;
 
 mod conversions;
 
-use crate::vulkan_failure::Vulkan失敗コード;
+use crate::{frame_composition::フレーム段階, vulkan_failure::Vulkan失敗コード};
 
 /// レンダラーの生成・描画・破棄で起こりうる失敗を表す層のエラー型。
 #[derive(Debug, Error)]
@@ -19,11 +19,9 @@ pub enum レンダラーエラー {
     /// Vulkanローダー(vulkan-1.dll)の動的読み込みに失敗した。
     #[error("Vulkanローダーの読み込みに失敗した: {0}")]
     ローダー読み込み失敗(String),
-
     /// Vulkan API呼び出しがエラーコードを返した。
     #[error("Vulkan呼び出しが失敗した: {0}")]
     Vulkan呼び出し失敗(Vulkan失敗コード),
-
     /// グラフィックス描画・提示、および必須機能(dynamicRendering・synchronization2・
     /// shaderDrawParameters)の両方に対応する物理デバイスが1つも見つからなかった。
     #[error(
@@ -95,4 +93,8 @@ pub enum レンダラーエラー {
 
     #[error("現在の提示先は単一視点だけを描画できるが、フレーム入力に{視点数}視点が指定された")]
     複数視点提示未対応 { 視点数: usize },
+    #[error("読み戻し要求に必要な読み戻し段階がフレーム構成に含まれていない")]
+    読み戻し段階なし,
+    #[error("フレーム構成に必要な段階がないため素材を実行できない: {0:?}")]
+    フレーム構成素材不一致(フレーム段階),
 }

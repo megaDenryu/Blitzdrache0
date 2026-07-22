@@ -20,7 +20,7 @@ impl ApplicationHandler for アプリ {
             &mut self.ホットリローダー,
             self.粒子表示,
             self.開発ui初期有効,
-            self.ポスト処理有効,
+            self.フレーム構成,
             self.布モード,
         ) {
             Ok((window, mut レンダラー, 開発ui, アニメーション, 布プリセット)) => {

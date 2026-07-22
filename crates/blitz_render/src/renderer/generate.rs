@@ -5,10 +5,13 @@ mod core_setup;
 mod debug_setup;
 mod frame_resources;
 mod generate_resources;
+#[cfg(test)]
+mod generate_tests;
 use super::レンダラー;
 use crate::cloth_material::布素材;
 use crate::error::レンダラーエラー;
 use crate::extent::ウィンドウ寸法;
+use crate::frame_composition::{フレーム構成, フレーム段階};
 use crate::particle_material::粒子素材;
 use crate::render_scene_material::描画シーン素材;
 use crate::shader_bundle::シェーダー束;
@@ -28,8 +31,9 @@ impl レンダラー {
         スキン: Option<スキンメッシュ素材>,
         布: Option<布素材>,
         粒子: Option<粒子素材>,
-        ポスト処理有効: bool,
+        フレーム構成: フレーム構成,
     ) -> Result<Self, レンダラーエラー> {
+        構成と素材を検査する(&フレーム構成, スキン.is_some(), 布.is_some(), 粒子.is_some())?;
         let コア = core_setup::組み立てる(表示ハンドル, ウィンドウハンドル, 寸法)?;
         let 資源 = generate_resources::組み立てる(generate_resources::生成要求 {
             instance: &コア.instance,
@@ -43,10 +47,26 @@ impl レンダラー {
             スキン: スキン.as_ref(),
             布: 布.as_ref(),
             粒子素材: 粒子.as_ref(),
-            ポスト処理有効,
+            フレーム構成,
             タイムスタンプ対応か: コア.タイムスタンプ対応か,
             タイムスタンプ周期ns: コア.タイムスタンプ周期ns,
         })?;
-        Ok(assemble::レンダラーを組み立てる(コア, 資源, 寸法))
+        Ok(assemble::レンダラーを組み立てる(コア, 資源, 寸法, フレーム構成))
     }
+}
+
+fn 構成と素材を検査する(
+    構成: &フレーム構成, スキンあり: bool, 布あり: bool, 粒子あり: bool
+) -> Result<(), レンダラーエラー> {
+    let 対応 = [
+        (スキンあり, フレーム段階::スキニング),
+        (布あり, フレーム段階::布シミュレーション),
+        (粒子あり, フレーム段階::粒子),
+    ];
+    for (素材あり, 段階) in 対応 {
+        if 素材あり && !構成.含む(段階) {
+            return Err(レンダラーエラー::フレーム構成素材不一致(段階));
+        }
+    }
+    Ok(())
 }

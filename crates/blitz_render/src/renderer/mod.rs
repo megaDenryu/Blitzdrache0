@@ -24,12 +24,12 @@ mod ui_dispatch;
 mod ui_texture;
 mod uniform_write;
 
-use ash::vk;
-
 use crate::extent::ウィンドウ寸法;
+use crate::frame_composition::フレーム構成;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
 use crate::vulkan::sync::フレームインフライト数;
+use ash::vk;
 
 pub use cpu_timing::CPU区間時間;
 
@@ -67,12 +67,13 @@ pub struct レンダラー {
     フレーム同期: vulkan::sync::フレーム同期,
     提示同期: vulkan::sync::提示同期,
     現在フレーム添字: usize,
+    フレーム構成: フレーム構成,
     pipeline: vulkan::pipeline::パイプライン,
     /// スキン付きシーンのときのみ`Some`(判断44)。有無はフレーム描画入力のスキン行列と常に一致させる。
     スキニング: Option<vulkan::skinning::スキニング一式>,
     /// 布付き起動のときのみ`Some`(判断52〜54)。有無はフレーム描画入力の布と常に一致させる。
     布: Option<vulkan::cloth::布一式>,
-    // 注意: 以下4つのポストプロセス資源はポスト処理有効時のみすべて`Some`(判断38・39)。
+    // 注意: 以下4つのポストプロセス資源はフレーム構成にポスト処理段階があるときのみすべて`Some`(判断38・39)。
     // 有無は常に一致させる(不一致はgraph_build側のpanicで検出される)。
     hdrターゲット: Option<vulkan::hdr_target::HDRターゲット>,
     ブルームピラミッド: Option<vulkan::bloom_targets::ブルームピラミッド>,

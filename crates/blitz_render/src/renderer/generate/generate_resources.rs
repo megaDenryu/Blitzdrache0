@@ -11,14 +11,16 @@ mod simulation_resources;
 
 use super::frame_resources::フレーム資源;
 use crate::error::レンダラーエラー;
+use crate::frame_composition::フレーム段階;
 use crate::vulkan::hdr_target::HDR形式;
 use ash::vk;
 
 pub(in crate::renderer::generate) use request::生成要求;
 
 pub(super) fn 組み立てる(要求: 生成要求<'_>) -> Result<フレーム資源, レンダラーエラー> {
+    let ポスト処理有効 = 要求.フレーム構成.含む(フレーム段階::ブルームとトーンマップ);
     // シーン・粒子の描画先形式: ポストプロセス有効ならHDR中間画像、無効ならスワップチェーン(判断38・39)。
-    let シーンカラー形式 = if 要求.ポスト処理有効 {
+    let シーンカラー形式 = if ポスト処理有効 {
         HDR形式
     } else {
         要求.swapchain.画像形式
@@ -49,7 +51,7 @@ pub(super) fn 組み立てる(要求: 生成要求<'_>) -> Result<フレーム�
 
     let 追加資源 = 追加資源を組み立てる(&要求, &メモリプロパティ, シーンカラー形式, &基礎)?;
 
-    let ポスト = post_resources::組み立てる(要求.device, &メモリプロパティ, 要求.swapchain, 要求.シェーダー, 要求.ポスト処理有効)?;
+    let ポスト = post_resources::組み立てる(要求.device, &メモリプロパティ, 要求.swapchain, 要求.シェーダー, ポスト処理有効)?;
     let (スキニング, 布一式) = simulation_resources::組み立てる(
         要求.device,
         &メモリプロパティ,
