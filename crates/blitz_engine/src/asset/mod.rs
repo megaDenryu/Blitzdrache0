@@ -29,7 +29,7 @@ mod runtime_loader;
 #[cfg(test)]
 mod runtime_loader_tests;
 #[cfg(test)]
-mod runtime_scene_tests;
+pub(crate) mod runtime_scene_tests;
 mod scene_data;
 mod skin_data;
 mod skin_vertex_attribute;
@@ -60,6 +60,7 @@ pub use runtime_format::{
 };
 pub use runtime_load_error::実行時シーン読込エラー;
 pub use runtime_loader::実行時シーンを読み込む;
+pub(crate) use runtime_loader::実行時シーンファイルを読み込む;
 pub use scene_data::シーンデータ;
 pub use skin_data::スキンデータ;
 pub use skin_vertex_attribute::スキン頂点属性;
