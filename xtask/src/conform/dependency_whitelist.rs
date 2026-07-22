@@ -20,7 +20,6 @@ const 白リスト: [(&str, &[&str]); 7] = [
     (
         "blitz_app",
         &[
-            "blitz_asset_compiler",
             "blitz_engine",
             "blitz_math",
             "blitz_render",

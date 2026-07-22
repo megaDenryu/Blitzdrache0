@@ -5,7 +5,7 @@ use std::path::PathBuf;
 
 const 既定シェーダー監視パス: &str = "shaders/scene.slang";
 const 既定シーン名: &str = "quad";
-const 既定アセットルート: &str = "assets";
+const 既定アセットルート: &str = "target/runtime_assets";
 
 /// 起動時に指定できる実行モード。
 #[derive(Debug, Clone, Copy)]
@@ -28,7 +28,7 @@ pub(crate) struct 起動設定 {
     pub(crate) シェーダー監視パス: PathBuf,
     /// 表示するシーンのアセットID。既定は`quad`(常に存在し決定的)。
     pub(crate) シーン名: String,
-    /// カタログの各アセットパスの基準ディレクトリ。既定は`assets`。
+    /// カタログの実行時アセットパスの基準ディレクトリ。既定は`target/runtime_assets`。
     pub(crate) アセットルート: PathBuf,
     pub(crate) 描画対象数: Option<描画対象数>,
     /// `--unlit`指定でfalse。既定はtrue(PBRライティング有効、判断26)。

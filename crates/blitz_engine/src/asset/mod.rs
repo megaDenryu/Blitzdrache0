@@ -16,6 +16,10 @@ mod render_object_id;
 mod runtime_format;
 #[cfg(test)]
 mod runtime_format_tests;
+mod runtime_load_error;
+mod runtime_loader;
+#[cfg(test)]
+mod runtime_loader_tests;
 #[cfg(test)]
 mod runtime_scene_tests;
 mod scene_data;
@@ -42,6 +46,8 @@ pub use runtime_format::{
     アセット実行時形式エラー, アセット形式版, シーンを実行時形式へ格納する, 実行時アセット, 実行時アセットを格納する, 実行時アセットを開く,
     実行時アセット種別, 実行時形式からシーンを読む,
 };
+pub use runtime_load_error::実行時シーン読込エラー;
+pub use runtime_loader::実行時シーンを読み込む;
 pub use scene_data::シーンデータ;
 pub use skin_data::スキンデータ;
 pub use skin_vertex_attribute::スキン頂点属性;

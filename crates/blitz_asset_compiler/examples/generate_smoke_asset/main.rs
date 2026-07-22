@@ -1,6 +1,6 @@
 //! スモーク用極小自作glTFアセットの生成器。決定的・ネット不要。
 //! `cargo xtask gen-smoke-asset`で
-//! assets/smoke/ へ quad.gltf・quad.bin・quad_base_color.png・quad_alt_color.png と、
+//! assets/smoke/ へ quad.gltf・quad_alt.gltf・quad.bin・2色のテクスチャと、
 //! shadow_scene.gltf・shadow_scene.bin・shadow_scene_white.png(判断37)を書き出す。
 //! xtask gen-smoke-asset の実体であり、リポジトリルートを作業ディレクトリとして実行される。
 
@@ -22,6 +22,11 @@ fn main() {
 
     if let Err(誤り) = std::fs::write(出力先ディレクトリ.join("quad.gltf"), gltf_json::文書JSON) {
         eprintln!("[generate_smoke_asset] quad.gltfの書き出しに失敗した: {誤り}");
+        std::process::exit(1);
+    }
+    let 代替文書 = gltf_json::文書JSON.replace("quad_base_color.png", "quad_alt_color.png");
+    if let Err(誤り) = std::fs::write(出力先ディレクトリ.join("quad_alt.gltf"), 代替文書) {
+        eprintln!("[generate_smoke_asset] quad_alt.gltfの書き出しに失敗した: {誤り}");
         std::process::exit(1);
     }
 

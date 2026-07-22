@@ -17,6 +17,9 @@ pub fn 実行する() -> ExitCode {
         eprintln!("[xtask] m11-soakのアセット取得に失敗した");
         return ExitCode::FAILURE;
     }
+    if !crate::compile_assets::既定を生成する() {
+        return ExitCode::FAILURE;
+    }
     println!("[xtask] m11-soak用リリースビルド");
     let Ok(ビルド結果) = Command::new("cargo").args(["build", "--release", "-p", "blitz_app"]).status() else {
         eprintln!("[xtask] cargoの起動に失敗した");

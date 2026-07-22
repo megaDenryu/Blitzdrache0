@@ -6,6 +6,9 @@ const ベンチフレーム数: &str = "360";
 const 描画対象数一覧: [&str; 3] = ["1", "10", "100"];
 
 pub fn 実行する() -> ExitCode {
+    if !crate::gen_smoke_asset::生成する() || !crate::compile_assets::既定を生成する() {
+        return ExitCode::FAILURE;
+    }
     println!("[xtask] 二描画対象の実機ピクセル判定を実行");
     if !cargoを実行する(&スモーク引数()) {
         return ExitCode::FAILURE;
@@ -29,7 +32,7 @@ fn スモーク引数() -> Vec<&'static str> {
         "--scene",
         "quad",
         "--asset-root",
-        "assets",
+        "target/runtime_assets",
         "--frames",
         "2",
         "--object-count",
@@ -49,7 +52,7 @@ fn ベンチ引数(描画対象数: &'static str) -> Vec<&'static str> {
         "--scene",
         "quad",
         "--asset-root",
-        "assets",
+        "target/runtime_assets",
         "--benchmark-frames",
         ベンチフレーム数,
         "--object-count",

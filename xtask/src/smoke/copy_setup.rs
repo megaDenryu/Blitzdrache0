@@ -7,8 +7,9 @@
 use std::path::PathBuf;
 
 const エントリファイル名: &str = "scene.slang";
-const アセットファイル一覧: [&str; 7] = [
+const アセットファイル一覧: [&str; 8] = [
     "quad.gltf",
+    "quad_alt.gltf",
     "quad.bin",
     "quad_base_color.png",
     "quad_alt_color.png",

@@ -12,7 +12,7 @@ fn 引数なしは既定値を保つ() {
     assert!(matches!(設定.モード, 起動モード::無期限実行));
     assert_eq!(設定.シェーダー監視パス, Path::new("shaders/scene.slang"));
     assert_eq!(設定.シーン名, "quad");
-    assert_eq!(設定.アセットルート, Path::new("assets"));
+    assert_eq!(設定.アセットルート, Path::new("target/runtime_assets"));
     assert!(設定.描画対象数.is_none());
     assert!(設定.ライティング有効);
     assert_eq!(設定.粒子表示, 粒子表示モード::なし);

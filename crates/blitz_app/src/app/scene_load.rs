@@ -7,8 +7,7 @@ mod render_input;
 
 use std::path::Path;
 
-use blitz_asset_compiler::ソースシーンを読み込む;
-use blitz_engine::{アセットID, カタログ, シーンデータ};
+use blitz_engine::{アセットID, カタログ, シーンデータ, 実行時シーンを読み込む};
 
 use crate::error::起動エラー;
 
@@ -17,22 +16,12 @@ const ヘルメット識別子: &str = "helmet";
 const シャドウシーン識別子: &str = "shadow_scene";
 const フォックス識別子: &str = "fox";
 
-/// `アセットルート`配下のquad・DamagedHelmet・shadow_scene(判断37)・Fox(判断42)を登録したカタログを作る(判断7)。
+/// `アセットルート`配下の版付き実行時形式を安定IDへ登録したカタログを作る。
 pub(super) fn カタログを構築する(アセットルート: &Path) -> Result<カタログ, 起動エラー> {
     let mut カタログ = カタログ::空を作る();
-    カタログ.登録する(アセットID::生成する(四角形識別子)?, アセットルート.join("smoke").join("quad.gltf"));
-    カタログ.登録する(
-        アセットID::生成する(ヘルメット識別子)?,
-        アセットルート.join("samples").join("DamagedHelmet").join("DamagedHelmet.glb"),
-    );
-    カタログ.登録する(
-        アセットID::生成する(シャドウシーン識別子)?,
-        アセットルート.join("smoke").join("shadow_scene.gltf"),
-    );
-    カタログ.登録する(
-        アセットID::生成する(フォックス識別子)?,
-        アセットルート.join("samples").join("Fox").join("Fox.glb"),
-    );
+    for 名前 in [四角形識別子, ヘルメット識別子, シャドウシーン識別子, フォックス識別子] {
+        カタログ.登録する(アセットID::生成する(名前)?, アセットルート.join(format!("{名前}.blitzasset")));
+    }
     Ok(カタログ)
 }
 
@@ -72,7 +61,7 @@ pub(super) fn シーンを読み込んで変換する(
     描画対象数: Option<crate::cli::描画対象数>,
 ) -> Result<(シーンデータ, blitz_render::描画シーン素材), 起動エラー> {
     let id = アセットID::生成する(シーン名)?;
-    let シーン = ソースシーンを読み込む(カタログ, &id).map_err(起動エラー::シーン読込失敗)?;
+    let シーン = 実行時シーンを読み込む(カタログ, &id).map_err(起動エラー::シーン読込失敗)?;
     let 描画シーン = シーンをレンダラー入力に変換する(&シーン, 描画対象数)?;
     Ok((シーン, 描画シーン))
 }

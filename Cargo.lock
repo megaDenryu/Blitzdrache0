@@ -134,7 +134,6 @@ checksum = "b588b76d00fde79687d7646a9b5bdf3cc0f655e0bbd080335a95d7e96f3587da"
 name = "blitz_app"
 version = "0.1.0"
 dependencies = [
- "blitz_asset_compiler",
  "blitz_engine",
  "blitz_math",
  "blitz_render",

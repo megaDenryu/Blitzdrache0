@@ -90,7 +90,7 @@ glTF・画像 → blitz_asset_compiler → アセット実行時形式 → blitz
 - 何か: Khronos の公開仕様 glTF 2.0 のパーサ。シーン階層・メッシュアクセサ・マテリアル参照を型付きで読める。rust-windowing 系と並ぶ gltf-rs 組織が保守
 - メリット: 仕様準拠の検証込みパース。アクセサのバイト解釈（ストライド・型変換）という地味に間違えやすい部分を吸収する
 - デメリット: json 等の推移的依存が付く。glTF 拡張の網羅は過剰装備
-- 採用理由: 使う部分集合だけの自作パーサと比較し、M3時点では階層・アクセサ・マテリアル参照の正確な網羅コストが自作の利益を上回る。アセットコンパイラフェーズで中間形式に変わる際、glTFパースはオフライン側へ移る予定であり、実行時コードとしては暫定
+- 採用理由: 使う部分集合だけの自作パーサと比較し、M3時点では階層・アクセサ・マテリアル参照の正確な網羅コストが自作の利益を上回る。OW1でglTFパースを`blitz_asset_compiler`へ移し、実行時のアプリとエンジンから分離した
 - 再構築判定: (a/c) 公開仕様の実装。差分テストで再構築可能だが経済性なし
 - 差し替えコスト: 低。安定ID境界により`blitz_asset_compiler`へ局所化し、公開APIにgltfの型を露出しない
 - 制約: `blitz_asset_compiler`だけが依存する
@@ -133,6 +133,7 @@ glTF・画像 → blitz_asset_compiler → アセット実行時形式 → blitz
 
 ```
 cargo build             # 全クレート（build.rs が shaders/ を slangc で SPIR-V へコンパイル）
+cargo xtask compile-assets  # glTF・画像からtarget/runtime_assets/*.blitzassetを生成
 cargo run -p blitz_app  # 実行（--scene <id> / --dev-ui / --particles / --report-gpu-times 等はcli.rs参照）
 cargo xtask             # 開発ツールの一覧表示（ツールの唯一の入口）
 cargo xtask verify      # 検証の標準列 (conform -> check -> clippy -D warnings -> test)
@@ -149,6 +150,8 @@ cargo xtask fetch-assets     # DamagedHelmet等の標準サンプル取得
 開発時は Vulkan validation layer（VK_LAYER_KHRONOS_validation、同期検証含む）を常時有効にする。
 
 ビルドには Vulkan SDK（`VULKAN_SDK` 環境変数、slangc 同梱）が必要。
+アプリは`target/runtime_assets`の版付き実行時形式だけを読む。ソース変更後は`cargo xtask compile-assets`で同じ安定IDの生成物を更新する。実行中のアプリは生成物のmtimeを監視し、更新を検知するとシーンを差し替える。
+
 シェーダーは `shaders/` に Slang で書き、実行中に保存するとホットリロード（mtimeポーリング → slangc 再コンパイル → パイプライン再生成）で即反映される。
 
 ## ドキュメント

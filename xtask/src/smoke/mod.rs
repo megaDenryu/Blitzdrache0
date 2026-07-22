@@ -8,6 +8,9 @@ mod stages;
 use std::process::ExitCode;
 
 pub fn 実行する() -> ExitCode {
+    if !crate::gen_smoke_asset::生成する() {
+        return ExitCode::FAILURE;
+    }
     let シェーダーコピー先 = match copy_setup::シェーダーを一時コピーする() {
         Ok(パス) => パス,
         Err(誤り) => {
@@ -22,8 +25,13 @@ pub fn 実行する() -> ExitCode {
             return ExitCode::FAILURE;
         }
     };
+    let 実行時アセットルート = std::path::Path::new("target/smoke_runtime_assets");
+    if !crate::compile_assets::既定を生成する() || !crate::compile_assets::生成する(&アセットルート, 実行時アセットルート)
+    {
+        return ExitCode::FAILURE;
+    }
 
-    if !stages::すべてを実行する(&シェーダーコピー先, &アセットルート) {
+    if !stages::すべてを実行する(&シェーダーコピー先, 実行時アセットルート) {
         return ExitCode::FAILURE;
     }
 

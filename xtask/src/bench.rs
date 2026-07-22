@@ -15,6 +15,9 @@ pub fn 実行する() -> ExitCode {
         eprintln!("[xtask] benchのアセット取得に失敗した");
         return ExitCode::FAILURE;
     }
+    if !crate::compile_assets::既定を生成する() {
+        return ExitCode::FAILURE;
+    }
 
     let 引数一覧 = [
         "run",
