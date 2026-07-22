@@ -3,6 +3,7 @@
 
 use ash::vk;
 
+use crate::renderer::render_object_resources::描画対象資源;
 use crate::vulkan;
 use crate::vulkan::sync::フレームインフライト数;
 
@@ -11,8 +12,7 @@ pub(super) struct フレーム資源 {
     pub(super) シャドウマップ: vulkan::shadow_map::シャドウマップ,
     pub(super) シャドウパイプライン: vulkan::pipeline::シャドウパイプライン,
     pub(super) 転送環境: vulkan::transfer::転送実行環境,
-    pub(super) ジオメトリ: vulkan::geometry::ジオメトリバッファ,
-    pub(super) テクスチャ: vulkan::texture::マテリアルテクスチャ一式,
+    pub(super) 描画対象資源一覧: Vec<描画対象資源>,
     pub(super) ユニフォーム: vulkan::uniform::フレームユニフォーム一式,
     pub(super) ディスクリプタ: vulkan::descriptor::ディスクリプタ一式,
     pub(super) command_pool: vk::CommandPool,

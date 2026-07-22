@@ -7,14 +7,14 @@ use super::レンダラー;
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
 use crate::vulkan;
-use crate::vulkan::frame::{UI描画入力, フレーム画像一式, ブルーム画像, 描画方式};
+use crate::vulkan::frame::{UI描画入力, 任意描画入力, 描画対象入力, 描画方式};
 
 impl レンダラー {
     /// 戻り値: 提示劣化の有無と、このフレームで書いたGPUタイムスタンプの
     /// 「パス名→クエリ開始添字」対応(判断30。計測無効なら空配列)。
     #[allow(clippy::type_complexity, clippy::too_many_arguments)]
     pub(super) fn 現在の画像で描画する(
-        &self,
+        &mut self,
         添字: u32,
         フレーム添字: usize,
         クリア色: クリアカラー,
@@ -25,7 +25,43 @@ impl レンダラー {
     ) -> Result<(bool, Vec<(&'static str, u32)>), レンダラーエラー> {
         let 添字usize = usize::try_from(添字).unwrap_or_else(|_| panic!("スワップチェーン画像添字がusizeに収まらない: {添字}"));
 
-        let 描画方式 = if 読み戻し要求 {
+        let 描画方式 = self.描画方式を決める(読み戻し要求);
+        let ポスト入力 = self.ポスト入力束を組み立てる(フレーム添字, 露出);
+        let 布入力 = self.布入力を組み立てる(フレーム添字, 布介入件数);
+        let 粒子入力 = self.粒子描画入力を組み立てる(フレーム添字);
+        let クエリプール = self.gpu計測.as_ref().map(|計測| 計測.クエリプール(フレーム添字));
+        let 画像一式 = self.フレーム画像一式を組み立てる(添字usize);
+        self.描画入力作業領域を更新する(フレーム添字);
+
+        vulkan::frame::描画する(
+            &self.device,
+            self.queue,
+            self.command_buffer一覧[フレーム添字],
+            self.提示先を組み立てる(添字),
+            &画像一式,
+            self.swapchain.寸法,
+            クリア色,
+            self.pipeline.handle,
+            描画対象入力 {
+                ジオメトリ: &self.ジオメトリ入力作業領域,
+                シャドウ: &self.シャドウ入力作業領域,
+            },
+            任意描画入力 {
+                スキニング: ポスト入力.スキニング.as_ref(),
+                布: 布入力.as_ref(),
+                粒子: 粒子入力.as_ref(),
+                ブルーム: ポスト入力.ブルーム.as_ref(),
+                トーンマップ: ポスト入力.トーンマップ.as_ref(),
+                ui: ui入力,
+            },
+            描画方式,
+            クエリプール,
+            self.同期入力を組み立てる(フレーム添字, 添字usize),
+        )
+    }
+
+    fn 描画方式を決める(&self, 読み戻し要求: bool) -> 描画方式 {
+        if 読み戻し要求 {
             let バッファ = self
                 .読み戻しバッファ
                 .as_ref()
@@ -35,51 +71,6 @@ impl レンダラー {
             }
         } else {
             描画方式::通常
-        };
-
-        let 入力束 = self.描画入力束を組み立てる(フレーム添字);
-        let ポスト入力 = self.ポスト入力束を組み立てる(フレーム添字, 露出);
-        let 布入力 = self.布入力を組み立てる(フレーム添字, 布介入件数);
-        let クエリプール = self.gpu計測.as_ref().map(|計測| 計測.クエリプール(フレーム添字));
-        let 画像一式 = フレーム画像一式 {
-            スワップチェーン画像: self.swapchain.画像一覧[添字usize],
-            スワップチェーンビュー: self.swapchain.画像ビュー一覧[添字usize],
-            深度画像: self.深度バッファ.画像,
-            深度ビュー: self.深度バッファ.画像ビュー,
-            シャドウマップ画像: self.シャドウマップ.画像,
-            シャドウマップビュー: self.シャドウマップ.画像ビュー,
-            hdr: self.hdrターゲット.as_ref().map(|hdr| (hdr.画像, hdr.画像ビュー)),
-            ブルーム: self.ブルームピラミッド.as_ref().map(|ピラミッド| ブルーム画像 {
-                縮小一覧: ピラミッド.縮小一覧.iter().map(|画像| (画像.画像, 画像.画像ビュー)).collect(),
-                拡大一覧: ピラミッド.拡大一覧.iter().map(|画像| (画像.画像, 画像.画像ビュー)).collect(),
-                寸法一覧: ピラミッド.寸法一覧.clone(),
-            }),
-        };
-
-        vulkan::frame::描画する(
-            &self.device,
-            self.queue,
-            self.command_buffer一覧[フレーム添字],
-            &self.swapchain_loader,
-            self.swapchain.handle,
-            添字,
-            &画像一式,
-            self.swapchain.寸法,
-            クリア色,
-            self.pipeline.handle,
-            &入力束.ジオメトリ,
-            &入力束.シャドウ,
-            ポスト入力.スキニング.as_ref(),
-            布入力.as_ref(),
-            入力束.粒子.as_ref(),
-            ポスト入力.ブルーム.as_ref(),
-            ポスト入力.トーンマップ.as_ref(),
-            ui入力,
-            描画方式,
-            クエリプール,
-            self.フレーム同期.取得セマフォ(フレーム添字),
-            self.提示同期.提示セマフォ(添字usize),
-            self.フレーム同期.フェンス(フレーム添字),
-        )
+        }
     }
 }

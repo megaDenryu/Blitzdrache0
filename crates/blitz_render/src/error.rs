@@ -7,8 +7,11 @@
 //! 自前表現へ変換する」だけであり、公開APIからash型を取り出せる経路にはならない。
 //! バリアント自体は自前表現（String・Vulkan失敗コード）のみを保持する。
 
-use crate::vulkan_failure::Vulkan失敗コード;
 use thiserror::Error;
+
+mod conversions;
+
+use crate::vulkan_failure::Vulkan失敗コード;
 
 /// レンダラーの生成・描画・破棄で起こりうる失敗を表す層のエラー型。
 #[derive(Debug, Error)]
@@ -86,15 +89,7 @@ pub enum レンダラーエラー {
     布にスキン必須,
     #[error("粒子シェーダーと粒子素材の有無が一致しない")]
     粒子入力不一致,
-}
-impl From<ash::LoadingError> for レンダラーエラー {
-    fn from(誤り: ash::LoadingError) -> Self {
-        Self::ローダー読み込み失敗(誤り.to_string())
-    }
-}
 
-impl From<ash::vk::Result> for レンダラーエラー {
-    fn from(結果: ash::vk::Result) -> Self {
-        Self::Vulkan呼び出し失敗(Vulkan失敗コード::生成する(結果))
-    }
+    #[error("描画対象のローカルからワールドへの変換が逆行列を持たない")]
+    描画対象変換非可逆,
 }

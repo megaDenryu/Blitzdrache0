@@ -56,13 +56,9 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let 粒子素材 = super::particle_setup::素材を作る(粒子表示)?;
 
     let カタログ = scene_load::カタログを構築する(アセットルート)?;
-    let (シーン, 頂点一覧, インデックス一覧, マテリアル) = scene_load::シーンを読み込んで変換する(&カタログ, シーン名)?;
+    let (シーン, 描画シーン) = scene_load::シーンを読み込んで変換する(&カタログ, シーン名)?;
     let スキン素材 = scene_load::スキン素材へ変換する(&シーン)?;
-    let 布 = match 布モード {
-        crate::cli::布モード::なし => None,
-        crate::cli::布モード::吊るし布 => Some(super::cloth_setup::吊るし布を構築する()?),
-        crate::cli::布モード::マント => Some(super::cloth_setup::マントを構築する(&頂点一覧)?),
-    };
+    let 布 = 布を構築する(布モード, &描画シーン)?;
     let (布素材, 布プリセット) = match 布 {
         Some((素材, プリセット)) => (Some(素材), Some(プリセット)),
         None => (None, None),
@@ -73,9 +69,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
         ウィンドウハンドル,
         寸法,
         シェーダー束,
-        &頂点一覧,
-        &インデックス一覧,
-        マテリアル,
+        描画シーン,
         スキン素材,
         布素材,
         粒子素材,
@@ -87,4 +81,17 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let アニメーション = アニメーション再生::生成する(シーン.スキン, シーン.アニメーション一覧);
     let 開発ui = 開発UI::生成する(&window, 開発ui初期有効);
     Ok((window, レンダラー, 開発ui, アニメーション, 布プリセット))
+}
+
+fn 布を構築する(
+    布モード: crate::cli::布モード,
+    描画シーン: &blitz_render::描画シーン素材,
+) -> Result<Option<(blitz_render::布素材, super::cloth_setup::布プリセット)>, 起動エラー> {
+    match 布モード {
+        crate::cli::布モード::なし => Ok(None),
+        crate::cli::布モード::吊るし布 => Ok(Some(super::cloth_setup::吊るし布を構築する()?)),
+        crate::cli::布モード::マント => Ok(Some(super::cloth_setup::マントを構築する(
+            描画シーン.先頭の描画対象().頂点一覧(),
+        )?)),
+    }
 }

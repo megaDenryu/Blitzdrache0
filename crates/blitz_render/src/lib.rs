@@ -21,6 +21,8 @@ mod particle_shader_set;
 mod pbr_material;
 mod readback_image;
 mod readback_result;
+mod render_object_material;
+mod render_scene_material;
 mod renderer;
 mod shader_bundle;
 mod shader_set;
@@ -52,6 +54,8 @@ pub use particle_shader_set::{粒子シェーダー一式, 粒子シェーダー
 pub use pbr_material::{マテリアル素材エラー, 金属粗さPBR素材};
 pub use readback_image::読み戻し画像;
 pub use readback_result::読み戻し結果;
+pub use render_object_material::描画対象素材;
+pub use render_scene_material::描画シーン素材;
 pub use renderer::{CPU区間時間, レンダラー};
 pub use shader_bundle::シェーダー束;
 pub use shader_set::{シェーダー一式, シェーダー一式エラー};

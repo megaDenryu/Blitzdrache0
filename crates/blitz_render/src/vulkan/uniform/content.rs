@@ -22,7 +22,4 @@ pub(crate) struct フレームユニフォーム内容 {
     pub(crate) 点光源強度: f32,
     pub(crate) 環境光係数: f32,
     pub(crate) ライティング有効: bool,
-    pub(crate) ベースカラー係数: [f32; 4],
-    pub(crate) 金属度係数: f32,
-    pub(crate) 粗さ係数: f32,
 }

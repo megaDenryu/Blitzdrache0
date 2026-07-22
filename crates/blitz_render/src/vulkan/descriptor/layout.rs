@@ -1,6 +1,7 @@
 //! ディスクリプタセットレイアウト: binding0-2=combined image sampler(FRAGMENT)、
 //! binding3=uniform buffer(VERTEX|FRAGMENT、判断24でビュー射影行列を含むため)、
-//! binding4=シャドウマップの比較サンプラー(FRAGMENT、判断35)。
+//! binding4=シャドウマップの比較サンプラー(FRAGMENT、判断35)、
+//! binding5=描画対象ユニフォーム(VERTEX|FRAGMENT)。
 
 use ash::vk;
 
@@ -17,6 +18,11 @@ pub(super) fn 生成する(device: &ash::Device) -> Result<vk::DescriptorSetLayo
             .descriptor_count(1)
             .stage_flags(vk::ShaderStageFlags::VERTEX | vk::ShaderStageFlags::FRAGMENT),
         テクスチャバインド(4),
+        vk::DescriptorSetLayoutBinding::default()
+            .binding(5)
+            .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
+            .descriptor_count(1)
+            .stage_flags(vk::ShaderStageFlags::VERTEX | vk::ShaderStageFlags::FRAGMENT),
     ];
     let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
     // 安全性: deviceは生成済みで有効。

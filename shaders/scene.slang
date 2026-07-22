@@ -6,6 +6,7 @@
 
 import pbr;
 import lighting;
+import scene_io;
 
 struct FrameUniform
 {
@@ -18,6 +19,12 @@ struct FrameUniform
     float4 pointLightPosition;
     float4 pointLightColor;
     float4 ambientAndLighting;
+};
+
+struct ObjectUniform
+{
+    column_major float4x4 localToWorld;
+    column_major float3x3 normalLocalToWorld;
     float4 baseColorFactor;
     float4 metallicRoughnessFactor;
 };
@@ -25,6 +32,9 @@ struct FrameUniform
 // binding3: フレームユニフォームバッファ(判断24)。フレームインフライトごとに別のディスクリプタセットが同じbindingを指す。
 [[vk::binding(3, 0)]]
 ConstantBuffer<FrameUniform> frameUniform;
+
+[[vk::binding(5, 0)]]
+ConstantBuffer<ObjectUniform> objectUniform;
 
 [[vk::binding(0, 0)]] Sampler2D baseColorTexture;
 [[vk::binding(1, 0)]] Sampler2D metallicRoughnessTexture;
@@ -35,35 +45,21 @@ ConstantBuffer<FrameUniform> frameUniform;
 [[vk::binding(4, 0)]] [[vk::combinedImageSampler]] SamplerComparisonState shadowMapSampler;
 static const float shadowMapTexelSize = 1.0 / 2048.0;
 
-struct VertexInput
-{
-    [[vk::location(0)]] float3 position : POSITION;
-    [[vk::location(1)]] float3 normal : NORMAL;
-    [[vk::location(2)]] float4 tangent : TANGENT;
-    [[vk::location(3)]] float2 uv : TEXCOORD0;
-};
-
-struct VertexOutput
-{
-    float4 position : SV_Position;
-    float3 worldPosition : TEXCOORD1;
-    float3 normal : TEXCOORD2;
-    float4 tangent : TEXCOORD3;
-    float2 uv : TEXCOORD0;
-};
-
 // 注意: この1行の表記はスモークのホットリロード検証が文字列置換で書き換える対象。表記を変えると検証が壊れるため、常にこの形(static const float3 = float3(x, y, z);)を保つ。
 static const float3 TINT = float3(1.0, 1.0, 1.0);
 
 [shader("vertex")]
 VertexOutput vertexMain(VertexInput input)
 {
-    // M4ではモデル行列が無い(メッシュはワールドそのまま)ため、位置・法線・接線はそのまま流す。
     VertexOutput output;
-    output.position = mul(frameUniform.viewProjection, float4(input.position, 1.0));
-    output.worldPosition = input.position;
-    output.normal = input.normal;
-    output.tangent = input.tangent;
+    float3 worldPosition = mul(objectUniform.localToWorld, float4(input.position, 1.0)).xyz;
+    float3 worldNormal = normalize(mul(objectUniform.normalLocalToWorld, input.normal));
+    float3 transformedTangent = mul((float3x3)objectUniform.localToWorld, input.tangent.xyz);
+    float3 worldTangent = normalize(transformedTangent - worldNormal * dot(worldNormal, transformedTangent));
+    output.position = mul(frameUniform.viewProjection, float4(worldPosition, 1.0));
+    output.worldPosition = worldPosition;
+    output.normal = worldNormal;
+    output.tangent = float4(worldTangent, input.tangent.w);
     output.uv = input.uv;
     return output;
 }
@@ -72,7 +68,7 @@ VertexOutput vertexMain(VertexInput input)
 float4 fragmentMain(VertexOutput input) : SV_Target
 {
     float4 baseColorSample = baseColorTexture.Sample(input.uv);
-    float3 albedo = baseColorSample.rgb * frameUniform.baseColorFactor.rgb * TINT;
+    float3 albedo = baseColorSample.rgb * objectUniform.baseColorFactor.rgb * TINT;
 
     bool lightingEnabled = frameUniform.ambientAndLighting.y > 0.5;
     if (!lightingEnabled)
@@ -89,7 +85,7 @@ float4 fragmentMain(VertexOutput input) : SV_Target
 
     float3 litColor = shadeLitSurface(
         albedo, metallicRoughnessSample,
-        frameUniform.metallicRoughnessFactor.x, frameUniform.metallicRoughnessFactor.y,
+        objectUniform.metallicRoughnessFactor.x, objectUniform.metallicRoughnessFactor.y,
         sampledNormal, input.normal, input.tangent,
         input.worldPosition, frameUniform.cameraWorldPosition.xyz, frameUniform.ambientAndLighting.x,
         frameUniform.directionalLightDirection.xyz, frameUniform.directionalLightColor.rgb, frameUniform.directionalLightColor.w,

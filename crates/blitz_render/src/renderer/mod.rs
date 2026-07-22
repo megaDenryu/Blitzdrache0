@@ -10,11 +10,13 @@ mod draw;
 mod draw_dispatch;
 mod draw_execute;
 mod draw_inputs;
+mod frame_dispatch_inputs;
 mod generate;
 mod post_inputs;
 mod queries;
 mod readback_buffer;
 mod reconstruct;
+mod render_object_resources;
 mod replace_scene;
 mod replace_shader;
 mod skin_write;
@@ -55,8 +57,9 @@ pub struct レンダラー {
     シャドウマップ: vulkan::shadow_map::シャドウマップ,
     シャドウパイプライン: vulkan::pipeline::シャドウパイプライン,
     転送環境: vulkan::transfer::転送実行環境,
-    ジオメトリ: vulkan::geometry::ジオメトリバッファ,
-    テクスチャ: vulkan::texture::マテリアルテクスチャ一式,
+    描画対象資源一覧: Vec<render_object_resources::描画対象資源>,
+    ジオメトリ入力作業領域: Vec<vulkan::frame::ジオメトリ入力>,
+    シャドウ入力作業領域: Vec<vulkan::frame::シャドウ描画入力>,
     ユニフォーム: vulkan::uniform::フレームユニフォーム一式,
     ディスクリプタ: vulkan::descriptor::ディスクリプタ一式,
     command_pool: vk::CommandPool,
@@ -86,10 +89,6 @@ pub struct レンダラー {
     検証カウンタ: 検証カウンタ,
     現在の寸法: ウィンドウ寸法,
     再構築が必要: bool,
-    // マテリアル係数(判断23)は毎フレームUBOへ書き込む(判断24)ため、シーン差し替え時も更新する。
-    ベースカラー係数: [f32; 4],
-    金属度係数: f32,
-    粗さ係数: f32,
 }
 
 impl Drop for レンダラー {

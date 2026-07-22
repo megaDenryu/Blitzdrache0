@@ -25,7 +25,7 @@ pub(super) fn 作る<'a>(
     布ドロー: Option<布ドロー<'a>>,
     クリア色: クリアカラー,
     pipeline: vk::Pipeline,
-    ジオメトリ入力: &'a ジオメトリ入力,
+    ジオメトリ一覧: &'a [ジオメトリ入力],
     寸法: vk::Extent2D,
 ) -> パス宣言<'a> {
     // スキン付きシーンでは頂点バッファがスキニングパスの出力のため、依存を読み宣言で表す(判断44)。
@@ -46,21 +46,29 @@ pub(super) fn 作る<'a>(
             クリア指定: クリア指定::クリアする { カラー: クリア色 },
         },
         move |文脈| {
-            draw_commands::描画コマンドを積む(文脈.device(), 文脈.コマンドバッファ(), pipeline, 寸法, ジオメトリ入力);
-            // 布の第2ドロー(判断54)。ディスクリプタセットは直前のシーンドローと同レイアウトのため束縛が生きている。
+            draw_commands::描画コマンドを積む(文脈.device(), 文脈.コマンドバッファ(), pipeline, 寸法, ジオメトリ一覧);
             if let Some(布) = &布ドロー {
-                let device = 文脈.device();
-                let command_buffer = 文脈.コマンドバッファ();
-                let 頂点バッファ一覧 = [布.入力.布頂点バッファ];
-                let オフセット一覧 = [0u64];
-                // 安全性: command_bufferは記録中で、布のパイプライン・バッファは生成済み。
-                unsafe {
-                    device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 布.入力.描画pipeline);
-                    device.cmd_bind_vertex_buffers(command_buffer, 0, &頂点バッファ一覧, &オフセット一覧);
-                    device.cmd_bind_index_buffer(command_buffer, 布.入力.インデックスバッファ, 0, vk::IndexType::UINT32);
-                    device.cmd_draw_indexed(command_buffer, 布.入力.インデックス数, 1, 0, 0, 0);
-                }
+                布を記録する(文脈.device(), 文脈.コマンドバッファ(), ジオメトリ一覧, 布);
             }
         },
     )
+}
+
+fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 一覧: &[ジオメトリ入力], 布: &布ドロー<'_>) {
+    let 先頭 = 一覧.first().unwrap_or_else(|| panic!("シーン描画入力は1件以上の不変条件に違反した"));
+    // 安全性: command_bufferは記録中で、布のパイプライン・バッファは生成済み。
+    unsafe {
+        device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 布.入力.描画pipeline);
+        device.cmd_bind_descriptor_sets(
+            command_buffer,
+            vk::PipelineBindPoint::GRAPHICS,
+            先頭.layout,
+            0,
+            &[先頭.ディスクリプタセット],
+            &[],
+        );
+        device.cmd_bind_vertex_buffers(command_buffer, 0, &[布.入力.布頂点バッファ], &[0]);
+        device.cmd_bind_index_buffer(command_buffer, 布.入力.インデックスバッファ, 0, vk::IndexType::UINT32);
+        device.cmd_draw_indexed(command_buffer, 布.入力.インデックス数, 1, 0, 0, 0);
+    }
 }

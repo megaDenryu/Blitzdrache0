@@ -11,7 +11,12 @@ impl レンダラー {
         // device_wait_idleでGPU上の全作業完了を待ってから破棄することで、
         // 使用中リソースの破棄によるvalidationエラーを避ける。
         let _ = unsafe { self.device.device_wait_idle() };
+        self.任意資源を破棄する();
+        self.描画資源を破棄する();
+        self.基盤を破棄する();
+    }
 
+    fn 任意資源を破棄する(&self) {
         if let Some(バッファ) = &self.読み戻しバッファ {
             バッファ.破棄する(&self.device);
         }
@@ -42,18 +47,25 @@ impl レンダラー {
         if let Some(hdr) = &self.hdrターゲット {
             hdr.破棄する(&self.device);
         }
+    }
+
+    fn 描画資源を破棄する(&self) {
         self.フレーム同期.破棄する(&self.device);
         self.提示同期.破棄する(&self.device);
         // 安全性: command_bufferはcommand_poolの破棄で暗黙に解放されるため、
         // 個別のfree_command_buffersは不要。
         unsafe { self.device.destroy_command_pool(self.command_pool, None) };
         self.ディスクリプタ.破棄する(&self.device);
+        for 資源 in &self.描画対象資源一覧 {
+            資源.破棄する(&self.device);
+        }
         self.ユニフォーム.破棄する(&self.device);
-        self.テクスチャ.破棄する(&self.device);
-        self.ジオメトリ.破棄する(&self.device);
         self.転送環境.破棄する(&self.device);
         self.深度バッファ.破棄する(&self.device);
         self.シャドウマップ.破棄する(&self.device);
+    }
+
+    fn 基盤を破棄する(&self) {
         self.swapchain.破棄する(&self.device, &self.swapchain_loader);
         self.device.全メモリ解放を確認する();
         // 安全性: deviceはSelfが唯一の所有者で、上記の全依存リソースは破棄済み。

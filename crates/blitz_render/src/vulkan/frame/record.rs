@@ -12,6 +12,7 @@ mod particle_draw_pass;
 mod particle_update_pass;
 mod readback_pass;
 mod scene_pass;
+mod shadow_draw;
 mod shadow_pass;
 mod skinning_pass;
 mod tonemap_pass;
@@ -36,8 +37,8 @@ pub(super) fn コマンドを記録する(
     寸法: vk::Extent2D,
     クリア色: クリアカラー,
     pipeline: vk::Pipeline,
-    ジオメトリ入力: &ジオメトリ入力,
-    シャドウ入力: &シャドウ描画入力,
+    ジオメトリ一覧: &[ジオメトリ入力],
+    シャドウ一覧: &[シャドウ描画入力],
     スキニング入力: Option<&スキニング描画入力>,
     布入力: Option<&布描画入力>,
     粒子入力: Option<&粒子描画入力>,
@@ -47,6 +48,33 @@ pub(super) fn コマンドを記録する(
     描画方式: &描画方式,
     クエリプール: Option<vk::QueryPool>,
 ) -> Result<Vec<(&'static str, u32)>, レンダラーエラー> {
+    記録を開始する(device, command_buffer, クエリプール)?;
+    let グラフ = graph_build::グラフを構築する(
+        画像一式,
+        寸法,
+        クリア色,
+        pipeline,
+        ジオメトリ一覧,
+        シャドウ一覧,
+        スキニング入力,
+        布入力,
+        粒子入力,
+        ブルーム入力,
+        トーンマップ入力,
+        ui入力,
+        描画方式,
+    );
+    let 計測マッピング = graph::実行する(device, command_buffer, グラフ, クエリプール);
+    // 安全性: command_bufferは記録開始済みで、対応するend呼び出し。
+    unsafe { device.end_command_buffer(command_buffer)? };
+    Ok(計測マッピング)
+}
+
+fn 記録を開始する(
+    device: &ash::Device,
+    command_buffer: vk::CommandBuffer,
+    クエリプール: Option<vk::QueryPool>,
+) -> Result<(), レンダラーエラー> {
     let begin_info = vk::CommandBufferBeginInfo::default().flags(vk::CommandBufferUsageFlags::ONE_TIME_SUBMIT);
     // 安全性: command_bufferはRESET_COMMAND_BUFFERフラグ付きプール由来で、
     // ここでの開始が暗黙的に前回の記録をリセットする。
@@ -58,25 +86,5 @@ pub(super) fn コマンドを記録する(
         // 書き込みはVulkanの契約違反になる)。
         unsafe { device.cmd_reset_query_pool(command_buffer, pool, 0, gpu_timing::パス数上限 * 2) };
     }
-
-    let グラフ = graph_build::グラフを構築する(
-        画像一式,
-        寸法,
-        クリア色,
-        pipeline,
-        ジオメトリ入力,
-        シャドウ入力,
-        スキニング入力,
-        布入力,
-        粒子入力,
-        ブルーム入力,
-        トーンマップ入力,
-        ui入力,
-        描画方式,
-    );
-    let 計測マッピング = graph::実行する(device, command_buffer, グラフ, クエリプール);
-
-    // 安全性: command_bufferは記録開始済みで、対応するend呼び出し。
-    unsafe { device.end_command_buffer(command_buffer)? };
-    Ok(計測マッピング)
+    Ok(())
 }

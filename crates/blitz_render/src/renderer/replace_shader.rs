@@ -13,13 +13,9 @@ impl レンダラー {
     /// エラーを返す（呼び出し元のblitz_appはこれを「コンパイル失敗、旧パイプライン継続」
     /// として扱う）。
     pub fn シェーダーを差し替える(&mut self, シェーダー: シェーダー一式) -> Result<(), レンダラーエラー> {
-        let 新パイプライン = vulkan::pipeline::パイプライン::生成する(
-            &self.device,
-            self.swapchain.画像形式,
-            深度形式,
-            self.ディスクリプタ.layout,
-            &シェーダー,
-        )?;
+        let ディスクリプタlayout = self.ディスクリプタ.layout;
+        let 新パイプライン =
+            vulkan::pipeline::パイプライン::生成する(&self.device, self.swapchain.画像形式, 深度形式, ディスクリプタlayout, &シェーダー)?;
 
         // 安全性: 旧パイプラインの使用完了を待ってから破棄する。
         unsafe { self.device.device_wait_idle()? };

@@ -14,6 +14,14 @@ struct FrameUniformLight
 [[vk::binding(3, 0)]]
 ConstantBuffer<FrameUniformLight> frameUniformLight;
 
+struct ObjectUniformTransform
+{
+    column_major float4x4 localToWorld;
+};
+
+[[vk::binding(5, 0)]]
+ConstantBuffer<ObjectUniformTransform> objectUniformTransform;
+
 struct VertexInput
 {
     [[vk::location(0)]] float3 position : POSITION;
@@ -28,7 +36,8 @@ struct VertexOutput
 VertexOutput vertexMain(VertexInput input)
 {
     VertexOutput output;
-    output.position = mul(frameUniformLight.lightViewProjection, float4(input.position, 1.0));
+    float4 worldPosition = mul(objectUniformTransform.localToWorld, float4(input.position, 1.0));
+    output.position = mul(frameUniformLight.lightViewProjection, worldPosition);
     return output;
 }
 

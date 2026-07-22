@@ -12,7 +12,7 @@ pub(super) fn 描画コマンドを積む(
     command_buffer: vk::CommandBuffer,
     pipeline: vk::Pipeline,
     寸法: vk::Extent2D,
-    ジオメトリ入力: &ジオメトリ入力,
+    ジオメトリ一覧: &[ジオメトリ入力],
 ) {
     let viewport = vk::Viewport::default()
         .x(0.0)
@@ -27,26 +27,26 @@ pub(super) fn 描画コマンドを積む(
     };
     let viewport一覧 = [viewport];
     let シザー一覧 = [シザー];
-    let 頂点バッファ一覧 = [ジオメトリ入力.頂点バッファ];
     let オフセット一覧 = [0u64];
-    let ディスクリプタセット一覧 = [ジオメトリ入力.ディスクリプタセット];
 
-    // 安全性: command_bufferは記録中で、pipeline・各バッファ・ディスクリプタセットは生成済み。
+    // 安全性: command_bufferは記録中で、pipelineと全対象のバッファ・ディスクリプタセットは生成済み。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, pipeline);
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
         device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
-        device.cmd_bind_descriptor_sets(
-            command_buffer,
-            vk::PipelineBindPoint::GRAPHICS,
-            ジオメトリ入力.layout,
-            0,
-            &ディスクリプタセット一覧,
-            &[],
-        );
-        device.cmd_bind_vertex_buffers(command_buffer, 0, &頂点バッファ一覧, &オフセット一覧);
-        device.cmd_bind_index_buffer(command_buffer, ジオメトリ入力.インデックスバッファ, 0, vk::IndexType::UINT32);
-        device.cmd_draw_indexed(command_buffer, ジオメトリ入力.インデックス数, 1, 0, 0, 0);
+        for 入力 in ジオメトリ一覧 {
+            device.cmd_bind_descriptor_sets(
+                command_buffer,
+                vk::PipelineBindPoint::GRAPHICS,
+                入力.layout,
+                0,
+                &[入力.ディスクリプタセット],
+                &[],
+            );
+            device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &オフセット一覧);
+            device.cmd_bind_index_buffer(command_buffer, 入力.インデックスバッファ, 0, vk::IndexType::UINT32);
+            device.cmd_draw_indexed(command_buffer, 入力.インデックス数, 1, 0, 0, 0);
+        }
     }
 }
 
