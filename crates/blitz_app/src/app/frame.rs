@@ -64,10 +64,19 @@ impl アプリ {
             .as_ref()
             .map(|window| super::aspect::計算する(window.inner_size()))
             .unwrap_or(1.0);
-        let 視点 = blitz_render::描画視点::生成する(self.カメラ.ビュー射影変換を作る(アスペクト比), self.カメラ.視点ワールド位置());
+        let カメラ位置 = self.カメラ.視点ワールド位置();
+        let 入力カメラ大域原点 = blitz_math::大域ワールド位置::局所ワールド位置から生成する(カメラ位置);
+        let 視点 = blitz_render::描画視点::生成する(self.カメラ.ビュー射影変換を作る(アスペクト比), カメラ位置, 入力カメラ大域原点);
+        let カメラ大域原点 = 視点.カメラ大域原点();
         let 視点一覧 = blitz_render::描画視点一覧::生成する(視点, Vec::new());
         if self.現在フレーム == 0 && self.描画対象数.is_some() {
             crate::reports::描画視点構成を表示する(視点一覧.視点数());
+            let 原点 = blitz_math::大域ワールド位置::生成する(
+                blitz_math::大域メートル::生成する(0.0),
+                blitz_math::大域メートル::生成する(0.0),
+                blitz_math::大域メートル::生成する(0.0),
+            );
+            crate::reports::座標変換を表示する(原点, 原点.カメラ相対へ変換する(カメラ大域原点));
         }
         blitz_render::フレーム描画入力 {
             クリア色: self.クリア色,
