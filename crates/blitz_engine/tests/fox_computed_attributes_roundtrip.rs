@@ -36,7 +36,7 @@ fn foxの計算充填法線と接線は単位長かつ直交する() {
         Err(誤り) => panic!("assets/samples/Fox/Fox.glbの読込に失敗した(cargo xtask fetch-assetsで取得済みか確認): {誤り}"),
     };
 
-    for 頂点 in &シーン.メッシュ.頂点一覧 {
+    for 頂点 in &シーン.先頭の描画対象().メッシュ().頂点一覧 {
         let 法線長さ二乗 = 内積(頂点.法線, 頂点.法線);
         assert!(
             (法線長さ二乗 - 1.0).abs() < 1e-3,

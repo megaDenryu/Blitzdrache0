@@ -5,6 +5,7 @@
 
 mod animation_clip;
 mod catalog;
+mod chunk_id;
 mod error;
 mod id;
 mod interpolation_kind;
@@ -15,6 +16,8 @@ mod loader;
 mod material_data;
 mod mesh_data;
 mod pbr_material_data;
+mod render_object_data;
+mod render_object_id;
 mod scene_data;
 mod skin_data;
 mod skin_vertex_attribute;
@@ -24,6 +27,7 @@ mod vertex_attribute;
 
 pub use animation_clip::アニメーションクリップ;
 pub use catalog::カタログ;
+pub use chunk_id::チャンクID;
 pub use error::アセットエラー;
 pub use id::{アセットID, アセットIDエラー};
 pub use interpolation_kind::補間種別;
@@ -34,6 +38,8 @@ pub use loader::シーンを読み込む;
 pub use material_data::マテリアルデータ;
 pub use mesh_data::メッシュデータ;
 pub use pbr_material_data::金属粗さPBRデータ;
+pub use render_object_data::描画対象データ;
+pub use render_object_id::描画対象ID;
 pub use scene_data::シーンデータ;
 pub use skin_data::スキンデータ;
 pub use skin_vertex_attribute::スキン頂点属性;
