@@ -21,6 +21,8 @@ mod render_object_id;
 mod runtime_format;
 #[cfg(test)]
 mod runtime_format_tests;
+#[cfg(test)]
+mod runtime_scene_tests;
 mod scene_data;
 mod skin_data;
 mod skin_vertex_attribute;
@@ -44,7 +46,8 @@ pub use pbr_material_data::金属粗さPBRデータ;
 pub use render_object_data::描画対象データ;
 pub use render_object_id::描画対象ID;
 pub use runtime_format::{
-    アセット実行時形式エラー, アセット形式版, 実行時アセット, 実行時アセットを格納する, 実行時アセットを開く, 実行時アセット種別,
+    アセット実行時形式エラー, アセット形式版, シーンを実行時形式へ格納する, 実行時アセット, 実行時アセットを格納する, 実行時アセットを開く,
+    実行時アセット種別, 実行時形式からシーンを読む,
 };
 pub use scene_data::シーンデータ;
 pub use skin_data::スキンデータ;

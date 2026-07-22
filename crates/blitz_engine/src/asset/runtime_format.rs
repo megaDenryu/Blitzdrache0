@@ -2,9 +2,11 @@
 
 mod error;
 mod header;
+mod scene_v1;
 
 pub use error::アセット実行時形式エラー;
 pub use header::{実行時アセットを格納する, 実行時アセットを開く};
+pub use scene_v1::{シーンを実行時形式へ格納する, 実行時形式からシーンを読む};
 
 pub(super) const ヘッダー長: usize = 24;
 pub(super) const 固定識別値: [u8; 8] = *b"BLITZAST";
