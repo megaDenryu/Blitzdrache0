@@ -2,17 +2,15 @@
 //! カメラ位置・ライティング有効フラグの追加で引数が増えたため、
 //! `一フレーム描画する`系のAPIはこの1つの入力にまとめる。
 
-use blitz_math::{クリップ, ワールド, 位置, 変換};
-
 use crate::clear_color::クリアカラー;
 use crate::ui_draw_data::UI描画データ;
+use crate::view_input::描画視点一覧;
 
 #[derive(Debug, Clone)]
 pub struct フレーム描画入力 {
     pub クリア色: クリアカラー,
-    pub ビュー射影: 変換<ワールド, クリップ>,
-    /// PBRのライティング計算(視線ベクトル)に使うカメラのワールド位置。
-    pub カメラ位置: 位置<ワールド>,
+    /// 1フレームで描画する非空の視点一覧。通常画面も要素数1として表す。
+    pub 視点一覧: 描画視点一覧,
     /// falseならunlit(albedo*TINTのみ)、trueならCook-Torrance GGX + Lambertの
     /// フルライティングを行う(判断26)。
     pub ライティング有効: bool,

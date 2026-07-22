@@ -36,6 +36,9 @@ mod ui_texture_material;
 mod ui_vertex;
 mod validation_counter;
 mod vertex;
+mod view_input;
+#[cfg(test)]
+mod view_input_tests;
 mod vulkan;
 mod vulkan_failure;
 
@@ -69,4 +72,5 @@ pub use ui_texture_material::{UIテクスチャ素材, UIテクスチャ素材�
 pub use ui_vertex::UI頂点;
 pub use validation_counter::検証カウンタ;
 pub use vertex::頂点;
+pub use view_input::{描画視点, 描画視点一覧};
 pub use vulkan_failure::Vulkan失敗コード;

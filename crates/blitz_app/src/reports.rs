@@ -9,6 +9,11 @@ pub(crate) fn 描画対象構成を表示する(描画対象数: usize) {
     println!("  シャドウ描画発行数/フレーム: {描画対象数}");
 }
 
+pub(crate) fn 描画視点構成を表示する(視点数: usize) {
+    println!("描画視点構成:");
+    println!("  視点数: {視点数}");
+}
+
 pub(crate) fn gpuメモリ統計を表示する(統計: &blitz_render::GPUメモリ統計) {
     println!("Vulkanメモリ確保:");
     println!("  現在確保数: {}", 統計.現在確保数());

@@ -64,10 +64,14 @@ impl アプリ {
             .as_ref()
             .map(|window| super::aspect::計算する(window.inner_size()))
             .unwrap_or(1.0);
+        let 視点 = blitz_render::描画視点::生成する(self.カメラ.ビュー射影変換を作る(アスペクト比), self.カメラ.視点ワールド位置());
+        let 視点一覧 = blitz_render::描画視点一覧::生成する(視点, Vec::new());
+        if self.現在フレーム == 0 && self.描画対象数.is_some() {
+            crate::reports::描画視点構成を表示する(視点一覧.視点数());
+        }
         blitz_render::フレーム描画入力 {
             クリア色: self.クリア色,
-            ビュー射影: self.カメラ.ビュー射影変換を作る(アスペクト比),
-            カメラ位置: self.カメラ.視点ワールド位置(),
+            視点一覧,
             ライティング有効: self.ライティング有効,
             露出: self.露出,
             スキン行列一覧: self
