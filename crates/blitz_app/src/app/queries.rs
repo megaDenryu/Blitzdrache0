@@ -1,6 +1,6 @@
 //! アプリ状態の読み出しと終了処理(main.rsの終了処理する等が使う照会メソッド群)。
 
-use blitz_render::{レンダラー, 検証カウンタ};
+use blitz_render::{CPU区間時間, レンダラー, 検証カウンタ};
 
 use super::アプリ;
 use crate::error::起動エラー;
@@ -33,6 +33,10 @@ impl アプリ {
     /// `--report-frame-times`で収集した、ウォームアップ後のCPU側フレーム間隔分布を返す。
     pub(crate) fn フレーム時間統計を取得する(&self) -> Option<super::frame_timing::フレーム時間統計> {
         self.フレーム間隔計測.as_ref().and_then(super::frame_timing::フレーム間隔計測::集計する)
+    }
+
+    pub(crate) fn レンダラーcpu区間時間を取得する(&self) -> &[CPU区間時間] {
+        self.レンダラー.as_ref().map_or(&[], レンダラー::cpu区間時間一覧を取得する)
     }
 
     /// イベントループ終了後に呼び、破棄順序を明示する。

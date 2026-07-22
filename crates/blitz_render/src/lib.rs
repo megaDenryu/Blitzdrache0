@@ -48,7 +48,7 @@ pub use particle_material::{粒子素材, 粒子素材エラー};
 pub use particle_shader_set::{粒子シェーダー一式, 粒子シェーダー一式エラー};
 pub use readback_image::読み戻し画像;
 pub use readback_result::読み戻し結果;
-pub use renderer::レンダラー;
+pub use renderer::{CPU区間時間, レンダラー};
 pub use shader_bundle::シェーダー束;
 pub use shader_set::{シェーダー一式, シェーダー一式エラー};
 pub use skin_mesh::{スキンメッシュ素材, スキンメッシュ素材エラー, スキン頂点属性};

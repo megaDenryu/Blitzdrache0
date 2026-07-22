@@ -4,6 +4,7 @@
 //! 参照: CLAUDE.md「unsafe の規律」「封じ込め」。ash型は一切ここから公開しない。
 
 mod cloth_write;
+mod cpu_timing;
 mod destroy;
 mod draw;
 mod draw_dispatch;
@@ -27,6 +28,8 @@ use crate::extent::ウィンドウ寸法;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
 use crate::vulkan::sync::フレームインフライト数;
+
+pub use cpu_timing::CPU区間時間;
 
 /// Vulkanインスタンス・デバイス・スワップチェーン・同期プリミティブを保持し、
 /// 毎フレーム立方体をカメラのビュー射影行列で提示するレンダラー。
@@ -76,6 +79,7 @@ pub struct レンダラー {
     粒子: Option<vulkan::particles::粒子リソース一式>,
     /// タイムスタンプ非対応デバイスでは`None`(判断30: 計測無効は型で表す)。
     gpu計測: Option<vulkan::gpu_timing::パス別GPU計測>,
+    cpu区間計測: Option<cpu_timing::CPU区間計測>,
     /// 開発用UI(egui)描画一式(判断33・34)。表示のオン/オフは入力側の有無で決まるため、常に生成する。
     ui一式: vulkan::ui::UIリソース一式,
     読み戻しバッファ: Option<vulkan::readback::読み戻しバッファ>,

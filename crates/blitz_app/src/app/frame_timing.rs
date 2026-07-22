@@ -7,7 +7,7 @@ use std::time::Instant;
 
 use crate::cli::起動モード;
 
-const ウォームアップフレーム数: u32 = 120;
+pub(crate) const ウォームアップフレーム数: u32 = 120;
 const 突発遅延境界MS: f64 = 25.0;
 
 pub(super) struct フレーム間隔計測 {
@@ -28,16 +28,10 @@ pub(crate) struct フレーム時間統計 {
 
 impl フレーム間隔計測 {
     pub(super) fn 生成する(モード: 起動モード) -> Self {
-        let 容量 = match モード {
-            起動モード::スモーク実行 { フレーム数 } | 起動モード::ベンチ実行 { フレーム数 } => {
-                フレーム数.saturating_sub(ウォームアップフレーム数)
-            }
-            起動モード::無期限実行 => 0,
-        };
         Self {
             前回開始: None,
             呼出回数: 0,
-            間隔一覧ms: Vec::with_capacity(usize::try_from(容量).unwrap_or_else(|_| panic!("フレーム数がusizeに収まらない"))),
+            間隔一覧ms: Vec::with_capacity(標本容量(モード)),
         }
     }
 
@@ -57,7 +51,17 @@ impl フレーム間隔計測 {
     }
 }
 
-fn 集計する(間隔一覧ms: &[f64]) -> Option<フレーム時間統計> {
+pub(crate) fn 標本容量(モード: 起動モード) -> usize {
+    let 容量 = match モード {
+        起動モード::スモーク実行 { フレーム数 } | 起動モード::ベンチ実行 { フレーム数 } => {
+            フレーム数.saturating_sub(ウォームアップフレーム数)
+        }
+        起動モード::無期限実行 => 0,
+    };
+    usize::try_from(容量).unwrap_or_else(|_| panic!("フレーム数がusizeに収まらない"))
+}
+
+pub(crate) fn 集計する(間隔一覧ms: &[f64]) -> Option<フレーム時間統計> {
     if 間隔一覧ms.is_empty() {
         return None;
     }

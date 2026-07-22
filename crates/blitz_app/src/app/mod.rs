@@ -23,7 +23,7 @@ use blitz_engine::カメラ;
 use blitz_render::{クリアカラー, レンダラー};
 use winit::window::Window;
 
-pub(crate) use frame_timing::フレーム時間統計;
+pub(crate) use frame_timing::{フレーム時間統計, 集計する};
 
 use crate::cli::{布モード, 粒子表示モード, 起動モード};
 use crate::dev_ui::開発UI;

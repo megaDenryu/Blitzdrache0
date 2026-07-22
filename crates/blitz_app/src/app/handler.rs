@@ -1,5 +1,4 @@
 //! `ApplicationHandler` 実装。winit所有ループ(パターンA)の受け口。参照: `_doc/設計/イベントループとフレームペーシング.md`
-
 use winit::application::ApplicationHandler;
 use winit::event::{ElementState, KeyEvent, WindowEvent};
 use winit::event_loop::ActiveEventLoop;
@@ -24,7 +23,13 @@ impl ApplicationHandler for アプリ {
             self.ポスト処理有効,
             self.布モード,
         ) {
-            Ok((window, レンダラー, 開発ui, アニメーション, 布プリセット)) => {
+            Ok((window, mut レンダラー, 開発ui, アニメーション, 布プリセット)) => {
+                if self.フレーム間隔計測.is_some() {
+                    レンダラー.cpu区間計測を有効にする(
+                        super::frame_timing::ウォームアップフレーム数,
+                        super::frame_timing::標本容量(self.起動モード),
+                    );
+                }
                 self.window = Some(window);
                 self.レンダラー = Some(レンダラー);
                 self.開発ui = Some(開発ui);

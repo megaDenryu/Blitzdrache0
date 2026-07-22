@@ -1,11 +1,22 @@
 //! レンダラーの読み取り系アクセサと寸法変更通知。`mod.rs`の行数分割のための切り出し。
 
+use super::cpu_timing::{CPU区間時間, CPU区間計測};
 use super::レンダラー;
 use crate::extent::ウィンドウ寸法;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
 
 impl レンダラー {
+    /// ベンチ用CPU区間計測を有効にする。通常実行では計測時計を読まない。
+    pub fn cpu区間計測を有効にする(&mut self, ウォームアップフレーム数: u32, 標本容量: usize) {
+        self.cpu区間計測 = Some(CPU区間計測::生成する(ウォームアップフレーム数, 標本容量));
+    }
+
+    /// ウォームアップ後に収集したレンダラーCPU区間時間を返す。
+    pub fn cpu区間時間一覧を取得する(&self) -> &[CPU区間時間] {
+        self.cpu区間計測.as_ref().map_or(&[], CPU区間計測::時間一覧)
+    }
+
     /// 現在までのvalidationエラー・警告合計件数を読めるカウンタを複製して返す。
     /// 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断3」。
     /// 読み取りはレンダラー破棄後に行うこと。
