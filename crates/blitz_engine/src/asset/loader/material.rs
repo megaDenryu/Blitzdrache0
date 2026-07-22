@@ -5,6 +5,7 @@ use std::path::PathBuf;
 
 use crate::asset::error::アセットエラー;
 use crate::asset::material_data::マテリアルデータ;
+use crate::asset::pbr_material_data::金属粗さPBRデータ;
 use crate::asset::texture_data::テクスチャデータ;
 
 use super::document::開いた文書;
@@ -23,14 +24,14 @@ pub(super) fn マテリアルを取り出す(
     let 法線マップ = 法線情報から取り出す(文書, マテリアル.normal_texture(), &mut 参照ファイル一覧)?;
 
     Ok((
-        マテリアルデータ {
+        マテリアルデータ::金属粗さPBR(金属粗さPBRデータ {
             ベースカラー,
             金属粗さ,
             法線マップ,
             ベースカラー係数: pbr.base_color_factor(),
             金属度係数: pbr.metallic_factor(),
             粗さ係数: pbr.roughness_factor(),
-        },
+        }),
         参照ファイル一覧,
     ))
 }

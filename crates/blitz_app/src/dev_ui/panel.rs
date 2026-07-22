@@ -6,8 +6,8 @@ use super::stats::開発UI統計;
 
 pub(super) fn 内容を描く(ctx: &egui::Context, 統計: &開発UI統計, 露出: &mut f32, ブレンド: &mut f32) {
     egui::Window::new("Blitzdrache0 dev").resizable(false).show(ctx, |ui| {
-        // フレーム間隔はFIFO提示のvsync待ちを含むため、60Hz環境では常に約16.7msになる。
-        // GPUの実仕事量はパス別GPU時間の合計で読む(判断50: 両者の混同が「重い」誤読を生んだ)。
+        // フレーム間隔はFIFO提示のvsync待ちを含むため、60Hz環境では約16.7msが基準になるが、OS合成や提示期限超過で倍周期になり得る。
+        // GPUの実仕事量はパス別GPU時間の合計で読む(判断50・67: 両者を分離して診断する)。
         ui.label(format!(
             "frame interval: {:.3} ms (vsync待ち込み。60Hzなら約16.7msが正常)",
             統計.フレーム時間ms

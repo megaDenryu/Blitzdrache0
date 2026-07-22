@@ -7,7 +7,7 @@
 
 use std::path::PathBuf;
 
-use blitz_engine::{アセットID, カタログ, シーンを読み込む};
+use blitz_engine::{アセットID, カタログ, シーンを読み込む, マテリアルデータ};
 
 fn リポジトリルートからのパス(相対パス: &str) -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..").join(相対パス)
@@ -40,7 +40,8 @@ fn 極小四角形アセットを読み込める() {
         assert_eq!(頂点.接線, [1.0, 0.0, 0.0, 1.0]);
     }
 
-    let ベースカラー = match シーン.マテリアル.ベースカラー {
+    let マテリアルデータ::金属粗さPBR(マテリアル) = シーン.マテリアル;
+    let ベースカラー = match マテリアル.ベースカラー {
         Some(テクスチャ) => テクスチャ,
         None => panic!("quad.gltfにはbaseColorテクスチャが設定されているはず"),
     };
