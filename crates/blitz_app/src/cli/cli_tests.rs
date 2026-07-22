@@ -27,10 +27,19 @@ fn 引数なしは既定値を保つ() {
 
 #[test]
 fn フレーム時間報告と固定フレーム数を解析する() {
-    let 引数一覧 = ["--frames".to_string(), "600".to_string(), "--report-frame-times".to_string()];
+    let 引数一覧 = ["--benchmark-frames".to_string(), "600".to_string(), "--report-frame-times".to_string()];
     let Ok(設定) = 引数を解析する(&引数一覧) else {
         panic!("有効な引数は解析できるはず");
     };
-    assert!(matches!(設定.モード, 起動モード::スモーク実行 { フレーム数: 600 }));
+    assert!(matches!(設定.モード, 起動モード::ベンチ実行 { フレーム数: 600 }));
     assert!(設定.フレーム時間報告);
+}
+
+#[test]
+fn スモーク用フレーム数をベンチ実行と区別する() {
+    let 引数一覧 = ["--frames".to_string(), "60".to_string()];
+    let Ok(設定) = 引数を解析する(&引数一覧) else {
+        panic!("有効な引数は解析できるはず");
+    };
+    assert!(matches!(設定.モード, 起動モード::スモーク実行 { フレーム数: 60 }));
 }

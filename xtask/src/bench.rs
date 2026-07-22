@@ -18,12 +18,13 @@ pub fn 実行する() -> ExitCode {
 
     let 引数一覧 = [
         "run",
+        "--release",
         "-p",
         "blitz_app",
         "--",
         "--scene",
         "helmet",
-        "--frames",
+        "--benchmark-frames",
         フレーム数,
         "--particles",
         "--report-gpu-times",

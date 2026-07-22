@@ -19,6 +19,7 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動設
     while let Some(引数値) = 引数.next() {
         match 引数値.as_str() {
             "--frames" => 起動設定.モード = value_args::frames引数を処理する(&mut 引数)?,
+            "--benchmark-frames" => 起動設定.モード = value_args::benchmark_frames引数を処理する(&mut 引数)?,
             "--shader-source" => {
                 起動設定.シェーダー監視パス = value_args::shader_source引数を処理する(&mut 引数)?;
             }

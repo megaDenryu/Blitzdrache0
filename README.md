@@ -133,7 +133,7 @@ cargo xtask             # 開発ツールの一覧表示（ツールの唯一の
 cargo xtask verify      # 検証の標準列 (conform -> check -> clippy -D warnings -> test)
 cargo xtask conform     # 規約適合の機械検査（行数・禁止文字列・依存白リスト・参照パス実在）
 cargo xtask smoke       # DoD自動検証: 5ステージの自己操作つき実行 + validation件数 + ピクセル読み戻し判定
-cargo xtask bench       # 固定シーンのベンチマーク（パス別GPU時間 + CPU側フレーム間隔分布）
+cargo xtask bench       # リリース版固定シーンのベンチマーク（パス別GPU時間 + CPU側フレーム間隔分布）
 cargo xtask gen-smoke-asset  # スモーク用アセットの再生成
 cargo xtask fetch-assets     # DamagedHelmet等の標準サンプル取得
 ```
@@ -157,5 +157,6 @@ cargo xtask fetch-assets     # DamagedHelmet等の標準サンプル取得
 - [イベントループとフレームペーシング](_doc/設計/イベントループとフレームペーシング.md) — 16.6msを誰が作るか（提示モードが主役）、winit所有ループと自前所有ループ（pump_app_events）の2パターン、およびA→Bの移行手順
 - [開発ループとコンパイル時間](_doc/設計/開発ループとコンパイル時間.md) — 3層ホットリロード（シェーダー/アセット/パラメータは再コンパイル不要）、部分コンパイルの仕組みと施策（rust-lld等）、コードホットリロードの扉
 - [シミュレーション層](_doc/設計/シミュレーション層.md) — 3層構造（表現はドメイン・数学は基盤）と介入モデル
+- [M11計測記録](_doc/計測/M11_2026-07-23.md) — 固定ベンチと長時間実行の追記専用記録
 - シェーダー言語は Slang を採用済み（M1で導入。SPIR-V/DXIL/Metal 出力可。API より移植性に効くため先に固定。ビルド時は build.rs、実行中はホットリロードが slangc を呼ぶ）
 - 当面 Windows + Vulkan のみ。Vulkan 自体がポータブルなため Linux/Android/MoltenVK 展開は後から可能。RHI（マルチAPI抽象層）はコンソール対応が現実になった時点で切り出す

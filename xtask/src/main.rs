@@ -37,6 +37,6 @@ fn 使い方を表示する() {
     println!("  smoke            blitz_appを--framesで自動実行し、validation件数0を終了コードで確認する");
     println!("  gen-smoke-asset  スモーク用極小glTFアセットをassets/smoke/へ生成する");
     println!("  fetch-assets     標準サンプル(DamagedHelmet・Fox)をassets/samples/へ取得する(curl.exe使用)");
-    println!("  bench            固定シーン+固定フレーム数でblitz_appを実行し、パス別GPU時間を表示する");
+    println!("  bench            リリース版の固定シーンを600フレーム実行し、GPU時間とCPU側フレーム間隔分布を表示する");
     println!("  m10-bench        M10流体GPU試作を固定条件で実行し、検証件数とGPU時間を表示する");
 }
