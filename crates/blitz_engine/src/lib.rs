@@ -15,6 +15,9 @@ mod frame_composition;
 #[cfg(test)]
 mod frame_composition_tests;
 mod lighting;
+mod streaming;
+#[cfg(test)]
+mod streaming_tests;
 
 pub use animation::{スキン行列を計算する, スキン行列一覧, ブレンドする, 姿勢, 姿勢を評価する, 関節TRS};
 pub use asset::{
@@ -28,3 +31,4 @@ pub use asset::{
 pub use camera::{カメラ, カメラインテント};
 pub use frame_composition::既定フレーム構成を作る;
 pub use lighting::既定ライティングを作る;
+pub use streaming::{チャンク座標, チャンク格子, チャンク格子エラー, チャンク要求};
