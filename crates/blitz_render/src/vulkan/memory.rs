@@ -5,6 +5,18 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 
+pub(crate) fn 専用メモリを確保する(
+    device: &ash::Device,
+    バイト数: u64,
+    メモリ型添字: u32,
+) -> Result<vk::DeviceMemory, レンダラーエラー> {
+    let alloc_info = vk::MemoryAllocateInfo::default()
+        .allocation_size(バイト数)
+        .memory_type_index(メモリ型添字);
+    // 安全性: deviceは生成済みで有効。alloc_infoはこの関数内の値だけを参照する。
+    Ok(unsafe { device.allocate_memory(&alloc_info, None)? })
+}
+
 pub(crate) fn ホスト可視メモリ型を選ぶ(
     プロパティ一覧: &vk::PhysicalDeviceMemoryProperties,
     要求メモリ型ビット: u32,

@@ -64,11 +64,7 @@ fn メモリを確保して結びつける(
     // 安全性: 画像は直前に生成済み。
     let 要件 = unsafe { device.get_image_memory_requirements(画像) };
     let メモリ型添字 = memory::デバイスローカルメモリ型を選ぶ(メモリプロパティ, 要件.memory_type_bits)?;
-    let alloc_info = vk::MemoryAllocateInfo::default()
-        .allocation_size(要件.size)
-        .memory_type_index(メモリ型添字);
-    // 安全性: deviceは生成済みで有効。alloc_infoは直前に構築した値のみを参照する。
-    let memory = unsafe { device.allocate_memory(&alloc_info, None)? };
+    let memory = memory::専用メモリを確保する(device, 要件.size, メモリ型添字)?;
     // 安全性: 画像・memoryはともに直前に生成済みで、offsetは0(専用確保のため衝突しない)。
     unsafe { device.bind_image_memory(画像, memory, 0)? };
     Ok(memory)

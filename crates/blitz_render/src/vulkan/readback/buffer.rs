@@ -35,16 +35,12 @@ impl 読み戻しバッファ {
             }
         };
 
-        let alloc_info = vk::MemoryAllocateInfo::default()
-            .allocation_size(要件.size)
-            .memory_type_index(メモリ型添字);
-        // 安全性: deviceは生成済みで有効。alloc_infoは直前に構築した値のみを参照する。
-        let memory = match unsafe { device.allocate_memory(&alloc_info, None) } {
+        let memory = match memory::専用メモリを確保する(device, 要件.size, メモリ型添字) {
             Ok(memory) => memory,
             Err(誤り) => {
                 // 安全性: bufferはこのスコープの唯一の所有者で、以降使用しない。
                 unsafe { device.destroy_buffer(handle, None) };
-                return Err(誤り.into());
+                return Err(誤り);
             }
         };
 
