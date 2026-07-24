@@ -9,7 +9,27 @@ use crate::fetch_assets;
 
 const フレーム数: &str = "600";
 
+/// 実表示計測を有効にするかどうか。2つの計測条件を取り違えないよう、真偽値でなく型で持つ。
+///
+/// 注意: `あり`は`vkWaitForPresentKHR`が表示まで描画ループを止める条件であり、拡張の有効化も伴う。
+/// 既存の性能時系列(M11以降)と比較する値は`なし`で採る。両条件の比較は交互実行で行うこと。
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum 実表示計測 {
+    なし,
+    あり,
+}
+
 pub fn 実行する() -> ExitCode {
+    条件を指定して実行する(実表示計測::なし)
+}
+
+pub fn 実表示計測つきで実行する() -> ExitCode {
+    println!("[xtask] 注意: 実表示計測は表示まで描画ループを止めるため、フレームペーシングを変えうる条件である");
+    println!("[xtask] 注意: 既存の性能時系列と比較する値は`cargo xtask bench`で採ること");
+    条件を指定して実行する(実表示計測::あり)
+}
+
+fn 条件を指定して実行する(実表示計測: 実表示計測) -> ExitCode {
     println!("[xtask] ベンチ用アセットの取得確認");
     if fetch_assets::実行する() != ExitCode::SUCCESS {
         eprintln!("[xtask] benchのアセット取得に失敗した");
@@ -19,7 +39,7 @@ pub fn 実行する() -> ExitCode {
         return ExitCode::FAILURE;
     }
 
-    let 引数一覧 = [
+    let mut 引数一覧 = vec![
         "run",
         "--release",
         "-p",
@@ -34,7 +54,14 @@ pub fn 実行する() -> ExitCode {
         "--report-frame-times",
         "--report-memory",
     ];
+    if 実表示計測 == 実表示計測::あり {
+        引数一覧.push("--report-display-timing");
+    }
     println!("[xtask] cargo {} を実行", 引数一覧.join(" "));
+    子プロセスを実行する(&引数一覧)
+}
+
+fn 子プロセスを実行する(引数一覧: &[&str]) -> ExitCode {
     match Command::new("cargo").args(引数一覧).status() {
         Ok(状態) if 状態.success() => {
             println!("[xtask] bench成功");

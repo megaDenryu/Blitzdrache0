@@ -12,6 +12,7 @@ impl ApplicationHandler for アプリ {
         if self.レンダラー.is_some() {
             return;
         }
+        let 実表示計測要求 = super::measurement_setup::実表示計測要求を決める(self);
         match super::window_setup::ウィンドウとレンダラーを作る(
             event_loop,
             &self.シーン名,
@@ -22,13 +23,11 @@ impl ApplicationHandler for アプリ {
             self.開発ui初期有効,
             self.フレーム構成,
             self.布モード,
+            実表示計測要求,
         ) {
             Ok((window, mut レンダラー, 開発ui, アニメーション, 布プリセット)) => {
-                if self.フレーム間隔計測.is_some() {
-                    レンダラー.cpu区間計測を有効にする(
-                        super::frame_timing::ウォームアップフレーム数,
-                        super::frame_timing::標本容量(self.起動モード),
-                    );
+                if let Some(状況) = super::measurement_setup::レンダラーの計測を有効にする(&mut レンダラー, self) {
+                    println!("実表示時刻計測: {}", 状況.名称());
                 }
                 self.window = Some(window);
                 self.レンダラー = Some(レンダラー);

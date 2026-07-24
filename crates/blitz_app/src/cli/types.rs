@@ -1,6 +1,6 @@
 //! CLI引数から得る型: 起動モード・起動設定一式。
 
-use super::描画対象数;
+use super::{布モード, 描画対象数, 粒子表示モード};
 use std::path::PathBuf;
 
 const 既定シェーダー監視パス: &str = "shaders/scene.slang";
@@ -57,6 +57,12 @@ pub(crate) struct 起動設定 {
     /// 布シミュレーションの方式(判断52・56)。`--cloth`=吊るし布(全シーン可)、
     /// `--cloth-cape`=マント(fox限定、キャラ追従)。既定はなし。
     pub(crate) 布モード: 布モード,
+    /// `--report-display-timing`指定でtrue。提示IDと提示待機で実表示間隔を測る。
+    ///
+    /// 注意: この計測は`vkWaitForPresentKHR`で表示まで描画ループを止める(2026-07-25の実測で毎フレーム
+    /// 約16ms)。フレームペーシングを変えうるため、既存の性能時系列と比較する値を採るときは指定しない。
+    /// この指定の有無で条件が変わるので、両条件を比べるときは交互に実行して機材側の時間変動を打ち消すこと。
+    pub(crate) 実表示時間報告: bool,
 }
 
 impl 起動設定 {
@@ -78,23 +84,7 @@ impl 起動設定 {
             露出: 1.0,
             ブレンド: 0.0,
             布モード: 布モード::なし,
+            実表示時間報告: false,
         }
     }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum 布モード {
-    なし,
-    吊るし布,
-    マント,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum 粒子表示モード {
-    なし,
-    粒子トイ,
-    表面流,
-    Sph512,
-    Sph1024,
-    Sph2048,
 }

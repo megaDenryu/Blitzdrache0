@@ -11,6 +11,7 @@ mod frame_timing;
 mod frame_ui;
 mod handler;
 mod hot_reload_apply;
+mod measurement_setup;
 mod particle_setup;
 mod queries;
 mod scene_camera;
@@ -52,6 +53,8 @@ pub(crate) struct アプリ {
     gpu時間報告: bool,
     gpuメモリ報告: bool,
     フレーム間隔計測: Option<frame_timing::フレーム間隔計測>,
+    /// `--report-display-timing`指定でtrue。フレーム時間報告とは独立に切り替える(この計測は描画ループを止めるため)。
+    実表示時間報告: bool,
     開発ui: Option<開発UI>,
     開発ui初期有効: bool,
     フレームダンプ先: Option<PathBuf>,

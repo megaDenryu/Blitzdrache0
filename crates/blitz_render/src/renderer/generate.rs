@@ -13,6 +13,7 @@ use crate::error::レンダラーエラー;
 use crate::extent::ウィンドウ寸法;
 use crate::frame_composition::{フレーム構成, フレーム段階};
 use crate::particle_material::粒子素材;
+use crate::present_display_request::実表示計測要求;
 use crate::render_scene_material::描画シーン素材;
 use crate::shader_bundle::シェーダー束;
 use crate::skin_mesh::スキンメッシュ素材;
@@ -32,9 +33,10 @@ impl レンダラー {
         布: Option<布素材>,
         粒子: Option<粒子素材>,
         フレーム構成: フレーム構成,
+        実表示計測要求: 実表示計測要求,
     ) -> Result<Self, レンダラーエラー> {
         構成と素材を検査する(&フレーム構成, スキン.is_some(), 布.is_some(), 粒子.is_some())?;
-        let コア = core_setup::組み立てる(表示ハンドル, ウィンドウハンドル, 寸法)?;
+        let コア = core_setup::組み立てる(表示ハンドル, ウィンドウハンドル, 寸法, 実表示計測要求)?;
         let 資源 = generate_resources::組み立てる(generate_resources::生成要求 {
             instance: &コア.instance,
             physical_device: コア.physical_device,

@@ -40,8 +40,7 @@ pub use cpu_timing::CPU区間時間;
 /// 長生きすることを呼び出し元が保証する（blitz_appはフィールド宣言順で担保する）。
 pub struct レンダラー {
     // 注意: フィールドとして値が読まれることはないが、破棄まで保持し続けることに意味がある。
-    // ash::Entryを破棄するとVulkanローダー(vulkan-1.dll)がアンロードされ得るため、
-    // instance/deviceの関数ポインタが無効化される前にentryを先に破棄してはならない。
+    // ash::Entryを破棄するとVulkanローダー(vulkan-1.dll)がアンロードされ得るため、instance/deviceの関数ポインタが無効化される前にentryを先に破棄してはならない。
     #[allow(dead_code)]
     entry: ash::Entry,
     instance: ash::Instance,
@@ -84,6 +83,7 @@ pub struct レンダラー {
     /// タイムスタンプ非対応デバイスでは`None`(判断30: 計測無効は型で表す)。
     gpu計測: Option<vulkan::gpu_timing::パス別GPU計測>,
     cpu区間計測: Option<cpu_timing::CPU区間計測>,
+    実表示計測: vulkan::present_timing::実表示計測,
     /// 開発用UI(egui)描画一式(判断33・34)。表示のオン/オフは入力側の有無で決まるため、常に生成する。
     ui一式: vulkan::ui::UIリソース一式,
     読み戻しバッファ: Option<vulkan::readback::読み戻しバッファ>,

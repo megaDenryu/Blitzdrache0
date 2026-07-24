@@ -22,4 +22,6 @@ pub(crate) struct コア資源 {
     pub(crate) タイムスタンプ対応か: bool,
     /// `vk::PhysicalDeviceLimits::timestamp_period`(1tickあたりのns)。
     pub(crate) タイムスタンプ周期ns: f32,
+    /// 実表示時刻計測の使用可否。非対応環境でも生成は成立し、記録開始時に非対応を返す。
+    pub(crate) 実表示計測: vulkan::present_timing::実表示計測,
 }

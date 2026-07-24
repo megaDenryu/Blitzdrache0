@@ -142,6 +142,7 @@ cargo xtask conform     # 規約適合の機械検査（行数・禁止文字列
 cargo xtask type-metrics  # 型ごとのフィールド数・impl分散ファイル数・メソッド数を多い順に表示（違反判定はしない計測専用）
 cargo xtask smoke       # DoD自動検証: 7ステージの自己操作つき実行 + validation件数 + ピクセル読み戻し判定
 cargo xtask bench       # リリース版固定シーンのベンチマーク（GPU時間 + CPU側フレーム間隔 + GPUメモリ確保統計）
+cargo xtask bench-display-timing  # benchに実表示間隔の計測を追加（計測が描画ループを止めるためbenchの時系列とは比較不可）
 cargo xtask m11-soak    # 3600フレーム連続実行中のRAM・VRAM推移をテキスト採取
 cargo xtask object-bench  # 2対象の画素判定と1・10・100対象のGPU/CPU時間・GPUメモリ計測
 cargo xtask gen-smoke-asset  # スモーク用アセットの再生成

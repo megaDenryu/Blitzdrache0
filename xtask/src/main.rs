@@ -29,6 +29,7 @@ fn main() -> ExitCode {
         Some("gen-smoke-asset") => gen_smoke_asset::実行する(),
         Some("fetch-assets") => fetch_assets::実行する(),
         Some("bench") => bench::実行する(),
+        Some("bench-display-timing") => bench::実表示計測つきで実行する(),
         Some("m10-bench") => m10_bench::実行する(),
         Some("m11-soak") => m11_soak::実行する(),
         Some("object-bench") => object_bench::実行する(),
@@ -52,6 +53,7 @@ fn 使い方を表示する() {
     println!("  gen-smoke-asset  スモーク用極小glTFアセットをassets/smoke/へ生成する");
     println!("  fetch-assets     標準サンプル(DamagedHelmet・Fox)をassets/samples/へ取得する(curl.exe使用)");
     println!("  bench            リリース版の固定シーンを600フレーム実行し、GPU時間とCPU側フレーム間隔分布を表示する");
+    println!("  bench-display-timing  benchに実表示間隔の計測を足して実行する(計測が描画ループを止めるため既存の時系列とは比較できない)");
     println!("  m10-bench        M10流体GPU試作を固定条件で実行し、検証件数とGPU時間を表示する");
     println!("  m11-soak         3600フレーム連続実行し、RAM・VRAM推移を約5秒間隔で表示する");
     println!("  object-bench     二対象の画素判定後、1・10・100対象のGPU/CPU時間とGPUメモリを計測する");

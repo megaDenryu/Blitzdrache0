@@ -4,11 +4,12 @@ use super::レンダラー;
 use crate::vulkan::frame::{フレーム画像一式, ブルーム画像, 同期入力, 提示先};
 
 impl レンダラー {
-    pub(super) fn 提示先を組み立てる(&self, 画像添字: u32) -> 提示先<'_> {
+    pub(super) fn 提示先を組み立てる(&self, 画像添字: u32, 提示id: Option<u64>) -> 提示先<'_> {
         提示先 {
             loader: &self.swapchain_loader,
             swapchain: self.swapchain.handle,
             画像添字,
+            提示id,
         }
     }
 

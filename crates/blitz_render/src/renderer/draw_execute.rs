@@ -31,6 +31,8 @@ impl レンダラー {
         if self.再構築が必要 {
             self.スワップチェーンを再構築する()?;
         }
+        // 注意: CPU区間時計の開始(prepare)より前に置くため、ここで止まった時間はCPU区間の表に現れない。止まった時間は観測ごとの停止時間msに残る。
+        self.実表示計測.表示を待って記録する(self.swapchain.handle)?;
 
         let mut 準備 = prepare::実行する(self, &入力, 視点, &ビュー射影行列)?;
         let Some(添字) = acquire::実行する(self, 準備.フレーム添字, &mut 準備.cpu区間時計)? else {

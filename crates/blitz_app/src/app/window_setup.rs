@@ -4,7 +4,7 @@
 mod window_create;
 
 use blitz_engine::アセットID;
-use blitz_render::{ウィンドウ寸法, レンダラー};
+use blitz_render::{ウィンドウ寸法, レンダラー, 実表示計測要求};
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 use winit::event_loop::ActiveEventLoop;
 use winit::window::Window;
@@ -40,6 +40,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     開発ui初期有効: bool,
     フレーム構成: blitz_render::フレーム構成,
     布モード: crate::cli::布モード,
+    実表示計測要求: 実表示計測要求,
 ) -> Result<起動一式, 起動エラー> {
     let window = window_create::生成する(event_loop)?;
     let 表示ハンドル = window.display_handle()?.as_raw();
@@ -72,6 +73,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
         布素材,
         粒子素材,
         フレーム構成,
+        実表示計測要求,
     )?;
 
     ホットリローダー.アセット監視を設定する(カタログ, アセットID::生成する(シーン名)?, &シーン.参照ファイル一覧);

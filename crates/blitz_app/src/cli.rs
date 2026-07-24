@@ -4,12 +4,14 @@
 #[cfg(test)]
 mod cli_tests;
 
+mod modes;
 mod object_count;
 mod setting_apply;
 mod types;
 mod value_args;
+pub(crate) use modes::{布モード, 粒子表示モード};
 pub(crate) use object_count::描画対象数;
-pub(crate) use types::{布モード, 粒子表示モード, 起動モード, 起動設定};
+pub(crate) use types::{起動モード, 起動設定};
 
 use crate::error::起動エラー;
 

@@ -32,6 +32,7 @@ impl レンダラー {
         let 粒子入力 = self.粒子描画入力を組み立てる(フレーム添字);
         let クエリプール = self.gpu計測.as_ref().map(|計測| 計測.クエリプール(フレーム添字));
         let 画像一式 = self.フレーム画像一式を組み立てる(添字usize);
+        let 提示id = self.実表示計測.提示idを発番する();
         self.描画入力作業領域を更新する(フレーム添字);
 
         vulkan::frame::描画する(
@@ -39,7 +40,7 @@ impl レンダラー {
             self.queue,
             self.command_buffer一覧[フレーム添字],
             &self.フレーム構成,
-            self.提示先を組み立てる(添字),
+            self.提示先を組み立てる(添字, 提示id),
             &画像一式,
             self.swapchain.寸法,
             クリア色,

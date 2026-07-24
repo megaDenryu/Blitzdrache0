@@ -10,6 +10,7 @@ use raw_window_handle::{RawDisplayHandle, RawWindowHandle};
 use super::debug_setup::デバッグメッセンジャーを作る;
 use crate::error::レンダラーエラー;
 use crate::extent::ウィンドウ寸法;
+use crate::present_display_request::実表示計測要求;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
 pub(super) use resources::コア資源;
@@ -18,6 +19,7 @@ pub(super) fn 組み立てる(
     表示ハンドル: RawDisplayHandle,
     ウィンドウハンドル: RawWindowHandle,
     寸法: ウィンドウ寸法,
+    実表示計測要求: 実表示計測要求,
 ) -> Result<コア資源, レンダラーエラー> {
     let デバッグ有効か = cfg!(debug_assertions);
     // 安全性: プロセス内で他にVulkanローダーを読み込んでいないことは
@@ -31,8 +33,10 @@ pub(super) fn 組み立てる(
     let (surface_loader, surface) = vulkan::surface::生成する(&entry, &instance, 表示ハンドル, ウィンドウハンドル)?;
     let (physical_device, queue_family_index) = vulkan::physical_device::選定する(&instance, &surface_loader, surface)?;
     let 大点描画対応 = vulkan::physical_device::大きな点描画に対応するか(&instance, physical_device);
-    let (device, queue) = vulkan::device::生成する(&instance, physical_device, queue_family_index, 大点描画対応)?;
+    let 実表示計測状況 = vulkan::present_timing::調べる(&instance, physical_device, 実表示計測要求);
+    let (device, queue) = vulkan::device::生成する(&instance, physical_device, queue_family_index, 大点描画対応, 実表示計測状況)?;
     let swapchain_loader = ash::khr::swapchain::Device::new(&instance, &device);
+    let 実表示計測 = vulkan::present_timing::実表示計測::生成する(&instance, &device, 実表示計測状況);
 
     let swapchain = vulkan::swapchain::スワップチェーン::生成する(
         physical_device,
@@ -62,5 +66,6 @@ pub(super) fn 組み立てる(
         検証カウンタ,
         タイムスタンプ対応か,
         タイムスタンプ周期ns,
+        実表示計測,
     })
 }

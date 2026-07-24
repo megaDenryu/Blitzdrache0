@@ -25,6 +25,28 @@ fn 引数なしは既定値を保つ() {
     assert_eq!(設定.露出, 1.0);
     assert_eq!(設定.ブレンド, 0.0);
     assert_eq!(設定.布モード, 布モード::なし);
+    assert!(!設定.実表示時間報告);
+}
+
+/// 実表示計測は測定対象を乱すため、`--report-frame-times`では有効にならないことを固定する。
+#[test]
+fn フレーム時間報告だけでは実表示計測を有効にしない() {
+    let 引数一覧 = ["--report-frame-times".to_string()];
+    let Ok(設定) = 引数を解析する(&引数一覧) else {
+        panic!("有効な引数は解析できるはず");
+    };
+    assert!(設定.フレーム時間報告);
+    assert!(!設定.実表示時間報告);
+}
+
+#[test]
+fn 両方の報告を同時に指定できる() {
+    let 引数一覧 = ["--report-frame-times".to_string(), "--report-display-timing".to_string()];
+    let Ok(設定) = 引数を解析する(&引数一覧) else {
+        panic!("有効な引数は解析できるはず");
+    };
+    assert!(設定.フレーム時間報告);
+    assert!(設定.実表示時間報告);
 }
 
 #[test]

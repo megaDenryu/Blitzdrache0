@@ -1,5 +1,7 @@
 //! 終了時に要求されたGPU時間とCPU側フレーム間隔をコンソールへ表示する。
 
+pub(crate) mod display_timing;
+
 use crate::app::フレーム時間統計;
 
 pub(crate) fn 描画対象構成を表示する(描画対象数: usize) {

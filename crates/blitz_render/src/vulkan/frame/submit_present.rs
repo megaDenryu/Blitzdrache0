@@ -17,6 +17,7 @@ pub(super) fn 送信して提示する(
     提示セマフォ: vk::Semaphore,
     描画完了フェンス: vk::Fence,
     読み戻し待機が必要: bool,
+    提示id: Option<u64>,
 ) -> Result<bool, レンダラーエラー> {
     let 待機セマフォ情報 = [vk::SemaphoreSubmitInfo::default()
         .semaphore(取得セマフォ)
@@ -45,16 +46,41 @@ pub(super) fn 送信して提示する(
     let スワップチェーン一覧 = [swapchain];
     let 画像添字一覧 = [画像添字];
     let 提示待機セマフォ一覧 = [提示セマフォ];
-    let present_info = vk::PresentInfoKHR::default()
-        .wait_semaphores(&提示待機セマフォ一覧)
-        .swapchains(&スワップチェーン一覧)
-        .image_indices(&画像添字一覧);
-
-    // 安全性: 提示セマフォはこの送信のsignal対象で、GPU側の描画完了後にシグナルされる。
-    let 提示結果 = unsafe { swapchain_loader.queue_present(queue, &present_info) };
+    let 提示結果 = 提示する(
+        swapchain_loader,
+        queue,
+        &提示待機セマフォ一覧,
+        &スワップチェーン一覧,
+        &画像添字一覧,
+        提示id,
+    );
     match 提示結果 {
         Ok(劣化) => Ok(劣化),
         Err(vk::Result::ERROR_OUT_OF_DATE_KHR) => Ok(true),
         Err(誤り) => Err(誤り.into()),
     }
+}
+
+/// 実表示時刻を計測するときだけ`VkPresentIdKHR`を連結する。IDを付けない経路では連結自体を行わない。
+fn 提示する(
+    swapchain_loader: &ash::khr::swapchain::Device,
+    queue: vk::Queue,
+    提示待機セマフォ一覧: &[vk::Semaphore],
+    スワップチェーン一覧: &[vk::SwapchainKHR],
+    画像添字一覧: &[u32],
+    提示id: Option<u64>,
+) -> ash::prelude::VkResult<bool> {
+    let 基本情報 = vk::PresentInfoKHR::default()
+        .wait_semaphores(提示待機セマフォ一覧)
+        .swapchains(スワップチェーン一覧)
+        .image_indices(画像添字一覧);
+    let Some(識別子) = 提示id else {
+        // 安全性: 提示セマフォはこの送信のsignal対象で、GPU側の描画完了後にシグナルされる。
+        return unsafe { swapchain_loader.queue_present(queue, &基本情報) };
+    };
+    let 提示id一覧 = [識別子];
+    let mut 提示id情報 = vk::PresentIdKHR::default().present_ids(&提示id一覧);
+    let 提示情報 = 基本情報.push_next(&mut 提示id情報);
+    // 安全性: 上と同じ条件に加え、連結した提示ID情報とID配列はこの呼び出しの間スタック上で生存する。
+    unsafe { swapchain_loader.queue_present(queue, &提示情報) }
 }

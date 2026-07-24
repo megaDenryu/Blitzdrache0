@@ -64,6 +64,7 @@ impl レンダラー {
             self.ブルームピラミッド = Some(新ピラミッド);
         }
         self.提示同期 = vulkan::sync::提示同期::生成する(&self.device, self.swapchain.画像数())?;
+        self.実表示計測.スワップチェーンを作り直した();
         self.再構築が必要 = false;
         Ok(())
     }

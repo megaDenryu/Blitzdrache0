@@ -12,6 +12,8 @@ pub(crate) struct 提示先<'a> {
     pub(crate) loader: &'a ash::khr::swapchain::Device,
     pub(crate) swapchain: vk::SwapchainKHR,
     pub(crate) 画像添字: u32,
+    /// 実表示時刻を計測しているときだけ`Some`。提示に付ける単調増加のID。
+    pub(crate) 提示id: Option<u64>,
 }
 
 #[derive(Clone, Copy)]
@@ -55,5 +57,6 @@ pub(super) fn 送信して提示する(
         同期.提示セマフォ,
         同期.描画完了フェンス,
         読み戻し待機が必要,
+        提示先.提示id,
     )
 }

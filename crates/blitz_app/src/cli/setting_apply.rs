@@ -31,6 +31,7 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--sph-2048" => 設定.粒子表示 = 粒子表示モード::Sph2048,
         "--report-gpu-times" => 設定.gpu時間報告 = true,
         "--report-frame-times" => 設定.フレーム時間報告 = true,
+        "--report-display-timing" => 設定.実表示時間報告 = true,
         "--report-memory" => 設定.gpuメモリ報告 = true,
         "--dev-ui" => 設定.開発ui初期有効 = true,
         "--no-post" => 設定.ポスト処理有効 = false,
