@@ -5,21 +5,24 @@ mod allow_lint;
 mod cargo_toml_parse;
 mod dependency_whitelist;
 mod doc_reference;
+mod doc_section;
 mod forbidden_strings;
 mod line_count;
-mod target_files;
+mod particle_reference;
+mod section_reference;
 mod violation;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
 
+use crate::file_scan;
 use violation::違反;
 
 const 検査対象ディレクトリ一覧: [&str; 3] = ["crates", "xtask/src", "shaders"];
 const 検査対象拡張子一覧: [&str; 3] = ["rs", "slang", "md"];
 
 pub fn 実行する() -> ExitCode {
-    let ファイル一覧 = match target_files::対象ファイル一覧を集める(&検査対象ディレクトリ一覧, &検査対象拡張子一覧) {
+    let ファイル一覧 = match file_scan::対象ファイル一覧を集める(&検査対象ディレクトリ一覧, &検査対象拡張子一覧) {
         Ok(一覧) => 一覧,
         Err(誤り) => {
             eprintln!("[xtask] conformのファイル走査に失敗した: {誤り}");
@@ -39,6 +42,14 @@ pub fn 実行する() -> ExitCode {
         Ok(依存違反一覧) => 違反一覧.extend(依存違反一覧),
         Err(誤り) => {
             eprintln!("[xtask] conformの依存白リスト検査に失敗した: {誤り}");
+            return ExitCode::FAILURE;
+        }
+    }
+
+    match doc_section::全文書を検査する() {
+        Ok(節参照違反一覧) => 違反一覧.extend(節参照違反一覧),
+        Err(誤り) => {
+            eprintln!("[xtask] conformの節参照実在検査に失敗した: {誤り}");
             return ExitCode::FAILURE;
         }
     }

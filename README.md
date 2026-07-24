@@ -137,8 +137,9 @@ cargo xtask compile-assets  # glTF・画像からtarget/runtime_assets/*.blitzas
 cargo xtask watch-assets    # ソース依存を監視し、変更時に実行時アセットを再生成
 cargo run -p blitz_app  # 実行（--scene <id> / --dev-ui / --particles / --report-gpu-times 等はcli.rs参照）
 cargo xtask             # 開発ツールの一覧表示（ツールの唯一の入口）
-cargo xtask verify      # 検証の標準列 (conform -> check -> clippy -D warnings -> test)
-cargo xtask conform     # 規約適合の機械検査（行数・禁止文字列・依存白リスト・参照パス実在）
+cargo xtask verify      # 検証の標準列 (conform -> fmt --check -> check -> clippy -D warnings -> test)
+cargo xtask conform     # 規約適合の機械検査（行数・禁止文字列・依存白リスト・参照パス実在・文書内の節参照実在）
+cargo xtask type-metrics  # 型ごとのフィールド数・impl分散ファイル数・メソッド数を多い順に表示（違反判定はしない計測専用）
 cargo xtask smoke       # DoD自動検証: 7ステージの自己操作つき実行 + validation件数 + ピクセル読み戻し判定
 cargo xtask bench       # リリース版固定シーンのベンチマーク（GPU時間 + CPU側フレーム間隔 + GPUメモリ確保統計）
 cargo xtask m11-soak    # 3600フレーム連続実行中のRAM・VRAM推移をテキスト採取

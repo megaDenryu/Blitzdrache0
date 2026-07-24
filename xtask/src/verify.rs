@@ -11,7 +11,9 @@ pub fn 検証列を実行する() -> ExitCode {
         return ExitCode::FAILURE;
     }
 
-    let 手順一覧: [(&str, &[&str]); 3] = [
+    // 実行時間の短い検査ほど前に置き、落ちる場合は早く落とす。fmtはコンパイルを伴わないためcheckより前に置く。
+    let 手順一覧: [(&str, &[&str]); 4] = [
+        ("fmt", &["fmt", "--all", "--check"]),
         ("check", &["check", "--workspace"]),
         ("clippy", &["clippy", "--all-targets", "--", "-D", "warnings"]),
         ("test", &["test", "--workspace"]),
