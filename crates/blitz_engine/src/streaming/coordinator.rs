@@ -4,6 +4,7 @@
 
 mod candidates;
 mod degradation;
+mod gpu_handoff;
 mod prepared_data;
 
 use std::collections::HashMap;
@@ -30,7 +31,7 @@ pub struct ストリーミング調停 {
     台帳: チャンク台帳,
     読込器: チャンク読込器,
     先読み半径: u8,
-    /// 準備済みチャンクのCPUデータ。台帳が準備済みとして数えるRAMはこの保管の実体である。出入りは`prepared_data`が所有する。
+    /// 準備済みチャンクのCPUデータ。台帳が準備済みとして数えるRAMはこの保管の実体である。読込完了での投入と不要時の破棄は`prepared_data`が、GPU転送のための取り出しは`gpu_handoff`が所有する。
     準備済みシーン: HashMap<チャンク座標, シーンデータ>,
 }
 

@@ -1,40 +1,31 @@
-//! 所有チャンクが同じ描画対象のGPU資源と、その描画対象だけを結ぶディスクリプタセットの束。
-//! チャンク専用のディスクリプタプールを持つため、チャンクの解除はプール1つの破棄で完結し、ディスクリプタセット添字はこのチャンクの内側に閉じる。
-//! 注意: 添字がチャンクの内側で閉じることが、他のチャンクの追加・解除で描画対象添字がずれないことの根拠である。
+//! 呼び出し元が1つの単位として追加・解除する描画対象のGPU資源と、その描画対象だけを結ぶディスクリプタセットの束。
+//! 束専用のディスクリプタプールを持つため、束の解除はプール1つの破棄で完結し、ディスクリプタセット添字はこの束の内側に閉じる。
+//! 注意: 添字が束の内側で閉じることが、他の束の追加・解除で描画対象添字がずれないことの根拠である。
 
 use ash::vk;
 
+use super::create::チャンク描画資源生成材料;
 use super::render_object_resources::{self, 描画対象資源};
+use crate::draw_bundle_id::描画束ID;
 use crate::error::レンダラーエラー;
 use crate::render_object_material::描画対象素材;
-use crate::vulkan::descriptor::{ディスクリプタレイアウト, 描画対象ディスクリプタプール};
-use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
-use crate::vulkan::shadow_map::シャドウマップ;
+use crate::vulkan::descriptor::描画対象ディスクリプタプール;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::transfer::転送実行環境;
-use crate::vulkan::uniform::フレームユニフォーム一式;
-
-/// チャンク1つぶんの資源を作るためにチャンクの外から与える材料。ディスクリプタセットはフレームユニフォームとシャドウマップも結び、レイアウトはチャンクをまたいで共有するため、描画対象素材だけでは足りない。
-pub(super) struct チャンク描画資源生成材料<'a> {
-    pub(super) 物理デバイス問い合わせ: 物理デバイス問い合わせ<'a>,
-    pub(super) メモリプロパティ: &'a vk::PhysicalDeviceMemoryProperties,
-    pub(super) 転送環境: &'a 転送実行環境,
-    pub(super) ユニフォーム: &'a フレームユニフォーム一式,
-    pub(super) シャドウマップ: &'a シャドウマップ,
-    pub(super) レイアウト: &'a ディスクリプタレイアウト,
-}
 
 pub(super) struct チャンク描画資源 {
+    /// 呼び出し元が与えた識別子。解除するときはこの値で対象を特定する。
+    id: 描画束ID,
     描画対象資源一覧: Vec<描画対象資源>,
     ディスクリプタ: 描画対象ディスクリプタプール,
 }
 
 impl チャンク描画資源 {
-    /// 失敗したときは生成途中のGPU資源をすべて解放してからエラーを返すため、呼び出し元は自分が保持中のチャンクをそのまま使い続けられる。
+    /// 失敗したときは生成途中のGPU資源をすべて解放してからエラーを返すため、呼び出し元は自分が保持中の束をそのまま使い続けられる。
     pub(super) fn 生成する(
         device: &GPUデバイス,
         材料: チャンク描画資源生成材料<'_>,
+        id: 描画束ID,
         描画対象一覧: &[描画対象素材],
     ) -> Result<Self, レンダラーエラー> {
         let 描画対象資源一覧 = render_object_resources::描画対象資源一覧を生成する(
@@ -54,9 +45,14 @@ impl チャンク描画資源 {
             }
         };
         Ok(Self {
+            id,
             描画対象資源一覧,
             ディスクリプタ,
         })
+    }
+
+    pub(super) fn id(&self) -> 描画束ID {
+        self.id
     }
 
     pub(super) fn 描画対象数(&self) -> usize {
