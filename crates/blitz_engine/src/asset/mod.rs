@@ -54,6 +54,7 @@ pub use mesh_data::メッシュデータ;
 pub use pbr_material_data::金属粗さPBRデータ;
 pub use render_object_data::描画対象データ;
 pub use render_object_id::描画対象ID;
+pub(crate) use runtime_format::mesh_layout;
 pub use runtime_format::{
     アセット実行時形式エラー, アセット形式版, カタログを実行時形式へ格納する, シーンを実行時形式へ格納する, チャンク目録を実行時形式へ格納する,
     実行時アセット, 実行時アセットを格納する, 実行時アセットを開く, 実行時アセット種別, 実行時形式からカタログを読む, 実行時形式からシーンを読む,

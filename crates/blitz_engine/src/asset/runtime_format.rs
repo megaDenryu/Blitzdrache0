@@ -10,6 +10,7 @@ pub use catalog_v1::{カタログを実行時形式へ格納する, 実行時形
 pub use chunk_directory_v1::{チャンク目録を実行時形式へ格納する, 実行時形式からチャンク目録を読む};
 pub use error::アセット実行時形式エラー;
 pub use header::{実行時アセットを格納する, 実行時アセットを開く};
+pub(crate) use scene_v1::mesh_layout;
 pub use scene_v1::{シーンを実行時形式へ格納する, 実行時形式からシーンを読む};
 
 pub(super) const ヘッダー長: usize = 24;

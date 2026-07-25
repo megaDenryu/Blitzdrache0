@@ -15,6 +15,7 @@ mod loader;
 mod memory_amount;
 mod memory_budget;
 mod memory_candidate;
+mod memory_estimate;
 mod memory_result;
 
 pub use chunk_diff::{GPU転送完了結果, チャンク集合差分, 準備完了結果};
@@ -32,4 +33,5 @@ pub use loader::{チャンク読込エラー, チャンク読込器, チャン�
 pub use memory_amount::ストリーミングメモリ量;
 pub use memory_budget::{ストリーミング予算, ストリーミング予算エラー};
 pub use memory_candidate::チャンク予算候補;
+pub use memory_estimate::{ストリーミング見積エラー, チャンクメモリ量を見積もる};
 pub use memory_result::{ストリーミング予算結果, 予算判定};

@@ -2,12 +2,13 @@
 
 mod transitions;
 mod update;
+mod usage;
 
 use std::collections::HashMap;
 
 use crate::チャンク座標;
 
-use super::{chunk_request::チャンク要求, chunk_state::チャンク状態};
+use super::{chunk_request::チャンク要求, chunk_state::チャンク状態, memory_amount::ストリーミングメモリ量};
 
 #[derive(Debug)]
 pub struct チャンク台帳 {
@@ -20,6 +21,9 @@ struct チャンク記録 {
     状態: チャンク状態,
     必要: bool,
     再要求時状態: Option<チャンク状態>,
+    /// 注意: `ramバイト数`は読込中までは読込前の見積であり、準備完了の反映で実測へ置き換わる。`vramバイト数`は見積である。
+    /// 現在使用量はこの量と状態から導出し、別フィールドとして保管しない。
+    メモリ量: ストリーミングメモリ量,
 }
 
 impl チャンク台帳 {

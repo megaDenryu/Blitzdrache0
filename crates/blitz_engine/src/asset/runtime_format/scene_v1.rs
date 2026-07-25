@@ -1,6 +1,7 @@
 //! 版1の静的シーン内容を共通ヘッダーへ格納し、検証して復元する。
 
 pub(super) mod bytes;
+pub(crate) mod mesh_layout;
 mod read;
 mod write;
 

@@ -2,13 +2,10 @@
 
 use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::読取位置;
+use super::super::mesh_layout::{インデックス長, スキン頂点属性長, 頂点長};
 use crate::asset::mesh_data::メッシュデータ;
 use crate::asset::skin_vertex_attribute::スキン頂点属性;
 use crate::asset::vertex_attribute::メッシュ頂点属性;
-
-const 頂点長: usize = 48;
-const インデックス長: usize = 4;
-const スキン頂点属性長: usize = 24;
 
 pub(super) fn 読む(入力: &mut 読取位置<'_>) -> Result<メッシュデータ, アセット実行時形式エラー> {
     let 頂点数 = 入力.件数(頂点長)?;

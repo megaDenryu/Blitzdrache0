@@ -6,26 +6,29 @@ use super::{チャンク台帳, チャンク記録};
 use crate::チャンク座標;
 
 use crate::streaming::{
-    chunk_diff::チャンク集合差分, chunk_request::チャンク要求, chunk_state::チャンク状態, ledger_error::チャンク台帳エラー
+    chunk_diff::チャンク集合差分, chunk_request::チャンク要求, chunk_state::チャンク状態, ledger_error::チャンク台帳エラー,
+    memory_candidate::チャンク予算候補,
 };
 
 impl チャンク台帳 {
     pub fn 必要集合を反映する(
-        &mut self, 必要集合: &[チャンク要求]
+        &mut self, 必要集合: &[チャンク予算候補]
     ) -> Result<チャンク集合差分, チャンク台帳エラー> {
         重複を検査する(必要集合)?;
         for 記録 in self.登録一覧.values_mut() {
             記録.必要 = false;
         }
         let mut 読込要求一覧 = Vec::new();
-        for 要求 in 必要集合 {
-            self.必要にする(*要求, &mut 読込要求一覧);
+        for 候補 in 必要集合 {
+            self.必要にする(*候補, &mut 読込要求一覧);
         }
         let 解除要求一覧 = self.不要を反映する();
         Ok(チャンク集合差分::生成する(読込要求一覧, 解除要求一覧))
     }
 
-    fn 必要にする(&mut self, 要求: チャンク要求, 読込要求一覧: &mut Vec<チャンク要求>) {
+    /// 注意: 既存記録のメモリ量は更新しない。準備完了で実測へ置き換えた値を、再要求に付いた見積で上書きしてしまうためである。
+    fn 必要にする(&mut self, 候補: チャンク予算候補, 読込要求一覧: &mut Vec<チャンク要求>) {
+        let 要求 = 候補.要求();
         let 座標 = 要求.座標();
         match self.登録一覧.get_mut(&座標) {
             Some(記録) => {
@@ -45,6 +48,7 @@ impl チャンク台帳 {
                         状態: チャンク状態::読込待ち,
                         必要: true,
                         再要求時状態: None,
+                        メモリ量: 候補.メモリ量(),
                     },
                 );
                 読込要求一覧.push(要求);
@@ -77,11 +81,12 @@ impl チャンク台帳 {
     }
 }
 
-fn 重複を検査する(必要集合: &[チャンク要求]) -> Result<(), チャンク台帳エラー> {
+fn 重複を検査する(必要集合: &[チャンク予算候補]) -> Result<(), チャンク台帳エラー> {
     let mut 座標一覧 = HashSet::with_capacity(必要集合.len());
-    for 要求 in 必要集合 {
-        if !座標一覧.insert(要求.座標()) {
-            return Err(チャンク台帳エラー::必要座標重複(要求.座標()));
+    for 候補 in 必要集合 {
+        let 座標 = 候補.要求().座標();
+        if !座標一覧.insert(座標) {
+            return Err(チャンク台帳エラー::必要座標重複(座標));
         }
     }
     Ok(())
