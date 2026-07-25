@@ -15,6 +15,7 @@ use crate::shader_set::シェーダー一式;
 use crate::ui_texture_id::UIテクスチャID;
 use crate::ui_texture_material::UIテクスチャ素材;
 use crate::ui_vertex::UI頂点;
+use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
@@ -67,7 +68,7 @@ impl UIリソース一式 {
         &mut self,
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        フレーム添字: usize,
+        フレーム添字: フレームスロット添字,
         頂点一覧: &[UI頂点],
         インデックス一覧: &[u32],
     ) -> Result<(vk::Buffer, vk::Buffer), レンダラーエラー> {

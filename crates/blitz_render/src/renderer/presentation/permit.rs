@@ -5,6 +5,7 @@
 use ash::vk;
 
 use crate::renderer::present_resources::{提示画像組, 提示資源};
+use crate::vulkan::swapchain::スワップチェーン画像添字;
 
 /// 提示状態が`描画可能`のときだけ得られる提示資源への借用。
 ///
@@ -28,13 +29,12 @@ impl<'資源> 描画許可<'資源> {
     }
 
     /// 取得できた画像添字に対応するハンドルを、通行証を持っているこの場でまとめて読み出す。
-    pub(in crate::renderer) fn 取得した画像を束ねる(&self, 画像添字: u32) -> 取得済み提示 {
-        let 添字usize = usize::try_from(画像添字).unwrap_or_else(|_| panic!("スワップチェーン画像添字がusizeに収まらない: {画像添字}"));
+    pub(in crate::renderer) fn 取得した画像を束ねる(&self, 画像添字: スワップチェーン画像添字) -> 取得済み提示 {
         取得済み提示 {
             画像添字,
             swapchain: self.資源.スワップチェーンハンドル(),
-            提示セマフォ: self.資源.提示セマフォ(添字usize),
-            画像組: self.資源.画像組を引く(添字usize),
+            提示セマフォ: self.資源.提示セマフォ(画像添字),
+            画像組: self.資源.画像組を引く(画像添字),
         }
     }
 }
@@ -42,14 +42,14 @@ impl<'資源> 描画許可<'資源> {
 /// 取得できた画像1枚ぶんの提示側ハンドル。`描画許可`のもとで読み出した値だけを持つため、
 /// `&mut レンダラー`を要する送信・提示の工程へそのまま持ち込める。
 pub(in crate::renderer) struct 取得済み提示 {
-    画像添字: u32,
+    画像添字: スワップチェーン画像添字,
     swapchain: vk::SwapchainKHR,
     提示セマフォ: vk::Semaphore,
     画像組: 提示画像組,
 }
 
 impl 取得済み提示 {
-    pub(in crate::renderer) fn 画像添字(&self) -> u32 {
+    pub(in crate::renderer) fn 画像添字(&self) -> スワップチェーン画像添字 {
         self.画像添字
     }
 

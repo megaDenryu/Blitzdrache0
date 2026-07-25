@@ -9,7 +9,7 @@ mod set;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
 use crate::vulkan::uniform::フレームユニフォーム一式;
 
 pub(crate) struct 粒子ディスクリプタ一式 {
@@ -45,15 +45,15 @@ impl 粒子ディスクリプタ一式 {
             }
         };
 
-        for (フレーム添字, &set) in set一覧.iter().enumerate() {
-            set::書き込む(device, set, 粒子バッファ, ユニフォーム.buffer(フレーム添字));
+        for フレーム添字 in フレームスロット添字::全スロット() {
+            set::書き込む(device, set一覧[フレーム添字.配列添字()], 粒子バッファ, ユニフォーム.buffer(フレーム添字));
         }
 
         Ok(Self { layout, pool, set一覧 })
     }
 
-    pub(crate) fn set(&self, フレーム添字: usize) -> vk::DescriptorSet {
-        self.set一覧[フレーム添字]
+    pub(crate) fn set(&self, フレーム添字: フレームスロット添字) -> vk::DescriptorSet {
+        self.set一覧[フレーム添字.配列添字()]
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

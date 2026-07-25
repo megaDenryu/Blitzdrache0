@@ -9,13 +9,14 @@ use crate::error::レンダラーエラー;
 use crate::ui_draw_data::UI描画データ;
 use crate::ui_mesh::UIメッシュ;
 use crate::vulkan;
+use crate::vulkan::sync::フレームスロット添字;
 
 impl レンダラー {
     /// `データ`が`None`、または有効なメッシュ(頂点・インデックスとも非空)が
     /// 1つも無ければ`None`を返し、UIパス自体をグラフへ積ませない。
     pub(super) fn ui描画入力を組み立てる(
         &mut self,
-        フレーム添字: usize,
+        フレーム添字: フレームスロット添字,
         データ: Option<&UI描画データ>,
     ) -> Result<Option<vulkan::frame::UI描画入力>, レンダラーエラー> {
         let Some(データ) = データ else { return Ok(None) };

@@ -1,9 +1,12 @@
 //! スワップチェーンとその画像・画像ビューをまとめて保持する内部構造体。
 
 mod create;
+mod image_index;
 mod select;
 
 use ash::vk;
+
+pub(crate) use image_index::スワップチェーン画像添字;
 
 use crate::error::レンダラーエラー;
 use crate::extent::ウィンドウ寸法;

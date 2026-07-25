@@ -3,9 +3,10 @@
 
 use super::布一式;
 use crate::vulkan::frame::布描画入力;
+use crate::vulkan::sync::フレームスロット添字;
 
 impl 布一式 {
-    pub(crate) fn 描画入力を作る(&self, フレーム添字: usize, 介入件数: u32) -> 布描画入力 {
+    pub(crate) fn 描画入力を作る(&self, フレーム添字: フレームスロット添字, 介入件数: u32) -> 布描画入力 {
         布描画入力 {
             layout: self.パイプライン群.layout,
             介入pipeline: self.パイプライン群.介入,
@@ -17,7 +18,7 @@ impl 布一式 {
             分離pipeline: self.パイプライン群.分離,
             仕上げpipeline: self.パイプライン群.仕上げ,
             頂点生成pipeline: self.パイプライン群.頂点生成,
-            ディスクリプタセット: self.ディスクリプタ.set一覧[フレーム添字],
+            ディスクリプタセット: self.ディスクリプタ.set一覧[フレーム添字.配列添字()],
             粒子数: self.固定部.粒子数,
             アタッチ件数: self.固定部.アタッチ件数,
             介入件数,

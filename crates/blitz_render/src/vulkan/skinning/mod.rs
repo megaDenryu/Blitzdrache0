@@ -12,6 +12,7 @@ mod pipeline;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) struct スキニング一式 {
@@ -32,7 +33,7 @@ impl スキニング一式 {
     pub(crate) fn 行列を書き込む(
         &self,
         device: &GPUデバイス,
-        フレーム添字: usize,
+        フレーム添字: フレームスロット添字,
         行列一覧: &[[f32; 16]],
     ) -> Result<(), レンダラーエラー> {
         if 行列一覧.len() != self.ジョイント数 {

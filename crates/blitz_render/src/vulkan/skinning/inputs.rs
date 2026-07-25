@@ -3,13 +3,14 @@
 
 use super::スキニング一式;
 use crate::vulkan::frame::スキニング描画入力;
+use crate::vulkan::sync::フレームスロット添字;
 
 impl スキニング一式 {
-    pub(crate) fn 描画入力を作る(&self, フレーム添字: usize) -> スキニング描画入力 {
+    pub(crate) fn 描画入力を作る(&self, フレーム添字: フレームスロット添字) -> スキニング描画入力 {
         スキニング描画入力 {
             pipeline: self.パイプライン.handle,
             layout: self.パイプライン.layout,
-            ディスクリプタセット: self.ディスクリプタ.set一覧[フレーム添字],
+            ディスクリプタセット: self.ディスクリプタ.set一覧[フレーム添字.配列添字()],
             頂点数: self.頂点数,
             出力バッファ: self.出力バッファ(),
         }

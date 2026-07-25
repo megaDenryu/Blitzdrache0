@@ -8,7 +8,7 @@ use ash::vk;
 
 use super::buffers::スキニングバッファ;
 use crate::error::レンダラーエラー;
-use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
 
 const バインディング数: u32 = 4;
 
@@ -80,8 +80,8 @@ pub(super) fn 生成する(
     };
 
     let 一式 = スキニングディスクリプタ { layout, pool, set一覧 };
-    for フレーム添字 in 0..フレームインフライト数 {
-        write::書く(device, 一式.set一覧[フレーム添字], バッファ, フレーム添字);
+    for フレーム添字 in フレームスロット添字::全スロット() {
+        write::書く(device, 一式.set一覧[フレーム添字.配列添字()], バッファ, フレーム添字);
     }
     Ok(一式)
 }

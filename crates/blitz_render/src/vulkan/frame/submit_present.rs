@@ -3,6 +3,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::swapchain::スワップチェーン画像添字;
 
 /// 戻り値: 提示が成功したときのサブオプティマル状態(true=再構築が望ましい)。
 #[allow(clippy::too_many_arguments)]
@@ -12,7 +13,7 @@ pub(super) fn 送信して提示する(
     command_buffer: vk::CommandBuffer,
     swapchain_loader: &ash::khr::swapchain::Device,
     swapchain: vk::SwapchainKHR,
-    画像添字: u32,
+    画像添字: スワップチェーン画像添字,
     取得セマフォ: vk::Semaphore,
     提示セマフォ: vk::Semaphore,
     描画完了フェンス: vk::Fence,
@@ -44,7 +45,7 @@ pub(super) fn 送信して提示する(
     }
 
     let スワップチェーン一覧 = [swapchain];
-    let 画像添字一覧 = [画像添字];
+    let 画像添字一覧 = [画像添字.gpu境界用u32()];
     let 提示待機セマフォ一覧 = [提示セマフォ];
     let 提示結果 = 提示する(
         swapchain_loader,

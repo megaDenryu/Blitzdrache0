@@ -9,7 +9,7 @@ mod slot_cycle;
 use ash::vk;
 
 use crate::vulkan;
-use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
 use crate::vulkan::tracked_device::GPUデバイス;
 use slot_cycle::フレームスロット巡回;
 
@@ -24,7 +24,7 @@ pub(super) struct フレーム進行 {
 
 /// 現在のスロットで引いた資源一式。3つを同時に取り出すため、別スロットの資源が混ざった組み合わせを作れない。
 pub(super) struct フレームスロット資源 {
-    pub(super) スロット: usize,
+    pub(super) スロット: フレームスロット添字,
     pub(super) フェンス: vk::Fence,
     pub(super) 取得セマフォ: vk::Semaphore,
     pub(super) command_buffer: vk::CommandBuffer,
@@ -37,7 +37,7 @@ impl フレーム進行 {
             スロット,
             フェンス: self.フレーム同期.フェンス(スロット),
             取得セマフォ: self.フレーム同期.取得セマフォ(スロット),
-            command_buffer: self.command_buffer一覧[スロット],
+            command_buffer: self.command_buffer一覧[スロット.配列添字()],
         }
     }
 

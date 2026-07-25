@@ -14,6 +14,7 @@ mod destroy;
 use ash::vk;
 
 use crate::vulkan;
+use crate::vulkan::swapchain::スワップチェーン画像添字;
 
 pub(super) struct 提示資源 {
     swapchain: vulkan::swapchain::スワップチェーン,
@@ -51,17 +52,18 @@ impl 提示資源 {
         self.swapchain.読み戻し対応
     }
 
-    pub(super) fn 画像組を引く(&self, 画像添字: usize) -> 提示画像組 {
+    pub(super) fn 画像組を引く(&self, 画像添字: スワップチェーン画像添字) -> 提示画像組 {
+        let 添字 = 画像添字.配列添字();
         提示画像組 {
-            スワップチェーン画像: self.swapchain.画像一覧[画像添字],
-            スワップチェーンビュー: self.swapchain.画像ビュー一覧[画像添字],
+            スワップチェーン画像: self.swapchain.画像一覧[添字],
+            スワップチェーンビュー: self.swapchain.画像ビュー一覧[添字],
             深度画像: self.深度バッファ.画像,
             深度ビュー: self.深度バッファ.画像ビュー,
         }
     }
 
     /// 画像添字に対応する提示セマフォ。本数は画像数と一致するため、取得できた添字はそのまま使える。
-    pub(super) fn 提示セマフォ(&self, 画像添字: usize) -> vk::Semaphore {
+    pub(super) fn 提示セマフォ(&self, 画像添字: スワップチェーン画像添字) -> vk::Semaphore {
         self.提示同期.提示セマフォ(画像添字)
     }
 }

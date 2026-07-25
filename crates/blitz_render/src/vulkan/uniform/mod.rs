@@ -9,7 +9,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::host_buffer;
-use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) use content::フレームユニフォーム内容;
@@ -48,18 +48,18 @@ impl フレームユニフォーム一式 {
         Ok(Self { buffer一覧, memory一覧 })
     }
 
-    pub(crate) fn buffer(&self, フレーム添字: usize) -> vk::Buffer {
-        self.buffer一覧[フレーム添字]
+    pub(crate) fn buffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
+        self.buffer一覧[フレーム添字.配列添字()]
     }
 
     pub(crate) fn 書き込む(
         &self,
         device: &ash::Device,
-        フレーム添字: usize,
+        フレーム添字: フレームスロット添字,
         内容: &フレームユニフォーム内容,
     ) -> Result<(), レンダラーエラー> {
         let バイト列 = bytes::バイト列にする(内容);
-        host_buffer::上書きする(device, self.memory一覧[フレーム添字], &バイト列)
+        host_buffer::上書きする(device, self.memory一覧[フレーム添字.配列添字()], &バイト列)
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {

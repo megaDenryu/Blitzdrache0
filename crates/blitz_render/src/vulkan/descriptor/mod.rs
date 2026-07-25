@@ -12,7 +12,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::vulkan::object_uniform::描画対象ユニフォーム;
 use crate::vulkan::shadow_map::シャドウマップ;
-use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
 use crate::vulkan::texture::マテリアルテクスチャ一式;
 use crate::vulkan::uniform::フレームユニフォーム一式;
 
@@ -60,8 +60,8 @@ impl ディスクリプタ一式 {
         };
 
         for (描画対象添字, 描画対象) in 描画対象一覧.iter().enumerate() {
-            for フレーム添字 in 0..フレームインフライト数 {
-                let set = set一覧[描画対象添字 * フレームインフライト数 + フレーム添字];
+            for フレーム添字 in フレームスロット添字::全スロット() {
+                let set = set一覧[描画対象添字 * フレームインフライト数 + フレーム添字.配列添字()];
                 set::テクスチャバインディングを書き込む(device, set, 描画対象.テクスチャ);
                 set::ユニフォームバインディングを書き込む(device, set, ユニフォーム.buffer(フレーム添字));
                 set::描画対象ユニフォームを書き込む(device, set, 描画対象.ユニフォーム.buffer);
@@ -72,8 +72,10 @@ impl ディスクリプタ一式 {
         Ok(Self { layout, pool, set一覧 })
     }
 
-    pub(crate) fn set(&self, 描画対象添字: usize, フレーム添字: usize) -> vk::DescriptorSet {
-        let 添字 = 描画対象添字 * フレームインフライト数 + フレーム添字;
+    /// 注意: 2つの添字は掛け合わせた1本の配列を引くため、入れ替えると別の描画対象のセットを引いたまま描画が成立する。
+    /// フレームスロット添字を別型にすることで、描画対象添字との入れ替えをコンパイルエラーにする。
+    pub(crate) fn set(&self, 描画対象添字: usize, フレーム添字: フレームスロット添字) -> vk::DescriptorSet {
+        let 添字 = 描画対象添字 * フレームインフライト数 + フレーム添字.配列添字();
         match self.set一覧.get(添字) {
             Some(set) => *set,
             None => panic!("描画対象またはフレーム添字がディスクリプタセット一覧の範囲外だった"),

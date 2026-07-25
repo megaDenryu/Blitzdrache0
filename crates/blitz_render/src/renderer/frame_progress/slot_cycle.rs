@@ -5,7 +5,7 @@
 #[cfg(test)]
 mod slot_cycle_tests;
 
-use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::sync::フレームスロット添字;
 
 /// 1フレームの結末。スロットを進めるかどうかはこの2択だけで決まる。
 #[derive(Clone, Copy)]
@@ -16,22 +16,25 @@ pub(in crate::renderer) enum フレーム結末 {
     見送った,
 }
 
+/// 毎フレームの描画経路で使うフレームスロット添字は、この巡回だけが発生源になる。
 pub(super) struct フレームスロット巡回 {
-    現在: usize,
+    現在: フレームスロット添字,
 }
 
 impl フレームスロット巡回 {
     pub(super) const fn 先頭から始める() -> Self {
-        Self { 現在: 0 }
+        Self {
+            現在: フレームスロット添字::先頭(),
+        }
     }
 
-    pub(super) const fn 現在のスロット(&self) -> usize {
+    pub(super) const fn 現在のスロット(&self) -> フレームスロット添字 {
         self.現在
     }
 
     pub(super) fn 結末を反映する(&mut self, 結末: フレーム結末) {
         match 結末 {
-            フレーム結末::提示した => self.現在 = (self.現在 + 1) % フレームインフライト数,
+            フレーム結末::提示した => self.現在 = self.現在.次のスロット(),
             フレーム結末::見送った => {}
         }
     }

@@ -5,10 +5,11 @@ use ash::vk;
 
 use super::シーン描画資源;
 use crate::vulkan::frame::{シャドウ描画入力, ジオメトリ入力, 描画対象入力};
+use crate::vulkan::sync::フレームスロット添字;
 
 /// 作業領域の中身のうち、描画対象資源の外から与える値。パイプラインは束の外(レンダラー)が保持するためここで受け取る。
 pub(in crate::renderer) struct 作業領域更新入力 {
-    pub(in crate::renderer) フレーム添字: usize,
+    pub(in crate::renderer) フレーム添字: フレームスロット添字,
     /// スキン付きシーンでの先頭描画対象の頂点バッファ差し替え先(判断44の既存契約)。スキン無しなら`None`。
     pub(in crate::renderer) スキン済み頂点バッファ: Option<vk::Buffer>,
     pub(in crate::renderer) シーンlayout: vk::PipelineLayout,

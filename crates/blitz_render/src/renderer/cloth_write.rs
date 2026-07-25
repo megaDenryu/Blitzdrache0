@@ -4,11 +4,14 @@
 use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::frame_input::フレーム描画入力;
+use crate::vulkan::sync::フレームスロット添字;
 
 impl レンダラー {
     /// 前提: 呼び出しはこのスロットのフェンス待ち後(判断24のUBO書き込みと同じ規律)。
     pub(super) fn 布フレームを書き込む(
-        &self, フレーム添字: usize, 入力: &フレーム描画入力
+        &self,
+        フレーム添字: フレームスロット添字,
+        入力: &フレーム描画入力,
     ) -> Result<(), レンダラーエラー> {
         match (&self.布, &入力.布) {
             (Some(布), Some(布入力)) => 布.フレーム入力を書き込む(self.環境.device(), フレーム添字, 布入力),
@@ -23,7 +26,11 @@ impl レンダラー {
     }
 
     /// 布の1フレーム描画入力を組み立てる(`draw_dispatch`用)。介入件数はフレーム入力から渡す。
-    pub(super) fn 布入力を組み立てる(&self, フレーム添字: usize, 介入件数: u32) -> Option<crate::vulkan::frame::布描画入力> {
+    pub(super) fn 布入力を組み立てる(
+        &self,
+        フレーム添字: フレームスロット添字,
+        介入件数: u32,
+    ) -> Option<crate::vulkan::frame::布描画入力> {
         self.布.as_ref().map(|一式| 一式.描画入力を作る(フレーム添字, 介入件数))
     }
 }

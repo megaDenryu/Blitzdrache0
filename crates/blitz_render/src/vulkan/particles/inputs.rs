@@ -3,9 +3,10 @@
 
 use super::粒子リソース一式;
 use crate::vulkan::frame::粒子描画入力;
+use crate::vulkan::sync::フレームスロット添字;
 
 impl 粒子リソース一式 {
-    pub(crate) fn 描画入力を作る(&self, フレーム添字: usize) -> 粒子描画入力 {
+    pub(crate) fn 描画入力を作る(&self, フレーム添字: フレームスロット添字) -> 粒子描画入力 {
         粒子描画入力 {
             コンピュートパイプライン: self.コンピュートパイプライン.handle,
             コンピュートlayout: self.コンピュートパイプライン.layout,

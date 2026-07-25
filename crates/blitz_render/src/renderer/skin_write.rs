@@ -4,11 +4,14 @@
 use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::frame_input::フレーム描画入力;
+use crate::vulkan::sync::フレームスロット添字;
 
 impl レンダラー {
     /// 前提: 呼び出しはこのスロットのフェンス待ち後(判断24のUBO書き込みと同じ規律)。
     pub(super) fn スキン行列を書き込む(
-        &self, フレーム添字: usize, 入力: &フレーム描画入力
+        &self,
+        フレーム添字: フレームスロット添字,
+        入力: &フレーム描画入力,
     ) -> Result<(), レンダラーエラー> {
         match (&self.スキニング, &入力.スキン行列一覧) {
             (Some(スキニング), Some(行列一覧)) => スキニング.行列を書き込む(self.環境.device(), フレーム添字, 行列一覧),

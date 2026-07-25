@@ -7,11 +7,12 @@ use super::{
     UI描画入力, シャドウ描画入力, ジオメトリ入力, スキニング描画入力, トーンマップ描画入力, ブルーム描画入力, 布描画入力, 粒子描画入力
 };
 use crate::error::レンダラーエラー;
+use crate::vulkan::swapchain::スワップチェーン画像添字;
 
 pub(crate) struct 提示先<'a> {
     pub(crate) loader: &'a ash::khr::swapchain::Device,
     pub(crate) swapchain: vk::SwapchainKHR,
-    pub(crate) 画像添字: u32,
+    pub(crate) 画像添字: スワップチェーン画像添字,
     /// 実表示時刻を計測しているときだけ`Some`。提示に付ける単調増加のID。
     pub(crate) 提示id: Option<u64>,
 }

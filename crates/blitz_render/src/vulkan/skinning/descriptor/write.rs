@@ -3,9 +3,12 @@
 use ash::vk;
 
 use super::super::buffers::スキニングバッファ;
+use crate::vulkan::sync::フレームスロット添字;
 
 /// 前提: setは割り当て済みで、生成直後(GPU未使用)にのみ呼ばれる。
-pub(super) fn 書く(device: &ash::Device, set: vk::DescriptorSet, バッファ: &スキニングバッファ, フレーム添字: usize) {
+pub(super) fn 書く(
+    device: &ash::Device, set: vk::DescriptorSet, バッファ: &スキニングバッファ, フレーム添字: フレームスロット添字
+) {
     let buffer一覧 = [
         バッファ.レスト頂点buffer(),
         バッファ.属性buffer(),

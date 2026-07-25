@@ -13,6 +13,7 @@ mod write;
 use crate::error::レンダラーエラー;
 use crate::frame_input::布フレーム入力;
 use crate::vulkan::pipeline::パイプライン;
+use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) use create::生成する as 布一式を生成する;
@@ -31,7 +32,7 @@ impl 布一式 {
     pub(crate) fn フレーム入力を書き込む(
         &self,
         device: &GPUデバイス,
-        フレーム添字: usize,
+        フレーム添字: フレームスロット添字,
         入力: &布フレーム入力,
     ) -> Result<(), レンダラーエラー> {
         if 入力.介入件数 > params::介入上限件数

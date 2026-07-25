@@ -3,11 +3,14 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::swapchain::スワップチェーン画像添字;
 
 /// 次画像取得の結果。
 pub(crate) enum 取得結果 {
     /// 画像を取得できた。`劣化` はサブオプティマル（描画は可能だが再構築が望ましい）。
-    取得した { 添字: u32, 劣化: bool },
+    取得した {
+        添字: スワップチェーン画像添字, 劣化: bool
+    },
     /// スワップチェーンが陳腐化しており、取得できなかった。再構築が必要。
     再構築が必要,
 }
@@ -22,7 +25,10 @@ pub(crate) fn 取得する(
     let 結果 = unsafe { swapchain_loader.acquire_next_image(swapchain, u64::MAX, 取得セマフォ, vk::Fence::null()) };
 
     match 結果 {
-        Ok((添字, 劣化)) => Ok(取得結果::取得した { 添字, 劣化 }),
+        Ok((添字, 劣化)) => Ok(取得結果::取得した {
+            添字: スワップチェーン画像添字::取得結果から生成する(添字),
+            劣化,
+        }),
         Err(vk::Result::ERROR_OUT_OF_DATE_KHR) => Ok(取得結果::再構築が必要),
         Err(誤り) => Err(誤り.into()),
     }

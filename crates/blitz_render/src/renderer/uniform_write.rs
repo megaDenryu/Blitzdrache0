@@ -8,12 +8,13 @@ use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::frame_input::フレーム描画入力;
 use crate::view_input::描画視点;
+use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::uniform::フレームユニフォーム内容;
 
 impl レンダラー {
     pub(super) fn ユニフォームを書き込む(
         &self,
-        フレーム添字: usize,
+        フレーム添字: フレームスロット添字,
         入力: &フレーム描画入力,
         視点: &描画視点,
         ビュー射影行列: &[[f32; 4]; 4],

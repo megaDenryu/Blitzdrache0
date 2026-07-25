@@ -3,7 +3,7 @@
 
 use ash::vk;
 
-use super::フレームインフライト数;
+use super::{フレームインフライト数, フレームスロット添字};
 use crate::error::レンダラーエラー;
 
 pub(crate) struct フレーム同期 {
@@ -31,12 +31,12 @@ impl フレーム同期 {
         })
     }
 
-    pub(crate) fn フェンス(&self, フレーム添字: usize) -> vk::Fence {
-        self.描画完了フェンス一覧[フレーム添字]
+    pub(crate) fn フェンス(&self, フレーム添字: フレームスロット添字) -> vk::Fence {
+        self.描画完了フェンス一覧[フレーム添字.配列添字()]
     }
 
-    pub(crate) fn 取得セマフォ(&self, フレーム添字: usize) -> vk::Semaphore {
-        self.取得セマフォ一覧[フレーム添字]
+    pub(crate) fn 取得セマフォ(&self, フレーム添字: フレームスロット添字) -> vk::Semaphore {
+        self.取得セマフォ一覧[フレーム添字.配列添字()]
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

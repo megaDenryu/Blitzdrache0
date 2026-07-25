@@ -8,7 +8,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::host_buffer;
-use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct スキニングバッファ {
@@ -29,15 +29,15 @@ impl スキニングバッファ {
         self.属性.0
     }
 
-    pub(super) fn 行列buffer(&self, フレーム添字: usize) -> vk::Buffer {
-        self.行列一覧[フレーム添字].0
+    pub(super) fn 行列buffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
+        self.行列一覧[フレーム添字.配列添字()].0
     }
 
     /// 前提: 呼び出しはフェンス待ち後(このスロットの前回GPU使用の完了後。判断24と同じ規律)。
     pub(super) fn 行列を書き込む(
         &self,
         device: &ash::Device,
-        フレーム添字: usize,
+        フレーム添字: フレームスロット添字,
         行列一覧: &[[f32; 16]],
     ) -> Result<(), レンダラーエラー> {
         let mut バイト列 = Vec::with_capacity(行列一覧.len() * 64);
@@ -46,7 +46,7 @@ impl スキニングバッファ {
                 バイト列.extend_from_slice(&成分.to_le_bytes());
             }
         }
-        host_buffer::上書きする(device, self.行列一覧[フレーム添字].1, &バイト列)
+        host_buffer::上書きする(device, self.行列一覧[フレーム添字.配列添字()].1, &バイト列)
     }
 
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {

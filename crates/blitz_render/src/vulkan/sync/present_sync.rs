@@ -4,6 +4,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::swapchain::スワップチェーン画像添字;
 
 pub(crate) struct 提示同期 {
     提示セマフォ一覧: Vec<vk::Semaphore>,
@@ -20,8 +21,8 @@ impl 提示同期 {
         Ok(Self { 提示セマフォ一覧 })
     }
 
-    pub(crate) fn 提示セマフォ(&self, 画像添字: usize) -> vk::Semaphore {
-        self.提示セマフォ一覧[画像添字]
+    pub(crate) fn 提示セマフォ(&self, 画像添字: スワップチェーン画像添字) -> vk::Semaphore {
+        self.提示セマフォ一覧[画像添字.配列添字()]
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

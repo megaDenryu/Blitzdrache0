@@ -8,7 +8,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::host_buffer;
-use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct 布バッファ {
@@ -29,16 +29,22 @@ pub(super) use create::生成する;
 impl 布バッファ {
     /// 前提: 呼び出しはフェンス待ち後(このスロットの前回GPU使用の完了後。判断24と同じ規律)。
     pub(super) fn 介入を書き込む(
-        &self, device: &ash::Device, フレーム添字: usize, バイト列: &[u8]
+        &self,
+        device: &ash::Device,
+        フレーム添字: フレームスロット添字,
+        バイト列: &[u8],
     ) -> Result<(), レンダラーエラー> {
-        host_buffer::上書きする(device, self.介入一覧[フレーム添字].1, バイト列)
+        host_buffer::上書きする(device, self.介入一覧[フレーム添字.配列添字()].1, バイト列)
     }
 
     /// 前提: 同上。
     pub(super) fn 定数を書き込む(
-        &self, device: &ash::Device, フレーム添字: usize, バイト列: &[u8]
+        &self,
+        device: &ash::Device,
+        フレーム添字: フレームスロット添字,
+        バイト列: &[u8],
     ) -> Result<(), レンダラーエラー> {
-        host_buffer::上書きする(device, self.定数一覧[フレーム添字].1, バイト列)
+        host_buffer::上書きする(device, self.定数一覧[フレーム添字.配列添字()].1, バイト列)
     }
 
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
