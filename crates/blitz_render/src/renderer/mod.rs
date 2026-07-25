@@ -12,6 +12,7 @@ mod draw_execute;
 mod draw_inputs;
 mod frame_dispatch_inputs;
 mod generate;
+mod measurement_control;
 mod queries;
 mod readback_buffer;
 mod reconstruct;
