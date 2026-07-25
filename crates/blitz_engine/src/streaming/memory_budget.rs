@@ -65,11 +65,11 @@ fn 結果を作る(
     上限: ストリーミングメモリ量,
     収容一覧: Vec<super::chunk_request::チャンク要求>,
 ) -> ストリーミング予算結果 {
-    let 除外一覧: Vec<_> = 候補一覧[除外開始..].iter().map(|候補| 候補.要求().id()).collect();
+    let 除外一覧: Vec<_> = 候補一覧[除外開始..].iter().map(|候補| 候補.要求().座標()).collect();
     let 判定 = if let Some(最初) = 候補一覧.get(除外開始) {
         let 追加 = 最初.メモリ量();
         予算判定::縮退 {
-            最初の除外: 最初.要求().id(),
+            最初の除外: 最初.要求().座標(),
             ram超過: 使用量.ramバイト数.checked_add(追加.ramバイト数).is_none_or(|値| 値 > 上限.ramバイト数),
             vram超過: 使用量.vramバイト数.checked_add(追加.vramバイト数).is_none_or(|値| 値 > 上限.vramバイト数),
         }

@@ -1,17 +1,17 @@
-//! 必要性と非同期処理段階をチャンクIDごとに一意管理する台帳。
+//! 必要性と非同期処理段階をチャンク座標ごとに一意管理する台帳。
 
 mod transitions;
 mod update;
 
 use std::collections::HashMap;
 
-use crate::チャンクID;
+use crate::チャンク座標;
 
 use super::{chunk_request::チャンク要求, chunk_state::チャンク状態};
 
 #[derive(Debug)]
 pub struct チャンク台帳 {
-    登録一覧: HashMap<チャンクID, チャンク記録>,
+    登録一覧: HashMap<チャンク座標, チャンク記録>,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -29,8 +29,8 @@ impl チャンク台帳 {
         }
     }
 
-    pub fn 状態を引く(&self, id: チャンクID) -> Option<チャンク状態> {
-        self.登録一覧.get(&id).map(|記録| 記録.状態)
+    pub fn 状態を引く(&self, 座標: チャンク座標) -> Option<チャンク状態> {
+        self.登録一覧.get(&座標).map(|記録| 記録.状態)
     }
 
     pub fn 登録数(&self) -> usize {

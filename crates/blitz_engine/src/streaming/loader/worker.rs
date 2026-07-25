@@ -6,7 +6,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::{self, RecvTimeoutError};
 use std::time::{Duration, Instant};
 
-use crate::{asset::実行時シーンファイルを読み込む, チャンクID};
+use crate::{asset::実行時シーンファイルを読み込む, チャンク座標};
 
 use super::{result::チャンク読込成果, チャンク読込エラー, チャンク読込器, チャンク読込完了};
 
@@ -14,7 +14,7 @@ const 要求上限: usize = 64;
 const 完了上限: usize = 4;
 
 pub(super) struct 読込ジョブ {
-    pub(super) チャンク: チャンクID,
+    pub(super) チャンク: チャンク座標,
     pub(super) パス: PathBuf,
 }
 

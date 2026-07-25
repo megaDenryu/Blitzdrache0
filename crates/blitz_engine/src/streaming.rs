@@ -1,6 +1,5 @@
 //! 大域位置からストリーミング対象を決定するデバイス非依存のチャンク格子。
 
-mod chunk_coordinate;
 mod chunk_diff;
 mod chunk_grid;
 mod chunk_ledger;
@@ -14,7 +13,6 @@ mod memory_budget;
 mod memory_candidate;
 mod memory_result;
 
-pub use chunk_coordinate::チャンク座標;
 pub use chunk_diff::{GPU転送完了結果, チャンク集合差分, 準備完了結果};
 pub use chunk_grid::チャンク格子;
 pub use chunk_ledger::チャンク台帳;

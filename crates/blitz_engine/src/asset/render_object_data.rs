@@ -2,16 +2,16 @@
 
 use blitz_math::{ローカル, ワールド, 変換};
 
-use super::chunk_id::チャンクID;
 use super::material_data::マテリアルデータ;
 use super::mesh_data::メッシュデータ;
 use super::render_object_id::描画対象ID;
+use crate::チャンク座標;
 
 /// シーンから描画処理へ抽出できる1つの対象。
 #[derive(Debug, Clone, PartialEq)]
 pub struct 描画対象データ {
     識別子: 描画対象ID,
-    所有チャンク: チャンクID,
+    所有チャンク: チャンク座標,
     ローカルからワールド: 変換<ローカル, ワールド>,
     メッシュ: メッシュデータ,
     マテリアル: マテリアルデータ,
@@ -20,7 +20,7 @@ pub struct 描画対象データ {
 impl 描画対象データ {
     pub fn 生成する(
         識別子: 描画対象ID,
-        所有チャンク: チャンクID,
+        所有チャンク: チャンク座標,
         ローカルからワールド: 変換<ローカル, ワールド>,
         メッシュ: メッシュデータ,
         マテリアル: マテリアルデータ,
@@ -38,7 +38,7 @@ impl 描画対象データ {
         self.識別子
     }
 
-    pub fn 所有チャンク(&self) -> チャンクID {
+    pub fn 所有チャンク(&self) -> チャンク座標 {
         self.所有チャンク
     }
 

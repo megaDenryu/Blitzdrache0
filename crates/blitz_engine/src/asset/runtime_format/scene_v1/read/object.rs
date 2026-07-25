@@ -4,11 +4,12 @@ use blitz_math::{ローカル, ワールド, 変換};
 
 use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::読取位置;
-use crate::asset::{chunk_id::チャンクID, render_object_data::描画対象データ, render_object_id::描画対象ID};
+use crate::asset::{render_object_data::描画対象データ, render_object_id::描画対象ID};
+use crate::チャンク座標;
 
 pub(super) fn 読む(入力: &mut 読取位置<'_>) -> Result<描画対象データ, アセット実行時形式エラー> {
     let 識別子 = 描画対象ID::生成する(入力.u64()?);
-    let 所有チャンク = チャンクID::生成する(入力.u64()?);
+    let 所有チャンク = チャンク座標::番号から復元する(入力.u64()?);
     let ローカルからワールド = 変換::<ローカル, ワールド>::列優先配列から生成する(行列を読む(入力)?);
     let メッシュ = super::mesh::読む(入力)?;
     let マテリアル = super::material::読む(入力)?;

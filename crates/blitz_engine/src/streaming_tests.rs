@@ -28,15 +28,15 @@ fn 必要集合は中心から外周へ決定的に並ぶ() {
 }
 
 #[test]
-fn 異なる座標は負値を含めて異なるidになる() {
+fn 異なる座標は負値を含めて異なる番号になる() {
     let 格子 = 格子を作る(1.0);
     let Ok(集合) = 格子.必要集合を計算する(位置(-0.1, -0.1), 1) else {
-        panic!("ID試験用の必要集合を計算できなかった");
+        panic!("番号試験用の必要集合を計算できなかった");
     };
-    let mut id一覧: Vec<_> = 集合.iter().map(|要求| 要求.id().番号を返す()).collect();
-    id一覧.sort_unstable();
-    id一覧.dedup();
-    assert_eq!(id一覧.len(), 9);
+    let mut 番号一覧: Vec<_> = 集合.iter().map(|要求| 要求.座標().番号を返す()).collect();
+    番号一覧.sort_unstable();
+    番号一覧.dedup();
+    assert_eq!(番号一覧.len(), 9);
 }
 
 #[test]

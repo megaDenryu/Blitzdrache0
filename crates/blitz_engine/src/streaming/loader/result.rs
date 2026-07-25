@@ -2,7 +2,7 @@
 
 use std::time::Duration;
 
-use crate::{シーンデータ, チャンクID, 実行時シーン読込エラー};
+use crate::{シーンデータ, チャンク座標, 実行時シーン読込エラー};
 
 #[derive(Debug)]
 pub struct チャンク読込成果 {
@@ -13,16 +13,18 @@ pub struct チャンク読込成果 {
 
 #[derive(Debug)]
 pub struct チャンク読込完了 {
-    チャンク: チャンクID,
+    チャンク: チャンク座標,
     結果: Result<チャンク読込成果, 実行時シーン読込エラー>,
 }
 
 impl チャンク読込完了 {
-    pub(super) fn 生成する(チャンク: チャンクID, 結果: Result<チャンク読込成果, 実行時シーン読込エラー>) -> Self {
+    pub(super) fn 生成する(
+        チャンク: チャンク座標, 結果: Result<チャンク読込成果, 実行時シーン読込エラー>
+    ) -> Self {
         Self { チャンク, 結果 }
     }
 
-    pub fn チャンク(&self) -> チャンクID {
+    pub fn チャンク(&self) -> チャンク座標 {
         self.チャンク
     }
 

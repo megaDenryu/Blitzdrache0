@@ -3,7 +3,7 @@
 use std::collections::HashSet;
 
 use super::{チャンク台帳, チャンク記録};
-use crate::チャンクID;
+use crate::チャンク座標;
 
 use crate::streaming::{
     chunk_diff::チャンク集合差分, chunk_request::チャンク要求, chunk_state::チャンク状態, ledger_error::チャンク台帳エラー
@@ -26,8 +26,8 @@ impl チャンク台帳 {
     }
 
     fn 必要にする(&mut self, 要求: チャンク要求, 読込要求一覧: &mut Vec<チャンク要求>) {
-        let id = 要求.id();
-        match self.登録一覧.get_mut(&id) {
+        let 座標 = 要求.座標();
+        match self.登録一覧.get_mut(&座標) {
             Some(記録) => {
                 記録.必要 = true;
                 記録.要求 = 要求;
@@ -39,7 +39,7 @@ impl チャンク台帳 {
             }
             None => {
                 self.登録一覧.insert(
-                    id,
+                    座標,
                     チャンク記録 {
                         要求,
                         状態: チャンク状態::読込待ち,
@@ -52,36 +52,36 @@ impl チャンク台帳 {
         }
     }
 
-    fn 不要を反映する(&mut self) -> Vec<チャンクID> {
+    fn 不要を反映する(&mut self) -> Vec<チャンク座標> {
         let mut 即時削除 = Vec::new();
         let mut 解除要求一覧 = Vec::new();
-        for (id, 記録) in &mut self.登録一覧 {
+        for (座標, 記録) in &mut self.登録一覧 {
             if 記録.必要 {
                 continue;
             }
             match 記録.状態 {
-                チャンク状態::読込待ち | チャンク状態::準備済み => 即時削除.push(*id),
+                チャンク状態::読込待ち | チャンク状態::準備済み => 即時削除.push(*座標),
                 チャンク状態::フレーム反映待ち | チャンク状態::常駐 => {
                     記録.再要求時状態 = Some(記録.状態);
                     記録.状態 = チャンク状態::解除待ち;
-                    解除要求一覧.push(*id);
+                    解除要求一覧.push(*座標);
                 }
                 チャンク状態::読込中 | チャンク状態::GPU転送中 | チャンク状態::解除待ち => {}
             }
         }
-        for id in 即時削除 {
-            self.登録一覧.remove(&id);
+        for 座標 in 即時削除 {
+            self.登録一覧.remove(&座標);
         }
-        解除要求一覧.sort_by_key(|id| id.番号を返す());
+        解除要求一覧.sort_by_key(|座標| 座標.番号を返す());
         解除要求一覧
     }
 }
 
 fn 重複を検査する(必要集合: &[チャンク要求]) -> Result<(), チャンク台帳エラー> {
-    let mut id一覧 = HashSet::with_capacity(必要集合.len());
+    let mut 座標一覧 = HashSet::with_capacity(必要集合.len());
     for 要求 in 必要集合 {
-        if !id一覧.insert(要求.id()) {
-            return Err(チャンク台帳エラー::必要ID重複(要求.id()));
+        if !座標一覧.insert(要求.座標()) {
+            return Err(チャンク台帳エラー::必要座標重複(要求.座標()));
         }
     }
     Ok(())

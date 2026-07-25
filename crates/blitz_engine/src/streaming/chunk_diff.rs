@@ -1,17 +1,17 @@
 //! 必要集合の反映で発生した読込と解除、および準備完了後の行先。
 
-use crate::チャンクID;
+use crate::チャンク座標;
 
 use super::chunk_request::チャンク要求;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct チャンク集合差分 {
     読込要求一覧: Vec<チャンク要求>,
-    解除要求一覧: Vec<チャンクID>,
+    解除要求一覧: Vec<チャンク座標>,
 }
 
 impl チャンク集合差分 {
-    pub(super) fn 生成する(読込要求一覧: Vec<チャンク要求>, 解除要求一覧: Vec<チャンクID>) -> Self {
+    pub(super) fn 生成する(読込要求一覧: Vec<チャンク要求>, 解除要求一覧: Vec<チャンク座標>) -> Self {
         Self {
             読込要求一覧, 解除要求一覧
         }
@@ -21,7 +21,7 @@ impl チャンク集合差分 {
         &self.読込要求一覧
     }
 
-    pub fn 解除要求一覧(&self) -> &[チャンクID] {
+    pub fn 解除要求一覧(&self) -> &[チャンク座標] {
         &self.解除要求一覧
     }
 }

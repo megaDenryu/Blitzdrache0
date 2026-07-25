@@ -2,7 +2,8 @@
 
 use blitz_math::{大域メートル, 大域ワールド位置};
 
-use super::{chunk_coordinate::チャンク座標, chunk_request::チャンク要求, error::チャンク格子エラー};
+use super::{chunk_request::チャンク要求, error::チャンク格子エラー};
+use crate::チャンク座標;
 
 #[derive(Debug, Clone, Copy)]
 pub struct チャンク格子 {
