@@ -6,6 +6,7 @@
 mod asset_rewrite;
 mod pixel_judgment;
 mod plan;
+mod rebuild_plan;
 mod shader_rewrite;
 mod window_operation;
 
@@ -15,6 +16,7 @@ use crate::cli::粒子表示モード;
 
 pub(crate) use asset_rewrite::アセットを書き換える;
 pub(crate) use pixel_judgment::{アニメーション差分を判定する, ピクセルを判定する};
+pub(crate) use rebuild_plan::ウィンドウ再構築計画;
 pub(crate) use shader_rewrite::シェーダーを書き換える;
 
 /// フレーム番号に応じて、このフレームで行う自己操作・検証を表す。

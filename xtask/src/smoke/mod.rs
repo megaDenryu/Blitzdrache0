@@ -1,7 +1,8 @@
-//! DoD自動検証: shaders/とassets/smoke/を一時コピーへ複製し、quad(ホットリロード+厳密判定)→helmet→particles→dev-ui→shadow(輝度相対比較)→fox(アニメ差分)→cloth(布込み差分)の各ステージを順に実行する。
+//! DoD自動検証: shaders/とassets/smoke/を一時コピーへ複製し、quad(ホットリロード+厳密判定)→helmet→particles→dev-ui→shadow(輝度相対比較)→fox(アニメ差分)→cloth(布込み差分)→post-resize(ポスト有効のままウィンドウ再構築)の各ステージを順に実行する。
 //! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断22」「判断29」「判断37」「判断45」「判断55」。
 
 mod copy_setup;
+mod launch_setting;
 mod run_stage;
 mod stages;
 

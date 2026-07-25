@@ -6,6 +6,7 @@ mod cargo_toml_parse;
 mod dependency_whitelist;
 mod doc_reference;
 mod doc_section;
+mod drop_impl;
 mod forbidden_strings;
 mod line_count;
 mod particle_reference;
@@ -69,6 +70,7 @@ fn ファイル単位の違反を集める(ファイル一覧: &[PathBuf]) -> Re
         }
         if 拡張子 == "rs" {
             違反一覧.extend(allow_lint::検査する(パス, &内容));
+            違反一覧.extend(drop_impl::検査する(パス, &内容));
         }
         違反一覧.extend(doc_reference::検査する(パス, &内容));
     }
