@@ -2,6 +2,7 @@
 
 use std::slice::Iter;
 
+use super::streaming_settings::プレイヤー位置源;
 use super::{value_args, 布モード, 粒子表示モード, 起動設定};
 use crate::error::起動エラー;
 
@@ -45,7 +46,9 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--cloth-cape" => 設定.布モード = 布モード::マント,
         "--window-rebuild" => 設定.ウィンドウ再構築検証有効 = true,
         "--streaming" => 設定.ストリーミング.有効 = true,
+        "--streaming-route" => 設定.ストリーミング.位置源 = プレイヤー位置源::固定経路,
         "--report-streaming" => 設定.ストリーミング.報告する = true,
+        "--report-streaming-summary" => 設定.ストリーミング.要約を報告する = true,
         _ => {}
     }
 }

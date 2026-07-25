@@ -11,8 +11,11 @@ mod file_scan;
 mod gen_source_assets;
 mod m10_bench;
 mod m11_soak;
+mod memory_sampling;
 mod object_bench;
+mod release_build;
 mod smoke;
+mod streaming_bench;
 mod type_metrics;
 mod verify;
 mod watch_assets;
@@ -33,6 +36,7 @@ fn main() -> ExitCode {
         Some("m10-bench") => m10_bench::実行する(),
         Some("m11-soak") => m11_soak::実行する(),
         Some("object-bench") => object_bench::実行する(),
+        Some("streaming-bench") => streaming_bench::実行する(&引数一覧[1..]),
         _ => {
             使い方を表示する();
             ExitCode::FAILURE
@@ -57,4 +61,7 @@ fn 使い方を表示する() {
     println!("  m10-bench        M10流体GPU試作を固定条件で実行し、検証件数とGPU時間を表示する");
     println!("  m11-soak         3600フレーム連続実行し、RAM・VRAM推移を約5秒間隔で表示する");
     println!("  object-bench     二対象の画素判定後、1・10・100対象のGPU/CPU時間とGPUメモリを計測する");
+    println!(
+        "  streaming-bench [フレーム数]  固定経路でチャンクを読み込みながら、予算を十分に取った反復のRAM・VRAM推移と、縮退させた読込・解除順の再現を測る"
+    );
 }

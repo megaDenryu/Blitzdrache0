@@ -61,6 +61,16 @@ impl アプリ {
         self.レンダラー.as_ref().map_or(&[], レンダラー::実表示観測一覧を取得する)
     }
 
+    /// `--report-streaming-summary`が指定されたか。
+    pub(crate) fn ストリーミング要約報告が必要か(&self) -> bool {
+        self.ストリーミング要約報告
+    }
+
+    /// 固定経路実行で観測した転送量・処理時間・最大使用量。`--streaming`が無ければ調停自体が無く`None`。
+    pub(crate) fn ストリーミング要約を取得する(&self) -> Option<super::ストリーミング要約> {
+        self.ストリーミング.as_ref().map(super::streaming::ストリーミング配線::要約を作る)
+    }
+
     /// イベントループ終了後に呼び、破棄順序を明示する。
     pub(crate) fn レンダラーを破棄する(&mut self) {
         self.レンダラー = None;

@@ -26,6 +26,7 @@ use blitz_render::{クリアカラー, レンダラー};
 use winit::window::Window;
 
 pub(crate) use frame_timing::{フレーム時間統計, 集計する};
+pub(crate) use streaming::ストリーミング要約;
 
 use crate::cli::{布モード, 描画対象数, 粒子表示モード, 起動モード};
 use crate::dev_ui::開発UI;
@@ -74,5 +75,7 @@ pub(crate) struct アプリ {
     ウィンドウ再構築検証有効: bool,
     /// `--streaming`指定時だけ`Some`。チャンク格子・目録・予算・台帳・読込器はすべてこの1つの中にある。
     ストリーミング: Option<streaming::ストリーミング配線>,
+    /// `--report-streaming-summary`指定でtrue。ストリーミングが無効なときも指定の有無を保つため、配線とは別に持つ。
+    ストリーミング要約報告: bool,
     起動時エラー: Option<起動エラー>,
 }

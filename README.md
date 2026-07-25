@@ -145,6 +145,7 @@ cargo xtask bench       # リリース版固定シーンのベンチマーク（
 cargo xtask bench-display-timing  # benchに実表示間隔の計測を追加（計測が描画ループを止めるためbenchの時系列とは比較不可）
 cargo xtask m11-soak    # 3600フレーム連続実行中のRAM・VRAM推移をテキスト採取
 cargo xtask object-bench  # 2対象の画素判定と1・10・100対象のGPU/CPU時間・GPUメモリ計測
+cargo xtask streaming-bench [フレーム数]  # 固定経路のチャンク読込: 予算を十分に取った反復のRAM・VRAM推移と、縮退させた読込・解除順の再現
 cargo xtask gen-source-assets # 検証用ソースアセット（スモーク用quad・影検証シーン・25チャンクの検証用世界）の再生成
 cargo xtask fetch-assets     # DamagedHelmet等の標準サンプル取得
 ```

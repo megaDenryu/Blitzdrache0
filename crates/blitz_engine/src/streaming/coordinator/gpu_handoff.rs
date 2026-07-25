@@ -4,7 +4,9 @@
 
 use super::ストリーミング調停;
 
-use crate::streaming::{chunk_diff::GPU転送完了結果, coordinator_error::ストリーミング調停エラー};
+use crate::streaming::{
+    chunk_diff::GPU転送完了結果, coordinator_error::ストリーミング調停エラー, ledger_error::チャンク台帳エラー
+};
 use crate::{シーンデータ, チャンク座標};
 
 impl ストリーミング調停 {
@@ -18,6 +20,8 @@ impl ストリーミング調停 {
             return Ok(None);
         };
         self.台帳.gpu転送を開始する(座標)?;
+        let メモリ量 = self.台帳.メモリ量を引く(座標).ok_or(チャンク台帳エラー::未登録(座標))?;
+        self.gpu転送を記録する(メモリ量.vramバイト数)?;
         Ok(Some(シーン))
     }
 
@@ -36,6 +40,6 @@ impl ストリーミング調停 {
     /// GPU資源を解放した座標を台帳から削除する。解除待ちでない座標は段階の飛ばしとして型付きエラーになる。
     pub fn gpu資源の解除を報告する(&mut self, 座標: チャンク座標) -> Result<(), ストリーミング調停エラー> {
         self.台帳.gpu使用完了後に解除する(座標)?;
-        Ok(())
+        self.gpu解除を記録する()
     }
 }
