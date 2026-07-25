@@ -46,10 +46,7 @@ impl レンダラー {
         // 安全性: command_bufferはcommand_poolの破棄で暗黙に解放されるため、
         // 個別のfree_command_buffersは不要。
         unsafe { self.device.destroy_command_pool(self.command_pool, None) };
-        self.ディスクリプタ.破棄する(&self.device);
-        for 資源 in &self.描画対象資源一覧 {
-            資源.破棄する(&self.device);
-        }
+        self.シーン描画資源.破棄する(&self.device);
         self.ユニフォーム.破棄する(&self.device);
         self.転送環境.破棄する(&self.device);
         self.深度バッファ.破棄する(&self.device);

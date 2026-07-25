@@ -9,16 +9,15 @@ mod destroy;
 mod draw;
 mod draw_dispatch;
 mod draw_execute;
-mod draw_inputs;
 mod frame_dispatch_inputs;
 mod generate;
 mod measurement_control;
 mod queries;
 mod readback_buffer;
 mod reconstruct;
-mod render_object_resources;
 mod replace_scene;
 mod replace_shader;
+mod scene_draw_resources;
 mod skin_write;
 mod ui_dispatch;
 mod ui_texture;
@@ -56,11 +55,9 @@ pub struct レンダラー {
     シャドウマップ: vulkan::shadow_map::シャドウマップ,
     シャドウパイプライン: vulkan::pipeline::シャドウパイプライン,
     転送環境: vulkan::transfer::転送実行環境,
-    描画対象資源一覧: Vec<render_object_resources::描画対象資源>,
-    ジオメトリ入力作業領域: Vec<vulkan::frame::ジオメトリ入力>,
-    シャドウ入力作業領域: Vec<vulkan::frame::シャドウ描画入力>,
+    /// 描画対象数に連動する資源(描画対象GPU資源・ディスクリプタ・描画入力作業領域)の束。要素数の一致はこの型が保つ。
+    シーン描画資源: scene_draw_resources::シーン描画資源,
     ユニフォーム: vulkan::uniform::フレームユニフォーム一式,
-    ディスクリプタ: vulkan::descriptor::ディスクリプタ一式,
     command_pool: vk::CommandPool,
     command_buffer一覧: [vk::CommandBuffer; フレームインフライト数],
     フレーム同期: vulkan::sync::フレーム同期,

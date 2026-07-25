@@ -9,8 +9,7 @@ use super::violation::違反;
 
 /// 注意: この一覧への追加は禁止する。減らす方向にのみ動かす。
 /// 削除できるのは、そのファイルの分割根拠が例外1〜4のいずれかを満たすよう型を再設計したときだけである。
-const 未是正ファイル一覧: [&str; 3] = [
-    "crates/blitz_render/src/renderer/draw_inputs.rs",
+const 未是正ファイル一覧: [&str; 2] = [
     "crates/blitz_render/src/renderer/generate/generate_resources/command_sync_resources.rs",
     "crates/blitz_render/src/renderer/generate/generate_resources/optional_resources.rs",
 ];
@@ -39,9 +38,9 @@ mod tests {
 
     #[test]
     fn 区切り文字が逆斜線でも一致する() {
-        assert!(既知の未是正ファイルか(
-            Path::new(r"crates\blitz_render\src\renderer\draw_inputs.rs")
-        ));
+        assert!(既知の未是正ファイルか(Path::new(
+            r"crates\blitz_render\src\renderer\generate\generate_resources\optional_resources.rs"
+        )));
         assert!(!既知の未是正ファイルか(Path::new("crates/blitz_render/src/renderer/draw.rs")));
     }
 

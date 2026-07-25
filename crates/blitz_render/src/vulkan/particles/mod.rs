@@ -6,11 +6,12 @@ mod buffer;
 mod compute_pipeline;
 mod descriptor;
 mod draw_pipeline;
+mod inputs;
 
-pub(crate) use buffer::粒子バッファ;
-pub(crate) use compute_pipeline::粒子コンピュートパイプライン;
-pub(crate) use descriptor::粒子ディスクリプタ一式;
-pub(crate) use draw_pipeline::粒子描画パイプライン;
+use buffer::粒子バッファ;
+use compute_pipeline::粒子コンピュートパイプライン;
+use descriptor::粒子ディスクリプタ一式;
+use draw_pipeline::粒子描画パイプライン;
 
 use ash::vk;
 
@@ -22,12 +23,12 @@ use crate::vulkan::transfer::転送実行環境;
 use crate::vulkan::uniform::フレームユニフォーム一式;
 
 pub(crate) struct 粒子リソース一式 {
-    pub(crate) バッファ: 粒子バッファ,
-    pub(crate) ディスクリプタ: 粒子ディスクリプタ一式,
-    pub(crate) コンピュートパイプライン: 粒子コンピュートパイプライン,
-    pub(crate) 描画パイプライン: 粒子描画パイプライン,
-    pub(crate) 更新スレッド数: u32,
-    pub(crate) 描画要素数: u32,
+    バッファ: 粒子バッファ,
+    ディスクリプタ: 粒子ディスクリプタ一式,
+    コンピュートパイプライン: 粒子コンピュートパイプライン,
+    描画パイプライン: 粒子描画パイプライン,
+    更新スレッド数: u32,
+    描画要素数: u32,
 }
 
 impl 粒子リソース一式 {

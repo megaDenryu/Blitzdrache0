@@ -6,6 +6,7 @@
 mod buffers;
 mod create;
 mod descriptor;
+mod inputs;
 mod pipeline;
 
 use ash::vk;
@@ -25,18 +26,6 @@ impl スキニング一式 {
     /// スキン済み頂点バッファ(シーン/シャドウパスが頂点入力として読む)。
     pub(crate) fn 出力バッファ(&self) -> vk::Buffer {
         self.バッファ.出力.0
-    }
-
-    pub(crate) fn パイプラインhandle(&self) -> vk::Pipeline {
-        self.パイプライン.handle
-    }
-
-    pub(crate) fn パイプラインlayout(&self) -> vk::PipelineLayout {
-        self.パイプライン.layout
-    }
-
-    pub(crate) fn set(&self, フレーム添字: usize) -> vk::DescriptorSet {
-        self.ディスクリプタ.set一覧[フレーム添字]
     }
 
     /// このフレームのスキン行列(列優先4x4)を書き込む。呼び出しはフェンス待ち後(判断24と同じ規律)。

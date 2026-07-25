@@ -9,7 +9,7 @@ use crate::vulkan;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 #[allow(clippy::too_many_arguments)]
-pub(in crate::renderer) fn 描画対象資源一覧を生成する(
+pub(in crate::renderer::scene_draw_resources) fn 描画対象資源一覧を生成する(
     instance: &ash::Instance,
     physical_device: vk::PhysicalDevice,
     device: &GPUデバイス,

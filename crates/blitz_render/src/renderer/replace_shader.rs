@@ -13,7 +13,7 @@ impl レンダラー {
     /// エラーを返す（呼び出し元のblitz_appはこれを「コンパイル失敗、旧パイプライン継続」
     /// として扱う）。
     pub fn シェーダーを差し替える(&mut self, シェーダー: シェーダー一式) -> Result<(), レンダラーエラー> {
-        let ディスクリプタlayout = self.ディスクリプタ.layout;
+        let ディスクリプタlayout = self.シーン描画資源.ディスクリプタlayout();
         let 新パイプライン =
             vulkan::pipeline::パイプライン::生成する(&self.device, self.swapchain.画像形式, 深度形式, ディスクリプタlayout, &シェーダー)?;
 
