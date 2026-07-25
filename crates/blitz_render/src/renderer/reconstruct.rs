@@ -5,8 +5,6 @@
 //! フレームごとの同期物（フェンス・取得セマフォ）とコマンドバッファは
 //! 再構築時に作り直さない（判断13）。
 
-use ash::vk;
-
 use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::extent::ウィンドウ寸法;
@@ -21,30 +19,23 @@ impl レンダラー {
 
     pub(super) fn スワップチェーンを再構築する(&mut self) -> Result<(), レンダラーエラー> {
         // 古いスワップチェーン・深度バッファ・提示同期の破棄前にGPU使用完了を待つ。
-        self.gpuの全作業完了を待つ()?;
-        self.提示同期.破棄する(&self.device);
-        self.深度バッファ.破棄する(&self.device);
-        self.swapchain.破棄する(&self.device, &self.swapchain_loader);
+        self.環境.gpuの全作業完了を待つ()?;
+        let device = self.環境.device();
+        self.提示同期.破棄する(device);
+        self.深度バッファ.破棄する(device);
+        self.swapchain.破棄する(device, self.環境.swapchain_loader());
 
-        self.swapchain = vulkan::swapchain::スワップチェーン::生成する(
-            self.physical_device,
-            &self.device,
-            &self.surface_loader,
-            self.surface,
-            &self.swapchain_loader,
-            self.現在の寸法,
-            vk::SwapchainKHR::null(),
-        )?;
-        let メモリプロパティ = self.物理デバイスのメモリプロパティを取得する();
-        self.深度バッファ = vulkan::depth::深度バッファ::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)?;
+        // 破棄を済ませたため旧スワップチェーンは渡さない。
+        self.swapchain = self.環境.スワップチェーンを作る(self.現在の寸法, None)?;
+        let メモリプロパティ = self.環境.メモリプロパティを取得する();
+        self.深度バッファ = vulkan::depth::深度バッファ::生成する(device, &メモリプロパティ, self.swapchain.寸法)?;
         // ポスト処理の画像はスワップチェーン寸法に連動するため作り直す(判断38・41)。有無の判定はフレーム構成を再度読まず、
         // 一式そのものの有無で行う(生成時にフレーム構成から決めた結果と常に一致する)。
-        let device = &self.device;
         let 新寸法 = self.swapchain.寸法;
         if let Some(ポスト処理) = self.ポスト処理.as_mut() {
             ポスト処理.寸法に追従する(device, &メモリプロパティ, 新寸法)?;
         }
-        self.提示同期 = vulkan::sync::提示同期::生成する(&self.device, self.swapchain.画像数())?;
+        self.提示同期 = vulkan::sync::提示同期::生成する(device, self.swapchain.画像数())?;
         self.実表示計測.スワップチェーンを作り直した();
         self.再構築が必要 = false;
         Ok(())

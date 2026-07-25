@@ -8,7 +8,7 @@ use crate::vulkan::post_process::ポスト処理一式;
 impl レンダラー {
     pub(super) fn 提示先を組み立てる(&self, 画像添字: u32, 提示id: Option<u64>) -> 提示先<'_> {
         提示先 {
-            loader: &self.swapchain_loader,
+            loader: self.環境.swapchain_loader(),
             swapchain: self.swapchain.handle,
             画像添字,
             提示id,

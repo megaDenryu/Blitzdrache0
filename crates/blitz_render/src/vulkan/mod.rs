@@ -16,6 +16,7 @@ pub(crate) mod device_buffer;
 pub(crate) mod frame;
 pub(crate) mod fullscreen_pipeline;
 pub(crate) mod geometry;
+pub(crate) mod gpu_environment;
 pub(crate) mod gpu_timing;
 pub(crate) mod graph;
 pub(crate) mod hdr_target;

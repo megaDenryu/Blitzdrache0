@@ -13,15 +13,7 @@ pub(super) fn レンダラーを組み立てる(
     フレーム構成: フレーム構成,
 ) -> レンダラー {
     レンダラー {
-        entry: コア.entry,
-        instance: コア.instance,
-        デバッグメッセンジャー: コア.デバッグメッセンジャー,
-        surface_loader: コア.surface_loader,
-        surface: コア.surface,
-        physical_device: コア.physical_device,
-        device: コア.device,
-        queue: コア.queue,
-        swapchain_loader: コア.swapchain_loader,
+        環境: コア.環境,
         swapchain: コア.swapchain,
         深度バッファ: 資源.深度バッファ,
         シャドウマップ: 資源.シャドウマップ,

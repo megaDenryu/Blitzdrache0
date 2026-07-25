@@ -5,6 +5,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::material::マテリアル素材;
+use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
@@ -19,15 +20,14 @@ pub(crate) struct マテリアルテクスチャ一式 {
 impl マテリアルテクスチャ一式 {
     pub(crate) fn 生成する(
         device: &GPUデバイス,
-        instance: &ash::Instance,
-        physical_device: vk::PhysicalDevice,
+        問い合わせ: 物理デバイス問い合わせ<'_>,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         転送環境: &転送実行環境,
         マテリアル: &マテリアル素材,
     ) -> Result<Self, レンダラーエラー> {
-        let ベースカラー = テクスチャ::生成する(device, instance, physical_device, メモリプロパティ, 転送環境, マテリアル.ベースカラー())?;
+        let ベースカラー = テクスチャ::生成する(device, 問い合わせ, メモリプロパティ, 転送環境, マテリアル.ベースカラー())?;
 
-        let 金属粗さ = match テクスチャ::生成する(device, instance, physical_device, メモリプロパティ, 転送環境, マテリアル.金属粗さ())
+        let 金属粗さ = match テクスチャ::生成する(device, 問い合わせ, メモリプロパティ, 転送環境, マテリアル.金属粗さ())
         {
             Ok(テクスチャ) => テクスチャ,
             Err(誤り) => {
@@ -36,7 +36,7 @@ impl マテリアルテクスチャ一式 {
             }
         };
 
-        let 法線マップ = match テクスチャ::生成する(device, instance, physical_device, メモリプロパティ, 転送環境, マテリアル.法線マップ())
+        let 法線マップ = match テクスチャ::生成する(device, 問い合わせ, メモリプロパティ, 転送環境, マテリアル.法線マップ())
         {
             Ok(テクスチャ) => テクスチャ,
             Err(誤り) => {

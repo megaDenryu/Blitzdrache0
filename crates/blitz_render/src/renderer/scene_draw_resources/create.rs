@@ -8,6 +8,7 @@ use super::シーン描画資源;
 use crate::error::レンダラーエラー;
 use crate::render_scene_material::描画シーン素材;
 use crate::vulkan::descriptor::{ディスクリプタ一式, 描画対象ディスクリプタ参照};
+use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
 use crate::vulkan::shadow_map::シャドウマップ;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
@@ -15,8 +16,7 @@ use crate::vulkan::uniform::フレームユニフォーム一式;
 
 /// 束の外から与える生成材料。ディスクリプタセットはフレームユニフォームとシャドウマップも結ぶため、描画シーン素材だけでは足りない。
 pub(in crate::renderer) struct シーン描画資源生成要求<'a> {
-    pub(in crate::renderer) instance: &'a ash::Instance,
-    pub(in crate::renderer) physical_device: vk::PhysicalDevice,
+    pub(in crate::renderer) 物理デバイス問い合わせ: 物理デバイス問い合わせ<'a>,
     pub(in crate::renderer) メモリプロパティ: &'a vk::PhysicalDeviceMemoryProperties,
     pub(in crate::renderer) 転送環境: &'a 転送実行環境,
     pub(in crate::renderer) ユニフォーム: &'a フレームユニフォーム一式,
@@ -30,8 +30,7 @@ impl シーン描画資源 {
         device: &GPUデバイス, 要求: シーン描画資源生成要求<'_>
     ) -> Result<Self, レンダラーエラー> {
         let 描画対象資源一覧 = render_object_resources::描画対象資源一覧を生成する(
-            要求.instance,
-            要求.physical_device,
+            要求.物理デバイス問い合わせ,
             device,
             要求.メモリプロパティ,
             要求.転送環境,

@@ -18,7 +18,7 @@ pub(super) fn 組み立てる(
 ) -> Result<Option<vulkan::particles::粒子リソース一式>, レンダラーエラー> {
     match (要求.シェーダー.粒子.as_ref(), 要求.粒子素材) {
         (Some(シェーダー), Some(素材)) => Ok(Some(vulkan::particles::粒子リソース一式::生成する(
-            要求.device,
+            要求.環境.device(),
             メモリプロパティ,
             &基礎.転送環境,
             シーンカラー形式,

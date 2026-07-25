@@ -1,19 +1,25 @@
-//! インスタンス・デバッグメッセンジャー・サーフェス・物理/論理デバイス・
-//! スワップチェーンまでを組み立てる(`generate_resources`より前の依存段)。
+//! GPU環境の生成と、その環境を材料にする最初の資源(スワップチェーン・実表示計測)の取得を1つの束にまとめる工程。
+//! `generate_resources`より前の依存段であり、後続段が要る材料をこの束が全部そろえる。
 
-mod resources;
-mod timestamp;
-
-use ash::vk;
-use raw_window_handle::{RawDisplayHandle, RawWindowHandle};
-
-use super::debug_setup::デバッグメッセンジャーを作る;
 use crate::error::レンダラーエラー;
 use crate::extent::ウィンドウ寸法;
 use crate::present_display_request::実表示計測要求;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
-pub(super) use resources::コア資源;
+use crate::vulkan::gpu_environment::GPU環境;
+use raw_window_handle::{RawDisplayHandle, RawWindowHandle};
+
+pub(crate) struct コア資源 {
+    pub(crate) 環境: GPU環境,
+    pub(crate) swapchain: vulkan::swapchain::スワップチェーン,
+    pub(crate) 検証カウンタ: 検証カウンタ,
+    /// 選定したキューファミリのtimestamp_valid_bits > 0 か(判断30)。
+    pub(crate) タイムスタンプ対応か: bool,
+    /// `vk::PhysicalDeviceLimits::timestamp_period`(1tickあたりのns)。
+    pub(crate) タイムスタンプ周期ns: f32,
+    /// 実表示時刻計測の使用可否。非対応環境でも生成は成立し、記録開始時に非対応を返す。
+    pub(crate) 実表示計測: vulkan::present_timing::実表示計測,
+}
 
 pub(super) fn 組み立てる(
     表示ハンドル: RawDisplayHandle,
@@ -21,47 +27,15 @@ pub(super) fn 組み立てる(
     寸法: ウィンドウ寸法,
     実表示計測要求: 実表示計測要求,
 ) -> Result<コア資源, レンダラーエラー> {
-    let デバッグ有効か = cfg!(debug_assertions);
-    // 安全性: プロセス内で他にVulkanローダーを読み込んでいないことは
-    // blitz_appがコンポジションルートとして唯一のレンダラーのみ生成することで保証する。
-    let entry = unsafe { ash::Entry::load()? };
-
-    let instance = vulkan::instance::生成する(&entry, 表示ハンドル, デバッグ有効か)?;
     let 検証カウンタ = 検証カウンタ::生成する();
-    let デバッグメッセンジャー = デバッグメッセンジャーを作る(&entry, &instance, &検証カウンタ, デバッグ有効か)?;
-
-    let (surface_loader, surface) = vulkan::surface::生成する(&entry, &instance, 表示ハンドル, ウィンドウハンドル)?;
-    let (physical_device, queue_family_index) = vulkan::physical_device::選定する(&instance, &surface_loader, surface)?;
-    let 大点描画対応 = vulkan::physical_device::大きな点描画に対応するか(&instance, physical_device);
-    let 実表示計測状況 = vulkan::present_timing::調べる(&instance, physical_device, 実表示計測要求);
-    let (device, queue) = vulkan::device::生成する(&instance, physical_device, queue_family_index, 大点描画対応, 実表示計測状況)?;
-    let swapchain_loader = ash::khr::swapchain::Device::new(&instance, &device);
-    let 実表示計測 = vulkan::present_timing::実表示計測::生成する(&instance, &device, 実表示計測状況);
-
-    let swapchain = vulkan::swapchain::スワップチェーン::生成する(
-        physical_device,
-        &device,
-        &surface_loader,
-        surface,
-        &swapchain_loader,
-        寸法,
-        vk::SwapchainKHR::null(),
-    )?;
-
+    let 環境 = GPU環境::生成する(表示ハンドル, ウィンドウハンドル, &検証カウンタ, 実表示計測要求)?;
+    let 実表示計測 = 環境.実表示計測を作る();
+    let swapchain = 環境.スワップチェーンを作る(寸法, None)?;
     let (タイムスタンプ対応か, タイムスタンプ周期ns) =
-        timestamp::タイムスタンプ対応状況を調べる(&instance, physical_device, queue_family_index);
+        環境.物理デバイス問い合わせ().タイムスタンプ計測条件を調べる(環境.キューファミリ添字());
 
     Ok(コア資源 {
-        entry,
-        instance,
-        デバッグメッセンジャー,
-        surface_loader,
-        surface,
-        physical_device,
-        device,
-        queue,
-        queue_family_index,
-        swapchain_loader,
+        環境,
         swapchain,
         検証カウンタ,
         タイムスタンプ対応か,

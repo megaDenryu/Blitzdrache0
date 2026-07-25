@@ -7,6 +7,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::render_object_material::描画対象素材;
 use crate::vulkan;
+use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) use list::描画対象資源一覧を生成する;
@@ -18,10 +19,8 @@ pub(super) struct 描画対象資源 {
 }
 
 impl 描画対象資源 {
-    #[allow(clippy::too_many_arguments)]
     pub(super) fn 生成する(
-        instance: &ash::Instance,
-        physical_device: vk::PhysicalDevice,
+        問い合わせ: 物理デバイス問い合わせ<'_>,
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         転送環境: &vulkan::transfer::転送実行環境,
@@ -36,8 +35,7 @@ impl 描画対象資源 {
         )?;
         let テクスチャ = match vulkan::texture::マテリアルテクスチャ一式::生成する(
             device,
-            instance,
-            physical_device,
+            問い合わせ,
             メモリプロパティ,
             転送環境,
             素材.マテリアル(),

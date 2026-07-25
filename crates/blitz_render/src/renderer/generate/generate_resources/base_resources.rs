@@ -10,7 +10,7 @@ use crate::error::レンダラーエラー;
 use crate::render_scene_material::描画シーン素材;
 use crate::renderer::scene_draw_resources::{シーン描画資源, シーン描画資源生成要求};
 use crate::vulkan;
-use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::gpu_environment::GPU環境;
 
 pub(super) struct 基礎資源 {
     pub(super) 深度バッファ: vulkan::depth::深度バッファ,
@@ -20,23 +20,18 @@ pub(super) struct 基礎資源 {
     pub(super) シーン描画資源: シーン描画資源,
 }
 
-#[allow(clippy::too_many_arguments)]
 pub(super) fn 組み立てる(
-    instance: &ash::Instance,
-    physical_device: vk::PhysicalDevice,
-    device: &GPUデバイス,
-    queue: vk::Queue,
-    queue_family_index: u32,
+    環境: &GPU環境,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     swapchain寸法: vk::Extent2D,
     描画シーン: &描画シーン素材,
 ) -> Result<基礎資源, レンダラーエラー> {
-    let 共有 = shared::共有資源::生成する(device, メモリプロパティ, queue, queue_family_index, swapchain寸法)?;
+    let device = 環境.device();
+    let 共有 = shared::共有資源::生成する(device, メモリプロパティ, 環境.queue(), 環境.キューファミリ添字(), swapchain寸法)?;
     let 束 = match シーン描画資源::生成する(
         device,
         シーン描画資源生成要求 {
-            instance,
-            physical_device,
+            物理デバイス問い合わせ: 環境.物理デバイス問い合わせ(),
             メモリプロパティ,
             転送環境: &共有.転送,
             ユニフォーム: &共有.ユニフォーム,

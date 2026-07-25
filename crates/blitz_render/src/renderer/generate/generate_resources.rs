@@ -13,7 +13,6 @@ mod submission_resources;
 
 use super::frame_resources::フレーム資源;
 use crate::error::レンダラーエラー;
-use crate::renderer::foundation_query;
 use crate::vulkan;
 use post_process_resources::描画先構成;
 
@@ -22,28 +21,19 @@ pub(in crate::renderer::generate) use request::生成要求;
 pub(super) fn 組み立てる(要求: 生成要求<'_>) -> Result<フレーム資源, レンダラーエラー> {
     let 描画先 = 描画先構成::決める(要求.フレーム構成);
     let シーンカラー形式 = 描画先.シーンカラー形式(要求.swapchain.画像形式);
+    let device = 要求.環境.device();
 
-    let メモリプロパティ = foundation_query::物理デバイスのメモリプロパティを取得する(要求.instance, 要求.physical_device);
-    let 基礎 = base_resources::組み立てる(
-        要求.instance,
-        要求.physical_device,
-        要求.device,
-        要求.queue,
-        要求.queue_family_index,
-        &メモリプロパティ,
-        要求.swapchain.寸法,
-        要求.描画シーン,
-    )?;
+    let メモリプロパティ = 要求.環境.メモリプロパティを取得する();
+    let 基礎 = base_resources::組み立てる(要求.環境, &メモリプロパティ, 要求.swapchain.寸法, 要求.描画シーン)?;
 
-    let 送信 = submission_resources::組み立てる(要求.device, 要求.queue_family_index, 要求.swapchain)?;
-    let パイプライン =
-        pipeline_resources::組み立てる(要求.device, シーンカラー形式, 基礎.シーン描画資源.ディスクリプタlayout(), 要求.シェーダー)?;
+    let 送信 = submission_resources::組み立てる(device, 要求.環境.キューファミリ添字(), 要求.swapchain)?;
+    let パイプライン = pipeline_resources::組み立てる(device, シーンカラー形式, 基礎.シーン描画資源.ディスクリプタlayout(), 要求.シェーダー)?;
     let 粒子 = particle_resources::組み立てる(&要求, &メモリプロパティ, &基礎, シーンカラー形式)?;
-    let gpu計測 = vulkan::gpu_timing::パス別GPU計測::生成する(要求.device, 要求.タイムスタンプ対応か, 要求.タイムスタンプ周期ns)?;
-    let ui一式 = vulkan::ui::UIリソース一式::生成する(要求.device, 要求.swapchain.画像形式, &要求.シェーダー.ui)?;
-    let ポスト処理 = 描画先.組み立てる(要求.device, &メモリプロパティ, 要求.swapchain, 要求.シェーダー)?;
+    let gpu計測 = vulkan::gpu_timing::パス別GPU計測::生成する(device, 要求.タイムスタンプ対応か, 要求.タイムスタンプ周期ns)?;
+    let ui一式 = vulkan::ui::UIリソース一式::生成する(device, 要求.swapchain.画像形式, &要求.シェーダー.ui)?;
+    let ポスト処理 = 描画先.組み立てる(device, &メモリプロパティ, 要求.swapchain, 要求.シェーダー)?;
     let (スキニング, 布) = simulation_resources::組み立てる(
-        要求.device,
+        device,
         &メモリプロパティ,
         &基礎.転送環境,
         シーンカラー形式,

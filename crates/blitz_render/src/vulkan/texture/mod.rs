@@ -13,6 +13,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::texture_material::テクスチャ素材;
+use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
@@ -28,14 +29,13 @@ pub(crate) struct テクスチャ {
 impl テクスチャ {
     pub(crate) fn 生成する(
         device: &GPUデバイス,
-        instance: &ash::Instance,
-        physical_device: vk::PhysicalDevice,
+        問い合わせ: 物理デバイス問い合わせ<'_>,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         転送環境: &転送実行環境,
         素材: &テクスチャ素材,
     ) -> Result<Self, レンダラーエラー> {
         let 形式 = format_support::vulkan形式を選ぶ(素材.用途());
-        format_support::blitフィルタ対応を確認する(instance, physical_device, 形式)?;
+        format_support::blitフィルタ対応を確認する(問い合わせ, 形式)?;
 
         let mip数 = mip_count::計算する(素材.幅(), 素材.高さ());
         let (image, memory) = image::生成する(device, メモリプロパティ, 素材.幅(), 素材.高さ(), mip数, 形式)?;

@@ -8,7 +8,6 @@ mod cpu_timing;
 mod destroy;
 mod draw_dispatch;
 mod draw_execute;
-mod foundation_query;
 mod frame_dispatch_inputs;
 mod frame_progress;
 mod generate;
@@ -28,7 +27,6 @@ use crate::extent::ウィンドウ寸法;
 use crate::frame_composition::フレーム構成;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
-use ash::vk;
 
 pub use cpu_timing::CPU区間時間;
 
@@ -38,18 +36,9 @@ pub use cpu_timing::CPU区間時間;
 /// 前提: `生成する` に渡すハンドルの指すウィンドウは、このレンダラーより
 /// 長生きすることを呼び出し元が保証する（blitz_appはフィールド宣言順で担保する）。
 pub struct レンダラー {
-    // 注意: フィールドとして値が読まれることはないが、破棄まで保持し続けることに意味がある。
-    // ash::Entryを破棄するとVulkanローダー(vulkan-1.dll)がアンロードされ得るため、instance/deviceの関数ポインタが無効化される前にentryを先に破棄してはならない。
-    #[allow(dead_code)]
-    entry: ash::Entry,
-    instance: ash::Instance,
-    デバッグメッセンジャー: Option<vulkan::debug_messenger::デバッグメッセンジャー>,
-    surface_loader: ash::khr::surface::Instance,
-    surface: vk::SurfaceKHR,
-    physical_device: vk::PhysicalDevice,
-    device: vulkan::tracked_device::GPUデバイス,
-    queue: vk::Queue,
-    swapchain_loader: ash::khr::swapchain::Device,
+    /// 生成後に変わらないVulkanハンドルの束(ローダー・インスタンス・サーフェス・物理/論理デバイス・キュー)。
+    /// 破棄順序の制約を共有するため1つの型に閉じてある。
+    環境: vulkan::gpu_environment::GPU環境,
     swapchain: vulkan::swapchain::スワップチェーン,
     深度バッファ: vulkan::depth::深度バッファ,
     シャドウマップ: vulkan::shadow_map::シャドウマップ,

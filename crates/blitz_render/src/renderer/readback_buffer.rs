@@ -1,5 +1,5 @@
 //! 読み戻しバッファの確保(必要なら再確保)と、読み戻し画像への変換。
-//! 触れるフィールドは`読み戻しバッファ`と、必要容量と形式を決める`swapchain`に限る。
+//! 触れるフィールドは`読み戻しバッファ`と、必要容量と形式を決める`swapchain`、確保と読み取りに要る`環境`に限る。
 //! 不変条件として、`Some`である間の容量は現在のスワップチェーン寸法ぶんを常に満たす。この確保を経ずに画像化を呼ぶことは呼び出し規律の破れであり、型付きエラーではなくpanicで落とす。
 
 use super::レンダラー;
@@ -20,11 +20,11 @@ impl レンダラー {
             return Ok(());
         }
         if let Some(古い) = self.読み戻しバッファ.take() {
-            古い.破棄する(&self.device);
+            古い.破棄する(self.環境.device());
         }
-        let メモリプロパティ = self.物理デバイスのメモリプロパティを取得する();
+        let メモリプロパティ = self.環境.メモリプロパティを取得する();
         self.読み戻しバッファ = Some(vulkan::readback::読み戻しバッファ::生成する(
-            &self.device,
+            self.環境.device(),
             &メモリプロパティ,
             必要バイト数,
         )?);
@@ -37,6 +37,6 @@ impl レンダラー {
             .読み戻しバッファ
             .as_ref()
             .unwrap_or_else(|| panic!("提示成功時に読み戻しバッファが未確保だった"));
-        vulkan::readback::読み取る(&self.device, バッファ, self.swapchain.寸法, self.swapchain.画像形式)
+        vulkan::readback::読み取る(self.環境.device(), バッファ, self.swapchain.寸法, self.swapchain.画像形式)
     }
 }

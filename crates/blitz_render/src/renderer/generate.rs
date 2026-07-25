@@ -2,7 +2,6 @@
 
 mod assemble;
 mod core_setup;
-mod debug_setup;
 mod frame_resources;
 mod generate_resources;
 #[cfg(test)]
@@ -38,11 +37,7 @@ impl レンダラー {
         構成と素材を検査する(&フレーム構成, スキン.is_some(), 布.is_some(), 粒子.is_some())?;
         let コア = core_setup::組み立てる(表示ハンドル, ウィンドウハンドル, 寸法, 実表示計測要求)?;
         let 資源 = generate_resources::組み立てる(generate_resources::生成要求 {
-            instance: &コア.instance,
-            physical_device: コア.physical_device,
-            device: &コア.device,
-            queue: コア.queue,
-            queue_family_index: コア.queue_family_index,
+            環境: &コア.環境,
             swapchain: &コア.swapchain,
             シェーダー: &シェーダー,
             描画シーン: &描画シーン,

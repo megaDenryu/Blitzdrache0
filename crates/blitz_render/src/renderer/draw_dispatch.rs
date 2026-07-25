@@ -42,8 +42,8 @@ impl レンダラー {
         self.シーン描画資源.作業領域を更新する(&作業領域入力);
 
         vulkan::frame::描画する(
-            &self.device,
-            self.queue,
+            self.環境.device(),
+            self.環境.queue(),
             スロット資源.command_buffer,
             &self.フレーム構成,
             self.提示先を組み立てる(添字, 提示id),

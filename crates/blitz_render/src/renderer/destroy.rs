@@ -1,7 +1,7 @@
 //! レンダラーの明示的な破棄処理。フィールドのDrop順序に頼らず、
 //! 生成の逆順で全Vulkanリソースを破棄する:
 //! device_wait_idle → 読み戻しバッファ・パイプライン・同期・コマンド・ジオメトリ・
-//! 深度バッファ・スワップチェーン・デバイス → サーフェス → メッセンジャー → インスタンス。
+//! 深度バッファ・スワップチェーン → GPU環境(デバイス → サーフェス → メッセンジャー → インスタンス)。
 
 use super::レンダラー;
 
@@ -9,57 +9,53 @@ impl レンダラー {
     pub(super) fn 破棄する(&mut self) {
         // 前提: この呼び出し以降このレンダラーは使用されない(Dropが唯一の呼び出し元)。
         // 破棄処理には失敗の伝播先が無いため、待機の失敗を捨てるのはこの1箇所だけである(集約側は`Result`を返す)。
-        let _ = self.gpuの全作業完了を待つ();
+        let _ = self.環境.gpuの全作業完了を待つ();
         self.任意資源を破棄する();
         self.描画資源を破棄する();
         self.基盤を破棄する();
     }
 
     fn 任意資源を破棄する(&self) {
+        let device = self.環境.device();
         if let Some(バッファ) = &self.読み戻しバッファ {
-            バッファ.破棄する(&self.device);
+            バッファ.破棄する(device);
         }
-        self.ui一式.破棄する(&self.device);
+        self.ui一式.破棄する(device);
         if let Some(粒子) = &self.粒子 {
-            粒子.破棄する(&self.device);
+            粒子.破棄する(device);
         }
         if let Some(計測) = &self.gpu計測 {
-            計測.破棄する(&self.device);
+            計測.破棄する(device);
         }
-        self.pipeline.破棄する(&self.device);
-        self.シャドウパイプライン.破棄する(&self.device);
+        self.pipeline.破棄する(device);
+        self.シャドウパイプライン.破棄する(device);
         if let Some(スキニング) = &self.スキニング {
-            スキニング.破棄する(&self.device);
+            スキニング.破棄する(device);
         }
         if let Some(布) = &self.布 {
-            布.破棄する(&self.device);
+            布.破棄する(device);
         }
         if let Some(ポスト処理) = &self.ポスト処理 {
-            ポスト処理.破棄する(&self.device);
+            ポスト処理.破棄する(device);
         }
     }
 
     fn 描画資源を破棄する(&self) {
-        self.フレーム進行.破棄する(&self.device);
-        self.提示同期.破棄する(&self.device);
-        self.シーン描画資源.破棄する(&self.device);
-        self.ユニフォーム.破棄する(&self.device);
-        self.転送環境.破棄する(&self.device);
-        self.深度バッファ.破棄する(&self.device);
-        self.シャドウマップ.破棄する(&self.device);
+        let device = self.環境.device();
+        self.フレーム進行.破棄する(device);
+        self.提示同期.破棄する(device);
+        self.シーン描画資源.破棄する(device);
+        self.ユニフォーム.破棄する(device);
+        self.転送環境.破棄する(device);
+        self.深度バッファ.破棄する(device);
+        self.シャドウマップ.破棄する(device);
     }
 
+    /// スワップチェーンの破棄と専用メモリの全解放確認は、GPU環境がvkDestroyDeviceを呼ぶ前でなければ
+    /// 意味を持たないため、環境の破棄の外に明示的に置く。
     fn 基盤を破棄する(&self) {
-        self.swapchain.破棄する(&self.device, &self.swapchain_loader);
-        self.device.全メモリ解放を確認する();
-        // 安全性: deviceはSelfが唯一の所有者で、上記の全依存リソースは破棄済み。
-        unsafe { self.device.destroy_device(None) };
-        // 安全性: surfaceはSelfが唯一の所有者で、対応するinstanceはこの後に破棄する。
-        unsafe { self.surface_loader.destroy_surface(self.surface, None) };
-        if let Some(デバッグメッセンジャー) = &self.デバッグメッセンジャー {
-            デバッグメッセンジャー.破棄する();
-        }
-        // 安全性: instanceはSelfが唯一の所有者で、上記の全依存リソースは破棄済み。
-        unsafe { self.instance.destroy_instance(None) };
+        self.swapchain.破棄する(self.環境.device(), self.環境.swapchain_loader());
+        self.環境.device().全メモリ解放を確認する();
+        self.環境.破棄する();
     }
 }

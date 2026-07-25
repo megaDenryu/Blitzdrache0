@@ -15,15 +15,15 @@ impl レンダラー {
             return Err(レンダラーエラー::スキン付きシーン差し替え未対応);
         }
         // 旧ジオメトリ・旧テクスチャの破棄前にGPU使用完了を待つ。
-        self.gpuの全作業完了を待つ()?;
+        self.環境.gpuの全作業完了を待つ()?;
 
-        let メモリプロパティ = self.物理デバイスのメモリプロパティを取得する();
+        let device = self.環境.device();
+        let メモリプロパティ = self.環境.メモリプロパティを取得する();
 
         let 新しい束 = シーン描画資源::生成する(
-            &self.device,
+            device,
             シーン描画資源生成要求 {
-                instance: &self.instance,
-                physical_device: self.physical_device,
+                物理デバイス問い合わせ: self.環境.物理デバイス問い合わせ(),
                 メモリプロパティ: &メモリプロパティ,
                 転送環境: &self.転送環境,
                 ユニフォーム: &self.ユニフォーム,
@@ -32,7 +32,7 @@ impl レンダラー {
             },
         )?;
         let 旧い束 = std::mem::replace(&mut self.シーン描画資源, 新しい束);
-        旧い束.破棄する(&self.device);
+        旧い束.破棄する(device);
         Ok(())
     }
 }

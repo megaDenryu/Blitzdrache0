@@ -13,7 +13,7 @@ pub(super) fn 実行する(
     取得セマフォ: vk::Semaphore,
     cpu区間時計: &mut Option<CPU区間時計>,
 ) -> Result<Option<u32>, レンダラーエラー> {
-    let 結果 = vulkan::frame::acquire::取得する(&レンダラー.swapchain_loader, レンダラー.swapchain.handle, 取得セマフォ)?;
+    let 結果 = vulkan::frame::acquire::取得する(レンダラー.環境.swapchain_loader(), レンダラー.swapchain.handle, 取得セマフォ)?;
     let 添字 = match 結果 {
         取得結果::取得した { 添字, 劣化 } => {
             レンダラー.再構築が必要 |= 劣化;
