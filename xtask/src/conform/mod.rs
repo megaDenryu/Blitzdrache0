@@ -10,6 +10,7 @@ mod forbidden_strings;
 mod line_count;
 mod particle_reference;
 mod section_reference;
+mod split_debt;
 mod violation;
 
 use std::path::PathBuf;

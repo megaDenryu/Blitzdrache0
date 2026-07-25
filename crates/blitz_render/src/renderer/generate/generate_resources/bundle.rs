@@ -1,5 +1,4 @@
-//! 各段の組み立て結果を`フレーム資源`へ束ねる。
-//! `generate_resources`の行数分割のためだけに切り出した内部ヘルパー。
+//! 各段の組み立て結果を`フレーム資源`の1つの値へ束ねる。所有権を移すだけで、生成も破棄もここでは行わない。
 
 use super::super::frame_resources::フレーム資源;
 use super::base_resources::基礎資源;

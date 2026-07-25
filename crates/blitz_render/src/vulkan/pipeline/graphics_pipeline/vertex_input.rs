@@ -47,7 +47,7 @@ pub(super) fn 布用記述する() -> (vk::VertexInputBindingDescription, Vec<vk
     (バインド記述, vec![全属性[0], 全属性[1], uv])
 }
 
-/// 属性選択に応じたバインド・属性記述を返す(graphics_pipelineの行数分割のための集約)。
+/// 属性選択に応じたバインド・属性記述を返す。
 pub(super) fn 選択して記述する(
     選択: super::頂点属性選択
 ) -> (vk::VertexInputBindingDescription, Vec<vk::VertexInputAttributeDescription>) {

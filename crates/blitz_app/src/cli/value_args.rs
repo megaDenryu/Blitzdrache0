@@ -1,5 +1,5 @@
 //! 値を伴うCLI引数(`--frames` `--benchmark-frames` `--shader-source`等)の解析。
-//! `cli.rs`の行数分割のためだけに切り出した内部ヘルパー。
+//! 各関数は引数イテレータから次の1語を取り出し、値の欠落・解析失敗・範囲外をそれぞれ型付きエラーにする。
 
 use std::path::PathBuf;
 use std::slice::Iter;

@@ -78,7 +78,7 @@ Rustは1つの型へ複数の `impl` ブロックを書け、それらを別フ�
 ## 機械的強制（変更禁止の設定）
 
 - ワークスペース `Cargo.toml` の `[workspace.lints]` で unwrap_used / expect_used / as_conversions を deny 済み。緩和する変更は禁止（テストモジュールでの局所allowのみ可）
-- `cargo xtask conform` が規約の機械検査（.rs/.slangの100行・禁止文字列・テスト外allow・クレート依存の白リスト・参照パス実在・文書内の節参照実在）。依存を追加するときは採用審査 + conform の白リスト更新が必須（Cargo.toml 変更だけでは通らない意図的な二重台帳）。検査を緩める変更は規約改訂（本ファイルの改訂）とセットでのみ許す
+- `cargo xtask conform` が規約の機械検査（.rs/.slangの100行・禁止文字列・切り出しの経緯語・テスト外allow・クレート依存の白リスト・参照パス実在・文書内の節参照実在）。依存を追加するときは採用審査 + conform の白リスト更新が必須（Cargo.toml 変更だけでは通らない意図的な二重台帳）。検査を緩める変更は規約改訂（本ファイルの改訂）とセットでのみ許す
 - 検証の標準列: `cargo xtask verify`（conform → fmt --check → check → clippy -D warnings → test）。この列が通らないコードはコミットしない
 - `cargo xtask type-metrics` は型ごとのフィールド数・impl分散ファイル数・メソッド数を計測する。**違反判定はしない**（現状の `レンダラー` が確実に閾値を超えるため、deny にすると検証列が全面的に止まる）。閾値による deny は型の分解が完了した後に入れる
 
