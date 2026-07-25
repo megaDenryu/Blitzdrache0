@@ -1,6 +1,7 @@
 //! 終了時に要求されたGPU時間とCPU側フレーム間隔をコンソールへ表示する。
 
 pub(crate) mod display_timing;
+pub(crate) mod streaming;
 
 use crate::app::フレーム時間統計;
 

@@ -4,9 +4,10 @@
 //! エントリファイル(scene.slang)単体でなくディレクトリ単位でコピーする
 //! (分割先のpbr.slangがコピー先に無いとslangcのimport解決が失敗する)。
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 const エントリファイル名: &str = "scene.slang";
+const チャンク世界ディレクトリ名: &str = "chunk_world";
 const アセットファイル一覧: [&str; 8] = [
     "quad.gltf",
     "quad_alt.gltf",
@@ -47,5 +48,24 @@ pub(super) fn アセットを一時コピーする() -> Result<PathBuf, String> 
         let 先 = コピー先ディレクトリ.join(ファイル名);
         std::fs::copy(&元, &先).map_err(|誤り| format!("{}のコピーに失敗した: {誤り}", 元.display()))?;
     }
+    チャンク世界を複製する(&ルート)?;
     Ok(ルート)
+}
+
+/// スモークはチャンク世界を描かないが、実行時アセット生成器はチャンク目録ソースの不在を失敗として扱うため、一式を一時ソースへ複製する。
+fn チャンク世界を複製する(ルート: &Path) -> Result<(), String> {
+    let 元ディレクトリ = PathBuf::from("assets").join(チャンク世界ディレクトリ名);
+    let 先ディレクトリ = ルート.join(チャンク世界ディレクトリ名);
+    std::fs::create_dir_all(&先ディレクトリ).map_err(|誤り| format!("チャンク世界のコピー先を作れない: {誤り}"))?;
+    let 読み取り結果 = std::fs::read_dir(&元ディレクトリ).map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", 元ディレクトリ.display()))?;
+    for エントリ結果 in 読み取り結果 {
+        let エントリ = エントリ結果.map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", 元ディレクトリ.display()))?;
+        let 元パス = エントリ.path();
+        if !元パス.is_file() {
+            continue;
+        }
+        std::fs::copy(&元パス, 先ディレクトリ.join(エントリ.file_name()))
+            .map_err(|誤り| format!("{}のコピーに失敗した: {誤り}", 元パス.display()))?;
+    }
+    Ok(())
 }

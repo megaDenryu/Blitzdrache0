@@ -22,6 +22,10 @@ mod streaming_budget_overflow_tests;
 #[cfg(test)]
 mod streaming_budget_tests;
 #[cfg(test)]
+mod streaming_coordinator_fixture;
+#[cfg(test)]
+mod streaming_coordinator_tests;
+#[cfg(test)]
 mod streaming_directory_tests;
 #[cfg(test)]
 mod streaming_estimate_tests;
@@ -52,7 +56,8 @@ pub use frame_composition::既定フレーム構成を作る;
 pub use lighting::既定ライティングを作る;
 pub use streaming::{
     GPU転送完了結果, ストリーミングメモリ量, ストリーミング予算, ストリーミング予算エラー, ストリーミング予算結果, ストリーミング見積エラー,
-    チャンクメモリ量を見積もる, チャンク予算候補, チャンク台帳, チャンク台帳エラー, チャンク格子, チャンク格子エラー, チャンク状態, チャンク目録,
-    チャンク目録エラー, チャンク要求, チャンク読込エラー, チャンク読込器, チャンク読込完了, チャンク読込成果, チャンク集合差分, 予算判定,
-    実行時チャンク目録を読み込む, 実行時チャンク目録読込エラー, 準備完了結果,
+    ストリーミング調停, ストリーミング調停エラー, ストリーミング調停設定, ストリーミング進行, チャンクメモリ量を見積もる, チャンク予算候補,
+    チャンク台帳, チャンク台帳エラー, チャンク格子, チャンク格子エラー, チャンク状態, チャンク目録, チャンク目録エラー, チャンク要求,
+    チャンク読込エラー, チャンク読込器, チャンク読込完了, チャンク読込成果, チャンク集合差分, 予算判定, 実行時チャンク目録を読み込む,
+    実行時チャンク目録読込エラー, 準備完了結果,
 };

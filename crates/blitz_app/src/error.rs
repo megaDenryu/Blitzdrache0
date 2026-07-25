@@ -50,29 +50,17 @@ pub(crate) enum 起動エラー {
     #[error("シーンの読込に失敗した: {0}(`cargo xtask compile-assets`で生成できる)")]
     シーン読込失敗(blitz_engine::実行時シーン読込エラー),
 
-    #[error("--frames引数が不正だった: {0}")]
-    フレーム数引数不正(String),
+    #[error("{0}")]
+    起動引数不正(#[from] crate::cli::起動引数エラー),
 
-    #[error("--shader-source引数が不正だった: {0}")]
-    シェーダーソース引数不正(String),
+    #[error("チャンク目録の読込に失敗した: {0}(`cargo xtask compile-assets`で生成できる)")]
+    チャンク目録読込失敗(blitz_engine::実行時チャンク目録読込エラー),
 
-    #[error("--scene引数が不正だった: {0}")]
-    シーン名引数不正(String),
+    #[error("チャンクストリーミングの進行に失敗した: {0}")]
+    ストリーミング進行失敗(#[from] blitz_engine::ストリーミング調停エラー),
 
-    #[error("--asset-root引数が不正だった: {0}")]
-    アセットルート引数不正(String),
-
-    #[error("--object-count引数が不正だった: {0}")]
-    描画対象数引数不正(String),
-
-    #[error("--dump-frame引数が不正だった: {0}")]
-    フレームダンプ引数不正(String),
-
-    #[error("--exposure引数が不正だった: {0}")]
-    露出引数不正(String),
-
-    #[error("--blend引数が不正だった: {0}")]
-    ブレンド引数不正(String),
+    #[error("チャンクストリーミングにアセットカタログが必要だが、まだ構築されていない")]
+    ストリーミングカタログ未構築,
 
     #[error("スキンメッシュ素材の生成に失敗した: {0}")]
     スキンメッシュ素材不正(#[from] blitz_render::スキンメッシュ素材エラー),

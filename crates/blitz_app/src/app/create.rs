@@ -1,19 +1,22 @@
 //! CLI起動設定からアプリの初期状態を構築する。
 
 use super::scene_camera::シーン初期カメラを作る;
-use super::{frame_timing, アプリ};
+use super::{frame_timing, streaming, アプリ};
 use crate::cli::起動設定;
+use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
 use crate::input::入力状態;
 use blitz_render::クリアカラー;
 
 impl アプリ {
-    pub(crate) fn 生成する(起動設定: 起動設定, クリア色: クリアカラー) -> Self {
+    /// チャンク目録の読込と読込ワーカーの起動を伴い失敗しうるため、結果を返す。
+    pub(crate) fn 生成する(起動設定: 起動設定, クリア色: クリアカラー) -> Result<Self, 起動エラー> {
         let フレーム間隔計測 = 起動設定
             .フレーム時間報告
             .then(|| frame_timing::フレーム間隔計測::生成する(起動設定.モード));
         let フレーム構成 = blitz_engine::既定フレーム構成を作る(起動設定.ポスト処理有効);
-        Self {
+        let ストリーミング = streaming::構築する(&起動設定.ストリーミング, &起動設定.アセットルート)?;
+        Ok(Self {
             レンダラー: None,
             window: None,
             起動モード: 起動設定.モード,
@@ -45,7 +48,8 @@ impl アプリ {
             アニメ時刻秒: 0.0,
             スモーク基準画像: None,
             ウィンドウ再構築検証有効: 起動設定.ウィンドウ再構築検証有効,
+            ストリーミング,
             起動時エラー: None,
-        }
+        })
     }
 }

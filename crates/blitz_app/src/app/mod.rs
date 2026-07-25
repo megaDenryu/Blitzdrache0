@@ -17,6 +17,7 @@ mod queries;
 mod scene_camera;
 mod scene_load;
 mod sph_setup;
+mod streaming;
 mod window_setup;
 use std::path::PathBuf;
 
@@ -71,5 +72,7 @@ pub(crate) struct アプリ {
     スモーク基準画像: Option<blitz_render::読み戻し画像>,
     /// `--window-rebuild`指定でtrue。ポスト処理を有効に保ったままウィンドウ再構築を踏む検証計画を選ぶ。
     ウィンドウ再構築検証有効: bool,
+    /// `--streaming`指定時だけ`Some`。チャンク格子・目録・予算・台帳・読込器はすべてこの1つの中にある。
+    ストリーミング: Option<streaming::ストリーミング配線>,
     起動時エラー: Option<起動エラー>,
 }

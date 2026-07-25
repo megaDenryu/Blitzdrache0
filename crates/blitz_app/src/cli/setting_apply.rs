@@ -16,6 +16,12 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--dump-frame" => 設定.フレームダンプ先 = Some(value_args::dump_frame引数を処理する(残り)?),
         "--exposure" => 設定.露出 = value_args::exposure引数を処理する(残り)?,
         "--blend" => 設定.ブレンド = value_args::blend引数を処理する(残り)?,
+        "--streaming-ram-limit" => {
+            設定.ストリーミング.上限.ramバイト数 = value_args::ストリーミング上限引数を処理する(残り, 引数値)?;
+        }
+        "--streaming-vram-limit" => {
+            設定.ストリーミング.上限.vramバイト数 = value_args::ストリーミング上限引数を処理する(残り, 引数値)?;
+        }
         _ => フラグを反映する(設定, 引数値),
     }
     Ok(())
@@ -38,6 +44,8 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--cloth" => 設定.布モード = 布モード::吊るし布,
         "--cloth-cape" => 設定.布モード = 布モード::マント,
         "--window-rebuild" => 設定.ウィンドウ再構築検証有効 = true,
+        "--streaming" => 設定.ストリーミング.有効 = true,
+        "--report-streaming" => 設定.ストリーミング.報告する = true,
         _ => {}
     }
 }

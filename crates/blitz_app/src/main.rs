@@ -43,7 +43,7 @@ fn 実行する() -> Result<ExitCode, 起動エラー> {
     let event_loop = EventLoop::new()?;
     event_loop.set_control_flow(ControlFlow::Poll);
 
-    let mut アプリ = アプリ::生成する(起動設定, クリア色);
+    let mut アプリ = アプリ::生成する(起動設定, クリア色)?;
     event_loop.run_app(&mut アプリ)?;
 
     if let Some(誤り) = アプリ.起動時エラーを取り出す() {
