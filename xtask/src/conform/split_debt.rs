@@ -9,10 +9,7 @@ use super::violation::違反;
 
 /// 注意: この一覧への追加は禁止する。減らす方向にのみ動かす。
 /// 削除できるのは、そのファイルの分割根拠が例外1〜4のいずれかを満たすよう型を再設計したときだけである。
-const 未是正ファイル一覧: [&str; 2] = [
-    "crates/blitz_render/src/renderer/generate/generate_resources/command_sync_resources.rs",
-    "crates/blitz_render/src/renderer/generate/generate_resources/optional_resources.rs",
-];
+const 未是正ファイル一覧: [&str; 1] = ["crates/blitz_render/src/renderer/generate/generate_resources/optional_resources.rs"];
 
 pub fn 既知の未是正ファイルか(パス: &Path) -> bool {
     let 正規化 = パス.to_string_lossy().replace('\\', "/");

@@ -1,13 +1,14 @@
-//! スワップチェーン生成後に組み立てる残り資源の組み立て手順。各段はサブモジュールへ分割(基礎/コマンド同期/追加/布)。束の型は`frame_resources`。
+//! スワップチェーン生成後に組み立てる残り資源の組み立て手順。各段はサブモジュールへ分割(基礎/フレーム送信/パイプライン/追加/シミュレーション)。束の型は`frame_resources`。
 //! ポスト処理は`vulkan::post_process`が一式として生成するため、ここは有効なときだけ呼ぶ判断だけを持つ。
 
 mod base_resources;
 mod bundle;
 mod cloth_resources;
-mod command_sync_resources;
 mod optional_resources;
+mod pipeline_resources;
 mod request;
 mod simulation_resources;
+mod submission_resources;
 
 use super::frame_resources::フレーム資源;
 use crate::error::レンダラーエラー;
@@ -40,15 +41,9 @@ pub(super) fn 組み立てる(要求: 生成要求<'_>) -> Result<フレーム�
         要求.描画シーン,
     )?;
 
-    let コマンド同期 = command_sync_resources::組み立てる(
-        要求.device,
-        要求.queue_family_index,
-        要求.swapchain,
-        シーンカラー形式,
-        基礎.シーン描画資源.ディスクリプタlayout(),
-        &要求.シェーダー.シーン,
-        &要求.シェーダー.シャドウ,
-    )?;
+    let 送信 = submission_resources::組み立てる(要求.device, 要求.queue_family_index, 要求.swapchain)?;
+    let パイプライン =
+        pipeline_resources::組み立てる(要求.device, シーンカラー形式, 基礎.シーン描画資源.ディスクリプタlayout(), 要求.シェーダー)?;
 
     let 追加資源 = 追加資源を組み立てる(&要求, &メモリプロパティ, シーンカラー形式, &基礎)?;
 
@@ -75,7 +70,7 @@ pub(super) fn 組み立てる(要求: 生成要求<'_>) -> Result<フレーム�
         要求.シェーダー,
     )?;
 
-    Ok(bundle::束ねる(基礎, コマンド同期, 追加資源, ポスト処理, スキニング, 布一式))
+    Ok(bundle::束ねる(基礎, 送信, パイプライン, 追加資源, ポスト処理, スキニング, 布一式))
 }
 
 fn 追加資源を組み立てる(

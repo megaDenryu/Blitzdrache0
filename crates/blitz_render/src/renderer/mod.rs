@@ -10,6 +10,7 @@ mod draw;
 mod draw_dispatch;
 mod draw_execute;
 mod frame_dispatch_inputs;
+mod frame_progress;
 mod generate;
 mod measurement_control;
 mod queries;
@@ -27,7 +28,6 @@ use crate::extent::ウィンドウ寸法;
 use crate::frame_composition::フレーム構成;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
-use crate::vulkan::sync::フレームインフライト数;
 use ash::vk;
 
 pub use cpu_timing::CPU区間時間;
@@ -58,11 +58,9 @@ pub struct レンダラー {
     /// 描画対象数に連動する資源(描画対象GPU資源・ディスクリプタ・描画入力作業領域)の束。要素数の一致はこの型が保つ。
     シーン描画資源: scene_draw_resources::シーン描画資源,
     ユニフォーム: vulkan::uniform::フレームユニフォーム一式,
-    command_pool: vk::CommandPool,
-    command_buffer一覧: [vk::CommandBuffer; フレームインフライト数],
-    フレーム同期: vulkan::sync::フレーム同期,
+    /// フレームスロットで引く資源(コマンドバッファ・描画完了フェンス・取得セマフォ)と、そのスロットの巡回状態の束。3つを同じスロットで引く一致はこの型が保つ。
+    フレーム進行: frame_progress::フレーム進行,
     提示同期: vulkan::sync::提示同期,
-    現在フレーム添字: usize,
     フレーム構成: フレーム構成,
     pipeline: vulkan::pipeline::パイプライン,
     /// スキン付きシーンのときのみ`Some`(判断44)。有無はフレーム描画入力のスキン行列と常に一致させる。

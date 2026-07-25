@@ -3,6 +3,7 @@
 //! ビュー射影行列等はdraw_execute.rsが事前にUBOへ書き込み済み(判断24)のため、
 //! ここではフレーム添字に対応するディスクリプタセットを選ぶだけでよい。
 
+use super::frame_progress::フレームスロット資源;
 use super::scene_draw_resources::作業領域更新入力;
 use super::レンダラー;
 use crate::clear_color::クリアカラー;
@@ -19,7 +20,7 @@ impl レンダラー {
     pub(super) fn 現在の画像で描画する(
         &mut self,
         添字: u32,
-        フレーム添字: usize,
+        スロット資源: &フレームスロット資源,
         クリア色: クリアカラー,
         露出: f32,
         布介入件数: u32,
@@ -27,6 +28,7 @@ impl レンダラー {
         ui入力: Option<&UI描画入力>,
     ) -> Result<(bool, Vec<(&'static str, u32)>), レンダラーエラー> {
         let 添字usize = usize::try_from(添字).unwrap_or_else(|_| panic!("スワップチェーン画像添字がusizeに収まらない: {添字}"));
+        let フレーム添字 = スロット資源.スロット;
 
         let 描画方式 = self.描画方式を決める(読み戻し要求)?;
         let ポスト入力 = self.ポスト処理.as_ref().map(|一式| 一式.描画入力を作る(露出));
@@ -42,7 +44,7 @@ impl レンダラー {
         vulkan::frame::描画する(
             &self.device,
             self.queue,
-            self.command_buffer一覧[フレーム添字],
+            スロット資源.command_buffer,
             &self.フレーム構成,
             self.提示先を組み立てる(添字, 提示id),
             &画像一式,
@@ -60,7 +62,7 @@ impl レンダラー {
             },
             描画方式,
             クエリプール,
-            self.同期入力を組み立てる(フレーム添字, 添字usize),
+            self.同期入力を組み立てる(スロット資源, 添字usize),
         )
     }
 

@@ -2,15 +2,17 @@
 
 use super::super::frame_resources::フレーム資源;
 use super::base_resources::基礎資源;
-use super::command_sync_resources::コマンド同期資源;
 use super::optional_resources::追加資源;
+use super::pipeline_resources::パイプライン資源;
+use super::submission_resources::フレーム送信資源;
 use crate::vulkan::cloth::布一式;
 use crate::vulkan::post_process::ポスト処理一式;
 use crate::vulkan::skinning::スキニング一式;
 
 pub(super) fn 束ねる(
     基礎: 基礎資源,
-    コマンド同期: コマンド同期資源,
+    送信: フレーム送信資源,
+    パイプライン: パイプライン資源,
     追加: 追加資源,
     ポスト処理: Option<ポスト処理一式>,
     スキニング: Option<スキニング一式>,
@@ -19,15 +21,13 @@ pub(super) fn 束ねる(
     フレーム資源 {
         深度バッファ: 基礎.深度バッファ,
         シャドウマップ: 基礎.シャドウマップ,
-        シャドウパイプライン: コマンド同期.シャドウパイプライン,
+        シャドウパイプライン: パイプライン.シャドウパイプライン,
         転送環境: 基礎.転送環境,
         シーン描画資源: 基礎.シーン描画資源,
         ユニフォーム: 基礎.ユニフォーム,
-        command_pool: コマンド同期.command_pool,
-        command_buffer一覧: コマンド同期.command_buffer一覧,
-        フレーム同期: コマンド同期.フレーム同期,
-        提示同期: コマンド同期.提示同期,
-        pipeline: コマンド同期.pipeline,
+        フレーム進行: 送信.フレーム進行,
+        提示同期: 送信.提示同期,
+        pipeline: パイプライン.pipeline,
         粒子: 追加.粒子,
         gpu計測: 追加.gpu計測,
         ui一式: 追加.ui一式,
