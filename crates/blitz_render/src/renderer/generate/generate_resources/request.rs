@@ -1,17 +1,17 @@
-//! スワップチェーン後の資源生成に必要な借用値をまとめる。
+//! 提示資源の生成後に走る資源生成に必要な借用値をまとめる。
 
 use crate::cloth_material::布素材;
 use crate::frame_composition::フレーム構成;
 use crate::particle_material::粒子素材;
 use crate::render_scene_material::描画シーン素材;
+use crate::renderer::present_resources::提示資源;
 use crate::shader_bundle::シェーダー束;
 use crate::skin_mesh::スキンメッシュ素材;
-use crate::vulkan;
 use crate::vulkan::gpu_environment::GPU環境;
 
 pub(in crate::renderer::generate) struct 生成要求<'a> {
     pub(in crate::renderer::generate) 環境: &'a GPU環境,
-    pub(in crate::renderer::generate) swapchain: &'a vulkan::swapchain::スワップチェーン,
+    pub(in crate::renderer::generate) 提示資源: &'a 提示資源,
     pub(in crate::renderer::generate) シェーダー: &'a シェーダー束,
     pub(in crate::renderer::generate) 描画シーン: &'a 描画シーン素材,
     pub(in crate::renderer::generate) スキン: Option<&'a スキンメッシュ素材>,

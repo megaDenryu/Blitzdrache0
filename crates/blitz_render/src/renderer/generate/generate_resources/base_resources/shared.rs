@@ -1,4 +1,4 @@
-//! 全描画対象が共有する深度、影、転送、フレームユニフォーム資源の生成と失敗時解放。
+//! 全描画対象が共有する影、転送、フレームユニフォーム資源の生成と失敗時解放。
 
 use ash::vk;
 
@@ -7,7 +7,6 @@ use crate::vulkan;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct 共有資源 {
-    pub(super) 深度: vulkan::depth::深度バッファ,
     pub(super) シャドウ: vulkan::shadow_map::シャドウマップ,
     pub(super) 転送: vulkan::transfer::転送実行環境,
     pub(super) ユニフォーム: vulkan::uniform::フレームユニフォーム一式,
@@ -19,21 +18,12 @@ impl 共有資源 {
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         queue: vk::Queue,
         queue_family_index: u32,
-        寸法: vk::Extent2D,
     ) -> Result<Self, レンダラーエラー> {
-        let 深度 = vulkan::depth::深度バッファ::生成する(device, メモリプロパティ, 寸法)?;
-        let シャドウ = match vulkan::shadow_map::シャドウマップ::生成する(device, メモリプロパティ) {
-            Ok(値) => 値,
-            Err(誤り) => {
-                深度.破棄する(device);
-                return Err(誤り);
-            }
-        };
+        let シャドウ = vulkan::shadow_map::シャドウマップ::生成する(device, メモリプロパティ)?;
         let 転送 = match vulkan::transfer::転送実行環境::生成する(device, queue, queue_family_index) {
             Ok(値) => 値,
             Err(誤り) => {
                 シャドウ.破棄する(device);
-                深度.破棄する(device);
                 return Err(誤り);
             }
         };
@@ -42,12 +32,10 @@ impl 共有資源 {
             Err(誤り) => {
                 転送.破棄する(device);
                 シャドウ.破棄する(device);
-                深度.破棄する(device);
                 return Err(誤り);
             }
         };
         Ok(Self {
-            深度,
             シャドウ,
             転送,
             ユニフォーム,
@@ -58,6 +46,5 @@ impl 共有資源 {
         self.ユニフォーム.破棄する(device);
         self.転送.破棄する(device);
         self.シャドウ.破棄する(device);
-        self.深度.破棄する(device);
     }
 }

@@ -12,6 +12,7 @@ mod frame_dispatch_inputs;
 mod frame_progress;
 mod generate;
 mod measurement_control;
+mod present_resources;
 mod queries;
 mod readback_buffer;
 mod reconstruct;
@@ -39,8 +40,9 @@ pub struct レンダラー {
     /// 生成後に変わらないVulkanハンドルの束(ローダー・インスタンス・サーフェス・物理/論理デバイス・キュー)。
     /// 破棄順序の制約を共有するため1つの型に閉じてある。
     環境: vulkan::gpu_environment::GPU環境,
-    swapchain: vulkan::swapchain::スワップチェーン,
-    深度バッファ: vulkan::depth::深度バッファ,
+    /// ウィンドウ寸法に連動して揃って作り直す資源(スワップチェーン・深度バッファ・提示同期)の束。
+    /// 深度画像の寸法と提示セマフォの本数がスワップチェーンの決めた値と一致することはこの型が保つ。
+    提示資源: present_resources::提示資源,
     シャドウマップ: vulkan::shadow_map::シャドウマップ,
     シャドウパイプライン: vulkan::pipeline::シャドウパイプライン,
     転送環境: vulkan::transfer::転送実行環境,
@@ -49,7 +51,6 @@ pub struct レンダラー {
     ユニフォーム: vulkan::uniform::フレームユニフォーム一式,
     /// フレームスロットで引く資源(コマンドバッファ・描画完了フェンス・取得セマフォ)と、そのスロットの巡回状態の束。3つを同じスロットで引く一致はこの型が保つ。
     フレーム進行: frame_progress::フレーム進行,
-    提示同期: vulkan::sync::提示同期,
     フレーム構成: フレーム構成,
     pipeline: vulkan::pipeline::パイプライン,
     /// スキン付きシーンのときのみ`Some`(判断44)。有無はフレーム描画入力のスキン行列と常に一致させる。

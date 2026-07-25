@@ -38,7 +38,7 @@ impl レンダラー {
         let コア = core_setup::組み立てる(表示ハンドル, ウィンドウハンドル, 寸法, 実表示計測要求)?;
         let 資源 = generate_resources::組み立てる(generate_resources::生成要求 {
             環境: &コア.環境,
-            swapchain: &コア.swapchain,
+            提示資源: &コア.提示資源,
             シェーダー: &シェーダー,
             描画シーン: &描画シーン,
             スキン: スキン.as_ref(),

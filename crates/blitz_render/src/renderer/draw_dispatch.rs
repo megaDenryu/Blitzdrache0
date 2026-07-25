@@ -48,7 +48,7 @@ impl レンダラー {
             &self.フレーム構成,
             self.提示先を組み立てる(添字, 提示id),
             &画像一式,
-            self.swapchain.寸法,
+            self.提示資源.寸法(),
             クリア色,
             self.pipeline.handle,
             self.シーン描画資源.描画対象入力を作る(),

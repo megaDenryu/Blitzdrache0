@@ -16,7 +16,7 @@ impl レンダラー {
         let device = self.環境.device();
         let ディスクリプタlayout = self.シーン描画資源.ディスクリプタlayout();
         let 新パイプライン =
-            vulkan::pipeline::パイプライン::生成する(device, self.swapchain.画像形式, 深度形式, ディスクリプタlayout, &シェーダー)?;
+            vulkan::pipeline::パイプライン::生成する(device, self.提示資源.画像形式(), 深度形式, ディスクリプタlayout, &シェーダー)?;
 
         // 旧パイプラインの使用完了を待ってから破棄する。
         self.環境.gpuの全作業完了を待つ()?;

@@ -1,7 +1,8 @@
 //! Drop実装の配置検査: blitz_renderのvulkan配下とrenderer配下でDropトレイト実装を禁止し、
 //! `crates/blitz_render/src/renderer/mod.rs`だけを例外にする。
-//! Vulkan資源の必要な破棄順序は資源の束をまたいで交錯する(提示一式が持つスワップチェーンとサーフェスの破棄の間に
-//! vkDestroyDeviceが挟まる)ため、破棄順を宣言順という見えない場所へ移すDropに任せると
+//! Vulkan資源の必要な破棄順序は資源の束をまたいで交錯する(提示資源の深度バッファが持つ専用メモリの解放は
+//! GPU環境のvkDestroyDeviceより前でなければならず、しかもその確認はレンダラー全体の破棄順を持つ
+//! renderer/destroy.rsの責任である)ため、破棄順を宣言順という見えない場所へ移すDropに任せると
 //! renderer/destroy.rsから順序の記述が消える。破棄順の誤りはvalidation layerが捕まえないため、
 //! この配置だけを機械検査で守る。
 //!
