@@ -4,15 +4,15 @@ use super::super::frame_resources::フレーム資源;
 use super::base_resources::基礎資源;
 use super::command_sync_resources::コマンド同期資源;
 use super::optional_resources::追加資源;
-use super::post_resources::ポスト資源;
 use crate::vulkan::cloth::布一式;
+use crate::vulkan::post_process::ポスト処理一式;
 use crate::vulkan::skinning::スキニング一式;
 
 pub(super) fn 束ねる(
     基礎: 基礎資源,
     コマンド同期: コマンド同期資源,
     追加: 追加資源,
-    ポスト: ポスト資源,
+    ポスト処理: Option<ポスト処理一式>,
     スキニング: Option<スキニング一式>,
     布: Option<布一式>,
 ) -> フレーム資源 {
@@ -34,9 +34,6 @@ pub(super) fn 束ねる(
         ui一式: 追加.ui一式,
         スキニング,
         布,
-        hdrターゲット: ポスト.hdrターゲット,
-        ブルームピラミッド: ポスト.ブルームピラミッド,
-        ブルーム: ポスト.ブルーム,
-        トーンマップ: ポスト.トーンマップ,
+        ポスト処理,
     }
 }

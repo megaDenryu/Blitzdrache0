@@ -58,6 +58,8 @@ impl ブルーム一式 {
         if self.descriptor_pool != vk::DescriptorPool::null() {
             // 安全性: 旧プールと旧セットは前提によりGPU未使用。プールの破棄がセットの解放を暗黙に行う。
             unsafe { device.destroy_descriptor_pool(self.descriptor_pool, None) };
+            // 注意: 破棄したハンドルを即座に外す。以降の生成が失敗して抜けたとき、破棄済みハンドルが残っていると`破棄する`が二重破棄する。
+            self.descriptor_pool = vk::DescriptorPool::null();
         }
         let ディスクリプタ = descriptor::生成する(device, self.単一読みlayout, self.二読みlayout, ピラミッド.縮小一覧.len())?;
         self.descriptor_pool = ディスクリプタ.pool;

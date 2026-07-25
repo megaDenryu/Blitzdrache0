@@ -1,4 +1,4 @@
-//! スワップチェーン・深度バッファ・HDR中間画像・提示同期の再構築(リサイズ・陳腐化への対応)。
+//! スワップチェーン・深度バッファ・ポスト処理画像・提示同期の再構築(リサイズ・陳腐化への対応)。
 //! パイプラインは動的ビューポート/シザーのため再構築不要（判断8）。
 //! フレームごとの同期物（フェンス・取得セマフォ）とコマンドバッファは
 //! 再構築時に作り直さない（判断13）。
@@ -7,22 +7,14 @@ use ash::vk;
 
 use super::レンダラー;
 use crate::error::レンダラーエラー;
-use crate::frame_composition::フレーム段階;
 use crate::vulkan;
 
 impl レンダラー {
     pub(super) fn スワップチェーンを再構築する(&mut self) -> Result<(), レンダラーエラー> {
-        // 安全性: 古いスワップチェーン・深度バッファ・HDR/ブルーム画像・提示同期の破棄前にGPU使用完了を待つ。
+        // 安全性: 古いスワップチェーン・深度バッファ・提示同期の破棄前にGPU使用完了を待つ。
         unsafe { self.device.device_wait_idle()? };
         self.提示同期.破棄する(&self.device);
         self.深度バッファ.破棄する(&self.device);
-        // take()で外してから破棄し、再生成が失敗してもDropが破棄済みハンドルへ触れないようにする。
-        if let Some(hdr) = self.hdrターゲット.take() {
-            hdr.破棄する(&self.device);
-        }
-        if let Some(ピラミッド) = self.ブルームピラミッド.take() {
-            ピラミッド.破棄する(&self.device);
-        }
         self.swapchain.破棄する(&self.device, &self.swapchain_loader);
 
         self.swapchain = vulkan::swapchain::スワップチェーン::生成する(
@@ -37,31 +29,12 @@ impl レンダラー {
         // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
         let メモリプロパティ = unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
         self.深度バッファ = vulkan::depth::深度バッファ::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)?;
-        // HDR/ブルームピラミッドはスワップチェーン寸法に連動するため作り直す(判断38・41)。
-        // 段数が解像度依存のためブルームのディスクリプタも作り直し、トーンマップは新ビューへ束縛し直す。
-        if self.フレーム構成.含む(フレーム段階::ブルームとトーンマップ) {
-            let 新hdr = vulkan::hdr_target::HDRターゲット::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)?;
-            let 新ピラミッド =
-                match vulkan::bloom_targets::ブルームピラミッド::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)
-                {
-                    Ok(一式) => 一式,
-                    Err(誤り) => {
-                        新hdr.破棄する(&self.device);
-                        return Err(誤り);
-                    }
-                };
-            if let Some(ブルーム) = &mut self.ブルーム
-                && let Err(誤り) = ブルーム.ディスクリプタを作り直す(&self.device, 新hdr.画像ビュー, &新ピラミッド)
-            {
-                新ピラミッド.破棄する(&self.device);
-                新hdr.破棄する(&self.device);
-                return Err(誤り);
-            }
-            if let Some(トーンマップ) = &self.トーンマップ {
-                トーンマップ.ビューを再束縛する(&self.device, 新hdr.画像ビュー, 新ピラミッド.最終ビュー());
-            }
-            self.hdrターゲット = Some(新hdr);
-            self.ブルームピラミッド = Some(新ピラミッド);
+        // ポスト処理の画像はスワップチェーン寸法に連動するため作り直す(判断38・41)。有無の判定はフレーム構成を再度読まず、
+        // 一式そのものの有無で行う(生成時にフレーム構成から決めた結果と常に一致する)。
+        let device = &self.device;
+        let 新寸法 = self.swapchain.寸法;
+        if let Some(ポスト処理) = self.ポスト処理.as_mut() {
+            ポスト処理.寸法に追従する(device, &メモリプロパティ, 新寸法)?;
         }
         self.提示同期 = vulkan::sync::提示同期::生成する(&self.device, self.swapchain.画像数())?;
         self.実表示計測.スワップチェーンを作り直した();

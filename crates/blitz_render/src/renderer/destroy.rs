@@ -35,17 +35,8 @@ impl レンダラー {
         if let Some(布) = &self.布 {
             布.破棄する(&self.device);
         }
-        if let Some(トーンマップ) = &self.トーンマップ {
-            トーンマップ.破棄する(&self.device);
-        }
-        if let Some(ブルーム) = &self.ブルーム {
-            ブルーム.破棄する(&self.device);
-        }
-        if let Some(ピラミッド) = &self.ブルームピラミッド {
-            ピラミッド.破棄する(&self.device);
-        }
-        if let Some(hdr) = &self.hdrターゲット {
-            hdr.破棄する(&self.device);
+        if let Some(ポスト処理) = &self.ポスト処理 {
+            ポスト処理.破棄する(&self.device);
         }
     }
 

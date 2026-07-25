@@ -1,11 +1,11 @@
-//! スワップチェーン生成後に組み立てる残り資源の組み立て手順。各段はサブモジュールへ分割(基礎/コマンド同期/追加/ポスト/布)。束の型は`frame_resources`。
+//! スワップチェーン生成後に組み立てる残り資源の組み立て手順。各段はサブモジュールへ分割(基礎/コマンド同期/追加/布)。束の型は`frame_resources`。
+//! ポスト処理は`vulkan::post_process`が一式として生成するため、ここは有効なときだけ呼ぶ判断だけを持つ。
 
 mod base_resources;
 mod bundle;
 mod cloth_resources;
 mod command_sync_resources;
 mod optional_resources;
-mod post_resources;
 mod request;
 mod simulation_resources;
 
@@ -13,6 +13,7 @@ use super::frame_resources::フレーム資源;
 use crate::error::レンダラーエラー;
 use crate::frame_composition::フレーム段階;
 use crate::vulkan::hdr_target::HDR形式;
+use crate::vulkan::post_process::ポスト処理一式;
 use ash::vk;
 
 pub(in crate::renderer::generate) use request::生成要求;
@@ -51,7 +52,17 @@ pub(super) fn 組み立てる(要求: 生成要求<'_>) -> Result<フレーム�
 
     let 追加資源 = 追加資源を組み立てる(&要求, &メモリプロパティ, シーンカラー形式, &基礎)?;
 
-    let ポスト = post_resources::組み立てる(要求.device, &メモリプロパティ, 要求.swapchain, 要求.シェーダー, ポスト処理有効)?;
+    let ポスト処理 = ポスト処理有効
+        .then(|| {
+            ポスト処理一式::生成する(
+                要求.device,
+                &メモリプロパティ,
+                要求.swapchain.画像形式,
+                要求.swapchain.寸法,
+                要求.シェーダー,
+            )
+        })
+        .transpose()?;
     let (スキニング, 布一式) = simulation_resources::組み立てる(
         要求.device,
         &メモリプロパティ,
@@ -64,7 +75,7 @@ pub(super) fn 組み立てる(要求: 生成要求<'_>) -> Result<フレーム�
         要求.シェーダー,
     )?;
 
-    Ok(bundle::束ねる(基礎, コマンド同期, 追加資源, ポスト, スキニング, 布一式))
+    Ok(bundle::束ねる(基礎, コマンド同期, 追加資源, ポスト処理, スキニング, 布一式))
 }
 
 fn 追加資源を組み立てる(

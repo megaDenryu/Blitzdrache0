@@ -25,8 +25,5 @@ pub(super) struct フレーム資源 {
     pub(super) ui一式: vulkan::ui::UIリソース一式,
     pub(super) スキニング: Option<vulkan::skinning::スキニング一式>,
     pub(super) 布: Option<vulkan::cloth::布一式>,
-    pub(super) hdrターゲット: Option<vulkan::hdr_target::HDRターゲット>,
-    pub(super) ブルームピラミッド: Option<vulkan::bloom_targets::ブルームピラミッド>,
-    pub(super) ブルーム: Option<vulkan::bloom::ブルーム一式>,
-    pub(super) トーンマップ: Option<vulkan::tonemap::トーンマップ一式>,
+    pub(super) ポスト処理: Option<vulkan::post_process::ポスト処理一式>,
 }

@@ -12,7 +12,6 @@ mod draw_execute;
 mod draw_inputs;
 mod frame_dispatch_inputs;
 mod generate;
-mod post_inputs;
 mod queries;
 mod readback_buffer;
 mod reconstruct;
@@ -72,12 +71,9 @@ pub struct レンダラー {
     スキニング: Option<vulkan::skinning::スキニング一式>,
     /// 布付き起動のときのみ`Some`(判断52〜54)。有無はフレーム描画入力の布と常に一致させる。
     布: Option<vulkan::cloth::布一式>,
-    // 注意: 以下4つのポストプロセス資源はフレーム構成にポスト処理段階があるときのみすべて`Some`(判断38・39)。
-    // 有無は常に一致させる(不一致はgraph_build側のpanicで検出される)。
-    hdrターゲット: Option<vulkan::hdr_target::HDRターゲット>,
-    ブルームピラミッド: Option<vulkan::bloom_targets::ブルームピラミッド>,
-    ブルーム: Option<vulkan::bloom::ブルーム一式>,
-    トーンマップ: Option<vulkan::tonemap::トーンマップ一式>,
+    /// フレーム構成にポスト処理段階があるときのみ`Some`(判断38・39)。HDR中間画像・ブルーム・トーンマップの
+    /// 有無をこの1つの`Option`が束ねるため、一部だけが存在する状態をレンダラーからは作れない。
+    ポスト処理: Option<vulkan::post_process::ポスト処理一式>,
     /// `--particles`指定時のみ`Some`(判断29)。有無でコンピュート更新+粒子描画パスの追加を決める。
     粒子: Option<vulkan::particles::粒子リソース一式>,
     /// タイムスタンプ非対応デバイスでは`None`(判断30: 計測無効は型で表す)。
