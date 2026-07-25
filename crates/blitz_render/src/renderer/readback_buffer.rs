@@ -22,8 +22,7 @@ impl レンダラー {
         if let Some(古い) = self.読み戻しバッファ.take() {
             古い.破棄する(&self.device);
         }
-        // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
-        let メモリプロパティ = unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
+        let メモリプロパティ = self.物理デバイスのメモリプロパティを取得する();
         self.読み戻しバッファ = Some(vulkan::readback::読み戻しバッファ::生成する(
             &self.device,
             &メモリプロパティ,

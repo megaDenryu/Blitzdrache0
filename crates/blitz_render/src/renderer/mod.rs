@@ -8,6 +8,7 @@ mod cpu_timing;
 mod destroy;
 mod draw_dispatch;
 mod draw_execute;
+mod foundation_query;
 mod frame_dispatch_inputs;
 mod frame_progress;
 mod generate;

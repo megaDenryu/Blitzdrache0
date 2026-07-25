@@ -14,11 +14,10 @@ impl レンダラー {
         if self.スキニング.is_some() {
             return Err(レンダラーエラー::スキン付きシーン差し替え未対応);
         }
-        // 安全性: 旧ジオメトリ・旧テクスチャの破棄前にGPU使用完了を待つ。
-        unsafe { self.device.device_wait_idle()? };
+        // 旧ジオメトリ・旧テクスチャの破棄前にGPU使用完了を待つ。
+        self.gpuの全作業完了を待つ()?;
 
-        // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
-        let メモリプロパティ = unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
+        let メモリプロパティ = self.物理デバイスのメモリプロパティを取得する();
 
         let 新しい束 = シーン描画資源::生成する(
             &self.device,

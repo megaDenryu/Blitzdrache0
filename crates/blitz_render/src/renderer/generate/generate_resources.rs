@@ -13,6 +13,7 @@ mod submission_resources;
 
 use super::frame_resources::フレーム資源;
 use crate::error::レンダラーエラー;
+use crate::renderer::foundation_query;
 use crate::vulkan;
 use post_process_resources::描画先構成;
 
@@ -22,8 +23,7 @@ pub(super) fn 組み立てる(要求: 生成要求<'_>) -> Result<フレーム�
     let 描画先 = 描画先構成::決める(要求.フレーム構成);
     let シーンカラー形式 = 描画先.シーンカラー形式(要求.swapchain.画像形式);
 
-    // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
-    let メモリプロパティ = unsafe { 要求.instance.get_physical_device_memory_properties(要求.physical_device) };
+    let メモリプロパティ = foundation_query::物理デバイスのメモリプロパティを取得する(要求.instance, 要求.physical_device);
     let 基礎 = base_resources::組み立てる(
         要求.instance,
         要求.physical_device,

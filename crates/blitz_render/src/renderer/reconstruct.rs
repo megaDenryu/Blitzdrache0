@@ -20,8 +20,8 @@ impl レンダラー {
     }
 
     pub(super) fn スワップチェーンを再構築する(&mut self) -> Result<(), レンダラーエラー> {
-        // 安全性: 古いスワップチェーン・深度バッファ・提示同期の破棄前にGPU使用完了を待つ。
-        unsafe { self.device.device_wait_idle()? };
+        // 古いスワップチェーン・深度バッファ・提示同期の破棄前にGPU使用完了を待つ。
+        self.gpuの全作業完了を待つ()?;
         self.提示同期.破棄する(&self.device);
         self.深度バッファ.破棄する(&self.device);
         self.swapchain.破棄する(&self.device, &self.swapchain_loader);
@@ -35,8 +35,7 @@ impl レンダラー {
             self.現在の寸法,
             vk::SwapchainKHR::null(),
         )?;
-        // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
-        let メモリプロパティ = unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
+        let メモリプロパティ = self.物理デバイスのメモリプロパティを取得する();
         self.深度バッファ = vulkan::depth::深度バッファ::生成する(&self.device, &メモリプロパティ, self.swapchain.寸法)?;
         // ポスト処理の画像はスワップチェーン寸法に連動するため作り直す(判断38・41)。有無の判定はフレーム構成を再度読まず、
         // 一式そのものの有無で行う(生成時にフレーム構成から決めた結果と常に一致する)。

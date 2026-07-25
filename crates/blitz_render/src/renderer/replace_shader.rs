@@ -17,8 +17,8 @@ impl レンダラー {
         let 新パイプライン =
             vulkan::pipeline::パイプライン::生成する(&self.device, self.swapchain.画像形式, 深度形式, ディスクリプタlayout, &シェーダー)?;
 
-        // 安全性: 旧パイプラインの使用完了を待ってから破棄する。
-        unsafe { self.device.device_wait_idle()? };
+        // 旧パイプラインの使用完了を待ってから破棄する。
+        self.gpuの全作業完了を待つ()?;
         self.pipeline.破棄する(&self.device);
         self.pipeline = 新パイプライン;
         Ok(())

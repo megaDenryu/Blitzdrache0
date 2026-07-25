@@ -7,10 +7,9 @@ use super::レンダラー;
 
 impl レンダラー {
     pub(super) fn 破棄する(&mut self) {
-        // 安全性: この呼び出し以降このレンダラーは使用されない(Dropの唯一の呼び出し元)。
-        // device_wait_idleでGPU上の全作業完了を待ってから破棄することで、
-        // 使用中リソースの破棄によるvalidationエラーを避ける。
-        let _ = unsafe { self.device.device_wait_idle() };
+        // 前提: この呼び出し以降このレンダラーは使用されない(Dropが唯一の呼び出し元)。
+        // 破棄処理には失敗の伝播先が無いため、待機の失敗を捨てるのはこの1箇所だけである(集約側は`Result`を返す)。
+        let _ = self.gpuの全作業完了を待つ();
         self.任意資源を破棄する();
         self.描画資源を破棄する();
         self.基盤を破棄する();

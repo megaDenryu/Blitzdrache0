@@ -27,8 +27,7 @@ impl レンダラー {
         let 寸法 = self.swapchain.寸法;
         let (頂点一覧結合, インデックス一覧結合, 項目一覧) = self.メッシュ列を結合する(&有効一覧, 寸法);
 
-        // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
-        let メモリプロパティ = unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
+        let メモリプロパティ = self.物理デバイスのメモリプロパティを取得する();
         let (頂点バッファ, インデックスバッファ) =
             self.ui一式
                 .ジオメトリを書き込む(&self.device, &メモリプロパティ, フレーム添字, &頂点一覧結合, &インデックス一覧結合)?;

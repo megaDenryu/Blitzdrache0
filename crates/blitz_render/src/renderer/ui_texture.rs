@@ -11,8 +11,7 @@ impl レンダラー {
     pub fn uiテクスチャを登録する(
         &mut self, id: UIテクスチャID, 素材: UIテクスチャ素材
     ) -> Result<(), レンダラーエラー> {
-        // 安全性: physical_deviceは選定済みで、instanceはこの呼び出しの間有効。
-        let メモリプロパティ = unsafe { self.instance.get_physical_device_memory_properties(self.physical_device) };
+        let メモリプロパティ = self.物理デバイスのメモリプロパティを取得する();
         self.ui一式
             .テクスチャを反映する(&self.device, &メモリプロパティ, &self.転送環境, id, &素材)
     }
