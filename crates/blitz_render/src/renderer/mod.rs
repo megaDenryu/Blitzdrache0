@@ -6,7 +6,6 @@
 mod cloth_write;
 mod cpu_timing;
 mod destroy;
-mod draw;
 mod draw_dispatch;
 mod draw_execute;
 mod frame_dispatch_inputs;
