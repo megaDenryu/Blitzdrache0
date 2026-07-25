@@ -7,7 +7,7 @@
 
 use super::提示資源;
 use crate::error::レンダラーエラー;
-use crate::extent::ウィンドウ寸法;
+use crate::extent::{ウィンドウ寸法, 非ゼロ寸法};
 use crate::vulkan;
 use crate::vulkan::gpu_environment::GPU環境;
 
@@ -42,11 +42,9 @@ impl 提示資源 {
     ///
     /// 注意: 破棄を先に行うため、生成の失敗はこの束を使用不能な状態のまま残す。呼び出し元は
     /// このエラーをレンダラー全体の続行不能として扱う(blitz_appはフレームループを終了させる)。
-    pub(in crate::renderer) fn 作り直す(
-        &mut self, 環境: &GPU環境, 要求寸法: ウィンドウ寸法
-    ) -> Result<(), レンダラーエラー> {
+    pub(in crate::renderer) fn 作り直す(&mut self, 環境: &GPU環境, 要求寸法: 非ゼロ寸法) -> Result<(), レンダラーエラー> {
         self.破棄する(環境);
-        *self = Self::生成する(環境, 要求寸法)?;
+        *self = Self::生成する(環境, 要求寸法.ウィンドウ寸法へ())?;
         Ok(())
     }
 }

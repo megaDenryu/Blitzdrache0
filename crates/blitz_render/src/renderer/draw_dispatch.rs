@@ -4,6 +4,7 @@
 //! ここではフレーム添字に対応するディスクリプタセットを選ぶだけでよい。
 
 use super::frame_progress::フレームスロット資源;
+use super::presentation::取得済み提示;
 use super::scene_draw_resources::作業領域更新入力;
 use super::レンダラー;
 use crate::clear_color::クリアカラー;
@@ -19,7 +20,7 @@ impl レンダラー {
     #[allow(clippy::type_complexity, clippy::too_many_arguments)]
     pub(super) fn 現在の画像で描画する(
         &mut self,
-        添字: u32,
+        取得済み: &取得済み提示,
         スロット資源: &フレームスロット資源,
         クリア色: クリアカラー,
         露出: f32,
@@ -27,7 +28,6 @@ impl レンダラー {
         読み戻し要求: bool,
         ui入力: Option<&UI描画入力>,
     ) -> Result<(bool, Vec<(&'static str, u32)>), レンダラーエラー> {
-        let 添字usize = usize::try_from(添字).unwrap_or_else(|_| panic!("スワップチェーン画像添字がusizeに収まらない: {添字}"));
         let フレーム添字 = スロット資源.スロット;
 
         let 描画方式 = self.描画方式を決める(読み戻し要求)?;
@@ -36,7 +36,7 @@ impl レンダラー {
         let 布入力 = self.布入力を組み立てる(フレーム添字, 布介入件数);
         let 粒子入力 = self.粒子.as_ref().map(|一式| 一式.描画入力を作る(フレーム添字));
         let クエリプール = self.gpu計測.as_ref().map(|計測| 計測.クエリプール(フレーム添字));
-        let 画像一式 = self.フレーム画像一式を組み立てる(添字usize);
+        let 画像一式 = self.フレーム画像一式を組み立てる(取得済み);
         let 提示id = self.実表示計測.提示idを発番する();
         let 作業領域入力 = self.作業領域更新入力を作る(フレーム添字);
         self.シーン描画資源.作業領域を更新する(&作業領域入力);
@@ -46,9 +46,9 @@ impl レンダラー {
             self.環境.queue(),
             スロット資源.command_buffer,
             &self.フレーム構成,
-            self.提示先を組み立てる(添字, 提示id),
+            self.提示先を組み立てる(取得済み, 提示id),
             &画像一式,
-            self.提示資源.寸法(),
+            self.提示.寸法(),
             クリア色,
             self.pipeline.handle,
             self.シーン描画資源.描画対象入力を作る(),
@@ -62,7 +62,7 @@ impl レンダラー {
             },
             描画方式,
             クエリプール,
-            self.同期入力を組み立てる(スロット資源, 添字usize),
+            self.同期入力を組み立てる(スロット資源, 取得済み),
         )
     }
 

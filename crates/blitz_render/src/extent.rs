@@ -1,4 +1,8 @@
-//! 物理ピクセル単位のウィンドウ寸法を表す値オブジェクト。
+//! 物理ピクセル単位のウィンドウ寸法を表す値オブジェクト。ゼロ寸法を除いた寸法は`non_zero`にある。
+
+mod non_zero;
+
+pub(crate) use non_zero::非ゼロ寸法;
 
 /// スワップチェーンの生成・再構築に使う物理ピクセル寸法。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

@@ -5,7 +5,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::frame_composition::{フレーム構成, フレーム段階};
-use crate::renderer::present_resources::提示資源;
+use crate::renderer::presentation::提示;
 use crate::shader_bundle::シェーダー束;
 use crate::vulkan::hdr_target::HDR形式;
 use crate::vulkan::post_process::ポスト処理一式;
@@ -37,15 +37,15 @@ impl 描画先構成 {
         &self,
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        提示資源: &提示資源,
+        提示: &提示,
         シェーダー: &シェーダー束,
     ) -> Result<Option<ポスト処理一式>, レンダラーエラー> {
         match self {
             Self::HDR中間画像を経由する => Ok(Some(ポスト処理一式::生成する(
                 device,
                 メモリプロパティ,
-                提示資源.画像形式(),
-                提示資源.寸法(),
+                提示.画像形式(),
+                提示.寸法(),
                 シェーダー,
             )?)),
             Self::スワップチェーンへ直接描く => Ok(None),

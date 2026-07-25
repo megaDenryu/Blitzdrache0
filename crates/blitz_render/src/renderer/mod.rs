@@ -13,6 +13,7 @@ mod frame_progress;
 mod generate;
 mod measurement_control;
 mod present_resources;
+mod presentation;
 mod queries;
 mod readback_buffer;
 mod reconstruct;
@@ -24,7 +25,6 @@ mod ui_dispatch;
 mod ui_texture;
 mod uniform_write;
 
-use crate::extent::ウィンドウ寸法;
 use crate::frame_composition::フレーム構成;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
@@ -40,9 +40,11 @@ pub struct レンダラー {
     /// 生成後に変わらないVulkanハンドルの束(ローダー・インスタンス・サーフェス・物理/論理デバイス・キュー)。
     /// 破棄順序の制約を共有するため1つの型に閉じてある。
     環境: vulkan::gpu_environment::GPU環境,
-    /// ウィンドウ寸法に連動して揃って作り直す資源(スワップチェーン・深度バッファ・提示同期)の束。
-    /// 深度画像の寸法と提示セマフォの本数がスワップチェーンの決めた値と一致することはこの型が保つ。
-    提示資源: present_resources::提示資源,
+    /// ウィンドウ寸法に連動して揃って作り直す資源(スワップチェーン・深度バッファ・提示同期)と、
+    /// その資源が要求寸法に追従しているかどうかの状態の束。
+    /// 深度画像の寸法と提示セマフォの本数がスワップチェーンの決めた値と一致すること、およびゼロ寸法や
+    /// 陳腐化のまま描画へ進めないことはこの型が保つ。
+    提示: presentation::提示,
     シャドウマップ: vulkan::shadow_map::シャドウマップ,
     シャドウパイプライン: vulkan::pipeline::シャドウパイプライン,
     転送環境: vulkan::transfer::転送実行環境,
@@ -70,8 +72,6 @@ pub struct レンダラー {
     ui一式: vulkan::ui::UIリソース一式,
     読み戻しバッファ: Option<vulkan::readback::読み戻しバッファ>,
     検証カウンタ: 検証カウンタ,
-    現在の寸法: ウィンドウ寸法,
-    再構築が必要: bool,
 }
 
 impl Drop for レンダラー {
