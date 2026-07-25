@@ -7,6 +7,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::render_object_material::描画対象素材;
 use crate::vulkan;
+use crate::vulkan::descriptor::描画対象ディスクリプタ参照;
 use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -64,6 +65,14 @@ impl 描画対象資源 {
             テクスチャ,
             ユニフォーム,
         })
+    }
+
+    /// ディスクリプタセットへ結ぶ資源の参照。テクスチャとユニフォームを所有するのはこの型のため、束ね方を知るのもこの型にする。
+    pub(super) fn ディスクリプタ参照(&self) -> 描画対象ディスクリプタ参照<'_> {
+        描画対象ディスクリプタ参照 {
+            テクスチャ: &self.テクスチャ,
+            ユニフォーム: &self.ユニフォーム,
+        }
     }
 
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
