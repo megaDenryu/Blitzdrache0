@@ -1,4 +1,4 @@
-//! 生成器→ローダの往復テスト: `cargo xtask gen-smoke-asset`で生成済みの
+//! 生成器→ローダの往復テスト: `cargo xtask gen-source-assets`で生成済みの
 //! assets/smoke/quad.gltf を実際に読み込み、形状・法線・ベースカラーを検証する。
 //!
 //! 注意: `cargo test`のテストバイナリはパッケージディレクトリを作業ディレクトリとして
@@ -30,9 +30,9 @@ fn 試験用カタログ() -> (カタログ, アセットID) {
 fn 極小四角形アセットを読み込める() {
     let (カタログ, id) = 試験用カタログ();
 
-    let シーン = match ソースシーンを読み込む(&カタログ, &id) {
+    let シーン = match ソースシーンを読み込む(&カタログ, &id, チャンク座標::生成する(0, 0)) {
         Ok(シーン) => シーン,
-        Err(誤り) => panic!("assets/smoke/quad.gltfの読込に失敗した(cargo xtask gen-smoke-assetで生成済みか確認): {誤り}"),
+        Err(誤り) => panic!("assets/smoke/quad.gltfの読込に失敗した(cargo xtask gen-source-assetsで生成済みか確認): {誤り}"),
     };
     let 描画対象 = シーン.先頭の描画対象();
     let メッシュ = 描画対象.メッシュ();

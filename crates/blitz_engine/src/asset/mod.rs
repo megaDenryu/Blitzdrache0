@@ -20,6 +20,8 @@ mod render_object_id;
 mod runtime_catalog_error_tests;
 #[cfg(test)]
 mod runtime_catalog_tests;
+#[cfg(test)]
+mod runtime_chunk_directory_tests;
 mod runtime_format;
 #[cfg(test)]
 mod runtime_format_tests;
@@ -53,8 +55,9 @@ pub use pbr_material_data::金属粗さPBRデータ;
 pub use render_object_data::描画対象データ;
 pub use render_object_id::描画対象ID;
 pub use runtime_format::{
-    アセット実行時形式エラー, アセット形式版, カタログを実行時形式へ格納する, シーンを実行時形式へ格納する, 実行時アセット, 実行時アセットを格納する,
-    実行時アセットを開く, 実行時アセット種別, 実行時形式からカタログを読む, 実行時形式からシーンを読む,
+    アセット実行時形式エラー, アセット形式版, カタログを実行時形式へ格納する, シーンを実行時形式へ格納する, チャンク目録を実行時形式へ格納する,
+    実行時アセット, 実行時アセットを格納する, 実行時アセットを開く, 実行時アセット種別, 実行時形式からカタログを読む, 実行時形式からシーンを読む,
+    実行時形式からチャンク目録を読む,
 };
 pub use runtime_load_error::実行時シーン読込エラー;
 pub use runtime_loader::実行時シーンを読み込む;

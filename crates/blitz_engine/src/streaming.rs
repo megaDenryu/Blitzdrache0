@@ -1,10 +1,14 @@
 //! 大域位置からストリーミング対象を決定するデバイス非依存のチャンク格子。
 
 mod chunk_diff;
+mod chunk_directory;
 mod chunk_grid;
 mod chunk_ledger;
 mod chunk_request;
 mod chunk_state;
+mod directory_error;
+mod directory_load_error;
+mod directory_loader;
 mod error;
 mod ledger_error;
 mod loader;
@@ -14,10 +18,14 @@ mod memory_candidate;
 mod memory_result;
 
 pub use chunk_diff::{GPU転送完了結果, チャンク集合差分, 準備完了結果};
+pub use chunk_directory::チャンク目録;
 pub use chunk_grid::チャンク格子;
 pub use chunk_ledger::チャンク台帳;
 pub use chunk_request::チャンク要求;
 pub use chunk_state::チャンク状態;
+pub use directory_error::チャンク目録エラー;
+pub use directory_load_error::実行時チャンク目録読込エラー;
+pub use directory_loader::実行時チャンク目録を読み込む;
 pub use error::チャンク格子エラー;
 pub use ledger_error::チャンク台帳エラー;
 pub use loader::{チャンク読込エラー, チャンク読込器, チャンク読込完了, チャンク読込成果};

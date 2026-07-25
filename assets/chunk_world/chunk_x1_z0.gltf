@@ -1,0 +1,33 @@
+{
+  "asset": { "version": "2.0" },
+  "buffers": [
+    { "uri": "chunk_world.bin", "byteLength": 5100 }
+  ],
+  "bufferViews": [
+    { "buffer": 0, "byteOffset": 2652, "byteLength": 48, "target": 34962 },
+    { "buffer": 0, "byteOffset": 2700, "byteLength": 48, "target": 34962 },
+    { "buffer": 0, "byteOffset": 2748, "byteLength": 64, "target": 34962 },
+    { "buffer": 0, "byteOffset": 2812, "byteLength": 32, "target": 34962 },
+    { "buffer": 0, "byteOffset": 2844, "byteLength": 12, "target": 34963 }
+  ],
+  "accessors": [
+    { "bufferView": 0, "componentType": 5126, "count": 4, "type": "VEC3", "min": [149.5, 0.0, 49.5], "max": [150.5, 0.0, 50.5] },
+    { "bufferView": 1, "componentType": 5126, "count": 4, "type": "VEC3" },
+    { "bufferView": 2, "componentType": 5126, "count": 4, "type": "VEC4" },
+    { "bufferView": 3, "componentType": 5126, "count": 4, "type": "VEC2" },
+    { "bufferView": 4, "componentType": 5123, "count": 6, "type": "SCALAR" }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": { "POSITION": 0, "NORMAL": 1, "TANGENT": 2, "TEXCOORD_0": 3 },
+          "indices": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [ { "mesh": 0 } ],
+  "scenes": [ { "nodes": [0] } ],
+  "scene": 0
+}

@@ -8,7 +8,7 @@
 use std::path::PathBuf;
 
 use blitz_asset_compiler::ソースシーンを読み込む;
-use blitz_engine::{アセットID, カタログ, スキンデータ, 姿勢, 姿勢を評価する};
+use blitz_engine::{アセットID, カタログ, スキンデータ, チャンク座標, 姿勢, 姿勢を評価する};
 
 fn リポジトリルートからのパス(相対パス: &str) -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..").join(相対パス)
@@ -54,7 +54,7 @@ fn 距離(a: [f32; 3], b: [f32; 3]) -> f32 {
 #[test]
 fn walk評価で平行移動チャンネルの無い関節は親位置へ潰れない() {
     let (カタログ, id) = 試験用カタログ();
-    let シーン = match ソースシーンを読み込む(&カタログ, &id) {
+    let シーン = match ソースシーンを読み込む(&カタログ, &id, チャンク座標::生成する(0, 0)) {
         Ok(シーン) => シーン,
         Err(誤り) => panic!("assets/samples/Fox/Fox.glbの読込に失敗した(cargo xtask fetch-assetsで取得済みか確認): {誤り}"),
     };

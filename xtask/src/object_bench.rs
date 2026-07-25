@@ -6,7 +6,7 @@ const ベンチフレーム数: &str = "360";
 const 描画対象数一覧: [&str; 3] = ["1", "10", "100"];
 
 pub fn 実行する() -> ExitCode {
-    if !crate::gen_smoke_asset::生成する() || !crate::compile_assets::既定を生成する() {
+    if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }
     println!("[xtask] 二描画対象の実機ピクセル判定を実行");

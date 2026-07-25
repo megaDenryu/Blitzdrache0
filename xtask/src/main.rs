@@ -8,7 +8,7 @@ mod compile_assets;
 mod conform;
 mod fetch_assets;
 mod file_scan;
-mod gen_smoke_asset;
+mod gen_source_assets;
 mod m10_bench;
 mod m11_soak;
 mod object_bench;
@@ -26,7 +26,7 @@ fn main() -> ExitCode {
         Some("smoke") => smoke::実行する(),
         Some("compile-assets") => compile_assets::実行する(&引数一覧[1..]),
         Some("watch-assets") => watch_assets::実行する(&引数一覧[1..]),
-        Some("gen-smoke-asset") => gen_smoke_asset::実行する(),
+        Some("gen-source-assets") => gen_source_assets::実行する(),
         Some("fetch-assets") => fetch_assets::実行する(),
         Some("bench") => bench::実行する(),
         Some("bench-display-timing") => bench::実表示計測つきで実行する(),
@@ -50,7 +50,7 @@ fn 使い方を表示する() {
     println!("  smoke            blitz_appを--framesで自動実行し、validation件数0を終了コードで確認する");
     println!("  compile-assets   glTF・画像を検証し、target/runtime_assetsへ実行時形式を生成する");
     println!("  watch-assets     カタログのソース依存を監視し、変更時に実行時形式を再生成する");
-    println!("  gen-smoke-asset  スモーク用極小glTFアセットをassets/smoke/へ生成する");
+    println!("  gen-source-assets 検証用ソースアセット(スモーク用quad・影検証シーン・25チャンクの検証用世界)をassets/へ生成する");
     println!("  fetch-assets     標準サンプル(DamagedHelmet・Fox)をassets/samples/へ取得する(curl.exe使用)");
     println!("  bench            リリース版の固定シーンを600フレーム実行し、GPU時間とCPU側フレーム間隔分布を表示する");
     println!("  bench-display-timing  benchに実表示間隔の計測を足して実行する(計測が描画ループを止めるため既存の時系列とは比較できない)");

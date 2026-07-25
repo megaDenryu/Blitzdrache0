@@ -5,7 +5,7 @@ use std::process::{Command, ExitCode};
 const フレーム数: &str = "600";
 
 pub fn 実行する() -> ExitCode {
-    if !crate::gen_smoke_asset::生成する() || !crate::compile_assets::既定を生成する() {
+    if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }
     for モード in ["--surface-flow", "--sph-512", "--sph-1024", "--sph-2048"] {

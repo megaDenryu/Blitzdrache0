@@ -9,7 +9,7 @@ mod stages;
 use std::process::ExitCode;
 
 pub fn 実行する() -> ExitCode {
-    if !crate::gen_smoke_asset::生成する() {
+    if !crate::gen_source_assets::生成する() {
         return ExitCode::FAILURE;
     }
     let シェーダーコピー先 = match copy_setup::シェーダーを一時コピーする() {

@@ -2,10 +2,15 @@
 
 use std::path::{Path, PathBuf};
 
-use blitz_engine::{アセットID, カタログ};
+use blitz_engine::{アセットID, カタログ, チャンク座標};
+
+/// ストリーミング対象でないアセットは世界の原点チャンクへ帰属させる。
+/// 参照: `_doc/計画/ユビキタス言語.md`「所有チャンク」
+const 原点チャンク: チャンク座標 = チャンク座標::生成する(0, 0);
 
 pub(super) struct コンパイル対象 {
     pub(super) id: アセットID,
+    pub(super) 所有チャンク: チャンク座標,
     pub(super) 出力パス: PathBuf,
 }
 
@@ -32,6 +37,7 @@ pub(super) fn 構築する(ソースルート: &Path, 出力ルート: &Path) ->
         カタログ.登録する(id.clone(), ソースパス);
         対象一覧.push(コンパイル対象 {
             id,
+            所有チャンク: 原点チャンク,
             出力パス: 出力ルート.join(format!("{名前}.blitzasset")),
         });
     }

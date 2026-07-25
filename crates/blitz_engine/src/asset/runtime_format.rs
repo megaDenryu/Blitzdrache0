@@ -1,11 +1,13 @@
 //! アセット実行時形式の共通ヘッダーと検証済みの読み取り結果。
 
 mod catalog_v1;
+mod chunk_directory_v1;
 mod error;
 mod header;
 mod scene_v1;
 
 pub use catalog_v1::{カタログを実行時形式へ格納する, 実行時形式からカタログを読む};
+pub use chunk_directory_v1::{チャンク目録を実行時形式へ格納する, 実行時形式からチャンク目録を読む};
 pub use error::アセット実行時形式エラー;
 pub use header::{実行時アセットを格納する, 実行時アセットを開く};
 pub use scene_v1::{シーンを実行時形式へ格納する, 実行時形式からシーンを読む};
@@ -37,6 +39,7 @@ impl アセット形式版 {
 pub enum 実行時アセット種別 {
     シーン,
     カタログ,
+    チャンク目録,
 }
 
 impl 実行時アセット種別 {
@@ -44,6 +47,7 @@ impl 実行時アセット種別 {
         match self {
             Self::シーン => 1,
             Self::カタログ => 2,
+            Self::チャンク目録 => 3,
         }
     }
 
@@ -51,6 +55,7 @@ impl 実行時アセット種別 {
         match 番号 {
             1 => Ok(Self::シーン),
             2 => Ok(Self::カタログ),
+            3 => Ok(Self::チャンク目録),
             未知 => Err(アセット実行時形式エラー::未知のアセット種別(未知)),
         }
     }

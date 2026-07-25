@@ -8,7 +8,7 @@
 use std::path::PathBuf;
 
 use blitz_asset_compiler::ソースシーンを読み込む;
-use blitz_engine::{アセットID, カタログ, マテリアルデータ};
+use blitz_engine::{アセットID, カタログ, チャンク座標, マテリアルデータ};
 
 fn リポジトリルートからのパス(相対パス: &str) -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..").join(相対パス)
@@ -28,9 +28,9 @@ fn 試験用カタログ() -> (カタログ, アセットID) {
 fn 床と遮蔽の2プリミティブが頂点オフセット付きで連結される() {
     let (カタログ, id) = 試験用カタログ();
 
-    let シーン = match ソースシーンを読み込む(&カタログ, &id) {
+    let シーン = match ソースシーンを読み込む(&カタログ, &id, チャンク座標::生成する(0, 0)) {
         Ok(シーン) => シーン,
-        Err(誤り) => panic!("assets/smoke/shadow_scene.gltfの読込に失敗した(cargo xtask gen-smoke-assetで生成済みか確認): {誤り}"),
+        Err(誤り) => panic!("assets/smoke/shadow_scene.gltfの読込に失敗した(cargo xtask gen-source-assetsで生成済みか確認): {誤り}"),
     };
     let 描画対象 = シーン.先頭の描画対象();
     let メッシュ = 描画対象.メッシュ();

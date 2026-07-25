@@ -1,0 +1,54 @@
+//! チャンク世界の取り込み。目録ソースを読んで25チャンクをコンパイル対象へ加え、
+//! 実行時の版付きチャンク目録を書き出す。座標はソースの宣言だけを根拠にし、ファイル名から逆算しない。
+
+use std::path::{Path, PathBuf};
+
+use blitz_asset_compiler::チャンク目録ソースを読み込む;
+use blitz_engine::{カタログ, チャンク目録, チャンク目録を実行時形式へ格納する};
+
+use super::catalog::コンパイル対象;
+
+/// 目録ソースの配置先。ソースルートからの相対で固定する。
+const 目録ソース相対パス: &str = "chunk_world/chunk_directory.txt";
+const 実行時目録ファイル名: &str = "chunk_directory.blitzchunks";
+
+pub(super) fn カタログへ登録する(
+    ソースルート: &Path,
+    出力ルート: &Path,
+    カタログ: &mut カタログ,
+    対象一覧: &mut Vec<コンパイル対象>,
+) -> Result<チャンク目録, String> {
+    let 目録ソースパス = ソースルート.join(目録ソース相対パス);
+    let 項目一覧 = チャンク目録ソースを読み込む(&目録ソースパス).map_err(|誤り| format!("{}: {誤り}", 目録ソースパス.display()))?;
+    let 基準ディレクトリ = 目録ソースパス.parent().map(Path::to_path_buf).unwrap_or_else(|| PathBuf::from("."));
+    let mut 目録 = チャンク目録::空を作る();
+    for 項目 in 項目一覧 {
+        let ソースパス = 基準ディレクトリ.join(項目.ソース相対パス());
+        if !ソースパス.is_file() {
+            return Err(format!("チャンク世界のソースアセットが存在しない: {}", ソースパス.display()));
+        }
+        目録
+            .登録する(項目.チャンク(), 項目.アセット().clone())
+            .map_err(|誤り| format!("{}: {誤り}", 目録ソースパス.display()))?;
+        カタログ.登録する(項目.アセット().clone(), ソースパス);
+        対象一覧.push(コンパイル対象 {
+            出力パス: 出力ルート.join(format!("{}.blitzasset", 項目.アセット())),
+            所有チャンク: 項目.チャンク(),
+            id: 項目.アセット().clone(),
+        });
+    }
+    Ok(目録)
+}
+
+pub(super) fn 目録を書き出す(出力ルート: &Path, 目録: &チャンク目録) -> Result<(), String> {
+    let バイト列 = チャンク目録を実行時形式へ格納する(目録).map_err(|誤り| 誤り.to_string())?;
+    let 出力パス = 出力ルート.join(実行時目録ファイル名);
+    std::fs::write(&出力パス, &バイト列).map_err(|誤り| format!("{}を書き出せない: {誤り}", 出力パス.display()))?;
+    println!(
+        "[compile_assets] {}: {}バイト({}チャンク)",
+        出力パス.display(),
+        バイト列.len(),
+        目録.件数()
+    );
+    Ok(())
+}
