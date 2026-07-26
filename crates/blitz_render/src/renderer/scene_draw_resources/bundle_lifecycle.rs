@@ -66,6 +66,18 @@ impl シーン描画資源 {
         true
     }
 
+    pub(in crate::renderer) fn 破棄待ち件数(&self) -> usize {
+        self.破棄待ち.len()
+    }
+
+    /// 前提: 呼び出し元がGPUの全作業完了を待ってから呼ぶ。提示が止まって`破棄待ちを一フレーム進める`が呼ばれない間に
+    /// 溜まった束を、フレームの進行に頼らず解放するための経路である。
+    pub(in crate::renderer) fn 破棄待ちを全て破棄する(&mut self, device: &GPUデバイス) {
+        for 待ち in self.破棄待ち.drain(..) {
+            待ち.束.破棄する(device);
+        }
+    }
+
     /// 前提: 1フレームにつきちょうど1回、描画発行の前に呼ぶ。呼ばないと破棄待ちが解放されず、多く呼ぶとGPU使用中の破棄になる。
     pub(in crate::renderer) fn 破棄待ちを一フレーム進める(&mut self, device: &GPUデバイス) {
         let mut 残す = Vec::with_capacity(self.破棄待ち.len());
