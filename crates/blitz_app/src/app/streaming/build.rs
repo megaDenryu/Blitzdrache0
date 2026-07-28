@@ -28,6 +28,7 @@ pub(in crate::app) fn 構築する(
         計測: super::measurement::ストリーミング計測::生成する(モード),
         上限: 起動設定.上限,
         報告する: 起動設定.報告する,
+        描画除外座標: 起動設定.lod継ぎ目検査.and_then(|検査| 検査.欠落座標),
         実破棄受け皿: Vec::new(),
         地形lod: super::lod_sync::地形LOD配線::生成する(起動設定.lod継ぎ目検査),
     }))

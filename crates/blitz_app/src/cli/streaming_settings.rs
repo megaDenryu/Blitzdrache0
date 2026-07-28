@@ -29,6 +29,7 @@ pub(crate) struct LOD継ぎ目検査設定 {
     pub(crate) 一方段: 地形詳細段,
     pub(crate) 他方座標: チャンク座標,
     pub(crate) 他方段: 地形詳細段,
+    pub(crate) 欠落座標: Option<チャンク座標>,
 }
 
 pub(crate) struct ストリーミング起動設定 {

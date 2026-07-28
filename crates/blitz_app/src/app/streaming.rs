@@ -8,16 +8,12 @@ mod lod_sync;
 mod measurement;
 mod route;
 
-use std::time::Instant;
-
-use blitz_engine::{ストリーミングメモリ量, ストリーミング調停};
-
 use super::アプリ;
 use crate::error::起動エラー;
-
+use blitz_engine::{ストリーミングメモリ量, ストリーミング調停};
 pub(in crate::app) use build::構築する;
-
 pub(crate) use measurement::ストリーミング要約;
+use std::time::Instant;
 
 /// チャンク1辺の大域メートル。検証用世界の格子寸法に合わせる。描画束のアンカー導出も同じ値を使う。
 pub(super) const 一辺メートル: f64 = 100.0;
@@ -28,6 +24,7 @@ pub(super) struct ストリーミング配線 {
     計測: measurement::ストリーミング計測,
     上限: ストリーミングメモリ量,
     報告する: bool,
+    描画除外座標: Option<blitz_engine::チャンク座標>,
     /// 実破棄済み束IDの受け皿。毎フレーム使い回し、破棄バッチごとのヒープ再確保を避ける。
     実破棄受け皿: Vec<blitz_render::描画束ID>,
     地形lod: lod_sync::地形LOD配線,
@@ -82,7 +79,14 @@ impl アプリ {
         // 計測区間は調停と描画束の追加解除の両方を含む。ストリーミングがメインスレッドを占める時間はこの合計である。
         let 開始 = Instant::now();
         let 進行 = 配線.調停.一フレーム進める(大域位置, カタログ)?;
-        bundle_sync::適用する(&mut 配線.調停, レンダラー, &進行, &mut 配線.実破棄受け皿, 大域オフセット)?;
+        bundle_sync::適用する(
+            &mut 配線.調停,
+            レンダラー,
+            &進行,
+            &mut 配線.実破棄受け皿,
+            大域オフセット,
+            配線.描画除外座標,
+        )?;
         // 束の追加と解除を反映した後に選ぶ。台帳の常駐とレンダラーの束が一致している時点でなければ、存在しない束の段を選ぶためである。
         配線.地形lod.選択を更新する(&配線.調停, カメラ位置)?;
         配線

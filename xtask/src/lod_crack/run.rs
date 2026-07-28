@@ -27,6 +27,8 @@ pub(super) fn 描画する(出力先: &Path, 条件: &検査条件) -> Option<�
         "--asset-root",
         "target/terrain_assets",
         "--streaming",
+        "--streaming-preload-radius",
+        "2",
         "--streaming-ram-limit",
         "16777216",
         "--streaming-vram-limit",
@@ -35,19 +37,19 @@ pub(super) fn 描画する(出力先: &Path, 条件: &検査条件) -> Option<�
         "--no-post",
         "--dump-frame",
     ];
-    let 状態 = Command::new("cargo")
-        .args(引数)
-        .arg(&ダンプ先)
-        .arg("--lod-crack-pair")
-        .args([
-            x1.to_string(),
-            z1.to_string(),
-            条件.一方段.to_string(),
-            x2.to_string(),
-            z2.to_string(),
-            条件.他方段.to_string(),
-        ])
-        .status();
+    let mut コマンド = Command::new("cargo");
+    コマンド.args(引数).arg(&ダンプ先).arg("--lod-crack-pair").args([
+        x1.to_string(),
+        z1.to_string(),
+        条件.一方段.to_string(),
+        x2.to_string(),
+        z2.to_string(),
+        条件.他方段.to_string(),
+    ]);
+    if let Some((欠落x, 欠落z)) = 条件.欠落 {
+        コマンド.arg("--lod-crack-missing").args([欠落x.to_string(), 欠落z.to_string()]);
+    }
+    let 状態 = コマンド.status();
     match 状態 {
         Ok(値) if 値.success() => 読み込む(&ダンプ先),
         Ok(値) => {
