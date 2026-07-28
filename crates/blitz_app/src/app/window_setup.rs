@@ -41,7 +41,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     フレーム構成: blitz_render::フレーム構成,
     布モード: crate::cli::布モード,
     実表示計測要求: 実表示計測要求,
-    起動シーン大域アンカー: blitz_math::大域ワールド位置,
+    大域平行移動: blitz_math::大域ワールド位置,
 ) -> Result<起動一式, 起動エラー> {
     let window = window_create::生成する(event_loop)?;
     let 表示ハンドル = window.display_handle()?.as_raw();
@@ -52,7 +52,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let 粒子素材 = super::particle_setup::素材を作る(粒子表示)?;
 
     let カタログ = scene_load::カタログを構築する(アセットルート)?;
-    let (シーン, 描画シーン) = scene_load::シーンを読み込んで変換する(&カタログ, シーン名, 描画対象数, 起動シーン大域アンカー)?;
+    let (シーン, 描画シーン) = scene_load::シーンを読み込んで変換する(&カタログ, シーン名, 描画対象数, 大域平行移動)?;
     if 描画対象数.is_some() {
         crate::reports::描画対象構成を表示する(描画シーン.描画対象数());
         crate::reports::フレーム構成を表示する(&フレーム構成);

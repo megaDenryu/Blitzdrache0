@@ -1,10 +1,13 @@
 //! engineの描画対象一覧をrenderの非空な描画シーン素材へ変換する。
 
+mod anchor;
+#[cfg(test)]
+mod anchor_tests;
 mod layout;
 #[cfg(test)]
 mod layout_tests;
 
-use blitz_engine::{シーンデータ, 描画対象データ};
+use blitz_engine::{シーンデータ, チャンク座標, 描画対象データ};
 use blitz_math::{ローカル, ワールド, 変換, 大域ワールド位置};
 use blitz_render::{描画シーン素材, 描画対象素材};
 
@@ -14,8 +17,10 @@ use crate::error::起動エラー;
 pub(super) fn 変換する(
     シーン: &シーンデータ,
     描画対象数: Option<crate::cli::描画対象数>,
-    大域アンカー: 大域ワールド位置,
+    束座標: チャンク座標,
+    大域平行移動: 大域ワールド位置,
 ) -> Result<描画シーン素材, 起動エラー> {
+    let 大域アンカー = anchor::導出する(シーン, 束座標, 大域平行移動)?;
     let 件数 = 描画対象数.map_or(シーン.描画対象一覧().len(), crate::cli::描画対象数::usize値);
     let mut 入力一覧 = (0..件数).map(|添字| {
         let 元 = &シーン.描画対象一覧()[添字 % シーン.描画対象一覧().len()];

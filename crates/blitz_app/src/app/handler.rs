@@ -24,7 +24,7 @@ impl ApplicationHandler for アプリ {
             self.フレーム構成,
             self.布モード,
             実表示計測要求,
-            self.起動シーン大域アンカー,
+            self.大域オフセット,
         ) {
             Ok((window, mut レンダラー, 開発ui, アニメーション, 布プリセット)) => {
                 if let Some(状況) = super::measurement_setup::レンダラーの計測を有効にする(&mut レンダラー, self) {
