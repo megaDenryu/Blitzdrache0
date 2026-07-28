@@ -6,7 +6,7 @@ mod shadow;
 
 pub use components::{ライティング入力エラー, 光強度, 光色, 環境光係数};
 pub use lights::{方向光入力, 点光源入力};
-pub use shadow::影入力;
+pub use shadow::{影入力, 影正射影範囲};
 
 #[derive(Debug, Clone, Copy)]
 pub struct ライティング入力 {
