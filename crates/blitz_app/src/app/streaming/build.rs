@@ -32,6 +32,6 @@ pub(in crate::app) fn 構築する(
         上限: 起動設定.上限,
         報告する: 起動設定.報告する,
         実破棄受け皿: Vec::new(),
-        地形lod: super::lod_sync::地形LOD配線::生成する(),
+        地形lod: super::lod_sync::地形LOD配線::生成する(起動設定.lod継ぎ目検査),
     }))
 }

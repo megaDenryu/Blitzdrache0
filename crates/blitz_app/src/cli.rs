@@ -5,6 +5,7 @@
 mod cli_tests;
 
 mod argument_error;
+mod lod_crack_args;
 mod modes;
 mod object_count;
 mod placement_args;
@@ -18,7 +19,7 @@ pub(crate) use argument_error::起動引数エラー;
 pub(crate) use modes::{布モード, 粒子表示モード};
 pub(crate) use object_count::描画対象数;
 pub(crate) use placement_args::平行移動起動設定;
-pub(crate) use streaming_settings::{ストリーミング起動設定, プレイヤー位置源};
+pub(crate) use streaming_settings::{LOD継ぎ目検査設定, ストリーミング起動設定, プレイヤー位置源};
 pub(crate) use types::{起動モード, 起動設定};
 
 use crate::error::起動エラー;

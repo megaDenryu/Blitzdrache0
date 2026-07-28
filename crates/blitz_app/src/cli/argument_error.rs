@@ -26,4 +26,6 @@ pub(crate) enum 起動引数エラー {
     大域オフセット不正(String),
     #[error("--camera-nudge引数が不正だった: {0}")]
     カメラずれ不正(String),
+    #[error("--lod-crack-pair引数が不正だった: {0}")]
+    Lod継ぎ目検査不正(String),
 }

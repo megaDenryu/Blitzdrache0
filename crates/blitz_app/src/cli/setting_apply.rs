@@ -3,7 +3,7 @@
 use std::slice::Iter;
 
 use super::streaming_settings::プレイヤー位置源;
-use super::{placement_args, value_args, 布モード, 粒子表示モード, 起動設定};
+use super::{lod_crack_args, placement_args, value_args, 布モード, 粒子表示モード, 起動設定};
 use crate::error::起動エラー;
 
 pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &mut Iter<String>) -> Result<(), 起動エラー> {
@@ -18,6 +18,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--exposure" => 設定.露出 = value_args::exposure引数を処理する(残り)?,
         "--global-offset" => 設定.平行移動.大域オフセット = placement_args::global_offset引数を処理する(残り)?,
         "--camera-nudge" => 設定.平行移動.カメラずれ = placement_args::camera_nudge引数を処理する(残り)?,
+        "--lod-crack-pair" => 設定.ストリーミング.lod継ぎ目検査 = Some(lod_crack_args::引数を処理する(残り)?),
         "--blend" => 設定.ブレンド = value_args::blend引数を処理する(残り)?,
         "--streaming-ram-limit" => {
             設定.ストリーミング.上限.ramバイト数 = value_args::ストリーミング上限引数を処理する(残り, 引数値)?;

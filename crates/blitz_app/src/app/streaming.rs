@@ -3,6 +3,7 @@
 
 mod build;
 mod bundle_sync;
+mod lod_override;
 mod lod_sync;
 mod measurement;
 mod route;
