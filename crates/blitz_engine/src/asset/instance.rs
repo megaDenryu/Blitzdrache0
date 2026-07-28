@@ -5,6 +5,7 @@ mod archetype;
 mod bounding_box;
 mod bounding_sphere;
 mod bounds;
+mod coverage;
 mod error;
 mod group;
 mod placement;
