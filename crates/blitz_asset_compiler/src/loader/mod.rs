@@ -2,6 +2,9 @@
 
 mod animation;
 mod archetype;
+mod archetype_material;
+#[cfg(test)]
+mod archetype_material_tests;
 mod buffer;
 mod document;
 mod file;
