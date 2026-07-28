@@ -16,6 +16,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--object-count" => 設定.描画対象数 = Some(value_args::object_count引数を処理する(残り)?),
         "--dump-frame" => 設定.フレームダンプ先 = Some(value_args::dump_frame引数を処理する(残り)?),
         "--exposure" => 設定.露出 = value_args::exposure引数を処理する(残り)?,
+        "--global-offset" => 設定.大域オフセット = value_args::global_offset引数を処理する(残り)?,
         "--blend" => 設定.ブレンド = value_args::blend引数を処理する(残り)?,
         "--streaming-ram-limit" => {
             設定.ストリーミング.上限.ramバイト数 = value_args::ストリーミング上限引数を処理する(残り, 引数値)?;

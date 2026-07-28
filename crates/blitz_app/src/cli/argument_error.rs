@@ -22,4 +22,6 @@ pub(crate) enum 起動引数エラー {
     ブレンド不正(String),
     #[error("ストリーミング上限の引数が不正だった: {0}")]
     ストリーミング上限不正(String),
+    #[error("--global-offset引数が不正だった: {0}")]
+    大域オフセット不正(String),
 }

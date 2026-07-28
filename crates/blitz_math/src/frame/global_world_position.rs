@@ -25,6 +25,11 @@ impl 大域ワールド位置 {
         Self(DVec3::new(f64::from(位置.x().値()), f64::from(位置.y().値()), f64::from(位置.z().値())))
     }
 
+    /// 成分ごとに大域位置を足す。世界全体へ同じ平行移動を加える原点移動不変性の検査で使う。
+    pub fn 平行移動する(self, ずれ: Self) -> Self {
+        Self(self.0 + ずれ.0)
+    }
+
     pub fn カメラ相対へ変換する(self, カメラ原点: Self) -> Result<カメラ相対位置, 座標変換エラー> {
         let 差分 = self.0 - カメラ原点.0;
         if !差分.is_finite() {
