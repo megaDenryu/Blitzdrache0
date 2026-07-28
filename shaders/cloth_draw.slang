@@ -10,7 +10,7 @@ struct FrameUniform
 {
     column_major float4x4 lightViewProjection;
     column_major float4x4 viewProjection;
-    float4 cameraWorldPosition;
+    float4 cameraRelativePosition;
     float4 directionalLightDirection;
     float4 directionalLightColor;
     float4 pointLightPosition;
@@ -39,7 +39,7 @@ struct VertexInput
 struct VertexOutput
 {
     float4 position : SV_Position;
-    float3 worldPosition : TEXCOORD1;
+    float3 relativePosition : TEXCOORD1;
     float3 normal : TEXCOORD2;
     float2 uv : TEXCOORD0;
 };
@@ -48,17 +48,17 @@ struct VertexOutput
 VertexOutput vertexMain(VertexInput input)
 {
     VertexOutput output;
-    float3 worldPosition = applyRelativeAnchor(input.position);
-    output.position = mul(frameUniform.viewProjection, float4(worldPosition, 1.0));
-    output.worldPosition = worldPosition;
+    float3 relativePosition = applyRelativeAnchor(input.position);
+    output.position = mul(frameUniform.viewProjection, float4(relativePosition, 1.0));
+    output.relativePosition = relativePosition;
     output.normal = input.normal;
     output.uv = input.uv;
     return output;
 }
 
-float shadowFactor(float3 worldPosition)
+float shadowFactor(float3 relativePosition)
 {
-    float4 lightClip = mul(frameUniform.lightViewProjection, float4(worldPosition, 1.0));
+    float4 lightClip = mul(frameUniform.lightViewProjection, float4(relativePosition, 1.0));
     float3 projected = lightClip.xyz / lightClip.w;
     float2 shadowUv = projected.xy * float2(0.5, -0.5) + 0.5;
     if (any(shadowUv < 0.0) || any(shadowUv > 1.0))
@@ -76,7 +76,7 @@ float4 fragmentMain(VertexOutput input, bool isFrontFace: SV_IsFrontFace) : SV_T
     float3 normal = normalize(input.normal) * (isFrontFace ? 1.0 : -1.0);
     float3 toLight = -normalize(frameUniform.directionalLightDirection.xyz);
     float lambert = max(dot(normal, toLight), 0.0);
-    float shadow = shadowFactor(input.worldPosition);
+    float shadow = shadowFactor(input.relativePosition);
     float3 direct = frameUniform.directionalLightColor.rgb * lambert * shadow;
     float3 ambient = float3(0.15, 0.15, 0.15);
     float weave = 0.94 + 0.06 * abs(sin(input.uv.x * 100.0) * sin(input.uv.y * 100.0));

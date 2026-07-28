@@ -3,10 +3,16 @@
 
 use super::布一式;
 use crate::vulkan::frame::布描画入力;
+use crate::vulkan::relative_anchor::カメラ相対アンカー;
 use crate::vulkan::sync::フレームスロット添字;
 
 impl 布一式 {
-    pub(crate) fn 描画入力を作る(&self, フレーム添字: フレームスロット添字, 介入件数: u32) -> 布描画入力 {
+    pub(crate) fn 描画入力を作る(
+        &self,
+        フレーム添字: フレームスロット添字,
+        介入件数: u32,
+        相対アンカー: カメラ相対アンカー,
+    ) -> 布描画入力 {
         布描画入力 {
             layout: self.パイプライン群.layout,
             介入pipeline: self.パイプライン群.介入,
@@ -30,6 +36,7 @@ impl 布一式 {
             インデックスバッファ: self.バッファ.インデックス.0,
             インデックス数: self.インデックス数,
             描画pipeline: self.描画パイプライン.handle,
+            相対アンカー,
         }
     }
 }

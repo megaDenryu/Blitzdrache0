@@ -1,4 +1,5 @@
 // シーン描画パスの頂点入出力構造体。頂点ステージの出力とフラグメントステージの入力が同じ宣言を共有するため、scene.slangからimportする独立ファイルに置く。
+// relativePositionはカメラ大域原点を引いたカメラ相対フレームの位置である(絶対ワールド座標ではない)。
 
 struct VertexInput
 {
@@ -11,7 +12,7 @@ struct VertexInput
 struct VertexOutput
 {
     float4 position : SV_Position;
-    float3 worldPosition : TEXCOORD1;
+    float3 relativePosition : TEXCOORD1;
     float3 normal : TEXCOORD2;
     float4 tangent : TEXCOORD3;
     float2 uv : TEXCOORD0;

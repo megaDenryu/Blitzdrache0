@@ -2,6 +2,8 @@
 
 use ash::vk;
 
+use crate::vulkan::relative_anchor::カメラ相対アンカー;
+
 pub(crate) struct 布描画入力 {
     pub(crate) layout: vk::PipelineLayout,
     pub(crate) 介入pipeline: vk::Pipeline,
@@ -25,4 +27,6 @@ pub(crate) struct 布描画入力 {
     pub(crate) インデックスバッファ: vk::Buffer,
     pub(crate) インデックス数: u32,
     pub(crate) 描画pipeline: vk::Pipeline,
+    /// 布の粒子位置は世界原点を基準に計算されるため、アンカーは世界原点のカメラ相対値になる。
+    pub(crate) 相対アンカー: カメラ相対アンカー,
 }

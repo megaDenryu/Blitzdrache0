@@ -7,6 +7,7 @@ mod images;
 mod record;
 mod submit_present;
 mod types;
+mod ui_types;
 
 pub(crate) mod acquire;
 pub(crate) mod draw_commands;
@@ -16,8 +17,9 @@ pub(crate) use cloth_types::布描画入力;
 pub(crate) use dispatch::{任意描画入力, 同期入力, 描画対象入力, 提示先};
 pub(crate) use images::{フレーム画像一式, ブルーム画像};
 pub(crate) use types::{
-    UI描画入力, UI描画項目, シャドウ描画入力, ジオメトリ入力, スキニング描画入力, トーンマップ描画入力, ブルーム描画入力, 描画方式, 粒子描画入力,
+    シャドウ描画入力, ジオメトリ入力, スキニング描画入力, トーンマップ描画入力, ブルーム描画入力, 描画方式, 粒子描画入力
 };
+pub(crate) use ui_types::{UI描画入力, UI描画項目};
 
 use ash::vk;
 

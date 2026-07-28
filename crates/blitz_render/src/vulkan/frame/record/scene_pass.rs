@@ -8,7 +8,7 @@ use crate::vulkan::frame::{draw_commands, ジオメトリ入力, 布描画入力
 use crate::vulkan::graph::{
     クリア指定, バッファハンドル, バッファ用途, パス宣言, パス種別, 画像ハンドル, 画像用途
 };
-use crate::vulkan::relative_anchor::{self, カメラ相対アンカー};
+use crate::vulkan::relative_anchor;
 
 /// シーン/シャドウパス内の布の第2ドロー(判断54)。頂点ハンドルは布頂点生成パスの出力。
 #[derive(Clone, Copy)]
@@ -60,7 +60,7 @@ fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, �
     // 安全性: command_bufferは記録中で、布のパイプライン・バッファは生成済み。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 布.入力.描画pipeline);
-        relative_anchor::積む(device, command_buffer, 先頭.layout, カメラ相対アンカー::加算なし());
+        relative_anchor::積む(device, command_buffer, 先頭.layout, 布.入力.相対アンカー);
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,

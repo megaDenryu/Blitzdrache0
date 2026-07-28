@@ -6,11 +6,12 @@ import pbr;
 
 // シャドウマップをPCF 3x3で比較サンプリングし、影係数(1=非シャドウ,0=シャドウ)を返す。
 // texelSizeは呼び出し側(scene.slang)がシャドウマップ解像度から渡す。
+// 位置とライトビュー射影は同じカメラ相対フレームで与える(前提: フレームUBOの書き込みが同じ原点を引く)。
 float computeShadowFactor(
-    float3 worldPosition, float4x4 lightViewProjection,
+    float3 relativePosition, float4x4 lightViewProjection,
     Texture2D shadowMapTexture, SamplerComparisonState shadowMapSampler, float texelSize)
 {
-    float4 lightClipPosition = mul(lightViewProjection, float4(worldPosition, 1.0));
+    float4 lightClipPosition = mul(lightViewProjection, float4(relativePosition, 1.0));
     float3 lightNdc = lightClipPosition.xyz / lightClipPosition.w;
     float2 shadowUv = lightNdc.xy * 0.5 + 0.5;
     float currentDepth = lightNdc.z;
@@ -33,7 +34,7 @@ float3 shadeLitSurface(
     float3 albedo, float2 metallicRoughnessSample,
     float metallicFactor, float roughnessFactor,
     float3 sampledNormal, float3 inputNormal, float4 inputTangent,
-    float3 worldPosition, float3 cameraWorldPosition, float ambientFactor,
+    float3 relativePosition, float3 cameraRelativePosition, float ambientFactor,
     float3 directionalLightDirection, float3 directionalLightColor, float directionalLightIntensity,
     float3 pointLightPosition, float3 pointLightColor, float pointLightIntensity,
     float shadowFactor)
@@ -41,7 +42,7 @@ float3 shadeLitSurface(
     float roughness = saturate(metallicRoughnessSample.x * roughnessFactor);
     float metallic = saturate(metallicRoughnessSample.y * metallicFactor);
     float3 normal = applyNormalMap(inputNormal, inputTangent, sampledNormal);
-    float3 viewDir = normalize(cameraWorldPosition - worldPosition);
+    float3 viewDir = normalize(cameraRelativePosition - relativePosition);
 
     float3 ambientTerm = albedo * ambientFactor;
 
@@ -49,7 +50,7 @@ float3 shadeLitSurface(
     float3 radiance = directionalLightColor * directionalLightIntensity;
     float3 directionalTerm = shadeLight(normal, viewDir, lightDir, radiance, albedo, metallic, roughness) * shadowFactor;
 
-    float3 toPoint = pointLightPosition - worldPosition;
+    float3 toPoint = pointLightPosition - relativePosition;
     float pointDistance = max(length(toPoint), 1e-4);
     float3 pointDir = toPoint / pointDistance;
     float3 pointRadiance = pointLightColor * pointLightIntensity / (pointDistance * pointDistance);

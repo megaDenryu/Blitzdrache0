@@ -1,8 +1,10 @@
-//! 1つの描画対象が所有するGPU資源。生成途中の失敗も逆順に解放する。
+//! 1つの描画対象が所有するGPU資源と、その対象の大域アンカー。生成途中の失敗も逆順に解放する。
+//! アンカーはGPU資源ではないが、毎フレームのプッシュ定数を作るのに描画対象と1対1で要るため同じ型が持つ。
 
 mod list;
 
 use ash::vk;
+use blitz_math::大域ワールド位置;
 
 use crate::error::レンダラーエラー;
 use crate::render_object_material::描画対象素材;
@@ -14,6 +16,7 @@ use crate::vulkan::tracked_device::GPUデバイス;
 pub(super) use list::描画対象資源一覧を生成する;
 
 pub(super) struct 描画対象資源 {
+    pub(super) 大域アンカー: 大域ワールド位置,
     pub(super) ジオメトリ: vulkan::geometry::ジオメトリバッファ,
     pub(super) テクスチャ: vulkan::texture::マテリアルテクスチャ一式,
     pub(super) ユニフォーム: vulkan::object_uniform::描画対象ユニフォーム,
@@ -61,6 +64,7 @@ impl 描画対象資源 {
             }
         };
         Ok(Self {
+            大域アンカー: 素材.大域アンカー(),
             ジオメトリ,
             テクスチャ,
             ユニフォーム,

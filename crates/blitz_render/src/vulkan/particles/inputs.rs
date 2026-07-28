@@ -3,10 +3,13 @@
 
 use super::粒子リソース一式;
 use crate::vulkan::frame::粒子描画入力;
+use crate::vulkan::relative_anchor::カメラ相対アンカー;
 use crate::vulkan::sync::フレームスロット添字;
 
 impl 粒子リソース一式 {
-    pub(crate) fn 描画入力を作る(&self, フレーム添字: フレームスロット添字) -> 粒子描画入力 {
+    pub(crate) fn 描画入力を作る(
+        &self, フレーム添字: フレームスロット添字, 相対アンカー: カメラ相対アンカー
+    ) -> 粒子描画入力 {
         粒子描画入力 {
             コンピュートパイプライン: self.コンピュートパイプライン.handle,
             コンピュートlayout: self.コンピュートパイプライン.layout,
@@ -16,6 +19,7 @@ impl 粒子リソース一式 {
             バッファ: self.バッファ.buffer,
             更新スレッド数: self.更新スレッド数,
             描画要素数: self.描画要素数,
+            相対アンカー,
         }
     }
 }

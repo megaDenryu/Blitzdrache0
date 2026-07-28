@@ -1,6 +1,10 @@
-//! 1フレームの描画で受け渡す型: 描画方式・ジオメトリ入力・粒子描画入力。
+//! 1フレームの描画で受け渡す型: 描画方式・ジオメトリ入力・シャドウ描画入力・粒子描画入力・スキニング描画入力・ポスト処理の描画入力。
+//! 布とUIは対応するサブシステムの入力だけを持つため`cloth_types`・`ui_types`が別に持つ。
 
 use ash::vk;
+
+use crate::vulkan::relative_anchor::カメラ相対アンカー;
+
 /// このフレームの描画後処理: 通常の提示前遷移のみか、読み戻し用のコピーを挟むか。
 pub(crate) enum 描画方式 {
     通常,
@@ -16,6 +20,8 @@ pub(crate) struct ジオメトリ入力 {
     pub(crate) インデックス数: u32,
     pub(crate) layout: vk::PipelineLayout,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
+    /// この描画のアンカーからカメラ大域原点を引いた値。プッシュ定数で頂点ステージへ渡す。
+    pub(crate) 相対アンカー: カメラ相対アンカー,
 }
 
 /// シャドウパス(判断35)1フレームぶんの入力。常に存在する(シーンパスと同じ
@@ -28,6 +34,7 @@ pub(crate) struct シャドウ描画入力 {
     pub(crate) インデックスバッファ: vk::Buffer,
     pub(crate) インデックス数: u32,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
+    pub(crate) 相対アンカー: カメラ相対アンカー,
 }
 
 /// GPU粒子トイ(判断29)1フレームぶんの入力。`--particles`指定時のみ`Some`で渡す。
@@ -42,6 +49,8 @@ pub(crate) struct 粒子描画入力 {
     pub(crate) バッファ: vk::Buffer,
     pub(crate) 更新スレッド数: u32,
     pub(crate) 描画要素数: u32,
+    /// 粒子の位置は世界原点を基準に計算されるため、アンカーは世界原点のカメラ相対値になる。
+    pub(crate) 相対アンカー: カメラ相対アンカー,
 }
 
 /// GPUスキニング(判断44)1フレームぶんの入力。スキン付きシーンのときのみ`Some`で渡す。
@@ -75,26 +84,4 @@ pub(crate) struct トーンマップ描画入力 {
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
     /// トーンマップ前にHDR輝度へ掛ける露出倍率(プッシュ定数で渡す)。
     pub(crate) 露出: f32,
-}
-
-/// 開発用UI(egui)1フレームぶんの入力。呼び出し元(renderer層)が今フレームの
-/// メッシュ列をジオメトリバッファへ書き込み済みで、そのバッファハンドルと
-/// メッシュごとの描画項目一覧を渡す(判断33・34)。
-pub(crate) struct UI描画入力 {
-    pub(crate) pipeline: vk::Pipeline,
-    pub(crate) layout: vk::PipelineLayout,
-    pub(crate) 頂点バッファ: vk::Buffer,
-    pub(crate) インデックスバッファ: vk::Buffer,
-    pub(crate) 項目一覧: Vec<UI描画項目>,
-}
-
-/// UIメッシュ1つぶんの描画項目: 結合バッファ内での要素オフセット(頂点/インデックスの
-/// 両バッファは1回だけ束縛し、`cmd_draw_indexed`のfirst_index/vertex_offsetで
-/// メッシュごとの範囲を指定する)と、テクスチャ・シザー矩形。
-pub(crate) struct UI描画項目 {
-    pub(crate) 頂点要素オフセット: i32,
-    pub(crate) インデックス要素オフセット: u32,
-    pub(crate) インデックス数: u32,
-    pub(crate) ディスクリプタセット: vk::DescriptorSet,
-    pub(crate) シザー: vk::Rect2D,
 }

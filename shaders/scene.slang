@@ -14,7 +14,7 @@ struct FrameUniform
     // column_major明示(CPU側は列優先配列)。lightViewProjectionは先頭(shadow.slangと同じ配置、判断36)。
     column_major float4x4 lightViewProjection;
     column_major float4x4 viewProjection;
-    float4 cameraWorldPosition;
+    float4 cameraRelativePosition;
     float4 directionalLightDirection;
     float4 directionalLightColor;
     float4 pointLightPosition;
@@ -53,12 +53,12 @@ static const float3 TINT = float3(1.0, 1.0, 1.0);
 VertexOutput vertexMain(VertexInput input)
 {
     VertexOutput output;
-    float3 worldPosition = applyRelativeAnchor(mul(objectUniform.localToWorld, float4(input.position, 1.0)).xyz);
+    float3 relativePosition = applyRelativeAnchor(mul(objectUniform.localToWorld, float4(input.position, 1.0)).xyz);
     float3 worldNormal = normalize(mul(objectUniform.normalLocalToWorld, input.normal));
     float3 transformedTangent = mul((float3x3)objectUniform.localToWorld, input.tangent.xyz);
     float3 worldTangent = normalize(transformedTangent - worldNormal * dot(worldNormal, transformedTangent));
-    output.position = mul(frameUniform.viewProjection, float4(worldPosition, 1.0));
-    output.worldPosition = worldPosition;
+    output.position = mul(frameUniform.viewProjection, float4(relativePosition, 1.0));
+    output.relativePosition = relativePosition;
     output.normal = worldNormal;
     output.tangent = float4(worldTangent, input.tangent.w);
     output.uv = input.uv;
@@ -81,14 +81,14 @@ float4 fragmentMain(VertexOutput input) : SV_Target
     float2 metallicRoughnessSample = metallicRoughnessTexture.Sample(input.uv).gb;
     float3 sampledNormal = normalMapTexture.Sample(input.uv).rgb * 2.0 - 1.0;
     float shadowFactor = computeShadowFactor(
-        input.worldPosition, frameUniform.lightViewProjection,
+        input.relativePosition, frameUniform.lightViewProjection,
         shadowMapTexture, shadowMapSampler, shadowMapTexelSize);
 
     float3 litColor = shadeLitSurface(
         albedo, metallicRoughnessSample,
         objectUniform.metallicRoughnessFactor.x, objectUniform.metallicRoughnessFactor.y,
         sampledNormal, input.normal, input.tangent,
-        input.worldPosition, frameUniform.cameraWorldPosition.xyz, frameUniform.ambientAndLighting.x,
+        input.relativePosition, frameUniform.cameraRelativePosition.xyz, frameUniform.ambientAndLighting.x,
         frameUniform.directionalLightDirection.xyz, frameUniform.directionalLightColor.rgb, frameUniform.directionalLightColor.w,
         frameUniform.pointLightPosition.xyz, frameUniform.pointLightColor.rgb, frameUniform.pointLightColor.w,
         shadowFactor);

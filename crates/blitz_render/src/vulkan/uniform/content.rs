@@ -13,7 +13,7 @@ pub(crate) struct フレームユニフォーム内容 {
     /// (`bytes::バイト列にする`のコメント参照)。
     pub(crate) ライトビュー射影行列: [[f32; 4]; 4],
     pub(crate) ビュー射影行列: [[f32; 4]; 4],
-    pub(crate) カメラワールド位置: [f32; 3],
+    pub(crate) カメラ相対位置: [f32; 3],
     pub(crate) 方向光方向: [f32; 3],
     pub(crate) 方向光色: [f32; 3],
     pub(crate) 方向光強度: f32,

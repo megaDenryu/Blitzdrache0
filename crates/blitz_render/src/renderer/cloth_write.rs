@@ -30,7 +30,8 @@ impl レンダラー {
         &self,
         フレーム添字: フレームスロット添字,
         介入件数: u32,
+        相対アンカー: crate::vulkan::relative_anchor::カメラ相対アンカー,
     ) -> Option<crate::vulkan::frame::布描画入力> {
-        self.布.as_ref().map(|一式| 一式.描画入力を作る(フレーム添字, 介入件数))
+        self.布.as_ref().map(|一式| 一式.描画入力を作る(フレーム添字, 介入件数, 相対アンカー))
     }
 }
