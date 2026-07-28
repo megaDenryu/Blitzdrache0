@@ -1,4 +1,4 @@
-//! チャンク世界の取り込み。目録ソースを読んで25チャンクをコンパイル対象へ加え、
+//! チャンク世界の取り込み。世界が宣言した目録ソースを読んで25チャンクをコンパイル対象へ加え、
 //! 実行時の版付きチャンク目録を書き出す。座標はソースの宣言だけを根拠にし、ファイル名から逆算しない。
 
 use std::path::{Path, PathBuf};
@@ -7,18 +7,18 @@ use blitz_asset_compiler::チャンク目録ソースを読み込む;
 use blitz_engine::{カタログ, チャンク目録, チャンク目録を実行時形式へ格納する};
 
 use super::catalog::コンパイル対象;
+use super::world::対象世界;
 
-/// 目録ソースの配置先。ソースルートからの相対で固定する。
-const 目録ソース相対パス: &str = "chunk_world/chunk_directory.txt";
 const 実行時目録ファイル名: &str = "chunk_directory.blitzchunks";
 
 pub(super) fn カタログへ登録する(
     ソースルート: &Path,
     出力ルート: &Path,
+    世界: 対象世界,
     カタログ: &mut カタログ,
     対象一覧: &mut Vec<コンパイル対象>,
 ) -> Result<チャンク目録, String> {
-    let 目録ソースパス = ソースルート.join(目録ソース相対パス);
+    let 目録ソースパス = ソースルート.join(世界.目録ソース相対パス());
     let 項目一覧 = チャンク目録ソースを読み込む(&目録ソースパス).map_err(|誤り| format!("{}: {誤り}", 目録ソースパス.display()))?;
     let 基準ディレクトリ = 目録ソースパス.parent().map(Path::to_path_buf).unwrap_or_else(|| PathBuf::from("."));
     let mut 目録 = チャンク目録::空を作る();
@@ -34,6 +34,7 @@ pub(super) fn カタログへ登録する(
         対象一覧.push(コンパイル対象 {
             出力パス: 出力ルート.join(format!("{}.blitzasset", 項目.アセット())),
             所有チャンク: 項目.チャンク(),
+            種別: 世界.チャンクのソース種別(),
             id: 項目.アセット().clone(),
         });
     }

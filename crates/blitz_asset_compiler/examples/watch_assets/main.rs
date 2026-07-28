@@ -9,6 +9,9 @@ use std::time::Duration;
 
 const 監視間隔: Duration = Duration::from_millis(250);
 
+/// 監視対象は板の世界のカタログである。地形世界を同時に見ないのは、1つの出力ルートが1つの世界しか持てないためである。
+const 板の世界: &str = "chunk_world";
+
 fn main() {
     if let Err(誤り) = 実行する() {
         eprintln!("[watch_assets] {誤り}");
@@ -45,6 +48,7 @@ fn 再コンパイルする(ソース: &Path, 出力: &Path) -> Result<bool, Str
         .args(["run", "-p", "blitz_asset_compiler", "--example", "compile_assets", "--"])
         .arg(ソース)
         .arg(出力)
+        .arg(板の世界)
         .status()
         .map_err(|誤り| format!("cargoの起動に失敗した: {誤り}"))?;
     if !状態.success() {

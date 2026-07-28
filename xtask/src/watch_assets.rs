@@ -12,7 +12,7 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
             return ExitCode::FAILURE;
         }
     };
-    if !crate::compile_assets::生成する(&ソース, &出力) {
+    if !crate::compile_assets::生成する(&ソース, &出力, crate::compile_assets::板の世界) {
         return ExitCode::FAILURE;
     }
     println!("[xtask] アセット監視を開始。終了はCtrl+C");

@@ -54,9 +54,13 @@ fn 使い方を表示する() {
     println!("  conform          規約適合の機械検査 (100行制限/禁止文字列/不正allow/依存白リスト/参照パス実在/節参照実在/vulkan配下のDrop実装禁止)");
     println!("  type-metrics     型ごとのフィールド数・impl分散ファイル数・メソッド数を多い順に表示する (違反判定はしない)");
     println!("  smoke            blitz_appを--framesで自動実行し、validation件数0を終了コードで確認する");
-    println!("  compile-assets   glTF・画像を検証し、target/runtime_assetsへ実行時形式を生成する");
+    println!(
+        "  compile-assets [ソースルート 出力ルート [世界名]]  ソースを検証して実行時形式を生成する(引数なしでchunk_worldをtarget/runtime_assetsへ、terrain_worldをtarget/terrain_assetsへ)"
+    );
     println!("  watch-assets     カタログのソース依存を監視し、変更時に実行時形式を再生成する");
-    println!("  gen-source-assets 検証用ソースアセット(スモーク用quad・影検証シーン・25チャンクの検証用世界)をassets/へ生成する");
+    println!(
+        "  gen-source-assets 検証用ソースアセット(スモーク用quad・影検証シーン・板の世界25チャンク・地形世界25チャンクの高さ格子)をassets/へ生成する"
+    );
     println!("  fetch-assets     標準サンプル(DamagedHelmet・Fox)をassets/samples/へ取得する(curl.exe使用)");
     println!("  bench            リリース版の固定シーンを600フレーム実行し、GPU時間とCPU側フレーム間隔分布を表示する");
     println!("  bench-display-timing  benchに実表示間隔の計測を足して実行する(計測が描画ループを止めるため既存の時系列とは比較できない)");
