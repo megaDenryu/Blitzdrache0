@@ -58,6 +58,9 @@ mod streaming_usage_tests;
 mod terrain_lod;
 #[cfg(test)]
 mod terrain_lod_tests;
+mod visibility;
+#[cfg(test)]
+mod visibility_tests;
 
 pub use animation::{スキン行列を計算する, スキン行列一覧, ブレンドする, 姿勢, 姿勢を評価する, 関節TRS};
 pub use asset::{
@@ -82,3 +85,4 @@ pub use streaming::{
     固定経路エラー, 実行時チャンク目録を読み込む, 実行時チャンク目録読込エラー, 準備完了結果, 観測済み読込量, 解除報告結果, 退避結果,
 };
 pub use terrain_lod::{地形LODエラー, 地形LOD選択器, 地形LOD選択設定};
+pub use visibility::{個体境界球, 可視個体を選ぶ, 可視判定エラー, 可視判定計数, 群可視材料, 視錐台};
