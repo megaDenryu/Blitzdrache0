@@ -31,6 +31,8 @@ mod runtime_loader;
 #[cfg(test)]
 mod runtime_loader_tests;
 #[cfg(test)]
+mod runtime_scene_terrain_tests;
+#[cfg(test)]
 pub(crate) mod runtime_scene_tests;
 mod scene_data;
 mod skin_data;
@@ -70,6 +72,6 @@ pub use scene_data::シーンデータ;
 pub use skin_data::スキンデータ;
 pub use skin_vertex_attribute::スキン頂点属性;
 pub use static_trs::静的TRS;
-pub use terrain_lod_meshes::地形LODメッシュ群;
+pub use terrain_lod_meshes::{地形LODメッシュ群, 地形LODメッシュ群エラー};
 pub use texture_data::{テクスチャデータ, 法線マップ既定テクスチャを作る, 白テクスチャデータを作る};
 pub use vertex_attribute::メッシュ頂点属性;

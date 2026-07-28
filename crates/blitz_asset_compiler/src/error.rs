@@ -37,4 +37,6 @@ pub enum アセットコンパイルエラー {
     チャンク目録ソース行不正 { 行番号: usize, 内容: String },
     #[error("高さ格子の扱いに失敗した: {0}")]
     高さ格子失敗(#[from] crate::height_grid::高さ格子エラー),
+    #[error("地形の詳細段の組み立てに失敗した: {0}")]
+    地形LODメッシュ群失敗(#[from] blitz_engine::地形LODメッシュ群エラー),
 }
