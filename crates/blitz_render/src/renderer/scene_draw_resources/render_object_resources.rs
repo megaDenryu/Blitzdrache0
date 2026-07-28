@@ -13,6 +13,9 @@ mod list;
 mod shared_single_column;
 #[cfg(test)]
 mod shared_single_column_tests;
+mod visible_id_range;
+#[cfg(test)]
+mod visible_id_range_tests;
 mod visible_id_source;
 
 use blitz_math::大域ワールド位置;
@@ -65,12 +68,14 @@ impl 描画対象資源 {
     }
 
     /// そのフレームにシーンパスが描く個体の添字を書く。可視個体選択を持たない対象へは呼ばない。
+    /// 書き込む前に各IDが個体数の内側を指すことを確かめるのは、この型が対象の個体数を持つ唯一の書き込み境界だからである。
     pub(super) fn 可視id列を書き込む(
         &self,
         device: &ash::Device,
         フレーム添字: フレームスロット添字,
         可視id列: &[u32],
     ) -> Result<(), レンダラーエラー> {
+        visible_id_range::個体数の内側かを検査する(可視id列, self.個体数)?;
         self.可視id列.書き込む(device, フレーム添字, 可視id列)
     }
 
