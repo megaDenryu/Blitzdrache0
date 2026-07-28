@@ -1,5 +1,5 @@
 //! 検査1条件ぶんのblitz_app起動と読み戻し画像の取り込み。
-//! 担当する工程: 大域オフセットを1つ受け取り、最終フレームの読み戻しを`<ベース名>.raw`と`<ベース名>.size`から画素バイト列として返す。
+//! 担当する工程: 検査条件を1つ受け取り、最終フレームの読み戻しを`<ベース名>.raw`と`<ベース名>.size`から画素バイト列として返す。
 
 use std::path::Path;
 use std::process::Command;
@@ -10,14 +10,20 @@ pub(super) struct 読み戻し画像 {
     pub(super) 画素バイト列: Vec<u8>,
 }
 
-pub(super) fn 読み戻しを取る(出力先: &Path, ベース名: &str, 大域オフセット: &str) -> Option<読み戻し画像> {
+/// 1条件ぶんの起動設定。大域オフセットは軸ごとに違う値を与えられるよう3成分で持ち、カメラずれは負の対照でのみ0以外にする。
+pub(super) struct 検査条件 {
+    pub(super) 大域オフセット: [f64; 3],
+    pub(super) カメラずれメートル: f64,
+}
+
+pub(super) fn 読み戻しを取る(出力先: &Path, ベース名: &str, 条件: &検査条件) -> Option<読み戻し画像> {
     let ダンプ先 = 出力先.join(ベース名);
-    let 引数一覧 = 引数列を作る(&ダンプ先, 大域オフセット);
+    let 引数一覧 = 引数列を作る(&ダンプ先, 条件);
     println!("[xtask] cargo {} を実行", 引数一覧.join(" "));
     match Command::new("cargo").args(&引数一覧).status() {
         Ok(状態) if 状態.success() => {}
         Ok(状態) => {
-            eprintln!("[xtask] blitz_appが終了コード{状態}で失敗した(オフセット{大域オフセット})");
+            eprintln!("[xtask] blitz_appが終了コード{状態}で失敗した(条件{ベース名})");
             return None;
         }
         Err(誤り) => {
@@ -28,7 +34,8 @@ pub(super) fn 読み戻しを取る(出力先: &Path, ベース名: &str, 大域
     読み込む(&ダンプ先)
 }
 
-fn 引数列を作る(ダンプ先: &Path, 大域オフセット: &str) -> Vec<String> {
+fn 引数列を作る(ダンプ先: &Path, 条件: &検査条件) -> Vec<String> {
+    let [x, y, z] = 条件.大域オフセット;
     vec![
         "run".to_string(),
         "-p".to_string(),
@@ -41,7 +48,11 @@ fn 引数列を作る(ダンプ先: &Path, 大域オフセット: &str) -> Vec<S
         "--dump-frame".to_string(),
         ダンプ先.display().to_string(),
         "--global-offset".to_string(),
-        大域オフセット.to_string(),
+        format!("{x}"),
+        format!("{y}"),
+        format!("{z}"),
+        "--camera-nudge".to_string(),
+        format!("{}", 条件.カメラずれメートル),
     ]
 }
 

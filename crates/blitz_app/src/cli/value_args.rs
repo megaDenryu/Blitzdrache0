@@ -7,7 +7,7 @@ use std::slice::Iter;
 use super::{描画対象数, 起動モード, 起動引数エラー};
 
 /// 値の欠落は引数ごとに違う型付きエラーになるため、エラーの作り方を引数で受け取る。
-fn 次の値を読む<'引数>(
+pub(super) fn 次の値を読む<'引数>(
     引数: &mut Iter<'引数, String>,
     引数名: &str,
     欠落エラー: fn(String) -> 起動引数エラー,
@@ -64,16 +64,6 @@ pub(super) fn ストリーミング上限引数を処理する(引数: &mut Iter
         ));
     }
     Ok(バイト数)
-}
-
-/// `--global-offset <メートル>`の値を読む。世界全体へXYZの各軸へ同じだけ加える平行移動量である。
-pub(super) fn global_offset引数を処理する(引数: &mut Iter<String>) -> Result<f64, 起動引数エラー> {
-    let 値 = 次の値を読む(引数, "--global-offset", 起動引数エラー::大域オフセット不正)?;
-    let オフセット = 値.parse::<f64>().map_err(|_| 起動引数エラー::大域オフセット不正(値.clone()))?;
-    if !オフセット.is_finite() {
-        return Err(起動引数エラー::大域オフセット不正(format!("有限値でない: {値}")));
-    }
-    Ok(オフセット)
 }
 
 pub(super) fn exposure引数を処理する(引数: &mut Iter<String>) -> Result<f32, 起動引数エラー> {
