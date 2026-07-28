@@ -19,4 +19,4 @@ pub use height_grid::{
 };
 pub use loader::ソースシーンを読み込む;
 pub use terrain::地形チャンクをコンパイルする;
-pub use vegetation::植生チャンクをコンパイルする;
+pub use vegetation::{植生チャンクをコンパイルする, 植生可視判定シーンをコンパイルする};

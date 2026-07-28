@@ -3,8 +3,12 @@
 //! 参照: `_doc/設計/植生インスタンスと物量計測.md`「インスタンス群の表現」
 
 mod bounds;
+mod cull_placement;
+mod cull_scene;
 mod deterministic_value;
 mod placement;
+
+pub use cull_scene::植生可視判定シーンをコンパイルする;
 #[cfg(test)]
 mod vegetation_tests;
 

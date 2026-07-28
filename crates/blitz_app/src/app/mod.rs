@@ -15,6 +15,7 @@ mod measurement_setup;
 mod particle_setup;
 mod queries;
 mod scene_camera;
+mod scene_lighting;
 mod scene_load;
 mod sph_setup;
 mod streaming;

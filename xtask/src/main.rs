@@ -9,6 +9,7 @@ mod conform;
 mod fetch_assets;
 mod file_scan;
 mod gen_source_assets;
+mod instance_cull;
 mod instance_draw;
 mod lod_crack;
 mod m10_bench;
@@ -18,9 +19,12 @@ mod object_bench;
 mod origin_invariance;
 mod ow3_dod;
 mod release_build;
+mod report_parse;
+mod shader_copy;
 mod smoke;
 mod streaming_bench;
 mod type_metrics;
+mod vegetation_run;
 mod verify;
 mod watch_assets;
 
@@ -43,6 +47,7 @@ fn main() -> ExitCode {
         Some("origin-invariance") => origin_invariance::実行する(),
         Some("lod-crack") => lod_crack::実行する(),
         Some("instance-draw") => instance_draw::実行する(),
+        Some("instance-cull") => instance_cull::実行する(),
         Some("ow3-dod") => ow3_dod::実行する(),
         Some("streaming-bench") => streaming_bench::実行する(&引数一覧[1..]),
         _ => {
@@ -77,6 +82,9 @@ fn 使い方を表示する() {
     println!("  lod-crack        地形LODの段差0・1・最大を四方向と細粗入替でGPU描画し、内側の継ぎ目に背景色が露出しないことを確かめる");
     println!(
         "  instance-draw    植生インスタンス群を実機描画し、4個体が画面の4分割へ離れて描かれること・両パスの発行が群×段ごと1回であること・個体数を増やしてもGPU確保数が増えないことを確かめる"
+    );
+    println!(
+        "  instance-cull    可視判定のオンとオフで植生シーンを描き、画面内の絵がバイト一致すること・視錐台外の個体が描かれなくなること・画面外の個体が落とす影が残ることを確かめる"
     );
     println!("  ow3-dod          原点移動・LOD継ぎ目・半径2ストリーミングを本番経路でまとめて測り、複数LOD画像をPNGへ書き出す");
     println!(

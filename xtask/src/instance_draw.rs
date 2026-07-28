@@ -3,11 +3,12 @@
 //! 参照: `_doc/設計/植生インスタンスと物量計測.md`「段階導入」
 
 mod pixel_check;
-mod report_parse;
-mod run;
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+
+use crate::report_parse::計数報告;
+use crate::vegetation_run;
 
 const 出力ディレクトリ: &str = "target/instance_draw";
 const シェーダーコピー先: &str = "target/instance_draw_shaders";
@@ -16,6 +17,7 @@ const 計数判定シーン: &str = "vegetation_64";
 const 画素判定の個体数: u64 = 4;
 const 計数判定の個体数: u64 = 64;
 const フレーム数: &str = "12";
+const 起動引数: [&str; 4] = ["--unlit", "--no-post", "--report-draw-issue", "--report-memory"];
 
 pub fn 実行する() -> ExitCode {
     match 検収する() {
@@ -36,15 +38,15 @@ fn 検収する() -> Result<String, String> {
     }
     let 出力先 = PathBuf::from(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
-    let シェーダー入口 = シェーダーを一時コピーする()?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
 
-    let 少数 = run::描画する(&出力先, 画素判定シーン, &シェーダー入口, フレーム数)?;
+    let 少数 = vegetation_run::描画する(&出力先.join(画素判定シーン), 画素判定シーン, &シェーダー入口, フレーム数, &起動引数)?;
     let 画素 = pixel_check::判定する(&少数)?;
-    let 少数計数 = report_parse::取り出す(&少数.標準出力)?;
+    let 少数計数 = crate::report_parse::取り出す(&少数.標準出力)?;
     計数を検査する(&少数計数, 画素判定の個体数)?;
 
-    let 多数 = run::描画する(&出力先, 計数判定シーン, &シェーダー入口, フレーム数)?;
-    let 多数計数 = report_parse::取り出す(&多数.標準出力)?;
+    let 多数 = vegetation_run::描画する(&出力先.join(計数判定シーン), 計数判定シーン, &シェーダー入口, フレーム数, &起動引数)?;
+    let 多数計数 = crate::report_parse::取り出す(&多数.標準出力)?;
     計数を検査する(&多数計数, 計数判定の個体数)?;
     if 少数計数.現在確保数 != 多数計数.現在確保数 {
         return Err(format!(
@@ -59,37 +61,22 @@ fn 検収する() -> Result<String, String> {
 }
 
 /// 群1つと非空LOD段1つの世界であるため、両パスの発行数はどちらも1でなければならない。個体数は発行数と別に数える。
-fn 計数を検査する(計数: &report_parse::計数報告, 期待個体数: u64) -> Result<(), String> {
-    if 計数.シーンパス発行数 != 1 || 計数.シャドウパス発行数 != 1 {
+/// この世界では全個体が画面に入るため、可視判定を通しても両パスの個体数は全個体数のままである。
+fn 計数を検査する(計数: &計数報告, 期待個体数: u64) -> Result<(), String> {
+    if 計数.シーン.発行数 != 1 || 計数.シャドウ.発行数 != 1 {
         return Err(format!(
             "群×非空LOD段ごとに1回の発行になっていない: シーン{}回、シャドウ{}回",
-            計数.シーンパス発行数, 計数.シャドウパス発行数
+            計数.シーン.発行数, 計数.シャドウ.発行数
         ));
     }
-    if 計数.シーンパス個体数 != 期待個体数 || 計数.シャドウパス個体数 != 期待個体数 {
+    if 計数.シーン.個体数 != 期待個体数 || 計数.シャドウ.個体数 != 期待個体数 {
         return Err(format!(
             "両パスが全個体を描いていない: シーン{}体、シャドウ{}体、期待{期待個体数}体",
-            計数.シーンパス個体数, 計数.シャドウパス個体数
+            計数.シーン.個体数, 計数.シャドウ.個体数
         ));
     }
     if 計数.validation件数 != 0 {
         return Err(format!("validationが{}件発生した", 計数.validation件数));
     }
     Ok(())
-}
-
-/// 監視対象シェーダーはリポジトリ本体でなく一時コピーを渡す。importで分割されているためディレクトリ単位で複製する。
-fn シェーダーを一時コピーする() -> Result<PathBuf, String> {
-    let コピー先 = PathBuf::from(シェーダーコピー先);
-    std::fs::create_dir_all(&コピー先).map_err(|誤り| format!("シェーダーのコピー先を作れなかった: {誤り}"))?;
-    let 読み取り結果 = std::fs::read_dir("shaders").map_err(|誤り| format!("shaders/の読み取りに失敗した: {誤り}"))?;
-    for エントリ結果 in 読み取り結果 {
-        let エントリ = エントリ結果.map_err(|誤り| format!("shaders/の読み取りに失敗した: {誤り}"))?;
-        let 元パス = エントリ.path();
-        if !元パス.is_file() || 元パス.extension().and_then(std::ffi::OsStr::to_str) != Some("slang") {
-            continue;
-        }
-        std::fs::copy(&元パス, コピー先.join(エントリ.file_name())).map_err(|誤り| format!("{}のコピーに失敗した: {誤り}", 元パス.display()))?;
-    }
-    Ok(コピー先.join("scene.slang"))
 }

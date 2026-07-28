@@ -1,31 +1,34 @@
-//! 1つの植生シーンを本番アプリの描画経路へ渡し、最終フレームの読み戻し画像と終了時の報告を受け取る工程。
+//! 植生の検証用世界の1シーンを本番アプリの描画経路へ渡し、最終フレームの読み戻し画像と終了時の報告を受け取る工程。
+//! 受け取るのはシーン名と追加の起動引数、返すのは標準出力と読み戻し画像である。
 //! 監視対象シェーダーはリポジトリ本体でなく一時コピーを渡す。植生の検証計画は書き換えを行わないが、
 //! 監視の入口をリポジトリへ向けない規律を他の検証と揃える。
 
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-pub(super) struct 実行結果 {
-    pub(super) 標準出力: String,
-    pub(super) 幅: usize,
-    pub(super) 高さ: usize,
-    pub(super) rgba8: Vec<u8>,
+/// 植生世界の実行時アセットの置き場。`compile-assets`の植生世界の既定出力ルートと同じ値である。
+const アセットルート: &str = "target/vegetation_assets";
+
+pub struct 実行結果 {
+    pub 標準出力: String,
+    pub 幅: usize,
+    pub 高さ: usize,
+    pub rgba8: Vec<u8>,
 }
 
-pub(super) fn 描画する(
-    出力先: &Path, シーン名: &str, シェーダー入口: &Path, フレーム数: &str
+pub fn 描画する(
+    ダンプ先: &Path, シーン名: &str, シェーダー入口: &Path, フレーム数: &str, 追加引数: &[&str]
 ) -> Result<実行結果, String> {
-    let ダンプ先 = 出力先.join(シーン名);
     let mut コマンド = Command::new("cargo");
     コマンド
         .args(["run", "-p", "blitz_app", "--", "--scene", シーン名])
-        .args(["--asset-root", "target/vegetation_assets"])
+        .args(["--asset-root", アセットルート])
         .args(["--frames", フレーム数])
-        .args(["--unlit", "--no-post", "--report-draw-issue", "--report-memory"])
+        .args(追加引数)
         .arg("--shader-source")
         .arg(シェーダー入口)
         .arg("--dump-frame")
-        .arg(&ダンプ先);
+        .arg(ダンプ先);
     let 出力 = コマンド
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({シーン名}): {誤り}"))?;
@@ -34,7 +37,7 @@ pub(super) fn 描画する(
     if !出力.status.success() {
         return Err(format!("blitz_appが{}で失敗した({シーン名})", 出力.status));
     }
-    let (幅, 高さ, rgba8) = 読み込む(&ダンプ先)?;
+    let (幅, 高さ, rgba8) = 読み込む(ダンプ先)?;
     Ok(実行結果 {
         標準出力, 幅, 高さ, rgba8
     })
