@@ -16,27 +16,30 @@ pub fn 実行する() -> ExitCode {
     };
     print!("{}", 実行結果.標準出力);
     eprint!("{}", 実行結果.標準エラー);
-    let Ok(計測) = metrics::読み取る(&実行結果.標準出力) else {
-        eprintln!("[xtask] ow3-dod失敗: 統合経路の計測行を読み取れなかった");
-        return ExitCode::FAILURE;
+    let 計測 = match metrics::読み取る(&実行結果.標準出力) {
+        Ok(計測) => 計測,
+        Err(理由) => {
+            eprintln!("[xtask] ow3-dod失敗: 統合経路の計測行を読み取れなかった: {理由}");
+            return ExitCode::FAILURE;
+        }
     };
-    let 合格 = 計測.読込件数 == 25
-        && 計測.最大台帳登録数 == 25
-        && 計測.gpu解除件数 > 0
-        && 計測.lod変更フレーム数 > 0
-        && 計測.lod変更時読込件数 == 0
-        && 計測.最終段種類数 >= 2
-        && 計測.最大ramバイト数 <= 上限バイト数
-        && 計測.最大vramバイト数 <= 上限バイト数
+    let 合格 = 計測.要約.ディスク読込件数 == 25
+        && 計測.要約.最大台帳登録数 == 25
+        && 計測.要約.gpu解除件数 > 0
+        && 計測.要約.lod変更フレーム数 > 0
+        && 計測.要約.lod変更時読込開始件数 == 0
+        && 計測.要約.最終段種類数 >= 2
+        && 計測.要約.最大ramバイト数 <= 上限バイト数
+        && 計測.要約.最大vramバイト数 <= 上限バイト数
         && 計測.validation件数 == 0;
     if !合格 {
-        eprintln!("[xtask] ow3-dod失敗: {}", 計測.要約());
+        eprintln!("[xtask] ow3-dod失敗: {}", 計測.要約文());
         return ExitCode::FAILURE;
     }
     let Some(png絶対パス) = run::pngへ変換する(&実行結果.ダンプ先) else {
         return ExitCode::FAILURE;
     };
-    println!("[xtask] ow3-dod成功: {}", 計測.要約());
+    println!("[xtask] ow3-dod成功: {}", 計測.要約文());
     println!("[xtask] 複数LOD画像: {}", png絶対パス.display());
     ExitCode::SUCCESS
 }
