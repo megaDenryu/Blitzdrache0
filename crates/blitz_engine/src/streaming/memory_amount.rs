@@ -19,4 +19,9 @@ impl ストリーミングメモリ量 {
             vramバイト数: self.vramバイト数.checked_add(追加.vramバイト数)?,
         })
     }
+
+    /// RAMとVRAMのどちらかが上限を超えているか。上限との比較規則をこの1箇所だけが定める。
+    pub(super) fn いずれかが上限を超えるか(self, 上限: Self) -> bool {
+        self.ramバイト数 > 上限.ramバイト数 || self.vramバイト数 > 上限.vramバイト数
+    }
 }

@@ -1,10 +1,11 @@
-use crate::streaming_coordinator_fixture::{世界を作る, 後始末する, 準備完了を待つ, 起動する, 進める};
+use crate::streaming_chunk_world_fixture::{世界を作る, 後始末する};
+use crate::streaming_coordinator_fixture::{準備完了を待つ, 起動する, 進める};
 use crate::ストリーミングメモリ量;
 
 #[test]
 fn 読込とgpu転送と解除の累計を数える() {
     let (パス一覧, カタログ, 目録) = 世界を作る("transfer_total", &[(0, 0), (1, 0)]);
-    let mut 調停 = 起動する(目録, ストリーミングメモリ量::生成する(100_000, 100_000));
+    let mut 調停 = 起動する(目録, ストリーミングメモリ量::生成する(100_000, 100_000), 1);
     assert_eq!(調停.転送量(), Default::default());
 
     let 準備完了一覧 = 準備完了を待つ(&mut 調停, &カタログ, 50.0, 2);

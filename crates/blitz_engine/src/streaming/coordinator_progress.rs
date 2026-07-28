@@ -47,11 +47,16 @@ impl ストリーミング進行 {
         self.台帳登録数
     }
 
-    pub fn 判定(&self) -> 予算判定 {
-        self.判定
+    pub fn 判定(&self) -> &予算判定 {
+        &self.判定
     }
 
+    /// 報告する値があるフレームか。上限超過を事象に含めるのは、退避対象が無いまま超過が続く状態を無報告で沈めないためである。
     pub fn 事象があるか(&self) -> bool {
-        !self.読込開始一覧.is_empty() || !self.準備完了一覧.is_empty() || !self.cpuデータ破棄一覧.is_empty() || !self.gpu資源解除待ち一覧.is_empty()
+        !self.読込開始一覧.is_empty()
+            || !self.準備完了一覧.is_empty()
+            || !self.cpuデータ破棄一覧.is_empty()
+            || !self.gpu資源解除待ち一覧.is_empty()
+            || matches!(self.判定, 予算判定::使用量超過による退避 { .. })
     }
 }
