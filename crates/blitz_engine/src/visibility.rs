@@ -3,6 +3,7 @@
 //! 判定は保守的である。誤って描くこと(偽陽性)は許すが、誤って消すこと(偽陰性)は許さない。
 //! 参照: `_doc/設計/植生インスタンスと物量計測.md`「可視判定」
 
+mod bounds_transform;
 mod count;
 mod error;
 mod frustum;

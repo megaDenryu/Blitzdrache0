@@ -1,4 +1,5 @@
-//! engineの描画対象一覧をrenderの非空な描画シーン素材へ変換する。
+//! engineの描画対象一覧をrenderの非空な描画シーン素材へ変換し、同じ走査で可視判定の材料も作る。
+//! 2つを同じ走査で作るのは、可視個体選択が束の中での描画対象添字で引かれ、その添字がここで決まる並び順そのものだからである。
 
 mod anchor;
 #[cfg(test)]
@@ -7,35 +8,51 @@ mod instance_transforms;
 mod layout;
 #[cfg(test)]
 mod layout_tests;
+mod visibility_material;
 
 use blitz_engine::{シーンデータ, チャンク座標, 描画対象データ};
 use blitz_math::{ローカル, ワールド, 変換, 大域ワールド位置};
 use blitz_render::{描画シーン素材, 描画対象素材};
 
 use super::convert;
+use crate::app::visibility::群可視材料の登録;
 use crate::error::起動エラー;
+
+/// 1つの束へ載せる描画入力の一式。描画シーン素材はレンダラーが、可視材料の登録は可視判定の配線が受け取る。
+pub(crate) struct 束の描画入力 {
+    pub(crate) 描画シーン: 描画シーン素材,
+    pub(crate) 可視材料一覧: Vec<群可視材料の登録>,
+}
 
 pub(super) fn 変換する(
     シーン: &シーンデータ,
     描画対象数: Option<crate::cli::描画対象数>,
     束座標: チャンク座標,
     大域平行移動: 大域ワールド位置,
-) -> Result<描画シーン素材, 起動エラー> {
+) -> Result<束の描画入力, 起動エラー> {
     let 大域アンカー = anchor::導出する(シーン, 束座標, 大域平行移動)?;
     let 件数 = 描画対象数.map_or(シーン.描画対象一覧().len(), crate::cli::描画対象数::usize値);
-    let mut 入力一覧 = (0..件数).map(|添字| {
+    let mut 素材一覧 = Vec::with_capacity(件数);
+    let mut 可視材料一覧 = Vec::new();
+    for 添字 in 0..件数 {
         let 元 = &シーン.描画対象一覧()[添字 % シーン.描画対象一覧().len()];
         let 変換 = 描画対象数.map_or(元.ローカルからワールド(), |_| {
             元.ローカルからワールド().合成する(layout::配置する(添字, 件数))
         });
-        描画対象を変換する(元, 大域アンカー, 変換)
-    });
-    let 先頭 = match 入力一覧.next() {
-        Some(描画対象) => 描画対象?,
+        素材一覧.push(描画対象を変換する(元, 大域アンカー, 変換)?);
+        if let Some(登録) = visibility_material::作る(元.形状(), 添字, 大域アンカー, 変換)? {
+            可視材料一覧.push(登録);
+        }
+    }
+    let mut 反復 = 素材一覧.into_iter();
+    let 先頭 = match 反復.next() {
+        Some(描画対象) => 描画対象,
         None => panic!("シーンデータは1つ以上の描画対象を持つ不変条件に違反した"),
     };
-    let 残り = 入力一覧.collect::<Result<Vec<_>, _>>()?;
-    Ok(描画シーン素材::生成する(先頭, 残り))
+    Ok(束の描画入力 {
+        描画シーン: 描画シーン素材::生成する(先頭, 反復.collect()),
+        可視材料一覧,
+    })
 }
 
 fn 描画対象を変換する(

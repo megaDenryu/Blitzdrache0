@@ -1,10 +1,13 @@
 //! `ApplicationHandler` 実装。winit所有ループ(パターンA)の受け口。参照: `_doc/設計/イベントループとフレームペーシング.md`
+//! 開発用UIの表示切替だけは触れるフィールドが`開発ui`に閉じるため`dev_ui_toggle`にある。
+
+mod dev_ui_toggle;
+
 use super::アプリ;
 use blitz_render::ウィンドウ寸法;
 use winit::application::ApplicationHandler;
-use winit::event::{ElementState, KeyEvent, WindowEvent};
+use winit::event::WindowEvent;
 use winit::event_loop::ActiveEventLoop;
-use winit::keyboard::{KeyCode, PhysicalKey};
 use winit::window::WindowId;
 
 impl ApplicationHandler for アプリ {
@@ -26,10 +29,11 @@ impl ApplicationHandler for アプリ {
             実表示計測要求,
             self.大域オフセット,
         ) {
-            Ok((window, mut レンダラー, 開発ui, アニメーション, 布プリセット)) => {
+            Ok((window, mut レンダラー, 開発ui, アニメーション, 布プリセット, 可視材料一覧)) => {
                 if let Some(状況) = super::measurement_setup::レンダラーの計測を有効にする(&mut レンダラー, self) {
                     println!("実表示時刻計測: {}", 状況.名称());
                 }
+                self.可視判定.束を登録する(super::scene_load::起動時シーンの束ID, 可視材料一覧);
                 self.window = Some(window);
                 self.レンダラー = Some(レンダラー);
                 self.開発ui = Some(開発ui);
@@ -73,28 +77,6 @@ impl ApplicationHandler for アプリ {
     fn about_to_wait(&mut self, _event_loop: &ActiveEventLoop) {
         if let Some(window) = &self.window {
             window.request_redraw();
-        }
-    }
-}
-
-impl アプリ {
-    /// F3キー押下(リピートでない立ち上がりのみ)で開発用UIをトグルする(判断34)。
-    fn f3押下を確認する(&mut self, event: &WindowEvent) {
-        let WindowEvent::KeyboardInput {
-            event:
-                KeyEvent {
-                    physical_key: PhysicalKey::Code(KeyCode::F3),
-                    state: ElementState::Pressed,
-                    repeat: false,
-                    ..
-                },
-            ..
-        } = event
-        else {
-            return;
-        };
-        if let Some(開発ui) = &mut self.開発ui {
-            開発ui.トグルする();
         }
     }
 }
