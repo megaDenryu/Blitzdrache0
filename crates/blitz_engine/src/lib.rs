@@ -15,7 +15,11 @@ mod chunk;
 mod frame_composition;
 #[cfg(test)]
 mod frame_composition_tests;
+mod instance_lod;
+#[cfg(test)]
+mod instance_lod_tests;
 mod lighting;
+mod lod_threshold;
 mod streaming;
 #[cfg(test)]
 mod streaming_budget_overflow_tests;
@@ -76,6 +80,7 @@ pub use asset::{
 pub use camera::{カメラ, カメラインテント};
 pub use chunk::チャンク座標;
 pub use frame_composition::既定フレーム構成を作る;
+pub use instance_lod::{個体LODエラー, 個体LOD選択設定, 個体別段状態, 個体詳細段};
 pub use lighting::既定ライティングを作る;
 pub use streaming::{
     GPU転送完了結果, ストリーミングメモリ量, ストリーミング予算, ストリーミング予算エラー, ストリーミング予算結果, ストリーミング見積エラー,
