@@ -5,7 +5,6 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::lod_mesh::メッシュ素材;
-use crate::terrain_detail::地形詳細段;
 use crate::vulkan;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
@@ -44,9 +43,10 @@ impl 段別ジオメトリ {
         Ok(Self { 段一覧 })
     }
 
-    /// 要求された段のジオメトリ。焼かれた段数を超える要求は最も粗い段を返す。距離が最も粗い段の閾値より遠いという意味であり、そのとき最も粗い段を描くのが要求どおりの結果だからである。
-    pub(super) fn 段を選ぶ(&self, 段: 地形詳細段) -> &vulkan::geometry::ジオメトリバッファ {
-        match self.段一覧.get(段.添字()).or_else(|| self.段一覧.last()) {
+    /// 段番号で引くジオメトリ。焼かれた段数を超える番号は最も粗い段を返す。距離が最も粗い段の閾値より遠いという意味であり、
+    /// そのとき最も粗い段を描くのが要求どおりの結果だからである。段番号はそのまま列の添字である。
+    pub(super) fn 段番号で選ぶ(&self, 段番号: usize) -> &vulkan::geometry::ジオメトリバッファ {
+        match self.段一覧.get(段番号).or_else(|| self.段一覧.last()) {
             Some(バッファ) => バッファ,
             None => panic!("段別ジオメトリは1段以上を持つ不変条件に違反した"),
         }

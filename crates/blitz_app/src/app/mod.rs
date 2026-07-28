@@ -11,6 +11,7 @@ mod frame_timing;
 mod frame_ui;
 mod handler;
 mod hot_reload_apply;
+mod lod_probe;
 mod measurement_setup;
 mod particle_setup;
 mod queries;
@@ -82,8 +83,10 @@ pub(crate) struct アプリ {
     ストリーミング: Option<streaming::ストリーミング配線>,
     /// `--report-streaming-summary`指定でtrue。ストリーミングが無効なときも指定の有無を保つため、配線とは別に持つ。
     ストリーミング要約報告: bool,
-    /// インスタンス群の可視判定。束の可視材料と毎フレームの可視ID列をここが持つ。ストリーミングを使わない起動時シーンでも要るため、
-    /// ストリーミング配線の中ではなくアプリが直に持つ。
+    /// インスタンス群の可視判定と個体別LOD。束の可視材料・個体別の段の記憶・毎フレームの可視ID列をここが持つ。
+    /// ストリーミングを使わない起動時シーンでも要るため、ストリーミング配線の中ではなくアプリが直に持つ。
     可視判定: visibility::可視判定配線,
+    /// `--lod-probe-step`指定時だけ`Some`。段の境界をまたぐ往復を決定的に作るためにカメラを前後させる。
+    個体詳細段探査: Option<lod_probe::個体詳細段探査>,
     起動時エラー: Option<起動エラー>,
 }

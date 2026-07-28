@@ -51,10 +51,10 @@ static const float shadowMapTexelSize = 1.0 / 2048.0;
 static const float3 TINT = float3(1.0, 1.0, 1.0);
 
 [shader("vertex")]
-VertexOutput vertexMain(VertexInput input, uint instanceIndex : SV_InstanceID)
+VertexOutput vertexMain(VertexInput input, uint instanceIndex : SV_InstanceID, uint startInstance : SV_StartInstanceLocation)
 {
     VertexOutput output;
-    InstanceTransform transform = instanceTransforms[visibleInstanceIds[instanceIndex]];
+    InstanceTransform transform = instanceTransforms[resolveInstanceIndex(instanceIndex, startInstance)];
     float3 relativePosition = applyRelativeAnchor(mul(transform.localToWorld, float4(input.position, 1.0)).xyz);
     float3 worldNormal = normalize(mul(transform.normalLocalToWorld, input.normal));
     float3 transformedTangent = mul((float3x3)transform.localToWorld, input.tangent.xyz);

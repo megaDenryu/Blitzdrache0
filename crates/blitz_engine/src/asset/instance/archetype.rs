@@ -4,6 +4,10 @@
 
 use super::error::インスタンス群エラー;
 use crate::asset::mesh_data::メッシュデータ;
+use crate::個体詳細段;
+
+/// 段番号がu8に収まる上限。これを超える段数は段の順序を番号で表せない。
+const 段数の上限: usize = 256;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct 原型 {
@@ -16,6 +20,9 @@ impl 原型 {
     pub fn 生成する(段一覧: Vec<メッシュデータ>) -> Result<Self, インスタンス群エラー> {
         if 段一覧.is_empty() {
             return Err(インスタンス群エラー::原型段なし);
+        }
+        if 段一覧.len() > 段数の上限 {
+            return Err(インスタンス群エラー::原型段数過大 { 段数: 段一覧.len() });
         }
         for (段番号, 段) in 段一覧.iter().enumerate() {
             if 段.スキン頂点属性一覧.is_some() {
@@ -31,6 +38,12 @@ impl 原型 {
 
     pub fn 段数(&self) -> usize {
         self.段一覧.len()
+    }
+
+    /// 最も粗い段。段数が1以上かつ段数の上限以下であることを生成時に確かめてあるため、この番号は必ず作れる。
+    pub fn 最粗段(&self) -> 個体詳細段 {
+        let 番号 = u8::try_from(self.段一覧.len() - 1).unwrap_or_else(|_| panic!("原型の段数が段番号の上限に収まるという不変条件に違反した"));
+        個体詳細段::番号から生成する(番号)
     }
 
     pub fn 最詳細メッシュ(&self) -> &メッシュデータ {

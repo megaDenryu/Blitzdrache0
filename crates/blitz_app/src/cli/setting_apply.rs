@@ -3,7 +3,7 @@
 use std::slice::Iter;
 
 use super::streaming_settings::プレイヤー位置源;
-use super::{lod_crack_args, placement_args, value_args, 布モード, 粒子表示モード, 起動設定};
+use super::{instance_lod_args, lod_crack_args, placement_args, value_args, 布モード, 粒子表示モード, 起動設定};
 use crate::error::起動エラー;
 
 pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &mut Iter<String>) -> Result<(), 起動エラー> {
@@ -27,6 +27,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
             検査.欠落座標 = Some(欠落座標);
         }
         "--blend" => 設定.ブレンド = value_args::blend引数を処理する(残り)?,
+        "--lod-probe-step" => 設定.個体詳細段探査刻み = Some(instance_lod_args::lod_probe_step引数を処理する(残り)?),
         "--streaming-ram-limit" => {
             設定.ストリーミング.上限.ramバイト数 = value_args::ストリーミング上限引数を処理する(残り, 引数値)?;
         }
@@ -55,6 +56,7 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--report-memory" => 設定.gpuメモリ報告 = true,
         "--report-draw-issue" => 設定.描画発行報告 = true,
         "--no-instance-cull" => 設定.インスタンス可視判定有効 = false,
+        "--no-instance-lod" => 設定.インスタンス段選択有効 = false,
         "--dev-ui" => 設定.開発ui初期有効 = true,
         "--no-post" => 設定.ポスト処理有効 = false,
         "--cloth" => 設定.布モード = 布モード::吊るし布,

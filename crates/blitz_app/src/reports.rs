@@ -3,26 +3,12 @@
 
 pub(crate) mod composition;
 pub(crate) mod display_timing;
+pub(crate) mod draw_issue;
 pub(crate) mod exit;
 pub(crate) mod streaming;
 pub(crate) mod streaming_summary;
 
 use crate::app::フレーム時間統計;
-
-/// 最終フレームの描画発行の内訳。直接インスタンス描画では発行回数が個体数に比例しないことと、
-/// シーンパスだけが可視判定で個体を絞りシャドウパスは絞らないことを、パス別の4つの数字で示す。
-pub(crate) fn 描画発行内訳を表示する(内訳: &blitz_render::描画発行内訳) {
-    println!("描画発行内訳(最終フレーム):");
-    パス別発行を表示する("シーンパス", &内訳.シーン());
-    パス別発行を表示する("シャドウパス", &内訳.シャドウ());
-}
-
-fn パス別発行を表示する(パス名: &str, 発行: &blitz_render::パス別描画発行) {
-    println!("  {パス名}発行数: {}", 発行.発行数());
-    println!("  {パス名}候補数: {}", 発行.候補数());
-    println!("  {パス名}可視数: {}", 発行.可視数());
-    println!("  {パス名}個体数: {}", 発行.個体数());
-}
 
 pub(crate) fn gpuメモリ統計を表示する(統計: &blitz_render::GPUメモリ統計) {
     println!("Vulkanメモリ確保:");

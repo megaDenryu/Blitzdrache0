@@ -5,6 +5,7 @@
 mod cli_tests;
 
 mod argument_error;
+mod instance_lod_args;
 mod lod_crack_args;
 mod modes;
 mod object_count;

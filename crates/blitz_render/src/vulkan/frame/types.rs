@@ -18,8 +18,11 @@ pub(crate) struct ジオメトリ入力 {
     pub(crate) 頂点バッファ: vk::Buffer,
     pub(crate) インデックスバッファ: vk::Buffer,
     pub(crate) インデックス数: u32,
-    /// この描画発行で描く個体の数。通常メッシュと地形は1、インスタンス群は個体数である。
+    /// この描画発行で描く個体の数。通常メッシュと地形は1、インスタンス群はそのLOD段の可視数である。
     pub(crate) インスタンス数: u32,
+    /// 可視ID列のうちこの発行が読み始める位置。頂点シェーダーは`SV_StartInstanceLocation`でこの値を受け取り、
+    /// `SV_InstanceID`に足して可視ID列を引く。段ごとに1回発行するため、段の範囲の開始がそのままこの値になる。
+    pub(crate) 先頭インスタンス: u32,
     pub(crate) layout: vk::PipelineLayout,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
     /// この描画のアンカーからカメラ大域原点を引いた値。プッシュ定数で頂点ステージへ渡す。
@@ -35,8 +38,10 @@ pub(crate) struct シャドウ描画入力 {
     pub(crate) 頂点バッファ: vk::Buffer,
     pub(crate) インデックスバッファ: vk::Buffer,
     pub(crate) インデックス数: u32,
-    /// この描画発行で描く個体の数。シャドウパスは可視判定を持たないため、シーンパスと同じ全個体を描く。
+    /// この描画発行で描く個体の数。シャドウパスは可視判定を持たないため、常にそのLOD段の全個体を描く。
     pub(crate) インスタンス数: u32,
+    /// 可視ID列のうちこの発行が読み始める位置。シーンパスと同じ段の範囲の開始を使う。
+    pub(crate) 先頭インスタンス: u32,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
     pub(crate) 相対アンカー: カメラ相対アンカー,
 }

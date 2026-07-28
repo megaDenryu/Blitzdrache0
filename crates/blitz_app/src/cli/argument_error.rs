@@ -18,6 +18,8 @@ pub(crate) enum 起動引数エラー {
     フレームダンプ不正(String),
     #[error("--exposure引数が不正だった: {0}")]
     露出不正(String),
+    #[error("--lod-probe-step引数が不正だった: {0}")]
+    LOD探査刻み不正(String),
     #[error("--blend引数が不正だった: {0}")]
     ブレンド不正(String),
     #[error("ストリーミング上限の引数が不正だった: {0}")]

@@ -9,7 +9,6 @@ use super::シーン描画資源;
 use crate::draw_bundle_id::描画束ID;
 use crate::error::レンダラーエラー;
 use crate::render_scene_material::描画シーン素材;
-use crate::renderer::draw_issue_breakdown::描画発行内訳;
 use crate::vulkan::descriptor::ディスクリプタレイアウト;
 use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
 use crate::vulkan::shadow_map::シャドウマップ;
@@ -70,7 +69,7 @@ impl シーン描画資源 {
             シャドウ入力作業領域: Vec::with_capacity(描画対象数),
             破棄待ち: Vec::new(),
             実破棄済みid一覧: Vec::new(),
-            直近の内訳: 描画発行内訳::空(),
+            計数集計: super::描画計数集計::default(),
         })
     }
 }

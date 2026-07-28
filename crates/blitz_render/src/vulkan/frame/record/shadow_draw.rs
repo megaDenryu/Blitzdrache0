@@ -50,7 +50,7 @@ unsafe fn 対象を記録する(device: &ash::Device, command_buffer: vk::Comman
         );
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &[0]);
         device.cmd_bind_index_buffer(command_buffer, 入力.インデックスバッファ, 0, vk::IndexType::UINT32);
-        device.cmd_draw_indexed(command_buffer, 入力.インデックス数, 入力.インスタンス数, 0, 0, 0);
+        device.cmd_draw_indexed(command_buffer, 入力.インデックス数, 入力.インスタンス数, 0, 0, 入力.先頭インスタンス);
     }
 }
 

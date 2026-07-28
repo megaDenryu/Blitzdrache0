@@ -9,12 +9,8 @@
 
 use blitz_math::メートル;
 
-use super::error::個体LODエラー;
 use super::level::個体詳細段;
 use super::settings::個体LOD選択設定;
-
-/// 段番号がu8に収まる上限。原型の段数はこの値以下でなければならない。
-const 段数の上限: usize = 256;
 
 pub struct 個体別段状態 {
     最粗段: 個体詳細段,
@@ -23,19 +19,14 @@ pub struct 個体別段状態 {
 }
 
 impl 個体別段状態 {
-    pub fn 生成する(個体数: usize, 段数: usize) -> Result<Self, 個体LODエラー> {
-        if 段数 == 0 {
-            return Err(個体LODエラー::段数なし);
-        }
-        if 段数 > 段数の上限 {
-            return Err(個体LODエラー::段数過大 { 段数 });
-        }
-        let 最粗段番号 = u8::try_from(段数 - 1).map_err(|_| 個体LODエラー::段数過大 { 段数 })?;
-        Ok(Self {
-            最粗段: 個体詳細段::番号から生成する(最粗段番号),
+    /// 最も粗い段は原型が持つ。原型は生成の時点で段を1つ以上かつ段番号の上限以下しか受け付けないため、
+    /// この構築は失敗しない。
+    pub fn 生成する(個体数: usize, 最粗段: 個体詳細段) -> Self {
+        Self {
+            最粗段,
             前回の段一覧: vec![None; 個体数],
             切替回数: 0,
-        })
+        }
     }
 
     pub fn 個体数(&self) -> usize {
