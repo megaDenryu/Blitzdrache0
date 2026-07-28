@@ -9,6 +9,7 @@ mod error;
 mod height_grid;
 mod loader;
 mod terrain;
+mod vegetation;
 
 pub use chunk_directory_source::{チャンク目録ソースを読み込む, チャンク目録ソース項目};
 pub use compile::{コンパイル済みシーン, ソースシーンをコンパイルする};
@@ -18,3 +19,4 @@ pub use height_grid::{
 };
 pub use loader::ソースシーンを読み込む;
 pub use terrain::地形チャンクをコンパイルする;
+pub use vegetation::植生チャンクをコンパイルする;

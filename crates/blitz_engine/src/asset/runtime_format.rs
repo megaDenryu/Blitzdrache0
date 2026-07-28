@@ -1,12 +1,12 @@
 //! アセット実行時形式の共通ヘッダーと検証済みの読み取り結果。
 
-mod catalog_v1;
+mod catalog;
 mod chunk_directory_v1;
 mod error;
 mod header;
 mod scene;
 
-pub use catalog_v1::{カタログを実行時形式へ格納する, 実行時形式からカタログを読む};
+pub use catalog::{カタログを実行時形式へ格納する, 実行時形式からカタログを読む};
 pub use chunk_directory_v1::{チャンク目録を実行時形式へ格納する, 実行時形式からチャンク目録を読む};
 pub use error::アセット実行時形式エラー;
 pub use header::{実行時アセットを格納する, 実行時アセットを開く};

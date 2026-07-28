@@ -1,5 +1,5 @@
 //! 既知の開発用ソースアセットを安定IDと実行時形式の出力名へ対応付ける。
-//! 世界ごとに何を焼くかもここが決める。板の世界はスモークとサンプルの一式を、地形の世界は起動時シーン1つだけを持つ。
+//! 世界ごとに何を焼くかは`world`が決め、ここは宣言をカタログとコンパイル対象一覧へ写す。
 
 use std::path::{Path, PathBuf};
 
@@ -11,26 +11,24 @@ use super::world::対象世界;
 /// 参照: `_doc/計画/ユビキタス言語.md`「所有チャンク」
 const 原点チャンク: チャンク座標 = チャンク座標::生成する(0, 0);
 
-/// 地形世界の起動時シーン。レンダラーはチャンクが1つも常駐しない期間にも描画対象を要求するため、束ID0を占める最小の対象が要る。
-/// 板の世界の`quad`と同じソースを別IDで登録するのは、初期カメラがシーン名で決まり、地形の俯瞰視点をこのIDへ紐づけるためである。
-/// 参照: `crates/blitz_app/src/app/scene_camera.rs`
-const 地形世界の起動時シーン: (&str, &str) = ("terrain_origin", "smoke/quad.gltf");
-
-/// 板の世界の出力ルートへ焼く開発用アセット。第3欄はソースが無いときに失敗させるかどうかである。
-const 板の世界の定義一覧: [(&str, &str, bool); 5] = [
-    ("quad", "smoke/quad.gltf", true),
-    ("quad_alt", "smoke/quad_alt.gltf", true),
-    ("shadow_scene", "smoke/shadow_scene.gltf", true),
-    ("helmet", "samples/DamagedHelmet/DamagedHelmet.glb", false),
-    ("fox", "samples/Fox/Fox.glb", false),
-];
-
 /// コンパイル対象のソースが何の形式で書かれているか。読み方が形式ごとに違うため、判別共用体で持つ。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum ソース種別 {
     /// glTF(.gltf/.glb)で書かれたシーン。
     Gltfシーン,
     高さ格子,
+    /// glTFを原型として読み、決定的に生成した配置でインスタンス群を焼く。
+    植生 {
+        個体数: usize,
+    },
+}
+
+/// 世界へ焼くアセット1件の宣言。`必須`はソースが無いときに失敗させるかどうかである。
+pub(super) struct アセット定義 {
+    pub(super) 名前: &'static str,
+    pub(super) 相対パス: &'static str,
+    pub(super) 必須: bool,
+    pub(super) 種別: ソース種別,
 }
 
 pub(super) struct コンパイル対象 {
@@ -45,30 +43,23 @@ pub(super) fn 構築する(
 ) -> Result<(カタログ, Vec<コンパイル対象>), String> {
     let mut カタログ = カタログ::空を作る();
     let mut 対象一覧 = Vec::new();
-    for (名前, 相対パス, 必須) in 定義一覧を選ぶ(世界) {
-        let ソースパス = ソースルート.join(相対パス);
+    for 定義 in 世界.アセット定義一覧() {
+        let ソースパス = ソースルート.join(定義.相対パス);
         if !ソースパス.is_file() {
-            if 必須 {
+            if 定義.必須 {
                 return Err(format!("必須ソースアセットが存在しない: {}", ソースパス.display()));
             }
             println!("[compile_assets] 未取得のためスキップ: {}", ソースパス.display());
             continue;
         }
-        let id = アセットID::生成する(名前).map_err(|誤り| 誤り.to_string())?;
+        let id = アセットID::生成する(定義.名前).map_err(|誤り| 誤り.to_string())?;
         カタログ.登録する(id.clone(), ソースパス);
         対象一覧.push(コンパイル対象 {
             id,
             所有チャンク: 原点チャンク,
-            種別: ソース種別::Gltfシーン,
-            出力パス: 出力ルート.join(format!("{名前}.blitzasset")),
+            種別: 定義.種別,
+            出力パス: 出力ルート.join(format!("{}.blitzasset", 定義.名前)),
         });
     }
     Ok((カタログ, 対象一覧))
-}
-
-fn 定義一覧を選ぶ(世界: 対象世界) -> Vec<(&'static str, &'static str, bool)> {
-    match 世界 {
-        対象世界::板の世界 => 板の世界の定義一覧.to_vec(),
-        対象世界::地形の世界 => vec![(地形世界の起動時シーン.0, 地形世界の起動時シーン.1, true)],
-    }
 }

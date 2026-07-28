@@ -3,10 +3,8 @@
 
 use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::読取位置;
+use super::super::mesh_layout::個体配置長;
 use crate::asset::instance::{個体配置, 境界球, 群境界, 軸平行包囲領域};
-
-/// 個体配置1件のバイト数。平行移動3・回転4・スケール3のf32である。
-pub(in crate::asset::runtime_format::scene) const 個体配置長: usize = 40;
 
 pub(in crate::asset::runtime_format::scene) fn 配置列を読む(
     入力: &mut 読取位置<'_>,
