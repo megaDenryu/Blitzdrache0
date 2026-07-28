@@ -6,6 +6,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::{self, RecvTimeoutError};
 use std::time::{Duration, Instant};
 
+use crate::streaming::reset_generation::リセット世代;
 use crate::{asset::実行時シーンファイルを読み込む, チャンク座標};
 
 use super::{result::チャンク読込成果, チャンク読込エラー, チャンク読込器, チャンク読込完了};
@@ -16,6 +17,8 @@ const 完了上限: usize = 4;
 pub(super) struct 読込ジョブ {
     pub(super) チャンク: チャンク座標,
     pub(super) パス: PathBuf,
+    /// 投入した時点のリセット世代。完了通知がそのまま持ち帰り、呼出し側が古い世代の完了を退ける根拠にする。
+    pub(super) 世代: リセット世代,
 }
 
 pub(super) fn 起動する() -> Result<チャンク読込器, チャンク読込エラー> {
@@ -55,5 +58,5 @@ fn 読み込む(ジョブ: 読込ジョブ) -> チャンク読込完了 {
         読込バイト数,
         所要時間: 開始.elapsed(),
     });
-    チャンク読込完了::生成する(ジョブ.チャンク, 結果)
+    チャンク読込完了::生成する(ジョブ.チャンク, ジョブ.世代, 結果)
 }

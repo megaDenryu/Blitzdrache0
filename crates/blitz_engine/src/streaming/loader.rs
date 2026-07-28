@@ -13,6 +13,8 @@ pub use error::チャンク読込エラー;
 pub use result::{チャンク読込完了, チャンク読込成果};
 use worker::読込ジョブ;
 
+use super::reset_generation::リセット世代;
+
 pub struct チャンク読込器 {
     要求送信: SyncSender<読込ジョブ>,
     完了受信: Option<Receiver<チャンク読込完了>>,
@@ -25,17 +27,21 @@ impl チャンク読込器 {
         worker::起動する()
     }
 
+    /// `世代`は投入した時点のリセット世代であり、完了通知がそのまま持ち帰る。
     pub fn 読込を要求する(
         &self,
         チャンク: crate::チャンク座標,
         アセット: &crate::アセットID,
         カタログ: &crate::カタログ,
+        世代: リセット世代,
     ) -> Result<(), チャンク読込エラー> {
         let パス = カタログ
             .パスを引く(アセット)
             .ok_or_else(|| チャンク読込エラー::カタログ未登録(アセット.clone()))?
             .to_path_buf();
-        match self.要求送信.try_send(読込ジョブ { チャンク, パス }) {
+        match self.要求送信.try_send(読込ジョブ {
+            チャンク, パス, 世代
+        }) {
             Ok(()) => Ok(()),
             Err(TrySendError::Full(_)) => Err(チャンク読込エラー::要求キュー満杯),
             Err(TrySendError::Disconnected(_)) => Err(チャンク読込エラー::ワーカー停止),

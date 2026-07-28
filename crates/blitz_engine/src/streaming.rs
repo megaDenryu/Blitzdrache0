@@ -26,6 +26,7 @@ mod memory_candidate;
 mod memory_estimate;
 mod memory_result;
 mod observed_read_size;
+mod reset_generation;
 mod transfer_total;
 
 pub use chunk_diff::{GPU転送完了結果, チャンク集合差分, 準備完了結果, 解除報告結果};
@@ -53,4 +54,5 @@ pub use memory_candidate::チャンク予算候補;
 pub use memory_estimate::{ストリーミング見積エラー, チャンクメモリ量を見積もる};
 pub use memory_result::{ストリーミング予算結果, 予算判定};
 pub use observed_read_size::観測済み読込量;
+pub use reset_generation::リセット世代;
 pub use transfer_total::ストリーミング転送量;
