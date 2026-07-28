@@ -20,7 +20,7 @@ glTF・画像 → blitz_asset_compiler → アセット実行時形式 → blitz
 ```
 
 層 = クレートとして分割し、依存方向を Cargo でコンパイル時に強制する。
-`blitz_asset_compiler` / `blitz_engine` / `blitz_app` は `#![forbid(unsafe_code)]` を宣言しており、unsafe が blitz_render の外に書かれることも機械的に禁止される。
+`blitz_render` 以外の全クレート（`blitz_app` / `blitz_asset_compiler` / `blitz_engine` / `blitz_math` / `blitz_sim`）は `#![forbid(unsafe_code)]` を宣言しており、unsafe が blitz_render の外に書かれることも機械的に禁止される。
 
 | クレート | 役割 | 制約 |
 |---|---|---|
@@ -133,7 +133,7 @@ glTF・画像 → blitz_asset_compiler → アセット実行時形式 → blitz
 
 ```
 cargo build             # 全クレート（build.rs が shaders/ を slangc で SPIR-V へコンパイル）
-cargo xtask compile-assets  # glTF・画像からtarget/runtime_assets/*.blitzassetを生成
+cargo xtask compile-assets  # glTF・画像・高さ格子からtarget/runtime_assets（板の世界）とtarget/terrain_assets（地形世界）へ実行時形式を生成
 cargo xtask watch-assets    # ソース依存を監視し、変更時に実行時アセットを再生成
 cargo run -p blitz_app  # 実行（--scene <id> / --dev-ui / --particles / --report-gpu-times 等はcli.rs参照）
 cargo xtask             # 開発ツールの一覧表示（ツールの唯一の入口）
@@ -146,8 +146,10 @@ cargo xtask bench-display-timing  # benchに実表示間隔の計測を追加（
 cargo xtask m11-soak    # 3600フレーム連続実行中のRAM・VRAM推移をテキスト採取
 cargo xtask object-bench  # 2対象の画素判定と1・10・100対象のGPU/CPU時間・GPUメモリ計測
 cargo xtask streaming-bench [フレーム数]  # 固定経路のチャンク読込: 予算を十分に取った反復のRAM・VRAM推移と、縮退させた読込・解除順の再現
-cargo xtask origin-invariance # 世界全体へkm級の大域平行移動を加えても読み戻し画像がバイト一致することを確認する
-cargo xtask gen-source-assets # 検証用ソースアセット（スモーク用quad・影検証シーン・25チャンクの検証用世界）の再生成
+cargo xtask origin-invariance # 世界全体へkm級の大域平行移動を加えても読み戻し画像がバイト一致し、カメラの微小移動には応答することを確認する
+cargo xtask lod-crack   # 地形LODの段差0・1・最大を四方向・細粗入替・片側欠落で描き、共有辺の投影帯に背景色が露出しないことを確認する
+cargo xtask ow3-dod     # 原点移動不変性・LOD継ぎ目・先読み半径2のストリーミングをまとめて測るOW3のDoD入口
+cargo xtask gen-source-assets # 検証用ソースアセット（スモーク用quad・影検証シーン・板の世界25チャンク・地形世界25チャンクの高さ格子）の再生成
 cargo xtask fetch-assets     # DamagedHelmet等の標準サンプル取得
 ```
 
