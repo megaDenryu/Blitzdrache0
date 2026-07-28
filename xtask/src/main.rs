@@ -9,6 +9,7 @@ mod conform;
 mod fetch_assets;
 mod file_scan;
 mod gen_source_assets;
+mod instance_draw;
 mod lod_crack;
 mod m10_bench;
 mod m11_soak;
@@ -41,6 +42,7 @@ fn main() -> ExitCode {
         Some("object-bench") => object_bench::実行する(),
         Some("origin-invariance") => origin_invariance::実行する(),
         Some("lod-crack") => lod_crack::実行する(),
+        Some("instance-draw") => instance_draw::実行する(),
         Some("ow3-dod") => ow3_dod::実行する(),
         Some("streaming-bench") => streaming_bench::実行する(&引数一覧[1..]),
         _ => {
@@ -73,6 +75,9 @@ fn 使い方を表示する() {
     println!("  object-bench     二対象の画素判定後、1・10・100対象のGPU/CPU時間とGPUメモリを計測する");
     println!("  origin-invariance 世界全体へkm級の大域平行移動を加えても読み戻し画像がバイト一致し、カメラだけを微小に動かすと変わることを確かめる");
     println!("  lod-crack        地形LODの段差0・1・最大を四方向と細粗入替でGPU描画し、内側の継ぎ目に背景色が露出しないことを確かめる");
+    println!(
+        "  instance-draw    植生インスタンス群を実機描画し、4個体が画面の4分割へ離れて描かれること・両パスの発行が群×段ごと1回であること・個体数を増やしてもGPU確保数が増えないことを確かめる"
+    );
     println!("  ow3-dod          原点移動・LOD継ぎ目・半径2ストリーミングを本番経路でまとめて測り、複数LOD画像をPNGへ書き出す");
     println!(
         "  streaming-bench [フレーム数]  固定経路でチャンクを読み込みながら、予算を十分に取った反復のRAM・VRAM推移と、縮退させた読込・解除順の再現を測る"

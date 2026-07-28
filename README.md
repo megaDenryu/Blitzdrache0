@@ -149,7 +149,8 @@ cargo xtask streaming-bench [フレーム数]  # 固定経路のチャンク読�
 cargo xtask origin-invariance # 世界全体へkm級の大域平行移動を加えても読み戻し画像がバイト一致し、カメラの微小移動には応答することを確認する
 cargo xtask lod-crack   # 地形LODの段差0・1・最大を四方向・細粗入替・片側欠落で描き、共有辺の投影帯に背景色が露出しないことを確認する
 cargo xtask ow3-dod     # 原点移動不変性・LOD継ぎ目・先読み半径2のストリーミングをまとめて測るOW3のDoD入口
-cargo xtask gen-source-assets # 検証用ソースアセット（スモーク用quad・影検証シーン・板の世界25チャンク・地形世界25チャンクの高さ格子）の再生成
+cargo xtask instance-draw # 植生インスタンス群を実機描画し、4個体が画面の4分割へ離れて描かれること・両パスの発行が群×段ごと1回であること・個体数を増やしてもGPU確保数が増えないことを確認する
+cargo xtask gen-source-assets # 検証用ソースアセット（スモーク用quad・影検証シーン・板の世界25チャンク・地形世界25チャンクの高さ格子・植生世界の原型）の再生成
 cargo xtask fetch-assets     # DamagedHelmet等の標準サンプル取得
 ```
 
