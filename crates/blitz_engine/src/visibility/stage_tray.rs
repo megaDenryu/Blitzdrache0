@@ -5,6 +5,7 @@
 
 use blitz_render::段別描画範囲;
 
+use super::instance_class::個体区分;
 use super::stage_bucket::段別並べ替え;
 
 #[derive(Default)]
@@ -44,14 +45,14 @@ impl 段別ID受け皿 {
         self.並べ替え.群を始める(段数);
     }
 
-    pub(super) fn 個体を積む(&mut self, 段番号: u8, 可視: bool) {
-        self.並べ替え.個体を積む(段番号, 可視);
+    pub(super) fn 個体を積む(&mut self, 段番号: u8, 区分: 個体区分) {
+        self.並べ替え.個体を積む(段番号, 区分);
     }
 
-    /// 積んだ判定を段別の並びへ書き出し、その群の可視数を返す。
-    pub(super) fn 群を書き出す(&mut self) -> usize {
-        let 可視数 = self.並べ替え.可視数();
+    /// 積んだ判定を段別の並びへ書き出し、その群のシーン可視数とシャドウ可視数を返す。
+    pub(super) fn 群を書き出す(&mut self) -> (usize, usize) {
+        let パス別可視数 = self.並べ替え.パス別可視数();
         self.並べ替え.書き出す(&mut self.id列, &mut self.段範囲列);
-        可視数
+        パス別可視数
     }
 }
