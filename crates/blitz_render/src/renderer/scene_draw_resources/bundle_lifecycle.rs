@@ -93,8 +93,8 @@ impl シーン描画資源 {
         self.破棄待ち = 残す;
     }
 
-    /// 実際に破棄し終えた束のIDを渡して空にする。資源の会計を実破棄の時点で減らすための唯一の観測点である。
-    pub(in crate::renderer) fn 実破棄済みを引き取る(&mut self) -> Vec<描画束ID> {
-        std::mem::take(&mut self.実破棄済みid一覧)
+    /// 実際に破棄し終えた束のIDを受け皿へ移して空にする。資源の会計を実破棄の時点で減らす唯一の観測点である。`append`は移動元の容量を残すため、双方の確保が一度で安定する。
+    pub(in crate::renderer) fn 実破棄済みを引き取る(&mut self, 受け皿: &mut Vec<描画束ID>) {
+        受け皿.append(&mut self.実破棄済みid一覧);
     }
 }
