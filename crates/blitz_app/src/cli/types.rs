@@ -39,6 +39,9 @@ pub(crate) struct 起動設定 {
     pub(crate) gpuメモリ報告: bool,
     /// `--report-draw-issue`指定でtrue。最終フレームのパス別描画発行数・候補数・可視数・個体数を終了時に出力する。
     pub(crate) 描画発行報告: bool,
+    /// `--report-instance-sections`指定でtrue。群選択の走査時間を測り、レンダラーCPU区間と併せて終了時に出力する。
+    /// フレーム時間報告と別の指定にするのは、区間の内訳が要るのは物量計測だけであり、既存の時系列を採る条件へ相乗りさせないためである。
+    pub(crate) インスタンス区間報告: bool,
     /// `--no-instance-cull`指定でfalse。既定はtrue。falseは全個体を描くため、可視判定の有無で読み戻し画像を比べる検収が成立する。
     pub(crate) インスタンス可視判定有効: bool,
     /// `--no-instance-lod`指定でfalse。既定はtrue。falseは全個体を最詳細段で描くため、段の選択の有無で読み戻し画像を比べる検収が成立する。

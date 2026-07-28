@@ -6,6 +6,7 @@ mod draw_mode;
 
 use blitz_math::大域ワールド位置;
 
+use super::cpu_timing::CPU区間時計;
 use super::frame_progress::フレームスロット資源;
 use super::presentation::取得済み提示;
 use super::scene_draw_resources::作業領域更新入力;
@@ -21,11 +22,13 @@ use crate::vulkan::skinning::スキニング一式;
 
 impl レンダラー {
     /// 戻り値: 提示劣化の有無と、このフレームで書いたGPUタイムスタンプの「パス名→クエリ開始添字」対応(判断30。計測無効なら空配列)。
+    /// `cpu区間時計`は作業領域の更新とコマンド記録以降の境界を刻む。計測が無効なら`None`であり、時刻を1度も読まない。
     #[allow(clippy::type_complexity, clippy::too_many_arguments)]
     pub(super) fn 現在の画像で描画する(
         &mut self,
         取得済み: &取得済み提示,
         スロット資源: &フレームスロット資源,
+        mut cpu区間時計: Option<&mut CPU区間時計>,
         クリア色: クリアカラー,
         露出: f32,
         布介入件数: u32,
@@ -58,9 +61,15 @@ impl レンダラー {
             地形詳細段選択一覧,
             可視個体選択一覧,
         };
+        if let Some(時計) = cpu区間時計.as_deref_mut() {
+            時計.作業領域更新を開始する();
+        }
         self.シーン描画資源.作業領域を更新する(&作業領域入力)?;
+        if let Some(時計) = cpu区間時計.as_deref_mut() {
+            時計.作業領域更新を終了する();
+        }
 
-        vulkan::frame::描画する(
+        let 結果 = vulkan::frame::描画する(
             self.環境.device(),
             self.環境.queue(),
             スロット資源.command_buffer,
@@ -82,6 +91,10 @@ impl レンダラー {
             描画方式,
             クエリプール,
             self.同期入力を組み立てる(スロット資源, 取得済み),
-        )
+        );
+        if let Some(時計) = cpu区間時計 {
+            時計.描画を終了する();
+        }
+        結果
     }
 }

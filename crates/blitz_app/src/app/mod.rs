@@ -19,6 +19,7 @@ mod scene_camera;
 mod scene_lighting;
 mod scene_load;
 mod scene_read_count;
+mod section_timing;
 mod sph_setup;
 mod streaming;
 mod visibility;
@@ -87,6 +88,8 @@ pub(crate) struct アプリ {
     /// インスタンス群の可視判定と個体別LOD。束の可視材料・個体別の段の記憶・毎フレームの可視ID列をここが持つ。
     /// ストリーミングを使わない起動時シーンでも要るため、ストリーミング配線の中ではなくアプリが直に持つ。
     可視判定: visibility::可視判定配線,
+    /// `--report-instance-sections`指定時だけ`Some`。可視判定と個体別LODの1フレーム分の走査が占めた時間を貯める。
+    群選択計測: Option<section_timing::区間計測>,
     /// `--lod-probe-step`指定時だけ`Some`。段の境界をまたぐ往復を決定的に作るためにカメラを前後させる。
     個体詳細段探査: Option<lod_probe::個体詳細段探査>,
     /// ディスクから実行時シーンを読んだ回数。段の選択や可視判定がディスクI/Oを起こさないことをこの数で示す。

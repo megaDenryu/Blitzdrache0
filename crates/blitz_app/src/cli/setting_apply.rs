@@ -55,6 +55,7 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--report-display-timing" => 設定.実表示時間報告 = true,
         "--report-memory" => 設定.gpuメモリ報告 = true,
         "--report-draw-issue" => 設定.描画発行報告 = true,
+        "--report-instance-sections" => 設定.インスタンス区間報告 = true,
         "--no-instance-cull" => 設定.インスタンス可視判定有効 = false,
         "--no-instance-lod" => 設定.インスタンス段選択有効 = false,
         "--dev-ui" => 設定.開発ui初期有効 = true,

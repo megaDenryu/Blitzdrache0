@@ -55,6 +55,11 @@ impl アプリ {
         self.フレーム間隔計測.as_ref().and_then(super::frame_timing::フレーム間隔計測::集計する)
     }
 
+    /// `--report-instance-sections`で収集した、群選択の走査がメインスレッドを占めた時間の分布。
+    pub(crate) fn 群選択区間統計を取得する(&self) -> Option<super::frame_timing::フレーム時間統計> {
+        self.群選択計測.as_ref().and_then(super::section_timing::区間計測::集計する)
+    }
+
     pub(crate) fn レンダラーcpu区間時間を取得する(&self) -> &[CPU区間時間] {
         self.レンダラー.as_ref().map_or(&[], レンダラー::cpu区間時間一覧を取得する)
     }

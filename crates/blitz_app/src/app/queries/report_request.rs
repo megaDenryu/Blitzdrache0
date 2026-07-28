@@ -22,6 +22,11 @@ impl アプリ {
         self.描画発行報告
     }
 
+    /// `--report-instance-sections`が指定されたか。
+    pub(crate) fn インスタンス区間報告が必要か(&self) -> bool {
+        self.群選択計測.is_some()
+    }
+
     /// `--report-display-timing`が指定されたか。
     pub(crate) fn 実表示時間報告が必要か(&self) -> bool {
         self.実表示時間報告
