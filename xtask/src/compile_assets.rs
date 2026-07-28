@@ -19,8 +19,9 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
         [] => 既定を生成する() && 地形世界を既定で生成する() && 植生世界を既定で生成する(),
         [ソース, 出力] => 生成する(Path::new(ソース), Path::new(出力), 板の世界),
         [ソース, 出力, 世界名] => 生成する(Path::new(ソース), Path::new(出力), 世界名),
+        [ソース, 出力, 世界名, 個体数] => 個体数を添えて生成する(Path::new(ソース), Path::new(出力), 世界名, Some(個体数)),
         _ => {
-            eprintln!("使い方: cargo xtask compile-assets [ソースルート 出力ルート [世界名]]");
+            eprintln!("使い方: cargo xtask compile-assets [ソースルート 出力ルート [世界名 [同居植生個体数]]]");
             return ExitCode::FAILURE;
         }
     };
@@ -42,17 +43,35 @@ pub fn 植生世界を既定で生成する() -> bool {
 }
 
 pub fn 生成する(ソースルート: &Path, 出力ルート: &Path, 世界名: &str) -> bool {
+    個体数を添えて生成する(ソースルート, 出力ルート, 世界名, None)
+}
+
+/// 地形世界の同居植生を指定の密度で焼く。物量計測が原型・マテリアル・座標を固定したまま密度だけを変えるための入口であり、
+/// 既定の出力ルートと衝突しないよう呼び出し側が専用の出力ルートを渡す。
+pub fn 地形世界を個体数指定で生成する(出力ルート: &Path, 個体数: usize) -> bool {
+    let 個体数 = 個体数.to_string();
+    個体数を添えて生成する(Path::new(既定ソースルート), 出力ルート, 地形の世界, Some(&個体数))
+}
+
+fn 個体数を添えて生成する(
+    ソースルート: &Path, 出力ルート: &Path, 世界名: &str, 同居植生個体数: Option<&str>
+) -> bool {
     println!(
-        "[xtask] 実行時アセット生成({世界名}): {} -> {}",
+        "[xtask] 実行時アセット生成({世界名}{}): {} -> {}",
+        同居植生個体数.map_or_else(String::new, |個体数| format!(", 同居植生{個体数}体")),
         ソースルート.display(),
         出力ルート.display()
     );
-    let 状態 = Command::new("cargo")
+    let mut コマンド = Command::new("cargo");
+    コマンド
         .args(["run", "-p", "blitz_asset_compiler", "--example", "compile_assets", "--"])
         .arg(ソースルート)
         .arg(出力ルート)
-        .arg(世界名)
-        .status();
+        .arg(世界名);
+    if let Some(個体数) = 同居植生個体数 {
+        コマンド.arg(個体数);
+    }
+    let 状態 = コマンド.status();
     match 状態 {
         Ok(終了状態) if 終了状態.success() => true,
         Ok(終了状態) => {

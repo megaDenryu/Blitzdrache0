@@ -27,8 +27,9 @@ pub fn 実行する() -> ExitCode {
         引数一覧: &["--scene", "helmet", "--benchmark-frames", フレーム数, "--particles"],
         採取間隔,
         制限時間,
+        標準出力先: None,
     };
-    if 実行しながら採取する(&条件) {
+    if 実行しながら採取する(&条件).is_some() {
         ExitCode::SUCCESS
     } else {
         ExitCode::FAILURE

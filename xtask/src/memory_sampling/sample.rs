@@ -48,10 +48,19 @@ impl メモリ標本 {
     }
 }
 
-pub(super) fn 要約を表示する(一覧: &[メモリ標本]) -> bool {
+/// 実行中に観測した最大値。呼出し側が表へ載せるのはこの3つだけであり、標本の列そのものは渡さない。
+#[derive(Clone, Copy)]
+pub(crate) struct メモリ最大 {
+    pub(crate) ワーキングセットmib: f64,
+    pub(crate) プライベートmib: f64,
+    /// GPUカウンターを1標本も引けなかった実行では`None`になる。0と区別するため真偽の代わりに不在で表す。
+    pub(crate) 専用vrammib: Option<f64>,
+}
+
+pub(super) fn 要約を表示して最大を返す(一覧: &[メモリ標本]) -> Option<メモリ最大> {
     let (Some(先頭), Some(末尾)) = (一覧.first(), 一覧.last()) else {
         println!("メモリ推移: 標本を取得できなかった");
-        return false;
+        return None;
     };
     println!("メモリ推移(先頭→末尾):");
     println!(
@@ -70,5 +79,20 @@ pub(super) fn 要約を表示する(一覧: &[メモリ標本]) -> bool {
         (Some(開始), Some(終了)) => println!("  専用VRAM: {開始:.2} → {終了:.2} MiB (差 {:+.2} MiB)", 終了 - 開始),
         _ => println!("  専用VRAM: 取得不可"),
     }
-    true
+    let 最大 = メモリ最大 {
+        ワーキングセットmib: 最大を取る(一覧, |標本| Some(標本.ワーキングセットmib))?,
+        プライベートmib: 最大を取る(一覧, |標本| Some(標本.プライベートmib))?,
+        専用vrammib: 最大を取る(一覧, |標本| 標本.専用vrammib),
+    };
+    println!(
+        "  最大: ワーキングセット {:.2} MiB / プライベート {:.2} MiB / 専用VRAM {}",
+        最大.ワーキングセットmib,
+        最大.プライベートmib,
+        最大.専用vrammib.map_or_else(|| "取得不可".to_string(), |値| format!("{値:.2} MiB"))
+    );
+    Some(最大)
+}
+
+fn 最大を取る(一覧: &[メモリ標本], 取り出す: impl Fn(&メモリ標本) -> Option<f64>) -> Option<f64> {
+    一覧.iter().filter_map(取り出す).max_by(f64::total_cmp)
 }
