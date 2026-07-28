@@ -10,6 +10,7 @@ use super::レンダラー;
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
 use crate::frame_composition::フレーム段階;
+use crate::terrain_detail::地形詳細段選択;
 use crate::vulkan;
 use crate::vulkan::frame::{UI描画入力, 任意描画入力, 描画方式};
 use crate::vulkan::relative_anchor::カメラ相対アンカー;
@@ -28,6 +29,7 @@ impl レンダラー {
         読み戻し要求: bool,
         ui入力: Option<&UI描画入力>,
         カメラ大域原点: 大域ワールド位置,
+        地形詳細段選択一覧: &[地形詳細段選択],
     ) -> Result<(bool, Vec<(&'static str, u32)>), レンダラーエラー> {
         let フレーム添字 = スロット資源.スロット;
 
@@ -48,6 +50,7 @@ impl レンダラー {
             シャドウpipeline: self.シャドウパイプライン.handle,
             シャドウlayout: self.シャドウパイプライン.layout,
             カメラ大域原点,
+            地形詳細段選択一覧,
         };
         self.シーン描画資源.作業領域を更新する(&作業領域入力)?;
 

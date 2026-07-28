@@ -8,13 +8,13 @@ use blitz_math::大域ワールド位置;
 
 use super::シーン描画資源;
 use crate::error::レンダラーエラー;
-use crate::terrain_detail_level::地形詳細段;
+use crate::terrain_detail::{地形詳細段選択, 段を引く};
 use crate::vulkan::frame::{シャドウ描画入力, ジオメトリ入力, 描画対象入力};
 use crate::vulkan::relative_anchor::カメラ相対アンカー;
 use crate::vulkan::sync::フレームスロット添字;
 
 /// 作業領域の中身のうち、描画対象資源の外から与える値。パイプラインは束の外(レンダラー)が保持するためここで受け取る。
-pub(in crate::renderer) struct 作業領域更新入力 {
+pub(in crate::renderer) struct 作業領域更新入力<'a> {
     pub(in crate::renderer) フレーム添字: フレームスロット添字,
     /// スキン付きシーンでの先頭描画対象の頂点バッファ差し替え先(判断44の既存契約)。スキン無しなら`None`。
     pub(in crate::renderer) スキン済み頂点バッファ: Option<vk::Buffer>,
@@ -22,16 +22,18 @@ pub(in crate::renderer) struct 作業領域更新入力 {
     pub(in crate::renderer) シャドウpipeline: vk::Pipeline,
     pub(in crate::renderer) シャドウlayout: vk::PipelineLayout,
     pub(in crate::renderer) カメラ大域原点: 大域ワールド位置,
+    /// 束ごとの詳細段。束の中の全描画対象へ同じ段を配る。
+    pub(in crate::renderer) 地形詳細段選択一覧: &'a [地形詳細段選択],
 }
 
 impl シーン描画資源 {
-    pub(in crate::renderer) fn 作業領域を更新する(&mut self, 入力: &作業領域更新入力) -> Result<(), レンダラーエラー> {
+    pub(in crate::renderer) fn 作業領域を更新する(&mut self, 入力: &作業領域更新入力<'_>) -> Result<(), レンダラーエラー> {
         self.ジオメトリ入力作業領域.clear();
         self.シャドウ入力作業領域.clear();
-        let 全描画対象 = self
-            .チャンク一覧
-            .iter()
-            .flat_map(|チャンク| チャンク.描画対象と対応セット(入力.フレーム添字, 地形詳細段::最詳細()));
+        let 全描画対象 = self.チャンク一覧.iter().flat_map(|チャンク| {
+            let 段 = 段を引く(入力.地形詳細段選択一覧, チャンク.id());
+            チャンク.描画対象と対応セット(入力.フレーム添字, 段)
+        });
         for (通し添字, (資源, ディスクリプタセット, 段)) in 全描画対象.enumerate() {
             let ジオメトリ = 資源.段を選ぶ(段);
             // スキニングはシーンの先頭対象だけへ適用する(判断44の既存契約)。

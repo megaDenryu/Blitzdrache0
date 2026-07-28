@@ -11,7 +11,7 @@ use blitz_math::大域ワールド位置;
 
 use crate::error::レンダラーエラー;
 use crate::render_object_material::描画対象素材;
-use crate::terrain_detail_level::地形詳細段;
+use crate::terrain_detail::地形詳細段;
 use crate::vulkan;
 use crate::vulkan::descriptor::描画対象ディスクリプタ参照;
 use crate::vulkan::gpu_environment::物理デバイス問い合わせ;

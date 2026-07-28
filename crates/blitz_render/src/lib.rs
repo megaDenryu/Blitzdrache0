@@ -22,9 +22,8 @@ mod gpu_memory_stats;
 mod lighting_input;
 #[cfg(test)]
 mod lighting_input_tests;
-mod lod_mesh_list;
+mod lod_mesh;
 mod material;
-mod mesh_material;
 mod particle_material;
 mod particle_shader_set;
 mod pbr_material;
@@ -39,7 +38,7 @@ mod renderer;
 mod shader_bundle;
 mod shader_set;
 mod skin_mesh;
-mod terrain_detail_level;
+mod terrain_detail;
 mod texture_material;
 mod ui_draw_data;
 mod ui_mesh;
@@ -69,9 +68,8 @@ pub use gpu_memory_stats::{GPUメモリ用途, GPUメモリ用途別確保量, G
 pub use lighting_input::{
     ライティング入力, ライティング入力エラー, 光強度, 光色, 影入力, 影正射影範囲, 方向光入力, 点光源入力, 環境光係数
 };
-pub use lod_mesh_list::詳細段メッシュ列;
+pub use lod_mesh::{メッシュ素材, 詳細段メッシュ列};
 pub use material::マテリアル素材;
-pub use mesh_material::メッシュ素材;
 pub use particle_material::{粒子素材, 粒子素材エラー};
 pub use particle_shader_set::{粒子シェーダー一式, 粒子シェーダー一式エラー};
 pub use pbr_material::{マテリアル素材エラー, 金属粗さPBR素材};
@@ -86,7 +84,7 @@ pub use renderer::{CPU区間時間, レンダラー};
 pub use shader_bundle::シェーダー束;
 pub use shader_set::{シェーダー一式, シェーダー一式エラー};
 pub use skin_mesh::{スキンメッシュ素材, スキンメッシュ素材エラー, スキン頂点属性};
-pub use terrain_detail_level::地形詳細段;
+pub use terrain_detail::{地形詳細段, 地形詳細段選択};
 pub use texture_material::{テクスチャ用途, テクスチャ素材, テクスチャ素材エラー};
 pub use ui_draw_data::UI描画データ;
 pub use ui_mesh::UIメッシュ;

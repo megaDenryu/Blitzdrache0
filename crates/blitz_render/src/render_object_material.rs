@@ -4,9 +4,9 @@
 
 use blitz_math::{ローカル, ワールド, 変換, 大域ワールド位置};
 
-use crate::lod_mesh_list::詳細段メッシュ列;
+use crate::lod_mesh::メッシュ素材;
+use crate::lod_mesh::詳細段メッシュ列;
 use crate::material::マテリアル素材;
-use crate::mesh_material::メッシュ素材;
 use crate::vertex::頂点;
 
 /// Vulkan型を露出せずに1つの描画対象をレンダラーへ渡す入力。

@@ -4,8 +4,8 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::mesh_material::メッシュ素材;
-use crate::terrain_detail_level::地形詳細段;
+use crate::lod_mesh::メッシュ素材;
+use crate::terrain_detail::地形詳細段;
 use crate::vulkan;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;

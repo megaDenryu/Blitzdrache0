@@ -9,7 +9,7 @@ use super::render_object_resources::{self, 描画対象資源};
 use crate::draw_bundle_id::描画束ID;
 use crate::error::レンダラーエラー;
 use crate::render_object_material::描画対象素材;
-use crate::terrain_detail_level::地形詳細段;
+use crate::terrain_detail::地形詳細段;
 use crate::vulkan::descriptor::描画対象ディスクリプタプール;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;

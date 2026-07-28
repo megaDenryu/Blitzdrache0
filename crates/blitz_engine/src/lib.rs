@@ -55,6 +55,9 @@ mod streaming_tests;
 mod streaming_transfer_tests;
 #[cfg(test)]
 mod streaming_usage_tests;
+mod terrain_lod;
+#[cfg(test)]
+mod terrain_lod_tests;
 
 pub use animation::{スキン行列を計算する, スキン行列一覧, ブレンドする, 姿勢, 姿勢を評価する, 関節TRS};
 pub use asset::{
@@ -77,3 +80,4 @@ pub use streaming::{
     チャンク要求, チャンク読込エラー, チャンク読込器, チャンク読込完了, チャンク読込成果, チャンク集合差分, リセット世代, 予算判定, 固定経路,
     固定経路エラー, 実行時チャンク目録を読み込む, 実行時チャンク目録読込エラー, 準備完了結果, 観測済み読込量, 解除報告結果, 退避結果,
 };
+pub use terrain_lod::{地形LODエラー, 地形LOD選択器, 地形LOD選択設定};
