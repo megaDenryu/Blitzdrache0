@@ -11,12 +11,21 @@ use super::world::対象世界;
 /// 参照: `_doc/計画/ユビキタス言語.md`「所有チャンク」
 const 原点チャンク: チャンク座標 = チャンク座標::生成する(0, 0);
 
+/// 地形チャンクへ同居させる植生の宣言。原型を安定IDの綴りで指すのは、`ソース種別`を`Copy`のまま保つためである。
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) struct 同居植生宣言 {
+    pub(super) 原型の安定id: &'static str,
+    pub(super) 個体数: usize,
+}
+
 /// コンパイル対象のソースが何の形式で書かれているか。読み方が形式ごとに違うため、判別共用体で持つ。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum ソース種別 {
     /// glTF(.gltf/.glb)で書かれたシーン。
     Gltfシーン,
-    高さ格子,
+    高さ格子 {
+        同居植生: Option<同居植生宣言>,
+    },
     /// glTFを原型として読み、決定的に生成した配置でインスタンス群を焼く。
     植生 {
         個体数: usize,
@@ -30,10 +39,12 @@ pub(super) enum ソース種別 {
 }
 
 /// 世界へ焼くアセット1件の宣言。`必須`はソースが無いときに失敗させるかどうかである。
+/// `実行時へ焼く`が偽の定義は、他のアセットが素材として読むだけのソースであり、コンパイル時カタログへは載るが実行時形式は作らない。
 pub(super) struct アセット定義 {
     pub(super) 名前: &'static str,
     pub(super) 相対パス: &'static str,
     pub(super) 必須: bool,
+    pub(super) 実行時へ焼く: bool,
     pub(super) 種別: ソース種別,
 }
 
@@ -60,6 +71,9 @@ pub(super) fn 構築する(
         }
         let id = アセットID::生成する(定義.名前).map_err(|誤り| 誤り.to_string())?;
         カタログ.登録する(id.clone(), ソースパス);
+        if !定義.実行時へ焼く {
+            continue;
+        }
         対象一覧.push(コンパイル対象 {
             id,
             所有チャンク: 原点チャンク,
