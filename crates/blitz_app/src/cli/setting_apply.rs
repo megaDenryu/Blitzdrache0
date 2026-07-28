@@ -65,6 +65,7 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--streaming" => 設定.ストリーミング.有効 = true,
         "--streaming-route" => 設定.ストリーミング.位置源 = プレイヤー位置源::固定経路,
         "--ow3-dod-route" => 設定.ストリーミング.位置源 = プレイヤー位置源::Ow3Dod経路,
+        "--instance-stream-route" => 設定.ストリーミング.位置源 = プレイヤー位置源::インスタンスストリーム経路,
         "--report-streaming" => 設定.ストリーミング.報告する = true,
         "--report-streaming-summary" => 設定.ストリーミング.要約を報告する = true,
         _ => {}

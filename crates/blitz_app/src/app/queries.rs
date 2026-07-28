@@ -1,4 +1,7 @@
 //! アプリ状態の読み出しと終了処理(main.rsの終了処理する等が使う照会メソッド群)。
+//! どの報告が求められたかの問い合わせは`report_request`が持つ。
+
+mod report_request;
 
 use blitz_render::{
     CPU区間時間, GPUメモリ統計, レンダラー, 実表示観測, 実表示計測状況, 描画発行内訳, 検証カウンタ
@@ -18,26 +21,8 @@ impl アプリ {
         self.レンダラー.as_ref().map(レンダラー::検証カウンタを取得する)
     }
 
-    /// `--report-gpu-times`が指定されたか。
-    pub(crate) fn gpu時間報告が必要か(&self) -> bool {
-        self.gpu時間報告
-    }
-
-    pub(crate) fn フレーム時間報告が必要か(&self) -> bool {
-        self.フレーム間隔計測.is_some()
-    }
-
-    pub(crate) fn gpuメモリ報告が必要か(&self) -> bool {
-        self.gpuメモリ報告
-    }
-
     pub(crate) fn gpuメモリ統計を取得する(&self) -> Option<GPUメモリ統計> {
         self.レンダラー.as_ref().map(レンダラー::gpuメモリ統計を取得する)
-    }
-
-    /// `--report-draw-issue`が指定されたか。
-    pub(crate) fn 描画発行報告が必要か(&self) -> bool {
-        self.描画発行報告
     }
 
     /// 最終フレームの描画発行内訳。レンダラー破棄前に呼ぶこと。
@@ -49,10 +34,17 @@ impl アプリ {
     pub(crate) fn 個体詳細段切替回数を取得する(&self) -> u64 {
         self.可視判定.段切替回数()
     }
+
+    /// 可視判定と段選択へ登録されている群の件数。束の解除で材料と段の記憶が漏れなく消えたことをこの数で見る。
+    pub(crate) fn 可視材料登録数を取得する(&self) -> usize {
+        self.可視判定.登録数()
+    }
+
     /// ディスクから実行時シーンを読んだ回数と、そのうち1フレーム目以降に起きた回数。
     pub(crate) fn シーン読込回数を取得する(&self) -> (u64, u64) {
         (self.シーン読込計数.総数(), self.シーン読込計数.起動後())
     }
+
     /// パス別の移動平均GPU時間(ミリ秒)。レンダラー破棄前に呼ぶこと(判断30)。
     pub(crate) fn パス別gpu時間を取得する(&self) -> Vec<(&'static str, f64)> {
         self.レンダラー.as_ref().map(レンダラー::パス別gpu時間を取得する).unwrap_or_default()
@@ -67,11 +59,6 @@ impl アプリ {
         self.レンダラー.as_ref().map_or(&[], レンダラー::cpu区間時間一覧を取得する)
     }
 
-    /// `--report-display-timing`が指定されたか。
-    pub(crate) fn 実表示時間報告が必要か(&self) -> bool {
-        self.実表示時間報告
-    }
-
     /// 実表示時刻計測の対応状況。レンダラー未生成なら拡張の有無を確かめられていないため`None`。
     pub(crate) fn 実表示計測状況を取得する(&self) -> Option<実表示計測状況> {
         self.レンダラー.as_ref().map(レンダラー::実表示計測状況を取得する)
@@ -79,11 +66,6 @@ impl アプリ {
 
     pub(crate) fn 実表示観測一覧を取得する(&self) -> &[実表示観測] {
         self.レンダラー.as_ref().map_or(&[], レンダラー::実表示観測一覧を取得する)
-    }
-
-    /// `--report-streaming-summary`が指定されたか。
-    pub(crate) fn ストリーミング要約報告が必要か(&self) -> bool {
-        self.ストリーミング要約報告
     }
 
     /// 固定経路実行で観測した転送量・処理時間・最大使用量。`--streaming`が無ければ調停自体が無く`None`。

@@ -21,6 +21,8 @@ pub(crate) enum プレイヤー位置源 {
     固定経路,
     /// `cargo xtask ow3-dod`専用。中心から始めて半径2を全件先読みし、静止後に境界とLOD閾値を横切る。
     Ow3Dod経路,
+    /// `cargo xtask instance-stream`専用。Ow3Dod経路と同じ先読みと横断のあと、始点まで戻って静止し整定する。
+    インスタンスストリーム経路,
 }
 
 #[derive(Debug, Clone, Copy)]
