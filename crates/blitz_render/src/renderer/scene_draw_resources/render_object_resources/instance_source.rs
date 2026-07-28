@@ -13,6 +13,7 @@ use crate::vulkan::instance_transform::content::個体変換内容;
 use crate::vulkan::instance_transform::{bytes, 個体変換バッファ};
 use crate::vulkan::object_uniform::描画対象ユニフォーム;
 use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::transfer::転送実行環境;
 
 pub(super) enum 個体変換の出どころ {
     /// 個体が1体だけの対象。描画対象ユニフォームの先頭を個体変換1件として読む。
@@ -24,6 +25,7 @@ impl 個体変換の出どころ {
     pub(super) fn 生成する(
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        転送環境: &転送実行環境,
         個体変換一覧: &[変換<ローカル, ワールド>],
     ) -> Result<Self, レンダラーエラー> {
         if 個体変換一覧.len() <= 1 {
@@ -36,6 +38,7 @@ impl 個体変換の出どころ {
         Ok(Self::専用バッファ(個体変換バッファ::生成する(
             device,
             メモリプロパティ,
+            転送環境,
             &内容一覧,
         )?))
     }
