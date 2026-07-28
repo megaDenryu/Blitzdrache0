@@ -3,7 +3,7 @@
 use std::collections::HashSet;
 use std::path::PathBuf;
 
-use super::super::scene_v1::bytes::読取位置;
+use super::super::scene::bytes::読取位置;
 use super::super::アセット実行時形式エラー;
 use crate::asset::{asset_metadata::アセットメタデータ, catalog::カタログ, id::アセットID};
 

@@ -6,7 +6,7 @@ use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::書込先;
 use crate::asset::animation_clip::アニメーションクリップ;
 
-pub(super) fn 一覧を書く(
+pub(in crate::asset::runtime_format::scene) fn 一覧を書く(
     出力: &mut 書込先,
     一覧: &[アニメーションクリップ],
     ジョイント数: Option<usize>,

@@ -92,7 +92,7 @@ fn 布を構築する(
         crate::cli::布モード::なし => Ok(None),
         crate::cli::布モード::吊るし布 => Ok(Some(super::cloth_setup::吊るし布を構築する()?)),
         crate::cli::布モード::マント => Ok(Some(super::cloth_setup::マントを構築する(
-            描画シーン.先頭の描画対象().頂点一覧(),
+            描画シーン.先頭の描画対象().最詳細段の頂点一覧(),
         )?)),
     }
 }

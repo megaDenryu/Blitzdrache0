@@ -16,7 +16,7 @@ const ジョイントチャンネル最小長: usize = 3;
 const 三成分値長: usize = 12;
 const 四成分値長: usize = 16;
 
-pub(super) fn 一覧を読む(
+pub(in crate::asset::runtime_format::scene) fn 一覧を読む(
     入力: &mut 読取位置<'_>,
     スキン: Option<&スキンデータ>,
 ) -> Result<Vec<アニメーションクリップ>, アセット実行時形式エラー> {

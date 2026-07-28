@@ -1,6 +1,6 @@
 //! チャンク目録の項目をチャンク座標順に並べ、版1内容へ決定的に書く。
 
-use super::super::scene_v1::bytes::書込先;
+use super::super::scene::bytes::書込先;
 use super::super::アセット実行時形式エラー;
 use crate::streaming::チャンク目録;
 

@@ -4,14 +4,17 @@ use super::{
     アセット実行時形式エラー, アセット形式版, ヘッダー長, 固定識別値, 実行時アセット, 実行時アセット種別
 };
 
+/// 形式版を呼び出し側から受けるのは、種別ごとに最新の版が違うためである。既定値を置くと、種別を増やしたときに古い版で書き出す経路が無言で生まれる。
 pub fn 実行時アセットを格納する(
-    種別: 実行時アセット種別, 内容: &[u8]
+    形式版: アセット形式版,
+    種別: 実行時アセット種別,
+    内容: &[u8],
 ) -> Result<Vec<u8>, アセット実行時形式エラー> {
     let 内容長 = u64::try_from(内容.len()).map_err(|_| アセット実行時形式エラー::内容長表現不能)?;
     let 全長 = ヘッダー長.checked_add(内容.len()).ok_or(アセット実行時形式エラー::内容長表現不能)?;
     let mut 結果 = Vec::with_capacity(全長);
     結果.extend_from_slice(&固定識別値);
-    結果.extend_from_slice(&アセット形式版::V1.番号().to_le_bytes());
+    結果.extend_from_slice(&形式版.番号().to_le_bytes());
     結果.extend_from_slice(&種別.番号().to_le_bytes());
     結果.extend_from_slice(&内容長.to_le_bytes());
     結果.extend_from_slice(内容);

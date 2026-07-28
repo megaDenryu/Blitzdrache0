@@ -9,6 +9,7 @@ use super::render_object_resources::{self, 描画対象資源};
 use crate::draw_bundle_id::描画束ID;
 use crate::error::レンダラーエラー;
 use crate::render_object_material::描画対象素材;
+use crate::terrain_detail_level::地形詳細段;
 use crate::vulkan::descriptor::描画対象ディスクリプタプール;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
@@ -59,15 +60,17 @@ impl チャンク描画資源 {
         self.描画対象資源一覧.len()
     }
 
-    /// 描画発行の作業領域を積むための走査。描画対象資源と、そのフレームで束縛すべきディスクリプタセットを対で返すため、呼び出し元は添字の対応規則を知らなくてよい。
+    /// 描画発行の作業領域を積むための走査。描画対象資源と、そのフレームで束縛すべきディスクリプタセットと、そのフレームで描く詳細段を組で返すため、呼び出し元は添字の対応規則を知らなくてよい。
+    /// 詳細段は束ごとに決まるため、束の中の全描画対象へ同じ値を配る。
     pub(super) fn 描画対象と対応セット(
         &self,
         フレーム添字: フレームスロット添字,
-    ) -> impl Iterator<Item = (&描画対象資源, vk::DescriptorSet)> {
+        段: 地形詳細段,
+    ) -> impl Iterator<Item = (&描画対象資源, vk::DescriptorSet, 地形詳細段)> {
         self.描画対象資源一覧
             .iter()
             .enumerate()
-            .map(move |(添字, 資源)| (資源, self.ディスクリプタ.set(添字, フレーム添字)))
+            .map(move |(添字, 資源)| (資源, self.ディスクリプタ.set(添字, フレーム添字), 段))
     }
 
     /// 注意: ディスクリプタセットが指すテクスチャとユニフォームより先にディスクリプタプールを破棄する。

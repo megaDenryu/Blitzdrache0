@@ -4,11 +4,13 @@ use blitz_math::{ローカル, 変換};
 
 use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::読取位置;
-use crate::asset::{joint::ジョイント, render_object_data::描画対象データ, skin_data::スキンデータ, static_trs::静的TRS};
+use crate::asset::{joint::ジョイント, skin_data::スキンデータ, skin_vertex_attribute::スキン頂点属性, static_trs::静的TRS};
 
 const ジョイント最小長: usize = 105;
 
-pub(super) fn 読む(入力: &mut 読取位置<'_>) -> Result<Option<スキンデータ>, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 読む(
+    入力: &mut 読取位置<'_>,
+) -> Result<Option<スキンデータ>, アセット実行時形式エラー> {
     match 入力.u8()? {
         0 => Ok(None),
         1 => {
@@ -41,7 +43,7 @@ fn ジョイントを読む(
             ジョイント添字, 親添字
         });
     }
-    let 逆バインド行列 = 変換::<ローカル, ローカル>::列優先配列から生成する(super::object::行列を読む(入力)?);
+    let 逆バインド行列 = 変換::<ローカル, ローカル>::列優先配列から生成する(super::matrix::行列を読む(入力)?);
     Ok(ジョイント {
         親添字,
         逆バインド行列,
@@ -57,13 +59,14 @@ fn trsを読む(入力: &mut 読取位置<'_>) -> Result<静的TRS, アセット
     })
 }
 
-pub(super) fn 頂点属性を検査する<'a>(
-    対象一覧: impl Iterator<Item = &'a 描画対象データ>,
+/// 描画対象でなく属性一覧そのものを受け取るのは、描画対象の形状が版で変わる一方この検査の内容は変わらないためである。
+pub(in crate::asset::runtime_format::scene) fn 頂点属性を検査する<'a>(
+    描画対象ごとの属性一覧: impl Iterator<Item = Option<&'a Vec<スキン頂点属性>>>,
     スキン: Option<&スキンデータ>,
 ) -> Result<(), アセット実行時形式エラー> {
     let ジョイント数 = スキン.map(|値| 値.ジョイント一覧.len());
-    for 対象 in 対象一覧 {
-        let Some(属性一覧) = &対象.メッシュ().スキン頂点属性一覧 else {
+    for 属性一覧 in 描画対象ごとの属性一覧 {
+        let Some(属性一覧) = 属性一覧 else {
             continue;
         };
         let Some(ジョイント数) = ジョイント数 else {

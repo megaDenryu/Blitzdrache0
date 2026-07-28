@@ -6,7 +6,9 @@ use crate::asset::material_data::マテリアルデータ;
 use crate::asset::pbr_material_data::金属粗さPBRデータ;
 use crate::asset::texture_data::テクスチャデータ;
 
-pub(super) fn 読む(入力: &mut 読取位置<'_>) -> Result<マテリアルデータ, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 読む(
+    入力: &mut 読取位置<'_>,
+) -> Result<マテリアルデータ, アセット実行時形式エラー> {
     let 種別 = 入力.u32()?;
     if 種別 != 1 {
         return Err(アセット実行時形式エラー::未知のマテリアル種別(種別));

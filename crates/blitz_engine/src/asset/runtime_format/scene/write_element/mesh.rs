@@ -4,8 +4,10 @@ use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::書込先;
 use crate::asset::{mesh_data::メッシュデータ, skin_vertex_attribute::スキン頂点属性, vertex_attribute::メッシュ頂点属性};
 
-pub(super) fn 書く(
-    出力: &mut 書込先, メッシュ: &メッシュデータ, ジョイント数: Option<usize>
+pub(in crate::asset::runtime_format::scene) fn 書く(
+    出力: &mut 書込先,
+    メッシュ: &メッシュデータ,
+    ジョイント数: Option<usize>,
 ) -> Result<(), アセット実行時形式エラー> {
     基本内容を検査する(メッシュ)?;
     出力.件数(メッシュ.頂点一覧.len())?;

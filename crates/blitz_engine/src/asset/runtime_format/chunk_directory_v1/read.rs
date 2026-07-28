@@ -1,6 +1,6 @@
 //! 版1チャンク目録内容を境界検査し、座標の重複を拒否して復元する。
 
-use super::super::scene_v1::bytes::読取位置;
+use super::super::scene::bytes::読取位置;
 use super::super::アセット実行時形式エラー;
 use crate::asset::id::アセットID;
 use crate::streaming::チャンク目録;

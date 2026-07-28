@@ -36,7 +36,7 @@ fn foxのスキンとアニメーションを読み込める() {
         Ok(シーン) => シーン,
         Err(誤り) => panic!("assets/samples/Fox/Fox.glbの読込に失敗した(cargo xtask fetch-assetsで取得済みか確認): {誤り}"),
     };
-    let メッシュ = シーン.先頭の描画対象().メッシュ();
+    let メッシュ = シーン.先頭の描画対象().形状().最詳細メッシュ();
 
     let スキン = match &シーン.スキン {
         Some(スキン) => スキン,

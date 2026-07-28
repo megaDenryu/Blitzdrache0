@@ -5,7 +5,10 @@ use super::super::bytes::書込先;
 use crate::asset::material_data::マテリアルデータ;
 use crate::asset::texture_data::テクスチャデータ;
 
-pub(super) fn 書く(出力: &mut 書込先, マテリアル: &マテリアルデータ) -> Result<(), アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 書く(
+    出力: &mut 書込先,
+    マテリアル: &マテリアルデータ,
+) -> Result<(), アセット実行時形式エラー> {
     match マテリアル {
         マテリアルデータ::金属粗さPBR(値) => {
             出力.u32(1);

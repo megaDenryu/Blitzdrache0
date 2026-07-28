@@ -2,7 +2,7 @@
 
 use std::path::Path;
 
-use super::super::scene_v1::bytes::書込先;
+use super::super::scene::bytes::書込先;
 use super::super::アセット実行時形式エラー;
 use crate::asset::{catalog::カタログ, catalog_entry::カタログ項目};
 
