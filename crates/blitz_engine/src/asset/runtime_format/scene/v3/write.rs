@@ -1,19 +1,16 @@
-//! 版2のバイト列を組み立てる。旧版を読んで最新版へ変換する経路を検査するには版2の実物が要るため、その材料をここが作る。
-//! 実行時形式の書き出しは常に最新版で行うため、この経路は検査からのみ呼ぶ。
+//! シーンを版3内容へ決定的な順序で書く。
 
 use std::collections::HashSet;
 
 use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::書込先;
-use super::super::shape_tag::{地形LODメッシュ群の判別値, 通常メッシュの判別値};
+use super::super::shape_tag::{インスタンス群の判別値, 地形LODメッシュ群の判別値, 通常メッシュの判別値};
 use super::super::write_element;
 use crate::asset::draw_shape::描画形状;
 use crate::asset::render_object_data::描画対象データ;
 use crate::asset::scene_data::シーンデータ;
 
-pub(in crate::asset::runtime_format::scene) fn 内容を書く(
-    シーン: &シーンデータ
-) -> Result<Vec<u8>, アセット実行時形式エラー> {
+pub(super) fn 内容を書く(シーン: &シーンデータ) -> Result<Vec<u8>, アセット実行時形式エラー> {
     let ジョイント数 = シーン.スキン.as_ref().map(|値| 値.ジョイント一覧.len());
     if ジョイント数.is_none() && !シーン.アニメーション一覧.is_empty() {
         return Err(アセット実行時形式エラー::スキンなしアニメーション);
@@ -55,6 +52,11 @@ fn 形状を書く(
             出力.u8(地形LODメッシュ群の判別値);
             write_element::メッシュ列を書く(出力, 群.段一覧(), ジョイント数)
         }
-        描画形状::インスタンス群(_) => panic!("版2はインスタンス群を表せないという不変条件に違反した"),
+        描画形状::インスタンス群(群) => {
+            出力.u8(インスタンス群の判別値);
+            write_element::メッシュ列を書く(出力, 群.原型().段一覧(), ジョイント数)?;
+            write_element::配置列を書く(出力, 群.配置一覧())?;
+            write_element::境界を書く(出力, 群.境界())
+        }
     }
 }

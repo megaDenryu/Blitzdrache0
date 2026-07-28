@@ -36,6 +36,8 @@ pub enum アセット実行時形式エラー {
     地形LOD段なし,
     #[error("地形LODメッシュ群が条件を満たさない: {0}")]
     地形LODメッシュ群不正(#[from] crate::asset::terrain_lod_meshes::地形LODメッシュ群エラー),
+    #[error("インスタンス群が条件を満たさない: {0}")]
+    インスタンス群不正(#[from] crate::asset::instance::インスタンス群エラー),
     #[error("シーン内容で描画対象ID {0}が重複している")]
     描画対象ID重複(u64),
     #[error("未知のマテリアル種別だった: {0}")]

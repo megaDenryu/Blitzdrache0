@@ -8,6 +8,7 @@ mod catalog_load_error;
 mod catalog_loader;
 mod draw_shape;
 mod id;
+mod instance;
 mod interpolation_kind;
 mod joint;
 mod joint_channel;
@@ -31,6 +32,8 @@ mod runtime_loader;
 #[cfg(test)]
 mod runtime_loader_tests;
 #[cfg(test)]
+mod runtime_scene_instance_tests;
+#[cfg(test)]
 mod runtime_scene_terrain_tests;
 #[cfg(test)]
 pub(crate) mod runtime_scene_tests;
@@ -50,6 +53,9 @@ pub use catalog_load_error::実行時カタログ読込エラー;
 pub use catalog_loader::実行時カタログを読み込む;
 pub use draw_shape::描画形状;
 pub use id::{アセットID, アセットIDエラー};
+pub use instance::{
+    インスタンス群, インスタンス群エラー, チャンクアンカーからの許容メートル, 個体配置, 原型, 境界球, 群境界, 軸平行包囲領域
+};
 pub use interpolation_kind::補間種別;
 pub use joint::ジョイント;
 pub use joint_channel::ジョイントアニメーションチャンネル;
