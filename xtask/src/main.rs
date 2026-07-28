@@ -11,6 +11,7 @@ mod file_scan;
 mod gen_source_assets;
 mod instance_cull;
 mod instance_draw;
+mod instance_lod;
 mod lod_crack;
 mod m10_bench;
 mod m11_soak;
@@ -49,6 +50,7 @@ fn main() -> ExitCode {
         Some("lod-crack") => lod_crack::実行する(),
         Some("instance-draw") => instance_draw::実行する(),
         Some("instance-cull") => instance_cull::実行する(),
+        Some("instance-lod") => instance_lod::実行する(),
         Some("ow3-dod") => ow3_dod::実行する(),
         Some("streaming-bench") => streaming_bench::実行する(&引数一覧[1..]),
         _ => {
@@ -86,6 +88,9 @@ fn 使い方を表示する() {
     );
     println!(
         "  instance-cull    可視判定のオンとオフで植生シーンを描き、画面内の絵がバイト一致すること・視錐台外の個体が描かれなくなること・画面外の個体が落とす影が残ることを確かめる"
+    );
+    println!(
+        "  instance-lod     段を2つ持つ原型の植生シーンを描き、同じ群で2段が同時に立つこと・段の違いが遠景の画素に出て近景は変わらないこと・ヒステリシス帯の内側の往復で段が振動しないこと・段の切替でGPU確保とディスク読込が動かないことを確かめる"
     );
     println!("  ow3-dod          原点移動・LOD継ぎ目・半径2ストリーミングを本番経路でまとめて測り、複数LOD画像をPNGへ書き出す");
     println!(

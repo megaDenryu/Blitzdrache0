@@ -18,6 +18,7 @@ mod queries;
 mod scene_camera;
 mod scene_lighting;
 mod scene_load;
+mod scene_read_count;
 mod sph_setup;
 mod streaming;
 mod visibility;
@@ -88,5 +89,7 @@ pub(crate) struct アプリ {
     可視判定: visibility::可視判定配線,
     /// `--lod-probe-step`指定時だけ`Some`。段の境界をまたぐ往復を決定的に作るためにカメラを前後させる。
     個体詳細段探査: Option<lod_probe::個体詳細段探査>,
+    /// ディスクから実行時シーンを読んだ回数。段の選択や可視判定がディスクI/Oを起こさないことをこの数で示す。
+    シーン読込計数: scene_read_count::シーン読込計数,
     起動時エラー: Option<起動エラー>,
 }

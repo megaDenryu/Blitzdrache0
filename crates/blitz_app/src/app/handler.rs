@@ -30,6 +30,8 @@ impl ApplicationHandler for アプリ {
             self.大域オフセット,
         ) {
             Ok((window, mut レンダラー, 開発ui, アニメーション, 布プリセット, 可視材料一覧)) => {
+                // 起動時シーンをディスクから読んだのはこの1回である。
+                self.シーン読込計数.読み込んだ(self.現在フレーム);
                 if let Some(状況) = super::measurement_setup::レンダラーの計測を有効にする(&mut レンダラー, self) {
                     println!("実表示時刻計測: {}", 状況.名称());
                 }
