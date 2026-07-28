@@ -8,6 +8,7 @@ mod point;
 mod run;
 mod section_parse;
 mod table;
+mod validation;
 
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
@@ -35,10 +36,8 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     match 物量点を決める(引数一覧).and_then(|物量点一覧| 計測する(&物量点一覧)) {
         Ok(結果一覧) => {
             table::表示する(&結果一覧);
-            println!(
-                "[xtask] ow4-bench成功: 物量点{}件を各{反復回数}回、validation報告は全実行0件",
-                結果一覧.len()
-            );
+            let 件数 = 結果一覧.len();
+            println!("[xtask] ow4-bench成功: 物量点{件数}件を各{反復回数}回、validationレイヤー有効のデバッグ実行が全物量点で0件");
             ExitCode::SUCCESS
         }
         Err(理由) => {
@@ -87,12 +86,14 @@ fn 一物量点を測る(
     if !crate::compile_assets::地形世界を個体数指定で生成する(&アセットルート, チャンクあたり個体数) {
         return Err(format!("チャンクあたり{チャンクあたり個体数}体の実行時アセット生成に失敗した"));
     }
+    let 検査候補数 = validation::検査する(&アセットルート, シェーダー入口)?;
     let 実行一覧 = (1..=反復回数)
         .map(|回| run::走らせる(出力先, &format!("x{チャンクあたり個体数}_{回}"), &アセットルート, シェーダー入口))
         .collect::<Result<Vec<run::一回の実行>, String>>()?;
     Ok(point::物量点の結果 {
         名前: format!("チャンクあたり{チャンクあたり個体数}体"),
         チャンクあたり個体数,
+        検査候補数,
         実行一覧,
     })
 }
