@@ -66,6 +66,15 @@ pub(super) fn ストリーミング上限引数を処理する(引数: &mut Iter
     Ok(バイト数)
 }
 
+pub(super) fn 先読み半径引数を処理する(引数: &mut Iter<String>) -> Result<u8, 起動引数エラー> {
+    let 値 = 次の値を読む(引数, "--streaming-preload-radius", 起動引数エラー::先読み半径不正)?;
+    let 半径 = 値.parse::<u8>().map_err(|_| 起動引数エラー::先読み半径不正(値.clone()))?;
+    if 半径 > 16 {
+        return Err(起動引数エラー::先読み半径不正(format!("上限16を超える: {半径}")));
+    }
+    Ok(半径)
+}
+
 pub(super) fn exposure引数を処理する(引数: &mut Iter<String>) -> Result<f32, 起動引数エラー> {
     let 値 = 次の値を読む(引数, "--exposure", 起動引数エラー::露出不正)?;
     let 露出 = 値.parse::<f32>().map_err(|_| 起動引数エラー::露出不正(値.clone()))?;

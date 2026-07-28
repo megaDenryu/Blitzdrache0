@@ -19,6 +19,8 @@ pub(crate) enum プレイヤー位置源 {
     カメラ視点,
     /// `--streaming-route`指定。フレーム番号から決まる固定経路を使い、実行のたびに同じ位置列を得る。
     固定経路,
+    /// `cargo xtask ow3-dod`専用。中心から始めて半径2を全件先読みし、静止後に境界とLOD閾値を横切る。
+    Ow3Dod経路,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -40,6 +42,7 @@ pub(crate) struct ストリーミング起動設定 {
     pub(crate) 要約を報告する: bool,
     pub(crate) 位置源: プレイヤー位置源,
     pub(crate) lod継ぎ目検査: Option<LOD継ぎ目検査設定>,
+    pub(crate) 先読み半径: u8,
 }
 
 impl ストリーミング起動設定 {
@@ -51,6 +54,7 @@ impl ストリーミング起動設定 {
             要約を報告する: false,
             位置源: プレイヤー位置源::カメラ視点,
             lod継ぎ目検査: None,
+            先読み半径: 1,
         }
     }
 }

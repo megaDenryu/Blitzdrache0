@@ -28,4 +28,6 @@ pub(crate) enum 起動引数エラー {
     カメラずれ不正(String),
     #[error("--lod-crack-pair引数が不正だった: {0}")]
     Lod継ぎ目検査不正(String),
+    #[error("--streaming-preload-radius引数が不正だった: {0}")]
+    先読み半径不正(String),
 }

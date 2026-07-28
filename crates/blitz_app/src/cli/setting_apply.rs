@@ -26,6 +26,9 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--streaming-vram-limit" => {
             設定.ストリーミング.上限.vramバイト数 = value_args::ストリーミング上限引数を処理する(残り, 引数値)?;
         }
+        "--streaming-preload-radius" => {
+            設定.ストリーミング.先読み半径 = value_args::先読み半径引数を処理する(残り)?;
+        }
         _ => フラグを反映する(設定, 引数値),
     }
     Ok(())
@@ -50,6 +53,7 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--window-rebuild" => 設定.ウィンドウ再構築検証有効 = true,
         "--streaming" => 設定.ストリーミング.有効 = true,
         "--streaming-route" => 設定.ストリーミング.位置源 = プレイヤー位置源::固定経路,
+        "--ow3-dod-route" => 設定.ストリーミング.位置源 = プレイヤー位置源::Ow3Dod経路,
         "--report-streaming" => 設定.ストリーミング.報告する = true,
         "--report-streaming-summary" => 設定.ストリーミング.要約を報告する = true,
         _ => {}

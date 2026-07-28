@@ -8,6 +8,8 @@ use blitz_engine::{ストリーミングメモリ量, ストリーミング転�
 use crate::app::frame_timing::{ウォームアップフレーム数, フレーム時間統計, 標本容量, 集計する};
 use crate::cli::起動モード;
 
+mod lod_change;
+
 pub(crate) struct ストリーミング計測 {
     /// 調停と描画束の追加解除にかかったメインスレッド時間。先頭のウォームアップフレームは除く。
     処理時間一覧ms: Vec<f64>,
@@ -15,6 +17,7 @@ pub(crate) struct ストリーミング計測 {
     最大使用量: ストリーミングメモリ量,
     最大台帳登録数: usize,
     縮退フレーム数: u32,
+    lod変更: lod_change::LOD変更計測,
 }
 
 pub(crate) struct ストリーミング要約 {
@@ -30,6 +33,8 @@ pub(crate) struct ストリーミング要約 {
     pub(crate) 処理時間統計: Option<フレーム時間統計>,
     /// 最後のフレームで選ばれた詳細段ごとの束数。段の切替が起きたかどうかを実行の外から見るための観測である。
     pub(crate) 段別の束数: Vec<(u8, usize)>,
+    pub(crate) lod変更フレーム数: u32,
+    pub(crate) lod変更時読込開始件数: u64,
 }
 
 impl ストリーミング計測 {
@@ -40,10 +45,17 @@ impl ストリーミング計測 {
             最大使用量: ストリーミングメモリ量::生成する(0, 0),
             最大台帳登録数: 0,
             縮退フレーム数: 0,
+            lod変更: lod_change::LOD変更計測::生成する(),
         }
     }
 
-    pub(super) fn 記録する(&mut self, フレーム番号: u32, 所要時間: Duration, 進行: &ストリーミング進行) {
+    pub(super) fn 記録する(
+        &mut self,
+        フレーム番号: u32,
+        所要時間: Duration,
+        進行: &ストリーミング進行,
+        段選択: &[(blitz_engine::チャンク座標, blitz_render::地形詳細段)],
+    ) {
         if フレーム番号 >= ウォームアップフレーム数 {
             self.処理時間一覧ms.push(所要時間.as_secs_f64() * 1000.0);
         }
@@ -58,6 +70,7 @@ impl ストリーミング計測 {
         if matches!(進行.判定(), 予算判定::縮退 { .. } | 予算判定::優先度退避 { .. }) {
             self.縮退フレーム数 = self.縮退フレーム数.saturating_add(1);
         }
+        self.lod変更.記録する(進行, 段選択);
     }
 
     pub(super) fn 要約を作る(
@@ -77,6 +90,8 @@ impl ストリーミング計測 {
             見送りフレーム数,
             処理時間統計: 集計する(&self.処理時間一覧ms),
             段別の束数,
+            lod変更フレーム数: self.lod変更.変更フレーム数(),
+            lod変更時読込開始件数: self.lod変更.変更時読込開始件数(),
         }
     }
 }
