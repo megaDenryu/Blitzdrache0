@@ -1,50 +1,50 @@
-//! 植生の原型1体ぶんのglTF文書。bufferViewsのオフセットはgeometryの区間長から計算する。
+//! 植生の原型glTF文書。段の数だけメッシュを並べ、その並び順がそのまま段番号順(先頭=最詳細)になる。
 //! マテリアルを持たないためベースカラーはエンジン側の既定テクスチャ(白)が使われ、番兵背景色との差が最大になる。
+//! 直方体1つぶんのbufferViewとaccessorとmeshの宣言は`sections`が作り、ここは文書全体の骨組みだけを組む。
 
-use super::geometry::{インデックス区間長, テクスチャ座標区間長, 位置区間長, 接線区間長, 法線区間長};
-use super::{共有バッファファイル名, 原型の半辺, 原型の高さ};
+mod sections;
 
-pub(super) fn 文書を作る(バッファ長: usize) -> String {
-    let 法線区間 = 位置区間長;
-    let 接線区間 = 法線区間 + 法線区間長;
-    let uv区間 = 接線区間 + 接線区間長;
-    let インデックス区間 = uv区間 + テクスチャ座標区間長;
-    let 最小 = format!("[{}, 0.0, {}]", -原型の半辺, -原型の半辺);
-    let 最大 = format!("[{原型の半辺}, {原型の高さ}, {原型の半辺}]");
+use super::geometry::{直方体のバイト長, 直方体諸元};
+
+pub(super) fn 文書を作る(諸元一覧: &[直方体諸元], バッファファイル名: &str) -> String {
+    let バッファ長 = 直方体のバイト長 * 諸元一覧.len();
+    let mut bufferview一覧 = Vec::new();
+    let mut accessor一覧 = Vec::new();
+    let mut mesh一覧 = Vec::new();
+    let mut node一覧 = Vec::new();
+    let mut node番号一覧 = Vec::new();
+    for (段番号, 諸元) in 諸元一覧.iter().enumerate() {
+        let 区間 = sections::段の区間を作る(段番号, *諸元);
+        bufferview一覧.push(区間.bufferview宣言);
+        accessor一覧.push(区間.accessor宣言);
+        mesh一覧.push(sections::mesh宣言を作る(段番号));
+        node一覧.push(format!("{{ \"mesh\": {段番号} }}"));
+        node番号一覧.push(段番号.to_string());
+    }
     format!(
         r#"{{
   "asset": {{ "version": "2.0" }},
   "buffers": [
-    {{ "uri": "{共有バッファファイル名}", "byteLength": {バッファ長} }}
+    {{ "uri": "{バッファファイル名}", "byteLength": {バッファ長} }}
   ],
   "bufferViews": [
-    {{ "buffer": 0, "byteOffset": 0, "byteLength": {位置区間長}, "target": 34962 }},
-    {{ "buffer": 0, "byteOffset": {法線区間}, "byteLength": {法線区間長}, "target": 34962 }},
-    {{ "buffer": 0, "byteOffset": {接線区間}, "byteLength": {接線区間長}, "target": 34962 }},
-    {{ "buffer": 0, "byteOffset": {uv区間}, "byteLength": {テクスチャ座標区間長}, "target": 34962 }},
-    {{ "buffer": 0, "byteOffset": {インデックス区間}, "byteLength": {インデックス区間長}, "target": 34963 }}
+{}
   ],
   "accessors": [
-    {{ "bufferView": 0, "componentType": 5126, "count": 24, "type": "VEC3", "min": {最小}, "max": {最大} }},
-    {{ "bufferView": 1, "componentType": 5126, "count": 24, "type": "VEC3" }},
-    {{ "bufferView": 2, "componentType": 5126, "count": 24, "type": "VEC4" }},
-    {{ "bufferView": 3, "componentType": 5126, "count": 24, "type": "VEC2" }},
-    {{ "bufferView": 4, "componentType": 5123, "count": 36, "type": "SCALAR" }}
+{}
   ],
   "meshes": [
-    {{
-      "primitives": [
-        {{
-          "attributes": {{ "POSITION": 0, "NORMAL": 1, "TANGENT": 2, "TEXCOORD_0": 3 }},
-          "indices": 4
-        }}
-      ]
-    }}
+{}
   ],
-  "nodes": [ {{ "mesh": 0 }} ],
-  "scenes": [ {{ "nodes": [0] }} ],
+  "nodes": [ {} ],
+  "scenes": [ {{ "nodes": [{}] }} ],
   "scene": 0
 }}
-"#
+"#,
+        bufferview一覧.join(",\n"),
+        accessor一覧.join(",\n"),
+        mesh一覧.join(",\n"),
+        node一覧.join(", "),
+        node番号一覧.join(", ")
     )
 }

@@ -11,6 +11,9 @@ const 地形世界の起動時シーン: (&str, &str) = ("terrain_origin", "smok
 /// 植生世界の原型ソース。起動時シーンもチャンクもこの1つのglTFを原型として読む。
 const 植生原型ソース: &str = "vegetation_world/archetype.gltf";
 
+/// 段を2つ持つ原型ソース。個体別LODの検収だけがこちらを読む。
+const 植生詳細段原型ソース: &str = "vegetation_world/archetype_lod.gltf";
+
 /// 画素判定に使う個体数。2×2の格子になり、画面を4分割した各領域へ1体ずつ描かれる構図になる。
 pub(super) const 画素判定の個体数: usize = 4;
 
@@ -37,6 +40,7 @@ pub(super) fn 植生の世界の一覧() -> Vec<アセット定義> {
         必須定義("vegetation_64", 植生原型ソース, 植生種別(計数判定の個体数)),
         必須定義("vegetation_cull", 植生原型ソース, ソース種別::植生可視判定),
         必須定義("vegetation_single", 植生原型ソース, ソース種別::植生単一個体),
+        必須定義("vegetation_lod", 植生詳細段原型ソース, ソース種別::植生詳細段),
     ]
 }
 

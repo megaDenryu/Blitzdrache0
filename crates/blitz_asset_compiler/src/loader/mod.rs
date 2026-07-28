@@ -1,6 +1,7 @@
 //! glTF読込の入口。gltf/image型はこのクレートの公開APIに出さない。
 
 mod animation;
+mod archetype;
 mod buffer;
 mod document;
 mod file;
@@ -10,6 +11,8 @@ mod skin;
 mod texture_decode;
 
 use blitz_engine::{アセットID, カタログ, シーンデータ, チャンク座標, 描画対象ID, 描画対象データ, 描画形状};
+
+pub use archetype::{原型ソース, 原型ソースを読み込む};
 
 use crate::error::アセットコンパイルエラー;
 
