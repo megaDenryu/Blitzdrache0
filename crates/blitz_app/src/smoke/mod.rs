@@ -43,8 +43,8 @@ pub(crate) enum スモークアクション {
 }
 
 /// `布有効`なら差分計画(布は厳密ピクセル判定と両立しないため。判断55・56)、`開発ui有効`なら
-/// devui計画、粒子トイならparticles計画、表面流ならGPU計測だけ、シーン名がhelmet/shadow_scene/foxなら各計画、
-/// それ以外(既定"quad")ならquad計画で判定する(判断29・34・37・45)。
+/// devui計画、粒子トイならparticles計画、表面流ならGPU計測だけ、シーン名がvegetationで始まるなら植生計画、
+/// シーン名がhelmet/shadow_scene/foxなら各計画、それ以外(既定"quad")ならquad計画で判定する(判断29・34・37・45)。
 pub(crate) fn 判定する(
     現在フレーム: u32,
     総フレーム数: u32,
@@ -67,6 +67,8 @@ pub(crate) fn 判定する(
         スモークアクション::通常描画
     } else if 粒子表示 == 粒子表示モード::粒子トイ {
         plan::particles計画(現在フレーム, 総フレーム数)
+    } else if シーン名.starts_with("vegetation") {
+        plan::植生計画()
     } else if シーン名 == "helmet" {
         plan::helmet計画(現在フレーム, 総フレーム数)
     } else if シーン名 == "shadow_scene" {

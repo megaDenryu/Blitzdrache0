@@ -54,8 +54,8 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let カタログ = scene_load::カタログを構築する(アセットルート)?;
     let (シーン, 描画シーン) = scene_load::シーンを読み込んで変換する(&カタログ, シーン名, 描画対象数, 大域平行移動)?;
     if 描画対象数.is_some() {
-        crate::reports::描画対象構成を表示する(描画シーン.描画対象数());
-        crate::reports::フレーム構成を表示する(&フレーム構成);
+        crate::reports::composition::描画対象構成を表示する(描画シーン.描画対象数());
+        crate::reports::composition::フレーム構成を表示する(&フレーム構成);
     }
     let スキン素材 = scene_load::スキン素材へ変換する(&シーン)?;
     let 布 = 布を構築する(布モード, &描画シーン)?;

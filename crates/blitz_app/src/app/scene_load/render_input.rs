@@ -3,6 +3,7 @@
 mod anchor;
 #[cfg(test)]
 mod anchor_tests;
+mod instance_transforms;
 mod layout;
 #[cfg(test)]
 mod layout_tests;
@@ -45,7 +46,7 @@ fn 描画対象を変換する(
     let マテリアル = convert::マテリアルを変換する(描画対象.マテリアル())?;
     Ok(描画対象素材::生成する(
         大域アンカー,
-        ローカルからワールド,
+        instance_transforms::組み立てる(描画対象.形状(), ローカルからワールド),
         convert::形状を変換する(描画対象.形状()),
         マテリアル,
     ))

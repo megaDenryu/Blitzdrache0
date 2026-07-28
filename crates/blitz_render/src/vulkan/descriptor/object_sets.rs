@@ -15,6 +15,8 @@ use crate::vulkan::uniform::フレームユニフォーム一式;
 pub(crate) struct 描画対象ディスクリプタ参照<'a> {
     pub(crate) テクスチャ: &'a マテリアルテクスチャ一式,
     pub(crate) ユニフォーム: &'a 描画対象ユニフォーム,
+    /// 個体変換を読むバッファと、そのバイト範囲。個体が1体だけの対象はユニフォームと同じバッファを指す。
+    pub(crate) 個体変換: (vk::Buffer, vk::DeviceSize),
 }
 
 pub(crate) struct 描画対象ディスクリプタプール {
@@ -77,6 +79,7 @@ fn 全セットの内容を書き込む(
             set::テクスチャバインディングを書き込む(device, set, 描画対象.テクスチャ);
             set::ユニフォームバインディングを書き込む(device, set, ユニフォーム.buffer(フレーム添字));
             set::描画対象ユニフォームを書き込む(device, set, 描画対象.ユニフォーム.buffer);
+            set::個体変換を書き込む(device, set, 描画対象.個体変換.0, 描画対象.個体変換.1);
             shadow_binding::シャドウマップバインディングを書き込む(device, set, シャドウマップ);
         }
     }

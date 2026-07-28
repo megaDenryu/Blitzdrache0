@@ -6,6 +6,7 @@
 
 import pbr;
 import lighting;
+import instance_transform;
 import relative_anchor;
 import scene_io;
 
@@ -24,8 +25,7 @@ struct FrameUniform
 
 struct ObjectUniform
 {
-    column_major float4x4 localToWorld;
-    column_major float3x3 normalLocalToWorld;
+    InstanceTransform transform;
     float4 baseColorFactor;
     float4 metallicRoughnessFactor;
 };
@@ -50,12 +50,13 @@ static const float shadowMapTexelSize = 1.0 / 2048.0;
 static const float3 TINT = float3(1.0, 1.0, 1.0);
 
 [shader("vertex")]
-VertexOutput vertexMain(VertexInput input)
+VertexOutput vertexMain(VertexInput input, uint instanceIndex : SV_InstanceID)
 {
     VertexOutput output;
-    float3 relativePosition = applyRelativeAnchor(mul(objectUniform.localToWorld, float4(input.position, 1.0)).xyz);
-    float3 worldNormal = normalize(mul(objectUniform.normalLocalToWorld, input.normal));
-    float3 transformedTangent = mul((float3x3)objectUniform.localToWorld, input.tangent.xyz);
+    InstanceTransform transform = instanceTransforms[instanceIndex];
+    float3 relativePosition = applyRelativeAnchor(mul(transform.localToWorld, float4(input.position, 1.0)).xyz);
+    float3 worldNormal = normalize(mul(transform.normalLocalToWorld, input.normal));
+    float3 transformedTangent = mul((float3x3)transform.localToWorld, input.tangent.xyz);
     float3 worldTangent = normalize(transformedTangent - worldNormal * dot(worldNormal, transformedTangent));
     output.position = mul(frameUniform.viewProjection, float4(relativePosition, 1.0));
     output.relativePosition = relativePosition;

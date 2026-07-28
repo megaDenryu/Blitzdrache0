@@ -22,6 +22,7 @@ pub(crate) mod graph;
 pub(crate) mod hdr_target;
 pub(crate) mod host_buffer;
 pub(crate) mod instance;
+pub(crate) mod instance_transform;
 pub(crate) mod linear_sampler;
 pub(crate) mod memory;
 pub(crate) mod memory_ledger;

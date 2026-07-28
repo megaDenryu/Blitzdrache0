@@ -53,6 +53,7 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--report-frame-times" => 設定.フレーム時間報告 = true,
         "--report-display-timing" => 設定.実表示時間報告 = true,
         "--report-memory" => 設定.gpuメモリ報告 = true,
+        "--report-draw-issue" => 設定.描画発行報告 = true,
         "--dev-ui" => 設定.開発ui初期有効 = true,
         "--no-post" => 設定.ポスト処理有効 = false,
         "--cloth" => 設定.布モード = 布モード::吊るし布,

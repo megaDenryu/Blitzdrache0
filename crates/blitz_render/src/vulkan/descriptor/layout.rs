@@ -1,6 +1,7 @@
 //! シーン描画・シャドウ描画・スキニング・布の各パイプラインが共有するディスクリプタセットレイアウトの所有者。
 //! binding0-2=combined image sampler(FRAGMENT)、binding3=uniform buffer(VERTEX|FRAGMENT、判断24でビュー射影行列を含むため)、
-//! binding4=シャドウマップの比較サンプラー(FRAGMENT、判断35)、binding5=描画対象ユニフォーム(VERTEX|FRAGMENT)。
+//! binding4=シャドウマップの比較サンプラー(FRAGMENT、判断35)、binding5=描画対象ユニフォーム(VERTEX|FRAGMENT)、
+//! binding6=個体変換のストレージバッファ(VERTEX)。頂点シェーダーは`SV_InstanceID`でここから1件を引く。
 //! レイアウトの内容は描画対象の個数に依らず同一のため、描画対象の束ごとに作らず1つを共有して束の外が所有する。
 
 use ash::vk;
@@ -28,6 +29,11 @@ impl ディスクリプタレイアウト {
                 .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
                 .descriptor_count(1)
                 .stage_flags(vk::ShaderStageFlags::VERTEX | vk::ShaderStageFlags::FRAGMENT),
+            vk::DescriptorSetLayoutBinding::default()
+                .binding(6)
+                .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
+                .descriptor_count(1)
+                .stage_flags(vk::ShaderStageFlags::VERTEX),
         ];
         let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
         // 安全性: deviceは生成済みで有効。

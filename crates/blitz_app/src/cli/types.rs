@@ -39,6 +39,8 @@ pub(crate) struct 起動設定 {
     pub(crate) フレーム時間報告: bool,
     /// `--report-memory`指定でtrue。Vulkan専用メモリ確保の現在数・上限・用途別量を終了時に出力する。
     pub(crate) gpuメモリ報告: bool,
+    /// `--report-draw-issue`指定でtrue。最終フレームのパス別描画発行数と個体数を終了時に出力する。
+    pub(crate) 描画発行報告: bool,
     /// `--dev-ui`指定でtrue。既定はfalse(開発用UIの起動時有効化、判断34。実行中はF3でも切替可能)。
     pub(crate) 開発ui初期有効: bool,
     /// `--dump-frame <ベース名>`指定で、最終フレーム(--frames必須)の読み戻し画像を`<ベース名>.raw`(RGBA8連結)と`<ベース名>.size`(幅 高さ)へ書き出す。既定はNone。
@@ -79,6 +81,7 @@ impl 起動設定 {
             gpu時間報告: false,
             フレーム時間報告: false,
             gpuメモリ報告: false,
+            描画発行報告: false,
             開発ui初期有効: false,
             フレームダンプ先: None,
             ポスト処理有効: true,

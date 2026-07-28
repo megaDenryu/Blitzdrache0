@@ -1,6 +1,8 @@
 //! アプリ状態の読み出しと終了処理(main.rsの終了処理する等が使う照会メソッド群)。
 
-use blitz_render::{CPU区間時間, GPUメモリ統計, レンダラー, 実表示観測, 実表示計測状況, 検証カウンタ};
+use blitz_render::{
+    CPU区間時間, GPUメモリ統計, レンダラー, 実表示観測, 実表示計測状況, 描画発行内訳, 検証カウンタ
+};
 
 use super::アプリ;
 use crate::error::起動エラー;
@@ -31,6 +33,16 @@ impl アプリ {
 
     pub(crate) fn gpuメモリ統計を取得する(&self) -> Option<GPUメモリ統計> {
         self.レンダラー.as_ref().map(レンダラー::gpuメモリ統計を取得する)
+    }
+
+    /// `--report-draw-issue`が指定されたか。
+    pub(crate) fn 描画発行報告が必要か(&self) -> bool {
+        self.描画発行報告
+    }
+
+    /// 最終フレームの描画発行内訳。レンダラー破棄前に呼ぶこと。
+    pub(crate) fn 描画発行内訳を取得する(&self) -> Option<描画発行内訳> {
+        self.レンダラー.as_ref().map(レンダラー::描画発行内訳を取得する)
     }
 
     /// パス別の移動平均GPU時間(ミリ秒)。レンダラー破棄前に呼ぶこと(判断30)。

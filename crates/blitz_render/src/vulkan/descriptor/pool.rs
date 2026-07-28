@@ -1,5 +1,5 @@
 //! ディスクリプタプール: マテリアル1つぶんの3テクスチャ+1UBO+シャドウマップ
-//! 比較サンプラー1つとフレーム・描画対象UBOを、フレームインフライトの数だけ確保する
+//! 比較サンプラー1つとフレーム・描画対象UBOと個体変換のストレージバッファ1つを、フレームインフライトの数だけ確保する
 //! (セットごとに独立したUBOを持つため)。
 
 use ash::vk;
@@ -19,6 +19,9 @@ pub(super) fn 生成する(device: &ash::Device, 描画対象数: usize) -> Resu
         vk::DescriptorPoolSize::default()
             .ty(vk::DescriptorType::UNIFORM_BUFFER)
             .descriptor_count(2 * セット数),
+        vk::DescriptorPoolSize::default()
+            .ty(vk::DescriptorType::STORAGE_BUFFER)
+            .descriptor_count(セット数),
     ];
     let create_info = vk::DescriptorPoolCreateInfo::default().max_sets(セット数).pool_sizes(&プールサイズ一覧);
     // 安全性: deviceは生成済みで有効。

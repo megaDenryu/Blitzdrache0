@@ -1,45 +1,21 @@
-//! 終了時に要求されたGPU時間とCPU側フレーム間隔をコンソールへ表示する。
+//! 終了時に要求された計測値をコンソールへ表示する。どの報告を出すかの取りまとめは`exit`、
+//! 起動直後に出す構成の要約は`composition`にある。
 
+pub(crate) mod composition;
 pub(crate) mod display_timing;
+pub(crate) mod exit;
 pub(crate) mod streaming;
 pub(crate) mod streaming_summary;
 
 use crate::app::フレーム時間統計;
 
-pub(crate) fn 描画対象構成を表示する(描画対象数: usize) {
-    println!("描画対象構成:");
-    println!("  描画対象数: {描画対象数}");
-    println!("  シーン描画発行数/フレーム: {描画対象数}");
-    println!("  シャドウ描画発行数/フレーム: {描画対象数}");
-}
-
-pub(crate) fn 描画視点構成を表示する(視点数: usize) {
-    println!("描画視点構成:");
-    println!("  視点数: {視点数}");
-}
-
-pub(crate) fn フレーム構成を表示する(構成: &blitz_render::フレーム構成) {
-    println!("フレーム構成:");
-    for 段階 in 構成.段階一覧() {
-        println!("  {}", 段階.名称());
-    }
-}
-
-pub(crate) fn 座標変換を表示する(
-    大域位置: blitz_math::大域ワールド位置,
-    カメラ相対結果: Result<blitz_math::カメラ相対位置, blitz_math::座標変換エラー>,
-) {
-    println!("座標変換:");
-    println!(
-        "  大域ワールド位置: [{:.4}, {:.4}, {:.4}] m",
-        大域位置.x().値(),
-        大域位置.y().値(),
-        大域位置.z().値()
-    );
-    match カメラ相対結果 {
-        Ok(位置) => println!("  カメラ相対位置: [{:.4}, {:.4}, {:.4}] m", 位置.x().値(), 位置.y().値(), 位置.z().値()),
-        Err(誤り) => println!("  カメラ相対変換失敗: {誤り}"),
-    }
+/// 最終フレームの描画発行の内訳。直接インスタンス描画では発行回数が個体数に比例しないことを、この2つの数字の対で示す。
+pub(crate) fn 描画発行内訳を表示する(内訳: &blitz_render::描画発行内訳) {
+    println!("描画発行内訳(最終フレーム):");
+    println!("  シーンパス発行数: {}", 内訳.シーンパス発行数());
+    println!("  シャドウパス発行数: {}", 内訳.シャドウパス発行数());
+    println!("  シーンパス個体数: {}", 内訳.シーンパス個体数());
+    println!("  シャドウパス個体数: {}", 内訳.シャドウパス個体数());
 }
 
 pub(crate) fn gpuメモリ統計を表示する(統計: &blitz_render::GPUメモリ統計) {

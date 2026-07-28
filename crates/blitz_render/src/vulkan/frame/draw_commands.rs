@@ -1,5 +1,6 @@
 //! パイプラインのバインドと動的ビューポート/シザー設定、
-//! 頂点/インデックスバッファのバインドとインデックス描画。
+//! 頂点/インデックスバッファのバインドとインデックス描画。1回の発行で描く個体の数は入力が持ち、群×段ごとに1回だけ発行する
+//! (参照: `_doc/設計/植生インスタンスと物量計測.md`「描画発行」)。
 //! ビュー射影行列等はフレームユニフォームバッファ(ディスクリプタセット)経由で渡す(判断24)。
 //! 描画ごとに変わるカメラ相対アンカーだけをプッシュ定数で積む(参照: `vulkan::relative_anchor`)。
 
@@ -47,7 +48,7 @@ pub(super) fn 描画コマンドを積む(
             );
             device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &オフセット一覧);
             device.cmd_bind_index_buffer(command_buffer, 入力.インデックスバッファ, 0, vk::IndexType::UINT32);
-            device.cmd_draw_indexed(command_buffer, 入力.インデックス数, 1, 0, 0, 0);
+            device.cmd_draw_indexed(command_buffer, 入力.インデックス数, 入力.インスタンス数, 0, 0, 0);
         }
     }
 }

@@ -3,6 +3,7 @@
 // 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断35」。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
+import instance_transform;
 import relative_anchor;
 
 // scene.slangのFrameUniformと同じbinding3を指すが、先頭のlightViewProjectionだけを
@@ -16,13 +17,6 @@ struct FrameUniformLight
 [[vk::binding(3, 0)]]
 ConstantBuffer<FrameUniformLight> frameUniformLight;
 
-struct ObjectUniformTransform
-{
-    column_major float4x4 localToWorld;
-};
-
-[[vk::binding(5, 0)]]
-ConstantBuffer<ObjectUniformTransform> objectUniformTransform;
 
 struct VertexInput
 {
@@ -35,10 +29,10 @@ struct VertexOutput
 };
 
 [shader("vertex")]
-VertexOutput vertexMain(VertexInput input)
+VertexOutput vertexMain(VertexInput input, uint instanceIndex : SV_InstanceID)
 {
     VertexOutput output;
-    float3 worldPosition = applyRelativeAnchor(mul(objectUniformTransform.localToWorld, float4(input.position, 1.0)).xyz);
+    float3 worldPosition = applyRelativeAnchor(mul(instanceTransforms[instanceIndex].localToWorld, float4(input.position, 1.0)).xyz);
     output.position = mul(frameUniformLight.lightViewProjection, float4(worldPosition, 1.0));
     return output;
 }
