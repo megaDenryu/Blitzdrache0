@@ -16,6 +16,12 @@ float computeShadowFactor(
     float2 shadowUv = lightNdc.xy * 0.5 + 0.5;
     float currentDepth = lightNdc.z;
 
+    // 影の正射影範囲の外は影の情報を持たない。サンプラーのクランプ結果を使うと範囲外が一律に暗くなるため、影なしとして返す。
+    if (any(shadowUv < 0.0) || any(shadowUv > 1.0) || currentDepth < 0.0 || currentDepth > 1.0)
+    {
+        return 1.0;
+    }
+
     float shadowSum = 0.0;
     for (int offsetY = -1; offsetY <= 1; offsetY++)
     {
