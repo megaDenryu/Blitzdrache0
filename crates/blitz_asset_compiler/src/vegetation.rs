@@ -6,9 +6,12 @@ mod bounds;
 mod cull_placement;
 mod cull_scene;
 mod deterministic_value;
+mod floor_scene;
 mod placement;
+mod single_scene;
 
 pub use cull_scene::植生可視判定シーンをコンパイルする;
+pub use single_scene::植生単一個体シーンをコンパイルする;
 #[cfg(test)]
 mod vegetation_tests;
 

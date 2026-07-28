@@ -7,8 +7,8 @@
 
 use ash::vk;
 
+use super::shared_single_column;
 use crate::error::レンダラーエラー;
-use crate::visible_instance_selection::可視ID列エラー;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::visible_id::{可視ID列バッファ, 可視ID列参照};
@@ -42,8 +42,8 @@ impl 可視ID列の出どころ {
         }
     }
 
-    /// 個体が1体だけの対象へ可視ID列が与えられたら型付きエラーにする。束の共有列は全対象が読むため、
-    /// 1つの対象の都合で書き換えると他の対象まで壊れる。
+    /// 個体が1体だけの対象は共有列を読むため、書き込みは行わない。共有列の内容と矛盾しない選択(可視0と、
+    /// 唯一の個体を指す可視1)だけを書き込み省略で受理し、それ以外は型付きエラーにする。判定は`shared_single_column`が持つ。
     pub(super) fn 書き込む(
         &self,
         device: &ash::Device,
@@ -51,7 +51,7 @@ impl 可視ID列の出どころ {
         可視id列: &[u32],
     ) -> Result<(), レンダラーエラー> {
         match self {
-            Self::束の単一個体列 => Err(可視ID列エラー::書き込み先なし.into()),
+            Self::束の単一個体列 => shared_single_column::書き込み要求を受理する(可視id列).map_err(Into::into),
             Self::専用バッファ(バッファ) => バッファ.書き込む(device, フレーム添字, 可視id列),
         }
     }

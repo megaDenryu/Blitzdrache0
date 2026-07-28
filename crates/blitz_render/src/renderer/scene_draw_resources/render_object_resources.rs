@@ -10,6 +10,9 @@ mod create;
 mod geometry_list;
 mod instance_source;
 mod list;
+mod shared_single_column;
+#[cfg(test)]
+mod shared_single_column_tests;
 mod visible_id_source;
 
 use blitz_math::大域ワールド位置;

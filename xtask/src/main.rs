@@ -18,6 +18,7 @@ mod memory_sampling;
 mod object_bench;
 mod origin_invariance;
 mod ow3_dod;
+mod pixel_region;
 mod release_build;
 mod report_parse;
 mod shader_copy;
