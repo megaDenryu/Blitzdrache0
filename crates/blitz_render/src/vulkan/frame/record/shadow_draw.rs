@@ -10,9 +10,15 @@ use crate::vulkan::shadow_map::シャドウマップ一辺;
 pub(super) fn 記録する(
     device: &ash::Device, command_buffer: vk::CommandBuffer, 入力一覧: &[シャドウ描画入力], 布ドロー: Option<布ドロー<'_>>
 ) {
-    let 先頭 = 入力一覧
-        .first()
-        .unwrap_or_else(|| panic!("シャドウ描画入力は1件以上の不変条件に違反した"));
+    let Some(先頭) = 入力一覧.first() else {
+        // 影を落とす対象が1件も無いフレーム。全個体がライト視錐台の外にある状態で実際に起こる。
+        // パスそのものは通してシャドウマップを消去する。消去しないと前フレームの深度が影として残る。
+        assert!(
+            布ドロー.is_none(),
+            "布のシャドウ記録は描画対象のレイアウトとディスクリプタセットを借りるため、対象が1件も無い状態では記録できない"
+        );
+        return;
+    };
     let 一辺 = f32::from(u16::try_from(シャドウマップ一辺).unwrap_or_else(|_| panic!("シャドウマップ一辺がu16に収まらない: {シャドウマップ一辺}")));
     let viewport = vk::Viewport::default().width(一辺).height(一辺).min_depth(0.0).max_depth(1.0);
     let シザー = vk::Rect2D {
