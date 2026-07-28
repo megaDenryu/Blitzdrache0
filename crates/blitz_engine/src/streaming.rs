@@ -27,7 +27,7 @@ mod memory_estimate;
 mod memory_result;
 mod transfer_total;
 
-pub use chunk_diff::{GPU転送完了結果, チャンク集合差分, 準備完了結果};
+pub use chunk_diff::{GPU転送完了結果, チャンク集合差分, 準備完了結果, 解除報告結果};
 pub use chunk_directory::チャンク目録;
 pub use chunk_grid::チャンク格子;
 pub use chunk_ledger::チャンク台帳;

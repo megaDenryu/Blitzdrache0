@@ -11,6 +11,7 @@ mod work_area;
 
 use ash::vk;
 
+use crate::draw_bundle_id::描画束ID;
 use crate::vulkan::descriptor::ディスクリプタレイアウト;
 use crate::vulkan::frame::{シャドウ描画入力, ジオメトリ入力};
 use crate::vulkan::tracked_device::GPUデバイス;
@@ -28,6 +29,9 @@ pub(super) struct シーン描画資源 {
     シャドウ入力作業領域: Vec<シャドウ描画入力>,
     /// 解除を予約された束。GPUが使い終わるまでフレームを数えてから破棄する(規律は`bundle_lifecycle`が持つ)。
     破棄待ち: Vec<破棄待ち束>,
+    /// 実際にGPU資源を破棄し終えた束のID。呼び出し元が引き取るまで貯まる。
+    /// 解除の予約と実破棄は時点が違い、資源の会計は実破棄の時点でしか減らせないため、破棄の事実をIDで外へ返す。
+    実破棄済みid一覧: Vec<描画束ID>,
 }
 
 impl シーン描画資源 {

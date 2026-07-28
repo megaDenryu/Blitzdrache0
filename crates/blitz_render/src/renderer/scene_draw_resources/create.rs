@@ -68,6 +68,7 @@ impl シーン描画資源 {
             ジオメトリ入力作業領域: Vec::with_capacity(描画対象数),
             シャドウ入力作業領域: Vec::with_capacity(描画対象数),
             破棄待ち: Vec::new(),
+            実破棄済みid一覧: Vec::new(),
         })
     }
 }
