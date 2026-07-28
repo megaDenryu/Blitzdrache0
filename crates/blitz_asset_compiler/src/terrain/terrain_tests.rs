@@ -7,5 +7,6 @@
 mod boundary;
 mod fixture;
 mod ground_height;
+mod ground_height_surface;
 mod skirt;
 mod structure;
