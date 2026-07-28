@@ -6,6 +6,7 @@
 
 import pbr;
 import lighting;
+import relative_anchor;
 import scene_io;
 
 struct FrameUniform
@@ -52,7 +53,7 @@ static const float3 TINT = float3(1.0, 1.0, 1.0);
 VertexOutput vertexMain(VertexInput input)
 {
     VertexOutput output;
-    float3 worldPosition = mul(objectUniform.localToWorld, float4(input.position, 1.0)).xyz;
+    float3 worldPosition = applyRelativeAnchor(mul(objectUniform.localToWorld, float4(input.position, 1.0)).xyz);
     float3 worldNormal = normalize(mul(objectUniform.normalLocalToWorld, input.normal));
     float3 transformedTangent = mul((float3x3)objectUniform.localToWorld, input.tangent.xyz);
     float3 worldTangent = normalize(transformedTangent - worldNormal * dot(worldNormal, transformedTangent));

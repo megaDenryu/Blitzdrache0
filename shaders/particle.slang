@@ -4,6 +4,8 @@
 // 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`判断29、`_doc/設計/レンダーグラフ.md`。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
+import relative_anchor;
+
 struct Particle
 {
     float4 position;
@@ -60,7 +62,7 @@ struct ParticleVertexOutput
 ParticleVertexOutput vertexMain(uint vertexID : SV_VertexID)
 {
     ParticleVertexOutput output;
-    float3 particlePosition = particlesRO[vertexID].position.xyz;
+    float3 particlePosition = applyRelativeAnchor(particlesRO[vertexID].position.xyz);
     output.position = mul(frameUniform.viewProjection, float4(particlePosition, 1.0));
     output.pointSize = 4.0;
     return output;

@@ -32,6 +32,7 @@ pub(crate) mod pipeline;
 pub(crate) mod post_process;
 pub(crate) mod present_timing;
 pub(crate) mod readback;
+pub(crate) mod relative_anchor;
 pub(crate) mod shader_module;
 pub(crate) mod shadow_map;
 pub(crate) mod skinning;

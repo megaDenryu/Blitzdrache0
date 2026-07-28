@@ -3,6 +3,8 @@
 // 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断35」。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
+import relative_anchor;
+
 // scene.slangのFrameUniformと同じbinding3を指すが、先頭のlightViewProjectionだけを
 // 宣言する(判断36: 両ファイルとも先頭配置のため、この構造体の1フィールド分の
 // オフセットがscene.slang側と一致する)。
@@ -36,8 +38,8 @@ struct VertexOutput
 VertexOutput vertexMain(VertexInput input)
 {
     VertexOutput output;
-    float4 worldPosition = mul(objectUniformTransform.localToWorld, float4(input.position, 1.0));
-    output.position = mul(frameUniformLight.lightViewProjection, worldPosition);
+    float3 worldPosition = applyRelativeAnchor(mul(objectUniformTransform.localToWorld, float4(input.position, 1.0)).xyz);
+    output.position = mul(frameUniformLight.lightViewProjection, float4(worldPosition, 1.0));
     return output;
 }
 

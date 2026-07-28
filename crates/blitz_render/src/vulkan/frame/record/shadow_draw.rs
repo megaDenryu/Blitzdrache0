@@ -4,6 +4,7 @@ use ash::vk;
 
 use super::scene_pass::布ドロー;
 use crate::vulkan::frame::シャドウ描画入力;
+use crate::vulkan::relative_anchor::{self, カメラ相対アンカー};
 use crate::vulkan::shadow_map::シャドウマップ一辺;
 
 pub(super) fn 記録する(
@@ -38,6 +39,7 @@ pub(super) fn 記録する(
 unsafe fn 対象を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 入力: &シャドウ描画入力) {
     // 安全性: 呼び出し元がコマンド記録中と全入力資源の有効性を保証する。
     unsafe {
+        relative_anchor::積む(device, command_buffer, 入力.layout, カメラ相対アンカー::加算なし());
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,
@@ -55,6 +57,7 @@ unsafe fn 対象を記録する(device: &ash::Device, command_buffer: vk::Comman
 unsafe fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 先頭: &シャドウ描画入力, 布: 布ドロー<'_>) {
     // 安全性: 呼び出し元がコマンド記録中と全入力資源の有効性を保証する。
     unsafe {
+        relative_anchor::積む(device, command_buffer, 先頭.layout, カメラ相対アンカー::加算なし());
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,

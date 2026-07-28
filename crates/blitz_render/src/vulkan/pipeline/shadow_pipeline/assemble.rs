@@ -7,6 +7,7 @@ use super::super::シャドウパイプライン;
 use super::finish::パイプラインを取り出す;
 use super::vertex_input;
 use crate::error::レンダラーエラー;
+use crate::vulkan::relative_anchor;
 use crate::vulkan::shadow_map::シャドウマップ形式;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
@@ -66,7 +67,10 @@ pub(super) fn 組み立てる(
     // vk::DescriptorSetLayoutハンドルを使うことでシーン描画と同じディスクリプタ
     // セットをそのまま束縛できる。新規ディスクリプタ一式を作らない設計判断)。
     let ディスクリプタlayout一覧 = [ディスクリプタlayout];
-    let layout_create_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&ディスクリプタlayout一覧);
+    let プッシュ定数範囲一覧 = [relative_anchor::プッシュ定数範囲()];
+    let layout_create_info = vk::PipelineLayoutCreateInfo::default()
+        .set_layouts(&ディスクリプタlayout一覧)
+        .push_constant_ranges(&プッシュ定数範囲一覧);
     // 安全性: deviceは生成済みで有効。layout_create_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };
 

@@ -4,6 +4,8 @@
 // 前提: FrameUniformのレイアウトはscene.slangと完全一致させること(同じUBOを読むため)。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
+import relative_anchor;
+
 struct FrameUniform
 {
     column_major float4x4 lightViewProjection;
@@ -46,8 +48,9 @@ struct VertexOutput
 VertexOutput vertexMain(VertexInput input)
 {
     VertexOutput output;
-    output.position = mul(frameUniform.viewProjection, float4(input.position, 1.0));
-    output.worldPosition = input.position;
+    float3 worldPosition = applyRelativeAnchor(input.position);
+    output.position = mul(frameUniform.viewProjection, float4(worldPosition, 1.0));
+    output.worldPosition = worldPosition;
     output.normal = input.normal;
     output.uv = input.uv;
     return output;

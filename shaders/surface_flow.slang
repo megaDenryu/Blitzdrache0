@@ -2,6 +2,8 @@
 // 1列を1スレッドが逐次処理するため、同一バッファ更新でも競合しない。
 // 注意: 横方向移流はCPU参照計算だけで検証し、このGPU試作の対象外とする。
 
+import relative_anchor;
+
 struct SurfaceCell
 {
     float4 state;
@@ -60,7 +62,8 @@ VertexOutput vertexMain(uint vertexID : SV_VertexID)
     float thickness = cellsRO[vertexID].state.x;
     float2 uv = float2(column, row) / float(GRID_SIZE - 1);
     VertexOutput output;
-    output.position = mul(frameUniform.viewProjection, float4((uv.x - 0.5) * 4.0, uv.y * 4.0 - 1.0, 0.3, 1.0));
+    float3 relativePosition = applyRelativeAnchor(float3((uv.x - 0.5) * 4.0, uv.y * 4.0 - 1.0, 0.3));
+    output.position = mul(frameUniform.viewProjection, float4(relativePosition, 1.0));
     output.pointSize = thickness > 0.001 ? 5.0 : 0.0;
     output.thickness = thickness;
     return output;

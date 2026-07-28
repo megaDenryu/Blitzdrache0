@@ -1,6 +1,8 @@
 // M10の弱圧縮性SPH技術検証。1ワークグループが全粒子を担当し、全対全探索の計算量を測る。
 // 前半を現在状態、後半を更新先として使い、グループ内デバイスバリア後に前半へ戻す。
 
+import relative_anchor;
+
 struct Particle
 {
     float4 positionDensity;
@@ -80,7 +82,8 @@ struct VertexOutput { float4 position : SV_Position; float pointSize : SV_PointS
 VertexOutput vertexMain(uint vertexID : SV_VertexID)
 {
     VertexOutput output;
-    output.position = mul(frameUniform.viewProjection, float4(particlesRO[vertexID].positionDensity.xyz, 1.0));
+    float3 relativePosition = applyRelativeAnchor(particlesRO[vertexID].positionDensity.xyz);
+    output.position = mul(frameUniform.viewProjection, float4(relativePosition, 1.0));
     output.pointSize = 4.0;
     return output;
 }

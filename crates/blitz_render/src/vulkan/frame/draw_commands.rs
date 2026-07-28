@@ -1,11 +1,12 @@
 //! パイプラインのバインドと動的ビューポート/シザー設定、
 //! 頂点/インデックスバッファのバインドとインデックス描画。
-//! ビュー射影行列等はフレームユニフォームバッファ(ディスクリプタセット)経由で
-//! 渡す(判断24。プッシュ定数は廃止)。
+//! ビュー射影行列等はフレームユニフォームバッファ(ディスクリプタセット)経由で渡す(判断24)。
+//! 描画ごとに変わるカメラ相対アンカーだけをプッシュ定数で積む(参照: `vulkan::relative_anchor`)。
 
 use ash::vk;
 
 use super::ジオメトリ入力;
+use crate::vulkan::relative_anchor::{self, カメラ相対アンカー};
 
 pub(super) fn 描画コマンドを積む(
     device: &ash::Device,
@@ -35,6 +36,7 @@ pub(super) fn 描画コマンドを積む(
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
         device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
         for 入力 in ジオメトリ一覧 {
+            relative_anchor::積む(device, command_buffer, 入力.layout, カメラ相対アンカー::加算なし());
             device.cmd_bind_descriptor_sets(
                 command_buffer,
                 vk::PipelineBindPoint::GRAPHICS,

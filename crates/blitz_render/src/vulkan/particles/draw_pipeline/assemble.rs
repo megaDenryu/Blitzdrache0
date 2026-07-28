@@ -7,6 +7,7 @@ use ash::vk;
 use super::finish;
 use super::粒子描画パイプライン;
 use crate::error::レンダラーエラー;
+use crate::vulkan::relative_anchor;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 const フラグメントエントリ名: &std::ffi::CStr = c"fragmentMain";
@@ -51,7 +52,10 @@ pub(super) fn 組み立てる(
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
     let ディスクリプタlayout一覧 = [ディスクリプタlayout];
-    let layout_create_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&ディスクリプタlayout一覧);
+    let プッシュ定数範囲一覧 = [relative_anchor::プッシュ定数範囲()];
+    let layout_create_info = vk::PipelineLayoutCreateInfo::default()
+        .set_layouts(&ディスクリプタlayout一覧)
+        .push_constant_ranges(&プッシュ定数範囲一覧);
     // 安全性: deviceは生成済みで有効。layout_create_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };
 
