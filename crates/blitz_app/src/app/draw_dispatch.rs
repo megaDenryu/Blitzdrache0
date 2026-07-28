@@ -11,7 +11,7 @@ use crate::smoke::{self, スモークアクション};
 
 impl アプリ {
     pub(super) fn 実行して判定する(
-        &mut self, アクション: スモークアクション, 描画入力: フレーム描画入力
+        &mut self, アクション: スモークアクション, 描画入力: フレーム描画入力<'_>
     ) -> Result<(), 起動エラー> {
         rewrite_action::適用する(self, アクション)?;
 

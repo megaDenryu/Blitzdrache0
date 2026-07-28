@@ -20,7 +20,7 @@ impl アプリ {
         self.フレームダンプ先.is_some() && self.現在フレーム + 1 == フレーム数
     }
 
-    pub(super) fn 読み戻してダンプする(&mut self, 描画入力: blitz_render::フレーム描画入力) -> Result<(), 起動エラー> {
+    pub(super) fn 読み戻してダンプする(&mut self, 描画入力: blitz_render::フレーム描画入力<'_>) -> Result<(), 起動エラー> {
         let Some(レンダラー) = &mut self.レンダラー else {
             return Ok(());
         };
