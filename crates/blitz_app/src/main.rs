@@ -75,7 +75,7 @@ fn 終了処理する(mut アプリ: アプリ) -> Result<ExitCode, 起動エラ
     }
     if アプリ.ストリーミング要約報告が必要か() {
         match アプリ.ストリーミング要約を取得する() {
-            Some(要約) => reports::streaming::要約を表示する(&要約),
+            Some(要約) => reports::streaming_summary::表示する(&要約),
             None => println!("ストリーミング要約: --streamingが指定されていないため計測していない"),
         }
     }

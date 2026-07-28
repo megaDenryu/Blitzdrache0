@@ -1,6 +1,7 @@
 //! 必要性と非同期処理段階をチャンク座標ごとに一意管理する台帳。
 
 mod eviction;
+mod eviction_victim;
 mod transitions;
 mod update;
 mod usage;

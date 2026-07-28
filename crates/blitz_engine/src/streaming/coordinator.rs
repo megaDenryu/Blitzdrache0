@@ -6,7 +6,9 @@ mod candidates;
 mod degradation;
 mod gpu_handoff;
 mod load_dispatch;
+mod overuse_eviction;
 mod prepared_data;
+mod priority_eviction;
 mod reset;
 mod transfer_record;
 
@@ -16,8 +18,8 @@ use blitz_math::大域ワールド位置;
 
 use super::{
     chunk_directory::チャンク目録, chunk_grid::チャンク格子, chunk_ledger::チャンク台帳, coordinator_error::ストリーミング調停エラー,
-    coordinator_progress::ストリーミング進行, coordinator_settings::ストリーミング調停設定, loader::チャンク読込器,
-    measured_ram::チャンクRAM実測記憶, memory_budget::ストリーミング予算, transfer_total::ストリーミング転送量,
+    coordinator_progress::ストリーミング進行, coordinator_settings::ストリーミング調停設定, eviction_hysteresis::退避優位計数,
+    loader::チャンク読込器, memory_budget::ストリーミング予算, observed_read_size::観測済み読込量, transfer_total::ストリーミング転送量,
 };
 use crate::{カタログ, シーンデータ, チャンク座標};
 
@@ -30,8 +32,10 @@ pub struct ストリーミング調停 {
     先読み半径: u8,
     /// 準備済みチャンクのCPUデータ。台帳が準備済みとして数えるRAMはこの保管の実体である。読込完了での投入と不要時の破棄は`prepared_data`が、GPU転送のための取り出しは`gpu_handoff`が所有する。
     準備済みシーン: HashMap<チャンク座標, シーンデータ>,
-    /// 読込で得たRAM実測の記憶。予算候補の見積をここで実測へ置き換え、見積の過小によるスラッシングを止める。
-    実測記憶: チャンクRAM実測記憶,
+    /// 読込で得た読込量の観測。予算候補の見積をここで押し上げ、見積の過小によるスラッシングを止める。
+    観測済み読込量: 観測済み読込量,
+    /// 近い未収容チャンクのための退避が、同じ座標について何フレーム続けて優位だったかの計数。境界の往復で退避が起きないようにする。
+    優位計数: 退避優位計数,
     転送量: ストリーミング転送量,
 }
 
@@ -46,7 +50,8 @@ impl ストリーミング調停 {
             読込器: チャンク読込器::起動する()?,
             先読み半径: 設定.先読み半径,
             準備済みシーン: HashMap::new(),
-            実測記憶: チャンクRAM実測記憶::空を作る(),
+            観測済み読込量: 観測済み読込量::空を作る(),
+            優位計数: 退避優位計数::空を作る(),
             転送量: ストリーミング転送量::default(),
         })
     }
@@ -59,8 +64,8 @@ impl ストリーミング調停 {
     ) -> Result<ストリーミング進行, ストリーミング調停エラー> {
         let 中心 = self.格子.所属座標を求める(プレイヤー位置)?;
         let 要求一覧 = self.格子.必要集合を計算する(プレイヤー位置, self.先読み半径)?;
-        let 解決済み一覧 = candidates::目録とカタログで解決する(&self.目録, カタログ, &self.実測記憶, &要求一覧)?;
-        let (判定, 差分) = degradation::必要集合を確定させる(self.予算, &mut self.台帳, 中心, 解決済み一覧)?;
+        let 解決済み一覧 = candidates::目録とカタログで解決する(&self.目録, カタログ, &self.観測済み読込量, &要求一覧)?;
+        let (判定, 差分) = degradation::必要集合を確定させる(self.予算, &mut self.台帳, 中心, &mut self.優位計数, 解決済み一覧)?;
         let 読込開始一覧 = self.読込を投入する(差分.読込要求一覧(), カタログ)?;
         let mut cpuデータ破棄一覧 = self.不要なcpuデータを捨てる();
         let 準備完了一覧 = self.完了を回収する(&mut cpuデータ破棄一覧)?;

@@ -2,6 +2,7 @@
 
 pub(crate) mod display_timing;
 pub(crate) mod streaming;
+pub(crate) mod streaming_summary;
 
 use crate::app::フレーム時間統計;
 
