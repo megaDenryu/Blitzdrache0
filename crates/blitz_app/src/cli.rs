@@ -8,6 +8,8 @@ mod argument_error;
 mod modes;
 mod object_count;
 mod placement_args;
+#[cfg(test)]
+mod placement_args_tests;
 mod setting_apply;
 mod streaming_settings;
 mod types;

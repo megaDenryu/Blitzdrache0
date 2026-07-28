@@ -36,12 +36,20 @@ impl ライティング入力 {
         self.点光源
     }
 
+    pub fn 点光源位置(&self) -> blitz_math::大域ワールド位置 {
+        self.点光源.位置()
+    }
+
     pub(crate) fn 環境光(&self) -> 環境光係数 {
         self.環境光
     }
 
     pub(crate) fn 影(&self) -> 影入力 {
         self.影
+    }
+
+    pub fn 影注視点(&self) -> blitz_math::大域ワールド位置 {
+        self.影.注視点()
     }
 
     pub(crate) fn 有効か(&self) -> bool {

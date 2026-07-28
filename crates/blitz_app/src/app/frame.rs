@@ -3,6 +3,8 @@
 
 mod action;
 mod draw_input;
+#[cfg(test)]
+mod draw_input_tests;
 mod finish;
 
 use winit::event_loop::ActiveEventLoop;
