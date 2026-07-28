@@ -4,19 +4,22 @@
 use ash::vk;
 
 use super::layout::ディスクリプタレイアウト;
-use super::{pool, set, shadow_binding};
+use super::{buffer_binding, pool, set, shadow_binding};
 use crate::error::レンダラーエラー;
 use crate::vulkan::object_uniform::描画対象ユニフォーム;
 use crate::vulkan::shadow_map::シャドウマップ;
 use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
 use crate::vulkan::texture::マテリアルテクスチャ一式;
 use crate::vulkan::uniform::フレームユニフォーム一式;
+use crate::vulkan::visible_id::可視ID列参照;
 
 pub(crate) struct 描画対象ディスクリプタ参照<'a> {
     pub(crate) テクスチャ: &'a マテリアルテクスチャ一式,
     pub(crate) ユニフォーム: &'a 描画対象ユニフォーム,
     /// 個体変換を読むバッファと、そのバイト範囲。個体が1体だけの対象はユニフォームと同じバッファを指す。
     pub(crate) 個体変換: (vk::Buffer, vk::DeviceSize),
+    /// 可視ID列を読むバッファ。個体が1体だけの対象は束が共有する値0だけの列を指す。
+    pub(crate) 可視id列: 可視ID列参照,
 }
 
 pub(crate) struct 描画対象ディスクリプタプール {
@@ -77,9 +80,10 @@ fn 全セットの内容を書き込む(
         for フレーム添字 in フレームスロット添字::全スロット() {
             let set = set一覧[描画対象添字 * フレームインフライト数 + フレーム添字.配列添字()];
             set::テクスチャバインディングを書き込む(device, set, 描画対象.テクスチャ);
-            set::ユニフォームバインディングを書き込む(device, set, ユニフォーム.buffer(フレーム添字));
-            set::描画対象ユニフォームを書き込む(device, set, 描画対象.ユニフォーム.buffer);
-            set::個体変換を書き込む(device, set, 描画対象.個体変換.0, 描画対象.個体変換.1);
+            buffer_binding::フレームユニフォームを書き込む(device, set, ユニフォーム.buffer(フレーム添字));
+            buffer_binding::描画対象ユニフォームを書き込む(device, set, 描画対象.ユニフォーム.buffer);
+            buffer_binding::個体変換を書き込む(device, set, 描画対象.個体変換.0, 描画対象.個体変換.1);
+            buffer_binding::可視id列を書き込む(device, set, 描画対象.可視id列.buffer(フレーム添字), 描画対象.可視id列.範囲());
             shadow_binding::シャドウマップバインディングを書き込む(device, set, シャドウマップ);
         }
     }

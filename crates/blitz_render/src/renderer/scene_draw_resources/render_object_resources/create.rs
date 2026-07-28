@@ -5,6 +5,7 @@ use ash::vk;
 
 use super::geometry_list::段別ジオメトリ;
 use super::instance_source::個体変換の出どころ;
+use super::visible_id_source::可視ID列の出どころ;
 use super::描画対象資源;
 use crate::error::レンダラーエラー;
 use crate::render_object_material::描画対象素材;
@@ -57,12 +58,23 @@ impl 描画対象資源 {
                 return Err(誤り);
             }
         };
+        let 可視id列 = match 可視ID列の出どころ::生成する(device, メモリプロパティ, 個体数) {
+            Ok(値) => 値,
+            Err(誤り) => {
+                個体変換.破棄する(device);
+                ユニフォーム.破棄する(device);
+                テクスチャ.破棄する(device);
+                段別ジオメトリ.破棄する(device);
+                return Err(誤り);
+            }
+        };
         Ok(Self {
             大域アンカー: 素材.大域アンカー(),
             段別ジオメトリ,
             テクスチャ,
             ユニフォーム,
             個体変換,
+            可視id列,
             個体数,
         })
     }

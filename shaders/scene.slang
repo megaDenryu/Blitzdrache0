@@ -9,6 +9,7 @@ import lighting;
 import instance_transform;
 import relative_anchor;
 import scene_io;
+import visible_id;
 
 struct FrameUniform
 {
@@ -53,7 +54,7 @@ static const float3 TINT = float3(1.0, 1.0, 1.0);
 VertexOutput vertexMain(VertexInput input, uint instanceIndex : SV_InstanceID)
 {
     VertexOutput output;
-    InstanceTransform transform = instanceTransforms[instanceIndex];
+    InstanceTransform transform = instanceTransforms[visibleInstanceIds[instanceIndex]];
     float3 relativePosition = applyRelativeAnchor(mul(transform.localToWorld, float4(input.position, 1.0)).xyz);
     float3 worldNormal = normalize(mul(transform.normalLocalToWorld, input.normal));
     float3 transformedTangent = mul((float3x3)transform.localToWorld, input.tangent.xyz);

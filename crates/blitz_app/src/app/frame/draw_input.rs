@@ -35,6 +35,7 @@ pub(super) fn 組み立てる<'a>(
         布: None,
         ui描画: None,
         地形詳細段選択一覧,
+        可視個体選択一覧: blitz_render::可視個体選択一覧::空(),
     }
 }
 

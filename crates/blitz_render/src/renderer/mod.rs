@@ -32,7 +32,7 @@ use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
 
 pub use cpu_timing::CPU区間時間;
-pub use draw_issue_breakdown::描画発行内訳;
+pub use draw_issue_breakdown::{パス別描画発行, 描画発行内訳};
 
 /// Vulkanインスタンス・デバイス・スワップチェーン・同期プリミティブを保持し、
 /// 毎フレーム立方体をカメラのビュー射影行列で提示するレンダラー。

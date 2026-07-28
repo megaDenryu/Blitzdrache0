@@ -1,5 +1,6 @@
-//! ディスクリプタセットの割当と、テクスチャ・UBOを指す内容の書き込み。
-//! フレームインフライトごとに1セット(テクスチャは全セット共有、UBOはセット固有)。
+//! ディスクリプタセットの割当と、テクスチャを指す画像バインディングの書き込み。
+//! フレームインフライトごとに1セットを割り当てる(テクスチャは全セット共有、バッファはセット固有)。
+//! バッファを指すバインディング(binding3・5・6・7)の書き込みは`buffer_binding`が担う。
 
 use ash::vk;
 
@@ -23,7 +24,7 @@ pub(super) fn 割り当てる(
 }
 
 /// binding0-2(テクスチャ)を書き込む。生成時・シーン差し替え(ホットリロード)時の
-/// 両方から呼ぶ。UBOのbinding3には触れない。
+/// 両方から呼ぶ。バッファのバインディングには触れない。
 pub(super) fn テクスチャバインディングを書き込む(
     device: &ash::Device,
     set: vk::DescriptorSet,
@@ -38,43 +39,6 @@ pub(super) fn テクスチャバインディングを書き込む(
         画像書き込み(set, 2, &法線マップ情報),
     ];
     // 安全性: setは割当済み、各テクスチャの画像ビュー・サンプラーは生成済みで有効。
-    unsafe { device.update_descriptor_sets(&書き込み一覧, &[]) };
-}
-
-/// binding3(ユニフォームバッファ)を書き込む。生成時にセットごとの固有バッファを結ぶ。
-pub(super) fn ユニフォームバインディングを書き込む(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer) {
-    let buffer情報一覧 = [vk::DescriptorBufferInfo::default().buffer(buffer).offset(0).range(vk::WHOLE_SIZE)];
-    let 書き込み一覧 = [vk::WriteDescriptorSet::default()
-        .dst_set(set)
-        .dst_binding(3)
-        .dst_array_element(0)
-        .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
-        .buffer_info(&buffer情報一覧)];
-    // 安全性: setは割当済み、bufferは生成済みで有効。
-    unsafe { device.update_descriptor_sets(&書き込み一覧, &[]) };
-}
-
-/// binding5へ描画対象固有の変換とマテリアル係数を結ぶ。
-pub(super) fn 描画対象ユニフォームを書き込む(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer) {
-    let buffer情報一覧 = [vk::DescriptorBufferInfo::default().buffer(buffer).offset(0).range(vk::WHOLE_SIZE)];
-    let 書き込み一覧 = [vk::WriteDescriptorSet::default()
-        .dst_set(set)
-        .dst_binding(5)
-        .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
-        .buffer_info(&buffer情報一覧)];
-    // 安全性: setは割当済み、bufferは生成済みで有効。
-    unsafe { device.update_descriptor_sets(&書き込み一覧, &[]) };
-}
-
-/// binding6へ個体変換のストレージバッファを結ぶ。個体が1体だけの対象は描画対象ユニフォームのバッファを先頭112バイトの範囲で指す。
-pub(super) fn 個体変換を書き込む(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer, 範囲: vk::DeviceSize) {
-    let buffer情報一覧 = [vk::DescriptorBufferInfo::default().buffer(buffer).offset(0).range(範囲)];
-    let 書き込み一覧 = [vk::WriteDescriptorSet::default()
-        .dst_set(set)
-        .dst_binding(6)
-        .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
-        .buffer_info(&buffer情報一覧)];
-    // 安全性: setは割当済み、bufferは生成済みで有効。
     unsafe { device.update_descriptor_sets(&書き込み一覧, &[]) };
 }
 

@@ -1,5 +1,8 @@
 //! 取得済み画像への実際の描画呼び出し。通常描画/読み戻しの`描画方式`を決め、各サブシステムから集めた入力束とフレーム画像一式を`vulkan::frame::描画する`へ渡す。
 //! ビュー射影行列等はdraw_execute.rsが事前にUBOへ書き込み済み(判断24)のため、ここではフレーム添字に対応するディスクリプタセットを選ぶだけでよい。
+//! 描画方式の判別は`draw_mode`にある。
+
+mod draw_mode;
 
 use blitz_math::大域ワールド位置;
 
@@ -9,10 +12,10 @@ use super::scene_draw_resources::作業領域更新入力;
 use super::レンダラー;
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
-use crate::frame_composition::フレーム段階;
 use crate::terrain_detail::地形詳細段選択;
+use crate::visible_instance_selection::可視個体選択一覧;
 use crate::vulkan;
-use crate::vulkan::frame::{UI描画入力, 任意描画入力, 描画方式};
+use crate::vulkan::frame::{UI描画入力, 任意描画入力};
 use crate::vulkan::relative_anchor::カメラ相対アンカー;
 use crate::vulkan::skinning::スキニング一式;
 
@@ -30,6 +33,7 @@ impl レンダラー {
         ui入力: Option<&UI描画入力>,
         カメラ大域原点: 大域ワールド位置,
         地形詳細段選択一覧: &[地形詳細段選択],
+        可視個体選択一覧: 可視個体選択一覧<'_>,
     ) -> Result<(bool, Vec<(&'static str, u32)>), レンダラーエラー> {
         let フレーム添字 = スロット資源.スロット;
 
@@ -44,6 +48,7 @@ impl レンダラー {
         let 提示id = self.実表示計測.提示idを発番する();
         // 作業領域の充填に要る、描画対象資源の外の値。スキン付きシーンでは先頭対象の頂点入力をスキン済みバッファへ差し替える(判断44)。
         let 作業領域入力 = 作業領域更新入力 {
+            device: self.環境.device(),
             フレーム添字,
             スキン済み頂点バッファ: self.スキニング.as_ref().map(スキニング一式::出力バッファ),
             シーンlayout: self.pipeline.layout,
@@ -51,6 +56,7 @@ impl レンダラー {
             シャドウlayout: self.シャドウパイプライン.layout,
             カメラ大域原点,
             地形詳細段選択一覧,
+            可視個体選択一覧,
         };
         self.シーン描画資源.作業領域を更新する(&作業領域入力)?;
 
@@ -77,22 +83,5 @@ impl レンダラー {
             クエリプール,
             self.同期入力を組み立てる(スロット資源, 取得済み),
         )
-    }
-
-    fn 描画方式を決める(&self, 読み戻し要求: bool) -> Result<描画方式, レンダラーエラー> {
-        if 読み戻し要求 {
-            if !self.フレーム構成.含む(フレーム段階::読み戻し) {
-                return Err(レンダラーエラー::読み戻し段階なし);
-            }
-            let バッファ = self
-                .読み戻しバッファ
-                .as_ref()
-                .unwrap_or_else(|| panic!("読み戻し要求時に読み戻しバッファが未確保だった"));
-            Ok(描画方式::読み戻し {
-                バッファ: バッファ.handle
-            })
-        } else {
-            Ok(描画方式::通常)
-        }
     }
 }
