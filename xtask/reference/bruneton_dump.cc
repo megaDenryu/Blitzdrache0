@@ -22,6 +22,9 @@ constexpr float kBottomRadius = 6360000.0f;
 constexpr float kTopRadius = 6460000.0f;
 constexpr float kRayleighScattering[3] = {5.802e-6f, 13.558e-6f, 33.100e-6f};
 constexpr float kRayleighScaleHeight = 8000.0f;
+// ミーは散乱と吸収を別に持ち、消散はその和である。散乱係数は透過率にも光学距離にも入らないが、
+// 参照実装の大気を採用方針と同じ媒体で組まないと、多重散乱や放射輝度を焼く段で条件が食い違う。
+constexpr float kMieScattering = 3.996e-6f;
 constexpr float kMieExtinction = 4.440e-6f;
 constexpr float kMieScaleHeight = 1200.0f;
 constexpr float kAbsorptionExtinction[3] = {0.650e-6f, 1.881e-6f, 0.085e-6f};
@@ -66,7 +69,7 @@ AtmosphereParameters BuildAtmosphere(int channel) {
       ScatteringSpectrum(Wide(kRayleighScattering[channel]) / m);
   atmosphere.mie_density.layers[0] = EmptyLayer();
   atmosphere.mie_density.layers[1] = ExponentialLayer(kMieScaleHeight);
-  atmosphere.mie_scattering = ScatteringSpectrum(Wide(kMieExtinction) / m);
+  atmosphere.mie_scattering = ScatteringSpectrum(Wide(kMieScattering) / m);
   atmosphere.mie_extinction = ScatteringSpectrum(Wide(kMieExtinction) / m);
   atmosphere.mie_phase_function_g = Wide(kAsymmetry);
   SetTentProfile(&atmosphere.absorption_density);
@@ -95,6 +98,7 @@ void PrintParameters() {
         Wide(kAbsorptionExtinction[i]));
   }
   printf("param rayleigh_scale_height %.17g\n", Wide(kRayleighScaleHeight));
+  printf("param mie_scattering %.17g\n", Wide(kMieScattering));
   printf("param mie_extinction %.17g\n", Wide(kMieExtinction));
   printf("param mie_scale_height %.17g\n", Wide(kMieScaleHeight));
   printf("param absorption_bottom %.17g\n", Wide(kAbsorptionBottom));

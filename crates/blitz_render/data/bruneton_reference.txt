@@ -1,6 +1,8 @@
 # Bruneton 2017実装のCPU参照が出した大気の物理量の期待値。手で編集しない。
 # 再生成: cargo xtask gen-atmosphere-reference <precomputed_atmospheric_scatteringの作業コピー>
-# 出典・リビジョン・ライセンス・構築手順: xtask/src/gen_atmosphere_reference.rs の冒頭
+# 出典・ライセンス・構築手順: xtask/src/gen_atmosphere_reference.rs の冒頭
+# 焼いた作業コピーのリビジョン: precomputed_atmospheric_scattering 34f14e745cff948f4ca3157d1b62a445ffa7286f
+# 焼いた作業コピーのリビジョン: external/dimensional_types 84e1e53320cd89119d31ec87cfdc2b51825b0c4b
 #
 # 各行は種別と数値の並びである。数値は17桁で書き、f64として厳密に読み戻せる。
 # param <名前> <値>                                       焼いた条件の大気パラメータ
@@ -20,6 +22,7 @@ param absorption_extinction_g 1.8810000028679497e-06
 param rayleigh_scattering_b 3.310000101919286e-05
 param absorption_extinction_b 8.5000003480217856e-08
 param rayleigh_scale_height 8000
+param mie_scattering 3.9960000322025735e-06
 param mie_extinction 4.4399998841981869e-06
 param mie_scale_height 1200
 param absorption_bottom 10000

@@ -6,7 +6,7 @@
 
 use blitz_math::メートル;
 
-use super::super::{大気内半径, 天頂余弦, 消散媒体};
+use super::super::{大気内観測点, 天頂余弦, 消散媒体};
 use super::reference_parse::読み解く;
 use super::reference_record::参照レコード;
 use crate::atmosphere::narrowing::実数へ狭める;
@@ -57,9 +57,9 @@ pub(super) fn 一致するか(実測: f32, 期待: f64) -> bool {
 
 /// 焼いたf64の引数を、比較相手の実装が持つf32へ狭めて視線を組み立てる。
 /// 焼く側が引数をf32で表せる値だけに限っているため、この縮小で情報は落ちない。
-pub(super) fn 視線(媒体: &消散媒体, 半径: f64, 余弦: f64) -> (大気内半径, 天頂余弦) {
-    let 観測半径 = 大気内半径::生成する(媒体, メートル::生成する(実数へ狭める(半径))).unwrap();
-    (観測半径, 天頂余弦::生成する(実数へ狭める(余弦)).unwrap())
+pub(super) fn 視線(媒体: &消散媒体, 半径: f64, 余弦: f64) -> (大気内観測点<'_>, 天頂余弦) {
+    let 観測点 = 大気内観測点::生成する(媒体, メートル::生成する(実数へ狭める(半径))).unwrap();
+    (観測点, 天頂余弦::生成する(実数へ狭める(余弦)).unwrap())
 }
 
 /// 参照を焼いた条件と、検査が使う媒体の値が同じであることを確かめる。
@@ -73,6 +73,7 @@ fn 焼いた条件が器の媒体と一致する() {
         ("rayleigh_scattering_g", f64::from(super::レイリー散乱係数[1])),
         ("rayleigh_scattering_b", f64::from(super::レイリー散乱係数[2])),
         ("rayleigh_scale_height", f64::from(super::レイリー尺度高度)),
+        ("mie_scattering", f64::from(super::ミー散乱係数)),
         ("mie_extinction", f64::from(super::ミー消散係数)),
         ("mie_scale_height", f64::from(super::ミー尺度高度)),
         ("absorption_extinction_r", f64::from(super::吸収消散係数[0])),
