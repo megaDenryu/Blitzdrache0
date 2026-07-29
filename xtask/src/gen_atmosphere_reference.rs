@@ -5,6 +5,7 @@
 //! 出典: Eric Bruneton, "Precomputed Atmospheric Scattering: a New Implementation" (2017)の公開実装
 //! (https://github.com/ebruneton/precomputed_atmospheric_scattering、3条項BSDライセンス)。
 //! 焼き出しの対象として固定したリビジョンは`revision.rs`が定数で持ち、作業コピーの実測値と一致しなければ生成を拒む。
+//! 作業コピーの追跡下のファイルに未コミットの変更があるときも、焼いたコードと出自の表示が食い違うため同様に拒む。
 //! 参照実装のコードそのものはこのリポジトリへ取り込まず、その出力である数値だけを焼く。
 //!
 //! 手順(いずれもリポジトリルートで実行する):
@@ -41,7 +42,7 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
 }
 
 fn 焼く(参照パス: &Path) -> Result<String, String> {
-    let リビジョン = revision::固定リビジョンを確かめる(参照パス)?;
+    let リビジョン = revision::焼き出しの出自を確かめる(参照パス)?;
     let 実行ファイル = build::焼き出しを構築する(参照パス)?;
     let 本文 = build::焼き出しを実行する(&実行ファイル)?;
     emit::書き出す(&本文, &リビジョン)
