@@ -76,7 +76,8 @@ float4 fragmentMain(VertexOutput input, bool isFrontFace: SV_IsFrontFace) : SV_T
     float3 normal = normalize(input.normal) * (isFrontFace ? 1.0 : -1.0);
     float3 toLight = -normalize(frameUniform.directionalLightDirection.xyz);
     float lambert = max(dot(normal, toLight), 0.0);
-    float shadow = shadowFactor(input.relativePosition);
+    // ambientAndLighting.zは方向光が影を落とすか。scene.slangと同じ判定で、0のとき比較サンプリングを行わない。
+    float shadow = frameUniform.ambientAndLighting.z > 0.5 ? shadowFactor(input.relativePosition) : 1.0;
     float3 direct = frameUniform.directionalLightColor.rgb * lambert * shadow;
     float3 ambient = float3(0.15, 0.15, 0.15);
     float weave = 0.94 + 0.06 * abs(sin(input.uv.x * 100.0) * sin(input.uv.y * 100.0));

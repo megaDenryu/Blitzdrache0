@@ -27,6 +27,7 @@ mod sun_light_intensity;
 mod sun_light_policy;
 mod sun_position;
 mod turbidity;
+mod world_policy;
 
 #[cfg(test)]
 mod continuity_tests;
@@ -59,3 +60,4 @@ pub use sun_light_color::太陽光色;
 pub use sun_light_intensity::太陽光強度;
 pub use sun_light_policy::太陽光方針;
 pub use turbidity::濁度;
+pub use world_policy::世界の空方針;

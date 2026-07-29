@@ -28,6 +28,7 @@ pub(super) fn 検査する(アセットルート: &Path, シェーダー入口: 
             "--report-draw-issue",
             "--unlit",
             "--no-post",
+            "--no-sky",
         ])
         .args(["--streaming-ram-limit", &上限, "--streaming-vram-limit", &上限])
         .arg("--asset-root")

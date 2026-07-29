@@ -4,7 +4,7 @@
 use std::path::PathBuf;
 
 use super::{布モード, 粒子表示モード, 起動モード, 起動設定};
-use crate::cli::{ストリーミング起動設定, 平行移動起動設定};
+use crate::cli::{ストリーミング起動設定, 平行移動起動設定, 時間帯起動設定};
 
 const 既定シェーダー監視パス: &str = "shaders/scene.slang";
 const 既定シーン名: &str = "quad";
@@ -30,7 +30,7 @@ impl 起動設定 {
             個体詳細段探査刻み: None,
             開発ui初期有効: false,
             フレームダンプ先: None,
-            空有効: false,
+            時間帯: 時間帯起動設定::既定値(),
             ポスト処理有効: true,
             露出: 1.0,
             ブレンド: 0.0,

@@ -82,9 +82,10 @@ float4 fragmentMain(VertexOutput input) : SV_Target
     // glTF規約: metallicRoughnessテクスチャはG=粗さ・B=金属度。
     float2 metallicRoughnessSample = metallicRoughnessTexture.Sample(input.uv).gb;
     float3 sampledNormal = normalMapTexture.Sample(input.uv).rgb * 2.0 - 1.0;
-    float shadowFactor = computeShadowFactor(
-        input.relativePosition, frameUniform.lightViewProjection,
-        shadowMapTexture, shadowMapSampler, shadowMapTexelSize);
+    // ambientAndLighting.zは方向光が影を落とすか。0のとき比較サンプリング自体を行わない。
+    float shadowFactor = frameUniform.ambientAndLighting.z > 0.5
+        ? computeShadowFactor(input.relativePosition, frameUniform.lightViewProjection, shadowMapTexture, shadowMapSampler, shadowMapTexelSize)
+        : 1.0;
 
     float3 litColor = shadeLitSurface(
         albedo, metallicRoughnessSample,

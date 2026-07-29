@@ -80,6 +80,8 @@ fn 引数を作る(アセットルート: &Path, シェーダー入口: &Path, �
         "--report-frame-times",
         "--unlit",
         "--no-post",
+        // 地形世界は空を持つ方針であるため、既存の計測条件を保つには空パスを明示的に外す。
+        "--no-sky",
     ];
     let mut 引数一覧: Vec<String> = 固定.iter().map(|語| (*語).to_string()).collect();
     引数一覧.extend(["--asset-root".to_string(), アセットルート.display().to_string()]);
