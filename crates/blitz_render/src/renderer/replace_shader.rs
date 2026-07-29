@@ -20,8 +20,7 @@ impl レンダラー {
 
         // 旧パイプラインの使用完了を待ってから破棄する。
         self.環境.gpuの全作業完了を待つ()?;
-        self.pipeline.破棄する(device);
-        self.pipeline = 新パイプライン;
+        self.描画段階資源.シーンを差し替える(device, 新パイプライン);
         Ok(())
     }
 }

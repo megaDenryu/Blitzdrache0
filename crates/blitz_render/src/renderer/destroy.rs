@@ -27,8 +27,7 @@ impl レンダラー {
         if let Some(計測) = &self.gpu計測 {
             計測.破棄する(device);
         }
-        self.pipeline.破棄する(device);
-        self.シャドウパイプライン.破棄する(device);
+        self.描画段階資源.破棄する(device);
         if let Some(スキニング) = &self.スキニング {
             スキニング.破棄する(device);
         }

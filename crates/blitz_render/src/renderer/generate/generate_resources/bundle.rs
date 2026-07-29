@@ -2,7 +2,7 @@
 
 use super::super::frame_resources::フレーム資源;
 use super::base_resources::基礎資源;
-use super::pipeline_resources::パイプライン資源;
+use crate::renderer::draw_stage_resources::描画段階資源;
 use crate::renderer::frame_progress::フレーム進行;
 use crate::vulkan;
 
@@ -10,7 +10,7 @@ use crate::vulkan;
 pub(super) struct 段別資源 {
     pub(super) 基礎: 基礎資源,
     pub(super) フレーム進行: フレーム進行,
-    pub(super) パイプライン: パイプライン資源,
+    pub(super) 描画段階: 描画段階資源,
     pub(super) 粒子: Option<vulkan::particles::粒子リソース一式>,
     pub(super) gpu計測: Option<vulkan::gpu_timing::パス別GPU計測>,
     pub(super) ui一式: vulkan::ui::UIリソース一式,
@@ -22,12 +22,11 @@ pub(super) struct 段別資源 {
 pub(super) fn 束ねる(段別: 段別資源) -> フレーム資源 {
     フレーム資源 {
         シャドウマップ: 段別.基礎.シャドウマップ,
-        シャドウパイプライン: 段別.パイプライン.シャドウパイプライン,
         転送環境: 段別.基礎.転送環境,
         シーン描画資源: 段別.基礎.シーン描画資源,
         ユニフォーム: 段別.基礎.ユニフォーム,
         フレーム進行: 段別.フレーム進行,
-        pipeline: 段別.パイプライン.pipeline,
+        描画段階資源: 段別.描画段階,
         粒子: 段別.粒子,
         gpu計測: 段別.gpu計測,
         ui一式: 段別.ui一式,

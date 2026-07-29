@@ -10,6 +10,7 @@ mod destroy;
 mod draw_dispatch;
 mod draw_execute;
 mod draw_issue_breakdown;
+mod draw_stage_resources;
 mod frame_dispatch_inputs;
 mod frame_progress;
 mod generate;
@@ -49,7 +50,6 @@ pub struct レンダラー {
     /// 陳腐化のまま描画へ進めないことはこの型が保つ。
     提示: presentation::提示,
     シャドウマップ: vulkan::shadow_map::シャドウマップ,
-    シャドウパイプライン: vulkan::pipeline::シャドウパイプライン,
     転送環境: vulkan::transfer::転送実行環境,
     /// 描画対象数に連動する資源(描画対象GPU資源・ディスクリプタ・描画入力作業領域)の束。要素数の一致はこの型が保つ。
     シーン描画資源: scene_draw_resources::シーン描画資源,
@@ -57,7 +57,8 @@ pub struct レンダラー {
     /// フレームスロットで引く資源(コマンドバッファ・描画完了フェンス・取得セマフォ)と、そのスロットの巡回状態の束。3つを同じスロットで引く一致はこの型が保つ。
     フレーム進行: frame_progress::フレーム進行,
     フレーム構成: フレーム構成,
-    pipeline: vulkan::pipeline::パイプライン,
+    /// 各描画段階が束縛するパイプラインとレイアウトの束。段階の追加でレンダラー直下のフィールドを増やさないための器。
+    描画段階資源: draw_stage_resources::描画段階資源,
     /// スキン付きシーンのときのみ`Some`(判断44)。有無はフレーム描画入力のスキン行列と常に一致させる。
     スキニング: Option<vulkan::skinning::スキニング一式>,
     /// 布付き起動のときのみ`Some`(判断52〜54)。有無はフレーム描画入力の布と常に一致させる。
