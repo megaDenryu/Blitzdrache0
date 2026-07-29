@@ -5,6 +5,7 @@ use std::process::ExitCode;
 
 mod atmosphere_lut;
 mod bench;
+mod check_glb;
 mod cloth_empty;
 mod cloth_night;
 mod cloth_shadow_order;
@@ -54,6 +55,7 @@ fn main() -> ExitCode {
         Some("conform") => conform::実行する(),
         Some("type-metrics") => type_metrics::実行する(),
         Some("smoke") => smoke::実行する(),
+        Some("check-glb") => check_glb::実行する(&引数一覧[1..]),
         Some("compile-assets") => compile_assets::実行する(&引数一覧[1..]),
         Some("watch-assets") => watch_assets::実行する(&引数一覧[1..]),
         Some("gen-source-assets") => gen_source_assets::実行する(),

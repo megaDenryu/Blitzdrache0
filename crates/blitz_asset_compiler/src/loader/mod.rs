@@ -6,6 +6,7 @@ mod archetype_material;
 #[cfg(test)]
 mod archetype_material_tests;
 mod buffer;
+mod contract;
 mod document;
 mod file;
 mod material;
@@ -16,6 +17,7 @@ mod texture_decode;
 use blitz_engine::{アセットID, カタログ, シーンデータ, チャンク座標, 描画対象ID, 描画対象データ, 描画形状};
 
 pub use archetype::{原型ソース, 原型ソースを読み込む};
+pub use contract::{入力契約を検査する, 契約指摘, 契約検査概要, 契約検査結果, 重大度};
 
 use crate::error::アセットコンパイルエラー;
 

@@ -1,0 +1,40 @@
+//! 指摘が指す場所の語彙。担当するのはglTF文書の中の位置の表し方だけであり、何が違反なのかは知らない。
+//! 添字に加えて名前を持たせるのは、指摘を読んだ者がBlender側でオブジェクト名から対象を探すためである。
+
+use std::fmt;
+
+/// 指摘の対象がglTF文書のどこであるかを表す。名前はglTFが省略できるため`Option`で持つ。
+pub enum 対象位置 {
+    文書,
+    メッシュ { 添字: usize, 名前: Option<String> },
+    プリミティブ { メッシュ添字: usize, 添字: usize },
+    ノード { 添字: usize, 名前: Option<String> },
+    マテリアル { 名前: Option<String> },
+    テクスチャ { 用途: &'static str },
+    画像 { 添字: usize },
+    アニメーション { 添字: usize, 名前: Option<String> },
+}
+
+impl fmt::Display for 対象位置 {
+    fn fmt(&self, 出力: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::文書 => write!(出力, "文書全体"),
+            Self::メッシュ { 添字, 名前 } => write!(出力, "メッシュ[{添字}]{}", 名前を飾る(名前.as_deref())),
+            Self::プリミティブ { メッシュ添字, 添字 } => write!(出力, "メッシュ[{メッシュ添字}]のプリミティブ[{添字}]"),
+            Self::ノード { 添字, 名前 } => write!(出力, "ノード[{添字}]{}", 名前を飾る(名前.as_deref())),
+            Self::マテリアル { 名前 } => write!(出力, "マテリアル{}", 名前を飾る(名前.as_deref())),
+            Self::テクスチャ { 用途 } => write!(出力, "テクスチャ({用途})"),
+            Self::画像 { 添字 } => write!(出力, "画像[{添字}]"),
+            Self::アニメーション { 添字, 名前 } => write!(出力, "アニメーション[{添字}]{}", 名前を飾る(名前.as_deref())),
+        }
+    }
+}
+
+fn 名前を飾る(名前: Option<&str>) -> String {
+    名前.map_or_else(String::new, |名前| format!("({名前})"))
+}
+
+/// glTFのノード・メッシュ・マテリアル・アニメーションから名前を写す。所有権を持つ文字列にするのは、指摘が文書より長く生きるためである。
+pub fn 名前を写す(名前: Option<&str>) -> Option<String> {
+    名前.map(str::to_string)
+}
