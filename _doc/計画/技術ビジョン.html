@@ -308,7 +308,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <!-- ============================================================ -->
 <h2 id="s3">3. GPUが1フレームを作る流れ — 現エンジンを教材に</h2>
 
-<p>CPUとGPUは分業する。CPUは「このフレームに何をどこに描くか」を決めて描画命令(コマンド)の列を組み立て、GPUはその命令列を大規模並列で実行して<a class="term" href="#term-pixel">画素</a>を塗る。Blitzdrache0では、この命令列の組み立てを<strong><a class="term" href="#term-render-graph">レンダーグラフ</a></strong>という仕組みが担っている。各描画工程(<a class="term" href="#term-pass">パス</a>)が「何を読み、何に書くか」を宣言し、グラフが工程間の待ち合わせ(<a class="term" href="#term-barrier">バリア</a>)を自動で導出する。工程を追加しても待ち合わせの正しさが壊れない器であり、この文書で語る野心の多く(新しいパスの追加)はこの器の上に載る。</p>
+<p>CPUとGPUは分業する。CPUは「このフレームに何をどこに描くか」を決めて描画命令(コマンド)の列を組み立て、GPUはその命令列を大規模並列で実行して<a class="term" href="#term-pixel">画素</a>を塗る。Blitzdrache0では、この命令列の組み立てを<strong><a class="term" href="#term-render-graph">レンダーグラフ</a></strong>という仕組みが担っている。各描画工程(<a class="term" href="#term-pass">パス</a>)が「何を読み、何に書くか」を宣言し、グラフは宣言された順序で実行しつつ、その順序に必要な待ち合わせ(<a class="term" href="#term-barrier">バリア</a>)を読み書き宣言から自動で導出する(実行順自体は構築側が明示する)。工程を追加してもバリアの正しさが壊れない器であり、この文書で語る野心の多く(新しいパスの追加)はこの器の上に載る。</p>
 
 <p>現エンジンの1フレームは、およそ次の工程列である(点灯アニメーションは実行順を表す)。</p>
 
@@ -797,7 +797,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <div class="box warn">
 <span class="label">接合点 a</span>
-<p><strong>共通<a class="term" href="#term-ubo">UBO</a> 464バイトと固定バインディング。</strong>現在は全<a class="term" href="#term-shader">シェーダー</a>が1つの固定サイズ設定領域を共有する。光源が集合になり、ビューが増え(影・<a class="term" href="#term-probe">プローブ</a>・反射)、<a class="term" href="#term-material">材質</a>が多様化すると固定区画は持たない。小さい<a class="term" href="#term-frame-constants">frame constants</a>(フレーム定数)と、structured buffer(可変長の構造化バッファ)+ディスクリプタインデクシング(資源を番号で選ぶ方式)への分離移行が必要である。多光源・<a class="term" href="#term-gi">GI</a>・材質拡張のすべてがこの上に載るため、<em>最初に動く境界</em>になる。</p>
+<p><strong>共通<a class="term" href="#term-ubo">UBO</a> 464バイトと固定バインディング。</strong>現在は主要なグラフィックス経路の<a class="term" href="#term-shader">シェーダー</a>群が1つの共通フレームUBO(464バイトの固定サイズ設定領域)を全体または先頭部分として共有する(個体・材質の設定や計算系の専用バッファは別に持つ)。光源が集合になり、ビューが増え(影・<a class="term" href="#term-probe">プローブ</a>・反射)、<a class="term" href="#term-material">材質</a>が多様化すると固定区画は持たない。小さい<a class="term" href="#term-frame-constants">frame constants</a>(フレーム定数)と、structured buffer(可変長の構造化バッファ)+ディスクリプタインデクシング(資源を番号で選ぶ方式)への分離移行が必要である。多光源・<a class="term" href="#term-gi">GI</a>・材質拡張のすべてがこの上に載るため、<em>最初に動く境界</em>になる。</p>
 </div>
 
 <div class="box warn">
@@ -926,7 +926,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr id="term-fence"><td>フェンス</td><td>GPUの処理完了をCPU側で待つための同期物。フレームの資源を書き換える前に、前回の使用が終わったことをフェンスで確かめる。</td></tr>
 <tr id="term-frame-in-flight"><td>フレームインフライト</td><td>CPUが次のフレームを準備する間にGPUが前のフレームを描く並行状態。同時進行の数だけ資源を多重化する。本エンジンは2である。</td></tr>
 <tr id="term-present"><td>提示 / FIFO提示</td><td>完成した画像を表示用の画像列(スワップチェーン)へ送って表示させること / 表示の垂直同期に合わせて順に出す提示モード。フレーム時間の主たる供給源である。</td></tr>
-<tr id="term-render-graph"><td>レンダーグラフ</td><td>パスの読み書きの宣言から、実行順と待ち合わせ(バリア)を自動導出する仕組み。工程を足しても待ち合わせの正しさが壊れない器であり、本エンジンは実装済みである。</td></tr>
+<tr id="term-render-graph"><td>レンダーグラフ</td><td>パスの読み書きの宣言から、宣言順の実行に必要な待ち合わせ(バリア)を自動導出する仕組み。実行順自体は構築側が明示する。工程を足してもバリアの正しさが壊れない器であり、本エンジンは実装済みである。</td></tr>
 <tr id="term-pass"><td>パス(描画工程)</td><td>レンダーグラフの1ノード。読む資源と書く資源を宣言して、GPUの作業を1まとまり実行する単位。</td></tr>
 <tr id="term-barrier"><td>バリア(同期バリア)</td><td>前の工程の書き込みが次の工程から正しく見えることを保証するGPUの同期指示。本エンジンはパスの宣言から自動で導出する。</td></tr>
 <tr id="term-shader"><td>シェーダー / 計算シェーダー</td><td>GPU上で走るプログラム / 描画パイプラインではなく汎用計算として走らせるシェーダー(コンピュートシェーダーとも呼ぶ)。</td></tr>
@@ -969,7 +969,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <div class="table-scroll">
 <table>
 <tr><th>用語</th><th>意味</th></tr>
-<tr id="term-gi"><td>GI(Global Illumination)</td><td>大域照明。光源から複数回跳ね返って届く間接光の計算。RTGIはレイトレーシングで解くGIを指す。</td></tr>
+<tr id="term-gi"><td>GI(Global Illumination)</td><td>大域照明。光源から1回以上跳ね返って届く間接光の計算。RTGIはレイトレーシングで解くGIを指す。</td></tr>
 <tr id="term-ibl"><td>IBL(Image-Based Lighting)</td><td>周囲環境の絵(環境マップ)を光源として使う照明。</td></tr>
 <tr id="term-ao"><td>AO(Ambient Occlusion)</td><td>環境光遮蔽。近くの遮蔽物により間接光が減る現象の近似。SSAOはスクリーン空間で解く版である。</td></tr>
 <tr id="term-ssr"><td>SSR(Screen Space Reflection)</td><td>スクリーン空間反射。描いた画面の中の情報だけで反射を作る方式。</td></tr>
