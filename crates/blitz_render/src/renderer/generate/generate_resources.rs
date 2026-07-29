@@ -11,7 +11,7 @@ mod simulation_resources;
 
 use super::frame_resources::フレーム資源;
 use crate::error::レンダラーエラー;
-use crate::renderer::draw_stage_resources::描画段階資源;
+use crate::renderer::draw_stage_resources::{描画段階資源, 生成要求 as 描画段階資源生成要求};
 use crate::renderer::frame_progress::フレーム進行;
 use crate::vulkan;
 use post_process_resources::描画先構成;
@@ -27,14 +27,15 @@ pub(super) fn 組み立てる(要求: 生成要求<'_>) -> Result<フレーム�
     let 基礎 = base_resources::組み立てる(要求.環境, &メモリプロパティ, 要求.描画シーン)?;
 
     let フレーム進行 = フレーム進行::生成する(device, 要求.環境.キューファミリ添字())?;
-    let 描画段階 = 描画段階資源::生成する(
+    let 描画段階 = 描画段階資源::生成する(描画段階資源生成要求 {
         device,
+        メモリプロパティ: &メモリプロパティ,
         シーンカラー形式,
-        基礎.シーン描画資源.ディスクリプタlayout(),
-        &基礎.ユニフォーム,
-        要求.シェーダー,
-        要求.フレーム構成,
-    )?;
+        ディスクリプタlayout: 基礎.シーン描画資源.ディスクリプタlayout(),
+        ユニフォーム: &基礎.ユニフォーム,
+        シェーダー: 要求.シェーダー,
+        構成: 要求.フレーム構成,
+    })?;
     let 粒子 = particle_resources::組み立てる(&要求, &メモリプロパティ, &基礎, シーンカラー形式)?;
     let gpu計測 = vulkan::gpu_timing::パス別GPU計測::生成する(device, 要求.タイムスタンプ対応か, 要求.タイムスタンプ周期ns)?;
     let ui一式 = vulkan::ui::UIリソース一式::生成する(device, 要求.提示.画像形式(), &要求.シェーダー.ui)?;

@@ -12,6 +12,7 @@ mod phase_tests;
 mod reference_parse;
 mod reference_record;
 mod reference_tests;
+mod transmittance_lut_tests;
 mod transmittance_tests;
 
 use blitz_math::メートル;

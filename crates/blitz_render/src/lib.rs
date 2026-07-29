@@ -82,7 +82,7 @@ pub use readback_result::読み戻し結果;
 pub use render_object_material::{個体変換列, 描画対象素材};
 pub use render_scene_material::描画シーン素材;
 pub use renderer::{CPU区間時間, パス別描画発行, レンダラー, 描画発行内訳, 段別個体数};
-pub use shader_bundle::シェーダー束;
+pub use shader_bundle::{シェーダー束, 大気LUTシェーダー一式};
 pub use shader_set::{シェーダー一式, シェーダー一式エラー};
 pub use skin_mesh::{スキンメッシュ素材, スキンメッシュ素材エラー, スキン頂点属性};
 pub use terrain_detail::{地形詳細段, 地形詳細段選択};

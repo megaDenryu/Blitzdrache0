@@ -2,8 +2,10 @@
 
 use ash::vk;
 
+mod atmosphere_lut_stage;
 mod shadow_stage;
 
+pub(super) use atmosphere_lut_stage::大気lutを積む;
 pub(super) use shadow_stage::影を積む;
 
 use super::base_images::基本画像ハンドル;

@@ -29,6 +29,11 @@ pub(crate) fn 状態へ写像する(用途: 画像用途) -> 画像状態 {
             vk::AccessFlags2::SHADER_SAMPLED_READ,
             vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL,
         ),
+        画像用途::コンピュート書き => 画像状態::生成する(
+            vk::PipelineStageFlags2::COMPUTE_SHADER,
+            vk::AccessFlags2::SHADER_STORAGE_WRITE,
+            vk::ImageLayout::GENERAL,
+        ),
         画像用途::転送元 => 画像状態::生成する(
             vk::PipelineStageFlags2::COPY,
             vk::AccessFlags2::TRANSFER_READ,
@@ -60,6 +65,7 @@ pub(crate) fn 書き込みを含むか(access: vk::AccessFlags2) -> bool {
         || access.contains(vk::AccessFlags2::DEPTH_STENCIL_ATTACHMENT_WRITE)
         || access.contains(vk::AccessFlags2::TRANSFER_WRITE)
         || access.contains(vk::AccessFlags2::SHADER_WRITE)
+        || access.contains(vk::AccessFlags2::SHADER_STORAGE_WRITE)
         || access.contains(vk::AccessFlags2::HOST_WRITE)
         || access.contains(vk::AccessFlags2::MEMORY_WRITE)
 }

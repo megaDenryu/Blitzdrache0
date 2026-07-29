@@ -45,13 +45,13 @@ pub(super) fn 行列を書き込む(バイト列: &mut [u8], 位置: &mut usize,
     }
 }
 
-pub(super) fn vec4を書き込む(バイト列: &mut [u8], 位置: &mut usize, 値: [f32; 4]) {
+pub(crate) fn vec4を書き込む(バイト列: &mut [u8], 位置: &mut usize, 値: [f32; 4]) {
     for 成分 in 値 {
         バイト列[*位置..*位置 + 4].copy_from_slice(&成分.to_le_bytes());
         *位置 += 4;
     }
 }
 
-pub(super) fn ベクトル3をvec4化(ベクトル: [f32; 3], w: f32) -> [f32; 4] {
+pub(crate) fn ベクトル3をvec4化(ベクトル: [f32; 3], w: f32) -> [f32; 4] {
     [ベクトル[0], ベクトル[1], ベクトル[2], w]
 }
