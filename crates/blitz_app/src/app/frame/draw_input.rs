@@ -29,7 +29,7 @@ pub(in crate::app) fn 視点を求める(アプリ: &アプリ) -> フレーム�
 
 pub(in crate::app) fn 組み立てる<'a>(
     アプリ: &アプリ,
-    大気lut入力: Option<blitz_render::大気LUT入力>,
+    大気lut入力: Option<blitz_render::atmosphere_lut_input::大気LUT入力>,
     視点情報: &フレーム視点,
     地形詳細段選択一覧: &'a [blitz_render::地形詳細段選択],
     可視個体選択一覧: blitz_render::可視個体選択一覧<'a>,

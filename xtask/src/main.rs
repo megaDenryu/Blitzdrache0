@@ -3,6 +3,7 @@
 
 use std::process::ExitCode;
 
+mod atmosphere_lut;
 mod bench;
 mod cloth_empty;
 mod cloth_night;
@@ -76,6 +77,7 @@ fn main() -> ExitCode {
         Some("csm-seam") => csm_seam::実行する(),
         Some("sky-draw") => sky_draw::実行する(),
         Some("sky-state") => sky_state::実行する(),
+        Some("atmosphere-lut") => atmosphere_lut::実行する(),
         Some("sky-time") => sky_time::実行する(),
         Some("ow3-dod") => ow3_dod::実行する(),
         Some("ow4-bench") => ow4_bench::実行する(&引数一覧[1..]),

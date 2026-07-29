@@ -13,21 +13,24 @@ mod inputs;
 mod medium_bytes;
 mod medium_uniform;
 mod multiscatter_descriptor;
+pub(crate) mod pass;
 mod pipeline;
+mod probe;
+mod readback_buffer;
 mod transmittance_descriptor;
 
 use ash::vk;
 
 pub(crate) use inputs::{大気LUT描画入力, 大気LUT生成入力};
 
+use inputs::ワークグループ数を求める;
+pub(crate) use probe::大気lutをgpuで焼いて読み戻す;
+
 use crate::atmosphere::{大気LUT解像度, 大気散乱媒体};
 use crate::error::レンダラーエラー;
 use crate::shader_bundle::大気LUTシェーダー一式;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
-
-/// 1ワークグループが受け持つテクセルの一辺。生成シェーダーの`numthreads`と一致させる。
-const ワークグループの一辺: u32 = 8;
 
 pub(crate) struct 大気LUT一式 {
     解像度: 大気LUT解像度,
@@ -92,8 +95,4 @@ impl 大気LUT一式 {
         self.束縛.破棄する(device);
         self.基盤.破棄する(device);
     }
-}
-
-fn ワークグループ数を求める(幅: u32, 高さ: u32) -> [u32; 2] {
-    [幅.div_ceil(ワークグループの一辺), 高さ.div_ceil(ワークグループの一辺)]
 }

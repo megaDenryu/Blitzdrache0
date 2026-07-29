@@ -6,8 +6,9 @@
 //! 無言で既定の大気を使うことも、無言でLUTを作らないこともしない(参照: CLAUDE.md「不在・未設定・使用不可」)。
 
 use super::レンダラー;
+use crate::atmosphere_lut_input::大気LUT入力;
 use crate::error::{レンダラーエラー, 空エラー};
-use crate::frame_input::{フレーム描画入力, 大気LUT入力};
+use crate::frame_input::フレーム描画入力;
 use crate::vulkan::atmosphere_lut::大気LUT描画入力;
 use crate::vulkan::sync::フレームスロット添字;
 

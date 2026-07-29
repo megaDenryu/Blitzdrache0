@@ -1,6 +1,7 @@
 //! 終了時に要求された計測値をコンソールへ表示する。どの報告を出すかの取りまとめは`exit`、
 //! 起動直後に出す構成の要約は`composition`にある。
 
+pub(crate) mod atmosphere_lut;
 pub(crate) mod composition;
 pub(crate) mod display_timing;
 pub(crate) mod draw_issue;

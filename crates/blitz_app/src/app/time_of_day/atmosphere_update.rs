@@ -6,7 +6,7 @@
 //! 履歴・乱数・フレーム番号・時間積算を判定へ入れない(参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「更新の決定性」)。
 
 use blitz_engine::sky::atmosphere::大気静的キー;
-use blitz_render::大気LUT生成指示;
+use blitz_render::atmosphere_lut_input::大気LUT生成指示;
 
 pub(in crate::app) struct 大気更新判定 {
     /// 直近に焼いたときの鍵。まだ1度も焼いていないフレームでは`None`であり、最初のフレームが必ず焼く。

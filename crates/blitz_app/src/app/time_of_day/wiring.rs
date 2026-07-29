@@ -6,12 +6,13 @@
 use blitz_engine::sky::atmosphere::大気媒体方針;
 use blitz_engine::sky::世界の空方針;
 use blitz_render::atmosphere::大気散乱媒体;
-use blitz_render::{ライティング入力, 大気LUT入力, 空入力};
+use blitz_render::atmosphere_lut_input::大気LUT入力;
+use blitz_render::{ライティング入力, 空入力};
 
-use super::atmosphere_medium::確定した大気散乱媒体へ写す;
 use super::atmosphere_update::大気更新判定;
 use super::clock::時間帯;
 use super::scene_policy;
+use crate::atmosphere_medium::確定した大気散乱媒体へ写す;
 use crate::cli::時間帯起動設定;
 
 pub(in crate::app) struct 天空配線 {

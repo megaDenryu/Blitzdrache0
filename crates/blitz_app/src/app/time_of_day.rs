@@ -4,9 +4,6 @@
 //! 空を持つ世界だけが時刻を読む。空を持たない世界はこの配線を1度も通らず、絵は世界が決めた固定の光のままである。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「段階導入」
 
-mod atmosphere_medium;
-#[cfg(test)]
-mod atmosphere_medium_tests;
 mod atmosphere_update;
 mod clock;
 mod scene_policy;

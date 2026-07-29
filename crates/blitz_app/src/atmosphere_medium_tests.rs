@@ -5,7 +5,7 @@
 use blitz_engine::sky::atmosphere::大気媒体方針;
 use blitz_render::atmosphere::大気散乱媒体;
 
-use super::atmosphere_medium::大気散乱媒体へ写す;
+use crate::atmosphere_medium::大気散乱媒体へ写す;
 
 fn 地球標準の媒体() -> 大気散乱媒体 {
     大気散乱媒体へ写す(&大気媒体方針::地球標準()).unwrap()

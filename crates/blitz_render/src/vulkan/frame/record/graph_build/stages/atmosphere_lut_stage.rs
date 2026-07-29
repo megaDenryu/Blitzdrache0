@@ -1,8 +1,8 @@
 //! 大気LUTの生成をレンダーグラフの具体的なパスへ展開する。担当する工程は「LUTを焼くフレームで生成パスを宣言順に積む」ことである。
 //! 受け取るのはグラフとそのフレームのLUT生成入力、返り値は無く、副作用はグラフへの画像登録とパスの追加だけである。
 
+use crate::vulkan::atmosphere_lut::pass as atmosphere_lut_pass;
 use crate::vulkan::atmosphere_lut::大気LUT描画入力;
-use crate::vulkan::frame::record::atmosphere_lut_pass;
 use crate::vulkan::graph;
 
 /// 大気LUTの生成を積む。宣言順を透過率が先になるようにするのは、後段のLUTが透過率LUTを読むためである。

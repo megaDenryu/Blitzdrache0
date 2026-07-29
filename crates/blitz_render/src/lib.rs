@@ -3,6 +3,8 @@
 //! 注意: 公開APIに ash の型（vk::* やハンドル）を露出してはならない。露出した瞬間、unsafe の封じ込めが破れて上位層に責任が漏れる。
 
 pub mod atmosphere;
+pub mod atmosphere_lut_input;
+pub mod atmosphere_lut_probe;
 pub mod cascade;
 mod clear_color;
 mod cloth_material;
@@ -62,9 +64,7 @@ pub use draw_result::{描画結果, 見送り理由};
 pub use error::{レンダラーエラー, 布エラー};
 pub use extent::ウィンドウ寸法;
 pub use frame_composition::{フレーム構成, フレーム構成エラー, フレーム段階};
-pub use frame_input::{
-    フレーム描画入力, 大気LUT入力, 大気LUT生成指示, 布フレーム入力, 空の方向係数の個数, 空入力, 空入力エラー
-};
+pub use frame_input::{フレーム描画入力, 布フレーム入力, 空の方向係数の個数, 空入力, 空入力エラー};
 pub use gpu_memory_stats::{GPUメモリ用途, GPUメモリ用途別確保量, GPUメモリ統計};
 pub use lighting_input::{
     ライティング入力, ライティング入力エラー, 光強度, 光色, 影の落ち方, 影入力, 影正射影範囲, 方向光入力, 点光源入力, 環境光係数,

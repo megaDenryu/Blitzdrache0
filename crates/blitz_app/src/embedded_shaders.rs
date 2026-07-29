@@ -46,6 +46,14 @@ const スキニングSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sk
 const 大気透過率SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/atmosphere_transmittance.spv"));
 const 大気多重散乱SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/atmosphere_multiscatter.spv"));
 
+/// 大気LUTのコンピュートシェーダーだけを組み立てる。読み戻し検査はレンダラーを作らないため、束の全部を要らない。
+pub(crate) fn 埋め込み大気lutシェーダーを生成する() -> Result<大気LUTシェーダー一式, 起動エラー> {
+    Ok(大気LUTシェーダー一式 {
+        透過率: コンピュートシェーダー::生成する(大気透過率SPIRV.to_vec())?,
+        多重散乱: コンピュートシェーダー::生成する(大気多重散乱SPIRV.to_vec())?,
+    })
+}
+
 /// レンダラー生成に渡す全シェーダーを埋め込みSPIR-Vから組み立てる(判断38)。
 /// 粒子系シェーダーは粒子トイまたは表面流の指定時だけ含める。
 pub(crate) fn 埋め込みシェーダー束を生成する(表示: 粒子表示モード) -> Result<シェーダー束, 起動エラー> {
@@ -69,10 +77,7 @@ pub(crate) fn 埋め込みシェーダー束を生成する(表示: 粒子表示
         シーン: シェーダー一式::生成する(頂点SPIRV.to_vec(), フラグメントSPIRV.to_vec())?,
         シャドウ: シェーダー一式::生成する(シャドウ頂点SPIRV.to_vec(), シャドウフラグメントSPIRV.to_vec())?,
         空: シェーダー一式::生成する(空頂点SPIRV.to_vec(), 空フラグメントSPIRV.to_vec())?,
-        大気lut: 大気LUTシェーダー一式 {
-            透過率: コンピュートシェーダー::生成する(大気透過率SPIRV.to_vec())?,
-            多重散乱: コンピュートシェーダー::生成する(大気多重散乱SPIRV.to_vec())?,
-        },
+        大気lut: 埋め込み大気lutシェーダーを生成する()?,
         トーンマップ: シェーダー一式::生成する(トーンマップ頂点SPIRV.to_vec(), トーンマップフラグメントSPIRV.to_vec())?,
         ブルーム前処理: シェーダー一式::生成する(ブルーム縮小側頂点SPIRV.to_vec(), ブルーム前処理SPIRV.to_vec())?,
         ブルーム縮小: シェーダー一式::生成する(ブルーム縮小側頂点SPIRV.to_vec(), ブルーム縮小SPIRV.to_vec())?,

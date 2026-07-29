@@ -2,11 +2,10 @@
 //! 視点・ライティング・シミュレーションの入力を増やしても引数列を拡散させないため、
 //! `一フレーム描画する`系のAPIはこの1つの入力にまとめる。
 
+use crate::atmosphere_lut_input::大気LUT入力;
 use crate::clear_color::クリアカラー;
-mod atmosphere_input;
 mod sky_input;
 
-pub use atmosphere_input::{大気LUT入力, 大気LUT生成指示};
 pub use sky_input::{空の方向係数の個数, 空入力, 空入力エラー};
 
 use crate::lighting_input::ライティング入力;
