@@ -3,7 +3,7 @@
 use std::slice::Iter;
 
 use super::streaming_settings::プレイヤー位置源;
-use super::{instance_lod_args, lod_crack_args, placement_args, value_args, 布モード, 粒子表示モード, 起動設定};
+use super::{instance_lod_args, lod_crack_args, placement_args, time_args, value_args, 布モード, 粒子表示モード, 起動設定};
 use crate::error::起動エラー;
 
 pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &mut Iter<String>) -> Result<(), 起動エラー> {
@@ -19,6 +19,9 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--global-offset" => 設定.平行移動.大域オフセット = placement_args::global_offset引数を処理する(残り)?,
         "--camera-nudge" => 設定.平行移動.カメラずれ = placement_args::camera_nudge引数を処理する(残り)?,
         "--camera-pitch" => 設定.平行移動.カメラ俯角差分 = placement_args::camera_pitch引数を処理する(残り)?,
+        "--camera-yaw" => 設定.平行移動.カメラ方位差分 = placement_args::camera_yaw引数を処理する(残り)?,
+        "--time-of-day" => 設定.時間帯.一日内時刻の秒 = Some(time_args::time_of_day引数を処理する(残り)?),
+        "--time-scale" => 設定.時間帯.時間倍率 = Some(time_args::time_scale引数を処理する(残り)?),
         "--lod-crack-pair" => 設定.ストリーミング.lod継ぎ目検査 = Some(lod_crack_args::引数を処理する(残り)?),
         "--lod-crack-missing" => {
             let 欠落座標 = lod_crack_args::欠落引数を処理する(残り)?;

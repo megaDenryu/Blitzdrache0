@@ -6,8 +6,13 @@ use blitz_render::{
     ライティング入力, ライティング入力エラー, 光強度, 光色, 影の落ち方, 影入力, 影正射影範囲, 方向光入力, 点光源入力, 環境光係数
 };
 
+mod from_sky_state;
+#[cfg(test)]
+mod from_sky_state_tests;
 #[cfg(test)]
 mod lighting_tests;
+
+pub use from_sky_state::天空状態をライティングへ写す;
 
 /// 影の正射影が見る範囲の中心。既定シーンは原点近傍に置くため世界原点を注視する。
 const 影注視点メートル: f64 = 0.0;

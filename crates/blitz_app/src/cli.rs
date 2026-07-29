@@ -5,6 +5,8 @@
 mod cli_tests;
 #[cfg(test)]
 mod launch_request_tests;
+#[cfg(test)]
+mod time_args_tests;
 
 mod argument_error;
 mod instance_lod_args;
@@ -17,6 +19,7 @@ mod placement_args;
 mod placement_args_tests;
 mod setting_apply;
 mod streaming_settings;
+mod time_args;
 mod time_of_day_settings;
 mod types;
 mod value_args;
