@@ -9,6 +9,7 @@
 //! 計算はf64で行い、f32へ狭めるのは呼び出し側へ返す境界だけである。理由は`narrowing.rs`にある。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「大気LUT方式の設計(第7段で実装する)」
 
+mod albedo_rgb;
 mod asymmetry;
 mod attenuating_component;
 mod density;
@@ -26,6 +27,7 @@ mod phase;
 mod phase_value;
 mod sample_count;
 mod scattering_cosine;
+mod scattering_medium;
 mod transmittance;
 mod transmittance_rgb;
 mod zenith_cosine;
@@ -33,6 +35,7 @@ mod zenith_cosine;
 #[cfg(test)]
 mod atmosphere_tests;
 
+pub use albedo_rgb::地表アルベドRGB;
 pub use asymmetry::位相非対称係数;
 pub use attenuating_component::減衰成分;
 pub use density::規格化密度を求める;
@@ -49,6 +52,7 @@ pub use phase::{ミー位相関数, レイリー位相関数};
 pub use phase_value::位相関数値;
 pub use sample_count::積分標本数;
 pub use scattering_cosine::散乱角余弦;
+pub use scattering_medium::大気散乱媒体;
 pub use transmittance::上端までの透過率;
 pub use transmittance_rgb::透過率RGB;
 pub use zenith_cosine::天頂余弦;

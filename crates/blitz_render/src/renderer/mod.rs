@@ -3,6 +3,7 @@
 //!
 //! 参照: CLAUDE.md「unsafe の規律」「封じ込め」。ash型は一切ここから公開しない。
 
+mod atmosphere_lut_write;
 mod chunk_bundle;
 mod cloth_write;
 mod cpu_timing;
