@@ -1,15 +1,13 @@
-// 空パス(OW5第2段): Hosek-Wilkie解析近似のHDR空を全画面三角形で描く。
-// 係数はCPU側(blitz_engineの空放射輝度係数)が焼き、ここは方向ごとの放射輝度式F(theta, gamma)を評価するだけである。
+// 空パス(OW5第2段): Hosek-Wilkie解析近似のHDR空を全画面三角形で描く。係数はCPU側(blitz_engineの空放射輝度係数)が焼き、ここは方向ごとの放射輝度式F(theta, gamma)を評価するだけである。
 // 深度がクリア値のままの画素だけへ描く限定はパイプラインの深度比較(EQUAL、書き込みなし)が担う。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 // 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「空の方式」
 
-// binding3のフレームユニフォーム。前半はscene.slangのFrameUniformと同じ並びであり、
-// 後半の inverseViewProjection 以降が空パスだけが読む区画である。
+// binding3のフレームユニフォーム。前半はscene.slangのFrameUniformと同じ並びであり、後半の inverseViewProjection 以降が空パスだけが読む区画である。
 // 注意: 前半の並びをscene.slangと食い違わせると後半のオフセットがずれる。
 struct SkyFrameUniform
 {
-    column_major float4x4 lightViewProjection;
+    column_major float4x4 cascadeLightViewProjection[4];
     column_major float4x4 viewProjection;
     float4 cameraRelativePosition;
     float4 directionalLightDirection;
@@ -17,6 +15,9 @@ struct SkyFrameUniform
     float4 pointLightPosition;
     float4 pointLightColor;
     float4 ambientAndLighting;
+    float4 cascadeSplitDepths;
+    float4 cascadeTransitionWidths;
+    float4 cameraForward;
     column_major float4x4 inverseViewProjection;
     // rgbが係数A〜I、wは未使用。
     float4 skyCoefficients[9];

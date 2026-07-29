@@ -13,6 +13,7 @@ mod buffer_state;
 mod builder;
 mod clear_spec;
 mod context;
+mod depth_attachment;
 mod executor;
 mod handle;
 mod initial_state;
@@ -27,6 +28,7 @@ mod usage;
 pub(crate) use aspect::画像アスペクト;
 pub(crate) use builder::グラフ;
 pub(crate) use clear_spec::クリア指定;
+pub(crate) use depth_attachment::深度アタッチメント;
 pub(crate) use executor::実行する;
 pub(crate) use handle::{バッファハンドル, 画像ハンドル};
 pub(crate) use initial_state::{

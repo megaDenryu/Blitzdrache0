@@ -7,18 +7,19 @@
 // シェーダーがこの列を読まないことでなく、書き込みの地点で列が全個体の並べ替えであることを検査し、
 // 発行のインスタンス数へ段の可視数でなく段の個体数を渡すことで守る
 // (参照: `_doc/設計/植生インスタンスと物量計測.md`「可視判定」)。
+// 帯ごとに1回ずつ発行し、どの帯を描いているかはプッシュ定数で受け取る。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 import instance_transform;
-import relative_anchor;
+import shadow_push;
 import visible_id;
 
-// scene.slangのFrameUniformと同じbinding3を指すが、先頭のlightViewProjectionだけを
+// scene.slangのFrameUniformと同じbinding3を指すが、先頭のcascadeLightViewProjectionだけを
 // 宣言する(判断36: 両ファイルとも先頭配置のため、この構造体の1フィールド分の
 // オフセットがscene.slang側と一致する)。
 struct FrameUniformLight
 {
-    column_major float4x4 lightViewProjection;
+    column_major float4x4 cascadeLightViewProjection[4];
 };
 
 [[vk::binding(3, 0)]]
@@ -40,8 +41,8 @@ VertexOutput vertexMain(VertexInput input, uint instanceIndex : SV_InstanceID, u
 {
     VertexOutput output;
     InstanceTransform transform = instanceTransforms[resolveInstanceIndex(instanceIndex, startInstance)];
-    float3 worldPosition = applyRelativeAnchor(mul(transform.localToWorld, float4(input.position, 1.0)).xyz);
-    output.position = mul(frameUniformLight.lightViewProjection, float4(worldPosition, 1.0));
+    float3 worldPosition = applyShadowAnchor(mul(transform.localToWorld, float4(input.position, 1.0)).xyz);
+    output.position = mul(frameUniformLight.cascadeLightViewProjection[currentCascadeIndex()], float4(worldPosition, 1.0));
     return output;
 }
 

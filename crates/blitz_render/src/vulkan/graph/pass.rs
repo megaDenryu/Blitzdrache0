@@ -3,6 +3,7 @@
 
 use super::clear_spec::クリア指定;
 use super::context::記録文脈;
+use super::depth_attachment::深度アタッチメント;
 use super::handle::{バッファハンドル, 画像ハンドル};
 use super::usage::{バッファ用途, 画像用途};
 
@@ -15,7 +16,7 @@ use super::usage::{バッファ用途, 画像用途};
 pub(crate) enum パス種別 {
     グラフィックス {
         カラー: Option<画像ハンドル>,
-        深度: Option<画像ハンドル>,
+        深度: Option<深度アタッチメント>,
         クリア指定: クリア指定,
     },
     コンピュート,

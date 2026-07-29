@@ -1,11 +1,10 @@
-// PBR metallic-roughnessモデル(方向光+点光源+環境光+法線マップ)と、方向光の
-// シャドウマップ(binding4の比較サンプラー、PCF 3x3)の合成(判断23〜26・35)。
+// PBR metallic-roughnessモデル(方向光+点光源+環境光+法線マップ)と、方向光のカスケードシャドウマップ(binding4の比較サンプラー、PCF 3x3)の合成(判断23〜26・35)。
 // 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`。シェーダー内識別子はASCII。
-// エントリポイント・FrameUniformはここに置き、PBR関数群は`pbr.slang`、
-// ライティング合成+シャドウ判定は`lighting.slang`へ分割してimportする。
+// エントリポイント・FrameUniformはここに置き、PBR関数群は`pbr.slang`、ライティング合成+シャドウ判定は`lighting.slang`、帯選択と境界ブレンドは`cascade_shadow.slang`へ分割してimportする。
 
 import pbr;
 import lighting;
+import cascade_shadow;
 import instance_transform;
 import relative_anchor;
 import scene_io;
@@ -13,8 +12,8 @@ import visible_id;
 
 struct FrameUniform
 {
-    // column_major明示(CPU側は列優先配列)。lightViewProjectionは先頭(shadow.slangと同じ配置、判断36)。
-    column_major float4x4 lightViewProjection;
+    // column_major明示(CPU側は列優先配列)。帯ごとのライトビュー射影は先頭(shadow.slangと同じ配置、判断36)。
+    column_major float4x4 cascadeLightViewProjection[4];
     column_major float4x4 viewProjection;
     float4 cameraRelativePosition;
     float4 directionalLightDirection;
@@ -22,6 +21,10 @@ struct FrameUniform
     float4 pointLightPosition;
     float4 pointLightColor;
     float4 ambientAndLighting;
+    // 以下3つはxyzだけを使いwは未使用。帯の境界のビュー空間深度・境界の手前の遷移帯の幅・カメラ前方向である。
+    float4 cascadeSplitDepths;
+    float4 cascadeTransitionWidths;
+    float4 cameraForward;
 };
 
 struct ObjectUniform
@@ -32,18 +35,14 @@ struct ObjectUniform
 };
 
 // binding3: フレームユニフォームバッファ(判断24)。フレームインフライトごとに別のディスクリプタセットが同じbindingを指す。
-[[vk::binding(3, 0)]]
-ConstantBuffer<FrameUniform> frameUniform;
-
-[[vk::binding(5, 0)]]
-ConstantBuffer<ObjectUniform> objectUniform;
+[[vk::binding(3, 0)]] ConstantBuffer<FrameUniform> frameUniform;
+[[vk::binding(5, 0)]] ConstantBuffer<ObjectUniform> objectUniform;
 
 [[vk::binding(0, 0)]] Sampler2D baseColorTexture;
 [[vk::binding(1, 0)]] Sampler2D metallicRoughnessTexture;
 [[vk::binding(2, 0)]] Sampler2D normalMapTexture;
-
-// binding4: シャドウマップ(判断35)。テクスチャ+比較サンプラーを同一bindingへ束ねる。
-[[vk::binding(4, 0)]] [[vk::combinedImageSampler]] Texture2D shadowMapTexture;
+// binding4: カスケードシャドウマップ(判断35・OW5第5段)。帯ごとの層を持つ2D配列テクスチャ+比較サンプラーを同一bindingへ束ねる。
+[[vk::binding(4, 0)]] [[vk::combinedImageSampler]] Texture2DArray shadowMapTexture;
 [[vk::binding(4, 0)]] [[vk::combinedImageSampler]] SamplerComparisonState shadowMapSampler;
 static const float shadowMapTexelSize = 1.0 / 2048.0;
 
@@ -79,12 +78,13 @@ float4 fragmentMain(VertexOutput input) : SV_Target
         return float4(albedo, 1.0);
     }
 
-    // glTF規約: metallicRoughnessテクスチャはG=粗さ・B=金属度。
+    // glTF規約: metallicRoughnessテクスチャはG=粗さ・B=金属度。ambientAndLighting.zは方向光が影を落とすかであり、0のとき比較サンプリング自体を行わない。
     float2 metallicRoughnessSample = metallicRoughnessTexture.Sample(input.uv).gb;
     float3 sampledNormal = normalMapTexture.Sample(input.uv).rgb * 2.0 - 1.0;
-    // ambientAndLighting.zは方向光が影を落とすか。0のとき比較サンプリング自体を行わない。
+    float viewDepth = viewDepthOf(input.relativePosition, frameUniform.cameraRelativePosition.xyz, frameUniform.cameraForward.xyz);
     float shadowFactor = frameUniform.ambientAndLighting.z > 0.5
-        ? computeShadowFactor(input.relativePosition, frameUniform.lightViewProjection, shadowMapTexture, shadowMapSampler, shadowMapTexelSize)
+        ? computeCascadedShadowFactor(input.relativePosition, viewDepth, frameUniform.cascadeLightViewProjection,
+              frameUniform.cascadeSplitDepths.xyz, frameUniform.cascadeTransitionWidths.xyz, shadowMapTexture, shadowMapSampler, shadowMapTexelSize)
         : 1.0;
 
     float3 litColor = shadeLitSurface(

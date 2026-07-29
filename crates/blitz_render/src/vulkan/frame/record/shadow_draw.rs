@@ -4,12 +4,17 @@
 use ash::vk;
 
 use super::scene_pass::布ドロー;
+use crate::cascade::帯番号;
 use crate::vulkan::frame::シャドウ描画入力;
-use crate::vulkan::relative_anchor;
 use crate::vulkan::shadow_map::シャドウマップ一辺;
+use crate::vulkan::shadow_push;
 
 pub(super) fn 記録する(
-    device: &ash::Device, command_buffer: vk::CommandBuffer, 入力一覧: &[シャドウ描画入力], 布ドロー: Option<布ドロー<'_>>
+    device: &ash::Device,
+    command_buffer: vk::CommandBuffer,
+    番号: 帯番号,
+    入力一覧: &[シャドウ描画入力],
+    布ドロー: Option<布ドロー<'_>>,
 ) {
     if 入力一覧.is_empty() && 布ドロー.is_none() {
         // 影を落とす対象も布も無いフレーム。全個体がライト視錐台の外にある状態で実際に起こる。
@@ -33,19 +38,19 @@ pub(super) fn 記録する(
         if let Some(先頭) = 入力一覧.first() {
             device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 先頭.pipeline);
             for 入力 in 入力一覧 {
-                対象を記録する(device, command_buffer, 入力);
+                対象を記録する(device, command_buffer, 番号, 入力);
             }
         }
         if let Some(布) = 布ドロー {
-            布を記録する(device, command_buffer, 布);
+            布を記録する(device, command_buffer, 番号, 布);
         }
     }
 }
 
-unsafe fn 対象を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 入力: &シャドウ描画入力) {
+unsafe fn 対象を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 番号: 帯番号, 入力: &シャドウ描画入力) {
     // 安全性: 呼び出し元がコマンド記録中と全入力資源の有効性を保証する。
     unsafe {
-        relative_anchor::積む(device, command_buffer, 入力.layout, 入力.相対アンカー);
+        shadow_push::積む(device, command_buffer, 入力.layout, 入力.相対アンカー, 番号);
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,
@@ -62,12 +67,12 @@ unsafe fn 対象を記録する(device: &ash::Device, command_buffer: vk::Comman
 
 /// 布は専用のシャドウパイプラインとディスクリプタセットを束縛する。どちらも描画対象から借りないため、
 /// 描画対象が1件も無いフレームでも、走査順が入れ替わったフレームでも、布の影は同じ位置に出る。
-unsafe fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 布: 布ドロー<'_>) {
+unsafe fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 番号: 帯番号, 布: 布ドロー<'_>) {
     let シャドウ = &布.入力.外部資源.シャドウ;
     // 安全性: 呼び出し元がコマンド記録中と全入力資源の有効性を保証する。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, シャドウ.pipeline);
-        relative_anchor::積む(device, command_buffer, シャドウ.layout, 布.入力.相対アンカー);
+        shadow_push::積む(device, command_buffer, シャドウ.layout, 布.入力.相対アンカー, 番号);
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,

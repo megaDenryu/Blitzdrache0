@@ -8,7 +8,7 @@ import relative_anchor;
 
 struct FrameUniform
 {
-    column_major float4x4 lightViewProjection;
+    column_major float4x4 cascadeLightViewProjection[4];
     column_major float4x4 viewProjection;
     float4 cameraRelativePosition;
     float4 directionalLightDirection;
@@ -16,14 +16,15 @@ struct FrameUniform
     float4 pointLightPosition;
     float4 pointLightColor;
     float4 ambientAndLighting;
-    float4 baseColorFactor;
-    float4 metallicRoughnessFactor;
+    float4 cascadeSplitDepths;
+    float4 cascadeTransitionWidths;
+    float4 cameraForward;
 };
 
 [[vk::binding(3, 0)]]
 ConstantBuffer<FrameUniform> frameUniform;
 
-[[vk::binding(4, 0)]] [[vk::combinedImageSampler]] Texture2D shadowMapTexture;
+[[vk::binding(4, 0)]] [[vk::combinedImageSampler]] Texture2DArray shadowMapTexture;
 [[vk::binding(4, 0)]] [[vk::combinedImageSampler]] SamplerComparisonState shadowMapSampler;
 
 static const float3 clothColor = float3(0.55, 0.1, 0.12);
@@ -58,14 +59,14 @@ VertexOutput vertexMain(VertexInput input)
 
 float shadowFactor(float3 relativePosition)
 {
-    float4 lightClip = mul(frameUniform.lightViewProjection, float4(relativePosition, 1.0));
+    float4 lightClip = mul(frameUniform.cascadeLightViewProjection[0], float4(relativePosition, 1.0));
     float3 projected = lightClip.xyz / lightClip.w;
     float2 shadowUv = projected.xy * float2(0.5, -0.5) + 0.5;
     if (any(shadowUv < 0.0) || any(shadowUv > 1.0))
     {
         return 1.0;
     }
-    return shadowMapTexture.SampleCmp(shadowMapSampler, shadowUv, projected.z - 0.002);
+    return shadowMapTexture.SampleCmp(shadowMapSampler, float3(shadowUv, 0.0), projected.z - 0.002);
 }
 
 // 両面ランバート: 裏面から見た場合は法線を反転して照らす(布は薄い面のため)。

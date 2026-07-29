@@ -7,15 +7,16 @@
 // 布を描くと、布の頂点へ走査順で最初の描画対象の個体変換が掛かり、布の影がどの描画対象が
 // 先に来るかで動いてしまう。その依存を断つためにこのシェーダーがある
 // (参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「描画段階資源の器と布専用シャドウ経路」)。
+// 帯ごとに1回ずつ発行し、どの帯を描いているかはプッシュ定数で受け取る。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
-import relative_anchor;
+import shadow_push;
 
 // 布専用のディスクリプタセットレイアウトのbinding3を指す。中身はフレームユニフォームバッファであり、
-// 先頭のlightViewProjectionだけを宣言する(判断36: scene.slangのFrameUniformも先頭に同じ行列を置く)。
+// 先頭のcascadeLightViewProjectionだけを宣言する(判断36: scene.slangのFrameUniformも先頭に同じ配列を置く)。
 struct FrameUniformLight
 {
-    column_major float4x4 lightViewProjection;
+    column_major float4x4 cascadeLightViewProjection[4];
 };
 
 [[vk::binding(3, 0)]]
@@ -36,8 +37,8 @@ struct VertexOutput
 VertexOutput vertexMain(VertexInput input)
 {
     VertexOutput output;
-    float3 worldPosition = applyRelativeAnchor(input.position);
-    output.position = mul(frameUniformLight.lightViewProjection, float4(worldPosition, 1.0));
+    float3 worldPosition = applyShadowAnchor(input.position);
+    output.position = mul(frameUniformLight.cascadeLightViewProjection[currentCascadeIndex()], float4(worldPosition, 1.0));
     return output;
 }
 

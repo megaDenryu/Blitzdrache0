@@ -7,7 +7,7 @@ use ash::vk;
 
 use crate::vulkan::frame::draw_commands::u32を丸めずf32へ変換する;
 use crate::vulkan::frame::空描画入力;
-use crate::vulkan::graph::{クリア指定, パス宣言, パス種別, 画像ハンドル, 画像用途};
+use crate::vulkan::graph::{クリア指定, パス宣言, パス種別, 深度アタッチメント, 画像ハンドル, 画像用途};
 
 pub(super) fn 作る<'a>(
     カラー: 画像ハンドル, 深度: 画像ハンドル, 入力: &'a 空描画入力, 寸法: vk::Extent2D
@@ -20,7 +20,7 @@ pub(super) fn 作る<'a>(
         Vec::new(),
         パス種別::グラフィックス {
             カラー: Some(カラー),
-            深度: Some(深度),
+            深度: Some(深度アタッチメント::全体(深度)),
             クリア指定: クリア指定::ロードする,
         },
         move |文脈| {

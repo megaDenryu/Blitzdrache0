@@ -29,7 +29,7 @@ impl カメラ相対アンカー {
         ))
     }
 
-    fn バイト列(self) -> [u8; 16] {
+    pub(crate) fn バイト列(self) -> [u8; 16] {
         let mut バイト列 = [0u8; 16];
         for (添字, 成分) in self.成分.iter().enumerate() {
             let 先頭 = 添字 * 4;

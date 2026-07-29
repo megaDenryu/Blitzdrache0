@@ -6,7 +6,7 @@ use ash::vk;
 use crate::clear_color::クリアカラー;
 use crate::vulkan::frame::{draw_commands, ジオメトリ入力, 布描画入力};
 use crate::vulkan::graph::{
-    クリア指定, バッファハンドル, バッファ用途, パス宣言, パス種別, 画像ハンドル, 画像用途
+    クリア指定, バッファハンドル, バッファ用途, パス宣言, パス種別, 深度アタッチメント, 画像ハンドル, 画像用途
 };
 use crate::vulkan::relative_anchor;
 
@@ -43,7 +43,7 @@ pub(super) fn 作る<'a>(
         Vec::new(),
         パス種別::グラフィックス {
             カラー: Some(カラー),
-            深度: Some(深度),
+            深度: Some(深度アタッチメント::全体(深度)),
             クリア指定: クリア指定::クリアする { カラー: クリア色 },
         },
         move |文脈| {

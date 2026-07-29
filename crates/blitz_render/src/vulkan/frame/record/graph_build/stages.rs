@@ -2,12 +2,14 @@
 
 use ash::vk;
 
+mod shadow_stage;
+
+pub(super) use shadow_stage::影を積む;
+
 use super::base_images::基本画像ハンドル;
 use crate::clear_color::クリアカラー;
-use crate::vulkan::frame::record::{cloth_passes, particle_draw_pass, particle_update_pass, scene_pass, shadow_pass, skinning_pass, sky_pass};
-use crate::vulkan::frame::{
-    シャドウ描画入力, ジオメトリ入力, スキニング描画入力, 布描画入力, 空描画入力, 粒子描画入力
-};
+use crate::vulkan::frame::record::{cloth_passes, particle_draw_pass, particle_update_pass, scene_pass, skinning_pass, sky_pass};
+use crate::vulkan::frame::{ジオメトリ入力, スキニング描画入力, 布描画入力, 空描画入力, 粒子描画入力};
 use crate::vulkan::graph;
 
 pub(super) fn スキニングを積む<'a>(
@@ -34,16 +36,6 @@ pub(super) fn 布を積む<'a>(
             頂点ハンドル: ハンドル.布頂点,
         }
     })
-}
-
-pub(super) fn 影を積む<'a>(
-    グラフ: &mut graph::グラフ<'a>,
-    基本: &基本画像ハンドル,
-    スキン済み: Option<graph::バッファハンドル>,
-    布: Option<scene_pass::布ドロー<'a>>,
-    入力: &'a [シャドウ描画入力],
-) {
-    グラフ.パスを積む(shadow_pass::作る(基本.シャドウマップ, スキン済み, 布, 入力));
 }
 
 #[allow(clippy::too_many_arguments)]

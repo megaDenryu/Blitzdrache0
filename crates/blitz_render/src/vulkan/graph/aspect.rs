@@ -9,7 +9,9 @@ pub(crate) enum 画像アスペクト {
 }
 
 impl 画像アスペクト {
-    /// このアスペクトの画像全体(ミップ0、レイヤー0の1枚)を指す部分範囲。
+    /// このアスペクトの画像全体(ミップ0、全レイヤー)を指す部分範囲。
+    /// レイヤーを全部含めるのは、シャドウマップが帯ごとの層を持つ配列画像であり、
+    /// グラフが配列全体を1資源として追跡するためである。
     pub(crate) fn 部分範囲(&self) -> vk::ImageSubresourceRange {
         let aspect_mask = match self {
             Self::カラー => vk::ImageAspectFlags::COLOR,
@@ -20,6 +22,6 @@ impl 画像アスペクト {
             .base_mip_level(0)
             .level_count(1)
             .base_array_layer(0)
-            .layer_count(1)
+            .layer_count(vk::REMAINING_ARRAY_LAYERS)
     }
 }

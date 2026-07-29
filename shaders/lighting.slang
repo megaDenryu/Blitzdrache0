@@ -4,12 +4,12 @@
 
 import pbr;
 
-// シャドウマップをPCF 3x3で比較サンプリングし、影係数(1=非シャドウ,0=シャドウ)を返す。
-// texelSizeは呼び出し側(scene.slang)がシャドウマップ解像度から渡す。
+// カスケードシャドウマップの1つの帯をPCF 3x3で比較サンプリングし、影係数(1=非シャドウ,0=シャドウ)を返す。
+// texelSizeは呼び出し側(scene.slang)がシャドウマップ解像度から渡し、cascadeIndexが配列テクスチャの層を選ぶ。
 // 位置とライトビュー射影は同じカメラ相対フレームで与える(前提: フレームUBOの書き込みが同じ原点を引く)。
 float computeShadowFactor(
-    float3 relativePosition, float4x4 lightViewProjection,
-    Texture2D shadowMapTexture, SamplerComparisonState shadowMapSampler, float texelSize)
+    float3 relativePosition, float4x4 lightViewProjection, uint cascadeIndex,
+    Texture2DArray shadowMapTexture, SamplerComparisonState shadowMapSampler, float texelSize)
 {
     float4 lightClipPosition = mul(lightViewProjection, float4(relativePosition, 1.0));
     float3 lightNdc = lightClipPosition.xyz / lightClipPosition.w;
@@ -28,7 +28,7 @@ float computeShadowFactor(
         for (int offsetX = -1; offsetX <= 1; offsetX++)
         {
             float2 sampleUv = shadowUv + float2(offsetX, offsetY) * texelSize;
-            shadowSum += shadowMapTexture.SampleCmp(shadowMapSampler, sampleUv, currentDepth);
+            shadowSum += shadowMapTexture.SampleCmp(shadowMapSampler, float3(sampleUv, float(cascadeIndex)), currentDepth);
         }
     }
     return shadowSum / 9.0;

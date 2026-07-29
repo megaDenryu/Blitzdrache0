@@ -10,6 +10,7 @@ mod camera_frustum;
 mod cascade_set;
 mod enclosing;
 mod ortho;
+mod ratio;
 mod settings;
 mod snap;
 mod split;
@@ -27,6 +28,7 @@ pub const 帯解像度: u32 = 2048;
 pub use band::{帯区間, 帯番号};
 pub use blend::{帯を選ぶ, 帯ブレンド};
 pub use cascade_set::カスケード一式;
-pub use settings::{カスケード設定, 実用分割混合率, 帯重なり率};
+pub use ratio::{実用分割混合率, 帯重なり率};
+pub use settings::カスケード設定;
 
 pub(crate) use build::組み立てる;

@@ -3,6 +3,8 @@
 //! 書き込みタイミングは呼び出し元(renderer/uniform_write.rs)がフェンス待ち後に行う。
 
 mod bytes;
+#[cfg(test)]
+mod bytes_tests;
 pub(crate) mod content;
 pub(crate) mod sky_bytes;
 pub(crate) mod sky_content;

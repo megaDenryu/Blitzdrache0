@@ -6,13 +6,14 @@ use super::{base_images, post_passes, post_setup, stages};
 use crate::clear_color::クリアカラー;
 use crate::frame_composition::{フレーム構成, フレーム段階};
 use crate::vulkan::frame::record::{readback_pass, ui_pass};
-use crate::vulkan::frame::{任意描画入力, 描画対象入力, 描画方式};
+use crate::vulkan::frame::{フレーム画像一式, 任意描画入力, 描画対象入力, 描画方式};
 use crate::vulkan::graph;
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn 積む<'a>(
     グラフ: &mut graph::グラフ<'a>,
     構成: &フレーム構成,
+    画像一式: &フレーム画像一式,
     基本: &base_images::基本画像ハンドル,
     ポスト: Option<&post_setup::ポスト構成<'a>>,
     カラー: graph::画像ハンドル,
@@ -29,7 +30,9 @@ pub(super) fn 積む<'a>(
         match 段階 {
             フレーム段階::スキニング => スキン済み = stages::スキニングを積む(グラフ, 任意.スキニング),
             フレーム段階::布シミュレーション => 布 = stages::布を積む(グラフ, 任意.布, スキン済み),
-            フレーム段階::影 => stages::影を積む(グラフ, 基本, スキン済み, 布, 描画対象.シャドウ),
+            フレーム段階::影 => {
+                stages::影を積む(グラフ, 基本, &画像一式.シャドウマップ帯ビュー一覧, スキン済み, 布, 描画対象.シャドウ);
+            }
             フレーム段階::シーン => {
                 stages::シーンを積む(グラフ, 基本, カラー, スキン済み, 布, クリア色, pipeline, 描画対象.ジオメトリ, 寸法);
             }

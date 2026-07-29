@@ -17,7 +17,7 @@ StructuredBuffer<SurfaceCell> cellsRO;
 
 struct FrameUniform
 {
-    column_major float4x4 lightViewProjection;
+    column_major float4x4 cascadeLightViewProjection[4];
     column_major float4x4 viewProjection;
 };
 

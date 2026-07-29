@@ -5,6 +5,7 @@
 use ash::vk;
 
 use super::clear_spec::クリア指定;
+use super::depth_attachment::深度アタッチメント;
 use super::handle::画像ハンドル;
 use super::registry::画像レジストリ;
 
@@ -13,7 +14,7 @@ pub(crate) fn 開始する(
     command_buffer: vk::CommandBuffer,
     レジストリ: &画像レジストリ,
     カラー: Option<画像ハンドル>,
-    深度: Option<画像ハンドル>,
+    深度: Option<深度アタッチメント>,
     クリア指定: &クリア指定,
 ) {
     // 注意: render_areaはこのパスのアタッチメント自身の寸法から導出する。スワップチェーン寸法を
@@ -21,7 +22,7 @@ pub(crate) fn 開始する(
     // クリップされ、範囲外がクリアもされない未定義領域になる(M6で全面影バグとして実際に踏んだ。
     // validationはrender_areaの縮小を検出しない)。
     let 基準ハンドル = カラー
-        .or(深度)
+        .or(深度.map(|深度| 深度.ハンドル))
         .unwrap_or_else(|| panic!("グラフィックスパスにカラーも深度も無い(パス宣言の誤り)"));
     let 寸法 = レジストリ.寸法を取得する(基準ハンドル);
     let (load_op, カラークリア値) = ロードオペレーションとカラークリア値(クリア指定);
@@ -42,9 +43,9 @@ pub(crate) fn 開始する(
     // 後段が深度をLOADするパス(粒子)やサンプリングするパス(シャドウマップを読むシーン)が
     // 未定義の値を読む(validationは検出しない。M6で全面影バグとして実際に踏んだ)。
     // 誰も後で読まない深度のDONT_CARE化は、グラフの後続用途から導出できるようになった時点で行う。
-    let 深度アタッチメント = 深度.map(|深度ハンドル| {
+    let 深度アタッチメント = 深度.map(|深度| {
         vk::RenderingAttachmentInfo::default()
-            .image_view(レジストリ.ビューを取得する(深度ハンドル))
+            .image_view(深度.描画先ビュー(レジストリ.ビューを取得する(深度.ハンドル)))
             .image_layout(vk::ImageLayout::DEPTH_ATTACHMENT_OPTIMAL)
             .load_op(load_op)
             .store_op(vk::AttachmentStoreOp::STORE)

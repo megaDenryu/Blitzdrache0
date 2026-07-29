@@ -37,6 +37,7 @@ pub(crate) mod readback;
 pub(crate) mod relative_anchor;
 pub(crate) mod shader_module;
 pub(crate) mod shadow_map;
+pub(crate) mod shadow_push;
 pub(crate) mod skinning;
 pub(crate) mod surface;
 pub(crate) mod swapchain;

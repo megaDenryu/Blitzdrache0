@@ -4,41 +4,8 @@
 
 use blitz_math::メートル;
 
+use super::ratio::{実用分割混合率, 帯重なり率};
 use crate::lighting_input::ライティング入力エラー;
-
-/// 一様分割と対数分割の混ぜ方。0で一様分割、1で対数分割になる。
-#[derive(Debug, Clone, Copy)]
-pub struct 実用分割混合率(f32);
-
-impl 実用分割混合率 {
-    pub fn 生成する(値: f32) -> Result<Self, ライティング入力エラー> {
-        if !値.is_finite() || !(0.0..=1.0).contains(&値) {
-            return Err(ライティング入力エラー::混合率不正);
-        }
-        Ok(Self(値))
-    }
-
-    pub(super) fn 値(self) -> f32 {
-        self.0
-    }
-}
-
-/// 隣り合う帯が重なる割合。手前の帯の深度幅に対する比で表し、その幅ぶん次の帯が近側へ伸びる。
-#[derive(Debug, Clone, Copy)]
-pub struct 帯重なり率(f32);
-
-impl 帯重なり率 {
-    pub fn 生成する(値: f32) -> Result<Self, ライティング入力エラー> {
-        if !値.is_finite() || !(0.05..=0.10).contains(&値) {
-            return Err(ライティング入力エラー::重なり率不正);
-        }
-        Ok(Self(値))
-    }
-
-    pub(super) fn 値(self) -> f32 {
-        self.0
-    }
-}
 
 #[derive(Debug, Clone, Copy)]
 pub struct カスケード設定 {
@@ -74,10 +41,16 @@ impl カスケード設定 {
     pub fn 既定() -> Self {
         Self {
             最大影距離: メートル::生成する(300.0),
-            混合率: 実用分割混合率(0.6),
-            重なり率: 帯重なり率(0.07),
+            混合率: 実用分割混合率::既定(),
+            重なり率: 帯重なり率::既定(),
             キャスター余白: メートル::生成する(60.0),
         }
+    }
+
+    /// 最大影距離だけを差し替えた設定を返す。分割の混ぜ方と余白は世界に依らず同じでよく、
+    /// 「どこまで影を出すか」だけが世界の広さで変わるためである。
+    pub fn 最大影距離を差し替える(self, 最大影距離: メートル) -> Result<Self, ライティング入力エラー> {
+        Self::生成する(最大影距離, self.混合率, self.重なり率, self.キャスター余白)
     }
 
     pub(super) fn 最大影距離(self) -> メートル {

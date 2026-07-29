@@ -8,7 +8,10 @@ pub(crate) struct フレーム画像一式 {
     pub(crate) 深度画像: vk::Image,
     pub(crate) 深度ビュー: vk::ImageView,
     pub(crate) シャドウマップ画像: vk::Image,
-    pub(crate) シャドウマップビュー: vk::ImageView,
+    /// 全層を1つの2D配列として見るビュー。グラフへの登録に使う(アタッチメントには使わない)。
+    pub(crate) シャドウマップ配列ビュー: vk::ImageView,
+    /// 帯ごとに1層だけを見るビュー。帯別のシャドウ記録がアタッチメントとして使う。
+    pub(crate) シャドウマップ帯ビュー一覧: [vk::ImageView; crate::cascade::帯数],
     /// ポストプロセス有効時のみ`Some`(判断38)。シーン・粒子の描画先になり、トーンマップパスが読む。
     pub(crate) hdr: Option<(vk::Image, vk::ImageView)>,
     /// ポストプロセス有効時のみ`Some`(判断41)。ブルームピラミッドの全段。
