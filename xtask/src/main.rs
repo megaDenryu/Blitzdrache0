@@ -9,6 +9,7 @@ mod cloth_night;
 mod cloth_shadow_order;
 mod compile_assets;
 mod conform;
+mod csm_seam;
 mod fetch_assets;
 mod file_scan;
 mod gen_sky_dataset;
@@ -70,6 +71,7 @@ fn main() -> ExitCode {
         Some("cloth-empty") => cloth_empty::実行する(),
         Some("cloth-night") => cloth_night::実行する(),
         Some("cloth-shadow-order") => cloth_shadow_order::実行する(),
+        Some("csm-seam") => csm_seam::実行する(),
         Some("sky-draw") => sky_draw::実行する(),
         Some("sky-state") => sky_state::実行する(),
         Some("sky-time") => sky_time::実行する(),

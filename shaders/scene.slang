@@ -69,15 +69,11 @@ VertexOutput vertexMain(VertexInput input, uint instanceIndex : SV_InstanceID, u
 [shader("fragment")]
 float4 fragmentMain(VertexOutput input) : SV_Target
 {
-    float4 baseColorSample = baseColorTexture.Sample(input.uv);
-    float3 albedo = baseColorSample.rgb * objectUniform.baseColorFactor.rgb * TINT;
-
-    bool lightingEnabled = frameUniform.ambientAndLighting.y > 0.5;
-    if (!lightingEnabled)
+    float3 albedo = baseColorTexture.Sample(input.uv).rgb * objectUniform.baseColorFactor.rgb * TINT;
+    if (frameUniform.ambientAndLighting.y <= 0.5)
     {
         return float4(albedo, 1.0);
     }
-
     // glTF規約: metallicRoughnessテクスチャはG=粗さ・B=金属度。ambientAndLighting.zは方向光が影を落とすかであり、0のとき比較サンプリング自体を行わない。
     float2 metallicRoughnessSample = metallicRoughnessTexture.Sample(input.uv).gb;
     float3 sampledNormal = normalMapTexture.Sample(input.uv).rgb * 2.0 - 1.0;
@@ -87,14 +83,18 @@ float4 fragmentMain(VertexOutput input) : SV_Target
               frameUniform.cascadeSplitDepths.xyz, frameUniform.cascadeTransitionWidths.xyz, shadowMapTexture, shadowMapSampler, shadowMapTexelSize)
         : 1.0;
 
+    // cameraForward.wは帯の可視化指定。1のとき、どの帯を引いたかと影の中かだけを色で出す(継ぎ目検収の補助)。
+    if (frameUniform.cameraForward.w > 0.5)
+    {
+        float3 debugColor = cascadeDebugPixel(
+            viewDepth, frameUniform.cascadeSplitDepths.xyz, frameUniform.cascadeTransitionWidths.xyz, shadowFactor);
+        return float4(debugColor, 1.0);
+    }
     float3 litColor = shadeLitSurface(
-        albedo, metallicRoughnessSample,
-        objectUniform.metallicRoughnessFactor.x, objectUniform.metallicRoughnessFactor.y,
-        sampledNormal, input.normal, input.tangent,
-        input.relativePosition, frameUniform.cameraRelativePosition.xyz, frameUniform.ambientAndLighting.x,
-        frameUniform.directionalLightDirection.xyz, frameUniform.directionalLightColor.rgb, frameUniform.directionalLightColor.w,
-        frameUniform.pointLightPosition.xyz, frameUniform.pointLightColor.rgb, frameUniform.pointLightColor.w,
-        shadowFactor);
-
+        albedo, metallicRoughnessSample, objectUniform.metallicRoughnessFactor.x, objectUniform.metallicRoughnessFactor.y,
+        sampledNormal, input.normal, input.tangent, input.relativePosition, frameUniform.cameraRelativePosition.xyz,
+        frameUniform.ambientAndLighting.x, frameUniform.directionalLightDirection.xyz, frameUniform.directionalLightColor.rgb,
+        frameUniform.directionalLightColor.w, frameUniform.pointLightPosition.xyz, frameUniform.pointLightColor.rgb,
+        frameUniform.pointLightColor.w, shadowFactor);
     return float4(litColor, 1.0);
 }

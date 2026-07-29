@@ -53,6 +53,8 @@ pub(crate) struct 起動設定 {
     pub(crate) 個体詳細段探査刻み: Option<f32>,
     /// `--dev-ui`指定でtrue。既定はfalse(開発用UIの起動時有効化、判断34。実行中はF3でも切替可能)。
     pub(crate) 開発ui初期有効: bool,
+    /// `--debug-cascade-bands`指定でtrue。既定はfalse(シーンの色を「どの帯を引いたか」と「影の中か」の可視化へ差し替える)。
+    pub(crate) カスケード帯可視化: bool,
     /// `--dump-frame <ベース名>`指定で、最終フレーム(--frames必須)の読み戻し画像を`<ベース名>.raw`(RGBA8連結)と`<ベース名>.size`(幅 高さ)へ書き出す。既定はNone。
     pub(crate) フレームダンプ先: Option<PathBuf>,
     /// 空と時刻の起動指定。空を描くかどうかは既定では世界の方針が決め、この指定はその上書きである。

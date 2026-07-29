@@ -69,3 +69,22 @@ float viewDepthOf(float3 relativePosition, float3 cameraRelativePosition, float3
 {
     return dot(relativePosition - cameraRelativePosition, cameraForward);
 }
+
+// 帯の可視化色。帯ごとに使うチャンネルの組を変え、影の中では同じ色を暗い段へ落とす。
+// 検収はチャンネルの組で帯を、明るさの段で影の内外を読み取る。2段しか作らないのは、
+// 中間の値を作ると読み取り側が帯と影を分けられなくなるためである。
+float3 cascadeDebugColor(uint cascadeIndex, float shadowFactor)
+{
+    float3 bandColor = float3(0.0, 0.0, 0.0);
+    if (cascadeIndex == 0) bandColor = float3(1.0, 0.0, 0.0);
+    else if (cascadeIndex == 1) bandColor = float3(0.0, 1.0, 0.0);
+    else if (cascadeIndex == 2) bandColor = float3(0.0, 0.0, 1.0);
+    else bandColor = float3(1.0, 1.0, 0.0);
+    return bandColor * (shadowFactor > 0.5 ? 1.0 : 0.25);
+}
+
+// 可視化する1画素の色。帯の選択は本番の色を出す経路と同じ関数を通す。
+float3 cascadeDebugPixel(float viewDepth, float3 splitDepths, float3 transitionWidths, float shadowFactor)
+{
+    return cascadeDebugColor(selectCascadeBlend(viewDepth, splitDepths, transitionWidths).primaryIndex, shadowFactor);
+}
