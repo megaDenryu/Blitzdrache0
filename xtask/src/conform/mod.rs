@@ -11,6 +11,7 @@ mod forbidden_strings;
 mod line_count;
 mod particle_reference;
 mod section_reference;
+mod shader_constant;
 mod split_debt;
 mod violation;
 
@@ -52,6 +53,14 @@ pub fn 実行する() -> ExitCode {
         Ok(節参照違反一覧) => 違反一覧.extend(節参照違反一覧),
         Err(誤り) => {
             eprintln!("[xtask] conformの節参照実在検査に失敗した: {誤り}");
+            return ExitCode::FAILURE;
+        }
+    }
+
+    match shader_constant::全定数を検査する() {
+        Ok(定数違反一覧) => 違反一覧.extend(定数違反一覧),
+        Err(誤り) => {
+            eprintln!("[xtask] conformのシェーダー定数の写し検査に失敗した: {誤り}");
             return ExitCode::FAILURE;
         }
     }

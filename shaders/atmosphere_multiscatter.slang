@@ -13,6 +13,12 @@ import atmosphere_scatter;
 [[vk::binding(2, 0)]] [format("rgba16f")] RWTexture2D<float4> multiScatterLut;
 
 static const uint threadsPerSide = 8;
+// 等比級数の公比が取ってよい上限。正本は`crates/blitz_render/src/atmosphere/multiscatter_series.rs`の`公比の上限`であり、
+// ここはその写しである。両者の値が一致することは`cargo xtask conform`が機械検査する。
+static const float multiScatterRatioLimit = 0.999;
+// 上限を破ったときに書く値。多重散乱は非負であるため、負値は正常な出力に現れない。
+// この値が書かれた事実は読み戻し検査の「負」の件数が捉える。
+static const float ratioBrokenMarker = -1.0;
 // 最下行を地表から離す割合と、最上行を大気上端から離す量。端点の経路長が0になるのを避ける。
 static const float lowestRowLift = 0.01;
 static const float highestRowDropMeters = 10.0;
@@ -54,8 +60,14 @@ void computeMain(uint3 threadId : SV_DispatchThreadID)
     float isotropicPhase = 1.0 / (4.0 * atmospherePi);
     float3 singleScatter = luminance * solidAnglePerDirection * isotropicPhase;
     float3 ratio = survival * solidAnglePerDirection * isotropicPhase;
-    // 公比が1以上になるのは媒体の不変条件が破れたときだけである。GPU側は失敗を返せないため、
-    // 発散した値を書かないよう1未満へ抑える。この抑えが働いた事実は読み戻し検査がCPU正本との差として捉える。
-    float3 clampedRatio = min(ratio, float3(0.99, 0.99, 0.99));
-    multiScatterLut[threadId.xy] = float4(singleScatter / (1.0 - clampedRatio), 0.0);
+    // 公比が上限に達するのは媒体の不変条件が破れたときだけである。CPU正本は同じ上限で型付きエラーを返し、
+    // 失敗を返せないGPUはここで異常の印を書く。無言で1未満へ抑えると、CPUが失敗させる媒体をGPUだけが
+    // それらしい値で描き続けることになり、食い違いが検査から隠れる。NaNは比較が偽になるため別に見る。
+    bool ratioBroken = any(ratio >= multiScatterRatioLimit) || any(isnan(ratio));
+    if (ratioBroken)
+    {
+        multiScatterLut[threadId.xy] = float4(ratioBrokenMarker, ratioBrokenMarker, ratioBrokenMarker, 0.0);
+        return;
+    }
+    multiScatterLut[threadId.xy] = float4(singleScatter / (1.0 - ratio), 0.0);
 }

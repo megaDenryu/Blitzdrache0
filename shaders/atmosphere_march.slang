@@ -11,6 +11,7 @@ static const float atmospherePi = 3.14159265358979323846;
 static const uint sphereDirectionSide = 8;
 static const uint sphereDirectionCount = sphereDirectionSide * sphereDirectionSide;
 static const uint marchStepCount = 20;
+// 区間の中で媒体を評価する位置を、区間の始まりから区間長の何倍だけ進んだ所に置くか。積分幅ではない。
 static const float stepSamplePosition = 0.3;
 
 struct MarchResult
@@ -60,19 +61,17 @@ MarchResult marchDirection(
     }
 
     float3 throughput = float3(1.0, 1.0, 1.0);
-    float traveled = 0.0;
+    float segmentLength = pathDistance / float(marchStepCount);
     float isotropicPhase = 1.0 / (4.0 * atmospherePi);
     for (uint step = 0; step < marchStepCount; ++step)
     {
-        float nextDistance = pathDistance * (float(step) + stepSamplePosition) / float(marchStepCount);
-        float segment = nextDistance - traveled;
-        traveled = nextDistance;
-        float3 position = observerPosition + viewDirection * traveled;
+        float sampleDistance = (float(step) + stepSamplePosition) * segmentLength;
+        float3 position = observerPosition + viewDirection * sampleDistance;
         MediumSample sample = sampleMedium(medium, position);
         float3 toSun = sunBlockedByGround(medium, position, sunDirection)
             ? float3(0.0, 0.0, 0.0)
             : sunTransmittance(medium, transmittanceLut, position, sunDirection);
-        float3 segmentTransmittance = exp(-sample.extinction * segment);
+        float3 segmentTransmittance = exp(-sample.extinction * segmentLength);
         for (uint channel = 0; channel < 3; ++channel)
         {
             float extinction = sample.extinction[channel];
@@ -87,6 +86,7 @@ MarchResult marchDirection(
         }
     }
 
+    // 積分幅の総和が経路長に等しいため、ここへ渡るthroughputは観測点から地表までの全経路ぶんである。
     if (groundHit > 0.0 && pathDistance == groundHit)
     {
         float3 groundPosition = observerPosition + viewDirection * groundHit;

@@ -25,6 +25,7 @@ mod multiscatter_lut;
 mod multiscatter_mapping;
 mod multiscatter_march;
 mod multiscatter_rgb;
+mod multiscatter_series;
 mod multiscatter_step;
 mod narrowing;
 mod normalized_density;

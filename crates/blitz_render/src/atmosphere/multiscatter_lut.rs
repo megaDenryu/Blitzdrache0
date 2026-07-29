@@ -3,14 +3,13 @@
 //! これがLUTの内容の正本であり、`shaders/atmosphere_multiscatter.slang`はこの式の写しである。
 //!
 //! 無限回の散乱を、64本の向きで測った「1回の散乱を経ても残る割合」を公比とする等比級数の和として閉じる。
-//! 級数`1 + r + r^2 + ...`が`1 / (1 - r)`へ収束するのは公比が1未満のときであり、それは散乱係数が消散係数を
-//! 超えないことと地表アルベドが1以下であることから従う。どちらも大気散乱媒体の生成が確かめている。
+//! 級数を閉じる操作と公比の上限は`multiscatter_series`が持つ。
 //! 参照: Sebastien Hillaire, "A Scalable and Production Ready Sky and Atmosphere Rendering Technique" (EGSR 2020)の
 //! `NewMultiScattCS`(`MULTI_SCATTERING_POWER_SERIE`の腕)。
 
 use super::multiscatter_mapping::多重散乱lutの条件を求める;
 use super::multiscatter_march::経路を積分する;
-use super::narrowing;
+use super::multiscatter_series::等比級数を閉じる;
 use super::sphere_directions::{一本あたりの立体角, 方向数, 球面の向き};
 use super::transmittance_table::透過率表;
 use super::{多重散乱RGB, 大気LUT解像度, 大気散乱媒体, 大気数学エラー};
@@ -65,15 +64,7 @@ fn 合成する(放射輝度: [f64; 3], 残存率: [f64; 3]) -> Result<多重散
     for 添字 in 0..3 {
         let 一次散乱 = 放射輝度[添字] * 立体角 * 等方位相;
         let 公比 = 残存率[添字] * 立体角 * 等方位相;
-        // 公比が1以上になるのは媒体の不変条件が破れたときだけであるため、無言で切り詰めず値域外として失敗させる。
-        // NaNもここで捕まえる(比較が偽になるため`公比 < 1.0`が成り立たない)。
-        if 公比.is_nan() || 公比 >= 1.0 {
-            return Err(大気数学エラー::値域外(
-                "多重散乱の等比級数の公比",
-                narrowing::実数へ狭める(公比),
-            ));
-        }
-        結果[添字] = narrowing::実数へ狭める(一次散乱 / (1.0 - 公比));
+        結果[添字] = 等比級数を閉じる(一次散乱, 公比)?;
     }
     多重散乱RGB::生成する(結果[0], 結果[1], 結果[2])
 }

@@ -8,6 +8,7 @@
 mod density_tests;
 mod intersect_tests;
 mod multiscatter_lut_tests;
+mod multiscatter_series_tests;
 mod optical_length_tests;
 mod phase_tests;
 mod reference_parse;
