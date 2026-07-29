@@ -10,11 +10,13 @@ use crate::frame_composition::{フレーム構成, フレーム段階};
 use crate::shader_bundle::シェーダー束;
 use crate::vulkan;
 use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::uniform::フレームユニフォーム一式;
 
 pub(super) fn 生成する(
     device: &GPUデバイス,
     シーンカラー形式: vk::Format,
     ディスクリプタlayout: vk::DescriptorSetLayout,
+    ユニフォーム: &フレームユニフォーム一式,
     シェーダー: &シェーダー束,
     構成: フレーム構成,
 ) -> Result<描画段階資源, レンダラーエラー> {
@@ -33,11 +35,25 @@ pub(super) fn 生成する(
             return Err(誤り);
         }
     };
-    match 空を生成する(device, シーンカラー形式, ディスクリプタlayout, シェーダー, 構成) {
-        Ok(空) => Ok(描画段階資源 {
-            シーン, シャドウ, 空
+    let 空 = match 空を生成する(device, シーンカラー形式, ディスクリプタlayout, シェーダー, 構成) {
+        Ok(空) => 空,
+        Err(誤り) => {
+            シャドウ.破棄する(device);
+            シーン.破棄する(device);
+            return Err(誤り);
+        }
+    };
+    match 布シャドウを生成する(device, ユニフォーム, シェーダー, 構成) {
+        Ok(布シャドウ) => Ok(描画段階資源 {
+            シーン,
+            シャドウ,
+            空,
+            布シャドウ,
         }),
         Err(誤り) => {
+            if let Some(空) = &空 {
+                空.破棄する(device);
+            }
             シャドウ.破棄する(device);
             シーン.破棄する(device);
             Err(誤り)
@@ -64,4 +80,18 @@ fn 空を生成する(
         &シェーダー.空,
     )?;
     Ok(Some(空))
+}
+
+/// 布専用シャドウ経路はフレーム構成に布シミュレーション段階があるときだけ作る。無い構成では`None`が「布を描かない」ことを型で表す。
+fn 布シャドウを生成する(
+    device: &GPUデバイス,
+    ユニフォーム: &フレームユニフォーム一式,
+    シェーダー: &シェーダー束,
+    構成: フレーム構成,
+) -> Result<Option<vulkan::cloth_shadow::布シャドウ資源>, レンダラーエラー> {
+    if !構成.含む(フレーム段階::布シミュレーション) {
+        return Ok(None);
+    }
+    let 布シャドウ = vulkan::cloth_shadow::布シャドウ資源::生成する(device, ユニフォーム, &シェーダー.布.シャドウ)?;
+    Ok(Some(布シャドウ))
 }

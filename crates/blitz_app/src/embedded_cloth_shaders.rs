@@ -17,6 +17,8 @@ const 仕上げSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_fi
 const 頂点生成SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_vertex_gen.spv"));
 const 描画頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_draw_vertex.spv"));
 const 描画フラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_draw_fragment.spv"));
+const シャドウ頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_shadow_vertex.spv"));
+const シャドウフラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_shadow_fragment.spv"));
 
 pub(crate) fn 埋め込み布シェーダーを生成する() -> Result<布シェーダー一式, 起動エラー> {
     Ok(布シェーダー一式 {
@@ -30,5 +32,6 @@ pub(crate) fn 埋め込み布シェーダーを生成する() -> Result<布シ�
         仕上げ: コンピュートシェーダー::生成する(仕上げSPIRV.to_vec())?,
         頂点生成: コンピュートシェーダー::生成する(頂点生成SPIRV.to_vec())?,
         描画: シェーダー一式::生成する(描画頂点SPIRV.to_vec(), 描画フラグメントSPIRV.to_vec())?,
+        シャドウ: シェーダー一式::生成する(シャドウ頂点SPIRV.to_vec(), シャドウフラグメントSPIRV.to_vec())?,
     })
 }
