@@ -142,6 +142,8 @@ nav.toc a:hover { text-decoration: underline; }
 .pill.done { background: #1d3a2d; color: #8fd8b0; }
 .pill.partial { background: #3a331d; color: #d8c88f; }
 .pill.none { background: #3a1d1d; color: #d89f8f; }
+.etym { display: block; color: var(--fg-dim); font-size: 0.84em; margin-top: 4px; line-height: 1.6; }
+.mean { display: block; color: var(--accent2); font-size: 0.88em; line-height: 1.6; }
 .formula {
   background: var(--code-bg);
   border: 1px solid var(--line);
@@ -280,7 +282,13 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
         <li><a href="#s10-2">表面の反射 — BRDFという密度</a></li>
         <li><a href="#s10-3">レンダリング方程式 — 輸送理論の表面版</a></li>
         <li><a href="#s10-4">体積の散乱 — 大気・霧・雲の物理</a></li>
-        <li><a href="#s10-5">グラフィックスが物理を歪めている箇所の目録</a></li>
+        <li><a href="#s10-5">カメラの数理 — 射影と深度</a></li>
+        <li><a href="#s10-6">影の数理 — シャドウマップからCSMまで</a></li>
+        <li><a href="#s10-7">PBRの中身 — マイクロファセット理論</a></li>
+        <li><a href="#s10-8">積分をくじ引きで解く — モンテカルロ法</a></li>
+        <li><a href="#s10-9">標本化の数理 — エイリアシングの正体とTAA</a></li>
+        <li><a href="#s10-10">露出の数理 — EVという対数の物差し</a></li>
+        <li><a href="#s10-11">グラフィックスが物理を歪めている箇所の目録</a></li>
       </ol>
     </a></li>
   </ol>
@@ -435,7 +443,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <ul>
 <li><strong><a class="term" href="#term-shadow-map">シャドウマップ</a></strong>: 光源の位置から世界の<a class="term" href="#term-depth">深度</a>(奥行き)だけを描いた絵を作り、本番の描画で「この<a class="term" href="#term-pixel">画素</a>は光源から見えているか」を深度比較で判定する。リアルタイム影の標準方式。</li>
 <li><strong><a class="term" href="#term-csm">CSM</a></strong>(Cascaded Shadow Maps。カスケードシャドウマップ。意訳すると「段々重ねの影地図」— cascadeの原義は段々滝で、同じものを段階的に何段も重ねる構成の呼び名): 方向光用の拡張で、カメラからの<a class="term" href="#term-cascade-band">距離帯</a>ごとに解像度の違うシャドウマップを持つ。近くは細かく、遠くは粗く、という解像度予算の配分方式である。</li>
-<li><strong><a class="term" href="#term-pcf-pcss">PCF</a> / PCSS</strong>(Percentage-Closer Filtering / Percentage-Closer Soft Shadows): 影の境界を複数サンプルの平均で滑らかにする方式(PCF)と、遮蔽物からの距離に応じてぼけ幅を変えて半影を再現する方式(PCSS)。</li>
+<li><strong>影の多数決ぼかしとその発展(<a class="term" href="#term-pcf-pcss">PCF</a> / PCSS)</strong>: 影かどうかの判定を周囲の数点の多数決にして境界を滑らかにする方式(PCF)と、遮蔽物からの距離に応じてぼけ幅を変えて本物の半影を再現する方式(PCSS)。数理は<a href="#s10-6">第10.6節</a>。</li>
 <li><strong><a class="term" href="#term-ray-tracing">レイトレーシング</a>影</strong>: GPUのレイトレーシング(光線追跡)機能で光源への遮蔽を直接問い合わせる。シャドウマップの解像度・漏れの問題が原理的に消えるが、GPUの対応と時間予算が要る。</li>
 </ul>
 
@@ -939,20 +947,20 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <div class="table-scroll">
 <table>
 <tr><th>用語</th><th>意味</th></tr>
-<tr id="term-pixel"><td>画素(ピクセル)</td><td>画面を構成する格子の1点。リアルタイムグラフィックスの仕事は、毎フレームすべての画素へ正しい色を入れることに尽きる。</td></tr>
-<tr id="term-mesh"><td>メッシュ / ジオメトリ</td><td>物体の形を三角形の集まりで表したデータ / 形状に関する情報の総称。三角形は頂点の位置・法線・テクスチャ座標を持つ。</td></tr>
-<tr id="term-normal"><td>法線</td><td>表面がどちらを向いているかを表す単位ベクトル。明るさの計算は、まず光源の方向と法線の関係で決まる。</td></tr>
-<tr id="term-texture"><td>テクスチャ</td><td>表面へ貼る画像データ。基本色・粗さ・法線などを画素ごとに与える。アセット容量の主犯であり、圧縮と読込方式が性能を左右する。</td></tr>
-<tr id="term-material"><td>マテリアル(材質)</td><td>表面が光をどう跳ね返すかを決めるパラメータとシェーダーの組。</td></tr>
-<tr id="term-pbr"><td>PBR(Physically Based Rendering)</td><td>物理ベースレンダリング。基本色・粗さ・金属性など物理に根ざした少数パラメータで材質を表す標準。どの照明環境へ置いても破綻しないことが利点である。</td></tr>
-<tr id="term-roughness-metallic"><td>粗さ / 金属性</td><td>反射のぼけ具合を表すPBRのパラメータ / その表面が金属か非金属かを表すPBRのパラメータ。粗さが低いほど反射は鏡に近づく。</td></tr>
-<tr id="term-light-types"><td>方向光 / 点光源 / スポット光</td><td>無限に遠い光源から平行に届く光(太陽) / 1点から全方向へ広がる光(電球) / 円錐状に絞った光(懐中電灯)。</td></tr>
-<tr id="term-ambient"><td>環境光 / 定数環境光</td><td>あらゆる方向から一様に届くと仮定した光 / それを係数1つで与える最も単純な近似。本エンジンの間接光は現在これだけである。</td></tr>
-<tr id="term-direct-indirect"><td>直接光 / 間接光</td><td>光源から表面へ直接届く光 / ほかの面で1回以上跳ね返ってから届く光。</td></tr>
-<tr id="term-color-bleeding"><td>カラーブリーディング</td><td>間接光により、近くの面の色が別の面へ移る現象。赤い壁のそばの灰色の球が赤みを帯びる。</td></tr>
-<tr id="term-frustum"><td>視錐台(しすいだい)</td><td>カメラまたは光源から見える範囲を表す四角錐台。この外にある物を描画から外す判定が視錐台カリングである。</td></tr>
-<tr id="term-projection"><td>射影 / 正射影</td><td>3次元の位置を2次元の画面座標へ写す変換 / 遠近を付けず平行に写す射影。方向光のシャドウマップは正射影を使う。</td></tr>
-<tr id="term-depth"><td>深度 / 深度バッファ</td><td>カメラから面までの奥行き / 画素ごとの奥行きを記録し、手前の面が奥の面を隠すことを保証する画像。</td></tr>
+<tr id="term-pixel"><td>画素(ピクセル)<span class="etym">pixel = picture element(絵の要素)の縮約</span><span class="mean">意訳: 絵のつぶ。画面を敷き詰める色付きの点1つ</span></td><td>画面を構成する格子の1点。リアルタイムグラフィックスの仕事は、毎フレームすべての画素へ正しい色を入れることに尽きる。</td></tr>
+<tr id="term-mesh"><td>メッシュ / ジオメトリ<span class="etym">mesh = 網・網目 / geometry = 幾何学</span><span class="mean">意訳: 三角形の網で作った形 / 形の情報ぜんぶの総称</span></td><td>物体の形を三角形の集まりで表したデータ / 形状に関する情報の総称。三角形は頂点の位置・法線・テクスチャ座標を持つ。</td></tr>
+<tr id="term-normal"><td>法線<span class="etym">normal = 垂直な(線)。数学用語の訳語で「法」は規範・基準の意</span><span class="mean">意訳: 面の向きを示す垂直の矢印</span></td><td>表面がどちらを向いているかを表す単位ベクトル。明るさの計算は、まず光源の方向と法線の関係で決まる。</td></tr>
+<tr id="term-texture"><td>テクスチャ<span class="etym">texture = 布の織り目・手触り・質感</span><span class="mean">意訳: 表面に貼る質感画像。物の肌のシール</span></td><td>表面へ貼る画像データ。基本色・粗さ・法線などを画素ごとに与える。アセット容量の主犯であり、圧縮と読込方式が性能を左右する。</td></tr>
+<tr id="term-material"><td>マテリアル(材質)<span class="etym">material = 素材・材料</span><span class="mean">意訳: その表面が何でできているかの設定一式</span></td><td>表面が光をどう跳ね返すかを決めるパラメータとシェーダーの組。</td></tr>
+<tr id="term-pbr"><td>PBR<span class="etym">Physically Based Rendering = 直訳「物理に基づいた描画」</span><span class="mean">意訳: 物理準拠の絵作り。感覚でなく光の物理法則からパラメータを決める流儀</span></td><td>基本色・粗さ・金属性など物理に根ざした少数パラメータで材質を表す標準。どの照明環境へ置いても破綻しないことが利点である。</td></tr>
+<tr id="term-roughness-metallic"><td>粗さ / 金属性<span class="etym">roughness = ざらざら度 / metallic = 金属っぽさ</span><span class="mean">意訳: 表面の磨き具合(低いほど鏡) / 金属か非金属かの度合い</span></td><td>反射のぼけ具合を表すPBRのパラメータ / その表面が金属か非金属かを表すPBRのパラメータ。粗さが低いほど反射は鏡に近づく。</td></tr>
+<tr id="term-light-types"><td>方向光 / 点光源 / スポット光<span class="etym">directional light / point light / spot light(spotは舞台の一点照らし)</span><span class="mean">意訳: 太陽の光 / 電球の光 / 懐中電灯の光</span></td><td>無限に遠い光源から平行に届く光(太陽) / 1点から全方向へ広がる光(電球) / 円錐状に絞った光(懐中電灯)。</td></tr>
+<tr id="term-ambient"><td>環境光 / 定数環境光<span class="etym">ambient light = 直訳「周囲の光」</span><span class="mean">意訳: どこからともなく満ちている光。部屋全体のほの明るさ</span></td><td>あらゆる方向から一様に届くと仮定した光 / それを係数1つで与える最も単純な近似。本エンジンの間接光は現在これだけである。</td></tr>
+<tr id="term-direct-indirect"><td>直接光 / 間接光<span class="etym">direct / indirect light</span><span class="mean">意訳: 光源から一直線に届く光 / 壁や床で跳ね返ってから届く光</span></td><td>光源から表面へ直接届く光 / ほかの面で1回以上跳ね返ってから届く光。</td></tr>
+<tr id="term-color-bleeding"><td>カラーブリーディング<span class="etym">color bleeding = 直訳「色のにじみ出し」(bleedは血がにじむ、の意)</span><span class="mean">意訳: 色移り。赤い壁のそばの物がほんのり赤く染まる現象</span></td><td>間接光により、近くの面の色が別の面へ移る現象。赤い壁のそばの灰色の球が赤みを帯びる。</td></tr>
+<tr id="term-frustum"><td>視錐台(しすいだい)<span class="etym">frustum = (数学用語)錐体の頭を切り落とした立体</span><span class="mean">意訳: カメラの視界の形。四角錐の先端を切った箱で、この中だけが画面に映る</span></td><td>カメラまたは光源から見える範囲を表す四角錐台。この外にある物を描画から外す判定が視錐台カリングである。</td></tr>
+<tr id="term-projection"><td>射影 / 正射影<span class="etym">projection = 投影(影を投げる) / orthographic projection = 直訳「まっすぐ描く投影」</span><span class="mean">意訳: 3次元を2次元へ写す変換 / 遠近を付けずに平行に写す版(設計図の描き方と同じ)</span></td><td>3次元の位置を2次元の画面座標へ写す変換 / 遠近を付けず平行に写す射影。方向光のシャドウマップは正射影を使う。</td></tr>
+<tr id="term-depth"><td>深度 / 深度バッファ<span class="etym">depth = 奥行き / depth buffer = 奥行きの記録紙(bufferは緩衝・一時置き場)</span><span class="mean">意訳: カメラからの遠さ / 画素ごとの遠さのメモ帳。手前の物が奥の物を隠す判定に使う</span></td><td>カメラから面までの奥行き / 画素ごとの奥行きを記録し、手前の面が奥の面を隠すことを保証する画像。</td></tr>
 </table>
 </div>
 
@@ -960,37 +968,37 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <div class="table-scroll">
 <table>
 <tr><th>用語</th><th>意味</th></tr>
-<tr id="term-frame-budget"><td>フレーム予算(16.6ミリ秒)</td><td>1フレームに使ってよい時間。60フレーム/秒なら16.6ミリ秒であり、区間ごとの配分(予算表)は評価軸文書が持つ。</td></tr>
-<tr id="term-world-update"><td>世界更新</td><td>1フレームの中で、入力の確定に続いて世界の状態(時刻・カメラ・ストリーミング・シミュレーション)を進めるCPU処理。実行順序はコンポジションルートが支配する。</td></tr>
-<tr id="term-group-select"><td>群選択</td><td>インスタンス群の可視判定・個体別LODの段選択・可視ID列の並べ替えを、1回の走査へ融合したCPU処理。実測は個体あたり約10ナノ秒であり、100万個体では観測範囲全体の支配区間になる。</td></tr>
-<tr id="term-uniform-write"><td>ユニフォーム書込(UBO書込)</td><td>そのフレームのカメラのビュー射影・カメラ相対位置・光源・帯ごとのライトビュー射影といった定数を、ユニフォームバッファへ書き込む工程。フレームインフライトごとに分けた領域へ書く。</td></tr>
-<tr id="term-command-record"><td>コマンド記録</td><td>GPUへの命令(描画・状態設定・バリア)をコマンドバッファへ並べるCPU処理。記録の時点ではGPUはまだ動かない。</td></tr>
-<tr id="term-submit"><td>提出(サブミット)</td><td>記録し終えたコマンドバッファをGPUのキューへ渡し、実行を始めさせること。</td></tr>
-<tr id="term-queue"><td>GPUキュー</td><td>GPUへ仕事を投入する口。グラフィックス・計算・転送の種別があり、別のキューへ出した仕事どうしは並行して進む。本エンジンは現在グラフィックス1本である。</td></tr>
-<tr id="term-fence"><td>フェンス<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 柵。GPUが終わるまでCPUを柵の手前で待たせる仕切り</span></td><td>GPUの処理完了をCPU側で待つための同期物。フレームの資源を書き換える前に、前回の使用が終わったことをフェンスで確かめる。</td></tr>
-<tr id="term-frame-in-flight"><td>フレームインフライト</td><td>CPUが次のフレームを準備する間にGPUが前のフレームを描く並行状態。同時進行の数だけ資源を多重化する。本エンジンは2である。</td></tr>
-<tr id="term-present"><td>提示 / FIFO提示</td><td>完成した画像を表示用の画像列(スワップチェーン)へ送って表示させること / 表示の垂直同期に合わせて順に出す提示モード。フレーム時間の主たる供給源である。</td></tr>
-<tr id="term-render-graph"><td>レンダーグラフ</td><td>パスの読み書きの宣言から、宣言順の実行に必要な待ち合わせ(バリア)を自動導出する仕組み。実行順自体は構築側が明示する。工程を足してもバリアの正しさが壊れない器であり、本エンジンは実装済みである。</td></tr>
-<tr id="term-pass"><td>パス(描画工程)<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: ひと工程・ひと回し。passは「1回通す」の意で、絵作りの作業工程1つぶん</span></td><td>レンダーグラフの1ノード。読む資源と書く資源を宣言して、GPUの作業を1まとまり実行する単位。</td></tr>
-<tr id="term-barrier"><td>バリア(同期バリア)<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 関所。前の工程の荷が届くまで次の工程を通さない仕切り</span></td><td>前の工程の書き込みが次の工程から正しく見えることを保証するGPUの同期指示。本エンジンはパスの宣言から自動で導出する。</td></tr>
-<tr id="term-shader"><td>シェーダー / 計算シェーダー</td><td>GPU上で走るプログラム / 描画パイプラインではなく汎用計算として走らせるシェーダー(コンピュートシェーダーとも呼ぶ)。</td></tr>
-<tr id="term-pipeline"><td>パイプライン</td><td>シェーダー・固定機能の設定・出力形式を束ねたGPU描画の実行単位。Vulkanでは描画の前に構築しておく必要がある。</td></tr>
-<tr id="term-descriptor"><td>ディスクリプタ / ディスクリプタセット<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 名札。GPUに「この資源はここにある」と教える札 / 札の束</span></td><td>シェーダーがバッファ・テクスチャを参照するための記述 / それを束ねた単位。</td></tr>
-<tr id="term-ubo"><td>UBO / structured buffer / ディスクリプタインデクシング</td><td>GPUへ渡す固定サイズの設定領域 / 可変長の構造化バッファ / 資源を番号で選ぶ方式。多光源・GI・材質拡張はいずれもこの器の上に載る。</td></tr>
-<tr id="term-frame-constants"><td>frame constants(フレーム定数)</td><td>フレームごとに1回だけ更新する小さな共通の定数領域。共通UBOを分離した後の姿である。</td></tr>
-<tr id="term-subresource"><td>サブリソース</td><td>1つの画像の中の特定のミップ段・特定の層。資源の状態追跡を画像全体より細かい単位で行うための区分である。</td></tr>
-<tr id="term-vram"><td>VRAM</td><td>GPUが直接読む記憶。テクスチャ・頂点・中間画像が載り、容量が物量と品質の上限を決める。</td></tr>
-<tr id="term-bandwidth"><td>帯域</td><td>単位時間に読み書きできるデータ量。テクスチャ圧縮は容量だけでなく帯域にも効く。</td></tr>
-<tr id="term-rate-limiting"><td>律速 / 支配要因 / 支配区間</td><td>全体の所要時間を決めている最も遅い要素 / ある物量点で最初に予算を超えた区間 / 観測した範囲全体で増分が最大の区間。後の2つは別の問いへの答えであり、混同しない。</td></tr>
-<tr id="term-p99"><td>p99</td><td>100回に1回の悪い方の値。フレーム時間の分布の裾を表す指標で、カクつきの定量化に使う。p50は中央値である。</td></tr>
-<tr id="term-frame-pacing"><td>フレームペーシング</td><td>フレームの提示間隔を均し、体感の滑らかさを守る制御。</td></tr>
-<tr id="term-job-system"><td>ジョブシステム</td><td>仕事を細かい単位に割り、CPUの全コアへ配る仕組み。ワークスティーリングは、空いたコアがほかのコアの仕事を奪う分配方式である。</td></tr>
-<tr id="term-async-queue"><td>非同期転送 / 非同期コンピュート</td><td>データ転送 / 計算を、描画とは別のGPUキューで並行させる技術。GPUの空き時間を品質の原資へ変える。</td></tr>
-<tr id="term-queue-ownership"><td>キュー所有権(queue ownership)</td><td>Vulkanで、資源をどのキューが使ってよいかを移譲する管理。複数キュー化の設計点である。</td></tr>
-<tr id="term-pso"><td>PSO(Pipeline State Object)</td><td>描画設定一式の事前生成物。実行中の生成はカクつきの主犯であり、事前コンパイルと永続キャッシュで防ぐ。</td></tr>
-<tr id="term-dynamic-resolution-vrs"><td>動的解像度 / VRS(Variable Rate Shading)</td><td>負荷に応じて描画解像度を変える制御 / 画面の領域ごとにシェーディングの密度を変えるGPU機能。</td></tr>
-<tr id="term-hitch"><td>ヒッチ / ヒッチレス<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: つまずき / つまずき無し。歩いていて一瞬ガクッと引っかかる、あの現象</span></td><td>フレーム時間の突発的な悪化(引っかかり) / それが起きないこと。</td></tr>
-<tr id="term-composition-root"><td>コンポジションルート</td><td>全レイヤーの依存を配線し、フレーム内の実行順序を一元支配する唯一の場所(blitz_app)。ここにロジックを書かない。</td></tr>
+<tr id="term-frame-budget"><td>フレーム予算(16.6ミリ秒)<span class="mean">意訳: 1枚の絵にかけてよい持ち時間。毎秒60枚なら1枚16.6ミリ秒</span></td><td>1フレームに使ってよい時間。60フレーム/秒なら16.6ミリ秒であり、区間ごとの配分(予算表)は評価軸文書が持つ。</td></tr>
+<tr id="term-world-update"><td>世界更新<span class="mean">意訳: 世界の時間を1コマ進める処理。時計・カメラ・物の動きをまとめて更新する</span></td><td>1フレームの中で、入力の確定に続いて世界の状態(時刻・カメラ・ストリーミング・シミュレーション)を進めるCPU処理。実行順序はコンポジションルートが支配する。</td></tr>
+<tr id="term-group-select"><td>群選択<span class="mean">意訳: 今フレームに描く物の選抜。100万本の草から「見えていて・どの細かさで描くか」を毎フレーム選ぶ</span></td><td>インスタンス群の可視判定・個体別LODの段選択・可視ID列の並べ替えを、1回の走査へ融合したCPU処理。実測は個体あたり約10ナノ秒であり、100万個体では観測範囲全体の支配区間になる。</td></tr>
+<tr id="term-uniform-write"><td>ユニフォーム書込(UBO書込)<span class="etym">uniform = 一様な。全画素・全頂点から同じ値が見える定数、の意</span><span class="mean">意訳: 今フレームの共通設定(カメラ・光源など)をGPUの黒板へ書き出す工程</span></td><td>そのフレームのカメラのビュー射影・カメラ相対位置・光源・帯ごとのライトビュー射影といった定数を、ユニフォームバッファへ書き込む工程。フレームインフライトごとに分けた領域へ書く。</td></tr>
+<tr id="term-command-record"><td>コマンド記録<span class="etym">command recording = 命令の記録</span><span class="mean">意訳: GPUへの指示書を書き溜める工程。書いている間GPUはまだ動かない</span></td><td>GPUへの命令(描画・状態設定・バリア)をコマンドバッファへ並べるCPU処理。記録の時点ではGPUはまだ動かない。</td></tr>
+<tr id="term-submit"><td>提出(サブミット)<span class="etym">submit = 提出する</span><span class="mean">意訳: 書き上げた指示書をGPUへ手渡して「やって」と言うこと</span></td><td>記録し終えたコマンドバッファをGPUのキューへ渡し、実行を始めさせること。</td></tr>
+<tr id="term-queue"><td>GPUキュー<span class="etym">queue = 行列・順番待ちの列</span><span class="mean">意訳: GPUの仕事の受付窓口。窓口が別なら仕事は並行して進む</span></td><td>GPUへ仕事を投入する口。グラフィックス・計算・転送の種別があり、別のキューへ出した仕事どうしは並行して進む。本エンジンは現在グラフィックス1本である。</td></tr>
+<tr id="term-fence"><td>フェンス<span class="etym">fence = 柵</span><span class="mean">意訳: 柵。GPUが終わるまでCPUを柵の手前で待たせる仕切り</span></td><td>GPUの処理完了をCPU側で待つための同期物。フレームの資源を書き換える前に、前回の使用が終わったことをフェンスで確かめる。</td></tr>
+<tr id="term-frame-in-flight"><td>フレームインフライト<span class="etym">frames in flight = 直訳「飛行中のフレーム」</span><span class="mean">意訳: 仕掛かり中のフレーム数。CPUが次を作る間にGPUが前を描く、流れ作業の同時仕掛かり数</span></td><td>CPUが次のフレームを準備する間にGPUが前のフレームを描く並行状態。同時進行の数だけ資源を多重化する。本エンジンは2である。</td></tr>
+<tr id="term-present"><td>提示 / FIFO提示<span class="etym">present = 差し出す / FIFO = First In First Out(先入れ先出し)</span><span class="mean">意訳: 完成した絵を画面へ出すこと / 先に描けた絵から順番どおりに出す方式</span></td><td>完成した画像を表示用の画像列(スワップチェーン)へ送って表示させること / 表示の垂直同期に合わせて順に出す提示モード。フレーム時間の主たる供給源である。</td></tr>
+<tr id="term-render-graph"><td>レンダーグラフ<span class="etym">render graph = 直訳「描画の graph(工程のつながり図)」</span><span class="mean">意訳: 絵作りの工程表。各工程が「何を読み何に書くか」を申告すると、待ち合わせを自動で入れてくれる仕組み</span></td><td>パスの読み書きの宣言から、宣言順の実行に必要な待ち合わせ(バリア)を自動導出する仕組み。実行順自体は構築側が明示する。工程を足してもバリアの正しさが壊れない器であり、本エンジンは実装済みである。</td></tr>
+<tr id="term-pass"><td>パス(描画工程)<span class="etym">pass = 1回通すこと(野球の1打席、書類の1回覧と同じ用法)</span><span class="mean">意訳: ひと工程。絵作りの作業工程1つぶん</span></td><td>レンダーグラフの1ノード。読む資源と書く資源を宣言して、GPUの作業を1まとまり実行する単位。</td></tr>
+<tr id="term-barrier"><td>バリア(同期バリア)<span class="etym">barrier = 障壁・遮断機</span><span class="mean">意訳: 関所。前の工程の荷が届くまで次の工程を通さない仕切り</span></td><td>前の工程の書き込みが次の工程から正しく見えることを保証するGPUの同期指示。本エンジンはパスの宣言から自動で導出する。</td></tr>
+<tr id="term-shader"><td>シェーダー / 計算シェーダー<span class="etym">shader = 直訳「陰影を付けるもの」(shade = 陰)。元は陰影計算専用だった名残で、今はGPUプログラム全般を指す</span><span class="mean">意訳: GPUで走る小さなプログラム / 絵でなく計算だけをさせる版</span></td><td>GPU上で走るプログラム / 描画パイプラインではなく汎用計算として走らせるシェーダー(コンピュートシェーダーとも呼ぶ)。</td></tr>
+<tr id="term-pipeline"><td>パイプライン<span class="etym">pipeline = 送油管。流れ作業の管、の意</span><span class="mean">意訳: 描画の段取り一式。頂点処理→ラスタ化→画素処理という工場ラインの設定をひと固まりにしたもの</span></td><td>シェーダー・固定機能の設定・出力形式を束ねたGPU描画の実行単位。Vulkanでは描画の前に構築しておく必要がある。</td></tr>
+<tr id="term-descriptor"><td>ディスクリプタ / ディスクリプタセット<span class="etym">descriptor = 記述するもの(describe = 記述する)</span><span class="mean">意訳: 名札。GPUに「この資源はここにある」と教える札 / 札の束</span></td><td>シェーダーがバッファ・テクスチャを参照するための記述 / それを束ねた単位。</td></tr>
+<tr id="term-ubo"><td>UBO / structured buffer / ディスクリプタインデクシング<span class="etym">Uniform Buffer Object = 共通定数の入れ物 / structured buffer = 構造体の配列バッファ / descriptor indexing = 名札の番号引き</span><span class="mean">意訳: 小さな固定の設定黒板 / 伸び縮みする表 / 名札を番号で選べる仕組み(資源が何千あっても添字1つで指せる)</span></td><td>GPUへ渡す固定サイズの設定領域 / 可変長の構造化バッファ / 資源を番号で選ぶ方式。多光源・GI・材質拡張はいずれもこの器の上に載る。</td></tr>
+<tr id="term-frame-constants"><td>frame constants(フレーム定数)<span class="etym">直訳「フレームの定数」</span><span class="mean">意訳: 1フレームの間だけ変わらない共通設定の最小セット</span></td><td>フレームごとに1回だけ更新する小さな共通の定数領域。共通UBOを分離した後の姿である。</td></tr>
+<tr id="term-subresource"><td>サブリソース<span class="etym">subresource = 直訳「資源の下位部分」</span><span class="mean">意訳: 1枚の画像の中の区画(縮小段や層の1つ)。画像全体でなく区画単位で管理する話</span></td><td>1つの画像の中の特定のミップ段・特定の層。資源の状態追跡を画像全体より細かい単位で行うための区分である。</td></tr>
+<tr id="term-vram"><td>VRAM<span class="etym">Video RAM = 映像用メモリ</span><span class="mean">意訳: GPUの手元の作業机。ここに載っている物しかGPUは速く扱えない</span></td><td>GPUが直接読む記憶。テクスチャ・頂点・中間画像が載り、容量が物量と品質の上限を決める。</td></tr>
+<tr id="term-bandwidth"><td>帯域<span class="etym">bandwidth = 直訳「(周波数の)帯の幅」。転じて通り道の太さ</span><span class="mean">意訳: データの通り道の太さ。1秒に運べる量</span></td><td>単位時間に読み書きできるデータ量。テクスチャ圧縮は容量だけでなく帯域にも効く。</td></tr>
+<tr id="term-rate-limiting"><td>律速 / 支配要因 / 支配区間<span class="etym">律速は化学用語「律速段階」(反応全体の速さを決める最も遅い段階)から</span><span class="mean">意訳: 行列のいちばん遅いレジ。そこが全体の速さを決める</span></td><td>全体の所要時間を決めている最も遅い要素 / ある物量点で最初に予算を超えた区間 / 観測した範囲全体で増分が最大の区間。後の2つは別の問いへの答えであり、混同しない。</td></tr>
+<tr id="term-p99"><td>p99<span class="etym">99th percentile = 99パーセンタイル(百分位)</span><span class="mean">意訳: 100回のうち悪い方から1番目の値。「たまのカクつき」を数字にする物差し</span></td><td>100回に1回の悪い方の値。フレーム時間の分布の裾を表す指標で、カクつきの定量化に使う。p50は中央値である。</td></tr>
+<tr id="term-frame-pacing"><td>フレームペーシング<span class="etym">pacing = 歩調の配分(マラソンのペース配分と同じ語)</span><span class="mean">意訳: 絵を出す間隔の歩調合わせ。速さより「揃っていること」が滑らかさを作る</span></td><td>フレームの提示間隔を均し、体感の滑らかさを守る制御。</td></tr>
+<tr id="term-job-system"><td>ジョブシステム<span class="etym">job = 仕事の1口 / work stealing = 直訳「仕事泥棒」</span><span class="mean">意訳: 仕事の小口配り。大仕事を小口に割って全CPUコアへ配る。ワークスティーリングは暇なコアが他人の山から仕事を取る分配法</span></td><td>仕事を細かい単位に割り、CPUの全コアへ配る仕組み。ワークスティーリングは、空いたコアがほかのコアの仕事を奪う分配方式である。</td></tr>
+<tr id="term-async-queue"><td>非同期転送 / 非同期コンピュート<span class="etym">asynchronous = 直訳「同時でない」。転じて「相手の完了を待たずに進む」</span><span class="mean">意訳: 荷運びや計算を描画の裏で並行させ、GPUの手待ち時間を仕事で埋めること</span></td><td>データ転送 / 計算を、描画とは別のGPUキューで並行させる技術。GPUの空き時間を品質の原資へ変える。</td></tr>
+<tr id="term-queue-ownership"><td>キュー所有権(queue ownership)<span class="mean">意訳: 資源の担当窓口の引き継ぎ管理。窓口(キュー)をまたいで資源を使うときの取り決め</span></td><td>Vulkanで、資源をどのキューが使ってよいかを移譲する管理。複数キュー化の設計点である。</td></tr>
+<tr id="term-pso"><td>PSO<span class="etym">Pipeline State Object = 直訳「パイプライン状態の物体」</span><span class="mean">意訳: 描画の段取り一式の完成品。実行中に作ると1回引っかかるので、前もって作り置く</span></td><td>描画設定一式の事前生成物。実行中の生成はカクつきの主犯であり、事前コンパイルと永続キャッシュで防ぐ。</td></tr>
+<tr id="term-dynamic-resolution-vrs"><td>動的解像度 / VRS<span class="etym">dynamic resolution / Variable Rate Shading = 直訳「可変頻度の陰影計算」</span><span class="mean">意訳: 忙しいときは粗く描いて間に合わせる制御 / 画面の目立たない場所だけ手を抜くGPU機能</span></td><td>負荷に応じて描画解像度を変える制御 / 画面の領域ごとにシェーディングの密度を変えるGPU機能。</td></tr>
+<tr id="term-hitch"><td>ヒッチ / ヒッチレス<span class="etym">hitch = 引っかかり(hitchhikeのhitch)</span><span class="mean">意訳: つまずき / つまずき無し。一瞬ガクッと引っかかる、あの現象</span></td><td>フレーム時間の突発的な悪化(引っかかり) / それが起きないこと。</td></tr>
+<tr id="term-composition-root"><td>コンポジションルート<span class="etym">composition root = 直訳「組み立ての根元」</span><span class="mean">意訳: 部品の配線盤。全部品を「誰が誰を使うか」ごと組み上げる唯一の根元</span></td><td>全レイヤーの依存を配線し、フレーム内の実行順序を一元支配する唯一の場所(blitz_app)。ここにロジックを書かない。</td></tr>
 </table>
 </div>
 
@@ -998,14 +1006,14 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <div class="table-scroll">
 <table>
 <tr><th>用語</th><th>意味</th></tr>
-<tr id="term-shadow-map"><td>シャドウマップ<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 影の地図。光源の位置から世界を撮った「距離の写真」で、影になる場所の台帳</span></td><td>光源から見た深度だけを描いた絵。本番の描画がこれと深度を比べて、その画素が光源から見えているかを判定する。</td></tr>
-<tr id="term-csm"><td>CSM(Cascaded Shadow Maps)<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 段々重ねの影地図。cascadeの原義は段々滝で、段階的に何段も重ねる構成のこと</span></td><td>方向光用に、カメラからの距離帯ごとに別のシャドウマップを持つ方式。近くは細かく遠くは粗く解像度を配分する。本エンジンは4帯を実装済みである。</td></tr>
-<tr id="term-cascade-band"><td>帯(距離帯)</td><td>CSMの1つの距離区間。専用の正射影とシャドウマップの層を持ち、帯の境界には重なりとブレンドを置く。本エンジンは4帯である。</td></tr>
-<tr id="term-texel-snap"><td>テクセルスナップ</td><td>カメラの移動でシャドウマップの格子の位相が変わり影がちらつくことを、格子への吸着で止める技法。テクセルはシャドウマップを構成する1つの升目である。</td></tr>
-<tr id="term-pcf-pcss"><td>PCF / PCSS</td><td>影の境界を複数サンプルの平均で滑らかにする方式 / 遮蔽物からの距離に応じて半影の幅を変える方式。</td></tr>
-<tr id="term-penumbra"><td>半影 / 接触影</td><td>遮蔽物から離れるほど広がる影の柔らかい縁 / 物が接する部分に出る細く濃い影。</td></tr>
-<tr id="term-ray-tracing"><td>レイトレーシング(RT)</td><td>光線を飛ばして最初に当たる面を求める計算。近年のGPUは専用の機構を持つ。影・反射・間接光の問い合わせに使う。</td></tr>
-<tr id="term-clustered-lighting"><td>クラスタードライティング</td><td>視錐台をセルへ分割し、各セルに影響する光源を事前に絞る多光源の標準技法。</td></tr>
+<tr id="term-shadow-map"><td>シャドウマップ<span class="etym">shadow map = 直訳「影の地図」</span><span class="mean">意訳: 光源から撮った距離の写真。「光源から見えている=影でない」の判定台帳</span></td><td>光源から見た深度だけを描いた絵。本番の描画がこれと深度を比べて、その画素が光源から見えているかを判定する。</td></tr>
+<tr id="term-csm"><td>CSM<span class="etym">Cascaded Shadow Maps = 直訳「段々滝式に重ねた影地図」(cascadeの原義は段々滝)</span><span class="mean">意訳: 距離別の影地図セット。近く用の細かい地図と遠く用の粗い地図を段々に持つ</span></td><td>方向光用に、カメラからの距離帯ごとに別のシャドウマップを持つ方式。近くは細かく遠くは粗く解像度を配分する。本エンジンは4帯を実装済みである。</td></tr>
+<tr id="term-cascade-band"><td>帯(距離帯)<span class="etym">cascade(段)の1つ。本文書では「帯」と訳す</span><span class="mean">意訳: CSMの1段ぶんの受け持ち距離範囲</span></td><td>CSMの1つの距離区間。専用の正射影とシャドウマップの層を持ち、帯の境界には重なりとブレンドを置く。本エンジンは4帯である。</td></tr>
+<tr id="term-texel-snap"><td>テクセルスナップ<span class="etym">texel = texture element(テクスチャの升目1つ) / snap = 磁石のようにパチンと吸着すること</span><span class="mean">意訳: 影地図の升目への吸着。カメラが動くたび影の升目がずれてちらつくのを、升目単位でしか動かないよう吸着して止める</span></td><td>カメラの移動でシャドウマップの格子の位相が変わり影がちらつくことを、格子への吸着で止める技法。テクセルはシャドウマップを構成する1つの升目である。</td></tr>
+<tr id="term-pcf-pcss"><td>PCF / PCSS<span class="etym">Percentage-Closer Filtering = 直訳「(光源に)より近い割合によるぼかし」/ Percentage-Closer Soft Shadows = 直訳「より近い割合による柔らかい影」</span><span class="mean">意訳: 影の多数決ぼかし。「この点は影か?」を周囲の数点に聞き、影だった票の割合で濃さを決める(0か1かでなく0.6の影が作れる) / その発展版で、遮蔽物が遠いほど聞き込みの範囲を広げて、本物の半影のように縁のぼけ幅を変える</span></td><td>影の境界を複数サンプルの平均で滑らかにする方式 / 遮蔽物からの距離に応じて半影の幅を変える方式。</td></tr>
+<tr id="term-penumbra"><td>半影 / 接触影<span class="etym">penumbra = ラテン語 paene(ほとんど)+umbra(影)。「ほとんど影」/ contact shadow</span><span class="mean">意訳: 影の縁のぼんやり帯(光源に大きさがあるため生じる) / 物と床が触れる際の細く濃い影(接地感の決め手)</span></td><td>遮蔽物から離れるほど広がる影の柔らかい縁 / 物が接する部分に出る細く濃い影。</td></tr>
+<tr id="term-ray-tracing"><td>レイトレーシング(RT)<span class="etym">ray tracing = 直訳「光線の追跡」</span><span class="mean">意訳: 光線の一本釣り。「この方向へ進んだら何に当たるか」を幾何学的に直接調べる</span></td><td>光線を飛ばして最初に当たる面を求める計算。近年のGPUは専用の機構を持つ。影・反射・間接光の問い合わせに使う。</td></tr>
+<tr id="term-clustered-lighting"><td>クラスタードライティング<span class="etym">clustered lighting = 直訳「(空間の)房分けによる照明」(clusterはブドウの房)</span><span class="mean">意訳: 光源の学区割り。視界を小部屋に分け、各小部屋に届く光源だけを名簿にしておく。画素は自分の小部屋の名簿だけ見ればよい</span></td><td>視錐台をセルへ分割し、各セルに影響する光源を事前に絞る多光源の標準技法。</td></tr>
 </table>
 </div>
 
@@ -1013,22 +1021,22 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <div class="table-scroll">
 <table>
 <tr><th>用語</th><th>意味</th></tr>
-<tr id="term-gi"><td>GI(Global Illumination)</td><td>大域照明。光源から1回以上跳ね返って届く間接光の計算。RTGIはレイトレーシングで解くGIを指す。</td></tr>
-<tr id="term-ibl"><td>IBL(Image-Based Lighting)</td><td>周囲環境の絵(環境マップ)を光源として使う照明。</td></tr>
-<tr id="term-ao"><td>AO(Ambient Occlusion)</td><td>環境光遮蔽。近くの遮蔽物により間接光が減る現象の近似。SSAOはスクリーン空間で解く版である。</td></tr>
-<tr id="term-ssr"><td>SSR(Screen Space Reflection)</td><td>スクリーン空間反射。描いた画面の中の情報だけで反射を作る方式。</td></tr>
-<tr id="term-screen-space"><td>スクリーン空間法</td><td>いま描いた画面自体を世界の近似として使い、画面内の情報だけで遮蔽・反射・跳ね返りを推定する方式の総称(SSAO・SSR・SSGI)。安価だが、画面の外と遮蔽の裏の情報は原理的に得られない。</td></tr>
+<tr id="term-gi"><td>GI<span class="etym">Global Illumination = 直訳「大域の照明」(global = 局所でなく世界全体の)</span><span class="mean">意訳: 回り込む光の計算。壁や床で跳ね返って届くぶんまで含めた照明。RTGIはこれをレイトレーシングで解く版</span></td><td>大域照明。光源から1回以上跳ね返って届く間接光の計算。RTGIはレイトレーシングで解くGIを指す。</td></tr>
+<tr id="term-ibl"><td>IBL<span class="etym">Image-Based Lighting = 直訳「画像に基づく照明」</span><span class="mean">意訳: 風景写真を光源にする照明。周囲の絵の全画素を小さな光源とみなして足し込む</span></td><td>周囲環境の絵(環境マップ)を光源として使う照明。</td></tr>
+<tr id="term-ao"><td>AO<span class="etym">Ambient Occlusion = 直訳「周囲光の遮蔽」/ SSAOのSSはScreen Space(画面空間)</span><span class="mean">意訳: 隅の暗がりの近似。物の隙間や巻き込みは周囲の光が入りにくく暗くなる、あの現象</span></td><td>環境光遮蔽。近くの遮蔽物により間接光が減る現象の近似。SSAOはスクリーン空間で解く版である。</td></tr>
+<tr id="term-ssr"><td>SSR<span class="etym">Screen Space Reflection = 直訳「画面空間の反射」</span><span class="mean">意訳: 画面内リサイクル反射。すでに描いた画面の中から映り込みの材料を探す</span></td><td>スクリーン空間反射。描いた画面の中の情報だけで反射を作る方式。</td></tr>
+<tr id="term-screen-space"><td>スクリーン空間法<span class="etym">screen space = 画面空間(3次元の世界でなく、描き上がった2次元の画面の上で考えること)</span><span class="mean">意訳: 描いた絵の使い回し。画面をそのまま「世界の簡易模型」として遮蔽や反射の推定に流用する。画面の外は原理的に見えない</span></td><td>いま描いた画面自体を世界の近似として使い、画面内の情報だけで遮蔽・反射・跳ね返りを推定する方式の総称(SSAO・SSR・SSGI)。安価だが、画面の外と遮蔽の裏の情報は原理的に得られない。</td></tr>
 <tr id="term-radiance-query"><td>radiance query(放射輝度問い合わせ)</td><td>「この点からこの方向を見たとき、どれだけの光が来るか」という統一の問い。本文書がGI・反射・RT影の設計目標に置く抽象である。</td></tr>
 <tr id="term-probe"><td>プローブ<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 探針・観測点。世界に差し込んだ光の温度計のようなもの</span></td><td>世界に置いた光の測定点。周囲の表面はプローブから補間して間接光を得る。DDGIは動的に更新するプローブ方式である。</td></tr>
-<tr id="term-surface-cache"><td>表面キャッシュ</td><td>世界の表面に光の計算結果を貯めて再利用する方式。Lumen級のGIの部品である。</td></tr>
-<tr id="term-path-tracing"><td>パストレーシング</td><td>光の跳ね返りを確率的に全部追う計算。理論上の正解(参照解)を出すため、検証の物差しに使える。</td></tr>
-<tr id="term-rendering-equation"><td>レンダリング方程式</td><td>「表面の明るさ=直接光+跳ね返って届く光の合計」を1行にした式。グラフィックスの全技術はこの式の近似解法である。</td></tr>
-<tr id="term-environment-map"><td>環境マップ</td><td>周囲の風景を1枚の画像(立方体または球)へ収めたもの。IBLではこれを光源として使う。</td></tr>
-<tr id="term-lut"><td>LUT(参照表)</td><td>計算結果をあらかじめ表へ焼いておき、実行時は表を引くだけにする手法。大気散乱の計算はLUT化が現代の標準である。</td></tr>
+<tr id="term-surface-cache"><td>表面キャッシュ<span class="etym">surface cache(cache = 隠し置き場・貯蔵庫)</span><span class="mean">意訳: 壁に書き溜める光の帳簿。一度計算した表面の明るさを貯めて使い回す</span></td><td>世界の表面に光の計算結果を貯めて再利用する方式。Lumen級のGIの部品である。</td></tr>
+<tr id="term-path-tracing"><td>パストレーシング<span class="etym">path tracing = 直訳「(光の)道筋の追跡」</span><span class="mean">意訳: 光の道のくじ引き総当たり。跳ね返りの道筋をランダムに1本ずつ引いて平均すると正解に収束する(数理は第10.3節)</span></td><td>光の跳ね返りを確率的に全部追う計算。理論上の正解(参照解)を出すため、検証の物差しに使える。</td></tr>
+<tr id="term-rendering-equation"><td>レンダリング方程式<span class="etym">rendering equation(render = 描画する。原義は「差し出す・表現する」)</span><span class="mean">意訳: 絵作りの大元の1本の式。「出る光=自ら光る分+入ってくる光×跳ね返し」。丁寧な導出は第10.3節</span></td><td>「表面の明るさ=直接光+跳ね返って届く光の合計」を1行にした式。グラフィックスの全技術はこの式の近似解法である。</td></tr>
+<tr id="term-environment-map"><td>環境マップ<span class="etym">environment map = 直訳「環境の地図」</span><span class="mean">意訳: 周囲の風景の全方位写真。箱(キューブマップ)や球に貼って使う</span></td><td>周囲の風景を1枚の画像(立方体または球)へ収めたもの。IBLではこれを光源として使う。</td></tr>
+<tr id="term-lut"><td>LUT(参照表)<span class="etym">Look-Up Table = 直訳「引くための表」</span><span class="mean">意訳: 計算の作り置き表。毎回計算せず、前もって解いた答えの表を引くだけにする</span></td><td>計算結果をあらかじめ表へ焼いておき、実行時は表を引くだけにする手法。大気散乱の計算はLUT化が現代の標準である。</td></tr>
 <tr id="term-analytic-sky"><td>Hosek-Wilkie解析式</td><td>空の放射輝度を少数の係数の式で近似する解析モデル。安価だが物理的な自由度が低い。本エンジンの現在の空はこれであり、Hillaire系LUTへの置換が決定済みである。</td></tr>
 <tr id="term-sky-state"><td>天空状態</td><td>時刻から決定的に導出される、太陽方向・方向光の色と強度・環境光・露出補正段・空の係数・影の有効性の束。エンジン側の純関数が返し、レンダラーは導出済みの状態だけを受け取る。</td></tr>
-<tr id="term-froxel"><td>froxel</td><td>frustum(視錐台)+voxel(立体画素)の造語。視錐台をセルへ分割して霧と光を計算する体積表現。</td></tr>
-<tr id="term-ray-march"><td>レイマーチ</td><td>光線に沿って一定の刻みで進みながら、濃さと届く光を積算する計算。体積雲・体積霧に使う。</td></tr>
+<tr id="term-froxel"><td>froxel<span class="etym">frustum(視錐台)+voxel(立体画素)の合成語</span><span class="mean">意訳: 視界のさいの目切り。カメラの視界を奥行き方向にも輪切りにした小箱1つ1つ</span></td><td>視錐台をセルへ分割して霧と光を計算する体積表現。</td></tr>
+<tr id="term-ray-march"><td>レイマーチ<span class="etym">ray marching = 直訳「光線の行進」</span><span class="mean">意訳: 光線の一歩ずつ進み。霧の中を少しずつ歩きながら「ここの濃さは? 届く光は?」を足し込んでいく計算</span></td><td>光線に沿って一定の刻みで進みながら、濃さと届く光を積算する計算。体積雲・体積霧に使う。</td></tr>
 <tr id="term-bake"><td>ベイク(事前計算)<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 焼き込み。パンを焼くように、計算結果を前もって固めて保存すること</span></td><td>実行前に光などの計算結果をデータへ焼き込むこと。安価だが、焼いた前提が変わる変更(時刻の移動・物の移動)には追随できない。</td></tr>
 </table>
 </div>
@@ -1039,31 +1047,31 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr><th>用語</th><th>意味</th></tr>
 <tr id="term-shading-model"><td>シェーディングモデル / 材質特徴ビット</td><td>照明の解き方の種類(標準・肌・髪など) / その材質がどの機能を使うかを表すビットの集合。どちらの軸で分けるかがパイプラインの本数を決める。</td></tr>
 <tr id="term-variant-explosion"><td>バリアント爆発</td><td>材質と機能の組み合わせで、シェーダーとパイプラインの本数が掛け算で増える問題。生成時間・切替コスト・検証コストのすべてが悪化する。</td></tr>
-<tr id="term-sss"><td>SSS(Subsurface Scattering)</td><td>表面下散乱。肌・大理石・葉のように、光が内部で散ってから出てくる材質の表現。</td></tr>
-<tr id="term-clearcoat"><td>クリアコート / 薄膜</td><td>車塗装の透明な層 / シャボン玉のような干渉色の層。多層マテリアルの代表である。</td></tr>
-<tr id="term-decal"><td>デカール</td><td>表面の上へ後から貼る材質(弾痕・汚れ・道路標示等)。</td></tr>
-<tr id="term-discriminated-union"><td>判別共用体</td><td>取りうる場合を型で列挙し、どの場合かを判別してから中身に触ることを強制する型。材質の種類を安全に増やすための器として本エンジンが採る。</td></tr>
-<tr id="term-xpbd"><td>XPBD布</td><td>位置を直接補正する実時間物理手法(Extended Position-Based Dynamics)で解く布。本エンジンは布専用のシャドウ経路を持つ。</td></tr>
-<tr id="term-skinning"><td>スキニング / スキン</td><td>骨(ジョイント)の姿勢に合わせて頂点を動かし、皮膚や服を変形させる処理。モーフは頂点位置の混ぜ合わせによる別方式である。</td></tr>
+<tr id="term-sss"><td>SSS<span class="etym">Subsurface Scattering = 直訳「表面下の散乱」</span><span class="mean">意訳: 肌の透け感の正体。光が皮膚の内側へ少し潜り、散ってから出てくる現象(耳を逆光で見ると赤く透ける、あれ)</span></td><td>表面下散乱。肌・大理石・葉のように、光が内部で散ってから出てくる材質の表現。</td></tr>
+<tr id="term-clearcoat"><td>クリアコート / 薄膜<span class="etym">clear coat = 直訳「透明な上塗り」/ thin film = 薄い膜</span><span class="mean">意訳: 車のツヤ層(色の上の透明ニス) / シャボン玉の虹色を作る極薄の膜</span></td><td>車塗装の透明な層 / シャボン玉のような干渉色の層。多層マテリアルの代表である。</td></tr>
+<tr id="term-decal"><td>デカール<span class="etym">decal = 転写シール(プラモデルのデカールと同じ語)</span><span class="mean">意訳: 後貼りシール。壁の弾痕や道路の白線を、面の上へ後から貼る</span></td><td>表面の上へ後から貼る材質(弾痕・汚れ・道路標示等)。</td></tr>
+<tr id="term-discriminated-union"><td>判別共用体<span class="etym">discriminated union = 直訳「判別つきの合併」</span><span class="mean">意訳: 場合分けを型にしたもの。「AかBかCのどれか」を、どれかを確かめてからでないと中身に触れない形で持つ</span></td><td>取りうる場合を型で列挙し、どの場合かを判別してから中身に触ることを強制する型。材質の種類を安全に増やすための器として本エンジンが採る。</td></tr>
+<tr id="term-xpbd"><td>XPBD布<span class="etym">Extended Position-Based Dynamics = 直訳「拡張・位置ベース動力学」</span><span class="mean">意訳: 力でなく位置を直接直す物理。布の点どうしの距離が伸びすぎたら位置を引き戻す、を繰り返す実時間向きの解き方</span></td><td>位置を直接補正する実時間物理手法で解く布。本エンジンは布専用のシャドウ経路を持つ。</td></tr>
+<tr id="term-skinning"><td>スキニング / スキン<span class="etym">skinning = 直訳「皮を張ること」</span><span class="mean">意訳: 骨に皮を張る処理。骨格の動きに皮膚や服の頂点を追従させる</span></td><td>骨(ジョイント)の姿勢に合わせて頂点を動かし、皮膚や服を変形させる処理。モーフは頂点位置の混ぜ合わせによる別方式である。</td></tr>
 <tr id="term-forward-deferred"><td>forward / deferred / visibility buffer<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: その場払い方式 / 後払い方式(deferredは「後回しにした」の意。照明の支払いを後でまとめて行う) / 後払いの徹底版(何が見えるかの番号だけ先にメモする)</span></td><td>描きながら照明まで計算する方式 / 材質情報を一旦絵(G-buffer。画面全画素の材質・法線・深度を格納する中間画像群)へ書き、後から照明する方式 / 可視面のIDだけを書き、材質の評価を後段で行う方式。</td></tr>
 <tr id="term-aa"><td>AA(アンチエイリアシング)<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: ぎざぎざ・ちらつき対策。aliasing(偽信号化)への対抗策の意</span></td><td>画素の格子が生む輪郭のギザつき・ちらつきを除去する技術の総称。MSAAは1フレーム内で完結するGPU標準装備の方式である。</td></tr>
 <tr id="term-taa"><td>TAA(Temporal Anti-Aliasing)<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 時間ためこみ式ぎざぎざ対策。過去フレームを貯めて使い回す</span></td><td>毎フレームサンプル位置をずらし(ジッタ)、過去フレームと混合して品質を稼ぐAA。時間方向の再構成の基本形である。</td></tr>
-<tr id="term-temporal-upscaler"><td>時間的アップスケーラ(TSR級)</td><td>低い解像度で描き、時間方向の情報から高い解像度を復元する方式。DLSS・FSRが商用の同系である。</td></tr>
+<tr id="term-temporal-upscaler"><td>時間的アップスケーラ(TSR級)<span class="etym">temporal upscaler = 直訳「時間を使う拡大器」。TSR = Temporal Super Resolution(時間的超解像)。DLSS = Deep Learning Super Sampling(深層学習超サンプリング)。FSR = FidelityFX Super Resolution</span><span class="mean">意訳: 過去フレームの貯金で解像度を水増しする仕組み。小さく描いて大きくきれいに見せる</span></td><td>低い解像度で描き、時間方向の情報から高い解像度を復元する方式。DLSS・FSRが商用の同系である。</td></tr>
 <tr id="term-jitter"><td>ジッタ<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 小刻み揺らし。狙いをわざと毎回少しずらすこと</span></td><td>毎フレーム、画素の中のサンプル位置を微小にずらすこと。時間方向にサンプルを散らし、混合によって画素あたりのサンプル数を稼ぐ。</td></tr>
-<tr id="term-motion-vector"><td>モーションベクタ</td><td>各画素が前フレームで画面上のどこにいたかを表すベクトル場。時間再構成の必須部品である。</td></tr>
-<tr id="term-history-buffer"><td>履歴バッファ</td><td>前フレームの結果を保持しておく画像。カメラが切り替わったときなどに無効化する規律が要る。</td></tr>
-<tr id="term-disocclusion"><td>disocclusion</td><td>前フレームでは隠れていた領域が、今フレームで露出すること。履歴が無いためゴーストの主因になる。</td></tr>
-<tr id="term-ghosting"><td>ゴースト(残像)</td><td>前フレームの情報を誤って混ぜたために、動く物の後ろへ尾を引く欠陥。</td></tr>
+<tr id="term-motion-vector"><td>モーションベクタ<span class="etym">motion vector = 直訳「動きの矢印」</span><span class="mean">意訳: 各画素の「前はどこにいたか」メモ。過去フレームから対応点を探すための矢印</span></td><td>各画素が前フレームで画面上のどこにいたかを表すベクトル場。時間再構成の必須部品である。</td></tr>
+<tr id="term-history-buffer"><td>履歴バッファ<span class="etym">history buffer = 履歴の一時置き場</span><span class="mean">意訳: 前フレームの絵の貯金箱</span></td><td>前フレームの結果を保持しておく画像。カメラが切り替わったときなどに無効化する規律が要る。</td></tr>
+<tr id="term-disocclusion"><td>disocclusion<span class="etym">dis-(解除) + occlusion(遮蔽) = 直訳「遮蔽の解除」</span><span class="mean">意訳: 物陰から現れたばかりの領域。前フレームには映っていないので過去の貯金が使えない</span></td><td>前フレームでは隠れていた領域が、今フレームで露出すること。履歴が無いためゴーストの主因になる。</td></tr>
+<tr id="term-ghosting"><td>ゴースト(残像)<span class="etym">ghosting = 直訳「幽霊化」</span><span class="mean">意訳: 動く物の後ろに残る半透明の尾。古い絵を間違って混ぜた痕跡</span></td><td>前フレームの情報を誤って混ぜたために、動く物の後ろへ尾を引く欠陥。</td></tr>
 <tr id="term-reactive-mask"><td>反応性マスク</td><td>履歴を信用してはいけない画素(半透明・急変する発光等)を、描画側が申告する仕組み。</td></tr>
 <tr id="term-denoiser"><td>デノイザー<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: ざらつき取り。少ない標本のまだら模様を均す係</span></td><td>レイトレーシング等の少ないサンプルの結果からノイズを除く処理。時間再構成と部品を共有する。</td></tr>
-<tr id="term-exposure"><td>露出</td><td>トーンマッピングの前に輝度へ掛ける倍率。カメラの露出設定に相当し、シーン全体の明るさを決める。本エンジンは現在手動である。</td></tr>
-<tr id="term-auto-exposure"><td>ヒストグラム自動露出</td><td>画面の輝度の分布(ヒストグラム)を集計し、明るさに合わせて露出を自動で決める方式。</td></tr>
-<tr id="term-hdr-tonemap"><td>HDR / トーンマッピング / ACES</td><td>広い輝度域のまま計算すること / それを表示できる輝度へ写す変換 / 映画業界で標準的に使われる変換カーブ。</td></tr>
+<tr id="term-exposure"><td>露出<span class="etym">exposure = カメラ用語(フィルムを光にさらすこと)の訳語</span><span class="mean">意訳: 絵全体の明るさのつまみ。人間の目が暗がりに慣れるのと同じ調整</span></td><td>トーンマッピングの前に輝度へ掛ける倍率。カメラの露出設定に相当し、シーン全体の明るさを決める。本エンジンは現在手動である。</td></tr>
+<tr id="term-auto-exposure"><td>ヒストグラム自動露出<span class="etym">histogram = 度数分布図</span><span class="mean">意訳: 画面の明るさの分布を集計して、つまみを自動で回す仕組み</span></td><td>画面の輝度の分布(ヒストグラム)を集計し、明るさに合わせて露出を自動で決める方式。</td></tr>
+<tr id="term-hdr-tonemap"><td>HDR / トーンマッピング / ACES<span class="etym">High Dynamic Range = 直訳「広い明暗の幅」/ tone mapping = 直訳「明暗の写し替え」/ ACES = Academy Color Encoding System(米映画芸術科学アカデミーの色符号化標準)</span><span class="mean">意訳: 太陽から暗闇まで本物の明暗幅のまま計算すること / それを画面が出せる幅へ上手に潰す変換 / 映画業界標準の潰し方カーブ</span></td><td>広い輝度域のまま計算すること / それを表示できる輝度へ写す変換 / 映画業界で標準的に使われる変換カーブ。</td></tr>
 <tr id="term-bloom"><td>ブルーム<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 光のにじみ。bloomは花が咲く・ぼうっと広がるの意</span></td><td>高輝度の部分が周囲へにじむ現象の再現。抽出・ぼかし・加算合成の3段で作る。本エンジンは実装済みである。</td></tr>
-<tr id="term-dof"><td>被写界深度(DoF)</td><td>ピントの合う奥行きの幅。範囲の外をぼかしてレンズらしい絵にするポスト処理。</td></tr>
-<tr id="term-motion-blur"><td>モーションブラー</td><td>露光している間の動きによるぶれの再現。モーションベクタを入力に使う。</td></tr>
-<tr id="term-post"><td>ポストプロセス</td><td>シーン描画の完成後に画像全体へかける加工の総称(トーンマッピング・ブルーム・被写界深度等)。画面全体を覆う図形を1枚描く、画像から画像へのパスとして実装する。</td></tr>
-<tr id="term-color-management"><td>色管理</td><td>線形・sRGB・広色域といった色空間を工程ごとに取り違えず、一貫して扱うこと。</td></tr>
+<tr id="term-dof"><td>被写界深度(DoF)<span class="etym">Depth of Field = 直訳「ピントの合う場の深さ」。写真用語の訳語</span><span class="mean">意訳: ピントの幅。手前と奥をぼかして「カメラで撮った感」を出す加工</span></td><td>ピントの合う奥行きの幅。範囲の外をぼかしてレンズらしい絵にするポスト処理。</td></tr>
+<tr id="term-motion-blur"><td>モーションブラー<span class="etym">motion blur = 直訳「動きによるぶれ」</span><span class="mean">意訳: 速い物の流れぶれ。シャッターが開いている間に動いた分のぶれの再現</span></td><td>露光している間の動きによるぶれの再現。モーションベクタを入力に使う。</td></tr>
+<tr id="term-post"><td>ポストプロセス<span class="etym">post-process = 直訳「後工程・後処理」</span><span class="mean">意訳: 撮った後の現像・加工。絵が描き上がってから全体にかける仕上げ</span></td><td>シーン描画の完成後に画像全体へかける加工の総称(トーンマッピング・ブルーム・被写界深度等)。画面全体を覆う図形を1枚描く、画像から画像へのパスとして実装する。</td></tr>
+<tr id="term-color-management"><td>色管理<span class="etym">color management</span><span class="mean">意訳: 色の座標系の取り違え防止。「この数値はどの色空間の値か」を工程間で揃える規律</span></td><td>線形・sRGB・広色域といった色空間を工程ごとに取り違えず、一貫して扱うこと。</td></tr>
 </table>
 </div>
 
@@ -1073,24 +1081,24 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr><th>用語</th><th>意味</th></tr>
 <tr id="term-lod"><td>LOD(Level of Detail)<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 細かさの段階。遠くの物は粗い作りで済ませる仕組み</span></td><td>距離に応じて物の詳細度(ポリゴン数等)を切り替える仕組み。</td></tr>
 <tr id="term-culling"><td>カリング<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 間引き。cullは家畜の群れから間引く意で、描かない物をふるい落とすこと</span></td><td>見えない物を描画から除外する選別。カメラの視錐台の外を除く視錐台カリングと、手前の物に隠れた分を除く遮蔽カリングがある。</td></tr>
-<tr id="term-occlusion-culling"><td>遮蔽カリング</td><td>手前の物に隠れて見えない物を描画から外す選別。視錐台の中にあるかどうかとは別の判定である。</td></tr>
-<tr id="term-instanced-draw"><td>インスタンス描画</td><td>同じ形状の物(木・草)を1回の描画命令でまとめて描く方式。物量の基本解である。</td></tr>
-<tr id="term-indirect-draw"><td>GPU駆動描画 / 間接描画</td><td>何を描くかの選別をGPUの計算シェーダーで行う方式 / 描画の引数そのものをGPUが書き、CPUは実行の指示だけを出す方式。CPUの関与が物の数に比例しなくなる。</td></tr>
+<tr id="term-occlusion-culling"><td>遮蔽カリング<span class="etym">occlusion culling = 直訳「遮蔽による間引き」</span><span class="mean">意訳: 物陰の間引き。ビルの裏の街並みを最初から描かない</span></td><td>手前の物に隠れて見えない物を描画から外す選別。視錐台の中にあるかどうかとは別の判定である。</td></tr>
+<tr id="term-instanced-draw"><td>インスタンス描画<span class="etym">instance = 実例・個体(1つの雛形から作った1体ずつ)</span><span class="mean">意訳: 同じ型のまとめ描き。「この木の型を、この1万箇所に」と1回の命令で描く</span></td><td>同じ形状の物(木・草)を1回の描画命令でまとめて描く方式。物量の基本解である。</td></tr>
+<tr id="term-indirect-draw"><td>GPU駆動描画 / 間接描画<span class="etym">GPU-driven rendering = 直訳「GPUが運転する描画」/ indirect draw = 直訳「間接の描画」(命令の中身を後からGPUが埋める)</span><span class="mean">意訳: GPUの自炊。「何をいくつ描くか」の決定までGPUが自分で行い、CPUは白紙の指示書を渡すだけ</span></td><td>何を描くかの選別をGPUの計算シェーダーで行う方式 / 描画の引数そのものをGPUが書き、CPUは実行の指示だけを出す方式。CPUの関与が物の数に比例しなくなる。</td></tr>
 <tr id="term-instance-group"><td>インスタンス群</td><td>1つの原型(共有するメッシュのLOD列)を、多数の配置で描く描画形状。木や草はこの形で持つ。</td></tr>
 <tr id="term-visible-id-list"><td>可視ID列</td><td>そのフレームで描く個体の添字を、LOD段ごとに連続した範囲へ並べ、各段の内側をシーンのみ可視・両方可視・シャドウのみ可視・どちらも不可視の順に置いた毎フレームのGPU入力。シーンとシャドウの2つの可視集合を、1本の列の連続範囲だけで表せる。</td></tr>
-<tr id="term-mesh-shader"><td>メッシュシェーダー</td><td>三角形の生成と選別をGPUで行う新しいパイプライン段。クラスタ単位の細かいカリングに向く。</td></tr>
-<tr id="term-virtual-geometry"><td>仮想化ジオメトリ(Nanite級)</td><td>メッシュをクラスタの階層へ事前に分解し、画面上の誤差が一定以下になる階層だけを読んで描く方式。ポリゴン数を画素数に比例させる。</td></tr>
-<tr id="term-meshlet"><td>meshlet / クラスタ</td><td>メッシュを分解した小さな三角形の束。仮想化ジオメトリとメッシュシェーダーの操作単位である。</td></tr>
-<tr id="term-ik"><td>IK(Inverse Kinematics)</td><td>足の接地や手の把持のため、目標位置から関節の角度を逆算する技術。</td></tr>
-<tr id="term-motion-matching"><td>モーションマッチング</td><td>大量に収録した動作データから、次のポーズを検索で選ぶアニメーション方式。</td></tr>
-<tr id="term-gpu-skin-cache"><td>GPUスキンキャッシュ</td><td>スキニングの結果を保存し、影など複数のパスでの再計算を消す仕組み。</td></tr>
-<tr id="term-chunk"><td>チャンク</td><td>世界をXZ平面で一定の一辺長に区切った1区画。読込と解除の単位であり、描画対象は所有チャンクを持つ。</td></tr>
+<tr id="term-mesh-shader"><td>メッシュシェーダー<span class="etym">mesh shader = メッシュを作るシェーダー</span><span class="mean">意訳: 三角形の製造直販。頂点の決まった流れ作業でなく、GPUが三角形の束を自由に作って選んで流せる新しい入口</span></td><td>三角形の生成と選別をGPUで行う新しいパイプライン段。クラスタ単位の細かいカリングに向く。</td></tr>
+<tr id="term-virtual-geometry"><td>仮想化ジオメトリ(Nanite級)<span class="etym">virtualized geometry = 直訳「仮想化された形状」。仮想メモリ(必要なページだけ実メモリへ載せる仕組み)の発想を形状データへ適用した命名</span><span class="mean">意訳: 形の必要分だけ読み。彫刻級の細かいモデルを細切れの束にしておき、画面に必要な細かさの分だけ読んで描く</span></td><td>メッシュをクラスタの階層へ事前に分解し、画面上の誤差が一定以下になる階層だけを読んで描く方式。ポリゴン数を画素数に比例させる。</td></tr>
+<tr id="term-meshlet"><td>meshlet / クラスタ<span class="etym">meshlet = mesh + -let(小さいもの。bookletのlet) / cluster = 房・かたまり</span><span class="mean">意訳: 三角形の小分けパック(数十〜百個入り)</span></td><td>メッシュを分解した小さな三角形の束。仮想化ジオメトリとメッシュシェーダーの操作単位である。</td></tr>
+<tr id="term-ik"><td>IK<span class="etym">Inverse Kinematics = 直訳「逆向きの運動学」。通常(順運動学)は関節角→手足の位置の順に決めるが、その逆</span><span class="mean">意訳: 目標からの逆算ポーズ。「足の裏をこの坂に着けたい」から膝と腿の角度を逆算する</span></td><td>足の接地や手の把持のため、目標位置から関節の角度を逆算する技術。</td></tr>
+<tr id="term-motion-matching"><td>モーションマッチング<span class="etym">motion matching = 直訳「動作の照合」</span><span class="mean">意訳: 動きの辞書引き。大量に録った実演データから「今の状況に一番合う次の1コマ」を毎フレーム検索する</span></td><td>大量に収録した動作データから、次のポーズを検索で選ぶアニメーション方式。</td></tr>
+<tr id="term-gpu-skin-cache"><td>GPUスキンキャッシュ<span class="etym">skin cache = スキニング結果の貯蔵庫</span><span class="mean">意訳: 変形結果の使い回し。骨で動かした後の頂点を保存し、影の描画などで二度計算しない</span></td><td>スキニングの結果を保存し、影など複数のパスでの再計算を消す仕組み。</td></tr>
+<tr id="term-chunk"><td>チャンク<span class="etym">chunk = かたまり・ぶつ切りの1個</span><span class="mean">意訳: 世界のタイル1枚。読み込みと片付けはこのタイル単位で行う</span></td><td>世界をXZ平面で一定の一辺長に区切った1区画。読込と解除の単位であり、描画対象は所有チャンクを持つ。</td></tr>
 <tr id="term-streaming"><td>ストリーミング<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 流し込み読込。全部を先に積まず、必要な分だけ川の流れのように補給し続けること</span></td><td>プレイヤーの位置に応じて、必要なチャンクだけを非同期に読み込み、不要になったものを解放し続ける仕組み。</td></tr>
-<tr id="term-popin"><td>ポップイン</td><td>読込が間に合わず、目の前で建物や木が突然現れる欠陥。</td></tr>
-<tr id="term-bc-compression"><td>BC系テクスチャ圧縮</td><td>GPUが直接読める固定比の画像圧縮(Block Compression)。VRAMと帯域を1/4から1/8にする。</td></tr>
+<tr id="term-popin"><td>ポップイン<span class="etym">pop-in = 直訳「ポンと入ってくる」</span><span class="mean">意訳: 突然の出現。読み込みが間に合わず目の前で建物がポンと湧く欠陥</span></td><td>読込が間に合わず、目の前で建物や木が突然現れる欠陥。</td></tr>
+<tr id="term-bc-compression"><td>BC系テクスチャ圧縮<span class="etym">Block Compression = 直訳「ブロック(4×4画素の升)単位の圧縮」</span><span class="mean">意訳: GPUがそのまま読める圧縮。zipと違い展開作業なしで、圧縮されたまま貼れる</span></td><td>GPUが直接読める固定比の画像圧縮。VRAMと帯域を1/4から1/8にする。</td></tr>
 <tr id="term-mip"><td>ミップ / ミップストリーミング<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 縮小版の段々。同じ画像の半分・1/4・1/8…を予め全部持っておく方式(mipはラテン語 multum in parvo「小さい中に多くを」の略)</span></td><td>テクスチャの解像度の段 / いま必要な段だけをVRAMへ置く読込方式。</td></tr>
-<tr id="term-virtual-texture"><td>仮想テクスチャ</td><td>テクスチャをページ単位で管理し、画面が実際に要求したページだけを読み込む方式。</td></tr>
-<tr id="term-paging"><td>ページング</td><td>データを一定の大きさのページ単位で管理し、要求されたページだけを読み込むこと。仮想テクスチャと仮想化ジオメトリに共通の土台である。</td></tr>
+<tr id="term-virtual-texture"><td>仮想テクスチャ<span class="etym">virtual texture。仮想メモリの発想をテクスチャへ適用した命名</span><span class="mean">意訳: 画像の必要分だけ読み。巨大な画像をタイルに割り、画面が実際に見た部分のタイルだけ読み込む</span></td><td>テクスチャをページ単位で管理し、画面が実際に要求したページだけを読み込む方式。</td></tr>
+<tr id="term-paging"><td>ページング<span class="etym">paging = 本のページ分け(page)から。OSのメモリ管理用語</span><span class="mean">意訳: データのページ分け管理。要求されたページだけ取り寄せる図書館方式</span></td><td>データを一定の大きさのページ単位で管理し、要求されたページだけを読み込むこと。仮想テクスチャと仮想化ジオメトリに共通の土台である。</td></tr>
 <tr id="term-asset-compiler"><td>アセットコンパイラ</td><td>glTFや画像を検証・変換して実行時形式を出力する、エンジンとは別のオフラインのツール層。同一の入力から同一の出力を出す決定的なコンパイルを守る。</td></tr>
 <tr id="term-runtime-format"><td>アセット実行時形式</td><td>エンジンが実行時に直接読む版付きのバイナリ形式。形式の拡張は版の追加として行い、古い版は最新版への変換で読む。</td></tr>
 </table>
@@ -1106,8 +1114,8 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr id="term-gpu-instrument"><td>GPU計器</td><td>パス別・帯別のGPU実行時間をタイムスタンプで採り、予算と突き合わせるための計測機構。</td></tr>
 <tr id="term-checkpoint"><td>定点</td><td>マイルストーンの完了時に必ず実行する点検の組。予算表の更新と差分の検出、設計文書と実装の一致確認などからなる。</td></tr>
 <tr id="term-vertical-slice"><td>縦切り</td><td>1つの能力を、端から端まで最小の構成で通して動かす進め方。暫定の方式で通した部分は縦切りの暫定と位置づけ、本番方式への置換の段を計画へ入れる。</td></tr>
-<tr id="term-dod"><td>DoD(Definition of Done)</td><td>その作業が完了したと言える条件。本プロジェクトは機械で判定できる形に書く。</td></tr>
-<tr id="term-artifact"><td>アーティファクト(描画の破綻)</td><td>本来そこに無いはずの見た目の欠陥。ちらつき・縞・にじみ・残像などの総称。</td></tr>
+<tr id="term-dod"><td>DoD<span class="etym">Definition of Done = 直訳「完了の定義」</span><span class="mean">意訳: 「終わった」と言ってよい条件の明文化</span></td><td>その作業が完了したと言える条件。本プロジェクトは機械で判定できる形に書く。</td></tr>
+<tr id="term-artifact"><td>アーティファクト(描画の破綻)<span class="etym">artifact = 直訳「人工物」。医療画像などで「本物でない、処理が作ってしまった偽の模様」を指す用語</span><span class="mean">意訳: 計算のせいで出る偽物の模様。ちらつき・縞・にじみ・残像の総称</span></td><td>本来そこに無いはずの見た目の欠陥。ちらつき・縞・にじみ・残像などの総称。</td></tr>
 <tr id="term-representative-scene"><td>代表シーン</td><td>実運用に近い密度・材質・光源の構成を持つ検証用のシーン。方式を採るかどうかは、このシーンでの計測で判定する。</td></tr>
 <tr id="term-graceful-degradation"><td>縮退設計</td><td>性能が足りない環境での品質の落ち方を設計すること。同一方式の中の品質段階と、機能非対応の正直な型化からなる(第7章)。</td></tr>
 </table>
@@ -1119,7 +1127,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <p>この章は、第4章までの技法の下にある理学(物理と数学)を、単位を保ったまま最初から積み上げる。グラフィックスの数理を扱う本の多くは、量の定義を飛ばして式を出したり、未定義の言葉で別の未定義の言葉を説明したりする。この章はその逆を行く: <strong>すべての量を「何を数えているのか」と「単位」から定義し、式は定義の組み合わせとしてだけ出す。</strong></p>
 
-<p>もう1つ、この章が正面から扱うのは<strong>グラフィックスが物理を意図的に歪めている箇所</strong>である。グラフィックスは理学ではなく工学であり、「毎秒60回、間に合う範囲で最も物理に近い答えを出す」ための近似の体系である。どこで何を捨てたかを知らないと、技法は暗記になる。逆にそれを知っていれば、新しい技法を見ても「ああ、あの捨てた部分をこう繕うのか」と読める。歪めた箇所は本文の随所で <span class="distort" style="display:inline; padding:1px 10px; margin:0;"><span style="font-size:0.78rem; font-weight:bold; color:#d0a8ec;">歪み</span></span> の札で示し、10.5節に目録を置く。</p>
+<p>もう1つ、この章が正面から扱うのは<strong>グラフィックスが物理を意図的に歪めている箇所</strong>である。グラフィックスは理学ではなく工学であり、「毎秒60回、間に合う範囲で最も物理に近い答えを出す」ための近似の体系である。どこで何を捨てたかを知らないと、技法は暗記になる。逆にそれを知っていれば、新しい技法を見ても「ああ、あの捨てた部分をこう繕うのか」と読める。歪めた箇所は本文の随所で <span class="distort" style="display:inline; padding:1px 10px; margin:0;"><span style="font-size:0.78rem; font-weight:bold; color:#d0a8ec;">歪み</span></span> の札で示し、10.11節に目録を置く。</p>
 
 <!-- ------------------------------------------------ -->
 <h3 id="s10-1">10.1 光をどう数えるか — 単位を保った放射の量</h3>
@@ -1309,7 +1317,126 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 </div>
 
 <!-- ------------------------------------------------ -->
-<h3 id="s10-5">10.5 グラフィックスが物理を歪めている箇所の目録</h3>
+<!-- ------------------------------------------------ -->
+<h3 id="s10-5">10.5 カメラの数理 — 射影と深度</h3>
+
+<p>3次元の点を画面の画素に対応づける仕組みを、単位と意味を保って追う。ここが分かると、視錐台・深度バッファ・「深度の精度問題」・シャドウマップの座標系(10.6節)がすべて1本につながる。</p>
+
+<h4>射影は「割り算」である</h4>
+
+<p>遠近法の核心は1つの割り算に尽きる: <strong>遠い物ほど小さく見えるのは、画面上の大きさが距離で割られるから</strong>である。カメラを原点に置き、視線方向にz軸を取ると、位置(x, y, z)の点が画面上に映る位置は、比例定数を別にすれば(x/z, y/z)である。相似三角形そのものであり、これ以上の内容はない。透視射影行列という4×4の行列が仰々しく見えるのは、この割り算を行列計算の枠組み(同次座標。割り算を「第4成分wへ分母を貯めておき、最後にwで割る」形に直したもの)へ収めるための帳簿仕事だからで、数学的な中身は割り算1回である。</p>
+
+<h4>深度は1/zで記録される</h4>
+
+<p>深度バッファに入る値は、実はカメラからの距離zそのものではなく、<strong>zの逆数に比例する量</strong>である(同次座標の割り算の副産物としてそうなる)。これは偶然の産物だが、都合が良い面と悪い面がある。良い面: 1/zは画面上で線形に補間できる(三角形の内部の深度を頂点から正しく補間できるのはこの性質のおかげである)。悪い面: <strong>精度の配分が手前に偏る</strong>。1/zは手前で急に変化し遠方でほぼ平らになるため、記録の目盛りが手前に細かく遠方に粗くなる。遠方で「どちらが手前か」の判定が壊れてちらつく欠陥(Zファイティング。深度の精度切れによる縞や明滅)はここから来る。現代の対策は逆Z(深度の0と1を逆に割り当てると、浮動小数点の「0付近に目盛りが密」という性質が1/zの偏りとちょうど打ち消し合う)で、遠距離描画の標準になっている。</p>
+
+<div class="formula">
+画面座標 = (x / z, y / z) ・ 深度バッファの値 ∝ 1 / z　<span class="unit">割り算が遠近法のすべて。深度が1/z系であることが精度問題の根</span>
+</div>
+
+<h4>視錐台とは「画面に映る範囲の逆像」である</h4>
+
+<p>画面は有限の四角形で、深度にも手前と奥の限界(近クリップ・遠クリップ)を置く。この「画面に映りうる範囲」を世界側から見ると、カメラを頂点とする四角錐の頭を切った立体になる — これが視錐台である。視錐台カリング(4.5章)が数学的にやっていることは、「物の包囲球が、視錐台を成す6枚の平面のどれかの外側に完全にあるか」という平面と球の距離判定6回である。1個あたり数ナノ秒で済む理由がこの単純さである。</p>
+
+<!-- ------------------------------------------------ -->
+<h3 id="s10-6">10.6 影の数理 — シャドウマップからCSMまで</h3>
+
+<h4>シャドウマップの原理は「2つのカメラの深度の照合」</h4>
+
+<p>影の判定は次の1文に還元される: <strong>「その点は、光源から見えるか?」</strong>。シャドウマップ方式はこれを2段で解く。(1)光源の位置にカメラを置いて世界の深度だけを描く(これがシャドウマップ)。(2)本番の描画で各画素の位置を光源のカメラの座標系へ変換し、「私から光源までの距離」と「シャドウマップに記録された、その方向の一番手前の距離」を比べる。記録より自分が遠ければ、間に何かがいる — つまり影である。</p>
+
+<div class="formula">
+影である ⇔ 光源座標系での自分の深度 &gt; シャドウマップ(自分の位置に対応するテクセル)の深度<span class="unit">2台のカメラの帳簿の突き合わせ。10.5節の射影をカメラと光源の2回使う</span>
+</div>
+
+<p>この単純な比較には数値上の罠が2つあり、影の実装の苦労の大半はこの2つとの戦いである。(a)<strong>自己影のにじみ(シャドウアクネ)</strong>: 自分の深度と記録された自分自身の深度は本来同じ値だが、テクセルの解像度と数値誤差でわずかにずれ、「自分が自分の影に入る」まだら模様が出る。対策は比較に小さな下駄(バイアス)を履かせることだが、履かせすぎると影が足元から剥がれる(ピーターパン現象)。(b)<strong>解像度の不足</strong>: シャドウマップの1テクセルが世界の何メートルを覆うか(世界メートル毎テクセル)が粗いと、影の輪郭が階段になる。</p>
+
+<h4>PCFの数理は「二値判定の平均化」</h4>
+
+<p>上の比較の結果は影/非影の2値で、そのままでは輪郭がジャギーになる。PCF(影の多数決ぼかし)の数理は、<strong>比較を1回でなく周囲N点で行い、「影だった割合」を影の濃さにする</strong>ことである。重要なのは順序で、「深度を平均してから比較する」のではなく「比較してから割合を取る」。深度の平均は物理的に無意味な値(手前の葉と奥の地面の中間の深度)を作るが、比較結果の平均は「この画素の面積のうち影に覆われた割合」という意味のある量の推定になる。これは10.8節のモンテカルロ的発想(積分をサンプルの平均で推定する)の最初の実例である。</p>
+
+<h4>CSMの分割式 — 一様と対数の混合</h4>
+
+<p>CSM(4.1章)の本質は解像度予算の配分である。カメラからの距離[近, 遠]を4帯に区切るとき、区切り方には両極がある。<strong>一様分割</strong>(等間隔)は遠方に手厚く近くに薄い。<strong>対数分割</strong>(等比: 各帯の遠近比が一定)は、10.5節の「画面上の大きさは1/z」という事実と噛み合う理論最適で、どの帯でも画素あたりの影の解像度が揃う — が、近距離の帯が極端に狭くなりすぎる。実用は両者の混合であり、本エンジンの<strong>実用分割(practical split)</strong>は混合率0.6で対数側に寄せている(設計正本の確定値)。数式で書けば、i番目の区切りは 混合率×(対数分割の位置) + (1−混合率)×(一様分割の位置) である。</p>
+
+<h4>テクセルスナップの数理 — 量子化による不変化</h4>
+
+<p>カメラが動くたびにシャドウマップの範囲(正射影)も動くと、世界の同じ場所を覆うテクセルの位相が毎フレームずれ、静止物の影の輪郭がちらちら泳ぐ。対策の数理は<strong>量子化</strong>である: 正射影の中心を連続に動かさず、シャドウマップの1テクセルぶんの世界幅を刻みとする格子の上にしか置かない(格子への吸着)。すると1テクセル未満のカメラ移動では正射影が全く動かず、静止物の影のテクセル座標が厳密に不変になる。本エンジンはこの不変性を「2フレームの合成経路で静止物の光源クリップ座標が一致する」というユニットテストで機械検査している(補遺5eの成果。「行列が不変」ではなく「行列×相対座標の合成が不変」が正しい契約である、という是正の経緯ごとこのエンジンの記録に残っている)。</p>
+
+<!-- ------------------------------------------------ -->
+<h3 id="s10-7">10.7 PBRの中身 — マイクロファセット理論</h3>
+
+<p>4.3章と10.2章でBRDFを「跳ね返し方の密度」と定義したが、PBRの標準BRDFの中身はどこから来るのか。答えは<strong>マイクロファセット理論(microfacet theory。微小面理論)</strong>という、統計で表面を記述する物理モデルである。</p>
+
+<h4>発想: 表面は小さな鏡の集まりである</h4>
+
+<p>どんな表面も、顕微鏡の尺度では小さな平面(微小面)の集まりであり、<strong>1枚1枚の微小面は完全な鏡</strong>だと考える。表面が「粗い」とは、微小面の向きがバラバラだということである。すると表面の反射は「無数の小さな鏡の統計」になり、パラメータは<em>微小面の向きの分布</em>だけになる。粗さ(roughness)の正体はこの分布の広がりである: 粗さ0はすべての鏡が同じ向き(=1枚の鏡)、粗さ大は向きがてんでばらばら(=ぼけた反射)。</p>
+
+<p>この統計を数式にすると、鏡面BRDFは3つの因子の積になる(Cook-Torranceモデル):</p>
+
+<div class="formula">
+鏡面BRDF = D × G × F ÷ (4 × cosθ<span class="unit">入</span> × cosθ<span class="unit">出</span>)<span class="unit">D: 向き分布 [1/sr] ・ G: 遮蔽 [無次元] ・ F: フレネル [無次元]</span>
+</div>
+
+<ul>
+<li><strong>D(分布項)</strong>: 「入射光を出射方向へ跳ね返せる向きの微小面が、どれだけの割合で存在するか」。粗さがここに入る。現代の標準はGGXという分布で、裾が長い(強いハイライトの周りに淡い広がりが残る)性質が実測の材質とよく合う。</li>
+<li><strong>G(幾何項)</strong>: 微小面どうしが互いに影を落とし遮り合う減衰。浅い角度で効く。これが無いとエネルギー保存が破れる。</li>
+<li><strong>F(フレネル項)</strong>: <strong>すべての物は、浅い角度で見ると鏡になる</strong>という物理現象(水面を真上から見ると底が見え、遠くの水面は空を映す、あれ)。反射率が視線の角度で変わる効果で、電磁気学(マクスウェル方程式の境界条件)から導かれる。PBRの「金属性」の正体はここにある: 金属はF(正面から見た反射率)が高く色付きで、非金属は低く無色(約4%)である。</li>
+</ul>
+
+<p>この理論の見事さは、<strong>「基本色・粗さ・金属性」という直感的なつまみが、それぞれ物理量(アルベド・微小面分布の幅・フレネル反射率)に1対1で対応している</strong>ことである。PBRが「どの照明でも破綻しない」(4.3章)のは、つまみの裏に物理があり、エネルギー保存と相反性(10.2節)を式が守っているからである。</p>
+
+<!-- ------------------------------------------------ -->
+<h3 id="s10-8">10.8 積分をくじ引きで解く — モンテカルロ法</h3>
+
+<p>10.3節でレンダリング方程式が「解けない積分」であることを見た。ここでは、それでも答えを出す確率論の道具 — <strong>モンテカルロ積分</strong> — を最初から組み立てる。パストレーシング・SSAO・RTGI・PCFの多数決・TAAの標本蓄積は、全部この1つの考えの応用である。</p>
+
+<h4>原理: 平均で積分を推定する</h4>
+
+<p>「関数fの区間全体での積分」を知りたいが、fは1点ずつしか評価できないとする。モンテカルロ法の答えはくじ引きである: <strong>区間からランダムに点をN個選び、fの値の平均に区間の大きさを掛ける</strong>。この推定値は、Nが増えるほど本当の積分値に近づく(大数の法則)。重要な性質が2つある。</p>
+
+<ol>
+<li><strong>誤差は 1/√N でしか減らない。</strong>標本を4倍にして誤差が半分、100倍にしてやっと1/10である。この遅さがレイトレーシングのノイズの正体であり、「1フレームでは足りない標本を時間方向に積み増す」(TAA・デノイザー、4.4章)という発想の必然性でもある。</li>
+<li><strong>次元に強い。</strong>普通の数値積分(区間を升目に切る)は次元が増えると升目の数が爆発するが、モンテカルロの1/√Nは次元によらない。跳ね返りのたびに積分が入れ子になる(=次元が増える)レンダリング方程式に対して、事実上唯一の正攻法である。</li>
+</ol>
+
+<h4>重点サンプリング — くじを賢く偏らせる</h4>
+
+<p>精度を上げる王道は、標本を増やすことではなく<strong>くじの偏らせ方</strong>である。積分への寄与が大きい場所(明るい光源の方向・BRDFの鋭いローブの方向)を高い確率で引き、その分を確率で割って補正する — これを重点サンプリング(importance sampling)という。「寄与の大きいところを重点的に調べ、えこひいきした分は割り引いて帳尻を合わせる」という、世論調査の層化抽出と同じ考えである。GGX分布からの標本化・光源に向けた標本化など、レンダラーの品質はこの偏らせ方の巧拙で決まると言ってよい。</p>
+
+<h4>ノイズとデノイズの位置づけ</h4>
+
+<p>モンテカルロの推定値は毎回ぶれる(分散を持つ)。画素ごとに独立にぶれるから、絵はざらざらのノイズになる。デノイザー(4.4章)の数理的な役割は、<strong>近くの画素・過去のフレームという「ほぼ同じ積分を解いているはずの標本」を借りてきて、実効的なNを増やす</strong>ことである。時間再構成(TAA)とデノイザーが部品を共有する(4.4章)のは、どちらも「よそから標本を借りて平均する」同じ数理だからである。借りてよい相手か(同じ面か・動いていないか)の判定を誤ると、ゴーストや残像(借りてはいけない標本の混入)になる。</p>
+
+<!-- ------------------------------------------------ -->
+<h3 id="s10-9">10.9 標本化の数理 — エイリアシングの正体とTAA</h3>
+
+<h4>エイリアシングとは「標本化が生む偽物の模様」である</h4>
+
+<p>画面は連続な像を画素の格子で<strong>標本化(サンプリング)</strong>したものである。標本化には信号処理の根本定理(標本化定理)がある: <strong>標本の間隔より細かい模様は、正しく記録できないだけでなく、別の粗い模様に化けて記録される。</strong>この化けた偽物がエイリアス(alias = 偽名・別名)であり、エイリアシングの語源である。遠くのフェンスの金網が粗い縞に化ける(モアレ)、細い手すりが点線に千切れる、動くと輪郭がちらつく — 全部「画素間隔より細かい情報が偽名で紛れ込んだ」現象である。</p>
+
+<p>重要なのは、<strong>これはぼかしで消える汚れではなく、標本化の時点で混入する原理的な偽情報</strong>だということである。後からぼかすと偽の模様ごとぼけるだけで、正しい像には戻らない。正攻法は標本化の前に細かすぎる成分を除くか(プリフィルタ)、標本を増やすかの2つしかない。</p>
+
+<h4>TAAの数理 — 標本を時間に分散し、指数移動平均で蓄える</h4>
+
+<p>画素あたりの標本を増やしたいが、1フレーム内で増やす(スーパーサンプリング)のは費用がN倍になる。TAA(4.4章)の数理は2つの部品からなる。</p>
+
+<ol>
+<li><strong>ジッタ = 標本位置の時間分散。</strong>毎フレーム、画素内の標本位置を既知のパターンでずらす。1フレームだけ見ると1標本のままだが、Nフレーム分を重ねれば画素内のN箇所を標本化したことになる。空間で増やせない標本を時間方向に借りる、という発想の転換である。</li>
+<li><strong>履歴混合 = 指数移動平均。</strong>過去の結果を「新しい値×α + 過去の蓄積×(1−α)」で混ぜ続ける(αは0.1程度)。これは統計でいう指数移動平均であり、直近およそ1/α枚(α=0.1なら約10枚)のフレームの平均を、画像1枚分の記憶だけで保持できる巧妙な形である。</li>
+</ol>
+
+<p>この2部品の弱点がそのまま4.4章の部品一覧に対応する: 過去の標本は「動いた物」の上では別の場所の標本なので、どこから来たかの追跡(モーションベクタ)が要る。追跡できない場所(disocclusion = 物陰から出たばかりの領域)では過去を借りてはならず、借りると偽の記憶(ゴースト)になる。つまり<strong>TAAとは「時間方向のモンテカルロ標本化+借りてよい標本の検定」</strong>であり、10.8節の数理の時間版である。</p>
+
+<!-- ------------------------------------------------ -->
+<h3 id="s10-10">10.10 露出の数理 — EVという対数の物差し</h3>
+
+<p>現実の輝度は桁で動く: 星明かりの地面はおよそ0.001 cd/m²、室内は100、曇り空は1,000、太陽の直射面は100,000を超える。8桁の幅を持つ量を線形の物差しで扱うのは無理があるため、写真の世界は<strong>対数の物差し</strong>を使う。それがEV(Exposure Value。露出段)であり、<strong>1段 = 明るさ2倍</strong>である。EVで+3段は2³=8倍を意味する。人間の明るさの知覚もおおよそ対数的(2倍の輝度が「同じくらいの1段明るい」に感じる)なので、対数は物理の都合と知覚の都合が一致する物差しでもある。</p>
+
+<p>本エンジンの露出の型(設計正本)がこの構造をそのまま写している: UI/CLIの<strong>露出倍率</strong>(線形)と、天空状態が返す<strong>露出補正段</strong>(EV。2を底とする段数)を分け、最終倍率 = 露出倍率 × 2^補正段 で合成する。夜の補正が「+2段」なのは「夜は目が慣れて4倍明るく感じる分を絵に入れる」という意味である。HDR(広い明暗幅のままの計算)・トーンマッピング(表示できる幅への圧縮)・自動露出(輝度分布からの段の自動決定)は、すべてこの対数の物差しの上の操作である。</p>
+
+
+<h3 id="s10-11">10.11 グラフィックスが物理を歪めている箇所の目録</h3>
 
 <p>本文とこの章で個別に述べた「歪み」を1つの表に集める。列の読み方: <em>何を捨てたか</em>は物理からの逸脱、<em>なぜ許されるか</em>は近似の成立条件、<em>いつ破れるか</em>は成立条件の外、<em>繕う技法</em>はその破れを局所的に貼り戻す技法である。</p>
 
