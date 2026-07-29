@@ -1,9 +1,10 @@
-// M9: 布の描画(判断54)。両面ランバート+方向光シャドウの最小シェーダー。
+// M9: 布の描画(判断54)。両面ランバート+方向光のカスケードシャドウの最小シェーダー。
 // ディスクリプタはシーンと同じセット(binding3=フレームユニフォーム、binding4=シャドウマップ)を
 // 束縛し、PBRテクスチャ(binding0〜2)は読まない。頂点レイアウトはscene.slangと同じ48バイト。
 // 前提: FrameUniformのレイアウトはscene.slangと完全一致させること(同じUBOを読むため)。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
+import cascade_shadow;
 import relative_anchor;
 
 struct FrameUniform
@@ -26,6 +27,7 @@ ConstantBuffer<FrameUniform> frameUniform;
 
 [[vk::binding(4, 0)]] [[vk::combinedImageSampler]] Texture2DArray shadowMapTexture;
 [[vk::binding(4, 0)]] [[vk::combinedImageSampler]] SamplerComparisonState shadowMapSampler;
+static const float shadowMapTexelSize = 1.0 / 2048.0;
 
 static const float3 clothColor = float3(0.55, 0.1, 0.12);
 
@@ -57,18 +59,6 @@ VertexOutput vertexMain(VertexInput input)
     return output;
 }
 
-float shadowFactor(float3 relativePosition)
-{
-    float4 lightClip = mul(frameUniform.cascadeLightViewProjection[0], float4(relativePosition, 1.0));
-    float3 projected = lightClip.xyz / lightClip.w;
-    float2 shadowUv = projected.xy * float2(0.5, -0.5) + 0.5;
-    if (any(shadowUv < 0.0) || any(shadowUv > 1.0))
-    {
-        return 1.0;
-    }
-    return shadowMapTexture.SampleCmp(shadowMapSampler, float3(shadowUv, 0.0), projected.z - 0.002);
-}
-
 // 両面ランバート: 裏面から見た場合は法線を反転して照らす(布は薄い面のため)。
 // uvからごく薄い格子模様を付けて織り目風にする(uv消費の実用も兼ねる)。
 [shader("fragment")]
@@ -78,9 +68,15 @@ float4 fragmentMain(VertexOutput input, bool isFrontFace: SV_IsFrontFace) : SV_T
     float3 toLight = -normalize(frameUniform.directionalLightDirection.xyz);
     float lambert = max(dot(normal, toLight), 0.0);
     // ambientAndLighting.zは方向光が影を落とすか。scene.slangと同じ判定で、0のとき比較サンプリングを行わない。
-    float shadow = frameUniform.ambientAndLighting.z > 0.5 ? shadowFactor(input.relativePosition) : 1.0;
-    float3 direct = frameUniform.directionalLightColor.rgb * lambert * shadow;
-    float3 ambient = float3(0.15, 0.15, 0.15);
+    float viewDepth = viewDepthOf(input.relativePosition, frameUniform.cameraRelativePosition.xyz, frameUniform.cameraForward.xyz);
+    float shadow = frameUniform.ambientAndLighting.z > 0.5
+        ? computeCascadedShadowFactor(input.relativePosition, viewDepth, frameUniform.cascadeLightViewProjection,
+              frameUniform.cascadeSplitDepths.xyz, frameUniform.cascadeTransitionWidths.xyz, shadowMapTexture, shadowMapSampler, shadowMapTexelSize)
+        : 1.0;
+    // 直接光へ方向光強度(directionalLightColor.w)を掛け、環境光はフレームユニフォームの環境光係数から取る。
+    // どちらもscene.slangと同じ読み方であり、これが無いと布だけが夜も方向光で照らされ、夜の環境光にも追従しない。
+    float3 direct = frameUniform.directionalLightColor.rgb * frameUniform.directionalLightColor.w * lambert * shadow;
+    float3 ambient = frameUniform.ambientAndLighting.xxx;
     float weave = 0.94 + 0.06 * abs(sin(input.uv.x * 100.0) * sin(input.uv.y * 100.0));
     return float4(clothColor * weave * (direct + ambient), 1.0);
 }

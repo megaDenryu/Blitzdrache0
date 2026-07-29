@@ -5,6 +5,7 @@ pub(crate) mod composition;
 pub(crate) mod display_timing;
 pub(crate) mod draw_issue;
 pub(crate) mod exit;
+pub(crate) mod shadow_gpu_time;
 pub(crate) mod sky_state;
 pub(crate) mod streaming;
 pub(crate) mod streaming_summary;
@@ -81,5 +82,8 @@ pub(crate) fn gpu時間表を表示する(表: &[(&'static str, f64)]) {
     println!("パス別GPU時間(移動平均、60フレーム窓):");
     for &(名前, 平均ミリ秒) in 表 {
         println!("  {名前}: {平均ミリ秒:.4} ms");
+    }
+    if let Some(合計) = shadow_gpu_time::帯別シャドウの合計ミリ秒(表) {
+        println!("  シャドウ合計: {合計:.4} ms");
     }
 }
