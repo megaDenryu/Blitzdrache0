@@ -4,6 +4,8 @@
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「時刻の型」
 
 mod ambient;
+/// 大気媒体の語彙は数が多く、空と太陽の平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
+pub mod atmosphere;
 mod celestial_policy;
 mod daylight_factor;
 mod daylight_policy;

@@ -3,6 +3,7 @@
 
 mod global_meter;
 mod global_second;
+mod inverse_meter;
 mod meter;
 mod meter_per_second;
 mod radian;
@@ -11,6 +12,7 @@ mod unit_conversion_error;
 
 pub use global_meter::大域メートル;
 pub use global_second::大域秒;
+pub use inverse_meter::逆メートル;
 pub use meter::メートル;
 pub use meter_per_second::メートル毎秒;
 pub use radian::ラジアン;
