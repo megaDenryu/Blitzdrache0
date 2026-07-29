@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blitzdrache0 技術ビジョン — AAA級品質と極限性能への地図</title>
+<style>
+:root {
+  --bg: #14161a;
+  --bg-panel: #1c1f26;
+  --bg-panel2: #232732;
+  --fg: #d8dde3;
+  --fg-dim: #9aa3ad;
+  --accent: #4fc3a1;
+  --accent2: #e0b25a;
+  --accent3: #6aa9e0;
+  --danger: #e07a6a;
+  --line: #333a45;
+  --code-bg: #101216;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Segoe UI", "Yu Gothic UI", "Noto Sans JP", Meiryo, system-ui, sans-serif;
+  line-height: 1.9;
+  font-size: 16px;
+}
+main { max-width: 980px; margin: 0 auto; padding: 0 24px 120px; }
+header.hero {
+  padding: 72px 24px 48px;
+  text-align: center;
+  background: linear-gradient(180deg, #0d1a1e 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--line);
+}
+header.hero h1 { font-size: 2.1rem; margin: 0 0 12px; letter-spacing: 0.04em; }
+header.hero p.sub { color: var(--fg-dim); margin: 0; font-size: 1.05rem; }
+header.hero .meta { color: var(--fg-dim); font-size: 0.85rem; margin-top: 20px; }
+h2 {
+  font-size: 1.5rem;
+  margin: 88px 0 24px;
+  padding: 10px 16px;
+  border-left: 5px solid var(--accent);
+  background: var(--bg-panel);
+  border-radius: 0 8px 8px 0;
+}
+h3 {
+  font-size: 1.18rem;
+  margin: 48px 0 16px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+  color: var(--accent);
+}
+h4 { font-size: 1.02rem; margin: 32px 0 10px; color: var(--accent2); }
+p { margin: 14px 0; }
+strong { color: #fff; }
+em { color: var(--accent2); font-style: normal; }
+a { color: var(--accent3); }
+ul, ol { padding-left: 1.6em; }
+li { margin: 6px 0; }
+code {
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: Consolas, "Cascadia Mono", monospace;
+  font-size: 0.9em;
+  color: #b8e0c8;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+th { background: var(--bg-panel2); color: #fff; white-space: nowrap; }
+td { background: var(--bg-panel); }
+.table-scroll { overflow-x: auto; }
+.box {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 20px 0;
+  background: var(--bg-panel);
+}
+.box.now { border-left: 5px solid var(--accent3); }
+.box.goal { border-left: 5px solid var(--accent2); }
+.box.warn { border-left: 5px solid var(--danger); }
+.box .label {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  padding: 1px 10px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+.box.now .label { background: #1d3247; color: #9ecbf0; }
+.box.goal .label { background: #43371c; color: #eeca82; }
+.box.warn .label { background: #47251d; color: #f0a89a; }
+.term {
+  border-bottom: 1px dotted var(--accent2);
+  cursor: help;
+}
+figure { margin: 28px 0; text-align: center; }
+figure svg { max-width: 100%; height: auto; }
+figcaption { color: var(--fg-dim); font-size: 0.88rem; margin-top: 10px; }
+nav.toc {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px 28px;
+  margin: 40px 0;
+}
+nav.toc h2 { all: unset; font-weight: bold; font-size: 1.1rem; color: var(--accent); }
+nav.toc ol { margin: 12px 0 0; }
+nav.toc a { text-decoration: none; }
+nav.toc a:hover { text-decoration: underline; }
+.pathrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 18px 0; }
+.pass {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 14px;
+  background: var(--bg-panel2);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+.pass.gpu { border-color: var(--accent); }
+.arrow { color: var(--fg-dim); }
+.pill {
+  display: inline-block;
+  font-size: 0.78rem;
+  border-radius: 20px;
+  padding: 1px 10px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.pill.done { background: #1d3a2d; color: #8fd8b0; }
+.pill.partial { background: #3a331d; color: #d8c88f; }
+.pill.none { background: #3a1d1d; color: #d89f8f; }
+.controls { margin: 14px 0; color: var(--fg-dim); font-size: 0.9rem; }
+input[type="range"] { width: 260px; vertical-align: middle; accent-color: var(--accent); }
+button.demo {
+  background: var(--bg-panel2);
+  color: var(--fg);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 6px 16px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+button.demo:hover { background: #2a3140; }
+.backtop {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  background: var(--bg-panel2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  text-decoration: none;
+  color: var(--fg-dim);
+}
+.backtop:hover { color: var(--fg); }
+
+/* 光線バウンスのアニメーション */
+@keyframes dashflow { to { stroke-dashoffset: -24; } }
+.ray { stroke-dasharray: 8 4; animation: dashflow 1.2s linear infinite; }
+.ray.slow { animation-duration: 2.0s; }
+
+/* フレームパス列のアニメーション: 各パスが順に点灯する */
+@keyframes passglow {
+  0%, 100% { fill: #232732; }
+  8%, 20% { fill: #2e5a4c; }
+}
+.fp { animation: passglow 8s linear infinite; }
+
+/* ジッタのサンプル位置 */
+@keyframes jitter {
+  0% { transform: translate(0px, 0px); }
+  25% { transform: translate(3px, -2px); }
+  50% { transform: translate(-2px, 3px); }
+  75% { transform: translate(-3px, -3px); }
+  100% { transform: translate(0px, 0px); }
+}
+.jitterdot { animation: jitter 2s steps(1) infinite; }
+
+@keyframes pulse { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
+.pulse { animation: pulse 2.4s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>Blitzdrache0 技術ビジョン</h1>
+  <p class="sub">AAA級品質と極限性能への地図 — 初歩からの技術解説と野心的到達形の定義</p>
+  <p class="meta">生存型文書(実装と現状に一致させる) / 正本: _doc/計画/技術ビジョン.html / 2026-07-29 初版</p>
+</header>
+
+<main>
+
+<nav class="toc" id="top">
+  <h2>目次</h2>
+  <ol>
+    <li><a href="#s1">序 — この文書の目的と読み方</a></li>
+    <li><a href="#s2">画素は何で決まるか — 形・材質・光・カメラ</a></li>
+    <li><a href="#s3">GPUが1フレームを作る流れ — 現エンジンを教材に</a></li>
+    <li><a href="#s4">技術要素の解説
+      <ol>
+        <li><a href="#s4-1">直接光と影</a></li>
+        <li><a href="#s4-2">間接光と反射 — 絵の説得力の本丸</a></li>
+        <li><a href="#s4-3">材質</a></li>
+        <li><a href="#s4-4">画の完成と時間方向の再構成</a></li>
+        <li><a href="#s4-5">物量 — ジオメトリとアニメーション</a></li>
+        <li><a href="#s4-6">世界読込 — ストリーミングとテクスチャ</a></li>
+        <li><a href="#s4-7">並列実行と実行基盤</a></li>
+      </ol>
+    </a></li>
+    <li><a href="#s5">野心的到達形の目録</a></li>
+    <li><a href="#s6">作り直し級の接合点と残せる資産</a></li>
+    <li><a href="#s7">縮退設計の思想 — 低性能デバイスでも最高品質</a></li>
+    <li><a href="#s8">能力予算と着手順</a></li>
+    <li><a href="#s9">用語辞書</a></li>
+  </ol>
+</nav>
+
+<!-- ============================================================ -->
+<h2 id="s1">1. 序 — この文書の目的と読み方</h2>
+
+<p>この文書は、エンジンのオーナーが宣言した方針「すべてをAAA級のグラフィックを極限まで最高パフォーマンスでやる。まともに実装すれば低性能デバイスでも最高品質がキチンと動くはず」を、技術の言葉に翻訳するための地図である。役割は2つある。第一に、リアルタイムグラフィックスの各技術要素を初歩から解説し、オーナー自身が方針決定に必要な概念を持てるようにする学習資料であること。第二に、このエンジンが目指す野心的な到達形を技術的に定義し、「どの能力を・どの順で・どの品質で作るか」を決める土台になるプレゼン資料であることである。</p>
+
+<p>読み進める前に、この文書全体を貫く2つの区別を頭に置いてほしい。</p>
+
+<div class="box goal">
+<span class="label">区別 1</span>
+<p><strong>「野心的到達形(能力)」と「現時点の本番方式候補」は別物である。</strong>「Lumen級のGI」「Nanite級の仮想ジオメトリ」のような固有名は能力の水準を伝える比較語として使うが、方式名を最終決定として固定しない。技術は進歩し、対象GPUも変わる。この文書では各能力に対して方式候補と、その採用条件・代替手段・破棄条件を添える。これはこのエンジンの憲法「可能性を閉じる決定を早期にしない」の適用である。</p>
+</div>
+
+<div class="box now">
+<span class="label">区別 2</span>
+<p><strong>「決定済み」と「未決定(オーナー裁定待ち)」を明示する。</strong>本文中の「現状」はすべて実装済みの事実(出典は性能アーキテクチャ方針・評価軸・各設計正本・計測記録)であり、「到達形」「方式候補」は本文書が提案する未決定の目標である。読み終えたときに決めるべきことは第8章に集約した。</p>
+</div>
+
+<p>各章の位置づけは次のとおりである。第2章と第3章は前提知識であり、絵が計算される仕組みをゼロから積み上げる。第4章が本体で、7つの技術領域を「定義 → なぜ絵が良くなるか → 現代の代表方式 → このエンジンの現状 → 野心的到達形 → 方式候補と採用条件 → 既存実装への波及」の型で解説する。第5章は全能力を1つの目録表に畳み、第6章は既存実装のうち作り直しに近い改修が要る接合点を正直に列挙する。第7章は「低性能デバイスでも最高品質」という要求の技術的な意味を定義し、第8章で実装順序の提案に落とす。</p>
+
+<!-- ============================================================ -->
+<h2 id="s2">2. 画素は何で決まるか — 形・材質・光・カメラ</h2>
+
+<p>画面は画素(ピクセル)の格子であり、リアルタイムグラフィックスの仕事は「毎秒60回、数百万個の画素それぞれに正しい色を入れること」に尽きる。では1つの画素の色は何で決まるのか。答えは4つの要素の組み合わせである。</p>
+
+<figure>
+<svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="画素の色を決める4要素の図">
+  <defs>
+    <marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#9aa3ad"/>
+    </marker>
+    <marker id="ahy" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#e0b25a"/>
+    </marker>
+  </defs>
+  <!-- 太陽(光) -->
+  <circle cx="120" cy="60" r="26" fill="#e0b25a"/>
+  <text x="120" y="110" fill="#e0b25a" font-size="14" text-anchor="middle">光(どこからどんな光が来るか)</text>
+  <!-- 光線 -->
+  <line x1="142" y1="80" x2="330" y2="185" stroke="#e0b25a" stroke-width="2" class="ray" marker-end="url(#ahy)"/>
+  <!-- 物体(形+材質) -->
+  <path d="M300,230 q60,-90 120,0 z" fill="#4fc3a1" opacity="0.85"/>
+  <text x="360" y="262" fill="#4fc3a1" font-size="14" text-anchor="middle">形(表面がどこを向いているか)</text>
+  <text x="360" y="284" fill="#6fd8b8" font-size="14" text-anchor="middle">材質(光をどう跳ね返すか)</text>
+  <!-- 反射光線 -->
+  <line x1="365" y1="180" x2="580" y2="95" stroke="#6aa9e0" stroke-width="2" class="ray" marker-end="url(#ah)"/>
+  <!-- カメラ -->
+  <rect x="590" y="70" width="54" height="36" rx="6" fill="#6aa9e0"/>
+  <path d="M644,78 l22,-8 v40 l-22,-8 z" fill="#6aa9e0"/>
+  <text x="628" y="140" fill="#6aa9e0" font-size="14" text-anchor="middle">カメラ(どの画素に映るか)</text>
+  <text x="380" y="40" fill="#d8dde3" font-size="15" text-anchor="middle">画素の色 = 形 × 材質 × 光 × カメラ の出会いの結果</text>
+</svg>
+<figcaption>図2-1: 1画素の色は、光源から出た光が表面の形と材質に応じて跳ね返り、カメラのその画素へ届いた量である。</figcaption>
+</figure>
+
+<ul>
+<li><strong>形(ジオメトリ)</strong>: その画素に映っている表面はどこにあり、どちらを向いているか。エンジンでは三角形の集まり(メッシュ)で表す。表面の向き(法線)は明るさ計算の主役である。</li>
+<li><strong>材質(マテリアル)</strong>: その表面は光をどう跳ね返すか。ざらざらの壁は光をあらゆる方向へ拡散し、磨いた金属は鏡のように一方向へ反射する。色・粗さ・金属性などのパラメータで表す。</li>
+<li><strong>光(ライティング)</strong>: どこから、どんな色と強さの光が来ているか。太陽のような遠い光(方向光)、電球のような近い光(点光源)、そして壁や床で跳ね返ってから届く間接光がある。</li>
+<li><strong>カメラ</strong>: 視点がどこにあり、どこを見ているか。3次元の世界を2次元の画素格子へ射影する。</li>
+</ul>
+
+<p>この4要素はそのまま本文書の章立てに対応する。形は第4.5章(物量)、材質は第4.3章、光は第4.1章と第4.2章が扱い、カメラを含めた「1フレームの組み立て」を次の第3章で追う。そして<strong>絵の品質とは、この4要素それぞれの近似をどこまで物理的に正しく・破綻なく行えるかの積である</strong>。AAA級とはこの積の水準の呼び名にすぎない。</p>
+
+<!-- ============================================================ -->
+<h2 id="s3">3. GPUが1フレームを作る流れ — 現エンジンを教材に</h2>
+
+<p>CPUとGPUは分業する。CPUは「このフレームに何をどこに描くか」を決めて描画命令(コマンド)の列を組み立て、GPUはその命令列を大規模並列で実行して画素を塗る。Blitzdrache0では、この命令列の組み立てを<strong>レンダーグラフ</strong>という仕組みが担っている。各描画工程(パス)が「何を読み、何に書くか」を宣言し、グラフが工程間の待ち合わせ(バリア)を自動で導出する。工程を追加しても待ち合わせの正しさが壊れない器であり、この文書で語る野心の多く(新しいパスの追加)はこの器の上に載る。</p>
+
+<p>現エンジンの1フレームは、およそ次の工程列である(点灯アニメーションは実行順を表す)。</p>
+
+<figure>
+<svg viewBox="0 0 900 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="現エンジンのフレーム工程列">
+  <style>
+    .fpt { fill: #d8dde3; font-size: 12px; text-anchor: middle; }
+    .fps { fill: #9aa3ad; font-size: 10px; text-anchor: middle; }
+  </style>
+  <!-- CPU行 -->
+  <text x="60" y="40" fill="#6aa9e0" font-size="13">CPU</text>
+  <rect x="100" y="22" width="130" height="30" rx="6" fill="#1d3247"/>
+  <text x="165" y="42" class="fpt">世界更新・群選択</text>
+  <rect x="240" y="22" width="130" height="30" rx="6" fill="#1d3247"/>
+  <text x="305" y="42" class="fpt">ユニフォーム書込</text>
+  <rect x="380" y="22" width="130" height="30" rx="6" fill="#1d3247"/>
+  <text x="445" y="42" class="fpt">コマンド記録</text>
+  <line x1="510" y1="37" x2="560" y2="37" stroke="#9aa3ad" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="536" y="30" class="fps">提出</text>
+  <!-- GPU行 -->
+  <text x="60" y="120" fill="#4fc3a1" font-size="13">GPU</text>
+  <g>
+    <rect class="fp" style="animation-delay:0s"   x="100" y="100" width="120" height="34" rx="6" stroke="#4fc3a1" stroke-width="1"/>
+    <text x="160" y="115" class="fpt">シャドウ 4帯</text>
+    <text x="160" y="129" class="fps">CSM各帯へ深度を描く</text>
+    <rect class="fp" style="animation-delay:1s"   x="230" y="100" width="100" height="34" rx="6" stroke="#4fc3a1" stroke-width="1"/>
+    <text x="280" y="115" class="fpt">布シャドウ</text>
+    <text x="280" y="129" class="fps">布専用経路</text>
+    <rect class="fp" style="animation-delay:2s"   x="340" y="100" width="120" height="34" rx="6" stroke="#4fc3a1" stroke-width="1"/>
+    <text x="400" y="115" class="fpt">シーン描画</text>
+    <text x="400" y="129" class="fps">PBR+CSM参照</text>
+    <rect class="fp" style="animation-delay:3s"   x="470" y="100" width="90" height="34" rx="6" stroke="#4fc3a1" stroke-width="1"/>
+    <text x="515" y="115" class="fpt">空</text>
+    <text x="515" y="129" class="fps">空画素のみ</text>
+    <rect class="fp" style="animation-delay:4s"   x="570" y="100" width="100" height="34" rx="6" stroke="#4fc3a1" stroke-width="1"/>
+    <text x="620" y="115" class="fpt">ブルーム</text>
+    <text x="620" y="129" class="fps">明部の滲み</text>
+    <rect class="fp" style="animation-delay:5s"   x="680" y="100" width="120" height="34" rx="6" stroke="#4fc3a1" stroke-width="1"/>
+    <text x="740" y="115" class="fpt">トーンマップ</text>
+    <text x="740" y="129" class="fps">HDR→表示輝度</text>
+    <rect class="fp" style="animation-delay:6s"   x="810" y="100" width="80" height="34" rx="6" stroke="#4fc3a1" stroke-width="1"/>
+    <text x="850" y="115" class="fpt">開発UI</text>
+    <text x="850" y="129" class="fps">計器表示</text>
+  </g>
+  <line x1="560" y1="37" x2="560" y2="80" stroke="#9aa3ad" stroke-width="1.5"/>
+  <line x1="560" y1="80" x2="120" y2="97" stroke="#9aa3ad" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="450" y="180" fill="#9aa3ad" font-size="12" text-anchor="middle">この列全体を16.6ミリ秒(60フレーム/秒)以内に収め続けることが「性能」の意味である</text>
+</svg>
+<figcaption>図3-1: 現エンジンの1フレーム。シャドウマップを先に描き、それを参照してシーンを照らし、空を足し、HDRの明るさを表示可能な輝度へ変換する。</figcaption>
+</figure>
+
+<p>押さえてほしいのは3点である。</p>
+
+<ol>
+<li><strong>1フレームは複数の絵の合成である。</strong>影のための深度だけの絵(シャドウマップ)を先に描き、本番の絵がそれを参照する。AAA級のフレームはこの中間の絵がさらに増える(法線の絵・速度の絵・過去フレームの絵など)。「パスを足す」とは中間の絵を増やすことである。</li>
+<li><strong>すべては予算の中で行う。</strong>60フレーム/秒なら1フレームの持ち時間は16.6ミリ秒しかない。このエンジンは評価軸文書でGPU合計予算16.6ミリ秒を区間(シーン・シャドウ等)へ配分し、GPU計器で毎フレーム実測している。新しい能力の追加は常に「その能力は何ミリ秒を使うか」とセットで論じる。</li>
+<li><strong>座標の土台は既に大規模世界仕様である。</strong>世界座標はf64(倍精度)で持ち、GPUへはカメラ相対のf32(単精度)だけを渡す。km級の巨大座標でも画素が揺れないことを機械検査(<code>cargo xtask origin-invariance</code>)が保証している。これは多くの商用エンジンが後付けで苦しむ部分を最初から解いている、このエンジンの強みである。</li>
+</ol>
+
+<div class="box now">
+<span class="label">現状の要約</span>
+<p>フレーム工程列: CSM4帯シャドウ + 布専用シャドウ → forward(前方)シーン描画(PBR・XPBD布込み) → 空(Hosek-Wilkie、時刻駆動) → ブルーム → ACESトーンマップ → 開発UI。レンダーグラフがバリアを自動導出し、GPU計器が帯別・パス別の実測を出す。詳細の正本は <code>_doc/設計/性能アーキテクチャ方針.md</code> と各設計文書。</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="s4">4. 技術要素の解説</h2>
+
+<p>ここからが本体である。7つの技術領域を、絵の理解に自然な順序(光 → 材質 → 画の完成 → 物量 → 世界読込 → 実行基盤)で解説する。各領域は同じ型で書く: <em>定義 → なぜ絵が良くなるか → 現代の代表方式 → このエンジンの現状 → 野心的到達形(能力) → 方式候補と採用条件 → 既存実装への波及</em>。</p>
+
+<!-- ------------------------------------------------ -->
+<h3 id="s4-1">4.1 直接光と影</h3>
+
+<h4>定義</h4>
+<p>直接光とは、光源から表面へ<strong>直接</strong>届く光のことである。太陽(方向光)・電球(点光源)・懐中電灯(スポット光)が代表で、計算は「光源の方向・距離・強さ」と「表面の向き・材質」から明るさを求める、リアルタイムグラフィックスで最も確立された部分である。影とは、光源と表面の間に遮蔽物があるとき直接光が届かないことの表現であり、<strong>影は直接光計算の一部</strong>である(影が別機能に見えるのは、遮蔽の判定に専用の仕組みが要るからにすぎない)。</p>
+
+<h4>なぜ絵が良くなるか</h4>
+<p>影は物の接地感と空間の奥行きを1枚で伝える。影が無い絵では物体が浮いて見え、影の解像度が足りない絵では輪郭がギザつき、影が硬すぎる絵では晴天の正午しか表現できない。現実の影は、遮蔽物から離れるほど輪郭がぼける(半影)。この距離依存のぼけまで再現できると、絵は一段と写真に近づく。</p>
+
+<h4>現代の代表方式</h4>
+<ul>
+<li><strong>シャドウマップ</strong>: 光源の位置から世界の深度(奥行き)だけを描いた絵を作り、本番の描画で「この画素は光源から見えているか」を深度比較で判定する。リアルタイム影の標準方式。</li>
+<li><strong>CSM</strong>(Cascaded Shadow Maps。カスケードシャドウマップ): 方向光用の拡張で、カメラからの距離帯ごとに解像度の違うシャドウマップを持つ。近くは細かく、遠くは粗く、という解像度予算の配分方式である。</li>
+<li><strong>PCF / PCSS</strong>(Percentage-Closer Filtering / Percentage-Closer Soft Shadows): 影の境界を複数サンプルの平均で滑らかにする方式(PCF)と、遮蔽物からの距離に応じてぼけ幅を変えて半影を再現する方式(PCSS)。</li>
+<li><strong>レイトレーシング影</strong>: GPUのレイトレーシング(光線追跡)機能で光源への遮蔽を直接問い合わせる。シャドウマップの解像度・漏れの問題が原理的に消えるが、GPUの対応と時間予算が要る。</li>
+</ul>
+
+<figure>
+<svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CSMの帯分割の図">
+  <!-- カメラ -->
+  <path d="M40,130 l30,-14 v28 z" fill="#6aa9e0"/>
+  <text x="52" y="170" fill="#6aa9e0" font-size="13" text-anchor="middle">カメラ</text>
+  <!-- 視錐台 -->
+  <path d="M70,130 L720,30 M70,130 L720,230" stroke="#9aa3ad" stroke-width="1" fill="none"/>
+  <!-- 帯 -->
+  <path d="M70,130 L190,111 L190,149 z" fill="#4fc3a1" opacity="0.55"/>
+  <path d="M190,111 L360,85 L360,175 L190,149 z" fill="#4fc3a1" opacity="0.38"/>
+  <path d="M360,85 L540,57 L540,203 L360,175 z" fill="#4fc3a1" opacity="0.24"/>
+  <path d="M540,57 L720,30 L720,230 L540,203 z" fill="#4fc3a1" opacity="0.12"/>
+  <text x="130" y="135" fill="#0d1a14" font-size="12" text-anchor="middle" font-weight="bold">帯0</text>
+  <text x="275" y="135" fill="#d8dde3" font-size="12" text-anchor="middle">帯1</text>
+  <text x="450" y="135" fill="#d8dde3" font-size="12" text-anchor="middle">帯2</text>
+  <text x="630" y="135" fill="#d8dde3" font-size="12" text-anchor="middle">帯3</text>
+  <text x="130" y="245" fill="#9aa3ad" font-size="11" text-anchor="middle">2048pxを狭い範囲に使う=細かい影</text>
+  <text x="630" y="245" fill="#9aa3ad" font-size="11" text-anchor="middle">同じ2048pxを広い範囲に=粗い影</text>
+</svg>
+<figcaption>図4-1: CSMの帯分割。カメラに近い帯ほど同じ解像度のシャドウマップを狭い範囲に使うため、画素あたりの影の解像度が高い。Blitzdrache0はこの4帯構成を実装済みである。</figcaption>
+</figure>
+
+<div class="box now">
+<span class="label">このエンジンの現状</span>
+<p>方向光1 + 点光源1 + 環境光係数1つの固定構成。方向光の影は<strong>4帯CSM(帯あたり2048px、D32深度の4層配列)が実装済み</strong>で、実用分割(近くを密に、遠くを粗く配分する分割式)・テクセルスナップ(カメラ移動で影がちらつくのを止める格子吸着。静止物の影のテクセル座標が不変であることを機械検査済み)・帯境界の重みブレンド・帯別GPU計器まで持つ。布には布専用のシャドウ経路がある。点光源の影は未実装。影のぼけはPCFの基本形で、PCSS級の距離依存半影は未実装。検収入口: <code>cargo xtask csm-seam</code> ほか。</p>
+</div>
+
+<div class="box goal">
+<span class="label">野心的到達形(能力)</span>
+<p>(a)任意個数の点光源・スポット光が影を持てる。(b)影の輪郭が遮蔽距離に応じてぼける(PCSS級)。(c)接触部の微小な影(接触影)が拾える。(d)影の品質がカメラ距離・光源数に対して破綻せず、予算内で自動配分される。</p>
+</div>
+
+<h4>方式候補と採用条件</h4>
+<ul>
+<li><strong>点光源影: キューブマップシャドウ+アトラス管理</strong>。採用条件は多光源(4.2でなく本節の光源数拡張)着手と同時。代替はRT影(対応GPUのみ)。破棄条件は仮になし(標準技術)。</li>
+<li><strong>PCSS級ソフト影</strong>。採用条件はCSMの品質定点で「半影の欠如」が絵の弱点として確認されたとき。費用はシーン描画のサンプル数増。</li>
+<li><strong>RT影(ハイブリッド)</strong>: 対応GPUで太陽影の遠距離帯やアーティファクトが出やすい細物(草・髪)をRTで置き換える。採用条件は第4.2章のradiance query基盤の成立後。非対応GPUではCSM+PCSSが正本のまま(縮退の型は第7章)。</li>
+</ul>
+
+<h4>既存実装への波及</h4>
+<p>CSM基盤・レンダーグラフ・帯別計器はそのまま土台になる。波及が大きいのは光源の入力型で、現在の「方向光1+点光源1」という固定フィールドは光源の集合(配列)へ置き換える必要がある(作り直し級接合点、第6章(d))。</p>
+
+<!-- ------------------------------------------------ -->
+<h3 id="s4-2">4.2 間接光と反射 — 絵の説得力の本丸</h3>
+
+<h4>定義</h4>
+<p>間接光とは、光源から出た光が壁・床・物体で1回以上跳ね返ってから表面へ届く光のことである。<strong>GI</strong>(Global Illumination。大域照明・間接光の計算)はこの跳ね返りを扱う技術の総称で、鏡面的な跳ね返りは<strong>反射</strong>、環境全体からの光は<strong>IBL</strong>(Image-Based Lighting。周囲の絵を光源として使う照明)、近くの遮蔽で間接光が減る現象は<strong>AO</strong>(Ambient Occlusion。環境光遮蔽)と、それぞれ名前が付いているが、物理的にはすべて同じ「跳ね返った光」である。</p>
+
+<p>直接光と間接光を言葉で述べると「表面の明るさは、直接届く光と、他の表面で跳ね返ってから届く光の合計である」となる。この関係を1行の式にしたものが<strong>レンダリング方程式</strong>であり、グラフィックスの全技術はこの式の近似解法だと言える。重要なのは式そのものではなく、<em>「跳ね返りの合計」は原理的に世界全体を見なければ計算できない</em>という性質である。1画素のために世界全体を見る、これが間接光が難しい理由のすべてである。</p>
+
+<figure>
+<svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="直接光と間接光の図">
+  <!-- 部屋 -->
+  <rect x="80" y="40" width="600" height="200" fill="none" stroke="#333a45" stroke-width="2"/>
+  <!-- 赤い壁 -->
+  <rect x="80" y="40" width="14" height="200" fill="#c04f4f"/>
+  <text x="60" y="140" fill="#c04f4f" font-size="12" text-anchor="middle" transform="rotate(-90 60 140)">赤い壁</text>
+  <!-- 窓からの光 -->
+  <circle cx="620" cy="20" r="16" fill="#e0b25a"/>
+  <line x1="608" y1="32" x2="420" y2="238" stroke="#e0b25a" stroke-width="2.5" class="ray"/>
+  <text x="540" y="120" fill="#e0b25a" font-size="13">直接光</text>
+  <!-- 床での跳ね返り→壁 -->
+  <line x1="420" y1="238" x2="96" y2="150" stroke="#d8a25a" stroke-width="2" class="ray slow"/>
+  <!-- 壁での跳ね返り→球 -->
+  <line x1="96" y1="150" x2="300" y2="190" stroke="#c05f5f" stroke-width="2" class="ray slow"/>
+  <text x="190" y="140" fill="#c07f6a" font-size="13">間接光(跳ね返り)</text>
+  <!-- 球 -->
+  <circle cx="320" cy="200" r="24" fill="#8a929c"/>
+  <circle cx="312" cy="196" r="20" fill="#a75f5f" opacity="0.35"/>
+  <text x="320" y="252" fill="#9aa3ad" font-size="12" text-anchor="middle">灰色の球が赤壁側だけ赤く染まる(カラーブリーディング)</text>
+</svg>
+<figcaption>図4-2: 間接光。窓の光が床で跳ね、赤い壁で跳ね、灰色の球をほんのり赤く染める。この「回り込み」が絵の説得力の正体である。</figcaption>
+</figure>
+
+<h4>なぜ絵が良くなるか</h4>
+<p><strong>現代のAAA級の見た目を決めている支配要因は、直接光ではなく間接光である。</strong>定数の環境光(全方向から一様な明るさ)で照らした絵は、影の中が平坦なグレーに沈み、屋内が嘘くさく、時間帯の変化が「明るさのスライダー」にしか見えない。間接光が入ると、影の中に色が宿り、狭い場所が自然に暗くなり、白い壁の部屋全体が柔らかく明るくなる。夕日が部屋の奥まで赤く染める、その1枚がGIの価値である。</p>
+
+<h4>現代の代表方式</h4>
+<p>間接光の解法は「どこに事前計算した光の情報を置き、実行時にどこへ問い合わせるか」で分類できる。</p>
+<ul>
+<li><strong>スクリーン空間法(SSAO・SSR・SSGI)</strong>: いま描いた画面自体を「世界の近似」として使い、画面内の情報だけで遮蔽・反射・跳ね返りを推定する。安価だが、画面外・遮蔽裏の情報は原理的に得られない。</li>
+<li><strong>プローブ法(イラディアンスプローブ・DDGI級)</strong>: 世界に測定点(プローブ)を格子状に置き、各点で「全方向からの光」を保持・更新する。表面はプローブから補間して間接光を得る。画面外も扱えるが、細かい遮蔽は苦手。</li>
+<li><strong>表面キャッシュ+レイトレーシング(Lumen級)</strong>: 世界の表面に光の計算結果をキャッシュし、レイトレーシング(ハードウェアまたはソフトウェア)で「この方向の先に何があるか」を問い合わせる。現世代AAAの実用解。</li>
+<li><strong>パストレーシング</strong>: 跳ね返りを確率的に全部追う。理論上の正解(参照解)であり、リアルタイムでは最上位GPU+強力なデノイズ(ノイズ除去)が要る。オフライン検証の物差しとしての価値が高い。</li>
+</ul>
+
+<div class="box goal">
+<span class="label">設計目標: 共通radiance query</span>
+<p>この文書が置く設計目標は、GI・反射・(将来の)RT影を個別機能の寄せ集めにせず、<strong>radiance query(放射輝度問い合わせ。「この点からこの方向を見たとき、どれだけの光が来るか」という統一の問い)</strong>を1つの入口として設計することである。問い合わせの実装は「スクリーン空間 → プローブ/表面キャッシュ → ハードウェアRT」の優先順位付きの階層で答える。安い情報源で答えられるなら安く、答えられないときだけ高い情報源へ進む。この階層構造そのものが、第7章の縮退設計(低性能機では階層の上位を外す)と直結する。</p>
+</div>
+
+<div class="box now">
+<span class="label">このエンジンの現状</span>
+<p>間接光は<strong>環境光係数1つ(定数環境光)</strong>のみ。IBL・AO・SSR・GIはいずれも未実装。空(Hosek-Wilkie解析式、時刻駆動)はOW5で入ったが「本番はHillaire系LUT+Bruneton系参照検証」への置換が決定済みで、現実装は縦切りの暫定と位置づけられている(正本: <code>_doc/設計/空と時間帯と遠距離シャドウ.md</code>)。つまり<strong>光の輸送の観点では、このエンジンはまだ出発点に立ったところであり、ここが野心と現状の最大のギャップである。</strong></p>
+</div>
+
+<div class="box goal">
+<span class="label">野心的到達形(能力)</span>
+<p>(a)時刻・天候・屋内外を問わず、間接光が動的に成立する(事前ベイク一発焼きへの依存で世界を静的にしない)。(b)鏡面反射が画面外の情報も拾える。(c)AOが接地・隅の暗さを安定して出す。(d)大気は物理ベース(Hillaire系LUT)で、体積雲・froxel体積霧(視錐台をセル分割して霧の濃さと光を計算する方式)まで到達する。(e)全体がradiance queryの1階層に統合され、GPU能力に応じて階層の深さが変わる。</p>
+</div>
+
+<h4>方式候補と採用条件</h4>
+<ul>
+<li><strong>第1段: IBL+SSAO</strong>(空と天空状態から作る環境マップ+スクリーン空間AO)。採用条件は多光源より先でよい(現在の定数環境光の置換として最小で最大の画質改善)。破棄条件なし(後続方式の下地としても残る)。</li>
+<li><strong>第2段: プローブGI</strong>(DDGI級の動的更新プローブ)。採用条件はIBLで「影の中の色」の欠如が品質定点で確認されたとき。</li>
+<li><strong>第3段: 表面キャッシュ+RTハイブリッド(Lumen級能力)</strong>。ソフトウェアRT(距離場等)を基本にハードウェアRT対応機で精度を上げる。採用条件はradiance query設計の壁打ちを経てから。<em>方式名は固定しない</em>: この階層は技術進歩が最も速い領域であり、着手時点で最良の解法を採用審査する。</li>
+<li><strong>参照検証: パストレーサー</strong>。リアルタイム経路とは別に、同一シーンの参照解を出すオフラインのパストレーサーを検証入口として持つ(大気でBruneton系を参照に使う構図の一般化)。「正しさを機械で検査する」このエンジンの流儀を光の輸送にも適用する。</li>
+</ul>
+
+<h4>既存実装への波及</h4>
+<p>環境光係数の入力型は光の輸送の設定型へ置換する(第6章(d)と同時)。UBO(GPUへ渡す固定サイズの設定領域)の共通区画464バイトはプローブ・環境マップの参照情報を持てないため、frame constants(フレーム定数)とディスクリプタインデクシングへの分離(第6章(a))が前提になる。レンダーグラフは計算パス(コンピュート)の本格投入先になる。</p>
+
+<!-- ------------------------------------------------ -->
+<h3 id="s4-3">4.3 材質</h3>
+
+<h4>定義</h4>
+<p>材質(マテリアル)とは、表面が光をどう跳ね返すかの記述である。現代の標準は<strong>PBR</strong>(Physically Based Rendering。物理ベースレンダリング)で、「基本色・粗さ(roughness)・金属性(metallic)」という物理に根ざした少数のパラメータで大半の物体を表す。粗さが低いほど反射は鏡に近づき、金属は光を自分の色で反射する。PBRの利点は<em>どの照明環境に置いても破綻しない</em>ことで、材質と光の分業(材質は跳ね返し方だけを述べ、光は光の側で決まる)がその根拠である。</p>
+
+<h4>なぜ絵が良くなるか</h4>
+<p>基本PBRで表せるのは「不透明で、表面が1層の物体」までである。現実の物には層と内部がある。車の塗装はクリア層の下に金属フレークが光り、シャボン玉は薄膜の干渉で虹色になり、肌は光が内部へ潜って散ってから出てくる(これが肌の柔らかさの正体)。水やガラスは透過し、髪は繊維の束として異方的に光る。<strong>材質の幅とは、表現できる物体の種類の幅そのもの</strong>であり、キャラクターの説得力(肌・髪・布)はほぼ材質と専用照明の勝負である。</p>
+
+<h4>現代の代表方式</h4>
+<ul>
+<li><strong>多層マテリアル</strong>: クリアコート(塗装の透明層)・薄膜(シャボン玉・油膜)・発光・布(繊維の逆行散乱)などをPBRの変種・追加層として持つ。</li>
+<li><strong>SSS</strong>(Subsurface Scattering。表面下散乱): 肌・大理石・葉のように光が内部で散る材質。スクリーン空間の拡散や専用の事前計算プロファイルで近似する。<em>材質パラメータの追加だけでは成立せず、専用の照明・影・(時間再構成での)安定化が要る</em>点が地雷である。髪も同様に専用照明(異方性ハイライト)と専用の影(細い束の自己遮蔽)が要る。</li>
+<li><strong>透明・半透明・水</strong>: 描画順と合成の問題(手前から描けない)を伴い、forward経路の維持理由になりやすい(後述)。</li>
+<li><strong>デカール</strong>: 弾痕・汚れ・道路標示のように、表面の上へ後から材質を貼る仕組み。</li>
+</ul>
+
+<div class="box warn">
+<span class="label">構造上の地雷: バリアント爆発</span>
+<p>材質の種類をシェーダーの条件分岐や個別シェーダーの列挙(バリアント)で増やすと、<strong>組み合わせが掛け算で爆発する</strong>(材質5種 × 影あり/なし × スキンあり/なし × … で数百本のパイプライン)。生成時間・切替コスト・検証コストのすべてが悪化する。必要なのは「材質特徴ビット(その材質がどの機能を使うか)」と「シェーディングモデル(照明の解き方の種類)」の境界設計であり、<em>どの軸をビットで、どの軸をモデル分岐で、どの軸をパイプライン分割で持つか</em>を最初に決めることである。これはパイプライン管理(4.7)と直結する。</p>
+</div>
+
+<div class="box now">
+<span class="label">このエンジンの現状</span>
+<p>金属粗さPBRを<strong>1変種として持つ判別共用体</strong>(M11で単一構造体から改修済み)。つまり「材質の種類を増やせる型の器」は既にあり、変種は現在1つである。テクスチャは基本色等を持ち、XPBD布は力学専用経路(材質としては通常PBR)。透明・SSS・髪・デカールは未実装。パイプラインは数本を起動時生成、キャッシュなし(正本: 性能アーキテクチャ方針 軸7)。</p>
+</div>
+
+<div class="box goal">
+<span class="label">野心的到達形(能力)</span>
+<p>(a)肌・髪・布・水・ガラス・車塗装・発光体が、それぞれ専用の照明特性で破綻なく描ける。(b)デカールで世界の表面を後から汚せる。(c)材質の追加がパイプライン爆発を起こさない境界設計を持つ。(d)すべての材質が時間再構成(4.4)の下で安定する(ちらつかない)。</p>
+</div>
+
+<h4>方式候補と採用条件</h4>
+<ul>
+<li><strong>境界設計を先に</strong>: 材質特徴ビット×シェーディングモデルの設計壁打ちを、変種を2つ目に増やす前に行う(採用条件: CHAR0着手前)。これが唯一の「先に決めないと後で全部払う」項目である。</li>
+<li><strong>SSS・髪</strong>: CHAR0(キャラクター構成)と同時に採用審査。専用照明+影+安定化のセットで見積もる。</li>
+<li><strong>透明・水</strong>: forward併用経路(4.2の多光源方式がdeferred系へ進んでも、透明物はforwardで描く構成が標準)として設計。</li>
+</ul>
+
+<h4>既存実装への波及</h4>
+<p>判別共用体の器は正しい方向に既に倒してある(強み)。波及はシェーダーの共通区画(UBO)とディスクリプタ構成(材質ごとのテクスチャ集合が増える)、そしてパイプライン管理(キャッシュ・事前コンパイル)に来る。</p>
+
+<!-- ------------------------------------------------ -->
+<h3 id="s4-4">4.4 画の完成と時間方向の再構成</h3>
+
+<h4>定義</h4>
+<p>ジオメトリと光と材質で「正しい明るさ」が求まっても、そのままでは絵として完成していない。<strong>AA</strong>(Anti-Aliasing。アンチエイリアシング。画素の格子が生む輪郭のギザつき・ちらつきの除去)、露出(明るさの自動調整)、トーンマッピング(HDRの広い輝度を画面の輝度域へ写す変換)、被写界深度・モーションブラーといった「画の完成」の工程群がある。その中心にあるのが<strong>時間方向の再構成</strong>: 過去のフレームの情報を今のフレームへ再利用して、1フレームでは足りないサンプル数を時間方向に積み増す考え方である。</p>
+
+<h4>なぜ絵が良くなるか(そしてなぜ全体の要か)</h4>
+<p>1画素1サンプルの絵は、細い物(草・髪・遠くの手すり)が画素格子と干渉してちらつく。<strong>TAA</strong>(Temporal Anti-Aliasing。時間的AA)は、毎フレーム画素内のサンプル位置を微妙にずらし(ジッタ)、過去フレームの結果と混ぜることで、実質的に画素あたり数サンプル〜十数サンプルの品質を得る。さらにこれを発展させ、<em>低い解像度で描いて時間方向の情報で高解像度を復元する</em>のが時間的アップスケーラ(TSR級。商用ではDLSS・FSRが同系)であり、「描く画素数を減らして品質を保つ」という究極の性能技術でもある。</p>
+
+<p>もう1つ決定的な事実がある。<strong>4.2のRTGI・RT反射は、ノイズを時間方向に均すことで初めて成立する</strong>(1フレームに撃てるレイは少数で、結果はノイズだらけである。デノイザーは時間再構成の親戚である)。つまり時間方向の再構成は「画の仕上げ」ではなく、<em>光の輸送の野心を支える基盤</em>である。</p>
+
+<figure>
+<svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TAAの仕組みの図">
+  <!-- 画素格子 -->
+  <g stroke="#333a45" stroke-width="1">
+    <rect x="60" y="50" width="60" height="60" fill="#1c1f26"/>
+    <rect x="120" y="50" width="60" height="60" fill="#1c1f26"/>
+    <rect x="60" y="110" width="60" height="60" fill="#1c1f26"/>
+    <rect x="120" y="110" width="60" height="60" fill="#1c1f26"/>
+  </g>
+  <circle cx="105" cy="95" r="5" fill="#e0b25a" class="jitterdot"/>
+  <text x="120" y="205" fill="#9aa3ad" font-size="12" text-anchor="middle">毎フレーム、サンプル位置を</text>
+  <text x="120" y="223" fill="#9aa3ad" font-size="12" text-anchor="middle">画素内でずらす(ジッタ)</text>
+  <line x1="210" y1="110" x2="280" y2="110" stroke="#9aa3ad" stroke-width="1.5" marker-end="url(#ah)"/>
+  <!-- 履歴混合 -->
+  <rect x="290" y="60" width="130" height="44" rx="8" fill="#1d3247"/>
+  <text x="355" y="87" fill="#9ecbf0" font-size="13" text-anchor="middle">過去フレームの絵(履歴)</text>
+  <rect x="290" y="130" width="130" height="44" rx="8" fill="#2e4a3e"/>
+  <text x="355" y="157" fill="#a8e0c4" font-size="13" text-anchor="middle">今フレームの絵</text>
+  <line x1="420" y1="82" x2="480" y2="112" stroke="#9aa3ad" stroke-width="1.5"/>
+  <line x1="420" y1="152" x2="480" y2="122" stroke="#9aa3ad" stroke-width="1.5"/>
+  <rect x="480" y="95" width="90" height="44" rx="8" fill="#43371c"/>
+  <text x="525" y="122" fill="#eeca82" font-size="13" text-anchor="middle">混合</text>
+  <line x1="570" y1="117" x2="620" y2="117" stroke="#9aa3ad" stroke-width="1.5" marker-end="url(#ah)"/>
+  <rect x="620" y="95" width="110" height="44" rx="8" fill="#232732" stroke="#4fc3a1"/>
+  <text x="675" y="122" fill="#d8dde3" font-size="13" text-anchor="middle">滑らかな絵</text>
+  <!-- モーションベクタ注記 -->
+  <text x="355" y="205" fill="#9aa3ad" font-size="12" text-anchor="middle">混合には「各画素が前フレームでどこにいたか」</text>
+  <text x="355" y="223" fill="#9aa3ad" font-size="12" text-anchor="middle">= モーションベクタが必須</text>
+</svg>
+<figcaption>図4-3: TAAの原理。ジッタで時間方向にサンプルを散らし、モーションベクタで過去の対応点を見つけて混合する。</figcaption>
+</figure>
+
+<h4>成立に必要な部品(ここが波及の正体)</h4>
+<ul>
+<li><strong>モーションベクタ</strong>: 各画素が前フレームで画面上のどこにいたかのベクトル場。<em>すべての動く物(カメラ・剛体・スキン・布・植生の揺れ)が自分の「前フレームの変換」を保持して出力する必要がある</em>。TAA導入が全描画パスへ波及すると言われる理由がこれである。</li>
+<li><strong>ジッタ</strong>: 射影行列への画素内オフセット注入。ジオメトリ全パスが同じジッタを共有する。</li>
+<li><strong>履歴バッファ</strong>: 前フレームの結果の保持。無効化(カメラカット)の規律が要る。</li>
+<li><strong>disocclusion判定</strong>(前フレームで隠れていた領域の露出検出): 履歴に無い情報を混ぜるとゴースト(残像)になる。深度・法線・速度の照合で棄却する。</li>
+<li><strong>反応性マスク</strong>: 履歴を信じてはいけない画素(半透明・パーティクル・急変する発光)を描画側が申告する仕組み。</li>
+<li><strong>デノイザー共有</strong>: RTGI・RT反射・RT影のノイズ除去は同じ時間再構成の部品(モーションベクタ・履歴・棄却)を使う。共通基盤として設計すると二重実装を避けられる。</li>
+</ul>
+
+<div class="box now">
+<span class="label">このエンジンの現状</span>
+<p>AAは<strong>未実装</strong>(MSAAもTAAもない)。これは怠慢ではなく意図した保留であり、「絵の様式確定前にTAAを採用しない」という扉が開けて維持されている(モーションベクタ・履歴・ジッタが存在しないことをM11総点検が確認済み。正本: フェーズ2計画「絵の様式に関する3条件」)。露出は手動(CLIと開発UI)、トーンマップはACES実装済み、ブルーム実装済み。DoF・モーションブラー・自動露出・HDR出力(ディスプレイへの広輝度出力)は未実装。</p>
+</div>
+
+<div class="box goal">
+<span class="label">野心的到達形(能力)</span>
+<p>(a)静止画でも動画でもちらつかない安定した画。(b)描画解像度と表示解像度の分離(時間的アップスケーラ)により、同じGPUで画質と性能を両取りする。(c)RT系のノイズを共通デノイザーで均せる。(d)自動露出(ヒストグラムベース)・DoF・モーションブラー・HDR出力・色管理(色空間の一貫した取り扱い)まで含む「画の完成」一式。</p>
+</div>
+
+<h4>方式候補と採用条件</h4>
+<ul>
+<li><strong>自作TAA → 自作TSR級アップスケーラの順</strong>。まずTAA(等解像度)で部品一式(モーションベクタ・ジッタ・履歴・棄却・反応性)を成立させ、その上にアップスケーリングを載せる。採用条件: <em>絵の様式の確定</em>(このエンジンは写実志向をAAA級方針で実質確定しつつある。オーナーの裁定で扉を閉じる)。</li>
+<li><strong>DLSS/FSR統合は別判断</strong>: ベンダー実装の組み込みは自作基盤の後でも可能(部品の要求はほぼ同じ)。採用条件は対象プラットフォームの決定後。</li>
+<li><strong>自動露出</strong>: 天空状態→露出の配線が既にあるため、ヒストグラム自動露出は時刻システムの自然な拡張として先行導入できる(採用条件: ポスト系で最初)。</li>
+</ul>
+
+<h4>既存実装への波及</h4>
+<p><strong>7領域の中で波及が最も広い。</strong>全描画対象への前フレーム変換の保持(エンジンデータ層)、全ジオメトリパスへのモーションベクタ出力(シェーダー層)、射影へのジッタ注入(カメラ層)、履歴画像の資源管理(レンダーグラフ層)。導入が遅いほど対象パスが増えて改修が膨らむため、<em>「いつ様式を確定するか」の判断自体が費用を決める</em>。第8章の着手順でこれを扱う。</p>
+
+<!-- ------------------------------------------------ -->
+<h3 id="s4-5">4.5 物量 — ジオメトリとアニメーション</h3>
+
+<h4>定義</h4>
+<p>物量とは、1フレームに存在してよい物の数と細かさのことである。森の木の1本1本、草の1株1株、群衆の1人1人。物量の技術は「見えている物だけを、必要な細かさだけで描く」ための選別技術であり、<strong>カリング</strong>(視界外・遮蔽された物の除外)と<strong>LOD</strong>(Level of Detail。距離に応じた詳細度の切替)が二本柱である。</p>
+
+<h4>なぜ絵が良くなるか</h4>
+<p>世界の説得力は密度で決まる。まばらな森は書き割りに見え、地平線まで描かれた森は世界に見える。ただし物量は品質の掛け算の分母でもある: 物が10倍になれば、影も、間接光の受け手も、読み込む データも10倍になる。<strong>物量技術の本質は「数に対して費用が線形に増えない構造」を作ること</strong>である。</p>
+
+<h4>現代の代表方式</h4>
+<ul>
+<li><strong>インスタンス描画</strong>: 同じ形状の物(木・草)を1回の描画命令でまとめて描く。数の基本解。</li>
+<li><strong>GPU駆動描画</strong>: 「何を描くか」の選別(カリング・LOD選択)自体をGPUの計算シェーダーで行い、GPUが自分で描画引数を作る(間接描画)。CPUの関与が物の数に比例しなくなる。</li>
+<li><strong>メッシュシェーダー</strong>: 三角形の生成・選別をGPUの新しいパイプライン段で行う機能。クラスタ(小さな三角形の束)単位の細かいカリングに向く。</li>
+<li><strong>仮想化ジオメトリ(Nanite級)</strong>: メッシュをクラスタの階層(粗い〜細かい)へ事前分解し、実行時に画面上の誤差が一定以下になる階層だけをストリーミングして描く。「ポリゴン数を画素数に比例させる」発想の転換であり、現世代の最高峰。<em>本体はGPU実行よりもオフライン側にある</em>: メッシュのクラスタ分解(meshlet生成)・誤差指標の計算・ページング可能な実行時形式という、アセットパイプラインの大改造が実態である。</li>
+<li><strong>アニメーション側の物量</strong>: スキニング(骨で皮膚を動かす)・モーフ(頂点の混合)・群衆(数百体の簡略アニメ)・IK(Inverse Kinematics。接地や把持のための逆算)・モーションマッチング(大量の収録動作から次の1歩を選ぶ方式)・GPUスキンキャッシュ(スキン結果を再利用して影・複数パスでの二重計算を消す)。</li>
+</ul>
+
+<div class="box now">
+<span class="label">このエンジンの現状</span>
+<p>物量の土台は<strong>OW4で実証済みの強み</strong>である。インスタンス群+2段階可視判定+個体別LOD+直接描画で、常駐100万個体でも描画発行数は一定(シーン40・シャドウ30)、GPUメモリ確保も687件で不変。群選択(可視判定+LOD選択+ID列組み立ての融合走査)は個体あたり約10ナノ秒で物量に対し線形。<em>ただし観測範囲全体の支配区間はこの群選択CPUであり、100万個体で約10ミリ秒(16.6ミリ秒フレームの6割)を占める</em>。間接描画・GPU駆動カリングは「現物量では律速でない」ため不採用判定(覆す条件付き)。メッシュシェーダー・仮想化ジオメトリ・遮蔽カリングは未着手。アニメーションはスキニング+アニメーション再生(M8)とXPBD布(M9)まで。地形は5段LOD+チャンクストリーミング実装済み。</p>
+</div>
+
+<div class="box goal">
+<span class="label">野心的到達形(能力)</span>
+<p>(a)画面のポリゴン密度が「画素数準拠」になる(距離によるポリゴンの節約が見た目に現れない)。(b)物の数がCPU時間を支配しない(GPU駆動の選別)。(c)遮蔽カリング(建物の裏の街を描かない)が動的に効く。(d)群衆・植生・地形が同じ物量基盤の上で暮らす。(e)キャラクターはIK・モーションマッチング級の動作品質を持つ。</p>
+</div>
+
+<h4>方式候補と採用条件</h4>
+<ul>
+<li><strong>群選択の階層化(粗い階層での早期棄却)</strong>: 性能アーキテクチャ方針 軸6が既に指名している次の一手。採用条件は実運用の常駐個体数の確定(視界距離の制定)。並列化はその次。</li>
+<li><strong>GPU駆動カリング+間接描画</strong>: 採用条件は「AAA級の代表シーン(実アセットの密度)でコマンド記録またはCPU選別が支配要因になる計測」。現在の不採用判定は検証世界前提であり、代表シーンの成立が再判定の引き金である(第8章)。</li>
+<li><strong>仮想化ジオメトリ</strong>: 野心枠。採用条件は(a)実アセット(数百万ポリ級の彫刻的メッシュ)の採用方針決定 (b)アセットコンパイラ(OW1)へのクラスタ分解・誤差指標・ページング形式の拡張見積もり。<em>アセット実行時形式への最大級の波及点</em>であり、テクスチャの仮想化(4.6)と波及先が同じため同時に審査する。</li>
+<li><strong>群衆・モーションマッチング</strong>: CHAR0以降。SIM0(シミュレーション実行基盤)との接続で審査。</li>
+</ul>
+
+<h4>既存実装への波及</h4>
+<p>インスタンス基盤・可視ID列・チャンク所有構造は土台として残る。仮想化ジオメトリはアセットコンパイラと実行時形式(OW1の成果物)への版追加が本体(第6章(c))。GPU駆動化はレンダーグラフへの計算パス+間接引数バッファの追加で、器は既にある。</p>
+
+<!-- ------------------------------------------------ -->
+<h3 id="s4-6">4.6 世界読込 — ストリーミングとテクスチャ</h3>
+
+<h4>定義</h4>
+<p>世界読込とは、メモリに収まらない大きさの世界を、プレイヤーの周囲だけメモリへ載せ続ける技術である。<strong>ストリーミング</strong>(移動に応じた読込・解放)と、その最大の顧客である<strong>テクスチャ</strong>(画像データ。容量の主犯)の管理からなる。品質語彙としては<strong>ヒッチレス</strong>: 読込がフレーム時間の突発的悪化(ヒッチ)として画面に現れないこと、を到達目標に置く。</p>
+
+<h4>なぜ絵が良くなるか</h4>
+<p>ストリーミングは「見えない品質」である。うまく動いている間は誰も気づかず、失敗すると世界が壊れる(ポップイン: 目の前で建物が出現する。ヒッチ: 歩くたびに画面が引っかかる。ぼけ: テクスチャの解像度が間に合わずぼやけたまま)。AAA級のシームレスなオープンワールドとは、ロード画面の削除ではなく、<em>この3つの失敗が起きない読込の設計</em>のことである。</p>
+
+<h4>現代の代表方式</h4>
+<ul>
+<li><strong>BC系テクスチャ圧縮</strong>(Block Compression。GPUが直接読める固定比圧縮): VRAMと帯域を1/4〜1/8にする。<em>非圧縮運用との差は「あれば良い」でなく桁違い</em>で、実アセットを入れる前提条件に近い。</li>
+<li><strong>ミップストリーミング</strong>: テクスチャの解像度段(ミップ)のうち、いま必要な段だけをVRAMへ置く。遠くの建物に4Kテクスチャの最上段は要らない。</li>
+<li><strong>仮想テクスチャ</strong>: テクスチャをページ(小タイル)単位で管理し、画面が実際に要求したページだけを読み込む究極形。仮想化ジオメトリと思想が同じで、実行時形式への波及も同じ場所に来る。</li>
+<li><strong>非同期転送</strong>: 読込データのGPU転送を描画と別のキュー(転送キュー)で行い、フレームを止めない。</li>
+</ul>
+
+<div class="box now">
+<span class="label">このエンジンの現状</span>
+<p>チャンクストリーミング基盤は<strong>OW2〜OW4で実装済みの強み</strong>: 格子・目録・予算・台帳・読込器が接続され、30分反復でメモリ横ばい・読込解放が決定的に再現。地形+植生同居で、LOD切替が読込もGPU再確保も起こさない配置(全段常駐)を実証済み。<em>既知の弱点は2つ</em>: (a)束追加フレームに50ミリ秒級のスパイク(同期的な転送送信とフェンス待機由来と推定、非同期転送キュー未着手) (b)テクスチャの実行時形式が非圧縮で、ミップストリーミングも無い。容量予算の実運用値も未制定(検証世界の実測まで。正本: 評価軸3.5)。</p>
+</div>
+
+<div class="box goal">
+<span class="label">野心的到達形(能力)</span>
+<p>(a)移動し続けてもフレーム時間の分布が変わらない(ヒッチレスの定量定義: 束追加フレームのp99がフレーム予算内)。(b)テクスチャ品質が「見る距離で必要な解像度」に常に一致する(ぼけの滞留なし)。(c)VRAM使用量が予算駆動で制御され、超過時の品質縮退が無言でなく方針として起こる。</p>
+</div>
+
+<h4>方式候補と採用条件</h4>
+<ul>
+<li><strong>BC圧縮+ミップ生成をアセットコンパイラへ</strong>: 採用条件は実アセット(写実テクスチャ)の導入開始。決定的コンパイルの流儀(同一入力→同一出力)は維持する。</li>
+<li><strong>非同期転送キュー</strong>: 採用条件は既定(実物量で50ミリ秒級スパイクの再現)に「品質駆動: ヒッチレスを到達形に採用した時点で前倒し」を追加提案する。</li>
+<li><strong>ミップストリーミング → 仮想テクスチャの順</strong>: ページング形式の設計は仮想化ジオメトリと同時に審査(波及先が同じため)。</li>
+</ul>
+
+<h4>既存実装への波及</h4>
+<p>ストリーミング調停・予算・台帳の構造は残る。実行時形式への版追加(第6章(c))とレンダーグラフの部分mip/layer追跡(第6章(b))、転送キュー導入によるキュー所有権(queue ownership。資源をどのキューが使ってよいかの移譲管理)の扱いが波及点である。</p>
+
+<!-- ------------------------------------------------ -->
+<h3 id="s4-7">4.7 並列実行と実行基盤</h3>
+
+<h4>定義</h4>
+<p>実行基盤とは、CPUとGPUの計算資源を使い切り、かつフレーム時間を安定させるための、絵に直接は見えない技術群である。CPU側の<strong>ジョブシステム</strong>(仕事を細かい単位に割ってコア全部へ配る仕組み)、GPU側の<strong>非同期コンピュート</strong>(描画と計算を別キューで並行させる)、<strong>PSO事前コンパイル</strong>(PSO = Pipeline State Object。描画設定一式の事前生成。実行中の生成はカクつきの主犯)、<strong>動的解像度</strong>と<strong>VRS</strong>(Variable Rate Shading。画面の領域ごとにシェーディングの密度を変える機能)、<strong>フレームペーシング</strong>(フレームの提示間隔を均す制御)、GPUクラッシュ診断、資源常駐予算の管理までを含む。</p>
+
+<h4>なぜ絵が良くなるか</h4>
+<p>この領域の品質は「平均フレームレート」ではなく<strong>フレーム時間の分布</strong>に現れる。平均60fpsでも、時々30ミリ秒のフレームが混ざる絵は「カクつく絵」である。AAA級の滑らかさとは分布の裾(p99: 100フレームに1回の悪い方の値)の管理であり、実行基盤はその裾を作る全要因(実行中のパイプライン生成・同期待ち・転送・提示のずれ)を退治する仕事である。また、使い切れていない計算資源は品質の原資である: 非同期コンピュートでGPUの空きを埋めれば、同じハードでより多くの品質(GI・シミュレーション)を買える。</p>
+
+<div class="box now">
+<span class="label">このエンジンの現状</span>
+<p>CPUは<strong>単一スレッド</strong>(世界更新・コマンド記録とも)。GPUは単一グラフィックスキュー+FIFO提示+フレームインフライト2。実表示時刻の計測入口(present_id/present_wait)を持ち、更新脱落の観測までできる(このレベルの提示計測を最初から持つのは強み)。パイプラインは起動時生成でキャッシュなし。GPU計器(パス別・帯別)と検収入口の網は充実。ジョブシステム・非同期コンピュート・動的解像度・VRS・クラッシュ診断は未着手。フレーム時間分布の計測はp50/p99の器あり(評価軸3.4)。</p>
+</div>
+
+<div class="box goal">
+<span class="label">野心的到達形(能力)</span>
+<p>(a)CPUの全コアが世界更新・選別・記録を分担する(ジョブシステム)。(b)GPUの描画の空き時間をシミュレーション・GI更新・選別計算が埋める(非同期コンピュート)。(c)実行中のシェーダー/PSO生成が起きない(事前コンパイル+永続キャッシュ)。(d)フレーム時間p99が予算内で、負荷変動には動的解像度・VRSが先に応答して画質の谷を最小化する。(e)GPUクラッシュが再現手順つきで診断できる。</p>
+</div>
+
+<h4>方式候補と採用条件</h4>
+<ul>
+<li><strong>ジョブシステム</strong>: 採用条件は既定(CPU律速の実測。群選択10ms/100万個体で実質満ちつつある)+方針の「先に走査数を減らす階層化」を経てから。Rustではワークスティーリング型(仕事を奪い合う分配方式)の採用審査(既存クレートか自作か)を行う。</li>
+<li><strong>非同期コンピュート</strong>: 採用条件は既定(SIM系で3.0ms超の独立区間の実測)+品質駆動(GI更新パスの導入時)。レンダーグラフのキュー割り当て拡張(第6章(b))が前提。</li>
+<li><strong>PSO事前コンパイル+永続キャッシュ</strong>: 採用条件はマテリアル境界設計(4.3)の確定と同時。バリアント数の管理と一体で設計する。</li>
+<li><strong>動的解像度・VRS</strong>: 採用条件は時間的アップスケーラ(4.4)の成立後(解像度可変の受け皿がアップスケーラだからである)。</li>
+</ul>
+
+<h4>既存実装への波及</h4>
+<p>フレームループの逐次実行はコンポジションルートに一元化されており、段階単位の並列化は局所改修で済む(軸6の可逆性判定)。非同期コンピュートはレンダーグラフのサブリソース追跡+キュー所有権(第6章(b))が本体。計測・検収の網は全項目でそのまま武器になる。</p>
+
+<!-- ============================================================ -->
+<h2 id="s5">5. 野心的到達形の目録</h2>
+
+<p>第4章の全能力を1つの表に畳む。列の意味: <em>現状</em>は実装済みの事実、<em>方式候補</em>は現時点の提案(固定しない)、<em>画質指標</em>はその能力の検収で何を測るか、<em>費用の性質</em>はどの資源を消費するか、<em>波及</em>は既存実装のどこへ改修が及ぶか、<em>条件</em>は採用・再判定の引き金である。予算の実数は既存計測・評価軸にあるものだけを書き、無いものは「未制定」とする。</p>
+
+<div class="table-scroll">
+<table>
+<tr><th>能力</th><th>現状</th><th>方式候補</th><th>画質指標</th><th>費用の性質</th><th>波及</th><th>採用・再判定条件</th></tr>
+<tr>
+<td>大気・空</td><td>Hosek-Wilkie解析式(暫定縦切り)<span class="pill partial">暫定</span></td><td>Hillaire系LUT(本番)+Bruneton系(参照検証)</td><td>参照解との輝度差・時刻遷移の連続性(sky-time拡張)</td><td>GPU: LUT更新+空パス。予算: 空1.0ms(制定済み)</td><td>空パス内部に閉じる(決定済み)</td><td>決定済み(OW5第7段)</td>
+</tr>
+<tr>
+<td>体積雲・霧</td><td>なし<span class="pill none">未着手</span></td><td>レイマーチ雲+froxel霧</td><td>光の透過・時刻連動・時間安定</td><td>GPU大。時間再構成前提</td><td>レンダーグラフへ計算パス追加</td><td>大気LUT成立後に審査</td>
+</tr>
+<tr>
+<td>多光源</td><td>方向光1+点光源1固定<span class="pill none">未着手</span></td><td>クラスタードライティング(forward+)→visibility buffer+遅延材質評価</td><td>光源数スケール時の破綻なし・予算内</td><td>GPU: 選別計算。CPU: 光源管理</td><td>光源入力型の置換(6章d)・UBO分離(6章a)</td><td>絵の様式確定+シーン要求(屋内・夜市街等)</td>
+</tr>
+<tr>
+<td>影(拡張)</td><td>4帯CSM+布専用経路<span class="pill done">基盤済</span></td><td>点光影アトラス+PCSS+RT影ハイブリッド</td><td>csm-seam系の拡張・半影の距離依存</td><td>GPU: シャドウ2.0ms予算(制定済み)</td><td>CSM基盤は残る。光源集合と連動</td><td>多光源と同時(点光影)/品質定点(PCSS)</td>
+</tr>
+<tr>
+<td>GI・反射・AO</td><td>定数環境光のみ<span class="pill none">未着手</span></td><td>IBL+SSAO → プローブGI → 表面キャッシュ+RTハイブリッド。共通radiance query設計</td><td>参照パストレーサーとの差・時間安定・漏れなし</td><td>GPU大(計算パス群)。VRAM: プローブ/キャッシュ。予算: 未制定</td><td>UBO分離(6章a)・ディスクリプタ拡張・非同期コンピュート</td><td>段階ごと(4.2)。radiance query壁打ちが起点</td>
+</tr>
+<tr>
+<td>材質の幅</td><td>金属粗さPBR1変種(判別共用体の器あり)<span class="pill partial">器あり</span></td><td>特徴ビット×シェーディングモデルの境界設計→SSS/髪/透明/水/デカール</td><td>材質ごとの参照照合・時間安定</td><td>GPU: シェーディング。管理: バリアント数</td><td>UBO/ディスクリプタ・パイプライン管理(4.7)</td><td>境界設計はCHAR0前(先行必須)</td>
+</tr>
+<tr>
+<td>AA・アップスケーラ</td><td>なし(意図的保留)<span class="pill none">未着手</span></td><td>自作TAA→自作TSR級。DLSS/FSR統合は別判断</td><td>静止・移動時のちらつき/ゴースト検査</td><td>GPU: 再構成パス。実質は解像度削減で黒字化</td><td><strong>全動体の前フレーム変換+全パスのモーションベクタ(最大波及)</strong></td><td>絵の様式確定(オーナー裁定)</td>
+</tr>
+<tr>
+<td>画の完成(ポスト)</td><td>ブルーム+ACES済。露出は手動<span class="pill partial">一部済</span></td><td>ヒストグラム自動露出→DoF→モーションブラー→HDR出力・色管理</td><td>露出の時刻追従・輝度分布</td><td>GPU小〜中</td><td>自動露出は既存の時刻→露出配線の拡張で小</td><td>自動露出は先行可。他はTAA後</td>
+</tr>
+<tr>
+<td>物量(選別)</td><td>100万個体で発行数一定。群選択10ms/100万個体<span class="pill done">基盤済</span></td><td>粗い階層の早期棄却→GPU駆動カリング+間接描画→遮蔽カリング</td><td>発行数・選別時間・欠け(誤棄却)ゼロ</td><td>CPU→GPUへの移し替え</td><td>可逆(ハンドル集約済み)。計算パス追加</td><td>視界距離制定+代表シーンでの再計測</td>
+</tr>
+<tr>
+<td>仮想化ジオメトリ</td><td>なし<span class="pill none">未着手</span></td><td>クラスタ階層LOD+ページング(Nanite級能力)</td><td>画素あたりポリゴン密度・LOD遷移の不可視性</td><td>オフライン: コンパイラ大改造。GPU: 選別+ラスタ</td><td><strong>実行時形式の版追加(6章c、最大級)</strong></td><td>実アセット方針決定+仮想テクスチャと同時審査</td>
+</tr>
+<tr>
+<td>テクスチャ基盤</td><td>非圧縮・ミップストリーミングなし<span class="pill none">未着手</span></td><td>BC圧縮+ミップ生成→ミップストリーミング→仮想テクスチャ</td><td>VRAM使用量・ぼけの滞留時間</td><td>VRAM/帯域が1/4〜1/8(圧縮)</td><td>実行時形式の版追加(6章c)</td><td>実アセット導入開始(BC圧縮は前提条件級)</td>
+</tr>
+<tr>
+<td>ヒッチレス読込</td><td>基盤済+既知の50ms級スパイク<span class="pill partial">課題あり</span></td><td>非同期転送キュー+読込ペーシング</td><td>束追加フレームのp99がフレーム予算内</td><td>GPU転送キュー+同期設計</td><td>キュー所有権の導入(6章b)</td><td>既定(スパイク再現)+品質駆動で前倒し提案</td>
+</tr>
+<tr>
+<td>CPU並列</td><td>単一スレッド<span class="pill none">未着手</span></td><td>階層化棄却→ジョブシステム(ワークスティーリング)</td><td>フレーム時間p99・コア使用率</td><td>CPU全コア</td><td>コンポジションルート局所(可逆性判定済み)</td><td>視界距離制定後の律速実測(実質満ちつつある)</td>
+</tr>
+<tr>
+<td>非同期コンピュート</td><td>単一キュー<span class="pill none">未着手</span></td><td>計算キュー分離(シミュレーション・GI更新・選別)</td><td>GPU使用率・フレーム重複度</td><td>同期設計の複雑さ</td><td>レンダーグラフのキュー割当拡張(6章b)</td><td>既定(3.0ms独立区間)+GI導入時</td>
+</tr>
+<tr>
+<td>実行の安定</td><td>提示計測あり・PSOキャッシュなし<span class="pill partial">一部済</span></td><td>PSO事前コンパイル+永続キャッシュ+動的解像度+VRS+クラッシュ診断</td><td>p99・ヒッチ回数・生成時スパイクゼロ</td><td>管理コスト</td><td>パイプライン管理(材質境界と一体)</td><td>材質境界設計と同時(キャッシュ)/アップスケーラ後(動的解像度)</td>
+</tr>
+<tr>
+<td>シミュレーション品質</td><td>XPBD布(0.051ms)・流体スパイク済<span class="pill partial">基盤あり</span></td><td>布/髪/流体のGPU化・空間ハッシュ・SIM1系</td><td>SIM1のDoD(品質向上)</td><td>GPU計算。非同期コンピュートの主客</td><td>SIM0(実行基盤)と接続</td><td>計画済み(SIM0→SIM1)</td>
+</tr>
+<tr>
+<td>キャラクター動作</td><td>スキン+再生(M8)<span class="pill partial">基盤あり</span></td><td>モーフ・IK・GPUスキンキャッシュ→モーションマッチング・群衆</td><td>接地・遷移の自然さ(検収方法は要設計)</td><td>CPU/GPU両方</td><td>CHAR0の主題。物量基盤と共有</td><td>CHAR0着手時に審査</td>
+</tr>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="s6">6. 作り直し級の接合点と残せる資産</h2>
+
+<p>第4章の波及を集約すると、既存実装のうち「拡張では済まず、置き換えに近い改修になる」接合点は次の4つである。これは欠陥ではない: どれも当時の要求には正しい設計であり、要求の水準が上がったから境界が動くのである。早期に知っておくことで、これらへ依存を増やす前に移行を計画できる。</p>
+
+<div class="box warn">
+<span class="label">接合点 a</span>
+<p><strong>共通UBO 464バイトと固定バインディング。</strong>現在は全シェーダーが1つの固定サイズ設定領域を共有する。光源が集合になり、ビューが増え(影・プローブ・反射)、材質が多様化すると固定区画は持たない。小さいframe constants(フレーム定数)と、structured buffer(可変長の構造化バッファ)+ディスクリプタインデクシング(資源を番号で選ぶ方式)への分離移行が必要である。多光源・GI・材質拡張のすべてがこの上に載るため、<em>最初に動く境界</em>になる。</p>
+</div>
+
+<div class="box warn">
+<span class="label">接合点 b</span>
+<p><strong>レンダーグラフの資源追跡の粒度。</strong>現在は画像全体を1資源として保守的に追跡する(CSMの4層配列も全体で1つ)。非同期コンピュート(キューをまたぐ)・部分mip/layer単位の転送(ミップストリーミング)・キュー所有権の移譲を最適に扱うには、サブリソース(層・ミップ単位)の追跡への拡張が必要である。グラフの宣言モデル自体は残る。</p>
+</div>
+
+<div class="box warn">
+<span class="label">接合点 c</span>
+<p><strong>アセット実行時形式の版。</strong>現形式は非圧縮テクスチャ+単純なジオメトリ配置であり、BC圧縮・ミップページング・クラスタ階層(仮想化ジオメトリ)はいずれも形式の版追加を要する。このエンジンには「版ごとの型+最新への変換」という後方互換の流儀が既にあり、その適用先になる。コンパイラの決定性(同一入力→同一出力)は維持する。</p>
+</div>
+
+<div class="box warn">
+<span class="label">接合点 d</span>
+<p><strong>光源の入力型。</strong>「方向光1+点光源1+環境光係数」という固定フィールドの型は、光源の集合+GPUライトカリング+光の輸送設定へ置き換える。blitz_engineの語彙(ライティング方針)の改訂であり、型は小さいが消費者が多い。</p>
+</div>
+
+<h4>残せる資産(この野心の下でも作り直さないもの)</h4>
+<ul>
+<li><strong>f64大域座標+カメラ相対描画</strong>: 全能力の下で不変の土台。機械検査(origin-invariance)ごと資産である。</li>
+<li><strong>レンダーグラフのパス宣言モデル</strong>: 粒度拡張(接合点b)はあるが、宣言→自動バリアの思想は全パス追加の受け皿。</li>
+<li><strong>決定的アセットコンパイラ</strong>: 版追加(接合点c)の器。決定性はBC圧縮・クラスタ分解でも維持できる。</li>
+<li><strong>ash直接使用</strong>: メッシュシェーダー・RT・複数キューの全機能上限に抽象層の天井が無い。この野心を語れるのはこの決定のおかげである。</li>
+<li><strong>機械検収の網</strong>(xtask検収入口・GPU計器・予算表): 全能力の検収がこの流儀の延長で書ける。</li>
+<li><strong>物量・ストリーミングの基盤</strong>(インスタンス群・可視ID列・チャンク調停): 拡張の土台として残る。</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="s7">7. 縮退設計の思想 — 低性能デバイスでも最高品質</h2>
+
+<p>オーナーの方針の後半「まともに実装すれば低性能デバイスでも最高品質がキチンと動くはず」を、この章で技術の言葉に定義する。</p>
+
+<p>まず正直な物理から始める。計算量は消えない。低性能GPUは単位時間に計算できる量が少なく、「同じ絵」を「同じ時間」で出すことは原理的にできない。ではこの方針は不可能かというと、そうではない。<strong>方針の技術的な意味は「品質の落ち方を設計する」ことである。</strong>雑な実装は低性能機で「動かない・カクつく・壊れる」へ落ちる。まともな実装は「同じ絵作りのまま、目に付きにくい要素から順に、予測可能に軽くなる」へ落ちる。この落ち方の設計を<strong>縮退設計</strong>と呼ぶ。</p>
+
+<h4>原則1: 機種差は同一方式の品質段階で吸収する</h4>
+<p>第一の手段は、方式を変えずに量を変えることである: 描画解像度(時間的アップスケーラが受け皿)・影の解像度と距離・プローブの密度・レイの本数・LODの距離・霧のセル数。これらは<em>連続的なつまみ</em>であり、同じ方式の中の品質段階なので、絵作り(アートの意図)が壊れない。つまみが増えるほど縮退は滑らかになる。第4章の方式候補が軒並み「解像度・密度・回数」のパラメータを持つ方式に寄せてあるのは、このつまみを最初から持つためである。</p>
+
+<figure>
+<svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="縮退の階段の図">
+  <line x1="60" y1="200" x2="720" y2="200" stroke="#333a45" stroke-width="2"/>
+  <line x1="60" y1="200" x2="60" y2="30" stroke="#333a45" stroke-width="2"/>
+  <text x="390" y="230" fill="#9aa3ad" font-size="12" text-anchor="middle">GPU性能 →</text>
+  <text x="40" y="115" fill="#9aa3ad" font-size="12" text-anchor="middle" transform="rotate(-90 40 115)">絵の品質</text>
+  <!-- 雑な実装: 崖 -->
+  <path d="M100,80 L340,80 L360,190 L700,190" stroke="#e07a6a" stroke-width="2.5" fill="none" stroke-dasharray="6 4"/>
+  <text x="240" y="70" fill="#e07a6a" font-size="12" text-anchor="middle">雑な実装: 要求水準を割ると崖(動かない/カクつく)</text>
+  <!-- 縮退設計: 滑らかな坂 -->
+  <path d="M100,180 C260,175 420,120 700,45" stroke="#4fc3a1" stroke-width="2.5" fill="none"/>
+  <text x="520" y="150" fill="#4fc3a1" font-size="12" text-anchor="middle">縮退設計: 同じ方式のまま滑らかに品質が伸びる</text>
+</svg>
+<figcaption>図7-1: 縮退設計の目標。性能軸のどこで切っても「その性能での最高の絵」が出る曲線を作る。</figcaption>
+</figure>
+
+<h4>原則2: 機能非対応は正直に型化する</h4>
+<p>ただし、つまみで吸収できない断絶が1つある: <strong>ハードウェア機能の非対応</strong>である。レイトレーシング非対応のGPUに「レイを減らしたRT」は存在しない。この場合は<em>同じ物理目標(例: この点への間接光)を別の解法(プローブ/スクリーン空間)で近似する</em>ことになり、「同一方式の解像度違い」では両立しない。このエンジンの流儀に従い、この断絶を無言のフォールバックにせず、<strong>品質段階の型として正直に表す</strong>: どの解法で動いているかは型と計器に現れ、検収は段階ごとに行う。radiance queryの階層構造(4.2)は、この型化を最初から設計に織り込むための器である。</p>
+
+<h4>原則3: 効率は品質である</h4>
+<p>「極限性能」は縮退とは独立に、全機種の品質を底上げする。同じ16.6ミリ秒から無駄(不要な同期・二重計算・使われない計算資源)を取り除けば、その分を品質に使える。このエンジンの日常の性能規律(計測不要で悪いと分かる無駄を最初から書かない)と計測文化(予算表・GPU計器・p99)は、この意味で品質方針の一部である。低性能機で効くのは高性能機と同じ最適化であることが多い。</p>
+
+<!-- ============================================================ -->
+<h2 id="s8">8. 能力予算と着手順</h2>
+
+<p>最後に、この野心をどの順で作るかの提案である。並びは依存関係順(先行が後続の前提になる順)であり、規模順でも重要度順でもない。フェーズ2計画の既存マイルストーン(OW/SIM/CHAR/UI)との接続を併記する。</p>
+
+<h4>判断の枠組みへの提案: 品質駆動の着手条件</h4>
+<p>現在の性能アーキテクチャ方針の着手条件は全て性能駆動(計測で律速が実証されたとき)である。これに<strong>品質駆動(品質目標がその方式を要求すると裁定されたとき)</strong>を第二の着手条件として追加することを提案する。大気LUT置換(計測上は問題が無いのに品質目標が方式を要求した例)を一般化するものである。どちらの駆動で着手したかを記録すれば、判断の追跡可能性も保たれる。</p>
+
+<div class="table-scroll">
+<table>
+<tr><th>順</th><th>作業</th><th>依存(なぜこの位置か)</th><th>接続</th></tr>
+<tr><td>0</td><td><strong>OW5完走</strong>(第6段 帯別カリング → 第7段 大気LUT置換 → 定点)</td><td>進行中の縦切りを閉じる。大気LUTは光の輸送の最初の本番方式</td><td>OW5(進行中)</td></tr>
+<tr><td>1</td><td><strong>方式境界の設計壁打ち3本</strong>: (a)radiance query階層 (b)材質特徴ビット×シェーディングモデル (c)UBO分離+ディスクリプタインデクシング</td><td>実装より先に境界を決める項目(第6章a,dと4.3の先行必須項目)。ここの決定が後続全部の器</td><td>新規(設計のみ)</td></tr>
+<tr><td>2</td><td><strong>絵の様式の確定(オーナー裁定)→ TAA基盤</strong>(モーションベクタ・ジッタ・履歴・棄却・反応性)</td><td>導入が遅いほど波及が膨らむ(4.4)。RT系・体積系の前提でもある</td><td>新規(様式確定は裁定)</td></tr>
+<tr><td>3</td><td><strong>IBL+SSAO+自動露出</strong>(定数環境光の置換)</td><td>最小の工事で最大の画質改善。TAA基盤があると品質が安定</td><td>新規(GIの第1段)</td></tr>
+<tr><td>4</td><td><strong>BC圧縮+ミップ生成+実行時形式の版追加</strong></td><td>実アセット導入の前提条件。接合点cの最初の版追加として仮想化の道も開く</td><td>OW1拡張</td></tr>
+<tr><td>5</td><td><strong>多光源(クラスタード)+点光源影+光源入力型の置換</strong></td><td>順1の(c)UBO分離が前提。夜・屋内シーンの成立要件</td><td>新規</td></tr>
+<tr><td>6</td><td><strong>プローブGI → radiance query階層の成立</strong></td><td>順1(a)の設計と順2のTAA(デノイズ)が前提</td><td>新規(GIの第2段)</td></tr>
+<tr><td>7</td><td><strong>ヒッチレス化(非同期転送)+ジョブシステム</strong>(並行可能: 描画系と独立)</td><td>品質駆動での前倒し候補。視界距離の制定とセット</td><td>OW2拡張/軸6</td></tr>
+<tr><td>8</td><td><strong>時間的アップスケーラ+動的解像度</strong></td><td>TAA基盤の発展。縮退設計の主受け皿</td><td>新規</td></tr>
+<tr><td>9</td><td><strong>SIM0/SIM1・CHAR0系</strong>(材質拡張・髪/SSS・動作品質は既計画のマイルストーンで)</td><td>順1(b)の材質境界が前提。非同期コンピュートの主客</td><td>SIM0/SIM1/CHAR0</td></tr>
+<tr><td>10</td><td><strong>野心枠の審査</strong>: 仮想化ジオメトリ+仮想テクスチャ / 表面キャッシュ+RTハイブリッド / 体積雲</td><td>実アセット方針・代表シーンの成立後に採用審査(能力は目録に定義済み)</td><td>新規(審査から)</td></tr>
+</table>
+</div>
+
+<p>この表の順0〜3が「絵が変わり始める最短経路」である。とりわけ<strong>順3(IBL+SSAO+自動露出)は、現在の定数環境光との対比で誰の目にも分かる変化</strong>であり、野心の最初の証明として適している。順1の壁打ち3本と順2の様式確定は、オーナーの裁定を要する決定として明示しておく。</p>
+
+<!-- ============================================================ -->
+<h2 id="s9">9. 用語辞書</h2>
+
+<p>本文で使った専門用語の一覧である(本文の初出補足の再掲を含む)。五十音・アルファベット混在で、関連の近い語を並べた。</p>
+
+<div class="table-scroll">
+<table>
+<tr><th>用語</th><th>意味</th></tr>
+<tr><td>AA(アンチエイリアシング)</td><td>画素の格子が生む輪郭のギザつき・ちらつきを除去する技術の総称。</td></tr>
+<tr><td>TAA(Temporal Anti-Aliasing)</td><td>毎フレームサンプル位置をずらし(ジッタ)、過去フレームと混合して品質を稼ぐAA。時間方向の再構成の基本形。</td></tr>
+<tr><td>時間的アップスケーラ(TSR級)</td><td>低解像度で描き、時間方向の情報から高解像度を復元する方式。DLSS・FSRが商用の同系。</td></tr>
+<tr><td>モーションベクタ</td><td>各画素が前フレームで画面上のどこにいたかを表すベクトル場。時間再構成の必須部品。</td></tr>
+<tr><td>disocclusion</td><td>前フレームでは隠れていた領域が今フレームで露出すること。履歴が無いためゴーストの主因になる。</td></tr>
+<tr><td>反応性マスク</td><td>履歴を信用してはいけない画素(半透明・急変する発光等)を描画側が申告する仕組み。</td></tr>
+<tr><td>デノイザー</td><td>レイトレーシング等の少サンプル結果からノイズを除く処理。時間再構成と部品を共有する。</td></tr>
+<tr><td>GI(Global Illumination)</td><td>大域照明。光源から複数回跳ね返って届く間接光の計算。</td></tr>
+<tr><td>IBL(Image-Based Lighting)</td><td>周囲環境の絵(環境マップ)を光源として使う照明。</td></tr>
+<tr><td>AO(Ambient Occlusion)</td><td>環境光遮蔽。近くの遮蔽物により間接光が減る現象の近似。SSAOはスクリーン空間版。</td></tr>
+<tr><td>SSR(Screen Space Reflection)</td><td>スクリーン空間反射。描いた画面内の情報だけで反射を作る方式。</td></tr>
+<tr><td>radiance query(放射輝度問い合わせ)</td><td>「この点からこの方向を見たときどれだけの光が来るか」という統一の問い。本文書がGI・反射・RT影の設計目標に置く抽象。</td></tr>
+<tr><td>プローブ</td><td>世界に置いた光の測定点。周囲の表面はプローブから補間して間接光を得る。DDGIは動的更新するプローブ方式。</td></tr>
+<tr><td>表面キャッシュ</td><td>世界の表面に光の計算結果を貯めて再利用する方式。Lumen級のGIの部品。</td></tr>
+<tr><td>パストレーシング</td><td>光の跳ね返りを確率的に全部追う計算。理論上の正解(参照解)を出すため検証の物差しに使える。</td></tr>
+<tr><td>レンダリング方程式</td><td>「表面の明るさ=直接光+跳ね返って届く光の合計」を1行にした式。全技術はこの式の近似解法。</td></tr>
+<tr><td>PBR(Physically Based Rendering)</td><td>物理ベースレンダリング。基本色・粗さ・金属性など物理に根ざした少数パラメータで材質を表す標準。</td></tr>
+<tr><td>SSS(Subsurface Scattering)</td><td>表面下散乱。肌のように光が内部で散ってから出てくる材質の表現。</td></tr>
+<tr><td>クリアコート / 薄膜</td><td>車塗装の透明層 / シャボン玉のような干渉色の層。多層マテリアルの代表。</td></tr>
+<tr><td>デカール</td><td>表面の上へ後から貼る材質(弾痕・汚れ等)。</td></tr>
+<tr><td>バリアント爆発</td><td>材質×機能の組み合わせでシェーダー・パイプラインの本数が掛け算で増える問題。</td></tr>
+<tr><td>シャドウマップ</td><td>光源から見た深度だけの絵。本番描画が深度比較で影を判定する。</td></tr>
+<tr><td>CSM(Cascaded Shadow Maps)</td><td>方向光用に距離帯ごとの解像度でシャドウマップを持つ方式。本エンジンは4帯実装済み。</td></tr>
+<tr><td>PCF / PCSS</td><td>影の境界を複数サンプルで滑らかにする方式 / 遮蔽距離に応じて半影の幅を変える方式。</td></tr>
+<tr><td>テクセルスナップ</td><td>カメラ移動でシャドウマップの格子位相が変わり影がちらつくのを、格子吸着で止める技法。</td></tr>
+<tr><td>froxel</td><td>frustum(視錐台)+voxel(立体画素)の造語。視錐台をセル分割して霧・光を計算する体積表現。</td></tr>
+<tr><td>LOD(Level of Detail)</td><td>距離に応じて物の詳細度(ポリゴン数等)を切り替える仕組み。</td></tr>
+<tr><td>カリング</td><td>見えない物(視界外・遮蔽)を描画から除外する選別。</td></tr>
+<tr><td>インスタンス描画 / 間接描画</td><td>同一形状をまとめて1命令で描く方式 / 描画引数自体をGPUが書く方式(GPU駆動の部品)。</td></tr>
+<tr><td>メッシュシェーダー</td><td>三角形の生成・選別をGPUで行う新しいパイプライン段。クラスタ単位のカリングに向く。</td></tr>
+<tr><td>仮想化ジオメトリ(Nanite級)</td><td>メッシュをクラスタ階層へ事前分解し、画面誤差が一定以下の階層だけを読み描く方式。ポリゴン数を画素数に比例させる。</td></tr>
+<tr><td>meshlet</td><td>メッシュを分解した小さな三角形の束(クラスタ)。</td></tr>
+<tr><td>IK(Inverse Kinematics)</td><td>足の接地や手の把持のため、目標位置から関節角を逆算する技術。</td></tr>
+<tr><td>モーションマッチング</td><td>大量の収録動作データから次のポーズを検索で選ぶアニメーション方式。</td></tr>
+<tr><td>GPUスキンキャッシュ</td><td>スキニング結果を保存し、影など複数パスでの再計算を消す仕組み。</td></tr>
+<tr><td>BC系テクスチャ圧縮</td><td>GPUが直接読める固定比の画像圧縮(Block Compression)。VRAMと帯域を1/4〜1/8にする。</td></tr>
+<tr><td>ミップ / ミップストリーミング</td><td>テクスチャの解像度段 / 必要な段だけをVRAMへ置く読込方式。</td></tr>
+<tr><td>仮想テクスチャ</td><td>テクスチャをページ単位で管理し、画面が要求したページだけ読み込む方式。</td></tr>
+<tr><td>ヒッチ / ヒッチレス</td><td>フレーム時間の突発的悪化(引っかかり)/ それが起きないこと。</td></tr>
+<tr><td>非同期転送 / 非同期コンピュート</td><td>データ転送/計算を描画と別のGPUキューで並行させる技術。</td></tr>
+<tr><td>キュー所有権(queue ownership)</td><td>Vulkanで資源をどのキューが使うかの移譲管理。複数キュー化の設計点。</td></tr>
+<tr><td>ジョブシステム</td><td>仕事を細かい単位に割り全CPUコアへ配る仕組み。ワークスティーリングは空いたコアが仕事を奪う分配方式。</td></tr>
+<tr><td>PSO(Pipeline State Object)</td><td>描画設定一式の事前生成物。実行中の生成はカクつきの主犯で、事前コンパイルと永続キャッシュで防ぐ。</td></tr>
+<tr><td>動的解像度 / VRS(Variable Rate Shading)</td><td>負荷に応じ描画解像度を変える制御 / 画面領域ごとにシェーディング密度を変えるGPU機能。</td></tr>
+<tr><td>フレームペーシング</td><td>フレームの提示間隔を均し、体感の滑らかさを守る制御。</td></tr>
+<tr><td>p99</td><td>100回に1回の悪い方の値。フレーム時間の分布の裾を表す指標で、カクつきの定量化に使う。</td></tr>
+<tr><td>UBO / structured buffer / ディスクリプタインデクシング</td><td>GPUへ渡す固定サイズ設定領域 / 可変長の構造化バッファ / 資源を番号で選ぶ方式。多光源・GI・材質拡張の器。</td></tr>
+<tr><td>frame constants</td><td>フレームごとに1回だけ更新する小さな共通定数領域。UBO分離後の姿。</td></tr>
+<tr><td>forward / deferred / visibility buffer</td><td>描きながら照明まで計算する方式 / 材質情報を一旦絵(G-buffer)に書き後で照明する方式 / 可視面のIDだけを書き、材質評価を後段で行う方式。</td></tr>
+<tr><td>クラスタードライティング</td><td>視錐台をセル分割し、各セルに影響する光源を事前に絞る多光源の標準技法。</td></tr>
+<tr><td>HDR / トーンマッピング / ACES</td><td>広い輝度域での計算 / それを表示輝度へ写す変換 / 映画業界標準の変換カーブ。</td></tr>
+<tr><td>レンダーグラフ</td><td>パスの読み書き宣言から実行順と待ち合わせ(バリア)を自動導出する仕組み。本エンジン実装済み。</td></tr>
+<tr><td>カメラ相対描画</td><td>世界座標をf64で持ち、GPUへはカメラ原点からの相対f32だけを渡す方式。巨大座標でも画素が揺れない。本エンジン実装済み。</td></tr>
+<tr><td>縮退設計</td><td>性能が足りない環境での品質の落ち方を設計すること。同一方式の品質段階+機能非対応の正直な型化(第7章)。</td></tr>
+</table>
+</div>
+
+<hr style="border-color: var(--line); margin-top: 80px;">
+<p style="color: var(--fg-dim); font-size: 0.88rem;">
+本文書は生存型文書であり、実装・計画と一致させ続ける。現状の記述の正本は
+<code>_doc/設計/性能アーキテクチャ方針.md</code>・<code>_doc/計画/評価軸.md</code>・
+<code>_doc/計画/エンジンフェーズ1完了報告とフェーズ2計画.md</code>・各設計文書であり、
+本文書は要約と目標定義だけを担う(二重管理しない)。方式候補の採用・破棄は採用審査と設計壁打ちを経て決定し、
+決定はこの文書の該当節へ反映する。
+</p>
+
+</main>
+<a class="backtop" href="#top">目次へ戻る</a>
+</body>
+</html>
