@@ -8,6 +8,7 @@ mod cloth_spirv_compile;
 mod particle_spirv_compile;
 mod shadow_spirv_compile;
 mod skinning_spirv_compile;
+mod sky_spirv_compile;
 mod slangc_entry_compile;
 mod slangc_locate;
 mod sph_spirv_compile;
@@ -26,6 +27,7 @@ const 表面流エントリファイル名: &str = "surface_flow.slang";
 const SPHエントリファイル名: &str = "sph.slang";
 const UIエントリファイル名: &str = "ui.slang";
 const シャドウエントリファイル名: &str = "shadow.slang";
+const 空エントリファイル名: &str = "sky.slang";
 const トーンマップエントリファイル名: &str = "tonemap.slang";
 const ブルーム縮小側エントリファイル名: &str = "bloom_down.slang";
 const ブルーム拡大側エントリファイル名: &str = "bloom_up.slang";
@@ -55,6 +57,9 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
 
     let シャドウソース絶対パス = シェーダーディレクトリ絶対パス.join(シャドウエントリファイル名);
     shadow_spirv_compile::頂点とフラグメントをコンパイルする(&slangc, &シャドウソース絶対パス, &出力先ディレクトリ)?;
+
+    let 空ソース絶対パス = シェーダーディレクトリ絶対パス.join(空エントリファイル名);
+    sky_spirv_compile::頂点とフラグメントをコンパイルする(&slangc, &空ソース絶対パス, &出力先ディレクトリ)?;
 
     let トーンマップソース絶対パス = シェーダーディレクトリ絶対パス.join(トーンマップエントリファイル名);
     tonemap_spirv_compile::頂点とフラグメントをコンパイルする(&slangc, &トーンマップソース絶対パス, &出力先ディレクトリ)?;

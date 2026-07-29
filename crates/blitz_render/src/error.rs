@@ -8,8 +8,10 @@ use thiserror::Error;
 
 mod cloth;
 mod conversions;
+mod sky;
 
 pub use cloth::布エラー;
+pub use sky::空エラー;
 
 use crate::{frame_composition::フレーム段階, vulkan_failure::Vulkan失敗コード};
 
@@ -92,4 +94,7 @@ pub enum レンダラーエラー {
     読み戻し段階なし,
     #[error("フレーム構成に必要な段階がないため素材を実行できない: {0:?}")]
     フレーム構成素材不一致(フレーム段階),
+
+    #[error("空の入力が不正である(層ごとの詳細は空エラー): {0}")]
+    空不正(#[from] sky::空エラー),
 }

@@ -15,6 +15,7 @@ mod scene_pass;
 mod shadow_draw;
 mod shadow_pass;
 mod skinning_pass;
+mod sky_pass;
 mod tonemap_pass;
 mod ui_pass;
 

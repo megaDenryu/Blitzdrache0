@@ -27,6 +27,9 @@ const UIフラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"),
 const シャドウ頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/shadow_vertex.spv"));
 const シャドウフラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/shadow_fragment.spv"));
 
+const 空頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sky_vertex.spv"));
+const 空フラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sky_fragment.spv"));
+
 const トーンマップ頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_vertex.spv"));
 const トーンマップフラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_fragment.spv"));
 
@@ -60,6 +63,7 @@ pub(crate) fn 埋め込みシェーダー束を生成する(表示: 粒子表示
     Ok(シェーダー束 {
         シーン: シェーダー一式::生成する(頂点SPIRV.to_vec(), フラグメントSPIRV.to_vec())?,
         シャドウ: シェーダー一式::生成する(シャドウ頂点SPIRV.to_vec(), シャドウフラグメントSPIRV.to_vec())?,
+        空: シェーダー一式::生成する(空頂点SPIRV.to_vec(), 空フラグメントSPIRV.to_vec())?,
         トーンマップ: シェーダー一式::生成する(トーンマップ頂点SPIRV.to_vec(), トーンマップフラグメントSPIRV.to_vec())?,
         ブルーム前処理: シェーダー一式::生成する(ブルーム縮小側頂点SPIRV.to_vec(), ブルーム前処理SPIRV.to_vec())?,
         ブルーム縮小: シェーダー一式::生成する(ブルーム縮小側頂点SPIRV.to_vec(), ブルーム縮小SPIRV.to_vec())?,

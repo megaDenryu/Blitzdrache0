@@ -7,6 +7,8 @@ mod create;
 mod inputs;
 mod resize;
 
+pub(crate) use inputs::ポスト描画入力;
+
 use ash::vk;
 
 use crate::error::レンダラーエラー;

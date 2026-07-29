@@ -16,7 +16,7 @@ use crate::error::レンダラーエラー;
 use crate::terrain_detail::地形詳細段選択;
 use crate::visible_instance_selection::可視個体選択一覧;
 use crate::vulkan;
-use crate::vulkan::frame::{UI描画入力, 任意描画入力};
+use crate::vulkan::frame::UI描画入力;
 use crate::vulkan::relative_anchor::カメラ相対アンカー;
 use crate::vulkan::skinning::スキニング一式;
 
@@ -42,10 +42,7 @@ impl レンダラー {
 
         let 描画方式 = self.描画方式を決める(読み戻し要求)?;
         let 原点アンカー = カメラ相対アンカー::世界原点から生成する(カメラ大域原点)?;
-        let ポスト入力 = self.ポスト処理.as_ref().map(|一式| 一式.描画入力を作る(露出));
-        let スキニング入力 = self.スキニング.as_ref().map(|一式| 一式.描画入力を作る(フレーム添字));
-        let 布入力 = self.布入力を組み立てる(フレーム添字, 布介入件数, 原点アンカー)?;
-        let 粒子入力 = self.粒子.as_ref().map(|一式| 一式.描画入力を作る(フレーム添字, 原点アンカー));
+        let 任意材料 = self.任意入力の材料を集める(フレーム添字, 露出, 布介入件数, 原点アンカー)?;
         let クエリプール = self.gpu計測.as_ref().map(|計測| 計測.クエリプール(フレーム添字));
         let 画像一式 = self.フレーム画像一式を組み立てる(取得済み);
         let 提示id = self.実表示計測.提示idを発番する();
@@ -80,14 +77,7 @@ impl レンダラー {
             クリア色,
             self.描画段階資源.シーンpipeline(),
             self.シーン描画資源.描画対象入力を作る(),
-            任意描画入力 {
-                スキニング: スキニング入力.as_ref(),
-                布: 布入力.as_ref(),
-                粒子: 粒子入力.as_ref(),
-                ブルーム: ポスト入力.as_ref().map(|入力| &入力.ブルーム),
-                トーンマップ: ポスト入力.as_ref().map(|入力| &入力.トーンマップ),
-                ui: ui入力,
-            },
+            任意材料.借用する(ui入力),
             描画方式,
             クエリプール,
             self.同期入力を組み立てる(スロット資源, 取得済み),

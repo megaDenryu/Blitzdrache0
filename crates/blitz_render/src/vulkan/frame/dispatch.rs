@@ -4,7 +4,7 @@ use ash::vk;
 
 use super::submit_present;
 use super::{
-    UI描画入力, シャドウ描画入力, ジオメトリ入力, スキニング描画入力, トーンマップ描画入力, ブルーム描画入力, 布描画入力, 粒子描画入力
+    UI描画入力, シャドウ描画入力, ジオメトリ入力, スキニング描画入力, トーンマップ描画入力, ブルーム描画入力, 布描画入力, 空描画入力, 粒子描画入力,
 };
 use crate::error::レンダラーエラー;
 use crate::vulkan::swapchain::スワップチェーン画像添字;
@@ -27,6 +27,7 @@ pub(crate) struct 描画対象入力<'a> {
 pub(crate) struct 任意描画入力<'a> {
     pub(crate) スキニング: Option<&'a スキニング描画入力>,
     pub(crate) 布: Option<&'a 布描画入力>,
+    pub(crate) 空: Option<&'a 空描画入力>,
     pub(crate) 粒子: Option<&'a 粒子描画入力>,
     pub(crate) ブルーム: Option<&'a ブルーム描画入力>,
     pub(crate) トーンマップ: Option<&'a トーンマップ描画入力>,

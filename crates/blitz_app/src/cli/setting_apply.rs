@@ -18,6 +18,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--exposure" => 設定.露出 = value_args::exposure引数を処理する(残り)?,
         "--global-offset" => 設定.平行移動.大域オフセット = placement_args::global_offset引数を処理する(残り)?,
         "--camera-nudge" => 設定.平行移動.カメラずれ = placement_args::camera_nudge引数を処理する(残り)?,
+        "--camera-pitch" => 設定.平行移動.カメラ俯角差分 = placement_args::camera_pitch引数を処理する(残り)?,
         "--lod-crack-pair" => 設定.ストリーミング.lod継ぎ目検査 = Some(lod_crack_args::引数を処理する(残り)?),
         "--lod-crack-missing" => {
             let 欠落座標 = lod_crack_args::欠落引数を処理する(残り)?;
@@ -59,6 +60,7 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--no-instance-cull" => 設定.インスタンス可視判定有効 = false,
         "--no-instance-lod" => 設定.インスタンス段選択有効 = false,
         "--dev-ui" => 設定.開発ui初期有効 = true,
+        "--sky" => 設定.空有効 = true,
         "--no-post" => 設定.ポスト処理有効 = false,
         "--cloth" => 設定.布モード = 布モード::吊るし布,
         "--cloth-cape" => 設定.布モード = 布モード::マント,

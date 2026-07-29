@@ -20,6 +20,7 @@ mod scene_lighting;
 mod scene_load;
 mod scene_read_count;
 mod section_timing;
+mod sky_setup;
 mod sph_setup;
 mod streaming;
 mod visibility;
@@ -57,6 +58,7 @@ pub(crate) struct アプリ {
     現在フレーム: u32,
     クリア色: クリアカラー,
     ライティング: blitz_render::ライティング入力,
+    空: Option<blitz_render::空入力>,
     フレーム構成: blitz_render::フレーム構成,
     粒子表示: 粒子表示モード,
     gpu時間報告: bool,

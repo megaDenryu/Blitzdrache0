@@ -4,6 +4,8 @@
 
 mod bytes;
 pub(crate) mod content;
+pub(crate) mod sky_bytes;
+pub(crate) mod sky_content;
 
 use ash::vk;
 
@@ -13,6 +15,7 @@ use crate::vulkan::sync::{フレームインフライト数, フレームスロ�
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) use content::フレームユニフォーム内容;
+pub(crate) use sky_content::空ユニフォーム内容;
 
 pub(crate) struct フレームユニフォーム一式 {
     buffer一覧: [vk::Buffer; フレームインフライト数],

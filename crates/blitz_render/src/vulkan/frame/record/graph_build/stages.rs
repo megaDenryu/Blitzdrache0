@@ -4,8 +4,10 @@ use ash::vk;
 
 use super::base_images::基本画像ハンドル;
 use crate::clear_color::クリアカラー;
-use crate::vulkan::frame::record::{cloth_passes, particle_draw_pass, particle_update_pass, scene_pass, shadow_pass, skinning_pass};
-use crate::vulkan::frame::{シャドウ描画入力, ジオメトリ入力, スキニング描画入力, 布描画入力, 粒子描画入力};
+use crate::vulkan::frame::record::{cloth_passes, particle_draw_pass, particle_update_pass, scene_pass, shadow_pass, skinning_pass, sky_pass};
+use crate::vulkan::frame::{
+    シャドウ描画入力, ジオメトリ入力, スキニング描画入力, 布描画入力, 空描画入力, 粒子描画入力
+};
 use crate::vulkan::graph;
 
 pub(super) fn スキニングを積む<'a>(
@@ -67,6 +69,18 @@ pub(super) fn シーンを積む<'a>(
         入力,
         寸法,
     ));
+}
+
+pub(super) fn 空を積む<'a>(
+    グラフ: &mut graph::グラフ<'a>,
+    基本: &基本画像ハンドル,
+    カラー: graph::画像ハンドル,
+    入力: Option<&'a 空描画入力>,
+    寸法: vk::Extent2D,
+) {
+    if let Some(入力) = 入力 {
+        グラフ.パスを積む(sky_pass::作る(カラー, 基本.深度, 入力, 寸法));
+    }
 }
 
 pub(super) fn 粒子を積む<'a>(

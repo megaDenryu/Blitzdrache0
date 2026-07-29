@@ -1,0 +1,62 @@
+//! OW5第2段の検収入口。地形世界を空ありと空なしで描き、空が実際に写ること・空がクリア深度の画素にしか現れないこと・
+//! 空パスのGPU時間が独立枠に収まることを画素と計測で確かめる。
+//!
+//! 空の限定を確かめる2条件はポスト処理を外して走らせる。ブルームは明るい空の光を画面全体へ広げるため、
+//! ポスト処理を入れたままではジオメトリの画素も空の有無で変わり、「空はクリア深度の画素にしか描かない」ことを画素で言えない。
+//! 絵の目視とGPU時間はポスト処理を入れた本番の経路から採る。
+//! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「検証の設計」
+
+mod gpu_time;
+mod gradient;
+mod image_load;
+mod judgment;
+mod png;
+mod run;
+
+use std::path::PathBuf;
+use std::process::ExitCode;
+
+const 出力ディレクトリ: &str = "target/sky_draw";
+/// 空パスの独立枠(ミリ秒)。予算はポスト処理の枠へ混ぜない。
+const 空パスの予算ミリ秒: f64 = 1.0;
+
+pub fn 実行する() -> ExitCode {
+    match 検収する() {
+        Ok(要約) => {
+            println!("[xtask] sky-draw成功: {要約}");
+            ExitCode::SUCCESS
+        }
+        Err(理由) => {
+            eprintln!("[xtask] sky-draw失敗: {理由}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+fn 検収する() -> Result<String, String> {
+    if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
+        return Err("検証用アセットの生成に失敗した".to_string());
+    }
+    let 出力先 = PathBuf::from(出力ディレクトリ);
+    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+
+    let 本番 = run::描画する(&出力先, "post_sky", run::条件::空あり本番経路)?;
+    let 空パスms = gpu_time::空パスの平均msを読む(&本番.標準出力)?;
+    if 空パスms >= 空パスの予算ミリ秒 {
+        return Err(format!("空パスのGPU時間{空パスms:.4}msが独立枠{空パスの予算ミリ秒}msに収まらなかった"));
+    }
+
+    let 空あり = run::描画する(&出力先, "flat_sky", run::条件::空ありポストなし)?;
+    let 空なし = run::描画する(&出力先, "flat_nosky", run::条件::空なしポストなし)?;
+    let 判定 = judgment::画素を判定する(&空あり, &空なし)?;
+
+    let png = png::変換する(&出力先.join("post_sky"))?;
+    Ok(format!(
+        "空パス{空パスms:.4}ms(枠{空パスの予算ミリ秒}ms)、空画素{}のうち塗られた画素{}、天頂の青みと地平の青みの差{}、ジオメトリ画素{}がバイト一致、絵は{}",
+        判定.空画素数,
+        判定.塗られた空画素数,
+        判定.青み差,
+        判定.幾何画素数,
+        png.display()
+    ))
+}
