@@ -143,6 +143,9 @@ nav.toc a:hover { text-decoration: underline; }
 .pill.partial { background: #3a331d; color: #d8c88f; }
 .pill.none { background: #3a1d1d; color: #d89f8f; }
 .etym { display: block; color: var(--fg-dim); font-size: 0.84em; margin-top: 4px; line-height: 1.6; }
+table.vars { font-size: 0.88rem; margin: 12px 0 20px; }
+table.vars th { font-weight: normal; color: var(--fg-dim); }
+table.vars td:first-child { white-space: nowrap; }
 .mean { display: block; color: var(--accent2); font-size: 0.88em; line-height: 1.6; }
 .formula {
   background: var(--code-bg);
@@ -1198,6 +1201,8 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <span class="unit">単位: [W/(m²・sr)] ÷ [W/m²] = [1/sr]</span>
 </div>
 
+<p><strong>変数の定義。</strong>正確に書くと、点 <math><mi>x</mi></math>・法線 <math><mi>n</mi></math> の表面に、方向 <math><msub><mi>ω</mi><mtext>入</mtext></msub></math> の周りの微小立体角 <math><mi>d</mi><msub><mi>ω</mi><mtext>入</mtext></msub></math> から放射輝度 <math><msub><mi>L</mi><mtext>入</mtext></msub></math> の光だけを当てたとき、面が受ける放射照度の増分は <math><mi>d</mi><mi>E</mi><mo>=</mo><msub><mi>L</mi><mtext>入</mtext></msub><mo>⋅</mo><mi>cos</mi><mspace width="0.1em"/><msub><mi>θ</mi><mtext>入</mtext></msub><mo>⋅</mo><mi>d</mi><msub><mi>ω</mi><mtext>入</mtext></msub></math> であり(放射照度の方向分解)、その結果 <math><msub><mi>ω</mi><mtext>出</mtext></msub></math> 方向の出射放射輝度が増える分が <math><mi>d</mi><msub><mi>L</mi><mtext>出</mtext></msub></math> である。BRDFはこの2つの微小量の比 <math><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><msub><mi>ω</mi><mtext>入</mtext></msub><mo>→</mo><msub><mi>ω</mi><mtext>出</mtext></msub><mo stretchy="false">)</mo><mo>=</mo><mi>d</mi><msub><mi>L</mi><mtext>出</mtext></msub><mo>/</mo><mi>d</mi><mi>E</mi></math> として定義される — 測度論の言葉なら、入射の方向分布(測度)に対する出射応答の密度、すなわちラドン=ニコディム微分の類似物である。この定義が意味を持つ根拠は光の線形性(入射の重ね合わせに対する応答の加法性)で、これは幾何光学近似(歪み1)で干渉を捨てたことの帰結である。</p>
+
 <p>単位が1/srになるのは、「入ってきたエネルギーを出射方向の全球へどう配り直すかの、方向あたりの密度」だからである。完全な鏡はすべてを1方向へ集中させ(密度は鋭い山)、白い紙はほぼ均等にばら撒く(密度は平ら。これをLambert面と呼び、その値は<math><mfrac><mtext>反射率</mtext><mi>π</mi></mfrac></math> — <math><mi>π</mi></math>で割るのは半球で積分すると反射率そのものになるようにするためである)。</p>
 
 <p>BRDFがこの形で定義できる根拠は<strong>光の線形性</strong>である: 2つの光源を同時に点けたときの明るさは、別々に点けたときの和になる(幾何光学近似で干渉を捨てたおかげで成り立つ)。線形だから「方向ごとの寄与を足し合わせる」という積分の形で反射を書ける。物理的な制約も2つだけある: エネルギー保存(出ていく総量は入った量を超えない — 半球で積分して1以下)と、相反性(入る向きと出る向きを入れ替えても値が同じ — 光路の可逆性)。PBRが「どの照明環境でも破綻しない」(第4.3章)のは、この2つの物理制約を守るように式を作ってあるからである。</p>
@@ -1233,9 +1238,70 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <span class="unit">[W/(m²・sr)] = [W/(m²・sr)] + ∫ [1/sr] · [W/(m²・sr)] · [無次元] · [sr] → 積分の中身×dωで [W/(m²・sr)]。左右の単位が一致する</span>
 </div>
 
+<p><strong>変数の定義。</strong>各記号が数学的には何であり、物理的には何を指すかを明示する。</p>
+
+<div class="table-scroll">
+<table class="vars">
+<tr><th>記号</th><th>数学的定義</th><th>物理的意味</th><th>単位</th></tr>
+<tr><td><math><mi>M</mi></math></td><td><math><msup><mi>ℝ</mi><mn>3</mn></msup></math> に埋め込まれた区分的に滑らかな2次元多様体</td><td>シーンの全表面(世界のすべての物の表面)</td><td>—</td></tr>
+<tr><td><math><mi>x</mi></math></td><td><math><mi>x</mi><mo>∈</mo><mi>M</mi></math></td><td>反射を評価している表面上の点</td><td>[m]</td></tr>
+<tr><td><math><mi>n</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></math></td><td>写像 <math><mi>M</mi><mo>→</mo><msup><mi>S</mi><mn>2</mn></msup></math>。点xにおける外向き単位法線</td><td>表面の向き</td><td>無次元</td></tr>
+<tr><td><math><msub><mi>ω</mi><mtext>入</mtext></msub><mo>,</mo><msub><mi>ω</mi><mtext>出</mtext></msub></math></td><td>単位球面 <math><msup><mi>S</mi><mn>2</mn></msup><mo>⊂</mo><msup><mi>ℝ</mi><mn>3</mn></msup></math> の元。慣習として両方「面から離れる向き」を正に取る</td><td>光の入射方向・出射方向</td><td>無次元</td></tr>
+<tr><td><math><mi>Ω</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></math></td><td><math><mo stretchy="false">{</mo><mi>ω</mi><mo>∈</mo><msup><mi>S</mi><mn>2</mn></msup><mo>:</mo><mi>ω</mi><mo>·</mo><mi>n</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>&gt;</mo><mn>0</mn><mo stretchy="false">}</mo></math>。積分域の上半球</td><td>表面から見える空側の全方向</td><td>—</td></tr>
+<tr><td><math><msub><mi>L</mi><mtext>出</mtext></msub></math></td><td>写像 <math><mi>M</mi><mo>×</mo><msup><mi>S</mi><mn>2</mn></msup><mo>→</mo><msubsup><mi>ℝ</mi><mrow><mo>≥</mo><mn>0</mn></mrow><mn>3</mn></msubsup></math>(RGB3成分。歪み2の3点近似。分光版は波長にも依存)。<strong>この方程式の未知関数</strong></td><td>点xから方向ω<sub>出</sub>へ出る放射輝度</td><td>[W/(m²・sr)]</td></tr>
+<tr><td><math><msub><mi>L</mi><mtext>発光</mtext></msub></math></td><td>同じ型の<strong>既知</strong>関数。光源上以外では恒等的に0</td><td>表面自身の発光(フィラメント・画面等)</td><td>[W/(m²・sr)]</td></tr>
+<tr><td><math><mi>r</mi><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>ω</mi><mo stretchy="false">)</mo></math></td><td>写像 <math><mi>M</mi><mo>×</mo><msup><mi>S</mi><mn>2</mn></msup><mo>→</mo><mi>M</mi></math>。xから方向ωへ出る半直線が最初に当たるMの点(レイキャスト作用素)</td><td>「xからその方向に見えている物」</td><td>[m]</td></tr>
+<tr><td><math><msub><mi>L</mi><mtext>入</mtext></msub></math></td><td><math><msub><mi>L</mi><mtext>入</mtext></msub><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>ω</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>L</mi><mtext>出</mtext></msub><mo stretchy="false">(</mo><mi>r</mi><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>ω</mi><mo stretchy="false">)</mo><mo>,</mo><mo>−</mo><mi>ω</mi><mo stretchy="false">)</mo></math>。<strong>独立の未知数ではなく、未知関数L<sub>出</sub>の別の点での値</strong></td><td>方向ωからxへ届く放射輝度。真空中の光線に沿った不変性(10.1節)により「見えている先の出射」と等しい</td><td>[W/(m²・sr)]</td></tr>
+<tr><td><math><mi>f</mi></math></td><td>写像 <math><mi>M</mi><mo>×</mo><msup><mi>S</mi><mn>2</mn></msup><mo>×</mo><msup><mi>S</mi><mn>2</mn></msup><mo>→</mo><msub><mi>ℝ</mi><mrow><mo>≥</mo><mn>0</mn></mrow></msub></math>。BRDF(10.2節)。エネルギー保存 <math><msub><mo>∫</mo><mrow><mi>Ω</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></msub><mi>f</mi><mspace width="0.14em"/><mi>cos</mi><mspace width="0.1em"/><mi>θ</mi><mspace width="0.14em"/><mi>d</mi><mi>ω</mi><mo>≤</mo><mn>1</mn></math>、相反性 <math><mi>f</mi><mo stretchy="false">(</mo><msub><mi>ω</mi><mtext>入</mtext></msub><mo>→</mo><msub><mi>ω</mi><mtext>出</mtext></msub><mo stretchy="false">)</mo><mo>=</mo><mi>f</mi><mo stretchy="false">(</mo><msub><mi>ω</mi><mtext>出</mtext></msub><mo>→</mo><msub><mi>ω</mi><mtext>入</mtext></msub><mo stretchy="false">)</mo></math></td><td>点xの材質の跳ね返し方の密度(既知。マテリアルが与える)</td><td>[1/sr]</td></tr>
+<tr><td><math><mi>cos</mi><mspace width="0.1em"/><msub><mi>θ</mi><mtext>入</mtext></msub></math></td><td><math><mo>=</mo><msub><mi>ω</mi><mtext>入</mtext></msub><mo>·</mo><mi>n</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></math>(Ω(x)上で正)</td><td>斜め入射の希釈率。同じ光束が斜めでは広い面積に薄く広がる(冬が寒い幾何)。BRDF定義の分母が放射照度であることに由来する換算因子</td><td>無次元</td></tr>
+<tr><td><math><mi>d</mi><msub><mi>ω</mi><mtext>入</mtext></msub></math></td><td><math><msup><mi>S</mi><mn>2</mn></msup></math> 上の標準面積測度(立体角測度)。球座標では <math><mi>d</mi><mi>ω</mi><mo>=</mo><mi>sin</mi><mspace width="0.1em"/><mi>θ</mi><mspace width="0.14em"/><mi>d</mi><mi>θ</mi><mspace width="0.14em"/><mi>d</mi><mi>φ</mi></math>。半球の全測度は2π</td><td>方向の微小な広がり</td><td>[sr]</td></tr>
+</table>
+</div>
+
+<figure>
+<svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="半球積分の幾何">
+  <line x1="80" y1="200" x2="680" y2="200" stroke="#4fc3a1" stroke-width="3"/>
+  <text x="650" y="224" fill="#4fc3a1" font-size="13">表面 M</text>
+  <circle cx="380" cy="200" r="4" fill="#fff"/>
+  <text x="380" y="224" fill="#d8dde3" font-size="13" text-anchor="middle">x</text>
+  <path d="M 200,200 A 180,180 0 0 1 560,200" fill="none" stroke="#333a45" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="565" y="120" fill="#9aa3ad" font-size="13">半球 Ω(x)</text>
+  <line x1="380" y1="200" x2="380" y2="60" stroke="#d8dde3" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="392" y="72" fill="#d8dde3" font-size="14">n(x)</text>
+  <line x1="230" y1="90" x2="380" y2="200" stroke="#e0b25a" stroke-width="2" class="ray"/>
+  <text x="212" y="80" fill="#e0b25a" font-size="14">ω入</text>
+  <path d="M 380,158 A 42,42 0 0 0 353,181" fill="none" stroke="#e0b25a" stroke-width="1.5"/>
+  <text x="346" y="152" fill="#e0b25a" font-size="13">θ入</text>
+  <line x1="380" y1="200" x2="540" y2="105" stroke="#6aa9e0" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="548" y="100" fill="#6aa9e0" font-size="14">ω出(カメラへ)</text>
+  <line x1="300" y1="70" x2="380" y2="200" stroke="#5a4a2a" stroke-width="1"/>
+  <line x1="470" y1="75" x2="380" y2="200" stroke="#5a4a2a" stroke-width="1"/>
+  <line x1="550" y1="140" x2="380" y2="200" stroke="#5a4a2a" stroke-width="1"/>
+  <text x="380" y="248" fill="#9aa3ad" font-size="12" text-anchor="middle">積分は半球Ω(x)の全方向ω入にわたり f・L入・cosθ入 を立体角測度dωで足す</text>
+</svg>
+<figcaption>図10-3: レンダリング方程式の幾何。点xの出射放射輝度(青)は、半球のあらゆる方向(黄・茶)からの入射の寄与の積分である。</figcaption>
+</figure>
+
+<h4>数学的な構造 — 第2種フレドホルム積分方程式とノイマン級数</h4>
+
+<p>変数表のとおり <math><msub><mi>L</mi><mtext>入</mtext></msub></math> は独立の未知数ではなく、<math><msub><mi>L</mi><mtext>入</mtext></msub><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>ω</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>L</mi><mtext>出</mtext></msub><mo stretchy="false">(</mo><mi>r</mi><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>ω</mi><mo stretchy="false">)</mo><mo>,</mo><mo>−</mo><mi>ω</mi><mo stretchy="false">)</mo></math> である。これを代入すると未知関数は <math><mi>L</mi><mo>≔</mo><msub><mi>L</mi><mtext>出</mtext></msub></math> ただ1つになり、方程式は作用素形で</p>
+
+<div class="formula">
+<math display="block"><mi>L</mi><mo>=</mo><msub><mi>L</mi><mtext>発光</mtext></msub><mo>+</mo><mi>T</mi><mi>L</mi><mo>,</mo><mspace width="1.2em"/><mo stretchy="false">(</mo><mi>T</mi><mi>L</mi><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><msub><mi>ω</mi><mtext>出</mtext></msub><mo stretchy="false">)</mo><mo>≔</mo><msub><mo>∫</mo><mrow><mi>Ω</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></msub><mi>f</mi><mo>⋅</mo><mi>L</mi><mo stretchy="false">(</mo><mi>r</mi><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><msub><mi>ω</mi><mtext>入</mtext></msub><mo stretchy="false">)</mo><mo>,</mo><mo>−</mo><msub><mi>ω</mi><mtext>入</mtext></msub><mo stretchy="false">)</mo><mo>⋅</mo><mi>cos</mi><mspace width="0.1em"/><msub><mi>θ</mi><mtext>入</mtext></msub><mspace width="0.2em"/><mi>d</mi><msub><mi>ω</mi><mtext>入</mtext></msub></math>
+<span class="unit">T: 適切な関数空間(慣習的にはM×S²上の有界可測関数、あるいはL²)上の線形積分作用素。「1回の輸送+反射」を表す</span>
+</div>
+
+<p>という<strong>第2種フレドホルム積分方程式</strong>になる。物理的なエネルギー保存(現実の材質はBRDFの半球積分が真に1未満)から作用素ノルムについて <math><mo>‖</mo><mi>T</mi><mo>‖</mo><mo>&lt;</mo><mn>1</mn></math> が成り立ち、ノイマン級数が収束して解が書ける:</p>
+
+<div class="formula">
+<math display="block"><mi>L</mi><mo>=</mo><msup><mo stretchy="false">(</mo><mrow><mi>I</mi><mo>−</mo><mi>T</mi></mrow><mo stretchy="false">)</mo><mrow><mo>−</mo><mn>1</mn></mrow></msup><msub><mi>L</mi><mtext>発光</mtext></msub><mo>=</mo><munderover><mo movablelimits="false">∑</mo><mrow><mi>k</mi><mo>=</mo><mn>0</mn></mrow><mo>∞</mo></munderover><msup><mi>T</mi><mi>k</mi></msup><msub><mi>L</mi><mtext>発光</mtext></msub></math>
+<span class="unit">第k項 T<sup>k</sup>L<sub>発光</sub> = ちょうどk回反射して届く光。k=0: 光源の直視、k=1: 直接光、k≥2: 間接光(GI)</span>
+</div>
+
+<p>この級数が本文の言葉の数学的実体である: <strong>「直接光」とはk=1項、「間接光(GI)」とはk≥2の項の和</strong>にすぎない。全流派の位置づけもこの式の上で言い直せる — パストレーシング(10.8節)は各項(積分の入れ子=高次元積分)をモンテカルロで推定する方法、事前計算(LUT・プローブ)は級数の一部を先に解いて表に焼く方法、リアルタイムGIの「何回目の反射まで持つか」という品質差はこの級数の打ち切り位置である。輸送理論からの由来(次項)は、この作用素方程式が放射輸送方程式の境界値問題の形式解と同型であることを指す。</p>
+
 <ul>
-<li><strong><math><mi>cos</mi><mspace width="0.12em"/><msub><mi>θ</mi><mtext>入</mtext></msub></math>(傾き補正)はどこから来たか</strong>: BRDFの定義の分母は放射照度(面が受ける密度)だった。斜めから差す光は同じ光束が広い面積に薄く広がるため、面が受ける密度は真上からの<math><mi>cos</mi><mspace width="0.12em"/><mi>θ</mi></math>倍に薄まる。冬が寒いのと同じ幾何である。入射放射輝度から放射照度へ換算するときにこの<math><mi>cos</mi><mspace width="0.12em"/><mi>θ</mi></math>が現れる。</li>
-<li><strong><math><mo>∫</mo><mi>d</mi><mi>ω</mi></math>(全方向合計)</strong>: 表面の上半分の空(半球、<math><mn>2</mn><mi>π</mi></math> sr)のあらゆる方向からの寄与を足す。線形性(10.2節)がこの「足すだけ」を正当化する。</li>
+<li><strong>積分域が半球である理由</strong>: 不透明な表面では下半球(<math><mi>ω</mi><mo>·</mo><mi>n</mi><mo>&lt;</mo><mn>0</mn></math>)からの入射が無い。透過材質(水・ガラス・肌)ではこの仮定が外れて積分域が全球になり、BRDFはBSDF(Bidirectional Scattering Distribution Function。散乱分布関数)へ一般化される。</li>
 </ul>
 
 <h4>この式の理学的な出自 — 放射輸送理論</h4>
@@ -1267,7 +1333,14 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <h4>Beer-Lambert則 — 指数減衰の出どころ</h4>
 
-<p>光線が<math><mi>σ</mi></math>の媒質を進むと、単位距離あたり割合<math><mi>σ</mi></math>で減る。「減る速さが今の量に比例する」ので、放射輝度は指数関数で減衰する — 預金の複利のちょうど逆である。距離<math><mi>s</mi></math>を進んだ後の生存率(透過率)は:</p>
+<p>光線が<math><mi>σ</mi></math>の媒質を進むと、単位距離あたり割合<math><mi>σ</mi></math>で減る。数学的に正確に書くと、これは光線に沿った1階線形の常微分方程式である: 経路を弧長 <math><mi>s</mi></math> でパラメータ化した光線 <math><mi>γ</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>x</mi><mn>0</mn></msub><mo>+</mo><mi>s</mi><mi>ω</mi></math> の上で、放射輝度 <math><mi>L</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mo>≔</mo><mi>L</mi><mo stretchy="false">(</mo><mi>γ</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mo>,</mo><mi>ω</mi><mo stretchy="false">)</mo></math> が</p>
+
+<div class="formula">
+<math display="block"><mfrac><mrow><mi>d</mi><mi>L</mi></mrow><mrow><mi>d</mi><mi>s</mi></mrow></mfrac><mo>=</mo><mo>−</mo><mi>σ</mi><mo stretchy="false">(</mo><mi>γ</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mspace width="0.14em"/><mi>L</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo></math>
+<span class="unit">σ: ℝ³→ℝ≥0 は場(位置の関数)としての消散係数 [1/m]。L [W/(m²・sr)]。sは弧長 [m]。これは放射輸送方程式から散乱の湧き出し項(source term)を落とした消散のみの形である</span>
+</div>
+
+<p>を満たす。変数分離で直ちに解けて、初期値 <math><mi>L</mi><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo></math> に対し <math><mi>L</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mo>=</mo><mi>L</mi><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo><mspace width="0.14em"/><mi>exp</mi><mo stretchy="false">(</mo><mo>−</mo><msubsup><mo>∫</mo><mn>0</mn><mi>s</mi></msubsup><mi>σ</mi><mo stretchy="false">(</mo><mi>γ</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mspace width="0.14em"/><mi>d</mi><mi>t</mi><mo stretchy="false">)</mo></math> となる。生存率(透過率)は:</p>
 
 <div class="formula">
 <math display="block">
@@ -1324,7 +1397,25 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <h4>射影は「割り算」である</h4>
 
-<p>遠近法の核心は1つの割り算に尽きる: <strong>遠い物ほど小さく見えるのは、画面上の大きさが距離で割られるから</strong>である。カメラを原点に置き、視線方向にz軸を取ると、位置(x, y, z)の点が画面上に映る位置は、比例定数を別にすれば(x/z, y/z)である。相似三角形そのものであり、これ以上の内容はない。透視射影行列という4×4の行列が仰々しく見えるのは、この割り算を行列計算の枠組み(同次座標。割り算を「第4成分wへ分母を貯めておき、最後にwで割る」形に直したもの)へ収めるための帳簿仕事だからで、数学的な中身は割り算1回である。</p>
+<p>遠近法の核心は1つの割り算に尽きる: <strong>遠い物ほど小さく見えるのは、画面上の大きさが距離で割られるから</strong>である。カメラを原点に置き、視線方向にz軸を取ると、位置(x, y, z)の点が画面上に映る位置は、比例定数を別にすれば(x/z, y/z)である。相似三角形そのものであり、これ以上の内容はない。透視射影行列という4×4の行列が仰々しく見えるのは、この割り算を行列計算の枠組み(同次座標。割り算を「第4成分wへ分母を貯めておき、最後にwで割る」形に直したもの)へ収めるための帳簿仕事だからで、数学的な中身は割り算1回である。同次座標の言葉で正確に言うと、射影空間 <math><mi>ℝ</mi><msup><mi>P</mi><mn>3</mn></msup></math> の斉次座標 <math><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>,</mo><mi>z</mi><mo>,</mo><mn>1</mn><mo stretchy="false">)</mo></math> に線形写像(4×4行列)を掛け、最後に第4成分で割って代表元を取る、という構成である。射影(非線形)を線形代数の道具で扱うための標準的な持ち上げであり、GPUのパイプラインがこの形を固定機能として持つ。</p>
+
+<figure>
+<svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="透視射影の相似三角形">
+  <line x1="60" y1="210" x2="720" y2="210" stroke="#333a45" stroke-width="1" stroke-dasharray="4 4"/>
+  <circle cx="100" cy="210" r="5" fill="#6aa9e0"/>
+  <text x="100" y="238" fill="#6aa9e0" font-size="13" text-anchor="middle">カメラ(原点)</text>
+  <line x1="240" y1="60" x2="240" y2="210" stroke="#4fc3a1" stroke-width="2.5"/>
+  <text x="240" y="46" fill="#4fc3a1" font-size="13" text-anchor="middle">画面(z = 1)</text>
+  <line x1="620" y1="90" x2="620" y2="210" stroke="#e0b25a" stroke-width="2.5"/>
+  <text x="628" y="86" fill="#e0b25a" font-size="13">物体(高さ y、距離 z)</text>
+  <line x1="100" y1="210" x2="620" y2="90" stroke="#9aa3ad" stroke-width="1.2" class="ray"/>
+  <circle cx="240" cy="178" r="4" fill="#fff"/>
+  <text x="266" y="168" fill="#d8dde3" font-size="13">映る高さ = y / z</text>
+  <path d="M 130,210 A 30,30 0 0 0 127,196" fill="none" stroke="#9aa3ad" stroke-width="1"/>
+  <text x="380" y="238" fill="#9aa3ad" font-size="12" text-anchor="middle">相似三角形: (映る高さ)/(画面までの距離1) = y/z 。遠近法はこの比例だけでできている</text>
+</svg>
+<figcaption>図10-4: 透視射影の幾何。カメラから距離1の画面に映る高さは、相似三角形により y/z である。</figcaption>
+</figure>
 
 <h4>深度は1/zで記録される</h4>
 
@@ -1346,8 +1437,39 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <p>影の判定は次の1文に還元される: <strong>「その点は、光源から見えるか?」</strong>。シャドウマップ方式はこれを2段で解く。(1)光源の位置にカメラを置いて世界の深度だけを描く(これがシャドウマップ)。(2)本番の描画で各画素の位置を光源のカメラの座標系へ変換し、「私から光源までの距離」と「シャドウマップに記録された、その方向の一番手前の距離」を比べる。記録より自分が遠ければ、間に何かがいる — つまり影である。</p>
 
 <div class="formula">
-影である ⇔ 光源座標系での自分の深度 &gt; シャドウマップ(自分の位置に対応するテクセル)の深度<span class="unit">2台のカメラの帳簿の突き合わせ。10.5節の射影をカメラと光源の2回使う</span>
+影である ⇔ 光源座標系での自分の深度 &gt; シャドウマップ(自分の位置に対応するテクセル)の深度<span class="unit">2台のカメラの帳簿の突き合わせ。10.5節の射影をカメラと光源の2回使う。記号で書くと、光源の射影を P<sub>光</sub>: ℝ³→[0,1]³(光源クリップ空間への写像)、シャドウマップを D: [0,1]²→[0,1](テクセル格子上の深度場)として、点p∈Mが影 ⇔ P<sub>光</sub>(p)の深度成分 &gt; D(P<sub>光</sub>(p)のxy成分)</span>
 </div>
+
+<figure>
+<svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="シャドウマップの2カメラ照合">
+  <!-- 光源 -->
+  <circle cx="120" cy="60" r="18" fill="#e0b25a"/>
+  <text x="120" y="34" fill="#e0b25a" font-size="13" text-anchor="middle">光源のカメラ</text>
+  <!-- シャドウマップ平面 -->
+  <line x1="180" y1="40" x2="240" y2="130" stroke="#e0b25a" stroke-width="2"/>
+  <text x="252" y="60" fill="#e0b25a" font-size="12">シャドウマップ D(距離の記録)</text>
+  <!-- 遮蔽物 -->
+  <rect x="330" y="120" width="70" height="45" rx="6" fill="#4fc3a1"/>
+  <text x="365" y="112" fill="#4fc3a1" font-size="12" text-anchor="middle">遮蔽物</text>
+  <!-- 地面 -->
+  <line x1="80" y1="235" x2="700" y2="235" stroke="#333a45" stroke-width="2.5"/>
+  <!-- 影の範囲 -->
+  <line x1="430" y1="235" x2="560" y2="235" stroke="#14161a" stroke-width="5"/>
+  <text x="495" y="256" fill="#9aa3ad" font-size="12" text-anchor="middle">影(記録より遠い)</text>
+  <!-- 光線: 遮蔽物へ(記録される) -->
+  <line x1="135" y1="72" x2="345" y2="128" stroke="#e0b25a" stroke-width="1.6" class="ray"/>
+  <text x="220" y="105" fill="#e0b25a" font-size="11">記録された距離 d₁</text>
+  <!-- 光線: 影の点へ(届かない、点線) -->
+  <line x1="140" y1="76" x2="500" y2="235" stroke="#8a6a3a" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <circle cx="500" cy="235" r="4" fill="#e07a6a"/>
+  <text x="560" y="218" fill="#e07a6a" font-size="12">点p: 光源までの距離 d₂ &gt; d₁ → 影</text>
+  <!-- 本カメラ -->
+  <path d="M660,120 l-26,12 v-24 z" fill="#6aa9e0"/>
+  <text x="660" y="98" fill="#6aa9e0" font-size="12" text-anchor="middle">本番カメラ</text>
+  <line x1="634" y1="126" x2="502" y2="233" stroke="#6aa9e0" stroke-width="1.2" class="ray slow"/>
+</svg>
+<figcaption>図10-5: シャドウマップの照合。光源から見た距離の記録 d₁ より、本番カメラが見ている点pの光源までの距離 d₂ が遠ければ、間に遮蔽物がある — つまり影である。</figcaption>
+</figure>
 
 <p>この単純な比較には数値上の罠が2つあり、影の実装の苦労の大半はこの2つとの戦いである。(a)<strong>自己影のにじみ(シャドウアクネ)</strong>: 自分の深度と記録された自分自身の深度は本来同じ値だが、テクセルの解像度と数値誤差でわずかにずれ、「自分が自分の影に入る」まだら模様が出る。対策は比較に小さな下駄(バイアス)を履かせることだが、履かせすぎると影が足元から剥がれる(ピーターパン現象)。(b)<strong>解像度の不足</strong>: シャドウマップの1テクセルが世界の何メートルを覆うか(世界メートル毎テクセル)が粗いと、影の輪郭が階段になる。</p>
 
@@ -1423,7 +1545,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <ol>
 <li><strong>ジッタ = 標本位置の時間分散。</strong>毎フレーム、画素内の標本位置を既知のパターンでずらす。1フレームだけ見ると1標本のままだが、Nフレーム分を重ねれば画素内のN箇所を標本化したことになる。空間で増やせない標本を時間方向に借りる、という発想の転換である。</li>
-<li><strong>履歴混合 = 指数移動平均。</strong>過去の結果を「新しい値×α + 過去の蓄積×(1−α)」で混ぜ続ける(αは0.1程度)。これは統計でいう指数移動平均であり、直近およそ1/α枚(α=0.1なら約10枚)のフレームの平均を、画像1枚分の記憶だけで保持できる巧妙な形である。</li>
+<li><strong>履歴混合 = 指数移動平均。</strong>フレームnの画素値を <math><msub><mi>x</mi><mi>n</mi></msub></math>、蓄積(履歴)を <math><msub><mi>y</mi><mi>n</mi></msub></math> として、漸化式 <math><msub><mi>y</mi><mi>n</mi></msub><mo>=</mo><mi>α</mi><msub><mi>x</mi><mi>n</mi></msub><mo>+</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><mo stretchy="false">)</mo><msub><mi>y</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub></math>(混合率 <math><mi>α</mi><mo>∈</mo><mo stretchy="false">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false">]</mo></math>、慣習的に0.1程度)で混ぜ続ける。展開すると <math><msub><mi>y</mi><mi>n</mi></msub><mo>=</mo><mi>α</mi><munderover><mo movablelimits="false">∑</mo><mrow><mi>k</mi><mo>=</mo><mn>0</mn></mrow><mo>∞</mo></munderover><msup><mo stretchy="false">(</mo><mrow><mn>1</mn><mo>−</mo><mi>α</mi></mrow><mo stretchy="false">)</mo><mi>k</mi></msup><msub><mi>x</mi><mrow><mi>n</mi><mo>−</mo><mi>k</mi></mrow></msub></math> — 過去のフレームを幾何級数的な重みで平均する指数移動平均であり、重みの実効的な幅(重心)はおよそ <math><mn>1</mn><mo>/</mo><mi>α</mi></math> フレームである。画像1枚分の記憶だけで直近約10枚の平均を保持できる、メモリ効率の良い形である。標本の分散はおよそ <math><mi>α</mi><mo>/</mo><mo stretchy="false">(</mo><mn>2</mn><mo>−</mo><mi>α</mi><mo stretchy="false">)</mo></math> 倍へ縮む(独立同分布の仮定下)。αを小さくすると滑らかだが応答が遅く(ゴーストが増え)、大きくすると応答は速いがちらつきが残る — この1母数がTAAの品質チューニングの本体である。</li>
 </ol>
 
 <p>この2部品の弱点がそのまま4.4章の部品一覧に対応する: 過去の標本は「動いた物」の上では別の場所の標本なので、どこから来たかの追跡(モーションベクタ)が要る。追跡できない場所(disocclusion = 物陰から出たばかりの領域)では過去を借りてはならず、借りると偽の記憶(ゴースト)になる。つまり<strong>TAAとは「時間方向のモンテカルロ標本化+借りてよい標本の検定」</strong>であり、10.8節の数理の時間版である。</p>
