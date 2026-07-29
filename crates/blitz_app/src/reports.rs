@@ -5,6 +5,7 @@ pub(crate) mod composition;
 pub(crate) mod display_timing;
 pub(crate) mod draw_issue;
 pub(crate) mod exit;
+pub(crate) mod sky_state;
 pub(crate) mod streaming;
 pub(crate) mod streaming_summary;
 

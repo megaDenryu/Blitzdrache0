@@ -20,6 +20,8 @@ mod instance_lod;
 mod instance_lod_tests;
 mod lighting;
 mod lod_threshold;
+/// 空と太陽の語彙は数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
+pub mod sky;
 mod streaming;
 #[cfg(test)]
 mod streaming_budget_overflow_tests;

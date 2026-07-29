@@ -26,6 +26,7 @@ mod pixel_region;
 mod release_build;
 mod report_parse;
 mod shader_copy;
+mod sky_state;
 mod smoke;
 mod streaming_bench;
 mod streaming_report;
@@ -58,6 +59,7 @@ fn main() -> ExitCode {
         Some("instance-lod") => instance_lod::実行する(),
         Some("instance-stream") => instance_stream::実行する(),
         Some("cloth-empty") => cloth_empty::実行する(),
+        Some("sky-state") => sky_state::実行する(),
         Some("ow3-dod") => ow3_dod::実行する(),
         Some("ow4-bench") => ow4_bench::実行する(&引数一覧[1..]),
         Some("streaming-bench") => streaming_bench::実行する(&引数一覧[1..]),

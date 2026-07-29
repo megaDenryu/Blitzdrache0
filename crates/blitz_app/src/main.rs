@@ -36,7 +36,13 @@ fn main() -> ExitCode {
 
 fn 実行する() -> Result<ExitCode, 起動エラー> {
     let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
-    let 起動設定 = cli::引数を解析する(&引数一覧)?;
+    match cli::引数を解析する(&引数一覧)? {
+        cli::起動要求::天空状態報告 => Ok(reports::sky_state::天空状態表を出す()),
+        cli::起動要求::描画実行(起動設定) => 描画する(*起動設定),
+    }
+}
+
+fn 描画する(起動設定: cli::起動設定) -> Result<ExitCode, 起動エラー> {
     // M0のクリアカラー: 落ち着いた濃紺。
     let クリア色 = クリアカラー::生成する(0.05, 0.07, 0.12, 1.0)?;
 
