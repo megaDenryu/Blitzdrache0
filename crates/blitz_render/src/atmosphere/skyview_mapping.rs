@@ -7,9 +7,9 @@
 //! 参照: Sebastien Hillaire, "A Scalable and Production Ready Sky and Atmosphere Rendering Technique" (EGSR 2020)の
 //! `UvToSkyViewLutParams`および`SkyViewLutParamsToUv`。
 //!
-//! 注意: この写像はGPU側に写しを持つ。ここが正本であり、ずれるとLUTを焼いた座標と引く座標が食い違って
-//! 空の色が静かにずれる。往復と軸の意味は`atmosphere_tests`が、CPUとGPUの一致はGPU読み戻し検査が
-//! 代表テクセルで確かめる。
+//! 注意: この写像は`shaders/atmosphere_skyview_mapping.slang`の写しを持つ。ここが正本であり、ずれるとLUTを焼いた
+//! 座標と引く座標が食い違って空の色が静かにずれる。往復と軸の意味は`atmosphere_tests`が、CPUとGPUの一致は
+//! GPU読み戻し検査が代表テクセルで確かめる。
 
 use super::narrowing;
 use super::{大気数学エラー, 天頂余弦, 方位余弦, 消散媒体};

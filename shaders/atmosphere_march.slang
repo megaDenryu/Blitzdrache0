@@ -7,7 +7,6 @@
 import atmosphere_medium;
 import atmosphere_scatter;
 
-static const float atmospherePi = 3.14159265358979323846;
 static const uint sphereDirectionSide = 8;
 static const uint sphereDirectionCount = sphereDirectionSide * sphereDirectionSide;
 static const uint marchStepCount = 20;
@@ -90,11 +89,7 @@ MarchResult marchDirection(
     if (groundHit > 0.0 && pathDistance == groundHit)
     {
         float3 groundPosition = observerPosition + viewDirection * groundHit;
-        float groundRadius = max(1.0, length(groundPosition));
-        float3 upVector = groundPosition / groundRadius;
-        float3 toSun = sunTransmittance(medium, transmittanceLut, groundPosition, sunDirection);
-        float incidentCosine = clamp(dot(upVector, sunDirection), 0.0, 1.0);
-        result.luminance += toSun * throughput * incidentCosine * medium.groundAlbedoAndAsymmetry.xyz / atmospherePi;
+        result.luminance += groundBounce(medium, transmittanceLut, groundPosition, sunDirection, throughput);
     }
     return result;
 }

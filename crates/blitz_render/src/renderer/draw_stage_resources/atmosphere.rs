@@ -4,7 +4,8 @@
 //! この一致は生成時に決まり、以降変わらない。ここが返す`None`は「この構成では大気LUTを作らない」ことだけを意味する。
 
 use super::描画段階資源;
-use crate::atmosphere::大気散乱媒体;
+use crate::atmosphere::{スカイビュー観測条件, 大気散乱媒体};
+use crate::atmosphere_lut_input::大気LUT生成指示;
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::大気LUT描画入力;
 use crate::vulkan::sync::フレームスロット添字;
@@ -18,9 +19,13 @@ impl 描画段階資源 {
 
     /// 大気LUTの生成パスが束縛する資源。LUT資源を持たない構成では`None`を返す。
     pub(in crate::renderer) fn 大気lut描画入力を作る(
-        &self, フレーム添字: フレームスロット添字
+        &self,
+        フレーム添字: フレームスロット添字,
+        媒体: &大気散乱媒体,
+        観測条件: スカイビュー観測条件,
+        指示: 大気LUT生成指示,
     ) -> Option<大気LUT描画入力> {
-        self.大気lut.as_ref().map(|一式| 一式.描画入力を作る(フレーム添字))
+        self.大気lut.as_ref().map(|一式| 一式.描画入力を作る(フレーム添字, 媒体, 観測条件, 指示))
     }
 
     /// そのフレームの大気媒体をLUT生成用のユニフォームへ書く。LUT資源を持たない構成では何もしない。

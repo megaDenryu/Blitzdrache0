@@ -4,6 +4,9 @@
 // ここが正本から外れると、LUTの色が静かにずれる。一致はGPU読み戻し検査が代表テクセルで確かめる。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
+// 円周率。位相関数と立体角の正規化がこの値を読む。この一式の全シェーダーがこのファイルを取り込むため、
+// 定数を1箇所に置くとどのシェーダーからも同じ値が見える。
+static const float atmospherePi = 3.14159265358979323846;
 // 3成分(空気分子・浮遊粒子・吸収層)がそれぞれ2層の密度分布を持つ。
 static const uint atmosphereComponentCount = 3;
 static const uint atmosphereLayerCount = 6;

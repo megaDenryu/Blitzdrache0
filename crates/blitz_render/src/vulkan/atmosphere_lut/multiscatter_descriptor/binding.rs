@@ -2,7 +2,7 @@
 //! すべてこの1箇所の対応を読むため、番号と型の食い違いが起こらない。
 //!
 //! 注意: 番号は`shaders/atmosphere_multiscatter.slang`の`vk::binding`と一致させる。
-//! 注意: 透過率LUTのレイアウトはSHADER_READ_ONLY_OPTIMAL、多重散乱LUTのレイアウトはGENERALである。
+//! 注意: 読む側の透過率LUTも書き込み先の多重散乱LUTもレイアウトはGENERALである。
 //! レンダーグラフの画像用途「コンピュート読み」「コンピュート書き」が同じレイアウトへ遷移させており、
 //! ここの値とバリアの導出先が食い違うとvalidationがレイアウト不一致を報告する。
 
@@ -54,7 +54,7 @@ pub(super) fn 書き込む(
     let 透過率情報 = [vk::DescriptorImageInfo::default()
         .sampler(sampler)
         .image_view(束縛先.透過率ビュー)
-        .image_layout(vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL)];
+        .image_layout(vk::ImageLayout::GENERAL)];
     let 書き込み先情報 = [vk::DescriptorImageInfo::default()
         .image_view(束縛先.多重散乱ビュー)
         .image_layout(vk::ImageLayout::GENERAL)];

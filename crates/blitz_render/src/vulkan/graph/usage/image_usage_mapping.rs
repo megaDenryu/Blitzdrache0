@@ -37,7 +37,7 @@ pub(crate) fn 状態へ写像する(用途: 画像用途) -> 画像状態 {
         画像用途::コンピュート読み => 画像状態::生成する(
             vk::PipelineStageFlags2::COMPUTE_SHADER,
             vk::AccessFlags2::SHADER_SAMPLED_READ,
-            vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL,
+            vk::ImageLayout::GENERAL,
         ),
         画像用途::転送元 => 画像状態::生成する(
             vk::PipelineStageFlags2::COPY,

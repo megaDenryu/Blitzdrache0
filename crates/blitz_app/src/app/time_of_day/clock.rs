@@ -59,6 +59,11 @@ impl 時間帯 {
         &self.状態
     }
 
+    /// 空を描くときだけ要る設定。スカイビューLUTの観測高度をここから引く。
+    pub(super) fn 空描画方針(&self) -> blitz_engine::sky::空描画方針 {
+        self.方針.空描画()
+    }
+
     pub(super) fn 空入力(&self) -> 空入力 {
         self.空入力
     }

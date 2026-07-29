@@ -10,9 +10,13 @@ import atmosphere_medium;
 // 自分の足元との交差を拾って常に影と答えることを避ける。
 static const float shadowOffsetMeters = 10.0;
 
+// 空気分子と浮遊粒子の散乱を和のほかに別々にも持つのは、一次散乱の積分が2つへ別々の位相関数を掛けるためである。
+// 多重散乱の近似は向きの偏りを失った光を扱うため和だけを使う。
 struct MediumSample
 {
     float3 scattering;
+    float3 rayleighScattering;
+    float3 mieScattering;
     float3 extinction;
 };
 
@@ -24,7 +28,9 @@ MediumSample sampleMedium(AtmosphereMedium medium, float3 position)
     float absorptionDensity = componentDensity(medium, 2, altitude);
 
     MediumSample sample;
-    sample.scattering = medium.scattering[0].xyz * rayleighDensity + medium.scattering[1].xyz * mieDensity;
+    sample.rayleighScattering = medium.scattering[0].xyz * rayleighDensity;
+    sample.mieScattering = medium.scattering[1].xyz * mieDensity;
+    sample.scattering = sample.rayleighScattering + sample.mieScattering;
     sample.extinction = medium.extinction[0].xyz * rayleighDensity + medium.extinction[1].xyz * mieDensity
         + medium.extinction[2].xyz * absorptionDensity;
     return sample;
@@ -75,4 +81,17 @@ bool sunBlockedByGround(AtmosphereMedium medium, float3 position, float3 sunDire
     }
     float3 shifted = position - (position / radius) * shadowOffsetMeters;
     return nearestSphereHit(shifted, sunDirection, bottomRadiusOf(medium)) >= 0.0;
+}
+
+// 視線が地表で終わるとき、地面が拡散反射で返す光。多重散乱の積分とスカイビューの積分が同じ式を使う。
+// 遮蔽判定を通さずに透過率を引くのは、地表そのものにある点が自分の足元と交わるためである(照り返しの
+// 向きの妥当性は入射余弦が受け持つ)。正本は`crates/blitz_render/src/atmosphere/multiscatter_step.rs`である。
+float3 groundBounce(
+    AtmosphereMedium medium, Sampler2D transmittanceLut, float3 groundPosition, float3 sunDirection, float3 throughput)
+{
+    float groundRadius = max(1.0, length(groundPosition));
+    float3 upVector = groundPosition / groundRadius;
+    float3 toSun = sunTransmittance(medium, transmittanceLut, groundPosition, sunDirection);
+    float incidentCosine = clamp(dot(upVector, sunDirection), 0.0, 1.0);
+    return toSun * throughput * incidentCosine * medium.groundAlbedoAndAsymmetry.xyz / atmospherePi;
 }

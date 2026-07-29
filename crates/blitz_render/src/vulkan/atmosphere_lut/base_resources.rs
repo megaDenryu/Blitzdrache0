@@ -1,6 +1,8 @@
-//! 大気LUTのうち、GPUメモリを占める資源(2枚のLUT画像と媒体のユニフォーム)の所有者。
-//! 触れるのはこの3つだけであり、ディスクリプタもパイプラインも持たない。生成の途中で失敗したら
-//! それまでに確保したメモリをその場で解放する。
+//! 大気LUTのうち、GPUメモリを占める資源(3枚のLUT画像と媒体のユニフォーム)の所有者。
+//! 触れるのはこの4つだけであり、ディスクリプタもパイプラインも持たない。生成の途中で失敗したら
+//! それまでに確保したメモリをその場で解放する。3枚の画像を順に確保する巻き戻しは`images`が持つ。
+
+mod images;
 
 use ash::vk;
 
@@ -13,6 +15,7 @@ use crate::vulkan::tracked_device::GPUデバイス;
 pub(super) struct 大気LUT基盤資源 {
     pub(super) 透過率: image::大気LUT画像,
     pub(super) 多重散乱: image::大気LUT画像,
+    pub(super) スカイビュー: image::大気LUT画像,
     媒体ユニフォーム: medium_uniform::媒体ユニフォーム一式,
 }
 
@@ -22,22 +25,22 @@ impl 大気LUT基盤資源 {
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         解像度: 大気LUT解像度,
     ) -> Result<Self, レンダラーエラー> {
-        let 透過率 = image::大気LUT画像::生成する(device, メモリプロパティ, 寸法(解像度.透過率の幅(), 解像度.透過率の高さ()))?;
         let 一辺 = 解像度.多重散乱の一辺();
-        let 多重散乱 = match image::大気LUT画像::生成する(device, メモリプロパティ, 寸法(一辺, 一辺)) {
-            Ok(値) => 値,
-            Err(誤り) => {
-                透過率.破棄する(device);
-                return Err(誤り);
-            }
-        };
+        let 寸法一覧 = [
+            寸法(解像度.透過率の幅(), 解像度.透過率の高さ()),
+            寸法(一辺, 一辺),
+            寸法(解像度.スカイビューの幅(), 解像度.スカイビューの高さ()),
+        ];
+        let [透過率, 多重散乱, スカイビュー] = images::順に作る(device, メモリプロパティ, 寸法一覧)?;
         match medium_uniform::媒体ユニフォーム一式::生成する(device, メモリプロパティ) {
             Ok(媒体ユニフォーム) => Ok(Self {
                 透過率,
                 多重散乱,
+                スカイビュー,
                 媒体ユニフォーム,
             }),
             Err(誤り) => {
+                スカイビュー.破棄する(device);
                 多重散乱.破棄する(device);
                 透過率.破棄する(device);
                 Err(誤り)
@@ -66,6 +69,7 @@ impl 大気LUT基盤資源 {
 
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
         self.媒体ユニフォーム.破棄する(device);
+        self.スカイビュー.破棄する(device);
         self.多重散乱.破棄する(device);
         self.透過率.破棄する(device);
     }

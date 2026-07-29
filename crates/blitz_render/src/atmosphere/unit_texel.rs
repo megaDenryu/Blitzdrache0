@@ -5,7 +5,8 @@
 //! テクセル中心をそのまま0と1に置くと、両端の半テクセルぶんが補間の外に落ちて端の条件を引けない。
 //!
 //! 注意: 2つの関数は互いの逆であり、往復が恒等であることを`atmosphere_tests`が検査する。
-//! 注意: この写像は`shaders/atmosphere_mapping.slang`の写しを持つ。ここが正本である。
+//! 注意: この写像は`shaders/atmosphere_skyview_mapping.slang`の`endToEndUnitPosition`と`texelCenterUvFromUnit`の
+//! 写しを持つ。ここが正本である。
 
 use super::narrowing;
 

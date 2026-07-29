@@ -5,7 +5,8 @@
 //! 一次散乱は太陽への透過率へ位相関数を掛けた向き依存の項であり、多重散乱はLUTから引いた伝達率へ
 //! 散乱係数を掛けた等方の項である。前者だけでは空が暗く、後者だけでは太陽周辺と地平線の色が消える。
 //!
-//! 注意: この式はGPU側に写しを持つ。正本はこちらである。
+//! 注意: この式は`shaders/atmosphere_skyview_march.slang`と`shaders/atmosphere_skyview_geometry.slang`の
+//! 写しを持つ。正本はこちらである。
 
 use super::medium_sample::媒体標本;
 use super::multiscatter_table::多重散乱表;

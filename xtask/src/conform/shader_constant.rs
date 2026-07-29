@@ -17,12 +17,20 @@ struct 定数の組 {
     写しの前置き: &'static str,
 }
 
-const 定数一覧: [定数の組; 1] = [定数の組 {
-    正本パス: "crates/blitz_render/src/atmosphere/multiscatter_series.rs",
-    正本の前置き: "pub(super) const 公比の上限: f64 = ",
-    写しパス: "shaders/atmosphere_multiscatter.slang",
-    写しの前置き: "static const float multiScatterRatioLimit = ",
-}];
+const 定数一覧: [定数の組; 2] = [
+    定数の組 {
+        正本パス: "crates/blitz_render/src/atmosphere/multiscatter_series.rs",
+        正本の前置き: "pub(super) const 公比の上限: f64 = ",
+        写しパス: "shaders/atmosphere_multiscatter.slang",
+        写しの前置き: "static const float multiScatterRatioLimit = ",
+    },
+    定数の組 {
+        正本パス: "crates/blitz_render/src/atmosphere/skyview_march.rs",
+        正本の前置き: "pub(super) const 標本区間数: u32 = ",
+        写しパス: "shaders/atmosphere_skyview_march.slang",
+        写しの前置き: "static const uint skyViewStepCount = ",
+    },
+];
 
 pub fn 全定数を検査する() -> Result<Vec<違反>, String> {
     let mut 違反一覧 = Vec::new();

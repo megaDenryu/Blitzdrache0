@@ -1,5 +1,10 @@
 //! 外部持ち込み画像・バッファをグラフへ登録する際の初期状態。用途写像(`usage::image_usage_mapping`等)とは別に扱う:
 //! どちらも「取得直後・前フレーム直後で今何も起きていない」状態であり、パス内で実際に使われる用途(カラー出力・提示等)とは異なる固有の値だから。
+//! 大気LUT画像の初期状態だけは、焼く場合と引く場合で1つの不変条件の表裏になるため`atmosphere_lut`が持つ。
+
+mod atmosphere_lut;
+
+pub(crate) use atmosphere_lut::{大気lutを引く画像の初期状態, 大気lutを焼く画像の初期状態};
 
 use ash::vk;
 
@@ -59,18 +64,6 @@ pub(crate) fn 前フレームhdr読み直後状態() -> 画像状態 {
     画像状態::生成する(
         vk::PipelineStageFlags2::FRAGMENT_SHADER,
         vk::AccessFlags2::SHADER_SAMPLED_READ,
-        vk::ImageLayout::UNDEFINED,
-    )
-}
-
-/// 大気LUT画像の、前フレーム「コンピュート書き」直後を想定した状態。
-///
-/// 注意: この画像をグラフへ登録するのはLUTを焼き直すフレームだけであり、そのフレームは全テクセルを
-/// 書き直すためlayoutはUNDEFINEDでよい。焼き直さないフレームは登録せず、中身がそのまま残る。
-pub(crate) fn 前フレーム大気lut書き直後状態() -> 画像状態 {
-    画像状態::生成する(
-        vk::PipelineStageFlags2::COMPUTE_SHADER,
-        vk::AccessFlags2::SHADER_STORAGE_WRITE,
         vk::ImageLayout::UNDEFINED,
     )
 }

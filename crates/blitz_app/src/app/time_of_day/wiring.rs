@@ -1,22 +1,24 @@
 //! 時間帯の配線本体。担当するのは「世界の空方針とゲーム時計を持ち、そのフレームのライティング入力・空入力・大気LUT入力・
 //! 露出倍率を返す」ことである。呼び出し元は、世界が空を持つかどうかも時刻の進み方も知らずに値だけを受け取る。
 //! 空を持たない世界は`時間帯`を持たず、ライティングも露出も世界が決めた値のままである。
+//! 生成局面は`create`が持つ。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「露出の時間変化」
 
+mod create;
+
 use blitz_engine::sky::atmosphere::大気媒体方針;
-use blitz_engine::sky::世界の空方針;
 use blitz_render::atmosphere::大気散乱媒体;
 use blitz_render::atmosphere_lut_input::大気LUT入力;
 use blitz_render::{ライティング入力, 空入力};
 
+use super::atmosphere_input;
 use super::atmosphere_update::大気更新判定;
 use super::clock::時間帯;
-use super::scene_policy;
-use crate::atmosphere_medium::確定した大気散乱媒体へ写す;
 use crate::cli::時間帯起動設定;
 
 pub(in crate::app) struct 天空配線 {
     時間帯: Option<時間帯>,
+    /// 空パスを積むかどうか。世界の方針と起動指定から生成時に決まり、以降変わらない。
     空を描く: bool,
     /// 空を持つ世界だけが持つ、LUT生成の入力へ下ろし済みの大気と、その出どころの方針。時刻に依存しないため生成時に1度だけ写す。
     /// 方針を残すのは、焼き直しの判定に使う大気静的キーがそこから決まるためである。
@@ -32,24 +34,7 @@ pub(in crate::app) struct 天空配線 {
 
 impl 天空配線 {
     pub(in crate::app) fn 生成する(シーン名: &str, 設定: &時間帯起動設定, 基準: ライティング入力) -> Self {
-        let 方針 = scene_policy::世界の空方針を決める(シーン名, 設定.空);
-        let (時間帯, 大気) = match 方針 {
-            世界の空方針::空なし => (None, None),
-            世界の空方針::空あり { 空と太陽, 既定時刻 } => (
-                Some(時間帯::生成する(空と太陽, 設定.初期時刻を決める(既定時刻), 設定.時間倍率)),
-                Some((空と太陽.大気媒体(), 確定した大気散乱媒体へ写す(&空と太陽.大気媒体()))),
-            ),
-        };
-        let mut 配線 = Self {
-            時間帯,
-            空を描く: scene_policy::空を描くか(方針, 設定.空),
-            大気,
-            大気更新判定: 大気更新判定::新規(),
-            基準ライティング: 基準,
-            ライティング: 基準,
-        };
-        配線.ライティングを導き直す();
-        配線
+        create::生成する(シーン名, 設定, 基準)
     }
 
     pub(in crate::app) fn 空を描くか(&self) -> bool {
@@ -73,11 +58,14 @@ impl 天空配線 {
         self.空を描く.then(|| self.時間帯.as_ref().map(時間帯::空入力)).flatten()
     }
 
-    /// LUT生成の入力になる大気と、そのフレームで焼き直すかどうかの指示。大気LUT資源は空段階を持つフレーム構成でだけ
+    /// LUT生成の入力になる大気と観測条件、そのフレームで何を焼き直すかの指示。大気LUT資源は空段階を持つフレーム構成でだけ
     /// 作られるため、空パスを積まない指定(`--no-sky`)では下ろした媒体を持っていても渡さない。
     pub(in crate::app) fn 大気lut入力(&mut self) -> Option<大気LUT入力> {
         let (方針, 媒体) = self.空を描く.then_some(self.大気).flatten()?;
-        Some(大気LUT入力::生成する(媒体, self.大気更新判定.判定する(方針.静的キー())))
+        let 時間帯 = self.時間帯.as_ref()?;
+        let 空描画 = 時間帯.空描画方針();
+        let 状態 = *時間帯.状態();
+        Some(atmosphere_input::組む(&方針, 媒体, &状態, 空描画, &mut self.大気更新判定))
     }
 
     /// 最終露出倍率。基準の露出倍率へ、天空状態の露出補正段を2の冪として掛ける。

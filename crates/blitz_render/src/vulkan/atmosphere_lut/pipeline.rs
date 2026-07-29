@@ -6,6 +6,15 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::vulkan::compute_pipeline;
 
+/// そのパイプラインが受け取る押し込み定数の枠。持たないパスと持つパスを型で分ける。
+/// バイト数0で「無し」を表さないのは、0の範囲を宣言したレイアウトと範囲を持たないレイアウトが別物であり、
+/// 前者はvalidationが値域外として指摘するためである。
+#[derive(Debug, Clone, Copy)]
+pub(super) enum 押し込み定数の枠 {
+    無し,
+    バイト数(u32),
+}
+
 pub(super) struct 生成パイプライン {
     pub(super) handle: vk::Pipeline,
     pub(super) layout: vk::PipelineLayout,
@@ -15,9 +24,10 @@ impl 生成パイプライン {
     pub(super) fn 生成する(
         device: &ash::Device,
         ディスクリプタlayout: vk::DescriptorSetLayout,
+        押し込み: 押し込み定数の枠,
         spirv: &[u8],
     ) -> Result<Self, レンダラーエラー> {
-        let layout = レイアウトを作る(device, ディスクリプタlayout)?;
+        let layout = レイアウトを作る(device, ディスクリプタlayout, 押し込み)?;
         match compute_pipeline::生成する(device, layout, spirv, c"computeMain") {
             Ok(handle) => Ok(Self { handle, layout }),
             Err(誤り) => {
@@ -41,9 +51,21 @@ impl 生成パイプライン {
 fn レイアウトを作る(
     device: &ash::Device,
     ディスクリプタlayout: vk::DescriptorSetLayout,
+    押し込み: 押し込み定数の枠,
 ) -> Result<vk::PipelineLayout, レンダラーエラー> {
     let set_layouts = [ディスクリプタlayout];
-    let create_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&set_layouts);
-    // 安全性: deviceは生成済みで有効。
+    let 範囲一覧 = match 押し込み {
+        押し込み定数の枠::無し => Vec::new(),
+        押し込み定数の枠::バイト数(バイト数) => vec![
+            vk::PushConstantRange::default()
+                .stage_flags(vk::ShaderStageFlags::COMPUTE)
+                .offset(0)
+                .size(バイト数),
+        ],
+    };
+    let create_info = vk::PipelineLayoutCreateInfo::default()
+        .set_layouts(&set_layouts)
+        .push_constant_ranges(&範囲一覧);
+    // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
     Ok(unsafe { device.create_pipeline_layout(&create_info, None)? })
 }

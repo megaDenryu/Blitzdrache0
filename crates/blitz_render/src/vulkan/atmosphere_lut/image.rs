@@ -9,6 +9,7 @@ mod create;
 
 use ash::vk;
 
+use super::大気LUT画像入力;
 use crate::error::レンダラーエラー;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -28,6 +29,15 @@ impl 大気LUT画像 {
         寸法: vk::Extent2D,
     ) -> Result<Self, レンダラーエラー> {
         create::生成する(device, メモリプロパティ, 寸法)
+    }
+
+    /// グラフへ資源を登録するのに要る3つだけを取り出す。メモリのハンドルは外へ出さない。
+    pub(crate) fn 画像入力を作る(&self) -> 大気LUT画像入力 {
+        大気LUT画像入力 {
+            画像: self.画像,
+            ビュー: self.画像ビュー,
+            寸法: self.寸法,
+        }
     }
 
     /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この画像は大気LUT一式の1段として呼ばれる(GPU待機済み)。

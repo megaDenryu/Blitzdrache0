@@ -7,7 +7,7 @@
 
 use ash::vk;
 
-use super::大気LUT生成入力;
+use super::{大気LUT生成入力, 生成の押し込み定数};
 use crate::vulkan::graph::{パス宣言, パス種別, 画像ハンドル, 画像用途};
 
 pub(crate) fn 作る<'a>(
@@ -37,8 +37,31 @@ pub(crate) fn 作る<'a>(
             unsafe {
                 device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::COMPUTE, 入力.pipeline);
                 device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::COMPUTE, 入力.layout, 0, &set一覧, &[]);
+            }
+            押し込む(device, command_buffer, 入力);
+            // 安全性: 直前にパイプラインとディスクリプタを束縛済みで、ワークグループ数は寸法から切り上げた正当な値。
+            unsafe {
                 device.cmd_dispatch(command_buffer, 横のワークグループ数, 縦のワークグループ数, 1);
             }
         },
     )
+}
+
+/// 押し込み定数を持つパスだけがディスパッチ前に書く。持たないパスのレイアウトには範囲が無く、書けば
+/// validationが範囲外として指摘するため、腕で分ける。
+fn 押し込む(device: &ash::Device, command_buffer: vk::CommandBuffer, 入力: &大気LUT生成入力) {
+    let 生成の押し込み定数::スカイビュー条件 {
+        観測半径, 太陽天頂余弦
+    } = 入力.押し込み定数
+    else {
+        return;
+    };
+    let mut バイト列 = [0u8; 8];
+    バイト列[0..4].copy_from_slice(&観測半径.to_le_bytes());
+    バイト列[4..8].copy_from_slice(&太陽天頂余弦.to_le_bytes());
+    // 安全性: command_bufferは記録中で、layoutはこの入力のパイプラインのものである。
+    // バイト列の長さはシェーダー側の押し込み定数の宣言(float2つ)と一致する。
+    unsafe {
+        device.cmd_push_constants(command_buffer, 入力.layout, vk::ShaderStageFlags::COMPUTE, 0, &バイト列);
+    }
 }

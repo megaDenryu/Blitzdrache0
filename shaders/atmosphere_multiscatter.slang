@@ -6,6 +6,7 @@
 import atmosphere_mapping;
 import atmosphere_medium;
 import atmosphere_march;
+import atmosphere_multiscatter_mapping;
 import atmosphere_scatter;
 
 [[vk::binding(0, 0)]] ConstantBuffer<AtmosphereMedium> atmosphereMedium;
@@ -19,9 +20,6 @@ static const float multiScatterRatioLimit = 0.999;
 // 上限を破ったときに書く値。多重散乱は非負であるため、負値は正常な出力に現れない。
 // この値が書かれた事実は読み戻し検査の「負」の件数が捉える。
 static const float ratioBrokenMarker = -1.0;
-// 最下行を地表から離す割合と、最上行を大気上端から離す量。端点の経路長が0になるのを避ける。
-static const float lowestRowLift = 0.01;
-static const float highestRowDropMeters = 10.0;
 
 [shader("compute")]
 [numthreads(threadsPerSide, threadsPerSide, 1)]
@@ -35,16 +33,13 @@ void computeMain(uint3 threadId : SV_DispatchThreadID)
         return;
     }
 
-    float horizontal = float(threadId.x) / float(width - 1);
-    float vertical = float(threadId.y) / float(height - 1);
-    float sunZenithCosine = clamp(horizontal * 2.0 - 1.0, -1.0, 1.0);
-    float bottom = bottomRadiusOf(atmosphereMedium);
-    float top = topRadiusOf(atmosphereMedium);
-    float radius = clamp(bottom + min(vertical + lowestRowLift, 1.0) * (top - bottom - highestRowDropMeters), bottom, top);
+    float2 unitPosition = float2(threadId.xy) / (float2(width, height) - 1.0);
+    MultiScatterCondition condition = multiScatterConditionFromUnit(atmosphereMedium, unitPosition);
+    float sunZenithCosine = condition.sunZenithCosine;
 
     // 天頂を+Zに取る。方位角は結果に効かないため、太陽をXZ平面へ置く。
     float3 sunDirection = float3(sqrt(max(0.0, 1.0 - sunZenithCosine * sunZenithCosine)), 0.0, sunZenithCosine);
-    float3 observerPosition = float3(0.0, 0.0, radius);
+    float3 observerPosition = float3(0.0, 0.0, condition.radius);
 
     float3 luminance = float3(0.0, 0.0, 0.0);
     float3 survival = float3(0.0, 0.0, 0.0);
