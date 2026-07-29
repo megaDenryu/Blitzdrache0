@@ -62,6 +62,8 @@ mod streaming_usage_tests;
 mod terrain_lod;
 #[cfg(test)]
 mod terrain_lod_tests;
+/// 時刻の型は数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
+pub mod time;
 mod visibility;
 #[cfg(test)]
 mod visibility_tests;
