@@ -93,7 +93,7 @@ pub use ui_scissor::UIシザー矩形px;
 pub use ui_texture_id::UIテクスチャID;
 pub use ui_texture_material::{UIテクスチャ素材, UIテクスチャ素材エラー};
 pub use ui_vertex::UI頂点;
-pub use validation_counter::検証カウンタ;
+pub use validation_counter::{検証カウンタ, 検証層の状況};
 pub use vertex::頂点;
 pub use view_input::{描画視点, 描画視点一覧};
 pub use visible_instance_selection::{パス別描画範囲, 可視ID列エラー, 可視個体選択, 可視個体選択一覧, 段別描画範囲};

@@ -38,6 +38,7 @@ fn 報告する() -> Result<(), 大気LUT報告エラー> {
 
     let 一回目 = blitz_render::atmosphere_lut_probe::大気lutをgpuで焼いて読み戻す(&媒体, 解像度, &シェーダー)?;
     let 二回目 = blitz_render::atmosphere_lut_probe::大気lutをgpuで焼いて読み戻す(&媒体, 解像度, &シェーダー)?;
+    rows::検証を出す(&一回目, &二回目);
     rows::再現性を出す(&一回目, &二回目);
 
     let 透過率表 = 透過率表::焼く(媒体.消散(), 解像度)?;

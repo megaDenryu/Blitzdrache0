@@ -10,6 +10,9 @@ pub(crate) fn 使い方を表示する() {
     println!("  type-metrics     型ごとのフィールド数・impl分散ファイル数・メソッド数を多い順に表示する (違反判定はしない)");
     println!("  smoke            blitz_appを--framesで自動実行し、validation件数0を終了コードで確認する");
     println!(
+        "  check-glb <glbまたはgltfのパス...>  エンジンのglTF入力契約への適合を全項目検査し、違反と是正方法を全件並べる(違反があれば終了コード1。警告では落とさない)"
+    );
+    println!(
         "  compile-assets [ソースルート 出力ルート [世界名]]  ソースを検証して実行時形式を生成する(引数なしでchunk_worldをtarget/runtime_assetsへ、terrain_worldをtarget/terrain_assetsへ)"
     );
     println!("  watch-assets     カタログのソース依存を監視し、変更時に実行時形式を再生成する");
@@ -64,7 +67,7 @@ pub(crate) fn 使い方を表示する() {
         "  sky-time         空を持つ地形世界を4時刻で描き、同一時刻のバイト一致・隣り合う時刻の空色と明部と暗部の変化・夜の環境光だけの明るさ・空の非飽和・太陽円盤の高輝度画素を判定して絵をPNGへ書き出す"
     );
     println!(
-        "  atmosphere-lut   透過率LUTと多重散乱LUTをウィンドウ無しのGPUで焼いて読み戻し、代表テクセルのCPU正本との一致・全要素の有限性と非負・透過率の値域・同入力2回の完全一致を判定する"
+        "  atmosphere-lut   透過率LUTと多重散乱LUTをvalidation層を有効にしたウィンドウ無しのGPUで焼いて読み戻し、validationの指摘0件・代表テクセルのCPU正本との一致・全要素の有限性と非負・透過率の値域・同入力2回の完全一致を判定する"
     );
     println!("  ow3-dod          原点移動・LOD継ぎ目・半径2ストリーミングを本番経路でまとめて測り、複数LOD画像をPNGへ書き出す");
     println!(

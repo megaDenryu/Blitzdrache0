@@ -9,6 +9,10 @@ fn 値を探す<'a>(語一覧: &[&'a str], 鍵: &str) -> Result<&'a str, String>
         .ok_or_else(|| format!("報告の行に{鍵}が無い"))
 }
 
+pub(super) fn 語句値(語一覧: &[&str], 鍵: &str) -> Result<String, String> {
+    Ok(値を探す(語一覧, 鍵)?.to_string())
+}
+
 pub(super) fn 整数値(語一覧: &[&str], 鍵: &str) -> Result<usize, String> {
     値を探す(語一覧, 鍵)?
         .parse::<usize>()

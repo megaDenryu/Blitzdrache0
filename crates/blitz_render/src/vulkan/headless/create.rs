@@ -1,35 +1,51 @@
 //! ヘッドレスGPU環境の生成局面。呼ばれるのは検査の組み立て時の1回だけである。
 //!
-//! インスタンス拡張を1つも要求しないのは、サーフェスを作らないためである。論理デバイスの拡張も
-//! スワップチェーンを要求しない。有効化するのは`synchronization2`だけであり、これはレンダーグラフの
-//! バリア発行が`vkCmdPipelineBarrier2`を使うためである。
+//! インスタンスの生成とvalidation層の有効化は`validation`が担う。論理デバイスの拡張はスワップチェーンを
+//! 要求しない。有効化するのは`synchronization2`だけであり、これはレンダーグラフのバリア発行が
+//! `vkCmdPipelineBarrier2`を使うためである。
 
 use ash::vk;
 
+use super::validation;
 use super::ヘッドレスGPU環境;
 use crate::error::レンダラーエラー;
+use crate::validation_counter::検証カウンタ;
 use crate::vulkan::tracked_device::GPUデバイス;
+
+/// インスタンスから作る論理デバイス側の一式。生成の途中で失敗したときにインスタンスを別に片付けられるよう、
+/// インスタンスとは別の組で返す。
+struct デバイス一式 {
+    physical_device: vk::PhysicalDevice,
+    device: GPUデバイス,
+    queue: vk::Queue,
+    command_pool: vk::CommandPool,
+}
 
 impl ヘッドレスGPU環境 {
     pub(crate) fn 生成する() -> Result<Self, レンダラーエラー> {
         // 安全性: このプロセスで他にVulkanローダーを読み込んでいないことは、検査が描画と同時に走らないことで保証する。
         let entry = unsafe { ash::Entry::load()? };
-        let アプリ情報 = vk::ApplicationInfo::default().api_version(vk::make_api_version(0, 1, 3, 0));
-        let インスタンス生成情報 = vk::InstanceCreateInfo::default().application_info(&アプリ情報);
-        // 安全性: 生成情報はこのスコープの値だけを参照する。
-        let instance = unsafe { entry.create_instance(&インスタンス生成情報, None)? };
-        match 環境を組み立てる(entry, &instance) {
-            Ok(環境) => Ok(環境),
+        let 検証カウンタ = 検証カウンタ::生成する();
+        let 検証 = validation::作る(&entry, &検証カウンタ)?;
+        match デバイス一式を作る(&検証.instance) {
+            Ok(一式) => Ok(Self {
+                entry,
+                検証,
+                検証カウンタ,
+                physical_device: 一式.physical_device,
+                device: 一式.device,
+                queue: 一式.queue,
+                command_pool: 一式.command_pool,
+            }),
             Err(誤り) => {
-                // 安全性: instanceはこのスコープの唯一の所有者で、以降使用しない。
-                unsafe { instance.destroy_instance(None) };
+                検証.破棄する();
                 Err(誤り)
             }
         }
     }
 }
 
-fn 環境を組み立てる(entry: ash::Entry, instance: &ash::Instance) -> Result<ヘッドレスGPU環境, レンダラーエラー> {
+fn デバイス一式を作る(instance: &ash::Instance) -> Result<デバイス一式, レンダラーエラー> {
     let (physical_device, キューファミリ添字) = super::select::選定する(instance)?;
     let (device, queue) = 論理デバイスを作る(instance, physical_device, キューファミリ添字)?;
     let プール生成情報 = vk::CommandPoolCreateInfo::default()
@@ -44,9 +60,7 @@ fn 環境を組み立てる(entry: ash::Entry, instance: &ash::Instance) -> Resu
             return Err(誤り.into());
         }
     };
-    Ok(ヘッドレスGPU環境 {
-        entry,
-        instance: instance.clone(),
+    Ok(デバイス一式 {
         physical_device,
         device,
         queue,

@@ -11,27 +11,44 @@ mod record;
 use crate::atmosphere::{大気LUT解像度, 大気散乱媒体};
 use crate::error::レンダラーエラー;
 use crate::shader_bundle::大気LUTシェーダー一式;
+use crate::validation_counter::検証層の状況;
 use crate::vulkan::headless::ヘッドレスGPU環境;
 use crate::vulkan::sync::フレームスロット添字;
 
 use super::readback_buffer::LUT読み戻しバッファ;
 use super::大気LUT一式;
 
-/// 2枚のLUTを焼いて読み戻した結果。並びは行優先であり、CPU正本が焼く並びと一致する。
+/// 各LUTを焼いて読み戻した結果。並びは行優先であり、CPU正本が焼く並びと一致する。
 pub(crate) struct 大気LUT読み戻し {
     pub(crate) 透過率: Vec<[f32; 4]>,
     pub(crate) 多重散乱: Vec<[f32; 4]>,
+}
+
+/// その実行でvalidation層を有効にできたかと、層が数えた指摘の件数。
+/// 件数だけを返さないのは、層が無い機材の0件を有効な機材の0件と読み違えないためである。
+pub(crate) struct 検証観測 {
+    pub(crate) 状況: 検証層の状況,
+    pub(crate) 件数: u64,
 }
 
 pub(crate) fn 大気lutをgpuで焼いて読み戻す(
     媒体: &大気散乱媒体,
     解像度: 大気LUT解像度,
     シェーダー: &大気LUTシェーダー一式,
-) -> Result<大気LUT読み戻し, レンダラーエラー> {
+) -> Result<(大気LUT読み戻し, 検証観測), レンダラーエラー> {
     let 環境 = ヘッドレスGPU環境::生成する()?;
     let 結果 = 環境で焼く(&環境, 媒体, 解像度, シェーダー);
+    let 状況 = 環境.検証層の状況();
+    let カウンタ = 環境.検証カウンタを複製する();
+    // 注意: 件数は破棄より後に読む。破棄そのものが発する指摘も件数へ含めるためである。
     環境.破棄する();
-    結果
+    Ok((
+        結果?,
+        検証観測 {
+            状況,
+            件数: カウンタ.件数を読む(),
+        },
+    ))
 }
 
 fn 環境で焼く(
