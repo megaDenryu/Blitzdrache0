@@ -44,8 +44,10 @@ impl ヘッドレスGPU環境 {
         one_shot::実行する(&self.device, self.command_pool, self.queue, 記録)
     }
 
-    /// 前提: 呼び出し元はGPUの全作業の完了を待っている(`一度きりで実行する`が送信ごとに待つ)。
+    /// 前提: 呼び出し元はGPUの全作業の完了を待っており(`一度きりで実行する`が送信ごとに待つ)、
+    /// この環境で確保した資源をすべて破棄済みである。残っていれば`全メモリ解放を確認する`が止める。
     pub(crate) fn 破棄する(&self) {
+        self.device.全メモリ解放を確認する();
         // 安全性: どのハンドルもSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了している。
         unsafe {
             self.device.destroy_command_pool(self.command_pool, None);
