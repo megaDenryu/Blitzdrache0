@@ -38,7 +38,7 @@ pub(super) fn 検査する(アセットルート: &Path, シェーダー入口: 
         .output()
         .map_err(|誤り| format!("validation検査のblitz_appを起動できなかった: {誤り}"))?;
     let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
-    print!("{標準出力}");
+    出どころを付けて流す(&標準出力);
     if !出力.status.success() {
         return Err(format!("validation検査のblitz_appが{}で失敗した", 出力.status));
     }
@@ -47,4 +47,13 @@ pub(super) fn 検査する(アセットルート: &Path, シェーダー入口: 
         return Err(format!("validationのエラー・警告が{}件あった", 計数.validation件数));
     }
     Ok(計数.シーン.候補数)
+}
+
+/// 検査実行の報告を1行ずつ出どころ付きで流す。この実行はフレーム数が計測本体より短く、
+/// 全チャンクが常駐する前の位置で最終フレームを迎えるため、描画発行内訳の値は計測条件の値と違う。
+/// 印を付けずに流すと、計測本体の報告と同じ行の形で並んで、この実行の計数を計測条件として読み違える。
+fn 出どころを付けて流す(標準出力: &str) {
+    for 行 in 標準出力.lines() {
+        println!("[validation検査 {検査フレーム数}フレーム] {行}");
+    }
 }
