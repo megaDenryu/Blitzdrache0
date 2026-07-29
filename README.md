@@ -143,6 +143,7 @@ cargo xtask type-metrics  # 型ごとのフィールド数・impl分散ファイ
 cargo xtask smoke       # DoD自動検証: 8ステージの自己操作つき実行 + validation件数 + ピクセル読み戻し判定
 cargo xtask bench       # リリース版固定シーンのベンチマーク（GPU時間 + CPU側フレーム間隔 + GPUメモリ確保統計）
 cargo xtask bench-display-timing  # benchに実表示間隔の計測を追加（計測が描画ループを止めるためbenchの時系列とは比較不可）
+cargo xtask m10-bench   # M10流体GPU試作を固定条件で実行し、検証件数とGPU時間を採取
 cargo xtask m11-soak    # 3600フレーム連続実行中のRAM・VRAM推移をテキスト採取
 cargo xtask object-bench  # 2対象の画素判定と1・10・100対象のGPU/CPU時間・GPUメモリ計測
 cargo xtask streaming-bench [フレーム数]  # 固定経路のチャンク読込: 予算を十分に取った反復のRAM・VRAM推移と、縮退させた読込・解除順の再現
@@ -187,6 +188,8 @@ cargo xtask fetch-assets     # DamagedHelmet等の標準サンプル取得
 - [シミュレーション層](_doc/設計/シミュレーション層.md) — 3層構造（表現はドメイン・数学は基盤）と介入モデル
 - [M11計測記録](_doc/計測/M11_2026-07-23.md) — 固定ベンチと長時間実行の追記専用記録
 - [OW2計測記録](_doc/計測/OW2_2026-07-25.md) — 固定ベンチ5回反復による33ms級遅延の再現性判定、長時間実行、描画対象数スケーリングの追記専用記録
+- [OW2第10段計測記録](_doc/計測/OW2第10段_2026-07-26.md) — 固定経路のチャンク読込・解除順の再現性、30分相当反復のRAM・VRAM推移、ストリーミングがメインスレッドを占める時間の追記専用記録
+- [OW3計測記録](_doc/計測/OW3_2026-07-28.md) — 原点移動不変性、異LOD境界の亀裂、複数LODを含む先読み半径2ストリーミングの追記専用記録
 - [OW4計測記録](_doc/計測/OW4_2026-07-29.md) — 植生の密度だけを変えた5物量点（10,000〜1,000,000個体）のCPU区間・GPU時間・計数・会計・プロセス実測と、折れ点および支配区間の追記専用記録
 - シェーダー言語は Slang を採用済み（M1で導入。SPIR-V/DXIL/Metal 出力可。API より移植性に効くため先に固定。ビルド時は build.rs、実行中はホットリロードが slangc を呼ぶ）
 - 当面 Windows + Vulkan のみ。Vulkan 自体がポータブルなため Linux/Android/MoltenVK 展開は後から可能。RHI（マルチAPI抽象層）はコンソール対応が現実になった時点で切り出す
