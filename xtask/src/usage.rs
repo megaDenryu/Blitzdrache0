@@ -20,6 +20,9 @@ pub(crate) fn 使い方を表示する() {
     println!(
         "  gen-sky-dataset <ArHosekSkyModelData_RGB.hのパス>  Hosek-Wilkie解析近似の係数データセットを公開ヘッダからリトルエンディアンf32列へ焼く(出典と書庫のSHA-256はgen_sky_dataset.rsの冒頭)"
     );
+    println!(
+        "  gen-atmosphere-reference <precomputed_atmospheric_scatteringの作業コピー>  Bruneton 2017実装のCPU参照から大気の物理量の期待値を焼く(出典・手順・要るツールはgen_atmosphere_reference.rsの冒頭。Windows専用)"
+    );
     println!("  bench            リリース版の固定シーンを600フレーム実行し、GPU時間とCPU側フレーム間隔分布を表示する");
     println!("  bench-display-timing  benchに実表示間隔の計測を足して実行する(計測が描画ループを止めるため既存の時系列とは比較できない)");
     println!("  m10-bench        M10流体GPU試作を固定条件で実行し、検証件数とGPU時間を表示する");

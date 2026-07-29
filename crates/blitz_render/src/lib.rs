@@ -4,7 +4,7 @@
 //!
 //! 注意: 公開APIに ash の型（vk::* やハンドル）を露出してはならない。露出した瞬間、unsafe の封じ込めが破れて上位層に責任が漏れる。
 
-/// CSMの数学。ashに触れないため、モジュールごと公開して型を`cascade::`で辿れるようにする。
+pub mod atmosphere;
 pub mod cascade;
 mod clear_color;
 mod cloth_material;

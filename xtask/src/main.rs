@@ -12,6 +12,7 @@ mod conform;
 mod csm_seam;
 mod fetch_assets;
 mod file_scan;
+mod gen_atmosphere_reference;
 mod gen_sky_dataset;
 mod gen_source_assets;
 mod instance_cull;
@@ -56,6 +57,7 @@ fn main() -> ExitCode {
         Some("watch-assets") => watch_assets::実行する(&引数一覧[1..]),
         Some("gen-source-assets") => gen_source_assets::実行する(),
         Some("gen-sky-dataset") => gen_sky_dataset::実行する(&引数一覧[1..]),
+        Some("gen-atmosphere-reference") => gen_atmosphere_reference::実行する(&引数一覧[1..]),
         Some("fetch-assets") => fetch_assets::実行する(),
         Some("bench") => bench::実行する(),
         Some("bench-display-timing") => bench::実表示計測つきで実行する(),
