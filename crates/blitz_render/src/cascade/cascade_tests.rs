@@ -4,6 +4,7 @@
 #![allow(clippy::unwrap_used)]
 
 mod ortho_tests;
+mod snap_tests;
 mod split_tests;
 
 use blitz_math::{クリップ, ビュー, メートル, ラジアン, ワールド, 位置, 変換, 大域メートル, 大域ワールド位置};
