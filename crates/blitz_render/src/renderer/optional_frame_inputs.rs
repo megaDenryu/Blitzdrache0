@@ -5,6 +5,7 @@
 
 use super::レンダラー;
 use crate::error::レンダラーエラー;
+use crate::frame_input::フレーム描画入力;
 use crate::vulkan::atmosphere_lut::大気LUT描画入力;
 use crate::vulkan::frame::{UI描画入力, スキニング描画入力, 任意描画入力, 布描画入力, 空描画入力, 粒子描画入力};
 use crate::vulkan::post_process::ポスト描画入力;
@@ -24,12 +25,13 @@ impl レンダラー {
     pub(super) fn 任意入力の材料を集める(
         &self,
         フレーム添字: フレームスロット添字,
+        入力: &フレーム描画入力<'_>,
         露出: f32,
         布介入件数: u32,
         原点アンカー: カメラ相対アンカー,
     ) -> Result<任意入力の材料, レンダラーエラー> {
         Ok(任意入力の材料 {
-            大気lut: self.大気lut描画入力を組み立てる(フレーム添字),
+            大気lut: self.大気lut描画入力を組み立てる(フレーム添字, 入力),
             ポスト: self.ポスト処理.as_ref().map(|一式| 一式.描画入力を作る(露出)),
             スキニング: self.スキニング.as_ref().map(|一式| 一式.描画入力を作る(フレーム添字)),
             布: self.布入力を組み立てる(フレーム添字, 布介入件数, 原点アンカー)?,

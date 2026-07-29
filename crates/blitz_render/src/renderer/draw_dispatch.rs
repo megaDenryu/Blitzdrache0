@@ -13,6 +13,7 @@ use super::scene_draw_resources::作業領域更新入力;
 use super::レンダラー;
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
+use crate::frame_input::フレーム描画入力;
 use crate::terrain_detail::地形詳細段選択;
 use crate::visible_instance_selection::可視個体選択一覧;
 use crate::vulkan;
@@ -29,6 +30,7 @@ impl レンダラー {
         取得済み: &取得済み提示,
         スロット資源: &フレームスロット資源,
         mut cpu区間時計: Option<&mut CPU区間時計>,
+        入力: &フレーム描画入力<'_>,
         クリア色: クリアカラー,
         露出: f32,
         布介入件数: u32,
@@ -42,7 +44,7 @@ impl レンダラー {
 
         let 描画方式 = self.描画方式を決める(読み戻し要求)?;
         let 原点アンカー = カメラ相対アンカー::世界原点から生成する(カメラ大域原点)?;
-        let 任意材料 = self.任意入力の材料を集める(フレーム添字, 露出, 布介入件数, 原点アンカー)?;
+        let 任意材料 = self.任意入力の材料を集める(フレーム添字, 入力, 露出, 布介入件数, 原点アンカー)?;
         let クエリプール = self.gpu計測.as_ref().map(|計測| 計測.クエリプール(フレーム添字));
         let 画像一式 = self.フレーム画像一式を組み立てる(取得済み);
         let 提示id = self.実表示計測.提示idを発番する();

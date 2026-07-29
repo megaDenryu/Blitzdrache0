@@ -7,6 +7,7 @@
 mod atmosphere_medium;
 #[cfg(test)]
 mod atmosphere_medium_tests;
+mod atmosphere_update;
 mod clock;
 mod scene_policy;
 #[cfg(test)]

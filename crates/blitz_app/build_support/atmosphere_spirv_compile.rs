@@ -12,6 +12,12 @@ const 透過率エントリ: [エントリ指定; 1] = [エントリ指定 {
     出力ファイル名: "atmosphere_transmittance.spv",
 }];
 
+const 多重散乱エントリ: [エントリ指定; 1] = [エントリ指定 {
+    エントリ名: "computeMain",
+    ステージ: "compute",
+    出力ファイル名: "atmosphere_multiscatter.spv",
+}];
+
 pub(super) fn 全部をコンパイルする(
     slangc: &スランガー位置,
     シェーダーディレクトリ: &Path,
@@ -22,5 +28,11 @@ pub(super) fn 全部をコンパイルする(
         &シェーダーディレクトリ.join("atmosphere_transmittance.slang"),
         出力先ディレクトリ,
         &透過率エントリ,
+    )?;
+    エントリ一覧をコンパイルする(
+        slangc,
+        &シェーダーディレクトリ.join("atmosphere_multiscatter.slang"),
+        出力先ディレクトリ,
+        &多重散乱エントリ,
     )
 }

@@ -12,6 +12,7 @@ use crate::shader_set::シェーダー一式;
 #[derive(Debug, Clone)]
 pub struct 大気LUTシェーダー一式 {
     pub 透過率: コンピュートシェーダー,
+    pub 多重散乱: コンピュートシェーダー,
 }
 
 /// レンダラーが使う全シェーダー。各フィールドはビルド時にslangcでコンパイル済みのSPIR-V。

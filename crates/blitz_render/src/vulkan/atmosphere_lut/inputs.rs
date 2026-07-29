@@ -17,7 +17,11 @@ pub(crate) struct 大気LUT生成入力 {
 /// 透過率と多重散乱を1つの`Option`が束ねるため、片方だけを焼く状態をフレーム記録からは作れない。
 pub(crate) struct 大気LUT描画入力 {
     pub(crate) 透過率: 大気LUT生成入力,
+    pub(crate) 多重散乱: 大気LUT生成入力,
     pub(crate) 透過率画像: vk::Image,
     pub(crate) 透過率ビュー: vk::ImageView,
     pub(crate) 透過率寸法: vk::Extent2D,
+    pub(crate) 多重散乱画像: vk::Image,
+    pub(crate) 多重散乱ビュー: vk::ImageView,
+    pub(crate) 多重散乱寸法: vk::Extent2D,
 }

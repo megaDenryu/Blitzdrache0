@@ -44,6 +44,7 @@ const ブルーム拡大SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "
 const スキニングSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/skinning_compute.spv"));
 
 const 大気透過率SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/atmosphere_transmittance.spv"));
+const 大気多重散乱SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/atmosphere_multiscatter.spv"));
 
 /// レンダラー生成に渡す全シェーダーを埋め込みSPIR-Vから組み立てる(判断38)。
 /// 粒子系シェーダーは粒子トイまたは表面流の指定時だけ含める。
@@ -70,6 +71,7 @@ pub(crate) fn 埋め込みシェーダー束を生成する(表示: 粒子表示
         空: シェーダー一式::生成する(空頂点SPIRV.to_vec(), 空フラグメントSPIRV.to_vec())?,
         大気lut: 大気LUTシェーダー一式 {
             透過率: コンピュートシェーダー::生成する(大気透過率SPIRV.to_vec())?,
+            多重散乱: コンピュートシェーダー::生成する(大気多重散乱SPIRV.to_vec())?,
         },
         トーンマップ: シェーダー一式::生成する(トーンマップ頂点SPIRV.to_vec(), トーンマップフラグメントSPIRV.to_vec())?,
         ブルーム前処理: シェーダー一式::生成する(ブルーム縮小側頂点SPIRV.to_vec(), ブルーム前処理SPIRV.to_vec())?,

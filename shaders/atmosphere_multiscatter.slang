@@ -1,0 +1,61 @@
+// 多重散乱LUTの生成。無限回の散乱を、球面64方向で測った「1回の散乱を経ても残る割合」を公比とする等比級数の和で閉じる。
+// 注意: 数式の正本は`crates/blitz_render/src/atmosphere`(multiscatter_lut.rs・multiscatter_march.rs・
+// multiscatter_mapping.rs・sphere_directions.rs)にあり、ここはその写しである。
+// 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
+
+import atmosphere_mapping;
+import atmosphere_medium;
+import atmosphere_march;
+import atmosphere_scatter;
+
+[[vk::binding(0, 0)]] ConstantBuffer<AtmosphereMedium> atmosphereMedium;
+[[vk::binding(1, 0)]] Sampler2D transmittanceLut;
+[[vk::binding(2, 0)]] [format("rgba16f")] RWTexture2D<float4> multiScatterLut;
+
+static const uint threadsPerSide = 8;
+// 最下行を地表から離す割合と、最上行を大気上端から離す量。端点の経路長が0になるのを避ける。
+static const float lowestRowLift = 0.01;
+static const float highestRowDropMeters = 10.0;
+
+[shader("compute")]
+[numthreads(threadsPerSide, threadsPerSide, 1)]
+void computeMain(uint3 threadId : SV_DispatchThreadID)
+{
+    uint width;
+    uint height;
+    multiScatterLut.GetDimensions(width, height);
+    if (threadId.x >= width || threadId.y >= height)
+    {
+        return;
+    }
+
+    float horizontal = float(threadId.x) / float(width - 1);
+    float vertical = float(threadId.y) / float(height - 1);
+    float sunZenithCosine = clamp(horizontal * 2.0 - 1.0, -1.0, 1.0);
+    float bottom = bottomRadiusOf(atmosphereMedium);
+    float top = topRadiusOf(atmosphereMedium);
+    float radius = clamp(bottom + min(vertical + lowestRowLift, 1.0) * (top - bottom - highestRowDropMeters), bottom, top);
+
+    // 天頂を+Zに取る。方位角は結果に効かないため、太陽をXZ平面へ置く。
+    float3 sunDirection = float3(sqrt(max(0.0, 1.0 - sunZenithCosine * sunZenithCosine)), 0.0, sunZenithCosine);
+    float3 observerPosition = float3(0.0, 0.0, radius);
+
+    float3 luminance = float3(0.0, 0.0, 0.0);
+    float3 survival = float3(0.0, 0.0, 0.0);
+    for (uint index = 0; index < sphereDirectionCount; ++index)
+    {
+        MarchResult result = marchDirection(
+            atmosphereMedium, transmittanceLut, observerPosition, sphereDirection(index), sunDirection);
+        luminance += result.luminance;
+        survival += result.survival;
+    }
+
+    float solidAnglePerDirection = 4.0 * atmospherePi / float(sphereDirectionCount);
+    float isotropicPhase = 1.0 / (4.0 * atmospherePi);
+    float3 singleScatter = luminance * solidAnglePerDirection * isotropicPhase;
+    float3 ratio = survival * solidAnglePerDirection * isotropicPhase;
+    // 公比が1以上になるのは媒体の不変条件が破れたときだけである。GPU側は失敗を返せないため、
+    // 発散した値を書かないよう1未満へ抑える。この抑えが働いた事実は読み戻し検査がCPU正本との差として捉える。
+    float3 clampedRatio = min(ratio, float3(0.99, 0.99, 0.99));
+    multiScatterLut[threadId.xy] = float4(singleScatter / (1.0 - clampedRatio), 0.0);
+}
