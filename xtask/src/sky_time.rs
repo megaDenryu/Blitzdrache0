@@ -1,0 +1,63 @@
+//! OW5第3段の検収入口。空を持つ地形世界を4つの代表時刻で描き、時刻を変えると空・照明・影・露出のすべてが
+//! 決定的に変わることを画素で確かめる。
+//!
+//! 判定は6つある。同一時刻の2回描画がバイト一致すること、隣り合う時刻の間で空色・明部・暗部がそれぞれ変わること、
+//! 夜の地表が環境光だけの明るさに収まり黒へ落ちないこと、4時刻のどの空も飽和しないこと、
+//! 夕方の低い太陽で太陽円盤の高輝度画素が現れること、全条件でvalidationが0件であることである。
+//! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「検証の設計」
+
+mod draw;
+mod image_judgment;
+mod judgment;
+mod moment;
+mod region;
+mod report;
+mod run;
+mod stats;
+
+use std::path::PathBuf;
+use std::process::ExitCode;
+
+const 出力ディレクトリ: &str = "target/sky_time";
+
+pub fn 実行する() -> ExitCode {
+    match 検収する() {
+        Ok(要約) => {
+            println!("[xtask] sky-time成功: {要約}");
+            ExitCode::SUCCESS
+        }
+        Err(理由) => {
+            eprintln!("[xtask] sky-time失敗: {理由}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+fn 検収する() -> Result<String, String> {
+    if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
+        return Err("検証用アセットの生成に失敗した".to_string());
+    }
+    let 出力先 = PathBuf::from(出力ディレクトリ);
+    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+
+    let 区分 = region::領域区分::作る(&draw::領域マスクを撮る(&出力先)?)?;
+    let 絵 = draw::絵を撮る(&出力先)?;
+    let mut 実測一覧 = Vec::new();
+    for 時刻の絵 in &絵.時刻ごと {
+        実測一覧.push(stats::採る(時刻の絵, &区分)?);
+    }
+    let 名前一覧: Vec<&str> = moment::代表時刻一覧.iter().map(|時刻| 時刻.名前).collect();
+
+    image_judgment::決定性を判定する(&絵)?;
+    judgment::時刻間の変化を判定する(&名前一覧, &実測一覧, 区分.幾何画素数)?;
+    judgment::夜を判定する(&実測一覧[moment::夜の添字])?;
+    judgment::空の飽和を判定する(&名前一覧, &実測一覧)?;
+    let 円盤画素数 = image_judgment::太陽円盤を判定する(&絵.太陽円盤)?;
+
+    report::表を出す(&名前一覧, &実測一覧);
+    let 絵の置き場 = report::絵を書き出す(&出力先)?;
+    Ok(format!(
+        "空画素{}・幾何画素{}を4時刻で数え、隣り合う時刻の空色と明部と暗部がすべて変わり、夜は環境光だけの明るさで黒つぶれ0、どの時刻も空は飽和せず、夕方の太陽円盤は{円盤画素数}画素、絵は{絵の置き場}",
+        区分.空画素数, 区分.幾何画素数
+    ))
+}

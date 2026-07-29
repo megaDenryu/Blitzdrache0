@@ -1,9 +1,10 @@
-//! ダンプされた読み戻し画像を読み込む工程。受け取るのはダンプのベース名、返すのは寸法とRGBA8のバイト列である。
+//! ダンプされた読み戻し画像を読み込む工程。空の検収が複数あり、どれも同じ2ファイルの対を読むため1箇所に置く。
+//! 受け取るのはダンプのベース名、返すのは寸法とRGBA8のバイト列である。
 //! 書き出し側は`<ベース名>.raw`(RGBA8連結)と`<ベース名>.size`(幅 高さ)の2ファイルへ分けるため、読み手も対で扱う。
 
 use std::path::{Path, PathBuf};
 
-pub(super) fn 読み込む(ダンプ先: &Path) -> Result<(usize, usize, Vec<u8>), String> {
+pub fn 読み込む(ダンプ先: &Path) -> Result<(usize, usize, Vec<u8>), String> {
     let 寸法パス = PathBuf::from(ダンプ先).with_extension("size");
     let 寸法 = std::fs::read_to_string(&寸法パス).map_err(|誤り| format!("{}を読めない: {誤り}", 寸法パス.display()))?;
     let mut 要素 = 寸法.split_whitespace();

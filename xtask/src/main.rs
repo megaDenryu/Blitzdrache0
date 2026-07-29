@@ -24,16 +24,20 @@ mod origin_invariance;
 mod ow3_dod;
 mod ow4_bench;
 mod pixel_region;
+mod raw_image;
+mod raw_png;
 mod release_build;
 mod report_parse;
 mod shader_copy;
 mod sky_draw;
 mod sky_state;
+mod sky_time;
 mod smoke;
 mod streaming_bench;
 mod streaming_report;
 mod type_metrics;
 mod usage;
+mod validation_count;
 mod vegetation_run;
 mod verify;
 mod watch_assets;
@@ -64,6 +68,7 @@ fn main() -> ExitCode {
         Some("cloth-empty") => cloth_empty::実行する(),
         Some("sky-draw") => sky_draw::実行する(),
         Some("sky-state") => sky_state::実行する(),
+        Some("sky-time") => sky_time::実行する(),
         Some("ow3-dod") => ow3_dod::実行する(),
         Some("ow4-bench") => ow4_bench::実行する(&引数一覧[1..]),
         Some("streaming-bench") => streaming_bench::実行する(&引数一覧[1..]),

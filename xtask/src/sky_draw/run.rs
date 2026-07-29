@@ -9,8 +9,6 @@
 use std::path::Path;
 use std::process::Command;
 
-use super::image_load;
-
 const アセットルート: &str = "target/terrain_assets";
 const シーン名: &str = "terrain_origin";
 const フレーム数: &str = "160";
@@ -64,8 +62,8 @@ pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: 条件) ->
     if !出力.status.success() {
         return Err(format!("blitz_appが{}で失敗した({出力名})", 出力.status));
     }
-    validation件数を確かめる(&標準出力, 出力名)?;
-    let (幅, 高さ, rgba8) = image_load::読み込む(&ダンプ先)?;
+    crate::validation_count::零件数を確かめる(&標準出力, 出力名)?;
+    let (幅, 高さ, rgba8) = crate::raw_image::読み込む(&ダンプ先)?;
     Ok(実行結果 {
         標準出力, 幅, 高さ, rgba8
     })
@@ -77,23 +75,4 @@ fn 条件別引数(条件: 条件) -> Vec<&'static str> {
         条件::空ありポストなし => vec!["--no-post"],
         条件::空なしポストなし => vec!["--no-sky", "--no-post"],
     }
-}
-
-fn validation件数を確かめる(標準出力: &str, 出力名: &str) -> Result<(), String> {
-    const 見出し: &str = "validationエラー・警告合計件数:";
-    let 行 = 標準出力
-        .lines()
-        .find(|行| 行.contains(見出し))
-        .ok_or_else(|| format!("{出力名}の出力にvalidation件数の行が無い"))?;
-    let 件数: u64 = 行
-        .rsplit(':')
-        .next()
-        .unwrap_or_default()
-        .trim()
-        .parse()
-        .map_err(|誤り| format!("{出力名}のvalidation件数を数として読めない: {誤り}"))?;
-    if 件数 != 0 {
-        return Err(format!("{出力名}でvalidationが{件数}件発生した"));
-    }
-    Ok(())
 }

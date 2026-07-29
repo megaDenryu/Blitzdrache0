@@ -4,7 +4,7 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-pub(super) fn 変換する(ダンプ先: &Path) -> Result<PathBuf, String> {
+pub fn 変換する(ダンプ先: &Path) -> Result<PathBuf, String> {
     let 寸法 = std::fs::read_to_string(ダンプ先.with_extension("size")).map_err(|誤り| format!("読み戻し寸法を読めなかった: {誤り}"))?;
     let 大きさ = 寸法.split_whitespace().collect::<Vec<_>>().join("x");
     let raw = ダンプ先.with_extension("raw");

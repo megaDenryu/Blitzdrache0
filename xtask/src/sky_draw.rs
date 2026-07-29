@@ -8,9 +8,7 @@
 
 mod gpu_time;
 mod gradient;
-mod image_load;
 mod judgment;
-mod png;
 mod run;
 
 use std::path::PathBuf;
@@ -50,7 +48,7 @@ fn 検収する() -> Result<String, String> {
     let 空なし = run::描画する(&出力先, "flat_nosky", run::条件::空なしポストなし)?;
     let 判定 = judgment::画素を判定する(&空あり, &空なし)?;
 
-    let png = png::変換する(&出力先.join("post_sky"))?;
+    let png = crate::raw_png::変換する(&出力先.join("post_sky"))?;
     Ok(format!(
         "空パス{空パスms:.4}ms(枠{空パスの予算ミリ秒}ms)、空画素{}のうち塗られた画素{}、天頂の青みと地平の青みの差{}、ジオメトリ画素{}がバイト一致、絵は{}",
         判定.空画素数,
