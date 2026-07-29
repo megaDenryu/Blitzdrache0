@@ -36,7 +36,7 @@ pub(in crate::app) fn 組み立てる<'a>(
     let カメラ大域原点 = 視点情報.カメラ大域位置;
     let 視点 = blitz_render::描画視点::生成する(視点情報.ビュー射影, 視点情報.カメラ大域位置, カメラ大域原点);
     let 視点一覧 = blitz_render::描画視点一覧::生成する(視点, Vec::new());
-    if アプリ.現在フレーム == 0 && アプリ.描画対象数.is_some() {
+    if アプリ.現在フレーム == 0 && アプリ.描画対象の並べ方.件数.is_some() {
         crate::reports::composition::描画視点構成を表示する(視点一覧.視点数());
         let 原点 = blitz_math::大域ワールド位置::原点();
         crate::reports::composition::座標変換を表示する(原点, 原点.カメラ相対へ変換する(カメラ大域原点));

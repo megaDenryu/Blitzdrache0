@@ -34,7 +34,7 @@ use winit::window::Window;
 pub(crate) use frame_timing::{フレーム時間統計, 集計する};
 pub(crate) use streaming::ストリーミング要約;
 
-use crate::cli::{布モード, 描画対象数, 粒子表示モード, 起動モード};
+use crate::cli::{布モード, 描画対象の並べ方, 粒子表示モード, 起動モード};
 use crate::dev_ui::開発UI;
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
@@ -51,7 +51,7 @@ pub(crate) struct アプリ {
     アセットルート: PathBuf,
     /// `--global-offset`で世界全体へ加える平行移動。カメラ・照明の大域位置と、チャンク座標から導出した描画アンカーの全部に同じ値を足す。
     大域オフセット: blitz_math::大域ワールド位置,
-    描画対象数: Option<描画対象数>,
+    描画対象の並べ方: 描画対象の並べ方,
     ホットリローダー: ホットリローダー,
     カメラ: カメラ,
     入力状態: 入力状態,

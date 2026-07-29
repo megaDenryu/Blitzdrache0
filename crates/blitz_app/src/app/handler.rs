@@ -20,7 +20,7 @@ impl ApplicationHandler for アプリ {
             event_loop,
             &self.シーン名,
             &self.アセットルート,
-            self.描画対象数,
+            self.描画対象の並べ方,
             &mut self.ホットリローダー,
             self.粒子表示,
             self.開発ui初期有効,

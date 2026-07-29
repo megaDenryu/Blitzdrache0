@@ -3,7 +3,7 @@
 mod default;
 
 use super::{
-    ストリーミング起動設定, 布モード, 平行移動起動設定, 描画対象数, 時間帯起動設定, 粒子表示モード
+    ストリーミング起動設定, 布モード, 平行移動起動設定, 描画対象の並べ方, 時間帯起動設定, 粒子表示モード
 };
 use std::path::PathBuf;
 
@@ -28,7 +28,8 @@ pub(crate) struct 起動設定 {
     pub(crate) シーン名: String,
     /// カタログの実行時アセットパスの基準ディレクトリ。既定は`target/runtime_assets`。
     pub(crate) アセットルート: PathBuf,
-    pub(crate) 描画対象数: Option<描画対象数>,
+    /// 起動時シーンの描画対象の並べ方。`--object-count`が複製する件数を、`--reverse-draw-order`が束の中の走査順を決める。
+    pub(crate) 描画対象の並べ方: 描画対象の並べ方,
     /// `--unlit`指定でfalse。既定はtrue(PBRライティング有効、判断26)。
     pub(crate) ライティング有効: bool,
     /// 粒子系GPUパスで表示する検証対象。既定はなし。

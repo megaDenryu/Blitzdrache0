@@ -9,6 +9,8 @@ mod launch_request_tests;
 mod time_args_tests;
 
 mod argument_error;
+mod draw_object_layout;
+mod draw_object_order;
 mod instance_lod_args;
 mod launch_request;
 mod lod_crack_args;
@@ -24,6 +26,8 @@ mod time_of_day_settings;
 mod types;
 mod value_args;
 pub(crate) use argument_error::起動引数エラー;
+pub(crate) use draw_object_layout::描画対象の並べ方;
+pub(crate) use draw_object_order::描画対象の走査順;
 pub(crate) use launch_request::起動要求;
 pub(crate) use modes::{布モード, 粒子表示モード};
 pub(crate) use object_count::描画対象数;

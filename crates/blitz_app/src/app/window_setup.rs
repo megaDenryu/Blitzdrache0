@@ -35,7 +35,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     event_loop: &ActiveEventLoop,
     シーン名: &str,
     アセットルート: &std::path::Path,
-    描画対象数: Option<crate::cli::描画対象数>,
+    描画対象の並べ方: crate::cli::描画対象の並べ方,
     ホットリローダー: &mut ホットリローダー,
     粒子表示: crate::cli::粒子表示モード,
     開発ui初期有効: bool,
@@ -53,8 +53,8 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let 粒子素材 = super::particle_setup::素材を作る(粒子表示)?;
 
     let カタログ = scene_load::カタログを構築する(アセットルート)?;
-    let (シーン, 描画入力) = scene_load::シーンを読み込んで変換する(&カタログ, シーン名, 描画対象数, 大域平行移動)?;
-    if 描画対象数.is_some() {
+    let (シーン, 描画入力) = scene_load::シーンを読み込んで変換する(&カタログ, シーン名, 描画対象の並べ方, 大域平行移動)?;
+    if 描画対象の並べ方.件数.is_some() {
         crate::reports::composition::描画対象構成を表示する(描画入力.描画シーン.描画対象数());
         crate::reports::composition::フレーム構成を表示する(&フレーム構成);
     }

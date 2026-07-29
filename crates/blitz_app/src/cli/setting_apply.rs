@@ -3,7 +3,9 @@
 use std::slice::Iter;
 
 use super::streaming_settings::プレイヤー位置源;
-use super::{instance_lod_args, lod_crack_args, placement_args, time_args, value_args, 布モード, 粒子表示モード, 起動設定};
+use super::{
+    instance_lod_args, lod_crack_args, placement_args, time_args, value_args, 布モード, 描画対象の走査順, 粒子表示モード, 起動設定
+};
 use crate::error::起動エラー;
 
 pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &mut Iter<String>) -> Result<(), 起動エラー> {
@@ -13,7 +15,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--shader-source" => 設定.シェーダー監視パス = value_args::shader_source引数を処理する(残り)?,
         "--scene" => 設定.シーン名 = value_args::scene引数を処理する(残り)?,
         "--asset-root" => 設定.アセットルート = value_args::asset_root引数を処理する(残り)?,
-        "--object-count" => 設定.描画対象数 = Some(value_args::object_count引数を処理する(残り)?),
+        "--object-count" => 設定.描画対象の並べ方.件数 = Some(value_args::object_count引数を処理する(残り)?),
         "--dump-frame" => 設定.フレームダンプ先 = Some(value_args::dump_frame引数を処理する(残り)?),
         "--exposure" => 設定.露出 = value_args::exposure引数を処理する(残り)?,
         "--global-offset" => 設定.平行移動.大域オフセット = placement_args::global_offset引数を処理する(残り)?,
@@ -60,6 +62,7 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--report-memory" => 設定.gpuメモリ報告 = true,
         "--report-draw-issue" => 設定.描画発行報告 = true,
         "--report-instance-sections" => 設定.インスタンス区間報告 = true,
+        "--reverse-draw-order" => 設定.描画対象の並べ方.走査順 = 描画対象の走査順::逆順,
         "--no-instance-cull" => 設定.インスタンス可視判定有効 = false,
         "--no-instance-lod" => 設定.インスタンス段選択有効 = false,
         "--dev-ui" => 設定.開発ui初期有効 = true,

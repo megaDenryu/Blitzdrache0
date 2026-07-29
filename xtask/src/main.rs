@@ -5,6 +5,7 @@ use std::process::ExitCode;
 
 mod bench;
 mod cloth_empty;
+mod cloth_shadow_order;
 mod compile_assets;
 mod conform;
 mod fetch_assets;
@@ -66,6 +67,7 @@ fn main() -> ExitCode {
         Some("instance-lod") => instance_lod::実行する(),
         Some("instance-stream") => instance_stream::実行する(),
         Some("cloth-empty") => cloth_empty::実行する(),
+        Some("cloth-shadow-order") => cloth_shadow_order::実行する(),
         Some("sky-draw") => sky_draw::実行する(),
         Some("sky-state") => sky_state::実行する(),
         Some("sky-time") => sky_time::実行する(),
