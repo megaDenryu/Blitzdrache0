@@ -4,6 +4,7 @@
 use std::process::ExitCode;
 
 mod bench;
+mod cloth_empty;
 mod compile_assets;
 mod conform;
 mod fetch_assets;
@@ -56,6 +57,7 @@ fn main() -> ExitCode {
         Some("instance-cull") => instance_cull::実行する(),
         Some("instance-lod") => instance_lod::実行する(),
         Some("instance-stream") => instance_stream::実行する(),
+        Some("cloth-empty") => cloth_empty::実行する(),
         Some("ow3-dod") => ow3_dod::実行する(),
         Some("ow4-bench") => ow4_bench::実行する(&引数一覧[1..]),
         Some("streaming-bench") => streaming_bench::実行する(&引数一覧[1..]),

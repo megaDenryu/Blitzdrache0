@@ -61,7 +61,7 @@ pub use cloth_shader_set::布シェーダー一式;
 pub use compute_shader::コンピュートシェーダー;
 pub use draw_bundle_id::描画束ID;
 pub use draw_result::{描画結果, 見送り理由};
-pub use error::レンダラーエラー;
+pub use error::{レンダラーエラー, 布エラー};
 pub use extent::ウィンドウ寸法;
 pub use frame_composition::{フレーム構成, フレーム構成エラー, フレーム段階};
 pub use frame_input::{フレーム描画入力, 布フレーム入力};

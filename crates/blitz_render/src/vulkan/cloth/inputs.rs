@@ -2,7 +2,7 @@
 //! 呼び出しタイミング: 毎フレームの描画入力組み立て時(生成完了後・破棄前であることは保持側の`レンダラー`が保証する)。
 
 use super::布一式;
-use crate::vulkan::frame::布描画入力;
+use crate::vulkan::frame::{布描画の外部資源, 布描画入力};
 use crate::vulkan::relative_anchor::カメラ相対アンカー;
 use crate::vulkan::sync::フレームスロット添字;
 
@@ -12,6 +12,7 @@ impl 布一式 {
         フレーム添字: フレームスロット添字,
         介入件数: u32,
         相対アンカー: カメラ相対アンカー,
+        外部資源: 布描画の外部資源,
     ) -> 布描画入力 {
         布描画入力 {
             layout: self.パイプライン群.layout,
@@ -36,7 +37,9 @@ impl 布一式 {
             インデックスバッファ: self.バッファ.インデックス.0,
             インデックス数: self.インデックス数,
             描画pipeline: self.描画パイプライン.handle,
+            描画layout: self.描画パイプライン.layout,
             相対アンカー,
+            外部資源,
         }
     }
 }

@@ -49,28 +49,30 @@ pub(super) fn 作る<'a>(
         move |文脈| {
             draw_commands::描画コマンドを積む(文脈.device(), 文脈.コマンドバッファ(), pipeline, 寸法, ジオメトリ一覧);
             if let Some(布) = &布ドロー {
-                布を記録する(文脈.device(), 文脈.コマンドバッファ(), ジオメトリ一覧, 布);
+                布を記録する(文脈.device(), 文脈.コマンドバッファ(), 布);
             }
         },
     )
 }
 
-fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 一覧: &[ジオメトリ入力], 布: &布ドロー<'_>) {
-    let 先頭 = 一覧.first().unwrap_or_else(|| panic!("シーン描画入力は1件以上の不変条件に違反した"));
+/// 布はカメラ視錐台で通常の描画対象が1件も残らないフレームにも描くため、束縛するレイアウトとディスクリプタセットを
+/// ジオメトリ一覧の先頭から借りず、布自身のパイプラインのレイアウトと布描画の外部資源から取る。
+fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 布: &布ドロー<'_>) {
+    let (入力, 資源) = (布.入力, &布.入力.外部資源);
     // 安全性: command_bufferは記録中で、布のパイプライン・バッファは生成済み。
     unsafe {
-        device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 布.入力.描画pipeline);
-        relative_anchor::積む(device, command_buffer, 先頭.layout, 布.入力.相対アンカー);
+        device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.描画pipeline);
+        relative_anchor::積む(device, command_buffer, 入力.描画layout, 入力.相対アンカー);
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,
-            先頭.layout,
+            入力.描画layout,
             0,
-            &[先頭.ディスクリプタセット],
+            &[資源.シーンディスクリプタセット],
             &[],
         );
-        device.cmd_bind_vertex_buffers(command_buffer, 0, &[布.入力.布頂点バッファ], &[0]);
-        device.cmd_bind_index_buffer(command_buffer, 布.入力.インデックスバッファ, 0, vk::IndexType::UINT32);
-        device.cmd_draw_indexed(command_buffer, 布.入力.インデックス数, 1, 0, 0, 0);
+        device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.布頂点バッファ], &[0]);
+        device.cmd_bind_index_buffer(command_buffer, 入力.インデックスバッファ, 0, vk::IndexType::UINT32);
+        device.cmd_draw_indexed(command_buffer, 入力.インデックス数, 1, 0, 0, 0);
     }
 }

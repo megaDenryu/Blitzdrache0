@@ -15,6 +15,7 @@ use crate::draw_bundle_id::描画束ID;
 
 use crate::vulkan::descriptor::ディスクリプタレイアウト;
 use crate::vulkan::frame::{シャドウ描画入力, ジオメトリ入力};
+use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 use bundle_lifecycle::破棄待ち束;
 use chunk_draw_resources::チャンク描画資源;
@@ -44,6 +45,21 @@ impl シーン描画資源 {
     /// シーンを差し替えても互換レイアウトを作り直すだけのため、パイプラインは作り直さない。
     pub(super) fn ディスクリプタlayout(&self) -> vk::DescriptorSetLayout {
         self.レイアウト.handle()
+    }
+
+    /// 走査順で最初の描画対象の、そのフレームのディスクリプタセット。可視判定はこの走査の結果を絞るだけで束一覧を変えないため、
+    /// 可視な描画対象が1件も無いフレームでも同じ値を返す。布の描画がフレームユニフォームとシャドウマップを読むために束縛する
+    /// (布は通常の描画対象が1件も可視でないフレームにも描かれる)。束を1つも持たないときは`None`を返し、
+    /// 束縛先が無いことを呼び出し元が明示的に失敗させる。
+    pub(in crate::renderer) fn 先頭描画対象のディスクリプタセット(
+        &self,
+        フレーム添字: フレームスロット添字,
+    ) -> Option<vk::DescriptorSet> {
+        self.チャンク一覧
+            .iter()
+            .flat_map(|チャンク| チャンク.描画対象と対応セット(フレーム添字))
+            .map(|(_, _, セット)| セット)
+            .next()
     }
 
     /// 注意: 各束がディスクリプタプールを破棄し終えてからレイアウトを破棄する(レイアウトはプールが割り当てたセットの生存前提である)。

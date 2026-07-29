@@ -1,8 +1,9 @@
 //! どのチャンク世界を1つの出力ルートへ焼くかの選択。1つの出力ルートは1つのカタログと1つのチャンク目録を持つため、
 //! 同じ座標を持つ2つの世界は同じ出力ルートへ同居できない。世界の選択がそのまま出力ルートの選択になる。
-//! どのアセットを焼くかの宣言は`asset_declaration`が持つ。
+//! どのアセットを焼くかの宣言は`asset_declaration`が、定義1件の組み立ては`definition_kind`が持つ。
 
 mod asset_declaration;
+mod definition_kind;
 
 use super::catalog::{アセット定義, ソース種別};
 

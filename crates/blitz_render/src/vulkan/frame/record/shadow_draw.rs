@@ -10,13 +10,9 @@ use crate::vulkan::shadow_map::シャドウマップ一辺;
 pub(super) fn 記録する(
     device: &ash::Device, command_buffer: vk::CommandBuffer, 入力一覧: &[シャドウ描画入力], 布ドロー: Option<布ドロー<'_>>
 ) {
-    let Some(先頭) = 入力一覧.first() else {
-        // 影を落とす対象が1件も無いフレーム。全個体がライト視錐台の外にある状態で実際に起こる。
+    let Some(pipeline) = 束縛するパイプラインを選ぶ(入力一覧, 布ドロー.as_ref()) else {
+        // 影を落とす対象も布も無いフレーム。全個体がライト視錐台の外にある状態で実際に起こる。
         // パスそのものは通してシャドウマップを消去する。消去しないと前フレームの深度が影として残る。
-        assert!(
-            布ドロー.is_none(),
-            "布のシャドウ記録は描画対象のレイアウトとディスクリプタセットを借りるため、対象が1件も無い状態では記録できない"
-        );
         return;
     };
     let 一辺 = f32::from(u16::try_from(シャドウマップ一辺).unwrap_or_else(|_| panic!("シャドウマップ一辺がu16に収まらない: {シャドウマップ一辺}")));
@@ -30,16 +26,25 @@ pub(super) fn 記録する(
     };
     // 安全性: command_bufferは記録中で、全入力のパイプライン・バッファ・ディスクリプタセットは生成済み。
     unsafe {
-        device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 先頭.pipeline);
+        device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, pipeline);
         device.cmd_set_viewport(command_buffer, 0, &[viewport]);
         device.cmd_set_scissor(command_buffer, 0, &[シザー]);
         for 入力 in 入力一覧 {
             対象を記録する(device, command_buffer, 入力);
         }
         if let Some(布) = 布ドロー {
-            布を記録する(device, command_buffer, 先頭, 布);
+            布を記録する(device, command_buffer, 布);
         }
     }
+}
+
+/// このパスが束縛するシャドウパイプライン。通常の描画対象も布も、レンダラーが1つだけ持つシャドウパイプラインを指すため、
+/// 先に得られた方を束縛すれば両方を描ける。どちらも無ければ`None`を返し、パスはシャドウマップの消去だけを行う。
+fn 束縛するパイプラインを選ぶ(入力一覧: &[シャドウ描画入力], 布: Option<&布ドロー<'_>>) -> Option<vk::Pipeline> {
+    入力一覧
+        .first()
+        .map(|入力| 入力.pipeline)
+        .or_else(|| 布.map(|布| 布.入力.外部資源.シャドウpipeline))
 }
 
 unsafe fn 対象を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 入力: &シャドウ描画入力) {
@@ -60,16 +65,17 @@ unsafe fn 対象を記録する(device: &ash::Device, command_buffer: vk::Comman
     }
 }
 
-unsafe fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 先頭: &シャドウ描画入力, 布: 布ドロー<'_>) {
+unsafe fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 布: 布ドロー<'_>) {
+    let 資源 = &布.入力.外部資源;
     // 安全性: 呼び出し元がコマンド記録中と全入力資源の有効性を保証する。
     unsafe {
-        relative_anchor::積む(device, command_buffer, 先頭.layout, 布.入力.相対アンカー);
+        relative_anchor::積む(device, command_buffer, 資源.シャドウlayout, 布.入力.相対アンカー);
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,
-            先頭.layout,
+            資源.シャドウlayout,
             0,
-            &[先頭.ディスクリプタセット],
+            &[資源.シーンディスクリプタセット],
             &[],
         );
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[布.入力.布頂点バッファ], &[0]);

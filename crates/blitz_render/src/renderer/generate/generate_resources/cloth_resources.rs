@@ -30,14 +30,15 @@ pub(super) fn 組み立てる(
         None
     } else {
         let Some(スキニング) = スキニング else {
-            return Err(レンダラーエラー::布にスキン必須);
+            return Err(crate::error::布エラー::スキン必須.into());
         };
         for 対応 in &素材.アタッチ対応一覧 {
             if 対応[1] >= スキニング.頂点数 {
-                return Err(レンダラーエラー::布アタッチ先範囲外 {
+                return Err(crate::error::布エラー::アタッチ先範囲外 {
                     添字: 対応[1],
                     頂点数: スキニング.頂点数,
-                });
+                }
+                .into());
             }
         }
         Some(スキニング.出力バッファ())

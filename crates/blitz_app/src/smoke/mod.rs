@@ -14,6 +14,12 @@ use winit::window::Window;
 
 use crate::cli::粒子表示モード;
 
+/// 植生の検収シーン。書き換えもピクセル判定も持たず、判定は検収側のxtaskが読み戻し画像と計数で行う。
+const 植生検収シーンの接頭辞: &str = "vegetation";
+/// 群が両方の視錐台から外れる検収シーン(`cargo xtask cloth-empty`)。中身は植生の検収シーンと同じだが、
+/// 既定カメラと既定の影範囲を選ばせるために名前を接頭辞から外してあるため、ここで個別に同じ計画へ振る。
+const 両視錐台外の群シーン: &str = "instance_all_culled";
+
 pub(crate) use asset_rewrite::アセットを書き換える;
 pub(crate) use pixel_judgment::{アニメーション差分を判定する, ピクセルを判定する};
 pub(crate) use rebuild_plan::ウィンドウ再構築計画;
@@ -67,7 +73,7 @@ pub(crate) fn 判定する(
         スモークアクション::通常描画
     } else if 粒子表示 == 粒子表示モード::粒子トイ {
         plan::particles計画(現在フレーム, 総フレーム数)
-    } else if シーン名.starts_with("vegetation") {
+    } else if シーン名.starts_with(植生検収シーンの接頭辞) || シーン名 == 両視錐台外の群シーン {
         plan::植生計画()
     } else if シーン名 == "helmet" {
         plan::helmet計画(現在フレーム, 総フレーム数)
