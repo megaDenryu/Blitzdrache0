@@ -8,7 +8,8 @@
 //! 画面内へ影を落としうるためである。この不変条件は、列が常に全個体の並べ替えであること(長さ・値域・重複の3検査)と、
 //! 段の範囲が列を隙間なく埋めて2つのパス範囲が4区分の並びに従うこと(`partition_check`)で守る
 //! (参照: `_doc/設計/植生インスタンスと物量計測.md`「可視判定」)。
-//! 選択1件の形は`selection`、選択の一覧と検査は`list`、段の範囲は`stage_range`、パスごとの範囲は`pass_range`にある。
+//! 選択1件の形は`selection`、選択の一覧と検査は`list`、段の範囲は`stage_range`、パスごとの範囲は`pass_range`、
+//! 列を読むパスの数え方は`visible_pass`にある。
 
 mod error;
 mod list;
@@ -16,9 +17,12 @@ mod partition_check;
 mod pass_range;
 mod selection;
 mod stage_range;
+mod visible_pass;
 
 pub use error::可視ID列エラー;
 pub use list::可視個体選択一覧;
 pub use pass_range::パス別描画範囲;
 pub use selection::可視個体選択;
 pub use stage_range::段別描画範囲;
+
+pub(crate) use visible_pass::可視ID列を読むパス数;
