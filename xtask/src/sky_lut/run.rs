@@ -29,7 +29,7 @@ pub(super) struct 実行結果 {
     pub(super) 標準出力: String,
 }
 
-pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: 条件) -> Result<実行結果, String> {
+pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: 条件, 一日内秒: Option<&str>) -> Result<実行結果, String> {
     let ダンプ先 = 出力先.join(出力名);
     let mut コマンド = Command::new("cargo");
     コマンド
@@ -41,9 +41,11 @@ pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: 条件) ->
         .args(["--streaming-vram-limit", 容量上限バイト])
         .args(["--camera-pitch", カメラ俯角差分度])
         .args(["--sky-lut", "--report-atmosphere-passes", "--report-gpu-times"])
-        .args(条件別引数(条件))
-        .arg("--dump-frame")
-        .arg(&ダンプ先);
+        .args(条件別引数(条件));
+    if let Some(秒) = 一日内秒 {
+        コマンド.args(["--time-of-day", 秒]);
+    }
+    コマンド.arg("--dump-frame").arg(&ダンプ先);
     let 出力 = コマンド
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({出力名}): {誤り}"))?;
