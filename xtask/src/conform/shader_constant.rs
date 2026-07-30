@@ -17,7 +17,13 @@ struct 定数の組 {
     写しの前置き: &'static str,
 }
 
-const 定数一覧: [定数の組; 2] = [
+const 定数一覧: [定数の組; 3] = [
+    定数の組 {
+        正本パス: "crates/blitz_render/src/atmosphere/sun_visibility.rs",
+        正本の前置き: "pub(super) const 遮蔽球を縮める半径メートル: f64 = ",
+        写しパス: "shaders/atmosphere_scatter.slang",
+        写しの前置き: "static const float shadowSphereShrinkMeters = ",
+    },
     定数の組 {
         正本パス: "crates/blitz_render/src/atmosphere/multiscatter_series.rs",
         正本の前置き: "pub(super) const 公比の上限: f64 = ",
