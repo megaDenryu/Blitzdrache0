@@ -2,6 +2,10 @@
 // LUTは放射照度1で焼いてあるため、尺度を掛けるのは描画側の役目である。視線が地面と交差する向きはLUTが地表の
 // 照り返しを含んでいるため、そのまま使う。夜間背景放射輝度は昼夜の切替なしに常時加算する。
 // 太陽円盤はLUTに含まれないため、円盤の放射輝度へ視線上の大気透過率と惑星による遮蔽を掛けた別項として足す。
+// 透過率と遮蔽はどちらも円盤の中心方向でなく画素ごとの視線で評価する。円盤は有限の角半径を持つため、
+// 地平線をまたぐ間は上側の画素が大気上端へ抜けるのに下側の画素が惑星へ入る。中心方向で1つの値を作ると
+// 円盤全体が同じ明るさになり、欠けも中心角の補間でしか表せない。画素ごとに判定すれば下側だけが欠ける。
+// 正本は`crates/blitz_render/src/atmosphere/sun_visibility.rs`である。
 // LUTの引き方は`sky_atmosphere_lookup`が、入力の並びと視線の復元は`sky_frame`が持つ。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 // 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「大気LUT方式の設計(第7段で実装する)」
@@ -10,15 +14,6 @@ import atmosphere_medium;
 import atmosphere_skyview_mapping;
 import sky_atmosphere_lookup;
 import sky_frame;
-
-// 惑星による直射の遮蔽。太陽の角半径ぶんの幅で滑らかに落とすのは、円盤が地平線をまたぐ間は一部だけが隠れるためである。
-float sunVisibilityAboveHorizon(float horizonZenithCosine, float sunZenithCosine)
-{
-    float sunAngularRadius = acos(clamp(frameUniform.nightSkyRadianceAndSunCos.w, -1.0, 1.0));
-    float horizonAngle = acos(clamp(horizonZenithCosine, -1.0, 1.0));
-    float sunZenithAngle = acos(clamp(sunZenithCosine, -1.0, 1.0));
-    return 1.0 - smoothstep(horizonAngle - sunAngularRadius, horizonAngle + sunAngularRadius, sunZenithAngle);
-}
 
 [shader("fragment")]
 float4 fragmentMain(VertexOutput input) : SV_Target
@@ -35,11 +30,13 @@ float4 fragmentMain(VertexOutput input) : SV_Target
     float3 radiance = sampleSkyView(medium, observerRadius, ray) * sunIrradiance;
     radiance += frameUniform.nightSkyRadianceAndSunCos.rgb;
 
-    float sunZenithCosine = clamp(sunDirection.y, -1.0, 1.0);
+    // 惑星の縁は幾何としての硬い境界であるため、可視は画素ごとの真偽で切る。地平線より下を向く視線は
+    // 惑星と交わるため直射が届かない。境界の等号を「交わる」側へ寄せる向きも正本の`視線が惑星と交差するか`に揃える。
+    float viewZenithCosine = clamp(direction.y, -1.0, 1.0);
     float horizonZenithCosine = skyHorizonZenithCosine(bottomRadiusOf(medium), observerRadius);
     float disk = sunDiskCoverage(clamp(dot(direction, sunDirection), -1.0, 1.0));
-    float visibility = sunVisibilityAboveHorizon(horizonZenithCosine, sunZenithCosine);
-    float3 diskTransmittance = sunTransmittanceAtObserver(medium, observerRadius, sunZenithCosine);
+    float visibility = viewZenithCosine > horizonZenithCosine ? 1.0 : 0.0;
+    float3 diskTransmittance = sunTransmittanceAlongView(medium, observerRadius, viewZenithCosine);
     radiance += frameUniform.sunDiskRadianceAndSunIrradiance.rgb * (disk * visibility) * diskTransmittance;
 
     return float4(max(radiance, 0.0), 1.0);

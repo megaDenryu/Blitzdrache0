@@ -47,7 +47,7 @@ mod skyview_march;
 mod skyview_rgb;
 mod skyview_step;
 mod sphere_directions;
-mod sun_visibility;
+pub mod sun_visibility;
 mod transmittance;
 mod transmittance_lut;
 mod transmittance_mapping;

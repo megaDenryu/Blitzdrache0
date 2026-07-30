@@ -54,11 +54,14 @@ float3 sampleSkyView(AtmosphereMedium medium, float observerRadius, SkyViewRay r
     return skyViewLut.SampleLevel(texelCenterUvFromUnit(unitPosition, uint2(width, height)), 0.0).rgb;
 }
 
-// 観測点から太陽へ向かう視線の透過率。太陽円盤の放射輝度を大気で減らすために引く。
-float3 sunTransmittanceAtObserver(AtmosphereMedium medium, float observerRadius, float sunZenithCosine)
+// 観測点からその画素の視線へ向かう透過率。太陽円盤の放射輝度を大気で減らすために引く。
+// 円盤の中心方向でなく画素の視線を軸に取るのは、円盤が有限の角半径を持ち、地平線をまたぐ間は
+// 画素ごとに経路が違うためである(正本は`crates/blitz_render/src/atmosphere/sun_visibility.rs`)。
+// 注意: 惑星と交わる向きの値は地面を貫いた先の大気を含むため意味を持たない。交わる向きを外すのは呼び出し側である。
+float3 sunTransmittanceAlongView(AtmosphereMedium medium, float observerRadius, float viewZenithCosine)
 {
     AtmosphereRay ray;
     ray.radius = observerRadius;
-    ray.zenithCosine = sunZenithCosine;
+    ray.zenithCosine = viewZenithCosine;
     return transmittanceLut.SampleLevel(transmittanceUvFromRay(medium, ray), 0.0).rgb;
 }

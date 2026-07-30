@@ -18,6 +18,7 @@ mod reference_tests;
 mod skyview_lookup_tests;
 mod skyview_lut_tests;
 mod skyview_mapping_tests;
+mod sun_disk_tests;
 mod sun_visibility_tests;
 mod transmittance_lut_tests;
 mod transmittance_tests;
