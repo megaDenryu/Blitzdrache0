@@ -2,6 +2,7 @@
 //! 参照: `_doc/設計/レンダーグラフ.md`「同期導出の規則」。
 #![allow(clippy::unwrap_used, clippy::expect_used)]
 
+mod attachment_read_tests;
 mod difference_tests;
 
 use std::collections::HashMap;

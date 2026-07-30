@@ -9,9 +9,15 @@ use crate::vulkan::graph::state::画像状態;
 /// 画像用途から、その用途で画像を使うときのVulkan同期状態を導く。
 pub(crate) fn 状態へ写像する(用途: 画像用途) -> 画像状態 {
     match 用途 {
+        // 注意: 読みも含める。カラーアタッチメントをLOADするパスはレンダリング開始そのものが読みであり、
+        // 固定機能ブレンドを有効にしたパスは宛先のカラーを読む。読みを落とすと、直前のパスが同じ画像へ書いた内容が
+        // 合成側の読みへ可視化されず、依存が書き込みから書き込みへの向きだけになる(LOADするのは空・粒子・UI・
+        // 空中遠近合成の4パスで、うち空中遠近合成とUIはブレンドで宛先も読む)。
+        // LOADするカラー用途を別の腕に分けないのは、載せる情報が`パス種別`の`クリア指定`と同じであり、
+        // 2箇所が食い違うと絵にしか現れない同期の欠陥になるためである。深度出力が同じ理由で読みを持つ。
         画像用途::カラー出力 => 画像状態::生成する(
             vk::PipelineStageFlags2::COLOR_ATTACHMENT_OUTPUT,
-            vk::AccessFlags2::COLOR_ATTACHMENT_WRITE,
+            vk::AccessFlags2::COLOR_ATTACHMENT_WRITE | vk::AccessFlags2::COLOR_ATTACHMENT_READ,
             vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL,
         ),
         // 注意: 読みも含める。深度アタッチメントを束ねるパスは深度テストで既存の値を比べ、LOADするパスは
