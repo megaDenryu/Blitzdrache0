@@ -37,6 +37,7 @@ mod release_build;
 mod report_parse;
 mod shader_copy;
 mod sky_draw;
+mod sky_lut;
 mod sky_state;
 mod sky_time;
 mod smoke;
@@ -81,6 +82,7 @@ fn main() -> ExitCode {
         Some("csm-seam") => csm_seam::実行する(),
         Some("sky-draw") => sky_draw::実行する(),
         Some("sky-state") => sky_state::実行する(),
+        Some("sky-lut") => sky_lut::実行する(),
         Some("atmosphere-lut") => atmosphere_lut::実行する(),
         Some("sky-time") => sky_time::実行する(),
         Some("ow3-dod") => ow3_dod::実行する(),
