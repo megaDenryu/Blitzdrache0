@@ -18,6 +18,11 @@ impl 帯マスク {
         Self::default()
     }
 
+    /// すべての帯と交差する。帯別に絞らない実行で、どの帯も全個体を可視として扱うときに使う。
+    pub fn 全帯() -> Self {
+        帯番号::全帯().into_iter().fold(Self::空(), Self::帯を立てる)
+    }
+
     pub fn 帯を立てる(self, 番号: 帯番号) -> Self {
         Self {
             ビット列: self.ビット列 | Self::ビット(番号),
