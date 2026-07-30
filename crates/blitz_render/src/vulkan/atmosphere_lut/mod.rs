@@ -8,6 +8,7 @@
 
 mod base_resources;
 mod binding_set;
+mod composite_descriptor;
 mod descriptor_common;
 mod draw_input;
 mod image;
@@ -26,6 +27,7 @@ mod transmittance_descriptor;
 
 use ash::vk;
 
+pub(crate) use composite_descriptor::{空中遠近合成の束縛先, 空中遠近合成ディスクリプタ};
 pub(crate) use draw_input::描画入力の材料;
 pub(crate) use inputs::{大気LUT描画入力, 大気LUT生成入力, 大気LUT画像入力, 生成する組, 生成の押し込み定数};
 pub(crate) use lut_extent::大気LUTの形;
@@ -69,6 +71,13 @@ impl 大気LUT一式 {
             ユニフォーム一覧: self.基盤.ユニフォーム一覧(),
             透過率ビュー: self.基盤.透過率.画像ビュー,
             スカイビュービュー: self.基盤.スカイビュー.画像ビュー,
+        }
+    }
+
+    /// 空中遠近合成が引く先。ボリュームだけを渡すのは、合成が写像に惑星半径を要らず、深度を毎フレーム結び直すためである。
+    pub(crate) fn 合成の束縛先(&self) -> 空中遠近合成の束縛先 {
+        空中遠近合成の束縛先 {
+            空中遠近ビュー: self.基盤.空中遠近.画像ビュー,
         }
     }
 

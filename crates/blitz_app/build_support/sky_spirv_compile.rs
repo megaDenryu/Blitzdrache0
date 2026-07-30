@@ -1,6 +1,7 @@
-//! 空パスのエントリをSPIR-Vへコンパイルする。頂点は方式で変わらないため`sky_frame.slang`から1本だけ焼き、
-//! フラグメントは方式ごとに`sky.slang`(Hosek腕)と`sky_atmosphere.slang`(大気LUT腕)から焼く。
-//! 空段階の有無と方式は実行時に決まるため、3本とも常時ビルドする(トーンマップと同じ扱い)。
+//! 空パスと空中遠近合成パスのエントリをSPIR-Vへコンパイルする。頂点は方式でも段でも変わらないため
+//! `sky_frame.slang`から1本だけ焼き、フラグメントは方式ごとに`sky.slang`(Hosek腕)と`sky_atmosphere.slang`
+//! (大気LUT腕)から、合成は`aerial_composite.slang`から焼く。
+//! 段の有無と方式は実行時に決まるため、4本とも常時ビルドする(トーンマップと同じ扱い)。
 
 use std::path::Path;
 
@@ -25,6 +26,12 @@ const 大気LUTフラグメントエントリ: [エントリ指定; 1] = [エン
     出力ファイル名: "sky_atmosphere_fragment.spv",
 }];
 
+const 空中遠近合成フラグメントエントリ: [エントリ指定; 1] = [エントリ指定 {
+    エントリ名: "fragmentMain",
+    ステージ: "fragment",
+    出力ファイル名: "aerial_composite_fragment.spv",
+}];
+
 pub(super) fn 全部をコンパイルする(
     slangc: &スランガー位置,
     シェーダーディレクトリ: &Path,
@@ -47,5 +54,11 @@ pub(super) fn 全部をコンパイルする(
         &シェーダーディレクトリ.join("sky_atmosphere.slang"),
         出力先ディレクトリ,
         &大気LUTフラグメントエントリ,
+    )?;
+    エントリ一覧をコンパイルする(
+        slangc,
+        &シェーダーディレクトリ.join("aerial_composite.slang"),
+        出力先ディレクトリ,
+        &空中遠近合成フラグメントエントリ,
     )
 }

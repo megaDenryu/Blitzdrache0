@@ -3,6 +3,7 @@
 //!
 //! 参照: CLAUDE.md「unsafe の規律」「封じ込め」。ash型は一切ここから公開しない。
 
+mod aerial_composite_input;
 mod atmosphere_lut_write;
 mod atmosphere_pass_tally;
 mod chunk_bundle;

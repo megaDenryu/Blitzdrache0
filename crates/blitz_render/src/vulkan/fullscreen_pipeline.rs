@@ -5,6 +5,10 @@
 mod finish;
 mod fixed_function;
 
+/// 生成結果からハンドルを取り出す工程。ブレンドや深度の要否が違う全画面パス(空中遠近合成)も
+/// 失敗時のlayoutの後始末は同じであるため、固定機能を共有しないパスへもこの1つを貸す。
+pub(crate) use finish::取り出す as パイプラインを取り出す;
+
 use ash::vk;
 
 use crate::error::レンダラーエラー;

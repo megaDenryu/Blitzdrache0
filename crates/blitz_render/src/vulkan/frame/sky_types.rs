@@ -22,3 +22,18 @@ pub(crate) struct 空描画入力 {
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
     pub(crate) 方式: 空描画の方式,
 }
+
+/// 空中遠近合成パス1フレームぶんの入力。大気LUT腕で合成を切っていないフレームだけ`Some`で渡す。
+///
+/// 最遠距離をここが運ぶのは、ボリュームを焼いた条件と引く条件を同じ値から作るためである。フレームユニフォームへ
+/// 写すと、焼いた刻みと引く刻みが別の経路で更新されて食い違いうる。
+pub(crate) struct 空中遠近合成描画入力 {
+    pub(crate) pipeline: vk::Pipeline,
+    pub(crate) layout: vk::PipelineLayout,
+    /// set0。フレームユニフォームを読むために走査順で最初の描画対象のセットを借りる(空パスと同じ理由)。
+    pub(crate) シーンセット: vk::DescriptorSet,
+    /// set1。深度と空中遠近ボリュームを結ぶ。
+    pub(crate) 合成セット: vk::DescriptorSet,
+    /// ボリュームの奥行きの目盛りの最遠端(メートル)。
+    pub(crate) 最遠距離: f32,
+}

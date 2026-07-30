@@ -5,10 +5,12 @@
 //! 段階が増えるたびにレンダラー直下のフィールドが増えることを止めるためにこの型がある
 //! (参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「描画段階資源の器と布専用シャドウ経路」)。
 //! 破棄はレンダラーの単一破棄元(`renderer/destroy.rs`)がこの型の`破棄する`を1回呼ぶ形を保つ。
-//! 生成はレンダラー生成時の1回だけの局面であり、`create`が担う。
+//! 生成はレンダラー生成時の1回だけの局面であり、`create`が担う。段階ごとの操作は、大気LUTだけに触れるものを`atmosphere`、
+//! 空段階だけに触れるものを`sky`が持つ。
 
 mod atmosphere;
 mod create;
+mod sky;
 
 use ash::vk;
 
@@ -33,19 +35,6 @@ pub(super) struct 描画段階資源 {
 impl 描画段階資源 {
     pub(super) fn 生成する(要求: 生成要求<'_>) -> Result<Self, レンダラーエラー> {
         create::生成する(要求)
-    }
-
-    /// 空段階を持つフレーム構成かどうか。フレーム描画入力の空の有無と突き合わせる判定に使う。
-    pub(super) fn 空を描くか(&self) -> bool {
-        self.空.is_some()
-    }
-
-    pub(super) fn 空描画入力を作る(
-        &self,
-        ディスクリプタセット: vk::DescriptorSet,
-        フレーム添字: フレームスロット添字,
-    ) -> Option<vulkan::frame::空描画入力> {
-        self.空.as_ref().map(|空| 空.描画入力を作る(ディスクリプタセット, フレーム添字))
     }
 
     pub(super) fn シーンpipeline(&self) -> vk::Pipeline {

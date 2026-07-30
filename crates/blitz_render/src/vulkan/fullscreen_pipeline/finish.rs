@@ -4,7 +4,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 
-pub(super) fn 取り出す(
+pub(crate) fn 取り出す(
     device: &ash::Device,
     layout: vk::PipelineLayout,
     生成結果: Result<Vec<vk::Pipeline>, (Vec<vk::Pipeline>, vk::Result)>,

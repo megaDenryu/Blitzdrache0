@@ -2,6 +2,7 @@
 //! 頂点/インデックスバッファから立方体を描画し、深度テストとプッシュ定数
 //! （ビュー射影行列）を持つ。
 
+mod aerial_composite_pipeline;
 mod create;
 mod graphics_pipeline;
 mod shadow_pipeline;
@@ -12,6 +13,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 
+pub(crate) use aerial_composite_pipeline::空中遠近合成パイプライン;
 pub(crate) use shadow_pipeline::シャドウパイプライン;
 pub(crate) use sky_pipeline::空パイプライン;
 

@@ -7,7 +7,9 @@ use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::frame_input::フレーム描画入力;
 use crate::vulkan::atmosphere_lut::大気LUT描画入力;
-use crate::vulkan::frame::{UI描画入力, スキニング描画入力, 任意描画入力, 布描画入力, 空描画入力, 粒子描画入力};
+use crate::vulkan::frame::{
+    UI描画入力, スキニング描画入力, 任意描画入力, 布描画入力, 空中遠近合成描画入力, 空描画入力, 粒子描画入力
+};
 use crate::vulkan::post_process::ポスト描画入力;
 use crate::vulkan::relative_anchor::カメラ相対アンカー;
 use crate::vulkan::sync::フレームスロット添字;
@@ -19,6 +21,7 @@ pub(super) struct 任意入力の材料 {
     布: Option<布描画入力>,
     粒子: Option<粒子描画入力>,
     空: Option<空描画入力>,
+    空中遠近合成: Option<空中遠近合成描画入力>,
 }
 
 impl レンダラー {
@@ -37,6 +40,7 @@ impl レンダラー {
             布: self.布入力を組み立てる(フレーム添字, 布介入件数, 原点アンカー)?,
             粒子: self.粒子.as_ref().map(|一式| 一式.描画入力を作る(フレーム添字, 原点アンカー)),
             空: self.空描画入力を組み立てる(フレーム添字)?,
+            空中遠近合成: self.空中遠近合成入力を組み立てる(フレーム添字, 入力)?,
         })
     }
 }
@@ -48,6 +52,7 @@ impl 任意入力の材料 {
             スキニング: self.スキニング.as_ref(),
             布: self.布.as_ref(),
             空: self.空.as_ref(),
+            空中遠近合成: self.空中遠近合成.as_ref(),
             粒子: self.粒子.as_ref(),
             ブルーム: self.ポスト.as_ref().map(|入力| &入力.ブルーム),
             トーンマップ: self.ポスト.as_ref().map(|入力| &入力.トーンマップ),

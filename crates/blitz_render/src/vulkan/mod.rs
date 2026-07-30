@@ -29,6 +29,7 @@ pub(crate) mod instance_transform;
 pub(crate) mod linear_sampler;
 pub(crate) mod memory;
 pub(crate) mod memory_ledger;
+pub(crate) mod nearest_sampler;
 pub(crate) mod object_uniform;
 pub(crate) mod particles;
 pub(crate) mod physical_device;

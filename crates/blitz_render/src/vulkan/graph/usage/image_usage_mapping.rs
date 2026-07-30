@@ -14,9 +14,12 @@ pub(crate) fn 状態へ写像する(用途: 画像用途) -> 画像状態 {
             vk::AccessFlags2::COLOR_ATTACHMENT_WRITE,
             vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL,
         ),
+        // 注意: 読みも含める。深度アタッチメントを束ねるパスは深度テストで既存の値を比べ、LOADするパスは
+        // レンダリング開始そのものが読みである。読みを落とすと、直前に別の用途(空中遠近合成の深度シェーダー読み)から
+        // 遷移してきた場合にLOADの読みがバリアの範囲外になり、validationがREAD_AFTER_WRITEを報告する。
         画像用途::深度出力 => 画像状態::生成する(
             深度書き込み段(),
-            vk::AccessFlags2::DEPTH_STENCIL_ATTACHMENT_WRITE,
+            vk::AccessFlags2::DEPTH_STENCIL_ATTACHMENT_WRITE | vk::AccessFlags2::DEPTH_STENCIL_ATTACHMENT_READ,
             vk::ImageLayout::DEPTH_ATTACHMENT_OPTIMAL,
         ),
         画像用途::シェーダー読みフラグメント => 画像状態::生成する(

@@ -38,7 +38,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     描画対象の並べ方: crate::cli::描画対象の並べ方,
     ホットリローダー: &mut ホットリローダー,
     粒子表示: crate::cli::粒子表示モード,
-    空の方式: crate::cli::空の方式指定,
+    空の描画: crate::cli::空の描画指定,
     開発ui初期有効: bool,
     フレーム構成: blitz_render::フレーム構成,
     布モード: crate::cli::布モード,
@@ -50,7 +50,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let ウィンドウハンドル = window.window_handle()?.as_raw();
     let 物理寸法 = window.inner_size();
     let 寸法 = ウィンドウ寸法::生成する(物理寸法.width, 物理寸法.height);
-    let シェーダー束 = embedded_shaders::埋め込みシェーダー束を生成する(粒子表示, 空の方式)?;
+    let シェーダー束 = embedded_shaders::埋め込みシェーダー束を生成する(粒子表示, 空の描画)?;
     let 粒子素材 = super::particle_setup::素材を作る(粒子表示)?;
 
     let カタログ = scene_load::カタログを構築する(アセットルート)?;
