@@ -57,4 +57,20 @@ impl 領域区分 {
         }
         Ok(())
     }
+
+    /// 指定した列で、空領域が上から連続する行の範囲(先頭行・末尾行)を求める。空代表画素の照合が、
+    /// 天頂寄り(範囲の先頭側)と地平線直上(範囲の末尾側)の2点を選ぶのに使う。
+    pub(super) fn 縦の空範囲を求める(&self, 幅: usize, 列: usize) -> Option<(usize, usize)> {
+        let 高さ = self.区分一覧.len() / 幅;
+        let (mut 先頭, mut 末尾) = (None, None);
+        for 行 in 0..高さ {
+            if self.区分一覧[行 * 幅 + 列] == 区分::空 {
+                先頭.get_or_insert(行);
+                末尾 = Some(行);
+            } else if 先頭.is_some() {
+                break;
+            }
+        }
+        先頭.zip(末尾)
+    }
 }

@@ -47,6 +47,17 @@ impl 実行結果 {
 }
 
 pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: &条件<'_>) -> Result<実行結果, String> {
+    描画して標準出力も得る(出力先, 出力名, 条件, &[]).map(|(結果, _)| 結果)
+}
+
+/// 追加引数を足したうえで描き、画素と標準出力の両方を返す。空代表画素の照合(`--report-sky-pixel`)のように
+/// 画像だけでなく報告の行も読みたい呼び出し元のための入口である。
+pub(super) fn 描画して標準出力も得る(
+    出力先: &Path,
+    出力名: &str,
+    条件: &条件<'_>,
+    追加引数: &[&str],
+) -> Result<(実行結果, String), String> {
     let ダンプ先 = 出力先.join(出力名);
     let mut コマンド = Command::new("cargo");
     コマンド
@@ -58,6 +69,7 @@ pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: &条件<'_
         .args(["--streaming-vram-limit", 容量上限バイト])
         .args(["--camera-pitch", カメラ俯角差分度])
         .args(条件別引数(条件))
+        .args(追加引数)
         .arg("--dump-frame")
         .arg(&ダンプ先);
     let 出力 = コマンド
@@ -69,7 +81,7 @@ pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: &条件<'_
     }
     crate::validation_count::零件数を確かめる(&標準出力, 出力名)?;
     let (幅, 高さ, rgba8) = crate::raw_image::読み込む(&ダンプ先)?;
-    Ok(実行結果 { 幅, 高さ, rgba8 })
+    Ok((実行結果 { 幅, 高さ, rgba8 }, 標準出力))
 }
 
 fn 条件別引数<'引数>(条件: &条件<'引数>) -> Vec<&'引数 str> {

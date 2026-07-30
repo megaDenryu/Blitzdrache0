@@ -10,6 +10,7 @@ mod draw;
 mod image_judgment;
 mod judgment;
 mod moment;
+mod pixel_check;
 mod region;
 mod report;
 mod run;
@@ -40,7 +41,9 @@ fn 検収する() -> Result<String, String> {
     let 出力先 = PathBuf::from(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
 
-    let 区分 = region::領域区分::作る(&draw::領域マスクを撮る(&出力先)?)?;
+    let マスク = draw::領域マスクを撮る(&出力先)?;
+    let 幅 = マスク.幅;
+    let 区分 = region::領域区分::作る(&マスク)?;
     let 絵 = draw::絵を撮る(&出力先)?;
     let mut 実測一覧 = Vec::new();
     for 時刻の絵 in &絵.時刻ごと {
@@ -53,11 +56,12 @@ fn 検収する() -> Result<String, String> {
     judgment::夜を判定する(&実測一覧[moment::夜の添字])?;
     judgment::空の飽和を判定する(&名前一覧, &実測一覧)?;
     let 円盤画素数 = image_judgment::太陽円盤を判定する(&絵.太陽円盤)?;
+    pixel_check::照合する(&出力先, 幅, &区分)?;
 
     report::表を出す(&名前一覧, &実測一覧);
     let 絵の置き場 = report::絵を書き出す(&出力先)?;
     Ok(format!(
-        "空画素{}・幾何画素{}を4時刻で数え、隣り合う時刻の空色と明部と暗部がすべて変わり、夜は環境光だけの明るさで黒つぶれ0、どの時刻も空は飽和せず、夕方の太陽円盤は{円盤画素数}画素、絵は{絵の置き場}",
+        "空画素{}・幾何画素{}を4時刻で数え、隣り合う時刻の空色と明部と暗部がすべて変わり、夜は環境光だけの明るさで黒つぶれ0、どの時刻も空は飽和せず、夕方の太陽円盤は{円盤画素数}画素、天頂寄りと地平線直上の代表画素がCPU正本と許容内で一致し、絵は{絵の置き場}",
         区分.空画素数, 区分.幾何画素数
     ))
 }
