@@ -21,7 +21,7 @@ pub(super) fn 絵を書き出す(出力先: &Path) -> Result<String, String> {
     let ファイル名一覧 = moment::代表時刻一覧
         .iter()
         .map(|時刻| 時刻.ファイル名)
-        .chain([moment::太陽円盤のファイル名]);
+        .chain([moment::太陽円盤のファイル名, moment::太陽円盤対照のファイル名]);
     let mut 置き場 = Vec::new();
     for ファイル名 in ファイル名一覧 {
         置き場.push(crate::raw_png::変換する(&出力先.join(ファイル名))?.display().to_string());

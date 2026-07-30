@@ -5,6 +5,9 @@
 //! 地形世界は本番のストリーミング経路でしか地面が現れないため、先読み半径と容量上限をOW3の統合経路と同じ値で渡す。
 //! カメラはシーン既定の見下ろし35度から25度戻し、地平線より上を画面へ入れる(`sky-draw`と同じ構図)。
 
+#[cfg(test)]
+mod test_support;
+
 use std::path::Path;
 use std::process::Command;
 
