@@ -3,6 +3,7 @@
 //! 描画への配線は空パスと時間帯統合の段が行い、この層は絵を知らない。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「時刻の型」
 
+mod aerial_key;
 mod ambient;
 /// 大気媒体の語彙は数が多く、空と太陽の平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
 pub mod atmosphere;
@@ -43,6 +44,7 @@ mod hosek_wilkie_tests;
 #[cfg(test)]
 mod policy_tests;
 
+pub use aerial_key::空中遠近キー;
 pub use ambient::環境光強度;
 pub use celestial_policy::天球方針;
 pub use daylight_factor::昼係数;

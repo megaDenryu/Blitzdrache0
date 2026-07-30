@@ -43,6 +43,11 @@ impl 空段階資源 {
         create::生成する(device, 要求)
     }
 
+    /// 大気LUT腕であるか。空中遠近ボリュームを焼くかどうかがこの1つで決まる。
+    pub(crate) fn 大気lut腕か(&self) -> bool {
+        matches!(self, Self::大気LUT { .. })
+    }
+
     /// 空パスが束縛する資源。`ディスクリプタセット`は走査順で最初の描画対象のもの(set0)である。
     pub(crate) fn 描画入力を作る(
         &self, ディスクリプタセット: vk::DescriptorSet, フレーム添字: フレームスロット添字

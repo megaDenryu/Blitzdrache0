@@ -1,9 +1,13 @@
-//! スカイビュー生成パスが束縛するディスクリプタ。binding0が大気媒体のユニフォーム、binding1が読む側の透過率LUT、
-//! binding2が読む側の多重散乱LUT、binding3が書き込み先のスカイビューLUTである。
+//! 経路を刻む生成パスが束縛するディスクリプタ。binding0が大気媒体のユニフォーム、binding1が読む側の透過率LUT、
+//! binding2が読む側の多重散乱LUT、binding3が書き込み先である。
+//!
+//! スカイビュー生成と空中遠近生成が同じ型を使う。どちらも「2枚の表を補間で引きながら経路を刻み、1枚へ書く」という
+//! 同じ束縛の形を持つためである。書き込み先が平面か立体かでディスクリプタの型は変わらない
+//! (Vulkanのストレージ画像のディスクリプタ種別は次元で分かれない)。
 //!
 //! 2枚のLUTをストレージ画像でなくサンプラー付きで読むのは、経路の標本点ごとに任意のUVを引き、テクセルの間を
-//! 補間する必要があるためである(CPU正本の2つの表も同じ双一次補間を行う)。観測点と太陽の向きはユニフォームでなく
-//! 押し込み定数で渡すため、このディスクリプタには載らない。
+//! 補間する必要があるためである(CPU正本の2つの表も同じ双一次補間を行う)。観測点・太陽の向き・カメラの視錐台は
+//! ユニフォームでなく押し込み定数で渡すため、このディスクリプタには載らない。
 //! 生成の手順は`create`が担い、ここは保持と参照と破棄だけを持つ。
 
 mod binding;
@@ -14,7 +18,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
 
-pub(super) struct スカイビューディスクリプタ {
+pub(super) struct 経路生成ディスクリプタ {
     pub(super) layout: vk::DescriptorSetLayout,
     pool: vk::DescriptorPool,
     sampler: vk::Sampler,
@@ -22,15 +26,15 @@ pub(super) struct スカイビューディスクリプタ {
 }
 
 /// ディスクリプタが結ぶ束縛先。3枚の画像のビューを取り違えないよう名前で受け取る。
-pub(super) struct スカイビューの束縛先<'a> {
+pub(super) struct 経路生成の束縛先<'a> {
     pub(super) ユニフォーム一覧: &'a [vk::Buffer; フレームインフライト数],
     pub(super) 透過率ビュー: vk::ImageView,
     pub(super) 多重散乱ビュー: vk::ImageView,
-    pub(super) スカイビュービュー: vk::ImageView,
+    pub(super) 書き込み先ビュー: vk::ImageView,
 }
 
-impl スカイビューディスクリプタ {
-    pub(super) fn 生成する(device: &ash::Device, 束縛先: スカイビューの束縛先<'_>) -> Result<Self, レンダラーエラー> {
+impl 経路生成ディスクリプタ {
+    pub(super) fn 生成する(device: &ash::Device, 束縛先: 経路生成の束縛先<'_>) -> Result<Self, レンダラーエラー> {
         create::生成する(device, 束縛先)
     }
 

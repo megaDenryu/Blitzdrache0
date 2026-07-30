@@ -4,7 +4,12 @@
 //!
 //! 同じ入力で2回焼いて突き合わせるのは、決定性の契約(同一GPU実装・同一入力で同一出力)を確かめるためである。
 
+mod aerial_condition;
+mod aerial_rows;
+mod aerial_statistics;
+mod component_counts;
 mod report_error;
+mod representative_line;
 mod rows;
 mod run_rows;
 mod statistics;
@@ -13,7 +18,9 @@ use std::process::ExitCode;
 
 use blitz_engine::sky::atmosphere::大気媒体方針;
 use blitz_engine::sky::空描画方針;
-use blitz_render::atmosphere::{スカイビュー観測条件, 多重散乱表, 大気LUT解像度, 天頂余弦, 透過率表};
+use blitz_render::atmosphere::{
+    スカイビュー観測条件, 多重散乱表, 大気LUT解像度, 天頂余弦, 空中遠近ボリュームの材料, 透過率表
+};
 
 use report_error::大気LUT報告エラー;
 
@@ -35,20 +42,25 @@ fn 報告する() -> Result<(), 大気LUT報告エラー> {
     let シェーダー = crate::embedded_shaders::埋め込み大気lutシェーダーを生成する()?;
     let 媒体 = crate::atmosphere_medium::大気散乱媒体へ写す(&大気媒体方針::地球標準())?;
     let 解像度 = 大気LUT解像度::既定値();
-    let 観測条件 = スカイビュー観測条件::生成する(空描画方針::既定値().観測高度(), 天頂余弦::生成する(検査する太陽天頂余弦)?)?;
+    let 観測高度 = 空描画方針::既定値().観測高度();
+    let 観測条件 = スカイビュー観測条件::生成する(観測高度, 天頂余弦::生成する(検査する太陽天頂余弦)?)?;
+    let 空中遠近条件 = aerial_condition::検査の条件(観測高度, 検査する太陽天頂余弦)?;
     println!(
-        "大気LUT報告 透過率幅={} 透過率高さ={} 多重散乱一辺={} スカイビュー幅={} スカイビュー高さ={} 観測高度={} 太陽天頂余弦={}",
+        "大気LUT報告 透過率幅={} 透過率高さ={} 多重散乱一辺={} スカイビュー幅={} スカイビュー高さ={} 空中遠近一辺={} 観測高度={} 太陽天頂余弦={} 空中遠近最遠距離={}",
         解像度.透過率の幅(),
         解像度.透過率の高さ(),
         解像度.多重散乱の一辺(),
         解像度.スカイビューの幅(),
         解像度.スカイビューの高さ(),
+        解像度.空中遠近の一辺(),
         観測条件.観測高度().値(),
-        観測条件.太陽天頂余弦().値()
+        観測条件.太陽天頂余弦().値(),
+        空中遠近条件.最遠距離().値()
     );
 
-    let 一回目 = blitz_render::atmosphere_lut_probe::大気lutをgpuで焼いて読み戻す(&媒体, 解像度, 観測条件, &シェーダー)?;
-    let 二回目 = blitz_render::atmosphere_lut_probe::大気lutをgpuで焼いて読み戻す(&媒体, 解像度, 観測条件, &シェーダー)?;
+    let 焼く = || blitz_render::atmosphere_lut_probe::大気lutをgpuで焼いて読み戻す(&媒体, 解像度, 観測条件, 空中遠近条件, &シェーダー);
+    let 一回目 = 焼く()?;
+    let 二回目 = 焼く()?;
     run_rows::検証を出す(&一回目, &二回目);
     run_rows::再現性を出す(&一回目, &二回目);
 
@@ -67,5 +79,16 @@ fn 報告する() -> Result<(), 大気LUT報告エラー> {
         観測条件,
         読み戻し: 一回目.スカイビュー(),
     })?;
+    aerial_statistics::空中遠近の統計を出す(一回目.空中遠近());
+    aerial_rows::空中遠近の代表ボクセルを出す(
+        空中遠近ボリュームの材料 {
+            媒体: &媒体,
+            透過率表: &透過率表,
+            多重散乱表: &多重散乱表,
+            解像度,
+            条件: 空中遠近条件,
+        },
+        一回目.空中遠近(),
+    )?;
     Ok(())
 }

@@ -9,7 +9,7 @@ use ash::vk;
 use crate::vulkan::graph;
 
 pub(super) fn 作る(
-    名前: &'static str, 画像: graph::画像ハンドル, 寸法: vk::Extent2D, 受け: vk::Buffer
+    名前: &'static str, 画像: graph::画像ハンドル, 範囲: vk::Extent3D, 受け: vk::Buffer
 ) -> graph::パス宣言<'static> {
     graph::パス宣言::生成する(
         名前,
@@ -28,11 +28,7 @@ pub(super) fn 作る(
                         .base_array_layer(0)
                         .layer_count(1),
                 )
-                .image_extent(vk::Extent3D {
-                    width: 寸法.width,
-                    height: 寸法.height,
-                    depth: 1,
-                })];
+                .image_extent(範囲)];
             // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ遷移済み(用途宣言からグラフが導く)、
             // 受けバッファはテクセル数ぶんの容量で確保済みである。
             unsafe {

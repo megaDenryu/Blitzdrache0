@@ -1,10 +1,10 @@
-//! スカイビューディスクリプタの生成局面。サンプラー・レイアウト・プール・セットを順に作り、束縛先を書き込む。
+//! 経路生成ディスクリプタの生成局面。サンプラー・レイアウト・プール・セットを順に作り、束縛先を書き込む。
 //! 呼ばれるのは大気LUT一式の組み立て時の1回だけであり、以降のフレームはセットを引くだけである。
 //! 途中で失敗したら、それまでに作ったハンドルをその場で逆順に片付ける。
 
 use ash::vk;
 
-use super::{binding, スカイビューの束縛先, スカイビューディスクリプタ};
+use super::{binding, 経路生成の束縛先, 経路生成ディスクリプタ};
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::descriptor_common;
 use crate::vulkan::linear_sampler;
@@ -12,8 +12,8 @@ use crate::vulkan::sync::フレームスロット添字;
 
 pub(super) fn 生成する(
     device: &ash::Device,
-    束縛先: スカイビューの束縛先<'_>,
-) -> Result<スカイビューディスクリプタ, レンダラーエラー> {
+    束縛先: 経路生成の束縛先<'_>,
+) -> Result<経路生成ディスクリプタ, レンダラーエラー> {
     let sampler = linear_sampler::作る(device)?;
     let layout = match binding::レイアウトを作る(device) {
         Ok(layout) => layout,
@@ -36,7 +36,7 @@ pub(super) fn 生成する(
     for 添字 in フレームスロット添字::全スロット() {
         binding::書き込む(device, set一覧[添字.配列添字()], sampler, &束縛先, 添字);
     }
-    Ok(スカイビューディスクリプタ {
+    Ok(経路生成ディスクリプタ {
         layout,
         pool,
         sampler,

@@ -12,6 +12,8 @@ mod descriptor_common;
 mod draw_input;
 mod image;
 mod inputs;
+mod lut_extent;
+mod march_descriptor;
 mod medium_bytes;
 mod medium_uniform;
 mod multiscatter_descriptor;
@@ -20,12 +22,13 @@ mod pipeline;
 mod probe;
 mod readback_buffer;
 mod sample_descriptor;
-mod skyview_descriptor;
 mod transmittance_descriptor;
 
 use ash::vk;
 
+pub(crate) use draw_input::描画入力の材料;
 pub(crate) use inputs::{大気LUT描画入力, 大気LUT生成入力, 大気LUT画像入力, 生成する組, 生成の押し込み定数};
+pub(crate) use lut_extent::大気LUTの形;
 pub(crate) use probe::{大気lutをgpuで焼いて読み戻す, 焼く条件};
 pub(crate) use sample_descriptor::{大気LUT標本の束縛先, 大気LUT標本ディスクリプタ};
 
@@ -35,8 +38,9 @@ use crate::shader_bundle::大気LUTシェーダー一式;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 
+/// 解像度をこの型が覚えないのは、LUT1枚ごとの形が`基盤`の画像そのものに付いており、ディスパッチの大きさも
+/// 押し込み定数もその形から導くためである。同じ値を2箇所で持つと、画像を作った寸法と焼く寸法が食い違いうる。
 pub(crate) struct 大気LUT一式 {
-    解像度: 大気LUT解像度,
     基盤: base_resources::大気LUT基盤資源,
     束縛: binding_set::大気LUT束縛一式,
 }
@@ -50,7 +54,7 @@ impl 大気LUT一式 {
     ) -> Result<Self, レンダラーエラー> {
         let 基盤 = base_resources::大気LUT基盤資源::生成する(device, メモリプロパティ, 解像度)?;
         match binding_set::大気LUT束縛一式::生成する(device, &基盤, シェーダー) {
-            Ok(束縛) => Ok(Self { 解像度, 基盤, 束縛 }),
+            Ok(束縛) => Ok(Self { 基盤, 束縛 }),
             Err(誤り) => {
                 基盤.破棄する(device);
                 Err(誤り)

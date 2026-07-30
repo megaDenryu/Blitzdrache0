@@ -1,4 +1,4 @@
-//! スカイビューディスクリプタのバインド番号と型の対応を持つ。レイアウト・プールの容量・セットへの書き込みが
+//! 経路生成ディスクリプタのバインド番号と型の対応を持つ。レイアウト・プールの容量・セットへの書き込みが
 //! すべてこの1箇所の対応を読むため、番号と型の食い違いが起こらない。
 //!
 //! 注意: 番号は`shaders/atmosphere_skyview.slang`の`vk::binding`と一致させる。
@@ -8,7 +8,7 @@
 
 use ash::vk;
 
-use super::スカイビューの束縛先;
+use super::経路生成の束縛先;
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::descriptor_common;
 use crate::vulkan::sync::フレームスロット添字;
@@ -45,7 +45,7 @@ pub(super) fn 書き込む(
     device: &ash::Device,
     set: vk::DescriptorSet,
     sampler: vk::Sampler,
-    束縛先: &スカイビューの束縛先<'_>,
+    束縛先: &経路生成の束縛先<'_>,
     添字: フレームスロット添字,
 ) {
     let バッファ情報 = [vk::DescriptorBufferInfo::default()
@@ -55,7 +55,7 @@ pub(super) fn 書き込む(
     let 透過率情報 = [読み画像情報(sampler, 束縛先.透過率ビュー)];
     let 多重散乱情報 = [読み画像情報(sampler, 束縛先.多重散乱ビュー)];
     let 書き込み先情報 = [vk::DescriptorImageInfo::default()
-        .image_view(束縛先.スカイビュービュー)
+        .image_view(束縛先.書き込み先ビュー)
         .image_layout(vk::ImageLayout::GENERAL)];
     let 書き込み一覧 = [
         vk::WriteDescriptorSet::default()

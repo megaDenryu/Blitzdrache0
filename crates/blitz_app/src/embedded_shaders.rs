@@ -43,6 +43,7 @@ const スキニングSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sk
 const 大気透過率SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/atmosphere_transmittance.spv"));
 const 大気多重散乱SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/atmosphere_multiscatter.spv"));
 const 大気スカイビューSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/atmosphere_skyview.spv"));
+const 大気空中遠近SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/atmosphere_aerial.spv"));
 
 /// 大気LUTのコンピュートシェーダーだけを組み立てる。読み戻し検査はレンダラーを作らないため、束の全部を要らない。
 pub(crate) fn 埋め込み大気lutシェーダーを生成する() -> Result<大気LUTシェーダー一式, 起動エラー> {
@@ -50,6 +51,7 @@ pub(crate) fn 埋め込み大気lutシェーダーを生成する() -> Result<�
         透過率: コンピュートシェーダー::生成する(大気透過率SPIRV.to_vec())?,
         多重散乱: コンピュートシェーダー::生成する(大気多重散乱SPIRV.to_vec())?,
         スカイビュー: コンピュートシェーダー::生成する(大気スカイビューSPIRV.to_vec())?,
+        空中遠近: コンピュートシェーダー::生成する(大気空中遠近SPIRV.to_vec())?,
     })
 }
 

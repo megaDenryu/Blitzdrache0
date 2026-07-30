@@ -24,3 +24,9 @@ pub(super) fn 実数値(語一覧: &[&str], 鍵: &str) -> Result<f64, String> {
         .parse::<f64>()
         .map_err(|誤り| format!("{鍵}を実数として読めない: {誤り}"))
 }
+
+/// テクセルやボクセルの座標。報告が出す添字はu32であり、u32に収まらない値は報告そのものが壊れていることを意味する。
+pub(super) fn 添字値(語一覧: &[&str], 鍵: &str) -> Result<u32, String> {
+    let 値 = 整数値(語一覧, 鍵)?;
+    u32::try_from(値).map_err(|_| format!("{鍵}がu32に収まらない: {値}"))
+}

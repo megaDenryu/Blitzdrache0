@@ -6,15 +6,16 @@ use ash::vk;
 use super::{大気LUT形式, 大気LUT画像};
 use crate::error::レンダラーエラー;
 use crate::gpu_memory_stats::GPUメモリ用途;
+use crate::vulkan::atmosphere_lut::大気LUTの形;
 use crate::vulkan::memory;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) fn 生成する(
     device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-    寸法: vk::Extent2D,
+    形: 大気LUTの形,
 ) -> Result<大気LUT画像, レンダラーエラー> {
-    let 画像 = 画像を作る(device, 寸法)?;
+    let 画像 = 画像を作る(device, 形)?;
     let memory = match メモリを確保して結びつける(device, メモリプロパティ, 画像) {
         Ok(memory) => memory,
         Err(誤り) => {
@@ -23,11 +24,11 @@ pub(super) fn 生成する(
             return Err(誤り);
         }
     };
-    match 画像ビューを作る(device, 画像) {
+    match 画像ビューを作る(device, 画像, 形) {
         Ok(画像ビュー) => Ok(大気LUT画像 {
             画像,
             画像ビュー,
-            寸法,
+            形,
             memory,
         }),
         Err(誤り) => {
@@ -39,15 +40,11 @@ pub(super) fn 生成する(
     }
 }
 
-fn 画像を作る(device: &ash::Device, 寸法: vk::Extent2D) -> Result<vk::Image, レンダラーエラー> {
+fn 画像を作る(device: &ash::Device, 形: 大気LUTの形) -> Result<vk::Image, レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
-        .image_type(vk::ImageType::TYPE_2D)
+        .image_type(形.画像種別())
         .format(大気LUT形式)
-        .extent(vk::Extent3D {
-            width: 寸法.width,
-            height: 寸法.height,
-            depth: 1,
-        })
+        .extent(形.範囲())
         .mip_levels(1)
         .array_layers(1)
         .samples(vk::SampleCountFlags::TYPE_1)
@@ -76,7 +73,7 @@ fn メモリを確保して結びつける(
     Ok(memory)
 }
 
-fn 画像ビューを作る(device: &ash::Device, 画像: vk::Image) -> Result<vk::ImageView, レンダラーエラー> {
+fn 画像ビューを作る(device: &ash::Device, 画像: vk::Image, 形: 大気LUTの形) -> Result<vk::ImageView, レンダラーエラー> {
     let 部分範囲 = vk::ImageSubresourceRange::default()
         .aspect_mask(vk::ImageAspectFlags::COLOR)
         .base_mip_level(0)
@@ -85,7 +82,7 @@ fn 画像ビューを作る(device: &ash::Device, 画像: vk::Image) -> Result<v
         .layer_count(1);
     let create_info = vk::ImageViewCreateInfo::default()
         .image(画像)
-        .view_type(vk::ImageViewType::TYPE_2D)
+        .view_type(形.ビュー種別())
         .format(大気LUT形式)
         .subresource_range(部分範囲);
     // 安全性: 画像はbind_image_memory済みで有効。

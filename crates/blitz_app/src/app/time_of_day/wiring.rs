@@ -14,6 +14,7 @@ use blitz_render::{ライティング入力, 空入力};
 use super::atmosphere_input;
 use super::atmosphere_update::大気更新判定;
 use super::clock::時間帯;
+use crate::app::frame::フレーム視点;
 use crate::cli::時間帯起動設定;
 
 pub(in crate::app) struct 天空配線 {
@@ -58,14 +59,21 @@ impl 天空配線 {
         self.空を描く.then(|| self.時間帯.as_ref().map(時間帯::空入力)).flatten()
     }
 
-    /// LUT生成の入力になる大気と観測条件、そのフレームで何を焼き直すかの指示。大気LUT資源は空段階を持つフレーム構成でだけ
+    /// LUT生成の入力になる大気と2つの観測条件、そのフレームで何を焼き直すかの指示。空中遠近の条件はカメラに依るため視点を受け取る。大気LUT資源は空段階を持つフレーム構成でだけ
     /// 作られるため、空パスを積まない指定(`--no-sky`)では下ろした媒体を持っていても渡さない。
-    pub(in crate::app) fn 大気lut入力(&mut self) -> Option<大気LUT入力> {
+    pub(in crate::app) fn 大気lut入力(&mut self, 視点: &フレーム視点) -> Option<大気LUT入力> {
         let (方針, 媒体) = self.空を描く.then_some(self.大気).flatten()?;
         let 時間帯 = self.時間帯.as_ref()?;
         let 空描画 = 時間帯.空描画方針();
         let 状態 = *時間帯.状態();
-        Some(atmosphere_input::組む(&方針, 媒体, &状態, 空描画, &mut self.大気更新判定))
+        let 材料 = atmosphere_input::大気入力の材料 {
+            方針: &方針,
+            媒体,
+            状態: &状態,
+            空描画,
+            視点,
+        };
+        Some(atmosphere_input::組む(&材料, &mut self.大気更新判定))
     }
 
     /// 最終露出倍率。基準の露出倍率へ、天空状態の露出補正段を2の冪として掛ける。
