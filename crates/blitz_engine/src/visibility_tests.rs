@@ -8,6 +8,7 @@
 
 mod fixture;
 mod light_box;
+mod light_box_degenerate;
 mod light_box_radius;
 mod pass_interval;
 mod placement;
