@@ -1,5 +1,5 @@
-//! 1フレームの描画で受け渡す型: 描画方式・ジオメトリ入力・シャドウ描画入力・粒子描画入力・スキニング描画入力・ポスト処理の描画入力。
-//! 布とUIは対応するサブシステムの入力だけを持つため`cloth_types`・`ui_types`が別に持つ。
+//! 1フレームの描画で受け渡す型: 描画方式・ジオメトリ入力・粒子描画入力・スキニング描画入力・ポスト処理の描画入力。
+//! 影・布・UIは対応するサブシステムの入力だけを持つため`shadow_types`・`cloth_types`・`ui_types`が別に持つ。
 
 use ash::vk;
 
@@ -26,23 +26,6 @@ pub(crate) struct ジオメトリ入力 {
     pub(crate) layout: vk::PipelineLayout,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
     /// この描画のアンカーからカメラ大域原点を引いた値。プッシュ定数で頂点ステージへ渡す。
-    pub(crate) 相対アンカー: カメラ相対アンカー,
-}
-
-/// シャドウパス(判断35)1フレームぶんの入力。常に存在する(シーンパスと同じ
-/// 頂点/インデックスバッファ・ディスクリプタセットを、シャドウ専用の
-/// パイプライン/layoutで束ね直すだけのため`ジオメトリ入力`とは別型にする)。
-pub(crate) struct シャドウ描画入力 {
-    pub(crate) pipeline: vk::Pipeline,
-    pub(crate) layout: vk::PipelineLayout,
-    pub(crate) 頂点バッファ: vk::Buffer,
-    pub(crate) インデックスバッファ: vk::Buffer,
-    pub(crate) インデックス数: u32,
-    /// この描画発行で描く個体の数。シャドウパスは可視判定を持たないため、常にそのLOD段の全個体を描く。
-    pub(crate) インスタンス数: u32,
-    /// 可視ID列のうちこの発行が読み始める位置。シーンパスと同じ段の範囲の開始を使う。
-    pub(crate) 先頭インスタンス: u32,
-    pub(crate) ディスクリプタセット: vk::DescriptorSet,
     pub(crate) 相対アンカー: カメラ相対アンカー,
 }
 

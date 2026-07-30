@@ -5,7 +5,7 @@ use ash::vk;
 
 use super::geometry_list::段別ジオメトリ;
 use super::instance_source::個体変換の出どころ;
-use super::visible_id_range::全個体の並べ替え検査;
+use super::visible_id_content::可視ID列の内容検査;
 use super::visible_id_source::可視ID列の出どころ;
 use super::描画対象資源;
 use crate::error::レンダラーエラー;
@@ -76,7 +76,7 @@ impl 描画対象資源 {
             ユニフォーム,
             個体変換,
             可視id列,
-            並べ替え検査: 全個体の並べ替え検査::生成する(個体数),
+            内容検査: 可視ID列の内容検査::生成する(個体数),
         })
     }
 }

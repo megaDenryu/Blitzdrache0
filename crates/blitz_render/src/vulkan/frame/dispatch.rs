@@ -4,7 +4,7 @@ use ash::vk;
 
 use super::submit_present;
 use super::{
-    UI描画入力, シャドウ描画入力, ジオメトリ入力, スキニング描画入力, トーンマップ描画入力, ブルーム描画入力, 布描画入力, 空中遠近合成描画入力,
+    UI描画入力, ジオメトリ入力, スキニング描画入力, トーンマップ描画入力, ブルーム描画入力, 布描画入力, 帯別シャドウ入力, 空中遠近合成描画入力,
     空描画入力, 粒子描画入力,
 };
 use crate::error::レンダラーエラー;
@@ -22,7 +22,7 @@ pub(crate) struct 提示先<'a> {
 #[derive(Clone, Copy)]
 pub(crate) struct 描画対象入力<'a> {
     pub(crate) ジオメトリ: &'a [ジオメトリ入力],
-    pub(crate) シャドウ: &'a [シャドウ描画入力],
+    pub(crate) 帯別シャドウ: 帯別シャドウ入力<'a>,
 }
 
 #[derive(Clone, Copy)]

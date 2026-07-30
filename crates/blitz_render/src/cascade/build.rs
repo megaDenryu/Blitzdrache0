@@ -7,17 +7,9 @@ use blitz_math::{クリップ, メートル, ワールド, 位置, 変換, 大�
 use super::band::帯番号;
 use super::camera_frustum::カメラ視錐台;
 use super::cascade_set::カスケード一式;
-use super::enclosing::包囲を求める;
 use super::settings::カスケード設定;
 use super::{bounding, ortho, snap, split, 帯数, 帯解像度};
 use crate::lighting_input::{ライティング入力エラー, 影入力, 方向光入力};
-
-/// 帯ごとの正射影の中心と半径(カメラ相対フレーム)。包囲の算出が同じ値を読むため、帯の構築結果と一緒に持ち回る。
-pub(super) struct 帯の包囲 {
-    pub(super) 中心: 大域ワールド位置,
-    pub(super) 横縦半幅: メートル,
-    pub(super) 奥行き半幅: メートル,
-}
 
 pub(crate) fn 組み立てる(
     方向光: 方向光入力,
@@ -39,7 +31,6 @@ pub(crate) fn 組み立てる(
     }
     let 分割 = split::分割する(軸.近深度, 遠深度, 設定);
 
-    let mut 包囲一覧: Vec<帯の包囲> = Vec::with_capacity(帯数);
     let mut 帯一覧: Vec<影入力> = Vec::with_capacity(帯数);
     let mut 隅一覧 = [[位置::<ワールド>::生成する(零, 零, 零); 8]; 帯数];
     for 番号 in 帯番号::全帯() {
@@ -55,14 +46,8 @@ pub(crate) fn 組み立てる(
         let 寄せた中心 = snap::光空間の格子へ寄せる(中心, 格子の基準点, 方向光.方向(), 刻み);
         let 奥行き半幅 = メートル::生成する(球.半径);
         帯一覧.push(ortho::正射影を作る(寄せた中心, 半幅, 半幅, 奥行き半幅, 設定.キャスター余白())?);
-        包囲一覧.push(帯の包囲 {
-            中心: 寄せた中心,
-            横縦半幅: 半幅,
-            奥行き半幅,
-        });
     }
 
-    let 包囲 = 包囲を求める(方向光, カメラ大域原点, &包囲一覧, 設定.キャスター余白())?;
     Ok(カスケード一式 {
         方向光,
         帯一覧: 配列にする(帯一覧),
@@ -71,7 +56,6 @@ pub(crate) fn 組み立てる(
         遷移幅: 分割.遷移幅,
         隅一覧,
         カメラ前方: [軸.前方.x, 軸.前方.y, 軸.前方.z],
-        包囲,
     })
 }
 
