@@ -31,11 +31,12 @@ float4 fragmentMain(VertexOutput input) : SV_Target
     radiance += frameUniform.nightSkyRadianceAndSunCos.rgb;
 
     // 惑星の縁は幾何としての硬い境界であるため、可視は画素ごとの真偽で切る。地平線より下を向く視線は
-    // 惑星と交わるため直射が届かない。境界の等号を「交わる」側へ寄せる向きも正本の`視線が惑星と交差するか`に揃える。
+    // 惑星と交わるため直射が届かない。境界の等号は「交わらない」側にあり、正本の`視線が惑星と交差するか`
+    // (水平の視線を交わらないと数える)に揃える。
     float viewZenithCosine = clamp(direction.y, -1.0, 1.0);
     float horizonZenithCosine = skyHorizonZenithCosine(bottomRadiusOf(medium), observerRadius);
     float disk = sunDiskCoverage(clamp(dot(direction, sunDirection), -1.0, 1.0));
-    float visibility = viewZenithCosine > horizonZenithCosine ? 1.0 : 0.0;
+    float visibility = viewZenithCosine >= horizonZenithCosine ? 1.0 : 0.0;
     float3 diskTransmittance = sunTransmittanceAlongView(medium, observerRadius, viewZenithCosine);
     radiance += frameUniform.sunDiskRadianceAndSunIrradiance.rgb * (disk * visibility) * diskTransmittance;
 
