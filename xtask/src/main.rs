@@ -30,6 +30,7 @@ mod origin_invariance;
 mod ow3_dod;
 mod ow4_bench;
 mod pixel_region;
+mod prop_draw;
 mod raw_image;
 mod raw_png;
 mod release_build;
@@ -69,6 +70,7 @@ fn main() -> ExitCode {
         Some("object-bench") => object_bench::実行する(),
         Some("origin-invariance") => origin_invariance::実行する(),
         Some("lod-crack") => lod_crack::実行する(),
+        Some("prop-draw") => prop_draw::実行する(),
         Some("instance-draw") => instance_draw::実行する(),
         Some("instance-cull") => instance_cull::実行する(),
         Some("instance-lod") => instance_lod::実行する(),
