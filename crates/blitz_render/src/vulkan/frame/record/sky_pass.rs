@@ -2,19 +2,26 @@
 //! 深度は読むだけで書かないため、後続の粒子パスが見る深度はシーンパスの結果のまま変わらない。
 //! パイプライン側の深度比較(EQUAL)が画素の限定を担い、このパスは宣言と発行だけを持つ
 //! (参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「空パスの配置」)。
+//!
+//! 読み画像は方式で変わる。大気LUT腕はスカイビューLUTと透過率LUTをフラグメント段で引くため、呼び出し元が
+//! その2枚のハンドルと用途を渡す。Hosek腕は1枚も読まない。
 
 use ash::vk;
 
 use crate::vulkan::frame::draw_commands::u32を丸めずf32へ変換する;
-use crate::vulkan::frame::空描画入力;
+use crate::vulkan::frame::{空描画の方式, 空描画入力};
 use crate::vulkan::graph::{クリア指定, パス宣言, パス種別, 深度アタッチメント, 画像ハンドル, 画像用途};
 
 pub(super) fn 作る<'a>(
-    カラー: 画像ハンドル, 深度: 画像ハンドル, 入力: &'a 空描画入力, 寸法: vk::Extent2D
+    カラー: 画像ハンドル,
+    深度: 画像ハンドル,
+    読み画像: Vec<(画像ハンドル, 画像用途)>,
+    入力: &'a 空描画入力,
+    寸法: vk::Extent2D,
 ) -> パス宣言<'a> {
     パス宣言::生成する(
         "空",
-        Vec::new(),
+        読み画像,
         vec![(カラー, 画像用途::カラー出力), (深度, 画像用途::深度出力)],
         Vec::new(),
         Vec::new(),
@@ -37,16 +44,34 @@ pub(super) fn 作る<'a>(
                 offset: vk::Offset2D { x: 0, y: 0 },
                 extent: 寸法,
             }];
-            let セット一覧 = [入力.ディスクリプタセット];
             // 安全性: command_bufferは記録中で、pipelineとディスクリプタセットは互換の組として生成済み。
             // 同期とレイアウト遷移はグラフ実行器が担う。
             unsafe {
                 device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.pipeline);
                 device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
                 device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
-                device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.layout, 0, &セット一覧, &[]);
-                device.cmd_draw(command_buffer, 3, 1, 0, 0);
             }
+            セットを束縛する(device, command_buffer, 入力);
+            // 安全性: 直前にパイプラインとディスクリプタを束縛済みで、頂点は全画面三角形の3頂点である。
+            unsafe { device.cmd_draw(command_buffer, 3, 1, 0, 0) };
         },
     )
+}
+
+/// 方式ごとにセットの本数が違うため、腕ごとに配列の長さを変えて束縛する。
+/// Hosek腕のパイプラインレイアウトはset0しか持たないため、常に2本束縛してはならない。
+fn セットを束縛する(device: &ash::Device, command_buffer: vk::CommandBuffer, 入力: &空描画入力) {
+    match 入力.方式 {
+        空描画の方式::Hosek解析近似 => 束縛を発行する(device, command_buffer, 入力.layout, &[入力.ディスクリプタセット]),
+        空描画の方式::大気LUT { 標本セット } => {
+            束縛を発行する(device, command_buffer, 入力.layout, &[入力.ディスクリプタセット, 標本セット]);
+        }
+    }
+}
+
+fn 束縛を発行する(device: &ash::Device, command_buffer: vk::CommandBuffer, layout: vk::PipelineLayout, セット一覧: &[vk::DescriptorSet]) {
+    // 安全性: command_bufferは記録中で、layoutとセットは互換の組として生成済みである。
+    unsafe {
+        device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::GRAPHICS, layout, 0, セット一覧, &[]);
+    }
 }

@@ -15,6 +15,7 @@ mod phase_tests;
 mod reference_parse;
 mod reference_record;
 mod reference_tests;
+mod skyview_lookup_tests;
 mod skyview_lut_tests;
 mod skyview_mapping_tests;
 mod transmittance_lut_tests;

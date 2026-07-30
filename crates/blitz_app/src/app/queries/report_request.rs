@@ -6,7 +6,12 @@ use crate::app::アプリ;
 impl アプリ {
     /// `--report-gpu-times`が指定されたか。
     pub(crate) fn gpu時間報告が必要か(&self) -> bool {
-        self.gpu時間報告
+        self.報告要求.gpu時間
+    }
+
+    /// `--report-atmosphere-passes`が指定されたか。
+    pub(crate) fn 大気lutパス数報告が必要か(&self) -> bool {
+        self.報告要求.大気lut生成パス数
     }
 
     pub(crate) fn フレーム時間報告が必要か(&self) -> bool {
@@ -14,12 +19,12 @@ impl アプリ {
     }
 
     pub(crate) fn gpuメモリ報告が必要か(&self) -> bool {
-        self.gpuメモリ報告
+        self.報告要求.gpuメモリ
     }
 
     /// `--report-draw-issue`が指定されたか。
     pub(crate) fn 描画発行報告が必要か(&self) -> bool {
-        self.描画発行報告
+        self.報告要求.描画発行
     }
 
     /// `--report-instance-sections`が指定されたか。
@@ -29,11 +34,11 @@ impl アプリ {
 
     /// `--report-display-timing`が指定されたか。
     pub(crate) fn 実表示時間報告が必要か(&self) -> bool {
-        self.実表示時間報告
+        self.報告要求.実表示時間
     }
 
     /// `--report-streaming-summary`が指定されたか。
     pub(crate) fn ストリーミング要約報告が必要か(&self) -> bool {
-        self.ストリーミング要約報告
+        self.報告要求.ストリーミング要約
     }
 }

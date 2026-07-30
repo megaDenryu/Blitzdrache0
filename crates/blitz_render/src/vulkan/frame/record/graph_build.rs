@@ -15,6 +15,13 @@ use crate::frame_composition::フレーム構成;
 use crate::vulkan::frame::{フレーム画像一式, 任意描画入力, 描画対象入力, 描画方式};
 use crate::vulkan::graph;
 
+/// 構築したグラフと、そのフレームで積んだ大気LUT生成パスの本数。本数を返すのは、生成の更新判定が意図どおりに
+/// 働いているかを実測で見る計器のためである(参照: `crates/blitz_render/src/renderer/atmosphere_pass_tally.rs`)。
+pub(super) struct 構築結果<'a> {
+    pub(super) グラフ: graph::グラフ<'a>,
+    pub(super) 大気lut生成パス数: u32,
+}
+
 #[allow(clippy::too_many_arguments)]
 pub(super) fn グラフを構築する<'a>(
     画像一式: &フレーム画像一式,
@@ -25,7 +32,7 @@ pub(super) fn グラフを構築する<'a>(
     描画対象: 描画対象入力<'a>,
     任意入力: 任意描画入力<'a>,
     描画方式: &'a 描画方式,
-) -> graph::グラフ<'a> {
+) -> 構築結果<'a> {
     let mut グラフ = graph::グラフ::新規();
     let 基本 = base_images::登録する(&mut グラフ, 画像一式, 寸法);
 
@@ -33,7 +40,7 @@ pub(super) fn グラフを構築する<'a>(
     let ポスト = post_setup::登録する(&mut グラフ, 画像一式, 任意入力.トーンマップ, 任意入力.ブルーム, 寸法);
     let シーンカラーハンドル = ポスト.as_ref().map_or(基本.スワップチェーン, |構成| 構成.hdrハンドル);
 
-    composition::積む(
+    let 実績 = composition::積む(
         &mut グラフ,
         フレーム構成,
         画像一式,
@@ -49,5 +56,8 @@ pub(super) fn グラフを構築する<'a>(
     );
 
     グラフ.最終用途を宣言する(基本.スワップチェーン, graph::画像用途::提示);
-    グラフ
+    構築結果 {
+        グラフ,
+        大気lut生成パス数: 実績.大気lut生成パス数,
+    }
 }

@@ -64,7 +64,7 @@ pub use draw_result::{描画結果, 見送り理由};
 pub use error::{レンダラーエラー, 布エラー};
 pub use extent::ウィンドウ寸法;
 pub use frame_composition::{フレーム構成, フレーム構成エラー, フレーム段階};
-pub use frame_input::{フレーム描画入力, 布フレーム入力, 空の方向係数の個数, 空入力, 空入力エラー};
+pub use frame_input::{フレーム描画入力, 布フレーム入力, 空入力, 空入力の材料, 空入力エラー};
 pub use gpu_memory_stats::{GPUメモリ用途, GPUメモリ用途別確保量, GPUメモリ統計};
 pub use lighting_input::{
     ライティング入力, ライティング入力エラー, 光強度, 光色, 影の落ち方, 影入力, 影正射影範囲, 方向光入力, 点光源入力, 環境光係数,
@@ -81,8 +81,8 @@ pub use readback_image::読み戻し画像;
 pub use readback_result::読み戻し結果;
 pub use render_object_material::{個体変換列, 描画対象素材};
 pub use render_scene_material::描画シーン素材;
-pub use renderer::{CPU区間時間, パス別描画発行, レンダラー, 描画発行内訳, 段別個体数};
-pub use shader_bundle::{シェーダー束, 大気LUTシェーダー一式};
+pub use renderer::{CPU区間時間, パス別描画発行, レンダラー, 大気LUT生成パス数の記録, 描画発行内訳, 段別個体数};
+pub use shader_bundle::{シェーダー束, 大気LUTシェーダー一式, 空シェーダー};
 pub use shader_set::{シェーダー一式, シェーダー一式エラー};
 pub use skin_mesh::{スキンメッシュ素材, スキンメッシュ素材エラー, スキン頂点属性};
 pub use terrain_detail::{地形詳細段, 地形詳細段選択};

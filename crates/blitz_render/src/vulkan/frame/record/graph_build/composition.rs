@@ -9,6 +9,12 @@ use crate::vulkan::frame::record::{readback_pass, ui_pass};
 use crate::vulkan::frame::{フレーム画像一式, 任意描画入力, 描画対象入力, 描画方式};
 use crate::vulkan::graph;
 
+/// 段階列の展開の結果。計器へ渡す数だけを返す。
+pub(super) struct 積み上げの実績 {
+    /// このフレームで積んだ大気LUT生成パスの本数。
+    pub(super) 大気lut生成パス数: u32,
+}
+
 #[allow(clippy::too_many_arguments)]
 pub(super) fn 積む<'a>(
     グラフ: &mut graph::グラフ<'a>,
@@ -23,10 +29,10 @@ pub(super) fn 積む<'a>(
     任意: 任意描画入力<'a>,
     描画方式: &'a 描画方式,
     寸法: vk::Extent2D,
-) {
+) -> 積み上げの実績 {
     // 大気LUTの生成はフレームの先頭へ積む。LUTを読む段階(空・空中遠近)より必ず前に置くためであり、
     // レンダーグラフが宣言順に実行することでこの前後関係が保たれる。焼き直さないフレームでは1本も積まれない。
-    stages::大気lutを積む(グラフ, 任意.大気lut);
+    let 大気lut = stages::大気lutを積む(グラフ, 任意.大気lut, stages::空パスがlutを引くか(任意.空));
     let mut スキン済み = None;
     let mut 布 = None;
     for 段階 in 構成.段階一覧() {
@@ -39,7 +45,7 @@ pub(super) fn 積む<'a>(
             フレーム段階::シーン => {
                 stages::シーンを積む(グラフ, 基本, カラー, スキン済み, 布, クリア色, pipeline, 描画対象.ジオメトリ, 寸法);
             }
-            フレーム段階::空 => stages::空を積む(グラフ, 基本, カラー, 任意.空, 寸法),
+            フレーム段階::空 => stages::空を積む(グラフ, 基本, カラー, 任意.空, 大気lut.読みハンドル, 寸法),
             フレーム段階::粒子 => stages::粒子を積む(グラフ, 基本, カラー, 任意.粒子, 寸法),
             フレーム段階::ブルームとトーンマップ => {
                 let ポスト = ポスト.unwrap_or_else(|| panic!("フレーム構成にポスト処理があるが資源が無い"));
@@ -56,5 +62,8 @@ pub(super) fn 積む<'a>(
                 }
             }
         }
+    }
+    積み上げの実績 {
+        大気lut生成パス数: 大気lut.生成パス数,
     }
 }

@@ -41,6 +41,7 @@ pub(crate) mod shader_module;
 pub(crate) mod shadow_map;
 pub(crate) mod shadow_push;
 pub(crate) mod skinning;
+pub(crate) mod sky_stage;
 pub(crate) mod surface;
 pub(crate) mod swapchain;
 pub(crate) mod sync;

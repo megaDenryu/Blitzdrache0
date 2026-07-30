@@ -2,6 +2,7 @@
 //! 起動直後に出す構成の要約は`composition`にある。
 
 pub(crate) mod atmosphere_lut;
+pub(crate) mod atmosphere_passes;
 pub(crate) mod composition;
 pub(crate) mod display_timing;
 pub(crate) mod draw_issue;

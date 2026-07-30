@@ -24,6 +24,7 @@ pub(super) fn レンダラーを組み立てる(
         粒子: 資源.粒子,
         gpu計測: 資源.gpu計測,
         cpu区間計測: None,
+        大気lut生成計数: crate::renderer::大気LUT生成パス数の記録::新規(),
         実表示計測: コア.実表示計測,
         ui一式: 資源.ui一式,
         読み戻しバッファ: None,

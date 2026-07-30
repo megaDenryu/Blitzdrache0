@@ -17,7 +17,8 @@ pub(crate) use acquire::取得結果;
 pub(crate) use cloth_types::{布シャドウ描画入力, 布描画の外部資源, 布描画入力};
 pub(crate) use dispatch::{任意描画入力, 同期入力, 描画対象入力, 提示先};
 pub(crate) use images::{フレーム画像一式, ブルーム画像};
-pub(crate) use sky_types::空描画入力;
+pub(crate) use record::記録の実績;
+pub(crate) use sky_types::{空描画の方式, 空描画入力};
 pub(crate) use types::{
     シャドウ描画入力, ジオメトリ入力, スキニング描画入力, トーンマップ描画入力, ブルーム描画入力, 描画方式, 粒子描画入力
 };
@@ -30,8 +31,8 @@ use crate::error::レンダラーエラー;
 use crate::frame_composition::フレーム構成;
 
 /// 取得済みの画像に対して1フレーム分のコマンドを記録し、送信・提示する。
-/// 戻り値は「提示まで到達したか（true）／スワップチェーンが陳腐化していたか（false）」と、
-/// このフレームで書いたGPUタイムスタンプの「パス名→クエリ開始添字」対応(判断30)。
+/// 戻り値は「提示まで到達したか（true）／スワップチェーンが陳腐化していたか（false）」と、記録の実績
+/// (GPUタイムスタンプの「パス名→クエリ開始添字」対応(判断30)と大気LUT生成パスの本数)。
 #[allow(clippy::too_many_arguments, clippy::type_complexity)]
 pub(crate) fn 描画する(
     device: &ash::Device,
@@ -48,9 +49,9 @@ pub(crate) fn 描画する(
     描画方式: 描画方式,
     クエリプール: Option<vk::QueryPool>,
     同期: 同期入力,
-) -> Result<(bool, Vec<(&'static str, u32)>), レンダラーエラー> {
+) -> Result<(bool, 記録の実績), レンダラーエラー> {
     let 読み戻し待機が必要 = matches!(描画方式, 描画方式::読み戻し { .. });
-    let 計測マッピング = record::コマンドを記録する(
+    let 実績 = record::コマンドを記録する(
         device,
         command_buffer,
         フレーム構成,
@@ -64,5 +65,5 @@ pub(crate) fn 描画する(
         クエリプール,
     )?;
     let 提示劣化 = dispatch::送信して提示する(device, queue, command_buffer, 提示先, 同期, 読み戻し待機が必要)?;
-    Ok((提示劣化, 計測マッピング))
+    Ok((提示劣化, 実績))
 }

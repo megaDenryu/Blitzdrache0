@@ -15,6 +15,7 @@ mod lod_probe;
 mod measurement_setup;
 mod particle_setup;
 mod queries;
+mod report_requests;
 mod scene_camera;
 mod scene_lighting;
 mod scene_load;
@@ -34,7 +35,7 @@ use winit::window::Window;
 pub(crate) use frame_timing::{フレーム時間統計, 集計する};
 pub(crate) use streaming::ストリーミング要約;
 
-use crate::cli::{布モード, 描画対象の並べ方, 粒子表示モード, 起動モード};
+use crate::cli::{布モード, 描画対象の並べ方, 空の方式指定, 粒子表示モード, 起動モード};
 use crate::dev_ui::開発UI;
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
@@ -60,13 +61,12 @@ pub(crate) struct アプリ {
     /// 世界の空方針・ゲーム時計・シーンの基準ライティング・そのフレームのライティングと空入力を1つが持つ。
     天空: time_of_day::天空配線,
     フレーム構成: blitz_render::フレーム構成,
+    /// 空の放射輝度の評価方式。空パスのシェーダーの選択がこの値で決まり、実行中は変わらない。
+    空の方式: 空の方式指定,
     粒子表示: 粒子表示モード,
-    gpu時間報告: bool,
-    gpuメモリ報告: bool,
-    描画発行報告: bool,
+    /// 終了時に出す報告の要求。起動指定から写した真偽値だけを持つ。
+    報告要求: report_requests::報告要求,
     フレーム間隔計測: Option<frame_timing::フレーム間隔計測>,
-    /// `--report-display-timing`指定でtrue。フレーム時間報告とは独立に切り替える(この計測は描画ループを止めるため)。
-    実表示時間報告: bool,
     開発ui: Option<開発UI>,
     開発ui初期有効: bool,
     カスケード帯可視化: bool,
@@ -86,8 +86,6 @@ pub(crate) struct アプリ {
     ウィンドウ再構築検証有効: bool,
     /// `--streaming`指定時だけ`Some`。チャンク格子・目録・予算・台帳・読込器はすべてこの1つの中にある。
     ストリーミング: Option<streaming::ストリーミング配線>,
-    /// `--report-streaming-summary`指定でtrue。ストリーミングが無効なときも指定の有無を保つため、配線とは別に持つ。
-    ストリーミング要約報告: bool,
     /// インスタンス群の可視判定と個体別LOD。束の可視材料・個体別の段の記憶・毎フレームの可視ID列をここが持つ。ストリーミングを使わない起動時シーンでも要るため、ストリーミング配線の中ではなくアプリが直に持つ。
     可視判定: visibility::可視判定配線,
     /// `--report-instance-sections`指定時だけ`Some`。可視判定と個体別LODの1フレーム分の走査が占めた時間を貯める。

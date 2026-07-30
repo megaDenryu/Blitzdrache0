@@ -1,25 +1,29 @@
-//! フレーム構成しだいで作る段階の資源(空パイプライン・大気LUT・布専用シャドウ経路)の生成局面。
+//! フレーム構成しだいで作る段階の資源(大気LUT・空段階・布専用シャドウ経路)の生成局面。
 //! 受け取るのは器の生成要求、返すのは3つの`Option`を束ねた組である。段階を持たない構成では`None`が
 //! 「その段階を積まない」ことを型で表す。途中で失敗したら、それまでに作った資源をその場で逆順に破棄する。
+//!
+//! 大気LUTを空段階より先に作るのは、大気LUT腕の空パイプラインがLUTを引くディスクリプタセットレイアウトを要り、
+//! そのディスクリプタがLUTの画像ビューと媒体のユニフォームを結ぶためである。
 
 use super::生成要求;
 use crate::atmosphere::大気LUT解像度;
 use crate::error::レンダラーエラー;
 use crate::frame_composition::フレーム段階;
 use crate::vulkan;
+use crate::vulkan::sky_stage::{空段階の生成要求, 空段階資源};
 
 pub(super) struct 任意段階の資源 {
-    pub(super) 空: Option<vulkan::pipeline::空パイプライン>,
+    pub(super) 空: Option<空段階資源>,
     pub(super) 大気lut: Option<vulkan::atmosphere_lut::大気LUT一式>,
     pub(super) 布シャドウ: Option<vulkan::cloth_shadow::布シャドウ資源>,
 }
 
 pub(super) fn 組み立てる(要求: &生成要求<'_>) -> Result<任意段階の資源, レンダラーエラー> {
-    let 空 = 空を生成する(要求)?;
-    let 大気lut = match 大気lutを生成する(要求) {
+    let 大気lut = 大気lutを生成する(要求)?;
+    let 空 = match 空を生成する(要求, 大気lut.as_ref()) {
         Ok(値) => 値,
         Err(誤り) => {
-            片付ける(要求, 空.as_ref(), None);
+            片付ける(要求, None, 大気lut.as_ref());
             return Err(誤り);
         }
     };
@@ -34,17 +38,27 @@ pub(super) fn 組み立てる(要求: &生成要求<'_>) -> Result<任意段階�
     }
 }
 
-/// 空パイプラインはフレーム構成に空段階があるときだけ作る。無い構成では`None`が「空を描かない」ことを型で表す。
-fn 空を生成する(要求: &生成要求<'_>) -> Result<Option<vulkan::pipeline::空パイプライン>, レンダラーエラー> {
+/// 空段階の資源はフレーム構成に空段階があるときだけ作る。無い構成では`None`が「空を描かない」ことを型で表す。
+///
+/// 大気LUTが無い状態でここへ来ることは無い。どちらもフレーム構成の空段階の有無だけで決まるため、
+/// 片方だけがあるのは組み立ての順序が壊れていることを意味する。
+fn 空を生成する(
+    要求: &生成要求<'_>,
+    大気lut: Option<&vulkan::atmosphere_lut::大気LUT一式>,
+) -> Result<Option<空段階資源>, レンダラーエラー> {
     if !要求.構成.含む(フレーム段階::空) {
         return Ok(None);
     }
-    Ok(Some(vulkan::pipeline::空パイプライン::生成する(
+    let 大気lut = 大気lut.unwrap_or_else(|| panic!("空段階があるのに大気LUT資源が作られていない"));
+    Ok(Some(空段階資源::生成する(
         要求.device,
-        要求.シーンカラー形式,
-        vulkan::depth::深度形式,
-        要求.ディスクリプタlayout,
-        &要求.シェーダー.空,
+        空段階の生成要求 {
+            カラー形式: 要求.シーンカラー形式,
+            深度形式: vulkan::depth::深度形式,
+            シーンlayout: 要求.ディスクリプタlayout,
+            シェーダー: &要求.シェーダー.空,
+            大気lut,
+        },
     )?))
 }
 
@@ -75,13 +89,12 @@ fn 布シャドウを生成する(
     )?))
 }
 
-fn 片付ける(
-    要求: &生成要求<'_>, 空: Option<&vulkan::pipeline::空パイプライン>, 大気lut: Option<&vulkan::atmosphere_lut::大気LUT一式>
-) {
-    if let Some(大気lut) = 大気lut {
-        大気lut.破棄する(要求.device);
-    }
+/// 空を大気LUTより先に片付ける。空段階の標本ディスクリプタが大気LUTの画像ビューを結んでいるためである。
+fn 片付ける(要求: &生成要求<'_>, 空: Option<&空段階資源>, 大気lut: Option<&vulkan::atmosphere_lut::大気LUT一式>) {
     if let Some(空) = 空 {
         空.破棄する(要求.device);
+    }
+    if let Some(大気lut) = 大気lut {
+        大気lut.破棄する(要求.device);
     }
 }

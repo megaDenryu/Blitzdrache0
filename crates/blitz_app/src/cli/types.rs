@@ -36,6 +36,8 @@ pub(crate) struct 起動設定 {
     pub(crate) 粒子表示: 粒子表示モード,
     /// `--report-gpu-times`指定でtrue。既定はfalse(パス別GPU時間の終了時コンソール出力、判断30)。
     pub(crate) gpu時間報告: bool,
+    /// `--report-atmosphere-passes`指定でtrue。既定はfalse(フレームごとの大気LUT生成パス本数を終了時に出力する)。
+    pub(crate) 大気lutパス数報告: bool,
     /// `--report-frame-times`指定でtrue。最初の120フレームを除いたCPU側フレーム間隔分布を終了時に出力する。
     pub(crate) フレーム時間報告: bool,
     /// `--report-memory`指定でtrue。Vulkan専用メモリ確保の現在数・上限・用途別量を終了時に出力する。

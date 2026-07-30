@@ -40,6 +40,7 @@ mod sample_count;
 mod scattering_cosine;
 mod scattering_medium;
 mod skyview_condition;
+mod skyview_lookup;
 mod skyview_lut;
 mod skyview_mapping;
 mod skyview_march;
@@ -84,6 +85,7 @@ pub use sample_count::積分標本数;
 pub use scattering_cosine::散乱角余弦;
 pub use scattering_medium::大気散乱媒体;
 pub use skyview_condition::スカイビュー観測条件;
+pub use skyview_lookup::ワールドの視線からスカイビューlutの視線を求める;
 pub use skyview_lut::{スカイビューlutのテクセル値, スカイビューlutを焼く};
 pub use skyview_mapping::{
     スカイビューLUT視線, スカイビューlutの単位位置を求める, スカイビューlutの視線を求める

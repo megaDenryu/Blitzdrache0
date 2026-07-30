@@ -1,28 +1,51 @@
-//! sky.slangの2エントリ(頂点+フラグメント)をSPIR-Vへコンパイルする。
-//! 空段階の有無は実行時のフレーム構成で決まるため、常時ビルドする(トーンマップと同じ扱い)。
+//! 空パスのエントリをSPIR-Vへコンパイルする。頂点は方式で変わらないため`sky_frame.slang`から1本だけ焼き、
+//! フラグメントは方式ごとに`sky.slang`(Hosek腕)と`sky_atmosphere.slang`(大気LUT腕)から焼く。
+//! 空段階の有無と方式は実行時に決まるため、3本とも常時ビルドする(トーンマップと同じ扱い)。
 
 use std::path::Path;
 
 use super::slangc_entry_compile::{エントリ一覧をコンパイルする, エントリ指定};
 use super::slangc_locate::スランガー位置;
 
-const エントリ一覧: [エントリ指定; 2] = [
-    エントリ指定 {
-        エントリ名: "vertexMain",
-        ステージ: "vertex",
-        出力ファイル名: "sky_vertex.spv",
-    },
-    エントリ指定 {
-        エントリ名: "fragmentMain",
-        ステージ: "fragment",
-        出力ファイル名: "sky_fragment.spv",
-    },
-];
+const 共通頂点エントリ: [エントリ指定; 1] = [エントリ指定 {
+    エントリ名: "vertexMain",
+    ステージ: "vertex",
+    出力ファイル名: "sky_vertex.spv",
+}];
 
-pub(super) fn 頂点とフラグメントをコンパイルする(
+const 解析近似フラグメントエントリ: [エントリ指定; 1] = [エントリ指定 {
+    エントリ名: "fragmentMain",
+    ステージ: "fragment",
+    出力ファイル名: "sky_fragment.spv",
+}];
+
+const 大気LUTフラグメントエントリ: [エントリ指定; 1] = [エントリ指定 {
+    エントリ名: "fragmentMain",
+    ステージ: "fragment",
+    出力ファイル名: "sky_atmosphere_fragment.spv",
+}];
+
+pub(super) fn 全部をコンパイルする(
     slangc: &スランガー位置,
-    ソース絶対パス: &Path,
+    シェーダーディレクトリ: &Path,
     出力先ディレクトリ: &Path,
 ) -> Result<(), String> {
-    エントリ一覧をコンパイルする(slangc, ソース絶対パス, 出力先ディレクトリ, &エントリ一覧)
+    エントリ一覧をコンパイルする(
+        slangc,
+        &シェーダーディレクトリ.join("sky_frame.slang"),
+        出力先ディレクトリ,
+        &共通頂点エントリ,
+    )?;
+    エントリ一覧をコンパイルする(
+        slangc,
+        &シェーダーディレクトリ.join("sky.slang"),
+        出力先ディレクトリ,
+        &解析近似フラグメントエントリ,
+    )?;
+    エントリ一覧をコンパイルする(
+        slangc,
+        &シェーダーディレクトリ.join("sky_atmosphere.slang"),
+        出力先ディレクトリ,
+        &大気LUTフラグメントエントリ,
+    )
 }

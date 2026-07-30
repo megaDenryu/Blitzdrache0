@@ -18,7 +18,7 @@ pub(super) fn 組み立てる(
     device: &ash::Device,
     カラー形式: vk::Format,
     深度形式: vk::Format,
-    ディスクリプタlayout: vk::DescriptorSetLayout,
+    ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
     頂点モジュール: vk::ShaderModule,
     フラグメントモジュール: vk::ShaderModule,
 ) -> Result<空パイプライン, レンダラーエラー> {
@@ -49,8 +49,7 @@ pub(super) fn 組み立てる(
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
-    let ディスクリプタlayout一覧 = [ディスクリプタlayout];
-    let layout_create_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&ディスクリプタlayout一覧);
+    let layout_create_info = vk::PipelineLayoutCreateInfo::default().set_layouts(ディスクリプタlayout一覧);
     // 安全性: deviceは生成済みで有効。layout_create_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };
 

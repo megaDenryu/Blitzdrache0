@@ -28,6 +28,12 @@ use crate::frame_composition::フレーム構成;
 use crate::vulkan::gpu_timing;
 use crate::vulkan::graph;
 
+/// 1フレームぶんの記録の実績。GPU計測のマッピングと、計器が数える大気LUT生成パスの本数を返す。
+pub(crate) struct 記録の実績 {
+    pub(crate) 計測マッピング: Vec<(&'static str, u32)>,
+    pub(crate) 大気lut生成パス数: u32,
+}
+
 #[allow(clippy::too_many_arguments)]
 pub(super) fn コマンドを記録する(
     device: &ash::Device,
@@ -41,13 +47,16 @@ pub(super) fn コマンドを記録する(
     任意入力: 任意描画入力<'_>,
     描画方式: &描画方式,
     クエリプール: Option<vk::QueryPool>,
-) -> Result<Vec<(&'static str, u32)>, レンダラーエラー> {
+) -> Result<記録の実績, レンダラーエラー> {
     記録を開始する(device, command_buffer, クエリプール)?;
-    let グラフ = graph_build::グラフを構築する(画像一式, フレーム構成, 寸法, クリア色, pipeline, 描画対象, 任意入力, 描画方式);
-    let 計測マッピング = graph::実行する(device, command_buffer, グラフ, クエリプール);
+    let 構築 = graph_build::グラフを構築する(画像一式, フレーム構成, 寸法, クリア色, pipeline, 描画対象, 任意入力, 描画方式);
+    let 計測マッピング = graph::実行する(device, command_buffer, 構築.グラフ, クエリプール);
     // 安全性: command_bufferは記録開始済みで、対応するend呼び出し。
     unsafe { device.end_command_buffer(command_buffer)? };
-    Ok(計測マッピング)
+    Ok(記録の実績 {
+        計測マッピング,
+        大気lut生成パス数: 構築.大気lut生成パス数,
+    })
 }
 
 fn 記録を開始する(

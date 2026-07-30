@@ -23,6 +23,7 @@ impl ApplicationHandler for アプリ {
             self.描画対象の並べ方,
             &mut self.ホットリローダー,
             self.粒子表示,
+            self.空の方式,
             self.開発ui初期有効,
             self.フレーム構成,
             self.布モード,

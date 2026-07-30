@@ -22,8 +22,8 @@ use crate::vulkan::tracked_device::GPUデバイス;
 pub(super) struct 描画段階資源 {
     シーン: vulkan::pipeline::パイプライン,
     シャドウ: vulkan::pipeline::シャドウパイプライン,
-    /// フレーム構成に空段階があるときだけ`Some`。有無はフレーム描画入力の空と常に一致させる。
-    空: Option<vulkan::pipeline::空パイプライン>,
+    /// フレーム構成に空段階があるときだけ`Some`。有無はフレーム描画入力の空と常に一致させる。方式はこの型が持つ。
+    空: Option<vulkan::sky_stage::空段階資源>,
     /// フレーム構成に空段階があるときだけ`Some`。有無はフレーム描画入力の大気媒体と常に一致させる。
     大気lut: Option<vulkan::atmosphere_lut::大気LUT一式>,
     /// フレーム構成に布シミュレーション段階があるときだけ`Some`。有無はレンダラーの布一式の有無と常に一致する(`レンダラー::生成する`の`構成と素材を検査する`が対応を検査済み)。
@@ -40,12 +40,12 @@ impl 描画段階資源 {
         self.空.is_some()
     }
 
-    pub(super) fn 空描画入力を作る(&self, ディスクリプタセット: vk::DescriptorSet) -> Option<vulkan::frame::空描画入力> {
-        self.空.as_ref().map(|空| vulkan::frame::空描画入力 {
-            pipeline: 空.handle,
-            layout: 空.layout,
-            ディスクリプタセット,
-        })
+    pub(super) fn 空描画入力を作る(
+        &self,
+        ディスクリプタセット: vk::DescriptorSet,
+        フレーム添字: フレームスロット添字,
+    ) -> Option<vulkan::frame::空描画入力> {
+        self.空.as_ref().map(|空| 空.描画入力を作る(ディスクリプタセット, フレーム添字))
     }
 
     pub(super) fn シーンpipeline(&self) -> vk::Pipeline {
@@ -79,17 +79,18 @@ impl 描画段階資源 {
         self.シーン = 新パイプライン;
     }
 
-    /// 布シャドウ・大気LUT・空・シーン・シャドウの順に破棄する。生成の逆順で片付ける。
+    /// 布シャドウ・空・大気LUT・シーン・シャドウの順に破棄する。生成の逆順で片付ける。
+    /// 空を大気LUTより先に置くのは、大気LUT腕の標本ディスクリプタが大気LUTの画像ビューを結んでいるためである。
     /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この束はその1段として呼ばれる(GPU待機済み)。
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
         if let Some(布シャドウ) = &self.布シャドウ {
             布シャドウ.破棄する(device);
         }
-        if let Some(大気lut) = &self.大気lut {
-            大気lut.破棄する(device);
-        }
         if let Some(空) = &self.空 {
             空.破棄する(device);
+        }
+        if let Some(大気lut) = &self.大気lut {
+            大気lut.破棄する(device);
         }
         self.シーン.破棄する(device);
         self.シャドウ.破棄する(device);

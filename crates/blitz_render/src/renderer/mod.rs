@@ -4,6 +4,7 @@
 //! 参照: CLAUDE.md「unsafe の規律」「封じ込め」。ash型は一切ここから公開しない。
 
 mod atmosphere_lut_write;
+mod atmosphere_pass_tally;
 mod chunk_bundle;
 mod cloth_write;
 mod cpu_timing;
@@ -35,6 +36,7 @@ use crate::frame_composition::フレーム構成;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
 
+pub use atmosphere_pass_tally::大気LUT生成パス数の記録;
 pub use cpu_timing::CPU区間時間;
 pub use draw_issue_breakdown::{パス別描画発行, 描画発行内訳, 段別個体数};
 
@@ -74,6 +76,9 @@ pub struct レンダラー {
     /// タイムスタンプ非対応デバイスでは`None`(判断30: 計測無効は型で表す)。
     gpu計測: Option<vulkan::gpu_timing::パス別GPU計測>,
     cpu区間計測: Option<cpu_timing::CPU区間計測>,
+    /// 大気LUT生成パスの実行数の記録。更新判定が働いているかを実測で見る計器であり、常に数える
+    /// (タイムスタンプの対応に依らずグラフの積み上げから数えるため、計測無効の機材でも値が出る)。
+    大気lut生成計数: atmosphere_pass_tally::大気LUT生成パス数の記録,
     実表示計測: vulkan::present_timing::実表示計測,
     /// 開発用UI(egui)描画一式(判断33・34)。表示のオン/オフは入力側の有無で決まるため、常に生成する。
     ui一式: vulkan::ui::UIリソース一式,

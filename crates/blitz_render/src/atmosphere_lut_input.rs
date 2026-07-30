@@ -48,9 +48,4 @@ impl 大気LUT入力 {
     pub(crate) fn 生成指示(&self) -> 大気LUT生成指示 {
         self.生成指示
     }
-
-    /// そのフレームでLUTを1枚でも焼くか。焼くフレームは媒体のユニフォームを書き直す。
-    pub(crate) fn 何かを焼くか(&self) -> bool {
-        !matches!(self.生成指示, 大気LUT生成指示::前の結果を使う)
-    }
 }

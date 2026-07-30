@@ -19,6 +19,7 @@ pub(crate) mod pass;
 mod pipeline;
 mod probe;
 mod readback_buffer;
+mod sample_descriptor;
 mod skyview_descriptor;
 mod transmittance_descriptor;
 
@@ -26,6 +27,7 @@ use ash::vk;
 
 pub(crate) use inputs::{大気LUT描画入力, 大気LUT生成入力, 大気LUT画像入力, 生成する組, 生成の押し込み定数};
 pub(crate) use probe::{大気lutをgpuで焼いて読み戻す, 焼く条件};
+pub(crate) use sample_descriptor::{大気LUT標本の束縛先, 大気LUT標本ディスクリプタ};
 
 use crate::atmosphere::{大気LUT解像度, 大気散乱媒体};
 use crate::error::レンダラーエラー;
@@ -53,6 +55,16 @@ impl 大気LUT一式 {
                 基盤.破棄する(device);
                 Err(誤り)
             }
+        }
+    }
+
+    /// 空パスの大気LUT腕が引く先。媒体のユニフォームと2枚のLUTのビューを、標本ディスクリプタの生成へ渡す。
+    /// 多重散乱LUTを含めないのは、引く側が経路を刻まずスカイビューの結果と透過率だけを使うためである。
+    pub(crate) fn 標本の束縛先(&self) -> 大気LUT標本の束縛先 {
+        大気LUT標本の束縛先 {
+            ユニフォーム一覧: self.基盤.ユニフォーム一覧(),
+            透過率ビュー: self.基盤.透過率.画像ビュー,
+            スカイビュービュー: self.基盤.スカイビュー.画像ビュー,
         }
     }
 
