@@ -17,6 +17,8 @@ import atmosphere_skyview_mapping;
 
 // 水平成分がこの長さ未満なら方位を決められないとみなす。天頂と天底の行はどの横位置でも同じ値であり、
 // 天頂の太陽はどの方位から見ても対称であるため、この場合にどの方位を選んでも引く値は変わらない。
+// 測るのは`length`(ユークリッドの長さ)であり、正本の`方位を決められない水平成分の長さ`と同じノルムである。
+// 正本は`crates/blitz_render/src/atmosphere/skyview_lookup.rs`にある。
 static const float skyAzimuthEpsilon = 1.0e-6;
 
 // 天頂を+Yに取ったワールドの視線と太陽方向から、LUTの縦横が意味する視線を求める。
