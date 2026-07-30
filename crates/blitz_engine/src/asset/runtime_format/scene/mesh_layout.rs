@@ -14,9 +14,10 @@ pub(super) const スキン頂点属性長: usize = 24;
 /// 個体配置1件の実行時形式でのバイト数。平行移動3成分、回転4成分、スケール3成分の各f32で40バイトになる。
 pub(crate) const 個体配置長: usize = 40;
 
-/// 個体1件のために描画側がホストメモリへ持つ検査記録のバイト数。可視ID列が全個体の並べ替えであることの重複検査が
+/// 個体1件のために描画側がホストメモリへ持つ検査記録のバイト数。同一パスの区間の中で同じ個体IDが重複しないことの検査が
 /// 個体ごとに「最後に見た検査の世代番号」をu32で1つ持つため4バイトになる。記録は束の読込時に個体数ぶんを一度だけ確保し、
-/// 束が常駐するあいだ保持される(参照: `crates/blitz_render/src/renderer/scene_draw_resources/render_object_resources/visible_id_range.rs`)。
+/// 束が常駐するあいだ保持される(参照: `crates/blitz_render/src/renderer/scene_draw_resources/render_object_resources/seen_record.rs`、
+/// 区間配置の検査は同ディレクトリの`visible_id_content.rs`が持つ)。
 /// 実確保はレンダラーの内側にあり見積からは観測できないため、要素1件ぶんの長さを安全側の定数としてここが持つ。
 /// これを数えないと、個体数の多いチャンクほど系統的に過小な見積で収容を決めることになる。
 pub(crate) const 個体別置換検査記録長: usize = 4;
