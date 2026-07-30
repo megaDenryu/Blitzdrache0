@@ -41,7 +41,8 @@ pub(super) mod test_series {
 
     /// 本数の並びだけを見る判定の検査に使う列。列の長さと総数は整合した値を置く。
     /// 長さそのものの整合は`series_integrity`が受け持つ。
-    pub(super) fn 列を作る(フレームごと: Vec<u32>) -> 生成パス数の列 {
+    /// 停止点の判定の検査も同じ列を使うため、可視性をsky_lut全体へ広げてある。
+    pub(in crate::sky_lut) fn 列を作る(フレームごと: Vec<u32>) -> 生成パス数の列 {
         let 長さ = u64::try_from(フレームごと.len()).unwrap();
         生成パス数の列 {
             数えたフレーム数: 長さ,

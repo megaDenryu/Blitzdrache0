@@ -20,14 +20,18 @@ const 時間倍率: &str = "3600";
 
 #[derive(Clone, Copy)]
 pub(super) enum 条件 {
-    /// 時計を止めたまま描く。初回のフレームだけが3本を焼き、以降は1本も焼かないことを見る。
+    /// 時計を止めたまま描く。初回のフレームだけが4本を焼き、以降は1本も焼かないことを見る。
     時計停止,
-    /// 時計を進めて描く。太陽が動くフレームがスカイビューだけを焼き直すことを見る。
+    /// 時計を進めて描く。太陽が動くフレームがスカイビューと空中遠近を焼き直すことを見る。
     時計進行,
+    /// 時計を止めたまま合成を切って描く。合成の経路が1本も走らず、絵が合成ありと違うことを見る。
+    合成なし,
 }
 
 pub(super) struct 実行結果 {
     pub(super) 標準出力: String,
+    /// 最終フレームの読み戻し画素。条件どうしのバイト比較に使う。
+    pub(super) 画素バイト列: Vec<u8>,
 }
 
 pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: 条件, 一日内秒: Option<&str>) -> Result<実行結果, String> {
@@ -56,12 +60,17 @@ pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: 条件, �
         return Err(format!("blitz_appが{}で失敗した({出力名})", 出力.status));
     }
     crate::validation_count::零件数を確かめる(&標準出力, 出力名)?;
-    Ok(実行結果 { 標準出力 })
+    let rawパス = ダンプ先.with_extension("raw");
+    let 画素バイト列 = std::fs::read(&rawパス).map_err(|誤り| format!("読み戻し画像を読めなかった({}): {誤り}", rawパス.display()))?;
+    Ok(実行結果 {
+        標準出力, 画素バイト列
+    })
 }
 
 fn 条件別引数(条件: 条件) -> Vec<&'static str> {
     match 条件 {
         条件::時計停止 => Vec::new(),
         条件::時計進行 => vec!["--time-scale", 時間倍率],
+        条件::合成なし => vec!["--no-aerial-composite"],
     }
 }
