@@ -1,6 +1,6 @@
 // スカイビューの視線1本ぶんの積分。経路を刻み、一次散乱に位相関数を掛けた項と多重散乱LUTから引いた
 // 等方の項を積む。区間の中で消散が一定であるとみなし、閉形式で積む(多重散乱の区間と同じ扱い)。
-// 注意: この積分は`crates/blitz_render/src/atmosphere/skyview_march.rs`と`skyview_step.rs`の写しである。
+// 注意: この積分は`crates/blitz_render/src/atmosphere/integration/skyview_march.rs`と`skyview_step.rs`の写しである。
 // 正本はRust側にあり、値域と単調性のユニットテストもそちらが持つ。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
@@ -9,7 +9,7 @@ import atmosphere_medium;
 import atmosphere_scatter;
 import atmosphere_skyview_geometry;
 
-// 視線の経路を刻む区間の数。正本は`crates/blitz_render/src/atmosphere/skyview_march.rs`の`標本区間数`であり、
+// 視線の経路を刻む区間の数。正本は`crates/blitz_render/src/atmosphere/integration/skyview_march.rs`の`標本区間数`であり、
 // ここはその写しである。両者の値が一致することは`cargo xtask conform`が機械検査する。
 static const uint skyViewStepCount = 30;
 // 区間の中で媒体を評価する位置を、区間の始まりから区間長の何倍だけ進んだ所に置くか。積分幅ではない。

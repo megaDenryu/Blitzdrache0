@@ -18,7 +18,7 @@ import atmosphere_skyview_mapping;
 // 水平成分がこの長さ未満なら方位を決められないとみなす。天頂と天底の行はどの横位置でも同じ値であり、
 // 天頂の太陽はどの方位から見ても対称であるため、この場合にどの方位を選んでも引く値は変わらない。
 // 測るのは`length`(ユークリッドの長さ)であり、正本の`方位を決められない水平成分の長さ`と同じノルムである。
-// 正本は`crates/blitz_render/src/atmosphere/skyview_lookup.rs`にある。
+// 正本は`crates/blitz_render/src/atmosphere/mapping/skyview_lookup.rs`にある。
 static const float skyAzimuthEpsilon = 1.0e-6;
 
 // 天頂を+Yに取ったワールドの視線と太陽方向から、LUTの縦横が意味する視線を求める。
@@ -58,7 +58,7 @@ float3 sampleSkyView(AtmosphereMedium medium, float observerRadius, SkyViewRay r
 
 // 観測点からその画素の視線へ向かう透過率。太陽円盤の放射輝度を大気で減らすために引く。
 // 円盤の中心方向でなく画素の視線を軸に取るのは、円盤が有限の角半径を持ち、地平線をまたぐ間は
-// 画素ごとに経路が違うためである(正本は`crates/blitz_render/src/atmosphere/sun_visibility.rs`)。
+// 画素ごとに経路が違うためである(正本は`crates/blitz_render/src/atmosphere/integration/sun_visibility.rs`)。
 // 注意: 惑星と交わる向きの値は地面を貫いた先の大気を含むため意味を持たない。交わる向きを外すのは呼び出し側である。
 float3 sunTransmittanceAlongView(AtmosphereMedium medium, float observerRadius, float viewZenithCosine)
 {

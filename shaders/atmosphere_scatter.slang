@@ -8,7 +8,7 @@ import atmosphere_medium;
 
 // 地表の遮蔽を判定するときに遮蔽球の半径をこの量だけ縮める。判定する点が地表そのものにあるとき、
 // 自分の足元との交差を拾って常に影と答えることを避ける。標本点を動かす形を採らない理由は正本にある。
-// 正本は`crates/blitz_render/src/atmosphere/sun_visibility.rs`の`遮蔽球を縮める半径メートル`であり、
+// 正本は`crates/blitz_render/src/atmosphere/integration/sun_visibility.rs`の`遮蔽球を縮める半径メートル`であり、
 // 両者の値が一致することは`cargo xtask conform`が機械検査する。
 static const float shadowSphereShrinkMeters = 10.0;
 
@@ -82,7 +82,7 @@ bool sunBlockedByGround(AtmosphereMedium medium, float3 position, float3 sunDire
 
 // 視線が地表で終わるとき、地面が拡散反射で返す光。多重散乱の積分とスカイビューの積分が同じ式を使う。
 // 遮蔽判定を通さずに透過率を引くのは、地表そのものにある点が自分の足元と交わるためである(照り返しの
-// 向きの妥当性は入射余弦が受け持つ)。正本は`crates/blitz_render/src/atmosphere/multiscatter_step.rs`である。
+// 向きの妥当性は入射余弦が受け持つ)。正本は`crates/blitz_render/src/atmosphere/integration/multiscatter_step.rs`である。
 float3 groundBounce(
     AtmosphereMedium medium, Sampler2D transmittanceLut, float3 groundPosition, float3 sunDirection, float3 throughput)
 {

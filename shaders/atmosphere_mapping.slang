@@ -1,5 +1,5 @@
 // 透過率LUTのテクセル座標と、観測点の半径・視線の天頂余弦との行き来。
-// 注意: この式は`crates/blitz_render/src/atmosphere/transmittance_mapping.rs`の写しである。
+// 注意: この式は`crates/blitz_render/src/atmosphere/mapping/transmittance_mapping.rs`の写しである。
 // 正本はRust側にあり、写像と逆写像の往復・軸の意味のユニットテストもそちらが持つ。
 // ここが正本から外れると、焼いた座標と引く座標が食い違って空の色が静かにずれる。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。

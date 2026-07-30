@@ -19,20 +19,20 @@ struct 定数の組 {
 
 const 定数一覧: [定数の組; 3] = [
     定数の組 {
-        正本パス: "crates/blitz_render/src/atmosphere/sun_visibility.rs",
-        正本の前置き: "pub(super) const 遮蔽球を縮める半径メートル: f64 = ",
+        正本パス: "crates/blitz_render/src/atmosphere/integration/sun_visibility.rs",
+        正本の前置き: "pub(in crate::atmosphere) const 遮蔽球を縮める半径メートル: f64 = ",
         写しパス: "shaders/atmosphere_scatter.slang",
         写しの前置き: "static const float shadowSphereShrinkMeters = ",
     },
     定数の組 {
-        正本パス: "crates/blitz_render/src/atmosphere/multiscatter_series.rs",
-        正本の前置き: "pub(super) const 公比の上限: f64 = ",
+        正本パス: "crates/blitz_render/src/atmosphere/integration/multiscatter_series.rs",
+        正本の前置き: "pub(in crate::atmosphere) const 公比の上限: f64 = ",
         写しパス: "shaders/atmosphere_multiscatter.slang",
         写しの前置き: "static const float multiScatterRatioLimit = ",
     },
     定数の組 {
-        正本パス: "crates/blitz_render/src/atmosphere/skyview_march.rs",
-        正本の前置き: "pub(super) const 標本区間数: u32 = ",
+        正本パス: "crates/blitz_render/src/atmosphere/integration/skyview_march.rs",
+        正本の前置き: "pub(in crate::atmosphere) const 標本区間数: u32 = ",
         写しパス: "shaders/atmosphere_skyview_march.slang",
         写しの前置き: "static const uint skyViewStepCount = ",
     },

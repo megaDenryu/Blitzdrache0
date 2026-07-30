@@ -1,6 +1,6 @@
 // 1本の向きについて経路を刻み、そこで散乱した光と「1回の散乱を経ても残る割合」を積む。
 // 位相関数を使わず等方(1/4π)で扱うのがHillaire 2020の多重散乱近似である。
-// 注意: この積分は`crates/blitz_render/src/atmosphere/multiscatter_march.rs`と`multiscatter_step.rs`の写しである。
+// 注意: この積分は`crates/blitz_render/src/atmosphere/integration/multiscatter_march.rs`と`multiscatter_step.rs`の写しである。
 // 球面の向きの並びは`sphere_directions.rs`の写しである。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 

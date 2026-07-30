@@ -14,10 +14,10 @@ use glam::DVec3;
 
 use blitz_math::メートル;
 
-pub(super) fn 実数へ狭める(値: f64) -> f32 {
+pub(in crate::atmosphere) fn 実数へ狭める(値: f64) -> f32 {
     DVec3::splat(値).as_vec3().x
 }
 
-pub(super) fn 長さへ狭める(値: f64) -> メートル {
+pub(in crate::atmosphere) fn 長さへ狭める(値: f64) -> メートル {
     メートル::生成する(実数へ狭める(値))
 }

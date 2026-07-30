@@ -1,6 +1,6 @@
 // スカイビューLUTのテクセル座標と、視線の天頂余弦・太陽との方位余弦との行き来。
 // 縦軸を地平線で2つの区間へ分け、それぞれの中で境界へ標本を寄せる。横軸は太陽方位余弦を平方根で刻む。
-// 注意: この式は`crates/blitz_render/src/atmosphere/skyview_mapping.rs`と`unit_texel.rs`の写しである。
+// 注意: この式は`crates/blitz_render/src/atmosphere/mapping/skyview_mapping.rs`と`unit_texel.rs`の写しである。
 // 正本はRust側にあり、往復と軸の意味のユニットテストもそちらが持つ。ここが正本から外れると、焼いた座標と
 // 引く座標が食い違って空の色が静かにずれる。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。

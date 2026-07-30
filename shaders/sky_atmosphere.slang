@@ -5,7 +5,7 @@
 // 透過率と遮蔽はどちらも円盤の中心方向でなく画素ごとの視線で評価する。円盤は有限の角半径を持つため、
 // 地平線をまたぐ間は上側の画素が大気上端へ抜けるのに下側の画素が惑星へ入る。中心方向で1つの値を作ると
 // 円盤全体が同じ明るさになり、欠けも中心角の補間でしか表せない。画素ごとに判定すれば下側だけが欠ける。
-// 正本は`crates/blitz_render/src/atmosphere/sun_visibility.rs`である。
+// 正本は`crates/blitz_render/src/atmosphere/integration/sun_visibility.rs`である。
 // LUTの引き方は`sky_atmosphere_lookup`が、入力の並びと視線の復元は`sky_frame`が持つ。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 // 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「大気LUT方式の設計(第7段で実装する)」

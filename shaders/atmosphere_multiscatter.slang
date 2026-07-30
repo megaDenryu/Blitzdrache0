@@ -14,7 +14,7 @@ import atmosphere_scatter;
 [[vk::binding(2, 0)]] [format("rgba16f")] RWTexture2D<float4> multiScatterLut;
 
 static const uint threadsPerSide = 8;
-// 等比級数の公比が取ってよい上限。正本は`crates/blitz_render/src/atmosphere/multiscatter_series.rs`の`公比の上限`であり、
+// 等比級数の公比が取ってよい上限。正本は`crates/blitz_render/src/atmosphere/integration/multiscatter_series.rs`の`公比の上限`であり、
 // ここはその写しである。両者の値が一致することは`cargo xtask conform`が機械検査する。
 static const float multiScatterRatioLimit = 0.999;
 // 上限を破ったときに書く値。多重散乱は非負であるため、負値は正常な出力に現れない。

@@ -5,7 +5,7 @@
 //! `cargo xtask conform`が、負値が読み戻し検査で不合格になることは`cargo xtask atmosphere-lut`が受け持つ。
 
 use super::m;
-use crate::atmosphere::multiscatter_series::{公比の上限, 等比級数を閉じる};
+use crate::atmosphere::integration::multiscatter_series::{公比の上限, 等比級数を閉じる};
 use crate::atmosphere::{
     位相非対称係数, 地表アルベドRGB, 多重散乱lutのテクセル値, 大気LUT解像度, 大気散乱媒体, 大気数学エラー, 密度分布, 消散係数RGB, 消散媒体, 減衰成分,
     透過率表,

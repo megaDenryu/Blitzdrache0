@@ -1,5 +1,5 @@
 // 多重散乱LUTのテクセル座標と、太陽の向き・観測点の半径との行き来。焼く側と引く側の両方がここを読む。
-// 注意: この式は`crates/blitz_render/src/atmosphere/multiscatter_mapping.rs`の写しである。正本はRust側にあり、
+// 注意: この式は`crates/blitz_render/src/atmosphere/mapping/multiscatter_mapping.rs`の写しである。正本はRust側にあり、
 // 写像と逆写像の往復のユニットテストもそちらが持つ。ここが正本から外れると、焼いた座標と引く座標が食い違って
 // 多重散乱の項だけが静かにずれる。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。

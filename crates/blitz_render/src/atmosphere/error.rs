@@ -11,11 +11,11 @@ pub enum 大気数学エラー {
 }
 
 impl 大気数学エラー {
-    pub(super) fn 値域外(項目: &'static str, 値: f32) -> Self {
+    pub(in crate::atmosphere) fn 値域外(項目: &'static str, 値: f32) -> Self {
         Self::値域外 { 項目, 値 }
     }
 
-    pub(super) fn 整数値域外(項目: &'static str, 値: u32) -> Self {
+    pub(in crate::atmosphere) fn 整数値域外(項目: &'static str, 値: u32) -> Self {
         Self::整数値域外 { 項目, 値 }
     }
 }
