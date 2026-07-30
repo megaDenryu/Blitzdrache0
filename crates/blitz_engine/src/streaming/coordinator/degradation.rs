@@ -31,7 +31,7 @@ pub(super) fn 必要集合を確定させる(
     let 新規候補: Vec<_> = 解決済み一覧
         .iter()
         .copied()
-        .filter(|候補| 台帳.状態を引く(候補.要求().座標()).is_none())
+        .filter(|候補| 台帳.状態を参照する(候補.要求().座標()).is_none())
         .collect();
     let 結果 = 予算.適用する(現在使用量, &新規候補)?;
     let 収容集合: HashSet<_> = 結果.収容一覧().iter().map(|候補| 候補.要求().座標()).collect();
@@ -39,7 +39,7 @@ pub(super) fn 必要集合を確定させる(
         .into_iter()
         .filter(|候補| {
             let 座標 = 候補.要求().座標();
-            収容集合.contains(&座標) || 台帳.状態を引く(座標).is_some()
+            収容集合.contains(&座標) || 台帳.状態を参照する(座標).is_some()
         })
         .collect();
     let mut 差分 = 台帳.必要集合を反映する(&反映集合)?;

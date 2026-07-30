@@ -2,18 +2,18 @@
 //! ここにあるのは純粋な計算だけであり、Vulkanの資源も描画の順序も知らない。
 //! ashに触れないため、平坦な再エクスポートへ混ぜずモジュールごと公開し、型を`atmosphere::`で辿れるようにする。
 //!
-//! このモジュールがプリコンピュートLUTの正本であり、コンピュートシェーダーはこの式の写しになる
+//! このモジュールがプリコンピュートのベイク済み画像の正本であり、コンピュートシェーダーはこの式の写しになる
 //! (カスケードシャドウの帯ブレンドで`cascade/blend.rs`が正本、`shaders/cascade_shadow.slang`が写しであるのと同じ関係)。
 //! CPU側に正本を置くのは、閉形式との一致・正規化・単調性といった性質をユニットテストで検査できるようにするためである。
 //!
 //! 内側は関心事ごとに7つの子モジュールへ分かれる。量(`quantity`)・媒体(`medium`)・幾何(`geometry`)・
 //! 写像(`mapping`)・表(`table`)・積分(`integration`)・焼き上げ(`bake`)であり、依存はこの並びの向きにだけ流れる。
-//! この階層を採るのは、LUTが1枚増えるたびに写像・積分・焼き上げの3つがそろって増え、平坦な並びでは
+//! この階層を採るのは、ベイク済み画像が1枚増えるたびに写像・積分・焼き上げの3つがそろって増え、平坦な並びでは
 //! どの3つが1組なのかも、どの関心事に属するのかも読めなくなるためである。外から見える名前はこのファイルの
 //! 再エクスポートが決めるため、階層の変更が呼び出し側へ漏れない。
 //!
 //! 計算はf64で行い、f32へ狭めるのは呼び出し側へ返す境界だけである。理由は`narrowing.rs`にある。
-//! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「大気LUT方式の設計(第7段で実装する)」
+//! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「大気のベイク済み画像方式の設計(第7段で実装する)」
 
 mod bake;
 mod error;
@@ -32,10 +32,10 @@ pub use bake::aerial_condition::空中遠近観測条件;
 pub use bake::aerial_lut::{
     空中遠近ボリュームのボクセル値, 空中遠近ボリュームの材料, 空中遠近ボリュームを焼く
 };
-pub use bake::multiscatter_lut::{多重散乱lutのテクセル値, 多重散乱lutを焼く};
+pub use bake::multiscatter_lut::{多重散乱のベイク済み画像のテクセル値, 多重散乱のベイク済み画像を焼く};
 pub use bake::skyview_condition::スカイビュー観測条件;
-pub use bake::skyview_lut::{スカイビューlutのテクセル値, スカイビューlutを焼く};
-pub use bake::transmittance_lut::{透過率lutのテクセル値, 透過率lutを焼く};
+pub use bake::skyview_lut::{スカイビューのベイク済み画像のテクセル値, スカイビューのベイク済み画像を焼く};
+pub use bake::transmittance_lut::{透過率のベイク済み画像のテクセル値, 透過率のベイク済み画像を焼く};
 pub use error::大気数学エラー;
 pub use geometry::frustum_rays::視錐台の向き;
 pub use geometry::intersect::{地平線の天頂余弦, 大気上端までの距離, 惑星までの距離, 視線が惑星と交差するか};
@@ -47,14 +47,16 @@ pub use mapping::aerial_mapping::{
     空中遠近ボリュームの奥行き位置を求める, 空中遠近ボリュームの奥行き添字の位置, 空中遠近ボリュームの標本座標を求める,
     空中遠近ボリュームの画面位置を求める, 空中遠近ボリュームの距離を求める,
 };
-pub use mapping::lut_resolution::大気LUT解像度;
-pub use mapping::multiscatter_mapping::{多重散乱lutの単位位置を求める, 多重散乱lutの条件, 多重散乱lutの条件を求める};
-pub use mapping::skyview_lookup::ワールドの視線からスカイビューlutの視線を求める;
+pub use mapping::lut_resolution::大気のベイク済み画像の解像度;
+pub use mapping::multiscatter_mapping::{
+    多重散乱のベイク済み画像の単位位置を求める, 多重散乱のベイク済み画像の条件, 多重散乱のベイク済み画像の条件を求める,
+};
+pub use mapping::skyview_lookup::ワールドの視線からスカイビューのベイク済み画像の視線を求める;
 pub use mapping::skyview_mapping::{
-    スカイビューLUT視線, スカイビューlutの単位位置を求める, スカイビューlutの視線を求める
+    スカイビューのベイク済み画像の単位位置を求める, スカイビューのベイク済み画像の視線, スカイビューのベイク済み画像の視線を求める,
 };
 pub use mapping::transmittance_mapping::{
-    テクセル中心のuv, 透過率LUT視線, 透過率lutのuvを求める, 透過率lutの視線を求める
+    テクセル中心のuv, 透過率のベイク済み画像のuvを求める, 透過率のベイク済み画像の視線, 透過率のベイク済み画像の視線を求める,
 };
 pub use mapping::unit_texel::{単位位置からテクセル中心のuv, 端から端への単位位置};
 pub use medium::density::規格化密度を求める;

@@ -1,4 +1,4 @@
-//! LUT1枚ぶんを受けるホスト可視バッファ。確保・コピー先としての貸し出し・マッピングして読むことを担う。
+//! ベイク済み画像1枚ぶんを受けるホスト可視バッファ。確保・コピー先としての貸し出し・マッピングして読むことを担う。
 //! 半精度のビット列を単精度へ開く工程は`half_float`が持つ。
 
 mod half_float;
@@ -12,13 +12,13 @@ use crate::vulkan::tracked_device::GPUデバイス;
 
 use half_float::{テクセルのバイト数, 単精度へ開く};
 
-pub(super) struct LUT読み戻しバッファ {
+pub(super) struct ベイク済み画像の読み戻しバッファ {
     pub(super) handle: vk::Buffer,
     memory: vk::DeviceMemory,
     テクセル数: usize,
 }
 
-impl LUT読み戻しバッファ {
+impl ベイク済み画像の読み戻しバッファ {
     pub(super) fn 生成する(
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,

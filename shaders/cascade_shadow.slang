@@ -1,4 +1,4 @@
-// カスケードシャドウの帯選択と境界ブレンド。深度で引く帯を決め、遷移帯では2つの帯を混ぜる。
+// カスケードシャドウの帯選択と境界ブレンド。深度で参照する帯を決め、遷移帯では2つの帯を混ぜる。
 // 注意: この式は`crates/blitz_render/src/cascade/blend.rs`の`帯を選ぶ`の写しである。
 // 単調で和が1になることのユニットテストはRust側が持ち、ここが正本から外れると境界に段差として現れる。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
@@ -44,7 +44,7 @@ CascadeBlend selectCascadeBlend(float viewDepth, float3 splitDepths, float3 tran
     return blend;
 }
 
-// 帯を選び、遷移帯なら2枚のシャドウマップを引いて重みで混ぜる。遷移帯の外では1枚しか引かない。
+// 帯を選び、遷移帯なら2枚のシャドウマップを参照して重みで混ぜる。遷移帯の外では1枚しか参照しない。
 float computeCascadedShadowFactor(
     float3 relativePosition, float viewDepth,
     float4x4 cascadeLightViewProjection[cascadeCount], float3 splitDepths, float3 transitionWidths,

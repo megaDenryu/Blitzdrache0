@@ -2,7 +2,7 @@
 //! 受け取るのは単位付きの媒体、返すのは`shaders/atmosphere_medium.slang`の`AtmosphereMedium`と一致するバイト列である。
 //!
 //! 注意: このバイト列の並びはslang側の構造体の宣言順そのものである。片方だけを変えると、
-//! 半径と係数が入れ替わったまま静かにLUTが焼かれる。並びの一致はGPU読み戻し検査が代表テクセルで確かめる。
+//! 半径と係数が入れ替わったまま静かにベイク済み画像が焼かれる。並びの一致はGPU読み戻し検査が代表テクセルで確かめる。
 
 use crate::atmosphere::大気散乱媒体;
 use crate::vulkan::uniform::bytes::{vec4を書き込む, ベクトル3をvec4化};

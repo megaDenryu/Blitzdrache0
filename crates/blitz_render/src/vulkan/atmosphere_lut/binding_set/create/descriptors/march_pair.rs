@@ -7,13 +7,13 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::atmosphere_lut::base_resources::大気LUT基盤資源;
+use crate::vulkan::atmosphere_lut::base_resources::大気のベイク済み画像の基盤資源;
 use crate::vulkan::atmosphere_lut::march_descriptor::{経路生成の束縛先, 経路生成ディスクリプタ};
 use crate::vulkan::sync::フレームインフライト数;
 
 pub(super) fn 経路生成を順に作る(
     device: &ash::Device,
-    基盤: &大気LUT基盤資源,
+    基盤: &大気のベイク済み画像の基盤資源,
     ユニフォーム一覧: &[vk::Buffer; フレームインフライト数],
     書き込み先一覧: [vk::ImageView; 2],
 ) -> Result<[経路生成ディスクリプタ; 2], レンダラーエラー> {

@@ -1,8 +1,8 @@
-// スカイビューLUTのテクセル座標と、視線の天頂余弦・太陽との方位余弦との行き来。
+// スカイビューのベイク済み画像のテクセル座標と、視線の天頂余弦・太陽との方位余弦との行き来。
 // 縦軸を地平線で2つの区間へ分け、それぞれの中で境界へ標本を寄せる。横軸は太陽方位余弦を平方根で刻む。
 // 注意: この式は`crates/blitz_render/src/atmosphere/mapping/skyview_mapping.rs`と`unit_texel.rs`の写しである。
 // 正本はRust側にあり、往復と軸の意味のユニットテストもそちらが持つ。ここが正本から外れると、焼いた座標と
-// 引く座標が食い違って空の色が静かにずれる。
+// 参照する座標が食い違って空の色が静かにずれる。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 import atmosphere_medium;
@@ -78,7 +78,7 @@ float2 endToEndUnitPosition(uint2 texel, uint2 resolution)
     return float2(texel) / (float2(resolution) - 1.0);
 }
 
-// 単位位置を、その位置に対応するテクセル中心のUVへ写す。引く側が使う。
+// 単位位置を、その位置に対応するテクセル中心のUVへ写す。参照する側が使う。
 float2 texelCenterUvFromUnit(float2 unitPosition, uint2 resolution)
 {
     float2 size = float2(resolution);

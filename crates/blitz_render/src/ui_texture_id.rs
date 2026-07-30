@@ -1,7 +1,7 @@
 //! 開発用UIテクスチャの安定ID。呼び出し側(blitz_app)がegui側のテクスチャIDから
 //! 決定的に写像して生成する(このクレートはeguiを知らない)。
 
-/// UIテクスチャの登録/更新/削除を引くための識別子(newtype)。
+/// UIテクスチャの登録/更新/削除を参照するための識別子(newtype)。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct UIテクスチャID(u64);
 

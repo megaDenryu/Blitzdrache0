@@ -1,13 +1,13 @@
-//! 大気LUT標本ディスクリプタのバインド番号と型の対応を持つ。レイアウト・プールの容量・セットへの書き込みが
+//! 大気のベイク済み画像標本ディスクリプタのバインド番号と型の対応を持つ。レイアウト・プールの容量・セットへの書き込みが
 //! すべてこの1箇所の対応を読むため、番号と型の食い違いが起こらない。
 //!
 //! 注意: 番号は`shaders/sky_atmosphere_lookup.slang`の`vk::binding`のset1側と一致させる。
-//! 注意: 2枚のLUTのレイアウトはGENERALである。レンダーグラフの画像用途「大気LUTフラグメント読み」が
+//! 注意: 2枚のベイク済み画像のレイアウトはGENERALである。レンダーグラフの画像用途「大気のベイク済み画像のフラグメント参照」が
 //! 同じレイアウトへ遷移させており、ここの値とバリアの導出先が食い違うとvalidationがレイアウト不一致を報告する。
 
 use ash::vk;
 
-use super::大気LUT標本の束縛先;
+use super::大気のベイク済み画像標本の束縛先;
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::descriptor_common;
 use crate::vulkan::sync::フレームスロット添字;
@@ -43,7 +43,7 @@ pub(super) fn 書き込む(
     device: &ash::Device,
     set: vk::DescriptorSet,
     sampler: vk::Sampler,
-    束縛先: &大気LUT標本の束縛先,
+    束縛先: &大気のベイク済み画像標本の束縛先,
     添字: フレームスロット添字,
 ) {
     let バッファ情報 = [vk::DescriptorBufferInfo::default()

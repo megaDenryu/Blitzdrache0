@@ -18,7 +18,7 @@ use crate::atmosphere::table::multiscatter_table::多重散乱表;
 use crate::atmosphere::table::transmittance_table::透過率表;
 use crate::atmosphere::{ミー位相関数, レイリー位相関数, 大気散乱媒体, 大気数学エラー, 散乱角余弦};
 
-/// 視線の経路を刻む区間の数。Hillaire 2020実装のスカイビューLUTと同じ30区間を採る。
+/// 視線の経路を刻む区間の数。Hillaire 2020実装のスカイビューのベイク済み画像と同じ30区間を採る。
 /// 注意: この値は`shaders/atmosphere_skyview_march.slang`の`skyViewStepCount`と一致していなければならない。
 /// 区間数が食い違うと同じ式でも離散化の誤差だけがずれ、読み戻し検査の代表テクセルが落ちる。
 /// 一致は`cargo xtask conform`の定数一致検査が機械的に見る。

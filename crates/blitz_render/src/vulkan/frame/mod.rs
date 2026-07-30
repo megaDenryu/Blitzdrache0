@@ -32,7 +32,7 @@ use crate::frame_composition::フレーム構成;
 
 /// 取得済みの画像に対して1フレーム分のコマンドを記録し、送信・提示する。
 /// 戻り値は「提示まで到達したか（true）／スワップチェーンが陳腐化していたか（false）」と、記録の実績
-/// (GPUタイムスタンプの「パス名→クエリ開始添字」対応(判断30)と大気LUT生成パスの本数)。
+/// (GPUタイムスタンプの「パス名→クエリ開始添字」対応(判断30)と大気のベイク済み画像生成パスの本数)。
 #[allow(clippy::too_many_arguments, clippy::type_complexity)]
 pub(crate) fn 描画する(
     device: &ash::Device,

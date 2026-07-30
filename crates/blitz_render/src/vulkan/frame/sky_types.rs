@@ -10,14 +10,14 @@ pub(crate) struct 空描画入力 {
     pub(crate) pipeline: vk::Pipeline,
     pub(crate) layout: vk::PipelineLayout,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
-    /// set1。スカイビューLUTと透過率LUTと媒体のユニフォームを結ぶ。
+    /// set1。スカイビューのベイク済み画像と透過率のベイク済み画像と媒体のユニフォームを結ぶ。
     pub(crate) 標本セット: vk::DescriptorSet,
 }
 
-/// 空中遠近合成パス1フレームぶんの入力。大気LUT腕で合成を切っていないフレームだけ`Some`で渡す。
+/// 空中遠近合成パス1フレームぶんの入力。大気のベイク済み画像方式で合成を切っていないフレームだけ`Some`で渡す。
 ///
-/// 最遠距離をここが運ぶのは、ボリュームを焼いた条件と引く条件を同じ値から作るためである。フレームユニフォームへ
-/// 写すと、焼いた刻みと引く刻みが別の経路で更新されて食い違いうる。
+/// 最遠距離をここが運ぶのは、ボリュームを焼いた条件と参照する条件を同じ値から作るためである。フレームユニフォームへ
+/// 写すと、焼いた刻みと参照する刻みが別の経路で更新されて食い違いうる。
 pub(crate) struct 空中遠近合成描画入力 {
     pub(crate) pipeline: vk::Pipeline,
     pub(crate) layout: vk::PipelineLayout,

@@ -6,9 +6,9 @@ mod atmosphere_lut_stage;
 mod shadow_stage;
 mod sky_stage;
 
-pub(super) use atmosphere_lut_stage::大気lutを積む;
+pub(super) use atmosphere_lut_stage::大気のベイク済み画像を積む;
 pub(super) use shadow_stage::影を積む;
-pub(super) use sky_stage::{空を積む, 空パスがlutを引くか};
+pub(super) use sky_stage::{空を積む, 空パスがベイク済み画像を参照するか};
 
 use super::base_images::基本画像ハンドル;
 use crate::clear_color::クリアカラー;

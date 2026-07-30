@@ -1,5 +1,5 @@
-// 空パスが大気LUTを引く工程。受け取るのはワールドの視線と観測半径、返すのはスカイビューLUTの放射輝度と
-// 太陽方向の透過率である。引くための資源(媒体のユニフォームと2枚のLUT)もここが宣言する。
+// 空パスが大気のベイク済み画像を参照する工程。受け取るのはワールドの視線と観測半径、返すのはスカイビューのベイク済み画像の放射輝度と
+// 太陽方向の透過率である。参照するための資源(媒体のユニフォームと2枚のベイク済み画像)もここが宣言する。
 // 注意: 写像の正本は`crates/blitz_render/src/atmosphere`(skyview_lookup.rs・skyview_mapping.rs・
 // transmittance_mapping.rs・intersect.rs)にあり、ここはその写しである。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
@@ -8,20 +8,20 @@ import atmosphere_mapping;
 import atmosphere_medium;
 import atmosphere_skyview_mapping;
 
-// set1は空パスが大気LUTを引くためだけのディスクリプタである。媒体のユニフォームを持つのは、LUTの写像が
-// 惑星下端半径と大気上端半径を要るためである。2枚のLUTのレイアウトはGENERALであり、レンダーグラフの
-// 画像用途「大気LUTフラグメント読み」が同じレイアウトを指す。
+// set1は空パスが大気のベイク済み画像を参照するためだけのディスクリプタである。媒体のユニフォームを持つのは、ベイク済み画像の写像が
+// 惑星下端半径と大気上端半径を要るためである。2枚のベイク済み画像のレイアウトはGENERALであり、レンダーグラフの
+// 画像用途「大気のベイク済み画像のフラグメント参照」が同じレイアウトを指す。
 [[vk::binding(0, 1)]] ConstantBuffer<AtmosphereMedium> atmosphereMedium;
 [[vk::binding(1, 1)]] Sampler2D transmittanceLut;
 [[vk::binding(2, 1)]] Sampler2D skyViewLut;
 
 // 水平成分がこの長さ未満なら方位を決められないとみなす。天頂と天底の行はどの横位置でも同じ値であり、
-// 天頂の太陽はどの方位から見ても対称であるため、この場合にどの方位を選んでも引く値は変わらない。
+// 天頂の太陽はどの方位から見ても対称であるため、この場合にどの方位を選んでも参照する値は変わらない。
 // 測るのは`length`(ユークリッドの長さ)であり、正本の`方位を決められない水平成分の長さ`と同じノルムである。
 // 正本は`crates/blitz_render/src/atmosphere/mapping/skyview_lookup.rs`にある。
 static const float skyAzimuthEpsilon = 1.0e-6;
 
-// 天頂を+Yに取ったワールドの視線と太陽方向から、LUTの縦横が意味する視線を求める。
+// 天頂を+Yに取ったワールドの視線と太陽方向から、ベイク済み画像の縦横が意味する視線を求める。
 // 方位余弦を内積そのものでなく水平面へ落としてから取るのは、横軸が太陽との相対方位であって角度ではないためである。
 SkyViewRay skyViewRayOfWorldDirection(float3 viewDirection, float3 sunDirection)
 {
@@ -46,7 +46,7 @@ float skyHorizonZenithCosine(float bottomRadius, float observerRadius)
     return -sqrt(max(0.0, 1.0 - ratio * ratio));
 }
 
-// スカイビューLUTの標本。単位位置をテクセル中心のUVへ直して引くため、両端のテクセルの条件も補間で覆える。
+// スカイビューのベイク済み画像の標本。単位位置をテクセル中心のUVへ直して参照するため、両端のテクセルの条件も補間で覆える。
 float3 sampleSkyView(AtmosphereMedium medium, float observerRadius, SkyViewRay ray)
 {
     uint width;
@@ -56,7 +56,7 @@ float3 sampleSkyView(AtmosphereMedium medium, float observerRadius, SkyViewRay r
     return skyViewLut.SampleLevel(texelCenterUvFromUnit(unitPosition, uint2(width, height)), 0.0).rgb;
 }
 
-// 観測点からその画素の視線へ向かう透過率。太陽円盤の放射輝度を大気で減らすために引く。
+// 観測点からその画素の視線へ向かう透過率。太陽円盤の放射輝度を大気で減らすために参照する。
 // 円盤の中心方向でなく画素の視線を軸に取るのは、円盤が有限の角半径を持ち、地平線をまたぐ間は
 // 画素ごとに経路が違うためである(正本は`crates/blitz_render/src/atmosphere/integration/sun_visibility.rs`)。
 // 注意: 惑星と交わる向きの値は地面を貫いた先の大気を含むため意味を持たない。交わる向きを外すのは呼び出し側である。

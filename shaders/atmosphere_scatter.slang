@@ -59,7 +59,7 @@ float nearestSphereHit(float3 position, float3 direction, float sphereRadius)
     return near < 0.0 ? far : near;
 }
 
-// その位置から太陽へ向かう向きの透過率。表を引くだけであり、惑星による遮蔽はここでは見ない。
+// その位置から太陽へ向かう向きの透過率。表を参照するだけであり、惑星による遮蔽はここでは見ない。
 float3 sunTransmittance(AtmosphereMedium medium, Sampler2D transmittanceLut, float3 position, float3 sunDirection)
 {
     float radius = length(position);
@@ -81,7 +81,7 @@ bool sunBlockedByGround(AtmosphereMedium medium, float3 position, float3 sunDire
 }
 
 // 視線が地表で終わるとき、地面が拡散反射で返す光。多重散乱の積分とスカイビューの積分が同じ式を使う。
-// 遮蔽判定を通さずに透過率を引くのは、地表そのものにある点が自分の足元と交わるためである(照り返しの
+// 遮蔽判定を通さずに透過率を参照するのは、地表そのものにある点が自分の足元と交わるためである(照り返しの
 // 向きの妥当性は入射余弦が受け持つ)。正本は`crates/blitz_render/src/atmosphere/integration/multiscatter_step.rs`である。
 float3 groundBounce(
     AtmosphereMedium medium, Sampler2D transmittanceLut, float3 groundPosition, float3 sunDirection, float3 throughput)

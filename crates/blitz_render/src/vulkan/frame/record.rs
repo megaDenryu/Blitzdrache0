@@ -29,10 +29,10 @@ use crate::frame_composition::フレーム構成;
 use crate::vulkan::gpu_timing;
 use crate::vulkan::graph;
 
-/// 1フレームぶんの記録の実績。GPU計測のマッピングと、計器が数える大気LUT生成パスの本数を返す。
+/// 1フレームぶんの記録の実績。GPU計測のマッピングと、計器が数える大気のベイク済み画像生成パスの本数を返す。
 pub(crate) struct 記録の実績 {
     pub(crate) 計測マッピング: Vec<(&'static str, u32)>,
-    pub(crate) 大気lut生成パス数: u32,
+    pub(crate) 大気のベイク済み画像生成パス数: u32,
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -56,7 +56,7 @@ pub(super) fn コマンドを記録する(
     unsafe { device.end_command_buffer(command_buffer)? };
     Ok(記録の実績 {
         計測マッピング,
-        大気lut生成パス数: 構築.大気lut生成パス数,
+        大気のベイク済み画像生成パス数: 構築.大気のベイク済み画像生成パス数,
     })
 }
 

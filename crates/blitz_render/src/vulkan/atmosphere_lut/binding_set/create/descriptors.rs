@@ -11,7 +11,7 @@ use ash::vk;
 use march_pair::経路生成を順に作る;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::atmosphere_lut::base_resources::大気LUT基盤資源;
+use crate::vulkan::atmosphere_lut::base_resources::大気のベイク済み画像の基盤資源;
 use crate::vulkan::atmosphere_lut::march_descriptor::経路生成ディスクリプタ;
 use crate::vulkan::atmosphere_lut::multiscatter_descriptor::{多重散乱の束縛先, 多重散乱ディスクリプタ};
 use crate::vulkan::atmosphere_lut::transmittance_descriptor::透過率ディスクリプタ;
@@ -34,7 +34,9 @@ impl ディスクリプタ四点 {
     }
 }
 
-pub(super) fn 作る(device: &ash::Device, 基盤: &大気LUT基盤資源) -> Result<ディスクリプタ四点, レンダラーエラー> {
+pub(super) fn 作る(
+    device: &ash::Device, 基盤: &大気のベイク済み画像の基盤資源
+) -> Result<ディスクリプタ四点, レンダラーエラー> {
     let ユニフォーム一覧 = 基盤.ユニフォーム一覧();
     let 透過率 = 透過率ディスクリプタ::生成する(device, ユニフォーム一覧, 基盤.透過率.画像ビュー)?;
     let 多重散乱 = match 多重散乱を作る(device, 基盤, &ユニフォーム一覧) {
@@ -62,7 +64,7 @@ pub(super) fn 作る(device: &ash::Device, 基盤: &大気LUT基盤資源) -> Re
 
 fn 多重散乱を作る(
     device: &ash::Device,
-    基盤: &大気LUT基盤資源,
+    基盤: &大気のベイク済み画像の基盤資源,
     ユニフォーム一覧: &[vk::Buffer; フレームインフライト数],
 ) -> Result<多重散乱ディスクリプタ, レンダラーエラー> {
     多重散乱ディスクリプタ::生成する(

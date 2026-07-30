@@ -1,6 +1,6 @@
-// スカイビューの積分が使う補助: 積分の座標系の組み立て、位相関数の組、多重散乱LUTの標本取り。
+// スカイビューの積分が使う補助: 積分の座標系の組み立て、位相関数の組、多重散乱のベイク済み画像の標本取り。
 // 注意: これらの式は`crates/blitz_render/src/atmosphere`の写しである(skyview_lut.rsの幾何の組み立て、
-// skyview_march.rsの位相の組、skyview_step.rsの多重散乱の引き方)。正本はRust側にある。
+// skyview_march.rsの位相の組、skyview_step.rsの多重散乱の参照の仕方)。正本はRust側にある。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 import atmosphere_medium;
@@ -43,7 +43,7 @@ float2 skyViewPhasePair(AtmosphereMedium medium, SkyViewGeometry geometry)
     return float2(rayleigh, factor * (1.0 + cosine * cosine) / denominator);
 }
 
-// その位置の多重散乱の伝達率。太陽天頂余弦と半径から単位位置を求め、テクセル中心のUVへ直して引く。
+// その位置の多重散乱の伝達率。太陽天頂余弦と半径から単位位置を求め、テクセル中心のUVへ直して参照する。
 float3 sampleMultiScatter(AtmosphereMedium medium, Sampler2D multiScatterLut, float3 position, float3 sunDirection)
 {
     float radius = length(position);

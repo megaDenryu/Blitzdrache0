@@ -1,7 +1,5 @@
-//! レンダーグラフ + リソースシステム。エンジン中核の型安全層。
-//! 責務: Vulkan(ash) の unsafe をこのクレートの実装内部に封じ込め、上位層には「このエンジンの使い方」だけを表現した安全な型を公開する。
-//! 注意: 公開APIに ash の型（vk::* やハンドル）を露出してはならない。露出した瞬間、unsafe の封じ込めが破れて上位層に責任が漏れる。
-
+//! レンダーグラフ + リソースシステム。エンジン中核の型安全層。責務: Vulkan(ash) の unsafe を内部に封じ込め、上位層には安全な型を公開する。
+//! 注意: 公開APIに ash の型（vk::* やハンドル）を露出してはならない。
 pub mod atmosphere;
 pub mod atmosphere_lut_input;
 pub mod atmosphere_lut_probe;
@@ -54,7 +52,6 @@ mod view_input_tests;
 mod visible_instance_selection;
 mod vulkan;
 mod vulkan_failure;
-
 pub use clear_color::{クリアカラー, クリアカラーエラー};
 pub use cloth_material::{布定数, 布素材, 布素材エラー};
 pub use cloth_shader_set::布シェーダー一式;
@@ -81,8 +78,10 @@ pub use readback_image::読み戻し画像;
 pub use readback_result::読み戻し結果;
 pub use render_object_material::{個体変換列, 描画対象素材};
 pub use render_scene_material::描画シーン素材;
-pub use renderer::{CPU区間時間, パス別描画発行, レンダラー, 大気LUT生成パス数の記録, 描画発行内訳, 段別個体数};
-pub use shader_bundle::{シェーダー束, 大気LUTシェーダー一式, 空シェーダー};
+pub use renderer::{
+    CPU区間時間, パス別描画発行, レンダラー, 大気のベイク済み画像生成パス数の記録, 描画発行内訳, 段別個体数
+};
+pub use shader_bundle::{シェーダー束, 大気のベイク済み画像のシェーダー一式, 空シェーダー};
 pub use shader_set::{シェーダー一式, シェーダー一式エラー};
 pub use skin_mesh::{スキンメッシュ素材, スキンメッシュ素材エラー, スキン頂点属性};
 pub use terrain_detail::{地形詳細段, 地形詳細段選択};

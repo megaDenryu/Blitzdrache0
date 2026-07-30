@@ -41,7 +41,7 @@ Blenderの実体は `C:\Program Files\Blender Foundation\Blender 5.2\blender.exe
 
 ## 本体からの参照の仕組み
 
-本体リポジトリのアセット宣言表が、外部のアセットリポジトリのglbを名指しで引く。宣言の実体は `crates/blitz_asset_compiler/examples/compile_assets/world/asset_declaration.rs` にあり、置き場の解決は `crates/blitz_asset_compiler/examples/compile_assets/source_location.rs` が1箇所で持つ。
+本体リポジトリのアセット宣言表が、外部のアセットリポジトリのglbを名指しで参照する。宣言の実体は `crates/blitz_asset_compiler/examples/compile_assets/world/asset_declaration.rs` にあり、置き場の解決は `crates/blitz_asset_compiler/examples/compile_assets/source_location.rs` が1箇所で持つ。
 
 宣言1件は、安定IDと相対パスと**基準**の3つで書く。基準は2つあり、`本体のソースルート` は `assets/` からの相対、`外部ソースルート` は外部のアセットリポジトリからの相対である。宣言の1行1行は起点の実パスを持たないため、置き場を移しても宣言を書き換えない。
 

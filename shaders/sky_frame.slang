@@ -22,7 +22,7 @@ struct SkyFrameUniform
     column_major float4x4 inverseViewProjection;
     // rgbが夜間の背景放射輝度、wが太陽円盤の角半径の余弦。
     float4 nightSkyRadianceAndSunCos;
-    // xyzが地表から太陽へ向かう単位ベクトル(Xが東・Yが天頂・Zが南)、wがスカイビューLUTを焼いた観測高度(メートル)。
+    // xyzが地表から太陽へ向かう単位ベクトル(Xが東・Yが天頂・Zが南)、wがスカイビューのベイク済み画像を焼いた観測高度(メートル)。
     float4 sunDirectionAndObserverAltitude;
     // rgbが太陽円盤の放射輝度、wが太陽の放射照度の尺度。
     float4 sunDiskRadianceAndSunIrradiance;

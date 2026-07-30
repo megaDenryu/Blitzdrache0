@@ -23,7 +23,7 @@ fn カタログを安定id順で決定的に往復する() {
     let Ok(fox) = アセットID::生成する("fox") else {
         panic!("試験用IDを生成できなかった");
     };
-    let Some(項目) = 復元.項目を引く(&fox) else {
+    let Some(項目) = 復元.項目を参照する(&fox) else {
         panic!("復元カタログにfoxが無かった");
     };
     assert_eq!(項目.実行時パス(), Path::new("fox.blitzasset"));

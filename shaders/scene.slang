@@ -83,7 +83,7 @@ float4 fragmentMain(VertexOutput input) : SV_Target
               frameUniform.cascadeSplitDepths.xyz, frameUniform.cascadeTransitionWidths.xyz, shadowMapTexture, shadowMapSampler, shadowMapTexelSize)
         : 1.0;
 
-    // cameraForward.wは帯の可視化指定。1のとき、どの帯を引いたかと影の中かだけを色で出す(継ぎ目検収の補助)。
+    // cameraForward.wは帯の可視化指定。1のとき、どの帯を参照したかと影の中かだけを色で出す(継ぎ目検収の補助)。
     if (frameUniform.cameraForward.w > 0.5)
     {
         float3 debugColor = cascadeDebugPixel(

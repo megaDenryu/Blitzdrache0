@@ -48,7 +48,7 @@ pub(crate) fn 状態へ写像する(用途: 画像用途) -> 画像状態 {
             vk::AccessFlags2::SHADER_SAMPLED_READ,
             vk::ImageLayout::GENERAL,
         ),
-        画像用途::大気LUTフラグメント読み => 画像状態::生成する(
+        画像用途::大気のベイク済み画像のフラグメント参照 => 画像状態::生成する(
             vk::PipelineStageFlags2::FRAGMENT_SHADER,
             vk::AccessFlags2::SHADER_SAMPLED_READ,
             vk::ImageLayout::GENERAL,

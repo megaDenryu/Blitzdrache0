@@ -21,7 +21,7 @@ float3 applyShadowAnchor(float3 worldPosition)
     return worldPosition + shadowPush.position;
 }
 
-// この発行が描いている帯の番号。フレームユニフォームの帯ごとの行列を引く添字になる。
+// この発行が描いている帯の番号。フレームユニフォームの帯ごとの行列を参照する添字になる。
 uint currentCascadeIndex()
 {
     return shadowPush.cascadeIndex;

@@ -37,7 +37,7 @@ impl 計器の読み {
 pub(super) fn 区間が無いことを確かめる(標準出力: &str, 無いはずの区間: &[&str]) -> Result<(), String> {
     let 表 = table::読む(標準出力)?;
     for 区間名 in 無いはずの区間 {
-        if table::区間を引く(&表, 区間名).is_ok() {
+        if table::区間を参照する(&表, 区間名).is_ok() {
             return Err(format!("合成を切った実行に区間{区間名}が現れた"));
         }
     }
@@ -48,11 +48,11 @@ pub(super) fn 区間を読む(標準出力: &str) -> Result<計器の読み, Str
     let 表 = table::読む(標準出力)?;
     let mut 並び = Vec::new();
     for 区間名 in 区間名一覧 {
-        並び.push(format!("{区間名}{:.4}ms", table::区間を引く(&表, 区間名)?));
+        並び.push(format!("{区間名}{:.4}ms", table::区間を参照する(&表, 区間名)?));
     }
     let mut 定常の合計ミリ秒 = 0.0;
     for 区間名 in 定常の区間一覧 {
-        定常の合計ミリ秒 += table::区間を引く(&表, 区間名)?;
+        定常の合計ミリ秒 += table::区間を参照する(&表, 区間名)?;
     }
     Ok(計器の読み {
         区間の並び: 並び.join("・"),

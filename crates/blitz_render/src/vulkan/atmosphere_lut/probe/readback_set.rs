@@ -5,11 +5,11 @@
 //! 見せる理由が無いためである。
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::atmosphere_lut::readback_buffer::LUT読み戻しバッファ;
+use crate::vulkan::atmosphere_lut::readback_buffer::ベイク済み画像の読み戻しバッファ;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct 受け皿一式 {
-    バッファ一覧: [LUT読み戻しバッファ; 4],
+    バッファ一覧: [ベイク済み画像の読み戻しバッファ; 4],
 }
 
 impl 受け皿一式 {
@@ -18,9 +18,9 @@ impl 受け皿一式 {
         メモリプロパティ: &ash::vk::PhysicalDeviceMemoryProperties,
         テクセル数一覧: [usize; 4],
     ) -> Result<Self, レンダラーエラー> {
-        let mut 作った: Vec<LUT読み戻しバッファ> = Vec::with_capacity(テクセル数一覧.len());
+        let mut 作った: Vec<ベイク済み画像の読み戻しバッファ> = Vec::with_capacity(テクセル数一覧.len());
         for テクセル数 in テクセル数一覧 {
-            match LUT読み戻しバッファ::生成する(device, メモリプロパティ, テクセル数) {
+            match ベイク済み画像の読み戻しバッファ::生成する(device, メモリプロパティ, テクセル数) {
                 Ok(バッファ) => 作った.push(バッファ),
                 Err(誤り) => {
                     while let Some(バッファ) = 作った.pop() {
@@ -39,19 +39,19 @@ impl 受け皿一式 {
     }
 
     /// 並びは透過率・多重散乱・スカイビュー・空中遠近であり、確保に渡したテクセル数の並びと同じである。
-    pub(super) fn 透過率(&self) -> &LUT読み戻しバッファ {
+    pub(super) fn 透過率(&self) -> &ベイク済み画像の読み戻しバッファ {
         &self.バッファ一覧[0]
     }
 
-    pub(super) fn 多重散乱(&self) -> &LUT読み戻しバッファ {
+    pub(super) fn 多重散乱(&self) -> &ベイク済み画像の読み戻しバッファ {
         &self.バッファ一覧[1]
     }
 
-    pub(super) fn スカイビュー(&self) -> &LUT読み戻しバッファ {
+    pub(super) fn スカイビュー(&self) -> &ベイク済み画像の読み戻しバッファ {
         &self.バッファ一覧[2]
     }
 
-    pub(super) fn 空中遠近(&self) -> &LUT読み戻しバッファ {
+    pub(super) fn 空中遠近(&self) -> &ベイク済み画像の読み戻しバッファ {
         &self.バッファ一覧[3]
     }
 

@@ -1,4 +1,4 @@
-//! 大気LUTのうち、GPUメモリを占める資源(4枚のLUT画像と媒体のユニフォーム)の所有者。
+//! 大気のベイク済み画像のうち、GPUメモリを占める資源(4枚のベイク済み画像と媒体のユニフォーム)の所有者。
 //! 触れるのはこの5つだけであり、ディスクリプタもパイプラインも持たない。生成の途中で失敗したら
 //! それまでに確保したメモリをその場で解放する。4枚の画像を順に確保する巻き戻しは`images`が持つ。
 
@@ -6,32 +6,32 @@ mod images;
 
 use ash::vk;
 
-use super::{image, medium_uniform, 大気LUTの形};
-use crate::atmosphere::{大気LUT解像度, 大気散乱媒体};
+use super::{image, medium_uniform, 大気のベイク済み画像の形};
+use crate::atmosphere::{大気のベイク済み画像の解像度, 大気散乱媒体};
 use crate::error::レンダラーエラー;
 use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
 use crate::vulkan::tracked_device::GPUデバイス;
 
-pub(super) struct 大気LUT基盤資源 {
-    pub(super) 透過率: image::大気LUT画像,
-    pub(super) 多重散乱: image::大気LUT画像,
-    pub(super) スカイビュー: image::大気LUT画像,
-    pub(super) 空中遠近: image::大気LUT画像,
+pub(super) struct 大気のベイク済み画像の基盤資源 {
+    pub(super) 透過率: image::大気のベイク済み画像,
+    pub(super) 多重散乱: image::大気のベイク済み画像,
+    pub(super) スカイビュー: image::大気のベイク済み画像,
+    pub(super) 空中遠近: image::大気のベイク済み画像,
     媒体ユニフォーム: medium_uniform::媒体ユニフォーム一式,
 }
 
-impl 大気LUT基盤資源 {
+impl 大気のベイク済み画像の基盤資源 {
     pub(super) fn 生成する(
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        解像度: 大気LUT解像度,
+        解像度: 大気のベイク済み画像の解像度,
     ) -> Result<Self, レンダラーエラー> {
         let 多重散乱の一辺 = 解像度.多重散乱の一辺();
         let 形一覧 = [
             平面(解像度.透過率の幅(), 解像度.透過率の高さ()),
             平面(多重散乱の一辺, 多重散乱の一辺),
             平面(解像度.スカイビューの幅(), 解像度.スカイビューの高さ()),
-            大気LUTの形::立体 {
+            大気のベイク済み画像の形::立体 {
                 一辺: 解像度.空中遠近の一辺(),
             },
         ];
@@ -82,6 +82,6 @@ impl 大気LUT基盤資源 {
     }
 }
 
-fn 平面(幅: u32, 高さ: u32) -> 大気LUTの形 {
-    大気LUTの形::平面 { 幅, 高さ }
+fn 平面(幅: u32, 高さ: u32) -> 大気のベイク済み画像の形 {
+    大気のベイク済み画像の形::平面 { 幅, 高さ }
 }

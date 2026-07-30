@@ -21,7 +21,7 @@ pub(crate) struct ジオメトリ入力 {
     /// この描画発行で描く個体の数。通常メッシュと地形は1、インスタンス群はそのLOD段の可視数である。
     pub(crate) インスタンス数: u32,
     /// 可視ID列のうちこの発行が読み始める位置。頂点シェーダーは`SV_StartInstanceLocation`でこの値を受け取り、
-    /// `SV_InstanceID`に足して可視ID列を引く。段ごとに1回発行するため、段の範囲の開始がそのままこの値になる。
+    /// `SV_InstanceID`に足して可視ID列を参照する。段ごとに1回発行するため、段の範囲の開始がそのままこの値になる。
     pub(crate) 先頭インスタンス: u32,
     pub(crate) layout: vk::PipelineLayout,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,

@@ -33,7 +33,7 @@ pub(super) const 計数判定の個体数: usize = 64;
 /// 名前を`vegetation`で始めないことが、既定カメラと既定の影範囲を選ばせて群を両方の視錐台から外す(理由は`xtask/src/cloth_empty.rs`)。
 const 両視錐台外の群シーン: &str = "instance_all_culled";
 
-/// Blenderが生成した小物1体の検収シーン。外部のアセットリポジトリの`props/`からglbを引く。
+/// Blenderが生成した小物1体の検収シーン。外部のアセットリポジトリの`props/`からglbを参照する。
 /// 安定IDを`prop_`で始めることが、この世界のカメラ姿勢と読み戻しだけの検収計画を選ばせる。
 /// 参照: `crates/blitz_app/src/app/scene_camera.rs`と`crates/blitz_app/src/smoke/mod.rs`
 const 小物の木箱シーン: (&str, &str) = ("prop_wooden_crate", "props/wooden_crate.glb");

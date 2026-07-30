@@ -1,4 +1,4 @@
-// 多重散乱LUTの生成。無限回の散乱を、球面64方向で測った「1回の散乱を経ても残る割合」を公比とする等比級数の和で閉じる。
+// 多重散乱のベイク済み画像の生成。無限回の散乱を、球面64方向で測った「1回の散乱を経ても残る割合」を公比とする等比級数の和で閉じる。
 // 注意: 数式の正本は`crates/blitz_render/src/atmosphere`(multiscatter_lut.rs・multiscatter_march.rs・
 // multiscatter_mapping.rs・sphere_directions.rs)にあり、ここはその写しである。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。

@@ -21,7 +21,7 @@ impl 起動設定 {
             ライティング有効: true,
             粒子表示: 粒子表示モード::なし,
             gpu時間報告: false,
-            大気lutパス数報告: false,
+            大気のベイク済み画像パス数報告: false,
             フレーム時間報告: false,
             gpuメモリ報告: false,
             描画発行報告: false,

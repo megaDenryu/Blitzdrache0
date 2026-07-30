@@ -23,7 +23,7 @@ pub(crate) enum 空の起動指定 {
 /// 焼かず合成パスを1本も積まない経路を通るため、空中遠近を入れる前の描画と同一である。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum 空中遠近合成指定 {
-    /// 既定。大気LUT腕なら遠景へ霞を合成する。
+    /// 既定。大気のベイク済み画像方式なら遠景へ霞を合成する。
     合成する,
     /// `--no-aerial-composite`。霞を1画素も乗せない。
     合成しない,

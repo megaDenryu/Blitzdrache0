@@ -6,7 +6,7 @@
 
 use std::f64::consts::PI;
 
-use super::sun_visibility::{太陽が地表に遮られるか, 太陽への透過率を引く};
+use super::sun_visibility::{太陽が地表に遮られるか, 太陽への透過率を参照する};
 use crate::atmosphere::geometry::vector3::{内積, 単位化};
 use crate::atmosphere::medium::medium_sample::媒体標本;
 use crate::atmosphere::table::transmittance_table::透過率表;
@@ -31,7 +31,7 @@ pub(in crate::atmosphere) fn 区間を積む(
     let 太陽への透過率 = if 太陽が地表に遮られるか(媒体, 条件.位置, 条件.太陽) {
         [0.0; 3]
     } else {
-        太陽への透過率を引く(媒体, 透過率表, 条件.位置, 条件.太陽)
+        太陽への透過率を参照する(媒体, 透過率表, 条件.位置, 条件.太陽)
     };
     let 等方位相 = 1.0 / (4.0 * PI);
     for 添字 in 0..3 {
@@ -48,7 +48,7 @@ pub(in crate::atmosphere) fn 区間を積む(
 }
 
 /// 視線が地表で終わるとき、地面が拡散反射で返す光を足す。
-/// 遮蔽判定を通さずに透過率を引くのは、地表そのものにある点が自分の足元と交わるためである
+/// 遮蔽判定を通さずに透過率を参照するのは、地表そのものにある点が自分の足元と交わるためである
 /// (詳細は`sun_visibility`)。照り返しの向きの妥当性は入射余弦が受け持つ。
 pub(in crate::atmosphere) fn 地面の照り返しを足す(
     放射輝度: &mut [f64; 3],
@@ -58,7 +58,7 @@ pub(in crate::atmosphere) fn 地面の照り返しを足す(
     太陽: [f64; 3],
     通過率: [f64; 3],
 ) {
-    let 太陽への透過率 = 太陽への透過率を引く(媒体, 透過率表, 地表位置, 太陽);
+    let 太陽への透過率 = 太陽への透過率を参照する(媒体, 透過率表, 地表位置, 太陽);
     let Some(上向き) = 単位化(地表位置) else {
         return;
     };

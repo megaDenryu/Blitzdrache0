@@ -543,12 +543,12 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <div class="box now">
 <span class="label">このエンジンの現状</span>
-<p>間接光は<strong>環境光係数1つ(定数環境光)</strong>のみ。IBL・AO・SSR・GIはいずれも未実装。空(<a class="term" href="#term-analytic-sky">Hosek-Wilkie</a>解析式、時刻駆動)はOW5で入ったが「本番はHillaire系<a class="term" href="#term-lut">LUT</a>+Bruneton系参照検証」への置換が決定済みで、現実装は<a class="term" href="#term-vertical-slice">縦切り</a>の暫定と位置づけられている(正本: <code>_doc/設計/空と時間帯と遠距離シャドウ.md</code>)。つまり<strong>光の輸送の観点では、このエンジンはまだ出発点に立ったところであり、ここが野心と現状の最大のギャップである。</strong></p>
+<p>間接光は<strong>環境光係数1つ(定数環境光)</strong>のみ。IBL・AO・SSR・GIはいずれも未実装。空(<a class="term" href="#term-analytic-sky">Hosek-Wilkie</a>解析式、時刻駆動)はOW5で入ったが「本番はHillaire系<a class="term" href="#term-lut">ベイク済み画像</a>+Bruneton系参照検証」への置換が決定済みで、現実装は<a class="term" href="#term-vertical-slice">縦切り</a>の暫定と位置づけられている(正本: <code>_doc/設計/空と時間帯と遠距離シャドウ.md</code>)。つまり<strong>光の輸送の観点では、このエンジンはまだ出発点に立ったところであり、ここが野心と現状の最大のギャップである。</strong></p>
 </div>
 
 <div class="box goal">
 <span class="label">野心的到達形(能力)</span>
-<p>(a)時刻・天候・屋内外を問わず、間接光が動的に成立する(事前<a class="term" href="#term-bake">ベイク</a>一発焼きへの依存で世界を静的にしない)。(b)鏡面反射が画面外の情報も拾える。(c)AOが接地・隅の暗さを安定して出す。(d)大気は物理ベース(Hillaire系LUT)で、体積雲・<a class="term" href="#term-froxel">froxel</a>体積霧(<a class="term" href="#term-frustum">視錐台</a>をセル分割して霧の濃さと光を計算する方式)まで到達する。(e)全体がradiance queryの1階層に統合され、GPU能力に応じて階層の深さが変わる。</p>
+<p>(a)時刻・天候・屋内外を問わず、間接光が動的に成立する(事前<a class="term" href="#term-bake">ベイク</a>一発焼きへの依存で世界を静的にしない)。(b)鏡面反射が画面外の情報も拾える。(c)AOが接地・隅の暗さを安定して出す。(d)大気は物理ベース(Hillaire系のベイク済み画像)で、体積雲・<a class="term" href="#term-froxel">froxel</a>体積霧(<a class="term" href="#term-frustum">視錐台</a>をセル分割して霧の濃さと光を計算する方式)まで到達する。(e)全体がradiance queryの1階層に統合され、GPU能力に応じて階層の深さが変わる。</p>
 </div>
 
 <h4>方式候補と採用条件</h4>
@@ -792,10 +792,10 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <table>
 <tr><th>能力</th><th>現状</th><th>方式候補</th><th>画質指標</th><th>費用の性質</th><th>波及</th><th>採用・再判定条件</th></tr>
 <tr>
-<td>大気・空</td><td><a class="term" href="#term-analytic-sky">Hosek-Wilkie</a>解析式(暫定<a class="term" href="#term-vertical-slice">縦切り</a>)<span class="pill partial">暫定</span></td><td>Hillaire系<a class="term" href="#term-lut">LUT</a>(本番)+Bruneton系(参照検証)</td><td>参照解との輝度差・時刻遷移の連続性(sky-time拡張)</td><td>GPU: LUT更新+空<a class="term" href="#term-pass">パス</a>。予算: 空1.0ms(制定済み)</td><td>空パス内部に閉じる(決定済み)</td><td>決定済み(OW5第7段)</td>
+<td>大気・空</td><td><a class="term" href="#term-analytic-sky">Hosek-Wilkie</a>解析式(暫定<a class="term" href="#term-vertical-slice">縦切り</a>)<span class="pill partial">暫定</span></td><td>Hillaire系<a class="term" href="#term-lut">ベイク済み画像</a>(本番)+Bruneton系(参照検証)</td><td>参照解との輝度差・時刻遷移の連続性(sky-time拡張)</td><td>GPU: ベイク済み画像更新+空<a class="term" href="#term-pass">パス</a>。予算: 空1.0ms(制定済み)</td><td>空パス内部に閉じる(決定済み)</td><td>決定済み(OW5第7段)</td>
 </tr>
 <tr>
-<td>体積雲・霧</td><td>なし<span class="pill none">未着手</span></td><td><a class="term" href="#term-ray-march">レイマーチ</a>雲+<a class="term" href="#term-froxel">froxel</a>霧</td><td>光の透過・時刻連動・時間安定</td><td>GPU大。時間再構成前提</td><td><a class="term" href="#term-render-graph">レンダーグラフ</a>へ<a class="term" href="#term-shader">計算パス</a>追加</td><td>大気LUT成立後に審査</td>
+<td>体積雲・霧</td><td>なし<span class="pill none">未着手</span></td><td><a class="term" href="#term-ray-march">レイマーチ</a>雲+<a class="term" href="#term-froxel">froxel</a>霧</td><td>光の透過・時刻連動・時間安定</td><td>GPU大。時間再構成前提</td><td><a class="term" href="#term-render-graph">レンダーグラフ</a>へ<a class="term" href="#term-shader">計算パス</a>追加</td><td>大気のベイク済み画像成立後に審査</td>
 </tr>
 <tr>
 <td>多光源</td><td><a class="term" href="#term-light-types">方向光</a>1+点光源1固定<span class="pill none">未着手</span></td><td><a class="term" href="#term-clustered-lighting">クラスタードライティング</a>(<a class="term" href="#term-forward-deferred">forward</a>+)→visibility buffer+遅延<a class="term" href="#term-material">材質</a>評価</td><td>光源数スケール時の破綻なし・予算内</td><td>GPU: 選別計算。CPU: 光源管理</td><td>光源入力型の置換(6章d)・<a class="term" href="#term-ubo">UBO</a>分離(6章a)</td><td>絵の様式確定+シーン要求(屋内・夜市街等)</td>
@@ -918,12 +918,12 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <p>最後に、この野心をどの順で作るかの提案である。並びは依存関係順(先行が後続の前提になる順)であり、規模順でも重要度順でもない。フェーズ2計画の既存マイルストーン(OW/SIM/CHAR/UI)との接続を併記する。</p>
 
 <h4>判断の枠組みへの提案: 品質駆動の着手条件</h4>
-<p>現在の性能アーキテクチャ方針の着手条件は全て性能駆動(計測で<a class="term" href="#term-rate-limiting">律速</a>が実証されたとき)である。これに<strong>品質駆動(品質目標がその方式を要求すると裁定されたとき)</strong>を第二の着手条件として追加することを提案する。大気<a class="term" href="#term-lut">LUT</a>置換(計測上は問題が無いのに品質目標が方式を要求した例)を一般化するものである。どちらの駆動で着手したかを記録すれば、判断の追跡可能性も保たれる。</p>
+<p>現在の性能アーキテクチャ方針の着手条件は全て性能駆動(計測で<a class="term" href="#term-rate-limiting">律速</a>が実証されたとき)である。これに<strong>品質駆動(品質目標がその方式を要求すると裁定されたとき)</strong>を第二の着手条件として追加することを提案する。大気の<a class="term" href="#term-lut">ベイク済み画像</a>への置換(計測上は問題が無いのに品質目標が方式を要求した例)を一般化するものである。どちらの駆動で着手したかを記録すれば、判断の追跡可能性も保たれる。</p>
 
 <div class="table-scroll">
 <table>
 <tr><th>順</th><th>作業</th><th>依存(なぜこの位置か)</th><th>接続</th></tr>
-<tr><td>0</td><td><strong>OW5完走</strong>(第6段 <a class="term" href="#term-cascade-band">帯別</a><a class="term" href="#term-culling">カリング</a> → 第7段 大気LUT置換 → <a class="term" href="#term-checkpoint">定点</a>)</td><td>進行中の<a class="term" href="#term-vertical-slice">縦切り</a>を閉じる。大気LUTは光の輸送の最初の本番方式</td><td>OW5(進行中)</td></tr>
+<tr><td>0</td><td><strong>OW5完走</strong>(第6段 <a class="term" href="#term-cascade-band">帯別</a><a class="term" href="#term-culling">カリング</a> → 第7段 大気のベイク済み画像置換 → <a class="term" href="#term-checkpoint">定点</a>)</td><td>進行中の<a class="term" href="#term-vertical-slice">縦切り</a>を閉じる。大気のベイク済み画像は光の輸送の最初の本番方式</td><td>OW5(進行中)</td></tr>
 <tr><td>1</td><td><strong>方式境界の設計壁打ち3本</strong>: (a)<a class="term" href="#term-radiance-query">radiance query</a>階層 (b)<a class="term" href="#term-shading-model">材質特徴ビット</a>×シェーディングモデル (c)<a class="term" href="#term-ubo">UBO</a>分離+ディスクリプタインデクシング</td><td>実装より先に境界を決める項目(第6章a,dと4.3の先行必須項目)。ここの決定が後続全部の器</td><td>新規(設計のみ)</td></tr>
 <tr><td>2</td><td><strong>絵の様式の確定(オーナー裁定)→ <a class="term" href="#term-taa">TAA</a>基盤</strong>(<a class="term" href="#term-motion-vector">モーションベクタ</a>・<a class="term" href="#term-jitter">ジッタ</a>・<a class="term" href="#term-history-buffer">履歴</a>・棄却・<a class="term" href="#term-reactive-mask">反応性</a>)</td><td>導入が遅いほど波及が膨らむ(4.4)。<a class="term" href="#term-ray-tracing">RT</a>系・体積系の前提でもある</td><td>新規(様式確定は裁定)</td></tr>
 <tr><td>3</td><td><strong><a class="term" href="#term-ibl">IBL</a>+<a class="term" href="#term-ao">SSAO</a>+<a class="term" href="#term-auto-exposure">自動露出</a></strong>(<a class="term" href="#term-ambient">定数環境光</a>の置換)</td><td>最小の工事で最大の画質改善。TAA基盤があると品質が安定</td><td>新規(<a class="term" href="#term-gi">GI</a>の第1段)</td></tr>
@@ -1035,8 +1035,8 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr id="term-path-tracing"><td>パストレーシング<span class="etym">path tracing = 直訳「(光の)道筋の追跡」</span><span class="mean">意訳: 光の道のくじ引き総当たり。跳ね返りの道筋をランダムに1本ずつ引いて平均すると正解に収束する(数理は第10.3節)</span></td><td>光の跳ね返りを確率的に全部追う計算。理論上の正解(参照解)を出すため、検証の物差しに使える。</td></tr>
 <tr id="term-rendering-equation"><td>レンダリング方程式<span class="etym">rendering equation(render = 描画する。原義は「差し出す・表現する」)</span><span class="mean">意訳: 絵作りの大元の1本の式。「出る光=自ら光る分+入ってくる光×跳ね返し」。丁寧な導出は第10.3節</span></td><td>「表面の明るさ=直接光+跳ね返って届く光の合計」を1行にした式。グラフィックスの全技術はこの式の近似解法である。</td></tr>
 <tr id="term-environment-map"><td>環境マップ<span class="etym">environment map = 直訳「環境の地図」</span><span class="mean">意訳: 周囲の風景の全方位写真。箱(キューブマップ)や球に貼って使う</span></td><td>周囲の風景を1枚の画像(立方体または球)へ収めたもの。IBLではこれを光源として使う。</td></tr>
-<tr id="term-lut"><td>LUT(参照表)<span class="etym">Look-Up Table = 直訳「引くための表」</span><span class="mean">意訳: 計算の作り置き表。毎回計算せず、前もって解いた答えの表を引くだけにする</span></td><td>計算結果をあらかじめ表へ焼いておき、実行時は表を引くだけにする手法。大気散乱の計算はLUT化が現代の標準である。</td></tr>
-<tr id="term-analytic-sky"><td>Hosek-Wilkie解析式</td><td>空の放射輝度を少数の係数の式で近似する解析モデル。安価だが物理的な自由度が低い。本エンジンの現在の空はこれであり、Hillaire系LUTへの置換が決定済みである。</td></tr>
+<tr id="term-lut"><td>ベイク済み画像<span class="etym">元来はLUT(Look-Up Table) = 直訳「引くための表」</span><span class="mean">意訳: 計算の作り置き表。毎回計算せず、前もって解いた答えの表を参照するだけにする</span></td><td>計算結果をあらかじめ表へ焼いておき、実行時は表を参照するだけにする手法。大気散乱の計算はベイク済み画像化が現代の標準である。</td></tr>
+<tr id="term-analytic-sky"><td>Hosek-Wilkie解析式</td><td>空の放射輝度を少数の係数の式で近似する解析モデル。安価だが物理的な自由度が低い。本エンジンの現在の空はこれであり、Hillaire系ベイク済み画像への置換が決定済みである。</td></tr>
 <tr id="term-sky-state"><td>天空状態</td><td>時刻から決定的に導出される、太陽方向・方向光の色と強度・環境光・露出補正段・空の係数・影の有効性の束。エンジン側の純関数が返し、レンダラーは導出済みの状態だけを受け取る。</td></tr>
 <tr id="term-froxel"><td>froxel<span class="etym">frustum(視錐台)+voxel(立体画素)の合成語</span><span class="mean">意訳: 視界のさいの目切り。カメラの視界を奥行き方向にも輪切りにした小箱1つ1つ</span></td><td>視錐台をセルへ分割して霧と光を計算する体積表現。</td></tr>
 <tr id="term-ray-march"><td>レイマーチ<span class="etym">ray marching = 直訳「光線の行進」</span><span class="mean">意訳: 光線の一歩ずつ進み。霧の中を少しずつ歩きながら「ここの濃さは? 届く光は?」を足し込んでいく計算</span></td><td>光線に沿って一定の刻みで進みながら、濃さと届く光を積算する計算。体積雲・体積霧に使う。</td></tr>
@@ -1064,7 +1064,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr id="term-motion-vector"><td>モーションベクタ<span class="etym">motion vector = 直訳「動きの矢印」</span><span class="mean">意訳: 各画素の「前はどこにいたか」メモ。過去フレームから対応点を探すための矢印</span></td><td>各画素が前フレームで画面上のどこにいたかを表すベクトル場。時間再構成の必須部品である。</td></tr>
 <tr id="term-history-buffer"><td>履歴バッファ<span class="etym">history buffer = 履歴の一時置き場</span><span class="mean">意訳: 前フレームの絵の貯金箱</span></td><td>前フレームの結果を保持しておく画像。カメラが切り替わったときなどに無効化する規律が要る。</td></tr>
 <tr id="term-disocclusion"><td>disocclusion<span class="etym">dis-(解除) + occlusion(遮蔽) = 直訳「遮蔽の解除」</span><span class="mean">意訳: 物陰から現れたばかりの領域。前フレームには映っていないので過去の貯金が使えない</span></td><td>前フレームでは隠れていた領域が、今フレームで露出すること。履歴が無いためゴーストの主因になる。</td></tr>
-<tr id="term-ghosting"><td>ゴースト(残像)<span class="etym">ghosting = 直訳「幽霊化」</span><span class="mean">意訳: 動く物の後ろに残る半透明の尾。古い絵を間違って混ぜた痕跡</span></td><td>前フレームの情報を誤って混ぜたために、動く物の後ろへ尾を引く欠陥。</td></tr>
+<tr id="term-ghosting"><td>ゴースト(残像)<span class="etym">ghosting = 直訳「幽霊化」</span><span class="mean">意訳: 動く物の後ろに残る半透明の尾。古い絵を間違って混ぜた痕跡</span></td><td>前フレームの情報を誤って混ぜたために、動く物の後ろへ尾を参照する欠陥。</td></tr>
 <tr id="term-reactive-mask"><td>反応性マスク</td><td>履歴を信用してはいけない画素(半透明・急変する発光等)を、描画側が申告する仕組み。</td></tr>
 <tr id="term-denoiser"><td>デノイザー<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: ざらつき取り。少ない標本のまだら模様を均す係</span></td><td>レイトレーシング等の少ないサンプルの結果からノイズを除く処理。時間再構成と部品を共有する。</td></tr>
 <tr id="term-exposure"><td>露出<span class="etym">exposure = カメラ用語(フィルムを光にさらすこと)の訳語</span><span class="mean">意訳: 絵全体の明るさのつまみ。人間の目が暗がりに慣れるのと同じ調整</span></td><td>トーンマッピングの前に輝度へ掛ける倍率。カメラの露出設定に相当し、シーン全体の明るさを決める。本エンジンは現在手動である。</td></tr>
@@ -1298,7 +1298,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <span class="unit">第k項 T<sup>k</sup>L<sub>発光</sub> = ちょうどk回反射して届く光。k=0: 光源の直視、k=1: 直接光、k≥2: 間接光(GI)</span>
 </div>
 
-<p>この級数が本文の言葉の数学的実体である: <strong>「直接光」とはk=1項、「間接光(GI)」とはk≥2の項の和</strong>にすぎない。全流派の位置づけもこの式の上で言い直せる — パストレーシング(10.8節)は各項(積分の入れ子=高次元積分)をモンテカルロで推定する方法、事前計算(LUT・プローブ)は級数の一部を先に解いて表に焼く方法、リアルタイムGIの「何回目の反射まで持つか」という品質差はこの級数の打ち切り位置である。輸送理論からの由来(次項)は、この作用素方程式が放射輸送方程式の境界値問題の形式解と同型であることを指す。</p>
+<p>この級数が本文の言葉の数学的実体である: <strong>「直接光」とはk=1項、「間接光(GI)」とはk≥2の項の和</strong>にすぎない。全流派の位置づけもこの式の上で言い直せる — パストレーシング(10.8節)は各項(積分の入れ子=高次元積分)をモンテカルロで推定する方法、事前計算(ベイク済み画像・プローブ)は級数の一部を先に解いて表に焼く方法、リアルタイムGIの「何回目の反射まで持つか」という品質差はこの級数の打ち切り位置である。輸送理論からの由来(次項)は、この作用素方程式が放射輸送方程式の境界値問題の形式解と同型であることを指す。</p>
 
 <ul>
 <li><strong>積分域が半球である理由</strong>: 不透明な表面では下半球(<math><mi>ω</mi><mo>·</mo><mi>n</mi><mo>&lt;</mo><mn>0</mn></math>)からの入射が無い。透過材質(水・ガラス・肌)ではこの仮定が外れて積分域が全球になり、BRDFはBSDF(Bidirectional Scattering Distribution Function。散乱分布関数)へ一般化される。</li>
@@ -1316,7 +1316,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <ul>
 <li><strong>モンテカルロ法(パストレーシング)</strong>: 積分を確率標本で置き換える。方向をランダムに選んで光路を1本ずつ追い、平均を取ると期待値が正解に収束する(大数の法則)。正しさの物差しになるが、収束が遅くノイズが出る(だからデノイザーと時間再構成(第4.4章)が対になる)。</li>
-<li><strong>事前計算(LUT・プローブ・表面キャッシュ)</strong>: 積分の一部を先に解いて表に焼く。入力の次元を落とせる部分(大気: 高度と角度だけで決まる、第4.2章のHillaire LUT)や、ゆっくりしか変わらない部分(プローブのGI)がこの戦略に向く。</li>
+<li><strong>事前計算(ベイク済み画像・プローブ・表面キャッシュ)</strong>: 積分の一部を先に解いて表に焼く。入力の次元を落とせる部分(大気: 高度と角度だけで決まる、第4.2章のHillaire系のベイク済み画像)や、ゆっくりしか変わらない部分(プローブのGI)がこの戦略に向く。</li>
 <li><strong>スクリーン空間(SSAO・SSR)</strong>: いま描いた画面自体を「世界の粗い標本」として積分の材料に流用する。安いが画面外は原理的に見えない。</li>
 </ul>
 
@@ -1325,7 +1325,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <!-- ------------------------------------------------ -->
 <h3 id="s10-4">10.4 体積の散乱 — 大気・霧・雲の物理</h3>
 
-<p>10.3節では媒質を真空と置いた。この節でその特殊化を1段戻し、空気そのものが光に仕事をする世界 — 空・霞・雲 — の量を定義する。このエンジンのOW5第7段(Hillaire系大気LUT)が実装するのはまさにこの節の数学である。</p>
+<p>10.3節では媒質を真空と置いた。この節でその特殊化を1段戻し、空気そのものが光に仕事をする世界 — 空・霞・雲 — の量を定義する。このエンジンのOW5第7段(Hillaire系大気のベイク済み画像)が実装するのはまさにこの節の数学である。</p>
 
 <h4>消散係数 — 「単位距離あたりの引っかかりやすさ」</h4>
 
@@ -1380,13 +1380,13 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <figcaption>図10-2: 散乱の向きの好み(位相関数)。中心の粒子に左から光が当たったとき、どの方向へ散りやすいかを閉曲線の遠さで表す。</figcaption>
 </figure>
 
-<h4>なぜLUT(表)に焼けるのか</h4>
+<h4>なぜベイク済み画像(表)に焼けるのか</h4>
 
-<p>大気の放射輝度の計算は「経路上の各点で、太陽からの透過率×散乱×位相を足し、さらに他所から散って来る光(多重散乱)を足す」という積分の入れ子で、毎画素で真面目にやると高くつく。ここで効くのが大気の対称性である: <strong>地球大気は高さ方向にしか変化しない</strong>(水平方向は一様とみなす)。すると透過率は「高度と天頂角の2数」だけで決まり、2次元の表(透過率LUT 256×64)に焼ける。多重散乱も同様に低次元化できる(Hillaire 2020の核心はこの分解である)。第4.2章で「事前計算戦略はゆっくり変わる・次元を落とせる部分に向く」と述べたことの、いちばん綺麗な実例が大気LUTである。</p>
+<p>大気の放射輝度の計算は「経路上の各点で、太陽からの透過率×散乱×位相を足し、さらに他所から散って来る光(多重散乱)を足す」という積分の入れ子で、毎画素で真面目にやると高くつく。ここで効くのが大気の対称性である: <strong>地球大気は高さ方向にしか変化しない</strong>(水平方向は一様とみなす)。すると透過率は「高度と天頂角の2数」だけで決まり、2次元の表(透過率のベイク済み画像 256×64)に焼ける。多重散乱も同様に低次元化できる(Hillaire 2020の核心はこの分解である)。第4.2章で「事前計算戦略はゆっくり変わる・次元を落とせる部分に向く」と述べたことの、いちばん綺麗な実例が大気のベイク済み画像である。</p>
 
 <div class="distort">
 <span class="label">歪み 4: 大気は「球対称の層」という理想化</span>
-<p>実際の大気には雲・水蒸気の偏り・地形による遮蔽があり、水平一様ではない。LUT方式はそれらを捨てて成立している。捨てた部分のうち絵に効くもの(雲)は、別の技法(レイマーチする体積雲)として貼り戻す — このエンジンの計画で体積雲が大気LUTと別段(別途審査)になっているのは、この理想化の境界が技法の境界だからである。</p>
+<p>実際の大気には雲・水蒸気の偏り・地形による遮蔽があり、水平一様ではない。ベイク済み画像方式はそれらを捨てて成立している。捨てた部分のうち絵に効くもの(雲)は、別の技法(レイマーチする体積雲)として貼り戻す — このエンジンの計画で体積雲が大気のベイク済み画像と別段(別途審査)になっているのは、この理想化の境界が技法の境界だからである。</p>
 </div>
 
 <!-- ------------------------------------------------ -->
@@ -1569,7 +1569,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr><td>RGB 3チャネル</td><td>波長の連続性(スペクトル)</td><td>人の目の錐体が3種類</td><td>プリズム分光・急な波長依存(<math><mn>1</mn><mo>/</mo><msup><mi>λ</mi><mn>4</mn></msup></math>等)</td><td>係数を波長積分してからRGB化(大気の係数がその例)</td></tr>
 <tr><td>表面BRDF</td><td>表面下の体積散乱</td><td>潜る深さが画素より小さい</td><td>肌・大理石・葉・ろうそく</td><td>SSS(専用の散乱プロファイル、4.3)</td></tr>
 <tr><td>点・方向光源</td><td>光源の大きさ(面光源)</td><td>光源が十分遠いか小さい</td><td>柔らかい影(半影)・面光源の写り込み</td><td>PCSS(4.1)・エリアライト近似式</td></tr>
-<tr><td>真空媒質</td><td>空気の散乱・吸収</td><td>近距離では効果が小さい</td><td>遠景の霞・空・霧・雲・夕焼け</td><td>大気LUT・空中遠近・体積霧(4.2、10.4)</td></tr>
+<tr><td>真空媒質</td><td>空気の散乱・吸収</td><td>近距離では効果が小さい</td><td>遠景の霞・空・霧・雲・夕焼け</td><td>大気のベイク済み画像・空中遠近・体積霧(4.2、10.4)</td></tr>
 <tr><td>大気の球対称層</td><td>雲・水平方向の濃度差</td><td>晴天の大気は近似的に層状</td><td>雲・局所的な霧だまり</td><td>体積雲レイマーチ・froxel霧(4.2)</td></tr>
 <tr><td>ピンホールカメラ</td><td>レンズの口径(有限の絞り)</td><td>全画素にピントが合う便利さ</td><td>被写界深度・玉ボケの表現</td><td>DoFポスト処理(4.4)</td></tr>
 <tr><td>瞬間シャッター</td><td>露光時間中の運動</td><td>1フレーム=1瞬間が計算しやすい</td><td>速い運動の滑らかさ(モーションブラー)</td><td>モーションベクタからのブラー(4.4)</td></tr>

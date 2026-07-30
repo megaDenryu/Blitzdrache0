@@ -10,8 +10,8 @@ impl アプリ {
     }
 
     /// `--report-atmosphere-passes`が指定されたか。
-    pub(crate) fn 大気lutパス数報告が必要か(&self) -> bool {
-        self.報告要求.大気lut生成パス数
+    pub(crate) fn 大気のベイク済み画像パス数報告が必要か(&self) -> bool {
+        self.報告要求.大気のベイク済み画像生成パス数
     }
 
     pub(crate) fn フレーム時間報告が必要か(&self) -> bool {

@@ -7,4 +7,4 @@ mod selection;
 
 pub use level::地形詳細段;
 pub use selection::地形詳細段選択;
-pub(crate) use selection::段を引く;
+pub(crate) use selection::段を参照する;

@@ -8,7 +8,7 @@ use super::{
     空描画入力, 粒子描画入力,
 };
 use crate::error::レンダラーエラー;
-use crate::vulkan::atmosphere_lut::大気LUT描画入力;
+use crate::vulkan::atmosphere_lut::大気のベイク済み画像の描画入力;
 use crate::vulkan::swapchain::スワップチェーン画像添字;
 
 pub(crate) struct 提示先<'a> {
@@ -27,12 +27,12 @@ pub(crate) struct 描画対象入力<'a> {
 
 #[derive(Clone, Copy)]
 pub(crate) struct 任意描画入力<'a> {
-    /// 大気LUTを焼き直すフレームだけ`Some`。焼き直さないフレームは生成パスを1本も積まない。
-    pub(crate) 大気lut: Option<&'a 大気LUT描画入力>,
+    /// 大気のベイク済み画像を焼き直すフレームだけ`Some`。焼き直さないフレームは生成パスを1本も積まない。
+    pub(crate) 大気のベイク済み画像: Option<&'a 大気のベイク済み画像の描画入力>,
     pub(crate) スキニング: Option<&'a スキニング描画入力>,
     pub(crate) 布: Option<&'a 布描画入力>,
     pub(crate) 空: Option<&'a 空描画入力>,
-    /// 大気LUT腕で合成を切っていないフレームだけ`Some`。合成パスを空パスの前に1本積む。
+    /// 大気のベイク済み画像方式で合成を切っていないフレームだけ`Some`。合成パスを空パスの前に1本積む。
     pub(crate) 空中遠近合成: Option<&'a 空中遠近合成描画入力>,
     pub(crate) 粒子: Option<&'a 粒子描画入力>,
     pub(crate) ブルーム: Option<&'a ブルーム描画入力>,

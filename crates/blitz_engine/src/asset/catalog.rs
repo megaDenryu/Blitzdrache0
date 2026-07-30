@@ -33,12 +33,12 @@ impl カタログ {
         self.登録一覧.insert(id, カタログ項目::生成する(実行時パス, ソース依存一覧, メタデータ));
     }
 
-    /// アセットIDからファイルパスを引く。未登録なら`None`。
-    pub fn パスを引く(&self, id: &アセットID) -> Option<&Path> {
+    /// アセットIDからファイルパスを参照する。未登録なら`None`。
+    pub fn パスを参照する(&self, id: &アセットID) -> Option<&Path> {
         self.登録一覧.get(id).map(カタログ項目::実行時パス)
     }
 
-    pub fn 項目を引く(&self, id: &アセットID) -> Option<&カタログ項目> {
+    pub fn 項目を参照する(&self, id: &アセットID) -> Option<&カタログ項目> {
         self.登録一覧.get(id)
     }
 

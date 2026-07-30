@@ -4,7 +4,7 @@
 
 use super::descriptors::ディスクリプタ四点;
 use crate::error::レンダラーエラー;
-use crate::shader_bundle::大気LUTシェーダー一式;
+use crate::shader_bundle::大気のベイク済み画像のシェーダー一式;
 use crate::vulkan::atmosphere_lut::pipeline::{押し込み定数の枠, 生成パイプライン};
 
 /// スカイビュー生成が押し込む定数のバイト数。`shaders/atmosphere_skyview.slang`の`SkyViewCondition`(float2つ)と一致させる。
@@ -16,7 +16,7 @@ const 空中遠近押し込みバイト数: u32 = 64;
 pub(super) fn 作る(
     device: &ash::Device,
     ディスクリプタ: &ディスクリプタ四点,
-    シェーダー: &大気LUTシェーダー一式,
+    シェーダー: &大気のベイク済み画像のシェーダー一式,
 ) -> Result<[生成パイプライン; 4], レンダラーエラー> {
     let 仕様一覧 = [
         (ディスクリプタ.透過率.layout, 押し込み定数の枠::無し, シェーダー.透過率.コード()),

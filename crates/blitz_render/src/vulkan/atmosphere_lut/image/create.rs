@@ -1,20 +1,20 @@
-//! 大気LUT画像の生成局面。呼ばれるのはレンダラー生成時と検査の組み立て時の1回だけであり、以降のフレームは参照しかしない。
+//! 大気のベイク済み画像の生成局面。呼ばれるのはレンダラー生成時と検査の組み立て時の1回だけであり、以降のフレームは参照しかしない。
 //! 途中で失敗したら、それまでに作ったハンドルをその場で逆順に片付ける。
 
 use ash::vk;
 
-use super::{大気LUT形式, 大気LUT画像};
+use super::{大気のベイク済み画像, 大気のベイク済み画像形式};
 use crate::error::レンダラーエラー;
 use crate::gpu_memory_stats::GPUメモリ用途;
-use crate::vulkan::atmosphere_lut::大気LUTの形;
+use crate::vulkan::atmosphere_lut::大気のベイク済み画像の形;
 use crate::vulkan::memory;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) fn 生成する(
     device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-    形: 大気LUTの形,
-) -> Result<大気LUT画像, レンダラーエラー> {
+    形: 大気のベイク済み画像の形,
+) -> Result<大気のベイク済み画像, レンダラーエラー> {
     let 画像 = 画像を作る(device, 形)?;
     let memory = match メモリを確保して結びつける(device, メモリプロパティ, 画像) {
         Ok(memory) => memory,
@@ -25,7 +25,7 @@ pub(super) fn 生成する(
         }
     };
     match 画像ビューを作る(device, 画像, 形) {
-        Ok(画像ビュー) => Ok(大気LUT画像 {
+        Ok(画像ビュー) => Ok(大気のベイク済み画像 {
             画像,
             画像ビュー,
             形,
@@ -40,10 +40,10 @@ pub(super) fn 生成する(
     }
 }
 
-fn 画像を作る(device: &ash::Device, 形: 大気LUTの形) -> Result<vk::Image, レンダラーエラー> {
+fn 画像を作る(device: &ash::Device, 形: 大気のベイク済み画像の形) -> Result<vk::Image, レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
         .image_type(形.画像種別())
-        .format(大気LUT形式)
+        .format(大気のベイク済み画像形式)
         .extent(形.範囲())
         .mip_levels(1)
         .array_layers(1)
@@ -73,7 +73,9 @@ fn メモリを確保して結びつける(
     Ok(memory)
 }
 
-fn 画像ビューを作る(device: &ash::Device, 画像: vk::Image, 形: 大気LUTの形) -> Result<vk::ImageView, レンダラーエラー> {
+fn 画像ビューを作る(
+    device: &ash::Device, 画像: vk::Image, 形: 大気のベイク済み画像の形
+) -> Result<vk::ImageView, レンダラーエラー> {
     let 部分範囲 = vk::ImageSubresourceRange::default()
         .aspect_mask(vk::ImageAspectFlags::COLOR)
         .base_mip_level(0)
@@ -83,7 +85,7 @@ fn 画像ビューを作る(device: &ash::Device, 画像: vk::Image, 形: 大気
     let create_info = vk::ImageViewCreateInfo::default()
         .image(画像)
         .view_type(形.ビュー種別())
-        .format(大気LUT形式)
+        .format(大気のベイク済み画像形式)
         .subresource_range(部分範囲);
     // 安全性: 画像はbind_image_memory済みで有効。
     Ok(unsafe { device.create_image_view(&create_info, None)? })

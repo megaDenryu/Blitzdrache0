@@ -11,7 +11,7 @@ pub(super) struct 並べ替え {
     pub(super) 旧親添字一覧: Vec<Option<usize>>,
 }
 
-/// 各ノードの親ノードのグローバル添字を引く表(ルートノードは含まれない)。
+/// 各ノードの親ノードのグローバル添字を参照する表(ルートノードは含まれない)。
 pub(super) fn 親ノード添字表を作る(文書: &gltf::Document) -> HashMap<usize, usize> {
     let mut 表 = HashMap::new();
     for ノード in 文書.nodes() {

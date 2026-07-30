@@ -8,7 +8,7 @@ use super::parse::{代表行, 報告};
 use super::thresholds::見出しから許容を選ぶ;
 
 pub fn 表を出す(報告: &報告) {
-    println!("[xtask] 大気LUT統計");
+    println!("[xtask] 大気のベイク済み画像統計");
     for 統計 in &報告.統計一覧 {
         println!(
             "  {:<12} テクセル数{:>6} 非有限{} 負{} 一超え{} 予約が非零{} 最大{:.6}",

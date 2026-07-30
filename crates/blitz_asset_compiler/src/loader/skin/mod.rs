@@ -13,7 +13,7 @@ use crate::error::アセットコンパイルエラー;
 
 use super::document::開いた文書;
 
-/// スキン読込で得られるジョイント添字の対応表。JOINTS_0の引き直し(mesh)と
+/// スキン読込で得られるジョイント添字の対応表。JOINTS_0の参照し直し(mesh)と
 /// アニメーション対象ノードの解決(animation)の両方から参照する。
 pub(super) struct 関節解決 {
     pub(super) 旧添字から新添字: Vec<usize>,

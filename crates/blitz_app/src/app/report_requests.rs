@@ -9,8 +9,8 @@ use crate::cli::起動設定;
 pub(crate) struct 報告要求 {
     /// `--report-gpu-times`。パス別GPU時間の移動平均を出す。
     pub(super) gpu時間: bool,
-    /// `--report-atmosphere-passes`。フレームごとの大気LUT生成パス本数を出す。
-    pub(super) 大気lut生成パス数: bool,
+    /// `--report-atmosphere-passes`。フレームごとの大気のベイク済み画像生成パス本数を出す。
+    pub(super) 大気のベイク済み画像生成パス数: bool,
     /// `--report-memory`。Vulkan専用メモリの確保数と用途別量を出す。
     pub(super) gpuメモリ: bool,
     /// `--report-draw-issue`。最終フレームのパス別描画発行数を出す。
@@ -26,7 +26,7 @@ impl 報告要求 {
     pub(super) fn 起動設定から作る(設定: &起動設定) -> Self {
         Self {
             gpu時間: 設定.gpu時間報告,
-            大気lut生成パス数: 設定.大気lutパス数報告,
+            大気のベイク済み画像生成パス数: 設定.大気のベイク済み画像パス数報告,
             gpuメモリ: 設定.gpuメモリ報告,
             描画発行: 設定.描画発行報告,
             実表示時間: 設定.実表示時間報告,

@@ -17,7 +17,7 @@ use crate::atmosphere::mapping::aerial_mapping::空中遠近ボリュームの�
 use crate::atmosphere::narrowing;
 use crate::atmosphere::table::multiscatter_table::多重散乱表;
 use crate::atmosphere::table::transmittance_table::透過率表;
-use crate::atmosphere::{大気LUT解像度, 大気散乱媒体, 大気数学エラー, 空中遠近ボクセル値};
+use crate::atmosphere::{大気のベイク済み画像の解像度, 大気散乱媒体, 大気数学エラー, 空中遠近ボクセル値};
 
 /// 1つのボリュームを焼くのに要る材料。引数の列が伸び続けるのを避けて1つに束ねる。
 #[derive(Clone, Copy)]
@@ -25,7 +25,7 @@ pub struct 空中遠近ボリュームの材料<'a> {
     pub 媒体: &'a 大気散乱媒体,
     pub 透過率表: &'a 透過率表,
     pub 多重散乱表: &'a 多重散乱表,
-    pub 解像度: 大気LUT解像度,
+    pub 解像度: 大気のベイク済み画像の解像度,
     pub 条件: 空中遠近観測条件,
 }
 
@@ -68,7 +68,7 @@ pub fn 空中遠近ボリュームを焼く(
 }
 
 /// 1区間の長さ。最遠距離を「スライスの間隔の数 × スライスあたりの標本区間数」で割る。
-/// 割る数が0にならないのは、一辺が2以上であることを大気LUT解像度の生成が保証するためである。
+/// 割る数が0にならないのは、一辺が2以上であることを大気のベイク済み画像の解像度の生成が保証するためである。
 fn 区間長を求める(材料: &空中遠近ボリュームの材料<'_>) -> f64 {
     let 間隔の数 = f64::from(材料.解像度.空中遠近の一辺() - 1) * f64::from(スライスあたりの標本区間数);
     f64::from(材料.条件.最遠距離().値()) / 間隔の数

@@ -12,7 +12,7 @@ use crate::atmosphere::geometry::vector3::進む;
 use crate::atmosphere::table::transmittance_table::透過率表;
 use crate::atmosphere::大気散乱媒体;
 
-/// 経路を刻む区間の数。Hillaire 2020実装の多重散乱LUTと同じ20区間を採る。
+/// 経路を刻む区間の数。Hillaire 2020実装の多重散乱のベイク済み画像と同じ20区間を採る。
 pub(in crate::atmosphere) const 標本区間数: u32 = 20;
 /// 区間の代表点を、その区間の始まりから区間長の何倍だけ進んだ位置に置くか。同出典の値である。
 /// 注意: これは区間の中で媒体を評価する位置であって積分幅ではない。消散へ掛ける積分幅は全区間で区間長に等しい。

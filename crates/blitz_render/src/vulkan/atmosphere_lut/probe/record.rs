@@ -8,18 +8,18 @@ mod copy_pass;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::pass;
-use crate::vulkan::atmosphere_lut::{大気LUT描画入力, 大気LUT画像入力, 生成する組};
+use crate::vulkan::atmosphere_lut::{大気のベイク済み画像の描画入力, 大気のベイク済み画像の画像入力, 生成する組};
 use crate::vulkan::graph;
 use crate::vulkan::headless::ヘッドレスGPU環境;
 
 use super::readback_set::受け皿一式;
-use super::大気LUT読み戻し;
+use super::大気のベイク済み画像の読み戻し;
 
 pub(super) fn 焼いて読み戻す(
     環境: &ヘッドレスGPU環境,
-    入力: &大気LUT描画入力,
+    入力: &大気のベイク済み画像の描画入力,
     受け皿: &受け皿一式,
-) -> Result<大気LUT読み戻し, レンダラーエラー> {
+) -> Result<大気のベイク済み画像の読み戻し, レンダラーエラー> {
     let device = 環境.device();
     let 生成する組::全部 {
         透過率: 透過率入力,
@@ -56,7 +56,7 @@ pub(super) fn 焼いて読み戻す(
         コピーを積む(&mut グラフ, "空中遠近読み戻し", 空中遠近, &入力.空中遠近画像, 受け皿.空中遠近().handle);
         graph::実行する(device, command_buffer, グラフ, None);
     })?;
-    Ok(大気LUT読み戻し {
+    Ok(大気のベイク済み画像の読み戻し {
         透過率: 受け皿.透過率().読み取る(device)?,
         多重散乱: 受け皿.多重散乱().読み取る(device)?,
         スカイビュー: 受け皿.スカイビュー().読み取る(device)?,
@@ -68,19 +68,19 @@ fn コピーを積む(
     グラフ: &mut graph::グラフ<'_>,
     名前: &'static str,
     ハンドル: graph::画像ハンドル,
-    画像: &大気LUT画像入力,
+    画像: &大気のベイク済み画像の画像入力,
     受け: ash::vk::Buffer,
 ) {
     グラフ.パスを積む(copy_pass::作る(名前, ハンドル, 画像.形.範囲(), 受け));
 }
 
 /// 検査は4枚すべてを1回の記録で焼くため、どの画像も「焼く画像」として登録する。
-fn 登録する(グラフ: &mut graph::グラフ<'_>, 画像: &大気LUT画像入力) -> graph::画像ハンドル {
+fn 登録する(グラフ: &mut graph::グラフ<'_>, 画像: &大気のベイク済み画像の画像入力) -> graph::画像ハンドル {
     グラフ.画像を登録する(
         画像.画像,
         画像.ビュー,
         graph::画像アスペクト::カラー,
-        graph::大気lutを焼く画像の初期状態(),
+        graph::大気のベイク済み画像を焼く画像の初期状態(),
         画像.形.グラフへ渡す寸法(),
     )
 }

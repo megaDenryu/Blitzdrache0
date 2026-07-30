@@ -6,7 +6,7 @@
 use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::frame_input::フレーム描画入力;
-use crate::vulkan::atmosphere_lut::大気LUT描画入力;
+use crate::vulkan::atmosphere_lut::大気のベイク済み画像の描画入力;
 use crate::vulkan::frame::{
     UI描画入力, スキニング描画入力, 任意描画入力, 布描画入力, 空中遠近合成描画入力, 空描画入力, 粒子描画入力
 };
@@ -15,7 +15,7 @@ use crate::vulkan::relative_anchor::カメラ相対アンカー;
 use crate::vulkan::sync::フレームスロット添字;
 
 pub(super) struct 任意入力の材料 {
-    大気lut: Option<大気LUT描画入力>,
+    大気のベイク済み画像: Option<大気のベイク済み画像の描画入力>,
     ポスト: Option<ポスト描画入力>,
     スキニング: Option<スキニング描画入力>,
     布: Option<布描画入力>,
@@ -34,7 +34,7 @@ impl レンダラー {
         原点アンカー: カメラ相対アンカー,
     ) -> Result<任意入力の材料, レンダラーエラー> {
         Ok(任意入力の材料 {
-            大気lut: self.大気lut描画入力を組み立てる(フレーム添字, 入力),
+            大気のベイク済み画像: self.大気のベイク済み画像の描画入力を組み立てる(フレーム添字, 入力),
             ポスト: self.ポスト処理.as_ref().map(|一式| 一式.描画入力を作る(露出)),
             スキニング: self.スキニング.as_ref().map(|一式| 一式.描画入力を作る(フレーム添字)),
             布: self.布入力を組み立てる(フレーム添字, 布介入件数, 原点アンカー)?,
@@ -48,7 +48,7 @@ impl レンダラー {
 impl 任意入力の材料 {
     pub(super) fn 借用する<'a>(&'a self, ui: Option<&'a UI描画入力>) -> 任意描画入力<'a> {
         任意描画入力 {
-            大気lut: self.大気lut.as_ref(),
+            大気のベイク済み画像: self.大気のベイク済み画像.as_ref(),
             スキニング: self.スキニング.as_ref(),
             布: self.布.as_ref(),
             空: self.空.as_ref(),

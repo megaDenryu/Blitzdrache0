@@ -1,10 +1,10 @@
-//! 大気LUT標本ディスクリプタの生成局面。サンプラー・レイアウト・プール・セットを順に作り、束縛先を書き込む。
-//! 呼ばれるのは空パイプラインを組み立てる直前の1回だけであり、以降のフレームはセットを引くだけである。
+//! 大気のベイク済み画像標本ディスクリプタの生成局面。サンプラー・レイアウト・プール・セットを順に作り、束縛先を書き込む。
+//! 呼ばれるのは空パイプラインを組み立てる直前の1回だけであり、以降のフレームはセットを参照するだけである。
 //! 途中で失敗したら、それまでに作ったハンドルをその場で逆順に片付ける。
 
 use ash::vk;
 
-use super::{binding, 大気LUT標本の束縛先, 大気LUT標本ディスクリプタ};
+use super::{binding, 大気のベイク済み画像標本の束縛先, 大気のベイク済み画像標本ディスクリプタ};
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::descriptor_common;
 use crate::vulkan::linear_sampler;
@@ -12,8 +12,8 @@ use crate::vulkan::sync::フレームスロット添字;
 
 pub(super) fn 生成する(
     device: &ash::Device,
-    束縛先: &大気LUT標本の束縛先,
-) -> Result<大気LUT標本ディスクリプタ, レンダラーエラー> {
+    束縛先: &大気のベイク済み画像標本の束縛先,
+) -> Result<大気のベイク済み画像標本ディスクリプタ, レンダラーエラー> {
     let sampler = linear_sampler::作る(device)?;
     let layout = match binding::レイアウトを作る(device) {
         Ok(layout) => layout,
@@ -36,7 +36,7 @@ pub(super) fn 生成する(
     for 添字 in フレームスロット添字::全スロット() {
         binding::書き込む(device, set一覧[添字.配列添字()], sampler, 束縛先, 添字);
     }
-    Ok(大気LUT標本ディスクリプタ {
+    Ok(大気のベイク済み画像標本ディスクリプタ {
         layout,
         pool,
         sampler,

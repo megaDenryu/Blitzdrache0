@@ -1,7 +1,7 @@
 // 大気媒体のGPU境界表現と、高度から規格化密度・視線に沿った光学距離・大気上端までの透過率を求める式。
 // 注意: この式は`crates/blitz_render/src/atmosphere`の写しである。正本はRust側(density.rs・optical_length.rs・
 // transmittance.rs・intersect.rs)にあり、閉形式との一致・正規化・単調性のユニットテストもRust側が持つ。
-// ここが正本から外れると、LUTの色が静かにずれる。一致はGPU読み戻し検査が代表テクセルで確かめる。
+// ここが正本から外れると、ベイク済み画像の色が静かにずれる。一致はGPU読み戻し検査が代表テクセルで確かめる。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 // 円周率。位相関数と立体角の正規化がこの値を読む。この一式の全シェーダーがこのファイルを取り込むため、
@@ -10,7 +10,7 @@ static const float atmospherePi = 3.14159265358979323846;
 // 3成分(空気分子・浮遊粒子・吸収層)がそれぞれ2層の密度分布を持つ。
 static const uint atmosphereComponentCount = 3;
 static const uint atmosphereLayerCount = 6;
-// 透過率LUTを焼くときに経路を刻む区間の数。Rust側の`transmittance_lut.rs`の標本区間数と同じ値でなければならない。
+// 透過率のベイク済み画像を焼くときに経路を刻む区間の数。Rust側の`transmittance_lut.rs`の標本区間数と同じ値でなければならない。
 static const uint transmittanceStepCount = 40;
 
 struct AtmosphereMedium
