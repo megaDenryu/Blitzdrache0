@@ -19,7 +19,7 @@ pub(crate) use cloth_types::{布シャドウ描画入力, 布描画の外部資�
 pub(crate) use dispatch::{任意描画入力, 同期入力, 描画対象入力, 提示先};
 pub(crate) use images::{フレーム画像一式, ブルーム画像};
 pub(crate) use record::記録の実績;
-pub(crate) use shadow_types::{シャドウ描画入力, 帯別シャドウ入力};
+pub(crate) use shadow_types::{シャドウ描画入力, 距離区分別のシャドウ入力};
 pub(crate) use sky_types::{空中遠近合成描画入力, 空描画入力};
 pub(crate) use types::{
     ジオメトリ入力, スキニング描画入力, トーンマップ描画入力, ブルーム描画入力, 描画方式, 粒子描画入力

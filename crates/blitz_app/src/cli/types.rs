@@ -44,7 +44,7 @@ pub(crate) struct 起動設定 {
     pub(crate) gpuメモリ報告: bool,
     /// `--report-draw-issue`指定でtrue。最終フレームのパス別描画発行数・候補数・可視数・個体数を終了時に出力する。
     pub(crate) 描画発行報告: bool,
-    /// `--report-instance-sections`指定でtrue。群選択の走査時間を測り、レンダラーCPU区間と併せて終了時に出力する。
+    /// `--report-instance-sections`指定でtrue。可視個体の選別の走査時間を測り、レンダラーCPU区間と併せて終了時に出力する。
     /// フレーム時間報告と別の指定にするのは、区間の内訳が要るのは物量計測だけであり、既存の時系列を採る条件へ相乗りさせないためである。
     pub(crate) インスタンス区間報告: bool,
     /// `--no-instance-cull`指定でfalse。既定はtrue。falseは全個体を描くため、可視判定の有無で読み戻し画像を比べる検収が成立する。
@@ -55,8 +55,8 @@ pub(crate) struct 起動設定 {
     pub(crate) 個体詳細段探査刻み: Option<f32>,
     /// `--dev-ui`指定でtrue。既定はfalse(開発用UIの起動時有効化、判断34。実行中はF3でも切替可能)。
     pub(crate) 開発ui初期有効: bool,
-    /// `--debug-cascade-bands`指定でtrue。既定はfalse(シーンの色を「どの帯を参照したか」と「影の中か」の可視化へ差し替える)。
-    pub(crate) カスケード帯可視化: bool,
+    /// `--debug-cascade-bands`指定でtrue。既定はfalse(シーンの色を「どの距離区分を参照したか」と「影の中か」の可視化へ差し替える)。
+    pub(crate) 距離区分の可視化: bool,
     /// `--dump-frame <ベース名>`指定で、最終フレーム(--frames必須)の読み戻し画像を`<ベース名>.raw`(RGBA8連結)と`<ベース名>.size`(幅 高さ)へ書き出す。既定はNone。
     pub(crate) フレームダンプ先: Option<PathBuf>,
     /// `--report-sky-pixel <横,縦;...>`指定で、その画素について空の色をCPU正本で求め直し、読み戻した画素と並べて出す。

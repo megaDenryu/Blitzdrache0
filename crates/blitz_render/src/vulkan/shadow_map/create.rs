@@ -5,10 +5,10 @@ mod image;
 
 use ash::vk;
 
-use self::image::{メモリを確保して結びつける, 帯ビューを作る, 画像を作る, 配列ビューを作る};
+use self::image::{メモリを確保して結びつける, 画像を作る, 距離区分ビューを作る, 配列ビューを作る};
 use super::sampler::比較サンプラーを作る;
 use super::シャドウマップ;
-use crate::cascade::帯数;
+use crate::cascade::距離区分数;
 use crate::error::レンダラーエラー;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -26,10 +26,10 @@ pub(super) fn 生成する(
         }
     };
     match 続きを生成する(device, 画像) {
-        Ok((配列ビュー, 帯ビュー一覧, sampler)) => Ok(シャドウマップ {
+        Ok((配列ビュー, 距離区分別のビュー一覧, sampler)) => Ok(シャドウマップ {
             画像,
             配列ビュー,
-            帯ビュー一覧,
+            距離区分別のビュー一覧,
             sampler,
             memory,
         }),
@@ -46,8 +46,8 @@ pub(super) fn 生成する(
 fn 続きを生成する(
     device: &GPUデバイス,
     画像: vk::Image,
-) -> Result<(vk::ImageView, [vk::ImageView; 帯数], vk::Sampler), レンダラーエラー> {
-    let mut 作成済みビュー: Vec<vk::ImageView> = Vec::with_capacity(帯数 + 1);
+) -> Result<(vk::ImageView, [vk::ImageView; 距離区分数], vk::Sampler), レンダラーエラー> {
+    let mut 作成済みビュー: Vec<vk::ImageView> = Vec::with_capacity(距離区分数 + 1);
     let 結果 = ビュー群とサンプラーを作る(device, 画像, &mut 作成済みビュー);
     if 結果.is_err() {
         for &ビュー in &作成済みビュー {
@@ -62,16 +62,16 @@ fn ビュー群とサンプラーを作る(
     device: &GPUデバイス,
     画像: vk::Image,
     作成済みビュー: &mut Vec<vk::ImageView>,
-) -> Result<(vk::ImageView, [vk::ImageView; 帯数], vk::Sampler), レンダラーエラー> {
+) -> Result<(vk::ImageView, [vk::ImageView; 距離区分数], vk::Sampler), レンダラーエラー> {
     let 配列ビュー = 配列ビューを作る(device, 画像)?;
     作成済みビュー.push(配列ビュー);
-    let mut 帯ビュー一覧 = [vk::ImageView::null(); 帯数];
-    for (添字, 保存先) in 帯ビュー一覧.iter_mut().enumerate() {
-        let 層 = u32::try_from(添字).unwrap_or_else(|_| panic!("帯の添字がu32に収まらない: {添字}"));
-        let ビュー = 帯ビューを作る(device, 画像, 層)?;
+    let mut 距離区分別のビュー一覧 = [vk::ImageView::null(); 距離区分数];
+    for (添字, 保存先) in 距離区分別のビュー一覧.iter_mut().enumerate() {
+        let 層 = u32::try_from(添字).unwrap_or_else(|_| panic!("距離区分の添字がu32に収まらない: {添字}"));
+        let ビュー = 距離区分ビューを作る(device, 画像, 層)?;
         作成済みビュー.push(ビュー);
         *保存先 = ビュー;
     }
     let sampler = 比較サンプラーを作る(device)?;
-    Ok((配列ビュー, 帯ビュー一覧, sampler))
+    Ok((配列ビュー, 距離区分別のビュー一覧, sampler))
 }

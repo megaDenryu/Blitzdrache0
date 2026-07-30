@@ -2,7 +2,7 @@
 //!
 //! これがベイク済み画像の内容の正本であり、`shaders/atmosphere_transmittance.slang`はこの式の写しである。
 //! CPU側に正本を置くのは、写像の逆写像との往復・値域・単調性をユニットテストで検査できるようにするためである
-//! (カスケードシャドウの帯ブレンドで`cascade/blend.rs`が正本、`shaders/cascade_shadow.slang`が写しであるのと同じ関係)。
+//! (カスケードシャドウの距離区分のブレンドで`cascade/blend.rs`が正本、`shaders/cascade_shadow.slang`が写しであるのと同じ関係)。
 
 use crate::atmosphere::mapping::transmittance_mapping::{テクセル中心のuv, 透過率のベイク済み画像の視線を求める};
 use crate::atmosphere::{

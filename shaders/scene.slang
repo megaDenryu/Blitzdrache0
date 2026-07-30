@@ -1,6 +1,6 @@
 // PBR metallic-roughnessモデル(方向光+点光源+環境光+法線マップ)と、方向光のカスケードシャドウマップ(binding4の比較サンプラー、PCF 3x3)の合成(判断23〜26・35)。
 // 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`。シェーダー内識別子はASCII。
-// エントリポイント・FrameUniformはここに置き、PBR関数群は`pbr.slang`、ライティング合成+シャドウ判定は`lighting.slang`、帯選択と境界ブレンドは`cascade_shadow.slang`へ分割してimportする。
+// エントリポイント・FrameUniformはここに置き、PBR関数群は`pbr.slang`、ライティング合成+シャドウ判定は`lighting.slang`、距離区分の選択と境界ブレンドは`cascade_shadow.slang`へ分割してimportする。
 
 import pbr;
 import lighting;
@@ -12,7 +12,7 @@ import visible_id;
 
 struct FrameUniform
 {
-    // column_major明示(CPU側は列優先配列)。帯ごとのライトビュー射影は先頭(shadow.slangと同じ配置、判断36)。
+    // column_major明示(CPU側は列優先配列)。距離区分ごとのライトビュー射影は先頭(shadow.slangと同じ配置、判断36)。
     column_major float4x4 cascadeLightViewProjection[4];
     column_major float4x4 viewProjection;
     float4 cameraRelativePosition;
@@ -21,7 +21,7 @@ struct FrameUniform
     float4 pointLightPosition;
     float4 pointLightColor;
     float4 ambientAndLighting;
-    // 以下3つはxyzだけを使いwは未使用。帯の境界のビュー空間深度・境界の手前の遷移帯の幅・カメラ前方向である。
+    // 以下3つはxyzだけを使いwは未使用。距離区分の境界のビュー空間深度・境界の手前の遷移域の幅・カメラ前方向である。
     float4 cascadeSplitDepths;
     float4 cascadeTransitionWidths;
     float4 cameraForward;
@@ -41,7 +41,7 @@ struct ObjectUniform
 [[vk::binding(0, 0)]] Sampler2D baseColorTexture;
 [[vk::binding(1, 0)]] Sampler2D metallicRoughnessTexture;
 [[vk::binding(2, 0)]] Sampler2D normalMapTexture;
-// binding4: カスケードシャドウマップ(判断35・OW5第5段)。帯ごとの層を持つ2D配列テクスチャ+比較サンプラーを同一bindingへ束ねる。
+// binding4: カスケードシャドウマップ(判断35・OW5第5段)。距離区分ごとの層を持つ2D配列テクスチャ+比較サンプラーを同一bindingへ束ねる。
 [[vk::binding(4, 0)]] [[vk::combinedImageSampler]] Texture2DArray shadowMapTexture;
 [[vk::binding(4, 0)]] [[vk::combinedImageSampler]] SamplerComparisonState shadowMapSampler;
 static const float shadowMapTexelSize = 1.0 / 2048.0;
@@ -83,7 +83,7 @@ float4 fragmentMain(VertexOutput input) : SV_Target
               frameUniform.cascadeSplitDepths.xyz, frameUniform.cascadeTransitionWidths.xyz, shadowMapTexture, shadowMapSampler, shadowMapTexelSize)
         : 1.0;
 
-    // cameraForward.wは帯の可視化指定。1のとき、どの帯を参照したかと影の中かだけを色で出す(継ぎ目検収の補助)。
+    // cameraForward.wは距離区分の可視化指定。1のとき、どの距離区分を参照したかと影の中かだけを色で出す(継ぎ目検収の補助)。
     if (frameUniform.cameraForward.w > 0.5)
     {
         float3 debugColor = cascadeDebugPixel(

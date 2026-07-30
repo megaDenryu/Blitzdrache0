@@ -47,8 +47,8 @@ impl アプリ {
         self.可視判定.登録数()
     }
 
-    /// 最終フレームに群選択が数えた計数。レンダラーの描画発行内訳と出どころが違う2つ目の計器である。
-    pub(crate) fn 群選択計数を取得する(&self) -> blitz_engine::可視判定計数 {
+    /// 最終フレームに可視個体の選別が数えた計数。レンダラーの描画発行内訳と出どころが違う2つ目の計器である。
+    pub(crate) fn 可視個体の選別の計数を取得する(&self) -> blitz_engine::可視判定計数 {
         self.可視判定.直近の計数()
     }
 
@@ -67,9 +67,9 @@ impl アプリ {
         self.フレーム間隔計測.as_ref().and_then(super::frame_timing::フレーム間隔計測::集計する)
     }
 
-    /// `--report-instance-sections`で収集した、群選択の走査がメインスレッドを占めた時間の分布。
-    pub(crate) fn 群選択区間統計を取得する(&self) -> Option<super::frame_timing::フレーム時間統計> {
-        self.群選択計測.as_ref().and_then(super::section_timing::区間計測::集計する)
+    /// `--report-instance-sections`で収集した、可視個体の選別の走査がメインスレッドを占めた時間の分布。
+    pub(crate) fn 可視個体の選別の区間統計を取得する(&self) -> Option<super::frame_timing::フレーム時間統計> {
+        self.可視個体の選別の計測.as_ref().and_then(super::section_timing::区間計測::集計する)
     }
 
     pub(crate) fn レンダラーcpu区間時間を取得する(&self) -> &[CPU区間時間] {

@@ -1,5 +1,5 @@
-// カスケードシャドウの帯選択と境界ブレンド。深度で参照する帯を決め、遷移帯では2つの帯を混ぜる。
-// 注意: この式は`crates/blitz_render/src/cascade/blend.rs`の`帯を選ぶ`の写しである。
+// カスケードシャドウの距離区分の選択と境界ブレンド。深度で参照する距離区分を決め、遷移域では2つの距離区分を混ぜる。
+// 注意: この式は`crates/blitz_render/src/cascade/blend.rs`の`距離区分を選ぶ`の写しである。
 // 単調で和が1になることのユニットテストはRust側が持ち、ここが正本から外れると境界に段差として現れる。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
@@ -14,7 +14,7 @@ struct CascadeBlend
     float primaryWeight;
 };
 
-// splitDepths.xyzが帯の境界、transitionWidths.xyzが境界の手前に置く遷移帯の幅である。
+// splitDepths.xyzが距離区分の境界、transitionWidths.xyzが境界の手前に置く遷移域の幅である。
 CascadeBlend selectCascadeBlend(float viewDepth, float3 splitDepths, float3 transitionWidths)
 {
     CascadeBlend blend;
@@ -44,7 +44,7 @@ CascadeBlend selectCascadeBlend(float viewDepth, float3 splitDepths, float3 tran
     return blend;
 }
 
-// 帯を選び、遷移帯なら2枚のシャドウマップを参照して重みで混ぜる。遷移帯の外では1枚しか参照しない。
+// 距離区分を選び、遷移域なら2枚のシャドウマップを参照して重みで混ぜる。遷移域の外では1枚しか参照しない。
 float computeCascadedShadowFactor(
     float3 relativePosition, float viewDepth,
     float4x4 cascadeLightViewProjection[cascadeCount], float3 splitDepths, float3 transitionWidths,
@@ -64,15 +64,15 @@ float computeCascadedShadowFactor(
     return lerp(secondary, primary, blend.primaryWeight);
 }
 
-// カメラ相対位置からビュー空間深度(カメラ前方向に沿った距離)を求める。帯の分割はこの深度で決まる。
+// カメラ相対位置からビュー空間深度(カメラ前方向に沿った距離)を求める。距離区分の分割はこの深度で決まる。
 float viewDepthOf(float3 relativePosition, float3 cameraRelativePosition, float3 cameraForward)
 {
     return dot(relativePosition - cameraRelativePosition, cameraForward);
 }
 
-// 帯の可視化色。帯ごとに使うチャンネルの組を変え、影の中では同じ色を暗い段へ落とす。
-// 検収はチャンネルの組で帯を、明るさの段で影の内外を読み取る。2段しか作らないのは、
-// 中間の値を作ると読み取り側が帯と影を分けられなくなるためである。
+// 距離区分の可視化色。距離区分ごとに使うチャンネルの組を変え、影の中では同じ色を暗い段へ落とす。
+// 検収はチャンネルの組で距離区分を、明るさの段で影の内外を読み取る。2段しか作らないのは、
+// 中間の値を作ると読み取り側が距離区分と影を分けられなくなるためである。
 float3 cascadeDebugColor(uint cascadeIndex, float shadowFactor)
 {
     float3 bandColor = float3(0.0, 0.0, 0.0);
@@ -83,7 +83,7 @@ float3 cascadeDebugColor(uint cascadeIndex, float shadowFactor)
     return bandColor * (shadowFactor > 0.5 ? 1.0 : 0.25);
 }
 
-// 可視化する1画素の色。帯の選択は本番の色を出す経路と同じ関数を通す。
+// 可視化する1画素の色。距離区分の選択は本番の色を出す経路と同じ関数を通す。
 float3 cascadeDebugPixel(float viewDepth, float3 splitDepths, float3 transitionWidths, float shadowFactor)
 {
     return cascadeDebugColor(selectCascadeBlend(viewDepth, splitDepths, transitionWidths).primaryIndex, shadowFactor);

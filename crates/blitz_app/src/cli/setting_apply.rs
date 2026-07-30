@@ -68,7 +68,7 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--no-instance-cull" => 設定.インスタンス可視判定有効 = false,
         "--no-instance-lod" => 設定.インスタンス段選択有効 = false,
         "--dev-ui" => 設定.開発ui初期有効 = true,
-        "--debug-cascade-bands" => 設定.カスケード帯可視化 = true,
+        "--debug-cascade-bands" => 設定.距離区分の可視化 = true,
         "--sky" => 設定.時間帯.空 = super::空の起動指定::空ありとして扱う,
         "--no-sky" => 設定.時間帯.空 = super::空の起動指定::空を描かない,
         "--no-aerial-composite" => 設定.時間帯.空中遠近合成 = super::空中遠近合成指定::合成しない,

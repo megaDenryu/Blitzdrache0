@@ -29,7 +29,7 @@ impl アプリ {
 
     /// `--report-instance-sections`が指定されたか。
     pub(crate) fn インスタンス区間報告が必要か(&self) -> bool {
-        self.群選択計測.is_some()
+        self.可視個体の選別の計測.is_some()
     }
 
     /// `--report-display-timing`が指定されたか。
