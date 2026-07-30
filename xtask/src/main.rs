@@ -11,6 +11,7 @@ mod cloth_night;
 mod cloth_shadow_order;
 mod compile_assets;
 mod conform;
+mod count_consistency;
 mod csm_seam;
 mod fetch_assets;
 mod file_scan;
