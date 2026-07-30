@@ -4,7 +4,7 @@
 use ash::vk;
 
 use super::空段階資源;
-use crate::vulkan::frame::{空中遠近合成描画入力, 空描画の方式, 空描画入力};
+use crate::vulkan::frame::{空中遠近合成描画入力, 空描画入力};
 use crate::vulkan::sync::フレームスロット添字;
 
 impl 空段階資源 {
@@ -12,22 +12,11 @@ impl 空段階資源 {
     pub(crate) fn 描画入力を作る(
         &self, ディスクリプタセット: vk::DescriptorSet, フレーム添字: フレームスロット添字
     ) -> 空描画入力 {
-        let (パイプライン, 方式) = match self {
-            Self::Hosek解析近似 { パイプライン } => (パイプライン, 空描画の方式::Hosek解析近似),
-            Self::大気LUT {
-                パイプライン, 標本, ..
-            } => (
-                パイプライン,
-                空描画の方式::大気LUT {
-                    標本セット: 標本.set(フレーム添字),
-                },
-            ),
-        };
         空描画入力 {
-            pipeline: パイプライン.handle,
-            layout: パイプライン.layout,
+            pipeline: self.パイプライン.handle,
+            layout: self.パイプライン.layout,
             ディスクリプタセット,
-            方式,
+            標本セット: self.標本.set(フレーム添字),
         }
     }
 

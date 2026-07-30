@@ -5,21 +5,22 @@
 //! 空パスが深度アタッチメントとして束縛するためである。順が逆だと合成の深度読みが空の深度出力を待つ形になり、
 //! 同じ深度画像を読みと書きで往復させる並びになる。
 //!
-//! 読み画像が方式で変わるのは、大気LUT腕だけが大気LUTを引くためである。用途に`大気LUTフラグメント読み`を使うのは、
-//! 大気LUTが休むレイアウトをGENERALに保つ不変条件があるためであり、通常の`シェーダー読みフラグメント`を
-//! 使ってはならない(参照: `graph/initial_state/atmosphere_lut.rs`)。
+//! 読み画像の用途に`大気LUTフラグメント読み`を使うのは、大気LUTが休むレイアウトをGENERALに保つ不変条件が
+//! あるためであり、通常の`シェーダー読みフラグメント`を使ってはならない
+//! (参照: `graph/initial_state/atmosphere_lut.rs`)。
 
 use ash::vk;
 
 use super::super::base_images::基本画像ハンドル;
 use super::atmosphere_lut_stage::{大気LUT読みハンドル, 空段階の読み先};
 use crate::vulkan::frame::record::{aerial_composite_pass, sky_pass};
-use crate::vulkan::frame::{空中遠近合成描画入力, 空描画の方式, 空描画入力};
+use crate::vulkan::frame::{空中遠近合成描画入力, 空描画入力};
 use crate::vulkan::graph;
 
-/// 空パスが大気LUTを引くか。引くフレームは、そのフレームで焼かなくてもLUT画像をグラフへ登録する必要がある。
+/// 空パスが大気LUTを引くか。空パスを積むフレームは必ず引くため、そのフレームで焼かなくてもLUT画像を
+/// グラフへ登録する必要がある。
 pub(in crate::vulkan::frame::record::graph_build) fn 空パスがlutを引くか(入力: Option<&空描画入力>) -> bool {
-    入力.is_some_and(|入力| matches!(入力.方式, 空描画の方式::大気LUT { .. }))
+    入力.is_some()
 }
 
 pub(in crate::vulkan::frame::record::graph_build) fn 空を積む<'a>(
@@ -36,26 +37,19 @@ pub(in crate::vulkan::frame::record::graph_build) fn 空を積む<'a>(
         グラフ.パスを積む(aerial_composite_pass::作る(カラー, 基本.深度, 空中遠近, 合成入力, 寸法));
     }
     if let Some(入力) = 入力 {
-        let 読み画像 = 読み画像を決める(入力, 読み先.空パスの二枚);
+        let 読み画像 = 読み画像を決める(読み先.空パスの二枚);
         グラフ.パスを積む(sky_pass::作る(カラー, 基本.深度, 読み画像, 入力, 寸法));
     }
 }
 
-/// 大気LUT腕は2枚のLUTを読み、Hosek腕は1枚も読まない。
+/// 空パスが読む2枚のLUT。
 ///
-/// 大気LUT腕でハンドルが無いのは、空段階があるのに大気LUT資源が無いという到達しない状態である
+/// ハンドルが無いのは、空段階があるのに大気LUT資源が無いという到達しない状態である
 /// (どちらもフレーム構成の空段階の有無だけで決まり、レンダラーの入力検査が食い違いを先に落とす)。
-fn 読み画像を決める(
-    入力: &空描画入力, 読みハンドル: Option<大気LUT読みハンドル>
-) -> Vec<(graph::画像ハンドル, graph::画像用途)> {
-    match 入力.方式 {
-        空描画の方式::Hosek解析近似 => Vec::new(),
-        空描画の方式::大気LUT { .. } => {
-            let ハンドル = 読みハンドル.unwrap_or_else(|| panic!("大気LUT腕の空パスがあるのに大気LUT画像がグラフへ登録されていない"));
-            vec![
-                (ハンドル.透過率, graph::画像用途::大気LUTフラグメント読み),
-                (ハンドル.スカイビュー, graph::画像用途::大気LUTフラグメント読み),
-            ]
-        }
-    }
+fn 読み画像を決める(読みハンドル: Option<大気LUT読みハンドル>) -> Vec<(graph::画像ハンドル, graph::画像用途)> {
+    let ハンドル = 読みハンドル.unwrap_or_else(|| panic!("空パスがあるのに大気LUT画像がグラフへ登録されていない"));
+    vec![
+        (ハンドル.透過率, graph::画像用途::大気LUTフラグメント読み),
+        (ハンドル.スカイビュー, graph::画像用途::大気LUTフラグメント読み),
+    ]
 }

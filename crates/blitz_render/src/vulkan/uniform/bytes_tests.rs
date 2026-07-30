@@ -1,7 +1,7 @@
 //! フレームユニフォームの各値がシェーダー側のオフセットと一致することの検査。
 //! 対応するシェーダー側の宣言は`shaders/scene.slang`の`FrameUniform`であり、
 //! 同じUBOを読む`shaders/shadow.slang`・`shaders/cloth_shadow.slang`・`shaders/cloth_draw.slang`・
-//! `shaders/sky.slang`・`shaders/particle.slang`も先頭からこの並びを共有する。
+//! `shaders/sky_frame.slang`・`shaders/particle.slang`も先頭からこの並びを共有する。
 //! ここが崩れると値化けとして絵に出るため、オフセットを数値で固定する。
 
 use super::bytes;
@@ -39,7 +39,7 @@ fn 内容を作る() -> フレームユニフォーム内容 {
 #[test]
 fn 共通区画の各値がシェーダーと同じオフセットへ並ぶ() {
     let バイト列 = bytes::バイト列にする(&内容を作る());
-    assert_eq!(バイト列.len(), 464 + 272);
+    assert_eq!(バイト列.len(), 464 + 112);
     for 添字 in 0..crate::cascade::帯数 {
         assert_eq!(f32を読む(&バイト列, 添字 * 64), f32::from(u8::try_from(添字 + 1).unwrap_or(1)));
     }
@@ -64,9 +64,9 @@ fn 共通区画の各値がシェーダーと同じオフセットへ並ぶ() {
 #[test]
 fn 空の区画が共通区画の直後から始まる() {
     let mut 内容 = 内容を作る();
-    内容.空.放射輝度スケール = [111.0, 112.0, 113.0];
+    内容.空.夜空放射輝度 = [111.0, 112.0, 113.0];
     let バイト列 = bytes::バイト列にする(&内容);
-    assert_eq!(f32を読む(&バイト列, 464 + 64 + 9 * 16), 111.0);
+    assert_eq!(f32を読む(&バイト列, 464 + 64), 111.0);
 }
 
 fn f32を読む(バイト列: &[u8], 位置: usize) -> f32 {

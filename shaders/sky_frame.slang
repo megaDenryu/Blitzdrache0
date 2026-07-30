@@ -1,5 +1,5 @@
-// 空パスが読むフレームユニフォームの並びと、全画面三角形の頂点段。放射輝度の評価だけが方式ごとに違うため、
-// 入力の並びと視線の復元はこの1つのモジュールが持ち、Hosek腕(sky.slang)と大気LUT腕(sky_atmosphere.slang)が取り込む。
+// 空パスが読むフレームユニフォームの並びと、全画面三角形の頂点段。放射輝度の評価(sky_atmosphere.slang)と
+// 空中遠近の合成(aerial_composite.slang)がこの1つのモジュールを取り込み、入力の並びと視線の復元を共有する。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 // 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「空パスの配置」
 
@@ -20,11 +20,7 @@ struct SkyFrameUniform
     float4 cascadeTransitionWidths;
     float4 cameraForward;
     column_major float4x4 inverseViewProjection;
-    // rgbが係数A〜I、wは未使用。大気LUT腕は読まない。
-    float4 skyCoefficients[9];
-    // rgbが放射輝度スケール、wが昼係数。大気LUT腕は読まない。
-    float4 skyRadianceScaleAndDaylight;
-    // rgbが夜空の放射輝度、wが太陽円盤の角半径の余弦。
+    // rgbが夜間の背景放射輝度、wが太陽円盤の角半径の余弦。
     float4 nightSkyRadianceAndSunCos;
     // xyzが地表から太陽へ向かう単位ベクトル(Xが東・Yが天頂・Zが南)、wがスカイビューLUTを焼いた観測高度(メートル)。
     float4 sunDirectionAndObserverAltitude;

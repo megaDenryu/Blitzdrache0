@@ -21,9 +21,6 @@ pub(crate) fn 使い方を表示する() {
     );
     println!("  fetch-assets     標準サンプル(DamagedHelmet・Fox)をassets/samples/へ取得する(curl.exe使用)");
     println!(
-        "  gen-sky-dataset <ArHosekSkyModelData_RGB.hのパス>  Hosek-Wilkie解析近似の係数データセットを公開ヘッダからリトルエンディアンf32列へ焼く(出典と書庫のSHA-256はgen_sky_dataset.rsの冒頭)"
-    );
-    println!(
         "  gen-atmosphere-reference <precomputed_atmospheric_scatteringの作業コピー>  Bruneton 2017実装のCPU参照から大気の物理量の期待値を焼く(出典・手順・要るツールはgen_atmosphere_reference.rsの冒頭。Windows専用)"
     );
     println!("  bench            リリース版の固定シーンを600フレーム実行し、GPU時間とCPU側フレーム間隔分布を表示する");
@@ -73,7 +70,7 @@ pub(crate) fn 使い方を表示する() {
         "  atmosphere-lut   透過率LUTと多重散乱LUTをvalidation層を有効にしたウィンドウ無しのGPUで焼いて読み戻し、validationの指摘0件・代表テクセルのCPU正本との一致・全要素の有限性と非負・透過率の値域・同入力2回の完全一致を判定する"
     );
     println!(
-        "  sky-lut [--time-of-day <秒>]  地形世界を大気LUT腕(--sky-lut)で時計停止・時計進行・合成なしの3条件で描き、大気LUT生成パスの本数が初回4本・停止後0本・進行中スカイビューと空中遠近の2本であること、6つのGPU計器区間が別々に立ち毎フレーム走る4区間の合計が空1.0msの定常予算に収まること、合成を切ると空中遠近の2区間が1つも立たず絵が合成ありと変わること、validation0件を判定して絵をPNGへ書き出す"
+        "  sky-lut [--time-of-day <秒>]  地形世界を時計停止・時計進行・合成なしの3条件で描き、大気LUT生成パスの本数が初回4本・停止後0本・進行中スカイビューと空中遠近の2本であること、6つのGPU計器区間が別々に立ち毎フレーム走る4区間の合計が空1.0msの定常予算に収まること、合成を切ると空中遠近の2区間が1つも立たず絵が合成ありと変わること、validation0件を判定して絵をPNGへ書き出す"
     );
     println!("  ow3-dod          原点移動・LOD継ぎ目・半径2ストリーミングを本番経路でまとめて測り、複数LOD画像をPNGへ書き出す");
     println!(

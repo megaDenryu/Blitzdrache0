@@ -35,7 +35,7 @@ use winit::window::Window;
 pub(crate) use frame_timing::{フレーム時間統計, 集計する};
 pub(crate) use streaming::ストリーミング要約;
 
-use crate::cli::{布モード, 描画対象の並べ方, 空の描画指定, 粒子表示モード, 起動モード};
+use crate::cli::{布モード, 描画対象の並べ方, 空中遠近合成指定, 粒子表示モード, 起動モード};
 use crate::dev_ui::開発UI;
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
@@ -62,7 +62,7 @@ pub(crate) struct アプリ {
     天空: time_of_day::天空配線,
     フレーム構成: blitz_render::フレーム構成,
     /// 空の放射輝度の評価方式。空パスのシェーダーの選択がこの値で決まり、実行中は変わらない。
-    空の描画: 空の描画指定,
+    空中遠近合成: 空中遠近合成指定,
     粒子表示: 粒子表示モード,
     /// 終了時に出す報告の要求。起動指定から写した真偽値だけを持つ。
     報告要求: report_requests::報告要求,

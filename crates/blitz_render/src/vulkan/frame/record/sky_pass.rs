@@ -3,13 +3,13 @@
 //! パイプライン側の深度比較(EQUAL)が画素の限定を担い、このパスは宣言と発行だけを持つ
 //! (参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「空パスの配置」)。
 //!
-//! 読み画像は方式で変わる。大気LUT腕はスカイビューLUTと透過率LUTをフラグメント段で引くため、呼び出し元が
-//! その2枚のハンドルと用途を渡す。Hosek腕は1枚も読まない。
+//! 読み画像はスカイビューLUTと透過率LUTの2枚である。どちらもフラグメント段で引くため、呼び出し元が
+//! その2枚のハンドルと用途を渡す。
 
 use ash::vk;
 
 use crate::vulkan::frame::draw_commands::u32を丸めずf32へ変換する;
-use crate::vulkan::frame::{空描画の方式, 空描画入力};
+use crate::vulkan::frame::空描画入力;
 use crate::vulkan::graph::{クリア指定, パス宣言, パス種別, 深度アタッチメント, 画像ハンドル, 画像用途};
 
 pub(super) fn 作る<'a>(
@@ -58,20 +58,11 @@ pub(super) fn 作る<'a>(
     )
 }
 
-/// 方式ごとにセットの本数が違うため、腕ごとに配列の長さを変えて束縛する。
-/// Hosek腕のパイプラインレイアウトはset0しか持たないため、常に2本束縛してはならない。
+/// set0にシーンのセット、set1にLUTの標本セットを束縛する。空パイプラインのレイアウトは常にこの2本を持つ。
 fn セットを束縛する(device: &ash::Device, command_buffer: vk::CommandBuffer, 入力: &空描画入力) {
-    match 入力.方式 {
-        空描画の方式::Hosek解析近似 => 束縛を発行する(device, command_buffer, 入力.layout, &[入力.ディスクリプタセット]),
-        空描画の方式::大気LUT { 標本セット } => {
-            束縛を発行する(device, command_buffer, 入力.layout, &[入力.ディスクリプタセット, 標本セット]);
-        }
-    }
-}
-
-fn 束縛を発行する(device: &ash::Device, command_buffer: vk::CommandBuffer, layout: vk::PipelineLayout, セット一覧: &[vk::DescriptorSet]) {
+    let セット一覧 = [入力.ディスクリプタセット, 入力.標本セット];
     // 安全性: command_bufferは記録中で、layoutとセットは互換の組として生成済みである。
     unsafe {
-        device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::GRAPHICS, layout, 0, セット一覧, &[]);
+        device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.layout, 0, &セット一覧, &[]);
     }
 }

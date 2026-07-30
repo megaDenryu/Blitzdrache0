@@ -7,7 +7,7 @@ use blitz_render::{
     コンピュートシェーダー, シェーダー一式, シェーダー束, 大気LUTシェーダー一式, 粒子シェーダー一式
 };
 
-use crate::cli::{空の描画指定, 粒子表示モード};
+use crate::cli::{空中遠近合成指定, 粒子表示モード};
 use crate::error::起動エラー;
 
 const 頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/vertex.spv"));
@@ -59,7 +59,7 @@ pub(crate) fn 埋め込み大気lutシェーダーを生成する() -> Result<�
 /// 粒子系シェーダーは粒子トイまたは表面流の指定時だけ含める。空パスは起動指定の方式で腕を選ぶ。
 pub(crate) fn 埋め込みシェーダー束を生成する(
     表示: 粒子表示モード,
-    空の描画: 空の描画指定,
+    空中遠近合成: 空中遠近合成指定,
 ) -> Result<シェーダー束, 起動エラー> {
     let 粒子 = match 表示 {
         粒子表示モード::なし => None,
@@ -80,7 +80,7 @@ pub(crate) fn 埋め込みシェーダー束を生成する(
     Ok(シェーダー束 {
         シーン: シェーダー一式::生成する(頂点SPIRV.to_vec(), フラグメントSPIRV.to_vec())?,
         シャドウ: シェーダー一式::生成する(シャドウ頂点SPIRV.to_vec(), シャドウフラグメントSPIRV.to_vec())?,
-        空: crate::embedded_sky_shaders::埋め込み空シェーダーを生成する(空の描画)?,
+        空: crate::embedded_sky_shaders::埋め込み空シェーダーを生成する(空中遠近合成)?,
         大気lut: 埋め込み大気lutシェーダーを生成する()?,
         トーンマップ: シェーダー一式::生成する(トーンマップ頂点SPIRV.to_vec(), トーンマップフラグメントSPIRV.to_vec())?,
         ブルーム前処理: シェーダー一式::生成する(ブルーム縮小側頂点SPIRV.to_vec(), ブルーム前処理SPIRV.to_vec())?,

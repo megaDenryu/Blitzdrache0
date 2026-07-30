@@ -1,7 +1,6 @@
-//! 空パスと空中遠近合成パスのエントリをSPIR-Vへコンパイルする。頂点は方式でも段でも変わらないため
-//! `sky_frame.slang`から1本だけ焼き、フラグメントは方式ごとに`sky.slang`(Hosek腕)と`sky_atmosphere.slang`
-//! (大気LUT腕)から、合成は`aerial_composite.slang`から焼く。
-//! 段の有無と方式は実行時に決まるため、4本とも常時ビルドする(トーンマップと同じ扱い)。
+//! 空パスと空中遠近合成パスのエントリをSPIR-Vへコンパイルする。頂点は段で変わらないため`sky_frame.slang`から
+//! 1本だけ焼き、放射輝度のフラグメントは`sky_atmosphere.slang`から、合成は`aerial_composite.slang`から焼く。
+//! 段の有無は実行時に決まるため、3本とも常時ビルドする(トーンマップと同じ扱い)。
 
 use std::path::Path;
 
@@ -14,13 +13,7 @@ const 共通頂点エントリ: [エントリ指定; 1] = [エントリ指定 {
     出力ファイル名: "sky_vertex.spv",
 }];
 
-const 解析近似フラグメントエントリ: [エントリ指定; 1] = [エントリ指定 {
-    エントリ名: "fragmentMain",
-    ステージ: "fragment",
-    出力ファイル名: "sky_fragment.spv",
-}];
-
-const 大気LUTフラグメントエントリ: [エントリ指定; 1] = [エントリ指定 {
+const 放射輝度フラグメントエントリ: [エントリ指定; 1] = [エントリ指定 {
     エントリ名: "fragmentMain",
     ステージ: "fragment",
     出力ファイル名: "sky_atmosphere_fragment.spv",
@@ -45,15 +38,9 @@ pub(super) fn 全部をコンパイルする(
     )?;
     エントリ一覧をコンパイルする(
         slangc,
-        &シェーダーディレクトリ.join("sky.slang"),
-        出力先ディレクトリ,
-        &解析近似フラグメントエントリ,
-    )?;
-    エントリ一覧をコンパイルする(
-        slangc,
         &シェーダーディレクトリ.join("sky_atmosphere.slang"),
         出力先ディレクトリ,
-        &大気LUTフラグメントエントリ,
+        &放射輝度フラグメントエントリ,
     )?;
     エントリ一覧をコンパイルする(
         slangc,

@@ -6,7 +6,7 @@ use crate::atmosphere_lut_input::大気LUT入力;
 use crate::clear_color::クリアカラー;
 mod sky_input;
 
-pub use sky_input::{空の方向係数の個数, 空入力, 空入力の材料, 空入力エラー};
+pub use sky_input::{空入力, 空入力の材料, 空入力エラー};
 
 use crate::lighting_input::ライティング入力;
 use crate::terrain_detail::地形詳細段選択;
