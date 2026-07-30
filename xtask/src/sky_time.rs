@@ -21,6 +21,7 @@ mod region;
 mod report;
 mod run;
 mod stats;
+mod sun_disk_diff;
 
 use std::path::PathBuf;
 use std::process::ExitCode;

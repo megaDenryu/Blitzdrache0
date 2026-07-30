@@ -15,6 +15,7 @@ mod scene_policy;
 #[cfg(test)]
 mod scene_policy_tests;
 mod sky_input;
+mod sun_disk_override;
 mod wiring;
 
 pub(crate) use reproduction_condition::空の再現条件;
