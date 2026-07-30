@@ -425,7 +425,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <div class="box now">
 <span class="label">現状の要約</span>
-<p>フレーム工程列: <a class="term" href="#term-csm">CSM</a>4帯シャドウ + 布専用シャドウ → <a class="term" href="#term-forward-deferred">forward</a>(前方)シーン描画(<a class="term" href="#term-pbr">PBR</a>・<a class="term" href="#term-xpbd">XPBD布</a>込み) → 空(<a class="term" href="#term-analytic-sky">Hosek-Wilkie</a>、時刻駆動) → ブルーム → ACESトーンマップ → 開発UI。レンダーグラフがバリアを自動導出し、GPU計器が帯別・パス別の実測を出す。詳細の正本は <code>_doc/設計/性能アーキテクチャ方針.md</code> と各設計文書。</p>
+<p>フレーム工程列: <a class="term" href="#term-csm">CSM</a>4帯シャドウ + 布専用シャドウ → <a class="term" href="#term-forward-deferred">forward</a>(前方)シーン描画(<a class="term" href="#term-pbr">PBR</a>・<a class="term" href="#term-xpbd">XPBD布</a>込み) → 空(<a class="term" href="#term-lut">大気のベイク済み画像</a>、時刻駆動) → ブルーム → ACESトーンマップ → 開発UI。レンダーグラフがバリアを自動導出し、GPU計器が帯別・パス別の実測を出す。詳細の正本は <code>_doc/設計/性能アーキテクチャ方針.md</code> と各設計文書。</p>
 </div>
 
 <!-- ============================================================ -->
@@ -543,7 +543,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <div class="box now">
 <span class="label">このエンジンの現状</span>
-<p>間接光は<strong>環境光係数1つ(定数環境光)</strong>のみ。IBL・AO・SSR・GIはいずれも未実装。空(<a class="term" href="#term-analytic-sky">Hosek-Wilkie</a>解析式、時刻駆動)はOW5で入ったが「本番はHillaire系<a class="term" href="#term-lut">ベイク済み画像</a>+Bruneton系参照検証」への置換が決定済みで、現実装は<a class="term" href="#term-vertical-slice">縦切り</a>の暫定と位置づけられている(正本: <code>_doc/設計/空と時間帯と遠距離シャドウ.md</code>)。つまり<strong>光の輸送の観点では、このエンジンはまだ出発点に立ったところであり、ここが野心と現状の最大のギャップである。</strong></p>
+<p>間接光は<strong>環境光係数1つ(定数環境光)</strong>のみ。IBL・AO・SSR・GIはいずれも未実装。空はOW5第7段(2026-07-30)でHillaire系<a class="term" href="#term-lut">ベイク済み画像</a>+Bruneton系参照検証を本番方式として確定し、<a class="term" href="#term-vertical-slice">縦切り</a>だったHosek-Wilkie解析式は資産ごと削除した(正本: <code>_doc/設計/空と時間帯と遠距離シャドウ.md</code>)。つまり<strong>光の輸送の観点では、大気散乱は本番方式に達したがIBL・AO・SSR・GIは未着手であり、ここが野心と現状の最大のギャップである。</strong></p>
 </div>
 
 <div class="box goal">
@@ -792,7 +792,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <table>
 <tr><th>能力</th><th>現状</th><th>方式候補</th><th>画質指標</th><th>費用の性質</th><th>波及</th><th>採用・再判定条件</th></tr>
 <tr>
-<td>大気・空</td><td><a class="term" href="#term-analytic-sky">Hosek-Wilkie</a>解析式(暫定<a class="term" href="#term-vertical-slice">縦切り</a>)<span class="pill partial">暫定</span></td><td>Hillaire系<a class="term" href="#term-lut">ベイク済み画像</a>(本番)+Bruneton系(参照検証)</td><td>参照解との輝度差・時刻遷移の連続性(sky-time拡張)</td><td>GPU: ベイク済み画像更新+空<a class="term" href="#term-pass">パス</a>。予算: 空1.0ms(制定済み)</td><td>空パス内部に閉じる(決定済み)</td><td>決定済み(OW5第7段)</td>
+<td>大気・空</td><td>Hillaire系<a class="term" href="#term-lut">ベイク済み画像</a>(本番)+Bruneton系(参照検証)<span class="pill done">完了</span></td><td>色付き透過率への拡張(空中遠近の代表透過率が参照検証で許容外になった場合)</td><td>参照解との輝度差・時刻遷移の連続性(sky-time拡張)</td><td>GPU: ベイク済み画像更新+空<a class="term" href="#term-pass">パス</a>。実測0.08ms(空1.0ms予算の8.3%、定常合計)</td><td>空パス内部に閉じる(決定済み)</td><td>完了(OW5第7段7e、2026-07-30)</td>
 </tr>
 <tr>
 <td>体積雲・霧</td><td>なし<span class="pill none">未着手</span></td><td><a class="term" href="#term-ray-march">レイマーチ</a>雲+<a class="term" href="#term-froxel">froxel</a>霧</td><td>光の透過・時刻連動・時間安定</td><td>GPU大。時間再構成前提</td><td><a class="term" href="#term-render-graph">レンダーグラフ</a>へ<a class="term" href="#term-shader">計算パス</a>追加</td><td>大気のベイク済み画像成立後に審査</td>
@@ -1036,7 +1036,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr id="term-rendering-equation"><td>レンダリング方程式<span class="etym">rendering equation(render = 描画する。原義は「差し出す・表現する」)</span><span class="mean">意訳: 絵作りの大元の1本の式。「出る光=自ら光る分+入ってくる光×跳ね返し」。丁寧な導出は第10.3節</span></td><td>「表面の明るさ=直接光+跳ね返って届く光の合計」を1行にした式。グラフィックスの全技術はこの式の近似解法である。</td></tr>
 <tr id="term-environment-map"><td>環境マップ<span class="etym">environment map = 直訳「環境の地図」</span><span class="mean">意訳: 周囲の風景の全方位写真。箱(キューブマップ)や球に貼って使う</span></td><td>周囲の風景を1枚の画像(立方体または球)へ収めたもの。IBLではこれを光源として使う。</td></tr>
 <tr id="term-lut"><td>ベイク済み画像<span class="etym">元来はLUT(Look-Up Table) = 直訳「引くための表」</span><span class="mean">意訳: 計算の作り置き表。毎回計算せず、前もって解いた答えの表を参照するだけにする</span></td><td>計算結果をあらかじめ表へ焼いておき、実行時は表を参照するだけにする手法。大気散乱の計算はベイク済み画像化が現代の標準である。</td></tr>
-<tr id="term-analytic-sky"><td>Hosek-Wilkie解析式</td><td>空の放射輝度を少数の係数の式で近似する解析モデル。安価だが物理的な自由度が低い。本エンジンの現在の空はこれであり、Hillaire系ベイク済み画像への置換が決定済みである。</td></tr>
+<tr id="term-analytic-sky"><td>Hosek-Wilkie解析式</td><td>空の放射輝度を少数の係数の式で近似する解析モデル。安価だが物理的な自由度が低い。本エンジンではOW5第7段(2026-07-30)までの縦切りの暫定としてこれを使い、Hillaire系ベイク済み画像への置換完了時に資産ごと削除した。</td></tr>
 <tr id="term-sky-state"><td>天空状態</td><td>時刻から決定的に導出される、太陽方向・方向光の色と強度・環境光・露出補正段・空の係数・影の有効性の束。エンジン側の純関数が返し、レンダラーは導出済みの状態だけを受け取る。</td></tr>
 <tr id="term-froxel"><td>froxel<span class="etym">frustum(視錐台)+voxel(立体画素)の合成語</span><span class="mean">意訳: 視界のさいの目切り。カメラの視界を奥行き方向にも輪切りにした小箱1つ1つ</span></td><td>視錐台をセルへ分割して霧と光を計算する体積表現。</td></tr>
 <tr id="term-ray-march"><td>レイマーチ<span class="etym">ray marching = 直訳「光線の行進」</span><span class="mean">意訳: 光線の一歩ずつ進み。霧の中を少しずつ歩きながら「ここの濃さは? 届く光は?」を足し込んでいく計算</span></td><td>光線に沿って一定の刻みで進みながら、濃さと届く光を積算する計算。体積雲・体積霧に使う。</td></tr>
