@@ -28,16 +28,25 @@ mod table;
 #[cfg(test)]
 mod atmosphere_tests;
 
+pub use bake::aerial_condition::空中遠近観測条件;
+pub use bake::aerial_lut::{
+    空中遠近ボリュームのボクセル値, 空中遠近ボリュームの材料, 空中遠近ボリュームを焼く
+};
 pub use bake::multiscatter_lut::{多重散乱lutのテクセル値, 多重散乱lutを焼く};
 pub use bake::skyview_condition::スカイビュー観測条件;
 pub use bake::skyview_lut::{スカイビューlutのテクセル値, スカイビューlutを焼く};
 pub use bake::transmittance_lut::{透過率lutのテクセル値, 透過率lutを焼く};
 pub use error::大気数学エラー;
+pub use geometry::frustum_rays::視錐台の向き;
 pub use geometry::intersect::{地平線の天頂余弦, 大気上端までの距離, 惑星までの距離, 視線が惑星と交差するか};
 pub use integration::optical_length::上端までの光学距離;
 pub use integration::phase::{ミー位相関数, レイリー位相関数};
 pub use integration::sun_visibility;
 pub use integration::transmittance::上端までの透過率;
+pub use mapping::aerial_mapping::{
+    空中遠近ボリュームの奥行き位置を求める, 空中遠近ボリュームの奥行き添字の位置, 空中遠近ボリュームの画面位置を求める,
+    空中遠近ボリュームの距離を求める,
+};
 pub use mapping::lut_resolution::大気LUT解像度;
 pub use mapping::multiscatter_mapping::{多重散乱lutの単位位置を求める, 多重散乱lutの条件, 多重散乱lutの条件を求める};
 pub use mapping::skyview_lookup::ワールドの視線からスカイビューlutの視線を求める;
@@ -54,6 +63,7 @@ pub use medium::density_profile::密度分布;
 pub use medium::extinction_medium::消散媒体;
 pub use medium::observation_point::大気内観測点;
 pub use medium::scattering_medium::大気散乱媒体;
+pub use quantity::aerial_voxel::空中遠近ボクセル値;
 pub use quantity::albedo_rgb::地表アルベドRGB;
 pub use quantity::asymmetry::位相非対称係数;
 pub use quantity::attenuating_component::減衰成分;
@@ -66,6 +76,7 @@ pub use quantity::sample_count::積分標本数;
 pub use quantity::scattering_cosine::散乱角余弦;
 pub use quantity::skyview_rgb::スカイビュー放射輝度RGB;
 pub use quantity::transmittance_rgb::透過率RGB;
+pub use quantity::unit_direction::単位方向;
 pub use quantity::zenith_cosine::天頂余弦;
 pub use table::multiscatter_table::多重散乱表;
 pub use table::transmittance_table::透過率表;

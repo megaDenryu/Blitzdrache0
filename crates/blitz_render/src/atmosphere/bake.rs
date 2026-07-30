@@ -5,6 +5,8 @@
 //! 走査の順序を積分の中へ埋め込まずここへ集めるのは、期待値の並びという1つの契約を1箇所に置くためである。
 //! 1枚を焼くのに要る大気以外の条件(観測高度と太陽の向き)もこのモジュールが型として持つ。
 
+pub(in crate::atmosphere) mod aerial_condition;
+pub(in crate::atmosphere) mod aerial_lut;
 pub(in crate::atmosphere) mod multiscatter_lut;
 pub(in crate::atmosphere) mod skyview_condition;
 pub(in crate::atmosphere) mod skyview_lut;

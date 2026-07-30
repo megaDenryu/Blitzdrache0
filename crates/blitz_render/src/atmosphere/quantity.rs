@@ -5,6 +5,7 @@
 //! 防ぐためである。生の`f32`をドメインAPIへ出さない規律の受け皿がこのモジュールである
 //! (参照: CLAUDE.md「型安全性」の数学DDD)。
 
+pub(in crate::atmosphere) mod aerial_voxel;
 pub(in crate::atmosphere) mod albedo_rgb;
 pub(in crate::atmosphere) mod asymmetry;
 pub(in crate::atmosphere) mod attenuating_component;
@@ -17,4 +18,5 @@ pub(in crate::atmosphere) mod sample_count;
 pub(in crate::atmosphere) mod scattering_cosine;
 pub(in crate::atmosphere) mod skyview_rgb;
 pub(in crate::atmosphere) mod transmittance_rgb;
+pub(in crate::atmosphere) mod unit_direction;
 pub(in crate::atmosphere) mod zenith_cosine;

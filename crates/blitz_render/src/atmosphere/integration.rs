@@ -5,6 +5,7 @@
 //! 唯一の場所だからである。区間数のような定数は`cargo xtask conform`の定数一致検査が正本としてこのモジュールの行を読む。
 //! 位相関数と太陽の可視性を同じ場所へ置くのは、どちらも「1つの標本点で源の項をいくら立てるか」の一部だからである。
 
+pub(in crate::atmosphere) mod aerial_march;
 pub(in crate::atmosphere) mod multiscatter_march;
 pub(in crate::atmosphere) mod multiscatter_series;
 pub(in crate::atmosphere) mod multiscatter_step;

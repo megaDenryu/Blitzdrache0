@@ -5,6 +5,7 @@
 //! 積分の手順から幾何を分けるのは、交差の式が閉形式であり、判別式の符号や自己交差の扱いといった
 //! 数値の地雷が積分の刻み方とは独立に検査できるためである。
 
+pub(in crate::atmosphere) mod frustum_rays;
 pub(in crate::atmosphere) mod intersect;
 pub(in crate::atmosphere) mod sphere_directions;
 pub(in crate::atmosphere) mod vector3;

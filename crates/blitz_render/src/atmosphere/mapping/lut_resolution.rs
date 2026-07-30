@@ -1,18 +1,14 @@
 //! プリコンピュートLUTを何テクセルで焼くかの品質方針。
+//! 既定の値とその出どころは`default_resolution`が、辺の長さの検証は`validate`が持つ。
+
+mod default_resolution;
+mod validate;
 
 use crate::atmosphere::大気数学エラー;
 
-/// 透過率LUTの既定の幅と高さ、多重散乱LUTの既定の一辺、スカイビューLUTの既定の幅と高さ。
-/// 参照: Sebastien Hillaire, "A Scalable and Production Ready Sky and Atmosphere Rendering Technique" (EGSR 2020)の実装の解像度。
-const 既定の透過率の幅: u32 = 256;
-const 既定の透過率の高さ: u32 = 64;
-const 既定の多重散乱の一辺: u32 = 32;
-const 既定のスカイビューの幅: u32 = 192;
-const 既定のスカイビューの高さ: u32 = 108;
-
 /// 各LUTのテクセル数。資源の確保・ディスパッチのワークグループ数・テクセル座標の写像がすべてこの1つの値を読むため、
 /// シェーダー側に解像度の定数を持たせない(シェーダーは書き込み先の寸法を実行時に問い合わせる)。
-/// 不変条件: どの辺も2以上である。多重散乱LUTとスカイビューLUTの写像が辺の長さから1を引いた値で割るため、1では刻みが定義できない。
+/// 不変条件: どの辺も2以上である(根拠は`validate`にある)。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct 大気LUT解像度 {
     透過率の幅: u32,
@@ -20,6 +16,7 @@ pub struct 大気LUT解像度 {
     多重散乱の一辺: u32,
     スカイビューの幅: u32,
     スカイビューの高さ: u32,
+    空中遠近の一辺: u32,
 }
 
 impl 大気LUT解像度 {
@@ -29,35 +26,28 @@ impl 大気LUT解像度 {
         多重散乱の一辺: u32,
         スカイビューの幅: u32,
         スカイビューの高さ: u32,
+        空中遠近の一辺: u32,
     ) -> Result<Self, 大気数学エラー> {
-        for (項目, 値) in [
+        validate::辺の長さを確かめる(&[
             ("透過率LUTの幅", 透過率の幅),
             ("透過率LUTの高さ", 透過率の高さ),
             ("多重散乱LUTの一辺", 多重散乱の一辺),
             ("スカイビューLUTの幅", スカイビューの幅),
             ("スカイビューLUTの高さ", スカイビューの高さ),
-        ] {
-            if 値 < 2 {
-                return Err(大気数学エラー::整数値域外(項目, 値));
-            }
-        }
+            ("空中遠近ボリュームの一辺", 空中遠近の一辺),
+        ])?;
         Ok(Self {
             透過率の幅,
             透過率の高さ,
             多重散乱の一辺,
             スカイビューの幅,
             スカイビューの高さ,
+            空中遠近の一辺,
         })
     }
 
     pub fn 既定値() -> Self {
-        Self {
-            透過率の幅: 既定の透過率の幅,
-            透過率の高さ: 既定の透過率の高さ,
-            多重散乱の一辺: 既定の多重散乱の一辺,
-            スカイビューの幅: 既定のスカイビューの幅,
-            スカイビューの高さ: 既定のスカイビューの高さ,
-        }
+        default_resolution::既定値()
     }
 
     pub fn 透過率の幅(&self) -> u32 {
@@ -80,21 +70,30 @@ impl 大気LUT解像度 {
         self.スカイビューの高さ
     }
 
+    pub fn 空中遠近の一辺(&self) -> u32 {
+        self.空中遠近の一辺
+    }
+
     pub fn 透過率のテクセル数(&self) -> usize {
-        テクセル数(self.透過率の幅, self.透過率の高さ)
+        要素数(&[self.透過率の幅, self.透過率の高さ])
     }
 
     pub fn 多重散乱のテクセル数(&self) -> usize {
-        テクセル数(self.多重散乱の一辺, self.多重散乱の一辺)
+        要素数(&[self.多重散乱の一辺, self.多重散乱の一辺])
     }
 
     pub fn スカイビューのテクセル数(&self) -> usize {
-        テクセル数(self.スカイビューの幅, self.スカイビューの高さ)
+        要素数(&[self.スカイビューの幅, self.スカイビューの高さ])
+    }
+
+    pub fn 空中遠近のボクセル数(&self) -> usize {
+        要素数(&[self.空中遠近の一辺; 3])
     }
 }
 
-fn テクセル数(幅: u32, 高さ: u32) -> usize {
-    let 幅 = usize::try_from(幅).unwrap_or_else(|_| panic!("LUTの幅{幅}がusizeに収まらない"));
-    let 高さ = usize::try_from(高さ).unwrap_or_else(|_| panic!("LUTの高さ{高さ}がusizeに収まらない"));
-    幅 * 高さ
+fn 要素数(辺一覧: &[u32]) -> usize {
+    辺一覧.iter().fold(1_usize, |積, 辺| {
+        let 長さ = usize::try_from(*辺).unwrap_or_else(|_| panic!("LUTの辺の長さ{辺}がusizeに収まらない"));
+        積 * 長さ
+    })
 }

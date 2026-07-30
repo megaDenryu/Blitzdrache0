@@ -5,6 +5,7 @@
 
 #![allow(clippy::unwrap_used)]
 
+mod aerial_lut_tests;
 mod density_tests;
 mod intersect_tests;
 mod multiscatter_lut_tests;
