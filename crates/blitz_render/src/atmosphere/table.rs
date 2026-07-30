@@ -6,4 +6,5 @@
 
 mod bilinear;
 pub(in crate::atmosphere) mod multiscatter_table;
+pub(in crate::atmosphere) mod skyview_table;
 pub(in crate::atmosphere) mod transmittance_table;

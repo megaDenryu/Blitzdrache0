@@ -79,4 +79,5 @@ pub use quantity::transmittance_rgb::透過率RGB;
 pub use quantity::unit_direction::単位方向;
 pub use quantity::zenith_cosine::天頂余弦;
 pub use table::multiscatter_table::多重散乱表;
+pub use table::skyview_table::スカイビュー表;
 pub use table::transmittance_table::透過率表;

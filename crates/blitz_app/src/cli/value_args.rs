@@ -7,7 +7,7 @@ use std::slice::Iter;
 use super::{描画対象数, 起動モード, 起動引数エラー};
 
 /// 値の欠落は引数ごとに違う型付きエラーになるため、エラーの作り方を引数で受け取る。
-pub(super) fn 次の値を読む<'引数>(
+pub(in crate::cli) fn 次の値を読む<'引数>(
     引数: &mut Iter<'引数, String>,
     引数名: &str,
     欠落エラー: fn(String) -> 起動引数エラー,

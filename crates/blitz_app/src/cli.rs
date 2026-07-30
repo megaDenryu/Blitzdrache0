@@ -19,6 +19,7 @@ mod object_count;
 mod placement_args;
 #[cfg(test)]
 mod placement_args_tests;
+mod screen_pixel_args;
 mod setting_apply;
 mod streaming_settings;
 mod time_args;
@@ -32,6 +33,7 @@ pub(crate) use launch_request::起動要求;
 pub(crate) use modes::{布モード, 粒子表示モード};
 pub(crate) use object_count::描画対象数;
 pub(crate) use placement_args::平行移動起動設定;
+pub(crate) use screen_pixel_args::画面画素位置;
 pub(crate) use streaming_settings::{LOD継ぎ目検査設定, ストリーミング起動設定, プレイヤー位置源};
 pub(crate) use time_of_day_settings::{時間帯起動設定, 空の起動指定, 空中遠近合成指定};
 pub(crate) use types::{起動モード, 起動設定};

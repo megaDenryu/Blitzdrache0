@@ -8,6 +8,7 @@ pub(crate) mod display_timing;
 pub(crate) mod draw_issue;
 pub(crate) mod exit;
 pub(crate) mod shadow_gpu_time;
+pub(crate) mod sky_pixel;
 pub(crate) mod sky_state;
 pub(crate) mod streaming;
 pub(crate) mod streaming_summary;

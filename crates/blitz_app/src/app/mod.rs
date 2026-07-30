@@ -34,6 +34,7 @@ use winit::window::Window;
 
 pub(crate) use frame_timing::{フレーム時間統計, 集計する};
 pub(crate) use streaming::ストリーミング要約;
+pub(crate) use time_of_day::空の再現条件;
 
 use crate::cli::{布モード, 描画対象の並べ方, 空中遠近合成指定, 粒子表示モード, 起動モード};
 use crate::dev_ui::開発UI;
@@ -71,6 +72,7 @@ pub(crate) struct アプリ {
     開発ui初期有効: bool,
     カスケード帯可視化: bool,
     フレームダンプ先: Option<PathBuf>,
+    空の代表画素報告: Vec<crate::cli::画面画素位置>,
     /// 露出(判断39)とブレンド(判断45)はCLI初期値を開発用UIのスライダーが実行中に書き換える。
     露出: f32,
     ブレンド: f32,

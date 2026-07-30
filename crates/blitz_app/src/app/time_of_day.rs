@@ -10,10 +10,12 @@ mod atmosphere_update;
 #[cfg(test)]
 mod atmosphere_update_tests;
 mod clock;
+mod reproduction_condition;
 mod scene_policy;
 #[cfg(test)]
 mod scene_policy_tests;
 mod sky_input;
 mod wiring;
 
+pub(crate) use reproduction_condition::空の再現条件;
 pub(in crate::app) use wiring::天空配線;

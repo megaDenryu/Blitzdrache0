@@ -59,6 +59,11 @@ impl 天空配線 {
         self.空を描く.then(|| self.時間帯.as_ref().map(時間帯::空入力)).flatten()
     }
 
+    pub(in crate::app) fn 再現条件(&self) -> Option<super::空の再現条件> {
+        let (_, 媒体) = self.空を描く.then_some(self.大気).flatten()?;
+        Some(atmosphere_input::再現条件を組む(媒体, self.時間帯.as_ref()?))
+    }
+
     /// LUT生成の入力になる大気と2つの観測条件、そのフレームで何を焼き直すかの指示。空中遠近の条件はカメラに依るため視点を受け取る。大気LUT資源は空段階を持つフレーム構成でだけ
     /// 作られるため、空パスを積まない指定(`--no-sky`)では下ろした媒体を持っていても渡さない。
     pub(in crate::app) fn 大気lut入力(&mut self, 視点: &フレーム視点) -> Option<大気LUT入力> {
