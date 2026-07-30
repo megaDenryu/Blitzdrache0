@@ -9,7 +9,8 @@ use std::process::Command;
 
 const アセットルート: &str = "target/terrain_assets";
 const シーン名: &str = "terrain_origin";
-const フレーム数: &str = "160";
+/// 1条件ぶんに描くフレーム数。列の整合検査もこの値を読み、報告が本当にこの本数を数えたことを確かめる。
+pub(super) const フレーム数: u64 = 160;
 const 先読み半径: &str = "2";
 const 容量上限バイト: &str = "16777216";
 const カメラ俯角差分度: &str = "-25";
@@ -31,11 +32,12 @@ pub(super) struct 実行結果 {
 
 pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: 条件, 一日内秒: Option<&str>) -> Result<実行結果, String> {
     let ダンプ先 = 出力先.join(出力名);
+    let フレーム数の指定 = フレーム数.to_string();
     let mut コマンド = Command::new("cargo");
     コマンド
         .args(["run", "-p", "blitz_app", "--", "--scene", シーン名])
         .args(["--asset-root", アセットルート])
-        .args(["--frames", フレーム数])
+        .args(["--frames", &フレーム数の指定])
         .args(["--streaming", "--streaming-preload-radius", 先読み半径])
         .args(["--streaming-ram-limit", 容量上限バイト])
         .args(["--streaming-vram-limit", 容量上限バイト])
