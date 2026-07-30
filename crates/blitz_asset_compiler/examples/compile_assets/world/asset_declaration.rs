@@ -3,7 +3,7 @@
 //! 定義1件を必須・任意・ソース専用のどれとして作るかは`definition_kind`が持つ。
 
 use super::super::catalog::{アセット定義, ソース種別, 同居植生宣言};
-use super::definition_kind::{ソース専用定義, 任意定義, 必須定義};
+use super::definition_kind::{ソース専用定義, 任意定義, 外部アセット定義, 必須定義};
 
 /// 地形世界の起動時シーン。レンダラーはチャンクが1つも常駐しない期間にも描画対象を要求するため、束ID0を占める最小の対象が要る。
 /// 板の世界の`quad`と同じソースを別IDで登録するのは、初期カメラがシーン名で決まり、地形の俯瞰視点をこのIDへ紐づけるためである。
@@ -33,6 +33,11 @@ pub(super) const 計数判定の個体数: usize = 64;
 /// 名前を`vegetation`で始めないことが、既定カメラと既定の影範囲を選ばせて群を両方の視錐台から外す(理由は`xtask/src/cloth_empty.rs`)。
 const 両視錐台外の群シーン: &str = "instance_all_culled";
 
+/// Blenderが生成した小物1体の検収シーン。外部のアセットリポジトリの`props/`からglbを引く。
+/// 安定IDを`prop_`で始めることが、この世界のカメラ姿勢と読み戻しだけの検収計画を選ばせる。
+/// 参照: `crates/blitz_app/src/app/scene_camera.rs`と`crates/blitz_app/src/smoke/mod.rs`
+const 小物の木箱シーン: (&str, &str) = ("prop_wooden_crate", "props/wooden_crate.glb");
+
 pub(super) fn 板の世界の一覧() -> Vec<アセット定義> {
     vec![
         必須定義("quad", "smoke/quad.gltf", ソース種別::Gltfシーン),
@@ -40,6 +45,7 @@ pub(super) fn 板の世界の一覧() -> Vec<アセット定義> {
         必須定義("shadow_scene", "smoke/shadow_scene.gltf", ソース種別::Gltfシーン),
         任意定義("helmet", "samples/DamagedHelmet/DamagedHelmet.glb"),
         任意定義("fox", "samples/Fox/Fox.glb"),
+        外部アセット定義(小物の木箱シーン.0, 小物の木箱シーン.1),
     ]
 }
 

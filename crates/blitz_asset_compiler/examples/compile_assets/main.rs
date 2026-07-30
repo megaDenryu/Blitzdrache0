@@ -3,6 +3,7 @@
 
 mod catalog;
 mod chunk_world;
+mod source_location;
 mod world;
 
 use std::path::Path;

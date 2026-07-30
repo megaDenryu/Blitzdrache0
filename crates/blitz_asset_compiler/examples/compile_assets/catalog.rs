@@ -5,6 +5,7 @@ use std::path::{Path, PathBuf};
 
 use blitz_engine::{アセットID, カタログ, チャンク座標};
 
+use super::source_location::{self, ソースの基準};
 use super::world::対象世界;
 
 /// ストリーミング対象でないアセットは世界の原点チャンクへ帰属させる。
@@ -40,9 +41,11 @@ pub(super) enum ソース種別 {
 
 /// 世界へ焼くアセット1件の宣言。`必須`はソースが無いときに失敗させるかどうかである。
 /// `実行時へ焼く`が偽の定義は、他のアセットが素材として読むだけのソースであり、コンパイル時カタログへは載るが実行時形式は作らない。
+/// `基準`は`相対パス`をどのルートから引くかであり、宣言側は起点の実パスを持たない。
 pub(super) struct アセット定義 {
     pub(super) 名前: &'static str,
     pub(super) 相対パス: &'static str,
+    pub(super) 基準: ソースの基準,
     pub(super) 必須: bool,
     pub(super) 実行時へ焼く: bool,
     pub(super) 種別: ソース種別,
@@ -60,8 +63,15 @@ pub(super) fn 構築する(
 ) -> Result<(カタログ, Vec<コンパイル対象>), String> {
     let mut カタログ = カタログ::空を作る();
     let mut 対象一覧 = Vec::new();
+    let 外部ルート = source_location::外部ソースルート::解決する();
     for 定義 in 世界.アセット定義一覧() {
-        let ソースパス = ソースルート.join(定義.相対パス);
+        let ソースパス = match source_location::ソースパスを引く(定義.基準, 定義.相対パス, ソースルート, &外部ルート) {
+            Ok(パス) => パス,
+            Err(診断) => {
+                println!("[compile_assets] 置き場が無いため{}をスキップ: {診断}", 定義.名前);
+                continue;
+            }
+        };
         if !ソースパス.is_file() {
             if 定義.必須 {
                 return Err(format!("必須ソースアセットが存在しない: {}", ソースパス.display()));
