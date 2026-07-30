@@ -7,6 +7,7 @@
 #![allow(clippy::unwrap_used)]
 
 mod fixture;
+mod group_bounds_degenerate;
 mod light_box;
 mod light_box_degenerate;
 mod light_box_radius;
