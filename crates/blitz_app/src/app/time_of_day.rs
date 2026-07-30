@@ -7,6 +7,8 @@
 mod aerial_input;
 mod atmosphere_input;
 mod atmosphere_update;
+#[cfg(test)]
+mod atmosphere_update_tests;
 mod clock;
 mod scene_policy;
 #[cfg(test)]

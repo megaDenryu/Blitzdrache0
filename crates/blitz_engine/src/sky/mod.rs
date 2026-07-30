@@ -34,6 +34,8 @@ mod turbidity;
 mod world_policy;
 
 #[cfg(test)]
+mod aerial_key_tests;
+#[cfg(test)]
 mod continuity_tests;
 #[cfg(test)]
 mod derive_tests;
