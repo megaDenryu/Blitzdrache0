@@ -53,7 +53,7 @@ VertexOutput vertexMain(uint vertexID : SV_VertexID)
 }
 
 // 太陽円盤の見え方。角半径の内外を余弦で比べ、縁を1割の幅で滑らかにしてジャギーを避ける。
-// 2つの腕が同じ縁の作り方を使うため、ここが1つの正本である。
+// sky_atmosphere.slangがこのモジュールを取り込んで呼ぶため、ここが唯一の正本である。
 float sunDiskCoverage(float cosGamma)
 {
     float sunCos = frameUniform.nightSkyRadianceAndSunCos.w;
