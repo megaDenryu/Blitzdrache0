@@ -44,8 +44,8 @@ pub use integration::phase::{ミー位相関数, レイリー位相関数};
 pub use integration::sun_visibility;
 pub use integration::transmittance::上端までの透過率;
 pub use mapping::aerial_mapping::{
-    空中遠近ボリュームの奥行き位置を求める, 空中遠近ボリュームの奥行き添字の位置, 空中遠近ボリュームの画面位置を求める,
-    空中遠近ボリュームの距離を求める,
+    空中遠近ボリュームの奥行き位置を求める, 空中遠近ボリュームの奥行き添字の位置, 空中遠近ボリュームの標本座標を求める,
+    空中遠近ボリュームの画面位置を求める, 空中遠近ボリュームの距離を求める,
 };
 pub use mapping::lut_resolution::大気LUT解像度;
 pub use mapping::multiscatter_mapping::{多重散乱lutの単位位置を求める, 多重散乱lutの条件, 多重散乱lutの条件を求める};

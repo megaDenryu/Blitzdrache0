@@ -39,3 +39,11 @@ float aerialDepthUnitOfDistance(float farDistance, float distance)
 {
     return farDistance <= 0.0 ? 0.0 : clamp(distance / farDistance, 0.0, 1.0);
 }
+
+// 引く側がボリュームを標本する3成分の座標。横縦は画面の位置をそのまま渡し、奥行きは単位位置をテクセル中心のUVへ直す。
+// 横縦が素通りなのは、焼く側が区画の中心を標本点に取るため画面の位置がそのままテクセル中心のUVになるからである。
+float3 aerialSampleCoordinate(float2 screenPosition, float depthUnit, uint side)
+{
+    float depthUv = (depthUnit * float(side - 1) + 0.5) / float(side);
+    return float3(screenPosition, depthUv);
+}
