@@ -23,7 +23,7 @@ pub(super) struct 任意入力の材料 {
 
 impl レンダラー {
     pub(super) fn 任意入力の材料を集める(
-        &self,
+        &mut self,
         フレーム添字: フレームスロット添字,
         入力: &フレーム描画入力<'_>,
         露出: f32,

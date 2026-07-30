@@ -53,7 +53,10 @@ fn 列を読む(行: &str, 条件名: &str) -> Result<Vec<u32>, String> {
     }
     残り
         .split(',')
-        .map(|語| 語.parse::<u32>().map_err(|誤り| format!("{条件名}の列の要素を数として読めない({語}): {誤り}")))
+        .map(|語| {
+            語.parse::<u32>()
+                .map_err(|誤り| format!("{条件名}の列の要素を数として読めない({語}): {誤り}"))
+        })
         .collect()
 }
 
