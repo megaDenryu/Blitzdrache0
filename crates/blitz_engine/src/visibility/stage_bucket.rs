@@ -14,6 +14,8 @@
 //! 段ごとのパス別の件数と書込位置は`tally`が持つ。
 
 mod tally;
+#[cfg(test)]
+mod write_tests;
 
 use blitz_render::段別描画範囲;
 
