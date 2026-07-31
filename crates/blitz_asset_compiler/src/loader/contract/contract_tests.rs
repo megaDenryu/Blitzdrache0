@@ -1,13 +1,17 @@
 //! 入力契約検査の試験。合格する材料と、契約を1箇所だけ崩した負の対照を突き合わせる。
+//! ここが持つのは文書と幾何の契約であり、材質スロットの契約は`material_tests`が持つ。
+//! 材料を組み立てて検査へ通す手順は両者が共有するため、この階層が所有して子へ貸す。
 
 #![allow(clippy::unwrap_used)]
+
+mod material_tests;
 
 use super::fixture_json::{三角形のプリミティブ, 合格の指定, 文書jsonを作る};
 use super::glb_fixture::{glbを書き出す, 三角形のバイナリ};
 use super::result::契約検査結果;
 use super::入力契約を検査する;
 
-fn 検査する(名前: &str, 指定: &super::fixture_json::文書の指定<'_>) -> 契約検査結果 {
+pub(super) fn 検査する(名前: &str, 指定: &super::fixture_json::文書の指定<'_>) -> 契約検査結果 {
     let パス = glbを書き出す(名前, &文書jsonを作る(指定), &三角形のバイナリ()).unwrap();
     入力契約を検査する(&パス)
 }

@@ -1,26 +1,28 @@
-//! ローダーが読む3枚のテクスチャの宣言の検査。受け取るのはglTF文書、返すのは指摘一覧である。
+//! ローダーが読む3枚のテクスチャの宣言の検査。受け取るのは材質スロット一覧、返すのは指摘一覧である。
 //! 見るのはUV座標の組の番号と画像実体の形式であり、画素の中身は`material_scan`のデコードが見る。
 //! 由来は`loader::material`がベースカラー・金属粗さ・法線マップだけを読むこと、`loader::mesh::primitive`がUV座標をTEXCOORD_0からしか読まないこと、
 //! および`image`クレートの依存をpngとjpegだけに絞っていること(参照: ワークスペースのCargo.tomlの`image`)である。
+//! 全スロットを見るのは、1メッシュが複数の材質を持てるようになり、先頭以外の材質のテクスチャも同じデコーダへ渡るためである。
 
 use super::finding::契約指摘;
+use super::slot_materials::材質スロットの参照;
 use super::target::対象位置;
 
 /// glTFが宣言できる画像形式のうち、デコーダが持っているもの。
 const 対応形式一覧: [&str; 2] = ["image/png", "image/jpeg"];
 const 対応拡張子一覧: [&str; 3] = ["png", "jpg", "jpeg"];
 
-pub(super) fn 検査する(文書: &gltf::Document) -> Vec<契約指摘> {
-    let Some(材質) = 文書
-        .meshes()
-        .next()
-        .and_then(|メッシュ| メッシュ.primitives().next())
-        .map(|プリミティブ| プリミティブ.material())
-    else {
-        return Vec::new();
-    };
+pub(super) fn 検査する(スロット一覧: &[材質スロットの参照<'_>]) -> Vec<契約指摘> {
+    let mut 指摘一覧 = Vec::new();
+    for スロット in スロット一覧 {
+        材質を検査する(&mut 指摘一覧, スロット.番号, &スロット.プリミティブ.material());
+    }
+    指摘一覧
+}
+
+fn 材質を検査する(指摘一覧: &mut Vec<契約指摘>, スロット: u32, 材質: &gltf::Material<'_>) {
     let pbr = 材質.pbr_metallic_roughness();
-    let スロット一覧 = [
+    let 用途一覧 = [
         ("ベースカラー", pbr.base_color_texture().map(|情報| (情報.texture(), 情報.tex_coord()))),
         (
             "金属粗さ",
@@ -28,24 +30,21 @@ pub(super) fn 検査する(文書: &gltf::Document) -> Vec<契約指摘> {
         ),
         ("法線マップ", 材質.normal_texture().map(|情報| (情報.texture(), 情報.tex_coord()))),
     ];
-
-    let mut 指摘一覧 = Vec::new();
-    for (用途, スロット) in スロット一覧 {
-        let Some((テクスチャ, uv組番号)) = スロット else {
+    for (用途, 参照) in 用途一覧 {
+        let Some((テクスチャ, uv組番号)) = 参照 else {
             continue;
         };
-        uv組番号を検査する(&mut 指摘一覧, 用途, uv組番号);
-        画像形式を検査する(&mut 指摘一覧, &テクスチャ.source());
+        uv組番号を検査する(指摘一覧, スロット, 用途, uv組番号);
+        画像形式を検査する(指摘一覧, &テクスチャ.source());
     }
-    指摘一覧
 }
 
-fn uv組番号を検査する(指摘一覧: &mut Vec<契約指摘>, 用途: &'static str, uv組番号: u32) {
+fn uv組番号を検査する(指摘一覧: &mut Vec<契約指摘>, スロット: u32, 用途: &'static str, uv組番号: u32) {
     if uv組番号 == 0 {
         return;
     }
     指摘一覧.push(契約指摘::違反を作る(
-        対象位置::テクスチャ { 用途 },
+        対象位置::テクスチャ { スロット, 用途 },
         format!("TEXCOORD_{uv組番号}を参照している。ローダーはTEXCOORD_0だけを読むため、別のUV座標の組を指定しても最初の組で貼られる"),
         "BlenderでUVマップを1つに統合し、そのUVマップを画像テクスチャノードに使う",
     ));

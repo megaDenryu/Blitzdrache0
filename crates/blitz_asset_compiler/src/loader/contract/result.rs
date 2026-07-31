@@ -10,6 +10,8 @@ use super::target::対象位置;
 pub struct 契約検査概要 {
     pub(super) メッシュ数: usize,
     pub(super) プリミティブ数: usize,
+    /// 先頭メッシュのプリミティブが参照する相異なる材質の数。プリミティブ数と並べると、材質の境界が何本残ったかが読める。
+    pub(super) 材質スロット数: usize,
     pub(super) 頂点数: usize,
     pub(super) インデックス数: usize,
     /// 先頭メッシュの頂点位置の最小と最大。頂点を1つも読めなかったときは`None`。

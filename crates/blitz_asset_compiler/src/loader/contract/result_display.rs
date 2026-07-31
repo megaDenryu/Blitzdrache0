@@ -32,8 +32,8 @@ impl fmt::Display for 契約検査概要 {
     fn fmt(&self, 出力: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(
             出力,
-            "概要: メッシュ{}個, 先頭メッシュのプリミティブ{}個, 頂点{}個, インデックス{}個",
-            self.メッシュ数, self.プリミティブ数, self.頂点数, self.インデックス数
+            "概要: メッシュ{}個, 先頭メッシュのプリミティブ{}個, 材質スロット{}個, 頂点{}個, インデックス{}個",
+            self.メッシュ数, self.プリミティブ数, self.材質スロット数, self.頂点数, self.インデックス数
         )?;
         match self.境界箱 {
             Some((最小, 最大)) => write!(

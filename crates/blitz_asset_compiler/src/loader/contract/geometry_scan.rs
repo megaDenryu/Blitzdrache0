@@ -9,6 +9,7 @@ use super::super::material_slots::材質スロット語彙;
 use super::super::mesh;
 use super::finding::契約指摘;
 use super::mesh_data_check;
+use super::primitive_preservation;
 use super::result::契約検査概要;
 use super::target::{名前を写す, 対象位置};
 
@@ -25,7 +26,11 @@ pub(super) fn 検査する(文書: &開いた文書) -> (Option<契約検査概�
 
     let 語彙 = 材質スロット語彙::メッシュ列から作る(std::slice::from_ref(&メッシュ));
     match mesh::メッシュデータを取り出す(文書, &メッシュ, None, &語彙) {
-        Ok(データ) => (Some(概要を作る(メッシュ数, プリミティブ数, &データ)), mesh_data_check::検査する(&データ)),
+        Ok(データ) => {
+            let mut 指摘一覧 = mesh_data_check::検査する(&データ);
+            指摘一覧.extend(primitive_preservation::検査する(プリミティブ数, &データ));
+            (Some(概要を作る(メッシュ数, プリミティブ数, &データ)), 指摘一覧)
+        }
         Err(誤り) => (
             None,
             vec![契約指摘::違反を作る(
@@ -41,10 +46,23 @@ fn 概要を作る(メッシュ数: usize, プリミティブ数: usize, デー�
     契約検査概要 {
         メッシュ数,
         プリミティブ数,
+        材質スロット数: 材質スロット数を数える(データ),
         頂点数: データ.頂点一覧.len(),
         インデックス数: データ.インデックス一覧.len(),
         境界箱: 境界箱を求める(データ),
     }
+}
+
+/// 焼いた結果が持つ相異なる材質スロットの数。glTFの宣言でなく焼いた結果から数えるのは、概要が読ませたいのが実行時形式に残った材質の本数だからである。
+fn 材質スロット数を数える(データ: &メッシュデータ) -> usize {
+    let mut 番号一覧: Vec<u32> = データ
+        .プリミティブ列
+        .iter()
+        .map(|プリミティブ| プリミティブ.材質スロット.番号を返す())
+        .collect();
+    番号一覧.sort_unstable();
+    番号一覧.dedup();
+    番号一覧.len()
 }
 
 /// 絵に出ない事故の多くが位置と大きさの取り違えであるため、頂点位置の最小と最大を概要へ載せる。
