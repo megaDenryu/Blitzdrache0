@@ -38,9 +38,17 @@ const 両視錐台外の群シーン: &str = "instance_all_culled";
 /// 参照: `crates/blitz_app/src/app/scene_camera.rs`と`crates/blitz_app/src/smoke/mod.rs`
 const 小物の木箱シーン: (&str, &str) = ("prop_wooden_crate", "props/wooden_crate.glb");
 
+/// 材質境界の検収シーン。同じ形を2材質2プリミティブで塗るものと、1材質1プリミティブで塗る対照の2つを焼く。
+/// 安定IDを`multi_material`で始めることが、書き換えもピクセル判定も持たない読み戻しだけの検収計画を選ばせる。
+/// 参照: `crates/blitz_app/src/smoke/mod.rs`
+const 材質境界の二材質シーン: (&str, &str) = ("multi_material_two", "smoke/multi_material_two.gltf");
+const 材質境界の単一材質シーン: (&str, &str) = ("multi_material_one", "smoke/multi_material_one.gltf");
+
 pub(super) fn 板の世界の一覧() -> Vec<アセット定義> {
     vec![
         必須定義("quad", "smoke/quad.gltf", ソース種別::Gltfシーン),
+        必須定義(材質境界の二材質シーン.0, 材質境界の二材質シーン.1, ソース種別::Gltfシーン),
+        必須定義(材質境界の単一材質シーン.0, 材質境界の単一材質シーン.1, ソース種別::Gltfシーン),
         必須定義("quad_alt", "smoke/quad_alt.gltf", ソース種別::Gltfシーン),
         必須定義("shadow_scene", "smoke/shadow_scene.gltf", ソース種別::Gltfシーン),
         任意定義("helmet", "samples/DamagedHelmet/DamagedHelmet.glb"),

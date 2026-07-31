@@ -14,15 +14,14 @@ use winit::window::Window;
 
 use crate::cli::粒子表示モード;
 
-/// 植生の検収シーン。書き換えもピクセル判定も持たず、判定は検収側のxtaskが読み戻し画像と計数で行う。
-const 植生検収シーンの接頭辞: &str = "vegetation";
+/// 書き換えもピクセル判定も持たず、判定を検収側のxtaskが読み戻し画像と計数で行うシーンの名前の接頭辞。
+/// 植生は`instance-*`、`prop_`は`prop-draw`と`village-draw`、`multi_material`は`multi-material-draw`が判定する。
+/// 既定の計画は`quad`のホットリロード検証であり、監視対象のシェーダーとquadの実行時形式を書き換えるため、
+/// これらをその計画へ落とすとリポジトリのシェーダーと既存の生成物が書き換わる。
+const 読み戻しだけの検収シーンの接頭辞一覧: [&str; 3] = ["vegetation", "prop_", "multi_material"];
 /// 群が両方の視錐台から外れる検収シーン(`cargo xtask cloth-empty`)。中身は植生の検収シーンと同じだが、
 /// 既定カメラと既定の影範囲を選ばせるために名前を接頭辞から外してあるため、ここで個別に同じ計画へ振る。
 const 両視錐台外の群シーン: &str = "instance_all_culled";
-/// Blender生成の小物を1体だけ描く検収シーン(`cargo xtask prop-draw`)。書き換えもピクセル判定も持たない。
-/// 既定の計画は`quad`のホットリロード検証であり、監視対象のシェーダーとquadの実行時形式を書き換えるため、
-/// この接頭辞を振り分けから外すとリポジトリのシェーダーと既存の生成物が書き換わる。
-const 小物検収シーンの接頭辞: &str = "prop_";
 
 pub(crate) use asset_rewrite::アセットを書き換える;
 pub(crate) use pixel_judgment::{アニメーション差分を判定する, ピクセルを判定する};
@@ -53,7 +52,7 @@ pub(crate) enum スモークアクション {
 }
 
 /// `布有効`なら差分計画(布は厳密ピクセル判定と両立しないため。判断55・56)、`開発ui有効`なら
-/// devui計画、粒子トイならparticles計画、表面流ならGPU計測だけ、シーン名がvegetationまたはprop_で始まるなら読み戻しだけの計画、
+/// devui計画、粒子トイならparticles計画、表面流ならGPU計測だけ、読み戻しだけの検収シーンの接頭辞で始まるならその計画、
 /// シーン名がhelmet/shadow_scene/foxなら各計画、それ以外(既定"quad")ならquad計画で判定する(判断29・34・37・45)。
 pub(crate) fn 判定する(
     現在フレーム: u32,
@@ -77,7 +76,7 @@ pub(crate) fn 判定する(
         スモークアクション::通常描画
     } else if 粒子表示 == 粒子表示モード::粒子トイ {
         plan::particles計画(現在フレーム, 総フレーム数)
-    } else if シーン名.starts_with(植生検収シーンの接頭辞) || シーン名 == 両視錐台外の群シーン || シーン名.starts_with(小物検収シーンの接頭辞)
+    } else if シーン名 == 両視錐台外の群シーン || 読み戻しだけの検収シーンの接頭辞一覧.iter().any(|接頭辞| シーン名.starts_with(接頭辞))
     {
         plan::読み戻しだけの計画()
     } else if シーン名 == "helmet" {

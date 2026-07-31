@@ -1,7 +1,8 @@
 //! 検証用ソースアセットの生成器。決定的・ネット不要。
 //! `cargo xtask gen-source-assets`で
 //! assets/smoke/ へ quad.gltf・quad_alt.gltf・quad.bin・2色のテクスチャと、
-//! shadow_scene.gltf・shadow_scene.bin・shadow_scene_white.png(判断37)を、
+//! shadow_scene.gltf・shadow_scene.bin・shadow_scene_white.png(判断37)と、
+//! 材質境界の検収用のmulti_material.bin・multi_material_two.gltf・multi_material_one.gltfを、
 //! assets/chunk_world/ へ25チャンク分のglTFと共有バッファと目録ソースを、
 //! assets/terrain_world/ へ25チャンク分の高さ格子と目録ソースを、
 //! assets/vegetation_world/ へ植生の原型glTFと1チャンクの目録ソースを書き出す。
@@ -12,9 +13,12 @@ mod chunk_world;
 mod directory_source;
 mod geometry;
 mod gltf_json;
+mod multi_material_geometry;
+mod multi_material_gltf_json;
 mod shadow_scene_geometry;
 mod shadow_scene_gltf_json;
 mod shadow_scene_texture;
+mod smoke_assets;
 mod terrain_world;
 mod textures;
 mod vegetation_world;
@@ -32,7 +36,7 @@ fn main() {
 fn 実行する() -> Result<(), String> {
     let スモーク出力先 = Path::new("assets/smoke");
     ディレクトリを作る(スモーク出力先)?;
-    スモークアセットを書き出す(スモーク出力先)?;
+    smoke_assets::書き出す(スモーク出力先)?;
     println!("[generate_source_assets] {}へ生成完了", スモーク出力先.display());
 
     let チャンク世界出力先 = Path::new("assets/chunk_world");
@@ -59,26 +63,4 @@ fn 実行する() -> Result<(), String> {
 
 fn ディレクトリを作る(パス: &Path) -> Result<(), String> {
     std::fs::create_dir_all(パス).map_err(|誤り| format!("{}の作成に失敗した: {誤り}", パス.display()))
-}
-
-fn スモークアセットを書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
-    書き込む(&出力先ディレクトリ.join("quad.gltf"), gltf_json::文書JSON.as_bytes())?;
-    let 代替文書 = gltf_json::文書JSON.replace("quad_base_color.png", "quad_alt_color.png");
-    書き込む(&出力先ディレクトリ.join("quad_alt.gltf"), 代替文書.as_bytes())?;
-    書き込む(&出力先ディレクトリ.join("quad.bin"), &geometry::バッファバイト列を作る())?;
-    textures::保存する(出力先ディレクトリ)?;
-    シャドウ検証アセットを書き出す(出力先ディレクトリ)
-}
-
-fn シャドウ検証アセットを書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
-    書き込む(&出力先ディレクトリ.join("shadow_scene.gltf"), shadow_scene_gltf_json::文書JSON.as_bytes())?;
-    書き込む(
-        &出力先ディレクトリ.join("shadow_scene.bin"),
-        &shadow_scene_geometry::バッファバイト列を作る(),
-    )?;
-    shadow_scene_texture::保存する(出力先ディレクトリ)
-}
-
-fn 書き込む(パス: &Path, バイト列: &[u8]) -> Result<(), String> {
-    std::fs::write(パス, バイト列).map_err(|誤り| format!("{}: {誤り}", パス.display()))
 }
