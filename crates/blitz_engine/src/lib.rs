@@ -1,10 +1,8 @@
 //! エンジン層: シーン・アセット・マテリアル。
 //!
-//! 責務: ゲームロジックに対して描画対象の世界を表現する語彙を提供し、
-//! blitz_render のレンダーグラフへ描画内容を翻訳する。
+//! 責務: ゲームロジックに対して描画対象の世界を表現する語彙を提供し、blitz_render のレンダーグラフへ描画内容を翻訳する。
 //!
-//! 注意: このクレートはwinitにもashにも依存しない。入力はデバイス非依存の
-//! `カメラインテント` としてのみ受け取る（参照: `_doc/計画/ユビキタス言語.md`「入力インテント」）。
+//! 注意: このクレートはwinitにもashにも依存しない。入力はデバイス非依存の`カメラインテント`としてのみ受け取る（参照: `_doc/計画/ユビキタス言語.md`「入力インテント」）。
 
 #![forbid(unsafe_code)]
 
@@ -12,6 +10,7 @@ mod animation;
 mod asset;
 mod camera;
 mod chunk;
+mod draw_bundle;
 mod frame_composition;
 #[cfg(test)]
 mod frame_composition_tests;
@@ -83,6 +82,7 @@ pub use asset::{
 };
 pub use camera::{カメラ, カメラインテント};
 pub use chunk::チャンク座標;
+pub use draw_bundle::{可視個体区間参照, 描画束, 描画束を組み立てる, 描画束エラー, 描画束一覧, 静的描画片};
 pub use frame_composition::既定フレーム構成を作る;
 pub use instance_lod::{個体LODエラー, 個体LOD選択設定, 個体別段状態, 個体詳細段};
 pub use lighting::{天空状態をライティングへ写す, 既定ライティングを作る};
