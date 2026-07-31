@@ -6,10 +6,16 @@ mod binary;
 mod document_json;
 
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 const JSONチャンク種別: u32 = 0x4E4F_534A;
 const BINチャンク種別: u32 = 0x004E_4942;
 
+/// 書き出し先を呼び出しごとに分けるための通し番号。
+static 通し番号: AtomicU64 = AtomicU64::new(0);
+
+/// 注意: 書き出し先のファイル名へ通し番号を混ぜる。同じ試験材料を要求する試験が同じ試験バイナリの中で並行して走るため、
+/// 固定のファイル名にすると、片方が上書きしている最中にもう片方が読み、glTFの解析が途中のバイト列で失敗する。
 pub fn glbを書き出す(名前: &str) -> PathBuf {
     let バイト列 = glbバイト列を組み立てる(&document_json::文書jsonを作る(), &binary::二三角形のバイナリ());
     let ディレクトリ = std::env::temp_dir().join("blitzdrache0_multi_material_fixture");
@@ -17,7 +23,8 @@ pub fn glbを書き出す(名前: &str) -> PathBuf {
         Ok(()) => {}
         Err(誤り) => panic!("試験材料のディレクトリを作れなかった: {誤り}"),
     }
-    let パス = ディレクトリ.join(format!("{名前}.glb"));
+    let 番号 = 通し番号.fetch_add(1, Ordering::Relaxed);
+    let パス = ディレクトリ.join(format!("{名前}_{}_{番号}.glb", std::process::id()));
     match std::fs::write(&パス, バイト列) {
         Ok(()) => パス,
         Err(誤り) => panic!("試験材料のGLBを書き出せなかった: {誤り}"),
