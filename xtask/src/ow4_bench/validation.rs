@@ -10,26 +10,27 @@
 use std::path::Path;
 use std::process::Command;
 
+use super::condition::計測条件;
 use super::{上限バイト数, 先読み半径, 起動時シーン};
 
 /// 静止先読み120フレームで25チャンクが全部載り、続く30フレームで往復が始まって解除も通る。
 const 検査フレーム数: &str = "180";
 
-pub(super) fn 検査する(アセットルート: &Path, シェーダー入口: &Path) -> Result<u64, String> {
+pub(super) fn 検査する(アセットルート: &Path, シェーダー入口: &Path, 条件: &計測条件) -> Result<u64, String> {
     let 上限 = 上限バイト数.to_string();
+    let 一日内時刻: Vec<String> = 条件
+        .一日内時刻の秒
+        .map(|秒| vec!["--time-of-day".to_string(), 秒.to_string()])
+        .unwrap_or_default();
     println!("[xtask] ow4-bench: {}をデバッグビルドでvalidation検査", アセットルート.display());
     let 出力 = Command::new("cargo")
         .args(["run", "-p", "blitz_app", "--"])
         .args(["--scene", 起動時シーン, "--streaming", "--streaming-preload-radius", 先読み半径])
         .args(["--instance-stream-route", "--benchmark-frames", 検査フレーム数])
-        .args([
-            "--report-streaming-summary",
-            "--report-memory",
-            "--report-draw-issue",
-            "--unlit",
-            "--no-post",
-            "--no-sky",
-        ])
+        .args(["--report-streaming-summary", "--report-memory", "--report-draw-issue"])
+        // レイヤーの検査を計測本体と同じ描画構成で通すため、条件が足す起動指定をこちらへも同じだけ渡す。
+        .args(super::condition::描画の起動指定(条件.描画))
+        .args(&一日内時刻)
         .args(["--streaming-ram-limit", &上限, "--streaming-vram-limit", &上限])
         .arg("--asset-root")
         .arg(アセットルート)

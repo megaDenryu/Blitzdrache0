@@ -12,7 +12,7 @@
 //! 一日内時刻を引数で選べるのは、絵の目視が代表時刻ごとに要るためである(判定は時刻に依らず同じ)。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「更新判定の置き場所」「予算と計器」
 
-mod gpu_time;
+pub(crate) mod gpu_time;
 mod judgment;
 mod pass_count;
 mod run;

@@ -15,6 +15,7 @@ mod ratio;
 mod settings;
 mod snap;
 mod split;
+mod texel_density;
 
 #[cfg(test)]
 mod cascade_tests;
@@ -32,5 +33,6 @@ pub use blend::{距離区分のブレンド, 距離区分を選ぶ};
 pub use cascade_set::多段一式;
 pub use ratio::{実用分割混合率, 距離区分の重なり率};
 pub use settings::多段設定;
+pub use texel_density::影の解像度密度;
 
 pub(crate) use build::組み立てる;
