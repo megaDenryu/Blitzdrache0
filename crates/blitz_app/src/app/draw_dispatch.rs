@@ -5,6 +5,7 @@
 mod pixel_readback;
 mod rewrite_action;
 
+use blitz_render::frame_input::プリミティブ発行受け皿;
 use blitz_render::{UI描画データ, フレーム描画入力, 布フレーム入力, 読み戻し結果};
 
 use super::visibility::可視選択受け皿;
@@ -18,6 +19,7 @@ pub(super) struct フレーム材料<'a> {
     pub(super) 視点情報: &'a super::frame::フレーム視点,
     pub(super) 地形詳細段選択一覧: &'a [blitz_render::地形詳細段選択],
     pub(super) 可視受け皿: &'a 可視選択受け皿,
+    pub(super) プリミティブ発行: &'a プリミティブ発行受け皿,
     pub(super) 布入力: Option<布フレーム入力>,
     pub(super) ui描画: Option<UI描画データ>,
 }
@@ -28,8 +30,14 @@ impl アプリ {
             blitz_render::可視個体選択一覧::生成する(材料.可視受け皿.選択一覧(), 材料.可視受け皿.id列(), 材料.可視受け皿.段範囲列())?;
         // 大気のベイク済み画像の焼き直し判定は前回焼いた鍵を書き換えるため、借用が重ならないよう描画入力の組み立てより前に済ませる。
         let 大気のベイク済み画像入力 = self.天空.大気のベイク済み画像入力(材料.視点情報);
-        let mut 描画入力 =
-            super::frame::描画入力を組み立てる(self, 大気のベイク済み画像入力, 材料.視点情報, 材料.地形詳細段選択一覧, 可視個体選択一覧);
+        let mut 描画入力 = super::frame::描画入力を組み立てる(
+            self,
+            大気のベイク済み画像入力,
+            材料.視点情報,
+            材料.地形詳細段選択一覧,
+            可視個体選択一覧,
+            材料.プリミティブ発行,
+        );
         描画入力.布 = 材料.布入力;
         描画入力.ui描画 = 材料.ui描画;
         if self.ダンプ対象フレームか() {

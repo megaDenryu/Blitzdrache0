@@ -5,6 +5,7 @@ use ash::vk;
 
 use super::geometry_list::段別ジオメトリ;
 use super::instance_source::個体変換の出どころ;
+use super::slot_material_resources::スロット別材質資源;
 use super::visible_id_content::可視ID列の内容検査;
 use super::visible_id_source::可視ID列の出どころ;
 use super::描画対象資源;
@@ -24,28 +25,16 @@ impl 描画対象資源 {
     ) -> Result<Self, レンダラーエラー> {
         let 個体数 = u32::try_from(素材.個体変換一覧().len()).map_err(|_| レンダラーエラー::個体数過大(素材.個体変換一覧().len()))?;
         let 段別ジオメトリ = 段別ジオメトリ::生成する(device, メモリプロパティ, 転送環境, 素材.段一覧())?;
-        let テクスチャ = match vulkan::texture::マテリアルテクスチャ一式::生成する(
-            device,
+        let スロット別材質 = match スロット別材質資源::生成する(
             問い合わせ,
+            device,
             メモリプロパティ,
             転送環境,
-            素材.マテリアル(),
-        ) {
-            Ok(値) => 値,
-            Err(誤り) => {
-                段別ジオメトリ.破棄する(device);
-                return Err(誤り);
-            }
-        };
-        let シェーダー定数 = match vulkan::object_uniform::描画対象シェーダー定数::生成する(
-            device,
-            メモリプロパティ,
             素材.先頭の個体変換(),
-            素材.マテリアル(),
+            素材.材質スロット素材一覧(),
         ) {
             Ok(値) => 値,
             Err(誤り) => {
-                テクスチャ.破棄する(device);
                 段別ジオメトリ.破棄する(device);
                 return Err(誤り);
             }
@@ -53,8 +42,7 @@ impl 描画対象資源 {
         let 個体変換 = match 個体変換の出どころ::生成する(device, メモリプロパティ, 転送環境, 素材.個体変換一覧()) {
             Ok(値) => 値,
             Err(誤り) => {
-                シェーダー定数.破棄する(device);
-                テクスチャ.破棄する(device);
+                スロット別材質.破棄する(device);
                 段別ジオメトリ.破棄する(device);
                 return Err(誤り);
             }
@@ -63,8 +51,7 @@ impl 描画対象資源 {
             Ok(値) => 値,
             Err(誤り) => {
                 個体変換.破棄する(device);
-                シェーダー定数.破棄する(device);
-                テクスチャ.破棄する(device);
+                スロット別材質.破棄する(device);
                 段別ジオメトリ.破棄する(device);
                 return Err(誤り);
             }
@@ -72,8 +59,7 @@ impl 描画対象資源 {
         Ok(Self {
             大域アンカー: 素材.大域アンカー(),
             段別ジオメトリ,
-            テクスチャ,
-            シェーダー定数,
+            スロット別材質,
             個体変換,
             可視id列,
             内容検査: 可視ID列の内容検査::生成する(個体数),

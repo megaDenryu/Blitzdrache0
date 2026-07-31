@@ -13,7 +13,7 @@ use super::frame_progress::フレーム結末;
 use super::presentation::提示状態;
 use super::レンダラー;
 use crate::draw_result::{描画結果, 見送り理由};
-use crate::error::レンダラーエラー;
+use crate::error::{フレーム入力不一致エラー, レンダラーエラー};
 use crate::frame_input::フレーム描画入力;
 use crate::readback_result::読み戻し結果;
 
@@ -56,7 +56,7 @@ impl レンダラー {
     ) -> Result<描画結果, レンダラーエラー> {
         let 視点数 = 入力.視点一覧.視点数();
         if 視点数 != 1 {
-            return Err(レンダラーエラー::複数視点提示未対応 { 視点数 });
+            return Err(フレーム入力不一致エラー::複数視点提示未対応 { 視点数 }.into());
         }
         let 視点 = 入力.視点一覧.先頭();
         // フレーム型から生値へ戻すGPU境界はこの1箇所（数学DDD。参照: CLAUDE.md「型安全性」）。

@@ -1,14 +1,15 @@
 //! ディスクリプタプール: マテリアル1つぶんの3テクスチャ+1UBO+シャドウマップ
 //! 比較サンプラー1つとフレーム・描画対象UBOと、個体変換・可視ID列の2本のストレージバッファを、進行中フレームの数だけ確保する
 //! (セットごとに独立したUBOと可視ID列を持つため)。
+//! 数える単位は描画対象ではなく材質スロットである。1つの描画対象が材質スロットの数だけセット組を持つためである。
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::sync::進行中フレーム数;
 
-pub(super) fn 生成する(device: &ash::Device, 描画対象数: usize) -> Result<vk::DescriptorPool, レンダラーエラー> {
-    let 合計数 = 描画対象数
+pub(super) fn 生成する(device: &ash::Device, 材質スロット合計数: usize) -> Result<vk::DescriptorPool, レンダラーエラー> {
+    let 合計数 = 材質スロット合計数
         .checked_mul(進行中フレーム数)
         .unwrap_or_else(|| panic!("ディスクリプタセット数がusizeを超えた"));
     let セット数 = u32::try_from(合計数).unwrap_or_else(|_| panic!("ディスクリプタセット数がu32に収まらない: {合計数}"));

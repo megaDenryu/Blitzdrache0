@@ -10,9 +10,9 @@ mod instance_transforms;
 mod layout;
 #[cfg(test)]
 mod layout_tests;
+mod material_slots;
 #[cfg(test)]
 mod reader_tests;
-mod representative_material;
 mod tray;
 #[cfg(test)]
 mod tray_fixture;

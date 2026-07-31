@@ -4,7 +4,10 @@
 //! (参照: `_doc/設計/地形とカメラ相対描画.md`「LOD」)。
 //! 個体変換は読込時に一度だけ書いて以後変えないため、可視判定やLOD選択で書き直さない。毎フレーム変わるのは可視ID列だけである
 //! (参照: `_doc/設計/植生インスタンスと物量計測.md`「描画発行」)。
+//! 材質は材質スロットごとに持つ。1つのメッシュが材質スロットごとに違う材質で塗られるため、テクスチャとシェーダー定数も
+//! 描画対象に1組ではなくスロットに1組必要になる(参照: `_doc/設計/マルチマテリアルと材質境界.md`「束縛バックエンドの移行境界」)。
 //! 確保の局面は`create`、個体変換の置き場は`instance_source`、可視ID列の置き場は`visible_id_source`、
+//! スロット別の材質資源は`slot_material_resources`、材質スロットからディスクリプタの参照への解決は`slot_binding`、
 //! 書き込む列の中身の検査は`visible_id_content`とその既出記録`seen_record`にある。
 
 mod create;
@@ -15,6 +18,8 @@ mod seen_record;
 mod shared_single_column;
 #[cfg(test)]
 mod shared_single_column_tests;
+mod slot_binding;
+mod slot_material_resources;
 mod visible_id_content;
 #[cfg(test)]
 mod visible_id_content_tests;
@@ -25,11 +30,10 @@ use blitz_math::大域ワールド位置;
 use crate::error::レンダラーエラー;
 use crate::visible_instance_selection::個体描画計画;
 use crate::vulkan;
-use crate::vulkan::descriptor::描画対象ディスクリプタ参照;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::visible_id::可視ID列バッファ;
 use instance_source::個体変換の出どころ;
+use slot_material_resources::スロット別材質資源;
 use visible_id_content::可視ID列の内容検査;
 use visible_id_source::可視ID列の出どころ;
 
@@ -39,8 +43,8 @@ pub(super) struct 描画対象資源 {
     pub(super) 大域アンカー: 大域ワールド位置,
     /// 詳細段の昇順に並んだ非空のジオメトリ。段の選択はここから1本を選ぶだけであり、確保も解放も伴わない。
     段別ジオメトリ: geometry_list::段別ジオメトリ,
-    pub(super) テクスチャ: vulkan::texture::マテリアルテクスチャ一式,
-    pub(super) シェーダー定数: vulkan::object_uniform::描画対象シェーダー定数,
+    /// 材質スロットごとのテクスチャとシェーダー定数。プリミティブ描画発行が指すスロット番号でここから1組を選ぶ。
+    スロット別材質: スロット別材質資源,
     個体変換: 個体変換の出どころ,
     可視id列: 可視ID列の出どころ,
     /// 書き込む列の中身がこの対象の個体と整合していることの検査。この対象の個体数(個体変換列の件数と常に一致する)と、
@@ -56,21 +60,14 @@ impl 描画対象資源 {
         self.段別ジオメトリ.段番号で選ぶ(段番号)
     }
 
-    pub(super) fn 個体数(&self) -> u32 {
-        self.内容検査.個体数()
+    /// 焼かれた段数の内側へ収めた段番号。超える番号を最も粗い段へ丸める規則をここが1箇所で持つため、
+    /// ジオメトリの選択とプリミティブ描画発行の絞り込みが別々の段を指すことがない。
+    pub(super) fn 有効な段番号(&self, 段番号: usize) -> usize {
+        self.段別ジオメトリ.有効な段番号(段番号)
     }
 
-    /// ディスクリプタセットへ結ぶ資源の参照。テクスチャ・シェーダー定数・個体変換を所有するのはこの型のため、束ね方を知るのもこの型にする。
-    /// 単一個体の可視ID列だけは束が共有するため、束から借りて受け取る。
-    pub(super) fn ディスクリプタ参照<'a>(
-        &'a self, 束の単一個体列: &可視ID列バッファ
-    ) -> 描画対象ディスクリプタ参照<'a> {
-        描画対象ディスクリプタ参照 {
-            テクスチャ: &self.テクスチャ,
-            シェーダー定数: &self.シェーダー定数,
-            個体変換: self.個体変換.ディスクリプタ参照(&self.シェーダー定数),
-            可視id列: self.可視id列.参照(束の単一個体列),
-        }
+    pub(super) fn 個体数(&self) -> u32 {
+        self.内容検査.個体数()
     }
 
     /// そのフレームに描く個体の添字をパス別・段別の並びで書く。可視個体選択を持たない対象へは呼ばない。
@@ -89,8 +86,7 @@ impl 描画対象資源 {
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
         self.可視id列.破棄する(device);
         self.個体変換.破棄する(device);
-        self.シェーダー定数.破棄する(device);
-        self.テクスチャ.破棄する(device);
+        self.スロット別材質.破棄する(device);
         self.段別ジオメトリ.破棄する(device);
     }
 }

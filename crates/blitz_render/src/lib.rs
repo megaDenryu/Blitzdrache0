@@ -15,7 +15,7 @@ mod extent;
 mod frame_composition;
 #[cfg(test)]
 mod frame_composition_tests;
-mod frame_input;
+pub mod frame_input;
 mod gpu_memory_stats;
 mod lighting_input;
 #[cfg(test)]
@@ -76,7 +76,7 @@ pub use present_display_request::実表示計測要求;
 pub use present_display_status::実表示計測状況;
 pub use readback_image::読み戻し画像;
 pub use readback_result::読み戻し結果;
-pub use render_object_material::{個体変換列, 描画対象素材};
+pub use render_object_material::{個体変換列, 描画対象素材, 材質スロット素材, 材質スロット素材一覧};
 pub use render_scene_material::描画シーン素材;
 pub use renderer::{
     CPU区間時間, パス別描画発行, レンダラー, 大気のベイク済み画像生成パス数の記録, 描画発行内訳, 段別個体数

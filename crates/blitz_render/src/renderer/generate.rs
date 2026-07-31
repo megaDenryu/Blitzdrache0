@@ -8,7 +8,7 @@ mod generate_resources;
 mod generate_tests;
 use super::レンダラー;
 use crate::cloth_material::布素材;
-use crate::error::レンダラーエラー;
+use crate::error::{フレーム入力不一致エラー, レンダラーエラー};
 use crate::extent::ウィンドウ寸法;
 use crate::frame_composition::{フレーム構成, フレーム段階};
 use crate::particle_material::粒子素材;
@@ -62,7 +62,7 @@ fn 構成と素材を検査する(
     ];
     for (素材あり, 段階) in 対応 {
         if 素材あり && !構成.含む(段階) {
-            return Err(レンダラーエラー::フレーム構成素材不一致(段階));
+            return Err(フレーム入力不一致エラー::フレーム構成素材不一致(段階).into());
         }
     }
     Ok(())

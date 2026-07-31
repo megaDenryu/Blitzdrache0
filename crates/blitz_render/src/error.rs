@@ -6,12 +6,14 @@ use thiserror::Error;
 
 mod cloth;
 mod conversions;
+mod frame_input_mismatch;
 mod sky;
 
 pub use cloth::布エラー;
+pub use frame_input_mismatch::フレーム入力不一致エラー;
 pub use sky::空エラー;
 
-use crate::{frame_composition::フレーム段階, vulkan_failure::Vulkan失敗コード};
+use crate::vulkan_failure::Vulkan失敗コード;
 
 /// レンダラーの生成・描画・破棄で起こりうる失敗を表す層のエラー型。
 #[derive(Debug, Error)]
@@ -77,6 +79,8 @@ pub enum レンダラーエラー {
     /// 1つの描画対象が持つ個体の数がGPUの描画発行で表せる範囲を超えた。
     #[error("描画対象の個体数{0}がu32に収まらない")]
     個体数過大(usize),
+    #[error("プリミティブのインデックス区間または頂点基準の値{0}が描画発行の幅に収まらない")]
+    プリミティブ区間過大(u64),
 
     /// そのフレームの可視ID列の入力が満たすべき条件を破った。
     #[error("可視ID列の入力が不正である: {0}")]
@@ -86,12 +90,8 @@ pub enum レンダラーエラー {
     #[error("カメラ相対フレームへの変換が失敗した: {0}")]
     カメラ相対変換失敗(blitz_math::座標変換エラー),
 
-    #[error("現在の提示先は単一視点だけを描画できるが、フレーム入力に{視点数}視点が指定された")]
-    複数視点提示未対応 { 視点数: usize },
-    #[error("読み戻し要求に必要な読み戻し段階がフレーム構成に含まれていない")]
-    読み戻し段階なし,
-    #[error("フレーム構成に必要な段階がないため素材を実行できない: {0:?}")]
-    フレーム構成素材不一致(フレーム段階),
+    #[error("フレームの入力がレンダラーの構成・提示先・資源と噛み合わない: {0}")]
+    フレーム入力不一致(#[from] frame_input_mismatch::フレーム入力不一致エラー),
 
     #[error("空の入力が不正である(層ごとの詳細は空エラー): {0}")]
     空不正(#[from] sky::空エラー),

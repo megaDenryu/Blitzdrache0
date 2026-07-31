@@ -14,6 +14,7 @@ use super::レンダラー;
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
 use crate::frame_input::フレーム描画入力;
+use crate::frame_input::プリミティブ発行受け皿;
 use crate::terrain_detail::地形詳細段選択;
 use crate::visible_instance_selection::可視個体選択一覧;
 use crate::vulkan;
@@ -40,6 +41,7 @@ impl レンダラー {
         カメラ大域原点: 大域ワールド位置,
         地形詳細段選択一覧: &[地形詳細段選択],
         可視個体選択一覧: 可視個体選択一覧<'_>,
+        プリミティブ発行: &プリミティブ発行受け皿,
     ) -> Result<(bool, vulkan::frame::記録の実績), レンダラーエラー> {
         let フレーム添字 = スロット資源.スロット;
 
@@ -63,6 +65,7 @@ impl レンダラー {
             カメラ大域原点,
             地形詳細段選択一覧,
             可視個体選択一覧,
+            プリミティブ発行,
         };
         if let Some(時計) = cpu区間時計.as_deref_mut() {
             時計.作業領域更新を開始する();

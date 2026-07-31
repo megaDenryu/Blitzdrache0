@@ -63,7 +63,14 @@ unsafe fn 対象を記録する(
         );
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &[0]);
         device.cmd_bind_index_buffer(command_buffer, 入力.インデックスバッファ, 0, vk::IndexType::UINT32);
-        device.cmd_draw_indexed(command_buffer, 入力.インデックス数, 入力.インスタンス数, 0, 0, 入力.先頭インスタンス);
+        device.cmd_draw_indexed(
+            command_buffer,
+            入力.インデックス数,
+            入力.インスタンス数,
+            入力.先頭インデックス,
+            入力.頂点基準,
+            入力.先頭インスタンス,
+        );
     }
 }
 

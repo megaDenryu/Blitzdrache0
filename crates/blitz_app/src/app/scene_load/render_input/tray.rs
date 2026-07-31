@@ -7,7 +7,7 @@ use blitz_engine::描画対象データ;
 use blitz_math::{ローカル, ワールド, 変換, 大域ワールド位置};
 use blitz_render::{描画シーン素材, 描画対象素材};
 
-use super::{convert, instance_transforms, representative_material, visibility_material};
+use super::{convert, instance_transforms, material_slots, visibility_material};
 use super::{束の描画入力, 束の登録一式};
 use crate::app::visibility::群可視材料の登録;
 use crate::error::起動エラー;
@@ -35,15 +35,12 @@ impl 変換の受け皿 {
         大域アンカー: 大域ワールド位置,
         ローカルからワールド: 変換<ローカル, ワールド>,
     ) -> Result<(), 起動エラー> {
-        let 束の開始 = self.プリミティブ描画項目一覧.件数();
         プリミティブ描画項目を組み立てる(元.形状(), 元.材質集合(), 位置, &mut self.プリミティブ描画項目一覧).map_err(super::描画入力エラー::from)?;
-        let 対象のプリミティブ描画項目 = self.プリミティブ描画項目一覧.開始以降を参照する(束の開始);
-        let 材質 = representative_material::代表材質を選ぶ(対象のプリミティブ描画項目, 元.材質集合(), 位置)?;
         self.素材一覧.push(描画対象素材::生成する(
             大域アンカー,
             instance_transforms::組み立てる(元.形状(), ローカルからワールド),
             convert::形状を変換する(元.形状()),
-            convert::マテリアルを変換する(材質)?,
+            material_slots::変換する(元.材質集合())?,
         ));
         if let Some(登録) = visibility_material::作る(元.形状(), 位置, 大域アンカー, ローカルからワールド)? {
             self.可視材料一覧.push(登録);

@@ -3,7 +3,7 @@
 //! 読み戻しを要求されたのに段階が構成に無い場合を型付きエラーにするのがこの操作の役目である。
 
 use super::super::レンダラー;
-use crate::error::レンダラーエラー;
+use crate::error::{フレーム入力不一致エラー, レンダラーエラー};
 use crate::frame_composition::フレーム段階;
 use crate::vulkan::frame::描画方式;
 
@@ -13,7 +13,7 @@ impl レンダラー {
             return Ok(描画方式::通常);
         }
         if !self.フレーム構成.含む(フレーム段階::読み戻し) {
-            return Err(レンダラーエラー::読み戻し段階なし);
+            return Err(フレーム入力不一致エラー::読み戻し段階なし.into());
         }
         let バッファ = self
             .読み戻しバッファ

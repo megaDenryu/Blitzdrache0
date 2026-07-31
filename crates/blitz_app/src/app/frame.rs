@@ -2,6 +2,7 @@
 //! 入力確定→世界更新→描画内容抽出→描画(フレーム内実行順序、コンポジションルートが明示)。
 
 mod action;
+mod borrowed_draw;
 mod draw_input;
 #[cfg(test)]
 mod draw_input_tests;
@@ -71,22 +72,7 @@ impl アプリ {
             event_loop.exit();
             return;
         }
-        // 描画入力は詳細段の選択と可視個体選択を借用で持つ。描画は`&mut self`を要るため、借用元の受け皿をいったん`self`の外へ預かる。
-        // 確保した容量を次のフレームへ持ち越すため、描画の成否によらず同じフレームのうちに返す。
-        let 段選択受け皿 = self.ストリーミング.as_mut().map_or_else(Vec::new, |配線| 配線.地形詳細段選択を預かる());
-        let 可視受け皿 = self.可視判定.受け皿を預ける();
-        let 実行結果 = self.描画まで進める(super::draw_dispatch::フレーム材料 {
-            アクション,
-            視点情報: &視点情報,
-            地形詳細段選択一覧: &段選択受け皿,
-            可視受け皿: &可視受け皿,
-            布入力,
-            ui描画,
-        });
-        self.可視判定.受け皿を戻す(可視受け皿);
-        if let Some(配線) = &mut self.ストリーミング {
-            配線.地形詳細段選択を返す(段選択受け皿);
-        }
+        let 実行結果 = borrowed_draw::受け皿を預けて描画する(self, アクション, &視点情報, 布入力, ui描画);
         if let Err(誤り) = 実行結果 {
             self.起動時エラー = Some(誤り);
             event_loop.exit();
