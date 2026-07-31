@@ -5,7 +5,7 @@
 mod convert;
 mod render_input;
 
-pub(crate) use render_input::束の描画入力;
+pub(crate) use render_input::{描画入力エラー, 束の描画入力};
 
 use std::path::Path;
 

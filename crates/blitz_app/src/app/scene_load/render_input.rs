@@ -4,15 +4,21 @@
 mod anchor;
 #[cfg(test)]
 mod anchor_tests;
+mod error;
 mod instance_transforms;
 mod layout;
 #[cfg(test)]
 mod layout_tests;
+mod material_resolve;
+#[cfg(test)]
+mod material_resolve_tests;
 mod visibility_material;
 
 use blitz_engine::{シーンデータ, チャンク座標, 描画対象データ};
 use blitz_math::{ローカル, ワールド, 変換, 大域ワールド位置};
 use blitz_render::{描画シーン素材, 描画対象素材};
+
+pub(crate) use error::描画入力エラー;
 
 use super::convert;
 use crate::app::visibility::群可視材料の登録;
@@ -63,7 +69,8 @@ fn 描画対象を変換する(
     大域アンカー: 大域ワールド位置,
     ローカルからワールド: 変換<ローカル, ワールド>,
 ) -> Result<描画対象素材, 起動エラー> {
-    let マテリアル = convert::マテリアルを変換する(描画対象.材質集合().先頭の材質())?;
+    let 材質 = material_resolve::参照材質を解決する(描画対象.形状(), 描画対象.材質集合())?;
+    let マテリアル = convert::マテリアルを変換する(材質)?;
     Ok(描画対象素材::生成する(
         大域アンカー,
         instance_transforms::組み立てる(描画対象.形状(), ローカルからワールド),

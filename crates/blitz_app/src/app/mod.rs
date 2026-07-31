@@ -18,7 +18,7 @@ mod queries;
 mod report_requests;
 mod scene_camera;
 mod scene_lighting;
-mod scene_load;
+pub(crate) mod scene_load;
 mod scene_read_count;
 mod section_timing;
 mod sph_setup;
