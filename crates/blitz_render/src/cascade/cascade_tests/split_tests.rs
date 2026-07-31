@@ -2,13 +2,13 @@
 //! なることを見る。
 
 use super::super::band::距離区分番号;
-use super::super::settings::カスケード設定;
+use super::super::settings::多段設定;
 use super::super::{blend, split, 距離区分の境界数};
 use super::m;
 
 #[test]
 fn 分割深度が単調で距離区分の区間に隙間が無い() {
-    let 分割 = split::分割する(m(0.1), m(300.0), カスケード設定::既定());
+    let 分割 = split::分割する(m(0.1), m(300.0), 多段設定::既定());
     for 添字 in 1..距離区分の境界数 {
         assert!(
             分割.分割深度[添字 - 1].値() < 分割.分割深度[添字].値(),
@@ -29,7 +29,7 @@ fn 分割深度が単調で距離区分の区間に隙間が無い() {
 
 #[test]
 fn 境界ブレンドの重みが単調で和が1になる() {
-    let 分割 = split::分割する(m(0.1), m(300.0), カスケード設定::既定());
+    let 分割 = split::分割する(m(0.1), m(300.0), 多段設定::既定());
     let mut 直前の主重み = f32::MAX;
     let mut 直前の主距離区分 = 0;
     let mut 深度値 = 0.1_f32;

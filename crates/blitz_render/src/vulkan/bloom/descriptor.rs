@@ -1,11 +1,11 @@
-//! ブルーム用ディスクリプタ: 単一読み(binding0のみ)と二読み(binding0+1)の2レイアウトと、
+//! 光のにじみ用ディスクリプタ: 単一読み(binding0のみ)と二読み(binding0+1)の2レイアウトと、
 //! 段数に応じたプール+セット群(前処理1・縮小 段数-1・拡大 段数-1)の割り当て。
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
 
-pub(super) struct ブルームセット群 {
+pub(super) struct 光のにじみセット群 {
     pub(super) pool: vk::DescriptorPool,
     pub(super) 前処理set: vk::DescriptorSet,
     pub(super) 縮小set一覧: Vec<vk::DescriptorSet>,
@@ -47,7 +47,7 @@ pub(super) fn 生成する(
     単一読みlayout: vk::DescriptorSetLayout,
     二読みlayout: vk::DescriptorSetLayout,
     段数: usize,
-) -> Result<ブルームセット群, レンダラーエラー> {
+) -> Result<光のにじみセット群, レンダラーエラー> {
     let 拡大段数 = 段数.saturating_sub(1);
     let セット数 = 1 + 拡大段数 * 2;
     let ディスクリプタ数 = 1 + 拡大段数 + 拡大段数 * 2;
@@ -66,7 +66,7 @@ pub(super) fn 生成する(
     let alloc_info = vk::DescriptorSetAllocateInfo::default().descriptor_pool(pool).set_layouts(&layout一覧);
     // 安全性: pool・layoutは生成済み。失敗時はpoolを片付ける。
     match unsafe { device.allocate_descriptor_sets(&alloc_info) } {
-        Ok(一覧) => Ok(ブルームセット群 {
+        Ok(一覧) => Ok(光のにじみセット群 {
             pool,
             前処理set: 一覧[0],
             縮小set一覧: 一覧[1..1 + 拡大段数].to_vec(),

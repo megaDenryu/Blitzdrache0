@@ -1,5 +1,5 @@
 //! 粒子更新パスの宣言(判断29): コンピュートで粒子ストレージバッファを書く。
-//! begin/end renderingは無い(コンピュートパス、記録クロージャはバインド+ディスパッチのみ)。
+//! begin/end renderingは無い(コンピュートパス、記録クロージャはバインド+計算の発行のみ)。
 
 use ash::vk;
 
@@ -23,7 +23,7 @@ pub(super) fn 作る<'a>(粒子ハンドル: バッファハンドル, 粒子入
             let device = 文脈.device();
             let command_buffer = 文脈.コマンドバッファ();
             let set一覧 = [粒子入力.ディスクリプタセット];
-            let ワークグループ数 = 粒子入力.更新スレッド数.div_ceil(64);
+            let 計算の班数 = 粒子入力.更新スレッド数.div_ceil(64);
 
             // 安全性: command_bufferは記録中で、pipeline・ディスクリプタセットは生成済み。
             unsafe {
@@ -36,7 +36,7 @@ pub(super) fn 作る<'a>(粒子ハンドル: バッファハンドル, 粒子入
                     &set一覧,
                     &[],
                 );
-                device.cmd_dispatch(command_buffer, ワークグループ数, 1, 1);
+                device.cmd_dispatch(command_buffer, 計算の班数, 1, 1);
             }
         },
     )

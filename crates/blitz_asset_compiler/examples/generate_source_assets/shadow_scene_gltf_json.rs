@@ -1,4 +1,4 @@
-//! shadow_scene.gltfのJSON本体。bufferViewsのオフセット・長さは
+//! shadow_scene.gltfのJSON本体。bufferViewsの開始位置・長さは
 //! shadow_scene_geometry::バッファバイト列を作る の書き出し順
 //! (床: 位置48B→法線48B→接線64B→UV32B→インデックス12B、遮蔽: 同順)へ
 //! 手動で一致させている(判断37)。

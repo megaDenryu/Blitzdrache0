@@ -1,5 +1,5 @@
 //! テクスチャ: OPTIMALタイリング・ステージング転送+vkCmdBlitImage連鎖の
-//! ミップマップ生成(判断20)。色(SRGB)/線形データ(UNORM)は`用途`から選ぶ(判断23)。
+//! 縮小段マップ生成(判断20)。色(SRGB)/線形データ(UNORM)は`用途`から選ぶ(判断23)。
 
 mod format_support;
 mod image;

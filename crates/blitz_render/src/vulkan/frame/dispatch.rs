@@ -4,7 +4,7 @@ use ash::vk;
 
 use super::submit_present;
 use super::{
-    UI描画入力, ジオメトリ入力, スキニング描画入力, トーンマップ描画入力, ブルーム描画入力, 布描画入力, 空中遠近合成描画入力, 空描画入力,
+    UI描画入力, ジオメトリ入力, スキニング描画入力, 光のにじみ描画入力, 布描画入力, 明るさの圧縮描画入力, 空中遠近合成描画入力, 空描画入力,
     粒子描画入力, 距離区分別のシャドウ入力,
 };
 use crate::error::レンダラーエラー;
@@ -35,8 +35,8 @@ pub(crate) struct 任意描画入力<'a> {
     /// 大気のベイク済み画像方式で合成を切っていないフレームだけ`Some`。合成パスを空パスの前に1本積む。
     pub(crate) 空中遠近合成: Option<&'a 空中遠近合成描画入力>,
     pub(crate) 粒子: Option<&'a 粒子描画入力>,
-    pub(crate) ブルーム: Option<&'a ブルーム描画入力>,
-    pub(crate) トーンマップ: Option<&'a トーンマップ描画入力>,
+    pub(crate) 光のにじみ: Option<&'a 光のにじみ描画入力>,
+    pub(crate) 明るさの圧縮: Option<&'a 明るさの圧縮描画入力>,
     pub(crate) ui: Option<&'a UI描画入力>,
 }
 

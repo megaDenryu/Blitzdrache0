@@ -1,4 +1,4 @@
-//! quad.gltfのJSON本体。bufferViewsのオフセット・長さはgeometry::バッファバイト列を作る
+//! quad.gltfのJSON本体。bufferViewsの開始位置・長さはgeometry::バッファバイト列を作る
 //! の書き出し順(位置48B→法線48B→接線64B→UV32B→インデックス12B、計204B)へ
 //! 手動で一致させている。
 

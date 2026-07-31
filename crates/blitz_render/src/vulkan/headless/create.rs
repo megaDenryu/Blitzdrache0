@@ -1,4 +1,4 @@
-//! ヘッドレスGPU環境の生成局面。呼ばれるのは検査の組み立て時の1回だけである。
+//! ウィンドウなし実行GPU環境の生成局面。呼ばれるのは検査の組み立て時の1回だけである。
 //!
 //! インスタンスの生成とvalidation層の有効化は`validation`が担う。論理デバイスの拡張はスワップチェーンを
 //! 要求しない。有効化するのは`synchronization2`だけであり、これはレンダーグラフのバリア発行が
@@ -7,7 +7,7 @@
 use ash::vk;
 
 use super::validation;
-use super::ヘッドレスGPU環境;
+use super::ウィンドウなし実行GPU環境;
 use crate::error::レンダラーエラー;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan::tracked_device::GPUデバイス;
@@ -21,7 +21,7 @@ struct デバイス一式 {
     command_pool: vk::CommandPool,
 }
 
-impl ヘッドレスGPU環境 {
+impl ウィンドウなし実行GPU環境 {
     pub(crate) fn 生成する() -> Result<Self, レンダラーエラー> {
         // 安全性: このプロセスで他にVulkanローダーを読み込んでいないことは、検査が描画と同時に走らないことで保証する。
         let entry = unsafe { ash::Entry::load()? };

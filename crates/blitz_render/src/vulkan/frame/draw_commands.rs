@@ -29,7 +29,7 @@ pub(super) fn 描画コマンドを積む(
     };
     let viewport一覧 = [viewport];
     let シザー一覧 = [シザー];
-    let オフセット一覧 = [0u64];
+    let 開始位置一覧 = [0u64];
 
     // 安全性: command_bufferは記録中で、pipelineと全対象のバッファ・ディスクリプタセットは生成済み。
     unsafe {
@@ -46,7 +46,7 @@ pub(super) fn 描画コマンドを積む(
                 &[入力.ディスクリプタセット],
                 &[],
             );
-            device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &オフセット一覧);
+            device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &開始位置一覧);
             device.cmd_bind_index_buffer(command_buffer, 入力.インデックスバッファ, 0, vk::IndexType::UINT32);
             device.cmd_draw_indexed(command_buffer, 入力.インデックス数, 入力.インスタンス数, 0, 0, 入力.先頭インスタンス);
         }

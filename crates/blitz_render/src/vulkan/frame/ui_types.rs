@@ -13,12 +13,12 @@ pub(crate) struct UI描画入力 {
     pub(crate) 項目一覧: Vec<UI描画項目>,
 }
 
-/// UIメッシュ1つぶんの描画項目: 結合バッファ内での要素オフセット(頂点/インデックスの
+/// UIメッシュ1つぶんの描画項目: 結合バッファ内での要素ずらし量(頂点/インデックスの
 /// 両バッファは1回だけ束縛し、`cmd_draw_indexed`のfirst_index/vertex_offsetで
 /// メッシュごとの範囲を指定する)と、テクスチャ・シザー矩形。
 pub(crate) struct UI描画項目 {
-    pub(crate) 頂点要素オフセット: i32,
-    pub(crate) インデックス要素オフセット: u32,
+    pub(crate) 頂点要素ずらし量: i32,
+    pub(crate) インデックス要素ずらし量: u32,
     pub(crate) インデックス数: u32,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
     pub(crate) シザー: vk::Rect2D,

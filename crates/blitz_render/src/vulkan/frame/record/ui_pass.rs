@@ -39,7 +39,7 @@ fn 記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, ui入�
     let viewport一覧 = [viewport];
     let 画面寸法バイト列 = 画面寸法プッシュ定数バイト列を作る(寸法);
     let 頂点バッファ一覧 = [ui入力.頂点バッファ];
-    let 頂点オフセット一覧 = [0u64];
+    let 頂点ずらし量一覧 = [0u64];
 
     // 安全性: command_bufferは記録中で、pipeline・layout・両バッファは生成済み。
     // 頂点/インデックスバッファの束縛はここで1回だけ行い、メッシュごとの範囲は
@@ -48,7 +48,7 @@ fn 記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, ui入�
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, ui入力.pipeline);
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
         device.cmd_push_constants(command_buffer, ui入力.layout, vk::ShaderStageFlags::VERTEX, 0, &画面寸法バイト列);
-        device.cmd_bind_vertex_buffers(command_buffer, 0, &頂点バッファ一覧, &頂点オフセット一覧);
+        device.cmd_bind_vertex_buffers(command_buffer, 0, &頂点バッファ一覧, &頂点ずらし量一覧);
         device.cmd_bind_index_buffer(command_buffer, ui入力.インデックスバッファ, 0, vk::IndexType::UINT32);
     }
 
@@ -71,8 +71,8 @@ fn 記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, ui入�
                 command_buffer,
                 項目.インデックス数,
                 1,
-                項目.インデックス要素オフセット,
-                項目.頂点要素オフセット,
+                項目.インデックス要素ずらし量,
+                項目.頂点要素ずらし量,
                 0,
             );
         }

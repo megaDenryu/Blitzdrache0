@@ -399,10 +399,10 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
     <text x="515" y="115" class="fpt">空</text>
     <text x="515" y="129" class="fps">空画素のみ</text>
     <rect class="fp" style="animation-delay:4s"   x="570" y="100" width="100" height="34" rx="6" stroke="#4fc3a1" stroke-width="1"/>
-    <text x="620" y="115" class="fpt">ブルーム</text>
+    <text x="620" y="115" class="fpt">光のにじみ</text>
     <text x="620" y="129" class="fps">明部の滲み</text>
     <rect class="fp" style="animation-delay:5s"   x="680" y="100" width="120" height="34" rx="6" stroke="#4fc3a1" stroke-width="1"/>
-    <text x="740" y="115" class="fpt">トーンマップ</text>
+    <text x="740" y="115" class="fpt">明るさの圧縮</text>
     <text x="740" y="129" class="fps">HDR→表示輝度</text>
     <rect class="fp" style="animation-delay:6s"   x="810" y="100" width="80" height="34" rx="6" stroke="#4fc3a1" stroke-width="1"/>
     <text x="850" y="115" class="fpt">開発UI</text>
@@ -412,7 +412,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
   <line x1="560" y1="80" x2="120" y2="97" stroke="#9aa3ad" stroke-width="1.5" marker-end="url(#ah)"/>
   <text x="450" y="180" fill="#9aa3ad" font-size="12" text-anchor="middle">この列全体を16.6ミリ秒(60フレーム/秒)以内に収め続けることが「性能」の意味である</text>
 </svg>
-<figcaption>図3-1: 現エンジンの1フレーム。<a class="term" href="#term-shadow-map">シャドウマップ</a>を先に描き、それを参照してシーンを照らし、空を足し、<a class="term" href="#term-hdr-tonemap">HDR</a>の明るさを表示可能な輝度へ変換する。<span class="figterms">図中の用語: <a class="term" href="#term-world-update">世界更新</a>・<a class="term" href="#term-group-select">可視個体の選別</a>・<a class="term" href="#term-uniform-write">シェーダー定数書込</a>・<a class="term" href="#term-command-record">コマンド記録</a>・<a class="term" href="#term-submit">提出</a>・<a class="term" href="#term-cascade-band">4距離区分</a>・<a class="term" href="#term-depth">深度</a>・<a class="term" href="#term-bloom">ブルーム</a>・<a class="term" href="#term-gpu-instrument">GPU計器</a></span></figcaption>
+<figcaption>図3-1: 現エンジンの1フレーム。<a class="term" href="#term-shadow-map">シャドウマップ</a>を先に描き、それを参照してシーンを照らし、空を足し、<a class="term" href="#term-hdr-tonemap">HDR</a>の明るさを表示可能な輝度へ変換する。<span class="figterms">図中の用語: <a class="term" href="#term-world-update">世界更新</a>・<a class="term" href="#term-group-select">可視個体の選別</a>・<a class="term" href="#term-uniform-write">シェーダー定数書込</a>・<a class="term" href="#term-command-record">コマンド記録</a>・<a class="term" href="#term-submit">提出</a>・<a class="term" href="#term-cascade-band">4距離区分</a>・<a class="term" href="#term-depth">深度</a>・<a class="term" href="#term-bloom">光のにじみ</a>・<a class="term" href="#term-gpu-instrument">GPU計器</a></span></figcaption>
 </figure>
 
 <p>押さえてほしいのは3点である。</p>
@@ -425,7 +425,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <div class="box now">
 <span class="label">現状の要約</span>
-<p>フレーム工程列: <a class="term" href="#term-csm">CSM</a>4距離区分シャドウ + 布専用シャドウ → <a class="term" href="#term-forward-deferred">forward</a>(前方)シーン描画(<a class="term" href="#term-pbr">PBR</a>・<a class="term" href="#term-xpbd">XPBD布</a>込み) → 空(<a class="term" href="#term-lut">大気のベイク済み画像</a>、時刻駆動) → ブルーム → ACESトーンマップ → 開発UI。レンダーグラフがバリアを自動導出し、GPU計器が距離区分別・パス別の実測を出す。詳細の正本は <code>_doc/設計/性能アーキテクチャ方針.md</code> と各設計文書。</p>
+<p>フレーム工程列: <a class="term" href="#term-csm">CSM</a>4距離区分シャドウ + 布専用シャドウ → <a class="term" href="#term-forward-deferred">forward</a>(前方)シーン描画(<a class="term" href="#term-pbr">PBR</a>・<a class="term" href="#term-xpbd">XPBD布</a>込み) → 空(<a class="term" href="#term-lut">大気のベイク済み画像</a>、時刻駆動) → 光のにじみ → ACES明るさの圧縮 → 開発UI。レンダーグラフがバリアを自動導出し、GPU計器が距離区分別・パス別の実測を出す。詳細の正本は <code>_doc/設計/性能アーキテクチャ方針.md</code> と各設計文書。</p>
 </div>
 
 <!-- ============================================================ -->
@@ -445,7 +445,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <h4>現代の代表方式</h4>
 <ul>
 <li><strong><a class="term" href="#term-shadow-map">シャドウマップ</a></strong>: 光源の位置から世界の<a class="term" href="#term-depth">深度</a>(奥行き)だけを描いた絵を作り、本番の描画で「この<a class="term" href="#term-pixel">画素</a>は光源から見えているか」を深度比較で判定する。リアルタイム影の標準方式。</li>
-<li><strong><a class="term" href="#term-csm">CSM</a></strong>(Cascaded Shadow Maps。カスケードシャドウマップ。意訳すると「段々重ねの影地図」— cascadeの原義は段々滝で、同じものを段階的に何段も重ねる構成の呼び名): 方向光用の拡張で、カメラからの<a class="term" href="#term-cascade-band">距離区分</a>ごとに解像度の違うシャドウマップを持つ。近くは細かく、遠くは粗く、という解像度予算の配分方式である。</li>
+<li><strong><a class="term" href="#term-csm">CSM</a></strong>(Cascaded Shadow Maps。多段シャドウマップ。意訳すると「段々重ねの影地図」— cascadeの原義は段々滝で、同じものを段階的に何段も重ねる構成の呼び名): 方向光用の拡張で、カメラからの<a class="term" href="#term-cascade-band">距離区分</a>ごとに解像度の違うシャドウマップを持つ。近くは細かく、遠くは粗く、という解像度予算の配分方式である。</li>
 <li><strong>影の多数決ぼかしとその発展(<a class="term" href="#term-pcf-pcss">PCF</a> / PCSS)</strong>: 影かどうかの判定を周囲の数点の多数決にして境界を滑らかにする方式(PCF)と、遮蔽物からの距離に応じてぼけ幅を変えて本物の半影を再現する方式(PCSS)。数理は<a href="#s10-6">第10.6節</a>。</li>
 <li><strong><a class="term" href="#term-ray-tracing">レイトレーシング</a>影</strong>: GPUのレイトレーシング(光線追跡)機能で光源への遮蔽を直接問い合わせる。シャドウマップの解像度・漏れの問題が原理的に消えるが、GPUの対応と時間予算が要る。</li>
 </ul>
@@ -608,7 +608,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <h3 id="s4-4">4.4 画の完成と時間方向の再構成</h3>
 
 <h4>定義</h4>
-<p><a class="term" href="#term-mesh">ジオメトリ</a>と光と<a class="term" href="#term-material">材質</a>で「正しい明るさ」が求まっても、そのままでは絵として完成していない。<strong><a class="term" href="#term-aa">AA</a></strong>(Anti-Aliasing。アンチエイリアシング。<a class="term" href="#term-pixel">画素</a>の格子が生む輪郭のギザつき・ちらつきの除去)、<a class="term" href="#term-exposure">露出</a>(明るさの自動調整)、<a class="term" href="#term-hdr-tonemap">トーンマッピング</a>(HDRの広い輝度を画面の輝度域へ写す変換)、<a class="term" href="#term-dof">被写界深度</a>・<a class="term" href="#term-motion-blur">モーションブラー</a>といった「画の完成」の工程群がある。その中心にあるのが<strong>時間方向の再構成</strong>: 過去のフレームの情報を今のフレームへ再利用して、1フレームでは足りないサンプル数を時間方向に積み増す考え方である。</p>
+<p><a class="term" href="#term-mesh">ジオメトリ</a>と光と<a class="term" href="#term-material">材質</a>で「正しい明るさ」が求まっても、そのままでは絵として完成していない。<strong><a class="term" href="#term-aa">AA</a></strong>(Anti-Aliasing。アンチエイリアシング。<a class="term" href="#term-pixel">画素</a>の格子が生む輪郭のギザつき・ちらつきの除去)、<a class="term" href="#term-exposure">露出</a>(明るさの自動調整)、<a class="term" href="#term-hdr-tonemap">明るさの圧縮</a>(HDRの広い輝度を画面の輝度域へ写す変換)、<a class="term" href="#term-dof">被写界深度</a>・<a class="term" href="#term-motion-blur">モーションブラー</a>といった「画の完成」の工程群がある。その中心にあるのが<strong>時間方向の再構成</strong>: 過去のフレームの情報を今のフレームへ再利用して、1フレームでは足りないサンプル数を時間方向に積み増す考え方である。</p>
 
 <h4>なぜ絵が良くなるか(そしてなぜ全体の要か)</h4>
 <p>1画素1サンプルの絵は、細い物(草・髪・遠くの手すり)が画素格子と干渉してちらつく。<strong><a class="term" href="#term-taa">TAA</a></strong>(Temporal Anti-Aliasing。時間的AA)は、毎フレーム画素内のサンプル位置を微妙にずらし(<a class="term" href="#term-jitter">ジッタ</a>)、過去フレームの結果と混ぜることで、実質的に画素あたり数サンプル〜十数サンプルの品質を得る。さらにこれを発展させ、<em>低い解像度で描いて時間方向の情報で高解像度を復元する</em>のが<a class="term" href="#term-temporal-upscaler">時間的アップスケーラ</a>(TSR級。商用ではDLSS・FSRが同系)であり、「描く画素数を減らして品質を保つ」という究極の性能技術でもある。</p>
@@ -650,7 +650,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <h4>成立に必要な部品(ここが波及の正体)</h4>
 <ul>
 <li><strong>モーションベクタ</strong>: 各画素が前フレームで画面上のどこにいたかのベクトル場。<em>すべての動く物(カメラ・剛体・<a class="term" href="#term-skinning">スキン</a>・布・植生の揺れ)が自分の「前フレームの変換」を保持して出力する必要がある</em>。TAA導入が全描画<a class="term" href="#term-pass">パス</a>へ波及すると言われる理由がこれである。</li>
-<li><strong>ジッタ</strong>: <a class="term" href="#term-projection">射影</a>行列への画素内オフセット注入。ジオメトリ全パスが同じジッタを共有する。</li>
+<li><strong>ジッタ</strong>: <a class="term" href="#term-projection">射影</a>行列への画素内ずらし量注入。ジオメトリ全パスが同じジッタを共有する。</li>
 <li><strong><a class="term" href="#term-history-buffer">履歴バッファ</a></strong>: 前フレームの結果の保持。無効化(カメラカット)の規律が要る。</li>
 <li><strong><a class="term" href="#term-disocclusion">disocclusion</a>判定</strong>(前フレームで隠れていた領域の露出検出): 履歴に無い情報を混ぜると<a class="term" href="#term-ghosting">ゴースト</a>(残像)になる。<a class="term" href="#term-depth">深度</a>・<a class="term" href="#term-normal">法線</a>・速度の照合で棄却する。</li>
 <li><strong><a class="term" href="#term-reactive-mask">反応性マスク</a></strong>: 履歴を信じてはいけない画素(半透明・パーティクル・急変する発光)を描画側が申告する仕組み。</li>
@@ -659,7 +659,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <div class="box now">
 <span class="label">このエンジンの現状</span>
-<p>AAは<strong>未実装</strong>(MSAAもTAAもない)。これは怠慢ではなく意図した保留であり、「絵の様式確定前にTAAを採用しない」という扉が開けて維持されている(モーションベクタ・履歴・ジッタが存在しないことをM11総点検が確認済み。正本: フェーズ2計画「絵の様式に関する3条件」)。露出は手動(CLIと開発UI)、トーンマップはACES実装済み、<a class="term" href="#term-bloom">ブルーム</a>実装済み。DoF・モーションブラー・<a class="term" href="#term-auto-exposure">自動露出</a>・HDR出力(ディスプレイへの広輝度出力)は未実装。</p>
+<p>AAは<strong>未実装</strong>(MSAAもTAAもない)。これは怠慢ではなく意図した保留であり、「絵の様式確定前にTAAを採用しない」という扉が開けて維持されている(モーションベクタ・履歴・ジッタが存在しないことをM11総点検が確認済み。正本: フェーズ2計画「絵の様式に関する3条件」)。露出は手動(CLIと開発UI)、明るさの圧縮はACES実装済み、<a class="term" href="#term-bloom">光のにじみ</a>実装済み。DoF・モーションブラー・<a class="term" href="#term-auto-exposure">自動露出</a>・HDR出力(ディスプレイへの広輝度出力)は未実装。</p>
 </div>
 
 <div class="box goal">
@@ -728,14 +728,14 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <h4>現代の代表方式</h4>
 <ul>
 <li><strong><a class="term" href="#term-bc-compression">BC系テクスチャ圧縮</a></strong>(Block Compression。GPUが直接読める固定比圧縮): <a class="term" href="#term-vram">VRAM</a>と<a class="term" href="#term-bandwidth">帯域</a>を1/4〜1/8にする。<em>非圧縮運用との差は「あれば良い」でなく桁違い</em>で、実アセットを入れる前提条件に近い。</li>
-<li><strong><a class="term" href="#term-mip">ミップストリーミング</a></strong>: テクスチャの解像度段(ミップ)のうち、いま必要な段だけをVRAMへ置く。遠くの建物に4Kテクスチャの最上段は要らない。</li>
+<li><strong><a class="term" href="#term-mip">縮小段ストリーミング</a></strong>: テクスチャの解像度段(縮小段)のうち、いま必要な段だけをVRAMへ置く。遠くの建物に4Kテクスチャの最上段は要らない。</li>
 <li><strong><a class="term" href="#term-virtual-texture">仮想テクスチャ</a></strong>: テクスチャをページ(小タイル)単位で管理し、画面が実際に要求したページだけを読み込む究極形。<a class="term" href="#term-virtual-geometry">仮想化ジオメトリ</a>と思想が同じで、<a class="term" href="#term-runtime-format">実行時形式</a>への波及も同じ場所に来る。</li>
 <li><strong><a class="term" href="#term-async-queue">非同期転送</a></strong>: 読込データのGPU転送を描画と別の<a class="term" href="#term-queue">キュー</a>(転送キュー)で行い、フレームを止めない。</li>
 </ul>
 
 <div class="box now">
 <span class="label">このエンジンの現状</span>
-<p>チャンクストリーミング基盤は<strong>OW2〜OW4で実装済みの強み</strong>: 格子・目録・予算・台帳・読込器が接続され、30分反復でメモリ横ばい・読込解放が決定的に再現。地形+植生同居で、<a class="term" href="#term-lod">LOD</a>切替が読込もGPU再確保も起こさない配置(全段常駐)を実証済み。<em>既知の弱点は2つ</em>: (a)束追加フレームに50ミリ秒級のスパイク(同期的な転送送信と<a class="term" href="#term-fence">フェンス</a>待機由来と推定、非同期転送キュー未着手) (b)テクスチャの実行時形式が非圧縮で、ミップストリーミングも無い。容量予算の実運用値も未制定(検証世界の実測まで。正本: 評価軸3.5)。</p>
+<p>チャンクストリーミング基盤は<strong>OW2〜OW4で実装済みの強み</strong>: 格子・目録・予算・台帳・読込器が接続され、30分反復でメモリ横ばい・読込解放が決定的に再現。地形+植生同居で、<a class="term" href="#term-lod">LOD</a>切替が読込もGPU再確保も起こさない配置(全段常駐)を実証済み。<em>既知の弱点は2つ</em>: (a)束追加フレームに50ミリ秒級のスパイク(同期的な転送送信と<a class="term" href="#term-fence">フェンス</a>待機由来と推定、非同期転送キュー未着手) (b)テクスチャの実行時形式が非圧縮で、縮小段ストリーミングも無い。容量予算の実運用値も未制定(検証世界の実測まで。正本: 評価軸3.5)。</p>
 </div>
 
 <div class="box goal">
@@ -745,9 +745,9 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <h4>方式候補と採用条件</h4>
 <ul>
-<li><strong>BC圧縮+ミップ生成を<a class="term" href="#term-asset-compiler">アセットコンパイラ</a>へ</strong>: 採用条件は実アセット(写実テクスチャ)の導入開始。決定的コンパイルの流儀(同一入力→同一出力)は維持する。</li>
+<li><strong>BC圧縮+縮小段生成を<a class="term" href="#term-asset-compiler">アセットコンパイラ</a>へ</strong>: 採用条件は実アセット(写実テクスチャ)の導入開始。決定的コンパイルの流儀(同一入力→同一出力)は維持する。</li>
 <li><strong>非同期転送キュー</strong>: 採用条件は既定(実物量で50ミリ秒級スパイクの再現)に「品質駆動: ヒッチレスを到達形に採用した時点で前倒し」を追加提案する。</li>
-<li><strong>ミップストリーミング → 仮想テクスチャの順</strong>: <a class="term" href="#term-paging">ページング</a>形式の設計は仮想化ジオメトリと同時に審査(波及先が同じため)。</li>
+<li><strong>縮小段ストリーミング → 仮想テクスチャの順</strong>: <a class="term" href="#term-paging">ページング</a>形式の設計は仮想化ジオメトリと同時に審査(波及先が同じため)。</li>
 </ul>
 
 <h4>既存実装への波及</h4>
@@ -813,7 +813,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <td><a class="term" href="#term-aa">AA</a>・<a class="term" href="#term-temporal-upscaler">アップスケーラ</a></td><td>なし(意図的保留)<span class="pill none">未着手</span></td><td>自作<a class="term" href="#term-taa">TAA</a>→自作TSR級。DLSS/FSR統合は別判断</td><td>静止・移動時のちらつき/<a class="term" href="#term-ghosting">ゴースト</a>検査</td><td>GPU: 再構成パス。実質は解像度削減で黒字化</td><td><strong>全動体の前フレーム変換+全パスの<a class="term" href="#term-motion-vector">モーションベクタ</a>(最大波及)</strong></td><td>絵の様式確定(オーナー裁定)</td>
 </tr>
 <tr>
-<td>画の完成(ポスト)</td><td><a class="term" href="#term-bloom">ブルーム</a>+<a class="term" href="#term-hdr-tonemap">ACES</a>済。<a class="term" href="#term-exposure">露出</a>は手動<span class="pill partial">一部済</span></td><td><a class="term" href="#term-auto-exposure">ヒストグラム自動露出</a>→<a class="term" href="#term-dof">DoF</a>→<a class="term" href="#term-motion-blur">モーションブラー</a>→HDR出力・<a class="term" href="#term-color-management">色管理</a></td><td>露出の時刻追従・輝度分布</td><td>GPU小〜中</td><td>自動露出は既存の時刻→露出配線の拡張で小</td><td>自動露出は先行可。他はTAA後</td>
+<td>画の完成(ポスト)</td><td><a class="term" href="#term-bloom">光のにじみ</a>+<a class="term" href="#term-hdr-tonemap">ACES</a>済。<a class="term" href="#term-exposure">露出</a>は手動<span class="pill partial">一部済</span></td><td><a class="term" href="#term-auto-exposure">ヒストグラム自動露出</a>→<a class="term" href="#term-dof">DoF</a>→<a class="term" href="#term-motion-blur">モーションブラー</a>→HDR出力・<a class="term" href="#term-color-management">色管理</a></td><td>露出の時刻追従・輝度分布</td><td>GPU小〜中</td><td>自動露出は既存の時刻→露出配線の拡張で小</td><td>自動露出は先行可。他はTAA後</td>
 </tr>
 <tr>
 <td>物量(選別)</td><td>100万個体で発行数一定。<a class="term" href="#term-group-select">可視個体の選別</a>10ms/100万個体<span class="pill done">基盤済</span></td><td>粗い階層の早期棄却→<a class="term" href="#term-indirect-draw">GPU駆動</a><a class="term" href="#term-culling">可視選別</a>+間接描画→<a class="term" href="#term-occlusion-culling">遮蔽可視選別</a></td><td>発行数・選別時間・欠け(誤棄却)ゼロ</td><td>CPU→GPUへの移し替え</td><td>可逆(ハンドル集約済み)。計算パス追加</td><td>視界距離制定+<a class="term" href="#term-representative-scene">代表シーン</a>での再計測</td>
@@ -822,7 +822,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <td><a class="term" href="#term-virtual-geometry">仮想化ジオメトリ</a></td><td>なし<span class="pill none">未着手</span></td><td><a class="term" href="#term-meshlet">クラスタ階層</a><a class="term" href="#term-lod">LOD</a>+<a class="term" href="#term-paging">ページング</a>(Nanite級能力)</td><td><a class="term" href="#term-pixel">画素</a>あたりポリゴン密度・LOD遷移の不可視性</td><td>オフライン: <a class="term" href="#term-asset-compiler">コンパイラ</a>大改造。GPU: 選別+ラスタ</td><td><strong><a class="term" href="#term-runtime-format">実行時形式</a>の版追加(6章c、最大級)</strong></td><td>実アセット方針決定+<a class="term" href="#term-virtual-texture">仮想テクスチャ</a>と同時審査</td>
 </tr>
 <tr>
-<td><a class="term" href="#term-texture">テクスチャ</a>基盤</td><td>非圧縮・<a class="term" href="#term-mip">ミップストリーミング</a>なし<span class="pill none">未着手</span></td><td><a class="term" href="#term-bc-compression">BC圧縮</a>+ミップ生成→ミップストリーミング→仮想テクスチャ</td><td>VRAM使用量・ぼけの滞留時間</td><td>VRAM/<a class="term" href="#term-bandwidth">帯域</a>が1/4〜1/8(圧縮)</td><td>実行時形式の版追加(6章c)</td><td>実アセット導入開始(BC圧縮は前提条件級)</td>
+<td><a class="term" href="#term-texture">テクスチャ</a>基盤</td><td>非圧縮・<a class="term" href="#term-mip">縮小段ストリーミング</a>なし<span class="pill none">未着手</span></td><td><a class="term" href="#term-bc-compression">BC圧縮</a>+縮小段生成→縮小段ストリーミング→仮想テクスチャ</td><td>VRAM使用量・ぼけの滞留時間</td><td>VRAM/<a class="term" href="#term-bandwidth">帯域</a>が1/4〜1/8(圧縮)</td><td>実行時形式の版追加(6章c)</td><td>実アセット導入開始(BC圧縮は前提条件級)</td>
 </tr>
 <tr>
 <td><a class="term" href="#term-hitch">ヒッチレス</a>読込</td><td>基盤済+既知の50ms級スパイク<span class="pill partial">課題あり</span></td><td>非同期転送<a class="term" href="#term-queue">キュー</a>+読込ペーシング</td><td>束追加フレームの<a class="term" href="#term-p99">p99</a>が<a class="term" href="#term-frame-budget">フレーム予算</a>内</td><td>GPU転送キュー+同期設計</td><td><a class="term" href="#term-queue-ownership">キュー所有権</a>の導入(6章b)</td><td>既定(スパイク再現)+品質駆動で前倒し提案</td>
@@ -857,12 +857,12 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <div class="box warn">
 <span class="label">接合点 b</span>
-<p><strong><a class="term" href="#term-render-graph">レンダーグラフ</a>の資源追跡の粒度。</strong>現在は画像全体を1資源として保守的に追跡する(<a class="term" href="#term-csm">CSM</a>の4層配列も全体で1つ)。<a class="term" href="#term-async-queue">非同期コンピュート</a>(<a class="term" href="#term-queue">キュー</a>をまたぐ)・部分mip/layer単位の転送(<a class="term" href="#term-mip">ミップストリーミング</a>)・<a class="term" href="#term-queue-ownership">キュー所有権</a>の移譲を最適に扱うには、<a class="term" href="#term-subresource">サブリソース</a>(層・ミップ単位)の追跡への拡張が必要である。グラフの宣言モデル自体は残る。</p>
+<p><strong><a class="term" href="#term-render-graph">レンダーグラフ</a>の資源追跡の粒度。</strong>現在は画像全体を1資源として保守的に追跡する(<a class="term" href="#term-csm">CSM</a>の4層配列も全体で1つ)。<a class="term" href="#term-async-queue">非同期コンピュート</a>(<a class="term" href="#term-queue">キュー</a>をまたぐ)・部分mip/layer単位の転送(<a class="term" href="#term-mip">縮小段ストリーミング</a>)・<a class="term" href="#term-queue-ownership">キュー所有権</a>の移譲を最適に扱うには、<a class="term" href="#term-subresource">サブリソース</a>(層・縮小段単位)の追跡への拡張が必要である。グラフの宣言モデル自体は残る。</p>
 </div>
 
 <div class="box warn">
 <span class="label">接合点 c</span>
-<p><strong>アセット<a class="term" href="#term-runtime-format">実行時形式</a>の版。</strong>現形式は非圧縮<a class="term" href="#term-texture">テクスチャ</a>+単純な<a class="term" href="#term-mesh">ジオメトリ</a>配置であり、<a class="term" href="#term-bc-compression">BC圧縮</a>・ミップ<a class="term" href="#term-paging">ページング</a>・<a class="term" href="#term-meshlet">クラスタ階層</a>(<a class="term" href="#term-virtual-geometry">仮想化ジオメトリ</a>)はいずれも形式の版追加を要する。このエンジンには「版ごとの型+最新への変換」という後方互換の流儀が既にあり、その適用先になる。<a class="term" href="#term-asset-compiler">コンパイラ</a>の決定性(同一入力→同一出力)は維持する。</p>
+<p><strong>アセット<a class="term" href="#term-runtime-format">実行時形式</a>の版。</strong>現形式は非圧縮<a class="term" href="#term-texture">テクスチャ</a>+単純な<a class="term" href="#term-mesh">ジオメトリ</a>配置であり、<a class="term" href="#term-bc-compression">BC圧縮</a>・縮小段<a class="term" href="#term-paging">ページング</a>・<a class="term" href="#term-meshlet">クラスタ階層</a>(<a class="term" href="#term-virtual-geometry">仮想化ジオメトリ</a>)はいずれも形式の版追加を要する。このエンジンには「版ごとの型+最新への変換」という後方互換の流儀が既にあり、その適用先になる。<a class="term" href="#term-asset-compiler">コンパイラ</a>の決定性(同一入力→同一出力)は維持する。</p>
 </div>
 
 <div class="box warn">
@@ -927,7 +927,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr><td>1</td><td><strong>方式境界の設計壁打ち3本</strong>: (a)<a class="term" href="#term-radiance-query">radiance query</a>階層 (b)<a class="term" href="#term-shading-model">材質特徴ビット</a>×シェーディングモデル (c)<a class="term" href="#term-ubo">UBO</a>分離+ディスクリプタインデクシング</td><td>実装より先に境界を決める項目(第6章a,dと4.3の先行必須項目)。ここの決定が後続全部の器</td><td>新規(設計のみ)</td></tr>
 <tr><td>2</td><td><strong>絵の様式の確定(オーナー裁定)→ <a class="term" href="#term-taa">TAA</a>基盤</strong>(<a class="term" href="#term-motion-vector">モーションベクタ</a>・<a class="term" href="#term-jitter">ジッタ</a>・<a class="term" href="#term-history-buffer">履歴</a>・棄却・<a class="term" href="#term-reactive-mask">反応性</a>)</td><td>導入が遅いほど波及が膨らむ(4.4)。<a class="term" href="#term-ray-tracing">RT</a>系・体積系の前提でもある</td><td>新規(様式確定は裁定)</td></tr>
 <tr><td>3</td><td><strong><a class="term" href="#term-ibl">IBL</a>+<a class="term" href="#term-ao">SSAO</a>+<a class="term" href="#term-auto-exposure">自動露出</a></strong>(<a class="term" href="#term-ambient">定数環境光</a>の置換)</td><td>最小の工事で最大の画質改善。TAA基盤があると品質が安定</td><td>新規(<a class="term" href="#term-gi">GI</a>の第1段)</td></tr>
-<tr><td>4</td><td><strong><a class="term" href="#term-bc-compression">BC圧縮</a>+<a class="term" href="#term-mip">ミップ</a>生成+<a class="term" href="#term-runtime-format">実行時形式</a>の版追加</strong></td><td>実アセット導入の前提条件。接合点cの最初の版追加として仮想化の道も開く</td><td>OW1拡張</td></tr>
+<tr><td>4</td><td><strong><a class="term" href="#term-bc-compression">BC圧縮</a>+<a class="term" href="#term-mip">縮小段</a>生成+<a class="term" href="#term-runtime-format">実行時形式</a>の版追加</strong></td><td>実アセット導入の前提条件。接合点cの最初の版追加として仮想化の道も開く</td><td>OW1拡張</td></tr>
 <tr><td>5</td><td><strong>多光源(<a class="term" href="#term-clustered-lighting">クラスタード</a>)+<a class="term" href="#term-light-types">点光源</a>影+光源入力型の置換</strong></td><td>順1の(c)UBO分離が前提。夜・屋内シーンの成立要件</td><td>新規</td></tr>
 <tr><td>6</td><td><strong><a class="term" href="#term-probe">プローブ</a>GI → radiance query階層の成立</strong></td><td>順1(a)の設計と順2のTAA(<a class="term" href="#term-denoiser">デノイズ</a>)が前提</td><td>新規(GIの第2段)</td></tr>
 <tr><td>7</td><td><strong><a class="term" href="#term-hitch">ヒッチレス</a>化(<a class="term" href="#term-async-queue">非同期転送</a>)+<a class="term" href="#term-job-system">ジョブシステム</a></strong>(並行可能: 描画系と独立)</td><td>品質駆動での前倒し候補。視界距離の制定とセット</td><td>OW2拡張/軸6</td></tr>
@@ -989,7 +989,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr id="term-descriptor"><td>ディスクリプタ / ディスクリプタセット<span class="etym">descriptor = 記述するもの(describe = 記述する)</span><span class="mean">意訳: 名札。GPUに「この資源はここにある」と教える札 / 札の束</span></td><td>シェーダーがバッファ・テクスチャを参照するための記述 / それを束ねた単位。</td></tr>
 <tr id="term-ubo"><td>UBO / structured buffer / ディスクリプタインデクシング<span class="etym">Uniform Buffer Object = 共通定数の入れ物 / structured buffer = 構造体の配列バッファ / descriptor indexing = 名札の番号引き</span><span class="mean">意訳: 小さな固定の設定黒板 / 伸び縮みする表 / 名札を番号で選べる仕組み(資源が何千あっても添字1つで指せる)</span></td><td>GPUへ渡す固定サイズの設定領域 / 可変長の構造化バッファ / 資源を番号で選ぶ方式。多光源・GI・材質拡張はいずれもこの器の上に載る。</td></tr>
 <tr id="term-frame-constants"><td>frame constants(フレーム定数)<span class="etym">直訳「フレームの定数」</span><span class="mean">意訳: 1フレームの間だけ変わらない共通設定の最小セット</span></td><td>フレームごとに1回だけ更新する小さな共通の定数領域。共通UBOを分離した後の姿である。</td></tr>
-<tr id="term-subresource"><td>サブリソース<span class="etym">subresource = 直訳「資源の下位部分」</span><span class="mean">意訳: 1枚の画像の中の区画(縮小段や層の1つ)。画像全体でなく区画単位で管理する話</span></td><td>1つの画像の中の特定のミップ段・特定の層。資源の状態追跡を画像全体より細かい単位で行うための区分である。</td></tr>
+<tr id="term-subresource"><td>サブリソース<span class="etym">subresource = 直訳「資源の下位部分」</span><span class="mean">意訳: 1枚の画像の中の区画(縮小段や層の1つ)。画像全体でなく区画単位で管理する話</span></td><td>1つの画像の中の特定の縮小段・特定の層。資源の状態追跡を画像全体より細かい単位で行うための区分である。</td></tr>
 <tr id="term-vram"><td>VRAM<span class="etym">Video RAM = 映像用メモリ</span><span class="mean">意訳: GPUの手元の作業机。ここに載っている物しかGPUは速く扱えない</span></td><td>GPUが直接読む記憶。テクスチャ・頂点・中間画像が載り、容量が物量と品質の上限を決める。</td></tr>
 <tr id="term-bandwidth"><td>帯域<span class="etym">bandwidth = 直訳「(周波数の)帯の幅」。転じて通り道の太さ</span><span class="mean">意訳: データの通り道の太さ。1秒に運べる量</span></td><td>単位時間に読み書きできるデータ量。テクスチャ圧縮は容量だけでなく帯域にも効く。</td></tr>
 <tr id="term-rate-limiting"><td>律速 / 支配要因 / 支配区間<span class="etym">律速は化学用語「律速段階」(反応全体の速さを決める最も遅い段階)から</span><span class="mean">意訳: 行列のいちばん遅いレジ。そこが全体の速さを決める</span></td><td>全体の所要時間を決めている最も遅い要素 / ある物量点で最初に予算を超えた区間 / 観測した範囲全体で増分が最大の区間。後の2つは別の問いへの答えであり、混同しない。</td></tr>
@@ -1067,13 +1067,13 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr id="term-ghosting"><td>ゴースト(残像)<span class="etym">ghosting = 直訳「幽霊化」</span><span class="mean">意訳: 動く物の後ろに残る半透明の尾。古い絵を間違って混ぜた痕跡</span></td><td>前フレームの情報を誤って混ぜたために、動く物の後ろへ尾を参照する欠陥。</td></tr>
 <tr id="term-reactive-mask"><td>反応性マスク</td><td>履歴を信用してはいけない画素(半透明・急変する発光等)を、描画側が申告する仕組み。</td></tr>
 <tr id="term-denoiser"><td>デノイザー<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: ざらつき取り。少ない標本のまだら模様を均す係</span></td><td>レイトレーシング等の少ないサンプルの結果からノイズを除く処理。時間再構成と部品を共有する。</td></tr>
-<tr id="term-exposure"><td>露出<span class="etym">exposure = カメラ用語(フィルムを光にさらすこと)の訳語</span><span class="mean">意訳: 絵全体の明るさのつまみ。人間の目が暗がりに慣れるのと同じ調整</span></td><td>トーンマッピングの前に輝度へ掛ける倍率。カメラの露出設定に相当し、シーン全体の明るさを決める。本エンジンは現在手動である。</td></tr>
+<tr id="term-exposure"><td>露出<span class="etym">exposure = カメラ用語(フィルムを光にさらすこと)の訳語</span><span class="mean">意訳: 絵全体の明るさのつまみ。人間の目が暗がりに慣れるのと同じ調整</span></td><td>明るさの圧縮の前に輝度へ掛ける倍率。カメラの露出設定に相当し、シーン全体の明るさを決める。本エンジンは現在手動である。</td></tr>
 <tr id="term-auto-exposure"><td>ヒストグラム自動露出<span class="etym">histogram = 度数分布図</span><span class="mean">意訳: 画面の明るさの分布を集計して、つまみを自動で回す仕組み</span></td><td>画面の輝度の分布(ヒストグラム)を集計し、明るさに合わせて露出を自動で決める方式。</td></tr>
-<tr id="term-hdr-tonemap"><td>HDR / トーンマッピング / ACES<span class="etym">High Dynamic Range = 直訳「広い明暗の幅」/ tone mapping = 直訳「明暗の写し替え」/ ACES = Academy Color Encoding System(米映画芸術科学アカデミーの色符号化標準)</span><span class="mean">意訳: 太陽から暗闇まで本物の明暗幅のまま計算すること / それを画面が出せる幅へ上手に潰す変換 / 映画業界標準の潰し方カーブ</span></td><td>広い輝度域のまま計算すること / それを表示できる輝度へ写す変換 / 映画業界で標準的に使われる変換カーブ。</td></tr>
-<tr id="term-bloom"><td>ブルーム<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 光のにじみ。bloomは花が咲く・ぼうっと広がるの意</span></td><td>高輝度の部分が周囲へにじむ現象の再現。抽出・ぼかし・加算合成の3段で作る。本エンジンは実装済みである。</td></tr>
+<tr id="term-hdr-tonemap"><td>HDR / 明るさの圧縮 / ACES<span class="etym">High Dynamic Range = 直訳「広い明暗の幅」/ tone mapping = 直訳「明暗の写し替え」/ ACES = Academy Color Encoding System(米映画芸術科学アカデミーの色符号化標準)</span><span class="mean">意訳: 太陽から暗闇まで本物の明暗幅のまま計算すること / それを画面が出せる幅へ上手に潰す変換 / 映画業界標準の潰し方カーブ</span></td><td>広い輝度域のまま計算すること / それを表示できる輝度へ写す変換 / 映画業界で標準的に使われる変換カーブ。</td></tr>
+<tr id="term-bloom"><td>光のにじみ<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 光のにじみ。bloomは花が咲く・ぼうっと広がるの意</span></td><td>高輝度の部分が周囲へにじむ現象の再現。抽出・ぼかし・加算合成の3段で作る。本エンジンは実装済みである。</td></tr>
 <tr id="term-dof"><td>被写界深度(DoF)<span class="etym">Depth of Field = 直訳「ピントの合う場の深さ」。写真用語の訳語</span><span class="mean">意訳: ピントの幅。手前と奥をぼかして「カメラで撮った感」を出す加工</span></td><td>ピントの合う奥行きの幅。範囲の外をぼかしてレンズらしい絵にするポスト処理。</td></tr>
 <tr id="term-motion-blur"><td>モーションブラー<span class="etym">motion blur = 直訳「動きによるぶれ」</span><span class="mean">意訳: 速い物の流れぶれ。シャッターが開いている間に動いた分のぶれの再現</span></td><td>露光している間の動きによるぶれの再現。モーションベクタを入力に使う。</td></tr>
-<tr id="term-post"><td>ポストプロセス<span class="etym">post-process = 直訳「後工程・後処理」</span><span class="mean">意訳: 撮った後の現像・加工。絵が描き上がってから全体にかける仕上げ</span></td><td>シーン描画の完成後に画像全体へかける加工の総称(トーンマッピング・ブルーム・被写界深度等)。画面全体を覆う図形を1枚描く、画像から画像へのパスとして実装する。</td></tr>
+<tr id="term-post"><td>ポストプロセス<span class="etym">post-process = 直訳「後工程・後処理」</span><span class="mean">意訳: 撮った後の現像・加工。絵が描き上がってから全体にかける仕上げ</span></td><td>シーン描画の完成後に画像全体へかける加工の総称(明るさの圧縮・光のにじみ・被写界深度等)。画面全体を覆う図形を1枚描く、画像から画像へのパスとして実装する。</td></tr>
 <tr id="term-color-management"><td>色管理<span class="etym">color management</span><span class="mean">意訳: 色の座標系の取り違え防止。「この数値はどの色空間の値か」を工程間で揃える規律</span></td><td>線形・sRGB・広色域といった色空間を工程ごとに取り違えず、一貫して扱うこと。</td></tr>
 </table>
 </div>
@@ -1099,7 +1099,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr id="term-streaming"><td>ストリーミング<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 流し込み読込。全部を先に積まず、必要な分だけ川の流れのように補給し続けること</span></td><td>プレイヤーの位置に応じて、必要なチャンクだけを非同期に読み込み、不要になったものを解放し続ける仕組み。</td></tr>
 <tr id="term-popin"><td>ポップイン<span class="etym">pop-in = 直訳「ポンと入ってくる」</span><span class="mean">意訳: 突然の出現。読み込みが間に合わず目の前で建物がポンと湧く欠陥</span></td><td>読込が間に合わず、目の前で建物や木が突然現れる欠陥。</td></tr>
 <tr id="term-bc-compression"><td>BC系テクスチャ圧縮<span class="etym">Block Compression = 直訳「ブロック(4×4画素の升)単位の圧縮」</span><span class="mean">意訳: GPUがそのまま読める圧縮。zipと違い展開作業なしで、圧縮されたまま貼れる</span></td><td>GPUが直接読める固定比の画像圧縮。VRAMと帯域を1/4から1/8にする。</td></tr>
-<tr id="term-mip"><td>ミップ / ミップストリーミング<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 縮小版の段々。同じ画像の半分・1/4・1/8…を予め全部持っておく方式(mipはラテン語 multum in parvo「小さい中に多くを」の略)</span></td><td>テクスチャの解像度の段 / いま必要な段だけをVRAMへ置く読込方式。</td></tr>
+<tr id="term-mip"><td>縮小段 / 縮小段ストリーミング<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 縮小版の段々。同じ画像の半分・1/4・1/8…を予め全部持っておく方式(mipはラテン語 multum in parvo「小さい中に多くを」の略)</span></td><td>テクスチャの解像度の段 / いま必要な段だけをVRAMへ置く読込方式。</td></tr>
 <tr id="term-virtual-texture"><td>仮想テクスチャ<span class="etym">virtual texture。仮想メモリの発想をテクスチャへ適用した命名</span><span class="mean">意訳: 画像の必要分だけ読み。巨大な画像をタイルに割り、画面が実際に見た部分のタイルだけ読み込む</span></td><td>テクスチャをページ単位で管理し、画面が実際に要求したページだけを読み込む方式。</td></tr>
 <tr id="term-paging"><td>ページング<span class="etym">paging = 本のページ分け(page)から。OSのメモリ管理用語</span><span class="mean">意訳: データのページ分け管理。要求されたページだけ取り寄せる図書館方式</span></td><td>データを一定の大きさのページ単位で管理し、要求されたページだけを読み込むこと。仮想テクスチャと仮想化ジオメトリに共通の土台である。</td></tr>
 <tr id="term-asset-compiler"><td>アセットコンパイラ</td><td>glTFや画像を検証・変換して実行時形式を出力する、エンジンとは別のオフラインのツール層。同一の入力から同一の出力を出す決定的なコンパイルを守る。</td></tr>
@@ -1555,7 +1555,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <p>現実の輝度は桁で動く: 星明かりの地面はおよそ0.001 cd/m²、室内は100、曇り空は1,000、太陽の直射面は100,000を超える。8桁の幅を持つ量を線形の物差しで扱うのは無理があるため、写真の世界は<strong>対数の物差し</strong>を使う。それがEV(Exposure Value。露出段)であり、<strong>1段 = 明るさ2倍</strong>である。EVで+3段は2³=8倍を意味する。人間の明るさの知覚もおおよそ対数的(2倍の輝度が「同じくらいの1段明るい」に感じる)なので、対数は物理の都合と知覚の都合が一致する物差しでもある。</p>
 
-<p>本エンジンの露出の型(設計正本)がこの構造をそのまま写している: UI/CLIの<strong>露出倍率</strong>(線形)と、天空状態が返す<strong>露出補正段</strong>(EV。2を底とする段数)を分け、最終倍率 = 露出倍率 × 2^補正段 で合成する。夜の補正が「+2段」なのは「夜は目が慣れて4倍明るく感じる分を絵に入れる」という意味である。HDR(広い明暗幅のままの計算)・トーンマッピング(表示できる幅への圧縮)・自動露出(輝度分布からの段の自動決定)は、すべてこの対数の物差しの上の操作である。</p>
+<p>本エンジンの露出の型(設計正本)がこの構造をそのまま写している: UI/CLIの<strong>露出倍率</strong>(線形)と、天空状態が返す<strong>露出補正段</strong>(EV。2を底とする段数)を分け、最終倍率 = 露出倍率 × 2^補正段 で合成する。夜の補正が「+2段」なのは「夜は目が慣れて4倍明るく感じる分を絵に入れる」という意味である。HDR(広い明暗幅のままの計算)・明るさの圧縮(表示できる幅への圧縮)・自動露出(輝度分布からの段の自動決定)は、すべてこの対数の物差しの上の操作である。</p>
 
 
 <h3 id="s10-11">10.11 グラフィックスが物理を歪めている箇所の目録</h3>

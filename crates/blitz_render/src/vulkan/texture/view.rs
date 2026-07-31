@@ -1,4 +1,4 @@
-//! 全ミップレベルにまたがるテクスチャの画像ビューとサンプラー。
+//! 全縮小段レベルにまたがるテクスチャの画像ビューとサンプラー。
 
 use ash::vk;
 
@@ -26,7 +26,7 @@ pub(super) fn 画像ビューを作る(
 }
 
 pub(super) fn サンプラーを作る(device: &ash::Device, mip数: u32) -> Result<vk::Sampler, レンダラーエラー> {
-    let mip数u16 = u16::try_from(mip数).unwrap_or_else(|_| panic!("ミップ数がu16に収まらない: {mip数}"));
+    let mip数u16 = u16::try_from(mip数).unwrap_or_else(|_| panic!("縮小段数がu16に収まらない: {mip数}"));
     let create_info = vk::SamplerCreateInfo::default()
         .mag_filter(vk::Filter::LINEAR)
         .min_filter(vk::Filter::LINEAR)

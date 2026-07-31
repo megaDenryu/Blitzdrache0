@@ -1,4 +1,4 @@
-//! トーンマップパス一式(判断38・39): 全画面三角形パイプライン、HDR画像とブルーム結果を
+//! 明るさの圧縮パス一式(判断38・39): 全画面三角形パイプライン、HDR画像と光のにじみ結果を
 //! 読むディスクリプタとサンプラー。ポストプロセス有効時のみ生成する。
 //! パイプラインの固定機能は`fullscreen_pipeline`、ビューの束縛は`rebind`にある。
 
@@ -13,7 +13,7 @@ use crate::vulkan::{fullscreen_pipeline, linear_sampler};
 
 pub(crate) const 露出プッシュ定数バイト数: u32 = 4;
 
-pub(crate) struct トーンマップ一式 {
+pub(crate) struct 明るさの圧縮一式 {
     pub(crate) pipeline: vk::Pipeline,
     pub(crate) layout: vk::PipelineLayout,
     sampler: vk::Sampler,
@@ -22,13 +22,13 @@ pub(crate) struct トーンマップ一式 {
     pub(crate) descriptor_set: vk::DescriptorSet,
 }
 
-impl トーンマップ一式 {
+impl 明るさの圧縮一式 {
     pub(crate) fn 生成する(
         device: &ash::Device,
         スワップチェーン形式: vk::Format,
         シェーダー: &シェーダー一式,
         hdrビュー: vk::ImageView,
-        ブルームビュー: vk::ImageView,
+        光のにじみビュー: vk::ImageView,
     ) -> Result<Self, レンダラーエラー> {
         let sampler = linear_sampler::作る(device)?;
         let ディスクリプタ = match descriptor::生成する(device) {
@@ -64,7 +64,7 @@ impl トーンマップ一式 {
             descriptor_pool: ディスクリプタ.pool,
             descriptor_set: ディスクリプタ.set,
         };
-        一式.ビューを再束縛する(device, hdrビュー, ブルームビュー);
+        一式.ビューを再束縛する(device, hdrビュー, 光のにじみビュー);
         Ok(一式)
     }
 

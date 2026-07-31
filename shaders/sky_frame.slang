@@ -4,7 +4,7 @@
 // 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「空パスの配置」
 
 // binding3のフレームシェーダー定数。前半はscene.slangのFrameUniformと同じ並びであり、後半の inverseViewProjection 以降が空パスだけが読む区画である。
-// 注意: 前半の並びをscene.slangと食い違わせると後半のオフセットがずれる。区画の書き手は
+// 注意: 前半の並びをscene.slangと食い違わせると後半の開始位置がずれる。区画の書き手は
 // `crates/blitz_render/src/vulkan/uniform/sky_bytes.rs`であり、並びを変えるときは両方を同時に直す。
 struct SkyFrameUniform
 {

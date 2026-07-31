@@ -1,17 +1,17 @@
-//! トーンマップ用ディスクリプタ: binding0=HDR画像・binding1=ブルーム結果の
+//! 明るさの圧縮用ディスクリプタ: binding0=HDR画像・binding1=光のにじみ結果の
 //! combined image sampler 2個のlayout・pool・set。
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
 
-pub(super) struct トーンマップディスクリプタ {
+pub(super) struct 明るさの圧縮ディスクリプタ {
     pub(super) layout: vk::DescriptorSetLayout,
     pub(super) pool: vk::DescriptorPool,
     pub(super) set: vk::DescriptorSet,
 }
 
-impl トーンマップディスクリプタ {
+impl 明るさの圧縮ディスクリプタ {
     pub(super) fn 破棄する(&self, device: &ash::Device) {
         // 安全性: 各ハンドルはこの構造体が唯一の所有者。poolの破棄がsetの解放を暗黙に行う。
         unsafe {
@@ -21,7 +21,7 @@ impl トーンマップディスクリプタ {
     }
 }
 
-pub(super) fn 生成する(device: &ash::Device) -> Result<トーンマップディスクリプタ, レンダラーエラー> {
+pub(super) fn 生成する(device: &ash::Device) -> Result<明るさの圧縮ディスクリプタ, レンダラーエラー> {
     let binding一覧 = [
         vk::DescriptorSetLayoutBinding::default()
             .binding(0)
@@ -61,7 +61,7 @@ pub(super) fn 生成する(device: &ash::Device) -> Result<トーンマップデ
             let Some(&set) = 一覧.first() else {
                 panic!("allocate_descriptor_setsが成功したのにセットが0個だった(Vulkan実装の契約違反)");
             };
-            Ok(トーンマップディスクリプタ { layout, pool, set })
+            Ok(明るさの圧縮ディスクリプタ { layout, pool, set })
         }
         Err(誤り) => {
             // 安全性: pool・layoutはこのスコープの唯一の所有者で、以降使用しない。

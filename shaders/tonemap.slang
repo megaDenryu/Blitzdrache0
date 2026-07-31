@@ -1,5 +1,5 @@
-// M7: トーンマップパス(判断38・39)。HDR中間画像(リニア)を全画面三角形でサンプリングし、
-// ブルーム(1/2解像度)を加算合成してから露出乗算とACES近似で表示リニア0..1へ圧縮する。
+// M7: 明るさの圧縮パス(判断38・39)。HDR中間画像(リニア)を全画面三角形でサンプリングし、
+// 光のにじみ(1/2解像度)を加算合成してから露出乗算とACES近似で表示リニア0..1へ圧縮する。
 // スワップチェーンはSRGB形式のため、sRGBへの符号化はハードウェアが行う。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
@@ -50,7 +50,7 @@ static const float bloomStrength = 0.06;
 [shader("fragment")]
 float4 fragmentMain(VertexOutput input) : SV_Target
 {
-    // ブルームはリニアHDRのまま加算し、露出・トーンカーブは合成後の値に一度だけ掛ける(判断38の色の流れ)。
+    // 光のにじみはリニアHDRのまま加算し、露出・トーンカーブは合成後の値に一度だけ掛ける(判断38の色の流れ)。
     float3 hdr = hdrTexture.Sample(input.uv).rgb + bloomTexture.Sample(input.uv).rgb * bloomStrength;
     float3 exposed = hdr * exposurePush.exposure;
     return float4(acesFilm(exposed), 1.0);

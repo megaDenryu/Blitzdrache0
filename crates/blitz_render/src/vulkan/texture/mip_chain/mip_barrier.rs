@@ -1,4 +1,4 @@
-//! ミップチェーン生成中の各レベルのレイアウト遷移バリア(synchronization2)。
+//! 縮小段チェーン生成中の各レベルのレイアウト遷移バリア(synchronization2)。
 
 use ash::vk;
 
@@ -56,10 +56,10 @@ pub(super) fn レベルをshader_readへ遷移する(device: &ash::Device, comma
     積む(device, command_buffer, バリア);
 }
 
-/// 最終ミップレベル専用: TRANSFER_DST_OPTIMAL(blitの先として使用済み、以降blit元には
+/// 最終縮小段レベル専用: TRANSFER_DST_OPTIMAL(blitの先として使用済み、以降blit元には
 /// ならない) → SHADER_READ_ONLY_OPTIMAL。
 ///
-/// 注意: mip数が1(ミップ無し)ならこのレベルはmip0そのものでCOPY段の書き込み、
+/// 注意: mip数が1(縮小段無し)ならこのレベルはmip0そのものでCOPY段の書き込み、
 /// mip数が2以上ならblit(BLIT段)の書き込み。`レベルをsrcへ遷移する`と同じ理由で
 /// `ALL_TRANSFER`を使う。
 pub(super) fn 最終レベルをshader_readへ遷移する(

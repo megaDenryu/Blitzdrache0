@@ -28,9 +28,9 @@ const 表面流エントリファイル名: &str = "surface_flow.slang";
 const SPHエントリファイル名: &str = "sph.slang";
 const UIエントリファイル名: &str = "ui.slang";
 const シャドウエントリファイル名: &str = "shadow.slang";
-const トーンマップエントリファイル名: &str = "tonemap.slang";
-const ブルーム縮小側エントリファイル名: &str = "bloom_down.slang";
-const ブルーム拡大側エントリファイル名: &str = "bloom_up.slang";
+const 明るさの圧縮エントリファイル名: &str = "tonemap.slang";
+const 光のにじみ縮小側エントリファイル名: &str = "bloom_down.slang";
+const 光のにじみ拡大側エントリファイル名: &str = "bloom_up.slang";
 const スキニングエントリファイル名: &str = "skinning.slang";
 
 pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
@@ -60,14 +60,14 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
 
     sky_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
 
-    let トーンマップソース絶対パス = シェーダーディレクトリ絶対パス.join(トーンマップエントリファイル名);
-    tonemap_spirv_compile::頂点と画素段をコンパイルする(&slangc, &トーンマップソース絶対パス, &出力先ディレクトリ)?;
+    let 明るさの圧縮ソース絶対パス = シェーダーディレクトリ絶対パス.join(明るさの圧縮エントリファイル名);
+    tonemap_spirv_compile::頂点と画素段をコンパイルする(&slangc, &明るさの圧縮ソース絶対パス, &出力先ディレクトリ)?;
 
-    let ブルーム縮小側パス = シェーダーディレクトリ絶対パス.join(ブルーム縮小側エントリファイル名);
-    bloom_spirv_compile::縮小側をコンパイルする(&slangc, &ブルーム縮小側パス, &出力先ディレクトリ)?;
+    let 光のにじみ縮小側パス = シェーダーディレクトリ絶対パス.join(光のにじみ縮小側エントリファイル名);
+    bloom_spirv_compile::縮小側をコンパイルする(&slangc, &光のにじみ縮小側パス, &出力先ディレクトリ)?;
 
-    let ブルーム拡大側パス = シェーダーディレクトリ絶対パス.join(ブルーム拡大側エントリファイル名);
-    bloom_spirv_compile::拡大側をコンパイルする(&slangc, &ブルーム拡大側パス, &出力先ディレクトリ)?;
+    let 光のにじみ拡大側パス = シェーダーディレクトリ絶対パス.join(光のにじみ拡大側エントリファイル名);
+    bloom_spirv_compile::拡大側をコンパイルする(&slangc, &光のにじみ拡大側パス, &出力先ディレクトリ)?;
 
     let スキニングパス = シェーダーディレクトリ絶対パス.join(スキニングエントリファイル名);
     skinning_spirv_compile::コンピュートをコンパイルする(&slangc, &スキニングパス, &出力先ディレクトリ)?;

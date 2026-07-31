@@ -1,9 +1,9 @@
 //! 大気のベイク済み画像生成パス1フレームぶんの入力の記録。フレーム構成に空段階があり、かつそのフレームでベイク済み画像を焼くときだけ`Some`で渡す。
 //!
 //! 画像そのものでなくハンドルを運ばないのは、グラフへの登録が`graph_build`側の担当だからである。
-//! ここが運ぶのは束縛先(パイプライン・レイアウト・ディスクリプタセット)と、ディスパッチするワークグループ数、
-//! それにディスパッチ前へ押し込む定数だけである。即時定数のバイト並びは`push_constants`、
-//! ワークグループ数の求め方は`workgroup_count`が持つ。
+//! ここが運ぶのは束縛先(パイプライン・レイアウト・ディスクリプタセット)と、計算の発行する計算の班数、
+//! それに計算の発行前へ押し込む定数だけである。即時定数のバイト並びは`push_constants`、
+//! 計算の班数の求め方は`workgroup_count`が持つ。
 
 mod push_constants;
 mod workgroup_count;
@@ -11,16 +11,16 @@ mod workgroup_count;
 use ash::vk;
 
 pub(crate) use push_constants::生成の即時定数;
-pub(super) use workgroup_count::ワークグループ数を求める;
+pub(super) use workgroup_count::計算の班数を求める;
 
 use super::大気のベイク済み画像の形;
 
-/// 1本のコンピュートパスが束縛する資源とディスパッチの大きさ。
+/// 1本のコンピュートパスが束縛する資源と計算の発行の大きさ。
 pub(crate) struct 大気のベイク済み画像の生成入力 {
     pub(crate) pipeline: vk::Pipeline,
     pub(crate) layout: vk::PipelineLayout,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
-    pub(crate) ワークグループ数: [u32; 3],
+    pub(crate) 計算の班数: [u32; 3],
     pub(crate) 即時定数: 生成の即時定数,
 }
 

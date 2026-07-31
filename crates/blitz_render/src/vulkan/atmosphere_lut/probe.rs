@@ -14,7 +14,7 @@ use crate::atmosphere::{スカイビュー観測条件, 大気のベイク済み
 use crate::atmosphere_lut_input::大気のベイク済み画像の生成指示;
 use crate::error::レンダラーエラー;
 use crate::shader_bundle::大気のベイク済み画像のシェーダー一式;
-use crate::vulkan::headless::ヘッドレスGPU環境;
+use crate::vulkan::headless::ウィンドウなし実行GPU環境;
 use crate::vulkan::sync::フレームスロット添字;
 
 pub(crate) use validation_observation::検証観測;
@@ -43,14 +43,15 @@ pub(crate) struct 焼く条件<'a> {
 pub(crate) fn 大気のベイク済み画像をgpuで焼いて読み戻す(
     条件: 焼く条件<'_>,
 ) -> Result<(大気のベイク済み画像の読み戻し, 検証観測), レンダラーエラー> {
-    let 環境 = ヘッドレスGPU環境::生成する()?;
+    let 環境 = ウィンドウなし実行GPU環境::生成する()?;
     let 結果 = 環境で焼く(&環境, &条件);
     let 観測 = 検証観測::環境を破棄して観測する(&環境);
     Ok((結果?, 観測))
 }
 
 fn 環境で焼く(
-    環境: &ヘッドレスGPU環境, 条件: &焼く条件<'_>
+    環境: &ウィンドウなし実行GPU環境,
+    条件: &焼く条件<'_>,
 ) -> Result<大気のベイク済み画像の読み戻し, レンダラーエラー> {
     let device = 環境.device();
     let メモリプロパティ = 環境.メモリプロパティを取得する();
@@ -61,7 +62,7 @@ fn 環境で焼く(
 }
 
 fn 一式で焼く(
-    環境: &ヘッドレスGPU環境,
+    環境: &ウィンドウなし実行GPU環境,
     一式: &大気のベイク済み画像一式,
     条件: &焼く条件<'_>,
     メモリプロパティ: &ash::vk::PhysicalDeviceMemoryProperties,

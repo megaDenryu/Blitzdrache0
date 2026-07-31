@@ -1,4 +1,4 @@
-//! UIテクスチャの唯一のミップレベルに対するレイアウト遷移バリア2つ
+//! UIテクスチャの唯一の縮小段レベルに対するレイアウト遷移バリア2つ
 //! (UNDEFINED→TRANSFER_DST、TRANSFER_DST→SHADER_READ_ONLY)。
 
 use ash::vk;

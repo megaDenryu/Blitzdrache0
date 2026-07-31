@@ -1,9 +1,9 @@
-//! ブルーム一式のパイプライン部(サンプラー・レイアウト2種・パイプライン3本)の生成。
+//! 光のにじみ一式のパイプライン部(サンプラー・レイアウト2種・パイプライン3本)の生成。
 //! ディスクリプタのプールとセットは空(null)のまま返し、`ディスクリプタを作り直す`が埋める。
 
 use ash::vk;
 
-use super::{descriptor, ブルーム一式};
+use super::{descriptor, 光のにじみ一式};
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan::hdr_target::HDR形式;
@@ -14,7 +14,7 @@ pub(super) fn パイプライン部を生成する(
     前処理シェーダー: &シェーダー一式,
     縮小シェーダー: &シェーダー一式,
     拡大シェーダー: &シェーダー一式,
-) -> Result<ブルーム一式, レンダラーエラー> {
+) -> Result<光のにじみ一式, レンダラーエラー> {
     let sampler = linear_sampler::作る(device)?;
     let (単一読みlayout, 二読みlayout) = match descriptor::レイアウト2種を作る(device) {
         Ok(組) => 組,
@@ -51,7 +51,7 @@ pub(super) fn パイプライン部を生成する(
         }
     }
 
-    Ok(ブルーム一式 {
+    Ok(光のにじみ一式 {
         前処理pipeline: 組一覧[0].0,
         前処理layout: 組一覧[0].1,
         縮小pipeline: 組一覧[1].0,

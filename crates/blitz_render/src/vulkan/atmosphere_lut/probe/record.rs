@@ -10,13 +10,13 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::pass;
 use crate::vulkan::atmosphere_lut::{大気のベイク済み画像の描画入力, 大気のベイク済み画像の画像入力, 生成する組};
 use crate::vulkan::graph;
-use crate::vulkan::headless::ヘッドレスGPU環境;
+use crate::vulkan::headless::ウィンドウなし実行GPU環境;
 
 use super::readback_set::受け皿一式;
 use super::大気のベイク済み画像の読み戻し;
 
 pub(super) fn 焼いて読み戻す(
-    環境: &ヘッドレスGPU環境,
+    環境: &ウィンドウなし実行GPU環境,
     入力: &大気のベイク済み画像の描画入力,
     受け皿: &受け皿一式,
 ) -> Result<大気のベイク済み画像の読み戻し, レンダラーエラー> {

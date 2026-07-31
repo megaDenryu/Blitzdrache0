@@ -6,7 +6,7 @@ use super::spec::布仕様;
 
 pub(super) fn 粒子一覧を作る(仕様: &布仕様, 一辺粒子数: usize) -> Vec<粒子> {
     let 逆質量 = 逆質量を計算する(仕様);
-    let 原点 = 仕様.原点オフセット();
+    let 原点 = 仕様.原点開始位置();
     let 間隔 = 仕様.粒子間隔();
 
     let mut 粒子一覧 = Vec::with_capacity(一辺粒子数 * 一辺粒子数);

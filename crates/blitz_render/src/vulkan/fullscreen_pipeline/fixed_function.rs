@@ -40,7 +40,7 @@ pub(super) fn 組み立てる(
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
-    // プッシュ定数0バイトの範囲は無効のため、使わないパス(ブルーム抽出)では範囲自体を空にする。
+    // プッシュ定数0バイトの範囲は無効のため、使わないパス(光のにじみ抽出)では範囲自体を空にする。
     let プッシュ定数範囲一覧 = if プッシュ定数バイト数 > 0 {
         vec![
             vk::PushConstantRange::default()

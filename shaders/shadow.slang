@@ -18,7 +18,7 @@ import visible_id;
 
 // scene.slangのFrameUniformと同じbinding3を指すが、先頭のcascadeLightViewProjectionだけを
 // 宣言する(判断36: 両ファイルとも先頭配置のため、この構造体の1フィールド分の
-// オフセットがscene.slang側と一致する)。
+// 開始位置がscene.slang側と一致する)。
 struct FrameUniformLight
 {
     column_major float4x4 cascadeLightViewProjection[4];

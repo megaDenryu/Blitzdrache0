@@ -1,4 +1,4 @@
-//! 開発用UIテクスチャ用のCPU側データ(RGBA8、ミップ不要)。
+//! 開発用UIテクスチャ用のCPU側データ(RGBA8、縮小段不要)。
 //! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断33」。
 
 use thiserror::Error;
@@ -11,7 +11,7 @@ pub enum UIテクスチャ素材エラー {
     バイト長不一致 { 期待バイト数: usize, 実バイト数: usize },
 }
 
-/// GPUへ登録するUIテクスチャ1枚ぶんのCPU側データ。ミップは生成しない。
+/// GPUへ登録するUIテクスチャ1枚ぶんのCPU側データ。縮小段は生成しない。
 #[derive(Debug, Clone, PartialEq)]
 pub struct UIテクスチャ素材 {
     幅: u32,

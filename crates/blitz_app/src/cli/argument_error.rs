@@ -25,7 +25,7 @@ pub(crate) enum 起動引数エラー {
     #[error("ストリーミング上限の引数が不正だった: {0}")]
     ストリーミング上限不正(String),
     #[error("--global-offset引数が不正だった: {0}")]
-    大域オフセット不正(String),
+    大域ずらし量不正(String),
     #[error("--camera-nudge引数が不正だった: {0}")]
     カメラずれ不正(String),
     #[error("--camera-pitch引数が不正だった: {0}")]

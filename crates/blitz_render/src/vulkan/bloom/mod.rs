@@ -1,4 +1,4 @@
-//! ブルームピラミッドのパイプライン・ディスクリプタ一式(判断41)。
+//! 光のにじみピラミッドのパイプライン・ディスクリプタ一式(判断41)。
 //! パイプライン3本(前処理・縮小・拡大)とサンプラー・レイアウトはウィンドウ寸法に依存せず永続し、
 //! ディスクリプタ(プールとセット)は段数が解像度依存のためピラミッドの作り直しと連動して作り直す。
 //! 生成手順は`create`、ディスクリプタは`descriptor`、ビュー束縛は`rebind`にある。
@@ -11,9 +11,9 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
-use crate::vulkan::bloom_targets::ブルームピラミッド;
+use crate::vulkan::bloom_targets::光のにじみピラミッド;
 
-pub(crate) struct ブルーム一式 {
+pub(crate) struct 光のにじみ一式 {
     pub(crate) 前処理pipeline: vk::Pipeline,
     pub(crate) 前処理layout: vk::PipelineLayout,
     pub(crate) 縮小pipeline: vk::Pipeline,
@@ -29,14 +29,14 @@ pub(crate) struct ブルーム一式 {
     pub(crate) 拡大set一覧: Vec<vk::DescriptorSet>,
 }
 
-impl ブルーム一式 {
+impl 光のにじみ一式 {
     pub(crate) fn 生成する(
         device: &ash::Device,
         前処理シェーダー: &シェーダー一式,
         縮小シェーダー: &シェーダー一式,
         拡大シェーダー: &シェーダー一式,
         hdrビュー: vk::ImageView,
-        ピラミッド: &ブルームピラミッド,
+        ピラミッド: &光のにじみピラミッド,
     ) -> Result<Self, レンダラーエラー> {
         let mut 一式 = create::パイプライン部を生成する(device, 前処理シェーダー, 縮小シェーダー, 拡大シェーダー)?;
         if let Err(誤り) = 一式.ディスクリプタを作り直す(device, hdrビュー, ピラミッド) {
@@ -53,7 +53,7 @@ impl ブルーム一式 {
         &mut self,
         device: &ash::Device,
         hdrビュー: vk::ImageView,
-        ピラミッド: &ブルームピラミッド,
+        ピラミッド: &光のにじみピラミッド,
     ) -> Result<(), レンダラーエラー> {
         if self.descriptor_pool != vk::DescriptorPool::null() {
             // 安全性: 旧プールと旧セットは前提によりGPU未使用。プールの破棄がセットの解放を暗黙に行う。

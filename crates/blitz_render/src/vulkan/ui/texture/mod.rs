@@ -1,4 +1,4 @@
-//! 開発用UIテクスチャ1枚(image・view・sampler)。ミップ無し・bilinear+CLAMP(判断33)。
+//! 開発用UIテクスチャ1枚(image・view・sampler)。縮小段無し・bilinear+CLAMP(判断33)。
 
 mod image;
 mod upload;

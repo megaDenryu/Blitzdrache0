@@ -38,7 +38,7 @@ pub(super) fn 照合する(出力先: &Path, 幅: usize, 区分: &領域区分) 
             一日内秒: 正午.一日内秒,
             カメラ方位度: "0",
         },
-        // `--report-sky-pixel`のCPU正本はブルーム・露出・ACESトーンマップを通さない前提で線形放射輝度を
+        // `--report-sky-pixel`のCPU正本は光のにじみ・露出・ACES明るさの圧縮を通さない前提で線形放射輝度を
         // sRGB符号化する(参照: `crates/blitz_app/src/reports/sky_pixel.rs`冒頭)。描画側もポスト処理を外す。
         &["--report-sky-pixel", &画素引数, "--no-post"],
     )?;

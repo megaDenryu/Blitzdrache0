@@ -1,7 +1,7 @@
 //! ビルド時に埋め込まれた初期シェーダー(SPIR-V)。シーンシェーダーはホットリロードで
 //! 置き換わるまでの起動直後の1回だけに使う。ファイル名は`build_support`配下の
 //! 各コンパイルモジュールの出力名と一致させる。
-//! トーンマップシェーダーのホットリロードは粒子と同様に非対応(ビルド時コンパイルのみ)。
+//! 明るさの圧縮シェーダーのホットリロードは粒子と同様に非対応(ビルド時コンパイルのみ)。
 
 use blitz_render::{
     コンピュートシェーダー, シェーダー一式, シェーダー束, 大気のベイク済み画像のシェーダー一式, 粒子シェーダー一式
@@ -29,14 +29,14 @@ const UI画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/ui_fra
 const シャドウ頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/shadow_vertex.spv"));
 const シャドウ画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/shadow_fragment.spv"));
 
-const トーンマップ頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_vertex.spv"));
-const トーンマップ画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_fragment.spv"));
+const 明るさの圧縮頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_vertex.spv"));
+const 明るさの圧縮画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_fragment.spv"));
 
-const ブルーム縮小側頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_down_vertex.spv"));
-const ブルーム前処理SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_prefilter.spv"));
-const ブルーム縮小SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_downsample.spv"));
-const ブルーム拡大側頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_up_vertex.spv"));
-const ブルーム拡大SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_upsample.spv"));
+const 光のにじみ縮小側頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_down_vertex.spv"));
+const 光のにじみ前処理SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_prefilter.spv"));
+const 光のにじみ縮小SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_downsample.spv"));
+const 光のにじみ拡大側頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_up_vertex.spv"));
+const 光のにじみ拡大SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_upsample.spv"));
 
 const スキニングSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/skinning_compute.spv"));
 
@@ -83,10 +83,10 @@ pub(crate) fn 埋め込みシェーダー束を生成する(
         シャドウ: シェーダー一式::生成する(シャドウ頂点SPIRV.to_vec(), シャドウ画素段SPIRV.to_vec())?,
         空: crate::embedded_sky_shaders::埋め込み空シェーダーを生成する(空中遠近合成)?,
         大気のベイク済み画像: 埋め込み大気のベイク済み画像シェーダーを生成する()?,
-        トーンマップ: シェーダー一式::生成する(トーンマップ頂点SPIRV.to_vec(), トーンマップ画素段SPIRV.to_vec())?,
-        ブルーム前処理: シェーダー一式::生成する(ブルーム縮小側頂点SPIRV.to_vec(), ブルーム前処理SPIRV.to_vec())?,
-        ブルーム縮小: シェーダー一式::生成する(ブルーム縮小側頂点SPIRV.to_vec(), ブルーム縮小SPIRV.to_vec())?,
-        ブルーム拡大: シェーダー一式::生成する(ブルーム拡大側頂点SPIRV.to_vec(), ブルーム拡大SPIRV.to_vec())?,
+        明るさの圧縮: シェーダー一式::生成する(明るさの圧縮頂点SPIRV.to_vec(), 明るさの圧縮画素段SPIRV.to_vec())?,
+        光のにじみ前処理: シェーダー一式::生成する(光のにじみ縮小側頂点SPIRV.to_vec(), 光のにじみ前処理SPIRV.to_vec())?,
+        光のにじみ縮小: シェーダー一式::生成する(光のにじみ縮小側頂点SPIRV.to_vec(), 光のにじみ縮小SPIRV.to_vec())?,
+        光のにじみ拡大: シェーダー一式::生成する(光のにじみ拡大側頂点SPIRV.to_vec(), 光のにじみ拡大SPIRV.to_vec())?,
         ui: シェーダー一式::生成する(UI頂点SPIRV.to_vec(), UI画素段SPIRV.to_vec())?,
         スキニング: コンピュートシェーダー::生成する(スキニングSPIRV.to_vec())?,
         布: crate::embedded_cloth_shaders::埋め込み布シェーダーを生成する()?,

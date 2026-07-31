@@ -14,7 +14,7 @@ const 有効の語: &str = "有効";
 pub fn 検証を検査する(検証: &検証行) -> Result<String, String> {
     if 検証.件数 != 0 {
         return Err(format!(
-            "ヘッドレス実行でvalidationが{}件の指摘を出した(層の状況は{})。指摘の全文はblitz_appの標準エラーにある",
+            "ウィンドウなし実行でvalidationが{}件の指摘を出した(層の状況は{})。指摘の全文はblitz_appの標準エラーにある",
             検証.件数, 検証.状況
         ));
     }

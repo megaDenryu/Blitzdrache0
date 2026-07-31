@@ -19,7 +19,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--dump-frame" => 設定.フレームダンプ先 = Some(value_args::dump_frame引数を処理する(残り)?),
         "--report-sky-pixel" => 設定.空の代表画素報告 = screen_pixel_args::report_sky_pixel引数を処理する(残り)?,
         "--exposure" => 設定.露出 = value_args::exposure引数を処理する(残り)?,
-        "--global-offset" => 設定.平行移動.大域オフセット = placement_args::global_offset引数を処理する(残り)?,
+        "--global-offset" => 設定.平行移動.大域ずらし量 = placement_args::global_offset引数を処理する(残り)?,
         "--camera-nudge" => 設定.平行移動.カメラずれ = placement_args::camera_nudge引数を処理する(残り)?,
         "--camera-pitch" => 設定.平行移動.カメラ俯角差分 = placement_args::camera_pitch引数を処理する(残り)?,
         "--camera-yaw" => 設定.平行移動.カメラ方位差分 = placement_args::camera_yaw引数を処理する(残り)?,

@@ -1,4 +1,4 @@
-//! ステージングバッファ→mip0コピー→ミップチェーン生成を1回の一時コマンドバッファで行う。
+//! ステージングバッファ→mip0コピー→縮小段チェーン生成を1回の一時コマンドバッファで行う。
 
 use ash::vk;
 
@@ -42,7 +42,7 @@ fn 全レベルを転送先レイアウトへ遷移する(device: &ash::Device, 
         .level_count(mip数)
         .base_array_layer(0)
         .layer_count(1);
-    // 注意: mip0はこの直後のバッファ→画像コピー(COPY段)、mip1以降はミップチェーンの
+    // 注意: mip0はこの直後のバッファ→画像コピー(COPY段)、mip1以降は縮小段チェーンの
     // blit(BLIT段)で書き込まれる。全レベルを1回のバリアでUNDEFINED解除するため、
     // dstStageMaskは両方を包含する`ALL_TRANSFER`にする。
     let バリア = vk::ImageMemoryBarrier2::default()
