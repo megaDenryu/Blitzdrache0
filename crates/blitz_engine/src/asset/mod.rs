@@ -62,7 +62,7 @@ pub use joint_channel::ジョイントアニメーションチャンネル;
 pub use keyframe_channel::チャンネル;
 pub use material_data::マテリアルデータ;
 pub use mesh_data::メッシュデータ;
-pub use pbr_material_data::金属粗さPBRデータ;
+pub use pbr_material_data::{材質特徴集合, 材質特徴集合エラー, 金属粗さPBRデータ};
 pub use render_object_data::描画対象データ;
 pub use render_object_id::描画対象ID;
 pub(crate) use runtime_format::mesh_layout;
