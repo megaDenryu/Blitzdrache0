@@ -10,8 +10,6 @@ mod animation;
 mod asset;
 mod camera;
 mod chunk;
-/// 描画束の語彙は識別・区間・材質束縛・可視個体区間の参照と数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
-pub mod draw_bundle;
 mod frame_composition;
 #[cfg(test)]
 mod frame_composition_tests;
@@ -20,6 +18,8 @@ mod instance_lod;
 mod instance_lod_tests;
 mod lighting;
 mod lod_threshold;
+/// プリミティブ描画項目の語彙は識別・区間・材質束縛・可視個体区間の参照と数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
+pub mod primitive_draw_item;
 /// 空と太陽の語彙は数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
 pub mod sky;
 mod streaming;

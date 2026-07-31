@@ -57,7 +57,7 @@ impl アプリ {
             ウィンドウ再構築検証有効: 起動設定.ウィンドウ再構築検証有効,
             ストリーミング,
             可視判定: super::visibility::可視判定配線::生成する(起動設定.インスタンス可視判定有効, 起動設定.インスタンス段選択有効),
-            描画束台帳: super::draw_bundle_registry::描画束台帳::default(),
+            プリミティブ描画項目台帳: super::primitive_draw_item_registry::プリミティブ描画項目台帳::default(),
             可視個体の選別の計測: 起動設定
                 .インスタンス区間報告
                 .then(|| super::section_timing::区間計測::生成する(起動設定.モード)),

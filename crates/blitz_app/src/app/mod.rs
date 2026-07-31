@@ -4,7 +4,6 @@ mod aspect;
 mod cloth_frame;
 mod cloth_setup;
 mod create;
-mod draw_bundle_registry;
 mod draw_dispatch;
 mod frame;
 mod frame_dump;
@@ -15,6 +14,7 @@ mod hot_reload_apply;
 mod lod_probe;
 mod measurement_setup;
 mod particle_setup;
+mod primitive_draw_item_registry;
 mod queries;
 mod report_requests;
 mod scene_camera;
@@ -88,8 +88,8 @@ pub(crate) struct アプリ {
     ストリーミング: Option<streaming::ストリーミング配線>,
     /// インスタンス群の可視判定と個体別LOD。束の可視材料・個体別の段の記憶・毎フレームの可視ID列をここが持つ。ストリーミングを使わない起動時シーンでも要るため、ストリーミング配線の中ではなくアプリが直に持つ。
     可視判定: visibility::可視判定配線,
-    /// 束ごとのプリミティブ別描画束。可視判定の台帳と同じ束IDで対になり、束の追加と解除で一緒に出入りする。段Cのプリミティブ別の描画発行がここから読む。
-    描画束台帳: draw_bundle_registry::描画束台帳,
+    /// 束ごとのプリミティブ描画項目。可視判定の台帳と同じ束IDで対になり、束の追加と解除で一緒に出入りする。段Cのプリミティブ別の描画発行がここから読む。
+    プリミティブ描画項目台帳: primitive_draw_item_registry::プリミティブ描画項目台帳,
     /// `--report-instance-sections`指定時だけ`Some`。可視判定と個体別LODの1フレーム分の走査が占めた時間を貯める。
     可視個体の選別の計測: Option<section_timing::区間計測>,
     /// `--lod-probe-step`指定時だけ`Some`。段の境界をまたぐ往復を決定的に作るためにカメラを前後させる。

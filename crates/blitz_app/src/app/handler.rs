@@ -38,7 +38,7 @@ impl ApplicationHandler for アプリ {
                 }
                 let 束id = super::scene_load::起動時シーンの束ID;
                 self.可視判定.束を登録する(束id, 登録一式.可視材料一覧);
-                self.描画束台帳.束を登録する(束id, 登録一式.描画束一覧);
+                self.プリミティブ描画項目台帳.束を登録する(束id, 登録一式.プリミティブ描画項目一覧);
                 self.window = Some(window);
                 self.レンダラー = Some(レンダラー);
                 self.開発ui = Some(開発ui);
