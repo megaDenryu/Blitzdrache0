@@ -5,6 +5,7 @@
 use blitz_engine::メッシュデータ;
 
 use super::super::document::開いた文書;
+use super::super::material_slots::材質スロット語彙;
 use super::super::mesh;
 use super::finding::契約指摘;
 use super::mesh_data_check;
@@ -22,7 +23,8 @@ pub(super) fn 検査する(文書: &開いた文書) -> (Option<契約検査概�
     };
     let プリミティブ数 = メッシュ.primitives().len();
 
-    match mesh::メッシュデータを取り出す(文書, &メッシュ, None) {
+    let 語彙 = 材質スロット語彙::メッシュ列から作る(std::slice::from_ref(&メッシュ));
+    match mesh::メッシュデータを取り出す(文書, &メッシュ, None, &語彙) {
         Ok(データ) => (Some(概要を作る(メッシュ数, プリミティブ数, &データ)), mesh_data_check::検査する(&データ)),
         Err(誤り) => (
             None,
