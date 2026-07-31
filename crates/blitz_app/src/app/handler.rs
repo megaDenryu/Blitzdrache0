@@ -30,13 +30,15 @@ impl ApplicationHandler for アプリ {
             実表示計測要求,
             self.大域ずらし量,
         ) {
-            Ok((window, mut レンダラー, 開発ui, アニメーション, 布プリセット, 可視材料一覧)) => {
+            Ok((window, mut レンダラー, 開発ui, アニメーション, 布プリセット, 登録一式)) => {
                 // 起動時シーンをディスクから読んだのはこの1回である。
                 self.シーン読込計数.読み込んだ(self.現在フレーム);
                 if let Some(状況) = super::measurement_setup::レンダラーの計測を有効にする(&mut レンダラー, self) {
                     println!("実表示時刻計測: {}", 状況.名称());
                 }
-                self.可視判定.束を登録する(super::scene_load::起動時シーンの束ID, 可視材料一覧);
+                let 束id = super::scene_load::起動時シーンの束ID;
+                self.可視判定.束を登録する(束id, 登録一式.可視材料一覧);
+                self.描画束台帳.束を登録する(束id, 登録一式.描画束一覧);
                 self.window = Some(window);
                 self.レンダラー = Some(レンダラー);
                 self.開発ui = Some(開発ui);

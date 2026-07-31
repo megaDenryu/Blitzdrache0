@@ -4,6 +4,7 @@ mod aspect;
 mod cloth_frame;
 mod cloth_setup;
 mod create;
+mod draw_bundle_registry;
 mod draw_dispatch;
 mod frame;
 mod frame_dump;
@@ -28,22 +29,19 @@ mod visibility;
 mod window_setup;
 use std::path::PathBuf;
 
-use blitz_engine::カメラ;
-use blitz_render::{クリアカラー, レンダラー};
-use winit::window::Window;
-
-pub(crate) use frame_timing::{フレーム時間統計, 集計する};
-pub(crate) use streaming::ストリーミング要約;
-pub(crate) use time_of_day::空の再現条件;
-
 use crate::cli::{布モード, 描画対象の並べ方, 空中遠近合成指定, 粒子表示モード, 起動モード};
 use crate::dev_ui::開発UI;
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
 use crate::input::入力状態;
+use blitz_engine::カメラ;
+use blitz_render::{クリアカラー, レンダラー};
+pub(crate) use frame_timing::{フレーム時間統計, 集計する};
+pub(crate) use streaming::ストリーミング要約;
+pub(crate) use time_of_day::空の再現条件;
+use winit::window::Window;
 
-/// 前提: `レンダラー`フィールドは`window`より前に宣言する。Rustは構造体フィールドを宣言順にDropするため、
-/// この順序がレンダラー破棄(surface等)をウィンドウ破棄より必ず先に行うことを保証する(レンダラーの生成前提を満たす)。
+/// 前提: `レンダラー`フィールドは`window`より前に宣言する。Rustは構造体フィールドを宣言順にDropするため、この順序がレンダラー破棄(surface等)をウィンドウ破棄より必ず先に行うことを保証する(レンダラーの生成前提を満たす)。
 pub(crate) struct アプリ {
     レンダラー: Option<レンダラー>,
     window: Option<Window>,
@@ -90,6 +88,8 @@ pub(crate) struct アプリ {
     ストリーミング: Option<streaming::ストリーミング配線>,
     /// インスタンス群の可視判定と個体別LOD。束の可視材料・個体別の段の記憶・毎フレームの可視ID列をここが持つ。ストリーミングを使わない起動時シーンでも要るため、ストリーミング配線の中ではなくアプリが直に持つ。
     可視判定: visibility::可視判定配線,
+    /// 束ごとのプリミティブ別描画束。可視判定の台帳と同じ束IDで対になり、束の追加と解除で一緒に出入りする。段Cのプリミティブ別の描画発行がここから読む。
+    描画束台帳: draw_bundle_registry::描画束台帳,
     /// `--report-instance-sections`指定時だけ`Some`。可視判定と個体別LODの1フレーム分の走査が占めた時間を貯める。
     可視個体の選別の計測: Option<section_timing::区間計測>,
     /// `--lod-probe-step`指定時だけ`Some`。段の境界をまたぐ往復を決定的に作るためにカメラを前後させる。
