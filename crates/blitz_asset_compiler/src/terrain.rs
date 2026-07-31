@@ -3,8 +3,8 @@
 //! 同じシーンへ植生のインスタンス群を同居させるのは、本番のストリーミング経路で植生が出入りすることを検査するためである。
 //! 参照: `_doc/設計/地形とカメラ相対描画.md`「地形の表現」、`_doc/設計/植生インスタンスと物量計測.md`「ストリーミング統合」
 
-mod ground_height;
-mod lod_bake;
+pub(crate) mod ground_height;
+pub(crate) mod lod_bake;
 mod lod_level;
 mod skirt;
 mod skirt_depth;

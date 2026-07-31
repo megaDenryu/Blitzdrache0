@@ -3,11 +3,13 @@
 
 /// 用途の識別。同じ添字から複数の独立した値を得るため、用途ごとに混合の入力を変える。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum 用途 {
+pub(crate) enum 用途 {
     X方向の揺らぎ,
     Z方向の揺らぎ,
     向き,
     大きさ,
+    周方向の揺らぎ,
+    半径方向の揺らぎ,
 }
 
 impl 用途 {
@@ -17,11 +19,13 @@ impl 用途 {
             Self::Z方向の揺らぎ => 2,
             Self::向き => 3,
             Self::大きさ => 4,
+            Self::周方向の揺らぎ => 5,
+            Self::半径方向の揺らぎ => 6,
         }
     }
 }
 
-pub(super) fn 零以上一未満(種: u64, 添字: u64, 用途: 用途) -> f32 {
+pub(crate) fn 零以上一未満(種: u64, 添字: u64, 用途: 用途) -> f32 {
     let 上位 = 混ぜる(種 ^ 混ぜる(添字.wrapping_mul(0x9E37_79B9_7F4A_7C15) ^ 用途.番号())) >> 48;
     let 十六ビット = match u16::try_from(上位) {
         Ok(値) => 値,

@@ -10,6 +10,7 @@ mod height_grid;
 mod loader;
 mod terrain;
 mod vegetation;
+mod village;
 
 pub use chunk_directory_source::{チャンク目録ソースを読み込む, チャンク目録ソース項目};
 pub use compile::{コンパイル済みシーン, ソースシーンをコンパイルする};
@@ -25,3 +26,4 @@ pub use vegetation::{
     同居植生の指定, 地形同居の群, 地形同居の群を作る, 植生チャンクをコンパイルする, 植生単一個体シーンをコンパイルする,
     植生可視判定シーンをコンパイルする, 植生詳細段シーンをコンパイルする,
 };
+pub use village::{小物群の指定, 見本の集落チャンクをコンパイルする, 配置様式};

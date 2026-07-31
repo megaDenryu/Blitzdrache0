@@ -1,0 +1,2 @@
+blitz_chunk_directory 1
+0 0 prop_village village_x0_z0.heightgrid

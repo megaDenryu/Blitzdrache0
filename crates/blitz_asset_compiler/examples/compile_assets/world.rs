@@ -4,6 +4,7 @@
 
 mod asset_declaration;
 mod definition_kind;
+mod village_declaration;
 
 use super::catalog::{アセット定義, ソース種別};
 
@@ -11,17 +12,20 @@ use super::catalog::{アセット定義, ソース種別};
 const 板の世界の目録ソース: &str = "chunk_world/chunk_directory.txt";
 const 地形の世界の目録ソース: &str = "terrain_world/chunk_directory.txt";
 const 植生の世界の目録ソース: &str = "vegetation_world/chunk_directory.txt";
+const 見本の集落の世界の目録ソース: &str = "village_world/chunk_directory.txt";
 
 /// プロセス境界で世界を指す名前。xtaskが同じ綴りを渡す。
 const 板の世界の引数名: &str = "chunk_world";
 const 地形の世界の引数名: &str = "terrain_world";
 const 植生の世界の引数名: &str = "vegetation_world";
+const 見本の集落の世界の引数名: &str = "village_world";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum 対象世界 {
     板の世界,
     地形の世界,
     植生の世界,
+    見本の集落の世界,
 }
 
 impl 対象世界 {
@@ -30,8 +34,9 @@ impl 対象世界 {
             板の世界の引数名 => Ok(Self::板の世界),
             地形の世界の引数名 => Ok(Self::地形の世界),
             植生の世界の引数名 => Ok(Self::植生の世界),
+            見本の集落の世界の引数名 => Ok(Self::見本の集落の世界),
             他 => Err(format!(
-                "未知の世界名である: {他}(有効な値は{板の世界の引数名}と{地形の世界の引数名}と{植生の世界の引数名})"
+                "未知の世界名である: {他}(有効な値は{板の世界の引数名}と{地形の世界の引数名}と{植生の世界の引数名}と{見本の集落の世界の引数名})"
             )),
         }
     }
@@ -41,6 +46,7 @@ impl 対象世界 {
             Self::板の世界 => 板の世界の目録ソース,
             Self::地形の世界 => 地形の世界の目録ソース,
             Self::植生の世界 => 植生の世界の目録ソース,
+            Self::見本の集落の世界 => 見本の集落の世界の目録ソース,
         }
     }
 
@@ -54,6 +60,9 @@ impl 対象世界 {
                 同居植生: Some(asset_declaration::地形の同居植生(同居植生個体数)),
             },
             Self::植生の世界 => asset_declaration::植生種別(asset_declaration::計数判定の個体数),
+            Self::見本の集落の世界 => ソース種別::見本の集落 {
+                群一覧: village_declaration::集落の小物一覧,
+            },
         }
     }
 
@@ -68,6 +77,14 @@ impl 対象世界 {
             Self::板の世界 => asset_declaration::板の世界の一覧(),
             Self::地形の世界 => asset_declaration::地形の世界の一覧(),
             Self::植生の世界 => asset_declaration::植生の世界の一覧(),
+            Self::見本の集落の世界 => village_declaration::一覧(),
         }
     }
+}
+
+/// 見本の集落の宣言をコンパイラが受け取る指定へ写す。宣言の一覧を持つのが`village_declaration`であるため、写す手順もそちらが持つ。
+pub(super) fn 見本の集落の群指定を作る(
+    群一覧: &[super::source_kind::小物群宣言],
+) -> Result<Vec<blitz_asset_compiler::小物群の指定>, String> {
+    village_declaration::群の指定一覧を作る(群一覧)
 }

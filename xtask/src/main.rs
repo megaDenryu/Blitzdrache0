@@ -48,6 +48,7 @@ mod usage;
 mod validation_count;
 mod vegetation_run;
 mod verify;
+mod village_draw;
 mod watch_assets;
 
 fn main() -> ExitCode {
@@ -71,6 +72,7 @@ fn main() -> ExitCode {
         Some("origin-invariance") => origin_invariance::実行する(),
         Some("lod-crack") => lod_crack::実行する(),
         Some("prop-draw") => prop_draw::実行する(),
+        Some("village-draw") => village_draw::実行する(),
         Some("instance-draw") => instance_draw::実行する(),
         Some("instance-cull") => instance_cull::実行する(),
         Some("instance-lod") => instance_lod::実行する(),

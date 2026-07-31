@@ -8,11 +8,13 @@ const 既定ソースルート: &str = "assets";
 const 既定出力ルート: &str = "target/runtime_assets";
 const 地形の既定出力ルート: &str = "target/terrain_assets";
 const 植生の既定出力ルート: &str = "target/vegetation_assets";
+const 見本の集落の既定出力ルート: &str = "target/village_assets";
 
 /// プロセス境界で世界を指す名前。compile_assetsのexampleが同じ綴りを解析する。
 pub const 板の世界: &str = "chunk_world";
 pub const 地形の世界: &str = "terrain_world";
 pub const 植生の世界: &str = "vegetation_world";
+pub const 見本の集落の世界: &str = "village_world";
 
 pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     let 成否 = match 引数一覧 {
@@ -40,6 +42,14 @@ pub fn 地形世界を既定で生成する() -> bool {
 /// 植生世界も原点チャンクを占めるため、専用の既定出力ルートへ焼く。
 pub fn 植生世界を既定で生成する() -> bool {
     生成する(Path::new(既定ソースルート), Path::new(植生の既定出力ルート), 植生の世界)
+}
+
+/// 見本の集落も原点チャンクを占めるため、専用の既定出力ルートへ焼く。
+/// 引数なしの一括生成へ入れないのは、この世界の小物の原型が本体リポジトリの外にあるアセットリポジトリだけにあり、
+/// それを持たない環境では焼けないためである。焼けない世界を一括生成へ入れると、アセットリポジトリを持たない環境で
+/// 既存の検証が全部止まる。この世界を要るのは`village-draw`だけであり、そこが名指しで呼ぶ。
+pub fn 見本の集落世界を既定で生成する() -> bool {
+    生成する(Path::new(既定ソースルート), Path::new(見本の集落の既定出力ルート), 見本の集落の世界)
 }
 
 pub fn 生成する(ソースルート: &Path, 出力ルート: &Path, 世界名: &str) -> bool {

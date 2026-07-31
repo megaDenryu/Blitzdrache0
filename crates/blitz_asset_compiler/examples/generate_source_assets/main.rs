@@ -5,6 +5,7 @@
 //! assets/chunk_world/ へ25チャンク分のglTFと共有バッファと目録ソースを、
 //! assets/terrain_world/ へ25チャンク分の高さ格子と目録ソースを、
 //! assets/vegetation_world/ へ植生の原型glTFと1チャンクの目録ソースを書き出す。
+//! assets/village_world/ へ見本の集落の地面1チャンク分の高さ格子と目録ソースを書き出す。
 //! xtask gen-source-assets の実体であり、リポジトリルートを作業ディレクトリとして実行される。
 
 mod chunk_world;
@@ -17,6 +18,7 @@ mod shadow_scene_texture;
 mod terrain_world;
 mod textures;
 mod vegetation_world;
+mod village_world;
 
 use std::path::Path;
 
@@ -47,6 +49,11 @@ fn 実行する() -> Result<(), String> {
     ディレクトリを作る(植生世界出力先)?;
     vegetation_world::書き出す(植生世界出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 植生世界出力先.display());
+
+    let 見本の集落出力先 = Path::new("assets/village_world");
+    ディレクトリを作る(見本の集落出力先)?;
+    village_world::書き出す(見本の集落出力先)?;
+    println!("[generate_source_assets] {}へ生成完了", 見本の集落出力先.display());
     Ok(())
 }
 
