@@ -7,7 +7,8 @@
 
 use blitz_render::cascade::距離区分数;
 
-/// 1つの群の判定が数えたパスごとの可視数。並べ替えが個体を積むあいだに数え、書き出しの走査で数え直さない。
+/// 1つの群の判定が数えたパスごとの可視数。段別集計のパス別件数を段でたたんだ合計から導き、
+/// 個体を積む走査でも書き出しの走査でも数え直さない。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub(super) struct 群のパス別可視数 {
     pub(super) シーン: usize,
