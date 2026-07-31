@@ -8,7 +8,9 @@ use std::path::{Path, PathBuf};
 
 const エントリファイル名: &str = "scene.slang";
 const チャンク世界ディレクトリ名: &str = "chunk_world";
-const アセットファイル一覧: [&str; 8] = [
+/// 一時ソースへ複製するassets/smoke/のファイル。スモークが描くのはquadだけだが、実行時アセット生成器は板の世界の必須アセットが
+/// 1つでも欠けると失敗するため、同じディレクトリの宣言に並ぶものはすべて複製する。
+const アセットファイル一覧: [&str; 11] = [
     "quad.gltf",
     "quad_alt.gltf",
     "quad.bin",
@@ -17,6 +19,9 @@ const アセットファイル一覧: [&str; 8] = [
     "shadow_scene.gltf",
     "shadow_scene.bin",
     "shadow_scene_white.png",
+    "multi_material.bin",
+    "multi_material_two.gltf",
+    "multi_material_one.gltf",
 ];
 
 pub(super) fn シェーダーを一時コピーする() -> Result<PathBuf, String> {
