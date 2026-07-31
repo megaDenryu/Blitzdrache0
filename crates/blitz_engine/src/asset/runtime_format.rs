@@ -4,12 +4,14 @@ mod catalog;
 mod chunk_directory_v1;
 mod error;
 mod header;
+mod material_assignment_error;
 mod scene;
 
 pub use catalog::{カタログを実行時形式へ格納する, 実行時形式からカタログを読む};
 pub use chunk_directory_v1::{チャンク目録を実行時形式へ格納する, 実行時形式からチャンク目録を読む};
 pub use error::アセット実行時形式エラー;
 pub use header::{実行時アセットを格納する, 実行時アセットを開く};
+pub use material_assignment_error::材質割当エラー;
 pub(crate) use scene::mesh_layout;
 pub use scene::{シーンを実行時形式へ格納する, 実行時形式からシーンを読む};
 
@@ -23,6 +25,8 @@ pub enum アセット形式版 {
     V2,
     /// 形状の判別へインスタンス群を加えた版。シーンだけがこの版を使う。
     V3,
+    /// メッシュへプリミティブ列を、描画対象へ材質集合を加えた版。シーンだけがこの版を使う。
+    V4,
 }
 
 impl アセット形式版 {
@@ -31,6 +35,7 @@ impl アセット形式版 {
             Self::V1 => 1,
             Self::V2 => 2,
             Self::V3 => 3,
+            Self::V4 => 4,
         }
     }
 
@@ -39,6 +44,7 @@ impl アセット形式版 {
             1 => Ok(Self::V1),
             2 => Ok(Self::V2),
             3 => Ok(Self::V3),
+            4 => Ok(Self::V4),
             未対応 => Err(アセット実行時形式エラー::未対応形式版(未対応)),
         }
     }

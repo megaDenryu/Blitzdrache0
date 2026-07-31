@@ -53,8 +53,8 @@ fn 固定識別値と未知の番号を型付きエラーにする() {
     ));
 
     let mut 版不正 = 正常.clone();
-    版不正[8..12].copy_from_slice(&4_u32.to_le_bytes());
-    assert!(matches!(実行時アセットを開く(&版不正), Err(アセット実行時形式エラー::未対応形式版(4))));
+    版不正[8..12].copy_from_slice(&5_u32.to_le_bytes());
+    assert!(matches!(実行時アセットを開く(&版不正), Err(アセット実行時形式エラー::未対応形式版(5))));
 
     let mut 種別不正 = 正常;
     種別不正[12..16].copy_from_slice(&4_u32.to_le_bytes());

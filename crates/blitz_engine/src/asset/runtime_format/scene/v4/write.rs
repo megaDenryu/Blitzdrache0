@@ -1,5 +1,4 @@
-//! 版3のバイト列を組み立てる。旧版を読んで最新版へ変換する経路を検査するには版3の実物が要るため、その材料をここが作る。
-//! 実行時形式の書き出しは常に最新版で行うため、この経路は検査からのみ呼ぶ。
+//! シーンを版4内容へ決定的な順序で書く。
 
 use std::collections::HashSet;
 
@@ -7,13 +6,12 @@ use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::書込先;
 use super::super::shape_tag::{インスタンス群の判別値, 地形LODメッシュ群の判別値, 通常メッシュの判別値};
 use super::super::write_element;
+use super::slot_check;
 use crate::asset::draw_shape::描画形状;
 use crate::asset::render_object_data::描画対象データ;
 use crate::asset::scene_data::シーンデータ;
 
-pub(in crate::asset::runtime_format::scene) fn 内容を書く(
-    シーン: &シーンデータ
-) -> Result<Vec<u8>, アセット実行時形式エラー> {
+pub(super) fn 内容を書く(シーン: &シーンデータ) -> Result<Vec<u8>, アセット実行時形式エラー> {
     let ジョイント数 = シーン.スキン.as_ref().map(|値| 値.ジョイント一覧.len());
     if ジョイント数.is_none() && !シーン.アニメーション一覧.is_empty() {
         return Err(アセット実行時形式エラー::スキンなしアニメーション);
@@ -36,11 +34,12 @@ pub(in crate::asset::runtime_format::scene) fn 内容を書く(
 fn 描画対象を書く(
     出力: &mut 書込先, 対象: &描画対象データ, ジョイント数: Option<usize>
 ) -> Result<(), アセット実行時形式エラー> {
+    slot_check::検査する(対象.形状(), 対象.材質集合())?;
     出力.u64(対象.識別子().番号を返す());
     出力.u64(対象.所有チャンク().番号を返す());
     write_element::行列を書く(出力, 対象.ローカルからワールド())?;
     形状を書く(出力, 対象.形状(), ジョイント数)?;
-    write_element::マテリアルを書く(出力, 対象.材質集合())
+    write_element::材質集合を書く(出力, 対象.材質集合())
 }
 
 fn 形状を書く(
@@ -49,15 +48,15 @@ fn 形状を書く(
     match 形状 {
         描画形状::通常メッシュ(メッシュ) => {
             出力.u8(通常メッシュの判別値);
-            write_element::旧版のメッシュを書く(出力, メッシュ, ジョイント数)
+            write_element::メッシュを書く(出力, メッシュ, ジョイント数)
         }
         描画形状::地形LODメッシュ群(群) => {
             出力.u8(地形LODメッシュ群の判別値);
-            write_element::メッシュ列を書く(出力, 群.段一覧(), ジョイント数, write_element::旧版のメッシュを書く)
+            write_element::メッシュ列を書く(出力, 群.段一覧(), ジョイント数, write_element::メッシュを書く)
         }
         描画形状::インスタンス群(群) => {
             出力.u8(インスタンス群の判別値);
-            write_element::メッシュ列を書く(出力, 群.原型().段一覧(), ジョイント数, write_element::旧版のメッシュを書く)?;
+            write_element::メッシュ列を書く(出力, 群.原型().段一覧(), ジョイント数, write_element::メッシュを書く)?;
             write_element::配置列を書く(出力, 群.配置一覧())?;
             write_element::境界を書く(出力, 群.境界())
         }

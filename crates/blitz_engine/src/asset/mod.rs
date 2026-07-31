@@ -39,6 +39,8 @@ mod runtime_loader_tests;
 #[cfg(test)]
 mod runtime_scene_instance_tests;
 #[cfg(test)]
+mod runtime_scene_multi_material_tests;
+#[cfg(test)]
 mod runtime_scene_terrain_tests;
 #[cfg(test)]
 pub(crate) mod runtime_scene_tests;
@@ -72,14 +74,14 @@ pub use material_slot_assignment::材質スロット割当;
 pub use material_slot_id::材質スロットID;
 pub use mesh_data::メッシュデータ;
 pub use mesh_primitive::メッシュプリミティブ;
-pub use pbr_material_data::{材質特徴集合, 材質特徴集合エラー, 金属粗さPBRデータ};
+pub use pbr_material_data::{材質特徴集合, 金属粗さPBRデータ};
 pub use render_object_data::描画対象データ;
 pub use render_object_id::描画対象ID;
 pub(crate) use runtime_format::mesh_layout;
 pub use runtime_format::{
     アセット実行時形式エラー, アセット形式版, カタログを実行時形式へ格納する, シーンを実行時形式へ格納する, チャンク目録を実行時形式へ格納する,
     実行時アセット, 実行時アセットを格納する, 実行時アセットを開く, 実行時アセット種別, 実行時形式からカタログを読む, 実行時形式からシーンを読む,
-    実行時形式からチャンク目録を読む,
+    実行時形式からチャンク目録を読む, 材質割当エラー,
 };
 pub use runtime_load_error::実行時シーン読込エラー;
 pub use runtime_loader::実行時シーンを読み込む;
