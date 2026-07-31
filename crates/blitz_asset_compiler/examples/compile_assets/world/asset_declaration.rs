@@ -38,6 +38,11 @@ const 両視錐台外の群シーン: &str = "instance_all_culled";
 /// 参照: `crates/blitz_app/src/app/scene_camera.rs`と`crates/blitz_app/src/smoke/mod.rs`
 const 小物の木箱シーン: (&str, &str) = ("prop_wooden_crate", "props/wooden_crate.glb");
 
+/// 材質を3つ持つ小物1体の検収シーン。木の本体へ鉄の帯と真鍮の角金具を組んだ箱であり、Blenderが書き出した実アセットで
+/// 1メッシュ複数材質の受入を確かめる材料である。安定IDを`prop_`で始める理由は木箱と同じである。
+/// 参照: `_doc/設計/マルチマテリアルと材質境界.md`「段階導入」E段
+const 小物の金具付き木箱シーン: (&str, &str) = ("prop_banded_chest", "props/banded_chest.glb");
+
 /// 材質境界の検収シーン。同じ形を2材質2プリミティブで塗るものと、1材質1プリミティブで塗る対照の2つを焼く。
 /// 安定IDを`multi_material`で始めることが、書き換えもピクセル判定も持たない読み戻しだけの検収計画を選ばせる。
 /// 参照: `crates/blitz_app/src/smoke/mod.rs`
@@ -54,6 +59,7 @@ pub(super) fn 板の世界の一覧() -> Vec<アセット定義> {
         任意定義("helmet", "samples/DamagedHelmet/DamagedHelmet.glb"),
         任意定義("fox", "samples/Fox/Fox.glb"),
         外部アセット定義(小物の木箱シーン.0, 小物の木箱シーン.1),
+        外部アセット定義(小物の金具付き木箱シーン.0, 小物の金具付き木箱シーン.1),
     ]
 }
 
