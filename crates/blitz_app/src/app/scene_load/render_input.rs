@@ -10,6 +10,8 @@ mod instance_transforms;
 mod layout;
 #[cfg(test)]
 mod layout_tests;
+#[cfg(test)]
+mod reader_tests;
 mod representative_material;
 mod tray;
 #[cfg(test)]
@@ -18,7 +20,8 @@ mod tray_fixture;
 mod tray_tests;
 mod visibility_material;
 
-use blitz_engine::{シーンデータ, チャンク座標, 描画束一覧};
+use blitz_engine::draw_bundle::描画束一覧;
+use blitz_engine::{シーンデータ, チャンク座標};
 use blitz_math::大域ワールド位置;
 use blitz_render::描画シーン素材;
 

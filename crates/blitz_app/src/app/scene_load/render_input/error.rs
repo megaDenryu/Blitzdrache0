@@ -2,7 +2,8 @@
 //! 起動全体の失敗型へ直接足さないのは、層ごとの語彙を1つの列挙へ集めると、どの層が何を拒むのかが読めなくなるためである。
 //! プリミティブと材質集合の対応はエンジン側の描画束の組み立て工程が拒むため、その失敗は透過して運ぶ。
 
-use blitz_engine::{チャンク座標, 描画束エラー};
+use blitz_engine::draw_bundle::描画束エラー;
+use blitz_engine::チャンク座標;
 
 #[derive(Debug, thiserror::Error)]
 pub(crate) enum 描画入力エラー {

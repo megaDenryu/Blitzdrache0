@@ -10,7 +10,8 @@ mod animation;
 mod asset;
 mod camera;
 mod chunk;
-mod draw_bundle;
+/// 描画束の語彙は識別・区間・材質束縛・可視個体区間の参照と数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
+pub mod draw_bundle;
 mod frame_composition;
 #[cfg(test)]
 mod frame_composition_tests;
@@ -82,7 +83,6 @@ pub use asset::{
 };
 pub use camera::{カメラ, カメラインテント};
 pub use chunk::チャンク座標;
-pub use draw_bundle::{可視個体区間参照, 描画束, 描画束を組み立てる, 描画束エラー, 描画束一覧, 静的描画片};
 pub use frame_composition::既定フレーム構成を作る;
 pub use instance_lod::{個体LODエラー, 個体LOD選択設定, 個体別段状態, 個体詳細段};
 pub use lighting::{天空状態をライティングへ写す, 既定ライティングを作る};
