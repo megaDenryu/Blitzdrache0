@@ -7,6 +7,7 @@ mod material;
 mod matrix;
 mod mesh;
 mod mesh_list;
+mod mesh_skin_vertex;
 mod skin;
 
 pub(super) use animation::一覧を書く as アニメーション一覧を書く;

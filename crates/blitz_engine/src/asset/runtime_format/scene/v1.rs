@@ -13,6 +13,7 @@ use blitz_math::{ローカル, ワールド, 変換};
 use crate::asset::animation_clip::アニメーションクリップ;
 use crate::asset::draw_shape::描画形状;
 use crate::asset::material_data::マテリアルデータ;
+use crate::asset::material_set::材質集合;
 use crate::asset::mesh_data::メッシュデータ;
 use crate::asset::render_object_data::描画対象データ;
 use crate::asset::render_object_id::描画対象ID;
@@ -57,7 +58,7 @@ impl 描画対象V1 {
             self.所有チャンク,
             self.ローカルからワールド,
             描画形状::通常メッシュ(self.メッシュ),
-            self.マテリアル,
+            材質集合::単一材質から生成する(self.マテリアル),
         )
     }
 }

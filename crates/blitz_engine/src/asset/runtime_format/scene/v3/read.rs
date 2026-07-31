@@ -10,6 +10,7 @@ use super::super::read_element;
 use super::super::shape_tag::{インスタンス群の判別値, 地形LODメッシュ群の判別値, 通常メッシュの判別値};
 use crate::asset::draw_shape::描画形状;
 use crate::asset::instance::{インスタンス群, 原型};
+use crate::asset::material_set::材質集合;
 use crate::asset::render_object_data::描画対象データ;
 use crate::asset::render_object_id::描画対象ID;
 use crate::asset::scene_data::シーンデータ;
@@ -58,7 +59,7 @@ fn 描画対象を読む(入力: &mut 読取位置<'_>) -> Result<描画対象�
         所有チャンク,
         ローカルからワールド,
         形状,
-        マテリアル,
+        材質集合::単一材質から生成する(マテリアル),
     ))
 }
 
