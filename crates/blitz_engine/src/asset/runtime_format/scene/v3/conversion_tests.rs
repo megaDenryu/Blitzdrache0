@@ -6,7 +6,9 @@
 use super::super::super::{アセット形式版, 実行時アセットを格納する, 実行時アセット種別};
 use crate::asset::draw_shape::描画形状;
 use crate::asset::runtime_format::実行時形式からシーンを読む;
+use crate::asset::runtime_scene_multi_material_tests::fixture::二材質シーンを作る;
 use crate::asset::runtime_scene_tests::静的シーンを作る;
+use crate::asset::{アセット実行時形式エラー, 材質割当エラー};
 
 fn 版3バイト列を作る() -> Vec<u8> {
     let 内容 = super::write::内容を書く(&静的シーンを作る(vec![10, 20, 30, 255], 0.2)).unwrap();
@@ -47,4 +49,14 @@ fn 版3と最新版で先頭のヘッダー形式版が異なる() {
     let 最新版 = crate::asset::シーンを実行時形式へ格納する(&静的シーンを作る(vec![10, 20, 30, 255], 0.2)).unwrap();
     assert_eq!(版3[8..12], アセット形式版::V3.番号().to_le_bytes());
     assert_eq!(最新版[8..12], アセット形式版::V4.番号().to_le_bytes());
+}
+
+#[test]
+fn 版3は複数プリミティブのメッシュを表せない() {
+    assert_eq!(
+        super::write::内容を書く(&二材質シーンを作る()),
+        Err(アセット実行時形式エラー::材質割当不正(
+            材質割当エラー::旧版が表せないプリミティブ列 { プリミティブ数: 2 }
+        ))
+    );
 }

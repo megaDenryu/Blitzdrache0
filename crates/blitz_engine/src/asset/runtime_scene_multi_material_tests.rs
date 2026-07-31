@@ -3,13 +3,27 @@
 
 #![allow(clippy::unwrap_used)]
 
-mod fixture;
+mod feature_negative_tests;
+pub(crate) mod fixture;
+pub(crate) mod material_fixture;
+mod patch;
+mod position;
+mod slot_negative_tests;
+
+use position as 位置;
 
 use fixture::二材質シーンを作る;
+use material_fixture::{テクスチャ無し材質を作る, ベースカラー付き材質を作る};
 
 use crate::asset::{
     アセット形式版, シーンを実行時形式へ格納する, 実行時形式からシーンを読む, 描画形状, 材質スロットID
 };
+
+#[test]
+fn 焼いた長さが積み上げと一致する() {
+    let バイト列 = シーンを実行時形式へ格納する(&二材質シーンを作る()).unwrap();
+    assert_eq!(バイト列.len(), 位置::焼いた全長);
+}
 
 #[test]
 fn 二材質のシーンを決定的に往復する() {
@@ -47,14 +61,8 @@ fn 往復した材質集合がスロットごとの材質と特徴集合を保�
     assert_eq!(材質集合.件数(), 2);
     assert_eq!(材質集合.割当一覧()[0].スロット.番号を返す(), 0);
     assert_eq!(材質集合.割当一覧()[1].スロット.番号を返す(), 1);
-    assert_eq!(
-        材質集合.材質を参照する(材質スロットID::生成する(0)),
-        Some(&fixture::ベースカラー付き材質を作る())
-    );
-    assert_eq!(
-        材質集合.材質を参照する(材質スロットID::生成する(1)),
-        Some(&fixture::テクスチャ無し材質を作る())
-    );
+    assert_eq!(材質集合.材質を参照する(材質スロットID::生成する(0)), Some(&ベースカラー付き材質を作る()));
+    assert_eq!(材質集合.材質を参照する(材質スロットID::生成する(1)), Some(&テクスチャ無し材質を作る()));
     assert_eq!(材質集合.材質を参照する(材質スロットID::生成する(2)), None);
     let crate::asset::マテリアルデータ::金属粗さPBR(スロット0) = &材質集合.割当一覧()[0].マテリアル;
     let crate::asset::マテリアルデータ::金属粗さPBR(スロット1) = &材質集合.割当一覧()[1].マテリアル;

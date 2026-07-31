@@ -39,7 +39,7 @@ mod runtime_loader_tests;
 #[cfg(test)]
 mod runtime_scene_instance_tests;
 #[cfg(test)]
-mod runtime_scene_multi_material_tests;
+pub(crate) mod runtime_scene_multi_material_tests;
 #[cfg(test)]
 mod runtime_scene_terrain_tests;
 #[cfg(test)]
