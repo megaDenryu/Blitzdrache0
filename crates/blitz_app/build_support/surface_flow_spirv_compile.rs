@@ -1,4 +1,4 @@
-//! surface_flow.slangのコンピュート・頂点・フラグメントをSPIR-Vへコンパイルする。
+//! surface_flow.slangのコンピュート・頂点・画素段をSPIR-Vへコンパイルする。
 
 use std::path::Path;
 

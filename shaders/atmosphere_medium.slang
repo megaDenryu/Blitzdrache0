@@ -21,7 +21,7 @@ struct AtmosphereMedium
     float4 extinction[atmosphereComponentCount];
     // 空気分子と浮遊粒子の散乱係数RGB。吸収層は散乱しないため持たない。
     float4 scattering[2];
-    // xyz=地表アルベド, w=ミー位相の非対称係数
+    // xyz=地表反射率, w=ミー位相の非対称係数
     float4 groundAlbedoAndAsymmetry;
     // 層ごとの x=幅, y=指数項, z=指数尺度, w=線形項
     float4 densityLayers[atmosphereLayerCount];

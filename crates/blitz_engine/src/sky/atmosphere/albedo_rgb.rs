@@ -11,16 +11,16 @@ const 地球の反射率: f32 = 0.1;
 /// 不変条件: 3成分とも有限かつ0以上1以下である。1を超える反射率は入射より多くの光を返し、多重散乱の反復が発散する。
 /// 単一成分でなく3成分で持つのは、地面の色が波長ごとに違い、その違いが多重散乱を通して空の色へ入るためである。
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct 地表アルベドRGB {
+pub struct 地表反射率RGB {
     成分: [f32; 3],
 }
 
-impl 地表アルベドRGB {
+impl 地表反射率RGB {
     pub fn 生成する(赤: f32, 緑: f32, 青: f32) -> Result<Self, 天空状態エラー> {
         let 成分 = [赤, 緑, 青];
         for 値 in 成分 {
             if !値.is_finite() || !(0.0..=1.0).contains(&値) {
-                return Err(天空状態エラー::値域外("地表アルベドRGB", 値));
+                return Err(天空状態エラー::値域外("地表反射率RGB", 値));
             }
         }
         Ok(Self { 成分 })

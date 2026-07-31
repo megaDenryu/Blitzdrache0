@@ -34,7 +34,7 @@ struct ObjectUniform
     float4 metallicRoughnessFactor;
 };
 
-// binding3: フレームユニフォームバッファ(判断24)。フレームインフライトごとに別のディスクリプタセットが同じbindingを指す。
+// binding3: フレームシェーダー定数バッファ(判断24)。進行中フレームごとに別のディスクリプタセットが同じbindingを指す。
 [[vk::binding(3, 0)]] ConstantBuffer<FrameUniform> frameUniform;
 [[vk::binding(5, 0)]] ConstantBuffer<ObjectUniform> objectUniform;
 

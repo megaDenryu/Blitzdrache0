@@ -11,7 +11,7 @@ use crate::vulkan::shadow_map::シャドウマップ形式;
 use crate::vulkan::shadow_push;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
-const フラグメントエントリ名: &std::ffi::CStr = c"fragmentMain";
+const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
 
 /// depth bias固定機能値(判断35)。シーンの規模(半径数m)に対する経験的な初期値で、
 /// Sascha Willemsのシャドウマップ実装例と同程度の桁を採用する。
@@ -22,7 +22,7 @@ pub(super) fn 組み立てる(
     device: &ash::Device,
     ディスクリプタlayout: vk::DescriptorSetLayout,
     頂点モジュール: vk::ShaderModule,
-    フラグメントモジュール: vk::ShaderModule,
+    画素段モジュール: vk::ShaderModule,
 ) -> Result<シャドウパイプライン, レンダラーエラー> {
     let ステージ一覧 = [
         vk::PipelineShaderStageCreateInfo::default()
@@ -31,8 +31,8 @@ pub(super) fn 組み立てる(
             .name(頂点エントリ名),
         vk::PipelineShaderStageCreateInfo::default()
             .stage(vk::ShaderStageFlags::FRAGMENT)
-            .module(フラグメントモジュール)
-            .name(フラグメントエントリ名),
+            .module(画素段モジュール)
+            .name(画素段エントリ名),
     ];
 
     let (バインド記述, 属性記述一覧) = vertex_input::記述する();
@@ -63,7 +63,7 @@ pub(super) fn 組み立てる(
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
     // 注意: シーンのディスクリプタセットレイアウトをそのまま再利用する
-    // (シャドウパスが使うのはbinding3のフレームユニフォームのみだが、同一の
+    // (シャドウパスが使うのはbinding3のフレームシェーダー定数のみだが、同一の
     // vk::DescriptorSetLayoutハンドルを使うことでシーン描画と同じディスクリプタ
     // セットをそのまま束縛できる。新規ディスクリプタ一式を作らない設計判断)。
     let ディスクリプタlayout一覧 = [ディスクリプタlayout];

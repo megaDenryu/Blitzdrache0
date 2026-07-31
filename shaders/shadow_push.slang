@@ -21,7 +21,7 @@ float3 applyShadowAnchor(float3 worldPosition)
     return worldPosition + shadowPush.position;
 }
 
-// この発行が描いている距離区分の番号。フレームユニフォームの距離区分ごとの行列を参照する添字になる。
+// この発行が描いている距離区分の番号。フレームシェーダー定数の距離区分ごとの行列を参照する添字になる。
 uint currentCascadeIndex()
 {
     return shadowPush.cascadeIndex;

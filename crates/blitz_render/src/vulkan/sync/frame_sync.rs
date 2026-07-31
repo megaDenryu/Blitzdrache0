@@ -3,12 +3,12 @@
 
 use ash::vk;
 
-use super::{フレームインフライト数, フレームスロット添字};
+use super::{フレームスロット添字, 進行中フレーム数};
 use crate::error::レンダラーエラー;
 
 pub(crate) struct フレーム同期 {
-    描画完了フェンス一覧: [vk::Fence; フレームインフライト数],
-    取得セマフォ一覧: [vk::Semaphore; フレームインフライト数],
+    描画完了フェンス一覧: [vk::Fence; 進行中フレーム数],
+    取得セマフォ一覧: [vk::Semaphore; 進行中フレーム数],
 }
 
 impl フレーム同期 {
@@ -16,9 +16,9 @@ impl フレーム同期 {
         let フェンス生成情報 = vk::FenceCreateInfo::default().flags(vk::FenceCreateFlags::SIGNALED);
         let セマフォ生成情報 = vk::SemaphoreCreateInfo::default();
 
-        let mut 描画完了フェンス一覧 = [vk::Fence::null(); フレームインフライト数];
-        let mut 取得セマフォ一覧 = [vk::Semaphore::null(); フレームインフライト数];
-        for 添字 in 0..フレームインフライト数 {
+        let mut 描画完了フェンス一覧 = [vk::Fence::null(); 進行中フレーム数];
+        let mut 取得セマフォ一覧 = [vk::Semaphore::null(); 進行中フレーム数];
+        for 添字 in 0..進行中フレーム数 {
             // 安全性: deviceは生成済みで有効。
             描画完了フェンス一覧[添字] = unsafe { device.create_fence(&フェンス生成情報, None)? };
             // 安全性: 同上。

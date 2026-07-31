@@ -45,7 +45,7 @@ pub(super) fn メモリを確保して結びつける(
     Ok(memory)
 }
 
-/// 全層を1つの2D配列として見るビュー。シーンのフラグメントが距離区分を添字で選ぶために使う。
+/// 全層を1つの2D配列として見るビュー。シーンの画素段が距離区分を添字で選ぶために使う。
 pub(super) fn 配列ビューを作る(device: &ash::Device, 画像: vk::Image) -> Result<vk::ImageView, レンダラーエラー> {
     ビューを作る(device, 画像, vk::ImageViewType::TYPE_2D_ARRAY, 0, シャドウマップ層数())
 }

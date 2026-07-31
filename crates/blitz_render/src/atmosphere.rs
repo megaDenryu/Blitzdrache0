@@ -66,7 +66,7 @@ pub use medium::extinction_medium::消散媒体;
 pub use medium::observation_point::大気内観測点;
 pub use medium::scattering_medium::大気散乱媒体;
 pub use quantity::aerial_voxel::空中遠近ボクセル値;
-pub use quantity::albedo_rgb::地表アルベドRGB;
+pub use quantity::albedo_rgb::地表反射率RGB;
 pub use quantity::asymmetry::位相非対称係数;
 pub use quantity::attenuating_component::減衰成分;
 pub use quantity::azimuth_cosine::方位余弦;

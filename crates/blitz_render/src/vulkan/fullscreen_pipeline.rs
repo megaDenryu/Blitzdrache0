@@ -1,6 +1,6 @@
 //! 全画面三角形ポストプロセス用パイプラインの共通組み立て(トーンマップ・ブルームが共用):
 //! 頂点入力なし・深度なし・ブレンドなし・動的ビューポート/シザー。
-//! フラグメントエントリ名とプッシュ定数バイト数(0なら範囲なし)だけがパスごとに異なる。
+//! 画素段エントリ名とプッシュ定数バイト数(0なら範囲なし)だけがパスごとに異なる。
 
 mod finish;
 mod fixed_function;
@@ -23,11 +23,11 @@ pub(crate) fn 組み立てる(
     カラー形式: vk::Format,
     ディスクリプタlayout: vk::DescriptorSetLayout,
     シェーダー: &シェーダー一式,
-    フラグメントエントリ名: &std::ffi::CStr,
+    画素段エントリ名: &std::ffi::CStr,
     プッシュ定数バイト数: u32,
 ) -> Result<(vk::Pipeline, vk::PipelineLayout), レンダラーエラー> {
     let 頂点モジュール = shader_module::生成する(device, シェーダー.頂点コード())?;
-    let フラグメントモジュール = match shader_module::生成する(device, シェーダー.フラグメントコード()) {
+    let 画素段モジュール = match shader_module::生成する(device, シェーダー.画素段コード()) {
         Ok(モジュール) => モジュール,
         Err(誤り) => {
             // 安全性: 頂点モジュールはこのスコープの唯一の所有者で、以降使用しない。
@@ -42,15 +42,15 @@ pub(crate) fn 組み立てる(
         ディスクリプタlayout,
         頂点モジュール,
         頂点エントリ名,
-        フラグメントモジュール,
-        フラグメントエントリ名,
+        画素段モジュール,
+        画素段エントリ名,
         プッシュ定数バイト数,
     );
 
     // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
     unsafe {
         device.destroy_shader_module(頂点モジュール, None);
-        device.destroy_shader_module(フラグメントモジュール, None);
+        device.destroy_shader_module(画素段モジュール, None);
     }
     結果
 }

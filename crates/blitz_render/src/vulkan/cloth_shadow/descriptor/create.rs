@@ -3,14 +3,14 @@
 
 use ash::vk;
 
-use super::{フレームユニフォームのバインディング番号, 布シャドウディスクリプタ};
+use super::{フレームシェーダー定数のバインディング番号, 布シャドウディスクリプタ};
 use crate::error::レンダラーエラー;
-use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
-use crate::vulkan::uniform::フレームユニフォーム一式;
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
+use crate::vulkan::uniform::フレームシェーダー定数一式;
 
 pub(in crate::vulkan::cloth_shadow) fn 生成する(
     device: &ash::Device,
-    ユニフォーム: &フレームユニフォーム一式,
+    シェーダー定数: &フレームシェーダー定数一式,
 ) -> Result<布シャドウディスクリプタ, レンダラーエラー> {
     let layout = レイアウトを生成する(device)?;
     let pool = match プールを生成する(device) {
@@ -33,14 +33,14 @@ pub(in crate::vulkan::cloth_shadow) fn 生成する(
         }
     };
     for フレーム添字 in フレームスロット添字::全スロット() {
-        フレームユニフォームを結ぶ(device, set一覧[フレーム添字.配列添字()], ユニフォーム.buffer(フレーム添字));
+        フレームシェーダー定数を結ぶ(device, set一覧[フレーム添字.配列添字()], シェーダー定数.buffer(フレーム添字));
     }
     Ok(布シャドウディスクリプタ { layout, pool, set一覧 })
 }
 
 fn レイアウトを生成する(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
     let バインド一覧 = [vk::DescriptorSetLayoutBinding::default()
-        .binding(フレームユニフォームのバインディング番号)
+        .binding(フレームシェーダー定数のバインディング番号)
         .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
         .descriptor_count(1)
         .stage_flags(vk::ShaderStageFlags::VERTEX)];
@@ -50,7 +50,7 @@ fn レイアウトを生成する(device: &ash::Device) -> Result<vk::Descriptor
 }
 
 fn プールを生成する(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
-    let セット数 = u32::try_from(フレームインフライト数).unwrap_or_else(|_| panic!("フレームインフライト数がu32に収まらない"));
+    let セット数 = u32::try_from(進行中フレーム数).unwrap_or_else(|_| panic!("進行中フレーム数がu32に収まらない"));
     let プールサイズ一覧 = [vk::DescriptorPoolSize::default()
         .ty(vk::DescriptorType::UNIFORM_BUFFER)
         .descriptor_count(セット数)];
@@ -63,22 +63,22 @@ fn セットを割り当てる(
     device: &ash::Device,
     pool: vk::DescriptorPool,
     layout: vk::DescriptorSetLayout,
-) -> Result<[vk::DescriptorSet; フレームインフライト数], レンダラーエラー> {
-    let layout一覧 = [layout; フレームインフライト数];
+) -> Result<[vk::DescriptorSet; 進行中フレーム数], レンダラーエラー> {
+    let layout一覧 = [layout; 進行中フレーム数];
     let alloc_info = vk::DescriptorSetAllocateInfo::default().descriptor_pool(pool).set_layouts(&layout一覧);
     // 安全性: pool・layoutは直前に生成済みで有効。
     let 一覧 = unsafe { device.allocate_descriptor_sets(&alloc_info)? };
-    match <[vk::DescriptorSet; フレームインフライト数]>::try_from(一覧) {
+    match <[vk::DescriptorSet; 進行中フレーム数]>::try_from(一覧) {
         Ok(set一覧) => Ok(set一覧),
         Err(_) => panic!("allocate_descriptor_setsが成功したのにセット数が要求と違った(Vulkan実装の契約違反)"),
     }
 }
 
-fn フレームユニフォームを結ぶ(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer) {
+fn フレームシェーダー定数を結ぶ(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer) {
     let buffer情報一覧 = [vk::DescriptorBufferInfo::default().buffer(buffer).offset(0).range(vk::WHOLE_SIZE)];
     let 書き込み一覧 = [vk::WriteDescriptorSet::default()
         .dst_set(set)
-        .dst_binding(フレームユニフォームのバインディング番号)
+        .dst_binding(フレームシェーダー定数のバインディング番号)
         .dst_array_element(0)
         .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
         .buffer_info(&buffer情報一覧)];

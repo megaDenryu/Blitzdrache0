@@ -17,7 +17,7 @@ pub(super) fn 生成する(
     属性選択: graphics_pipeline::頂点属性選択,
 ) -> Result<パイプライン, レンダラーエラー> {
     let 頂点モジュール = shader_module::生成する(device, シェーダー.頂点コード())?;
-    let フラグメントモジュール = match shader_module::生成する(device, シェーダー.フラグメントコード()) {
+    let 画素段モジュール = match shader_module::生成する(device, シェーダー.画素段コード()) {
         Ok(モジュール) => モジュール,
         Err(誤り) => {
             // 安全性: 頂点モジュールはこのスコープの唯一の所有者で、以降使用しない。
@@ -32,14 +32,14 @@ pub(super) fn 生成する(
         深度形式,
         ディスクリプタlayout,
         頂点モジュール,
-        フラグメントモジュール,
+        画素段モジュール,
         属性選択,
     );
 
     // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
     unsafe {
         device.destroy_shader_module(頂点モジュール, None);
-        device.destroy_shader_module(フラグメントモジュール, None);
+        device.destroy_shader_module(画素段モジュール, None);
     }
     結果
 }

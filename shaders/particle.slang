@@ -28,7 +28,7 @@ struct ParticleFrameUniform
     column_major float4x4 viewProjection;
 };
 
-// binding1: 頂点シェーダーのみが使うビュー射影行列(既存フレームユニフォームバッファを共有)。
+// binding1: 頂点シェーダーのみが使うビュー射影行列(既存フレームシェーダー定数バッファを共有)。
 [[vk::binding(1, 0)]]
 ConstantBuffer<ParticleFrameUniform> frameUniform;
 

@@ -56,7 +56,7 @@ pub(crate) fn 確保して書き込む(
     Ok((buffer, memory))
 }
 
-/// 確保済みのホスト可視メモリへ内容を書き込む(全置き換え)。フレームユニフォームの
+/// 確保済みのホスト可視メモリへ内容を書き込む(全置き換え)。フレームシェーダー定数の
 /// 毎フレーム更新(判断24)がこの関数を再利用する。
 pub(crate) fn 上書きする(device: &ash::Device, memory: vk::DeviceMemory, データ: &[u8]) -> Result<(), レンダラーエラー> {
     // 安全性: memoryはHOST_VISIBLE|HOST_COHERENTで確保済み。WHOLE_SIZEでの

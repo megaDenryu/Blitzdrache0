@@ -20,7 +20,7 @@ use crate::particle_material::粒子素材;
 use crate::particle_shader_set::粒子シェーダー一式;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
-use crate::vulkan::uniform::フレームユニフォーム一式;
+use crate::vulkan::uniform::フレームシェーダー定数一式;
 
 pub(crate) struct 粒子リソース一式 {
     バッファ: 粒子バッファ,
@@ -39,12 +39,12 @@ impl 粒子リソース一式 {
         転送環境: &転送実行環境,
         カラー形式: vk::Format,
         深度形式: vk::Format,
-        ユニフォーム: &フレームユニフォーム一式,
+        シェーダー定数: &フレームシェーダー定数一式,
         シェーダー: &粒子シェーダー一式,
         素材: &粒子素材,
     ) -> Result<Self, レンダラーエラー> {
         let バッファ = 粒子バッファ::生成する(device, メモリプロパティ, 転送環境, 素材)?;
-        let ディスクリプタ = match 粒子ディスクリプタ一式::生成する(device, バッファ.buffer, ユニフォーム) {
+        let ディスクリプタ = match 粒子ディスクリプタ一式::生成する(device, バッファ.buffer, シェーダー定数) {
             Ok(ディスクリプタ) => ディスクリプタ,
             Err(誤り) => {
                 バッファ.破棄する(device);
@@ -67,7 +67,7 @@ impl 粒子リソース一式 {
             深度形式,
             ディスクリプタ.layout,
             シェーダー.頂点コード(),
-            シェーダー.フラグメントコード(),
+            シェーダー.画素段コード(),
         ) {
             Ok(パイプライン) => パイプライン,
             Err(誤り) => {

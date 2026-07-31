@@ -11,26 +11,26 @@ use crate::cli::{空中遠近合成指定, 粒子表示モード};
 use crate::error::起動エラー;
 
 const 頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/vertex.spv"));
-const フラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/fragment.spv"));
+const 画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/fragment.spv"));
 
 const 粒子コンピュートSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_compute.spv"));
 const 粒子頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_vertex.spv"));
-const 粒子フラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_fragment.spv"));
+const 粒子画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_fragment.spv"));
 const 表面流コンピュートSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/surface_flow_compute.spv"));
 const 表面流頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/surface_flow_vertex.spv"));
-const 表面流フラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/surface_flow_fragment.spv"));
+const 表面流画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/surface_flow_fragment.spv"));
 const SPHコンピュートSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sph_compute.spv"));
 const SPH頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sph_vertex.spv"));
-const SPHフラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sph_fragment.spv"));
+const SPH画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sph_fragment.spv"));
 
 const UI頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/ui_vertex.spv"));
-const UIフラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/ui_fragment.spv"));
+const UI画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/ui_fragment.spv"));
 
 const シャドウ頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/shadow_vertex.spv"));
-const シャドウフラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/shadow_fragment.spv"));
+const シャドウ画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/shadow_fragment.spv"));
 
 const トーンマップ頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_vertex.spv"));
-const トーンマップフラグメントSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_fragment.spv"));
+const トーンマップ画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_fragment.spv"));
 
 const ブルーム縮小側頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_down_vertex.spv"));
 const ブルーム前処理SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/bloom_prefilter.spv"));
@@ -67,27 +67,27 @@ pub(crate) fn 埋め込みシェーダー束を生成する(
         粒子表示モード::粒子トイ => Some(粒子シェーダー一式::生成する(
             粒子コンピュートSPIRV.to_vec(),
             粒子頂点SPIRV.to_vec(),
-            粒子フラグメントSPIRV.to_vec(),
+            粒子画素段SPIRV.to_vec(),
         )?),
         粒子表示モード::表面流 => Some(粒子シェーダー一式::生成する(
             表面流コンピュートSPIRV.to_vec(),
             表面流頂点SPIRV.to_vec(),
-            表面流フラグメントSPIRV.to_vec(),
+            表面流画素段SPIRV.to_vec(),
         )?),
         粒子表示モード::Sph512 | 粒子表示モード::Sph1024 | 粒子表示モード::Sph2048 => Some(
-            粒子シェーダー一式::生成する(SPHコンピュートSPIRV.to_vec(), SPH頂点SPIRV.to_vec(), SPHフラグメントSPIRV.to_vec())?,
+            粒子シェーダー一式::生成する(SPHコンピュートSPIRV.to_vec(), SPH頂点SPIRV.to_vec(), SPH画素段SPIRV.to_vec())?,
         ),
     };
     Ok(シェーダー束 {
-        シーン: シェーダー一式::生成する(頂点SPIRV.to_vec(), フラグメントSPIRV.to_vec())?,
-        シャドウ: シェーダー一式::生成する(シャドウ頂点SPIRV.to_vec(), シャドウフラグメントSPIRV.to_vec())?,
+        シーン: シェーダー一式::生成する(頂点SPIRV.to_vec(), 画素段SPIRV.to_vec())?,
+        シャドウ: シェーダー一式::生成する(シャドウ頂点SPIRV.to_vec(), シャドウ画素段SPIRV.to_vec())?,
         空: crate::embedded_sky_shaders::埋め込み空シェーダーを生成する(空中遠近合成)?,
         大気のベイク済み画像: 埋め込み大気のベイク済み画像シェーダーを生成する()?,
-        トーンマップ: シェーダー一式::生成する(トーンマップ頂点SPIRV.to_vec(), トーンマップフラグメントSPIRV.to_vec())?,
+        トーンマップ: シェーダー一式::生成する(トーンマップ頂点SPIRV.to_vec(), トーンマップ画素段SPIRV.to_vec())?,
         ブルーム前処理: シェーダー一式::生成する(ブルーム縮小側頂点SPIRV.to_vec(), ブルーム前処理SPIRV.to_vec())?,
         ブルーム縮小: シェーダー一式::生成する(ブルーム縮小側頂点SPIRV.to_vec(), ブルーム縮小SPIRV.to_vec())?,
         ブルーム拡大: シェーダー一式::生成する(ブルーム拡大側頂点SPIRV.to_vec(), ブルーム拡大SPIRV.to_vec())?,
-        ui: シェーダー一式::生成する(UI頂点SPIRV.to_vec(), UIフラグメントSPIRV.to_vec())?,
+        ui: シェーダー一式::生成する(UI頂点SPIRV.to_vec(), UI画素段SPIRV.to_vec())?,
         スキニング: コンピュートシェーダー::生成する(スキニングSPIRV.to_vec())?,
         布: crate::embedded_cloth_shaders::埋め込み布シェーダーを生成する()?,
         粒子,

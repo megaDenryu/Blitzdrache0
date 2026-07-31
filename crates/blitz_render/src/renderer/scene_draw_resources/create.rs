@@ -14,27 +14,27 @@ use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
 use crate::vulkan::shadow_map::シャドウマップ;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
-use crate::vulkan::uniform::フレームユニフォーム一式;
+use crate::vulkan::uniform::フレームシェーダー定数一式;
 
 /// 起動時のシーン全体を1つの束として持つときの識別子。ストリーミングを使わない経路ではこの束だけが存在する。
 pub(in crate::renderer) const 起動シーンの束ID: 描画束ID = 描画束ID::生成する(0);
 
-/// 束1つぶんの資源を作るために束の外から与える材料。ディスクリプタセットはフレームユニフォームとシャドウマップも結び、レイアウトは束をまたいで共有するため、描画対象素材だけでは足りない。
+/// 束1つぶんの資源を作るために束の外から与える材料。ディスクリプタセットはフレームシェーダー定数とシャドウマップも結び、レイアウトは束をまたいで共有するため、描画対象素材だけでは足りない。
 pub(in crate::renderer) struct チャンク描画資源生成材料<'a> {
     pub(super) 物理デバイス問い合わせ: 物理デバイス問い合わせ<'a>,
     pub(super) メモリプロパティ: &'a vk::PhysicalDeviceMemoryProperties,
     pub(super) 転送環境: &'a 転送実行環境,
-    pub(super) ユニフォーム: &'a フレームユニフォーム一式,
+    pub(super) シェーダー定数: &'a フレームシェーダー定数一式,
     pub(super) シャドウマップ: &'a シャドウマップ,
     pub(super) レイアウト: &'a ディスクリプタレイアウト,
 }
 
-/// 束の外から与える生成材料。ディスクリプタセットはフレームユニフォームとシャドウマップも結ぶため、描画シーン素材だけでは足りない。
+/// 束の外から与える生成材料。ディスクリプタセットはフレームシェーダー定数とシャドウマップも結ぶため、描画シーン素材だけでは足りない。
 pub(in crate::renderer) struct シーン描画資源生成要求<'a> {
     pub(in crate::renderer) 物理デバイス問い合わせ: 物理デバイス問い合わせ<'a>,
     pub(in crate::renderer) メモリプロパティ: &'a vk::PhysicalDeviceMemoryProperties,
     pub(in crate::renderer) 転送環境: &'a 転送実行環境,
-    pub(in crate::renderer) ユニフォーム: &'a フレームユニフォーム一式,
+    pub(in crate::renderer) シェーダー定数: &'a フレームシェーダー定数一式,
     pub(in crate::renderer) シャドウマップ: &'a シャドウマップ,
     pub(in crate::renderer) 描画シーン: &'a 描画シーン素材,
 }
@@ -49,7 +49,7 @@ impl シーン描画資源 {
             物理デバイス問い合わせ: 要求.物理デバイス問い合わせ,
             メモリプロパティ: 要求.メモリプロパティ,
             転送環境: 要求.転送環境,
-            ユニフォーム: 要求.ユニフォーム,
+            シェーダー定数: 要求.シェーダー定数,
             シャドウマップ: 要求.シャドウマップ,
             レイアウト: &レイアウト,
         };
@@ -79,7 +79,7 @@ pub(in crate::renderer) struct 束追加材料<'a> {
     pub(in crate::renderer) 物理デバイス問い合わせ: 物理デバイス問い合わせ<'a>,
     pub(in crate::renderer) メモリプロパティ: &'a vk::PhysicalDeviceMemoryProperties,
     pub(in crate::renderer) 転送環境: &'a 転送実行環境,
-    pub(in crate::renderer) ユニフォーム: &'a フレームユニフォーム一式,
+    pub(in crate::renderer) シェーダー定数: &'a フレームシェーダー定数一式,
     pub(in crate::renderer) シャドウマップ: &'a シャドウマップ,
 }
 
@@ -91,7 +91,7 @@ pub(super) fn 生成材料を作る<'a>(
         物理デバイス問い合わせ: 材料.物理デバイス問い合わせ,
         メモリプロパティ: 材料.メモリプロパティ,
         転送環境: 材料.転送環境,
-        ユニフォーム: 材料.ユニフォーム,
+        シェーダー定数: 材料.シェーダー定数,
         シャドウマップ: 材料.シャドウマップ,
         レイアウト,
     }

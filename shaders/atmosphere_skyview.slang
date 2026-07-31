@@ -14,7 +14,7 @@ import atmosphere_skyview_mapping;
 [[vk::binding(2, 0)]] Sampler2D multiScatterLut;
 [[vk::binding(3, 0)]] [format("rgba16f")] RWTexture2D<float4> skyViewLut;
 
-// そのフレームの観測点と太陽の向き。媒体のユニフォームと別に押し込み定数で渡すのは、媒体が変わらないまま
+// そのフレームの観測点と太陽の向き。媒体のシェーダー定数と別に即時定数で渡すのは、媒体が変わらないまま
 // 太陽だけが動くフレームでも、この2つだけは毎回書き換わるためである。
 struct SkyViewCondition
 {

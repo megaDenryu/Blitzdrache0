@@ -1,5 +1,5 @@
 //! スキニングの4種バッファ(判断44): レスト頂点(読み)・スキン属性(読み)・
-//! スキン行列(フレームインフライト2重、ホスト可視で毎フレーム書く)・スキン済み頂点(書き)。
+//! スキン行列(進行中フレーム2重、ホスト可視で毎フレーム書く)・スキン済み頂点(書き)。
 //! 生成手順は`create`にある。
 
 mod create;
@@ -8,13 +8,13 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::host_buffer;
-use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct スキニングバッファ {
     レスト頂点: (vk::Buffer, vk::DeviceMemory),
     属性: (vk::Buffer, vk::DeviceMemory),
-    行列一覧: [(vk::Buffer, vk::DeviceMemory); フレームインフライト数],
+    行列一覧: [(vk::Buffer, vk::DeviceMemory); 進行中フレーム数],
     pub(super) 出力: (vk::Buffer, vk::DeviceMemory),
 }
 

@@ -23,10 +23,10 @@ impl 粒子描画パイプライン {
         深度形式: vk::Format,
         ディスクリプタlayout: vk::DescriptorSetLayout,
         頂点spirv: &[u8],
-        フラグメントspirv: &[u8],
+        画素段spirv: &[u8],
     ) -> Result<Self, レンダラーエラー> {
         let 頂点モジュール = shader_module::生成する(device, 頂点spirv)?;
-        let フラグメントモジュール = match shader_module::生成する(device, フラグメントspirv) {
+        let 画素段モジュール = match shader_module::生成する(device, 画素段spirv) {
             Ok(モジュール) => モジュール,
             Err(誤り) => {
                 // 安全性: 頂点モジュールはこのスコープの唯一の所有者で、以降使用しない。
@@ -35,12 +35,12 @@ impl 粒子描画パイプライン {
             }
         };
 
-        let 結果 = assemble::組み立てる(device, カラー形式, 深度形式, ディスクリプタlayout, 頂点モジュール, フラグメントモジュール);
+        let 結果 = assemble::組み立てる(device, カラー形式, 深度形式, ディスクリプタlayout, 頂点モジュール, 画素段モジュール);
 
         // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
         unsafe {
             device.destroy_shader_module(頂点モジュール, None);
-            device.destroy_shader_module(フラグメントモジュール, None);
+            device.destroy_shader_module(画素段モジュール, None);
         }
         結果
     }

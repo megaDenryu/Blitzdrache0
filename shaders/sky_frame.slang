@@ -1,9 +1,9 @@
-// 空パスが読むフレームユニフォームの並びと、全画面三角形の頂点段。放射輝度の評価(sky_atmosphere.slang)と
+// 空パスが読むフレームシェーダー定数の並びと、全画面三角形の頂点段。放射輝度の評価(sky_atmosphere.slang)と
 // 空中遠近の合成(aerial_composite.slang)がこの1つのモジュールを取り込み、入力の並びと視線の復元を共有する。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 // 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「空パスの配置」
 
-// binding3のフレームユニフォーム。前半はscene.slangのFrameUniformと同じ並びであり、後半の inverseViewProjection 以降が空パスだけが読む区画である。
+// binding3のフレームシェーダー定数。前半はscene.slangのFrameUniformと同じ並びであり、後半の inverseViewProjection 以降が空パスだけが読む区画である。
 // 注意: 前半の並びをscene.slangと食い違わせると後半のオフセットがずれる。区画の書き手は
 // `crates/blitz_render/src/vulkan/uniform/sky_bytes.rs`であり、並びを変えるときは両方を同時に直す。
 struct SkyFrameUniform

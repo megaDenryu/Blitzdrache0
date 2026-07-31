@@ -7,11 +7,11 @@ use blitz_render::シェーダー一式;
 
 use super::slangc::{self, スランガー位置};
 
-pub(super) fn 頂点とフラグメントをコンパイルする(ソースパス: &Path) -> Result<シェーダー一式, String> {
+pub(super) fn 頂点と画素段をコンパイルする(ソースパス: &Path) -> Result<シェーダー一式, String> {
     let slangc = slangc::発見する()?;
     let 頂点spirv = エントリを1つコンパイルする(&slangc, ソースパス, "vertexMain", "vertex", "vertex.spv")?;
-    let フラグメントspirv = エントリを1つコンパイルする(&slangc, ソースパス, "fragmentMain", "fragment", "fragment.spv")?;
-    シェーダー一式::生成する(頂点spirv, フラグメントspirv).map_err(|誤り| 誤り.to_string())
+    let 画素段spirv = エントリを1つコンパイルする(&slangc, ソースパス, "fragmentMain", "fragment", "fragment.spv")?;
+    シェーダー一式::生成する(頂点spirv, 画素段spirv).map_err(|誤り| 誤り.to_string())
 }
 
 fn エントリを1つコンパイルする(

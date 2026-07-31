@@ -21,7 +21,7 @@ mod static_key;
 mod atmosphere_tests;
 
 pub use absorption_component::吸収成分;
-pub use albedo_rgb::地表アルベドRGB;
+pub use albedo_rgb::地表反射率RGB;
 pub use asymmetry::位相非対称係数;
 pub use density_layer::密度分布層;
 pub use density_profile::密度分布;

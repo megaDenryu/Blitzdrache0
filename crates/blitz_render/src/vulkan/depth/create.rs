@@ -49,7 +49,7 @@ fn 画像を作る(device: &ash::Device, 寸法: vk::Extent2D) -> Result<vk::Ima
         .array_layers(1)
         .samples(vk::SampleCountFlags::TYPE_1)
         .tiling(vk::ImageTiling::OPTIMAL)
-        // SAMPLEDを足すのは空中遠近合成が深度をフラグメント段で参照するためである(参照: `vulkan/frame/record/aerial_composite_pass.rs`)。
+        // SAMPLEDを足すのは空中遠近合成が深度を画素段段で参照するためである(参照: `vulkan/frame/record/aerial_composite_pass.rs`)。
         .usage(vk::ImageUsageFlags::DEPTH_STENCIL_ATTACHMENT | vk::ImageUsageFlags::SAMPLED)
         .sharing_mode(vk::SharingMode::EXCLUSIVE)
         .initial_layout(vk::ImageLayout::UNDEFINED);

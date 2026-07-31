@@ -1,14 +1,13 @@
 //! 粒子ディスクリプタプール: storage buffer 1本 + uniform buffer 1本を
-//! フレームインフライトの数だけ確保する。
+//! 進行中フレームの数だけ確保する。
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::sync::進行中フレーム数;
 
 pub(super) fn 生成する(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
-    let セット数 =
-        u32::try_from(フレームインフライト数).unwrap_or_else(|_| panic!("フレームインフライト数がu32に収まらない: {フレームインフライト数}"));
+    let セット数 = u32::try_from(進行中フレーム数).unwrap_or_else(|_| panic!("進行中フレーム数がu32に収まらない: {進行中フレーム数}"));
     let プールサイズ一覧 = [
         vk::DescriptorPoolSize::default()
             .ty(vk::DescriptorType::STORAGE_BUFFER)

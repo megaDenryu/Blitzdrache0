@@ -5,25 +5,25 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::sync::進行中フレーム数;
 
 pub(super) fn セット数() -> u32 {
-    u32::try_from(フレームインフライト数).unwrap_or_else(|_| panic!("フレームインフライト数がu32に収まらない: {フレームインフライト数}"))
+    u32::try_from(進行中フレーム数).unwrap_or_else(|_| panic!("進行中フレーム数がu32に収まらない: {進行中フレーム数}"))
 }
 
 pub(super) fn セットを割り当てる(
     device: &ash::Device,
     pool: vk::DescriptorPool,
     layout: vk::DescriptorSetLayout,
-) -> Result<[vk::DescriptorSet; フレームインフライト数], レンダラーエラー> {
-    let layout一覧 = [layout; フレームインフライト数];
+) -> Result<[vk::DescriptorSet; 進行中フレーム数], レンダラーエラー> {
+    let layout一覧 = [layout; 進行中フレーム数];
     let alloc_info = vk::DescriptorSetAllocateInfo::default().descriptor_pool(pool).set_layouts(&layout一覧);
     // 安全性: pool・layoutは生成済みで有効。
     let set一覧 = unsafe { device.allocate_descriptor_sets(&alloc_info)? };
     let 件数 = set一覧.len();
     Ok(set一覧
         .try_into()
-        .unwrap_or_else(|_| panic!("allocate_descriptor_setsが{フレームインフライト数}個でなく{件数}個のセットを返した")))
+        .unwrap_or_else(|_| panic!("allocate_descriptor_setsが{進行中フレーム数}個でなく{件数}個のセットを返した")))
 }
 
 /// 生成の途中で失敗したときに、それまでに作ったレイアウトとプールを片付ける。

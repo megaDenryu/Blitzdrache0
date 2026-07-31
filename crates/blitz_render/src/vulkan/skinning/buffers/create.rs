@@ -12,7 +12,7 @@ use crate::error::レンダラーエラー;
 use crate::skin_mesh::スキンメッシュ素材;
 use crate::vertex::頂点;
 use crate::vulkan::geometry::{bytes, upload};
-use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::sync::進行中フレーム数;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 use crate::vulkan::{device_buffer, host_buffer};
@@ -55,7 +55,7 @@ pub(crate) fn 生成する(
     )?;
 
     let 行列初期値 = vec![0u8; 素材.ジョイント数() * 行列バイト長];
-    let mut 行列一覧 = [(vk::Buffer::null(), vk::DeviceMemory::null()); フレームインフライト数];
+    let mut 行列一覧 = [(vk::Buffer::null(), vk::DeviceMemory::null()); 進行中フレーム数];
     for 行列 in &mut 行列一覧 {
         *行列 = 積む(
             &mut 確保済み,

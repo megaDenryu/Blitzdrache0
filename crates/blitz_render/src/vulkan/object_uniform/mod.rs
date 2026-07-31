@@ -1,4 +1,4 @@
-//! 描画対象ごとの静的ユニフォーム。フレーム共通値と分け、対象ごとの重複を避ける。
+//! 描画対象ごとの静的シェーダー定数。フレーム共通値と分け、対象ごとの重複を避ける。
 //! 注意: バッファはストレージバッファとしても束縛する。個体が1体だけの対象は専用の個体変換バッファを確保せず、
 //! このバッファの先頭112バイトを個体変換1件として読むためである(参照: `vulkan::instance_transform`)。
 
@@ -16,19 +16,19 @@ use crate::vulkan::host_buffer;
 use crate::vulkan::instance_transform::content::個体変換内容;
 use crate::vulkan::tracked_device::GPUデバイス;
 
-pub(crate) struct 描画対象ユニフォーム {
+pub(crate) struct 描画対象シェーダー定数 {
     pub(crate) buffer: vk::Buffer,
     memory: vk::DeviceMemory,
 }
 
-impl 描画対象ユニフォーム {
+impl 描画対象シェーダー定数 {
     pub(crate) fn 生成する(
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         ローカルからワールド: 変換<ローカル, ワールド>,
         マテリアル: &マテリアル素材,
     ) -> Result<Self, レンダラーエラー> {
-        let 内容 = content::描画対象ユニフォーム内容 {
+        let 内容 = content::描画対象シェーダー定数内容 {
             変換: 個体変換内容::変換から作る(ローカルからワールド)?,
             ベースカラー係数: マテリアル.ベースカラー係数(),
             金属粗さ係数: [マテリアル.金属度係数(), マテリアル.粗さ係数()],

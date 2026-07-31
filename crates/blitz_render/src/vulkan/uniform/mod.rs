@@ -1,5 +1,5 @@
-//! フレームごとのライティング・カメラ・マテリアル定数を積んだユニフォームバッファ。
-//! フレームインフライトごと(2本)にホスト可視・コヒーレントで確保する(判断24)。
+//! フレームごとのライティング・カメラ・マテリアル定数を積んだシェーダー定数バッファ。
+//! 進行中フレームごと(2本)にホスト可視・コヒーレントで確保する(判断24)。
 //! 書き込みタイミングは呼び出し元(renderer/uniform_write.rs)がフェンス待ち後に行う。
 
 pub(crate) mod bytes;
@@ -13,27 +13,27 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::host_buffer;
-use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::tracked_device::GPUデバイス;
 
-pub(crate) use content::フレームユニフォーム内容;
-pub(crate) use sky_content::空ユニフォーム内容;
+pub(crate) use content::フレームシェーダー定数内容;
+pub(crate) use sky_content::空シェーダー定数内容;
 
-pub(crate) struct フレームユニフォーム一式 {
-    buffer一覧: [vk::Buffer; フレームインフライト数],
-    memory一覧: [vk::DeviceMemory; フレームインフライト数],
+pub(crate) struct フレームシェーダー定数一式 {
+    buffer一覧: [vk::Buffer; 進行中フレーム数],
+    memory一覧: [vk::DeviceMemory; 進行中フレーム数],
 }
 
-impl フレームユニフォーム一式 {
+impl フレームシェーダー定数一式 {
     pub(crate) fn 生成する(
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     ) -> Result<Self, レンダラーエラー> {
-        let mut buffer一覧 = [vk::Buffer::null(); フレームインフライト数];
-        let mut memory一覧 = [vk::DeviceMemory::null(); フレームインフライト数];
+        let mut buffer一覧 = [vk::Buffer::null(); 進行中フレーム数];
+        let mut memory一覧 = [vk::DeviceMemory::null(); 進行中フレーム数];
         let 初期バイト列 = [0u8; bytes::バイト長];
 
-        for 添字 in 0..フレームインフライト数 {
+        for 添字 in 0..進行中フレーム数 {
             match host_buffer::確保して書き込む(device, メモリプロパティ, &初期バイト列, vk::BufferUsageFlags::UNIFORM_BUFFER) {
                 Ok((buffer, memory)) => {
                     buffer一覧[添字] = buffer;
@@ -61,7 +61,7 @@ impl フレームユニフォーム一式 {
         &self,
         device: &ash::Device,
         フレーム添字: フレームスロット添字,
-        内容: &フレームユニフォーム内容,
+        内容: &フレームシェーダー定数内容,
     ) -> Result<(), レンダラーエラー> {
         let バイト列 = bytes::バイト列にする(内容);
         host_buffer::上書きする(device, self.memory一覧[フレーム添字.配列添字()], &バイト列)

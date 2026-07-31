@@ -1,5 +1,5 @@
 // M9: 布の描画(判断54)。両面ランバート+方向光のカスケードシャドウの最小シェーダー。
-// ディスクリプタはシーンと同じセット(binding3=フレームユニフォーム、binding4=シャドウマップ)を
+// ディスクリプタはシーンと同じセット(binding3=フレームシェーダー定数、binding4=シャドウマップ)を
 // 束縛し、PBRテクスチャ(binding0〜2)は読まない。頂点レイアウトはscene.slangと同じ48バイト。
 // 前提: FrameUniformのレイアウトはscene.slangと完全一致させること(同じUBOを読むため)。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
@@ -73,7 +73,7 @@ float4 fragmentMain(VertexOutput input, bool isFrontFace: SV_IsFrontFace) : SV_T
         ? computeCascadedShadowFactor(input.relativePosition, viewDepth, frameUniform.cascadeLightViewProjection,
               frameUniform.cascadeSplitDepths.xyz, frameUniform.cascadeTransitionWidths.xyz, shadowMapTexture, shadowMapSampler, shadowMapTexelSize)
         : 1.0;
-    // 直接光へ方向光強度(directionalLightColor.w)を掛け、環境光はフレームユニフォームの環境光係数から取る。
+    // 直接光へ方向光強度(directionalLightColor.w)を掛け、環境光はフレームシェーダー定数の環境光係数から取る。
     // どちらもscene.slangと同じ読み方であり、これが無いと布だけが夜も方向光で照らされ、夜の環境光にも追従しない。
     float3 direct = frameUniform.directionalLightColor.rgb * frameUniform.directionalLightColor.w * lambert * shadow;
     float3 ambient = frameUniform.ambientAndLighting.xxx;

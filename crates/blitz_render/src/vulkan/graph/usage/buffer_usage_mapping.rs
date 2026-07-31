@@ -16,7 +16,7 @@ pub(crate) fn 状態へ写像する(用途: バッファ用途) -> バッファ�
         バッファ用途::インデックス読み => {
             バッファ状態::生成する(vk::PipelineStageFlags2::INDEX_INPUT, vk::AccessFlags2::INDEX_READ)
         }
-        バッファ用途::ユニフォーム読み => バッファ状態::生成する(
+        バッファ用途::シェーダー定数読み => バッファ状態::生成する(
             vk::PipelineStageFlags2::VERTEX_SHADER | vk::PipelineStageFlags2::FRAGMENT_SHADER,
             vk::AccessFlags2::UNIFORM_READ,
         ),

@@ -1,18 +1,18 @@
 //! 布シミュ用ディスクリプタ(判断54): b0=定数UBO、b1〜b9=ストレージ9本の統一レイアウトと、
-//! UBO・介入だけが異なるフレームインフライト2セット。バインディング表はcloth_step.slang冒頭の仕様。
+//! UBO・介入だけが異なる進行中フレーム2セット。バインディング表はcloth_step.slang冒頭の仕様。
 
 use ash::vk;
 
 use super::buffers::布バッファ;
 use crate::error::レンダラーエラー;
-use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 const ストレージ本数: u32 = 9;
 
 pub(super) struct 布ディスクリプタ {
     pub(super) layout: vk::DescriptorSetLayout,
     pool: vk::DescriptorPool,
-    pub(super) set一覧: [vk::DescriptorSet; フレームインフライト数],
+    pub(super) set一覧: [vk::DescriptorSet; 進行中フレーム数],
 }
 
 impl 布ディスクリプタ {
@@ -50,7 +50,7 @@ pub(super) fn 生成する(
     // 安全性: deviceは生成済みで有効。
     let layout = unsafe { device.create_descriptor_set_layout(&layout_info, None)? };
 
-    let セット数 = u32::try_from(フレームインフライト数).unwrap_or_else(|_| panic!("フレームインフライト数がu32に収まらない"));
+    let セット数 = u32::try_from(進行中フレーム数).unwrap_or_else(|_| panic!("進行中フレーム数がu32に収まらない"));
     let pool_size一覧 = [
         vk::DescriptorPoolSize::default()
             .ty(vk::DescriptorType::UNIFORM_BUFFER)
@@ -70,11 +70,11 @@ pub(super) fn 生成する(
         }
     };
 
-    let layout一覧 = [layout; フレームインフライト数];
+    let layout一覧 = [layout; 進行中フレーム数];
     let alloc_info = vk::DescriptorSetAllocateInfo::default().descriptor_pool(pool).set_layouts(&layout一覧);
     // 安全性: pool・layoutは直前に生成済み。失敗時は両方片付ける。
     let set一覧 = match unsafe { device.allocate_descriptor_sets(&alloc_info) } {
-        Ok(一覧) => match <[vk::DescriptorSet; フレームインフライト数]>::try_from(一覧) {
+        Ok(一覧) => match <[vk::DescriptorSet; 進行中フレーム数]>::try_from(一覧) {
             Ok(set一覧) => set一覧,
             Err(_) => panic!("allocate_descriptor_setsが成功したのにセット数が要求と違った(Vulkan実装の契約違反)"),
         },

@@ -48,7 +48,7 @@ pub(super) fn 書き込む(
     添字: フレームスロット添字,
 ) {
     let バッファ情報 = [vk::DescriptorBufferInfo::default()
-        .buffer(束縛先.ユニフォーム一覧[添字.配列添字()])
+        .buffer(束縛先.シェーダー定数一覧[添字.配列添字()])
         .offset(0)
         .range(vk::WHOLE_SIZE)];
     let 透過率情報 = [vk::DescriptorImageInfo::default()
@@ -75,6 +75,6 @@ pub(super) fn 書き込む(
             .descriptor_type(種別一覧[2].1)
             .image_info(&書き込み先情報),
     ];
-    // 安全性: setは割当済み、ユニフォーム・サンプラー・画像ビューは生成済みで有効。
+    // 安全性: setは割当済み、シェーダー定数・サンプラー・画像ビューは生成済みで有効。
     unsafe { device.update_descriptor_sets(&書き込み一覧, &[]) };
 }

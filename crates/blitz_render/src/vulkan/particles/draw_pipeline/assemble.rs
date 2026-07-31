@@ -10,7 +10,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::relative_anchor;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
-const フラグメントエントリ名: &std::ffi::CStr = c"fragmentMain";
+const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
 
 pub(super) fn 組み立てる(
     device: &ash::Device,
@@ -18,7 +18,7 @@ pub(super) fn 組み立てる(
     深度形式: vk::Format,
     ディスクリプタlayout: vk::DescriptorSetLayout,
     頂点モジュール: vk::ShaderModule,
-    フラグメントモジュール: vk::ShaderModule,
+    画素段モジュール: vk::ShaderModule,
 ) -> Result<粒子描画パイプライン, レンダラーエラー> {
     let ステージ一覧 = [
         vk::PipelineShaderStageCreateInfo::default()
@@ -27,8 +27,8 @@ pub(super) fn 組み立てる(
             .name(頂点エントリ名),
         vk::PipelineShaderStageCreateInfo::default()
             .stage(vk::ShaderStageFlags::FRAGMENT)
-            .module(フラグメントモジュール)
-            .name(フラグメントエントリ名),
+            .module(画素段モジュール)
+            .name(画素段エントリ名),
     ];
 
     // 頂点入力なし(SV_VertexIDでストレージバッファから読むため頂点バインドは不要)。

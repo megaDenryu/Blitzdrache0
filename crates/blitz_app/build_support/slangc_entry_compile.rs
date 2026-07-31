@@ -1,6 +1,6 @@
 //! slangcを子プロセスとして呼び出し、指定エントリ一覧を個別のSPIR-Vへコンパイルする
-//! 共通処理。scene.slang用(頂点+フラグメント)とparticle.slang用
-//! (コンピュート+頂点+フラグメント)の両方がこれを使う。
+//! 共通処理。scene.slang用(頂点+画素段)とparticle.slang用
+//! (コンピュート+頂点+画素段)の両方がこれを使う。
 
 use std::path::{Path, PathBuf};
 use std::process::Command;

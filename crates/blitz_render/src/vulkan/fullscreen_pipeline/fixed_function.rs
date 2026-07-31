@@ -13,8 +13,8 @@ pub(super) fn 組み立てる(
     ディスクリプタlayout: vk::DescriptorSetLayout,
     頂点モジュール: vk::ShaderModule,
     頂点エントリ名: &std::ffi::CStr,
-    フラグメントモジュール: vk::ShaderModule,
-    フラグメントエントリ名: &std::ffi::CStr,
+    画素段モジュール: vk::ShaderModule,
+    画素段エントリ名: &std::ffi::CStr,
     プッシュ定数バイト数: u32,
 ) -> Result<(vk::Pipeline, vk::PipelineLayout), レンダラーエラー> {
     let ステージ一覧 = [
@@ -24,8 +24,8 @@ pub(super) fn 組み立てる(
             .name(頂点エントリ名),
         vk::PipelineShaderStageCreateInfo::default()
             .stage(vk::ShaderStageFlags::FRAGMENT)
-            .module(フラグメントモジュール)
-            .name(フラグメントエントリ名),
+            .module(画素段モジュール)
+            .name(画素段エントリ名),
     ];
     let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default();
     let 入力アセンブリstate = vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::TRIANGLE_LIST);

@@ -9,7 +9,7 @@ use crate::vulkan::frame::record::{scene_pass, shadow_pass};
 use crate::vulkan::frame::距離区分別のシャドウ入力;
 use crate::vulkan::graph;
 
-/// 距離区分ごとに1回ずつパスを積み、その距離区分のライト視錐台が通した候補だけを渡す(第6段の距離区分別のカリング)。
+/// 距離区分ごとに1回ずつパスを積み、その距離区分のライト視錐台が通した候補だけを渡す(第6段の距離区分別の可視個体の選別)。
 pub(in crate::vulkan::frame::record::graph_build) fn 影を積む<'a>(
     グラフ: &mut graph::グラフ<'a>,
     基本: &基本画像ハンドル,

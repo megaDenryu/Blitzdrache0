@@ -1,15 +1,15 @@
-//! パス別GPU計測用のタイムスタンプクエリプール。フレームインフライトごとに
+//! パス別GPU計測用のタイムスタンプクエリプール。進行中フレームごとに
 //! 1プール確保し(判断30)、パス前後2発ぶんの容量(`クエリ数上限`)を持つ。
 
 use ash::vk;
 
 use super::クエリ数上限;
 use crate::error::レンダラーエラー;
-use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::sync::進行中フレーム数;
 
-pub(super) fn 生成する(device: &ash::Device) -> Result<[vk::QueryPool; フレームインフライト数], レンダラーエラー> {
-    let mut プール一覧 = [vk::QueryPool::null(); フレームインフライト数];
-    for 添字 in 0..フレームインフライト数 {
+pub(super) fn 生成する(device: &ash::Device) -> Result<[vk::QueryPool; 進行中フレーム数], レンダラーエラー> {
+    let mut プール一覧 = [vk::QueryPool::null(); 進行中フレーム数];
+    for 添字 in 0..進行中フレーム数 {
         let create_info = vk::QueryPoolCreateInfo::default()
             .query_type(vk::QueryType::TIMESTAMP)
             .query_count(クエリ数上限);

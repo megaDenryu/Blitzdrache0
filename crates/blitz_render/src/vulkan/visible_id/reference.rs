@@ -3,16 +3,16 @@
 
 use ash::vk;
 
-use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 #[derive(Clone, Copy)]
 pub(crate) struct 可視ID列参照 {
-    スロット別バッファ: [vk::Buffer; フレームインフライト数],
+    スロット別バッファ: [vk::Buffer; 進行中フレーム数],
     範囲: vk::DeviceSize,
 }
 
 impl 可視ID列参照 {
-    pub(super) fn 生成する(スロット別バッファ: [vk::Buffer; フレームインフライト数], 範囲: vk::DeviceSize) -> Self {
+    pub(super) fn 生成する(スロット別バッファ: [vk::Buffer; 進行中フレーム数], 範囲: vk::DeviceSize) -> Self {
         Self {
             スロット別バッファ, 範囲
         }

@@ -2,7 +2,7 @@
 
 use super::super::instance_transform::content::個体変換内容;
 
-pub(super) struct 描画対象ユニフォーム内容 {
+pub(super) struct 描画対象シェーダー定数内容 {
     pub(super) 変換: 個体変換内容,
     pub(super) ベースカラー係数: [f32; 4],
     pub(super) 金属粗さ係数: [f32; 2],

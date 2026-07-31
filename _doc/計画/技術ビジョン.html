@@ -378,7 +378,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
   <rect x="100" y="22" width="130" height="30" rx="6" fill="#1d3247"/>
   <text x="165" y="42" class="fpt">世界更新・可視個体の選別</text>
   <rect x="240" y="22" width="130" height="30" rx="6" fill="#1d3247"/>
-  <text x="305" y="42" class="fpt">ユニフォーム書込</text>
+  <text x="305" y="42" class="fpt">シェーダー定数書込</text>
   <rect x="380" y="22" width="130" height="30" rx="6" fill="#1d3247"/>
   <text x="445" y="42" class="fpt">コマンド記録</text>
   <line x1="510" y1="37" x2="560" y2="37" stroke="#9aa3ad" stroke-width="1.5" marker-end="url(#ah)"/>
@@ -412,7 +412,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
   <line x1="560" y1="80" x2="120" y2="97" stroke="#9aa3ad" stroke-width="1.5" marker-end="url(#ah)"/>
   <text x="450" y="180" fill="#9aa3ad" font-size="12" text-anchor="middle">この列全体を16.6ミリ秒(60フレーム/秒)以内に収め続けることが「性能」の意味である</text>
 </svg>
-<figcaption>図3-1: 現エンジンの1フレーム。<a class="term" href="#term-shadow-map">シャドウマップ</a>を先に描き、それを参照してシーンを照らし、空を足し、<a class="term" href="#term-hdr-tonemap">HDR</a>の明るさを表示可能な輝度へ変換する。<span class="figterms">図中の用語: <a class="term" href="#term-world-update">世界更新</a>・<a class="term" href="#term-group-select">可視個体の選別</a>・<a class="term" href="#term-uniform-write">ユニフォーム書込</a>・<a class="term" href="#term-command-record">コマンド記録</a>・<a class="term" href="#term-submit">提出</a>・<a class="term" href="#term-cascade-band">4距離区分</a>・<a class="term" href="#term-depth">深度</a>・<a class="term" href="#term-bloom">ブルーム</a>・<a class="term" href="#term-gpu-instrument">GPU計器</a></span></figcaption>
+<figcaption>図3-1: 現エンジンの1フレーム。<a class="term" href="#term-shadow-map">シャドウマップ</a>を先に描き、それを参照してシーンを照らし、空を足し、<a class="term" href="#term-hdr-tonemap">HDR</a>の明るさを表示可能な輝度へ変換する。<span class="figterms">図中の用語: <a class="term" href="#term-world-update">世界更新</a>・<a class="term" href="#term-group-select">可視個体の選別</a>・<a class="term" href="#term-uniform-write">シェーダー定数書込</a>・<a class="term" href="#term-command-record">コマンド記録</a>・<a class="term" href="#term-submit">提出</a>・<a class="term" href="#term-cascade-band">4距離区分</a>・<a class="term" href="#term-depth">深度</a>・<a class="term" href="#term-bloom">ブルーム</a>・<a class="term" href="#term-gpu-instrument">GPU計器</a></span></figcaption>
 </figure>
 
 <p>押さえてほしいのは3点である。</p>
@@ -681,7 +681,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <h3 id="s4-5">4.5 物量 — ジオメトリとアニメーション</h3>
 
 <h4>定義</h4>
-<p>物量とは、1フレームに存在してよい物の数と細かさのことである。森の木の1本1本、草の1株1株、群衆の1人1人。物量の技術は「見えている物だけを、必要な細かさだけで描く」ための選別技術であり、<strong><a class="term" href="#term-culling">カリング</a></strong>(視界外・遮蔽された物の除外)と<strong><a class="term" href="#term-lod">LOD</a></strong>(Level of Detail。距離に応じた詳細度の切替)が二本柱である。</p>
+<p>物量とは、1フレームに存在してよい物の数と細かさのことである。森の木の1本1本、草の1株1株、群衆の1人1人。物量の技術は「見えている物だけを、必要な細かさだけで描く」ための選別技術であり、<strong><a class="term" href="#term-culling">可視選別</a></strong>(視界外・遮蔽された物の除外)と<strong><a class="term" href="#term-lod">LOD</a></strong>(Level of Detail。距離に応じた詳細度の切替)が二本柱である。</p>
 
 <h4>なぜ絵が良くなるか</h4>
 <p>世界の説得力は密度で決まる。まばらな森は書き割りに見え、地平線まで描かれた森は世界に見える。ただし物量は品質の掛け算の分母でもある: 物が10倍になれば、影も、<a class="term" href="#term-direct-indirect">間接光</a>の受け手も、読み込む データも10倍になる。<strong>物量技術の本質は「数に対して費用が線形に増えない構造」を作ること</strong>である。</p>
@@ -689,26 +689,26 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <h4>現代の代表方式</h4>
 <ul>
 <li><strong><a class="term" href="#term-instanced-draw">インスタンス描画</a></strong>: 同じ形状の物(木・草)を1回の描画命令でまとめて描く。数の基本解。</li>
-<li><strong><a class="term" href="#term-indirect-draw">GPU駆動</a>描画</strong>: 「何を描くか」の選別(カリング・LOD選択)自体をGPUの<a class="term" href="#term-shader">計算シェーダー</a>で行い、GPUが自分で描画引数を作る(間接描画)。CPUの関与が物の数に比例しなくなる。</li>
-<li><strong><a class="term" href="#term-mesh-shader">メッシュシェーダー</a></strong>: 三角形の生成・選別をGPUの新しい<a class="term" href="#term-pipeline">パイプライン</a>段で行う機能。<a class="term" href="#term-meshlet">クラスタ</a>(小さな三角形の束)単位の細かいカリングに向く。</li>
+<li><strong><a class="term" href="#term-indirect-draw">GPU駆動</a>描画</strong>: 「何を描くか」の選別(可視選別・LOD選択)自体をGPUの<a class="term" href="#term-shader">計算シェーダー</a>で行い、GPUが自分で描画引数を作る(間接描画)。CPUの関与が物の数に比例しなくなる。</li>
+<li><strong><a class="term" href="#term-mesh-shader">メッシュシェーダー</a></strong>: 三角形の生成・選別をGPUの新しい<a class="term" href="#term-pipeline">パイプライン</a>段で行う機能。<a class="term" href="#term-meshlet">クラスタ</a>(小さな三角形の束)単位の細かい可視選別に向く。</li>
 <li><strong><a class="term" href="#term-virtual-geometry">仮想化ジオメトリ</a>(Nanite級)</strong>: <a class="term" href="#term-mesh">メッシュ</a>をクラスタの階層(粗い〜細かい)へ事前分解し、実行時に画面上の誤差が一定以下になる階層だけを<a class="term" href="#term-streaming">ストリーミング</a>して描く。「ポリゴン数を<a class="term" href="#term-pixel">画素</a>数に比例させる」発想の転換であり、現世代の最高峰。<em>本体はGPU実行よりもオフライン側にある</em>: メッシュのクラスタ分解(meshlet生成)・誤差指標の計算・<a class="term" href="#term-paging">ページング</a>可能な<a class="term" href="#term-runtime-format">実行時形式</a>という、アセットパイプラインの大改造が実態である。</li>
 <li><strong>アニメーション側の物量</strong>: <a class="term" href="#term-skinning">スキニング</a>(骨で皮膚を動かす)・モーフ(頂点の混合)・群衆(数百体の簡略アニメ)・<a class="term" href="#term-ik">IK</a>(Inverse Kinematics。接地や把持のための逆算)・<a class="term" href="#term-motion-matching">モーションマッチング</a>(大量の収録動作から次の1歩を選ぶ方式)・<a class="term" href="#term-gpu-skin-cache">GPUスキンキャッシュ</a>(スキン結果を再利用して影・複数<a class="term" href="#term-pass">パス</a>での二重計算を消す)。</li>
 </ul>
 
 <div class="box now">
 <span class="label">このエンジンの現状</span>
-<p>物量の土台は<strong>OW4で実証済みの強み</strong>である。<a class="term" href="#term-instance-group">インスタンス群</a>+2段階可視判定+個体別LOD+直接描画で、常駐100万個体でも描画発行数は一定(シーン40・シャドウ30)、GPUメモリ確保も687件で不変。<a class="term" href="#term-group-select">可視個体の選別</a>(可視判定+LOD選択+ID列組み立ての融合走査)は個体あたり約10ナノ秒で物量に対し線形。<em>ただし観測範囲全体の<a class="term" href="#term-rate-limiting">支配区間</a>はこの可視個体の選別CPUであり、100万個体で約10ミリ秒(<a class="term" href="#term-frame-budget">16.6ミリ秒</a>フレームの6割)を占める</em>。間接描画・GPU駆動カリングは「現物量では律速でない」ため不採用判定(覆す条件付き)。メッシュシェーダー・仮想化ジオメトリ・<a class="term" href="#term-occlusion-culling">遮蔽カリング</a>は未着手。アニメーションはスキニング+アニメーション再生(M8)と<a class="term" href="#term-xpbd">XPBD布</a>(M9)まで。地形は5段LOD+チャンクストリーミング実装済み。</p>
+<p>物量の土台は<strong>OW4で実証済みの強み</strong>である。<a class="term" href="#term-instance-group">インスタンス群</a>+2段階可視判定+個体別LOD+直接描画で、常駐100万個体でも描画発行数は一定(シーン40・シャドウ30)、GPUメモリ確保も687件で不変。<a class="term" href="#term-group-select">可視個体の選別</a>(可視判定+LOD選択+ID列組み立ての融合走査)は個体あたり約10ナノ秒で物量に対し線形。<em>ただし観測範囲全体の<a class="term" href="#term-rate-limiting">支配区間</a>はこの可視個体の選別CPUであり、100万個体で約10ミリ秒(<a class="term" href="#term-frame-budget">16.6ミリ秒</a>フレームの6割)を占める</em>。間接描画・GPU駆動可視選別は「現物量では律速でない」ため不採用判定(覆す条件付き)。メッシュシェーダー・仮想化ジオメトリ・<a class="term" href="#term-occlusion-culling">遮蔽可視選別</a>は未着手。アニメーションはスキニング+アニメーション再生(M8)と<a class="term" href="#term-xpbd">XPBD布</a>(M9)まで。地形は5段LOD+チャンクストリーミング実装済み。</p>
 </div>
 
 <div class="box goal">
 <span class="label">野心的到達形(能力)</span>
-<p>(a)画面のポリゴン密度が「画素数準拠」になる(距離によるポリゴンの節約が見た目に現れない)。(b)物の数がCPU時間を支配しない(GPU駆動の選別)。(c)遮蔽カリング(建物の裏の街を描かない)が動的に効く。(d)群衆・植生・地形が同じ物量基盤の上で暮らす。(e)キャラクターはIK・モーションマッチング級の動作品質を持つ。</p>
+<p>(a)画面のポリゴン密度が「画素数準拠」になる(距離によるポリゴンの節約が見た目に現れない)。(b)物の数がCPU時間を支配しない(GPU駆動の選別)。(c)遮蔽可視選別(建物の裏の街を描かない)が動的に効く。(d)群衆・植生・地形が同じ物量基盤の上で暮らす。(e)キャラクターはIK・モーションマッチング級の動作品質を持つ。</p>
 </div>
 
 <h4>方式候補と採用条件</h4>
 <ul>
 <li><strong>可視個体の選別の階層化(粗い階層での早期棄却)</strong>: 性能アーキテクチャ方針 軸6が既に指名している次の一手。採用条件は実運用の常駐個体数の確定(視界距離の制定)。並列化はその次。</li>
-<li><strong>GPU駆動カリング+間接描画</strong>: 採用条件は「AAA級の<a class="term" href="#term-representative-scene">代表シーン</a>(実アセットの密度)で<a class="term" href="#term-command-record">コマンド記録</a>またはCPU選別が支配要因になる計測」。現在の不採用判定は検証世界前提であり、代表シーンの成立が再判定の引き金である(第8章)。</li>
+<li><strong>GPU駆動可視選別+間接描画</strong>: 採用条件は「AAA級の<a class="term" href="#term-representative-scene">代表シーン</a>(実アセットの密度)で<a class="term" href="#term-command-record">コマンド記録</a>またはCPU選別が支配要因になる計測」。現在の不採用判定は検証世界前提であり、代表シーンの成立が再判定の引き金である(第8章)。</li>
 <li><strong>仮想化ジオメトリ</strong>: 野心枠。採用条件は(a)実アセット(数百万ポリ級の彫刻的メッシュ)の採用方針決定 (b)<a class="term" href="#term-asset-compiler">アセットコンパイラ</a>(OW1)へのクラスタ分解・誤差指標・ページング形式の拡張見積もり。<em>アセット実行時形式への最大級の波及点</em>であり、<a class="term" href="#term-texture">テクスチャ</a>の仮想化(4.6)と波及先が同じため同時に審査する。</li>
 <li><strong>群衆・モーションマッチング</strong>: CHAR0以降。SIM0(シミュレーション実行基盤)との接続で審査。</li>
 </ul>
@@ -764,7 +764,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <div class="box now">
 <span class="label">このエンジンの現状</span>
-<p>CPUは<strong>単一スレッド</strong>(<a class="term" href="#term-world-update">世界更新</a>・<a class="term" href="#term-command-record">コマンド記録</a>とも)。GPUは単一グラフィックスキュー+FIFO提示+<a class="term" href="#term-frame-in-flight">フレームインフライト</a>2。実表示時刻の計測入口(present_id/present_wait)を持ち、更新脱落の観測までできる(このレベルの提示計測を最初から持つのは強み)。パイプラインは起動時生成でキャッシュなし。<a class="term" href="#term-gpu-instrument">GPU計器</a>(<a class="term" href="#term-pass">パス</a>別・<a class="term" href="#term-cascade-band">距離区分別</a>)と<a class="term" href="#term-acceptance-entry">検収入口</a>の網は充実。ジョブシステム・非同期コンピュート・動的解像度・VRS・クラッシュ診断は未着手。フレーム時間分布の計測はp50/p99の器あり(評価軸3.4)。</p>
+<p>CPUは<strong>単一スレッド</strong>(<a class="term" href="#term-world-update">世界更新</a>・<a class="term" href="#term-command-record">コマンド記録</a>とも)。GPUは単一グラフィックスキュー+FIFO提示+<a class="term" href="#term-frame-in-flight">進行中フレーム</a>2。実表示時刻の計測入口(present_id/present_wait)を持ち、更新脱落の観測までできる(このレベルの提示計測を最初から持つのは強み)。パイプラインは起動時生成でキャッシュなし。<a class="term" href="#term-gpu-instrument">GPU計器</a>(<a class="term" href="#term-pass">パス</a>別・<a class="term" href="#term-cascade-band">距離区分別</a>)と<a class="term" href="#term-acceptance-entry">検収入口</a>の網は充実。ジョブシステム・非同期コンピュート・動的解像度・VRS・クラッシュ診断は未着手。フレーム時間分布の計測はp50/p99の器あり(評価軸3.4)。</p>
 </div>
 
 <div class="box goal">
@@ -816,7 +816,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <td>画の完成(ポスト)</td><td><a class="term" href="#term-bloom">ブルーム</a>+<a class="term" href="#term-hdr-tonemap">ACES</a>済。<a class="term" href="#term-exposure">露出</a>は手動<span class="pill partial">一部済</span></td><td><a class="term" href="#term-auto-exposure">ヒストグラム自動露出</a>→<a class="term" href="#term-dof">DoF</a>→<a class="term" href="#term-motion-blur">モーションブラー</a>→HDR出力・<a class="term" href="#term-color-management">色管理</a></td><td>露出の時刻追従・輝度分布</td><td>GPU小〜中</td><td>自動露出は既存の時刻→露出配線の拡張で小</td><td>自動露出は先行可。他はTAA後</td>
 </tr>
 <tr>
-<td>物量(選別)</td><td>100万個体で発行数一定。<a class="term" href="#term-group-select">可視個体の選別</a>10ms/100万個体<span class="pill done">基盤済</span></td><td>粗い階層の早期棄却→<a class="term" href="#term-indirect-draw">GPU駆動</a><a class="term" href="#term-culling">カリング</a>+間接描画→<a class="term" href="#term-occlusion-culling">遮蔽カリング</a></td><td>発行数・選別時間・欠け(誤棄却)ゼロ</td><td>CPU→GPUへの移し替え</td><td>可逆(ハンドル集約済み)。計算パス追加</td><td>視界距離制定+<a class="term" href="#term-representative-scene">代表シーン</a>での再計測</td>
+<td>物量(選別)</td><td>100万個体で発行数一定。<a class="term" href="#term-group-select">可視個体の選別</a>10ms/100万個体<span class="pill done">基盤済</span></td><td>粗い階層の早期棄却→<a class="term" href="#term-indirect-draw">GPU駆動</a><a class="term" href="#term-culling">可視選別</a>+間接描画→<a class="term" href="#term-occlusion-culling">遮蔽可視選別</a></td><td>発行数・選別時間・欠け(誤棄却)ゼロ</td><td>CPU→GPUへの移し替え</td><td>可逆(ハンドル集約済み)。計算パス追加</td><td>視界距離制定+<a class="term" href="#term-representative-scene">代表シーン</a>での再計測</td>
 </tr>
 <tr>
 <td><a class="term" href="#term-virtual-geometry">仮想化ジオメトリ</a></td><td>なし<span class="pill none">未着手</span></td><td><a class="term" href="#term-meshlet">クラスタ階層</a><a class="term" href="#term-lod">LOD</a>+<a class="term" href="#term-paging">ページング</a>(Nanite級能力)</td><td><a class="term" href="#term-pixel">画素</a>あたりポリゴン密度・LOD遷移の不可視性</td><td>オフライン: <a class="term" href="#term-asset-compiler">コンパイラ</a>大改造。GPU: 選別+ラスタ</td><td><strong><a class="term" href="#term-runtime-format">実行時形式</a>の版追加(6章c、最大級)</strong></td><td>実アセット方針決定+<a class="term" href="#term-virtual-texture">仮想テクスチャ</a>と同時審査</td>
@@ -867,7 +867,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <div class="box warn">
 <span class="label">接合点 d</span>
-<p><strong>光源の入力型。</strong>「<a class="term" href="#term-light-types">方向光</a>1+点光源1+<a class="term" href="#term-ambient">環境光係数</a>」という固定フィールドの型は、光源の集合+GPUライト<a class="term" href="#term-culling">カリング</a>+光の輸送設定へ置き換える。blitz_engineの語彙(ライティング方針)の改訂であり、型は小さいが消費者が多い。</p>
+<p><strong>光源の入力型。</strong>「<a class="term" href="#term-light-types">方向光</a>1+点光源1+<a class="term" href="#term-ambient">環境光係数</a>」という固定フィールドの型は、光源の集合+GPUライト<a class="term" href="#term-culling">可視選別</a>+光の輸送設定へ置き換える。blitz_engineの語彙(ライティング方針)の改訂であり、型は小さいが消費者が多い。</p>
 </div>
 
 <h4>残せる資産(この野心の下でも作り直さないもの)</h4>
@@ -923,7 +923,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <div class="table-scroll">
 <table>
 <tr><th>順</th><th>作業</th><th>依存(なぜこの位置か)</th><th>接続</th></tr>
-<tr><td>0</td><td><strong>OW5完走</strong>(第6段 <a class="term" href="#term-cascade-band">距離区分別</a><a class="term" href="#term-culling">カリング</a> → 第7段 大気のベイク済み画像置換 → <a class="term" href="#term-checkpoint">定点</a>)</td><td>進行中の<a class="term" href="#term-vertical-slice">縦切り</a>を閉じる。大気のベイク済み画像は光の輸送の最初の本番方式</td><td>OW5(進行中)</td></tr>
+<tr><td>0</td><td><strong>OW5完走</strong>(第6段 <a class="term" href="#term-cascade-band">距離区分別</a><a class="term" href="#term-culling">可視選別</a> → 第7段 大気のベイク済み画像置換 → <a class="term" href="#term-checkpoint">定点</a>)</td><td>進行中の<a class="term" href="#term-vertical-slice">縦切り</a>を閉じる。大気のベイク済み画像は光の輸送の最初の本番方式</td><td>OW5(進行中)</td></tr>
 <tr><td>1</td><td><strong>方式境界の設計壁打ち3本</strong>: (a)<a class="term" href="#term-radiance-query">radiance query</a>階層 (b)<a class="term" href="#term-shading-model">材質特徴ビット</a>×シェーディングモデル (c)<a class="term" href="#term-ubo">UBO</a>分離+ディスクリプタインデクシング</td><td>実装より先に境界を決める項目(第6章a,dと4.3の先行必須項目)。ここの決定が後続全部の器</td><td>新規(設計のみ)</td></tr>
 <tr><td>2</td><td><strong>絵の様式の確定(オーナー裁定)→ <a class="term" href="#term-taa">TAA</a>基盤</strong>(<a class="term" href="#term-motion-vector">モーションベクタ</a>・<a class="term" href="#term-jitter">ジッタ</a>・<a class="term" href="#term-history-buffer">履歴</a>・棄却・<a class="term" href="#term-reactive-mask">反応性</a>)</td><td>導入が遅いほど波及が膨らむ(4.4)。<a class="term" href="#term-ray-tracing">RT</a>系・体積系の前提でもある</td><td>新規(様式確定は裁定)</td></tr>
 <tr><td>3</td><td><strong><a class="term" href="#term-ibl">IBL</a>+<a class="term" href="#term-ao">SSAO</a>+<a class="term" href="#term-auto-exposure">自動露出</a></strong>(<a class="term" href="#term-ambient">定数環境光</a>の置換)</td><td>最小の工事で最大の画質改善。TAA基盤があると品質が安定</td><td>新規(<a class="term" href="#term-gi">GI</a>の第1段)</td></tr>
@@ -974,12 +974,12 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr id="term-frame-budget"><td>フレーム予算(16.6ミリ秒)<span class="mean">意訳: 1枚の絵にかけてよい持ち時間。毎秒60枚なら1枚16.6ミリ秒</span></td><td>1フレームに使ってよい時間。60フレーム/秒なら16.6ミリ秒であり、区間ごとの配分(予算表)は評価軸文書が持つ。</td></tr>
 <tr id="term-world-update"><td>世界更新<span class="mean">意訳: 世界の時間を1コマ進める処理。時計・カメラ・物の動きをまとめて更新する</span></td><td>1フレームの中で、入力の確定に続いて世界の状態(時刻・カメラ・ストリーミング・シミュレーション)を進めるCPU処理。実行順序はコンポジションルートが支配する。</td></tr>
 <tr id="term-group-select"><td>可視個体の選別<span class="mean">意訳: 今フレームに描く物の選抜。100万本の草から「見えていて・どの細かさで描くか」を毎フレーム選ぶ</span></td><td>インスタンス群の可視判定・個体別LODの段選択・可視ID列の並べ替えを、1回の走査へ融合したCPU処理。実測は個体あたり約10ナノ秒であり、100万個体では観測範囲全体の支配区間になる。</td></tr>
-<tr id="term-uniform-write"><td>ユニフォーム書込(UBO書込)<span class="etym">uniform = 一様な。全画素・全頂点から同じ値が見える定数、の意</span><span class="mean">意訳: 今フレームの共通設定(カメラ・光源など)をGPUの黒板へ書き出す工程</span></td><td>そのフレームのカメラのビュー射影・カメラ相対位置・光源・距離区分ごとのライトビュー射影といった定数を、ユニフォームバッファへ書き込む工程。フレームインフライトごとに分けた領域へ書く。</td></tr>
+<tr id="term-uniform-write"><td>シェーダー定数書込(UBO書込)<span class="etym">uniform = 一様な。全画素・全頂点から同じ値が見える定数、の意</span><span class="mean">意訳: 今フレームの共通設定(カメラ・光源など)をGPUの黒板へ書き出す工程</span></td><td>そのフレームのカメラのビュー射影・カメラ相対位置・光源・距離区分ごとのライトビュー射影といった定数を、シェーダー定数バッファへ書き込む工程。進行中フレームごとに分けた領域へ書く。</td></tr>
 <tr id="term-command-record"><td>コマンド記録<span class="etym">command recording = 命令の記録</span><span class="mean">意訳: GPUへの指示書を書き溜める工程。書いている間GPUはまだ動かない</span></td><td>GPUへの命令(描画・状態設定・バリア)をコマンドバッファへ並べるCPU処理。記録の時点ではGPUはまだ動かない。</td></tr>
 <tr id="term-submit"><td>提出(サブミット)<span class="etym">submit = 提出する</span><span class="mean">意訳: 書き上げた指示書をGPUへ手渡して「やって」と言うこと</span></td><td>記録し終えたコマンドバッファをGPUのキューへ渡し、実行を始めさせること。</td></tr>
 <tr id="term-queue"><td>GPUキュー<span class="etym">queue = 行列・順番待ちの列</span><span class="mean">意訳: GPUの仕事の受付窓口。窓口が別なら仕事は並行して進む</span></td><td>GPUへ仕事を投入する口。グラフィックス・計算・転送の種別があり、別のキューへ出した仕事どうしは並行して進む。本エンジンは現在グラフィックス1本である。</td></tr>
 <tr id="term-fence"><td>フェンス<span class="etym">fence = 柵</span><span class="mean">意訳: 柵。GPUが終わるまでCPUを柵の手前で待たせる仕切り</span></td><td>GPUの処理完了をCPU側で待つための同期物。フレームの資源を書き換える前に、前回の使用が終わったことをフェンスで確かめる。</td></tr>
-<tr id="term-frame-in-flight"><td>フレームインフライト<span class="etym">frames in flight = 直訳「飛行中のフレーム」</span><span class="mean">意訳: 仕掛かり中のフレーム数。CPUが次を作る間にGPUが前を描く、流れ作業の同時仕掛かり数</span></td><td>CPUが次のフレームを準備する間にGPUが前のフレームを描く並行状態。同時進行の数だけ資源を多重化する。本エンジンは2である。</td></tr>
+<tr id="term-frame-in-flight"><td>進行中フレーム<span class="etym">frames in flight = 直訳「飛行中のフレーム」</span><span class="mean">意訳: 仕掛かり中のフレーム数。CPUが次を作る間にGPUが前を描く、流れ作業の同時仕掛かり数</span></td><td>CPUが次のフレームを準備する間にGPUが前のフレームを描く並行状態。同時進行の数だけ資源を多重化する。本エンジンは2である。</td></tr>
 <tr id="term-present"><td>提示 / FIFO提示<span class="etym">present = 差し出す / FIFO = First In First Out(先入れ先出し)</span><span class="mean">意訳: 完成した絵を画面へ出すこと / 先に描けた絵から順番どおりに出す方式</span></td><td>完成した画像を表示用の画像列(スワップチェーン)へ送って表示させること / 表示の垂直同期に合わせて順に出す提示モード。フレーム時間の主たる供給源である。</td></tr>
 <tr id="term-render-graph"><td>レンダーグラフ<span class="etym">render graph = 直訳「描画の graph(工程のつながり図)」</span><span class="mean">意訳: 絵作りの工程表。各工程が「何を読み何に書くか」を申告すると、待ち合わせを自動で入れてくれる仕組み</span></td><td>パスの読み書きの宣言から、宣言順の実行に必要な待ち合わせ(バリア)を自動導出する仕組み。実行順自体は構築側が明示する。工程を足してもバリアの正しさが壊れない器であり、本エンジンは実装済みである。</td></tr>
 <tr id="term-pass"><td>パス(描画工程)<span class="etym">pass = 1回通すこと(野球の1打席、書類の1回覧と同じ用法)</span><span class="mean">意訳: ひと工程。絵作りの作業工程1つぶん</span></td><td>レンダーグラフの1ノード。読む資源と書く資源を宣言して、GPUの作業を1まとまり実行する単位。</td></tr>
@@ -1083,13 +1083,13 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <table>
 <tr><th>用語</th><th>意味</th></tr>
 <tr id="term-lod"><td>LOD(Level of Detail)<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 細かさの段階。遠くの物は粗い作りで済ませる仕組み</span></td><td>距離に応じて物の詳細度(ポリゴン数等)を切り替える仕組み。</td></tr>
-<tr id="term-culling"><td>カリング<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 間引き。cullは家畜の群れから間引く意で、描かない物をふるい落とすこと</span></td><td>見えない物を描画から除外する選別。カメラの視錐台の外を除く視錐台カリングと、手前の物に隠れた分を除く遮蔽カリングがある。</td></tr>
-<tr id="term-occlusion-culling"><td>遮蔽カリング<span class="etym">occlusion culling = 直訳「遮蔽による間引き」</span><span class="mean">意訳: 物陰の間引き。ビルの裏の街並みを最初から描かない</span></td><td>手前の物に隠れて見えない物を描画から外す選別。視錐台の中にあるかどうかとは別の判定である。</td></tr>
+<tr id="term-culling"><td>可視選別<br><span style="color:var(--fg-dim);font-size:0.86em;">意訳: 間引き。cullは家畜の群れから間引く意で、描かない物をふるい落とすこと</span></td><td>見えない物を描画から除外する選別。カメラの視錐台の外を除く視錐台カリングと、手前の物に隠れた分を除く遮蔽可視選別がある。</td></tr>
+<tr id="term-occlusion-culling"><td>遮蔽可視選別<span class="etym">occlusion culling = 直訳「遮蔽による間引き」</span><span class="mean">意訳: 物陰の間引き。ビルの裏の街並みを最初から描かない</span></td><td>手前の物に隠れて見えない物を描画から外す選別。視錐台の中にあるかどうかとは別の判定である。</td></tr>
 <tr id="term-instanced-draw"><td>インスタンス描画<span class="etym">instance = 実例・個体(1つの雛形から作った1体ずつ)</span><span class="mean">意訳: 同じ型のまとめ描き。「この木の型を、この1万箇所に」と1回の命令で描く</span></td><td>同じ形状の物(木・草)を1回の描画命令でまとめて描く方式。物量の基本解である。</td></tr>
 <tr id="term-indirect-draw"><td>GPU駆動描画 / 間接描画<span class="etym">GPU-driven rendering = 直訳「GPUが運転する描画」/ indirect draw = 直訳「間接の描画」(命令の中身を後からGPUが埋める)</span><span class="mean">意訳: GPUの自炊。「何をいくつ描くか」の決定までGPUが自分で行い、CPUは白紙の指示書を渡すだけ</span></td><td>何を描くかの選別をGPUの計算シェーダーで行う方式 / 描画の引数そのものをGPUが書き、CPUは実行の指示だけを出す方式。CPUの関与が物の数に比例しなくなる。</td></tr>
 <tr id="term-instance-group"><td>インスタンス群</td><td>1つの原型(共有するメッシュのLOD列)を、多数の配置で描く描画形状。木や草はこの形で持つ。</td></tr>
 <tr id="term-visible-id-list"><td>可視ID列</td><td>そのフレームで描く個体の添字を、LOD段ごとに連続した範囲へ並べ、各段の内側をシーンのみ可視・両方可視・シャドウのみ可視・どちらも不可視の順に置いた毎フレームのGPU入力。シーンとシャドウの2つの可視集合を、1本の列の連続範囲だけで表せる。</td></tr>
-<tr id="term-mesh-shader"><td>メッシュシェーダー<span class="etym">mesh shader = メッシュを作るシェーダー</span><span class="mean">意訳: 三角形の製造直販。頂点の決まった流れ作業でなく、GPUが三角形の束を自由に作って選んで流せる新しい入口</span></td><td>三角形の生成と選別をGPUで行う新しいパイプライン段。クラスタ単位の細かいカリングに向く。</td></tr>
+<tr id="term-mesh-shader"><td>メッシュシェーダー<span class="etym">mesh shader = メッシュを作るシェーダー</span><span class="mean">意訳: 三角形の製造直販。頂点の決まった流れ作業でなく、GPUが三角形の束を自由に作って選んで流せる新しい入口</span></td><td>三角形の生成と選別をGPUで行う新しいパイプライン段。クラスタ単位の細かい可視選別に向く。</td></tr>
 <tr id="term-virtual-geometry"><td>仮想化ジオメトリ(Nanite級)<span class="etym">virtualized geometry = 直訳「仮想化された形状」。仮想メモリ(必要なページだけ実メモリへ載せる仕組み)の発想を形状データへ適用した命名</span><span class="mean">意訳: 形の必要分だけ読み。彫刻級の細かいモデルを細切れの束にしておき、画面に必要な細かさの分だけ読んで描く</span></td><td>メッシュをクラスタの階層へ事前に分解し、画面上の誤差が一定以下になる階層だけを読んで描く方式。ポリゴン数を画素数に比例させる。</td></tr>
 <tr id="term-meshlet"><td>meshlet / クラスタ<span class="etym">meshlet = mesh + -let(小さいもの。bookletのlet) / cluster = 房・かたまり</span><span class="mean">意訳: 三角形の小分けパック(数十〜百個入り)</span></td><td>メッシュを分解した小さな三角形の束。仮想化ジオメトリとメッシュシェーダーの操作単位である。</td></tr>
 <tr id="term-ik"><td>IK<span class="etym">Inverse Kinematics = 直訳「逆向きの運動学」。通常(順運動学)は関節角→手足の位置の順に決めるが、その逆</span><span class="mean">意訳: 目標からの逆算ポーズ。「足の裏をこの坂に着けたい」から膝と腿の角度を逆算する</span></td><td>足の接地や手の把持のため、目標位置から関節の角度を逆算する技術。</td></tr>
@@ -1150,7 +1150,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <p><strong>第2段: 放射照度(ほうしゃしょうど) <math><mi>E</mi></math> [W/m²]。</strong>面が受け取る放射束の面積密度である。「この机の1平方メートルに毎秒何ジュール届いているか」。日焼けの度合いやソーラーパネルの発電量を決めるのはこの量である。ただしまだ「どの方向から来たか」を区別しない: 真上からの1Wも、あらゆる方向からかき集めた1Wも、同じ<math><mi>E</mi><mo>=</mo><mn>1</mn><mspace width="0.15em"/><mtext>W/m²</mtext></math>である。</p>
 
-<p><strong>寄り道: 立体角(りったいかく) [sr]。</strong>「方向の広がり」を数える量が要る。平面の角度(ラジアン)が円弧の長さ/半径であるのと同様に、立体角は<strong>球面上の面積/半径の2乗</strong>で定義する。単位はステラジアン(sr)。全方向(球面全体)は <math><mfrac><mrow><mn>4</mn><mi>π</mi><msup><mi>r</mi><mn>2</mn></msup></mrow><msup><mi>r</mi><mn>2</mn></msup></mfrac><mo>=</mo><mn>4</mn><mi>π</mi></math> sr、半球(表面から見える空の全部)は <math><mn>2</mn><mi>π</mi></math> sr である。腕を伸ばした親指の先はおよそ0.00006srで、太陽と満月はどちらも偶然ほぼ同じ0.00006sr程度に見える(だから日食が起こる)。</p>
+<p><strong>寄り道: 立体角(りったいかく) [sr]。</strong>「方向の広がり」を数える量が要る。平面の角度(ラジアン)が円弧の長さ/半径であるのと同様に、立体角は<strong>球面上の面積/半径の2乗</strong>で定義する。単位はステラジアン(sr)。全方向(球面全体)は <math><mfrac><mrow><mn>4</mn><mi>π</mi><msup><mi>r</mi><mn>2</mn></msup></mrow><msup><mi>r</mi><mn>2</mn></msup></mfrac><mo>=</mo><mn>4</mn><mi>π</mi></math> sr、半球(表面から見える空の全部)は <math><mn>2</mn><mi>π</mi></math> sr である。枝を伸ばした親指の先はおよそ0.00006srで、太陽と満月はどちらも偶然ほぼ同じ0.00006sr程度に見える(だから日食が起こる)。</p>
 
 <figure>
 <svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="立体角の定義の図">
@@ -1506,7 +1506,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <li><strong>F(フレネル項)</strong>: <strong>すべての物は、浅い角度で見ると鏡になる</strong>という物理現象(水面を真上から見ると底が見え、遠くの水面は空を映す、あれ)。反射率が視線の角度で変わる効果で、電磁気学(マクスウェル方程式の境界条件)から導かれる。PBRの「金属性」の正体はここにある: 金属はF(正面から見た反射率)が高く色付きで、非金属は低く無色(約4%)である。</li>
 </ul>
 
-<p>この理論の見事さは、<strong>「基本色・粗さ・金属性」という直感的なつまみが、それぞれ物理量(アルベド・微小面分布の幅・フレネル反射率)に1対1で対応している</strong>ことである。PBRが「どの照明でも破綻しない」(4.3章)のは、つまみの裏に物理があり、エネルギー保存と相反性(10.2節)を式が守っているからである。</p>
+<p>この理論の見事さは、<strong>「基本色・粗さ・金属性」という直感的なつまみが、それぞれ物理量(反射率・微小面分布の幅・フレネル反射率)に1対1で対応している</strong>ことである。PBRが「どの照明でも破綻しない」(4.3章)のは、つまみの裏に物理があり、エネルギー保存と相反性(10.2節)を式が守っているからである。</p>
 
 <!-- ------------------------------------------------ -->
 <h3 id="s10-8">10.8 積分をくじ引きで解く — モンテカルロ法</h3>

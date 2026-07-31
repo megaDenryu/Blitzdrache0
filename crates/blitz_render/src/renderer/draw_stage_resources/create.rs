@@ -13,7 +13,7 @@ use crate::frame_composition::フレーム構成;
 use crate::shader_bundle::シェーダー束;
 use crate::vulkan;
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::uniform::フレームユニフォーム一式;
+use crate::vulkan::uniform::フレームシェーダー定数一式;
 
 /// 器を組み立てるのに要る材料一式。
 pub(in crate::renderer) struct 生成要求<'a> {
@@ -23,9 +23,9 @@ pub(in crate::renderer) struct 生成要求<'a> {
     /// 影段階は深度だけへ書くため色形式を要らない。
     pub(in crate::renderer) シーンカラー形式: vk::Format,
     pub(in crate::renderer) ディスクリプタlayout: vk::DescriptorSetLayout,
-    /// 布専用シャドウ経路のディスクリプタが結ぶフレームユニフォーム。
+    /// 布専用シャドウ経路のディスクリプタが結ぶフレームシェーダー定数。
     /// 描画対象のディスクリプタセットを借りずに束縛先を作るため、この段でバッファを受け取る。
-    pub(in crate::renderer) ユニフォーム: &'a フレームユニフォーム一式,
+    pub(in crate::renderer) シェーダー定数: &'a フレームシェーダー定数一式,
     pub(in crate::renderer) シェーダー: &'a シェーダー束,
     pub(in crate::renderer) 構成: フレーム構成,
 }

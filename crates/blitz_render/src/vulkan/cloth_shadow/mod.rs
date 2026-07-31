@@ -13,7 +13,7 @@ use crate::shader_set::シェーダー一式;
 use crate::vulkan::frame::布シャドウ描画入力;
 use crate::vulkan::pipeline::シャドウパイプライン;
 use crate::vulkan::sync::フレームスロット添字;
-use crate::vulkan::uniform::フレームユニフォーム一式;
+use crate::vulkan::uniform::フレームシェーダー定数一式;
 
 pub(crate) struct 布シャドウ資源 {
     ディスクリプタ: descriptor::布シャドウディスクリプタ,
@@ -23,10 +23,10 @@ pub(crate) struct 布シャドウ資源 {
 impl 布シャドウ資源 {
     pub(crate) fn 生成する(
         device: &ash::Device,
-        ユニフォーム: &フレームユニフォーム一式,
+        シェーダー定数: &フレームシェーダー定数一式,
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        let ディスクリプタ = descriptor::生成する(device, ユニフォーム)?;
+        let ディスクリプタ = descriptor::生成する(device, シェーダー定数)?;
         let パイプライン = match シャドウパイプライン::生成する(device, ディスクリプタ.layout(), シェーダー) {
             Ok(パイプライン) => パイプライン,
             Err(誤り) => {

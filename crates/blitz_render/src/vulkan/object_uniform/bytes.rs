@@ -1,12 +1,12 @@
-//! 描画対象ユニフォームをシェーダーのObjectUniformと一致する144バイトへ変換する。
+//! 描画対象シェーダー定数をシェーダーのObjectUniformと一致する144バイトへ変換する。
 //! 先頭112バイトは個体変換と同じ並びであり、その組み立ては`instance_transform::bytes`が持つ。
 
 use super::super::instance_transform::bytes as 個体変換バイト;
-use super::content::描画対象ユニフォーム内容;
+use super::content::描画対象シェーダー定数内容;
 
 pub(super) const バイト長: usize = 144;
 
-pub(super) fn バイト列にする(内容: &描画対象ユニフォーム内容) -> [u8; バイト長] {
+pub(super) fn バイト列にする(内容: &描画対象シェーダー定数内容) -> [u8; バイト長] {
     let mut バイト列 = [0u8; バイト長];
     バイト列[..個体変換バイト::バイト長].copy_from_slice(&個体変換バイト::バイト列にする(&内容.変換));
     let mut 位置 = 個体変換バイト::バイト長;

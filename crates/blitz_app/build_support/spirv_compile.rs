@@ -1,4 +1,4 @@
-//! scene.slangの2エントリ(頂点+フラグメント)をSPIR-Vへコンパイルする。
+//! scene.slangの2エントリ(頂点+画素段)をSPIR-Vへコンパイルする。
 //! 実際のslangc呼び出しは`slangc_entry_compile`に集約する。
 
 use std::path::Path;
@@ -19,7 +19,7 @@ const エントリ一覧: [エントリ指定; 2] = [
     },
 ];
 
-pub(super) fn 頂点とフラグメントをコンパイルする(
+pub(super) fn 頂点と画素段をコンパイルする(
     slangc: &スランガー位置,
     ソース絶対パス: &Path,
     出力先ディレクトリ: &Path,

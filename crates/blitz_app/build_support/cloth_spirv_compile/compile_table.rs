@@ -24,13 +24,10 @@ pub(super) const コンパイル表: [(&str, &[エントリ指定]); 9] = [
     ("cloth_separate.slang", &[コンピュート("separateMain", "cloth_separate.spv")]),
     ("cloth_finish.slang", &[コンピュート("finishMain", "cloth_finish.spv")]),
     ("cloth_vertex.slang", &[コンピュート("vertexGenMain", "cloth_vertex_gen.spv")]),
-    (
-        "cloth_draw.slang",
-        &[頂点("cloth_draw_vertex.spv"), フラグメント("cloth_draw_fragment.spv")],
-    ),
+    ("cloth_draw.slang", &[頂点("cloth_draw_vertex.spv"), 画素段("cloth_draw_fragment.spv")]),
     (
         "cloth_shadow.slang",
-        &[頂点("cloth_shadow_vertex.spv"), フラグメント("cloth_shadow_fragment.spv")],
+        &[頂点("cloth_shadow_vertex.spv"), 画素段("cloth_shadow_fragment.spv")],
     ),
 ];
 
@@ -50,7 +47,7 @@ const fn 頂点(出力ファイル名: &'static str) -> エントリ指定 {
     }
 }
 
-const fn フラグメント(出力ファイル名: &'static str) -> エントリ指定 {
+const fn 画素段(出力ファイル名: &'static str) -> エントリ指定 {
     エントリ指定 {
         エントリ名: "fragmentMain",
         ステージ: "fragment",

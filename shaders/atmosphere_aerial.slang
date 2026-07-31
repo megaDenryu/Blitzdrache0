@@ -14,7 +14,7 @@ import atmosphere_skyview_geometry;
 [[vk::binding(2, 0)]] Sampler2D multiScatterLut;
 [[vk::binding(3, 0)]] [format("rgba16f")] RWTexture3D<float4> aerialVolume;
 
-// そのフレームの観測点・太陽の向き・視錐台・最遠距離。媒体のユニフォームと別に押し込み定数で渡すのは、
+// そのフレームの観測点・太陽の向き・視錐台・最遠距離。媒体のシェーダー定数と別に即時定数で渡すのは、
 // 媒体が変わらないままカメラと太陽だけが動くフレームでもこれらが毎回書き換わるためである。
 struct AerialCondition
 {

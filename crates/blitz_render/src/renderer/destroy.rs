@@ -43,7 +43,7 @@ impl レンダラー {
         let device = self.環境.device();
         self.フレーム進行.破棄する(device);
         self.シーン描画資源.破棄する(device);
-        self.ユニフォーム.破棄する(device);
+        self.シェーダー定数.破棄する(device);
         self.転送環境.破棄する(device);
         self.シャドウマップ.破棄する(device);
     }

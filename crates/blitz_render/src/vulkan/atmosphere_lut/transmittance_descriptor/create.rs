@@ -6,11 +6,11 @@ use ash::vk;
 use super::透過率ディスクリプタ;
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::descriptor_common;
-use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 pub(super) fn 生成する(
     device: &ash::Device,
-    ユニフォーム一覧: [vk::Buffer; フレームインフライト数],
+    シェーダー定数一覧: [vk::Buffer; 進行中フレーム数],
     書き込み先: vk::ImageView,
 ) -> Result<透過率ディスクリプタ, レンダラーエラー> {
     let layout = レイアウトを作る(device)?;
@@ -29,7 +29,7 @@ pub(super) fn 生成する(
         }
     };
     for 添字 in フレームスロット添字::全スロット() {
-        書き込む(device, set一覧[添字.配列添字()], ユニフォーム一覧[添字.配列添字()], 書き込み先);
+        書き込む(device, set一覧[添字.配列添字()], シェーダー定数一覧[添字.配列添字()], 書き込み先);
     }
     Ok(透過率ディスクリプタ { layout, pool, set一覧 })
 }
@@ -69,8 +69,8 @@ fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レン
 
 /// 注意: ストレージ画像のレイアウトはGENERALである。レンダーグラフの画像用途「コンピュート書き」が同じレイアウトへ遷移させており、
 /// ここの値とバリアの導出先が食い違うとvalidationがレイアウト不一致を報告する。
-fn 書き込む(device: &ash::Device, set: vk::DescriptorSet, ユニフォーム: vk::Buffer, 書き込み先: vk::ImageView) {
-    let バッファ情報 = [vk::DescriptorBufferInfo::default().buffer(ユニフォーム).offset(0).range(vk::WHOLE_SIZE)];
+fn 書き込む(device: &ash::Device, set: vk::DescriptorSet, シェーダー定数: vk::Buffer, 書き込み先: vk::ImageView) {
+    let バッファ情報 = [vk::DescriptorBufferInfo::default().buffer(シェーダー定数).offset(0).range(vk::WHOLE_SIZE)];
     let 画像情報 = [vk::DescriptorImageInfo::default()
         .image_view(書き込み先)
         .image_layout(vk::ImageLayout::GENERAL)];
@@ -86,6 +86,6 @@ fn 書き込む(device: &ash::Device, set: vk::DescriptorSet, ユニフォーム
             .descriptor_type(vk::DescriptorType::STORAGE_IMAGE)
             .image_info(&画像情報),
     ];
-    // 安全性: setは割当済み、ユニフォームと画像ビューは生成済みで有効。
+    // 安全性: setは割当済み、シェーダー定数と画像ビューは生成済みで有効。
     unsafe { device.update_descriptor_sets(&書き込み一覧, &[]) };
 }

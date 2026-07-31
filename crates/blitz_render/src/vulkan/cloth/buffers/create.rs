@@ -10,7 +10,7 @@ use super::布バッファ;
 use crate::cloth_material::布素材;
 use crate::error::レンダラーエラー;
 use crate::vulkan::geometry::upload;
-use crate::vulkan::sync::フレームインフライト数;
+use crate::vulkan::sync::進行中フレーム数;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 use crate::vulkan::{device_buffer, host_buffer};
@@ -66,9 +66,9 @@ pub(crate) fn 生成する(
     let 介入初期値 =
         vec![0u8; usize::try_from(params::介入上限件数).unwrap_or_else(|_| panic!("介入上限件数がusizeに収まらない")) * 32];
     let 定数初期値 = vec![0u8; params::バイト長];
-    let mut 介入一覧 = [(vk::Buffer::null(), vk::DeviceMemory::null()); フレームインフライト数];
-    let mut 定数一覧 = [(vk::Buffer::null(), vk::DeviceMemory::null()); フレームインフライト数];
-    for 添字 in 0..フレームインフライト数 {
+    let mut 介入一覧 = [(vk::Buffer::null(), vk::DeviceMemory::null()); 進行中フレーム数];
+    let mut 定数一覧 = [(vk::Buffer::null(), vk::DeviceMemory::null()); 進行中フレーム数];
+    for 添字 in 0..進行中フレーム数 {
         介入一覧[添字] = 積む(
             &mut 確保済み,
             device,

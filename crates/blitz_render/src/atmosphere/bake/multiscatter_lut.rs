@@ -5,7 +5,7 @@
 //! 無限回の散乱を、64本の向きで測った「1回の散乱を経ても残る割合」を公比とする等比級数の和として閉じる。
 //! 級数を閉じる操作と公比の上限は`multiscatter_series`が持つ。
 //! 参照: Sebastien Hillaire, "A Scalable and Production Ready Sky and Atmosphere Rendering Technique" (EGSR 2020)の
-//! `NewMultiScattCS`(`MULTI_SCATTERING_POWER_SERIE`の腕)。
+//! `NewMultiScattCS`(`MULTI_SCATTERING_POWER_SERIE`の枝)。
 
 use crate::atmosphere::geometry::sphere_directions::{一本あたりの立体角, 方向数, 球面の向き};
 use crate::atmosphere::integration::multiscatter_march::経路を積分する;

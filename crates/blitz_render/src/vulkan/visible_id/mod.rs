@@ -1,5 +1,5 @@
 //! そのフレームに描く個体の添字をパス別・LOD段別の区間へ並べたストレージバッファ。シーンとシャドウの両方の頂点シェーダーが
-//! これを参照する。フレームインフライトごとに1本を持ち、束の読込時に容量ぶんを一度だけ確保する。
+//! これを参照する。進行中フレームごとに1本を持ち、束の読込時に容量ぶんを一度だけ確保する。
 //! 可視判定の結果や段の選択が変わってもGPU確保は起こらず、毎フレーム行うのは書き込みだけである
 //! (参照: `_doc/設計/植生インスタンスと物量計測.md`「描画発行」)。
 //! 1個体はシーンの区間と距離区分ごとの区間へ最大でパス数ぶん現れるため、書き込む列の長さは個体数と一致せず、
@@ -19,7 +19,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::host_buffer;
-use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) use reference::可視ID列参照;
@@ -28,8 +28,8 @@ pub(crate) use reference::可視ID列参照;
 pub(crate) const 可視IDバイト長: usize = 4;
 
 pub(crate) struct 可視ID列バッファ {
-    buffer一覧: [vk::Buffer; フレームインフライト数],
-    memory一覧: [vk::DeviceMemory; フレームインフライト数],
+    buffer一覧: [vk::Buffer; 進行中フレーム数],
+    memory一覧: [vk::DeviceMemory; 進行中フレーム数],
     範囲: vk::DeviceSize,
     /// 書き込める可視IDの件数。個体数とパス数の積であり、書き込みの側はこれを超えないことだけを確かめる。
     容量件数: usize,
@@ -42,9 +42,9 @@ impl 可視ID列バッファ {
         個体数: u32,
     ) -> Result<Self, レンダラーエラー> {
         let 初期列 = capacity::初期バイト列を作る(個体数);
-        let mut buffer一覧 = [vk::Buffer::null(); フレームインフライト数];
-        let mut memory一覧 = [vk::DeviceMemory::null(); フレームインフライト数];
-        for 添字 in 0..フレームインフライト数 {
+        let mut buffer一覧 = [vk::Buffer::null(); 進行中フレーム数];
+        let mut memory一覧 = [vk::DeviceMemory::null(); 進行中フレーム数];
+        for 添字 in 0..進行中フレーム数 {
             match host_buffer::確保して書き込む(device, メモリプロパティ, &初期列, vk::BufferUsageFlags::STORAGE_BUFFER) {
                 Ok((buffer, memory)) => {
                     buffer一覧[添字] = buffer;
@@ -70,7 +70,7 @@ impl 可視ID列バッファ {
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
-        確保済みを解放する(device, &self.buffer一覧, &self.memory一覧, フレームインフライト数);
+        確保済みを解放する(device, &self.buffer一覧, &self.memory一覧, 進行中フレーム数);
     }
 
     fn memory(&self, フレーム添字: フレームスロット添字) -> vk::DeviceMemory {
@@ -80,8 +80,8 @@ impl 可視ID列バッファ {
 
 fn 確保済みを解放する(
     device: &GPUデバイス,
-    buffer一覧: &[vk::Buffer; フレームインフライト数],
-    memory一覧: &[vk::DeviceMemory; フレームインフライト数],
+    buffer一覧: &[vk::Buffer; 進行中フレーム数],
+    memory一覧: &[vk::DeviceMemory; 進行中フレーム数],
     件数: usize,
 ) {
     for 添字 in 0..件数 {

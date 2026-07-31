@@ -1,4 +1,4 @@
-//! コンピュート・頂点・フラグメントのSPIR-Vバイト列を保持する値オブジェクト。
+//! コンピュート・頂点・画素段のSPIR-Vバイト列を保持する値オブジェクト。
 //! GPU粒子トイ(M5波2判断29)のパイプライン2本(コンピュート+グラフィックス)を
 //! 生成するための入力。`シェーダー一式`(scene.slang用)と対になる型。
 
@@ -7,7 +7,7 @@ use thiserror::Error;
 /// `粒子シェーダー一式::生成する` が失敗したときのエラー。
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
 pub enum 粒子シェーダー一式エラー {
-    /// コンピュート・頂点・フラグメントいずれかのSPIR-Vバイト列が空だった。
+    /// コンピュート・頂点・画素段いずれかのSPIR-Vバイト列が空だった。
     #[error("粒子シェーダーのSPIR-Vバイト列が空だった")]
     空のバイト列,
     /// SPIR-Vは32bit語単位のバイナリ形式のため、バイト長は4の倍数であるべき。
@@ -20,17 +20,15 @@ pub enum 粒子シェーダー一式エラー {
 pub struct 粒子シェーダー一式 {
     コンピュートspirv: Vec<u8>,
     頂点spirv: Vec<u8>,
-    フラグメントspirv: Vec<u8>,
+    画素段spirv: Vec<u8>,
 }
 
 impl 粒子シェーダー一式 {
     /// 各バイト列が空でなく4の倍数長であることを検証して生成する。
     pub fn 生成する(
-        コンピュートspirv: Vec<u8>,
-        頂点spirv: Vec<u8>,
-        フラグメントspirv: Vec<u8>,
+        コンピュートspirv: Vec<u8>, 頂点spirv: Vec<u8>, 画素段spirv: Vec<u8>
     ) -> Result<Self, 粒子シェーダー一式エラー> {
-        for バイト列 in [&コンピュートspirv, &頂点spirv, &フラグメントspirv] {
+        for バイト列 in [&コンピュートspirv, &頂点spirv, &画素段spirv] {
             if バイト列.is_empty() {
                 return Err(粒子シェーダー一式エラー::空のバイト列);
             }
@@ -41,7 +39,7 @@ impl 粒子シェーダー一式 {
         Ok(Self {
             コンピュートspirv,
             頂点spirv,
-            フラグメントspirv,
+            画素段spirv,
         })
     }
 
@@ -53,7 +51,7 @@ impl 粒子シェーダー一式 {
         &self.頂点spirv
     }
 
-    pub(crate) fn フラグメントコード(&self) -> &[u8] {
-        &self.フラグメントspirv
+    pub(crate) fn 画素段コード(&self) -> &[u8] {
+        &self.画素段spirv
     }
 }

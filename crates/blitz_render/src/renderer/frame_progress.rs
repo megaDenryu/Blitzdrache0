@@ -9,7 +9,7 @@ mod slot_cycle;
 use ash::vk;
 
 use crate::vulkan;
-use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::tracked_device::GPUデバイス;
 use slot_cycle::フレームスロット巡回;
 
@@ -17,7 +17,7 @@ pub(super) use slot_cycle::フレーム結末;
 
 pub(super) struct フレーム進行 {
     command_pool: vk::CommandPool,
-    command_buffer一覧: [vk::CommandBuffer; フレームインフライト数],
+    command_buffer一覧: [vk::CommandBuffer; 進行中フレーム数],
     フレーム同期: vulkan::sync::フレーム同期,
     巡回: フレームスロット巡回,
     /// 提示へ到達しなかったフレームの累計。提示停止に起因する異常(破棄待ちの滞留・フレームループの空転)を実行中に観測する計器である。

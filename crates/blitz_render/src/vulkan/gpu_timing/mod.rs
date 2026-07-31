@@ -13,7 +13,7 @@ use ash::vk;
 use moving_average::移動平均;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 /// グラフが1フレームに持てるパス数の上限(クエリプール容量の元になる)。
 /// M7のブルームピラミッド(判断41)で8→16、M9の布シミュレーション(判断54: 約8パス追加)で16→32、
@@ -23,9 +23,9 @@ pub(crate) const パス数上限: u32 = 48;
 const クエリ数上限: u32 = パス数上限 * 2;
 
 pub(crate) struct パス別GPU計測 {
-    プール一覧: [vk::QueryPool; フレームインフライト数],
+    プール一覧: [vk::QueryPool; 進行中フレーム数],
     タイムスタンプ周期ns: f32,
-    直近マッピング一覧: [Vec<(&'static str, u32)>; フレームインフライト数],
+    直近マッピング一覧: [Vec<(&'static str, u32)>; 進行中フレーム数],
     移動平均表: HashMap<&'static str, 移動平均>,
 }
 

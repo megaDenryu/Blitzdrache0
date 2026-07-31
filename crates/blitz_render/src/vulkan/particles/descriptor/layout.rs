@@ -1,5 +1,5 @@
 //! 粒子ディスクリプタセットレイアウト: binding0=storage buffer(粒子、COMPUTE|VERTEX)、
-//! binding1=uniform buffer(フレームユニフォームを共有、VERTEXのみ)。
+//! binding1=uniform buffer(フレームシェーダー定数を共有、VERTEXのみ)。
 
 use ash::vk;
 

@@ -6,11 +6,11 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::vulkan::compute_pipeline;
 
-/// そのパイプラインが受け取る押し込み定数の枠。持たないパスと持つパスを型で分ける。
+/// そのパイプラインが受け取る即時定数の枠。持たないパスと持つパスを型で分ける。
 /// バイト数0で「無し」を表さないのは、0の範囲を宣言したレイアウトと範囲を持たないレイアウトが別物であり、
 /// 前者はvalidationが値域外として指摘するためである。
 #[derive(Debug, Clone, Copy)]
-pub(super) enum 押し込み定数の枠 {
+pub(super) enum 即時定数の枠 {
     無し,
     バイト数(u32),
 }
@@ -24,7 +24,7 @@ impl 生成パイプライン {
     pub(super) fn 生成する(
         device: &ash::Device,
         ディスクリプタlayout: vk::DescriptorSetLayout,
-        押し込み: 押し込み定数の枠,
+        押し込み: 即時定数の枠,
         spirv: &[u8],
     ) -> Result<Self, レンダラーエラー> {
         let layout = レイアウトを作る(device, ディスクリプタlayout, 押し込み)?;
@@ -51,12 +51,12 @@ impl 生成パイプライン {
 fn レイアウトを作る(
     device: &ash::Device,
     ディスクリプタlayout: vk::DescriptorSetLayout,
-    押し込み: 押し込み定数の枠,
+    押し込み: 即時定数の枠,
 ) -> Result<vk::PipelineLayout, レンダラーエラー> {
     let set_layouts = [ディスクリプタlayout];
     let 範囲一覧 = match 押し込み {
-        押し込み定数の枠::無し => Vec::new(),
-        押し込み定数の枠::バイト数(バイト数) => vec![
+        即時定数の枠::無し => Vec::new(),
+        即時定数の枠::バイト数(バイト数) => vec![
             vk::PushConstantRange::default()
                 .stage_flags(vk::ShaderStageFlags::COMPUTE)
                 .offset(0)

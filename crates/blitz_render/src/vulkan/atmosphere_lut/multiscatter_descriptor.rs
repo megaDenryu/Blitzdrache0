@@ -1,4 +1,4 @@
-//! 多重散乱生成パスが束縛するディスクリプタ。binding0が大気媒体のユニフォーム、binding1が読む側の透過率のベイク済み画像、
+//! 多重散乱生成パスが束縛するディスクリプタ。binding0が大気媒体のシェーダー定数、binding1が読む側の透過率のベイク済み画像、
 //! binding2が書き込み先の多重散乱のベイク済み画像である。
 //! 透過率のベイク済み画像をストレージ画像でなくサンプラー付きで読むのは、経路の標本点ごとに任意のUVを参照し、
 //! テクセルの間を補間する必要があるためである(CPU正本の透過率表も同じ双一次補間を行う)。
@@ -10,18 +10,18 @@ mod create;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 pub(super) struct 多重散乱ディスクリプタ {
     pub(super) layout: vk::DescriptorSetLayout,
     pool: vk::DescriptorPool,
     sampler: vk::Sampler,
-    set一覧: [vk::DescriptorSet; フレームインフライト数],
+    set一覧: [vk::DescriptorSet; 進行中フレーム数],
 }
 
 /// ディスクリプタが結ぶ束縛先。透過率のベイク済み画像と多重散乱のベイク済み画像のビューを取り違えないよう名前で受け取る。
 pub(super) struct 多重散乱の束縛先<'a> {
-    pub(super) ユニフォーム一覧: &'a [vk::Buffer; フレームインフライト数],
+    pub(super) シェーダー定数一覧: &'a [vk::Buffer; 進行中フレーム数],
     pub(super) 透過率ビュー: vk::ImageView,
     pub(super) 多重散乱ビュー: vk::ImageView,
 }

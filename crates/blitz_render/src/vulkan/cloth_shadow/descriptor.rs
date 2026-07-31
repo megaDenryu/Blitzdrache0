@@ -1,4 +1,4 @@
-//! 布専用シャドウ経路のディスクリプタの所有者。フレームユニフォーム1本だけを結ぶレイアウトと、
+//! 布専用シャドウ経路のディスクリプタの所有者。フレームシェーダー定数1本だけを結ぶレイアウトと、
 //! フレームスロットごとの2セットを保持する。触れるのは自分が作ったレイアウト・プール・セットだけである。
 //!
 //! 不変条件として、セットは生成時に一度書いたら以降書き換えない(結ぶバッファがスロットごとに固定のため)。
@@ -11,18 +11,18 @@ mod create;
 
 use ash::vk;
 
-use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
-/// フレームユニフォームのバインディング番号。shaders/cloth_shadow.slangの`[[vk::binding(3, 0)]]`と一致させる。
+/// フレームシェーダー定数のバインディング番号。shaders/cloth_shadow.slangの`[[vk::binding(3, 0)]]`と一致させる。
 /// 3にそろえるのは、同じ内容を読むscene.slang・shadow.slangの宣言と番号を食い違わせないためである。
-const フレームユニフォームのバインディング番号: u32 = 3;
+const フレームシェーダー定数のバインディング番号: u32 = 3;
 
 pub(super) use create::生成する;
 
 pub(super) struct 布シャドウディスクリプタ {
     layout: vk::DescriptorSetLayout,
     pool: vk::DescriptorPool,
-    set一覧: [vk::DescriptorSet; フレームインフライト数],
+    set一覧: [vk::DescriptorSet; 進行中フレーム数],
 }
 
 impl 布シャドウディスクリプタ {

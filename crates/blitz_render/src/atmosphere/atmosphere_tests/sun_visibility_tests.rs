@@ -7,7 +7,7 @@
 
 use super::{下端半径, 地球標準の媒体};
 use crate::atmosphere::sun_visibility::太陽が地表に遮られるか;
-use crate::atmosphere::{位相非対称係数, 地表アルベドRGB, 大気散乱媒体, 消散係数RGB};
+use crate::atmosphere::{位相非対称係数, 地表反射率RGB, 大気散乱媒体, 消散係数RGB};
 
 /// 惑星中心を原点とし、天頂を+Yに取った座標系での高度から位置を作る。
 fn 位置(高度: f64) -> [f64; 3] {
@@ -26,7 +26,7 @@ fn 散乱媒体() -> 大気散乱媒体 {
         消散係数RGB::毎メートルから(赤, 緑, 青).unwrap(),
         消散係数RGB::毎メートルから(super::ミー散乱係数, super::ミー散乱係数, super::ミー散乱係数).unwrap(),
         位相非対称係数::生成する(super::位相非対称係数).unwrap(),
-        地表アルベドRGB::生成する(0.1, 0.1, 0.1).unwrap(),
+        地表反射率RGB::生成する(0.1, 0.1, 0.1).unwrap(),
     )
     .unwrap()
 }

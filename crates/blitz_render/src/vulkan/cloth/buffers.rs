@@ -1,5 +1,5 @@
 //! 布シミュレーションのバッファ群(判断54)。粒子・前位置・隣接拘束・空間グリッド2本・
-//! 布頂点(STORAGE|VERTEX)・インデックス・アタッチ対応と、フレームインフライト2重の
+//! 布頂点(STORAGE|VERTEX)・インデックス・アタッチ対応と、進行中フレーム2重の
 //! 介入キュー・定数UBO(ホスト可視)。生成手順は`create`にある。
 
 mod create;
@@ -8,7 +8,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::host_buffer;
-use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct 布バッファ {
@@ -20,8 +20,8 @@ pub(super) struct 布バッファ {
     pub(super) 布頂点: (vk::Buffer, vk::DeviceMemory),
     pub(super) インデックス: (vk::Buffer, vk::DeviceMemory),
     pub(super) アタッチ: (vk::Buffer, vk::DeviceMemory),
-    pub(super) 介入一覧: [(vk::Buffer, vk::DeviceMemory); フレームインフライト数],
-    pub(super) 定数一覧: [(vk::Buffer, vk::DeviceMemory); フレームインフライト数],
+    pub(super) 介入一覧: [(vk::Buffer, vk::DeviceMemory); 進行中フレーム数],
+    pub(super) 定数一覧: [(vk::Buffer, vk::DeviceMemory); 進行中フレーム数],
 }
 
 pub(super) use create::生成する;

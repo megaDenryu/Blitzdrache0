@@ -1,5 +1,5 @@
 // 空パスが大気のベイク済み画像を参照する工程。受け取るのはワールドの視線と観測半径、返すのはスカイビューのベイク済み画像の放射輝度と
-// 太陽方向の透過率である。参照するための資源(媒体のユニフォームと2枚のベイク済み画像)もここが宣言する。
+// 太陽方向の透過率である。参照するための資源(媒体のシェーダー定数と2枚のベイク済み画像)もここが宣言する。
 // 注意: 写像の正本は`crates/blitz_render/src/atmosphere`(skyview_lookup.rs・skyview_mapping.rs・
 // transmittance_mapping.rs・intersect.rs)にあり、ここはその写しである。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
@@ -8,9 +8,9 @@ import atmosphere_mapping;
 import atmosphere_medium;
 import atmosphere_skyview_mapping;
 
-// set1は空パスが大気のベイク済み画像を参照するためだけのディスクリプタである。媒体のユニフォームを持つのは、ベイク済み画像の写像が
+// set1は空パスが大気のベイク済み画像を参照するためだけのディスクリプタである。媒体のシェーダー定数を持つのは、ベイク済み画像の写像が
 // 惑星下端半径と大気上端半径を要るためである。2枚のベイク済み画像のレイアウトはGENERALであり、レンダーグラフの
-// 画像用途「大気のベイク済み画像のフラグメント参照」が同じレイアウトを指す。
+// 画像用途「大気のベイク済み画像の画素段参照」が同じレイアウトを指す。
 [[vk::binding(0, 1)]] ConstantBuffer<AtmosphereMedium> atmosphereMedium;
 [[vk::binding(1, 1)]] Sampler2D transmittanceLut;
 [[vk::binding(2, 1)]] Sampler2D skyViewLut;

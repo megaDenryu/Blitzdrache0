@@ -13,7 +13,7 @@ pub(crate) fn 状態へ写像する(用途: 画像用途) -> 画像状態 {
         // 固定機能ブレンドを有効にしたパスは宛先のカラーを読む。読みを落とすと、直前のパスが同じ画像へ書いた内容が
         // 合成側の読みへ可視化されず、依存が書き込みから書き込みへの向きだけになる(LOADするのは空・粒子・UI・
         // 空中遠近合成の4パスで、うち空中遠近合成とUIはブレンドで宛先も読む)。
-        // LOADするカラー用途を別の腕に分けないのは、載せる情報が`パス種別`の`クリア指定`と同じであり、
+        // LOADするカラー用途を別の枝に分けないのは、載せる情報が`パス種別`の`クリア指定`と同じであり、
         // 2箇所が食い違うと絵にしか現れない同期の欠陥になるためである。深度出力が同じ理由で読みを持つ。
         画像用途::カラー出力 => 画像状態::生成する(
             vk::PipelineStageFlags2::COLOR_ATTACHMENT_OUTPUT,
@@ -28,7 +28,7 @@ pub(crate) fn 状態へ写像する(用途: 画像用途) -> 画像状態 {
             vk::AccessFlags2::DEPTH_STENCIL_ATTACHMENT_WRITE | vk::AccessFlags2::DEPTH_STENCIL_ATTACHMENT_READ,
             vk::ImageLayout::DEPTH_ATTACHMENT_OPTIMAL,
         ),
-        画像用途::シェーダー読みフラグメント => 画像状態::生成する(
+        画像用途::シェーダー読み画素段 => 画像状態::生成する(
             vk::PipelineStageFlags2::FRAGMENT_SHADER,
             vk::AccessFlags2::SHADER_SAMPLED_READ,
             vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL,
@@ -48,7 +48,7 @@ pub(crate) fn 状態へ写像する(用途: 画像用途) -> 画像状態 {
             vk::AccessFlags2::SHADER_SAMPLED_READ,
             vk::ImageLayout::GENERAL,
         ),
-        画像用途::大気のベイク済み画像のフラグメント参照 => 画像状態::生成する(
+        画像用途::大気のベイク済み画像の画素段参照 => 画像状態::生成する(
             vk::PipelineStageFlags2::FRAGMENT_SHADER,
             vk::AccessFlags2::SHADER_SAMPLED_READ,
             vk::ImageLayout::GENERAL,

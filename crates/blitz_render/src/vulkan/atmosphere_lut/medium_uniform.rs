@@ -1,8 +1,8 @@
-//! 大気散乱媒体を運ぶユニフォームバッファ。フレームインフライトごとに1本ずつホスト可視で確保する。
+//! 大気散乱媒体を運ぶシェーダー定数バッファ。進行中フレームごとに1本ずつホスト可視で確保する。
 //!
 //! 注意: 1本を共有せずスロットごとに持つのは、大気が変わったフレームで書き換えるとき、別のスロットで
 //! まだ実行中の生成パスが同じバッファを読んでいる可能性があるためである。スロットごとに分ければ、
-//! そのスロットのフェンス待機の後に書く規律だけでこの競合が消える(フレームユニフォームと同じ理由)。
+//! そのスロットのフェンス待機の後に書く規律だけでこの競合が消える(フレームシェーダー定数と同じ理由)。
 
 use ash::vk;
 
@@ -10,23 +10,23 @@ use super::medium_bytes;
 use crate::atmosphere::大気散乱媒体;
 use crate::error::レンダラーエラー;
 use crate::vulkan::host_buffer;
-use crate::vulkan::sync::{フレームインフライト数, フレームスロット添字};
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::tracked_device::GPUデバイス;
 
-pub(super) struct 媒体ユニフォーム一式 {
-    buffer一覧: [vk::Buffer; フレームインフライト数],
-    memory一覧: [vk::DeviceMemory; フレームインフライト数],
+pub(super) struct 媒体シェーダー定数一式 {
+    buffer一覧: [vk::Buffer; 進行中フレーム数],
+    memory一覧: [vk::DeviceMemory; 進行中フレーム数],
 }
 
-impl 媒体ユニフォーム一式 {
+impl 媒体シェーダー定数一式 {
     pub(super) fn 生成する(
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     ) -> Result<Self, レンダラーエラー> {
-        let mut buffer一覧 = [vk::Buffer::null(); フレームインフライト数];
-        let mut memory一覧 = [vk::DeviceMemory::null(); フレームインフライト数];
+        let mut buffer一覧 = [vk::Buffer::null(); 進行中フレーム数];
+        let mut memory一覧 = [vk::DeviceMemory::null(); 進行中フレーム数];
         let 初期バイト列 = [0u8; medium_bytes::バイト長];
-        for 添字 in 0..フレームインフライト数 {
+        for 添字 in 0..進行中フレーム数 {
             match host_buffer::確保して書き込む(device, メモリプロパティ, &初期バイト列, vk::BufferUsageFlags::UNIFORM_BUFFER) {
                 Ok((buffer, memory)) => {
                     buffer一覧[添字] = buffer;
@@ -60,7 +60,7 @@ impl 媒体ユニフォーム一式 {
     }
 
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
-        for 添字 in 0..フレームインフライト数 {
+        for 添字 in 0..進行中フレーム数 {
             // 安全性: バッファ・memoryはSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了している。
             unsafe { device.destroy_buffer(self.buffer一覧[添字], None) };
             device.メモリを解放する(self.memory一覧[添字]);

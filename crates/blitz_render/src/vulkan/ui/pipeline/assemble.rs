@@ -8,7 +8,7 @@ use super::finish;
 use crate::error::レンダラーエラー;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
-const フラグメントエントリ名: &std::ffi::CStr = c"fragmentMain";
+const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
 /// 画面寸法(幅・高さのf32、判断33)をVERTEX段へ渡すプッシュ定数のバイト数。
 /// `crate::vulkan::frame::record::ui_pass`が組み立てる`[u8; 8]`と一致させること。
 const 画面寸法プッシュ定数バイト数: u32 = 8;
@@ -18,7 +18,7 @@ pub(super) fn 組み立てる(
     カラー形式: vk::Format,
     ディスクリプタlayout: vk::DescriptorSetLayout,
     頂点モジュール: vk::ShaderModule,
-    フラグメントモジュール: vk::ShaderModule,
+    画素段モジュール: vk::ShaderModule,
 ) -> Result<UIパイプライン, レンダラーエラー> {
     let ステージ一覧 = [
         vk::PipelineShaderStageCreateInfo::default()
@@ -27,8 +27,8 @@ pub(super) fn 組み立てる(
             .name(頂点エントリ名),
         vk::PipelineShaderStageCreateInfo::default()
             .stage(vk::ShaderStageFlags::FRAGMENT)
-            .module(フラグメントモジュール)
-            .name(フラグメントエントリ名),
+            .module(画素段モジュール)
+            .name(画素段エントリ名),
     ];
 
     let (バインド記述, 属性記述一覧) = super::vertex_input::記述する();

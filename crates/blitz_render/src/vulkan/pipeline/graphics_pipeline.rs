@@ -11,7 +11,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::relative_anchor;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
-const フラグメントエントリ名: &std::ffi::CStr = c"fragmentMain";
+const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
 
 /// 頂点属性の宣言セット。布は接線を消費しないため3属性版を使う(判断54)。
 #[derive(Clone, Copy)]
@@ -27,7 +27,7 @@ pub(super) fn 組み立てる(
     深度形式: vk::Format,
     ディスクリプタlayout: vk::DescriptorSetLayout,
     頂点モジュール: vk::ShaderModule,
-    フラグメントモジュール: vk::ShaderModule,
+    画素段モジュール: vk::ShaderModule,
     属性選択: 頂点属性選択,
 ) -> Result<パイプライン, レンダラーエラー> {
     let ステージ一覧 = [
@@ -37,8 +37,8 @@ pub(super) fn 組み立てる(
             .name(頂点エントリ名),
         vk::PipelineShaderStageCreateInfo::default()
             .stage(vk::ShaderStageFlags::FRAGMENT)
-            .module(フラグメントモジュール)
-            .name(フラグメントエントリ名),
+            .module(画素段モジュール)
+            .name(画素段エントリ名),
     ];
 
     let (バインド記述, 属性記述一覧) = vertex_input::選択して記述する(属性選択);
@@ -62,7 +62,7 @@ pub(super) fn 組み立てる(
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
-    // 注意: フレーム共通の定数(ビュー射影行列等)はbinding3のフレームユニフォームバッファ経由で渡す(判断24)。
+    // 注意: フレーム共通の定数(ビュー射影行列等)はbinding3のフレームシェーダー定数バッファ経由で渡す(判断24)。
     // プッシュ定数は描画ごとに変わるカメラ相対アンカーだけが使う(参照: `vulkan::relative_anchor`)。
     let ディスクリプタlayout一覧 = [ディスクリプタlayout];
     let プッシュ定数範囲一覧 = [relative_anchor::プッシュ定数範囲()];

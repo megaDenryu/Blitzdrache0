@@ -1,4 +1,4 @@
-//! sph.slangのコンピュート・頂点・フラグメントをSPIR-Vへコンパイルする。
+//! sph.slangのコンピュート・頂点・画素段をSPIR-Vへコンパイルする。
 
 use std::path::Path;
 

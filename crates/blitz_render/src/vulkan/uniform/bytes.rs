@@ -1,4 +1,4 @@
-//! `フレームユニフォーム内容`をFrameUniform(shaders/scene.slang)と一致するバイト列へ組み立てる。
+//! `フレームシェーダー定数内容`をFrameUniform(shaders/scene.slang)と一致するバイト列へ組み立てる。
 //! 成分ごとの`to_le_bytes`で行い、ポインタ再解釈には依存しない(vulkan/geometry/bytes.rsと同じ方針)。
 //! 前半464バイトがシーンとシャドウが読む区画、後半112バイトが空パスだけが読む区画である。
 //! 後半の並べ方は`sky_bytes`が持つ。
@@ -7,7 +7,7 @@
 //! (shaders/shadow.slang・shaders/cloth_shadow.slang)は同じbinding3を「先頭に距離区分ごとの
 //! 光源ビュー射影行列の配列だけを持つ構造体」として解釈するため、先頭フィールドの一致が同期の前提になる。
 
-use super::content::フレームユニフォーム内容;
+use super::content::フレームシェーダー定数内容;
 use super::sky_bytes;
 
 /// シーンとシャドウが読む区画のバイト長: 行列5つ(距離区分4つ + ビュー射影。320) + vec4単位9個(144) = 464。
@@ -15,7 +15,7 @@ const 共通区画バイト長: usize = 320 + 144;
 /// UBO全体のバイト長。
 pub(super) const バイト長: usize = 共通区画バイト長 + super::sky_bytes::空区画バイト長;
 
-pub(super) fn バイト列にする(内容: &フレームユニフォーム内容) -> [u8; バイト長] {
+pub(super) fn バイト列にする(内容: &フレームシェーダー定数内容) -> [u8; バイト長] {
     let mut バイト列 = [0u8; バイト長];
     let mut 位置 = 0usize;
 
