@@ -25,6 +25,7 @@ mod lod_crack;
 mod m10_bench;
 mod m11_soak;
 mod memory_sampling;
+mod multi_material_draw;
 mod object_bench;
 mod origin_invariance;
 mod ow3_dod;
@@ -76,6 +77,7 @@ fn main() -> ExitCode {
         Some("instance-draw") => instance_draw::実行する(),
         Some("instance-cull") => instance_cull::実行する(),
         Some("instance-lod") => instance_lod::実行する(),
+        Some("multi-material-draw") => multi_material_draw::実行する(),
         Some("instance-stream") => instance_stream::実行する(),
         Some("cloth-empty") => cloth_empty::実行する(),
         Some("cloth-night") => cloth_night::実行する(),
