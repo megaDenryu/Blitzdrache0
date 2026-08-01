@@ -20,7 +20,7 @@ pub(crate) struct シャドウパイプライン {
 
 impl シャドウパイプライン {
     /// `ディスクリプタlayout` はシーン描画と共有するディスクリプタセットレイアウト
-    /// (binding3のフレームシェーダー定数のみをシャドウ頂点シェーダーが使う)。
+    /// (binding8の多段影定数のみをシャドウ頂点シェーダーが使う)。
     pub(crate) fn 生成する(
         device: &ash::Device,
         ディスクリプタlayout: vk::DescriptorSetLayout,

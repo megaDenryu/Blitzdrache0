@@ -63,7 +63,7 @@ pub(super) fn 組み立てる(
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
     // 注意: シーンのディスクリプタセットレイアウトをそのまま再利用する
-    // (シャドウパスが使うのはbinding3のフレームシェーダー定数のみだが、同一の
+    // (シャドウパスが使うのはbinding8の多段影定数のみだが、同一の
     // vk::DescriptorSetLayoutハンドルを使うことでシーン描画と同じディスクリプタ
     // セットをそのまま束縛できる。新規ディスクリプタ一式を作らない設計判断)。
     let ディスクリプタlayout一覧 = [ディスクリプタlayout];

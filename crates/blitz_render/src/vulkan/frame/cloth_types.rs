@@ -11,7 +11,7 @@ use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 pub(crate) struct 布描画の外部資源 {
     /// シャドウパスで布だけを描く専用の一式。
     pub(crate) シャドウ: 布シャドウ描画入力,
-    /// シーンパスが束縛するシーン用ディスクリプタセット。布のシーン側シェーダーが読むのはフレームシェーダー定数(binding3)と
+    /// シーンパスが束縛するシーン用ディスクリプタセット。布のシーン側シェーダーが読むのはビュー・シーンパス定数(binding3)と多段影定数(binding8)と
     /// シャドウマップ(binding4)であり、どちらも描画対象によらず同じ資源を指す。
     /// 走査順で最初の描画対象のセットを使うため、可視判定の結果でこの値は変わらない。
     pub(crate) シーンディスクリプタセット: vk::DescriptorSet,
@@ -23,7 +23,7 @@ pub(crate) struct 布描画の外部資源 {
 pub(crate) struct 布シャドウ描画入力 {
     pub(crate) pipeline: vk::Pipeline,
     pub(crate) layout: vk::PipelineLayout,
-    /// フレームシェーダー定数(binding3)だけを結んだ、そのフレームスロットのセット。
+    /// 多段影定数(binding8)だけを結んだ、そのフレームスロットのセット。
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
 }
 

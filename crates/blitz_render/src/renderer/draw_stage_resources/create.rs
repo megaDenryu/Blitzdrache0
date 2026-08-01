@@ -23,7 +23,7 @@ pub(in crate::renderer) struct 生成要求<'a> {
     /// 影段階は深度だけへ書くため色形式を要らない。
     pub(in crate::renderer) シーンカラー形式: vk::Format,
     pub(in crate::renderer) ディスクリプタlayout: vk::DescriptorSetLayout,
-    /// 布専用シャドウ経路のディスクリプタが結ぶフレームシェーダー定数。
+    /// 布専用シャドウ経路のディスクリプタが結ぶ多段影定数の持ち主。
     /// 描画対象のディスクリプタセットを借りずに束縛先を作るため、この段でバッファを受け取る。
     pub(in crate::renderer) シェーダー定数: &'a フレームシェーダー定数一式,
     pub(in crate::renderer) シェーダー: &'a シェーダー束,
