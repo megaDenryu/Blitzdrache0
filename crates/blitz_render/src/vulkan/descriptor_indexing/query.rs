@@ -27,5 +27,6 @@ pub(crate) fn 上限を採取する(instance: &ash::Instance, 物理デバイス
     ディスクリプタ索引上限::生成する(
         性質.limits.max_per_stage_descriptor_sampled_images,
         性質.limits.max_descriptor_set_sampled_images,
+        性質.limits.max_per_stage_resources,
     )
 }
