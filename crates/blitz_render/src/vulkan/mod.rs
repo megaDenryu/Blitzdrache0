@@ -13,6 +13,7 @@ pub(crate) mod compute_pipeline;
 pub(crate) mod debug_messenger;
 pub(crate) mod depth;
 pub(crate) mod descriptor;
+pub(crate) mod descriptor_indexing;
 pub(crate) mod device;
 pub(crate) mod device_buffer;
 pub(crate) mod frame;

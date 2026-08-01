@@ -16,6 +16,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::present_display_status::実表示計測状況;
 use crate::vulkan::debug_messenger::デバッグメッセンジャー;
+use crate::vulkan::descriptor_indexing::ディスクリプタ索引上限;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) use physical_query::物理デバイス問い合わせ;
@@ -37,6 +38,9 @@ pub(crate) struct GPU環境 {
     /// 論理デバイス生成時に実表示計測の2拡張を有効化したかの判定結果。有効化していない拡張の関数を
     /// 呼ばせないため、判定と実表示計測の生成をこの型で結び付ける。
     実表示計測状況: 実表示計測状況,
+    /// 選定した物理デバイスから採取した、索引化した材質テクスチャ表の容量に効く上限。デバイスが変われば
+    /// 変わる値であり、デバイスと同じ寿命でここに保つ。
+    ディスクリプタ索引上限: ディスクリプタ索引上限,
 }
 
 impl GPU環境 {

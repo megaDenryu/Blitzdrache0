@@ -2,7 +2,7 @@
 
 use ash::vk;
 
-use crate::error::レンダラーエラー;
+use crate::error::{デバイス要件エラー, レンダラーエラー};
 
 /// グラフィックス描画とサーフェス提示の両方に対応するキューファミリを持ち、
 /// dynamicRendering・synchronization2 に対応する物理デバイスを選ぶ。
@@ -37,7 +37,7 @@ pub(crate) fn 選定する(
 
     最有力候補
         .map(|(物理デバイス, キューファミリ, _)| (物理デバイス, キューファミリ))
-        .ok_or(レンダラーエラー::適合物理デバイスなし)
+        .ok_or_else(|| デバイス要件エラー::適合物理デバイスなし.into())
 }
 
 fn 機能要件を満たすか(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> bool {

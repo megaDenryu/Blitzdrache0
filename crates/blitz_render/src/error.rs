@@ -6,10 +6,12 @@ use thiserror::Error;
 
 mod cloth;
 mod conversions;
+mod device_requirement;
 mod frame_input_mismatch;
 mod sky;
 
 pub use cloth::布エラー;
+pub use device_requirement::{ディスクリプタ索引機能項目, デバイス要件エラー};
 pub use frame_input_mismatch::フレーム入力不一致エラー;
 pub use sky::空エラー;
 
@@ -24,11 +26,9 @@ pub enum レンダラーエラー {
     /// Vulkan API呼び出しがエラーコードを返した。
     #[error("Vulkan呼び出しが失敗した: {0}")]
     Vulkan呼び出し失敗(Vulkan失敗コード),
-    /// グラフィックス描画・提示、および必須機能(dynamicRendering・synchronization2・shaderDrawParameters)の両方に対応する物理デバイスが1つも見つからなかった。
-    #[error(
-        "グラフィックス表示・提示、および必須機能(dynamicRendering/synchronization2/shaderDrawParameters)に対応する物理デバイスが見つからなかった"
-    )]
-    適合物理デバイスなし,
+    /// 物理デバイスがエンジンの最低要件を満たさない(適合デバイスなし・必要機能不足)。層ごとの詳細は`デバイス要件エラー`が持つ。
+    #[error("物理デバイスがエンジンの最低要件を満たさない: {0}")]
+    デバイス要件不足(#[from] device_requirement::デバイス要件エラー),
 
     /// サーフェスが提示可能な形式を1つも報告しなかった（Vulkan仕様上は到達しないはずの経路だが、外部デバイス由来のため型で防ぎきれない）。
     #[error("サーフェスが提示形式を1つも報告しなかった")]

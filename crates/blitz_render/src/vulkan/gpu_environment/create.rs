@@ -34,12 +34,16 @@ impl GPU環境 {
 
         let (surface_loader, surface) = vulkan::surface::生成する(&entry, &instance, 表示ハンドル, ウィンドウハンドル)?;
         let (physical_device, キューファミリ添字) = vulkan::physical_device::選定する(&instance, &surface_loader, surface)?;
+        // 選定の条件は変えず、選ばれたデバイスに対して索引化の最低機能要件を照合する。選定の枝で落とすと
+        // どの機能が欠けたのかを報告できず、機材を直す手がかりが残らない。
+        let (ディスクリプタ索引機能, ディスクリプタ索引上限) = vulkan::descriptor_indexing::採取する(&instance, physical_device);
+        ディスクリプタ索引機能.最低要件を照合する()?;
         let 大点描画対応 = vulkan::physical_device::大きな点描画に対応するか(&instance, physical_device);
         let 実表示計測状況 = vulkan::present_timing::調べる(&instance, physical_device, 実表示計測要求);
         let (device, queue) = vulkan::device::生成する(&instance, physical_device, キューファミリ添字, 大点描画対応, 実表示計測状況)?;
         let swapchain_loader = ash::khr::swapchain::Device::new(&instance, &device);
 
-        Ok(Self {
+        let 環境 = Self {
             entry,
             instance,
             デバッグメッセンジャー,
@@ -51,7 +55,20 @@ impl GPU環境 {
             キューファミリ添字,
             swapchain_loader,
             実表示計測状況,
-        })
+            ディスクリプタ索引上限,
+        };
+        環境.ディスクリプタ索引上限を報告する();
+        Ok(環境)
+    }
+
+    /// 採取した上限を起動時に1行で残す。合否を判定しないため、判定しないことも同じ行に書いて
+    /// 「通ったから足りている」と読まれないようにする。
+    fn ディスクリプタ索引上限を報告する(&self) {
+        println!(
+            "ディスクリプタ索引上限(合否は判定しない): シェーダー段あたりの画像ディスクリプタ{}個 / セットあたりの画像ディスクリプタ{}個",
+            self.ディスクリプタ索引上限.シェーダー段あたりの画像ディスクリプタ数(),
+            self.ディスクリプタ索引上限.セットあたりの画像ディスクリプタ数()
+        );
     }
 
     /// 論理デバイスで実際に有効化した拡張と一致する実表示計測を作る。

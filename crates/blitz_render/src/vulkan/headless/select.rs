@@ -6,7 +6,7 @@
 
 use ash::vk;
 
-use crate::error::レンダラーエラー;
+use crate::error::{デバイス要件エラー, レンダラーエラー};
 
 pub(super) fn 選定する(instance: &ash::Instance) -> Result<(vk::PhysicalDevice, u32), レンダラーエラー> {
     // 安全性: instanceは生成済みで有効。
@@ -16,7 +16,7 @@ pub(super) fn 選定する(instance: &ash::Instance) -> Result<(vk::PhysicalDevi
             return Ok((物理デバイス, 添字));
         }
     }
-    Err(レンダラーエラー::適合物理デバイスなし)
+    Err(デバイス要件エラー::適合物理デバイスなし.into())
 }
 
 fn コンピュートキューを探す(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> Option<u32> {
