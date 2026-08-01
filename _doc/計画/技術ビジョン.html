@@ -560,7 +560,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 </ul>
 
 <h4>既存実装への波及</h4>
-<p>環境光係数の入力型は光の輸送の設定型へ置換する(第6章(d)と同時)。<a class="term" href="#term-ubo">UBO</a>(GPUへ渡す固定サイズの設定領域)の共通区画464バイトはプローブ・環境マップの参照情報を持てないため、<a class="term" href="#term-frame-constants">frame constants</a>(フレーム定数)とディスクリプタインデクシングへの分離(第6章(a))が前提になる。<a class="term" href="#term-render-graph">レンダーグラフ</a>は<a class="term" href="#term-shader">計算パス</a>(コンピュート)の本格投入先になる。</p>
+<p>環境光係数の入力型は光の輸送の設定型へ置換する(第6章(d)と同時)。かつて464バイトの共通区画だった<a class="term" href="#term-ubo">UBO</a>(GPUへ渡す固定サイズの設定領域)は、ビュー・シーンパス定数176バイト・多段影定数304バイト・空パス定数112バイトの3本へ分割済みであり、<a class="term" href="#term-frame-constants">frame constants</a>(フレーム定数)への分離はここまで進んだ。ただし固定サイズの定数領域はプローブ・環境マップの参照情報を持てないため、残る個体と材質のディスクリプタインデクシングへの移行(第6章(a))が前提になる。<a class="term" href="#term-render-graph">レンダーグラフ</a>は<a class="term" href="#term-shader">計算パス</a>(コンピュート)の本格投入先になる。</p>
 
 <!-- ------------------------------------------------ -->
 <h3 id="s4-3">4.3 材質</h3>
@@ -852,7 +852,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <div class="box warn">
 <span class="label">接合点 a</span>
-<p><strong>共通<a class="term" href="#term-ubo">UBO</a> 464バイトと固定バインディング。</strong>現在は主要なグラフィックス経路の<a class="term" href="#term-shader">シェーダー</a>群が1つの共通フレームUBO(464バイトの固定サイズ設定領域)を全体または先頭部分として共有する(個体・材質の設定や計算系の専用バッファは別に持つ)。光源が集合になり、ビューが増え(影・<a class="term" href="#term-probe">プローブ</a>・反射)、<a class="term" href="#term-material">材質</a>が多様化すると固定区画は持たない。小さい<a class="term" href="#term-frame-constants">frame constants</a>(フレーム定数)と、structured buffer(可変長の構造化バッファ)+ディスクリプタインデクシング(資源を番号で選ぶ方式)への分離移行が必要である。多光源・<a class="term" href="#term-gi">GI</a>・材質拡張のすべてがこの上に載るため、<em>最初に動く境界</em>になる。</p>
+<p><strong>個体と材質の固定区画と固定バインディング。</strong>フレームの共通定数は、かつて主要なグラフィックス経路の<a class="term" href="#term-shader">シェーダー</a>群が1つの<a class="term" href="#term-ubo">UBO</a>(464バイトの固定サイズ設定領域)を全体または先頭部分として共有する形だったが、ビュー・シーンパス定数・多段影定数・空パス定数の3本へ分割済みであり、各シェーダーは自分が読む1本だけを宣言して読む(先頭部分を別の構造体として読む別名宣言は廃止した)。個体・材質の設定は固定区画と固定バインディングのままであり、ここが残る課題である。光源が集合になり、ビューが増え(影・<a class="term" href="#term-probe">プローブ</a>・反射)、<a class="term" href="#term-material">材質</a>が多様化すると固定区画は持たない。<a class="term" href="#term-frame-constants">frame constants</a>(フレーム定数)の分離に続けて、structured buffer(可変長の構造化バッファ)+ディスクリプタインデクシング(資源を番号で選ぶ方式)への移行が必要である。多光源・<a class="term" href="#term-gi">GI</a>・材質拡張のすべてがこの上に載るため、<em>最初に動く境界</em>になる。</p>
 </div>
 
 <div class="box warn">
