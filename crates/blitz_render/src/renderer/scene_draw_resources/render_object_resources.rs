@@ -3,16 +3,16 @@
 //! ジオメトリを詳細段ごとに持つのは、全段を読込時にGPUへ載せてLOD切替でGPU再確保を起こさないためである
 //! (参照: `_doc/設計/地形とカメラ相対描画.md`「LOD」)。
 //! 個体変換は読込時に一度だけ書いて以後変えないため、可視判定やLOD選択で書き直さない。毎フレーム変わるのは可視ID列だけである
-//! (参照: `_doc/設計/植生インスタンスと物量計測.md`「描画発行」)。
+//! (参照: `_doc/設計/植生インスタンスと物量計測.md`「描画発行」)。個体が1体だけの対象も1要素の個体変換バッファを持ち、
+//! 他の資源の先頭を個体変換として読むことはない(参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「段階導入」)。
 //! 材質は材質スロットごとに持つ。1つのメッシュが材質スロットごとに違う材質で塗られるため、テクスチャとシェーダー定数も
 //! 描画対象に1組ではなくスロットに1組必要になる(参照: `_doc/設計/マルチマテリアルと材質境界.md`「束縛バックエンドの移行境界」)。
-//! 確保の局面は`create`、個体変換の置き場は`instance_source`、可視ID列の置き場は`visible_id_source`、
+//! 確保の局面は`create`、可視ID列の置き場は`visible_id_source`、
 //! スロット別の材質資源は`slot_material_resources`、材質スロットからディスクリプタの参照への解決は`slot_binding`、
 //! 書き込む列の中身の検査は`visible_id_content`とその既出記録`seen_record`にある。
 
 mod create;
 mod geometry_list;
-mod instance_source;
 mod list;
 mod seen_record;
 mod shared_single_column;
@@ -30,9 +30,9 @@ use blitz_math::大域ワールド位置;
 use crate::error::レンダラーエラー;
 use crate::visible_instance_selection::個体描画計画;
 use crate::vulkan;
+use crate::vulkan::instance_transform::個体変換バッファ;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
-use instance_source::個体変換の出どころ;
 use slot_material_resources::スロット別材質資源;
 use visible_id_content::可視ID列の内容検査;
 use visible_id_source::可視ID列の出どころ;
@@ -45,7 +45,7 @@ pub(super) struct 描画対象資源 {
     段別ジオメトリ: geometry_list::段別ジオメトリ,
     /// 材質スロットごとのテクスチャとシェーダー定数。プリミティブ描画発行が指すスロット番号でここから1組を選ぶ。
     スロット別材質: スロット別材質資源,
-    個体変換: 個体変換の出どころ,
+    個体変換: 個体変換バッファ,
     可視id列: 可視ID列の出どころ,
     /// 書き込む列の中身がこの対象の個体と整合していることの検査。この対象の個体数(個体変換列の件数と常に一致する)と、
     /// パスごとの重複を見るための既出記録をこれが持つ。

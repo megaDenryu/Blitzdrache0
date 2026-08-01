@@ -23,7 +23,7 @@ pub(super) fn 描画対象シェーダー定数を書き込む(device: &ash::Dev
     シェーダー定数バッファを書き込む(device, set, 5, buffer);
 }
 
-/// binding6へ個体変換のストレージバッファを結ぶ。個体が1体だけの対象は描画対象シェーダー定数のバッファを先頭112バイトの範囲で指す。
+/// binding6へ個体変換のストレージバッファを結ぶ。個体が1体だけの対象も1要素ぶんの範囲を持つ専用のバッファを結ぶ。
 pub(super) fn 個体変換を書き込む(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer, 範囲: vk::DeviceSize) {
     ストレージバッファを書き込む(device, set, 6, buffer, 範囲);
 }

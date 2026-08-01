@@ -4,7 +4,6 @@
 use ash::vk;
 
 use super::geometry_list::段別ジオメトリ;
-use super::instance_source::個体変換の出どころ;
 use super::slot_material_resources::スロット別材質資源;
 use super::visible_id_content::可視ID列の内容検査;
 use super::visible_id_source::可視ID列の出どころ;
@@ -13,6 +12,8 @@ use crate::error::レンダラーエラー;
 use crate::render_object_material::描画対象素材;
 use crate::vulkan;
 use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
+use crate::vulkan::instance_transform::content::個体変換内容;
+use crate::vulkan::instance_transform::個体変換バッファ;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 impl 描画対象資源 {
@@ -39,7 +40,7 @@ impl 描画対象資源 {
                 return Err(誤り);
             }
         };
-        let 個体変換 = match 個体変換の出どころ::生成する(device, メモリプロパティ, 転送環境, 素材.個体変換一覧()) {
+        let 個体変換 = match 個体変換を確保する(device, メモリプロパティ, 転送環境, 素材) {
             Ok(値) => 値,
             Err(誤り) => {
                 スロット別材質.破棄する(device);
@@ -65,4 +66,15 @@ impl 描画対象資源 {
             内容検査: 可視ID列の内容検査::生成する(個体数),
         })
     }
+}
+
+/// 個体数に関わらず同じ確保を通す。個体が1体だけの対象も1要素の列になるため、個体数で分岐しない。
+fn 個体変換を確保する(
+    device: &GPUデバイス,
+    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    転送環境: &vulkan::transfer::転送実行環境,
+    素材: &描画対象素材,
+) -> Result<個体変換バッファ, レンダラーエラー> {
+    let 内容一覧 = 個体変換内容::一覧を作る(素材.個体変換一覧())?;
+    個体変換バッファ::生成する(device, メモリプロパティ, 転送環境, &内容一覧)
 }
