@@ -3,7 +3,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::present_display_status::実表示計測状況;
+use crate::present_display::実表示計測状況;
 use crate::vulkan::present_timing;
 use crate::vulkan::tracked_device::GPUデバイス;
 

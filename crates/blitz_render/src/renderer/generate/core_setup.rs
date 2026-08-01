@@ -3,7 +3,7 @@
 
 use crate::error::レンダラーエラー;
 use crate::extent::ウィンドウ寸法;
-use crate::present_display_request::実表示計測要求;
+use crate::present_display::実表示計測要求;
 use crate::renderer::presentation::提示;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;

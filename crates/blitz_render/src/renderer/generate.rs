@@ -12,7 +12,7 @@ use crate::error::{フレーム入力不一致エラー, レンダラーエラ�
 use crate::extent::ウィンドウ寸法;
 use crate::frame_composition::{フレーム構成, フレーム段階};
 use crate::particle_material::粒子素材;
-use crate::present_display_request::実表示計測要求;
+use crate::present_display::実表示計測要求;
 use crate::render_scene_material::描画シーン素材;
 use crate::shader_bundle::シェーダー束;
 use crate::skin_mesh::スキンメッシュ素材;

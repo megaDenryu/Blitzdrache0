@@ -13,10 +13,10 @@ mod physical_query;
 
 use ash::vk;
 
+use crate::descriptor_indexing_limits::ディスクリプタ索引上限;
 use crate::error::レンダラーエラー;
-use crate::present_display_status::実表示計測状況;
+use crate::present_display::実表示計測状況;
 use crate::vulkan::debug_messenger::デバッグメッセンジャー;
-use crate::vulkan::descriptor_indexing::ディスクリプタ索引上限;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) use physical_query::物理デバイス問い合わせ;
@@ -50,6 +50,11 @@ impl GPU環境 {
 
     pub(crate) fn queue(&self) -> vk::Queue {
         self.queue
+    }
+
+    /// 選定した物理デバイスから採取した上限。印字の書式は上位層が決めるため、値だけを渡す。
+    pub(crate) fn ディスクリプタ索引上限(&self) -> ディスクリプタ索引上限 {
+        self.ディスクリプタ索引上限
     }
 
     /// 選定済みキューファミリの添字。コマンドプールと転送環境の生成に要る。

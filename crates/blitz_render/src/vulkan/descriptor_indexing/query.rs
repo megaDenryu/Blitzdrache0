@@ -6,7 +6,8 @@
 
 use ash::vk;
 
-use super::{ディスクリプタ索引上限, ディスクリプタ索引機能};
+use super::ディスクリプタ索引機能;
+use crate::descriptor_indexing_limits::ディスクリプタ索引上限;
 
 /// 3機能はいずれもVulkan 1.2のコア機能であり、拡張の有無ではなく1.2の機能構造体で問い合わせる。
 pub(crate) fn 機能を採取する(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> ディスクリプタ索引機能 {

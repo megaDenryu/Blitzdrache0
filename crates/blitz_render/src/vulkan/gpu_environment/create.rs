@@ -8,7 +8,7 @@ use raw_window_handle::{RawDisplayHandle, RawWindowHandle};
 use super::GPU環境;
 use crate::error::レンダラーエラー;
 use crate::extent::ウィンドウ寸法;
-use crate::present_display_request::実表示計測要求;
+use crate::present_display::実表示計測要求;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
 use crate::vulkan::present_timing::実表示計測;
@@ -42,7 +42,7 @@ impl GPU環境 {
         let (device, queue) = vulkan::device::生成する(&instance, physical_device, キューファミリ添字, 大点描画対応, 実表示計測状況)?;
         let swapchain_loader = ash::khr::swapchain::Device::new(&instance, &device);
 
-        let 環境 = Self {
+        Ok(Self {
             entry,
             instance,
             デバッグメッセンジャー,
@@ -55,20 +55,7 @@ impl GPU環境 {
             swapchain_loader,
             実表示計測状況,
             ディスクリプタ索引上限,
-        };
-        環境.ディスクリプタ索引上限を報告する();
-        Ok(環境)
-    }
-
-    /// 採取した上限を起動時に1行で残す。合否を判定しないため、判定しないことも同じ行に書いて
-    /// 「通ったから足りている」と読まれないようにする。
-    fn ディスクリプタ索引上限を報告する(&self) {
-        println!(
-            "ディスクリプタ索引上限(合否は判定しない): シェーダー段あたりの画像ディスクリプタ{}個 / セットあたりの画像ディスクリプタ{}個 / シェーダー段あたりの資源合計{}個",
-            self.ディスクリプタ索引上限.シェーダー段あたりの画像ディスクリプタ数(),
-            self.ディスクリプタ索引上限.セットあたりの画像ディスクリプタ数(),
-            self.ディスクリプタ索引上限.シェーダー段あたりの資源合計数()
-        );
+        })
     }
 
     /// 論理デバイスで実際に有効化した拡張と一致する実表示計測を作る。

@@ -2,7 +2,7 @@
 
 use std::time::Instant;
 
-use crate::present_display_observation::実表示観測;
+use crate::present_display::実表示観測;
 
 /// 待機対象を「最後に発番したIDより1つ古い提示」に保つための戻り数。
 ///

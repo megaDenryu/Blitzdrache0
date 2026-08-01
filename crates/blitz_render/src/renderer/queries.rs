@@ -7,9 +7,10 @@ use super::atmosphere_pass_tally::大気のベイク済み画像生成パス数�
 use super::cpu_timing::{CPU区間時間, CPU区間計測};
 use super::draw_issue_breakdown::描画発行内訳;
 use super::レンダラー;
+use crate::descriptor_indexing_limits::ディスクリプタ索引上限;
 use crate::gpu_memory_stats::GPUメモリ統計;
-use crate::present_display_observation::実表示観測;
-use crate::present_display_status::実表示計測状況;
+use crate::present_display::実表示観測;
+use crate::present_display::実表示計測状況;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
 
@@ -22,6 +23,11 @@ impl レンダラー {
     /// 実表示時刻計測の対応状況(拡張と機能フラグの実測結果)。
     pub fn 実表示計測状況を取得する(&self) -> 実表示計測状況 {
         self.実表示計測.状況()
+    }
+
+    /// 索引化した材質テクスチャ表の容量に効く、選定した物理デバイスの上限。合否は判定していない実測値である。
+    pub fn ディスクリプタ索引上限を取得する(&self) -> ディスクリプタ索引上限 {
+        self.環境.ディスクリプタ索引上限()
     }
 
     /// ウォームアップ後に収集した実表示観測。計測していないなら空配列。

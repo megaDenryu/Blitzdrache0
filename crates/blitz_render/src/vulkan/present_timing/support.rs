@@ -4,8 +4,8 @@ use std::ffi::CStr;
 
 use ash::vk;
 
-use crate::present_display_request::実表示計測要求;
-use crate::present_display_status::実表示計測状況;
+use crate::present_display::実表示計測状況;
+use crate::present_display::実表示計測要求;
 
 /// 論理デバイス生成時に有効化する拡張名。present_wait は present_id に依存するため常に2つで1組にする。
 pub(crate) const 有効化する拡張名一覧: [&CStr; 2] = [ash::khr::present_id::NAME, ash::khr::present_wait::NAME];

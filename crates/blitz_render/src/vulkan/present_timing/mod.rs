@@ -10,8 +10,8 @@ mod wait;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::present_display_observation::実表示観測;
-use crate::present_display_status::実表示計測状況;
+use crate::present_display::実表示観測;
+use crate::present_display::実表示計測状況;
 use record::表示時刻記録;
 
 pub(crate) use support::{有効化する拡張名一覧, 調べる};

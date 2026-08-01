@@ -6,7 +6,7 @@
 
 use super::cpu_timing::CPU区間計測;
 use super::レンダラー;
-use crate::present_display_status::実表示計測状況;
+use crate::present_display::実表示計測状況;
 
 impl レンダラー {
     /// ベンチ用CPU区間計測を有効にする。通常実行では計測時計を読まない。

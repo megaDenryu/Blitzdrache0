@@ -33,6 +33,7 @@ impl ApplicationHandler for アプリ {
             Ok((window, mut レンダラー, 開発ui, アニメーション, 布プリセット, 登録一式)) => {
                 // 起動時シーンをディスクから読んだのはこの1回である。
                 self.シーン読込計数.読み込んだ(self.現在フレーム);
+                crate::reports::composition::ディスクリプタ索引上限を表示する(レンダラー.ディスクリプタ索引上限を取得する());
                 if let Some(状況) = super::measurement_setup::レンダラーの計測を有効にする(&mut レンダラー, self) {
                     println!("実表示時刻計測: {}", 状況.名称());
                 }
