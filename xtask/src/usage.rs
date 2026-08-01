@@ -17,7 +17,7 @@ pub(crate) fn 使い方を表示する() {
     );
     println!("  watch-assets     カタログのソース依存を監視し、変更時に実行時形式を再生成する");
     println!(
-        "  gen-source-assets 検証用ソースアセット(スモーク用quad・影検証シーン・板の世界25チャンク・地形世界25チャンクの高さ格子)をassets/へ生成する"
+        "  gen-source-assets 検証用ソースアセット(スモーク用quad・影検証シーン・材質境界シーン・板の世界・地形世界・植生世界・見本の集落の各25チャンク級)をassets/へ生成する"
     );
     println!("  fetch-assets     標準サンプル(DamagedHelmet・Fox)をassets/samples/へ取得する(curl.exe使用)");
     println!(
