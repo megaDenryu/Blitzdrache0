@@ -1,0 +1,94 @@
+//! シェーダー定数の宣言が1箇所に閉じていることの検査。受け取るのは無し(対象の表がここにある)、
+//! 返すのは自前の宣言を持ち続けているシェーダーの違反一覧である。
+//!
+//! フレームの定数を読む側が自分で構造体と`ConstantBuffer`を書くと、宣言の並びが正本と食い違っても
+//! コンパイルは通り、値化けとしてしか現れない。とりわけ「正本の先頭だけを別の構造体として読む」書き方は、
+//! 正本の先頭に何を置くかを暗黙のABIにしてしまう。この検査は、取り込む側が宣言を持たないことを機械的に見る
+//! (参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「分離の形」)。
+
+use std::path::{Path, PathBuf};
+
+use super::violation::違反;
+
+/// 宣言を持ってはならないシェーダーと、代わりに取り込むべきモジュール。
+struct 取り込む側 {
+    パス: &'static str,
+    取り込むモジュール一覧: &'static [&'static str],
+}
+
+const 検査対象一覧: [取り込む側; 8] = [
+    取り込む側 {
+        パス: "shaders/shadow.slang",
+        取り込むモジュール一覧: &["cascade_shadow_uniform"],
+    },
+    取り込む側 {
+        パス: "shaders/cloth_shadow.slang",
+        取り込むモジュール一覧: &["cascade_shadow_uniform"],
+    },
+    取り込む側 {
+        パス: "shaders/cloth_draw.slang",
+        取り込むモジュール一覧: &["cascade_shadow_uniform", "view_pass_uniform"],
+    },
+    取り込む側 {
+        パス: "shaders/scene.slang",
+        取り込むモジュール一覧: &["cascade_shadow_uniform", "view_pass_uniform"],
+    },
+    取り込む側 {
+        パス: "shaders/sky_frame.slang",
+        取り込むモジュール一覧: &["sky_pass_uniform", "view_pass_uniform"],
+    },
+    取り込む側 {
+        パス: "shaders/particle.slang",
+        取り込むモジュール一覧: &["view_pass_uniform"],
+    },
+    取り込む側 {
+        パス: "shaders/sph.slang",
+        取り込むモジュール一覧: &["view_pass_uniform"],
+    },
+    取り込む側 {
+        パス: "shaders/surface_flow.slang",
+        取り込むモジュール一覧: &["view_pass_uniform"],
+    },
+];
+
+/// フレームの定数を指す番号。この番号へ自前の`ConstantBuffer`を結ぶ宣言が取り込む側に残っていたら違反とする。
+const フレーム定数のバインディング番号一覧: [u32; 3] = [3, 8, 9];
+
+pub fn 全シェーダーを検査する() -> Result<Vec<違反>, String> {
+    let mut 違反一覧 = Vec::new();
+    for 対象 in &検査対象一覧 {
+        let 内容 = std::fs::read_to_string(Path::new(対象.パス)).map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", 対象.パス))?;
+        違反一覧.extend(自前の宣言を探す(対象, &内容));
+        違反一覧.extend(取り込みの欠落を探す(対象, &内容));
+    }
+    Ok(違反一覧)
+}
+
+fn 自前の宣言を探す(対象: &取り込む側, 内容: &str) -> Vec<違反> {
+    let mut 違反一覧 = Vec::new();
+    for 番号 in フレーム定数のバインディング番号一覧 {
+        let 宣言 = format!("[[vk::binding({番号}, 0)]]");
+        for (行番号, _) in 内容.lines().enumerate().filter(|(_, 行)| 行.trim_start().starts_with(&宣言)) {
+            違反一覧.push(違反::行単位(
+                PathBuf::from(対象.パス),
+                行番号 + 1,
+                format!("フレームの定数(binding{番号})を自前で宣言している。宣言の正本のモジュールをimportする"),
+            ));
+        }
+    }
+    違反一覧
+}
+
+fn 取り込みの欠落を探す(対象: &取り込む側, 内容: &str) -> Vec<違反> {
+    let mut 違反一覧 = Vec::new();
+    for モジュール in 対象.取り込むモジュール一覧 {
+        let 取り込み = format!("import {モジュール};");
+        if !内容.lines().any(|行| 行.trim() == 取り込み) {
+            違反一覧.push(違反::ファイル単位(
+                PathBuf::from(対象.パス),
+                format!("フレームの定数の宣言を持つ{モジュール}をimportしていない"),
+            ));
+        }
+    }
+    違反一覧
+}

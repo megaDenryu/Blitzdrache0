@@ -12,8 +12,10 @@ mod line_count;
 mod particle_reference;
 mod section_reference;
 mod shader_constant;
+mod shader_uniform_alias;
 mod split_debt;
 mod violation;
+mod whole_repository;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -41,26 +43,10 @@ pub fn 実行する() -> ExitCode {
         }
     };
 
-    match dependency_whitelist::全クレートを検査する() {
-        Ok(依存違反一覧) => 違反一覧.extend(依存違反一覧),
+    match whole_repository::集める() {
+        Ok(全体違反一覧) => 違反一覧.extend(全体違反一覧),
         Err(誤り) => {
-            eprintln!("[xtask] conformの依存白リスト検査に失敗した: {誤り}");
-            return ExitCode::FAILURE;
-        }
-    }
-
-    match doc_section::全文書を検査する() {
-        Ok(節参照違反一覧) => 違反一覧.extend(節参照違反一覧),
-        Err(誤り) => {
-            eprintln!("[xtask] conformの節参照実在検査に失敗した: {誤り}");
-            return ExitCode::FAILURE;
-        }
-    }
-
-    match shader_constant::全定数を検査する() {
-        Ok(定数違反一覧) => 違反一覧.extend(定数違反一覧),
-        Err(誤り) => {
-            eprintln!("[xtask] conformのシェーダー定数の写し検査に失敗した: {誤り}");
+            eprintln!("[xtask] conformの{誤り}");
             return ExitCode::FAILURE;
         }
     }
