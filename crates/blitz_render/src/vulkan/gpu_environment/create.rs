@@ -34,10 +34,9 @@ impl GPU環境 {
 
         let (surface_loader, surface) = vulkan::surface::生成する(&entry, &instance, 表示ハンドル, ウィンドウハンドル)?;
         let (physical_device, キューファミリ添字) = vulkan::physical_device::選定する(&instance, &surface_loader, surface)?;
-        // 選定の条件は変えず、選ばれたデバイスに対して索引化の最低機能要件を照合する。選定の枝で落とすと
-        // どの機能が欠けたのかを報告できず、機材を直す手がかりが残らない。
-        let (ディスクリプタ索引機能, ディスクリプタ索引上限) = vulkan::descriptor_indexing::採取する(&instance, physical_device);
-        ディスクリプタ索引機能.最低要件を照合する()?;
+        // 索引の機能は選定が候補を絞る条件として見ており、ここへ来た時点で選ばれた1台は満たしている。
+        // ここで読むのは、その1台の表容量に効く上限だけである。
+        let ディスクリプタ索引上限 = vulkan::descriptor_indexing::上限を採取する(&instance, physical_device);
         let 大点描画対応 = vulkan::physical_device::大きな点描画に対応するか(&instance, physical_device);
         let 実表示計測状況 = vulkan::present_timing::調べる(&instance, physical_device, 実表示計測要求);
         let (device, queue) = vulkan::device::生成する(&instance, physical_device, キューファミリ添字, 大点描画対応, 実表示計測状況)?;

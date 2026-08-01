@@ -1,5 +1,5 @@
-//! 起動時に1度だけ、物理デバイスからディスクリプタ索引の機能と上限を読み取る工程。
-//! 受け取るのはインスタンスと選定済みの物理デバイス、返すのは照合前の機能と、テクスチャ表の容量に効く上限である。
+//! 起動時に、物理デバイスからディスクリプタ索引の機能と上限を読み取る工程。
+//! 機能は候補ごとに選定が読み、上限は選ばれた1台についてGPU環境が読むため、2つの入口を分けて持つ。
 //!
 //! 注意: ここで読んだ機能はデバイス生成の機能構造体へ渡さない。読み取りと有効化を同じ場所へ書くと、
 //! 段を分けて絵を動かさない約束が失われる。
@@ -8,18 +8,11 @@ use ash::vk;
 
 use super::{ディスクリプタ索引上限, ディスクリプタ索引機能};
 
-pub(crate) fn 採取する(
-    instance: &ash::Instance,
-    物理デバイス: vk::PhysicalDevice,
-) -> (ディスクリプタ索引機能, ディスクリプタ索引上限) {
-    (機能を読む(instance, 物理デバイス), 上限を読む(instance, 物理デバイス))
-}
-
 /// 3機能はいずれもVulkan 1.2のコア機能であり、拡張の有無ではなく1.2の機能構造体で問い合わせる。
-fn 機能を読む(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> ディスクリプタ索引機能 {
+pub(crate) fn 機能を採取する(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> ディスクリプタ索引機能 {
     let mut vulkan12機能 = vk::PhysicalDeviceVulkan12Features::default();
     let mut 機能 = vk::PhysicalDeviceFeatures2::default().push_next(&mut vulkan12機能);
-    // 安全性: instance・物理デバイスは選定済みで有効。連結した機能構造体はこの関数内で生存する。
+    // 安全性: instance・物理デバイスは列挙済みで有効。連結した機能構造体はこの関数内で生存する。
     unsafe { instance.get_physical_device_features2(物理デバイス, &mut 機能) };
     ディスクリプタ索引機能::生成する(
         vulkan12機能.runtime_descriptor_array == vk::TRUE,
@@ -28,7 +21,7 @@ fn 機能を読む(instance: &ash::Instance, 物理デバイス: vk::PhysicalDev
     )
 }
 
-fn 上限を読む(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> ディスクリプタ索引上限 {
+pub(crate) fn 上限を採取する(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> ディスクリプタ索引上限 {
     // 安全性: instance・物理デバイスは選定済みで、instanceの生存中に問い合わせる。
     let 性質 = unsafe { instance.get_physical_device_properties(物理デバイス) };
     ディスクリプタ索引上限::生成する(

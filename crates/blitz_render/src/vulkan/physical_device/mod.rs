@@ -1,0 +1,61 @@
+//! 物理デバイスとキューファミリの選定。全候補を列挙し、基礎要件を満たすものを選定候補へ写して選ぶ規則へ渡す。
+//! 基礎要件の判定は`base_requirement`、候補の材料は`candidate`、選ぶ規則は`choose`が持つ。
+
+mod base_requirement;
+mod candidate;
+mod choose;
+#[cfg(test)]
+mod choose_tests;
+
+use ash::vk;
+
+use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor_indexing;
+use candidate::選定候補;
+
+/// 基礎要件(グラフィックス描画とサーフェス提示、dynamicRendering・synchronization2・shaderDrawParameters)と
+/// ディスクリプタ索引の最低機能要件をともに満たす物理デバイスを選ぶ。満たす候補の中ではdiscrete GPUを優先する。
+pub(crate) fn 選定する(
+    instance: &ash::Instance,
+    surface_loader: &ash::khr::surface::Instance,
+    surface: vk::SurfaceKHR,
+) -> Result<(vk::PhysicalDevice, u32), レンダラーエラー> {
+    // 安全性: instanceは生成済みで、この呼び出しの間有効であることを呼び出し元が保証する。
+    let 一覧 = unsafe { instance.enumerate_physical_devices()? };
+
+    let mut 適合一覧: Vec<(vk::PhysicalDevice, u32)> = Vec::new();
+    let mut 候補一覧: Vec<選定候補> = Vec::new();
+    for 物理デバイス in 一覧 {
+        let 探索結果 = base_requirement::満たすキューファミリを探す(instance, surface_loader, surface, 物理デバイス)?;
+        let Some(キューファミリ) = 探索結果 else {
+            continue;
+        };
+        候補一覧.push(候補を作る(instance, 物理デバイス, 適合一覧.len()));
+        適合一覧.push((物理デバイス, キューファミリ));
+    }
+
+    let 選んだ添字 = choose::選ぶ(&候補一覧)?;
+    let Some(&(物理デバイス, キューファミリ)) = 適合一覧.get(選んだ添字) else {
+        panic!("選んだ候補の添字{選んだ添字}が適合一覧の外を指した(候補と適合ハンドルを同じ走査で1件ずつ積む不変条件が破れている)");
+    };
+    Ok((物理デバイス, キューファミリ))
+}
+
+fn 候補を作る(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice, 添字: usize) -> 選定候補 {
+    // 安全性: instance・物理デバイスは生成・列挙済みで有効。
+    let 性質 = unsafe { instance.get_physical_device_properties(物理デバイス) };
+    let 機材名 = 性質
+        .device_name_as_c_str()
+        .map_or_else(|_| "(機材名を読めなかった)".to_string(), |名前| 名前.to_string_lossy().into_owned());
+    let discreteか = 性質.device_type == vk::PhysicalDeviceType::DISCRETE_GPU;
+    選定候補::生成する(添字, 機材名, discreteか, descriptor_indexing::機能を採取する(instance, 物理デバイス))
+}
+
+/// 物理デバイスが`largePoints`(1.0を超えるSV_PointSize出力)に対応するか。
+/// 粒子描画のPointSize指定(判断29)が効くかどうかを左右するのみで、
+/// 未対応でも点は既定サイズで描かれ続けるため物理デバイス選定条件には含めない。
+pub(crate) fn 大きな点描画に対応するか(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> bool {
+    // 安全性: instance・物理デバイスは列挙済みで有効。
+    let 機能 = unsafe { instance.get_physical_device_features(物理デバイス) };
+    機能.large_points == vk::TRUE
+}

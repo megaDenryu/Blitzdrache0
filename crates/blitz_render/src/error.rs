@@ -6,7 +6,7 @@ use thiserror::Error;
 
 mod cloth;
 mod conversions;
-mod device_requirement;
+pub(crate) mod device_requirement;
 mod frame_input_mismatch;
 mod sky;
 
