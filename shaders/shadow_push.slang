@@ -1,4 +1,4 @@
-// シャドウ記録の1発行ぶんに頂点ステージへ送るプッシュ定数。カメラ相対アンカーに距離区分番号を足した20バイトであり、
+// シャドウ記録の1発行ぶんに頂点ステージへ送るプッシュ定数。カメラ相対の基準原点に距離区分番号を足した20バイトであり、
 // 通常のシャドウと布専用シャドウの2本の頂点シェーダーが同じ宣言を読む。
 // シーン・粒子が読む relative_anchor.slang の16バイトと別に持つのは、距離区分番号を足した形をシャドウ以外の
 // パイプラインレイアウトへ波及させないためである
@@ -15,7 +15,7 @@ struct ShadowPush
 [[vk::push_constant]]
 ShadowPush shadowPush;
 
-// アンカーを加算してカメラ相対のワールド位置にする。
+// 基準原点を加算してカメラ相対のワールド位置にする。
 float3 applyShadowAnchor(float3 worldPosition)
 {
     return worldPosition + shadowPush.position;

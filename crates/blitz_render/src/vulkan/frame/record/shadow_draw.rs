@@ -52,7 +52,7 @@ unsafe fn 対象を記録する(
 ) {
     // 安全性: 呼び出し元がコマンド記録中と全入力資源の有効性を保証する。
     unsafe {
-        shadow_push::積む(device, command_buffer, 入力.layout, 入力.相対アンカー, 番号);
+        shadow_push::積む(device, command_buffer, 入力.layout, 入力.相対の基準原点, 番号);
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,
@@ -81,7 +81,7 @@ unsafe fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBu
     // 安全性: 呼び出し元がコマンド記録中と全入力資源の有効性を保証する。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, シャドウ.pipeline);
-        shadow_push::積む(device, command_buffer, シャドウ.layout, 布.入力.相対アンカー, 番号);
+        shadow_push::積む(device, command_buffer, シャドウ.layout, 布.入力.相対の基準原点, 番号);
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,

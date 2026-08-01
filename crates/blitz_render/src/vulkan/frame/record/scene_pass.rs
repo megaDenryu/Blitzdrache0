@@ -62,7 +62,7 @@ fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, �
     // 安全性: command_bufferは記録中で、布のパイプライン・バッファは生成済み。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.描画pipeline);
-        relative_anchor::積む(device, command_buffer, 入力.描画layout, 入力.相対アンカー);
+        relative_anchor::積む(device, command_buffer, 入力.描画layout, 入力.相対の基準原点);
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,

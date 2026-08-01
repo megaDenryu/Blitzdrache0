@@ -30,7 +30,7 @@ impl レンダラー {
         &self,
         フレーム添字: フレームスロット添字,
         介入件数: u32,
-        相対アンカー: crate::vulkan::relative_anchor::カメラ相対アンカー,
+        相対の基準原点: crate::vulkan::relative_anchor::カメラ相対の基準原点,
     ) -> Result<Option<crate::vulkan::frame::布描画入力>, レンダラーエラー> {
         let Some(一式) = self.布.as_ref() else {
             return Ok(None);
@@ -46,6 +46,6 @@ impl レンダラー {
             シャドウ,
             シーンディスクリプタセット,
         };
-        Ok(Some(一式.描画入力を作る(フレーム添字, 介入件数, 相対アンカー, 外部資源)))
+        Ok(Some(一式.描画入力を作る(フレーム添字, 介入件数, 相対の基準原点, 外部資源)))
     }
 }

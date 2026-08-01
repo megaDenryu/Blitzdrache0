@@ -18,4 +18,4 @@ pub use bounding_sphere::境界球;
 pub use bounds::群境界;
 pub use error::インスタンス群エラー;
 pub use group::インスタンス群;
-pub use placement::{チャンクアンカーからの許容メートル, 個体配置};
+pub use placement::{チャンクの基準原点からの許容メートル, 個体配置};

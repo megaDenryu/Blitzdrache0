@@ -3,7 +3,7 @@
 
 use ash::vk;
 
-use crate::vulkan::relative_anchor::カメラ相対アンカー;
+use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 
 /// このフレームの描画後処理: 通常の提示前遷移のみか、読み戻し用のコピーを挟むか。
 pub(crate) enum 描画方式 {
@@ -29,8 +29,8 @@ pub(crate) struct ジオメトリ入力 {
     pub(crate) 先頭インスタンス: u32,
     pub(crate) layout: vk::PipelineLayout,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
-    /// この描画のアンカーからカメラ大域原点を引いた値。プッシュ定数で頂点ステージへ渡す。
-    pub(crate) 相対アンカー: カメラ相対アンカー,
+    /// この描画の基準原点からカメラ大域原点を引いた値。プッシュ定数で頂点ステージへ渡す。
+    pub(crate) 相対の基準原点: カメラ相対の基準原点,
 }
 
 /// GPU粒子トイ(判断29)1フレームぶんの入力。`--particles`指定時のみ`Some`で渡す。
@@ -45,8 +45,8 @@ pub(crate) struct 粒子描画入力 {
     pub(crate) バッファ: vk::Buffer,
     pub(crate) 更新スレッド数: u32,
     pub(crate) 描画要素数: u32,
-    /// 粒子の位置は世界原点を基準に計算されるため、アンカーは世界原点のカメラ相対値になる。
-    pub(crate) 相対アンカー: カメラ相対アンカー,
+    /// 粒子の位置は世界原点を基準に計算されるため、基準原点は世界原点のカメラ相対値になる。
+    pub(crate) 相対の基準原点: カメラ相対の基準原点,
 }
 
 /// GPUスキニング(判断44)1フレームぶんの入力。スキン付きシーンのときのみ`Some`で渡す。

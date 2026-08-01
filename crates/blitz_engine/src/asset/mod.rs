@@ -61,7 +61,7 @@ pub use catalog_loader::実行時カタログを読み込む;
 pub use draw_shape::描画形状;
 pub use id::{アセットID, アセットIDエラー};
 pub use instance::{
-    インスタンス群, インスタンス群エラー, チャンクアンカーからの許容メートル, 個体配置, 原型, 境界球, 群境界, 軸平行包囲領域
+    インスタンス群, インスタンス群エラー, チャンクの基準原点からの許容メートル, 個体配置, 原型, 境界球, 群境界, 軸平行包囲領域
 };
 pub use interpolation_kind::補間種別;
 pub use joint::ジョイント;

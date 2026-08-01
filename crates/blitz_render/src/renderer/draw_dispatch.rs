@@ -19,7 +19,7 @@ use crate::terrain_detail::地形詳細段選択;
 use crate::visible_instance_selection::可視個体選択一覧;
 use crate::vulkan;
 use crate::vulkan::frame::UI描画入力;
-use crate::vulkan::relative_anchor::カメラ相対アンカー;
+use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 use crate::vulkan::skinning::スキニング一式;
 
 impl レンダラー {
@@ -49,8 +49,8 @@ impl レンダラー {
         self.描画段階資源
             .合成の深度を結び直す(self.環境.device(), フレーム添字, 取得済み.画像組().深度ビュー);
         let 描画方式 = self.描画方式を決める(読み戻し要求)?;
-        let 原点アンカー = カメラ相対アンカー::世界原点から生成する(カメラ大域原点)?;
-        let 任意材料 = self.任意入力の材料を集める(フレーム添字, 入力, 露出, 布介入件数, 原点アンカー)?;
+        let 原点由来の基準原点 = カメラ相対の基準原点::世界原点から生成する(カメラ大域原点)?;
+        let 任意材料 = self.任意入力の材料を集める(フレーム添字, 入力, 露出, 布介入件数, 原点由来の基準原点)?;
         let クエリプール = self.gpu計測.as_ref().map(|計測| 計測.クエリプール(フレーム添字));
         let 画像一式 = self.フレーム画像一式を組み立てる(取得済み);
         let 提示id = self.実表示計測.提示idを発番する();

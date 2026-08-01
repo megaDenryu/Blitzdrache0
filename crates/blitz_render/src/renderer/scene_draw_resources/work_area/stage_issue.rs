@@ -14,14 +14,14 @@ use crate::error::{フレーム入力不一致エラー, レンダラーエラ�
 use crate::frame_input::プリミティブ描画発行;
 use crate::visible_instance_selection::{可視パス, 段別描画範囲};
 use crate::vulkan::frame::{シャドウ描画入力, ジオメトリ入力};
-use crate::vulkan::relative_anchor::カメラ相対アンカー;
+use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 
 pub(super) fn 積む(
     材料: &描画対象の材料<'_>,
     受け皿: &mut 描画発行受け皿<'_>,
     段番号: usize,
     範囲: 段別描画範囲,
-    相対アンカー: カメラ相対アンカー,
+    相対の基準原点: カメラ相対の基準原点,
 ) -> Result<(), レンダラーエラー> {
     if 範囲.個体数() == 0 {
         return Ok(());
@@ -48,7 +48,7 @@ pub(super) fn 積む(
                     先頭インスタンス: 区間.開始(),
                     layout: 材料.入力.シーンlayout,
                     ディスクリプタセット: セット,
-                    相対アンカー,
+                    相対の基準原点,
                 }),
                 可視パス::影の距離区分(番号) => 受け皿.距離区分別のシャドウ[番号.添字()].push(シャドウ描画入力 {
                     pipeline: 材料.入力.シャドウpipeline,
@@ -61,7 +61,7 @@ pub(super) fn 積む(
                     インスタンス数: 区間.描画数(),
                     先頭インスタンス: 区間.開始(),
                     ディスクリプタセット: セット,
-                    相対アンカー,
+                    相対の基準原点,
                 }),
             }
         }

@@ -51,7 +51,7 @@ pub(super) fn 作る<'a>(
                 device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 粒子入力.描画パイプライン);
                 device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
                 device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
-                relative_anchor::積む(device, command_buffer, 粒子入力.描画layout, 粒子入力.相対アンカー);
+                relative_anchor::積む(device, command_buffer, 粒子入力.描画layout, 粒子入力.相対の基準原点);
                 device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::GRAPHICS, 粒子入力.描画layout, 0, &set一覧, &[]);
                 device.cmd_draw(command_buffer, 粒子入力.描画要素数, 1, 0, 0);
             }

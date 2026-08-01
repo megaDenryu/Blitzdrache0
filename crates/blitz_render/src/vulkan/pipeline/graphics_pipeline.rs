@@ -63,7 +63,7 @@ pub(super) fn 組み立てる(
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
     // 注意: フレーム共通の定数(ビュー射影行列等)はbinding3のフレームシェーダー定数バッファ経由で渡す(判断24)。
-    // プッシュ定数は描画ごとに変わるカメラ相対アンカーだけが使う(参照: `vulkan::relative_anchor`)。
+    // プッシュ定数は描画ごとに変わるカメラ相対の基準原点だけが使う(参照: `vulkan::relative_anchor`)。
     let ディスクリプタlayout一覧 = [ディスクリプタlayout];
     let プッシュ定数範囲一覧 = [relative_anchor::プッシュ定数範囲()];
     let layout_create_info = vk::PipelineLayoutCreateInfo::default()

@@ -3,7 +3,7 @@
 
 use super::布一式;
 use crate::vulkan::frame::{布描画の外部資源, 布描画入力};
-use crate::vulkan::relative_anchor::カメラ相対アンカー;
+use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 use crate::vulkan::sync::フレームスロット添字;
 
 impl 布一式 {
@@ -11,7 +11,7 @@ impl 布一式 {
         &self,
         フレーム添字: フレームスロット添字,
         介入件数: u32,
-        相対アンカー: カメラ相対アンカー,
+        相対の基準原点: カメラ相対の基準原点,
         外部資源: 布描画の外部資源,
     ) -> 布描画入力 {
         布描画入力 {
@@ -38,7 +38,7 @@ impl 布一式 {
             インデックス数: self.インデックス数,
             描画pipeline: self.描画パイプライン.handle,
             描画layout: self.描画パイプライン.layout,
-            相対アンカー,
+            相対の基準原点,
             外部資源,
         }
     }
