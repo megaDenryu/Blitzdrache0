@@ -44,7 +44,9 @@ fn セット1つへ書き込む(
     フレーム添字: フレームスロット添字,
 ) {
     set::テクスチャバインディングを書き込む(device, set, 参照.テクスチャ);
-    buffer_binding::フレームシェーダー定数を書き込む(device, set, シェーダー定数.buffer(フレーム添字));
+    buffer_binding::ビューとシーンパスの定数を書き込む(device, set, シェーダー定数.ビューとシーンパスのbuffer(フレーム添字));
+    buffer_binding::多段影の定数を書き込む(device, set, シェーダー定数.多段影のbuffer(フレーム添字));
+    buffer_binding::空パスの定数を書き込む(device, set, シェーダー定数.空パスのbuffer(フレーム添字));
     buffer_binding::描画対象シェーダー定数を書き込む(device, set, 参照.シェーダー定数.buffer);
     buffer_binding::個体変換を書き込む(device, set, 参照.個体変換.0, 参照.個体変換.1);
     buffer_binding::可視id列を書き込む(device, set, 参照.可視id列.buffer(フレーム添字), 参照.可視id列.範囲());

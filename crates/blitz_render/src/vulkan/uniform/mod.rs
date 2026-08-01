@@ -1,27 +1,45 @@
-//! フレームごとのライティング・カメラ・マテリアル定数を積んだシェーダー定数バッファ。
-//! 進行中フレームごと(2本)にホスト可視・コヒーレントで確保する(判断24)。
+//! フレームごとのシェーダー定数バッファ3本(ビュー・シーンパス定数・多段影定数・空パス定数)の所有者。
+//! 3本を1つの型が持つのは、どれも寿命がフレーム×ビューであり、進行中フレームごとの多重化の規律が同じためである。
+//! 束縛頻度でのセット再編は段3以降で行う(参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「束縛頻度による4セット」)。
+//!
 //! 書き込みタイミングは呼び出し元(renderer/uniform_write.rs)がフェンス待ち後に行う。
+//! 空パス定数は空段階を持つフレーム構成でだけ書き、持たない構成では1度も書かない。
 
-pub(crate) mod bytes;
-#[cfg(test)]
-mod bytes_tests;
-pub(crate) mod content;
+mod buffer_set;
+pub(crate) mod cascade_bytes;
+pub(crate) mod cascade_content;
+mod create;
 pub(crate) mod sky_bytes;
 pub(crate) mod sky_content;
+pub(crate) mod sky_write_order;
+pub(crate) mod view_pass_bytes;
+pub(crate) mod view_pass_content;
+pub(crate) mod write_bytes;
+
+#[cfg(test)]
+mod layout_tests;
+#[cfg(test)]
+mod shader_struct;
+#[cfg(test)]
+mod shader_struct_tests;
+#[cfg(test)]
+mod sky_write_order_tests;
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::host_buffer;
-use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
+use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
+use buffer_set::定数バッファ一式;
 
-pub(crate) use content::フレームシェーダー定数内容;
-pub(crate) use sky_content::空シェーダー定数内容;
+pub(crate) use cascade_content::多段影定数内容;
+pub(crate) use sky_content::空パス定数内容;
+pub(crate) use view_pass_content::ビューとシーンパスの定数内容;
 
 pub(crate) struct フレームシェーダー定数一式 {
-    buffer一覧: [vk::Buffer; 進行中フレーム数],
-    memory一覧: [vk::DeviceMemory; 進行中フレーム数],
+    ビューとシーンパス: 定数バッファ一式,
+    多段影: 定数バッファ一式,
+    空パス: 定数バッファ一式,
 }
 
 impl フレームシェーダー定数一式 {
@@ -29,54 +47,52 @@ impl フレームシェーダー定数一式 {
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     ) -> Result<Self, レンダラーエラー> {
-        let mut buffer一覧 = [vk::Buffer::null(); 進行中フレーム数];
-        let mut memory一覧 = [vk::DeviceMemory::null(); 進行中フレーム数];
-        let 初期バイト列 = [0u8; bytes::バイト長];
-
-        for 添字 in 0..進行中フレーム数 {
-            match host_buffer::確保して書き込む(device, メモリプロパティ, &初期バイト列, vk::BufferUsageFlags::UNIFORM_BUFFER) {
-                Ok((buffer, memory)) => {
-                    buffer一覧[添字] = buffer;
-                    memory一覧[添字] = memory;
-                }
-                Err(誤り) => {
-                    for 破棄添字 in 0..添字 {
-                        // 安全性: 生成途中のバッファはこのスコープの唯一の所有者で、以降使用しない。
-                        unsafe { device.destroy_buffer(buffer一覧[破棄添字], None) };
-                        device.メモリを解放する(memory一覧[破棄添字]);
-                    }
-                    return Err(誤り);
-                }
-            }
-        }
-
-        Ok(Self { buffer一覧, memory一覧 })
+        create::生成する(device, メモリプロパティ)
     }
 
-    pub(crate) fn buffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
-        self.buffer一覧[フレーム添字.配列添字()]
+    pub(crate) fn ビューとシーンパスのbuffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
+        self.ビューとシーンパス.buffer(フレーム添字)
     }
 
-    pub(crate) fn 書き込む(
+    pub(crate) fn 多段影のbuffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
+        self.多段影.buffer(フレーム添字)
+    }
+
+    pub(crate) fn 空パスのbuffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
+        self.空パス.buffer(フレーム添字)
+    }
+
+    pub(crate) fn ビューとシーンパスの定数を書き込む(
         &self,
         device: &ash::Device,
         フレーム添字: フレームスロット添字,
-        内容: &フレームシェーダー定数内容,
+        内容: &ビューとシーンパスの定数内容,
     ) -> Result<(), レンダラーエラー> {
-        let バイト列 = bytes::バイト列にする(内容);
-        host_buffer::上書きする(device, self.memory一覧[フレーム添字.配列添字()], &バイト列)
+        self.ビューとシーンパス
+            .書き込む(device, フレーム添字, &view_pass_bytes::バイト列にする(内容))
+    }
+
+    pub(crate) fn 多段影の定数を書き込む(
+        &self,
+        device: &ash::Device,
+        フレーム添字: フレームスロット添字,
+        内容: &多段影定数内容,
+    ) -> Result<(), レンダラーエラー> {
+        self.多段影.書き込む(device, フレーム添字, &cascade_bytes::バイト列にする(内容))
+    }
+
+    pub(crate) fn 空パスの定数を書き込む(
+        &self,
+        device: &ash::Device,
+        フレーム添字: フレームスロット添字,
+        内容: &空パス定数内容,
+    ) -> Result<(), レンダラーエラー> {
+        self.空パス.書き込む(device, フレーム添字, &sky_bytes::バイト列にする(内容))
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
-        // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
-        // device_wait_idle済みであることを呼び出し元が保証する。
-        unsafe {
-            for &buffer in &self.buffer一覧 {
-                device.destroy_buffer(buffer, None);
-            }
-        }
-        for &memory in &self.memory一覧 {
-            device.メモリを解放する(memory);
-        }
+        self.空パス.破棄する(device);
+        self.多段影.破棄する(device);
+        self.ビューとシーンパス.破棄する(device);
     }
 }

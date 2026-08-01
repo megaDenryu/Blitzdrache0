@@ -14,21 +14,22 @@ import atmosphere_medium;
 import atmosphere_skyview_mapping;
 import sky_atmosphere_lookup;
 import sky_frame;
+import sky_pass_uniform;
 
 [shader("fragment")]
 float4 fragmentMain(VertexOutput input) : SV_Target
 {
     AtmosphereMedium medium = atmosphereMedium;
     float3 direction = normalize(input.viewRay);
-    float3 sunDirection = frameUniform.sunDirectionAndObserverAltitude.xyz;
-    float observerAltitude = frameUniform.sunDirectionAndObserverAltitude.w;
+    float3 sunDirection = skyPassUniform.sunDirectionAndObserverAltitude.xyz;
+    float observerAltitude = skyPassUniform.sunDirectionAndObserverAltitude.w;
     // 観測半径を上端で切り詰めるのは、写像の平方根の中身が非負である根拠が「観測点が大気の内側にある」ことだからである。
     float observerRadius = min(bottomRadiusOf(medium) + observerAltitude, topRadiusOf(medium));
 
     SkyViewRay ray = skyViewRayOfWorldDirection(direction, sunDirection);
-    float sunIrradiance = frameUniform.sunDiskRadianceAndSunIrradiance.w;
+    float sunIrradiance = skyPassUniform.sunDiskRadianceAndSunIrradiance.w;
     float3 radiance = sampleSkyView(medium, observerRadius, ray) * sunIrradiance;
-    radiance += frameUniform.nightSkyRadianceAndSunCos.rgb;
+    radiance += skyPassUniform.nightSkyRadianceAndSunCos.rgb;
 
     // 惑星の縁は幾何としての硬い境界であるため、可視は画素ごとの真偽で切る。地平線より下を向く視線は
     // 惑星と交わるため直射が届かない。境界の等号は「交わらない」側にあり、正本の`視線が惑星と交差するか`
@@ -38,7 +39,7 @@ float4 fragmentMain(VertexOutput input) : SV_Target
     float disk = sunDiskCoverage(clamp(dot(direction, sunDirection), -1.0, 1.0));
     float visibility = viewZenithCosine >= horizonZenithCosine ? 1.0 : 0.0;
     float3 diskTransmittance = sunTransmittanceAlongView(medium, observerRadius, viewZenithCosine);
-    radiance += frameUniform.sunDiskRadianceAndSunIrradiance.rgb * (disk * visibility) * diskTransmittance;
+    radiance += skyPassUniform.sunDiskRadianceAndSunIrradiance.rgb * (disk * visibility) * diskTransmittance;
 
     return float4(max(radiance, 0.0), 1.0);
 }

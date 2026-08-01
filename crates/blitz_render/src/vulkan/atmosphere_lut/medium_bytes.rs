@@ -5,7 +5,7 @@
 //! 半径と係数が入れ替わったまま静かにベイク済み画像が焼かれる。並びの一致はGPU読み戻し検査が代表テクセルで確かめる。
 
 use crate::atmosphere::大気散乱媒体;
-use crate::vulkan::uniform::bytes::{vec4を書き込む, ベクトル3をvec4化};
+use crate::vulkan::uniform::write_bytes::{vec4を書き込む, ベクトル3をvec4化};
 
 /// float4の枠の数: 半径1・消散係数3・散乱係数2・地表反射率と非対称係数1・密度層6・定数項6。
 const 枠数: usize = 19;

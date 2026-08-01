@@ -6,6 +6,7 @@
 mod aerial_composite_input;
 mod atmosphere_lut_write;
 mod atmosphere_pass_tally;
+mod cascade_uniform_write;
 mod chunk_bundle;
 mod cloth_write;
 mod cpu_timing;
@@ -32,6 +33,7 @@ mod sky_uniform_write;
 mod ui_dispatch;
 mod ui_texture;
 mod uniform_write;
+mod view_pass_uniform_write;
 
 use crate::frame_composition::フレーム構成;
 use crate::validation_counter::検証カウンタ;

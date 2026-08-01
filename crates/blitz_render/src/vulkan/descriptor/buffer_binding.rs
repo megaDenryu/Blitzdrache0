@@ -1,11 +1,21 @@
-//! バッファを指すバインディングの書き込み。フレームシェーダー定数(binding3)・描画対象シェーダー定数(binding5)・
-//! 個体変換(binding6)・可視ID列(binding7)の4つを担当し、画像バインディングには触れない。
+//! バッファを指すバインディングの書き込み。ビュー・シーンパス定数(binding3)・描画対象シェーダー定数(binding5)・
+//! 個体変換(binding6)・可視ID列(binding7)・多段影定数(binding8)・空パス定数(binding9)を担当し、画像バインディングには触れない。
 
 use ash::vk;
 
-/// binding3(フレームシェーダー定数バッファ)を書き込む。生成時にセットごとの固有バッファを結ぶ。
-pub(super) fn フレームシェーダー定数を書き込む(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer) {
+/// binding3(ビュー・シーンパス定数)を書き込む。生成時にセットごとの固有バッファを結ぶ。
+pub(super) fn ビューとシーンパスの定数を書き込む(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer) {
     シェーダー定数バッファを書き込む(device, set, 3, buffer);
+}
+
+/// binding8(多段影定数)を書き込む。シーンの画素段とシャドウ記録の頂点段が同じ1本を読む。
+pub(super) fn 多段影の定数を書き込む(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer) {
+    シェーダー定数バッファを書き込む(device, set, 8, buffer);
+}
+
+/// binding9(空パス定数)を書き込む。空段階を持たないフレーム構成でも束縛先は結ぶ(中身は書かれず誰も読まない)。
+pub(super) fn 空パスの定数を書き込む(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer) {
+    シェーダー定数バッファを書き込む(device, set, 9, buffer);
 }
 
 /// binding5へ描画対象固有の変換とマテリアル係数を結ぶ。

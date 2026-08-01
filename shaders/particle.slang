@@ -5,6 +5,7 @@
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 import relative_anchor;
+import view_pass_uniform;
 
 struct Particle
 {
@@ -21,16 +22,6 @@ RWStructuredBuffer<Particle> particlesRW;
 
 [[vk::binding(0, 0)]]
 StructuredBuffer<Particle> particlesRO;
-
-struct ParticleFrameUniform
-{
-    column_major float4x4 cascadeLightViewProjection[4];
-    column_major float4x4 viewProjection;
-};
-
-// binding1: 頂点シェーダーのみが使うビュー射影行列(既存フレームシェーダー定数バッファを共有)。
-[[vk::binding(1, 0)]]
-ConstantBuffer<ParticleFrameUniform> frameUniform;
 
 static const float3 GRAVITY = float3(0.0, -1.5, 0.0);
 static const float FLOOR_Y = -1.0;
@@ -63,7 +54,7 @@ ParticleVertexOutput vertexMain(uint vertexID : SV_VertexID)
 {
     ParticleVertexOutput output;
     float3 particlePosition = applyRelativeAnchor(particlesRO[vertexID].position.xyz);
-    output.position = mul(frameUniform.viewProjection, float4(particlePosition, 1.0));
+    output.position = mul(viewPassUniform.viewProjection, float4(particlePosition, 1.0));
     output.pointSize = 4.0;
     return output;
 }

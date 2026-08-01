@@ -1,5 +1,7 @@
 //! 粒子ディスクリプタセットレイアウト: binding0=storage buffer(粒子、COMPUTE|VERTEX)、
-//! binding1=uniform buffer(フレームシェーダー定数を共有、VERTEXのみ)。
+//! binding3=uniform buffer(ビュー・シーンパス定数を共有、VERTEXのみ)。
+//! 番号3はshaders/view_pass_uniform.slangの宣言に合わせる。粒子・表面流・SPHの頂点段は
+//! この1つの宣言を取り込むため、シーンと同じ番号でなければ束縛できない。
 
 use ash::vk;
 
@@ -13,7 +15,7 @@ pub(super) fn 生成する(device: &ash::Device) -> Result<vk::DescriptorSetLayo
             .descriptor_count(1)
             .stage_flags(vk::ShaderStageFlags::COMPUTE | vk::ShaderStageFlags::VERTEX),
         vk::DescriptorSetLayoutBinding::default()
-            .binding(1)
+            .binding(3)
             .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
             .descriptor_count(1)
             .stage_flags(vk::ShaderStageFlags::VERTEX),

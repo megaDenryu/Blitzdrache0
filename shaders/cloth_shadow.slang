@@ -10,17 +10,8 @@
 // 距離区分ごとに1回ずつ発行し、どの距離区分を描いているかはプッシュ定数で受け取る。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
+import cascade_shadow_uniform;
 import shadow_push;
-
-// 布専用のディスクリプタセットレイアウトのbinding3を指す。中身はフレームシェーダー定数バッファであり、
-// 先頭のcascadeLightViewProjectionだけを宣言する(判断36: scene.slangのFrameUniformも先頭に同じ配列を置く)。
-struct FrameUniformLight
-{
-    column_major float4x4 cascadeLightViewProjection[4];
-};
-
-[[vk::binding(3, 0)]]
-ConstantBuffer<FrameUniformLight> frameUniformLight;
 
 // 頂点入力は位置のみ。バインドする布頂点バッファはscene.slangと同じ48バイトの頂点構造体である。
 struct VertexInput
@@ -38,7 +29,7 @@ VertexOutput vertexMain(VertexInput input)
 {
     VertexOutput output;
     float3 worldPosition = applyShadowAnchor(input.position);
-    output.position = mul(frameUniformLight.cascadeLightViewProjection[currentCascadeIndex()], float4(worldPosition, 1.0));
+    output.position = mul(cascadeShadowUniform.cascadeLightViewProjection[currentCascadeIndex()], float4(worldPosition, 1.0));
     return output;
 }
 

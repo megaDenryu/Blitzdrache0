@@ -9,6 +9,8 @@
 
 import atmosphere_aerial_mapping;
 import sky_frame;
+import sky_pass_uniform;
+import view_pass_uniform;
 
 // set1は合成パスだけが束縛するディスクリプタである。深度はNEARESTのサンプラーを結ぶ。輪郭で深度を混ぜると、
 // 手前の面と奥の面の間の距離が出てそこだけ霞の量が跳ぶ。ボリュームはLINEARであり、3軸の補間が霞を滑らかにする。
@@ -16,7 +18,7 @@ import sky_frame;
 [[vk::binding(0, 1)]] Sampler2D sceneDepth;
 [[vk::binding(1, 1)]] Sampler3D aerialVolume;
 
-// そのフレームのボリュームの最遠距離。フレームシェーダー定数へ載せず即時定数で渡すのは、この値の出どころが
+// そのフレームのボリュームの最遠距離。空パス定数へ載せず即時定数で渡すのは、この値の出どころが
 // 焼く側と同じ空中遠近観測条件の1箇所であり、シェーダー定数へ写すと焼いた刻みと参照する刻みが食い違いうるためである。
 struct AerialCompositeCondition
 {
@@ -29,8 +31,8 @@ struct AerialCompositeCondition
 float3 cameraRelativePointOfDepth(float2 screenPosition, float depth)
 {
     float2 ndc = screenPosition * 2.0 - 1.0;
-    float4 surfacePoint = mul(frameUniform.inverseViewProjection, float4(ndc, depth, 1.0));
-    return surfacePoint.xyz / surfacePoint.w - frameUniform.cameraRelativePosition.xyz;
+    float4 surfacePoint = mul(skyPassUniform.inverseViewProjection, float4(ndc, depth, 1.0));
+    return surfacePoint.xyz / surfacePoint.w - viewPassUniform.cameraRelativePosition.xyz;
 }
 
 [shader("fragment")]
@@ -57,6 +59,6 @@ float4 fragmentMain(VertexOutput input) : SV_Target
     aerialVolume.GetDimensions(volumeWidth, volumeHeight, volumeDepth);
     float4 voxel = aerialVolume.SampleLevel(aerialSampleCoordinate(screenPosition, depthUnit, volumeDepth), 0.0);
 
-    float sunIrradiance = frameUniform.sunDiskRadianceAndSunIrradiance.w;
+    float sunIrradiance = skyPassUniform.sunDiskRadianceAndSunIrradiance.w;
     return float4(max(voxel.rgb * sunIrradiance, 0.0), clamp(voxel.a, 0.0, 1.0));
 }

@@ -1,33 +1,15 @@
 // M9: 布の描画(判断54)。両面ランバート+方向光の多段シャドウの最小シェーダー。
-// ディスクリプタはシーンと同じセット(binding3=フレームシェーダー定数、binding4=シャドウマップ)を
+// ディスクリプタはシーンと同じセット(binding3=ビュー・シーンパス定数、binding4=シャドウマップ、binding8=多段影定数)を
 // 束縛し、PBRテクスチャ(binding0〜2)は読まない。頂点レイアウトはscene.slangと同じ48バイト。
-// 前提: FrameUniformのレイアウトはscene.slangと完全一致させること(同じUBOを読むため)。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 import cascade_shadow;
+import cascade_shadow_uniform;
 import relative_anchor;
-
-struct FrameUniform
-{
-    column_major float4x4 cascadeLightViewProjection[4];
-    column_major float4x4 viewProjection;
-    float4 cameraRelativePosition;
-    float4 directionalLightDirection;
-    float4 directionalLightColor;
-    float4 pointLightPosition;
-    float4 pointLightColor;
-    float4 ambientAndLighting;
-    float4 cascadeSplitDepths;
-    float4 cascadeTransitionWidths;
-    float4 cameraForward;
-};
-
-[[vk::binding(3, 0)]]
-ConstantBuffer<FrameUniform> frameUniform;
+import view_pass_uniform;
 
 [[vk::binding(4, 0)]] [[vk::combinedImageSampler]] Texture2DArray shadowMapTexture;
 [[vk::binding(4, 0)]] [[vk::combinedImageSampler]] SamplerComparisonState shadowMapSampler;
-static const float shadowMapTexelSize = 1.0 / 2048.0;
 
 static const float3 clothColor = float3(0.55, 0.1, 0.12);
 
@@ -52,7 +34,7 @@ VertexOutput vertexMain(VertexInput input)
 {
     VertexOutput output;
     float3 relativePosition = applyRelativeAnchor(input.position);
-    output.position = mul(frameUniform.viewProjection, float4(relativePosition, 1.0));
+    output.position = mul(viewPassUniform.viewProjection, float4(relativePosition, 1.0));
     output.relativePosition = relativePosition;
     output.normal = input.normal;
     output.uv = input.uv;
@@ -65,18 +47,19 @@ VertexOutput vertexMain(VertexInput input)
 float4 fragmentMain(VertexOutput input, bool isFrontFace: SV_IsFrontFace) : SV_Target
 {
     float3 normal = normalize(input.normal) * (isFrontFace ? 1.0 : -1.0);
-    float3 toLight = -normalize(frameUniform.directionalLightDirection.xyz);
+    float3 toLight = -normalize(viewPassUniform.directionalLightDirection.xyz);
     float lambert = max(dot(normal, toLight), 0.0);
-    // ambientAndLighting.zは方向光が影を落とすか。scene.slangと同じ判定で、0のとき比較サンプリングを行わない。
-    float viewDepth = viewDepthOf(input.relativePosition, frameUniform.cameraRelativePosition.xyz, frameUniform.cameraForward.xyz);
-    float shadow = frameUniform.ambientAndLighting.z > 0.5
-        ? computeCascadedShadowFactor(input.relativePosition, viewDepth, frameUniform.cascadeLightViewProjection,
-              frameUniform.cascadeSplitDepths.xyz, frameUniform.cascadeTransitionWidths.xyz, shadowMapTexture, shadowMapSampler, shadowMapTexelSize)
+    // shadowFlagsAndTexelSize.xは方向光が影を落とすか。scene.slangと同じ判定で、0のとき比較サンプリングを行わない。
+    float viewDepth = viewDepthOf(input.relativePosition, viewPassUniform.cameraRelativePosition.xyz, viewPassUniform.cameraForward.xyz);
+    float shadow = cascadeShadowUniform.shadowFlagsAndTexelSize.x > 0.5
+        ? computeCascadedShadowFactor(input.relativePosition, viewDepth, cascadeShadowUniform.cascadeLightViewProjection,
+              cascadeShadowUniform.cascadeSplitDepths.xyz, cascadeShadowUniform.cascadeTransitionWidths.xyz, shadowMapTexture,
+              shadowMapSampler, cascadeShadowUniform.shadowFlagsAndTexelSize.z)
         : 1.0;
-    // 直接光へ方向光強度(directionalLightColor.w)を掛け、環境光はフレームシェーダー定数の環境光係数から取る。
+    // 直接光へ方向光強度(directionalLightColor.w)を掛け、環境光はビュー・シーンパス定数の環境光係数から取る。
     // どちらもscene.slangと同じ読み方であり、これが無いと布だけが夜も方向光で照らされ、夜の環境光にも追従しない。
-    float3 direct = frameUniform.directionalLightColor.rgb * frameUniform.directionalLightColor.w * lambert * shadow;
-    float3 ambient = frameUniform.ambientAndLighting.xxx;
+    float3 direct = viewPassUniform.directionalLightColor.rgb * viewPassUniform.directionalLightColor.w * lambert * shadow;
+    float3 ambient = viewPassUniform.ambientAndLightingEnabled.xxx;
     float weave = 0.94 + 0.06 * abs(sin(input.uv.x * 100.0) * sin(input.uv.y * 100.0));
     return float4(clothColor * weave * (direct + ambient), 1.0);
 }

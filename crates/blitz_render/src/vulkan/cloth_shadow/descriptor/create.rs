@@ -3,7 +3,7 @@
 
 use ash::vk;
 
-use super::{フレームシェーダー定数のバインディング番号, 布シャドウディスクリプタ};
+use super::{多段影定数のバインディング番号, 布シャドウディスクリプタ};
 use crate::error::レンダラーエラー;
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::uniform::フレームシェーダー定数一式;
@@ -33,14 +33,14 @@ pub(in crate::vulkan::cloth_shadow) fn 生成する(
         }
     };
     for フレーム添字 in フレームスロット添字::全スロット() {
-        フレームシェーダー定数を結ぶ(device, set一覧[フレーム添字.配列添字()], シェーダー定数.buffer(フレーム添字));
+        多段影の定数を結ぶ(device, set一覧[フレーム添字.配列添字()], シェーダー定数.多段影のbuffer(フレーム添字));
     }
     Ok(布シャドウディスクリプタ { layout, pool, set一覧 })
 }
 
 fn レイアウトを生成する(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
     let バインド一覧 = [vk::DescriptorSetLayoutBinding::default()
-        .binding(フレームシェーダー定数のバインディング番号)
+        .binding(多段影定数のバインディング番号)
         .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
         .descriptor_count(1)
         .stage_flags(vk::ShaderStageFlags::VERTEX)];
@@ -74,11 +74,11 @@ fn セットを割り当てる(
     }
 }
 
-fn フレームシェーダー定数を結ぶ(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer) {
+fn 多段影の定数を結ぶ(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer) {
     let buffer情報一覧 = [vk::DescriptorBufferInfo::default().buffer(buffer).offset(0).range(vk::WHOLE_SIZE)];
     let 書き込み一覧 = [vk::WriteDescriptorSet::default()
         .dst_set(set)
-        .dst_binding(フレームシェーダー定数のバインディング番号)
+        .dst_binding(多段影定数のバインディング番号)
         .dst_array_element(0)
         .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
         .buffer_info(&buffer情報一覧)];

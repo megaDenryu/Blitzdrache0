@@ -2,6 +2,7 @@
 // 前半を現在状態、後半を更新先として使い、グループ内デバイスバリア後に前半へ戻す。
 
 import relative_anchor;
+import view_pass_uniform;
 
 struct Particle
 {
@@ -11,14 +12,6 @@ struct Particle
 
 [[vk::binding(0, 0)]] RWStructuredBuffer<Particle> particlesRW;
 [[vk::binding(0, 0)]] StructuredBuffer<Particle> particlesRO;
-
-struct FrameUniform
-{
-    column_major float4x4 cascadeLightViewProjection[4];
-    column_major float4x4 viewProjection;
-};
-
-[[vk::binding(1, 0)]] ConstantBuffer<FrameUniform> frameUniform;
 
 static const float DELTA_TIME = 1.0 / 120.0;
 static const float SMOOTHING_RADIUS = 0.24;
@@ -83,7 +76,7 @@ VertexOutput vertexMain(uint vertexID : SV_VertexID)
 {
     VertexOutput output;
     float3 relativePosition = applyRelativeAnchor(particlesRO[vertexID].positionDensity.xyz);
-    output.position = mul(frameUniform.viewProjection, float4(relativePosition, 1.0));
+    output.position = mul(viewPassUniform.viewProjection, float4(relativePosition, 1.0));
     output.pointSize = 4.0;
     return output;
 }

@@ -1,4 +1,4 @@
-//! 粒子ディスクリプタセットの割当と、粒子バッファ・フレームシェーダー定数を
+//! 粒子ディスクリプタセットの割当と、粒子バッファ・ビュー・シーンパス定数を
 //! 指す内容の書き込み。進行中フレームごとに1セット(粒子バッファは全セット共有、
 //! シェーダー定数はセット固有)。
 
@@ -34,7 +34,7 @@ pub(super) fn 書き込む(device: &ash::Device, set: vk::DescriptorSet, 粒子�
             .buffer_info(&粒子バッファ情報),
         vk::WriteDescriptorSet::default()
             .dst_set(set)
-            .dst_binding(1)
+            .dst_binding(3)
             .dst_array_element(0)
             .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
             .buffer_info(&uniform情報),
