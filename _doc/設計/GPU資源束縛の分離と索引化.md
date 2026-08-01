@@ -15,13 +15,52 @@
 
 置き場所の判定基準: 固定小容量で同じビュー/パス内へ一斉配布する値だけをUBO、件数が増える・添字で参照する値をSSBO、画像はディスクリプタ表に置く。
 
-現行の連結フレームUBO(576B。共通464B+空112B。`crates/blitz_render/src/vulkan/uniform/bytes.rs`が正本)は次へ分ける。
+旧の連結フレームUBO(576B。共通464B+空112B)は次の3本へ分けた(段2で実装済み)。
 
 - **ビュー・シーンパス定数UBO**: ビュー射影・カメラ相対位置・カメラ前方向等、全シーン描画が同じビューで読む小値。寿命はフレーム×ビュー。段2では直接照明の値(方向光の方向/色/強度・点光の位置/色/強度・環境光係数・ライティング有効)もここへ仮置きし、段5で照明問い合わせセットへ移す。純粋な「ビュー定数」を名乗らないのはこの仮置きのためであり、第4の一時照明UBOを立てないのは、段5で消すバッファとディスクリプタを増やさないためである(2026-08-02、ルーム連番377-378で確定)
-- **多段影定数UBO**: 4距離区分のライトVP・分割深度・遷移幅・影有効・デバッグ(距離区分可視化)・テクセル尺度。シーンの影評価とシャドウパスが共有する。**現行の「ビュー定数の先頭をシャドウシェーダーが別structとして読む」暗黙ABIは廃止する**(布シャドウも同じ廃止の対象である)
-- **空パス定数UBO**: 現行の後半112Bを空専用へ。空なしフレームは空白112Bを書かない
+- **多段影定数UBO**: 4距離区分のライトVP・分割深度・遷移幅・影有効・デバッグ(距離区分可視化)・テクセル尺度。シーンの影評価とシャドウパスが共有する。**旧の「ビュー定数の先頭をシャドウシェーダーが別structとして読む」暗黙ABIは廃止した**(布シャドウも同じ廃止の対象だった)
+- **空パス定数UBO**: 旧の後半112Bを空専用へ。空なしフレームは空白112Bを書かない
 - **直接照明ヘッダ**: 件数・開始位置・方式だけの小値を照明問い合わせセットのUBOへ置き、方向光・局所光の本体はSSBOへ移す(現行の1+1も件数1の配列として包む)
 - 露出/明るさの圧縮・大気生成等のパス固有値は各パスの定数のまま。共通フレームUBOへ戻さない
+
+### 3本のフィールドレイアウト(段2で確定)
+
+CPU側の正本は`crates/blitz_render/src/vulkan/uniform/`の`view_pass_bytes.rs`・`cascade_bytes.rs`・`sky_bytes.rs`であり、GPU側の宣言の正本は`shaders/view_pass_uniform.slang`・`cascade_shadow_uniform.slang`・`sky_pass_uniform.slang`である。行列以外は16バイト境界を跨がないようvec4単位にそろえる。開始位置の一致は`vulkan/uniform/layout_tests.rs`と`shader_struct_tests.rs`が単体テストで見る。
+
+ビュー・シーンパス定数UBO(176バイト、binding3):
+
+| 開始位置 | 型 | 名前 | 内容 |
+| --- | --- | --- | --- |
+| 0 | float4x4 | viewProjection | ビュー射影 |
+| 64 | float4 | cameraRelativePosition | xyzがカメラ相対位置 |
+| 80 | float4 | cameraForward | xyzがカメラ前方向 |
+| 96 | float4 | directionalLightDirection | xyzが方向光の向き |
+| 112 | float4 | directionalLightColor | rgbが色・wが強度 |
+| 128 | float4 | pointLightPosition | xyzが点光源のカメラ相対位置 |
+| 144 | float4 | pointLightColor | rgbが色・wが強度 |
+| 160 | float4 | ambientAndLightingEnabled | xが環境光係数・yがライティング有効 |
+
+多段影定数UBO(304バイト、binding8):
+
+| 開始位置 | 型 | 名前 | 内容 |
+| --- | --- | --- | --- |
+| 0 | float4x4[4] | cascadeLightViewProjection | 距離区分ごとのライトビュー射影 |
+| 256 | float4 | cascadeSplitDepths | xyzが境界のビュー空間深度 |
+| 272 | float4 | cascadeTransitionWidths | xyzが境界手前の遷移域の幅 |
+| 288 | float4 | shadowFlagsAndTexelSize | xが影有効・yが距離区分の可視化・zがテクセル尺度 |
+
+空パス定数UBO(112バイト、binding9):
+
+| 開始位置 | 型 | 名前 | 内容 |
+| --- | --- | --- | --- |
+| 0 | float4x4 | inverseViewProjection | クリップからカメラ相対ワールドへ戻す変換 |
+| 64 | float4 | nightSkyRadianceAndSunCos | rgbが夜空放射輝度・wが太陽円盤の余弦角半径 |
+| 80 | float4 | sunDirectionAndObserverAltitude | xyzが太陽方向・wが観測高度 |
+| 96 | float4 | sunDiskRadianceAndSunIrradiance | rgbが太陽円盤放射輝度・wが太陽放射照度 |
+
+段2ではセット再編を行わないため、3本とも既存のシーンのディスクリプタセット(set0)へ結ぶ。布専用シャドウ経路のセットは多段影定数だけを、粒子系のセットはビュー・シーンパス定数だけを結ぶ。bindingの番号は宣言モジュールが正本であり、取り込む側が自前で宣言していないことは`cargo xtask conform`が検査する。
+
+シャドウマップのテクセル尺度はシェーダーの`static const`からこのUBOへ移した。解像度が2の冪であるため逆数はf32で誤差なく表せ、画素は変わらない。CPU側の出どころは`vulkan/shadow_map.rs`の`テクセル尺度()`1箇所である。
 
 現行の`ObjectUniform`(144B)は廃止方向とする。変換112Bは全個体共通の**個体レコード**(InstanceRecord)SSBOへ、ベースカラー/金属度/粗さの係数は**材質レコード**(MaterialRecord)SSBOへ移す。単一個体も1要素の個体バッファを読む。初期移行は現行の所有単位(描画対象/束)のバッファでよく、世界全体のarenaへの集約はGPU駆動間接描画の採用時に行う。
 
@@ -105,7 +144,7 @@ set 3の直接光は最初から配列契約にする(固定フィールドに�
 
 0. **設計正本化**(本文書): 4セットの役割・UBO/SSBO判定・ID→スロットの世代規律・最低機能集合・「非対応は品質でない」の確定
 1. **デバイス能力段**(実装済み): descriptor indexingの機能3種(`runtimeDescriptorArray`・`shaderSampledImageArrayNonUniformIndexing`・`descriptorBindingPartiallyBound`)の型付き照合と非対応の明示失敗、および上限(`maxPerStageDescriptorSampledImages`・`maxDescriptorSetSampledImages`・`maxPerStageResources`)の型付き採取と報告。上限の合否判定はテクスチャ表容量の既定値が未決定のため行わず、既定値の確定(段4の着手前)とセットで追加する(単一機材の上限をそのまま最低要件にしない。2026-08-02、ルーム連番377-378で確定)。機能はまだデバイス作成へ有効化せず既存の絵を変えない。`maxPerStageResources`まで採取するのは、同じ画素段がset 0/1/3のバッファと影の画像も一緒に消費し、表の枚数が資源合計の側で先に頭打ちになるためである。**機能の照合はデバイス選定の条件そのものとして掛ける**(選定後の照合では、選ばれたGPUが機能を欠き別のGPUが対応している機材で、動けるのに起動が失敗する)。基礎要件を満たす候補が1台も残らなかったときは、候補ごとの機材名と不足機能を並べた型付きエラーにする。実装の所在は、選定と選ぶ規則が`crates/blitz_render/src/vulkan/physical_device/`、機能と上限の採取が`crates/blitz_render/src/vulkan/descriptor_indexing/`、不足を並べる型付きエラーが`crates/blitz_render/src/error/device_requirement/`、公開の値オブジェクトが`crates/blitz_render/src/descriptor_indexing_limits.rs`、起動時の1行報告が`crates/blitz_app/src/reports/composition.rs`である。採取した上限は物理デバイスと同じ寿命で`GPU環境`が保ち、`レンダラー`のアクセサ経由でコンポジションルートが読む。照合を掛けるのはシーンを描くウィンドウ付きのデバイスだけであり、ウィンドウなし実行のコンピュート専用デバイスは対象にしない(最低機能要件はシーンレンダラーのものだからである)
-2. **フレームABI分離段**: ビュー・シーンパス/多段影/空UBOの分割と、shadow・cloth_shadow両方の先頭alias読みの廃止。検収は次を必須ゲートとする(2026-08-02、ルーム連番377-378で確定): 既存検収入口(smoke全ステージ・csm-seam・instance-cull・multi-material-draw・prop-multi-material-draw・sky-time・cloth-shadow-order・origin-invariance)の判定値完全不変+validation 0件+verify全緑。完全不変の対象は画素バイト・描画/可視/validation計数などの決定的な値に限り、GPU/CPU時間は一致条件に入れない。加えて、各UBOのCPUバイト長・全フィールド開始位置・シェーダー宣言の一致を単体テストにし、旧先頭alias宣言がshadow/cloth_shadowのslangから0件になったことを静的に検査し、空なしフレームで空UBOへの書込が0回・空ありで1回/フレームであることを狭い状態テストで見る(空白112Bを書かないことを画素だけに頼らない)
+2. **フレームABI分離段**(実装済み): ビュー・シーンパス/多段影/空UBOの分割と、shadow・cloth_shadow両方の先頭alias読みの廃止。同じ書き方をしていたparticle・sph・surface_flowも同時に移した。各UBOのフィールドレイアウトは本文書「分離の形」の表が正本である。検収は次を必須ゲートとする(2026-08-02、ルーム連番377-378で確定): 既存検収入口(smoke全ステージ・csm-seam・instance-cull・multi-material-draw・prop-multi-material-draw・sky-time・cloth-shadow-order・origin-invariance)の判定値完全不変+validation 0件+verify全緑。完全不変の対象は画素バイト・描画/可視/validation計数などの決定的な値に限り、GPU/CPU時間は一致条件に入れない。加えて、各UBOのCPUバイト長・全フィールド開始位置・シェーダー宣言の一致を単体テストにし、旧先頭alias宣言がshadow/cloth_shadowのslangから0件になったことを静的に検査し、空なしフレームで空UBOへの書込が0回・空ありで1回/フレームであることを狭い状態テストで見る(空白112Bを書かないことを画素だけに頼らない)
 3. **データ表段**: ObjectUniform→個体SSBO+材質レコード+描画定数。現行テクスチャセットのまま画素不変を証明し、永続する描画束の材質境界を材質IDに保ち、フレーム描画packetだけが、そのフレームで束縛する資源表世代と一致する材質GPU参照を持つ形にする
 4. **索引材質段**: set 2のsampled image表・資源表世代/フェンス退役・非一様索引・正準フォールバック。単一/複数材質/ホットリロードで画素・validation・束縛数・寿命を検収し、旧セットを削除
 5. **照明問い合わせ段**: set 3を現行の直接光1+1/影/定数間接近似で本番接続し、第2正本のGPU資源束の境界を固定。順3のIBLで環境の枝を追加できる停止点にする
@@ -118,6 +157,6 @@ set 3の直接光は最初から配列契約にする(固定フィールドに�
 
 ## 未決定の事項
 
-- 各UBO/SSBOの正確なフィールドレイアウト(段2-3の実装時に確定し本文書へ写す)
+- 個体レコードSSBO・材質レコードSSBOの正確なフィールドレイアウト(段3の実装時に確定し本文書へ写す。UBO3本ぶんは段2で確定し「分離の形」へ写した)
 - テクスチャ表の容量の既定値(段4の着手前に、段1が採取する対象デバイスの実測を材料に決める。確定とセットで段1の照合へ上限の合否判定を追加する)
 - update-after-bindの採用(世代作り直しの実測律速が出た場合のみ審査)
