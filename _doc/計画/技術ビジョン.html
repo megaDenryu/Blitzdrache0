@@ -852,7 +852,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <div class="box warn">
 <span class="label">接合点 a</span>
-<p><strong>個体と材質の固定区画と固定バインディング。</strong>フレームの共通定数は、かつて主要なグラフィックス経路の<a class="term" href="#term-shader">シェーダー</a>群が1つの<a class="term" href="#term-ubo">UBO</a>(464バイトの固定サイズ設定領域)を全体または先頭部分として共有する形だったが、ビュー・シーンパス定数・多段影定数・空パス定数の3本へ分割済みであり、各シェーダーは自分が読む1本だけを宣言して読む(先頭部分を別の構造体として読む別名宣言は廃止した)。個体・材質の設定は固定区画と固定バインディングのままであり、ここが残る課題である。光源が集合になり、ビューが増え(影・<a class="term" href="#term-probe">プローブ</a>・反射)、<a class="term" href="#term-material">材質</a>が多様化すると固定区画は持たない。<a class="term" href="#term-frame-constants">frame constants</a>(フレーム定数)の分離に続けて、structured buffer(可変長の構造化バッファ)+ディスクリプタインデクシング(資源を番号で選ぶ方式)への移行が必要である。多光源・<a class="term" href="#term-gi">GI</a>・材質拡張のすべてがこの上に載るため、<em>最初に動く境界</em>になる。</p>
+<p><strong>個体と材質の固定区画と固定バインディング。</strong>フレームの共通定数は、かつて主要なグラフィックス経路の<a class="term" href="#term-shader">シェーダー</a>群が1つの<a class="term" href="#term-ubo">UBO</a>(464バイトの固定サイズ設定領域)を全体または先頭部分として共有する形だったが、ビュー・シーンパス定数・多段影定数・空パス定数の3本へ分割済みであり、各シェーダーは自分が読む定数だけを、それぞれ唯一の宣言モジュールから取り込む(先頭部分を別の構造体として読む別名宣言は廃止した)。個体・材質の設定は固定区画と固定バインディングのままであり、ここが残る課題である。光源が集合になり、ビューが増え(影・<a class="term" href="#term-probe">プローブ</a>・反射)、<a class="term" href="#term-material">材質</a>が多様化すると固定区画は持たない。<a class="term" href="#term-frame-constants">frame constants</a>(フレーム定数)の分離に続けて、structured buffer(可変長の構造化バッファ)+ディスクリプタインデクシング(資源を番号で選ぶ方式)への移行が必要である。多光源・<a class="term" href="#term-gi">GI</a>・材質拡張のすべてがこの上に載るため、<em>最初に動く境界</em>になる。</p>
 </div>
 
 <div class="box warn">
