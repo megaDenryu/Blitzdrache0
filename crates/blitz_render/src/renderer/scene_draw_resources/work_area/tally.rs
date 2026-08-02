@@ -5,6 +5,7 @@
 
 use crate::renderer::draw_issue_breakdown::{パス別描画発行, 描画発行内訳, 段別個体数};
 use crate::visible_instance_selection::{可視ID列を読むパス数, 可視パス};
+use crate::vulkan::frame::記録側の計数;
 
 /// 1つのパスぶんの集計。触れるのは自分のパスの可視数と段別個体数だけである。
 #[derive(Default)]
@@ -42,7 +43,12 @@ impl 描画計数集計 {
     }
 
     /// 発行数だけは積んだ入力の件数そのものであるため、パスから件数を引く関数を充填側から受け取る。
-    pub(in crate::renderer) fn 内訳を作る(&self, 発行数を引く: impl Fn(可視パス) -> usize) -> 描画発行内訳 {
+    /// 記録側の計数も同じ形で受け取る。数える主体が記録の局面であり、この集計は値を運ぶだけだからである。
+    pub(in crate::renderer) fn 内訳を作る(
+        &self,
+        発行数を引く: impl Fn(可視パス) -> usize,
+        記録側を引く: impl Fn(可視パス) -> 記録側の計数,
+    ) -> 描画発行内訳 {
         let mut パス別 = std::array::from_fn(|_| パス別描画発行::空());
         for パス in 可視パス::全パス() {
             let 集計 = &self.パス別[パス.添字()];
@@ -51,6 +57,7 @@ impl 描画計数集計 {
                 self.全個体数,
                 集計.可視数,
                 段別個体数::一覧から生成する(集計.段別個体数.clone()),
+                記録側を引く(パス),
             );
         }
         描画発行内訳::生成する(パス別)

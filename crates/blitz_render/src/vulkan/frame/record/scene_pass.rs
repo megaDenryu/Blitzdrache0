@@ -4,6 +4,7 @@
 use ash::vk;
 
 use crate::clear_color::クリアカラー;
+use crate::visible_instance_selection::可視パス;
 use crate::vulkan::frame::{draw_commands, shared_set_bind, ジオメトリ入力, 共有セット束縛, 布描画入力};
 use crate::vulkan::graph::{
     クリア指定, バッファハンドル, バッファ用途, パス宣言, パス種別, 深度アタッチメント, 画像ハンドル, 画像用途
@@ -66,6 +67,7 @@ fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, �
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.描画pipeline);
         relative_anchor::積む(device, command_buffer, 入力.描画layout, 入力.相対の基準原点);
     }
+    共有.計器.描画切替().パイプライン束縛を数える(可視パス::シーン);
     shared_set_bind::布の共有セットを束縛する(device, command_buffer, 入力.描画layout, 共有);
     // 安全性: command_bufferは記録中で、布の頂点・インデックスバッファは生成済み。
     unsafe {
@@ -73,4 +75,6 @@ fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, �
         device.cmd_bind_index_buffer(command_buffer, 入力.インデックスバッファ, 0, vk::IndexType::UINT32);
         device.cmd_draw_indexed(command_buffer, 入力.インデックス数, 1, 0, 0, 0);
     }
+    // 布は論理的な材質を持たないため材質切替へ加えない。加えると材質の数と切替の数が対応しなくなる。
+    共有.計器.描画切替().描画を数える(可視パス::シーン);
 }

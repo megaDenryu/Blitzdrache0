@@ -12,6 +12,7 @@ use ash::vk;
 
 use super::shared_set_bind;
 use super::{ジオメトリ入力, 共有セット束縛};
+use crate::visible_instance_selection::可視パス;
 use crate::vulkan::scene_draw_constants;
 
 pub(super) fn 描画コマンドを積む(
@@ -47,10 +48,12 @@ pub(super) fn 描画コマンドを積む(
         for 入力 in ジオメトリ一覧 {
             if 直前のキー != Some(入力.パイプラインキー) {
                 device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.pipeline);
+                共有.計器.描画切替().パイプライン束縛を数える(可視パス::シーン);
                 直前のキー = Some(入力.パイプラインキー);
             }
+            共有.計器.描画切替().材質を見る(可視パス::シーン, 入力.大域材質id);
             scene_draw_constants::積む(device, command_buffer, 入力.layout, 入力.描画定数);
-            共有.計数.数える(shared_set_bind::ジオメトリのセット番号);
+            共有.計器.セット別束縛().数える(shared_set_bind::ジオメトリのセット番号);
             device.cmd_bind_descriptor_sets(
                 command_buffer,
                 vk::PipelineBindPoint::GRAPHICS,
@@ -69,6 +72,7 @@ pub(super) fn 描画コマンドを積む(
                 入力.頂点基準,
                 入力.先頭インスタンス,
             );
+            共有.計器.描画切替().描画を数える(可視パス::シーン);
         }
     }
 }

@@ -9,6 +9,8 @@
 mod pass_issue;
 mod stage_counts;
 
+/// 記録が実際にGPUへ積んだ回数。数えるのはコマンド記録の局面だが、読み手にとっては描画発行の内訳の一部であるため、ここから公開する。
+pub use crate::vulkan::frame::記録側の計数;
 pub use pass_issue::パス別描画発行;
 pub use stage_counts::段別個体数;
 

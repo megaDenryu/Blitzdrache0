@@ -13,7 +13,7 @@ use ash::vk;
 
 use super::シーンセットレイアウト一式;
 use crate::error::レンダラーエラー;
-use crate::vulkan::frame::セット別束縛計数;
+use crate::vulkan::frame::記録の計器;
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::uniform::フレームシェーダー定数一式;
 
@@ -26,7 +26,7 @@ pub(crate) struct 共有セット束縛<'計器> {
     pub(crate) ビューとパス: vk::DescriptorSet,
     pub(crate) 材質: vk::DescriptorSet,
     pub(crate) 照明問い合わせ: vk::DescriptorSet,
-    pub(crate) 計数: &'計器 セット別束縛計数,
+    pub(crate) 計器: &'計器 記録の計器,
 }
 
 pub(crate) struct 共有ディスクリプタセット {
@@ -55,13 +55,13 @@ impl 共有ディスクリプタセット {
         フレーム添字: フレームスロット添字,
         材質: vk::DescriptorSet,
         照明問い合わせ: vk::DescriptorSet,
-        計数: &'計器 セット別束縛計数,
+        計器: &'計器 記録の計器,
     ) -> 共有セット束縛<'計器> {
         共有セット束縛 {
             ビューとパス: self.ビューとパス(フレーム添字),
             材質,
             照明問い合わせ,
-            計数,
+            計器,
         }
     }
 

@@ -35,6 +35,6 @@ pub(super) fn レンダラーを組み立てる(
         ui一式: 資源.ui一式,
         読み戻しバッファ: None,
         検証カウンタ: コア.検証カウンタ,
-        セット別束縛計数: crate::vulkan::frame::セット別束縛計数::default(),
+        記録の計器: crate::vulkan::frame::記録の計器::default(),
     }
 }
