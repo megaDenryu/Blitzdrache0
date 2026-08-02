@@ -53,6 +53,7 @@ impl シーン描画資源 {
         let チャンク一覧 = vec![チャンク];
         let 描画対象数: usize = チャンク一覧.iter().map(チャンク描画資源::描画対象数).sum();
         Ok(Self {
+            影のキャスター: crate::frame_input::影のキャスター指定::通常に描く,
             チャンク一覧,
             ジオメトリ入力作業領域: Vec::with_capacity(描画対象数),
             距離区分別のシャドウ入力作業領域: std::array::from_fn(|_| Vec::with_capacity(描画対象数)),

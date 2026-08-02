@@ -71,6 +71,7 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--no-instance-cull" => 設定.インスタンス可視判定有効 = false,
         "--no-instance-lod" => 設定.インスタンス段選択有効 = false,
         "--no-instance-shadow" => 設定.インスタンス影キャスター有効 = false,
+        "--no-shadow-casters" => 設定.影キャスター全体有効 = false,
         "--dev-ui" => 設定.開発ui初期有効 = true,
         "--debug-cascade-bands" => 設定.距離区分の可視化 = true,
         "--sky" => 設定.時間帯.空 = super::空の起動指定::空ありとして扱う,

@@ -9,10 +9,12 @@ use crate::clear_color::クリアカラー;
 mod primitive_issue;
 mod primitive_issue_section;
 mod primitive_issue_tray;
+mod shadow_casters;
 mod sky_input;
 
 pub use primitive_issue::プリミティブ描画発行;
 pub use primitive_issue_tray::プリミティブ発行受け皿;
+pub use shadow_casters::影のキャスター指定;
 pub use sky_input::{空入力, 空入力の材料, 空入力エラー};
 
 use crate::lighting_input::ライティング入力;
@@ -36,6 +38,8 @@ pub struct フレーム描画入力<'a> {
     pub 大気: Option<大気のベイク済み画像の入力>,
     /// 明るさの圧縮前にHDR輝度へ掛ける露出倍率(判断39)。ポストプロセス無効時は使われない。
     pub 露出: f32,
+    /// そのフレームのシャドウパスへ描画入力を積むか。既定は`通常に描く`であり、`全て外す`は添付処理の切片を測る対照である。
+    pub 影のキャスター: 影のキャスター指定,
     /// trueのとき、シーンの画素段はPBRの色でなく「どの距離区分を参照したか」と「影の中か」を表す色を出す。
     /// 継ぎ目の検収が距離区分の領域を画素から読み取るために使う補助であり、最終判定は本番の色で行う。
     pub 距離区分を可視化する: bool,

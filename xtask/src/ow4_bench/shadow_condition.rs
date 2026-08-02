@@ -14,8 +14,10 @@ pub(super) struct シャドウ計測指定 {
     一辺解像度: Option<String>,
     /// `--caster-margin <メートル>`。
     キャスター余白: Option<String>,
-    /// `--no-instance-shadow`。キャスター0の対照であり、影を落とすのが地形だけになる。
-    キャスターを外す: bool,
+    /// `--no-instance-shadow`。群の個体だけを影の候補から外す。地形は影を落とし続ける。
+    個体を影から外す: bool,
+    /// `--no-shadow-casters`。地形も個体も布も距離区分のパスへ積まない。残るのは深度配列の消去と保存だけである。
+    全キャスターを外す: bool,
     /// `--no-instance-lod`。全個体を最詳細段で描く。代表世界の2段はインデックス数が同じで寸法だけが違うため、
     /// この対照が増やすのは投入インデックス数でなくキャスター1体あたりのラスタライズ面積である。
     段選択を止める: bool,
@@ -33,7 +35,8 @@ impl シャドウ計測指定 {
             "--caster-margin" => self.キャスター余白 = Some(値を読む(語, 残り)?),
             "--camera-yaw" => self.カメラ方位度 = Some(値を読む(語, 残り)?),
             "--camera-nudge" => self.カメラずれ = Some(値を読む(語, 残り)?),
-            "--no-instance-shadow" => self.キャスターを外す = true,
+            "--no-instance-shadow" => self.個体を影から外す = true,
+            "--no-shadow-casters" => self.全キャスターを外す = true,
             "--no-instance-lod" => self.段選択を止める = true,
             _ => return Ok(false),
         }
@@ -55,7 +58,8 @@ impl シャドウ計測指定 {
             }
         }
         let 旗 = [
-            ("--no-instance-shadow", self.キャスターを外す),
+            ("--no-instance-shadow", self.個体を影から外す),
+            ("--no-shadow-casters", self.全キャスターを外す),
             ("--no-instance-lod", self.段選択を止める),
         ];
         for (名前, 立っているか) in 旗 {

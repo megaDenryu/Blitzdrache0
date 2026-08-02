@@ -68,7 +68,7 @@ pub(crate) struct アプリ {
     フレーム間隔計測: Option<frame_timing::フレーム間隔計測>,
     開発ui: Option<開発UI>,
     開発ui初期有効: bool,
-    距離区分の可視化: bool,
+    計測つまみ: frame::描画の計測つまみ,
     フレームダンプ先: Option<PathBuf>,
     空の代表画素報告: Vec<crate::cli::画面画素位置>,
     /// 露出(判断39)とブレンド(判断45)はCLI初期値を開発用UIのスライダーが実行中に書き換える。

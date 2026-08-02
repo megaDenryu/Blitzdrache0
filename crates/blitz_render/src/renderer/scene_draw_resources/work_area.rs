@@ -3,50 +3,21 @@
 //! 注意: 積む前に必ず空にする。各パスの入力の件数は、全チャンクの描画対象の非空段数の合計からそのパスの描画数が0の段を除いた数であり、パスごとに違う値になる。
 //! ディスクリプタセットはチャンク自身が自分の添字で参照して返すため、この走査はチャンクをまたいだ通し添字をセットの選択には使わない。1つの描画対象ぶんの組み立ては`object_entry`、1つの段ぶんの発行は`stage_issue`、数え方は`tally`、積み終えたシーン発行の並べ替えは`sort`、充填し終えた作業領域の読み出しは`readout`にある。
 
+mod fill_input;
 mod object_entry;
 mod readout;
 mod sort;
 mod stage_issue;
 mod tally;
 
-use ash::vk;
-use blitz_math::大域ワールド位置;
-
 use super::シーン描画資源;
 use crate::cascade::距離区分数;
 use crate::error::{フレーム入力不一致エラー, レンダラーエラー};
-use crate::frame_input::プリミティブ発行受け皿;
-use crate::terrain_detail::{地形詳細段選択, 段を参照する};
-use crate::visible_instance_selection::可視個体選択一覧;
+use crate::terrain_detail::段を参照する;
 use crate::vulkan::frame::{シャドウ描画入力, ジオメトリ入力};
-use crate::vulkan::material_table::{材質資源表, 資源表世代の束縛};
-use crate::vulkan::pipeline_ledger::材質描画族パイプライン台帳;
-use crate::vulkan::sync::フレームスロット添字;
-use crate::vulkan::tracked_device::GPUデバイス;
 
+pub(in crate::renderer) use fill_input::作業領域更新入力;
 pub(in crate::renderer) use tally::描画計数集計;
-
-/// 作業領域の中身のうち、描画対象資源の外から与える値。パイプラインは束の外(レンダラー)が保持するためここで受け取る。
-pub(in crate::renderer) struct 作業領域更新入力<'a> {
-    /// 可視ID列をそのフレームのバッファへ書き込むために要る。作業領域の充填と同じ走査で書くため、この入力が運ぶ。
-    pub(in crate::renderer) device: &'a GPUデバイス,
-    pub(in crate::renderer) フレーム添字: フレームスロット添字,
-    /// スキン付きシーンでの先頭描画対象の頂点バッファ差し替え先(判断44の既存契約)。スキン無しなら`None`。
-    pub(in crate::renderer) スキン済み頂点バッファ: Option<vk::Buffer>,
-    /// 発行ごとにパイプラインキーを引くために要る。材質を読む描画族のパイプラインはこの台帳だけが持つ。
-    pub(in crate::renderer) パイプライン台帳: &'a 材質描画族パイプライン台帳,
-    pub(in crate::renderer) カメラ大域原点: 大域ワールド位置,
-    /// 束ごとの詳細段。束の中の全描画対象へ同じ段を配る。個体別LODの選択を持つ対象はこの段を使わない。
-    pub(in crate::renderer) 地形詳細段選択一覧: &'a [地形詳細段選択],
-    /// そのフレームに描く個体の並びと段の切り分け。選択を持たない対象は全個体を束の段で描く。
-    pub(in crate::renderer) 可視個体選択一覧: 可視個体選択一覧<'a>,
-    /// 描画対象ごとに、その対象が描くプリミティブの並び。段の選択が選んだ詳細段のプリミティブだけが発行になる。
-    pub(in crate::renderer) プリミティブ発行: &'a プリミティブ発行受け皿,
-    /// 材質スロット番号から解決した材質IDを、そのフレームが束縛する世代のレコード添字へ写すために要る。
-    pub(in crate::renderer) 材質資源表: &'a 材質資源表,
-    /// そのフレームが束縛した資源表世代。解決した材質GPU参照がこの世代のものであることを確かめる材料である。
-    pub(in crate::renderer) 資源表世代の束縛: 資源表世代の束縛,
-}
 
 /// 積み先をまとめて渡す受け皿。すべてが常に同じフレームの同じ走査の結果であることをこの型が示す。
 pub(super) struct 描画発行受け皿<'a> {
@@ -62,6 +33,7 @@ impl シーン描画資源 {
             列.clear();
         }
         self.計数集計.集計を始める();
+        self.影のキャスター = 入力.影のキャスター;
         let mut 通し添字 = 0usize;
         for チャンク in &self.チャンク一覧 {
             let 段 = 段を参照する(入力.地形詳細段選択一覧, チャンク.id());
