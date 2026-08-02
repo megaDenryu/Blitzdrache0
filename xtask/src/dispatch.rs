@@ -7,7 +7,8 @@ use crate::{
     atmosphere_lut, bench, check_glb, cloth_empty, cloth_night, cloth_shadow_order, compile_assets, conform, csm_seam, fetch_assets,
     gen_atmosphere_reference, gen_source_assets, instance_cull, instance_draw, instance_lod, instance_stream, lod_crack, m10_bench, m11_soak,
     material_reload_draw, multi_material_draw, object_bench, origin_invariance, ow3_dod, ow4_bench, prop_draw, prop_multi_material_draw,
-    shadow_probe, sky_draw, sky_lut, sky_state, sky_time, smoke, streaming_bench, type_metrics, usage, verify, village_draw, watch_assets,
+    shadow_probe, sky_draw, sky_lut, sky_state, sky_time, smoke, streaming_bench, type_metrics, usage, verify, vertex_diag, village_draw,
+    watch_assets,
 };
 
 pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
@@ -42,6 +43,7 @@ pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
         Some("cloth-night") => cloth_night::実行する(),
         Some("cloth-shadow-order") => cloth_shadow_order::実行する(),
         Some("csm-seam") => csm_seam::実行する(),
+        Some("vertex-diag") => vertex_diag::実行する(),
         Some("sky-draw") => sky_draw::実行する(),
         Some("sky-state") => sky_state::実行する(),
         Some("sky-lut") => sky_lut::実行する(&引数一覧[1..]),

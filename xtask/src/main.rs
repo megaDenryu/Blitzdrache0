@@ -54,6 +54,7 @@ mod usage;
 mod validation_count;
 mod vegetation_run;
 mod verify;
+mod vertex_diag;
 mod village_draw;
 mod watch_assets;
 
