@@ -11,8 +11,8 @@ use std::collections::HashMap;
 
 use crate::error::材質資源表エラー;
 
-use super::capacity::テクスチャ表容量;
 use super::image_identity::画像同一性;
+use super::residency_count::世代の常駐枚数;
 use super::texture_id::テクスチャID;
 use super::texture_role::材質テクスチャ役割;
 use super::texture_slot::テクスチャスロット;
@@ -44,16 +44,16 @@ impl テクスチャ台帳 {
     /// アセットのIDを持たない正準フォールバックのためのスロット。IDから解決できないため、用途からの解決は梱包工程だけが持つ。
     pub(in crate::vulkan::material_table) fn 台帳外のスロットを発番する(
         &mut self,
-        容量: テクスチャ表容量,
+        常駐枚数: 世代の常駐枚数,
     ) -> Result<テクスチャスロット, 材質資源表エラー> {
-        self.発番する(容量)
+        self.発番する(常駐枚数)
     }
 
     pub(in crate::vulkan::material_table) fn 引き当てる(
         &mut self,
         指定: &テクスチャ指定<'_>,
         役割: 材質テクスチャ役割,
-        容量: テクスチャ表容量,
+        常駐枚数: 世代の常駐枚数,
     ) -> Result<スロットの引き当て, 材質資源表エラー> {
         let 同一性 = 画像同一性::生成する(指定.画像id(), 役割.ビュー契約());
         if let Some((既知の同一性, スロット)) = self.id別.get(&指定.テクスチャid()) {
@@ -68,7 +68,7 @@ impl テクスチャ台帳 {
             self.id別.insert(指定.テクスチャid(), (同一性, スロット));
             return Ok(スロットの引き当て::既に常駐している(スロット));
         }
-        let スロット = self.発番する(容量)?;
+        let スロット = self.発番する(常駐枚数)?;
         self.id別.insert(指定.テクスチャid(), (同一性, スロット));
         self.画像別.insert(同一性, スロット);
         Ok(スロットの引き当て::常駐させる必要がある(スロット))
@@ -83,11 +83,13 @@ impl テクスチャ台帳 {
         self.発番済み
     }
 
-    fn 発番する(&mut self, 容量: テクスチャ表容量) -> Result<テクスチャスロット, 材質資源表エラー> {
-        if self.発番済み >= 容量.枚数() {
-            return Err(材質資源表エラー::容量超過 {
-                必要枚数: self.発番済み.saturating_add(1),
-                予算枚数: 容量.枚数(),
+    /// 発番が見積を超えるのは、必要枚数の数え方と発番の鍵が食い違ったときだけである。作った画像を数え間違えたまま
+    /// 世代を公開しないよう、握り潰さず型付きの失敗にする。
+    fn 発番する(&mut self, 常駐枚数: 世代の常駐枚数) -> Result<テクスチャスロット, 材質資源表エラー> {
+        if self.発番済み >= 常駐枚数.枚数() {
+            return Err(材質資源表エラー::常駐枚数の見積不足 {
+                発番数: self.発番済み.saturating_add(1),
+                見積枚数: 常駐枚数.枚数(),
             });
         }
         let スロット = テクスチャスロット::生成する(self.発番済み);

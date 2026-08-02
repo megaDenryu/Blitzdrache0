@@ -7,21 +7,25 @@ use crate::error::{レンダラーエラー, 材質資源表エラー};
 use crate::texture_material::テクスチャ用途;
 use crate::vulkan::material_table::generation_build::構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
-use crate::vulkan::material_table::{material_id::大域材質ID, stage_reserve::画素段の予約枠};
+use crate::vulkan::material_table::material_id::大域材質ID;
 
-use super::fixture::{余裕のある上限, 材質を作る, 検査用供給元, 検査用素材};
+use super::fixture::{余裕のあるレイアウト容量, 材質を作る, 検査用供給元, 検査用素材};
 
 #[test]
 fn 解決結果は世代型付きであり異世代の参照を拒む() {
     let 素材 = 検査用素材(テクスチャ用途::色);
     let mut 供給元 = 検査用供給元::常に成功する();
-    let 予約枠 = 画素段の予約枠::現行のシーン画素段();
-    let 世代1 = 構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のある上限(), 予約枠, &[材質を作る(1, Some(&素材))]).unwrap();
+    let 世代1 = 構築する(
+        &mut 供給元,
+        資源表世代ID::最初(),
+        余裕のあるレイアウト容量(),
+        &[材質を作る(1, Some(&素材))],
+    )
+    .unwrap();
     let 世代2 = 構築する(
         &mut 供給元,
         資源表世代ID::最初().次を作る().unwrap(),
-        余裕のある上限(),
-        予約枠,
+        余裕のあるレイアウト容量(),
         &[材質を作る(1, Some(&素材))],
     )
     .unwrap();
@@ -42,12 +46,10 @@ fn 解決結果は世代型付きであり異世代の参照を拒む() {
 fn 重複した材質idと未知の材質idを型付きの失敗にする() {
     let 素材 = 検査用素材(テクスチャ用途::色);
     let mut 供給元 = 検査用供給元::常に成功する();
-    let 予約枠 = 画素段の予約枠::現行のシーン画素段();
     let 重複 = 構築する(
         &mut 供給元,
         資源表世代ID::最初(),
-        余裕のある上限(),
-        予約枠,
+        余裕のあるレイアウト容量(),
         &[材質を作る(3, Some(&素材)), 材質を作る(3, None)],
     );
     assert!(matches!(
@@ -57,7 +59,7 @@ fn 重複した材質idと未知の材質idを型付きの失敗にする() {
         }))
     ));
 
-    let 世代 = 構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のある上限(), 予約枠, &[材質を作る(3, None)]).unwrap();
+    let 世代 = 構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &[材質を作る(3, None)]).unwrap();
     assert_eq!(
         世代.解決する(大域材質ID::生成する(9)).unwrap_err(),
         材質資源表エラー::未知の材質ID { 材質id: 9 }

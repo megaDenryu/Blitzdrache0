@@ -4,10 +4,10 @@
 //! 不変条件: 画像を列へ足す順番と台帳が発番するスロットの番号は常に一致する。ここが唯一その2つを同時に進める場所である。
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::material_table::capacity::テクスチャ表容量;
 use crate::vulkan::material_table::fallback_usage::正準フォールバック用途;
 use crate::vulkan::material_table::pack_input::梱包対象材質;
 use crate::vulkan::material_table::packer::fallback_slots::正準フォールバック解決;
+use crate::vulkan::material_table::residency_count::世代の常駐枚数;
 use crate::vulkan::material_table::supplier::常駐テクスチャ供給元;
 use crate::vulkan::material_table::texture_registry::{スロットの引き当て, テクスチャ台帳};
 use crate::vulkan::material_table::texture_role::材質テクスチャ役割;
@@ -21,17 +21,17 @@ pub(super) struct 常駐の結果 {
 pub(super) fn 積む<供給元: 常駐テクスチャ供給元>(
     供給元: &mut 供給元,
     画像集合: &mut Vec<供給元::常駐画像>,
-    容量: テクスチャ表容量,
+    常駐枚数: 世代の常駐枚数,
     材質一覧: &[梱包対象材質<'_>],
 ) -> Result<常駐の結果, レンダラーエラー> {
     let mut 台帳 = テクスチャ台帳::新規();
-    let フォールバック = フォールバックを常駐させる(供給元, 画像集合, &mut 台帳, 容量)?;
+    let フォールバック = フォールバックを常駐させる(供給元, 画像集合, &mut 台帳, 常駐枚数)?;
     for 材質 in 材質一覧 {
         for 役割 in 材質テクスチャ役割::全役割 {
             let Some(指定) = 材質.役割の指定(役割) else {
                 continue;
             };
-            if let スロットの引き当て::常駐させる必要がある(スロット) = 台帳.引き当てる(指定, 役割, 容量)? {
+            if let スロットの引き当て::常駐させる必要がある(スロット) = 台帳.引き当てる(指定, 役割, 常駐枚数)? {
                 積んで並びを確かめる(供給元, 画像集合, スロット, 指定.素材())?;
             }
         }
@@ -46,11 +46,11 @@ fn フォールバックを常駐させる<供給元: 常駐テクスチャ供�
     供給元: &mut 供給元,
     画像集合: &mut Vec<供給元::常駐画像>,
     台帳: &mut テクスチャ台帳,
-    容量: テクスチャ表容量,
+    常駐枚数: 世代の常駐枚数,
 ) -> Result<正準フォールバック解決, レンダラーエラー> {
     let mut 用途別スロット = Vec::with_capacity(正準フォールバック用途::全用途.len());
     for 用途 in 正準フォールバック用途::全用途 {
-        let スロット = 台帳.台帳外のスロットを発番する(容量)?;
+        let スロット = 台帳.台帳外のスロットを発番する(常駐枚数)?;
         積んで並びを確かめる(供給元, 画像集合, スロット, &用途.素材を作る())?;
         用途別スロット.push(スロット);
     }

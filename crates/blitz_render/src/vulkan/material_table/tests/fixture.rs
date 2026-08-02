@@ -9,6 +9,8 @@
 use crate::descriptor_indexing_limits::ディスクリプタ索引上限;
 use crate::error::レンダラーエラー;
 use crate::texture_material::{テクスチャ用途, テクスチャ素材};
+use crate::vulkan::material_table::capacity::テクスチャ表レイアウト容量;
+use crate::vulkan::material_table::stage_reserve::画素段の予約枠;
 use crate::vulkan::material_table::supplier::常駐テクスチャ供給元;
 use crate::vulkan::material_table::{
     image_id::画像ID, material_id::大域材質ID, pack_input::梱包対象材質, texture_id::テクスチャID, texture_spec::テクスチャ指定,
@@ -71,9 +73,10 @@ pub(super) fn 検査用素材(用途: テクスチャ用途) -> テクスチャ�
     テクスチャ素材::生成する(1, 1, vec![1, 2, 3, 4], 用途).unwrap()
 }
 
-/// 材質テクスチャ表の枚数が上限で頭打ちにならない、余裕のある上限。
-pub(super) fn 余裕のある上限() -> ディスクリプタ索引上限 {
-    ディスクリプタ索引上限::生成する(1_000, 1_000, 1_000)
+/// 材質テクスチャ表の枚数が実機の上限でも要望でも頭打ちにならない、余裕のあるレイアウト容量。
+pub(super) fn 余裕のあるレイアウト容量() -> テクスチャ表レイアウト容量 {
+    let 上限 = ディスクリプタ索引上限::生成する(1_000, 1_000, 1_000);
+    テクスチャ表レイアウト容量::決める(上限, 画素段の予約枠::現行のシーン画素段(), 64).unwrap()
 }
 
 /// ベースカラーだけを持ちうる材質。テクスチャIDと画像IDを材質番号から作るため、材質ごとに別の画像になる。

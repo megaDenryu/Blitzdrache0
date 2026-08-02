@@ -23,6 +23,7 @@ mod material_id;
 mod pack_input;
 mod packer;
 mod record_index;
+mod residency_count;
 mod resource_table;
 mod stage_reserve;
 mod supplier;

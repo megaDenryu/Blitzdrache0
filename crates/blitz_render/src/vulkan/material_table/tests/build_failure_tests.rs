@@ -8,16 +8,20 @@ use crate::texture_material::テクスチャ用途;
 use crate::vulkan::material_table::generation_build::構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::ledger::資源表世代台帳;
-use crate::vulkan::material_table::stage_reserve::画素段の予約枠;
 
-use super::fixture::{余裕のある上限, 材質を作る, 検査用供給元, 検査用素材};
+use super::fixture::{余裕のあるレイアウト容量, 材質を作る, 検査用供給元, 検査用素材};
 
 #[test]
 fn 構築の失敗は部分生成資源だけを破棄し公開中の世代を変えない() {
     let 素材 = 検査用素材(テクスチャ用途::色);
-    let 予約枠 = 画素段の予約枠::現行のシーン画素段();
     let mut 供給元 = 検査用供給元::常に成功する();
-    let 初期世代 = 構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のある上限(), 予約枠, &[材質を作る(1, Some(&素材))]).unwrap();
+    let 初期世代 = 構築する(
+        &mut 供給元,
+        資源表世代ID::最初(),
+        余裕のあるレイアウト容量(),
+        &[材質を作る(1, Some(&素材))],
+    )
+    .unwrap();
     let mut 台帳 = 資源表世代台帳::最初の世代を公開する(初期世代);
     let 公開前の世代番号 = 台帳.公開中().世代id().番号();
     let 公開前の画像枚数 = 台帳.公開中().画像枚数();
@@ -27,8 +31,7 @@ fn 構築の失敗は部分生成資源だけを破棄し公開中の世代を�
     let 新世代 = 構築する(
         &mut 失敗する供給元,
         台帳.次の世代idを発行する().unwrap(),
-        余裕のある上限(),
-        予約枠,
+        余裕のあるレイアウト容量(),
         &[材質を作る(2, Some(&素材))],
     );
 
