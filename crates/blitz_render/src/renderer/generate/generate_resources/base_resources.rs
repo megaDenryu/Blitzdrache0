@@ -17,6 +17,7 @@ pub(super) struct 基礎資源 {
     pub(super) 転送環境: vulkan::transfer::転送実行環境,
     pub(super) シェーダー定数: vulkan::uniform::フレームシェーダー定数一式,
     pub(super) シーン描画資源: シーン描画資源,
+    pub(super) 材質資源表: vulkan::material_table::材質資源表,
 }
 
 pub(super) fn 組み立てる(
@@ -44,10 +45,26 @@ pub(super) fn 組み立てる(
         }
     };
 
+    let 材質資源表 = match vulkan::material_table::材質資源表::生成する(
+        device,
+        環境.物理デバイス問い合わせ(),
+        メモリプロパティ,
+        &共有.転送,
+        環境.ディスクリプタ索引上限(),
+    ) {
+        Ok(値) => 値,
+        Err(誤り) => {
+            束.破棄する(device);
+            共有.破棄する(device);
+            return Err(誤り);
+        }
+    };
+
     Ok(基礎資源 {
         シャドウマップ: 共有.シャドウ,
         転送環境: 共有.転送,
         シェーダー定数: 共有.シェーダー定数,
         シーン描画資源: 束,
+        材質資源表,
     })
 }

@@ -10,6 +10,7 @@ pub(super) struct フレーム資源 {
     pub(super) シャドウマップ: vulkan::shadow_map::シャドウマップ,
     pub(super) 転送環境: vulkan::transfer::転送実行環境,
     pub(super) シーン描画資源: シーン描画資源,
+    pub(super) 材質資源表: vulkan::material_table::材質資源表,
     pub(super) シェーダー定数: vulkan::uniform::フレームシェーダー定数一式,
     pub(super) フレーム進行: フレーム進行,
     pub(super) 描画段階資源: 描画段階資源,
