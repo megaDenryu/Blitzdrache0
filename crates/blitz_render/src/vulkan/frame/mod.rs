@@ -5,10 +5,12 @@ mod cloth_types;
 mod copy;
 mod dispatch;
 mod images;
+mod present;
 mod record;
 mod shadow_types;
 mod shared_set_bind;
 mod sky_types;
+mod submit_outcome;
 mod submit_present;
 mod types;
 mod ui_types;
@@ -25,6 +27,7 @@ pub(crate) use images::{フレーム画像一式, 光のにじみ画像};
 pub(crate) use record::記録の実績;
 pub(crate) use shadow_types::{シャドウ描画入力, 距離区分別のシャドウ入力};
 pub(crate) use sky_types::{空中遠近合成描画入力, 空描画入力};
+pub(crate) use submit_outcome::送信後の結末;
 pub(crate) use types::{
     ジオメトリ入力, スキニング描画入力, 光のにじみ描画入力, 描画方式, 明るさの圧縮描画入力, 粒子描画入力
 };
@@ -37,8 +40,9 @@ use crate::error::レンダラーエラー;
 use crate::frame_composition::フレーム構成;
 
 /// 取得済みの画像に対して1フレーム分のコマンドを記録し、送信・提示する。
-/// 戻り値は「提示まで到達したか（true）／スワップチェーンが陳腐化していたか（false）」と、記録の実績
-/// (GPUタイムスタンプの「パス名→クエリ開始添字」対応(判断30)と大気のベイク済み画像生成パスの本数)。
+/// 戻り値の`Err`は送信へ到達しなかったことだけを表し、送信が成った後の失敗は`送信後の結末`に載る。呼び出し元はこの2つを
+/// 区別して資源表世代の保持を記録する。もう1つの戻り値は記録の実績
+/// (GPUタイムスタンプの「パス名→クエリ開始添字」対応(判断30)と大気のベイク済み画像生成パスの本数)である。
 #[allow(clippy::too_many_arguments, clippy::type_complexity)]
 pub(crate) fn 描画する(
     device: &ash::Device,
@@ -55,7 +59,7 @@ pub(crate) fn 描画する(
     描画方式: 描画方式,
     クエリプール: Option<vk::QueryPool>,
     同期: 同期入力,
-) -> Result<(bool, 記録の実績), レンダラーエラー> {
+) -> Result<(送信後の結末, 記録の実績), レンダラーエラー> {
     let 読み戻し待機が必要 = matches!(描画方式, 描画方式::読み戻し { .. });
     let 実績 = record::コマンドを記録する(
         device,
@@ -70,6 +74,6 @@ pub(crate) fn 描画する(
         &描画方式,
         クエリプール,
     )?;
-    let 提示劣化 = dispatch::送信して提示する(device, queue, command_buffer, 提示先, 同期, 読み戻し待機が必要)?;
-    Ok((提示劣化, 実績))
+    let 結末 = submit_present::送信して提示する(device, queue, command_buffer, 提示先, &同期, 読み戻し待機が必要)?;
+    Ok((結末, 実績))
 }

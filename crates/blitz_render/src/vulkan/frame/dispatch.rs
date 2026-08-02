@@ -2,12 +2,10 @@
 
 use ash::vk;
 
-use super::submit_present;
 use super::{
     UI描画入力, ジオメトリ入力, スキニング描画入力, 光のにじみ描画入力, 共有セット束縛, 布描画入力, 明るさの圧縮描画入力, 空中遠近合成描画入力,
     空描画入力, 粒子描画入力, 距離区分別のシャドウ入力,
 };
-use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像の描画入力;
 use crate::vulkan::swapchain::スワップチェーン画像添字;
 
@@ -46,27 +44,4 @@ pub(crate) struct 同期入力 {
     pub(crate) 取得セマフォ: vk::Semaphore,
     pub(crate) 提示セマフォ: vk::Semaphore,
     pub(crate) 描画完了フェンス: vk::Fence,
-}
-
-pub(super) fn 送信して提示する(
-    device: &ash::Device,
-    queue: vk::Queue,
-    command_buffer: vk::CommandBuffer,
-    提示先: 提示先<'_>,
-    同期: 同期入力,
-    読み戻し待機が必要: bool,
-) -> Result<bool, レンダラーエラー> {
-    submit_present::送信して提示する(
-        device,
-        queue,
-        command_buffer,
-        提示先.loader,
-        提示先.swapchain,
-        提示先.画像添字,
-        同期.取得セマフォ,
-        同期.提示セマフォ,
-        同期.描画完了フェンス,
-        読み戻し待機が必要,
-        提示先.提示id,
-    )
 }
