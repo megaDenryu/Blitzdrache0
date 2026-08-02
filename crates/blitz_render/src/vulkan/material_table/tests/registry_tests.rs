@@ -10,6 +10,7 @@ use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::{
     image_id::画像ID, material_id::大域材質ID, pack_input::梱包対象材質, texture_id::テクスチャID, texture_spec::テクスチャ指定,
 };
+use crate::vulkan::material_variant::シェーディングモデル種別;
 
 use super::fixture::検査用供給元;
 use super::material_fixture::{余裕のあるレイアウト容量, 検査用素材, 画像を選んだ材質};
@@ -40,6 +41,7 @@ fn 同じ画像でもビュー契約が違えば別のスロットにする() {
     let 金属粗さ = テクスチャ指定::生成する(テクスチャID::生成する(202), 画像ID::生成する(7), &線形素材);
     let 材質一覧 = [梱包対象材質::生成する(
         大域材質ID::生成する(1),
+        シェーディングモデル種別::標準金属粗さPBR,
         [1.0, 1.0, 1.0, 1.0],
         0.0,
         1.0,

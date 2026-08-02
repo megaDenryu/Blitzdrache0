@@ -6,27 +6,25 @@
 //! 参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「材質レコードとテクスチャ台帳」
 
 use super::generation_id::資源表世代ID;
-use super::record_index::材質レコード添字;
+use super::generation_resolution::世代内材質解決;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct 材質GPU参照 {
     世代id: 資源表世代ID,
-    レコード添字: 材質レコード添字,
+    解決: 世代内材質解決,
 }
 
 impl 材質GPU参照 {
-    pub(in crate::vulkan::material_table) const fn 生成する(世代id: 資源表世代ID, レコード添字: 材質レコード添字) -> Self {
-        Self {
-            世代id, レコード添字
-        }
+    pub(in crate::vulkan::material_table) const fn 生成する(世代id: 資源表世代ID, 解決: 世代内材質解決) -> Self {
+        Self { 世代id, 解決 }
     }
 
     pub(crate) const fn 世代id(self) -> 資源表世代ID {
         self.世代id
     }
 
-    /// 束縛する世代との一致を確かめずに添字だけを読ませないため、世代の検査を通す口とは別に公開しない。
-    pub(in crate::vulkan::material_table) const fn レコード添字(self) -> 材質レコード添字 {
-        self.レコード添字
+    /// 束縛する世代との一致を確かめずに中身だけを読ませないため、世代の検査を通す口とは別に公開しない。
+    pub(in crate::vulkan::material_table) const fn 解決(self) -> 世代内材質解決 {
+        self.解決
     }
 }

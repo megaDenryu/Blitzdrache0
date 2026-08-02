@@ -12,13 +12,14 @@ use std::collections::HashMap;
 
 use super::generation_id::資源表世代ID;
 use super::generation_record::世代内材質レコード;
+use super::generation_resolution::世代内材質解決;
 use super::material_id::大域材質ID;
-use super::record_index::材質レコード添字;
 
 pub(crate) struct 資源表世代<画像, 付属> {
     世代id: 資源表世代ID,
     材質レコード列: Vec<世代内材質レコード>,
-    材質別レコード添字: HashMap<大域材質ID, 材質レコード添字>,
+    /// 材質IDから、この世代でのレコード添字と正規化済みの材質変種キーへの対応。
+    材質別解決: HashMap<大域材質ID, 世代内材質解決>,
     /// テクスチャスロットの添字で引く画像。台帳の発番順と同じ並びである。
     画像集合: Vec<画像>,
     /// この世代を束縛するための資源。画像とレコード列が確定した後に供給元が1度だけ仕上げる。
@@ -29,14 +30,14 @@ impl<画像, 付属> 資源表世代<画像, 付属> {
     pub(in crate::vulkan::material_table) fn 束ねる(
         世代id: 資源表世代ID,
         材質レコード列: Vec<世代内材質レコード>,
-        材質別レコード添字: HashMap<大域材質ID, 材質レコード添字>,
+        材質別解決: HashMap<大域材質ID, 世代内材質解決>,
         画像集合: Vec<画像>,
         付属資源: 付属,
     ) -> Self {
         Self {
             世代id,
             材質レコード列,
-            材質別レコード添字,
+            材質別解決,
             画像集合,
             付属資源: Some(付属資源),
         }
@@ -47,7 +48,7 @@ impl<画像, 付属> 資源表世代<画像, 付属> {
         Self {
             世代id,
             材質レコード列: Vec::new(),
-            材質別レコード添字: HashMap::new(),
+            材質別解決: HashMap::new(),
             画像集合: Vec::new(),
             付属資源: None,
         }

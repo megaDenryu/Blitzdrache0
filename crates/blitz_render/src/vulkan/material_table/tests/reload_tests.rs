@@ -14,13 +14,21 @@ use crate::vulkan::material_table::generation_build::構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::material_id::大域材質ID;
 use crate::vulkan::material_table::pack_input::梱包対象材質;
+use crate::vulkan::material_variant::シェーディングモデル種別;
 
 use super::fixture::検査用供給元;
 use super::material_fixture::余裕のあるレイアウト容量;
 
 /// 差し替えの前後で変わるのはベースカラー係数の赤成分だけである。同じ材質IDが世代で別の値を返すことだけを見たいためである。
 fn 赤の材質(赤: f32) -> 梱包対象材質<'static> {
-    梱包対象材質::生成する(大域材質ID::生成する(1), [赤, 0.0, 0.0, 1.0], 0.0, 1.0, [None, None, None])
+    梱包対象材質::生成する(
+        大域材質ID::生成する(1),
+        シェーディングモデル種別::標準金属粗さPBR,
+        [赤, 0.0, 0.0, 1.0],
+        0.0,
+        1.0,
+        [None, None, None],
+    )
 }
 
 type 検査用世代 = 資源表世代<u32, ()>;
@@ -36,7 +44,7 @@ fn 世代を作る(供給元: &mut 検査用供給元, 番号: u32, 赤: f32) ->
 
 fn 赤成分を読む(世代: &検査用世代) -> f32 {
     let 参照 = 世代.解決する(大域材質ID::生成する(1)).unwrap();
-    let 添字 = 世代.描画へ渡すレコード添字(参照).unwrap();
+    let 添字 = 世代.描画へ渡す解決(参照).unwrap().レコード添字();
     世代.レコード(添字).expect("解決した添字はその世代のレコードを指す").ベースカラー係数()[0]
 }
 
@@ -58,7 +66,7 @@ fn 旧世代で解決した参照を新世代は受け取らない() {
     let 旧世代 = 世代を作る(&mut 供給元, 1, 0.25);
     let 新世代 = 世代を作る(&mut 供給元, 2, 0.75);
     let 旧参照 = 旧世代.解決する(大域材質ID::生成する(1)).unwrap();
-    let 誤り = 新世代.描画へ渡すレコード添字(旧参照).expect_err("旧世代の参照は新世代では通らない");
+    let 誤り = 新世代.描画へ渡す解決(旧参照).expect_err("旧世代の参照は新世代では通らない");
     assert!(matches!(
         誤り,
         材質資源表エラー::異世代の混在 {

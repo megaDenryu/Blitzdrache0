@@ -6,6 +6,7 @@ use crate::error::{レンダラーエラー, 材質資源表エラー};
 use crate::vulkan::material_table::generation_build::構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::{material_id::大域材質ID, pack_input::梱包対象材質};
+use crate::vulkan::material_variant::シェーディングモデル種別;
 
 use super::fixture::検査用供給元;
 use super::material_fixture::余裕のあるレイアウト容量;
@@ -15,6 +16,7 @@ fn 範囲外の係数を型付きの失敗にする() {
     let mut 供給元 = 検査用供給元::常に成功する();
     let 材質一覧 = [梱包対象材質::生成する(
         大域材質ID::生成する(1),
+        シェーディングモデル種別::標準金属粗さPBR,
         [1.0, 1.0, 1.0, 1.0],
         1.5,
         0.5,

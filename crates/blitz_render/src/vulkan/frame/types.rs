@@ -3,6 +3,8 @@
 
 use ash::vk;
 
+use crate::vulkan::material_table::大域材質ID;
+use crate::vulkan::material_variant::材質変種キー;
 use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 use crate::vulkan::scene_draw_constants::シーン描画定数;
 
@@ -31,6 +33,11 @@ pub(crate) struct ジオメトリ入力 {
     pub(crate) ジオメトリセット: vk::DescriptorSet,
     /// この発行のカメラ相対の基準原点と、塗る材質のレコード添字。プッシュ定数で頂点ステージと画素段ステージへ渡す。
     pub(crate) 描画定数: シーン描画定数,
+    /// この発行が塗る材質の正規化済み変種キー。並べ替えの第1鍵であり、束縛するパイプラインを決める成分でもある。
+    pub(crate) 材質変種キー: 材質変種キー,
+    /// この発行が塗る材質の論理的な識別。並べ替えの第2鍵であり、材質切替を数えるときの比較対象でもある。
+    /// 世代内のレコード添字を鍵にしないのは、添字が世代を作り直すたびに並び直るためである。
+    pub(crate) 大域材質id: 大域材質ID,
 }
 
 /// GPU粒子トイ(判断29)1フレームぶんの入力。`--particles`指定時のみ`Some`で渡す。

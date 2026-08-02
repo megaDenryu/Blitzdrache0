@@ -7,16 +7,17 @@
 
 use crate::error::材質資源表エラー;
 
+use super::super::generation_resolution::世代内材質解決;
 use super::super::material_id::大域材質ID;
-use super::super::record_index::材質レコード添字;
 use super::{材質資源表, 資源表世代の束縛};
 
 impl 材質資源表 {
-    pub(crate) fn 束縛した世代でレコード添字を解決する(
+    /// 返すのは描画発行が要る2つ、すなわちGPUの描画定数へ載せるレコード添字と、その発行が束縛するPSOを選ぶ材質変種キーである。
+    pub(crate) fn 束縛した世代で材質を解決する(
         &self,
         束縛: 資源表世代の束縛,
         材質id: 大域材質ID,
-    ) -> Result<材質レコード添字, 材質資源表エラー> {
+    ) -> Result<世代内材質解決, 材質資源表エラー> {
         let 世代 = self.公開中の世代();
         if 世代.世代id() != 束縛.世代id {
             return Err(材質資源表エラー::異世代の混在 {
@@ -25,6 +26,6 @@ impl 材質資源表 {
             });
         }
         let 参照 = 世代.解決する(材質id)?;
-        世代.描画へ渡すレコード添字(参照)
+        世代.描画へ渡す解決(参照)
     }
 }

@@ -7,8 +7,14 @@
 
 use thiserror::Error;
 
+use crate::vulkan::material_variant::材質能力エラー;
+
 #[derive(Debug, Error, Clone, PartialEq)]
 pub enum 材質資源表エラー {
+    /// 材質の3軸が、このエンジンが描けると宣言した組合せの外にあった。材質変種キーの導出が判定する。
+    #[error("材質の3軸をこのエンジンが描けない: {0}")]
+    材質能力不足(#[from] 材質能力エラー),
+
     #[error("同じ大域材質ID{材質id}が1つの資源表世代へ2回現れた")]
     材質IDの重複 { 材質id: u64 },
 

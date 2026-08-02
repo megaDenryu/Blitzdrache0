@@ -31,6 +31,7 @@ pub(crate) mod lighting_query;
 pub(crate) mod linear_sampler;
 pub(crate) mod material_record;
 pub(crate) mod material_table;
+pub(crate) mod material_variant;
 pub(crate) mod memory;
 pub(crate) mod memory_ledger;
 pub(crate) mod nearest_sampler;

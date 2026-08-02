@@ -3,6 +3,7 @@
 use crate::pbr_material::金属粗さPBR素材;
 use crate::texture_material::テクスチャ素材;
 use crate::vulkan::material_table::材質テクスチャ役割;
+use crate::vulkan::material_variant::シェーディングモデル種別;
 
 /// マテリアル種別を型で判別し、新しい方式の追加時に全使用箇所を網羅検査する。
 #[derive(Debug, Clone)]
@@ -14,6 +15,13 @@ impl マテリアル素材 {
     fn 金属粗さpbr(&self) -> &金属粗さPBR素材 {
         match self {
             Self::金属粗さPBR(素材) => 素材,
+        }
+    }
+
+    /// 材質の3軸のうち、照明式が相互排他的に変わる軸。材質変種キーの導出はこの値を材料にする。
+    pub(crate) const fn シェーディングモデル種別(&self) -> シェーディングモデル種別 {
+        match self {
+            Self::金属粗さPBR(_) => シェーディングモデル種別::標準金属粗さPBR,
         }
     }
 

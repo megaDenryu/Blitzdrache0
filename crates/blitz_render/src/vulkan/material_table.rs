@@ -16,6 +16,7 @@ mod generation;
 mod generation_build;
 mod generation_id;
 mod generation_record;
+mod generation_resolution;
 mod image_id;
 mod image_identity;
 mod ledger;
@@ -39,7 +40,9 @@ mod texture_spec;
 
 /// レンダラーが持つ所有者と、GPU境界・描画経路が名指しする型だけを外へ見せる。
 pub(crate) use capacity::テクスチャ表レイアウト容量;
+pub(crate) use feature_set::材質特徴集合;
 pub(crate) use generation_record::世代内材質レコード;
+pub(crate) use generation_resolution::世代内材質解決;
 pub(crate) use material_id::大域材質ID;
 pub(crate) use resource_table::{描画対象別の材質ID, 材質資源の作業環境, 材質資源表, 資源表世代の束縛};
 pub(crate) use texture_role::材質テクスチャ役割;
