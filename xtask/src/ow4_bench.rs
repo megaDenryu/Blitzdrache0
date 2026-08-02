@@ -10,6 +10,7 @@ mod measure;
 mod point;
 mod run;
 mod section_parse;
+mod shadow_condition;
 mod table;
 mod validation;
 

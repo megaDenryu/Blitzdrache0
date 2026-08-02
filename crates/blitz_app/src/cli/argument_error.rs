@@ -44,4 +44,6 @@ pub(crate) enum 起動引数エラー {
     空代表画素不正(String),
     #[error("--shadow-resolution引数が不正だった: {0}")]
     影の一辺解像度不正(String),
+    #[error("--caster-margin引数が不正だった: {0}")]
+    キャスター余白不正(String),
 }

@@ -3,6 +3,9 @@
 //! 全物量点で共有される条件だからである。既定を従来条件に置くのは、この計測が2026-07-29から続く時系列であり、
 //! 指定なしの実行が過去の値と比べられる必要があるためである(参照: `_doc/計測/OW4_2026-07-29.md`)。
 
+#[cfg(test)]
+mod argument_tests;
+
 /// 何を描くかの条件。予算のどの行を判定できるかがこの選択で決まる。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum 描画条件 {
@@ -16,6 +19,8 @@ pub(super) struct 計測条件 {
     pub(super) 描画: 描画条件,
     /// `--time-of-day <秒>`へ渡す一日内時刻。`None`なら世界の方針の既定時刻のままである。
     pub(super) 一日内時刻の秒: Option<u32>,
+    /// 律速切り分けで振る軸。指定が無ければ起動指定の語を1つも足さない。
+    pub(super) シャドウ: super::shadow_condition::シャドウ計測指定,
 }
 
 pub(super) struct 引数の読み {
@@ -28,8 +33,12 @@ pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<引数の読み
     let mut 物量点一覧 = Vec::new();
     let mut 描画 = 描画条件::素の描画;
     let mut 一日内時刻の秒 = None;
+    let mut シャドウ = super::shadow_condition::シャドウ計測指定::default();
     let mut 残り = 引数一覧.iter();
     while let Some(語) = 残り.next() {
+        if シャドウ.語を読む(語.as_str(), &mut 残り)? {
+            continue;
+        }
         match 語.as_str() {
             "--production-draw" => 描画 = 描画条件::本番の描画,
             "--time-of-day" => 一日内時刻の秒 = Some(一日内秒を読む(残り.next())?),
@@ -39,7 +48,9 @@ pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<引数の読み
     Ok(引数の読み {
         物量点一覧,
         条件: 計測条件 {
-            描画, 一日内時刻の秒
+            描画,
+            一日内時刻の秒,
+            シャドウ,
         },
     })
 }
@@ -52,6 +63,12 @@ pub(super) fn 描画の起動指定(描画: 描画条件) -> &'static [&'static 
     }
 }
 
+/// 時刻の起動指定。計測本体とvalidation検査の両方が同じ語を渡すため、作る場所を1つにする。
+pub(super) fn 時刻の起動指定(条件: &計測条件) -> Vec<String> {
+    let Some(秒) = 条件.一日内時刻の秒 else { return Vec::new() };
+    vec!["--time-of-day".to_string(), 秒.to_string()]
+}
+
 fn 一日内秒を読む(語: Option<&String>) -> Result<u32, String> {
     let 語 = 語.ok_or_else(|| "--time-of-dayの次に秒が無い".to_string())?;
     語.parse().map_err(|誤り| format!("--time-of-dayの秒を数として読めない: {誤り}"))
@@ -62,38 +79,5 @@ fn 個体数を読む(語: &str) -> Result<usize, String> {
         Ok(個体数) if 個体数 > 0 => Ok(個体数),
         Ok(_) => Err("チャンクあたり個体数は1以上である必要がある".to_string()),
         Err(誤り) => Err(format!("チャンクあたり個体数を数として読めない({語}): {誤り}")),
-    }
-}
-
-#[cfg(test)]
-#[allow(clippy::unwrap_used)]
-mod tests {
-    use super::*;
-
-    fn 語列にする(語一覧: &[&str]) -> Vec<String> {
-        語一覧.iter().map(|語| (*語).to_string()).collect()
-    }
-
-    /// 指定なしの実行が従来条件のままであること。ここが変わると過去の計測値と比べられなくなる。
-    #[test]
-    fn 既定は素の描画で時刻の指定を持たない() {
-        let 読み = 引数を読む(&[]).unwrap();
-        assert!(読み.物量点一覧.is_empty());
-        assert_eq!(読み.条件.描画, 描画条件::素の描画);
-        assert_eq!(読み.条件.一日内時刻の秒, None);
-    }
-
-    #[test]
-    fn 物量点と条件を混ぜて並べられる() {
-        let 読み = 引数を読む(&語列にする(&["4000", "--production-draw", "--time-of-day", "61200"])).unwrap();
-        assert_eq!(読み.物量点一覧, vec![4000]);
-        assert_eq!(読み.条件.描画, 描画条件::本番の描画);
-        assert_eq!(読み.条件.一日内時刻の秒, Some(61200));
-    }
-
-    #[test]
-    fn 値の無い時刻指定と零の物量点は失敗にする() {
-        assert!(引数を読む(&語列にする(&["--time-of-day"])).is_err());
-        assert!(引数を読む(&語列にする(&["0"])).is_err());
     }
 }

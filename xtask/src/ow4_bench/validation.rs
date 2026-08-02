@@ -18,10 +18,7 @@ const 検査フレーム数: &str = "180";
 
 pub(super) fn 検査する(アセットルート: &Path, シェーダー入口: &Path, 条件: &計測条件) -> Result<u64, String> {
     let 上限 = 上限バイト数.to_string();
-    let 一日内時刻: Vec<String> = 条件
-        .一日内時刻の秒
-        .map(|秒| vec!["--time-of-day".to_string(), 秒.to_string()])
-        .unwrap_or_default();
+    let 一日内時刻 = super::condition::時刻の起動指定(条件);
     println!("[xtask] ow4-bench: {}をデバッグビルドでvalidation検査", アセットルート.display());
     let 出力 = Command::new("cargo")
         .args(["run", "-p", "blitz_app", "--"])
@@ -31,6 +28,7 @@ pub(super) fn 検査する(アセットルート: &Path, シェーダー入口: 
         // レイヤーの検査を計測本体と同じ描画構成で通すため、条件が足す起動指定をこちらへも同じだけ渡す。
         .args(super::condition::描画の起動指定(条件.描画))
         .args(&一日内時刻)
+        .args(条件.シャドウ.起動指定())
         .args(["--streaming-ram-limit", &上限, "--streaming-vram-limit", &上限])
         .arg("--asset-root")
         .arg(アセットルート)

@@ -89,9 +89,8 @@ fn 引数を作る(アセットルート: &Path, シェーダー入口: &Path, �
     ];
     let mut 引数一覧: Vec<String> = 固定.iter().map(|語| (*語).to_string()).collect();
     引数一覧.extend(super::condition::描画の起動指定(条件.描画).iter().map(|語| (*語).to_string()));
-    if let Some(秒) = 条件.一日内時刻の秒 {
-        引数一覧.extend(["--time-of-day".to_string(), 秒.to_string()]);
-    }
+    引数一覧.extend(super::condition::時刻の起動指定(条件));
+    引数一覧.extend(条件.シャドウ.起動指定());
     引数一覧.extend(["--asset-root".to_string(), アセットルート.display().to_string()]);
     引数一覧.extend(["--shader-source".to_string(), シェーダー入口.display().to_string()]);
     引数一覧.extend(["--streaming-ram-limit".to_string(), 上限.to_string()]);

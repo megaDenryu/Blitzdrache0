@@ -51,6 +51,9 @@ pub(crate) struct 起動設定 {
     pub(crate) インスタンス可視判定有効: bool,
     /// `--no-instance-lod`指定でfalse。既定はtrue。falseは全個体を最詳細段で描くため、段の選択の有無で読み戻し画像を比べる検収が成立する。
     pub(crate) インスタンス段選択有効: bool,
+    /// `--no-instance-shadow`指定でfalse。既定はtrue。falseはどの距離区分も個体を影の候補にしないため、
+    /// シャドウパスに残る費用が地形と添付処理だけになる計測用の対照が作れる。
+    pub(crate) インスタンス影キャスター有効: bool,
     /// `--lod-probe-step <メートル>`指定でSome。1フレームおきにカメラをZ方向へこの距離だけ動かして戻し、段の境界をまたぐ往復を作る。
     pub(crate) 個体詳細段探査刻み: Option<f32>,
     /// `--dev-ui`指定でtrue。既定はfalse(開発用UIの起動時有効化、判断34。実行中はF3でも切替可能)。

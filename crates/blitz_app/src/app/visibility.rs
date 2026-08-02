@@ -16,22 +16,21 @@ use blitz_render::{cascade::影の解像度密度, ライティング入力, 描
 
 use crate::error::起動エラー;
 pub(crate) use registration::群可視材料の登録;
+pub(in crate::app) use settings::選別のつまみ;
 pub(super) use tray::可視選択受け皿;
 
 pub(super) struct 可視判定配線 {
-    /// 起動指定で切る2つのつまみ。`--no-instance-cull`は視錐台で絞らず全個体を可視とし、`--no-instance-lod`は全個体を最詳細段で描く。2つは独立に働く。
-    可視判定有効: bool,
-    段選択有効: bool,
+    /// 起動指定で切るつまみ。互いに独立に働く(`settings`が意味を持つ)。
+    つまみ: 選別のつまみ,
     設定: 個体LOD選択設定,
     台帳: registry::群可視材料台帳,
     受け皿: 可視選択受け皿,
 }
 
 impl 可視判定配線 {
-    pub(super) fn 生成する(可視判定有効: bool, 段選択有効: bool) -> Self {
+    pub(super) fn 生成する(つまみ: 選別のつまみ) -> Self {
         Self {
-            可視判定有効,
-            段選択有効,
+            つまみ,
             設定: settings::段の閾値設定を作る(),
             台帳: registry::群可視材料台帳::default(),
             受け皿: 可視選択受け皿::生成する(),
@@ -64,8 +63,9 @@ impl 可視判定配線 {
             視錐台: 判定範囲.カメラ,
             距離区分別のライト: 判定範囲.距離区分別のライト,
             カメラ大域原点,
-            可視判定有効: self.可視判定有効,
-            段選択: settings::段選択方式を選ぶ(self.段選択有効, self.設定),
+            可視判定有効: self.つまみ.可視判定有効,
+            影キャスター有効: self.つまみ.影キャスター有効,
+            段選択: settings::段選択方式を選ぶ(self.つまみ.段選択有効, self.設定),
             台帳: &mut self.台帳,
             受け皿: &mut self.受け皿,
         })?;

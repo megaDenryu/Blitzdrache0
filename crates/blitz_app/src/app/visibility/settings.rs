@@ -21,6 +21,18 @@ pub(super) fn 段の閾値設定を作る() -> 個体LOD選択設定 {
     }
 }
 
+/// 起動指定から来る選別のつまみ。3つを1つの型へまとめるのは、どれも計測と検収のために本番の選別を部分的に止める
+/// 同じ性質の指定であり、配線が持つフィールドとして別々に並べる理由が無いためである。
+#[derive(Clone, Copy)]
+pub(in crate::app) struct 選別のつまみ {
+    /// `--no-instance-cull`でfalse。falseは視錐台で絞らず全個体を可視とする。
+    pub(in crate::app) 可視判定有効: bool,
+    /// `--no-instance-lod`でfalse。falseは全個体を最詳細段で描く。
+    pub(in crate::app) 段選択有効: bool,
+    /// `--no-instance-shadow`でfalse。falseはどの距離区分も個体を1体も影の候補にしない。
+    pub(in crate::app) 影キャスター有効: bool,
+}
+
 /// そのフレームの段選択の方式。段の選択を止めた実行では全個体を最詳細段で描く。
 /// 起動指定の真偽から方式へ写すのをここへ置くのは、この判断が距離の刻みと同じ「段をどう選ぶか」の設定であるためである。
 pub(super) fn 段選択方式を選ぶ(段選択有効: bool, 設定: 個体LOD選択設定) -> 段選択方式 {
