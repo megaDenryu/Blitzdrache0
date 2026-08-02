@@ -240,8 +240,8 @@ set 3の直接光は最初から配列契約にする(固定フィールドに�
 | (i) NonUniform装飾の最終SPIR-V検査 | 実施済み | `crates/blitz_app/src/embedded_shaders/nonuniform_tests.rs`。埋め込んだ画素段のSPIR-Vで、材質テクスチャ表を基点とするアクセス連鎖がすべてNonUniformで装飾されていることを見る |
 | (ii) 部分束縛の正例とフォールバックの実在 | 実施済み | 狭い検査が`vulkan/material_table/tests/fallback_tests.rs`と`capacity_tests.rs`、実配線が`cargo xtask multi-material-draw`。テクスチャを持たない材質が1件でも2件でも常駐画像が正準フォールバックの3枚に収まることを判定する。実機で未書込の要素を参照しない描画は既存検収入口のvalidation 0件が兼ねる |
 | (iii) set 2の束縛回数のセット番号別の計器 | 実施済み | 計器が`crates/blitz_render/src/vulkan/frame/bind_tally.rs`、判定が`cargo xtask multi-material-draw`。実測は2材質が[5, 10, 1, 1]・1材質が[5, 5, 1, 1](添字がセット番号)であり、材質のセットはどちらも1回、ジオメトリのセットだけがプリミティブの数で増える |
-| (iv) 無変更リロードの画素同一と変更リロードの混成画素なし | 部分的に実施済み | `cargo xtask smoke`のホットリロード検証がシェーダーの差し替えを見る。アセットの差し替えでの画素判定は未実施 |
+| (iv) 無変更リロードの画素同一と変更リロードの混成画素なし | 部分的に実施済み | シェーダーの差し替えは`cargo xtask smoke`のホットリロード検証。世代の切替は`vulkan/material_table/tests/reload_tests.rs`と`ledger_tests.rs`が、同じ材質IDが世代ごとに自分の係数を返すこと・旧世代で解決した参照を新世代が受け取らないこと・旧世代がフレームに保持されている間は退役しないことを狭い検査で固定する。アセットを差し替えた前後のGPU読み戻しによる画素判定は未実施 |
 | (v) リロード経路のdevice_wait_idle不使用 | 実施済み | `cargo xtask conform`の`reload_without_device_wait` |
 | (vi) 旧個別材質セットの消滅 | 実施済み | `cargo xtask conform`の`removed_slot_material_set` |
-| (vii) 重複除去とビュー契約の衝突拒否の実配線 | 部分的に実施済み | `vulkan/material_table/tests/registry_tests.rs`が仕組みを見る。テクスチャを持つ標準サンプル(DamagedHelmet)を取得した環境では実経路も通り、材質1件に対して常駐画像が正準フォールバック3枚と実テクスチャ3枚の合計6枚になることを終了時報告の材質資源表の行で確認できる。ただし同じ画像を2つ以上の役割が指すアセットが手元に無いため、重複除去そのものが働く場面は実アセットでは通っていない |
+| (vii) 重複除去とビュー契約の衝突拒否の実配線 | 部分的に実施済み(実アセットでの補強は次段送り) | `vulkan/material_table/tests/registry_tests.rs`が仕組みを見る。テクスチャを持つ標準サンプル(DamagedHelmet)を取得した環境では実経路も通り、材質1件に対して常駐画像が正準フォールバック3枚と実テクスチャ3枚の合計6枚になることを終了時報告の材質資源表の行で確認できる。ただし同じ画像を2つ以上の役割が指すアセットが手元に無いため、重複除去そのものが働く場面は実アセットでは通っていない |
 | (viii) 容量境界のオフバイワン | 実施済み | `vulkan/material_table/tests/capacity_tests.rs`が容量より1枚少ない・ちょうど・1枚多いの3点を見る |

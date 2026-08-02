@@ -14,3 +14,4 @@ mod packer_tests;
 mod publication_tests;
 mod registration_tests;
 mod registry_tests;
+mod reload_tests;
