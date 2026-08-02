@@ -2,8 +2,10 @@
 //! 軸ごとにどの条件を並べるかは`axis_cases`が持つ。
 
 mod axis_cases;
+mod round_count;
 
 pub(in crate::shadow_probe) use axis_cases::軸の条件一覧;
+pub(in crate::shadow_probe) use round_count::決める as 周回数を決める;
 
 /// 1つの条件。名前は表と生値ファイルの見出しになり、起動指定はそのまま`blitz_app`へ渡る。
 pub(in crate::shadow_probe) struct 計測条件 {
@@ -20,9 +22,23 @@ pub(super) enum 振る軸 {
     視点,
 }
 
+impl 振る軸 {
+    /// 生値と実行ログの置き場になる軸ごとのディレクトリ名。軸を続けて回しても前の軸の証拠を上書きしない。
+    /// 引数の綴りをそのまま使うのは、実行したコマンドと残った証拠の場所を読み手が1対1で結べるようにするためである。
+    pub(super) fn ディレクトリ名(self) -> &'static str {
+        match self {
+            Self::解像度 => "resolution",
+            Self::キャスター => "casters",
+            Self::余白 => "margin",
+            Self::視点 => "camera",
+        }
+    }
+}
+
 pub(super) struct 実行の指定 {
     pub(super) 軸: 振る軸,
-    pub(super) 周回数: usize,
+    /// `--rounds`で与えられた周回数。実際に回す数は条件数が決まってから`周回数を決める`が求める。
+    pub(super) 指定された周回数: Option<usize>,
     pub(super) チャンクあたり個体数: usize,
     pub(super) 一日内時刻の秒: u32,
 }
@@ -31,29 +47,28 @@ pub(super) struct 実行の指定 {
 const 既定のチャンクあたり個体数: usize = 4_000;
 /// 低い太陽(17時)。`csm-seam`が継ぎ目の検収に使う時刻と同じである。
 const 既定の一日内時刻の秒: u32 = 61_200;
-const 既定の周回数: usize = 4;
 
 pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<実行の指定, String> {
     let mut 軸 = None;
-    let mut 周回数 = 既定の周回数;
+    let mut 指定された周回数 = None;
     let mut チャンクあたり個体数 = 既定のチャンクあたり個体数;
     let mut 一日内時刻の秒 = 既定の一日内時刻の秒;
     let mut 残り = 引数一覧.iter();
     while let Some(語) = 残り.next() {
         match 語.as_str() {
-            "--rounds" => 周回数 = 数を読む(語, 残り.next())?,
+            "--rounds" => 指定された周回数 = Some(数を読む(語, 残り.next())?),
             "--chunk-instances" => チャンクあたり個体数 = 数を読む(語, 残り.next())?,
             "--time-of-day" => 一日内時刻の秒 = u32::try_from(数を読む(語, 残り.next())?).map_err(|誤り| format!("{誤り}"))?,
             _ => 軸 = Some(軸を読む(語)?),
         }
     }
     let 軸 = 軸.ok_or_else(|| "振る軸を1つ指定する(resolution / casters / margin / camera)".to_string())?;
-    if 周回数 == 0 {
+    if 指定された周回数 == Some(0) {
         return Err("--roundsは1以上である必要がある".to_string());
     }
     Ok(実行の指定 {
         軸,
-        周回数,
+        指定された周回数,
         チャンクあたり個体数,
         一日内時刻の秒,
     })
