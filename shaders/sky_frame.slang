@@ -1,11 +1,11 @@
 // 空パスの全画面三角形の頂点段と太陽円盤の見え方。放射輝度の評価(sky_atmosphere.slang)と
 // 空中遠近の合成(aerial_composite.slang)がこの1つのモジュールを取り込み、視線の復元を共有する。
-// 定数そのものは`sky_pass_uniform.slang`(空専用の値)と`view_pass_uniform.slang`(カメラ相対位置)が宣言する。
+// 定数そのものは`sky_pass_uniform.slang`(空専用の値)と`view_uniform.slang`(カメラ相対位置)が宣言する。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 // 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「空パスの配置」
 
 import sky_pass_uniform;
-import view_pass_uniform;
+import view_uniform;
 
 struct VertexOutput
 {
@@ -24,7 +24,7 @@ VertexOutput vertexMain(uint vertexID : SV_VertexID)
     VertexOutput output;
     output.position = float4(ndc, 1.0, 1.0);
     float4 farPoint = mul(skyPassUniform.inverseViewProjection, float4(ndc, 1.0, 1.0));
-    output.viewRay = farPoint.xyz / farPoint.w - viewPassUniform.cameraRelativePosition.xyz;
+    output.viewRay = farPoint.xyz / farPoint.w - viewUniform.cameraRelativePosition.xyz;
     return output;
 }
 

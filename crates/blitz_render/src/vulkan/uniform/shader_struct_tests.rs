@@ -2,25 +2,20 @@
 //! 各フィールドの開始位置と全体のバイト長を`layout_tests`が固定した数値と突き合わせる。
 //! 2つのファイルはコメントでしか結ばれておらず、片方だけを直した食い違いは走らせても絵に出ないため、ここが機械的に見る。
 
-use super::{cascade_bytes, sky_bytes, view_pass_bytes};
+use super::{cascade_bytes, sky_bytes, view_bytes};
 use crate::vulkan::shader_struct::{シェーダー構造体の並び, 読み取る};
 
-const ビュー定数の原文: &str = include_str!("../../../../../shaders/view_pass_uniform.slang");
+const ビュー定数の原文: &str = include_str!("../../../../../shaders/view_uniform.slang");
 const 多段影定数の原文: &str = include_str!("../../../../../shaders/cascade_shadow_uniform.slang");
 const 空パス定数の原文: &str = include_str!("../../../../../shaders/sky_pass_uniform.slang");
 
 #[test]
-fn ビューとシーンパスの定数の宣言がcpu側と同じ並びである() {
-    let 並び = 読み取る一つ(ビュー定数の原文, "ViewPassUniform");
-    assert_eq!(並び.バイト長, view_pass_bytes::バイト長);
+fn ビュー定数の宣言がcpu側と同じ並びである() {
+    let 並び = 読み取る一つ(ビュー定数の原文, "ViewUniform");
+    assert_eq!(並び.バイト長, view_bytes::バイト長);
     開始位置を確かめる(&並び, "viewProjection", 0);
     開始位置を確かめる(&並び, "cameraRelativePosition", 64);
     開始位置を確かめる(&並び, "cameraForward", 80);
-    開始位置を確かめる(&並び, "directionalLightDirection", 96);
-    開始位置を確かめる(&並び, "directionalLightColor", 112);
-    開始位置を確かめる(&並び, "pointLightPosition", 128);
-    開始位置を確かめる(&並び, "pointLightColor", 144);
-    開始位置を確かめる(&並び, "ambientAndLightingEnabled", 160);
 }
 
 #[test]
@@ -30,7 +25,7 @@ fn 多段影定数の宣言がcpu側と同じ並びである() {
     開始位置を確かめる(&並び, "cascadeLightViewProjection", 0);
     開始位置を確かめる(&並び, "cascadeSplitDepths", 256);
     開始位置を確かめる(&並び, "cascadeTransitionWidths", 272);
-    開始位置を確かめる(&並び, "shadowFlagsAndTexelSize", 288);
+    開始位置を確かめる(&並び, "cascadeDebugAndTexelSize", 288);
 }
 
 #[test]

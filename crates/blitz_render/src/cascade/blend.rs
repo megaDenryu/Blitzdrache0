@@ -1,5 +1,5 @@
 //! ビュー空間深度から、その画素が引く2つの距離区分とその重みを決める工程。
-//! この関数が距離区分の選択と境界ブレンドの正本であり、`shaders/lighting.slang`の`selectCascadeBlend`は同じ式の写しである。
+//! この関数が距離区分の選択と境界ブレンドの正本であり、`shaders/cascade_shadow.slang`の`selectCascadeBlend`は同じ式の写しである。
 //! Rust側に置くのは、重みが単調で和が1であることをユニットテストで検査できるようにするためである。
 
 use blitz_math::メートル;

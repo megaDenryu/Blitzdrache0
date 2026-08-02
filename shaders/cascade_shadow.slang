@@ -3,7 +3,7 @@
 // 単調で和が1になることのユニットテストはRust側が持ち、ここが正本から外れると境界に段差として現れる。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
-import lighting;
+import shadow_sample;
 
 static const uint cascadeCount = 4;
 

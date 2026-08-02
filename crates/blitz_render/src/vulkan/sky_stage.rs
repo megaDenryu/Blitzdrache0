@@ -32,7 +32,7 @@ pub(crate) struct 空段階資源 {
 pub(crate) struct 空段階の生成要求<'a> {
     pub(crate) カラー形式: vk::Format,
     pub(crate) 深度形式: vk::Format,
-    /// set0に結ぶビューとパスのセットのレイアウト。空パス定数とビュー・シーンパス定数をここから読む。
+    /// set0に結ぶビューとパスのセットのレイアウト。空パス定数とビュー定数をここから読む。
     pub(crate) ビューとパスlayout: vk::DescriptorSetLayout,
     pub(crate) シェーダー: &'a 空シェーダー,
     /// set1から参照するベイク済み画像の持ち主。フレーム構成に空段階があるときは必ず作られている。

@@ -12,8 +12,9 @@ struct CascadeShadowUniform
     float4 cascadeSplitDepths;
     // xyzが距離区分の境界の手前に置く遷移域の幅。wは未使用である。
     float4 cascadeTransitionWidths;
-    // xが方向光が影を落とすか(0か1)、yが距離区分の可視化(0か1)、zがシャドウマップのテクセル尺度。wは未使用である。
-    float4 shadowFlagsAndTexelSize;
+    // xが距離区分の可視化(0か1)、yがシャドウマップのテクセル尺度。zwは未使用である。
+    // 方向光が影を落とすかはここに無い。遮蔽の判定方法は光ごとに違うため、照明問い合わせの方向光レコードの可視性が持つ。
+    float4 cascadeDebugAndTexelSize;
 };
 
 [[vk::binding(1, 0)]]

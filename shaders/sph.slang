@@ -2,7 +2,7 @@
 // 前半を現在状態、後半を更新先として使い、グループ内デバイスバリア後に前半へ戻す。
 
 import relative_anchor;
-import view_pass_uniform;
+import view_uniform;
 
 struct Particle
 {
@@ -76,7 +76,7 @@ VertexOutput vertexMain(uint vertexID : SV_VertexID)
 {
     VertexOutput output;
     float3 relativePosition = applyRelativeAnchor(particlesRO[vertexID].positionDensity.xyz);
-    output.position = mul(viewPassUniform.viewProjection, float4(relativePosition, 1.0));
+    output.position = mul(viewUniform.viewProjection, float4(relativePosition, 1.0));
     output.pointSize = 4.0;
     return output;
 }

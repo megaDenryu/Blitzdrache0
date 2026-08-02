@@ -1,8 +1,8 @@
 //! set0(ビューとパスのセット)のレイアウトと、そのセットへシェーダー定数3本を結ぶ操作。触れるのは
-//! ビュー・シーンパス定数(binding0)・多段影定数(binding1)・空パス定数(binding2)の3つだけである。
+//! ビュー定数(binding0)・多段影定数(binding1)・空パス定数(binding2)の3つだけである。
 //! 3本を1つのセットへ置くのは、どれも寿命がフレーム×ビューであり束縛頻度が同じためである
 //! (参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「束縛頻度による4セット」)。
-//! 番号の正本は`shaders/view_pass_uniform.slang`・`cascade_shadow_uniform.slang`・`sky_pass_uniform.slang`の宣言である。
+//! 番号の正本は`shaders/view_uniform.slang`・`cascade_shadow_uniform.slang`・`sky_pass_uniform.slang`の宣言である。
 
 use ash::vk;
 
@@ -10,13 +10,13 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::uniform::フレームシェーダー定数一式;
 
-pub(crate) const ビューとシーンパスの定数のバインディング番号: u32 = 0;
+pub(crate) const ビュー定数のバインディング番号: u32 = 0;
 pub(crate) const 多段影の定数のバインディング番号: u32 = 1;
 pub(crate) const 空パスの定数のバインディング番号: u32 = 2;
 
 pub(super) fn レイアウトを生成する(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
     let バインド一覧 = [
-        定数バインド(ビューとシーンパスの定数のバインディング番号),
+        定数バインド(ビュー定数のバインディング番号),
         定数バインド(多段影の定数のバインディング番号),
         定数バインド(空パスの定数のバインディング番号),
     ];
@@ -30,10 +30,7 @@ pub(super) fn 定数を結ぶ(
     device: &ash::Device, set: vk::DescriptorSet, 定数: &フレームシェーダー定数一式, フレーム添字: フレームスロット添字
 ) {
     let 対応 = [
-        (
-            ビューとシーンパスの定数のバインディング番号,
-            定数.ビューとシーンパスのbuffer(フレーム添字),
-        ),
+        (ビュー定数のバインディング番号, 定数.ビュー定数のbuffer(フレーム添字)),
         (多段影の定数のバインディング番号, 定数.多段影のbuffer(フレーム添字)),
         (空パスの定数のバインディング番号, 定数.空パスのbuffer(フレーム添字)),
     ];

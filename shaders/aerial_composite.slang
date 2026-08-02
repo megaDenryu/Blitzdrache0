@@ -10,7 +10,7 @@
 import atmosphere_aerial_mapping;
 import sky_frame;
 import sky_pass_uniform;
-import view_pass_uniform;
+import view_uniform;
 
 // set1は合成パスだけが束縛するディスクリプタである。深度はNEARESTのサンプラーを結ぶ。輪郭で深度を混ぜると、
 // 手前の面と奥の面の間の距離が出てそこだけ霞の量が跳ぶ。ボリュームはLINEARであり、3軸の補間が霞を滑らかにする。
@@ -32,7 +32,7 @@ float3 cameraRelativePointOfDepth(float2 screenPosition, float depth)
 {
     float2 ndc = screenPosition * 2.0 - 1.0;
     float4 surfacePoint = mul(skyPassUniform.inverseViewProjection, float4(ndc, depth, 1.0));
-    return surfacePoint.xyz / surfacePoint.w - viewPassUniform.cameraRelativePosition.xyz;
+    return surfacePoint.xyz / surfacePoint.w - viewUniform.cameraRelativePosition.xyz;
 }
 
 [shader("fragment")]

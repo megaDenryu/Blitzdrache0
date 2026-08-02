@@ -5,7 +5,7 @@
 use ash::vk;
 
 use super::buffer_set::定数バッファ一式;
-use super::{cascade_bytes, sky_bytes, view_pass_bytes, フレームシェーダー定数一式};
+use super::{cascade_bytes, sky_bytes, view_bytes, フレームシェーダー定数一式};
 use crate::error::レンダラーエラー;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -13,11 +13,11 @@ pub(super) fn 生成する(
     device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
 ) -> Result<フレームシェーダー定数一式, レンダラーエラー> {
-    let ビューとシーンパス = 定数バッファ一式::生成する(device, メモリプロパティ, view_pass_bytes::バイト長)?;
+    let ビュー = 定数バッファ一式::生成する(device, メモリプロパティ, view_bytes::バイト長)?;
     let 多段影 = match 定数バッファ一式::生成する(device, メモリプロパティ, cascade_bytes::バイト長) {
         Ok(値) => 値,
         Err(誤り) => {
-            ビューとシーンパス.破棄する(device);
+            ビュー.破棄する(device);
             return Err(誤り);
         }
     };
@@ -25,13 +25,11 @@ pub(super) fn 生成する(
         Ok(値) => 値,
         Err(誤り) => {
             多段影.破棄する(device);
-            ビューとシーンパス.破棄する(device);
+            ビュー.破棄する(device);
             return Err(誤り);
         }
     };
     Ok(フレームシェーダー定数一式 {
-        ビューとシーンパス,
-        多段影,
-        空パス,
+        ビュー, 多段影, 空パス
     })
 }

@@ -5,7 +5,7 @@
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 import relative_anchor;
-import view_pass_uniform;
+import view_uniform;
 
 struct Particle
 {
@@ -54,7 +54,7 @@ ParticleVertexOutput vertexMain(uint vertexID : SV_VertexID)
 {
     ParticleVertexOutput output;
     float3 particlePosition = applyRelativeAnchor(particlesRO[vertexID].position.xyz);
-    output.position = mul(viewPassUniform.viewProjection, float4(particlePosition, 1.0));
+    output.position = mul(viewUniform.viewProjection, float4(particlePosition, 1.0));
     output.pointSize = 4.0;
     return output;
 }

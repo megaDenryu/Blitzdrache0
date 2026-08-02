@@ -27,27 +27,27 @@ const 検査対象一覧: [取り込む側; 8] = [
     },
     取り込む側 {
         パス: "shaders/cloth_draw.slang",
-        取り込むモジュール一覧: &["cascade_shadow_uniform", "view_pass_uniform"],
+        取り込むモジュール一覧: &["cascade_shadow_uniform", "lighting_query", "view_uniform"],
     },
     取り込む側 {
         パス: "shaders/scene.slang",
-        取り込むモジュール一覧: &["cascade_shadow_uniform", "view_pass_uniform"],
+        取り込むモジュール一覧: &["cascade_shadow_uniform", "lighting_query", "view_uniform"],
     },
     取り込む側 {
         パス: "shaders/sky_frame.slang",
-        取り込むモジュール一覧: &["sky_pass_uniform", "view_pass_uniform"],
+        取り込むモジュール一覧: &["sky_pass_uniform", "view_uniform"],
     },
     取り込む側 {
         パス: "shaders/particle.slang",
-        取り込むモジュール一覧: &["view_pass_uniform"],
+        取り込むモジュール一覧: &["view_uniform"],
     },
     取り込む側 {
         パス: "shaders/sph.slang",
-        取り込むモジュール一覧: &["view_pass_uniform"],
+        取り込むモジュール一覧: &["view_uniform"],
     },
     取り込む側 {
         パス: "shaders/surface_flow.slang",
-        取り込むモジュール一覧: &["view_pass_uniform"],
+        取り込むモジュール一覧: &["view_uniform"],
     },
 ];
 

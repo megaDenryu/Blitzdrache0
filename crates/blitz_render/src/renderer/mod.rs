@@ -33,7 +33,7 @@ mod sky_uniform_write;
 mod ui_dispatch;
 mod ui_texture;
 mod uniform_write;
-mod view_pass_uniform_write;
+mod view_uniform_write;
 
 use crate::frame_composition::フレーム構成;
 use crate::validation_counter::検証カウンタ;
