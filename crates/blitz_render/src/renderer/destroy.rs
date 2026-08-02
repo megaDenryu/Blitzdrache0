@@ -54,8 +54,9 @@ impl レンダラー {
         }
     }
 
-    fn 描画資源を破棄する(&self) {
+    fn 描画資源を破棄する(&mut self) {
         let device = self.環境.device();
+        self.パイプライン台帳.破棄する(device);
         self.フレーム進行.破棄する(device);
         self.シーン描画資源.破棄する(device);
         self.照明問い合わせ資源.破棄する(device);

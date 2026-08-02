@@ -5,7 +5,7 @@
 
 use thiserror::Error;
 
-use super::{cloth, device_requirement, frame_input_mismatch, lighting_query, material_table, sky};
+use super::{cloth, device_requirement, frame_input_mismatch, lighting_query, material_table, pipeline_ledger, sky};
 use crate::vulkan_failure::Vulkan失敗コード;
 
 #[derive(Debug, Error)]
@@ -95,4 +95,6 @@ pub enum レンダラーエラー {
     /// 照明問い合わせ資源の梱包で、ヘッダの件数と実レコード数と容量が整合しなかった。
     #[error("照明問い合わせ資源の梱包が失敗した: {0}")]
     照明問い合わせ梱包不正(#[from] lighting_query::照明問い合わせ梱包エラー),
+    #[error("パイプライン台帳とキーが噛み合わない: {0}")]
+    パイプライン台帳不正(#[from] pipeline_ledger::パイプライン台帳エラー),
 }

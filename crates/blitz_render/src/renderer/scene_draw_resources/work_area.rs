@@ -20,6 +20,7 @@ use crate::terrain_detail::{地形詳細段選択, 段を参照する};
 use crate::visible_instance_selection::可視個体選択一覧;
 use crate::vulkan::frame::{シャドウ描画入力, ジオメトリ入力};
 use crate::vulkan::material_table::{材質資源表, 資源表世代の束縛};
+use crate::vulkan::pipeline_ledger::材質描画族パイプライン台帳;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -32,9 +33,8 @@ pub(in crate::renderer) struct 作業領域更新入力<'a> {
     pub(in crate::renderer) フレーム添字: フレームスロット添字,
     /// スキン付きシーンでの先頭描画対象の頂点バッファ差し替え先(判断44の既存契約)。スキン無しなら`None`。
     pub(in crate::renderer) スキン済み頂点バッファ: Option<vk::Buffer>,
-    pub(in crate::renderer) シーンlayout: vk::PipelineLayout,
-    pub(in crate::renderer) シャドウpipeline: vk::Pipeline,
-    pub(in crate::renderer) シャドウlayout: vk::PipelineLayout,
+    /// 発行ごとにパイプラインキーを引くために要る。材質を読む描画族のパイプラインはこの台帳だけが持つ。
+    pub(in crate::renderer) パイプライン台帳: &'a 材質描画族パイプライン台帳,
     pub(in crate::renderer) カメラ大域原点: 大域ワールド位置,
     /// 束ごとの詳細段。束の中の全描画対象へ同じ段を配る。個体別LODの選択を持つ対象はこの段を使わない。
     pub(in crate::renderer) 地形詳細段選択一覧: &'a [地形詳細段選択],

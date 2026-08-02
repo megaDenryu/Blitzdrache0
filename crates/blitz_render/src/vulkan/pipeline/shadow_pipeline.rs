@@ -12,6 +12,10 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
+use crate::vulkan::shadow_map::シャドウマップ形式;
+use crate::vulkan::shadow_push;
+
+pub(super) use create::生成する as pipelineを生成する;
 
 pub(crate) struct シャドウパイプライン {
     pub(crate) handle: vk::Pipeline,
@@ -19,21 +23,27 @@ pub(crate) struct シャドウパイプライン {
 }
 
 impl シャドウパイプライン {
+    /// 自分のパイプラインレイアウトを抱えたまま持ち回る布のシャドウ経路だけが使う。
+    /// 材質描画族のシャドウはレイアウトを台帳が族ごとに1つ持つため、この入口を通らない。
     /// `ディスクリプタlayout一覧` はset0から順に並べたビューとパス・ジオメトリの2つである。
     pub(crate) fn 生成する(
         device: &ash::Device,
         ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, ディスクリプタlayout一覧, シェーダー)
+        let layout = super::layout::生成する(device, ディスクリプタlayout一覧, shadow_push::プッシュ定数範囲())?;
+        match create::生成する(device, シャドウマップ形式, super::描画の標本数, layout, シェーダー) {
+            Ok(handle) => Ok(Self { handle, layout }),
+            Err(誤り) => {
+                super::layout::破棄する(device, layout);
+                Err(誤り)
+            }
+        }
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: handle・layoutはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
-        // device_wait_idle済みであることを呼び出し元が保証する。
-        unsafe {
-            device.destroy_pipeline(self.handle, None);
-            device.destroy_pipeline_layout(self.layout, None);
-        }
+        // 安全性: handleはSelfが唯一の所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
+        unsafe { device.destroy_pipeline(self.handle, None) };
+        super::layout::破棄する(device, self.layout);
     }
 }

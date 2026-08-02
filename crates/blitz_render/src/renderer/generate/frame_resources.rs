@@ -17,6 +17,7 @@ pub(super) struct フレーム資源 {
     pub(super) 照明問い合わせ: vulkan::lighting_query::照明問い合わせ資源束,
     pub(super) フレーム進行: フレーム進行,
     pub(super) 描画段階資源: 描画段階資源,
+    pub(super) パイプライン台帳: vulkan::pipeline_ledger::材質描画族パイプライン台帳,
     pub(super) 粒子: Option<vulkan::particles::粒子リソース一式>,
     pub(super) gpu計測: Option<vulkan::gpu_timing::パス別GPU計測>,
     pub(super) ui一式: vulkan::ui::UIリソース一式,

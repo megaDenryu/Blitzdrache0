@@ -1,12 +1,12 @@
 //! 固定機能ステートの組み立てとVkPipelineの生成。頂点入力・TRIANGLE_LIST・深度テスト・
 //! dynamic rendering・動的ビューポート/シザー。頂点入力記述は`vertex_input`、生成結果の取り出しは`finish`に委ねる。
+//! パイプラインレイアウトは呼び出し元が所有するものを借りる(参照: `vulkan::pipeline::layout`)。
 
 mod finish;
 mod vertex_input;
 
 use ash::vk;
 
-use super::パイプライン;
 use crate::error::レンダラーエラー;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
@@ -24,12 +24,12 @@ pub(super) fn 組み立てる(
     device: &ash::Device,
     カラー形式: vk::Format,
     深度形式: vk::Format,
-    ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
+    標本数: vk::SampleCountFlags,
+    layout: vk::PipelineLayout,
     頂点モジュール: vk::ShaderModule,
     画素段モジュール: vk::ShaderModule,
     属性選択: 頂点属性選択,
-    プッシュ定数範囲: vk::PushConstantRange,
-) -> Result<パイプライン, レンダラーエラー> {
+) -> Result<vk::Pipeline, レンダラーエラー> {
     let ステージ一覧 = [
         vk::PipelineShaderStageCreateInfo::default()
             .stage(vk::ShaderStageFlags::VERTEX)
@@ -52,7 +52,7 @@ pub(super) fn 組み立てる(
         .polygon_mode(vk::PolygonMode::FILL)
         .cull_mode(vk::CullModeFlags::NONE)
         .line_width(1.0);
-    let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
+    let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(標本数);
     let カラーブレンドアタッチメント一覧 = [vk::PipelineColorBlendAttachmentState::default().color_write_mask(vk::ColorComponentFlags::RGBA)];
     let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default().attachments(&カラーブレンドアタッチメント一覧);
     let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
@@ -61,16 +61,6 @@ pub(super) fn 組み立てる(
         .depth_compare_op(vk::CompareOp::LESS);
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
-
-    // 注意: フレーム共通の定数(ビュー射影行列等)はset0のビューとパスのセットの経由で渡す(判断24)。
-    // プッシュ定数は描画ごとに変わる値だけが使う。範囲を呼び出し元から受けるのは、シーンが描画定数16バイトを
-    // (参照: `vulkan::scene_draw_constants`)、布がカメラ相対の基準原点16バイトを(参照: `vulkan::relative_anchor`)読むためである。
-    let プッシュ定数範囲一覧 = [プッシュ定数範囲];
-    let layout_create_info = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(ディスクリプタlayout一覧)
-        .push_constant_ranges(&プッシュ定数範囲一覧);
-    // 安全性: deviceは生成済みで有効。layout_create_infoは本関数内で構築した値のみを参照する。
-    let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };
 
     let カラー形式一覧 = [カラー形式];
     let mut rendering情報 = vk::PipelineRenderingCreateInfo::default()
@@ -93,5 +83,5 @@ pub(super) fn 組み立てる(
     // 安全性: 各stateは本関数内で構築した値のみを参照し、deviceは生成済みで有効。
     let 生成結果 = unsafe { device.create_graphics_pipelines(vk::PipelineCache::null(), &[create_info], None) };
 
-    finish::パイプラインを取り出す(device, layout, 生成結果)
+    finish::パイプラインを取り出す(生成結果)
 }

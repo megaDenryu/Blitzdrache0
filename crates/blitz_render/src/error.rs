@@ -7,6 +7,7 @@ pub(crate) mod device_requirement;
 mod frame_input_mismatch;
 mod lighting_query;
 mod material_table;
+mod pipeline_ledger;
 mod renderer_error;
 mod sky;
 
@@ -15,5 +16,6 @@ pub use device_requirement::{ディスクリプタ索引機能項目, デバイ�
 pub use frame_input_mismatch::フレーム入力不一致エラー;
 pub use lighting_query::照明問い合わせ梱包エラー;
 pub use material_table::材質資源表エラー;
+pub use pipeline_ledger::パイプライン台帳エラー;
 pub use renderer_error::レンダラーエラー;
 pub use sky::空エラー;

@@ -1,11 +1,12 @@
-//! パイプラインのバインドと動的ビューポート/シザー設定、
-//! 頂点/インデックスバッファのバインドとインデックス描画。1回の発行で描く個体の数は入力が持ち、群×段×プリミティブごとに1回だけ発行する
+//! シーンパスの描画コマンドの記録。動的ビューポート/シザーの設定、発行ごとのパイプラインの切替、
+//! 頂点/インデックスバッファの束縛とインデックス描画を行う。1回の発行で描く個体の数は入力が持ち、群×段×プリミティブごとに1回だけ発行する
 //! (参照: `_doc/設計/植生インスタンスと物量計測.md`「描画発行」、`_doc/設計/マルチマテリアルと材質境界.md`「可視ID列の契約」)。
 //! ビュー射影行列等はビューとパスのセット(set0)経由で渡す(判断24)。
 //! 描画ごとに変わるカメラ相対の基準原点と材質レコード添字だけをプッシュ定数で積む(参照: `vulkan::scene_draw_constants`)。
 //!
-//! 注意: set0とset2とset3はパイプラインを束縛した直後に1回だけ結び、発行ごとにはset1だけを結ぶ。
-//! 発行の数で増える束縛をジオメトリのセット1つに限ることが、材質/プリミティブ数に比例した束縛を作らない根拠である。
+//! 注意: set0とset2とset3はパスの先頭で1回だけ結び、発行ごとにはset1だけを結ぶ。材質を読む描画族のパイプラインはレイアウトを族で1つ共有するため、
+//! パイプラインを切り替えてもこの3つの束縛は無効にならない(参照: `vulkan::pipeline_ledger::layouts`)。
+//! ビューポートとシザーは発行が1件も無いフレームでも設定する。同じパスの中で布が自分のパイプラインで描くため、設定を発行の有無に依らせると布が未設定のビューポートで描かれる。
 
 use ash::vk;
 
@@ -16,7 +17,6 @@ use crate::vulkan::scene_draw_constants;
 pub(super) fn 描画コマンドを積む(
     device: &ash::Device,
     command_buffer: vk::CommandBuffer,
-    pipeline: vk::Pipeline,
     寸法: vk::Extent2D,
     ジオメトリ一覧: &[ジオメトリ入力],
     共有: 共有セット束縛<'_>,
@@ -38,13 +38,17 @@ pub(super) fn 描画コマンドを積む(
 
     // 安全性: command_bufferは記録中で、pipelineと全対象のバッファ・ディスクリプタセットは生成済み。
     unsafe {
-        device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, pipeline);
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
         device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
         if let Some(先頭) = ジオメトリ一覧.first() {
             shared_set_bind::シーンの共有セットを束縛する(device, command_buffer, 先頭.layout, 共有);
         }
+        let mut 直前のキー = None;
         for 入力 in ジオメトリ一覧 {
+            if 直前のキー != Some(入力.パイプラインキー) {
+                device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.pipeline);
+                直前のキー = Some(入力.パイプラインキー);
+            }
             scene_draw_constants::積む(device, command_buffer, 入力.layout, 入力.描画定数);
             共有.計数.数える(shared_set_bind::ジオメトリのセット番号);
             device.cmd_bind_descriptor_sets(

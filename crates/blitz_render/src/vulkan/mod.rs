@@ -38,6 +38,7 @@ pub(crate) mod nearest_sampler;
 pub(crate) mod particles;
 pub(crate) mod physical_device;
 pub(crate) mod pipeline;
+pub(crate) mod pipeline_ledger;
 pub(crate) mod post_process;
 pub(crate) mod present_timing;
 pub(crate) mod readback;

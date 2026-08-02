@@ -43,14 +43,13 @@ pub(super) fn コマンドを記録する(
     画像一式: &フレーム画像一式,
     寸法: vk::Extent2D,
     クリア色: クリアカラー,
-    pipeline: vk::Pipeline,
     描画対象: 描画対象入力<'_>,
     任意入力: 任意描画入力<'_>,
     描画方式: &描画方式,
     クエリプール: Option<vk::QueryPool>,
 ) -> Result<記録の実績, レンダラーエラー> {
     記録を開始する(device, command_buffer, クエリプール)?;
-    let 構築 = graph_build::グラフを構築する(画像一式, フレーム構成, 寸法, クリア色, pipeline, 描画対象, 任意入力, 描画方式);
+    let 構築 = graph_build::グラフを構築する(画像一式, フレーム構成, 寸法, クリア色, 描画対象, 任意入力, 描画方式);
     let 計測マッピング = graph::実行する(device, command_buffer, 構築.グラフ, クエリプール);
     // 安全性: command_bufferは記録開始済みで、対応するend呼び出し。
     unsafe { device.end_command_buffer(command_buffer)? };

@@ -1,7 +1,7 @@
 //! 描画段階資源の生成。呼ばれるのはレンダラー生成時の1回だけであり、以降のフレームは参照しかしない。
 //! 途中で失敗したら、それまでに生成した資源をその場で逆順に破棄する。生成の途中経過を外へ出さないため、
 //! 部分的に生成された器は呼び出し元から見えない。
-//! 常に作るシーンとシャドウをここが、フレーム構成しだいで作る段階の資源を`optional_stages`が担う。
+//! フレーム構成しだいで作る段階の資源は`optional_stages`が担う。シーンと影の本体のパイプラインはパイプライン台帳が持つため、ここでは作らない。
 
 mod optional_stages;
 
@@ -11,7 +11,6 @@ use super::描画段階資源;
 use crate::error::レンダラーエラー;
 use crate::frame_composition::フレーム構成;
 use crate::shader_bundle::シェーダー束;
-use crate::vulkan;
 use crate::vulkan::descriptor::シーンセットレイアウト一式;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -28,35 +27,10 @@ pub(in crate::renderer) struct 生成要求<'a> {
 }
 
 pub(super) fn 生成する(要求: 生成要求<'_>) -> Result<描画段階資源, レンダラーエラー> {
-    let device = 要求.device;
-    let シーン = vulkan::pipeline::パイプライン::生成する(
-        device,
-        要求.シーンカラー形式,
-        vulkan::depth::深度形式,
-        &要求.セットレイアウト.シーンの並び(),
-        &要求.シェーダー.シーン,
-    )?;
-    let シャドウの並び = 要求.セットレイアウト.シャドウの並び();
-    let シャドウ = match vulkan::pipeline::シャドウパイプライン::生成する(device, &シャドウの並び, &要求.シェーダー.シャドウ)
-    {
-        Ok(シャドウ) => シャドウ,
-        Err(誤り) => {
-            シーン.破棄する(device);
-            return Err(誤り);
-        }
-    };
-    match optional_stages::組み立てる(&要求) {
-        Ok(任意) => Ok(描画段階資源 {
-            シーン,
-            シャドウ,
-            空: 任意.空,
-            大気のベイク済み画像: 任意.大気のベイク済み画像,
-            布シャドウ: 任意.布シャドウ,
-        }),
-        Err(誤り) => {
-            シャドウ.破棄する(device);
-            シーン.破棄する(device);
-            Err(誤り)
-        }
-    }
+    let 任意 = optional_stages::組み立てる(&要求)?;
+    Ok(描画段階資源 {
+        空: 任意.空,
+        大気のベイク済み画像: 任意.大気のベイク済み画像,
+        布シャドウ: 任意.布シャドウ,
+    })
 }

@@ -3,17 +3,18 @@
 
 use ash::vk;
 
-use super::super::シャドウパイプライン;
 use super::assemble;
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan::shader_module;
 
-pub(super) fn 生成する(
+pub(in crate::vulkan::pipeline) fn 生成する(
     device: &ash::Device,
-    ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
+    深度形式: vk::Format,
+    標本数: vk::SampleCountFlags,
+    layout: vk::PipelineLayout,
     シェーダー: &シェーダー一式,
-) -> Result<シャドウパイプライン, レンダラーエラー> {
+) -> Result<vk::Pipeline, レンダラーエラー> {
     let 頂点モジュール = shader_module::生成する(device, シェーダー.頂点コード())?;
     let 画素段モジュール = match shader_module::生成する(device, シェーダー.画素段コード()) {
         Ok(モジュール) => モジュール,
@@ -24,7 +25,7 @@ pub(super) fn 生成する(
         }
     };
 
-    let 結果 = assemble::組み立てる(device, ディスクリプタlayout一覧, 頂点モジュール, 画素段モジュール);
+    let 結果 = assemble::組み立てる(device, 深度形式, 標本数, layout, 頂点モジュール, 画素段モジュール);
 
     // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
     unsafe {

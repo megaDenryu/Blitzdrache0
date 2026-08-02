@@ -3,20 +3,21 @@
 
 use ash::vk;
 
-use super::{graphics_pipeline, パイプライン};
+use super::graphics_pipeline;
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan::shader_module;
 
+#[allow(clippy::too_many_arguments)]
 pub(super) fn 生成する(
     device: &ash::Device,
     カラー形式: vk::Format,
     深度形式: vk::Format,
-    ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
+    標本数: vk::SampleCountFlags,
+    layout: vk::PipelineLayout,
     シェーダー: &シェーダー一式,
     属性選択: graphics_pipeline::頂点属性選択,
-    プッシュ定数範囲: vk::PushConstantRange,
-) -> Result<パイプライン, レンダラーエラー> {
+) -> Result<vk::Pipeline, レンダラーエラー> {
     let 頂点モジュール = shader_module::生成する(device, シェーダー.頂点コード())?;
     let 画素段モジュール = match shader_module::生成する(device, シェーダー.画素段コード()) {
         Ok(モジュール) => モジュール,
@@ -27,16 +28,7 @@ pub(super) fn 生成する(
         }
     };
 
-    let 結果 = graphics_pipeline::組み立てる(
-        device,
-        カラー形式,
-        深度形式,
-        ディスクリプタlayout一覧,
-        頂点モジュール,
-        画素段モジュール,
-        属性選択,
-        プッシュ定数範囲,
-    );
+    let 結果 = graphics_pipeline::組み立てる(device, カラー形式, 深度形式, 標本数, layout, 頂点モジュール, 画素段モジュール, 属性選択);
 
     // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
     unsafe {

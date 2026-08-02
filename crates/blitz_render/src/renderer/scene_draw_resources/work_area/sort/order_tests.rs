@@ -5,9 +5,12 @@
 
 #![allow(clippy::unwrap_used)]
 
+use ash::vk;
+
 use super::{シーン発行の整列鍵, 整列する};
 use crate::vulkan::material_table::大域材質ID;
 use crate::vulkan::material_variant::材質変種キー;
+use crate::vulkan::pipeline_ledger::{パイプラインキー, 描画先の一意化, 照明問い合わせ契約};
 
 /// 検査用の発行。整列鍵と、積んだ順を見分けるための通し番号を持つ。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -16,8 +19,16 @@ struct 検査用発行 {
     通し番号: usize,
 }
 
+fn シーンのキー() -> パイプラインキー {
+    パイプラインキー::シーン {
+        描画先: 描画先の一意化::色と深度へ描く(vk::Format::R8G8B8A8_UNORM, vk::Format::D32_SFLOAT, vk::SampleCountFlags::TYPE_1),
+        材質変種: 材質変種キー::標準金属粗さPBRの不透明片面,
+        照明問い合わせ: 照明問い合わせ契約::直接光と多段影,
+    }
+}
+
 fn 鍵(発行: &検査用発行) -> シーン発行の整列鍵 {
-    シーン発行の整列鍵::生成する(材質変種キー::標準金属粗さPBRの不透明片面, 大域材質ID::生成する(発行.材質番号))
+    シーン発行の整列鍵::生成する(シーンのキー(), 大域材質ID::生成する(発行.材質番号))
 }
 
 fn 積む(材質番号一覧: &[u64]) -> Vec<検査用発行> {

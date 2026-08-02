@@ -3,12 +3,9 @@
 
 use ash::vk;
 
-use super::super::シャドウパイプライン;
 use super::finish::パイプラインを取り出す;
 use super::vertex_input;
 use crate::error::レンダラーエラー;
-use crate::vulkan::shadow_map::シャドウマップ形式;
-use crate::vulkan::shadow_push;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
@@ -20,10 +17,12 @@ const 深度バイアス傾き項: f32 = 1.75;
 
 pub(super) fn 組み立てる(
     device: &ash::Device,
-    ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
+    深度形式: vk::Format,
+    標本数: vk::SampleCountFlags,
+    layout: vk::PipelineLayout,
     頂点モジュール: vk::ShaderModule,
     画素段モジュール: vk::ShaderModule,
-) -> Result<シャドウパイプライン, レンダラーエラー> {
+) -> Result<vk::Pipeline, レンダラーエラー> {
     let ステージ一覧 = [
         vk::PipelineShaderStageCreateInfo::default()
             .stage(vk::ShaderStageFlags::VERTEX)
@@ -53,7 +52,7 @@ pub(super) fn 組み立てる(
         .depth_bias_constant_factor(深度バイアス定数項)
         .depth_bias_slope_factor(深度バイアス傾き項)
         .depth_bias_clamp(0.0);
-    let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
+    let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(標本数);
     let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default();
     let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
         .depth_test_enable(true)
@@ -62,16 +61,9 @@ pub(super) fn 組み立てる(
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
-    // 注意: シーン描画と同じビューとパスのセットとジオメトリのセットのレイアウトを受け取る。同じハンドルであることが、
+    // 注意: レイアウトは呼び出し元が所有する。シーン描画と同じビューとパスのセットとジオメトリのセットを宣言したレイアウトであることが、
     // シーンパスで束縛したセットをシャドウパスがそのまま束縛できる根拠である。
-    let プッシュ定数範囲一覧 = [shadow_push::プッシュ定数範囲()];
-    let layout_create_info = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(ディスクリプタlayout一覧)
-        .push_constant_ranges(&プッシュ定数範囲一覧);
-    // 安全性: deviceは生成済みで有効。layout_create_infoは本関数内で構築した値のみを参照する。
-    let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };
-
-    let mut rendering情報 = vk::PipelineRenderingCreateInfo::default().depth_attachment_format(シャドウマップ形式);
+    let mut rendering情報 = vk::PipelineRenderingCreateInfo::default().depth_attachment_format(深度形式);
 
     let create_info = vk::GraphicsPipelineCreateInfo::default()
         .stages(&ステージ一覧)
@@ -89,5 +81,5 @@ pub(super) fn 組み立てる(
     // 安全性: 各stateは本関数内で構築した値のみを参照し、deviceは生成済みで有効。
     let 生成結果 = unsafe { device.create_graphics_pipelines(vk::PipelineCache::null(), &[create_info], None) };
 
-    パイプラインを取り出す(device, layout, 生成結果)
+    パイプラインを取り出す(生成結果)
 }

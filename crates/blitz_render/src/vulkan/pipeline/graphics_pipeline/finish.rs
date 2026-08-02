@@ -1,16 +1,13 @@
 //! `create_graphics_pipelines`の生成結果からパイプラインを取り出す。
-//! 失敗時はlayoutの後始末（破棄）まで行う。
+//! レイアウトの後始末をここでしないのは、レイアウトの所有者がパイプラインの生成を頼んだ側だからである。
 
 use ash::vk;
 
-use super::super::パイプライン;
 use crate::error::レンダラーエラー;
 
 pub(super) fn パイプラインを取り出す(
-    device: &ash::Device,
-    layout: vk::PipelineLayout,
     生成結果: Result<Vec<vk::Pipeline>, (Vec<vk::Pipeline>, vk::Result)>,
-) -> Result<パイプライン, レンダラーエラー> {
+) -> Result<vk::Pipeline, レンダラーエラー> {
     match 生成結果 {
         Ok(一覧) => {
             let Some(&handle) = 一覧.first() else {
@@ -18,12 +15,8 @@ pub(super) fn パイプラインを取り出す(
                 // Vulkan実装がその契約を破っている状態であり回復不能。
                 panic!("create_graphics_pipelinesが成功したのにパイプラインが0本だった");
             };
-            Ok(パイプライン { handle, layout })
+            Ok(handle)
         }
-        Err((_, 誤り)) => {
-            // 安全性: パイプライン生成に失敗したため、layoutを参照するパイプラインは存在しない。
-            unsafe { device.destroy_pipeline_layout(layout, None) };
-            Err(誤り.into())
-        }
+        Err((_, 誤り)) => Err(誤り.into()),
     }
 }
