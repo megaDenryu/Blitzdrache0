@@ -46,6 +46,8 @@ pub(crate) struct 起動設定 {
     pub(crate) 描画発行報告: bool,
     /// `--report-sun-angle`指定でtrue。その実行が使った太陽の高度と方位を終了時に出力する。
     pub(crate) 太陽角度報告: bool,
+    /// `--report-caster-distance`指定でtrue。最終フレームのキャスター候補をカメラからの距離帯へ振り分けた分布を終了時に出力する。
+    pub(crate) キャスター距離分布報告: bool,
     /// `--report-instance-sections`指定でtrue。可視個体の選別の走査時間を測り、レンダラーCPU区間と併せて終了時に出力する。
     /// フレーム時間報告と別の指定にするのは、区間の内訳が要るのは物量計測だけであり、既存の時系列を採る条件へ相乗りさせないためである。
     pub(crate) インスタンス区間報告: bool,

@@ -9,6 +9,9 @@
 mod band_light_box;
 mod band_pass_test;
 mod bounds_transform;
+mod camera_distance;
+mod caster_distance;
+mod caster_distance_scan;
 mod combined_select;
 mod count;
 mod error;
@@ -25,6 +28,8 @@ mod volume_test;
 
 pub use band_light_box::距離区分別の光空間直方体;
 pub use band_pass_test::距離区分別の可視判定;
+pub use caster_distance::キャスター距離分布;
+pub use caster_distance_scan::キャスターのカメラ距離分布を数える;
 pub use combined_select::{個体選択材料, 可視個体と段を選ぶ, 段選択方式};
 pub use count::可視判定計数;
 pub use error::可視判定エラー;

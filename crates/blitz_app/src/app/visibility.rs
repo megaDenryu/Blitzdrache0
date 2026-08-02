@@ -10,14 +10,15 @@ mod registry;
 mod settings;
 mod tray;
 
-use blitz_engine::{個体LOD選択設定, 可視判定計数};
+use blitz_engine::個体LOD選択設定;
 use blitz_math::{クリップ, ワールド, 変換, 大域ワールド位置};
-use blitz_render::{cascade::影の解像度密度, ライティング入力, 描画束ID};
+use blitz_render::{ライティング入力, 描画束ID};
 
 use crate::error::起動エラー;
 pub(crate) use registration::群可視材料の登録;
 pub(in crate::app) use settings::選別のつまみ;
 pub(super) use tray::可視選択受け皿;
+pub(crate) use tray::選別の計器;
 
 pub(super) struct 可視判定配線 {
     /// 起動指定で切るつまみ。互いに独立に働く(`settings`が意味を持つ)。
@@ -63,8 +64,7 @@ impl 可視判定配線 {
             視錐台: 判定範囲.カメラ,
             距離区分別のライト: 判定範囲.距離区分別のライト,
             カメラ大域原点,
-            可視判定有効: self.つまみ.可視判定有効,
-            影キャスター有効: self.つまみ.影キャスター有効,
+            つまみ: self.つまみ,
             段選択: settings::段選択方式を選ぶ(self.つまみ.段選択有効, self.設定),
             台帳: &mut self.台帳,
             受け皿: &mut self.受け皿,
@@ -73,9 +73,9 @@ impl 可視判定配線 {
         Ok(())
     }
 
-    /// 直近のフレームの計器。全群の判定が数えた計数と、判定に使った距離区分ごとの解像度密度を一組で返す(別々に取ると違うフレームの値を並べうる)。
-    pub(super) fn 直近の計器(&self) -> (可視判定計数, Option<影の解像度密度>) {
-        (self.受け皿.計数(), self.受け皿.解像度密度())
+    /// 直近のフレームの計器。計数・解像度密度・距離分布を一組で返す(別々に取ると違うフレームの値を並べうる)。
+    pub(super) fn 直近の計器(&self) -> 選別の計器 {
+        self.受け皿.計器()
     }
 
     /// 起動から現在までに個体の段が入れ替わった延べ回数。ヒステリシス帯の内側での往復で段が振動していないことを見る。

@@ -4,8 +4,7 @@
 mod renderer_metrics;
 mod report_request;
 
-use blitz_engine::可視判定計数;
-use blitz_render::{CPU区間時間, cascade::影の解像度密度, レンダラー, 実表示観測, 実表示計測状況};
+use blitz_render::{CPU区間時間, レンダラー, 実表示観測, 実表示計測状況};
 
 use super::アプリ;
 use crate::error::起動エラー;
@@ -26,8 +25,8 @@ impl アプリ {
         self.可視判定.登録数()
     }
 
-    /// 最終フレームに可視個体の選別が数えた計数と、その判定に使った距離区分ごとの世界メートル毎テクセル。
-    pub(crate) fn 可視個体の選別の計器を取得する(&self) -> (可視判定計数, Option<影の解像度密度>) {
+    /// 最終フレームに可視個体の選別が数えた計数と、その判定に使った距離区分ごとの世界メートル毎テクセルと、キャスター候補の距離分布。
+    pub(crate) fn 可視個体の選別の計器を取得する(&self) -> super::visibility::選別の計器 {
         self.可視判定.直近の計器()
     }
 

@@ -3,8 +3,10 @@
 //! GPU資源の束縛と材質資源表の計器の行は`binding_metrics`が持つ。
 
 pub(crate) use binding_metrics::{セット別束縛回数を表示する, 材質資源表の要約を表示する};
+pub(crate) use caster_distance::キャスター距離分布を表示する;
 
 mod binding_metrics;
+mod caster_distance;
 
 /// 最終フレームの描画発行の内訳。直接インスタンス描画では発行回数が個体数に比例しないことと、
 /// シーンと距離区分0から距離区分3が別々の視錐台で個体を絞ることと、同じ群の中で複数のLOD段が同時に立つことを、
