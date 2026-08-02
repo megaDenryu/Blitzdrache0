@@ -560,7 +560,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 </ul>
 
 <h4>既存実装への波及</h4>
-<p>環境光係数の入力型は光の輸送の設定型へ置換する(第6章(d)と同時)。かつて464バイトの共通区画だった<a class="term" href="#term-ubo">UBO</a>(GPUへ渡す固定サイズの設定領域)は、ビュー・シーンパス定数176バイト・多段影定数304バイト・空パス定数112バイトの3本へ分割済みであり、<a class="term" href="#term-frame-constants">frame constants</a>(フレーム定数)への分離はここまで進んだ。ただし固定サイズの定数領域はプローブ・環境マップの参照情報を持てないため、残る個体と材質のディスクリプタインデクシングへの移行(第6章(a))が前提になる。<a class="term" href="#term-render-graph">レンダーグラフ</a>は<a class="term" href="#term-shader">計算パス</a>(コンピュート)の本格投入先になる。</p>
+<p>環境光係数の入力型は光の輸送の設定型へ置換する(第6章(d)と同時)。かつて464バイトの共通区画だった<a class="term" href="#term-ubo">UBO</a>(GPUへ渡す固定サイズの設定領域)は、ビュー定数96バイト・多段影定数304バイト・空パス定数112バイトの3本へ分割し、直接光の値は照明問い合わせセット(set 3)へ移した(2026-08-02完了)。個体と材質の固定区画も、材質のsampled image表への索引化と個体/材質のstructured buffer(構造化バッファ)化まで完了しており、<a class="term" href="#term-frame-constants">frame constants</a>(フレーム定数)の分離とディスクリプタインデクシングはどちらも実装済みである(詳細: <code>_doc/設計/GPU資源束縛の分離と索引化.md</code>)。照明問い合わせセットは順3のIBL/プローブ資源を追加できる停止点として用意済みであり、残るのはテクスチャ表容量の最終既定値の確定である。<a class="term" href="#term-render-graph">レンダーグラフ</a>は<a class="term" href="#term-shader">計算パス</a>(コンピュート)の本格投入先になる。</p>
 
 <!-- ------------------------------------------------ -->
 <h3 id="s4-3">4.3 材質</h3>
@@ -851,8 +851,8 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <p>第4章の波及を集約すると、既存実装のうち「拡張では済まず、置き換えに近い改修になる」接合点は次の4つである。これは欠陥ではない: どれも当時の要求には正しい設計であり、要求の水準が上がったから境界が動くのである。早期に知っておくことで、これらへ依存を増やす前に移行を計画できる。</p>
 
 <div class="box warn">
-<span class="label">接合点 a</span>
-<p><strong>個体と材質の固定区画と固定バインディング。</strong>フレームの共通定数は、かつて主要なグラフィックス経路の<a class="term" href="#term-shader">シェーダー</a>群が1つの<a class="term" href="#term-ubo">UBO</a>(464バイトの固定サイズ設定領域)を全体または先頭部分として共有する形だったが、ビュー・シーンパス定数・多段影定数・空パス定数の3本へ分割済みであり、各シェーダーは自分が読む定数だけを、それぞれ唯一の宣言モジュールから取り込む(先頭部分を別の構造体として読む別名宣言は廃止した)。個体・材質の設定は固定区画と固定バインディングのままであり、ここが残る課題である。光源が集合になり、ビューが増え(影・<a class="term" href="#term-probe">プローブ</a>・反射)、<a class="term" href="#term-material">材質</a>が多様化すると固定区画は持たない。<a class="term" href="#term-frame-constants">frame constants</a>(フレーム定数)の分離に続けて、structured buffer(可変長の構造化バッファ)+ディスクリプタインデクシング(資源を番号で選ぶ方式)への移行が必要である。多光源・<a class="term" href="#term-gi">GI</a>・材質拡張のすべてがこの上に載るため、<em>最初に動く境界</em>になる。</p>
+<span class="label">接合点 a(2026-08-02解消)</span>
+<p><strong>個体と材質の固定区画と固定バインディング。</strong>フレームの共通定数は、かつて主要なグラフィックス経路の<a class="term" href="#term-shader">シェーダー</a>群が1つの<a class="term" href="#term-ubo">UBO</a>(464バイトの固定サイズ設定領域)を全体または先頭部分として共有する形だったが、ビュー定数・多段影定数・空パス定数・照明問い合わせセットの4本へ分割し、各シェーダーは自分が読む定数だけを、それぞれ唯一の宣言モジュールから取り込む(先頭部分を別の構造体として読む別名宣言は廃止した)。個体・材質の設定も固定区画と固定バインディングから、個体/材質のstructured buffer(構造化バッファ)+材質のsampled image表のディスクリプタインデクシング(資源を番号で選ぶ方式)へ移行済みである。光源は照明問い合わせセットの中で件数可変のstructured bufferとして持つため、光源が集合になっても固定区画を増設しない。<a class="term" href="#term-material">材質</a>は資源表世代ごとに1つの索引表を差し替えるため、材質が多様化してもディスクリプタセットを作り直さない。多光源・<a class="term" href="#term-gi">GI</a>・材質拡張はこの器の上に載る。設計・実装の正本は<code>_doc/設計/GPU資源束縛の分離と索引化.md</code>であり、テクスチャ表容量の最終既定値とupdate-after-bindの採用可否だけが未決定のまま残る。</p>
 </div>
 
 <div class="box warn">
@@ -924,7 +924,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <table>
 <tr><th>順</th><th>作業</th><th>依存(なぜこの位置か)</th><th>接続</th></tr>
 <tr><td>0</td><td><strong>OW5完走</strong>(第6段 <a class="term" href="#term-cascade-band">距離区分別</a><a class="term" href="#term-culling">可視選別</a> → 第7段 大気のベイク済み画像置換 → <a class="term" href="#term-checkpoint">定点</a>)</td><td>進行中の<a class="term" href="#term-vertical-slice">縦切り</a>を閉じる。大気のベイク済み画像は光の輸送の最初の本番方式</td><td>OW5(進行中)</td></tr>
-<tr><td>1</td><td><strong>方式境界の設計壁打ち3本</strong>: (a)<a class="term" href="#term-radiance-query">radiance query</a>階層 (b)<a class="term" href="#term-shading-model">材質特徴ビット</a>×シェーディングモデル (c)<a class="term" href="#term-ubo">UBO</a>分離+ディスクリプタインデクシング</td><td>実装より先に境界を決める項目(第6章a,dと4.3の先行必須項目)。ここの決定が後続全部の器</td><td>新規(設計のみ)</td></tr>
+<tr><td>1</td><td><strong>方式境界の設計壁打ち3本</strong>: (a)<a class="term" href="#term-radiance-query">radiance query</a>階層 (b)<a class="term" href="#term-shading-model">材質特徴ビット</a>×シェーディングモデル (c)<a class="term" href="#term-ubo">UBO</a>分離+ディスクリプタインデクシング</td><td>実装より先に境界を決める項目(第6章a,dと4.3の先行必須項目)。ここの決定が後続全部の器</td><td>(a)新規(設計のみ・未着手) (b)実装済み(<code>_doc/設計/マルチマテリアルと材質境界.md</code>段A〜E) (c)実装済み(<code>_doc/設計/GPU資源束縛の分離と索引化.md</code>段1〜6、接合点a解消)</td></tr>
 <tr><td>2</td><td><strong>絵の様式の確定(オーナー裁定)→ <a class="term" href="#term-taa">TAA</a>基盤</strong>(<a class="term" href="#term-motion-vector">モーションベクタ</a>・<a class="term" href="#term-jitter">ジッタ</a>・<a class="term" href="#term-history-buffer">履歴</a>・棄却・<a class="term" href="#term-reactive-mask">反応性</a>)</td><td>導入が遅いほど波及が膨らむ(4.4)。<a class="term" href="#term-ray-tracing">RT</a>系・体積系の前提でもある</td><td>新規(様式確定は裁定)</td></tr>
 <tr><td>3</td><td><strong><a class="term" href="#term-ibl">IBL</a>+<a class="term" href="#term-ao">SSAO</a>+<a class="term" href="#term-auto-exposure">自動露出</a></strong>(<a class="term" href="#term-ambient">定数環境光</a>の置換)</td><td>最小の工事で最大の画質改善。TAA基盤があると品質が安定</td><td>新規(<a class="term" href="#term-gi">GI</a>の第1段)</td></tr>
 <tr><td>4</td><td><strong><a class="term" href="#term-bc-compression">BC圧縮</a>+<a class="term" href="#term-mip">縮小段</a>生成+<a class="term" href="#term-runtime-format">実行時形式</a>の版追加</strong></td><td>実アセット導入の前提条件。接合点cの最初の版追加として仮想化の道も開く</td><td>OW1拡張</td></tr>
