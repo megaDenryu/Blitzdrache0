@@ -1,4 +1,4 @@
-//! 律速切り分けの計測で振る軸を1つの型に集め、引数の読み取りと起動指定への写しを担う。
+//! 律速切り分けの計測で振る軸と、その裁定材料を読むための報告指定を1つの型に集め、引数の読み取りと起動指定への写しを担う。
 //! 受け取るのは`ow4-bench`の引数語、返すのは`blitz_app`へ渡す起動指定の語列である。
 //! どの軸も指定が無ければ語を1つも足さないため、指定なしの実行は従来条件のまま変わらない。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「シャドウ性能の是正(フェーズ2性能課題、2026-08-03着手)」
@@ -25,6 +25,13 @@ pub(super) struct シャドウ計測指定 {
     カメラ方位度: Option<String>,
     /// `--camera-nudge <メートル>`。方位と組み合わせて視点を経路上の別位置へ移す。
     カメラずれ: Option<String>,
+    /// `--max-shadow-distance <メートル>`。多段設定の最大影距離を差し替える(段S2-1の品質方針α)。
+    最大影距離: Option<String>,
+    /// `--shadow-caster-range <メートル>`。カメラからの中心距離がこの上限を超える個体を影の候補から外す
+    /// 計測専用の単純切断である(段S2-1の品質方針β)。
+    影の視距離: Option<String>,
+    /// `--report-caster-distance`。キャスター候補を距離帯へ振り分けた分布を報告させる。裁定の距離の水準はこの分布から導く。
+    キャスター距離分布を報告する: bool,
 }
 
 impl シャドウ計測指定 {
@@ -35,6 +42,9 @@ impl シャドウ計測指定 {
             "--caster-margin" => self.キャスター余白 = Some(値を読む(語, 残り)?),
             "--camera-yaw" => self.カメラ方位度 = Some(値を読む(語, 残り)?),
             "--camera-nudge" => self.カメラずれ = Some(値を読む(語, 残り)?),
+            "--max-shadow-distance" => self.最大影距離 = Some(値を読む(語, 残り)?),
+            "--shadow-caster-range" => self.影の視距離 = Some(値を読む(語, 残り)?),
+            "--report-caster-distance" => self.キャスター距離分布を報告する = true,
             "--no-instance-shadow" => self.個体を影から外す = true,
             "--no-shadow-casters" => self.全キャスターを外す = true,
             "--no-instance-lod" => self.段選択を止める = true,
@@ -49,6 +59,8 @@ impl シャドウ計測指定 {
             ("--caster-margin", self.キャスター余白.as_ref()),
             ("--camera-yaw", self.カメラ方位度.as_ref()),
             ("--camera-nudge", self.カメラずれ.as_ref()),
+            ("--max-shadow-distance", self.最大影距離.as_ref()),
+            ("--shadow-caster-range", self.影の視距離.as_ref()),
         ];
         let mut 語列 = Vec::new();
         for (名前, 値) in 値つき {
@@ -61,6 +73,7 @@ impl シャドウ計測指定 {
             ("--no-instance-shadow", self.個体を影から外す),
             ("--no-shadow-casters", self.全キャスターを外す),
             ("--no-instance-lod", self.段選択を止める),
+            ("--report-caster-distance", self.キャスター距離分布を報告する),
         ];
         for (名前, 立っているか) in 旗 {
             if 立っているか {

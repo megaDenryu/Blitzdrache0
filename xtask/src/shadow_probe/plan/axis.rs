@@ -13,11 +13,22 @@ pub(in crate::shadow_probe) enum 振る軸 {
     視点,
     頂点,
     太陽高度,
+    最大影距離,
+    影の視距離,
 }
 
 impl 振る軸 {
     /// 引数で選べる軸の一覧。使い方の表示もこの並びで出す。
-    pub(in crate::shadow_probe) const 全軸: [Self; 6] = [Self::解像度, Self::キャスター, Self::余白, Self::視点, Self::頂点, Self::太陽高度];
+    pub(in crate::shadow_probe) const 全軸: [Self; 8] = [
+        Self::解像度,
+        Self::キャスター,
+        Self::余白,
+        Self::視点,
+        Self::頂点,
+        Self::太陽高度,
+        Self::最大影距離,
+        Self::影の視距離,
+    ];
 
     /// 軸を選ぶ引数の綴り。生値と実行ログの置き場になる軸ごとのディレクトリ名にも同じ綴りを使う。
     /// 軸を続けて回しても前の軸の証拠を上書きせず、実行したコマンドと残った証拠の場所を読み手が1対1で結べる。
@@ -29,6 +40,8 @@ impl 振る軸 {
             Self::視点 => "camera",
             Self::頂点 => "vertex",
             Self::太陽高度 => "sun",
+            Self::最大影距離 => "distance",
+            Self::影の視距離 => "range",
         }
     }
 }
