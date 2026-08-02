@@ -1,39 +1,18 @@
-//! 振る軸の選び方と、周回数や物量といった実行の指定の引数解釈。担当するのは引数の語から実行の指定を作ることだけであり、
-//! 軸ごとにどの条件を並べるかは`axis_cases`が持つ。
+//! 周回数や物量といった実行の指定の引数解釈。担当するのは引数の語から実行の指定を作ることだけであり、
+//! 軸そのものと綴りは`axis`が、軸ごとにどの条件を並べるかは`axis_cases`が、条件1つが何を既定から変えるかは`case`が、
+//! 条件が使うアセットの世界は`measurement_world`が持つ。
 
+mod axis;
 mod axis_cases;
+mod case;
+mod measurement_world;
 mod round_count;
 
+pub(in crate::shadow_probe) use axis::振る軸;
 pub(in crate::shadow_probe) use axis_cases::軸の条件一覧;
+pub(in crate::shadow_probe) use case::{条件の時刻, 計測条件};
+pub(in crate::shadow_probe) use measurement_world::計測世界;
 pub(in crate::shadow_probe) use round_count::決める as 周回数を決める;
-
-/// 1つの条件。名前は表と生値ファイルの見出しになり、起動指定はそのまま`blitz_app`へ渡る。
-pub(in crate::shadow_probe) struct 計測条件 {
-    pub(in crate::shadow_probe) 名前: &'static str,
-    pub(in crate::shadow_probe) 起動指定: &'static [&'static str],
-}
-
-/// 振る軸。1回の実行で1つの軸だけを振り、他は既定へ固定する。
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum 振る軸 {
-    解像度,
-    キャスター,
-    余白,
-    視点,
-}
-
-impl 振る軸 {
-    /// 生値と実行ログの置き場になる軸ごとのディレクトリ名。軸を続けて回しても前の軸の証拠を上書きしない。
-    /// 引数の綴りをそのまま使うのは、実行したコマンドと残った証拠の場所を読み手が1対1で結べるようにするためである。
-    pub(super) fn ディレクトリ名(self) -> &'static str {
-        match self {
-            Self::解像度 => "resolution",
-            Self::キャスター => "casters",
-            Self::余白 => "margin",
-            Self::視点 => "camera",
-        }
-    }
-}
 
 pub(super) struct 実行の指定 {
     pub(super) 軸: 振る軸,
@@ -59,10 +38,10 @@ pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<実行の指定
             "--rounds" => 指定された周回数 = Some(数を読む(語, 残り.next())?),
             "--chunk-instances" => チャンクあたり個体数 = 数を読む(語, 残り.next())?,
             "--time-of-day" => 一日内時刻の秒 = u32::try_from(数を読む(語, 残り.next())?).map_err(|誤り| format!("{誤り}"))?,
-            _ => 軸 = Some(軸を読む(語)?),
+            _ => 軸 = Some(axis::綴りから読む(語)?),
         }
     }
-    let 軸 = 軸.ok_or_else(|| "振る軸を1つ指定する(resolution / casters / margin / camera)".to_string())?;
+    let 軸 = 軸.ok_or_else(|| format!("振る軸を1つ指定する({})", axis::綴りを並べる()))?;
     if 指定された周回数 == Some(0) {
         return Err("--roundsは1以上である必要がある".to_string());
     }
@@ -72,18 +51,6 @@ pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<実行の指定
         チャンクあたり個体数,
         一日内時刻の秒,
     })
-}
-
-fn 軸を読む(語: &str) -> Result<振る軸, String> {
-    match 語 {
-        "resolution" => Ok(振る軸::解像度),
-        "casters" => Ok(振る軸::キャスター),
-        "margin" => Ok(振る軸::余白),
-        "camera" => Ok(振る軸::視点),
-        _ => Err(format!(
-            "知らない軸である({語})。resolution / casters / margin / camera のいずれかを指定する"
-        )),
-    }
 }
 
 fn 数を読む(引数名: &str, 語: Option<&String>) -> Result<usize, String> {

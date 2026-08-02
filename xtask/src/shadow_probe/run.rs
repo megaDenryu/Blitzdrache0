@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use super::parse;
-use super::plan::{実行の指定, 計測条件};
+use super::plan::{実行の指定, 条件の時刻, 計測条件};
 use super::record::一標本;
 
 const 実行ファイル: &str = "target/release/blitz_app.exe";
@@ -41,6 +41,15 @@ pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<一標�
     parse::標本を取り出す(&標準出力, 材料.実行番号, 材料.条件.名前)
 }
 
+/// その実行が使う一日内時刻。太陽高度の軸の条件だけが自分の秒を持ち、他の軸は実行の指定へ従う。
+/// 同じ`--time-of-day`を2回渡して後勝ちに頼らないのは、渡す語の並びを変えただけで条件が変わる形にしないためである。
+fn 一日内時刻の秒(材料: &実行の材料<'_>) -> u32 {
+    match 材料.条件.時刻 {
+        条件の時刻::実行の指定に従う => 材料.指定.一日内時刻の秒,
+        条件の時刻::秒で固定(秒) => 秒,
+    }
+}
+
 fn 引数を作る(材料: &実行の材料<'_>) -> Vec<String> {
     let 固定 = [
         "--scene",
@@ -55,7 +64,7 @@ fn 引数を作る(材料: &実行の材料<'_>) -> Vec<String> {
         "--report-gpu-times",
     ];
     let mut 引数一覧: Vec<String> = 固定.iter().map(|語| (*語).to_string()).collect();
-    引数一覧.extend(["--time-of-day".to_string(), 材料.指定.一日内時刻の秒.to_string()]);
+    引数一覧.extend(["--time-of-day".to_string(), 一日内時刻の秒(材料).to_string()]);
     引数一覧.extend(材料.条件.起動指定.iter().map(|語| (*語).to_string()));
     引数一覧.extend(["--asset-root".to_string(), 材料.アセットルート.display().to_string()]);
     引数一覧.extend(["--shader-source".to_string(), 材料.シェーダー入口.display().to_string()]);

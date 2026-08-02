@@ -1,20 +1,19 @@
 //! ソースアセットを版付き実行時形式へ変換する唯一の公開ツール入口。
 //! 1つの出力ルートは1つのチャンク世界を持つため、世界ごとに出力ルートを分けて順に生成する。
+//! 世界を指す綴りは`world_name`が持つ。
+
+mod world_name;
 
 use std::path::Path;
 use std::process::{Command, ExitCode};
+
+pub use world_name::*;
 
 const 既定ソースルート: &str = "assets";
 const 既定出力ルート: &str = "target/runtime_assets";
 const 地形の既定出力ルート: &str = "target/terrain_assets";
 const 植生の既定出力ルート: &str = "target/vegetation_assets";
 const 見本の集落の既定出力ルート: &str = "target/village_assets";
-
-/// プロセス境界で世界を指す名前。compile_assetsのexampleが同じ綴りを解析する。
-pub const 板の世界: &str = "chunk_world";
-pub const 地形の世界: &str = "terrain_world";
-pub const 植生の世界: &str = "vegetation_world";
-pub const 見本の集落の世界: &str = "village_world";
 
 pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     let 成否 = match 引数一覧 {
@@ -56,11 +55,16 @@ pub fn 生成する(ソースルート: &Path, 出力ルート: &Path, 世界名
     個体数を添えて生成する(ソースルート, 出力ルート, 世界名, None)
 }
 
-/// 地形世界の同居植生を指定の密度で焼く。物量計測が原型・マテリアル・座標を固定したまま密度だけを変えるための入口であり、
-/// 既定の出力ルートと衝突しないよう呼び出し側が専用の出力ルートを渡す。
+/// 地形世界の同居植生を指定の密度で焼く。物量計測が原型・マテリアル・座標を固定したまま密度だけを変えるための入口である。
 pub fn 地形世界を個体数指定で生成する(出力ルート: &Path, 個体数: usize) -> bool {
+    世界を個体数指定で生成する(出力ルート, 地形の世界, 個体数)
+}
+
+/// 地形の目録を持つ世界の同居植生を、指定の密度で焼く。既定の出力ルートと衝突しないよう呼び出し側が専用の出力ルートを渡す。
+/// 頂点診断の世界は代表世界と同じ地面と密度を使うため、世界名だけを差し替えれば条件間で配置が揃う。
+pub fn 世界を個体数指定で生成する(出力ルート: &Path, 世界名: &str, 個体数: usize) -> bool {
     let 個体数 = 個体数.to_string();
-    個体数を添えて生成する(Path::new(既定ソースルート), 出力ルート, 地形の世界, Some(&個体数))
+    個体数を添えて生成する(Path::new(既定ソースルート), 出力ルート, 世界名, Some(&個体数))
 }
 
 fn 個体数を添えて生成する(
