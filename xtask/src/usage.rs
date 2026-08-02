@@ -89,10 +89,10 @@ pub(crate) fn 使い方を表示する() {
     );
     println!("  ow3-dod          原点移動・LOD継ぎ目・半径2ストリーミングを本番経路でまとめて測り、複数LOD画像をPNGへ書き出す");
     println!(
-        "  ow4-bench [チャンクあたり個体数...]  植生の密度だけを変えた25チャンク世界を各3回走らせ、CPU区間・GPU時間・計数・会計・プロセス実測を採る(既定は400・4000・40000体)"
+        "  ow4-bench [チャンクあたり個体数...] [--production-draw] [--time-of-day 秒] [シャドウ計測指定]  植生の密度だけを変えた25チャンク世界を各3回走らせ、CPU区間・GPU時間・計数・会計・プロセス実測を採る(既定は400・4000・40000体)。シャドウ計測指定は--shadow-resolution・--caster-margin・--max-shadow-distance・--shadow-caster-range・--camera-yaw・--camera-nudge・--no-instance-shadow・--no-shadow-casters・--no-instance-lod・--report-caster-distanceであり、そのままblitz_appへ渡る"
     );
     println!(
-        "  shadow-probe <resolution|casters|margin|camera|vertex|sun> [--rounds N] [--chunk-instances N] [--time-of-day 秒]  律速切り分けの計測バッチ。1つの軸の条件を子プロセスとして交互に起動し、距離区分別GPU時間の中央値とp95・投入インデックス数・可視数・その実行の太陽高度と方位を条件ごとにまとめて出す(判定はしない。周回数は条件数の倍数へ切り上げる。生値と実行ログは軸ごとにtarget/shadow_probe/<軸名>/へ残す。vertexは外形と配置を固定して原型のトポロジー量だけを変えた診断世界の対、sunは南中対称の時刻3対6条件で、均衡を保つ最小は既定の6周回36実行である)"
+        "  shadow-probe <resolution|casters|margin|camera|vertex|sun|distance|range> [--rounds N] [--chunk-instances N] [--time-of-day 秒]  律速切り分けの計測バッチ。1つの軸の条件を子プロセスとして交互に起動し、距離区分別GPU時間の中央値とp95・投入インデックス数・可視数・その実行の太陽高度と方位を条件ごとにまとめて出す(判定はしない。周回数は条件数の倍数へ切り上げる。生値と実行ログは軸ごとにtarget/shadow_probe/<軸名>/へ残す。vertexは外形と配置を固定して原型のトポロジー量だけを変えた診断世界の対、sunは南中対称の時刻3対6条件で、均衡を保つ最小は既定の6周回36実行である。distanceは最大影距離を300・225・200・175メートルへ振る4条件、rangeは影の視距離を切断なし・225・200・175メートルへ振る4条件であり、どちらの水準もキャスター距離分布から導いた)"
     );
     println!(
         "  streaming-bench [フレーム数]  固定経路でチャンクを読み込みながら、予算を十分に取った反復のRAM・VRAM推移と、縮退させた読込・解除順の再現を測る"
