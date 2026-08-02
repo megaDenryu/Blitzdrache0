@@ -89,6 +89,9 @@ pub(crate) fn 使い方を表示する() {
         "  ow4-bench [チャンクあたり個体数...]  植生の密度だけを変えた25チャンク世界を各3回走らせ、CPU区間・GPU時間・計数・会計・プロセス実測を採る(既定は400・4000・40000体)"
     );
     println!(
+        "  shadow-probe <resolution|casters|margin|camera> [--rounds N] [--chunk-instances N] [--time-of-day 秒]  律速切り分けの計測バッチ。1つの軸の条件を子プロセスとして交互に起動し、距離区分別GPU時間の中央値とp95・投入インデックス数・可視数を条件ごとにまとめて出す(判定はしない。生値はtarget/shadow_probe/raw.tsv)"
+    );
+    println!(
         "  streaming-bench [フレーム数]  固定経路でチャンクを読み込みながら、予算を十分に取った反復のRAM・VRAM推移と、縮退させた読込・解除順の再現を測る"
     );
 }

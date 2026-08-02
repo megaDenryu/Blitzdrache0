@@ -41,6 +41,7 @@ mod raw_png;
 mod release_build;
 mod report_parse;
 mod shader_copy;
+mod shadow_probe;
 mod sky_draw;
 mod sky_lut;
 mod sky_state;
