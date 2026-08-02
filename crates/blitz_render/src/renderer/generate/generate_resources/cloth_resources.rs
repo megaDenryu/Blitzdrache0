@@ -7,6 +7,7 @@ use crate::cloth_material::布素材;
 use crate::cloth_shader_set::布シェーダー一式;
 use crate::error::レンダラーエラー;
 use crate::vulkan;
+use crate::vulkan::descriptor::シーンセットレイアウト一式;
 use crate::vulkan::skinning::スキニング一式;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
@@ -17,7 +18,7 @@ pub(super) fn 組み立てる(
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &転送実行環境,
     シーンカラー形式: vk::Format,
-    シーンディスクリプタlayout: vk::DescriptorSetLayout,
+    セットレイアウト: &シーンセットレイアウト一式,
     布: Option<&布素材>,
     シェーダー: &布シェーダー一式,
     スキニング: Option<&スキニング一式>,
@@ -48,7 +49,7 @@ pub(super) fn 組み立てる(
         メモリプロパティ,
         転送環境,
         シーンカラー形式,
-        シーンディスクリプタlayout,
+        セットレイアウト,
         素材,
         シェーダー,
         スキン済みbuffer,

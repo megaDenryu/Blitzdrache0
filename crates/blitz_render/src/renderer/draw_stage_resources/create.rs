@@ -12,8 +12,8 @@ use crate::error::レンダラーエラー;
 use crate::frame_composition::フレーム構成;
 use crate::shader_bundle::シェーダー束;
 use crate::vulkan;
+use crate::vulkan::descriptor::シーンセットレイアウト一式;
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::uniform::フレームシェーダー定数一式;
 
 /// 器を組み立てるのに要る材料一式。
 pub(in crate::renderer) struct 生成要求<'a> {
@@ -22,10 +22,7 @@ pub(in crate::renderer) struct 生成要求<'a> {
     /// シーン段階の色アタッチメントの形式(ポスト処理があればHDR中間画像、無ければスワップチェーン)。
     /// 影段階は深度だけへ書くため色形式を要らない。
     pub(in crate::renderer) シーンカラー形式: vk::Format,
-    pub(in crate::renderer) ディスクリプタlayout: vk::DescriptorSetLayout,
-    /// 布専用シャドウ経路のディスクリプタが結ぶ多段影定数の持ち主。
-    /// 描画対象のディスクリプタセットを借りずに束縛先を作るため、この段でバッファを受け取る。
-    pub(in crate::renderer) シェーダー定数: &'a フレームシェーダー定数一式,
+    pub(in crate::renderer) セットレイアウト: &'a シーンセットレイアウト一式,
     pub(in crate::renderer) シェーダー: &'a シェーダー束,
     pub(in crate::renderer) 構成: フレーム構成,
 }
@@ -36,10 +33,11 @@ pub(super) fn 生成する(要求: 生成要求<'_>) -> Result<描画段階資�
         device,
         要求.シーンカラー形式,
         vulkan::depth::深度形式,
-        要求.ディスクリプタlayout,
+        &要求.セットレイアウト.シーンの並び(),
         &要求.シェーダー.シーン,
     )?;
-    let シャドウ = match vulkan::pipeline::シャドウパイプライン::生成する(device, 要求.ディスクリプタlayout, &要求.シェーダー.シャドウ)
+    let シャドウの並び = 要求.セットレイアウト.シャドウの並び();
+    let シャドウ = match vulkan::pipeline::シャドウパイプライン::生成する(device, &シャドウの並び, &要求.シェーダー.シャドウ)
     {
         Ok(シャドウ) => シャドウ,
         Err(誤り) => {

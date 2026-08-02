@@ -10,12 +10,15 @@ use crate::error::レンダラーエラー;
 use crate::render_scene_material::描画シーン素材;
 use crate::renderer::scene_draw_resources::{シーン描画資源, シーン描画資源生成要求};
 use crate::vulkan;
+use crate::vulkan::descriptor::{シーンセットレイアウト一式, 共有ディスクリプタセット};
 use crate::vulkan::gpu_environment::GPU環境;
 
 pub(super) struct 基礎資源 {
     pub(super) シャドウマップ: vulkan::shadow_map::シャドウマップ,
     pub(super) 転送環境: vulkan::transfer::転送実行環境,
     pub(super) シェーダー定数: vulkan::uniform::フレームシェーダー定数一式,
+    pub(super) セットレイアウト: シーンセットレイアウト一式,
+    pub(super) 共有ディスクリプタ: 共有ディスクリプタセット,
     pub(super) シーン描画資源: シーン描画資源,
     pub(super) 材質資源表: vulkan::material_table::材質資源表,
 }
@@ -33,8 +36,7 @@ pub(super) fn 組み立てる(
             物理デバイス問い合わせ: 環境.物理デバイス問い合わせ(),
             メモリプロパティ,
             転送環境: &共有.転送,
-            シェーダー定数: &共有.シェーダー定数,
-            シャドウマップ: &共有.シャドウ,
+            セットレイアウト: &共有.セットレイアウト,
             描画シーン,
         },
     ) {
@@ -64,6 +66,8 @@ pub(super) fn 組み立てる(
         シャドウマップ: 共有.シャドウ,
         転送環境: 共有.転送,
         シェーダー定数: 共有.シェーダー定数,
+        セットレイアウト: 共有.セットレイアウト,
+        共有ディスクリプタ: 共有.共有ディスクリプタ,
         シーン描画資源: 束,
         材質資源表,
     })

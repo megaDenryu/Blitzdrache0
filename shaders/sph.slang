@@ -10,8 +10,8 @@ struct Particle
     float4 velocityCount;
 };
 
-[[vk::binding(0, 0)]] RWStructuredBuffer<Particle> particlesRW;
-[[vk::binding(0, 0)]] StructuredBuffer<Particle> particlesRO;
+[[vk::binding(3, 0)]] RWStructuredBuffer<Particle> particlesRW;
+[[vk::binding(3, 0)]] StructuredBuffer<Particle> particlesRO;
 
 static const float DELTA_TIME = 1.0 / 120.0;
 static const float SMOOTHING_RADIUS = 0.24;

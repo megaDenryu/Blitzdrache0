@@ -16,5 +16,5 @@ struct CascadeShadowUniform
     float4 shadowFlagsAndTexelSize;
 };
 
-[[vk::binding(8, 0)]]
+[[vk::binding(1, 0)]]
 ConstantBuffer<CascadeShadowUniform> cascadeShadowUniform;

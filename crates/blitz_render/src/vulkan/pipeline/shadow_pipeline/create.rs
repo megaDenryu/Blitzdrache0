@@ -11,7 +11,7 @@ use crate::vulkan::shader_module;
 
 pub(super) fn 生成する(
     device: &ash::Device,
-    ディスクリプタlayout: vk::DescriptorSetLayout,
+    ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
     シェーダー: &シェーダー一式,
 ) -> Result<シャドウパイプライン, レンダラーエラー> {
     let 頂点モジュール = shader_module::生成する(device, シェーダー.頂点コード())?;
@@ -24,7 +24,7 @@ pub(super) fn 生成する(
         }
     };
 
-    let 結果 = assemble::組み立てる(device, ディスクリプタlayout, 頂点モジュール, 画素段モジュール);
+    let 結果 = assemble::組み立てる(device, ディスクリプタlayout一覧, 頂点モジュール, 画素段モジュール);
 
     // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
     unsafe {

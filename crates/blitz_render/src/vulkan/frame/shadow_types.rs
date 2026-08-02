@@ -8,8 +8,9 @@ use crate::cascade::{距離区分数, 距離区分番号};
 use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 
 /// シャドウパス(判断35)の距離区分1つぶんの1発行の入力。シーンパスと同じ
-/// 頂点/インデックスバッファ・ディスクリプタセットを、シャドウ専用の
+/// 頂点/インデックスバッファ・ジオメトリのセットを、シャドウ専用の
 /// パイプライン/layoutで束ね直すだけのため`ジオメトリ入力`とは別型にする。
+/// 材質のセットも照明問い合わせのセットも読まないため持たない。
 pub(crate) struct シャドウ描画入力 {
     pub(crate) pipeline: vk::Pipeline,
     pub(crate) layout: vk::PipelineLayout,
@@ -24,7 +25,7 @@ pub(crate) struct シャドウ描画入力 {
     pub(crate) インスタンス数: u32,
     /// 可視ID列のうちこの発行が読み始める位置。その距離区分の区間の中のこの段の開始である。
     pub(crate) 先頭インスタンス: u32,
-    pub(crate) ディスクリプタセット: vk::DescriptorSet,
+    pub(crate) ジオメトリセット: vk::DescriptorSet,
     pub(crate) 相対の基準原点: カメラ相対の基準原点,
 }
 

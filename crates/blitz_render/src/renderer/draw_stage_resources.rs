@@ -18,7 +18,6 @@ pub(super) use create::生成要求;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan;
-use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct 描画段階資源 {
@@ -54,11 +53,8 @@ impl 描画段階資源 {
     }
 
     /// 布をシャドウパスへ記録するときの束縛先。布無しの構成では`None`を返し、布一式との有無の食い違いを呼び出し元が失敗させる。
-    pub(super) fn 布シャドウ描画入力を作る(
-        &self,
-        フレーム添字: フレームスロット添字,
-    ) -> Option<vulkan::frame::布シャドウ描画入力> {
-        self.布シャドウ.as_ref().map(|布シャドウ| 布シャドウ.描画入力を作る(フレーム添字))
+    pub(super) fn 布シャドウ描画入力を作る(&self) -> Option<vulkan::frame::布シャドウ描画入力> {
+        self.布シャドウ.as_ref().map(vulkan::cloth_shadow::布シャドウ資源::描画入力を作る)
     }
 
     /// ホットリロードでシーンのパイプラインだけを入れ替える。

@@ -1,11 +1,14 @@
 //! シャドウパスの複数対象と布の描画コマンド記録。
 //! 通常の描画対象と布はパイプラインが別のため、対象の記録をひとまとめに済ませてから布のパイプラインへ切り替える。
+//! どちらの局面もビューとパスのセット(set0)を自分のパイプラインレイアウトで結び直す。パイプラインレイアウトが違うと
+//! 束縛が無効になるためである。照明問い合わせのセットはシャドウ記録のレイアウトが宣言しないため結ばない。
 
 use ash::vk;
 
 use super::scene_pass::布ドロー;
 use crate::cascade::距離区分番号;
-use crate::vulkan::frame::シャドウ描画入力;
+use crate::vulkan::frame::shared_set_bind;
+use crate::vulkan::frame::{シャドウ描画入力, 共有セット束縛};
 use crate::vulkan::shadow_map::シャドウマップ一辺;
 use crate::vulkan::shadow_push;
 
@@ -15,6 +18,7 @@ pub(super) fn 記録する(
     番号: 距離区分番号,
     入力一覧: &[シャドウ描画入力],
     布ドロー: Option<布ドロー<'_>>,
+    共有: 共有セット束縛,
 ) {
     if 入力一覧.is_empty() && 布ドロー.is_none() {
         // その距離区分へ影を落とす対象も布も無いフレーム。全個体がその距離区分のライト視錐台の外にある状態で実際に起こる。
@@ -30,35 +34,35 @@ pub(super) fn 記録する(
             height: シャドウマップ一辺,
         },
     };
-    // 安全性: command_bufferは記録中で、全入力のパイプライン・バッファ・ディスクリプタセットは生成済み。
-    // ビューポートとシザーはどちらのパイプラインも動的宣言のため、パイプラインの切り替えで失われない。
+    // 安全性: command_bufferは記録中であり、ビューポートとシザーはどちらのパイプラインも動的宣言のため、
+    // パイプラインの切り替えで失われない。
     unsafe {
         device.cmd_set_viewport(command_buffer, 0, &[viewport]);
         device.cmd_set_scissor(command_buffer, 0, &[シザー]);
-        if let Some(先頭) = 入力一覧.first() {
-            device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 先頭.pipeline);
-            for 入力 in 入力一覧 {
-                対象を記録する(device, command_buffer, 番号, 入力);
-            }
+    }
+    if let Some(先頭) = 入力一覧.first() {
+        // 安全性: command_bufferは記録中で、pipelineは生成済み。
+        unsafe { device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 先頭.pipeline) };
+        shared_set_bind::ビューとパスのセットを束縛する(device, command_buffer, 先頭.layout, 共有);
+        for 入力 in 入力一覧 {
+            対象を記録する(device, command_buffer, 番号, 入力);
         }
-        if let Some(布) = 布ドロー {
-            布を記録する(device, command_buffer, 番号, 布);
-        }
+    }
+    if let Some(布) = 布ドロー {
+        布を記録する(device, command_buffer, 番号, 布, 共有);
     }
 }
 
-unsafe fn 対象を記録する(
-    device: &ash::Device, command_buffer: vk::CommandBuffer, 番号: 距離区分番号, 入力: &シャドウ描画入力
-) {
-    // 安全性: 呼び出し元がコマンド記録中と全入力資源の有効性を保証する。
+fn 対象を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 番号: 距離区分番号, 入力: &シャドウ描画入力) {
+    // 安全性: command_bufferは記録中で、入力のバッファとディスクリプタセットは生成済み。
     unsafe {
         shadow_push::積む(device, command_buffer, 入力.layout, 入力.相対の基準原点, 番号);
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,
             入力.layout,
-            0,
-            &[入力.ディスクリプタセット],
+            shared_set_bind::ジオメトリのセット番号,
+            &[入力.ジオメトリセット],
             &[],
         );
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &[0]);
@@ -74,22 +78,20 @@ unsafe fn 対象を記録する(
     }
 }
 
-/// 布は専用のシャドウパイプラインとディスクリプタセットを束縛する。どちらも描画対象から借りないため、
+/// 布は専用のシャドウパイプラインを束縛し、ジオメトリのセットを読まない。パイプラインもセットも描画対象から借りないため、
 /// 描画対象が1件も無いフレームでも、走査順が入れ替わったフレームでも、布の影は同じ位置に出る。
-unsafe fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 番号: 距離区分番号, 布: 布ドロー<'_>) {
+fn 布を記録する(
+    device: &ash::Device, command_buffer: vk::CommandBuffer, 番号: 距離区分番号, 布: 布ドロー<'_>, 共有: 共有セット束縛
+) {
     let シャドウ = &布.入力.外部資源.シャドウ;
-    // 安全性: 呼び出し元がコマンド記録中と全入力資源の有効性を保証する。
+    // 安全性: command_bufferは記録中で、布のパイプラインは生成済み。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, シャドウ.pipeline);
         shadow_push::積む(device, command_buffer, シャドウ.layout, 布.入力.相対の基準原点, 番号);
-        device.cmd_bind_descriptor_sets(
-            command_buffer,
-            vk::PipelineBindPoint::GRAPHICS,
-            シャドウ.layout,
-            0,
-            &[シャドウ.ディスクリプタセット],
-            &[],
-        );
+    }
+    shared_set_bind::ビューとパスのセットを束縛する(device, command_buffer, シャドウ.layout, 共有);
+    // 安全性: command_bufferは記録中で、布の頂点・インデックスバッファは生成済み。
+    unsafe {
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[布.入力.布頂点バッファ], &[0]);
         device.cmd_bind_index_buffer(command_buffer, 布.入力.インデックスバッファ, 0, vk::IndexType::UINT32);
         device.cmd_draw_indexed(command_buffer, 布.入力.インデックス数, 1, 0, 0, 0);

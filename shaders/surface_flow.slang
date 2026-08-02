@@ -11,9 +11,9 @@ struct SurfaceCell
     float4 reserved;
 };
 
-[[vk::binding(0, 0)]]
+[[vk::binding(3, 0)]]
 RWStructuredBuffer<SurfaceCell> cellsRW;
-[[vk::binding(0, 0)]]
+[[vk::binding(3, 0)]]
 StructuredBuffer<SurfaceCell> cellsRO;
 
 static const uint GRID_SIZE = 128;

@@ -1,12 +1,16 @@
 //! パイプラインのバインドと動的ビューポート/シザー設定、
 //! 頂点/インデックスバッファのバインドとインデックス描画。1回の発行で描く個体の数は入力が持ち、群×段×プリミティブごとに1回だけ発行する
 //! (参照: `_doc/設計/植生インスタンスと物量計測.md`「描画発行」、`_doc/設計/マルチマテリアルと材質境界.md`「可視ID列の契約」)。
-//! ビュー射影行列等はフレームシェーダー定数バッファ(ディスクリプタセット)経由で渡す(判断24)。
+//! ビュー射影行列等はビューとパスのセット(set0)経由で渡す(判断24)。
 //! 描画ごとに変わるカメラ相対の基準原点と材質レコード添字だけをプッシュ定数で積む(参照: `vulkan::scene_draw_constants`)。
+//!
+//! 注意: set0とset3はパイプラインを束縛した直後に1回だけ結び、発行ごとにはset1とset2だけを結ぶ。
+//! 発行の数で増える束縛をこの2つに限ることが、材質/プリミティブ数に比例した束縛を作らない根拠である。
 
 use ash::vk;
 
-use super::ジオメトリ入力;
+use super::shared_set_bind;
+use super::{ジオメトリ入力, 共有セット束縛};
 use crate::vulkan::scene_draw_constants;
 
 pub(super) fn 描画コマンドを積む(
@@ -15,6 +19,7 @@ pub(super) fn 描画コマンドを積む(
     pipeline: vk::Pipeline,
     寸法: vk::Extent2D,
     ジオメトリ一覧: &[ジオメトリ入力],
+    共有: 共有セット束縛,
 ) {
     let viewport = vk::Viewport::default()
         .x(0.0)
@@ -36,14 +41,17 @@ pub(super) fn 描画コマンドを積む(
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, pipeline);
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
         device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
+        if let Some(先頭) = ジオメトリ一覧.first() {
+            shared_set_bind::共有セットを束縛する(device, command_buffer, 先頭.layout, 共有);
+        }
         for 入力 in ジオメトリ一覧 {
             scene_draw_constants::積む(device, command_buffer, 入力.layout, 入力.描画定数);
             device.cmd_bind_descriptor_sets(
                 command_buffer,
                 vk::PipelineBindPoint::GRAPHICS,
                 入力.layout,
-                0,
-                &[入力.ディスクリプタセット],
+                shared_set_bind::ジオメトリのセット番号,
+                &[入力.ジオメトリセット, 入力.材質セット],
                 &[],
             );
             device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &開始位置一覧);

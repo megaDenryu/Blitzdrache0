@@ -1,17 +1,21 @@
-//! シーン描画とシャドウ描画が使うディスクリプタ: binding0-2=combined image sampler×3、
-//! binding3=ビュー・シーンパス定数(判断21・判断24)、binding4=シャドウマップの比較サンプラー(判断35)、
-//! binding5=材質レコードのストレージバッファ、binding6=個体変換のストレージバッファ、binding7=可視ID列のストレージバッファ、
-//! binding8=多段影定数、binding9=空パス定数。
-//! レイアウトは全描画対象で同一のため1つを共有し、セットは描画対象の束ごとに専用プールから
-//! 描画対象数×進行中フレーム数だけ割り当てる。プールを束ごとに分けることで、束の解除が
-//! プール1つの破棄で完結し、ディスクリプタセット添字が束の内側に閉じる。
+//! scene系パイプライン族が束縛する4セットのディスクリプタ。set0=ビューとパス(定数3本)、set1=ジオメトリと可視
+//! (個体レコード・可視ID列)、set2=材質(材質レコード・テクスチャ)、set3=照明問い合わせ(シャドウマップ)である。
+//! 番号と役割の契約は`_doc/設計/GPU資源束縛の分離と索引化.md`「束縛頻度による4セット」が正本であり、
+//! 各セットのバインディング番号はその役割のモジュールが持つ。
+//!
+//! set0とset3は描画対象で変わらないため`shared_sets`が1組だけ持ち、set1とset2は束ごとに`object_sets`が持つ。
+//! レイアウトは束をまたいで同一のため`scene_set_layouts`が1つだけ所有する。
 
-mod buffer_binding;
-mod layout;
+mod alloc;
+mod empty_set;
+mod geometry_set;
+mod lighting_set;
+mod material_set;
 mod object_sets;
-mod pool;
-mod set;
-mod shadow_binding;
+mod scene_set_layouts;
+mod shared_sets;
+mod view_pass_set;
 
-pub(crate) use layout::ディスクリプタレイアウト;
-pub(crate) use object_sets::{描画対象ディスクリプタプール, 描画対象ディスクリプタ参照};
+pub(crate) use object_sets::{ジオメトリセット参照, 描画対象ディスクリプタプール, 材質セット参照};
+pub(crate) use scene_set_layouts::シーンセットレイアウト一式;
+pub(crate) use shared_sets::{共有セット束縛, 共有ディスクリプタセット};

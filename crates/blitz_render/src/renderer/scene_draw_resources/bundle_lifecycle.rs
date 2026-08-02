@@ -6,7 +6,7 @@
 //! したがって`進行中フレーム数`回の`破棄待ちを一フレーム進める`を経てから破棄する。
 
 use super::chunk_draw_resources::チャンク描画資源;
-use super::create::{束追加材料, 生成材料を作る};
+use super::create::束追加材料;
 use super::シーン描画資源;
 use crate::draw_bundle_id::描画束ID;
 use crate::error::レンダラーエラー;
@@ -47,7 +47,7 @@ impl シーン描画資源 {
             "同じ束ID{}を解除せずに二重追加した",
             id.番号を返す()
         );
-        let 束 = チャンク描画資源::生成する(device, 生成材料を作る(&材料, &self.レイアウト), id, 描画対象一覧)?;
+        let 束 = チャンク描画資源::生成する(device, 材料, id, 描画対象一覧)?;
         self.チャンク一覧.push(束);
         Ok(())
     }

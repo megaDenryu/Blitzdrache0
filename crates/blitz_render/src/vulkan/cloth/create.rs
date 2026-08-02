@@ -16,7 +16,7 @@ pub(crate) fn 生成する(
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &転送実行環境,
     シーンカラー形式: vk::Format,
-    シーンディスクリプタlayout: vk::DescriptorSetLayout,
+    セットレイアウト: &crate::vulkan::descriptor::シーンセットレイアウト一式,
     素材: &布素材,
     シェーダー: &布シェーダー一式,
     スキン済み頂点buffer: Option<vk::Buffer>,
@@ -42,7 +42,7 @@ pub(crate) fn 生成する(
         device,
         シーンカラー形式,
         crate::vulkan::depth::深度形式,
-        シーンディスクリプタlayout,
+        &セットレイアウト.布描画の並び(),
         &シェーダー.描画,
     ) {
         Ok(一式) => 一式,

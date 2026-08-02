@@ -9,6 +9,7 @@ use crate::shader_bundle::シェーダー束;
 use crate::skin_mesh::スキンメッシュ素材;
 use crate::vertex::頂点;
 use crate::vulkan;
+use crate::vulkan::descriptor::シーンセットレイアウト一式;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
@@ -20,7 +21,7 @@ pub(super) fn 組み立てる(
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &転送実行環境,
     シーンカラー形式: vk::Format,
-    シーンディスクリプタlayout: vk::DescriptorSetLayout,
+    セットレイアウト: &シーンセットレイアウト一式,
     頂点一覧: &[頂点],
     スキン: Option<&スキンメッシュ素材>,
     布: Option<&布素材>,
@@ -36,7 +37,7 @@ pub(super) fn 組み立てる(
         メモリプロパティ,
         転送環境,
         シーンカラー形式,
-        シーンディスクリプタlayout,
+        セットレイアウト,
         布,
         &シェーダー.布,
         スキニング.as_ref(),

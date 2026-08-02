@@ -1,6 +1,6 @@
 // M9: 布の描画(判断54)。両面ランバート+方向光の多段シャドウの最小シェーダー。
-// ディスクリプタはシーンと同じセット(binding3=ビュー・シーンパス定数、binding4=シャドウマップ、binding8=多段影定数)を
-// 束縛し、PBRテクスチャ(binding0〜2)は読まない。頂点レイアウトはscene.slangと同じ48バイト。
+// 束縛するのはビューとパスのセット(set0のビュー・シーンパス定数と多段影定数)と照明問い合わせのセット(set3のシャドウマップ)だけであり、
+// ジオメトリのセットも材質のセットも読まない。頂点レイアウトはscene.slangと同じ48バイト。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 import cascade_shadow;
@@ -8,8 +8,8 @@ import cascade_shadow_uniform;
 import relative_anchor;
 import view_pass_uniform;
 
-[[vk::binding(4, 0)]] [[vk::combinedImageSampler]] Texture2DArray shadowMapTexture;
-[[vk::binding(4, 0)]] [[vk::combinedImageSampler]] SamplerComparisonState shadowMapSampler;
+[[vk::binding(0, 3)]] [[vk::combinedImageSampler]] Texture2DArray shadowMapTexture;
+[[vk::binding(0, 3)]] [[vk::combinedImageSampler]] SamplerComparisonState shadowMapSampler;
 
 static const float3 clothColor = float3(0.55, 0.1, 0.12);
 

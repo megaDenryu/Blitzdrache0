@@ -20,7 +20,7 @@ const 深度バイアス傾き項: f32 = 1.75;
 
 pub(super) fn 組み立てる(
     device: &ash::Device,
-    ディスクリプタlayout: vk::DescriptorSetLayout,
+    ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
     頂点モジュール: vk::ShaderModule,
     画素段モジュール: vk::ShaderModule,
 ) -> Result<シャドウパイプライン, レンダラーエラー> {
@@ -62,14 +62,11 @@ pub(super) fn 組み立てる(
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
-    // 注意: シーンのディスクリプタセットレイアウトをそのまま再利用する
-    // (シャドウパスが使うのはbinding8の多段影定数のみだが、同一の
-    // vk::DescriptorSetLayoutハンドルを使うことでシーン描画と同じディスクリプタ
-    // セットをそのまま束縛できる。新規ディスクリプタ一式を作らない設計判断)。
-    let ディスクリプタlayout一覧 = [ディスクリプタlayout];
+    // 注意: シーン描画と同じビューとパスのセットとジオメトリのセットのレイアウトを受け取る。同じハンドルであることが、
+    // シーンパスで束縛したセットをシャドウパスがそのまま束縛できる根拠である。
     let プッシュ定数範囲一覧 = [shadow_push::プッシュ定数範囲()];
     let layout_create_info = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(&ディスクリプタlayout一覧)
+        .set_layouts(ディスクリプタlayout一覧)
         .push_constant_ranges(&プッシュ定数範囲一覧);
     // 安全性: deviceは生成済みで有効。layout_create_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };

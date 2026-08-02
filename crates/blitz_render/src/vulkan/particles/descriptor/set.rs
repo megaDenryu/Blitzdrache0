@@ -30,14 +30,14 @@ pub(super) fn 書き込む(device: &ash::Device, set: vk::DescriptorSet, 粒子�
             .dst_set(set)
             .dst_binding(0)
             .dst_array_element(0)
-            .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
-            .buffer_info(&粒子バッファ情報),
+            .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
+            .buffer_info(&uniform情報),
         vk::WriteDescriptorSet::default()
             .dst_set(set)
             .dst_binding(3)
             .dst_array_element(0)
-            .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
-            .buffer_info(&uniform情報),
+            .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
+            .buffer_info(&粒子バッファ情報),
     ];
     // 安全性: setは割当済み、粒子バッファ・uniformは生成済みで有効。
     unsafe { device.update_descriptor_sets(&書き込み一覧, &[]) };

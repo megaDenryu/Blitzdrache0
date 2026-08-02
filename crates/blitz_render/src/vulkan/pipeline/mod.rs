@@ -25,21 +25,21 @@ pub(crate) struct パイプライン {
 }
 
 impl パイプライン {
-    /// `カラー形式` はスワップチェーンの、`深度形式` は深度バッファの
-    /// dynamic renderingの出力形式。`ディスクリプタlayout` はベースカラーテクスチャの
-    /// combined image sampler(判断21)。
+    /// `カラー形式` はスワップチェーンの、`深度形式` は深度バッファの dynamic renderingの出力形式である。
+    /// `ディスクリプタlayout一覧` はset0から順に並べたレイアウトであり、シーンはビューとパス・ジオメトリ・材質・
+    /// 照明問い合わせの4つを持つ(参照: `vulkan::descriptor`)。
     pub(crate) fn 生成する(
         device: &ash::Device,
         カラー形式: vk::Format,
         深度形式: vk::Format,
-        ディスクリプタlayout: vk::DescriptorSetLayout,
+        ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
         create::生成する(
             device,
             カラー形式,
             深度形式,
-            ディスクリプタlayout,
+            ディスクリプタlayout一覧,
             シェーダー,
             graphics_pipeline::頂点属性選択::全属性,
             scene_draw_constants::プッシュ定数範囲(),
@@ -47,18 +47,19 @@ impl パイプライン {
     }
 
     /// 布描画用の変種(判断54): 接線を宣言しない3属性の頂点入力で生成する。
+    /// `ディスクリプタlayout一覧`のset1とset2は、布が読まない役割を表す空のレイアウトである。
     pub(crate) fn 布用に生成する(
         device: &ash::Device,
         カラー形式: vk::Format,
         深度形式: vk::Format,
-        ディスクリプタlayout: vk::DescriptorSetLayout,
+        ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
         create::生成する(
             device,
             カラー形式,
             深度形式,
-            ディスクリプタlayout,
+            ディスクリプタlayout一覧,
             シェーダー,
             graphics_pipeline::頂点属性選択::布用,
             relative_anchor::プッシュ定数範囲(),

@@ -23,12 +23,12 @@ impl 空中遠近合成資源 {
     pub(super) fn 生成する(
         device: &ash::Device,
         カラー形式: vk::Format,
-        シーンlayout: vk::DescriptorSetLayout,
+        ビューとパスlayout: vk::DescriptorSetLayout,
         束縛先: &空中遠近合成の束縛先,
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
         let ディスクリプタ = 空中遠近合成ディスクリプタ::生成する(device, 束縛先)?;
-        let layout一覧 = [シーンlayout, ディスクリプタ.layout];
+        let layout一覧 = [ビューとパスlayout, ディスクリプタ.layout];
         match 空中遠近合成パイプライン::生成する(device, カラー形式, &layout一覧, シェーダー) {
             Ok(パイプライン) => Ok(Self {
                 パイプライン,

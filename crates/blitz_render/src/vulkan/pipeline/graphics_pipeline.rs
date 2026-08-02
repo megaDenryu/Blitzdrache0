@@ -24,7 +24,7 @@ pub(super) fn 組み立てる(
     device: &ash::Device,
     カラー形式: vk::Format,
     深度形式: vk::Format,
-    ディスクリプタlayout: vk::DescriptorSetLayout,
+    ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
     頂点モジュール: vk::ShaderModule,
     画素段モジュール: vk::ShaderModule,
     属性選択: 頂点属性選択,
@@ -62,13 +62,12 @@ pub(super) fn 組み立てる(
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
-    // 注意: フレーム共通の定数(ビュー射影行列等)はbinding3のビュー・シーンパス定数と、binding8の多段影定数の経由で渡す(判断24)。
+    // 注意: フレーム共通の定数(ビュー射影行列等)はset0のビューとパスのセットの経由で渡す(判断24)。
     // プッシュ定数は描画ごとに変わる値だけが使う。範囲を呼び出し元から受けるのは、シーンが描画定数16バイトを
     // (参照: `vulkan::scene_draw_constants`)、布がカメラ相対の基準原点16バイトを(参照: `vulkan::relative_anchor`)読むためである。
-    let ディスクリプタlayout一覧 = [ディスクリプタlayout];
     let プッシュ定数範囲一覧 = [プッシュ定数範囲];
     let layout_create_info = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(&ディスクリプタlayout一覧)
+        .set_layouts(ディスクリプタlayout一覧)
         .push_constant_ranges(&プッシュ定数範囲一覧);
     // 安全性: deviceは生成済みで有効。layout_create_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };

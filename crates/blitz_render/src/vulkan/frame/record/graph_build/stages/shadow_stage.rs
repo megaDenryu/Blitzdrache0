@@ -6,7 +6,7 @@ use ash::vk;
 use super::super::base_images::基本画像ハンドル;
 use crate::cascade::{距離区分数, 距離区分番号};
 use crate::vulkan::frame::record::{scene_pass, shadow_pass};
-use crate::vulkan::frame::距離区分別のシャドウ入力;
+use crate::vulkan::frame::{共有セット束縛, 距離区分別のシャドウ入力};
 use crate::vulkan::graph;
 
 /// 距離区分ごとに1回ずつパスを積み、その距離区分のライト視錐台が通した候補だけを渡す(第6段の距離区分別の可視個体の選別)。
@@ -17,6 +17,7 @@ pub(in crate::vulkan::frame::record::graph_build) fn 影を積む<'a>(
     スキン済み: Option<graph::バッファハンドル>,
     布: Option<scene_pass::布ドロー<'a>>,
     入力: 距離区分別のシャドウ入力<'a>,
+    共有: 共有セット束縛,
 ) {
     for 番号 in 距離区分番号::全距離区分() {
         グラフ.パスを積む(shadow_pass::作る(
@@ -26,6 +27,7 @@ pub(in crate::vulkan::frame::record::graph_build) fn 影を積む<'a>(
             スキン済み,
             布,
             入力.距離区分(番号),
+            共有,
         ));
     }
 }

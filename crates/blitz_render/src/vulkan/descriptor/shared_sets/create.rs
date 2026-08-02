@@ -1,0 +1,74 @@
+//! 共有ディスクリプタセットを確保して内容を結ぶ局面。呼ばれるのはレンダラー生成時の1度だけであり、
+//! 以降のフレームは参照しかしない。途中で失敗したらプールをその場で破棄する。
+
+use ash::vk;
+
+use super::共有ディスクリプタセット;
+use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor::{alloc, lighting_set, view_pass_set, シーンセットレイアウト一式};
+use crate::vulkan::shadow_map::シャドウマップ;
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
+use crate::vulkan::uniform::フレームシェーダー定数一式;
+
+pub(super) fn 生成する(
+    device: &ash::Device,
+    レイアウト: &シーンセットレイアウト一式,
+    シェーダー定数: &フレームシェーダー定数一式,
+    シャドウマップ: &シャドウマップ,
+) -> Result<共有ディスクリプタセット, レンダラーエラー> {
+    let pool = プールを生成する(device)?;
+    match 割り当てて結ぶ(device, pool, レイアウト, シェーダー定数, シャドウマップ) {
+        Ok((ビューとパス一覧, 照明問い合わせ)) => Ok(共有ディスクリプタセット {
+            pool,
+            ビューとパス一覧,
+            照明問い合わせ,
+        }),
+        Err(誤り) => {
+            // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
+            unsafe { device.destroy_descriptor_pool(pool, None) };
+            Err(誤り)
+        }
+    }
+}
+
+#[allow(clippy::type_complexity)]
+fn 割り当てて結ぶ(
+    device: &ash::Device,
+    pool: vk::DescriptorPool,
+    レイアウト: &シーンセットレイアウト一式,
+    シェーダー定数: &フレームシェーダー定数一式,
+    シャドウマップ: &シャドウマップ,
+) -> Result<([vk::DescriptorSet; 進行中フレーム数], vk::DescriptorSet), レンダラーエラー> {
+    let ビューとパス一覧 = alloc::割り当てる(device, pool, レイアウト.ビューとパス(), 進行中フレーム数)?;
+    let ビューとパス一覧 = match <[vk::DescriptorSet; 進行中フレーム数]>::try_from(ビューとパス一覧) {
+        Ok(値) => 値,
+        Err(_) => panic!("ビューとパスのセット数が進行中フレーム数と一致しない"),
+    };
+    for フレーム添字 in フレームスロット添字::全スロット() {
+        view_pass_set::定数を結ぶ(device, ビューとパス一覧[フレーム添字.配列添字()], シェーダー定数, フレーム添字);
+    }
+    let 照明問い合わせ一覧 = alloc::割り当てる(device, pool, レイアウト.照明問い合わせ(), 1)?;
+    let Some(照明問い合わせ) = 照明問い合わせ一覧.first().copied() else {
+        panic!("照明問い合わせのセットを1つ要求したのに1つも返らなかった");
+    };
+    lighting_set::シャドウマップを結ぶ(device, 照明問い合わせ, シャドウマップ);
+    Ok((ビューとパス一覧, 照明問い合わせ))
+}
+
+/// 定数3本を進行中フレーム数ぶんと、シャドウマップ1枚を1つぶん確保する。
+fn プールを生成する(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
+    let フレーム数 = u32::try_from(進行中フレーム数).unwrap_or_else(|_| panic!("進行中フレーム数がu32に収まらない"));
+    let プールサイズ一覧 = [
+        vk::DescriptorPoolSize::default()
+            .ty(vk::DescriptorType::UNIFORM_BUFFER)
+            .descriptor_count(3 * フレーム数),
+        vk::DescriptorPoolSize::default()
+            .ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
+            .descriptor_count(1),
+    ];
+    let create_info = vk::DescriptorPoolCreateInfo::default()
+        .max_sets(フレーム数 + 1)
+        .pool_sizes(&プールサイズ一覧);
+    // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
+    Ok(unsafe { device.create_descriptor_pool(&create_info, None)? })
+}

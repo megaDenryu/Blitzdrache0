@@ -22,5 +22,5 @@ struct ViewPassUniform
     float4 ambientAndLightingEnabled;
 };
 
-[[vk::binding(3, 0)]]
+[[vk::binding(0, 0)]]
 ConstantBuffer<ViewPassUniform> viewPassUniform;

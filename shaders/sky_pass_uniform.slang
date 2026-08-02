@@ -16,5 +16,5 @@ struct SkyPassUniform
     float4 sunDiskRadianceAndSunIrradiance;
 };
 
-[[vk::binding(9, 0)]]
+[[vk::binding(2, 0)]]
 ConstantBuffer<SkyPassUniform> skyPassUniform;

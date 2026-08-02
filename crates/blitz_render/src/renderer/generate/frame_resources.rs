@@ -12,6 +12,8 @@ pub(super) struct フレーム資源 {
     pub(super) シーン描画資源: シーン描画資源,
     pub(super) 材質資源表: vulkan::material_table::材質資源表,
     pub(super) シェーダー定数: vulkan::uniform::フレームシェーダー定数一式,
+    pub(super) セットレイアウト: vulkan::descriptor::シーンセットレイアウト一式,
+    pub(super) 共有ディスクリプタ: vulkan::descriptor::共有ディスクリプタセット,
     pub(super) フレーム進行: フレーム進行,
     pub(super) 描画段階資源: 描画段階資源,
     pub(super) 粒子: Option<vulkan::particles::粒子リソース一式>,

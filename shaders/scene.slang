@@ -1,4 +1,4 @@
-// PBR metallic-roughnessモデル(方向光+点光源+環境光+法線マップ)と、方向光の多段シャドウマップ(binding4の比較サンプラー、PCF 3x3)の合成(判断23〜26・35)。
+// PBR metallic-roughnessモデル(方向光+点光源+環境光+法線マップ)と、方向光の多段シャドウマップ(照明問い合わせのセットの比較サンプラー、PCF 3x3)の合成(判断23〜26・35)。
 // 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`。シェーダー内識別子はASCII。
 // エントリポイントはここに置き、PBR関数群は`pbr.slang`、ライティング合成+シャドウ判定は`lighting.slang`、距離区分の選択と境界ブレンドは`cascade_shadow.slang`へ分割してimportする。
 // ビューと直接照明の定数は`view_pass_uniform.slang`、影の定数は`cascade_shadow_uniform.slang`が唯一の宣言を持つ。
@@ -16,12 +16,12 @@ import scene_io;
 import view_pass_uniform;
 import visible_id;
 
-[[vk::binding(0, 0)]] Sampler2D baseColorTexture;
-[[vk::binding(1, 0)]] Sampler2D metallicRoughnessTexture;
-[[vk::binding(2, 0)]] Sampler2D normalMapTexture;
-// binding4: 多段シャドウマップ(判断35・OW5第5段)。距離区分ごとの層を持つ2D配列テクスチャ+比較サンプラーを同一bindingへ束ねる。
-[[vk::binding(4, 0)]] [[vk::combinedImageSampler]] Texture2DArray shadowMapTexture;
-[[vk::binding(4, 0)]] [[vk::combinedImageSampler]] SamplerComparisonState shadowMapSampler;
+[[vk::binding(1, 2)]] Sampler2D baseColorTexture;
+[[vk::binding(2, 2)]] Sampler2D metallicRoughnessTexture;
+[[vk::binding(3, 2)]] Sampler2D normalMapTexture;
+// 照明問い合わせのセットのbinding0: 多段シャドウマップ(判断35・OW5第5段)。距離区分ごとの層を持つ2D配列テクスチャ+比較サンプラーを同一bindingへ束ねる。
+[[vk::binding(0, 3)]] [[vk::combinedImageSampler]] Texture2DArray shadowMapTexture;
+[[vk::binding(0, 3)]] [[vk::combinedImageSampler]] SamplerComparisonState shadowMapSampler;
 
 // 注意: この1行の表記はスモークのホットリロード検証が文字列置換で書き換える対象。表記を変えると検証が壊れるため、常にこの形(static const float3 = float3(x, y, z);)を保つ。
 static const float3 TINT = float3(1.0, 1.0, 1.0);

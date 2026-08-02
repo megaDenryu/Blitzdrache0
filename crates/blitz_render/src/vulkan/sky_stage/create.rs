@@ -10,7 +10,7 @@ use crate::vulkan::pipeline::空パイプライン;
 
 pub(super) fn 生成する(device: &ash::Device, 要求: 空段階の生成要求<'_>) -> Result<空段階資源, レンダラーエラー> {
     let 標本 = 大気のベイク済み画像標本ディスクリプタ::生成する(device, &要求.大気のベイク済み画像.標本の束縛先())?;
-    let layout一覧 = [要求.シーンlayout, 標本.layout];
+    let layout一覧 = [要求.ビューとパスlayout, 標本.layout];
     let パイプライン = match パイプラインを作る(device, &要求, &layout一覧, &要求.シェーダー.放射輝度) {
         Ok(パイプライン) => パイプライン,
         Err(誤り) => {
@@ -39,7 +39,7 @@ fn 合成を作る(
     Ok(Some(空中遠近合成資源::生成する(
         device,
         要求.カラー形式,
-        要求.シーンlayout,
+        要求.ビューとパスlayout,
         &要求.大気のベイク済み画像.合成の束縛先(),
         シェーダー,
     )?))

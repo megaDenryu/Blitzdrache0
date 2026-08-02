@@ -13,7 +13,7 @@ pub(super) use sky_stage::{空を積む, 空パスがベイク済み画像を参
 use super::base_images::基本画像ハンドル;
 use crate::clear_color::クリアカラー;
 use crate::vulkan::frame::record::{cloth_passes, particle_draw_pass, particle_update_pass, scene_pass, skinning_pass};
-use crate::vulkan::frame::{ジオメトリ入力, スキニング描画入力, 布描画入力, 粒子描画入力};
+use crate::vulkan::frame::{ジオメトリ入力, スキニング描画入力, 共有セット束縛, 布描画入力, 粒子描画入力};
 use crate::vulkan::graph;
 
 pub(super) fn スキニングを積む<'a>(
@@ -52,6 +52,7 @@ pub(super) fn シーンを積む<'a>(
     クリア色: クリアカラー,
     pipeline: vk::Pipeline,
     入力: &'a [ジオメトリ入力],
+    共有: 共有セット束縛,
     寸法: vk::Extent2D,
 ) {
     グラフ.パスを積む(scene_pass::作る(
@@ -63,6 +64,7 @@ pub(super) fn シーンを積む<'a>(
         クリア色,
         pipeline,
         入力,
+        共有,
         寸法,
     ));
 }

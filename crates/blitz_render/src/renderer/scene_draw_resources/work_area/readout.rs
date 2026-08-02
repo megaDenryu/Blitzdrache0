@@ -5,7 +5,7 @@
 use super::super::シーン描画資源;
 use crate::renderer::draw_issue_breakdown::描画発行内訳;
 use crate::visible_instance_selection::可視パス;
-use crate::vulkan::frame::{描画対象入力, 距離区分別のシャドウ入力};
+use crate::vulkan::frame::{共有セット束縛, 描画対象入力, 距離区分別のシャドウ入力};
 
 impl シーン描画資源 {
     /// 直近のフレームで積んだ内訳。`作業領域を更新する`が最後に数えた値から作る。
@@ -18,10 +18,12 @@ impl シーン描画資源 {
         })
     }
 
-    pub(in crate::renderer) fn 描画対象入力を作る(&self) -> 描画対象入力<'_> {
+    /// 共有のセットは束が持たないため呼び出し元から受け取る。束が1つも無いフレームでも束縛先が決まることの根拠がこれである。
+    pub(in crate::renderer) fn 描画対象入力を作る(&self, 共有: 共有セット束縛) -> 描画対象入力<'_> {
         描画対象入力 {
             ジオメトリ: &self.ジオメトリ入力作業領域,
             距離区分別のシャドウ: 距離区分別のシャドウ入力::生成する(&self.距離区分別のシャドウ入力作業領域),
+            共有,
         }
     }
 }

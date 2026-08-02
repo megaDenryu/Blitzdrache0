@@ -16,11 +16,6 @@ impl 束内材質参照 {
         Self { 添字 }
     }
 
-    /// 材質スロットを1件しか持たない対象と、布のように材質を読まない描画が使う先頭の参照。
-    pub(in crate::renderer::scene_draw_resources) fn 先頭() -> Self {
-        Self::生成する(0)
-    }
-
     pub(in crate::renderer::scene_draw_resources) fn セットの並びの添字(self) -> usize {
         self.添字
     }
