@@ -1,11 +1,12 @@
 //! パイプライン記載表の状態遷移の検査と、その検査が使うGPUの実物を持たない供給元。
 //! 実体をu32の通し番号にすることで、生成が何回起きたか・同じキーが同じ実体を返すか・破棄がちょうど1回かを数えられる。
-//! キーそのものの性質(決定性・OrdとEqの整合・非混同)は`key_tests`、表の構築と破棄は`build_tests`が見る。
+//! キーそのものの性質(決定性・OrdとEqの整合・非混同)は`key_tests`、表の構築と破棄は`build_tests`、シェーダーの差し替えの取引は`reload_tests`が見る。
 
 #![allow(clippy::unwrap_used)]
 
 mod build_tests;
 mod key_tests;
+mod reload_tests;
 
 use ash::vk;
 
