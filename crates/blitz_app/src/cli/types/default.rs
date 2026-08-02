@@ -25,6 +25,7 @@ impl 起動設定 {
             フレーム時間報告: false,
             gpuメモリ報告: false,
             描画発行報告: false,
+            太陽角度報告: false,
             インスタンス区間報告: false,
             インスタンス可視判定有効: true,
             インスタンス段選択有効: true,

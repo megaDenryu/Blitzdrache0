@@ -35,6 +35,8 @@ mod continuity_tests;
 mod derive_tests;
 #[cfg(test)]
 mod policy_tests;
+#[cfg(test)]
+mod sun_symmetry_tests;
 
 pub use aerial_key::空中遠近キー;
 pub use ambient::環境光強度;

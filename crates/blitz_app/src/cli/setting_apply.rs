@@ -66,6 +66,7 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--report-display-timing" => 設定.実表示時間報告 = true,
         "--report-memory" => 設定.gpuメモリ報告 = true,
         "--report-draw-issue" => 設定.描画発行報告 = true,
+        "--report-sun-angle" => 設定.太陽角度報告 = true,
         "--report-instance-sections" => 設定.インスタンス区間報告 = true,
         "--reverse-draw-order" => 設定.描画対象の並べ方.走査順 = 描画対象の走査順::逆順,
         "--no-instance-cull" => 設定.インスタンス可視判定有効 = false,

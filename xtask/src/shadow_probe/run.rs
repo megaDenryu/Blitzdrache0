@@ -62,6 +62,7 @@ fn 引数を作る(材料: &実行の材料<'_>) -> Vec<String> {
         フレーム数,
         "--report-draw-issue",
         "--report-gpu-times",
+        "--report-sun-angle",
     ];
     let mut 引数一覧: Vec<String> = 固定.iter().map(|語| (*語).to_string()).collect();
     引数一覧.extend(["--time-of-day".to_string(), 一日内時刻の秒(材料).to_string()]);

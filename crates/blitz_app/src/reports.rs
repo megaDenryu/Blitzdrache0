@@ -13,6 +13,7 @@ pub(crate) mod sky_pixel;
 pub(crate) mod sky_state;
 pub(crate) mod streaming;
 pub(crate) mod streaming_summary;
+pub(crate) mod sun_angle;
 
 use crate::app::フレーム時間統計;
 

@@ -5,6 +5,13 @@
 
 use std::path::Path;
 
+/// その実行が使った太陽の角度。条件名でなくこの値が、どの高度と方位で採った標本かの証拠になる。
+#[derive(Debug, Clone, Copy)]
+pub(super) struct 太陽の角度 {
+    pub(super) 高度度: f64,
+    pub(super) 方位度: f64,
+}
+
 #[derive(Debug, Clone, Copy)]
 pub(super) struct 区間の分布 {
     pub(super) 平均ミリ秒: f64,
@@ -21,10 +28,11 @@ pub(super) struct 一標本 {
     pub(super) 合計: 区間の分布,
     pub(super) 投入インデックス数: Vec<u64>,
     pub(super) 可視数: Vec<u64>,
+    pub(super) 太陽: 太陽の角度,
 }
 
 pub(super) fn 生値を書く(書き先: &Path, 標本一覧: &[一標本]) -> Result<(), String> {
-    let mut 本文 = String::from("実行番号\t条件\t区間\t平均ミリ秒\t中央値ミリ秒\tp95ミリ秒\t投入インデックス数\t可視数\n");
+    let mut 本文 = String::from("実行番号\t条件\t太陽高度度\t太陽方位度\t区間\t平均ミリ秒\t中央値ミリ秒\tp95ミリ秒\t投入インデックス数\t可視数\n");
     for 標本 in 標本一覧 {
         for (番号, 分布) in 標本.距離区分別.iter().enumerate() {
             let 索引 = 標本.投入インデックス数.get(番号).copied().unwrap_or(0);
@@ -40,7 +48,7 @@ pub(super) fn 生値を書く(書き先: &Path, 標本一覧: &[一標本]) -> R
 
 fn 行にする(標本: &一標本, 区間: &str, 分布: 区間の分布, 索引: u64, 可視: u64) -> String {
     format!(
-        "{}\t{}\t{区間}\t{:.4}\t{:.4}\t{:.4}\t{索引}\t{可視}\n",
-        標本.実行番号, 標本.条件名, 分布.平均ミリ秒, 分布.中央値ミリ秒, 分布.p95ミリ秒
+        "{}\t{}\t{:.4}\t{:.4}\t{区間}\t{:.4}\t{:.4}\t{:.4}\t{索引}\t{可視}\n",
+        標本.実行番号, 標本.条件名, 標本.太陽.高度度, 標本.太陽.方位度, 分布.平均ミリ秒, 分布.中央値ミリ秒, 分布.p95ミリ秒
     )
 }

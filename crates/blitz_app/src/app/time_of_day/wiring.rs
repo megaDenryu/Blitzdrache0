@@ -77,6 +77,10 @@ impl 天空配線 {
         };
         Some(atmosphere_input::組む(&材料, &mut self.大気更新判定))
     }
+    /// そのフレームで使っている天空状態。空の方針を持たない世界では無い。
+    pub(in crate::app) fn 天空状態(&self) -> Option<&blitz_engine::sky::天空状態> {
+        self.時間帯.as_ref().map(時間帯::状態)
+    }
     /// 最終露出倍率。基準の露出倍率へ、天空状態の露出補正段を2の冪として掛ける。
     pub(in crate::app) fn 露出倍率(&self, 基準露出: f32) -> f32 {
         let Some(時間帯) = &self.時間帯 else {

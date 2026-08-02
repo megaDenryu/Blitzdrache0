@@ -27,6 +27,11 @@ impl アプリ {
         self.報告要求.描画発行
     }
 
+    /// `--report-sun-angle`が指定されたか。
+    pub(crate) fn 太陽角度報告が必要か(&self) -> bool {
+        self.報告要求.太陽角度
+    }
+
     /// `--report-instance-sections`が指定されたか。
     pub(crate) fn インスタンス区間報告が必要か(&self) -> bool {
         self.可視個体の選別の計測.is_some()

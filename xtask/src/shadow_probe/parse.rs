@@ -7,7 +7,7 @@
 
 use crate::report_parse::距離区分数;
 
-use super::record::{一標本, 区間の分布};
+use super::record::{一標本, 区間の分布, 太陽の角度};
 
 pub(super) fn 標本を取り出す(標準出力: &str, 実行番号: usize, 条件名: &str) -> Result<一標本, String> {
     let mut 距離区分別 = Vec::with_capacity(距離区分数);
@@ -26,6 +26,15 @@ pub(super) fn 標本を取り出す(標準出力: &str, 実行番号: usize, 条
         合計: 区間を読む(標準出力, "シャドウ合計")?,
         投入インデックス数,
         可視数,
+        太陽: 太陽の角度を読む(標準出力)?,
+    })
+}
+
+/// `--report-sun-angle`が出す2行。導出はblitz_engineの天空状態が持ち、ここは読むだけである。
+fn 太陽の角度を読む(標準出力: &str) -> Result<太陽の角度, String> {
+    Ok(太陽の角度 {
+        高度度: 小数を読む(標準出力, "太陽高度度:")?,
+        方位度: 小数を読む(標準出力, "太陽方位度:")?,
     })
 }
 
@@ -54,11 +63,20 @@ fn 鍵の次の小数(行: &str, 鍵: &str, 区間名: &str) -> Result<f64, Stri
     語.parse().map_err(|誤り| format!("区間{区間名}の値を数として読めない({語}): {誤り}"))
 }
 
+fn 小数を読む(標準出力: &str, 鍵: &str) -> Result<f64, String> {
+    let 残り = 鍵の次を取り出す(標準出力, 鍵)?;
+    残り.parse().map_err(|誤り| format!("「{鍵}」の値を数として読めない({残り}): {誤り}"))
+}
+
 fn 整数を読む(標準出力: &str, 鍵: &str) -> Result<u64, String> {
+    let 残り = 鍵の次を取り出す(標準出力, 鍵)?;
+    残り.parse().map_err(|誤り| format!("「{鍵}」の値を数として読めない({残り}): {誤り}"))
+}
+
+fn 鍵の次を取り出す<'出力>(標準出力: &'出力 str, 鍵: &str) -> Result<&'出力 str, String> {
     let 行 = 標準出力
         .lines()
         .find(|行| 行.trim_start().starts_with(鍵))
         .ok_or_else(|| format!("報告に「{鍵}」の行が無い"))?;
-    let 残り = 行.trim_start().trim_start_matches(鍵).trim();
-    残り.parse().map_err(|誤り| format!("「{鍵}」の値を数として読めない({残り}): {誤り}"))
+    Ok(行.trim_start().trim_start_matches(鍵).trim())
 }
