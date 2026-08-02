@@ -75,7 +75,7 @@ fn 起動シーンの束を作る(
     材質資源表: &mut 材質資源表,
     描画シーン: &描画シーン素材,
 ) -> Result<シーン描画資源, レンダラーエラー> {
-    let 材質id一覧 = 材質資源表.束の材質を登録する(crate::renderer::scene_draw_resources::起動シーンの束ID, 描画シーン.描画対象一覧());
+    let 材質id一覧 = 材質資源表.束の材質を登録する(crate::renderer::scene_draw_resources::起動シーンの束ID, 描画シーン.描画対象一覧())?;
     シーン描画資源::生成する(
         device,
         シーン描画資源生成要求 {

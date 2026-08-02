@@ -8,6 +8,7 @@
 
 mod capacity;
 mod device_supplier;
+mod dry_run;
 mod fallback_usage;
 mod feature_set;
 mod frame_hold;
@@ -40,5 +41,6 @@ mod texture_spec;
 pub(crate) use capacity::テクスチャ表レイアウト容量;
 pub(crate) use generation_record::世代内材質レコード;
 pub(crate) use material_id::大域材質ID;
+pub(crate) use registration::束の保持材質;
 pub(crate) use resource_table::{描画対象別の材質ID, 材質資源の作業環境, 材質資源表, 資源表世代の束縛};
 pub(crate) use texture_role::材質テクスチャ役割;

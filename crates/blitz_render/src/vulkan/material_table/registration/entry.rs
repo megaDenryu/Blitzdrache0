@@ -34,7 +34,7 @@ struct 保持材質 {
     役割別テクスチャ: [Option<保持テクスチャ>; 3],
 }
 
-pub(super) struct 束の保持材質 {
+pub(crate) struct 束の保持材質 {
     描画対象別: Vec<Vec<保持材質>>,
 }
 

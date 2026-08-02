@@ -12,4 +12,5 @@ mod ledger_tests;
 mod material_fixture;
 mod packer_tests;
 mod publication_tests;
+mod registration_tests;
 mod registry_tests;

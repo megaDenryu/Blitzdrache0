@@ -14,10 +14,11 @@ use crate::draw_bundle_id::描画束ID;
 use crate::render_object_material::描画対象素材;
 
 use super::pack_input::梱包対象材質;
-use entry::束の保持材質;
+
 use minting::安定IDの発番;
 
 pub(in crate::vulkan::material_table) use entry::描画対象別の材質ID;
+pub(crate) use entry::束の保持材質;
 
 pub(in crate::vulkan::material_table) struct 材質登録簿 {
     /// 束ごとの保持材質。並びが梱包の順であり、そのまま世代内のレコード添字の並びになる。
@@ -53,11 +54,24 @@ impl 材質登録簿 {
 
     /// 該当する束の保持材質を捨てる。無ければ`false`を返す。解除済みの束を再び解除しても異常ではない。
     pub(in crate::vulkan::material_table) fn 束を解除する(&mut self, 束id: 描画束ID) -> bool {
-        let Some(位置) = self.束別.iter().position(|(既存, _)| *既存 == 束id) else {
-            return false;
-        };
-        self.束別.remove(位置);
-        true
+        self.束を取り外す(束id).is_some()
+    }
+
+    /// 該当する束の保持材質を所有権ごと取り出す。差し替えが失敗したときに元へ戻せるようにするための口である。
+    pub(in crate::vulkan::material_table) fn 束を取り外す(&mut self, 束id: 描画束ID) -> Option<束の保持材質> {
+        let 位置 = self.束別.iter().position(|(既存, _)| *既存 == 束id)?;
+        Some(self.束別.remove(位置).1)
+    }
+
+    /// 取り外した保持材質を元の束IDで戻す。並びの末尾へ戻るため梱包の順は変わりうるが、材質IDは変わらない。
+    /// 注意: 同じ束IDが既にあるところへ戻すのは呼び出し元のバグである。
+    pub(in crate::vulkan::material_table) fn 束を戻す(&mut self, 束id: 描画束ID, 保持: 束の保持材質) {
+        assert!(
+            !self.束別.iter().any(|(既存, _)| *既存 == 束id),
+            "取り外していない描画束{}へ保持材質を戻そうとした",
+            束id.番号を返す()
+        );
+        self.束別.push((束id, 保持));
     }
 
     pub(in crate::vulkan::material_table) fn 全て解除する(&mut self) {
