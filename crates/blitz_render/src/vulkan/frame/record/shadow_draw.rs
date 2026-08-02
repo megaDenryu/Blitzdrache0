@@ -6,17 +6,17 @@
 use ash::vk;
 
 use super::scene_pass::布ドロー;
-use crate::cascade::距離区分番号;
+use crate::cascade::{影の一辺解像度, 距離区分番号};
 use crate::visible_instance_selection::可視パス;
 use crate::vulkan::frame::shared_set_bind;
 use crate::vulkan::frame::{シャドウ描画入力, 共有セット束縛};
-use crate::vulkan::shadow_map::シャドウマップ一辺;
 use crate::vulkan::shadow_push;
 
 pub(super) fn 記録する(
     device: &ash::Device,
     command_buffer: vk::CommandBuffer,
     番号: 距離区分番号,
+    一辺: 影の一辺解像度,
     入力一覧: &[シャドウ描画入力],
     布ドロー: Option<布ドロー<'_>>,
     共有: 共有セット束縛<'_>,
@@ -26,9 +26,10 @@ pub(super) fn 記録する(
         // パスそのものは通してシャドウマップを消去する。消去しないと前フレームの深度が影として残る。
         return;
     }
-    let 一辺 = f32::from(u16::try_from(シャドウマップ一辺).unwrap_or_else(|_| panic!("シャドウマップ一辺がu16に収まらない: {シャドウマップ一辺}")));
-    let viewport = vk::Viewport::default().width(一辺).height(一辺).min_depth(0.0).max_depth(1.0);
-    let シザー = vk::Rect2D::default().extent(vk::Extent2D::default().width(シャドウマップ一辺).height(シャドウマップ一辺));
+    let 実数の一辺 = 一辺.実数のテクセル数();
+    let viewport = vk::Viewport::default().width(実数の一辺).height(実数の一辺).min_depth(0.0).max_depth(1.0);
+    let テクセル数 = 一辺.テクセル数();
+    let シザー = vk::Rect2D::default().extent(vk::Extent2D::default().width(テクセル数).height(テクセル数));
     // 安全性: command_bufferは記録中であり、ビューポートとシザーはどちらのパイプラインも動的宣言のため、パイプラインの切り替えで失われない。
     unsafe {
         device.cmd_set_viewport(command_buffer, 0, &[viewport]);

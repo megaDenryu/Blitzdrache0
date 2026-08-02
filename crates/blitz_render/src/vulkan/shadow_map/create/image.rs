@@ -2,19 +2,20 @@
 
 use ash::vk;
 
-use super::super::{シャドウマップ一辺, シャドウマップ層数, シャドウマップ形式};
+use super::super::{シャドウマップ層数, シャドウマップ形式};
+use crate::cascade::影の一辺解像度;
 use crate::error::レンダラーエラー;
 use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::memory;
 use crate::vulkan::tracked_device::GPUデバイス;
 
-pub(super) fn 画像を作る(device: &ash::Device) -> Result<vk::Image, レンダラーエラー> {
+pub(super) fn 画像を作る(device: &ash::Device, 一辺: 影の一辺解像度) -> Result<vk::Image, レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
         .format(シャドウマップ形式)
         .extent(vk::Extent3D {
-            width: シャドウマップ一辺,
-            height: シャドウマップ一辺,
+            width: 一辺.テクセル数(),
+            height: 一辺.テクセル数(),
             depth: 1,
         })
         .mip_levels(1)

@@ -5,7 +5,7 @@
 
 use thiserror::Error;
 
-use super::{cloth, device_requirement, frame_input_mismatch, lighting_query, material_table, pipeline_ledger, sky};
+use super::{cascade, cloth, device_requirement, frame_input_mismatch, lighting_query, material_table, pipeline_ledger, sky};
 use crate::vulkan_failure::Vulkan失敗コード;
 
 #[derive(Debug, Error)]
@@ -89,8 +89,8 @@ pub enum レンダラーエラー {
     /// 索引化した材質テクスチャ表の台帳と世代の失敗。旧スロット別セット経路では起こらないため、層を分けて`材質資源表エラー`が持つ。
     #[error("材質資源表の構築が失敗した: {0}")]
     材質資源表不正(#[from] material_table::材質資源表エラー),
-    #[error("多段の組み立てが失敗した(カメラ視錐台の退化・正射影の値の不正): {0}")]
-    多段構築失敗(#[from] crate::lighting_input::ライティング入力エラー),
+    #[error("多段シャドウの構築が失敗した: {0}")]
+    多段不正(#[from] cascade::多段エラー),
 
     /// 照明問い合わせ資源の梱包で、ヘッダの件数と実レコード数と容量が整合しなかった。
     #[error("照明問い合わせ資源の梱包が失敗した: {0}")]

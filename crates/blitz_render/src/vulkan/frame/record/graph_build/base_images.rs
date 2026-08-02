@@ -9,6 +9,8 @@ pub(super) struct 基本画像ハンドル {
     pub(super) スワップチェーン: graph::画像ハンドル,
     pub(super) 深度: graph::画像ハンドル,
     pub(super) シャドウマップ: graph::画像ハンドル,
+    /// シャドウマップ資源の一辺。登録した寸法と同じ値であり、シャドウパスのビューポートがこれを読む。
+    pub(super) シャドウマップ一辺: crate::cascade::影の一辺解像度,
 }
 
 pub(super) fn 登録する(
@@ -29,8 +31,8 @@ pub(super) fn 登録する(
         寸法,
     );
     let シャドウマップ寸法 = vk::Extent2D {
-        width: crate::vulkan::shadow_map::シャドウマップ一辺,
-        height: crate::vulkan::shadow_map::シャドウマップ一辺,
+        width: 画像一式.シャドウマップ一辺.テクセル数(),
+        height: 画像一式.シャドウマップ一辺.テクセル数(),
     };
     let シャドウマップ = グラフ.画像を登録する(
         画像一式.シャドウマップ画像,
@@ -43,5 +45,6 @@ pub(super) fn 登録する(
         スワップチェーン,
         深度,
         シャドウマップ,
+        シャドウマップ一辺: 画像一式.シャドウマップ一辺,
     }
 }

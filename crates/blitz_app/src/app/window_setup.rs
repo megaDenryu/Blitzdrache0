@@ -44,6 +44,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     布モード: crate::cli::布モード,
     実表示計測要求: 実表示計測要求,
     大域平行移動: blitz_math::大域ワールド位置,
+    影の一辺解像度: blitz_render::cascade::影の一辺解像度,
 ) -> Result<起動一式, 起動エラー> {
     let window = window_create::生成する(event_loop)?;
     let 表示ハンドル = window.display_handle()?.as_raw();
@@ -60,7 +61,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
         crate::reports::composition::フレーム構成を表示する(&フレーム構成);
     }
     let スキン素材 = scene_load::スキン素材へ変換する(&シーン)?;
-    let 布 = 布を構築する(布モード, &描画入力.描画シーン)?;
+    let 布 = super::cloth_setup::布モードから構築する(布モード, &描画入力.描画シーン)?;
     let (布素材, 布プリセット) = match 布 {
         Some((素材, プリセット)) => (Some(素材), Some(プリセット)),
         None => (None, None),
@@ -77,6 +78,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
         粒子素材,
         フレーム構成,
         実表示計測要求,
+        影の一辺解像度,
     )?;
 
     ホットリローダー.アセット監視を設定する(カタログ, アセットID::生成する(シーン名)?, &シーン.参照ファイル一覧);
@@ -84,17 +86,4 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let アニメーション = アニメーション再生::生成する(シーン.スキン, シーン.アニメーション一覧);
     let 開発ui = 開発UI::生成する(&window, 開発ui初期有効);
     Ok((window, レンダラー, 開発ui, アニメーション, 布プリセット, 描画入力.登録一式))
-}
-
-fn 布を構築する(
-    布モード: crate::cli::布モード,
-    描画シーン: &blitz_render::描画シーン素材,
-) -> Result<Option<(blitz_render::布素材, super::cloth_setup::布プリセット)>, 起動エラー> {
-    match 布モード {
-        crate::cli::布モード::なし => Ok(None),
-        crate::cli::布モード::吊るし布 => Ok(Some(super::cloth_setup::吊るし布を構築する()?)),
-        crate::cli::布モード::マント => Ok(Some(super::cloth_setup::マントを構築する(
-            描画シーン.先頭の描画対象().最詳細段の頂点一覧(),
-        )?)),
-    }
 }

@@ -8,15 +8,16 @@ use ash::vk;
 use self::image::{メモリを確保して結びつける, 画像を作る, 距離区分ビューを作る, 配列ビューを作る};
 use super::sampler::比較サンプラーを作る;
 use super::シャドウマップ;
-use crate::cascade::距離区分数;
+use crate::cascade::{影の一辺解像度, 距離区分数};
 use crate::error::レンダラーエラー;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) fn 生成する(
     device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    一辺: 影の一辺解像度,
 ) -> Result<シャドウマップ, レンダラーエラー> {
-    let 画像 = 画像を作る(device)?;
+    let 画像 = 画像を作る(device, 一辺)?;
     let memory = match メモリを確保して結びつける(device, メモリプロパティ, 画像) {
         Ok(memory) => memory,
         Err(誤り) => {
@@ -27,6 +28,7 @@ pub(super) fn 生成する(
     };
     match 続きを生成する(device, 画像) {
         Ok((配列ビュー, 距離区分別のビュー一覧, sampler)) => Ok(シャドウマップ {
+            一辺,
             画像,
             配列ビュー,
             距離区分別のビュー一覧,

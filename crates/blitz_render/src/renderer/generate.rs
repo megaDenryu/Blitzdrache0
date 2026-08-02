@@ -7,6 +7,7 @@ mod generate_resources;
 #[cfg(test)]
 mod generate_tests;
 use super::レンダラー;
+use crate::cascade::影の一辺解像度;
 use crate::cloth_material::布素材;
 use crate::error::{フレーム入力不一致エラー, レンダラーエラー};
 use crate::extent::ウィンドウ寸法;
@@ -33,6 +34,7 @@ impl レンダラー {
         粒子: Option<粒子素材>,
         フレーム構成: フレーム構成,
         実表示計測要求: 実表示計測要求,
+        影の一辺: 影の一辺解像度,
     ) -> Result<Self, レンダラーエラー> {
         構成と素材を検査する(&フレーム構成, スキン.is_some(), 布.is_some(), 粒子.is_some())?;
         let コア = core_setup::組み立てる(表示ハンドル, ウィンドウハンドル, 寸法, 実表示計測要求)?;
@@ -45,6 +47,7 @@ impl レンダラー {
             布: 布.as_ref(),
             粒子素材: 粒子.as_ref(),
             フレーム構成,
+            影の一辺,
             タイムスタンプ対応か: コア.タイムスタンプ対応か,
             タイムスタンプ周期ns: コア.タイムスタンプ周期ns,
         })?;

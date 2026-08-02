@@ -4,6 +4,7 @@
 
 use ash::vk;
 
+use crate::cascade::影の一辺解像度;
 use crate::error::レンダラーエラー;
 use crate::vulkan;
 use crate::vulkan::descriptor::{シーンセットレイアウト一式, 共有ディスクリプタセット};
@@ -27,8 +28,9 @@ impl 共有資源 {
         queue: vk::Queue,
         queue_family_index: u32,
         表容量: テクスチャ表レイアウト容量,
+        影の一辺: 影の一辺解像度,
     ) -> Result<Self, レンダラーエラー> {
-        let シャドウ = vulkan::shadow_map::シャドウマップ::生成する(device, メモリプロパティ)?;
+        let シャドウ = vulkan::shadow_map::シャドウマップ::生成する(device, メモリプロパティ, 影の一辺)?;
         let 転送 = match vulkan::transfer::転送実行環境::生成する(device, queue, queue_family_index) {
             Ok(値) => 値,
             Err(誤り) => {

@@ -8,7 +8,6 @@ use blitz_math::大域ワールド位置;
 use crate::cascade::{多段一式, 距離区分数, 距離区分番号};
 use crate::error::レンダラーエラー;
 use crate::frame_input::フレーム描画入力;
-use crate::vulkan::shadow_map;
 use crate::vulkan::uniform::多段影定数内容;
 
 pub(super) fn 組み立てる(
@@ -21,7 +20,7 @@ pub(super) fn 組み立てる(
         距離区分の分割深度: 多段.分割深度().map(|深度| 深度.値()),
         距離区分の遷移幅: 多段.遷移幅().map(|幅| 幅.値()),
         距離区分を可視化する: 入力.距離区分を可視化する,
-        シャドウマップのテクセル尺度: shadow_map::テクセル尺度(),
+        シャドウマップのテクセル尺度: 多段.解像度().テクセル尺度(),
     })
 }
 

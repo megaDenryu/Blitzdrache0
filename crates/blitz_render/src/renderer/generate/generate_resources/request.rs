@@ -1,5 +1,6 @@
 //! 提示側の資源の生成後に走る資源生成に必要な借用値をまとめる。
 
+use crate::cascade::影の一辺解像度;
 use crate::cloth_material::布素材;
 use crate::frame_composition::フレーム構成;
 use crate::particle_material::粒子素材;
@@ -18,6 +19,8 @@ pub(in crate::renderer::generate) struct 生成要求<'a> {
     pub(in crate::renderer::generate) 布: Option<&'a 布素材>,
     pub(in crate::renderer::generate) 粒子素材: Option<&'a 粒子素材>,
     pub(in crate::renderer::generate) フレーム構成: フレーム構成,
+    /// シャドウマップ資源の一辺。多段の構築が使う一辺と同じ値を呼び出し元が渡す責務を負う。
+    pub(in crate::renderer::generate) 影の一辺: 影の一辺解像度,
     pub(in crate::renderer::generate) タイムスタンプ対応か: bool,
     pub(in crate::renderer::generate) タイムスタンプ周期ns: f32,
 }

@@ -42,4 +42,6 @@ pub(crate) enum 起動引数エラー {
     先読み半径不正(String),
     #[error("--report-sky-pixel引数が不正だった: {0}")]
     空代表画素不正(String),
+    #[error("--shadow-resolution引数が不正だった: {0}")]
+    影の一辺解像度不正(String),
 }
