@@ -48,4 +48,6 @@ pub(crate) enum 起動引数エラー {
     キャスター余白不正(String),
     #[error("--max-shadow-distance引数が不正だった: {0}")]
     最大影距離不正(String),
+    #[error("--shadow-caster-range引数が不正だった: {0}")]
+    影の視距離不正(String),
 }

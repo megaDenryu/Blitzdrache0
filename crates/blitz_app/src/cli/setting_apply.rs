@@ -27,6 +27,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--shadow-resolution" => 設定.シャドウ計測.一辺解像度 = shadow_args::shadow_resolution引数を処理する(残り)?,
         "--caster-margin" => 設定.シャドウ計測.キャスター余白 = Some(shadow_args::caster_margin引数を処理する(残り)?),
         "--max-shadow-distance" => 設定.シャドウ計測.最大影距離 = Some(shadow_args::max_shadow_distance引数を処理する(残り)?),
+        "--shadow-caster-range" => 設定.シャドウ計測.影の視距離 = Some(shadow_args::shadow_caster_range引数を処理する(残り)?),
         "--time-of-day" => 設定.時間帯.一日内時刻の秒 = Some(time_args::time_of_day引数を処理する(残り)?),
         "--time-scale" => 設定.時間帯.時間倍率 = Some(time_args::time_scale引数を処理する(残り)?),
         "--lod-crack-pair" => 設定.ストリーミング.lod継ぎ目検査 = Some(lod_crack_args::引数を処理する(残り)?),

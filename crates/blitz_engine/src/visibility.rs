@@ -8,6 +8,7 @@
 
 mod band_light_box;
 mod band_pass_test;
+mod band_visibility_mode;
 mod bounds_transform;
 mod camera_distance;
 mod caster_distance;
@@ -21,13 +22,14 @@ mod instance_sphere;
 mod light_space_interval;
 mod pass_test;
 mod plane;
+mod shadow_range;
 mod stage_bucket;
 mod stage_tray;
 mod visible_pass_set;
 mod volume_test;
 
 pub use band_light_box::距離区分別の光空間直方体;
-pub use band_pass_test::距離区分別の可視判定;
+pub use band_visibility_mode::距離区分別の可視判定;
 pub use caster_distance::キャスター距離分布;
 pub use caster_distance_scan::キャスターのカメラ距離分布を数える;
 pub use combined_select::{個体選択材料, 可視個体と段を選ぶ, 段選択方式};
@@ -37,4 +39,5 @@ pub use frustum::視錐台;
 pub use group_material::群可視材料;
 pub use instance_sphere::個体境界球;
 pub use pass_test::可視判定方式;
+pub use shadow_range::影の視距離;
 pub use stage_tray::段別ID受け皿;

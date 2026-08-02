@@ -1,5 +1,6 @@
 //! 多段シャドウの費用を測るための起動指定と、その引数の解析。
-//! 触れる引数は`--shadow-resolution`・`--caster-margin`・`--max-shadow-distance`の3つであり、既定値は本番の多段設定と同じ値を指す。
+//! 触れる引数は`--shadow-resolution`・`--caster-margin`・`--max-shadow-distance`・`--shadow-caster-range`の4つであり、
+//! 既定値は本番の多段設定と同じ値を指す。
 //!
 //! この一群を計測専用と呼ぶのは、指定を1つも与えない実行が既定の多段設定と1ビットも違わないからである。
 //! シャドウマップの一辺は本番ではコンパイル時に決まっていた値であり、律速の切り分け(距離区分ごとの費用が
@@ -8,6 +9,7 @@
 
 use std::slice::Iter;
 
+use blitz_engine::影の視距離;
 use blitz_math::メートル;
 use blitz_render::cascade::影の一辺解像度;
 
@@ -24,6 +26,8 @@ pub(crate) struct シャドウ計測起動設定 {
     /// この値は距離区分3の候補数だけでなく4区分の分割深度・正射影幅・世界メートル毎テクセルをすべて変え、
     /// 受影可能な最遠距離そのものを縮める(段S2-1の品質方針αの計測)。
     pub(crate) 最大影距離: Option<メートル>,
+    /// `--shadow-caster-range <メートル>`で選ぶ影の視距離。`None`なら切断を1回も評価しない(段S2-1の品質方針βの計測)。
+    pub(crate) 影の視距離: Option<影の視距離>,
 }
 
 impl シャドウ計測起動設定 {
@@ -32,6 +36,7 @@ impl シャドウ計測起動設定 {
             一辺解像度: 影の一辺解像度::既定(),
             キャスター余白: None,
             最大影距離: None,
+            影の視距離: None,
         }
     }
 }
@@ -52,6 +57,13 @@ pub(super) fn max_shadow_distance引数を処理する(引数: &mut Iter<String>
         return Err(起動引数エラー::最大影距離不正(format!("有限かつ正でない: {値}")));
     }
     Ok(メートル::生成する(長さ))
+}
+
+/// `--shadow-caster-range <メートル>`の値を読む。正の有限であることは値オブジェクトが検証するため、ここは数の解釈と語の翻訳だけを行う。
+pub(super) fn shadow_caster_range引数を処理する(引数: &mut Iter<String>) -> Result<影の視距離, 起動引数エラー> {
+    let 値 = 次の値を読む(引数, "--shadow-caster-range", 起動引数エラー::影の視距離不正)?;
+    let 長さ = 値.parse::<f32>().map_err(|_| 起動引数エラー::影の視距離不正(値.clone()))?;
+    影の視距離::生成する(メートル::生成する(長さ)).map_err(|誤り| 起動引数エラー::影の視距離不正(format!("{値}: {誤り}")))
 }
 
 /// `--caster-margin <メートル>`の値を読む。0を許すのは、余白の寄与そのものを消した対照を計測が要るためである。
