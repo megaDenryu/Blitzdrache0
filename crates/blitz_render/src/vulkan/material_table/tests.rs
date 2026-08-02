@@ -7,6 +7,7 @@ mod build_failure_tests;
 mod capacity_tests;
 mod fallback_tests;
 mod fixture;
+mod frame_hold_tests;
 mod generation_tests;
 mod ledger_tests;
 mod material_fixture;

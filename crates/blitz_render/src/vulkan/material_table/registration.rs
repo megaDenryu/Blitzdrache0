@@ -57,21 +57,28 @@ impl 材質登録簿 {
         self.束を取り外す(束id).is_some()
     }
 
-    /// 該当する束の保持材質を所有権ごと取り出す。差し替えが失敗したときに元へ戻せるようにするための口である。
-    pub(in crate::vulkan::material_table) fn 束を取り外す(&mut self, 束id: 描画束ID) -> Option<束の保持材質> {
+    /// 該当する束の保持材質を、並びの中の位置と一緒に所有権ごと取り出す。位置を返すのは、差し替えが失敗したときに
+    /// 取り外す前とまったく同じ並びへ戻すためである。並びは梱包の順であり、順が変わると材質レコード添字も変わる。
+    pub(in crate::vulkan::material_table) fn 束を取り外す(&mut self, 束id: 描画束ID) -> Option<(usize, 束の保持材質)> {
         let 位置 = self.束別.iter().position(|(既存, _)| *既存 == 束id)?;
-        Some(self.束別.remove(位置).1)
+        Some((位置, self.束別.remove(位置).1))
     }
 
-    /// 取り外した保持材質を元の束IDで戻す。並びの末尾へ戻るため梱包の順は変わりうるが、材質IDは変わらない。
-    /// 注意: 同じ束IDが既にあるところへ戻すのは呼び出し元のバグである。
-    pub(in crate::vulkan::material_table) fn 束を戻す(&mut self, 束id: 描画束ID, 保持: 束の保持材質) {
+    /// 取り外した保持材質を元の位置へ戻す。注意: 同じ束IDが既にあるところへ戻すのは呼び出し元のバグである。
+    pub(in crate::vulkan::material_table) fn 束を位置へ戻す(&mut self, 位置: usize, 束id: 描画束ID, 保持: 束の保持材質) {
         assert!(
             !self.束別.iter().any(|(既存, _)| *既存 == 束id),
             "取り外していない描画束{}へ保持材質を戻そうとした",
             束id.番号を返す()
         );
-        self.束別.push((束id, 保持));
+        assert!(位置 <= self.束別.len(), "取り外したときの位置が現在の並びの外だった");
+        self.束別.insert(位置, (束id, 保持));
+    }
+
+    /// 束IDの並び。取り外しと戻しが並びを保つことの検査だけが読む。
+    #[cfg(test)]
+    pub(in crate::vulkan::material_table) fn 束idの並び(&self) -> Vec<描画束ID> {
+        self.束別.iter().map(|(束id, _)| *束id).collect()
     }
 
     pub(in crate::vulkan::material_table) fn 全て解除する(&mut self) {

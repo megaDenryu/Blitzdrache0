@@ -7,6 +7,7 @@
 //! 「同じレイアウトの上で資源表世代だけを差し替える」設計の根幹に反する。
 //! 参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「材質レコードとテクスチャ台帳」
 
+mod draft;
 mod frame_binding;
 mod publish;
 mod resolve;

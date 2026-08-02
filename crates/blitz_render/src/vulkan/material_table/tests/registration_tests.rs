@@ -8,16 +8,16 @@
 #![allow(clippy::unwrap_used, clippy::expect_used)]
 
 use crate::descriptor_indexing_limits::ディスクリプタ索引上限;
+use crate::draw_bundle_id::描画束ID;
 use crate::error::{レンダラーエラー, 材質資源表エラー};
 use crate::texture_material::テクスチャ用途;
 use crate::vulkan::material_table::capacity::テクスチャ表レイアウト容量;
 use crate::vulkan::material_table::dry_run::検査専用供給元;
-use crate::vulkan::material_table::frame_hold::フレーム保持状況;
 use crate::vulkan::material_table::generation_build::構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::pack_input::梱包対象材質;
+use crate::vulkan::material_table::registration::材質登録簿;
 use crate::vulkan::material_table::stage_reserve::画素段の予約枠;
-use crate::vulkan::sync::フレームスロット添字;
 
 use super::fixture::検査用供給元;
 use super::material_fixture::{検査用素材, 画像を選んだ材質};
@@ -75,19 +75,20 @@ fn 検査専用供給元と資源を作る供給元の判定が一致する() {
     }
 }
 
-/// 送信へ到達しなかったフレームが世代を保持したままにならないことの土台。束縛先を借りるだけでは保持状況が変わらず、
-/// 同じスロットが次のフレームで改めて保持を記録できる。借りた時点で記録すると、この2度目が呼び出し順の誤りとして落ちる。
+/// 取り外しと戻しが並びを保つ。並びは梱包の順であり、順が変われば同じ材質のレコード添字が変わるため、
+/// 差し替えの巻き戻しが末尾へ足す形では「失敗時は旧状態不変」を満たさない。
 #[test]
-fn 束縛先を借りるだけでは保持状況が変わらない() {
-    let mut 状況 = フレーム保持状況::新規();
-    let 世代 = 資源表世代ID::最初();
-    let スロット = フレームスロット添字::先頭();
-    assert!(!状況.保持しているか(世代), "借りる前は誰も保持していない");
-    // 借りる操作は保持状況へ触れないため、ここでは何も起きない。
-    assert!(!状況.保持しているか(世代), "借りただけでは保持しない");
-    状況.束縛を記録する(スロット, 世代);
-    assert!(状況.保持しているか(世代));
-    状況.通過を記録する(スロット);
-    状況.束縛を記録する(スロット, 世代);
-    assert!(状況.保持しているか(世代), "通過を記録した後は同じスロットが再び保持できる");
+fn 取り外した束は元の位置へ戻る() {
+    let mut 登録簿 = 材質登録簿::新規();
+    for 番号 in 1..=3u64 {
+        登録簿.束を登録する(描画束ID::生成する(番号), &[]);
+    }
+    let (位置, 保持) = 登録簿.束を取り外す(描画束ID::生成する(2)).expect("登録した束は取り外せる");
+    assert_eq!(位置, 1, "取り外した位置は並びの中の位置である");
+    登録簿.束を位置へ戻す(位置, 描画束ID::生成する(2), 保持);
+    assert_eq!(
+        登録簿.束idの並び(),
+        vec![描画束ID::生成する(1), 描画束ID::生成する(2), 描画束ID::生成する(3)],
+        "戻した後の並びが取り外す前と同じである"
+    );
 }
