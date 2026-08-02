@@ -6,6 +6,7 @@
 mod argument_name;
 mod asset_declaration;
 mod definition_kind;
+mod vegetation_declaration;
 mod vertex_diagnostic_declaration;
 mod village_declaration;
 
@@ -52,7 +53,7 @@ impl 対象世界 {
             Self::地形の世界 => ソース種別::高さ格子 {
                 同居植生: Some(asset_declaration::地形の同居植生(同居植生個体数)),
             },
-            Self::植生の世界 => asset_declaration::植生種別(asset_declaration::計数判定の個体数),
+            Self::植生の世界 => vegetation_declaration::植生種別(vegetation_declaration::計数判定の個体数),
             Self::見本の集落の世界 => ソース種別::見本の集落 {
                 群一覧: village_declaration::集落の小物一覧,
             },
@@ -72,7 +73,7 @@ impl 対象世界 {
         match self {
             Self::板の世界 => asset_declaration::板の世界の一覧(),
             Self::地形の世界 => asset_declaration::地形の世界の一覧(),
-            Self::植生の世界 => asset_declaration::植生の世界の一覧(),
+            Self::植生の世界 => vegetation_declaration::一覧(),
             Self::見本の集落の世界 => village_declaration::一覧(),
             Self::頂点診断の世界(原型) => vertex_diagnostic_declaration::一覧(原型),
         }

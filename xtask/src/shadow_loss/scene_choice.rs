@@ -1,0 +1,86 @@
+//! 何を描くかの構図の選択。担当するのは、構図の綴りから世界・シーン・アセットルート・カメラと時刻の起動指定を返すことである。
+//!
+//! 2つ持つのは、同じ計器がα/βの費用の裁定材料と、βの危険を露出する負の対照の両方を測るためである。
+//! 地形は代表世界を`csm-seam`と同じ構図で描き、影視距離は遠方キャスターと近距離対照だけを置いた検収世界を描く。
+
+/// その構図の結果に定まった期待があるか。
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum 構図の期待 {
+    判定しない,
+    負の対照として判定する,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum 構図 {
+    /// 代表の地形世界を低い太陽と寝かせた視線で描く。α/βの費用の裁定材料はこの構図で採る。
+    地形,
+    /// 遠方キャスターと近距離対照だけを置いた検収世界。βの切断で消える影と残る影を分けて見る。
+    影視距離の検収,
+}
+
+impl 構図 {
+    pub(super) const 全構図: [Self; 2] = [Self::地形, Self::影視距離の検収];
+
+    pub(super) fn 綴り(self) -> &'static str {
+        match self {
+            Self::地形 => "terrain",
+            Self::影視距離の検収 => "range",
+        }
+    }
+
+    pub(super) fn アセットルート(self) -> &'static str {
+        match self {
+            Self::地形 => "target/terrain_assets",
+            Self::影視距離の検収 => "target/vegetation_assets",
+        }
+    }
+
+    pub(super) fn シーン名(self) -> &'static str {
+        match self {
+            Self::地形 => "terrain_origin",
+            Self::影視距離の検収 => "vegetation_shadow_range",
+        }
+    }
+
+    /// その構図に定まった期待。地形の代表世界はどれだけ失われるかを人が読む材料であり、失われる量に正解が無い。
+    /// 影視距離の検収世界は「遠方キャスターの影が消え、近距離対照の影が残る」ことを露出するために作った世界であり、
+    /// それが起きなければ世界か切断のどちらかが壊れている。
+    /// 注意: 保護契約を持つ実装(光の方向へ伸ばしたキャスターの境界と保護受光領域の交差で残す形)を入れたときは、
+    /// この期待は「遠方キャスターの影が消えない」へ反転する。
+    pub(super) fn 期待(self) -> 構図の期待 {
+        match self {
+            Self::地形 => 構図の期待::判定しない,
+            Self::影視距離の検収 => 構図の期待::負の対照として判定する,
+        }
+    }
+
+    /// その構図だけが足す起動指定。地形はストリーミングで地面を出し、寝かせた視線で4距離区分を画面へ入れる。
+    /// 検収世界はチャンクを1つしか持たず、シーン既定のカメラがそのまま群と床を見下ろす。
+    pub(super) fn 追加の起動指定(self) -> &'static [&'static str] {
+        match self {
+            Self::地形 => &[
+                "--streaming",
+                "--streaming-preload-radius",
+                "2",
+                "--streaming-ram-limit",
+                "16777216",
+                "--streaming-vram-limit",
+                "16777216",
+                "--camera-pitch",
+                "-25",
+            ],
+            Self::影視距離の検収 => &[],
+        }
+    }
+}
+
+pub(super) fn 綴りから読む(語: &str) -> Result<構図, String> {
+    match 構図::全構図.into_iter().find(|構図| 構図.綴り() == 語) {
+        Some(構図) => Ok(構図),
+        None => Err(format!("知らない構図である({語})。{}のいずれかを指定する", 綴りを並べる())),
+    }
+}
+
+pub(super) fn 綴りを並べる() -> String {
+    構図::全構図.iter().map(|構図| 構図.綴り()).collect::<Vec<&str>>().join(" / ")
+}

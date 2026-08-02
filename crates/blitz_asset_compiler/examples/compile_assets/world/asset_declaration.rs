@@ -10,11 +10,8 @@ use super::definition_kind::{ソース専用定義, 任意定義, 外部アセ�
 /// 参照: `crates/blitz_app/src/app/scene_camera.rs`
 pub(super) const 地形世界の起動時シーン: (&str, &str) = ("terrain_origin", "smoke/quad.gltf");
 
-/// 植生世界の原型ソース。起動時シーンもチャンクもこの1つのglTFを原型として読む。
-const 植生原型ソース: &str = "vegetation_world/archetype.gltf";
-
 /// 段を2つ持つ原型ソース。個体別LODの検収と、地形世界の同居植生がこちらを読む。
-const 植生詳細段原型ソース: &str = "vegetation_world/archetype_lod.gltf";
+pub(super) const 植生詳細段原型ソース: &str = "vegetation_world/archetype_lod.gltf";
 
 /// 地形世界が同居させる植生の原型を指す安定ID。実行時形式は焼かず、地形チャンクが素材として読むだけである。
 const 地形世界の植生原型: &str = "terrain_vegetation_archetype";
@@ -22,16 +19,6 @@ const 地形世界の植生原型: &str = "terrain_vegetation_archetype";
 /// 地形チャンク1つが持つ個体数の既定。既存の検収はこの密度で走り、束の追加と解除で状態が生まれて消えることを見るのに足りる軽さである。
 /// 物量の計測は`ow4-bench`が密度だけを変えた別の出力ルートへ焼くため、この既定は物量点の変更で動かさない。
 pub(super) const 地形同居の既定個体数: usize = 64;
-
-/// 画素判定に使う個体数。2×2の格子になり、画面を4分割した各領域へ1体ずつ描かれる構図になる。
-pub(super) const 画素判定の個体数: usize = 4;
-
-/// 計数判定で確保数の増え方を比べる相手の個体数。
-pub(super) const 計数判定の個体数: usize = 64;
-
-/// 群がカメラ視錐台にもライト視錐台にも入らないシーン。中身は`vegetation_4`と同じ4個体の群であり、名前だけが違う。
-/// 名前を`vegetation`で始めないことが、既定カメラと既定の影範囲を選ばせて群を両方の視錐台から外す(理由は`xtask/src/cloth_empty.rs`)。
-const 両視錐台外の群シーン: &str = "instance_all_culled";
 
 /// Blenderが生成した小物1体の検収シーン。外部のアセットリポジトリの`props/`からglbを参照する。
 /// 安定IDを`prop_`で始めることが、この世界のカメラ姿勢と読み戻しだけの検収計画を選ばせる。
@@ -82,19 +69,4 @@ pub(super) fn 地形の同居植生(個体数: usize) -> 同居植生宣言 {
         原型の安定id: 地形世界の植生原型,
         個体数,
     }
-}
-
-pub(super) fn 植生の世界の一覧() -> Vec<アセット定義> {
-    vec![
-        必須定義("vegetation_4", 植生原型ソース, 植生種別(画素判定の個体数)),
-        必須定義("vegetation_64", 植生原型ソース, 植生種別(計数判定の個体数)),
-        必須定義("vegetation_cull", 植生原型ソース, ソース種別::植生可視判定),
-        必須定義("vegetation_single", 植生原型ソース, ソース種別::植生単一個体),
-        必須定義("vegetation_lod", 植生詳細段原型ソース, ソース種別::植生詳細段),
-        必須定義(両視錐台外の群シーン, 植生原型ソース, 植生種別(画素判定の個体数)),
-    ]
-}
-
-pub(super) fn 植生種別(個体数: usize) -> ソース種別 {
-    ソース種別::植生 { 個体数 }
 }

@@ -11,12 +11,15 @@ pub(crate) mod group_object;
 mod lod_placement;
 mod lod_scene;
 mod placement;
+mod shadow_range_placement;
+mod shadow_range_scene;
 mod single_scene;
 mod terrain_group;
 mod terrain_placement;
 
 pub use cull_scene::植生可視判定シーンをコンパイルする;
 pub use lod_scene::植生詳細段シーンをコンパイルする;
+pub use shadow_range_scene::植生影視距離シーンをコンパイルする;
 pub use single_scene::植生単一個体シーンをコンパイルする;
 pub use terrain_group::{同居植生の指定, 地形同居の群, 地形同居の群を作る};
 #[cfg(test)]

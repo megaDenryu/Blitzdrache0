@@ -21,7 +21,7 @@ const 植生検収シーンの接頭辞: &str = "vegetation_";
 const 両視錐台外の群シーン: &str = "instance_all_culled";
 
 /// 床を同居させた検収シーンの名前。どちらも同じライト方針を使う。
-const 床を持つ検収シーン一覧: [&str; 2] = ["vegetation_cull", "vegetation_single"];
+const 床を持つ検収シーン一覧: [&str; 3] = ["vegetation_cull", "vegetation_shadow_range", "vegetation_single"];
 
 /// 影の正射影が見る範囲の中心。群と床を敷いたチャンクの中央である。
 const 検収の影注視点メートル: f64 = 50.0;
