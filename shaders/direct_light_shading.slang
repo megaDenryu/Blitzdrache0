@@ -51,6 +51,12 @@ float3 shadeLitSurface(
     for (uint localIndex = 0; localIndex < lightingQueryHeader.localLightCount; localIndex++)
     {
         LocalLightRecord record = localLightRecords[localIndex];
+        // 光種の枝を明示する。CPU側は局所光レコードを点光としてしか作れないが、種別を読まずに点光の式を当てると、
+        // 光種が増えたときに新しい種別の光を黙って点光の減衰で照らしてしまう。
+        if (record.kind.x != localLightKindPoint)
+        {
+            continue;
+        }
         float3 toLight = record.cameraRelativePosition.xyz - relativePosition;
         float lightDistance = max(length(toLight), 1e-4);
         float3 lightDir = toLight / lightDistance;
