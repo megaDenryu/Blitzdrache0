@@ -23,6 +23,7 @@ mod lighting_input;
 mod lighting_input_tests;
 mod lod_mesh;
 mod material;
+mod material_table_summary;
 mod particle_material;
 mod particle_shader_set;
 mod pbr_material;
@@ -68,6 +69,7 @@ pub use lighting_input::{
 };
 pub use lod_mesh::{メッシュ素材, 詳細段メッシュ列};
 pub use material::マテリアル素材;
+pub use material_table_summary::材質資源表の要約;
 pub use particle_material::{粒子素材, 粒子素材エラー};
 pub use particle_shader_set::{粒子シェーダー一式, 粒子シェーダー一式エラー};
 pub use pbr_material::{マテリアル素材エラー, 金属粗さPBR素材};

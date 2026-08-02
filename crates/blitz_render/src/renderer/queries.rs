@@ -9,6 +9,7 @@ use super::draw_issue_breakdown::描画発行内訳;
 use super::レンダラー;
 use crate::descriptor_indexing_limits::ディスクリプタ索引上限;
 use crate::gpu_memory_stats::GPUメモリ統計;
+use crate::material_table_summary::材質資源表の要約;
 use crate::present_display::実表示観測;
 use crate::present_display::実表示計測状況;
 use crate::validation_counter::検証カウンタ;
@@ -66,6 +67,12 @@ impl レンダラー {
     /// (参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「段階導入」の段4bの検収ゲート(iii))。
     pub fn セット別ディスクリプタ束縛回数を取得する(&self) -> [u32; vulkan::frame::セット番号の数] {
         self.セット別束縛計数.番号ごとの回数()
+    }
+
+    /// 公開中の資源表世代の版番号と中身の件数。テクスチャを1枚も持たない材質が、材質ごとの既定の画素でなく
+    /// 世代で共有する正準フォールバック3枚を指していることを常駐画像枚数で見る。
+    pub fn 材質資源表の要約を取得する(&self) -> 材質資源表の要約 {
+        self.材質資源表.公開中の世代の要約()
     }
 
     /// 大気のベイク済み画像生成パスの実行数の記録。フレームごとの本数と累計であり、更新判定が意図どおり働いているかを実測で見る。

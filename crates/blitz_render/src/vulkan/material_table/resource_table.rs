@@ -13,6 +13,7 @@ mod resolve;
 mod work_environment;
 
 use crate::error::レンダラーエラー;
+use crate::material_table_summary::材質資源表の要約;
 use crate::vulkan::texture::テクスチャ;
 
 use super::capacity::テクスチャ表レイアウト容量;
@@ -53,6 +54,12 @@ impl 材質資源表 {
             台帳: 資源表世代台帳::最初の世代を公開する(初期世代),
             世代の作り直しが要るか: false,
         })
+    }
+
+    /// 公開中の世代の版番号と中身の件数。表の内容をGPUの型なしで外から見るための計器である。
+    pub(crate) fn 公開中の世代の要約(&self) -> 材質資源表の要約 {
+        let 世代 = self.台帳.公開中();
+        材質資源表の要約::生成する(世代.世代id().番号(), 世代.材質件数(), 世代.画像枚数())
     }
 
     /// 公開中の世代。材質IDの解決だけが使うため、モジュール木の外へは出さない。
