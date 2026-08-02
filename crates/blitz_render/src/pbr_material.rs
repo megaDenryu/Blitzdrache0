@@ -1,4 +1,7 @@
 //! glTFのPBR metallic-roughnessをGPUへ渡す素材。
+//! 3つのテクスチャを`Option`で持つのは、「無し」を既定の画素で埋めた素材へ無言で置き換えないためである。
+//! 無しの材質は特徴ビットが下り、材質テクスチャ表の正準フォールバックのスロットを指す
+//! (参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「材質レコードとテクスチャ台帳」)。
 
 use thiserror::Error;
 
@@ -12,9 +15,9 @@ pub enum マテリアル素材エラー {
 
 #[derive(Debug, Clone)]
 pub struct 金属粗さPBR素材 {
-    ベースカラー: テクスチャ素材,
-    金属粗さ: テクスチャ素材,
-    法線マップ: テクスチャ素材,
+    ベースカラー: Option<テクスチャ素材>,
+    金属粗さ: Option<テクスチャ素材>,
+    法線マップ: Option<テクスチャ素材>,
     ベースカラー係数: [f32; 4],
     金属度係数: f32,
     粗さ係数: f32,
@@ -23,9 +26,9 @@ pub struct 金属粗さPBR素材 {
 impl 金属粗さPBR素材 {
     #[allow(clippy::too_many_arguments)]
     pub fn 生成する(
-        ベースカラー: テクスチャ素材,
-        金属粗さ: テクスチャ素材,
-        法線マップ: テクスチャ素材,
+        ベースカラー: Option<テクスチャ素材>,
+        金属粗さ: Option<テクスチャ素材>,
+        法線マップ: Option<テクスチャ素材>,
         ベースカラー係数: [f32; 4],
         金属度係数: f32,
         粗さ係数: f32,
@@ -45,16 +48,16 @@ impl 金属粗さPBR素材 {
         })
     }
 
-    pub(crate) fn ベースカラー(&self) -> &テクスチャ素材 {
-        &self.ベースカラー
+    pub(crate) fn ベースカラー(&self) -> Option<&テクスチャ素材> {
+        self.ベースカラー.as_ref()
     }
 
-    pub(crate) fn 金属粗さ(&self) -> &テクスチャ素材 {
-        &self.金属粗さ
+    pub(crate) fn 金属粗さ(&self) -> Option<&テクスチャ素材> {
+        self.金属粗さ.as_ref()
     }
 
-    pub(crate) fn 法線マップ(&self) -> &テクスチャ素材 {
-        &self.法線マップ
+    pub(crate) fn 法線マップ(&self) -> Option<&テクスチャ素材> {
+        self.法線マップ.as_ref()
     }
 
     pub(crate) fn ベースカラー係数(&self) -> [f32; 4] {

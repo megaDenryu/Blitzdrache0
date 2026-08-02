@@ -11,9 +11,10 @@ use crate::vulkan::material_table::generation_record::世代内材質レコー�
 use crate::vulkan::material_table::material_id::大域材質ID;
 use crate::vulkan::material_table::texture_role::材質テクスチャ役割;
 
-use super::fixture::{余裕のあるレイアウト容量, 材質を作る, 検査用供給元, 検査用素材};
+use super::fixture::検査用供給元;
+use super::material_fixture::{余裕のあるレイアウト容量, 材質を作る, 検査用素材};
 
-fn レコードを引く<画像>(世代: &資源表世代<画像>, 番号: u64) -> &世代内材質レコード {
+fn レコードを引く<画像, 付属>(世代: &資源表世代<画像, 付属>, 番号: u64) -> &世代内材質レコード {
     let 参照 = 世代.解決する(大域材質ID::生成する(番号)).unwrap();
     let 添字 = 世代.描画へ渡すレコード添字(参照).unwrap();
     世代.レコード(添字).unwrap()

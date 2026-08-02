@@ -9,11 +9,12 @@ use crate::vulkan::material_table::generation_build::構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::ledger::資源表世代台帳;
 
-use super::fixture::{余裕のあるレイアウト容量, 検査用供給元};
+use super::fixture::検査用供給元;
+use super::material_fixture::余裕のあるレイアウト容量;
 
 fn 世代を作る(
     供給元: &mut 検査用供給元, 世代id: 資源表世代ID
-) -> crate::vulkan::material_table::generation::資源表世代<u32> {
+) -> crate::vulkan::material_table::generation::資源表世代<u32, ()> {
     構築する(供給元, 世代id, 余裕のあるレイアウト容量(), &[]).unwrap()
 }
 

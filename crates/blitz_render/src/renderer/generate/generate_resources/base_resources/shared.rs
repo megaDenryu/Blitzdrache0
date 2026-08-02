@@ -1,10 +1,12 @@
 //! 全描画対象が共有する影、転送、フレームシェーダー定数、scene系のセットレイアウトと共有ディスクリプタセットの生成と失敗時解放。
+//! 材質テクスチャ表の容量を先に決めてセットレイアウトへ渡すのは、表の要素数がレイアウトの一部だからである。
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan;
 use crate::vulkan::descriptor::{シーンセットレイアウト一式, 共有ディスクリプタセット};
+use crate::vulkan::material_table::テクスチャ表レイアウト容量;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct 共有資源 {
@@ -21,6 +23,7 @@ impl 共有資源 {
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         queue: vk::Queue,
         queue_family_index: u32,
+        表容量: テクスチャ表レイアウト容量,
     ) -> Result<Self, レンダラーエラー> {
         let シャドウ = vulkan::shadow_map::シャドウマップ::生成する(device, メモリプロパティ)?;
         let 転送 = match vulkan::transfer::転送実行環境::生成する(device, queue, queue_family_index) {
@@ -38,7 +41,7 @@ impl 共有資源 {
                 return Err(誤り);
             }
         };
-        let セットレイアウト = match シーンセットレイアウト一式::生成する(device) {
+        let セットレイアウト = match シーンセットレイアウト一式::生成する(device, 表容量) {
             Ok(値) => 値,
             Err(誤り) => {
                 シェーダー定数.破棄する(device);

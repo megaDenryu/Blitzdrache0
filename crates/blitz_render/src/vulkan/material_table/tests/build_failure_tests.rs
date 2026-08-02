@@ -9,7 +9,8 @@ use crate::vulkan::material_table::generation_build::構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::ledger::資源表世代台帳;
 
-use super::fixture::{余裕のあるレイアウト容量, 材質を作る, 検査用供給元, 検査用素材};
+use super::fixture::検査用供給元;
+use super::material_fixture::{余裕のあるレイアウト容量, 材質を作る, 検査用素材};
 
 #[test]
 fn 構築の失敗は部分生成資源だけを破棄し公開中の世代を変えない() {

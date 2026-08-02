@@ -9,7 +9,8 @@ use crate::vulkan::material_table::generation_build::構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::material_id::大域材質ID;
 
-use super::fixture::{余裕のあるレイアウト容量, 材質を作る, 検査用供給元, 検査用素材};
+use super::fixture::検査用供給元;
+use super::material_fixture::{余裕のあるレイアウト容量, 材質を作る, 検査用素材};
 
 #[test]
 fn 解決結果は世代型付きであり異世代の参照を拒む() {

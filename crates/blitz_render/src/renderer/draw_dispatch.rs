@@ -3,13 +3,13 @@
 //! 描画方式の判別は`draw_mode`にある。
 
 mod draw_mode;
+mod work_area_fill;
 
 use blitz_math::大域ワールド位置;
 
 use super::cpu_timing::CPU区間時計;
 use super::frame_progress::フレームスロット資源;
 use super::presentation::取得済み提示;
-use super::scene_draw_resources::作業領域更新入力;
 use super::レンダラー;
 use crate::clear_color::クリアカラー;
 use crate::error::レンダラーエラー;
@@ -20,7 +20,6 @@ use crate::visible_instance_selection::可視個体選択一覧;
 use crate::vulkan;
 use crate::vulkan::frame::UI描画入力;
 use crate::vulkan::relative_anchor::カメラ相対の基準原点;
-use crate::vulkan::skinning::スキニング一式;
 
 impl レンダラー {
     /// 戻り値: 提示劣化の有無と、記録の実績(GPUタイムスタンプの「パス名→クエリ開始添字」対応(判断30。計測無効なら空配列)と、
@@ -44,6 +43,9 @@ impl レンダラー {
         プリミティブ発行: &プリミティブ発行受け皿,
     ) -> Result<(bool, vulkan::frame::記録の実績), レンダラーエラー> {
         let フレーム添字 = スロット資源.スロット;
+        // フェンス待機と退役の回収は`draw_execute/prepare.rs`で済んでいるため、ここで作り直しと束縛を行える。
+        // 束縛した世代の材質のセットをこのフレームの全シーン描画発行が読む。
+        let 資源表世代の束縛 = self.資源表世代を確定して束縛する(フレーム添字)?;
 
         // 前提: このスロットのフェンス待機は`draw_execute/prepare.rs`で済んでいるため、合成のディスクリプタを読むGPU作業は完了している。
         self.描画段階資源
@@ -54,26 +56,18 @@ impl レンダラー {
         let クエリプール = self.gpu計測.as_ref().map(|計測| 計測.クエリプール(フレーム添字));
         let 画像一式 = self.フレーム画像一式を組み立てる(取得済み);
         let 提示id = self.実表示計測.提示idを発番する();
-        // 作業領域の充填に要る、描画対象資源の外の値。スキン付きシーンでは先頭対象の頂点入力をスキン済みバッファへ差し替える(判断44)。
-        let 作業領域入力 = 作業領域更新入力 {
-            device: self.環境.device(),
-            フレーム添字,
-            スキン済み頂点バッファ: self.スキニング.as_ref().map(スキニング一式::出力バッファ),
-            シーンlayout: self.描画段階資源.シーンlayout(),
-            シャドウpipeline: self.描画段階資源.シャドウpipeline(),
-            シャドウlayout: self.描画段階資源.シャドウlayout(),
-            カメラ大域原点,
-            地形詳細段選択一覧,
-            可視個体選択一覧,
-            プリミティブ発行,
-        };
-        if let Some(時計) = cpu区間時計.as_deref_mut() {
-            時計.作業領域更新を開始する();
-        }
-        self.シーン描画資源.作業領域を更新する(&作業領域入力)?;
-        if let Some(時計) = cpu区間時計.as_deref_mut() {
-            時計.作業領域更新を終了する();
-        }
+        work_area_fill::積む(
+            self,
+            work_area_fill::充填の材料 {
+                フレーム添字,
+                資源表世代の束縛,
+                カメラ大域原点,
+                地形詳細段選択一覧,
+                可視個体選択一覧,
+                プリミティブ発行,
+            },
+            cpu区間時計.as_deref_mut(),
+        )?;
 
         let 結果 = vulkan::frame::描画する(
             self.環境.device(),
@@ -85,7 +79,8 @@ impl レンダラー {
             self.提示.寸法(),
             クリア色,
             self.描画段階資源.シーンpipeline(),
-            self.シーン描画資源.描画対象入力を作る(self.共有ディスクリプタ.束縛を作る(フレーム添字)),
+            self.シーン描画資源
+                .描画対象入力を作る(self.共有ディスクリプタ.束縛を作る(フレーム添字, 資源表世代の束縛.材質のセット)),
             任意材料.借用する(ui入力),
             描画方式,
             クエリプール,

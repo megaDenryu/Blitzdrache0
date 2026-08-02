@@ -10,7 +10,7 @@ use crate::vulkan::sync::フレームスロット添字;
 use super::資源表世代台帳;
 use crate::vulkan::material_table::generation::資源表世代;
 
-impl<画像> 資源表世代台帳<画像> {
+impl<画像, 付属> 資源表世代台帳<画像, 付属> {
     /// そのスロットで発行するフレームが公開中の世代を束縛したことを記録する。
     pub(crate) fn フレームが束縛する(&mut self, スロット: フレームスロット添字) {
         let 世代 = self.公開中.世代id();
@@ -23,7 +23,7 @@ impl<画像> 資源表世代台帳<画像> {
     }
 
     /// 退役してよくなった世代を台帳から取り出す。呼び出し元は受け取った世代の画像を供給元へ退役させる。
-    pub(crate) fn 退役した世代を回収する(&mut self) -> Vec<資源表世代<画像>> {
+    pub(crate) fn 退役した世代を回収する(&mut self) -> Vec<資源表世代<画像, 付属>> {
         let mut 残す = Vec::with_capacity(self.退役待ち.len());
         let mut 回収 = Vec::new();
         for 世代 in self.退役待ち.drain(..) {
@@ -37,6 +37,8 @@ impl<画像> 資源表世代台帳<画像> {
         回収
     }
 
+    /// 退役の規律の検査だけが数える。本番の経路は回収した世代そのものを受け取る。
+    #[cfg(test)]
     pub(crate) fn 退役待ち件数(&self) -> usize {
         self.退役待ち.len()
     }

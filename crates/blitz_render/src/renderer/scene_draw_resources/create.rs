@@ -10,31 +10,32 @@ use crate::draw_bundle_id::描画束ID;
 use crate::error::レンダラーエラー;
 use crate::render_scene_material::描画シーン素材;
 use crate::vulkan::descriptor::シーンセットレイアウト一式;
-use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
+use crate::vulkan::material_table::描画対象別の材質ID;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 /// 起動時のシーン全体を1つの束として持つときの識別子。ストリーミングを使わない経路ではこの束だけが存在する。
 pub(in crate::renderer) const 起動シーンの束ID: 描画束ID = 描画束ID::生成する(0);
 
-/// 束1つぶんの資源を作るために束の外から与える材料。セットレイアウトは束をまたいで共有するため、描画対象素材だけでは足りない。
-/// 束を1つ追加するときに与える材料も同じ中身であるため、`束追加材料`はこの型の別名である。
+/// 束1つぶんの資源を作るために束の外から与える材料。セットレイアウトと材質IDは束をまたぐ所有者から来るため、
+/// 描画対象素材だけでは足りない。束を1つ追加するときに与える材料も同じ中身であるため、`束追加材料`はこの型の別名である。
 pub(in crate::renderer) struct チャンク描画資源生成材料<'a> {
-    pub(in crate::renderer) 物理デバイス問い合わせ: 物理デバイス問い合わせ<'a>,
     pub(in crate::renderer) メモリプロパティ: &'a vk::PhysicalDeviceMemoryProperties,
     pub(in crate::renderer) 転送環境: &'a 転送実行環境,
     pub(in crate::renderer) セットレイアウト: &'a シーンセットレイアウト一式,
+    /// 材質資源表がこの束の描画対象一覧と同じ並びで発番した大域材質ID。
+    pub(in crate::renderer) 材質id一覧: &'a [描画対象別の材質ID],
 }
 
 pub(in crate::renderer) type 束追加材料<'a> = チャンク描画資源生成材料<'a>;
 
 /// 束の外から与える生成材料。束の内容は描画シーン素材が、束縛の形はセットレイアウトが決める。
 pub(in crate::renderer) struct シーン描画資源生成要求<'a> {
-    pub(in crate::renderer) 物理デバイス問い合わせ: 物理デバイス問い合わせ<'a>,
     pub(in crate::renderer) メモリプロパティ: &'a vk::PhysicalDeviceMemoryProperties,
     pub(in crate::renderer) 転送環境: &'a 転送実行環境,
     pub(in crate::renderer) セットレイアウト: &'a シーンセットレイアウト一式,
     pub(in crate::renderer) 描画シーン: &'a 描画シーン素材,
+    pub(in crate::renderer) 材質id一覧: &'a [描画対象別の材質ID],
 }
 
 impl シーン描画資源 {
@@ -43,10 +44,10 @@ impl シーン描画資源 {
         device: &GPUデバイス, 要求: シーン描画資源生成要求<'_>
     ) -> Result<Self, レンダラーエラー> {
         let 材料 = チャンク描画資源生成材料 {
-            物理デバイス問い合わせ: 要求.物理デバイス問い合わせ,
             メモリプロパティ: 要求.メモリプロパティ,
             転送環境: 要求.転送環境,
             セットレイアウト: 要求.セットレイアウト,
+            材質id一覧: 要求.材質id一覧,
         };
         let チャンク = チャンク描画資源::生成する(device, 材料, 起動シーンの束ID, 要求.描画シーン.描画対象一覧())?;
         let チャンク一覧 = vec![チャンク];

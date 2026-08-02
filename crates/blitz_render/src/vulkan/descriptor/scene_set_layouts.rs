@@ -2,16 +2,22 @@
 //! set0がビューとパス、set1がジオメトリと可視、set2が材質、set3が照明問い合わせであり、この並びを
 //! パイプラインレイアウトの宣言としてここが配る(参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「束縛頻度による4セット」)。
 //! シーンを差し替えても同じレイアウトを使い続けるため、束の生成より上でこの型を持つ。
+//!
+//! 材質テクスチャ表を読む固定サンプラーと、その表の要素数もここが持つ。固定サンプラーはそれを宣言したレイアウトより
+//! 長生きしなければならず、要素数はレイアウトの一部であるため、所有者を分けると破棄順と一致の前提が散らばる。
+//! 生成の局面は`create`にある。
+
+mod create;
 
 use ash::vk;
 
-use super::{empty_set, geometry_set, lighting_set, material_set, view_pass_set};
 use crate::error::レンダラーエラー;
-
-/// 生成する5つのレイアウトの数。4つの役割に、役割を読まない位置を埋める空のレイアウトを足したものである。
-const レイアウト数: usize = 5;
+use crate::vulkan::material_table::テクスチャ表レイアウト容量;
+use crate::vulkan::texture::table_sampler;
 
 pub(crate) struct シーンセットレイアウト一式 {
+    材質サンプラー: vk::Sampler,
+    材質テクスチャ表容量: テクスチャ表レイアウト容量,
     ビューとパス: vk::DescriptorSetLayout,
     ジオメトリ: vk::DescriptorSetLayout,
     材質: vk::DescriptorSetLayout,
@@ -20,15 +26,9 @@ pub(crate) struct シーンセットレイアウト一式 {
 }
 
 impl シーンセットレイアウト一式 {
-    pub(crate) fn 生成する(device: &ash::Device) -> Result<Self, レンダラーエラー> {
-        let 一覧 = 順に生成する(device)?;
-        Ok(Self {
-            ビューとパス: 一覧[0],
-            ジオメトリ: 一覧[1],
-            材質: 一覧[2],
-            照明問い合わせ: 一覧[3],
-            空: 一覧[4],
-        })
+    /// 材質テクスチャ表の要素数を受け取るのは、それがレイアウトの一部だからである。世代の内容ではこの値を変えない。
+    pub(crate) fn 生成する(device: &ash::Device, 表容量: テクスチャ表レイアウト容量) -> Result<Self, レンダラーエラー> {
+        create::生成する(device, 表容量)
     }
 
     pub(crate) fn ビューとパス(&self) -> vk::DescriptorSetLayout {
@@ -39,12 +39,25 @@ impl シーンセットレイアウト一式 {
         self.ジオメトリ
     }
 
-    pub(crate) fn 材質(&self) -> vk::DescriptorSetLayout {
-        self.材質
-    }
-
     pub(crate) fn 照明問い合わせ(&self) -> vk::DescriptorSetLayout {
         self.照明問い合わせ
+    }
+
+    pub(crate) fn 材質テクスチャ表容量(&self) -> テクスチャ表レイアウト容量 {
+        self.材質テクスチャ表容量
+    }
+
+    /// 資源表世代1つぶんの材質のセットを、その世代専用のプールから1つだけ取り出す。
+    pub(crate) fn 材質のセットを1つ割り当てる(
+        &self,
+        device: &ash::Device,
+        pool: vk::DescriptorPool,
+    ) -> Result<vk::DescriptorSet, レンダラーエラー> {
+        let 一覧 = super::alloc::割り当てる(device, pool, self.材質, 1)?;
+        match 一覧.first().copied() {
+            Some(セット) => Ok(セット),
+            None => panic!("材質のセットを1つ要求したのに1つも返らなかった"),
+        }
     }
 
     /// シーン描画のパイプラインが宣言する4セット。
@@ -68,31 +81,6 @@ impl シーンセットレイアウト一式 {
             // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用完了を呼び出し元が保証する。
             unsafe { device.destroy_descriptor_set_layout(handle, None) };
         }
+        table_sampler::破棄する(device, self.材質サンプラー);
     }
-}
-
-/// 途中で失敗したら生成済みのレイアウトをその場で破棄するため、部分的に生成された一式は呼び出し元から見えない。
-fn 順に生成する(device: &ash::Device) -> Result<[vk::DescriptorSetLayout; レイアウト数], レンダラーエラー> {
-    type 生成手順 = fn(&ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー>;
-    let 手順一覧: [生成手順; レイアウト数] = [
-        view_pass_set::レイアウトを生成する,
-        geometry_set::レイアウトを生成する,
-        material_set::レイアウトを生成する,
-        lighting_set::レイアウトを生成する,
-        empty_set::レイアウトを生成する,
-    ];
-    let mut 一覧 = [vk::DescriptorSetLayout::null(); レイアウト数];
-    for (添字, 手順) in 手順一覧.into_iter().enumerate() {
-        match 手順(device) {
-            Ok(値) => 一覧[添字] = 値,
-            Err(誤り) => {
-                for 生成済み in 一覧.iter().take(添字) {
-                    // 安全性: 生成途中のレイアウトはこのスコープの唯一の所有者で、以降使用しない。
-                    unsafe { device.destroy_descriptor_set_layout(*生成済み, None) };
-                }
-                return Err(誤り);
-            }
-        }
-    }
-    Ok(一覧)
 }

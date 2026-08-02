@@ -2,10 +2,9 @@
 //! 作業領域はシーン1本と距離区分ごとに1本であり、毎フレーム空にしてから束一覧を先頭から走査して積み直す。
 //! ディスクリプタセット添字は束の内側で閉じるため、ある束の追加・解除が他の束の添字をずらさない。
 //! セットレイアウトと、描画対象で変わらないset0・set3のセットは束の外(レンダラー直下)が所有する(参照: `vulkan::descriptor`)。
-//! 生成は`create`、束1つぶんの資源は`chunk_draw_resources`、束の追加と解除は`bundle_lifecycle`、毎フレームの作業領域更新は`work_area`、描画対象1つぶんの資源は`render_object_resources`、材質スロット番号を解決した結果の型は`bundle_material_reference`にある。
+//! 生成は`create`、束1つぶんの資源は`chunk_draw_resources`、束の追加と解除は`bundle_lifecycle`、毎フレームの作業領域更新は`work_area`、描画対象1つぶんの資源は`render_object_resources`にある。
 
 mod bundle_lifecycle;
-mod bundle_material_reference;
 mod chunk_draw_resources;
 mod create;
 mod render_object_resources;
@@ -19,6 +18,7 @@ use crate::vulkan::tracked_device::GPUデバイス;
 use bundle_lifecycle::破棄待ち束;
 use chunk_draw_resources::チャンク描画資源;
 
+pub(in crate::renderer) use create::起動シーンの束ID;
 pub(super) use create::{シーン描画資源生成要求, 束追加材料};
 pub(super) use work_area::作業領域更新入力;
 use work_area::描画計数集計;

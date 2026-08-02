@@ -7,7 +7,8 @@ use crate::vulkan::material_table::generation_build::構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::{material_id::大域材質ID, pack_input::梱包対象材質};
 
-use super::fixture::{余裕のあるレイアウト容量, 検査用供給元};
+use super::fixture::検査用供給元;
+use super::material_fixture::余裕のあるレイアウト容量;
 
 #[test]
 fn 範囲外の係数を型付きの失敗にする() {

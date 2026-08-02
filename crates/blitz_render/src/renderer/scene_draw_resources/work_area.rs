@@ -18,6 +18,7 @@ use crate::frame_input::プリミティブ発行受け皿;
 use crate::terrain_detail::{地形詳細段選択, 段を参照する};
 use crate::visible_instance_selection::可視個体選択一覧;
 use crate::vulkan::frame::{シャドウ描画入力, ジオメトリ入力};
+use crate::vulkan::material_table::{材質資源表, 資源表世代の束縛};
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -40,6 +41,10 @@ pub(in crate::renderer) struct 作業領域更新入力<'a> {
     pub(in crate::renderer) 可視個体選択一覧: 可視個体選択一覧<'a>,
     /// 描画対象ごとに、その対象が描くプリミティブの並び。段の選択が選んだ詳細段のプリミティブだけが発行になる。
     pub(in crate::renderer) プリミティブ発行: &'a プリミティブ発行受け皿,
+    /// 材質スロット番号から解決した材質IDを、そのフレームが束縛する世代のレコード添字へ写すために要る。
+    pub(in crate::renderer) 材質資源表: &'a 材質資源表,
+    /// そのフレームが束縛した資源表世代。解決した材質GPU参照がこの世代のものであることを確かめる材料である。
+    pub(in crate::renderer) 資源表世代の束縛: 資源表世代の束縛,
 }
 
 /// 積み先をまとめて渡す受け皿。すべてが常に同じフレームの同じ走査の結果であることをこの型が示す。

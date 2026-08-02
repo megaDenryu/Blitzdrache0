@@ -1,4 +1,4 @@
-//! 全縮小段レベルにまたがるテクスチャの画像ビューとサンプラー。
+//! 全縮小段レベルにまたがるテクスチャの画像ビュー。
 
 use ash::vk;
 
@@ -23,21 +23,4 @@ pub(super) fn 画像ビューを作る(
         .subresource_range(部分範囲);
     // 安全性: imageはbind_image_memory済みで有効。
     Ok(unsafe { device.create_image_view(&create_info, None)? })
-}
-
-pub(super) fn サンプラーを作る(device: &ash::Device, mip数: u32) -> Result<vk::Sampler, レンダラーエラー> {
-    let mip数u16 = u16::try_from(mip数).unwrap_or_else(|_| panic!("縮小段数がu16に収まらない: {mip数}"));
-    let create_info = vk::SamplerCreateInfo::default()
-        .mag_filter(vk::Filter::LINEAR)
-        .min_filter(vk::Filter::LINEAR)
-        .mipmap_mode(vk::SamplerMipmapMode::LINEAR)
-        .address_mode_u(vk::SamplerAddressMode::REPEAT)
-        .address_mode_v(vk::SamplerAddressMode::REPEAT)
-        .address_mode_w(vk::SamplerAddressMode::REPEAT)
-        .min_lod(0.0)
-        .max_lod(f32::from(mip数u16))
-        .border_color(vk::BorderColor::INT_OPAQUE_BLACK)
-        .unnormalized_coordinates(false);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_sampler(&create_info, None)? })
 }

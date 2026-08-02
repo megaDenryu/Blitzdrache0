@@ -12,7 +12,8 @@ use crate::vulkan::material_table::ledger::資源表世代台帳;
 use crate::vulkan::material_table::material_id::大域材質ID;
 use crate::vulkan::sync::フレームスロット添字;
 
-use super::fixture::{余裕のあるレイアウト容量, 材質を作る, 検査用供給元, 検査用素材};
+use super::fixture::検査用供給元;
+use super::material_fixture::{余裕のあるレイアウト容量, 材質を作る, 検査用素材};
 
 #[test]
 fn 両フェンスの通過後にだけ旧世代が1回退役する() {

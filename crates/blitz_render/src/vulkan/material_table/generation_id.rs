@@ -17,6 +17,8 @@ impl 資源表世代ID {
         Self { 値: 1 }
     }
 
+    /// 番号の枯渇の検査だけが、末尾の番号から始める世代を組み立てるのに使う。本番は`最初`と`次を作る`だけを通る。
+    #[cfg(test)]
     pub(in crate::vulkan::material_table) const fn 番号から生成する(値: u32) -> Self {
         Self { 値 }
     }

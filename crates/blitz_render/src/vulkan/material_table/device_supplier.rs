@@ -1,51 +1,59 @@
-//! 資源表世代のテクスチャをVulkanの画像として常駐させる本番の供給元。担当するのは、既存のテクスチャ生成経路を
-//! 世代の構築と退役から呼べる1つの口へ束ねることである。
+//! 資源表世代のテクスチャをVulkanの画像として常駐させ、世代1つぶんの材質のセットを仕上げる本番の供給元。
+//! 担当するのは、既存のテクスチャ生成経路と材質のセットの確保を、世代の構築と退役から呼べる1つの口へ束ねることである。
 //!
-//! 前提: 借りている論理デバイス・物理デバイスへの問い合わせ・転送実行環境は、この供給元より長生きする
+//! 前提: 借りている論理デバイス・物理デバイスへの問い合わせ・転送実行環境・セットレイアウトは、この供給元より長生きする
 //! (レンダラーの破棄順は`renderer/destroy.rs`が持ち、転送実行環境の破棄はこの供給元を使い終えた後である)。
+//! 世代1つぶんの束縛先の確保と解放は`generation_binding`が持つ。
 
-use ash::vk;
+mod generation_binding;
 
 use crate::error::レンダラーエラー;
 use crate::texture_material::テクスチャ素材;
-use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
 use crate::vulkan::texture::テクスチャ;
-use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::transfer::転送実行環境;
 
+use super::generation_record::世代内材質レコード;
+use super::resource_table::材質資源の作業環境;
 use super::supplier::常駐テクスチャ供給元;
 
-pub(crate) struct デバイス常駐供給元<'環境> {
-    device: &'環境 GPUデバイス,
-    問い合わせ: 物理デバイス問い合わせ<'環境>,
-    メモリプロパティ: vk::PhysicalDeviceMemoryProperties,
-    転送環境: &'環境 転送実行環境,
+pub(in crate::vulkan::material_table) use generation_binding::世代束縛資源;
+
+pub(in crate::vulkan::material_table) struct デバイス常駐供給元<'環境> {
+    環境: 材質資源の作業環境<'環境>,
 }
 
 impl<'環境> デバイス常駐供給元<'環境> {
-    pub(crate) fn 生成する(
-        device: &'環境 GPUデバイス,
-        問い合わせ: 物理デバイス問い合わせ<'環境>,
-        メモリプロパティ: vk::PhysicalDeviceMemoryProperties,
-        転送環境: &'環境 転送実行環境,
-    ) -> Self {
-        Self {
-            device,
-            問い合わせ,
-            メモリプロパティ,
-            転送環境,
-        }
+    pub(in crate::vulkan::material_table) fn 生成する(環境: 材質資源の作業環境<'環境>) -> Self {
+        Self { 環境 }
     }
 }
 
 impl 常駐テクスチャ供給元 for デバイス常駐供給元<'_> {
     type 常駐画像 = テクスチャ;
+    type 世代付属資源 = 世代束縛資源;
 
     fn 常駐させる(&mut self, 素材: &テクスチャ素材) -> Result<テクスチャ, レンダラーエラー> {
-        テクスチャ::生成する(self.device, self.問い合わせ, &self.メモリプロパティ, self.転送環境, 素材)
+        テクスチャ::生成する(
+            self.環境.device,
+            self.環境.問い合わせ,
+            self.環境.メモリプロパティ,
+            self.環境.転送環境,
+            素材,
+        )
+    }
+
+    fn 世代を仕上げる(
+        &mut self,
+        画像集合: &[テクスチャ],
+        レコード列: &[世代内材質レコード],
+    ) -> Result<世代束縛資源, レンダラーエラー> {
+        世代束縛資源::生成する(self.環境, 画像集合, レコード列)
     }
 
     fn 退役させる(&mut self, 画像: テクスチャ) {
-        画像.破棄する(self.device);
+        画像.破棄する(self.環境.device);
+    }
+
+    fn 付属資源を退役させる(&mut self, 付属資源: 世代束縛資源) {
+        付属資源.破棄する(self.環境.device);
     }
 }

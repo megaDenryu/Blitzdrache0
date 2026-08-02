@@ -2,8 +2,8 @@
 // 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`。シェーダー内識別子はASCII。
 // エントリポイントはここに置き、PBR関数群は`pbr.slang`、ライティング合成+シャドウ判定は`lighting.slang`、距離区分の選択と境界ブレンドは`cascade_shadow.slang`へ分割してimportする。
 // ビューと直接照明の定数は`view_pass_uniform.slang`、影の定数は`cascade_shadow_uniform.slang`が唯一の宣言を持つ。
-// 材質の係数は`material_record.slang`のストレージバッファにあり、どの1件を読むかは`scene_draw_constants.slang`の
-// プッシュ定数が運ぶ添字が決める。
+// 材質の係数とテクスチャスロットは`material_record.slang`のストレージバッファにあり、どの1件を読むかは
+// `scene_draw_constants.slang`のプッシュ定数が運ぶ添字が決める。テクスチャは材質のセットの索引表から読む。
 
 import pbr;
 import lighting;
@@ -16,15 +16,26 @@ import scene_io;
 import view_pass_uniform;
 import visible_id;
 
-[[vk::binding(1, 2)]] Sampler2D baseColorTexture;
-[[vk::binding(2, 2)]] Sampler2D metallicRoughnessTexture;
-[[vk::binding(3, 2)]] Sampler2D normalMapTexture;
+// 材質のセットのbinding1: 資源表世代が常駐させた全テクスチャの表。binding2は表全体を読む1つの固定サンプラーである。
+// 常駐枚数に満たない残りの要素は書き込まれない(部分束縛)。
+// 要素数はCPU側の`テクスチャ表レイアウト容量`と同じ値でなければならず、`cargo xtask conform`が突き合わせる。
+// 要素数を書かない実行時配列にできないのは、SPIR-Vの妥当性検査がUniformConstantの実行時配列を拒むためである。
+// 隣り合うプリミティブが別のスロットを参照するため、添字はNonUniformResourceIndexで非一様であることを明示する。
+static const uint materialTextureTableCapacity = 256;
+[[vk::binding(1, 2)]] Texture2D materialTextures[materialTextureTableCapacity];
+[[vk::binding(2, 2)]] SamplerState materialSampler;
 // 照明問い合わせのセットのbinding0: 多段シャドウマップ(判断35・OW5第5段)。距離区分ごとの層を持つ2D配列テクスチャ+比較サンプラーを同一bindingへ束ねる。
 [[vk::binding(0, 3)]] [[vk::combinedImageSampler]] Texture2DArray shadowMapTexture;
 [[vk::binding(0, 3)]] [[vk::combinedImageSampler]] SamplerComparisonState shadowMapSampler;
 
 // 注意: この1行の表記はスモークのホットリロード検証が文字列置換で書き換える対象。表記を変えると検証が壊れるため、常にこの形(static const float3 = float3(x, y, z);)を保つ。
 static const float3 TINT = float3(1.0, 1.0, 1.0);
+
+// テクスチャを持たない役割のスロットも実在する正準フォールバックの画像を指すため、特徴ビットで分岐せず常に標本する。
+float4 sampleMaterialTexture(uint slot, float2 uv)
+{
+    return materialTextures[NonUniformResourceIndex(slot)].Sample(materialSampler, uv);
+}
 
 [shader("vertex")]
 VertexOutput vertexMain(VertexInput input, uint instanceIndex : SV_InstanceID, uint startInstance : SV_StartInstanceLocation)
@@ -47,14 +58,14 @@ VertexOutput vertexMain(VertexInput input, uint instanceIndex : SV_InstanceID, u
 float4 fragmentMain(VertexOutput input) : SV_Target
 {
     MaterialRecord materialRecord = materialRecords[sceneDrawConstants.materialRecordIndex];
-    float3 albedo = baseColorTexture.Sample(input.uv).rgb * materialRecord.baseColorFactor.rgb * TINT;
+    float3 albedo = sampleMaterialTexture(materialRecord.baseColorTextureSlot, input.uv).rgb * materialRecord.baseColorFactor.rgb * TINT;
     if (viewPassUniform.ambientAndLightingEnabled.y <= 0.5)
     {
         return float4(albedo, 1.0);
     }
     // glTF規約: metallicRoughnessテクスチャはG=粗さ・B=金属度。shadowFlagsAndTexelSize.xは方向光が影を落とすかであり、0のとき比較サンプリング自体を行わない。
-    float2 metallicRoughnessSample = metallicRoughnessTexture.Sample(input.uv).gb;
-    float3 sampledNormal = normalMapTexture.Sample(input.uv).rgb * 2.0 - 1.0;
+    float2 metallicRoughnessSample = sampleMaterialTexture(materialRecord.metallicRoughnessTextureSlot, input.uv).gb;
+    float3 sampledNormal = sampleMaterialTexture(materialRecord.normalTextureSlot, input.uv).rgb * 2.0 - 1.0;
     float viewDepth = viewDepthOf(input.relativePosition, viewPassUniform.cameraRelativePosition.xyz, viewPassUniform.cameraForward.xyz);
     float shadowFactor = cascadeShadowUniform.shadowFlagsAndTexelSize.x > 0.5
         ? computeCascadedShadowFactor(input.relativePosition, viewDepth, cascadeShadowUniform.cascadeLightViewProjection,

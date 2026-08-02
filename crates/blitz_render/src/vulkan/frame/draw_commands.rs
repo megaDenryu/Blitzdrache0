@@ -4,8 +4,8 @@
 //! ビュー射影行列等はビューとパスのセット(set0)経由で渡す(判断24)。
 //! 描画ごとに変わるカメラ相対の基準原点と材質レコード添字だけをプッシュ定数で積む(参照: `vulkan::scene_draw_constants`)。
 //!
-//! 注意: set0とset3はパイプラインを束縛した直後に1回だけ結び、発行ごとにはset1とset2だけを結ぶ。
-//! 発行の数で増える束縛をこの2つに限ることが、材質/プリミティブ数に比例した束縛を作らない根拠である。
+//! 注意: set0とset2とset3はパイプラインを束縛した直後に1回だけ結び、発行ごとにはset1だけを結ぶ。
+//! 発行の数で増える束縛をジオメトリのセット1つに限ることが、材質/プリミティブ数に比例した束縛を作らない根拠である。
 
 use ash::vk;
 
@@ -42,7 +42,7 @@ pub(super) fn 描画コマンドを積む(
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
         device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
         if let Some(先頭) = ジオメトリ一覧.first() {
-            shared_set_bind::共有セットを束縛する(device, command_buffer, 先頭.layout, 共有);
+            shared_set_bind::シーンの共有セットを束縛する(device, command_buffer, 先頭.layout, 共有);
         }
         for 入力 in ジオメトリ一覧 {
             scene_draw_constants::積む(device, command_buffer, 入力.layout, 入力.描画定数);
@@ -51,7 +51,7 @@ pub(super) fn 描画コマンドを積む(
                 vk::PipelineBindPoint::GRAPHICS,
                 入力.layout,
                 shared_set_bind::ジオメトリのセット番号,
-                &[入力.ジオメトリセット, 入力.材質セット],
+                &[入力.ジオメトリセット],
                 &[],
             );
             device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &開始位置一覧);

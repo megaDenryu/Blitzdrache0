@@ -29,10 +29,6 @@ pub(crate) mod instance;
 pub(crate) mod instance_transform;
 pub(crate) mod linear_sampler;
 pub(crate) mod material_record;
-/// 注意: 段4aは本番のGPU消費者を持たない(旧スロット別セット経路と並存させ、絵と判定値を動かさないため)。
-/// フレームごとの束縛と退役の呼び出し元は段4bのフレーム経路が持つため、それまでこの木の未使用を許す。
-/// この許可は段4bの配線と同時に外す。参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「段階導入」
-#[allow(dead_code)]
 pub(crate) mod material_table;
 pub(crate) mod memory;
 pub(crate) mod memory_ledger;

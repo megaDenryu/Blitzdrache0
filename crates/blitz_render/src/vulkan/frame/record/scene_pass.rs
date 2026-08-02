@@ -59,6 +59,7 @@ pub(super) fn 作る<'a>(
 /// 布はカメラ視錐台で通常の描画対象が1件も残らないフレームにも描くため、束縛先をジオメトリ一覧の先頭から借りず、
 /// 布自身のパイプラインのレイアウトと共有のセットから取る。布のパイプラインレイアウトはset1とset2を空のレイアウトで
 /// 宣言するため、通常の描画対象が束縛したset0とset3は無効になっており、ここで結び直す必要がある。
+/// 材質のセットは布が読まないため結ばない(空のレイアウトの位置へ実レイアウトのセットを結ぶと互換でない)。
 fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 布: &布ドロー<'_>, 共有: 共有セット束縛) {
     let 入力 = 布.入力;
     // 安全性: command_bufferは記録中で、布のパイプライン・バッファは生成済み。
@@ -66,7 +67,7 @@ fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, �
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.描画pipeline);
         relative_anchor::積む(device, command_buffer, 入力.描画layout, 入力.相対の基準原点);
     }
-    shared_set_bind::共有セットを束縛する(device, command_buffer, 入力.描画layout, 共有);
+    shared_set_bind::布の共有セットを束縛する(device, command_buffer, 入力.描画layout, 共有);
     // 安全性: command_bufferは記録中で、布の頂点・インデックスバッファは生成済み。
     unsafe {
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.布頂点バッファ], &[0]);

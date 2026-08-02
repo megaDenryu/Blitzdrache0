@@ -1,10 +1,10 @@
 //! 索引化した材質テクスチャ表の台帳と世代。担当するのは、材質とテクスチャの安定IDを1つの資源表世代の中のGPU添字へ写す
 //! 唯一の経路と、完全に構築済みの世代だけを公開してフェンス通過後に退役させる寿命の規律である。
 //!
-//! 注意: 段4aの契約により、この表を束縛するディスクリプタセットもシェーダーもまだ無い。現行の描画は旧スロット別セット経路の
-//! ままであり、この表の内容は絵に影響しない。フレームごとの束縛(`フレームが束縛する`)と退役の回収の呼び出し元は
-//! 段4bのフレーム経路が持つ。そのため`vulkan/mod.rs`のモジュール宣言がこの木の未使用を許している。
-//! 参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「段階導入」
+//! 束の登録から公開までの流れは次のとおりである。束が読み込まれると`材質登録簿`が材質とテクスチャへ安定IDを発番して
+//! CPU側の材質を保持し、その全体から新しい世代を構築して公開する。フレームは公開中の世代を束縛し、旧世代は
+//! 束縛した全フレームのフェンス通過後に退役する。
+//! 参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「材質レコードとテクスチャ台帳」
 
 mod capacity;
 mod device_supplier;
@@ -23,6 +23,7 @@ mod material_id;
 mod pack_input;
 mod packer;
 mod record_index;
+mod registration;
 mod residency_count;
 mod resource_table;
 mod stage_reserve;
@@ -35,5 +36,9 @@ mod texture_role;
 mod texture_slot;
 mod texture_spec;
 
-/// レンダラーが持つ所有者だけを外へ見せる。他の型はこのモジュール木の内側だけで使う。
-pub(crate) use resource_table::材質資源表;
+/// レンダラーが持つ所有者と、GPU境界・描画経路が名指しする型だけを外へ見せる。
+pub(crate) use capacity::テクスチャ表レイアウト容量;
+pub(crate) use generation_record::世代内材質レコード;
+pub(crate) use material_id::大域材質ID;
+pub(crate) use resource_table::{描画対象別の材質ID, 材質資源の作業環境, 材質資源表, 資源表世代の束縛};
+pub(crate) use texture_role::材質テクスチャ役割;

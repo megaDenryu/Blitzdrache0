@@ -13,8 +13,4 @@ impl 画像ID {
     pub(crate) const fn 生成する(値: u64) -> Self {
         Self { 値 }
     }
-
-    pub(crate) const fn 値(self) -> u64 {
-        self.値
-    }
 }

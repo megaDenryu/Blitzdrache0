@@ -12,6 +12,7 @@ use crate::renderer::scene_draw_resources::{シーン描画資源, シーン描�
 use crate::vulkan;
 use crate::vulkan::descriptor::{シーンセットレイアウト一式, 共有ディスクリプタセット};
 use crate::vulkan::gpu_environment::GPU環境;
+use crate::vulkan::material_table::{テクスチャ表レイアウト容量, 材質資源の作業環境, 材質資源表};
 
 pub(super) struct 基礎資源 {
     pub(super) シャドウマップ: vulkan::shadow_map::シャドウマップ,
@@ -23,40 +24,34 @@ pub(super) struct 基礎資源 {
     pub(super) 材質資源表: vulkan::material_table::材質資源表,
 }
 
+/// 生成の順は、表容量 → 共有資源(セットレイアウトを含む) → 材質資源表 → 起動シーンの束、である。
+/// 材質資源表を束より先に作るのは、束の描画対象が持つ材質IDを発番するのが材質資源表だからである。
 pub(super) fn 組み立てる(
     環境: &GPU環境,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     描画シーン: &描画シーン素材,
 ) -> Result<基礎資源, レンダラーエラー> {
     let device = 環境.device();
-    let 共有 = shared::共有資源::生成する(device, メモリプロパティ, 環境.queue(), 環境.キューファミリ添字())?;
-    let 束 = match シーン描画資源::生成する(
+    let 表容量 = テクスチャ表レイアウト容量::起動時に決める(環境.ディスクリプタ索引上限())?;
+    let 共有 = shared::共有資源::生成する(device, メモリプロパティ, 環境.queue(), 環境.キューファミリ添字(), 表容量)?;
+    let 作業環境 = 材質資源の作業環境 {
         device,
-        シーン描画資源生成要求 {
-            物理デバイス問い合わせ: 環境.物理デバイス問い合わせ(),
-            メモリプロパティ,
-            転送環境: &共有.転送,
-            セットレイアウト: &共有.セットレイアウト,
-            描画シーン,
-        },
-    ) {
+        問い合わせ: 環境.物理デバイス問い合わせ(),
+        メモリプロパティ,
+        転送環境: &共有.転送,
+        セットレイアウト: &共有.セットレイアウト,
+    };
+    let mut 材質資源表 = match 材質資源表::生成する(作業環境, 表容量) {
         Ok(値) => 値,
         Err(誤り) => {
             共有.破棄する(device);
             return Err(誤り);
         }
     };
-
-    let 材質資源表 = match vulkan::material_table::材質資源表::生成する(
-        device,
-        環境.物理デバイス問い合わせ(),
-        メモリプロパティ,
-        &共有.転送,
-        環境.ディスクリプタ索引上限(),
-    ) {
+    let 束 = match 起動シーンの束を作る(device, メモリプロパティ, &共有, &mut 材質資源表, 描画シーン) {
         Ok(値) => 値,
         Err(誤り) => {
-            束.破棄する(device);
+            材質資源表.破棄する(作業環境);
             共有.破棄する(device);
             return Err(誤り);
         }
@@ -71,4 +66,24 @@ pub(super) fn 組み立てる(
         シーン描画資源: 束,
         材質資源表,
     })
+}
+
+fn 起動シーンの束を作る(
+    device: &crate::vulkan::tracked_device::GPUデバイス,
+    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    共有: &shared::共有資源,
+    材質資源表: &mut 材質資源表,
+    描画シーン: &描画シーン素材,
+) -> Result<シーン描画資源, レンダラーエラー> {
+    let 材質id一覧 = 材質資源表.束の材質を登録する(crate::renderer::scene_draw_resources::起動シーンの束ID, 描画シーン.描画対象一覧());
+    シーン描画資源::生成する(
+        device,
+        シーン描画資源生成要求 {
+            メモリプロパティ,
+            転送環境: &共有.転送,
+            セットレイアウト: &共有.セットレイアウト,
+            描画シーン,
+            材質id一覧: &材質id一覧,
+        },
+    )
 }

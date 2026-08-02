@@ -17,7 +17,7 @@ struct 定数の組 {
     写しの前置き: &'static str,
 }
 
-const 定数一覧: [定数の組; 4] = [
+const 定数一覧: [定数の組; 5] = [
     定数の組 {
         正本パス: "crates/blitz_render/src/atmosphere/integration/sun_visibility.rs",
         正本の前置き: "pub(in crate::atmosphere) const 遮蔽球を縮める半径メートル: f64 = ",
@@ -41,6 +41,12 @@ const 定数一覧: [定数の組; 4] = [
         正本の前置き: "pub(in crate::atmosphere) const スライスあたりの標本区間数: u32 = ",
         写しパス: "shaders/atmosphere_aerial_march.slang",
         写しの前置き: "static const uint aerialSegmentsPerSlice = ",
+    },
+    定数の組 {
+        正本パス: "crates/blitz_render/src/vulkan/material_table/capacity.rs",
+        正本の前置き: "pub(in crate::vulkan::material_table) const 表の要素数: u32 = ",
+        写しパス: "shaders/scene.slang",
+        写しの前置き: "static const uint materialTextureTableCapacity = ",
     },
 ];
 

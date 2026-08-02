@@ -1,11 +1,14 @@
 //! テクスチャ: OPTIMALタイリング・ステージング転送+vkCmdBlitImage連鎖の
 //! 縮小段マップ生成(判断20)。色(SRGB)/線形データ(UNORM)は`用途`から選ぶ(判断23)。
+//!
+//! サンプラーを画像ごとに持たないのは、材質テクスチャ表の全画像を1つの固定サンプラーで読むためである
+//! (参照: `table_sampler`)。
 
 mod format_support;
 mod image;
-mod material_set;
 mod mip_chain;
 mod mip_count;
+pub(crate) mod table_sampler;
 mod upload;
 mod view;
 
@@ -17,13 +20,10 @@ use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
-pub(crate) use material_set::マテリアルテクスチャ一式;
-
 pub(crate) struct テクスチャ {
     image: vk::Image,
     memory: vk::DeviceMemory,
     pub(crate) image_view: vk::ImageView,
-    pub(crate) sampler: vk::Sampler,
 }
 
 impl テクスチャ {
@@ -53,29 +53,14 @@ impl テクスチャ {
                 return Err(誤り);
             }
         };
-        let sampler = match view::サンプラーを作る(device, mip数) {
-            Ok(sampler) => sampler,
-            Err(誤り) => {
-                // 安全性: image・image_view・memoryはこのスコープの唯一の所有者で、以降使用しない。
-                unsafe { device.destroy_image_view(image_view, None) };
-                画像を破棄する(device, image, memory);
-                return Err(誤り);
-            }
-        };
 
-        Ok(Self {
-            image,
-            memory,
-            image_view,
-            sampler,
-        })
+        Ok(Self { image, memory, image_view })
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
         // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
         // device_wait_idle済みであることを呼び出し元が保証する。
         unsafe {
-            device.destroy_sampler(self.sampler, None);
             device.destroy_image_view(self.image_view, None);
             device.destroy_image(self.image, None);
         }

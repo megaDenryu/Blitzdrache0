@@ -2,24 +2,25 @@
 //! コメントでしか結ばれておらず、片方だけを直した食い違いは走らせても色がずれた絵にしかならないため、ここが機械的に見る。
 
 use super::bytes;
-use super::content::材質レコード内容;
+use crate::vulkan::material_table::世代内材質レコード;
 use crate::vulkan::shader_struct::{シェーダー構造体の並び, 読み取る};
 
 const 材質レコードの原文: &str = include_str!("../../../../../shaders/material_record.slang");
 
 #[test]
 fn 材質レコードの各値が決めた開始位置へ並ぶ() {
-    let 内容 = 材質レコード内容 {
-        ベースカラー係数: [10.0, 11.0, 12.0, 13.0],
-        金属粗さ係数: [20.0, 21.0],
-    };
-    let バイト列 = bytes::バイト列にする(&内容);
-    assert_eq!(バイト列.len(), 32);
+    let レコード = 世代内材質レコード::試験用に組み立てる([10.0, 11.0, 12.0, 13.0], 20.0, 21.0, [true, false, true], [5, 6, 7]);
+    let バイト列 = bytes::バイト列にする(&レコード);
+    assert_eq!(バイト列.len(), 48);
     assert_eq!(f32を読む(&バイト列, 0), 10.0);
     assert_eq!(f32を読む(&バイト列, 12), 13.0);
     assert_eq!(f32を読む(&バイト列, 16), 20.0);
     assert_eq!(f32を読む(&バイト列, 20), 21.0);
     assert_eq!(f32を読む(&バイト列, 24), 0.0);
+    assert_eq!(u32を読む(&バイト列, 32), 0b101, "特徴ビットは役割の並びのビット集合である");
+    assert_eq!(u32を読む(&バイト列, 36), 5);
+    assert_eq!(u32を読む(&バイト列, 40), 6);
+    assert_eq!(u32を読む(&バイト列, 44), 7);
 }
 
 #[test]
@@ -31,6 +32,10 @@ fn 材質レコードの宣言がcpu側と同じ並びである() {
     assert_eq!(並び.バイト長, bytes::バイト長);
     開始位置を確かめる(&並び, "baseColorFactor", 0);
     開始位置を確かめる(&並び, "metallicRoughnessFactor", 16);
+    開始位置を確かめる(&並び, "featureBits", 32);
+    開始位置を確かめる(&並び, "baseColorTextureSlot", 36);
+    開始位置を確かめる(&並び, "metallicRoughnessTextureSlot", 40);
+    開始位置を確かめる(&並び, "normalTextureSlot", 44);
 }
 
 fn 開始位置を確かめる(並び: &シェーダー構造体の並び, 名前: &str, 期待する位置: usize) {
@@ -41,9 +46,16 @@ fn 開始位置を確かめる(並び: &シェーダー構造体の並び, 名�
 }
 
 fn f32を読む(バイト列: &[u8], 位置: usize) -> f32 {
-    let 配列 = match バイト列[位置..位置 + 4].try_into() {
+    f32::from_le_bytes(四バイトを切り出す(バイト列, 位置))
+}
+
+fn u32を読む(バイト列: &[u8], 位置: usize) -> u32 {
+    u32::from_le_bytes(四バイトを切り出す(バイト列, 位置))
+}
+
+fn 四バイトを切り出す(バイト列: &[u8], 位置: usize) -> [u8; 4] {
+    match バイト列[位置..位置 + 4].try_into() {
         Ok(配列) => 配列,
         Err(_) => panic!("4バイトの切り出しに失敗した"),
-    };
-    f32::from_le_bytes(配列)
+    }
 }

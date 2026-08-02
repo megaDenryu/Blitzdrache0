@@ -11,7 +11,8 @@ use crate::vulkan::material_table::{
     image_id::画像ID, material_id::大域材質ID, pack_input::梱包対象材質, texture_id::テクスチャID, texture_spec::テクスチャ指定,
 };
 
-use super::fixture::{余裕のあるレイアウト容量, 検査用供給元, 検査用素材, 画像を選んだ材質};
+use super::fixture::検査用供給元;
+use super::material_fixture::{余裕のあるレイアウト容量, 検査用素材, 画像を選んだ材質};
 
 /// 正準フォールバックが常に占める枚数。材質のテクスチャ枚数はこの枚数を引いて数える。
 const フォールバック枚数: usize = 3;

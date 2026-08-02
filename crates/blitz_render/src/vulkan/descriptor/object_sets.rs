@@ -1,30 +1,18 @@
-//! 1つの束に属する描画対象のジオメトリのセット(set1)と材質のセット(set2)を、その束専用のディスクリプタプールから
-//! 確保して保持する。注意: プールの破棄がセットの解放を暗黙に行うため、束の解除はプール1つの破棄で完結する。
+//! 1つの束に属する描画対象のジオメトリのセット(set1)を、その束専用のディスクリプタプールから確保して保持する。
+//! 注意: プールの破棄がセットの解放を暗黙に行うため、束の解除はプール1つの破棄で完結する。
 //! セット添字もこの型の内側で閉じるため、他の束の追加・解除で添字がずれない。
 //!
 //! ジオメトリのセットを描画対象×フレームスロットで持つのは、可視ID列がフレームスロットごとに別のバッファだからである。
-//! 材質のセットを材質スロットごとに持ちフレームスロットで分けないのは、材質レコードもテクスチャもフレームで変わらないためである
-//! (参照: `_doc/設計/マルチマテリアルと材質境界.md`「束縛バックエンドの移行境界」)。
-//! 2つの添字から位置を導く配置は`placement`、割り当て済みのセットへの書き込みは`write`にある。
+//! 材質のセット(set2)は束が持たない。資源表世代が1つだけ持ち、パスの先頭で1回束縛する
+//! (参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「束縛頻度による4セット」)。
+//! 確保と書き込みの局面は`create`にある。
 
-mod placement;
-mod write;
+mod create;
 
 use ash::vk;
 
-use super::シーンセットレイアウト一式;
-use crate::error::レンダラーエラー;
-use crate::vulkan::sync::フレームスロット添字;
-use crate::vulkan::texture::マテリアルテクスチャ一式;
+use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::visible_id::可視ID列参照;
-use placement::セット配置;
-
-/// 材質スロット1つぶんの、材質のセットが結ぶ資源。
-pub(crate) struct 材質セット参照<'a> {
-    pub(crate) テクスチャ: &'a マテリアルテクスチャ一式,
-    /// 材質レコード列を読むバッファと、そのバイト範囲。同じ描画対象の全スロットのセットが同じ値を持つ。
-    pub(crate) 材質レコード: (vk::Buffer, vk::DeviceSize),
-}
 
 /// 描画対象1つぶんの、ジオメトリのセットが結ぶ資源。
 pub(crate) struct ジオメトリセット参照 {
@@ -36,35 +24,17 @@ pub(crate) struct ジオメトリセット参照 {
 
 pub(crate) struct 描画対象ディスクリプタプール {
     pool: vk::DescriptorPool,
+    /// 描画対象の順、その中でフレームスロットの順に並ぶ。
     ジオメトリset一覧: Vec<vk::DescriptorSet>,
-    材質set一覧: Vec<vk::DescriptorSet>,
-    配置: セット配置,
+    描画対象数: usize,
 }
 
 impl 描画対象ディスクリプタプール {
-    /// `対象別材質参照一覧`の並びが描画対象の添字であり、その内側の並びが材質スロットの添字である。
-    /// `ジオメトリ参照一覧`の並びも同じ描画対象の添字である。
-    pub(crate) fn 生成する(
-        device: &ash::Device,
-        レイアウト: &シーンセットレイアウト一式,
-        ジオメトリ参照一覧: &[ジオメトリセット参照],
-        対象別材質参照一覧: &[Vec<材質セット参照<'_>>],
-    ) -> Result<Self, レンダラーエラー> {
-        let 対象別スロット数 = 対象別材質参照一覧.iter().map(Vec::len).collect::<Vec<usize>>();
-        let 配置 = セット配置::生成する(&対象別スロット数);
-        let pool = write::プールを生成する(device, &配置)?;
-        match write::割り当てて書き込む(device, pool, レイアウト, &配置, ジオメトリ参照一覧, 対象別材質参照一覧) {
-            Ok((ジオメトリset一覧, 材質set一覧)) => Ok(Self {
-                pool,
-                ジオメトリset一覧,
-                材質set一覧,
-                配置,
-            }),
-            Err(誤り) => {
-                // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
-                unsafe { device.destroy_descriptor_pool(pool, None) };
-                Err(誤り)
-            }
+    fn 束ねる(pool: vk::DescriptorPool, ジオメトリset一覧: Vec<vk::DescriptorSet>, 描画対象数: usize) -> Self {
+        Self {
+            pool,
+            ジオメトリset一覧,
+            描画対象数,
         }
     }
 
@@ -72,11 +42,11 @@ impl 描画対象ディスクリプタプール {
     pub(crate) fn ジオメトリセット(
         &self, 描画対象添字: usize, フレーム添字: フレームスロット添字
     ) -> vk::DescriptorSet {
-        取り出す(&self.ジオメトリset一覧, self.配置.ジオメトリ位置(描画対象添字, フレーム添字))
-    }
-
-    pub(crate) fn 材質セット(&self, 描画対象添字: usize, スロット添字: usize) -> vk::DescriptorSet {
-        取り出す(&self.材質set一覧, self.配置.材質位置(描画対象添字, スロット添字))
+        assert!(描画対象添字 < self.描画対象数, "ジオメトリのセットの描画対象添字が束の配置の外だった");
+        match self.ジオメトリset一覧.get(位置を求める(描画対象添字, フレーム添字)) {
+            Some(set) => *set,
+            None => panic!("ディスクリプタセット一覧が描画対象添字の示す位置を持たない"),
+        }
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {
@@ -86,10 +56,9 @@ impl 描画対象ディスクリプタプール {
     }
 }
 
-/// 配置が返した位置のセット。位置が無いのも一覧がその位置を持たないのも、呼び出し元が渡した添字の誤りである。
-fn 取り出す(set一覧: &[vk::DescriptorSet], 位置: Option<usize>) -> vk::DescriptorSet {
-    match 位置.and_then(|位置| set一覧.get(位置)) {
-        Some(set) => *set,
-        None => panic!("ディスクリプタセットの添字が束の配置の外だった"),
-    }
+fn 位置を求める(描画対象添字: usize, フレーム添字: フレームスロット添字) -> usize {
+    描画対象添字
+        .checked_mul(進行中フレーム数)
+        .and_then(|積| 積.checked_add(フレーム添字.配列添字()))
+        .unwrap_or_else(|| panic!("ジオメトリのセットの位置がusizeを超えた"))
 }

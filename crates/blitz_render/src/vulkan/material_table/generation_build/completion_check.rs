@@ -9,8 +9,8 @@ use crate::vulkan::material_table::generation::資源表世代;
 use crate::vulkan::material_table::pack_input::梱包対象材質;
 use crate::vulkan::material_table::texture_role::材質テクスチャ役割;
 
-pub(super) fn 確かめる<画像>(
-    世代: &資源表世代<画像>, 材質一覧: &[梱包対象材質<'_>]
+pub(super) fn 確かめる<画像, 付属>(
+    世代: &資源表世代<画像, 付属>, 材質一覧: &[梱包対象材質<'_>]
 ) -> Result<(), 材質資源表エラー> {
     let 画像枚数 = u32::try_from(世代.画像枚数()).unwrap_or_else(|_| panic!("世代の画像枚数がu32に収まらない"));
     for 材質 in 材質一覧 {

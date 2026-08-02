@@ -9,6 +9,7 @@ mod fallback_tests;
 mod fixture;
 mod generation_tests;
 mod ledger_tests;
+mod material_fixture;
 mod packer_tests;
 mod publication_tests;
 mod registry_tests;
