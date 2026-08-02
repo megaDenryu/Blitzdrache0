@@ -39,8 +39,14 @@ impl シーンセットレイアウト一式 {
         self.ジオメトリ
     }
 
-    pub(crate) fn 照明問い合わせ(&self) -> vk::DescriptorSetLayout {
-        self.照明問い合わせ
+    /// 進行中フレームスロットごとの照明問い合わせのセットを、照明問い合わせ資源束が持つプールから取り出す。
+    pub(crate) fn 照明問い合わせのセットを割り当てる(
+        &self,
+        device: &ash::Device,
+        pool: vk::DescriptorPool,
+        セット数: usize,
+    ) -> Result<Vec<vk::DescriptorSet>, レンダラーエラー> {
+        super::alloc::割り当てる(device, pool, self.照明問い合わせ, セット数)
     }
 
     pub(crate) fn 材質テクスチャ表容量(&self) -> テクスチャ表レイアウト容量 {

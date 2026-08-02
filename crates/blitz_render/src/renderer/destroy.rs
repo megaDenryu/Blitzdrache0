@@ -58,6 +58,7 @@ impl レンダラー {
         let device = self.環境.device();
         self.フレーム進行.破棄する(device);
         self.シーン描画資源.破棄する(device);
+        self.照明問い合わせ資源.破棄する(device);
         self.共有ディスクリプタ.破棄する(device);
         self.セットレイアウト.破棄する(device);
         self.シェーダー定数.破棄する(device);

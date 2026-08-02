@@ -27,6 +27,7 @@ pub(crate) mod headless;
 pub(crate) mod host_buffer;
 pub(crate) mod instance;
 pub(crate) mod instance_transform;
+pub(crate) mod lighting_query;
 pub(crate) mod linear_sampler;
 pub(crate) mod material_record;
 pub(crate) mod material_table;

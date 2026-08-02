@@ -5,7 +5,7 @@
 
 use thiserror::Error;
 
-use super::{cloth, device_requirement, frame_input_mismatch, material_table, sky};
+use super::{cloth, device_requirement, frame_input_mismatch, lighting_query, material_table, sky};
 use crate::vulkan_failure::Vulkan失敗コード;
 
 #[derive(Debug, Error)]
@@ -91,4 +91,8 @@ pub enum レンダラーエラー {
     材質資源表不正(#[from] material_table::材質資源表エラー),
     #[error("多段の組み立てが失敗した(カメラ視錐台の退化・正射影の値の不正): {0}")]
     多段構築失敗(#[from] crate::lighting_input::ライティング入力エラー),
+
+    /// 照明問い合わせ資源の梱包で、ヘッダの件数と実レコード数と容量が整合しなかった。
+    #[error("照明問い合わせ資源の梱包が失敗した: {0}")]
+    照明問い合わせ梱包不正(#[from] lighting_query::照明問い合わせ梱包エラー),
 }

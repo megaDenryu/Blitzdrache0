@@ -9,13 +9,14 @@
 mod alloc;
 mod empty_set;
 mod geometry_set;
-mod lighting_set;
+pub(crate) mod lighting_set;
 pub(crate) mod material_set;
 mod object_sets;
 mod scene_set_layouts;
 mod shared_sets;
 mod view_pass_set;
 
+pub(crate) use lighting_set::照明問い合わせのバッファ組;
 pub(crate) use object_sets::{ジオメトリセット参照, 描画対象ディスクリプタプール};
 pub(crate) use scene_set_layouts::シーンセットレイアウト一式;
 pub(crate) use shared_sets::{共有セット束縛, 共有ディスクリプタセット};
