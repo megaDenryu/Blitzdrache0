@@ -239,7 +239,7 @@ set 3の直接光は最初から配列契約にする(固定フィールドに�
 | --- | --- | --- |
 | (i) NonUniform装飾の最終SPIR-V検査 | 実施済み | `crates/blitz_app/src/embedded_shaders/nonuniform_tests.rs`。埋め込んだ画素段のSPIR-Vで、材質テクスチャ表を基点とするアクセス連鎖がすべてNonUniformで装飾されていることを見る |
 | (ii) 部分束縛の正例とフォールバックの実在 | 部分的に実施済み | `vulkan/material_table/tests/fallback_tests.rs`と`capacity_tests.rs`。テクスチャを持たない材質が実在するスロットを指すことと、常駐枚数が容量に満たない世代が公開できることを狭い検査で見る。実機で未書込の要素を参照しない描画の確認は既存検収入口のvalidation 0件が兼ねている |
-| (iii) set 2の束縛回数のセット番号別の計器 | 未実施 | 束縛の実装は「パスの先頭で1回」だが、回数を数える計器はまだ無い |
+| (iii) set 2の束縛回数のセット番号別の計器 | 実施済み | 計器が`crates/blitz_render/src/vulkan/frame/bind_tally.rs`、判定が`cargo xtask multi-material-draw`。実測は2材質が[5, 10, 1, 1]・1材質が[5, 5, 1, 1](添字がセット番号)であり、材質のセットはどちらも1回、ジオメトリのセットだけがプリミティブの数で増える |
 | (iv) 無変更リロードの画素同一と変更リロードの混成画素なし | 部分的に実施済み | `cargo xtask smoke`のホットリロード検証がシェーダーの差し替えを見る。アセットの差し替えでの画素判定は未実施 |
 | (v) リロード経路のdevice_wait_idle不使用 | 実施済み | `cargo xtask conform`の`reload_without_device_wait` |
 | (vi) 旧個別材質セットの消滅 | 実施済み | `cargo xtask conform`の`removed_slot_material_set` |

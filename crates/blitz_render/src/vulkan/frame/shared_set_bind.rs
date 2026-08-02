@@ -9,7 +9,7 @@
 
 use ash::vk;
 
-use super::共有セット束縛;
+use super::{セット別束縛計数, 共有セット束縛};
 
 pub(super) const ビューとパスのセット番号: u32 = 0;
 pub(super) const ジオメトリのセット番号: u32 = 1;
@@ -29,7 +29,7 @@ pub(super) fn シーンの共有セットを束縛する(
         (材質のセット番号, 共有.材質),
         (照明問い合わせのセット番号, 共有.照明問い合わせ),
     ];
-    束縛する(device, command_buffer, layout, &対応);
+    束縛する(device, command_buffer, layout, &対応, 共有.計数);
 }
 
 /// 布の描画が結ぶset0とset3。布のパイプラインはset2を資源を持たない空のレイアウトで宣言するため、材質のセットは結ばない。
@@ -43,11 +43,18 @@ pub(super) fn 布の共有セットを束縛する(
         (ビューとパスのセット番号, 共有.ビューとパス),
         (照明問い合わせのセット番号, 共有.照明問い合わせ),
     ];
-    束縛する(device, command_buffer, layout, &対応);
+    束縛する(device, command_buffer, layout, &対応, 共有.計数);
 }
 
-fn 束縛する(device: &ash::Device, command_buffer: vk::CommandBuffer, layout: vk::PipelineLayout, 対応: &[(u32, vk::DescriptorSet)]) {
+fn 束縛する(
+    device: &ash::Device,
+    command_buffer: vk::CommandBuffer,
+    layout: vk::PipelineLayout,
+    対応: &[(u32, vk::DescriptorSet)],
+    計数: &セット別束縛計数,
+) {
     for (番号, セット) in 対応 {
+        計数.数える(*番号);
         // 安全性: command_bufferは記録中で、layoutとセットは互換の組として生成済みである。
         unsafe {
             device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::GRAPHICS, layout, *番号, &[*セット], &[]);
@@ -60,8 +67,9 @@ pub(super) fn ビューとパスのセットを束縛する(
     device: &ash::Device,
     command_buffer: vk::CommandBuffer,
     layout: vk::PipelineLayout,
-    共有: 共有セット束縛,
+    共有: 共有セット束縛<'_>,
 ) {
+    共有.計数.数える(ビューとパスのセット番号);
     // 安全性: command_bufferは記録中で、layoutとセットは互換の組として生成済みである。
     unsafe {
         device.cmd_bind_descriptor_sets(

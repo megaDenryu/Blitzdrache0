@@ -1,13 +1,11 @@
 //! アプリ状態の読み出しと終了処理(main.rsの終了処理する等が使う照会メソッド群)。
-//! どの報告が求められたかの問い合わせは`report_request`が持つ。
+//! どの報告が求められたかの問い合わせは`report_request`、レンダラーだけを見て答える計器の照会は`renderer_metrics`が持つ。
 
+mod renderer_metrics;
 mod report_request;
 
 use blitz_engine::可視判定計数;
-use blitz_render::{
-    CPU区間時間, GPUメモリ統計, cascade::影の解像度密度, レンダラー, 大気のベイク済み画像生成パス数の記録, 実表示観測, 実表示計測状況, 描画発行内訳,
-    検証カウンタ,
-};
+use blitz_render::{CPU区間時間, cascade::影の解像度密度, レンダラー, 実表示観測, 実表示計測状況};
 
 use super::アプリ;
 use crate::error::起動エラー;
@@ -16,27 +14,6 @@ impl アプリ {
     /// resumed/window_event内で発生した起動時エラーを取り出す。
     pub(crate) fn 起動時エラーを取り出す(&mut self) -> Option<起動エラー> {
         self.起動時エラー.take()
-    }
-
-    /// 破棄後に読むための検証カウンタ。レンダラー未生成なら`None`(一度も描画していないためvalidationメッセージも発生し得ない)。
-    pub(crate) fn 検証カウンタを取得する(&self) -> Option<検証カウンタ> {
-        self.レンダラー.as_ref().map(レンダラー::検証カウンタを取得する)
-    }
-
-    pub(crate) fn gpuメモリ統計を取得する(&self) -> Option<GPUメモリ統計> {
-        self.レンダラー.as_ref().map(レンダラー::gpuメモリ統計を取得する)
-    }
-
-    /// 最終フレームの描画発行内訳。レンダラー破棄前に呼ぶこと。
-    pub(crate) fn 描画発行内訳を取得する(&self) -> Option<描画発行内訳> {
-        self.レンダラー.as_ref().map(レンダラー::描画発行内訳を取得する)
-    }
-
-    /// 大気のベイク済み画像生成パスの実行数の記録。レンダラー未生成なら1フレームも数えていないため`None`。
-    pub(crate) fn 大気のベイク済み画像生成パス数の記録を取得する(
-        &self,
-    ) -> Option<&大気のベイク済み画像生成パス数の記録> {
-        self.レンダラー.as_ref().map(レンダラー::大気のベイク済み画像生成パス数の記録を取得する)
     }
 
     /// 起動から現在までに個体の段が入れ替わった延べ回数。段の記憶を持つ可視判定の配線から集める。

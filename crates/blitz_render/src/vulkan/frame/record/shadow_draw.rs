@@ -18,7 +18,7 @@ pub(super) fn 記録する(
     番号: 距離区分番号,
     入力一覧: &[シャドウ描画入力],
     布ドロー: Option<布ドロー<'_>>,
-    共有: 共有セット束縛,
+    共有: 共有セット束縛<'_>,
 ) {
     if 入力一覧.is_empty() && 布ドロー.is_none() {
         // その距離区分へ影を落とす対象も布も無いフレーム。全個体がその距離区分のライト視錐台の外にある状態で実際に起こる。
@@ -45,6 +45,7 @@ pub(super) fn 記録する(
         unsafe { device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 先頭.pipeline) };
         shared_set_bind::ビューとパスのセットを束縛する(device, command_buffer, 先頭.layout, 共有);
         for 入力 in 入力一覧 {
+            共有.計数.数える(shared_set_bind::ジオメトリのセット番号);
             対象を記録する(device, command_buffer, 番号, 入力);
         }
     }
@@ -81,7 +82,7 @@ fn 対象を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer
 /// 布は専用のシャドウパイプラインを束縛し、ジオメトリのセットを読まない。パイプラインもセットも描画対象から借りないため、
 /// 描画対象が1件も無いフレームでも、走査順が入れ替わったフレームでも、布の影は同じ位置に出る。
 fn 布を記録する(
-    device: &ash::Device, command_buffer: vk::CommandBuffer, 番号: 距離区分番号, 布: 布ドロー<'_>, 共有: 共有セット束縛
+    device: &ash::Device, command_buffer: vk::CommandBuffer, 番号: 距離区分番号, 布: 布ドロー<'_>, 共有: 共有セット束縛<'_>
 ) {
     let シャドウ = &布.入力.外部資源.シャドウ;
     // 安全性: command_bufferは記録中で、布のパイプラインは生成済み。

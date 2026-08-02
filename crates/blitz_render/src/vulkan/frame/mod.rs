@@ -1,5 +1,6 @@
 //! 1フレームの記録・送信・提示。dynamic rendering + synchronization2で行う。
 
+mod bind_tally;
 mod cloth_types;
 mod copy;
 mod dispatch;
@@ -17,6 +18,7 @@ pub(crate) mod draw_commands;
 
 pub(crate) use crate::vulkan::descriptor::共有セット束縛;
 pub(crate) use acquire::取得結果;
+pub(crate) use bind_tally::{セット別束縛計数, セット番号の数};
 pub(crate) use cloth_types::{布シャドウ描画入力, 布描画の外部資源, 布描画入力};
 pub(crate) use dispatch::{任意描画入力, 同期入力, 描画対象入力, 提示先};
 pub(crate) use images::{フレーム画像一式, 光のにじみ画像};

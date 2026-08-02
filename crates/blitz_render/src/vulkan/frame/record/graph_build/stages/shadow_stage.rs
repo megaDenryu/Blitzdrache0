@@ -17,7 +17,7 @@ pub(in crate::vulkan::frame::record::graph_build) fn 影を積む<'a>(
     スキン済み: Option<graph::バッファハンドル>,
     布: Option<scene_pass::布ドロー<'a>>,
     入力: 距離区分別のシャドウ入力<'a>,
-    共有: 共有セット束縛,
+    共有: 共有セット束縛<'a>,
 ) {
     for 番号 in 距離区分番号::全距離区分() {
         グラフ.パスを積む(shadow_pass::作る(

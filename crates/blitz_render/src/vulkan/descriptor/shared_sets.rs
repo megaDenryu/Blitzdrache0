@@ -13,6 +13,7 @@ use ash::vk;
 
 use super::シーンセットレイアウト一式;
 use crate::error::レンダラーエラー;
+use crate::vulkan::frame::セット別束縛計数;
 use crate::vulkan::shadow_map::シャドウマップ;
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::uniform::フレームシェーダー定数一式;
@@ -20,11 +21,13 @@ use crate::vulkan::uniform::フレームシェーダー定数一式;
 /// 描画発行で変わらない3つのセットを1組にした束縛先。ビューとパスのセット(set0)はそのフレームスロットのもの、
 /// 材質のセット(set2)はそのフレームが束縛する資源表世代のもの、照明問い合わせのセット(set3)は資源が固定のため常に同じものである。
 /// パイプラインレイアウトが違うと束縛が無効になるため、パイプラインを切り替えたパスの各局面がそれぞれ1回束縛する。
+/// 計器を同じ組で運ぶのは、束縛を積む地点が必ずこの組を受け取るからである(数える場所と束縛する場所がずれない)。
 #[derive(Clone, Copy)]
-pub(crate) struct 共有セット束縛 {
+pub(crate) struct 共有セット束縛<'計器> {
     pub(crate) ビューとパス: vk::DescriptorSet,
     pub(crate) 材質: vk::DescriptorSet,
     pub(crate) 照明問い合わせ: vk::DescriptorSet,
+    pub(crate) 計数: &'計器 セット別束縛計数,
 }
 
 pub(crate) struct 共有ディスクリプタセット {
@@ -49,11 +52,17 @@ impl 共有ディスクリプタセット {
     }
 
     /// そのフレームのシーン描画・布描画・シャドウ記録が使う束縛先の組。材質のセットはそのフレームが束縛する世代のものを受け取る。
-    pub(crate) fn 束縛を作る(&self, フレーム添字: フレームスロット添字, 材質: vk::DescriptorSet) -> 共有セット束縛 {
+    pub(crate) fn 束縛を作る<'計器>(
+        &self,
+        フレーム添字: フレームスロット添字,
+        材質: vk::DescriptorSet,
+        計数: &'計器 セット別束縛計数,
+    ) -> 共有セット束縛<'計器> {
         共有セット束縛 {
             ビューとパス: self.ビューとパス(フレーム添字),
             材質,
             照明問い合わせ: self.照明問い合わせ,
+            計数,
         }
     }
 

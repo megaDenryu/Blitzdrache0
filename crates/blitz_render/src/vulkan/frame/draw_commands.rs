@@ -19,7 +19,7 @@ pub(super) fn 描画コマンドを積む(
     pipeline: vk::Pipeline,
     寸法: vk::Extent2D,
     ジオメトリ一覧: &[ジオメトリ入力],
-    共有: 共有セット束縛,
+    共有: 共有セット束縛<'_>,
 ) {
     let viewport = vk::Viewport::default()
         .x(0.0)
@@ -46,6 +46,7 @@ pub(super) fn 描画コマンドを積む(
         }
         for 入力 in ジオメトリ一覧 {
             scene_draw_constants::積む(device, command_buffer, 入力.layout, 入力.描画定数);
+            共有.計数.数える(shared_set_bind::ジオメトリのセット番号);
             device.cmd_bind_descriptor_sets(
                 command_buffer,
                 vk::PipelineBindPoint::GRAPHICS,

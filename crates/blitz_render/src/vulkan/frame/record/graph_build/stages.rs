@@ -52,7 +52,7 @@ pub(super) fn シーンを積む<'a>(
     クリア色: クリアカラー,
     pipeline: vk::Pipeline,
     入力: &'a [ジオメトリ入力],
-    共有: 共有セット束縛,
+    共有: 共有セット束縛<'a>,
     寸法: vk::Extent2D,
 ) {
     グラフ.パスを積む(scene_pass::作る(
