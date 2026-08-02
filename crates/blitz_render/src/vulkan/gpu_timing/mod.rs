@@ -2,7 +2,7 @@
 //! 発行し、フレームのフェンス待ち後に前回分を読んで移動平均(60フレーム窓)を保つ。
 //! 参照: `_doc/設計/レンダーグラフ.md`「GPU計測」。
 
-mod moving_average;
+mod pass_time_window;
 mod query_pool;
 mod readback;
 
@@ -10,9 +10,10 @@ use std::collections::HashMap;
 
 use ash::vk;
 
-use moving_average::移動平均;
+use pass_time_window::パス時間の窓;
 
 use crate::error::レンダラーエラー;
+use crate::gpu_pass_timing::パス時間の分布;
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 /// グラフが1フレームに持てるパス数の上限(クエリプール容量の元になる)。
@@ -26,7 +27,7 @@ pub(crate) struct パス別GPU計測 {
     プール一覧: [vk::QueryPool; 進行中フレーム数],
     タイムスタンプ周期ns: f32,
     直近マッピング一覧: [Vec<(&'static str, u32)>; 進行中フレーム数],
-    移動平均表: HashMap<&'static str, 移動平均>,
+    窓表: HashMap<&'static str, パス時間の窓>,
 }
 
 impl パス別GPU計測 {
@@ -45,7 +46,7 @@ impl パス別GPU計測 {
             プール一覧,
             タイムスタンプ周期ns,
             直近マッピング一覧: std::array::from_fn(|_| Vec::new()),
-            移動平均表: HashMap::new(),
+            窓表: HashMap::new(),
         }))
     }
 
@@ -62,7 +63,7 @@ impl パス別GPU計測 {
             self.プール一覧[フレーム添字.配列添字()],
             &self.直近マッピング一覧[フレーム添字.配列添字()],
             self.タイムスタンプ周期ns,
-            &mut self.移動平均表,
+            &mut self.窓表,
         );
     }
 
@@ -74,9 +75,9 @@ impl パス別GPU計測 {
         self.直近マッピング一覧[フレーム添字.配列添字()] = マッピング;
     }
 
-    /// パス名ごとの移動平均ミリ秒を全件返す(登録順は不定)。
-    pub(crate) fn 平均一覧を取得する(&self) -> Vec<(&'static str, f64)> {
-        self.移動平均表.iter().map(|(&名前, 平均)| (名前, 平均.平均())).collect()
+    /// パス名ごとの直近の窓の分布を全件返す(登録順は不定)。
+    pub(crate) fn 分布一覧を取得する(&self) -> Vec<(&'static str, パス時間の分布)> {
+        self.窓表.iter().map(|(&名前, 窓)| (名前, 窓.分布())).collect()
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

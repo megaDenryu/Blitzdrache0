@@ -37,7 +37,7 @@ impl アプリ {
     }
 
     /// パス別の移動平均GPU時間(ミリ秒)。レンダラー破棄前に呼ぶこと(判断30)。
-    pub(crate) fn パス別gpu時間を取得する(&self) -> Vec<(&'static str, f64)> {
+    pub(crate) fn パス別gpu時間を取得する(&self) -> Vec<(&'static str, blitz_render::gpu_pass_timing::パス時間の分布)> {
         self.レンダラー.as_ref().map(レンダラー::パス別gpu時間を取得する).unwrap_or_default()
     }
 

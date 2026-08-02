@@ -19,6 +19,7 @@ mod frame_composition_tests;
 pub mod frame_input;
 mod frame_lighting;
 mod gpu_memory_stats;
+pub mod gpu_pass_timing;
 mod lighting_input;
 #[cfg(test)]
 mod lighting_input_tests;
@@ -48,8 +49,6 @@ mod ui_vertex;
 mod validation_counter;
 mod vertex;
 mod view_input;
-#[cfg(test)]
-mod view_input_tests;
 mod visible_instance_selection;
 mod vulkan;
 mod vulkan_failure;

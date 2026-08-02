@@ -43,12 +43,12 @@ impl レンダラー {
         self.検証カウンタ.clone()
     }
 
-    /// パス名ごとの移動平均GPU時間(ミリ秒)を返す(判断30)。タイムスタンプ非対応
+    /// パス名ごとの直近60フレームの窓の分布を返す(判断30)。タイムスタンプ非対応
     /// デバイスでは空配列(計測できていないことの明示。無言の0ミリ秒は返さない)。
-    pub fn パス別gpu時間を取得する(&self) -> Vec<(&'static str, f64)> {
+    pub fn パス別gpu時間を取得する(&self) -> Vec<(&'static str, crate::gpu_pass_timing::パス時間の分布)> {
         self.gpu計測
             .as_ref()
-            .map(vulkan::gpu_timing::パス別GPU計測::平均一覧を取得する)
+            .map(vulkan::gpu_timing::パス別GPU計測::分布一覧を取得する)
             .unwrap_or_default()
     }
 

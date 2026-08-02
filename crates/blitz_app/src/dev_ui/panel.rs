@@ -12,7 +12,7 @@ pub(super) fn 内容を描く(ctx: &egui::Context, 統計: &開発UI統計, 露�
             "frame interval: {:.3} ms (vsync待ち込み。60Hzなら約16.7msが正常)",
             統計.フレーム時間ms
         ));
-        let gpu合計: f64 = 統計.パス別gpu時間.iter().map(|&(_, ミリ秒)| ミリ秒).sum();
+        let gpu合計: f64 = 統計.パス別gpu時間.iter().map(|&(_, 分布)| 分布.平均ミリ秒()).sum();
         ui.label(format!("GPU合計: {gpu合計:.4} ms"));
         ui.label(format!("validation issues: {}", 統計.validation件数));
         ui.separator();
@@ -25,8 +25,8 @@ pub(super) fn 内容を描く(ctx: &egui::Context, 統計: &開発UI統計, 露�
         if 統計.パス別gpu時間.is_empty() {
             ui.label("  (not available on this device)");
         } else {
-            for &(名前, 平均ミリ秒) in &統計.パス別gpu時間 {
-                ui.label(format!("  {名前}: {平均ミリ秒:.4} ms"));
+            for &(名前, 分布) in &統計.パス別gpu時間 {
+                ui.label(format!("  {名前}: {:.4} ms", 分布.平均ミリ秒()));
             }
         }
     });

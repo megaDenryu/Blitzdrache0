@@ -7,6 +7,7 @@ pub(crate) mod composition;
 pub(crate) mod display_timing;
 pub(crate) mod draw_issue;
 pub(crate) mod exit;
+pub(crate) mod gpu_time_table;
 pub(crate) mod shadow_gpu_time;
 pub(crate) mod sky_pixel;
 pub(crate) mod sky_state;
@@ -73,20 +74,4 @@ pub(crate) fn フレーム時間統計を表示する(統計: &フレーム時�
     println!("  p99: {:.4} ms", 統計.p99ms);
     println!("  最大: {:.4} ms", 統計.最大ms);
     println!("  25ms超過: {}回", 統計.二十五ms超過数);
-}
-
-/// `--report-gpu-times`指定時の終了時コンソール出力(判断30)。計測無効(空配列)なら
-/// その旨を明示し、無言で何も出さないことを避ける。
-pub(crate) fn gpu時間表を表示する(表: &[(&'static str, f64)]) {
-    if 表.is_empty() {
-        println!("パス別GPU時間: 計測できなかった(タイムスタンプ非対応、または1フレームも計測が完了していない)");
-        return;
-    }
-    println!("パス別GPU時間(移動平均、60フレーム窓):");
-    for &(名前, 平均ミリ秒) in 表 {
-        println!("  {名前}: {平均ミリ秒:.4} ms");
-    }
-    if let Some(合計) = shadow_gpu_time::距離区分別のシャドウの合計ミリ秒(表) {
-        println!("  シャドウ合計: {合計:.4} ms");
-    }
 }

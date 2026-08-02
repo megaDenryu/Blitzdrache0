@@ -1,4 +1,4 @@
-//! 前回このスロットで書いたクエリ結果を読み、移動平均表を更新する。
+//! 前回このスロットで書いたクエリ結果を読み、パス時間の窓の表を更新する。
 //! WAIT無しでAVAILABILITY付きで読み、未完(availability=0)のペアは読み飛ばす
 //! (判断30。フェンス待ち後の呼び出しのため通常は全件availableのはず)。
 
@@ -6,20 +6,20 @@ use std::collections::HashMap;
 
 use ash::vk;
 
-use super::moving_average::移動平均;
+use super::pass_time_window::パス時間の窓;
 
 pub(super) fn 読み取る(
     device: &ash::Device,
     pool: vk::QueryPool,
     マッピング: &[(&'static str, u32)],
     タイムスタンプ周期ns: f32,
-    移動平均表: &mut HashMap<&'static str, 移動平均>,
+    窓表: &mut HashMap<&'static str, パス時間の窓>,
 ) {
     for &(名前, 開始添字) in マッピング {
         let Some(経過ミリ秒) = 一組を読み取る(device, pool, 開始添字, タイムスタンプ周期ns) else {
             continue;
         };
-        移動平均表.entry(名前).or_insert_with(移動平均::新規).追加する(経過ミリ秒);
+        窓表.entry(名前).or_insert_with(パス時間の窓::新規).追加する(経過ミリ秒);
     }
 }
 
