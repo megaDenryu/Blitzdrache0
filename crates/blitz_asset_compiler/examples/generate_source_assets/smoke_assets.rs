@@ -18,6 +18,8 @@ pub(super) fn 書き出す(出力先ディレクトリ: &Path) -> Result<(), Str
 }
 
 /// 材質境界の検収アセット。同じ形と同じバッファを、2材質2プリミティブと1材質1プリミティブの2つの文書が読む。
+/// 材質の係数だけを差し替えた3つ目の文書も同じバッファを読む。差し替えの前後で形が変わらないことが、
+/// 画素の違いを材質の違いだけに帰属させる根拠になる。
 fn 材質境界アセットを書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
     書き込む(
         &出力先ディレクトリ.join("multi_material.bin"),
@@ -26,6 +28,10 @@ fn 材質境界アセットを書き出す(出力先ディレクトリ: &Path) -
     書き込む(
         &出力先ディレクトリ.join("multi_material_two.gltf"),
         multi_material_gltf_json::二材質の文書().as_bytes(),
+    )?;
+    書き込む(
+        &出力先ディレクトリ.join("multi_material_two_alt.gltf"),
+        multi_material_gltf_json::代替の二材質の文書().as_bytes(),
     )?;
     書き込む(
         &出力先ディレクトリ.join("multi_material_one.gltf"),

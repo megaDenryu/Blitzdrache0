@@ -1,11 +1,10 @@
 //! マルチマテリアル段Cの検収入口。同じ形を2材質2プリミティブで塗るシーンと、1材質1プリミティブで塗る対照を実機で描き、
 //! 材質の境界が画素に出ること・シーンパスの発行がプリミティブの数ぶん増えること・可視ID数とシーン可視数が対照と変わらないことを確かめる。
-//! 1条件ぶんの起動と読み戻しは`run`、代表色の採り方は`pixel_check`、画素の合否は`judgment`、計数の突き合わせは`count_judgment`にある。
+//! 1条件ぶんの起動と読み戻しは`run`、画素の合否は`judgment`、計数の突き合わせは`count_judgment`にある。板の判定領域と代表色は`crate::plate_region`にある。
 //! 参照: `_doc/設計/マルチマテリアルと材質境界.md`「段階導入」C段
 
 mod count_judgment;
 mod judgment;
-mod pixel_check;
 mod run;
 
 use std::path::PathBuf;
@@ -37,8 +36,8 @@ fn 検収する() -> Result<String, String> {
 
     let 二材質 = run::描画する(&出力先, 二材質シーン)?;
     let 単一材質 = run::描画する(&出力先, 単一材質シーン)?;
-    let 二材質の色 = pixel_check::左右の代表色を採る(&二材質)?;
-    let 単一材質の色 = pixel_check::左右の代表色を採る(&単一材質)?;
+    let 二材質の色 = crate::plate_region::左右の代表色を採る(&二材質)?;
+    let 単一材質の色 = crate::plate_region::左右の代表色を採る(&単一材質)?;
     judgment::二材質の画素を検査する(&二材質の色)?;
     judgment::単一材質の画素を検査する(&単一材質の色)?;
     let 二材質計数 = crate::report_parse::取り出す(&二材質.標準出力)?;

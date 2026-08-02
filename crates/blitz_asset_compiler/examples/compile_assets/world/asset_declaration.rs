@@ -49,11 +49,17 @@ const 小物の金具付き木箱シーン: (&str, &str) = ("prop_banded_chest",
 const 材質境界の二材質シーン: (&str, &str) = ("multi_material_two", "smoke/multi_material_two.gltf");
 const 材質境界の単一材質シーン: (&str, &str) = ("multi_material_one", "smoke/multi_material_one.gltf");
 
+/// 資源表世代の差し替えの検収シーンと、検収の実行中にその生成物を上書きする側。安定IDを分ける理由は`crates/blitz_app/src/smoke/material_reload.rs`にある。
+const 材質差し替えのシーン: (&str, &str) = ("material_reload", "smoke/multi_material_two.gltf");
+const 材質差し替えの代替シーン: (&str, &str) = ("material_reload_alt", "smoke/multi_material_two_alt.gltf");
+
 pub(super) fn 板の世界の一覧() -> Vec<アセット定義> {
     vec![
         必須定義("quad", "smoke/quad.gltf", ソース種別::Gltfシーン),
         必須定義(材質境界の二材質シーン.0, 材質境界の二材質シーン.1, ソース種別::Gltfシーン),
         必須定義(材質境界の単一材質シーン.0, 材質境界の単一材質シーン.1, ソース種別::Gltfシーン),
+        必須定義(材質差し替えのシーン.0, 材質差し替えのシーン.1, ソース種別::Gltfシーン),
+        必須定義(材質差し替えの代替シーン.0, 材質差し替えの代替シーン.1, ソース種別::Gltfシーン),
         必須定義("quad_alt", "smoke/quad_alt.gltf", ソース種別::Gltfシーン),
         必須定義("shadow_scene", "smoke/shadow_scene.gltf", ソース種別::Gltfシーン),
         任意定義("helmet", "samples/DamagedHelmet/DamagedHelmet.glb"),

@@ -4,6 +4,7 @@
 //! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断9」「判断22」。
 
 mod asset_rewrite;
+pub(crate) mod material_reload;
 mod pixel_judgment;
 mod plan;
 mod rebuild_plan;
@@ -37,6 +38,8 @@ pub(crate) enum スモークアクション {
     復帰,
     シェーダー書き換え,
     アセット書き換え,
+    /// 材質差し替えステージ: このフレームの読み戻し画像を差し替え前の絵として別名で書き出す。
+    材質差し替え前ダンプ,
     初期色判定,
     アセット反映後判定,
     最終判定,
@@ -76,6 +79,8 @@ pub(crate) fn 判定する(
         スモークアクション::通常描画
     } else if 粒子表示 == 粒子表示モード::粒子トイ {
         plan::particles計画(現在フレーム, 総フレーム数)
+    } else if material_reload::このシーンか(シーン名) {
+        material_reload::計画(現在フレーム, 総フレーム数)
     } else if シーン名 == 両視錐台外の群シーン || 読み戻しだけの検収シーンの接頭辞一覧.iter().any(|接頭辞| シーン名.starts_with(接頭辞))
     {
         plan::読み戻しだけの計画()
