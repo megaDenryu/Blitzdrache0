@@ -5,7 +5,10 @@
 //! どれも複数のファイルを突き合わせて初めて判定でき、走査中の1ファイルからは答えが出ない。
 
 use super::violation::違反;
-use super::{dependency_whitelist, doc_section, removed_object_uniform, shader_constant, shader_uniform_alias};
+use super::{
+    dependency_whitelist, doc_section, reload_without_device_wait, removed_object_uniform, removed_slot_material_set, shader_constant,
+    shader_uniform_alias,
+};
 
 pub fn 集める() -> Result<Vec<違反>, String> {
     let mut 違反一覧 = Vec::new();
@@ -14,5 +17,7 @@ pub fn 集める() -> Result<Vec<違反>, String> {
     違反一覧.extend(shader_constant::全定数を検査する().map_err(|誤り| format!("シェーダー定数の写し検査に失敗した: {誤り}"))?);
     違反一覧.extend(shader_uniform_alias::全シェーダーを検査する().map_err(|誤り| format!("シェーダー定数の宣言箇所の検査に失敗した: {誤り}"))?);
     違反一覧.extend(removed_object_uniform::全ファイルを検査する().map_err(|誤り| format!("廃止語の検査に失敗した: {誤り}"))?);
+    違反一覧.extend(removed_slot_material_set::全ファイルを検査する().map_err(|誤り| format!("旧材質セットの廃止語の検査に失敗した: {誤り}"))?);
+    違反一覧.extend(reload_without_device_wait::検査する().map_err(|誤り| format!("シーンの差し替えの待ちの検査に失敗した: {誤り}"))?);
     Ok(違反一覧)
 }
