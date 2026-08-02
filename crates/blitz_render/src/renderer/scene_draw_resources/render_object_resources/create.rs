@@ -4,6 +4,7 @@
 use ash::vk;
 
 use super::geometry_list::段別ジオメトリ;
+use super::record_buffers::レコード列一式;
 use super::slot_material_resources::スロット別材質資源;
 use super::visible_id_content::可視ID列の内容検査;
 use super::visible_id_source::可視ID列の出どころ;
@@ -12,8 +13,6 @@ use crate::error::レンダラーエラー;
 use crate::render_object_material::描画対象素材;
 use crate::vulkan;
 use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
-use crate::vulkan::instance_transform::content::個体変換内容;
-use crate::vulkan::instance_transform::個体変換バッファ;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 impl 描画対象資源 {
@@ -26,21 +25,16 @@ impl 描画対象資源 {
     ) -> Result<Self, レンダラーエラー> {
         let 個体数 = u32::try_from(素材.個体変換一覧().len()).map_err(|_| レンダラーエラー::個体数過大(素材.個体変換一覧().len()))?;
         let 段別ジオメトリ = 段別ジオメトリ::生成する(device, メモリプロパティ, 転送環境, 素材.段一覧())?;
-        let スロット別材質 = match スロット別材質資源::生成する(
-            問い合わせ,
-            device,
-            メモリプロパティ,
-            転送環境,
-            素材.先頭の個体変換(),
-            素材.材質スロット素材一覧(),
-        ) {
-            Ok(値) => 値,
-            Err(誤り) => {
-                段別ジオメトリ.破棄する(device);
-                return Err(誤り);
-            }
-        };
-        let 個体変換 = match 個体変換を確保する(device, メモリプロパティ, 転送環境, 素材) {
+        let スロット別材質 =
+            match スロット別材質資源::生成する(問い合わせ, device, メモリプロパティ, 転送環境, 素材.材質スロット素材一覧())
+            {
+                Ok(値) => 値,
+                Err(誤り) => {
+                    段別ジオメトリ.破棄する(device);
+                    return Err(誤り);
+                }
+            };
+        let レコード列 = match レコード列一式::生成する(device, メモリプロパティ, 転送環境, 素材) {
             Ok(値) => 値,
             Err(誤り) => {
                 スロット別材質.破棄する(device);
@@ -51,7 +45,7 @@ impl 描画対象資源 {
         let 可視id列 = match 可視ID列の出どころ::生成する(device, メモリプロパティ, 個体数) {
             Ok(値) => 値,
             Err(誤り) => {
-                個体変換.破棄する(device);
+                レコード列.破棄する(device);
                 スロット別材質.破棄する(device);
                 段別ジオメトリ.破棄する(device);
                 return Err(誤り);
@@ -61,20 +55,9 @@ impl 描画対象資源 {
             大域の基準原点: 素材.大域の基準原点(),
             段別ジオメトリ,
             スロット別材質,
-            個体変換,
+            レコード列,
             可視id列,
             内容検査: 可視ID列の内容検査::生成する(個体数),
         })
     }
-}
-
-/// 個体数に関わらず同じ確保を通す。個体が1体だけの対象も1要素の列になるため、個体数で分岐しない。
-fn 個体変換を確保する(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-    転送環境: &vulkan::transfer::転送実行環境,
-    素材: &描画対象素材,
-) -> Result<個体変換バッファ, レンダラーエラー> {
-    let 内容一覧 = 個体変換内容::一覧を作る(素材.個体変換一覧())?;
-    個体変換バッファ::生成する(device, メモリプロパティ, 転送環境, &内容一覧)
 }

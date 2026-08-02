@@ -2,12 +2,12 @@
 //! 頂点/インデックスバッファのバインドとインデックス描画。1回の発行で描く個体の数は入力が持ち、群×段×プリミティブごとに1回だけ発行する
 //! (参照: `_doc/設計/植生インスタンスと物量計測.md`「描画発行」、`_doc/設計/マルチマテリアルと材質境界.md`「可視ID列の契約」)。
 //! ビュー射影行列等はフレームシェーダー定数バッファ(ディスクリプタセット)経由で渡す(判断24)。
-//! 描画ごとに変わるカメラ相対の基準原点だけをプッシュ定数で積む(参照: `vulkan::relative_anchor`)。
+//! 描画ごとに変わるカメラ相対の基準原点と材質レコード添字だけをプッシュ定数で積む(参照: `vulkan::scene_draw_constants`)。
 
 use ash::vk;
 
 use super::ジオメトリ入力;
-use crate::vulkan::relative_anchor;
+use crate::vulkan::scene_draw_constants;
 
 pub(super) fn 描画コマンドを積む(
     device: &ash::Device,
@@ -37,7 +37,7 @@ pub(super) fn 描画コマンドを積む(
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
         device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
         for 入力 in ジオメトリ一覧 {
-            relative_anchor::積む(device, command_buffer, 入力.layout, 入力.相対の基準原点);
+            scene_draw_constants::積む(device, command_buffer, 入力.layout, 入力.描画定数);
             device.cmd_bind_descriptor_sets(
                 command_buffer,
                 vk::PipelineBindPoint::GRAPHICS,

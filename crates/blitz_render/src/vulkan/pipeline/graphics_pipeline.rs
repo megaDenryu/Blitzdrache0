@@ -8,7 +8,6 @@ use ash::vk;
 
 use super::パイプライン;
 use crate::error::レンダラーエラー;
-use crate::vulkan::relative_anchor;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
@@ -29,6 +28,7 @@ pub(super) fn 組み立てる(
     頂点モジュール: vk::ShaderModule,
     画素段モジュール: vk::ShaderModule,
     属性選択: 頂点属性選択,
+    プッシュ定数範囲: vk::PushConstantRange,
 ) -> Result<パイプライン, レンダラーエラー> {
     let ステージ一覧 = [
         vk::PipelineShaderStageCreateInfo::default()
@@ -63,9 +63,10 @@ pub(super) fn 組み立てる(
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
     // 注意: フレーム共通の定数(ビュー射影行列等)はbinding3のビュー・シーンパス定数と、binding8の多段影定数の経由で渡す(判断24)。
-    // プッシュ定数は描画ごとに変わるカメラ相対の基準原点だけが使う(参照: `vulkan::relative_anchor`)。
+    // プッシュ定数は描画ごとに変わる値だけが使う。範囲を呼び出し元から受けるのは、シーンが描画定数16バイトを
+    // (参照: `vulkan::scene_draw_constants`)、布がカメラ相対の基準原点16バイトを(参照: `vulkan::relative_anchor`)読むためである。
     let ディスクリプタlayout一覧 = [ディスクリプタlayout];
-    let プッシュ定数範囲一覧 = [relative_anchor::プッシュ定数範囲()];
+    let プッシュ定数範囲一覧 = [プッシュ定数範囲];
     let layout_create_info = vk::PipelineLayoutCreateInfo::default()
         .set_layouts(&ディスクリプタlayout一覧)
         .push_constant_ranges(&プッシュ定数範囲一覧);

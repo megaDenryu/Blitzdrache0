@@ -12,7 +12,6 @@ use ash::vk;
 use super::layout::ディスクリプタレイアウト;
 use super::{pool, set};
 use crate::error::レンダラーエラー;
-use crate::vulkan::object_uniform::描画対象シェーダー定数;
 use crate::vulkan::shadow_map::シャドウマップ;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::texture::マテリアルテクスチャ一式;
@@ -22,7 +21,8 @@ use slot_index::スロット別セット配置;
 
 pub(crate) struct 描画対象ディスクリプタ参照<'a> {
     pub(crate) テクスチャ: &'a マテリアルテクスチャ一式,
-    pub(crate) シェーダー定数: &'a 描画対象シェーダー定数,
+    /// 材質レコード列を読むバッファと、そのバイト範囲。同じ描画対象の全スロットのセットが同じ値を持つ。
+    pub(crate) 材質レコード: (vk::Buffer, vk::DeviceSize),
     /// 個体変換を読むバッファと、そのバイト範囲。個体が1体だけの対象も1要素ぶんの範囲を持つ専用のバッファを指す。
     pub(crate) 個体変換: (vk::Buffer, vk::DeviceSize),
     /// 可視ID列を読むバッファ。個体が1体だけの対象は束が共有する値0だけの列を指す。

@@ -6,6 +6,7 @@
 
 use ash::vk;
 
+use crate::renderer::scene_draw_resources::bundle_material_reference::束内材質参照;
 use crate::vulkan::descriptor::描画対象ディスクリプタプール;
 use crate::vulkan::sync::フレームスロット添字;
 
@@ -27,8 +28,8 @@ impl<'a> 対象のディスクリプタ選択<'a> {
         }
     }
 
-    /// その材質スロットを束ねるディスクリプタセット。スロット添字はこの対象の材質スロット資源が返した添字である。
-    pub(in crate::renderer::scene_draw_resources) fn スロット(self, スロット添字: usize) -> vk::DescriptorSet {
-        self.プール.set(self.描画対象添字, スロット添字, self.フレーム添字)
+    /// その材質を束ねるディスクリプタセット。参照はこの対象の材質スロット資源が材質スロット番号から解決した値である。
+    pub(in crate::renderer::scene_draw_resources) fn スロット(self, 材質参照: 束内材質参照) -> vk::DescriptorSet {
+        self.プール.set(self.描画対象添字, 材質参照.セットの並びの添字(), self.フレーム添字)
     }
 }

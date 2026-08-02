@@ -1,4 +1,4 @@
-//! バッファを指すバインディングの書き込み。ビュー・シーンパス定数(binding3)・描画対象シェーダー定数(binding5)・
+//! バッファを指すバインディングの書き込み。ビュー・シーンパス定数(binding3)・材質レコード(binding5)・
 //! 個体変換(binding6)・可視ID列(binding7)・多段影定数(binding8)・空パス定数(binding9)を担当し、画像バインディングには触れない。
 
 use ash::vk;
@@ -18,9 +18,9 @@ pub(super) fn 空パスの定数を書き込む(device: &ash::Device, set: vk::D
     シェーダー定数バッファを書き込む(device, set, 9, buffer);
 }
 
-/// binding5へ描画対象固有の変換とマテリアル係数を結ぶ。
-pub(super) fn 描画対象シェーダー定数を書き込む(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer) {
-    シェーダー定数バッファを書き込む(device, set, 5, buffer);
+/// binding5へ材質レコードのストレージバッファを結ぶ。同じ描画対象のどの材質スロットのセットも同じバッファを結ぶ。
+pub(super) fn 材質レコードを書き込む(device: &ash::Device, set: vk::DescriptorSet, buffer: vk::Buffer, 範囲: vk::DeviceSize) {
+    ストレージバッファを書き込む(device, set, 5, buffer, 範囲);
 }
 
 /// binding6へ個体変換のストレージバッファを結ぶ。個体が1体だけの対象も1要素ぶんの範囲を持つ専用のバッファを結ぶ。

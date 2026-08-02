@@ -12,6 +12,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
+use crate::vulkan::{relative_anchor, scene_draw_constants};
 
 pub(crate) use aerial_composite_pipeline::空中遠近合成パイプライン;
 pub(crate) use shadow_pipeline::シャドウパイプライン;
@@ -41,6 +42,7 @@ impl パイプライン {
             ディスクリプタlayout,
             シェーダー,
             graphics_pipeline::頂点属性選択::全属性,
+            scene_draw_constants::プッシュ定数範囲(),
         )
     }
 
@@ -59,6 +61,7 @@ impl パイプライン {
             ディスクリプタlayout,
             シェーダー,
             graphics_pipeline::頂点属性選択::布用,
+            relative_anchor::プッシュ定数範囲(),
         )
     }
 

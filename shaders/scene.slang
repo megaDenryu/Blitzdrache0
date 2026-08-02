@@ -2,25 +2,19 @@
 // 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`。シェーダー内識別子はASCII。
 // エントリポイントはここに置き、PBR関数群は`pbr.slang`、ライティング合成+シャドウ判定は`lighting.slang`、距離区分の選択と境界ブレンドは`cascade_shadow.slang`へ分割してimportする。
 // ビューと直接照明の定数は`view_pass_uniform.slang`、影の定数は`cascade_shadow_uniform.slang`が唯一の宣言を持つ。
+// 材質の係数は`material_record.slang`のストレージバッファにあり、どの1件を読むかは`scene_draw_constants.slang`の
+// プッシュ定数が運ぶ添字が決める。
 
 import pbr;
 import lighting;
 import cascade_shadow;
 import cascade_shadow_uniform;
 import instance_transform;
-import relative_anchor;
+import material_record;
+import scene_draw_constants;
 import scene_io;
 import view_pass_uniform;
 import visible_id;
-
-struct ObjectUniform
-{
-    InstanceTransform transform;
-    float4 baseColorFactor;
-    float4 metallicRoughnessFactor;
-};
-
-[[vk::binding(5, 0)]] ConstantBuffer<ObjectUniform> objectUniform;
 
 [[vk::binding(0, 0)]] Sampler2D baseColorTexture;
 [[vk::binding(1, 0)]] Sampler2D metallicRoughnessTexture;
@@ -37,7 +31,7 @@ VertexOutput vertexMain(VertexInput input, uint instanceIndex : SV_InstanceID, u
 {
     VertexOutput output;
     InstanceTransform transform = instanceTransforms[resolveInstanceIndex(instanceIndex, startInstance)];
-    float3 relativePosition = applyRelativeAnchor(mul(transform.localToWorld, float4(input.position, 1.0)).xyz);
+    float3 relativePosition = applySceneDrawAnchor(mul(transform.localToWorld, float4(input.position, 1.0)).xyz);
     float3 worldNormal = normalize(mul(transform.normalLocalToWorld, input.normal));
     float3 transformedTangent = mul((float3x3)transform.localToWorld, input.tangent.xyz);
     float3 worldTangent = normalize(transformedTangent - worldNormal * dot(worldNormal, transformedTangent));
@@ -52,7 +46,8 @@ VertexOutput vertexMain(VertexInput input, uint instanceIndex : SV_InstanceID, u
 [shader("fragment")]
 float4 fragmentMain(VertexOutput input) : SV_Target
 {
-    float3 albedo = baseColorTexture.Sample(input.uv).rgb * objectUniform.baseColorFactor.rgb * TINT;
+    MaterialRecord materialRecord = materialRecords[sceneDrawConstants.materialRecordIndex];
+    float3 albedo = baseColorTexture.Sample(input.uv).rgb * materialRecord.baseColorFactor.rgb * TINT;
     if (viewPassUniform.ambientAndLightingEnabled.y <= 0.5)
     {
         return float4(albedo, 1.0);
@@ -75,7 +70,7 @@ float4 fragmentMain(VertexOutput input) : SV_Target
         return float4(debugColor, 1.0);
     }
     float3 litColor = shadeLitSurface(
-        albedo, metallicRoughnessSample, objectUniform.metallicRoughnessFactor.x, objectUniform.metallicRoughnessFactor.y,
+        albedo, metallicRoughnessSample, materialRecord.metallicRoughnessFactor.x, materialRecord.metallicRoughnessFactor.y,
         sampledNormal, input.normal, input.tangent, input.relativePosition, viewPassUniform.cameraRelativePosition.xyz,
         viewPassUniform.ambientAndLightingEnabled.x, viewPassUniform.directionalLightDirection.xyz, viewPassUniform.directionalLightColor.rgb,
         viewPassUniform.directionalLightColor.w, viewPassUniform.pointLightPosition.xyz, viewPassUniform.pointLightColor.rgb,

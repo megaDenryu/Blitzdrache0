@@ -1,6 +1,6 @@
 //! ディスクリプタプール: マテリアル1つぶんの3テクスチャとシャドウマップ比較サンプラー1つ、
-//! フレームの定数3本(ビュー・シーンパス・多段影・空パス)と描画対象のシェーダー定数の計4本、
-//! 個体変換・可視ID列の2本のストレージバッファを、進行中フレームの数だけ確保する
+//! フレームの定数3本(ビュー・シーンパス・多段影・空パス)、
+//! 材質レコード・個体変換・可視ID列の3本のストレージバッファを、進行中フレームの数だけ確保する
 //! (セットごとに独立したシェーダー定数バッファと可視ID列を持つため)。
 //! 数える単位は描画対象ではなく材質スロットである。1つの描画対象が材質スロットの数だけセット組を持つためである。
 
@@ -20,10 +20,10 @@ pub(super) fn 生成する(device: &ash::Device, 材質スロット合計数: us
             .descriptor_count(4 * セット数),
         vk::DescriptorPoolSize::default()
             .ty(vk::DescriptorType::UNIFORM_BUFFER)
-            .descriptor_count(4 * セット数),
+            .descriptor_count(3 * セット数),
         vk::DescriptorPoolSize::default()
             .ty(vk::DescriptorType::STORAGE_BUFFER)
-            .descriptor_count(2 * セット数),
+            .descriptor_count(3 * セット数),
     ];
     let create_info = vk::DescriptorPoolCreateInfo::default().max_sets(セット数).pool_sizes(&プールサイズ一覧);
     // 安全性: deviceは生成済みで有効。

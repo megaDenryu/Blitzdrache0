@@ -1,6 +1,6 @@
 //! シーン描画・シャドウ描画・スキニング・布の各パイプラインが共有するディスクリプタセットレイアウトの所有者。
 //! binding0-2=combined image sampler(FRAGMENT)、binding3=ビュー・シーンパス定数(VERTEX|FRAGMENT、ビュー射影行列を含むため)、
-//! binding4=シャドウマップの比較サンプラー(FRAGMENT、判断35)、binding5=描画対象シェーダー定数(VERTEX|FRAGMENT)、
+//! binding4=シャドウマップの比較サンプラー(FRAGMENT、判断35)、binding5=材質レコードのストレージバッファ(FRAGMENT。係数を読むのは画素段だけである)、
 //! binding6=個体変換のストレージバッファ(VERTEX)、binding7=可視ID列のストレージバッファ(VERTEX)、
 //! binding8=多段影定数(VERTEX|FRAGMENT。シャドウ記録の頂点段とシーンの画素段が同じ1本を読む)、
 //! binding9=空パス定数(VERTEX|FRAGMENT。空パスと空中遠近の合成パスだけが読む)。
@@ -25,9 +25,9 @@ impl ディスクリプタレイアウト {
             テクスチャバインド(2),
             シェーダー定数バインド(3),
             テクスチャバインド(4),
-            シェーダー定数バインド(5),
-            ストレージバッファバインド(6),
-            ストレージバッファバインド(7),
+            ストレージバッファバインド(5, vk::ShaderStageFlags::FRAGMENT),
+            ストレージバッファバインド(6, vk::ShaderStageFlags::VERTEX),
+            ストレージバッファバインド(7, vk::ShaderStageFlags::VERTEX),
             シェーダー定数バインド(8),
             シェーダー定数バインド(9),
         ];
@@ -57,12 +57,13 @@ fn シェーダー定数バインド(binding: u32) -> vk::DescriptorSetLayoutBin
         .stage_flags(vk::ShaderStageFlags::VERTEX | vk::ShaderStageFlags::FRAGMENT)
 }
 
-fn ストレージバッファバインド(binding: u32) -> vk::DescriptorSetLayoutBinding<'static> {
+/// 読むステージを引数で受けるのは、個体変換と可視ID列を頂点段が、材質レコードを画素段が読むためである。
+fn ストレージバッファバインド(binding: u32, ステージ: vk::ShaderStageFlags) -> vk::DescriptorSetLayoutBinding<'static> {
     vk::DescriptorSetLayoutBinding::default()
         .binding(binding)
         .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
         .descriptor_count(1)
-        .stage_flags(vk::ShaderStageFlags::VERTEX)
+        .stage_flags(ステージ)
 }
 
 fn テクスチャバインド(binding: u32) -> vk::DescriptorSetLayoutBinding<'static> {

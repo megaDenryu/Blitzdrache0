@@ -22,13 +22,6 @@ impl 個体変換列 {
         &self.一覧
     }
 
-    pub fn 先頭(&self) -> 変換<ローカル, ワールド> {
-        match self.一覧.first() {
-            Some(変換) => *変換,
-            None => panic!("個体変換列は1件以上を持つ不変条件に違反した"),
-        }
-    }
-
     pub fn 件数(&self) -> usize {
         self.一覧.len()
     }

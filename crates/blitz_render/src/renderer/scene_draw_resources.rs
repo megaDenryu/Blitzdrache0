@@ -1,9 +1,10 @@
 //! 描画対象の個数に連動するGPU資源の束: 呼び出し元が単位として扱う束の集合・全束が共有するディスクリプタセットレイアウト・毎フレームの描画入力作業領域・解除予約された束の待機列。
 //! 作業領域はシーン1本と距離区分ごとに1本であり、毎フレーム空にしてから束一覧を先頭から走査して積み直す。
 //! ディスクリプタセット添字は束の内側で閉じるため、ある束の追加・解除が他の束の添字をずらさない。
-//! 生成は`create`、束1つぶんの資源は`chunk_draw_resources`、束の追加と解除は`bundle_lifecycle`、毎フレームの作業領域更新は`work_area`、描画対象1つぶんの資源は`render_object_resources`にある。
+//! 生成は`create`、束1つぶんの資源は`chunk_draw_resources`、束の追加と解除は`bundle_lifecycle`、毎フレームの作業領域更新は`work_area`、描画対象1つぶんの資源は`render_object_resources`、材質スロット番号を解決した結果の型は`bundle_material_reference`にある。
 
 mod bundle_lifecycle;
+mod bundle_material_reference;
 mod chunk_draw_resources;
 mod create;
 mod render_object_resources;
@@ -61,7 +62,7 @@ impl シーン描画資源 {
         self.チャンク一覧
             .iter()
             .flat_map(|チャンク| チャンク.描画対象と対応セット(フレーム添字))
-            .map(|(_, _, 選択)| 選択.スロット(0))
+            .map(|(_, _, 選択)| 選択.スロット(bundle_material_reference::束内材質参照::先頭()))
             .next()
     }
 

@@ -4,6 +4,7 @@
 use ash::vk;
 
 use crate::vulkan::relative_anchor::カメラ相対の基準原点;
+use crate::vulkan::scene_draw_constants::シーン描画定数;
 
 /// このフレームの描画後処理: 通常の提示前遷移のみか、読み戻し用のコピーを挟むか。
 pub(crate) enum 描画方式 {
@@ -29,8 +30,8 @@ pub(crate) struct ジオメトリ入力 {
     pub(crate) 先頭インスタンス: u32,
     pub(crate) layout: vk::PipelineLayout,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
-    /// この描画の基準原点からカメラ大域原点を引いた値。プッシュ定数で頂点ステージへ渡す。
-    pub(crate) 相対の基準原点: カメラ相対の基準原点,
+    /// この発行のカメラ相対の基準原点と、塗る材質のレコード添字。プッシュ定数で頂点ステージと画素段ステージへ渡す。
+    pub(crate) 描画定数: シーン描画定数,
 }
 
 /// GPU粒子トイ(判断29)1フレームぶんの入力。`--particles`指定時のみ`Some`で渡す。
