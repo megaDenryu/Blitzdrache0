@@ -13,16 +13,16 @@ use blitz_render::frame_input::影のキャスター指定;
 /// アプリのフィールドとして別々に並べる理由が無いためである。
 #[derive(Clone, Copy)]
 pub(in crate::app) struct 描画の計測つまみ {
-    /// `--debug-cascade-bands`でtrue。シーンの色を距離区分と影の内外の可視化へ差し替える。
-    pub(in crate::app) 距離区分を可視化する: bool,
+    /// `--debug-cascade-bands`と`--debug-shadow-loss`が選ぶ、シーンの色に代えて出す診断。
+    pub(in crate::app) 画素診断: blitz_render::cascade::画素診断,
     /// `--no-shadow-casters`で`全て外す`。距離区分のパスへ描画入力を1件も積まない対照になる。
     pub(in crate::app) 影のキャスター: 影のキャスター指定,
 }
 
 impl 描画の計測つまみ {
-    pub(in crate::app) fn 起動設定から作る(距離区分を可視化する: bool, 影キャスター全体有効: bool) -> Self {
+    pub(in crate::app) fn 起動設定から作る(画素診断: blitz_render::cascade::画素診断, 影キャスター全体有効: bool) -> Self {
         Self {
-            距離区分を可視化する,
+            画素診断,
             影のキャスター: if 影キャスター全体有効 {
                 影のキャスター指定::通常に描く
             } else {
@@ -82,7 +82,7 @@ pub(in crate::app) fn 組み立てる<'a>(
         布: None,
         ui描画: None,
         影のキャスター: アプリ.計測つまみ.影のキャスター,
-        距離区分を可視化する: アプリ.計測つまみ.距離区分を可視化する,
+        画素診断: アプリ.計測つまみ.画素診断,
         地形詳細段選択一覧,
         可視個体選択一覧,
         プリミティブ発行,

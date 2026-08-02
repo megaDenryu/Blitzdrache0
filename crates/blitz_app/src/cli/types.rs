@@ -65,8 +65,8 @@ pub(crate) struct 起動設定 {
     pub(crate) 個体詳細段探査刻み: Option<f32>,
     /// `--dev-ui`指定でtrue。既定はfalse(開発用UIの起動時有効化、判断34。実行中はF3でも切替可能)。
     pub(crate) 開発ui初期有効: bool,
-    /// `--debug-cascade-bands`指定でtrue。既定はfalse(シーンの色を「どの距離区分を参照したか」と「影の中か」の可視化へ差し替える)。
-    pub(crate) 距離区分の可視化: bool,
+    /// シーンの画素段が本番の色の代わりに出す診断。`--debug-cascade-bands`が距離区分の可視化を、`--debug-shadow-loss`が影可視度と受光距離帯の計器を選ぶ。既定は出さない。
+    pub(crate) 画素診断: blitz_render::cascade::画素診断,
     /// `--dump-frame <ベース名>`指定で、最終フレーム(--frames必須)の読み戻し画像を`<ベース名>.raw`(RGBA8連結)と`<ベース名>.size`(幅 高さ)へ書き出す。既定はNone。
     pub(crate) フレームダンプ先: Option<PathBuf>,
     /// `--report-sky-pixel <横,縦;...>`指定で、その画素について空の色をCPU正本で求め直し、読み戻した画素と並べて出す。

@@ -10,6 +10,7 @@ import cascade_shadow_uniform;
 import direct_light_shading;
 import instance_transform;
 import lighting_query;
+import pixel_diagnostic;
 import material_record;
 import scene_draw_constants;
 import scene_io;
@@ -34,7 +35,7 @@ float4 sampleMaterialTexture(uint slot, float2 uv)
     return materialTextures[NonUniformResourceIndex(slot)].Sample(materialSampler, uv);
 }
 
-// 距離区分の可視化が読む影係数。可視化は方向光1件ぶんの遮蔽を色で出す補助であり、光が0件なら影なしとして描く。
+// 診断の枝が読む影係数。診断は方向光1件ぶんの遮蔽を出す補助であり、光が0件なら影なしとして描く。
 float debugVisibilityFactor(float3 relativePosition, float viewDepth)
 {
     if (lightingQueryHeader.directionalLightCount == 0)
@@ -75,13 +76,14 @@ float4 fragmentMain(VertexOutput input) : SV_Target
     float3 sampledNormal = sampleMaterialTexture(materialRecord.normalTextureSlot, input.uv).rgb * 2.0 - 1.0;
     float viewDepth = viewDepthOf(input.relativePosition, viewUniform.cameraRelativePosition.xyz, viewUniform.cameraForward.xyz);
 
-    // cascadeDebugAndTexelSize.xは距離区分の可視化指定。1のとき、どの距離区分を参照したかと影の中かだけを色で出す(継ぎ目検収の補助)。
-    if (cascadeShadowUniform.cascadeDebugAndTexelSize.x > 0.5)
+    // cascadeDebugAndTexelSize.xは診断の種別。0でないとき、本番の色の代わりに検収が画素から読む値を出す。
+    float3 diagnosticColor;
+    if (pixelDiagnosticColor(
+            cascadeShadowUniform.cascadeDebugAndTexelSize.x, viewDepth, cascadeShadowUniform.cascadeSplitDepths.xyz,
+            cascadeShadowUniform.cascadeTransitionWidths.xyz, debugVisibilityFactor(input.relativePosition, viewDepth),
+            length(input.relativePosition - viewUniform.cameraRelativePosition.xyz), diagnosticColor))
     {
-        float3 debugColor = cascadeDebugPixel(
-            viewDepth, cascadeShadowUniform.cascadeSplitDepths.xyz, cascadeShadowUniform.cascadeTransitionWidths.xyz,
-            debugVisibilityFactor(input.relativePosition, viewDepth));
-        return float4(debugColor, 1.0);
+        return float4(diagnosticColor, 1.0);
     }
     float3 litColor = shadeLitSurface(
         albedo, metallicRoughnessSample, materialRecord.metallicRoughnessFactor.x, materialRecord.metallicRoughnessFactor.y,

@@ -5,54 +5,15 @@
 //! とりわけ「CPUは型付きエラー、GPUは異常値」という同じ境界を両側が持つ定数は、値がずれると
 //! 検出の境界そのものがずれるため、GPUとCPUの一致検査でも捉えられない。ここが機械的に見る。
 
+mod table;
+
 use std::path::{Path, PathBuf};
 
 use super::violation::違反;
 
-/// 突き合わせる定数の組。正本の行と写しの行を、それぞれ宣言の前置きで見つける。
-struct 定数の組 {
-    正本パス: &'static str,
-    正本の前置き: &'static str,
-    写しパス: &'static str,
-    写しの前置き: &'static str,
-}
-
-const 定数一覧: [定数の組; 5] = [
-    定数の組 {
-        正本パス: "crates/blitz_render/src/atmosphere/integration/sun_visibility.rs",
-        正本の前置き: "pub(in crate::atmosphere) const 遮蔽球を縮める半径メートル: f64 = ",
-        写しパス: "shaders/atmosphere_scatter.slang",
-        写しの前置き: "static const float shadowSphereShrinkMeters = ",
-    },
-    定数の組 {
-        正本パス: "crates/blitz_render/src/atmosphere/integration/multiscatter_series.rs",
-        正本の前置き: "pub(in crate::atmosphere) const 公比の上限: f64 = ",
-        写しパス: "shaders/atmosphere_multiscatter.slang",
-        写しの前置き: "static const float multiScatterRatioLimit = ",
-    },
-    定数の組 {
-        正本パス: "crates/blitz_render/src/atmosphere/integration/skyview_march.rs",
-        正本の前置き: "pub(in crate::atmosphere) const 標本区間数: u32 = ",
-        写しパス: "shaders/atmosphere_skyview_march.slang",
-        写しの前置き: "static const uint skyViewStepCount = ",
-    },
-    定数の組 {
-        正本パス: "crates/blitz_render/src/atmosphere/integration/aerial_march.rs",
-        正本の前置き: "pub(in crate::atmosphere) const スライスあたりの標本区間数: u32 = ",
-        写しパス: "shaders/atmosphere_aerial_march.slang",
-        写しの前置き: "static const uint aerialSegmentsPerSlice = ",
-    },
-    定数の組 {
-        正本パス: "crates/blitz_render/src/vulkan/material_table/capacity.rs",
-        正本の前置き: "pub(in crate::vulkan::material_table) const 表の要素数: u32 = ",
-        写しパス: "shaders/scene.slang",
-        写しの前置き: "static const uint materialTextureTableCapacity = ",
-    },
-];
-
 pub fn 全定数を検査する() -> Result<Vec<違反>, String> {
     let mut 違反一覧 = Vec::new();
-    for 組 in &定数一覧 {
+    for 組 in table::定数一覧 {
         let 正本 = 値を読む(組.正本パス, 組.正本の前置き)?;
         let 写し = 値を読む(組.写しパス, 組.写しの前置き)?;
         if 正本 != 写し {
