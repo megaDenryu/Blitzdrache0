@@ -10,4 +10,5 @@ mod fixture;
 mod generation_tests;
 mod ledger_tests;
 mod packer_tests;
+mod publication_tests;
 mod registry_tests;
