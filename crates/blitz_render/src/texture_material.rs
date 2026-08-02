@@ -15,7 +15,7 @@ pub enum テクスチャ素材エラー {
 /// テクスチャの中身が色(sRGBエンコード)か、法線・粗さ等の線形データ(UNORM)かの区別。
 /// 色でないデータをsRGBとして解釈するとGPU側で不要なガンマ補正がかかり値が歪むため、
 /// テクスチャ生成時にVulkanの画像形式選択へ伝える(判断23)。
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum テクスチャ用途 {
     /// ベースカラー等、人の目に見える色。R8G8B8A8_SRGBで解釈する。
     色,

@@ -1,0 +1,60 @@
+//! レンダラーが1つだけ持つ、索引化した材質テクスチャ表の所有者。担当するのは、起動時に資源表世代を1つ公開し、
+//! 破棄時に公開中と退役待ちの全世代の画像を退役させることである。
+//!
+//! 注意: 段4aでは、この表を束縛するディスクリプタセットもシェーダーもまだ無い。材質とテクスチャの安定IDを描画シーン素材が
+//! 運ぶようになるまで積める材質が無いため、公開する世代は正準フォールバックだけを持つ材質0件の表である。
+//! 現行の描画は旧スロット別セット経路のままであり、この表の内容は絵に影響しない。
+//! 参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「段階導入」
+
+use ash::vk;
+
+use crate::descriptor_indexing_limits::ディスクリプタ索引上限;
+use crate::error::レンダラーエラー;
+use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
+use crate::vulkan::texture::テクスチャ;
+use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::transfer::転送実行環境;
+
+use super::device_supplier::デバイス常駐供給元;
+use super::generation_build;
+use super::generation_id::資源表世代ID;
+use super::ledger::資源表世代台帳;
+use super::stage_reserve::画素段の予約枠;
+use super::supplier::常駐テクスチャ供給元;
+
+pub(crate) struct 材質資源表 {
+    台帳: 資源表世代台帳<テクスチャ>,
+}
+
+impl 材質資源表 {
+    pub(crate) fn 生成する(
+        device: &GPUデバイス,
+        問い合わせ: 物理デバイス問い合わせ<'_>,
+        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        転送環境: &転送実行環境,
+        上限: ディスクリプタ索引上限,
+    ) -> Result<Self, レンダラーエラー> {
+        let mut 供給元 = デバイス常駐供給元::生成する(device, 問い合わせ, *メモリプロパティ, 転送環境);
+        let 初期世代 = generation_build::構築する(&mut 供給元, 資源表世代ID::最初(), 上限, 画素段の予約枠::現行のシーン画素段(), &[])?;
+        Ok(Self {
+            台帳: 資源表世代台帳::最初の世代を公開する(初期世代),
+        })
+    }
+
+    /// 前提: レンダラー全体の破棄順は`renderer/destroy.rs`が持ち、この束はGPU待機済みの1段として呼ばれる。
+    /// 転送実行環境より前に呼ぶ(供給元が借りるため)。
+    pub(crate) fn 破棄する(
+        &mut self,
+        device: &GPUデバイス,
+        問い合わせ: 物理デバイス問い合わせ<'_>,
+        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        転送環境: &転送実行環境,
+    ) {
+        let mut 供給元 = デバイス常駐供給元::生成する(device, 問い合わせ, *メモリプロパティ, 転送環境);
+        for 世代 in self.台帳.全世代を取り出す() {
+            for 画像 in 世代.画像集合を取り出す() {
+                供給元.退役させる(画像);
+            }
+        }
+    }
+}
