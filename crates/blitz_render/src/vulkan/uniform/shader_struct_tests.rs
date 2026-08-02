@@ -2,8 +2,8 @@
 //! 各フィールドの開始位置と全体のバイト長を`layout_tests`が固定した数値と突き合わせる。
 //! 2つのファイルはコメントでしか結ばれておらず、片方だけを直した食い違いは走らせても絵に出ないため、ここが機械的に見る。
 
-use super::shader_struct::{シェーダー構造体の並び, 読み取る};
 use super::{cascade_bytes, sky_bytes, view_pass_bytes};
+use crate::vulkan::shader_struct::{シェーダー構造体の並び, 読み取る};
 
 const ビュー定数の原文: &str = include_str!("../../../../../shaders/view_pass_uniform.slang");
 const 多段影定数の原文: &str = include_str!("../../../../../shaders/cascade_shadow_uniform.slang");

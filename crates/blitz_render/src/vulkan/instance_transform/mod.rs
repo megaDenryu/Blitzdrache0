@@ -7,6 +7,8 @@
 
 pub(crate) mod bytes;
 pub(crate) mod content;
+#[cfg(test)]
+mod layout_tests;
 
 use ash::vk;
 

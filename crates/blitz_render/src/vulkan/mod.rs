@@ -41,6 +41,8 @@ pub(crate) mod readback;
 pub(crate) mod relative_anchor;
 pub(crate) mod scene_draw_constants;
 pub(crate) mod shader_module;
+#[cfg(test)]
+pub(crate) mod shader_struct;
 pub(crate) mod shadow_map;
 pub(crate) mod shadow_push;
 pub(crate) mod skinning;

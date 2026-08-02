@@ -10,6 +10,7 @@ mod drop_impl;
 mod forbidden_strings;
 mod line_count;
 mod particle_reference;
+mod removed_object_uniform;
 mod section_reference;
 mod shader_constant;
 mod shader_uniform_alias;

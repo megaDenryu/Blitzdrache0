@@ -19,8 +19,6 @@ pub(crate) mod write_bytes;
 #[cfg(test)]
 mod layout_tests;
 #[cfg(test)]
-mod shader_struct;
-#[cfg(test)]
 mod shader_struct_tests;
 #[cfg(test)]
 mod sky_write_order_tests;

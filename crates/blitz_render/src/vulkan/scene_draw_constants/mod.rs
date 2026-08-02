@@ -6,6 +6,9 @@
 //! 布・粒子が読む`relative_anchor`の16バイトと別に持つのは、材質を持たないパイプラインへ材質レコード添字を
 //! 波及させないためである。シャドウの20バイト定数(`shadow_push`)とも別のままにする。
 
+#[cfg(test)]
+mod layout_tests;
+
 use ash::vk;
 
 use crate::vulkan::relative_anchor::カメラ相対の基準原点;
