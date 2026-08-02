@@ -6,6 +6,7 @@
 //! 番号の正本は`shaders/lighting_query.slang`の宣言である。
 
 mod buffer_group;
+mod pool;
 
 use ash::vk;
 
@@ -31,23 +32,9 @@ pub(super) fn レイアウトを生成する(device: &ash::Device) -> Result<vk:
     Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
 }
 
-/// 進行中フレームスロットの数だけセットを取り出せるプール。件数はスロット数に追従させる。
+/// 進行中フレームスロットの数だけセットを取り出せるプール。件数の決め方は`pool`が持つ。
 pub(crate) fn プールを生成する(device: &ash::Device, スロット数: usize) -> Result<vk::DescriptorPool, レンダラーエラー> {
-    let スロット数 = u32::try_from(スロット数).unwrap_or_else(|_| panic!("進行中フレーム数がu32に収まらない"));
-    let プールサイズ一覧 = [
-        vk::DescriptorPoolSize::default()
-            .ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-            .descriptor_count(スロット数),
-        vk::DescriptorPoolSize::default()
-            .ty(vk::DescriptorType::UNIFORM_BUFFER)
-            .descriptor_count(スロット数),
-        vk::DescriptorPoolSize::default()
-            .ty(vk::DescriptorType::STORAGE_BUFFER)
-            .descriptor_count(2 * スロット数),
-    ];
-    let create_info = vk::DescriptorPoolCreateInfo::default().max_sets(スロット数).pool_sizes(&プールサイズ一覧);
-    // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
-    Ok(unsafe { device.create_descriptor_pool(&create_info, None)? })
+    pool::生成する(device, スロット数)
 }
 
 /// そのスロットの3本のバッファと、全スロットで共通のシャドウマップを結ぶ。
