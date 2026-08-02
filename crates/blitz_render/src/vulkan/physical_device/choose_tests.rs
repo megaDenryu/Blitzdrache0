@@ -7,7 +7,7 @@ use crate::error::{ディスクリプタ索引機能項目, デバイス要件�
 use crate::vulkan::descriptor_indexing::ディスクリプタ索引機能;
 
 fn 候補(添字: usize, 機材名: &str, discreteか: bool, 索引対応: bool) -> 選定候補 {
-    let 機能 = ディスクリプタ索引機能::生成する(索引対応, 索引対応, 索引対応);
+    let 機能 = ディスクリプタ索引機能::生成する(索引対応, 索引対応);
     選定候補::生成する(添字, 機材名.to_string(), discreteか, 機能)
 }
 
@@ -49,7 +49,7 @@ fn 対応候補が非discreteだけなら先頭を選ぶ() {
 
 #[test]
 fn 全候補が索引の機能を欠くと候補別の不足を報告する() {
-    let 欠ける候補 = 選定候補::生成する(1, "統合GPU".to_string(), false, ディスクリプタ索引機能::生成する(true, false, true));
+    let 欠ける候補 = 選定候補::生成する(1, "統合GPU".to_string(), false, ディスクリプタ索引機能::生成する(false, true));
     let 候補一覧 = [候補(0, "discrete GPU", true, false), 欠ける候補];
     let 内訳一覧 = 不足内訳を取り出す(&候補一覧);
     assert_eq!(内訳一覧.len(), 2);
@@ -71,5 +71,5 @@ fn 全候補が欠けたときのメッセージに機材名と機能名が並�
         .map(|誤り| 誤り.to_string())
         .unwrap_or_default();
     assert!(文言.contains("discrete GPU"), "実際のメッセージ: {文言}");
-    assert!(文言.contains("runtimeDescriptorArray"), "実際のメッセージ: {文言}");
+    assert!(文言.contains("shaderSampledImageArrayNonUniformIndexing"), "実際のメッセージ: {文言}");
 }

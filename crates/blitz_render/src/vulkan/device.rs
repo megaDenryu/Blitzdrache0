@@ -1,5 +1,5 @@
 //! 論理デバイスとグラフィックスキューの生成。dynamicRendering・synchronization2と、材質テクスチャ表の索引化に要る
-//! ディスクリプタ索引の3機能を有効化する。
+//! ディスクリプタ索引の2機能を有効化する。
 
 use ash::vk;
 
@@ -33,11 +33,12 @@ pub(crate) fn 生成する(
     // shader_draw_parameters: SV_VertexIDの再現に使うSPIR-V DrawParameters機能に必要
     // （`physical_device::機能要件を満たすか`の選定基準と対にする）。
     let mut vulkan11機能 = vk::PhysicalDeviceVulkan11Features::default().shader_draw_parameters(true);
-    // 材質テクスチャ表を要素数固定のsampled image配列として非一様な添字で参照し、世代の常駐枚数に満たない
-    // 残りの要素を未書込のまま束縛するために要る3機能。同じ3つを`physical_device`が選定の条件として掛けるため、
-    // ここで有効化に失敗する候補は選ばれていない(参照: `crates/blitz_render/src/vulkan/descriptor_indexing/mod.rs`)。
+    // 材質テクスチャ表を非一様な添字で参照し、世代の常駐枚数に満たない残りの要素を未書込のまま束縛するために要る2機能。
+    // 同じ2つを`physical_device`が選定の条件として掛けるため、ここで有効化に失敗する候補は選ばれていない
+    // (参照: `crates/blitz_render/src/vulkan/descriptor_indexing/mod.rs`)。
+    // 注意: 表をシェーダーで要素数固定の配列として宣言するため`runtimeDescriptorArray`は要らない。要らない機能を
+    // 必須にすると、固定長の表を読めるのに動かせない機材が出る。
     let mut vulkan12機能 = vk::PhysicalDeviceVulkan12Features::default()
-        .runtime_descriptor_array(true)
         .shader_sampled_image_array_non_uniform_indexing(true)
         .descriptor_binding_partially_bound(true);
     let mut vulkan13機能 = vk::PhysicalDeviceVulkan13Features::default()
