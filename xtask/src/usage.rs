@@ -92,7 +92,7 @@ pub(crate) fn 使い方を表示する() {
         "  ow4-bench [チャンクあたり個体数...]  植生の密度だけを変えた25チャンク世界を各3回走らせ、CPU区間・GPU時間・計数・会計・プロセス実測を採る(既定は400・4000・40000体)"
     );
     println!(
-        "  shadow-probe <resolution|casters|margin|camera|vertex|sun> [--rounds N] [--chunk-instances N] [--time-of-day 秒]  律速切り分けの計測バッチ。1つの軸の条件を子プロセスとして交互に起動し、距離区分別GPU時間の中央値とp95・投入インデックス数・可視数を条件ごとにまとめて出す(判定はしない。周回数は条件数の倍数へ切り上げる。生値と実行ログは軸ごとにtarget/shadow_probe/<軸名>/へ残す。vertexは外形が同じで投入インデックス数だけが16倍違う診断世界の対、sunは一日内時刻の4点を振る)"
+        "  shadow-probe <resolution|casters|margin|camera|vertex|sun> [--rounds N] [--chunk-instances N] [--time-of-day 秒]  律速切り分けの計測バッチ。1つの軸の条件を子プロセスとして交互に起動し、距離区分別GPU時間の中央値とp95・投入インデックス数・可視数・その実行の太陽高度と方位を条件ごとにまとめて出す(判定はしない。周回数は条件数の倍数へ切り上げる。生値と実行ログは軸ごとにtarget/shadow_probe/<軸名>/へ残す。vertexは外形と配置を固定して原型のトポロジー量だけを変えた診断世界の対、sunは南中対称の時刻3対6条件。sunの既定は6周回36実行と長いため、短く採るなら--rounds 12で各条件2回になる)"
     );
     println!(
         "  streaming-bench [フレーム数]  固定経路でチャンクを読み込みながら、予算を十分に取った反復のRAM・VRAM推移と、縮退させた読込・解除順の再現を測る"
