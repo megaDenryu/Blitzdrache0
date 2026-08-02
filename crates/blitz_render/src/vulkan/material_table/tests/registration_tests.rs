@@ -7,7 +7,6 @@
 
 #![allow(clippy::unwrap_used, clippy::expect_used)]
 
-use crate::descriptor_indexing_limits::ディスクリプタ索引上限;
 use crate::draw_bundle_id::描画束ID;
 use crate::error::{レンダラーエラー, 材質資源表エラー};
 use crate::texture_material::テクスチャ用途;
@@ -17,16 +16,9 @@ use crate::vulkan::material_table::generation_build::構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::pack_input::梱包対象材質;
 use crate::vulkan::material_table::registration::材質登録簿;
-use crate::vulkan::material_table::stage_reserve::画素段の予約枠;
 
 use super::fixture::検査用供給元;
-use super::material_fixture::{検査用素材, 画像を選んだ材質};
-
-/// 正準フォールバック3枚に加えてテクスチャ1枚だけが入る容量。2枚目の固有テクスチャで超過する。
-fn 四枚の容量() -> テクスチャ表レイアウト容量 {
-    let 上限 = ディスクリプタ索引上限::生成する(100, 100, 100);
-    テクスチャ表レイアウト容量::決める(上限, 画素段の予約枠::現行のシーン画素段(), 4).unwrap()
-}
+use super::material_fixture::{四枚の容量, 検査用素材, 画像を選んだ材質};
 
 fn 資源を作らずに試す(
     材質一覧: &[梱包対象材質<'_>], 容量: テクスチャ表レイアウト容量
