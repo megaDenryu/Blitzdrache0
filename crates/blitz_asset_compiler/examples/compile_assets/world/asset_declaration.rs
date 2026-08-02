@@ -8,7 +8,7 @@ use super::definition_kind::{ソース専用定義, 任意定義, 外部アセ�
 /// 地形世界の起動時シーン。レンダラーはチャンクが1つも常駐しない期間にも描画対象を要求するため、束ID0を占める最小の対象が要る。
 /// 板の世界の`quad`と同じソースを別IDで登録するのは、初期カメラがシーン名で決まり、地形の俯瞰視点をこのIDへ紐づけるためである。
 /// 参照: `crates/blitz_app/src/app/scene_camera.rs`
-const 地形世界の起動時シーン: (&str, &str) = ("terrain_origin", "smoke/quad.gltf");
+pub(super) const 地形世界の起動時シーン: (&str, &str) = ("terrain_origin", "smoke/quad.gltf");
 
 /// 植生世界の原型ソース。起動時シーンもチャンクもこの1つのglTFを原型として読む。
 const 植生原型ソース: &str = "vegetation_world/archetype.gltf";

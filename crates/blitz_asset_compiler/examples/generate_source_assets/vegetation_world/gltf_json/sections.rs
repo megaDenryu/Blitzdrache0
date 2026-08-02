@@ -1,11 +1,10 @@
-//! メッシュLOD段1つぶんのglTF宣言を作る工程。受け取るのは段番号と直方体の諸元、
+//! メッシュLOD段1つぶんのglTF宣言を作る工程。受け取るのは段番号と直方体の諸元と段の中身の量、
 //! 返すのはその段のbufferView5件とaccessor5件とmesh1件の宣言文字列である。
 //! 段ごとにbufferViewとaccessorが5件ずつ増え、番号は段番号の5倍から始まる。
 //! この対応をここ1箇所で決めることで、文書の骨組み側は段の中身の並びを知らずに済む。
 
-use super::super::geometry::{
-    インデックス区間長, テクスチャ座標区間長, 位置区間長, 接線区間長, 法線区間長, 直方体のバイト長, 直方体諸元
-};
+use super::super::geometry::直方体諸元;
+use super::super::stage_amount::段の中身の量;
 
 /// 1つの段が使うbufferViewとaccessorの件数。位置・法線・接線・UV・インデックスの5つである。
 const 段あたりの区間数: usize = 5;
@@ -15,8 +14,11 @@ pub(super) struct 段の区間 {
     pub(super) accessor宣言: String,
 }
 
-pub(super) fn 段の区間を作る(段番号: usize, 諸元: 直方体諸元) -> 段の区間 {
-    let 基点 = 直方体のバイト長 * 段番号;
+pub(super) fn 段の区間を作る(段番号: usize, 諸元: 直方体諸元, 量: 段の中身の量) -> 段の区間 {
+    let (位置区間長, 法線区間長, 接線区間長) = (量.位置区間長(), 量.法線区間長(), 量.接線区間長());
+    let (テクスチャ座標区間長, インデックス区間長) = (量.テクスチャ座標区間長(), 量.インデックス区間長());
+    let (頂点数, インデックス数) = (量.頂点数, 量.インデックス数);
+    let 基点 = 量.バイト長() * 段番号;
     let 法線区間 = 基点 + 位置区間長;
     let 接線区間 = 法線区間 + 法線区間長;
     let uv区間 = 接線区間 + 接線区間長;
@@ -33,11 +35,11 @@ pub(super) fn 段の区間を作る(段番号: usize, 諸元: 直方体諸元) -
              \x20   {{ \"buffer\": 0, \"byteOffset\": {インデックス区間}, \"byteLength\": {インデックス区間長}, \"target\": 34963 }}"
         ),
         accessor宣言: format!(
-            "    {{ \"bufferView\": {}, \"componentType\": 5126, \"count\": 24, \"type\": \"VEC3\", \"min\": {最小}, \"max\": {最大} }},\n\
-             \x20   {{ \"bufferView\": {}, \"componentType\": 5126, \"count\": 24, \"type\": \"VEC3\" }},\n\
-             \x20   {{ \"bufferView\": {}, \"componentType\": 5126, \"count\": 24, \"type\": \"VEC4\" }},\n\
-             \x20   {{ \"bufferView\": {}, \"componentType\": 5126, \"count\": 24, \"type\": \"VEC2\" }},\n\
-             \x20   {{ \"bufferView\": {}, \"componentType\": 5123, \"count\": 36, \"type\": \"SCALAR\" }}",
+            "    {{ \"bufferView\": {}, \"componentType\": 5126, \"count\": {頂点数}, \"type\": \"VEC3\", \"min\": {最小}, \"max\": {最大} }},\n\
+             \x20   {{ \"bufferView\": {}, \"componentType\": 5126, \"count\": {頂点数}, \"type\": \"VEC3\" }},\n\
+             \x20   {{ \"bufferView\": {}, \"componentType\": 5126, \"count\": {頂点数}, \"type\": \"VEC4\" }},\n\
+             \x20   {{ \"bufferView\": {}, \"componentType\": 5126, \"count\": {頂点数}, \"type\": \"VEC2\" }},\n\
+             \x20   {{ \"bufferView\": {}, \"componentType\": 5123, \"count\": {インデックス数}, \"type\": \"SCALAR\" }}",
             番号,
             番号 + 1,
             番号 + 2,

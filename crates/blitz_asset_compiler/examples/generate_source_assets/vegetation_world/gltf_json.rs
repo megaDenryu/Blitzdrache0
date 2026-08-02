@@ -4,17 +4,18 @@
 
 mod sections;
 
-use super::geometry::{直方体のバイト長, 直方体諸元};
+use super::geometry::直方体諸元;
+use super::stage_amount::段の中身の量;
 
-pub(super) fn 文書を作る(諸元一覧: &[直方体諸元], バッファファイル名: &str) -> String {
-    let バッファ長 = 直方体のバイト長 * 諸元一覧.len();
+pub(super) fn 文書を作る(諸元一覧: &[直方体諸元], バッファファイル名: &str, 量: 段の中身の量) -> String {
+    let バッファ長 = 量.バイト長() * 諸元一覧.len();
     let mut bufferview一覧 = Vec::new();
     let mut accessor一覧 = Vec::new();
     let mut mesh一覧 = Vec::new();
     let mut node一覧 = Vec::new();
     let mut node番号一覧 = Vec::new();
     for (段番号, 諸元) in 諸元一覧.iter().enumerate() {
-        let 区間 = sections::段の区間を作る(段番号, *諸元);
+        let 区間 = sections::段の区間を作る(段番号, *諸元, 量);
         bufferview一覧.push(区間.bufferview宣言);
         accessor一覧.push(区間.accessor宣言);
         mesh一覧.push(sections::mesh宣言を作る(段番号));

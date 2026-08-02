@@ -5,7 +5,7 @@
 //! 材質境界の検収用のmulti_material.bin・multi_material_two.gltf・multi_material_one.gltfを、
 //! assets/chunk_world/ へ25チャンク分のglTFと共有バッファと目録ソースを、
 //! assets/terrain_world/ へ25チャンク分の高さ格子と目録ソースを、
-//! assets/vegetation_world/ へ植生の原型glTFと1チャンクの目録ソースを書き出す。
+//! assets/vegetation_world/ へ植生の原型glTFと頂点量の診断用に面を細分化した原型glTFと1チャンクの目録ソースを書き出す。
 //! assets/village_world/ へ見本の集落の地面1チャンク分の高さ格子と目録ソースを書き出す。
 //! xtask gen-source-assets の実体であり、リポジトリルートを作業ディレクトリとして実行される。
 

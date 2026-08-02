@@ -1,12 +1,16 @@
 //! どのチャンク世界を1つの出力ルートへ焼くかの選択。1つの出力ルートは1つのカタログと1つのチャンク目録を持つため、
 //! 同じ座標を持つ2つの世界は同じ出力ルートへ同居できない。世界の選択がそのまま出力ルートの選択になる。
-//! どのアセットを焼くかの宣言は`asset_declaration`が、定義1件の組み立ては`definition_kind`が持つ。
+//! どのアセットを焼くかの宣言は`asset_declaration`が、定義1件の組み立ては`definition_kind`が持ち、
+//! プロセス境界の綴りとその解析は`argument_name`が持つ。
 
+mod argument_name;
 mod asset_declaration;
 mod definition_kind;
+mod vertex_diagnostic_declaration;
 mod village_declaration;
 
 use super::catalog::{アセット定義, ソース種別};
+use vertex_diagnostic_declaration::診断の原型;
 
 /// ソースルートからの相対で固定した、世界ごとの目録ソースの配置先。
 const 板の世界の目録ソース: &str = "chunk_world/chunk_directory.txt";
@@ -14,37 +18,26 @@ const 地形の世界の目録ソース: &str = "terrain_world/chunk_directory.t
 const 植生の世界の目録ソース: &str = "vegetation_world/chunk_directory.txt";
 const 見本の集落の世界の目録ソース: &str = "village_world/chunk_directory.txt";
 
-/// プロセス境界で世界を指す名前。xtaskが同じ綴りを渡す。
-const 板の世界の引数名: &str = "chunk_world";
-const 地形の世界の引数名: &str = "terrain_world";
-const 植生の世界の引数名: &str = "vegetation_world";
-const 見本の集落の世界の引数名: &str = "village_world";
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum 対象世界 {
     板の世界,
     地形の世界,
     植生の世界,
     見本の集落の世界,
+    /// 頂点処理量の係数を同定するための計測専用の世界。地形の代表世界と同じ地面と配置を持ち、同居植生の原型だけが違う。
+    頂点診断の世界(診断の原型),
 }
 
 impl 対象世界 {
     pub(super) fn 引数名から解析する(引数名: &str) -> Result<Self, String> {
-        match 引数名 {
-            板の世界の引数名 => Ok(Self::板の世界),
-            地形の世界の引数名 => Ok(Self::地形の世界),
-            植生の世界の引数名 => Ok(Self::植生の世界),
-            見本の集落の世界の引数名 => Ok(Self::見本の集落の世界),
-            他 => Err(format!(
-                "未知の世界名である: {他}(有効な値は{板の世界の引数名}と{地形の世界の引数名}と{植生の世界の引数名}と{見本の集落の世界の引数名})"
-            )),
-        }
+        argument_name::解析する(引数名)
     }
 
+    /// 頂点診断の世界が地形の目録を読むのは、代表世界と同じ25チャンクの同じ地面を対象にするためである。
     pub(super) fn 目録ソース相対パス(self) -> &'static str {
         match self {
             Self::板の世界 => 板の世界の目録ソース,
-            Self::地形の世界 => 地形の世界の目録ソース,
+            Self::地形の世界 | Self::頂点診断の世界(_) => 地形の世界の目録ソース,
             Self::植生の世界 => 植生の世界の目録ソース,
             Self::見本の集落の世界 => 見本の集落の世界の目録ソース,
         }
@@ -63,10 +56,13 @@ impl 対象世界 {
             Self::見本の集落の世界 => ソース種別::見本の集落 {
                 群一覧: village_declaration::集落の小物一覧,
             },
+            Self::頂点診断の世界(原型) => ソース種別::高さ格子 {
+                同居植生: Some(vertex_diagnostic_declaration::同居植生(原型, 同居植生個体数)),
+            },
         }
     }
 
-    /// 同居植生の個体数を指定されなかったときに使う値。地形以外の世界は同居植生を持たないため、この値を読まない。
+    /// 同居植生の個体数を指定されなかったときに使う値。地形と頂点診断以外の世界は同居植生を持たないため、この値を読まない。
     pub(super) fn 同居植生の既定個体数() -> usize {
         asset_declaration::地形同居の既定個体数
     }
@@ -78,6 +74,7 @@ impl 対象世界 {
             Self::地形の世界 => asset_declaration::地形の世界の一覧(),
             Self::植生の世界 => asset_declaration::植生の世界の一覧(),
             Self::見本の集落の世界 => village_declaration::一覧(),
+            Self::頂点診断の世界(原型) => vertex_diagnostic_declaration::一覧(原型),
         }
     }
 }
