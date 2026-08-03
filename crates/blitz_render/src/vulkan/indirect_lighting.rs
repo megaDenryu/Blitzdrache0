@@ -11,30 +11,31 @@
 
 mod create;
 mod draw_input;
+mod inject;
 mod injection;
+mod injection_material;
 mod inputs;
 
 use ash::vk;
 
-use crate::distant_environment::遠方環境の解析入力エラー;
-use crate::distant_environment::{遠方環境のシェーダー一式, 遠方環境の解析入力};
+use crate::distant_environment::遠方環境のシェーダー一式;
 use crate::error::レンダラーエラー;
-use crate::indirect_lighting::{焼き始めの記録, 間接照明エラー};
+use crate::indirect_lighting::焼き始めの記録;
 use crate::vulkan::derived_environment::派生表現一式;
 use crate::vulkan::descriptor::lighting_set::distant_environment::遠方環境の束縛先;
 use crate::vulkan::distant_environment::{遠方環境が借りる束縛先, 遠方環境一式};
 use crate::vulkan::tracked_device::GPUデバイス;
 
-pub(crate) use injection::解析入力の注入;
+pub(crate) use injection::{焼かせる注入, 解析入力の注入};
 pub(crate) use inputs::{登録する画像, 間接照明の描画入力, 間接照明の焼く組};
 
 pub(crate) struct 遠方環境の照明資源 {
     遠方環境: 遠方環境一式,
     派生表現: 派生表現一式,
     焼き始め: 焼き始めの記録,
-    /// 検収が解析入力を注入した実行だけが`Some`。本番のフレーム経路はこの入口を1度も呼ばない。
-    /// 注入がある実行は焼き上げの計画が「何も焼かない」に固定され、3つの画像が毎フレーム転送で埋まる。
-    注入: Option<injection::解析入力の注入資源>,
+    /// 検収が中身を注入した実行だけが`Some`。本番のフレーム経路は注入の入口を1度も呼ばない。
+    /// どちらの枝を注入したかでそのフレームの焼き上げの計画が変わる(`inject`と`draw_input`)。
+    注入: Option<injection::検収の注入>,
 }
 
 impl 遠方環境の照明資源 {
@@ -55,26 +56,6 @@ impl 遠方環境の照明資源 {
             鏡面畳込み: self.派生表現.鏡面畳込み画像().立方体ビュー,
             反射率積分表: self.派生表現.反射率積分表の画像().ビュー,
         }
-    }
-
-    /// 検収専用の入口。3つの派生表現の中身を解析入力で置き換え、以降のフレームで焼き上げを止める。
-    /// 呼ばれるのはレンダラー生成の直後の1回だけであり、2度目の注入は前のバッファを取り違えないよう拒む。
-    pub(crate) fn 解析入力を注入する(
-        &mut self,
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        入力: &遠方環境の解析入力,
-    ) -> Result<(), レンダラーエラー> {
-        if self.注入.is_some() {
-            return Err(間接照明エラー::from(遠方環境の解析入力エラー::二重注入).into());
-        }
-        self.注入 = Some(injection::解析入力の注入資源::生成する(
-            device,
-            メモリプロパティ,
-            &self.派生表現,
-            入力,
-        )?);
-        Ok(())
     }
 
     /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この一式は`描画段階資源`の1段として呼ばれる(GPU待機済み)。

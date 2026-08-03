@@ -42,7 +42,7 @@ impl ApplicationHandler for アプリ {
                 let 注入 = self
                     .読み戻し検収
                     .遠方環境の検収条件
-                    .map(|条件| レンダラー.遠方環境の解析入力を注入する(&条件.解析入力を組む()));
+                    .map(|条件| crate::reports::indirect_probe::レンダラーへ注入する(条件, &mut レンダラー));
                 if let Some(Err(誤り)) = 注入 {
                     self.起動時エラー = Some(crate::error::起動エラー::from(誤り));
                     event_loop.exit();

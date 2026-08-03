@@ -10,6 +10,7 @@
 
 mod condition;
 mod expected_color;
+mod injection_dispatch;
 mod plates;
 mod projection;
 mod row;
@@ -20,6 +21,7 @@ use blitz_render::distant_environment::derived::鏡面畳込みの解像度;
 use blitz_render::読み戻し画像;
 
 pub(crate) use condition::遠方環境の検収条件;
+pub(crate) use injection_dispatch::レンダラーへ注入する;
 
 use crate::app::frame::フレーム視点;
 
@@ -34,7 +36,7 @@ pub(crate) struct 照合の材料<'a> {
 }
 
 pub(crate) fn 代表板を照合する(材料: &照合の材料<'_>) {
-    let 解析入力 = 材料.条件.解析入力を組む();
+    let 解析入力 = 材料.条件.焼き上がりの解析入力();
     let 期待の材料 = expected_color::期待の材料 {
         解析入力: &解析入力,
         鏡面の解像度: 鏡面畳込みの解像度::既定値(),

@@ -7,6 +7,7 @@
 
 mod analytic_input;
 mod analytic_input_error;
+mod bake_source_input;
 pub mod consume;
 pub mod derived;
 pub mod derived_probe;
@@ -19,6 +20,7 @@ mod sun_direction;
 
 pub use analytic_input::{遠方環境の解析入力, 鏡面畳込みの解析入力};
 pub use analytic_input_error::遠方環境の解析入力エラー;
+pub use bake_source_input::遠方環境の焼かせる解析入力;
 pub use frame_input::遠方環境の入力;
 pub use pass_counts::間接照明生成パス数;
 pub use shader_set::遠方環境のシェーダー一式;
