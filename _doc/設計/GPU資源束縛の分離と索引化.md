@@ -181,6 +181,22 @@ CPU側の正本は`crates/blitz_render/src/vulkan/lighting_query/`の`header_byt
 
 多段シャドウマップは同じセットのbinding0にあり、比較サンプラーと同一bindingへ束ねる。
 
+### 遠方環境の枝が足すbinding(順3-Ic-2で確定)
+
+照明問い合わせのセットのレイアウトは照明束縛レイアウトの枝で変わる。「直接光と多段影」の枝はbinding0から3だけを宣言し、「直接光と多段影と遠方環境」の枝は次の3つを足す。どれも画素段だけが読み、画像とサンプラーを同一bindingへ束ねた組み合わせ画像サンプラーである。
+
+| binding | 種別 | 宣言名 | 内容 |
+| --- | --- | --- | --- |
+| 4 | TextureCube + SamplerState | diffuseIrradianceTexture / diffuseIrradianceSampler | 拡散照度の立方体画像。太陽相対座標で焼いてある |
+| 5 | TextureCube + SamplerState | specularPrefilterTexture / specularPrefilterSampler | 鏡面畳込みの立方体画像。縮小段が粗さ段に対応する |
+| 6 | Texture2D + SamplerState | reflectanceIntegralTexture / reflectanceIntegralSampler | 反射率積分表。横軸が法線と視線の余弦、縦軸が粗さ |
+
+**定数近似の枝はこの3つを1つも宣言しない**。使わない束縛先をレイアウトへ置くと、その枝の検収が未使用のダミー資源を用意することになるためである。CPU側の宣言は`vulkan/descriptor/lighting_set/distant_environment.rs`、GPU側の宣言は`shaders/indirect_distant_environment.slang`にあり、どちらか一方だけが番号を宣言していないことは`cargo xtask conform`の`lighting_query_declaration`が見る(正本を契約の枝ごとに2つ持ち、それぞれが自分の番号を全部持つことを確かめる)。
+
+3つの画像のディスクリプタのレイアウトはGENERALである。焼き直さないフレームも中身を保つ画像であり、休むレイアウトをGENERALに固定する不変条件を大気のベイク済み画像と共有するためである。3つはレンダラー生成時に全フレームスロットのセットへ一度だけ結ぶ(焼き直しても束縛先のビューが変わらない)。
+
+**画素段のエントリも契約ごとに分かれる**。シーン描画は`shaders/scene.slang`と`shaders/scene_distant_environment.slang`、布描画は`shaders/cloth_draw.slang`と`shaders/cloth_draw_distant_environment.slang`である。頂点段は照明問い合わせのセットを1つも読まないため両方の契約が同じ1本を共有する。CPU側で1組を選ぶのは`契約別の描画シェーダー`であり、選ぶ鍵は照明束縛レイアウトの枝1つだけである。
+
 棄却した案: 空/プローブ/影の材質テクスチャ表への投入(寿命とアクセス権が違う)。全将来資源を予約した巨大固定LightingContext。供給元方式の材質特徴ビット化(材質ごとに照明品質が変わってしまう)。スカイビューのベイク済み画像を表面PBRが直接環境光として読む(IBL畳込み契約を飛ばす)。
 
 ## 材質レコードとテクスチャ台帳
