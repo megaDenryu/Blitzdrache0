@@ -3,7 +3,7 @@
 //!
 //! 布・粒子・全画面・コンピュートはこの台帳の外にあり、それぞれの段階資源が自分のパイプラインを持ち続ける。
 //! 材質を読まないパイプラインへ材質の軸を強制しないためである。
-//! キーの型は`key`、描画先の一意化は`render_target`、照明問い合わせの契約は`lighting_contract`、
+//! キーの型は`key`、描画先の一意化は`render_target`、照明資源の束縛レイアウトは`lighting_binding_layout`、
 //! 起動時に数え上げる必要キー集合は`required_keys`、キーと実体の対応表は`entry_table`、実体の作り方は`device_supplier`、
 //! レイアウトの所有は`layouts`にある。生成の局面は`create`、シェーダーの差し替えの取引は`reload`が持つ。
 //! 参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「段階導入」の段6
@@ -13,7 +13,7 @@ mod device_supplier;
 mod entry_table;
 mod key;
 mod layouts;
-mod lighting_contract;
+mod lighting_binding_layout;
 mod reload;
 mod render_target;
 mod required_keys;
@@ -29,14 +29,14 @@ use crate::vulkan::material_variant::材質変種キー;
 use entry_table::パイプライン記載表;
 
 pub(crate) use key::パイプラインキー;
-pub(crate) use lighting_contract::照明問い合わせ契約;
+pub(crate) use lighting_binding_layout::照明束縛レイアウト;
 pub(crate) use render_target::描画先の一意化;
 
 pub(crate) struct 材質描画族パイプライン台帳 {
     レイアウト: layouts::材質描画族のレイアウト,
     /// 起動時に決めた描画先と照明の契約。キーを組み立てるのは台帳自身であり、呼び出し元が成分を持ち回らない。
     シーンの描画先: 描画先の一意化,
-    シーンの照明問い合わせ: 照明問い合わせ契約,
+    シーンの照明束縛: 照明束縛レイアウト,
     シャドウの描画先: 描画先の一意化,
     シーン: パイプライン記載表<vk::Pipeline>,
     シャドウ: パイプライン記載表<vk::Pipeline>,
@@ -48,7 +48,7 @@ impl 材質描画族パイプライン台帳 {
         パイプラインキー::シーン {
             描画先: self.シーンの描画先,
             材質変種,
-            照明問い合わせ: self.シーンの照明問い合わせ,
+            照明束縛: self.シーンの照明束縛,
         }
     }
 

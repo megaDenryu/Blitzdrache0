@@ -14,7 +14,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::material_variant::材質変種キー;
 
 use super::key::パイプラインキー;
-use super::lighting_contract::照明問い合わせ契約;
+use super::lighting_binding_layout::照明束縛レイアウト;
 use super::render_target::描画先の一意化;
 use super::supplier::パイプライン供給元;
 
@@ -72,7 +72,7 @@ fn シーンのキー(描画先: 描画先の一意化) -> パイプラインキ
     パイプラインキー::シーン {
         描画先,
         材質変種: 材質変種キー::標準金属粗さPBRの不透明両面,
-        照明問い合わせ: 照明問い合わせ契約::直接光と多段影,
+        照明束縛: 照明束縛レイアウト::直接光と多段影,
     }
 }
 

@@ -5,19 +5,17 @@
 //! シーンの枝は材質変種キーの全変種ぶんであり、変種が増えれば数え上げも自動で増える。シャドウの枝は材質を読まないため1本である。
 
 use super::key::パイプラインキー;
-use super::lighting_contract::照明問い合わせ契約;
+use super::lighting_binding_layout::照明束縛レイアウト;
 use super::render_target::描画先の一意化;
 use crate::vulkan::material_variant::材質変種キー;
 
-pub(super) fn シーンのキー一覧(
-    描画先: 描画先の一意化, 照明問い合わせ: 照明問い合わせ契約
-) -> Vec<パイプラインキー> {
+pub(super) fn シーンのキー一覧(描画先: 描画先の一意化, 照明束縛: 照明束縛レイアウト) -> Vec<パイプラインキー> {
     材質変種キー::全変種
         .iter()
         .map(|材質変種| パイプラインキー::シーン {
             描画先,
             材質変種: *材質変種,
-            照明問い合わせ,
+            照明束縛,
         })
         .collect()
 }
