@@ -50,7 +50,7 @@ impl パイプライン供給元 for 数える供給元 {
     fn 生成する(&mut self, _キー: パイプラインキー) -> Result<u32, レンダラーエラー> {
         self.生成回数 += 1;
         if self.失敗させる回 == Some(self.生成回数) {
-            return Err(crate::error::フレーム入力不一致エラー::粒子入力不一致.into());
+            return Err(crate::error::生成要求不一致エラー::粒子入力不一致.into());
         }
         Ok(self.生成回数)
     }

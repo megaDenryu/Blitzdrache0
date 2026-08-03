@@ -10,7 +10,7 @@ use crate::vulkan::pipeline_ledger::entry_table::パイプライン記載表;
 use crate::vulkan::pipeline_ledger::reload::差し替えを行う;
 
 fn 待機の失敗() -> レンダラーエラー {
-    crate::error::フレーム入力不一致エラー::粒子入力不一致.into()
+    crate::error::生成要求不一致エラー::粒子入力不一致.into()
 }
 
 #[test]

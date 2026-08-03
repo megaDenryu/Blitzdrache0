@@ -28,3 +28,17 @@ impl From<blitz_math::座標変換エラー> for レンダラーエラー {
         Self::カメラ相対変換失敗(誤り)
     }
 }
+
+/// 間接照明の層の内側の2つの失敗を、層の型を経てレンダラーの失敗へ写す。
+/// 2段の`#[from]`は連鎖しないため、`?`で直接伝播できるようここで明示する。
+impl From<crate::indirect_lighting::間接照明契約エラー> for レンダラーエラー {
+    fn from(誤り: crate::indirect_lighting::間接照明契約エラー) -> Self {
+        Self::間接照明不正(誤り.into())
+    }
+}
+
+impl From<crate::indirect_lighting::間接照明入力不一致エラー> for レンダラーエラー {
+    fn from(誤り: crate::indirect_lighting::間接照明入力不一致エラー) -> Self {
+        Self::間接照明不正(誤り.into())
+    }
+}

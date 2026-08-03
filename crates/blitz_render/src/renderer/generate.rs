@@ -9,7 +9,7 @@ mod generate_tests;
 use super::レンダラー;
 use crate::cascade::影の一辺解像度;
 use crate::cloth_material::布素材;
-use crate::error::{フレーム入力不一致エラー, レンダラーエラー};
+use crate::error::{レンダラーエラー, 生成要求不一致エラー};
 use crate::extent::ウィンドウ寸法;
 use crate::frame_composition::{フレーム構成, フレーム段階};
 use crate::indirect_lighting::照明問い合わせ契約;
@@ -68,7 +68,7 @@ fn 構成と素材を検査する(
     ];
     for (素材あり, 段階) in 対応 {
         if 素材あり && !構成.含む(段階) {
-            return Err(フレーム入力不一致エラー::フレーム構成素材不一致(段階).into());
+            return Err(生成要求不一致エラー::フレーム構成素材不一致(段階).into());
         }
     }
     Ok(())

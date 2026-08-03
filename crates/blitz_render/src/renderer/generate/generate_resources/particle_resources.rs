@@ -28,6 +28,6 @@ pub(super) fn 組み立てる(
             素材,
         )?)),
         (None, None) => Ok(None),
-        (Some(_), None) | (None, Some(_)) => Err(crate::error::フレーム入力不一致エラー::粒子入力不一致.into()),
+        (Some(_), None) | (None, Some(_)) => Err(crate::error::生成要求不一致エラー::粒子入力不一致.into()),
     }
 }

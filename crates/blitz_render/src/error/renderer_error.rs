@@ -5,7 +5,7 @@
 
 use thiserror::Error;
 
-use super::{cascade, cloth, device_requirement, frame_input_mismatch, lighting_query, material_table, pipeline_ledger, sky};
+use super::{cascade, cloth, device_requirement, frame_input_mismatch, generate_request, lighting_query, material_table, pipeline_ledger, sky};
 use crate::indirect_lighting;
 use crate::vulkan_failure::Vulkan失敗コード;
 
@@ -44,10 +44,6 @@ pub enum レンダラーエラー {
     /// R8G8B8A8_SRGBのリニアフィルタblitに物理デバイスが対応していない（判断20: 縮小段マップ生成はvkCmdBlitImageの連鎖で行うため必須）。
     #[error("物理デバイスがR8G8B8A8_SRGBのリニアフィルタblitに対応していない")]
     テクスチャblit非対応,
-
-    /// スキンメッシュ素材の属性数がレンダラー生成時の頂点数と一致しなかった(判断44)。
-    #[error("スキン属性数{属性数}が頂点数{頂点数}と一致しない")]
-    スキン属性数不一致 { 属性数: usize, 頂点数: usize },
 
     /// スキン付きシーンの有無とフレーム描画入力のスキン行列の有無が一致しなかった(判断44)。無言のデフォルト姿勢適用はしない(CLAUDE.md「不在・未設定・使用不可」)。
     #[error("スキン行列とスキンメッシュの有無が一致しない: {0}")]
@@ -95,6 +91,8 @@ pub enum レンダラーエラー {
     照明問い合わせ梱包不正(#[from] lighting_query::照明問い合わせ梱包エラー),
     #[error("パイプライン台帳とキーが噛み合わない: {0}")]
     パイプライン台帳不正(#[from] pipeline_ledger::パイプライン台帳エラー),
-    #[error("照明問い合わせ契約が要る資源を作れない: {0}")]
-    間接照明契約不成立(#[from] indirect_lighting::間接照明契約エラー),
+    #[error("間接照明の供給元の対応が破れた: {0}")]
+    間接照明不正(#[from] indirect_lighting::間接照明エラー),
+    #[error("生成に渡した素材とフレーム構成が噛み合わない: {0}")]
+    生成要求不一致(#[from] generate_request::生成要求不一致エラー),
 }
