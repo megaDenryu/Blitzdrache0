@@ -8,6 +8,7 @@
 
 use blitz_render::atmosphere_lut_input::大気のベイク済み画像の入力;
 use blitz_render::distant_environment::遠方環境の入力;
+use blitz_render::indirect_lighting::照明問い合わせ契約;
 
 use super::super::atmosphere_input;
 use super::天空配線;
@@ -20,6 +21,19 @@ pub(in crate::app) struct 焼き上げ入力の組 {
 }
 
 impl 天空配線 {
+    /// 遠方環境を焼くフレームか。契約が遠方環境の枝なら、空を描かない起動指定でも焼く
+    /// (空背景の有無と表面への間接照明は独立である)。
+    fn 遠方環境を焼くか(&self) -> bool {
+        self.照明問い合わせ契約 == 照明問い合わせ契約::遠方環境LambertGGX
+    }
+
+    /// 大気のベイク済み画像を焼くフレームか。空を描くか、契約が遠方環境の枝なら焼く。
+    /// レンダラー側の資源の生成条件(`照明問い合わせ契約::大気のベイク済み画像を作るか`)と同じ条件であり、
+    /// 食い違うと資源の有無とフレーム入力の有無が合わずに描画が型付きエラーで落ちる。
+    fn 大気を焼くか(&self) -> bool {
+        self.空を描く || self.遠方環境を焼くか()
+    }
+
     /// ベイク済み画像生成の入力になる大気と2つの観測条件、遠方環境の明るさの尺度、そのフレームで何を焼き直すかの指示。
     /// 空中遠近の条件はカメラに依るため視点を受け取る。大気のベイク済み画像資源は空段階を持つフレーム構成でだけ
     /// 作られるため、空パスを積まない指定(`--no-sky`)では下ろした媒体を持っていても渡さない。
@@ -27,7 +41,7 @@ impl 天空配線 {
         let 無し = 焼き上げ入力の組 {
             大気: None, 遠方環境: None
         };
-        let Some((方針, 媒体)) = self.空を描く.then_some(self.大気).flatten() else {
+        let Some((方針, 媒体)) = self.大気を焼くか().then_some(self.大気).flatten() else {
             return 無し;
         };
         let Some(時間帯) = self.時間帯.as_ref() else {
