@@ -9,6 +9,7 @@ mod buffer;
 mod contract;
 mod document;
 mod file;
+mod fixed_object;
 mod material;
 mod material_slots;
 mod mesh;
@@ -19,6 +20,7 @@ use blitz_engine::{アセットID, カタログ, シーンデータ, チャン�
 
 pub use archetype::{原型ソース, 原型ソースを読み込む};
 pub use contract::{入力契約を検査する, 契約指摘, 契約検査概要, 契約検査結果, 重大度};
+pub(crate) use fixed_object::固定物の描画対象を読み込む;
 
 use crate::error::アセットコンパイルエラー;
 

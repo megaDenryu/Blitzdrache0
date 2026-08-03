@@ -10,6 +10,7 @@
 
 mod layout;
 mod placement;
+pub(crate) mod prop_group;
 mod scene;
 
 pub use placement::配置様式;

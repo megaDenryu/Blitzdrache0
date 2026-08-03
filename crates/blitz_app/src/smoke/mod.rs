@@ -16,10 +16,10 @@ use winit::window::Window;
 use crate::cli::粒子表示モード;
 
 /// 書き換えもピクセル判定も持たず、判定を検収側のxtaskが読み戻し画像と計数で行うシーンの名前の接頭辞。
-/// 植生は`instance-*`、`prop_`は`prop-draw`と`village-draw`、`multi_material`は`multi-material-draw`、`indirect_probe`は`indirect-probe`が判定する。
+/// 判定する入口は順に`instance-*`・`prop-draw`と`village-draw`・`multi-material-draw`・`indirect-probe`・`terrain-visual`である。
 /// 既定の計画は`quad`のホットリロード検証であり、監視対象のシェーダーとquadの実行時形式を書き換えるため、
 /// これらをその計画へ落とすとリポジトリのシェーダーと既存の生成物が書き換わる。
-const 読み戻しだけの検収シーンの接頭辞一覧: [&str; 4] = ["vegetation", "prop_", "multi_material", "indirect_probe"];
+const 読み戻しだけの検収シーンの接頭辞一覧: [&str; 5] = ["vegetation", "prop_", "multi_material", "indirect_probe", "terrain_visual"];
 /// 群が両方の視錐台から外れる検収シーン(`cargo xtask cloth-empty`)。中身は植生の検収シーンと同じだが、
 /// 既定カメラと既定の影範囲を選ばせるために名前を接頭辞から外してあるため、ここで個別に同じ計画へ振る。
 const 両視錐台外の群シーン: &str = "instance_all_culled";

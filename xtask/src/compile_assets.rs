@@ -1,19 +1,15 @@
 //! ソースアセットを版付き実行時形式へ変換する唯一の公開ツール入口。
 //! 1つの出力ルートは1つのチャンク世界を持つため、世界ごとに出力ルートを分けて順に生成する。
-//! 世界を指す綴りは`world_name`が持つ。
+//! 世界を指す綴りは`world_name`が、世界ごとの既定出力ルートは`default_root`が持つ。
 
+mod default_root;
 mod world_name;
 
 use std::path::Path;
 use std::process::{Command, ExitCode};
 
+pub use default_root::*;
 pub use world_name::*;
-
-const 既定ソースルート: &str = "assets";
-const 既定出力ルート: &str = "target/runtime_assets";
-const 地形の既定出力ルート: &str = "target/terrain_assets";
-const 植生の既定出力ルート: &str = "target/vegetation_assets";
-const 見本の集落の既定出力ルート: &str = "target/village_assets";
 
 pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     let 成否 = match 引数一覧 {
@@ -29,28 +25,6 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     if 成否 { ExitCode::SUCCESS } else { ExitCode::FAILURE }
 }
 
-pub fn 既定を生成する() -> bool {
-    生成する(Path::new(既定ソースルート), Path::new(既定出力ルート), 板の世界)
-}
-
-/// 地形世界は板の世界と同じ座標を占めるため、同じ出力ルートへは同居できない。専用の既定出力ルートへ焼く。
-pub fn 地形世界を既定で生成する() -> bool {
-    生成する(Path::new(既定ソースルート), Path::new(地形の既定出力ルート), 地形の世界)
-}
-
-/// 植生世界も原点チャンクを占めるため、専用の既定出力ルートへ焼く。
-pub fn 植生世界を既定で生成する() -> bool {
-    生成する(Path::new(既定ソースルート), Path::new(植生の既定出力ルート), 植生の世界)
-}
-
-/// 見本の集落も原点チャンクを占めるため、専用の既定出力ルートへ焼く。
-/// 引数なしの一括生成へ入れないのは、この世界の小物の原型が本体リポジトリの外にあるアセットリポジトリだけにあり、
-/// それを持たない環境では焼けないためである。焼けない世界を一括生成へ入れると、アセットリポジトリを持たない環境で
-/// 既存の検証が全部止まる。この世界を要るのは`village-draw`だけであり、そこが名指しで呼ぶ。
-pub fn 見本の集落世界を既定で生成する() -> bool {
-    生成する(Path::new(既定ソースルート), Path::new(見本の集落の既定出力ルート), 見本の集落の世界)
-}
-
 pub fn 生成する(ソースルート: &Path, 出力ルート: &Path, 世界名: &str) -> bool {
     個体数を添えて生成する(ソースルート, 出力ルート, 世界名, None)
 }
@@ -64,7 +38,7 @@ pub fn 地形世界を個体数指定で生成する(出力ルート: &Path, 個
 /// 頂点診断の世界は代表世界と同じ地面と密度を使うため、世界名だけを差し替えれば条件間で配置が揃う。
 pub fn 世界を個体数指定で生成する(出力ルート: &Path, 世界名: &str, 個体数: usize) -> bool {
     let 個体数 = 個体数.to_string();
-    個体数を添えて生成する(Path::new(既定ソースルート), 出力ルート, 世界名, Some(&個体数))
+    個体数を添えて生成する(default_root::ソースルート(), 出力ルート, 世界名, Some(&個体数))
 }
 
 fn 個体数を添えて生成する(
