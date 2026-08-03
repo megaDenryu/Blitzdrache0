@@ -24,7 +24,7 @@ mod table_image;
 
 use ash::vk;
 
-use crate::distant_environment::derived::鏡面畳込みの解像度;
+use crate::distant_environment::derived::{反射率積分表の解像度, 拡散照度の解像度, 鏡面畳込みの解像度};
 use crate::error::レンダラーエラー;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -68,6 +68,14 @@ impl 派生表現一式 {
     /// 鏡面畳込みの段構成。焼く段の列挙と段ごとの粗さがここから決まる。
     pub(in crate::vulkan) fn 鏡面畳込みの解像度(&self) -> 鏡面畳込みの解像度 {
         self.解像度.鏡面畳込み
+    }
+
+    pub(in crate::vulkan) fn 拡散照度の解像度(&self) -> 拡散照度の解像度 {
+        self.解像度.拡散照度
+    }
+
+    pub(in crate::vulkan) fn 反射率積分表の解像度(&self) -> 反射率積分表の解像度 {
+        self.解像度.反射率積分表
     }
 
     /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この一式は`描画段階資源`の1段として呼ばれる(GPU待機済み)。

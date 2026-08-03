@@ -1,5 +1,4 @@
 //! blitz_render の公開ファサード。Vulkanの全リソースをここに集約し、生成から破棄までのライフサイクルを一元管理する。
-//!
 //! 参照: CLAUDE.md「unsafe の規律」「封じ込め」。ash型は一切ここから公開しない。
 
 mod aerial_composite_input;
@@ -16,6 +15,7 @@ mod draw_stage_resources;
 mod frame_dispatch_inputs;
 mod frame_progress;
 mod generate;
+mod indirect_lighting_injection;
 mod lighting_query_write;
 mod measurement_control;
 mod optional_frame_inputs;

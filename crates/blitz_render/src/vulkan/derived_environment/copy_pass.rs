@@ -12,10 +12,13 @@ use ash::vk;
 
 pub(in crate::vulkan) use mip_zero_copy::最詳細段の複製を作る;
 pub(in crate::vulkan) use readback_pass::{立方体の読み戻しを作る, 表の読み戻しを作る};
-pub(in crate::vulkan) use upload_pass::書き込みパスを作る;
+pub(in crate::vulkan) use upload_pass::{全段の書き込みパスを作る, 書き込みパスを作る, 表の書き込みパスを作る};
 
 /// 立方体の派生画像の1テクセルのバイト数。4成分の半精度である。
 pub(super) const 四成分テクセルのバイト数: u64 = 8;
+
+/// 反射率積分表の1テクセルのバイト数。2成分の半精度である。
+pub(in crate::vulkan) const 二成分テクセルのバイト数: u64 = 4;
 
 pub(super) fn 層の部分範囲(段: u32, 層数: u32) -> vk::ImageSubresourceLayers {
     vk::ImageSubresourceLayers::default()

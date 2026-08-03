@@ -18,6 +18,7 @@ use crate::vulkan::graph;
 use crate::vulkan::indirect_lighting::{間接照明の描画入力, 間接照明の焼く組};
 
 mod graph_images;
+mod injection_upload;
 
 pub(in crate::vulkan::frame::record::graph_build) use graph_images::遠方環境の消費画像;
 use graph_images::{消費する画像を登録する, 遠方環境を登録する};
@@ -42,6 +43,7 @@ pub(in crate::vulkan::frame::record::graph_build) fn 間接照明を積む<'a>(
     };
     let スカイビュー = スカイビュー.unwrap_or_else(|| panic!("遠方環境の照明資源があるのにスカイビューのベイク済み画像が登録されていない"));
     let 消費画像 = 消費する画像を登録する(グラフ, 入力);
+    injection_upload::注入を積む(グラフ, 入力, 消費画像);
     遠方環境と派生を積む(グラフ, 入力, スカイビュー, 消費画像);
     反射率積分表を積む(グラフ, 入力, 消費画像.反射率積分表());
     // 本数は積んだ結果を数え直さず、積む組を決めたのと同じ計画が答える。数え直すと、積む側と数える側で

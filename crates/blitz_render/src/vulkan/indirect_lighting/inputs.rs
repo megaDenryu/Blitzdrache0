@@ -10,6 +10,7 @@
 
 use ash::vk;
 
+use super::解析入力の注入;
 use crate::indirect_lighting::焼き上げの計画;
 use crate::vulkan::derived_environment::派生表現の生成入力;
 use crate::vulkan::distant_environment::遠方環境の生成入力;
@@ -49,4 +50,6 @@ pub(crate) struct 間接照明の描画入力 {
     pub(crate) 焼く組: 間接照明の焼く組,
     /// まだ1度も焼いていないフレームだけ値を持つ。以降のフレームは焼き直さない。
     pub(crate) 反射率積分表の入力: Option<派生表現の生成入力>,
+    /// 検収が解析入力を注入した実行だけ値を持つ。値があるフレームは3つの画像を転送で埋め、生成パスを積まない。
+    pub(crate) 注入: Option<解析入力の注入>,
 }

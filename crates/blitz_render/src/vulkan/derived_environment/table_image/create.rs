@@ -42,8 +42,8 @@ pub(super) fn 生成する(
     }
 }
 
-/// 用途にSTORAGEとSAMPLEDとTRANSFER_SRCを立てるのは、コンピュートが書き、標準PBRがサンプラーで読み、
-/// 検査が読み戻すためである。
+/// 用途にSTORAGEとSAMPLEDとTRANSFER_SRCとTRANSFER_DSTを立てるのは、コンピュートが書き、標準PBRがサンプラーで読み、
+/// 検査が読み戻し、検収が解析入力を転送で書き込むためである。
 fn 画像を作る(device: &ash::Device, 横: u32, 縦: u32) -> Result<vk::Image, レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
@@ -57,7 +57,7 @@ fn 画像を作る(device: &ash::Device, 横: u32, 縦: u32) -> Result<vk::Image
         .array_layers(1)
         .samples(vk::SampleCountFlags::TYPE_1)
         .tiling(vk::ImageTiling::OPTIMAL)
-        .usage(vk::ImageUsageFlags::STORAGE | vk::ImageUsageFlags::SAMPLED | vk::ImageUsageFlags::TRANSFER_SRC)
+        .usage(vk::ImageUsageFlags::STORAGE | vk::ImageUsageFlags::SAMPLED | vk::ImageUsageFlags::TRANSFER_SRC | vk::ImageUsageFlags::TRANSFER_DST)
         .sharing_mode(vk::SharingMode::EXCLUSIVE)
         .initial_layout(vk::ImageLayout::UNDEFINED);
     // 安全性: deviceは生成済みで有効。

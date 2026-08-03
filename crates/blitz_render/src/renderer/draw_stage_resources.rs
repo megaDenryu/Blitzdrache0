@@ -44,6 +44,11 @@ impl 描画段階資源 {
             .map(vulkan::indirect_lighting::遠方環境の照明資源::照明問い合わせへの束縛先)
     }
 
+    /// 遠方環境の照明資源への可変の参照。検収の注入だけが使う入口であり、本番のフレーム経路は通らない。
+    pub(super) fn 遠方環境の照明を借りる(&mut self) -> Option<&mut vulkan::indirect_lighting::遠方環境の照明資源> {
+        self.遠方環境の照明.as_mut()
+    }
+
     /// 布をシャドウパスへ記録するときの束縛先。布無しの構成では`None`を返し、布一式との有無の食い違いを呼び出し元が失敗させる。
     pub(super) fn 布シャドウ描画入力を作る(&self) -> Option<vulkan::frame::布シャドウ描画入力> {
         self.布シャドウ.as_ref().map(vulkan::cloth_shadow::布シャドウ資源::描画入力を作る)
