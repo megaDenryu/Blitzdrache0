@@ -1,7 +1,7 @@
 //! 派生表現の数学のユニットテストを所有するモジュール。担うのは、GPUを起動せずに確かめられる性質
 //! (定数環境の解析解・標本数を上げたときの収束・写像の往復・値域)を関心事ごとに束ねることだけである。
 //!
-//! GPUと突き合わせる検査は`cargo xtask distant-environment-derived`が別に持つ。こちらが正本の性質を、
+//! GPUと突き合わせる検査は`cargo xtask derived-environment`が別に持つ。こちらが正本の性質を、
 //! あちらが写しの一致を見る。
 
 #![allow(clippy::unwrap_used)]

@@ -64,7 +64,8 @@ fn メモリを確保して結びつける(
 fn 全ビューを作る(
     device: &ash::Device, 画像: vk::Image, 段数: u32
 ) -> Result<(Vec<vk::ImageView>, vk::ImageView), レンダラーエラー> {
-    let mut 段ごと = Vec::with_capacity(段数.try_into().unwrap_or(0));
+    let 段数の容量 = usize::try_from(段数).unwrap_or_else(|_| panic!("縮小段の数{段数}がusizeに収まらない"));
+    let mut 段ごと = Vec::with_capacity(段数の容量);
     for 段 in 0..段数 {
         match 段の配列ビューを作る(device, 画像, 段) {
             Ok(ビュー) => 段ごと.push(ビュー),
