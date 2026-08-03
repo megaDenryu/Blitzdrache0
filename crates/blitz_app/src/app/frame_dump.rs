@@ -2,8 +2,9 @@
 //! `<ベース名>.raw`(RGBA8連結)と`<ベース名>.size`(幅 高さ)へ保存する。
 //! 親エージェントの検収工程「絵の目視監査」用(経緯: M6の影バグはvalidation・
 //! ピクセル判定の両方をすり抜け、絵を見ることでのみ検出できた)。
-//! 空の代表画素の照合は`sky_pixel_check`が持つ。
+//! 空の代表画素の照合は`sky_pixel_check`、遠方環境の消費の照合は`indirect_probe_check`が持つ。
 
+mod indirect_probe_check;
 mod sky_pixel_check;
 
 use std::path::{Path, PathBuf};
@@ -44,6 +45,7 @@ impl アプリ {
             blitz_render::読み戻し結果::読み戻した(画像) => {
                 書き出す(&画像, &ダンプ先)?;
                 sky_pixel_check::照合する(self, &画像, 視点情報);
+                indirect_probe_check::照合する(self, &画像, 視点情報);
                 Ok(描画の到達::提示した)
             }
             blitz_render::読み戻し結果::見送った(理由) => Err(起動エラー::フレームダンプ失敗(format!(

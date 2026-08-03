@@ -39,6 +39,15 @@ impl ApplicationHandler for アプリ {
                 if let Some(状況) = super::measurement_setup::レンダラーの計測を有効にする(&mut レンダラー, self) {
                     println!("実表示時刻計測: {}", 状況.名称());
                 }
+                let 注入 = self
+                    .読み戻し検収
+                    .遠方環境の検収条件
+                    .map(|条件| レンダラー.遠方環境の解析入力を注入する(&条件.解析入力を組む()));
+                if let Some(Err(誤り)) = 注入 {
+                    self.起動時エラー = Some(crate::error::起動エラー::from(誤り));
+                    event_loop.exit();
+                    return;
+                }
                 let 束id = super::scene_load::起動時シーンの束ID;
                 self.可視判定.束を登録する(束id, 登録一式.可視材料一覧);
                 self.プリミティブ描画項目台帳.束を登録する(束id, 登録一式.プリミティブ描画項目一覧);

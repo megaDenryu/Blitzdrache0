@@ -34,9 +34,9 @@ impl 描画の計測つまみ {
 
 /// カメラ相対フレームのビュー射影と、その組み立てに使うカメラの大域位置。可視判定と描画入力が同じ値を使うため、
 /// 1フレームに1度だけ作って両方へ配る。
-pub(in crate::app) struct フレーム視点 {
-    pub(in crate::app) ビュー射影: 変換<ワールド, クリップ>,
-    pub(in crate::app) カメラ大域位置: blitz_math::大域ワールド位置,
+pub(crate) struct フレーム視点 {
+    pub(crate) ビュー射影: 変換<ワールド, クリップ>,
+    pub(crate) カメラ大域位置: blitz_math::大域ワールド位置,
 }
 
 pub(in crate::app) fn 視点を求める(アプリ: &アプリ) -> フレーム視点 {

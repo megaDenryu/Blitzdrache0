@@ -5,7 +5,7 @@ mod cloth_frame;
 mod cloth_setup;
 mod create;
 mod draw_dispatch;
-mod frame;
+pub(crate) mod frame;
 mod frame_dump;
 mod frame_timing;
 mod frame_ui;
@@ -70,7 +70,7 @@ pub(crate) struct アプリ {
     開発ui初期有効: bool,
     計測つまみ: frame::描画の計測つまみ,
     フレームダンプ先: Option<PathBuf>,
-    空の代表画素報告: Vec<crate::cli::画面画素位置>,
+    読み戻し検収: crate::cli::読み戻し検収起動設定,
     /// 露出(判断39)とブレンド(判断45)はCLI初期値を開発用UIのスライダーが実行中に書き換える。
     露出: f32,
     ブレンド: f32,

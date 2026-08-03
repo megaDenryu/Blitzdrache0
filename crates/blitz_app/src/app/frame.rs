@@ -13,7 +13,8 @@ use winit::event_loop::ActiveEventLoop;
 use super::アプリ;
 use crate::smoke;
 
-pub(super) use draw_input::{フレーム視点, 描画の計測つまみ, 組み立てる as 描画入力を組み立てる};
+pub(crate) use draw_input::フレーム視点;
+pub(super) use draw_input::{描画の計測つまみ, 組み立てる as 描画入力を組み立てる};
 
 impl アプリ {
     /// RedrawRequestedのたびに1フレーム分の描画を実行する。

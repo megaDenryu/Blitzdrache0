@@ -11,6 +11,7 @@ pub(crate) mod distant_environment;
 pub(crate) mod draw_issue;
 pub(crate) mod exit;
 pub(crate) mod gpu_time_table;
+pub(crate) mod indirect_probe;
 pub(crate) mod shadow_gpu_time;
 pub(crate) mod sky_pixel;
 pub(crate) mod sky_state;
