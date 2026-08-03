@@ -15,6 +15,8 @@ mod clock;
 mod distant_environment_update;
 #[cfg(test)]
 mod distant_environment_update_tests;
+#[cfg(test)]
+mod indirect_lighting_chain_tests;
 mod reproduction_condition;
 mod scene_policy;
 #[cfg(test)]
