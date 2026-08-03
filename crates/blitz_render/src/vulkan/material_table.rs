@@ -3,7 +3,8 @@
 //!
 //! 束の登録から公開までの流れは次のとおりである。束が読み込まれると`材質登録簿`が材質とテクスチャへ安定IDを発番して
 //! CPU側の材質を保持し、その全体から新しい世代を構築して公開する。フレームは公開中の世代を束縛し、旧世代は
-//! 束縛した全フレームのフェンス通過後に退役する。
+//! 束縛した全フレームのフェンス通過後に退役する。起動時だけは公開する世代がまだ無いため、`材質の登録状態`へ
+//! 起動シーンの束を積み終えてから最初の世代を構築し、それが通ったときだけ`材質資源表`を作る。
 //! 参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「材質レコードとテクスチャ台帳」
 
 mod capacity;
@@ -26,6 +27,7 @@ mod pack_input;
 mod packer;
 mod record_index;
 mod registration;
+mod registration_state;
 mod residency_count;
 mod resource_table;
 mod stage_reserve;
@@ -44,5 +46,6 @@ pub(crate) use feature_set::材質特徴集合;
 pub(crate) use generation_record::世代内材質レコード;
 pub(crate) use generation_resolution::世代内材質解決;
 pub(crate) use material_id::大域材質ID;
-pub(crate) use resource_table::{描画対象別の材質ID, 材質資源の作業環境, 材質資源表, 資源表世代の束縛};
+pub(crate) use registration_state::{描画対象別の材質ID, 材質の登録状態};
+pub(crate) use resource_table::{材質資源の作業環境, 材質資源表, 資源表世代の束縛};
 pub(crate) use texture_role::材質テクスチャ役割;
