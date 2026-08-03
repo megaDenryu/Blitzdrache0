@@ -20,7 +20,7 @@ mod report;
 mod run;
 mod scene_choice;
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 const 出力ディレクトリ: &str = "target/shadow_loss";
@@ -46,22 +46,39 @@ fn 測る(引数一覧: &[String]) -> Result<String, String> {
     }
     let 出力先 = PathBuf::from(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 差分先 = 出力先.join("diff");
+    前の実行が残した差分画像を消す(&差分先)?;
     let 候補の起動指定 = 指定.候補.起動指定へ写す();
     let 基準 = run::描画する(&出力先, "baseline", 指定.構図, &[])?;
     let 候補 = run::描画する(&出力先, "candidate", 指定.構図, &候補の起動指定)?;
     let 比較 = compare::比べる(&基準, &候補)?;
-    report::表示する(&比較);
-    let 差分先 = 出力先.join("diff");
-    diff_image::書き出す(&差分先, 比較.幅, 比較.高さ, &比較)?;
-    let 差分png = crate::raw_png::変換する(&差分先)?;
+    // 前提と期待の判定を表と差分画像より先に置く。比較が成立しない実行や期待を破った実行が、
+    // 裁定材料に見える成果物を残してはならないためである。
     guard::前提を確かめる(&比較)?;
     guard::負の対照を判定する(指定.構図, &比較)?;
+    report::表示する(&比較);
+    diff_image::書き出す(&差分先, 比較.幅, 比較.高さ, &比較)?;
+    let 差分png = crate::raw_png::変換する(&差分先)?;
     Ok(format!(
         "構図{}・候補{}、差分画像は{}",
         指定.構図.綴り(),
         候補の起動指定.join(" "),
         差分png.display()
     ))
+}
+
+/// 前の実行が残した差分画像を消す。判定を書き出しより先へ置いても、判定で落ちた実行のあとに前回の差分画像が
+/// 残っていれば、それがこの実行の裁定材料に見える。書き出しに至らなかった実行が絵を1枚も残さないようにする。
+fn 前の実行が残した差分画像を消す(差分先: &Path) -> Result<(), String> {
+    for 拡張子 in ["raw", "size", "png"] {
+        let パス = 差分先.with_extension(拡張子);
+        match std::fs::remove_file(&パス) {
+            Ok(()) => {}
+            Err(誤り) if 誤り.kind() == std::io::ErrorKind::NotFound => {}
+            Err(誤り) => return Err(format!("前の実行の差分画像を消せなかった({}): {誤り}", パス.display())),
+        }
+    }
+    Ok(())
 }
 
 fn アセットを焼く(構図: scene_choice::構図) -> bool {
