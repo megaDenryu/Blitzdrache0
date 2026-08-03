@@ -5,7 +5,7 @@ use std::slice::Iter;
 use super::streaming_settings::プレイヤー位置源;
 use super::{
     indirect_probe_args, instance_lod_args, lod_crack_args, placement_args, screen_pixel_args, shadow_args, time_args, value_args, 布モード,
-    描画対象の走査順, 粒子表示モード, 起動設定,
+    描画対象の走査順, 検証計画指定, 粒子表示モード, 起動設定,
 };
 use crate::error::起動エラー;
 
@@ -87,7 +87,8 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--no-post" => 設定.ポスト処理有効 = false,
         "--cloth" => 設定.布モード = 布モード::吊るし布,
         "--cloth-cape" => 設定.布モード = 布モード::マント,
-        "--window-rebuild" => 設定.ウィンドウ再構築検証有効 = true,
+        "--window-rebuild" => 設定.検証計画 = 検証計画指定::ウィンドウ再構築,
+        "--shader-reload" => 設定.検証計画 = 検証計画指定::シェーダー差し替え,
         "--streaming" => 設定.ストリーミング.有効 = true,
         "--streaming-route" => 設定.ストリーミング.位置源 = プレイヤー位置源::固定経路,
         "--ow3-dod-route" => 設定.ストリーミング.位置源 = プレイヤー位置源::Ow3Dod経路,

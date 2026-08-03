@@ -7,7 +7,6 @@
 //! ファイル名は`build_support::spirv_compile`の出力名と一致させる。
 
 use blitz_render::indirect_lighting::契約別の描画シェーダー;
-use blitz_render::シェーダー一式;
 
 use crate::error::起動エラー;
 
@@ -17,7 +16,8 @@ pub(super) const 遠方環境の画素段SPIRV: &[u8] = include_bytes!(concat!(e
 
 pub(super) fn 組む() -> Result<契約別の描画シェーダー, 起動エラー> {
     Ok(契約別の描画シェーダー::生成する(
-        シェーダー一式::生成する(頂点SPIRV.to_vec(), 画素段SPIRV.to_vec())?,
-        シェーダー一式::生成する(頂点SPIRV.to_vec(), 遠方環境の画素段SPIRV.to_vec())?,
-    ))
+        頂点SPIRV.to_vec(),
+        画素段SPIRV.to_vec(),
+        遠方環境の画素段SPIRV.to_vec(),
+    )?)
 }

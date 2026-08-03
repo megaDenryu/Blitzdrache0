@@ -16,7 +16,7 @@ use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
 use blitz_engine::{アセットID, カタログ, シーンデータ};
-use blitz_render::シェーダー一式;
+use blitz_render::indirect_lighting::契約別の描画シェーダー;
 
 use asset_watch::アセット監視状態;
 use shader_watch::{シェーダー変化結果, シェーダー監視状態};
@@ -26,7 +26,7 @@ const 確認間隔: Duration = Duration::from_millis(500);
 /// `ホットリローダー::確認する` の結果。
 pub(crate) enum ホットリロード結果 {
     変化なし,
-    シェーダー再コンパイル成功 { シェーダー: シェーダー一式 },
+    シェーダー再コンパイル成功 { シェーダー: 契約別の描画シェーダー },
     シェーダー再コンパイル失敗 { メッセージ: String },
     // シーンデータがスキン・アニメーション追加(判断42)で大型化したためBoxで持つ(clippy::large_enum_variant)。
     アセット再読込成功 { シーン: Box<シーンデータ> },

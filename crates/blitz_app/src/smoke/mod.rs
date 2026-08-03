@@ -7,8 +7,8 @@ mod asset_rewrite;
 pub(crate) mod material_reload;
 mod pixel_judgment;
 mod plan;
-mod rebuild_plan;
 mod shader_rewrite;
+mod verification_plan;
 mod window_operation;
 
 use winit::window::Window;
@@ -26,8 +26,8 @@ const 両視錐台外の群シーン: &str = "instance_all_culled";
 
 pub(crate) use asset_rewrite::アセットを書き換える;
 pub(crate) use pixel_judgment::{アニメーション差分を判定する, ピクセルを判定する};
-pub(crate) use rebuild_plan::ウィンドウ再構築計画;
 pub(crate) use shader_rewrite::シェーダーを書き換える;
+pub(crate) use verification_plan::{ウィンドウ再構築計画, シェーダー差し替え計画};
 
 /// フレーム番号に応じて、このフレームで行う自己操作・検証を表す。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -38,8 +38,8 @@ pub(crate) enum スモークアクション {
     復帰,
     シェーダー書き換え,
     アセット書き換え,
-    /// 材質差し替えステージ: このフレームの読み戻し画像を差し替え前の絵として別名で書き出す。
-    材質差し替え前ダンプ,
+    /// 材質とシェーダーの差し替えステージ: このフレームの読み戻し画像を差し替え前の絵として別名で書き出す。
+    差し替え前ダンプ,
     初期色判定,
     アセット反映後判定,
     最終判定,

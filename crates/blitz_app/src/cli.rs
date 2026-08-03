@@ -28,6 +28,7 @@ mod time_args;
 mod time_of_day_settings;
 mod types;
 mod value_args;
+mod verification_plan;
 pub(crate) use argument_error::起動引数エラー;
 pub(crate) use draw_object_layout::描画対象の並べ方;
 pub(crate) use draw_object_order::描画対象の走査順;
@@ -40,6 +41,7 @@ pub(crate) use shadow_args::シャドウ計測起動設定;
 pub(crate) use streaming_settings::{LOD継ぎ目検査設定, ストリーミング起動設定, プレイヤー位置源};
 pub(crate) use time_of_day_settings::{太陽円盤指定, 時間帯起動設定, 空の起動指定, 空中遠近合成指定};
 pub(crate) use types::{読み戻し検収起動設定, 起動モード, 起動設定};
+pub(crate) use verification_plan::検証計画指定;
 
 use crate::error::起動エラー;
 
