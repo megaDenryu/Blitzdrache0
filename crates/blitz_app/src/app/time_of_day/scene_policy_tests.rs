@@ -1,5 +1,5 @@
 //! シーン名と起動指定から決まる空の方針と間接照明方針を検査する。検証世界が空を持たないことと、
-//! 2つの上書きが別の効き方をすることと、天空の遠方環境を選ぶ世界が検収世界1つに限られることを固定する。
+//! 2つの上書きが別の効き方をすることと、天空の遠方環境を選ぶ世界が地形世界と検収世界に限られることを固定する。
 
 use blitz_engine::sky::{世界の空方針, 世界の間接照明方針};
 
@@ -45,9 +45,22 @@ fn 間接照明の検収世界は空を持つ() {
 }
 
 #[test]
-fn 天空の遠方環境を選ぶのは間接照明の検収世界だけである() {
-    assert_eq!(世界の間接照明方針を決める("indirect_probe"), 世界の間接照明方針::天空の遠方環境);
-    for シーン名 in ["quad", "helmet", "shadow_scene", "fox", "vegetation_cull", "terrain_origin"] {
+fn 天空の遠方環境を選ぶのは地形世界と間接照明の検収世界である() {
+    for シーン名 in ["indirect_probe", "terrain_origin"] {
+        assert_eq!(世界の間接照明方針を決める(シーン名), 世界の間接照明方針::天空の遠方環境, "{シーン名}");
+    }
+    for シーン名 in [
+        "quad",
+        "helmet",
+        "shadow_scene",
+        "fox",
+        "vegetation_cull",
+        "instance_all_culled",
+        "material_reload",
+        "multi_material_two",
+        "prop_wooden_crate",
+        "prop_village",
+    ] {
         assert_eq!(世界の間接照明方針を決める(シーン名), 世界の間接照明方針::定数近似, "{シーン名}");
     }
 }
