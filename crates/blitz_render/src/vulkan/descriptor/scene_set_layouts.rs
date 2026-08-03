@@ -5,19 +5,23 @@
 //!
 //! 材質テクスチャ表を読む固定サンプラーと、その表の要素数もここが持つ。固定サンプラーはそれを宣言したレイアウトより
 //! 長生きしなければならず、要素数はレイアウトの一部であるため、所有者を分けると破棄順と一致の前提が散らばる。
-//! 生成の局面は`create`にある。
+//! 生成の局面は`create`、レイアウトからセットを取り出す局面は`allocate`にある。
 
+mod allocate;
 mod create;
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::material_table::テクスチャ表レイアウト容量;
+use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
 use crate::vulkan::texture::table_sampler;
 
 pub(crate) struct シーンセットレイアウト一式 {
     材質サンプラー: vk::Sampler,
     材質テクスチャ表容量: テクスチャ表レイアウト容量,
+    /// 照明問い合わせのセットが宣言した枝。資源を結ぶ側がこの値から結ぶ先を決める。
+    照明束縛: 照明束縛レイアウト,
     ビューとパス: vk::DescriptorSetLayout,
     ジオメトリ: vk::DescriptorSetLayout,
     材質: vk::DescriptorSetLayout,
@@ -27,8 +31,16 @@ pub(crate) struct シーンセットレイアウト一式 {
 
 impl シーンセットレイアウト一式 {
     /// 材質テクスチャ表の要素数を受け取るのは、それがレイアウトの一部だからである。世代の内容ではこの値を変えない。
-    pub(crate) fn 生成する(device: &ash::Device, 表容量: テクスチャ表レイアウト容量) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, 表容量)
+    pub(crate) fn 生成する(
+        device: &ash::Device,
+        表容量: テクスチャ表レイアウト容量,
+        照明束縛: 照明束縛レイアウト,
+    ) -> Result<Self, レンダラーエラー> {
+        create::生成する(device, 表容量, 照明束縛)
+    }
+
+    pub(crate) fn 照明束縛(&self) -> 照明束縛レイアウト {
+        self.照明束縛
     }
 
     pub(crate) fn ビューとパス(&self) -> vk::DescriptorSetLayout {
@@ -39,31 +51,8 @@ impl シーンセットレイアウト一式 {
         self.ジオメトリ
     }
 
-    /// 進行中フレームスロットごとの照明問い合わせのセットを、照明問い合わせ資源束が持つプールから取り出す。
-    pub(crate) fn 照明問い合わせのセットを割り当てる(
-        &self,
-        device: &ash::Device,
-        pool: vk::DescriptorPool,
-        セット数: usize,
-    ) -> Result<Vec<vk::DescriptorSet>, レンダラーエラー> {
-        super::alloc::割り当てる(device, pool, self.照明問い合わせ, セット数)
-    }
-
     pub(crate) fn 材質テクスチャ表容量(&self) -> テクスチャ表レイアウト容量 {
         self.材質テクスチャ表容量
-    }
-
-    /// 資源表世代1つぶんの材質のセットを、その世代専用のプールから1つだけ取り出す。
-    pub(crate) fn 材質のセットを1つ割り当てる(
-        &self,
-        device: &ash::Device,
-        pool: vk::DescriptorPool,
-    ) -> Result<vk::DescriptorSet, レンダラーエラー> {
-        let 一覧 = super::alloc::割り当てる(device, pool, self.材質, 1)?;
-        match 一覧.first().copied() {
-            Some(セット) => Ok(セット),
-            None => panic!("材質のセットを1つ要求したのに1つも返らなかった"),
-        }
     }
 
     /// シーン描画のパイプラインが宣言する4セット。

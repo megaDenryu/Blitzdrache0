@@ -2,6 +2,8 @@
 //! 照明問い合わせ資源束の生成と失敗時解放。
 //! 材質テクスチャ表の容量を先に決めてセットレイアウトへ渡すのは、表の要素数がレイアウトの一部だからである。
 
+mod create;
+
 use ash::vk;
 
 use crate::cascade::影の一辺解像度;
@@ -10,6 +12,7 @@ use crate::vulkan;
 use crate::vulkan::descriptor::{シーンセットレイアウト一式, 共有ディスクリプタセット};
 use crate::vulkan::lighting_query::照明問い合わせ資源束;
 use crate::vulkan::material_table::テクスチャ表レイアウト容量;
+use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct 共有資源 {
@@ -29,63 +32,9 @@ impl 共有資源 {
         queue_family_index: u32,
         表容量: テクスチャ表レイアウト容量,
         影の一辺: 影の一辺解像度,
+        照明束縛: 照明束縛レイアウト,
     ) -> Result<Self, レンダラーエラー> {
-        let シャドウ = vulkan::shadow_map::シャドウマップ::生成する(device, メモリプロパティ, 影の一辺)?;
-        let 転送 = match vulkan::transfer::転送実行環境::生成する(device, queue, queue_family_index) {
-            Ok(値) => 値,
-            Err(誤り) => {
-                シャドウ.破棄する(device);
-                return Err(誤り);
-            }
-        };
-        let シェーダー定数 = match vulkan::uniform::フレームシェーダー定数一式::生成する(device, メモリプロパティ) {
-            Ok(値) => 値,
-            Err(誤り) => {
-                転送.破棄する(device);
-                シャドウ.破棄する(device);
-                return Err(誤り);
-            }
-        };
-        let セットレイアウト = match シーンセットレイアウト一式::生成する(device, 表容量) {
-            Ok(値) => 値,
-            Err(誤り) => {
-                シェーダー定数.破棄する(device);
-                転送.破棄する(device);
-                シャドウ.破棄する(device);
-                return Err(誤り);
-            }
-        };
-        let 共有結果 = 共有ディスクリプタセット::生成する(device, &セットレイアウト, &シェーダー定数);
-        let 共有ディスクリプタ = match 共有結果 {
-            Ok(値) => 値,
-            Err(誤り) => {
-                セットレイアウト.破棄する(device);
-                シェーダー定数.破棄する(device);
-                転送.破棄する(device);
-                シャドウ.破棄する(device);
-                return Err(誤り);
-            }
-        };
-        let 照明結果 = 照明問い合わせ資源束::生成する(device, メモリプロパティ, &セットレイアウト, &シャドウ);
-        let 照明問い合わせ = match 照明結果 {
-            Ok(値) => 値,
-            Err(誤り) => {
-                共有ディスクリプタ.破棄する(device);
-                セットレイアウト.破棄する(device);
-                シェーダー定数.破棄する(device);
-                転送.破棄する(device);
-                シャドウ.破棄する(device);
-                return Err(誤り);
-            }
-        };
-        Ok(Self {
-            シャドウ,
-            転送,
-            シェーダー定数,
-            セットレイアウト,
-            共有ディスクリプタ,
-            照明問い合わせ,
-        })
+        create::生成する(device, メモリプロパティ, queue, queue_family_index, 表容量, 影の一辺, 照明束縛)
     }
 
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {

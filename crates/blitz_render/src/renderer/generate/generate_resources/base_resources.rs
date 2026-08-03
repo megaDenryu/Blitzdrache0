@@ -33,10 +33,19 @@ pub(super) fn 組み立てる(
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     描画シーン: &描画シーン素材,
     影の一辺: crate::cascade::影の一辺解像度,
+    照明束縛: crate::vulkan::pipeline_ledger::照明束縛レイアウト,
 ) -> Result<基礎資源, レンダラーエラー> {
     let device = 環境.device();
     let 表容量 = テクスチャ表レイアウト容量::起動時に決める(環境.ディスクリプタ索引上限())?;
-    let 共有 = shared::共有資源::生成する(device, メモリプロパティ, 環境.queue(), 環境.キューファミリ添字(), 表容量, 影の一辺)?;
+    let 共有 = shared::共有資源::生成する(
+        device,
+        メモリプロパティ,
+        環境.queue(),
+        環境.キューファミリ添字(),
+        表容量,
+        影の一辺,
+        照明束縛,
+    )?;
     let 作業環境 = 材質資源の作業環境 {
         device,
         問い合わせ: 環境.物理デバイス問い合わせ(),

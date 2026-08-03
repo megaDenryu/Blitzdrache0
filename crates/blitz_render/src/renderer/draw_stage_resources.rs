@@ -36,6 +36,14 @@ impl 描画段階資源 {
         create::生成する(要求)
     }
 
+    /// 照明問い合わせのセットへ結ぶ遠方環境の3つの画像。遠方環境の照明資源を持たない契約では`None`を返し、
+    /// セットの束縛レイアウトとの食い違いを結ぶ側が落とす。
+    pub(super) fn 遠方環境の束縛先(&self) -> Option<vulkan::descriptor::lighting_set::distant_environment::遠方環境の束縛先> {
+        self.遠方環境の照明
+            .as_ref()
+            .map(vulkan::indirect_lighting::遠方環境の照明資源::照明問い合わせへの束縛先)
+    }
+
     /// 布をシャドウパスへ記録するときの束縛先。布無しの構成では`None`を返し、布一式との有無の食い違いを呼び出し元が失敗させる。
     pub(super) fn 布シャドウ描画入力を作る(&self) -> Option<vulkan::frame::布シャドウ描画入力> {
         self.布シャドウ.as_ref().map(vulkan::cloth_shadow::布シャドウ資源::描画入力を作る)

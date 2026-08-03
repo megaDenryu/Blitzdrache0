@@ -7,39 +7,12 @@
 
 use ash::vk;
 
-use super::pack::照明問い合わせのバイト列;
+use super::header_bytes;
+use super::pack::{局所光列のバイト長, 方向光列のバイト長, 照明問い合わせのバイト列};
+use super::writable_buffer::書き換えバッファ;
 use crate::error::レンダラーエラー;
 use crate::vulkan::descriptor::照明問い合わせのバッファ組;
-use crate::vulkan::host_buffer;
 use crate::vulkan::tracked_device::GPUデバイス;
-
-/// 1本ぶんのホスト可視バッファ。バッファとメモリは常に組で生き死にする。
-pub(super) struct 書き換えバッファ {
-    buffer: vk::Buffer,
-    memory: vk::DeviceMemory,
-}
-
-impl 書き換えバッファ {
-    pub(super) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        バイト長: usize,
-        用途: vk::BufferUsageFlags,
-    ) -> Result<Self, レンダラーエラー> {
-        let (buffer, memory) = host_buffer::確保して書き込む(device, メモリプロパティ, &vec![0u8; バイト長], 用途)?;
-        Ok(Self { buffer, memory })
-    }
-
-    fn 書き込む(&self, device: &ash::Device, バイト列: &[u8]) -> Result<(), レンダラーエラー> {
-        host_buffer::上書きする(device, self.memory, バイト列)
-    }
-
-    pub(super) fn 破棄する(&self, device: &GPUデバイス) {
-        // 安全性: bufferはSelfが唯一の所有者であり、破棄時点でGPU側の使用完了を呼び出し元が保証する。
-        unsafe { device.destroy_buffer(self.buffer, None) };
-        device.メモリを解放する(self.memory);
-    }
-}
 
 pub(super) struct スロット資源 {
     pub(super) ヘッダ: 書き換えバッファ,
@@ -49,6 +22,38 @@ pub(super) struct スロット資源 {
 }
 
 impl スロット資源 {
+    /// 3本のバッファを順に確保する。途中で失敗したら、そこまでに確保したぶんをその場で逆順に破棄する。
+    pub(super) fn 生成する(
+        device: &GPUデバイス,
+        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        セット: vk::DescriptorSet,
+    ) -> Result<Self, レンダラーエラー> {
+        let 定数用途 = vk::BufferUsageFlags::UNIFORM_BUFFER;
+        let 列用途 = vk::BufferUsageFlags::STORAGE_BUFFER;
+        let ヘッダ = 書き換えバッファ::生成する(device, メモリプロパティ, header_bytes::バイト長, 定数用途)?;
+        let 方向光列 = match 書き換えバッファ::生成する(device, メモリプロパティ, 方向光列のバイト長, 列用途) {
+            Ok(値) => 値,
+            Err(誤り) => {
+                ヘッダ.破棄する(device);
+                return Err(誤り);
+            }
+        };
+        let 局所光列 = match 書き換えバッファ::生成する(device, メモリプロパティ, 局所光列のバイト長, 列用途) {
+            Ok(値) => 値,
+            Err(誤り) => {
+                方向光列.破棄する(device);
+                ヘッダ.破棄する(device);
+                return Err(誤り);
+            }
+        };
+        Ok(Self {
+            ヘッダ,
+            方向光列,
+            局所光列,
+            セット,
+        })
+    }
+
     /// ディスクリプタの結び方だけを知るモジュールへ渡す3本のハンドル。
     pub(super) fn バッファ組(&self) -> 照明問い合わせのバッファ組 {
         照明問い合わせのバッファ組 {

@@ -10,12 +10,14 @@ pub(crate) mod capacity;
 mod create;
 pub(crate) mod directional_bytes;
 pub(crate) mod directional_content;
+mod distant_environment_bind;
 pub(crate) mod header_bytes;
 pub(crate) mod header_content;
 pub(crate) mod local_bytes;
 pub(crate) mod local_content;
 pub(crate) mod pack;
 mod slot_resources;
+mod writable_buffer;
 
 #[cfg(test)]
 mod layout_tests;
@@ -27,7 +29,8 @@ mod shader_struct_tests;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::シーンセットレイアウト一式;
+use crate::vulkan::descriptor::{lighting_set, シーンセットレイアウト一式};
+use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
 use crate::vulkan::shadow_map::シャドウマップ;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
@@ -41,6 +44,10 @@ pub(crate) use local_content::局所光レコード内容;
 pub(crate) struct 照明問い合わせ資源束 {
     pool: vk::DescriptorPool,
     スロット一覧: Vec<スロット資源>,
+    /// このセットが宣言した枝。遠方環境の3つの画像を結ぶかどうかをこの値だけが決める。
+    束縛レイアウト: 照明束縛レイアウト,
+    /// 遠方環境の枝のときだけ持つ、3つの画像を読む固定サンプラー。
+    遠方環境サンプラー: Option<vk::Sampler>,
 }
 
 impl 照明問い合わせ資源束 {
@@ -73,6 +80,9 @@ impl 照明問い合わせ資源束 {
     /// 注意: プールの破棄がセットの解放を暗黙に行う。バッファは確保の逆順に破棄する。
     /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この束はその1段として呼ばれる(GPU待機済み)。
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
+        if let Some(サンプラー) = self.遠方環境サンプラー {
+            lighting_set::distant_environment::サンプラーを破棄する(device, サンプラー);
+        }
         for スロット in self.スロット一覧.iter().rev() {
             スロット.破棄する(device);
         }

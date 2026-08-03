@@ -19,6 +19,7 @@ use crate::distant_environment::遠方環境のシェーダー一式;
 use crate::error::レンダラーエラー;
 use crate::indirect_lighting::焼き始めの記録;
 use crate::vulkan::derived_environment::派生表現一式;
+use crate::vulkan::descriptor::lighting_set::distant_environment::遠方環境の束縛先;
 use crate::vulkan::distant_environment::{遠方環境が借りる束縛先, 遠方環境一式};
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -38,6 +39,16 @@ impl 遠方環境の照明資源 {
         シェーダー: &遠方環境のシェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
         create::生成する(device, メモリプロパティ, 借りる束縛先, シェーダー)
+    }
+
+    /// 標準PBRが読む3つの画像のビュー。焼き直しても束縛先が変わらないため、照明問い合わせのセットは
+    /// これを生成時に一度だけ結ぶ。
+    pub(crate) fn 照明問い合わせへの束縛先(&self) -> 遠方環境の束縛先 {
+        遠方環境の束縛先 {
+            拡散照度: self.派生表現.拡散照度画像().立方体ビュー,
+            鏡面畳込み: self.派生表現.鏡面畳込み画像().立方体ビュー,
+            反射率積分表: self.派生表現.反射率積分表の画像().ビュー,
+        }
     }
 
     /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この一式は`描画段階資源`の1段として呼ばれる(GPU待機済み)。
