@@ -10,7 +10,7 @@ const エントリファイル名: &str = "scene.slang";
 const チャンク世界ディレクトリ名: &str = "chunk_world";
 /// 一時ソースへ複製するassets/smoke/のファイル。スモークが描くのはquadだけだが、実行時アセット生成器は板の世界の必須アセットが
 /// 1つでも欠けると失敗するため、同じディレクトリの宣言に並ぶものはすべて複製する。
-const アセットファイル一覧: [&str; 12] = [
+const アセットファイル一覧: [&str; 14] = [
     "quad.gltf",
     "quad_alt.gltf",
     "quad.bin",
@@ -23,6 +23,8 @@ const アセットファイル一覧: [&str; 12] = [
     "multi_material_two.gltf",
     "multi_material_two_alt.gltf",
     "multi_material_one.gltf",
+    "indirect_probe.bin",
+    "indirect_probe.gltf",
 ];
 
 pub(super) fn シェーダーを一時コピーする() -> Result<PathBuf, String> {
