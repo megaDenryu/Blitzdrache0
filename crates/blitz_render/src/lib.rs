@@ -79,7 +79,7 @@ pub use readback_result::読み戻し結果;
 pub use render_object_material::{個体変換列, 描画対象素材, 材質スロット素材, 材質スロット素材一覧};
 pub use render_scene_material::描画シーン素材;
 pub use renderer::{
-    CPU区間時間, パス別描画発行, レンダラー, 大気のベイク済み画像生成パス数の記録, 描画発行内訳, 段別個体数, 記録側の計数
+    CPU区間時間, パス別描画発行, レンダラー, 大気のベイク済み画像生成パス数の記録, 描画発行内訳, 段別個体数, 記録側の計数, 間接照明生成パス数の記録,
 };
 pub use shader_bundle::{シェーダー束, 大気のベイク済み画像のシェーダー一式, 空シェーダー};
 pub use shader_set::{シェーダー一式, シェーダー一式エラー};

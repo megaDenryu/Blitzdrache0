@@ -8,6 +8,7 @@ mod optional_stages;
 use ash::vk;
 
 use super::描画段階資源;
+use crate::distant_environment::照明問い合わせ契約;
 use crate::error::レンダラーエラー;
 use crate::frame_composition::フレーム構成;
 use crate::shader_bundle::シェーダー束;
@@ -24,6 +25,8 @@ pub(in crate::renderer) struct 生成要求<'a> {
     pub(in crate::renderer) セットレイアウト: &'a シーンセットレイアウト一式,
     pub(in crate::renderer) シェーダー: &'a シェーダー束,
     pub(in crate::renderer) 構成: フレーム構成,
+    /// 世界の間接照明方針から起動時に決まる契約。遠方環境の枝だけが遠方環境と派生表現の資源を作る。
+    pub(in crate::renderer) 照明問い合わせ契約: 照明問い合わせ契約,
 }
 
 pub(super) fn 生成する(要求: 生成要求<'_>) -> Result<描画段階資源, レンダラーエラー> {
@@ -31,6 +34,7 @@ pub(super) fn 生成する(要求: 生成要求<'_>) -> Result<描画段階資�
     Ok(描画段階資源 {
         空: 任意.空,
         大気のベイク済み画像: 任意.大気のベイク済み画像,
+        遠方環境の照明: 任意.遠方環境の照明,
         布シャドウ: 任意.布シャドウ,
     })
 }

@@ -2,6 +2,7 @@
 
 use crate::cascade::影の一辺解像度;
 use crate::cloth_material::布素材;
+use crate::distant_environment::照明問い合わせ契約;
 use crate::frame_composition::フレーム構成;
 use crate::particle_material::粒子素材;
 use crate::render_scene_material::描画シーン素材;
@@ -19,6 +20,7 @@ pub(in crate::renderer::generate) struct 生成要求<'a> {
     pub(in crate::renderer::generate) 布: Option<&'a 布素材>,
     pub(in crate::renderer::generate) 粒子素材: Option<&'a 粒子素材>,
     pub(in crate::renderer::generate) フレーム構成: フレーム構成,
+    pub(in crate::renderer::generate) 照明問い合わせ契約: 照明問い合わせ契約,
     /// シャドウマップ資源の一辺。多段の構築が使う一辺と同じ値を呼び出し元が渡す責務を負う。
     pub(in crate::renderer::generate) 影の一辺: 影の一辺解像度,
     pub(in crate::renderer::generate) タイムスタンプ対応か: bool,

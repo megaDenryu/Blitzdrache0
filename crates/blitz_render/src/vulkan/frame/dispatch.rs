@@ -7,6 +7,7 @@ use super::{
     空描画入力, 粒子描画入力, 距離区分別のシャドウ入力,
 };
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像の描画入力;
+use crate::vulkan::indirect_lighting::間接照明の描画入力;
 use crate::vulkan::swapchain::スワップチェーン画像添字;
 
 pub(crate) struct 提示先<'a> {
@@ -31,6 +32,8 @@ pub(crate) struct 描画対象入力<'a> {
 pub(crate) struct 任意描画入力<'a> {
     /// 大気のベイク済み画像を焼き直すフレームだけ`Some`。焼き直さないフレームは生成パスを1本も積まない。
     pub(crate) 大気のベイク済み画像: Option<&'a 大気のベイク済み画像の描画入力>,
+    /// 照明問い合わせ契約が遠方環境の枝のフレームだけ`Some`。定数近似の契約では資源そのものが無い。
+    pub(crate) 間接照明: Option<&'a 間接照明の描画入力>,
     pub(crate) スキニング: Option<&'a スキニング描画入力>,
     pub(crate) 布: Option<&'a 布描画入力>,
     pub(crate) 空: Option<&'a 空描画入力>,

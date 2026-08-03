@@ -24,12 +24,13 @@ mod table_image;
 
 use ash::vk;
 
+use crate::distant_environment::derived::鏡面畳込みの解像度;
 use crate::error::レンダラーエラー;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(in crate::vulkan) use create::派生表現の解像度一式;
 pub(in crate::vulkan) use cube_image::派生の立方体画像;
-pub(in crate::vulkan) use inputs::派生表現の生成入力;
+pub(crate) use inputs::派生表現の生成入力;
 pub(in crate::vulkan) use pipelines::派生表現のシェーダー一式;
 pub(crate) use probe::{派生表現をgpuで焼いて読み戻す, 派生表現を焼く条件};
 pub(in crate::vulkan) use table_image::反射率積分表の画像;
@@ -62,6 +63,11 @@ impl 派生表現一式 {
 
     pub(in crate::vulkan) fn 反射率積分表の画像(&self) -> &反射率積分表の画像 {
         &self.画像.反射率積分表
+    }
+
+    /// 鏡面畳込みの段構成。焼く段の列挙と段ごとの粗さがここから決まる。
+    pub(in crate::vulkan) fn 鏡面畳込みの解像度(&self) -> 鏡面畳込みの解像度 {
+        self.解像度.鏡面畳込み
     }
 
     /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この一式は`描画段階資源`の1段として呼ばれる(GPU待機済み)。

@@ -23,4 +23,4 @@ mod wiring;
 
 pub(crate) use distant_environment_update::遠方環境更新判定;
 pub(crate) use reproduction_condition::空の再現条件;
-pub(in crate::app) use wiring::天空配線;
+pub(in crate::app) use wiring::{天空配線, 焼き上げ入力の組};

@@ -6,6 +6,7 @@ use blitz_render::ライティング入力;
 
 use super::super::atmosphere_update::大気更新判定;
 use super::super::clock::時間帯;
+use super::super::distant_environment_update::遠方環境更新判定;
 use super::super::scene_policy;
 use super::super::sun_disk_override;
 use super::天空配線;
@@ -27,6 +28,8 @@ pub(super) fn 生成する(シーン名: &str, 設定: &時間帯起動設定, �
         空を描く: scene_policy::空を描くか(方針, 設定.空),
         大気,
         大気更新判定: 大気更新判定::新規(),
+        間接照明方針: scene_policy::世界の間接照明方針を決める(シーン名),
+        遠方環境更新判定: 遠方環境更新判定::新規(),
         基準ライティング: 基準,
         ライティング: 基準,
     };

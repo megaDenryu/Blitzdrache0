@@ -1,0 +1,49 @@
+//! 遠方環境から間接照明を答えるためのGPU資源一式。遠方環境の立方体画像と、そこから導く3つの派生表現
+//! (拡散照度・鏡面畳込み・反射率積分表)をまとめて持つ。
+//!
+//! 2つの一式を1つの型にするのは、どちらか片方だけが在る状態が意味を持たないためである。派生表現は遠方環境の
+//! 配列ビューを束縛して焼くため遠方環境なしには焼けず、遠方環境だけを焼いても標準PBRが読む表現は揃わない。
+//! 別々の`Option`で持つと、その成立しない組を型の上で作れてしまう。
+//!
+//! 参照するスカイビューのベイク済み画像と媒体のシェーダー定数は大気のベイク済み画像一式が所有し、この型は
+//! ビューを借りるだけである。
+//! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「世界の間接照明方針と契約の2枝(3-Ic)」
+
+mod bake_record;
+mod create;
+mod draw_input;
+mod inputs;
+
+use ash::vk;
+
+use crate::distant_environment::遠方環境のシェーダー一式;
+use crate::error::レンダラーエラー;
+use crate::vulkan::derived_environment::派生表現一式;
+use crate::vulkan::distant_environment::{遠方環境が借りる束縛先, 遠方環境一式};
+use crate::vulkan::tracked_device::GPUデバイス;
+
+pub(crate) use inputs::{登録する画像, 間接照明の描画入力, 間接照明の焼く組};
+
+pub(crate) struct 遠方環境の照明資源 {
+    遠方環境: 遠方環境一式,
+    派生表現: 派生表現一式,
+    焼き始め: bake_record::焼き始めの記録,
+}
+
+impl 遠方環境の照明資源 {
+    pub(crate) fn 生成する(
+        device: &GPUデバイス,
+        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        借りる束縛先: 遠方環境が借りる束縛先<'_>,
+        シェーダー: &遠方環境のシェーダー一式,
+    ) -> Result<Self, レンダラーエラー> {
+        create::生成する(device, メモリプロパティ, 借りる束縛先, シェーダー)
+    }
+
+    /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この一式は`描画段階資源`の1段として呼ばれる(GPU待機済み)。
+    /// 派生表現を先に片付けるのは、派生表現のディスクリプタが遠方環境の配列ビューを結んでいるためである。
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
+        self.派生表現.破棄する(device);
+        self.遠方環境.破棄する(device);
+    }
+}

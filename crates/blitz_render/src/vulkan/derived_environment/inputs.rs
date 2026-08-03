@@ -28,7 +28,8 @@ impl 派生表現の即時定数 {
 }
 
 /// 1本のコンピュートパスが束縛する資源と計算の発行の大きさ。
-pub(in crate::vulkan) struct 派生表現の生成入力 {
+/// レンダラー層まで見えるのは、1フレームの描画入力がこの型を持ったまま記録の呼び出しまで運ばれるためである。
+pub(crate) struct 派生表現の生成入力 {
     pub(in crate::vulkan) pipeline: vk::Pipeline,
     pub(in crate::vulkan) layout: vk::PipelineLayout,
     pub(in crate::vulkan) ディスクリプタセット: vk::DescriptorSet,

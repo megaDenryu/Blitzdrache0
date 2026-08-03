@@ -4,7 +4,6 @@
 
 mod aerial_composite_input;
 mod atmosphere_lut_write;
-mod atmosphere_pass_tally;
 mod cascade_uniform_write;
 mod chunk_bundle;
 mod cloth_write;
@@ -20,6 +19,7 @@ mod generate;
 mod lighting_query_write;
 mod measurement_control;
 mod optional_frame_inputs;
+mod pass_tally;
 mod present_resources;
 mod presentation;
 mod queries;
@@ -39,9 +39,9 @@ use crate::frame_composition::フレーム構成;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan;
 
-pub use atmosphere_pass_tally::大気のベイク済み画像生成パス数の記録;
 pub use cpu_timing::CPU区間時間;
 pub use draw_issue_breakdown::{パス別描画発行, 描画発行内訳, 段別個体数, 記録側の計数};
+pub use pass_tally::{大気のベイク済み画像生成パス数の記録, 間接照明生成パス数の記録};
 
 /// Vulkanインスタンス・デバイス・スワップチェーン・同期プリミティブを保持し、フレーム構成の順に描いて提示するレンダラー。
 /// 前提: `生成する`に渡すハンドルの指すウィンドウは、このレンダラーより長生きすることを呼び出し元が保証する(blitz_appはフィールド宣言順で担保する)。
@@ -82,8 +82,8 @@ pub struct レンダラー {
     cpu区間計測: Option<cpu_timing::CPU区間計測>,
     /// 大気のベイク済み画像を1枚でも焼いたか。上位層の指示が「参照するだけ」でも、まだ焼いていないうちは3枚を焼く指示へ格上げする(見送られたフレームの生成パスはGPUへ届かないため、指示だけでは一度も書かれていない画像を防げない)。
     大気のベイク済み画像を焼いたか: bool,
-    /// 大気のベイク済み画像生成パスの実行数の記録。更新判定が働いているかを実測で見る計器であり、常に数える(タイムスタンプの対応に依らずグラフの積み上げから数えるため、計測無効の機材でも値が出る)。
-    大気のベイク済み画像生成計数: atmosphere_pass_tally::大気のベイク済み画像生成パス数の記録,
+    /// 生成パスの実行数の記録の束(大気のベイク済み画像と間接照明)。更新判定が働いているかを実測で見る計器であり、常に数える(タイムスタンプの対応に依らずグラフの積み上げから数えるため、計測無効の機材でも値が出る)。
+    生成パス数の記録: pass_tally::生成パス数の記録一式,
     実表示計測: vulkan::present_timing::実表示計測,
     /// 開発用UI(egui)描画一式(判断33・34)。表示のオン/オフは入力側の有無で決まるため、常に生成する。
     ui一式: vulkan::ui::UIリソース一式,

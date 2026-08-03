@@ -33,6 +33,7 @@ use crate::vulkan::graph;
 pub(crate) struct 記録の実績 {
     pub(crate) 計測マッピング: Vec<(&'static str, u32)>,
     pub(crate) 大気のベイク済み画像生成パス数: u32,
+    pub(crate) 間接照明生成パス数: crate::distant_environment::間接照明生成パス数,
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -56,6 +57,7 @@ pub(super) fn コマンドを記録する(
     Ok(記録の実績 {
         計測マッピング,
         大気のベイク済み画像生成パス数: 構築.大気のベイク済み画像生成パス数,
+        間接照明生成パス数: 構築.間接照明生成パス数,
     })
 }
 

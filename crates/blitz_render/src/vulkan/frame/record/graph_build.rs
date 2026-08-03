@@ -16,10 +16,11 @@ use crate::vulkan::frame::{フレーム画像一式, 任意描画入力, 描画�
 use crate::vulkan::graph;
 
 /// 構築したグラフと、そのフレームで積んだ大気のベイク済み画像生成パスの本数。本数を返すのは、生成の更新判定が意図どおりに
-/// 働いているかを実測で見る計器のためである(参照: `crates/blitz_render/src/renderer/atmosphere_pass_tally.rs`)。
+/// 働いているかを実測で見る計器のためである(参照: `crates/blitz_render/src/renderer/pass_tally/atmosphere.rs`)。
 pub(super) struct 構築結果<'a> {
     pub(super) グラフ: graph::グラフ<'a>,
     pub(super) 大気のベイク済み画像生成パス数: u32,
+    pub(super) 間接照明生成パス数: crate::distant_environment::間接照明生成パス数,
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -57,5 +58,6 @@ pub(super) fn グラフを構築する<'a>(
     構築結果 {
         グラフ,
         大気のベイク済み画像生成パス数: 実績.大気のベイク済み画像生成パス数,
+        間接照明生成パス数: 実績.間接照明生成パス数,
     }
 }

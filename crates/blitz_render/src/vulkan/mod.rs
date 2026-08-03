@@ -27,6 +27,7 @@ pub(crate) mod graph;
 pub(crate) mod hdr_target;
 pub(crate) mod headless;
 pub(crate) mod host_buffer;
+pub(crate) mod indirect_lighting;
 pub(crate) mod instance;
 pub(crate) mod instance_transform;
 pub(crate) mod lighting_query;
