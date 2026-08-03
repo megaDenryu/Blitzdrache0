@@ -67,7 +67,7 @@ impl 天空配線 {
             大気: Some(導出.入力),
             遠方環境: self
                 .遠方環境を焼くか()
-                .then(|| atmosphere_input::遠方環境を組む(空描画, 導出.スカイビュー鍵, &mut self.遠方環境更新判定)),
+                .then(|| atmosphere_input::遠方環境を組む(空描画, &状態, 導出.スカイビュー鍵, &mut self.遠方環境更新判定)),
         }
     }
 }

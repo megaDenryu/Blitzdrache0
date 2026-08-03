@@ -11,8 +11,11 @@ struct LightingQueryHeader
     uint localLightCount;
     // 0のときシーンの画素段はベースカラーをそのまま返す。件数0とは別の状態である。
     uint lightingEnabled;
-    // 方向も位置も問わない旧来の定数間接近似の係数。順3で放射輝度問い合わせ資源へ置き換える。
+    // 方向も位置も問わない定数間接近似の係数。定数近似の契約のパイプラインだけが読む。
     float constantIndirectFactor;
+    // xyzがワールドの太陽方向(表面から太陽へ向かう単位ベクトル)、wは未使用である。
+    // 遠方環境の契約のパイプラインだけが読み、法線と反射方向を太陽相対座標へ写すのに使う。
+    float4 sunDirection;
 };
 
 struct DirectionalLightRecord

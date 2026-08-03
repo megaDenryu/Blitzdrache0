@@ -38,7 +38,7 @@ use pack::照明問い合わせのバイト列;
 use slot_resources::スロット資源;
 
 pub(crate) use directional_content::方向光レコード内容;
-pub(crate) use header_content::照明問い合わせヘッダ内容;
+pub(crate) use header_content::{ヘッダの間接照明, 照明問い合わせヘッダ内容};
 pub(crate) use local_content::局所光レコード内容;
 
 pub(crate) struct 照明問い合わせ資源束 {

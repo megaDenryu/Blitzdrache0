@@ -13,7 +13,9 @@ pub mod input;
 mod pass_counts;
 pub mod probe;
 mod shader_set;
+mod sun_direction;
 
 pub use frame_input::遠方環境の入力;
 pub use pass_counts::間接照明生成パス数;
 pub use shader_set::遠方環境のシェーダー一式;
+pub use sun_direction::ワールドの太陽方向;

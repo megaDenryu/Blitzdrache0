@@ -145,14 +145,17 @@ set 3を**照明問い合わせセット**とし、set 2のアセットテクス
 
 CPU側の正本は`crates/blitz_render/src/vulkan/lighting_query/`の`header_bytes.rs`・`directional_bytes.rs`・`local_bytes.rs`であり、GPU側の宣言の正本は`shaders/lighting_query.slang`である。バイト長と全フィールドの開始位置の一致は同じ階層の`layout_tests.rs`と`shader_struct_tests.rs`が単体テストで見る。
 
-照明問い合わせヘッダ(16バイト、照明問い合わせのセットのbinding1、宣言名`LightingQueryHeader`):
+照明問い合わせヘッダ(32バイト、照明問い合わせのセットのbinding1、宣言名`LightingQueryHeader`。順3-Ic-2で16バイトから広げた):
 
 | 開始位置 | 型 | 名前 | 内容 |
 | --- | --- | --- | --- |
 | 0 | uint | directionalLightCount | 方向光レコードの件数 |
 | 4 | uint | localLightCount | 局所光レコードの件数 |
 | 8 | uint | lightingEnabled | 照明の有効性。0のとき画素段はベースカラーを返す |
-| 12 | float | constantIndirectFactor | 定数間接近似の係数 |
+| 12 | float | constantIndirectFactor | 定数間接近似の係数。定数近似の契約の画素段だけが読む |
+| 16 | float4 | sunDirection | xyzがワールドの太陽方向(表面から太陽へ向かう単位ベクトル)。wは未使用。遠方環境の契約の画素段だけが読む |
+
+**最後の2つは契約の枝ごとに片方だけが意味を持つ**。CPU側は`header_content.rs`の`ヘッダの間接照明`という判別共用体で表し、選ばれなかった側の区画は0で残る。既定値の適用ではなく、その契約のパイプラインが1度も読まない区画である。レイアウトを枝で変えないのは、同じ`LightingQueryHeader`の宣言をシーン描画と布描画の両方が読むためであり、バイト長が枝で変わると宣言が1つであることの意味が失われるためである。太陽方向をヘッダが運ぶのは、遠方環境が太陽相対座標で焼かれ、表面が法線と反射方向を同じ座標へ写す必要があるためである(参照: `_doc/設計/放射輝度問い合わせ階層.md`「鍵の設計(2つの注意)」)。
 
 方向光レコード(48バイト、照明問い合わせのセットのbinding2のストレージバッファ、宣言名`DirectionalLightRecord`):
 

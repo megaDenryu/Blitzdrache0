@@ -35,7 +35,7 @@ impl レンダラー {
         let 影内容 = super::cascade_uniform_write::組み立てる(入力, &多段, 原点)?;
         self.シェーダー定数.多段影の定数を書き込む(device, フレーム添字, &影内容)?;
 
-        let 照明内容 = super::lighting_query_write::組み立てる(&照明, 視点)?;
+        let 照明内容 = super::lighting_query_write::組み立てる(&照明, 入力.遠方環境.as_ref(), 視点)?;
         self.照明問い合わせ資源
             .スロットへ書き込む(device, フレーム添字, &照明内容.ヘッダ, &照明内容.方向光一覧, &照明内容.局所光一覧)?;
 

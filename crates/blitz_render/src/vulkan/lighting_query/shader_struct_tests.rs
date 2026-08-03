@@ -15,6 +15,7 @@ fn ヘッダの宣言がcpu側と同じ並びである() {
     開始位置を確かめる(&並び, "localLightCount", 4);
     開始位置を確かめる(&並び, "lightingEnabled", 8);
     開始位置を確かめる(&並び, "constantIndirectFactor", 12);
+    開始位置を確かめる(&並び, "sunDirection", 16);
 }
 
 #[test]
