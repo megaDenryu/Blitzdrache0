@@ -2,11 +2,13 @@
 // 太陽方向の透過率である。参照するための資源(媒体のシェーダー定数と2枚のベイク済み画像)もここが宣言する。
 // 注意: 写像の正本は`crates/blitz_render/src/atmosphere`(skyview_lookup.rs・skyview_mapping.rs・
 // transmittance_mapping.rs・intersect.rs)にあり、ここはその写しである。
+// ワールドの視線からベイク済み画像の視線を求める写しは`skyview_ray_lookup`が持つ(遠方環境生成と共有するため)。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 import atmosphere_mapping;
 import atmosphere_medium;
 import atmosphere_skyview_mapping;
+__exported import skyview_ray_lookup;
 
 // set1は空パスが大気のベイク済み画像を参照するためだけのディスクリプタである。媒体のシェーダー定数を持つのは、ベイク済み画像の写像が
 // 惑星下端半径と大気上端半径を要るためである。2枚のベイク済み画像のレイアウトはGENERALであり、レンダーグラフの
@@ -14,30 +16,6 @@ import atmosphere_skyview_mapping;
 [[vk::binding(0, 1)]] ConstantBuffer<AtmosphereMedium> atmosphereMedium;
 [[vk::binding(1, 1)]] Sampler2D transmittanceLut;
 [[vk::binding(2, 1)]] Sampler2D skyViewLut;
-
-// 水平成分がこの長さ未満なら方位を決められないとみなす。天頂と天底の行はどの横位置でも同じ値であり、
-// 天頂の太陽はどの方位から見ても対称であるため、この場合にどの方位を選んでも参照する値は変わらない。
-// 測るのは`length`(ユークリッドの長さ)であり、正本の`方位を決められない水平成分の長さ`と同じノルムである。
-// 正本は`crates/blitz_render/src/atmosphere/mapping/skyview_lookup.rs`にある。
-static const float skyAzimuthEpsilon = 1.0e-6;
-
-// 天頂を+Yに取ったワールドの視線と太陽方向から、ベイク済み画像の縦横が意味する視線を求める。
-// 方位余弦を内積そのものでなく水平面へ落としてから取るのは、横軸が太陽との相対方位であって角度ではないためである。
-SkyViewRay skyViewRayOfWorldDirection(float3 viewDirection, float3 sunDirection)
-{
-    float2 viewHorizontal = float2(viewDirection.x, viewDirection.z);
-    float2 sunHorizontal = float2(sunDirection.x, sunDirection.z);
-    float azimuthCosine = 1.0;
-    if (length(viewHorizontal) >= skyAzimuthEpsilon && length(sunHorizontal) >= skyAzimuthEpsilon)
-    {
-        azimuthCosine = clamp(dot(normalize(viewHorizontal), normalize(sunHorizontal)), -1.0, 1.0);
-    }
-
-    SkyViewRay ray;
-    ray.viewZenithCosine = clamp(viewDirection.y, -1.0, 1.0);
-    ray.sunAzimuthCosine = azimuthCosine;
-    return ray;
-}
 
 // 観測点から地表へ引いた接線の向きの天頂余弦。これより下を向く視線が地表と交わる。
 float skyHorizonZenithCosine(float bottomRadius, float observerRadius)

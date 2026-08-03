@@ -9,12 +9,24 @@ pub(super) struct 定数の組 {
     pub(super) 写しの前置き: &'static str,
 }
 
-pub(super) const 定数一覧: [定数の組; 9] = [
+pub(super) const 定数一覧: [定数の組; 11] = [
     定数の組 {
         正本パス: "crates/blitz_render/src/atmosphere/integration/sun_visibility.rs",
         正本の前置き: "pub(in crate::atmosphere) const 遮蔽球を縮める半径メートル: f64 = ",
         写しパス: "shaders/atmosphere_scatter.slang",
         写しの前置き: "static const float shadowSphereShrinkMeters = ",
+    },
+    定数の組 {
+        正本パス: "crates/blitz_render/src/atmosphere/mapping/skyview_lookup.rs",
+        正本の前置き: "pub(in crate::atmosphere) const 方位を決められない水平成分の長さ: f64 = ",
+        写しパス: "shaders/skyview_ray_lookup.slang",
+        写しの前置き: "static const float skyAzimuthEpsilon = ",
+    },
+    定数の組 {
+        正本パス: "crates/blitz_render/src/atmosphere/mapping/skyview_lookup.rs",
+        正本の前置き: "pub(in crate::atmosphere) const 方位を決められない水平成分の長さ: f64 = ",
+        写しパス: "shaders/sun_relative_frame.slang",
+        写しの前置き: "static const float sunRelativeAzimuthEpsilon = ",
     },
     定数の組 {
         正本パス: "crates/blitz_render/src/atmosphere/integration/multiscatter_series.rs",

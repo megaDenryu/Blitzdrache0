@@ -7,6 +7,7 @@
 
 mod aerial_lut_tests;
 mod aerial_mapping_tests;
+mod cube_face_mapping_tests;
 mod density_tests;
 mod intersect_tests;
 mod multiscatter_lut_tests;
@@ -21,6 +22,7 @@ mod skyview_lookup_tests;
 mod skyview_lut_tests;
 mod skyview_mapping_tests;
 mod sun_disk_tests;
+mod sun_relative_frame_tests;
 mod sun_visibility_tests;
 mod transmittance_lut_tests;
 mod transmittance_tests;

@@ -30,6 +30,13 @@ const 空中遠近エントリ: [エントリ指定; 1] = [エントリ指定 {
     出力ファイル名: "atmosphere_aerial.spv",
 }];
 
+/// 遠方環境は大気の表ではないが、スカイビューの表の上に立ち同じ空段階でだけ使うため、同じ場所でコンパイルする。
+const 遠方環境エントリ: [エントリ指定; 1] = [エントリ指定 {
+    エントリ名: "computeMain",
+    ステージ: "compute",
+    出力ファイル名: "distant_environment.spv",
+}];
+
 pub(super) fn 全部をコンパイルする(
     slangc: &スランガー位置,
     シェーダーディレクトリ: &Path,
@@ -58,5 +65,11 @@ pub(super) fn 全部をコンパイルする(
         &シェーダーディレクトリ.join("atmosphere_aerial.slang"),
         出力先ディレクトリ,
         &空中遠近エントリ,
+    )?;
+    エントリ一覧をコンパイルする(
+        slangc,
+        &シェーダーディレクトリ.join("distant_environment.slang"),
+        出力先ディレクトリ,
+        &遠方環境エントリ,
     )
 }

@@ -6,8 +6,8 @@
 //! (多段シャドウの距離区分のブレンドで`cascade/blend.rs`が正本、`shaders/cascade_shadow.slang`が写しであるのと同じ関係)。
 //! CPU側に正本を置くのは、閉形式との一致・正規化・単調性といった性質をユニットテストで検査できるようにするためである。
 //!
-//! 内側は関心事ごとに7つの子モジュールへ分かれる。量(`quantity`)・媒体(`medium`)・幾何(`geometry`)・
-//! 写像(`mapping`)・表(`table`)・積分(`integration`)・焼き上げ(`bake`)であり、依存はこの並びの向きにだけ流れる。
+//! 内側は関心事ごとに8つの子モジュールへ分かれる。量(`quantity`)・媒体(`medium`)・幾何(`geometry`)・
+//! 写像(`mapping`)・表(`table`)・積分(`integration`)・供給(`supply`)・焼き上げ(`bake`)であり、依存はこの並びの向きにだけ流れる。
 //! この階層を採るのは、ベイク済み画像が1枚増えるたびに写像・積分・焼き上げの3つがそろって増え、平坦な並びでは
 //! どの3つが1組なのかも、どの関心事に属するのかも読めなくなるためである。外から見える名前はこのファイルの
 //! 再エクスポートが決めるため、階層の変更が呼び出し側へ漏れない。
@@ -23,6 +23,7 @@ mod mapping;
 mod medium;
 mod narrowing;
 mod quantity;
+mod supply;
 mod table;
 
 #[cfg(test)]
@@ -32,6 +33,7 @@ pub use bake::aerial_condition::空中遠近観測条件;
 pub use bake::aerial_lut::{
     空中遠近ボリュームのボクセル値, 空中遠近ボリュームの材料, 空中遠近ボリュームを焼く
 };
+pub use bake::distant_environment_lut::{遠方環境のテクセル値, 遠方環境を焼く};
 pub use bake::multiscatter_lut::{多重散乱のベイク済み画像のテクセル値, 多重散乱のベイク済み画像を焼く};
 pub use bake::skyview_condition::スカイビュー観測条件;
 pub use bake::skyview_lut::{スカイビューのベイク済み画像のテクセル値, スカイビューのベイク済み画像を焼く};
@@ -47,6 +49,11 @@ pub use mapping::aerial_mapping::{
     空中遠近ボリュームの奥行き位置を求める, 空中遠近ボリュームの奥行き添字の位置, 空中遠近ボリュームの標本座標を求める,
     空中遠近ボリュームの画面位置を求める, 空中遠近ボリュームの距離を求める,
 };
+pub use mapping::cube_face::{立方体の全面, 立方体の面};
+pub use mapping::cube_face_mapping::{
+    テクセル中心の面内位置, 向きから面と面内位置を求める, 面と面内位置から向きを求める
+};
+pub use mapping::distant_environment_resolution::{立方体の面数, 遠方環境の解像度};
 pub use mapping::lut_resolution::大気のベイク済み画像の解像度;
 pub use mapping::multiscatter_mapping::{
     多重散乱のベイク済み画像の単位位置を求める, 多重散乱のベイク済み画像の条件, 多重散乱のベイク済み画像の条件を求める,
@@ -55,6 +62,7 @@ pub use mapping::skyview_lookup::ワールドの視線からスカイビュー�
 pub use mapping::skyview_mapping::{
     スカイビューのベイク済み画像の単位位置を求める, スカイビューのベイク済み画像の視線, スカイビューのベイク済み画像の視線を求める,
 };
+pub use mapping::sun_relative_frame::{太陽相対フレーム, 太陽相対座標の太陽方向};
 pub use mapping::transmittance_mapping::{
     テクセル中心のuv, 透過率のベイク済み画像のuvを求める, 透過率のベイク済み画像の視線, 透過率のベイク済み画像の視線を求める,
 };
@@ -76,10 +84,13 @@ pub use quantity::normalized_density::規格化密度;
 pub use quantity::phase_value::位相関数値;
 pub use quantity::sample_count::積分標本数;
 pub use quantity::scattering_cosine::散乱角余弦;
+pub use quantity::sky_radiance_rgb::天空放射輝度RGB;
 pub use quantity::skyview_rgb::スカイビュー放射輝度RGB;
 pub use quantity::transmittance_rgb::透過率RGB;
 pub use quantity::unit_direction::単位方向;
 pub use quantity::zenith_cosine::天頂余弦;
+pub use supply::radiance_scale::天空放射輝度の尺度;
+pub use supply::sky_radiance::天空放射輝度供給;
 pub use table::multiscatter_table::多重散乱表;
 pub use table::skyview_table::スカイビュー表;
 pub use table::transmittance_table::透過率表;

@@ -16,6 +16,7 @@ pub(in crate::atmosphere) mod normalized_density;
 pub(in crate::atmosphere) mod phase_value;
 pub(in crate::atmosphere) mod sample_count;
 pub(in crate::atmosphere) mod scattering_cosine;
+pub(in crate::atmosphere) mod sky_radiance_rgb;
 pub(in crate::atmosphere) mod skyview_rgb;
 pub(in crate::atmosphere) mod transmittance_rgb;
 pub(in crate::atmosphere) mod unit_direction;

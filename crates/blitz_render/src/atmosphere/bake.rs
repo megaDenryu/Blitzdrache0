@@ -7,6 +7,7 @@
 
 pub(in crate::atmosphere) mod aerial_condition;
 pub(in crate::atmosphere) mod aerial_lut;
+pub(in crate::atmosphere) mod distant_environment_lut;
 pub(in crate::atmosphere) mod multiscatter_lut;
 pub(in crate::atmosphere) mod skyview_condition;
 pub(in crate::atmosphere) mod skyview_lut;

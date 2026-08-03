@@ -5,9 +5,13 @@
 //! 食い違って色が静かにずれるという、絵にしか現れない欠陥になる。往復が恒等であることは`atmosphere_tests`が検査する。
 
 pub(in crate::atmosphere) mod aerial_mapping;
+pub(in crate::atmosphere) mod cube_face;
+pub(in crate::atmosphere) mod cube_face_mapping;
+pub(in crate::atmosphere) mod distant_environment_resolution;
 pub(in crate::atmosphere) mod lut_resolution;
 pub(in crate::atmosphere) mod multiscatter_mapping;
 pub(in crate::atmosphere) mod skyview_lookup;
 pub(in crate::atmosphere) mod skyview_mapping;
+pub(in crate::atmosphere) mod sun_relative_frame;
 pub(in crate::atmosphere) mod transmittance_mapping;
 pub(in crate::atmosphere) mod unit_texel;
