@@ -14,6 +14,8 @@ mod diagnostic_image;
 mod diff_image;
 mod distance;
 mod guard;
+mod range_world;
+mod region_count;
 mod report;
 mod run;
 mod scene_choice;
@@ -38,6 +40,7 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
 
 fn 測る(引数一覧: &[String]) -> Result<String, String> {
     let 指定 = args::引数を読む(引数一覧)?;
+    guard::描く前に確かめる(指定.構図, &指定.候補)?;
     if !crate::gen_source_assets::生成する() || !アセットを焼く(指定.構図) {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
@@ -46,11 +49,10 @@ fn 測る(引数一覧: &[String]) -> Result<String, String> {
     let 候補の起動指定 = 指定.候補.起動指定へ写す();
     let 基準 = run::描画する(&出力先, "baseline", 指定.構図, &[])?;
     let 候補 = run::描画する(&出力先, "candidate", 指定.構図, &候補の起動指定)?;
-    let (幅, 高さ) = (基準.幅, 基準.高さ);
     let 比較 = compare::比べる(&基準, &候補)?;
     report::表示する(&比較);
     let 差分先 = 出力先.join("diff");
-    diff_image::書き出す(&差分先, 幅, 高さ, &比較)?;
+    diff_image::書き出す(&差分先, 比較.幅, 比較.高さ, &比較)?;
     let 差分png = crate::raw_png::変換する(&差分先)?;
     guard::前提を確かめる(&比較)?;
     guard::負の対照を判定する(指定.構図, &比較)?;
