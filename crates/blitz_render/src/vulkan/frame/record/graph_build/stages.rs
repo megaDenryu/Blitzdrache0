@@ -8,7 +8,7 @@ mod shadow_stage;
 mod sky_stage;
 
 pub(super) use atmosphere_lut_stage::大気のベイク済み画像を積む;
-pub(super) use indirect_lighting_stage::間接照明を積む;
+pub(super) use indirect_lighting_stage::{遠方環境の消費画像, 間接照明を積む};
 pub(super) use shadow_stage::影を積む;
 pub(super) use sky_stage::{空を積む, 空パスがベイク済み画像を参照するか};
 
@@ -54,12 +54,17 @@ pub(super) fn シーンを積む<'a>(
     クリア色: クリアカラー,
     入力: &'a [ジオメトリ入力],
     共有: 共有セット束縛<'a>,
+    遠方環境: Option<遠方環境の消費画像>,
     寸法: vk::Extent2D,
 ) {
+    let mut 読み画像一覧 = vec![(基本.シャドウマップ, graph::画像用途::深度シェーダー読み)];
+    if let Some(遠方環境) = 遠方環境 {
+        読み画像一覧.extend(遠方環境.読み宣言());
+    }
     グラフ.パスを積む(scene_pass::作る(
         カラー,
         基本.深度,
-        基本.シャドウマップ,
+        読み画像一覧,
         スキン済み,
         布,
         クリア色,
