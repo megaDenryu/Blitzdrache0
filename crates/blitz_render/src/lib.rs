@@ -13,6 +13,7 @@ mod draw_bundle_id;
 mod draw_result;
 mod error;
 mod extent;
+mod floor_index;
 mod frame_composition;
 #[cfg(test)]
 mod frame_composition_tests;

@@ -40,3 +40,43 @@ float2 cubeFaceTexelCenter(uint2 texel, uint faceSide)
 {
     return (float2(texel) + 0.5) / float(faceSide);
 }
+
+struct CubeFacePosition
+{
+    uint faceLayer;
+    float2 position;
+};
+
+// 向きから面と面内位置を求める。`directionOfCubeFace`の逆写像である。
+// 絶対値が最大の成分で面を選び、残る2成分を面の横縦へ割り当てる。等しい絶対値が並ぶ稜線では添字の小さい軸を選ぶ。
+CubeFacePosition cubeFaceOfDirection(float3 direction)
+{
+    float3 magnitude = abs(direction);
+    float largest = max(magnitude.x, max(magnitude.y, magnitude.z));
+    CubeFacePosition found;
+    float2 raw;
+    if (magnitude.x >= magnitude.y && magnitude.x >= magnitude.z)
+    {
+        found.faceLayer = direction.x > 0.0 ? 0 : 1;
+        raw = direction.x > 0.0 ? float2(-direction.z, -direction.y) : float2(direction.z, -direction.y);
+    }
+    else if (magnitude.y >= magnitude.z)
+    {
+        found.faceLayer = direction.y > 0.0 ? 2 : 3;
+        raw = direction.y > 0.0 ? float2(direction.x, direction.z) : float2(direction.x, -direction.z);
+    }
+    else
+    {
+        found.faceLayer = direction.z > 0.0 ? 4 : 5;
+        raw = direction.z > 0.0 ? float2(direction.x, -direction.y) : float2(-direction.x, -direction.y);
+    }
+    found.position = (raw / largest + 1.0) * 0.5;
+    return found;
+}
+
+// 0から1までの面内位置を、その位置を含むテクセルの添字へ落とす。位置1はちょうど面の端であるため末尾のテクセルへ寄せる。
+uint2 cubeFaceTexelOfPosition(float2 facePosition, uint faceSide)
+{
+    float2 scaled = floor(facePosition * float(faceSide));
+    return uint2(clamp(scaled, float2(0.0, 0.0), float2(float(faceSide - 1), float(faceSide - 1))));
+}

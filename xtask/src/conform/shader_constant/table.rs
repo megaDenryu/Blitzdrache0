@@ -9,7 +9,25 @@ pub(super) struct 定数の組 {
     pub(super) 写しの前置き: &'static str,
 }
 
-pub(super) const 定数一覧: [定数の組; 11] = [
+pub(super) const 定数一覧: [定数の組; 14] = [
+    定数の組 {
+        正本パス: "crates/blitz_render/src/distant_environment/derived/diffuse_irradiance.rs",
+        正本の前置き: "pub const 拡散照度の標本数: u32 = ",
+        写しパス: "shaders/diffuse_irradiance.slang",
+        写しの前置き: "static const uint diffuseIrradianceSampleCount = ",
+    },
+    定数の組 {
+        正本パス: "crates/blitz_render/src/distant_environment/derived/specular_prefilter.rs",
+        正本の前置き: "pub const 鏡面畳込みの標本数: u32 = ",
+        写しパス: "shaders/specular_prefilter.slang",
+        写しの前置き: "static const uint specularPrefilterSampleCount = ",
+    },
+    定数の組 {
+        正本パス: "crates/blitz_render/src/distant_environment/derived/brdf_integration.rs",
+        正本の前置き: "pub const 反射率積分表の標本数: u32 = ",
+        写しパス: "shaders/brdf_integration.slang",
+        写しの前置き: "static const uint brdfIntegrationSampleCount = ",
+    },
     定数の組 {
         正本パス: "crates/blitz_render/src/atmosphere/integration/sun_visibility.rs",
         正本の前置き: "pub(in crate::atmosphere) const 遮蔽球を縮める半径メートル: f64 = ",
