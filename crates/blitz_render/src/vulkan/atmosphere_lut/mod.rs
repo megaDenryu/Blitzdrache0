@@ -8,9 +8,11 @@
 mod base_resources;
 mod binding_set;
 mod composite_descriptor;
-mod descriptor_common;
+/// 遠方環境の生成もスロットごとに1セットを持つ同じ数え方を使うため、`vulkan`の中から見える。
+pub(in crate::vulkan) mod descriptor_common;
 mod draw_input;
-mod image;
+/// 画素形式は遠方環境の立方体画像とも共通であるため、`vulkan`の中から見える。
+pub(in crate::vulkan) mod image;
 mod inputs;
 mod lut_extent;
 mod march_descriptor;
@@ -18,9 +20,12 @@ mod medium_bytes;
 mod medium_uniform;
 mod multiscatter_descriptor;
 pub(crate) mod pass;
-mod pipeline;
-mod probe;
-mod readback_buffer;
+/// 遠方環境の生成も同じ「ディスクリプタ1つと即時定数の枠」のコンピュートパイプラインを組むため、`vulkan`の中から見える。
+pub(in crate::vulkan) mod pipeline;
+/// 遠方環境の読み戻し検査も同じvalidationの観測を返すため、`vulkan`の中から見える。
+pub(in crate::vulkan) mod probe;
+/// 遠方環境の読み戻しも同じ半精度4成分の受け皿を使うため、`vulkan`の中から見える。
+pub(in crate::vulkan) mod readback_buffer;
 mod sample_descriptor;
 mod transmittance_descriptor;
 use crate::atmosphere::{大気のベイク済み画像の解像度, 大気散乱媒体};

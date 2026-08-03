@@ -5,6 +5,7 @@ pub(crate) mod atmosphere_lut;
 pub(crate) mod atmosphere_passes;
 pub(crate) mod composition;
 pub(crate) mod display_timing;
+pub(crate) mod distant_environment;
 pub(crate) mod draw_issue;
 pub(crate) mod exit;
 pub(crate) mod gpu_time_table;

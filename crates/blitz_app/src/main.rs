@@ -12,6 +12,7 @@ mod atmosphere_medium_tests;
 mod cli;
 mod dev_ui;
 mod embedded_cloth_shaders;
+mod embedded_distant_environment_shader;
 mod embedded_shaders;
 mod embedded_sky_shaders;
 mod error;
@@ -43,6 +44,7 @@ fn 実行する() -> Result<ExitCode, 起動エラー> {
     match cli::引数を解析する(&引数一覧)? {
         cli::起動要求::天空状態報告 => Ok(reports::sky_state::天空状態表を出す()),
         cli::起動要求::大気のベイク済み画像報告 => Ok(reports::atmosphere_lut::大気のベイク済み画像表を出す()),
+        cli::起動要求::遠方環境報告 => Ok(reports::distant_environment::遠方環境表を出す()),
         cli::起動要求::描画実行(起動設定) => 描画する(*起動設定),
     }
 }

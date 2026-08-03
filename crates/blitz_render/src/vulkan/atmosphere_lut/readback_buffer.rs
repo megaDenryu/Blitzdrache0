@@ -12,14 +12,14 @@ use crate::vulkan::tracked_device::GPUデバイス;
 
 use half_float::{テクセルのバイト数, 単精度へ開く};
 
-pub(super) struct ベイク済み画像の読み戻しバッファ {
-    pub(super) handle: vk::Buffer,
+pub(in crate::vulkan) struct ベイク済み画像の読み戻しバッファ {
+    pub(in crate::vulkan) handle: vk::Buffer,
     memory: vk::DeviceMemory,
     テクセル数: usize,
 }
 
 impl ベイク済み画像の読み戻しバッファ {
-    pub(super) fn 生成する(
+    pub(in crate::vulkan) fn 生成する(
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         テクセル数: usize,
@@ -44,7 +44,7 @@ impl ベイク済み画像の読み戻しバッファ {
     }
 
     /// 前提: 呼び出し元はこのバッファへのコピーがフェンス待機で完了済みであることを保証する。
-    pub(super) fn 読み取る(&self, device: &ash::Device) -> Result<Vec<[f32; 4]>, レンダラーエラー> {
+    pub(in crate::vulkan) fn 読み取る(&self, device: &ash::Device) -> Result<Vec<[f32; 4]>, レンダラーエラー> {
         // 安全性: memoryはHOST_VISIBLE|HOST_COHERENTで確保済みであり、マッピングは確保容量全体を対象にする。
         let ポインタ = unsafe { device.map_memory(self.memory, 0, vk::WHOLE_SIZE, vk::MemoryMapFlags::empty())? };
         let mut バイト列 = vec![0u8; self.テクセル数 * テクセルのバイト数];
@@ -55,7 +55,7 @@ impl ベイク済み画像の読み戻しバッファ {
         Ok(単精度へ開く(&バイト列))
     }
 
-    pub(super) fn 破棄する(&self, device: &GPUデバイス) {
+    pub(in crate::vulkan) fn 破棄する(&self, device: &GPUデバイス) {
         // 安全性: handle・memoryはSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了している。
         unsafe { device.destroy_buffer(self.handle, None) };
         device.メモリを解放する(self.memory);

@@ -16,6 +16,7 @@ pub(crate) mod descriptor;
 pub(crate) mod descriptor_indexing;
 pub(crate) mod device;
 pub(crate) mod device_buffer;
+pub(crate) mod distant_environment;
 pub(crate) mod frame;
 pub(crate) mod fullscreen_pipeline;
 pub(crate) mod geometry;

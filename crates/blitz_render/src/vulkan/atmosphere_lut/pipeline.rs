@@ -10,18 +10,18 @@ use crate::vulkan::compute_pipeline;
 /// バイト数0で「無し」を表さないのは、0の範囲を宣言したレイアウトと範囲を持たないレイアウトが別物であり、
 /// 前者はvalidationが値域外として指摘するためである。
 #[derive(Debug, Clone, Copy)]
-pub(super) enum 即時定数の枠 {
+pub(in crate::vulkan) enum 即時定数の枠 {
     無し,
     バイト数(u32),
 }
 
-pub(super) struct 生成パイプライン {
-    pub(super) handle: vk::Pipeline,
-    pub(super) layout: vk::PipelineLayout,
+pub(in crate::vulkan) struct 生成パイプライン {
+    pub(in crate::vulkan) handle: vk::Pipeline,
+    pub(in crate::vulkan) layout: vk::PipelineLayout,
 }
 
 impl 生成パイプライン {
-    pub(super) fn 生成する(
+    pub(in crate::vulkan) fn 生成する(
         device: &ash::Device,
         ディスクリプタlayout: vk::DescriptorSetLayout,
         押し込み: 即時定数の枠,
@@ -39,7 +39,7 @@ impl 生成パイプライン {
     }
 
     /// 注意: パイプラインをレイアウトより先に破棄する(パイプラインがレイアウトを参照するため)。
-    pub(super) fn 破棄する(&self, device: &ash::Device) {
+    pub(in crate::vulkan) fn 破棄する(&self, device: &ash::Device) {
         // 安全性: handle・layoutはSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了している。
         unsafe {
             device.destroy_pipeline(self.handle, None);

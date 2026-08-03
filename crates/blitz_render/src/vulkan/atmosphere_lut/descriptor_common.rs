@@ -7,11 +7,11 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::vulkan::sync::進行中フレーム数;
 
-pub(super) fn セット数() -> u32 {
+pub(in crate::vulkan) fn セット数() -> u32 {
     u32::try_from(進行中フレーム数).unwrap_or_else(|_| panic!("進行中フレーム数がu32に収まらない: {進行中フレーム数}"))
 }
 
-pub(super) fn セットを割り当てる(
+pub(in crate::vulkan) fn セットを割り当てる(
     device: &ash::Device,
     pool: vk::DescriptorPool,
     layout: vk::DescriptorSetLayout,
@@ -27,7 +27,7 @@ pub(super) fn セットを割り当てる(
 }
 
 /// 生成の途中で失敗したときに、それまでに作ったレイアウトとプールを片付ける。
-pub(super) fn 途中の資源を片付ける(device: &ash::Device, layout: vk::DescriptorSetLayout, pool: Option<vk::DescriptorPool>) {
+pub(in crate::vulkan) fn 途中の資源を片付ける(device: &ash::Device, layout: vk::DescriptorSetLayout, pool: Option<vk::DescriptorPool>) {
     // 安全性: layout・poolはこのスコープの唯一の所有者で、以降使用しない。
     unsafe {
         if let Some(pool) = pool {

@@ -10,6 +10,9 @@ mod atmosphere_update;
 #[cfg(test)]
 mod atmosphere_update_tests;
 mod clock;
+mod distant_environment_update;
+#[cfg(test)]
+mod distant_environment_update_tests;
 mod reproduction_condition;
 mod scene_policy;
 #[cfg(test)]
@@ -18,5 +21,6 @@ mod sky_input;
 mod sun_disk_override;
 mod wiring;
 
+pub(crate) use distant_environment_update::遠方環境更新判定;
 pub(crate) use reproduction_condition::空の再現条件;
 pub(in crate::app) use wiring::天空配線;

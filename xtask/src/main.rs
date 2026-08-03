@@ -14,6 +14,7 @@ mod conform;
 mod count_consistency;
 mod csm_seam;
 mod dispatch;
+mod distant_environment;
 mod fetch_assets;
 mod file_scan;
 mod gen_atmosphere_reference;

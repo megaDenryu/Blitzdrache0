@@ -1,5 +1,4 @@
-//! レンダーグラフ + リソースシステム。エンジン中核の型安全層。責務: Vulkan(ash) の unsafe を内部に封じ込め、上位層には安全な型を公開する。
-//! 注意: 公開APIに ash の型（vk::* やハンドル）を露出してはならない。
+//! レンダーグラフ + リソースシステム。エンジン中核の型安全層。責務: Vulkan(ash) の unsafe を内部に封じ込め、上位層には安全な型を公開する。注意: 公開APIに ash の型（vk::* やハンドル）を露出してはならない。
 pub mod atmosphere;
 pub mod atmosphere_lut_input;
 pub mod atmosphere_lut_probe;
@@ -9,6 +8,7 @@ mod cloth_material;
 mod cloth_shader_set;
 mod compute_shader;
 mod descriptor_indexing_limits;
+pub mod distant_environment;
 mod draw_bundle_id;
 mod draw_result;
 mod error;
