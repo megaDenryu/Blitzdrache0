@@ -13,6 +13,7 @@
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「更新判定の置き場所」「予算と計器」
 
 pub(crate) mod gpu_time;
+mod indirect_pass_count;
 mod judgment;
 mod pass_count;
 mod run;
@@ -69,6 +70,7 @@ fn 検収する(一日内秒: Option<&str>) -> Result<String, String> {
     let 進行の列 = pass_count::読む(&進行.標準出力, "時計進行")?;
     let 合成なしの列 = pass_count::読む(&合成なし.標準出力, "合成なし")?;
 
+    let 間接照明のフレーム数 = indirect_pass_count::三条件を確かめる(&停止.標準出力, &進行.標準出力, &合成なし.標準出力)?;
     series_integrity::列の整合を確かめる(&停止の列, "時計停止")?;
     series_integrity::列の整合を確かめる(&進行の列, "時計進行")?;
     series_integrity::列の整合を確かめる(&合成なしの列, "合成なし")?;
@@ -80,7 +82,7 @@ fn 検収する(一日内秒: Option<&str>) -> Result<String, String> {
     let png = crate::raw_png::変換する(&出力先.join("lut_stopped"))?;
     let 合成なしのpng = crate::raw_png::変換する(&出力先.join("lut_no_composite"))?;
     Ok(format!(
-        "一日内時刻{}で、時計停止は{}フレームで生成パス{}本(列の先頭{:?})、時計進行は{}フレームで生成パス{}本(うちスカイビューと空中遠近の2本を焼いたフレームが{}回)、計器は{}、{}、停止点は{}、絵は{}と{}",
+        "一日内時刻{}で、時計停止は{}フレームで生成パス{}本(列の先頭{:?})、時計進行は{}フレームで生成パス{}本(うちスカイビューと空中遠近の2本を焼いたフレームが{}回)、計器は{}、{}、停止点は{}、間接照明は3条件とも{}フレームで生成パス0本、絵は{}と{}",
         一日内秒.map_or("既定(11時)".to_string(), |秒| format!("{秒}秒")),
         停止の列.数えたフレーム数,
         停止の列.総数,
@@ -91,6 +93,7 @@ fn 検収する(一日内秒: Option<&str>) -> Result<String, String> {
         計器.区間の並び,
         計器.予算との比較(),
         停止点,
+        間接照明のフレーム数,
         png.display(),
         合成なしのpng.display()
     ))
