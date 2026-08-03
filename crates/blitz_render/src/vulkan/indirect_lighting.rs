@@ -20,7 +20,7 @@ use ash::vk;
 
 use crate::distant_environment::遠方環境のシェーダー一式;
 use crate::error::レンダラーエラー;
-use crate::indirect_lighting::焼き始めの記録;
+use crate::indirect_lighting::{焼き上げ本数の見込み, 焼き始めの記録};
 use crate::vulkan::derived_environment::派生表現一式;
 use crate::vulkan::descriptor::lighting_set::distant_environment::遠方環境の束縛先;
 use crate::vulkan::distant_environment::{遠方環境が借りる束縛先, 遠方環境一式};
@@ -56,6 +56,12 @@ impl 遠方環境の照明資源 {
             鏡面畳込み: self.派生表現.鏡面畳込み画像().立方体ビュー,
             反射率積分表: self.派生表現.反射率積分表の画像().ビュー,
         }
+    }
+
+    /// この資源が1フレームに積む本数の見込み。焼き上げの計画と同じ粗さ段数から導くため、検収が読む期待値と
+    /// レンダーグラフが積む本数が同じ1つの導出から出る。
+    pub(crate) fn 焼き上げ本数の見込み(&self) -> 焼き上げ本数の見込み {
+        焼き上げ本数の見込み::導く(self.派生表現.鏡面畳込みの解像度().粗さ段数())
     }
 
     /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この一式は`描画段階資源`の1段として呼ばれる(GPU待機済み)。

@@ -17,6 +17,7 @@ mod sky;
 pub(super) use create::生成要求;
 
 use crate::error::レンダラーエラー;
+use crate::indirect_lighting::焼き上げ本数の見込み;
 use crate::vulkan;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -42,6 +43,13 @@ impl 描画段階資源 {
         self.遠方環境の照明
             .as_ref()
             .map(vulkan::indirect_lighting::遠方環境の照明資源::照明問い合わせへの束縛先)
+    }
+
+    /// 遠方環境の契約が1フレームに積む本数の見込み。定数近似の契約では資源そのものが無いため`None`を返す。
+    pub(super) fn 間接照明の焼き上げ本数の見込み(&self) -> Option<焼き上げ本数の見込み> {
+        self.遠方環境の照明
+            .as_ref()
+            .map(vulkan::indirect_lighting::遠方環境の照明資源::焼き上げ本数の見込み)
     }
 
     /// 遠方環境の照明資源への可変の参照。検収の注入だけが使う入口であり、本番のフレーム経路は通らない。

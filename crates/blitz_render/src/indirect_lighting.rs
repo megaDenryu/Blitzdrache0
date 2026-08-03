@@ -6,6 +6,7 @@
 //! GPU側の現物が同じ語で辿れるようにする。
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「世界の間接照明方針と契約の2枝(3-Ic)」
 
+mod bake_forecast;
 mod bake_plan;
 mod bake_record;
 mod contract;
@@ -14,6 +15,7 @@ mod error;
 mod input_error;
 mod layer_error;
 
+pub use bake_forecast::焼き上げ本数の見込み;
 pub use bake_plan::焼き上げの計画;
 pub use bake_record::焼き始めの記録;
 pub use contract::照明問い合わせ契約;

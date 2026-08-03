@@ -9,6 +9,7 @@ use super::pass_tally::{大気のベイク済み画像生成パス数の記録, 
 use super::レンダラー;
 use crate::descriptor_indexing_limits::ディスクリプタ索引上限;
 use crate::gpu_memory_stats::GPUメモリ統計;
+use crate::indirect_lighting::焼き上げ本数の見込み;
 use crate::material_table_summary::材質資源表の要約;
 use crate::present_display::実表示観測;
 use crate::present_display::実表示計測状況;
@@ -83,6 +84,12 @@ impl レンダラー {
     /// 間接照明の表現を焼くパスの実行数の記録。照明問い合わせ契約が定数近似の世界では1本も積まれないことを実測で見る。
     pub fn 間接照明生成パス数の記録を取得する(&self) -> &間接照明生成パス数の記録 {
         &self.生成パス数の記録.間接照明
+    }
+
+    /// 遠方環境の契約が1フレームに積む本数の見込み。定数近似の契約では資源が無いため`None`を返す。
+    /// 実測の記録と対で読むための値であり、検収はこの見込みから条件ごとの期待を組み立てる。
+    pub fn 間接照明の焼き上げ本数の見込みを取得する(&self) -> Option<焼き上げ本数の見込み> {
+        self.描画段階資源.間接照明の焼き上げ本数の見込み()
     }
 
     /// 提示へ到達しなかったフレームの累計。提示停止に起因する異常(破棄待ちの滞留・フレームループの空転)を実行中に観測する計器である。
