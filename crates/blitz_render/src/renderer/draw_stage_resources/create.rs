@@ -8,9 +8,9 @@ mod optional_stages;
 use ash::vk;
 
 use super::描画段階資源;
-use crate::distant_environment::照明問い合わせ契約;
 use crate::error::レンダラーエラー;
 use crate::frame_composition::フレーム構成;
+use crate::indirect_lighting::照明問い合わせ契約;
 use crate::shader_bundle::シェーダー束;
 use crate::vulkan::descriptor::シーンセットレイアウト一式;
 use crate::vulkan::tracked_device::GPUデバイス;

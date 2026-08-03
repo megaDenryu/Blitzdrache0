@@ -17,7 +17,7 @@ pub(in crate::app) use bake_input::焼き上げ入力の組;
 use blitz_engine::sky::atmosphere::大気媒体方針;
 use blitz_engine::sky::世界の間接照明方針;
 use blitz_render::atmosphere::大気散乱媒体;
-use blitz_render::distant_environment::照明問い合わせ契約;
+use blitz_render::indirect_lighting::照明問い合わせ契約;
 use blitz_render::{ライティング入力, 空入力};
 pub(in crate::app) struct 天空配線 {
     時間帯: Option<時間帯>,

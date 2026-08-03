@@ -45,7 +45,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     実表示計測要求: 実表示計測要求,
     大域平行移動: blitz_math::大域ワールド位置,
     影の一辺解像度: blitz_render::cascade::影の一辺解像度,
-    照明問い合わせ契約: blitz_render::distant_environment::照明問い合わせ契約,
+    照明問い合わせ契約: blitz_render::indirect_lighting::照明問い合わせ契約,
 ) -> Result<起動一式, 起動エラー> {
     let window = window_create::生成する(event_loop)?;
     let 表示ハンドル = window.display_handle()?.as_raw();

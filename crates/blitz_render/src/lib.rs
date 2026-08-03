@@ -14,12 +14,11 @@ mod draw_result;
 mod error;
 mod extent;
 mod frame_composition;
-#[cfg(test)]
-mod frame_composition_tests;
 pub mod frame_input;
 mod frame_lighting;
 mod gpu_memory_stats;
 pub mod gpu_pass_timing;
+pub mod indirect_lighting;
 mod lighting_input;
 #[cfg(test)]
 mod lighting_input_tests;

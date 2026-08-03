@@ -1,5 +1,8 @@
 //! エンジンが宣言し、レンダラーが実行する1フレームの段階列。
 
+#[cfg(test)]
+mod frame_composition_tests;
+
 use thiserror::Error;
 
 mod validation;

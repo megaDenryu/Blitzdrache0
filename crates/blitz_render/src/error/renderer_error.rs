@@ -6,6 +6,7 @@
 use thiserror::Error;
 
 use super::{cascade, cloth, device_requirement, frame_input_mismatch, lighting_query, material_table, pipeline_ledger, sky};
+use crate::indirect_lighting;
 use crate::vulkan_failure::Vulkan失敗コード;
 
 #[derive(Debug, Error)]
@@ -60,9 +61,6 @@ pub enum レンダラーエラー {
     #[error("布の入力が不正である: {0}")]
     布不正(#[from] cloth::布エラー),
 
-    #[error("粒子シェーダーと粒子素材の有無が一致しない")]
-    粒子入力不一致,
-
     #[error("描画対象のローカルからワールドへの変換が逆行列を持たない")]
     描画対象変換非可逆,
 
@@ -97,4 +95,6 @@ pub enum レンダラーエラー {
     照明問い合わせ梱包不正(#[from] lighting_query::照明問い合わせ梱包エラー),
     #[error("パイプライン台帳とキーが噛み合わない: {0}")]
     パイプライン台帳不正(#[from] pipeline_ledger::パイプライン台帳エラー),
+    #[error("照明問い合わせ契約が要る資源を作れない: {0}")]
+    間接照明契約不成立(#[from] indirect_lighting::間接照明契約エラー),
 }

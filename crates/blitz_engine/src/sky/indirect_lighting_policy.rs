@@ -7,7 +7,7 @@
 //! 世界の語彙とレンダラーの語彙を分けるのは、レンダラーが「世界」を知らないためである。世界が宣言するのは方針、
 //! レンダラーが構築するのは契約であり、その写しはこの型が1箇所で持つ。
 
-use blitz_render::distant_environment::照明問い合わせ契約;
+use blitz_render::indirect_lighting::照明問い合わせ契約;
 
 /// 世界が宣言する間接照明の供給元。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

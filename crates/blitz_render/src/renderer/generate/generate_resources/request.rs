@@ -2,8 +2,8 @@
 
 use crate::cascade::影の一辺解像度;
 use crate::cloth_material::布素材;
-use crate::distant_environment::照明問い合わせ契約;
 use crate::frame_composition::フレーム構成;
+use crate::indirect_lighting::照明問い合わせ契約;
 use crate::particle_material::粒子素材;
 use crate::render_scene_material::描画シーン素材;
 use crate::renderer::presentation::提示;
