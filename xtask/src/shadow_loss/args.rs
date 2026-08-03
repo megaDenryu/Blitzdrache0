@@ -7,14 +7,25 @@
 use super::candidate_axis::{候補の計測指定, 計測軸};
 use super::scene_choice;
 
+/// 1回の実行で計器が何をするか。数える様式と撮る様式は出す成果物も描く条件も違うため、同じ実行で兼ねない。
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum 計器の様式 {
+    /// 診断出力を読み、受光距離帯ごとの欠落と余分を数える。
+    影の欠落を数える,
+    /// 本番の見た目で2枚を撮る。比較も判定もしない。
+    最終色の絵を撮る,
+}
+
 pub(super) struct 指定 {
     pub(super) 構図: scene_choice::構図,
     pub(super) 候補: 候補の計測指定,
+    pub(super) 様式: 計器の様式,
 }
 
 pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<指定, String> {
     let mut 構図: Option<scene_choice::構図> = None;
     let mut 候補: Option<候補の計測指定> = None;
+    let mut 様式 = 計器の様式::影の欠落を数える;
     let mut 残り = 引数一覧.iter();
     while let Some(語) = 残り.next() {
         if 語 == "--layout" {
@@ -23,6 +34,10 @@ pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<指定, String>
                 return Err("--layoutが2回ある。1回の実行で描く構図は1つだけである".to_string());
             }
             構図 = Some(scene_choice::綴りから読む(値)?);
+            continue;
+        }
+        if 語 == "--final-color" {
+            様式 = 計器の様式::最終色の絵を撮る;
             continue;
         }
         let 軸 = 計測軸::綴りから読む(語).ok_or_else(|| format!("知らない引数である({語})"))?;
@@ -36,10 +51,10 @@ pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<指定, String>
         }
         候補 = Some(軸.値を添える(値)?);
     }
-    組み立てる(構図.unwrap_or(scene_choice::構図::地形), 候補)
+    組み立てる(構図.unwrap_or(scene_choice::構図::地形), 候補, 様式)
 }
 
-fn 組み立てる(構図: scene_choice::構図, 候補: Option<候補の計測指定>) -> Result<指定, String> {
+fn 組み立てる(構図: scene_choice::構図, 候補: Option<候補の計測指定>, 様式: 計器の様式) -> Result<指定, String> {
     let 候補 = 候補.ok_or_else(|| {
         format!(
             "候補の指定が1つ要る({})。ちょうど1つだけ受けるのは、αとβを同時に変えないためである",
@@ -55,7 +70,7 @@ fn 組み立てる(構図: scene_choice::構図, 候補: Option<候補の計測�
             計測軸::綴りを並べる(受け入れる軸)
         ));
     }
-    Ok(指定 { 構図, 候補 })
+    Ok(指定 { 構図, 候補, 様式 })
 }
 
 #[cfg(test)]

@@ -1,8 +1,7 @@
 //! 1条件ぶんのblitz_app起動と診断画像の取り込み。受け取るのは構図と候補の起動指定、返すのは読み取り済みの診断画像である。
 //!
 //! 影の欠落計器の枝で描くため、空とポスト処理は外す。診断の値は本番の色でなく評価そのものであり、
-//! 明るさの圧縮や霞を通すと符号化した値が壊れるためである。時刻17時は太陽が低く、影が受光面を長く横切る
-//! (`csm-seam`が継ぎ目の検収に使う時刻と同じである)。
+//! 明るさの圧縮や霞を通すと符号化した値が壊れるためである。フレーム数と一日内時刻は最終色の様式と同じ写しを使う。
 
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -10,17 +9,14 @@ use std::process::Command;
 use super::diagnostic_image::診断画像;
 use super::scene_choice::構図;
 
-const フレーム数: &str = "160";
-const 一日内秒: &str = "61200";
-
 pub(super) fn 描画する(出力先: &Path, 出力名: &str, 構図: 構図, 候補の起動指定: &[String]) -> Result<診断画像, String> {
     let ダンプ先 = PathBuf::from(出力先).join(出力名);
     let mut コマンド = Command::new("cargo");
     コマンド
         .args(["run", "-p", "blitz_app", "--", "--scene", 構図.シーン名()])
         .args(["--asset-root", 構図.アセットルート()])
-        .args(["--frames", フレーム数])
-        .args(["--time-of-day", 一日内秒])
+        .args(["--frames", super::フレーム数])
+        .args(["--time-of-day", super::一日内秒])
         .args(["--no-sky", "--no-post", "--debug-shadow-loss"])
         .args(構図.追加の起動指定())
         .args(候補の起動指定)

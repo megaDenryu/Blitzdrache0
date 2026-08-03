@@ -10,6 +10,20 @@ use super::compare::比較結果;
 const 欠落の色: [u8; 3] = [255, 0, 0];
 const 余分の色: [u8; 3] = [0, 0, 255];
 
+/// 前の実行が残した差分画像を消す。判定を書き出しより先へ置いても、判定で落ちた実行のあとに前回の差分画像が
+/// 残っていれば、それがこの実行の裁定材料に見える。書き出しに至らなかった実行が絵を1枚も残さないようにする。
+pub(super) fn 前の実行が残した画像を消す(書き先: &Path) -> Result<(), String> {
+    for 拡張子 in ["raw", "size", "png"] {
+        let パス = 書き先.with_extension(拡張子);
+        match std::fs::remove_file(&パス) {
+            Ok(()) => {}
+            Err(誤り) if 誤り.kind() == std::io::ErrorKind::NotFound => {}
+            Err(誤り) => return Err(format!("前の実行の差分画像を消せなかった({}): {誤り}", パス.display())),
+        }
+    }
+    Ok(())
+}
+
 pub(super) fn 書き出す(書き先: &Path, 幅: usize, 高さ: usize, 比較: &比較結果) -> Result<(), String> {
     let mut rgba8 = vec![0u8; 幅 * 高さ * 4];
     for 添字 in 0..幅 * 高さ {

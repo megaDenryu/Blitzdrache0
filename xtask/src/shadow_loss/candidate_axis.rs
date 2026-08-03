@@ -69,8 +69,12 @@ impl 候補の計測指定 {
         self.軸().綴り()
     }
 
-    pub(super) fn 起動指定へ写す(&self) -> Vec<String> {
+    pub(super) fn 距離の綴り(&self) -> &str {
         let (Self::最大影距離(距離) | Self::影の視距離(距離)) = self;
-        vec![self.綴り().to_string(), 距離.綴り().to_string()]
+        距離.綴り()
+    }
+
+    pub(super) fn 起動指定へ写す(&self) -> Vec<String> {
+        vec![self.綴り().to_string(), self.距離の綴り().to_string()]
     }
 }

@@ -2,6 +2,7 @@
 //! 制限が実際に効いていることを固定することである。手で回す負例は退行を防がないため、検証列へ入る形にする。
 
 use super::引数を読む;
+use super::計器の様式;
 use crate::shadow_loss::candidate_axis::計測軸;
 use crate::shadow_loss::scene_choice::構図;
 
@@ -69,4 +70,13 @@ fn 地形の構図は最大影距離の候補を受ける() {
     let 指定 = 読む(&["--layout", "terrain", "--max-shadow-distance", "200"]).unwrap_or_else(|誤り| panic!("正例が落ちた: {誤り}"));
     assert_eq!(指定.構図, 構図::地形);
     assert_eq!(指定.候補.軸(), 計測軸::最大影距離);
+}
+
+#[test]
+fn 様式の既定は数える側であり最終色の旗で撮る側になる() {
+    let 既定 = 読む(&["--shadow-caster-range", "80"]).unwrap_or_else(|誤り| panic!("正例が落ちた: {誤り}"));
+    assert_eq!(既定.様式, 計器の様式::影の欠落を数える);
+    let 撮る = 読む(&["--max-shadow-distance", "200", "--final-color"]).unwrap_or_else(|誤り| panic!("正例が落ちた: {誤り}"));
+    assert_eq!(撮る.様式, 計器の様式::最終色の絵を撮る);
+    assert_eq!(撮る.候補.距離の綴り(), "200", "距離の綴りは撮った絵の名前に入る");
 }
