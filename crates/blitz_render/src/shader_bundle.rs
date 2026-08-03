@@ -4,6 +4,7 @@
 use crate::cloth_shader_set::布シェーダー一式;
 use crate::compute_shader::コンピュートシェーダー;
 use crate::distant_environment::遠方環境のシェーダー一式;
+use crate::indirect_lighting::契約別の描画シェーダー;
 use crate::particle_shader_set::粒子シェーダー一式;
 use crate::shader_set::シェーダー一式;
 
@@ -31,7 +32,8 @@ pub struct 空シェーダー {
 /// レンダラーが使う全シェーダー。各フィールドはビルド時にslangcでコンパイル済みのSPIR-V。
 #[derive(Debug, Clone)]
 pub struct シェーダー束 {
-    pub シーン: シェーダー一式,
+    /// シーン描画の画素段は照明問い合わせ契約ごとに分かれる。頂点段は両方が同じものを持つ。
+    pub シーン: 契約別の描画シェーダー,
     pub シャドウ: シェーダー一式,
     /// 空パスの全画面三角形と放射輝度評価。フレーム構成に空段階があるときだけパイプラインが作られる。
     pub 空: 空シェーダー,

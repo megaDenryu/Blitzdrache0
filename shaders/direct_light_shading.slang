@@ -22,20 +22,15 @@ float directionalVisibilityFactor(DirectionalLightRecord record, float3 relative
 }
 
 // 件数が0の列は1度も参照しない。現行の直接光は方向光1件と局所光1件であり、どちらも件数1の列として並ぶ。
-// 定数間接近似・方向光・局所光の順に足すのは、この順序が絵の正本だからである(足す順を変えると丸めが変わる)。
+// 間接光・方向光・局所光の順に足すのは、この順序が絵の正本だからである(足す順を変えると丸めが変わる)。
+// 間接光の項を引数で受けるのは、その値をどの供給元から得るかが照明問い合わせ契約ごとに違うためである。
+// このモジュールは直接光だけを担い、供給元の枝を1つも知らない
+// (参照: `_doc/設計/放射輝度問い合わせ階層.md`「世界の間接照明方針と契約の2枝(3-Ic)」)。
 float3 shadeLitSurface(
-    float3 albedo, float2 metallicRoughnessSample,
-    float metallicFactor, float roughnessFactor,
-    float3 sampledNormal, float3 inputNormal, float4 inputTangent,
-    float3 relativePosition, float3 cameraRelativePosition, float viewDepth)
+    float3 ambientTerm, float3 albedo, float metallic, float roughness,
+    float3 normal, float3 viewDir,
+    float3 relativePosition, float viewDepth)
 {
-    float roughness = saturate(metallicRoughnessSample.x * roughnessFactor);
-    float metallic = saturate(metallicRoughnessSample.y * metallicFactor);
-    float3 normal = applyNormalMap(inputNormal, inputTangent, sampledNormal);
-    float3 viewDir = normalize(cameraRelativePosition - relativePosition);
-
-    float3 ambientTerm = albedo * lightingQueryHeader.constantIndirectFactor;
-
     float3 directionalTerm = float3(0.0, 0.0, 0.0);
     for (uint directionalIndex = 0; directionalIndex < lightingQueryHeader.directionalLightCount; directionalIndex++)
     {

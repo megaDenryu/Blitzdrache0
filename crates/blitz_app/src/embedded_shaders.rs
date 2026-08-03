@@ -5,6 +5,7 @@
 
 #[cfg(test)]
 mod nonuniform_tests;
+mod scene_shaders;
 
 use blitz_render::{
     コンピュートシェーダー, シェーダー一式, シェーダー束, 大気のベイク済み画像のシェーダー一式, 粒子シェーダー一式
@@ -12,9 +13,6 @@ use blitz_render::{
 
 use crate::cli::{空中遠近合成指定, 粒子表示モード};
 use crate::error::起動エラー;
-
-const 頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/vertex.spv"));
-const 画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/fragment.spv"));
 
 const 粒子コンピュートSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_compute.spv"));
 const 粒子頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_vertex.spv"));
@@ -82,7 +80,7 @@ pub(crate) fn 埋め込みシェーダー束を生成する(
         ),
     };
     Ok(シェーダー束 {
-        シーン: シェーダー一式::生成する(頂点SPIRV.to_vec(), 画素段SPIRV.to_vec())?,
+        シーン: scene_shaders::組む()?,
         シャドウ: シェーダー一式::生成する(シャドウ頂点SPIRV.to_vec(), シャドウ画素段SPIRV.to_vec())?,
         空: crate::embedded_sky_shaders::埋め込み空シェーダーを生成する(空中遠近合成)?,
         大気のベイク済み画像: 埋め込み大気のベイク済み画像シェーダーを生成する()?,

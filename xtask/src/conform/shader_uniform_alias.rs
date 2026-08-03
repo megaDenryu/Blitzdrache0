@@ -6,50 +6,12 @@
 //! 正本の先頭に何を置くかをバイト配置の暗黙契約にしてしまう。この検査は、取り込む側が宣言を持たないことを機械的に見る
 //! (参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「分離の形」)。
 
+mod table;
+
 use std::path::{Path, PathBuf};
 
 use super::violation::違反;
-
-/// 宣言を持ってはならないシェーダーと、代わりに取り込むべきモジュール。
-struct 取り込む側 {
-    パス: &'static str,
-    取り込むモジュール一覧: &'static [&'static str],
-}
-
-const 検査対象一覧: [取り込む側; 8] = [
-    取り込む側 {
-        パス: "shaders/shadow.slang",
-        取り込むモジュール一覧: &["cascade_shadow_uniform"],
-    },
-    取り込む側 {
-        パス: "shaders/cloth_shadow.slang",
-        取り込むモジュール一覧: &["cascade_shadow_uniform"],
-    },
-    取り込む側 {
-        パス: "shaders/cloth_draw.slang",
-        取り込むモジュール一覧: &["cascade_shadow_uniform", "lighting_query", "view_uniform"],
-    },
-    取り込む側 {
-        パス: "shaders/scene.slang",
-        取り込むモジュール一覧: &["cascade_shadow_uniform", "lighting_query", "view_uniform"],
-    },
-    取り込む側 {
-        パス: "shaders/sky_frame.slang",
-        取り込むモジュール一覧: &["sky_pass_uniform", "view_uniform"],
-    },
-    取り込む側 {
-        パス: "shaders/particle.slang",
-        取り込むモジュール一覧: &["view_uniform"],
-    },
-    取り込む側 {
-        パス: "shaders/sph.slang",
-        取り込むモジュール一覧: &["view_uniform"],
-    },
-    取り込む側 {
-        パス: "shaders/surface_flow.slang",
-        取り込むモジュール一覧: &["view_uniform"],
-    },
-];
+use table::{取り込む側, 検査対象一覧};
 
 /// ビューとパスのセット(set0)でフレームの定数を指す番号。この番号へ自前の`ConstantBuffer`を結ぶ宣言が
 /// 取り込む側に残っていたら違反とする。

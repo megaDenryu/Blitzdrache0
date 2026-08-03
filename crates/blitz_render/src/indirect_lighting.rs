@@ -9,6 +9,7 @@
 mod bake_plan;
 mod bake_record;
 mod contract;
+mod contract_shaders;
 mod error;
 mod input_error;
 mod layer_error;
@@ -16,6 +17,7 @@ mod layer_error;
 pub use bake_plan::焼き上げの計画;
 pub use bake_record::焼き始めの記録;
 pub use contract::照明問い合わせ契約;
+pub use contract_shaders::契約別の描画シェーダー;
 pub use error::間接照明契約エラー;
 pub use input_error::間接照明入力不一致エラー;
 pub use layer_error::間接照明エラー;

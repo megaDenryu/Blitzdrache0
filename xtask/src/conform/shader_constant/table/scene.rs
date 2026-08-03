@@ -31,7 +31,7 @@ pub(super) const 定数一覧: [定数の組; 5] = [
     定数の組 {
         正本パス: "crates/blitz_render/src/vulkan/material_table/capacity.rs",
         正本の前置き: "pub(in crate::vulkan::material_table) const 表の要素数: u32 = ",
-        写しパス: "shaders/scene.slang",
+        写しパス: "shaders/scene_surface.slang",
         写しの前置き: "static const uint materialTextureTableCapacity = ",
     },
 ];

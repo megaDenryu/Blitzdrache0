@@ -4,7 +4,7 @@
 use super::super::slangc_entry_compile::エントリ指定;
 
 /// 出力ファイル名は`embedded_cloth_shaders`と一致させる。
-pub(super) const コンパイル表: [(&str, &[エントリ指定]); 9] = [
+pub(super) const コンパイル表: [(&str, &[エントリ指定]); 10] = [
     (
         "cloth_step.slang",
         &[
@@ -25,6 +25,10 @@ pub(super) const コンパイル表: [(&str, &[エントリ指定]); 9] = [
     ("cloth_finish.slang", &[コンピュート("finishMain", "cloth_finish.spv")]),
     ("cloth_vertex.slang", &[コンピュート("vertexGenMain", "cloth_vertex_gen.spv")]),
     ("cloth_draw.slang", &[頂点("cloth_draw_vertex.spv"), 画素段("cloth_draw_fragment.spv")]),
+    (
+        "cloth_draw_distant_environment.slang",
+        &[画素段("cloth_draw_distant_environment_fragment.spv")],
+    ),
     (
         "cloth_shadow.slang",
         &[頂点("cloth_shadow_vertex.spv"), 画素段("cloth_shadow_fragment.spv")],
