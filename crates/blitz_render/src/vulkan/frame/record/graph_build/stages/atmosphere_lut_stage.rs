@@ -36,6 +36,9 @@ pub(in crate::vulkan::frame::record::graph_build) struct 空段階の読み先 {
 /// 大気のベイク済み画像の積み上げの結果。
 pub(in crate::vulkan::frame::record::graph_build) struct 大気のベイク済み画像積み上げ結果 {
     pub(in crate::vulkan::frame::record::graph_build) 読み先: 空段階の読み先,
+    /// スカイビューのベイク済み画像を登録したハンドル。ベイク済み画像を作らない構成では`None`である。
+    /// 空パスの読み先と別に持つのは、遠方環境が空パスの有無に関わらずこの1枚を読むためである。
+    pub(in crate::vulkan::frame::record::graph_build) スカイビュー: Option<graph::画像ハンドル>,
     /// このフレームで積んだ生成パスの本数。0から4のいずれかであり、計器がこの値を数える。
     pub(in crate::vulkan::frame::record::graph_build) 生成パス数: u32,
 }
@@ -55,6 +58,7 @@ pub(in crate::vulkan::frame::record::graph_build) fn 大気のベイク済み画
                 空パスの二枚: None,
                 合成のボリューム: None,
             },
+            スカイビュー: None,
             生成パス数: 0,
         };
     };
@@ -68,6 +72,7 @@ pub(in crate::vulkan::frame::record::graph_build) fn 大気のベイク済み画
             }),
             合成のボリューム: 空中遠近.ハンドル,
         },
+        スカイビュー: Some(三枚.スカイビュー),
         生成パス数: 三枚.生成パス数 + 空中遠近.生成パス数,
     }
 }
