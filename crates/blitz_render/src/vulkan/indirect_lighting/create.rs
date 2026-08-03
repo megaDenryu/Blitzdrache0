@@ -7,12 +7,12 @@
 
 use ash::vk;
 
-use super::bake_record::焼き始めの記録;
 use super::遠方環境の照明資源;
 use crate::atmosphere::遠方環境の解像度;
 use crate::distant_environment::derived::{反射率積分表の解像度, 拡散照度の解像度, 鏡面畳込みの解像度};
 use crate::distant_environment::遠方環境のシェーダー一式;
 use crate::error::レンダラーエラー;
+use crate::indirect_lighting::焼き始めの記録;
 use crate::vulkan::derived_environment::{派生表現のシェーダー一式, 派生表現の解像度一式, 派生表現一式};
 use crate::vulkan::distant_environment::{遠方環境が借りる束縛先, 遠方環境一式};
 use crate::vulkan::tracked_device::GPUデバイス;

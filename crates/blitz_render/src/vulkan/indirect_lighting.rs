@@ -9,7 +9,6 @@
 //! ビューを借りるだけである。
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「世界の間接照明方針と契約の2枝(3-Ic)」
 
-mod bake_record;
 mod create;
 mod draw_input;
 mod inputs;
@@ -18,6 +17,7 @@ use ash::vk;
 
 use crate::distant_environment::遠方環境のシェーダー一式;
 use crate::error::レンダラーエラー;
+use crate::indirect_lighting::焼き始めの記録;
 use crate::vulkan::derived_environment::派生表現一式;
 use crate::vulkan::distant_environment::{遠方環境が借りる束縛先, 遠方環境一式};
 use crate::vulkan::tracked_device::GPUデバイス;
@@ -27,7 +27,7 @@ pub(crate) use inputs::{登録する画像, 間接照明の描画入力, 間接�
 pub(crate) struct 遠方環境の照明資源 {
     遠方環境: 遠方環境一式,
     派生表現: 派生表現一式,
-    焼き始め: bake_record::焼き始めの記録,
+    焼き始め: 焼き始めの記録,
 }
 
 impl 遠方環境の照明資源 {
