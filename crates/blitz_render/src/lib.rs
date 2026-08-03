@@ -13,7 +13,6 @@ mod draw_bundle_id;
 mod draw_result;
 mod error;
 mod extent;
-mod floor_index;
 mod frame_composition;
 #[cfg(test)]
 mod frame_composition_tests;
@@ -27,6 +26,7 @@ mod lighting_input_tests;
 mod lod_mesh;
 mod material;
 mod material_table_summary;
+mod numeric;
 mod particle_material;
 mod particle_shader_set;
 mod pbr_material;

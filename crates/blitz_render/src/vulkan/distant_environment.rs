@@ -10,7 +10,7 @@
 
 mod create;
 mod descriptor;
-mod image;
+pub(in crate::vulkan) mod image;
 mod inputs;
 pub(crate) mod pass;
 mod probe;
@@ -24,6 +24,7 @@ use crate::vulkan::atmosphere_lut::pipeline::生成パイプライン;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 
+pub(in crate::vulkan) use image::遠方環境の立方体画像;
 pub(crate) use inputs::{
     計算の班数を求める, 遠方環境が借りる束縛先, 遠方環境の即時定数, 遠方環境の生成入力, 遠方環境の画像入力
 };

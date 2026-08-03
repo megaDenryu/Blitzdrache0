@@ -5,7 +5,7 @@
 //! 補間の有無だけで両者がずれ、写しの誤りと区別できなくなる。規則はVulkanのLINEARフィルタと
 //! CLAMP_TO_EDGEアドレスモードに合わせてある(範囲の外は端のテクセルへ張り付ける)。
 
-use crate::floor_index::実数位置の床の添字;
+use crate::numeric::floor_index::実数位置の床の添字;
 
 /// UVから両隣の添字と混ぜ具合を求める。返す比は0以上1以下である。
 pub(in crate::atmosphere) fn 添字と比(uv: f64, 辺の長さ: u32) -> (u32, u32, f64) {

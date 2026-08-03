@@ -71,5 +71,6 @@ pub(super) fn 全部をコンパイルする(
         &シェーダーディレクトリ.join("distant_environment.slang"),
         出力先ディレクトリ,
         &遠方環境エントリ,
-    )
+    )?;
+    super::derived_environment_spirv_compile::全部をコンパイルする(slangc, シェーダーディレクトリ, 出力先ディレクトリ)
 }

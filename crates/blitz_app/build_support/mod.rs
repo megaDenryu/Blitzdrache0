@@ -6,6 +6,7 @@
 mod atmosphere_spirv_compile;
 mod bloom_spirv_compile;
 mod cloth_spirv_compile;
+mod derived_environment_spirv_compile;
 mod particle_spirv_compile;
 mod shadow_spirv_compile;
 mod skinning_spirv_compile;

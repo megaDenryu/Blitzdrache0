@@ -12,6 +12,7 @@ mod atmosphere_medium_tests;
 mod cli;
 mod dev_ui;
 mod embedded_cloth_shaders;
+mod embedded_derived_environment_shaders;
 mod embedded_distant_environment_shader;
 mod embedded_shaders;
 mod embedded_sky_shaders;
