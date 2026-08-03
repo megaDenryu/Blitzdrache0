@@ -7,9 +7,11 @@
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「シャドウ性能の是正(フェーズ2性能課題、2026-08-03着手)」
 
 mod args;
+mod candidate_axis;
 mod compare;
 mod diagnostic_image;
 mod diff_image;
+mod distance;
 mod guard;
 mod report;
 mod run;
@@ -40,8 +42,9 @@ fn 測る(引数一覧: &[String]) -> Result<String, String> {
     }
     let 出力先 = PathBuf::from(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 候補の起動指定 = 指定.候補.起動指定へ写す();
     let 基準 = run::描画する(&出力先, "baseline", 指定.構図, &[])?;
-    let 候補 = run::描画する(&出力先, "candidate", 指定.構図, &指定.候補の起動指定)?;
+    let 候補 = run::描画する(&出力先, "candidate", 指定.構図, &候補の起動指定)?;
     let (幅, 高さ) = (基準.幅, 基準.高さ);
     let 比較 = compare::比べる(&基準, &候補)?;
     report::表示する(&比較);
@@ -52,7 +55,7 @@ fn 測る(引数一覧: &[String]) -> Result<String, String> {
     Ok(format!(
         "構図{}・候補{}、差分画像は{}",
         指定.構図.綴り(),
-        指定.候補の起動指定.join(" "),
+        候補の起動指定.join(" "),
         差分png.display()
     ))
 }
