@@ -13,7 +13,7 @@ use super::violation::違反;
 
 pub fn 全定数を検査する() -> Result<Vec<違反>, String> {
     let mut 違反一覧 = Vec::new();
-    for 組 in table::定数一覧 {
+    for 組 in table::領域一覧.iter().copied().flatten() {
         let 正本 = 値を読む(組.正本パス, 組.正本の前置き)?;
         let 写し = 値を読む(組.写しパス, 組.写しの前置き)?;
         if 正本 != 写し {

@@ -5,6 +5,7 @@
 //! 数学と検査入口がここへ加わるためであり、遠方環境に属する型を1つの名前空間で辿れるようにするためである。
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「順3-Iの実装設計」
 
+pub mod consume;
 pub mod derived;
 pub mod derived_probe;
 mod frame_input;
