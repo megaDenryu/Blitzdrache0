@@ -7,7 +7,8 @@
 //! assets/chunk_world/ へ25チャンク分のglTFと共有バッファと目録ソースを、
 //! assets/terrain_world/ へ25チャンク分の高さ格子と目録ソースを、
 //! assets/vegetation_world/ へ植生の原型glTFと頂点量の診断用に面を細分化した原型glTFと1チャンクの目録ソースを書き出す。
-//! assets/village_world/ へ見本の集落の地面1チャンク分の高さ格子と目録ソースを書き出す。
+//! assets/village_world/ へ見本の集落の地面1チャンク分の高さ格子と目録ソースを、
+//! assets/terrain_visual_world/ へ目視見本の地面1チャンク分の高さ格子と目録ソースと材質見本の立体のglTFを書き出す。
 //! xtask gen-source-assets の実体であり、リポジトリルートを作業ディレクトリとして実行される。
 
 mod chunk_world;
@@ -23,6 +24,7 @@ mod shadow_scene_geometry;
 mod shadow_scene_gltf_json;
 mod shadow_scene_texture;
 mod smoke_assets;
+mod terrain_visual_world;
 mod terrain_world;
 mod textures;
 mod vegetation_world;
@@ -62,6 +64,11 @@ fn 実行する() -> Result<(), String> {
     ディレクトリを作る(見本の集落出力先)?;
     village_world::書き出す(見本の集落出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 見本の集落出力先.display());
+
+    let 目視見本出力先 = Path::new("assets/terrain_visual_world");
+    ディレクトリを作る(目視見本出力先)?;
+    terrain_visual_world::書き出す(目視見本出力先)?;
+    println!("[generate_source_assets] {}へ生成完了", 目視見本出力先.display());
     Ok(())
 }
 
