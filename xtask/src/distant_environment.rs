@@ -8,7 +8,7 @@
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「検収(機械判定)」
 
 mod judgment;
-mod parse;
+pub(crate) mod parse;
 mod thresholds;
 
 use std::process::{Command, ExitCode};

@@ -13,6 +13,7 @@ mod compile_assets;
 mod conform;
 mod count_consistency;
 mod csm_seam;
+mod derived_environment;
 mod dispatch;
 mod distant_environment;
 mod fetch_assets;

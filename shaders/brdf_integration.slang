@@ -39,6 +39,16 @@ float brdfVisibility(float viewCosine, float lightCosine, float halfCosine, floa
     return denominator <= 0.0 ? 0.0 : masking * viewHalfCosine / denominator;
 }
 
+// 反射率が斜めの入射で1へ近づく分。5乗を掛け算の繰り返しで求めるのは、正本のRust側が同じ形(2乗の2乗に1つ掛ける)で
+// 求めており、指数関数と対数関数を経由する`pow`が別の丸めを持つためである。この値は1から引かれるため、
+// 視線が面に近い側では桁落ちして丸めの違いが数百倍に開く。
+float reflectanceDropOf(float viewHalfCosine)
+{
+    float base = 1.0 - viewHalfCosine;
+    float square = base * base;
+    return square * square * base;
+}
+
 [shader("compute")]
 [numthreads(threadsPerSide, threadsPerSide, 1)]
 void computeMain(uint3 threadId : SV_DispatchThreadID)
@@ -68,7 +78,7 @@ void computeMain(uint3 threadId : SV_DispatchThreadID)
         }
         float viewHalfCosine = max(0.0, view.x * halfVector.x + view.z * halfVector.z);
         float visibility = brdfVisibility(viewCosine, lightDirection.z, max(0.0, halfVector.z), viewHalfCosine, roughness);
-        float reflectanceDrop = pow(1.0 - viewHalfCosine, 5.0);
+        float reflectanceDrop = reflectanceDropOf(viewHalfCosine);
         scaleSum += (1.0 - reflectanceDrop) * visibility;
         biasSum += reflectanceDrop * visibility;
     }
