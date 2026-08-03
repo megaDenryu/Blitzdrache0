@@ -57,3 +57,6 @@ fn 組み立てる(構図: scene_choice::構図, 候補: Option<候補の計測�
     }
     Ok(指定 { 構図, 候補 })
 }
+
+#[cfg(test)]
+mod exclusivity_tests;

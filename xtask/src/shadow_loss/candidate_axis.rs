@@ -12,7 +12,7 @@ const 最大影距離の綴り: &str = "--max-shadow-distance";
 const 影の視距離の綴り: &str = "--shadow-caster-range";
 
 /// 候補で振る軸そのもの。距離を持たない側であり、綴りの読み取りと、構図が受け入れるかの判定に使う。
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum 計測軸 {
     /// α。多段設定の最大影距離を差し替える。
     最大影距離,

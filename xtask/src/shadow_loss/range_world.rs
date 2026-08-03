@@ -52,3 +52,6 @@ pub(super) fn 切断の距離を確かめる(切断距離: f64) -> Result<(), St
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod distance_range_tests;

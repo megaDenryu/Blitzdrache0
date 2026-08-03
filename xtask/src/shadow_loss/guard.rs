@@ -93,3 +93,6 @@ fn 百分率を求める(該当数: u64, 母数: u64, 領域の名: &str) -> Res
     }
     Ok(該当数 * 100 / 母数)
 }
+
+#[cfg(test)]
+mod judgment_tests;

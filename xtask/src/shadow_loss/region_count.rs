@@ -27,23 +27,29 @@ impl 受光面の領域 {
         }
     }
 
+    /// 矩形が覆う画素の添字。数え上げと、判定の固定が印を塗る側の両方がこの1つの並べ方を使う。
+    pub(super) fn 画素の添字(&self, 幅: usize) -> impl Iterator<Item = usize> {
+        let (x開始, x終端) = (self.x開始, self.x終端);
+        (self.y開始..self.y終端).flat_map(move |y| (x開始..x終端).map(move |x| y * 幅 + x))
+    }
+
     pub(super) fn 数える(&self, 比較: &比較結果) -> Result<領域の集計, String> {
         let mut 集計 = 領域の集計 {
             基準の影画素数: 0,
             候補の影画素数: 0,
             欠落画素数: 0,
         };
-        for y in self.y開始..self.y終端 {
-            for x in self.x開始..self.x終端 {
-                let 添字 = y * 比較.幅 + x;
-                let (Some(基準の影), Some(候補の影)) = (比較.基準の影の印.get(添字), 比較.候補の影の印.get(添字)) else {
-                    return Err(format!("受光面の領域が読み戻し画像({}×{})の外にある", 比較.幅, 比較.高さ));
-                };
-                集計.基準の影画素数 += u64::from(*基準の影);
-                集計.候補の影画素数 += u64::from(*候補の影);
-                集計.欠落画素数 += u64::from(*基準の影 && !*候補の影);
-            }
+        for 添字 in self.画素の添字(比較.幅) {
+            let (Some(基準の影), Some(候補の影)) = (比較.基準の影の印.get(添字), 比較.候補の影の印.get(添字)) else {
+                return Err(format!("受光面の領域が読み戻し画像({}×{})の外にある", 比較.幅, 比較.高さ));
+            };
+            集計.基準の影画素数 += u64::from(*基準の影);
+            集計.候補の影画素数 += u64::from(*候補の影);
+            集計.欠落画素数 += u64::from(*基準の影 && !*候補の影);
         }
         Ok(集計)
     }
 }
+
+#[cfg(test)]
+mod counting_tests;
