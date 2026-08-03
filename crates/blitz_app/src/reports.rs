@@ -4,6 +4,7 @@
 pub(crate) mod atmosphere_lut;
 pub(crate) mod atmosphere_passes;
 pub(crate) mod composition;
+pub(crate) mod cube_seam;
 pub(crate) mod display_timing;
 pub(crate) mod distant_environment;
 pub(crate) mod draw_issue;
