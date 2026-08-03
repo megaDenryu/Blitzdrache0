@@ -10,6 +10,7 @@ use std::path::{Path, PathBuf};
 
 use blitz_render::読み戻し画像;
 
+use super::draw_dispatch::描画の到達;
 use super::frame::フレーム視点;
 use super::アプリ;
 use crate::cli::起動モード;
@@ -32,18 +33,18 @@ impl アプリ {
         描画入力: blitz_render::フレーム描画入力<'_>,
         視点情報: &フレーム視点,
         アクション: スモークアクション,
-    ) -> Result<(), 起動エラー> {
+    ) -> Result<描画の到達, 起動エラー> {
         let Some(ダンプ先) = self.フレームダンプ先.as_deref().map(|基準| 書き出し先を選ぶ(基準, アクション)) else {
-            return Ok(());
+            return Ok(描画の到達::届かなかった);
         };
         let Some(レンダラー) = &mut self.レンダラー else {
-            return Ok(());
+            return Ok(描画の到達::届かなかった);
         };
         match レンダラー.一フレーム描画して読み戻す(描画入力)? {
             blitz_render::読み戻し結果::読み戻した(画像) => {
                 書き出す(&画像, &ダンプ先)?;
                 sky_pixel_check::照合する(self, &画像, 視点情報);
-                Ok(())
+                Ok(描画の到達::提示した)
             }
             blitz_render::読み戻し結果::見送った(理由) => Err(起動エラー::フレームダンプ失敗(format!(
                 "ダンプ対象フレームで描画が見送られた: {理由:?}"

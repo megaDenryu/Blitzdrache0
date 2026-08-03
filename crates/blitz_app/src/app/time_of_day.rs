@@ -9,6 +9,8 @@ mod atmosphere_input;
 mod atmosphere_update;
 #[cfg(test)]
 mod atmosphere_update_tests;
+#[cfg(test)]
+mod bake_commit_tests;
 mod clock;
 mod distant_environment_update;
 #[cfg(test)]
