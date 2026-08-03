@@ -20,6 +20,7 @@ mod fetch_assets;
 mod file_scan;
 mod gen_atmosphere_reference;
 mod gen_source_assets;
+mod indirect_probe;
 mod instance_cull;
 mod instance_draw;
 mod instance_lod;

@@ -5,10 +5,10 @@ use std::process::ExitCode;
 
 use crate::{
     atmosphere_lut, bench, check_glb, cloth_empty, cloth_night, cloth_shadow_order, compile_assets, conform, csm_seam, derived_environment,
-    distant_environment, fetch_assets, gen_atmosphere_reference, gen_source_assets, instance_cull, instance_draw, instance_lod, instance_stream,
-    lod_crack, m10_bench, m11_soak, material_reload_draw, multi_material_draw, object_bench, origin_invariance, ow3_dod, ow4_bench, prop_draw,
-    prop_multi_material_draw, shadow_loss, shadow_probe, sky_draw, sky_lut, sky_state, sky_time, smoke, streaming_bench, type_metrics, usage, verify,
-    vertex_diag, village_draw, watch_assets,
+    distant_environment, fetch_assets, gen_atmosphere_reference, gen_source_assets, indirect_probe, instance_cull, instance_draw, instance_lod,
+    instance_stream, lod_crack, m10_bench, m11_soak, material_reload_draw, multi_material_draw, object_bench, origin_invariance, ow3_dod, ow4_bench,
+    prop_draw, prop_multi_material_draw, shadow_loss, shadow_probe, sky_draw, sky_lut, sky_state, sky_time, smoke, streaming_bench, type_metrics,
+    usage, verify, vertex_diag, village_draw, watch_assets,
 };
 
 pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
@@ -50,6 +50,7 @@ pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
         Some("atmosphere-lut") => atmosphere_lut::実行する(),
         Some("distant-environment") => distant_environment::実行する(),
         Some("derived-environment") => derived_environment::実行する(),
+        Some("indirect-probe") => indirect_probe::実行する(),
         Some("sky-time") => sky_time::実行する(),
         Some("ow3-dod") => ow3_dod::実行する(),
         Some("ow4-bench") => ow4_bench::実行する(&引数一覧[1..]),
