@@ -4,7 +4,8 @@
 
 use std::path::Path;
 
-use super::{geometry, gltf_json, multi_material_geometry, multi_material_gltf_json};
+use super::{geometry, gltf_json, indirect_probe_geometry, indirect_probe_gltf_json};
+use super::{multi_material_geometry, multi_material_gltf_json};
 use super::{shadow_scene_geometry, shadow_scene_gltf_json, shadow_scene_texture, textures};
 
 pub(super) fn 書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
@@ -14,6 +15,7 @@ pub(super) fn 書き出す(出力先ディレクトリ: &Path) -> Result<(), Str
     書き込む(&出力先ディレクトリ.join("quad.bin"), &geometry::バッファバイト列を作る())?;
     textures::保存する(出力先ディレクトリ)?;
     材質境界アセットを書き出す(出力先ディレクトリ)?;
+    遠方環境の検収アセットを書き出す(出力先ディレクトリ)?;
     シャドウ検証アセットを書き出す(出力先ディレクトリ)
 }
 
@@ -36,6 +38,19 @@ fn 材質境界アセットを書き出す(出力先ディレクトリ: &Path) -
     書き込む(
         &出力先ディレクトリ.join("multi_material_one.gltf"),
         multi_material_gltf_json::単一材質の文書().as_bytes(),
+    )
+}
+
+/// 遠方環境の消費の検収アセット。金属と誘電体の板を粗さの水準ごとに並べた1つの世界であり、
+/// 板ごとに材質とプリミティブが分かれる。
+fn 遠方環境の検収アセットを書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
+    書き込む(
+        &出力先ディレクトリ.join("indirect_probe.bin"),
+        &indirect_probe_geometry::バッファバイト列を作る(),
+    )?;
+    書き込む(
+        &出力先ディレクトリ.join("indirect_probe.gltf"),
+        indirect_probe_gltf_json::文書().as_bytes(),
     )
 }
 

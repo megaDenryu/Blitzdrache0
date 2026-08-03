@@ -2,7 +2,8 @@
 //! `cargo xtask gen-source-assets`で
 //! assets/smoke/ へ quad.gltf・quad_alt.gltf・quad.bin・2色のテクスチャと、
 //! shadow_scene.gltf・shadow_scene.bin・shadow_scene_white.png(判断37)と、
-//! 材質境界の検収用のmulti_material.bin・multi_material_two.gltf・multi_material_one.gltfを、
+//! 材質境界の検収用のmulti_material.bin・multi_material_two.gltf・multi_material_one.gltfと、
+//! 遠方環境の消費の検収用のindirect_probe.bin・indirect_probe.gltfを、
 //! assets/chunk_world/ へ25チャンク分のglTFと共有バッファと目録ソースを、
 //! assets/terrain_world/ へ25チャンク分の高さ格子と目録ソースを、
 //! assets/vegetation_world/ へ植生の原型glTFと頂点量の診断用に面を細分化した原型glTFと1チャンクの目録ソースを書き出す。
@@ -13,6 +14,9 @@ mod chunk_world;
 mod directory_source;
 mod geometry;
 mod gltf_json;
+mod indirect_probe_geometry;
+mod indirect_probe_gltf_json;
+mod indirect_probe_plates;
 mod multi_material_geometry;
 mod multi_material_gltf_json;
 mod shadow_scene_geometry;

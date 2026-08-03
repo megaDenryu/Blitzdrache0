@@ -8,6 +8,7 @@
 //! `crates/blitz_asset_compiler/src/vegetation/single_scene.rs`が同じ前提で配置を決める。
 
 mod cascade_policy;
+mod indirect_probe;
 
 use blitz_math::{メートル, 大域メートル, 大域ワールド位置};
 use blitz_render::{
@@ -37,6 +38,9 @@ pub(super) fn シーン初期ライティングを作る(
     シャドウ計測: &crate::cli::シャドウ計測起動設定,
 ) -> ライティング入力 {
     let 多段設定 = cascade_policy::シーンの多段設定を作る(シーン名, シャドウ計測);
+    if シーン名 == indirect_probe::シーン識別子 {
+        return indirect_probe::方針を作る(有効, 大域ずらし量).多段設定を差し替える(多段設定);
+    }
     if !シーン名.starts_with(植生検収シーンの接頭辞) {
         return blitz_engine::既定ライティングを作る(有効, 大域ずらし量).多段設定を差し替える(多段設定);
     }
