@@ -11,7 +11,6 @@
 use ash::vk;
 
 use super::{焼かせる注入, 解析入力の注入};
-use crate::indirect_lighting::焼き上げの計画;
 use crate::vulkan::derived_environment::派生表現の生成入力;
 use crate::vulkan::distant_environment::遠方環境の生成入力;
 
@@ -44,9 +43,6 @@ pub(crate) struct 間接照明の描画入力 {
     /// 最詳細段の複製が写す1層ぶんの範囲。遠方環境と鏡面畳込みの最詳細段は同じ一辺を持つ。
     pub(crate) 遠方環境の範囲: vk::Extent3D,
     pub(crate) 層数: u32,
-    /// そのフレームの焼き上げの計画。焼く組と反射率積分表の入力はこの計画から作られ、段の展開が返す本数も
-    /// この計画が答える。積む側と数える側が同じ1つの導出から出ることを、この1つの値が保つ。
-    pub(crate) 計画: 焼き上げの計画,
     pub(crate) 焼く組: 間接照明の焼く組,
     /// まだ1度も焼いていないフレームだけ値を持つ。以降のフレームは焼き直さない。
     pub(crate) 反射率積分表の入力: Option<派生表現の生成入力>,
