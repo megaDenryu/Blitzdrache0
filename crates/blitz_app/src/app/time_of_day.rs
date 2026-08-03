@@ -12,6 +12,7 @@ mod atmosphere_update_tests;
 #[cfg(test)]
 mod bake_commit_tests;
 mod clock;
+mod distant_environment_key_record;
 mod distant_environment_update;
 #[cfg(test)]
 mod distant_environment_update_tests;
@@ -25,6 +26,7 @@ mod sky_input;
 mod sun_disk_override;
 mod wiring;
 
+pub(crate) use distant_environment_key_record::遠方環境の鍵の記録;
 pub(crate) use distant_environment_update::遠方環境更新判定;
 pub(crate) use reproduction_condition::空の再現条件;
 pub(in crate::app) use wiring::{天空配線, 焼き上げ入力の組};

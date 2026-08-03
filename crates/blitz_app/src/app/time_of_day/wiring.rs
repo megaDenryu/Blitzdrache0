@@ -74,6 +74,10 @@ impl 天空配線 {
         let (_, 媒体) = self.空を描く.then_some(self.大気).flatten()?;
         Some(atmosphere_input::再現条件を組む(媒体, self.時間帯.as_ref()?))
     }
+    /// 遠方環境の焼き直し判定が何を見て何を答えたかの記録。定数近似の契約では1フレームも判定しないため空のままである。
+    pub(in crate::app) fn 遠方環境の鍵の記録(&self) -> &super::遠方環境の鍵の記録 {
+        self.遠方環境更新判定.記録()
+    }
     /// そのフレームで使っている天空状態。空の方針を持たない世界では無い。
     pub(in crate::app) fn 天空状態(&self) -> Option<&blitz_engine::sky::天空状態> {
         self.時間帯.as_ref().map(時間帯::状態)

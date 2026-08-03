@@ -8,6 +8,7 @@ pub(crate) mod cube_seam;
 pub(crate) mod derived_environment;
 pub(crate) mod display_timing;
 pub(crate) mod distant_environment;
+pub(crate) mod distant_environment_key;
 pub(crate) mod draw_issue;
 pub(crate) mod exit;
 pub(crate) mod gpu_time_table;
