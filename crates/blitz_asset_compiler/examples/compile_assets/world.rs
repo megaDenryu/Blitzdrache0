@@ -66,6 +66,7 @@ impl 対象世界 {
             },
             Self::目視見本の世界 => ソース種別::目視見本 {
                 材質見本の立体の安定id: visual_sample_declaration::材質見本の立体,
+                遠景地面の安定id: visual_sample_declaration::遠景地面,
                 群一覧: visual_sample_declaration::庭の小物一覧,
             },
             Self::頂点診断の世界(原型) => ソース種別::高さ格子 {
