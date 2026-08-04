@@ -38,6 +38,9 @@ pub(crate) fn 状態へ写像する(用途: バッファ用途) -> バッファ�
         }
         バッファ用途::転送元 => バッファ状態::生成する(vk::PipelineStageFlags2::COPY, vk::AccessFlags2::TRANSFER_READ),
         バッファ用途::転送先 => バッファ状態::生成する(vk::PipelineStageFlags2::COPY, vk::AccessFlags2::TRANSFER_WRITE),
+        バッファ用途::消去の書き込み => {
+            バッファ状態::生成する(vk::PipelineStageFlags2::CLEAR, vk::AccessFlags2::TRANSFER_WRITE)
+        }
     }
 }
 
