@@ -80,10 +80,7 @@ fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
         "--dev-ui" => 設定.開発ui初期有効 = true,
         "--debug-cascade-bands" => 設定.画素診断 = blitz_render::cascade::画素診断::距離区分の可視化,
         "--debug-shadow-loss" => 設定.画素診断 = blitz_render::cascade::画素診断::影の欠落計器,
-        "--sky" => 設定.時間帯.空 = super::空の起動指定::空ありとして扱う,
-        "--no-sky" => 設定.時間帯.空 = super::空の起動指定::空を描かない,
-        "--no-aerial-composite" => 設定.時間帯.空中遠近合成 = super::空中遠近合成指定::合成しない,
-        "--sun-disk-off" => 設定.時間帯.太陽円盤 = super::太陽円盤指定::消す,
+        _ if super::time_of_day_flags::反映する(&mut 設定.時間帯, 引数値) => {}
         "--no-post" => 設定.ポスト処理有効 = false,
         "--cloth" => 設定.布モード = 布モード::吊るし布,
         "--cloth-cape" => 設定.布モード = 布モード::マント,
