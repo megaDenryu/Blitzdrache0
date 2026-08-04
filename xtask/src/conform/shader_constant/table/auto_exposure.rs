@@ -9,19 +9,19 @@ use super::定数の組;
 pub(super) const 定数一覧: [定数の組; 3] = [
     定数の組 {
         正本パス: "crates/blitz_engine/src/auto_exposure/luminance.rs",
-        正本の前置き: "pub const 赤の重み: f32 = ",
+        正本の前置き: "pub(super) const 赤の重み: f32 = ",
         写しパス: "xtask/src/hdr_luminance/statistics.rs",
         写しの前置き: "const 赤の重み: f64 = ",
     },
     定数の組 {
         正本パス: "crates/blitz_engine/src/auto_exposure/luminance.rs",
-        正本の前置き: "pub const 緑の重み: f32 = ",
+        正本の前置き: "pub(super) const 緑の重み: f32 = ",
         写しパス: "xtask/src/hdr_luminance/statistics.rs",
         写しの前置き: "const 緑の重み: f64 = ",
     },
     定数の組 {
         正本パス: "crates/blitz_engine/src/auto_exposure/luminance.rs",
-        正本の前置き: "pub const 青の重み: f32 = ",
+        正本の前置き: "pub(super) const 青の重み: f32 = ",
         写しパス: "xtask/src/hdr_luminance/statistics.rs",
         写しの前置き: "const 青の重み: f64 = ",
     },

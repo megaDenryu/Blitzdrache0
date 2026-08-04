@@ -4,6 +4,10 @@
 //! 放射輝度の問い合わせの外側にある(照明の供給ではなく画の完成の段である)。この層はGPUもフレームも実時間も
 //! 知らず、同じ入力からは常に同じ出力を返す。集計・導出・時間適応を別の純関数に分けるのは、GPUのslang写しと
 //! 段ごとに突き合わせるためである(`参照: _doc/設計/放射輝度問い合わせ階層.md`「IIb(自動露出)の設計」)。
+//!
+//! この層が外へ出す生の単精度は`境界の線形輝度`だけである。GPUの写しへ同じ列を渡すために、
+//! コンポジションルートが読んでレンダラーへ運ぶ必要があるためである。目盛の定数と相対輝度の重みは
+//! 外へ出さない(重みはslangの写しが自分の定数として持ち、値の一致は`cargo xtask conform`が見る)。
 
 mod adaptation;
 mod adaptation_speed;
@@ -50,13 +54,9 @@ pub use error::自動露出エラー;
 pub use exposure_method::露出方式;
 pub use histogram::輝度ヒストグラム;
 pub use histogram_boundary::{ビンの添字を求める, 境界の線形輝度};
-pub use histogram_scale::{
-    ビンが覆う対数輝度の幅, ビンの添字, ビン数, 全ビンの添字, 最後のビンの添字, 範囲の上端の対数輝度, 範囲の下端の対数輝度
-};
+pub use histogram_scale::{ビンの添字, ビン数, 全ビンの添字, 最後のビンの添字};
 pub use log_luminance::対数輝度;
-pub use luminance::{
-    画素を区分する, 相対輝度を求める, 緑の重み, 赤の重み, 輝度の区分, 輝度を区分する, 青の重み
-};
+pub use luminance::{画素を区分する, 輝度の区分, 輝度を区分する};
 pub use middle_gray::目標中間灰;
 pub use pixel_count::画素件数;
 pub use pixel_ratio::画素の割合;
