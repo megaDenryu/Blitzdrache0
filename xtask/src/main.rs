@@ -22,6 +22,7 @@ mod fetch_assets;
 mod file_scan;
 mod gen_atmosphere_reference;
 mod gen_source_assets;
+mod hdr_luminance;
 mod indirect_cost;
 mod indirect_probe;
 mod instance_cull;
@@ -65,6 +66,7 @@ mod vegetation_run;
 mod verify;
 mod vertex_diag;
 mod village_draw;
+mod visual_sample_world;
 mod watch_assets;
 
 fn main() -> ExitCode {

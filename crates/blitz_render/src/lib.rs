@@ -73,7 +73,7 @@ pub use particle_material::{粒子素材, 粒子素材エラー};
 pub use particle_shader_set::{粒子シェーダー一式, 粒子シェーダー一式エラー};
 pub use pbr_material::{マテリアル素材エラー, 金属粗さPBR素材};
 pub use present_display::{実表示観測, 実表示計測状況, 実表示計測要求};
-pub use readback_image::読み戻し画像;
+pub use readback_image::{HDR読み戻し画像, 読み戻し画像};
 pub use readback_result::読み戻し結果;
 pub use render_object_material::{個体変換列, 描画対象素材, 材質スロット素材, 材質スロット素材一覧};
 pub use render_scene_material::描画シーン素材;

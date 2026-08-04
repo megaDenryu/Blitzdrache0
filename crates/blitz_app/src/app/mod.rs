@@ -69,7 +69,7 @@ pub(crate) struct アプリ {
     開発ui: Option<開発UI>,
     開発ui初期有効: bool,
     計測つまみ: frame::描画の計測つまみ,
-    フレームダンプ先: Option<PathBuf>,
+    フレームダンプ先: Option<crate::cli::フレームダンプ指定>,
     読み戻し検収: crate::cli::読み戻し検収起動設定,
     /// 露出(判断39)とブレンド(判断45)はCLI初期値を開発用UIのスライダーが実行中に書き換える。
     露出: f32,

@@ -9,9 +9,7 @@ use std::path::Path;
 use std::process::Command;
 
 use crate::vegetation_run::実行結果;
-
-const アセットルート: &str = "target/terrain_visual_assets";
-const シーン名: &str = "terrain_visual";
+use crate::visual_sample_world::{アセットルート, シーン名};
 
 /// 描くフレーム数。空と間接照明の焼き上げが定常へ入り、絵が時刻だけで決まる状態まで進める本数である。
 const フレーム数: &str = "120";

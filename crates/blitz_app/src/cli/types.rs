@@ -1,24 +1,17 @@
 //! CLI引数から得る型: 起動モード・起動設定一式。既定値の組み立ては`default`にある。
 
 mod default;
+mod frame_dump_setting;
+mod launch_mode;
 mod readback_verification;
-pub(crate) use readback_verification::読み戻し検収起動設定;
+pub(crate) use {
+    frame_dump_setting::フレームダンプ指定, launch_mode::起動モード, readback_verification::読み戻し検収起動設定
+};
 
 use super::{
     シャドウ計測起動設定, ストリーミング起動設定, 布モード, 平行移動起動設定, 描画対象の並べ方, 時間帯起動設定, 画面画素位置, 粒子表示モード,
 };
 use std::path::PathBuf;
-
-/// 起動時に指定できる実行モード。
-#[derive(Debug, Clone, Copy)]
-pub(crate) enum 起動モード {
-    /// ユーザーが閉じるまで無期限に実行する。
-    無期限実行,
-    /// 指定フレーム数を描画したら自動終了する(DoDのスモーク検証用)。
-    スモーク実行 { フレーム数: u32 },
-    /// 自己操作やピクセル判定を行わず、指定フレーム数を描画して計測する。
-    ベンチ実行 { フレーム数: u32 },
-}
 
 /// CLI引数から得た起動設定一式。
 pub(crate) struct 起動設定 {
@@ -69,8 +62,8 @@ pub(crate) struct 起動設定 {
     pub(crate) 開発ui初期有効: bool,
     /// シーンの画素段が本番の色の代わりに出す診断。`--debug-cascade-bands`が距離区分の可視化を、`--debug-shadow-loss`が影可視度と受光距離帯の計器を選ぶ。既定は出さない。
     pub(crate) 画素診断: blitz_render::cascade::画素診断,
-    /// `--dump-frame <ベース名>`指定で、最終フレーム(--frames必須)の読み戻し画像を`<ベース名>.raw`(RGBA8連結)と`<ベース名>.size`(幅 高さ)へ書き出す。既定はNone。
-    pub(crate) フレームダンプ先: Option<PathBuf>,
+    /// `--dump-frame <ベース名>`と`--dump-hdr-frame <ベース名>`指定で、最終フレーム(--frames必須)の読み戻しを書き出す。書き出す画像と外部形式は指定が持つ。既定はNone。
+    pub(crate) フレームダンプ先: Option<フレームダンプ指定>,
     pub(crate) 読み戻し検収: 読み戻し検収起動設定,
     /// 空と時刻の起動指定。空を描くかどうかは既定では世界の方針が決め、この指定はその上書きである。
     pub(crate) 時間帯: 時間帯起動設定,

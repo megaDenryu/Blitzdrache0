@@ -1,4 +1,4 @@
-//! ホスト可視バッファのマッピングと、読み戻し画像への変換(BGRA→RGBA並び替え含む)。
+//! ホスト可視バッファのマッピングと、読み戻し画像への変換(BGRA→RGBA並び替え・半精度→単精度の変換を含む)。
 //!
 //! 注意: 呼び出し元は、このバッファへのGPU書き込み(コピーコマンド)がフェンス待機で
 //! 完了済みであることを保証すること。ここではマッピング前の同期は行わない。
@@ -6,8 +6,10 @@
 use ash::vk;
 
 use super::buffer::読み戻しバッファ;
+use super::target::読み戻し対象;
 use crate::error::レンダラーエラー;
-use crate::readback_image::読み戻し画像;
+use crate::numeric::half_precision::半精度を単精度へ;
+use crate::readback_image::{HDR読み戻し画像, 読み戻し画像};
 
 pub(crate) fn 読み取る(
     device: &ash::Device,
@@ -15,7 +17,37 @@ pub(crate) fn 読み取る(
     寸法: vk::Extent2D,
     形式: vk::Format,
 ) -> Result<読み戻し画像, レンダラーエラー> {
-    let 必要バイト数: u64 = u64::from(寸法.width) * u64::from(寸法.height) * 4;
+    let 生データ = 生バイト列を読む(device, バッファ, 寸法, 読み戻し対象::提示画像)?;
+    let rgba = if bgra形式か(形式) {
+        並び替える(&生データ)
+    } else {
+        生データ
+    };
+    Ok(読み戻し画像::生成する(寸法.width, 寸法.height, rgba))
+}
+
+/// 半精度4成分のバイト列を単精度の成分列へ開く。半精度の意味づけ(非正規化数・無限大・非数)を知るのはGPU境界のこの層だけであり、
+/// 読み手がもう1つ復号を持つと丸めの食い違いが検収の差に化けるため、開いた形で外へ渡す。
+pub(crate) fn hdrを読み取る(
+    device: &ash::Device,
+    バッファ: &読み戻しバッファ,
+    寸法: vk::Extent2D,
+) -> Result<HDR読み戻し画像, レンダラーエラー> {
+    let 生データ = 生バイト列を読む(device, バッファ, 寸法, 読み戻し対象::圧縮前のHDR)?;
+    let 成分 = 生データ
+        .chunks_exact(2)
+        .map(|対| 半精度を単精度へ(u16::from_le_bytes([対[0], 対[1]])))
+        .collect();
+    Ok(HDR読み戻し画像::生成する(寸法.width, 寸法.height, 成分))
+}
+
+fn 生バイト列を読む(
+    device: &ash::Device,
+    バッファ: &読み戻しバッファ,
+    寸法: vk::Extent2D,
+    対象: 読み戻し対象,
+) -> Result<Vec<u8>, レンダラーエラー> {
+    let 必要バイト数 = u64::from(寸法.width) * u64::from(寸法.height) * 対象.画素あたりバイト数();
     let 要素数 = usize::try_from(必要バイト数).unwrap_or_else(|_| panic!("読み戻しバイト数がusizeに収まらない: {必要バイト数}"));
 
     // 安全性: バッファのメモリはHOST_VISIBLE|HOST_COHERENTで確保済みで、
@@ -26,13 +58,7 @@ pub(crate) fn 読み取る(
     let 生データ = unsafe { std::slice::from_raw_parts(ポインタ.cast::<u8>(), 要素数) }.to_vec();
     // 安全性: memoryはこの直前にmap_memory済みの同一ハンドル。
     unsafe { device.unmap_memory(バッファ.memory()) };
-
-    let rgba = if bgra形式か(形式) {
-        並び替える(&生データ)
-    } else {
-        生データ
-    };
-    Ok(読み戻し画像::生成する(寸法.width, 寸法.height, rgba))
+    Ok(生データ)
 }
 
 fn 並び替える(データ: &[u8]) -> Vec<u8> {

@@ -1,20 +1,20 @@
-//! `--dump-frame <ベース名>` の書き出し: 読み戻し画像を
-//! `<ベース名>.raw`(RGBA8連結)と`<ベース名>.size`(幅 高さ)へ保存する。
+//! `--dump-frame` `--dump-hdr-frame` の書き出しの入口。担うのは「このフレームがダンプ対象か」と
+//! 「どの画像を、どのベース名で書き出すか」の振り分けだけであり、外部形式への写しは対象ごとの工程が持つ。
 //! 親エージェントの検収工程「絵の目視監査」用(経緯: M6の影バグはvalidation・
 //! ピクセル判定の両方をすり抜け、絵を見ることでのみ検出できた)。
-//! 空の代表画素の照合は`sky_pixel_check`、遠方環境の消費の照合は`indirect_probe_check`が持つ。
+//! 提示画像の書き出しと照合は`presentation_dump`、圧縮前のHDRの書き出しは`hdr_dump`が持つ。
 
+mod hdr_dump;
 mod indirect_probe_check;
+mod presentation_dump;
 mod sky_pixel_check;
 
 use std::path::{Path, PathBuf};
 
-use blitz_render::読み戻し画像;
-
 use super::draw_dispatch::描画の到達;
 use super::frame::フレーム視点;
 use super::アプリ;
-use crate::cli::起動モード;
+use crate::cli::{フレームダンプ指定, 起動モード};
 use crate::error::起動エラー;
 use crate::smoke::スモークアクション;
 
@@ -35,22 +35,15 @@ impl アプリ {
         視点情報: &フレーム視点,
         アクション: スモークアクション,
     ) -> Result<描画の到達, 起動エラー> {
-        let Some(ダンプ先) = self.フレームダンプ先.as_deref().map(|基準| 書き出し先を選ぶ(基準, アクション)) else {
+        let Some(指定) = self.フレームダンプ先.clone() else {
             return Ok(描画の到達::届かなかった);
         };
-        let Some(レンダラー) = &mut self.レンダラー else {
-            return Ok(描画の到達::届かなかった);
-        };
-        match レンダラー.一フレーム描画して読み戻す(描画入力)? {
-            blitz_render::読み戻し結果::読み戻した(画像) => {
-                書き出す(&画像, &ダンプ先)?;
-                sky_pixel_check::照合する(self, &画像, 視点情報);
-                indirect_probe_check::照合する(self, &画像, 視点情報);
-                Ok(描画の到達::提示した)
+        let ダンプ先 = 書き出し先を選ぶ(指定.基準名(), アクション);
+        match 指定 {
+            フレームダンプ指定::提示画像を書き出す { .. } => {
+                presentation_dump::読み戻して書き出す(self, 描画入力, 視点情報, &ダンプ先)
             }
-            blitz_render::読み戻し結果::見送った(理由) => Err(起動エラー::フレームダンプ失敗(format!(
-                "ダンプ対象フレームで描画が見送られた: {理由:?}"
-            ))),
+            フレームダンプ指定::圧縮前のHDRを書き出す { .. } => hdr_dump::読み戻して書き出す(self, 描画入力, &ダンプ先),
         }
     }
 }
@@ -67,22 +60,10 @@ fn 書き出し先を選ぶ(基準: &Path, アクション: スモークアク�
     基準.with_file_name(format!("{名前}_before"))
 }
 
-fn 書き出す(画像: &読み戻し画像, ベース名: &Path) -> Result<(), 起動エラー> {
-    let 幅 = 画像.幅();
-    let 高さ = 画像.高さ();
-    let mut バイト列 = Vec::with_capacity(usize::try_from(u64::from(幅) * u64::from(高さ) * 4).unwrap_or(0));
-    for y in 0..高さ {
-        for x in 0..幅 {
-            let ピクセル = 画像.ピクセル(x, y).unwrap_or([0, 0, 0, 0]);
-            バイト列.extend_from_slice(&ピクセル);
-        }
-    }
-
-    let rawパス = ベース名.with_extension("raw");
+/// 寸法ファイルは対象によらず同じ形式で書く。検収側が画素の並びを読むためにまず要るのが幅と高さであり、
+/// 対象ごとに読み手を分けると同じ2数を2通りで読むことになる。
+fn 寸法を書く(幅: u32, 高さ: u32, ベース名: &Path) -> Result<(), 起動エラー> {
     let sizeパス = ベース名.with_extension("size");
-    std::fs::write(&rawパス, バイト列).map_err(|誤り| 起動エラー::フレームダンプ失敗(format!("{}: {誤り}", rawパス.display())))?;
     std::fs::write(&sizeパス, format!("{幅} {高さ}\n"))
-        .map_err(|誤り| 起動エラー::フレームダンプ失敗(format!("{}: {誤り}", sizeパス.display())))?;
-    println!("[dump-frame] 書き出した: {}", rawパス.display());
-    Ok(())
+        .map_err(|誤り| 起動エラー::フレームダンプ失敗(format!("{}: {誤り}", sizeパス.display())))
 }

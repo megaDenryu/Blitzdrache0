@@ -5,13 +5,18 @@ use ash::vk;
 
 use crate::vulkan::material_table::大域材質ID;
 use crate::vulkan::pipeline_ledger::パイプラインキー;
+use crate::vulkan::readback::読み戻し対象;
 use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 use crate::vulkan::scene_draw_constants::シーン描画定数;
 
 /// このフレームの描画後処理: 通常の提示前遷移のみか、読み戻し用のコピーを挟むか。
 pub(crate) enum 描画方式 {
     通常,
-    読み戻し { バッファ: vk::Buffer },
+    /// 読み戻しコピーを挟む。転送元にする画像は`対象`が決める。
+    読み戻し {
+        バッファ: vk::Buffer,
+        対象: 読み戻し対象,
+    },
 }
 /// 頂点/インデックスバッファと、この発行が束縛するジオメトリのセット(set1)。
 /// ビューとパスのセット(set0)・材質のセット(set2)・照明問い合わせのセット(set3)は発行ごとに変わらないため、

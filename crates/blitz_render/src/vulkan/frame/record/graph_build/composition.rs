@@ -2,10 +2,10 @@
 
 use ash::vk;
 
-use super::{base_images, post_passes, post_setup, stages};
+use super::{base_images, post_passes, post_setup, readback_stage, stages};
 use crate::clear_color::クリアカラー;
 use crate::frame_composition::{フレーム構成, フレーム段階};
-use crate::vulkan::frame::record::{readback_pass, ui_pass};
+use crate::vulkan::frame::record::ui_pass;
 use crate::vulkan::frame::{フレーム画像一式, 任意描画入力, 描画対象入力, 描画方式};
 use crate::vulkan::graph;
 
@@ -86,11 +86,7 @@ pub(super) fn 積む<'a>(
                     グラフ.パスを積む(ui_pass::作る(基本.スワップチェーン, 入力, 寸法));
                 }
             }
-            フレーム段階::読み戻し => {
-                if let 描画方式::読み戻し { バッファ } = 描画方式 {
-                    グラフ.パスを積む(readback_pass::作る(基本.スワップチェーン, *バッファ, 寸法));
-                }
-            }
+            フレーム段階::読み戻し => readback_stage::積む(グラフ, 描画方式, 基本.スワップチェーン, ポスト, 寸法),
         }
     }
     積み上げの実績 {

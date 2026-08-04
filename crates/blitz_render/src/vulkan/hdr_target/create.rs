@@ -49,7 +49,8 @@ fn 画像を作る(device: &ash::Device, 寸法: vk::Extent2D) -> Result<vk::Ima
         .array_layers(1)
         .samples(vk::SampleCountFlags::TYPE_1)
         .tiling(vk::ImageTiling::OPTIMAL)
-        .usage(vk::ImageUsageFlags::COLOR_ATTACHMENT | vk::ImageUsageFlags::SAMPLED)
+        // TRANSFER_SRCを常に付けるのは、圧縮前のHDRの読み戻し(検収用)がこの画像を転送元にするためである。用途の追加は画素の値を1つも変えない。
+        .usage(vk::ImageUsageFlags::COLOR_ATTACHMENT | vk::ImageUsageFlags::SAMPLED | vk::ImageUsageFlags::TRANSFER_SRC)
         .sharing_mode(vk::SharingMode::EXCLUSIVE)
         .initial_layout(vk::ImageLayout::UNDEFINED);
     // 安全性: deviceは生成済みで有効。

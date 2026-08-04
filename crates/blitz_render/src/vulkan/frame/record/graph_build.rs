@@ -6,6 +6,7 @@ mod base_images;
 mod composition;
 mod post_passes;
 mod post_setup;
+mod readback_stage;
 mod stages;
 
 use ash::vk;

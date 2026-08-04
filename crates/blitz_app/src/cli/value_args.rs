@@ -4,7 +4,7 @@
 use std::path::PathBuf;
 use std::slice::Iter;
 
-use super::{描画対象数, 起動モード, 起動引数エラー};
+use super::{フレームダンプ指定, 描画対象数, 起動モード, 起動引数エラー};
 
 /// 値の欠落は引数ごとに違う型付きエラーになるため、エラーの作り方を引数で受け取る。
 pub(in crate::cli) fn 次の値を読む<'引数>(
@@ -47,9 +47,13 @@ pub(super) fn object_count引数を処理する(引数: &mut Iter<String>) -> Re
     描画対象数::生成する(数).map_err(起動引数エラー::描画対象数不正)
 }
 
-pub(super) fn dump_frame引数を処理する(引数: &mut Iter<String>) -> Result<PathBuf, 起動引数エラー> {
-    let 値 = 次の値を読む(引数, "--dump-frame", 起動引数エラー::フレームダンプ不正)?;
-    Ok(PathBuf::from(値))
+/// `--dump-frame`と`--dump-hdr-frame`は値の読み方が同じであるため、どちらもこの1つが受ける。
+pub(super) fn dump_frame引数を処理する(
+    引数: &mut Iter<String>, 引数名: &str
+) -> Result<フレームダンプ指定, 起動引数エラー> {
+    let 基準名 = PathBuf::from(次の値を読む(引数, 引数名, 起動引数エラー::フレームダンプ不正)?);
+    フレームダンプ指定::引数名から選ぶ(引数名, 基準名)
+        .ok_or_else(|| 起動引数エラー::フレームダンプ不正(format!("{引数名}はフレームダンプの引数名ではない")))
 }
 
 /// `--streaming-ram-limit` `--streaming-vram-limit`のバイト数を読む。予算は1バイト以上でなければ生成できないため0を拒否する。

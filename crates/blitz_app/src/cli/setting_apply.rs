@@ -17,7 +17,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--scene" => 設定.シーン名 = value_args::scene引数を処理する(残り)?,
         "--asset-root" => 設定.アセットルート = value_args::asset_root引数を処理する(残り)?,
         "--object-count" => 設定.描画対象の並べ方.件数 = Some(value_args::object_count引数を処理する(残り)?),
-        "--dump-frame" => 設定.フレームダンプ先 = Some(value_args::dump_frame引数を処理する(残り)?),
+        "--dump-frame" | "--dump-hdr-frame" => 設定.フレームダンプ先 = Some(value_args::dump_frame引数を処理する(残り, 引数値)?),
         "--report-sky-pixel" => 設定.読み戻し検収.空の代表画素 = screen_pixel_args::report_sky_pixel引数を処理する(残り)?,
         "--indirect-probe" => 設定.読み戻し検収.遠方環境の検収条件 = Some(indirect_probe_args::引数を処理する(残り)?),
         "--exposure" => 設定.露出 = value_args::exposure引数を処理する(残り)?,
