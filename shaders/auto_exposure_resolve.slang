@@ -5,6 +5,7 @@
 
 import auto_exposure_derivation;
 import auto_exposure_state;
+import unfused_arithmetic;
 
 [[vk::binding(2, 0)]] StructuredBuffer<uint> histogram;
 [[vk::binding(3, 0)]] RWStructuredBuffer<ExposureState> exposureState;
@@ -26,11 +27,11 @@ struct ResolveSetting
 // この2つの上限があるかぎり、系列は目標を跨がずに単調に近づく。
 float adaptedCompensationStep(float previous, float target)
 {
-    float difference = target - previous;
+    float difference = unfusedSubtract(target, previous);
     float speed = difference < 0.0 ? resolveSetting.stepDownSpeed : resolveSetting.stepUpSpeed;
-    float movementLimit = speed * resolveSetting.elapsedSeconds;
-    float movement = min(abs(difference), movementLimit) * sign(difference);
-    return previous + movement;
+    float movementLimit = unfusedMultiply(speed, resolveSetting.elapsedSeconds);
+    float movement = unfusedMultiply(min(abs(difference), movementLimit), sign(difference));
+    return unfusedAdd(previous, movement);
 }
 
 [shader("compute")]

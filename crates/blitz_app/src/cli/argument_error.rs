@@ -44,6 +44,8 @@ pub(crate) enum 起動引数エラー {
     #[error("--indirect-probe引数が不正だった: {0}")]
     遠方環境の検収条件不正(String),
 
+    #[error("--auto-exposure-probe引数が不正だった: {0}")]
+    自動露出の探り色不正(String),
     #[error("--report-sky-pixel引数が不正だった: {0}")]
     空代表画素不正(String),
     #[error("--shadow-resolution引数が不正だった: {0}")]

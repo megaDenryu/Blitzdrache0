@@ -4,8 +4,8 @@ use std::slice::Iter;
 
 use super::streaming_settings::プレイヤー位置源;
 use super::{
-    indirect_probe_args, instance_lod_args, lod_crack_args, placement_args, screen_pixel_args, shadow_args, time_args, value_args, 布モード,
-    描画対象の走査順, 検証計画指定, 粒子表示モード, 起動設定,
+    auto_exposure_probe_args, indirect_probe_args, instance_lod_args, lod_crack_args, placement_args, screen_pixel_args, shadow_args, time_args,
+    value_args, 布モード, 描画対象の走査順, 検証計画指定, 粒子表示モード, 起動設定,
 };
 use crate::error::起動エラー;
 
@@ -19,6 +19,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--object-count" => 設定.描画対象の並べ方.件数 = Some(value_args::object_count引数を処理する(残り)?),
         "--dump-frame" | "--dump-hdr-frame" => value_args::フレームダンプ引数を反映する(&mut 設定.フレームダンプ先, 残り, 引数値)?,
         "--report-sky-pixel" => 設定.読み戻し検収.空の代表画素 = screen_pixel_args::report_sky_pixel引数を処理する(残り)?,
+        "--auto-exposure-probe" => 設定.読み戻し検収.自動露出の探り色 = Some(auto_exposure_probe_args::引数を処理する(残り)?),
         "--report-auto-exposure" => 設定.読み戻し検収.自動露出を報告するか = true,
         "--indirect-probe" => 設定.読み戻し検収.遠方環境の検収条件 = Some(indirect_probe_args::引数を処理する(残り)?),
         "--exposure" => 設定.露出 = value_args::exposure引数を処理する(残り)?,

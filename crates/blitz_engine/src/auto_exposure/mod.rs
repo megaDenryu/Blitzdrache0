@@ -41,6 +41,8 @@ mod histogram_scale_tests;
 #[cfg(test)]
 mod histogram_tests;
 #[cfg(test)]
+mod probe_pixel_tests;
+#[cfg(test)]
 mod quantity_tests;
 #[cfg(test)]
 mod value_object_tests;

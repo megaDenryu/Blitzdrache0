@@ -11,6 +11,7 @@ mod launch_request_tests;
 mod time_args_tests;
 
 mod argument_error;
+mod auto_exposure_probe_args;
 mod draw_object_layout;
 mod draw_object_order;
 mod indirect_probe_args;

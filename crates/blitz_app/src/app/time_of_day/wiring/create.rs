@@ -8,15 +8,24 @@ use blitz_render::{ライティング入力, レンダラーエラー};
 use super::super::atmosphere_update::大気更新判定;
 use super::super::clock::時間帯;
 use super::super::distant_environment_update::遠方環境更新判定;
+use super::super::exposure_elapsed::自動露出の経過秒源;
 use super::super::scene_policy;
 use super::super::sun_disk_override;
 use super::天空配線;
 use crate::atmosphere_medium::確定した大気散乱媒体へ写す;
-use crate::cli::時間帯起動設定;
+use crate::cli::{時間帯起動設定, 起動モード};
 
-pub(super) fn 生成する(
-    シーン名: &str, 設定: &時間帯起動設定, 基準: ライティング入力
-) -> Result<天空配線, レンダラーエラー> {
+/// 天空配線を組むのに要る材料。呼び出し元が起動設定から取り出して渡す。
+pub(in crate::app) struct 生成材料<'材料> {
+    pub(in crate::app) シーン名: &'材料 str,
+    pub(in crate::app) 時間帯: &'材料 時間帯起動設定,
+    /// 自動露出の経過秒を実時間で進めるか固定の刻みで進めるかを決める。
+    pub(in crate::app) 起動モード: 起動モード,
+    pub(in crate::app) 基準ライティング: ライティング入力,
+}
+
+pub(super) fn 生成する(材料: 生成材料<'_>) -> Result<天空配線, レンダラーエラー> {
+    let (シーン名, 設定, 基準) = (材料.シーン名, 材料.時間帯, 材料.基準ライティング);
     let 方針 = scene_policy::世界の空方針を決める(シーン名, 設定.空);
     let 方針 = sun_disk_override::太陽円盤を反映する(方針, 設定.太陽円盤);
     let (時間帯, 大気) = match 方針 {
@@ -33,6 +42,7 @@ pub(super) fn 生成する(
         大気更新判定: 大気更新判定::新規(),
         照明問い合わせ契約: scene_policy::世界の間接照明方針を決める(シーン名).照明問い合わせ契約へ写す(大気.is_some())?,
         露出方式: scene_policy::世界の露出方式を決める(シーン名, 設定.自動露出),
+        自動露出の経過秒源: 自動露出の経過秒源::起動モードから決める(材料.起動モード),
         遠方環境更新判定: 遠方環境更新判定::新規(),
         基準ライティング: 基準,
         ライティング: 基準,

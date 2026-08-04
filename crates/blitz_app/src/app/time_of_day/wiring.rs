@@ -13,13 +13,14 @@ use super::atmosphere_input;
 use super::atmosphere_update::大気更新判定;
 use super::clock::時間帯;
 use super::distant_environment_update::遠方環境更新判定;
-use crate::cli::時間帯起動設定;
+use super::exposure_elapsed::自動露出の経過秒源;
 pub(in crate::app) use bake_input::焼き上げ入力の組;
 use blitz_engine::auto_exposure::露出方式;
 use blitz_engine::sky::atmosphere::大気媒体方針;
 use blitz_render::atmosphere::大気散乱媒体;
 use blitz_render::indirect_lighting::照明問い合わせ契約;
 use blitz_render::{ライティング入力, レンダラーエラー, 空入力};
+pub(in crate::app) use create::生成材料;
 pub(in crate::app) struct 天空配線 {
     時間帯: Option<時間帯>,
     /// 空パスを積むかどうか。世界の方針と起動指定から生成時に決まり、以降変わらない。
@@ -35,6 +36,8 @@ pub(in crate::app) struct 天空配線 {
     遠方環境更新判定: 遠方環境更新判定,
     /// 世界が起動時に決めた露出の決め方。以降変わらない。
     露出方式: 露出方式,
+    /// 自動露出の時間適応へ渡す経過秒の供給元。実行の種類が起動時に枝を決め、以降は枝が変わらない。
+    自動露出の経過秒源: 自動露出の経過秒源,
     /// シーンが決めた基準のライティング。時刻が置き換えるのは方向光・環境光・影の落ち方だけであり、
     /// 点光源と影の正射影範囲はこの基準のまま残す。
     基準ライティング: ライティング入力,
@@ -43,10 +46,8 @@ pub(in crate::app) struct 天空配線 {
 }
 impl 天空配線 {
     /// 世界の間接照明方針が大気の媒体を要るのに世界が媒体を持たない場合は、ここで型付きの失敗になる。
-    pub(in crate::app) fn 生成する(
-        シーン名: &str, 設定: &時間帯起動設定, 基準: ライティング入力
-    ) -> Result<Self, レンダラーエラー> {
-        create::生成する(シーン名, 設定, 基準)
+    pub(in crate::app) fn 生成する(材料: create::生成材料<'_>) -> Result<Self, レンダラーエラー> {
+        create::生成する(材料)
     }
     pub(in crate::app) fn 空を描くか(&self) -> bool {
         self.空を描く

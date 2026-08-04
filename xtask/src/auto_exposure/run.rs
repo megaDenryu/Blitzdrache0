@@ -12,18 +12,38 @@ use std::process::Command;
 use super::parse::{自動露出の報告, 読み解く};
 use crate::visual_sample_world::{アセットルート, シーン名};
 
+/// 積和融合の有無でビンが変わる線形RGB。融合しない計算では相対輝度がちょうど添字74の境界0.18460327になり、
+/// 融合する計算では1つ下の単精度へ落ちて添字73のビンへ入る。3成分とも半精度で正確に表せる値であるため、
+/// 半精度のHDR中間画像を通ってもこの性質が保たれる(この組の探索と性質はCPU正本の単体試験が固定する)。
+const 探り色: &str = "0.062561035,0.19641113,0.42700195";
+/// 探り色が入るべきビンの添字。CPU正本の単体試験が同じ値を固定する。
+pub(super) const 探り色のビンの添字: &str = "74";
+
 /// 描くフレーム数。`terrain-visual`と同じ本数であり、空と間接照明の焼き上げが定常へ入る状態まで進める。
 const フレーム数: &str = "120";
 
-pub(super) fn 描画して報告を読む(出力先: &Path, 出力名: &str, 一日内秒: &str) -> Result<自動露出の報告, String> {
+/// 探り色を背景へ流すかどうか。流す条件では空も遠景の霞も外し、背景の画素をクリア色そのものに保つ。
+pub(super) enum 探り色の扱い {
+    流さない,
+    背景へ流す,
+}
+
+pub(super) fn 描画して報告を読む(
+    出力先: &Path, 出力名: &str, 一日内秒: &str, 探り: &探り色の扱い
+) -> Result<自動露出の報告, String> {
     println!("[xtask] auto-exposure描画: {出力名}");
     let ダンプ先 = 出力先.join(出力名);
-    let 出力 = Command::new("cargo")
+    let mut コマンド = Command::new("cargo");
+    コマンド
         .args(["run", "--release", "-p", "blitz_app", "--", "--scene", シーン名])
         .args(["--asset-root", アセットルート])
         .args(["--frames", フレーム数])
         .args(["--time-of-day", 一日内秒])
-        .arg("--report-auto-exposure")
+        .arg("--report-auto-exposure");
+    if let 探り色の扱い::背景へ流す = 探り {
+        コマンド.args(["--auto-exposure-probe", 探り色, "--no-sky", "--no-aerial-composite"]);
+    }
+    let 出力 = コマンド
         .arg("--dump-hdr-frame")
         .arg(&ダンプ先)
         .output()

@@ -1,16 +1,13 @@
 //! 材質テクスチャ表を参照する添字へ、最終SPIR-VでNonUniformの装飾が付いていることの検査。
 //! 原文の`NonUniformResourceIndex`は上流の最適化や書き換えで落ちうるため、埋め込み済みのSPIR-Vそのものを見る
 //! (参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「段階導入」の段4bの検収ゲート(i))。
-//! SPIR-Vの読み解きは`spirv_module`、参照の数え方は`nonuniform_scan`にある。どちらもこの検査だけが使う。
+//! SPIR-Vの読み解きは`spirv_module`(融合禁止の検査と共有する)、参照の数え方は`nonuniform_scan`にある。
 //!
 //! 照明問い合わせ契約ごとに画素段が分かれるため、走査は両方の画素段へ掛ける。表を読む工程は
 //! `shaders/scene_surface.slang`の1つを共有するが、装飾が最終SPIR-Vまで残るかはエントリごとに確かめる。
 
-mod nonuniform_scan;
-mod spirv_module;
-
-use super::scene_shaders::{画素段SPIRV, 遠方環境の画素段SPIRV};
-use nonuniform_scan::集計する;
+use super::nonuniform_scan::集計する;
+use crate::embedded_shaders::scene_shaders::{画素段SPIRV, 遠方環境の画素段SPIRV};
 
 /// 材質テクスチャ表の変数名。`shaders/scene_surface.slang`の宣言が正本である。
 const 材質テクスチャ表の変数名: &str = "materialTextures";

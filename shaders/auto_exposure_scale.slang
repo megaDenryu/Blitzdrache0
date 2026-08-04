@@ -3,6 +3,8 @@
 // 値の一致は`cargo xtask conform`の定数一致検査が見る。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
+import unfused_arithmetic;
+
 // ヒストグラムが覆う範囲の下端。
 static const float rangeLowerLogLuminance = -14.0;
 // 1つのビンが覆う対数輝度の幅。
@@ -19,19 +21,15 @@ static const uint nonFiniteSlotIndex = 129;
 static const uint histogramSlotCount = 130;
 
 // このビンが覆う区間の下端。
-// 注意: `precise`で積と和の丸めを分けるのは、CPU正本が`範囲の下端 + f32::from(添字) * 幅`を
-// 積和融合なしで評価するためである。融合すると代表値が1つ違う単精度になり、切り詰めた平均がCPUと食い違う。
+// 注意: 積と和の丸めを分けるのは、CPU正本が`範囲の下端 + f32::from(添字) * 幅`を積和融合なしで評価するためである。
+// 融合すると代表値が1つ違う単精度になり、切り詰めた平均がCPUと食い違う。
 float binLowerLogLuminance(uint index)
 {
-    precise float scaled = float(index) * binLogLuminanceWidth;
-    precise float lower = rangeLowerLogLuminance + scaled;
-    return lower;
+    return unfusedAdd(rangeLowerLogLuminance, unfusedMultiply(float(index), binLogLuminanceWidth));
 }
 
 // このビンを代表する対数輝度。区間の中央を採る。
 float binRepresentativeLogLuminance(uint index)
 {
-    precise float halfWidth = binLogLuminanceWidth * 0.5;
-    precise float representative = binLowerLogLuminance(index) + halfWidth;
-    return representative;
+    return unfusedAdd(binLowerLogLuminance(index), unfusedMultiply(binLogLuminanceWidth, 0.5));
 }

@@ -16,6 +16,7 @@ mod distant_environment_key_record;
 mod distant_environment_update;
 #[cfg(test)]
 mod distant_environment_update_tests;
+mod exposure_elapsed;
 #[cfg(test)]
 mod indirect_lighting_chain_tests;
 mod reproduction_condition;
@@ -29,4 +30,4 @@ mod wiring;
 pub(crate) use distant_environment_key_record::遠方環境の鍵の記録;
 pub(crate) use distant_environment_update::遠方環境更新判定;
 pub(crate) use reproduction_condition::空の再現条件;
-pub(in crate::app) use wiring::{天空配線, 焼き上げ入力の組};
+pub(in crate::app) use wiring::{天空配線, 焼き上げ入力の組, 生成材料};

@@ -4,6 +4,7 @@
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 import auto_exposure_scale;
+import unfused_arithmetic;
 
 // 相対輝度Y = 0.2126R + 0.7152G + 0.0722B(BT.709の係数)の3成分の重み。
 static const float redWeight = 0.2126;
@@ -12,16 +13,14 @@ static const float blueWeight = 0.0722;
 
 // 線形RGBから相対輝度を求める。
 // 注意: 3つの積を先に丸め、赤と緑の和を採ってから青を足す、この演算の順そのものがCPU正本との一致契約である。
-// `precise`で積和融合(乗算と加算を1命令にまとめ、積の丸めを省く最適化)を禁じるのは、融合すると境界のすぐ近くの
-// 画素が共有した境界の反対側のビンへ落ちるためである。線形の境界値を共有しても、輝度を作る演算が違えばビンは一致しない。
+// 積和融合を禁じるのは、融合すると境界のすぐ近くの画素が共有した境界の反対側のビンへ落ちるためである。
+// 線形の境界値を共有しても、輝度を作る演算が違えばビンは一致しない。禁止は`unfused_arithmetic`が生成物の水準で行う。
 float relativeLuminance(float3 color)
 {
-    precise float weightedRed = color.r * redWeight;
-    precise float weightedGreen = color.g * greenWeight;
-    precise float weightedBlue = color.b * blueWeight;
-    precise float redAndGreen = weightedRed + weightedGreen;
-    precise float total = redAndGreen + weightedBlue;
-    return total;
+    float weightedRed = unfusedMultiply(color.r, redWeight);
+    float weightedGreen = unfusedMultiply(color.g, greenWeight);
+    float weightedBlue = unfusedMultiply(color.b, blueWeight);
+    return unfusedAdd(unfusedAdd(weightedRed, weightedGreen), weightedBlue);
 }
 
 // 輝度が入るビンの添字を、線形の境界値との比較だけで求める。範囲の外は捨てずに端のビンへ張り付ける。

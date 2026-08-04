@@ -1,5 +1,5 @@
 // 世界の自動露出の状態。1本の永続バッファに1件だけ置き、前フレームが書いた値を次フレームが読む。
-// 注意: 対応するCPU側の並びは`crates/blitz_render/src/vulkan/auto_exposure/state_buffer.rs`にあり、
+// 注意: 対応するCPU側の並びは`crates/blitz_render/src/vulkan/auto_exposure/storage.rs`にあり、
 // 初期化(全要素0=未初期化)もそこが行う。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 

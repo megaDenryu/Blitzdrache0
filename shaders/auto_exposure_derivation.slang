@@ -5,6 +5,7 @@
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 import auto_exposure_scale;
+import unfused_arithmetic;
 
 // 片側で除外する件数を決める除数。上下それぞれ1パーセントを外すため、総数を100で割る。
 static const uint oneSideExclusionDivisor = 100;
@@ -34,7 +35,7 @@ float truncatedMeanLogLuminance(StructuredBuffer<uint> histogram, uint total, ui
     uint windowBegin = total / oneSideExclusionDivisor;
     uint windowEnd = total - windowBegin;
     uint scanned = 0;
-    precise float weightedSum = 0.0;
+    float weightedSum = 0.0;
     for (uint index = 0; index < binCount; ++index)
     {
         uint binBegin = scanned;
@@ -43,9 +44,8 @@ float truncatedMeanLogLuminance(StructuredBuffer<uint> histogram, uint total, ui
         uint upper = min(binEnd, windowEnd);
         uint lower = max(binBegin, windowBegin);
         uint overlap = upper > lower ? upper - lower : 0;
-        precise float term = float(overlap) * binRepresentativeLogLuminance(index);
-        precise float nextSum = weightedSum + term;
-        weightedSum = nextSum;
+        float term = unfusedMultiply(float(overlap), binRepresentativeLogLuminance(index));
+        weightedSum = unfusedAdd(weightedSum, term);
     }
     return weightedSum / float(windowCount);
 }
@@ -71,6 +71,6 @@ DerivationResult deriveTargetCompensationStep(
     }
     float mean = truncatedMeanLogLuminance(histogram, total, windowCount);
     result.resolved = true;
-    result.targetCompensationStep = clamp(middleGrayLogLuminance - mean, lowerLimit, upperLimit);
+    result.targetCompensationStep = clamp(unfusedSubtract(middleGrayLogLuminance, mean), lowerLimit, upperLimit);
     return result;
 }
