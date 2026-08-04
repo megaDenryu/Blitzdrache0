@@ -11,6 +11,7 @@ use std::collections::HashMap;
 
 use ash::vk;
 
+use super::composite_interval::{self, 合成区間の宣言};
 use super::pass_time_window::パス時間の窓;
 
 pub(super) fn 読み取る(
@@ -18,13 +19,16 @@ pub(super) fn 読み取る(
     pool: vk::QueryPool,
     マッピング: &[(&'static str, u32)],
     タイムスタンプ周期ns: f32,
+    合成区間一覧: &[合成区間の宣言],
     窓表: &mut HashMap<&'static str, パス時間の窓>,
 ) {
     let 読み値一覧: Vec<(&'static str, Option<f64>)> = マッピング
         .iter()
         .map(|&(名前, 開始添字)| (名前, 一組を読み取る(device, pool, 開始添字, タイムスタンプ周期ns)))
         .collect();
-    for (名前, 合計ミリ秒) in フレーム内で合算する(&読み値一覧) {
+    let フレーム内の合計 = フレーム内で合算する(&読み値一覧);
+    let 合成 = composite_interval::適用する(合成区間一覧, &フレーム内の合計);
+    for (名前, 合計ミリ秒) in フレーム内の合計.into_iter().chain(合成) {
         窓表.entry(名前).or_insert_with(パス時間の窓::新規).追加する(合計ミリ秒);
     }
 }

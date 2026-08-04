@@ -2,9 +2,12 @@
 //! 発行し、フレームのフェンス待ち後に前回分を読んで移動平均(60フレーム窓)を保つ。
 //! 参照: `_doc/設計/レンダーグラフ.md`「GPU計測」。
 
+mod composite_interval;
 mod pass_time_window;
 mod query_pool;
 mod readback;
+
+pub(crate) use composite_interval::合成区間の宣言;
 
 use std::collections::HashMap;
 
@@ -27,6 +30,8 @@ pub(crate) struct パス別GPU計測 {
     プール一覧: [vk::QueryPool; 進行中フレーム数],
     タイムスタンプ周期ns: f32,
     直近マッピング一覧: [Vec<(&'static str, u32)>; 進行中フレーム数],
+    /// 複数のパスの1フレームぶんの和を1つの区間として持つための宣言。中身はパス名を所有する層が決めて生成時に渡す。
+    合成区間一覧: Vec<合成区間の宣言>,
     窓表: HashMap<&'static str, パス時間の窓>,
 }
 
@@ -37,6 +42,7 @@ impl パス別GPU計測 {
         device: &ash::Device,
         タイムスタンプ対応か: bool,
         タイムスタンプ周期ns: f32,
+        合成区間一覧: Vec<合成区間の宣言>,
     ) -> Result<Option<Self>, レンダラーエラー> {
         if !タイムスタンプ対応か {
             return Ok(None);
@@ -46,6 +52,7 @@ impl パス別GPU計測 {
             プール一覧,
             タイムスタンプ周期ns,
             直近マッピング一覧: std::array::from_fn(|_| Vec::new()),
+            合成区間一覧,
             窓表: HashMap::new(),
         }))
     }
@@ -63,6 +70,7 @@ impl パス別GPU計測 {
             self.プール一覧[フレーム添字.配列添字()],
             &self.直近マッピング一覧[フレーム添字.配列添字()],
             self.タイムスタンプ周期ns,
+            &self.合成区間一覧,
             &mut self.窓表,
         );
     }

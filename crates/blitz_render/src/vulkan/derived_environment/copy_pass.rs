@@ -10,7 +10,7 @@ mod upload_pass;
 
 use ash::vk;
 
-pub(in crate::vulkan) use mip_zero_copy::最詳細段の複製を作る;
+pub(in crate::vulkan) use mip_zero_copy::{最詳細段の複製のパス名, 最詳細段の複製を作る};
 pub(in crate::vulkan) use readback_pass::{立方体の読み戻しを作る, 表の読み戻しを作る};
 pub(in crate::vulkan) use upload_pass::{全段の書き込みパスを作る, 書き込みパスを作る, 表の書き込みパスを作る};
 

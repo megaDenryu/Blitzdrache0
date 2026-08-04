@@ -11,6 +11,7 @@
 
 mod create;
 mod draw_input;
+mod generation_interval;
 mod inject;
 mod injection;
 mod injection_material;
@@ -26,6 +27,7 @@ use crate::vulkan::descriptor::lighting_set::distant_environment::遠方環境�
 use crate::vulkan::distant_environment::{遠方環境が借りる束縛先, 遠方環境一式};
 use crate::vulkan::tracked_device::GPUデバイス;
 
+pub(crate) use generation_interval::合成区間を宣言する;
 pub(crate) use injection::{焼かせる注入, 解析入力の注入};
 pub(crate) use inputs::{登録する画像, 間接照明の描画入力, 間接照明の焼く組};
 
