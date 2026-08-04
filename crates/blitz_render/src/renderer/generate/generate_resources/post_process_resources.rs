@@ -3,6 +3,7 @@
 
 use ash::vk;
 
+use crate::auto_exposure::自動露出の設定;
 use crate::error::レンダラーエラー;
 use crate::frame_composition::{フレーム構成, フレーム段階};
 use crate::renderer::presentation::提示;
@@ -10,6 +11,7 @@ use crate::shader_bundle::シェーダー束;
 use crate::vulkan::hdr_target::HDR形式;
 use crate::vulkan::post_process::ポスト処理一式;
 use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::transfer::転送実行環境;
 
 pub(super) enum 描画先構成 {
     HDR中間画像を経由する,
@@ -33,12 +35,15 @@ impl 描画先構成 {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub(super) fn 組み立てる(
         &self,
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         提示: &提示,
         シェーダー: &シェーダー束,
+        転送環境: &転送実行環境,
+        自動露出の設定: 自動露出の設定,
     ) -> Result<Option<ポスト処理一式>, レンダラーエラー> {
         match self {
             Self::HDR中間画像を経由する => Ok(Some(ポスト処理一式::生成する(
@@ -47,6 +52,8 @@ impl 描画先構成 {
                 提示.画像形式(),
                 提示.寸法(),
                 シェーダー,
+                転送環境,
+                自動露出の設定,
             )?)),
             Self::スワップチェーンへ直接描く => Ok(None),
         }

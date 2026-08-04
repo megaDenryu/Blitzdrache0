@@ -1,0 +1,61 @@
+//! GPU上のストレージバッファ1本と、そのために専用に確保したメモリの組。
+//! 担当するのは「確保・初期値の書き込み・破棄」だけであり、中身が何を表すかを1つも知らない。
+//!
+//! 組で持つのは、バッファとメモリを別々に持ち回ると片方だけを破棄する経路が作れてしまうためである。
+
+use ash::vk;
+
+use crate::error::レンダラーエラー;
+use crate::vulkan::device_buffer;
+use crate::vulkan::geometry::upload::ステージング経由でアップロードする;
+use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::transfer::転送実行環境;
+
+/// 記憶と転送の両方に使う用途。検収がGPUの中身を読み戻せるように転送元も開ける。
+fn 記憶と転送の用途() -> vk::BufferUsageFlags {
+    vk::BufferUsageFlags::STORAGE_BUFFER | vk::BufferUsageFlags::TRANSFER_DST | vk::BufferUsageFlags::TRANSFER_SRC
+}
+
+pub(crate) struct 記憶バッファ {
+    pub(crate) handle: vk::Buffer,
+    memory: vk::DeviceMemory,
+}
+
+impl 記憶バッファ {
+    /// 中身を書かずに確保する。呼び出し側が最初の書き込みを行うまで中身は未定義である。
+    pub(crate) fn 確保する(
+        device: &GPUデバイス,
+        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        バイト数: u64,
+    ) -> Result<Self, レンダラーエラー> {
+        let (handle, memory) = device_buffer::確保する(device, メモリプロパティ, バイト数, 記憶と転送の用途())?;
+        Ok(Self { handle, memory })
+    }
+
+    /// 与えたバイト列でデバイスローカルに作る。起動時に1度だけ書いて以降変えない列が使う。
+    pub(crate) fn 書き込んで確保する(
+        device: &GPUデバイス,
+        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        転送環境: &転送実行環境,
+        バイト列: &[u8],
+    ) -> Result<Self, レンダラーエラー> {
+        let (handle, memory) = ステージング経由でアップロードする(device, メモリプロパティ, 転送環境, バイト列, 記憶と転送の用途())?;
+        Ok(Self { handle, memory })
+    }
+
+    /// 全体を0で埋める。生成直後の1回だけ呼ぶ。
+    pub(crate) fn 零で埋める(
+        &self, device: &GPUデバイス, 転送環境: &転送実行環境, バイト数: u64
+    ) -> Result<(), レンダラーエラー> {
+        転送環境.一括実行する(device, |command_buffer| {
+            // 安全性: command_bufferは転送実行環境が記録用に開始済みで、埋める長さは確保長ぴったりである。
+            unsafe { device.cmd_fill_buffer(command_buffer, self.handle, 0, バイト数, 0) };
+        })
+    }
+
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
+        // 安全性: handleとmemoryはSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了していることを呼び出し元が保証する。
+        unsafe { device.destroy_buffer(self.handle, None) };
+        device.メモリを解放する(self.memory);
+    }
+}

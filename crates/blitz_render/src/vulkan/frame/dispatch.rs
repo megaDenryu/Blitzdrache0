@@ -7,6 +7,7 @@ use super::{
     空描画入力, 粒子描画入力, 距離区分別のシャドウ入力,
 };
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像の描画入力;
+use crate::vulkan::auto_exposure::自動露出描画入力;
 use crate::vulkan::indirect_lighting::間接照明の描画入力;
 use crate::vulkan::swapchain::スワップチェーン画像添字;
 
@@ -42,6 +43,8 @@ pub(crate) struct 任意描画入力<'a> {
     pub(crate) 粒子: Option<&'a 粒子描画入力>,
     pub(crate) 光のにじみ: Option<&'a 光のにじみ描画入力>,
     pub(crate) 明るさの圧縮: Option<&'a 明るさの圧縮描画入力>,
+    /// 露出方式がヒストグラム自動の世界だけ`Some`。時刻別固定の世界では集計も更新も1本も積まない。
+    pub(crate) 自動露出: Option<&'a 自動露出描画入力>,
     pub(crate) ui: Option<&'a UI描画入力>,
 }
 

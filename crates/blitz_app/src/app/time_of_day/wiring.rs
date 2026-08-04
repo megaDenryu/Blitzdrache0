@@ -2,11 +2,12 @@
 //! 露出倍率を返す」ことである。呼び出し元は、世界が空を持つかどうかも時刻の進み方も知らずに値だけを受け取る。
 //! 焼き直しの判定を伴う入力の組み立ては`bake_input`が持つ。
 //! 空を持たない世界は`時間帯`を持たず、ライティングも露出も世界が決めた値のままである。
-//! 生成局面は`create`が持つ。
+//! 生成局面は`create`が持つ。露出の合成と自動露出の設定の組み立ては`exposure`が持つ。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「露出の時間変化」
 
 mod bake_input;
 mod create;
+mod exposure;
 
 use super::atmosphere_input;
 use super::atmosphere_update::大気更新判定;
@@ -14,6 +15,7 @@ use super::clock::時間帯;
 use super::distant_environment_update::遠方環境更新判定;
 use crate::cli::時間帯起動設定;
 pub(in crate::app) use bake_input::焼き上げ入力の組;
+use blitz_engine::auto_exposure::露出方式;
 use blitz_engine::sky::atmosphere::大気媒体方針;
 use blitz_render::atmosphere::大気散乱媒体;
 use blitz_render::indirect_lighting::照明問い合わせ契約;
@@ -31,6 +33,8 @@ pub(in crate::app) struct 天空配線 {
     照明問い合わせ契約: 照明問い合わせ契約,
     /// 遠方環境を焼き直すかどうかの判定。前回焼いたときの鍵だけを持つ。
     遠方環境更新判定: 遠方環境更新判定,
+    /// 世界が起動時に決めた露出の決め方。以降変わらない。
+    露出方式: 露出方式,
     /// シーンが決めた基準のライティング。時刻が置き換えるのは方向光・環境光・影の落ち方だけであり、
     /// 点光源と影の正射影範囲はこの基準のまま残す。
     基準ライティング: ライティング入力,
@@ -81,13 +85,6 @@ impl 天空配線 {
     /// そのフレームで使っている天空状態。空の方針を持たない世界では無い。
     pub(in crate::app) fn 天空状態(&self) -> Option<&blitz_engine::sky::天空状態> {
         self.時間帯.as_ref().map(時間帯::状態)
-    }
-    /// 最終露出倍率。基準の露出倍率へ、天空状態の露出補正段を2の冪として掛ける。
-    pub(in crate::app) fn 露出倍率(&self, 基準露出: f32) -> f32 {
-        let Some(時間帯) = &self.時間帯 else {
-            return 基準露出;
-        };
-        基準露出 * 2.0_f32.powf(時間帯.状態().露出補正段().値())
     }
     fn ライティングを導き直す(&mut self) {
         let Some(時間帯) = &self.時間帯 else {

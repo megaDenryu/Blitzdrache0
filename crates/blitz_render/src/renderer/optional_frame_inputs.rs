@@ -60,6 +60,7 @@ impl 任意入力の材料 {
             粒子: self.粒子.as_ref(),
             光のにじみ: self.ポスト.as_ref().map(|入力| &入力.光のにじみ),
             明るさの圧縮: self.ポスト.as_ref().map(|入力| &入力.明るさの圧縮),
+            自動露出: self.ポスト.as_ref().and_then(|入力| 入力.自動露出.as_ref()),
             ui,
         }
     }

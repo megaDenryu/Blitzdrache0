@@ -1,5 +1,6 @@
 //! 提示側の資源の生成後に走る資源生成に必要な借用値をまとめる。
 
+use crate::auto_exposure::自動露出の設定;
 use crate::cascade::影の一辺解像度;
 use crate::cloth_material::布素材;
 use crate::frame_composition::フレーム構成;
@@ -21,6 +22,8 @@ pub(in crate::renderer::generate) struct 生成要求<'a> {
     pub(in crate::renderer::generate) 粒子素材: Option<&'a 粒子素材>,
     pub(in crate::renderer::generate) フレーム構成: フレーム構成,
     pub(in crate::renderer::generate) 照明問い合わせ契約: 照明問い合わせ契約,
+    /// 世界が宣言した露出の決め方と、導出に要る定数。ポスト処理を組む構成でだけ資源になる。
+    pub(in crate::renderer::generate) 自動露出の設定: 自動露出の設定,
     /// シャドウマップ資源の一辺。多段の構築が使う一辺と同じ値を呼び出し元が渡す責務を負う。
     pub(in crate::renderer::generate) 影の一辺: 影の一辺解像度,
     pub(in crate::renderer::generate) タイムスタンプ対応か: bool,

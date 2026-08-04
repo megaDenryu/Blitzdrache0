@@ -4,6 +4,7 @@
 //! pbr.slang等の変更を取りこぼす)。
 
 mod atmosphere_spirv_compile;
+mod auto_exposure_spirv_compile;
 mod bloom_spirv_compile;
 mod cloth_spirv_compile;
 mod derived_environment_spirv_compile;
@@ -77,6 +78,7 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     skinning_spirv_compile::コンピュートをコンパイルする(&slangc, &スキニングパス, &出力先ディレクトリ)?;
 
     atmosphere_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
+    auto_exposure_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
 
     cloth_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)
 }

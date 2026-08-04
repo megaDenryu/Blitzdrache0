@@ -6,12 +6,15 @@ use ash::vk;
 
 use super::fullscreen_draw;
 use crate::vulkan::frame::明るさの圧縮描画入力;
-use crate::vulkan::graph::{パス宣言, パス種別, 画像ハンドル, 画像用途};
+use crate::vulkan::graph::{バッファハンドル, バッファ用途, パス宣言, パス種別, 画像ハンドル, 画像用途};
 
+/// 露出状態のバッファは、そのフレームで導出と適応を積んだときだけ読みとして宣言する。宣言することが、
+/// 同じフレームの更新を画素段の読みが跨がないというメモリ依存そのものである。
 pub(super) fn 作る<'a>(
     hdr: 画像ハンドル,
     光のにじみa: 画像ハンドル,
     スワップチェーン: 画像ハンドル,
+    露出状態: Option<バッファハンドル>,
     入力: &'a 明るさの圧縮描画入力,
     寸法: vk::Extent2D,
 ) -> パス宣言<'a> {
@@ -19,7 +22,7 @@ pub(super) fn 作る<'a>(
         "明るさの圧縮",
         vec![(hdr, 画像用途::シェーダー読み画素段), (光のにじみa, 画像用途::シェーダー読み画素段)],
         vec![(スワップチェーン, 画像用途::カラー出力)],
-        Vec::new(),
+        露出状態.map_or_else(Vec::new, |ハンドル| vec![(ハンドル, バッファ用途::画素段シェーダー読み)]),
         Vec::new(),
         パス種別::グラフィックス {
             カラー: Some(スワップチェーン),
@@ -27,7 +30,10 @@ pub(super) fn 作る<'a>(
             クリア指定: fullscreen_draw::黒クリア(),
         },
         move |文脈| {
-            let 露出バイト列 = 入力.露出.to_le_bytes();
+            let mut 露出バイト列 = [0u8; 12];
+            露出バイト列[0..4].copy_from_slice(&入力.露出.to_le_bytes());
+            露出バイト列[4..8].copy_from_slice(&入力.芸術的バイアスの補正段.to_le_bytes());
+            露出バイト列[8..12].copy_from_slice(&入力.自動か.to_le_bytes());
             fullscreen_draw::コマンドを積む(
                 文脈.device(),
                 文脈.コマンドバッファ(),

@@ -86,6 +86,7 @@ pub(crate) fn 埋め込みシェーダー束を生成する(
         大気のベイク済み画像: 埋め込み大気のベイク済み画像シェーダーを生成する()?,
         遠方環境: crate::embedded_derived_environment_shaders::埋め込み遠方環境シェーダー一式を生成する()?,
         明るさの圧縮: シェーダー一式::生成する(明るさの圧縮頂点SPIRV.to_vec(), 明るさの圧縮画素段SPIRV.to_vec())?,
+        自動露出: crate::embedded_auto_exposure_shaders::埋め込み自動露出シェーダーを生成する()?,
         光のにじみ前処理: シェーダー一式::生成する(光のにじみ縮小側頂点SPIRV.to_vec(), 光のにじみ前処理SPIRV.to_vec())?,
         光のにじみ縮小: シェーダー一式::生成する(光のにじみ縮小側頂点SPIRV.to_vec(), 光のにじみ縮小SPIRV.to_vec())?,
         光のにじみ拡大: シェーダー一式::生成する(光のにじみ拡大側頂点SPIRV.to_vec(), 光のにじみ拡大SPIRV.to_vec())?,

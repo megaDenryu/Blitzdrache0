@@ -4,6 +4,7 @@
 //! 参照: CLAUDE.md「unsafe の規律」
 
 pub(crate) mod atmosphere_lut;
+pub(crate) mod auto_exposure;
 pub(crate) mod bloom;
 pub(crate) mod bloom_targets;
 pub(crate) mod cloth;

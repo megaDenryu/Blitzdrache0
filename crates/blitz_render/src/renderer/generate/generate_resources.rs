@@ -45,7 +45,7 @@ pub(super) fn 組み立てる(要求: 生成要求<'_>) -> Result<フレーム�
     let 合成区間一覧 = vec![vulkan::indirect_lighting::合成区間を宣言する()];
     let gpu計測 = vulkan::gpu_timing::パス別GPU計測::生成する(device, 要求.タイムスタンプ対応か, 要求.タイムスタンプ周期ns, 合成区間一覧)?;
     let ui一式 = vulkan::ui::UIリソース一式::生成する(device, 要求.提示.画像形式(), &要求.シェーダー.ui)?;
-    let ポスト処理 = 描画先.組み立てる(device, &メモリプロパティ, 要求.提示, 要求.シェーダー)?;
+    let ポスト処理 = 描画先.組み立てる(device, &メモリプロパティ, 要求.提示, 要求.シェーダー, &基礎.転送環境, 要求.自動露出の設定)?;
     let (スキニング, 布) = simulation_resources::組み立てる(
         device,
         &メモリプロパティ,

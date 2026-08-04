@@ -1,4 +1,5 @@
-//! 明るさの圧縮のディスクリプタセットへHDRビュー(binding0)と光のにじみビュー(binding1)を束縛する。
+//! 明るさの圧縮のディスクリプタセットへHDRビュー(binding0)と光のにじみビュー(binding1)と
+//! GPU上の露出状態(binding2)を束縛する。露出状態は作り直さないため、生成直後の1回だけ別の入口で書く。
 
 use ash::vk;
 
@@ -29,6 +30,21 @@ impl 明るさの圧縮一式 {
                 .image_info(&光のにじみ情報一覧),
         ];
         // 安全性: setは割り当て済みで、前提によりGPU未使用の時点でのみ呼ばれる。
+        unsafe { device.update_descriptor_sets(&write一覧, &[]) };
+    }
+
+    /// 生成直後に1度だけ呼ぶ。露出状態のバッファはスワップチェーン再構築で作り直さないため、再束縛の対象にしない。
+    pub(crate) fn 露出状態を束縛する(&self, device: &ash::Device, 露出状態バッファ: vk::Buffer) {
+        let 情報一覧 = [vk::DescriptorBufferInfo::default()
+            .buffer(露出状態バッファ)
+            .offset(0)
+            .range(vk::WHOLE_SIZE)];
+        let write一覧 = [vk::WriteDescriptorSet::default()
+            .dst_set(self.descriptor_set)
+            .dst_binding(2)
+            .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
+            .buffer_info(&情報一覧)];
+        // 安全性: setは割り当て済みで、生成直後のGPU未使用の時点でのみ呼ばれる。
         unsafe { device.update_descriptor_sets(&write一覧, &[]) };
     }
 }

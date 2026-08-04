@@ -7,6 +7,7 @@ mod generate_resources;
 #[cfg(test)]
 mod generate_tests;
 use super::レンダラー;
+use crate::auto_exposure::自動露出の設定;
 use crate::cascade::影の一辺解像度;
 use crate::cloth_material::布素材;
 use crate::error::{レンダラーエラー, 生成要求不一致エラー};
@@ -37,6 +38,7 @@ impl レンダラー {
         実表示計測要求: 実表示計測要求,
         影の一辺: 影の一辺解像度,
         照明問い合わせ契約: 照明問い合わせ契約,
+        自動露出の設定: 自動露出の設定,
     ) -> Result<Self, レンダラーエラー> {
         構成と素材を検査する(&フレーム構成, スキン.is_some(), 布.is_some(), 粒子.is_some())?;
         let コア = core_setup::組み立てる(表示ハンドル, ウィンドウハンドル, 寸法, 実表示計測要求)?;
@@ -50,6 +52,7 @@ impl レンダラー {
             粒子素材: 粒子.as_ref(),
             フレーム構成,
             照明問い合わせ契約,
+            自動露出の設定,
             影の一辺,
             タイムスタンプ対応か: コア.タイムスタンプ対応か,
             タイムスタンプ周期ns: コア.タイムスタンプ周期ns,

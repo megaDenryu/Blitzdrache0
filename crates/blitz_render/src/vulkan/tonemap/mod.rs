@@ -11,7 +11,8 @@ use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan::{fullscreen_pipeline, linear_sampler};
 
-pub(crate) const 露出プッシュ定数バイト数: u32 = 4;
+/// 明るさの圧縮が押し込む定数のバイト数。`shaders/tonemap.slang`の`ExposurePush`(単精度2つと32ビット1つ)と一致させる。
+pub(crate) const 露出プッシュ定数バイト数: u32 = 12;
 
 pub(crate) struct 明るさの圧縮一式 {
     pub(crate) pipeline: vk::Pipeline,

@@ -3,9 +3,16 @@
 // スワップチェーンはSRGB形式のため、sRGBへの符号化はハードウェアが行う。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
+import auto_exposure_state;
+
+// 露出の決め方。`automatic`が0の枝では`exposure`がそのまま最終倍率であり、時刻別固定の補正段はCPUが畳み込み済みである。
+// 1の枝では基準倍率へ「芸術的バイアス+GPU上の自動補正段」を2の冪として掛ける。自動補正段をCPUのプッシュ定数で
+// 渡さないのは、そうすると同じフレームの集計が次のフレームの絵にしか効かず、1フレーム遅れになるためである。
 struct ExposurePush
 {
     float exposure;
+    float artisticBiasStep;
+    uint automatic;
 };
 
 [[vk::push_constant]]
@@ -13,6 +20,18 @@ ExposurePush exposurePush;
 
 [[vk::binding(0, 0)]] Sampler2D hdrTexture;
 [[vk::binding(1, 0)]] Sampler2D bloomTexture;
+[[vk::binding(2, 0)]] StructuredBuffer<ExposureState> exposureState;
+
+// そのフレームの最終露出倍率。
+float finalExposure()
+{
+    if (exposurePush.automatic == 0)
+    {
+        return exposurePush.exposure;
+    }
+    float step = exposurePush.artisticBiasStep + automaticCompensationStep(exposureState[0]);
+    return exposurePush.exposure * exp2(step);
+}
 
 struct VertexOutput
 {
@@ -52,6 +71,6 @@ float4 fragmentMain(VertexOutput input) : SV_Target
 {
     // 光のにじみはリニアHDRのまま加算し、露出・トーンカーブは合成後の値に一度だけ掛ける(判断38の色の流れ)。
     float3 hdr = hdrTexture.Sample(input.uv).rgb + bloomTexture.Sample(input.uv).rgb * bloomStrength;
-    float3 exposed = hdr * exposurePush.exposure;
+    float3 exposed = hdr * finalExposure();
     return float4(acesFilm(exposed), 1.0);
 }

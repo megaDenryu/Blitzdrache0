@@ -30,6 +30,9 @@ pub(crate) fn 状態へ写像する(用途: バッファ用途) -> バッファ�
             vk::PipelineStageFlags2::COMPUTE_SHADER,
             vk::AccessFlags2::SHADER_STORAGE_READ | vk::AccessFlags2::SHADER_STORAGE_WRITE,
         ),
+        バッファ用途::画素段シェーダー読み => {
+            バッファ状態::生成する(vk::PipelineStageFlags2::FRAGMENT_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ)
+        }
         バッファ用途::頂点段シェーダー読み => {
             バッファ状態::生成する(vk::PipelineStageFlags2::VERTEX_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ)
         }

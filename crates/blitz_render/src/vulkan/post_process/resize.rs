@@ -4,7 +4,7 @@
 
 use ash::vk;
 
-use super::{create, ポスト処理一式};
+use super::{sized_images, ポスト処理一式};
 use crate::error::レンダラーエラー;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -19,7 +19,7 @@ impl ポスト処理一式 {
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         寸法: vk::Extent2D,
     ) -> Result<(), レンダラーエラー> {
-        let (新hdr, 新ピラミッド) = create::画像を生成する(device, メモリプロパティ, 寸法)?;
+        let (新hdr, 新ピラミッド) = sized_images::生成する(device, メモリプロパティ, 寸法)?;
         // ピラミッドの段数が解像度に依存するため光のにじみのディスクリプタは作り直し、明るさの圧縮は新しいビューへ束縛し直す。
         if let Err(誤り) = self.光のにじみ.ディスクリプタを作り直す(device, 新hdr.画像ビュー, &新ピラミッド) {
             新ピラミッド.破棄する(device);
@@ -27,6 +27,8 @@ impl ポスト処理一式 {
             return Err(誤り);
         }
         self.明るさの圧縮.ビューを再束縛する(device, 新hdr.画像ビュー, 新ピラミッド.最終ビュー());
+        // 自動露出の集計もHDR中間画像を読むため、同じ新しいビューへ束縛し直す。バッファは作り直さないためそのままである。
+        self.自動露出.資源を束縛する(device, 新hdr.画像ビュー);
         // 注意: 旧画像の破棄は、それを読んでいたディスクリプタとビューを新画像へ差し替えた後に行う。
         self.光のにじみピラミッド.破棄する(device);
         self.hdrターゲット.破棄する(device);

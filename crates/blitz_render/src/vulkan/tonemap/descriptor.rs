@@ -1,5 +1,8 @@
-//! 明るさの圧縮用ディスクリプタ: binding0=HDR画像・binding1=光のにじみ結果の
-//! combined image sampler 2個のlayout・pool・set。
+//! 明るさの圧縮用ディスクリプタ: binding0=HDR画像・binding1=光のにじみ結果のcombined image sampler 2個と、
+//! binding2=GPU上の露出状態のストレージバッファ1個のlayout・pool・set。
+//!
+//! 露出状態を露出方式に関わらず束縛するのは、世界ごとにセットの形が変わると束縛の一致条件が1つ増えるためである。
+//! 時刻別固定の枝は即時定数の分岐でこのバッファを1度も読まない。
 
 use ash::vk;
 
@@ -33,15 +36,24 @@ pub(super) fn 生成する(device: &ash::Device) -> Result<明るさの圧縮デ
             .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
             .descriptor_count(1)
             .stage_flags(vk::ShaderStageFlags::FRAGMENT),
+        vk::DescriptorSetLayoutBinding::default()
+            .binding(2)
+            .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
+            .descriptor_count(1)
+            .stage_flags(vk::ShaderStageFlags::FRAGMENT),
     ];
     let layout_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&binding一覧);
     // 安全性: deviceは生成済みで有効。
     let layout = unsafe { device.create_descriptor_set_layout(&layout_info, None)? };
 
-    let pool_size = vk::DescriptorPoolSize::default()
-        .ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-        .descriptor_count(2);
-    let pool_size一覧 = [pool_size];
+    let pool_size一覧 = [
+        vk::DescriptorPoolSize::default()
+            .ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
+            .descriptor_count(2),
+        vk::DescriptorPoolSize::default()
+            .ty(vk::DescriptorType::STORAGE_BUFFER)
+            .descriptor_count(1),
+    ];
     let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(1).pool_sizes(&pool_size一覧);
     // 安全性: deviceは生成済みで有効。失敗時はlayoutを片付ける。
     let pool = match unsafe { device.create_descriptor_pool(&pool_info, None) } {

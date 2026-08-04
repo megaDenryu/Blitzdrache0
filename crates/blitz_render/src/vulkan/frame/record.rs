@@ -4,6 +4,7 @@
 //! 組み立て自体は`graph_build`に委ねる。
 
 mod aerial_composite_pass;
+mod auto_exposure_passes;
 mod bloom_down_pass;
 mod bloom_up_pass;
 mod cloth_passes;

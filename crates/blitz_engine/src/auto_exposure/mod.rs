@@ -19,6 +19,7 @@ mod derivation;
 mod derivation_result;
 mod error;
 mod exposure_method;
+mod final_compensation;
 mod histogram;
 mod histogram_boundary;
 mod histogram_scale;
@@ -33,6 +34,8 @@ mod positive_luminance;
 mod adaptation_tests;
 #[cfg(test)]
 mod derivation_tests;
+#[cfg(test)]
+mod final_compensation_tests;
 #[cfg(test)]
 mod histogram_scale_tests;
 #[cfg(test)]
@@ -52,6 +55,7 @@ pub use derivation::目標補正段を導く;
 pub use derivation_result::露出の導出結果;
 pub use error::自動露出エラー;
 pub use exposure_method::露出方式;
+pub use final_compensation::最終補正段を合成する;
 pub use histogram::輝度ヒストグラム;
 pub use histogram_boundary::{ビンの添字を求める, 境界の線形輝度};
 pub use histogram_scale::{ビンの添字, ビン数, 全ビンの添字, 最後のビンの添字};

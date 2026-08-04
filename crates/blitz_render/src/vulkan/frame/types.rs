@@ -92,6 +92,9 @@ pub(crate) struct 明るさの圧縮描画入力 {
     pub(crate) pipeline: vk::Pipeline,
     pub(crate) layout: vk::PipelineLayout,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
-    /// 明るさの圧縮前にHDR輝度へ掛ける露出倍率(プッシュ定数で渡す)。
+    /// 明るさの圧縮前にHDR輝度へ掛ける露出倍率(プッシュ定数で渡す)。時刻別固定の枝ではこれが最終倍率である。
     pub(crate) 露出: f32,
+    /// ヒストグラム自動の枝だけが使う2つ。基準倍率へ足す芸術的バイアスの段と、その枝かどうか(1のときだけ画素段がGPU上の露出状態を読む)。
+    pub(crate) 芸術的バイアスの補正段: f32,
+    pub(crate) 自動か: u32,
 }

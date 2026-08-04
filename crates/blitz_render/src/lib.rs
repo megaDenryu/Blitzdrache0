@@ -2,6 +2,7 @@
 pub mod atmosphere;
 pub mod atmosphere_lut_input;
 pub mod atmosphere_lut_probe;
+pub mod auto_exposure;
 pub mod cascade;
 mod clear_color;
 mod cloth_material;

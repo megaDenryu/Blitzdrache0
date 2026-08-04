@@ -28,13 +28,14 @@ mod usage;
 pub(crate) use aspect::画像アスペクト;
 pub(crate) use builder::グラフ;
 pub(crate) use clear_spec::クリア指定;
+pub(crate) use context::記録文脈;
 pub(crate) use depth_attachment::深度アタッチメント;
 pub(crate) use executor::実行する;
 pub(crate) use handle::{バッファハンドル, 画像ハンドル};
 pub(crate) use initial_state::{
     前フレームhdr読み直後状態, 前フレームコンピュート読み直後状態, 前フレームシャドウマップ読み直後状態, 前フレーム深度書き込み直後状態,
-    前フレーム粒子読み直後状態, 前フレーム頂点入力読み直後状態, 取得直後の色画像状態, 焼いた画像を参照するだけのときの初期状態,
-    焼いた画像を焼き直すときの初期状態,
+    前フレーム画素段読み直後状態, 前フレーム粒子読み直後状態, 前フレーム頂点入力読み直後状態, 取得直後の色画像状態,
+    焼いた画像を参照するだけのときの初期状態, 焼いた画像を焼き直すときの初期状態,
 };
 pub(crate) use pass::{パス宣言, パス種別};
 pub(crate) use state::画像状態;
