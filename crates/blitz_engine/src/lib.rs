@@ -8,11 +8,10 @@
 
 mod animation;
 mod asset;
+pub mod auto_exposure;
 mod camera;
 mod chunk;
 mod frame_composition;
-#[cfg(test)]
-mod frame_composition_tests;
 mod instance_lod;
 #[cfg(test)]
 mod instance_lod_tests;

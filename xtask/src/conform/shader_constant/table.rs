@@ -3,6 +3,7 @@
 //! 領域で分けるのは、定数を足すときに触るのがその領域の台帳1つになるようにするためである。
 
 mod atmosphere;
+mod auto_exposure;
 mod distant_environment;
 mod scene;
 
@@ -15,4 +16,9 @@ pub(super) struct 定数の組 {
 }
 
 /// 領域ごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域一覧: [&[定数の組]; 3] = [&atmosphere::定数一覧, &distant_environment::定数一覧, &scene::定数一覧];
+pub(super) const 領域一覧: [&[定数の組]; 4] = [
+    &atmosphere::定数一覧,
+    &auto_exposure::定数一覧,
+    &distant_environment::定数一覧,
+    &scene::定数一覧,
+];
