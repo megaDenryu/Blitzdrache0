@@ -62,8 +62,8 @@ pub(crate) struct 起動設定 {
     pub(crate) 開発ui初期有効: bool,
     /// シーンの画素段が本番の色の代わりに出す診断。`--debug-cascade-bands`が距離区分の可視化を、`--debug-shadow-loss`が影可視度と受光距離帯の計器を選ぶ。既定は出さない。
     pub(crate) 画素診断: blitz_render::cascade::画素診断,
-    /// `--dump-frame <ベース名>`と`--dump-hdr-frame <ベース名>`指定で、最終フレーム(--frames必須)の読み戻しを書き出す。書き出す画像と外部形式は指定が持つ。既定はNone。
-    pub(crate) フレームダンプ先: Option<フレームダンプ指定>,
+    /// `--dump-frame <ベース名>`と`--dump-hdr-frame <ベース名>`指定で、最終フレーム(--frames必須)の読み戻しを書き出す。書き出す画像と外部形式と、同時指定を拒むことは指定の型が持つ。既定は指定なし。
+    pub(crate) フレームダンプ先: フレームダンプ指定,
     pub(crate) 読み戻し検収: 読み戻し検収起動設定,
     /// 空と時刻の起動指定。空を描くかどうかは既定では世界の方針が決め、この指定はその上書きである。
     pub(crate) 時間帯: 時間帯起動設定,

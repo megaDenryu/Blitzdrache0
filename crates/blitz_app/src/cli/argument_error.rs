@@ -14,7 +14,8 @@ pub(crate) enum 起動引数エラー {
     アセットルート不正(String),
     #[error("--object-count引数が不正だった: {0}")]
     描画対象数不正(String),
-    #[error("--dump-frame引数が不正だった: {0}")]
+    /// 引数名は`--dump-frame`と`--dump-hdr-frame`の2つがあるため、どちらだったかは中身が名指しする。
+    #[error("フレームダンプの引数が不正だった: {0}")]
     フレームダンプ不正(String),
     #[error("--exposure引数が不正だった: {0}")]
     露出不正(String),

@@ -4,6 +4,8 @@
 #[cfg(test)]
 mod cli_tests;
 #[cfg(test)]
+mod frame_dump_args_tests;
+#[cfg(test)]
 mod launch_request_tests;
 #[cfg(test)]
 mod time_args_tests;

@@ -48,12 +48,14 @@ pub(super) fn object_count引数を処理する(引数: &mut Iter<String>) -> Re
 }
 
 /// `--dump-frame`と`--dump-hdr-frame`は値の読み方が同じであるため、どちらもこの1つが受ける。
-pub(super) fn dump_frame引数を処理する(
-    引数: &mut Iter<String>, 引数名: &str
-) -> Result<フレームダンプ指定, 起動引数エラー> {
+/// どの画像を選ぶかと、既に選ばれていたときに失敗させるかは指定の型が決める。
+pub(super) fn フレームダンプ引数を反映する(
+    指定: &mut フレームダンプ指定,
+    引数: &mut Iter<String>,
+    引数名: &str,
+) -> Result<(), 起動引数エラー> {
     let 基準名 = PathBuf::from(次の値を読む(引数, 引数名, 起動引数エラー::フレームダンプ不正)?);
-    フレームダンプ指定::引数名から選ぶ(引数名, 基準名)
-        .ok_or_else(|| 起動引数エラー::フレームダンプ不正(format!("{引数名}はフレームダンプの引数名ではない")))
+    指定.引数から設定する(引数名, 基準名)
 }
 
 /// `--streaming-ram-limit` `--streaming-vram-limit`のバイト数を読む。予算は1バイト以上でなければ生成できないため0を拒否する。
