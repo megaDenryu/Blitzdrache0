@@ -16,6 +16,7 @@
 mod judgment;
 mod parse;
 mod run;
+mod summary;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -49,5 +50,5 @@ fn 検収する() -> Result<String, String> {
     judgment::二実行の一致を判定する(&一回目, &二回目)?;
     judgment::一致を判定する(&探り)?;
     judgment::探り色を判定する(&探り)?;
-    Ok(judgment::要約を組む(&一回目, &探り, &出力先))
+    Ok(summary::要約を組む(&一回目, &探り, &出力先))
 }

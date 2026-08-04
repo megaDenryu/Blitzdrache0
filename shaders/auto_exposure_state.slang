@@ -13,6 +13,9 @@ struct ExposureState
     uint unresolvedFrameCount;
     // 直近に導出できたフレームの目標補正段(EV)。時間適応を通す前の値であり、CPU正本との一致を検収が読む。
     float lastTargetCompensationStep;
+    // 直近に導出できたフレームの添字の重み付き総和(32ビット2語)。整数であるためCPU正本とバイト一致する。
+    uint weightedIndexSumLow;
+    uint weightedIndexSumHigh;
 };
 
 // 描くフレームが使う自動補正段。未初期化のあいだは0であり、時刻別固定へは戻さない。

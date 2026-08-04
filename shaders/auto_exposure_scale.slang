@@ -13,6 +13,8 @@ static const float binLogLuminanceWidth = 0.15625;
 static const uint binCount = 128;
 // 最後のビンの添字。
 static const uint lastBinIndex = 127;
+// 添字0のビンが代表する対数輝度。範囲の下端にビンの幅の半分を足した値である。
+static const float firstBinRepresentativeLogLuminance = -13.921875;
 
 // ビンへ入らない画素を数える2つの枠。ヒストグラムのバッファはビンの後ろにこの2つを並べる。
 static const uint nonPositiveSlotIndex = 128;
@@ -32,4 +34,11 @@ float binLowerLogLuminance(uint index)
 float binRepresentativeLogLuminance(uint index)
 {
     return unfusedAdd(binLowerLogLuminance(index), unfusedMultiply(binLogLuminanceWidth, 0.5));
+}
+
+// 添字の平均が代表する対数輝度。ビンの代表値が添字の1次式であるため、代表値の平均は平均の添字の代表値に等しい。
+// 128項の浮動小数の総和を採らずに済むのはこの性質による。
+float indexMeanLogLuminance(float indexMean)
+{
+    return unfusedAdd(unfusedMultiply(indexMean, binLogLuminanceWidth), firstBinRepresentativeLogLuminance);
 }

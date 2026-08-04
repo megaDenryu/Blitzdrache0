@@ -4,7 +4,7 @@
 // 注意: `precise`修飾では足りない。slangc 2025.11時点の生成SPIR-Vには`precise`が1つも装飾を残さず
 // (spirv-disで確認済み)、融合しない契約をドライバーへ渡せない。ここはSPIR-Vのインライン記述で
 // OpFMul・OpFAdd・OpFSubへNoContractionを直に付ける。生成物に装飾が実在することは
-// `crates/blitz_app/src/embedded_shaders/no_contraction_tests.rs`が機械的に見る。
+// `crates/blitz_app/src/embedded_shaders/spirv_checks/no_contraction.rs`が機械的に見る。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 // 融合しない乗算。

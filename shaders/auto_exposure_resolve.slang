@@ -53,6 +53,8 @@ void computeMain()
         return;
     }
     state.lastTargetCompensationStep = derived.targetCompensationStep;
+    state.weightedIndexSumLow = derived.weightedIndexSum.low;
+    state.weightedIndexSumHigh = derived.weightedIndexSum.high;
     if (state.initialized == 0)
     {
         // 最初の有効なヒストグラムからは補間せずに目標をそのまま初期値にする(起動直後の白飛び・黒潰れを避ける)。
