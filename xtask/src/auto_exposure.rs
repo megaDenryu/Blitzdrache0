@@ -16,6 +16,7 @@
 mod judgment;
 mod parse;
 mod run;
+mod step_tolerance;
 mod summary;
 
 use std::path::PathBuf;

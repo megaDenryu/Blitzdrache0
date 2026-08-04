@@ -47,7 +47,9 @@ WeightedIndexSum addTerm(WeightedIndexSum sum, uint overlap, uint index)
     return sum;
 }
 
-// 平均を作るための実数。上位の語の重みは2の冪であるため積は厳密であり、丸めは最後の加算の1回だけになる。
+// 平均を作るための実数。上位の語への2の32乗の乗算は厳密であり、上位の語の変換・下位の語の変換・最後の加算が
+// CPU正本と同じ順に起こる。
+// 注意: 変換そのものが丸めを持つ。2の24乗を超える語は整数のまま単精度へ収まらないため、語の変換の時点で丸められる。
 float weightedIndexSumAsFloat(WeightedIndexSum sum)
 {
     return unfusedAdd(unfusedMultiply(float(sum.high), highWordScale), float(sum.low));
