@@ -1,8 +1,9 @@
 //! レンダラーが外部へ公開する読み取り専用アクセサ。すべて`&self`でレンダラーの状態を変えないため、
-//! 描画ループの途中でも終了後でも呼べる(検証カウンタだけは破棄後に読む規律がある)。
+//! 描画ループの途中でも終了後でも呼べる(検証カウンタだけは破棄後に読む規律がある)。GPUの中身そのものを問い合わせる自動露出の観測だけは`auto_exposure`にあり、そこだけがGPUの待機と転送を伴う。
 //!
 //! 参照: 計測の有効化は`measurement_control.rs`、寸法変更の通知は`reconstruct.rs`にある。
 
+mod auto_exposure;
 use super::cpu_timing::{CPU区間時間, CPU区間計測};
 use super::draw_issue_breakdown::描画発行内訳;
 use super::pass_tally::{大気のベイク済み画像生成パス数の記録, 間接照明生成パス数の記録};

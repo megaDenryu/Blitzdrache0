@@ -11,6 +11,8 @@ struct ExposureState
     float compensationStep;
     // ビンへ入った画素が1つも無く導出できなかったフレームの累計。状態を変えなかった回数がそのまま増える。
     uint unresolvedFrameCount;
+    // 直近に導出できたフレームの目標補正段(EV)。時間適応を通す前の値であり、CPU正本との一致を検収が読む。
+    float lastTargetCompensationStep;
 };
 
 // 描くフレームが使う自動補正段。未初期化のあいだは0であり、時刻別固定へは戻さない。

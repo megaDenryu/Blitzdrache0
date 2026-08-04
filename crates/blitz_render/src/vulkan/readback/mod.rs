@@ -5,7 +5,9 @@
 mod buffer;
 mod read;
 mod target;
+mod words;
 
 pub(crate) use buffer::読み戻しバッファ;
 pub(crate) use read::{hdrを読み取る, 読み取る};
 pub(crate) use target::読み戻し対象;
+pub(crate) use words::語列を読み戻す;

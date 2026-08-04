@@ -11,6 +11,7 @@ mod bind;
 mod descriptor;
 mod input;
 mod pipelines;
+mod readback;
 mod storage;
 mod storage_buffer;
 

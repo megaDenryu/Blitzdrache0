@@ -66,7 +66,7 @@ impl 読み戻しバッファ {
         self.容量バイト数
     }
 
-    pub(super) fn memory(&self) -> vk::DeviceMemory {
+    pub(crate) fn memory(&self) -> vk::DeviceMemory {
         self.memory
     }
 

@@ -51,6 +51,7 @@ void computeMain()
         exposureState[0] = state;
         return;
     }
+    state.lastTargetCompensationStep = derived.targetCompensationStep;
     if (state.initialized == 0)
     {
         // 最初の有効なヒストグラムからは補間せずに目標をそのまま初期値にする(起動直後の白飛び・黒潰れを避ける)。

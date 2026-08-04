@@ -4,6 +4,7 @@
 use std::process::ExitCode;
 
 mod atmosphere_lut;
+mod auto_exposure;
 mod bench;
 mod check_glb;
 mod cloth_empty;

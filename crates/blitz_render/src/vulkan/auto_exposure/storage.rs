@@ -19,8 +19,8 @@ pub(crate) const ヒストグラムの要素数: usize = ビン数 + 2;
 pub(crate) fn ヒストグラムのバイト数() -> u64 {
     u64::try_from(ヒストグラムの要素数 * 4).unwrap_or_else(|_| panic!("ヒストグラムのバイト数がu64に収まらない"))
 }
-/// 露出状態1件のバイト数。`shaders/auto_exposure_state.slang`の`ExposureState`(4バイトの要素3つ)と一致させる。
-pub(crate) const 露出状態のバイト数: u64 = 12;
+/// 露出状態1件のバイト数。`shaders/auto_exposure_state.slang`の`ExposureState`(4バイトの要素4つ)と一致させる。
+pub(crate) const 露出状態のバイト数: u64 = 16;
 
 pub(crate) struct 自動露出のバッファ一式 {
     pub(crate) 境界: 記憶バッファ,
