@@ -6,17 +6,17 @@
 
 /// 1条件ぶんの実測。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) struct 実測 {
-    pub(super) 数えたフレーム数: u64,
-    pub(super) 焼き直したフレーム数: u64,
-    pub(super) 総数: u64,
+pub(crate) struct 実測 {
+    pub(crate) 数えたフレーム数: u64,
+    pub(crate) 焼き直したフレーム数: u64,
+    pub(crate) 総数: u64,
 }
 
 /// 本番の焼き上げの計画が答えた、1フレームぶんに積む本数。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) struct 見込み {
-    pub(super) 初回の合計: u64,
-    pub(super) 焼き直しの合計: u64,
+pub(crate) struct 見込み {
+    pub(crate) 初回の合計: u64,
+    pub(crate) 焼き直しの合計: u64,
 }
 
 /// 実測の行の先頭。末尾の空白まで含めるのは、見込みの行が同じ語で始まるためである。
@@ -25,7 +25,7 @@ const 見込みの先頭: &str = "間接照明生成パス数の見込み ";
 /// 見込みの行が遠方環境の契約であることを示す語。定数近似の実行はこの語を持たない。
 const 遠方環境の契約: &str = "契約=遠方環境";
 
-pub(super) fn 実測を読む(標準出力: &str, 条件名: &str) -> Result<実測, String> {
+pub(crate) fn 実測を読む(標準出力: &str, 条件名: &str) -> Result<実測, String> {
     let 行 = 行を探す(標準出力, 実測の先頭, 条件名)?;
     Ok(実測 {
         数えたフレーム数: 数を読む(行, "数えたフレーム数=", 条件名)?,
@@ -36,7 +36,7 @@ pub(super) fn 実測を読む(標準出力: &str, 条件名: &str) -> Result<実
 
 /// 見込みの行を読む。契約が定数近似だと1フレームぶんの本数が無く、地形世界が遠方環境へ切り替わっていないことを
 /// 意味するため、そこで失敗にする。
-pub(super) fn 見込みを読む(標準出力: &str, 条件名: &str) -> Result<見込み, String> {
+pub(crate) fn 見込みを読む(標準出力: &str, 条件名: &str) -> Result<見込み, String> {
     let 行 = 行を探す(標準出力, 見込みの先頭, 条件名)?;
     if !行.contains(遠方環境の契約) {
         return Err(format!("{条件名}の見込みの行が遠方環境の契約でない: {行}"));
