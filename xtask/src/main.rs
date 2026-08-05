@@ -32,6 +32,7 @@ mod instance_cull;
 mod instance_draw;
 mod instance_lod;
 mod instance_stream;
+mod local_visibility;
 mod lod_crack;
 mod m10_bench;
 mod m11_soak;
