@@ -4,8 +4,8 @@ use std::slice::Iter;
 
 use super::streaming_settings::プレイヤー位置源;
 use super::{
-    auto_exposure_probe_args, indirect_probe_args, instance_lod_args, lod_crack_args, placement_args, screen_pixel_args, shadow_args, time_args,
-    value_args, 布モード, 描画対象の走査順, 検証計画指定, 粒子表示モード, 起動設定,
+    auto_exposure_probe_args, ibl_step_scan_args, indirect_probe_args, instance_lod_args, lod_crack_args, placement_args, screen_pixel_args,
+    shadow_args, time_args, value_args, 布モード, 描画対象の走査順, 検証計画指定, 粒子表示モード, 起動設定,
 };
 use crate::error::起動エラー;
 
@@ -13,6 +13,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
     match 引数値 {
         "--frames" => 設定.モード = value_args::frames引数を処理する(残り)?,
         "--benchmark-frames" => 設定.モード = value_args::benchmark_frames引数を処理する(残り)?,
+        "--ibl-step-scan" => 設定.モード = ibl_step_scan_args::引数を処理する(残り)?,
         "--shader-source" => 設定.シェーダー監視パス = value_args::shader_source引数を処理する(残り)?,
         "--scene" => 設定.シーン名 = value_args::scene引数を処理する(残り)?,
         "--asset-root" => 設定.アセットルート = value_args::asset_root引数を処理する(残り)?,

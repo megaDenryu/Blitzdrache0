@@ -56,4 +56,6 @@ pub(crate) enum 起動引数エラー {
     最大影距離不正(String),
     #[error("--shadow-caster-range引数が不正だった: {0}")]
     影の視距離不正(String),
+    #[error("--ibl-step-scan引数が不正だった: {0}")]
+    段差走査範囲不正(String),
 }

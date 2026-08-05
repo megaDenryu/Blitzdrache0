@@ -6,6 +6,8 @@ mod cli_tests;
 #[cfg(test)]
 mod frame_dump_args_tests;
 #[cfg(test)]
+mod ibl_step_scan_args_tests;
+#[cfg(test)]
 mod launch_request_tests;
 #[cfg(test)]
 mod time_args_tests;
@@ -14,6 +16,7 @@ mod argument_error;
 mod auto_exposure_probe_args;
 mod draw_object_layout;
 mod draw_object_order;
+mod ibl_step_scan_args;
 mod indirect_probe_args;
 mod instance_lod_args;
 mod launch_request;
@@ -59,6 +62,8 @@ const 大気のベイク済み画像報告引数: &str = "--report-atmosphere-lu
 const 遠方環境報告引数: &str = "--report-distant-environment";
 /// 描画しない報告だけを求める引数。ウィンドウを作らずウィンドウなし実行のGPUだけを使う。
 const 派生表現報告引数: &str = "--report-derived-environment";
+/// 描画しない報告だけを求める引数。GPUを1度も使わず、一日で跨ぐ太陽天頂区間の境界を列挙する。
+const 太陽天頂区間の境界報告引数: &str = "--report-sun-zenith-boundaries";
 
 /// CLI引数から起動要求を解析する。粒子系の検証対象は`--particles`または`--surface-flow`で選ぶ。
 /// `--shader-source`は監視・再コンパイル対象のエントリファイルを指す。`import`先の他ファイルは常にエントリと同じディレクトリから解決するため個別指定は不要。
@@ -74,6 +79,9 @@ pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動要
     }
     if 引数一覧.iter().any(|引数値| 引数値 == 派生表現報告引数) {
         return Ok(起動要求::派生表現報告);
+    }
+    if 引数一覧.iter().any(|引数値| 引数値 == 太陽天頂区間の境界報告引数) {
+        return Ok(起動要求::太陽天頂区間の境界報告);
     }
     Ok(起動要求::描画実行(Box::new(起動設定を解析する(引数一覧)?)))
 }

@@ -24,7 +24,7 @@ mod scene_read_count;
 mod section_timing;
 mod sph_setup;
 mod streaming;
-mod time_of_day;
+pub(crate) mod time_of_day;
 mod visibility;
 mod window_setup;
 use std::path::PathBuf;

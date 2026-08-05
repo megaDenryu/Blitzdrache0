@@ -1,19 +1,20 @@
 //! 時間帯の配線本体。担当するのは「世界の空方針と間接照明方針とゲーム時計を持ち、そのフレームのライティング入力・空入力・
 //! 露出倍率を返す」ことである。呼び出し元は、世界が空を持つかどうかも時刻の進み方も知らずに値だけを受け取る。
-//! 焼き直しの判定を伴う入力の組み立てと、2つの更新の記録の読み取りは`bake_input`が持つ。
 //! 空を持たない世界は`時間帯`を持たず、ライティングも露出も世界が決めた値のままである。
-//! 生成局面は`create`が持つ。露出の合成と自動露出の設定の組み立ては`exposure`が持つ。
+//! 焼き直しの判定を伴う入力の組み立てと2つの更新の記録の読み取りは`bake_input`、生成局面は`create`、露出の合成と自動露出の設定の組み立ては`exposure`、段差の走査が撮影ごとに据える条件は`scan_override`が持つ。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「露出の時間変化」
 
 mod bake_input;
 mod create;
 mod exposure;
+mod scan_override;
 
 use super::atmosphere_input;
 use super::atmosphere_update::大気更新判定;
 use super::clock::時間帯;
 use super::distant_environment_update::遠方環境更新判定;
 use super::exposure_elapsed::自動露出の経過秒源;
+use super::step_scan::段差走査;
 use super::thinning::遠方環境の間引き;
 pub(in crate::app) use bake_input::焼き上げ入力の組;
 use blitz_engine::auto_exposure::露出方式;
@@ -37,6 +38,8 @@ pub(in crate::app) struct 天空配線 {
     遠方環境更新判定: 遠方環境更新判定,
     /// 遠方環境の更新を間引く刻みと、生成パスがGPUへ届いたフレームの区間の記録。
     間引き: 遠方環境の間引き,
+    /// `--ibl-step-scan`指定時だけ`Some`。撮影の列を持ち、フレーム番号から今の撮影を答える。
+    段差走査: Option<段差走査>,
     /// 世界が起動時に決めた露出の決め方。以降変わらない。
     露出方式: 露出方式,
     /// 自動露出の時間適応へ渡す経過秒の供給元。実行の種類が起動時に枝を決め、以降は枝が変わらない。
