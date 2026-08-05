@@ -11,6 +11,8 @@ mod launch_request_tests;
 #[cfg(test)]
 mod local_visibility_args_tests;
 #[cfg(test)]
+mod report_only_request_tests;
+#[cfg(test)]
 mod time_args_tests;
 
 mod argument_error;
