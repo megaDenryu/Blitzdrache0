@@ -48,7 +48,7 @@ fn 実行する() -> Result<ExitCode, 起動エラー> {
         cli::起動要求::大気のベイク済み画像報告 => Ok(reports::atmosphere_lut::大気のベイク済み画像表を出す()),
         cli::起動要求::遠方環境報告 => Ok(reports::distant_environment::遠方環境表を出す()),
         cli::起動要求::派生表現報告 => Ok(reports::derived_environment::派生表現表を出す()),
-        cli::起動要求::太陽天頂区間の境界報告 => Ok(reports::sun_zenith_boundary::太陽天頂区間の境界表を出す()),
+        cli::起動要求::太陽天頂区間の跨ぎ報告 => Ok(reports::sun_zenith_crossing::太陽天頂区間の跨ぎ表を出す()),
         cli::起動要求::描画実行(起動設定) => 描画する(*起動設定),
     }
 }

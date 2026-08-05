@@ -20,7 +20,7 @@ pub(crate) mod sky_state;
 pub(crate) mod streaming;
 pub(crate) mod streaming_summary;
 pub(crate) mod sun_angle;
-pub(crate) mod sun_zenith_boundary;
+pub(crate) mod sun_zenith_crossing;
 
 use crate::app::フレーム時間統計;
 

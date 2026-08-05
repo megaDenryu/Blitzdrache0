@@ -28,8 +28,9 @@ mod sun_light_color;
 mod sun_light_intensity;
 mod sun_light_policy;
 mod sun_position;
-mod sun_zenith_boundary;
-mod sun_zenith_boundary_crossing;
+mod sun_zenith_crossing;
+mod sun_zenith_crossing_direction;
+mod sun_zenith_crossing_search;
 mod sun_zenith_interval;
 mod thinning_step;
 mod world_policy;
@@ -45,7 +46,7 @@ mod policy_tests;
 #[cfg(test)]
 mod sun_symmetry_tests;
 #[cfg(test)]
-mod sun_zenith_boundary_tests;
+mod sun_zenith_crossing_tests;
 #[cfg(test)]
 mod sun_zenith_interval_tests;
 
@@ -70,7 +71,8 @@ pub use sun_direction::太陽方向;
 pub use sun_light_color::太陽光色;
 pub use sun_light_intensity::太陽光強度;
 pub use sun_light_policy::太陽光方針;
-pub use sun_zenith_boundary::{一日の区間境界を列挙する, 太陽天頂区間の境界};
+pub use sun_zenith_crossing::{一日の区間の跨ぎを列挙する, 太陽天頂区間の跨ぎ};
+pub use sun_zenith_crossing_direction::跨ぎの方向;
 pub use sun_zenith_interval::太陽天頂区間;
 pub use thinning_step::間引きの刻みの設定;
 pub use world_policy::世界の空方針;
