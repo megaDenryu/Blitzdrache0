@@ -6,8 +6,9 @@
 
 use blitz_math::メートル;
 
+use super::test_scenes::{段差, 段差の境界};
 use super::visibility_statistics::地の在る画素の最小可視度;
-use super::{場面を焼く, 場面を設定で焼く, 局所可視性の設定, 検査する設定, 検査する高さ, 段差, 段差の境界};
+use super::{場面を焼く, 場面を設定で焼く, 局所可視性の設定, 検査する設定, 検査する高さ};
 use crate::local_visibility::{遮蔽の設定, 遮蔽半径};
 
 /// 判定に使う縦位置。画面の縦の真ん中であり、上下の端の画素を避ける。
