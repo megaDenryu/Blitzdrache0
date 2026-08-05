@@ -11,7 +11,6 @@ mod shadow_stage;
 mod sky_stage;
 
 pub(super) use atmosphere_lut_stage::大気のベイク済み画像を積む;
-pub(super) use depth_prepass_stage::深度プリパスを積む;
 pub(super) use indirect_lighting_stage::間接照明を積む;
 pub(super) use scene_stage::シーンを積む;
 pub(super) use shadow_stage::影を積む;

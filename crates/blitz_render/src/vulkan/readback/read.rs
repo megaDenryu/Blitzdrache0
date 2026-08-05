@@ -9,7 +9,7 @@ use super::buffer::読み戻しバッファ;
 use super::target::読み戻し対象;
 use crate::error::レンダラーエラー;
 use crate::numeric::half_precision::半精度を単精度へ;
-use crate::readback_image::{HDR読み戻し画像, 深度読み戻し画像, 読み戻し画像};
+use crate::readback_image::{HDR読み戻し画像, 局所可視度読み戻し画像, 深度読み戻し画像, 読み戻し画像};
 
 pub(crate) fn 読み取る(
     device: &ash::Device,
@@ -52,6 +52,17 @@ pub(crate) fn 深度を読み取る(
         .map(|四つ| f32::from_le_bytes([四つ[0], 四つ[1], 四つ[2], 四つ[3]]))
         .collect();
     Ok(深度読み戻し画像::生成する(寸法.width, 寸法.height, 深度))
+}
+
+/// 8ビット無符号正規化4成分のバイト列から第1成分だけを取り出す。4成分なのは記憶画像の必須対応形式の都合であり、局所可視度が乗るのは第1成分だけである。
+pub(crate) fn 局所可視度を読み取る(
+    device: &ash::Device,
+    バッファ: &読み戻しバッファ,
+    寸法: vk::Extent2D,
+) -> Result<局所可視度読み戻し画像, レンダラーエラー> {
+    let 生データ = 生バイト列を読む(device, バッファ, 寸法, 読み戻し対象::局所可視度)?;
+    let 符号値 = 生データ.chunks_exact(4).map(|四つ| 四つ[0]).collect();
+    Ok(局所可視度読み戻し画像::生成する(寸法.width, 寸法.height, 符号値))
 }
 
 fn 生バイト列を読む(

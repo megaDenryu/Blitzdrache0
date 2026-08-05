@@ -7,6 +7,7 @@ use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::frame_input::フレーム描画入力;
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像の描画入力;
+use crate::vulkan::depth_injection::合成深度の注入入力;
 use crate::vulkan::frame::{
     UI描画入力, スキニング描画入力, 任意描画入力, 布描画入力, 空中遠近合成描画入力, 空描画入力, 粒子描画入力
 };
@@ -26,6 +27,7 @@ pub(super) struct 任意入力の材料 {
     空: Option<空描画入力>,
     空中遠近合成: Option<空中遠近合成描画入力>,
     局所可視性: Option<局所可視性描画入力>,
+    合成深度の注入: Option<合成深度の注入入力>,
 }
 
 impl レンダラー {
@@ -47,6 +49,7 @@ impl レンダラー {
             空: self.空描画入力を組み立てる(フレーム添字),
             空中遠近合成: self.空中遠近合成入力を組み立てる(フレーム添字, 入力)?,
             局所可視性: self.局所可視性入力を組み立てる(入力),
+            合成深度の注入: self.合成深度の注入入力を組み立てる()?,
         })
     }
 }
@@ -65,6 +68,7 @@ impl 任意入力の材料 {
             明るさの圧縮: self.ポスト.as_ref().map(|入力| &入力.明るさの圧縮),
             自動露出: self.ポスト.as_ref().and_then(|入力| 入力.自動露出.as_ref()),
             局所可視性: self.局所可視性.as_ref(),
+            合成深度の注入: self.合成深度の注入,
             ui,
         }
     }

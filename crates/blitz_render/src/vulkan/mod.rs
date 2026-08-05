@@ -13,6 +13,7 @@ pub(crate) mod commands;
 pub(crate) mod compute_pipeline;
 pub(crate) mod debug_messenger;
 pub(crate) mod depth;
+pub(crate) mod depth_injection;
 pub(crate) mod derived_environment;
 pub(crate) mod descriptor;
 pub(crate) mod descriptor_indexing;

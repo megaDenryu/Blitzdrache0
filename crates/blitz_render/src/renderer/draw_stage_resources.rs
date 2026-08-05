@@ -13,6 +13,7 @@ mod atmosphere;
 mod create;
 mod indirect_lighting;
 mod sky;
+mod synthetic_depth;
 
 pub(super) use create::生成要求;
 
@@ -30,6 +31,8 @@ pub(super) struct 描画段階資源 {
     遠方環境の照明: Option<vulkan::indirect_lighting::遠方環境の照明資源>,
     /// フレーム構成に布シミュレーション段階があるときだけ`Some`。有無はレンダラーの布一式の有無と常に一致する(`レンダラー::生成する`の`構成と素材を検査する`が対応を検査済み)。
     布シャドウ: Option<vulkan::cloth_shadow::布シャドウ資源>,
+    /// 検収が合成深度を据えた実行だけ`Some`。シーン段階が専有する資源であり、据えるまでは転送パスを1本も積まない。
+    合成深度の注入: Option<vulkan::depth_injection::合成深度の注入一式>,
 }
 
 impl 描画段階資源 {
@@ -77,6 +80,9 @@ impl 描画段階資源 {
         }
         if let Some(大気のベイク済み画像) = &self.大気のベイク済み画像 {
             大気のベイク済み画像.破棄する(device);
+        }
+        if let Some(合成深度の注入) = &self.合成深度の注入 {
+            合成深度の注入.破棄する(device);
         }
     }
 }

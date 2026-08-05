@@ -8,7 +8,7 @@
 //! (注入する値は起動時に決まって以降変わらない)。
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「3-Icの消費式と実装段割り」
 
-use super::レンダラー;
+use super::super::レンダラー;
 use crate::distant_environment::{遠方環境の焼かせる解析入力, 遠方環境の解析入力, 遠方環境の解析入力エラー};
 use crate::error::レンダラーエラー;
 use crate::indirect_lighting::間接照明エラー;

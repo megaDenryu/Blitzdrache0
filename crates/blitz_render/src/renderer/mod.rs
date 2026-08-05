@@ -14,7 +14,7 @@ mod draw_stage_resources;
 mod frame_dispatch_inputs;
 mod frame_progress;
 mod generate;
-mod indirect_lighting_injection;
+mod injection;
 mod lighting_query_write;
 mod measurement_control;
 mod optional_frame_inputs;
