@@ -1,8 +1,11 @@
 //! パス別GPUタイムスタンプ計測(判断30)。グラフのパス境界にvkCmdWriteTimestamp2を
 //! 発行し、フレームのフェンス待ち後に前回分を読んで移動平均(60フレーム窓)を保つ。
+//! 生成の局面は`create`、窓へ入る前の生の値の記録は`frame_samples`にある。
 //! 参照: `_doc/設計/レンダーグラフ.md`「GPU計測」。
 
 mod composite_interval;
+mod create;
+mod frame_samples;
 mod pass_time_window;
 mod query_pool;
 mod readback;
@@ -13,10 +16,10 @@ use std::collections::HashMap;
 
 use ash::vk;
 
+use frame_samples::フレーム別の記録;
 use pass_time_window::パス時間の窓;
 
-use crate::error::レンダラーエラー;
-use crate::gpu_pass_timing::パス時間の分布;
+use crate::gpu_pass_timing::{パス時間の分布, フレーム別の標本};
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 /// グラフが1フレームに持てるパス数の上限(クエリプール容量の元になる)。
@@ -33,30 +36,11 @@ pub(crate) struct パス別GPU計測 {
     /// 複数のパスの1フレームぶんの和を1つの区間として持つための宣言。中身はパス名を所有する層が決めて生成時に渡す。
     合成区間一覧: Vec<合成区間の宣言>,
     窓表: HashMap<&'static str, パス時間の窓>,
+    /// 窓へ入る前の生の値の記録。既定は採らない状態であり、計測の起動指定だけが始めさせる。
+    フレーム別: フレーム別の記録,
 }
 
 impl パス別GPU計測 {
-    /// `タイムスタンプ対応か`が`false`(timestamp_valid_bits == 0)の物理デバイスでは
-    /// `None`を返す(判断30: 計測無効は型で表し、無言の0ミリ秒を返さない)。
-    pub(crate) fn 生成する(
-        device: &ash::Device,
-        タイムスタンプ対応か: bool,
-        タイムスタンプ周期ns: f32,
-        合成区間一覧: Vec<合成区間の宣言>,
-    ) -> Result<Option<Self>, レンダラーエラー> {
-        if !タイムスタンプ対応か {
-            return Ok(None);
-        }
-        let プール一覧 = query_pool::生成する(device)?;
-        Ok(Some(Self {
-            プール一覧,
-            タイムスタンプ周期ns,
-            直近マッピング一覧: std::array::from_fn(|_| Vec::new()),
-            合成区間一覧,
-            窓表: HashMap::new(),
-        }))
-    }
-
     pub(crate) fn クエリプール(&self, フレーム添字: フレームスロット添字) -> vk::QueryPool {
         self.プール一覧[フレーム添字.配列添字()]
     }
@@ -72,6 +56,7 @@ impl パス別GPU計測 {
             self.タイムスタンプ周期ns,
             &self.合成区間一覧,
             &mut self.窓表,
+            &mut self.フレーム別,
         );
     }
 
@@ -81,6 +66,16 @@ impl パス別GPU計測 {
         &mut self, フレーム添字: フレームスロット添字, マッピング: Vec<(&'static str, u32)>
     ) {
         self.直近マッピング一覧[フレーム添字.配列添字()] = マッピング;
+    }
+
+    /// 窓へ入る前の生の値の記録を始める。始めるまでは1要素も積まない。
+    pub(crate) fn フレーム別の記録を始める(&mut self) {
+        self.フレーム別.始める();
+    }
+
+    /// 記録したフレーム別の生標本。記録を始めていなければ空である。
+    pub(crate) fn フレーム別の標本一覧(&self) -> &[フレーム別の標本] {
+        self.フレーム別.標本一覧()
     }
 
     /// パス名ごとの直近の窓の分布を全件返す(登録順は不定)。

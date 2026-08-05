@@ -13,6 +13,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str) {
         "--sph-1024" => 設定.粒子表示 = 粒子表示モード::Sph1024,
         "--sph-2048" => 設定.粒子表示 = 粒子表示モード::Sph2048,
         "--report-gpu-times" => 設定.gpu時間報告 = true,
+        "--report-gpu-frame-times" => 設定.gpu時間のフレーム別生値報告 = true,
         "--report-atmosphere-passes" => 設定.大気のベイク済み画像パス数報告 = true,
         "--report-frame-times" => 設定.フレーム時間報告 = true,
         "--report-display-timing" => 設定.実表示時間報告 = true,

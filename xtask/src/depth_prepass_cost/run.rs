@@ -8,7 +8,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use super::plan::実行の指定;
-use super::schedule::実行条件;
+use super::schedule::{周回の位置, 実行条件};
 use super::world;
 
 pub(super) struct 実行の材料<'a> {
@@ -16,12 +16,16 @@ pub(super) struct 実行の材料<'a> {
     pub(super) シェーダー入口: &'a Path,
     pub(super) 指定: &'a 実行の指定,
     pub(super) 条件: &'a 実行条件,
+    pub(super) 位置: 周回の位置,
     pub(super) 実行番号: usize,
 }
 
 pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<String, String> {
-    let 標準出力先 = PathBuf::from(材料.出力先).join(format!("run_{}_{}.log", 材料.実行番号, 材料.条件.名前));
-    println!("[xtask] depth-prepass-cost実行{}: {}", 材料.実行番号, 材料.条件.名前);
+    let 標準出力先 = PathBuf::from(材料.出力先).join(format!("run_{}_周回{}_{}.log", 材料.実行番号, 材料.位置.周回番号, 材料.条件.名前));
+    println!(
+        "[xtask] depth-prepass-cost実行{}: 周回{}の{}番目 {}",
+        材料.実行番号, 材料.位置.周回番号, 材料.位置.順序位置, 材料.条件.名前
+    );
     let 出力 = Command::new(world::実行ファイル)
         .args(引数を作る(材料))
         .output()
@@ -38,6 +42,7 @@ pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<String,
 fn 引数を作る(材料: &実行の材料<'_>) -> Vec<String> {
     let mut 引数一覧 = world::世界の引数();
     引数一覧.push("--report-gpu-times".to_string());
+    引数一覧.push("--report-gpu-frame-times".to_string());
     引数一覧.extend(["--benchmark-frames".to_string(), 材料.指定.フレーム数.to_string()]);
     引数一覧.extend(["--shader-source".to_string(), 材料.シェーダー入口.display().to_string()]);
     引数一覧.extend(world::時刻の引数(材料.指定.一日内秒.as_ref()));

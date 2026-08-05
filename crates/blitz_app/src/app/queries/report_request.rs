@@ -9,6 +9,11 @@ impl アプリ {
         self.報告要求.gpu時間
     }
 
+    /// `--report-gpu-frame-times`が指定されたか。
+    pub(crate) fn gpu時間のフレーム別生値報告が必要か(&self) -> bool {
+        self.報告要求.gpu時間のフレーム別生値
+    }
+
     /// `--report-atmosphere-passes`が指定されたか。
     pub(crate) fn 大気のベイク済み画像パス数報告が必要か(&self) -> bool {
         self.報告要求.大気のベイク済み画像生成パス数

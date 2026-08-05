@@ -11,9 +11,7 @@
 
 use std::collections::VecDeque;
 
-use crate::gpu_pass_timing::パス時間の分布;
-
-const 窓サイズ: usize = 60;
+use crate::gpu_pass_timing::{パス時間の分布, 窓の標本数 as 窓サイズ};
 
 pub(crate) struct パス時間の窓 {
     値一覧: VecDeque<f64>,

@@ -6,24 +6,32 @@
 //! 積むはずの区間が欠けていたら失敗にする。積まないはずの区間が立っていても失敗にする。
 //! どちらも「測ろうとした条件と実際に走った条件が違う」ことを意味しており、値が採れないまま表だけが出る事態を避ける。
 
+mod frame_samples;
 #[cfg(test)]
 mod parse_tests;
 
 use super::intervals;
 use super::record::{一標本, 区間の分布, 区間の観測};
-use super::schedule::実行条件;
+use super::schedule::{周回の位置, 実行条件};
 
-pub(super) fn 標本を取り出す(標準出力: &str, 実行番号: usize, 条件: &実行条件) -> Result<一標本, String> {
+pub(super) fn 標本を取り出す(
+    標準出力: &str, 実行番号: usize, 位置: 周回の位置, 条件: &実行条件
+) -> Result<一標本, String> {
     let 積むか = 条件.方式.深度プリパスを積むか();
     let mut 区間別 = Vec::new();
     for 区間名 in intervals::全区間一覧 {
         let 立つはず = 区間名 == intervals::色パスの区間名 || 積むか;
         区間別.push(区間を読む(標準出力, 区間名, 条件.名前, 立つはず)?);
     }
+    let 生標本 = frame_samples::読む(標準出力, 条件.名前)?;
     Ok(一標本 {
         実行番号,
+        周回番号: 位置.周回番号,
+        順序位置: 位置.順序位置,
         条件名: 条件.名前,
         区間別,
+        窓の標本数: 生標本.窓の標本数,
+        フレーム別の値一覧: 生標本.生値一覧,
     })
 }
 

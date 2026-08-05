@@ -1,9 +1,11 @@
 //! レンダラーが外部へ公開する読み取り専用アクセサ。すべて`&self`でレンダラーの状態を変えないため、
 //! 描画ループの途中でも終了後でも呼べる(検証カウンタだけは破棄後に読む規律がある)。GPUの中身そのものを問い合わせる自動露出の観測だけは`auto_exposure`にあり、そこだけがGPUの待機と転送を伴う。
 //!
+//! パス別GPU計測の読み出しだけは`gpu_timing`にある。
 //! 参照: 計測の有効化は`measurement_control.rs`、寸法変更の通知は`reconstruct.rs`にある。
 
 mod auto_exposure;
+mod gpu_timing;
 use super::cpu_timing::{CPU区間時間, CPU区間計測};
 use super::draw_issue_breakdown::描画発行内訳;
 use super::pass_tally::{大気のベイク済み画像生成パス数の記録, 間接照明生成パス数の記録};
@@ -43,15 +45,6 @@ impl レンダラー {
     /// 読み取りはレンダラー破棄後に行うこと。
     pub fn 検証カウンタを取得する(&self) -> 検証カウンタ {
         self.検証カウンタ.clone()
-    }
-
-    /// パス名ごとの直近60フレームの窓の分布を返す(判断30)。タイムスタンプ非対応
-    /// デバイスでは空配列(計測できていないことの明示。無言の0ミリ秒は返さない)。
-    pub fn パス別gpu時間を取得する(&self) -> Vec<(&'static str, crate::gpu_pass_timing::パス時間の分布)> {
-        self.gpu計測
-            .as_ref()
-            .map(vulkan::gpu_timing::パス別GPU計測::分布一覧を取得する)
-            .unwrap_or_default()
     }
 
     /// 現在のVulkan専用メモリ確保数、最大同時数、デバイス上限、用途別確保量を返す。

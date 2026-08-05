@@ -6,11 +6,15 @@
 //! 鏡面畳込み生成は粗さの段ごとにパスを積むため、回ごとに1標本を入れると窓の中身が段の混じった列になり、中央値も95パーセンタイルも「そのフレームでその区間に費やした時間」を答えなくなる(段ごとに大きさが違うため混じった列の中央値はどの段の値でもない)。
 //! 窓の1標本を1フレームぶんに保つことで、区間の分位がそのまま更新1回の費用になる。
 
+#[cfg(test)]
+mod readback_tests;
+
 use std::collections::HashMap;
 
 use ash::vk;
 
 use super::composite_interval::{self, 合成区間の宣言};
+use super::frame_samples::フレーム別の記録;
 use super::pass_time_window::パス時間の窓;
 
 pub(super) fn 読み取る(
@@ -20,6 +24,7 @@ pub(super) fn 読み取る(
     タイムスタンプ周期ns: f32,
     合成区間一覧: &[合成区間の宣言],
     窓表: &mut HashMap<&'static str, パス時間の窓>,
+    フレーム別: &mut フレーム別の記録,
 ) {
     let 読み値一覧: Vec<(&'static str, Option<f64>)> = マッピング
         .iter()
@@ -27,7 +32,10 @@ pub(super) fn 読み取る(
         .collect();
     let フレーム内の合計 = フレーム内で合算する(&読み値一覧);
     let 合成 = composite_interval::適用する(合成区間一覧, &フレーム内の合計);
-    for (名前, 合計ミリ秒) in フレーム内の合計.into_iter().chain(合成) {
+    let 区間別の値: Vec<(&'static str, f64)> = フレーム内の合計.into_iter().chain(合成).collect();
+    // 生の値の記録と窓の更新へ同じ列を渡す。別々に組み立てると、窓の分位を計算し直す元の列が窓の中身とずれる。
+    フレーム別.一回ぶんを積む(&区間別の値);
+    for (名前, 合計ミリ秒) in 区間別の値 {
         窓表.entry(名前).or_insert_with(パス時間の窓::新規).追加する(合計ミリ秒);
     }
 }
@@ -36,7 +44,7 @@ pub(super) fn 読み取る(
 /// 回が1つでも読めなかった名前は、そのフレームのぶんを丸ごと捨てる。
 /// 読めた回だけを足した合計はそのフレームの費用を過小に見せ、読み飛ばしたことが値から分からなくなるためである。
 /// 並びは最初に現れた順を保つ(グラフの宣言順がそのまま報告の並びになる)。
-fn フレーム内で合算する(読み値一覧: &[(&'static str, Option<f64>)]) -> Vec<(&'static str, f64)> {
+pub(super) fn フレーム内で合算する(読み値一覧: &[(&'static str, Option<f64>)]) -> Vec<(&'static str, f64)> {
     let mut 合計一覧: Vec<(&'static str, Option<f64>)> = Vec::new();
     for &(名前, 経過ミリ秒) in 読み値一覧 {
         match 合計一覧.iter_mut().find(|(既存の名前, _)| *既存の名前 == 名前) {
@@ -75,26 +83,4 @@ fn 一組を読み取る(device: &ash::Device, pool: vk::QueryPool, 開始添字
     let 差分tick_u32 = u32::try_from(差分tick).ok()?;
     let 差分ns = f64::from(差分tick_u32) * f64::from(タイムスタンプ周期ns);
     Some(差分ns / 1_000_000.0)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn 同じ名前の回を足して一標本にする() {
-        let 読み値 = [("鏡面畳込み生成", Some(0.10)), ("鏡面畳込み生成", Some(0.20)), ("シーン描画", Some(1.0))];
-        let 合計 = フレーム内で合算する(&読み値);
-        assert_eq!(合計.len(), 2);
-        assert_eq!(合計[0].0, "鏡面畳込み生成");
-        assert!((合計[0].1 - 0.30).abs() < 1.0e-9, "{}", 合計[0].1);
-        assert_eq!(合計[1], ("シーン描画", 1.0));
-    }
-
-    #[test]
-    fn 読めない回があった名前はそのフレームを捨てる() {
-        let 読み値 = [("鏡面畳込み生成", Some(0.10)), ("鏡面畳込み生成", None), ("シーン描画", Some(1.0))];
-        let 合計 = フレーム内で合算する(&読み値);
-        assert_eq!(合計, vec![("シーン描画", 1.0)]);
-    }
 }

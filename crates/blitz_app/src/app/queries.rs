@@ -40,6 +40,11 @@ impl アプリ {
         self.レンダラー.as_ref().map(レンダラー::パス別gpu時間を取得する).unwrap_or_default()
     }
 
+    /// パス別GPU時間の窓へ入る前の生の値。記録を始めていなければ空である。レンダラー破棄前に呼ぶこと。
+    pub(crate) fn パス別gpu時間のフレーム別標本を取得する(&self) -> &[blitz_render::gpu_pass_timing::フレーム別の標本] {
+        self.レンダラー.as_ref().map_or(&[], レンダラー::パス別gpu時間のフレーム別標本を取得する)
+    }
+
     /// `--report-frame-times`で収集した、ウォームアップ後のCPU側フレーム間隔分布を返す。
     pub(crate) fn フレーム時間統計を取得する(&self) -> Option<super::frame_timing::フレーム時間統計> {
         self.フレーム間隔計測.as_ref().and_then(super::frame_timing::フレーム間隔計測::集計する)

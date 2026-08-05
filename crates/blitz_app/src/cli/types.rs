@@ -32,6 +32,9 @@ pub(crate) struct 起動設定 {
     pub(crate) 粒子表示: 粒子表示モード,
     /// `--report-gpu-times`指定でtrue。既定はfalse(パス別GPU時間の終了時コンソール出力、判断30)。
     pub(crate) gpu時間報告: bool,
+    /// `--report-gpu-frame-times`指定でtrue。既定はfalse(パス別GPU時間の窓へ入る前の生の値をフレーム別に全件出す)。
+    /// 分位を独立に計算し直して報告値と突き合わせる検収だけが使う指定であり、行数が測定フレーム数×区間数まで増える。
+    pub(crate) gpu時間のフレーム別生値報告: bool,
     /// `--report-atmosphere-passes`指定でtrue。既定はfalse(フレームごとの大気のベイク済み画像生成パス本数を終了時に出力する)。
     pub(crate) 大気のベイク済み画像パス数報告: bool,
     /// `--report-frame-times`指定でtrue。最初の120フレームを除いたCPU側フレーム間隔分布を終了時に出力する。
