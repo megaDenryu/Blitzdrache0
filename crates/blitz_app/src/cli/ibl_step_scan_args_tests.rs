@@ -1,13 +1,25 @@
 //! `--ibl-step-scan`の解析を反証可能な形で固定する。見るのは、範囲が起動モードの枝へ入ること、
-//! 1本も撮らない指定を拒むこと、区切りの数が違う語を拒むことである。
+//! 圧縮前のHDRの書き出し先が無い走査を拒むこと、1本も撮らない指定を拒むこと、区切りの数が違う語を拒むことである。
 
 #![allow(clippy::unwrap_used)]
 
 use super::{起動モード, 起動要求};
 
 fn 解析する(値: &str) -> Result<起動要求, crate::error::起動エラー> {
-    let 引数: Vec<String> = vec!["--ibl-step-scan".to_string(), 値.to_string()];
+    let 引数: Vec<String> = vec![
+        "--ibl-step-scan".to_string(),
+        値.to_string(),
+        "--dump-hdr-frame".to_string(),
+        "target/ibl_step/shot".to_string(),
+    ];
     super::引数を解析する(&引数)
+}
+
+/// 圧縮前のHDRの書き出し先が無い走査を拒む。持たないまま走ると絵を1枚も残さず成功して終わる。
+#[test]
+fn 書き出し先の無い走査を拒む() {
+    let 引数: Vec<String> = vec!["--ibl-step-scan".to_string(), "0,1".to_string()];
+    assert!(super::引数を解析する(&引数).is_err());
 }
 
 #[test]

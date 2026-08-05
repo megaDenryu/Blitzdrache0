@@ -4,6 +4,7 @@ mod default;
 mod frame_dump_setting;
 mod launch_mode;
 mod readback_verification;
+pub(in crate::cli) use frame_dump_setting::走査の書き出し先を確かめる;
 pub(crate) use {
     frame_dump_setting::フレームダンプ指定, launch_mode::起動モード, readback_verification::読み戻し検収起動設定
 };
