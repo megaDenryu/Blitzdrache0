@@ -22,6 +22,8 @@ pub(crate) struct 見込み {
 /// 実測の行の先頭。末尾の空白まで含めるのは、見込みの行が同じ語で始まるためである。
 const 実測の先頭: &str = "間接照明生成パス数 ";
 const 見込みの先頭: &str = "間接照明生成パス数の見込み ";
+/// 太陽天頂区間の記録の行の先頭。綴りは`crates/blitz_app/src/reports/distant_environment_key.rs`の出力と一致させている。
+const 区間の先頭: &str = "太陽天頂区間 ";
 /// 見込みの行が遠方環境の契約であることを示す語。定数近似の実行はこの語を持たない。
 const 遠方環境の契約: &str = "契約=遠方環境";
 
@@ -47,6 +49,12 @@ pub(crate) fn 見込みを読む(標準出力: &str, 条件名: &str) -> Result<
     })
 }
 
+/// 太陽天頂区間が前のフレームから変わった回数。遠方環境を焼き直すべきフレーム数はこの値に初回の1回を足したものである。
+pub(crate) fn 区間の変化回数を読む(標準出力: &str, 条件名: &str) -> Result<u64, String> {
+    let 行 = 行を探す(標準出力, 区間の先頭, 条件名)?;
+    数を読む(行, "区間が変わった回数=", 条件名)
+}
+
 fn 行を探す<'出力>(標準出力: &'出力 str, 先頭: &str, 条件名: &str) -> Result<&'出力 str, String> {
     標準出力
         .lines()
@@ -55,10 +63,7 @@ fn 行を探す<'出力>(標準出力: &'出力 str, 先頭: &str, 条件名: &s
 }
 
 fn 数を読む(行: &str, 前置き: &str, 条件名: &str) -> Result<u64, String> {
-    let 残り = 行
-        .split(前置き)
-        .nth(1)
-        .ok_or_else(|| format!("{条件名}の間接照明の行に{前置き}が無い: {行}"))?;
+    let 残り = 行.split(前置き).nth(1).ok_or_else(|| format!("{条件名}の行に{前置き}が無い: {行}"))?;
     let 語 = 残り.split_whitespace().next().unwrap_or_default();
     語.parse().map_err(|誤り| format!("{条件名}の{前置き}を数として読めない({語}): {誤り}"))
 }
