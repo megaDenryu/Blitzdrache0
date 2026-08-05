@@ -1,11 +1,11 @@
-//! 外部持ち込み画像・バッファをグラフへ登録する際の初期状態。用途写像(`usage::image_usage_mapping`等)とは別に扱う:
-//! どちらも「取得直後・前フレーム直後で今何も起きていない」状態であり、パス内で実際に使われる用途(カラー出力・提示等)とは異なる固有の値だから。
-//! 焼いた画像(大気のベイク済み画像・遠方環境とその派生表現)の初期状態だけは、焼き直す場合と参照するだけの場合で
-//! 1つの不変条件の表裏になるため`baked_image`が持つ。
+//! 外部持ち込み画像・バッファをグラフへ登録する際の初期状態。用途写像(`usage::image_usage_mapping`等)とは別に扱う: どちらも「取得直後・前フレーム直後で今何も起きていない」状態であり、パス内で実際に使われる用途(カラー出力・提示等)とは異なる固有の値だから。
+//! 焼いた画像(大気のベイク済み画像・遠方環境とその派生表現)の初期状態だけは、焼き直す場合と参照するだけの場合で1つの不変条件の表裏になるため`baked_image`が持つ。局所可視度の2枚は記憶画像としても読まれるため`local_visibility`が別に持つ。
 
 mod baked_image;
+mod local_visibility;
 
 pub(crate) use baked_image::{焼いた画像を参照するだけのときの初期状態, 焼いた画像を焼き直すときの初期状態};
+pub(crate) use local_visibility::局所可視度の画像の前フレーム直後状態;
 
 use ash::vk;
 
@@ -15,11 +15,8 @@ use super::usage::image_usage_mapping::深度書き込み段;
 
 /// スワップチェーンから取得した直後のカラー画像の状態。
 ///
-/// 注意: srcStageMaskはTOP_OF_PIPEではなくCOLOR_ATTACHMENT_OUTPUTにする。
-/// 取得セマフォの待機はCOLOR_ATTACHMENT_OUTPUT段で行うため、最初のバリアがそれより
-/// 早い段だと待機のスコープ外になり、vkAcquireNextImageKHRの読み出しに対して
-/// WRITE_AFTER_READ検証エラーになる。layoutはUNDEFINEDのままでよい
-/// （このエンジンは常に全面クリアするため前回内容を保持する必要がない）。
+/// 注意: srcStageMaskはTOP_OF_PIPEではなくCOLOR_ATTACHMENT_OUTPUTにする。取得セマフォの待機はCOLOR_ATTACHMENT_OUTPUT段で行うため、最初のバリアがそれより早い段だと待機のスコープ外になり、vkAcquireNextImageKHRの読み出しに対してWRITE_AFTER_READ検証エラーになる。
+/// layoutはUNDEFINEDのままでよい（このエンジンは常に全面クリアするため前回内容を保持する必要がない）。
 pub(crate) fn 取得直後の色画像状態() -> 画像状態 {
     画像状態::生成する(
         vk::PipelineStageFlags2::COLOR_ATTACHMENT_OUTPUT,

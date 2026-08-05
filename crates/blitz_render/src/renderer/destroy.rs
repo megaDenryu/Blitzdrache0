@@ -52,6 +52,7 @@ impl レンダラー {
         if let Some(ポスト処理) = &self.ポスト処理 {
             ポスト処理.破棄する(device);
         }
+        self.局所可視性.破棄する(device);
     }
 
     fn 描画資源を破棄する(&mut self) {

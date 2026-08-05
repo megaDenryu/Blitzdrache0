@@ -18,6 +18,7 @@ pub(super) struct 段別資源 {
     pub(super) ポスト処理: Option<vulkan::post_process::ポスト処理一式>,
     pub(super) スキニング: Option<vulkan::skinning::スキニング一式>,
     pub(super) 布: Option<vulkan::cloth::布一式>,
+    pub(super) 局所可視性: vulkan::local_visibility::局所可視性一式,
 }
 
 pub(super) fn 束ねる(段別: 段別資源) -> フレーム資源 {
@@ -39,5 +40,6 @@ pub(super) fn 束ねる(段別: 段別資源) -> フレーム資源 {
         スキニング: 段別.スキニング,
         布: 段別.布,
         ポスト処理: 段別.ポスト処理,
+        局所可視性: 段別.局所可視性,
     }
 }

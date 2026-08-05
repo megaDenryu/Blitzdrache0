@@ -24,4 +24,5 @@ pub(super) struct フレーム資源 {
     pub(super) スキニング: Option<vulkan::skinning::スキニング一式>,
     pub(super) 布: Option<vulkan::cloth::布一式>,
     pub(super) ポスト処理: Option<vulkan::post_process::ポスト処理一式>,
+    pub(super) 局所可視性: vulkan::local_visibility::局所可視性一式,
 }

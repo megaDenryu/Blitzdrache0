@@ -6,6 +6,7 @@
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 import distant_environment_shading;
+import local_visibility_apply;
 import sun_relative_frame;
 
 [[vk::binding(4, 3)]] [[vk::combinedImageSampler]] TextureCube diffuseIrradianceTexture;
@@ -47,9 +48,10 @@ float2 distantEnvironmentReflectanceIntegral(float nDotV, float roughness)
 
 // 標準PBRの表面が受け取る間接光の色。拡散と鏡面を足した値を返す。
 // 法線と視線の向きはワールドであり、太陽方向もワールドである。
+// 局所可視度は拡散の項だけへ掛かる。鏡面は反射方向の細い立体角を見るため、半球全体の塞がり具合を掛ける根拠が無い。
 float3 distantEnvironmentIndirect(
     float3 worldNormal, float3 worldViewDir, float3 sunDirection,
-    float3 baseColor, float metallic, float roughness)
+    float3 baseColor, float metallic, float roughness, float localVisibility)
 {
     float3 normal = normalize(worldNormal);
     float3 viewDir = normalize(worldViewDir);
@@ -65,7 +67,7 @@ float3 distantEnvironmentIndirect(
     float3 specular = indirectSpecularColor(
         distantEnvironmentPrefiltered(sunRelativeReflection, roughness), normalIncidenceReflectance,
         distantEnvironmentReflectanceIntegral(nDotV, roughness));
-    return diffuse + specular;
+    return applyLocalVisibility(diffuse, localVisibility) + specular;
 }
 
 // 布の表面が受け取る間接光の色。布は金属でないため取り分を掛けず、拡散照度をそのままLambertの規約で割る

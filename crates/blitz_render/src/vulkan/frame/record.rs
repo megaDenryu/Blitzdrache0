@@ -11,6 +11,7 @@ mod cloth_passes;
 mod depth_prepass_pass;
 mod fullscreen_draw;
 mod graph_build;
+mod local_visibility_passes;
 mod particle_draw_pass;
 mod particle_update_pass;
 pub(crate) mod pass_names;

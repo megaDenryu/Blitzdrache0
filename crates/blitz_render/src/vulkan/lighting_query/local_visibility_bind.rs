@@ -1,0 +1,22 @@
+//! 局所可視度のぼかし後の画像を全スロットのセットへ結ぶ局面。触れるのは各スロットのセットだけである。
+//!
+//! 遠方環境の3つと違い、この束縛先は画面寸法に連動するため一度結んで終わりにならない。呼ばれるのは
+//! レンダラー生成時と、スワップチェーンを作り直して画像を確保し直した直後の2つである。作り直しの後に
+//! 結び直しを落とすと、破棄済みのビューを指したままのセットで描くことになる。
+//!
+//! 束縛レイアウトの枝で分けないのは、両方の照明問い合わせ契約がこの番号を必ず宣言するためである
+//! (参照: `crates/blitz_render/src/vulkan/descriptor/lighting_set/local_visibility.rs`)。
+
+use ash::vk;
+
+use super::照明問い合わせ資源束;
+use crate::vulkan::descriptor::lighting_set::local_visibility::結ぶ;
+
+impl 照明問い合わせ資源束 {
+    /// 前提: 呼び出し時点でGPUがこれらのセットを使用していないこと(生成直後またはdevice_wait_idle後)。
+    pub(crate) fn 局所可視度の画像を結ぶ(&self, device: &ash::Device, ビュー: vk::ImageView) {
+        for スロット in &self.スロット一覧 {
+            結ぶ(device, スロット.セット, ビュー);
+        }
+    }
+}

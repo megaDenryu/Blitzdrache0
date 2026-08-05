@@ -5,6 +5,9 @@
 // 斜めから見た床が別の面と見なされ、床の陰りが均されないまま雑音を残す。
 // 注意: この工程は`crates/blitz_render/src/local_visibility/bilateral_blur.rs`の写しである。正本はRust側にある。
 // 注意: 生の可視度を記憶画像として読むのは、書いた直後の画像をレイアウトを往復させずに読むためである。
+// 注意: 記憶画像の形式宣言は`crates/blitz_render/src/vulkan/local_visibility/images.rs`の`局所可視度の形式`
+// (R8G8B8A8_UNORM)と一致させる。Vulkanは形式を宣言した記憶画像の読み書きに画像ビューと同じ形式を要求するため、
+// 食い違うとパイプラインの生成が落ちる。使うのは第1成分だけであり、残りの3成分は書く値を持たない。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 import local_visibility_depth;
@@ -13,8 +16,8 @@ import local_visibility_projection;
 import local_visibility_setting;
 
 [[vk::binding(0, 0)]] Texture2D<float> depthImage;
-[[vk::binding(1, 0)]] RWTexture2D<float> rawVisibilityImage;
-[[vk::binding(2, 0)]] RWTexture2D<float> blurredVisibilityImage;
+[[vk::binding(1, 0)]] [format("rgba8")] RWTexture2D<float4> rawVisibilityImage;
+[[vk::binding(2, 0)]] [format("rgba8")] RWTexture2D<float4> blurredVisibilityImage;
 [[vk::push_constant]] LocalVisibilitySetting localVisibilitySetting;
 
 // 1班が覆う画素の一辺。遮蔽の標本化と同じ値であり、CPU側の班数の割り出しはこの値と一致させる。
@@ -35,7 +38,7 @@ float blurredLocalVisibility(uint2 pixel)
         depthImage, setting.projection, setting.extent, setting.occlusionSameSurfaceTolerance, pixel);
     if (!normal.reconstructed)
     {
-        return rawVisibilityImage[center];
+        return rawVisibilityImage[center].r;
     }
     float coverage = localVisibilityPixelCoverage(setting.projection, setting.extent, localVisibilityCameraDepth(origin));
     float limit = localVisibilitySameSurfaceLimit(coverage, setting.blurSameSurfaceTolerance);
@@ -62,7 +65,7 @@ float blurredLocalVisibility(uint2 pixel)
             {
                 continue;
             }
-            sum += rawVisibilityImage[neighborPixel];
+            sum += rawVisibilityImage[neighborPixel].r;
             count++;
         }
     }
@@ -79,5 +82,5 @@ void computeMain(uint3 threadId : SV_DispatchThreadID)
     {
         return;
     }
-    blurredVisibilityImage[int2(int(pixel.x), int(pixel.y))] = blurredLocalVisibility(pixel);
+    blurredVisibilityImage[int2(int(pixel.x), int(pixel.y))] = float4(blurredLocalVisibility(pixel), 0.0, 0.0, 1.0);
 }

@@ -25,13 +25,14 @@ impl ApplicationHandler for アプリ {
             self.粒子表示,
             self.空中遠近合成,
             self.開発ui初期有効,
-            self.フレーム構成,
+            self.世界の描画構成.フレーム構成,
             self.布モード,
             実表示計測要求,
             self.大域ずらし量,
             self.天空.影の一辺解像度(),
             self.天空.照明問い合わせ契約(),
             self.天空.自動露出の設定(),
+            self.世界の描画構成.局所可視性の描画設定,
         ) {
             Ok((window, mut レンダラー, 開発ui, アニメーション, 布プリセット, 登録一式)) => {
                 // 起動時シーンをディスクから読んだのはこの1回である。
@@ -73,9 +74,7 @@ impl ApplicationHandler for アプリ {
             .is_some_and(|(window, 開発ui)| 開発ui.winitイベントを取り込む(window, &event));
         self.f3押下を確認する(&event);
 
-        // 入力層はwinitイベントを蓄積するだけで、以降のmatchが既存の責務を続ける
-        // （カメラインテントへの写像は`入力状態`内部で完結し、blitz_engineはwinitを知らない）。
-        // eguiが消費したイベント(ポインタ/キーボードがUI操作中)はカメラ入力へ流さない。
+        // 入力層はwinitイベントを蓄積するだけで、以降のmatchが既存の責務を続ける（カメラインテントへの写像は`入力状態`内部で完結し、blitz_engineはwinitを知らない）。eguiが消費したイベント(ポインタ/キーボードがUI操作中)はカメラ入力へ流さない。
         if !egui消費済みか {
             self.入力状態.winitイベントを取り込む(&event);
         }

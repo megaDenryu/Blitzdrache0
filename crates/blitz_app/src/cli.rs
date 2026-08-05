@@ -1,5 +1,4 @@
-//! CLI引数の解析。CLIはプロセス境界のため、引数名はASCIIのまま扱う。
-//! 型定義は`types`、値を伴う引数の個別処理は`value_args`に委ねる。
+//! CLI引数の解析。CLIはプロセス境界のため、引数名はASCIIのまま扱う。型定義は`types`、値を伴う引数の個別処理は`value_args`に委ねる。
 
 #[cfg(test)]
 mod cli_tests;
@@ -21,6 +20,7 @@ mod ibl_step_scan_args;
 mod indirect_probe_args;
 mod instance_lod_args;
 mod launch_request;
+pub(crate) mod local_visibility_settings;
 mod lod_crack_args;
 mod modes;
 mod object_count;

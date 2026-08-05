@@ -15,6 +15,7 @@ pub(crate) mod header_bytes;
 pub(crate) mod header_content;
 pub(crate) mod local_bytes;
 pub(crate) mod local_content;
+mod local_visibility_bind;
 pub(crate) mod pack;
 mod slot_resources;
 mod writable_buffer;

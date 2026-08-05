@@ -42,6 +42,11 @@ impl 提示資源 {
         self.swapchain.寸法
     }
 
+    /// 全画像が共有する深度画像のビュー。局所可視性補正のコンピュートがこのビューを束縛して深度を読む。
+    pub(super) fn 深度ビュー(&self) -> vk::ImageView {
+        self.深度バッファ.画像ビュー
+    }
+
     /// スワップチェーン画像の色形式。シーンの描画先形式とパイプラインの色アタッチメント形式を決める。
     pub(super) fn 画像形式(&self) -> vk::Format {
         self.swapchain.画像形式

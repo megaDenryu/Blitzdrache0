@@ -16,8 +16,9 @@ mod instance_lod;
 #[cfg(test)]
 mod instance_lod_tests;
 mod lighting;
-mod lod_threshold;
 /// プリミティブ描画項目の語彙は識別・区間・材質束縛・可視個体区間の参照と数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
+pub mod local_visibility;
+mod lod_threshold;
 pub mod primitive_draw_item;
 /// 空と太陽の語彙は数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
 pub mod sky;

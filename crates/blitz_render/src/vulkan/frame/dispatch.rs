@@ -9,6 +9,7 @@ use super::{
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像の描画入力;
 use crate::vulkan::auto_exposure::自動露出描画入力;
 use crate::vulkan::indirect_lighting::間接照明の描画入力;
+use crate::vulkan::local_visibility::局所可視性描画入力;
 use crate::vulkan::swapchain::スワップチェーン画像添字;
 
 pub(crate) struct 提示先<'a> {
@@ -47,6 +48,8 @@ pub(crate) struct 任意描画入力<'a> {
     pub(crate) 明るさの圧縮: Option<&'a 明るさの圧縮描画入力>,
     /// 露出方式がヒストグラム自動の世界だけ`Some`。時刻別固定の世界では集計も更新も1本も積まない。
     pub(crate) 自動露出: Option<&'a 自動露出描画入力>,
+    /// 拡散間接方式が局所可視性補正付き環境の世界だけ`Some`。環境のみの世界では遮蔽の標本化もぼかしも1本も積まない。
+    pub(crate) 局所可視性: Option<&'a 局所可視性描画入力>,
     pub(crate) ui: Option<&'a UI描画入力>,
 }
 

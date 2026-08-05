@@ -6,6 +6,7 @@ use crate::cloth_shader_set::布シェーダー一式;
 use crate::compute_shader::コンピュートシェーダー;
 use crate::distant_environment::遠方環境のシェーダー一式;
 use crate::indirect_lighting::契約別の描画シェーダー;
+use crate::local_visibility::局所可視性のシェーダー一式;
 use crate::particle_shader_set::粒子シェーダー一式;
 use crate::shader_set::シェーダー一式;
 
@@ -46,6 +47,8 @@ pub struct シェーダー束 {
     pub 明るさの圧縮: シェーダー一式,
     /// 自動露出の集計と導出。露出方式は実行時に世界が宣言するため、契約に関わらず常に受け取る。
     pub 自動露出: 自動露出のシェーダー一式,
+    /// 局所可視性補正の遮蔽の標本化と両側ぼかし。拡散間接方式は実行時に世界が宣言するため、契約に関わらず常に受け取る。
+    pub 局所可視性: 局所可視性のシェーダー一式,
     /// 光のにじみピラミッドの前処理(判断41)。HDRからKaris平均+ソフト閾値で1/2解像度へ抽出する。
     pub 光のにじみ前処理: シェーダー一式,
     /// 光のにじみピラミッドの縮小(判断41)。13タップ縮小で1/2ずつ小さくする。

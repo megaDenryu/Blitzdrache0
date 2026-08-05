@@ -3,6 +3,9 @@
 // 深度が書かれていない画素と、法線の面が定まらない画素は遮蔽なしへ退避する。空の背景に陰りを描かないこと
 // そのものがこの退避である。
 // 注意: この工程は`crates/blitz_render/src/local_visibility/occlusion_sampling.rs`の写しである。正本はRust側にある。
+// 注意: 記憶画像の形式宣言は`crates/blitz_render/src/vulkan/local_visibility/images.rs`の`局所可視度の形式`
+// (R8G8B8A8_UNORM)と一致させる。Vulkanは形式を宣言した記憶画像の読み書きに画像ビューと同じ形式を要求するため、
+// 食い違うとパイプラインの生成が落ちる。使うのは第1成分だけであり、残りの3成分は書く値を持たない。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 import local_visibility_depth;
@@ -13,7 +16,7 @@ import local_visibility_sample;
 import local_visibility_setting;
 
 [[vk::binding(0, 0)]] Texture2D<float> depthImage;
-[[vk::binding(1, 0)]] RWTexture2D<float> rawVisibilityImage;
+[[vk::binding(1, 0)]] [format("rgba8")] RWTexture2D<float4> rawVisibilityImage;
 [[vk::push_constant]] LocalVisibilitySetting localVisibilitySetting;
 
 // 1班が覆う画素の一辺。CPU側の班数の割り出しはこの値と一致させる。
@@ -80,5 +83,5 @@ void computeMain(uint3 threadId : SV_DispatchThreadID)
     {
         return;
     }
-    rawVisibilityImage[int2(int(pixel.x), int(pixel.y))] = pixelLocalVisibility(pixel);
+    rawVisibilityImage[int2(int(pixel.x), int(pixel.y))] = float4(pixelLocalVisibility(pixel), 0.0, 0.0, 1.0);
 }

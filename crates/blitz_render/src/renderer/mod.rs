@@ -1,5 +1,4 @@
-//! blitz_render の公開ファサード。Vulkanの全リソースをここに集約し、生成から破棄までのライフサイクルを一元管理する。
-//! 参照: CLAUDE.md「unsafe の規律」「封じ込め」。ash型は一切ここから公開しない。
+//! blitz_render の公開ファサード。Vulkanの全リソースをここに集約し、生成から破棄までのライフサイクルを一元管理する。参照: CLAUDE.md「unsafe の規律」「封じ込め」。ash型は一切ここから公開しない。
 
 mod aerial_composite_input;
 mod atmosphere_lut_write;
@@ -75,6 +74,7 @@ pub struct レンダラー {
     布: Option<vulkan::cloth::布一式>,
     /// フレーム構成にポスト処理段階があるときのみ`Some`(判断38・39)。HDR中間画像・光のにじみ・明るさの圧縮の有無をこの1つの`Option`が束ねるため、一部だけが存在する状態をレンダラーからは作れない。
     ポスト処理: Option<vulkan::post_process::ポスト処理一式>,
+    局所可視性: vulkan::local_visibility::局所可視性一式,
     /// `--particles`指定時のみ`Some`(判断29)。有無でコンピュート更新+粒子描画パスの追加を決める。
     粒子: Option<vulkan::particles::粒子リソース一式>,
     /// タイムスタンプ非対応デバイスでは`None`(判断30: 計測無効は型で表す)。

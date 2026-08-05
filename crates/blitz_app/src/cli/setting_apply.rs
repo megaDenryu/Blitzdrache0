@@ -56,7 +56,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--streaming-preload-radius" => {
             設定.ストリーミング.先読み半径 = value_args::先読み半径引数を処理する(残り)?;
         }
-        "--depth-prepass" => 設定.深度プリパス方式 = depth_prepass_args::引数を処理する(残り)?,
+        "--depth-prepass" => 設定.深度プリパス方式 = Some(depth_prepass_args::引数を処理する(残り)?),
         _ => flags::反映する(設定, 引数値),
     }
     Ok(())

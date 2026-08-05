@@ -22,7 +22,7 @@ mod exposure_elapsed;
 mod indirect_lighting_chain_tests;
 mod interval_override;
 mod reproduction_condition;
-mod scene_policy;
+pub(in crate::app) mod scene_policy;
 #[cfg(test)]
 mod scene_policy_tests;
 mod sky_input;

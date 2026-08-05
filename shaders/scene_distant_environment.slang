@@ -7,6 +7,7 @@
 import direct_light_shading;
 import indirect_distant_environment;
 import lighting_query;
+import local_visibility_apply;
 import material_record;
 import scene_diagnostic;
 import scene_io;
@@ -33,7 +34,7 @@ float4 fragmentMain(VertexOutput input) : SV_Target
     }
     float3 ambientTerm = distantEnvironmentIndirect(
         surface.normal, surface.viewDir, lightingQueryHeader.sunDirection.xyz,
-        surface.albedo, surface.metallic, surface.roughness);
+        surface.albedo, surface.metallic, surface.roughness, localVisibilityOfScreenPosition(input.position));
     float3 litColor = shadeLitSurface(
         ambientTerm, surface.albedo, surface.metallic, surface.roughness, surface.normal, surface.viewDir,
         input.relativePosition, surface.viewDepth);

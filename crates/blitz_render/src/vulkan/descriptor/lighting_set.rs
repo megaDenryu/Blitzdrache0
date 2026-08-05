@@ -1,12 +1,12 @@
-//! set3(照明問い合わせのセット)のレイアウトと、そのセットへ資源を結ぶ操作。触れるのは
-//! シャドウマップの比較サンプラー(binding0)・ヘッダの定数バッファ(binding1)・方向光レコード列(binding2)・
-//! 局所光レコード列(binding3)の4つと、遠方環境の枝だけが持つ3つ(binding4から6、`distant_environment`が担う)である。
+//! set3(照明問い合わせのセット)のレイアウトと、そのセットへ資源を結ぶ操作。触れるのはシャドウマップの比較サンプラー(binding0)・
+//! ヘッダの定数バッファ(binding1)・方向光レコード列(binding2)・局所光レコード列(binding3)の4つと、両方の契約が持つ
+//! 局所可視度の画像(binding7、`local_visibility`が担う)、遠方環境の枝だけが持つ3つ(binding4から6、`distant_environment`が担う)である。
 //! 4つを同じセットへ置くのは、どれも寿命がフレーム×ビューであり、直接光と直接影が同じ問い合わせ契約に属するためである
-//! (参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「照明問い合わせ資源のGPU境界」)。
-//! 番号の正本は`shaders/lighting_query.slang`の宣言である。
+//! (参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「照明問い合わせ資源のGPU境界」)。番号の正本は`shaders/lighting_query.slang`の宣言である。
 
 mod buffer_group;
 pub(crate) mod distant_environment;
+pub(crate) mod local_visibility;
 mod pool;
 
 use ash::vk;
@@ -36,6 +36,7 @@ pub(super) fn レイアウトを生成する(
     if 束縛レイアウト.遠方環境の画像を結ぶか() {
         バインド一覧.extend(distant_environment::バインド一覧());
     }
+    バインド一覧.push(local_visibility::バインド());
     let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
     // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
     Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
