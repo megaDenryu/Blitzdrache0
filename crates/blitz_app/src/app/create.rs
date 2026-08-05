@@ -9,7 +9,7 @@ use super::{frame_timing, streaming, アプリ};
 use crate::cli::起動設定;
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
-use crate::input::入力状態;
+use crate::input::{カメラ操作の適用方針, 入力状態};
 use blitz_render::クリアカラー;
 
 impl アプリ {
@@ -46,7 +46,7 @@ impl アプリ {
             アセットルート: 起動設定.アセットルート,
             大域ずらし量,
             描画対象の並べ方: 起動設定.描画対象の並べ方,
-            入力状態: 入力状態::生成する(),
+            入力状態: 入力状態::生成する(カメラ操作の適用方針::起動モードから決める(起動設定.モード)),
             現在フレーム: 0,
             クリア色,
             天空,
