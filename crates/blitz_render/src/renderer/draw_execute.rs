@@ -7,6 +7,7 @@
 //! 圧縮前のHDRの読み戻しは子の`hdr_readback`が持つ。あちらは公開エントリのほかに読み戻しバッファをHDR画像へ開く変換を持ち、提示画像とは画素あたりのバイト数も成分の型も違う対象を1つ所有するためである。
 
 mod acquire;
+mod depth_readback;
 mod hdr_readback;
 mod prepare;
 mod submit;

@@ -8,11 +8,12 @@ pub(super) fn コピーを記録する(
     画像: vk::Image,
     バッファ: vk::Buffer,
     寸法: vk::Extent2D,
+    面: vk::ImageAspectFlags,
 ) {
     let 領域 = vk::BufferImageCopy::default()
         .image_subresource(
             vk::ImageSubresourceLayers::default()
-                .aspect_mask(vk::ImageAspectFlags::COLOR)
+                .aspect_mask(面)
                 .mip_level(0)
                 .base_array_layer(0)
                 .layer_count(1),

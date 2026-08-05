@@ -47,7 +47,7 @@ pub(super) fn object_count引数を処理する(引数: &mut Iter<String>) -> Re
     描画対象数::生成する(数).map_err(起動引数エラー::描画対象数不正)
 }
 
-/// `--dump-frame`と`--dump-hdr-frame`は値の読み方が同じであるため、どちらもこの1つが受ける。
+/// `--dump-frame`と`--dump-hdr-frame`と`--dump-depth-frame`は値の読み方が同じであるため、どれもこの1つが受ける。
 /// どの画像を選ぶかと、既に選ばれていたときに失敗させるかは指定の型が決める。
 pub(super) fn フレームダンプ引数を反映する(
     指定: &mut フレームダンプ指定,

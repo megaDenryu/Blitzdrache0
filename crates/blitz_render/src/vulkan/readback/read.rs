@@ -9,7 +9,7 @@ use super::buffer::読み戻しバッファ;
 use super::target::読み戻し対象;
 use crate::error::レンダラーエラー;
 use crate::numeric::half_precision::半精度を単精度へ;
-use crate::readback_image::{HDR読み戻し画像, 読み戻し画像};
+use crate::readback_image::{HDR読み戻し画像, 深度読み戻し画像, 読み戻し画像};
 
 pub(crate) fn 読み取る(
     device: &ash::Device,
@@ -38,6 +38,20 @@ pub(crate) fn hdrを読み取る(
         .map(|対| 半精度を単精度へ(u16::from_le_bytes([対[0], 対[1]])))
         .collect();
     Ok(HDR読み戻し画像::生成する(寸法.width, 寸法.height, 成分))
+}
+
+/// 単精度1成分のバイト列を深度の列へ開く。D32_SFLOATのビット列をそのまま単精度として読むだけであり、値を丸め直さない。
+pub(crate) fn 深度を読み取る(
+    device: &ash::Device,
+    バッファ: &読み戻しバッファ,
+    寸法: vk::Extent2D,
+) -> Result<深度読み戻し画像, レンダラーエラー> {
+    let 生データ = 生バイト列を読む(device, バッファ, 寸法, 読み戻し対象::最終深度)?;
+    let 深度 = 生データ
+        .chunks_exact(4)
+        .map(|四つ| f32::from_le_bytes([四つ[0], 四つ[1], 四つ[2], 四つ[3]]))
+        .collect();
+    Ok(深度読み戻し画像::生成する(寸法.width, 寸法.height, 深度))
 }
 
 fn 生バイト列を読む(

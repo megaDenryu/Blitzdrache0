@@ -50,7 +50,8 @@ fn 画像を作る(device: &ash::Device, 寸法: vk::Extent2D) -> Result<vk::Ima
         .samples(vk::SampleCountFlags::TYPE_1)
         .tiling(vk::ImageTiling::OPTIMAL)
         // SAMPLEDを足すのは空中遠近合成が深度を画素段で参照するためである(参照: `vulkan/frame/record/aerial_composite_pass.rs`)。
-        .usage(vk::ImageUsageFlags::DEPTH_STENCIL_ATTACHMENT | vk::ImageUsageFlags::SAMPLED)
+        // TRANSFER_SRCを足すのは、深度プリパスの三条件で最終深度をホストへ読み戻して突き合わせるためである(参照: `vulkan::readback::読み戻し対象`)。
+        .usage(vk::ImageUsageFlags::DEPTH_STENCIL_ATTACHMENT | vk::ImageUsageFlags::SAMPLED | vk::ImageUsageFlags::TRANSFER_SRC)
         .sharing_mode(vk::SharingMode::EXCLUSIVE)
         .initial_layout(vk::ImageLayout::UNDEFINED);
     // 安全性: deviceは生成済みで有効。
