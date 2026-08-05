@@ -8,7 +8,9 @@ mod auto_exposure_spirv_compile;
 mod bloom_spirv_compile;
 mod cloth_spirv_compile;
 mod derived_environment_spirv_compile;
+mod local_visibility_spirv_compile;
 mod particle_spirv_compile;
+mod rerun_registration;
 mod shadow_spirv_compile;
 mod skinning_spirv_compile;
 mod sky_spirv_compile;
@@ -21,7 +23,7 @@ mod tonemap_spirv_compile;
 mod ui_spirv_compile;
 
 use std::env;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 const シェーダーディレクトリ相対パス: &str = "../../shaders";
 const エントリファイル名: &str = "scene.slang";
@@ -39,7 +41,7 @@ const スキニングエントリファイル名: &str = "skinning.slang";
 pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     let manifest_dir = env::var("CARGO_MANIFEST_DIR").map_err(|誤り| format!("CARGO_MANIFEST_DIR環境変数が取得できない: {誤り}"))?;
     let シェーダーディレクトリ絶対パス = PathBuf::from(&manifest_dir).join(シェーダーディレクトリ相対パス);
-    再ビルド対象を登録する(&シェーダーディレクトリ絶対パス)?;
+    rerun_registration::登録する(&シェーダーディレクトリ絶対パス)?;
 
     let out_dir = env::var("OUT_DIR").map_err(|誤り| format!("OUT_DIR環境変数が取得できない: {誤り}"))?;
     let 出力先ディレクトリ = PathBuf::from(out_dir);
@@ -79,22 +81,7 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
 
     atmosphere_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
     auto_exposure_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
+    local_visibility_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
 
     cloth_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)
-}
-
-/// shaders/ディレクトリ自体と、直下の全.slangファイルをrerun-if-changed対象にする。
-/// ディレクトリ自体も登録することで、ファイルの追加・削除にも追従する
-/// (Cargoはディレクトリのmtimeでもこのトリガーを検知できる)。
-fn 再ビルド対象を登録する(ディレクトリ: &Path) -> Result<(), String> {
-    println!("cargo:rerun-if-changed={}", ディレクトリ.display());
-    let 読み取り結果 = std::fs::read_dir(ディレクトリ).map_err(|誤り| format!("shaders/ディレクトリの読み取りに失敗した: {誤り}"))?;
-    for エントリ結果 in 読み取り結果 {
-        let エントリ = エントリ結果.map_err(|誤り| format!("shaders/ディレクトリの読み取りに失敗した: {誤り}"))?;
-        let パス = エントリ.path();
-        if パス.extension().and_then(|拡張子| 拡張子.to_str()) == Some("slang") {
-            println!("cargo:rerun-if-changed={}", パス.display());
-        }
-    }
-    Ok(())
 }
