@@ -19,7 +19,7 @@ use crate::draw_result::{描画結果, 見送り理由};
 use crate::error::{フレーム入力不一致エラー, レンダラーエラー};
 use crate::frame_input::フレーム描画入力;
 use crate::readback_image::読み戻し画像;
-use crate::readback_result::読み戻し結果;
+use crate::readback_image::読み戻し結果;
 use crate::vulkan::readback::読み戻し対象;
 
 impl レンダラー {

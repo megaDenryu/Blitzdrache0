@@ -9,7 +9,7 @@ use super::super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::frame_input::フレーム描画入力;
 use crate::readback_image::HDR読み戻し画像;
-use crate::readback_result::読み戻し結果;
+use crate::readback_image::読み戻し結果;
 use crate::vulkan;
 use crate::vulkan::readback::読み戻し対象;
 
