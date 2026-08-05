@@ -9,7 +9,7 @@ use blitz_engine::auto_exposure::露出方式;
 use blitz_engine::local_visibility::拡散間接方式;
 use blitz_engine::sky::{世界の空方針, 世界の間接照明方針};
 
-use crate::cli::local_visibility_settings::局所可視性の起動指定;
+use crate::cli::local_visibility_settings::{局所可視性の起動指定, 拡散間接方式の起動上書き};
 use crate::cli::{空の起動指定, 自動露出の起動指定};
 
 /// 空を持つ世界の名前の接頭辞。`terrain_origin`をはじめ、地形チャンクを敷く世界はすべてこの接頭辞で始まる。
@@ -64,7 +64,8 @@ pub(in crate::app) fn 世界の露出方式を決める(シーン名: &str, 指�
 /// あって、照度そのものの供給元でも画の完成の段でもない。間接照明の検収世界を含めないのは、その世界の判定が板の
 /// 画素の値そのものを見ており、近傍の形から来る陰りが乗ると期待値が立たなくなるためである。
 pub(in crate::app) fn 世界の拡散間接方式を決める(シーン名: &str, 指定: 局所可視性の起動指定) -> 拡散間接方式 {
-    if 指定 == 局所可視性の起動指定::環境のみで描く || !シーン名.starts_with(地形世界の接頭辞) {
+    if 指定.方式の上書き == 拡散間接方式の起動上書き::環境のみで描く || !シーン名.starts_with(地形世界の接頭辞)
+    {
         return 拡散間接方式::環境のみ;
     }
     拡散間接方式::局所可視性補正付き環境

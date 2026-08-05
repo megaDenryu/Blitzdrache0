@@ -95,4 +95,6 @@ pub enum レンダラーエラー {
     間接照明不正(#[from] indirect_lighting::間接照明エラー),
     #[error("生成に渡した素材とフレーム構成が噛み合わない: {0}")]
     生成要求不一致(#[from] generate_request::生成要求不一致エラー),
+    #[error("局所可視性補正の入力が値域を外れた: {0}")]
+    局所可視性不正(#[from] crate::local_visibility::局所可視性エラー),
 }

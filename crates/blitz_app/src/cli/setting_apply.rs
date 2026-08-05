@@ -5,8 +5,8 @@ mod flags;
 use std::slice::Iter;
 
 use super::{
-    auto_exposure_probe_args, depth_prepass_args, ibl_step_scan_args, indirect_probe_args, instance_lod_args, lod_crack_args, placement_args,
-    screen_pixel_args, shadow_args, time_args, value_args, 起動設定,
+    auto_exposure_probe_args, depth_prepass_args, ibl_step_scan_args, indirect_probe_args, instance_lod_args, local_visibility_settings,
+    lod_crack_args, placement_args, screen_pixel_args, shadow_args, time_args, value_args, 起動設定,
 };
 use crate::error::起動エラー;
 
@@ -57,6 +57,8 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
             設定.ストリーミング.先読み半径 = value_args::先読み半径引数を処理する(残り)?;
         }
         "--depth-prepass" => 設定.深度プリパス方式 = Some(depth_prepass_args::引数を処理する(残り)?),
+        "--local-visibility-shape" => 設定.読み戻し検収.局所可視性の検収の形 = Some(local_visibility_settings::形の引数を処理する(残り)?),
+        "--local-visibility-fixed" => 設定.局所可視性.可視度の固定 = local_visibility_settings::固定の引数を処理する(残り)?,
         _ => flags::反映する(設定, 引数値),
     }
     Ok(())

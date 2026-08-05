@@ -20,6 +20,7 @@
 //! ハンマーズリー列と接基底は派生表現の畳み込みが持つ正本を共有する。同じ数学へ2つの正本を置くと
 //! シェーダー側の写しも2本になり、値の一致検査が二重になるためである。
 
+mod acceptance_override;
 mod bake;
 mod bilateral_blur;
 mod blur_settings;
@@ -58,6 +59,7 @@ mod visibility_image;
 #[cfg(test)]
 mod local_visibility_tests;
 
+pub use acceptance_override::局所可視度の上書き;
 pub use bake::{局所可視度画像を焼く, 生の局所可視度を焼く};
 pub use bilateral_blur::両側ぼかしを掛ける;
 pub use blur_settings::両側ぼかしの設定;

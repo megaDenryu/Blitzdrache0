@@ -1,7 +1,7 @@
 //! 値を伴わない1つのフラグを起動設定へ反映する工程。受け取るのは起動設定と引数の語、返すものは無い。
 //! 知らない語を黙って読み飛ばすのは、この工程が値を伴う引数の反映(親モジュール)で処理されなかった語だけを受け取るためである。
 
-use super::super::local_visibility_settings::局所可視性の起動指定;
+use super::super::local_visibility_settings::拡散間接方式の起動上書き;
 use super::super::streaming_settings::プレイヤー位置源;
 use super::super::{布モード, 描画対象の走査順, 検証計画指定, 粒子表示モード, 起動設定};
 
@@ -28,7 +28,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str) {
         "--no-instance-lod" => 設定.インスタンス段選択有効 = false,
         "--no-instance-shadow" => 設定.インスタンス影キャスター有効 = false,
         "--no-shadow-casters" => 設定.影キャスター全体有効 = false,
-        "--no-ssao" => 設定.局所可視性 = 局所可視性の起動指定::環境のみで描く,
+        "--no-ssao" => 設定.局所可視性.方式の上書き = 拡散間接方式の起動上書き::環境のみで描く,
         "--dev-ui" => 設定.開発ui初期有効 = true,
         "--debug-cascade-bands" => 設定.画素診断 = blitz_render::cascade::画素診断::距離区分の可視化,
         "--debug-shadow-loss" => 設定.画素診断 = blitz_render::cascade::画素診断::影の欠落計器,

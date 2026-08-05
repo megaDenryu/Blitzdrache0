@@ -17,9 +17,7 @@ pub(crate) use input::局所可視性描画入力;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::local_visibility::{
-    局所可視性のシェーダー一式, 局所可視性の描画設定, 局所可視性の設定, 拡散間接方式
-};
+use crate::local_visibility::{局所可視性のシェーダー一式, 局所可視性の描画設定};
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
@@ -27,8 +25,7 @@ pub(crate) struct 局所可視性一式 {
     画像組: images::局所可視度の画像組,
     ディスクリプタ: descriptor::局所可視性のディスクリプタ,
     パイプライン: pipelines::局所可視性のパイプライン一式,
-    設定: 局所可視性の設定,
-    方式: 拡散間接方式,
+    描画設定: 局所可視性の描画設定,
 }
 
 impl 局所可視性一式 {
@@ -42,7 +39,7 @@ impl 局所可視性一式 {
     ) -> Result<Self, レンダラーエラー> {
         let 画像組 = images::局所可視度の画像組::生成する(device, メモリプロパティ, 画面.寸法)?;
         let 一式 = 組み上げる(device, シェーダー, 描画設定, 画像組)?;
-        if let Err(誤り) = fill::遮蔽なしで埋める(device, 転送環境, &一式.画像組) {
+        if let Err(誤り) = fill::一定の符号値で埋める(device, 転送環境, &一式.画像組, 描画設定.埋める符号値()) {
             一式.破棄する(device);
             return Err(誤り);
         }
@@ -50,9 +47,9 @@ impl 局所可視性一式 {
         Ok(一式)
     }
 
-    /// 世界が宣言した拡散間接方式。2本のパスを積むかどうかだけを決める。
-    pub(crate) fn 方式(&self) -> 拡散間接方式 {
-        self.方式
+    /// 遮蔽の標本化と両側ぼかしをそのフレームへ積むか。判断は描画設定が持つ。
+    pub(crate) fn パスを積むか(&self) -> bool {
+        self.描画設定.パスを積むか()
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
@@ -88,8 +85,7 @@ fn 組み上げる(
             画像組,
             ディスクリプタ,
             パイプライン,
-            設定: 描画設定.補正の設定,
-            方式: 描画設定.方式,
+            描画設定,
         }),
         Err(誤り) => {
             ディスクリプタ.破棄する(device);

@@ -15,6 +15,7 @@ pub(crate) mod exit;
 pub(crate) mod gpu_frame_samples;
 pub(crate) mod gpu_time_table;
 pub(crate) mod indirect_probe;
+pub(crate) mod local_visibility;
 pub(crate) mod shadow_gpu_time;
 pub(crate) mod sky_pixel;
 pub(crate) mod sky_state;

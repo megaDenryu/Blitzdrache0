@@ -7,6 +7,7 @@
 
 use super::画面画素位置;
 use crate::reports::indirect_probe::遠方環境の検収条件;
+use crate::reports::local_visibility::合成深度の形;
 
 pub(crate) struct 読み戻し検収起動設定 {
     /// `--report-sky-pixel <横,縦;...>`指定で、その画素について空の色をCPU正本で求め直し、読み戻した画素と並べて出す。
@@ -21,6 +22,9 @@ pub(crate) struct 読み戻し検収起動設定 {
     /// `--auto-exposure-probe <赤,緑,青>`指定で、シーンパスのクリア色をこの線形RGBへ置き換える。
     /// 背景の画素が探り色になり、その色をCPU正本とGPUがどのビンへ入れたかを突き合わせられる。
     pub(crate) 自動露出の探り色: Option<[f32; 3]>,
+    /// `--local-visibility-shape <形>`指定で、その形の合成深度をGPUの深度画像へ注入し、読み戻した局所可視度を
+    /// CPU正本と並べて出す。指定が無い実行は注入も報告も行わない。
+    pub(crate) 局所可視性の検収の形: Option<合成深度の形>,
 }
 
 impl 読み戻し検収起動設定 {
@@ -30,6 +34,7 @@ impl 読み戻し検収起動設定 {
             遠方環境の検収条件: None,
             自動露出を報告するか: false,
             自動露出の探り色: None,
+            局所可視性の検収の形: None,
         }
     }
 }
