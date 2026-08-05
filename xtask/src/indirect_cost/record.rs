@@ -63,11 +63,16 @@ impl 一標本 {
 }
 
 pub(super) fn 生値を書く(書き先: &Path, 標本一覧: &[一標本], 由来: &crate::release_build::構築の由来) -> Result<(), String> {
-    let mut 本文 = format!(
-        "# 計測に使ったバイナリ {}
-",
-        由来.一行にする()
-    );
+    let mut 本文: String = 由来
+        .注記一覧()
+        .iter()
+        .map(|注記| {
+            format!(
+                "# {注記}
+"
+            )
+        })
+        .collect();
     本文.push_str("実行番号\t条件\t区間\t平均ミリ秒\tp50ミリ秒\tp95ミリ秒\t標本数\t焼き直したフレーム数\t数えたフレーム数\n");
     for 標本 in 標本一覧 {
         for (区間名, 分布) in intervals::全区間一覧().iter().zip(&標本.区間別) {
