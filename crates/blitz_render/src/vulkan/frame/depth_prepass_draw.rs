@@ -35,12 +35,12 @@ pub(super) fn 描画コマンドを積む(
         return;
     };
     shared_set_bind::ビューとパスのセットを束縛する(device, command_buffer, 先頭.layout, 共有);
-    let mut 直前のpipeline = vk::Pipeline::null();
+    let mut 直前のpipeline = None;
     for 入力 in ジオメトリ一覧 {
-        if 直前のpipeline != 入力.深度プリパスpipeline {
+        if 直前のpipeline != Some(入力.深度プリパスpipeline) {
             // 安全性: command_bufferは記録中で、pipelineは台帳が起動時に作った実体である。
             unsafe { device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.深度プリパスpipeline) };
-            直前のpipeline = 入力.深度プリパスpipeline;
+            直前のpipeline = Some(入力.深度プリパスpipeline);
         }
         一件を記録する(device, command_buffer, 入力);
     }
