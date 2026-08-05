@@ -28,6 +28,8 @@ mod sky_input;
 mod sun_disk_override;
 mod sun_zenith_interval_record;
 mod thinning;
+#[cfg(test)]
+mod thinning_commit_tests;
 mod wiring;
 
 pub(crate) use distant_environment_key_record::遠方環境の鍵の記録;
