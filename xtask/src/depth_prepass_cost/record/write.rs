@@ -11,13 +11,13 @@
 
 use std::path::Path;
 
-use crate::release_build::構築の由来;
+use crate::release_build::{tsvの前置き, 構築の由来};
 
 use super::super::intervals;
 use super::{一標本, 区間の観測};
 
 pub(in super::super) fn 生値を書く(書き先: &Path, 標本一覧: &[一標本], 由来: &構築の由来) -> Result<(), String> {
-    let mut 本文 = 由来の行(由来);
+    let mut 本文 = tsvの前置き(&由来.注記一覧());
     本文.push_str("実行番号\t周回\t順序位置\t条件\t読み取り順\t区間\t経過ミリ秒\n");
     for 標本 in 標本一覧 {
         for 生値 in &標本.フレーム別の値一覧 {
@@ -31,7 +31,7 @@ pub(in super::super) fn 生値を書く(書き先: &Path, 標本一覧: &[一標
 }
 
 pub(in super::super) fn 窓の集約を書く(書き先: &Path, 標本一覧: &[一標本], 由来: &構築の由来) -> Result<(), String> {
-    let mut 本文 = 由来の行(由来);
+    let mut 本文 = tsvの前置き(&由来.注記一覧());
     本文.push_str("実行番号\t周回\t順序位置\t条件\t区間\t平均ミリ秒\tp50ミリ秒\tp95ミリ秒\t標本数\n");
     for 標本 in 標本一覧 {
         for (区間名, 観測) in intervals::全区間一覧.iter().zip(&標本.区間別) {
@@ -54,10 +54,4 @@ fn 行にする(標本: &一標本, 区間名: &str, 観測: 区間の観測) ->
 
 fn 書く(書き先: &Path, 本文: &str) -> Result<(), String> {
     std::fs::write(書き先, 本文).map_err(|誤り| format!("{}を書けなかった: {誤り}", 書き先.display()))
-}
-
-/// 見出しより前に置く注記の行。計測に使ったバイナリの由来と、在れば未追跡のファイルのパスをここだけで
-/// 確かめられるようにする。1行目だけを書かないのは、未追跡のパスが採用可否の材料そのものだからである。
-fn 由来の行(由来: &構築の由来) -> String {
-    由来.注記一覧().iter().map(|注記| format!("# {注記}\n")).collect()
 }

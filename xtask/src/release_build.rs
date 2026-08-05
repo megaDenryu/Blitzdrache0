@@ -9,11 +9,13 @@
 //! 構築の標準出力と所要時間は計測窓へ入らない。ここが戻ってから初めて条件列が始まるためである。
 
 mod provenance;
+mod tsv_prefix;
 
 use std::path::Path;
 use std::process::Command;
 
 pub use provenance::構築の由来;
+pub use tsv_prefix::tsvの前置き;
 
 /// 計測が直に叩く実行ファイル。構築の対象と、由来を採る対象が同じ1つであることをこの定数が保つ。
 pub const 計測用の実行ファイル: &str = "target/release/blitz_app.exe";

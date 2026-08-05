@@ -28,6 +28,8 @@
 
 mod capture;
 mod diff_presence;
+#[cfg(test)]
+mod notes_tests;
 
 use std::path::Path;
 
