@@ -13,13 +13,16 @@ use std::process::Command;
 const フレーム数: &str = "12";
 /// 正午。時刻は局所可視度に効かないが、実行条件を1つに固定して読み手が条件を推測しなくてよいようにする。
 const 一日内秒: &str = "43200";
+/// 時計を止める倍率。局所可視度は深度だけから決まるため時刻に依らないが、既定の時計が実時間で進むと
+/// 遠方環境の焼き直しがフレームごとに起こりうる。止めるほうが実行の条件が1つ減る。
+const 時計を止める倍率: &str = "0";
 
 pub(super) fn 描画する(形: &str) -> Result<String, String> {
     let 出力 = Command::new("cargo")
         .args(["run", "-p", "blitz_app", "--", "--scene", crate::visual_sample_world::シーン名])
         .args(["--asset-root", crate::visual_sample_world::アセットルート])
         .args(["--frames", フレーム数])
-        .args(["--time-of-day", 一日内秒])
+        .args(["--time-of-day", 一日内秒, "--time-scale", 時計を止める倍率])
         .args(["--local-visibility-shape", 形])
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({形}): {誤り}"))?;

@@ -9,6 +9,8 @@ mod ibl_step_scan_args_tests;
 #[cfg(test)]
 mod launch_request_tests;
 #[cfg(test)]
+mod local_visibility_args_tests;
+#[cfg(test)]
 mod time_args_tests;
 
 mod argument_error;
@@ -27,6 +29,7 @@ mod object_count;
 mod placement_args;
 #[cfg(test)]
 mod placement_args_tests;
+mod report_only_request;
 mod screen_pixel_args;
 mod setting_apply;
 mod shadow_args;
@@ -55,38 +58,18 @@ pub(crate) use verification_plan::検証計画指定;
 
 use crate::error::起動エラー;
 
-/// 描画しない報告だけを求める引数。描画の設定を1つも読まないため、他の引数より先に判定する。
-const 天空状態報告引数: &str = "--report-sky-state";
-/// 描画しない報告だけを求める引数。ウィンドウを作らずウィンドウなし実行のGPUだけを使う。
-const 大気のベイク済み画像報告引数: &str = "--report-atmosphere-lut";
-/// 描画しない報告だけを求める引数。ウィンドウを作らずウィンドウなし実行のGPUだけを使う。
-const 遠方環境報告引数: &str = "--report-distant-environment";
-/// 描画しない報告だけを求める引数。ウィンドウを作らずウィンドウなし実行のGPUだけを使う。
-const 派生表現報告引数: &str = "--report-derived-environment";
-/// 描画しない報告だけを求める引数。GPUを1度も使わず、一日で太陽天頂区間の境界を跨ぐ瞬間を列挙する。
-const 太陽天頂区間の跨ぎ報告引数: &str = "--report-sun-zenith-crossings";
-
 /// CLI引数から起動要求を解析する。粒子系の検証対象は`--particles`または`--surface-flow`で選ぶ。
 /// `--shader-source`は監視・再コンパイル対象のエントリファイルを指す。`import`先の他ファイルは常にエントリと同じディレクトリから解決するため個別指定は不要。
 pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動要求, 起動エラー> {
-    if 引数一覧.iter().any(|引数値| 引数値 == 天空状態報告引数) {
-        return Ok(起動要求::天空状態報告);
-    }
-    if 引数一覧.iter().any(|引数値| 引数値 == 大気のベイク済み画像報告引数) {
-        return Ok(起動要求::大気のベイク済み画像報告);
-    }
-    if 引数一覧.iter().any(|引数値| 引数値 == 遠方環境報告引数) {
-        return Ok(起動要求::遠方環境報告);
-    }
-    if 引数一覧.iter().any(|引数値| 引数値 == 派生表現報告引数) {
-        return Ok(起動要求::派生表現報告);
-    }
-    if 引数一覧.iter().any(|引数値| 引数値 == 太陽天頂区間の跨ぎ報告引数) {
-        return Ok(起動要求::太陽天頂区間の跨ぎ報告);
+    if let Some(要求) = report_only_request::報告だけの要求を見分ける(引数一覧) {
+        return Ok(要求);
     }
     Ok(起動要求::描画実行(Box::new(起動設定を解析する(引数一覧)?)))
 }
 
+/// 引数を全部読み終えてから、組み合わせの成立を確かめる。走査の途中で確かめられないのは、どの検査も
+/// 「後から来る引数が無いこと」を条件に含むためである。指定の順序で結果が変わる検査は、利用者が並べ方を
+/// 覚えていなければならない仕様になる。
 fn 起動設定を解析する(引数一覧: &[String]) -> Result<起動設定, 起動エラー> {
     let mut 起動設定 = 起動設定::既定値();
 
@@ -95,6 +78,10 @@ fn 起動設定を解析する(引数一覧: &[String]) -> Result<起動設定, 
         setting_apply::反映する(&mut 起動設定, 引数値, &mut 引数)?;
     }
     types::走査の書き出し先を確かめる(起動設定.モード, &起動設定.フレームダンプ先)?;
+    local_visibility_settings::検収とフレームダンプの排他を確かめる(
+        起動設定.読み戻し検収.局所可視性の検収の形,
+        &起動設定.フレームダンプ先,
+    )?;
 
     Ok(起動設定)
 }
