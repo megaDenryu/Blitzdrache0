@@ -48,8 +48,8 @@ pub(super) fn 布用記述する() -> (vk::VertexInputBindingDescription, Vec<vk
 }
 
 /// 属性選択に応じたバインド・属性記述を返す。
-pub(super) fn 選択して記述する(
-    選択: super::頂点属性選択
+pub(in crate::vulkan::pipeline) fn 選択して記述する(
+    選択: super::頂点属性選択,
 ) -> (vk::VertexInputBindingDescription, Vec<vk::VertexInputAttributeDescription>) {
     match 選択 {
         super::頂点属性選択::全属性 => {

@@ -3,7 +3,9 @@
 //! この2つはレイアウトの所有を呼び出し元へ委ねる。自分のレイアウトを抱えたまま持ち回る布のような使い方は`パイプライン`が持つ。
 
 mod aerial_composite_pipeline;
+mod color_pass_depth;
 mod create;
+mod depth_prepass_pipeline;
 mod graphics_pipeline;
 mod layout;
 mod material_family;
@@ -17,8 +19,11 @@ use crate::shader_set::シェーダー一式;
 use crate::vulkan::relative_anchor;
 
 pub(crate) use aerial_composite_pipeline::空中遠近合成パイプライン;
+pub(crate) use color_pass_depth::色パスの深度状態;
 pub(crate) use layout::{生成する as レイアウトを生成する, 破棄する as レイアウトを破棄する};
-pub(crate) use material_family::{シャドウのpipelineを生成する, シーンのpipelineを生成する};
+pub(crate) use material_family::{
+    シャドウのpipelineを生成する, シーンのpipelineを生成する, 深度プリパスのpipelineを生成する
+};
 pub(crate) use shadow_pipeline::シャドウパイプライン;
 pub(crate) use sky_pipeline::空パイプライン;
 
@@ -50,6 +55,7 @@ impl パイプライン {
             layout,
             シェーダー,
             graphics_pipeline::頂点属性選択::布用,
+            色パスの深度状態::より近いものを描いて書く,
         );
         match 結果 {
             Ok(handle) => Ok(Self { handle, layout }),

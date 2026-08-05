@@ -3,7 +3,6 @@
 
 use ash::vk;
 
-use crate::clear_color::クリアカラー;
 use crate::visible_instance_selection::可視パス;
 use crate::vulkan::frame::{draw_commands, shared_set_bind, ジオメトリ入力, 共有セット束縛, 布描画入力};
 use crate::vulkan::graph::{
@@ -28,7 +27,7 @@ pub(super) fn 作る<'a>(
     読み画像一覧: Vec<(画像ハンドル, 画像用途)>,
     スキン済み頂点: Option<バッファハンドル>,
     布ドロー: Option<布ドロー<'a>>,
-    クリア色: クリアカラー,
+    クリア: クリア指定,
     ジオメトリ一覧: &'a [ジオメトリ入力],
     共有: 共有セット束縛<'a>,
     寸法: vk::Extent2D,
@@ -48,7 +47,7 @@ pub(super) fn 作る<'a>(
         パス種別::グラフィックス {
             カラー: Some(カラー),
             深度: Some(深度アタッチメント::全体(深度)),
-            クリア指定: クリア指定::クリアする { カラー: クリア色 },
+            クリア指定: クリア,
         },
         move |文脈| {
             draw_commands::描画コマンドを積む(文脈.device(), 文脈.コマンドバッファ(), 寸法, ジオメトリ一覧, 共有);

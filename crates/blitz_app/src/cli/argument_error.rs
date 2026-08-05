@@ -58,4 +58,6 @@ pub(crate) enum 起動引数エラー {
     影の視距離不正(String),
     #[error("--ibl-step-scan引数が不正だった: {0}")]
     段差走査範囲不正(String),
+    #[error("--depth-prepass引数が不正だった: {0}")]
+    深度プリパス方式不正(String),
 }

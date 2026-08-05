@@ -12,6 +12,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::material_variant::材質変種キー;
+use crate::vulkan::pipeline::色パスの深度状態;
 
 use super::key::パイプラインキー;
 use super::lighting_binding_layout::照明束縛レイアウト;
@@ -73,6 +74,7 @@ fn シーンのキー(描画先: 描画先の一意化) -> パイプラインキ
         描画先,
         材質変種: 材質変種キー::標準金属粗さPBRの不透明両面,
         照明束縛: 照明束縛レイアウト::直接光と多段影,
+        深度状態: 色パスの深度状態::より近いものを描いて書く,
     }
 }
 

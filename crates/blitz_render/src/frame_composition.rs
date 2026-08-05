@@ -1,62 +1,25 @@
-//! エンジンが宣言し、レンダラーが実行する1フレームの段階列。
+//! エンジンが宣言し、レンダラーが実行する1フレームの組み立て方。段階の列と深度プリパスの方式の2つを持つ。
+//! 段階の語彙は`stage`、深度プリパスの方式は`depth_prepass`、段階列の妥当性の検査は`validation`にある。
 
 #[cfg(test)]
 mod frame_composition_tests;
 
 use thiserror::Error;
 
+mod depth_prepass;
+mod stage;
 mod validation;
 
+pub use depth_prepass::深度プリパス方式;
+pub use stage::フレーム段階;
 use validation::検証する;
 
 const 段階数上限: usize = 9;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum フレーム段階 {
-    スキニング,
-    布シミュレーション,
-    影,
-    シーン,
-    空,
-    粒子,
-    光のにじみと明るさの圧縮,
-    UI,
-    読み戻し,
-}
-
-impl フレーム段階 {
-    pub fn 名称(self) -> &'static str {
-        match self {
-            Self::スキニング => "スキニング",
-            Self::布シミュレーション => "布シミュレーション",
-            Self::影 => "影",
-            Self::シーン => "シーン",
-            Self::空 => "空",
-            Self::粒子 => "粒子",
-            Self::光のにじみと明るさの圧縮 => "光のにじみと明るさの圧縮",
-            Self::UI => "UI",
-            Self::読み戻し => "読み戻し",
-        }
-    }
-
-    fn 順位(self) -> u8 {
-        match self {
-            Self::スキニング => 0,
-            Self::布シミュレーション => 1,
-            Self::影 => 2,
-            Self::シーン => 3,
-            Self::空 => 4,
-            Self::粒子 => 5,
-            Self::光のにじみと明るさの圧縮 => 6,
-            Self::UI => 7,
-            Self::読み戻し => 8,
-        }
-    }
-}
-
 #[derive(Debug, Clone, Copy)]
 pub struct フレーム構成 {
     段階一覧: [Option<フレーム段階>; 段階数上限],
+    深度プリパス方式: 深度プリパス方式,
 }
 
 impl フレーム構成 {
@@ -66,7 +29,24 @@ impl フレーム構成 {
         for (添字, 段階) in 段階一覧.iter().copied().enumerate() {
             格納先[添字] = Some(段階);
         }
-        Ok(Self { 段階一覧: 格納先 })
+        Ok(Self {
+            段階一覧: 格納先,
+            深度プリパス方式: 深度プリパス方式::使わない,
+        })
+    }
+
+    /// 深度プリパスの方式を据えた構成を返す。生成の既定が`使わない`であるのは、本番の絵をこの軸で変えないためであり、
+    /// 積む枝は計測の起動指定だけが据える(参照: `_doc/設計/放射輝度問い合わせ階層.md`「IIaの実装設計」)。
+    #[must_use]
+    pub const fn 深度プリパス方式を据えた(self, 方式: 深度プリパス方式) -> Self {
+        Self {
+            段階一覧: self.段階一覧,
+            深度プリパス方式: 方式,
+        }
+    }
+
+    pub const fn 深度プリパス方式(&self) -> 深度プリパス方式 {
+        self.深度プリパス方式
     }
 
     pub fn 段階一覧(&self) -> impl Iterator<Item = フレーム段階> + '_ {

@@ -62,7 +62,7 @@ pub use draw_bundle_id::描画束ID;
 pub use draw_result::{描画結果, 見送り理由};
 pub use error::{レンダラーエラー, 布エラー};
 pub use extent::ウィンドウ寸法;
-pub use frame_composition::{フレーム構成, フレーム構成エラー, フレーム段階};
+pub use frame_composition::{フレーム構成, フレーム構成エラー, フレーム段階, 深度プリパス方式};
 pub use frame_input::{フレーム描画入力, 布フレーム入力, 空入力, 空入力の材料, 空入力エラー};
 pub use gpu_memory_stats::{GPUメモリ用途, GPUメモリ用途別確保量, GPUメモリ統計};
 pub use lighting_input::{ライティング入力, ライティング入力エラー, 光強度, 光色, 影の落ち方};

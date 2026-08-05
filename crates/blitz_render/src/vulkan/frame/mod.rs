@@ -6,6 +6,7 @@ mod copy;
 mod dispatch;
 mod draw_switch_tally;
 mod images;
+mod post_types;
 mod present;
 mod record;
 mod record_counts;
@@ -19,6 +20,7 @@ mod types;
 mod ui_types;
 
 pub(crate) mod acquire;
+pub(crate) mod depth_prepass_draw;
 pub(crate) mod draw_commands;
 
 pub(crate) use crate::vulkan::descriptor::共有セット束縛;
@@ -28,15 +30,14 @@ pub(crate) use cloth_types::{布シャドウ描画入力, 布描画の外部資�
 pub(crate) use dispatch::{任意描画入力, 同期入力, 描画対象入力, 提示先};
 pub(crate) use draw_switch_tally::記録側切替計数;
 pub(crate) use images::{フレーム画像一式, 光のにじみ画像};
+pub(crate) use post_types::{光のにじみ描画入力, 明るさの圧縮描画入力};
 pub(crate) use record::記録の実績;
 pub use record_counts::記録側の計数;
 pub(crate) use record_metrics::記録の計器;
 pub(crate) use shadow_types::{シャドウ描画入力, 距離区分別のシャドウ入力};
 pub(crate) use sky_types::{空中遠近合成描画入力, 空描画入力};
 pub(crate) use submit_outcome::送信後の結末;
-pub(crate) use types::{
-    ジオメトリ入力, スキニング描画入力, 光のにじみ描画入力, 描画方式, 明るさの圧縮描画入力, 粒子描画入力
-};
+pub(crate) use types::{ジオメトリ入力, スキニング描画入力, 描画方式, 粒子描画入力};
 pub(crate) use ui_types::{UI描画入力, UI描画項目};
 
 use ash::vk;

@@ -3,20 +3,24 @@
 use ash::vk;
 
 mod atmosphere_lut_stage;
+mod depth_prepass_stage;
 mod indirect_lighting_stage;
 mod shadow_stage;
 mod sky_stage;
 
 pub(super) use atmosphere_lut_stage::大気のベイク済み画像を積む;
+pub(super) use depth_prepass_stage::深度プリパスを積む;
 pub(super) use indirect_lighting_stage::{遠方環境の消費画像, 間接照明を積む};
 pub(super) use shadow_stage::影を積む;
 pub(super) use sky_stage::{空を積む, 空パスがベイク済み画像を参照するか};
 
 use super::base_images::基本画像ハンドル;
 use crate::clear_color::クリアカラー;
+use crate::frame_composition::深度プリパス方式;
 use crate::vulkan::frame::record::{cloth_passes, particle_draw_pass, particle_update_pass, scene_pass, skinning_pass};
 use crate::vulkan::frame::{ジオメトリ入力, スキニング描画入力, 共有セット束縛, 布描画入力, 粒子描画入力};
 use crate::vulkan::graph;
+use crate::vulkan::graph::クリア指定;
 
 pub(super) fn スキニングを積む<'a>(
     グラフ: &mut graph::グラフ<'a>,
@@ -52,6 +56,7 @@ pub(super) fn シーンを積む<'a>(
     スキン済み: Option<graph::バッファハンドル>,
     布: Option<scene_pass::布ドロー<'a>>,
     クリア色: クリアカラー,
+    方式: 深度プリパス方式,
     入力: &'a [ジオメトリ入力],
     共有: 共有セット束縛<'a>,
     遠方環境: Option<遠方環境の消費画像>,
@@ -61,13 +66,19 @@ pub(super) fn シーンを積む<'a>(
     if let Some(遠方環境) = 遠方環境 {
         読み画像一覧.extend(遠方環境.読み宣言());
     }
+    // 深度プリパスが書いた深度を消去せずに読み込む。両方が消去すると、等値の比較で1画素も描かれなくなる。
+    let クリア = if 方式.深度プリパスを積むか() {
+        クリア指定::カラーだけを消去して深度は読み込む { カラー: クリア色 }
+    } else {
+        クリア指定::クリアする { カラー: クリア色 }
+    };
     グラフ.パスを積む(scene_pass::作る(
         カラー,
         基本.深度,
         読み画像一覧,
         スキン済み,
         布,
-        クリア色,
+        クリア,
         入力,
         共有,
         寸法,

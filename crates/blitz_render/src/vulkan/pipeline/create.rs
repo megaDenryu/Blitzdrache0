@@ -3,6 +3,7 @@
 
 use ash::vk;
 
+use super::color_pass_depth::色パスの深度状態;
 use super::graphics_pipeline;
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
@@ -17,6 +18,7 @@ pub(super) fn 生成する(
     layout: vk::PipelineLayout,
     シェーダー: &シェーダー一式,
     属性選択: graphics_pipeline::頂点属性選択,
+    深度状態: 色パスの深度状態,
 ) -> Result<vk::Pipeline, レンダラーエラー> {
     let 頂点モジュール = shader_module::生成する(device, シェーダー.頂点コード())?;
     let 画素段モジュール = match shader_module::生成する(device, シェーダー.画素段コード()) {
@@ -28,7 +30,17 @@ pub(super) fn 生成する(
         }
     };
 
-    let 結果 = graphics_pipeline::組み立てる(device, カラー形式, 深度形式, 標本数, layout, 頂点モジュール, 画素段モジュール, 属性選択);
+    let 結果 = graphics_pipeline::組み立てる(
+        device,
+        カラー形式,
+        深度形式,
+        標本数,
+        layout,
+        頂点モジュール,
+        画素段モジュール,
+        属性選択,
+        深度状態,
+    );
 
     // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
     unsafe {

@@ -1,5 +1,5 @@
-//! 1フレームの描画で受け渡す型: 描画方式・ジオメトリ入力・粒子描画入力・スキニング描画入力・ポスト処理の描画入力。
-//! 影・布・UIは対応するサブシステムの入力だけを持つため`shadow_types`・`cloth_types`・`ui_types`が別に持つ。
+//! 1フレームの描画で受け渡す型: 描画方式・ジオメトリ入力・粒子描画入力・スキニング描画入力。
+//! 影・布・UI・ポスト処理は対応するサブシステムの入力だけを持つため`shadow_types`・`cloth_types`・`ui_types`・`post_types`が別に持つ。
 
 use ash::vk;
 
@@ -24,6 +24,9 @@ pub(crate) enum 描画方式 {
 pub(crate) struct ジオメトリ入力 {
     /// この発行が束縛するパイプライン。発行ごとに持つのは、材質変種でパイプラインが変わりうるためである。直前の発行とキーが同じなら記録側が束縛を省く。
     pub(crate) pipeline: vk::Pipeline,
+    /// 同じ発行を深度プリパスで描くときのパイプライン。色パスと同じ頂点段のSPIR-Vから作った深度だけの実体であり、材質変種が同じなら同じものになる。
+    /// 深度プリパスを積まない方式でも値が入るのは、積むかどうかがフレームの組み立て方の選択であり、発行の内容が持つ性質ではないためである。
+    pub(crate) 深度プリパスpipeline: vk::Pipeline,
     /// 束縛したパイプラインを選んだキー。並べ替えの第1鍵であり、記録側が切替の要否を判断する材料でもある。
     pub(crate) パイプラインキー: パイプラインキー,
     pub(crate) 頂点バッファ: vk::Buffer,
@@ -71,30 +74,4 @@ pub(crate) struct スキニング描画入力 {
     pub(crate) 頂点数: u32,
     /// スキン済み頂点バッファ。グラフ登録とシーン/シャドウの頂点入力差し替えに使う。
     pub(crate) 出力バッファ: vk::Buffer,
-}
-
-/// 光のにじみピラミッド(判断41)1フレームぶんの入力。ポストプロセス有効時のみ`Some`で渡す。
-/// セット一覧の長さは段数-1(縮小set[i]は縮小[i+1]へのパスの読み元、拡大set[i]は拡大[i]へのパスの読み元)。
-pub(crate) struct 光のにじみ描画入力 {
-    pub(crate) 前処理pipeline: vk::Pipeline,
-    pub(crate) 前処理layout: vk::PipelineLayout,
-    pub(crate) 縮小pipeline: vk::Pipeline,
-    pub(crate) 縮小layout: vk::PipelineLayout,
-    pub(crate) 拡大pipeline: vk::Pipeline,
-    pub(crate) 拡大layout: vk::PipelineLayout,
-    pub(crate) 前処理set: vk::DescriptorSet,
-    pub(crate) 縮小set一覧: Vec<vk::DescriptorSet>,
-    pub(crate) 拡大set一覧: Vec<vk::DescriptorSet>,
-}
-
-/// 明るさの圧縮パス(判断38・39)1フレームぶんの入力。ポストプロセス有効時のみ`Some`で渡す。
-pub(crate) struct 明るさの圧縮描画入力 {
-    pub(crate) pipeline: vk::Pipeline,
-    pub(crate) layout: vk::PipelineLayout,
-    pub(crate) ディスクリプタセット: vk::DescriptorSet,
-    /// 明るさの圧縮前にHDR輝度へ掛ける露出倍率(プッシュ定数で渡す)。時刻別固定の枝ではこれが最終倍率である。
-    pub(crate) 露出: f32,
-    /// ヒストグラム自動の枝だけが使う2つ。基準倍率へ足す芸術的バイアスの段と、その枝かどうか(1のときだけ画素段がGPU上の露出状態を読む)。
-    pub(crate) 芸術的バイアスの補正段: f32,
-    pub(crate) 自動か: u32,
 }

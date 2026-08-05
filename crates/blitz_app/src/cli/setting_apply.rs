@@ -1,11 +1,12 @@
-//! 1つのCLI引数を起動設定へ反映する。
+//! 値を伴う1つのCLI引数を起動設定へ反映する。値を伴わないフラグの反映は`flags`が持つ。
+
+mod flags;
 
 use std::slice::Iter;
 
-use super::streaming_settings::プレイヤー位置源;
 use super::{
-    auto_exposure_probe_args, ibl_step_scan_args, indirect_probe_args, instance_lod_args, lod_crack_args, placement_args, screen_pixel_args,
-    shadow_args, time_args, value_args, 布モード, 描画対象の走査順, 検証計画指定, 粒子表示モード, 起動設定,
+    auto_exposure_probe_args, depth_prepass_args, ibl_step_scan_args, indirect_probe_args, instance_lod_args, lod_crack_args, placement_args,
+    screen_pixel_args, shadow_args, time_args, value_args, 起動設定,
 };
 use crate::error::起動エラー;
 
@@ -53,48 +54,8 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--streaming-preload-radius" => {
             設定.ストリーミング.先読み半径 = value_args::先読み半径引数を処理する(残り)?;
         }
-        _ => フラグを反映する(設定, 引数値),
+        "--depth-prepass" => 設定.深度プリパス方式 = depth_prepass_args::引数を処理する(残り)?,
+        _ => flags::反映する(設定, 引数値),
     }
     Ok(())
-}
-
-fn フラグを反映する(設定: &mut 起動設定, 引数値: &str) {
-    match 引数値 {
-        "--unlit" => 設定.ライティング有効 = false,
-        "--particles" => 設定.粒子表示 = 粒子表示モード::粒子トイ,
-        "--surface-flow" => 設定.粒子表示 = 粒子表示モード::表面流,
-        "--sph-512" => 設定.粒子表示 = 粒子表示モード::Sph512,
-        "--sph-1024" => 設定.粒子表示 = 粒子表示モード::Sph1024,
-        "--sph-2048" => 設定.粒子表示 = 粒子表示モード::Sph2048,
-        "--report-gpu-times" => 設定.gpu時間報告 = true,
-        "--report-atmosphere-passes" => 設定.大気のベイク済み画像パス数報告 = true,
-        "--report-frame-times" => 設定.フレーム時間報告 = true,
-        "--report-display-timing" => 設定.実表示時間報告 = true,
-        "--report-memory" => 設定.gpuメモリ報告 = true,
-        "--report-draw-issue" => 設定.描画発行報告 = true,
-        "--report-sun-angle" => 設定.太陽角度報告 = true,
-        "--report-caster-distance" => 設定.キャスター距離分布報告 = true,
-        "--report-instance-sections" => 設定.インスタンス区間報告 = true,
-        "--reverse-draw-order" => 設定.描画対象の並べ方.走査順 = 描画対象の走査順::逆順,
-        "--no-instance-cull" => 設定.インスタンス可視判定有効 = false,
-        "--no-instance-lod" => 設定.インスタンス段選択有効 = false,
-        "--no-instance-shadow" => 設定.インスタンス影キャスター有効 = false,
-        "--no-shadow-casters" => 設定.影キャスター全体有効 = false,
-        "--dev-ui" => 設定.開発ui初期有効 = true,
-        "--debug-cascade-bands" => 設定.画素診断 = blitz_render::cascade::画素診断::距離区分の可視化,
-        "--debug-shadow-loss" => 設定.画素診断 = blitz_render::cascade::画素診断::影の欠落計器,
-        _ if super::time_of_day_flags::反映する(&mut 設定.時間帯, 引数値) => {}
-        "--no-post" => 設定.ポスト処理有効 = false,
-        "--cloth" => 設定.布モード = 布モード::吊るし布,
-        "--cloth-cape" => 設定.布モード = 布モード::マント,
-        "--window-rebuild" => 設定.検証計画 = 検証計画指定::ウィンドウ再構築,
-        "--shader-reload" => 設定.検証計画 = 検証計画指定::シェーダー差し替え,
-        "--streaming" => 設定.ストリーミング.有効 = true,
-        "--streaming-route" => 設定.ストリーミング.位置源 = プレイヤー位置源::固定経路,
-        "--ow3-dod-route" => 設定.ストリーミング.位置源 = プレイヤー位置源::Ow3Dod経路,
-        "--instance-stream-route" => 設定.ストリーミング.位置源 = プレイヤー位置源::インスタンスストリーム経路,
-        "--report-streaming" => 設定.ストリーミング.報告する = true,
-        "--report-streaming-summary" => 設定.ストリーミング.要約を報告する = true,
-        _ => {}
-    }
 }

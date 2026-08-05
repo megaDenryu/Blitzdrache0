@@ -6,11 +6,12 @@
 //! シェーダーを借りて持つのは、シェーダーの差し替えが「新しいシェーダーで作った供給元から新しい表を構築する」形になるためであり、
 //! 供給元の寿命は1回の構築の間だけである。
 
+mod family_dispatch;
+
 use ash::vk;
 
 use crate::error::{パイプライン台帳エラー, レンダラーエラー};
 use crate::shader_set::シェーダー一式;
-use crate::vulkan::pipeline;
 
 use super::key::パイプラインキー;
 use super::layouts::材質描画族のレイアウト;
@@ -21,6 +22,7 @@ use super::supplier::パイプライン供給元;
 pub(super) enum 材質描画族 {
     シーン,
     シャドウ,
+    深度プリパス,
 }
 
 impl 材質描画族 {
@@ -28,6 +30,7 @@ impl 材質描画族 {
         match self {
             Self::シーン => "シーン",
             Self::シャドウ => "シャドウ",
+            Self::深度プリパス => "深度プリパス",
         }
     }
 }
@@ -67,22 +70,7 @@ impl パイプライン供給元 for デバイスパイプライン供給元<'_>
     type 実体 = vk::Pipeline;
 
     fn 生成する(&mut self, キー: パイプラインキー) -> Result<vk::Pipeline, レンダラーエラー> {
-        match (self.族, キー) {
-            (材質描画族::シーン, パイプラインキー::シーン { 描画先, .. }) => {
-                let Some(カラー形式) = 描画先.カラー形式() else {
-                    return Err(パイプライン台帳エラー::色の無い描画先でシーンを描く { 記述: キー.記述() }.into());
-                };
-                let layout = self.レイアウト.シーン();
-                pipeline::シーンのpipelineを生成する(self.device, カラー形式, 描画先.深度形式(), 描画先.標本数(), layout, self.シェーダー)
-            }
-            (材質描画族::シャドウ, パイプラインキー::シャドウ { 描画先 }) => {
-                let layout = self.レイアウト.シャドウ();
-                pipeline::シャドウのpipelineを生成する(self.device, 描画先.深度形式(), 描画先.標本数(), layout, self.シェーダー)
-            }
-            (材質描画族::シーン, パイプラインキー::シャドウ { .. }) | (材質描画族::シャドウ, パイプラインキー::シーン { .. }) => {
-                Err(self.族の不一致(キー))
-            }
-        }
+        family_dispatch::生成する(self, キー)
     }
 
     fn 破棄する(&mut self, 実体: vk::Pipeline) {

@@ -12,6 +12,7 @@ use crate::visible_instance_selection::可視パス;
 use crate::vulkan::frame::{記録側の計数, 記録側切替計数};
 use crate::vulkan::material_table::大域材質ID;
 use crate::vulkan::material_variant::材質変種キー;
+use crate::vulkan::pipeline::色パスの深度状態;
 use crate::vulkan::pipeline_ledger::{パイプラインキー, 描画先の一意化, 照明束縛レイアウト};
 
 /// 検査用の発行。整列鍵と、積んだ順を見分けるための通し番号を持つ。
@@ -26,6 +27,7 @@ fn シーンのキー() -> パイプラインキー {
         描画先: 描画先の一意化::色と深度へ描く(vk::Format::R8G8B8A8_UNORM, vk::Format::D32_SFLOAT, vk::SampleCountFlags::TYPE_1),
         材質変種: 材質変種キー::標準金属粗さPBRの不透明両面,
         照明束縛: 照明束縛レイアウト::直接光と多段影,
+        深度状態: 色パスの深度状態::より近いものを描いて書く,
     }
 }
 

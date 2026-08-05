@@ -25,12 +25,12 @@ pub(crate) fn 開始する(
         .or(深度.map(|深度| 深度.ハンドル))
         .unwrap_or_else(|| panic!("グラフィックスパスにカラーも深度も無い(パス宣言の誤り)"));
     let 寸法 = レジストリ.寸法を取得する(基準ハンドル);
-    let (load_op, カラークリア値) = ロードオペレーションとカラークリア値(クリア指定);
+    let (カラーload_op, 深度load_op, カラークリア値) = ロードオペレーションとカラークリア値(クリア指定);
     let カラーアタッチメント = カラー.map(|カラーハンドル| {
         vk::RenderingAttachmentInfo::default()
             .image_view(レジストリ.ビューを取得する(カラーハンドル))
             .image_layout(vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL)
-            .load_op(load_op)
+            .load_op(カラーload_op)
             .store_op(vk::AttachmentStoreOp::STORE)
             .clear_value(カラークリア値)
     });
@@ -47,7 +47,7 @@ pub(crate) fn 開始する(
         vk::RenderingAttachmentInfo::default()
             .image_view(深度.描画先ビュー(レジストリ.ビューを取得する(深度.ハンドル)))
             .image_layout(vk::ImageLayout::DEPTH_ATTACHMENT_OPTIMAL)
-            .load_op(load_op)
+            .load_op(深度load_op)
             .store_op(vk::AttachmentStoreOp::STORE)
             .clear_value(深度クリア値)
     });
@@ -68,17 +68,21 @@ pub(crate) fn 開始する(
     unsafe { device.cmd_begin_rendering(command_buffer, &rendering_info) };
 }
 
-fn ロードオペレーションとカラークリア値(クリア指定: &クリア指定) -> (vk::AttachmentLoadOp, vk::ClearValue) {
+/// 返すのはカラーのloadOp・深度のloadOp・カラーのクリア値の3つである。
+fn ロードオペレーションとカラークリア値(
+    クリア指定: &クリア指定
+) -> (vk::AttachmentLoadOp, vk::AttachmentLoadOp, vk::ClearValue) {
+    let 色の値 = |カラー: &crate::clear_color::クリアカラー| vk::ClearValue {
+        color: vk::ClearColorValue {
+            float32: カラー.rgba配列()
+        },
+    };
     match クリア指定 {
-        クリア指定::クリアする { カラー } => (
-            vk::AttachmentLoadOp::CLEAR,
-            vk::ClearValue {
-                color: vk::ClearColorValue {
-                    float32: カラー.rgba配列()
-                },
-            },
-        ),
-        クリア指定::ロードする => (vk::AttachmentLoadOp::LOAD, vk::ClearValue::default()),
+        クリア指定::クリアする { カラー } => (vk::AttachmentLoadOp::CLEAR, vk::AttachmentLoadOp::CLEAR, 色の値(カラー)),
+        クリア指定::カラーだけを消去して深度は読み込む { カラー } => {
+            (vk::AttachmentLoadOp::CLEAR, vk::AttachmentLoadOp::LOAD, 色の値(カラー))
+        }
+        クリア指定::ロードする => (vk::AttachmentLoadOp::LOAD, vk::AttachmentLoadOp::LOAD, vk::ClearValue::default()),
     }
 }
 

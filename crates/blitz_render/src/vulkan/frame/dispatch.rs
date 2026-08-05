@@ -27,6 +27,8 @@ pub(crate) struct 描画対象入力<'a> {
     pub(crate) 影のキャスター: crate::frame_input::影のキャスター指定,
     /// 描画発行で変わらないset0とset3。シーンパスとシャドウパスの各局面が自分のパイプラインレイアウトで束縛する。
     pub(crate) 共有: 共有セット束縛<'a>,
+    /// 起動時の計測条件が選んだ深度プリパスの方式。パイプライン台帳が唯一の持ち主であり、フレームの組み立てはここから読む。
+    pub(crate) 深度プリパス方式: crate::frame_composition::深度プリパス方式,
 }
 
 #[derive(Clone, Copy)]

@@ -8,6 +8,7 @@ mod auto_exposure_passes;
 mod bloom_down_pass;
 mod bloom_up_pass;
 mod cloth_passes;
+mod depth_prepass_pass;
 mod fullscreen_draw;
 mod graph_build;
 mod particle_draw_pass;
