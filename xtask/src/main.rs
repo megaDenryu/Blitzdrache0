@@ -16,6 +16,7 @@ mod count_consistency;
 mod csm_seam;
 mod damage_band;
 mod day_moment;
+mod depth_prepass_cost;
 mod derived_environment;
 mod dispatch;
 mod distant_environment;

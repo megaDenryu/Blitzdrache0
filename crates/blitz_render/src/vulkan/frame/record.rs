@@ -13,6 +13,7 @@ mod fullscreen_draw;
 mod graph_build;
 mod particle_draw_pass;
 mod particle_update_pass;
+pub(crate) mod pass_names;
 mod readback_pass;
 mod scene_pass;
 mod shadow_draw;

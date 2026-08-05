@@ -8,7 +8,7 @@ mod draw_switch_tally;
 mod images;
 mod post_types;
 mod present;
-mod record;
+pub(crate) mod record;
 mod record_counts;
 mod record_metrics;
 mod shadow_types;

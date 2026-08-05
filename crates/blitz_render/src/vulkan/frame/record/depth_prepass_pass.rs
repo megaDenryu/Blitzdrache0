@@ -9,6 +9,7 @@
 
 use ash::vk;
 
+use super::pass_names;
 use crate::clear_color::クリアカラー;
 use crate::vulkan::frame::{depth_prepass_draw, ジオメトリ入力, 共有セット束縛};
 use crate::vulkan::graph::{
@@ -30,7 +31,7 @@ pub(super) fn 作る<'a>(
     let 読みバッファ一覧 = スキン済み頂点.map_or(Vec::new(), |ハンドル| vec![(ハンドル, バッファ用途::頂点読み)]);
 
     パス宣言::生成する(
-        "深度プリパス",
+        pass_names::深度プリパス,
         Vec::new(),
         vec![(深度, 画像用途::深度出力)],
         読みバッファ一覧,

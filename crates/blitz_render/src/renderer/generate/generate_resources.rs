@@ -42,7 +42,10 @@ pub(super) fn 組み立てる(要求: 生成要求<'_>) -> Result<フレーム�
     基礎.照明問い合わせ.遠方環境の画像を結ぶ(device, 描画段階.遠方環境の束縛先());
     let 粒子 = particle_resources::組み立てる(&要求, &メモリプロパティ, &基礎, シーンカラー形式)?;
     // 合成区間の中身はパス名を所有する層が決める。計器は宣言を適用するだけで、間接照明という機能を1つも知らない。
-    let 合成区間一覧 = vec![vulkan::indirect_lighting::合成区間を宣言する()];
+    let 合成区間一覧 = vec![
+        vulkan::indirect_lighting::合成区間を宣言する(),
+        vulkan::frame::record::pass_names::合成区間を宣言する(),
+    ];
     let gpu計測 = vulkan::gpu_timing::パス別GPU計測::生成する(device, 要求.タイムスタンプ対応か, 要求.タイムスタンプ周期ns, 合成区間一覧)?;
     let ui一式 = vulkan::ui::UIリソース一式::生成する(device, 要求.提示.画像形式(), &要求.シェーダー.ui)?;
     let ポスト処理 = 描画先.組み立てる(device, &メモリプロパティ, 要求.提示, 要求.シェーダー, &基礎.転送環境, 要求.自動露出の設定)?;

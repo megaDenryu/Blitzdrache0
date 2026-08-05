@@ -3,6 +3,7 @@
 
 use ash::vk;
 
+use super::pass_names;
 use crate::visible_instance_selection::可視パス;
 use crate::vulkan::frame::{draw_commands, shared_set_bind, ジオメトリ入力, 共有セット束縛, 布描画入力};
 use crate::vulkan::graph::{
@@ -39,7 +40,7 @@ pub(super) fn 作る<'a>(
         読みバッファ一覧ローカル.push((布.頂点ハンドル, バッファ用途::頂点読み));
     }
     パス宣言::生成する(
-        "シーン描画",
+        pass_names::シーン描画,
         読み画像一覧,
         vec![(カラー, 画像用途::カラー出力), (深度, 画像用途::深度出力)],
         読みバッファ一覧ローカル,
