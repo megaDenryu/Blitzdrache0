@@ -3,9 +3,12 @@
 //! `indirect-cost`と同じ世界・同じ先読み半径・同じカメラ俯角にするのは、既に採ってある色パスの費用と並べて読めるようにするためである。
 //! 別の構図で測ると、深度プリパスが足す費用の大きさを既存の値と比べる根拠が消える。
 
+#[cfg(test)]
+mod tests;
+
 use super::schedule::実行条件;
 
-pub(super) const 実行ファイル: &str = "target/release/blitz_app.exe";
+pub(super) const 実行ファイル: &str = crate::release_build::計測用の実行ファイル;
 const シーン名: &str = "terrain_origin";
 const アセットルート: &str = "target/terrain_assets";
 const 先読み半径: &str = "2";
@@ -13,8 +16,13 @@ const 容量上限バイト: &str = "16777216";
 const カメラ俯角差分度: &str = "-25";
 
 /// 世界とカメラを決める引数。条件によらず同じである。
+///
+/// 局所可視性補正を切るのは、3条件の目的が深度プリパスの費用対効果を分離することだからである。補正を宣言した
+/// 世界は深度プリパスの方式を引き上げるため、切らないと条件Aの`使わない`が型付きの失敗になって条件列が成立しない。
+/// 補正込みの費用は通常実行の計器で別に採る。
 pub(super) fn 世界の引数() -> Vec<String> {
     [
+        "--no-ssao",
         "--scene",
         シーン名,
         "--asset-root",
