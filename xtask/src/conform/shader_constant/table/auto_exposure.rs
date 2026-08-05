@@ -11,7 +11,7 @@ use super::定数の組;
 
 const 輝度の正本: &str = "crates/blitz_engine/src/auto_exposure/luminance.rs";
 const 目盛の正本: &str = "crates/blitz_engine/src/auto_exposure/histogram_scale.rs";
-const 実測の入口の写し: &str = "xtask/src/hdr_luminance/statistics.rs";
+const 実測の入口の写し: &str = "xtask/src/relative_luminance.rs";
 const 輝度の写し: &str = "shaders/auto_exposure_luminance.slang";
 const 目盛の写し: &str = "shaders/auto_exposure_scale.slang";
 

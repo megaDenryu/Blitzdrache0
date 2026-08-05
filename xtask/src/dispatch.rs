@@ -5,7 +5,7 @@ use std::process::ExitCode;
 
 use crate::{
     atmosphere_lut, auto_exposure, bench, check_glb, cloth_empty, cloth_night, cloth_shadow_order, compile_assets, conform, csm_seam,
-    derived_environment, distant_environment, fetch_assets, gen_atmosphere_reference, gen_source_assets, hdr_luminance, indirect_cost,
+    derived_environment, distant_environment, fetch_assets, gen_atmosphere_reference, gen_source_assets, hdr_luminance, ibl_step, indirect_cost,
     indirect_probe, instance_cull, instance_draw, instance_lod, instance_stream, lod_crack, m10_bench, m11_soak, material_reload_draw,
     multi_material_draw, object_bench, origin_invariance, ow3_dod, ow4_bench, prop_draw, prop_multi_material_draw, shader_reload_draw, shadow_loss,
     shadow_probe, sky_draw, sky_lut, sky_state, sky_time, smoke, streaming_bench, terrain_visual, type_metrics, usage, verify, vertex_diag,
@@ -37,6 +37,7 @@ pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
         Some("terrain-visual") => terrain_visual::実行する(),
         Some("hdr-luminance") => hdr_luminance::実行する(),
         Some("auto-exposure") => auto_exposure::実行する(),
+        Some("ibl-step") => ibl_step::実行する(),
         Some("instance-draw") => instance_draw::実行する(),
         Some("instance-cull") => instance_cull::実行する(),
         Some("instance-lod") => instance_lod::実行する(),

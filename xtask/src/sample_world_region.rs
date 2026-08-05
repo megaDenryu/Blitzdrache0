@@ -8,6 +8,50 @@
 //! 書き出すため、画面の座標を数で書かずに済む。
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「目視見本の世界と`cargo xtask terrain-visual`」
 
+mod base_color_code;
 mod ground_mask;
+mod mask_run;
+mod sample_bodies;
+mod sphere_mask;
 
 pub use ground_mask::地面マスク;
+pub use mask_run::領域マスクを撮る;
+use sample_bodies::球の材質;
+
+use crate::vegetation_run::実行結果;
+
+/// 差を集計する単位になる固定の領域1つ。
+pub struct 固定領域 {
+    /// 報告と生値の行に出す名前。
+    pub 名前: String,
+    /// この領域に属する画素の添字。読み戻し画像の行優先の並びでの位置である。
+    pub 画素添字一覧: Vec<usize>,
+}
+
+/// 領域マスクの1枚から、地面の拡散領域と粗さ水準別の球の領域を作る。
+/// 並びは地面・金属の粗さの昇順・誘電体の粗さの昇順であり、報告と生値がこの順に並ぶ。
+pub fn 固定領域一覧を作る(マスク: &実行結果) -> Result<Vec<固定領域>, String> {
+    let 地面 = 地面マスク::作る(マスク)?;
+    let mut 一覧 = vec![固定領域 {
+        名前: "地面の拡散".to_string(),
+        画素添字一覧: (0..マスク.幅 * マスク.高さ).filter(|添字| 地面.地面か(*添字)).collect(),
+    }];
+    for 材質 in [球の材質::金属, 球の材質::誘電体] {
+        一覧.extend(球の領域を作る(マスク, 材質)?);
+    }
+    Ok(一覧)
+}
+
+fn 球の領域を作る(マスク: &実行結果, 材質: 球の材質) -> Result<Vec<固定領域>, String> {
+    let 粗さ一覧 = sample_bodies::粗さ一覧(材質);
+    let 色 = base_color_code::画像の中の該当色を探す(マスク, 材質.ベースカラー(), 材質.呼び名())?;
+    let かたまり一覧 = sphere_mask::球ごとの画素を分ける(マスク, 色, 材質, 粗さ一覧.len())?;
+    Ok(粗さ一覧
+        .iter()
+        .zip(かたまり一覧)
+        .map(|(粗さ, 画素添字一覧)| 固定領域 {
+            名前: format!("{}の粗さ{粗さ:.2}", 材質.呼び名()),
+            画素添字一覧,
+        })
+        .collect())
+}

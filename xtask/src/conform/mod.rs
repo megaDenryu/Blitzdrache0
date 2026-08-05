@@ -15,6 +15,7 @@ mod reload_without_device_wait;
 mod removed_object_uniform;
 mod removed_slot_material_set;
 mod removed_view_pass_lighting;
+mod sample_bodies_consistency;
 mod section_reference;
 mod shader_constant;
 mod shader_uniform_alias;
