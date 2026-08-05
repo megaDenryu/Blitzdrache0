@@ -16,6 +16,7 @@ mod distant_environment_key;
 mod exposure_stop;
 mod indirect_lighting_policy;
 mod radiance_color;
+mod representative_zenith_cosine;
 mod scene_policy;
 mod shadow_validity;
 mod sky_draw_policy;
@@ -27,6 +28,8 @@ mod sun_light_color;
 mod sun_light_intensity;
 mod sun_light_policy;
 mod sun_position;
+mod sun_zenith_interval;
+mod thinning_step;
 mod world_policy;
 
 #[cfg(test)]
@@ -39,6 +42,8 @@ mod derive_tests;
 mod policy_tests;
 #[cfg(test)]
 mod sun_symmetry_tests;
+#[cfg(test)]
+mod sun_zenith_interval_tests;
 
 pub use aerial_key::空中遠近キー;
 pub use ambient::環境光強度;
@@ -50,6 +55,7 @@ pub use distant_environment_key::遠方環境キー;
 pub use exposure_stop::露出補正段;
 pub use indirect_lighting_policy::世界の間接照明方針;
 pub use radiance_color::放射輝度色;
+pub use representative_zenith_cosine::代表天頂余弦;
 pub use scene_policy::空と太陽の方針;
 pub use shadow_validity::影の有効性;
 pub use sky_draw_policy::空描画方針;
@@ -60,4 +66,6 @@ pub use sun_direction::太陽方向;
 pub use sun_light_color::太陽光色;
 pub use sun_light_intensity::太陽光強度;
 pub use sun_light_policy::太陽光方針;
+pub use sun_zenith_interval::太陽天頂区間;
+pub use thinning_step::間引きの刻みの設定;
 pub use world_policy::世界の空方針;
