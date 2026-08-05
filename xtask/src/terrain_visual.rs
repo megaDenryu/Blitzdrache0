@@ -8,7 +8,6 @@
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「3-Ic-3bの実装」
 
 mod band;
-mod ground_mask;
 mod run;
 
 use std::path::PathBuf;
@@ -40,7 +39,7 @@ fn 検収する() -> Result<String, String> {
     std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
 
     let マスクの絵 = run::描画する(&出力先.join(領域マスクのファイル名), &run::条件::領域マスク, 領域マスクのファイル名)?;
-    let マスク = ground_mask::地面マスク::作る(&マスクの絵)?;
+    let マスク = crate::sample_world_region::地面マスク::作る(&マスクの絵)?;
     let mut 帯の行一覧 = Vec::new();
     let mut 絵の置き場一覧 = Vec::new();
     for 時刻 in &代表時刻一覧 {

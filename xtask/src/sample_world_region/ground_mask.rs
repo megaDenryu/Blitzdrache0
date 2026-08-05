@@ -16,13 +16,13 @@ const 見本の右: f64 = 0.55;
 const 見本の上: f64 = 0.94;
 const 見本の下: f64 = 0.99;
 
-pub(super) struct 地面マスク {
+pub struct 地面マスク {
     地面か一覧: Vec<bool>,
-    pub(super) 地面画素数: u64,
+    pub 地面画素数: u64,
 }
 
 impl 地面マスク {
-    pub(super) fn 作る(マスク: &実行結果) -> Result<Self, String> {
+    pub fn 作る(マスク: &実行結果) -> Result<Self, String> {
         let 地面の色 = 見本区画の一色を読む(マスク)?;
         let mut 地面か一覧 = Vec::with_capacity(マスク.幅 * マスク.高さ);
         let mut 地面画素数 = 0_u64;
@@ -39,11 +39,11 @@ impl 地面マスク {
         })
     }
 
-    pub(super) fn 地面か(&self, 添字: usize) -> bool {
+    pub fn 地面か(&self, 添字: usize) -> bool {
         self.地面か一覧[添字]
     }
 
-    pub(super) fn 寸法が合うか(&self, 絵: &実行結果) -> Result<(), String> {
+    pub fn 寸法が合うか(&self, 絵: &実行結果) -> Result<(), String> {
         let 画素数 = 絵.幅 * 絵.高さ;
         if self.地面か一覧.len() != 画素数 {
             return Err(format!("領域マスクと絵の画素数が違う: {}と{画素数}", self.地面か一覧.len()));

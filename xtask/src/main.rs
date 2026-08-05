@@ -48,6 +48,7 @@ mod raw_image;
 mod raw_png;
 mod release_build;
 mod report_parse;
+mod sample_world_region;
 mod shader_copy;
 mod shader_reload_draw;
 mod shadow_loss;

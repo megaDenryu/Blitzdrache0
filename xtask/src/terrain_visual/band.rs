@@ -11,8 +11,8 @@
 //! 注意: RGBA8の読み戻しからは非有限値をそのまま観測できない。明るさの圧縮とsRGB符号化を通った後の値が帯に
 //! 収まることを、有限性の観測できる代理として置く。
 
-use super::ground_mask::地面マスク;
 use crate::damage_band::{割合にする, 飽和の下限, 飽和割合の上限, 黒潰れの上限, 黒潰れ割合の上限};
+use crate::sample_world_region::地面マスク;
 use crate::vegetation_run::実行結果;
 
 /// その時刻に地面を照らす光。夜だけが間接光だけになる。
