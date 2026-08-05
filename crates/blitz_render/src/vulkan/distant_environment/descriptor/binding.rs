@@ -53,7 +53,7 @@ pub(super) fn 書き込む(
         .range(vk::WHOLE_SIZE)];
     let スカイビュー情報 = [vk::DescriptorImageInfo::default()
         .sampler(sampler)
-        .image_view(束縛先.スカイビュービュー)
+        .image_view(束縛先.遠方環境用スカイビュービュー)
         .image_layout(vk::ImageLayout::GENERAL)];
     let 書き込み先情報 = [vk::DescriptorImageInfo::default()
         .image_view(束縛先.書き込み先の配列ビュー)

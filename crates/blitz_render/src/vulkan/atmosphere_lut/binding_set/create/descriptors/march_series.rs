@@ -11,12 +11,12 @@ use crate::vulkan::atmosphere_lut::base_resources::大気のベイク済み画�
 use crate::vulkan::atmosphere_lut::march_descriptor::{経路生成の束縛先, 経路生成ディスクリプタ};
 use crate::vulkan::sync::進行中フレーム数;
 
-pub(super) fn 経路生成を順に作る(
+pub(super) fn 経路生成を順に作る<const 個数: usize>(
     device: &ash::Device,
     基盤: &大気のベイク済み画像の基盤資源,
     シェーダー定数一覧: &[vk::Buffer; 進行中フレーム数],
-    書き込み先一覧: [vk::ImageView; 2],
-) -> Result<[経路生成ディスクリプタ; 2], レンダラーエラー> {
+    書き込み先一覧: [vk::ImageView; 個数],
+) -> Result<[経路生成ディスクリプタ; 個数], レンダラーエラー> {
     let mut 作った: Vec<経路生成ディスクリプタ> = Vec::with_capacity(書き込み先一覧.len());
     for 書き込み先ビュー in 書き込み先一覧 {
         let 束縛先 = 経路生成の束縛先 {

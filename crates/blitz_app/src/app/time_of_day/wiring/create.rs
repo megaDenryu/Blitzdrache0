@@ -11,6 +11,7 @@ use super::super::distant_environment_update::遠方環境更新判定;
 use super::super::exposure_elapsed::自動露出の経過秒源;
 use super::super::scene_policy;
 use super::super::sun_disk_override;
+use super::super::thinning::遠方環境の間引き;
 use super::天空配線;
 use crate::atmosphere_medium::確定した大気散乱媒体へ写す;
 use crate::cli::{時間帯起動設定, 起動モード};
@@ -44,6 +45,7 @@ pub(super) fn 生成する(材料: 生成材料<'_>) -> Result<天空配線, レ
         露出方式: scene_policy::世界の露出方式を決める(シーン名, 設定.自動露出),
         自動露出の経過秒源: 自動露出の経過秒源::起動モードから決める(材料.起動モード),
         遠方環境更新判定: 遠方環境更新判定::新規(),
+        間引き: 遠方環境の間引き::新規(),
         基準ライティング: 基準,
         ライティング: 基準,
     };

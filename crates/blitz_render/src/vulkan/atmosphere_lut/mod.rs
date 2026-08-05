@@ -10,6 +10,7 @@ mod binding_set;
 mod composite_descriptor;
 /// 遠方環境の生成もスロットごとに1セットを持つ同じ数え方を使うため、`vulkan`の中から見える。
 pub(in crate::vulkan) mod descriptor_common;
+mod distant_skyview;
 mod draw_input;
 /// 画素形式は遠方環境の立方体画像とも共通であるため、`vulkan`の中から見える。
 pub(in crate::vulkan) mod image;
@@ -35,6 +36,7 @@ use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 use ash::vk;
 pub(crate) use composite_descriptor::{空中遠近合成の束縛先, 空中遠近合成ディスクリプタ};
+pub(crate) use distant_skyview::遠方環境用スカイビューの焼く条件;
 pub(crate) use draw_input::描画入力の材料;
 pub(crate) use inputs::{
     大気のベイク済み画像の描画入力, 大気のベイク済み画像の生成入力, 大気のベイク済み画像の画像入力, 生成する組, 生成の即時定数

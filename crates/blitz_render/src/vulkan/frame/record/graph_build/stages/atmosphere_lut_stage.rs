@@ -23,6 +23,14 @@ pub(in crate::vulkan::frame::record::graph_build) struct 大気のベイク済�
     pub(in crate::vulkan::frame::record::graph_build) スカイビュー: graph::画像ハンドル,
 }
 
+/// 経路を刻む生成が読む2枚のハンドル。空パスの2枚と別に持つのは、読む側も組み合わせも違うためである。
+/// 遠方環境用スカイビューの生成がこの2枚を読む。
+#[derive(Clone, Copy)]
+pub(in crate::vulkan::frame::record::graph_build) struct 経路生成が読む二枚 {
+    pub(in crate::vulkan::frame::record::graph_build) 透過率: graph::画像ハンドル,
+    pub(in crate::vulkan::frame::record::graph_build) 多重散乱: graph::画像ハンドル,
+}
+
 /// 空段階の各パスが参照する先。2つを別のOptionで持つのは、在る条件が別だからである。空パスの2枚は方式が
 /// 大気のベイク済み画像方式であることだけを条件にし、合成のボリュームは合成パスが在ることを条件にする。
 #[derive(Clone, Copy)]
@@ -36,9 +44,9 @@ pub(in crate::vulkan::frame::record::graph_build) struct 空段階の読み先 {
 /// 大気のベイク済み画像の積み上げの結果。
 pub(in crate::vulkan::frame::record::graph_build) struct 大気のベイク済み画像積み上げ結果 {
     pub(in crate::vulkan::frame::record::graph_build) 読み先: 空段階の読み先,
-    /// スカイビューのベイク済み画像を登録したハンドル。ベイク済み画像を作らない構成では`None`である。
-    /// 空パスの読み先と別に持つのは、遠方環境が空パスの有無に関わらずこの1枚を読むためである。
-    pub(in crate::vulkan::frame::record::graph_build) スカイビュー: Option<graph::画像ハンドル>,
+    /// 透過率と多重散乱を登録したハンドル。ベイク済み画像を作らない構成では`None`である。
+    /// 空パスの読み先と別に持つのは、遠方環境用スカイビューの生成が空パスの有無に関わらずこの2枚を読むためである。
+    pub(in crate::vulkan::frame::record::graph_build) 経路の二枚: Option<経路生成が読む二枚>,
     /// このフレームで積んだ生成パスの本数。0から4のいずれかであり、計器がこの値を数える。
     pub(in crate::vulkan::frame::record::graph_build) 生成パス数: u32,
 }
@@ -58,7 +66,7 @@ pub(in crate::vulkan::frame::record::graph_build) fn 大気のベイク済み画
                 空パスの二枚: None,
                 合成のボリューム: None,
             },
-            スカイビュー: None,
+            経路の二枚: None,
             生成パス数: 0,
         };
     };
@@ -72,7 +80,10 @@ pub(in crate::vulkan::frame::record::graph_build) fn 大気のベイク済み画
             }),
             合成のボリューム: 空中遠近.ハンドル,
         },
-        スカイビュー: Some(三枚.スカイビュー),
+        経路の二枚: Some(経路生成が読む二枚 {
+            透過率: 三枚.透過率,
+            多重散乱: 三枚.多重散乱,
+        }),
         生成パス数: 三枚.生成パス数 + 空中遠近.生成パス数,
     }
 }

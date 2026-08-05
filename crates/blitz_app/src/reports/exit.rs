@@ -22,6 +22,7 @@ pub(crate) fn 終了時報告を出す(アプリ: &アプリ) {
             None => println!("間接照明生成パス数: レンダラーが生成されなかったため数えていない"),
         }
         super::distant_environment_key::遠方環境の鍵を表示する(アプリ.遠方環境の鍵の記録を取得する());
+        super::distant_environment_key::太陽天頂区間を表示する(アプリ.太陽天頂区間の記録を取得する());
     }
     if アプリ.gpuメモリ報告が必要か() {
         match アプリ.gpuメモリ統計を取得する() {

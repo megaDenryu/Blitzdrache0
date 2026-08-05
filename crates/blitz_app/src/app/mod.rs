@@ -38,7 +38,7 @@ use blitz_engine::カメラ;
 use blitz_render::{クリアカラー, レンダラー};
 pub(crate) use frame_timing::{フレーム時間統計, 集計する};
 pub(crate) use streaming::ストリーミング要約;
-pub(crate) use time_of_day::{空の再現条件, 遠方環境の鍵の記録, 遠方環境更新判定};
+pub(crate) use time_of_day::{太陽天頂区間の記録, 空の再現条件, 遠方環境の鍵の記録, 遠方環境更新判定};
 use winit::window::Window;
 
 /// 前提: `レンダラー`フィールドは`window`より前に宣言する。Rustは構造体フィールドを宣言順にDropするため、この順序がレンダラー破棄(surface等)をウィンドウ破棄より必ず先に行うことを保証する(レンダラーの生成前提を満たす)。
