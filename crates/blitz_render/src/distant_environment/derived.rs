@@ -42,6 +42,7 @@ pub use diffuse_irradiance::{拡散照度のテクセル値, 拡散照度の標�
 pub use diffuse_resolution::拡散照度の解像度;
 pub use environment_content::遠方環境の内容;
 pub use error::派生表現エラー;
+pub use hammersley::ハンマーズリー標本を求める;
 pub use mip_level::粗さ段;
 pub use roughness::粗さ;
 pub use specular_prefilter::{鏡面畳込みのテクセル値, 鏡面畳込みの標本数, 鏡面畳込みの段を焼く};

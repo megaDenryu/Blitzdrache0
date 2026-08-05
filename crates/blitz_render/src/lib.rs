@@ -23,6 +23,7 @@ pub mod indirect_lighting;
 mod lighting_input;
 #[cfg(test)]
 mod lighting_input_tests;
+pub mod local_visibility;
 mod lod_mesh;
 mod material;
 mod material_table_summary;
