@@ -45,6 +45,20 @@ pub(super) fn 名前からidを引く(命令一覧: &[命令], 名前: &str) -> 
     Err(format!("SPIR-Vに{名前}という名前の宣言が無い"))
 }
 
+/// SPIR-Vの装飾BuiltInの値と組み込みPositionの値。
+const 装飾_BUILT_IN: u32 = 11;
+const 組み込み_POSITION: u32 = 0;
+
+/// 位置の組み込み出力として装飾された変数のid。頂点段のSPIR-Vには必ず1つある。
+pub(super) fn 位置の組み込み出力のidを引く(命令一覧: &[命令]) -> Result<u32, String> {
+    命令一覧
+        .iter()
+        .filter(|命令| 命令.命令コード == 命令_OP_DECORATE && 命令.語一覧.len() >= 3)
+        .find(|命令| 命令.語一覧[1] == 装飾_BUILT_IN && 命令.語一覧[2] == 組み込み_POSITION)
+        .map(|命令| 命令.語一覧[0])
+        .ok_or_else(|| "SPIR-Vに位置の組み込み出力の宣言が無い".to_string())
+}
+
 /// OpDecorateの語は[対象id, 装飾, 追加の値...]の順に並ぶ。
 pub(super) fn 装飾の付いたidを集める(命令一覧: &[命令], 装飾: u32) -> Vec<u32> {
     命令一覧

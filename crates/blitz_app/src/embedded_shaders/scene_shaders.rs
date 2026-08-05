@@ -10,7 +10,7 @@ use blitz_render::indirect_lighting::契約別の描画シェーダー;
 
 use crate::error::起動エラー;
 
-const 頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/vertex.spv"));
+pub(super) const 頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/vertex.spv"));
 pub(super) const 画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/fragment.spv"));
 pub(super) const 遠方環境の画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/scene_distant_environment_fragment.spv"));
 
