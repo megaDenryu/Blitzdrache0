@@ -659,7 +659,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <div class="box now">
 <span class="label">このエンジンの現状</span>
-<p>AAは<strong>未実装</strong>(MSAAもTAAもない)。これは怠慢ではなく意図した保留であり、「絵の様式確定前にTAAを採用しない」という扉が開けて維持されている(モーションベクタ・履歴・ジッタが存在しないことをM11総点検が確認済み。正本: フェーズ2計画「絵の様式に関する3条件」)。露出は手動(CLIと開発UI)、明るさの圧縮はACES実装済み、<a class="term" href="#term-bloom">光のにじみ</a>実装済み。DoF・モーションブラー・<a class="term" href="#term-auto-exposure">自動露出</a>・HDR出力(ディスプレイへの広輝度出力)は未実装。</p>
+<p>AAは<strong>未実装</strong>(MSAAもTAAもない)。これは怠慢ではなく意図した保留であり、「絵の様式確定前にTAAを採用しない」という扉がM11の総点検まで開けて維持されていた(モーションベクタ・履歴・ジッタが存在しないことを総点検が確認済み。正本: フェーズ2計画「絵の様式に関する3条件」)。<strong>2026-08-08のオーナー裁定で絵の様式が写実志向に確定し、この扉は閉じた。</strong>採用が決まったため以後の呼び名は時間再構成であり、実装設計の正本は<code>_doc/設計/時間再構成.md</code>である(実装はまだ着手していない)。露出は手動(CLIと開発UI)、明るさの圧縮はACES実装済み、<a class="term" href="#term-bloom">光のにじみ</a>実装済み。DoF・モーションブラー・<a class="term" href="#term-auto-exposure">自動露出</a>・HDR出力(ディスプレイへの広輝度出力)は未実装。</p>
 </div>
 
 <div class="box goal">
