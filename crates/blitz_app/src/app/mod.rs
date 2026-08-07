@@ -27,7 +27,6 @@ mod streaming;
 pub(crate) mod time_of_day;
 mod visibility;
 mod window_setup;
-use std::path::PathBuf;
 
 use crate::cli::{布モード, 描画対象の並べ方, 検証計画指定, 空中遠近合成指定, 粒子表示モード, 起動モード};
 use crate::dev_ui::開発UI;
@@ -46,9 +45,9 @@ pub(crate) struct アプリ {
     レンダラー: Option<レンダラー>,
     window: Option<Window>,
     起動モード: 起動モード,
-    シェーダー監視パス: PathBuf,
+    シェーダー監視パス: std::path::PathBuf,
     シーン名: String,
-    アセットルート: PathBuf,
+    アセットルート: std::path::PathBuf,
     /// `--global-offset`で世界全体へ加える平行移動。カメラ・照明の大域位置と、チャンク座標から導出した描画の基準原点の全部に同じ値を足す。
     大域ずらし量: blitz_math::大域ワールド位置,
     描画対象の並べ方: 描画対象の並べ方,
@@ -56,6 +55,7 @@ pub(crate) struct アプリ {
     カメラ: カメラ,
     入力状態: 入力状態,
     現在フレーム: u32,
+    視点の履歴: frame::視点の履歴,
     クリア色: クリアカラー,
     /// 世界の空方針・ゲーム時計・シーンの基準ライティング・そのフレームのライティングと空入力を1つが持つ。
     天空: time_of_day::天空配線,

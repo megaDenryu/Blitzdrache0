@@ -1,17 +1,19 @@
-// 画素の位置と深度からビュー空間の量を復元する規約。透視投影の4つの量だけを持ち、逆行列を持たない。
+// 画素の位置と深度からビュー空間の量を復元する規約。透視投影の4つの量と画素内ずらしだけを持ち、逆行列を持たない。
 // 注意: この式は`crates/blitz_render/src/local_visibility/projection.rs`と`view_position.rs`の写しである。正本はRust側にある。
 // 注意: 正本は正規化装置座標と画素位置の組み立てを倍精度で行い、最後に単精度へ狭める。シェーダーは単精度だけで
 // 組むため、最下位のビットが正本と食い違いうる。検収が全画素のバイト一致でなく符号値1段の許容で突き合わせるのは
 // この差のためである(`参照: _doc/設計/放射輝度問い合わせ階層.md`「IIaの実装設計」)。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
-// 透視投影の逆変換に要る4つの量。深度の規約はVulkanのクリップ空間であり、0が近クリップ面、1が遠クリップ面である。
+// 透視投影の逆変換に要る4つの量と、深度を書いた射影が受けた画素内ずらし(正規化装置座標)。
+// 深度の規約はVulkanのクリップ空間であり、0が近クリップ面、1が遠クリップ面である。
 struct LocalVisibilityProjection
 {
     float nearClip;
     float farClip;
     float halfFovTangent;
     float aspectRatio;
+    float2 pixelJitterNdc;
 };
 
 // 深度が表すカメラからの奥行き。
@@ -26,12 +28,13 @@ float localVisibilityCameraDepth(float3 viewPosition)
     return -viewPosition.z;
 }
 
-// 画素の中心が正規化装置座標のどこに当たるか。横は右が正、縦は下が正である。
-float2 localVisibilityPixelCenterNdc(uint2 extent, uint2 pixel)
+// 画素の中心が、ずらしを取り除いた正規化装置座標のどこに当たるか。横は右が正、縦は下が正である。
+// 画素内ずらしを引くのは、この画素へ深度を書いた点がずらし込みでこの中心に落ちたためである。
+float2 localVisibilityPixelCenterNdc(LocalVisibilityProjection projection, uint2 extent, uint2 pixel)
 {
     return float2(
         2.0 * (float(pixel.x) + 0.5) / float(extent.x) - 1.0,
-        2.0 * (float(pixel.y) + 0.5) / float(extent.y) - 1.0);
+        2.0 * (float(pixel.y) + 0.5) / float(extent.y) - 1.0) - projection.pixelJitterNdc;
 }
 
 // 画素の中心と深度が指すビュー空間の位置。
@@ -39,7 +42,7 @@ float2 localVisibilityPixelCenterNdc(uint2 extent, uint2 pixel)
 float3 localVisibilityRestoredPosition(LocalVisibilityProjection projection, uint2 extent, uint2 pixel, float depth)
 {
     float viewDepth = localVisibilityViewDepthOfDepth(projection, depth);
-    float2 ndc = localVisibilityPixelCenterNdc(extent, pixel);
+    float2 ndc = localVisibilityPixelCenterNdc(projection, extent, pixel);
     return float3(
         ndc.x * projection.halfFovTangent * projection.aspectRatio * viewDepth,
         -ndc.y * projection.halfFovTangent * viewDepth,
@@ -81,8 +84,9 @@ bool localVisibilityPixelOfPosition(
     {
         return false;
     }
-    float ndcX = viewPosition.x / (projection.halfFovTangent * projection.aspectRatio * viewDepth);
-    float ndcY = -viewPosition.y / (projection.halfFovTangent * viewDepth);
+    // 射影が受けた画素内ずらしぶん、画面上の落ちどころが動く。復元の向きと符号が逆になる。
+    float ndcX = viewPosition.x / (projection.halfFovTangent * projection.aspectRatio * viewDepth) + projection.pixelJitterNdc.x;
+    float ndcY = -viewPosition.y / (projection.halfFovTangent * viewDepth) + projection.pixelJitterNdc.y;
     float realX = (ndcX + 1.0) * 0.5 * float(extent.x);
     float realY = (ndcY + 1.0) * 0.5 * float(extent.y);
     if (!isfinite(realX) || realX < 0.0 || realX >= float(extent.x) || !isfinite(realY) || realY < 0.0 || realY >= float(extent.y))

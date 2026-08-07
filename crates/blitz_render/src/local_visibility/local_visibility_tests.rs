@@ -12,6 +12,7 @@
 mod blur_tests;
 mod concave_tests;
 mod image_value_tests;
+mod pixel_jitter_tests;
 mod plane_tests;
 mod projection_tests;
 mod quantization_tests;
@@ -23,7 +24,7 @@ mod test_scenes;
 mod value_object_tests;
 mod visibility_statistics;
 
-use blitz_math::{メートル, ラジアン};
+use blitz_math::{メートル, ラジアン, 画素内ずらし};
 
 use super::narrowing::整数を単精度へ狭める;
 use super::{
@@ -39,6 +40,7 @@ pub(super) fn 検査する射影() -> 射影の復元 {
         メートル::生成する(2000.0),
         ラジアン::生成する(std::f32::consts::FRAC_PI_3),
         整数を単精度へ狭める(検査する幅) / 整数を単精度へ狭める(検査する高さ),
+        画素内ずらし::ずらさない(),
     )
     .unwrap()
 }

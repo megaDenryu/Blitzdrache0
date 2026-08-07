@@ -3,6 +3,7 @@
 
 mod camera_relative_position;
 mod global_world_position;
+mod pixel_jitter;
 mod position;
 mod rotation;
 mod space;
@@ -14,6 +15,7 @@ mod trs_tests;
 
 pub use camera_relative_position::{カメラ相対位置, 座標変換エラー};
 pub use global_world_position::大域ワールド位置;
+pub use pixel_jitter::{画素内ずらし, 画素内ずらしエラー};
 pub use position::位置;
 pub use rotation::{クォータニオン, クォータニオンエラー};
 pub use space::{クリップ, ビュー, ローカル, ワールド, 光源クリップ, 空間};

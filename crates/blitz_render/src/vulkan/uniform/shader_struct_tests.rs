@@ -16,6 +16,7 @@ fn ビュー定数の宣言がcpu側と同じ並びである() {
     開始位置を確かめる(&並び, "viewProjection", 0);
     開始位置を確かめる(&並び, "cameraRelativePosition", 64);
     開始位置を確かめる(&並び, "cameraForward", 80);
+    開始位置を確かめる(&並び, "previousViewProjection", 96);
 }
 
 #[test]

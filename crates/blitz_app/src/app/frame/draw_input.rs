@@ -5,9 +5,11 @@
 //! そのフレームの視点そのものを求める工程は`frame_view`が持つ。
 
 pub(in crate::app) mod frame_view;
+pub(in crate::app) mod view_history;
 
 pub(crate) use frame_view::フレーム視点;
 pub(in crate::app) use frame_view::視点を求める;
+pub(in crate::app) use view_history::視点の履歴;
 
 use super::super::アプリ;
 use blitz_render::frame_input::影のキャスター指定;
@@ -45,7 +47,7 @@ pub(in crate::app) fn 組み立てる<'a>(
     プリミティブ発行: &'a blitz_render::frame_input::プリミティブ発行受け皿,
 ) -> blitz_render::フレーム描画入力<'a> {
     let カメラ大域原点 = 視点情報.カメラ大域位置;
-    let 視点 = blitz_render::描画視点::生成する(視点情報.ビュー射影, 視点情報.カメラ大域位置, カメラ大域原点, 視点情報.射影の復元);
+    let 視点 = blitz_render::描画視点::生成する(視点情報.ビュー射影の組, 視点情報.カメラ大域位置, カメラ大域原点, 視点情報.射影の復元);
     let 視点一覧 = blitz_render::描画視点一覧::生成する(視点, Vec::new());
     if アプリ.現在フレーム == 0 && アプリ.描画対象の並べ方.件数.is_some() {
         crate::reports::composition::描画視点構成を表示する(視点一覧.視点数());
