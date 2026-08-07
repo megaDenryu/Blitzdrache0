@@ -46,6 +46,8 @@ mod probe_pixel_tests;
 #[cfg(test)]
 mod quantity_tests;
 #[cfg(test)]
+mod temporal_luminance_agreement_tests;
+#[cfg(test)]
 mod value_object_tests;
 
 pub use adaptation::次の適応状態を求める;

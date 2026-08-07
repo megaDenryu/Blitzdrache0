@@ -7,6 +7,9 @@
 //! 規約と関数を段3a以降が使う。
 //! 参照: `_doc/設計/時間再構成.md`「判断f: 純関数層の中身」
 //!
+//! 部品の純関数を1画素ぶんの結果へ束ねる合成の順は`pixel_reconstruction.rs`が1本で持つ。段3bのslangの写しも
+//! 検収のハーネスも、部品を自分の順で並べ直さずこの順に従う。
+//!
 //! この層が最初に固定するのは動きベクトルの規約である。向き・単位・画素内ずらしの差分の含否の3つは、
 //! 書く側と読む側の全てへ波及するため、他のどの実装よりも先に型で決める(`motion_vector.rs`が根拠を持つ)。
 //!
@@ -25,6 +28,7 @@ mod luminance_weighted_blend;
 mod motion_vector;
 mod neighborhood_range;
 mod pixel_offset;
+mod pixel_reconstruction;
 mod relative_luminance;
 mod screen_position;
 mod sequence_index;
@@ -43,6 +47,8 @@ mod luminance_weight_tests;
 #[cfg(test)]
 mod motion_vector_tests;
 #[cfg(test)]
+mod reconstruction_tests;
+#[cfg(test)]
 mod value_object_tests;
 
 pub use current_frame_ratio::今のフレームの寄与率;
@@ -56,6 +62,7 @@ pub use luminance_weighted_blend::輝度で重み付けて混ぜる;
 pub use motion_vector::動きベクトル;
 pub use neighborhood_range::近傍の色の範囲;
 pub use pixel_offset::画素を単位とするずらし;
+pub use pixel_reconstruction::一画素を再構成する;
 pub use relative_luminance::{相対輝度, 相対輝度を求める};
 pub use screen_position::画面上の位置;
 pub use sequence_index::ずらしの列の添字;

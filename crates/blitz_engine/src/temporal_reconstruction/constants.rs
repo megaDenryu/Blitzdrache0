@@ -24,6 +24,7 @@ pub(super) const 縦の基数: u16 = 3;
 ///
 /// 注意: 自動露出の層(`crates/blitz_engine/src/auto_exposure/luminance.rs`)と同じ定義でなければならない。
 /// 同じ線形の色に対して2つの輝度の定義が並ぶと、露出が明るいと判定した画素を混合が暗いと重み付ける食い違いが起こる。
+/// この一致は`crates/blitz_engine/src/auto_exposure/temporal_luminance_agreement_tests.rs`が検査している。
 pub(super) const 赤の重み: f32 = 0.2126;
 pub(super) const 緑の重み: f32 = 0.7152;
 pub(super) const 青の重み: f32 = 0.0722;
