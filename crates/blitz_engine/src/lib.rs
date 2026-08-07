@@ -3,9 +3,7 @@
 //! 責務: ゲームロジックに対して描画対象の世界を表現する語彙を提供し、blitz_render のレンダーグラフへ描画内容を翻訳する。
 //!
 //! 注意: このクレートはwinitにもashにも依存しない。入力はデバイス非依存の`カメラインテント`としてのみ受け取る（参照: `_doc/計画/ユビキタス言語.md`「入力インテント」）。
-
 #![forbid(unsafe_code)]
-
 mod animation;
 mod asset;
 pub mod auto_exposure;
@@ -61,6 +59,8 @@ mod streaming_tests;
 mod streaming_transfer_tests;
 #[cfg(test)]
 mod streaming_usage_tests;
+/// 時間再構成の語彙は動きベクトルの規約・履歴の混合・棄却・画素内ずらしの列と数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
+pub mod temporal_reconstruction;
 mod terrain_lod;
 #[cfg(test)]
 mod terrain_lod_tests;
