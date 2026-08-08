@@ -11,6 +11,7 @@ use super::ウィンドウなし実行GPU環境;
 use crate::error::レンダラーエラー;
 use crate::validation_counter::検証カウンタ;
 use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::unsent_command_buffers::未送信の一時コマンドバッファ数;
 
 /// インスタンスから作る論理デバイス側の一式。生成の途中で失敗したときにインスタンスを別に片付けられるよう、
 /// インスタンスとは別の組で返す。
@@ -36,6 +37,7 @@ impl ウィンドウなし実行GPU環境 {
                 device: 一式.device,
                 queue: 一式.queue,
                 command_pool: 一式.command_pool,
+                未送信の一時コマンドバッファ数: 未送信の一時コマンドバッファ数::零から数え始める(),
             }),
             Err(誤り) => {
                 検証.破棄する();

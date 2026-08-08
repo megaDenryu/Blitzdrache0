@@ -9,14 +9,17 @@
 //! 注意: 検証カウンタはインスタンス破棄より後に読む。破棄そのものが発する指摘も件数へ含めるためである。
 
 mod create;
-mod one_shot;
 mod select;
+mod session;
 mod validation;
 
 use ash::vk;
 
+pub(crate) use session::GPU命令を積む一時コマンドバッファ;
+
 use crate::validation_counter::{検証カウンタ, 検証層の状況};
 use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::unsent_command_buffers::未送信の一時コマンドバッファ数;
 
 pub(crate) struct ウィンドウなし実行GPU環境 {
     // 注意: 値としては読まれないが、破棄まで保持し続けることに意味がある。
@@ -29,6 +32,7 @@ pub(crate) struct ウィンドウなし実行GPU環境 {
     device: GPUデバイス,
     queue: vk::Queue,
     command_pool: vk::CommandPool,
+    未送信の一時コマンドバッファ数: 未送信の一時コマンドバッファ数,
 }
 
 impl ウィンドウなし実行GPU環境 {
@@ -51,17 +55,18 @@ impl ウィンドウなし実行GPU環境 {
         unsafe { self.検証.instance.get_physical_device_memory_properties(self.physical_device) }
     }
 
-    /// コマンドバッファを1本取り、渡されたクロージャでGPU命令をコマンドバッファへ積んで送信し、完了を待つ。
-    pub(crate) fn 一度きりで実行する(
+    /// 一時コマンドバッファを1本確保して積み込みを開始する。
+    /// 返る値は`送信して完了を待つ`で必ず閉じる。閉じないまま捨てると`破棄する`が止める。
+    pub(crate) fn gpu命令を積み始める(
         &self,
-        gpu命令をコマンドバッファへ積む: impl FnOnce(&ash::Device, vk::CommandBuffer),
-    ) -> Result<(), crate::error::レンダラーエラー> {
-        one_shot::実行する(&self.device, self.command_pool, self.queue, gpu命令をコマンドバッファへ積む)
+    ) -> Result<GPU命令を積む一時コマンドバッファ<'_>, crate::error::レンダラーエラー> {
+        GPU命令を積む一時コマンドバッファ::積み始める(self)
     }
 
-    /// 前提: 呼び出し元はGPUの全作業の完了を待っており(`一度きりで実行する`が送信ごとに待つ)、
+    /// 前提: 呼び出し元はGPUの全作業の完了を待っており(`送信して完了を待つ`が送信ごとに待つ)、
     /// この環境で確保した資源をすべて破棄済みである。残っていれば`全メモリ解放を確認する`が止める。
     pub(crate) fn 破棄する(&self) {
+        self.未送信の一時コマンドバッファ数.未送信が1本も残っていないことを確かめる();
         self.device.全メモリ解放を確認する();
         // 安全性: どのハンドルもSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了している。
         unsafe {

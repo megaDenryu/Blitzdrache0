@@ -67,4 +67,5 @@ pub(crate) mod tracked_device;
 pub(crate) mod transfer;
 pub(crate) mod ui;
 pub(crate) mod uniform;
+pub(crate) mod unsent_command_buffers;
 pub(crate) mod visible_id;
