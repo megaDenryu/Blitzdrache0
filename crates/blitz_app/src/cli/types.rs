@@ -5,13 +5,11 @@ mod frame_dump_setting;
 mod launch_mode;
 mod readback_verification;
 pub(in crate::cli) use frame_dump_setting::走査の書き出し先を確かめる;
-pub(crate) use {
-    frame_dump_setting::フレームダンプ指定, launch_mode::起動モード, readback_verification::読み戻し検収起動設定
-};
+pub(crate) use readback_verification::読み戻し検収起動設定;
+pub(crate) use {frame_dump_setting::フレームダンプ指定, launch_mode::起動モード};
 
-use super::{
-    シャドウ計測起動設定, ストリーミング起動設定, 布モード, 平行移動起動設定, 描画対象の並べ方, 時間帯起動設定, 画面画素位置, 粒子表示モード,
-};
+use super::{シャドウ計測起動設定, ストリーミング起動設定, 布モード, 平行移動起動設定};
+use super::{描画対象の並べ方, 時間帯起動設定, 画面画素位置, 粒子表示モード};
 use std::path::PathBuf;
 
 /// CLI引数から得た起動設定一式。
@@ -94,6 +92,8 @@ pub(crate) struct 起動設定 {
     /// 深度プリパスを積むかどうかと、色パスの深度の比べ方。`--depth-prepass`が据える。未指定を`使わない`と同じ値にしないのは、局所可視性補正を宣言した世界が未指定なら方式を引き上げ、明示の`none`とは衝突として落とすためである(2つを1つの値へ潰すと、引き上げが利用者の明示を黙って覆す)。
     pub(crate) 深度プリパス方式: Option<blitz_render::深度プリパス方式>,
     pub(crate) 局所可視性: super::local_visibility_settings::局所可視性の起動指定,
+    /// 時間再構成を効かせるかどうかの上書き。既定は世界の宣言に従う。`--no-taa`が使わない側へ落とす。
+    pub(crate) 時間再構成: super::temporal_reconstruction_settings::時間再構成方式の起動上書き,
     /// 世界全体とカメラへ加える平行移動。大域ずらし量はカメラ大域原点・照明の大域位置と、起動時シーンとチャンク束の描画の基準原点へ効く。
     /// 基準原点は所有チャンクから導出した後にこの平行移動を合成する。チャンク格子と必要集合の判定は平行移動を含まない世界座標で行うため、位置源には加えない。
     pub(crate) 平行移動: 平行移動起動設定,

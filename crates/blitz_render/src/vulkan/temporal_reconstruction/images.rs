@@ -1,0 +1,95 @@
+//! 時間再構成が使う画面と同じ寸法の3枚(動きベクトル1枚と履歴2枚)。触れるのはこの3枚とその裏付けだけであり、
+//! 方式もパスも知らない。
+//!
+//! 履歴を2枚持つのは、あるフレームが前のフレームの結果を読みながら自分の結果を書くためである。枚数を進行中フレーム数へ
+//! 合わせてはならない。スロットごとに履歴を分けると、あるフレームが読むのは1つ前でなく2つ前の結果になり、混合の系列が
+//! 2本に割れる(`参照: _doc/設計/時間再構成.md`「判断c: 履歴画像の持ち方と無効化の規律」)。
+//!
+//! 動きベクトルを2成分にするのは、規約が正規化装置座標の横と縦の差分だけを運ぶためである。履歴を4成分にするのは、
+//! 第4成分へ前のフレームのビュー空間の奥行きを載せて棄却の照合に使うためである。
+//!
+//! 前提: R16G16_SFLOATとR16G16B16A16_SFLOATのカラー添付・標本・線形補間・転送はどちらもVulkan仕様の必須対応であり
+//! (仕様の「Mandatory Format Support: 16-bit Components」の表でカラー添付と標本の両方に必須の印が付く)、
+//! 実行時の対応確認は行わない。記憶画像の書き込みだけはR16G16_SFLOATで必須でないため、その用途では使わない。
+
+mod create;
+
+use ash::vk;
+
+use crate::error::レンダラーエラー;
+use crate::vulkan::tracked_device::GPUデバイス;
+
+/// 動きベクトル画像の形式。横と縦の2成分に正規化装置座標の差分を持つ。
+pub(crate) const 動きベクトルの形式: vk::Format = vk::Format::R16G16_SFLOAT;
+
+/// 履歴画像の形式。混合は明るさの圧縮より前の線形の値に対して行うため、表示可能範囲を超える明るさを保持できる
+/// HDR中間画像と同じ形式にする。
+pub(crate) const 履歴の形式: vk::Format = vk::Format::R16G16B16A16_SFLOAT;
+
+/// 履歴画像の枚数。前のフレームを読みながら今のフレームを書くため2枚を交互に使う。
+pub(crate) const 履歴の枚数: usize = 2;
+
+/// 画像1枚とその裏付け。
+pub(crate) struct 時間再構成の画像 {
+    pub(crate) 画像: vk::Image,
+    pub(crate) 画像ビュー: vk::ImageView,
+    memory: vk::DeviceMemory,
+}
+
+impl 時間再構成の画像 {
+    fn 破棄する(&self, device: &GPUデバイス) {
+        // 安全性: 画像・画像ビュー・memoryはSelfが唯一の所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
+        unsafe {
+            device.destroy_image_view(self.画像ビュー, None);
+            device.destroy_image(self.画像, None);
+        }
+        device.メモリを解放する(self.memory);
+    }
+}
+
+/// 動きベクトルの1枚と履歴の2枚の組。
+pub(crate) struct 時間再構成の画像組 {
+    pub(crate) 動きベクトル: 時間再構成の画像,
+    pub(crate) 履歴: [時間再構成の画像; 履歴の枚数],
+}
+
+impl 時間再構成の画像組 {
+    /// 途中で失敗したら、それまでに確保した画像をその場で片付ける。部分的に確保された組を呼び出し元へ渡さない。
+    pub(crate) fn 生成する(
+        device: &GPUデバイス,
+        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        寸法: vk::Extent2D,
+    ) -> Result<Self, レンダラーエラー> {
+        let 動きベクトル = create::生成する(device, メモリプロパティ, 動きベクトルの形式, 寸法)?;
+        let mut 確保済みの履歴 = Vec::with_capacity(履歴の枚数);
+        for _ in 0..履歴の枚数 {
+            match create::生成する(device, メモリプロパティ, 履歴の形式, 寸法) {
+                Ok(画像) => 確保済みの履歴.push(画像),
+                Err(誤り) => {
+                    for 画像 in &確保済みの履歴 {
+                        画像.破棄する(device);
+                    }
+                    動きベクトル.破棄する(device);
+                    return Err(誤り);
+                }
+            }
+        }
+        let 履歴 = 履歴の配列にする(確保済みの履歴);
+        Ok(Self { 動きベクトル, 履歴 })
+    }
+
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
+        for 画像 in &self.履歴 {
+            画像.破棄する(device);
+        }
+        self.動きベクトル.破棄する(device);
+    }
+}
+
+/// 確保した枚数が履歴の枚数と一致することは直前の繰り返しが保証している。一致しない状態はこの関数の呼び出し元の誤りである。
+fn 履歴の配列にする(確保済み: Vec<時間再構成の画像>) -> [時間再構成の画像; 履歴の枚数] {
+    let 枚数 = 確保済み.len();
+    確保済み
+        .try_into()
+        .unwrap_or_else(|_| panic!("履歴画像を{}枚確保するはずが{枚数}枚だった(実装のバグ)", 履歴の枚数))
+}

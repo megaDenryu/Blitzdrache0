@@ -36,6 +36,7 @@ mod screen_pixel_args;
 mod setting_apply;
 mod shadow_args;
 mod streaming_settings;
+pub(crate) mod temporal_reconstruction_settings;
 mod time_args;
 mod time_of_day_flags;
 mod time_of_day_settings;

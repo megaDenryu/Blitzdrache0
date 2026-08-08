@@ -60,6 +60,7 @@ pub(crate) mod sky_stage;
 pub(crate) mod surface;
 pub(crate) mod swapchain;
 pub(crate) mod sync;
+pub(crate) mod temporal_reconstruction;
 pub(crate) mod texture;
 pub(crate) mod tonemap;
 pub(crate) mod tracked_device;

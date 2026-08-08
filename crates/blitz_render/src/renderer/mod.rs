@@ -34,9 +34,7 @@ mod ui_texture;
 mod uniform_write;
 mod view_uniform_write;
 
-use crate::frame_composition::フレーム構成;
-use crate::validation_counter::検証カウンタ;
-use crate::vulkan;
+use crate::{frame_composition::フレーム構成, validation_counter::検証カウンタ, vulkan};
 
 pub use cpu_timing::CPU区間時間;
 pub use draw_issue_breakdown::{パス別描画発行, 描画発行内訳, 段別個体数, 記録側の計数};
@@ -75,6 +73,8 @@ pub struct レンダラー {
     /// フレーム構成にポスト処理段階があるときのみ`Some`(判断38・39)。HDR中間画像・光のにじみ・明るさの圧縮の有無をこの1つの`Option`が束ねるため、一部だけが存在する状態をレンダラーからは作れない。
     ポスト処理: Option<vulkan::post_process::ポスト処理一式>,
     局所可視性: vulkan::local_visibility::局所可視性一式,
+    /// 時間再構成の方式と、画面寸法に連動する3枚(動きベクトル1枚と履歴2枚)の所有者。方式に依らず常に持つ(判断e)。
+    時間再構成: vulkan::temporal_reconstruction::時間再構成一式,
     /// `--particles`指定時のみ`Some`(判断29)。有無でコンピュート更新+粒子描画パスの追加を決める。
     粒子: Option<vulkan::particles::粒子リソース一式>,
     /// タイムスタンプ非対応デバイスでは`None`(判断30: 計測無効は型で表す)。

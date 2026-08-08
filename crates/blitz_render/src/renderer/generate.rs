@@ -20,6 +20,7 @@ use crate::present_display::実表示計測要求;
 use crate::render_scene_material::描画シーン素材;
 use crate::shader_bundle::シェーダー束;
 use crate::skin_mesh::スキンメッシュ素材;
+use crate::temporal_reconstruction::時間再構成方式;
 use raw_window_handle::{RawDisplayHandle, RawWindowHandle};
 
 impl レンダラー {
@@ -41,6 +42,7 @@ impl レンダラー {
         照明問い合わせ契約: 照明問い合わせ契約,
         自動露出の設定: 自動露出の設定,
         局所可視性の描画設定: 局所可視性の描画設定,
+        時間再構成方式: 時間再構成方式,
     ) -> Result<Self, レンダラーエラー> {
         構成と素材を検査する(&フレーム構成, スキン.is_some(), 布.is_some(), 粒子.is_some())?;
         let コア = core_setup::組み立てる(表示ハンドル, ウィンドウハンドル, 寸法, 実表示計測要求)?;
@@ -56,6 +58,7 @@ impl レンダラー {
             照明問い合わせ契約,
             自動露出の設定,
             局所可視性の描画設定,
+            時間再構成方式,
             影の一辺,
             タイムスタンプ対応か: コア.タイムスタンプ対応か,
             タイムスタンプ周期ns: コア.タイムスタンプ周期ns,

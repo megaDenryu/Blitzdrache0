@@ -53,6 +53,7 @@ impl レンダラー {
             ポスト処理.破棄する(device);
         }
         self.局所可視性.破棄する(device);
+        self.時間再構成.破棄する(device);
     }
 
     fn 描画資源を破棄する(&mut self) {

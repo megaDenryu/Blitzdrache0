@@ -19,6 +19,7 @@ pub(super) struct 段別資源 {
     pub(super) スキニング: Option<vulkan::skinning::スキニング一式>,
     pub(super) 布: Option<vulkan::cloth::布一式>,
     pub(super) 局所可視性: vulkan::local_visibility::局所可視性一式,
+    pub(super) 時間再構成: vulkan::temporal_reconstruction::時間再構成一式,
 }
 
 pub(super) fn 束ねる(段別: 段別資源) -> フレーム資源 {
@@ -41,5 +42,6 @@ pub(super) fn 束ねる(段別: 段別資源) -> フレーム資源 {
         布: 段別.布,
         ポスト処理: 段別.ポスト処理,
         局所可視性: 段別.局所可視性,
+        時間再構成: 段別.時間再構成,
     }
 }

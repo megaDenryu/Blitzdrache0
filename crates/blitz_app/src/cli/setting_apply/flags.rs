@@ -3,6 +3,7 @@
 
 use super::super::local_visibility_settings::拡散間接方式の起動上書き;
 use super::super::streaming_settings::プレイヤー位置源;
+use super::super::temporal_reconstruction_settings::時間再構成方式の起動上書き;
 use super::super::{布モード, 描画対象の走査順, 検証計画指定, 粒子表示モード, 起動設定};
 
 pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str) {
@@ -29,6 +30,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str) {
         "--no-instance-shadow" => 設定.インスタンス影キャスター有効 = false,
         "--no-shadow-casters" => 設定.影キャスター全体有効 = false,
         "--no-ssao" => 設定.局所可視性.方式の上書き = 拡散間接方式の起動上書き::環境のみで描く,
+        "--no-taa" => 設定.時間再構成 = 時間再構成方式の起動上書き::使わないで描く,
         "--dev-ui" => 設定.開発ui初期有効 = true,
         "--debug-cascade-bands" => 設定.画素診断 = blitz_render::cascade::画素診断::距離区分の可視化,
         "--debug-shadow-loss" => 設定.画素診断 = blitz_render::cascade::画素診断::影の欠落計器,

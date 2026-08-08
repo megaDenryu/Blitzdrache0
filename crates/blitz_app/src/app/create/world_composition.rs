@@ -7,10 +7,11 @@
 //! 2つの決定を1つの工程に閉じる(`参照: _doc/設計/放射輝度問い合わせ階層.md`「IIaの実装設計」)。
 
 use blitz_engine::local_visibility::拡散間接方式;
+use blitz_engine::temporal_reconstruction::時間再構成方式;
 use blitz_render::local_visibility::{局所可視性の描画設定, 局所可視性の設定};
 use blitz_render::深度プリパス方式;
 
-use crate::app::time_of_day::scene_policy::世界の拡散間接方式を決める;
+use crate::app::time_of_day::scene_policy::{世界の拡散間接方式を決める, 世界の時間再構成方式を決める};
 use crate::cli::{起動引数エラー, 起動設定};
 use crate::error::起動エラー;
 
@@ -18,6 +19,8 @@ use crate::error::起動エラー;
 pub(in crate::app) struct 世界の描画構成 {
     pub(in crate::app) フレーム構成: blitz_render::フレーム構成,
     pub(in crate::app) 局所可視性の描画設定: 局所可視性の描画設定,
+    /// 世界が宣言した時間再構成方式をGPU境界の型へ写した値。レンダラーの生成へそのまま渡る。
+    pub(in crate::app) 時間再構成方式: blitz_render::temporal_reconstruction::時間再構成方式,
 }
 
 pub(in crate::app) fn 決める(起動設定: &起動設定, 空を描くか: bool) -> Result<世界の描画構成, 起動エラー> {
@@ -28,9 +31,10 @@ pub(in crate::app) fn 決める(起動設定: &起動設定, 空を描くか: bo
             .深度プリパス方式を据えた(深度プリパス方式),
         局所可視性の描画設定: 局所可視性の描画設定 {
             補正の設定: 局所可視性の設定::既定(),
-            方式: 描画側の方式へ写す(方式),
+            方式: 描画側の拡散間接方式へ写す(方式),
             検収の上書き: 起動設定.局所可視性.可視度の固定,
         },
+        時間再構成方式: 描画側の時間再構成方式へ写す(世界の時間再構成方式を決める(&起動設定.シーン名, 起動設定.時間再構成)),
     })
 }
 
@@ -53,11 +57,18 @@ fn 深度プリパス方式を決める(
     }
 }
 
-fn 描画側の方式へ写す(方式: 拡散間接方式) -> blitz_render::local_visibility::拡散間接方式 {
+fn 描画側の拡散間接方式へ写す(方式: 拡散間接方式) -> blitz_render::local_visibility::拡散間接方式 {
     match 方式 {
         拡散間接方式::環境のみ => blitz_render::local_visibility::拡散間接方式::環境のみ,
         拡散間接方式::局所可視性補正付き環境 => {
             blitz_render::local_visibility::拡散間接方式::局所可視性補正付き環境
         }
+    }
+}
+
+fn 描画側の時間再構成方式へ写す(方式: 時間再構成方式) -> blitz_render::temporal_reconstruction::時間再構成方式 {
+    match 方式 {
+        時間再構成方式::使わない => blitz_render::temporal_reconstruction::時間再構成方式::使わない,
+        時間再構成方式::履歴混合 => blitz_render::temporal_reconstruction::時間再構成方式::履歴混合,
     }
 }
