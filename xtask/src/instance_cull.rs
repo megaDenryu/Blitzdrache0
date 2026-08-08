@@ -18,6 +18,7 @@ const 正判定シーン: &str = "vegetation_4";
 /// 視錐台外の番兵と、画面外から画面内へ影を落とす個体を持つ世界。
 const 負対照シーン: &str = "vegetation_cull";
 const フレーム数: &str = "12";
+// メモリ報告(--report-memory)は観測であり判定値ではない。資源を常設する軸(局所可視性・時間再構成)が増えると確保数が動くが、判定は読み戻し画像のバイト一致と可視数だけが持つ。
 const 可視判定オンの引数: [&str; 3] = ["--no-post", "--report-draw-issue", "--report-memory"];
 const 可視判定オフの引数: [&str; 4] = ["--no-post", "--report-draw-issue", "--report-memory", "--no-instance-cull"];
 
