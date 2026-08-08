@@ -44,13 +44,15 @@ impl 記憶バッファ {
     }
 
     /// 全体を0で埋める。生成直後の1回だけ呼ぶ。
-    pub(crate) fn 零で埋める(
-        &self, device: &GPUデバイス, 転送環境: &転送実行環境, バイト数: u64
-    ) -> Result<(), レンダラーエラー> {
-        転送環境.一括実行する(device, |command_buffer| {
-            // 安全性: command_bufferは転送実行環境が記録用に開始済みで、埋める長さは確保長ぴったりである。
-            unsafe { device.cmd_fill_buffer(command_buffer, self.handle, 0, バイト数, 0) };
-        })
+    pub(crate) fn 零で埋める(&self, 転送環境: &転送実行環境, バイト数: u64) -> Result<(), レンダラーエラー> {
+        let 一時 = 転送環境.転送コマンドを積み始める()?;
+        // 安全性: command_bufferは積み込み開始済みで、埋める長さは確保長ぴったりである。
+        unsafe {
+            一時
+                .論理デバイス()
+                .cmd_fill_buffer(一時.積む先のコマンドバッファ(), self.handle, 0, バイト数, 0)
+        };
+        一時.送信して完了を待つ()
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {

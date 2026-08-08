@@ -14,8 +14,6 @@ use crate::vulkan::distant_environment::遠方環境の立方体画像;
 
 /// 材料を組むのに要るものの束。引数の列が伸び続けるのを避けて1つにする。
 pub(super) struct 材料の材料<'a> {
-    pub(super) device: &'a ash::Device,
-    pub(super) command_buffer: vk::CommandBuffer,
     pub(super) 遠方環境画像: &'a 遠方環境の立方体画像,
     pub(super) 一式: &'a 派生表現一式,
     pub(super) 書き込み元: vk::Buffer,
@@ -56,8 +54,6 @@ pub(super) fn 材料を組む<'a>(
     let 鏡面 = 材料.一式.鏡面畳込み画像();
     let 表 = 材料.一式.反射率積分表の画像();
     積む材料 {
-        device: 材料.device,
-        command_buffer: 材料.command_buffer,
         遠方環境: 登録する画像 {
             画像: 材料.遠方環境画像.画像,
             ビュー: 材料.遠方環境画像.配列ビュー,

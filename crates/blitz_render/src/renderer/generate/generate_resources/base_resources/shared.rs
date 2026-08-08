@@ -24,7 +24,7 @@ impl 共有資源 {
         self.共有ディスクリプタ.破棄する(device);
         self.セットレイアウト.破棄する(device);
         self.シェーダー定数.破棄する(device);
-        self.転送.破棄する(device);
+        self.転送.破棄する();
         self.シャドウ.破棄する(device);
     }
 }

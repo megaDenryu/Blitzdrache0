@@ -11,10 +11,15 @@
 use ash::vk;
 
 use super::resources::積む材料;
+use crate::error::レンダラーエラー;
 use crate::vulkan::derived_environment::{copy_pass, pass};
 use crate::vulkan::graph;
+use crate::vulkan::headless::GPU命令を積む一時コマンドバッファ;
 
-pub(super) fn 積む(材料: 積む材料<'_>) {
+pub(super) fn 積んで送信し完了を待つ(
+    一時: GPU命令を積む一時コマンドバッファ<'_>,
+    材料: 積む材料<'_>,
+) -> Result<(), レンダラーエラー> {
     let mut グラフ = graph::グラフ::新規();
     let 遠方環境 = 画像を登録する(&mut グラフ, 材料.遠方環境.画像, 材料.遠方環境.ビュー, 材料.遠方環境.寸法);
     let 拡散照度 = 画像を登録する(&mut グラフ, 材料.拡散照度.画像, 材料.拡散照度.ビュー, 材料.拡散照度.寸法);
@@ -71,7 +76,8 @@ pub(super) fn 積む(材料: 積む材料<'_>) {
         材料.反射率積分表の範囲,
         材料.受け.反射率積分表,
     ));
-    graph::実行する(材料.device, 材料.command_buffer, グラフ, None);
+    graph::実行する(一時.論理デバイス(), 一時.積む先のコマンドバッファ(), グラフ, None);
+    一時.送信して完了を待つ()
 }
 
 /// 初期状態は大気のベイク済み画像を焼く画像と同じであり、レイアウトはUNDEFINEDである。

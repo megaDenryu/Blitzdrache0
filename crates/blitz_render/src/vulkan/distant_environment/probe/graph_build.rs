@@ -10,16 +10,16 @@
 use ash::vk;
 
 use super::copy_pass;
+use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::{
     pass as 大気パス, 大気のベイク済み画像の描画入力, 大気のベイク済み画像の生成入力, 大気のベイク済み画像の画像入力, 生成する組,
 };
 use crate::vulkan::distant_environment::{pass as 遠方環境パス, 遠方環境の生成入力, 遠方環境の画像入力};
 use crate::vulkan::graph;
+use crate::vulkan::headless::GPU命令を積む一時コマンドバッファ;
 
-/// 1回の記録に要る材料。引数の列が伸び続けるのを避けて1つに束ねる。
+/// 1回の積み込みに要る材料。引数の列が伸び続けるのを避けて1つに束ねる。
 pub(super) struct 積む材料<'a> {
-    pub(super) device: &'a ash::Device,
-    pub(super) command_buffer: vk::CommandBuffer,
     pub(super) 大気入力: &'a 大気のベイク済み画像の描画入力,
     /// 遠方環境用スカイビューを焼く1本ぶんの束縛と、その書き込み先の画像。
     pub(super) 遠方環境用スカイビュー入力: &'a 大気のベイク済み画像の生成入力,
@@ -29,7 +29,10 @@ pub(super) struct 積む材料<'a> {
     pub(super) 受け: vk::Buffer,
 }
 
-pub(super) fn 積む(材料: 積む材料<'_>) {
+pub(super) fn 積んで送信し完了を待つ(
+    一時: GPU命令を積む一時コマンドバッファ<'_>,
+    材料: 積む材料<'_>,
+) -> Result<(), レンダラーエラー> {
     let mut グラフ = graph::グラフ::新規();
     let スカイビュー = 大気の三枚を積む(&mut グラフ, &材料);
     let 遠方環境 = グラフ.画像を登録する(
@@ -45,7 +48,8 @@ pub(super) fn 積む(材料: 積む材料<'_>) {
         材料.遠方環境入力,
     ));
     グラフ.パスを積む(copy_pass::作る(遠方環境, 材料.画像入力.範囲, 材料.画像入力.層数, 材料.受け));
-    graph::実行する(材料.device, 材料.command_buffer, グラフ, None);
+    graph::実行する(一時.論理デバイス(), 一時.積む先のコマンドバッファ(), グラフ, None);
+    一時.送信して完了を待つ()
 }
 
 /// 透過率・多重散乱・遠方環境用スカイビューを本番と同じ宣言順で積み、遠方環境が読むスカイビューのハンドルを返す。

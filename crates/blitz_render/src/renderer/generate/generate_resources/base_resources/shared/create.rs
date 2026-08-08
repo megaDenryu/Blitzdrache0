@@ -36,7 +36,7 @@ pub(in crate::renderer) fn 生成する(
     let シェーダー定数 = match vulkan::uniform::フレームシェーダー定数一式::生成する(device, メモリプロパティ) {
         Ok(値) => 値,
         Err(誤り) => {
-            転送.破棄する(device);
+            転送.破棄する();
             シャドウ.破棄する(device);
             return Err(誤り);
         }
@@ -45,7 +45,7 @@ pub(in crate::renderer) fn 生成する(
         Ok(値) => 値,
         Err(誤り) => {
             シェーダー定数.破棄する(device);
-            転送.破棄する(device);
+            転送.破棄する();
             シャドウ.破棄する(device);
             return Err(誤り);
         }
@@ -56,7 +56,7 @@ pub(in crate::renderer) fn 生成する(
         Err(誤り) => {
             セットレイアウト.破棄する(device);
             シェーダー定数.破棄する(device);
-            転送.破棄する(device);
+            転送.破棄する();
             シャドウ.破棄する(device);
             return Err(誤り);
         }
@@ -68,7 +68,7 @@ pub(in crate::renderer) fn 生成する(
             共有ディスクリプタ.破棄する(device);
             セットレイアウト.破棄する(device);
             シェーダー定数.破棄する(device);
-            転送.破棄する(device);
+            転送.破棄する();
             シャドウ.破棄する(device);
             return Err(誤り);
         }

@@ -65,7 +65,7 @@ impl レンダラー {
         self.共有ディスクリプタ.破棄する(device);
         self.セットレイアウト.破棄する(device);
         self.シェーダー定数.破棄する(device);
-        self.転送環境.破棄する(device);
+        self.転送環境.破棄する();
         self.シャドウマップ.破棄する(device);
     }
 

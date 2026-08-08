@@ -23,16 +23,28 @@ pub(super) fn 記録して転送する(
     let (ステージングバッファ, ステージングメモリ) =
         host_buffer::確保して書き込む(device, メモリプロパティ, rgba8, vk::BufferUsageFlags::TRANSFER_SRC)?;
 
-    let 実行結果 = 転送環境.一括実行する(device, |command_buffer| {
-        barrier::転送先へ遷移する(device, command_buffer, image);
-        コピーする(device, command_buffer, ステージングバッファ, image, 幅, 高さ);
-        barrier::シェーダー読み取り専用へ遷移する(device, command_buffer, image);
-    });
+    let 実行結果 = 唯一のレベルへ転送する(転送環境, ステージングバッファ, image, 幅, 高さ);
 
     // 安全性: 転送実行は完了済みで、ステージングバッファは以降使用しない。
     unsafe { device.destroy_buffer(ステージングバッファ, None) };
     device.メモリを解放する(ステージングメモリ);
     実行結果
+}
+
+fn 唯一のレベルへ転送する(
+    転送環境: &転送実行環境,
+    ステージングバッファ: vk::Buffer,
+    image: vk::Image,
+    幅: u32,
+    高さ: u32,
+) -> Result<(), レンダラーエラー> {
+    let 一時 = 転送環境.転送コマンドを積み始める()?;
+    let device = 一時.論理デバイス();
+    let command_buffer = 一時.積む先のコマンドバッファ();
+    barrier::転送先へ遷移する(device, command_buffer, image);
+    コピーする(device, command_buffer, ステージングバッファ, image, 幅, 高さ);
+    barrier::シェーダー読み取り専用へ遷移する(device, command_buffer, image);
+    一時.送信して完了を待つ()
 }
 
 fn コピーする(

@@ -1,4 +1,4 @@
-//! 1回の記録に要る材料の束。担うのは、記録へ渡す値をまとめて名前で受け取ることだけである。
+//! 1回の積み込みに要る材料の束。担うのは、積み込みへ渡す値をまとめて名前で受け取ることだけである。
 //! 受けバッファの所有と読み取りは`readback_set`が持つ。
 //!
 //! 引数の列を1つに束ねるのは、画像・ビュー・寸法・範囲・入力の組が4組あり、平らに並べると
@@ -16,8 +16,6 @@ pub(super) struct 登録する画像 {
 }
 
 pub(super) struct 積む材料<'a> {
-    pub(super) device: &'a ash::Device,
-    pub(super) command_buffer: vk::CommandBuffer,
     pub(super) 遠方環境: 登録する画像,
     pub(super) 拡散照度: 登録する画像,
     pub(super) 鏡面畳込み: 登録する画像,

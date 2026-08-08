@@ -32,11 +32,7 @@ fn 転送して開く(
     元: vk::Buffer,
     バイト数: u64,
 ) -> Result<Vec<u32>, レンダラーエラー> {
-    転送環境.一括実行する(device, |command_buffer| {
-        let 領域 = [vk::BufferCopy::default().size(バイト数)];
-        // 安全性: command_bufferは転送実行環境が記録用に開始済みで、コピー長は両バッファの確保長以下である。
-        unsafe { device.cmd_copy_buffer(command_buffer, 元, 受け皿.handle, &領域) };
-    })?;
+    受け皿へコピーする(転送環境, 元, 受け皿.handle, バイト数)?;
     let 要素数 = usize::try_from(バイト数 / 4).unwrap_or_else(|_| panic!("読み戻す語数がusizeに収まらない: {バイト数}"));
     // 安全性: 受け皿のメモリはHOST_VISIBLE|HOST_COHERENTで確保済みで、写す長さは確保長ぴったりである。
     let ポインタ = unsafe { device.map_memory(受け皿.memory(), 0, バイト数, vk::MemoryMapFlags::empty())? };
@@ -45,4 +41,14 @@ fn 転送して開く(
     // 安全性: memoryはこの直前にmap_memory済みの同一ハンドルである。
     unsafe { device.unmap_memory(受け皿.memory()) };
     Ok(語列)
+}
+
+fn 受け皿へコピーする(
+    転送環境: &転送実行環境, 元: vk::Buffer, 受け皿: vk::Buffer, バイト数: u64
+) -> Result<(), レンダラーエラー> {
+    let 一時 = 転送環境.転送コマンドを積み始める()?;
+    let 領域 = [vk::BufferCopy::default().size(バイト数)];
+    // 安全性: command_bufferは積み込み開始済みで、コピー長は両バッファの確保長以下である。
+    unsafe { 一時.論理デバイス().cmd_copy_buffer(一時.積む先のコマンドバッファ(), 元, 受け皿, &領域) };
+    一時.送信して完了を待つ()
 }
