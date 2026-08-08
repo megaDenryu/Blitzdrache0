@@ -5,6 +5,7 @@
 mod execute;
 mod frame_reach;
 mod local_visibility_check;
+mod motion_vector_check;
 mod pixel_readback;
 mod rewrite_action;
 
@@ -47,6 +48,8 @@ impl アプリ {
         描画入力.ui描画 = 材料.ui描画;
         let 到達 = if let Some(形) = self.局所可視性を検収する形(材料.アクション) {
             self.局所可視度を検収する(描画入力, 材料.視点情報, 形)?
+        } else if self.動きベクトルを報告するフレームか(材料.アクション) {
+            self.動きベクトルを報告する(描画入力)?
         } else if self.ダンプ対象フレームか(材料.アクション) {
             self.読み戻してダンプする(描画入力, 材料.視点情報, 材料.アクション)?
         } else {

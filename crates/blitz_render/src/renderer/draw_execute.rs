@@ -10,6 +10,7 @@ mod acquire;
 mod depth_readback;
 mod hdr_readback;
 mod local_visibility_readback;
+mod motion_vector_readback;
 mod prepare;
 mod submit;
 

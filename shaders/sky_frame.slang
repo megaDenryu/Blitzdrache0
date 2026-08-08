@@ -14,7 +14,10 @@ struct VertexOutput
     float4 position : SV_Position;
     // カメラ相対フレームでの視線ベクトル。全画面三角形はwが一定のため、頂点間の線形補間が正確な向きを与える。
     float3 viewRay : TEXCOORD0;
-    // 全画面三角形のクリップ位置。wが1で一定のため、この値の補間はその画素の正規化装置座標そのものになる。
+    // 今フレームのビュー射影が視線方向を写したクリップ位置。ラスタライズの位置をそのまま使わず同じ視線から作り直すのは、
+    // 視線が逆ビュー射影を1度通って復元された値だからである。前フレームの側だけが往復の誤差を負うと、静止したカメラでも
+    // 動きベクトルが1画素ぶん残る(実測で最大0.002026、画面の15パーセントの画素が1画素の幅を超えた)。
+    // 同じ視線を同じ向きの変換で2度写せば、その誤差は差で消える。
     float4 currentClipPosition : TEXCOORD1;
     // 前フレームのずらし無しビュー射影が同じ視線方向を写したクリップ位置。空には奥行きが無いため、
     // 無限遠の点として第4成分を0で通す。平行移動の成分が効かなくなり、カメラの回転だけが画面上の移動を作る。
@@ -32,7 +35,7 @@ VertexOutput vertexMain(uint vertexID : SV_VertexID)
     output.position = float4(ndc, 1.0, 1.0);
     float4 farPoint = mul(skyPassUniform.inverseViewProjection, float4(ndc, 1.0, 1.0));
     output.viewRay = farPoint.xyz / farPoint.w - viewUniform.cameraRelativePosition.xyz;
-    output.currentClipPosition = output.position;
+    output.currentClipPosition = mul(viewUniform.viewProjection, float4(output.viewRay, 0.0));
     output.previousClipPosition = mul(viewUniform.previousViewProjection, float4(output.viewRay, 0.0));
     return output;
 }
