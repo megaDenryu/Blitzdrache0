@@ -27,6 +27,11 @@ impl レンダラー {
 
     /// 提示成功直後に読み戻しバッファをホストから読み、圧縮前のHDR中間画像へ変換する。
     fn 読み戻しバッファからhdr画像を作る(&self) -> Result<HDR読み戻し画像, レンダラーエラー> {
-        vulkan::readback::hdrを読み取る(self.環境.device(), self.確保済みの読み戻しバッファ(), self.提示.寸法())
+        vulkan::readback::半精度四成分を読み取る(
+            self.環境.device(),
+            self.確保済みの読み戻しバッファ(),
+            self.提示.寸法(),
+            読み戻し対象::圧縮前のHDR,
+        )
     }
 }

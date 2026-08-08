@@ -29,10 +29,7 @@ mod visibility;
 mod window_setup;
 
 use crate::cli::{布モード, 描画対象の並べ方, 検証計画指定, 空中遠近合成指定, 粒子表示モード, 起動モード};
-use crate::dev_ui::開発UI;
-use crate::error::起動エラー;
-use crate::hot_reload::ホットリローダー;
-use crate::input::入力状態;
+use crate::{dev_ui::開発UI, error::起動エラー, hot_reload::ホットリローダー, input::入力状態};
 use blitz_engine::カメラ;
 use blitz_render::{クリアカラー, レンダラー};
 pub(crate) use frame_timing::{フレーム時間統計, 集計する};
@@ -56,6 +53,8 @@ pub(crate) struct アプリ {
     入力状態: 入力状態,
     現在フレーム: u32,
     視点の履歴: frame::視点の履歴,
+    /// `--report-temporal-reconstruction`指定の実行だけが使う観測の材料。前のフレームの再構成結果を1枚だけ持つ。
+    時間再構成の観測: draw_dispatch::時間再構成の観測,
     クリア色: クリアカラー,
     /// 世界の空方針・ゲーム時計・シーンの基準ライティング・そのフレームのライティングと空入力を1つが持つ。
     天空: time_of_day::天空配線,

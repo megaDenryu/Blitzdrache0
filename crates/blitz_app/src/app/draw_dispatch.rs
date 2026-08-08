@@ -8,9 +8,11 @@ mod local_visibility_check;
 mod motion_vector_check;
 mod pixel_readback;
 mod rewrite_action;
+mod temporal_reconstruction_check;
 
 use blitz_render::frame_input::プリミティブ発行受け皿;
 pub(super) use frame_reach::描画の到達;
+pub(super) use temporal_reconstruction_check::時間再構成の観測;
 
 use blitz_render::{UI描画データ, 布フレーム入力};
 
@@ -50,6 +52,8 @@ impl アプリ {
             self.局所可視度を検収する(描画入力, 材料.視点情報, 形)?
         } else if self.動きベクトルを報告するフレームか(材料.アクション) {
             self.動きベクトルを報告する(描画入力)?
+        } else if self.時間再構成を観測するフレームか(材料.アクション) {
+            self.時間再構成を観測する(描画入力)?
         } else if self.ダンプ対象フレームか(材料.アクション) {
             self.読み戻してダンプする(描画入力, 材料.視点情報, 材料.アクション)?
         } else {

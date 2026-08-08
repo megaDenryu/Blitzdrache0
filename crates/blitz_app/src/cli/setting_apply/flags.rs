@@ -32,6 +32,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str) {
         "--no-ssao" => 設定.局所可視性.方式の上書き = 拡散間接方式の起動上書き::環境のみで描く,
         "--no-taa" => 設定.時間再構成 = 時間再構成方式の起動上書き::使わないで描く,
         "--report-motion-vector" => 設定.読み戻し検収.動きベクトルを報告するか = true,
+        "--report-temporal-reconstruction" => 設定.読み戻し検収.時間再構成を報告するか = true,
         "--dev-ui" => 設定.開発ui初期有効 = true,
         "--debug-cascade-bands" => 設定.画素診断 = blitz_render::cascade::画素診断::距離区分の可視化,
         "--debug-shadow-loss" => 設定.画素診断 = blitz_render::cascade::画素診断::影の欠落計器,
