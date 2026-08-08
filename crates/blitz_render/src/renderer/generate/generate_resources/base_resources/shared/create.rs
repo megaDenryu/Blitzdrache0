@@ -16,7 +16,7 @@ use crate::vulkan::material_table::テクスチャ表レイアウト容量;
 use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
 use crate::vulkan::tracked_device::GPUデバイス;
 
-pub(super) fn 生成する(
+pub(in crate::renderer) fn 生成する(
     device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     queue: vk::Queue,

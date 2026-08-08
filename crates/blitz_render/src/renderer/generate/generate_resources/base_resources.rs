@@ -37,7 +37,7 @@ pub(super) fn 組み立てる(
 ) -> Result<基礎資源, レンダラーエラー> {
     let device = 環境.device();
     let 表容量 = テクスチャ表レイアウト容量::起動時に決める(環境.ディスクリプタ索引上限())?;
-    let 共有 = shared::共有資源::生成する(
+    let 共有 = shared::create::生成する(
         device,
         メモリプロパティ,
         環境.queue(),
