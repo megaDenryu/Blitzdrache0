@@ -9,6 +9,7 @@ import indirect_distant_environment;
 import lighting_query;
 import local_visibility_apply;
 import material_record;
+import motion_vector;
 import scene_diagnostic;
 import scene_io;
 import scene_surface;
@@ -17,20 +18,20 @@ import scene_surface;
 static const float3 distantEnvironmentTint = float3(1.0, 1.0, 1.0);
 
 [shader("fragment")]
-float4 fragmentMain(VertexOutput input) : SV_Target
+ColorAndMotionOutput fragmentMain(VertexOutput input)
 {
     MaterialRecord materialRecord = sceneMaterialRecord();
     float3 albedo = sceneAlbedoOf(materialRecord, input.uv, distantEnvironmentTint);
     if (lightingQueryHeader.lightingEnabled == 0)
     {
-        return float4(albedo, 1.0);
+        return sceneColorAndMotion(albedo, input);
     }
     SceneSurface surface = sceneSurfaceOf(materialRecord, input, albedo);
 
     float3 diagnosticColor;
     if (sceneDiagnosticColor(input, surface.viewDepth, diagnosticColor))
     {
-        return float4(diagnosticColor, 1.0);
+        return sceneColorAndMotion(diagnosticColor, input);
     }
     float3 ambientTerm = distantEnvironmentIndirect(
         surface.normal, surface.viewDir, lightingQueryHeader.sunDirection.xyz,
@@ -38,5 +39,5 @@ float4 fragmentMain(VertexOutput input) : SV_Target
     float3 litColor = shadeLitSurface(
         ambientTerm, surface.albedo, surface.metallic, surface.roughness, surface.normal, surface.viewDir,
         input.relativePosition, surface.viewDepth);
-    return float4(litColor, 1.0);
+    return sceneColorAndMotion(litColor, input);
 }

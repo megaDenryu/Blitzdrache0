@@ -14,6 +14,9 @@ pub(crate) struct フレーム画像一式 {
     pub(crate) シャドウマップ配列ビュー: vk::ImageView,
     /// 距離区分ごとに1層だけを見るビュー。距離区分別のシャドウ記録がアタッチメントとして使う。
     pub(crate) シャドウマップ距離区分別のビュー一覧: [vk::ImageView; crate::cascade::距離区分数],
+    /// シーン描画と空のパスが第2のカラー添付として書く動きベクトル画像。時間再構成方式に依らず毎フレーム書くため`Option`にしない。
+    pub(crate) 動きベクトル画像: vk::Image,
+    pub(crate) 動きベクトルビュー: vk::ImageView,
     /// ポストプロセス有効時のみ`Some`(判断38)。シーン・粒子の描画先になり、明るさの圧縮パスが読む。
     pub(crate) hdr: Option<(vk::Image, vk::ImageView)>,
     /// ポストプロセス有効時のみ`Some`(判断41)。光のにじみピラミッドの全段。

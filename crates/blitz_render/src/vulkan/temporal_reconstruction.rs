@@ -17,6 +17,8 @@ use crate::temporal_reconstruction::時間再構成方式;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
+pub(crate) use images::動きベクトルの形式;
+
 pub(crate) struct 時間再構成一式 {
     画像組: images::時間再構成の画像組,
     方式: 時間再構成方式,
@@ -51,6 +53,12 @@ impl 時間再構成一式 {
             return Ok(());
         }
         fill::履歴を零で埋める(device, 転送環境, 画像組)
+    }
+
+    /// シーン描画と空のパスが第2のカラー添付として書く動きベクトル画像。方式に依らず毎フレーム書くため、
+    /// 有無を`Option`で表さない。
+    pub(crate) fn 動きベクトル画像組(&self) -> (vk::Image, vk::ImageView) {
+        (self.画像組.動きベクトル.画像, self.画像組.動きベクトル.画像ビュー)
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {

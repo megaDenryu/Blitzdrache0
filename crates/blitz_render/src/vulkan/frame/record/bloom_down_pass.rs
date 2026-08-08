@@ -5,7 +5,7 @@ use ash::vk;
 
 use super::fullscreen_draw;
 use crate::vulkan::frame::光のにじみ描画入力;
-use crate::vulkan::graph::{パス宣言, パス種別, 画像ハンドル, 画像用途};
+use crate::vulkan::graph::{カラー添付列, パス宣言, パス種別, 画像ハンドル, 画像用途};
 
 /// 前提: 添字は段番号。長さはピラミッドの段数上限(bloom_targets::段数上限)と一致させる。
 const 縮小パス名一覧: [&str; 5] = [
@@ -66,7 +66,7 @@ fn 作る<'a>(
         Vec::new(),
         Vec::new(),
         パス種別::グラフィックス {
-            カラー: Some(書き),
+            カラー: カラー添付列::色だけ(書き),
             深度: None,
             クリア指定: fullscreen_draw::黒クリア(),
         },

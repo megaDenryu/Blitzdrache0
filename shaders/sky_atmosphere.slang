@@ -12,12 +12,13 @@
 
 import atmosphere_medium;
 import atmosphere_skyview_mapping;
+import motion_vector;
 import sky_atmosphere_lookup;
 import sky_frame;
 import sky_pass_uniform;
 
 [shader("fragment")]
-float4 fragmentMain(VertexOutput input) : SV_Target
+ColorAndMotionOutput fragmentMain(VertexOutput input)
 {
     AtmosphereMedium medium = atmosphereMedium;
     float3 direction = normalize(input.viewRay);
@@ -41,5 +42,5 @@ float4 fragmentMain(VertexOutput input) : SV_Target
     float3 diskTransmittance = sunTransmittanceAlongView(medium, observerRadius, viewZenithCosine);
     radiance += skyPassUniform.sunDiskRadianceAndSunIrradiance.rgb * (disk * visibility) * diskTransmittance;
 
-    return float4(max(radiance, 0.0), 1.0);
+    return colorAndMotion(max(radiance, 0.0), input.currentClipPosition, input.previousClipPosition);
 }

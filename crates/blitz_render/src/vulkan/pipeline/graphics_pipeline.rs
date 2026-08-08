@@ -9,6 +9,7 @@ use ash::vk;
 
 use super::color_pass_depth::色パスの深度状態;
 use crate::error::レンダラーエラー;
+use crate::vulkan::temporal_reconstruction::動きベクトルの形式;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
@@ -55,7 +56,10 @@ pub(super) fn 組み立てる(
         .cull_mode(vk::CullModeFlags::NONE)
         .line_width(1.0);
     let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(標本数);
-    let カラーブレンドアタッチメント一覧 = [vk::PipelineColorBlendAttachmentState::default().color_write_mask(vk::ColorComponentFlags::RGBA)];
+    // 第2の添付は動きベクトルである。時間再構成方式に依らず常に2枚を宣言するのは、方式でパイプラインの形を変えないためである(判断e)。
+    // 注意: 2枚の混合状態は同一でなければならない。independentBlend機能を有効にしていないためである。動きベクトルは2成分の形式であり、
+    // 書き込みマスクの残り2成分は存在しないので無視される。
+    let カラーブレンドアタッチメント一覧 = [vk::PipelineColorBlendAttachmentState::default().color_write_mask(vk::ColorComponentFlags::RGBA); 2];
     let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default().attachments(&カラーブレンドアタッチメント一覧);
     let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
         .depth_test_enable(true)
@@ -64,7 +68,7 @@ pub(super) fn 組み立てる(
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
-    let カラー形式一覧 = [カラー形式];
+    let カラー形式一覧 = [カラー形式, 動きベクトルの形式];
     let mut rendering情報 = vk::PipelineRenderingCreateInfo::default()
         .color_attachment_formats(&カラー形式一覧)
         .depth_attachment_format(深度形式);

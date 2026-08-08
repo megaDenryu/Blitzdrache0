@@ -9,6 +9,7 @@
 import cloth_io;
 import cloth_shading;
 import lighting_query;
+import motion_vector;
 import relative_anchor;
 import view_uniform;
 
@@ -18,6 +19,9 @@ VertexOutput vertexMain(VertexInput input)
     VertexOutput output;
     float3 relativePosition = applyRelativeAnchor(input.position);
     output.position = mul(viewUniform.viewProjection, float4(relativePosition, 1.0));
+    output.currentClipPosition = output.position;
+    // 布の変形を含まず、カメラの運動だけを表す前フレームの位置である。前フレームの頂点位置を保つ形は第2弾で入る。
+    output.previousClipPosition = mul(viewUniform.previousViewProjection, float4(relativePosition, 1.0));
     output.relativePosition = relativePosition;
     output.normal = input.normal;
     output.uv = input.uv;
@@ -25,11 +29,11 @@ VertexOutput vertexMain(VertexInput input)
 }
 
 [shader("fragment")]
-float4 fragmentMain(VertexOutput input, bool isFrontFace: SV_IsFrontFace) : SV_Target
+ColorAndMotionOutput fragmentMain(VertexOutput input, bool isFrontFace: SV_IsFrontFace)
 {
     float3 normal = clothSurfaceNormal(input.normal, isFrontFace);
     float3 direct = clothDirectLight(normal, input.relativePosition);
     // 定数間接近似はscene.slangと同じヘッダの係数から取る。これが無いと布だけが夜の環境光に追従しない。
     float3 ambient = float3(lightingQueryHeader.constantIndirectFactor, lightingQueryHeader.constantIndirectFactor, lightingQueryHeader.constantIndirectFactor);
-    return float4(clothColor * clothWeave(input.uv) * (direct + ambient), 1.0);
+    return clothColorAndMotion(clothColor * clothWeave(input.uv) * (direct + ambient), input);
 }

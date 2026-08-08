@@ -5,15 +5,15 @@
 use ash::vk;
 
 use super::clear_spec::クリア指定;
+use super::color_attachments::カラー添付列;
 use super::depth_attachment::深度アタッチメント;
-use super::handle::画像ハンドル;
 use super::registry::画像レジストリ;
 
 pub(crate) fn 開始する(
     device: &ash::Device,
     command_buffer: vk::CommandBuffer,
     レジストリ: &画像レジストリ,
-    カラー: Option<画像ハンドル>,
+    カラー: カラー添付列,
     深度: Option<深度アタッチメント>,
     クリア指定: &クリア指定,
 ) {
@@ -22,19 +22,12 @@ pub(crate) fn 開始する(
     // クリップされ、範囲外がクリアもされない未定義領域になる(M6で全面影バグとして実際に踏んだ。
     // validationはrender_areaの縮小を検出しない)。
     let 基準ハンドル = カラー
+        .先頭()
         .or(深度.map(|深度| 深度.ハンドル))
         .unwrap_or_else(|| panic!("グラフィックスパスにカラーも深度も無い(パス宣言の誤り)"));
     let 寸法 = レジストリ.寸法を取得する(基準ハンドル);
     let (カラーload_op, 深度load_op, カラークリア値) = ロードオペレーションとカラークリア値(クリア指定);
-    let カラーアタッチメント = カラー.map(|カラーハンドル| {
-        vk::RenderingAttachmentInfo::default()
-            .image_view(レジストリ.ビューを取得する(カラーハンドル))
-            .image_layout(vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL)
-            .load_op(カラーload_op)
-            .store_op(vk::AttachmentStoreOp::STORE)
-            .clear_value(カラークリア値)
-    });
-    let カラーアタッチメント一覧 = カラーアタッチメント.map_or_else(Vec::new, |アタッチメント| vec![アタッチメント]);
+    let カラーアタッチメント一覧 = カラー.記述を並べる(レジストリ, カラーload_op, カラークリア値);
 
     let 深度クリア値 = vk::ClearValue {
         depth_stencil: vk::ClearDepthStencilValue { depth: 1.0, stencil: 0 },

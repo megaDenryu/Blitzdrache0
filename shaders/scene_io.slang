@@ -1,5 +1,8 @@
 // シーン描画パスの頂点入出力構造体。頂点ステージの出力と画素段ステージの入力が同じ宣言を共有するため、scene.slangからimportする独立ファイルに置く。
 // relativePositionはカメラ大域原点を引いたカメラ相対フレームの位置である(絶対ワールド座標ではない)。
+// 2つの契約の画素段が同じ2枚の添付へ書くため、色と動きベクトルをまとめる1本もここに置く。
+
+import motion_vector;
 
 struct VertexInput
 {
@@ -16,4 +19,14 @@ struct VertexOutput
     float3 normal : TEXCOORD2;
     float4 tangent : TEXCOORD3;
     float2 uv : TEXCOORD0;
+    // 動きベクトルの材料。画素段のSV_Positionは窓座標へ変換済みで同次座標を持たないため、今のクリップ位置も別に運ぶ。
+    float4 currentClipPosition : TEXCOORD4;
+    // 今フレームのカメラ大域原点で表し直した、前フレームのずらし無しビュー射影が写したクリップ位置。
+    float4 previousClipPosition : TEXCOORD5;
 };
+
+// 表面の色とこの画素の動きベクトルをまとめた出力。定数近似と遠方環境の両方の画素段が同じこの1本を通す。
+ColorAndMotionOutput sceneColorAndMotion(float3 color, VertexOutput input)
+{
+    return colorAndMotion(color, input.currentClipPosition, input.previousClipPosition);
+}

@@ -10,7 +10,7 @@ use ash::vk;
 
 use crate::vulkan::frame::draw_commands::u32を丸めずf32へ変換する;
 use crate::vulkan::frame::空中遠近合成描画入力;
-use crate::vulkan::graph::{クリア指定, パス宣言, パス種別, 画像ハンドル, 画像用途};
+use crate::vulkan::graph::{カラー添付列, クリア指定, パス宣言, パス種別, 画像ハンドル, 画像用途};
 
 pub(super) fn 作る<'a>(
     カラー: 画像ハンドル,
@@ -26,7 +26,7 @@ pub(super) fn 作る<'a>(
         Vec::new(),
         Vec::new(),
         パス種別::グラフィックス {
-            カラー: Some(カラー),
+            カラー: カラー添付列::色だけ(カラー),
             深度: None,
             クリア指定: クリア指定::ロードする,
         },

@@ -10,6 +10,7 @@ use ash::vk;
 use super::finish;
 use super::空パイプライン;
 use crate::error::レンダラーエラー;
+use crate::vulkan::temporal_reconstruction::動きベクトルの形式;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
@@ -40,7 +41,9 @@ pub(super) fn 組み立てる(
         .cull_mode(vk::CullModeFlags::NONE)
         .line_width(1.0);
     let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
-    let カラーブレンドアタッチメント一覧 = [vk::PipelineColorBlendAttachmentState::default().color_write_mask(vk::ColorComponentFlags::RGBA)];
+    // 第2の添付は動きベクトルである。空パスもシーン描画と同じ2枚の添付へ書くため、宣言する形をシーンと揃える。
+    // 注意: 2枚の混合状態は同一でなければならない。independentBlend機能を有効にしていないためである。
+    let カラーブレンドアタッチメント一覧 = [vk::PipelineColorBlendAttachmentState::default().color_write_mask(vk::ColorComponentFlags::RGBA); 2];
     let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default().attachments(&カラーブレンドアタッチメント一覧);
     let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
         .depth_test_enable(true)
@@ -53,7 +56,7 @@ pub(super) fn 組み立てる(
     // 安全性: deviceは生成済みで有効。layout_create_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };
 
-    let カラー形式一覧 = [カラー形式];
+    let カラー形式一覧 = [カラー形式, 動きベクトルの形式];
     let mut rendering情報 = vk::PipelineRenderingCreateInfo::default()
         .color_attachment_formats(&カラー形式一覧)
         .depth_attachment_format(深度形式);

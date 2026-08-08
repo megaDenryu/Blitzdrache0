@@ -9,12 +9,13 @@ import cloth_io;
 import cloth_shading;
 import indirect_distant_environment;
 import lighting_query;
+import motion_vector;
 
 [shader("fragment")]
-float4 fragmentMain(VertexOutput input, bool isFrontFace: SV_IsFrontFace) : SV_Target
+ColorAndMotionOutput fragmentMain(VertexOutput input, bool isFrontFace: SV_IsFrontFace)
 {
     float3 normal = clothSurfaceNormal(input.normal, isFrontFace);
     float3 direct = clothDirectLight(normal, input.relativePosition);
     float3 ambient = distantEnvironmentClothIndirect(normal, lightingQueryHeader.sunDirection.xyz);
-    return float4(clothColor * clothWeave(input.uv) * (direct + ambient), 1.0);
+    return clothColorAndMotion(clothColor * clothWeave(input.uv) * (direct + ambient), input);
 }

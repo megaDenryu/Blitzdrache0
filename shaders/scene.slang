@@ -13,6 +13,7 @@ import instance_transform;
 import lighting_query;
 import local_visibility_apply;
 import material_record;
+import motion_vector;
 import scene_diagnostic;
 import scene_draw_constants;
 import scene_io;
@@ -33,6 +34,9 @@ VertexOutput vertexMain(VertexInput input, uint instanceIndex : SV_InstanceID, u
     float3 transformedTangent = mul((float3x3)transform.localToWorld, input.tangent.xyz);
     float3 worldTangent = normalize(transformedTangent - worldNormal * dot(worldNormal, transformedTangent));
     output.position = mul(viewUniform.viewProjection, float4(relativePosition, 1.0));
+    output.currentClipPosition = output.position;
+    // 剛体は動かないため、今フレームのカメラ相対位置をそのまま前フレームのビュー射影へ通せば前フレームの位置が出る(判断b)。
+    output.previousClipPosition = mul(viewUniform.previousViewProjection, float4(relativePosition, 1.0));
     output.relativePosition = relativePosition;
     output.normal = worldNormal;
     output.tangent = float4(worldTangent, input.tangent.w);
@@ -41,25 +45,25 @@ VertexOutput vertexMain(VertexInput input, uint instanceIndex : SV_InstanceID, u
 }
 
 [shader("fragment")]
-float4 fragmentMain(VertexOutput input) : SV_Target
+ColorAndMotionOutput fragmentMain(VertexOutput input)
 {
     MaterialRecord materialRecord = sceneMaterialRecord();
     float3 albedo = sceneAlbedoOf(materialRecord, input.uv, TINT);
     if (lightingQueryHeader.lightingEnabled == 0)
     {
-        return float4(albedo, 1.0);
+        return sceneColorAndMotion(albedo, input);
     }
     SceneSurface surface = sceneSurfaceOf(materialRecord, input, albedo);
 
     float3 diagnosticColor;
     if (sceneDiagnosticColor(input, surface.viewDepth, diagnosticColor))
     {
-        return float4(diagnosticColor, 1.0);
+        return sceneColorAndMotion(diagnosticColor, input);
     }
     float3 ambientTerm = applyLocalVisibility(
         surface.albedo * lightingQueryHeader.constantIndirectFactor, localVisibilityOfScreenPosition(input.position));
     float3 litColor = shadeLitSurface(
         ambientTerm, surface.albedo, surface.metallic, surface.roughness, surface.normal, surface.viewDir,
         input.relativePosition, surface.viewDepth);
-    return float4(litColor, 1.0);
+    return sceneColorAndMotion(litColor, input);
 }

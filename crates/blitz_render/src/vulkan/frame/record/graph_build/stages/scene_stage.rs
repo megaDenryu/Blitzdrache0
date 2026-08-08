@@ -56,6 +56,7 @@ pub(in crate::vulkan::frame::record::graph_build) fn シーンを積む<'a>(
     };
     グラフ.パスを積む(scene_pass::作る(
         カラー,
+        基本.動きベクトル,
         基本.深度,
         読み画像一覧,
         スキン済み,

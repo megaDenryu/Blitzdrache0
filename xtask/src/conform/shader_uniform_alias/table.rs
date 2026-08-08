@@ -7,7 +7,7 @@ pub(super) struct 取り込む側 {
     pub(super) 取り込むモジュール一覧: &'static [&'static str],
 }
 
-pub(super) const 検査対象一覧: [取り込む側; 13] = [
+pub(super) const 検査対象一覧: [取り込む側; 14] = [
     取り込む側 {
         パス: "shaders/shadow.slang",
         取り込むモジュール一覧: &["cascade_shadow_uniform"],
@@ -27,6 +27,10 @@ pub(super) const 検査対象一覧: [取り込む側; 13] = [
     取り込む側 {
         パス: "shaders/cloth_shading.slang",
         取り込むモジュール一覧: &["cascade_shadow_uniform", "lighting_query", "view_uniform"],
+    },
+    取り込む側 {
+        パス: "shaders/motion_vector.slang",
+        取り込むモジュール一覧: &["view_uniform"],
     },
     取り込む側 {
         パス: "shaders/scene.slang",

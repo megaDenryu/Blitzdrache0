@@ -3,9 +3,11 @@
 
 mod baked_image;
 mod local_visibility;
+mod temporal_reconstruction;
 
 pub(crate) use baked_image::{焼いた画像を参照するだけのときの初期状態, 焼いた画像を焼き直すときの初期状態};
 pub(crate) use local_visibility::局所可視度の画像の前フレーム直後状態;
+pub(crate) use temporal_reconstruction::前フレーム動きベクトル書き込み直後状態;
 
 use ash::vk;
 
