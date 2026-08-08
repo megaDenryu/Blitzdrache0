@@ -1,6 +1,11 @@
-//! ポストプロセスパス列の積み込み(判断41): 自動露出(消去→集計→導出と適応) → 前処理(HDR→縮小0) → 縮小チェーン →
-//! 拡大チェーン(下から加算) → 明るさの圧縮(HDR+光のにじみ最終→スワップチェーン)。
-//! この順序自体が担当する関心事であり、各パスの中身は`auto_exposure_passes`・`bloom_down_pass`・`bloom_up_pass`・`tonemap_pass`が持つ。
+//! ポストプロセスパス列の積み込み(判断41): 時間再構成 → 自動露出(消去→集計→導出と適応) → 前処理(HDR→縮小0) →
+//! 縮小チェーン → 拡大チェーン(下から加算) → 明るさの圧縮(HDR+光のにじみ最終→スワップチェーン)。
+//! この順序自体が担当する関心事であり、各パスの中身は`temporal_reconstruction_pass`・`auto_exposure_passes`・
+//! `bloom_down_pass`・`bloom_up_pass`・`tonemap_pass`が持つ。
+//!
+//! 時間再構成を先頭へ置くのは光のにじみとの順序が理由である。画素より細かいハイライトの明滅を再構成より前に
+//! 光のにじみへ通すと、その明滅が増幅されて画面全体へ広がる。副次的に、集計より前に再構成が入ると
+//! フレームごとの輝度分布の揺れが減り、露出の追従が落ち着く(`参照: _doc/設計/時間再構成.md`「判断d」)。
 //!
 //! 自動露出を光のにじみより前へ置くのは、Nフレームのヒストグラムを同じNフレームの絵へ効かせるためである。
 //! 集計と光のにじみの前処理はどちらもHDR中間画像を読むだけであり、順を入れ替えても絵は変わらない。
@@ -9,12 +14,20 @@
 use ash::vk;
 
 use super::super::{auto_exposure_passes, bloom_down_pass, bloom_up_pass, tonemap_pass};
+use super::base_images::基本画像ハンドル;
 use super::post_setup::ポスト構成;
+use super::stages;
 use crate::vulkan::graph;
+use crate::vulkan::temporal_reconstruction::時間再構成描画入力;
 
 pub(super) fn 積む<'a>(
-    グラフ: &mut graph::グラフ<'a>, 構成: &ポスト構成<'a>, スワップチェーン: graph::画像ハンドル, 寸法: vk::Extent2D
+    グラフ: &mut graph::グラフ<'a>,
+    構成: &ポスト構成<'a>,
+    基本: &基本画像ハンドル,
+    時間再構成: Option<&'a 時間再構成描画入力>,
+    寸法: vk::Extent2D,
 ) {
+    stages::時間再構成を積む(グラフ, 構成.hdrハンドル, 基本, 時間再構成, 寸法);
     if let Some(自動露出) = &構成.自動露出 {
         グラフ.パスを積む(auto_exposure_passes::消去を作る(自動露出.ヒストグラム));
         グラフ.パスを積む(auto_exposure_passes::集計を作る(
@@ -63,7 +76,7 @@ pub(super) fn 積む<'a>(
     グラフ.パスを積む(tonemap_pass::作る(
         構成.hdrハンドル,
         構成.光のにじみ最終ハンドル(),
-        スワップチェーン,
+        基本.スワップチェーン,
         構成.自動露出.as_ref().map(|自動露出| 自動露出.露出状態),
         構成.明るさの圧縮,
         寸法,

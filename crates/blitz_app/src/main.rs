@@ -18,6 +18,7 @@ mod embedded_distant_environment_shader;
 mod embedded_local_visibility_shaders;
 mod embedded_shaders;
 mod embedded_sky_shaders;
+mod embedded_temporal_reconstruction_shaders;
 mod error;
 mod hot_reload;
 mod input;

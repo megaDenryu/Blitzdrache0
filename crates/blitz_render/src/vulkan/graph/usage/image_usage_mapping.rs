@@ -24,46 +24,28 @@ pub(crate) fn 状態へ写像する(用途: 画像用途) -> 画像状態 {
             vk::AccessFlags2::DEPTH_STENCIL_ATTACHMENT_WRITE | vk::AccessFlags2::DEPTH_STENCIL_ATTACHMENT_READ,
             vk::ImageLayout::DEPTH_ATTACHMENT_OPTIMAL,
         ),
-        画像用途::シェーダー読み画素段 => 画像状態::生成する(
-            vk::PipelineStageFlags2::FRAGMENT_SHADER,
-            vk::AccessFlags2::SHADER_SAMPLED_READ,
-            vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL,
-        ),
-        画像用途::深度シェーダー読み => 画像状態::生成する(
-            vk::PipelineStageFlags2::FRAGMENT_SHADER,
-            vk::AccessFlags2::SHADER_SAMPLED_READ,
-            vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL,
-        ),
+        画像用途::シェーダー読み画素段 => 画素段の標本読み(vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL),
+        画像用途::深度シェーダー読み => 画素段の標本読み(vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL),
         画像用途::コンピュート書き => 画像状態::生成する(
             vk::PipelineStageFlags2::COMPUTE_SHADER,
             vk::AccessFlags2::SHADER_STORAGE_WRITE,
             vk::ImageLayout::GENERAL,
         ),
-        画像用途::シェーダー読みコンピュート段 => 画像状態::生成する(
-            vk::PipelineStageFlags2::COMPUTE_SHADER,
-            vk::AccessFlags2::SHADER_SAMPLED_READ,
-            vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL,
-        ),
-        画像用途::コンピュート読み => 画像状態::生成する(
-            vk::PipelineStageFlags2::COMPUTE_SHADER,
-            vk::AccessFlags2::SHADER_SAMPLED_READ,
-            vk::ImageLayout::GENERAL,
-        ),
-        画像用途::深度コンピュート読み => 画像状態::生成する(
-            vk::PipelineStageFlags2::COMPUTE_SHADER,
-            vk::AccessFlags2::SHADER_SAMPLED_READ,
-            vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL,
-        ),
+        画像用途::シェーダー読みコンピュート段 => コンピュート段の標本読み(vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL),
+        画像用途::コンピュート読み => コンピュート段の標本読み(vk::ImageLayout::GENERAL),
+        画像用途::深度コンピュート読み => コンピュート段の標本読み(vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL),
         画像用途::コンピュート記憶読み => 画像状態::生成する(
             vk::PipelineStageFlags2::COMPUTE_SHADER,
             vk::AccessFlags2::SHADER_STORAGE_READ,
             vk::ImageLayout::GENERAL,
         ),
-        画像用途::焼いた画像の画素段参照 => 画像状態::生成する(
-            vk::PipelineStageFlags2::FRAGMENT_SHADER,
-            vk::AccessFlags2::SHADER_SAMPLED_READ,
+        画像用途::焼いた画像の画素段参照 => 画素段の標本読み(vk::ImageLayout::GENERAL),
+        画像用途::履歴のカラー出力 => 画像状態::生成する(
+            vk::PipelineStageFlags2::COLOR_ATTACHMENT_OUTPUT,
+            vk::AccessFlags2::COLOR_ATTACHMENT_WRITE | vk::AccessFlags2::COLOR_ATTACHMENT_READ,
             vk::ImageLayout::GENERAL,
         ),
+        画像用途::履歴の画素段参照 => 画素段の標本読み(vk::ImageLayout::GENERAL),
         画像用途::転送元 => 画像状態::生成する(
             vk::PipelineStageFlags2::COPY,
             vk::AccessFlags2::TRANSFER_READ,
@@ -80,6 +62,20 @@ pub(crate) fn 状態へ写像する(用途: 画像用途) -> 画像状態 {
             vk::ImageLayout::PRESENT_SRC_KHR,
         ),
     }
+}
+
+/// 画素段シェーダーが標本器で読む状態。休むレイアウトだけが用途ごとに違う。
+fn 画素段の標本読み(レイアウト: vk::ImageLayout) -> 画像状態 {
+    画像状態::生成する(
+        vk::PipelineStageFlags2::FRAGMENT_SHADER,
+        vk::AccessFlags2::SHADER_SAMPLED_READ,
+        レイアウト,
+    )
+}
+
+/// コンピュート段が標本器で読む状態。休むレイアウトだけが用途ごとに違う。
+fn コンピュート段の標本読み(レイアウト: vk::ImageLayout) -> 画像状態 {
+    画像状態::生成する(vk::PipelineStageFlags2::COMPUTE_SHADER, vk::AccessFlags2::SHADER_SAMPLED_READ, レイアウト)
 }
 
 /// 深度アタッチメントの読み書きが起こりうる段（early/late fragment tests）。深度出力の書き込み段と、深度の初期状態(前フレーム書き込み直後)の双方で使うため公開する。

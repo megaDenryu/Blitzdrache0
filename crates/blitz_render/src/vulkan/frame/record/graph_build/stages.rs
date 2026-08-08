@@ -9,12 +9,14 @@ mod local_visibility_stage;
 mod scene_stage;
 mod shadow_stage;
 mod sky_stage;
+mod temporal_reconstruction_stage;
 
 pub(super) use atmosphere_lut_stage::大気のベイク済み画像を積む;
 pub(super) use indirect_lighting_stage::間接照明を積む;
 pub(super) use scene_stage::シーンを積む;
 pub(super) use shadow_stage::影を積む;
 pub(super) use sky_stage::{空を積む, 空パスがベイク済み画像を参照するか};
+pub(super) use temporal_reconstruction_stage::時間再構成を積む;
 
 use super::base_images::基本画像ハンドル;
 use crate::vulkan::frame::record::{cloth_passes, particle_draw_pass, particle_update_pass, scene_pass, skinning_pass};

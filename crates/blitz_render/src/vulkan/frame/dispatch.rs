@@ -12,6 +12,7 @@ use crate::vulkan::depth_injection::合成深度の注入入力;
 use crate::vulkan::indirect_lighting::間接照明の描画入力;
 use crate::vulkan::local_visibility::局所可視性描画入力;
 use crate::vulkan::swapchain::スワップチェーン画像添字;
+use crate::vulkan::temporal_reconstruction::時間再構成描画入力;
 
 pub(crate) struct 提示先<'a> {
     pub(crate) loader: &'a ash::khr::swapchain::Device,
@@ -51,6 +52,9 @@ pub(crate) struct 任意描画入力<'a> {
     pub(crate) 自動露出: Option<&'a 自動露出描画入力>,
     /// 拡散間接方式が局所可視性補正付き環境の世界だけ`Some`。環境のみの世界では遮蔽の標本化もぼかしも1本も積まない。
     pub(crate) 局所可視性: Option<&'a 局所可視性描画入力>,
+    /// 時間再構成方式が履歴混合で、かつポスト処理を組む構成のフレームだけ`Some`。使わないの世界では再構成のパスを
+    /// 1本も積まず、シーンの色はHDR中間画像へ直に描かれる。
+    pub(crate) 時間再構成: Option<&'a 時間再構成描画入力>,
     /// 検収が合成深度を据えた実行だけ`Some`。本番の起動では転送パスを1本も積まない。
     pub(crate) 合成深度の注入: Option<合成深度の注入入力>,
     pub(crate) ui: Option<&'a UI描画入力>,

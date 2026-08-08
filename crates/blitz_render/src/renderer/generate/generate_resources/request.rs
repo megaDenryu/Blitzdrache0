@@ -11,7 +11,7 @@ use crate::render_scene_material::描画シーン素材;
 use crate::renderer::presentation::提示;
 use crate::shader_bundle::シェーダー束;
 use crate::skin_mesh::スキンメッシュ素材;
-use crate::temporal_reconstruction::時間再構成方式;
+use crate::temporal_reconstruction::時間再構成の描画設定;
 use crate::vulkan::gpu_environment::GPU環境;
 
 pub(in crate::renderer::generate) struct 生成要求<'a> {
@@ -28,8 +28,8 @@ pub(in crate::renderer::generate) struct 生成要求<'a> {
     pub(in crate::renderer::generate) 自動露出の設定: 自動露出の設定,
     /// 世界が宣言した拡散間接方式と、遮蔽の標本化とぼかしが読む数値の設定。方式に関わらず資源は作る。
     pub(in crate::renderer::generate) 局所可視性の描画設定: 局所可視性の描画設定,
-    /// 世界が宣言した時間再構成方式。方式に関わらず動きベクトルと履歴の3枚を作る。
-    pub(in crate::renderer::generate) 時間再構成方式: 時間再構成方式,
+    /// 世界が宣言した時間再構成方式と、パスが押し込む2つの数。方式に関わらず4枚とパスの実体を作る。
+    pub(in crate::renderer::generate) 時間再構成の描画設定: 時間再構成の描画設定,
     /// シャドウマップ資源の一辺。多段の構築が使う一辺と同じ値を呼び出し元が渡す責務を負う。
     pub(in crate::renderer::generate) 影の一辺: 影の一辺解像度,
     pub(in crate::renderer::generate) タイムスタンプ対応か: bool,

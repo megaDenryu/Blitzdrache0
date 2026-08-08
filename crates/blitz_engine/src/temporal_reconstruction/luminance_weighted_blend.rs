@@ -13,6 +13,9 @@ use super::error::時間再構成エラー;
 use super::linear_color::線形色;
 use super::relative_luminance::相対輝度を求める;
 
+/// 注意: 重みを作る2つの割り算・重みの和・成分ごとの積和という演算の順そのものが、slangの写し
+/// (`shaders/temporal_reconstruction_blend.slang`)との一致契約である。積和融合を使うと結果が写しと最下位の桁で
+/// 食い違い、合成した入力の注入による突き合わせの許容を誤差が食い潰す。
 pub fn 輝度で重み付けて混ぜる(
     履歴: 線形色,
     今のフレーム: 線形色,

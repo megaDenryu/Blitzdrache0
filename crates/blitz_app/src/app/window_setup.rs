@@ -48,7 +48,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     照明問い合わせ契約: blitz_render::indirect_lighting::照明問い合わせ契約,
     自動露出の設定: blitz_render::auto_exposure::自動露出の設定,
     局所可視性の描画設定: blitz_render::local_visibility::局所可視性の描画設定,
-    時間再構成方式: blitz_render::temporal_reconstruction::時間再構成方式,
+    時間再構成の描画設定: blitz_render::temporal_reconstruction::時間再構成の描画設定,
 ) -> Result<起動一式, 起動エラー> {
     let window = window_create::生成する(event_loop)?;
     let 表示ハンドル = window.display_handle()?.as_raw();
@@ -86,7 +86,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
         照明問い合わせ契約,
         自動露出の設定,
         局所可視性の描画設定,
-        時間再構成方式,
+        時間再構成の描画設定,
     )?;
 
     ホットリローダー.アセット監視を設定する(カタログ, アセットID::生成する(シーン名)?, &シーン.参照ファイル一覧);
