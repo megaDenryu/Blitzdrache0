@@ -11,8 +11,6 @@ mod shader_rewrite;
 mod verification_plan;
 mod window_operation;
 
-use winit::window::Window;
-
 use crate::cli::粒子表示モード;
 
 /// 書き換えもピクセル判定も持たず、判定を検収側のxtaskが読み戻し画像と計数で行うシーンの名前の接頭辞。
@@ -27,7 +25,10 @@ const 両視錐台外の群シーン: &str = "instance_all_culled";
 pub(crate) use asset_rewrite::アセットを書き換える;
 pub(crate) use pixel_judgment::{アニメーション差分を判定する, ピクセルを判定する};
 pub(crate) use shader_rewrite::シェーダーを書き換える;
-pub(crate) use verification_plan::{ウィンドウ再構築計画, シェーダー差し替え計画};
+pub(crate) use verification_plan::{
+    現在フレームからウィンドウ再構築の動作を導出する, 現在フレームからシェーダー差し替えの動作を導出する
+};
+pub(crate) use window_operation::ウィンドウへ操作を適用する;
 
 /// フレーム番号に応じて、このフレームで行う自己操作・検証を表す。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -80,7 +81,7 @@ pub(crate) fn 判定する(
     } else if 粒子表示 == 粒子表示モード::粒子トイ {
         plan::particles計画(現在フレーム, 総フレーム数)
     } else if material_reload::このシーンか(シーン名) {
-        material_reload::計画(現在フレーム, 総フレーム数)
+        material_reload::現在フレームから材質差し替えの動作を導出する(現在フレーム, 総フレーム数)
     } else if シーン名 == 両視錐台外の群シーン || 読み戻しだけの検収シーンの接頭辞一覧.iter().any(|接頭辞| シーン名.starts_with(接頭辞))
     {
         plan::読み戻しだけの計画()
@@ -93,8 +94,4 @@ pub(crate) fn 判定する(
     } else {
         plan::quad計画(現在フレーム, 総フレーム数)
     }
-}
-
-pub(crate) fn window自己操作を適用する(window: &Window, アクション: スモークアクション) {
-    window_operation::適用する(window, アクション);
 }

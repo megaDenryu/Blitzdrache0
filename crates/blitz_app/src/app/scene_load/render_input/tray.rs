@@ -42,7 +42,8 @@ impl 変換の受け皿 {
             convert::形状を変換する(元.形状()),
             material_slots::変換する(元.材質集合())?,
         ));
-        if let Some(登録) = visibility_material::作る(元.形状(), 位置, 大域の基準原点, ローカルからワールド)? {
+        if let Some(登録) = visibility_material::群可視材料の登録を作る(元.形状(), 位置, 大域の基準原点, ローカルからワールド)?
+        {
             self.可視材料一覧.push(登録);
         }
         Ok(())

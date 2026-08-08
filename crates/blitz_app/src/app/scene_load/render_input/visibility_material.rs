@@ -11,7 +11,7 @@ use blitz_render::レンダラーエラー;
 use crate::app::visibility::群可視材料の登録;
 use crate::error::起動エラー;
 
-pub(super) fn 作る(
+pub(super) fn 群可視材料の登録を作る(
     形状: &描画形状,
     対象添字: usize,
     大域の基準原点: 大域ワールド位置,

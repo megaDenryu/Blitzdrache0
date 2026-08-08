@@ -29,7 +29,7 @@ impl アプリ {
 
         let アクション = action::選ぶ(self);
         if let Some(window) = &self.window {
-            smoke::window自己操作を適用する(window, アクション);
+            smoke::ウィンドウへ操作を適用する(window, アクション);
         }
 
         // フレーム内実行順序: 入力確定→世界更新→描画内容抽出→描画。

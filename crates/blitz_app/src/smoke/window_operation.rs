@@ -8,7 +8,7 @@ use super::スモークアクション;
 const リサイズ後の幅: u32 = 480;
 const リサイズ後の高さ: u32 = 360;
 
-pub(super) fn 適用する(window: &Window, アクション: スモークアクション) {
+pub(crate) fn ウィンドウへ操作を適用する(window: &Window, アクション: スモークアクション) {
     match アクション {
         スモークアクション::リサイズ => {
             let _ = window.request_inner_size(PhysicalSize::new(リサイズ後の幅, リサイズ後の高さ));
