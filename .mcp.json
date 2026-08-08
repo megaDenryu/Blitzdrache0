@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "vscode-lsp-mcp": {
+      "command": "node",
+      "args": [
+        "c:/Users/pokr301qup/.vscode/extensions/megadenryu.megadenryu-vscode-lsp-mcp-0.3.0/dist/mcp.js"
+      ],
+      "env": {
+        "MEGADENRYU_LSP_MCP_PORT": "17811"
+      }
+    }
+  }
+}
