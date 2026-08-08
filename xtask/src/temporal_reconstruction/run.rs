@@ -13,15 +13,27 @@ use std::process::Command;
 const フレーム数: &str = "120";
 /// 正午。時刻を1つに固定して、読み手が条件を推測しなくてよいようにする。
 const 一日内秒: &str = "43200";
+/// 合成入力の突き合わせの本数。履歴を有効にする1枚と突き合わせる1枚が最終フレームで走るため、そこまで進めば足りる。
+const 注入のフレーム数: &str = "12";
 
 pub(super) fn 観測を採る(呼び名: &str) -> Result<String, String> {
+    走らせる(呼び名, フレーム数, "--report-temporal-reconstruction")
+}
+
+/// 合成入力の突き合わせの1回。焼き上げの進み具合に依存しないため短い本数で足りる。4枚とも検収が決めた値へ
+/// 差し替わるため、空も間接照明も結果へ1画素も現れない。
+pub(super) fn 合成入力の観測を採る() -> Result<String, String> {
+    走らせる("合成入力の突き合わせ", 注入のフレーム数, "--report-temporal-reconstruction-injection")
+}
+
+fn 走らせる(呼び名: &str, 描くフレーム数: &str, 報告の指定: &str) -> Result<String, String> {
     println!("[xtask] temporal-reconstruction実行: {呼び名}");
     let 出力 = Command::new("cargo")
         .args(["run", "-p", "blitz_app", "--", "--scene", crate::visual_sample_world::シーン名])
         .args(["--asset-root", crate::visual_sample_world::アセットルート])
-        .args(["--frames", フレーム数])
+        .args(["--frames", 描くフレーム数])
         .args(["--time-of-day", 一日内秒])
-        .arg("--report-temporal-reconstruction")
+        .arg(報告の指定)
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({呼び名}): {誤り}"))?;
     let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
