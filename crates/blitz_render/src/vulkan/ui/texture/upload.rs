@@ -11,7 +11,7 @@ use crate::vulkan::host_buffer;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
-pub(super) fn 記録して転送する(
+pub(super) fn ホストの画素列を画像へ転送する(
     device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &転送実行環境,
@@ -23,7 +23,7 @@ pub(super) fn 記録して転送する(
     let (ステージングバッファ, ステージングメモリ) =
         host_buffer::確保して書き込む(device, メモリプロパティ, rgba8, vk::BufferUsageFlags::TRANSFER_SRC)?;
 
-    let 実行結果 = 唯一のレベルへ転送する(転送環境, ステージングバッファ, image, 幅, 高さ);
+    let 実行結果 = ステージングバッファから唯一の縮小段レベルへ転送する(転送環境, ステージングバッファ, image, 幅, 高さ);
 
     // 安全性: 転送実行は完了済みで、ステージングバッファは以降使用しない。
     unsafe { device.destroy_buffer(ステージングバッファ, None) };
@@ -31,7 +31,7 @@ pub(super) fn 記録して転送する(
     実行結果
 }
 
-fn 唯一のレベルへ転送する(
+fn ステージングバッファから唯一の縮小段レベルへ転送する(
     転送環境: &転送実行環境,
     ステージングバッファ: vk::Buffer,
     image: vk::Image,

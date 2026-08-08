@@ -29,7 +29,7 @@ pub(super) struct 積む材料<'a> {
     pub(super) 受け: vk::Buffer,
 }
 
-pub(super) fn 積んで送信し完了を待つ(
+pub(super) fn パスを積んで送信し完了を待つ(
     一時: GPU命令を積む一時コマンドバッファ<'_>,
     材料: 積む材料<'_>,
 ) -> Result<(), レンダラーエラー> {

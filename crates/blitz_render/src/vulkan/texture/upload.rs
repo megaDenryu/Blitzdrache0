@@ -13,7 +13,7 @@ use crate::vulkan::transfer::転送実行環境;
 use super::mip_chain;
 
 #[allow(clippy::too_many_arguments)]
-pub(super) fn 記録して転送する(
+pub(super) fn ホストの画素列を画像へ転送する(
     device: &GPUデバイス,
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     転送環境: &転送実行環境,
@@ -26,7 +26,8 @@ pub(super) fn 記録して転送する(
     let (ステージングバッファ, ステージングメモリ) =
         host_buffer::確保して書き込む(device, メモリプロパティ, rgba8, vk::BufferUsageFlags::TRANSFER_SRC)?;
 
-    let 実行結果 = 縮小段まで含めて転送する(転送環境, ステージングバッファ, image, 幅, 高さ, mip数);
+    let 実行結果 =
+        ステージングバッファから縮小段チェーンまで転送する(転送環境, ステージングバッファ, image, 幅, 高さ, mip数);
 
     // 安全性: 転送実行は完了済みで、ステージングバッファは以降使用しない。
     unsafe { device.destroy_buffer(ステージングバッファ, None) };
@@ -34,7 +35,7 @@ pub(super) fn 記録して転送する(
     実行結果
 }
 
-fn 縮小段まで含めて転送する(
+fn ステージングバッファから縮小段チェーンまで転送する(
     転送環境: &転送実行環境,
     ステージングバッファ: vk::Buffer,
     image: vk::Image,
@@ -47,7 +48,7 @@ fn 縮小段まで含めて転送する(
     let command_buffer = 一時.積む先のコマンドバッファ();
     barrier::全レベルを転送先レイアウトへ遷移する(device, command_buffer, image, mip数);
     mip0へコピーする(device, command_buffer, ステージングバッファ, image, 幅, 高さ);
-    mip_chain::記録する(device, command_buffer, image, 幅, 高さ, mip数);
+    mip_chain::縮小段チェーンを積む(device, command_buffer, image, 幅, 高さ, mip数);
     一時.送信して完了を待つ()
 }
 

@@ -9,7 +9,14 @@ mod mip_barrier;
 
 use ash::vk;
 
-pub(super) fn 記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, image: vk::Image, 幅: u32, 高さ: u32, mip数: u32) {
+pub(super) fn 縮小段チェーンを積む(
+    device: &ash::Device,
+    command_buffer: vk::CommandBuffer,
+    image: vk::Image,
+    幅: u32,
+    高さ: u32,
+    mip数: u32,
+) {
     for mip in 1..mip数 {
         mip_barrier::レベルをsrcへ遷移する(device, command_buffer, image, mip - 1);
         blitを積む(device, command_buffer, image, 幅, 高さ, mip);

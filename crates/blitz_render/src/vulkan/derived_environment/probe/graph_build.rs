@@ -16,7 +16,7 @@ use crate::vulkan::derived_environment::{copy_pass, pass};
 use crate::vulkan::graph;
 use crate::vulkan::headless::GPU命令を積む一時コマンドバッファ;
 
-pub(super) fn 積んで送信し完了を待つ(
+pub(super) fn パスを積んで送信し完了を待つ(
     一時: GPU命令を積む一時コマンドバッファ<'_>,
     材料: 積む材料<'_>,
 ) -> Result<(), レンダラーエラー> {
