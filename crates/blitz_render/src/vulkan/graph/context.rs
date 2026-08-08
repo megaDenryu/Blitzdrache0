@@ -1,4 +1,4 @@
-//! 記録クロージャに渡す内部型。宣言済みハンドルの解決とコマンドバッファ取得だけを許す
+//! GPU命令をコマンドバッファへ積むクロージャに渡す内部型。宣言済みハンドルの解決とコマンドバッファ取得だけを許す
 //! （判断28: 宣言=真実。参照: `_doc/設計/レンダーグラフ.md`「パス」）。
 
 use ash::vk;
@@ -7,7 +7,7 @@ use super::buffer_registry::バッファレジストリ;
 use super::handle::{バッファハンドル, 画像ハンドル};
 use super::registry::画像レジストリ;
 
-pub(crate) struct 記録文脈<'a> {
+pub(crate) struct GPU命令の積み先と宣言済み資源の取り出し口<'a> {
     device: &'a ash::Device,
     command_buffer: vk::CommandBuffer,
     画像レジストリ: &'a 画像レジストリ,
@@ -17,7 +17,7 @@ pub(crate) struct 記録文脈<'a> {
     宣言済みバッファ: Vec<バッファハンドル>,
 }
 
-impl<'a> 記録文脈<'a> {
+impl<'a> GPU命令の積み先と宣言済み資源の取り出し口<'a> {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn 生成する(
         device: &'a ash::Device,

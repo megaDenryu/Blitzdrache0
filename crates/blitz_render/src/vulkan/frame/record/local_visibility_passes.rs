@@ -6,7 +6,9 @@
 
 use ash::vk;
 
-use crate::vulkan::graph::{パス宣言, パス種別, 画像ハンドル, 画像用途, 記録文脈};
+use crate::vulkan::graph::{
+    GPU命令の積み先と宣言済み資源の取り出し口, パス宣言, パス種別, 画像ハンドル, 画像用途
+};
 use crate::vulkan::local_visibility::局所可視性描画入力;
 
 /// 1班が覆う画素の一辺。`shaders/local_visibility_occlusion.slang`と`local_visibility_blur.slang`の
@@ -53,7 +55,9 @@ fn 班数(寸法: vk::Extent2D) -> [u32; 3] {
     [寸法.width.div_ceil(班の一辺), 寸法.height.div_ceil(班の一辺), 1]
 }
 
-fn コンピュートを積む(文脈: &記録文脈, 入力: &局所可視性描画入力, pipeline: vk::Pipeline, 班数: [u32; 3]) {
+fn コンピュートを積む(
+    文脈: &GPU命令の積み先と宣言済み資源の取り出し口, 入力: &局所可視性描画入力, pipeline: vk::Pipeline, 班数: [u32; 3]
+) {
     let device = 文脈.device();
     let command_buffer = 文脈.コマンドバッファ();
     let セット一覧 = [入力.セット];

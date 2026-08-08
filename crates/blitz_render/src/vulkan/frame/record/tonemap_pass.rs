@@ -1,6 +1,6 @@
 //! 明るさの圧縮パスの宣言(判断38・39): HDR画像と光のにじみ結果(a)を画素段で読み、
 //! 全画面三角形でスワップチェーンへ露出+ACES+光のにじみ加算の結果を書く。
-//! 記録クロージャの中身は`fullscreen_draw`が担う(begin/end renderingは実行器が担う)。
+//! GPU命令をコマンドバッファへ積むクロージャの中身は`fullscreen_draw`が担う(begin/end renderingは実行器が担う)。
 
 use ash::vk;
 

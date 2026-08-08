@@ -6,7 +6,7 @@ use ash::vk;
 
 use crate::vulkan::auto_exposure::{ヒストグラムのバイト数, 自動露出描画入力};
 use crate::vulkan::graph::{
-    バッファハンドル, バッファ用途, パス宣言, パス種別, 画像ハンドル, 画像用途, 記録文脈
+    GPU命令の積み先と宣言済み資源の取り出し口, バッファハンドル, バッファ用途, パス宣言, パス種別, 画像ハンドル, 画像用途
 };
 
 /// 集計の1班が覆う画素の一辺。`shaders/auto_exposure_histogram.slang`の`threadsPerSide`と一致させる。
@@ -75,7 +75,7 @@ pub(super) fn 導出と適応を作る<'a>(
 }
 
 fn コンピュートを積む(
-    文脈: &記録文脈,
+    文脈: &GPU命令の積み先と宣言済み資源の取り出し口,
     pipeline: vk::Pipeline,
     layout: vk::PipelineLayout,
     セット: vk::DescriptorSet,

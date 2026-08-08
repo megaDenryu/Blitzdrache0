@@ -6,7 +6,9 @@
 
 use ash::vk;
 
-use crate::vulkan::graph::{パス宣言, パス種別, 画像ハンドル, 画像用途, 記録文脈};
+use crate::vulkan::graph::{
+    GPU命令の積み先と宣言済み資源の取り出し口, パス宣言, パス種別, 画像ハンドル, 画像用途
+};
 
 /// 転送パスが要る4本のハンドルと寸法。
 #[derive(Clone, Copy)]
@@ -46,7 +48,9 @@ pub(crate) fn 合成入力の注入を作る<'a>(
     )
 }
 
-fn コピーを積む(文脈: &記録文脈, 書き戻し先: 合成入力の書き戻し先, 入力: 合成入力の注入入力) {
+fn コピーを積む(
+    文脈: &GPU命令の積み先と宣言済み資源の取り出し口, 書き戻し先: 合成入力の書き戻し先, 入力: 合成入力の注入入力
+) {
     let 色の面 = vk::ImageAspectFlags::COLOR;
     let 組一覧 = [
         (書き戻し先.今のフレームの色, 入力.今のフレームの色, 色の面),
@@ -60,7 +64,11 @@ fn コピーを積む(文脈: &記録文脈, 書き戻し先: 合成入力の書
 }
 
 fn 一枚を写す(
-    文脈: &記録文脈, ハンドル: 画像ハンドル, バッファ: vk::Buffer, 面: vk::ImageAspectFlags, 寸法: vk::Extent2D
+    文脈: &GPU命令の積み先と宣言済み資源の取り出し口,
+    ハンドル: 画像ハンドル,
+    バッファ: vk::Buffer,
+    面: vk::ImageAspectFlags,
+    寸法: vk::Extent2D,
 ) {
     let 画像 = 文脈.画像を解決する(ハンドル);
     let 領域 = vk::BufferImageCopy::default()
