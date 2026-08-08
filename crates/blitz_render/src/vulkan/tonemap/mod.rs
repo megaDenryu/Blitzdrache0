@@ -31,7 +31,7 @@ impl 明るさの圧縮一式 {
         hdrビュー: vk::ImageView,
         光のにじみビュー: vk::ImageView,
     ) -> Result<Self, レンダラーエラー> {
-        let sampler = linear_sampler::作る(device)?;
+        let sampler = linear_sampler::線形サンプラーを作る(device)?;
         let ディスクリプタ = match descriptor::生成する(device) {
             Ok(ディスクリプタ) => ディスクリプタ,
             Err(誤り) => {

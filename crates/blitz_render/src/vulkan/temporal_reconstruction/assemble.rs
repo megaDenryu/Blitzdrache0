@@ -22,7 +22,7 @@ pub(super) fn 組み上げる(
     設定: 時間再構成の描画設定,
     画像組: 時間再構成の画像組,
 ) -> Result<時間再構成一式, レンダラーエラー> {
-    let 標本器 = match linear_sampler::作る(device) {
+    let 標本器 = match linear_sampler::線形サンプラーを作る(device) {
         Ok(標本器) => 標本器,
         Err(誤り) => {
             画像組.破棄する(device);

@@ -15,8 +15,8 @@ pub(super) fn 生成する(
     device: &ash::Device,
     束縛先: &空中遠近合成の束縛先,
 ) -> Result<空中遠近合成ディスクリプタ, レンダラーエラー> {
-    let 深度サンプラー = nearest_sampler::作る(device)?;
-    let ボリュームサンプラー = match linear_sampler::作る(device) {
+    let 深度サンプラー = nearest_sampler::最近傍サンプラーを作る(device)?;
+    let ボリュームサンプラー = match linear_sampler::線形サンプラーを作る(device) {
         Ok(sampler) => sampler,
         Err(誤り) => return Err(作ったサンプラーを片付けて返す(device, &[深度サンプラー], 誤り)),
     };

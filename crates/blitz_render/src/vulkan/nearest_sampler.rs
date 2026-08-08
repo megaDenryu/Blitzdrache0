@@ -8,7 +8,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 
-pub(crate) fn 作る(device: &ash::Device) -> Result<vk::Sampler, レンダラーエラー> {
+pub(crate) fn 最近傍サンプラーを作る(device: &ash::Device) -> Result<vk::Sampler, レンダラーエラー> {
     let create_info = vk::SamplerCreateInfo::default()
         .mag_filter(vk::Filter::NEAREST)
         .min_filter(vk::Filter::NEAREST)

@@ -5,7 +5,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 
-pub(crate) fn 作る(device: &ash::Device) -> Result<vk::Sampler, レンダラーエラー> {
+pub(crate) fn 線形サンプラーを作る(device: &ash::Device) -> Result<vk::Sampler, レンダラーエラー> {
     let create_info = vk::SamplerCreateInfo::default()
         .mag_filter(vk::Filter::LINEAR)
         .min_filter(vk::Filter::LINEAR)

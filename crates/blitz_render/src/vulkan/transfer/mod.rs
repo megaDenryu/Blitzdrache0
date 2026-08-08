@@ -20,10 +20,14 @@ impl 転送実行環境 {
         Ok(Self { queue, command_pool })
     }
 
-    /// `記録`クロージャで積んだ転送コマンドを一時コマンドバッファへ記録し、
+    /// `転送コマンドを積む`クロージャで積んだ転送コマンドを一時コマンドバッファへ記録し、
     /// グラフィックスキューへsubmitしてfence待ちで完了を保証する。
-    pub(crate) fn 一括実行する(&self, device: &ash::Device, 記録: impl FnOnce(vk::CommandBuffer)) -> Result<(), レンダラーエラー> {
-        submit::一括実行する(device, self.queue, self.command_pool, 記録)
+    pub(crate) fn 一括実行する(
+        &self,
+        device: &ash::Device,
+        転送コマンドを積む: impl FnOnce(vk::CommandBuffer),
+    ) -> Result<(), レンダラーエラー> {
+        submit::一括実行する(device, self.queue, self.command_pool, 転送コマンドを積む)
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

@@ -14,7 +14,7 @@ pub(super) fn 生成する(
     device: &ash::Device,
     束縛先: 経路生成の束縛先<'_>,
 ) -> Result<経路生成ディスクリプタ, レンダラーエラー> {
-    let sampler = linear_sampler::作る(device)?;
+    let sampler = linear_sampler::線形サンプラーを作る(device)?;
     let layout = match binding::レイアウトを作る(device) {
         Ok(layout) => layout,
         Err(誤り) => return Err(サンプラーを片付けて返す(device, sampler, 誤り)),

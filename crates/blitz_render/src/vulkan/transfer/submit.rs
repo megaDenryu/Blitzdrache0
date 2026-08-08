@@ -1,4 +1,4 @@
-//! 一時コマンドバッファの記録・送信・完了待機。呼び出し元が渡す`記録`クロージャで
+//! 一時コマンドバッファの記録・送信・完了待機。呼び出し元が渡す`転送コマンドを積む`クロージャで
 //! 転送コマンド(コピー・バリア・blit)を積み、グラフィックスキューへsubmitして
 //! fence待ちで完了を保証する(判断2の一時コマンドバッファヘルパー)。
 
@@ -10,7 +10,7 @@ pub(super) fn 一括実行する(
     device: &ash::Device,
     queue: vk::Queue,
     command_pool: vk::CommandPool,
-    記録: impl FnOnce(vk::CommandBuffer),
+    転送コマンドを積む: impl FnOnce(vk::CommandBuffer),
 ) -> Result<(), レンダラーエラー> {
     let alloc_info = vk::CommandBufferAllocateInfo::default()
         .command_pool(command_pool)
@@ -24,7 +24,7 @@ pub(super) fn 一括実行する(
         panic!("allocate_command_buffersが1本のコマンドバッファを返さなかった");
     };
 
-    let 実行結果 = 記録して送信する(device, queue, command_buffer, 記録);
+    let 実行結果 = 記録して送信する(device, queue, command_buffer, 転送コマンドを積む);
 
     // 安全性: command_bufferはこのスコープの唯一の所有者で、送信完了(fence待ち済み)
     // または送信前エラーのいずれの場合も以降使用しない。
@@ -36,12 +36,12 @@ fn 記録して送信する(
     device: &ash::Device,
     queue: vk::Queue,
     command_buffer: vk::CommandBuffer,
-    記録: impl FnOnce(vk::CommandBuffer),
+    転送コマンドを積む: impl FnOnce(vk::CommandBuffer),
 ) -> Result<(), レンダラーエラー> {
     let begin_info = vk::CommandBufferBeginInfo::default().flags(vk::CommandBufferUsageFlags::ONE_TIME_SUBMIT);
     // 安全性: command_bufferは直前に確保済みで未記録状態。
     unsafe { device.begin_command_buffer(command_buffer, &begin_info)? };
-    記録(command_buffer);
+    転送コマンドを積む(command_buffer);
     // 安全性: command_bufferは記録開始済みで、対応するend呼び出し。
     unsafe { device.end_command_buffer(command_buffer)? };
 

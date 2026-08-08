@@ -15,7 +15,7 @@ pub(super) fn パイプライン部を生成する(
     縮小シェーダー: &シェーダー一式,
     拡大シェーダー: &シェーダー一式,
 ) -> Result<光のにじみ一式, レンダラーエラー> {
-    let sampler = linear_sampler::作る(device)?;
+    let sampler = linear_sampler::線形サンプラーを作る(device)?;
     let (単一読みlayout, 二読みlayout) = match descriptor::レイアウト2種を作る(device) {
         Ok(組) => 組,
         Err(誤り) => {

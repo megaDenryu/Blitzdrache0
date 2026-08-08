@@ -51,12 +51,12 @@ impl ウィンドウなし実行GPU環境 {
         unsafe { self.検証.instance.get_physical_device_memory_properties(self.physical_device) }
     }
 
-    /// コマンドバッファを1本取り、渡された記録を書いて送信し、完了を待つ。
+    /// コマンドバッファを1本取り、渡されたクロージャでGPU命令をコマンドバッファへ積んで送信し、完了を待つ。
     pub(crate) fn 一度きりで実行する(
         &self,
-        記録: impl FnOnce(&ash::Device, vk::CommandBuffer),
+        gpu命令をコマンドバッファへ積む: impl FnOnce(&ash::Device, vk::CommandBuffer),
     ) -> Result<(), crate::error::レンダラーエラー> {
-        one_shot::実行する(&self.device, self.command_pool, self.queue, 記録)
+        one_shot::実行する(&self.device, self.command_pool, self.queue, gpu命令をコマンドバッファへ積む)
     }
 
     /// 前提: 呼び出し元はGPUの全作業の完了を待っており(`一度きりで実行する`が送信ごとに待つ)、
