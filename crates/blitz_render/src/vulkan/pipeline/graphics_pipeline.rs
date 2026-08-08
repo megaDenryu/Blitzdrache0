@@ -58,7 +58,8 @@ pub(super) fn 組み立てる(
     let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(標本数);
     // 第2の添付は動きベクトルである。時間再構成方式に依らず常に2枚を宣言するのは、方式でパイプラインの形を変えないためである(判断e)。
     // 注意: 2枚の混合状態は同一でなければならない。independentBlend機能を有効にしていないためである。動きベクトルは2成分の形式であり、
-    // 書き込みマスクの残り2成分は存在しないので無視される。
+    // 書き込みマスクの残り2成分は存在しないので無視される。今は全描画がブレンド無効だから成立している形であり、
+    // 半透明がこのパスへ入るときはindependentBlendの有効化か書き込みマスクの分離が必須になる(動きベクトルへのブレンドは規約違反)。
     let カラーブレンドアタッチメント一覧 = [vk::PipelineColorBlendAttachmentState::default().color_write_mask(vk::ColorComponentFlags::RGBA); 2];
     let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default().attachments(&カラーブレンドアタッチメント一覧);
     let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
