@@ -32,6 +32,7 @@ use crate::cli::{布モード, 描画対象の並べ方, 検証計画指定, 空
 use crate::{dev_ui::開発UI, error::起動エラー, hot_reload::ホットリローダー, input::入力状態};
 use blitz_engine::カメラ;
 use blitz_render::{クリアカラー, レンダラー};
+pub(crate) use draw_dispatch::時間再構成の突き合わせの要約;
 pub(crate) use frame_timing::{フレーム時間統計, 集計する};
 pub(crate) use streaming::ストリーミング要約;
 pub(crate) use time_of_day::{太陽天頂区間の記録, 空の再現条件, 遠方環境の鍵の記録, 遠方環境更新判定};

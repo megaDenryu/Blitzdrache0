@@ -9,6 +9,10 @@
 //! どうかと、履歴画像へ初期値を書き込むかどうかだけである
 //! (`参照: _doc/設計/時間再構成.md`「判断e: 世界宣言の第4軸と検収の保護」)。
 
+mod synthetic_input;
+
+pub use synthetic_input::時間再構成の合成入力;
+
 /// 世界が宣言する時間再構成の方式。CPU正本は`blitz_engine::temporal_reconstruction::時間再構成方式`であり、
 /// コンポジションルートがその値を開いてここへ写す。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

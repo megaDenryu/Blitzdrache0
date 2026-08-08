@@ -5,7 +5,8 @@
 //! レンダラーを生成した後に検収の実行だけが呼び、呼ばない実行の絵は1画素も変わらない。散らして置くと、
 //! 生成の引数や毎フレームの入力に検収専用の値が混ざっているかどうかを読み手が1つずつ確かめることになる。
 //!
-//! 遠方環境の派生表現への解析入力は`indirect_lighting`、局所可視性補正が読む合成深度は`synthetic_depth`が持つ。
+//! 遠方環境の派生表現への解析入力は`indirect_lighting`、局所可視性補正が読む合成深度は`synthetic_depth`、時間再構成が読む4枚は`temporal_reconstruction`が持つ。
 
 mod indirect_lighting;
 mod synthetic_depth;
+mod temporal_reconstruction;

@@ -12,18 +12,23 @@ use ash::vk;
 use super::super::super::temporal_reconstruction_pass;
 use super::super::base_images::基本画像ハンドル;
 use crate::vulkan::graph;
-use crate::vulkan::temporal_reconstruction::時間再構成描画入力;
+use crate::vulkan::temporal_reconstruction::{
+    合成入力の書き戻し先, 合成入力の注入を作る, 合成入力の注入入力, 時間再構成描画入力
+};
 
 /// 入力と画像の登録は必ず対で有るか対で無い。片方だけが有る状態はレンダラーの配線の誤りである。
+#[allow(clippy::too_many_arguments)]
 pub(in crate::vulkan::frame::record::graph_build) fn 時間再構成を積む<'a>(
     グラフ: &mut graph::グラフ<'a>,
     再構成後の色: graph::画像ハンドル,
     基本: &基本画像ハンドル,
     入力: Option<&'a 時間再構成描画入力>,
+    合成入力: Option<合成入力の注入入力>,
     寸法: vk::Extent2D,
 ) {
     match (入力, &基本.時間再構成) {
         (Some(入力), Some(登録)) => {
+            合成入力を積む(グラフ, 基本, 登録, 合成入力);
             let ハンドル = temporal_reconstruction_pass::時間再構成のハンドル組 {
                 今のフレームの色: 登録.今のフレームの色,
                 履歴読み: 登録.履歴読み,
@@ -37,4 +42,23 @@ pub(in crate::vulkan::frame::record::graph_build) fn 時間再構成を積む<'a
         (None, None) => {}
         _ => panic!("時間再構成の入力と画像の登録の有無が一致しない(レンダラーの配線のバグ)"),
     }
+}
+
+/// 検収が合成入力を据えた実行だけ、再構成のパスの直前へ転送を1本積む。
+fn 合成入力を積む<'a>(
+    グラフ: &mut graph::グラフ<'a>,
+    基本: &基本画像ハンドル,
+    登録: &super::super::base_images::時間再構成の登録,
+    合成入力: Option<合成入力の注入入力>,
+) {
+    let Some(合成入力) = 合成入力 else {
+        return;
+    };
+    let 書き戻し先 = 合成入力の書き戻し先 {
+        今のフレームの色: 登録.今のフレームの色,
+        履歴読み: 登録.履歴読み,
+        動きベクトル: 基本.動きベクトル,
+        深度: 基本.深度,
+    };
+    グラフ.パスを積む(合成入力の注入を作る(書き戻し先, 合成入力));
 }

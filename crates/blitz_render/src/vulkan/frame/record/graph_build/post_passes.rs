@@ -18,16 +18,17 @@ use super::base_images::基本画像ハンドル;
 use super::post_setup::ポスト構成;
 use super::stages;
 use crate::vulkan::graph;
-use crate::vulkan::temporal_reconstruction::時間再構成描画入力;
+use crate::vulkan::temporal_reconstruction::{合成入力の注入入力, 時間再構成描画入力};
 
 pub(super) fn 積む<'a>(
     グラフ: &mut graph::グラフ<'a>,
     構成: &ポスト構成<'a>,
     基本: &基本画像ハンドル,
     時間再構成: Option<&'a 時間再構成描画入力>,
+    合成入力: Option<合成入力の注入入力>,
     寸法: vk::Extent2D,
 ) {
-    stages::時間再構成を積む(グラフ, 構成.hdrハンドル, 基本, 時間再構成, 寸法);
+    stages::時間再構成を積む(グラフ, 構成.hdrハンドル, 基本, 時間再構成, 合成入力, 寸法);
     if let Some(自動露出) = &構成.自動露出 {
         グラフ.パスを積む(auto_exposure_passes::消去を作る(自動露出.ヒストグラム));
         グラフ.パスを積む(auto_exposure_passes::集計を作る(

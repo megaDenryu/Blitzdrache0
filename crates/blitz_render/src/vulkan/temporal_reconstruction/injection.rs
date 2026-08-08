@@ -1,0 +1,93 @@
+//! 検収が与えた合成入力4枚を保持し、毎フレームそれを時間再構成のパスが読む画像へ書き戻す資源。担当するのは、4枚をホスト可視バッファへ写して持ち続けることと、そのバッファから画像への転送をパス1本として差し出すことである。
+//!
+//! バッファを持ち続けるのは、シーン描画が毎フレーム今のフレームの色と動きベクトルを上書きし、時間再構成のパスが毎フレーム履歴の書き込み側を上書きするためである。1度だけ書き込む形にすると、次のフレームには本番の描画結果へ戻る。この資源が在るのは検収の実行だけである。本番の起動では`None`を持ち、パスも1本積まれない。
+
+mod buffers;
+mod byte_layout;
+mod pass;
+
+use ash::vk;
+
+pub(crate) use pass::{合成入力の書き戻し先, 合成入力の注入を作る, 合成入力の注入入力};
+
+use crate::error::レンダラーエラー;
+use buffers::{片付ける, 配列にする};
+use byte_layout::{半精度のバイト列へ写す, 単精度のバイト列へ写す};
+
+use crate::temporal_reconstruction::時間再構成の合成入力;
+use crate::vulkan::host_buffer;
+use crate::vulkan::tracked_device::GPUデバイス;
+
+impl super::時間再構成一式 {
+    /// 検収が焼いた合成入力を据える。既に据えてあれば入れ替える。前提: 呼び出し元はGPUの全作業完了を待ってから呼ぶ(旧いバッファをその場で破棄するため)。
+    pub(crate) fn 合成入力を据える(
+        &mut self,
+        device: &GPUデバイス,
+        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        入力: &時間再構成の合成入力,
+    ) -> Result<(), レンダラーエラー> {
+        let 新しい注入 = 合成入力の注入一式::生成する(device, メモリプロパティ, 入力)?;
+        if let Some(旧い) = self.合成入力の注入.replace(新しい注入) {
+            旧い.破棄する(device);
+        }
+        Ok(())
+    }
+
+    /// そのフレームの転送パスへ渡す入力。据えていなければ`None`であり、パスを1本も積まない。
+    pub(crate) fn 合成入力の注入入力(&self) -> Option<合成入力の注入入力> {
+        self.合成入力の注入.as_ref().map(合成入力の注入一式::描画入力を作る)
+    }
+}
+
+/// 4枚ぶんのホスト可視バッファと、その入力が焼かれた寸法。
+pub(crate) struct 合成入力の注入一式 {
+    バッファ一覧: [(vk::Buffer, vk::DeviceMemory); 4],
+    寸法: vk::Extent2D,
+}
+
+impl 合成入力の注入一式 {
+    pub(crate) fn 生成する(
+        device: &GPUデバイス,
+        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        入力: &時間再構成の合成入力,
+    ) -> Result<Self, レンダラーエラー> {
+        let バイト列一覧 = [
+            半精度のバイト列へ写す(入力.今のフレームの色()),
+            半精度のバイト列へ写す(入力.履歴()),
+            半精度のバイト列へ写す(入力.動きベクトル()),
+            単精度のバイト列へ写す(入力.深度()),
+        ];
+        let mut 確保済み = Vec::with_capacity(バイト列一覧.len());
+        for バイト列 in &バイト列一覧 {
+            let 結果 = host_buffer::確保して書き込む(device, メモリプロパティ, バイト列, vk::BufferUsageFlags::TRANSFER_SRC);
+            match 結果 {
+                Ok(組) => 確保済み.push(組),
+                Err(誤り) => {
+                    片付ける(device, &確保済み);
+                    return Err(誤り);
+                }
+            }
+        }
+        Ok(Self {
+            バッファ一覧: 配列にする(確保済み),
+            寸法: vk::Extent2D {
+                width: 入力.寸法().幅(),
+                height: 入力.寸法().高さ(),
+            },
+        })
+    }
+
+    pub(crate) fn 描画入力を作る(&self) -> 合成入力の注入入力 {
+        合成入力の注入入力 {
+            今のフレームの色: self.バッファ一覧[0].0,
+            履歴: self.バッファ一覧[1].0,
+            動きベクトル: self.バッファ一覧[2].0,
+            深度: self.バッファ一覧[3].0,
+            寸法: self.寸法,
+        }
+    }
+
+    pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
+        片付ける(device, &self.バッファ一覧);
+    }
+}
