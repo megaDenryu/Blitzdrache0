@@ -66,6 +66,7 @@ mod smoke;
 mod streaming_bench;
 mod streaming_report;
 mod temporal_reconstruction;
+mod temporal_visual;
 mod terrain_visual;
 mod type_metrics;
 mod usage;
