@@ -37,6 +37,7 @@ pub(super) fn 描画する(出力先: &Path, 条件: &検査条件) -> Option<�
         "--no-post",
         // 地形世界は空を持つ方針であるため、番兵背景の露出を数えるこの検査は空パスを明示的に外す。
         "--no-sky",
+        "--no-taa",
         "--dump-frame",
     ];
     let mut コマンド = Command::new("cargo");

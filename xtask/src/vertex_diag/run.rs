@@ -36,7 +36,7 @@ pub(super) fn 描画する(出力先: &Path, 出力名: &str, アセットルー
         .args(["--streaming-vram-limit", 容量上限バイト])
         .args(["--camera-pitch", カメラ俯角差分度])
         .args(["--time-of-day", 一日内秒])
-        .args(["--no-sky", "--no-post", "--report-draw-issue", "--report-memory"])
+        .args(["--no-sky", "--no-post", "--no-taa", "--report-draw-issue", "--report-memory"])
         .args(追加引数)
         .arg("--dump-frame")
         .arg(&ダンプ先)

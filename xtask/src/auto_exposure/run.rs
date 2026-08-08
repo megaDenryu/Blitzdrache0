@@ -39,6 +39,7 @@ pub(super) fn 描画して報告を読む(
         .args(["--asset-root", アセットルート])
         .args(["--frames", フレーム数])
         .args(["--time-of-day", 一日内秒])
+        .arg("--no-taa")
         .arg("--report-auto-exposure");
     if let 探り色の扱い::背景へ流す = 探り {
         コマンド.args(["--auto-exposure-probe", 探り色, "--no-sky", "--no-aerial-composite"]);

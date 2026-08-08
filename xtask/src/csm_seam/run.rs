@@ -64,7 +64,7 @@ pub(super) fn 描画する(出力先: &Path, 出力名: &str, 距離区分を可
         .args(["--camera-pitch", カメラ俯角差分度])
         .args(["--camera-yaw", カメラ方位差分度])
         .args(["--time-of-day", 一日内秒])
-        .args(["--no-sky", "--no-post"]);
+        .args(["--no-sky", "--no-post", "--no-taa"]);
     if 距離区分を可視化する {
         コマンド.arg("--debug-cascade-bands");
     }

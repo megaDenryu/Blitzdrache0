@@ -86,6 +86,7 @@ fn 引数を作る(アセットルート: &Path, シェーダー入口: &Path, �
         "--report-instance-sections",
         "--report-gpu-times",
         "--report-frame-times",
+        "--no-taa",
     ];
     let mut 引数一覧: Vec<String> = 固定.iter().map(|語| (*語).to_string()).collect();
     引数一覧.extend(super::condition::描画の起動指定(条件.描画).iter().map(|語| (*語).to_string()));

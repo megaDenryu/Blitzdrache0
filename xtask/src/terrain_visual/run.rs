@@ -20,6 +20,7 @@ pub(super) fn 描画する(ダンプ先: &Path, 一日内秒: &str, 条件名: &
         .args(["--asset-root", アセットルート])
         .args(["--frames", フレーム数])
         .args(["--time-of-day", 一日内秒])
+        .arg("--no-taa")
         .arg("--dump-frame")
         .arg(ダンプ先)
         .output()

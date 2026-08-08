@@ -20,6 +20,7 @@ pub(super) fn 描画する(形: &str) -> Result<String, String> {
         .args(["--asset-root", crate::visual_sample_world::アセットルート])
         .args(["--frames", フレーム数])
         .args(["--time-of-day", 一日内秒])
+        .arg("--no-taa")
         .args(["--local-visibility-shape", 形])
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({形}): {誤り}"))?;

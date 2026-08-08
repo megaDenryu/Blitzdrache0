@@ -57,7 +57,7 @@ pub(super) fn 走らせる(
     コマンド
         .args(["run", "-p", "blitz_app", "--"])
         .args(共通引数)
-        .args(["--no-post", "--frames", フレーム数])
+        .args(["--no-post", "--no-taa", "--frames", フレーム数])
         .args(["--streaming-ram-limit", 上限バイト数, "--streaming-vram-limit", 上限バイト数])
         .args(追加引数)
         .arg("--shader-source")

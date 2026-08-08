@@ -36,6 +36,7 @@ pub(super) fn 世界の引数() -> Vec<String> {
         容量上限バイト,
         "--camera-pitch",
         カメラ俯角差分度,
+        "--no-taa",
     ]
     .iter()
     .map(|語| (*語).to_string())

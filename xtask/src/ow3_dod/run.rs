@@ -31,6 +31,7 @@ pub(super) fn 統合経路を実行する() -> Option<実行結果> {
             "16777216",
             "--streaming-vram-limit",
             "16777216",
+            "--no-taa",
             "--ow3-dod-route",
             "--report-streaming-summary",
             "--report-memory",

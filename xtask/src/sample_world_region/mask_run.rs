@@ -20,7 +20,7 @@ pub fn 領域マスクを撮る(ダンプ先: &Path, 条件名: &str) -> Result<
         .args(["run", "-p", "blitz_app", "--", "--scene", シーン名])
         .args(["--asset-root", アセットルート])
         .args(["--frames", フレーム数])
-        .args(["--no-sky", "--no-post", "--unlit"])
+        .args(["--no-sky", "--no-post", "--unlit", "--no-taa"])
         .arg("--dump-frame")
         .arg(ダンプ先)
         .output()

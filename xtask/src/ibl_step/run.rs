@@ -29,6 +29,7 @@ pub(super) fn 撮る(撮るもの: &撮るもの<'_>, ベース名: &Path) -> Re
     let 出力 = Command::new("cargo")
         .args(["run", "--release", "-q", "-p", "blitz_app", "--", "--scene", シーン名])
         .args(["--asset-root", アセットルート])
+        .arg("--no-taa")
         .args(条件別引数(撮るもの))
         .arg(書き出しの引数(撮るもの))
         .arg(ベース名)

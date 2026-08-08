@@ -55,6 +55,7 @@ pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: 条件) ->
         .args(["--streaming-vram-limit", 容量上限バイト])
         .args(["--camera-pitch", カメラ俯角差分度])
         .args(条件別引数(条件))
+        .arg("--no-taa")
         .arg("--dump-frame")
         .arg(&ダンプ先);
     let 出力 = コマンド

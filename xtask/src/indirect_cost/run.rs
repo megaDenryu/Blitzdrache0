@@ -64,6 +64,7 @@ fn 引数を作る(材料: &実行の材料<'_>) -> Vec<String> {
         カメラ俯角差分度,
         "--report-gpu-times",
         "--report-atmosphere-passes",
+        "--no-taa",
     ];
     let mut 引数一覧: Vec<String> = 固定.iter().map(|語| (*語).to_string()).collect();
     引数一覧.extend(["--benchmark-frames".to_string(), 材料.指定.フレーム数.to_string()]);

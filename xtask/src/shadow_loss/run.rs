@@ -17,7 +17,7 @@ pub(super) fn 描画する(出力先: &Path, 出力名: &str, 構図: 構図, �
         .args(["--asset-root", 構図.アセットルート()])
         .args(["--frames", super::フレーム数])
         .args(["--time-of-day", super::一日内秒])
-        .args(["--no-sky", "--no-post", "--debug-shadow-loss"])
+        .args(["--no-sky", "--no-post", "--no-taa", "--debug-shadow-loss"])
         .args(構図.追加の起動指定())
         .args(候補の起動指定)
         .arg("--dump-frame")

@@ -22,6 +22,7 @@ pub(super) fn 描画する(ダンプ先: &Path, 時刻: &代表時刻) -> Result
         .args(["--asset-root", アセットルート])
         .args(["--frames", フレーム数])
         .args(["--time-of-day", 時刻.一日内秒])
+        .arg("--no-taa")
         .arg("--dump-hdr-frame")
         .arg(ダンプ先)
         .output()

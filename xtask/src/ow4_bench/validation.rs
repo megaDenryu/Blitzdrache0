@@ -24,7 +24,7 @@ pub(super) fn 検査する(アセットルート: &Path, シェーダー入口: 
         .args(["run", "-p", "blitz_app", "--"])
         .args(["--scene", 起動時シーン, "--streaming", "--streaming-preload-radius", 先読み半径])
         .args(["--instance-stream-route", "--benchmark-frames", 検査フレーム数])
-        .args(["--report-streaming-summary", "--report-memory", "--report-draw-issue"])
+        .args(["--report-streaming-summary", "--report-memory", "--report-draw-issue", "--no-taa"])
         // レイヤーの検査を計測本体と同じ描画構成で通すため、条件が足す起動指定をこちらへも同じだけ渡す。
         .args(super::condition::描画の起動指定(条件.描画))
         .args(&一日内時刻)

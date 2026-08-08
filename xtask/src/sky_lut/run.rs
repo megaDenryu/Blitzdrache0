@@ -51,7 +51,7 @@ pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: 条件, �
     if let Some(秒) = 一日内秒 {
         コマンド.args(["--time-of-day", 秒]);
     }
-    コマンド.arg("--dump-frame").arg(&ダンプ先);
+    コマンド.arg("--no-taa").arg("--dump-frame").arg(&ダンプ先);
     let 出力 = コマンド
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({出力名}): {誤り}"))?;

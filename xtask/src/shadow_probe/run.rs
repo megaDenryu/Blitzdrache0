@@ -58,6 +58,7 @@ fn 引数を作る(材料: &実行の材料<'_>) -> Vec<String> {
         "--streaming-preload-radius",
         先読み半径,
         "--instance-stream-route",
+        "--no-taa",
         "--benchmark-frames",
         フレーム数,
         "--report-draw-issue",
