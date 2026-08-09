@@ -13,7 +13,7 @@ use crate::vulkan::material_table::{
 use crate::vulkan::material_variant::シェーディングモデル種別;
 
 pub(super) fn 検査用素材(用途: テクスチャ用途) -> テクスチャ素材 {
-    テクスチャ素材::生成する(1, 1, vec![1, 2, 3, 4], 用途).unwrap()
+    テクスチャ素材::rgba8の原寸から生成する(1, 1, vec![1, 2, 3, 4], 用途).unwrap()
 }
 
 /// 材質テクスチャ表の枚数が実機の上限でも要望でも頭打ちにならない、余裕のあるレイアウト容量。

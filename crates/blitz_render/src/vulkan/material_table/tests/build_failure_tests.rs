@@ -3,7 +3,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use crate::error::レンダラーエラー;
+use crate::error::{テクスチャ形式エラー, レンダラーエラー};
 use crate::texture_material::テクスチャ用途;
 use crate::vulkan::material_table::generation_build::構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
@@ -36,7 +36,12 @@ fn 構築の失敗は部分生成資源だけを破棄し公開中の世代を�
         &[材質を作る(2, Some(&素材))],
     );
 
-    assert!(matches!(新世代, Err(レンダラーエラー::テクスチャblit非対応)));
+    assert!(matches!(
+        新世代,
+        Err(レンダラーエラー::テクスチャ形式不正(
+            テクスチャ形式エラー::リニアフィルタblit非対応
+        ))
+    ));
     assert_eq!(失敗する供給元.生存枚数(), 0, "作りかけの画像を1枚も残さない");
     assert_eq!(失敗する供給元.退役枚数(), 3);
     assert_eq!(台帳.公開中().世代id().番号(), 公開前の世代番号);

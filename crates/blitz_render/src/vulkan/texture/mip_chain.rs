@@ -2,12 +2,14 @@
 //! バリア(`mip_barrier`)を積んでからLINEARフィルタでblitし、blit元として使い終えた
 //! レベルはSHADER_READ_ONLY_OPTIMALへ遷移する(判断20)。
 //!
-//! 注意: blitの元/先の寸法は`max(1, 幅>>mip)`で計算する。1x1到達後も
-//! この式が1を返し続けるため、途中でサイズが0になる事故を避けられる。
+//! 注意: blitの元/先の寸法は素材の段の寸法と同じ算術(`level_extent`)で求める。1x1到達後も
+//! この算術が1を返し続けるため、途中でサイズが0になる事故を避けられる。
 
 mod mip_barrier;
 
 use ash::vk;
+
+use crate::texture_material::level_extent::縮小段の幅と高さを求める;
 
 pub(super) fn 縮小段チェーンを積む(
     device: &ash::Device,
@@ -74,10 +76,9 @@ fn blitを積む(device: &ash::Device, command_buffer: vk::CommandBuffer, image:
     }
 }
 
-/// `max(1, 辺>>mip)`をi32へ変換する(Offset3Dはi32のため)。
+/// 段の幅と高さをi32へ変換する(Offset3Dはi32のため)。
 fn 寸法を求める(幅: u32, 高さ: u32, mip: u32) -> (i32, i32) {
-    let 幅段階 = (幅 >> mip).max(1);
-    let 高さ段階 = (高さ >> mip).max(1);
+    let (幅段階, 高さ段階) = 縮小段の幅と高さを求める(幅, 高さ, mip);
     let 幅i32 = i32::try_from(幅段階).unwrap_or_else(|_| panic!("縮小段寸法がi32に収まらない: {幅段階}"));
     let 高さi32 = i32::try_from(高さ段階).unwrap_or_else(|_| panic!("縮小段寸法がi32に収まらない: {高さ段階}"));
     (幅i32, 高さi32)

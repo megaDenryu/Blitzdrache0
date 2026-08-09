@@ -85,7 +85,7 @@ pub use shader_bundle::{シェーダー束, 大気のベイク済み画像のシ
 pub use shader_set::{シェーダー一式, シェーダー一式エラー, 位置の不変装飾を付ける, 位置の不変装飾エラー};
 pub use skin_mesh::{スキンメッシュ素材, スキンメッシュ素材エラー, スキン頂点属性};
 pub use terrain_detail::{地形詳細段, 地形詳細段選択};
-pub use texture_material::{テクスチャ用途, テクスチャ素材, テクスチャ素材エラー};
+pub use texture_material::{テクスチャ格納形式, テクスチャ用途, テクスチャ素材, テクスチャ素材エラー};
 pub use ui_draw_data::UI描画データ;
 pub use ui_mesh::UIメッシュ;
 pub use ui_scissor::UIシザー矩形px;

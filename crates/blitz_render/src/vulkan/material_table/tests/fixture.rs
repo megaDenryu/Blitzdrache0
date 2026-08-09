@@ -7,7 +7,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use crate::error::レンダラーエラー;
+use crate::error::{テクスチャ形式エラー, レンダラーエラー};
 use crate::texture_material::テクスチャ素材;
 use crate::vulkan::material_table::generation_record::世代内材質レコード;
 use crate::vulkan::material_table::supplier::常駐テクスチャ供給元;
@@ -53,7 +53,9 @@ impl 常駐テクスチャ供給元 for 検査用供給元 {
     fn 常駐させる(&mut self, _素材: &テクスチャ素材) -> Result<u32, レンダラーエラー> {
         self.常駐の呼び出し回数 = self.常駐の呼び出し回数.saturating_add(1);
         if self.失敗させる呼び出し番号 == Some(self.常駐の呼び出し回数) {
-            return Err(レンダラーエラー::テクスチャblit非対応);
+            return Err(レンダラーエラー::テクスチャ形式不正(
+                テクスチャ形式エラー::リニアフィルタblit非対応,
+            ));
         }
         let 画像 = self.常駐の呼び出し回数;
         self.生きている画像.push(画像);

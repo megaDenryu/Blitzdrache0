@@ -12,6 +12,7 @@ mod material_table;
 mod pipeline_ledger;
 mod renderer_error;
 mod sky;
+mod texture_format;
 
 pub use cascade::多段エラー;
 pub use cloth::布エラー;
@@ -23,3 +24,4 @@ pub use material_table::材質資源表エラー;
 pub use pipeline_ledger::パイプライン台帳エラー;
 pub use renderer_error::レンダラーエラー;
 pub use sky::空エラー;
+pub use texture_format::テクスチャ形式エラー;

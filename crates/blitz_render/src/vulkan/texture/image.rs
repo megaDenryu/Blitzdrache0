@@ -12,8 +12,9 @@ pub(super) fn 生成する(
     メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     幅: u32,
     高さ: u32,
-    mip数: u32,
+    縮小段数: u32,
     形式: vk::Format,
+    使い道: vk::ImageUsageFlags,
 ) -> Result<(vk::Image, vk::DeviceMemory), レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
@@ -23,11 +24,11 @@ pub(super) fn 生成する(
             height: 高さ,
             depth: 1,
         })
-        .mip_levels(mip数)
+        .mip_levels(縮小段数)
         .array_layers(1)
         .samples(vk::SampleCountFlags::TYPE_1)
         .tiling(vk::ImageTiling::OPTIMAL)
-        .usage(vk::ImageUsageFlags::TRANSFER_SRC | vk::ImageUsageFlags::TRANSFER_DST | vk::ImageUsageFlags::SAMPLED)
+        .usage(使い道)
         .sharing_mode(vk::SharingMode::EXCLUSIVE)
         .initial_layout(vk::ImageLayout::UNDEFINED);
     // 安全性: deviceは生成済みで有効。

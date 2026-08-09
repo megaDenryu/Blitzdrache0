@@ -1,13 +1,15 @@
-//! テクスチャ: OPTIMALタイリング・ステージング転送+vkCmdBlitImage連鎖の
-//! 縮小段マップ生成(判断20)。色(SRGB)/線形データ(UNORM)は`用途`から選ぶ(判断23)。
+//! テクスチャ: OPTIMALタイリングの画像1枚と、それを指す画像ビューの資源型。
+//! 生成の局面は`create`が持ち、そこが縮小段の積み方の2系統(GPUのblitで作る / ファイルの全段を転送する)を選ぶ。
 //!
 //! サンプラーを画像ごとに持たないのは、材質テクスチャ表の全画像を1つの固定サンプラーで読むためである
 //! (参照: `table_sampler`)。
 
+mod create;
 mod format_support;
+#[cfg(test)]
+mod format_support_tests;
 mod image;
 mod mip_chain;
-mod mip_count;
 pub(crate) mod table_sampler;
 mod upload;
 mod view;
@@ -34,35 +36,11 @@ impl テクスチャ {
         転送環境: &転送実行環境,
         素材: &テクスチャ素材,
     ) -> Result<Self, レンダラーエラー> {
-        let 形式 = format_support::vulkan形式を選ぶ(素材.用途());
-        format_support::blitフィルタ対応を確認する(問い合わせ, 形式)?;
+        create::テクスチャを生成する(device, 問い合わせ, メモリプロパティ, 転送環境, 素材)
+    }
 
-        let mip数 = mip_count::計算する(素材.幅(), 素材.高さ());
-        let (image, memory) = image::生成する(device, メモリプロパティ, 素材.幅(), 素材.高さ(), mip数, 形式)?;
-
-        if let Err(誤り) = upload::ホストの画素列を画像へ転送する(
-            device,
-            メモリプロパティ,
-            転送環境,
-            image,
-            素材.幅(),
-            素材.高さ(),
-            mip数,
-            素材.rgba8(),
-        ) {
-            画像を破棄する(device, image, memory);
-            return Err(誤り);
-        }
-
-        let image_view = match view::画像ビューを作る(device, image, mip数, 形式) {
-            Ok(view) => view,
-            Err(誤り) => {
-                画像を破棄する(device, image, memory);
-                return Err(誤り);
-            }
-        };
-
-        Ok(Self { image, memory, image_view })
+    fn 部品から組み立てる(image: vk::Image, memory: vk::DeviceMemory, image_view: vk::ImageView) -> Self {
+        Self { image, memory, image_view }
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
