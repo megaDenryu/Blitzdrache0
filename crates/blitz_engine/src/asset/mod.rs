@@ -50,6 +50,8 @@ mod skin_vertex_attribute;
 mod static_trs;
 mod terrain_lod_meshes;
 mod texture_data;
+/// テクスチャの格納の語彙は形式・ブロックの格子・バイト数の算術のエラーと数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
+pub mod texture_storage;
 mod vertex_attribute;
 
 pub use animation_clip::アニメーションクリップ;
