@@ -9,6 +9,7 @@ mod error;
 mod height_grid;
 mod loader;
 mod terrain;
+mod texture_storage;
 mod vegetation;
 mod village;
 mod visual_sample;
@@ -23,6 +24,10 @@ pub use loader::{
     ソースシーンを読み込む, 入力契約を検査する, 原型ソース, 原型ソースを読み込む, 契約指摘, 契約検査概要, 契約検査結果, 重大度
 };
 pub use terrain::地形チャンクをコンパイルする;
+pub use texture_storage::{
+    rgba8の縮小段をbc1のバイト列へ符号化する, srgbの色として縦横を半分に縮める, srgbの色として縮小段の連なりを作る,
+    srgbの色の全段をbc1のバイト列へ符号化する,
+};
 pub use vegetation::{
     同居植生の指定, 地形同居の群, 地形同居の群を作る, 植生チャンクをコンパイルする, 植生単一個体シーンをコンパイルする,
     植生可視判定シーンをコンパイルする, 植生影視距離シーンをコンパイルする, 植生詳細段シーンをコンパイルする,
