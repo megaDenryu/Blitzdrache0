@@ -93,5 +93,5 @@ pub use skin_data::スキンデータ;
 pub use skin_vertex_attribute::スキン頂点属性;
 pub use static_trs::静的TRS;
 pub use terrain_lod_meshes::{地形LODメッシュ群, 地形LODメッシュ群エラー};
-pub use texture_data::{テクスチャデータ, 法線マップ既定テクスチャを作る, 白テクスチャデータを作る};
+pub use texture_data::テクスチャデータ;
 pub use vertex_attribute::メッシュ頂点属性;
