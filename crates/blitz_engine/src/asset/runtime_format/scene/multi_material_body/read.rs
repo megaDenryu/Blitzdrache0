@@ -16,8 +16,8 @@ use crate::asset::render_object_id::描画対象ID;
 use crate::asset::scene_data::シーンデータ;
 use crate::チャンク座標;
 
-/// 版4の描画対象1件の最小バイト数。形状の判別値1バイトと、最も小さい形状である通常メッシュ1つ分を足す。
-const 描画対象最小長: usize = read_element::版4の形状以外の描画対象長 + 1 + read_element::版4のメッシュ最小長;
+/// 版4以降の描画対象1件の最小バイト数。形状の判別値1バイトと、最も小さい形状である通常メッシュ1つ分を足す。
+const 描画対象最小長: usize = read_element::版4以降の形状以外の描画対象長 + 1 + read_element::版4以降のメッシュ最小長;
 
 pub(in crate::asset::runtime_format::scene) fn 内容を読む(
     内容: &[u8],
