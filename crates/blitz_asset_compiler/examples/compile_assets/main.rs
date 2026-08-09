@@ -7,6 +7,7 @@ mod chunk_world;
 mod compile_target;
 mod source_kind;
 mod source_location;
+mod texture_policy_argument;
 mod world;
 
 use std::path::Path;
@@ -17,7 +18,7 @@ use blitz_engine::{カタログ, カタログを実行時形式へ格納する};
 use world::対象世界;
 
 /// この入口が当てはめる既定のテクスチャ格納方針。既定を当てはめるのはこの1箇所だけであり、
-/// コンパイルのライブラリ関数は方針を必須の引数で受け取る。ブロック圧縮を渡す入口は順4の段4が新設する
+/// コンパイルのライブラリ関数は方針を必須の引数で受け取る。ブロック圧縮を渡すのは`cargo xtask texture-compression`だけである
 /// (参照: `_doc/設計/テクスチャのブロック圧縮と縮小段生成.md`「判断i」)。
 const 既定のテクスチャ格納方針: テクスチャ格納方針 = テクスチャ格納方針::全てRGBA8;
 
@@ -29,7 +30,9 @@ fn main() {
 }
 
 fn 実行する() -> Result<(), String> {
-    let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
+    let 全引数一覧: Vec<String> = std::env::args().skip(1).collect();
+    let (指定された方針, 引数一覧) = texture_policy_argument::引数一覧から方針の指定を取り出す(&全引数一覧)?;
+    let 方針 = 指定された方針.unwrap_or(既定のテクスチャ格納方針);
     let (ソースルート文字列, 出力ルート文字列, 世界名, 同居植生個体数) = match 引数一覧.as_slice() {
         [ソース, 出力, 世界名] => (ソース, 出力, 世界名, 対象世界::同居植生の既定個体数()),
         [ソース, 出力, 世界名, 個体数] => (ソース, 出力, 世界名, 同居植生個体数を解析する(個体数)?),
@@ -44,7 +47,7 @@ fn 実行する() -> Result<(), String> {
     let mut 実行時カタログ = カタログ::空を作る();
 
     for 対象 in 対象一覧 {
-        let 結果 = compile_target::対象をコンパイルする(&カタログ, &対象, 既定のテクスチャ格納方針)?;
+        let 結果 = compile_target::対象をコンパイルする(&カタログ, &対象, 方針)?;
         std::fs::write(&対象.出力パス, &結果.実行時バイト列).map_err(|誤り| format!("{}を書き出せない: {誤り}", 対象.出力パス.display()))?;
         let ファイル名 = 対象.出力パス.file_name().ok_or_else(|| "生成物のファイル名が無い".to_string())?;
         実行時カタログ.詳細を登録する(対象.id, std::path::PathBuf::from(ファイル名), 結果.ソース依存一覧, 結果.メタデータ);

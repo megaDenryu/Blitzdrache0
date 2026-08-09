@@ -1,15 +1,20 @@
 //! ソースアセットを版付き実行時形式へ変換する唯一の公開ツール入口。
 //! 1つの出力ルートは1つのチャンク世界を持つため、世界ごとに出力ルートを分けて順に生成する。
-//! 世界を指す綴りは`world_name`が、世界ごとの既定出力ルートは`default_root`が持つ。
+//! 世界を指す綴りは`world_name`が、テクスチャ格納方針を指す綴りは`texture_policy_name`が、
+//! 世界ごとの既定出力ルートは`default_root`が、コンパイラの起動は`invoke`が持つ。
 
 mod default_root;
+mod invoke;
+pub mod texture_policy_name;
 mod world_name;
 
 use std::path::Path;
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
 
 pub use default_root::*;
 pub use world_name::*;
+
+use invoke::{アセットコンパイラを起動して実行時形式を焼く, 実行時形式を焼く指定};
 
 pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     let 成否 = match 引数一覧 {
@@ -29,6 +34,19 @@ pub fn 生成する(ソースルート: &Path, 出力ルート: &Path, 世界名
     個体数を添えて生成する(ソースルート, 出力ルート, 世界名, None)
 }
 
+/// テクスチャ格納方針を名指しして焼く。既定を当てはめずに方針を渡すのは`cargo xtask texture-compression`だけであり、
+/// この入口が同じ世界を方針違いで2度焼いて絵と格納バイト数の対照を作る。
+/// 参照: `_doc/設計/テクスチャのブロック圧縮と縮小段生成.md`「判断i」
+pub fn 方針を名指しして生成する(出力ルート: &Path, 世界名: &str, テクスチャ格納方針の名前: &str) -> bool {
+    アセットコンパイラを起動して実行時形式を焼く(&実行時形式を焼く指定 {
+        ソースルート: default_root::ソースルート(),
+        出力ルート,
+        世界名,
+        同居植生個体数: None,
+        テクスチャ格納方針の名前: Some(テクスチャ格納方針の名前),
+    })
+}
+
 /// 地形世界の同居植生を指定の密度で焼く。物量計測が原型・マテリアル・座標を固定したまま密度だけを変えるための入口である。
 pub fn 地形世界を個体数指定で生成する(出力ルート: &Path, 個体数: usize) -> bool {
     世界を個体数指定で生成する(出力ルート, 地形の世界, 個体数)
@@ -44,31 +62,11 @@ pub fn 世界を個体数指定で生成する(出力ルート: &Path, 世界名
 fn 個体数を添えて生成する(
     ソースルート: &Path, 出力ルート: &Path, 世界名: &str, 同居植生個体数: Option<&str>
 ) -> bool {
-    println!(
-        "[xtask] 実行時アセット生成({世界名}{}): {} -> {}",
-        同居植生個体数.map_or_else(String::new, |個体数| format!(", 同居植生{個体数}体")),
-        ソースルート.display(),
-        出力ルート.display()
-    );
-    let mut コマンド = Command::new("cargo");
-    コマンド
-        .args(["run", "-p", "blitz_asset_compiler", "--example", "compile_assets", "--"])
-        .arg(ソースルート)
-        .arg(出力ルート)
-        .arg(世界名);
-    if let Some(個体数) = 同居植生個体数 {
-        コマンド.arg(個体数);
-    }
-    let 状態 = コマンド.status();
-    match 状態 {
-        Ok(終了状態) if 終了状態.success() => true,
-        Ok(終了状態) => {
-            eprintln!("[xtask] 実行時アセット生成が終了コード{終了状態}で失敗");
-            false
-        }
-        Err(誤り) => {
-            eprintln!("[xtask] cargoの起動に失敗: {誤り}");
-            false
-        }
-    }
+    アセットコンパイラを起動して実行時形式を焼く(&実行時形式を焼く指定 {
+        ソースルート,
+        出力ルート,
+        世界名,
+        同居植生個体数,
+        テクスチャ格納方針の名前: None,
+    })
 }
