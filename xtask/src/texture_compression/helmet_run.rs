@@ -1,0 +1,66 @@
+//! DamagedHelmetの目視材料の生成。担当するのは、2048画素級の実アセットのベースカラーをBC1化した絵と
+//! 非圧縮の絵を同じ構図で撮り、格納バイト数の比を測ることである。
+//!
+//! この絵に画素の判定値を持たないのは、順4の完了定義がこの絵について「目視で破綻しないこと」だからである
+//! (参照: `_doc/設計/テクスチャのブロック圧縮と縮小段生成.md`「判断h」)。合否はオーナーが絵を見て決める。
+//! 機械が見るのはvalidationの指摘0件と、2枚の絵が実際に食い違うことだけである。後者を見るのは、
+//! 起動指定の取り違えで同じ絵を2枚並べたまま「破綻していない」と読む事故を防ぐためである。
+
+use std::path::Path;
+
+use super::world_bake::{ヘルメットのシーン名, 実行時形式のバイト数を読む};
+use super::{difference, draw, helmet_crop, summary, world_bake};
+
+pub(super) fn ヘルメットの目視材料を作る(出力先: &Path) -> Result<Vec<String>, String> {
+    let ルート = world_bake::ヘルメットの世界を方針違いで焼く()?;
+    let 非圧縮 = draw::描いてpngへ書き出す(
+        &ルート.非圧縮,
+        ヘルメットのシーン名,
+        &出力先.join("helmet_rgba8"),
+        "DamagedHelmet(全てRGBA8)",
+    )?;
+    let 圧縮 = draw::描いてpngへ書き出す(
+        &ルート.ブロック圧縮,
+        ヘルメットのシーン名,
+        &出力先.join("helmet_bc1"),
+        "DamagedHelmet(ベースカラーのブロック圧縮)",
+    )?;
+    let 統計 = 画面全体の統計を採る(&非圧縮.画像, &圧縮.画像)?;
+    if 統計.差のある画素数 == 0 {
+        return Err("DamagedHelmetの2枚の絵が1画素も食い違わない(方針の取り違えの疑いがある)".to_string());
+    }
+    helmet_crop::区画が絵に収まるか確かめる(非圧縮.画像.幅, 非圧縮.画像.高さ)?;
+    let 非圧縮の拡大 = helmet_crop::切り取って拡大する(&非圧縮.png, &出力先.join("helmet_rgba8_crop.png"))?;
+    let 圧縮の拡大 = helmet_crop::切り取って拡大する(&圧縮.png, &出力先.join("helmet_bc1_crop.png"))?;
+    Ok(vec![
+        format!("DamagedHelmetの{}(判定値なしの観測)", summary::統計の行を作る("絵の差", &統計)),
+        summary::格納バイト数の行を作る(
+            "DamagedHelmet",
+            実行時形式のバイト数を読む(&ルート.非圧縮, ヘルメットのシーン名)?,
+            実行時形式のバイト数を読む(&ルート.ブロック圧縮, ヘルメットのシーン名)?,
+        )?,
+        format!(
+            "DamagedHelmetの絵は{}と{}(拡大は{}と{})",
+            非圧縮.png.display(),
+            圧縮.png.display(),
+            非圧縮の拡大.display(),
+            圧縮の拡大.display()
+        ),
+    ])
+}
+
+/// ヘルメットは画面の一部を占めるだけであり、どの画素がどの素材かを構図から決められないため、
+/// 素材ごとに領域を分けず画面全体で統計を採る。背景の画素は差0として平均へ入るが、
+/// この値に判定を課さないため薄まりが判定を緩めることは無い。
+fn 画面全体の統計を採る(
+    非圧縮: &crate::vegetation_run::実行結果,
+    圧縮: &crate::vegetation_run::実行結果,
+) -> Result<difference::画素の成分差の統計, String> {
+    let 全体 = crate::pixel_region::画面領域 {
+        x開始: 0,
+        x終端: 非圧縮.幅,
+        y開始: 0,
+        y終端: 非圧縮.高さ,
+    };
+    difference::領域内の成分差の統計を求める(非圧縮, 圧縮, &全体)
+}

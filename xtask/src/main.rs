@@ -68,6 +68,7 @@ mod streaming_report;
 mod temporal_reconstruction;
 mod temporal_visual;
 mod terrain_visual;
+mod texture_compression;
 mod type_metrics;
 mod usage;
 mod validation_count;
