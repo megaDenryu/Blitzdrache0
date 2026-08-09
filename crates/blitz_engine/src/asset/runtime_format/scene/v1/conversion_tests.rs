@@ -8,7 +8,7 @@ use crate::asset::runtime_format::実行時形式からシーンを読む;
 use crate::asset::runtime_scene_tests::静的シーンを作る;
 
 fn 版1バイト列を作る() -> Vec<u8> {
-    let 内容 = super::write::内容を書く(&静的シーンを作る(vec![10, 20, 30, 255], 0.2)).unwrap();
+    let 内容 = super::write::シーン内容を書く(&静的シーンを作る(vec![10, 20, 30, 255], 0.2)).unwrap();
     実行時アセットを格納する(アセット形式版::V1, 実行時アセット種別::シーン, &内容).unwrap()
 }
 

@@ -8,11 +8,11 @@ use super::multi_material_body;
 use super::{read_element, write_element};
 use crate::asset::scene_data::シーンデータ;
 
-pub(super) fn 格納する(シーン: &シーンデータ) -> Result<Vec<u8>, アセット実行時形式エラー> {
-    let 内容 = multi_material_body::内容を書く(シーン, write_element::版5のテクスチャを書く)?;
+pub(super) fn シーン内容を格納する(シーン: &シーンデータ) -> Result<Vec<u8>, アセット実行時形式エラー> {
+    let 内容 = multi_material_body::マルチマテリアル本体を書く(シーン, write_element::版5のテクスチャを書く)?;
     実行時アセットを格納する(アセット形式版::V5, 実行時アセット種別::シーン, &内容)
 }
 
-pub(super) fn 内容を読む(内容: &[u8]) -> Result<シーンデータ, アセット実行時形式エラー> {
-    multi_material_body::内容を読む(内容, read_element::版5のテクスチャを読む)
+pub(super) fn シーン内容を読む(内容: &[u8]) -> Result<シーンデータ, アセット実行時形式エラー> {
+    multi_material_body::マルチマテリアル本体を読む(内容, read_element::版5のテクスチャを読む)
 }

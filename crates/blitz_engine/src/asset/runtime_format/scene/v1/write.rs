@@ -10,8 +10,8 @@ use crate::asset::draw_shape::描画形状;
 use crate::asset::render_object_data::描画対象データ;
 use crate::asset::scene_data::シーンデータ;
 
-pub(in crate::asset::runtime_format::scene) fn 内容を書く(
-    シーン: &シーンデータ
+pub(in crate::asset::runtime_format::scene) fn シーン内容を書く(
+    シーン: &シーンデータ,
 ) -> Result<Vec<u8>, アセット実行時形式エラー> {
     let ジョイント数 = シーン.スキン.as_ref().map(|値| 値.ジョイント一覧.len());
     if ジョイント数.is_none() && !シーン.アニメーション一覧.is_empty() {

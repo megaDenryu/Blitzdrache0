@@ -16,7 +16,7 @@ use crate::チャンク座標;
 /// 版2の描画対象1件の最小バイト数。形状の判別値1バイトと、最も小さい形状である通常メッシュ1つ分を足す。
 const 描画対象最小長: usize = read_element::形状以外の描画対象長 + 1 + read_element::メッシュ最小長;
 
-pub(in crate::asset::runtime_format::scene) fn 内容を読む(内容: &[u8]) -> Result<シーンV2, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn シーン内容を読む(内容: &[u8]) -> Result<シーンV2, アセット実行時形式エラー> {
     let mut 入力 = 読取位置::新規(内容);
     let 対象数 = 入力.件数(描画対象最小長)?;
     if 対象数 == 0 {

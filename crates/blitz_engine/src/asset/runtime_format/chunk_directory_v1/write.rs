@@ -4,7 +4,7 @@ use super::super::scene::bytes::書込先;
 use super::super::アセット実行時形式エラー;
 use crate::streaming::チャンク目録;
 
-pub(super) fn 内容を書く(目録: &チャンク目録) -> Result<Vec<u8>, アセット実行時形式エラー> {
+pub(super) fn チャンク目録内容を書く(目録: &チャンク目録) -> Result<Vec<u8>, アセット実行時形式エラー> {
     let mut 一覧: Vec<_> = 目録.全登録を走査する().collect();
     一覧.sort_by_key(|(チャンク, _)| (チャンク.x(), チャンク.z()));
     let mut 出力 = 書込先::新規();

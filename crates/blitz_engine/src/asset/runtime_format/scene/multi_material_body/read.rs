@@ -19,7 +19,7 @@ use crate::チャンク座標;
 /// 版4以降の描画対象1件の最小バイト数。形状の判別値1バイトと、最も小さい形状である通常メッシュ1つ分を足す。
 const 描画対象最小長: usize = read_element::版4以降の形状以外の描画対象長 + 1 + read_element::版4以降のメッシュ最小長;
 
-pub(in crate::asset::runtime_format::scene) fn 内容を読む(
+pub(in crate::asset::runtime_format::scene) fn マルチマテリアル本体を読む(
     内容: &[u8],
     テクスチャを読む: テクスチャを読む工程,
 ) -> Result<シーンデータ, アセット実行時形式エラー> {

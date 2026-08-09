@@ -14,13 +14,13 @@ use super::read_element;
 use super::write_element;
 use crate::asset::scene_data::シーンデータ;
 
-pub(super) fn 内容を読む(内容: &[u8]) -> Result<シーンデータ, アセット実行時形式エラー> {
-    multi_material_body::内容を読む(内容, read_element::版4までのテクスチャを読む)
+pub(super) fn シーン内容を読む(内容: &[u8]) -> Result<シーンデータ, アセット実行時形式エラー> {
+    multi_material_body::マルチマテリアル本体を読む(内容, read_element::版4までのテクスチャを読む)
 }
 
 #[cfg(test)]
-pub(in crate::asset::runtime_format::scene) fn 内容を書く(
-    シーン: &シーンデータ
+pub(in crate::asset::runtime_format::scene) fn シーン内容を書く(
+    シーン: &シーンデータ,
 ) -> Result<Vec<u8>, アセット実行時形式エラー> {
-    multi_material_body::内容を書く(シーン, write_element::版4までのテクスチャを書く)
+    multi_material_body::マルチマテリアル本体を書く(シーン, write_element::版4までのテクスチャを書く)
 }

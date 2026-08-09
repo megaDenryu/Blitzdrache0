@@ -6,8 +6,8 @@ use super::super::super::アセット実行時形式エラー;
 use super::super::bytes;
 use crate::asset::catalog::カタログ;
 
-pub(in crate::asset::runtime_format::catalog) fn 内容を書く(
-    カタログ: &カタログ
+pub(in crate::asset::runtime_format::catalog) fn カタログ内容を書く(
+    カタログ: &カタログ,
 ) -> Result<Vec<u8>, アセット実行時形式エラー> {
     let 一覧 = bytes::安定id順に並べる(カタログ);
     let mut 出力 = 書込先::新規();

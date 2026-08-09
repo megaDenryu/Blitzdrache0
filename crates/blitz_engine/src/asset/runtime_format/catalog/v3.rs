@@ -12,7 +12,7 @@ use crate::asset::{asset_metadata::アセットメタデータ, catalog::カタ�
 /// 版3の項目1件の最小バイト数。メタデータ以外の最小長へu64を4つ足した値である。
 const 項目最小長: usize = bytes::メタデータ以外の項目最小長 + 32;
 
-pub(super) fn 内容を読む(内容: &[u8]) -> Result<カタログ, アセット実行時形式エラー> {
+pub(super) fn カタログ内容を読む(内容: &[u8]) -> Result<カタログ, アセット実行時形式エラー> {
     let mut 入力 = 読取位置::新規(内容);
     let 項目数 = 入力.件数(項目最小長)?;
     let mut id一覧 = HashSet::with_capacity(項目数);
@@ -34,7 +34,7 @@ pub(super) fn 内容を読む(内容: &[u8]) -> Result<カタログ, アセッ�
     Ok(カタログ)
 }
 
-pub(super) fn 内容を書く(カタログ: &カタログ) -> Result<Vec<u8>, アセット実行時形式エラー> {
+pub(super) fn カタログ内容を書く(カタログ: &カタログ) -> Result<Vec<u8>, アセット実行時形式エラー> {
     let 一覧 = bytes::安定id順に並べる(カタログ);
     let mut 出力 = 書込先::新規();
     出力.件数(一覧.len())?;

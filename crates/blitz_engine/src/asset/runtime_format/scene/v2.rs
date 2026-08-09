@@ -22,7 +22,7 @@ use crate::asset::skin_data::スキンデータ;
 use crate::asset::terrain_lod_meshes::地形LODメッシュ群;
 use crate::チャンク座標;
 
-pub(super) use read::内容を読む;
+pub(super) use read::シーン内容を読む;
 
 pub(super) struct シーンV2 {
     先頭の描画対象: 描画対象V2,

@@ -9,5 +9,5 @@ mod shape_read;
 mod slot_check;
 mod write;
 
-pub(super) use read::内容を読む;
-pub(super) use write::内容を書く;
+pub(super) use read::マルチマテリアル本体を読む;
+pub(super) use write::マルチマテリアル本体を書く;

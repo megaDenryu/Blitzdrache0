@@ -21,7 +21,7 @@ use crate::asset::scene_data::シーンデータ;
 use crate::asset::skin_data::スキンデータ;
 use crate::チャンク座標;
 
-pub(super) use read::内容を読む;
+pub(super) use read::シーン内容を読む;
 
 pub(super) struct シーンV1 {
     先頭の描画対象: 描画対象V1,
