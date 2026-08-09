@@ -4,14 +4,15 @@
 //! 台帳を親から分けるのは、検収の世界が増えるたびにこの一覧だけが伸び、計画の分岐と押し合うためである。
 
 /// 書き換えもピクセル判定も持たず、判定を検収側のxtaskが読み戻し画像と計数で行うシーンの名前の接頭辞。
-/// 判定する入口は順に`instance-*`・`prop-draw`と`village-draw`・`multi-material-draw`・`indirect-probe`・`terrain-visual`・`texture-compression`である。
+/// 判定する入口は順に`instance-*`・`prop-draw`と`village-draw`・`multi-material-draw`・`indirect-probe`・`terrain-visual`・`texture-compression`・`game-fox-tour`である。
 /// 既定の計画は`quad`のホットリロード検証であり、監視対象のシェーダーとquadの実行時形式を書き換えるため、
 /// これらをその計画へ落とすとリポジトリのシェーダーと既存の生成物が書き換わる。
-const 接頭辞一覧: [&str; 6] = [
+const 接頭辞一覧: [&str; 7] = [
     "vegetation",
     "prop_",
     "multi_material",
     "indirect_probe",
+    "terrain_fox_tour",
     "terrain_visual",
     "texture_compression",
 ];

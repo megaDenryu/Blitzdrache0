@@ -6,9 +6,7 @@
 
 use std::path::Path;
 
-use super::{
-    場所巡りの世界, 地形の世界, 板の世界, 植生の世界, 生成する, 目視見本の世界, 見本の集落の世界
-};
+use super::{地形の世界, 場所巡りの世界, 板の世界, 植生の世界, 生成する, 目視見本の世界, 見本の集落の世界};
 
 const 既定ソースルート: &str = "assets";
 const 既定出力ルート: &str = "target/runtime_assets";

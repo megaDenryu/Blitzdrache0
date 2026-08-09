@@ -18,7 +18,9 @@ mod village;
 mod visual_sample;
 
 pub use chunk_directory_source::{チャンク目録ソースを読み込む, チャンク目録ソース項目};
-pub use compile::{コンパイル済みシーン, ソースシーンをコンパイルする, 寸法を合わせる倍率を与えてソースシーンをコンパイルする};
+pub use compile::{
+    コンパイル済みシーン, ソースシーンをコンパイルする, 寸法を合わせる倍率を与えてソースシーンをコンパイルする
+};
 pub use destination_marker::{目印つき地形チャンクをコンパイルする, 目印の据え付け};
 pub use error::アセットコンパイルエラー;
 pub use height_field::{
