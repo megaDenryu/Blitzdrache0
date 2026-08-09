@@ -23,6 +23,7 @@ mod distant_environment;
 mod fetch_assets;
 mod file_scan;
 mod fox_tour_launch;
+mod fox_tour_map_seed;
 mod game_fox_tour;
 mod gen_atmosphere_reference;
 mod gen_game_map;

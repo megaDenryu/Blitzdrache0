@@ -11,6 +11,7 @@ mod height;
 mod lattice_noise;
 mod marker_geometry;
 mod marker_gltf_json;
+mod seed_file;
 
 use std::path::Path;
 
@@ -37,7 +38,8 @@ const 目印の文書ファイル名: &str = "destination_marker.gltf";
 
 pub(crate) fn 書き出す(出力先ディレクトリ: &Path, 種: マップ生成の乱数の種) -> Result<(), String> {
     地面を書き出す(出力先ディレクトリ, 種)?;
-    目印の柱を書き出す(出力先ディレクトリ)
+    目印の柱を書き出す(出力先ディレクトリ)?;
+    seed_file::マップの生成に使った乱数の種をファイルへ書き出す(出力先ディレクトリ, 種)
 }
 
 fn 地面を書き出す(出力先ディレクトリ: &Path, 種: マップ生成の乱数の種) -> Result<(), String> {
