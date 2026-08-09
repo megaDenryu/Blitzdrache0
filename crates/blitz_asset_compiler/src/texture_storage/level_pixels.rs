@@ -14,6 +14,7 @@ pub const 緑の位置: usize = 1;
 pub const 青の位置: usize = 2;
 pub const 不透明度の位置: usize = 3;
 
+/// 添字の算術に使う1画素のバイト数。エンジンの`テクスチャ格納形式::RGBA8`が数える1画素と同じ4である。
 const 画素1つのバイト数: usize = 4;
 
 pub struct 縮小段の画素の読み出し口<'a> {

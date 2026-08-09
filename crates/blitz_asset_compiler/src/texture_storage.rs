@@ -7,6 +7,9 @@ mod level_pixels;
 mod mip_chain;
 mod pixel_color;
 
+#[cfg(test)]
+mod all_levels_tests;
+
 use blitz_engine::テクスチャデータ;
 
 use crate::error::アセットコンパイルエラー;
