@@ -6,7 +6,9 @@
 
 use std::path::Path;
 
-use super::{地形の世界, 板の世界, 植生の世界, 生成する, 目視見本の世界, 見本の集落の世界};
+use super::{
+    場所巡りの世界, 地形の世界, 板の世界, 植生の世界, 生成する, 目視見本の世界, 見本の集落の世界
+};
 
 const 既定ソースルート: &str = "assets";
 const 既定出力ルート: &str = "target/runtime_assets";
@@ -14,6 +16,7 @@ const 地形の既定出力ルート: &str = "target/terrain_assets";
 const 植生の既定出力ルート: &str = "target/vegetation_assets";
 const 見本の集落の既定出力ルート: &str = "target/village_assets";
 const 目視見本の既定出力ルート: &str = "target/terrain_visual_assets";
+const 場所巡りの既定出力ルート: &str = "target/fox_tour_assets";
 
 pub fn ソースルート() -> &'static Path {
     Path::new(既定ソースルート)
@@ -45,4 +48,16 @@ pub fn 見本の集落世界を既定で生成する() -> bool {
 /// 小物の原型が本体リポジトリの外にあるアセットリポジトリだけにある。この世界を要るのは`terrain-visual`だけである。
 pub fn 目視見本世界を既定で生成する() -> bool {
     生成する(ソースルート(), Path::new(目視見本の既定出力ルート), 目視見本の世界)
+}
+
+/// 場所巡りの世界も原点チャンクを占めるため、専用の既定出力ルートへ焼く。一括生成へ入れないのは、この世界の地面が
+/// 乱数の種から作られ、種を指定する`gen-game-map`を通らなければソースが存在しないためである。
+/// この世界を要るのは`gen-game-map`と`game-fox-tour`だけであり、そこが名指しで呼ぶ。
+pub fn 場所巡り世界を既定で生成する() -> bool {
+    生成する(ソースルート(), Path::new(場所巡りの既定出力ルート), 場所巡りの世界)
+}
+
+/// 場所巡りの世界の実行時アセットの置き場。blitz_appの`--asset-root`へ渡す綴りである。
+pub fn 場所巡りの出力ルート() -> &'static Path {
+    Path::new(場所巡りの既定出力ルート)
 }

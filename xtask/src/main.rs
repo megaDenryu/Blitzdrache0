@@ -24,6 +24,7 @@ mod fetch_assets;
 mod file_scan;
 mod game_fox_tour;
 mod gen_atmosphere_reference;
+mod gen_game_map;
 mod gen_source_assets;
 mod hdr_luminance;
 mod ibl_step;

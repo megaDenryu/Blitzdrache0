@@ -1,0 +1,10 @@
+blitz_chunk_directory 1
+-1 -1 fox_tour_x-1_z-1 fox_tour_x-1_z-1.heightgrid
+0 -1 fox_tour_x0_z-1 fox_tour_x0_z-1.heightgrid
+1 -1 fox_tour_x1_z-1 fox_tour_x1_z-1.heightgrid
+-1 0 fox_tour_x-1_z0 fox_tour_x-1_z0.heightgrid
+0 0 fox_tour_x0_z0 fox_tour_x0_z0.heightgrid
+1 0 fox_tour_x1_z0 fox_tour_x1_z0.heightgrid
+-1 1 fox_tour_x-1_z1 fox_tour_x-1_z1.heightgrid
+0 1 fox_tour_x0_z1 fox_tour_x0_z1.heightgrid
+1 1 fox_tour_x1_z1 fox_tour_x1_z1.heightgrid

@@ -5,18 +5,21 @@
 
 mod chunk_directory_source;
 mod compile;
+mod destination_marker;
 mod error;
 mod height_field;
 mod height_grid;
 mod loader;
 mod terrain;
 mod texture_storage;
+mod uniform_scale;
 mod vegetation;
 mod village;
 mod visual_sample;
 
 pub use chunk_directory_source::{チャンク目録ソースを読み込む, チャンク目録ソース項目};
-pub use compile::{コンパイル済みシーン, ソースシーンをコンパイルする};
+pub use compile::{コンパイル済みシーン, ソースシーンをコンパイルする, 寸法を合わせる倍率を与えてソースシーンをコンパイルする};
+pub use destination_marker::{目印つき地形チャンクをコンパイルする, 目印の据え付け};
 pub use error::アセットコンパイルエラー;
 pub use height_field::{
     コンパイル済み高さ場, チャンクごとの高さ格子から高さ場を組み立てる, 高さ場アセットをコンパイルする, 高さ場コンパイルエラー
@@ -32,6 +35,7 @@ pub use texture_storage::{
     rgba8の縮小段をbc1のバイト列へ符号化する, srgbの色として縦横を半分に縮める, srgbの色として縮小段の連なりを作る,
     srgbの色の全段をbc1のバイト列へ符号化する, テクスチャ格納方針, 方針と役割に従って原寸を格納済みテクスチャへ焼く, 材質テクスチャ役割,
 };
+pub use uniform_scale::寸法を合わせる一様倍率;
 pub use vegetation::{
     同居植生の指定, 地形同居の群, 地形同居の群を作る, 植生チャンクをコンパイルする, 植生単一個体シーンをコンパイルする,
     植生可視判定シーンをコンパイルする, 植生影視距離シーンをコンパイルする, 植生詳細段シーンをコンパイルする,

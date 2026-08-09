@@ -5,6 +5,7 @@
 mod catalog;
 mod chunk_world;
 mod compile_target;
+mod height_field;
 mod source_kind;
 mod source_location;
 mod texture_policy_argument;
@@ -43,7 +44,7 @@ fn 実行する() -> Result<(), String> {
     let 出力ルート = Path::new(出力ルート文字列);
     std::fs::create_dir_all(出力ルート).map_err(|誤り| format!("出力ディレクトリ{}を作れない: {誤り}", 出力ルート.display()))?;
     let (mut カタログ, mut 対象一覧) = catalog::構築する(ソースルート, 出力ルート, 世界)?;
-    let チャンク目録 = chunk_world::カタログへ登録する(ソースルート, 出力ルート, 世界, 同居植生個体数, &mut カタログ, &mut 対象一覧)?;
+    let 取り込み結果 = chunk_world::カタログへ登録する(ソースルート, 出力ルート, 世界, 同居植生個体数, &mut カタログ, &mut 対象一覧)?;
     let mut 実行時カタログ = カタログ::空を作る();
 
     for 対象 in 対象一覧 {
@@ -53,8 +54,11 @@ fn 実行する() -> Result<(), String> {
         実行時カタログ.詳細を登録する(対象.id, std::path::PathBuf::from(ファイル名), 結果.ソース依存一覧, 結果.メタデータ);
         println!("[compile_assets] {}: {}バイト", 対象.出力パス.display(), 結果.実行時バイト列.len());
     }
+    if 世界.高さ場を焼くか() {
+        height_field::高さ場を焼いて登録する(出力ルート, &取り込み結果.チャンクごとのソース一覧, &mut 実行時カタログ)?;
+    }
     カタログを書き出す(出力ルート, &実行時カタログ)?;
-    chunk_world::目録を書き出す(出力ルート, &チャンク目録)
+    chunk_world::目録を書き出す(出力ルート, &取り込み結果.目録)
 }
 
 /// 同居植生の個体数。0はインスタンス群を持てない値であり、コンパイラの奥まで運ぶより入口で拒む。

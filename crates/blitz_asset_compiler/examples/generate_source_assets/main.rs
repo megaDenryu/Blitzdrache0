@@ -1,25 +1,32 @@
-//! 検証用ソースアセットの生成器。決定的・ネット不要。
-//! `cargo xtask gen-source-assets`で
+//! ソースアセットの生成器。決定的・ネット不要。書き出すものは起動引数で2つに分かれる。
+//!
+//! 引数なし(`cargo xtask gen-source-assets`)では検証用の世界一式を書き出す。行き先は
 //! assets/smoke/ へ quad.gltf・quad_alt.gltf・quad.bin・2色のテクスチャと、
 //! shadow_scene.gltf・shadow_scene.bin・shadow_scene_white.png(判断37)と、
 //! 材質境界の検収用のmulti_material.bin・multi_material_two.gltf・multi_material_one.gltfと、
 //! 遠方環境の消費の検収用のindirect_probe.bin・indirect_probe.gltfを、
 //! assets/chunk_world/ へ25チャンク分のglTFと共有バッファと目録ソースを、
 //! assets/terrain_world/ へ25チャンク分の高さ格子と目録ソースを、
-//! assets/vegetation_world/ へ植生の原型glTFと頂点量の診断用に面を細分化した原型glTFと1チャンクの目録ソースを書き出す。
+//! assets/vegetation_world/ へ植生の原型glTFと頂点量の診断用に面を細分化した原型glTFと1チャンクの目録ソースを、
 //! assets/village_world/ へ見本の集落の地面1チャンク分の高さ格子と目録ソースを、
-//! assets/terrain_visual_world/ へ目視見本の地面1チャンク分の高さ格子と目録ソースと材質見本の立体のglTFを書き出す。
+//! assets/terrain_visual_world/ へ目視見本の地面1チャンク分の高さ格子と目録ソースと材質見本の立体のglTFを、
 //! assets/texture_compression_world/ へブロック圧縮の対照の素材(512画素四方の滑らかなグラデーションと決定的な雑音)と
 //! それらをベースカラーに持つ板2枚のglTFと1チャンクの目録ソースを書き出す。
-//! xtask gen-source-assets の実体であり、リポジトリルートを作業ディレクトリとして実行される。
+//!
+//! `--game-map-seed <数>`(`cargo xtask gen-game-map --seed <数>`)では場所巡りの世界だけを書き出す。行き先は
+//! assets/fox_tour_world/ であり、種から決めた9チャンク分の高さ格子と目録ソースと目的地の目印の柱のglTFである。
+//!
+//! どちらの実行もリポジトリルートを作業ディレクトリとする。
 
 mod chunk_world;
 mod directory_source;
+mod fox_tour_world;
 mod geometry;
 mod gltf_json;
 mod indirect_probe_geometry;
 mod indirect_probe_gltf_json;
 mod indirect_probe_plates;
+mod map_seed;
 mod multi_material_geometry;
 mod multi_material_gltf_json;
 mod shadow_scene_geometry;
@@ -31,9 +38,12 @@ mod terrain_world;
 mod texture_compression_world;
 mod textures;
 mod vegetation_world;
+mod verification_worlds;
 mod village_world;
 
 use std::path::Path;
+
+use map_seed::マップ生成の乱数の種;
 
 fn main() {
     if let Err(誤り) = 実行する() {
@@ -43,43 +53,21 @@ fn main() {
 }
 
 fn 実行する() -> Result<(), String> {
-    let スモーク出力先 = Path::new("assets/smoke");
-    ディレクトリを作る(スモーク出力先)?;
-    smoke_assets::書き出す(スモーク出力先)?;
-    println!("[generate_source_assets] {}へ生成完了", スモーク出力先.display());
+    let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
+    match map_seed::引数一覧から種を読む(&引数一覧)? {
+        Some(種) => 場所巡りの世界を書き出す(種),
+        None => verification_worlds::一式を書き出す(),
+    }
+}
 
-    let チャンク世界出力先 = Path::new("assets/chunk_world");
-    ディレクトリを作る(チャンク世界出力先)?;
-    chunk_world::書き出す(チャンク世界出力先)?;
-    println!("[generate_source_assets] {}へ生成完了", チャンク世界出力先.display());
-
-    let 地形世界出力先 = Path::new("assets/terrain_world");
-    ディレクトリを作る(地形世界出力先)?;
-    terrain_world::書き出す(地形世界出力先)?;
-    println!("[generate_source_assets] {}へ生成完了", 地形世界出力先.display());
-
-    let 植生世界出力先 = Path::new("assets/vegetation_world");
-    ディレクトリを作る(植生世界出力先)?;
-    vegetation_world::書き出す(植生世界出力先)?;
-    println!("[generate_source_assets] {}へ生成完了", 植生世界出力先.display());
-
-    let 見本の集落出力先 = Path::new("assets/village_world");
-    ディレクトリを作る(見本の集落出力先)?;
-    village_world::書き出す(見本の集落出力先)?;
-    println!("[generate_source_assets] {}へ生成完了", 見本の集落出力先.display());
-
-    let 目視見本出力先 = Path::new("assets/terrain_visual_world");
-    ディレクトリを作る(目視見本出力先)?;
-    terrain_visual_world::書き出す(目視見本出力先)?;
-    println!("[generate_source_assets] {}へ生成完了", 目視見本出力先.display());
-
-    let ブロック圧縮の対照出力先 = Path::new("assets/texture_compression_world");
-    ディレクトリを作る(ブロック圧縮の対照出力先)?;
-    texture_compression_world::対照素材のソース一式を書き出す(ブロック圧縮の対照出力先)?;
-    println!("[generate_source_assets] {}へ生成完了", ブロック圧縮の対照出力先.display());
+fn 場所巡りの世界を書き出す(種: マップ生成の乱数の種) -> Result<(), String> {
+    let 出力先 = Path::new("assets/fox_tour_world");
+    ディレクトリを作る(出力先)?;
+    fox_tour_world::書き出す(出力先, 種)?;
+    println!("[generate_source_assets] {}へ種{}から生成完了", 出力先.display(), 種.値());
     Ok(())
 }
 
-fn ディレクトリを作る(パス: &Path) -> Result<(), String> {
+pub(crate) fn ディレクトリを作る(パス: &Path) -> Result<(), String> {
     std::fs::create_dir_all(パス).map_err(|誤り| format!("{}の作成に失敗した: {誤り}", パス.display()))
 }

@@ -1,12 +1,14 @@
 //! どのチャンク世界を1つの出力ルートへ焼くかの選択。1つの出力ルートは1つのカタログと1つのチャンク目録を持つため、
 //! 同じ座標を持つ2つの世界は同じ出力ルートへ同居できない。世界の選択がそのまま出力ルートの選択になる。
 //! どのアセットを焼くかの宣言は`asset_declaration`が、定義1件の組み立ては`definition_kind`が持ち、
-//! プロセス境界の綴りとその解析は`argument_name`が持つ。宣言をコンパイラが受け取る指定へ写す手順は、
-//! 小物群を`prop_group_declaration`が、目視見本を`visual_sample_declaration`が持つ。
+//! プロセス境界の綴りとその解析は`argument_name`が、目録ソースの置き場は`directory_source_path`が持つ。宣言をコンパイラが受け取る指定へ写す手順は、
+//! 小物群を`prop_group_declaration`が、目視見本を`visual_sample_declaration`が、場所巡りを`fox_tour_declaration`が持つ。
 
 mod argument_name;
 mod asset_declaration;
 mod definition_kind;
+mod directory_source_path;
+pub(super) mod fox_tour_declaration;
 pub(super) mod prop_group_declaration;
 mod vegetation_declaration;
 mod vertex_diagnostic_declaration;
@@ -15,14 +17,6 @@ pub(super) mod visual_sample_declaration;
 
 use super::catalog::{アセット定義, ソース種別};
 use vertex_diagnostic_declaration::診断の原型;
-
-/// ソースルートからの相対で固定した、世界ごとの目録ソースの配置先。
-const 板の世界の目録ソース: &str = "chunk_world/chunk_directory.txt";
-const 地形の世界の目録ソース: &str = "terrain_world/chunk_directory.txt";
-const 植生の世界の目録ソース: &str = "vegetation_world/chunk_directory.txt";
-const 見本の集落の世界の目録ソース: &str = "village_world/chunk_directory.txt";
-const 目視見本の世界の目録ソース: &str = "terrain_visual_world/chunk_directory.txt";
-const ブロック圧縮の対照世界の目録ソース: &str = "texture_compression_world/chunk_directory.txt";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum 対象世界 {
@@ -36,6 +30,9 @@ pub(super) enum 対象世界 {
     頂点診断の世界(診断の原型),
     /// ブロック圧縮の絵と誤差の統計を確かめるための世界。対照の素材をベースカラーに持つ板2枚を原点チャンクへ置き、チャンク以外に焼くものを持たない。参照: `_doc/設計/テクスチャのブロック圧縮と縮小段生成.md`「判断i」
     ブロック圧縮の対照世界,
+    /// クソゲー1本目「キツネの場所巡り」を遊ぶ世界。乱数の種から生成した9チャンクの地面へ目的地の目印を立て、
+    /// 起動時に読むキツネのシーンを一緒に焼く。参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「第1段階の定義」
+    場所巡りの世界,
 }
 
 impl 対象世界 {
@@ -43,16 +40,8 @@ impl 対象世界 {
         argument_name::解析する(引数名)
     }
 
-    /// 頂点診断の世界が地形の目録を読むのは、代表世界と同じ25チャンクの同じ地面を対象にするためである。
     pub(super) fn 目録ソース相対パス(self) -> &'static str {
-        match self {
-            Self::板の世界 => 板の世界の目録ソース,
-            Self::地形の世界 | Self::頂点診断の世界(_) => 地形の世界の目録ソース,
-            Self::植生の世界 => 植生の世界の目録ソース,
-            Self::見本の集落の世界 => 見本の集落の世界の目録ソース,
-            Self::目視見本の世界 => 目視見本の世界の目録ソース,
-            Self::ブロック圧縮の対照世界 => ブロック圧縮の対照世界の目録ソース,
-        }
+        directory_source_path::選ぶ(self)
     }
 
     /// その世界のチャンクがどのソース形式で書かれているか。板はglTF、地形は高さ格子、植生は原型glTFである。
@@ -77,12 +66,19 @@ impl 対象世界 {
                 同居植生: Some(vertex_diagnostic_declaration::同居植生(原型, 同居植生個体数)),
             },
             Self::ブロック圧縮の対照世界 => ソース種別::Gltfシーン,
+            Self::場所巡りの世界 => fox_tour_declaration::チャンクのソース種別(),
         }
     }
 
     /// 同居植生の個体数を指定されなかったときに使う値。地形と頂点診断以外の世界は同居植生を持たないため、この値を読まない。
     pub(super) fn 同居植生の既定個体数() -> usize {
         asset_declaration::地形同居の既定個体数
+    }
+
+    /// その世界が高さ場アセットを焼くか。実行中に地形の高さを参照するのは場所巡りの世界だけであり、
+    /// 検収の世界は高さ場を持たない(持たせると既存の世界のカタログの中身が変わる)。
+    pub(super) fn 高さ場を焼くか(self) -> bool {
+        self == Self::場所巡りの世界
     }
 
     /// チャンク以外に焼く、この世界のアセット一覧。
@@ -95,6 +91,7 @@ impl 対象世界 {
             Self::目視見本の世界 => visual_sample_declaration::一覧(),
             Self::頂点診断の世界(原型) => vertex_diagnostic_declaration::一覧(原型),
             Self::ブロック圧縮の対照世界 => Vec::new(),
+            Self::場所巡りの世界 => fox_tour_declaration::一覧(),
         }
     }
 }
