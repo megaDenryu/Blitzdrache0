@@ -12,7 +12,7 @@ use blitz_engine::auto_exposure::露出方式;
 use blitz_engine::local_visibility::拡散間接方式;
 use blitz_engine::sky::{世界の空方針, 世界の間接照明方針};
 use blitz_engine::temporal_reconstruction::時間再構成方式;
-pub(in crate::app) use sky_pass_choice::積むか as 空を描くか;
+pub(in crate::app) use sky_pass_choice::空パスを積むか as 空を描くか;
 
 use crate::cli::local_visibility_settings::{局所可視性の起動指定, 拡散間接方式の起動上書き};
 use crate::cli::temporal_reconstruction_settings::時間再構成方式の起動上書き;

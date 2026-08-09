@@ -41,7 +41,7 @@ impl 対象世界 {
     }
 
     pub(super) fn 目録ソース相対パス(self) -> &'static str {
-        directory_source_path::選ぶ(self)
+        directory_source_path::目録ソース相対パスを選ぶ(self)
     }
 
     /// その世界のチャンクがどのソース形式で書かれているか。板はglTF、地形は高さ格子、植生は原型glTFである。

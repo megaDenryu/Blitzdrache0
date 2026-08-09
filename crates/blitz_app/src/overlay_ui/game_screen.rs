@@ -64,7 +64,7 @@ fn 進行を描く(ctx: &egui::Context, 表示内容: ゲーム画面の表示�
     egui::Area::new(egui::Id::new("キツネの場所巡りの進行"))
         .anchor(egui::Align2::LEFT_TOP, egui::vec2(24.0, 24.0))
         .show(ctx, |ui| {
-            板を敷く().show(ui, |ui| {
+            敷く板を作る().show(ui, |ui| {
                 ui.label(
                     egui::RichText::new(format!("巡った場所 {} / {}", 表示内容.到達済みの目的地数, 表示内容.目的地の総数))
                         .size(進行の文字の大きさ)
@@ -84,7 +84,7 @@ fn 案内の文字(文: &str) -> egui::RichText {
 }
 
 /// 文字の後ろへ敷く板。地面の明るさは時刻と自動露出で動くため、板を敷かないと読める時刻と読めない時刻ができる。
-fn 板を敷く() -> egui::Frame {
+fn 敷く板を作る() -> egui::Frame {
     egui::Frame::NONE.fill(敷く板の色).inner_margin(板の内側の余白).corner_radius(8.0)
 }
 
@@ -92,7 +92,7 @@ fn 画面の中央へ重ねる(ctx: &egui::Context, 名前: &str, 中身: impl F
     egui::Area::new(egui::Id::new(名前))
         .anchor(egui::Align2::CENTER_CENTER, egui::vec2(0.0, 0.0))
         .show(ctx, |ui| {
-            板を敷く().show(ui, |ui| {
+            敷く板を作る().show(ui, |ui| {
                 ui.vertical_centered(中身);
             });
         });

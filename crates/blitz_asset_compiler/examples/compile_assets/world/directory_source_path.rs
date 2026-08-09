@@ -13,7 +13,7 @@ const ブロック圧縮の対照世界の目録ソース: &str = "texture_compr
 const 場所巡りの世界の目録ソース: &str = "fox_tour_world/chunk_directory.txt";
 
 /// 頂点診断の世界が地形の目録を読むのは、代表世界と同じ25チャンクの同じ地面を対象にするためである。
-pub(super) fn 選ぶ(世界: 対象世界) -> &'static str {
+pub(super) fn 目録ソース相対パスを選ぶ(世界: 対象世界) -> &'static str {
     match 世界 {
         対象世界::板の世界 => 板の世界の目録ソース,
         対象世界::地形の世界 | 対象世界::頂点診断の世界(_) => 地形の世界の目録ソース,

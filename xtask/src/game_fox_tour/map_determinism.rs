@@ -12,19 +12,22 @@ use std::path::{Path, PathBuf};
 const 突き合わせるディレクトリ一覧: [&str; 2] = ["assets/fox_tour_world", "target/fox_tour_assets"];
 
 pub(super) fn 同じ種から同じマップが出ることを確かめる(種: &str) -> Result<String, String> {
-    if !crate::gen_game_map::生成する(種) {
+    if !crate::gen_game_map::種からマップを生成する(種) {
         return Err(format!("種{種}からのマップ生成に失敗した(1度目)"));
     }
     let 一度目 = 全ファイルのバイト列を読む()?;
-    if !crate::gen_game_map::生成する(種) {
+    if !crate::gen_game_map::種からマップを生成する(種) {
         return Err(format!("種{種}からのマップ生成に失敗した(2度目)"));
     }
     let 二度目 = 全ファイルのバイト列を読む()?;
-    突き合わせる(&一度目, &二度目)?;
+    二度の生成のバイト列を突き合わせる(&一度目, &二度目)?;
     Ok(format!("種{種}から2度作ったマップが{}本のファイルでバイト一致した", 一度目.len()))
 }
 
-fn 突き合わせる(一度目: &BTreeMap<PathBuf, Vec<u8>>, 二度目: &BTreeMap<PathBuf, Vec<u8>>) -> Result<(), String> {
+fn 二度の生成のバイト列を突き合わせる(
+    一度目: &BTreeMap<PathBuf, Vec<u8>>,
+    二度目: &BTreeMap<PathBuf, Vec<u8>>,
+) -> Result<(), String> {
     if 一度目.len() != 二度目.len() {
         return Err(format!("2度の生成でファイルの本数が食い違った({}本と{}本)", 一度目.len(), 二度目.len()));
     }

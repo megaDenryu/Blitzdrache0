@@ -18,7 +18,7 @@ const 種の選択肢の綴り: &str = "--seed";
 const 生成器へ渡す綴り: &str = "--game-map-seed";
 
 pub fn 実行する(引数一覧: &[String]) -> ExitCode {
-    let 種 = match 種を読む(引数一覧) {
+    let 種 = match 引数一覧から種を読む(引数一覧) {
         Ok(種) => 種,
         Err(理由) => {
             eprintln!("[xtask] gen-game-map失敗: {理由}");
@@ -26,15 +26,19 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
             return ExitCode::FAILURE;
         }
     };
-    if 生成する(&種) { ExitCode::SUCCESS } else { ExitCode::FAILURE }
+    if 種からマップを生成する(&種) {
+        ExitCode::SUCCESS
+    } else {
+        ExitCode::FAILURE
+    }
 }
 
 /// ソースアセットを種から書き出し、続けて実行時形式へ焼く。焼く工程は既存のコンパイル入口をそのまま呼ぶ。
-pub fn 生成する(種: &str) -> bool {
+pub fn 種からマップを生成する(種: &str) -> bool {
     ソースアセットを種から書き出す(種) && compile_assets::場所巡り世界を既定で生成する()
 }
 
-fn 種を読む(引数一覧: &[String]) -> Result<String, String> {
+fn 引数一覧から種を読む(引数一覧: &[String]) -> Result<String, String> {
     let [綴り, 値] = 引数一覧 else {
         return Err(format!("引数は{種の選択肢の綴り}と種の値の2語である"));
     };
