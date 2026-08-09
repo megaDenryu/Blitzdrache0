@@ -10,6 +10,7 @@ mod entity_id;
 mod entity_ledger;
 mod fox_tour;
 mod render_supply;
+mod scripted_operation;
 mod step_seconds;
 mod summary;
 
@@ -40,8 +41,8 @@ impl ゲーム配線 {
     pub(crate) fn 起動設定から作る(遊ぶゲーム: 遊ぶゲームの指定, モード: 起動モード) -> Self {
         match 遊ぶゲーム {
             遊ぶゲームの指定::ゲームを遊ばない => Self::ゲームを遊ばない,
-            遊ぶゲームの指定::キツネの場所巡り => {
-                Self::キツネの場所巡り(fox_tour::キツネの場所巡りの配線::生成する(モード))
+            遊ぶゲームの指定::キツネの場所巡り(操作の出どころ) => {
+                Self::キツネの場所巡り(fox_tour::キツネの場所巡りの配線::生成する(モード, 操作の出どころ))
             }
         }
     }

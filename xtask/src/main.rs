@@ -22,6 +22,7 @@ mod dispatch;
 mod distant_environment;
 mod fetch_assets;
 mod file_scan;
+mod game_fox_tour;
 mod gen_atmosphere_reference;
 mod gen_source_assets;
 mod hdr_luminance;

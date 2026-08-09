@@ -8,4 +8,6 @@ pub(crate) struct ゲーム進行の要約 {
     pub(crate) 最後の進行段階の呼び名: &'static str,
     pub(crate) 到達済みの目的地数: usize,
     pub(crate) 目的地の総数: usize,
+    /// 最後のゲーム更新の後のプレイヤーの大域位置。動く個体が実際に動いたかを、絵を見ずに実行の結果で確かめるために出す。
+    pub(crate) プレイヤーの大域位置: blitz_math::大域ワールド位置,
 }
