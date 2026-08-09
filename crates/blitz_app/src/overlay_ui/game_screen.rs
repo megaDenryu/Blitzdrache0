@@ -45,7 +45,7 @@ fn タイトルを描く(ctx: &egui::Context) {
         ui.label(案内の文字("Enterではじめる"));
         ui.label(案内の文字("Escで終了"));
         ui.add_space(12.0);
-        ui.label(案内の文字("WASDで歩き、橙色の柱をすべて訪ねる"));
+        ui.label(案内の文字("矢印キーで歩き、橙色の柱をすべて訪ねる"));
     });
 }
 

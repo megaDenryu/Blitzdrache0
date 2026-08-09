@@ -11,7 +11,7 @@ pub fn 実行する() -> ExitCode {
     コマンド.args(["run", "-p", "blitz_app", "--release", "--"]);
     crate::fox_tour_launch::世界を開く指定を積む(&mut コマンド);
     コマンド.args(["--game", "fox_tour"]);
-    println!("[xtask] キツネの場所巡りを起動する(Enterではじめる、WASDで歩く、Escで終了確認)");
+    println!("[xtask] キツネの場所巡りを起動する(Enterではじめる、矢印キーで歩く、Escで終了確認)");
     match コマンド.status() {
         Ok(終了状態) if 終了状態.success() => ExitCode::SUCCESS,
         Ok(終了状態) => {
