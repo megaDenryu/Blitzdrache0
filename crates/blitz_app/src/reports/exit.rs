@@ -6,6 +6,9 @@ use super::{display_timing, streaming_summary};
 use crate::app::アプリ;
 
 pub(crate) fn 終了時報告を出す(アプリ: &アプリ) {
+    if let Some(要約) = アプリ.ゲームの進行の要約を作る() {
+        super::game::ゲームの進行を表示する(&要約);
+    }
     if アプリ.gpu時間報告が必要か() {
         super::gpu_time_table::表示する(&アプリ.パス別gpu時間を取得する());
     }

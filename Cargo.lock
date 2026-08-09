@@ -135,6 +135,7 @@ name = "blitz_app"
 version = "0.1.0"
 dependencies = [
  "blitz_engine",
+ "blitz_game",
  "blitz_math",
  "blitz_render",
  "blitz_sim",

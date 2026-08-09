@@ -5,6 +5,8 @@ mod cli_tests;
 #[cfg(test)]
 mod frame_dump_args_tests;
 #[cfg(test)]
+mod game_selection_tests;
+#[cfg(test)]
 mod ibl_step_scan_args_tests;
 #[cfg(test)]
 mod launch_request_tests;
@@ -20,6 +22,7 @@ mod auto_exposure_probe_args;
 mod depth_prepass_args;
 mod draw_object_layout;
 mod draw_object_order;
+mod game_selection;
 mod ibl_step_scan_args;
 mod indirect_probe_args;
 mod instance_lod_args;
@@ -46,6 +49,7 @@ mod verification_plan;
 pub(crate) use argument_error::起動引数エラー;
 pub(crate) use draw_object_layout::描画対象の並べ方;
 pub(crate) use draw_object_order::描画対象の走査順;
+pub(crate) use game_selection::遊ぶゲームの指定;
 pub(crate) use launch_request::起動要求;
 pub(crate) use modes::{布モード, 粒子表示モード};
 pub(crate) use object_count::描画対象数;

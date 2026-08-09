@@ -10,6 +10,8 @@ pub(crate) enum 起動引数エラー {
     シェーダーソース不正(String),
     #[error("--scene引数が不正だった: {0}")]
     シーン名不正(String),
+    #[error("--game引数が不正だった: {0}")]
+    遊ぶゲーム不正(String),
     #[error("--asset-root引数が不正だった: {0}")]
     アセットルート不正(String),
     #[error("--object-count引数が不正だった: {0}")]

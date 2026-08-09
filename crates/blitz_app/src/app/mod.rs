@@ -32,11 +32,10 @@ use crate::cli::{布モード, 描画対象の並べ方, 検証計画指定, 空
 use crate::{dev_ui::開発UI, error::起動エラー, hot_reload::ホットリローダー, input::入力状態};
 use blitz_engine::カメラ;
 use blitz_render::{クリアカラー, レンダラー};
-pub(crate) use draw_dispatch::時間再構成の突き合わせの要約;
 pub(crate) use frame_timing::{フレーム時間統計, 集計する};
-pub(crate) use streaming::ストリーミング要約;
 pub(crate) use time_of_day::{太陽天頂区間の記録, 空の再現条件, 遠方環境の鍵の記録, 遠方環境更新判定};
 use winit::window::Window;
+pub(crate) use {draw_dispatch::時間再構成の突き合わせの要約, streaming::ストリーミング要約};
 
 /// 前提: `レンダラー`フィールドは`window`より前に宣言する。Rustは構造体フィールドを宣言順にDropするため、この順序がレンダラー破棄(surface等)をウィンドウ破棄より必ず先に行うことを保証する(レンダラーの生成前提を満たす)。
 pub(crate) struct アプリ {
@@ -52,6 +51,7 @@ pub(crate) struct アプリ {
     ホットリローダー: ホットリローダー,
     カメラ: カメラ,
     入力状態: 入力状態,
+    ゲーム配線: crate::game::ゲーム配線,
     現在フレーム: u32,
     視点の履歴: frame::視点の履歴,
     /// `--report-temporal-reconstruction`指定の実行だけが使う観測の材料。前のフレームの再構成結果を1枚だけ持つ。

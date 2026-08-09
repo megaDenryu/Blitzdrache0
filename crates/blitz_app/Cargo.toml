@@ -8,6 +8,7 @@ workspace = true
 
 [dependencies]
 blitz_engine = { path = "../blitz_engine" }
+blitz_game = { path = "../blitz_game" }
 blitz_math = { path = "../blitz_math" }
 blitz_render = { path = "../blitz_render" }
 blitz_sim = { path = "../blitz_sim" }

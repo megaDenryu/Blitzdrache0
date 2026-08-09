@@ -1,15 +1,24 @@
-//! winitイベントをカメラインテントへ写像する入力層。blitz_engineはwinitを知らない
+//! winitイベントを蓄積し、カメラインテントとゲームの確定済みの操作入力へ確定する共通入力層。blitz_engineもblitz_gameもwinitを知らない
 //! （参照: `_doc/計画/ユビキタス言語.md`「入力インテント」、開発スレッド「判断15」）。
+//!
+//! カメラはこの層がインテントまで作るが、ゲームはデバイス非依存の入力までを作って渡し、意味付けの写像はゲーム側が持つ
+//! （参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「判断3」）。
 
 mod camera_intent_policy;
 #[cfg(test)]
 mod camera_intent_tests;
 mod confirm;
+#[cfg(test)]
+mod game_input_tests;
+mod game_intent_policy;
+mod game_key_state;
 mod ingest;
 
 pub(crate) use camera_intent_policy::カメラ操作の適用方針;
+pub(crate) use game_intent_policy::ゲーム操作の適用方針;
 
 use blitz_engine::カメラインテント;
+use blitz_game::確定済みの操作入力;
 use winit::event::WindowEvent;
 
 /// マウスドラッグ・ホイール・キー押下の蓄積状態。フレームごとに`インテントを確定する`で
@@ -30,6 +39,8 @@ pub(crate) struct 入力状態 {
     e押下中: bool,
     /// カメラ操作を適用するかどうか。実行の種類から起動時に1度だけ決まり、以降は変わらない。
     カメラ操作の方針: カメラ操作の適用方針,
+    /// ゲーム操作に割り当てたキーの押下状態。カメラ操作のキーと重ならないため、蓄積も確定も別に持つ。
+    ゲーム操作のキー: game_key_state::ゲーム操作のキー状態,
 }
 
 impl 入力状態 {
@@ -50,7 +61,14 @@ impl 入力状態 {
             q押下中: false,
             e押下中: false,
             カメラ操作の方針,
+            ゲーム操作のキー: game_key_state::ゲーム操作のキー状態::default(),
         }
+    }
+
+    /// このフレームぶんのゲームの操作入力を確定する。決定と取り消しは押し下げが届いたフレームだけ真になる。
+    /// 意味付け(ゲームインテントへの写像)はゲーム側が持つため、ここが返すのは確定済みの操作入力までである。
+    pub(crate) fn ゲームの操作入力を確定する(&mut self) -> 確定済みの操作入力 {
+        self.ゲーム操作のキー.確定する()
     }
 
     pub(crate) fn winitイベントを取り込む(&mut self, event: &WindowEvent) {

@@ -20,6 +20,7 @@ mod embedded_shaders;
 mod embedded_sky_shaders;
 mod embedded_temporal_reconstruction_shaders;
 mod error;
+mod game;
 mod hot_reload;
 mod input;
 mod reports;
