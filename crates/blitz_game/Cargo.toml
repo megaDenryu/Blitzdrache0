@@ -1,0 +1,10 @@
+[package]
+name = "blitz_game"
+edition.workspace = true
+version.workspace = true
+
+[dependencies]
+blitz_math = { path = "../blitz_math" }
+
+[lints]
+workspace = true

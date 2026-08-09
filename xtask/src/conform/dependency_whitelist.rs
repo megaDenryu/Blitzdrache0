@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 use super::cargo_toml_parse::{クレート名を取り出す, 依存名一覧を取り出す};
 use super::violation::違反;
 
-const 白リスト: [(&str, &[&str]); 7] = [
+const 白リスト: [(&str, &[&str]); 8] = [
     ("blitz_math", &["glam"]),
     ("blitz_engine", &["blitz_math", "blitz_render", "thiserror"]),
     ("blitz_asset_compiler", &["blitz_engine", "blitz_math", "gltf", "image", "thiserror"]),
@@ -17,10 +17,14 @@ const 白リスト: [(&str, &[&str]); 7] = [
     ),
     // 判断51: シミュレーション基盤層。手法の数学のみでashもblitz_renderも知らない
     ("blitz_sim", &["blitz_math", "thiserror"]),
+    // ゲームロジック層。設計正本が許すのはこの2つだけであり、工程1の実装が実際に使うのはblitz_mathである
+    // (参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「第1段階の定義」)。winit・egui・ashへは依存させない
+    ("blitz_game", &["blitz_engine", "blitz_math"]),
     (
         "blitz_app",
         &[
             "blitz_engine",
+            "blitz_game",
             "blitz_math",
             "blitz_render",
             "blitz_sim",

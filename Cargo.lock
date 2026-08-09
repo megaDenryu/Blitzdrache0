@@ -166,6 +166,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "blitz_game"
+version = "0.1.0"
+dependencies = [
+ "blitz_math",
+]
+
+[[package]]
 name = "blitz_math"
 version = "0.1.0"
 dependencies = [

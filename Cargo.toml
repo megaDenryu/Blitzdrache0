@@ -6,6 +6,7 @@ members = [
     "crates/blitz_engine",
     "crates/blitz_asset_compiler",
     "crates/blitz_sim",
+    "crates/blitz_game",
     "crates/blitz_app",
     "xtask",
 ]
