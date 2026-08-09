@@ -4,6 +4,8 @@
 
 mod convert;
 mod render_input;
+#[cfg(test)]
+mod storage_byte_agreement_tests;
 
 pub(crate) use render_input::{描画入力エラー, 束の描画入力, 束の登録一式};
 
