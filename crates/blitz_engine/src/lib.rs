@@ -10,6 +10,7 @@ pub mod auto_exposure;
 mod camera;
 mod chunk;
 mod frame_composition;
+pub mod height_field;
 mod instance_lod;
 #[cfg(test)]
 mod instance_lod_tests;

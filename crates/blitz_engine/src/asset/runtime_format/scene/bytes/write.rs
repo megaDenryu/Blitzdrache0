@@ -30,6 +30,13 @@ impl 書込先 {
         self.0.extend_from_slice(&値.to_le_bytes());
         Ok(())
     }
+    pub(crate) fn f64(&mut self, 値: f64) -> Result<(), アセット実行時形式エラー> {
+        if !値.is_finite() {
+            return Err(アセット実行時形式エラー::非有限小数);
+        }
+        self.0.extend_from_slice(&値.to_le_bytes());
+        Ok(())
+    }
     pub(crate) fn 件数(&mut self, 値: usize) -> Result<(), アセット実行時形式エラー> {
         let 値 = u32::try_from(値).map_err(|_| アセット実行時形式エラー::件数表現不能)?;
         self.u32(値);

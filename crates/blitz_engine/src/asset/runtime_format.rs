@@ -4,6 +4,8 @@ mod catalog;
 mod chunk_directory_v1;
 mod error;
 mod header;
+mod height_field_error;
+mod height_field_v1;
 mod material_assignment_error;
 mod scene;
 
@@ -11,6 +13,8 @@ pub use catalog::{カタログを実行時形式へ格納する, 実行時形式
 pub use chunk_directory_v1::{チャンク目録を実行時形式へ格納する, 実行時形式からチャンク目録を読む};
 pub use error::アセット実行時形式エラー;
 pub use header::{実行時アセットを格納する, 実行時アセットを開く};
+pub use height_field_error::高さ場実行時形式エラー;
+pub use height_field_v1::{実行時形式から高さ場を読む, 高さ場を実行時形式へ格納する};
 pub use material_assignment_error::材質割当エラー;
 pub(crate) use scene::mesh_layout;
 pub use scene::{シーンを実行時形式へ格納する, 実行時形式からシーンを読む};
@@ -59,6 +63,8 @@ pub enum 実行時アセット種別 {
     シーン,
     カタログ,
     チャンク目録,
+    /// 世界の高さを実行中に参照するための種別。参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「判断7: 地図の正本を持ち、生成は2系統に分ける」
+    高さ場,
 }
 
 impl 実行時アセット種別 {
@@ -67,6 +73,7 @@ impl 実行時アセット種別 {
             Self::シーン => 1,
             Self::カタログ => 2,
             Self::チャンク目録 => 3,
+            Self::高さ場 => 4,
         }
     }
 
@@ -75,6 +82,7 @@ impl 実行時アセット種別 {
             1 => Ok(Self::シーン),
             2 => Ok(Self::カタログ),
             3 => Ok(Self::チャンク目録),
+            4 => Ok(Self::高さ場),
             未知 => Err(アセット実行時形式エラー::未知のアセット種別(未知)),
         }
     }

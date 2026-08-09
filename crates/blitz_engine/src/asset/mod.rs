@@ -32,6 +32,8 @@ mod runtime_chunk_directory_tests;
 mod runtime_format;
 #[cfg(test)]
 mod runtime_format_tests;
+#[cfg(test)]
+mod runtime_height_field_tests;
 mod runtime_load_error;
 mod runtime_loader;
 #[cfg(test)]
@@ -83,7 +85,7 @@ pub(crate) use runtime_format::mesh_layout;
 pub use runtime_format::{
     アセット実行時形式エラー, アセット形式版, カタログを実行時形式へ格納する, シーンを実行時形式へ格納する, チャンク目録を実行時形式へ格納する,
     実行時アセット, 実行時アセットを格納する, 実行時アセットを開く, 実行時アセット種別, 実行時形式からカタログを読む, 実行時形式からシーンを読む,
-    実行時形式からチャンク目録を読む, 材質割当エラー,
+    実行時形式からチャンク目録を読む, 実行時形式から高さ場を読む, 材質割当エラー, 高さ場を実行時形式へ格納する, 高さ場実行時形式エラー,
 };
 pub use runtime_load_error::実行時シーン読込エラー;
 pub use runtime_loader::実行時シーンを読み込む;
