@@ -13,13 +13,13 @@ use super::{difference, draw, helmet_crop, summary, world_bake};
 
 pub(super) fn ヘルメットの目視材料を作る(出力先: &Path) -> Result<Vec<String>, String> {
     let ルート = world_bake::ヘルメットの世界を方針違いで焼く()?;
-    let 非圧縮 = draw::描いてpngへ書き出す(
+    let 非圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(
         &ルート.非圧縮,
         ヘルメットのシーン名,
         &出力先.join("helmet_rgba8"),
         "DamagedHelmet(全てRGBA8)",
     )?;
-    let 圧縮 = draw::描いてpngへ書き出す(
+    let 圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(
         &ルート.ブロック圧縮,
         ヘルメットのシーン名,
         &出力先.join("helmet_bc1"),
@@ -30,8 +30,8 @@ pub(super) fn ヘルメットの目視材料を作る(出力先: &Path) -> Resul
         return Err("DamagedHelmetの2枚の絵が1画素も食い違わない(方針の取り違えの疑いがある)".to_string());
     }
     helmet_crop::区画が絵に収まるか確かめる(非圧縮.画像.幅, 非圧縮.画像.高さ)?;
-    let 非圧縮の拡大 = helmet_crop::切り取って拡大する(&非圧縮.png, &出力先.join("helmet_rgba8_crop.png"))?;
-    let 圧縮の拡大 = helmet_crop::切り取って拡大する(&圧縮.png, &出力先.join("helmet_bc1_crop.png"))?;
+    let 非圧縮の拡大 = helmet_crop::ヘルメットの区画を切り取って拡大する(&非圧縮.png, &出力先.join("helmet_rgba8_crop.png"))?;
+    let 圧縮の拡大 = helmet_crop::ヘルメットの区画を切り取って拡大する(&圧縮.png, &出力先.join("helmet_bc1_crop.png"))?;
     Ok(vec![
         format!("DamagedHelmetの{}(判定値なしの観測)", summary::統計の行を作る("絵の差", &統計)),
         summary::格納バイト数の行を作る(

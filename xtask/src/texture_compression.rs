@@ -25,7 +25,7 @@ use std::process::ExitCode;
 const 出力ディレクトリ: &str = "target/texture_compression";
 
 pub fn 実行する() -> ExitCode {
-    match 撮って判定する() {
+    match ブロック圧縮の絵を撮って判定する() {
         Ok(要約) => {
             println!("[xtask] texture-compression成功: {要約}");
             ExitCode::SUCCESS
@@ -37,7 +37,7 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 撮って判定する() -> Result<String, String> {
+fn ブロック圧縮の絵を撮って判定する() -> Result<String, String> {
     if !crate::gen_source_assets::生成する() {
         return Err("検証用ソースアセットの生成に失敗した".to_string());
     }

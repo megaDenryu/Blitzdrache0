@@ -28,7 +28,7 @@ pub(super) fn 区画が絵に収まるか確かめる(幅: usize, 高さ: usize)
     Ok(())
 }
 
-pub(super) fn 切り取って拡大する(元の絵: &Path, 出力先: &Path) -> Result<PathBuf, String> {
+pub(super) fn ヘルメットの区画を切り取って拡大する(元の絵: &Path, 出力先: &Path) -> Result<PathBuf, String> {
     let 区画 = format!("{区画の横}x{区画の縦}+{起点横}+{起点縦}");
     let 状態 = Command::new("magick")
         .arg(元の絵)

@@ -16,6 +16,6 @@ pub const 全てRGBA8: &str = "all_rgba8";
 pub const ベースカラーのブロック圧縮: &str = "block_compressed_base_color";
 
 /// 方針の名前を、コンパイラの入口へ渡す2語の選択肢へ組み立てる。
-pub(super) fn 選択肢の2語を組み立てる(方針の名前: &str) -> [&str; 2] {
+pub(super) fn 方針の選択肢の2語を組み立てる(方針の名前: &str) -> [&str; 2] {
     [選択肢の綴り, 方針の名前]
 }

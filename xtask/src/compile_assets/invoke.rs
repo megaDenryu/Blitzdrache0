@@ -35,12 +35,12 @@ pub(super) fn アセットコンパイラを起動して実行時形式を焼く
         コマンド.arg(個体数);
     }
     if let Some(名前) = 指定.テクスチャ格納方針の名前 {
-        コマンド.args(super::texture_policy_name::選択肢の2語を組み立てる(名前));
+        コマンド.args(super::texture_policy_name::方針の選択肢の2語を組み立てる(名前));
     }
-    起動結果を読む(コマンド.status())
+    コンパイラの起動結果を成否へ読む(コマンド.status())
 }
 
-fn 起動結果を読む(状態: std::io::Result<std::process::ExitStatus>) -> bool {
+fn コンパイラの起動結果を成否へ読む(状態: std::io::Result<std::process::ExitStatus>) -> bool {
     match 状態 {
         Ok(終了状態) if 終了状態.success() => true,
         Ok(終了状態) => {

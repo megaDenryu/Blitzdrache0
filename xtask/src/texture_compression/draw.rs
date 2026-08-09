@@ -18,15 +18,23 @@ pub(super) struct 撮った絵 {
     pub(super) png: PathBuf,
 }
 
-pub(super) fn 描いてpngへ書き出す(
-    アセットルート: &Path, シーン名: &str, ダンプ先: &Path, 条件名: &str
+pub(super) fn 条件1つを描いて読み戻しをpngへ書き出す(
+    アセットルート: &Path,
+    シーン名: &str,
+    ダンプ先: &Path,
+    条件名: &str,
 ) -> Result<撮った絵, String> {
-    let 画像 = 描く(アセットルート, シーン名, ダンプ先, 条件名)?;
+    let 画像 = 条件1つを描いて読み戻す(アセットルート, シーン名, ダンプ先, 条件名)?;
     let png = crate::raw_png::変換する(ダンプ先)?;
     Ok(撮った絵 { 画像, png })
 }
 
-pub(super) fn 描く(アセットルート: &Path, シーン名: &str, ダンプ先: &Path, 条件名: &str) -> Result<実行結果, String> {
+pub(super) fn 条件1つを描いて読み戻す(
+    アセットルート: &Path,
+    シーン名: &str,
+    ダンプ先: &Path,
+    条件名: &str,
+) -> Result<実行結果, String> {
     let 出力 = Command::new("cargo")
         .args(["run", "-p", "blitz_app", "--", "--scene", シーン名])
         .arg("--asset-root")
