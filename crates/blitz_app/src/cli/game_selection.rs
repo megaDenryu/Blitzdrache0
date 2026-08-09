@@ -31,7 +31,9 @@ impl 遊ぶゲームの指定 {
 }
 
 /// `--game`の値から遊ぶゲームを選ぶ。知らない名前は黙って無視せず型付きエラーにする。
-pub(in crate::cli) fn game引数を処理する(引数: &mut Iter<String>) -> Result<遊ぶゲームの指定, 起動引数エラー> {
+pub(in crate::cli) fn 遊ぶゲームの指定の引数を処理する(
+    引数: &mut Iter<String>,
+) -> Result<遊ぶゲームの指定, 起動引数エラー> {
     let 値 = value_args::次の値を読む(引数, "--game", 起動引数エラー::遊ぶゲーム不正)?;
     match 値.as_str() {
         キツネの場所巡りの引数値 => Ok(遊ぶゲームの指定::キツネの場所巡り),
