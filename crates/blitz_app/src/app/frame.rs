@@ -3,6 +3,7 @@
 
 mod action;
 mod borrowed_draw;
+mod camera_follow;
 mod draw_input;
 #[cfg(test)]
 mod draw_input_tests;
@@ -40,6 +41,8 @@ impl アプリ {
             event_loop.exit();
             return;
         }
+        // カメラの追従はゲーム更新の直後・カメラの更新より前に置く。据えた注視点に対してそのフレームのマウス操作を効かせるためである。
+        camera_follow::ゲームが供給する位置へ注視点を移す(self);
         self.カメラ.更新する(インテント);
         if let Some(探査) = &mut self.個体詳細段探査 {
             探査.適用する(&mut self.カメラ, self.現在フレーム);

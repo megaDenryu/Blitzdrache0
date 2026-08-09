@@ -74,6 +74,10 @@ impl キツネの場所巡りの配線 {
         &mut self.台帳
     }
 
+    pub(super) fn プレイヤーの大域位置(&self) -> 大域ワールド位置 {
+        self.状態.プレイヤーの大域位置()
+    }
+
     pub(super) fn 終了が決まったか(&self) -> bool {
         self.状態.終了が決まったか()
     }
