@@ -11,10 +11,10 @@ use winit::window::Window;
 
 use super::animation_state::アニメーション再生;
 use super::scene_load;
-use crate::overlay_ui::画面へ重ねるUI;
 use crate::embedded_shaders;
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
+use crate::overlay_ui::画面へ重ねるUI;
 
 /// resumed時に構築してアプリのフィールドへ格納する一式。
 type 起動一式 = (

@@ -29,7 +29,7 @@ mod visibility;
 mod window_setup;
 
 use crate::cli::{布モード, 描画対象の並べ方, 検証計画指定, 空中遠近合成指定, 粒子表示モード, 起動モード};
-use crate::{overlay_ui::画面へ重ねるUI, error::起動エラー, hot_reload::ホットリローダー, input::入力状態};
+use crate::{error::起動エラー, hot_reload::ホットリローダー, input::入力状態, overlay_ui::画面へ重ねるUI};
 use blitz_engine::カメラ;
 use blitz_render::{クリアカラー, レンダラー};
 pub(crate) use frame_timing::{フレーム時間統計, 集計する};

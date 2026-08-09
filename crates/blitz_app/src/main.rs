@@ -10,7 +10,6 @@ mod atmosphere_medium;
 #[cfg(test)]
 mod atmosphere_medium_tests;
 mod cli;
-mod overlay_ui;
 mod embedded_auto_exposure_shaders;
 mod embedded_cloth_shaders;
 mod embedded_derived_environment_shaders;
@@ -23,6 +22,7 @@ mod error;
 mod game;
 mod hot_reload;
 mod input;
+mod overlay_ui;
 mod reports;
 mod smoke;
 

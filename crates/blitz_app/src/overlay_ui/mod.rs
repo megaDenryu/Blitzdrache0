@@ -5,7 +5,9 @@
 
 mod font_setup;
 mod frame_time;
+mod game_screen;
 mod mesh_convert;
+mod overlay_content;
 mod panel;
 mod scissor_convert;
 mod texture_id_map;
@@ -14,12 +16,14 @@ mod texture_sync;
 
 pub(crate) mod stats;
 
+pub(crate) use game_screen::ゲーム画面の表示内容;
+pub(crate) use overlay_content::画面へ重ねる内容;
+
 use winit::event::WindowEvent;
 use winit::window::Window;
 
 use crate::error::起動エラー;
 use frame_time::フレーム時間計測;
-use stats::開発UI統計;
 use texture_mirror::テクスチャミラー;
 
 pub(crate) struct 画面へ重ねるUI {
@@ -60,21 +64,24 @@ impl 画面へ重ねるUI {
     }
 
     /// このフレームぶんのegui実行と、UIテクスチャ反映・メッシュ変換までを行う。
-    /// 無効時はeguiを実行せず`None`を返す(判断34)。
+    /// 重ねるものが1つも無いフレームはeguiを実行せず`None`を返す(判断34)。
     /// `露出`・`ブレンド`はスライダーが書き換えるため可変参照で受ける(判断39・45)。
     pub(crate) fn 描画データを作る(
         &mut self,
         window: &Window,
         レンダラー: &mut blitz_render::レンダラー,
-        統計: 開発UI統計,
+        内容: 画面へ重ねる内容,
         露出: &mut f32,
         ブレンド: &mut f32,
     ) -> Result<Option<blitz_render::UI描画データ>, 起動エラー> {
-        if !self.開発パネルを表示するか {
+        if 内容.重ねるものが無いか(self.開発パネルを表示するか) {
             return Ok(None);
         }
+        let 開発パネルを表示するか = self.開発パネルを表示するか;
         let raw_input = self.winit統合.take_egui_input(window);
-        let full_output = self.コンテキスト.run(raw_input, |ctx| panel::内容を描く(ctx, &統計, 露出, ブレンド));
+        let full_output = self
+            .コンテキスト
+            .run(raw_input, |ctx| 内容.順に描く(ctx, 開発パネルを表示するか, 露出, ブレンド));
         self.winit統合.handle_platform_output(window, full_output.platform_output);
 
         texture_sync::反映する(レンダラー, &full_output.textures_delta, &mut self.ミラー)?;
