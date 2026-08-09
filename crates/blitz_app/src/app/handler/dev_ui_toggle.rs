@@ -1,4 +1,4 @@
-//! F3キーによる開発用UIの表示切替(判断34)。触れるフィールドは`開発ui`だけであり、
+//! F3キーによる開発用UIの表示切替(判断34)。触れるフィールドは`画面へ重ねるui`だけであり、
 //! winitイベントを読んで押下の立ち上がりだけを拾う。
 
 use winit::event::{ElementState, KeyEvent, WindowEvent};
@@ -22,8 +22,8 @@ impl アプリ {
         else {
             return;
         };
-        if let Some(開発ui) = &mut self.開発ui {
-            開発ui.トグルする();
+        if let Some(画面へ重ねるui) = &mut self.画面へ重ねるui {
+            画面へ重ねるui.開発パネルの表示を切り替える();
         }
     }
 }

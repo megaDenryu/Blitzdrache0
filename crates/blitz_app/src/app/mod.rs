@@ -29,7 +29,7 @@ mod visibility;
 mod window_setup;
 
 use crate::cli::{布モード, 描画対象の並べ方, 検証計画指定, 空中遠近合成指定, 粒子表示モード, 起動モード};
-use crate::{dev_ui::開発UI, error::起動エラー, hot_reload::ホットリローダー, input::入力状態};
+use crate::{overlay_ui::画面へ重ねるUI, error::起動エラー, hot_reload::ホットリローダー, input::入力状態};
 use blitz_engine::カメラ;
 use blitz_render::{クリアカラー, レンダラー};
 pub(crate) use frame_timing::{フレーム時間統計, 集計する};
@@ -66,7 +66,7 @@ pub(crate) struct アプリ {
     /// 終了時に出す報告の要求。起動指定から写した真偽値だけを持つ。
     報告要求: report_requests::報告要求,
     フレーム間隔計測: Option<frame_timing::フレーム間隔計測>,
-    開発ui: Option<開発UI>,
+    画面へ重ねるui: Option<画面へ重ねるUI>,
     開発ui初期有効: bool,
     計測つまみ: frame::描画の計測つまみ,
     フレームダンプ先: crate::cli::フレームダンプ指定,

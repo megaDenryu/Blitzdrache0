@@ -1,6 +1,7 @@
-//! 開発用UI(egui)統合(判断31〜34)。egui/egui-winitへの依存はblitz_appにのみ閉じ、
-//! blitz_renderは自前のUI描画語彙のみを知る(判断32)。F3でトグル、既定オフ、
-//! `--dev-ui`で起動時から有効化する。無効時はeguiを一切実行しない。
+//! 画面へ重ねるUI(egui)の統合(判断31〜34)。egui/egui-winitへの依存はblitz_appにのみ閉じ、
+//! blitz_renderは自前のUI描画語彙のみを知る(判断32)。重ねる中身は開発パネルが`panel`にある。
+//! 開発パネルはF3で表示を切り替え、既定は非表示、`--dev-ui`で起動時から表示する。
+//! 重ねるものが1つも無いフレームはeguiを一切実行しない。
 
 mod font_setup;
 mod frame_time;
@@ -21,16 +22,16 @@ use frame_time::フレーム時間計測;
 use stats::開発UI統計;
 use texture_mirror::テクスチャミラー;
 
-pub(crate) struct 開発UI {
+pub(crate) struct 画面へ重ねるUI {
     コンテキスト: egui::Context,
     winit統合: egui_winit::State,
     ミラー: テクスチャミラー,
     フレーム時間: フレーム時間計測,
-    有効: bool,
+    開発パネルを表示するか: bool,
 }
 
-impl 開発UI {
-    pub(crate) fn 生成する(window: &Window, 初期有効: bool) -> Self {
+impl 画面へ重ねるUI {
+    pub(crate) fn 生成する(window: &Window, 開発パネルの初期表示: bool) -> Self {
         let コンテキスト = egui::Context::default();
         font_setup::日本語フォントを追加する(&コンテキスト);
         let 初期ppp = egui_winit::pixels_per_point(&コンテキスト, window);
@@ -40,18 +41,19 @@ impl 開発UI {
             winit統合,
             ミラー: テクスチャミラー::新規(),
             フレーム時間: フレーム時間計測::生成する(),
-            有効: 初期有効,
+            開発パネルを表示するか: 開発パネルの初期表示,
         }
     }
 
-    pub(crate) fn トグルする(&mut self) {
-        self.有効 = !self.有効;
+    pub(crate) fn 開発パネルの表示を切り替える(&mut self) {
+        self.開発パネルを表示するか = !self.開発パネルを表示するか;
     }
 
-    /// eguiが消費したイベントは呼び出し元(入力層)へ渡さない。無効時はeguiを
-    /// 実行しないため常にfalse(消費しない)を返す。
+    /// eguiが消費したイベントは呼び出し元(入力層)へ渡さない。開発パネルを表示していないフレームは
+    /// eguiがマウスもキーも受け取らないため常にfalse(消費しない)を返す。ゲームの画面はキー操作を1つも持たず、
+    /// 操作は共通入力層が確定するため、この判定は開発パネルの表示だけで決まる。
     pub(crate) fn winitイベントを取り込む(&mut self, window: &Window, event: &WindowEvent) -> bool {
-        if !self.有効 {
+        if !self.開発パネルを表示するか {
             return false;
         }
         self.winit統合.on_window_event(window, event).consumed
@@ -68,7 +70,7 @@ impl 開発UI {
         露出: &mut f32,
         ブレンド: &mut f32,
     ) -> Result<Option<blitz_render::UI描画データ>, 起動エラー> {
-        if !self.有効 {
+        if !self.開発パネルを表示するか {
             return Ok(None);
         }
         let raw_input = self.winit統合.take_egui_input(window);

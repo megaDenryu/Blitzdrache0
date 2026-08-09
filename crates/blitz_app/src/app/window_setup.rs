@@ -11,7 +11,7 @@ use winit::window::Window;
 
 use super::animation_state::アニメーション再生;
 use super::scene_load;
-use crate::dev_ui::開発UI;
+use crate::overlay_ui::画面へ重ねるUI;
 use crate::embedded_shaders;
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
@@ -20,7 +20,7 @@ use crate::hot_reload::ホットリローダー;
 type 起動一式 = (
     Window,
     レンダラー,
-    開発UI,
+    画面へ重ねるUI,
     Option<アニメーション再生>,
     Option<super::cloth_setup::布プリセット>,
     scene_load::束の登録一式,
@@ -95,6 +95,6 @@ pub(super) fn ウィンドウとレンダラーを作る(
     ホットリローダー.アセット監視を設定する(カタログ, アセットID::生成する(シーン名)?, &シーン.参照ファイル一覧);
 
     let アニメーション = アニメーション再生::生成する(シーン.スキン, シーン.アニメーション一覧);
-    let 開発ui = 開発UI::生成する(&window, 開発ui初期有効);
-    Ok((window, レンダラー, 開発ui, アニメーション, 布プリセット, 描画入力.登録一式))
+    let 画面へ重ねるui = 画面へ重ねるUI::生成する(&window, 開発ui初期有効);
+    Ok((window, レンダラー, 画面へ重ねるui, アニメーション, 布プリセット, 描画入力.登録一式))
 }

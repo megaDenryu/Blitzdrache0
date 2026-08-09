@@ -1,5 +1,5 @@
 //! `ApplicationHandler` 実装。winit所有ループ(パターンA)の受け口。参照: `_doc/設計/イベントループとフレームペーシング.md`
-//! 開発用UIの表示切替だけは触れるフィールドが`開発ui`に閉じるため`dev_ui_toggle`にある。
+//! 開発用UIの表示切替だけは触れるフィールドが`画面へ重ねるui`に閉じるため`dev_ui_toggle`にある。
 //! 起動時に1回だけ走る生成と格納は`resume`にある。
 
 mod dev_ui_toggle;
@@ -24,8 +24,8 @@ impl ApplicationHandler for アプリ {
         let egui消費済みか = self
             .window
             .as_ref()
-            .zip(self.開発ui.as_mut())
-            .is_some_and(|(window, 開発ui)| 開発ui.winitイベントを取り込む(window, &event));
+            .zip(self.画面へ重ねるui.as_mut())
+            .is_some_and(|(window, 画面へ重ねるui)| 画面へ重ねるui.winitイベントを取り込む(window, &event));
         self.f3押下を確認する(&event);
 
         // 入力層はwinitイベントを蓄積するだけで、以降のmatchが既存の責務を続ける（カメラインテントへの写像は`入力状態`内部で完結し、blitz_engineはwinitを知らない）。eguiが消費したイベント(ポインタ/キーボードがUI操作中)はカメラ入力へ流さない。
