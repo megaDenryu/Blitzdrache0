@@ -21,7 +21,7 @@ pub(super) fn 原寸の段を画像へコピーする(
     幅: u32,
     高さ: u32,
 ) {
-    let 領域 = 領域を組み立てる(0, 0, 幅, 高さ);
+    let 領域 = コピー領域を組み立てる(0, 0, 幅, 高さ);
     // 安全性: command_bufferは積み込み中。imageはTRANSFER_DST_OPTIMALへ遷移済み。
     // ステージングバッファは呼び出し元が原寸の画素列と同じ長さで確保・書き込み済み。
     unsafe {
@@ -48,7 +48,7 @@ pub(super) fn 全段を画像へコピーする(
     for (添字, バイト列) in 素材.段ごとのバイト列().iter().enumerate() {
         let 段番号 = u32::try_from(添字).unwrap_or_else(|_| panic!("縮小段の段番号{添字}が32ビットに収まらない"));
         let (段の幅, 段の高さ) = 縮小段の幅と高さを求める(素材.幅(), 素材.高さ(), 段番号);
-        領域一覧.push(領域を組み立てる(開始位置, 段番号, 段の幅, 段の高さ));
+        領域一覧.push(コピー領域を組み立てる(開始位置, 段番号, 段の幅, 段の高さ));
         let 段のバイト数 = vk::DeviceSize::try_from(バイト列.len()).unwrap_or_else(|_| panic!("縮小段{段番号}のバイト数が64ビットに収まらない"));
         開始位置 += 段のバイト数;
     }
@@ -66,7 +66,7 @@ pub(super) fn 全段を画像へコピーする(
 }
 
 /// バッファ内の並びに隙間を作らないため、行の長さと高さを0にして「範囲の寸法どおりに詰まっている」ことを表す。
-fn 領域を組み立てる(開始位置: vk::DeviceSize, 段番号: u32, 段の幅: u32, 段の高さ: u32) -> vk::BufferImageCopy {
+fn コピー領域を組み立てる(開始位置: vk::DeviceSize, 段番号: u32, 段の幅: u32, 段の高さ: u32) -> vk::BufferImageCopy {
     vk::BufferImageCopy::default()
         .buffer_offset(開始位置)
         .buffer_row_length(0)
