@@ -18,6 +18,8 @@ mod texture_decode;
 
 use blitz_engine::{アセットID, カタログ, シーンデータ, チャンク座標, 描画対象ID, 描画対象データ, 描画形状};
 
+use crate::texture_storage::テクスチャ格納方針;
+
 pub use archetype::{原型ソース, 原型ソースを読み込む};
 pub use contract::{入力契約を検査する, 契約指摘, 契約検査概要, 契約検査結果, 重大度};
 pub(crate) use fixed_object::固定物の描画対象を読み込む;
@@ -36,6 +38,7 @@ pub fn ソースシーンを読み込む(
     カタログ: &カタログ,
     id: &アセットID,
     所有チャンク: チャンク座標,
+    方針: テクスチャ格納方針,
 ) -> Result<シーンデータ, アセットコンパイルエラー> {
     let パス = カタログ
         .パスを参照する(id)
@@ -49,7 +52,7 @@ pub fn ソースシーンを読み込む(
 
     let スキン読込結果 = skin::スキンを取り出す(&開いた文書, 対象メッシュ.index())?;
 
-    let 材質スロット = material_slots::解決する(&開いた文書, std::iter::once(対象メッシュ.clone()))?;
+    let 材質スロット = material_slots::解決する(&開いた文書, std::iter::once(対象メッシュ.clone()), 方針)?;
     let メッシュ実体 = mesh::メッシュデータを取り出す(
         &開いた文書,
         &対象メッシュ,

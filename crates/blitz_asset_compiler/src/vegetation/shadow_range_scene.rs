@@ -7,11 +7,13 @@ use blitz_engine::{アセットID, カタログ, チャンク座標};
 use super::{floor_scene, shadow_range_placement};
 use crate::compile::コンパイル済みシーン;
 use crate::error::アセットコンパイルエラー;
+use crate::texture_storage::テクスチャ格納方針;
 
 pub fn 植生影視距離シーンをコンパイルする(
     カタログ: &カタログ,
     id: &アセットID,
     所有チャンク: チャンク座標,
+    方針: テクスチャ格納方針,
 ) -> Result<コンパイル済みシーン, アセットコンパイルエラー> {
-    floor_scene::群と床のシーンをコンパイルする(カタログ, id, 所有チャンク, shadow_range_placement::配置列を作る()?)
+    floor_scene::群と床のシーンをコンパイルする(カタログ, id, 所有チャンク, shadow_range_placement::配置列を作る()?, 方針)
 }

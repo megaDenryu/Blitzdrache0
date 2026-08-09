@@ -16,6 +16,7 @@ use crate::error::アセットコンパイルエラー;
 use crate::height_grid::高さ格子;
 use crate::loader::原型ソースを読み込む;
 use crate::terrain::ground_height;
+use crate::texture_storage::テクスチャ格納方針;
 use crate::vegetation::group_object;
 
 pub(crate) fn 小物群の描画対象を作る(
@@ -24,8 +25,9 @@ pub(crate) fn 小物群の描画対象を作る(
     所有チャンク: チャンク座標,
     描画対象番号: u64,
     指定: &小物群の指定,
+    方針: テクスチャ格納方針,
 ) -> Result<(描画対象データ, Vec<PathBuf>), アセットコンパイルエラー> {
-    let 原型ソース = 原型ソースを読み込む(カタログ, &指定.原型id)?;
+    let 原型ソース = 原型ソースを読み込む(カタログ, &指定.原型id, 方針)?;
     let 配置一覧 = placement::配置列を作る(所有チャンク, 描画対象番号, 指定.個体数, 指定.配置様式, |x, z| {
         ground_height::地表高さを求める(格子, x, z)
     })?;

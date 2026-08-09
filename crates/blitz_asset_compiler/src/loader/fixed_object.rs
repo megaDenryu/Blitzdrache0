@@ -12,6 +12,7 @@ use blitz_math::{ローカル, ワールド, 変換};
 
 use super::{document, material_slots, mesh};
 use crate::error::アセットコンパイルエラー;
+use crate::texture_storage::テクスチャ格納方針;
 
 pub(crate) fn 固定物の描画対象を読み込む(
     カタログ: &カタログ,
@@ -19,6 +20,7 @@ pub(crate) fn 固定物の描画対象を読み込む(
     所有チャンク: チャンク座標,
     描画対象番号: u64,
     ローカルからワールド: 変換<ローカル, ワールド>,
+    方針: テクスチャ格納方針,
 ) -> Result<(描画対象データ, Vec<PathBuf>), アセットコンパイルエラー> {
     let パス = カタログ
         .パスを参照する(id)
@@ -28,7 +30,7 @@ pub(crate) fn 固定物の描画対象を読み込む(
     if 対象メッシュ.primitives().next().is_none() {
         return Err(アセットコンパイルエラー::プリミティブなし);
     }
-    let 材質スロット = material_slots::解決する(&開いた文書, std::iter::once(対象メッシュ.clone()))?;
+    let 材質スロット = material_slots::解決する(&開いた文書, std::iter::once(対象メッシュ.clone()), 方針)?;
     let メッシュ実体 = mesh::メッシュデータを取り出す(&開いた文書, &対象メッシュ, None, &材質スロット.語彙)?;
     let mut 参照ファイル一覧 = 開いた文書.参照ファイル一覧;
     参照ファイル一覧.extend(材質スロット.参照ファイル一覧);

@@ -7,7 +7,7 @@
 
 use std::path::PathBuf;
 
-use blitz_asset_compiler::ソースシーンを読み込む;
+use blitz_asset_compiler::{ソースシーンを読み込む, テクスチャ格納方針};
 use blitz_engine::{
     アセットID, カタログ, シーンデータ, チャンク座標, マテリアルデータ, 描画対象ID, 描画対象データ
 };
@@ -30,7 +30,8 @@ fn 試験用カタログ() -> (カタログ, アセットID) {
 fn 極小四角形アセットを読み込める() {
     let (カタログ, id) = 試験用カタログ();
 
-    let シーン = match ソースシーンを読み込む(&カタログ, &id, チャンク座標::生成する(0, 0)) {
+    let シーン = match ソースシーンを読み込む(&カタログ, &id, チャンク座標::生成する(0, 0), テクスチャ格納方針::全てRGBA8)
+    {
         Ok(シーン) => シーン,
         Err(誤り) => panic!("assets/smoke/quad.gltfの読込に失敗した(cargo xtask gen-source-assetsで生成済みか確認): {誤り}"),
     };

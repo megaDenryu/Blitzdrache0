@@ -11,6 +11,7 @@ use blitz_engine::{アセットID, カタログ, メッシュデータ, 材質�
 use super::document::開いた文書;
 use super::{archetype_material, document, material_slots, mesh};
 use crate::error::アセットコンパイルエラー;
+use crate::texture_storage::テクスチャ格納方針;
 
 /// 原型1件ぶんの読取結果。段一覧が空になることはこの工程が拒むため、受け取った側は非空として扱ってよい。
 pub struct 原型ソース {
@@ -20,13 +21,15 @@ pub struct 原型ソース {
 }
 
 pub fn 原型ソースを読み込む(
-    カタログ: &カタログ, id: &アセットID
+    カタログ: &カタログ,
+    id: &アセットID,
+    方針: テクスチャ格納方針,
 ) -> Result<原型ソース, アセットコンパイルエラー> {
     let パス = カタログ
         .パスを参照する(id)
         .ok_or_else(|| アセットコンパイルエラー::カタログ未登録(id.clone()))?;
     let 文書 = document::文書を開く(パス)?;
-    let (段一覧, 材質集合, 材質参照ファイル一覧) = 文書から取り出す(&文書)?;
+    let (段一覧, 材質集合, 材質参照ファイル一覧) = 文書から取り出す(&文書, 方針)?;
     let mut 参照ファイル一覧 = 文書.参照ファイル一覧;
     参照ファイル一覧.extend(材質参照ファイル一覧);
     Ok(原型ソース {
@@ -41,12 +44,13 @@ pub fn 原型ソースを読み込む(
 /// 原型はスキニングの対象にしないため、スキンは読まない(スキン頂点属性を持つ段は`原型::生成する`が拒む)。
 fn 文書から取り出す(
     文書: &開いた文書,
+    方針: テクスチャ格納方針,
 ) -> Result<(Vec<メッシュデータ>, 材質集合, Vec<PathBuf>), アセットコンパイルエラー> {
     archetype_material::全段が同じ描画条件かを検査する(&文書.document)?;
     if 文書.document.meshes().next().is_none() {
         return Err(アセットコンパイルエラー::メッシュなし);
     }
-    let 材質スロット = material_slots::解決する(文書, 文書.document.meshes())?;
+    let 材質スロット = material_slots::解決する(文書, 文書.document.meshes(), 方針)?;
     let mut 段一覧 = Vec::new();
     for メッシュ in 文書.document.meshes() {
         段一覧.push(mesh::メッシュデータを取り出す(文書, &メッシュ, None, &材質スロット.語彙)?);

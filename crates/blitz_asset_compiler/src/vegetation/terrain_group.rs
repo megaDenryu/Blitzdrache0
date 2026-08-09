@@ -12,6 +12,7 @@ use blitz_engine::{
 use super::{group_object, terrain_placement};
 use crate::error::アセットコンパイルエラー;
 use crate::loader::原型ソースを読み込む;
+use crate::texture_storage::テクスチャ格納方針;
 
 /// 地形チャンクへ同居させる植生の指定。原型の安定IDと個体数を持つ。地形の側はこの値の有無だけで同居させるかを決める。
 pub struct 同居植生の指定 {
@@ -30,8 +31,9 @@ pub fn 地形同居の群を作る(
     所有チャンク: チャンク座標,
     描画対象番号: u64,
     地表高さを求める: impl Fn(f32, f32) -> Result<f32, アセットコンパイルエラー>,
+    方針: テクスチャ格納方針,
 ) -> Result<地形同居の群, アセットコンパイルエラー> {
-    let 原型ソース = 原型ソースを読み込む(カタログ, &指定.原型id)?;
+    let 原型ソース = 原型ソースを読み込む(カタログ, &指定.原型id, 方針)?;
     let 配置一覧 = terrain_placement::配置列を作る(所有チャンク, 指定.個体数, 地表高さを求める)?;
     let 描画対象 = group_object::群の描画対象を作る(
         描画対象番号,

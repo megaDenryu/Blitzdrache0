@@ -15,6 +15,7 @@ use super::目視見本の指定;
 use crate::error::アセットコンパイルエラー;
 use crate::height_grid::高さ格子;
 use crate::terrain::lod_bake;
+use crate::texture_storage::テクスチャ格納方針;
 use crate::vegetation::group_object;
 use crate::village::prop_group::小物群の描画対象を作る;
 
@@ -27,6 +28,7 @@ pub(super) fn 組み立てる(
     所有チャンク: チャンク座標,
     ソースパス: PathBuf,
     指定: &目視見本の指定,
+    方針: テクスチャ格納方針,
 ) -> Result<シーンデータ, アセットコンパイルエラー> {
     let 庭の地面 = 描画対象データ::生成する(
         描画対象ID::生成する(庭の地面の描画対象番号),
@@ -35,13 +37,13 @@ pub(super) fn 組み立てる(
         描画形状::地形LODメッシュ群(lod_bake::段別メッシュを焼く(格子)?),
         材質集合::単一材質から生成する(庭の地面のマテリアルを作る()),
     );
-    let (mut 残りの描画対象, 固定物の参照一覧) = fixed_objects::据える(カタログ, 格子, 所有チャンク, 指定)?;
+    let (mut 残りの描画対象, 固定物の参照一覧) = fixed_objects::据える(カタログ, 格子, 所有チャンク, 指定, 方針)?;
     let mut 参照ファイル一覧 = vec![ソースパス];
     参照ファイル一覧.extend(固定物の参照一覧);
     let mut 通し番号 = fixed_objects::最後の描画対象番号;
     for 群の指定 in &指定.群一覧 {
         通し番号 += 1;
-        let (対象, 参照一覧) = 小物群の描画対象を作る(カタログ, 格子, 所有チャンク, 通し番号, 群の指定)?;
+        let (対象, 参照一覧) = 小物群の描画対象を作る(カタログ, 格子, 所有チャンク, 通し番号, 群の指定, 方針)?;
         参照ファイル一覧.extend(参照一覧);
         残りの描画対象.push(対象);
     }
