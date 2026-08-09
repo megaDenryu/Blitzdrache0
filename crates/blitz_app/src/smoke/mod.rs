@@ -7,20 +7,12 @@ mod asset_rewrite;
 pub(crate) mod material_reload;
 mod pixel_judgment;
 mod plan;
+mod readback_only_scene;
 mod shader_rewrite;
 mod verification_plan;
 mod window_operation;
 
 use crate::cli::粒子表示モード;
-
-/// 書き換えもピクセル判定も持たず、判定を検収側のxtaskが読み戻し画像と計数で行うシーンの名前の接頭辞。
-/// 判定する入口は順に`instance-*`・`prop-draw`と`village-draw`・`multi-material-draw`・`indirect-probe`・`terrain-visual`である。
-/// 既定の計画は`quad`のホットリロード検証であり、監視対象のシェーダーとquadの実行時形式を書き換えるため、
-/// これらをその計画へ落とすとリポジトリのシェーダーと既存の生成物が書き換わる。
-const 読み戻しだけの検収シーンの接頭辞一覧: [&str; 5] = ["vegetation", "prop_", "multi_material", "indirect_probe", "terrain_visual"];
-/// 群が両方の視錐台から外れる検収シーン(`cargo xtask cloth-empty`)。中身は植生の検収シーンと同じだが、
-/// 既定カメラと既定の影範囲を選ばせるために名前を接頭辞から外してあるため、ここで個別に同じ計画へ振る。
-const 両視錐台外の群シーン: &str = "instance_all_culled";
 
 pub(crate) use asset_rewrite::アセットを書き換える;
 pub(crate) use pixel_judgment::{アニメーション差分を判定する, ピクセルを判定する};
@@ -82,8 +74,7 @@ pub(crate) fn 判定する(
         plan::現在フレームから粒子の動作を導出する(現在フレーム, 総フレーム数)
     } else if material_reload::このシーンか(シーン名) {
         material_reload::現在フレームから材質差し替えの動作を導出する(現在フレーム, 総フレーム数)
-    } else if シーン名 == 両視錐台外の群シーン || 読み戻しだけの検収シーンの接頭辞一覧.iter().any(|接頭辞| シーン名.starts_with(接頭辞))
-    {
+    } else if readback_only_scene::読み戻しだけの検収シーンか(シーン名) {
         plan::読み戻しだけの動作を導出する()
     } else if シーン名 == "helmet" {
         plan::現在フレームからヘルメットの動作を導出する(現在フレーム, 総フレーム数)

@@ -22,6 +22,7 @@ const 地形の世界の目録ソース: &str = "terrain_world/chunk_directory.t
 const 植生の世界の目録ソース: &str = "vegetation_world/chunk_directory.txt";
 const 見本の集落の世界の目録ソース: &str = "village_world/chunk_directory.txt";
 const 目視見本の世界の目録ソース: &str = "terrain_visual_world/chunk_directory.txt";
+const ブロック圧縮の対照世界の目録ソース: &str = "texture_compression_world/chunk_directory.txt";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum 対象世界 {
@@ -33,6 +34,8 @@ pub(super) enum 対象世界 {
     目視見本の世界,
     /// 頂点処理量の係数を同定するための計測専用の世界。地形の代表世界と同じ地面と配置を持ち、同居植生の原型のトポロジー量だけが違う。
     頂点診断の世界(診断の原型),
+    /// ブロック圧縮の絵と誤差の統計を確かめるための世界。対照の素材をベースカラーに持つ板2枚を原点チャンクへ置き、チャンク以外に焼くものを持たない。参照: `_doc/設計/テクスチャのブロック圧縮と縮小段生成.md`「判断i」
+    ブロック圧縮の対照世界,
 }
 
 impl 対象世界 {
@@ -48,6 +51,7 @@ impl 対象世界 {
             Self::植生の世界 => 植生の世界の目録ソース,
             Self::見本の集落の世界 => 見本の集落の世界の目録ソース,
             Self::目視見本の世界 => 目視見本の世界の目録ソース,
+            Self::ブロック圧縮の対照世界 => ブロック圧縮の対照世界の目録ソース,
         }
     }
 
@@ -72,6 +76,7 @@ impl 対象世界 {
             Self::頂点診断の世界(原型) => ソース種別::高さ格子 {
                 同居植生: Some(vertex_diagnostic_declaration::同居植生(原型, 同居植生個体数)),
             },
+            Self::ブロック圧縮の対照世界 => ソース種別::Gltfシーン,
         }
     }
 
@@ -89,6 +94,7 @@ impl 対象世界 {
             Self::見本の集落の世界 => village_declaration::一覧(),
             Self::目視見本の世界 => visual_sample_declaration::一覧(),
             Self::頂点診断の世界(原型) => vertex_diagnostic_declaration::一覧(原型),
+            Self::ブロック圧縮の対照世界 => Vec::new(),
         }
     }
 }

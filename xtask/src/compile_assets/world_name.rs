@@ -17,3 +17,8 @@ pub const 目視見本の世界: &str = "terrain_visual_world";
 /// 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「シャドウ性能の是正(フェーズ2性能課題、2026-08-03着手)」
 pub const 頂点診断の粗い世界: &str = "vertex_diag_coarse_world";
 pub const 頂点診断の細かい世界: &str = "vertex_diag_fine_world";
+
+/// ブロック圧縮の絵と誤差の統計を確かめるための世界。対照の素材(滑らかなグラデーションと決定的な雑音)を
+/// ベースカラーに持つ板2枚だけを原点チャンクへ置く。
+/// 参照: `_doc/設計/テクスチャのブロック圧縮と縮小段生成.md`「段割りと各段の完了条件」の段4
+pub const ブロック圧縮の対照世界: &str = "texture_compression_world";

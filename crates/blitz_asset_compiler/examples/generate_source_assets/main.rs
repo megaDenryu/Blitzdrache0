@@ -9,6 +9,8 @@
 //! assets/vegetation_world/ へ植生の原型glTFと頂点量の診断用に面を細分化した原型glTFと1チャンクの目録ソースを書き出す。
 //! assets/village_world/ へ見本の集落の地面1チャンク分の高さ格子と目録ソースを、
 //! assets/terrain_visual_world/ へ目視見本の地面1チャンク分の高さ格子と目録ソースと材質見本の立体のglTFを書き出す。
+//! assets/texture_compression_world/ へブロック圧縮の対照の素材(512画素四方の滑らかなグラデーションと決定的な雑音)と
+//! それらをベースカラーに持つ板2枚のglTFと1チャンクの目録ソースを書き出す。
 //! xtask gen-source-assets の実体であり、リポジトリルートを作業ディレクトリとして実行される。
 
 mod chunk_world;
@@ -26,6 +28,7 @@ mod shadow_scene_texture;
 mod smoke_assets;
 mod terrain_visual_world;
 mod terrain_world;
+mod texture_compression_world;
 mod textures;
 mod vegetation_world;
 mod village_world;
@@ -69,6 +72,11 @@ fn 実行する() -> Result<(), String> {
     ディレクトリを作る(目視見本出力先)?;
     terrain_visual_world::書き出す(目視見本出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 目視見本出力先.display());
+
+    let ブロック圧縮の対照出力先 = Path::new("assets/texture_compression_world");
+    ディレクトリを作る(ブロック圧縮の対照出力先)?;
+    texture_compression_world::対照素材のソース一式を書き出す(ブロック圧縮の対照出力先)?;
+    println!("[generate_source_assets] {}へ生成完了", ブロック圧縮の対照出力先.display());
     Ok(())
 }
 
