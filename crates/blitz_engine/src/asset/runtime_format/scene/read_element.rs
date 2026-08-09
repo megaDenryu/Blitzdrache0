@@ -22,9 +22,7 @@ pub(super) use matrix::行列を読む;
 pub(super) use mesh::{旧版を読む as 旧版のメッシュを読む, 読む as メッシュを読む};
 pub(super) use mesh_list::読む as メッシュ列を読む;
 pub(super) use skin::{読む as スキンを読む, 頂点属性を検査する};
-pub(super) use texture::{
-    テクスチャを読む工程, 版4までを読む as 版4までのテクスチャを読む, 版5を読む as 版5のテクスチャを読む
-};
+pub(super) use texture::{テクスチャを読む工程, 版4までのテクスチャを読む, 版5のテクスチャを読む};
 
 /// 版1から版3のメッシュ1つ分の最小バイト数。頂点数4 + 頂点1件48 + 添字数4 + 添字1件4 + スキン頂点属性の有無1の合計である。
 pub(super) const メッシュ最小長: usize = 61;

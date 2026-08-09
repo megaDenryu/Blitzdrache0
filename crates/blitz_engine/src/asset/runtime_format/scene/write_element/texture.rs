@@ -16,7 +16,7 @@ pub(in crate::asset::runtime_format::scene) type テクスチャを書く工程 
 
 /// 版4までの並びで書き出す経路は検査だけが持つ。実行時形式の書き出しは常に最新版で行うためである。
 #[cfg(test)]
-pub(in crate::asset::runtime_format::scene) fn 版4までを書く(
+pub(in crate::asset::runtime_format::scene) fn 版4までのテクスチャを書く(
     出力: &mut 書込先,
     テクスチャ: Option<&格納済みテクスチャ>,
 ) -> Result<(), アセット実行時形式エラー> {
@@ -34,7 +34,7 @@ pub(in crate::asset::runtime_format::scene) fn 版4までを書く(
     Ok(())
 }
 
-pub(in crate::asset::runtime_format::scene) fn 版5を書く(
+pub(in crate::asset::runtime_format::scene) fn 版5のテクスチャを書く(
     出力: &mut 書込先,
     テクスチャ: Option<&格納済みテクスチャ>,
 ) -> Result<(), アセット実行時形式エラー> {

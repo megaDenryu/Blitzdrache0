@@ -16,7 +16,7 @@ const 縮小段最小長: usize = 12;
 pub(in crate::asset::runtime_format::scene) type テクスチャを読む工程 =
     fn(&mut 読取位置<'_>) -> Result<Option<格納済みテクスチャ>, アセット実行時形式エラー>;
 
-pub(in crate::asset::runtime_format::scene) fn 版4までを読む(
+pub(in crate::asset::runtime_format::scene) fn 版4までのテクスチャを読む(
     入力: &mut 読取位置<'_>,
 ) -> Result<Option<格納済みテクスチャ>, アセット実行時形式エラー> {
     let Some((幅, 高さ)) = 有無と寸法を読む(入力)? else {
@@ -40,7 +40,7 @@ pub(in crate::asset::runtime_format::scene) fn 版4までを読む(
     )?))
 }
 
-pub(in crate::asset::runtime_format::scene) fn 版5を読む(
+pub(in crate::asset::runtime_format::scene) fn 版5のテクスチャを読む(
     入力: &mut 読取位置<'_>,
 ) -> Result<Option<格納済みテクスチャ>, アセット実行時形式エラー> {
     let Some((幅, 高さ)) = 有無と寸法を読む(入力)? else {
