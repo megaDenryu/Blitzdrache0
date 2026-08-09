@@ -3,7 +3,8 @@
 
 use std::path::PathBuf;
 
-use blitz_engine::{テクスチャデータ, マテリアルデータ, 金属粗さPBRデータ};
+use blitz_engine::texture_storage::格納済みテクスチャ;
+use blitz_engine::{マテリアルデータ, 金属粗さPBRデータ};
 
 use crate::error::アセットコンパイルエラー;
 
@@ -39,7 +40,7 @@ fn 情報から取り出す(
     文書: &開いた文書,
     情報: Option<gltf::texture::Info<'_>>,
     参照ファイル一覧: &mut Vec<PathBuf>,
-) -> Result<Option<テクスチャデータ>, アセットコンパイルエラー> {
+) -> Result<Option<格納済みテクスチャ>, アセットコンパイルエラー> {
     let Some(情報) = 情報 else {
         return Ok(None);
     };
@@ -47,14 +48,14 @@ fn 情報から取り出す(
     if let Some(パス) = パス {
         参照ファイル一覧.push(パス);
     }
-    Ok(Some(データ))
+    Ok(Some(格納済みテクスチャ::rgba8の原寸から生成する(&データ)?))
 }
 
 fn 法線情報から取り出す(
     文書: &開いた文書,
     情報: Option<gltf::material::NormalTexture<'_>>,
     参照ファイル一覧: &mut Vec<PathBuf>,
-) -> Result<Option<テクスチャデータ>, アセットコンパイルエラー> {
+) -> Result<Option<格納済みテクスチャ>, アセットコンパイルエラー> {
     let Some(情報) = 情報 else {
         return Ok(None);
     };
@@ -62,5 +63,5 @@ fn 法線情報から取り出す(
     if let Some(パス) = パス {
         参照ファイル一覧.push(パス);
     }
-    Ok(Some(データ))
+    Ok(Some(格納済みテクスチャ::rgba8の原寸から生成する(&データ)?))
 }

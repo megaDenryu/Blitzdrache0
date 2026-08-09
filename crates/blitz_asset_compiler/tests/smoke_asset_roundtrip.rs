@@ -60,11 +60,14 @@ fn 極小四角形アセットを読み込める() {
         Some(テクスチャ) => テクスチャ,
         None => panic!("quad.gltfにはbaseColorテクスチャが設定されているはず"),
     };
-    assert_eq!(ベースカラー.幅, 4);
-    assert_eq!(ベースカラー.高さ, 4);
+    assert_eq!(ベースカラー.幅を返す(), 4);
+    assert_eq!(ベースカラー.高さを返す(), 4);
 
     let 期待ピクセル = [0u8, 0, 255, 255];
-    for ピクセル in ベースカラー.rgba8.chunks_exact(4) {
+    let Some(画素列) = ベースカラー.rgba8の原寸の画素列を返す() else {
+        panic!("ベースカラーが格納形式RGBA8で焼かれていなかった");
+    };
+    for ピクセル in 画素列.chunks_exact(4) {
         assert_eq!(ピクセル, 期待ピクセル);
     }
 

@@ -5,17 +5,19 @@ mod features_error;
 #[cfg(test)]
 mod features_tests;
 
-use super::texture_data::テクスチャデータ;
+use super::texture_storage::格納済みテクスチャ;
 
 pub use features::材質特徴集合;
 pub use features_error::材質特徴集合エラー;
 
+/// テクスチャは復号済みの画素ではなく、実行時形式が運ぶ形の`格納済みテクスチャ`で持つ。
+/// 格納形式ごとに画素の並びが違い、ブロック圧縮の値をCPUで画素として読む経路は存在しないためである。
 #[derive(Debug, Clone, PartialEq)]
 pub struct 金属粗さPBRデータ {
-    pub ベースカラー: Option<テクスチャデータ>,
+    pub ベースカラー: Option<格納済みテクスチャ>,
     /// glTF規約ではG成分が粗さ、B成分が金属度を表す。
-    pub 金属粗さ: Option<テクスチャデータ>,
-    pub 法線マップ: Option<テクスチャデータ>,
+    pub 金属粗さ: Option<格納済みテクスチャ>,
+    pub 法線マップ: Option<格納済みテクスチャ>,
     pub ベースカラー係数: [f32; 4],
     pub 金属度係数: f32,
     pub 粗さ係数: f32,

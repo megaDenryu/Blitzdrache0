@@ -1,4 +1,4 @@
-//! 版4の複数材質シーンが決定的に往復することの検査。プリミティブ列と材質集合が、焼いた形のまま読み戻ることを確かめる。
+//! 版5の複数材質シーンが決定的に往復することの検査。プリミティブ列と材質集合が、焼いた形のまま読み戻ることを確かめる。
 //! 参照: `_doc/設計/マルチマテリアルと材質境界.md`「入力契約と実行時形式(scene v4)」
 
 #![allow(clippy::unwrap_used)]
@@ -9,6 +9,7 @@ pub(crate) mod material_fixture;
 mod patch;
 mod position;
 mod slot_negative_tests;
+mod texture_negative_tests;
 
 use position as 位置;
 
@@ -31,7 +32,7 @@ fn 二材質のシーンを決定的に往復する() {
     let 一回目 = シーンを実行時形式へ格納する(&シーン).unwrap();
     let 二回目 = シーンを実行時形式へ格納する(&シーン).unwrap();
     assert_eq!(一回目, 二回目);
-    assert_eq!(一回目[8..12], アセット形式版::V4.番号().to_le_bytes());
+    assert_eq!(一回目[8..12], アセット形式版::V5.番号().to_le_bytes());
     assert_eq!(実行時形式からシーンを読む(&一回目).unwrap(), シーン);
 }
 

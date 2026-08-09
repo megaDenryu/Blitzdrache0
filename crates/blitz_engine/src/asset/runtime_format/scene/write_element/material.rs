@@ -3,7 +3,8 @@
 
 use super::super::super::{アセット実行時形式エラー, 材質割当エラー};
 use super::super::bytes::書込先;
-use super::material_element::{テクスチャを書く, 係数を書く, 金属粗さPBRの種別番号};
+use super::material_element::{係数を書く, 金属粗さPBRの種別番号};
+use super::texture::版4までを書く as テクスチャを書く;
 use crate::asset::material_data::マテリアルデータ;
 use crate::asset::material_set::材質集合;
 use crate::asset::material_slot_id::材質スロットID;

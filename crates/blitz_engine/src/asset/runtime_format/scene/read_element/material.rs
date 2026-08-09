@@ -2,7 +2,8 @@
 
 use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::読取位置;
-use super::material_element::{テクスチャを読む, 係数を読む, 金属粗さPBRの種別番号};
+use super::material_element::{係数を読む, 金属粗さPBRの種別番号};
+use super::texture::版4までを読む as テクスチャを読む;
 use crate::asset::material_data::マテリアルデータ;
 use crate::asset::pbr_material_data::金属粗さPBRデータ;
 

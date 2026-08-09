@@ -13,6 +13,7 @@ mod mesh_list;
 mod mesh_primitive;
 mod mesh_skin_vertex;
 mod skin;
+mod texture;
 
 pub(super) use animation::一覧を書く as アニメーション一覧を書く;
 pub(super) use instance::{境界を書く, 配置列を書く};
@@ -25,3 +26,6 @@ pub(super) use mesh::旧版を書く as 旧版のメッシュを書く;
 pub(super) use mesh::書く as メッシュを書く;
 pub(super) use mesh_list::書く as メッシュ列を書く;
 pub(super) use skin::書く as スキンを書く;
+#[cfg(test)]
+pub(super) use texture::版4までを書く as 版4までのテクスチャを書く;
+pub(super) use texture::{テクスチャを書く工程, 版5を書く as 版5のテクスチャを書く};
