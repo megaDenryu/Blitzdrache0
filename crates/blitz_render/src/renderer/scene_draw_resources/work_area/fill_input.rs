@@ -5,7 +5,7 @@
 use ash::vk;
 use blitz_math::大域ワールド位置;
 
-use crate::frame_input::{プリミティブ発行受け皿, 影のキャスター指定};
+use crate::frame_input::{プリミティブ発行受け皿, 動く個体の大域位置の指定, 影のキャスター指定};
 use crate::terrain_detail::地形詳細段選択;
 use crate::visible_instance_selection::可視個体選択一覧;
 use crate::vulkan::material_table::{材質資源表, 資源表世代の束縛};
@@ -27,6 +27,8 @@ pub(in crate::renderer) struct 作業領域更新入力<'a> {
     pub(in crate::renderer) 地形詳細段選択一覧: &'a [地形詳細段選択],
     /// そのフレームに描く個体の並びと段の切り分け。選択を持たない対象は全個体を束の段で描く。
     pub(in crate::renderer) 可視個体選択一覧: 可視個体選択一覧<'a>,
+    /// そのフレームに動く個体を置く大域位置。読込時に動く個体を宣言した対象だけがこの指定を受け取る。
+    pub(in crate::renderer) 動く個体の大域位置の指定一覧: &'a [動く個体の大域位置の指定],
     /// 描画対象ごとに、その対象が描くプリミティブの並び。段の選択が選んだ詳細段のプリミティブだけが発行になる。
     pub(in crate::renderer) プリミティブ発行: &'a プリミティブ発行受け皿,
     /// 材質スロット番号から解決した材質IDを、そのフレームが束縛する世代のレコード添字へ写すために要る。

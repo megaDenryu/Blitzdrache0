@@ -30,6 +30,7 @@ pub(super) struct フレーム材料<'a> {
     pub(super) 地形詳細段選択一覧: &'a [blitz_render::地形詳細段選択],
     pub(super) 可視受け皿: &'a 可視選択受け皿,
     pub(super) プリミティブ発行: &'a プリミティブ発行受け皿,
+    pub(super) 動く個体の大域位置の指定一覧: &'a [blitz_render::frame_input::動く個体の大域位置の指定],
     pub(super) 布入力: Option<布フレーム入力>,
     pub(super) ui描画: Option<UI描画データ>,
 }
@@ -47,6 +48,7 @@ impl アプリ {
             材料.地形詳細段選択一覧,
             可視個体選択一覧,
             材料.プリミティブ発行,
+            材料.動く個体の大域位置の指定一覧,
         );
         描画入力.布 = 材料.布入力;
         描画入力.ui描画 = 材料.ui描画;

@@ -7,12 +7,14 @@
 use crate::atmosphere_lut_input::大気のベイク済み画像の入力;
 use crate::clear_color::クリアカラー;
 use crate::distant_environment::遠方環境の入力;
+mod moving_instance_supply;
 mod primitive_issue;
 mod primitive_issue_section;
 mod primitive_issue_tray;
 mod shadow_casters;
 mod sky_input;
 
+pub use moving_instance_supply::動く個体の大域位置の指定;
 pub use primitive_issue::プリミティブ描画発行;
 pub use primitive_issue_tray::プリミティブ発行受け皿;
 pub use shadow_casters::影のキャスター指定;
@@ -68,6 +70,10 @@ pub struct フレーム描画入力<'a> {
     /// 段の区間はパスごとに別々の開始と描画数を持ち、シーンはカメラ視錐台、距離区分0から距離区分3はその距離区分のライト視錐台の判定結果である
     /// (参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「可視ID列の距離区分別の区間(4区分並べの後継)」)。
     pub 可視個体選択一覧: 可視個体選択一覧<'a>,
+    /// そのフレームに動く個体を置く大域位置。読込時に動く個体を宣言した個体は毎フレームここに現れなければならず、
+    /// 宣言していない個体を指す指定は型付きエラーになる(無言で捨てると、供給しているのに動かない状態が絵にしか出ない)。
+    /// 宣言を1つも持たない起動ではこの一覧が常に空であり、動く個体の書き込みは1件も起こらない。
+    pub 動く個体の大域位置の指定一覧: &'a [動く個体の大域位置の指定],
     /// 描画対象ごとに、その対象が描くプリミティブの並び。段の選択で選ばれた詳細段のプリミティブだけが発行になる。
     /// ここに無い描画対象は描くインデックス区間を決められないため、描画は型付きエラーになる(無言で対象を飛ばすことはしない)。
     /// 可視選別は個体・原型・詳細段について1回だけ行い、プリミティブへの展開はその結果を読むこの段でだけ起こる

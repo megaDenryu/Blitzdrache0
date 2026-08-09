@@ -11,7 +11,7 @@ use super::super::cpu_timing::CPU区間時計;
 use super::super::scene_draw_resources::作業領域更新入力;
 use super::super::レンダラー;
 use crate::error::レンダラーエラー;
-use crate::frame_input::プリミティブ発行受け皿;
+use crate::frame_input::{プリミティブ発行受け皿, 動く個体の大域位置の指定};
 use crate::terrain_detail::地形詳細段選択;
 use crate::visible_instance_selection::可視個体選択一覧;
 use crate::vulkan::material_table::{材質資源の作業環境, 資源表世代の束縛};
@@ -25,6 +25,7 @@ pub(super) struct 充填の材料<'a> {
     pub(super) カメラ大域原点: 大域ワールド位置,
     pub(super) 地形詳細段選択一覧: &'a [地形詳細段選択],
     pub(super) 可視個体選択一覧: 可視個体選択一覧<'a>,
+    pub(super) 動く個体の大域位置の指定一覧: &'a [動く個体の大域位置の指定],
     pub(super) プリミティブ発行: &'a プリミティブ発行受け皿,
     pub(super) 影のキャスター: crate::frame_input::影のキャスター指定,
 }
@@ -41,6 +42,7 @@ pub(super) fn 積む(
         カメラ大域原点: 材料.カメラ大域原点,
         地形詳細段選択一覧: 材料.地形詳細段選択一覧,
         可視個体選択一覧: 材料.可視個体選択一覧,
+        動く個体の大域位置の指定一覧: 材料.動く個体の大域位置の指定一覧,
         プリミティブ発行: 材料.プリミティブ発行,
         材質資源表: &レンダラー.材質資源表,
         資源表世代の束縛: 材料.資源表世代の束縛,

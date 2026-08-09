@@ -59,8 +59,9 @@ fn 割り当てて書き込む(
             let Some(set) = set一覧.get(位置を求める(描画対象添字, フレーム添字)).copied() else {
                 panic!("ジオメトリのセット一覧が走査中の位置を持たない");
             };
+            let 個体レコード = (参照.個体レコード.buffer(フレーム添字), 参照.個体レコード.範囲());
             let 可視id列 = (参照.可視id列.buffer(フレーム添字), 参照.可視id列.範囲());
-            geometry_set::資源を結ぶ(device, set, 参照.個体レコード, 可視id列);
+            geometry_set::資源を結ぶ(device, set, 個体レコード, 可視id列);
         }
     }
     Ok(set一覧)

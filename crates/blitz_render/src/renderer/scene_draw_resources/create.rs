@@ -8,7 +8,7 @@ use super::chunk_draw_resources::チャンク描画資源;
 use super::シーン描画資源;
 use crate::draw_bundle_id::描画束ID;
 use crate::error::レンダラーエラー;
-use crate::render_scene_material::描画シーン素材;
+use crate::render_scene_material::{動く個体の宣言, 描画シーン素材};
 use crate::vulkan::descriptor::シーンセットレイアウト一式;
 use crate::vulkan::material_table::描画対象別の材質ID;
 use crate::vulkan::tracked_device::GPUデバイス;
@@ -25,6 +25,8 @@ pub(in crate::renderer) struct チャンク描画資源生成材料<'a> {
     pub(in crate::renderer) セットレイアウト: &'a シーンセットレイアウト一式,
     /// 材質資源表がこの束の描画対象一覧と同じ並びで発番した大域材質ID。
     pub(in crate::renderer) 材質id一覧: &'a [描画対象別の材質ID],
+    /// この束の中で毎フレーム変換を書き換える個体の宣言。チャンクの束は1件も持たない。
+    pub(in crate::renderer) 動く個体一覧: &'a [動く個体の宣言],
 }
 
 pub(in crate::renderer) type 束追加材料<'a> = チャンク描画資源生成材料<'a>;
@@ -48,6 +50,7 @@ impl シーン描画資源 {
             転送環境: 要求.転送環境,
             セットレイアウト: 要求.セットレイアウト,
             材質id一覧: 要求.材質id一覧,
+            動く個体一覧: 要求.描画シーン.動く個体一覧(),
         };
         let チャンク = チャンク描画資源::生成する(device, 材料, 起動シーンの束ID, 要求.描画シーン.描画対象一覧())?;
         let チャンク一覧 = vec![チャンク];

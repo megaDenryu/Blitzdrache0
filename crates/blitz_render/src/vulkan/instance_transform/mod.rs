@@ -7,8 +7,14 @@
 
 pub(crate) mod bytes;
 pub(crate) mod content;
+mod dynamic;
+mod dynamic_allocation;
 #[cfg(test)]
 mod layout_tests;
+mod reference;
+
+pub(crate) use dynamic::動く個体の変換バッファ;
+pub(crate) use reference::個体レコード参照;
 
 use ash::vk;
 
@@ -45,6 +51,10 @@ impl 個体変換バッファ {
         )?;
         let 範囲 = u64::try_from(バイト列.len()).unwrap_or_else(|_| panic!("個体変換バッファの長さがu64に収まらない"));
         Ok(Self { buffer, memory, 範囲 })
+    }
+
+    pub(crate) fn 参照(&self) -> 個体レコード参照 {
+        個体レコード参照::全スロット共通のバッファから生成する(self.buffer, self.範囲)
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {

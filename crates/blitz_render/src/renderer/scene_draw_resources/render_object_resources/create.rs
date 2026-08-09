@@ -4,6 +4,7 @@
 use ash::vk;
 
 use super::geometry_list::段別ジオメトリ;
+use super::instance_record_storage::個体レコードの置き場;
 use super::slot_material_ids::スロット別材質ID;
 use super::visible_id_content::可視ID列の内容検査;
 use super::visible_id_source::可視ID列の出どころ;
@@ -17,12 +18,14 @@ use crate::vulkan::tracked_device::GPUデバイス;
 
 impl 描画対象資源 {
     /// `材質id一覧`は材質資源表がこの対象の材質スロット素材一覧と同じ並びで発番した大域材質IDである。
+    /// `動く個体添字一覧`はこの対象について宣言された動く個体の添字であり、空なら個体レコードは静的な1本になる。
     pub(in crate::renderer::scene_draw_resources) fn 生成する(
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         転送環境: &vulkan::transfer::転送実行環境,
         素材: &描画対象素材,
         材質id一覧: &[大域材質ID],
+        動く個体添字一覧: &[u32],
     ) -> Result<Self, レンダラーエラー> {
         let 個体数 = u32::try_from(素材.個体変換一覧().len()).map_err(|_| レンダラーエラー::個体数過大(素材.個体変換一覧().len()))?;
         let 段別ジオメトリ = 段別ジオメトリ::生成する(device, メモリプロパティ, 転送環境, 素材.段一覧())?;
@@ -33,7 +36,7 @@ impl 描画対象資源 {
                 return Err(誤り);
             }
         };
-        let 個体変換 = match vulkan::instance_transform::個体変換バッファ::生成する(device, メモリプロパティ, 転送環境, &個体変換内容一覧)
+        let 個体変換 = match 個体レコードの置き場::生成する(device, メモリプロパティ, 転送環境, &個体変換内容一覧, 動く個体添字一覧)
         {
             Ok(値) => 値,
             Err(誤り) => {

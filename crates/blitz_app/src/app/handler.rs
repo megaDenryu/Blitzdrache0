@@ -1,7 +1,9 @@
 //! `ApplicationHandler` 実装。winit所有ループ(パターンA)の受け口。参照: `_doc/設計/イベントループとフレームペーシング.md`
 //! 開発用UIの表示切替だけは触れるフィールドが`開発ui`に閉じるため`dev_ui_toggle`にある。
+//! 起動時に1回だけ走る生成と格納は`resume`にある。
 
 mod dev_ui_toggle;
+mod resume;
 
 use super::アプリ;
 use blitz_render::ウィンドウ寸法;
@@ -15,56 +17,7 @@ impl ApplicationHandler for アプリ {
         if self.レンダラー.is_some() {
             return;
         }
-        let 実表示計測要求 = super::measurement_setup::実表示計測要求を決める(self);
-        match super::window_setup::ウィンドウとレンダラーを作る(
-            event_loop,
-            &self.シーン名,
-            &self.アセットルート,
-            self.描画対象の並べ方,
-            &mut self.ホットリローダー,
-            self.粒子表示,
-            self.空中遠近合成,
-            self.開発ui初期有効,
-            self.世界の描画構成.フレーム構成,
-            self.布モード,
-            実表示計測要求,
-            self.大域ずらし量,
-            self.天空.影の一辺解像度(),
-            self.天空.照明問い合わせ契約(),
-            self.天空.自動露出の設定(),
-            self.世界の描画構成.局所可視性の描画設定,
-            self.世界の描画構成.時間再構成の描画設定,
-        ) {
-            Ok((window, mut レンダラー, 開発ui, アニメーション, 布プリセット, 登録一式)) => {
-                // 起動時シーンをディスクから読んだのはこの1回である。
-                self.シーン読込計数.読み込んだ(self.現在フレーム);
-                crate::reports::composition::ディスクリプタ索引上限を表示する(レンダラー.ディスクリプタ索引上限を取得する());
-                if let Some(状況) = super::measurement_setup::レンダラーの計測を有効にする(&mut レンダラー, self) {
-                    println!("実表示時刻計測: {}", 状況.名称());
-                }
-                let 注入 = self
-                    .読み戻し検収
-                    .遠方環境の検収条件
-                    .map(|条件| crate::reports::indirect_probe::レンダラーへ注入する(条件, &mut レンダラー));
-                if let Some(Err(誤り)) = 注入 {
-                    self.起動時エラー = Some(crate::error::起動エラー::from(誤り));
-                    event_loop.exit();
-                    return;
-                }
-                let 束id = super::scene_load::起動時シーンの束ID;
-                self.可視判定.束を登録する(束id, 登録一式.可視材料一覧);
-                self.プリミティブ描画項目台帳.束を登録する(束id, 登録一式.プリミティブ描画項目一覧);
-                self.window = Some(window);
-                self.レンダラー = Some(レンダラー);
-                self.開発ui = Some(開発ui);
-                self.アニメーション = アニメーション;
-                self.布プリセット = 布プリセット;
-            }
-            Err(誤り) => {
-                self.起動時エラー = Some(誤り);
-                event_loop.exit();
-            }
-        }
+        resume::生成してアプリへ格納する(self, event_loop);
     }
 
     fn window_event(&mut self, event_loop: &ActiveEventLoop, _window_id: WindowId, event: WindowEvent) {

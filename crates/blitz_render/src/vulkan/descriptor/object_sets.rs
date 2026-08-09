@@ -11,13 +11,15 @@ mod create;
 
 use ash::vk;
 
+use crate::vulkan::instance_transform::個体レコード参照;
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::visible_id::可視ID列参照;
 
 /// 描画対象1つぶんの、ジオメトリのセットが結ぶ資源。
 pub(crate) struct ジオメトリセット参照 {
-    /// 個体レコードを読むバッファと、そのバイト範囲。個体が1体だけの対象も1要素ぶんの範囲を持つ専用のバッファを指す。
-    pub(crate) 個体レコード: (vk::Buffer, vk::DeviceSize),
+    /// 個体レコードを読むバッファ。個体が1体だけの対象も1要素ぶんの範囲を持つ専用のバッファを指し、
+    /// 動く個体を宣言した対象だけがフレームスロットごとに別のバッファを指す。
+    pub(crate) 個体レコード: 個体レコード参照,
     /// 可視ID列を読むバッファ。個体が1体だけの対象は束が共有する値0だけの列を指す。
     pub(crate) 可視id列: 可視ID列参照,
 }

@@ -24,7 +24,7 @@ pub(super) const 起動時シーンの所有チャンク: チャンク座標 = �
 
 /// 起動時のシーンをレンダラーが持つときの描画束ID。
 /// 注意: この番号はレンダラー側の`起動シーンの束ID`と同じ値でなければならない(参照: `crates/blitz_render/src/renderer/scene_draw_resources/create.rs`)。
-pub(in crate::app) const 起動時シーンの束ID: blitz_render::描画束ID = blitz_render::描画束ID::生成する(0);
+pub(crate) const 起動時シーンの束ID: blitz_render::描画束ID = blitz_render::描画束ID::生成する(0);
 
 /// `アセットルート`配下の版付きカタログを読み、生成物の相対パスを解決する。
 pub(super) fn カタログを構築する(アセットルート: &Path) -> Result<カタログ, 起動エラー> {
