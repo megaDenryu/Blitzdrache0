@@ -6,6 +6,7 @@
 mod chunk_directory_source;
 mod compile;
 mod error;
+mod height_field;
 mod height_grid;
 mod loader;
 mod terrain;
@@ -17,6 +18,9 @@ mod visual_sample;
 pub use chunk_directory_source::{チャンク目録ソースを読み込む, チャンク目録ソース項目};
 pub use compile::{コンパイル済みシーン, ソースシーンをコンパイルする};
 pub use error::アセットコンパイルエラー;
+pub use height_field::{
+    コンパイル済み高さ場, チャンクごとの高さ格子から高さ場を組み立てる, 高さ場アセットをコンパイルする, 高さ場コンパイルエラー
+};
 pub use height_grid::{
     高さ格子, 高さ格子を切り出す, 高さ格子を格納する, 高さ格子を読み込む, 高さ格子エラー, 高さ格子諸元
 };
