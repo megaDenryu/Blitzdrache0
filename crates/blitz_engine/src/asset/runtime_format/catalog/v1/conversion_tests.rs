@@ -36,7 +36,7 @@ fn 版1のカタログを個体数0として最新版へ変換して読む() {
 #[test]
 fn 最新版は個体数を往復する() {
     let バイト列 = crate::asset::カタログを実行時形式へ格納する(&カタログを作る(64)).unwrap();
-    assert_eq!(バイト列[8..12], アセット形式版::V2.番号().to_le_bytes());
+    assert_eq!(バイト列[8..12], アセット形式版::V3.番号().to_le_bytes());
     let 読み取り = 実行時形式からカタログを読む(&バイト列).unwrap();
     let id = アセットID::生成する("vegetation_chunk").unwrap();
     assert_eq!(読み取り.項目を参照する(&id).unwrap().メタデータ().個体数, 64);
