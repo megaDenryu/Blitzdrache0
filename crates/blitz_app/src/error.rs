@@ -37,6 +37,8 @@ pub(crate) enum 起動エラー {
     シーン読込失敗(blitz_engine::実行時シーン読込エラー),
     #[error("{0}")]
     起動引数不正(#[from] crate::cli::起動引数エラー),
+    #[error("高さ場の読込に失敗した: {0}(`cargo xtask compile-assets`で生成できる)")]
+    高さ場読込失敗(#[from] blitz_engine::height_field::高さ場読込エラー),
     #[error("チャンク目録の読込に失敗した: {0}(`cargo xtask compile-assets`で生成できる)")]
     チャンク目録読込失敗(blitz_engine::実行時チャンク目録読込エラー),
     #[error("チャンクストリーミングの進行に失敗した: {0}")]

@@ -49,7 +49,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     自動露出の設定: blitz_render::auto_exposure::自動露出の設定,
     局所可視性の描画設定: blitz_render::local_visibility::局所可視性の描画設定,
     時間再構成の描画設定: blitz_render::temporal_reconstruction::時間再構成の描画設定,
-    ゲーム配線: &crate::game::ゲーム配線,
+    ゲーム配線: &mut crate::game::ゲーム配線,
 ) -> Result<起動一式, 起動エラー> {
     let window = window_create::生成する(event_loop)?;
     let 表示ハンドル = window.display_handle()?.as_raw();
@@ -59,7 +59,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let シェーダー束 = embedded_shaders::埋め込みシェーダー束を生成する(粒子表示, 空中遠近合成)?;
     let 粒子素材 = super::particle_setup::素材を作る(粒子表示)?;
 
-    let カタログ = scene_load::カタログを構築する(アセットルート)?;
+    let カタログ = scene_load::カタログを構築して高さ場を据える(アセットルート, ゲーム配線)?;
     let (シーン, mut 描画入力) = scene_load::シーンを読み込んで変換する(&カタログ, シーン名, 描画対象の並べ方, 大域平行移動)?;
     // 動く個体の宣言は束の読込より前でなければならない。宣言した個体だけがフレームスロットごとのバッファを持ち、そのバッファを読込時のディスクリプタが結ぶ。
     ゲーム配線.束の描画シーン素材へ動く個体を宣言する(scene_load::起動時シーンの束ID, &mut 描画入力.描画シーン)?;

@@ -62,6 +62,17 @@ impl ゲーム配線 {
         ゲームの終了要求::続ける
     }
 
+    /// カタログを構築した直後に、その世界の高さ場をゲームへ据える。遊ばない起動では高さ場を1度も読まない。
+    pub(crate) fn カタログから高さ場を据える(
+        &mut self,
+        カタログ: &blitz_engine::カタログ,
+    ) -> Result<(), blitz_engine::height_field::高さ場読込エラー> {
+        let Self::キツネの場所巡り(配線) = self else {
+            return Ok(());
+        };
+        配線.カタログから高さ場を据える(カタログ)
+    }
+
     /// 終了時の報告へ渡す要約。遊ばない起動では報告する対象が無いため`None`を返す。
     pub(crate) fn 進行の要約を作る(&self) -> Option<ゲーム進行の要約> {
         match self {

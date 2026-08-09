@@ -17,6 +17,9 @@ mod game_intent_tests;
 mod game_state;
 #[cfg(test)]
 mod game_state_tests;
+mod ground_height;
+#[cfg(test)]
+mod ground_height_tests;
 mod operation_axis;
 mod player_move;
 #[cfg(test)]
@@ -36,6 +39,7 @@ pub use forward_azimuth::前へ進む向きの方位角;
 pub use fox_tour_route::キツネの場所巡りの道順を作る;
 pub use game_intent::ゲームインテント;
 pub use game_state::場所巡りのゲームの状態;
+pub use ground_height::足元の地面の高さ;
 pub use operation_axis::操作軸の倒し量;
 pub use progress_stage::{ゲームの進行段階, 終了確認から戻る段階};
 pub use tour_progress::場所巡りの進行;
