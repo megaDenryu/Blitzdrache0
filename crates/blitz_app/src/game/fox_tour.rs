@@ -8,6 +8,8 @@
 
 mod create;
 mod ground;
+#[cfg(test)]
+mod ground_tests;
 
 use blitz_engine::height_field::高さ場の読み口;
 use blitz_game::{
