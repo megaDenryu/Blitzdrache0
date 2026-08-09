@@ -17,9 +17,9 @@ const 白リスト: [(&str, &[&str]); 8] = [
     ),
     // 判断51: シミュレーション基盤層。手法の数学のみでashもblitz_renderも知らない
     ("blitz_sim", &["blitz_math", "thiserror"]),
-    // ゲームロジック層。設計正本が許すのはこの2つだけであり、工程1の実装が実際に使うのはblitz_mathである
+    // ゲームロジック層。設計正本が許すのはblitz_engineとblitz_mathの2つであり、白リストへは実依存になった時点で足す
     // (参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「第1段階の定義」)。winit・egui・ashへは依存させない
-    ("blitz_game", &["blitz_engine", "blitz_math"]),
+    ("blitz_game", &["blitz_math"]),
     (
         "blitz_app",
         &[
