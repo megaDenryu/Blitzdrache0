@@ -8,9 +8,9 @@ use crate::{
     depth_prepass_cost, derived_environment, distant_environment, fetch_assets, game_fox_tour, gen_atmosphere_reference, gen_game_map,
     gen_source_assets, hdr_luminance, ibl_step, indirect_cost, indirect_probe, instance_cull, instance_draw, instance_lod, instance_stream,
     local_visibility, lod_crack, m10_bench, m11_soak, material_reload_draw, motion_vector, multi_material_draw, object_bench, origin_invariance,
-    ow3_dod, ow4_bench, prop_draw, prop_multi_material_draw, shader_reload_draw, shadow_loss, shadow_probe, sky_draw, sky_lut, sky_state, sky_time,
-    smoke, streaming_bench, temporal_reconstruction, temporal_visual, terrain_visual, texture_compression, type_metrics, usage, verify, vertex_diag,
-    village_draw, watch_assets,
+    ow3_dod, ow4_bench, play_fox_tour, prop_draw, prop_multi_material_draw, shader_reload_draw, shadow_loss, shadow_probe, sky_draw, sky_lut,
+    sky_state, sky_time, smoke, streaming_bench, temporal_reconstruction, temporal_visual, terrain_visual, texture_compression, type_metrics, usage,
+    verify, vertex_diag, village_draw, watch_assets,
 };
 
 pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
@@ -34,6 +34,7 @@ pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
         Some("origin-invariance") => origin_invariance::実行する(),
         Some("lod-crack") => lod_crack::実行する(),
         Some("game-fox-tour") => game_fox_tour::実行する(),
+        Some("play-fox-tour") => play_fox_tour::実行する(),
         Some("prop-draw") => prop_draw::実行する(),
         Some("prop-multi-material-draw") => prop_multi_material_draw::実行する(),
         Some("village-draw") => village_draw::実行する(),
