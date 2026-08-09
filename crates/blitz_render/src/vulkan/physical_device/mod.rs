@@ -14,7 +14,8 @@ use crate::vulkan::descriptor_indexing;
 use candidate::選定候補;
 
 /// 基礎要件(グラフィックス描画とサーフェス提示、dynamicRendering・synchronization2・shaderDrawParameters)と
-/// ディスクリプタ索引の最低機能要件をともに満たす物理デバイスを選ぶ。満たす候補の中ではdiscrete GPUを優先する。
+/// ディスクリプタ索引の最低機能要件とテクスチャのブロック圧縮への対応をすべて満たす物理デバイスを選ぶ。
+/// 満たす候補の中ではdiscrete GPUを優先する。
 pub(crate) fn 選定する(
     instance: &ash::Instance,
     surface_loader: &ash::khr::surface::Instance,
@@ -48,7 +49,27 @@ fn 候補を作る(instance: &ash::Instance, 物理デバイス: vk::PhysicalDev
         .device_name_as_c_str()
         .map_or_else(|_| "(機材名を読めなかった)".to_string(), |名前| 名前.to_string_lossy().into_owned());
     let discreteか = 性質.device_type == vk::PhysicalDeviceType::DISCRETE_GPU;
-    選定候補::生成する(添字, 機材名, discreteか, descriptor_indexing::機能を採取する(instance, 物理デバイス))
+    選定候補::生成する(
+        添字,
+        機材名,
+        discreteか,
+        descriptor_indexing::機能を採取する(instance, 物理デバイス),
+        物理デバイスがテクスチャのブロック圧縮に対応するか(instance, 物理デバイス),
+    )
+}
+
+/// 物理デバイスが`textureCompressionBC`(BC1からBC7までのブロック圧縮形式の族)に対応するか。
+/// 非対応の機材へ非圧縮の版を焼き直す枝も、実行時にCPUで展開する枝も持たないため、対応しない機材は候補から外す
+/// (参照: `_doc/設計/テクスチャのブロック圧縮と縮小段生成.md`「判断e」)。
+///
+/// 注意: 採取と有効化は別の場所にある。同じ機能を`crates/blitz_render/src/vulkan/device.rs`が論理デバイスの生成で立てる。
+/// 片方だけを増減させると、選定を通った機材で有効化していない形式の画像を作ることになる。
+fn 物理デバイスがテクスチャのブロック圧縮に対応するか(
+    instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice
+) -> bool {
+    // 安全性: instance・物理デバイスは列挙済みで有効。
+    let 機能 = unsafe { instance.get_physical_device_features(物理デバイス) };
+    機能.texture_compression_bc == vk::TRUE
 }
 
 /// 物理デバイスが`largePoints`(1.0を超えるSV_PointSize出力)に対応するか。

@@ -1,5 +1,5 @@
-//! 複数候補での選び分けの検査。物理デバイスに触れずに候補を組み立て、索引の機能を欠く候補を飛ばすこと、
-//! discreteを優先すること、1台も残らないときに候補別の不足を報告することを見る。
+//! 複数候補での選び分けの検査。物理デバイスに触れずに候補を組み立て、索引の機能またはテクスチャのブロック圧縮を
+//! 欠く候補を飛ばすこと、discreteを優先すること、1台も残らないときにどちらの条件で落ちたのかを報告することを見る。
 
 use super::candidate::選定候補;
 use super::choose::選ぶ;
@@ -7,8 +7,14 @@ use crate::error::{ディスクリプタ索引機能項目, デバイス要件�
 use crate::vulkan::descriptor_indexing::ディスクリプタ索引機能;
 
 fn 候補(添字: usize, 機材名: &str, discreteか: bool, 索引対応: bool) -> 選定候補 {
+    ブロック圧縮を選べる候補(添字, 機材名, discreteか, 索引対応, true)
+}
+
+fn ブロック圧縮を選べる候補(
+    添字: usize, 機材名: &str, discreteか: bool, 索引対応: bool, ブロック圧縮対応: bool
+) -> 選定候補 {
     let 機能 = ディスクリプタ索引機能::生成する(索引対応, 索引対応);
-    選定候補::生成する(添字, 機材名.to_string(), discreteか, 機能)
+    選定候補::生成する(添字, 機材名.to_string(), discreteか, 機能, ブロック圧縮対応)
 }
 
 fn 不足内訳を取り出す(候補一覧: &[選定候補]) -> Vec<(String, Vec<ディスクリプタ索引機能項目>)> {
@@ -48,8 +54,26 @@ fn 対応候補が非discreteだけなら先頭を選ぶ() {
 }
 
 #[test]
+fn ブロック圧縮を欠く候補を飛ばして対応する候補を選ぶ() {
+    let 候補一覧 = [
+        ブロック圧縮を選べる候補(0, "discrete GPU", true, true, false),
+        候補(1, "統合GPU", false, true),
+    ];
+    assert_eq!(選ぶ(&候補一覧).ok(), Some(1));
+}
+
+#[test]
+fn 索引に対応する候補が全てブロック圧縮を欠くと機材名を並べて報告する() {
+    let 候補一覧 = [ブロック圧縮を選べる候補(0, "discrete GPU", true, true, false)];
+    let Err(デバイス要件エラー::テクスチャのブロック圧縮非対応(機材名一覧)) = 選ぶ(&候補一覧) else {
+        panic!("ブロック圧縮の非対応以外の結果が返った");
+    };
+    assert_eq!(機材名一覧, vec!["discrete GPU".to_string()]);
+}
+
+#[test]
 fn 全候補が索引の機能を欠くと候補別の不足を報告する() {
-    let 欠ける候補 = 選定候補::生成する(1, "統合GPU".to_string(), false, ディスクリプタ索引機能::生成する(false, true));
+    let 欠ける候補 = 選定候補::生成する(1, "統合GPU".to_string(), false, ディスクリプタ索引機能::生成する(false, true), true);
     let 候補一覧 = [候補(0, "discrete GPU", true, false), 欠ける候補];
     let 内訳一覧 = 不足内訳を取り出す(&候補一覧);
     assert_eq!(内訳一覧.len(), 2);
