@@ -35,4 +35,4 @@ pub use game_state::場所巡りのゲームの状態;
 pub use operation_axis::操作軸の倒し量;
 pub use progress_stage::{ゲームの進行段階, 終了確認から戻る段階};
 pub use tour_progress::場所巡りの進行;
-pub use tour_route::{場所巡りの道順, 目的地番号};
+pub use tour_route::場所巡りの道順;
