@@ -1,7 +1,10 @@
-// 照明問い合わせが運ぶ値の形の宣言だけを持つモジュール。束縛先を1つも宣言しないため、照明問い合わせのセットを
-// 読む画素段も、生成側のセットへ同じバッファを結ぶ選別のコンピュートも、同じこの1つから形を読む。
+// 材質のシェーダーが正当に読む照明の値の形。照明問い合わせヘッダと方向光レコードである。束縛先を1つも
+// 宣言しないため、照明問い合わせのセットを読む画素段も、生成側のセットへ同じバッファを結ぶ選別のコンピュートも、
+// 同じこの1つから形を読む。
 // 束縛の宣言(`lighting_query.slang`)と分けるのは、コンピュートがset3を1つも束縛しないためである。
 // 形と束縛を1つのファイルへ置くと、コンピュートが取り込むだけで画素段専用の束縛先を宣言したことになる。
+// 局所光レコードとクラスタの区間は`local_light_records.slang`が別に持つ。材質のシェーダーがヘッダを読むために
+// 取り込んだだけで、光の並べ方とクラスタの生成方法まで名指しできることを避けるためである。
 // CPU側の正本は`crates/blitz_render/src/vulkan/lighting_query/`であり、並びの一致を単体テストが見る。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
@@ -35,35 +38,6 @@ struct DirectionalLightRecord
     uint4 visibility;
 };
 
-struct LocalLightRecord
-{
-    // xyzがカメラ相対位置。wは未使用である。
-    float4 cameraRelativePosition;
-    // rgbがscene-linearの色、wが強度。
-    float4 colorAndIntensity;
-    // xが光種。yzwは未使用である。
-    uint4 kind;
-    // 光が届く範囲の上限(メートル)。この距離で減衰の窓が0になる。
-    float influenceRadius;
-    // 影を持つかどうか。0が影なしであり、番兵の添字で「影なし」を表さない。
-    uint hasShadow;
-    // 影を持つときに見る影資源の添字。影を持たない光では読まない。
-    uint shadowResourceIndex;
-    // 未使用である。減衰の窓の指数は固定であり、変えたくなったときがレコードの版を上げるときである。
-    uint unusedLocalLightSlot;
-};
-
-// クラスタ格子の1つのセルが持つ、クラスタ光添字列の中の区間。選別のコンピュートが書き、画素段が読む。
-struct ClusterCell
-{
-    // そのセルが使うクラスタ光添字列の開始位置。
-    uint start;
-    // そのセルへ割り当てられた局所光の件数。
-    uint count;
-};
-
 // 可視性の種別。番兵の添字で「影なし」を表さず、種別そのもので枝を分ける。
 static const uint directionalVisibilityNone = 0;
 static const uint directionalVisibilityCascadedShadow = 1;
-// 光種。現行は点光だけである。
-static const uint localLightKindPoint = 0;

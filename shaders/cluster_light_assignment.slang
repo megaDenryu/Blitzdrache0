@@ -10,6 +10,7 @@ import cluster_cell_frustum;
 import cluster_mapping;
 import cluster_sphere_intersection;
 import lighting_query_records;
+import local_light_records;
 
 // セル1つが指せる局所光の件数の上限。CPU正本の`局所光源の上限件数`と同じ値でなければならない。
 static const uint clusterLightsPerCellCapacity = 64;

@@ -5,9 +5,11 @@
 use super::{directional_bytes, header_bytes, local_bytes};
 use crate::vulkan::shader_struct::{シェーダー構造体の並び, 読み取る};
 
-/// 値の形の宣言だけを持つモジュールを読む。束縛の宣言(`shaders/lighting_query.slang`)と分かれているのは、
-/// 選別のコンピュートがset3を1つも束縛せずに同じ形を読むためである。
+/// 値の形の宣言だけを持つ2つのモジュールを読む。束縛の宣言と分かれているのは、選別のコンピュートがset3を
+/// 1つも束縛せずに同じ形を読むためである。形が2つに分かれているのは、材質のシェーダーが読んでよいヘッダと
+/// 方向光レコードを、局所光とクラスタの内側から離すためである。
 const 照明問い合わせの原文: &str = include_str!("../../../../../shaders/lighting_query_records.slang");
+const 局所光の原文: &str = include_str!("../../../../../shaders/local_light_records.slang");
 
 #[test]
 fn ヘッダの宣言がcpu側と同じ並びである() {
@@ -34,7 +36,7 @@ fn 方向光レコードの宣言がcpu側と同じ並びである() {
 
 #[test]
 fn 局所光レコードの宣言がcpu側と同じ並びである() {
-    let 並び = 読み取る一つ("LocalLightRecord");
+    let 並び = 局所光から読み取る("LocalLightRecord");
     assert_eq!(並び.バイト長, local_bytes::バイト長);
     開始位置を確かめる(&並び, "cameraRelativePosition", 0);
     開始位置を確かめる(&並び, "colorAndIntensity", 16);
@@ -46,7 +48,15 @@ fn 局所光レコードの宣言がcpu側と同じ並びである() {
 }
 
 fn 読み取る一つ(構造体名: &str) -> シェーダー構造体の並び {
-    match 読み取る(照明問い合わせの原文, 構造体名) {
+    原文から読み取る(照明問い合わせの原文, 構造体名)
+}
+
+fn 局所光から読み取る(構造体名: &str) -> シェーダー構造体の並び {
+    原文から読み取る(局所光の原文, 構造体名)
+}
+
+fn 原文から読み取る(原文: &str, 構造体名: &str) -> シェーダー構造体の並び {
+    match 読み取る(原文, 構造体名) {
         Ok(並び) => 並び,
         Err(誤り) => panic!("{構造体名}の宣言を読めない: {誤り}"),
     }
