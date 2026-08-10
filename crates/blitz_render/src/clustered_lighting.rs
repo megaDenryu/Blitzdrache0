@@ -60,6 +60,8 @@ mod frustum_sampling;
 #[cfg(test)]
 mod independent_construction;
 #[cfg(test)]
+mod point_light_radiance_tests;
+#[cfg(test)]
 mod recommended_radius_tests;
 #[cfg(test)]
 mod single_precision_agreement_tests;

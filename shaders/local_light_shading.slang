@@ -79,12 +79,14 @@ public struct LocalLightQuery
         float3 toLight = record.cameraRelativePosition.xyz - relativePosition;
         float squaredDistance = dot(toLight, toLight);
         float lightDistance = sqrt(squaredDistance);
+        // 光の位置にちょうど載った表面では光へ向かう向きが定まらず、影の立方体のどの面を読むかも決まらないため、零ベクトルを渡した比較標本が返す未定義の値(非数なら内積0を掛けても画素が汚れる)を避けて、標本を1つも行わずに向きも放射も0のまま返す。
+        if (lightDistance <= 0.0)
+        {
+            return true;
+        }
         float window = localLightAttenuationWindow(lightDistance, record.influenceRadius);
-        // 光の位置にちょうど載った表面では向きが定まらないため零ベクトルを返す。零ベクトルとの内積は0であり、
-        // どの反射の式を通しても寄与が出ない(窓を掛ける前の実装が距離を下から抑えて同じ振る舞いをしていた)。
-        result.directionToLight = lightDistance > 0.0 ? toLight / lightDistance : float3(0.0, 0.0, 0.0);
-        result.radiance = record.colorAndIntensity.rgb * record.colorAndIntensity.w
-            / (squaredDistance + localLightSquaredDistanceEpsilon) * window;
+        result.directionToLight = toLight / lightDistance;
+        result.radiance = record.colorAndIntensity.rgb * record.colorAndIntensity.w / (squaredDistance + localLightSquaredDistanceEpsilon) * window;
         // 影を落とす灯だけが立方体を1つ占める。影なしの灯は立方体を持たないため、添字を読まずに素通りする
         // (番兵の添字で影なしを表さない形の実効がこの枝である)。
         if (record.hasShadow != 0)
