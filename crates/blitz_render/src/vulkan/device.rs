@@ -1,5 +1,5 @@
 //! 論理デバイスとグラフィックスキューの生成。dynamicRendering・synchronization2と、材質テクスチャ表の索引化に要る
-//! ディスクリプタ索引の2機能と、テクスチャのブロック圧縮を有効化する。
+//! ディスクリプタ索引の2機能と、テクスチャのブロック圧縮と立方体の配列画像を有効化する。
 
 use ash::vk;
 
@@ -49,10 +49,13 @@ pub(crate) fn 生成する(
     //
     // texture_compression_bc: ブロック圧縮の画像形式を有効化せずにその形式の画像を作るのは仕様違反であるため、
     // 検査だけでなく有効化まで行う(参照: `_doc/設計/テクスチャのブロック圧縮と縮小段生成.md`「判断e」)。
-    // 常にtrueで立てるのは、同じ機能を`physical_device`が選定の条件として掛けており、ここで有効化に失敗する候補が選ばれていないためである。
+    // image_cube_array: 点光源の影の立方体配列のビューを作るのに要る。同じく有効化まで行う
+    // (参照: `_doc/設計/クラスタ多光源と点光源の影.md`「判断l」)。
+    // 2つとも常にtrueで立てるのは、同じ機能を`physical_device`が選定の条件として掛けており、ここで有効化に失敗する候補が選ばれていないためである。
     let 基本機能 = vk::PhysicalDeviceFeatures::default()
         .large_points(大点描画対応)
-        .texture_compression_bc(true);
+        .texture_compression_bc(true)
+        .image_cube_array(true);
 
     let mut create_info = vk::DeviceCreateInfo::default()
         .queue_create_infos(&キュー生成情報)

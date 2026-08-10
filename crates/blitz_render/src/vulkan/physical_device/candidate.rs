@@ -15,6 +15,8 @@ pub(crate) struct 選定候補 {
     索引機能: ディスクリプタ索引機能,
     /// `VkPhysicalDeviceFeatures::textureCompressionBC`。
     テクスチャのブロック圧縮に対応するか: bool,
+    /// `VkPhysicalDeviceFeatures::imageCubeArray`。
+    立方体の配列画像に対応するか: bool,
 }
 
 impl 選定候補 {
@@ -24,6 +26,7 @@ impl 選定候補 {
         discreteか: bool,
         索引機能: ディスクリプタ索引機能,
         テクスチャのブロック圧縮に対応するか: bool,
+        立方体の配列画像に対応するか: bool,
     ) -> Self {
         Self {
             添字,
@@ -31,6 +34,7 @@ impl 選定候補 {
             discreteか,
             索引機能,
             テクスチャのブロック圧縮に対応するか,
+            立方体の配列画像に対応するか,
         }
     }
 
@@ -56,5 +60,9 @@ impl 選定候補 {
 
     pub(crate) fn テクスチャのブロック圧縮に対応するか(&self) -> bool {
         self.テクスチャのブロック圧縮に対応するか
+    }
+
+    pub(crate) fn 立方体の配列画像に対応するか(&self) -> bool {
+        self.立方体の配列画像に対応するか
     }
 }

@@ -3,9 +3,13 @@
 
 mod base_requirement;
 mod candidate;
+#[cfg(test)]
+mod candidate_fixture;
 mod choose;
 #[cfg(test)]
 mod choose_tests;
+#[cfg(test)]
+mod feature_choose_tests;
 
 use ash::vk;
 
@@ -14,7 +18,7 @@ use crate::vulkan::descriptor_indexing;
 use candidate::選定候補;
 
 /// 基礎要件(グラフィックス描画とサーフェス提示、dynamicRendering・synchronization2・shaderDrawParameters)と
-/// ディスクリプタ索引の最低機能要件とテクスチャのブロック圧縮への対応をすべて満たす物理デバイスを選ぶ。
+/// ディスクリプタ索引の最低機能要件とテクスチャのブロック圧縮と立方体の配列画像への対応をすべて満たす物理デバイスを選ぶ。
 /// 満たす候補の中ではdiscrete GPUを優先する。
 pub(crate) fn 選定する(
     instance: &ash::Instance,
@@ -55,6 +59,7 @@ fn 候補を作る(instance: &ash::Instance, 物理デバイス: vk::PhysicalDev
         discreteか,
         descriptor_indexing::機能を採取する(instance, 物理デバイス),
         物理デバイスがテクスチャのブロック圧縮に対応するか(instance, 物理デバイス),
+        物理デバイスが立方体の配列画像に対応するか(instance, 物理デバイス),
     )
 }
 
@@ -70,6 +75,18 @@ fn 物理デバイスがテクスチャのブロック圧縮に対応するか(
     // 安全性: instance・物理デバイスは列挙済みで有効。
     let 機能 = unsafe { instance.get_physical_device_features(物理デバイス) };
     機能.texture_compression_bc == vk::TRUE
+}
+
+/// 物理デバイスが`imageCubeArray`(立方体の面を配列として持つ画像ビュー)に対応するか。
+/// 点光源の影が1枚の立方体配列を標本する形に固まっており、面ごとの2D配列として引き直す枝を持たないため、
+/// 対応しない機材は候補から外す(参照: `_doc/設計/クラスタ多光源と点光源の影.md`「判断l」)。
+///
+/// 注意: 採取と有効化は別の場所にある。同じ機能を`crates/blitz_render/src/vulkan/device.rs`が論理デバイスの生成で立てる。
+/// 片方だけを増減させると、選定を通った機材で有効化していない機能に依存したビューを作ることになる。
+fn 物理デバイスが立方体の配列画像に対応するか(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> bool {
+    // 安全性: instance・物理デバイスは列挙済みで有効。
+    let 機能 = unsafe { instance.get_physical_device_features(物理デバイス) };
+    機能.image_cube_array == vk::TRUE
 }
 
 /// 物理デバイスが`largePoints`(1.0を超えるSV_PointSize出力)に対応するか。
