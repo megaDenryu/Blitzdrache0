@@ -22,7 +22,7 @@ fn 引数なしは既定値を保つ() {
     assert_eq!(設定.アセットルート, Path::new("target/runtime_assets"));
     assert!(設定.描画対象の並べ方.件数.is_none());
     assert_eq!(設定.描画対象の並べ方.走査順, 描画対象の走査順::読込順);
-    assert!(設定.ライティング有効);
+    assert!(設定.ライティング.有効);
     assert_eq!(設定.粒子表示, 粒子表示モード::なし);
     assert!(!設定.gpu時間報告);
     assert!(!設定.フレーム時間報告);

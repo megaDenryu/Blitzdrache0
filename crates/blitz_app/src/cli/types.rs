@@ -24,8 +24,8 @@ pub(crate) struct 起動設定 {
     pub(crate) アセットルート: PathBuf,
     /// 起動時シーンの描画対象の並べ方。`--object-count`が複製する件数を、`--reverse-draw-order`が束の中の走査順を決める。
     pub(crate) 描画対象の並べ方: 描画対象の並べ方,
-    /// `--unlit`指定でfalse。既定はtrue(PBRライティング有効、判断26)。
-    pub(crate) ライティング有効: bool,
+    /// 世界が宣言したライティングへの起動側の上書き。`--unlit`と`--local-light-count`が据える。
+    pub(crate) ライティング: super::lighting_settings::ライティング起動設定,
     /// 粒子系GPUパスで表示する検証対象。既定はなし。
     pub(crate) 粒子表示: 粒子表示モード,
     /// `--report-gpu-times`指定でtrue。既定はfalse(パス別GPU時間の終了時コンソール出力、判断30)。

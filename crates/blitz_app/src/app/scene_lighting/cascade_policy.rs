@@ -29,7 +29,7 @@ pub(super) fn シーンの多段設定を作る(シーン名: &str, 計測: &cra
 fn 世界の最大影距離を反映する(設定: 多段設定, シーン名: &str) -> 多段設定 {
     let 最大影距離 = if シーン名 == super::両視錐台外の群シーン {
         両視錐台外の世界の最大影距離
-    } else if シーン名.starts_with(super::植生検収シーンの接頭辞) {
+    } else if シーン名.starts_with(super::vegetation_verification::接頭辞) {
         植生検収世界の最大影距離
     } else {
         return 設定;

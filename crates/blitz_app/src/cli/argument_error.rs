@@ -23,6 +23,8 @@ pub(crate) enum 起動引数エラー {
     露出不正(String),
     #[error("--lod-probe-step引数が不正だった: {0}")]
     LOD探査刻み不正(String),
+    #[error("--local-light-count引数が不正だった: {0}")]
+    局所光の件数不正(String),
     #[error("--blend引数が不正だった: {0}")]
     ブレンド不正(String),
     #[error("ストリーミング上限の引数が不正だった: {0}")]
