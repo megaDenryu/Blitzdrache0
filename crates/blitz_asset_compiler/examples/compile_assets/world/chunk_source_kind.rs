@@ -7,8 +7,8 @@
 
 use super::super::catalog::ソース種別;
 use super::{
-    asset_declaration, fox_tour_declaration, stone_hut_declaration, vegetation_declaration, vertex_diagnostic_declaration, village_declaration,
-    visual_sample_declaration, 対象世界,
+    asset_declaration, fox_tour_declaration, night_lights_declaration, stone_hut_declaration, vegetation_declaration, vertex_diagnostic_declaration,
+    village_declaration, visual_sample_declaration, 対象世界,
 };
 
 pub(super) fn チャンクのソース種別を選ぶ(世界: 対象世界, 同居植生個体数: usize) -> ソース種別 {
@@ -29,7 +29,7 @@ pub(super) fn チャンクのソース種別を選ぶ(世界: 対象世界, 同�
         対象世界::頂点診断の世界(原型) => ソース種別::高さ格子 {
             同居植生: Some(vertex_diagnostic_declaration::同居植生(原型, 同居植生個体数)),
         },
-        対象世界::夜の多光源の世界 => ソース種別::固定物を据えた高さ格子 { 据え付け一覧: &[] },
+        対象世界::夜の多光源の世界 => night_lights_declaration::チャンクのソース種別(),
         対象世界::屋内の多光源の世界 => stone_hut_declaration::チャンクのソース種別(),
         対象世界::場所巡りの世界 => fox_tour_declaration::チャンクのソース種別(),
     }

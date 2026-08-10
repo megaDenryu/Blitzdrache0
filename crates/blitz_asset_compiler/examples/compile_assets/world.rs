@@ -4,7 +4,7 @@
 //! プロセス境界の綴りとその解析は`argument_name`が、目録ソースの置き場は`directory_source_path`が、
 //! チャンクのソース形式は`chunk_source_kind`が持つ。宣言をコンパイラが受け取る指定へ写す手順は、
 //! 小物群を`prop_group_declaration`が、目視見本を`visual_sample_declaration`が、地面へ据える固定物を`fixed_placement_declaration`が持ち、
-//! 世界ごとの宣言は`fox_tour_declaration`と`stone_hut_declaration`にある。
+//! 世界ごとの宣言は`fox_tour_declaration`と`stone_hut_declaration`と`night_lights_declaration`にある。
 
 mod argument_name;
 mod asset_declaration;
@@ -13,6 +13,7 @@ mod definition_kind;
 mod directory_source_path;
 pub(super) mod fixed_placement_declaration;
 pub(super) mod fox_tour_declaration;
+mod night_lights_declaration;
 pub(super) mod prop_group_declaration;
 pub(super) mod stone_hut_declaration;
 mod vegetation_declaration;
@@ -79,7 +80,8 @@ impl 対象世界 {
             Self::見本の集落の世界 => village_declaration::一覧(),
             Self::目視見本の世界 => visual_sample_declaration::一覧(),
             Self::頂点診断の世界(原型) => vertex_diagnostic_declaration::一覧(原型),
-            Self::ブロック圧縮の対照世界 | Self::夜の多光源の世界 => Vec::new(),
+            Self::ブロック圧縮の対照世界 => Vec::new(),
+            Self::夜の多光源の世界 => night_lights_declaration::一覧(),
             Self::屋内の多光源の世界 => stone_hut_declaration::一覧(),
             Self::場所巡りの世界 => fox_tour_declaration::一覧(),
         }
