@@ -15,7 +15,7 @@ use crate::vulkan::gpu_environment::GPU環境;
 use crate::vulkan::material_table::{テクスチャ表レイアウト容量, 材質の登録状態, 材質資源の作業環境, 材質資源表};
 
 pub(super) struct 基礎資源 {
-    pub(super) シャドウマップ: vulkan::shadow_map::シャドウマップ,
+    pub(super) 影の資源: vulkan::shadow_resources::影の資源の組,
     pub(super) 転送環境: vulkan::transfer::転送実行環境,
     pub(super) シェーダー定数: vulkan::uniform::フレームシェーダー定数一式,
     pub(super) セットレイアウト: シーンセットレイアウト一式,
@@ -71,7 +71,7 @@ pub(super) fn 組み立てる(
     };
 
     Ok(基礎資源 {
-        シャドウマップ: 共有.シャドウ,
+        影の資源: 共有.影の資源,
         転送環境: 共有.転送,
         シェーダー定数: 共有.シェーダー定数,
         セットレイアウト: 共有.セットレイアウト,

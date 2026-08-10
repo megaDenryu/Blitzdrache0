@@ -66,7 +66,7 @@ impl レンダラー {
         self.セットレイアウト.破棄する(device);
         self.シェーダー定数.破棄する(device);
         self.転送環境.破棄する();
-        self.シャドウマップ.破棄する(device);
+        self.影の資源.破棄する(device);
     }
 
     /// 提示資源の破棄と専用メモリの全解放確認は、GPU環境がvkDestroyDeviceを呼ぶ前でなければ

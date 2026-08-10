@@ -25,11 +25,11 @@ pub(in crate::renderer) fn 生成する(
     影の一辺: 影の一辺解像度,
     照明束縛: 照明束縛レイアウト,
 ) -> Result<共有資源, レンダラーエラー> {
-    let シャドウ = vulkan::shadow_map::シャドウマップ::生成する(device, メモリプロパティ, 影の一辺)?;
+    let 影の資源 = vulkan::shadow_resources::生成する(device, メモリプロパティ, 影の一辺)?;
     let 転送 = match vulkan::transfer::転送実行環境::生成する(device, queue, queue_family_index) {
         Ok(値) => 値,
         Err(誤り) => {
-            シャドウ.破棄する(device);
+            影の資源.破棄する(device);
             return Err(誤り);
         }
     };
@@ -37,7 +37,7 @@ pub(in crate::renderer) fn 生成する(
         Ok(値) => 値,
         Err(誤り) => {
             転送.破棄する();
-            シャドウ.破棄する(device);
+            影の資源.破棄する(device);
             return Err(誤り);
         }
     };
@@ -46,7 +46,7 @@ pub(in crate::renderer) fn 生成する(
         Err(誤り) => {
             シェーダー定数.破棄する(device);
             転送.破棄する();
-            シャドウ.破棄する(device);
+            影の資源.破棄する(device);
             return Err(誤り);
         }
     };
@@ -57,11 +57,11 @@ pub(in crate::renderer) fn 生成する(
             セットレイアウト.破棄する(device);
             シェーダー定数.破棄する(device);
             転送.破棄する();
-            シャドウ.破棄する(device);
+            影の資源.破棄する(device);
             return Err(誤り);
         }
     };
-    let 照明結果 = 照明問い合わせ資源束::生成する(device, メモリプロパティ, &セットレイアウト, &シャドウ);
+    let 照明結果 = 照明問い合わせ資源束::生成する(device, メモリプロパティ, &セットレイアウト, &影の資源.多段影);
     let 照明問い合わせ = match 照明結果 {
         Ok(値) => 値,
         Err(誤り) => {
@@ -69,12 +69,12 @@ pub(in crate::renderer) fn 生成する(
             セットレイアウト.破棄する(device);
             シェーダー定数.破棄する(device);
             転送.破棄する();
-            シャドウ.破棄する(device);
+            影の資源.破棄する(device);
             return Err(誤り);
         }
     };
     Ok(共有資源 {
-        シャドウ,
+        影の資源,
         転送,
         シェーダー定数,
         セットレイアウト,

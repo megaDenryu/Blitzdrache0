@@ -10,7 +10,7 @@ use crate::vulkan::lighting_query::照明問い合わせ資源束;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct 共有資源 {
-    pub(super) シャドウ: vulkan::shadow_map::シャドウマップ,
+    pub(super) 影の資源: vulkan::shadow_resources::影の資源の組,
     pub(super) 転送: vulkan::transfer::転送実行環境,
     pub(super) シェーダー定数: vulkan::uniform::フレームシェーダー定数一式,
     pub(super) セットレイアウト: シーンセットレイアウト一式,
@@ -25,6 +25,6 @@ impl 共有資源 {
         self.セットレイアウト.破棄する(device);
         self.シェーダー定数.破棄する(device);
         self.転送.破棄する();
-        self.シャドウ.破棄する(device);
+        self.影の資源.破棄する(device);
     }
 }
