@@ -70,7 +70,7 @@ pub use frame_composition::{フレーム構成, フレーム構成エラー, フ
 pub use frame_input::{フレーム描画入力, 布フレーム入力, 空入力, 空入力の材料, 空入力エラー};
 pub use gpu_memory_stats::{GPUメモリ用途, GPUメモリ用途別確保量, GPUメモリ統計};
 pub use lighting_input::{ライティング入力, ライティング入力エラー, 光強度, 光色, 影の落ち方};
-pub use lighting_input::{局所光源列, 影入力, 影正射影範囲, 方向光入力, 点光源入力, 環境光係数};
+pub use lighting_input::{局所光源列, 影入力, 影正射影範囲, 方向光入力, 点光源の可視性, 点光源入力, 環境光係数};
 pub use lod_mesh::{メッシュ素材, 詳細段メッシュ列};
 pub use material::マテリアル素材;
 pub use material_table_summary::材質資源表の要約;

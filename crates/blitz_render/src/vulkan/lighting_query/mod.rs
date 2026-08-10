@@ -25,9 +25,13 @@ mod slot_resources;
 mod writable_buffer;
 
 #[cfg(test)]
-mod layout_tests;
+mod directional_layout_tests;
+#[cfg(test)]
+mod local_layout_tests;
 #[cfg(test)]
 mod pack_tests;
+#[cfg(test)]
+mod record_byte_read;
 #[cfg(test)]
 mod shader_struct_tests;
 
@@ -35,17 +39,14 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::descriptor::{lighting_set, シーンセットレイアウト一式};
-use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
-use crate::vulkan::shadow_map::シャドウマップ;
 use crate::vulkan::sync::フレームスロット添字;
-use crate::vulkan::tracked_device::GPUデバイス;
-use pack::照明問い合わせのバイト列;
-use slot_resources::スロット資源;
+use crate::vulkan::{pipeline_ledger::照明束縛レイアウト, shadow_map::シャドウマップ, tracked_device::GPUデバイス};
+use {pack::照明問い合わせのバイト列, slot_resources::スロット資源};
 
-pub(crate) use directional_content::方向光レコード内容;
 pub(crate) use header_content::{ヘッダの間接照明, 照明問い合わせヘッダ内容};
-pub(crate) use local_content::局所光レコード内容;
-pub(crate) use local_sequence::局所光レコードの並び;
+pub(crate) use {
+    directional_content::方向光レコード内容, local_content::局所光レコード内容, local_sequence::局所光レコードの並び
+};
 
 pub(crate) struct 照明問い合わせ資源束 {
     pool: vk::DescriptorPool,

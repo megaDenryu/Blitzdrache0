@@ -2,6 +2,8 @@
 
 use thiserror::Error;
 
+use crate::point_light_shadow::点光源の影の入力エラー;
+
 #[derive(Debug, Clone, Copy)]
 pub struct 光色([f32; 3]);
 
@@ -51,7 +53,8 @@ impl 環境光係数 {
     }
 }
 
-#[derive(Debug, Clone, Copy, Error, PartialEq, Eq)]
+/// 注意: `Eq`を導出しない。入れ子の`点光源の影の入力エラー`が浮動小数の値を持つためである。
+#[derive(Debug, Clone, Copy, Error, PartialEq)]
 pub enum ライティング入力エラー {
     #[error("光色は有限かつ0以上でなければならない")]
     色不正,
@@ -65,6 +68,10 @@ pub enum ライティング入力エラー {
     点光源位置不正,
     #[error("局所光源列の件数{件数}がGPUのレコード列の容量{上限}を超えている")]
     局所光源列の件数が上限を超えた { 件数: usize, 上限: usize },
+    #[error("影を落とす点光源の件数{件数}が立方体配列の持てる件数{上限}を超えている")]
+    影を落とす点光源の件数が上限を超えた { 件数: usize, 上限: usize },
+    #[error("影を落とす点光源の宣言を受理できない: {0}")]
+    影を落とす点光源の宣言が不正(#[from] 点光源の影の入力エラー),
     #[error("影の注視点の全成分は有限でなければならない")]
     影注視点不正,
     #[error("影の光源距離は有限かつ正でなければならない")]

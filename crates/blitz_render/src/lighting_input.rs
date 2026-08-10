@@ -6,16 +6,17 @@ use crate::cascade::多段設定;
 
 mod cascade_assembly;
 mod components;
-mod lights;
+mod directional_light;
 mod local_lights;
+mod point_light;
+mod point_light_visibility;
 mod shadow;
 mod shadow_casting;
 
 pub use components::{ライティング入力エラー, 光強度, 光色, 環境光係数};
-pub use lights::{方向光入力, 点光源入力};
 pub use local_lights::局所光源列;
-pub use shadow::{影入力, 影正射影範囲};
-pub use shadow_casting::影の落ち方;
+pub use {directional_light::方向光入力, point_light::点光源入力, point_light_visibility::点光源の可視性};
+pub use {shadow::影入力, shadow::影正射影範囲, shadow_casting::影の落ち方};
 
 #[derive(Debug, Clone, Copy)]
 pub struct ライティング入力 {
