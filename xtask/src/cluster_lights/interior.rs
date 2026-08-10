@@ -60,7 +60,9 @@ fn 中央の矩形の平均輝度(rgba8: &[u8], 幅: usize, 高さ: usize) -> f6
     for 縦 in 中心の縦.saturating_sub(縦の半分)..(中心の縦 + 縦の半分).min(高さ) {
         for 横 in 中心の横.saturating_sub(横の半分)..(中心の横 + 横の半分).min(幅) {
             let 先頭 = (縦 * 幅 + 横) * 4;
-            let 画素 = rgba8.get(先頭..先頭 + 4).unwrap_or(&[0, 0, 0, 0]);
+            let Some(画素) = rgba8.get(先頭..先頭 + 3) else {
+                continue;
+            };
             合計 += (f64::from(画素[0]) + f64::from(画素[1]) + f64::from(画素[2])) / 3.0;
             画素数 += 1;
         }
