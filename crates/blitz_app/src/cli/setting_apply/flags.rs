@@ -34,6 +34,8 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str) {
         "--report-motion-vector" => 設定.読み戻し検収.動きベクトルを報告するか = true,
         "--report-temporal-reconstruction" => 設定.読み戻し検収.時間再構成を報告するか = true,
         "--report-temporal-reconstruction-injection" => 設定.読み戻し検収.時間再構成の合成入力を突き合わせるか = true,
+        "--report-cluster-assignment" => 設定.読み戻し検収.クラスタ選別の割り当てを報告するか = true,
+        "--dump-preceding-frame" => 設定.読み戻し検収.先行フレームも書き出すか = true,
         "--dev-ui" => 設定.開発ui初期有効 = true,
         "--debug-cascade-bands" => 設定.画素診断 = blitz_render::cascade::画素診断::距離区分の可視化,
         "--debug-shadow-loss" => 設定.画素診断 = blitz_render::cascade::画素診断::影の欠落計器,

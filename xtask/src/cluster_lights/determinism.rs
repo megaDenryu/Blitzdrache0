@@ -1,0 +1,42 @@
+//! 同一の起動の中で撮った2枚の一致を見る工程。受け取るのは出力先、返すのは撮った絵のパスである。
+//!
+//! 起動をまたがずに比べるのは、GPUの読み戻しがこの機材では時間帯によって非決定になることが分かっているためである
+//! (参照: `_doc/設計/クラスタ多光源と点光源の影.md`「検収戦略(判断i)」の3)。同一起動の中の最終フレームと
+//! その1つ前を撮り、静止した世界であるからバイト単位で一致することを課す。
+//!
+//! この判定が成立するのは、この世界が布を1枚も持たないためである。布の画素は実行のたびに揺れる。
+
+use std::path::{Path, PathBuf};
+
+use super::{run, world};
+
+pub(super) fn 確かめる(出力先: &Path) -> Result<PathBuf, String> {
+    let 書き出し先 = 出力先.join("night");
+    run::走らせる(&run::描画条件 {
+        シーン名: world::夜のシーン,
+        アセットルート: world::夜のアセットルート,
+        書き出し先: &書き出し先,
+        追加引数: &[
+            "--sky",
+            "--time-of-day",
+            world::夜の一日内秒,
+            "--dump-preceding-frame",
+            "--report-cluster-assignment",
+        ],
+    })?;
+    let (_, _, 最終) = run::読み込む(&書き出し先)?;
+    let 先行の書き出し先 = 出力先.join("night_preceding");
+    let (_, _, 先行) = run::読み込む(&先行の書き出し先)?;
+    let 違う画素数 = 違う画素を数える(&最終, &先行)?;
+    if 違う画素数 != 0 {
+        return Err(format!("同一起動の中で撮った2枚が{違う画素数}画素で違った"));
+    }
+    crate::raw_png::変換する(&書き出し先)
+}
+
+fn 違う画素を数える(左: &[u8], 右: &[u8]) -> Result<usize, String> {
+    if 左.len() != 右.len() {
+        return Err(format!("2枚のバイト長が違う: {}と{}", 左.len(), 右.len()));
+    }
+    Ok(左.chunks_exact(4).zip(右.chunks_exact(4)).filter(|(左, 右)| 左 != 右).count())
+}

@@ -7,7 +7,7 @@
 #[cfg(test)]
 mod parse_tests;
 
-use super::section_parse::区画の行一覧;
+use crate::report_parse::section_parse::区画の行一覧;
 use crate::sky_lut::gpu_time::{定常の区間一覧, 更新時の区間一覧};
 
 const 見出し: &str = "パス別GPU時間";

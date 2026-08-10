@@ -15,16 +15,22 @@
 //!
 //! 参照: `_doc/設計/クラスタ多光源と点光源の影.md`
 
+mod assignment_audit;
+mod assignment_statistics;
+mod assignment_tally;
 mod attenuation_window;
 mod cell_boundary_margin;
 mod cell_correspondence;
+mod cell_face_quad;
 mod cell_frustum;
 mod cell_index;
 mod cell_light_capacity;
+mod cell_light_interval;
 mod cell_mapping;
 mod cutoff_threshold;
 mod depth_range;
 mod depth_slice;
+mod exact_sphere_intersection;
 mod grid_division;
 mod half_field_of_view_tangent;
 mod influence_radius;
@@ -33,6 +39,7 @@ mod interval;
 mod light_sphere;
 mod narrowing;
 mod point_light_radiance;
+mod quad_distance;
 mod recommended_radius;
 mod screen_tile;
 mod sphere_intersection;
@@ -45,6 +52,8 @@ mod cell_frustum_tests;
 mod cell_index_tests;
 #[cfg(test)]
 mod cell_mapping_tests;
+#[cfg(test)]
+mod exact_sphere_intersection_tests;
 #[cfg(test)]
 mod frustum_sampling;
 #[cfg(test)]
@@ -64,11 +73,14 @@ mod sphere_intersection_tests;
 #[cfg(test)]
 mod test_fixture;
 
+pub use assignment_audit::割り当てを突き合わせて統計を作る;
+pub use assignment_statistics::クラスタ選別の割り当て統計;
 pub use attenuation_window::減衰の窓;
 pub use cell_boundary_margin::{セルの奥行きを広げる相対量, セルの横と縦を広げる画素数};
 pub use cell_frustum::クラスタ格子のセルの錐台;
 pub use cell_index::クラスタ格子のセル添字;
 pub use cell_light_capacity::{クラスタ光添字列の要素数, セル1つが指せる局所光の上限件数};
+pub use cell_light_interval::セルの光の区間;
 pub use cell_mapping::クラスタ写像;
 pub use cutoff_threshold::打ち切りの閾値;
 pub use depth_range::クラスタの奥行き範囲;

@@ -2,7 +2,7 @@
 //! 世界メートル毎テクセルである。計数とストリーミング要約は既存の読み取りがあり、GPU時間の表は`gpu_table`が持つ。
 //! 区間名の綴りは`crates/blitz_app/src/reports.rs`の出力と一致させている。
 
-use super::section_parse::{区画の行, 区画の行一覧, 鍵の次の小数, 鍵の次の整数};
+use crate::report_parse::section_parse::{区画の行, 区画の行一覧, 鍵の次の小数, 鍵の次の整数};
 
 /// 1つのCPU区間の分布。物量点をまたいで比べるのはp50・p95・p99であり、平均は外れ値に引きずられるため補助に留める。
 #[derive(Clone, Copy)]

@@ -4,7 +4,7 @@
 use std::process::ExitCode;
 
 use crate::{
-    atmosphere_lut, auto_exposure, bench, check_glb, cloth_empty, cloth_night, cloth_shadow_order, compile_assets, conform, csm_seam,
+    atmosphere_lut, auto_exposure, bench, check_glb, cloth_empty, cloth_night, cloth_shadow_order, cluster_lights, compile_assets, conform, csm_seam,
     depth_prepass_cost, derived_environment, distant_environment, fetch_assets, game_fox_tour, gen_atmosphere_reference, gen_game_map,
     gen_source_assets, hdr_luminance, ibl_step, indirect_cost, indirect_probe, instance_cull, instance_draw, instance_lod, instance_stream,
     local_visibility, lod_crack, m10_bench, m11_soak, material_reload_draw, motion_vector, multi_material_draw, object_bench, origin_invariance,
@@ -53,6 +53,7 @@ pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
         Some("instance-stream") => instance_stream::実行する(),
         Some("cloth-empty") => cloth_empty::実行する(),
         Some("cloth-night") => cloth_night::実行する(),
+        Some("cluster-lights") => cluster_lights::実行する(),
         Some("cloth-shadow-order") => cloth_shadow_order::実行する(),
         Some("csm-seam") => csm_seam::実行する(),
         Some("vertex-diag") => vertex_diag::実行する(),

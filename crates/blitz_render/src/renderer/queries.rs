@@ -5,6 +5,7 @@
 //! 参照: 計測の有効化は`measurement_control.rs`、寸法変更の通知は`reconstruct.rs`にある。
 
 mod auto_exposure;
+mod cluster_lighting;
 mod gpu_timing;
 use super::cpu_timing::{CPU区間時間, CPU区間計測};
 use super::draw_issue_breakdown::描画発行内訳;

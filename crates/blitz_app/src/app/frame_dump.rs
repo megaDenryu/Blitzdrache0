@@ -3,13 +3,15 @@
 //! ピクセル判定の両方をすり抜け、絵を見ることでのみ検出できた)。
 //! 提示画像の書き出しと照合は`presentation_dump`、圧縮前のHDRの書き出しは`hdr_dump`、最終深度の書き出しは`depth_dump`が持つ。
 
+mod cluster_assignment_check;
 mod depth_dump;
+mod dump_destination;
 mod hdr_dump;
 mod indirect_probe_check;
 mod presentation_dump;
 mod sky_pixel_check;
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use super::draw_dispatch::描画の到達;
 use super::frame::フレーム視点;
@@ -29,8 +31,15 @@ impl アプリ {
         let 起動モード::スモーク実行 { フレーム数 } = self.起動モード else {
             return false;
         };
-        let 採るフレームか = self.現在フレーム + 1 == フレーム数 || アクション == スモークアクション::差し替え前ダンプ;
+        let 採るフレームか = self.現在フレーム + 1 == フレーム数
+            || self.先行ダンプのフレームか(フレーム数)
+            || アクション == スモークアクション::差し替え前ダンプ;
         self.フレームダンプ先.書き出すか() && 採るフレームか
+    }
+
+    /// 同一起動内の再現性を見るために、最終フレームの1つ前も書き出すか。指定が無ければ撮らない。
+    pub(super) fn 先行ダンプのフレームか(&self, フレーム数: u32) -> bool {
+        self.読み戻し検収.先行フレームも書き出すか && self.現在フレーム + 2 == フレーム数
     }
 
     pub(super) fn 読み戻してダンプする(
@@ -42,46 +51,19 @@ impl アプリ {
         match self.フレームダンプ先.clone() {
             フレームダンプ指定::指定なし => Ok(描画の到達::届かなかった),
             フレームダンプ指定::提示画像を書き出す { 基準名 } => {
-                let 先 = 書き出し先を決める(self, &基準名, アクション);
+                let 先 = dump_destination::決める(self, &基準名, アクション);
                 presentation_dump::読み戻して書き出す(self, 描画入力, 視点情報, &先)
             }
             フレームダンプ指定::圧縮前のHDRを書き出す { 基準名 } => {
-                let 先 = 書き出し先を決める(self, &基準名, アクション);
+                let 先 = dump_destination::決める(self, &基準名, アクション);
                 hdr_dump::読み戻して書き出す(self, 描画入力, &先)
             }
             フレームダンプ指定::最終深度を書き出す { 基準名 } => {
-                let 先 = 書き出し先を決める(self, &基準名, アクション);
+                let 先 = dump_destination::決める(self, &基準名, アクション);
                 depth_dump::読み戻して書き出す(self, 描画入力, &先)
             }
         }
     }
-}
-
-/// そのフレームの書き出し先。段差の走査ではベース名の後ろへ跨ぎと側を足し、そうでなければ従来の選び方に従う。
-///
-/// 書き出し先の組み立てを走査の側に持たせないのは、ベース名を持つのがフレームダンプの指定であり、
-/// その指定を読むのがこの入口だからである。走査はファイル名に足す語だけを答える。
-/// 画像の別を走査が選ばないのは、段差を測る実行が圧縮前のHDRを、絵を見る実行が提示画像を要るためである。
-fn 書き出し先を決める(アプリ: &アプリ, 基準名: &Path, アクション: スモークアクション) -> PathBuf {
-    let Some(撮影) = アプリ.天空.このフレームの撮影(アプリ.現在フレーム) else {
-        return 書き出し先を選ぶ(基準名, アクション);
-    };
-    let 名前 = 基準名
-        .file_name()
-        .map_or_else(|| "step".to_string(), |名前| 名前.to_string_lossy().into_owned());
-    基準名.with_file_name(format!("{名前}{}", 撮影.ファイル名の後置き()))
-}
-
-/// 差し替え前のフレームは`<ベース名>_before`へ書き出す。同じ実行の2枚を検収側が同じ読み手で読めるよう、
-/// 拡張子の付け方は最終フレームと同じにする。
-fn 書き出し先を選ぶ(基準: &Path, アクション: スモークアクション) -> PathBuf {
-    if アクション != スモークアクション::差し替え前ダンプ {
-        return 基準.to_path_buf();
-    }
-    let 名前 = 基準
-        .file_name()
-        .map_or_else(|| "frame".to_string(), |名前| 名前.to_string_lossy().into_owned());
-    基準.with_file_name(format!("{名前}_before"))
 }
 
 /// 寸法ファイルは対象によらず同じ形式で書く。検収側が画素の並びを読むためにまず要るのが幅と高さであり、

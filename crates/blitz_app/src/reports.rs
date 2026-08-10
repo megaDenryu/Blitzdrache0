@@ -4,6 +4,7 @@
 pub(crate) mod atmosphere_lut;
 pub(crate) mod atmosphere_passes;
 pub(crate) mod auto_exposure;
+pub(crate) mod cluster_assignment;
 pub(crate) mod composition;
 pub(crate) mod cube_seam;
 pub(crate) mod derived_environment;

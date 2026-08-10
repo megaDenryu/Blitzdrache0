@@ -6,6 +6,7 @@
 
 mod extract;
 mod line_read;
+pub mod section_parse;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct パス別描画発行 {

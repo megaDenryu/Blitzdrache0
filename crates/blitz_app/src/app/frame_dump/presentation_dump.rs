@@ -10,7 +10,7 @@ use blitz_render::読み戻し画像;
 use super::super::draw_dispatch::描画の到達;
 use super::super::frame::フレーム視点;
 use super::super::アプリ;
-use super::{indirect_probe_check, sky_pixel_check, 寸法を書く};
+use super::{cluster_assignment_check, indirect_probe_check, sky_pixel_check, 寸法を書く};
 use crate::error::起動エラー;
 
 pub(super) fn 読み戻して書き出す(
@@ -27,6 +27,7 @@ pub(super) fn 読み戻して書き出す(
             書き出す(&画像, ダンプ先)?;
             sky_pixel_check::照合する(アプリ, &画像, 視点情報);
             indirect_probe_check::照合する(アプリ, &画像, 視点情報);
+            cluster_assignment_check::報告する(アプリ, 視点情報);
             Ok(描画の到達::提示した)
         }
         blitz_render::読み戻し結果::見送った(理由) => Err(起動エラー::フレームダンプ失敗(format!(

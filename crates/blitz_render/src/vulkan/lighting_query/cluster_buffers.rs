@@ -27,7 +27,7 @@ pub(super) struct クラスタ格子の資源 {
 }
 
 /// 仮置きの分割数が決める格子の2本のバイト数。ヘッダへ書く分割数と同じ1箇所から読む。
-fn 格子と光添字列のバイト数() -> (u64, u64) {
+pub(super) fn 格子と光添字列のバイト数() -> (u64, u64) {
     let 分割数 = クラスタ格子の分割数::仮置きの分割数を返す();
     let セルの総数 = usize::try_from(分割数.セルの総数()).unwrap_or_else(|_| panic!("セルの総数がusizeに収まらない"));
     let 格子 = u64::try_from(セルの総数 * セル1つのバイト数).unwrap_or_else(|_| panic!("クラスタ格子のバイト数がu64に収まらない"));
@@ -43,7 +43,9 @@ impl クラスタ格子の資源 {
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
     ) -> Result<Self, レンダラーエラー> {
         let (格子のバイト数, 光添字列のバイト数) = 格子と光添字列のバイト数();
-        let 用途 = vk::BufferUsageFlags::STORAGE_BUFFER;
+        // 転送元の用途を足すのは、検収の読み戻しがこの2本をホスト可視のバッファへコピーするためである。
+        // 本番のフレーム経路はコピーを1度も積まないが、用途は確保のときにしか宣言できない。
+        let 用途 = vk::BufferUsageFlags::STORAGE_BUFFER | vk::BufferUsageFlags::TRANSFER_SRC;
         let (格子, 格子のメモリ) = device_buffer::確保する(device, メモリプロパティ, 格子のバイト数, 用途)?;
         match device_buffer::確保する(device, メモリプロパティ, 光添字列のバイト数, 用途) {
             Ok((光添字列, 光添字列のメモリ)) => Ok(Self {
