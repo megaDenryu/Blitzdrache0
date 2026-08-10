@@ -52,18 +52,18 @@ fn 検収する() -> Result<String, String> {
     summary::屋内の領域の表を表示する(&屋内.領域一覧);
     interior_judgment::屋内の領域を判定する(&屋内.領域一覧)?;
 
-    let 夜 = night_measure::夜を影付きの件数3つで撮る(&出力先)?;
+    let 夜 = night_measure::夜の世界を影付きの件数3つで撮る(&出力先)?;
     summary::夜の領域の表を表示する(&夜.領域一覧);
     night_judgment::夜の領域を判定する(&夜.領域一覧)?;
-    instrument_judgment::計器を判定する(&夜.影付き2件の計器)?;
-    instrument_judgment::夜の絞りが落としたかを判定する(&夜.影付き2件の計器)?;
+    instrument_judgment::点光源の影の計器を判定する(&夜.影付き2件の計器)?;
+    instrument_judgment::夜の世界の絞りが落としたかを判定する(&夜.影付き2件の計器)?;
 
-    let 計器一覧 = shadow_count_scale::影付きの件数を振って計器を採る(&出力先)?;
-    summary::計器の表を表示する(&計器一覧);
+    let 計器一覧 = shadow_count_scale::影付きの件数を振って点光源の影の計器を採る(&出力先)?;
+    summary::点光源の影の計器の表を表示する(&計器一覧);
     for 計器 in &計器一覧 {
-        instrument_judgment::計器を判定する(計器)?;
+        instrument_judgment::点光源の影の計器を判定する(計器)?;
     }
-    Ok(summary::要約を組む(
+    Ok(summary::検収の要約を組む(
         &夜.影付き2件の計器,
         &[&屋内.影付きの絵, &屋内.影なしの絵, &夜.絵],
     ))

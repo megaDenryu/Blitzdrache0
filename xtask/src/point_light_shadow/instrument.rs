@@ -24,7 +24,9 @@ pub(super) struct 点光源の影の計器 {
     pub(super) gpu時間のp50ms: Option<f64>,
 }
 
-pub(super) fn 計器を取り出す(標準出力: &str, 影を落とす灯の件数: usize) -> Result<点光源の影の計器, String> {
+pub(super) fn 点光源の影の計器を取り出す(
+    標準出力: &str, 影を落とす灯の件数: usize
+) -> Result<点光源の影の計器, String> {
     let 内訳 = 区画の行一覧(標準出力, 記録内訳の見出し)?;
     Ok(点光源の影の計器 {
         影を落とす灯の件数,

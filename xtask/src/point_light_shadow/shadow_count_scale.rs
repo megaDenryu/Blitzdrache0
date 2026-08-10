@@ -9,16 +9,19 @@ use std::path::Path;
 
 use crate::multi_light_world::{run, world};
 
-use super::instrument::{点光源の影の計器, 計器を取り出す};
+use super::instrument::{点光源の影の計器, 点光源の影の計器を取り出す};
 
 /// 振る件数。屋内の世界が置く灯は3件であり、0件がこの世界の影なしの対照である。
-pub(super) const 影付きの件数一覧: [usize; 4] = [0, 1, 2, 3];
+pub(super) const 振る影付きの灯の件数一覧: [usize; 4] = [0, 1, 2, 3];
 
-pub(super) fn 影付きの件数を振って計器を採る(出力先: &Path) -> Result<Vec<点光源の影の計器>, String> {
-    影付きの件数一覧.iter().map(|件数| 一件数を測る(出力先, *件数)).collect()
+pub(super) fn 影付きの件数を振って点光源の影の計器を採る(出力先: &Path) -> Result<Vec<点光源の影の計器>, String> {
+    振る影付きの灯の件数一覧
+        .iter()
+        .map(|件数| 影付きの一件数で計器を採る(出力先, *件数))
+        .collect()
 }
 
-fn 一件数を測る(出力先: &Path, 影付きの件数: usize) -> Result<点光源の影の計器, String> {
+fn 影付きの一件数で計器を採る(出力先: &Path, 影付きの件数: usize) -> Result<点光源の影の計器, String> {
     let 件数文字列 = 影付きの件数.to_string();
     let 書き出し先 = 出力先.join(format!("hut_instrument_x{影付きの件数}"));
     let 結果 = run::走らせる(&run::描画条件 {
@@ -34,5 +37,5 @@ fn 一件数を測る(出力先: &Path, 影付きの件数: usize) -> Result<点
             "--report-memory",
         ],
     })?;
-    計器を取り出す(&結果.標準出力, 影付きの件数)
+    点光源の影の計器を取り出す(&結果.標準出力, 影付きの件数)
 }

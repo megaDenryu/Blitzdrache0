@@ -8,10 +8,10 @@ use std::path::{Path, PathBuf};
 
 use crate::multi_light_world::{run, world};
 
-use super::interior_region::判定領域の一覧;
+use super::interior_region::屋内の判定領域の一覧;
 use super::region::矩形の平均輝度を採る;
 
-pub(super) struct 領域ごとの屋内の平均輝度 {
+pub(super) struct 屋内の領域ごとの平均輝度 {
     pub(super) 名前: &'static str,
     pub(super) 影付き3件: f64,
     pub(super) 影なし: f64,
@@ -19,20 +19,20 @@ pub(super) struct 領域ごとの屋内の平均輝度 {
 }
 
 pub(super) struct 屋内の測り {
-    pub(super) 領域一覧: Vec<領域ごとの屋内の平均輝度>,
+    pub(super) 領域一覧: Vec<屋内の領域ごとの平均輝度>,
     pub(super) 影付きの絵: PathBuf,
     pub(super) 影なしの絵: PathBuf,
 }
 
 pub(super) fn 屋内を3条件で撮る(出力先: &Path) -> Result<屋内の測り, String> {
-    let (影付き, 影付きの絵) = 一条件を撮る(出力先, "hut_shadow_lit", &["--point-light-shadow-count", "3"])?;
-    let (影なし, 影なしの絵) = 一条件を撮る(出力先, "hut_shadow_none", &["--point-light-shadow-count", "0"])?;
-    let (対照, _) = 一条件を撮る(出力先, "hut_unlit", &["--local-light-count", "0"])?;
+    let (影付き, 影付きの絵) = 屋内を一条件で撮る(出力先, "hut_shadow_lit", &["--point-light-shadow-count", "3"])?;
+    let (影なし, 影なしの絵) = 屋内を一条件で撮る(出力先, "hut_shadow_none", &["--point-light-shadow-count", "0"])?;
+    let (対照, _) = 屋内を一条件で撮る(出力先, "hut_unlit", &["--local-light-count", "0"])?;
     let 三条件 = 影付き.into_iter().zip(影なし).zip(対照);
-    let 領域一覧 = 判定領域の一覧
+    let 領域一覧 = 屋内の判定領域の一覧
         .iter()
         .zip(三条件)
-        .map(|(領域, ((影付き3件, 影なし), 灯を消した対照))| 領域ごとの屋内の平均輝度 {
+        .map(|(領域, ((影付き3件, 影なし), 灯を消した対照))| 屋内の領域ごとの平均輝度 {
             名前: 領域.名前,
             影付き3件,
             影なし,
@@ -46,7 +46,7 @@ pub(super) fn 屋内を3条件で撮る(出力先: &Path) -> Result<屋内の測
     })
 }
 
-fn 一条件を撮る(出力先: &Path, 名前: &str, 追加引数: &[&str]) -> Result<(Vec<f64>, PathBuf), String> {
+fn 屋内を一条件で撮る(出力先: &Path, 名前: &str, 追加引数: &[&str]) -> Result<(Vec<f64>, PathBuf), String> {
     let 書き出し先 = 出力先.join(名前);
     let 結果 = run::走らせる(&run::描画条件 {
         シーン名: world::屋内のシーン,
@@ -55,7 +55,7 @@ fn 一条件を撮る(出力先: &Path, 名前: &str, 追加引数: &[&str]) -> 
         書き出し先: &書き出し先,
         追加引数,
     })?;
-    let 平均輝度一覧 = 判定領域の一覧
+    let 平均輝度一覧 = 屋内の判定領域の一覧
         .iter()
         .map(|領域| 矩形の平均輝度を採る(&結果, &領域.矩形))
         .collect::<Result<Vec<f64>, String>>()?;
