@@ -33,6 +33,7 @@ mod numeric;
 mod particle_material;
 mod particle_shader_set;
 mod pbr_material;
+pub mod point_light_shadow;
 mod present_display;
 mod readback_image;
 mod render_object_material;

@@ -6,6 +6,7 @@ mod atmosphere;
 mod auto_exposure;
 mod clustered_lighting;
 mod distant_environment;
+mod point_light_shadow;
 mod scene;
 mod temporal_reconstruction;
 
@@ -18,11 +19,12 @@ pub(super) struct 定数の組 {
 }
 
 /// 領域ごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域一覧: [&[定数の組]; 6] = [
+pub(super) const 領域一覧: [&[定数の組]; 7] = [
     &atmosphere::定数一覧,
     &auto_exposure::定数一覧,
     &clustered_lighting::定数一覧,
     &distant_environment::定数一覧,
+    &point_light_shadow::定数一覧,
     &scene::定数一覧,
     &temporal_reconstruction::定数一覧,
 ];
