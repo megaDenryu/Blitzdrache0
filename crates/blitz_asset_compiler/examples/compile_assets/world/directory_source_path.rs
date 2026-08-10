@@ -10,6 +10,8 @@ const 植生の世界の目録ソース: &str = "vegetation_world/chunk_director
 const 見本の集落の世界の目録ソース: &str = "village_world/chunk_directory.txt";
 const 目視見本の世界の目録ソース: &str = "terrain_visual_world/chunk_directory.txt";
 const ブロック圧縮の対照世界の目録ソース: &str = "texture_compression_world/chunk_directory.txt";
+const 夜の多光源の世界の目録ソース: &str = "night_lights_world/chunk_directory.txt";
+const 屋内の多光源の世界の目録ソース: &str = "stone_hut_world/chunk_directory.txt";
 const 場所巡りの世界の目録ソース: &str = "fox_tour_world/chunk_directory.txt";
 
 /// 頂点診断の世界が地形の目録を読むのは、代表世界と同じ25チャンクの同じ地面を対象にするためである。
@@ -21,6 +23,8 @@ pub(super) fn 目録ソース相対パスを選ぶ(世界: 対象世界) -> &'st
         対象世界::見本の集落の世界 => 見本の集落の世界の目録ソース,
         対象世界::目視見本の世界 => 目視見本の世界の目録ソース,
         対象世界::ブロック圧縮の対照世界 => ブロック圧縮の対照世界の目録ソース,
+        対象世界::夜の多光源の世界 => 夜の多光源の世界の目録ソース,
+        対象世界::屋内の多光源の世界 => 屋内の多光源の世界の目録ソース,
         対象世界::場所巡りの世界 => 場所巡りの世界の目録ソース,
     }
 }

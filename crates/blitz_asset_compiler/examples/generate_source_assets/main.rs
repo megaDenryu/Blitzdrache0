@@ -10,6 +10,8 @@
 //! assets/vegetation_world/ へ植生の原型glTFと頂点量の診断用に面を細分化した原型glTFと1チャンクの目録ソースを、
 //! assets/village_world/ へ見本の集落の地面1チャンク分の高さ格子と目録ソースを、
 //! assets/terrain_visual_world/ へ目視見本の地面1チャンク分の高さ格子と目録ソースと材質見本の立体のglTFを、
+//! assets/night_lights_world/ へ夜の多光源の地面1チャンク分の高さ格子と目録ソースを、
+//! assets/stone_hut_world/ へ屋内の多光源の平らな地面1チャンク分の高さ格子と目録ソースを、
 //! assets/texture_compression_world/ へブロック圧縮の対照の素材(512画素四方の滑らかなグラデーションと決定的な雑音)と
 //! それらをベースカラーに持つ板2枚のglTFと1チャンクの目録ソースを書き出す。
 //!
@@ -30,10 +32,12 @@ mod indirect_probe_plates;
 mod map_seed;
 mod multi_material_geometry;
 mod multi_material_gltf_json;
+mod night_lights_world;
 mod shadow_scene_geometry;
 mod shadow_scene_gltf_json;
 mod shadow_scene_texture;
 mod smoke_assets;
+mod stone_hut_world;
 mod terrain_visual_world;
 mod terrain_world;
 mod texture_compression_world;

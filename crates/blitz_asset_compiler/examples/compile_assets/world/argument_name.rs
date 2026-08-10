@@ -13,9 +13,11 @@ const 目視見本の世界: &str = "terrain_visual_world";
 const 頂点診断の粗い世界: &str = "vertex_diag_coarse_world";
 const 頂点診断の細かい世界: &str = "vertex_diag_fine_world";
 const ブロック圧縮の対照世界: &str = "texture_compression_world";
+const 夜の多光源の世界: &str = "night_lights_world";
+const 屋内の多光源の世界: &str = "stone_hut_world";
 const 場所巡りの世界: &str = "fox_tour_world";
 
-const 有効な綴り: [&str; 9] = [
+const 有効な綴り: [&str; 11] = [
     板の世界,
     地形の世界,
     植生の世界,
@@ -24,6 +26,8 @@ const 有効な綴り: [&str; 9] = [
     頂点診断の粗い世界,
     頂点診断の細かい世界,
     ブロック圧縮の対照世界,
+    夜の多光源の世界,
+    屋内の多光源の世界,
     場所巡りの世界,
 ];
 
@@ -37,6 +41,8 @@ pub(super) fn 解析する(引数名: &str) -> Result<対象世界, String> {
         頂点診断の粗い世界 => Ok(対象世界::頂点診断の世界(粗い原型)),
         頂点診断の細かい世界 => Ok(対象世界::頂点診断の世界(細かい原型)),
         ブロック圧縮の対照世界 => Ok(対象世界::ブロック圧縮の対照世界),
+        夜の多光源の世界 => Ok(対象世界::夜の多光源の世界),
+        屋内の多光源の世界 => Ok(対象世界::屋内の多光源の世界),
         場所巡りの世界 => Ok(対象世界::場所巡りの世界),
         他 => Err(format!("未知の世界名である: {他}(有効な値は{})", 有効な綴り.join("と"))),
     }

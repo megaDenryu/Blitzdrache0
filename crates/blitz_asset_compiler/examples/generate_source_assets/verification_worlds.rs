@@ -7,7 +7,8 @@
 use std::path::Path;
 
 use crate::{
-    chunk_world, smoke_assets, terrain_visual_world, terrain_world, texture_compression_world, vegetation_world, village_world, ディレクトリを作る,
+    chunk_world, night_lights_world, smoke_assets, stone_hut_world, terrain_visual_world, terrain_world, texture_compression_world, vegetation_world,
+    village_world, ディレクトリを作る,
 };
 
 pub(crate) fn 一式を書き出す() -> Result<(), String> {
@@ -40,6 +41,16 @@ pub(crate) fn 一式を書き出す() -> Result<(), String> {
     ディレクトリを作る(目視見本出力先)?;
     terrain_visual_world::書き出す(目視見本出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 目視見本出力先.display());
+
+    let 夜の多光源出力先 = Path::new("assets/night_lights_world");
+    ディレクトリを作る(夜の多光源出力先)?;
+    night_lights_world::書き出す(夜の多光源出力先)?;
+    println!("[generate_source_assets] {}へ生成完了", 夜の多光源出力先.display());
+
+    let 屋内の多光源出力先 = Path::new("assets/stone_hut_world");
+    ディレクトリを作る(屋内の多光源出力先)?;
+    stone_hut_world::書き出す(屋内の多光源出力先)?;
+    println!("[generate_source_assets] {}へ生成完了", 屋内の多光源出力先.display());
 
     let ブロック圧縮の対照出力先 = Path::new("assets/texture_compression_world");
     ディレクトリを作る(ブロック圧縮の対照出力先)?;

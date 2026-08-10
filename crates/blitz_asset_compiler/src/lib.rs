@@ -5,8 +5,8 @@
 
 mod chunk_directory_source;
 mod compile;
-mod destination_marker;
 mod error;
+mod fixed_placement;
 mod height_field;
 mod height_grid;
 mod loader;
@@ -21,8 +21,8 @@ pub use chunk_directory_source::{チャンク目録ソースを読み込む, チ
 pub use compile::{
     コンパイル済みシーン, ソースシーンをコンパイルする, 寸法を合わせる倍率を与えてソースシーンをコンパイルする
 };
-pub use destination_marker::{目印つき地形チャンクをコンパイルする, 目印の据え付け};
 pub use error::アセットコンパイルエラー;
+pub use fixed_placement::{固定物の据え付け, 固定物を据えた地形チャンクをコンパイルする};
 pub use height_field::{
     コンパイル済み高さ場, チャンクごとの高さ格子から高さ場を組み立てる, 高さ場アセットをコンパイルする, 高さ場コンパイルエラー
 };
