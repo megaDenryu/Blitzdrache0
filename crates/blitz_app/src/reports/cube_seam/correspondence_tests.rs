@@ -8,7 +8,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use blitz_render::atmosphere::{テクセル中心の面内位置, 立方体の全面, 立方体の面, 面と面内位置から向きを求める};
+use blitz_render::cube_image::{テクセル中心の面内位置, 立方体の全面, 立方体の面, 面と面内位置から向きを求める};
 
 use super::edge_pairs::{全ての辺, 相手側の辺, 辺の隣接面};
 use super::nearest_texel::辺の上で最も近い添字;

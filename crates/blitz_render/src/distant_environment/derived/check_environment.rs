@@ -11,7 +11,7 @@
 use super::cube_side::立方体画像の一辺;
 use super::environment_content::遠方環境の内容;
 use super::error::派生表現エラー;
-use crate::atmosphere::{テクセル中心の面内位置, 立方体の全面, 面と面内位置から向きを求める};
+use crate::cube_image::{テクセル中心の面内位置, 立方体の全面, 面と面内位置から向きを求める};
 
 /// 方向性の強い環境が全方向へ持つ下限の放射輝度。成分ごとに違えるのは、赤と青を取り違える写しの誤りを
 /// 判定に出すためである。

@@ -7,7 +7,7 @@
 //!
 //! 注意: この参照は`shaders/distant_environment_lookup.slang`の写しを持つ。ここが正本である。
 
-use crate::atmosphere::{向きから面と面内位置を求める, 立方体の面};
+use crate::cube_image::{向きから面と面内位置を求める, 立方体の面};
 use crate::numeric::floor_index::実数位置の床の添字;
 
 /// 向きが指すテクセルの面と面内の添字。長さ0の向きは面を選べないため、その到達はプログラムの誤りである。

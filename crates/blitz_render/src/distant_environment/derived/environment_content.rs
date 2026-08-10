@@ -9,7 +9,7 @@
 use super::cube_side::立方体画像の一辺;
 use super::cube_texel_lookup::{向きから立方体テクセルを求める, 立方体テクセルの通し番号};
 use super::error::派生表現エラー;
-use crate::atmosphere::立方体の面;
+use crate::cube_image::立方体の面;
 
 /// 遠方環境の全テクセル。並びは面(層番号の順)が最も外、次に縦、横が最も速い。
 /// 不変条件: 要素数は6面ぶんであり、全成分が有限かつ0以上である。

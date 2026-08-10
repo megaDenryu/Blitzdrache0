@@ -7,7 +7,6 @@
 
 mod aerial_lut_tests;
 mod aerial_mapping_tests;
-mod cube_face_mapping_tests;
 mod density_tests;
 mod intersect_tests;
 mod multiscatter_lut_tests;

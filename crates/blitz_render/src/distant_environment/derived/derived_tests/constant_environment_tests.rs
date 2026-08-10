@@ -5,7 +5,7 @@
 //! 結果が放射輝度の定数倍だけずれ、絵では明るさの違いにしか見えない。
 
 use super::定数の環境;
-use crate::atmosphere::立方体の全面;
+use crate::cube_image::立方体の全面;
 use crate::distant_environment::derived::{
     拡散照度のテクセル値, 拡散照度の解像度, 拡散照度を焼く, 鏡面畳込みのテクセル値, 鏡面畳込みの解像度
 };

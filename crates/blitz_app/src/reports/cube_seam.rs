@@ -20,7 +20,7 @@ mod nearest_texel;
 mod seam_tests;
 pub(crate) mod texel_access;
 
-use blitz_render::atmosphere::立方体の全面;
+use blitz_render::cube_image::立方体の全面;
 
 use edge_pairs::{全ての辺, 相手側の辺, 辺の隣接面};
 use nearest_texel::辺の上で最も近い添字;
@@ -52,9 +52,9 @@ pub(crate) fn 面境界を突き合わせる(読み戻し: &[[f32; 4]], 一辺: 
 fn 稜線1本の最大相対差(
     読み戻し: &[[f32; 4]],
     一辺: u32,
-    面: blitz_render::atmosphere::立方体の面,
+    面: blitz_render::cube_image::立方体の面,
     辺: edge_pairs::面の辺,
-    隣: blitz_render::atmosphere::立方体の面,
+    隣: blitz_render::cube_image::立方体の面,
 ) -> f64 {
     let 隣の辺 = 相手側の辺(隣, 面);
     let mut 最大 = 0.0_f64;

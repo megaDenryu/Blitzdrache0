@@ -8,11 +8,10 @@
 //! 参照する側が尺度を知らずに読めることを契約にするためである(スカイビューの表とはここが違う)。
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「遠方環境の形式と生成(3-Ia)」
 
-use crate::atmosphere::mapping::cube_face::{立方体の全面, 立方体の面};
-use crate::atmosphere::mapping::cube_face_mapping::{テクセル中心の面内位置, 面と面内位置から向きを求める};
 use crate::atmosphere::mapping::distant_environment_resolution::遠方環境の解像度;
 use crate::atmosphere::supply::sky_radiance::天空放射輝度供給;
 use crate::atmosphere::{大気数学エラー, 天空放射輝度RGB};
+use crate::cube_image::{テクセル中心の面内位置, 立方体の全面, 立方体の面, 面と面内位置から向きを求める};
 
 /// 1テクセルの値。テクセル中心の向きを1本だけ標本する。立体角の平均を取らないのは、遠方環境が
 /// 拡散・鏡面の畳み込みの入力であり、畳み込みの側が広い立体角で平均を取るためである。

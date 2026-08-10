@@ -49,10 +49,6 @@ pub use mapping::aerial_mapping::{
     空中遠近ボリュームの奥行き位置を求める, 空中遠近ボリュームの奥行き添字の位置, 空中遠近ボリュームの標本座標を求める,
     空中遠近ボリュームの画面位置を求める, 空中遠近ボリュームの距離を求める,
 };
-pub use mapping::cube_face::{立方体の全面, 立方体の面};
-pub use mapping::cube_face_mapping::{
-    テクセル中心の面内位置, 向きから面と面内位置を求める, 面と面内位置から向きを求める
-};
 pub use mapping::distant_environment_resolution::{立方体の面数, 遠方環境の解像度};
 pub use mapping::lut_resolution::大気のベイク済み画像の解像度;
 pub use mapping::multiscatter_mapping::{

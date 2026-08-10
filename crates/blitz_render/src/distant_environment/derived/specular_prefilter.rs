@@ -17,7 +17,7 @@ use super::ggx_sample::{ggxの半ベクトルを標本する, 半ベクトルで
 use super::hammersley::ハンマーズリー標本を求める;
 use super::mip_level::粗さ段;
 use super::specular_resolution::鏡面畳込みの解像度;
-use crate::atmosphere::{テクセル中心の面内位置, 立方体の全面, 立方体の面, 面と面内位置から向きを求める};
+use crate::cube_image::{テクセル中心の面内位置, 立方体の全面, 立方体の面, 面と面内位置から向きを求める};
 
 /// 1テクセルあたりの標本数。
 /// 注意: `shaders/specular_prefilter.slang`の`specularPrefilterSampleCount`と一致させる(`cargo xtask conform`が検査する)。

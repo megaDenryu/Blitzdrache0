@@ -9,6 +9,7 @@ mod rotation;
 mod space;
 mod transform;
 mod transform_construct;
+mod transform_construct_cube_face;
 mod trs;
 #[cfg(test)]
 mod trs_tests;
@@ -18,5 +19,5 @@ pub use global_world_position::大域ワールド位置;
 pub use pixel_jitter::{画素内ずらし, 画素内ずらしエラー};
 pub use position::位置;
 pub use rotation::{クォータニオン, クォータニオンエラー};
-pub use space::{クリップ, ビュー, ローカル, ワールド, 光源クリップ, 空間};
+pub use space::{クリップ, ビュー, ローカル, ワールド, 光源クリップ, 点光源の面クリップ, 空間};
 pub use transform::変換;

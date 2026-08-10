@@ -5,7 +5,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use blitz_render::atmosphere::{立方体の全面, 立方体の面};
+use blitz_render::cube_image::{立方体の全面, 立方体の面};
 
 use super::edge_pairs::{全ての辺, 相手側の辺, 辺の隣接面};
 

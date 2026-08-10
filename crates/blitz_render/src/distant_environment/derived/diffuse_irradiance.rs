@@ -17,7 +17,7 @@ use super::environment_content::遠方環境の内容;
 use super::hammersley::ハンマーズリー標本を求める;
 use super::spherical_direction::天頂余弦と方位の割合から接空間の向きを組む;
 use super::tangent_basis::{接基底の向きを戻す, 接基底を組む};
-use crate::atmosphere::{テクセル中心の面内位置, 立方体の全面, 立方体の面, 面と面内位置から向きを求める};
+use crate::cube_image::{テクセル中心の面内位置, 立方体の全面, 立方体の面, 面と面内位置から向きを求める};
 
 /// 1テクセルあたりの標本数。値を上げると畳み込みのむらが減り、更新の費用が比例して増える。
 /// 注意: `shaders/diffuse_irradiance.slang`の`diffuseIrradianceSampleCount`と一致させる(`cargo xtask conform`が検査する)。

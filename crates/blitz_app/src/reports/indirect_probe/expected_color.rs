@@ -7,7 +7,8 @@
 //! 参照する縮小段と面をここで決めるのは、注入した鏡面の色が段と面で違うためである。GPUは反射方向と粗さから
 //! 段と面を選んで標本するため、期待値の側も同じ選び方を再現しなければ値が合わない。
 
-use blitz_render::atmosphere::{向きから面と面内位置を求める, 太陽相対フレーム};
+use blitz_render::atmosphere::太陽相対フレーム;
+use blitz_render::cube_image::向きから面と面内位置を求める;
 use blitz_render::distant_environment::consume::{
     垂直入射の反射率を求める, 拡散の取り分を求める, 粗さから縮小段の位置を求める, 粗さ対応の反射率を求める, 間接拡散の色を求める,
     間接鏡面の色を求める,

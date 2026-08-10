@@ -5,7 +5,7 @@
 //! 書き込みが「線形の放射輝度を0から1へ切り詰めてsRGB符号化した値」そのものになる。
 //! 面と段の位置も並べるのは、値が合わなかったときに「どの面のどの段を参照したつもりか」を判定側が読めるようにするためである。
 
-use blitz_render::atmosphere::立方体の面;
+use blitz_render::cube_image::立方体の面;
 
 use super::expected_color::板の期待;
 use super::projection::板の投影;

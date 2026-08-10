@@ -4,7 +4,7 @@
 //! 通し番号の求め方をここで書き直さずレンダラーの公開の関数へ委ねるのは、焼く側と読む側の並びが
 //! 1つの正本から決まることを保つためである。
 
-use blitz_render::atmosphere::立方体の面;
+use blitz_render::cube_image::立方体の面;
 use blitz_render::distant_environment::derived::立方体テクセルの通し番号;
 
 pub(crate) fn 立方体のテクセル(読み戻し: &[[f32; 4]], 面: 立方体の面, 横: u32, 縦: u32, 一辺: u32) -> [f32; 3] {

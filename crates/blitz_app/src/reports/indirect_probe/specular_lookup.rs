@@ -8,7 +8,7 @@
 //! 面の中の位置を持ち回るのは、面の境界に近い参照を検収が拒めるようにするためである。境界の近くではGPUの
 //! 補間が隣の面を混ぜるため、面ごとに違う色を置いた判定が成り立たない。
 
-use blitz_render::atmosphere::立方体の面;
+use blitz_render::cube_image::立方体の面;
 use blitz_render::distant_environment::{遠方環境の解析入力, 鏡面畳込みの解析入力};
 
 /// 鏡面畳込みのどこを参照したか。

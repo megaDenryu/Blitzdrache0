@@ -7,7 +7,7 @@
 //! CPU正本へ半精度へ丸めた環境を渡すのは、GPUの画像が半精度で入力を保つためである。丸めをそろえないと、
 //! 写しの誤りでない差が最初から乗る。
 
-use blitz_render::atmosphere::立方体の全面;
+use blitz_render::cube_image::立方体の全面;
 use blitz_render::distant_environment::derived::{拡散照度のテクセル値, 遠方環境の内容, 鏡面畳込みのテクセル値};
 use blitz_render::distant_environment::derived_probe::派生表現の読み戻し;
 
