@@ -14,7 +14,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::frame::点光源の影の描画発行;
 use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 
-pub(super) fn 積む(
+pub(super) fn 点光源の影の発行を積む(
     材料: &描画対象の材料<'_>,
     積み先: &mut Vec<点光源の影の描画発行>,
     基準原点のカメラ相対位置: カメラ相対位置,
