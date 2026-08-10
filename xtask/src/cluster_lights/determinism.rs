@@ -5,16 +5,20 @@
 //! その1つ前を撮り、静止した世界であるからバイト単位で一致することを課す。
 //!
 //! この判定が成立するのは、この世界が布を1枚も持たないためである。布の画素は実行のたびに揺れる。
+//!
+//! 絵のバイト一致に加えて、その実行が出した割り当ての報告行どうしも比べる。絵は最終の色だけを写すため、
+//! セルへの割り当てが揺れても同じ画素へ落ち着けば絵の一致だけでは捉えられないためである。
 
 use std::path::{Path, PathBuf};
 
-use super::{run, world};
+use super::{assignment, run, world};
 
 pub(super) fn 確かめる(出力先: &Path) -> Result<PathBuf, String> {
     let 書き出し先 = 出力先.join("night");
-    run::走らせる(&run::描画条件 {
+    let 結果 = run::走らせる(&run::描画条件 {
         シーン名: world::夜のシーン,
         アセットルート: world::夜のアセットルート,
+        枚数: world::絵の枚数,
         書き出し先: &書き出し先,
         追加引数: &[
             "--sky",
@@ -24,6 +28,7 @@ pub(super) fn 確かめる(出力先: &Path) -> Result<PathBuf, String> {
             "--report-cluster-assignment",
         ],
     })?;
+    割り当ての行が一致することを確かめる(&結果.標準出力)?;
     let (_, _, 最終) = run::読み込む(&書き出し先)?;
     let 先行の書き出し先 = 出力先.join("night_preceding");
     let (_, _, 先行) = run::読み込む(&先行の書き出し先)?;
@@ -32,6 +37,24 @@ pub(super) fn 確かめる(出力先: &Path) -> Result<PathBuf, String> {
         return Err(format!("同一起動の中で撮った2枚が{違う画素数}画素で違った"));
     }
     crate::raw_png::変換する(&書き出し先)
+}
+
+/// 同じ起動の中で出た割り当ての報告行が全部同じ綴りであることを課す。先行フレームと最終フレームの2行が出るため、
+/// 1行しか無い実行は先行フレームの書き出しが効いていないことを意味し、それも失敗にする。
+fn 割り当ての行が一致することを確かめる(標準出力: &str) -> Result<(), String> {
+    let 行一覧 = assignment::行一覧を取り出す(標準出力)?;
+    let Some(先頭) = 行一覧.first() else {
+        return Err("割り当ての報告行が1行も無い".to_string());
+    };
+    if 行一覧.len() < 2 {
+        return Err("割り当ての報告行が1行しか無い: 先行フレームの書き出しが効いていない".to_string());
+    }
+    for 行 in &行一覧 {
+        if 行 != 先頭 {
+            return Err(format!("同一起動の中で割り当ての報告行が食い違った: 「{先頭}」と「{行}」"));
+        }
+    }
+    Ok(())
 }
 
 fn 違う画素を数える(左: &[u8], 右: &[u8]) -> Result<usize, String> {

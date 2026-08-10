@@ -31,7 +31,7 @@ pub(crate) struct シャドウ計測起動設定 {
 }
 
 impl シャドウ計測起動設定 {
-    pub(super) fn 既定値() -> Self {
+    pub(crate) fn 既定値() -> Self {
         Self {
             一辺解像度: 影の一辺解像度::既定(),
             キャスター余白: None,

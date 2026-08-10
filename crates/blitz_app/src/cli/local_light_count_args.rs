@@ -8,6 +8,9 @@
 //! 上限を解析の時点で拒むのは、`blitz_render::局所光源列`が上限を超える宣言を型付きの失敗にするためである。
 //! 起動引数の誤りをレンダラーの奥の失敗として受け取ると、直すべき場所が引数であることが読み取れない。
 
+#[cfg(test)]
+mod local_light_count_args_tests;
+
 use std::slice::Iter;
 
 use super::{value_args, 起動引数エラー};

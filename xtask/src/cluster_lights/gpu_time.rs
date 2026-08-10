@@ -2,14 +2,22 @@
 //!
 //! 平均でなく中央値を読むのは、跳ねた標本に引きずられない値で光の件数どうしを比べるためである。
 //! 表の綴りは`crates/blitz_app/src/reports/gpu_time_table.rs`の出力と一致させている。
+//!
+//! **標本数が窓の長さに満ちていることを必ず確かめる。** 満ちていない窓のp50は「直近60フレームの中央値」ではなく、
+//! 撮った枚数ぶんだけの中央値であり、条件どうしを並べて読む根拠にならない。枚数が足りない実行を成功として
+//! 通すと、その表は「60フレーム窓のp50」と称した別の量の表になる。
 
 use crate::report_parse::section_parse::{区画の行, 区画の行一覧};
 
 const 見出し: &str = "パス別GPU時間";
+
+/// 分布を求める窓が保つ標本の数。正本は`crates/blitz_render/src/gpu_pass_timing.rs`の`窓の標本数`であり、
+/// xtaskが外部クレートへ依存しない方針のため値を持ち直している。この二重定義は`cargo xtask conform`の定数一致検査へ登録してある。
+const 窓の標本数: usize = 60;
 const 選別の区間名: &str = "クラスタの選別";
 const シーン描画の区間名: &str = "シーン描画";
 
-pub(super) struct 区間の中央値 {
+pub(crate) struct 区間の中央値 {
     pub(super) 選別ms: f64,
     pub(super) シーン描画ms: f64,
 }
@@ -22,15 +30,37 @@ pub(super) fn 取り出す(標準出力: &str) -> Result<区間の中央値, Str
     })
 }
 
-/// 中央値は「(p50 0.0061 / p95 ...)」の形で括弧の中に並ぶ。鍵が括弧に触れているため、語の完全一致でなく
-/// 末尾一致で鍵の語を見つけ、その次の語を読む。
 fn 中央値を読む(区画: &[&str], 区間名: &str) -> Result<f64, String> {
     let 行 = 区画の行(区画, &format!("{区間名}:"))?;
-    let mut 語一覧 = 行.split_whitespace().skip_while(|語| !語.ends_with("p50"));
-    語一覧.next().ok_or_else(|| format!("「{行}」に区間{区間名}の中央値の鍵が無い"))?;
+    窓が満ちているか確かめる(行, 区間名)?;
+    鍵の次の小数を読む(行, "p50")
+}
+
+/// 「標本60)」の形で括弧の中に並ぶ標本数を読み、窓の長さに満ちていることを課す。
+fn 窓が満ちているか確かめる(行: &str, 区間名: &str) -> Result<(), String> {
+    let 語 = 行
+        .split_whitespace()
+        .find_map(|語| 語.strip_prefix("標本"))
+        .ok_or_else(|| format!("「{行}」に区間{区間名}の標本数が無い"))?;
+    let 標本数: usize = 語
+        .trim_end_matches(')')
+        .parse()
+        .map_err(|誤り| format!("「{行}」の標本数を整数として読めない: {誤り}"))?;
+    if 標本数 == 窓の標本数 {
+        return Ok(());
+    }
+    Err(format!(
+        "区間{区間名}の窓が満ちていない(標本{標本数}・窓の長さ{窓の標本数}): 撮る枚数が足りないため、このp50は直近{窓の標本数}フレームの中央値ではない"
+    ))
+}
+
+/// 括弧に触れている鍵の語を末尾一致で見つけ、その次の語を小数として読む。
+fn 鍵の次の小数を読む(行: &str, 鍵: &str) -> Result<f64, String> {
+    let mut 語一覧 = 行.split_whitespace().skip_while(|語| !語.ends_with(鍵));
+    語一覧.next().ok_or_else(|| format!("「{行}」に鍵{鍵}が無い"))?;
     語一覧
         .next()
-        .ok_or_else(|| format!("「{行}」の中央値の鍵の次に語が無い"))?
+        .ok_or_else(|| format!("「{行}」の鍵{鍵}の次に語が無い"))?
         .parse()
-        .map_err(|誤り| format!("「{行}」の中央値を小数として読めない: {誤り}"))
+        .map_err(|誤り| format!("「{行}」の{鍵}を小数として読めない: {誤り}"))
 }

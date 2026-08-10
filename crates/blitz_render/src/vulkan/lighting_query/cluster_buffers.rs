@@ -14,7 +14,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::device_buffer;
 use crate::vulkan::tracked_device::GPUデバイス;
 
-/// セル1つぶんの区間表のバイト数。`shaders/lighting_query_records.slang`の`ClusterCell`(開始位置と件数の2つ)と一致させる。
+/// セル1つぶんの区間表のバイト数。`shaders/local_light_records.slang`の`ClusterCell`(開始位置と件数の2つ)と一致させる。
 const セル1つのバイト数: usize = 8;
 /// クラスタ光添字列の1要素のバイト数。局所光レコード列への添字1つである。
 const 添字1つのバイト数: usize = 4;

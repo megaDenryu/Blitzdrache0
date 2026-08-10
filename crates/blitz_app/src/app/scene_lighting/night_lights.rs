@@ -10,6 +10,8 @@
 //! 参照: `_doc/設計/クラスタ多光源と点光源の影.md`「検収戦略(判断i)」
 
 mod lamp_field;
+#[cfg(test)]
+mod lamp_field_tests;
 
 use blitz_math::{メートル, 大域メートル, 大域ワールド位置};
 use blitz_render::clustered_lighting::クラスタ多光源入力エラー;

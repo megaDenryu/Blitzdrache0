@@ -3,6 +3,9 @@
 //! 方針そのものは世界ごとのモジュールが持ち、多段影の設定は`cascade_policy`が全世界ぶんを持つ。
 //! 既定は`blitz_engine`の既定ライティングであり、名前で選ばれなかった世界はすべてそれになる。
 
+#[cfg(test)]
+mod light_count_tests;
+
 mod cascade_policy;
 mod indirect_probe;
 mod night_lights;
@@ -31,7 +34,7 @@ pub(super) fn シーン初期ライティングを作る(
         return Ok(night_lights::方針を作る(有効, 大域ずらし量, 局所光の件数).多段設定を差し替える(多段設定));
     }
     if シーン名 == stone_hut_interior::シーン識別子 {
-        return Ok(stone_hut_interior::方針を作る(有効, 大域ずらし量, 局所光の件数).多段設定を差し替える(多段設定));
+        return Ok(stone_hut_interior::方針を作る(有効, 大域ずらし量, 局所光の件数)?.多段設定を差し替える(多段設定));
     }
     局所光の件数の上書きを読まない世界であることを確かめる(シーン名, 局所光の件数)?;
     if シーン名 == indirect_probe::シーン識別子 {

@@ -18,8 +18,14 @@ const 屋内の実行時形式: &str = "target/stone_hut_assets/prop_stone_hut_i
 /// 夜の一日内秒。`cargo xtask cloth-night`と`cargo xtask sky-time`が使う代表時刻と同じ値である。
 pub(super) const 夜の一日内秒: &str = "75600";
 
-/// どちらの世界も同じ枚数で撮る。静止した世界であり、間接照明の焼き上げが済むだけの枚数があれば足りる。
-pub(super) const フレーム数: &str = "12";
+/// 絵を撮る実行の枚数。静止した世界であり、間接照明の焼き上げが済むだけの枚数があれば足りる。
+/// 読み戻しの決定性も屋内の明暗の対照もGPU時間を読まないため、窓が満ちるまで回す必要が無い。
+pub(super) const 絵の枚数: &str = "12";
+
+/// GPU時間を採る実行の枚数。パス別GPU時間の窓は直近60標本であり(正本は`crates/blitz_render/src/gpu_pass_timing.rs`の`窓の標本数`)、
+/// 読み取りは1フレームに1回、進行中フレーム数ぶん遅れて始まる。90枚なら窓は必ず満ち、窓の先頭は30枚目より後になるため、
+/// 間接照明と大気の焼き上げが済んだ定常状態だけが窓に入る。窓が満ちたことは入口が標本数で必ず確かめる。
+pub(super) const 計測の枚数: &str = "90";
 
 pub(super) fn 夜の世界を用意する() -> Result<(), String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::夜の多光源世界を既定で生成する() {

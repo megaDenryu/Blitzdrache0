@@ -9,6 +9,8 @@ use crate::release_build::計測用の実行ファイル;
 pub(super) struct 描画条件<'a> {
     pub(super) シーン名: &'a str,
     pub(super) アセットルート: &'a str,
+    /// 撮る枚数。GPU時間を読む実行だけが窓の満ちる枚数を要るため、条件ごとに決める。
+    pub(super) 枚数: &'a str,
     pub(super) 書き出し先: &'a Path,
     pub(super) 追加引数: &'a [&'a str],
 }
@@ -23,7 +25,7 @@ pub(super) struct 実行結果 {
 pub(super) fn 走らせる(条件: &描画条件<'_>) -> Result<実行結果, String> {
     let 出力 = Command::new(計測用の実行ファイル)
         .args(["--scene", 条件.シーン名, "--asset-root", 条件.アセットルート])
-        .args(["--frames", super::world::フレーム数])
+        .args(["--frames", 条件.枚数])
         .args(["--no-taa", "--no-auto-exposure"])
         .args(条件.追加引数)
         .arg("--dump-frame")

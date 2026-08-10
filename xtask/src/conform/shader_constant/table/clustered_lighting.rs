@@ -1,7 +1,10 @@
 //! クラスタ多光源のCPU正本と、そのシェーダー写しの対応。触れるのは、セル1つが指せる光の件数の上限、
 //! セルの錐台を広げる2つの余裕、放射の分母へ足す微小量だけである。
 //!
-//! 4つとも、値がずれても絵は出てしまう。件数の上限がずれれば添字列の区間の頭が別のセルの区間を指し、
+//! 5つ目はGPU時間の窓の長さである。夜の多光源の検収がこの数を写しで持ち、窓が満ちたことを確かめてから
+//! p50を読む。正本が動いて写しが動かないと、満ちていない窓のp50を「直近60フレームの中央値」として読むことになる。
+//!
+//! 最初の4つとも、値がずれても絵は出てしまう。件数の上限がずれれば添字列の区間の頭が別のセルの区間を指し、
 //! 余裕がずれれば境界のセルで光が抜け、微小量がずれれば光の芯の明るさが変わる。どれも実行しても
 //! 例外にならないため、ここが機械的に見る。
 
@@ -11,7 +14,13 @@ const 上限件数の正本: &str = "crates/blitz_render/src/lighting_input/loca
 const 余裕の正本: &str = "crates/blitz_render/src/clustered_lighting/cell_boundary_margin.rs";
 const 微小量の正本: &str = "crates/blitz_render/src/clustered_lighting/point_light_radiance.rs";
 
-pub(super) const 定数一覧: [定数の組; 4] = [
+pub(super) const 定数一覧: [定数の組; 5] = [
+    定数の組 {
+        正本パス: "crates/blitz_render/src/gpu_pass_timing.rs",
+        正本の前置き: "pub const 窓の標本数: usize = ",
+        写しパス: "xtask/src/cluster_lights/gpu_time.rs",
+        写しの前置き: "const 窓の標本数: usize = ",
+    },
     定数の組 {
         正本パス: 上限件数の正本,
         正本の前置き: "const 局所光源の上限件数: usize = ",

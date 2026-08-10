@@ -1,8 +1,9 @@
 //! クラスタの割り当ての報告行の読み取り。受け取るのは標準出力、返すのは統計の値である。
 //! 行の綴りは`crates/blitz_app/src/reports/cluster_assignment.rs`の出力と一致させている。
 //!
-//! 最後に現れた行を読むのは、先行フレームも書き出す実行では同じ行が2回出るためである。2回とも同じ値であることは
-//! 読み戻しの決定性の判定が別に見ている。
+//! 最後に現れた行を読むのは、先行フレームも書き出す実行では同じ行が2回出るためである。
+//! その2行が同じ綴りであることは`determinism`が`行一覧を取り出す`で直に比べる(絵のバイト一致だけでは、
+//! 絵に出ない割り当ての揺れを捉えられないためである)。
 
 const 語頭: &str = "クラスタ割り当て";
 
@@ -18,10 +19,22 @@ pub(super) struct 割り当ての統計 {
     pub(super) 偽陽性率: f64,
 }
 
-pub(super) fn 取り出す(標準出力: &str) -> Result<割り当ての統計, String> {
-    let 行 = 標準出力
+/// 割り当ての報告行を出た順に全部返す。1行も無ければ失敗にする。
+pub(super) fn 行一覧を取り出す(標準出力: &str) -> Result<Vec<&str>, String> {
+    let 行一覧: Vec<&str> = 標準出力
         .lines()
-        .rfind(|行| 行.trim_start().starts_with(語頭))
+        .map(str::trim_end)
+        .filter(|行| 行.trim_start().starts_with(語頭))
+        .collect();
+    if 行一覧.is_empty() {
+        return Err(format!("出力に「{語頭}」で始まる行が無い"));
+    }
+    Ok(行一覧)
+}
+
+pub(super) fn 取り出す(標準出力: &str) -> Result<割り当ての統計, String> {
+    let 行 = *行一覧を取り出す(標準出力)?
+        .last()
         .ok_or_else(|| format!("出力に「{語頭}」で始まる行が無い"))?;
     Ok(割り当ての統計 {
         セル総数: 整数を読む(行, "セル総数")?,
