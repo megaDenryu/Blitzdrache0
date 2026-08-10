@@ -16,13 +16,13 @@ mod gpu_time;
 mod gpu_time_tests;
 mod interior;
 mod interior_judgment;
-mod run;
 mod scale;
 mod summary;
-mod world;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+use crate::multi_light_world::world;
 
 const 出力ディレクトリ: &str = "target/cluster_lights";
 

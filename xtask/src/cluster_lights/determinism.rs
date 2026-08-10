@@ -11,7 +11,8 @@
 
 use std::path::{Path, PathBuf};
 
-use super::{assignment, run, world};
+use super::assignment;
+use crate::multi_light_world::{run, world};
 
 pub(super) fn 確かめる(出力先: &Path) -> Result<PathBuf, String> {
     let 書き出し先 = 出力先.join("night");

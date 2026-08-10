@@ -44,6 +44,7 @@ mod m11_soak;
 mod material_reload_draw;
 mod memory_sampling;
 mod motion_vector;
+mod multi_light_world;
 mod multi_material_draw;
 mod object_bench;
 mod origin_invariance;

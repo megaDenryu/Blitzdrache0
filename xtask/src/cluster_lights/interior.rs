@@ -13,7 +13,7 @@
 
 use std::path::{Path, PathBuf};
 
-use super::{run, world};
+use crate::multi_light_world::{run, world};
 
 /// 屋内を測る矩形の、画面の幅と高さに対する半分の割合を百分率で置く。戸口の内側だけを含み、小屋の外壁を含まない大きさである。
 /// 百分率の整数で持つのは、画素数を実数へ写してから整数へ戻す往復を作らないためである。

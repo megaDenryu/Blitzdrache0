@@ -10,7 +10,8 @@ use std::path::Path;
 
 use super::assignment::割り当ての統計;
 use super::gpu_time::区間の中央値;
-use super::{assignment, gpu_time, run, world};
+use super::{assignment, gpu_time};
+use crate::multi_light_world::{run, world};
 
 /// 振る光の件数。
 pub(super) const 光の件数一覧: [usize; 4] = [1, 8, 32, 64];
