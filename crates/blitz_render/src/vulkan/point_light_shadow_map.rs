@@ -8,6 +8,7 @@
 //! 参照: `_doc/設計/クラスタ多光源と点光源の影.md`「判断l」
 
 mod create;
+mod initial_layout;
 mod sampler;
 
 use ash::vk;
