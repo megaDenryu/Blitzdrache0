@@ -7,6 +7,7 @@ mod inverse_meter;
 mod meter;
 mod meter_per_second;
 mod radian;
+mod radian_per_second;
 mod second;
 mod unit_conversion_error;
 
@@ -16,5 +17,6 @@ pub use inverse_meter::逆メートル;
 pub use meter::メートル;
 pub use meter_per_second::メートル毎秒;
 pub use radian::ラジアン;
+pub use radian_per_second::ラジアン毎秒;
 pub use second::秒;
 pub use unit_conversion_error::単位変換エラー;
