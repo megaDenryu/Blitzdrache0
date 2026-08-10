@@ -3,6 +3,7 @@
 
 use ash::vk;
 
+use super::bounding_sphere::描画対象の境界球;
 use super::geometry_list::段別ジオメトリ;
 use super::instance_record_storage::個体レコードの置き場;
 use super::slot_material_ids::スロット別材質ID;
@@ -52,7 +53,9 @@ impl 描画対象資源 {
                 return Err(誤り);
             }
         };
+        let 段別の頂点一覧: Vec<&[crate::vertex::頂点]> = 素材.段一覧().iter().map(|段| 段.頂点一覧()).collect();
         Ok(Self {
+            境界球: 描画対象の境界球::段と個体から求める(&段別の頂点一覧, 素材.個体変換一覧(), 動く個体添字一覧),
             大域の基準原点: 素材.大域の基準原点(),
             段別ジオメトリ,
             スロット別材質id: スロット別材質ID::組み立てる(素材.材質スロット素材一覧(), 材質id一覧),

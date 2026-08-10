@@ -17,7 +17,7 @@ struct 確保記録 {
 struct 台帳状態 {
     確保一覧: HashMap<u64, 確保記録>,
     最大同時確保数: usize,
-    用途別確保量: [u64; 5],
+    用途別確保量: [u64; 6],
 }
 
 pub(crate) struct メモリ台帳 {

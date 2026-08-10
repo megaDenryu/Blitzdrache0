@@ -40,7 +40,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::vulkan::descriptor::{lighting_set, シーンセットレイアウト一式};
 use crate::vulkan::sync::フレームスロット添字;
-use crate::vulkan::{pipeline_ledger::照明束縛レイアウト, shadow_map::シャドウマップ, tracked_device::GPUデバイス};
+use crate::vulkan::{pipeline_ledger::照明束縛レイアウト, shadow_resources::影の資源の組, tracked_device::GPUデバイス};
 use {pack::照明問い合わせのバイト列, slot_resources::スロット資源};
 
 pub(crate) use header_content::{ヘッダの間接照明, 照明問い合わせヘッダ内容};
@@ -62,9 +62,9 @@ impl 照明問い合わせ資源束 {
         device: &GPUデバイス,
         メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
         レイアウト: &シーンセットレイアウト一式,
-        シャドウマップ: &シャドウマップ,
+        影の資源: &影の資源の組,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, メモリプロパティ, レイアウト, シャドウマップ)
+        create::生成する(device, メモリプロパティ, レイアウト, 影の資源)
     }
 
     /// 注意: 呼び出し元はこのスロットの描画完了フェンスを待ってから呼ぶ(renderer/uniform_write.rsの経路)。

@@ -2,7 +2,7 @@
 
 use ash::vk;
 
-pub(crate) struct フレーム画像一式 {
+pub(crate) struct フレーム画像一式<'a> {
     pub(crate) スワップチェーン画像: vk::Image,
     pub(crate) スワップチェーンビュー: vk::ImageView,
     pub(crate) 深度画像: vk::Image,
@@ -14,6 +14,11 @@ pub(crate) struct フレーム画像一式 {
     pub(crate) シャドウマップ配列ビュー: vk::ImageView,
     /// 距離区分ごとに1層だけを見るビュー。距離区分別のシャドウ記録がアタッチメントとして使う。
     pub(crate) シャドウマップ距離区分別のビュー一覧: [vk::ImageView; crate::cascade::距離区分数],
+    pub(crate) 点光源の影の画像: vk::Image,
+    /// 全層を1つの立方体の配列として見るビュー。グラフへの登録に使う(アタッチメントには使わない)。
+    pub(crate) 点光源の影の立方体配列ビュー: vk::ImageView,
+    /// 層ごとに1層だけを見るビュー。面ごとの記録がアタッチメントとして使う。層番号が添字である。
+    pub(crate) 点光源の影の層別のビュー一覧: &'a [vk::ImageView],
     /// シーン描画と空のパスが第2のカラー添付として書く動きベクトル画像。時間再構成方式に依らず毎フレーム書くため`Option`にしない。
     pub(crate) 動きベクトル画像: vk::Image,
     pub(crate) 動きベクトルビュー: vk::ImageView,

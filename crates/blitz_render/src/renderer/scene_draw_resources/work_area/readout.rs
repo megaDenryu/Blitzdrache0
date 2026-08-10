@@ -7,7 +7,10 @@ use crate::frame_composition::深度プリパス方式;
 use crate::renderer::draw_issue_breakdown::描画発行内訳;
 use crate::visible_instance_selection::可視パス;
 use crate::vulkan::cluster_light_assignment::クラスタ選別の描画入力;
-use crate::vulkan::frame::{共有セット束縛, 描画対象入力, 記録側切替計数, 距離区分別のシャドウ入力};
+use crate::vulkan::frame::{
+    共有セット束縛, 描画対象入力, 点光源の影の束縛, 記録側切替計数, 距離区分別のシャドウ入力
+};
+use crate::vulkan::point_light_shadow_plan::点光源の影の描画計画;
 
 impl シーン描画資源 {
     /// 直近のフレームで積んだ内訳。`作業領域を更新する`が最後に数えた値と、直近の記録が積んだ回数から作る。
@@ -30,6 +33,8 @@ impl シーン描画資源 {
         共有: 共有セット束縛<'計器>,
         深度プリパス方式: 深度プリパス方式,
         クラスタ選別: クラスタ選別の描画入力,
+        点光源の影の計画: 点光源の影の描画計画,
+        点光源の影の束縛: 点光源の影の束縛,
     ) -> 描画対象入力<'計器> {
         描画対象入力 {
             ジオメトリ: &self.ジオメトリ入力作業領域,
@@ -38,6 +43,9 @@ impl シーン描画資源 {
             共有,
             深度プリパス方式,
             クラスタ選別,
+            点光源の影の発行: &self.点光源の影の作業領域,
+            点光源の影の計画,
+            点光源の影の束縛,
         }
     }
 }

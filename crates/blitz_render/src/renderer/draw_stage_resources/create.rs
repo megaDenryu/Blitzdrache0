@@ -12,6 +12,7 @@ use crate::error::レンダラーエラー;
 use crate::frame_composition::フレーム構成;
 use crate::indirect_lighting::照明問い合わせ契約;
 use crate::shader_bundle::シェーダー束;
+use crate::vulkan;
 use crate::vulkan::cluster_light_assignment::クラスタ選別一式;
 use crate::vulkan::descriptor::{シーンセットレイアウト一式, 照明問い合わせのバッファ組};
 use crate::vulkan::tracked_device::GPUデバイス;
@@ -36,9 +37,21 @@ pub(in crate::renderer) struct 生成要求<'a> {
 /// 任意段階の失敗で選別だけが漏れる経路と、選別の失敗で任意段階が漏れる経路のどちらかが必ず残るためである。
 pub(super) fn 生成する(要求: 生成要求<'_>) -> Result<描画段階資源, レンダラーエラー> {
     let クラスタ選別 = クラスタ選別一式::生成する(要求.device, &要求.シェーダー.クラスタ選別, 要求.クラスタ選別が読むバッファ組一覧)?;
+    let 点光源の影 = match vulkan::pipeline::点光源の影のパイプライン::生成する(
+        要求.device,
+        &要求.セットレイアウト.シャドウの並び(),
+        &要求.シェーダー.点光源の影,
+    ) {
+        Ok(値) => 値,
+        Err(誤り) => {
+            クラスタ選別.破棄する(要求.device);
+            return Err(誤り);
+        }
+    };
     let 任意 = match optional_stages::組み立てる(&要求) {
         Ok(値) => 値,
         Err(誤り) => {
+            点光源の影.破棄する(要求.device);
             クラスタ選別.破棄する(要求.device);
             return Err(誤り);
         }
@@ -50,5 +63,6 @@ pub(super) fn 生成する(要求: 生成要求<'_>) -> Result<描画段階資�
         布シャドウ: 任意.布シャドウ,
         合成深度の注入: None,
         クラスタ選別,
+        点光源の影,
     })
 }

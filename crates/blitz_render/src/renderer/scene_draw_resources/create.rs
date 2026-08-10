@@ -60,6 +60,7 @@ impl シーン描画資源 {
             チャンク一覧,
             ジオメトリ入力作業領域: Vec::with_capacity(描画対象数),
             距離区分別のシャドウ入力作業領域: std::array::from_fn(|_| Vec::with_capacity(描画対象数)),
+            点光源の影の作業領域: Vec::with_capacity(描画対象数),
             破棄待ち: Vec::new(),
             実破棄済みid一覧: Vec::new(),
             計数集計: super::描画計数集計::default(),

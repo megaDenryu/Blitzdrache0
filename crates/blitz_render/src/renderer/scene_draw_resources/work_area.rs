@@ -5,6 +5,7 @@
 
 mod fill_input;
 mod object_entry;
+mod point_light_shadow_issue;
 mod readout;
 mod sort;
 mod stage_issue;
@@ -14,7 +15,7 @@ use super::シーン描画資源;
 use crate::cascade::距離区分数;
 use crate::error::{フレーム入力不一致エラー, レンダラーエラー};
 use crate::terrain_detail::段を参照する;
-use crate::vulkan::frame::{シャドウ描画入力, ジオメトリ入力};
+use crate::vulkan::frame::{シャドウ描画入力, ジオメトリ入力, 点光源の影の描画発行};
 
 pub(in crate::renderer) use fill_input::作業領域更新入力;
 pub(in crate::renderer) use tally::描画計数集計;
@@ -23,6 +24,8 @@ pub(in crate::renderer) use tally::描画計数集計;
 pub(super) struct 描画発行受け皿<'a> {
     pub(super) ジオメトリ: &'a mut Vec<ジオメトリ入力>,
     pub(super) 距離区分別のシャドウ: &'a mut [Vec<シャドウ描画入力>; 距離区分数],
+    /// 点光源の影の発行。面ごとに分けず1本の列で持ち、面の絞りは記録の地点が行う。
+    pub(super) 点光源の影: &'a mut Vec<点光源の影の描画発行>,
     pub(super) 集計: &'a mut 描画計数集計,
 }
 
@@ -32,6 +35,7 @@ impl シーン描画資源 {
         for 列 in &mut self.距離区分別のシャドウ入力作業領域 {
             列.clear();
         }
+        self.点光源の影の作業領域.clear();
         self.計数集計.集計を始める();
         self.影のキャスター = 入力.影のキャスター;
         let mut 通し添字 = 0usize;
@@ -47,6 +51,7 @@ impl シーン描画資源 {
                 let mut 受け皿 = 描画発行受け皿 {
                     ジオメトリ: &mut self.ジオメトリ入力作業領域,
                     距離区分別のシャドウ: &mut self.距離区分別のシャドウ入力作業領域,
+                    点光源の影: &mut self.点光源の影の作業領域,
                     集計: &mut self.計数集計,
                 };
                 object_entry::積む(

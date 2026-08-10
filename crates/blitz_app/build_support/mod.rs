@@ -11,6 +11,7 @@ mod cluster_light_assignment_spirv_compile;
 mod derived_environment_spirv_compile;
 mod local_visibility_spirv_compile;
 mod particle_spirv_compile;
+mod point_light_shadow_spirv_compile;
 mod rerun_registration;
 mod shadow_spirv_compile;
 mod skinning_spirv_compile;
@@ -35,6 +36,7 @@ const 表面流エントリファイル名: &str = "surface_flow.slang";
 const SPHエントリファイル名: &str = "sph.slang";
 const UIエントリファイル名: &str = "ui.slang";
 const シャドウエントリファイル名: &str = "shadow.slang";
+const 点光源の影のエントリファイル名: &str = "point_light_shadow.slang";
 const 明るさの圧縮エントリファイル名: &str = "tonemap.slang";
 const 光のにじみ縮小側エントリファイル名: &str = "bloom_down.slang";
 const 光のにじみ拡大側エントリファイル名: &str = "bloom_up.slang";
@@ -66,6 +68,9 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
 
     let シャドウソース絶対パス = シェーダーディレクトリ絶対パス.join(シャドウエントリファイル名);
     shadow_spirv_compile::頂点と画素段をコンパイルする(&slangc, &シャドウソース絶対パス, &出力先ディレクトリ)?;
+
+    let 点光源の影のソース絶対パス = シェーダーディレクトリ絶対パス.join(点光源の影のエントリファイル名);
+    point_light_shadow_spirv_compile::頂点と画素段をコンパイルする(&slangc, &点光源の影のソース絶対パス, &出力先ディレクトリ)?;
 
     sky_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
 

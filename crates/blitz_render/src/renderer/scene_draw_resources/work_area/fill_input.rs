@@ -10,6 +10,7 @@ use crate::terrain_detail::地形詳細段選択;
 use crate::visible_instance_selection::可視個体選択一覧;
 use crate::vulkan::material_table::{材質資源表, 資源表世代の束縛};
 use crate::vulkan::pipeline_ledger::材質描画族パイプライン台帳;
+use crate::vulkan::point_light_shadow_plan::点光源の影の描画計画;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -37,4 +38,6 @@ pub(in crate::renderer) struct 作業領域更新入力<'a> {
     pub(in crate::renderer) 資源表世代の束縛: 資源表世代の束縛,
     /// 距離区分のパスへ描画入力を積むか。外した対照では数え上げも同じ並びで回るため、計数と発行が食い違わない。
     pub(in crate::renderer) 影のキャスター: 影のキャスター指定,
+    /// そのフレームに影を落とす灯の並び。灯を1件も持たないフレームでは点光源の影の発行を1件も積まない。
+    pub(in crate::renderer) 点光源の影の計画: 点光源の影の描画計画,
 }

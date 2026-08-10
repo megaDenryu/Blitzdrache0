@@ -13,6 +13,7 @@
 //! スロット別の材質IDは`slot_material_ids`、材質スロット番号の解決は`slot_binding`、
 //! 書き込む列の中身の検査は`visible_id_content`とその既出記録`seen_record`にある。
 
+mod bounding_sphere;
 mod create;
 mod frame_write;
 mod geometry_list;
@@ -33,6 +34,7 @@ use blitz_math::大域ワールド位置;
 
 use crate::vulkan;
 use crate::vulkan::tracked_device::GPUデバイス;
+use bounding_sphere::描画対象の境界球;
 use instance_record_storage::個体レコードの置き場;
 use slot_material_ids::スロット別材質ID;
 use visible_id_content::可視ID列の内容検査;
@@ -49,6 +51,8 @@ pub(super) struct 描画対象資源 {
     /// 個体変換の列の置き場。描画が可視ID列を通した添字で1件を選ぶ。動く個体を宣言した対象だけがスロット別の枝になる。
     個体変換: 個体レコードの置き場,
     可視id列: 可視ID列の出どころ,
+    /// 全個体を覆う球。点光源の影の面ごとの絞りだけが読む。読み込み時に決まり、以後変わらない。
+    境界球: 描画対象の境界球,
     /// 書き込む列の中身がこの対象の個体と整合していることの検査。この対象の個体数(個体変換列の件数と常に一致する)と、
     /// パスごとの重複を見るための既出記録をこれが持つ。
     内容検査: 可視ID列の内容検査,
@@ -66,6 +70,11 @@ impl 描画対象資源 {
     /// ジオメトリの選択とプリミティブ描画発行の絞り込みが別々の段を指すことがない。
     pub(super) fn 有効な段番号(&self, 段番号: usize) -> usize {
         self.段別ジオメトリ.有効な段番号(段番号)
+    }
+
+    /// 点光源の影の面ごとの絞りが読む球。他の判定はこれを読まない(カメラの可視判定はエンジン側が持つ)。
+    pub(super) fn 境界球(&self) -> 描画対象の境界球 {
+        self.境界球
     }
 
     pub(super) fn 個体数(&self) -> u32 {

@@ -26,7 +26,7 @@ pub(super) struct 構築結果<'a> {
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn グラフを構築する<'a>(
-    画像一式: &フレーム画像一式,
+    画像一式: &フレーム画像一式<'_>,
     フレーム構成: &フレーム構成,
     寸法: vk::Extent2D,
     クリア色: クリアカラー,

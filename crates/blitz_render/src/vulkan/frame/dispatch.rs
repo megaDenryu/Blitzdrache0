@@ -3,8 +3,8 @@
 use ash::vk;
 
 use super::{
-    UI描画入力, ジオメトリ入力, スキニング描画入力, 光のにじみ描画入力, 共有セット束縛, 布描画入力, 明るさの圧縮描画入力, 空中遠近合成描画入力,
-    空描画入力, 粒子描画入力, 距離区分別のシャドウ入力,
+    UI描画入力, ジオメトリ入力, スキニング描画入力, 光のにじみ描画入力, 共有セット束縛, 布描画入力, 明るさの圧縮描画入力, 点光源の影の描画発行,
+    点光源の影の束縛, 空中遠近合成描画入力, 空描画入力, 粒子描画入力, 距離区分別のシャドウ入力,
 };
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像の描画入力;
 use crate::vulkan::auto_exposure::自動露出描画入力;
@@ -12,6 +12,7 @@ use crate::vulkan::cluster_light_assignment::クラスタ選別の描画入力;
 use crate::vulkan::depth_injection::合成深度の注入入力;
 use crate::vulkan::indirect_lighting::間接照明の描画入力;
 use crate::vulkan::local_visibility::局所可視性描画入力;
+use crate::vulkan::point_light_shadow_plan::点光源の影の描画計画;
 use crate::vulkan::swapchain::スワップチェーン画像添字;
 use crate::vulkan::temporal_reconstruction::{合成入力の注入入力, 時間再構成描画入力};
 
@@ -35,6 +36,11 @@ pub(crate) struct 描画対象入力<'a> {
     pub(crate) 深度プリパス方式: crate::frame_composition::深度プリパス方式,
     /// クラスタの選別が積むパスの束縛先と即時定数。全世界がこの経路を通るため`Option`にしない。
     pub(crate) クラスタ選別: クラスタ選別の描画入力,
+    /// 点光源の影の面ごとの記録の発行。灯を1件も持たないフレームでは空である。
+    pub(crate) 点光源の影の発行: &'a [点光源の影の描画発行],
+    /// そのフレームに影を落とす灯の並び。面ごとのパスの本数はこの件数の6倍である。
+    pub(crate) 点光源の影の計画: 点光源の影の描画計画,
+    pub(crate) 点光源の影の束縛: 点光源の影の束縛,
 }
 
 #[derive(Clone, Copy)]

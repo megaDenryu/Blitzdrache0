@@ -21,6 +21,9 @@ const UI画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/ui_fra
 const シャドウ頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/shadow_vertex.spv"));
 const シャドウ画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/shadow_fragment.spv"));
 
+const 点光源の影の頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/point_light_shadow_vertex.spv"));
+const 点光源の影の画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/point_light_shadow_fragment.spv"));
+
 const 明るさの圧縮頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_vertex.spv"));
 const 明るさの圧縮画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/tonemap_fragment.spv"));
 
@@ -57,6 +60,7 @@ pub(crate) fn 埋め込みシェーダー束を生成する(
     Ok(シェーダー束 {
         シーン: scene_shaders::組む()?,
         シャドウ: シェーダー一式::生成する(シャドウ頂点SPIRV.to_vec(), シャドウ画素段SPIRV.to_vec())?,
+        点光源の影: シェーダー一式::生成する(点光源の影の頂点SPIRV.to_vec(), 点光源の影の画素段SPIRV.to_vec())?,
         空: crate::embedded_sky_shaders::埋め込み空シェーダーを生成する(空中遠近合成)?,
         大気のベイク済み画像: 埋め込み大気のベイク済み画像シェーダーを生成する()?,
         遠方環境: crate::embedded_derived_environment_shaders::埋め込み遠方環境シェーダー一式を生成する()?,

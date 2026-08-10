@@ -6,6 +6,8 @@ mod copy;
 mod dispatch;
 mod draw_switch_tally;
 mod images;
+mod point_light_shadow_tally;
+mod point_light_shadow_types;
 mod post_types;
 mod present;
 pub(crate) mod record;
@@ -30,6 +32,7 @@ pub(crate) use cloth_types::{布シャドウ描画入力, 布描画の外部資�
 pub(crate) use dispatch::{任意描画入力, 同期入力, 描画対象入力, 提示先};
 pub(crate) use draw_switch_tally::記録側切替計数;
 pub(crate) use images::{フレーム画像一式, 光のにじみ画像};
+pub(crate) use point_light_shadow_types::{点光源の影の描画発行, 点光源の影の束縛};
 pub(crate) use post_types::{光のにじみ描画入力, 明るさの圧縮描画入力};
 pub(crate) use record::記録の実績;
 pub use record_counts::記録側の計数;
@@ -57,7 +60,7 @@ pub(crate) fn 描画する(
     command_buffer: vk::CommandBuffer,
     フレーム構成: &フレーム構成,
     提示先: 提示先<'_>,
-    画像一式: &フレーム画像一式,
+    画像一式: &フレーム画像一式<'_>,
     寸法: vk::Extent2D,
     クリア色: クリアカラー,
     描画対象: 描画対象入力<'_>,

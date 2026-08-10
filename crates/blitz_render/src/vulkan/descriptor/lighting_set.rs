@@ -1,6 +1,7 @@
 //! set3(照明問い合わせのセット)のレイアウトと、そこへ資源を結ぶ操作の入口。触れるのはシャドウマップの比較サンプラー(binding0)・
 //! ヘッダの定数バッファ(binding1)・方向光レコード列(binding2)・局所光レコード列(binding3)の4つと、両方の契約が持つ
-//! 局所可視度の画像(binding7、`local_visibility`が担う)とクラスタ格子の2本(binding8と9、`cluster_grid`が担う)、
+//! 局所可視度の画像(binding7、`local_visibility`が担う)とクラスタ格子の2本(binding8と9、`cluster_grid`が担う)と
+//! 点光源の影の立方体配列(binding10、`point_light_shadow_map`が担う)、
 //! 遠方環境の枝だけが持つ3つ(binding4から6、`distant_environment`が担う)である。
 //! 同じセットへ置くのは、どれも寿命がフレーム×ビューであり、直接光と直接影が同じ問い合わせ契約に属するためである
 //! (参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「照明問い合わせ資源のGPU境界」)。番号の正本は`shaders/lighting_query.slang`の宣言である。
@@ -12,6 +13,7 @@ mod buffer_group;
 pub(crate) mod cluster_grid;
 pub(crate) mod distant_environment;
 pub(crate) mod local_visibility;
+pub(crate) mod point_light_shadow_map;
 mod pool;
 
 use ash::vk;
@@ -43,6 +45,7 @@ pub(super) fn レイアウトを生成する(
     }
     バインド一覧.push(local_visibility::バインド());
     バインド一覧.extend(cluster_grid::バインド一覧());
+    バインド一覧.push(point_light_shadow_map::バインド());
     let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
     // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
     Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })

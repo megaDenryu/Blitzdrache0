@@ -6,7 +6,7 @@
 
 use ash::vk;
 
-use super::stage_issue;
+use super::{point_light_shadow_issue, stage_issue};
 use super::{作業領域更新入力, 描画発行受け皿};
 use crate::draw_bundle_id::描画束ID;
 use crate::error::レンダラーエラー;
@@ -16,6 +16,7 @@ use crate::renderer::scene_draw_resources::render_object_resources::描画対象
 use crate::terrain_detail::地形詳細段;
 use crate::visible_instance_selection::段別描画範囲;
 use crate::vulkan::relative_anchor::カメラ相対の基準原点;
+use blitz_math::カメラ相対位置;
 
 pub(super) struct 描画対象の材料<'a> {
     pub(super) 入力: &'a 作業領域更新入力<'a>,
@@ -32,9 +33,10 @@ pub(super) struct 描画対象の材料<'a> {
 }
 
 impl 描画対象の材料<'_> {
-    pub(super) fn 相対の基準原点を作る(&self) -> Result<カメラ相対の基準原点, レンダラーエラー> {
-        let 相対位置 = self.資源.大域の基準原点.カメラ相対へ変換する(self.入力.カメラ大域原点)?;
-        Ok(カメラ相対の基準原点::相対位置から生成する(相対位置))
+    /// この対象の基準原点をそのフレームのカメラ大域原点で狭めた位置。プッシュ定数の基準原点も、
+    /// 点光源の影の絞りが読む球の中心も、この1つの値から出す(2度求めると同じ量を2箇所で持つことになる)。
+    pub(super) fn 基準原点のカメラ相対位置を作る(&self) -> Result<カメラ相対位置, レンダラーエラー> {
+        Ok(self.資源.大域の基準原点.カメラ相対へ変換する(self.入力.カメラ大域原点)?)
     }
 
     pub(super) fn 頂点バッファ差し替え先(&self) -> Option<vk::Buffer> {
@@ -47,8 +49,10 @@ impl 描画対象の材料<'_> {
 }
 
 pub(super) fn 積む(材料: &描画対象の材料<'_>, 受け皿: &mut 描画発行受け皿<'_>) -> Result<(), レンダラーエラー> {
-    let 相対の基準原点 = 材料.相対の基準原点を作る()?;
+    let 基準原点のカメラ相対位置 = 材料.基準原点のカメラ相対位置を作る()?;
+    let 相対の基準原点 = カメラ相対の基準原点::相対位置から生成する(基準原点のカメラ相対位置);
     動く個体の位置と向きを書き込む(材料)?;
+    point_light_shadow_issue::積む(材料, 受け皿.点光源の影, 基準原点のカメラ相対位置, 相対の基準原点)?;
     受け皿.集計.対象の個体数を加える(u64::from(材料.資源.個体数()));
     let Some(計画) = 材料.入力.可視個体選択一覧.引く(材料.束id, 材料.対象添字) else {
         return 全個体を束の段で積む(材料, 受け皿, 相対の基準原点);

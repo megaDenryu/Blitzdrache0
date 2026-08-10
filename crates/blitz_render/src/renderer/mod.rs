@@ -37,7 +37,7 @@ mod view_uniform_write;
 use crate::{frame_composition::フレーム構成, validation_counter::検証カウンタ, vulkan};
 
 pub use cpu_timing::CPU区間時間;
-pub use draw_issue_breakdown::{パス別描画発行, 描画発行内訳, 段別個体数, 記録側の計数};
+pub use draw_issue_breakdown::{パス別描画発行, 描画発行内訳, 段別個体数, 点光源の影の記録内訳, 記録側の計数};
 pub use pass_tally::{大気のベイク済み画像生成パス数の記録, 間接照明生成パス数の記録};
 
 /// Vulkanインスタンス・デバイス・スワップチェーン・同期プリミティブを保持し、フレーム構成の順に描いて提示するレンダラー。

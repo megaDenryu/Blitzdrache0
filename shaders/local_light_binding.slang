@@ -1,4 +1,4 @@
-// 照明問い合わせのセット(set3)のうち、局所光とクラスタの内側だけの束縛先の唯一の宣言。局所光レコード列(binding3)・クラスタ格子の区間表(binding8)・クラスタ光添字列(binding9)である。
+// 照明問い合わせのセット(set3)のうち、局所光とクラスタの内側だけの束縛先の唯一の宣言。局所光レコード列(binding3)・クラスタ格子の区間表(binding8)・クラスタ光添字列(binding9)・点光源の影の立方体配列(binding10)である。
 //
 // 材質のシェーダーはこのモジュールを取り込まない。
 // 取り込むのは局所光の問い合わせ(`local_light_shading.slang`)だけであり、あちらが取り込みを再輸出しないため、消費側からはこの3つの名前が見えない。
@@ -16,3 +16,7 @@ __exported import local_light_records;
 [[vk::binding(8, 3)]] StructuredBuffer<ClusterCell> clusterCells;
 // セルの区間が指す局所光レコードの添字の列。
 [[vk::binding(9, 3)]] StructuredBuffer<uint> clusterLightIndices;
+// 点光源の影の立方体配列(判断l・判断p)。灯1件につき立方体1つを持ち、局所光レコードの影資源添字がその立方体を選ぶ。
+// 多段影のbinding0を配列化せずここへ置くのは、1つのディスクリプタの配列へ2D配列と立方体の配列を混ぜられないためである。
+[[vk::binding(10, 3)]] [[vk::combinedImageSampler]] TextureCubeArray pointLightShadowTexture;
+[[vk::binding(10, 3)]] [[vk::combinedImageSampler]] SamplerComparisonState pointLightShadowSampler;

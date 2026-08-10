@@ -5,13 +5,16 @@
 //! 距離区分別の可視数を足した値は、複数の距離区分へ同時に所属する個体を重複して数える。「影を落とす個体が1体も落ちていない」ことは
 //! この和ではなく、可視個体の選別の計数が持つ距離区分の和集合の可視数で見る。
 //! パス1つぶんの数は`pass_issue`、LOD段ごとの個体数は`stage_counts`にある。
+//! 可視ID列を1つも通らない点光源の影の内訳だけは形が違うため、同じ表へ足さず`point_light_shadow`が別の型で持つ。
 
 mod pass_issue;
+mod point_light_shadow;
 mod stage_counts;
 
 /// 記録が実際にGPUへ積んだ回数。数えるのはコマンド記録の局面だが、読み手にとっては描画発行の内訳の一部であるため、ここから公開する。
 pub use crate::vulkan::frame::記録側の計数;
 pub use pass_issue::パス別描画発行;
+pub use point_light_shadow::点光源の影の記録内訳;
 pub use stage_counts::段別個体数;
 
 use crate::visible_instance_selection::{可視ID列を読むパス数, 可視パス};

@@ -6,7 +6,7 @@ use ash::vk;
 
 use crate::vertex::頂点;
 
-pub(super) fn 記述する() -> (vk::VertexInputBindingDescription, [vk::VertexInputAttributeDescription; 1]) {
+pub(in crate::vulkan::pipeline) fn 記述する() -> (vk::VertexInputBindingDescription, [vk::VertexInputAttributeDescription; 1]) {
     let stride = u32::try_from(std::mem::size_of::<頂点>()).unwrap_or_else(|_| panic!("頂点のサイズがu32に収まらない"));
     let 位置開始位置 = u32::try_from(std::mem::offset_of!(頂点, 位置)).unwrap_or_else(|_| panic!("頂点の位置開始位置がu32に収まらない"));
 

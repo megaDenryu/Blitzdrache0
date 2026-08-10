@@ -7,16 +7,20 @@
 // もう1つは、問い合わせの値の私有フィールドであり、区間の開始位置と件数は問い合わせの外から読めない。
 // 消費側が呼べるのは、問い合わせを作る`ofScreenPixel`と、件数の`count`と、標本の`sampleAt`の3つだけである(参照: `_doc/設計/クラスタ多光源と点光源の影.md`の先行裁定「材質シェーダーは光源の並びとクラスタの生成方法を知らない」)。
 //
-// 放射に減衰の窓を掛けるのは、クラスタの打ち切りと絵を一致させるためである。逆二乗のままでは影響半径の外側でも
-// 寄与が0にならず、セルへ割り当てられた光と割り当てられなかった光の境目に段差が出る
-// (正本は`crates/blitz_render/src/clustered_lighting/attenuation_window.rs`と`point_light_radiance.rs`)。
+// 放射に減衰の窓を掛けるのは、クラスタの打ち切りと絵を一致させるためである(窓そのものは
+// `local_light_attenuation.slang`が持つ。正本は`crates/blitz_render/src/clustered_lighting/`の2つである)。
+//
+// 影の減衰もこの内側で掛ける。材質のシェーダーが受け取るのは影を掛けた後の放射であり、影の有無も方式も
+// 名指しできない(参照: `_doc/設計/クラスタ多光源と点光源の影.md`「判断o」)。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
-// 取り込みを再輸出しないのは、これがこの分割の要だからである。消費側はこのモジュールを取り込んでも`local_light_binding`の3つの束縛先も`local_light_records`のレコードの形も見えず、下の問い合わせの型しか名指しできない。
+// 取り込みを再輸出しないのは、これがこの分割の要だからである。消費側はこのモジュールを取り込んでも`local_light_binding`の4つの束縛先も`local_light_records`のレコードの形も見えず、下の問い合わせの型しか名指しできない。
 // `lighting_query`はヘッダを読むために取り込む(消費側も自分で取り込んでよい値である)。
 import cluster_mapping;
 import lighting_query;
+import local_light_attenuation;
 import local_light_binding;
+import point_light_shadow_sample;
 
 // 距離の二乗へ足す微小量。CPU正本の`距離の二乗へ足す微小量`と同じ値でなければならない。
 static const float localLightSquaredDistanceEpsilon = 1e-8;
@@ -27,16 +31,6 @@ public struct LocalLightSample
     public float3 directionToLight;
     public float3 radiance;
 };
-
-// 光からの距離が影響半径へ近づくにつれて0へ落ちる、0以上1以下の係数。正本は
-// `crates/blitz_render/src/clustered_lighting/attenuation_window.rs`である。
-float localLightAttenuationWindow(float lightDistance, float influenceRadius)
-{
-    float ratio = lightDistance / influenceRadius;
-    float squaredRatio = ratio * ratio;
-    float inner = clamp(1.0 - squaredRatio * squaredRatio, 0.0, 1.0);
-    return inner * inner;
-}
 
 // その画素へ届く局所光の問い合わせ。
 public struct LocalLightQuery
@@ -91,6 +85,14 @@ public struct LocalLightQuery
         result.directionToLight = lightDistance > 0.0 ? toLight / lightDistance : float3(0.0, 0.0, 0.0);
         result.radiance = record.colorAndIntensity.rgb * record.colorAndIntensity.w
             / (squaredDistance + localLightSquaredDistanceEpsilon) * window;
+        // 影を落とす灯だけが立方体を1つ占める。影なしの灯は立方体を持たないため、添字を読まずに素通りする
+        // (番兵の添字で影なしを表さない形の実効がこの枝である)。
+        if (record.hasShadow != 0)
+        {
+            result.radiance *= pointLightShadowFactor(
+                -toLight, record.influenceRadius, record.shadowResourceIndex,
+                pointLightShadowTexture, pointLightShadowSampler);
+        }
         return true;
     }
 };

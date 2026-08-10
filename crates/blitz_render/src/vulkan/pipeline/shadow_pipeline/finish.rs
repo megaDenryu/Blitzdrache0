@@ -5,7 +5,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 
-pub(super) fn パイプラインを取り出す(
+pub(in crate::vulkan::pipeline) fn パイプラインを取り出す(
     生成結果: Result<Vec<vk::Pipeline>, (Vec<vk::Pipeline>, vk::Result)>,
 ) -> Result<vk::Pipeline, レンダラーエラー> {
     match 生成結果 {

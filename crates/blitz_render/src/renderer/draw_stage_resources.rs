@@ -10,8 +10,10 @@
 //! 空段階だけに触れるものを`sky`が持つ。
 
 mod atmosphere;
+mod cluster_light_assignment;
 mod create;
 mod indirect_lighting;
+mod point_light_shadow;
 mod sky;
 mod synthetic_depth;
 
@@ -35,6 +37,9 @@ pub(super) struct 描画段階資源 {
     合成深度の注入: Option<vulkan::depth_injection::合成深度の注入一式>,
     /// クラスタの選別のコンピュートと、その生成側のセット。全世界がこの経路を通るため`Option`にしない。
     クラスタ選別: vulkan::cluster_light_assignment::クラスタ選別一式,
+    /// 点光源の影の面ごとの記録パイプライン。影を落とす灯を1件も持たない世界も作る。灯の宣言は毎フレームの入力であり、
+    /// パイプラインの有無をそこへ連動させると宣言が変わるたびに資源の作り直しが要るためである。
+    点光源の影: vulkan::pipeline::点光源の影のパイプライン,
 }
 
 impl 描画段階資源 {
@@ -55,15 +60,6 @@ impl 描画段階資源 {
         self.遠方環境の照明
             .as_ref()
             .map(vulkan::indirect_lighting::遠方環境の照明資源::焼き上げ本数の見込み)
-    }
-
-    /// そのフレームスロットの選別のパスが要る束縛先と即時定数。
-    pub(super) fn クラスタ選別の描画入力を作る(
-        &self,
-        フレーム添字: vulkan::sync::フレームスロット添字,
-        カメラ相対ビュー変換: blitz_math::変換<blitz_math::ワールド, blitz_math::ビュー>,
-    ) -> vulkan::cluster_light_assignment::クラスタ選別の描画入力 {
-        self.クラスタ選別.描画入力を作る(フレーム添字, カメラ相対ビュー変換)
     }
 
     /// 遠方環境の照明資源への可変の参照。検収の注入だけが使う入口であり、本番のフレーム経路は通らない。
@@ -96,5 +92,6 @@ impl 描画段階資源 {
             合成深度の注入.破棄する(device);
         }
         self.クラスタ選別.破棄する(device);
+        self.点光源の影.破棄する(device);
     }
 }

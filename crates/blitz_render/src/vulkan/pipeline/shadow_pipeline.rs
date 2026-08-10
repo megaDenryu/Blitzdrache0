@@ -5,8 +5,8 @@
 
 mod assemble;
 mod create;
-mod finish;
-mod vertex_input;
+pub(in crate::vulkan::pipeline) mod finish;
+pub(in crate::vulkan::pipeline) mod vertex_input;
 
 use ash::vk;
 

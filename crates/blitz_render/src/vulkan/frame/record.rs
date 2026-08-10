@@ -16,6 +16,8 @@ mod local_visibility_passes;
 mod particle_draw_pass;
 mod particle_update_pass;
 pub(crate) mod pass_names;
+mod point_light_shadow_draw;
+pub(crate) mod point_light_shadow_pass;
 mod readback_pass;
 mod scene_pass;
 mod shadow_draw;
@@ -47,7 +49,7 @@ pub(super) fn コマンドを記録する(
     device: &ash::Device,
     command_buffer: vk::CommandBuffer,
     フレーム構成: &フレーム構成,
-    画像一式: &フレーム画像一式,
+    画像一式: &フレーム画像一式<'_>,
     寸法: vk::Extent2D,
     クリア色: クリアカラー,
     描画対象: 描画対象入力<'_>,

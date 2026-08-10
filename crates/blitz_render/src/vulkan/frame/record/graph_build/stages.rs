@@ -7,6 +7,7 @@ mod cluster_light_assignment_stage;
 mod depth_prepass_stage;
 mod indirect_lighting_stage;
 mod local_visibility_stage;
+mod point_light_shadow_stage;
 mod scene_stage;
 mod shadow_stage;
 mod sky_stage;
@@ -14,6 +15,7 @@ mod temporal_reconstruction_stage;
 
 pub(super) use atmosphere_lut_stage::大気のベイク済み画像を積む;
 pub(super) use indirect_lighting_stage::間接照明を積む;
+pub(super) use point_light_shadow_stage::点光源の影を積む;
 pub(super) use scene_stage::シーンを積む;
 pub(super) use shadow_stage::影を積む;
 pub(super) use sky_stage::{空を積む, 空パスがベイク済み画像を参照するか};

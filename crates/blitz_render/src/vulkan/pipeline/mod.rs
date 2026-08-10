@@ -9,6 +9,7 @@ mod depth_prepass_pipeline;
 mod graphics_pipeline;
 mod layout;
 mod material_family;
+mod point_light_shadow_pipeline;
 mod shadow_pipeline;
 mod sky_pipeline;
 
@@ -24,6 +25,7 @@ pub(crate) use layout::{生成する as レイアウトを生成する, 破棄�
 pub(crate) use material_family::{
     シャドウのpipelineを生成する, シーンのpipelineを生成する, 深度プリパスのpipelineを生成する
 };
+pub(crate) use point_light_shadow_pipeline::点光源の影のパイプライン;
 pub(crate) use shadow_pipeline::シャドウパイプライン;
 pub(crate) use sky_pipeline::空パイプライン;
 

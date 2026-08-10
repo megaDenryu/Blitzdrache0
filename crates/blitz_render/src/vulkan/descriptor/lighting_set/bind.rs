@@ -5,15 +5,16 @@
 
 use ash::vk;
 
-use super::{cluster_grid, 照明問い合わせのバッファ組};
-use crate::vulkan::shadow_map::シャドウマップ;
+use super::{cluster_grid, point_light_shadow_map, 照明問い合わせのバッファ組};
+use crate::vulkan::shadow_resources::影の資源の組;
 
-/// そのスロットのバッファと、全スロットで共通のシャドウマップを結ぶ。
+/// そのスロットのバッファと、全スロットで共通の影の資源の組を結ぶ。
 /// クラスタ格子の2本も同じ手順で結ぶのは、どちらも同じスロットが所有するバッファであり、結び直しの局面を持たないためである。
 pub(crate) fn 資源を結ぶ(
-    device: &ash::Device, set: vk::DescriptorSet, バッファ組: 照明問い合わせのバッファ組, シャドウマップ: &シャドウマップ
+    device: &ash::Device, set: vk::DescriptorSet, バッファ組: 照明問い合わせのバッファ組, 影の資源: &影の資源の組
 ) {
-    シャドウマップを結ぶ(device, set, シャドウマップ);
+    シャドウマップを結ぶ(device, set, &影の資源.多段影);
+    point_light_shadow_map::結ぶ(device, set, 影の資源.点光源の影.立方体配列ビュー, 影の資源.点光源の影.sampler);
     let 定数の対 = [(super::ヘッダのバインディング番号, vk::DescriptorType::UNIFORM_BUFFER, バッファ組.ヘッダ)];
     let 記憶の対 = [
         (super::方向光列のバインディング番号, バッファ組.方向光列),
@@ -41,7 +42,9 @@ fn バッファを結ぶ(device: &ash::Device, set: vk::DescriptorSet, 番号: u
 
 /// 束縛するのは距離区分ごとの層でなく配列全体のビューであり、距離区分の選択はシェーダーが層の添字で行う。
 /// シャドウマップはスワップチェーン再構築と独立の固定資源のため、生成時に一度だけ結べばよい。
-fn シャドウマップを結ぶ(device: &ash::Device, set: vk::DescriptorSet, シャドウマップ: &シャドウマップ) {
+fn シャドウマップを結ぶ(
+    device: &ash::Device, set: vk::DescriptorSet, シャドウマップ: &crate::vulkan::shadow_map::シャドウマップ
+) {
     let 画像情報一覧 = [vk::DescriptorImageInfo::default()
         .sampler(シャドウマップ.sampler)
         .image_view(シャドウマップ.配列ビュー)
