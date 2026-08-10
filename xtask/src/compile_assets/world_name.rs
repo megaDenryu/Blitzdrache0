@@ -23,7 +23,7 @@ pub const 頂点診断の細かい世界: &str = "vertex_diag_fine_world";
 /// 参照: `_doc/設計/テクスチャのブロック圧縮と縮小段生成.md`「段割りと各段の完了条件」の段4
 pub const ブロック圧縮の対照世界: &str = "texture_compression_world";
 
-/// 夜の多光源の検収世界。起伏のある地面1チャンクだけを持ち、点光源はblitz_appの世界の宣言が置く。
+/// 夜の多光源の検収世界。起伏のある地面1チャンクと、影の形で灯を見分けるための遮蔽物2件を持つ。点光源はblitz_appの世界の宣言が置く。
 /// 参照: `_doc/設計/クラスタ多光源と点光源の影.md`「検収戦略(判断i)」
 pub const 夜の多光源の世界: &str = "night_lights_world";
 
