@@ -16,6 +16,14 @@ struct LightingQueryHeader
     // xyzがワールドの太陽方向(表面から太陽へ向かう単位ベクトル)、wは未使用である。
     // 遠方環境の契約のパイプラインだけが読み、法線と反射方向を太陽相対座標へ写すのに使う。
     float4 sunDirection;
+    // 以下の3区画はクラスタ写像のパラメータであり、画素段と選別のコンピュートが同じ値を読む。
+    // 読み手が現れるのはクラスタの選別を入れる段であり、この版では書かれるだけである。
+    // xyzがクラスタ格子の横・縦・奥行きの分割数、wは未使用である。
+    uint4 clusterGridDivisions;
+    // xyがクラスタ写像が見る画面の横・縦の画素数、zwは未使用である。
+    uint4 clusterScreenPixelExtent;
+    // xがビュー空間の奥行きの近、yが遠、zwが視野の半角の正接の横と縦である。
+    float4 clusterDepthRangeAndHalfAngleTangent;
 };
 
 struct DirectionalLightRecord
@@ -36,6 +44,14 @@ struct LocalLightRecord
     float4 colorAndIntensity;
     // xが光種。yzwは未使用である。
     uint4 kind;
+    // 光が届く範囲の上限(メートル)。減衰の窓を掛ける段まで読み手は居ない。
+    float influenceRadius;
+    // 影を持つかどうか。0が影なしであり、番兵の添字で「影なし」を表さない。
+    uint hasShadow;
+    // 影を持つときに見る影資源の添字。影を持たない光では読まない。
+    uint shadowResourceIndex;
+    // 未使用である。減衰の窓の指数は固定であり、変えたくなったときがレコードの版を上げるときである。
+    uint unusedLocalLightSlot;
 };
 
 // 可視性の種別。番兵の添字で「影なし」を表さず、種別そのもので枝を分ける。

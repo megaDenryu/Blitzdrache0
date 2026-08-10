@@ -15,6 +15,7 @@ pub(crate) mod header_bytes;
 pub(crate) mod header_content;
 pub(crate) mod local_bytes;
 pub(crate) mod local_content;
+pub(crate) mod local_sequence;
 mod local_visibility_bind;
 pub(crate) mod pack;
 mod slot_resources;
@@ -41,6 +42,7 @@ use slot_resources::スロット資源;
 pub(crate) use directional_content::方向光レコード内容;
 pub(crate) use header_content::{ヘッダの間接照明, 照明問い合わせヘッダ内容};
 pub(crate) use local_content::局所光レコード内容;
+pub(crate) use local_sequence::局所光レコードの並び;
 
 pub(crate) struct 照明問い合わせ資源束 {
     pool: vk::DescriptorPool,
@@ -68,7 +70,7 @@ impl 照明問い合わせ資源束 {
         フレーム添字: フレームスロット添字,
         ヘッダ: &照明問い合わせヘッダ内容,
         方向光一覧: &[方向光レコード内容],
-        局所光一覧: &[局所光レコード内容],
+        局所光一覧: &局所光レコードの並び,
     ) -> Result<(), レンダラーエラー> {
         let バイト列: 照明問い合わせのバイト列 = pack::組み立てる(ヘッダ, 方向光一覧, 局所光一覧)?;
         self.スロット一覧[フレーム添字.配列添字()].書き込む(device, &バイト列)

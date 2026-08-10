@@ -16,6 +16,9 @@ fn ヘッダの宣言がcpu側と同じ並びである() {
     開始位置を確かめる(&並び, "lightingEnabled", 8);
     開始位置を確かめる(&並び, "constantIndirectFactor", 12);
     開始位置を確かめる(&並び, "sunDirection", 16);
+    開始位置を確かめる(&並び, "clusterGridDivisions", 32);
+    開始位置を確かめる(&並び, "clusterScreenPixelExtent", 48);
+    開始位置を確かめる(&並び, "clusterDepthRangeAndHalfAngleTangent", 64);
 }
 
 #[test]
@@ -34,6 +37,10 @@ fn 局所光レコードの宣言がcpu側と同じ並びである() {
     開始位置を確かめる(&並び, "cameraRelativePosition", 0);
     開始位置を確かめる(&並び, "colorAndIntensity", 16);
     開始位置を確かめる(&並び, "kind", 32);
+    開始位置を確かめる(&並び, "influenceRadius", 48);
+    開始位置を確かめる(&並び, "hasShadow", 52);
+    開始位置を確かめる(&並び, "shadowResourceIndex", 56);
+    開始位置を確かめる(&並び, "unusedLocalLightSlot", 60);
 }
 
 fn 読み取る一つ(構造体名: &str) -> シェーダー構造体の並び {

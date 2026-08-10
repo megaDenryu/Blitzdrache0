@@ -145,7 +145,7 @@ set 3を**照明問い合わせセット**とし、set 2のアセットテクス
 
 CPU側の正本は`crates/blitz_render/src/vulkan/lighting_query/`の`header_bytes.rs`・`directional_bytes.rs`・`local_bytes.rs`であり、GPU側の宣言の正本は`shaders/lighting_query.slang`である。バイト長と全フィールドの開始位置の一致は同じ階層の`layout_tests.rs`と`shader_struct_tests.rs`が単体テストで見る。
 
-照明問い合わせヘッダ(32バイト、照明問い合わせのセットのbinding1、宣言名`LightingQueryHeader`。順3-Ic-2で16バイトから広げた):
+照明問い合わせヘッダ(80バイト、照明問い合わせのセットのbinding1、宣言名`LightingQueryHeader`。順3-Ic-2で16バイトから32バイトへ、着手順5の第2段階で80バイトへ広げた):
 
 | 開始位置 | 型 | 名前 | 内容 |
 | --- | --- | --- | --- |
@@ -154,6 +154,11 @@ CPU側の正本は`crates/blitz_render/src/vulkan/lighting_query/`の`header_byt
 | 8 | uint | lightingEnabled | 照明の有効性。0のとき画素段はベースカラーを返す |
 | 12 | float | constantIndirectFactor | 定数間接近似の係数。定数近似の契約の画素段だけが読む |
 | 16 | float4 | sunDirection | xyzがワールドの太陽方向(表面から太陽へ向かう単位ベクトル)。wは未使用。遠方環境の契約の画素段だけが読む |
+| 32 | uint4 | clusterGridDivisions | xyzがクラスタ格子の横・縦・奥行きの分割数。wは未使用 |
+| 48 | uint4 | clusterScreenPixelExtent | xyがクラスタ写像が見る画面の横・縦の画素数。zwは未使用 |
+| 64 | float4 | clusterDepthRangeAndHalfAngleTangent | xがビュー空間の奥行きの近・yが遠・zwが視野の半角の正接の横と縦 |
+
+**末尾の3区画はクラスタ写像の4つのパラメータであり、着手順5の第2段階では書かれるだけで読み手が居ない。** 読み手が現れるのはクラスタの選別を入れる第3段階であり、画素段と選別のコンピュートの両方が同じ値を読む。画面の画素数を運ぶのはタイルの画素寸法でなく画素数そのものである。タイルへの割り当ての式が`(2 × 画素 + 1) × 分割数 / (2 × 画素数)`であり、分割数が画素数を割り切らない場合にタイルの寸法からは同じ答えを作れないためである(正本は`crates/blitz_render/src/clustered_lighting/screen_tile.rs`)。
 
 **最後の2つは契約の枝ごとに片方だけが意味を持つ**。CPU側は`header_content.rs`の`ヘッダの間接照明`という判別共用体で表し、選ばれなかった側の区画は0で残る。既定値の適用ではなく、その契約のパイプラインが1度も読まない区画である。レイアウトを枝で変えないのは、同じ`LightingQueryHeader`の宣言をシーン描画と布描画の両方が読むためであり、バイト長が枝で変わると宣言が1つであることの意味が失われるためである。太陽方向をヘッダが運ぶのは、遠方環境が太陽相対座標で焼かれ、表面が法線と反射方向を同じ座標へ写す必要があるためである(参照: `_doc/設計/放射輝度問い合わせ階層.md`「鍵の設計(2つの注意)」)。
 
@@ -167,13 +172,19 @@ CPU側の正本は`crates/blitz_render/src/vulkan/lighting_query/`の`header_byt
 
 **多段影の枝が受理する資源添字は0だけである**(2026-08-02の補遺5-f)。現行の照明問い合わせのセットは多段影を1組しか持たず、シェーダーもその1組を直に参照する。非0を通すとCPUは「別の影を見る光」を作れたつもりになるのにGPUは黙って組0を読むため、梱包が非0を型付きで拒む。受理範囲を広げるのは順5で影の資源が配列になるときであり、CPU側の`vulkan/lighting_query/capacity.rs`の`多段影資源の組数`とシェーダーの参照を同時に変える。
 
-局所光レコード(48バイト、照明問い合わせのセットのbinding3のストレージバッファ、宣言名`LocalLightRecord`):
+局所光レコード(64バイト、照明問い合わせのセットのbinding3のストレージバッファ、宣言名`LocalLightRecord`。着手順5の第2段階で48バイトから広げた):
 
 | 開始位置 | 型 | 名前 | 内容 |
 | --- | --- | --- | --- |
 | 0 | float4 | cameraRelativePosition | xyzがカメラ相対位置。wは未使用 |
 | 16 | float4 | colorAndIntensity | rgbがscene-linearの色・wが強度 |
 | 32 | uint4 | kind | xが光種(0が点光)。yzwは未使用 |
+| 48 | float | influenceRadius | 光が届く範囲の上限(メートル) |
+| 52 | uint | hasShadow | 影を持つか。0が影なしであり、番兵の添字で「影なし」を表さない |
+| 56 | uint | shadowResourceIndex | 影を持つときに見る影資源の添字 |
+| 60 | uint | unusedLocalLightSlot | 未使用 |
+
+**影の2欄は書き手も読み手も点光源の影の段まで現れない。** それでもこの版で区画を確保したのは、64バイトへの版上げを2回やらないためである。第2段階から第4段階までの書き込みは常に影無し(0)であり、影響半径も運ぶだけで誰も読まない(減衰の窓を掛けるのは第3段階である)。列の容量は1件から64件へ上げた。容量の値は公開の局所光源列の上限件数を読み、根拠は`crates/blitz_render/src/lighting_input/local_lights.rs`が持つ。
 
 **光種が点光へ閉じていることの保証地点は`局所光レコード内容::点光として写す`の1つである**(2026-08-02の補遺5-f)。レコードの光種のフィールドはそのモジュールの外から書けないため、他の入口から別の光種のレコードを作れない。シェーダー側も光種の枝を明示して読むため、光種が増えたときに新しい種別の光が点光の減衰で黙って照らされることがない。
 
@@ -277,7 +288,7 @@ set 3の直接光は最初から配列契約にする(固定フィールドに�
    - **GPUの方式tagは作らない**: 供給元方式はパイプラインキー(段6)で既知になるため、1枝しかないruntime enumやdummyの資源添字をGPUのヘッダへ先行しない。CPU側の判別共用体(現行1枝=定数間接近似)のみ持つ
    - **ヘッダ**: 方向光件数・局所光件数・定数間接近似値・全体有効性。真偽と件数はuintで詰め、floatの閾値判定をやめる
    - **方向光レコード**: 表面から光へ向かう規約へ正規化した方向(現行シェーダーの`-directionalLightDirection`から符号が変わるため、変換点を1箇所にし単体テストを必須とする)・scene-linearの色と強度(正本は1つ)・**可視性の種別/参照**(現行は多段影資源0を指す枝、影なしは明示の枝。大域の影有効だけに畳むと順5の複数方向光で対応が失われる)。多段影定数(行列・分割・遷移・テクセル尺度・デバッグ)はshadow/cloth_shadowの書込パスも読む共有パス定数のためset 0に残す
-   - **局所光レコード**: カメラ相対位置・scene-linearの色と強度・光種(現行はpoint)。影響半径は現行入力に根拠のある値が無いため先行しない(順5で減衰/打切り方針とセットでレコードv2として追加する)
+   - **局所光レコード**: カメラ相対位置・scene-linearの色と強度・光種(現行はpoint)。影響半径は現行入力に根拠のある値が無いため先行しない(順5で減衰/打切り方針とセットでレコードv2として追加する)。**このv2は着手順5の第2段階で入った**(本文書「照明問い合わせ資源のフィールドレイアウト(段5で確定)」の表が現行の正本である)
    - **ライティング無効の挙動**: `lighting enabled=false`は光件数0でなくscene.slangがalbedoを返す特別枝である。この挙動を変えず画素完全一致を固定する
    - **検収ゲート**: 既存検収入口全部の判定値完全不変+validation 0件+verify全緑に加え、(i)フレームスロット0/1へ異なる光値を書き、片方のGPU使用中に他方を書いても内容/ディスクリプタが混ざらず、フェンス前の同スロット再書込をしない状態検査 (ii)方向/局所の件数0/1の境界。0件でも0バイトのバッファを作らず、シェーダーが未初期化領域を読まない。ヘッダの件数が実レコード数を超える入力は型付き拒否 (iii)scene.slangとcloth_draw.slangが同じ照明問い合わせのSlang関数/レコード宣言を読み、旧`viewPassUniform`の照明フィールド参照が全シェーダー/CPUで0件のconform (iv)原点不変: 局所光だけがカメラ相対化され方向光は平行移動不変であることを、origin-invarianceに加えレコードのバイト列で直接確認 (v)set 3のディスクリプタプールの件数追従・生成途中失敗の逆順解放・レンダラー破棄順。照明資源束の所有を共有ディスクリプタの中で曖昧にしない (vi)セット番号別計器でscene/cloth各パスのset 3束縛が1回のまま、光件数やプリミティブ数で増えないこと (vii)96バイトのビュー定数のCPU全開始位置とslang宣言の突合(既存様式)
    **段5は実装済みである(2026-08-02)。** 実装の所在は次のとおりである。GPU側の宣言が`shaders/lighting_query.slang`、CPU側のバイト詰めと資源束が`crates/blitz_render/src/vulkan/lighting_query/`(容量が`capacity.rs`、ヘッダが`header_content.rs`と`header_bytes.rs`、方向光レコードが`directional_content.rs`と`directional_bytes.rs`、局所光レコードが`local_content.rs`と`local_bytes.rs`、3本のバイト列への梱包と件数の検証が`pack.rs`、フレームスロット1つぶんの資源が`slot_resources.rs`、生成の局面が`create.rs`)、set 3のレイアウトと結び方が`crates/blitz_render/src/vulkan/descriptor/lighting_set.rs`(プールの件数が`lighting_set/pool.rs`、3本のバッファを名前で束ねる値が`lighting_set/buffer_group.rs`)、CPU境界の分解形が`crates/blitz_render/src/frame_lighting/`、レコード内容の組み立てが`crates/blitz_render/src/renderer/lighting_query_write.rs`、96バイトのビュー定数が`crates/blitz_render/src/vulkan/uniform/view_content.rs`と`view_bytes.rs`である。シェーダー側は影の比較サンプリングが`shaders/shadow_sample.slang`、直接光の列挙と合成が`shaders/direct_light_shading.slang`へ分かれた(旧`lighting.slang`は中身が影の標本化だけになったため改名した)。レイアウトの表は本文書「照明問い合わせ資源のフィールドレイアウト(段5で確定)」が正本である。

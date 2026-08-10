@@ -8,7 +8,7 @@
 use super::capacity::{多段影資源の組数, 局所光レコードの容量, 方向光レコードの容量};
 use super::directional_content::方向光レコード内容;
 use super::header_content::照明問い合わせヘッダ内容;
-use super::local_content::局所光レコード内容;
+use super::local_sequence::局所光レコードの並び;
 use super::{directional_bytes, header_bytes, local_bytes};
 use crate::error::照明問い合わせ梱包エラー;
 use crate::frame_lighting::直接光の可視性;
@@ -26,10 +26,10 @@ pub(crate) struct 照明問い合わせのバイト列 {
 pub(crate) fn 組み立てる(
     ヘッダ: &照明問い合わせヘッダ内容,
     方向光一覧: &[方向光レコード内容],
-    局所光一覧: &[局所光レコード内容],
+    局所光一覧: &局所光レコードの並び,
 ) -> Result<照明問い合わせのバイト列, 照明問い合わせ梱包エラー> {
     件数を確かめる(ヘッダ.方向光件数, 方向光一覧.len(), 方向光レコードの容量, 光の種類::方向光)?;
-    件数を確かめる(ヘッダ.局所光件数, 局所光一覧.len(), 局所光レコードの容量, 光の種類::局所光)?;
+    件数を確かめる(ヘッダ.局所光件数, 局所光一覧.件数(), 局所光レコードの容量, 光の種類::局所光)?;
     可視性の参照先を確かめる(方向光一覧)?;
     let mut 方向光列 = [0u8; 方向光列のバイト長];
     for (添字, 内容) in 方向光一覧.iter().enumerate() {
@@ -37,7 +37,7 @@ pub(crate) fn 組み立てる(
         方向光列[開始..開始 + directional_bytes::バイト長].copy_from_slice(&directional_bytes::バイト列にする(内容));
     }
     let mut 局所光列 = [0u8; 局所光列のバイト長];
-    for (添字, 内容) in 局所光一覧.iter().enumerate() {
+    for (添字, 内容) in 局所光一覧.局所光レコードを先頭から順に返す().enumerate() {
         let 開始 = 添字 * local_bytes::バイト長;
         局所光列[開始..開始 + local_bytes::バイト長].copy_from_slice(&local_bytes::バイト列にする(内容));
     }
