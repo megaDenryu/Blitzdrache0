@@ -7,6 +7,7 @@
 
 use ash::vk;
 
+use super::cluster_buffers::クラスタ格子の資源;
 use super::header_bytes;
 use super::pack::{局所光列のバイト長, 方向光列のバイト長, 照明問い合わせのバイト列};
 use super::writable_buffer::書き換えバッファ;
@@ -18,6 +19,8 @@ pub(super) struct スロット資源 {
     pub(super) ヘッダ: 書き換えバッファ,
     pub(super) 方向光列: 書き換えバッファ,
     pub(super) 局所光列: 書き換えバッファ,
+    /// 選別のコンピュートだけが書く2本。CPUからの書き込みの口を持たない。
+    pub(super) クラスタ格子: クラスタ格子の資源,
     pub(super) セット: vk::DescriptorSet,
 }
 
@@ -46,20 +49,32 @@ impl スロット資源 {
                 return Err(誤り);
             }
         };
+        let クラスタ格子 = match クラスタ格子の資源::生成する(device, メモリプロパティ) {
+            Ok(値) => 値,
+            Err(誤り) => {
+                局所光列.破棄する(device);
+                方向光列.破棄する(device);
+                ヘッダ.破棄する(device);
+                return Err(誤り);
+            }
+        };
         Ok(Self {
             ヘッダ,
             方向光列,
             局所光列,
+            クラスタ格子,
             セット,
         })
     }
 
-    /// ディスクリプタの結び方だけを知るモジュールへ渡す3本のハンドル。
+    /// ディスクリプタの結び方だけを知るモジュールへ渡す5本のハンドル。
     pub(super) fn バッファ組(&self) -> 照明問い合わせのバッファ組 {
         照明問い合わせのバッファ組 {
             ヘッダ: self.ヘッダ.buffer,
             方向光列: self.方向光列.buffer,
             局所光列: self.局所光列.buffer,
+            クラスタ格子: self.クラスタ格子.格子,
+            クラスタ光添字列: self.クラスタ格子.光添字列,
         }
     }
 
@@ -73,6 +88,7 @@ impl スロット資源 {
 
     /// 注意: ディスクリプタセットの解放はプールの破棄が暗黙に行うため、ここではバッファだけを破棄する。
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
+        self.クラスタ格子.破棄する(device);
         self.局所光列.破棄する(device);
         self.方向光列.破棄する(device);
         self.ヘッダ.破棄する(device);

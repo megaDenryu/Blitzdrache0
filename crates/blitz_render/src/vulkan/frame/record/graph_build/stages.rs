@@ -3,6 +3,7 @@
 use ash::vk;
 
 mod atmosphere_lut_stage;
+mod cluster_light_assignment_stage;
 mod depth_prepass_stage;
 mod indirect_lighting_stage;
 mod local_visibility_stage;

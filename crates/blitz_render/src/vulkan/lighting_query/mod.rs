@@ -7,6 +7,8 @@
 //! 多段シャドウマップは束縛先が変わらない固定資源のため、全スロットのセットが同じ画像を生成時に1度だけ結ぶ。
 
 pub(crate) mod capacity;
+mod cluster_bind;
+mod cluster_buffers;
 mod create;
 pub(crate) mod directional_bytes;
 pub(crate) mod directional_content;

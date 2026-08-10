@@ -32,7 +32,7 @@ VertexOutput vertexMain(VertexInput input)
 ColorAndMotionOutput fragmentMain(VertexOutput input, bool isFrontFace: SV_IsFrontFace)
 {
     float3 normal = clothSurfaceNormal(input.normal, isFrontFace);
-    float3 direct = clothDirectLight(normal, input.relativePosition);
+    float3 direct = clothDirectLight(normal, input.relativePosition, uint2(input.position.xy));
     // 定数間接近似はscene.slangと同じヘッダの係数から取る。これが無いと布だけが夜の環境光に追従しない。
     float3 ambient = float3(lightingQueryHeader.constantIndirectFactor, lightingQueryHeader.constantIndirectFactor, lightingQueryHeader.constantIndirectFactor);
     return clothColorAndMotion(clothColor * clothWeave(input.uv) * (direct + ambient), input);

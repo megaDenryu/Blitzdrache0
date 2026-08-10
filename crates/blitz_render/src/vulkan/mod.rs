@@ -9,6 +9,7 @@ pub(crate) mod bloom;
 pub(crate) mod bloom_targets;
 pub(crate) mod cloth;
 pub(crate) mod cloth_shadow;
+pub(crate) mod cluster_light_assignment;
 pub(crate) mod commands;
 pub(crate) mod compute_pipeline;
 pub(crate) mod debug_messenger;

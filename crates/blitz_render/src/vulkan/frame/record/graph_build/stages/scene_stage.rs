@@ -10,7 +10,7 @@ use ash::vk;
 
 use super::super::base_images::基本画像ハンドル;
 use super::indirect_lighting_stage::遠方環境の消費画像;
-use super::{depth_prepass_stage, local_visibility_stage};
+use super::{cluster_light_assignment_stage, depth_prepass_stage, local_visibility_stage};
 use crate::clear_color::クリアカラー;
 use crate::vulkan::depth_injection;
 use crate::vulkan::frame::record::scene_pass;
@@ -34,6 +34,9 @@ pub(in crate::vulkan::frame::record::graph_build) fn シーンを積む<'a>(
     任意: 任意描画入力<'a>,
     寸法: vk::Extent2D,
 ) -> Option<graph::画像ハンドル> {
+    // 選別を段階の先頭へ置く。シーン描画と布描画がその結果を画素段で読むため、この順が保たれることで
+    // 書き込みと読みの間にバリアが立つ。
+    let クラスタの読み = cluster_light_assignment_stage::クラスタの選別を積む(グラフ, 描画対象.クラスタ選別);
     let 方式 = 描画対象.深度プリパス方式;
     depth_prepass_stage::深度プリパスを積む(グラフ, 基本, スキン済み, 描画対象, 方式, 寸法);
     if let Some(注入) = 任意.合成深度の注入 {
@@ -64,6 +67,7 @@ pub(in crate::vulkan::frame::record::graph_build) fn シーンを積む<'a>(
         クリア,
         描画対象.ジオメトリ,
         描画対象.共有,
+        クラスタの読み,
         寸法,
     ));
     局所可視度

@@ -16,9 +16,11 @@
 //! 参照: `_doc/設計/クラスタ多光源と点光源の影.md`
 
 mod attenuation_window;
+mod cell_boundary_margin;
 mod cell_correspondence;
 mod cell_frustum;
 mod cell_index;
+mod cell_light_capacity;
 mod cell_mapping;
 mod cutoff_threshold;
 mod depth_range;
@@ -50,6 +52,12 @@ mod independent_construction;
 #[cfg(test)]
 mod recommended_radius_tests;
 #[cfg(test)]
+mod single_precision_agreement_tests;
+#[cfg(test)]
+mod single_precision_sample;
+#[cfg(test)]
+mod single_precision_transcript;
+#[cfg(test)]
 mod sphere_boundary_tests;
 #[cfg(test)]
 mod sphere_intersection_tests;
@@ -57,8 +65,10 @@ mod sphere_intersection_tests;
 mod test_fixture;
 
 pub use attenuation_window::減衰の窓;
+pub use cell_boundary_margin::{セルの奥行きを広げる相対量, セルの横と縦を広げる画素数};
 pub use cell_frustum::クラスタ格子のセルの錐台;
 pub use cell_index::クラスタ格子のセル添字;
+pub use cell_light_capacity::{クラスタ光添字列の要素数, セル1つが指せる局所光の上限件数};
 pub use cell_mapping::クラスタ写像;
 pub use cutoff_threshold::打ち切りの閾値;
 pub use depth_range::クラスタの奥行き範囲;

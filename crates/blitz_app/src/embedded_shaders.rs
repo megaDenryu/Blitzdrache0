@@ -3,26 +3,17 @@
 //! 各コンパイルモジュールの出力名と一致させる。
 //! 明るさの圧縮シェーダーのホットリロードは粒子と同様に非対応(ビルド時コンパイルのみ)。埋め込んだSPIR-Vそのものへ掛ける検査(材質テクスチャ表への参照の非一様の装飾と、自動露出の単精度の四則の融合禁止の装飾)は`spirv_checks`が持つ。
 
+mod particle_shaders;
 mod scene_shaders;
 #[cfg(test)]
 mod spirv_checks;
 
 use blitz_render::{
-    コンピュートシェーダー, シェーダー一式, シェーダー束, 大気のベイク済み画像のシェーダー一式, 粒子シェーダー一式
+    コンピュートシェーダー, シェーダー一式, シェーダー束, 大気のベイク済み画像のシェーダー一式
 };
 
 use crate::cli::{空中遠近合成指定, 粒子表示モード};
 use crate::error::起動エラー;
-
-const 粒子コンピュートSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_compute.spv"));
-const 粒子頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_vertex.spv"));
-const 粒子画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/particle_fragment.spv"));
-const 表面流コンピュートSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/surface_flow_compute.spv"));
-const 表面流頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/surface_flow_vertex.spv"));
-const 表面流画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/surface_flow_fragment.spv"));
-const SPHコンピュートSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sph_compute.spv"));
-const SPH頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sph_vertex.spv"));
-const SPH画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sph_fragment.spv"));
 
 const UI頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/ui_vertex.spv"));
 const UI画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/ui_fragment.spv"));
@@ -63,22 +54,6 @@ pub(crate) fn 埋め込みシェーダー束を生成する(
     表示: 粒子表示モード,
     空中遠近合成: 空中遠近合成指定,
 ) -> Result<シェーダー束, 起動エラー> {
-    let 粒子 = match 表示 {
-        粒子表示モード::なし => None,
-        粒子表示モード::粒子トイ => Some(粒子シェーダー一式::生成する(
-            粒子コンピュートSPIRV.to_vec(),
-            粒子頂点SPIRV.to_vec(),
-            粒子画素段SPIRV.to_vec(),
-        )?),
-        粒子表示モード::表面流 => Some(粒子シェーダー一式::生成する(
-            表面流コンピュートSPIRV.to_vec(),
-            表面流頂点SPIRV.to_vec(),
-            表面流画素段SPIRV.to_vec(),
-        )?),
-        粒子表示モード::Sph512 | 粒子表示モード::Sph1024 | 粒子表示モード::Sph2048 => Some(
-            粒子シェーダー一式::生成する(SPHコンピュートSPIRV.to_vec(), SPH頂点SPIRV.to_vec(), SPH画素段SPIRV.to_vec())?,
-        ),
-    };
     Ok(シェーダー束 {
         シーン: scene_shaders::組む()?,
         シャドウ: シェーダー一式::生成する(シャドウ頂点SPIRV.to_vec(), シャドウ画素段SPIRV.to_vec())?,
@@ -88,6 +63,7 @@ pub(crate) fn 埋め込みシェーダー束を生成する(
         明るさの圧縮: シェーダー一式::生成する(明るさの圧縮頂点SPIRV.to_vec(), 明るさの圧縮画素段SPIRV.to_vec())?,
         自動露出: crate::embedded_auto_exposure_shaders::埋め込み自動露出シェーダーを生成する()?,
         局所可視性: crate::embedded_local_visibility_shaders::埋め込み局所可視性シェーダーを生成する()?,
+        クラスタ選別: crate::embedded_cluster_light_assignment_shader::埋め込みクラスタ選別シェーダーを生成する()?,
         時間再構成: crate::embedded_temporal_reconstruction_shaders::埋め込み時間再構成シェーダーを生成する()?,
         光のにじみ前処理: シェーダー一式::生成する(光のにじみ縮小側頂点SPIRV.to_vec(), 光のにじみ前処理SPIRV.to_vec())?,
         光のにじみ縮小: シェーダー一式::生成する(光のにじみ縮小側頂点SPIRV.to_vec(), 光のにじみ縮小SPIRV.to_vec())?,
@@ -95,6 +71,6 @@ pub(crate) fn 埋め込みシェーダー束を生成する(
         ui: シェーダー一式::生成する(UI頂点SPIRV.to_vec(), UI画素段SPIRV.to_vec())?,
         スキニング: コンピュートシェーダー::生成する(スキニングSPIRV.to_vec())?,
         布: crate::embedded_cloth_shaders::埋め込み布シェーダーを生成する()?,
-        粒子,
+        粒子: particle_shaders::表示モードから選ぶ(表示)?,
     })
 }

@@ -5,7 +5,9 @@
 use super::{directional_bytes, header_bytes, local_bytes};
 use crate::vulkan::shader_struct::{シェーダー構造体の並び, 読み取る};
 
-const 照明問い合わせの原文: &str = include_str!("../../../../../shaders/lighting_query.slang");
+/// 値の形の宣言だけを持つモジュールを読む。束縛の宣言(`shaders/lighting_query.slang`)と分かれているのは、
+/// 選別のコンピュートがset3を1つも束縛せずに同じ形を読むためである。
+const 照明問い合わせの原文: &str = include_str!("../../../../../shaders/lighting_query_records.slang");
 
 #[test]
 fn ヘッダの宣言がcpu側と同じ並びである() {

@@ -64,6 +64,6 @@ ColorAndMotionOutput fragmentMain(VertexOutput input)
         surface.albedo * lightingQueryHeader.constantIndirectFactor, localVisibilityOfScreenPosition(input.position));
     float3 litColor = shadeLitSurface(
         ambientTerm, surface.albedo, surface.metallic, surface.roughness, surface.normal, surface.viewDir,
-        input.relativePosition, surface.viewDepth);
+        input.relativePosition, surface.viewDepth, uint2(input.position.xy));
     return sceneColorAndMotion(litColor, input);
 }

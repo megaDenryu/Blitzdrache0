@@ -7,6 +7,7 @@ mod atmosphere_spirv_compile;
 mod auto_exposure_spirv_compile;
 mod bloom_spirv_compile;
 mod cloth_spirv_compile;
+mod cluster_light_assignment_spirv_compile;
 mod derived_environment_spirv_compile;
 mod local_visibility_spirv_compile;
 mod particle_spirv_compile;
@@ -83,6 +84,7 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     atmosphere_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
     auto_exposure_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
     local_visibility_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
+    cluster_light_assignment_spirv_compile::コンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
     temporal_reconstruction_spirv_compile::頂点と画素段をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
 
     cloth_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)

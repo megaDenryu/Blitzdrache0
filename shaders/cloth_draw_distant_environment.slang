@@ -15,7 +15,7 @@ import motion_vector;
 ColorAndMotionOutput fragmentMain(VertexOutput input, bool isFrontFace: SV_IsFrontFace)
 {
     float3 normal = clothSurfaceNormal(input.normal, isFrontFace);
-    float3 direct = clothDirectLight(normal, input.relativePosition);
+    float3 direct = clothDirectLight(normal, input.relativePosition, uint2(input.position.xy));
     float3 ambient = distantEnvironmentClothIndirect(normal, lightingQueryHeader.sunDirection.xyz);
     return clothColorAndMotion(clothColor * clothWeave(input.uv) * (direct + ambient), input);
 }

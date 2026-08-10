@@ -8,6 +8,7 @@ use super::{
 };
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像の描画入力;
 use crate::vulkan::auto_exposure::自動露出描画入力;
+use crate::vulkan::cluster_light_assignment::クラスタ選別の描画入力;
 use crate::vulkan::depth_injection::合成深度の注入入力;
 use crate::vulkan::indirect_lighting::間接照明の描画入力;
 use crate::vulkan::local_visibility::局所可視性描画入力;
@@ -32,6 +33,8 @@ pub(crate) struct 描画対象入力<'a> {
     pub(crate) 共有: 共有セット束縛<'a>,
     /// 起動時の計測条件が選んだ深度プリパスの方式。パイプライン台帳が唯一の持ち主であり、フレームの組み立てはここから読む。
     pub(crate) 深度プリパス方式: crate::frame_composition::深度プリパス方式,
+    /// クラスタの選別が積むパスの束縛先と即時定数。全世界がこの経路を通るため`Option`にしない。
+    pub(crate) クラスタ選別: クラスタ選別の描画入力,
 }
 
 #[derive(Clone, Copy)]
