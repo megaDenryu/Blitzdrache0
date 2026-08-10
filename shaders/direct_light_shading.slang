@@ -41,17 +41,18 @@ float3 directionalLightTerm(
     return total;
 }
 
-// その画素のセルへ割り当てられた局所光だけを足す。割り当ての順は選別が宣言の順で書くため、実行のたびに同じである。
+// その画素へ届く局所光だけを足す。届く順は選別が宣言の順で書くため、実行のたびに同じである。
+// クラスタ格子の作られ方も局所光レコードの並びも、この関数からは名指しできない。
 float3 localLightTerm(
     float3 albedo, float metallic, float roughness, float3 normal, float3 viewDir,
     float3 relativePosition, float viewDepth, uint2 screenPixel)
 {
-    ClusterCell cell = localLightClusterCellOfPixel(screenPixel, viewDepth);
+    LocalLightQuery query = LocalLightQuery.ofScreenPixel(screenPixel, viewDepth);
     float3 total = float3(0.0, 0.0, 0.0);
-    for (uint slot = 0; slot < cell.count; slot++)
+    for (uint slot = 0; slot < query.count(); slot++)
     {
         LocalLightSample light;
-        if (!localLightSampleOf(localLightRecordOfClusterSlot(cell, slot), relativePosition, light))
+        if (!query.sampleAt(slot, relativePosition, light))
         {
             continue;
         }

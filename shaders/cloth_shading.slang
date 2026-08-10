@@ -44,15 +44,15 @@ float3 clothDirectionalLight(float3 normal, float3 relativePosition, float viewD
     return direct;
 }
 
-// その画素のセルへ割り当てられた局所光を件数ぶん足す。影は持たないため可視度を掛けない。
+// その画素へ届く局所光を件数ぶん足す。影は持たないため可視度を掛けない。
 float3 clothLocalLight(float3 normal, float3 relativePosition, float viewDepth, uint2 screenPixel)
 {
-    ClusterCell cell = localLightClusterCellOfPixel(screenPixel, viewDepth);
+    LocalLightQuery query = LocalLightQuery.ofScreenPixel(screenPixel, viewDepth);
     float3 direct = float3(0.0, 0.0, 0.0);
-    for (uint slot = 0; slot < cell.count; slot++)
+    for (uint slot = 0; slot < query.count(); slot++)
     {
         LocalLightSample light;
-        if (!localLightSampleOf(localLightRecordOfClusterSlot(cell, slot), relativePosition, light))
+        if (!query.sampleAt(slot, relativePosition, light))
         {
             continue;
         }
