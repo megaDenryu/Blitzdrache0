@@ -53,6 +53,7 @@ mod ow4_bench;
 mod pixel_region;
 mod plate_region;
 mod play_fox_tour;
+mod point_light_shadow;
 mod prop_draw;
 mod prop_multi_material_draw;
 mod raw_image;
