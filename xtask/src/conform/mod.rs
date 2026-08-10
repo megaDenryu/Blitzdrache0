@@ -10,6 +10,7 @@ mod drop_impl;
 mod forbidden_strings;
 mod lighting_query_declaration;
 mod line_count;
+mod module_import_boundary;
 mod particle_reference;
 mod reload_without_device_wait;
 mod removed_object_uniform;
@@ -69,6 +70,9 @@ fn ファイル単位の違反を集める(ファイル一覧: &[PathBuf]) -> Re
         if 拡張子 == "rs" || 拡張子 == "slang" {
             違反一覧.extend(line_count::検査する(パス, &内容));
             違反一覧.extend(forbidden_strings::検査する(パス, &内容));
+        }
+        if 拡張子 == "slang" {
+            違反一覧.extend(module_import_boundary::検査する(パス, &内容));
         }
         if 拡張子 == "rs" {
             違反一覧.extend(allow_lint::検査する(パス, &内容));
