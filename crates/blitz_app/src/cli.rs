@@ -1,4 +1,5 @@
-//! CLI引数の解析。CLIはプロセス境界のため、引数名はASCIIのまま扱う。型定義は`types`、値を伴う引数の個別処理は`value_args`に委ねる。
+//! CLI引数の解析。CLIはプロセス境界のため、引数名はASCIIのまま扱う。
+//! 型定義は`types`、値を伴う引数の個別処理は`value_args`、引数一覧から起動要求を組み立てる工程は`parse`に委ねる。
 
 #[cfg(test)]
 mod cli_tests;
@@ -34,9 +35,11 @@ pub(crate) mod local_visibility_settings;
 mod lod_crack_args;
 mod modes;
 mod object_count;
+mod parse;
 mod placement_args;
 #[cfg(test)]
 mod placement_args_tests;
+mod point_light_shadow_count_args;
 mod report_only_request;
 mod screen_pixel_args;
 mod setting_apply;
@@ -55,9 +58,9 @@ pub(crate) use draw_object_order::描画対象の走査順;
 pub(crate) use game_operation_source::ゲーム操作の出どころ;
 pub(crate) use game_selection::遊ぶゲームの指定;
 pub(crate) use launch_request::起動要求;
-pub(crate) use local_light_count_args::局所光の件数の起動指定;
 pub(crate) use modes::{布モード, 粒子表示モード};
 pub(crate) use object_count::描画対象数;
+pub(crate) use parse::引数を解析する;
 pub(crate) use placement_args::平行移動起動設定;
 pub(crate) use screen_pixel_args::画面画素位置;
 pub(crate) use shadow_args::シャドウ計測起動設定;
@@ -67,33 +70,6 @@ pub(crate) use time_of_day_settings::{
 };
 pub(crate) use types::{フレームダンプ指定, 読み戻し検収起動設定, 起動モード, 起動設定};
 pub(crate) use verification_plan::検証計画指定;
-
-use crate::error::起動エラー;
-
-/// CLI引数から起動要求を解析する。粒子系の検証対象は`--particles`または`--surface-flow`で選ぶ。
-/// `--shader-source`は監視・再コンパイル対象のエントリファイルを指す。`import`先の他ファイルは常にエントリと同じディレクトリから解決するため個別指定は不要。
-pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動要求, 起動エラー> {
-    if let Some(要求) = report_only_request::報告だけの要求を見分ける(引数一覧) {
-        return Ok(要求);
-    }
-    Ok(起動要求::描画実行(Box::new(起動設定を解析する(引数一覧)?)))
-}
-
-/// 引数を全部読み終えてから、組み合わせの成立を確かめる。走査の途中で確かめられないのは、どの検査も
-/// 「後から来る引数が無いこと」を条件に含むためである。指定の順序で結果が変わる検査は、利用者が並べ方を
-/// 覚えていなければならない仕様になる。
-fn 起動設定を解析する(引数一覧: &[String]) -> Result<起動設定, 起動エラー> {
-    let mut 起動設定 = 起動設定::既定値();
-
-    let mut 引数 = 引数一覧.iter();
-    while let Some(引数値) = 引数.next() {
-        setting_apply::反映する(&mut 起動設定, 引数値, &mut 引数)?;
-    }
-    types::走査の書き出し先を確かめる(起動設定.モード, &起動設定.フレームダンプ先)?;
-    local_visibility_settings::検収とフレームダンプの排他を確かめる(
-        起動設定.読み戻し検収.局所可視性の検収の形,
-        &起動設定.フレームダンプ先,
-    )?;
-
-    Ok(起動設定)
-}
+pub(crate) use {
+    local_light_count_args::局所光の件数の起動指定, point_light_shadow_count_args::影を落とす灯の件数の起動指定
+};

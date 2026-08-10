@@ -6,7 +6,8 @@ use std::slice::Iter;
 
 use super::{
     auto_exposure_probe_args, depth_prepass_args, game_selection, ibl_step_scan_args, indirect_probe_args, instance_lod_args, local_light_count_args,
-    local_visibility_settings, lod_crack_args, placement_args, screen_pixel_args, shadow_args, time_args, value_args, 起動設定,
+    local_visibility_settings, lod_crack_args, placement_args, point_light_shadow_count_args, screen_pixel_args, shadow_args, time_args, value_args,
+    起動設定,
 };
 use crate::error::起動エラー;
 
@@ -47,6 +48,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
             検査.欠落座標 = Some(欠落座標);
         }
         "--local-light-count" => 設定.ライティング.局所光の件数 = local_light_count_args::引数を処理する(残り)?,
+        "--point-light-shadow-count" => 設定.ライティング.影を落とす灯の件数 = point_light_shadow_count_args::引数を処理する(残り)?,
         "--blend" => 設定.ブレンド = value_args::blend引数を処理する(残り)?,
         "--lod-probe-step" => 設定.個体詳細段探査刻み = Some(instance_lod_args::lod_probe_step引数を処理する(残り)?),
         "--streaming-ram-limit" => {

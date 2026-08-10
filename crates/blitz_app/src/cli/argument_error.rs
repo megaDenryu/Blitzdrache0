@@ -25,6 +25,8 @@ pub(crate) enum 起動引数エラー {
     LOD探査刻み不正(String),
     #[error("--local-light-count引数が不正だった: {0}")]
     局所光の件数不正(String),
+    #[error("--point-light-shadow-count引数が不正だった: {0}")]
+    影を落とす灯の件数不正(String),
     #[error("--blend引数が不正だった: {0}")]
     ブレンド不正(String),
     #[error("ストリーミング上限の引数が不正だった: {0}")]

@@ -15,7 +15,7 @@ mod vegetation_verification;
 use blitz_math::大域ワールド位置;
 use blitz_render::ライティング入力;
 
-use crate::cli::局所光の件数の起動指定;
+use crate::cli::{局所光の件数の起動指定, 影を落とす灯の件数の起動指定};
 use crate::error::起動エラー;
 
 /// 群が両方の視錐台の外にある検収シーン(`cargo xtask cloth-empty`)。ライト方針は既定のままであり、
@@ -28,13 +28,14 @@ pub(super) fn シーン初期ライティングを作る(
     大域ずらし量: 大域ワールド位置,
     シャドウ計測: &crate::cli::シャドウ計測起動設定,
     局所光の件数: 局所光の件数の起動指定,
+    影を落とす灯の件数: 影を落とす灯の件数の起動指定,
 ) -> Result<ライティング入力, 起動エラー> {
     let 多段設定 = cascade_policy::シーンの多段設定を作る(シーン名, シャドウ計測);
     if シーン名 == night_lights::シーン識別子 {
-        return Ok(night_lights::方針を作る(有効, 大域ずらし量, 局所光の件数).多段設定を差し替える(多段設定));
+        return Ok(night_lights::方針を作る(有効, 大域ずらし量, 局所光の件数, 影を落とす灯の件数).多段設定を差し替える(多段設定));
     }
     if シーン名 == stone_hut_interior::シーン識別子 {
-        return Ok(stone_hut_interior::方針を作る(有効, 大域ずらし量, 局所光の件数)?.多段設定を差し替える(多段設定));
+        return Ok(stone_hut_interior::方針を作る(有効, 大域ずらし量, 局所光の件数, 影を落とす灯の件数)?.多段設定を差し替える(多段設定));
     }
     局所光の件数の上書きを読まない世界であることを確かめる(シーン名, 局所光の件数)?;
     if シーン名 == indirect_probe::シーン識別子 {
