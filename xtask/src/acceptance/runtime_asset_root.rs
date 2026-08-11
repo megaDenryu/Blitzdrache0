@@ -7,7 +7,6 @@
 use std::path::{Path, PathBuf};
 
 #[repr(transparent)]
-#[derive(Clone)]
 pub struct 実行時アセットルート(PathBuf);
 
 impl 実行時アセットルート {

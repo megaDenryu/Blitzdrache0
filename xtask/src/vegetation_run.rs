@@ -15,7 +15,7 @@ use crate::acceptance::{検収の1回の実行, 終了時報告, 読み戻しの
 const アセットルート: &str = "target/vegetation_assets";
 
 pub fn 描画する(
-    書き出し先: &読み戻しの書き出し先,
+    書き出し先: 読み戻しの書き出し先,
     シーン名: &str,
     シェーダー入口: &Path,
     フレーム数: &str,
@@ -39,6 +39,6 @@ pub fn 描画する(
     if !出力.status.success() {
         return Err(format!("blitz_appが{}で失敗した({シーン名})", 出力.status));
     }
-    let 画像 = 読み戻し画像::読み込む(書き出し先)?;
-    Ok(検収の1回の実行::組み立てる(報告, 画像, 書き出し先.clone()))
+    let 画像 = 読み戻し画像::読み込む(&書き出し先)?;
+    Ok(検収の1回の実行::組み立てる(報告, 画像, 書き出し先))
 }

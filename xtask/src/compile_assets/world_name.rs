@@ -8,6 +8,9 @@
 //! (`crates/blitz_asset_compiler/examples/compile_assets/world/argument_name.rs`)にも同じものがあり、
 //! 食い違えば実行時アセット生成が「未知の世界名である」で失敗する。
 
+#[cfg(test)]
+mod round_trip_tests;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum 世界名 {
     板の世界,

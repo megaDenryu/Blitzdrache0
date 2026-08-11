@@ -70,7 +70,7 @@ fn 描く(
     let mut 引数: Vec<&str> = 共通引数.to_vec();
     引数.extend_from_slice(追加引数);
     let 書き出し先 = 出力先.中の書き出し先(名前);
-    let 結果 = vegetation_run::描画する(&書き出し先, 検収シーン, シェーダー入口, フレーム数, &引数)?;
+    let 結果 = vegetation_run::描画する(書き出し先, 検収シーン, シェーダー入口, フレーム数, &引数)?;
     let 計数 = crate::report_parse::取り出す(結果.報告().本文())?;
     Ok(judgment::実行 {
         名前: 名前.to_string(),

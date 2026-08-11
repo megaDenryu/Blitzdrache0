@@ -64,8 +64,8 @@ fn 検収する() -> Result<String, String> {
 fn 対で描く(出力先: &読み戻しの置き場, シーン名: &str, シェーダー入口: &Path) -> Result<judgment::実行の対, String> {
     let オンの書き出し先 = 出力先.中の書き出し先(&format!("{シーン名}_on"));
     let オフの書き出し先 = 出力先.中の書き出し先(&format!("{シーン名}_off"));
-    let オン = vegetation_run::描画する(&オンの書き出し先, シーン名, シェーダー入口, フレーム数, &可視判定オンの引数)?;
-    let オフ = vegetation_run::描画する(&オフの書き出し先, シーン名, シェーダー入口, フレーム数, &可視判定オフの引数)?;
+    let オン = vegetation_run::描画する(オンの書き出し先, シーン名, シェーダー入口, フレーム数, &可視判定オンの引数)?;
+    let オフ = vegetation_run::描画する(オフの書き出し先, シーン名, シェーダー入口, フレーム数, &可視判定オフの引数)?;
     let オン計数 = crate::report_parse::取り出す(オン.報告().本文())?;
     let オフ計数 = crate::report_parse::取り出す(オフ.報告().本文())?;
     Ok(judgment::実行の対 {

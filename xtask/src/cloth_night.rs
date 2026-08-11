@@ -64,5 +64,5 @@ fn 描く(
 ) -> Result<検収の1回の実行, String> {
     let mut 引数: Vec<&str> = vec!["--sky", "--time-of-day", 一日内秒];
     引数.extend_from_slice(追加);
-    crate::vegetation_run::描画する(&出力先.中の書き出し先(名前), シーン, 入口, フレーム数, &引数)
+    crate::vegetation_run::描画する(出力先.中の書き出し先(名前), シーン, 入口, フレーム数, &引数)
 }

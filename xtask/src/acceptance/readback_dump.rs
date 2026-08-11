@@ -31,7 +31,6 @@ impl 読み戻しの置き場 {
 
 /// 読み戻し1件ぶんの書き出し先。拡張子を持たない基準名までのパスを持ち、対の2ファイルをここから組む。
 #[repr(transparent)]
-#[derive(Clone)]
 pub struct 読み戻しの書き出し先(PathBuf);
 
 impl 読み戻しの書き出し先 {
@@ -59,7 +58,10 @@ impl 読み戻しの書き出し先 {
 
     /// この書き出しをPNGへ変換して、絵の置き場を返す。親エージェントの目視は生のRGBA8を開けないため、
     /// 絵を要る入口がこの口を通る。変換の工程へ生のパスを渡すのはこの型の中だけである。
-    pub fn 目視用の絵へ変換する(&self) -> Result<PathBuf, String> {
-        crate::raw_png::変換する(&self.0)
+    pub fn 目視用の絵へ変換する(&self) -> Result<PathBuf, 検収エラー> {
+        crate::raw_png::変換する(&self.0).map_err(|理由| 検収エラー::目視用の絵へ変換できなかった {
+            書き出し先: self.0.clone(),
+            理由,
+        })
     }
 }
