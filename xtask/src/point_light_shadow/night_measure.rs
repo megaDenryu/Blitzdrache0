@@ -6,7 +6,7 @@
 
 use std::path::PathBuf;
 
-use crate::acceptance::{描画検収の実行環境, 検収の実行名};
+use crate::acceptance::{判定の破れ, 描画検収の実行環境, 検収の実行名, 検収エラー};
 use crate::multi_light_world::{run, world};
 
 use super::instrument::{点光源の影の計器, 点光源の影の計器を取り出す};
@@ -26,7 +26,7 @@ pub(super) struct 夜の測り {
     pub(super) 絵: PathBuf,
 }
 
-pub(super) fn 夜の世界を影付きの件数3つで撮る(実行環境: &描画検収の実行環境) -> Result<夜の測り, String> {
+pub(super) fn 夜の世界を影付きの件数3つで撮る(実行環境: &描画検収の実行環境) -> Result<夜の測り, 検収エラー> {
     let (零件, _, _) = 夜を一条件で撮る(実行環境, 0)?;
     let (一件, _, _) = 夜を一条件で撮る(実行環境, 1)?;
     let (二件, 二件の計器, 絵) = 夜を一条件で撮る(実行環境, 2)?;
@@ -49,8 +49,9 @@ pub(super) fn 夜の世界を影付きの件数3つで撮る(実行環境: &描�
 }
 
 fn 夜を一条件で撮る(
-    実行環境: &描画検収の実行環境, 影付きの件数: usize
-) -> Result<(Vec<f64>, 点光源の影の計器, PathBuf), String> {
+    実行環境: &描画検収の実行環境,
+    影付きの件数: u64,
+) -> Result<(Vec<f64>, 点光源の影の計器, PathBuf), 検収エラー> {
     let 件数文字列 = 影付きの件数.to_string();
     let 実行名の綴り = format!("night_shadow_x{影付きの件数}");
     let 結果 = 実行環境.描いて読み戻す(
@@ -72,7 +73,7 @@ fn 夜を一条件で撮る(
     let 平均輝度一覧 = 夜の判定領域の一覧
         .iter()
         .map(|領域| 矩形の平均輝度を採る(結果.画像(), &領域.矩形))
-        .collect::<Result<Vec<f64>, String>>()?;
+        .collect::<Result<Vec<f64>, 判定の破れ>>()?;
     let 計器 = 点光源の影の計器を取り出す(結果.報告(), 影付きの件数)?;
     Ok((平均輝度一覧, 計器, 結果.書き出し先().目視用の絵へ変換する()?))
 }

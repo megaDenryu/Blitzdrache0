@@ -6,7 +6,7 @@
 
 use std::path::PathBuf;
 
-use crate::acceptance::{描画検収の実行環境, 検収の実行名};
+use crate::acceptance::{判定の破れ, 描画検収の実行環境, 検収の実行名, 検収エラー};
 use crate::multi_light_world::{run, world};
 
 use super::interior_region::屋内の判定領域の一覧;
@@ -25,7 +25,7 @@ pub(super) struct 屋内の測り {
     pub(super) 影なしの絵: PathBuf,
 }
 
-pub(super) fn 屋内を3条件で撮る(実行環境: &描画検収の実行環境) -> Result<屋内の測り, String> {
+pub(super) fn 屋内を3条件で撮る(実行環境: &描画検収の実行環境) -> Result<屋内の測り, 検収エラー> {
     let (影付き, 影付きの絵) = 屋内を一条件で撮る(実行環境, "hut_shadow_lit", &["--point-light-shadow-count", "3"])?;
     let (影なし, 影なしの絵) = 屋内を一条件で撮る(実行環境, "hut_shadow_none", &["--point-light-shadow-count", "0"])?;
     let (対照, _) = 屋内を一条件で撮る(実行環境, "hut_unlit", &["--local-light-count", "0"])?;
@@ -49,7 +49,7 @@ pub(super) fn 屋内を3条件で撮る(実行環境: &描画検収の実行環�
 
 fn 屋内を一条件で撮る(
     実行環境: &描画検収の実行環境, 名前: &str, 追加の選択肢: &[&str]
-) -> Result<(Vec<f64>, PathBuf), String> {
+) -> Result<(Vec<f64>, PathBuf), 検収エラー> {
     let 結果 = 実行環境.描いて読み戻す(
         検収の実行名::生成する(名前)?,
         &run::起動指定を組み立てる(world::屋内のシーン, world::絵の枚数, 追加の選択肢),
@@ -57,6 +57,6 @@ fn 屋内を一条件で撮る(
     let 平均輝度一覧 = 屋内の判定領域の一覧
         .iter()
         .map(|領域| 矩形の平均輝度を採る(結果.画像(), &領域.矩形))
-        .collect::<Result<Vec<f64>, String>>()?;
+        .collect::<Result<Vec<f64>, 判定の破れ>>()?;
     Ok((平均輝度一覧, 結果.書き出し先().目視用の絵へ変換する()?))
 }
