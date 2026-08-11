@@ -19,6 +19,18 @@ fn 符号位置の逃がしを実行時の文字へ写す() {
 }
 
 #[test]
+fn 桁の下線を読み飛ばして符号位置へ写す() {
+    assert_eq!(逃がしを復号する(r"a\u{2_e}b"), "a.b");
+    assert_eq!(逃がしを復号する(r"a\u{00_00_2e}b"), "a.b");
+}
+
+#[test]
+fn 閉じの波括弧が無い符号位置は原文のまま残す() {
+    assert_eq!(逃がしを復号する(r"a\u{2eb"), r"a\u{2eb");
+    assert_eq!(逃がしを復号する(r"a\u2e"), r"a\u2e");
+}
+
+#[test]
 fn 逃がしで書いた綴りと素の綴りが同じ中身になる() {
     assert_eq!(逃がしを復号する(r"shaders/scene\x2eslang"), "shaders/scene.slang");
 }

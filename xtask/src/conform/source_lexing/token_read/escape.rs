@@ -48,14 +48,20 @@ fn 十六進の2桁を復号する(残り: &mut Peekable<Chars<'_>>, 出力: &mu
     文字へ写して押す(&桁, 出力, &format!("\\x{桁}"));
 }
 
+/// `\u{2e}`と`\u{2_e}`。下線は桁の区切りとして書けるため、読み飛ばしてから数として写す。
+/// 閉じの波括弧が無い形は綴りとして成り立たないため、読んだところまでを原文のまま残す。
 fn 波括弧の符号位置を復号する(残り: &mut Peekable<Chars<'_>>, 出力: &mut String) {
     if 残り.next_if(|文字| *文字 == '{').is_none() {
         出力.push_str("\\u");
         return;
     }
-    let 桁: String = std::iter::from_fn(|| 残り.next_if(char::is_ascii_hexdigit)).collect();
-    残り.next_if(|文字| *文字 == '}');
-    文字へ写して押す(&桁, 出力, &format!("\\u{{{桁}}}"));
+    let 原文の桁: String = std::iter::from_fn(|| 残り.next_if(|文字| 文字.is_ascii_hexdigit() || *文字 == '_')).collect();
+    if 残り.next_if(|文字| *文字 == '}').is_none() {
+        出力.push_str(&format!("\\u{{{原文の桁}"));
+        return;
+    }
+    let 桁: String = 原文の桁.chars().filter(|文字| *文字 != '_').collect();
+    文字へ写して押す(&桁, 出力, &format!("\\u{{{原文の桁}}}"));
 }
 
 /// 十六進の桁を文字へ写す。写せない桁は原文のまま残す。
