@@ -33,14 +33,18 @@ fn 波括弧で閉じる試験の項目だけを除く() {
 fn 一行で閉じる試験の宣言の後ろを打ち切らない() {
     let 原文 = "#[cfg(test)]\nmod spirv_checks;\nconst 埋め込み: &str = \"ui_vertex.spv\";";
     let 初出 = ファイル内の初出を集める(原文);
-    assert_eq!(初出.get("ui_vertex.spv"), Some(&3));
+    assert_eq!(初出.get("ui_vertex.spv").map(|要点| 要点.行番号), Some(3));
 }
 
 #[test]
 fn 試験の項目の中の波括弧の文字リテラルで範囲が伸びない() {
     let 原文 = "#[cfg(test)]\nfn t() {\n    let c = '{';\n}\nconst 後: &str = \"after.png\";";
     let 初出 = ファイル内の初出を集める(原文);
-    assert_eq!(初出.get("after.png"), Some(&5), "試験の項目の範囲が末尾まで伸びている");
+    assert_eq!(
+        初出.get("after.png").map(|要点| 要点.行番号),
+        Some(5),
+        "試験の項目の範囲が末尾まで伸びている"
+    );
 }
 
 #[test]
