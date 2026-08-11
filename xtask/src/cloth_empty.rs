@@ -3,10 +3,13 @@
 //! 布ありの実行だけが画素を描くことを見る。布なしの実行は、描くものが1つも無いシャドウパスが消去だけを行う経路の検査でもある。
 //! 判定の中身は`judgment`にある。
 
+mod error;
 mod judgment;
 
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+
+use error::描画入力が空のフレームの布の検収エラー;
 
 use crate::acceptance::{描画フレーム数, 描画検収の実行環境, 検収の1回の実行, 検収の実行名, 検収シーン名};
 use crate::vegetation_run;
@@ -37,12 +40,14 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
+fn 検収する() -> Result<String, 描画入力が空のフレームの布の検収エラー> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::植生世界を既定で生成する() {
-        return Err("検証用アセットの生成に失敗した".to_string());
+        return Err(描画入力が空のフレームの布の検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = vegetation_run::植生世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先)).map_err(|理由| {
+        描画入力が空のフレームの布の検収エラー::シェーダーの一時コピーを作れなかった { 理由 }
+    })?;
 
     let 布あり = 描く(&実行環境, "cloth", &シェーダー入口, &布ありの引数)?;
     let 布なし = 描く(&実行環境, "no_cloth", &シェーダー入口, &布なしの引数)?;
@@ -60,8 +65,11 @@ fn 検収する() -> Result<String, String> {
 }
 
 fn 描く(
-    実行環境: &描画検収の実行環境, 名前: &str, シェーダー入口: &Path, 追加引数: &[&str]
-) -> Result<検収の1回の実行, String> {
+    実行環境: &描画検収の実行環境,
+    名前: &str,
+    シェーダー入口: &Path,
+    追加引数: &[&str],
+) -> Result<検収の1回の実行, 描画入力が空のフレームの布の検収エラー> {
     let 実行 = 実行環境.描いて読み戻す(
         検収の実行名::生成する(名前)?,
         &vegetation_run::植生世界の起動指定を組み立てる(シーン, フレーム数, シェーダー入口, 追加引数),

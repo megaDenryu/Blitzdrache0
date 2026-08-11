@@ -8,10 +8,13 @@
 //! 画素判定も持たないため、時刻を変えて絵を変えても既存の判定と衝突しない。`--sky`で空を持たない世界の方針を上書きし、
 //! 方向光・環境光・露出を時刻から導く経路へ載せる。判定の定数と中身は`judgment`にある。
 
+mod error;
 mod judgment;
 
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+
+use error::布の明るさの時刻追従の検収エラー;
 
 use crate::acceptance::{描画フレーム数, 描画検収の実行環境, 検収の1回の実行, 検収の実行名, 検収シーン名};
 
@@ -38,12 +41,13 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
+fn 検収する() -> Result<String, 布の明るさの時刻追従の検収エラー> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::植生世界を既定で生成する() {
-        return Err("検証用アセットの生成に失敗した".to_string());
+        return Err(布の明るさの時刻追従の検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = crate::vegetation_run::植生世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let 入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
+    let 入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+        .map_err(|理由| 布の明るさの時刻追従の検収エラー::シェーダーの一時コピーを作れなかった { 理由 })?;
 
     let (夜, 夜png) = 布領域を測る(&実行環境, &入口, "night", 夜の一日内秒)?;
     let (昼, _) = 布領域を測る(&実行環境, &入口, "day", 昼の一日内秒)?;
@@ -58,7 +62,7 @@ fn 布領域を測る(
     入口: &Path,
     名前: &str,
     一日内秒: &str,
-) -> Result<(judgment::布領域, std::path::PathBuf), String> {
+) -> Result<(judgment::布領域, std::path::PathBuf), 布の明るさの時刻追従の検収エラー> {
     let 布あり = 描く(実行環境, &format!("{名前}_cloth"), 入口, 一日内秒, &["--cloth"])?;
     let 布なし = 描く(実行環境, &format!("{名前}_no_cloth"), 入口, 一日内秒, &[])?;
     let 領域 = judgment::布領域を測る(布あり.画像(), 布なし.画像())?;
@@ -67,8 +71,12 @@ fn 布領域を測る(
 }
 
 fn 描く(
-    実行環境: &描画検収の実行環境, 名前: &str, 入口: &Path, 一日内秒: &str, 追加: &[&str]
-) -> Result<検収の1回の実行, String> {
+    実行環境: &描画検収の実行環境,
+    名前: &str,
+    入口: &Path,
+    一日内秒: &str,
+    追加: &[&str],
+) -> Result<検収の1回の実行, 布の明るさの時刻追従の検収エラー> {
     let mut 引数: Vec<&str> = vec!["--sky", "--time-of-day", 一日内秒];
     引数.extend_from_slice(追加);
     let 実行 = 実行環境.描いて読み戻す(
