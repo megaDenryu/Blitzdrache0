@@ -16,7 +16,9 @@ mod validation_judgment;
 
 use std::process::ExitCode;
 
-use crate::acceptance::{アプリの起こし方, 世界を読まずに報告を採る実行環境, 検収の実行名, 終了時報告};
+use crate::acceptance::{
+    アプリの起こし方, 世界を読まずに報告を採る実行環境, 検収の実行名, 検収エラー, 終了時報告
+};
 
 /// この実行を指す名前。絵は書き出さないが、失敗の文面がどの実行かを名指すために要る。
 const 大気の焼き上げの実行名: 検収の実行名 = 検収の実行名::定数から生成する("atmosphere_lut");
@@ -36,7 +38,7 @@ pub fn 実行する() -> ExitCode {
 
 fn 検収する() -> Result<String, String> {
     let 出力 = 報告を採る()?;
-    let 報告 = parse::報告を取り出す(出力.本文())?;
+    let 報告 = parse::報告を取り出す(&出力)?;
     let 検証の告知 = validation_judgment::検証を検査する(&報告.検証).inspect_err(|_| eprint!("{}", 出力.標準エラーの本文()))?;
     let 判定 = judgment::全項目を検査する(&報告)?;
     table::表を出す(&報告);
@@ -49,8 +51,8 @@ fn 検収する() -> Result<String, String> {
 
 /// 大気のベイク済み画像を焼かせて報告を採る。validationの指摘は判定の一部としてこの入口が読むため、
 /// 実行環境が零件を確かめる口は通さない。
-fn 報告を採る() -> Result<終了時報告, String> {
+fn 報告を採る() -> Result<終了時報告, 検収エラー> {
     println!("[xtask] blitz_appの大気のベイク済み画像報告を実行");
     let 実行環境 = 世界を読まずに報告を採る実行環境::作る(アプリの起こし方::毎回cargoに構築させて起動する);
-    Ok(実行環境.報告を採る(大気の焼き上げの実行名, &["--report-atmosphere-lut"])?)
+    実行環境.報告を採る(大気の焼き上げの実行名, &["--report-atmosphere-lut"])
 }
