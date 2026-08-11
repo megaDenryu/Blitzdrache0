@@ -7,7 +7,7 @@
 //! log2は正の値にしか定まらないため、百分位は正の輝度の画素だけを並べて採り、残る2つは件数として報告する。
 //! 黙って捨てると、下限ビンの設計に要る「log2が定まらない画素がどれだけあるか」が報告から消える。
 
-use super::image::{HDR画像, 画素あたり成分数};
+use crate::acceptance::圧縮前のHDR画像;
 use crate::relative_luminance::相対輝度;
 
 pub(super) struct 輝度統計 {
@@ -44,11 +44,11 @@ impl 輝度統計 {
     }
 }
 
-pub(super) fn 集計する(画像: &HDR画像) -> Result<輝度統計, String> {
-    let mut log2輝度 = Vec::with_capacity(画像.画素数);
+pub(super) fn 集計する(画像: &圧縮前のHDR画像) -> Result<輝度統計, String> {
+    let mut log2輝度 = Vec::with_capacity(画像.画素数());
     let (mut 非正, mut 非有限) = (0_u64, 0_u64);
     let (mut 線形の最小, mut 線形の最大) = (f64::INFINITY, f64::NEG_INFINITY);
-    for 画素 in 画像.成分列.chunks_exact(画素あたり成分数) {
+    for 画素 in 画像.画素列() {
         let 輝度 = 相対輝度(画素);
         if !輝度.is_finite() {
             非有限 += 1;
@@ -66,13 +66,13 @@ pub(super) fn 集計する(画像: &HDR画像) -> Result<輝度統計, String> {
     組み立てる(画像, &log2輝度, (非正, 非有限), (線形の最小, 線形の最大))
 }
 
-fn 組み立てる(画像: &HDR画像, 昇順: &[f64], 除外件数: (u64, u64), 線形: (f64, f64)) -> Result<輝度統計, String> {
+fn 組み立てる(画像: &圧縮前のHDR画像, 昇順: &[f64], 除外件数: (u64, u64), 線形: (f64, f64)) -> Result<輝度統計, String> {
     let 件数 = u64::try_from(昇順.len()).map_err(|誤り| format!("正の輝度の画素数がu64に収まらない: {誤り}"))?;
     if 件数 == 0 {
         return Err("正の輝度を持つ画素が1つも無く、log2輝度の分布を作れない".to_string());
     }
     Ok(輝度統計 {
-        全画素数: u64::try_from(画像.画素数).map_err(|誤り| format!("画素数がu64に収まらない: {誤り}"))?,
+        全画素数: u64::try_from(画像.画素数()).map_err(|誤り| format!("画素数がu64に収まらない: {誤り}"))?,
         正の輝度の画素数: 件数,
         非正の輝度の画素数: 除外件数.0,
         非有限の輝度の画素数: 除外件数.1,

@@ -1,4 +1,5 @@
-//! 1つの形ぶんのblitz_app起動。受け取るのは形の語、返すのは標準出力である。
+//! 1つの形ぶんの起動の指定。受け取るのは形の語、返すのは実行環境へ渡す起動指定である。
+//! 起こす手順そのものは検収の共通語彙の実行環境が持つ。
 //!
 //! 目視見本の庭を使うのは、この世界だけが局所可視性補正を宣言しており、深度プリパスと2本のコンピュートが
 //! 本番と同じ順序で積まれるためである。合成深度は深度プリパスの後で深度画像を丸ごと書き換えるため、
@@ -8,29 +9,23 @@
 //! 依存しないためである。
 //! 時間再構成は`--no-taa`で外す。この入口の判定がバイト一致に依るため、フレームをまたぐ混合が入ると前のフレームの残りが絵に混ざる。
 
-use std::process::Command;
+use crate::acceptance::{
+    アプリの起こし方, アプリの起動指定, 世界を読ませて報告を採る実行環境, 描画フレーム数
+};
+use crate::visual_sample_world::{目視見本世界のアセットルートを作る, 目視見本世界のシーン名};
 
 /// 描くフレーム数。最終フレームで注入と読み戻しが2回起こる。
-const フレーム数: &str = "12";
+const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(12);
 /// 正午。時刻は局所可視度に効かないが、実行条件を1つに固定して読み手が条件を推測しなくてよいようにする。
 const 一日内秒: &str = "43200";
 
-pub(super) fn 描画する(形: &str) -> Result<String, String> {
-    let 出力 = Command::new("cargo")
-        .args(["run", "-p", "blitz_app", "--", "--scene", crate::visual_sample_world::シーン名])
-        .args(["--asset-root", crate::visual_sample_world::アセットルート])
-        .args(["--frames", フレーム数])
-        .args(["--time-of-day", 一日内秒])
-        .arg("--no-taa")
-        .args(["--local-visibility-shape", 形])
-        .output()
-        .map_err(|誤り| format!("blitz_appを起動できなかった({形}): {誤り}"))?;
-    let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
-    if !出力.status.success() {
-        print!("{標準出力}");
-        eprintln!("{}", String::from_utf8_lossy(&出力.stderr));
-        return Err(format!("blitz_appが{}で失敗した({形})", 出力.status));
-    }
-    crate::validation_count::零件数を確かめる(&標準出力, 形)?;
-    Ok(標準出力)
+pub(super) fn 実行環境を作る() -> 世界を読ませて報告を採る実行環境 {
+    世界を読ませて報告を採る実行環境::作る(アプリの起こし方::毎回cargoに構築させて起動する, 目視見本世界のアセットルートを作る())
+}
+
+pub(super) fn 形の起動指定を組み立てる(形: &str) -> アプリの起動指定 {
+    アプリの起動指定::シーンと枚数を決める(目視見本世界のシーン名, フレーム数)
+        .値を持つ選択肢を足す("--time-of-day", 一日内秒)
+        .選択肢を足す("--no-taa")
+        .値を持つ選択肢を足す("--local-visibility-shape", 形)
 }

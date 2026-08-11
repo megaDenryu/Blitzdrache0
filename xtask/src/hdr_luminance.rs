@@ -8,7 +8,6 @@
 //! 機械判定は2つだけである。validationの指摘が0件であることと、報告する統計値がすべて有限であることである。
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「順3-IIの実装設計」
 
-mod image;
 mod record;
 mod run;
 mod statistics;
@@ -17,6 +16,7 @@ mod table;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
+use crate::acceptance::検収の実行名;
 use crate::release_build::計測の生値のファイル;
 
 use crate::day_moment::代表時刻一覧;
@@ -39,13 +39,13 @@ pub(crate) fn 実行する() -> ExitCode {
 fn 計測する() -> Result<String, String> {
     crate::visual_sample_world::用意する()?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 実行環境 = run::実行環境を作る(出力先.clone())?;
 
     let mut 標本一覧 = Vec::with_capacity(代表時刻一覧.len());
     for 時刻 in &代表時刻一覧 {
-        let ダンプ先 = 出力先.join(時刻.ファイル名);
-        run::描画する(&ダンプ先, 時刻)?;
-        let 画像 = image::読み込む(&ダンプ先)?;
+        println!("[xtask] hdr-luminance描画: {}", 時刻.名前);
+        let 画像 = 実行環境
+            .圧縮前の画素で描いて読み戻す(検収の実行名::生成する(時刻.ファイル名)?, &run::時刻の起動指定を組み立てる(時刻.一日内秒))?;
         let 統計 = statistics::集計する(&画像)?;
         統計.値が有限であることを確かめる(時刻.名前)?;
         標本一覧.push((時刻.名前, 統計));

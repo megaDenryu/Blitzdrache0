@@ -16,7 +16,6 @@
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「IIaの実装設計」
 
 mod composition_guard;
-mod hdr_image;
 mod judgment;
 mod parse;
 mod run;
@@ -29,6 +28,8 @@ mod tolerance;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+use crate::acceptance::{圧縮前のHDR画像, 描画検収の実行環境, 検収の実行名};
 
 const 出力ディレクトリ: &str = "target/local_visibility";
 
@@ -58,23 +59,29 @@ fn 検収する() -> Result<String, String> {
     if !crate::compile_assets::既定を生成する() {
         return Err("間接照明の検収世界のアセット生成に失敗した".to_string());
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 形の実行環境 = run::実行環境を作る();
+    let 項別の実行環境 = term_run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
     let mut 行一覧 = Vec::new();
     for 形 in 形の一覧 {
-        let 行 = parse::形の行を取り出す(&run::描画する(形)?)?;
+        let 報告 = 形の実行環境.報告を採る(検収の実行名::生成する(形)?, &run::形の起動指定を組み立てる(形))?;
+        let 行 = parse::形の行を取り出す(報告.本文())?;
         judgment::共通の判定を行う(&行)?;
         shape_property::形の性質を検査する(&行)?;
         行一覧.push(行);
     }
 
-    let 遮蔽なし = term_run::描画する(&出力先, 遮蔽なしの符号値)?;
-    let 中間 = term_run::描画する(&出力先, 中間の符号値)?;
-    let 全遮蔽 = term_run::描画する(&出力先, 全遮蔽の符号値)?;
+    let 遮蔽なし = 一つの符号値で描く(&項別の実行環境, 遮蔽なしの符号値)?;
+    let 中間 = 一つの符号値で描く(&項別の実行環境, 中間の符号値)?;
+    let 全遮蔽 = 一つの符号値で描く(&項別の実行環境, 全遮蔽の符号値)?;
     composition_guard::構図の一致を確かめる(&遮蔽なし, &中間, &全遮蔽)?;
     let 項別 = term_measure::測る(&遮蔽なし, &中間, &全遮蔽, 中間の符号値)?;
     term_judgment::判定する(&項別)?;
 
     Ok(summary::要約を組む(&行一覧, &項別))
+}
+
+/// 局所可視度を1つの符号値へ固定して1条件を撮る。
+fn 一つの符号値で描く(実行環境: &描画検収の実行環境, 符号値: u8) -> Result<圧縮前のHDR画像, String> {
+    Ok(実行環境.圧縮前の画素で描いて読み戻す(term_run::実行名を組む(符号値)?, &term_run::符号値の起動指定を組み立てる(符号値))?)
 }

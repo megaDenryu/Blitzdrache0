@@ -42,6 +42,7 @@ pub struct 読み戻しの書き出し先 {
 
 impl 読み戻しの書き出し先 {
     const 画素の拡張子: &'static str = "raw";
+    const 圧縮前の画素の拡張子: &'static str = "hdr32";
     const 寸法の拡張子: &'static str = "size";
 
     /// 出力ディレクトリと実行名から決める。実行環境をまだ通っていない入口が書き出し先を組むための口である。
@@ -63,6 +64,10 @@ impl 読み戻しの書き出し先 {
 
     pub(super) fn 画素のパス(&self) -> PathBuf {
         self.基準名までのパス.with_extension(Self::画素の拡張子)
+    }
+
+    pub(super) fn 圧縮前の画素のパス(&self) -> PathBuf {
+        self.基準名までのパス.with_extension(Self::圧縮前の画素の拡張子)
     }
 
     pub(super) fn 寸法のパス(&self) -> PathBuf {
