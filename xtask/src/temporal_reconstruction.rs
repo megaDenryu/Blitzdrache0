@@ -12,12 +12,16 @@
 //! 合成した入力の注入によるCPU正本との突き合わせは、別の1回の実行として先に走らせる。4枚とも検収が決めた値へ
 //! 差し替わるため焼き上げの進み具合に依存せず、短い本数で足りる。許容の根拠は`injection`が持つ。
 
+mod error;
 mod injection;
 mod judgment;
 mod observation;
+mod report_line;
 mod run;
 
 use std::process::ExitCode;
+
+use error::時間再構成の検収エラー;
 
 pub fn 実行する() -> ExitCode {
     match 検収する() {
@@ -32,12 +36,13 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
-    crate::visual_sample_world::用意する()?;
+fn 検収する() -> Result<String, 時間再構成の検収エラー> {
+    crate::visual_sample_world::用意する()
+        .map_err(|理由| 時間再構成の検収エラー::目視見本世界を用意できなかった { 理由 })?;
     let 実行環境 = run::実行環境を作る();
     let 注入 = injection::取り出して判定する(&run::合成入力の観測を採る(&実行環境)?)?;
-    let 一回目 = observation::取り出す(&run::観測を採る(&実行環境, run::一回目の実行名, "1回目")?, "1回目")?;
-    let 二回目 = observation::取り出す(&run::観測を採る(&実行環境, run::二回目の実行名, "2回目")?, "2回目")?;
+    let 一回目 = observation::取り出す(&run::観測を採る(&実行環境, run::一回目の実行名, "1回目")?)?;
+    let 二回目 = observation::取り出す(&run::観測を採る(&実行環境, run::二回目の実行名, "2回目")?)?;
     judgment::判定する(&一回目, &二回目)?;
     Ok(format!("{}、{}", injection::要約を組む(&注入), observation::要約を組む(&一回目)))
 }
