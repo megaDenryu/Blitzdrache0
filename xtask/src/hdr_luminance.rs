@@ -8,6 +8,8 @@
 //! 機械判定は2つだけである。validationの指摘が0件であることと、報告する統計値がすべて有限であることである。
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「順3-IIの実装設計」
 
+mod error;
+mod judgment;
 mod record;
 mod run;
 mod statistics;
@@ -15,6 +17,8 @@ mod table;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+use error::圧縮前の輝度分布の計測エラー;
 
 use crate::acceptance::検収の実行名;
 use crate::release_build::計測の生値のファイル;
@@ -36,8 +40,9 @@ pub(crate) fn 実行する() -> ExitCode {
     }
 }
 
-fn 計測する() -> Result<String, String> {
-    crate::visual_sample_world::用意する()?;
+fn 計測する() -> Result<String, 圧縮前の輝度分布の計測エラー> {
+    crate::visual_sample_world::用意する()
+        .map_err(|理由| 圧縮前の輝度分布の計測エラー::目視見本世界を用意できなかった { 理由 })?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
     let 実行環境 = run::実行環境を作る(出力先.clone())?;
 
@@ -47,7 +52,7 @@ fn 計測する() -> Result<String, String> {
         let 画像 = 実行環境
             .圧縮前の画素で描いて読み戻す(検収の実行名::生成する(時刻.ファイル名)?, &run::時刻の起動指定を組み立てる(時刻.一日内秒))?;
         let 統計 = statistics::集計する(&画像)?;
-        統計.値が有限であることを確かめる(時刻.名前)?;
+        judgment::値が有限であることを確かめる(&統計, 時刻.名前)?;
         標本一覧.push((時刻.名前, 統計));
     }
     record::生値を書く(&計測の生値のファイル::出力ディレクトリの中の場所(&出力先), &標本一覧)?;

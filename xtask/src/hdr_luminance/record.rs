@@ -6,15 +6,21 @@
 
 use std::path::Path;
 
+use super::error::圧縮前の輝度分布の計測エラー;
 use super::statistics::輝度統計;
 
-pub(super) fn 生値を書く(書き先: &Path, 標本一覧: &[(&'static str, 輝度統計)]) -> Result<(), String> {
+pub(super) fn 生値を書く(
+    書き先: &Path, 標本一覧: &[(&'static str, 輝度統計)]
+) -> Result<(), 圧縮前の輝度分布の計測エラー> {
     let mut 本文 =
         String::from("時刻\t全画素数\t正の輝度の画素数\t0以下の画素数\t非有限の画素数\t最小EV\tp1EV\tp50EV\tp99EV\t最大EV\t線形最小\t線形最大\n");
     for (名前, 統計) in 標本一覧 {
         本文.push_str(&行にする(名前, 統計));
     }
-    std::fs::write(書き先, 本文).map_err(|誤り| format!("{}を書けなかった: {誤り}", 書き先.display()))
+    std::fs::write(書き先, 本文).map_err(|誤り| 圧縮前の輝度分布の計測エラー::生値を書けなかった {
+        パス: 書き先.to_path_buf(),
+        誤り,
+    })
 }
 
 fn 行にする(名前: &str, 統計: &輝度統計) -> String {
