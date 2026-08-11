@@ -15,7 +15,7 @@ use crate::vulkan::local_visibility::局所可視性描画入力;
 /// `threadsPerSide`と一致させる。食い違うと画面の一部が書かれないまま残る。
 const 班の一辺: u32 = 8;
 
-pub(super) fn 遮蔽の標本化を作る<'a>(
+pub(super) fn 遮蔽の標本化パスを宣言する<'a>(
     深度: 画像ハンドル,
     生: 画像ハンドル,
     入力: &'a 局所可視性描画入力,
@@ -32,7 +32,7 @@ pub(super) fn 遮蔽の標本化を作る<'a>(
     )
 }
 
-pub(super) fn 両側ぼかしを作る<'a>(
+pub(super) fn 両側ぼかしパスを宣言する<'a>(
     深度: 画像ハンドル,
     生: 画像ハンドル,
     ぼかし後: 画像ハンドル,

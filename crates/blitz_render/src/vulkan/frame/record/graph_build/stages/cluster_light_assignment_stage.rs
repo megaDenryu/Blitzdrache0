@@ -19,7 +19,11 @@ pub(in crate::vulkan::frame::record::graph_build) fn クラスタの選別を積
 ) -> [graph::バッファハンドル; 2] {
     let 格子 = 登録する(グラフ, 入力.格子);
     let 光添字列 = 登録する(グラフ, 入力.光添字列);
-    グラフ.パスを積む(cluster_light_assignment_pass::作る(格子, 光添字列, 入力));
+    グラフ.パスを積む(cluster_light_assignment_pass::クラスタ選別パスを宣言する(
+        格子,
+        光添字列,
+        入力,
+    ));
     [格子, 光添字列]
 }
 

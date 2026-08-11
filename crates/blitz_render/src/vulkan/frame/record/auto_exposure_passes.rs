@@ -12,7 +12,7 @@ use crate::vulkan::graph::{
 /// 集計の1班が覆う画素の一辺。`shaders/auto_exposure_histogram.slang`の`threadsPerSide`と一致させる。
 const 集計の班の一辺: u32 = 16;
 
-pub(super) fn 消去を作る<'a>(ヒストグラム: バッファハンドル) -> パス宣言<'a> {
+pub(super) fn ヒストグラム消去パスを宣言する<'a>(ヒストグラム: バッファハンドル) -> パス宣言<'a> {
     パス宣言::生成する(
         "自動露出のヒストグラム消去",
         Vec::new(),
@@ -32,7 +32,7 @@ pub(super) fn 消去を作る<'a>(ヒストグラム: バッファハンドル) 
     )
 }
 
-pub(super) fn 集計を作る<'a>(
+pub(super) fn hdr集計パスを宣言する<'a>(
     hdr: 画像ハンドル,
     ヒストグラム: バッファハンドル,
     入力: &'a 自動露出描画入力,
@@ -54,7 +54,7 @@ pub(super) fn 集計を作る<'a>(
     )
 }
 
-pub(super) fn 導出と適応を作る<'a>(
+pub(super) fn 露出導出と適応パスを宣言する<'a>(
     ヒストグラム: バッファハンドル,
     露出状態: バッファハンドル,
     入力: &'a 自動露出描画入力,

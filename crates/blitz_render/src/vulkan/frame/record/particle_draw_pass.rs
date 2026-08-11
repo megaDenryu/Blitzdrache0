@@ -10,7 +10,7 @@ use crate::vulkan::graph::{
 };
 use crate::vulkan::relative_anchor;
 
-pub(super) fn 作る<'a>(
+pub(super) fn 粒子描画パスを宣言する<'a>(
     カラー: 画像ハンドル,
     深度: 画像ハンドル,
     粒子ハンドル: バッファハンドル,

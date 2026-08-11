@@ -33,7 +33,14 @@ pub(in crate::vulkan::frame::record::graph_build) fn 点光源の影を積む<'a
                 画像: 基本.点光源の影,
                 層ビュー,
             };
-            グラフ.パスを積む(point_light_shadow_pass::作る(灯, 面, 描き先, 束縛, 発行一覧, 共有));
+            グラフ.パスを積む(point_light_shadow_pass::点光源の影パスを宣言する(
+                灯,
+                面,
+                描き先,
+                束縛,
+                発行一覧,
+                共有,
+            ));
         }
     }
 }

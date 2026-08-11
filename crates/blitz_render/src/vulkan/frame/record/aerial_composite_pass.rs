@@ -12,7 +12,7 @@ use crate::vulkan::frame::draw_commands::u32を丸めずf32へ変換する;
 use crate::vulkan::frame::空中遠近合成描画入力;
 use crate::vulkan::graph::{カラー添付列, クリア指定, パス宣言, パス種別, 画像ハンドル, 画像用途};
 
-pub(super) fn 作る<'a>(
+pub(super) fn 空中遠近合成パスを宣言する<'a>(
     カラー: 画像ハンドル,
     深度: 画像ハンドル,
     空中遠近: 画像ハンドル,

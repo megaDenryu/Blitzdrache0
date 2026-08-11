@@ -37,7 +37,7 @@ pub(in crate::vulkan::frame::record::graph_build) fn 時間再構成を積む<'a
                 深度: 基本.深度,
                 再構成後の色,
             };
-            グラフ.パスを積む(temporal_reconstruction_pass::作る(ハンドル, 入力, 寸法));
+            グラフ.パスを積む(temporal_reconstruction_pass::時間再構成パスを宣言する(ハンドル, 入力, 寸法));
         }
         (None, None) => {}
         _ => panic!("時間再構成の入力と画像の登録の有無が一致しない(レンダラーの配線のバグ)"),

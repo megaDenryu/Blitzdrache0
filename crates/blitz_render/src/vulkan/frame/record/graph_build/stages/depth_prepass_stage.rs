@@ -22,7 +22,7 @@ pub(in crate::vulkan::frame::record::graph_build) fn 深度プリパスを積む
     if !方式.深度プリパスを積むか() {
         return;
     }
-    グラフ.パスを積む(depth_prepass_pass::作る(
+    グラフ.パスを積む(depth_prepass_pass::深度プリパスを宣言する(
         基本.深度,
         スキン済み,
         描画対象.ジオメトリ,

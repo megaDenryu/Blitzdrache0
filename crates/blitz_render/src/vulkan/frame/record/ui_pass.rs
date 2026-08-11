@@ -8,7 +8,9 @@ use ash::vk;
 use crate::vulkan::frame::UI描画入力;
 use crate::vulkan::graph::{カラー添付列, クリア指定, パス宣言, パス種別, 画像ハンドル, 画像用途};
 
-pub(super) fn 作る<'a>(カラー: 画像ハンドル, ui入力: &'a UI描画入力, 寸法: vk::Extent2D) -> パス宣言<'a> {
+pub(super) fn ui描画パスを宣言する<'a>(
+    カラー: 画像ハンドル, ui入力: &'a UI描画入力, 寸法: vk::Extent2D
+) -> パス宣言<'a> {
     パス宣言::生成する(
         "UI描画",
         Vec::new(),

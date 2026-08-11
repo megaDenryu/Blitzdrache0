@@ -57,7 +57,7 @@ pub(in crate::vulkan::frame::record::graph_build) fn シーンを積む<'a>(
     } else {
         クリア指定::クリアする { カラー: クリア色 }
     };
-    グラフ.パスを積む(scene_pass::作る(
+    グラフ.パスを積む(scene_pass::シーン描画パスを宣言する(
         カラー,
         基本.動きベクトル,
         基本.深度,

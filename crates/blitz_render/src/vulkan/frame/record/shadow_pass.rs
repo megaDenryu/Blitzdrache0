@@ -24,7 +24,7 @@ pub(super) struct シャドウの描き先 {
     pub(super) 一辺: 影の一辺解像度,
 }
 
-pub(super) fn 作る<'a>(
+pub(super) fn シャドウ描画パスを宣言する<'a>(
     番号: 距離区分番号,
     描き先: シャドウの描き先,
     スキン済み頂点: Option<バッファハンドル>,

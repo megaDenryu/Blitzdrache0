@@ -7,8 +7,11 @@ use crate::vulkan::frame::copy;
 use crate::vulkan::graph::{パス宣言, パス種別, 画像ハンドル, 画像用途};
 use crate::vulkan::readback::読み戻し対象;
 
-pub(super) fn 作る<'a>(
-    転送元: 画像ハンドル, バッファ: vk::Buffer, 対象: 読み戻し対象, 寸法: vk::Extent2D
+pub(super) fn 読み戻しパスを宣言する<'a>(
+    転送元: 画像ハンドル,
+    バッファ: vk::Buffer,
+    対象: 読み戻し対象,
+    寸法: vk::Extent2D,
 ) -> パス宣言<'a> {
     パス宣言::生成する(
         "読み戻しコピー",

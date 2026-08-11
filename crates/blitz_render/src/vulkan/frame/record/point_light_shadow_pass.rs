@@ -29,7 +29,7 @@ pub(super) struct 点光源の影の描き先 {
     pub(super) 層ビュー: vk::ImageView,
 }
 
-pub(super) fn 作る<'a>(
+pub(super) fn 点光源の影パスを宣言する<'a>(
     灯: 影を落とす灯,
     面: 立方体の面,
     描き先: 点光源の影の描き先,

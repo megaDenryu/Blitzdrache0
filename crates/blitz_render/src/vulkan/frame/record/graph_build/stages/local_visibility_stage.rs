@@ -24,8 +24,14 @@ pub(in crate::vulkan::frame::record::graph_build) fn 局所可視性を積む<'a
     let 入力 = 入力?;
     let 生 = 登録する(グラフ, 入力.生の画像, 入力.生のビュー, 寸法);
     let ぼかし後 = 登録する(グラフ, 入力.ぼかし後の画像, 入力.ぼかし後の画像ビュー, 寸法);
-    グラフ.パスを積む(local_visibility_passes::遮蔽の標本化を作る(深度, 生, 入力, 寸法));
-    グラフ.パスを積む(local_visibility_passes::両側ぼかしを作る(深度, 生, ぼかし後, 入力, 寸法));
+    グラフ.パスを積む(local_visibility_passes::遮蔽の標本化パスを宣言する(深度, 生, 入力, 寸法));
+    グラフ.パスを積む(local_visibility_passes::両側ぼかしパスを宣言する(
+        深度,
+        生,
+        ぼかし後,
+        入力,
+        寸法,
+    ));
     Some(ぼかし後)
 }
 
