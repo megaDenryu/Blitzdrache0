@@ -3,11 +3,14 @@
 //! 判定の中身は`judgment`、画素の分類は`pixel_check`にある。
 //! 参照: `_doc/設計/植生インスタンスと物量計測.md`「段階導入」
 
+mod error;
 mod judgment;
 mod pixel_check;
 
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+
+use error::植生個体別段選択の検収エラー;
 
 use crate::acceptance::{描画フレーム数, 描画検収の実行環境, 検収の実行名, 検収シーン名};
 use crate::vegetation_run;
@@ -42,12 +45,13 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
+fn 検収する() -> Result<String, 植生個体別段選択の検収エラー> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::植生世界を既定で生成する() {
-        return Err("検証用アセットの生成に失敗した".to_string());
+        return Err(植生個体別段選択の検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = vegetation_run::植生世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+        .map_err(|理由| 植生個体別段選択の検収エラー::シェーダーの一時コピーを作れなかった { 理由 })?;
 
     let 段あり = 描く(&実行環境, "on", &シェーダー入口, &[])?;
     let 段なし = 描く(&実行環境, "off", &シェーダー入口, &["--no-instance-lod"])?;
@@ -65,8 +69,11 @@ fn 検収する() -> Result<String, String> {
 }
 
 fn 描く(
-    実行環境: &描画検収の実行環境, 名前: &str, シェーダー入口: &Path, 追加引数: &[&str]
-) -> Result<judgment::実行, String> {
+    実行環境: &描画検収の実行環境,
+    名前: &str,
+    シェーダー入口: &Path,
+    追加引数: &[&str],
+) -> Result<judgment::実行, 植生個体別段選択の検収エラー> {
     let mut 引数: Vec<&str> = 共通引数.to_vec();
     引数.extend_from_slice(追加引数);
     let 結果 = 実行環境.描いて読み戻す(
