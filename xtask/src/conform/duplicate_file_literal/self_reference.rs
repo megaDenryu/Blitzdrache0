@@ -18,7 +18,7 @@ use crate::conform::violation::違反;
 /// 注意: 載せてよいのは、対象の綴りを列挙する検査の台帳だけである。
 const 対象の綴りを列挙する台帳一覧: [&str; 18] = [
     "xtask/src/conform/drop_impl.rs",
-    "xtask/src/conform/duplicate_file_literal/allowance.rs",
+    "xtask/src/conform/duplicate_file_literal/allowance/table.rs",
     "xtask/src/conform/lighting_query_declaration/table.rs",
     "xtask/src/conform/module_import_boundary/table.rs",
     "xtask/src/conform/shader_constant/table/atmosphere.rs",
