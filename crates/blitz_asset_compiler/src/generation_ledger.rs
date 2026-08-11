@@ -8,6 +8,8 @@
 
 mod content_hash;
 mod dependency_digest;
+#[cfg(test)]
+mod dependency_digest_tests;
 mod error;
 #[cfg(test)]
 mod generation_ledger_tests;
@@ -19,7 +21,7 @@ mod rebake_tally;
 mod text_format;
 
 pub use content_hash::内容ハッシュ;
-pub use dependency_digest::ソース依存一式の内容ハッシュを求める;
+pub use dependency_digest::今回の宣言と依存一式の内容ハッシュを求める;
 pub use error::生成台帳エラー;
 pub use heading::生成台帳の見出し;
 pub use ledger::{チャンクの焼き直し判定, 生成台帳};
