@@ -33,11 +33,10 @@ fn 検収する() -> Result<String, String> {
         return Err("見本の集落のアセット生成に失敗した".to_string());
     }
     実行時形式の実在を確かめる()?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
-    let 標準出力 = run::描画する(&出力先.join("village"))?;
-    let png = crate::raw_png::変換する(&出力先.join("village"))?;
-    run::報告を書き出す(&標準出力);
+    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 実行 = 実行環境.描いて読み戻す(run::集落の実行名, &run::起動指定を組み立てる())?;
+    let png = 実行.書き出し先().目視用の絵へ変換する()?;
+    run::報告を書き出す(実行.報告().本文());
     Ok(format!("本番経路の絵は{}", png.display()))
 }
 

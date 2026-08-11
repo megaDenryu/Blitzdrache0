@@ -14,7 +14,8 @@
 //! 起こし方の綴りは`app_executable`、1回ぶんの起動の組み立てと実行は`app_launch`、
 //! 起動へ渡すシーンは`scene_name`、枚数は`frame_count`、それらと選択肢を束ねた指定は`launch_specification`、
 //! 画像の寸法と画素の位置は`pixel_geometry`が、1回の実行を指す名前は`run_name`が、
-//! それらを束ねる操作サービスは`run_environment`が持つ。
+//! 絵を書き出さずに報告だけを採る操作サービスは`world_report_environment`が、
+//! 絵を読む操作サービスは`run_environment`が持つ。
 
 mod app_executable;
 mod app_launch;
@@ -30,6 +31,7 @@ mod run_environment;
 mod run_name;
 mod runtime_asset_root;
 mod scene_name;
+mod world_report_environment;
 
 pub use app_executable::アプリの起こし方;
 pub use error::検収エラー;
@@ -43,3 +45,4 @@ pub use run_environment::{描画検収の実行環境, 検収の1回の実行};
 pub use run_name::検収の実行名;
 pub use runtime_asset_root::実行時アセットルート;
 pub use scene_name::検収シーン名;
+pub use world_report_environment::世界を読ませて報告を採る実行環境;

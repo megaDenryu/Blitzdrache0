@@ -8,12 +8,13 @@
 //! 参照: `_doc/設計/時間再構成.md`「段割りと各段の完了条件」の段4
 
 mod crop;
+mod pixel_diff;
 mod run;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
+use crate::acceptance::{描画検収の実行環境, 検収の実行名};
 use crate::day_moment::{代表時刻, 代表時刻一覧};
 use run::時間再構成の条件;
 
@@ -38,11 +39,11 @@ pub fn 実行する() -> ExitCode {
 
 fn 撮る() -> Result<String, String> {
     crate::visual_sample_world::用意する()?;
+    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
     let mut 行一覧 = Vec::new();
     for 時刻 in 代表時刻一覧.iter().filter(|時刻| 撮る時刻のファイル名.contains(&時刻.ファイル名)) {
-        行一覧.push(一時刻の対を撮る(&出力先, 時刻)?);
+        行一覧.push(一時刻の対を撮る(&実行環境, &出力先, 時刻)?);
     }
     if 行一覧.len() != 撮る時刻のファイル名.len() {
         return Err(format!("代表時刻の表から{}時刻しか選べなかった", 行一覧.len()));
@@ -50,11 +51,13 @@ fn 撮る() -> Result<String, String> {
     Ok(行一覧.join("、"))
 }
 
-fn 一時刻の対を撮る(出力先: &std::path::Path, 時刻: &代表時刻) -> Result<String, String> {
-    let 効かせた = 一条件を撮る(出力先, 時刻, 時間再構成の条件::効かせる, "with_taa")?;
-    let 切った = 一条件を撮る(出力先, 時刻, 時間再構成の条件::切る, "without_taa")?;
+fn 一時刻の対を撮る(
+    実行環境: &描画検収の実行環境, 出力先: &std::path::Path, 時刻: &代表時刻
+) -> Result<String, String> {
+    let 効かせた = 一条件を撮る(実行環境, 時刻, 時間再構成の条件::効かせる, "with_taa")?;
+    let 切った = 一条件を撮る(実行環境, 時刻, 時間再構成の条件::切る, "without_taa")?;
     crop::区画が絵に収まるか確かめる(効かせた.画像.幅().画素数(), 効かせた.画像.高さ().画素数())?;
-    let 食い違い = 食い違う画素を数える(効かせた.画像.バイト列(), 切った.画像.バイト列())?;
+    let 食い違い = pixel_diff::食い違う画素を数える(効かせた.画像.バイト列(), 切った.画像.バイト列())?;
     if 食い違い == 0 {
         return Err(format!("{}の効かせた絵と切った絵が1画素も食い違わない", 時刻.名前));
     }
@@ -78,23 +81,13 @@ struct 撮った絵 {
 }
 
 fn 一条件を撮る(
-    出力先: &std::path::Path, 時刻: &代表時刻, 条件: 時間再構成の条件, 接尾辞: &str
+    実行環境: &描画検収の実行環境, 時刻: &代表時刻, 条件: 時間再構成の条件, 接尾辞: &str
 ) -> Result<撮った絵, String> {
     let 名前 = format!("{}_{}", 時刻.ファイル名, 接尾辞);
-    let 実行名 = 検収の実行名::生成する(&名前)?;
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
-    let 画像 = run::描画する(&書き出し先, 時刻.一日内秒, 条件)?;
-    let png = 書き出し先.目視用の絵へ変換する()?;
-    Ok(撮った絵 { 画像, png })
-}
-
-fn 食い違う画素を数える(左: &[u8], 右: &[u8]) -> Result<usize, String> {
-    if 左.len() != 右.len() {
-        return Err(format!("比べる2枚のバイト数が違う: {}と{}", 左.len(), 右.len()));
-    }
-    Ok(左
-        .chunks_exact(4)
-        .zip(右.chunks_exact(4))
-        .filter(|(左画素, 右画素)| 左画素 != 右画素)
-        .count())
+    let 実行 = 実行環境.描いて読み戻す(検収の実行名::生成する(&名前)?, &run::起動指定を組み立てる(時刻.一日内秒, 条件))?;
+    let png = 実行.書き出し先().目視用の絵へ変換する()?;
+    Ok(撮った絵 {
+        画像: 実行.画像を取り出す(),
+        png,
+    })
 }
