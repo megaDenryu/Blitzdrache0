@@ -12,7 +12,12 @@ mod series_check;
 mod series_check_tests;
 mod table;
 
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
+
+use crate::acceptance::{アプリの起こし方, 世界を読まずに報告を採る実行環境, 検収の実行名};
+
+/// この実行を指す名前。絵は書き出さないが、失敗の文面がどの実行かを名指すために要る。
+const 天空状態の実行名: 検収の実行名 = 検収の実行名::定数から生成する("sky_state");
 
 pub fn 実行する() -> ExitCode {
     match 検収する() {
@@ -40,13 +45,7 @@ fn 検収する() -> Result<String, String> {
 }
 
 fn 報告を採る() -> Result<String, String> {
-    println!("[xtask] cargo run -p blitz_app -- --report-sky-state を実行");
-    let 出力 = Command::new("cargo")
-        .args(["run", "-p", "blitz_app", "--", "--report-sky-state"])
-        .output()
-        .map_err(|誤り| format!("blitz_appを起動できなかった: {誤り}"))?;
-    if !出力.status.success() {
-        return Err(format!("blitz_appが{}で失敗した", 出力.status));
-    }
-    Ok(String::from_utf8_lossy(&出力.stdout).into_owned())
+    println!("[xtask] blitz_appの天空状態報告を実行");
+    let 実行環境 = 世界を読まずに報告を採る実行環境::作る(アプリの起こし方::毎回cargoに構築させて起動する);
+    Ok(実行環境.報告を採る(天空状態の実行名, &["--report-sky-state"])?.本文().to_string())
 }

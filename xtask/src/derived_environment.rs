@@ -12,7 +12,12 @@ mod parse;
 mod rows;
 mod thresholds;
 
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
+
+use crate::acceptance::{アプリの起こし方, 世界を読まずに報告を採る実行環境, 検収の実行名, 終了時報告};
+
+/// この実行を指す名前。絵は書き出さないが、失敗の文面がどの実行かを名指すために要る。
+const 派生表現の実行名: 検収の実行名 = 検収の実行名::定数から生成する("derived_environment");
 
 pub fn 実行する() -> ExitCode {
     match 検収する() {
@@ -28,9 +33,9 @@ pub fn 実行する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, String> {
-    let (標準出力, 標準エラー) = 報告を採る()?;
-    let 報告 = parse::報告を取り出す(&標準出力).inspect_err(|_| eprintln!("{標準エラー}"))?;
-    let 判定 = judgment::全項目を検査する(&報告).inspect_err(|_| eprintln!("{標準エラー}"))?;
+    let 出力 = 報告を採る()?;
+    let 報告 = parse::報告を取り出す(出力.本文()).inspect_err(|_| eprint!("{}", 出力.標準エラーの本文()))?;
+    let 判定 = judgment::全項目を検査する(&報告).inspect_err(|_| eprint!("{}", 出力.標準エラーの本文()))?;
     表を出す(&報告);
     Ok(要約を組む(&報告, &判定))
 }
@@ -67,15 +72,10 @@ fn 表を出す(報告: &rows::報告) {
     }
 }
 
-fn 報告を採る() -> Result<(String, String), String> {
-    println!("[xtask] cargo run -p blitz_app -- --report-derived-environment を実行");
-    let 出力 = Command::new("cargo")
-        .args(["run", "-p", "blitz_app", "--", "--report-derived-environment"])
-        .output()
-        .map_err(|誤り| format!("blitz_appを起動できなかった: {誤り}"))?;
-    let 標準エラー = String::from_utf8_lossy(&出力.stderr).into_owned();
-    if !出力.status.success() {
-        return Err(format!("blitz_appが{}で失敗した: {標準エラー}", 出力.status));
-    }
-    Ok((String::from_utf8_lossy(&出力.stdout).into_owned(), 標準エラー))
+/// 派生表現を焼かせて報告を採る。validationの指摘は判定の一部としてこの入口が読むため、
+/// 実行環境が零件を確かめる口は通さない。
+fn 報告を採る() -> Result<終了時報告, String> {
+    println!("[xtask] blitz_appの派生表現報告を実行");
+    let 実行環境 = 世界を読まずに報告を採る実行環境::作る(アプリの起こし方::毎回cargoに構築させて起動する);
+    Ok(実行環境.報告を採る(派生表現の実行名, &["--report-derived-environment"])?)
 }

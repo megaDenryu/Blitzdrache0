@@ -12,18 +12,15 @@ mod parse_tests;
 
 mod parse;
 
-use std::process::Command;
+use crate::acceptance::{アプリの起こし方, 世界を読まずに報告を採る実行環境, 検収の実行名};
 
 pub(super) use parse::{一覧を読む as 標準出力から読む, 跨ぎ};
 
+/// この実行を指す名前。絵は書き出さないが、失敗の文面がどの実行かを名指すために要る。
+const 跨ぎの報告の実行名: 検収の実行名 = 検収の実行名::定数から生成する("sun_zenith_crossings");
+
 pub(super) fn 一覧を読む() -> Result<Vec<跨ぎ>, String> {
-    let 出力 = Command::new("cargo")
-        .args(["run", "-q", "-p", "blitz_app", "--", "--report-sun-zenith-crossings"])
-        .output()
-        .map_err(|誤り| format!("跨ぎの報告を起動できなかった: {誤り}"))?;
-    if !出力.status.success() {
-        eprintln!("{}", String::from_utf8_lossy(&出力.stderr));
-        return Err(format!("跨ぎの報告が{}で失敗した", 出力.status));
-    }
-    標準出力から読む(&String::from_utf8_lossy(&出力.stdout))
+    let 実行環境 = 世界を読まずに報告を採る実行環境::作る(アプリの起こし方::毎回cargoに構築させ構築の知らせを伏せて起動する);
+    let 報告 = 実行環境.報告を採る(跨ぎの報告の実行名, &["--report-sun-zenith-crossings"])?;
+    標準出力から読む(報告.本文())
 }

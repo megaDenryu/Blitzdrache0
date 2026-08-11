@@ -11,7 +11,12 @@ mod judgment;
 pub(crate) mod parse;
 mod thresholds;
 
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
+
+use crate::acceptance::{アプリの起こし方, 世界を読まずに報告を採る実行環境, 検収の実行名, 終了時報告};
+
+/// この実行を指す名前。絵は書き出さないが、失敗の文面がどの実行かを名指すために要る。
+const 遠方環境の実行名: 検収の実行名 = 検収の実行名::定数から生成する("distant_environment");
 
 pub fn 実行する() -> ExitCode {
     match 検収する() {
@@ -26,17 +31,10 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-/// blitz_appが書いた標準出力と標準エラー。validationの指摘は標準エラーへ出るため、
-/// 検収が落ちたときに読めるよう成功時も保持する。
-struct 実行の出力 {
-    標準出力: String,
-    標準エラー: String,
-}
-
 fn 検収する() -> Result<String, String> {
     let 出力 = 報告を採る()?;
-    let 報告 = parse::報告を取り出す(&出力.標準出力).inspect_err(|_| eprintln!("{}", 出力.標準エラー))?;
-    let 判定 = judgment::全項目を検査する(&報告).inspect_err(|_| eprintln!("{}", 出力.標準エラー))?;
+    let 報告 = parse::報告を取り出す(出力.本文()).inspect_err(|_| eprint!("{}", 出力.標準エラーの本文()))?;
+    let 判定 = judgment::全項目を検査する(&報告).inspect_err(|_| eprint!("{}", 出力.標準エラーの本文()))?;
     表を出す(&報告);
     Ok(format!(
         "鍵の判定が{}条件すべて期待どおりで、太陽円盤放射輝度だけを変えた対がバイト一致し、全{}テクセルが有限かつ非負で、代表{}テクセルがCPU正本と一致し(最大相対誤差{:.3e})、面境界の最大相対差が{:.3e}だった。{}",
@@ -63,18 +61,10 @@ fn 表を出す(報告: &parse::報告) {
     }
 }
 
-fn 報告を採る() -> Result<実行の出力, String> {
-    println!("[xtask] cargo run -p blitz_app -- --report-distant-environment を実行");
-    let 出力 = Command::new("cargo")
-        .args(["run", "-p", "blitz_app", "--", "--report-distant-environment"])
-        .output()
-        .map_err(|誤り| format!("blitz_appを起動できなかった: {誤り}"))?;
-    let 標準エラー = String::from_utf8_lossy(&出力.stderr).into_owned();
-    if !出力.status.success() {
-        return Err(format!("blitz_appが{}で失敗した: {標準エラー}", 出力.status));
-    }
-    Ok(実行の出力 {
-        標準出力: String::from_utf8_lossy(&出力.stdout).into_owned(),
-        標準エラー,
-    })
+/// 遠方環境を焼かせて報告を採る。validationの指摘は判定の一部としてこの入口が読むため、
+/// 実行環境が零件を確かめる口は通さない。
+fn 報告を採る() -> Result<終了時報告, String> {
+    println!("[xtask] blitz_appの遠方環境報告を実行");
+    let 実行環境 = 世界を読まずに報告を採る実行環境::作る(アプリの起こし方::毎回cargoに構築させて起動する);
+    Ok(実行環境.報告を採る(遠方環境の実行名, &["--report-distant-environment"])?)
 }

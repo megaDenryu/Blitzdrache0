@@ -17,6 +17,9 @@ const リリース実行ファイルの綴り: &str = "target/release/blitz_app.
 pub enum アプリの起こし方 {
     /// cargoに構築させてから起動する。デバッグ版で足りる検収がこれを使う。
     毎回cargoに構築させて起動する,
+    /// cargoに構築させてから起動し、cargo自身の構築の知らせを伏せる。
+    /// アプリの報告だけを読みたい入口が、標準エラーへ流れる進み具合の行を混ぜないために使う。
+    毎回cargoに構築させ構築の知らせを伏せて起動する,
     /// あらかじめ構築したリリース版の実行ファイルを直に起動する。GPU時間を測る計測がこれを使う。
     /// 構築そのものは`release_build`が計測の前に1度だけ行う。
     構築済みのリリース版を直に起動する,
@@ -39,6 +42,7 @@ impl アプリの起こし方 {
     pub fn 表示の綴り(self) -> &'static str {
         match self {
             Self::毎回cargoに構築させて起動する => "cargo run",
+            Self::毎回cargoに構築させ構築の知らせを伏せて起動する => "cargo run -q",
             Self::構築済みのリリース版を直に起動する => リリース実行ファイルの綴り,
         }
     }
@@ -49,6 +53,7 @@ impl アプリの起こし方 {
     fn cargoへ渡す引数(self) -> Option<&'static [&'static str]> {
         match self {
             Self::毎回cargoに構築させて起動する => Some(&["run", "-p", "blitz_app", "--"]),
+            Self::毎回cargoに構築させ構築の知らせを伏せて起動する => Some(&["run", "-q", "-p", "blitz_app", "--"]),
             Self::構築済みのリリース版を直に起動する => None,
         }
     }
