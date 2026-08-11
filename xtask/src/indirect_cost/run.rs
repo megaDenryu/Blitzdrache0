@@ -11,6 +11,7 @@
 
 use std::path::{Path, PathBuf};
 
+use super::error::間接照明の費用計測エラー;
 use super::plan::実行の指定;
 use super::schedule::{実行条件, 時計};
 use crate::acceptance::{
@@ -34,13 +35,16 @@ pub(super) struct 実行の材料<'a> {
     pub(super) 実行番号: usize,
 }
 
-pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<終了時報告, String> {
+pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<終了時報告, 間接照明の費用計測エラー> {
     let 標準出力先 = PathBuf::from(材料.出力先).join(format!("run_{}_{}.log", 材料.実行番号, 材料.条件.名前));
     println!("[xtask] indirect-cost実行{}: {}", 材料.実行番号, 材料.条件.名前);
     let 報告 = 材料
         .実行環境
         .報告を採る(検収の実行名::生成する(材料.条件.名前)?, &起動指定を組み立てる(材料))?;
-    std::fs::write(&標準出力先, 報告.本文()).map_err(|誤り| format!("{}を書けなかった: {誤り}", 標準出力先.display()))?;
+    let 書き出し = std::fs::write(&標準出力先, 報告.本文());
+    書き出し.map_err(|誤り| 間接照明の費用計測エラー::実行の標準出力を書けなかった {
+        パス: 標準出力先, 誤り
+    })?;
     Ok(報告)
 }
 

@@ -9,6 +9,7 @@
 
 use std::path::Path;
 
+use super::error::間接照明の費用計測エラー;
 use super::intervals;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -62,7 +63,11 @@ impl 一標本 {
     }
 }
 
-pub(super) fn 生値を書く(書き先: &Path, 標本一覧: &[一標本], 由来: &crate::release_build::構築の由来) -> Result<(), String> {
+pub(super) fn 生値を書く(
+    書き先: &Path,
+    標本一覧: &[一標本],
+    由来: &crate::release_build::構築の由来,
+) -> Result<(), 間接照明の費用計測エラー> {
     let mut 本文 = crate::release_build::tsvの前置き(&由来.注記一覧());
     本文.push_str("実行番号\t条件\t区間\t平均ミリ秒\tp50ミリ秒\tp95ミリ秒\t標本数\t焼き直したフレーム数\t数えたフレーム数\n");
     for 標本 in 標本一覧 {
@@ -71,7 +76,10 @@ pub(super) fn 生値を書く(書き先: &Path, 標本一覧: &[一標本], 由�
         }
         本文.push_str(&行にする(標本, "区間別分位の和(参考値)", 標本.区間別分位の和()));
     }
-    std::fs::write(書き先, 本文).map_err(|誤り| format!("{}を書けなかった: {誤り}", 書き先.display()))
+    std::fs::write(書き先, 本文).map_err(|誤り| 間接照明の費用計測エラー::生値を書けなかった {
+        パス: 書き先.to_path_buf(),
+        誤り,
+    })
 }
 
 fn 行にする(標本: &一標本, 区間名: &str, 分布: 区間の分布) -> String {

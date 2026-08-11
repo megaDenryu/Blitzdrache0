@@ -16,6 +16,8 @@
 //! (`crate::release_build`が唯一の入口である)。
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「3-Icの消費式と実装段割り」
 
+mod drift;
+mod error;
 mod intervals;
 mod judgment;
 mod parse;
@@ -28,6 +30,8 @@ mod table;
 
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+
+use error::間接照明の費用計測エラー;
 
 use crate::release_build::計測の生値のファイル;
 
@@ -47,15 +51,17 @@ pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
     }
 }
 
-fn 計測する(引数一覧: &[String]) -> Result<String, String> {
+fn 計測する(引数一覧: &[String]) -> Result<String, 間接照明の費用計測エラー> {
     let 指定 = plan::引数を読む(引数一覧)?;
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
-        return Err("検証用アセットの生成に失敗した".to_string());
+        return Err(間接照明の費用計測エラー::検証用アセットを生成できなかった);
     }
-    let 由来 = crate::release_build::計測用に構築する("indirect-cost")?;
+    let 由来 = crate::release_build::計測用に構築する("indirect-cost")
+        .map_err(|理由| 間接照明の費用計測エラー::計測用の構築が失敗した { 理由 })?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
+    std::fs::create_dir_all(&出力先).map_err(|誤り| 間接照明の費用計測エラー::出力先を作れなかった { 誤り })?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+        .map_err(|理由| 間接照明の費用計測エラー::シェーダーの一時コピーを作れなかった { 理由 })?;
 
     let 実行環境 = run::実行環境を作る();
     let mut 標本一覧 = Vec::with_capacity(schedule::交互の並び.len());
@@ -76,5 +82,5 @@ fn 計測する(引数一覧: &[String]) -> Result<String, String> {
     judgment::値が有限であることを確かめる(&標本一覧)?;
     record::生値を書く(&計測の生値のファイル::出力ディレクトリの中の場所(&出力先), &標本一覧, &由来)?;
     table::表示する(&標本一覧);
-    summary::要約を組む(&標本一覧, &出力先, 指定.フレーム数, &由来)
+    Ok(summary::要約を組む(&標本一覧, &出力先, 指定.フレーム数, &由来)?)
 }
