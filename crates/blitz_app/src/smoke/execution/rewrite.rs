@@ -6,6 +6,7 @@
 
 use super::スモーク実行;
 use crate::error::起動エラー;
+use crate::smoke::action_demand::求められた書き換え;
 use crate::smoke::スモークアクション;
 
 const 初期色の行: &str = "static const float3 TINT = float3(1.0, 1.0, 1.0);";
@@ -13,10 +14,14 @@ const 書き換え後の行: &str = "static const float3 TINT = float3(0.1, 0.9,
 
 impl スモーク実行 {
     pub(crate) fn 書き換えを適用する(&self, アクション: スモークアクション) -> Result<(), 起動エラー> {
-        match アクション {
-            スモークアクション::シェーダー書き換え => self.シェーダーの色を書き換える(),
-            スモークアクション::アセット書き換え => self.アセットの置き場.生成物を差し替える(&self.差し替える生成物の対),
-            _ => Ok(()),
+        let Some(書き換え) = アクション.求める書き換え() else {
+            return Ok(());
+        };
+        match 書き換え {
+            求められた書き換え::監視先のシェーダーの色 => self.シェーダーの色を書き換える(),
+            求められた書き換え::実行時アセットの生成物 => {
+                self.アセットの置き場.生成物を差し替える(&self.差し替える生成物の対)
+            }
         }
     }
 

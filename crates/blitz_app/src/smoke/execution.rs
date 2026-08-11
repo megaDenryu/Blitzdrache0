@@ -8,6 +8,7 @@
 mod construction;
 mod frame_action;
 mod rewrite;
+mod window_operation;
 
 use crate::cli::{世界の種別, 差し替える生成物の対, 描画対象数, 検証計画指定, 粒子表示モード};
 use crate::hot_reload::監視するシェーダーの入口ファイル;

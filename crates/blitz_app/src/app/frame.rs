@@ -12,7 +12,6 @@ mod finish;
 use winit::event_loop::ActiveEventLoop;
 
 use super::アプリ;
-use crate::smoke;
 
 pub(crate) use draw_input::フレーム視点;
 pub(super) use draw_input::{描画の計測つまみ, 組み立てる as 描画入力を組み立てる, 視点の履歴};
@@ -29,8 +28,8 @@ impl アプリ {
         self.ホットリロードを確認する();
 
         let アクション = action::選ぶ(self);
-        if let Some(window) = &self.window {
-            smoke::ウィンドウへ操作を適用する(window, アクション);
+        if let (Some(スモーク実行), Some(window)) = (&self.スモーク実行, &self.window) {
+            スモーク実行.ウィンドウへ自己操作を適用する(window, アクション);
         }
 
         // フレーム内実行順序: 入力確定→世界更新→描画内容抽出→描画。

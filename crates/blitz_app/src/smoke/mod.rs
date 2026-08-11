@@ -3,17 +3,16 @@
 //! 「リサイズ・最小化で落ちない」をウィンドウの自己操作とピクセル読み戻しで機械検証する。
 //! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断9」「判断22」。
 
+mod action_demand;
 mod execution;
 mod material_reload;
 mod pixel_judgment;
 mod plan;
 mod verification_plan;
-mod window_operation;
 mod world_plan;
 
 pub(crate) use execution::スモーク実行;
 pub(crate) use pixel_judgment::{アニメーション差分を判定する, ピクセルを判定する};
-pub(crate) use window_operation::ウィンドウへ操作を適用する;
 
 /// フレーム番号に応じて、このフレームで行う自己操作・検証を表す。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
