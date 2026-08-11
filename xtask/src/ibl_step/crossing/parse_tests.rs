@@ -4,13 +4,12 @@
 #![allow(clippy::unwrap_used)]
 
 use super::parse::一覧を読む;
-use crate::acceptance::{検収の実行名, 終了時報告};
+use crate::acceptance::{検収の実行名, 検収エラー, 終了時報告};
 
 const 試験の実行名: 検収の実行名 = 検収の実行名::定数から生成する("sun_zenith_crossings_test");
 
-fn 読む(標準出力: &str) -> Result<Vec<super::跨ぎ>, String> {
-    let 報告 = 終了時報告::取り込む(&試験の実行名, 標準出力.to_string(), String::new());
-    一覧を読む(&報告).map_err(|誤り| 誤り.to_string())
+fn 読む(標準出力: &str) -> Result<Vec<super::跨ぎ>, 検収エラー> {
+    一覧を読む(&終了時報告::取り込む(&試験の実行名, 標準出力.to_string(), String::new()))
 }
 
 fn 行(番号: usize, 識別: u16, 方向: &str) -> String {
@@ -39,7 +38,7 @@ fn 正しい報告を読める() {
 #[test]
 fn 壊れた行を落とす() {
     let 報告 = 見出し(2) + &行(0, 97, "up") + "太陽天頂区間の跨ぎ 番号=1 上側の区間識別=ななじゅう 方向=down\n";
-    let 誤り = 読む(&報告).unwrap_err();
+    let 誤り = 読む(&報告).unwrap_err().to_string();
     assert!(誤り.contains("上側の区間識別"), "{誤り}");
 }
 
@@ -47,20 +46,20 @@ fn 壊れた行を落とす() {
 #[test]
 fn 総数と行数の食い違いを落とす() {
     let 報告 = 見出し(3) + &行(0, 97, "up") + &行(1, 97, "down");
-    let 誤り = 読む(&報告).unwrap_err();
+    let 誤り = 読む(&報告).unwrap_err().to_string();
     assert!(誤り.contains("跨ぎの行数"), "{誤り}");
 }
 
 #[test]
 fn 番号の飛びを落とす() {
     let 報告 = 見出し(2) + &行(0, 97, "up") + &行(2, 98, "up");
-    let 誤り = 読む(&報告).unwrap_err();
+    let 誤り = 読む(&報告).unwrap_err().to_string();
     assert!(誤り.contains("連番"), "{誤り}");
 }
 
 #[test]
 fn 見出しの無い報告を落とす() {
-    let 誤り = 読む(&行(0, 97, "up")).unwrap_err();
+    let 誤り = 読む(&行(0, 97, "up")).unwrap_err().to_string();
     assert!(誤り.contains("太陽天頂区間の跨ぎ報告"), "{誤り}");
 }
 
