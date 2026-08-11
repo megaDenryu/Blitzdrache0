@@ -8,6 +8,7 @@
 use super::error::生成台帳エラー;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(transparent)]
 pub struct 生成器の版(u32);
 
 impl 生成器の版 {

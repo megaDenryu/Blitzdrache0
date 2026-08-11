@@ -32,6 +32,7 @@ pub(super) struct 台帳のテキストが表す中身 {
     pub(super) チャンクごとの内容ハッシュ: BTreeMap<チャンク座標, 内容ハッシュ>,
 }
 
+#[repr(transparent)]
 pub(super) struct 生成台帳の本文(String);
 
 impl 生成台帳の本文 {

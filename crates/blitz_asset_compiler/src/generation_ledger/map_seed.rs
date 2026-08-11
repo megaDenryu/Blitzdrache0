@@ -4,6 +4,7 @@
 //! 生成台帳の見出しがこの型を持つのは、種が変われば前に焼いたチャンクを1件も使えないためである。
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(transparent)]
 pub struct マップ生成の乱数の種(u32);
 
 impl マップ生成の乱数の種 {

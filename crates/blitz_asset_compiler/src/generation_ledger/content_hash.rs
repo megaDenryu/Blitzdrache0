@@ -17,6 +17,7 @@ const 畳み込みに掛ける値: u64 = 0x0000_0100_0000_01b3;
 const 読み取りの一区切りのバイト数: usize = 1 << 20;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(transparent)]
 pub struct 内容ハッシュ(u64);
 
 impl 内容ハッシュ {
