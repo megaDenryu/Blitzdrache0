@@ -9,18 +9,20 @@ mod pixel_check;
 mod run;
 
 use std::path::{Path, PathBuf};
+
+use crate::acceptance::描画フレーム数;
 use std::process::ExitCode;
 
 const 出力ディレクトリ: &str = "target/instance_stream";
 const シェーダーコピー先: &str = "target/instance_stream_shaders";
 
 /// 静止だけの実行のフレーム数。経路の静止先読み局面と同じ長さであり、この実行は一度も移動しない。
-const 静止フレーム数: &str = "120";
+const 静止フレーム数: 描画フレーム数 = 描画フレーム数::生成する(120);
 
 /// 往復を含む実行のフレーム数。静止先読み120、往復80、整定120の合計である。
 /// 整定を120フレーム置くのは、解除の予約から実破棄までに進行中フレームぶんの遅れがあり、
 /// さらに再読込の完了までディスクの応答を待つためである。
-const 往復フレーム数: &str = "320";
+const 往復フレーム数: 描画フレーム数 = 描画フレーム数::生成する(320);
 
 /// カメラを1フレームおきに前後させる距離。可視判定の結果を実際に変えるため、チャンク一辺100メートルを超える幅を取る。
 /// 位置源が固定経路であるため、この移動は必要集合を変えない。
@@ -46,14 +48,13 @@ fn 検収する() -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
     let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
 
-    let 静止 = run::走らせる(&出力先, "preload", &シェーダー入口, 静止フレーム数, &[])?;
-    let 往復 = run::走らせる(&出力先, "roundtrip", &シェーダー入口, 往復フレーム数, &[])?;
+    let 静止 = run::走らせる(&実行環境, "preload", &シェーダー入口, 静止フレーム数, &[])?;
+    let 往復 = run::走らせる(&実行環境, "roundtrip", &シェーダー入口, 往復フレーム数, &[])?;
     let カメラ往復 = run::走らせる(
-        &出力先,
+        &実行環境,
         "camera_probe",
         &シェーダー入口,
         往復フレーム数,

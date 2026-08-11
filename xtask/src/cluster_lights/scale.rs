@@ -6,12 +6,10 @@
 //! 件数を1・8・32・64に取るのは、1件が第3段階までの既定と同じ形であり、64件が世界が宣言できる上限だからである。
 //! あいだの2点は、件数を倍々に振ったときGPU時間が件数に比例するのか頭打ちになるのかを読むための点である。
 
-use std::path::Path;
-
 use super::assignment::割り当ての統計;
 use super::gpu_time::区間の中央値;
 use super::{assignment, gpu_time};
-use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
+use crate::acceptance::{描画検収の実行環境, 検収の実行名};
 use crate::multi_light_world::{run, world};
 
 /// 振る光の件数。
@@ -27,38 +25,37 @@ pub(super) struct 件数ごとの結果 {
     pub(super) 割り当て: 割り当ての統計,
 }
 
-pub(super) fn 測る(出力先: &Path) -> Result<Vec<件数ごとの結果>, String> {
-    光の件数一覧.iter().map(|件数| 一件数を測る(出力先, *件数)).collect()
+pub(super) fn 測る(実行環境: &描画検収の実行環境) -> Result<Vec<件数ごとの結果>, String> {
+    光の件数一覧.iter().map(|件数| 一件数を測る(実行環境, *件数)).collect()
 }
 
-fn 一件数を測る(出力先: &Path, 光の件数: usize) -> Result<件数ごとの結果, String> {
+fn 一件数を測る(実行環境: &描画検収の実行環境, 光の件数: usize) -> Result<件数ごとの結果, String> {
     let 件数文字列 = 光の件数.to_string();
     let mut 選別一覧 = Vec::with_capacity(反復回数);
     let mut シーン描画一覧 = Vec::with_capacity(反復回数);
     let mut 最後の標準出力 = String::new();
     for 回 in 1..=反復回数 {
         let 実行名の綴り = format!("night_x{光の件数}_{回}");
-        let 実行名 = 検収の実行名::生成する(&実行名の綴り)?;
-        let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
-        let 結果 = run::走らせる(&run::描画条件 {
-            シーン名: world::夜のシーン,
-            アセットルート: world::夜のアセットルート,
-            枚数: world::計測の枚数,
-            書き出し先: &書き出し先,
-            追加引数: &[
-                "--sky",
-                "--time-of-day",
-                world::夜の一日内秒,
-                "--local-light-count",
-                &件数文字列,
-                "--report-gpu-times",
-                "--report-cluster-assignment",
-            ],
-        })?;
-        let 区間の中央値 { 選別ms, シーン描画ms } = gpu_time::取り出す(結果.報告.本文())?;
+        let 結果 = 実行環境.描いて読み戻す(
+            検収の実行名::生成する(&実行名の綴り)?,
+            &run::起動指定を組み立てる(
+                world::夜のシーン,
+                world::計測の枚数,
+                &[
+                    "--sky",
+                    "--time-of-day",
+                    world::夜の一日内秒,
+                    "--local-light-count",
+                    &件数文字列,
+                    "--report-gpu-times",
+                    "--report-cluster-assignment",
+                ],
+            ),
+        )?;
+        let 区間の中央値 { 選別ms, シーン描画ms } = gpu_time::取り出す(結果.報告().本文())?;
         選別一覧.push(選別ms);
         シーン描画一覧.push(シーン描画ms);
-        最後の標準出力 = 結果.報告.本文().to_string();
+        最後の標準出力 = 結果.報告().本文().to_string();
     }
     let 割り当て = assignment::取り出す(&最後の標準出力)?;
     宣言された件数を確かめる(&割り当て, 光の件数)?;

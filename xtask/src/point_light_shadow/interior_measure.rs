@@ -4,9 +4,9 @@
 //! 対照を「影付きのまま灯を0件にした絵」でなく「灯を0件にした絵」で撮るのは、点光源の寄与がちょうど0の絵が要るためである。
 //! 外側の領域が対照と一致することが、壁を抜けていた漏光がちょうど0になったことの反証になる。
 
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
-use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
+use crate::acceptance::{描画検収の実行環境, 検収の実行名};
 use crate::multi_light_world::{run, world};
 
 use super::interior_region::屋内の判定領域の一覧;
@@ -25,10 +25,10 @@ pub(super) struct 屋内の測り {
     pub(super) 影なしの絵: PathBuf,
 }
 
-pub(super) fn 屋内を3条件で撮る(出力先: &Path) -> Result<屋内の測り, String> {
-    let (影付き, 影付きの絵) = 屋内を一条件で撮る(出力先, "hut_shadow_lit", &["--point-light-shadow-count", "3"])?;
-    let (影なし, 影なしの絵) = 屋内を一条件で撮る(出力先, "hut_shadow_none", &["--point-light-shadow-count", "0"])?;
-    let (対照, _) = 屋内を一条件で撮る(出力先, "hut_unlit", &["--local-light-count", "0"])?;
+pub(super) fn 屋内を3条件で撮る(実行環境: &描画検収の実行環境) -> Result<屋内の測り, String> {
+    let (影付き, 影付きの絵) = 屋内を一条件で撮る(実行環境, "hut_shadow_lit", &["--point-light-shadow-count", "3"])?;
+    let (影なし, 影なしの絵) = 屋内を一条件で撮る(実行環境, "hut_shadow_none", &["--point-light-shadow-count", "0"])?;
+    let (対照, _) = 屋内を一条件で撮る(実行環境, "hut_unlit", &["--local-light-count", "0"])?;
     let 三条件 = 影付き.into_iter().zip(影なし).zip(対照);
     let 領域一覧 = 屋内の判定領域の一覧
         .iter()
@@ -47,19 +47,16 @@ pub(super) fn 屋内を3条件で撮る(出力先: &Path) -> Result<屋内の測
     })
 }
 
-fn 屋内を一条件で撮る(出力先: &Path, 名前: &str, 追加引数: &[&str]) -> Result<(Vec<f64>, PathBuf), String> {
-    let 実行名 = 検収の実行名::生成する(名前)?;
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
-    let 結果 = run::走らせる(&run::描画条件 {
-        シーン名: world::屋内のシーン,
-        アセットルート: world::屋内のアセットルート,
-        枚数: world::絵の枚数,
-        書き出し先: &書き出し先,
-        追加引数,
-    })?;
+fn 屋内を一条件で撮る(
+    実行環境: &描画検収の実行環境, 名前: &str, 追加の選択肢: &[&str]
+) -> Result<(Vec<f64>, PathBuf), String> {
+    let 結果 = 実行環境.描いて読み戻す(
+        検収の実行名::生成する(名前)?,
+        &run::起動指定を組み立てる(world::屋内のシーン, world::絵の枚数, 追加の選択肢),
+    )?;
     let 平均輝度一覧 = 屋内の判定領域の一覧
         .iter()
-        .map(|領域| 矩形の平均輝度を採る(&結果.画像, &領域.矩形))
+        .map(|領域| 矩形の平均輝度を採る(結果.画像(), &領域.矩形))
         .collect::<Result<Vec<f64>, String>>()?;
-    Ok((平均輝度一覧, 書き出し先.目視用の絵へ変換する()?))
+    Ok((平均輝度一覧, 結果.書き出し先().目視用の絵へ変換する()?))
 }

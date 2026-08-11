@@ -45,20 +45,20 @@ fn 検収する() -> Result<String, String> {
     world::屋内の世界を用意する()?;
     world::夜の世界を用意する()?;
     crate::release_build::計測用に構築する("point-light-shadow")?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 屋内の実行環境 = world::屋内の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 夜の実行環境 = world::夜の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
-    let 屋内 = interior_measure::屋内を3条件で撮る(&出力先)?;
+    let 屋内 = interior_measure::屋内を3条件で撮る(&屋内の実行環境)?;
     summary::屋内の領域の表を表示する(&屋内.領域一覧);
     interior_judgment::屋内の領域を判定する(&屋内.領域一覧)?;
 
-    let 夜 = night_measure::夜の世界を影付きの件数3つで撮る(&出力先)?;
+    let 夜 = night_measure::夜の世界を影付きの件数3つで撮る(&夜の実行環境)?;
     summary::夜の領域の表を表示する(&夜.領域一覧);
     night_judgment::夜の領域を判定する(&夜.領域一覧)?;
     instrument_judgment::点光源の影の計器を判定する(&夜.影付き2件の計器)?;
     instrument_judgment::夜の世界の絞りが落としたかを判定する(&夜.影付き2件の計器)?;
 
-    let 計器一覧 = shadow_count_scale::影付きの件数を振って点光源の影の計器を採る(&出力先)?;
+    let 計器一覧 = shadow_count_scale::影付きの件数を振って点光源の影の計器を採る(&屋内の実行環境)?;
     summary::点光源の影の計器の表を表示する(&計器一覧);
     for 計器 in &計器一覧 {
         instrument_judgment::点光源の影の計器を判定する(計器)?;

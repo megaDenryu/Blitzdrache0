@@ -7,25 +7,49 @@
 //! 時間再構成と自動露出を外すのは、どちらもフレームをまたいで値を持ち越すためである。持ち越しがあると、
 //! 同一起動の中で撮った2枚が一致することを読み戻しの決定性の根拠にできない。
 
-pub(crate) const 夜のシーン: &str = "terrain_night_lights";
-pub(crate) const 夜のアセットルート: &str = "target/night_lights_assets";
+use std::path::PathBuf;
+
+use crate::acceptance::{
+    アプリの起こし方, 実行時アセットルート, 描画フレーム数, 描画検収の実行環境, 検収エラー, 検収シーン名
+};
+
+pub(crate) const 夜のシーン: 検収シーン名 = 検収シーン名::生成する("terrain_night_lights");
+const 夜のアセットルート: &str = "target/night_lights_assets";
 const 夜の実行時形式: &str = "target/night_lights_assets/terrain_night_lights.blitzasset";
 
-pub(crate) const 屋内のシーン: &str = "prop_stone_hut_interior";
-pub(crate) const 屋内のアセットルート: &str = "target/stone_hut_assets";
+pub(crate) const 屋内のシーン: 検収シーン名 = 検収シーン名::生成する("prop_stone_hut_interior");
+const 屋内のアセットルート: &str = "target/stone_hut_assets";
 const 屋内の実行時形式: &str = "target/stone_hut_assets/prop_stone_hut_interior.blitzasset";
+
+/// 夜の多光源の世界を起こす実行環境。リリース版の実行ファイルを直に起こすのは、GPU時間を測る条件を
+/// デバッグ版の実行と混ぜないためである。
+pub(crate) fn 夜の世界の実行環境を作る(出力ディレクトリ: PathBuf) -> Result<描画検収の実行環境, 検収エラー> {
+    実行環境を作る(夜のアセットルート, 出力ディレクトリ)
+}
+
+pub(crate) fn 屋内の世界の実行環境を作る(出力ディレクトリ: PathBuf) -> Result<描画検収の実行環境, 検収エラー> {
+    実行環境を作る(屋内のアセットルート, 出力ディレクトリ)
+}
+
+fn 実行環境を作る(アセットルート: &str, 出力ディレクトリ: PathBuf) -> Result<描画検収の実行環境, 検収エラー> {
+    描画検収の実行環境::作る(
+        アプリの起こし方::構築済みのリリース版を直に起動する,
+        実行時アセットルート::綴りから生成する(アセットルート),
+        出力ディレクトリ,
+    )
+}
 
 /// 夜の一日内秒。`cargo xtask cloth-night`と`cargo xtask sky-time`が使う代表時刻と同じ値である。
 pub(crate) const 夜の一日内秒: &str = "75600";
 
 /// 絵を撮る実行の枚数。静止した世界であり、間接照明の焼き上げが済むだけの枚数があれば足りる。
 /// 読み戻しの決定性も屋内の明暗の対照もGPU時間を読まないため、窓が満ちるまで回す必要が無い。
-pub(crate) const 絵の枚数: &str = "12";
+pub(crate) const 絵の枚数: 描画フレーム数 = 描画フレーム数::生成する(12);
 
 /// GPU時間を採る実行の枚数。パス別GPU時間の窓は直近60標本であり(正本は`crates/blitz_render/src/gpu_pass_timing.rs`の`窓の標本数`)、
 /// 読み取りは1フレームに1回、進行中フレーム数ぶん遅れて始まる。90枚なら窓は必ず満ち、窓の先頭は30枚目より後になるため、
 /// 間接照明と大気の焼き上げが済んだ定常状態だけが窓に入る。窓が満ちたことは入口が標本数で必ず確かめる。
-pub(crate) const 計測の枚数: &str = "90";
+pub(crate) const 計測の枚数: 描画フレーム数 = 描画フレーム数::生成する(90);
 
 pub(crate) fn 夜の世界を用意する() -> Result<(), String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::夜の多光源世界を既定で生成する() {

@@ -1,4 +1,5 @@
-//! 検収1条件ぶんのblitz_app起動と読み戻し画像の取り込み。担当するのは「距離区分の可視化の有無を受け取り、最終フレームの画素を返す」ことである。
+//! 検収1条件ぶんの起動の指定と、輝度の読み出し。受け取るのは距離区分の可視化の有無、返すのは実行環境へ渡す起動指定である。
+//! 起こす手順そのものは検収の共通語彙の実行環境が持つ。
 //!
 //! 描く世界は検証用地形世界である。一辺100メートルのチャンクが5×5に並ぶ長い受光面と、
 //! 各チャンクに同居する植生の群が反復する遮蔽物になる。地面は本番のストリーミング経路でしか現れないため、
@@ -20,19 +21,21 @@
 //! 同じ段差が出ることを実測で確かめた)。斜めに向けると稜線が境界曲線を横切り、列ごとの寄与が打ち消える。
 //! 時間再構成は`--no-taa`で外す。この入口の判定がバイト一致に依るため、フレームをまたぐ混合が入ると前のフレームの残りが絵に混ざる。
 
-use std::path::Path;
-use std::process::Command;
+use std::path::PathBuf;
 
-use crate::acceptance::{検収の実行名, 画素の番号, 終了時報告, 読み戻しの書き出し先, 読み戻し画像};
+use crate::acceptance::{
+    アプリの起こし方, アプリの起動指定, 実行時アセットルート, 描画フレーム数, 描画検収の実行環境, 検収エラー, 検収シーン名, 画素の番号, 読み戻し画像,
+};
 
 const アセットルート: &str = "target/terrain_assets";
-const シーン名: &str = "terrain_origin";
-const フレーム数: &str = "160";
+const シーン名: 検収シーン名 = 検収シーン名::生成する("terrain_origin");
+const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(160);
 const 先読み半径: &str = "2";
 const 容量上限バイト: &str = "16777216";
 const カメラ俯角差分度: &str = "-30";
 const カメラ方位差分度: &str = "45";
 const 一日内秒: &str = "61200";
+const 背景と光を外す選択肢: [&str; 3] = ["--no-sky", "--no-post", "--no-taa"];
 
 /// 8bitのRGB平均。輝度の段差はこの値で測る。依存も副作用も持たない計算であるため自由関数で置く。
 pub(super) fn 輝度を求める(画像: &読み戻し画像, 添字: usize) -> f64 {
@@ -40,36 +43,26 @@ pub(super) fn 輝度を求める(画像: &読み戻し画像, 添字: usize) -> 
     (f64::from(画素[0]) + f64::from(画素[1]) + f64::from(画素[2])) / 3.0
 }
 
-pub(super) fn 描画する(出力先: &Path, 出力名: &str, 距離区分を可視化する: bool) -> Result<読み戻し画像, String> {
-    let 実行名 = 検収の実行名::生成する(出力名)?;
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
-    let mut コマンド = Command::new("cargo");
-    コマンド
-        .args(["run", "-p", "blitz_app", "--", "--scene", シーン名])
-        .args(["--asset-root", アセットルート])
-        .args(["--frames", フレーム数])
-        .args(["--streaming", "--streaming-preload-radius", 先読み半径])
-        .args(["--streaming-ram-limit", 容量上限バイト])
-        .args(["--streaming-vram-limit", 容量上限バイト])
-        .args(["--camera-pitch", カメラ俯角差分度])
-        .args(["--camera-yaw", カメラ方位差分度])
-        .args(["--time-of-day", 一日内秒])
-        .args(["--no-sky", "--no-post", "--no-taa"]);
-    if 距離区分を可視化する {
-        コマンド.arg("--debug-cascade-bands");
+pub(super) fn 実行環境を作る(出力ディレクトリ: PathBuf) -> Result<描画検収の実行環境, 検収エラー> {
+    描画検収の実行環境::作る(
+        アプリの起こし方::毎回cargoに構築させて起動する,
+        実行時アセットルート::綴りから生成する(アセットルート),
+        出力ディレクトリ,
+    )
+}
+
+pub(super) fn 起動指定を組み立てる(距離区分を可視化するか: bool) -> アプリの起動指定 {
+    let 指定 = アプリの起動指定::シーンと枚数を決める(シーン名, フレーム数)
+        .値を持つ選択肢を足す("--streaming-preload-radius", 先読み半径)
+        .選択肢を足す("--streaming")
+        .値を持つ選択肢を足す("--streaming-ram-limit", 容量上限バイト)
+        .値を持つ選択肢を足す("--streaming-vram-limit", 容量上限バイト)
+        .値を持つ選択肢を足す("--camera-pitch", カメラ俯角差分度)
+        .値を持つ選択肢を足す("--camera-yaw", カメラ方位差分度)
+        .値を持つ選択肢を足す("--time-of-day", 一日内秒)
+        .選択肢をまとめて足す(&背景と光を外す選択肢);
+    if 距離区分を可視化するか {
+        return 指定.選択肢を足す("--debug-cascade-bands");
     }
-    コマンド.arg("--dump-frame").arg(書き出し先.起動引数として渡す綴り());
-    let 出力 = コマンド
-        .output()
-        .map_err(|誤り| format!("blitz_appを起動できなかった({出力名}): {誤り}"))?;
-    let 報告 = 終了時報告::取り込む(
-        書き出し先.実行名(),
-        String::from_utf8_lossy(&出力.stdout).into_owned(),
-        String::from_utf8_lossy(&出力.stderr).into_owned(),
-    );
-    if !出力.status.success() {
-        return Err(format!("blitz_appが{}で失敗した({出力名})", 出力.status));
-    }
-    報告.検証層の指摘が零件であることを確かめる()?;
-    Ok(読み戻し画像::読み込む(&書き出し先)?)
+    指定
 }

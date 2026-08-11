@@ -12,6 +12,8 @@ mod judgment;
 mod run;
 
 use std::path::{Path, PathBuf};
+
+use crate::acceptance::{描画検収の実行環境, 検収の1回の実行, 検収の実行名};
 use std::process::ExitCode;
 
 const 出力ディレクトリ: &str = "target/cloth_shadow_order";
@@ -40,19 +42,18 @@ fn 検収する() -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
     let 入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
 
-    let 読込順1回目 = run::描画する(&出力先, "load_order_1", &入口, run::条件::布あり読込順)?;
-    let 読込順2回目 = run::描画する(&出力先, "load_order_2", &入口, run::条件::布あり読込順)?;
-    let 読込順の布なし = run::描画する(&出力先, "load_order_no_cloth", &入口, run::条件::布なし読込順)?;
-    let 逆順 = run::描画する(&出力先, "reverse_order", &入口, run::条件::布あり逆順)?;
-    let 逆順の布なし = run::描画する(&出力先, "reverse_order_no_cloth", &入口, run::条件::布なし逆順)?;
+    let 読込順1回目 = 描く(&実行環境, "load_order_1", &入口, run::条件::布あり読込順)?;
+    let 読込順2回目 = 描く(&実行環境, "load_order_2", &入口, run::条件::布あり読込順)?;
+    let 読込順の布なし = 描く(&実行環境, "load_order_no_cloth", &入口, run::条件::布なし読込順)?;
+    let 逆順 = 描く(&実行環境, "reverse_order", &入口, run::条件::布あり逆順)?;
+    let 逆順の布なし = 描く(&実行環境, "reverse_order_no_cloth", &入口, run::条件::布なし逆順)?;
 
-    let 基準の影 = judgment::布影領域を求める(&読込順1回目, &読込順の布なし)?;
-    let 再現の影 = judgment::布影領域を求める(&読込順2回目, &読込順の布なし)?;
-    let 逆順の影 = judgment::布影領域を求める(&逆順, &逆順の布なし)?;
+    let 基準の影 = judgment::布影領域を求める(読込順1回目.画像(), 読込順の布なし.画像())?;
+    let 再現の影 = judgment::布影領域を求める(読込順2回目.画像(), 読込順の布なし.画像())?;
+    let 逆順の影 = judgment::布影領域を求める(逆順.画像(), 逆順の布なし.画像())?;
     if 基準の影.画素数() < 布影の下限画素数 {
         return Err(format!(
             "布の影が{}画素しか出ていない(下限{布影の下限画素数}): 走査順の入替を比べる対象が無く検収が成立しない",
@@ -70,12 +71,18 @@ fn 検収する() -> Result<String, String> {
         ));
     }
 
-    let 読込順png = crate::raw_png::変換する(&出力先.join("load_order_1"))?;
-    let 逆順png = crate::raw_png::変換する(&出力先.join("reverse_order"))?;
+    let 読込順png = 読込順1回目.書き出し先().目視用の絵へ変換する()?;
+    let 逆順png = 逆順.書き出し先().目視用の絵へ変換する()?;
     Ok(format!(
         "布の影が覆う{}画素のうち、走査順の入替で食い違ったのは{走査順の差}画素(同一条件2回は{再現性の床}画素、許容{許容差}画素)、絵は{}と{}",
         基準の影.画素数(),
         読込順png.display(),
         逆順png.display()
     ))
+}
+
+fn 描く(
+    実行環境: &描画検収の実行環境, 実行名の綴り: &str, シェーダー入口: &Path, 条件: run::条件
+) -> Result<検収の1回の実行, String> {
+    Ok(実行環境.描いて読み戻す(検収の実行名::生成する(実行名の綴り)?, &run::起動指定を組み立てる(条件, シェーダー入口))?)
 }

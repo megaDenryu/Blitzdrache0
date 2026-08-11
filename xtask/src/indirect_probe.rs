@@ -56,21 +56,20 @@ fn 検収する() -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
-    let 拡散 = conditions::条件を判定する(&出力先, "diffuse", "diffuse", 夜の一日内秒)?;
-    let 段別 = conditions::条件を判定する(&出力先, "specular_level", "specular-level", 夜の一日内秒)?;
-    let 面別 = conditions::条件を判定する(&出力先, "specular_face", "specular-face", 夜の一日内秒)?;
-    let 面別の別方位 = conditions::条件を判定する(&出力先, "specular_face_azimuth", "specular-face", 方位の違う夜の一日内秒)?;
-    let 縦結合 = conditions::条件を判定する(&出力先, "vertical", "vertical", 夜の一日内秒)?;
+    let 拡散 = conditions::条件を判定する(&実行環境, "diffuse", "diffuse", 夜の一日内秒)?;
+    let 段別 = conditions::条件を判定する(&実行環境, "specular_level", "specular-level", 夜の一日内秒)?;
+    let 面別 = conditions::条件を判定する(&実行環境, "specular_face", "specular-face", 夜の一日内秒)?;
+    let 面別の別方位 = conditions::条件を判定する(&実行環境, "specular_face_azimuth", "specular-face", 方位の違う夜の一日内秒)?;
+    let 縦結合 = conditions::条件を判定する(&実行環境, "vertical", "vertical", 夜の一日内秒)?;
 
     let 黒に落ちた金属 = judgment::金属が黒に落ちることを検査する(&拡散.行一覧, &段別.行一覧)?;
     judgment::段が整数であることを検査する(&段別.行一覧)?;
     let 面の最小余裕 = face_judgment::面の余裕を検査する(&面別.行一覧)?.min(face_judgment::面の余裕を検査する(&面別の別方位.行一覧)?);
     let 覆った面 = face_judgment::立方体の6面を覆うことを検査する(&[&面別.行一覧, &面別の別方位.行一覧])?;
 
-    let 帯 = conditions::破綻防止帯を測る(&出力先, 昼の一日内秒)?;
+    let 帯 = conditions::破綻防止帯を測る(&実行環境, 昼の一日内秒)?;
     Ok(summary::要約を組む(&summary::要約の材料 {
         拡散: &拡散,
         段別: &段別,

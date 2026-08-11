@@ -15,7 +15,13 @@ mod judgment;
 mod run;
 
 use std::path::PathBuf;
+
+use crate::acceptance::検収の実行名;
 use std::process::ExitCode;
+
+/// 2条件の書き出しの基準名。絵のファイル名になり、失敗の文面もこの名前で実行を名指す。
+const 本番の実行名: 検収の実行名 = 検収の実行名::定数から生成する("scene");
+const 可視化の実行名: 検収の実行名 = 検収の実行名::定数から生成する("bands");
 
 const 出力ディレクトリ: &str = "target/csm_seam";
 /// 境界の数。距離区分数4に対して3つである(xtaskはエンジンのクレートへ依存しないため値を二重に持つ)。
@@ -44,22 +50,22 @@ fn 検収する() -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
-    let 本番 = run::描画する(&出力先, "scene", false)?;
-    let 可視化 = run::描画する(&出力先, "bands", true)?;
-    if !本番.寸法が同じか(&可視化) {
+    let 本番の実行 = 実行環境.描いて読み戻す(本番の実行名, &run::起動指定を組み立てる(false))?;
+    let 可視化の実行 = 実行環境.描いて読み戻す(可視化の実行名, &run::起動指定を組み立てる(true))?;
+    let (本番, 可視化) = (本番の実行.画像(), 可視化の実行.画像());
+    if !本番.寸法が同じか(可視化) {
         return Err("本番と可視化の読み戻し寸法が違う".to_string());
     }
-    let 地図 = band_map::距離区分の地図::読み取る(&可視化);
+    let 地図 = band_map::距離区分の地図::読み取る(可視化);
 
     let 距離区分別の影画素数 = judgment::全距離区分に影があることを検査する(&地図)?;
     let 境界の影 = judgment::境界の両側に影があることを検査する(&地図)?;
-    let 段差 = judgment::境界の輝度段差を検査する(&地図, &本番)?;
+    let 段差 = judgment::境界の輝度段差を検査する(&地図, 本番)?;
 
-    let 本番png = crate::raw_png::変換する(&出力先.join("scene"))?;
-    let 可視化png = crate::raw_png::変換する(&出力先.join("bands"))?;
+    let 本番png = 本番の実行.書き出し先().目視用の絵へ変換する()?;
+    let 可視化png = 可視化の実行.書き出し先().目視用の絵へ変換する()?;
     let 段差の記述: Vec<String> = 段差
         .iter()
         .enumerate()

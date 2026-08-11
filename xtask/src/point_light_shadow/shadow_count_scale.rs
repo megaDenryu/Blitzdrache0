@@ -5,9 +5,7 @@
 //! 撮る枚数をGPU時間の窓が満ちる枚数にするのは、件数ごとのp50を並べて読めるようにするためである。
 //! 窓が満ちていない実行のp50は「直近60フレームの中央値」ではなく、撮った枚数ぶんだけの中央値になる。
 
-use std::path::Path;
-
-use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
+use crate::acceptance::{描画検収の実行環境, 検収の実行名};
 use crate::multi_light_world::{run, world};
 
 use super::instrument::{点光源の影の計器, 点光源の影の計器を取り出す};
@@ -15,30 +13,33 @@ use super::instrument::{点光源の影の計器, 点光源の影の計器を取
 /// 振る件数。屋内の世界が置く灯は3件であり、0件がこの世界の影なしの対照である。
 pub(super) const 振る影付きの灯の件数一覧: [usize; 4] = [0, 1, 2, 3];
 
-pub(super) fn 影付きの件数を振って点光源の影の計器を採る(出力先: &Path) -> Result<Vec<点光源の影の計器>, String> {
+pub(super) fn 影付きの件数を振って点光源の影の計器を採る(
+    実行環境: &描画検収の実行環境,
+) -> Result<Vec<点光源の影の計器>, String> {
     振る影付きの灯の件数一覧
         .iter()
-        .map(|件数| 影付きの一件数で計器を採る(出力先, *件数))
+        .map(|件数| 影付きの一件数で計器を採る(実行環境, *件数))
         .collect()
 }
 
-fn 影付きの一件数で計器を採る(出力先: &Path, 影付きの件数: usize) -> Result<点光源の影の計器, String> {
+fn 影付きの一件数で計器を採る(
+    実行環境: &描画検収の実行環境, 影付きの件数: usize
+) -> Result<点光源の影の計器, String> {
     let 件数文字列 = 影付きの件数.to_string();
     let 実行名の綴り = format!("hut_instrument_x{影付きの件数}");
-    let 実行名 = 検収の実行名::生成する(&実行名の綴り)?;
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
-    let 結果 = run::走らせる(&run::描画条件 {
-        シーン名: world::屋内のシーン,
-        アセットルート: world::屋内のアセットルート,
-        枚数: world::計測の枚数,
-        書き出し先: &書き出し先,
-        追加引数: &[
-            "--point-light-shadow-count",
-            &件数文字列,
-            "--report-gpu-times",
-            "--report-draw-issue",
-            "--report-memory",
-        ],
-    })?;
-    点光源の影の計器を取り出す(結果.報告.本文(), 影付きの件数)
+    let 結果 = 実行環境.描いて読み戻す(
+        検収の実行名::生成する(&実行名の綴り)?,
+        &run::起動指定を組み立てる(
+            world::屋内のシーン,
+            world::計測の枚数,
+            &[
+                "--point-light-shadow-count",
+                &件数文字列,
+                "--report-gpu-times",
+                "--report-draw-issue",
+                "--report-memory",
+            ],
+        ),
+    )?;
+    点光源の影の計器を取り出す(結果.報告().本文(), 影付きの件数)
 }

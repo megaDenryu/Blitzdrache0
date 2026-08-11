@@ -43,12 +43,12 @@ fn 検収する() -> Result<String, String> {
     world::夜の世界を用意する()?;
     world::屋内の世界を用意する()?;
     crate::release_build::計測用に構築する("cluster-lights")?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 夜の実行環境 = world::夜の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 屋内の実行環境 = world::屋内の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
-    let 夜の絵 = determinism::確かめる(&出力先)?;
-    let 結果一覧 = scale::測る(&出力先)?;
-    let 屋内 = interior::測る(&出力先)?;
+    let 夜の絵 = determinism::確かめる(&夜の実行環境)?;
+    let 結果一覧 = scale::測る(&夜の実行環境)?;
+    let 屋内 = interior::測る(&屋内の実行環境)?;
     interior_judgment::明るさの比を判定する(屋内.灯ありの平均輝度, 屋内.灯なしの平均輝度)?;
     summary::表を表示する(&結果一覧);
     Ok(summary::要約を組む(&結果一覧, &屋内, &夜の絵))
