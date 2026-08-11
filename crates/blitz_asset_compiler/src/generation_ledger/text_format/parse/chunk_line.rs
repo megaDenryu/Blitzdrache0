@@ -7,8 +7,8 @@ use super::super::super::content_hash::内容ハッシュ;
 use super::super::super::error::生成台帳エラー;
 use super::super::チャンクの欄;
 
-/// 見出しが占める行数。チャンクの行の行番号はこの次から始まる。
-const 見出しが占める行数: usize = 4;
+/// 形式宣言と見出しが占める行数。チャンクの行の行番号はこの次から始まる。
+const 見出しが占める行数: usize = 5;
 
 pub(super) fn チャンクの行一覧を読む(行一覧: &[&str]) -> Result<BTreeMap<(i32, i32), 内容ハッシュ>, 生成台帳エラー> {
     let mut 記録 = BTreeMap::new();
