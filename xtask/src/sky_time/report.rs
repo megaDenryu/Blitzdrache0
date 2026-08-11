@@ -8,6 +8,7 @@ use std::path::Path;
 
 use super::moment;
 use super::stats::領域別実測;
+use crate::acceptance::検収エラー;
 
 pub(super) fn 表を出す(名前一覧: &[&str], 実測一覧: &[領域別実測]) {
     println!("時刻別の領域実測(空の平均色、明部p95、明部p99、暗部画素数、地形の黒潰れ・飽和・全成分0の画素数):");
@@ -20,14 +21,23 @@ pub(super) fn 表を出す(名前一覧: &[&str], 実測一覧: &[領域別実�
     }
 }
 
-pub(super) fn 絵を書き出す(出力先: &Path) -> Result<String, String> {
+pub(super) fn 絵を書き出す(出力先: &Path) -> Result<String, 検収エラー> {
     let ファイル名一覧 = moment::代表時刻一覧
         .iter()
         .map(|時刻| 時刻.ファイル名)
         .chain([moment::太陽円盤のファイル名, moment::太陽円盤対照のファイル名]);
     let mut 置き場 = Vec::new();
     for ファイル名 in ファイル名一覧 {
-        置き場.push(crate::raw_png::変換する(&出力先.join(ファイル名))?.display().to_string());
+        置き場.push(一枚を目視用の絵へ変換する(&出力先.join(ファイル名))?.display().to_string());
     }
     Ok(置き場.join("、"))
+}
+
+/// 変換の失敗を検収エラーの枝へ載せる。変換が外部のツールの起動であり、失敗の種類をこちらで数え上げられないため、
+/// 枝は理由を文で持つ。
+fn 一枚を目視用の絵へ変換する(書き出し先: &Path) -> Result<std::path::PathBuf, 検収エラー> {
+    crate::raw_png::変換する(書き出し先).map_err(|理由| 検収エラー::目視用の絵へ変換できなかった {
+        書き出し先: 書き出し先.to_path_buf(),
+        理由,
+    })
 }
