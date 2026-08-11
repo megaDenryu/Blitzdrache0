@@ -58,7 +58,7 @@ pub(crate) struct 起動設定 {
     /// `--no-shadow-casters`指定でfalse。既定はtrue。falseは地形も個体も布も距離区分のパスへ積まないため、シャドウパスに残る費用が深度配列の消去と保存だけになる。個体だけを外す指定との差が地形の描画費用になる。
     pub(crate) 影キャスター全体有効: bool,
     /// `--lod-probe-step <メートル>`指定でSome。1フレームおきにカメラをZ方向へこの距離だけ動かして戻し、段の境界をまたぐ往復を作る。
-    pub(crate) 個体詳細段探査刻み: Option<f32>,
+    pub(crate) 個体詳細段探査刻み: Option<blitz_math::メートル>,
     /// `--dev-ui`指定でtrue。既定はfalse(開発用UIの起動時有効化、判断34。実行中はF3でも切替可能)。
     pub(crate) 開発ui初期有効: bool,
     /// シーンの画素段が本番の色の代わりに出す診断。`--debug-cascade-bands`が距離区分の可視化を、`--debug-shadow-loss`が影可視度と受光距離帯の計器を選ぶ。既定は出さない。
@@ -73,9 +73,9 @@ pub(crate) struct 起動設定 {
     /// `--no-post`指定でfalse。既定はtrue(HDR中間バッファ+明るさの圧縮パス、判断38・39)。falseならシーンが直接スワップチェーンへ描く構成に戻る(DoD「チェーンの追加・削除可能」の機械実証)。
     pub(crate) ポスト処理有効: bool,
     /// `--exposure <倍率>`指定で変更。既定は1.0(明るさの圧縮前にHDR輝度へ掛ける露出倍率、判断39)。
-    pub(crate) 露出: f32,
+    pub(crate) 露出: super::露出倍率,
     /// `--blend <0..1>`指定で変更。既定は0.0(アニメーションクリップ2本のブレンド係数、判断45)。
-    pub(crate) ブレンド: f32,
+    pub(crate) ブレンド: super::アニメーションのブレンド係数,
     /// 布シミュレーションの方式(判断52・56)。`--cloth`=吊るし布(全シーン可)、`--cloth-cape`=マント(fox限定、キャラ追従)。既定はなし。
     pub(crate) 布モード: 布モード,
     /// `--report-display-timing`指定でtrue。提示IDと提示待機で実表示間隔を測る。

@@ -71,7 +71,7 @@ impl アプリ {
             布プリセット: None,
             掴み中だった: false,
             アニメーション: None,
-            アニメ時刻秒: 0.0,
+            アニメ時刻: blitz_math::秒::生成する(0.0),
             スモーク基準画像: None,
             ストリーミング,
             可視判定: super::visibility::可視判定配線::生成する(super::visibility::選別のつまみ {

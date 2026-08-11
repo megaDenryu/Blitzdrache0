@@ -22,7 +22,13 @@ impl 画面へ重ねる内容 {
     }
 
     /// そのフレームに重ねるものを順に描く。開発パネルを後に描くのは、ゲームの画面と重なる位置でも計器が読めるようにするためである。
-    pub(super) fn 順に描く(&self, ctx: &egui::Context, 開発パネルを表示するか: bool, 露出: &mut f32, ブレンド: &mut f32) {
+    pub(super) fn 順に描く(
+        &self,
+        ctx: &egui::Context,
+        開発パネルを表示するか: bool,
+        露出: &mut crate::cli::露出倍率,
+        ブレンド: &mut crate::cli::アニメーションのブレンド係数,
+    ) {
         if let Some(表示内容) = self.ゲーム画面 {
             game_screen::内容を描く(ctx, 表示内容);
         }

@@ -3,8 +3,11 @@
 //! 英語表記(egui既定フォントはCJKグリフを持たないため)。
 
 use super::stats::開発UI統計;
+use crate::cli::{アニメーションのブレンド係数, 露出倍率};
 
-pub(super) fn 内容を描く(ctx: &egui::Context, 統計: &開発UI統計, 露出: &mut f32, ブレンド: &mut f32) {
+pub(super) fn 内容を描く(
+    ctx: &egui::Context, 統計: &開発UI統計, 露出: &mut 露出倍率, ブレンド: &mut アニメーションのブレンド係数
+) {
     egui::Window::new("Blitzdrache0 dev").resizable(false).show(ctx, |ui| {
         // フレーム間隔はFIFO提示のvsync待ちを含むため、60Hz環境では約16.7msが基準になるが、OS合成や提示期限超過で倍周期になり得る。
         // GPUの実仕事量はパス別GPU時間の合計で読む(判断50・67: 両者を分離して診断する)。
@@ -16,10 +19,12 @@ pub(super) fn 内容を描く(ctx: &egui::Context, 統計: &開発UI統計, 露�
         ui.label(format!("GPU合計: {gpu合計:.4} ms"));
         ui.label(format!("validation issues: {}", 統計.validation件数));
         ui.separator();
-        // 露出は倍率のため対数スケールで動かす(0.25〜4.0で上下2段の明暗を確認できる)。
-        ui.add(egui::Slider::new(露出, 0.25..=4.0).logarithmic(true).text("exposure"));
+        // 露出は倍率のため対数スケールで動かす。動かせる範囲は値オブジェクトが持つ。
+        let 露出の範囲 = 露出倍率::スライダーの範囲();
+        ui.add(egui::Slider::new(露出.スライダーへ貸す(), 露出の範囲).logarithmic(true).text("exposure"));
         // アニメーションクリップ2本のブレンド係数(判断45)。スキン無しシーンでは効果を持たない。
-        ui.add(egui::Slider::new(ブレンド, 0.0..=1.0).text("blend"));
+        let ブレンドの範囲 = アニメーションのブレンド係数::スライダーの範囲();
+        ui.add(egui::Slider::new(ブレンド.スライダーへ貸す(), ブレンドの範囲).text("blend"));
         ui.separator();
         ui.label("GPU time per pass (moving average):");
         if 統計.パス別gpu時間.is_empty() {

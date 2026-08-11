@@ -71,20 +71,16 @@ pub(super) fn 先読み半径引数を処理する(引数: &mut Iter<String>) ->
     Ok(半径)
 }
 
-pub(super) fn exposure引数を処理する(引数: &mut Iter<String>) -> Result<f32, 起動引数エラー> {
+pub(super) fn exposure引数を処理する(引数: &mut Iter<String>) -> Result<super::露出倍率, 起動引数エラー> {
     let 値 = 次の値を読む(引数, "--exposure", 起動引数エラー::露出不正)?;
-    let 露出 = 値.parse::<f32>().map_err(|_| 起動引数エラー::露出不正(値.clone()))?;
-    if !露出.is_finite() || 露出 <= 0.0 {
-        return Err(起動引数エラー::露出不正(format!("正の有限値でない: {値}")));
-    }
-    Ok(露出)
+    let 実数 = 値.parse::<f32>().map_err(|_| 起動引数エラー::露出不正(値.clone()))?;
+    super::露出倍率::生成する(実数).map_err(|誤り| 起動引数エラー::露出不正(誤り.to_string()))
 }
 
-pub(super) fn blend引数を処理する(引数: &mut Iter<String>) -> Result<f32, 起動引数エラー> {
+pub(super) fn blend引数を処理する(
+    引数: &mut Iter<String>,
+) -> Result<super::アニメーションのブレンド係数, 起動引数エラー> {
     let 値 = 次の値を読む(引数, "--blend", 起動引数エラー::ブレンド不正)?;
-    let ブレンド = 値.parse::<f32>().map_err(|_| 起動引数エラー::ブレンド不正(値.clone()))?;
-    if !(0.0..=1.0).contains(&ブレンド) {
-        return Err(起動引数エラー::ブレンド不正(format!("0から1の範囲でない: {値}")));
-    }
-    Ok(ブレンド)
+    let 実数 = 値.parse::<f32>().map_err(|_| 起動引数エラー::ブレンド不正(値.clone()))?;
+    super::アニメーションのブレンド係数::生成する(実数).map_err(|誤り| 起動引数エラー::ブレンド不正(誤り.to_string()))
 }

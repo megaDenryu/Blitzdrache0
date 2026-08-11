@@ -71,8 +71,8 @@ impl 画面へ重ねるUI {
         window: &Window,
         レンダラー: &mut blitz_render::レンダラー,
         内容: 画面へ重ねる内容,
-        露出: &mut f32,
-        ブレンド: &mut f32,
+        露出: &mut crate::cli::露出倍率,
+        ブレンド: &mut crate::cli::アニメーションのブレンド係数,
     ) -> Result<Option<blitz_render::UI描画データ>, 起動エラー> {
         if 内容.重ねるものが無いか(self.開発パネルを表示するか) {
             return Ok(None);

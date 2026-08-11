@@ -2,6 +2,8 @@
 //! 型定義は`types`、値を伴う引数の個別処理は`value_args`、引数一覧から起動要求を組み立てる工程は`parse`に委ねる。
 
 #[cfg(test)]
+mod adjustable_amount_tests;
+#[cfg(test)]
 mod cli_tests;
 #[cfg(test)]
 mod frame_dump_args_tests;
@@ -18,11 +20,13 @@ mod report_only_request_tests;
 #[cfg(test)]
 mod time_args_tests;
 
+mod animation_blend;
 mod argument_error;
 mod auto_exposure_probe_args;
 mod depth_prepass_args;
 mod draw_object_layout;
 mod draw_object_order;
+mod exposure_scale;
 mod game_operation_source;
 mod game_selection;
 mod ibl_step_scan_args;
@@ -54,9 +58,11 @@ mod time_of_day_settings;
 mod types;
 mod value_args;
 mod verification_plan;
+pub(crate) use animation_blend::アニメーションのブレンド係数;
 pub(crate) use argument_error::起動引数エラー;
 pub(crate) use draw_object_layout::描画対象の並べ方;
 pub(crate) use draw_object_order::描画対象の走査順;
+pub(crate) use exposure_scale::露出倍率;
 pub(crate) use game_operation_source::ゲーム操作の出どころ;
 pub(crate) use game_selection::遊ぶゲームの指定;
 pub(crate) use launch_request::起動要求;
