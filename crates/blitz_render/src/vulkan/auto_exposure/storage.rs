@@ -13,7 +13,8 @@ use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 /// ヒストグラムのバッファが持つ要素数。ビンの本数に、0以下の枠と非有限の枠を足した数である。
-/// 注意: `shaders/auto_exposure_scale.slang`の`histogramSlotCount`と同じ値でなければならない。
+/// 注意: `shaders/auto_exposure_scale.slang`の`histogramSlotCount`と同じ値でなければならない。この式そのものは
+/// `cargo xtask conform`の定数一致検査が読めないため、検査はビンの本数と同slangの`nonPositiveSlotIndex`の一致で代わりを果たす。
 pub(crate) const ヒストグラムの要素数: usize = ビン数 + 2;
 /// ヒストグラムのバッファのバイト数。1要素は32ビットの件数である。
 pub(crate) fn ヒストグラムのバイト数() -> u64 {
