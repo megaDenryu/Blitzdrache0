@@ -10,7 +10,7 @@
 
 use std::path::Path;
 
-use crate::map_seed::マップ生成の乱数の種;
+use blitz_asset_compiler::マップ生成の乱数の種;
 
 /// 生成に使った種を書き出すファイルの名前。
 const 種を書き出すファイルの名前: &str = "map_seed.txt";

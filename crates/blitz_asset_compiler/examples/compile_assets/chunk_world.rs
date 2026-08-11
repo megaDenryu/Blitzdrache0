@@ -10,6 +10,7 @@ use blitz_asset_compiler::チャンク目録ソースを読み込む;
 use blitz_engine::{カタログ, チャンク座標, チャンク目録, チャンク目録を実行時形式へ格納する};
 
 use super::catalog::コンパイル対象;
+use super::chunk_ledger::台帳での扱い;
 use super::world::対象世界;
 
 const 実行時目録ファイル名: &str = "chunk_directory.blitzchunks";
@@ -47,6 +48,7 @@ pub(super) fn カタログへ登録する(
             所有チャンク: 項目.チャンク(),
             種別: 世界.チャンクのソース種別(同居植生個体数),
             id: 項目.アセット().clone(),
+            台帳での扱い: 台帳での扱い::チャンクとして記録する,
         });
         チャンクごとのソース一覧.push((項目.チャンク(), ソースパス));
     }

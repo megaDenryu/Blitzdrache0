@@ -16,20 +16,21 @@
 //! それらをベースカラーに持つ板2枚のglTFと1チャンクの目録ソースを書き出す。
 //!
 //! `--game-map-seed <数>`(`cargo xtask gen-game-map --seed <数>`)では場所巡りの世界だけを書き出す。行き先は
-//! assets/fox_tour_world/ であり、種から決めた9チャンク分の高さ格子と目録ソースと目的地の目印の柱のglTFと、
-//! 生成に使った種そのものを書いたファイルである。
+//! ソースルート(既定はassets/、`--source-root <パス>`で差し替える)の下のfox_tour_world/であり、種から決めた
+//! 9チャンク分の高さ格子と目録ソースと目的地の目印の柱のglTFと、生成に使った種そのものを書いたファイルと、
+//! 焼き直しを省くための生成台帳である。
 //!
 //! どちらの実行もリポジトリルートを作業ディレクトリとする。
 
 mod chunk_world;
 mod directory_source;
 mod fox_tour_world;
+mod generation_arguments;
 mod geometry;
 mod gltf_json;
 mod indirect_probe_geometry;
 mod indirect_probe_gltf_json;
 mod indirect_probe_plates;
-mod map_seed;
 mod multi_material_geometry;
 mod multi_material_gltf_json;
 mod night_lights_world;
@@ -48,7 +49,9 @@ mod village_world;
 
 use std::path::Path;
 
-use map_seed::マップ生成の乱数の種;
+use blitz_asset_compiler::マップ生成の乱数の種;
+
+use generation_arguments::書き出す対象;
 
 fn main() {
     if let Err(誤り) = 実行する() {
@@ -59,17 +62,22 @@ fn main() {
 
 fn 実行する() -> Result<(), String> {
     let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
-    match map_seed::引数一覧から種を読む(&引数一覧)? {
-        Some(種) => 場所巡りの世界を書き出す(種),
-        None => verification_worlds::一式を書き出す(),
+    match generation_arguments::引数一覧から書き出す対象を読む(&引数一覧)? {
+        書き出す対象::場所巡りの世界 { 種, ソースルート } => 場所巡りの世界を書き出す(&ソースルート, 種),
+        書き出す対象::検証用の世界一式 => verification_worlds::一式を書き出す(),
     }
 }
 
-fn 場所巡りの世界を書き出す(種: マップ生成の乱数の種) -> Result<(), String> {
-    let 出力先 = Path::new("assets/fox_tour_world");
-    ディレクトリを作る(出力先)?;
-    fox_tour_world::書き出す(出力先, 種)?;
-    println!("[generate_source_assets] {}へ種{}から生成完了", 出力先.display(), 種.値());
+fn 場所巡りの世界を書き出す(ソースルート: &Path, 種: マップ生成の乱数の種) -> Result<(), String> {
+    let 出力先 = ソースルート.join(fox_tour_world::世界のディレクトリ名);
+    ディレクトリを作る(&出力先)?;
+    let 勘定 = fox_tour_world::書き出す(&出力先, 種)?;
+    println!(
+        "[generate_source_assets] {}へ種{}から生成完了、{}",
+        出力先.display(),
+        種.値(),
+        勘定.報告の行を作る()
+    );
     Ok(())
 }
 

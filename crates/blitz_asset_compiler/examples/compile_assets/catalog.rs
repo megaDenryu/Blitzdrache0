@@ -5,6 +5,7 @@ use std::path::{Path, PathBuf};
 
 use blitz_engine::{アセットID, カタログ, チャンク座標};
 
+use super::chunk_ledger::台帳での扱い;
 use super::source_location::{self, ソースの基準};
 use super::world::対象世界;
 
@@ -32,6 +33,7 @@ pub(super) struct コンパイル対象 {
     pub(super) 所有チャンク: チャンク座標,
     pub(super) 種別: ソース種別,
     pub(super) 出力パス: PathBuf,
+    pub(super) 台帳での扱い: 台帳での扱い,
 }
 
 pub(super) fn 構築する(
@@ -66,6 +68,7 @@ pub(super) fn 構築する(
             所有チャンク: 原点チャンク,
             種別: 定義.種別,
             出力パス: 出力ルート.join(format!("{}.blitzasset", 定義.名前)),
+            台帳での扱い: 台帳での扱い::毎回焼く,
         });
     }
     Ok((カタログ, 対象一覧))

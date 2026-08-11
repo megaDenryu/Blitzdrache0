@@ -3,3 +3,6 @@
 # 標準サンプルglTF(DamagedHelmet等)。xtask fetch-assetsで取得する（ネット由来のためコミットしない）
 assets/samples/
 opencode.json
+
+# 生成台帳。生成器の実行ファイルの内容ハッシュを持つため機械ごとに中身が違い、ソースではなく生成の途中状態である
+generation_ledger.txt

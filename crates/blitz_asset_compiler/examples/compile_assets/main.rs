@@ -1,8 +1,10 @@
 //! `cargo xtask compile-assets`から呼ばれる実行時アセット生成器。
 //! 1回の実行が焼くのは1つのチャンク世界であり、出力ルートには1つのカタログと1つのチャンク目録が並ぶ。
-//! どのソース種別をどのコンパイル工程が焼くかの割り当ては`compile_target`が持つ。
+//! どのソース種別をどのコンパイル工程が焼くかの割り当ては`compile_target`が持ち、前回の焼き上がりから変わっていない
+//! チャンクを据え置く増分の判定は`chunk_ledger`が持つ。
 
 mod catalog;
+mod chunk_ledger;
 mod chunk_world;
 mod compile_target;
 mod height_field;
@@ -22,6 +24,9 @@ use world::対象世界;
 /// コンパイルのライブラリ関数は方針を必須の引数で受け取る。ブロック圧縮を渡すのは`cargo xtask texture-compression`だけである
 /// (参照: `_doc/設計/テクスチャのブロック圧縮と縮小段生成.md`「判断i」)。
 const 既定のテクスチャ格納方針: テクスチャ格納方針 = テクスチャ格納方針::全てRGBA8;
+
+/// 出力ルートに置く実行時カタログのファイル名。増分の判定が前回のカタログを読むため、書く側と読む側でこの1つを見る。
+pub(crate) const 実行時カタログのファイル名: &str = "catalog.blitzcatalog";
 
 fn main() {
     if let Err(誤り) = 実行する() {
@@ -46,14 +51,8 @@ fn 実行する() -> Result<(), String> {
     let (mut カタログ, mut 対象一覧) = catalog::構築する(ソースルート, 出力ルート, 世界)?;
     let 取り込み結果 = chunk_world::カタログへ登録する(ソースルート, 出力ルート, 世界, 同居植生個体数, &mut カタログ, &mut 対象一覧)?;
     let mut 実行時カタログ = カタログ::空を作る();
-
-    for 対象 in 対象一覧 {
-        let 結果 = compile_target::対象をコンパイルする(&カタログ, &対象, 方針)?;
-        std::fs::write(&対象.出力パス, &結果.実行時バイト列).map_err(|誤り| format!("{}を書き出せない: {誤り}", 対象.出力パス.display()))?;
-        let ファイル名 = 対象.出力パス.file_name().ok_or_else(|| "生成物のファイル名が無い".to_string())?;
-        実行時カタログ.詳細を登録する(対象.id, std::path::PathBuf::from(ファイル名), 結果.ソース依存一覧, 結果.メタデータ);
-        println!("[compile_assets] {}: {}バイト", 対象.出力パス.display(), 結果.実行時バイト列.len());
-    }
+    let 勘定 = chunk_ledger::台帳を見ながら対象一覧を焼く(出力ルート, &カタログ, &対象一覧, 方針, &mut 実行時カタログ)?;
+    println!("[compile_assets] {}", 勘定.報告の行を作る());
     if 世界.高さ場を焼くか() {
         height_field::高さ場を焼いて登録する(出力ルート, &取り込み結果.チャンクごとのソース一覧, &mut 実行時カタログ)?;
     }
@@ -72,7 +71,7 @@ fn 同居植生個体数を解析する(引数: &str) -> Result<usize, String> {
 
 fn カタログを書き出す(出力ルート: &Path, カタログ: &カタログ) -> Result<(), String> {
     let バイト列 = カタログを実行時形式へ格納する(カタログ).map_err(|誤り| 誤り.to_string())?;
-    let 出力パス = 出力ルート.join("catalog.blitzcatalog");
+    let 出力パス = 出力ルート.join(実行時カタログのファイル名);
     std::fs::write(&出力パス, &バイト列).map_err(|誤り| format!("{}を書き出せない: {誤り}", 出力パス.display()))?;
     println!("[compile_assets] {}: {}バイト", 出力パス.display(), バイト列.len());
     Ok(())
