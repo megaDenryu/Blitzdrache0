@@ -71,8 +71,8 @@ fn 対で描く(
 ) -> Result<judgment::実行の対, String> {
     let オン = 一条件を描く(実行環境, シーン名, &format!("{シーン名の綴り}_on"), シェーダー入口, &可視判定オンの引数)?;
     let オフ = 一条件を描く(実行環境, シーン名, &format!("{シーン名の綴り}_off"), シェーダー入口, &可視判定オフの引数)?;
-    let オン計数 = crate::report_parse::取り出す(オン.報告().本文())?;
-    let オフ計数 = crate::report_parse::取り出す(オフ.報告().本文())?;
+    let オン計数 = crate::report_parse::取り出す(オン.報告())?;
+    let オフ計数 = crate::report_parse::取り出す(オフ.報告())?;
     Ok(judgment::実行の対 {
         シーン名: シーン名の綴り.to_string(),
         オン: オン.画像を取り出す(),

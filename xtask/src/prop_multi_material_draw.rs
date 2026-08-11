@@ -43,7 +43,7 @@ fn 検収する() -> Result<String, String> {
     let 材質色 = 実行環境.描いて読み戻す(run::材質の色の実行名, &run::起動指定を組み立てる(run::条件::材質の色をそのまま読む))?;
     let 分布 = material_pixels::色の分布を採る(材質色.画像())?;
     let 画素判定 = judgment::材質の境界を検査する(&分布)?;
-    let 計数 = crate::report_parse::取り出す(材質色.報告().本文())?;
+    let 計数 = crate::report_parse::取り出す(材質色.報告())?;
     count_judgment::検査する(&計数, 材質の数)?;
     let 平面png = 材質色.書き出し先().目視用の絵へ変換する()?;
 

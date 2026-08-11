@@ -1,20 +1,18 @@
 //! 統合経路の人間向け要約からDoD判定に必要な整数を集め、判定後の1行要約へ整える。
 //! ストリーミング要約の読み取りそのものは`streaming_report`が持ち、ここはvalidation件数を足して要約文にすることだけを行う。
 
+use crate::acceptance::終了時報告;
 use crate::streaming_report::ストリーミング要約報告;
-
-/// 誤りの文面へ出す読み手の名前。どの入口の報告を読んで落ちたのかが分かるようにする。
-const 読み手の名前: &str = "ow3-dodの統合経路";
 
 pub(super) struct 計測値 {
     pub(super) 要約: ストリーミング要約報告,
     pub(super) validation件数: u64,
 }
 
-pub(super) fn 読み取る(出力: &str) -> Result<計測値, String> {
+pub(super) fn 読み取る(報告: &終了時報告) -> Result<計測値, String> {
     Ok(計測値 {
-        要約: crate::streaming_report::取り出す(出力)?,
-        validation件数: crate::validation_count::件数を読む(出力, 読み手の名前)?,
+        要約: crate::streaming_report::取り出す(報告.本文())?,
+        validation件数: 報告.検証層の指摘件数()?,
     })
 }
 

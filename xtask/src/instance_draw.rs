@@ -47,11 +47,11 @@ fn 検収する() -> Result<String, String> {
 
     let 少数 = 一条件を描く(&実行環境, 画素判定シーン, 画素判定シーンの綴り, &シェーダー入口)?;
     let 画素 = pixel_check::判定する(少数.画像())?;
-    let 少数計数 = crate::report_parse::取り出す(少数.報告().本文())?;
+    let 少数計数 = crate::report_parse::取り出す(少数.報告())?;
     count_check::計数を検査する(&少数計数, 画素判定の個体数)?;
 
     let 多数 = 一条件を描く(&実行環境, 計数判定シーン, 計数判定シーンの綴り, &シェーダー入口)?;
-    let 多数計数 = crate::report_parse::取り出す(多数.報告().本文())?;
+    let 多数計数 = crate::report_parse::取り出す(多数.報告())?;
     count_check::計数を検査する(&多数計数, 計数判定の個体数)?;
     if 少数計数.現在確保数 != 多数計数.現在確保数 {
         return Err(format!(

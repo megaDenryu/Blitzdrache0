@@ -40,8 +40,8 @@ fn 検収する() -> Result<String, String> {
     let 単一材質の色 = crate::plate_region::左右の代表色を採る(単一材質.画像())?;
     judgment::二材質の画素を検査する(&二材質の色)?;
     judgment::単一材質の画素を検査する(&単一材質の色)?;
-    let 二材質計数 = crate::report_parse::取り出す(二材質.報告().本文())?;
-    let 単一材質計数 = crate::report_parse::取り出す(単一材質.報告().本文())?;
+    let 二材質計数 = crate::report_parse::取り出す(二材質.報告())?;
+    let 単一材質計数 = crate::report_parse::取り出す(単一材質.報告())?;
     count_judgment::計数を検査する(&二材質計数, &単一材質計数)?;
     switch_judgment::記録側の切替を検査する(&二材質計数, &単一材質計数)?;
     Ok(format!(

@@ -46,8 +46,8 @@ fn 検収する() -> Result<String, String> {
 
     let 布あり = 描く(&実行環境, "cloth", &シェーダー入口, &布ありの引数)?;
     let 布なし = 描く(&実行環境, "no_cloth", &シェーダー入口, &布なしの引数)?;
-    let 布あり計数 = crate::report_parse::取り出す(布あり.報告().本文())?;
-    let 布なし計数 = crate::report_parse::取り出す(布なし.報告().本文())?;
+    let 布あり計数 = crate::report_parse::取り出す(布あり.報告())?;
+    let 布なし計数 = crate::report_parse::取り出す(布なし.報告())?;
     judgment::入力が空であることを検査する("布あり", &布あり計数)?;
     judgment::入力が空であることを検査する("布なし", &布なし計数)?;
     judgment::布の段階切替を検査する("布あり", &布あり計数, true)?;

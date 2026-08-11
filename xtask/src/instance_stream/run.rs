@@ -65,7 +65,7 @@ pub(super) fn 走らせる(
     実行結果.報告().画面へ流す();
     Ok(実行 {
         名前: 名前.to_string(),
-        計数: crate::report_parse::取り出す(実行結果.報告().本文())?,
+        計数: crate::report_parse::取り出す(実行結果.報告())?,
         要約: crate::streaming_report::取り出す(実行結果.報告().本文())?,
         画像: 実行結果.画像を取り出す(),
     })
