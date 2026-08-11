@@ -10,8 +10,7 @@ mod determinism_tests;
 
 use std::path::PathBuf;
 
-use blitz_asset_compiler::チャンク目録ソースを読み込む;
-use blitz_engine::チャンク座標;
+use blitz_asset_compiler::{チャンクの高さ格子ソース, チャンク目録ソースを読み込む, 高さ格子のファイル};
 
 /// 地形の世界は東西南北とも-2から2までの25チャンクである。
 const 端のチャンク: i32 = 2;
@@ -22,7 +21,7 @@ fn リポジトリルートからのパス(相対パス: &str) -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..").join(相対パス)
 }
 
-fn 地形の世界のソース一覧() -> Vec<(チャンク座標, PathBuf)> {
+fn 地形の世界のソース一覧() -> Vec<チャンクの高さ格子ソース> {
     let 目録ソースパス = リポジトリルートからのパス("assets/terrain_world/chunk_directory.txt");
     let 項目一覧 = match チャンク目録ソースを読み込む(&目録ソースパス) {
         Ok(一覧) => 一覧,
@@ -30,7 +29,12 @@ fn 地形の世界のソース一覧() -> Vec<(チャンク座標, PathBuf)> {
     };
     項目一覧
         .iter()
-        .map(|項目| (項目.チャンク(), 目録ソースパス.with_file_name(項目.ソース相対パス())))
+        .map(|項目| {
+            チャンクの高さ格子ソース::生成する(
+                項目.チャンク(),
+                高さ格子のファイル::パスから作る(目録ソースパス.with_file_name(項目.ソース相対パス())),
+            )
+        })
         .collect()
 }
 

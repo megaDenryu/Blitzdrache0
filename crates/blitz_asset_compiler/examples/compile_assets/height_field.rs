@@ -5,17 +5,15 @@
 //! (綴りは`crates/blitz_engine/src/height_field/stable_id.rs`が持ち、ここはそれを参照する)。
 //! 高さ場はチャンク目録に載らない。チャンク目録が1つの座標へ1つのアセットIDしか持てず、高さ場が矩形全体を1枚で覆うためである。
 
-use std::path::PathBuf;
-
-use blitz_asset_compiler::高さ場アセットをコンパイルする;
+use blitz_asset_compiler::{チャンクの高さ格子ソース, 高さ場アセットをコンパイルする};
 use blitz_engine::height_field::世界の高さ場の安定IDの綴り;
-use blitz_engine::{アセットID, チャンク座標};
+use blitz_engine::アセットID;
 
 use super::compilation::実行時アセットのコンパイル;
 
 impl 実行時アセットのコンパイル {
     pub(super) fn 高さ場を焼いて登録する(
-        &mut self, チャンクごとのソース一覧: &[(チャンク座標, PathBuf)]
+        &mut self, チャンクごとのソース一覧: &[チャンクの高さ格子ソース]
     ) -> Result<(), String> {
         let id = アセットID::生成する(世界の高さ場の安定IDの綴り).map_err(|誤り| 誤り.to_string())?;
         let 結果 = 高さ場アセットをコンパイルする(チャンクごとのソース一覧).map_err(|誤り| format!("{id}: {誤り}"))?;

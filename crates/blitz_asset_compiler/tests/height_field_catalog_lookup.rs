@@ -6,12 +6,14 @@
 
 use std::path::PathBuf;
 
-use blitz_asset_compiler::{チャンク目録ソースを読み込む, 高さ場アセットをコンパイルする};
+use blitz_asset_compiler::{
+    チャンクの高さ格子ソース, チャンク目録ソースを読み込む, 高さ場アセットをコンパイルする, 高さ格子のファイル
+};
 use blitz_engine::height_field::{世界の高さ場の安定IDの綴り, 地表高さの問い合わせ結果, 高さ場の読み口};
-use blitz_engine::{アセットID, カタログ, チャンク座標};
+use blitz_engine::{アセットID, カタログ};
 use blitz_math::{大域メートル, 大域ワールド位置};
 
-fn 地形の世界のソース一覧() -> Vec<(チャンク座標, PathBuf)> {
+fn 地形の世界のソース一覧() -> Vec<チャンクの高さ格子ソース> {
     let 目録ソースパス = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
         .join("assets/terrain_world/chunk_directory.txt");
@@ -21,7 +23,12 @@ fn 地形の世界のソース一覧() -> Vec<(チャンク座標, PathBuf)> {
     };
     項目一覧
         .iter()
-        .map(|項目| (項目.チャンク(), 目録ソースパス.with_file_name(項目.ソース相対パス())))
+        .map(|項目| {
+            チャンクの高さ格子ソース::生成する(
+                項目.チャンク(),
+                高さ格子のファイル::パスから作る(目録ソースパス.with_file_name(項目.ソース相対パス())),
+            )
+        })
         .collect()
 }
 

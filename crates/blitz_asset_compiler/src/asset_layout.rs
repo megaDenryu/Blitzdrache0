@@ -8,6 +8,7 @@
 //! 食い違ったときに「ファイルが見つからない」という遠い場所の失敗になるためである。写しを注意書きで同期させない。
 //! 参照: `_doc/設計/大規模世界の生成と遠景.md`
 
+mod chunk_height_grid;
 mod error;
 mod fox_tour_source_directory;
 mod height_grid_file;
@@ -16,6 +17,7 @@ mod source_root;
 mod world_directory_name;
 mod world_source_directory;
 
+pub use chunk_height_grid::{チャンクの高さ格子, チャンクの高さ格子ソース};
 pub use error::アセット配置エラー;
 pub use fox_tour_source_directory::場所巡りの世界のソースディレクトリ;
 pub use height_grid_file::高さ格子のファイル;
