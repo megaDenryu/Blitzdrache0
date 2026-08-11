@@ -12,7 +12,7 @@ use super::args::指定;
 use super::candidate_axis::候補の計測指定;
 use super::run;
 use super::scene_choice::構図;
-use crate::acceptance::{描画検収の実行環境, 検収の実行名};
+use crate::acceptance::{描画検収の実行環境, 検収の実行名, 検収エラー};
 
 pub(super) fn 二枚を撮る(指定: &指定) -> Result<String, String> {
     let 出力先 = super::描く支度をする(指定.構図)?;
@@ -35,10 +35,10 @@ fn 実行名を組む(候補: &候補の計測指定, 役: &str) -> String {
 
 fn 撮る(
     実行環境: &描画検収の実行環境, 実行名の綴り: &str, 構図: 構図, 候補の起動指定: &[String]
-) -> Result<PathBuf, String> {
+) -> Result<PathBuf, 検収エラー> {
     let 指定 = super::launch::共通の起動指定を組み立てる(構図)
         .選択肢を足す("--no-taa")
         .選択肢をまとめて足す(&候補の起動指定.iter().map(String::as_str).collect::<Vec<&str>>());
     let 実行 = 実行環境.描いて読み戻す(検収の実行名::生成する(実行名の綴り)?, &指定)?;
-    Ok(実行.書き出し先().目視用の絵へ変換する()?)
+    実行.書き出し先().目視用の絵へ変換する()
 }
