@@ -67,11 +67,11 @@ fn 読み取る(報告: &終了時報告, プロセス: メモリ最大) -> Resu
         return Err(format!("validationのエラー・警告が{}件あった", 計数.validation件数));
     }
     Ok(一回の実行 {
-        区間: super::measure::cpu区間を取り出す(標準出力)?,
-        gpu: super::gpu_table::取り出す(標準出力)?,
-        確保: super::measure::vulkan確保を取り出す(標準出力)?,
+        区間: super::measure::cpu区間を取り出す(報告)?,
+        gpu: super::gpu_table::取り出す(報告)?,
+        確保: super::measure::vulkan確保を取り出す(報告)?,
         計数,
-        世界メートル毎テクセル: super::measure::世界メートル毎テクセルを取り出す(標準出力)?,
+        世界メートル毎テクセル: super::measure::世界メートル毎テクセルを取り出す(報告)?,
         要約: crate::streaming_report::取り出す(標準出力)?,
         プロセス,
     })

@@ -3,10 +3,10 @@
 //! パスはシーンと距離区分0から距離区分3の5つであり、距離区分ごとに同じ5行の組が出る
 //! (参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「可視ID列の距離区分別の区間(4区分並べの後継)」)。
 //! 行から値を取り出す工程は`line_read`、報告全体を1つの計数報告へ写す工程は`extract`にある。
+//! 見出しで囲まれた区画の読み取りは検収の共通語彙の`報告の区画`が持つ。
 
 mod extract;
 mod line_read;
-pub mod section_parse;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct パス別描画発行 {
