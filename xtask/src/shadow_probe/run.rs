@@ -5,7 +5,7 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::acceptance::アプリの起こし方;
+use crate::acceptance::{アプリの起こし方, 検収の実行名, 終了時報告};
 
 use super::parse;
 use super::plan::{実行の指定, 条件の時刻, 計測条件};
@@ -27,7 +27,7 @@ pub(super) struct 実行の材料<'a> {
 }
 
 pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<一標本, String> {
-    let 標準出力先 = PathBuf::from(材料.出力先).join(format!("run_{:03}.log", 材料.実行番号));
+    let 標準出力先 = PathBuf::from(材料.出力先).join(format!("{}.log", 実行名の綴りを組む(材料.実行番号)));
     let 引数一覧 = 引数を作る(材料);
     println!("[xtask] shadow-probe実行{}: {}", 材料.実行番号, 材料.条件.名前);
     let 起こし方 = アプリの起こし方::構築済みのリリース版を直に起動する;
@@ -41,7 +41,18 @@ pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<一標�
     if !出力.status.success() {
         return Err(format!("実行{}が{}で失敗した", 材料.実行番号, 出力.status));
     }
-    parse::標本を取り出す(&標準出力, 材料.実行番号, 材料.条件.名前)
+    let 報告 = 終了時報告::取り込む(
+        &検収の実行名::生成する(&実行名の綴りを組む(材料.実行番号))?,
+        標準出力,
+        String::from_utf8_lossy(&出力.stderr).into_owned(),
+    );
+    Ok(parse::標本を取り出す(&報告, 材料.実行番号, 材料.条件.名前)?)
+}
+
+/// 報告の読み取りが破れたときの文面が名指す実行名。標準出力を落としたログのファイル名と同じ綴りにして、
+/// 破れた実行の証拠を読み手がそのまま開けるようにする。
+fn 実行名の綴りを組む(実行番号: usize) -> String {
+    format!("run_{実行番号:03}")
 }
 
 /// その実行が使う一日内時刻。太陽高度の軸の条件だけが自分の秒を持ち、他の軸は実行の指定へ従う。
