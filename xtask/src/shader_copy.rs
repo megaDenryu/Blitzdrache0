@@ -30,3 +30,20 @@ pub fn 一時コピーを作る(コピー先: &Path) -> Result<PathBuf, String> 
     }
     Ok(シェーダーの入口のファイル::コピー先の中の場所(コピー先))
 }
+
+#[cfg(test)]
+#[allow(clippy::expect_used)]
+mod tests {
+    use super::*;
+
+    /// スモークとホットリロードの検収は、この型が組んだパスをそのままslangcへ渡す。綴りを型の私有へ移した後も
+    /// その名前が実在のファイルを指していることを、リポジトリのshaders/へ組み立てて確かめる。
+    #[test]
+    fn 入口の名前がリポジトリのシェーダーの実在のファイルを指す() {
+        let リポジトリの根 = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .expect("xtaskの親ディレクトリがリポジトリの根である");
+        let 場所 = シェーダーの入口のファイル::コピー先の中の場所(&リポジトリの根.join("shaders"));
+        assert!(場所.is_file(), "入口のファイルが無い: {}", 場所.display());
+    }
+}
