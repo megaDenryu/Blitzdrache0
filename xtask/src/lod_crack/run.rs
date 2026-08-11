@@ -4,16 +4,12 @@
 use std::path::Path;
 use std::process::Command;
 
+use crate::acceptance::{読み戻しの書き出し先, 読み戻し画像};
+
 use super::cases::検査条件;
 
-pub(super) struct 読み戻し画像 {
-    pub(super) 幅: usize,
-    pub(super) 高さ: usize,
-    pub(super) rgba8: Vec<u8>,
-}
-
 pub(super) fn 描画する(出力先: &Path, 条件: &検査条件) -> Option<読み戻し画像> {
-    let ダンプ先 = 出力先.join(&条件.名前);
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, &条件.名前);
     let (x1, z1) = 条件.一方;
     let (x2, z2) = 条件.他方;
     let 引数 = [
@@ -42,20 +38,24 @@ pub(super) fn 描画する(出力先: &Path, 条件: &検査条件) -> Option<�
         "--dump-frame",
     ];
     let mut コマンド = Command::new("cargo");
-    コマンド.args(引数).arg(&ダンプ先).arg("--lod-crack-pair").args([
-        x1.to_string(),
-        z1.to_string(),
-        条件.一方段.to_string(),
-        x2.to_string(),
-        z2.to_string(),
-        条件.他方段.to_string(),
-    ]);
+    コマンド
+        .args(引数)
+        .arg(書き出し先.起動引数として渡す綴り())
+        .arg("--lod-crack-pair")
+        .args([
+            x1.to_string(),
+            z1.to_string(),
+            条件.一方段.to_string(),
+            x2.to_string(),
+            z2.to_string(),
+            条件.他方段.to_string(),
+        ]);
     if let Some((欠落x, 欠落z)) = 条件.欠落 {
         コマンド.arg("--lod-crack-missing").args([欠落x.to_string(), 欠落z.to_string()]);
     }
     let 状態 = コマンド.status();
     match 状態 {
-        Ok(値) if 値.success() => 読み込む(&ダンプ先),
+        Ok(値) if 値.success() => 読み込んで報せる(&書き出し先, &条件.名前),
         Ok(値) => {
             eprintln!("[xtask] blitz_appが{}で失敗した({})", 値, 条件.名前);
             None
@@ -67,11 +67,14 @@ pub(super) fn 描画する(出力先: &Path, 条件: &検査条件) -> Option<�
     }
 }
 
-fn 読み込む(ダンプ先: &Path) -> Option<読み戻し画像> {
-    let 寸法 = std::fs::read_to_string(ダンプ先.with_extension("size")).ok()?;
-    let mut 要素 = 寸法.split_whitespace();
-    let 幅 = 要素.next()?.parse().ok()?;
-    let 高さ = 要素.next()?.parse().ok()?;
-    let rgba8 = std::fs::read(ダンプ先.with_extension("raw")).ok()?;
-    Some(読み戻し画像 { 幅, 高さ, rgba8 })
+/// 読めなかったことを条件の名前つきで報せてから無しへ畳む。この入口の呼び出し元は無しを「この組は判定しない」と読むため、
+/// 読めなかった理由を捨てると、判定を飛ばしたのか合格したのかが出力から分からなくなる。
+fn 読み込んで報せる(書き出し先: &読み戻しの書き出し先, 条件名: &str) -> Option<読み戻し画像> {
+    match 読み戻し画像::読み込む(書き出し先) {
+        Ok(画像) => Some(画像),
+        Err(誤り) => {
+            eprintln!("[xtask] {条件名}の読み戻しを読めなかった: {誤り}");
+            None
+        }
+    }
 }

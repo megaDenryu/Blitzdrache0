@@ -1,4 +1,4 @@
-//! 影の欠落計器の診断画像1枚の読み取り。受け取るのは読み戻したRGBA8、返すのは画素ごとの影可視度と受光距離帯である。
+//! 影の欠落計器の診断画像1枚の読み取り。受け取るのは読み戻し画像、返すのは画素ごとの影可視度と受光距離帯である。
 //!
 //! 符号化は`shaders/pixel_diagnostic.slang`の`shadowLossDiagnosticColor`が作る。赤が影可視度、緑が受光距離帯、青が幾何の印である。
 //! 出力は交換チェーンのsRGB符号化を通るため、ここで同じ伝達関数の逆をかけて線形へ戻す。
@@ -7,6 +7,8 @@
 
 #[cfg(test)]
 mod band_tests;
+
+use crate::acceptance::読み戻し画像;
 
 /// 受光距離帯の数。`受光距離帯数`の写しである。
 pub(super) const 帯数: usize = 16;
@@ -41,9 +43,12 @@ pub(super) struct 診断画像 {
 }
 
 impl 診断画像 {
-    pub(super) fn 読み取る(幅: usize, 高さ: usize, rgba8: &[u8]) -> Self {
-        let 画素一覧 = (0..幅 * 高さ).map(|添字| 判別する(rgba8, 添字)).collect();
-        Self { 幅, 高さ, 画素一覧 }
+    pub(super) fn 読み取る(読み戻し: &読み戻し画像) -> Self {
+        Self {
+            幅: 読み戻し.幅(),
+            高さ: 読み戻し.高さ(),
+            画素一覧: (0..読み戻し.画素数()).map(|添字| 判別する(読み戻し.添字の画素(添字))).collect(),
+        }
     }
 
     pub(super) fn 画素(&self, 添字: usize) -> Option<診断画素> {
@@ -55,11 +60,8 @@ impl 診断画像 {
     }
 }
 
-fn 判別する(rgba8: &[u8], 添字: usize) -> Option<診断画素> {
-    let 先頭 = 添字 * 4;
-    let 赤 = *rgba8.get(先頭)?;
-    let 緑 = *rgba8.get(先頭 + 1)?;
-    let 青 = *rgba8.get(先頭 + 2)?;
+fn 判別する(色: [u8; 3]) -> Option<診断画素> {
+    let [赤, 緑, 青] = 色;
     if 青 < 幾何の印の下限 {
         return None;
     }

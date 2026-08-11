@@ -2,7 +2,7 @@
 //! 投影座標は`terrain_origin`の初期カメラと1280×720画面を前提とし、向きごとにラスタライズで所有される共有辺側の1画素帯へ固定する。
 
 use super::cases::継ぎ目方向;
-use super::run::読み戻し画像;
+use crate::acceptance::読み戻し画像;
 
 const 背景RGB: [u8; 3] = [63, 75, 97];
 const 帯半幅画素: f64 = 0.49;
@@ -16,7 +16,6 @@ pub(super) struct 検査結果 {
 }
 
 pub(super) fn 継ぎ目を検査する(画像: &読み戻し画像, 方向: 継ぎ目方向) -> Result<検査結果, String> {
-    画像を検証する(画像)?;
     let 線 = match 方向 {
         継ぎ目方向::東 => &東向き共有辺[..],
         継ぎ目方向::西 => &西向き共有辺[..],
@@ -25,8 +24,8 @@ pub(super) fn 継ぎ目を検査する(画像: &読み戻し画像, 方向: 継�
     };
     let mut roi画素数 = 0_u64;
     let mut 背景画素数 = 0_u64;
-    for y in 1..画像.高さ - 1 {
-        for x in 1..画像.幅 - 1 {
+    for y in 1..画像.高さ() - 1 {
+        for x in 1..画像.幅() - 1 {
             let 点 = (
                 f64::from(u32::try_from(x).map_err(|_| "X座標がu32を超えた".to_string())?),
                 f64::from(u32::try_from(y).map_err(|_| "Y座標がu32を超えた".to_string())?),
@@ -62,18 +61,6 @@ const fn 水平共有辺(y補正: f64) -> [(f64, f64); 9] {
     ]
 }
 
-fn 画像を検証する(画像: &読み戻し画像) -> Result<(), String> {
-    let 期待長 = 画像
-        .幅
-        .checked_mul(画像.高さ)
-        .and_then(|数| 数.checked_mul(4))
-        .ok_or_else(|| "寸法が大きすぎる".to_string())?;
-    if 画像.rgba8.len() != 期待長 {
-        return Err(format!("寸法とRGBA8長が違う: {期待長} と {}", 画像.rgba8.len()));
-    }
-    Ok(())
-}
-
 fn 線分からの距離(点: (f64, f64), 始点: (f64, f64), 終点: (f64, f64)) -> f64 {
     let 線 = (終点.0 - 始点.0, 終点.1 - 始点.1);
     let 点差 = (点.0 - 始点.0, 点.1 - 始点.1);
@@ -83,6 +70,5 @@ fn 線分からの距離(点: (f64, f64), 始点: (f64, f64), 終点: (f64, f64)
 }
 
 fn 背景か(画像: &読み戻し画像, x: usize, y: usize) -> bool {
-    let 開始 = (y * 画像.幅 + x) * 4;
-    画像.rgba8[開始..開始 + 3] == 背景RGB
+    画像.座標の画素(x, y) == 背景RGB
 }

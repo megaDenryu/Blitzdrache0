@@ -8,7 +8,7 @@ use std::path::Path;
 use std::process::Command;
 
 /// リリースの実行ファイルの置き場。生の綴りが在るのはこの1行だけである。
-const リリース実行ファイルのパス: &str = "target/release/blitz_app.exe";
+const リリース実行ファイルの綴り: &str = "target/release/blitz_app.exe";
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum アプリの起こし方 {
@@ -28,7 +28,7 @@ impl アプリの起こし方 {
                 コマンド.args(["run", "-p", "blitz_app", "--"]);
                 コマンド
             }
-            Self::構築済みのリリース版を直に起動する => Command::new(リリース実行ファイルのパス),
+            Self::構築済みのリリース版を直に起動する => Command::new(リリース実行ファイルの綴り),
         }
     }
 
@@ -36,13 +36,12 @@ impl アプリの起こし方 {
     pub fn 表示の綴り(self) -> &'static str {
         match self {
             Self::毎回cargoに構築させて起動する => "cargo run",
-            Self::構築済みのリリース版を直に起動する => リリース実行ファイルのパス,
+            Self::構築済みのリリース版を直に起動する => リリース実行ファイルの綴り,
         }
     }
 
-    /// 由来を採る対象としてのリリース実行ファイル。生のパスへ戻る唯一の境界であり、
-    /// 読むのは構築の由来を採る工程だけである。
-    pub(crate) fn 由来を採るリリース実行ファイルのパス() -> &'static Path {
-        Path::new(リリース実行ファイルのパス)
+    /// リリース実行ファイルの置き場。生のパスへ戻る唯一の境界であり、読むのは構築の由来を採る工程だけである。
+    pub(crate) fn リリース実行ファイルのパス() -> &'static Path {
+        Path::new(リリース実行ファイルの綴り)
     }
 }
