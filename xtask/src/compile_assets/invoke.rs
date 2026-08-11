@@ -21,8 +21,10 @@ pub(super) struct 実行時形式を焼く指定<'指定> {
 pub(super) fn アセットコンパイラを起動して標準出力を取り込む(
     指定: &実行時形式を焼く指定
 ) -> Result<String, String> {
-    let mut コマンド = 起動するコマンドを組み立てる(指定);
-    let 出力 = コマンド.output().map_err(|誤り| format!("cargoの起動に失敗: {誤り}"))?;
+    これから焼く対象を告げる(指定);
+    let 出力 = 起動するコマンドを組み立てる(指定)
+        .output()
+        .map_err(|誤り| format!("cargoの起動に失敗: {誤り}"))?;
     let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
     print!("{標準出力}");
     eprint!("{}", String::from_utf8_lossy(&出力.stderr));
@@ -34,10 +36,11 @@ pub(super) fn アセットコンパイラを起動して標準出力を取り込
 }
 
 pub(super) fn アセットコンパイラを起動して実行時形式を焼く(指定: &実行時形式を焼く指定) -> bool {
+    これから焼く対象を告げる(指定);
     コンパイラの起動結果を成否へ読む(起動するコマンドを組み立てる(指定).status())
 }
 
-fn 起動するコマンドを組み立てる(指定: &実行時形式を焼く指定) -> Command {
+fn これから焼く対象を告げる(指定: &実行時形式を焼く指定) {
     println!(
         "[xtask] 実行時アセット生成({}{}{}): {} -> {}",
         指定.世界名,
@@ -46,6 +49,9 @@ fn 起動するコマンドを組み立てる(指定: &実行時形式を焼く�
         指定.ソースルート.display(),
         指定.出力ルート.display()
     );
+}
+
+fn 起動するコマンドを組み立てる(指定: &実行時形式を焼く指定) -> Command {
     let mut コマンド = Command::new("cargo");
     コマンド
         .args(["run", "-p", "blitz_asset_compiler", "--example", "compile_assets", "--"])
