@@ -6,7 +6,7 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::shader_copy::シェーダーのエントリファイル名;
+use crate::shader_copy::シェーダーの入口のファイル名;
 
 const チャンク世界ディレクトリ名: &str = "chunk_world";
 /// 一時ソースへ複製するassets/smoke/のファイル。スモークが描くのはquadだけだが、実行時アセット生成器は板の世界の必須アセットが
@@ -44,7 +44,7 @@ pub(super) fn シェーダーを一時コピーする() -> Result<PathBuf, Strin
         std::fs::copy(&元パス, コピー先ディレクトリ.join(&ファイル名)).map_err(|誤り| format!("{}のコピーに失敗した: {誤り}", 元パス.display()))?;
     }
 
-    Ok(コピー先ディレクトリ.join(シェーダーのエントリファイル名))
+    Ok(コピー先ディレクトリ.join(シェーダーの入口のファイル名))
 }
 
 pub(super) fn アセットを一時コピーする() -> Result<PathBuf, String> {

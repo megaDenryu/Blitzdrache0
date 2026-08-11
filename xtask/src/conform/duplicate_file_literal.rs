@@ -27,7 +27,7 @@ pub fn 全ファイルを検査する() -> Result<Vec<違反>, String> {
             continue;
         }
         重複した綴り一覧.push(綴り.clone());
-        if allowance::既知の許容か(&綴り) {
+        if allowance::既知の寄せられない綴りか(&綴り) {
             continue;
         }
         違反一覧.extend(出現箇所一覧.iter().map(|出現箇所| {
