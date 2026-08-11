@@ -4,11 +4,14 @@
 //! 判定の中身は`judgment`、画素の分類は`pixel_check`、実行の起動は`run`にある。
 //! 参照: `_doc/設計/植生インスタンスと物量計測.md`「ストリーミング統合」
 
+mod error;
 mod judgment;
 mod pixel_check;
 mod run;
 
 use std::path::{Path, PathBuf};
+
+use error::植生ストリーミング統合の検収エラー;
 
 use crate::acceptance::描画フレーム数;
 use std::process::ExitCode;
@@ -44,12 +47,13 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
+fn 検収する() -> Result<String, 植生ストリーミング統合の検収エラー> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
-        return Err("検証用アセットの生成に失敗した".to_string());
+        return Err(植生ストリーミング統合の検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+        .map_err(|理由| 植生ストリーミング統合の検収エラー::シェーダーの一時コピーを作れなかった { 理由 })?;
 
     let 静止 = run::走らせる(&実行環境, "preload", &シェーダー入口, 静止フレーム数, &[])?;
     let 往復 = run::走らせる(&実行環境, "roundtrip", &シェーダー入口, 往復フレーム数, &[])?;
