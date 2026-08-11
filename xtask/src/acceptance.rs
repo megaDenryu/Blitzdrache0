@@ -33,6 +33,7 @@ mod readback_hdr_image;
 mod readback_image;
 mod readback_size;
 mod report_only_environment;
+mod reserved_option;
 mod run_environment;
 mod run_name;
 mod runtime_asset_root;

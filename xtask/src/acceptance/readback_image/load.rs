@@ -4,7 +4,7 @@
 //! この型の不変条件として`読み戻し画像`の構築の口が持つ。
 
 use super::super::dump_format::書き出しの形式;
-use super::super::error::検収エラー;
+use super::super::error::{検収エラー, 読み戻しの破れ};
 use super::super::readback_dump::読み戻しの書き出し先;
 use super::super::readback_size::幅と高さを読む;
 use super::読み戻し画像;
@@ -12,8 +12,10 @@ use super::読み戻し画像;
 pub(super) fn 対の2ファイルから読み込む(書き出し先: &読み戻しの書き出し先) -> Result<読み戻し画像, 検収エラー> {
     let (幅, 高さ) = 幅と高さを読む(書き出し先)?;
     let 画素のパス = 書き出し先.形式のパス(書き出しの形式::提示画像);
-    let rgba8 = std::fs::read(&画素のパス).map_err(|誤り| 検収エラー::読み戻しのファイルを読めない {
-        パス: 画素のパス, 誤り
+    let rgba8 = std::fs::read(&画素のパス).map_err(|誤り| {
+        検収エラー::読み戻しが破れた(読み戻しの破れ::ファイルを読めない {
+            パス: 画素のパス, 誤り
+        })
     })?;
     読み戻し画像::検証して組み立てる(幅, 高さ, rgba8)
 }

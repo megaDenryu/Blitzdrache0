@@ -24,6 +24,7 @@ mod summary;
 mod term_judgment;
 mod term_measure;
 mod term_run;
+mod term_tally;
 mod tolerance;
 
 use std::path::PathBuf;

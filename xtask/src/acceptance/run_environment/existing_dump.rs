@@ -10,7 +10,7 @@
 use std::path::PathBuf;
 
 use super::super::dump_format::書き出しの形式;
-use super::super::error::検収エラー;
+use super::super::error::{検収エラー, 読み戻しの破れ};
 use super::super::readback_hdr_image::圧縮前のHDR画像;
 use super::super::readback_image::読み戻し画像;
 use super::super::run_name::検収の実行名;
@@ -36,7 +36,7 @@ impl 描画検収の実行環境 {
         形式: 書き出しの形式,
     ) -> Result<Vec<u8>, 検収エラー> {
         let パス = self.出力ディレクトリ.中の書き出し先(実行名).形式のパス(形式);
-        std::fs::read(&パス).map_err(|誤り| 検収エラー::読み戻しのファイルを読めない { パス, 誤り })
+        std::fs::read(&パス).map_err(|誤り| 検収エラー::読み戻しが破れた(読み戻しの破れ::ファイルを読めない { パス, 誤り }))
     }
 
     /// 同じ置き場に既に書かれている書き出しをPNGへ変換して、絵の置き場を返す。

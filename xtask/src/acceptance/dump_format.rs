@@ -15,6 +15,14 @@ pub enum 書き出しの形式 {
 }
 
 impl 書き出しの形式 {
+    /// 全部の形式。汎用の口が同じ綴りを積むことを拒む判定と、書き出したファイルの後始末が読む。
+    pub(super) const 全形式: [Self; 3] = [Self::提示画像, Self::明るさの圧縮前, Self::最終深度];
+
+    /// この型が組み立てる選択肢の綴りの全部。
+    pub(super) fn 選択肢の綴り一覧() -> Vec<&'static str> {
+        Self::全形式.into_iter().map(Self::選択肢の綴り).collect()
+    }
+
     pub(super) fn 選択肢の綴り(self) -> &'static str {
         match self {
             Self::提示画像 => "--dump-frame",
