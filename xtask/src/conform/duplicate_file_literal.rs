@@ -1,48 +1,36 @@
-//! ファイル名らしい文字列リテラルが2箇所以上に書かれていないかの検査。
+//! ファイル名らしい文字列リテラルが2つ以上のファイルに書かれていないかの検査。
 //! 受け取るのは無し、返すのは重複した綴りの違反一覧である。走査するファイルの範囲は`scan_scope`が持つ。
 //!
 //! 同じファイル名を2箇所へ書くと、片方だけを直した食い違いが実行するまで出ない。しかも綴りが合っている
 //! 限り両方とも動くため、複製が増えても誰も困らないまま増え続ける。ここが機械的に止める。
 //!
-//! 数えるのは箇所でなくファイルである。同じファイルの中で同じ名前が複数回出るのは、台帳が1つのシェーダーへ
-//! 複数の宣言を結ぶときのように、1つの持ち場の中での繰り返しであり、片方だけを直す食い違いが起こらない。
+//! 数えるのは箇所でなくファイルである。同じファイルの中で同じ名前が複数回出るのは、1つの持ち場の中での
+//! 繰り返しであり、片方だけを直す食い違いが起こらない。
+//! 自分で検査の対象を名指しする台帳は数から外す。どのファイルを外したかは`self_reference`が1件ずつ持つ。
 
 mod allowance;
 mod extract;
 mod scan_scope;
+mod self_reference;
+mod tally;
+mod test_item_skip;
 #[cfg(test)]
 mod tests;
 
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 
+use super::source_lexing;
 use super::violation::違反;
+use tally::検査の集計;
 
 pub fn 全ファイルを検査する() -> Result<Vec<違反>, String> {
     let 出現表 = 出現箇所を集める(&scan_scope::走査するファイル一覧を集める()?)?;
-    let mut 重複した綴り一覧 = Vec::new();
-    let mut 違反一覧 = Vec::new();
+    let mut 集計 = 検査の集計::新しく作る();
     for (綴り, 出現箇所一覧) in 出現表 {
-        if 出現箇所一覧.len() < 2 {
-            continue;
-        }
-        重複した綴り一覧.push(綴り.clone());
-        if allowance::既知の寄せられない綴りか(&綴り) {
-            continue;
-        }
-        違反一覧.extend(出現箇所一覧.iter().map(|出現箇所| {
-            違反::行単位(
-                出現箇所.パス.clone(),
-                出現箇所.行番号,
-                format!(
-                    "ファイル名らしい綴り「{綴り}」が{}箇所に書かれている(正本を1箇所へ寄せる)",
-                    出現箇所一覧.len()
-                ),
-            )
-        }));
+        集計.綴り1つを見る(&綴り, &出現箇所一覧);
     }
-    違反一覧.extend(allowance::台帳の陳腐化を検査する(&重複した綴り一覧));
-    Ok(違反一覧)
+    Ok(集計.違反一覧にする())
 }
 
 struct 出現箇所 {
@@ -64,17 +52,16 @@ fn 出現箇所を集める(ファイル一覧: &[PathBuf]) -> Result<BTreeMap<S
     Ok(出現表)
 }
 
-/// 1ファイルの中で綴りごとに最初の行だけを拾う。`cfg(test)`を見た行から下は読まない。
-/// そこから下はファイルの途中から始まる試験であり、試験の入力として作る名前が正本を持たないためである。
+/// 1ファイルの中で綴りごとに最初の行だけを拾う。`#[cfg(test)]`の付いた項目の中は数えない。
+/// 試験の入力として作る名前が正本を持たないためである。
 fn ファイル内の初出を集める(内容: &str) -> BTreeMap<String, usize> {
+    let 試験の範囲一覧 = test_item_skip::試験の項目の行範囲一覧(内容);
     let mut 初出: BTreeMap<String, usize> = BTreeMap::new();
-    for (添字, 行) in 内容.lines().enumerate() {
-        if 行.contains("cfg(test)") {
-            break;
+    for 断片 in source_lexing::文字列リテラル一覧(内容) {
+        if test_item_skip::範囲の中の行か(&試験の範囲一覧, 断片.開始行) || !extract::拡張子を含むか(&断片.中身) {
+            continue;
         }
-        for 綴り in extract::拡張子つきのリテラルを取り出す(行) {
-            初出.entry(綴り).or_insert(添字 + 1);
-        }
+        初出.entry(extract::ファイル名の部分(&断片.中身)).or_insert(断片.開始行);
     }
     初出
 }

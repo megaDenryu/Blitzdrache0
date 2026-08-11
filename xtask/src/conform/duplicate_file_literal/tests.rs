@@ -1,39 +1,52 @@
-//! 行からファイル名らしいリテラルを取り出す規則の検査。走査と集計でなく、取り出しの規則だけを見る。
+//! ファイル名らしい綴りの選び方と、試験の項目の除かれ方の検査。走査と集計でなく規則だけを見る。
 
-use super::extract::拡張子つきのリテラルを取り出す;
-
-#[test]
-fn 拡張子つきのリテラルを見つける() {
-    assert_eq!(
-        拡張子つきのリテラルを取り出す(r#"    const 監視先: &str = "shaders/scene.slang";"#),
-        vec!["shaders/scene.slang".to_string()]
-    );
-}
+use super::extract::拡張子を含むか;
+use super::test_item_skip::{範囲の中の行か, 試験の項目の行範囲一覧};
+use super::ファイル内の初出を集める;
 
 #[test]
-fn 同じ行の複数のリテラルをすべて取り出す() {
-    assert_eq!(
-        拡張子つきのリテラルを取り出す(r#"    let 対 = ["a/b.png", "c/d.ktx2"];"#),
-        vec!["a/b.png".to_string(), "c/d.ktx2".to_string()]
-    );
+fn 拡張子つきの綴りを選ぶ() {
+    assert!(拡張子を含むか("shaders/scene.slang"));
+    assert!(拡張子を含むか("a/b.png"));
 }
 
 #[test]
 fn 数の綴りを拡張子と読み違えない() {
-    assert!(拡張子つきのリテラルを取り出す(r#"    let 閾値 = "0.05";"#).is_empty());
-}
-
-#[test]
-fn 拡張子を持たないリテラルは取り出さない() {
-    assert!(拡張子つきのリテラルを取り出す(r#"    println!("描画発行内訳:");"#).is_empty());
+    assert!(!拡張子を含むか("0.05"));
 }
 
 #[test]
 fn 点に続く並びが長すぎるものは拡張子でない() {
-    assert!(拡張子つきのリテラルを取り出す(r#"    let 文 = "終わり.abcdefghijk";"#).is_empty());
+    assert!(!拡張子を含むか("終わり.abcdefghijk"));
 }
 
 #[test]
-fn コメントの中のファイル名は文字列リテラルでないため取り出さない() {
-    assert!(拡張子つきのリテラルを取り出す("//! 参照: shaders/scene.slang").is_empty());
+fn 波括弧で閉じる試験の項目だけを除く() {
+    let 原文 = "const 名: &str = \"a.png\";\n#[cfg(test)]\nmod tests {\n    const 見本: &str = \"b.png\";\n}\nconst 後: &str = \"c.png\";";
+    let 初出 = ファイル内の初出を集める(原文);
+    assert!(初出.contains_key("a.png"));
+    assert!(!初出.contains_key("b.png"));
+    assert!(初出.contains_key("c.png"), "試験の項目の後ろが打ち切られている");
+}
+
+#[test]
+fn 一行で閉じる試験の宣言の後ろを打ち切らない() {
+    let 原文 = "#[cfg(test)]\nmod spirv_checks;\nconst 埋め込み: &str = \"ui_vertex.spv\";";
+    let 初出 = ファイル内の初出を集める(原文);
+    assert_eq!(初出.get("ui_vertex.spv"), Some(&3));
+}
+
+#[test]
+fn コメントと文字列の中の属性を項目の始まりと読まない() {
+    let 原文 = "// #[cfg(test)]\nconst 名: &str = \"d.png\";\nlet 語 = \"#[cfg(test)]\";\nconst 後: &str = \"e.png\";";
+    assert!(試験の項目の行範囲一覧(原文).is_empty());
+    let 初出 = ファイル内の初出を集める(原文);
+    assert!(初出.contains_key("d.png") && 初出.contains_key("e.png"));
+}
+
+#[test]
+fn 試験の項目の中の行だけが範囲に入る() {
+    let 範囲一覧 = 試験の項目の行範囲一覧("#[cfg(test)]\nmod tests {\n}\nconst 名: &str = \"f.png\";");
+    assert!(範囲の中の行か(&範囲一覧, 2));
+    assert!(!範囲の中の行か(&範囲一覧, 4));
 }

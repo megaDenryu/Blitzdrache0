@@ -22,6 +22,7 @@ mod section_reference;
 mod shader_constant;
 mod shader_uniform_alias;
 mod single_lighting_slot_write;
+mod source_lexing;
 mod split_debt;
 mod violation;
 mod whole_repository;

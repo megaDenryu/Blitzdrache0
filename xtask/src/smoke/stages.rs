@@ -2,13 +2,13 @@
 
 use std::path::Path;
 
+use crate::fetch_assets::{フォックスの取得対象, ヘルメットの取得対象};
+
 use super::launch_setting::起動設定;
 use super::run_stage;
 
 const 四角形フレーム数: &str = "600";
 const 短時間フレーム数: &str = "120";
-const ヘルメット取得先: &str = "assets/samples/DamagedHelmet/DamagedHelmet.glb";
-const フォックス取得先: &str = "assets/samples/Fox/Fox.glb";
 
 pub(super) fn すべてを実行する(シェーダー: &Path, アセット: &Path) -> bool {
     四角形(シェーダー, アセット)
@@ -39,7 +39,7 @@ fn 四角形(シェーダー: &Path, アセット: &Path) -> bool {
 }
 
 fn ヘルメット(シェーダー: &Path) -> bool {
-    if !Path::new(ヘルメット取得先).is_file() {
+    if !ヘルメットの取得対象.取得済みか() {
         println!("[xtask] helmetアセット未取得のためhelmetステージをスキップした(cargo xtask fetch-assetsで取得可)");
         return true;
     }
@@ -69,7 +69,7 @@ fn シャドウ(シェーダー: &Path, アセット: &Path) -> bool {
 }
 
 fn フォックス(シェーダー: &Path) -> bool {
-    if !Path::new(フォックス取得先).is_file() {
+    if !フォックスの取得対象.取得済みか() {
         println!("[xtask] Foxアセット未取得のためfox/clothステージをスキップした(cargo xtask fetch-assetsで取得可)");
         return true;
     }
