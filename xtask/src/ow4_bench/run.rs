@@ -61,7 +61,6 @@ pub(super) fn 走らせる(
 /// 注意: ファイルへ落とした標準出力を終了時報告として包み直す。この実行は採取のあいだ標準出力をファイルへ流すため、
 /// 起動のセッションからは報告が返らない。
 fn 読み取る(報告: &終了時報告, プロセス: メモリ最大) -> Result<一回の実行, String> {
-    let 標準出力 = 報告.本文();
     let 計数 = crate::report_parse::取り出す(報告)?;
     if 計数.validation件数 != 0 {
         return Err(format!("validationのエラー・警告が{}件あった", 計数.validation件数));
@@ -72,7 +71,7 @@ fn 読み取る(報告: &終了時報告, プロセス: メモリ最大) -> Resu
         確保: super::measure::vulkan確保を取り出す(報告)?,
         計数,
         世界メートル毎テクセル: super::measure::世界メートル毎テクセルを取り出す(報告)?,
-        要約: crate::streaming_report::取り出す(標準出力)?,
+        要約: crate::streaming_report::取り出す(報告)?,
         プロセス,
     })
 }

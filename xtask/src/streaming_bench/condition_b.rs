@@ -46,9 +46,9 @@ fn 一度実行する(回: u32) -> Option<Vec<String>> {
         println!("  {行}");
     }
     println!("  縮退フレーム数: {}", 標準出力.matches("予算判定: 縮退").count());
-    let 事象列 = order_sequence::事象列を取り出す(標準出力);
+    let 事象列 = order_sequence::事象列を取り出す(&報告);
     for 種別 in &order_sequence::事象種別一覧 {
-        let 件数 = order_sequence::座標数を数える(&order_sequence::見出しで絞る(&事象列, 種別.見出し));
+        let 件数 = order_sequence::座標数を数える(&order_sequence::見出しで絞る(&事象列, &種別.見出し));
         println!("  {} {件数}件", 種別.見出し);
     }
     Some(事象列)
