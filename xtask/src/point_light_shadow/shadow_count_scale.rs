@@ -7,7 +7,7 @@
 
 use std::path::Path;
 
-use crate::acceptance::読み戻しの書き出し先;
+use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
 use crate::multi_light_world::{run, world};
 
 use super::instrument::{点光源の影の計器, 点光源の影の計器を取り出す};
@@ -24,7 +24,9 @@ pub(super) fn 影付きの件数を振って点光源の影の計器を採る(�
 
 fn 影付きの一件数で計器を採る(出力先: &Path, 影付きの件数: usize) -> Result<点光源の影の計器, String> {
     let 件数文字列 = 影付きの件数.to_string();
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, &format!("hut_instrument_x{影付きの件数}"));
+    let 実行名の綴り = format!("hut_instrument_x{影付きの件数}");
+    let 実行名 = 検収の実行名::生成する(&実行名の綴り)?;
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
     let 結果 = run::走らせる(&run::描画条件 {
         シーン名: world::屋内のシーン,
         アセットルート: world::屋内のアセットルート,

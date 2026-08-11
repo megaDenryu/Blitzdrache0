@@ -6,7 +6,7 @@
 use std::path::Path;
 use std::process::Command;
 
-use crate::acceptance::{終了時報告, 読み戻しの書き出し先, 読み戻し画像};
+use crate::acceptance::{検収の実行名, 終了時報告, 読み戻しの書き出し先, 読み戻し画像};
 use crate::report_parse::計数報告;
 use crate::streaming_report::ストリーミング要約報告;
 
@@ -48,7 +48,8 @@ pub(super) struct 実行 {
 pub(super) fn 走らせる(
     出力先: &Path, 名前: &str, シェーダー入口: &Path, フレーム数: &str, 追加引数: &[&str]
 ) -> Result<実行, String> {
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 名前);
+    let 実行名 = 検収の実行名::生成する(名前)?;
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
     let mut コマンド = Command::new("cargo");
     コマンド
         .args(["run", "-p", "blitz_app", "--"])
@@ -61,7 +62,7 @@ pub(super) fn 走らせる(
         .arg("--dump-frame")
         .arg(書き出し先.起動引数として渡す綴り());
     let 出力 = コマンド.output().map_err(|誤り| format!("blitz_appを起動できなかった({名前}): {誤り}"))?;
-    let 報告 = 終了時報告::取り込む(名前, String::from_utf8_lossy(&出力.stdout).into_owned());
+    let 報告 = 終了時報告::取り込む(書き出し先.実行名(), String::from_utf8_lossy(&出力.stdout).into_owned());
     報告.画面へ流す();
     if !出力.status.success() {
         return Err(format!("blitz_appが{}で失敗した({名前})", 出力.status));

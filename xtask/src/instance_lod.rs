@@ -9,7 +9,7 @@ mod pixel_check;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use crate::acceptance::読み戻しの置き場;
+use crate::acceptance::{検収の実行名, 読み戻しの置き場};
 use crate::vegetation_run;
 
 const 出力ディレクトリ: &str = "target/instance_lod";
@@ -69,7 +69,8 @@ fn 描く(
 ) -> Result<judgment::実行, String> {
     let mut 引数: Vec<&str> = 共通引数.to_vec();
     引数.extend_from_slice(追加引数);
-    let 書き出し先 = 出力先.中の書き出し先(名前);
+    let 実行名 = 検収の実行名::生成する(名前)?;
+    let 書き出し先 = 出力先.中の書き出し先(実行名);
     let 結果 = vegetation_run::描画する(書き出し先, 検収シーン, シェーダー入口, フレーム数, &引数)?;
     let 計数 = crate::report_parse::取り出す(結果.報告().本文())?;
     Ok(judgment::実行 {

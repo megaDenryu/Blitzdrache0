@@ -13,7 +13,7 @@ mod run;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use crate::acceptance::読み戻しの書き出し先;
+use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
 use crate::day_moment::代表時刻一覧;
 
 const 出力ディレクトリ: &str = "target/terrain_visual";
@@ -39,16 +39,18 @@ fn 検収する() -> Result<String, String> {
     let 出力先 = PathBuf::from(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
 
-    let マスクの絵 = crate::sample_world_region::領域マスクを撮る(
-        &読み戻しの書き出し先::出力ディレクトリの中に決める(&出力先, 領域マスクのファイル名),
-        領域マスクのファイル名,
-    )?;
+    let 領域マスクの実行名 = 検収の実行名::生成する(領域マスクのファイル名)?;
+    let マスクの絵 = crate::sample_world_region::領域マスクを撮る(&読み戻しの書き出し先::出力ディレクトリの中に決める(
+        &出力先,
+        領域マスクの実行名,
+    ))?;
     let マスク = crate::sample_world_region::地面マスク::作る(&マスクの絵)?;
     let mut 帯の行一覧 = Vec::new();
     let mut 絵の置き場一覧 = Vec::new();
     for 時刻 in &代表時刻一覧 {
-        let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(&出力先, 時刻.ファイル名);
-        let 画像 = run::描画する(&書き出し先, 時刻.一日内秒, 時刻.ファイル名)?;
+        let 実行名 = 検収の実行名::生成する(時刻.ファイル名)?;
+        let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(&出力先, 実行名);
+        let 画像 = run::描画する(&書き出し先, 時刻.一日内秒)?;
         帯の行一覧.push(band::破綻防止帯を判定する(
             時刻.名前,
             &画像,

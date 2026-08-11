@@ -34,7 +34,7 @@ pub fn 描画する(
     let 出力 = コマンド
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({シーン名}): {誤り}"))?;
-    let 報告 = 終了時報告::取り込む(シーン名, String::from_utf8_lossy(&出力.stdout).into_owned());
+    let 報告 = 終了時報告::取り込む(書き出し先.実行名(), String::from_utf8_lossy(&出力.stdout).into_owned());
     報告.画面へ流す();
     if !出力.status.success() {
         return Err(format!("blitz_appが{}で失敗した({シーン名})", 出力.status));

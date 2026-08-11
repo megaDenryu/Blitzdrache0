@@ -4,12 +4,13 @@
 use std::path::Path;
 use std::process::Command;
 
-use crate::acceptance::{読み戻しの書き出し先, 読み戻し画像};
+use crate::acceptance::{検収の実行名, 読み戻しの書き出し先, 読み戻し画像};
 
 use super::cases::検査条件;
 
 pub(super) fn 描画する(出力先: &Path, 条件: &検査条件) -> Option<読み戻し画像> {
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, &条件.名前);
+    let 実行名 = 検収の実行名::生成する(&条件.名前).map_err(|誤り| eprintln!("[xtask] {誤り}")).ok()?;
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
     let (x1, z1) = 条件.一方;
     let (x2, z2) = 条件.他方;
     let 引数 = [

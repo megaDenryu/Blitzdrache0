@@ -11,7 +11,7 @@
 //! 誤りの型は`error`、読み戻した絵は`readback_image`、その置き場は`readback_dump`、
 //! アプリが読む実行時形式の置き場は`runtime_asset_root`、アプリの終了時報告は`exit_report`、
 //! 起こし方の綴りは`app_executable`、1回ぶんの起動の指定は`launch_specification`、
-//! それらを束ねる操作サービスは`run_environment`が持つ。
+//! 1回の実行を指す名前は`run_name`が、それらを束ねる操作サービスは`run_environment`が持つ。
 
 mod app_executable;
 mod error;
@@ -20,6 +20,7 @@ mod launch_specification;
 mod readback_dump;
 mod readback_image;
 mod run_environment;
+mod run_name;
 mod runtime_asset_root;
 
 pub use app_executable::アプリの起こし方;
@@ -29,4 +30,5 @@ pub use launch_specification::{アプリの起動指定, 描画フレーム数, 
 pub use readback_dump::{読み戻しの書き出し先, 読み戻しの置き場};
 pub use readback_image::読み戻し画像;
 pub use run_environment::{描画検収の実行環境, 検収の1回の実行};
+pub use run_name::検収の実行名;
 pub use runtime_asset_root::実行時アセットルート;

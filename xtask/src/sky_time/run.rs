@@ -7,7 +7,7 @@
 use std::path::Path;
 use std::process::Command;
 
-use crate::acceptance::{終了時報告, 読み戻しの書き出し先, 読み戻し画像};
+use crate::acceptance::{検収の実行名, 終了時報告, 読み戻しの書き出し先, 読み戻し画像};
 
 const アセットルート: &str = "target/terrain_assets";
 const シーン名: &str = "terrain_origin";
@@ -38,7 +38,8 @@ pub(super) fn 描画して標準出力も得る(
     条件: &条件<'_>,
     追加引数: &[&str],
 ) -> Result<(読み戻し画像, String), String> {
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 出力名);
+    let 実行名 = 検収の実行名::生成する(出力名)?;
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
     let mut コマンド = Command::new("cargo");
     コマンド
         .args(["run", "-p", "blitz_app", "--", "--scene", シーン名])
@@ -56,7 +57,7 @@ pub(super) fn 描画して標準出力も得る(
     let 出力 = コマンド
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({出力名}): {誤り}"))?;
-    let 報告 = 終了時報告::取り込む(出力名, String::from_utf8_lossy(&出力.stdout).into_owned());
+    let 報告 = 終了時報告::取り込む(書き出し先.実行名(), String::from_utf8_lossy(&出力.stdout).into_owned());
     if !出力.status.success() {
         return Err(format!("blitz_appが{}で失敗した({出力名})", 出力.status));
     }

@@ -8,8 +8,8 @@
 
 use std::path::Path;
 
-use crate::acceptance::読み戻しの書き出し先;
 use crate::acceptance::読み戻し画像;
+use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
 
 use super::world_bake::{ヘルメットのシーン名, 実行時形式のバイト数を読む};
 use super::{difference, draw, helmet_crop, summary, world_bake};
@@ -19,15 +19,15 @@ pub(super) fn ヘルメットの目視材料を作る(出力先: &Path) -> Resul
     let 非圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(
         &ルート.非圧縮,
         ヘルメットのシーン名,
-        &読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, "helmet_rgba8"),
-        "DamagedHelmet(全てRGBA8)",
-    )?;
+        &読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 検収の実行名::生成する("helmet_rgba8")?),
+    )
+    .map_err(|誤り| format!("DamagedHelmet(全てRGBA8): {誤り}"))?;
     let 圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(
         &ルート.ブロック圧縮,
         ヘルメットのシーン名,
-        &読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, "helmet_bc1"),
-        "DamagedHelmet(ベースカラーのブロック圧縮)",
-    )?;
+        &読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 検収の実行名::生成する("helmet_bc1")?),
+    )
+    .map_err(|誤り| format!("DamagedHelmet(ベースカラーのブロック圧縮): {誤り}"))?;
     let 統計 = 画面全体の統計を採る(&非圧縮.画像, &圧縮.画像)?;
     if 統計.差のある画素数 == 0 {
         return Err("DamagedHelmetの2枚の絵が1画素も食い違わない(方針の取り違えの疑いがある)".to_string());

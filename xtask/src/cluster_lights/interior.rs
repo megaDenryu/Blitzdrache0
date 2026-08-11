@@ -13,7 +13,7 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::acceptance::読み戻しの書き出し先;
+use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
 use crate::multi_light_world::{run, world};
 
 /// 屋内を測る矩形の、画面の幅と高さに対する半分の割合を百分率で置く。戸口の内側だけを含み、小屋の外壁を含まない大きさである。
@@ -37,7 +37,8 @@ pub(super) fn 測る(出力先: &Path) -> Result<屋内の測り, String> {
 }
 
 fn 一条件を撮る(出力先: &Path, 名前: &str, 追加引数: &[&str]) -> Result<(f64, PathBuf), String> {
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 名前);
+    let 実行名 = 検収の実行名::生成する(名前)?;
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
     let 結果 = run::走らせる(&run::描画条件 {
         シーン名: world::屋内のシーン,
         アセットルート: world::屋内のアセットルート,

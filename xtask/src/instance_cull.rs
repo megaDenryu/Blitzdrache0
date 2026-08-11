@@ -9,7 +9,7 @@ mod pixel_check;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use crate::acceptance::読み戻しの置き場;
+use crate::acceptance::{検収の実行名, 読み戻しの置き場};
 use crate::vegetation_run;
 
 const 出力ディレクトリ: &str = "target/instance_cull";
@@ -62,8 +62,9 @@ fn 検収する() -> Result<String, String> {
 
 /// 同じシーンを可視判定のオンとオフで1回ずつ描く。読み戻し画像と終了時報告を対で返す。
 fn 対で描く(出力先: &読み戻しの置き場, シーン名: &str, シェーダー入口: &Path) -> Result<judgment::実行の対, String> {
-    let オンの書き出し先 = 出力先.中の書き出し先(&format!("{シーン名}_on"));
-    let オフの書き出し先 = 出力先.中の書き出し先(&format!("{シーン名}_off"));
+    let (オンの綴り, オフの綴り) = (format!("{シーン名}_on"), format!("{シーン名}_off"));
+    let (オンの実行名, オフの実行名) = (検収の実行名::生成する(&オンの綴り)?, 検収の実行名::生成する(&オフの綴り)?);
+    let (オンの書き出し先, オフの書き出し先) = (出力先.中の書き出し先(オンの実行名), 出力先.中の書き出し先(オフの実行名));
     let オン = vegetation_run::描画する(オンの書き出し先, シーン名, シェーダー入口, フレーム数, &可視判定オンの引数)?;
     let オフ = vegetation_run::描画する(オフの書き出し先, シーン名, シェーダー入口, フレーム数, &可視判定オフの引数)?;
     let オン計数 = crate::report_parse::取り出す(オン.報告().本文())?;

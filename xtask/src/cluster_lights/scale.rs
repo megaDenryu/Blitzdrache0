@@ -11,7 +11,7 @@ use std::path::Path;
 use super::assignment::割り当ての統計;
 use super::gpu_time::区間の中央値;
 use super::{assignment, gpu_time};
-use crate::acceptance::読み戻しの書き出し先;
+use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
 use crate::multi_light_world::{run, world};
 
 /// 振る光の件数。
@@ -37,7 +37,9 @@ fn 一件数を測る(出力先: &Path, 光の件数: usize) -> Result<件数ご
     let mut シーン描画一覧 = Vec::with_capacity(反復回数);
     let mut 最後の標準出力 = String::new();
     for 回 in 1..=反復回数 {
-        let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, &format!("night_x{光の件数}_{回}"));
+        let 実行名の綴り = format!("night_x{光の件数}_{回}");
+        let 実行名 = 検収の実行名::生成する(&実行名の綴り)?;
+        let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
         let 結果 = run::走らせる(&run::描画条件 {
             シーン名: world::夜のシーン,
             アセットルート: world::夜のアセットルート,

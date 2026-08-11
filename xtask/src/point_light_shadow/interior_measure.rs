@@ -6,7 +6,7 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::acceptance::読み戻しの書き出し先;
+use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
 use crate::multi_light_world::{run, world};
 
 use super::interior_region::屋内の判定領域の一覧;
@@ -48,7 +48,8 @@ pub(super) fn 屋内を3条件で撮る(出力先: &Path) -> Result<屋内の測
 }
 
 fn 屋内を一条件で撮る(出力先: &Path, 名前: &str, 追加引数: &[&str]) -> Result<(Vec<f64>, PathBuf), String> {
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 名前);
+    let 実行名 = 検収の実行名::生成する(名前)?;
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
     let 結果 = run::走らせる(&run::描画条件 {
         シーン名: world::屋内のシーン,
         アセットルート: world::屋内のアセットルート,

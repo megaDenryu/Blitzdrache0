@@ -13,7 +13,7 @@ mod run;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use crate::acceptance::読み戻しの書き出し先;
+use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
 use crate::day_moment::{代表時刻, 代表時刻一覧};
 use run::時間再構成の条件;
 
@@ -81,8 +81,9 @@ fn 一条件を撮る(
     出力先: &std::path::Path, 時刻: &代表時刻, 条件: 時間再構成の条件, 接尾辞: &str
 ) -> Result<撮った絵, String> {
     let 名前 = format!("{}_{}", 時刻.ファイル名, 接尾辞);
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, &名前);
-    let 画像 = run::描画する(&書き出し先, 時刻.一日内秒, &名前, 条件)?;
+    let 実行名 = 検収の実行名::生成する(&名前)?;
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
+    let 画像 = run::描画する(&書き出し先, 時刻.一日内秒, 条件)?;
     let png = 書き出し先.目視用の絵へ変換する()?;
     Ok(撮った絵 { 画像, png })
 }

@@ -12,12 +12,13 @@
 use std::path::{Path, PathBuf};
 
 use super::assignment;
-use crate::acceptance::読み戻しの書き出し先;
 use crate::acceptance::読み戻し画像;
+use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
 use crate::multi_light_world::{run, world};
 
 pub(super) fn 確かめる(出力先: &Path) -> Result<PathBuf, String> {
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, "night");
+    let 実行名 = 検収の実行名::生成する("night")?;
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
     let 結果 = run::走らせる(&run::描画条件 {
         シーン名: world::夜のシーン,
         アセットルート: world::夜のアセットルート,
@@ -33,7 +34,8 @@ pub(super) fn 確かめる(出力先: &Path) -> Result<PathBuf, String> {
     })?;
     割り当ての行が一致することを確かめる(結果.報告.本文())?;
     let 最終 = 結果.画像;
-    let 先行の書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, "night_preceding");
+    let 先行の書き出し先 =
+        読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 検収の実行名::生成する("night_preceding")?);
     let 先行 = 読み戻し画像::読み込む(&先行の書き出し先)?;
     let 違う画素数 = 違う画素を数える(最終.バイト列(), 先行.バイト列())?;
     if 違う画素数 != 0 {

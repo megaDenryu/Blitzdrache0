@@ -11,7 +11,7 @@
 use std::path::Path;
 use std::process::Command;
 
-use crate::acceptance::{検収の1回の実行, 終了時報告, 読み戻しの書き出し先, 読み戻し画像};
+use crate::acceptance::{検収の1回の実行, 検収の実行名, 終了時報告, 読み戻しの書き出し先, 読み戻し画像};
 
 const アセットルート: &str = "target/runtime_assets";
 const フレーム数: &str = "12";
@@ -30,6 +30,7 @@ pub(super) fn 描画する(
     注入: &注入の指定<'_>,
     ポスト処理を通すか: bool,
 ) -> Result<検収の1回の実行, String> {
+    let 実行名 = 検収の実行名::生成する(実行名)?;
     let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
     let mut 起動 = Command::new("cargo");
     起動
@@ -49,7 +50,7 @@ pub(super) fn 描画する(
         .arg(書き出し先.起動引数として渡す綴り())
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({実行名}): {誤り}"))?;
-    let 報告 = 終了時報告::取り込む(実行名, String::from_utf8_lossy(&出力.stdout).into_owned());
+    let 報告 = 終了時報告::取り込む(書き出し先.実行名(), String::from_utf8_lossy(&出力.stdout).into_owned());
     if !出力.status.success() {
         eprintln!("{}", String::from_utf8_lossy(&出力.stderr));
         return Err(format!("blitz_appが{}で失敗した({実行名})", 出力.status));

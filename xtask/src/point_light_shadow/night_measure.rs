@@ -6,7 +6,7 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::acceptance::読み戻しの書き出し先;
+use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
 use crate::multi_light_world::{run, world};
 
 use super::instrument::{点光源の影の計器, 点光源の影の計器を取り出す};
@@ -50,7 +50,9 @@ pub(super) fn 夜の世界を影付きの件数3つで撮る(出力先: &Path) -
 
 fn 夜を一条件で撮る(出力先: &Path, 影付きの件数: usize) -> Result<(Vec<f64>, 点光源の影の計器, PathBuf), String> {
     let 件数文字列 = 影付きの件数.to_string();
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, &format!("night_shadow_x{影付きの件数}"));
+    let 実行名の綴り = format!("night_shadow_x{影付きの件数}");
+    let 実行名 = 検収の実行名::生成する(&実行名の綴り)?;
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
     let 結果 = run::走らせる(&run::描画条件 {
         シーン名: world::夜のシーン,
         アセットルート: world::夜のアセットルート,

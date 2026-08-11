@@ -13,7 +13,7 @@ mod judgment;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use crate::acceptance::{検収の1回の実行, 読み戻しの置き場};
+use crate::acceptance::{検収の1回の実行, 検収の実行名, 読み戻しの置き場};
 
 const 出力ディレクトリ: &str = "target/cloth_night";
 const シェーダーコピー先: &str = "target/cloth_night_shaders";
@@ -49,7 +49,7 @@ fn 検収する() -> Result<String, String> {
     let 昼 = 布領域を測る(&出力先, &入口, "day", 昼の一日内秒)?;
 
     let 明るさ = judgment::明るさの時刻への追従を判定する(&夜, &昼)?;
-    let 夜png = 出力先.中の書き出し先("night_cloth").目視用の絵へ変換する()?;
+    let 夜png = 出力先.中の書き出し先(検収の実行名::生成する("night_cloth")?).目視用の絵へ変換する()?;
     Ok(format!("{明るさ}、絵は{}", 夜png.display()))
 }
 
@@ -64,5 +64,6 @@ fn 描く(
 ) -> Result<検収の1回の実行, String> {
     let mut 引数: Vec<&str> = vec!["--sky", "--time-of-day", 一日内秒];
     引数.extend_from_slice(追加);
-    crate::vegetation_run::描画する(出力先.中の書き出し先(名前), シーン, 入口, フレーム数, &引数)
+    let 実行名 = 検収の実行名::生成する(名前)?;
+    crate::vegetation_run::描画する(出力先.中の書き出し先(実行名), シーン, 入口, フレーム数, &引数)
 }

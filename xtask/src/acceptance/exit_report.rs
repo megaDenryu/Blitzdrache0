@@ -7,6 +7,7 @@
 //! 名前をメソッドの引数で毎回受けると、渡し忘れた入口だけが名無しの失敗を出す。
 
 use super::error::検収エラー;
+use super::run_name::検収の実行名;
 use crate::report_heading::報告の見出し;
 use crate::validation_count::検証層の指摘件数の見出し;
 
@@ -16,9 +17,9 @@ pub struct 終了時報告 {
 }
 
 impl 終了時報告 {
-    pub fn 取り込む(読み手の名前: &str, 本文: String) -> Self {
+    pub fn 取り込む(実行名: 検収の実行名<'_>, 本文: String) -> Self {
         Self {
-            読み手の名前: 読み手の名前.to_string(),
+            読み手の名前: 実行名.to_string(),
             本文,
         }
     }

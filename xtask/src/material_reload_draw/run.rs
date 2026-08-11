@@ -10,7 +10,7 @@
 use std::path::Path;
 use std::process::Command;
 
-use crate::acceptance::{終了時報告, 読み戻しの書き出し先, 読み戻し画像};
+use crate::acceptance::{検収の実行名, 終了時報告, 読み戻しの書き出し先, 読み戻し画像};
 
 /// 1回の起動が生む、差し替えを挟んだ2枚の絵。2枚が同じ起動から出たことを型で示すためにまとめて持つ。
 pub(super) struct 差し替えを挟んだ実行 {
@@ -24,7 +24,8 @@ const フレーム数: &str = "300";
 const 起動引数: [&str; 4] = ["--unlit", "--no-post", "--report-draw-issue", "--report-memory"];
 
 pub(super) fn 差し替えを挟んで描画する(出力先: &Path, シーン名: &str) -> Result<差し替えを挟んだ実行, String> {
-    let 後の書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, シーン名);
+    let 実行名 = 検収の実行名::生成する(シーン名)?;
+    let 後の書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
     let 出力 = Command::new("cargo")
         .args(["run", "-p", "blitz_app", "--", "--scene", シーン名])
         .args(["--asset-root", アセットルート])
@@ -34,12 +35,14 @@ pub(super) fn 差し替えを挟んで描画する(出力先: &Path, シーン�
         .arg(後の書き出し先.起動引数として渡す綴り())
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({シーン名}): {誤り}"))?;
-    let 報告 = 終了時報告::取り込む(シーン名, String::from_utf8_lossy(&出力.stdout).into_owned());
+    let 報告 = 終了時報告::取り込む(後の書き出し先.実行名(), String::from_utf8_lossy(&出力.stdout).into_owned());
     報告.画面へ流す();
     if !出力.status.success() {
         return Err(format!("blitz_appが{}で失敗した({シーン名})", 出力.status));
     }
-    let 前の書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, &format!("{シーン名}_before"));
+    let 差し替え前の綴り = format!("{シーン名}_before");
+    let 前の書き出し先 =
+        読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 検収の実行名::生成する(&差し替え前の綴り)?);
     報告.検証層の指摘が零件であることを確かめる()?;
     Ok(差し替えを挟んだ実行 {
         差し替え前: 読み戻し画像::読み込む(&前の書き出し先)?,

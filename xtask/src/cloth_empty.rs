@@ -8,7 +8,7 @@ mod judgment;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use crate::acceptance::{検収の1回の実行, 読み戻しの置き場};
+use crate::acceptance::{検収の1回の実行, 検収の実行名, 読み戻しの置き場};
 use crate::vegetation_run;
 
 const 出力ディレクトリ: &str = "target/cloth_empty";
@@ -61,5 +61,6 @@ fn 検収する() -> Result<String, String> {
 fn 描く(
     出力先: &読み戻しの置き場, 名前: &str, シェーダー入口: &Path, 追加引数: &[&str]
 ) -> Result<検収の1回の実行, String> {
-    vegetation_run::描画する(出力先.中の書き出し先(名前), シーン, シェーダー入口, フレーム数, 追加引数)
+    let 実行名 = 検収の実行名::生成する(名前)?;
+    vegetation_run::描画する(出力先.中の書き出し先(実行名), シーン, シェーダー入口, フレーム数, 追加引数)
 }
