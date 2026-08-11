@@ -24,6 +24,8 @@ mod summary;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
+use crate::release_build::計測の生値のファイル;
+
 use crate::sample_world_region::固定領域一覧を作る;
 
 const 出力ディレクトリ: &str = "target/ibl_step";
@@ -58,7 +60,7 @@ fn 計測する() -> Result<String, String> {
 
     let 結果 = scan::走査する(&跨ぎ一覧, &領域一覧, &ベース名)?;
     judgment::値が有限であることを確かめる(&結果.集計一覧)?;
-    record::生値を書く(&出力先.join(crate::release_build::計測の生値ファイル名), &結果.生値)?;
+    record::生値を書く(&計測の生値のファイル::出力ディレクトリの中の場所(&出力先), &結果.生値)?;
     record::表を表示する(&結果.集計一覧, &跨ぎ一覧);
     let 対照の行 = judgment::対照を判定する(&跨ぎ一覧, &結果.集計一覧, &ベース名)?;
     let 絵の置き場 = picture::代表点の絵を書く(&跨ぎ一覧, &結果.集計一覧, &結果.地面の段差の降順, &出力先.join(絵のベース名))?;

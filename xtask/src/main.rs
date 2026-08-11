@@ -60,6 +60,7 @@ mod raw_image;
 mod raw_png;
 mod relative_luminance;
 mod release_build;
+mod report_heading;
 mod report_parse;
 mod sample_world_region;
 mod shader_copy;

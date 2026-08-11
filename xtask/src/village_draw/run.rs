@@ -7,6 +7,8 @@
 use std::path::Path;
 use std::process::Command;
 
+use crate::report_heading::報告の見出し;
+
 const アセットルート: &str = "target/village_assets";
 const シーン名: &str = "prop_village";
 const フレーム数: &str = "180";
@@ -16,11 +18,11 @@ const 条件名: &str = "village";
 const 一日内秒: &str = "61200";
 
 /// 終了時報告のうち、この入口が読ませたい部分の見出し。行の先頭から一致を見る。
-const 報告の見出し一覧: [&str; 5] = [
-    "描画発行内訳",
-    "CPU側フレーム間隔",
-    "パス別GPU時間",
-    "Vulkanメモリ確保",
+const 報告の見出し一覧: [報告の見出し; 5] = [
+    報告の見出し::生成する("描画発行内訳"),
+    報告の見出し::生成する("CPU側フレーム間隔"),
+    報告の見出し::生成する("パス別GPU時間"),
+    報告の見出し::生成する("Vulkanメモリ確保"),
     crate::validation_count::検証層の指摘件数の見出し,
 ];
 
@@ -55,7 +57,7 @@ pub(super) fn 描画する(ダンプ先: &Path) -> Result<String, String> {
 pub(super) fn 報告を書き出す(標準出力: &str) {
     let mut 報告の内側 = false;
     for 行 in 標準出力.lines() {
-        if 報告の見出し一覧.iter().any(|見出し| 行.starts_with(見出し)) {
+        if 報告の見出し一覧.iter().any(|見出し| 見出し.行の始まりか(行)) {
             報告の内側 = true;
         } else if !行.starts_with(' ') {
             報告の内側 = false;
