@@ -7,18 +7,20 @@
 
 use std::path::PathBuf;
 
-use blitz_asset_compiler::{実行時形式の出力ルート, 高さ場アセットをコンパイルする};
+use blitz_asset_compiler::高さ場アセットをコンパイルする;
 use blitz_engine::height_field::世界の高さ場の安定IDの綴り;
-use blitz_engine::{アセットID, カタログ, チャンク座標};
+use blitz_engine::{アセットID, チャンク座標};
 
-pub(super) fn 高さ場を焼いて登録する(
-    出力ルート: &実行時形式の出力ルート,
-    チャンクごとのソース一覧: &[(チャンク座標, PathBuf)],
-    実行時カタログ: &mut カタログ,
-) -> Result<(), String> {
-    let id = アセットID::生成する(世界の高さ場の安定IDの綴り).map_err(|誤り| 誤り.to_string())?;
-    let 結果 = 高さ場アセットをコンパイルする(チャンクごとのソース一覧).map_err(|誤り| format!("{id}: {誤り}"))?;
-    let 実行時パス = 出力ルート.アセットを書き出す(&id, &結果.実行時バイト列)?;
-    実行時カタログ.詳細を登録する(id, 実行時パス, 結果.ソース依存一覧, 結果.メタデータ);
-    Ok(())
+use super::compilation::実行時アセットのコンパイル;
+
+impl 実行時アセットのコンパイル {
+    pub(super) fn 高さ場を焼いて登録する(
+        &mut self, チャンクごとのソース一覧: &[(チャンク座標, PathBuf)]
+    ) -> Result<(), String> {
+        let id = アセットID::生成する(世界の高さ場の安定IDの綴り).map_err(|誤り| 誤り.to_string())?;
+        let 結果 = 高さ場アセットをコンパイルする(チャンクごとのソース一覧).map_err(|誤り| format!("{id}: {誤り}"))?;
+        let 実行時パス = self.出力ルート.アセットを書き出す(&id, &結果.実行時バイト列)?;
+        self.実行時カタログ.詳細を登録する(id, 実行時パス, 結果.ソース依存一覧, 結果.メタデータ);
+        Ok(())
+    }
 }
