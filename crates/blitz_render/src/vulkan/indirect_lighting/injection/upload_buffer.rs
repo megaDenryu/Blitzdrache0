@@ -24,7 +24,7 @@ impl 注入元バッファ {
     }
 
     pub(in crate::vulkan::indirect_lighting) fn handle(&self) -> vk::Buffer {
-        self.バッファ.バッファ()
+        self.バッファ.バッファのハンドル()
     }
 
     /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、このバッファは遠方環境の照明資源の1段として呼ばれる(GPU待機済み)。

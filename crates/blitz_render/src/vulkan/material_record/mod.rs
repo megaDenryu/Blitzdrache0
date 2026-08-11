@@ -26,7 +26,7 @@ pub(crate) struct 材質レコードバッファ {
 
 impl 材質レコードバッファ {
     pub(crate) fn buffer(&self) -> vk::Buffer {
-        self.バッファ.バッファ()
+        self.バッファ.バッファのハンドル()
     }
 
     pub(crate) fn 生成する(

@@ -53,11 +53,11 @@ impl ジオメトリバッファ {
     }
 
     pub(crate) fn 頂点バッファ(&self) -> vk::Buffer {
-        self.頂点.バッファ()
+        self.頂点.バッファのハンドル()
     }
 
     pub(crate) fn インデックスバッファ(&self) -> vk::Buffer {
-        self.索引.バッファ()
+        self.索引.バッファのハンドル()
     }
 
     /// 前提: 破棄時点でGPU側の使用が完了していることを呼び出し元が保証する。

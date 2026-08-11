@@ -23,7 +23,7 @@ impl 書き換えバッファ {
     }
 
     pub(super) fn buffer(&self) -> vk::Buffer {
-        self.バッファ.バッファ()
+        self.バッファ.バッファのハンドル()
     }
 
     pub(super) fn 書き込む(&self, device: &ash::Device, バイト列: &[u8]) -> Result<(), レンダラーエラー> {

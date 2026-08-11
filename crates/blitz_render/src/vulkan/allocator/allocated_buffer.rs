@@ -30,7 +30,7 @@ impl 専用メモリ付きバッファ {
         }
     }
 
-    pub(crate) fn バッファ(&self) -> vk::Buffer {
+    pub(crate) fn バッファのハンドル(&self) -> vk::Buffer {
         self.buffer
     }
 

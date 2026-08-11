@@ -15,7 +15,7 @@ impl 読み戻しバッファ {
     }
 
     pub(crate) fn handle(&self) -> ash::vk::Buffer {
-        self.バッファ.バッファ()
+        self.バッファ.バッファのハンドル()
     }
 
     pub(crate) fn 容量バイト数(&self) -> u64 {

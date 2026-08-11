@@ -52,11 +52,11 @@ impl クラスタ格子の資源 {
     }
 
     pub(super) fn 格子のバッファ(&self) -> vk::Buffer {
-        self.格子.バッファ()
+        self.格子.バッファのハンドル()
     }
 
     pub(super) fn 光添字列のバッファ(&self) -> vk::Buffer {
-        self.光添字列.バッファ()
+        self.光添字列.バッファのハンドル()
     }
 
     /// 注意: 確保の逆順に破棄する。

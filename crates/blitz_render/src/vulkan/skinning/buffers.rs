@@ -22,11 +22,11 @@ pub(super) use create::生成する;
 
 impl スキニングバッファ {
     pub(super) fn レスト頂点buffer(&self) -> vk::Buffer {
-        self.レスト頂点.バッファ()
+        self.レスト頂点.バッファのハンドル()
     }
 
     pub(super) fn 属性buffer(&self) -> vk::Buffer {
-        self.属性.バッファ()
+        self.属性.バッファのハンドル()
     }
 
     pub(super) fn 行列buffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {

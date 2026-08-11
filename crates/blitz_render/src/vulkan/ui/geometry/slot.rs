@@ -14,7 +14,7 @@ pub(super) struct バッファスロット {
 
 impl バッファスロット {
     pub(super) fn buffer(&self) -> vk::Buffer {
-        self.バッファ.バッファ()
+        self.バッファ.バッファのハンドル()
     }
 
     /// 前提: 破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
