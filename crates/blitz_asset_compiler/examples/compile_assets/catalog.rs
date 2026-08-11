@@ -4,6 +4,8 @@
 //!
 //! 置き場と世界と2つのカタログはコンパイルのサービス型が保持しているため、この工程は何も持参されない。
 
+use std::path::PathBuf;
+
 use blitz_engine::{アセットID, チャンク座標};
 
 use super::chunk_ledger::台帳での扱い;
@@ -36,10 +38,7 @@ impl 実行時アセットのコンパイル {
         let 外部ルート = source_location::外部ソースルート::解決する();
         let mut 対象一覧 = Vec::new();
         for 定義 in self.世界.アセット定義一覧() {
-            let 基準 = 定義.基準;
-            let 相対パス = 定義.相対パス;
-            let Some(ソースパス) = self.宣言のソースを開ける形で参照する(基準, 相対パス, &外部ルート, &定義)?
-            else {
+            let Some(ソースパス) = self.宣言のソースを開ける形で参照する(&定義, &外部ルート)? else {
                 continue;
             };
             let id = アセットID::生成する(定義.名前).map_err(|誤り| 誤り.to_string())?;
@@ -60,12 +59,11 @@ impl 実行時アセットのコンパイル {
     /// 置き場が無いか未取得の宣言は値なしを返して飛ばす。必須の宣言だけは失敗にする。
     fn 宣言のソースを開ける形で参照する(
         &self,
-        基準: ソースの基準,
-        相対パス: &str,
-        外部ルート: &source_location::外部ソースルート,
         定義: &アセット定義,
-    ) -> Result<Option<std::path::PathBuf>, String> {
-        let ソースパス = match source_location::ソースパスを参照する(基準, 相対パス, &self.ソースルート, 外部ルート) {
+        外部ルート: &source_location::外部ソースルート,
+    ) -> Result<Option<PathBuf>, String> {
+        let 参照結果 = source_location::ソースパスを参照する(定義.基準, 定義.相対パス, &self.ソースルート, 外部ルート);
+        let ソースパス = match 参照結果 {
             Ok(パス) => パス,
             Err(診断) => {
                 println!("[compile_assets] 置き場が無いため{}をスキップ: {診断}", 定義.名前);
