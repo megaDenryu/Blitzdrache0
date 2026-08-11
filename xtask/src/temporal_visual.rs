@@ -8,11 +8,15 @@
 //! 参照: `_doc/設計/時間再構成.md`「段割りと各段の完了条件」の段4
 
 mod crop;
+mod error;
+mod judgment;
 mod pixel_diff;
 mod run;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+use error::時間再構成の目視材料の撮影エラー;
 
 use crate::acceptance::{描画検収の実行環境, 検収の実行名};
 use crate::day_moment::{代表時刻, 代表時刻一覧};
@@ -37,30 +41,29 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 撮る() -> Result<String, String> {
-    crate::visual_sample_world::用意する()?;
+fn 撮る() -> Result<String, 時間再構成の目視材料の撮影エラー> {
+    crate::visual_sample_world::用意する()
+        .map_err(|理由| 時間再構成の目視材料の撮影エラー::目視見本世界を用意できなかった { 理由 })?;
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
     let mut 行一覧 = Vec::new();
     for 時刻 in 代表時刻一覧.iter().filter(|時刻| 撮る時刻のファイル名.contains(&時刻.ファイル名)) {
         行一覧.push(一時刻の対を撮る(&実行環境, &出力先, 時刻)?);
     }
-    if 行一覧.len() != 撮る時刻のファイル名.len() {
-        return Err(format!("代表時刻の表から{}時刻しか選べなかった", 行一覧.len()));
-    }
+    judgment::撮った時刻が台帳の件数と揃うことを確かめる(行一覧.len(), 撮る時刻のファイル名.len())?;
     Ok(行一覧.join("、"))
 }
 
 fn 一時刻の対を撮る(
-    実行環境: &描画検収の実行環境, 出力先: &std::path::Path, 時刻: &代表時刻
-) -> Result<String, String> {
+    実行環境: &描画検収の実行環境,
+    出力先: &std::path::Path,
+    時刻: &代表時刻,
+) -> Result<String, 時間再構成の目視材料の撮影エラー> {
     let 効かせた = 一条件を撮る(実行環境, 時刻, 時間再構成の条件::効かせる, "with_taa")?;
     let 切った = 一条件を撮る(実行環境, 時刻, 時間再構成の条件::切る, "without_taa")?;
     crop::区画が絵に収まるか確かめる(効かせた.画像.幅().画素数(), 効かせた.画像.高さ().画素数())?;
     let 食い違い = pixel_diff::食い違う画素を数える(効かせた.画像.バイト列(), 切った.画像.バイト列())?;
-    if 食い違い == 0 {
-        return Err(format!("{}の効かせた絵と切った絵が1画素も食い違わない", 時刻.名前));
-    }
+    judgment::効かせた絵と切った絵が食い違うことを確かめる(時刻.名前, 食い違い)?;
     let 効かせた拡大 = crop::切り取って拡大する(&効かせた.png, &出力先.join(format!("{}_with_taa_crop.png", 時刻.ファイル名)))?;
     let 切った拡大 = crop::切り取って拡大する(&切った.png, &出力先.join(format!("{}_without_taa_crop.png", 時刻.ファイル名)))?;
     Ok(format!(
@@ -81,8 +84,11 @@ struct 撮った絵 {
 }
 
 fn 一条件を撮る(
-    実行環境: &描画検収の実行環境, 時刻: &代表時刻, 条件: 時間再構成の条件, 接尾辞: &str
-) -> Result<撮った絵, String> {
+    実行環境: &描画検収の実行環境,
+    時刻: &代表時刻,
+    条件: 時間再構成の条件,
+    接尾辞: &str,
+) -> Result<撮った絵, 時間再構成の目視材料の撮影エラー> {
     let 名前 = format!("{}_{}", 時刻.ファイル名, 接尾辞);
     let 実行 = 実行環境.描いて読み戻す(検収の実行名::生成する(&名前)?, &run::起動指定を組み立てる(時刻.一日内秒, 条件))?;
     let png = 実行.書き出し先().目視用の絵へ変換する()?;
