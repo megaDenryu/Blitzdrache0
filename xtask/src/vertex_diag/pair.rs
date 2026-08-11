@@ -7,11 +7,11 @@
 use std::path::{Path, PathBuf};
 
 use super::run;
+use crate::acceptance::描画検収の実行環境;
 
 pub(super) struct 診断の対 {
-    出力先: PathBuf,
-    粗いルート: PathBuf,
-    細かいルート: PathBuf,
+    粗い世界の実行環境: 描画検収の実行環境,
+    細かい世界の実行環境: 描画検収の実行環境,
 }
 
 impl 診断の対 {
@@ -19,15 +19,14 @@ impl 診断の対 {
         let 粗いルート = 一世界を焼く(出力先, "coarse", crate::compile_assets::世界名::頂点診断の粗い世界, チャンクあたり個体数)?;
         let 細かいルート = 一世界を焼く(出力先, "fine", crate::compile_assets::世界名::頂点診断の細かい世界, チャンクあたり個体数)?;
         Ok(Self {
-            出力先: 出力先.to_path_buf(),
-            粗いルート,
-            細かいルート,
+            粗い世界の実行環境: run::実行環境を作る(粗いルート, 出力先.to_path_buf())?,
+            細かい世界の実行環境: run::実行環境を作る(細かいルート, 出力先.to_path_buf())?,
         })
     }
 
-    pub(super) fn 描き比べる(&self, 条件名: &str, 追加引数: &[&str]) -> Result<(run::実行結果, run::実行結果), String> {
-        let 粗い = run::描画する(&self.出力先, &format!("coarse_{条件名}"), &self.粗いルート, 追加引数)?;
-        let 細かい = run::描画する(&self.出力先, &format!("fine_{条件名}"), &self.細かいルート, 追加引数)?;
+    pub(super) fn 描き比べる(&self, 条件名: &str, 追加の選択肢: &[&str]) -> Result<(run::実行結果, run::実行結果), String> {
+        let 粗い = run::描画する(&self.粗い世界の実行環境, &format!("coarse_{条件名}"), 追加の選択肢)?;
+        let 細かい = run::描画する(&self.細かい世界の実行環境, &format!("fine_{条件名}"), 追加の選択肢)?;
         Ok((粗い, 細かい))
     }
 }

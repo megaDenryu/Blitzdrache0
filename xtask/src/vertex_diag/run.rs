@@ -1,5 +1,5 @@
-//! 診断世界1つぶんのblitz_app起動と、読み戻し画像および終了時報告の取り込み。
-//! 担当するのは「アセットルートを受け取り、固定の構図で描いた最終フレームの画素と計数を返す」ことである。
+//! 診断世界1つぶんの起動の指定と、その実行から画素と計数を採る工程。
+//! 受け取るのは実行環境と実行名と追加の選択肢、返すのは固定の構図で描いた最終フレームの画素と計数である。
 //!
 //! 構図は寝かせた視線と低い太陽にする。この構図では影が画面の広い範囲を覆うため、
 //! 影の輪郭が動けば画素の食い違いとして現れる。判定するのは2つの診断世界の絵の差であり、
@@ -7,54 +7,57 @@
 //! 空とポスト処理を外すのは、光のにじみが局所の食い違いを画面全体へ広げ、幾何の食い違いを画素で数えられなくなるためである。
 //! 時間再構成は`--no-taa`で外す。この入口の判定がバイト一致に依るため、フレームをまたぐ混合が入ると前のフレームの残りが絵に混ざる。
 
-use std::path::Path;
-use std::process::Command;
+use std::path::PathBuf;
 
-use crate::acceptance::{検収の実行名, 終了時報告, 読み戻しの書き出し先, 読み戻し画像};
+use crate::acceptance::{
+    アプリの起こし方, アプリの起動指定, 実行時アセットルート, 描画フレーム数, 描画検収の実行環境, 検収の実行名, 検収エラー, 検収シーン名,
+    読み戻し画像,
+};
 use crate::report_parse::計数報告;
 
-const シーン名: &str = "terrain_origin";
-const フレーム数: &str = "160";
+const シーン名: 検収シーン名 = 検収シーン名::生成する("terrain_origin");
+const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(160);
 const 先読み半径: &str = "2";
 const 容量上限バイト: &str = "16777216";
 const カメラ俯角差分度: &str = "-25";
 const 一日内秒: &str = "61200";
+const 背景と光を外す選択肢: [&str; 5] = ["--no-sky", "--no-post", "--no-taa", "--report-draw-issue", "--report-memory"];
 
 pub(super) struct 実行結果 {
     pub(super) 画像: 読み戻し画像,
     pub(super) 計数: 計数報告,
 }
 
-pub(super) fn 描画する(出力先: &Path, 出力名: &str, アセットルート: &Path, 追加引数: &[&str]) -> Result<実行結果, String> {
-    let 実行名 = 検収の実行名::生成する(出力名)?;
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
-    let 出力 = Command::new("cargo")
-        .args(["run", "-p", "blitz_app", "--", "--scene", シーン名])
-        .args(["--asset-root", &アセットルート.display().to_string()])
-        .args(["--frames", フレーム数])
-        .args(["--streaming", "--streaming-preload-radius", 先読み半径])
-        .args(["--streaming-ram-limit", 容量上限バイト])
-        .args(["--streaming-vram-limit", 容量上限バイト])
-        .args(["--camera-pitch", カメラ俯角差分度])
-        .args(["--time-of-day", 一日内秒])
-        .args(["--no-sky", "--no-post", "--no-taa", "--report-draw-issue", "--report-memory"])
-        .args(追加引数)
-        .arg("--dump-frame")
-        .arg(書き出し先.起動引数として渡す綴り())
-        .output()
-        .map_err(|誤り| format!("blitz_appを起動できなかった({出力名}): {誤り}"))?;
-    let 報告 = 終了時報告::取り込む(
-        書き出し先.実行名(),
-        String::from_utf8_lossy(&出力.stdout).into_owned(),
-        String::from_utf8_lossy(&出力.stderr).into_owned(),
-    );
-    if !出力.status.success() {
-        return Err(format!("blitz_appが{}で失敗した({出力名})", 出力.status));
-    }
-    報告.検証層の指摘が零件であることを確かめる()?;
-    let 計数 = crate::report_parse::取り出す(報告.本文())?;
+/// 診断世界1つぶんの実行環境。2つの世界が別々のアセットルートを持つため、世界ごとに1つ作る。
+pub(super) fn 実行環境を作る(
+    アセットルート: PathBuf, 出力ディレクトリ: PathBuf
+) -> Result<描画検収の実行環境, 検収エラー> {
+    描画検収の実行環境::作る(
+        アプリの起こし方::毎回cargoに構築させて起動する,
+        実行時アセットルート::パスから生成する(アセットルート),
+        出力ディレクトリ,
+    )
+}
+
+pub(super) fn 描画する(
+    実行環境: &描画検収の実行環境, 実行名の綴り: &str, 追加の選択肢: &[&str]
+) -> Result<実行結果, String> {
+    let 実行 = 実行環境.描いて読み戻す(検収の実行名::生成する(実行名の綴り)?, &起動指定を組み立てる(追加の選択肢))?;
+    let 計数 = crate::report_parse::取り出す(実行.報告().本文())?;
     Ok(実行結果 {
-        画像: 読み戻し画像::読み込む(&書き出し先)?,
+        画像: 実行.画像を取り出す(),
         計数,
     })
+}
+
+fn 起動指定を組み立てる(追加の選択肢: &[&str]) -> アプリの起動指定 {
+    アプリの起動指定::シーンと枚数を決める(シーン名, フレーム数)
+        .選択肢を足す("--streaming")
+        .値を持つ選択肢を足す("--streaming-preload-radius", 先読み半径)
+        .値を持つ選択肢を足す("--streaming-ram-limit", 容量上限バイト)
+        .値を持つ選択肢を足す("--streaming-vram-limit", 容量上限バイト)
+        .値を持つ選択肢を足す("--camera-pitch", カメラ俯角差分度)
+        .値を持つ選択肢を足す("--time-of-day", 一日内秒)
+        .選択肢をまとめて足す(&背景と光を外す選択肢)
+        .選択肢をまとめて足す(追加の選択肢)
 }

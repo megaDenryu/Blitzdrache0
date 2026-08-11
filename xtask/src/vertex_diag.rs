@@ -62,7 +62,6 @@ fn 検収する() -> Result<String, String> {
         return Err("検証用ソースアセットの生成に失敗した".to_string());
     }
     let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
     let 対 = pair::診断の対::焼く(&出力先, チャンクあたり個体数)?;
 
     let (影なしの粗い, 影なしの細かい) = 対.描き比べる("no_group_shadow", &["--no-instance-shadow"])?;

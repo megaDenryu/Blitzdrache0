@@ -6,13 +6,13 @@
 
 mod parse;
 
-use std::path::Path;
-
 use parse::代表画素行;
 
+use super::draw::描いて報告も得る;
 use super::moment;
 use super::region::領域区分;
-use super::run::{描画して標準出力も得る, 条件};
+use super::run::条件;
+use crate::acceptance::描画検収の実行環境;
 
 /// sRGB8bit相当の期待値と実測値の差に許す絶対誤差。2026-07-30の実測(正午・列640・天頂寄り縦3・地平線直上縦311)は
 /// 最大0.35階調であり、丸めの余地を持たせてその6倍を取る。
@@ -20,7 +20,7 @@ const 許容誤差: f64 = 2.0;
 /// 天頂側・地平線側それぞれで境界から外す行数。フレーム上端の切り詰めや地平線の縁のにじみを避ける。
 const 余白行数: usize = 3;
 
-pub(super) fn 照合する(出力先: &Path, 幅: usize, 区分: &領域区分) -> Result<(), String> {
+pub(super) fn 照合する(実行環境: &描画検収の実行環境, 幅: usize, 区分: &領域区分) -> Result<(), String> {
     let 列 = 幅 / 2;
     let (先頭, 末尾) = 区分.縦の空範囲を求める(幅, 列).ok_or_else(|| format!("列{列}に空の画素が無い"))?;
     if 末尾 < 先頭 + 余白行数 * 2 + 1 {
@@ -31,8 +31,8 @@ pub(super) fn 照合する(出力先: &Path, 幅: usize, 区分: &領域区分) 
     let 画素引数 = format!("{列},{}", 先頭 + 余白行数) + &format!(";{列},{}", 末尾 - 余白行数);
 
     let 正午 = &moment::代表時刻一覧[moment::再描画する添字];
-    let (_, 標準出力) = 描画して標準出力も得る(
-        出力先,
+    let (_, 標準出力) = 描いて報告も得る(
+        実行環境,
         "pixel_check",
         &条件::時刻の絵 {
             一日内秒: 正午.一日内秒,

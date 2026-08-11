@@ -49,12 +49,12 @@ fn 検収する() -> Result<String, String> {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
     let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 実行環境 = run::実行環境を作る(出力先.clone())?;
 
-    let マスク = draw::領域マスクを撮る(&出力先)?;
+    let マスク = draw::領域マスクを撮る(&実行環境)?;
     let 幅 = マスク.幅().画素数();
     let 区分 = region::領域区分::作る(&マスク)?;
-    let 絵 = draw::絵を撮る(&出力先)?;
+    let 絵 = draw::絵を撮る(&実行環境)?;
     let mut 実測一覧 = Vec::new();
     for 時刻の絵 in &絵.時刻ごと {
         実測一覧.push(stats::採る(時刻の絵, &区分)?);
@@ -70,7 +70,7 @@ fn 検収する() -> Result<String, String> {
     let 地形の帯 = terrain_band::破綻防止帯を判定する(&名前一覧, &実測一覧, 区分.幾何画素数)?;
     let 円盤の差分画素数 = image_judgment::太陽円盤を判定する(&絵.円盤.ポストあり, &絵.円盤.ポストあり対照)?;
     let 円盤の不変 = sun_disk_invariance::円盤が動かさないものを判定する(&絵.円盤)?;
-    pixel_check::照合する(&出力先, 幅, &区分)?;
+    pixel_check::照合する(&実行環境, 幅, &区分)?;
 
     let 絵の置き場 = report::絵を書き出す(&出力先)?;
     Ok(format!(
