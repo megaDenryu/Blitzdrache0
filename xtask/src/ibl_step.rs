@@ -12,6 +12,7 @@
 mod control;
 mod crossing;
 mod difference;
+mod error;
 mod judgment;
 mod measure;
 mod picture;
@@ -22,6 +23,8 @@ mod summary;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+use error::間引きの段差の計測エラー;
 
 use crate::acceptance::{アプリの起こし方, 描画検収の実行環境};
 use crate::release_build::計測の生値のファイル;
@@ -42,8 +45,9 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 計測する() -> Result<String, String> {
-    crate::visual_sample_world::用意する()?;
+fn 計測する() -> Result<String, 間引きの段差の計測エラー> {
+    crate::visual_sample_world::用意する()
+        .map_err(|理由| 間引きの段差の計測エラー::目視見本世界を用意できなかった { 理由 })?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
     let マスクの実行環境 = 描画検収の実行環境::作る(
         アプリの起こし方::毎回cargoに構築させて起動する,
@@ -54,7 +58,8 @@ fn 計測する() -> Result<String, String> {
         crate::sample_world_region::領域マスクの実行名,
         &crate::sample_world_region::領域マスクの起動指定を組み立てる(),
     )?;
-    let 領域一覧 = 固定領域一覧を作る(マスクの実行.画像())?;
+    let 領域一覧 = 固定領域一覧を作る(マスクの実行.画像())
+        .map_err(|理由| 間引きの段差の計測エラー::固定領域の一覧を作れなかった { 理由 })?;
     let 跨ぎ一覧 = crossing::一覧を読む()?;
     let 撮影の実行環境 = run::実行環境を作る(出力先.clone())?;
 

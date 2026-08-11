@@ -6,6 +6,7 @@
 use std::path::Path;
 
 use super::crossing::跨ぎ;
+use super::error::間引きの段差の計測エラー;
 use super::summary::{分布, 最大の記録, 領域の集計};
 
 pub(super) struct 生値の行<'材料> {
@@ -37,8 +38,11 @@ pub(super) fn 行にする(行: &生値の行<'_>, 明るさ: &分布, 色: &分
     )
 }
 
-pub(super) fn 生値を書く(書き先: &Path, 本文: &str) -> Result<(), String> {
-    std::fs::write(書き先, 本文).map_err(|誤り| format!("{}を書けなかった: {誤り}", 書き先.display()))
+pub(super) fn 生値を書く(書き先: &Path, 本文: &str) -> Result<(), 間引きの段差の計測エラー> {
+    std::fs::write(書き先, 本文).map_err(|誤り| 間引きの段差の計測エラー::生値を書けなかった {
+        パス: 書き先.to_path_buf(),
+        誤り,
+    })
 }
 
 pub(super) fn 表を表示する(集計一覧: &[領域の集計], 跨ぎ一覧: &[跨ぎ]) {
