@@ -65,6 +65,13 @@ fn 取り込みの括弧の中の綴りだけを引数とみなす() {
 }
 
 #[test]
+fn 名前の途中で一致する別のマクロは取り込みでない() {
+    let 原文 = "const A: &[u8] = not_include_bytes!(\"a.spv\");\nconst B: &[u8] = include_bytes!(\"b.spv\");";
+    assert!(!取り込みの引数か(原文, "a.spv"));
+    assert!(取り込みの引数か(原文, "b.spv"));
+}
+
+#[test]
 fn 同じ行でも括弧の外の綴りは引数でない() {
     let 原文 = "const C: (&str, &[u8]) = (\"c.spv\", include_bytes!(concat!(env!(\"OUT_DIR\"), \"/d.spv\")));";
     assert!(!取り込みの引数か(原文, "c.spv"));

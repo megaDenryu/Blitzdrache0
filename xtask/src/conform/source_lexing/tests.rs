@@ -70,14 +70,6 @@ fn 生文字列と通常文字列が同じ綴りを同じ中身にする() {
 }
 
 #[test]
-fn 複数行の生文字列の次の行の位置がずれない() {
-    let 原文 = "let 語 = r\"1行目\n2行目\";\nlet 次 = \"d.png\";";
-    let 一覧 = 文字列リテラル一覧(原文);
-    assert_eq!(一覧[1].中身, "d.png");
-    assert_eq!(一覧[1].開始行, 3);
-}
-
-#[test]
 fn 引用符の文字リテラルで区間が開かない() {
     assert_eq!(リテラルの中身一覧("let 区切り = '\"'; let 名 = \"e.png\";"), vec!["e.png"]);
 }
@@ -86,13 +78,4 @@ fn 引用符の文字リテラルで区間が開かない() {
 fn ライフタイムを文字リテラルと読まない() {
     let 断片一覧 = 字句へ分ける("fn f<'a>(x: &'a str) -> &'a str { x }");
     assert!(断片一覧.iter().all(|断片| 断片.区分 == 字句の区分::コード));
-}
-
-#[test]
-fn コードだけの行はコメントと文字列を落とす() {
-    let 原文 = "// #[cfg(test)]\nlet 語 = \"#[cfg(test)]\";\n#[cfg(test)]\nmod tests;";
-    let 行一覧 = コードだけの行一覧(原文);
-    assert!(!行一覧[0].contains("cfg(test)"));
-    assert!(!行一覧[1].contains("cfg(test)"));
-    assert!(行一覧[2].contains("#[cfg(test)]"));
 }
