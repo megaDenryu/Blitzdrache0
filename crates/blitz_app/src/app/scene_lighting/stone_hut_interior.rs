@@ -19,9 +19,6 @@ use blitz_render::{
 
 use crate::cli::{局所光の件数の起動指定, 影を落とす灯の件数の起動指定, 起動引数エラー};
 
-/// この世界のシーンを指す安定ID。生成側(`crates/blitz_asset_compiler/examples/generate_source_assets/stone_hut_world.rs`)と同じ綴りである。
-pub(crate) const シーン識別子: &str = "prop_stone_hut_interior";
-
 /// 小屋を据えた位置。宣言側(`crates/blitz_asset_compiler/examples/compile_assets/world/stone_hut_declaration.rs`)と同じ値である。
 const 小屋の中心メートル: f64 = 50.0;
 

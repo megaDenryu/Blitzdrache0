@@ -3,7 +3,6 @@
 
 mod window_create;
 
-use blitz_engine::アセットID;
 use blitz_render::{ウィンドウ寸法, レンダラー, 実表示計測要求};
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 use winit::event_loop::ActiveEventLoop;
@@ -33,7 +32,7 @@ type 起動一式 = (
 #[allow(clippy::too_many_arguments)]
 pub(super) fn ウィンドウとレンダラーを作る(
     event_loop: &ActiveEventLoop,
-    シーン名: &str,
+    シーン: &crate::cli::起動時シーン,
     アセットルート: &std::path::Path,
     描画対象の並べ方: crate::cli::描画対象の並べ方,
     ホットリローダー: &mut ホットリローダー,
@@ -60,14 +59,15 @@ pub(super) fn ウィンドウとレンダラーを作る(
     let 粒子素材 = super::particle_setup::素材を作る(粒子表示)?;
 
     let カタログ = scene_load::カタログを構築して高さ場を据える(アセットルート, ゲーム配線)?;
-    let (シーン, mut 描画入力) = scene_load::シーンを読み込んで変換する(&カタログ, シーン名, 描画対象の並べ方, 大域平行移動)?;
+    let (シーンデータ, mut 描画入力) =
+        scene_load::シーンを読み込んで変換する(&カタログ, シーン.安定id(), 描画対象の並べ方, 大域平行移動)?;
     // 動く個体の宣言は束の読込より前でなければならない。宣言した個体だけがフレームスロットごとのバッファを持ち、そのバッファを読込時のディスクリプタが結ぶ。
     ゲーム配線.束の描画シーン素材へ動く個体を宣言する(scene_load::起動時シーンの束ID, &mut 描画入力.描画シーン)?;
     if 描画対象の並べ方.件数.is_some() {
         crate::reports::composition::描画対象構成を表示する(描画入力.描画シーン.描画対象数());
         crate::reports::composition::フレーム構成を表示する(&フレーム構成);
     }
-    let スキン素材 = scene_load::スキン素材へ変換する(&シーン)?;
+    let スキン素材 = scene_load::スキン素材へ変換する(&シーンデータ)?;
     let 布 = super::cloth_setup::布モードから構築する(布モード, &描画入力.描画シーン)?;
     let (布素材, 布プリセット) = match 布 {
         Some((素材, プリセット)) => (Some(素材), Some(プリセット)),
@@ -92,9 +92,9 @@ pub(super) fn ウィンドウとレンダラーを作る(
         時間再構成の描画設定,
     )?;
 
-    ホットリローダー.アセット監視を設定する(カタログ, アセットID::生成する(シーン名)?, &シーン.参照ファイル一覧);
+    ホットリローダー.アセット監視を設定する(カタログ, シーン.安定id().clone(), &シーンデータ.参照ファイル一覧);
 
-    let アニメーション = アニメーション再生::生成する(シーン.スキン, シーン.アニメーション一覧);
+    let アニメーション = アニメーション再生::生成する(シーンデータ.スキン, シーンデータ.アニメーション一覧);
     let 画面へ重ねるui = 画面へ重ねるUI::生成する(&window, 開発ui初期有効);
     Ok((window, レンダラー, 画面へ重ねるui, アニメーション, 布プリセット, 描画入力.登録一式))
 }

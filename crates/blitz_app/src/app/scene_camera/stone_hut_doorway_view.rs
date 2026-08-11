@@ -13,10 +13,6 @@
 use blitz_engine::{カメラ, カメラインテント};
 use blitz_math::{メートル, ラジアン};
 
-/// この構図を選ばせるシーン名。地面のチャンクへ付けた安定IDと同じ綴りである。
-/// 参照: `crates/blitz_asset_compiler/examples/generate_source_assets/stone_hut_world.rs`
-pub(super) const シーン識別子: &str = "prop_stone_hut_interior";
-
 /// 注視点の水平位置。小屋を据えた位置と同じ値である。
 const 注視点の水平メートル: f32 = 50.0;
 

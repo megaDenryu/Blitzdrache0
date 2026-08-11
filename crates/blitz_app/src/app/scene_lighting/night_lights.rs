@@ -21,9 +21,6 @@ use blitz_render::{
 
 use crate::cli::{局所光の件数の起動指定, 影を落とす灯の件数の起動指定};
 
-/// この世界のシーンを指す安定ID。生成側(`crates/blitz_asset_compiler/examples/generate_source_assets/night_lights_world.rs`)と同じ綴りである。
-pub(crate) const シーン識別子: &str = "terrain_night_lights";
-
 /// 影の正射影が見る範囲の中心と半幅。灯の並び(中心から26.25メートル)と、その外の下りの手前までを1つの範囲へ収める。
 const 影注視点メートル: f64 = 50.0;
 const 影の半幅: f32 = 40.0;

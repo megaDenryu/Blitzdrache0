@@ -9,7 +9,6 @@ use crate::cli::{
 };
 
 const 既定シェーダー監視パス: &str = "shaders/scene.slang";
-const 既定シーン名: &str = "quad";
 const 既定アセットルート: &str = "target/runtime_assets";
 
 impl 起動設定 {
@@ -17,7 +16,7 @@ impl 起動設定 {
         Self {
             モード: 起動モード::無期限実行,
             シェーダー監視パス: PathBuf::from(既定シェーダー監視パス),
-            シーン名: 既定シーン名.to_string(),
+            シーン: crate::cli::起動時シーン::既定(),
             アセットルート: PathBuf::from(既定アセットルート),
             描画対象の並べ方: 描画対象の並べ方::そのまま読む(),
             ライティング: super::super::lighting_settings::ライティング起動設定::既定値(),

@@ -4,15 +4,15 @@
 //! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断9」「判断22」。
 
 mod asset_rewrite;
-pub(crate) mod material_reload;
+mod material_reload;
 mod pixel_judgment;
 mod plan;
-mod readback_only_scene;
 mod shader_rewrite;
 mod verification_plan;
 mod window_operation;
+mod world_plan;
 
-use crate::cli::粒子表示モード;
+use crate::cli::{世界の種別, 粒子表示モード};
 
 pub(crate) use asset_rewrite::アセットを書き換える;
 pub(crate) use pixel_judgment::{アニメーション差分を判定する, ピクセルを判定する};
@@ -48,12 +48,12 @@ pub(crate) enum スモークアクション {
 }
 
 /// `布有効`なら差分計画(布は厳密ピクセル判定と両立しないため。判断55・56)、`開発ui有効`なら
-/// devui計画、粒子トイならparticles計画、表面流ならGPU計測だけ、読み戻しだけの検収シーンの接頭辞で始まるならその計画、
-/// シーン名がhelmet/shadow_scene/foxなら各計画、それ以外(既定"quad")ならquad計画で判定する(判断29・34・37・45)。
+/// devui計画、粒子トイならparticles計画、表面流ならGPU計測だけを行う。どれにも当たらなければ、
+/// 世界の種別ごとの計画を`world_plan`が選ぶ(判断29・34・37・45)。
 pub(crate) fn 判定する(
     現在フレーム: u32,
     総フレーム数: u32,
-    シーン名: &str,
+    種別: 世界の種別,
     粒子表示: 粒子表示モード,
     開発ui有効: bool,
     布有効: bool,
@@ -72,17 +72,7 @@ pub(crate) fn 判定する(
         スモークアクション::通常描画
     } else if 粒子表示 == 粒子表示モード::粒子トイ {
         plan::現在フレームから粒子の動作を導出する(現在フレーム, 総フレーム数)
-    } else if material_reload::このシーンか(シーン名) {
-        material_reload::現在フレームから材質差し替えの動作を導出する(現在フレーム, 総フレーム数)
-    } else if readback_only_scene::読み戻しだけの検収シーンか(シーン名) {
-        plan::読み戻しだけの動作を導出する()
-    } else if シーン名 == "helmet" {
-        plan::現在フレームからヘルメットの動作を導出する(現在フレーム, 総フレーム数)
-    } else if シーン名 == "shadow_scene" {
-        plan::現在フレームからシャドウの動作を導出する(現在フレーム, 総フレーム数)
-    } else if シーン名 == "fox" {
-        plan::現在フレームからフォックスの動作を導出する(現在フレーム)
     } else {
-        plan::現在フレームからquadシーンの動作を導出する(現在フレーム, 総フレーム数)
+        world_plan::世界ごとの動作を導出する(現在フレーム, 総フレーム数, 種別)
     }
 }

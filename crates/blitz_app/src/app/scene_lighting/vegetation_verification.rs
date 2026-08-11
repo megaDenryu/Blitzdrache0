@@ -8,17 +8,12 @@
 //! 参照: `crates/blitz_asset_compiler/src/vegetation/cull_placement.rs`と
 //! `crates/blitz_asset_compiler/src/vegetation/single_scene.rs`が同じ前提で配置を決める。
 
+use crate::cli::植生の検収世界の種別;
 use blitz_math::{メートル, 大域メートル, 大域ワールド位置};
 use blitz_render::{
     ライティング入力, ライティング入力エラー, 光強度, 光色, 局所光源列, 影の落ち方, 影入力, 影正射影範囲, 方向光入力, 点光源の可視性, 点光源入力,
     環境光係数,
 };
-
-/// 植生の検収シーンの名前の接頭辞。どのシーンも同じ1チャンクの中央へ群を敷くため、影の範囲を共有できる。
-pub(super) const 接頭辞: &str = "vegetation_";
-
-/// 床を同居させた検収シーンの名前。どれも同じライト方針を使う。
-const 床を持つ検収シーン一覧: [&str; 3] = ["vegetation_cull", "vegetation_shadow_range", "vegetation_single"];
 
 /// 影の正射影が見る範囲の中心。群と床を敷いたチャンクの中央である。
 const 検収の影注視点メートル: f64 = 50.0;
@@ -27,9 +22,11 @@ const 検収の影半幅: f32 = 120.0;
 const 検収の影光源距離: f32 = 200.0;
 const 検収の影遠クリップ: f32 = 400.0;
 
-pub(super) fn 方針を作る(シーン名: &str, 有効: bool, 大域ずらし量: 大域ワールド位置) -> ライティング入力 {
+pub(super) fn 方針を作る(
+    種別: 植生の検収世界の種別, 有効: bool, 大域ずらし量: 大域ワールド位置
+) -> ライティング入力 {
     let 影 = 影を作る(大域ずらし量);
-    if !床を持つ検収シーン一覧.contains(&シーン名) {
+    if 種別 == 植生の検収世界の種別::床を持たない {
         return blitz_engine::既定ライティングを作る(有効, 大域ずらし量).影を差し替える(影);
     }
     let 白 = 確定値(光色::生成する(1.0, 1.0, 1.0));

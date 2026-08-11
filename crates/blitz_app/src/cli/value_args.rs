@@ -32,8 +32,8 @@ pub(super) fn shader_source引数を処理する(引数: &mut Iter<String>) -> R
     Ok(PathBuf::from(値))
 }
 
-pub(super) fn scene引数を処理する(引数: &mut Iter<String>) -> Result<String, 起動引数エラー> {
-    Ok(次の値を読む(引数, "--scene", 起動引数エラー::シーン名不正)?.clone())
+pub(super) fn scene引数を処理する(引数: &mut Iter<String>) -> Result<super::起動時シーン, 起動引数エラー> {
+    super::起動時シーン::綴りから解析する(次の値を読む(引数, "--scene", 起動引数エラー::シーン名不正)?)
 }
 
 pub(super) fn asset_root引数を処理する(引数: &mut Iter<String>) -> Result<PathBuf, 起動引数エラー> {

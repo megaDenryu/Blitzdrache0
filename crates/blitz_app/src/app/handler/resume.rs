@@ -10,7 +10,7 @@ pub(super) fn 生成してアプリへ格納する(アプリ: &mut アプリ, ev
     let 実表示計測要求 = crate::app::measurement_setup::実表示計測要求を決める(アプリ);
     match crate::app::window_setup::ウィンドウとレンダラーを作る(
         event_loop,
-        &アプリ.シーン名,
+        &アプリ.シーン,
         &アプリ.アセットルート,
         アプリ.描画対象の並べ方,
         &mut アプリ.ホットリローダー,

@@ -17,7 +17,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--benchmark-frames" => 設定.モード = value_args::benchmark_frames引数を処理する(残り)?,
         "--ibl-step-scan" | "--ibl-step-control" => 設定.モード = ibl_step_scan_args::引数を処理する(残り, 引数値)?,
         "--shader-source" => 設定.シェーダー監視パス = value_args::shader_source引数を処理する(残り)?,
-        "--scene" => 設定.シーン名 = value_args::scene引数を処理する(残り)?,
+        "--scene" => 設定.シーン = value_args::scene引数を処理する(残り)?,
         "--game" => 設定.遊ぶゲーム = game_selection::遊ぶゲームの指定の引数を処理する(残り)?,
         "--asset-root" => 設定.アセットルート = value_args::asset_root引数を処理する(残り)?,
         "--object-count" => 設定.描画対象の並べ方.件数 = Some(value_args::object_count引数を処理する(残り)?),

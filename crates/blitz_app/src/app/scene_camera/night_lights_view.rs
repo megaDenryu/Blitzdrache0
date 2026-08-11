@@ -11,10 +11,6 @@
 use blitz_engine::{カメラ, カメラインテント};
 use blitz_math::{メートル, ラジアン};
 
-/// この構図を選ばせるシーン名。地面のチャンクへ付けた安定IDと同じ綴りである。
-/// 参照: `crates/blitz_asset_compiler/examples/generate_source_assets/night_lights_world.rs`
-pub(super) const シーン識別子: &str = "terrain_night_lights";
-
 /// 注視点の水平位置。チャンクの大域原点はX最小・Z最小の角にあるため、一辺100メートルの半分だけ内側が並びの中央になる。
 const 注視点の水平メートル: f32 = 50.0;
 

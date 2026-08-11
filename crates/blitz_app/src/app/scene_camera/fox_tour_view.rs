@@ -14,10 +14,6 @@
 use blitz_engine::{カメラ, カメラインテント};
 use blitz_math::ラジアン;
 
-/// この構図を選ばせるシーン名。起動時に読むキツネのシーンへ付けた安定IDと同じ綴りである。
-/// 参照: `crates/blitz_asset_compiler/examples/compile_assets/world/fox_tour_declaration.rs`
-pub(super) const シーン識別子: &str = "terrain_fox_tour";
-
 const 方位度: f32 = 0.0;
 const 俯角度: f32 = 20.0;
 

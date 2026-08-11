@@ -43,7 +43,7 @@ pub(crate) struct アプリ {
     window: Option<Window>,
     起動モード: 起動モード,
     シェーダー監視パス: std::path::PathBuf,
-    シーン名: String,
+    シーン: crate::cli::起動時シーン,
     アセットルート: std::path::PathBuf,
     /// `--global-offset`で世界全体へ加える平行移動。カメラ・照明の大域位置と、チャンク座標から導出した描画の基準原点の全部に同じ値を足す。
     大域ずらし量: blitz_math::大域ワールド位置,

@@ -18,7 +18,7 @@ fn 引数なしは既定値を保つ() {
     let 設定 = 描画設定を解析する(&[]);
     assert!(matches!(設定.モード, 起動モード::無期限実行));
     assert_eq!(設定.シェーダー監視パス, Path::new("shaders/scene.slang"));
-    assert_eq!(設定.シーン名, "quad");
+    assert_eq!(設定.シーン.安定id().文字列を返す(), "quad");
     assert_eq!(設定.アセットルート, Path::new("target/runtime_assets"));
     assert!(設定.描画対象の並べ方.件数.is_none());
     assert_eq!(設定.描画対象の並べ方.走査順, 描画対象の走査順::読込順);

@@ -13,8 +13,6 @@ use blitz_render::{
     ライティング入力, ライティング入力エラー, 光強度, 光色, 局所光源列, 影の落ち方, 影入力, 影正射影範囲, 方向光入力, 環境光係数
 };
 
-pub(super) const シーン識別子: &str = "indirect_probe";
-
 const 影光源距離: f32 = 10.0;
 const 影の半幅: f32 = 4.0;
 

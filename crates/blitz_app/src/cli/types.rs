@@ -18,8 +18,8 @@ pub(crate) struct 起動設定 {
     /// ホットリロードの監視対象となるエントリファイル。既定は`shaders/scene.slang`(存在しなければ監視無効)。
     /// `import`で参照される他の.slangファイル(`pbr.slang`等)はこのエントリファイルと同じディレクトリから解決されるため、個別指定はしない。ディレクトリ全体をmtime走査で監視する。
     pub(crate) シェーダー監視パス: PathBuf,
-    /// 表示するシーンのアセットID。既定は`quad`(常に存在し決定的)。
-    pub(crate) シーン名: String,
+    /// 表示するシーン。綴りは実行時アセットの安定IDであり、既定は平面板の世界(常に存在し決定的)。
+    pub(crate) シーン: super::起動時シーン,
     /// カタログの実行時アセットパスの基準ディレクトリ。既定は`target/runtime_assets`。
     pub(crate) アセットルート: PathBuf,
     /// 起動時シーンの描画対象の並べ方。`--object-count`が複製する件数を、`--reverse-draw-order`が束の中の走査順を決める。
