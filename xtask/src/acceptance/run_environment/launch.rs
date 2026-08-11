@@ -7,13 +7,11 @@ use super::super::error::検収エラー;
 use super::super::exit_report::終了時報告;
 use super::super::launch_specification::アプリの起動指定;
 use super::super::readback_dump::読み戻しの書き出し先;
-use super::super::run_name::検収の実行名;
 use super::super::runtime_asset_root::実行時アセットルート;
 
 pub(super) fn 起こして終了時報告を得る(
     起こし方: アプリの起こし方,
     アセットルート: &実行時アセットルート,
-    実行名: 検収の実行名<'_>,
     指定: &アプリの起動指定,
     書き出し先: &読み戻しの書き出し先,
 ) -> Result<終了時報告, 検収エラー> {
@@ -25,17 +23,17 @@ pub(super) fn 起こして終了時報告を得る(
         .arg("--dump-frame")
         .arg(書き出し先.起動引数として渡す綴り());
     let 出力 = コマンド.output().map_err(|誤り| 検収エラー::アプリを起こせなかった {
-        条件名: 実行名.to_string(),
+        実行名: 書き出し先.実行名().clone(),
         起こし方: 起こし方.表示の綴り(),
         誤り,
     })?;
-    let 報告 = 終了時報告::取り込む(実行名, String::from_utf8_lossy(&出力.stdout).into_owned());
+    let 報告 = 終了時報告::取り込む(書き出し先.実行名(), String::from_utf8_lossy(&出力.stdout).into_owned());
     if 出力.status.success() {
         return Ok(報告);
     }
     報告.画面へ流す();
     Err(検収エラー::アプリが失敗して終わった {
-        条件名: 実行名.to_string(),
+        実行名: 書き出し先.実行名().clone(),
         終了状態: 出力.status.to_string(),
     })
 }

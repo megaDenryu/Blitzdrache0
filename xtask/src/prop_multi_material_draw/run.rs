@@ -13,8 +13,8 @@ use crate::acceptance::{
 
 const アセットルート: &str = "target/runtime_assets";
 /// 2条件の書き出しの基準名。絵のファイル名になり、失敗の文面もこの名前で実行を名指す。
-pub(super) const 材質の色の実行名: 検収の実行名<'static> = 検収の実行名::定数から生成する("flat");
-pub(super) const 本番経路の実行名: 検収の実行名<'static> = 検収の実行名::定数から生成する("post");
+pub(super) const 材質の色の実行名: 検収の実行名 = 検収の実行名::定数から生成する("flat");
+pub(super) const 本番経路の実行名: 検収の実行名 = 検収の実行名::定数から生成する("post");
 const シーン名: 検収シーン名 = 検収シーン名::生成する("prop_banded_chest");
 const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(12);
 /// どの条件でも足す報告の指定。計器の合否がこの2つの報告を読む。
