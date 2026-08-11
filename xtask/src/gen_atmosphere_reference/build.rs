@@ -3,11 +3,13 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+use super::error::大気の期待値の焼き出しエラー;
+
 /// cmd.exeへ渡す経路は区切りを実行環境の流儀へ揃える。斜線のままだと切替指定と見分けがつかない。
 const 構築手順の断片: [&str; 3] = ["xtask", "reference", "build_bruneton_dump.bat"];
 const 出力ディレクトリ: &str = "target/bruneton_reference";
 
-pub(super) fn 焼き出しを構築する(参照パス: &Path) -> Result<PathBuf, String> {
+pub(super) fn 焼き出しを構築する(参照パス: &Path) -> Result<PathBuf, 大気の期待値の焼き出しエラー> {
     let 必要ファイル = [
         参照パス.join("atmosphere/functions.glsl"),
         参照パス.join("atmosphere/reference/functions.cc"),
@@ -15,15 +17,16 @@ pub(super) fn 焼き出しを構築する(参照パス: &Path) -> Result<PathBuf
     ];
     for パス in 必要ファイル {
         if !パス.is_file() {
-            return Err(format!(
-                "{}が無い。作業コピーの取得と部分モジュールの初期化を確かめること",
-                パス.display()
-            ));
+            return Err(大気の期待値の焼き出しエラー::参照実装の必要ファイルが無い { パス });
         }
     }
     let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("{}を作れない: {誤り}", 出力先.display()))?;
-    let リポジトリルート = std::env::current_dir().map_err(|誤り| format!("現在のディレクトリを読めない: {誤り}"))?;
+    std::fs::create_dir_all(&出力先)
+        .map_err(|誤り| 大気の期待値の焼き出しエラー::出力先を作れなかった {
+            パス: 出力先.clone(), 誤り
+        })?;
+    let リポジトリルート = std::env::current_dir()
+        .map_err(|誤り| 大気の期待値の焼き出しエラー::現在のディレクトリを読めなかった { 誤り })?;
     let 実行ファイル = 出力先.join("bruneton_dump.exe");
     let 構築手順: PathBuf = 構築手順の断片.iter().collect();
     let 状態 = Command::new("cmd")
@@ -33,22 +36,28 @@ pub(super) fn 焼き出しを構築する(参照パス: &Path) -> Result<PathBuf
         .arg(&リポジトリルート)
         .arg(&実行ファイル)
         .status()
-        .map_err(|誤り| format!("{}を起動できない: {誤り}", 構築手順.display()))?;
+        .map_err(|誤り| 大気の期待値の焼き出しエラー::構築手順を起こせなかった {
+            構築手順: 構築手順.clone(),
+            誤り,
+        })?;
     if !状態.success() {
-        return Err(format!(
-            "{}が失敗した。MSVCのC++ツールセットが導入されているか確かめること",
-            構築手順.display()
-        ));
+        return Err(大気の期待値の焼き出しエラー::構築手順が失敗して終わった { 構築手順 });
     }
     Ok(実行ファイル)
 }
 
-pub(super) fn 焼き出しを実行する(実行ファイル: &Path) -> Result<String, String> {
-    let 出力 = Command::new(実行ファイル)
-        .output()
-        .map_err(|誤り| format!("{}を起動できない: {誤り}", 実行ファイル.display()))?;
+pub(super) fn 焼き出しを実行する(実行ファイル: &Path) -> Result<String, 大気の期待値の焼き出しエラー> {
+    let 出力 =
+        Command::new(実行ファイル)
+            .output()
+            .map_err(|誤り| 大気の期待値の焼き出しエラー::焼き出しを起こせなかった {
+                実行ファイル: 実行ファイル.to_path_buf(),
+                誤り,
+            })?;
     if !出力.status.success() {
-        return Err(format!("{}が異常終了した", 実行ファイル.display()));
+        return Err(大気の期待値の焼き出しエラー::焼き出しが異常終了した {
+            実行ファイル: 実行ファイル.to_path_buf(),
+        });
     }
-    String::from_utf8(出力.stdout).map_err(|誤り| format!("焼き出しの出力がUTF-8でない: {誤り}"))
+    String::from_utf8(出力.stdout).map_err(|誤り| 大気の期待値の焼き出しエラー::焼き出しの出力がUTF8でない { 誤り })
 }

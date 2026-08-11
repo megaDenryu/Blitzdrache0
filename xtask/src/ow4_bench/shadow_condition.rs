@@ -8,6 +8,8 @@ mod condition_tests;
 
 use std::slice::Iter;
 
+use super::error::物量計測エラー;
+
 #[derive(Default)]
 pub(super) struct シャドウ計測指定 {
     /// `--shadow-resolution <テクセル数>`。値の検証は`blitz_app`の値オブジェクトが行う。
@@ -36,14 +38,14 @@ pub(super) struct シャドウ計測指定 {
 
 impl シャドウ計測指定 {
     /// 1語を自分の担当として読めたらtrueを返す。読めなければ呼び出し元が次の解釈へ回す。
-    pub(super) fn 語を読む(&mut self, 語: &str, 残り: &mut Iter<String>) -> Result<bool, String> {
+    pub(super) fn 語を読む(&mut self, 語: &str, 残り: &mut Iter<String>) -> Result<bool, 物量計測エラー> {
         match 語 {
-            "--shadow-resolution" => self.一辺解像度 = Some(値を読む(語, 残り)?),
-            "--caster-margin" => self.キャスター余白 = Some(値を読む(語, 残り)?),
-            "--camera-yaw" => self.カメラ方位度 = Some(値を読む(語, 残り)?),
-            "--camera-nudge" => self.カメラずれ = Some(値を読む(語, 残り)?),
-            "--max-shadow-distance" => self.最大影距離 = Some(値を読む(語, 残り)?),
-            "--shadow-caster-range" => self.影の視距離 = Some(値を読む(語, 残り)?),
+            "--shadow-resolution" => self.一辺解像度 = Some(値を読む("--shadow-resolution", 残り)?),
+            "--caster-margin" => self.キャスター余白 = Some(値を読む("--caster-margin", 残り)?),
+            "--camera-yaw" => self.カメラ方位度 = Some(値を読む("--camera-yaw", 残り)?),
+            "--camera-nudge" => self.カメラずれ = Some(値を読む("--camera-nudge", 残り)?),
+            "--max-shadow-distance" => self.最大影距離 = Some(値を読む("--max-shadow-distance", 残り)?),
+            "--shadow-caster-range" => self.影の視距離 = Some(値を読む("--shadow-caster-range", 残り)?),
             "--report-caster-distance" => self.キャスター距離分布を報告する = true,
             "--no-instance-shadow" => self.個体を影から外す = true,
             "--no-shadow-casters" => self.全キャスターを外す = true,
@@ -84,6 +86,6 @@ impl シャドウ計測指定 {
     }
 }
 
-fn 値を読む(引数名: &str, 残り: &mut Iter<String>) -> Result<String, String> {
-    残り.next().cloned().ok_or_else(|| format!("{引数名}の次に値が無い"))
+fn 値を読む(引数名: &'static str, 残り: &mut Iter<String>) -> Result<String, 物量計測エラー> {
+    残り.next().cloned().ok_or(物量計測エラー::引数の次に値が無い { 引数名 })
 }

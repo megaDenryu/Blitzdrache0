@@ -6,6 +6,7 @@
 //! どちらの軸が絵を動かしたか分けられない数をそのまま裁定材料にしてしまう。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「シャドウ性能の是正(フェーズ2性能課題、2026-08-03着手)」
 
+use super::argument_error::影の欠落計器の引数の破れ;
 use super::distance::距離メートル;
 
 const 最大影距離の綴り: &str = "--max-shadow-distance";
@@ -42,7 +43,7 @@ impl 計測軸 {
             .join(" または ")
     }
 
-    pub(super) fn 値を添える(self, 綴り: &str) -> Result<候補の計測指定, String> {
+    pub(super) fn 値を添える(self, 綴り: &str) -> Result<候補の計測指定, 影の欠落計器の引数の破れ> {
         let 距離 = 距離メートル::生成する(綴り)?;
         Ok(match self {
             Self::最大影距離 => 候補の計測指定::最大影距離(距離),

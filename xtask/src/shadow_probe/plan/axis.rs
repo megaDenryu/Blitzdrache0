@@ -4,6 +4,8 @@
 //! 選べる軸の一覧だけは配列で持つため、足した軸を`全軸`へ入れ忘れると選べないままになる。
 //! この抜けは下のテストが綴りの往復で捕まえる。
 
+use crate::shadow_probe::error::律速切り分けの計測エラー;
+
 /// 振る軸。1回の実行で1つの軸だけを振り、他は既定へ固定する。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(in crate::shadow_probe) enum 振る軸 {
@@ -46,11 +48,14 @@ impl 振る軸 {
     }
 }
 
-pub(in crate::shadow_probe) fn 綴りから読む(語: &str) -> Result<振る軸, String> {
-    match 振る軸::全軸.into_iter().find(|軸| 軸.綴り() == 語) {
-        Some(軸) => Ok(軸),
-        None => Err(format!("知らない軸である({語})。{}のいずれかを指定する", 綴りを並べる())),
-    }
+pub(in crate::shadow_probe) fn 綴りから読む(語: &str) -> Result<振る軸, 律速切り分けの計測エラー> {
+    振る軸::全軸
+        .into_iter()
+        .find(|軸| 軸.綴り() == 語)
+        .ok_or_else(|| 律速切り分けの計測エラー::知らない軸を渡された {
+            語: 語.to_string(),
+            選べる軸: 綴りを並べる(),
+        })
 }
 
 pub(in crate::shadow_probe) fn 綴りを並べる() -> String {
@@ -65,7 +70,7 @@ mod tests {
     #[test]
     fn 全軸の綴りは往復して重複しない() {
         for 軸 in 振る軸::全軸 {
-            assert_eq!(綴りから読む(軸.綴り()), Ok(軸));
+            assert_eq!(綴りから読む(軸.綴り()).ok(), Some(軸));
         }
         let mut 綴り一覧: Vec<&str> = 振る軸::全軸.iter().map(|軸| 軸.綴り()).collect();
         綴り一覧.sort_unstable();

@@ -8,6 +8,8 @@ mod case;
 mod measurement_world;
 mod round_count;
 
+use super::error::律速切り分けの計測エラー;
+
 pub(in crate::shadow_probe) use axis::振る軸;
 pub(in crate::shadow_probe) use axis_cases::軸の条件一覧;
 pub(in crate::shadow_probe) use case::{条件の時刻, 計測条件};
@@ -27,7 +29,7 @@ const 既定のチャンクあたり個体数: usize = 4_000;
 /// 低い太陽(17時)。`csm-seam`が継ぎ目の検収に使う時刻と同じである。
 const 既定の一日内時刻の秒: u32 = 61_200;
 
-pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<実行の指定, String> {
+pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<実行の指定, 律速切り分けの計測エラー> {
     let mut 軸 = None;
     let mut 指定された周回数 = None;
     let mut チャンクあたり個体数 = 既定のチャンクあたり個体数;
@@ -37,13 +39,19 @@ pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<実行の指定
         match 語.as_str() {
             "--rounds" => 指定された周回数 = Some(数を読む(語, 残り.next())?),
             "--chunk-instances" => チャンクあたり個体数 = 数を読む(語, 残り.next())?,
-            "--time-of-day" => 一日内時刻の秒 = u32::try_from(数を読む(語, 残り.next())?).map_err(|誤り| format!("{誤り}"))?,
+            "--time-of-day" => {
+                let 秒 = 数を読む(語, 残り.next())?;
+                一日内時刻の秒 = u32::try_from(秒)
+                    .map_err(|_| 律速切り分けの計測エラー::一日内時刻の秒が32ビットに収まらない { 秒 })?;
+            }
             _ => 軸 = Some(axis::綴りから読む(語)?),
         }
     }
-    let 軸 = 軸.ok_or_else(|| format!("振る軸を1つ指定する({})", axis::綴りを並べる()))?;
+    let 軸 = 軸.ok_or_else(|| 律速切り分けの計測エラー::振る軸を渡されなかった {
+        選べる軸: axis::綴りを並べる(),
+    })?;
     if 指定された周回数 == Some(0) {
-        return Err("--roundsは1以上である必要がある".to_string());
+        return Err(律速切り分けの計測エラー::周回数が零である);
     }
     Ok(実行の指定 {
         軸,
@@ -53,7 +61,12 @@ pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<実行の指定
     })
 }
 
-fn 数を読む(引数名: &str, 語: Option<&String>) -> Result<usize, String> {
-    let 語 = 語.ok_or_else(|| format!("{引数名}の次に値が無い"))?;
-    語.parse().map_err(|誤り| format!("{引数名}の値を数として読めない({語}): {誤り}"))
+fn 数を読む(引数名: &str, 語: Option<&String>) -> Result<usize, 律速切り分けの計測エラー> {
+    let 語 = 語.ok_or_else(|| 律速切り分けの計測エラー::引数の次に値が無い {
+        引数名: 引数名.to_string()
+    })?;
+    語.parse().map_err(|_| 律速切り分けの計測エラー::引数の値を数として読めない {
+        引数名: 引数名.to_string(),
+        語: 語.clone(),
+    })
 }

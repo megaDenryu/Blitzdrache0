@@ -10,11 +10,14 @@
 //! 完全交換では書き換えた側が1本も載らず、絵が動かないことがその根拠になる。
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「3-Ic-3の実装段割り」
 
+mod error;
 mod judgment;
 mod run;
 
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+
+use error::契約別のシェーダー束の差し替えの検収エラー;
 
 const 出力ディレクトリ: &str = "target/shader_reload_draw";
 /// 検収用に複製するシェーダーディレクトリ。リポジトリ本体の`shaders/`を監視先にすると、この検収の書き換えが
@@ -34,14 +37,15 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
+fn 検収する() -> Result<String, 契約別のシェーダー束の差し替えの検収エラー> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
-        return Err("検証用アセットの生成に失敗した".to_string());
+        return Err(契約別のシェーダー束の差し替えの検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let 監視先 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先)).map_err(|破れ| 破れ.to_string())?;
+    let 監視先 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+        .map_err(契約別のシェーダー束の差し替えの検収エラー::シェーダーの一時コピーを作れなかった)?;
 
     let 差し替え後 = 実行環境.描いて読み戻す(run::差し替え後の実行名, &run::起動指定を組み立てる(&監視先))?;
     let 差し替え前 = 実行環境.同じ置き場の書き出しを読み戻す(run::差し替え前の実行名)?;
-    judgment::差し替えを検査する(&差し替え前, &差し替え後)
+    Ok(judgment::差し替えを検査する(&差し替え前, &差し替え後)?)
 }

@@ -6,6 +6,7 @@
 
 use std::path::{Path, PathBuf};
 
+use super::error::律速切り分けの計測エラー;
 use super::plan::{計測世界, 計測条件};
 
 pub(super) struct アセットの置き場 {
@@ -13,7 +14,9 @@ pub(super) struct アセットの置き場 {
 }
 
 impl アセットの置き場 {
-    pub(super) fn 焼く(根: &Path, 条件一覧: &[計測条件], チャンクあたり個体数: usize) -> Result<Self, String> {
+    pub(super) fn 焼く(
+        根: &Path, 条件一覧: &[計測条件], チャンクあたり個体数: usize
+    ) -> Result<Self, 律速切り分けの計測エラー> {
         let mut 対応: Vec<(計測世界, PathBuf)> = Vec::new();
         for 条件 in 条件一覧 {
             if 対応.iter().any(|(登録済み, _)| *登録済み == 条件.世界) {
@@ -22,18 +25,20 @@ impl アセットの置き場 {
             let ルート = 根.join(format!("{}_{チャンクあたり個体数}", 条件.世界.置き場の名前()));
             if !crate::compile_assets::世界を個体数指定で生成する(&ルート, 条件.世界.世界名(), チャンクあたり個体数)
             {
-                return Err(format!("{}の実行時アセット生成に失敗した", 条件.世界.世界名()));
+                return Err(律速切り分けの計測エラー::計測世界の実行時アセットを生成できなかった {
+                    世界: 条件.世界.世界名(),
+                });
             }
             対応.push((条件.世界, ルート));
         }
         Ok(Self { 対応 })
     }
 
-    pub(super) fn 参照する(&self, 世界: 計測世界) -> Result<&Path, String> {
+    pub(super) fn 参照する(&self, 世界: 計測世界) -> Result<&Path, 律速切り分けの計測エラー> {
         self.対応
             .iter()
             .find(|(登録済み, _)| *登録済み == 世界)
             .map(|(_, ルート)| ルート.as_path())
-            .ok_or_else(|| format!("{}のアセットが焼かれていない", 世界.世界名()))
+            .ok_or_else(|| 律速切り分けの計測エラー::計測世界のアセットが焼かれていない { 世界: 世界.世界名() })
     }
 }

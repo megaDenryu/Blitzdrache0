@@ -13,7 +13,7 @@
 
 use std::path::PathBuf;
 
-use crate::acceptance::{描画検収の実行環境, 検収の実行名, 画素の横位置, 画素の縦位置};
+use crate::acceptance::{描画検収の実行環境, 検収の実行名, 検収エラー, 画素の横位置, 画素の縦位置};
 use crate::multi_light_world::{run, world};
 
 /// 屋内を測る矩形の、画面の幅と高さに対する半分の割合を百分率で置く。戸口の内側だけを含み、小屋の外壁を含まない大きさである。
@@ -26,7 +26,7 @@ pub(super) struct 屋内の測り {
     pub(super) 絵: PathBuf,
 }
 
-pub(super) fn 測る(実行環境: &描画検収の実行環境) -> Result<屋内の測り, String> {
+pub(super) fn 測る(実行環境: &描画検収の実行環境) -> Result<屋内の測り, 検収エラー> {
     let 灯あり = 一条件を撮る(実行環境, "hut_lit", &[])?;
     let 灯なし = 一条件を撮る(実行環境, "hut_unlit", &["--local-light-count", "0"])?;
     Ok(屋内の測り {
@@ -36,7 +36,9 @@ pub(super) fn 測る(実行環境: &描画検収の実行環境) -> Result<屋�
     })
 }
 
-fn 一条件を撮る(実行環境: &描画検収の実行環境, 名前: &str, 追加の選択肢: &[&str]) -> Result<(f64, PathBuf), String> {
+fn 一条件を撮る(
+    実行環境: &描画検収の実行環境, 名前: &str, 追加の選択肢: &[&str]
+) -> Result<(f64, PathBuf), 検収エラー> {
     let 結果 = 実行環境.描いて読み戻す(
         検収の実行名::生成する(名前)?,
         &run::起動指定を組み立てる(world::屋内のシーン, world::絵の枚数, 追加の選択肢),

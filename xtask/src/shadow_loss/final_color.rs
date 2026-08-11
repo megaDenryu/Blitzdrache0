@@ -10,11 +10,12 @@ use std::path::PathBuf;
 
 use super::args::指定;
 use super::candidate_axis::候補の計測指定;
+use super::error::影の欠落計器のエラー;
 use super::run;
 use super::scene_choice::構図;
 use crate::acceptance::{描画検収の実行環境, 検収の実行名, 検収エラー};
 
-pub(super) fn 二枚を撮る(指定: &指定) -> Result<String, String> {
+pub(super) fn 二枚を撮る(指定: &指定) -> Result<String, 影の欠落計器のエラー> {
     let 出力先 = super::描く支度をする(指定.構図)?;
     let 実行環境 = run::実行環境を作る(指定.構図, 出力先)?;
     let 基準 = 撮る(&実行環境, &実行名を組む(&指定.候補, "baseline"), 指定.構図, &[])?;

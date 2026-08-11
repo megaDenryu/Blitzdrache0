@@ -19,10 +19,13 @@
 
 mod build;
 mod emit;
+mod error;
 mod revision;
 
 use std::path::Path;
 use std::process::ExitCode;
+
+use error::大気の期待値の焼き出しエラー;
 
 pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     let Some(参照パス) = 引数一覧.first() else {
@@ -41,7 +44,7 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     }
 }
 
-fn 焼く(参照パス: &Path) -> Result<String, String> {
+fn 焼く(参照パス: &Path) -> Result<String, 大気の期待値の焼き出しエラー> {
     let リビジョン = revision::焼き出しの出自を確かめる(参照パス)?;
     let 実行ファイル = build::焼き出しを構築する(参照パス)?;
     let 本文 = build::焼き出しを実行する(&実行ファイル)?;

@@ -5,17 +5,21 @@
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 
-use crate::acceptance::{検収の実行名, 終了時報告};
+use crate::acceptance::{判定の名前, 検収の実行名, 終了時報告};
 use crate::memory_sampling::{メモリ最大, 実行しながら採取する, 採取条件};
 use crate::report_parse::計数報告;
 use crate::streaming_report::ストリーミング要約報告;
 
 use super::condition::計測条件;
+use super::error::物量計測エラー;
 use super::gpu_table::GPU時間;
 use super::measure::{CPU区間一式, Vulkan確保};
 use launch_arguments::{上限の綴り, 引数を作る};
 
 mod launch_arguments;
+
+/// 計測の本体はリリースビルドで走るが、報告の件数が零でない実行は表へ載せない。
+const 検証層のエラーと警告: 判定の名前 = 判定の名前::定数から生成する("検証層のエラーと警告");
 
 const 採取間隔: Duration = Duration::from_secs(1);
 /// 打ち切りは異常の検出であって計測の期限ではないため、100倍の物量でも余る長さを取る。
@@ -39,7 +43,7 @@ pub(super) fn 走らせる(
     アセットルート: &Path,
     シェーダー入口: &Path,
     条件: &計測条件,
-) -> Result<一回の実行, String> {
+) -> Result<一回の実行, 物量計測エラー> {
     let 上限 = 上限の綴り();
     let 標準出力先 = PathBuf::from(出力先).join(format!("{名前}.log"));
     let 引数一覧 = 引数を作る(アセットルート, シェーダー入口, &上限, 条件);
@@ -52,19 +56,21 @@ pub(super) fn 走らせる(
         制限時間,
         標準出力先: Some(&標準出力先),
     };
-    let プロセス = 実行しながら採取する(&条件).ok_or_else(|| format!("実行{名前}が失敗したか標本を1つも採れなかった"))?;
-    let 標準出力 = std::fs::read_to_string(&標準出力先).map_err(|誤り| format!("{}を読めない: {誤り}", 標準出力先.display()))?;
+    let プロセス = 実行しながら採取する(&条件)
+        .ok_or_else(|| 物量計測エラー::実行が標本を1つも採れなかった { 名前: 名前.to_string() })?;
+    let 標準出力 = std::fs::read_to_string(&標準出力先).map_err(|誤り| 物量計測エラー::実行の標準出力を読めなかった {
+        パス: 標準出力先.clone(),
+        誤り,
+    })?;
     let 報告 = 終了時報告::取り込む(&検収の実行名::生成する(名前)?, 標準出力, String::new());
     読み取る(&報告, プロセス)
 }
 
 /// 注意: ファイルへ落とした標準出力を終了時報告として包み直す。この実行は採取のあいだ標準出力をファイルへ流すため、
 /// 起動のセッションからは報告が返らない。
-fn 読み取る(報告: &終了時報告, プロセス: メモリ最大) -> Result<一回の実行, String> {
+fn 読み取る(報告: &終了時報告, プロセス: メモリ最大) -> Result<一回の実行, 物量計測エラー> {
     let 計数 = crate::report_parse::取り出す(報告)?;
-    if 計数.validation件数 != 0 {
-        return Err(format!("validationのエラー・警告が{}件あった", 計数.validation件数));
-    }
+    検証層のエラーと警告.零件であることを課す(計数.validation件数)?;
     Ok(一回の実行 {
         区間: super::measure::cpu区間を取り出す(報告)?,
         gpu: super::gpu_table::取り出す(報告)?,

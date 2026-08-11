@@ -31,7 +31,7 @@ pub(super) struct 一標本 {
     pub(super) 太陽: 太陽の角度,
 }
 
-pub(super) fn 生値を書く(書き先: &Path, 標本一覧: &[一標本]) -> Result<(), String> {
+pub(super) fn 生値を書く(書き先: &Path, 標本一覧: &[一標本]) -> Result<(), super::error::律速切り分けの計測エラー> {
     let mut 本文 = String::from("実行番号\t条件\t太陽高度度\t太陽方位度\t区間\t平均ミリ秒\t中央値ミリ秒\tp95ミリ秒\t投入インデックス数\t可視数\n");
     for 標本 in 標本一覧 {
         for (番号, 分布) in 標本.距離区分別.iter().enumerate() {
@@ -43,7 +43,10 @@ pub(super) fn 生値を書く(書き先: &Path, 標本一覧: &[一標本]) -> R
         let 可視合計: u64 = 標本.可視数.iter().sum();
         本文.push_str(&行にする(標本, "合計", 標本.合計, 索引合計, 可視合計));
     }
-    std::fs::write(書き先, 本文).map_err(|誤り| format!("{}を書けなかった: {誤り}", 書き先.display()))
+    std::fs::write(書き先, 本文).map_err(|誤り| super::error::律速切り分けの計測エラー::生値を書けなかった {
+        パス: 書き先.to_path_buf(),
+        誤り,
+    })
 }
 
 fn 行にする(標本: &一標本, 区間: &str, 分布: 区間の分布, 索引: u64, 可視: u64) -> String {

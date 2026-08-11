@@ -7,6 +7,7 @@ use std::path::{Path, PathBuf};
 
 use crate::acceptance::{アプリの起こし方, 検収の実行名, 終了時報告};
 
+use super::error::律速切り分けの計測エラー;
 use super::parse;
 use super::plan::{実行の指定, 条件の時刻, 計測条件};
 use super::record::一標本;
@@ -26,20 +27,27 @@ pub(super) struct 実行の材料<'a> {
     pub(super) 実行番号: usize,
 }
 
-pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<一標本, String> {
+pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<一標本, 律速切り分けの計測エラー> {
     let 標準出力先 = PathBuf::from(材料.出力先).join(format!("{}.log", 実行名の綴りを組む(材料.実行番号)));
     let 引数一覧 = 引数を作る(材料);
     println!("[xtask] shadow-probe実行{}: {}", 材料.実行番号, 材料.条件.名前);
     let 起こし方 = アプリの起こし方::構築済みのリリース版を直に起動する;
-    let 出力 = 起こし方
-        .コマンドを作る()
-        .args(&引数一覧)
-        .output()
-        .map_err(|誤り| format!("{}を起動できなかった: {誤り}", 起こし方.表示の綴り()))?;
+    let 出力 = 起こし方.コマンドを作る().args(&引数一覧).output().map_err(|誤り| {
+        律速切り分けの計測エラー::アプリを起こせなかった {
+            起こし方: 起こし方.表示の綴り(),
+            誤り,
+        }
+    })?;
     let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
-    std::fs::write(&標準出力先, &標準出力).map_err(|誤り| format!("{}を書けなかった: {誤り}", 標準出力先.display()))?;
+    std::fs::write(&標準出力先, &標準出力).map_err(|誤り| 律速切り分けの計測エラー::実行の標準出力を書けなかった {
+        パス: 標準出力先.clone(),
+        誤り,
+    })?;
     if !出力.status.success() {
-        return Err(format!("実行{}が{}で失敗した", 材料.実行番号, 出力.status));
+        return Err(律速切り分けの計測エラー::実行が失敗して終わった {
+            実行番号: 材料.実行番号,
+            終了状態: 出力.status.to_string(),
+        });
     }
     let 報告 = 終了時報告::取り込む(
         &検収の実行名::生成する(&実行名の綴りを組む(材料.実行番号))?,

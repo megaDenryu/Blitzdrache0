@@ -9,6 +9,8 @@
 use std::path::Path;
 use std::process::Command;
 
+use super::error::大気の期待値の焼き出しエラー;
+
 /// 焼き出しの対象として固定した参照実装のリビジョン。
 const 参照実装のリビジョン: &str = "34f14e745cff948f4ca3157d1b62a445ffa7286f";
 /// 参照実装が部分モジュールとして持つ、単位付き数値ライブラリのリビジョン。
@@ -22,7 +24,7 @@ pub(super) struct 実測リビジョン {
     pub(super) 部分モジュール: String,
 }
 
-pub(super) fn 焼き出しの出自を確かめる(参照パス: &Path) -> Result<実測リビジョン, String> {
+pub(super) fn 焼き出しの出自を確かめる(参照パス: &Path) -> Result<実測リビジョン, 大気の期待値の焼き出しエラー> {
     let 部分モジュールのパス = 参照パス.join(部分モジュールの位置);
     let 参照実装 = 先頭リビジョンを読む(参照パス)?;
     照合する(参照実装の名前, &参照実装, 参照実装のリビジョン)?;
@@ -36,46 +38,49 @@ pub(super) fn 焼き出しの出自を確かめる(参照パス: &Path) -> Resul
     })
 }
 
-fn 照合する(名前: &str, 実測: &str, 固定: &str) -> Result<(), String> {
+fn 照合する(名前: &'static str, 実測: &str, 固定: &str) -> Result<(), 大気の期待値の焼き出しエラー> {
     if 実測 != 固定 {
-        return Err(format!(
-            "{名前}のHEADは{実測}であり、焼き出しが固定している{固定}と違う。出自の表示が実際と食い違うため生成を止める"
-        ));
+        return Err(大気の期待値の焼き出しエラー::固定したリビジョンと食い違う {
+            名前,
+            実測: 実測.to_string(),
+            固定: 固定.to_string(),
+        });
     }
     Ok(())
 }
 
 /// 追跡下のファイルへ、ステージ済みと未ステージのどちらの未コミット変更も無いことを確かめる。追跡外のファイルは焼き出しの入力にならないため対象にしない。
-fn 未コミット変更が無いことを確かめる(名前: &str, 作業コピー: &Path) -> Result<(), String> {
+fn 未コミット変更が無いことを確かめる(
+    名前: &'static str,
+    作業コピー: &Path,
+) -> Result<(), 大気の期待値の焼き出しエラー> {
     let 変更一覧 = gitの出力を読む(作業コピー, &["status", "--porcelain", "--untracked-files=no"])?;
     if 変更一覧.is_empty() {
         return Ok(());
     }
-    Err(format!(
-        "{名前}の作業コピーに未コミットの変更がある。\n{変更一覧}\nHEADが固定リビジョンのままでも焼くのは変更後のコードであり、生成物へ付く出自の表示が実際に焼いたコードと食い違うため生成を止める。変更を戻すか、コミットしたうえで固定リビジョンを更新すること"
-    ))
+    Err(大気の期待値の焼き出しエラー::作業コピーに未コミットの変更がある { 名前, 変更一覧 })
 }
 
 /// 作業コピーが指している先頭のコミット、すなわちgitのHEADのリビジョンを読む。
-fn 先頭リビジョンを読む(作業コピー: &Path) -> Result<String, String> {
+fn 先頭リビジョンを読む(作業コピー: &Path) -> Result<String, 大気の期待値の焼き出しエラー> {
     gitの出力を読む(作業コピー, &["rev-parse", "HEAD"])
 }
 
 /// 作業コピーでgitを実行し、標準出力の末尾の空白を落として返す。先頭を落とさないのは、`git status --porcelain`の行頭2文字が変更の種別を表すためである。
-fn gitの出力を読む(作業コピー: &Path, 引数一覧: &[&str]) -> Result<String, String> {
-    let 出力 = Command::new("git")
-        .arg("-C")
-        .arg(作業コピー)
-        .args(引数一覧)
-        .output()
-        .map_err(|誤り| format!("{}でgitを起動できない: {誤り}", 作業コピー.display()))?;
+fn gitの出力を読む(作業コピー: &Path, 引数一覧: &[&str]) -> Result<String, 大気の期待値の焼き出しエラー> {
+    let 出力 = Command::new("git").arg("-C").arg(作業コピー).args(引数一覧).output().map_err(|誤り| {
+        大気の期待値の焼き出しエラー::作業コピーでgitを起こせなかった {
+            作業コピー: 作業コピー.to_path_buf(),
+            誤り,
+        }
+    })?;
     if !出力.status.success() {
-        return Err(format!(
-            "{}で`git {}`が失敗した。gitの作業コピーであることと、部分モジュールが初期化済みであることを確かめること",
-            作業コピー.display(),
-            引数一覧.join(" ")
-        ));
+        return Err(大気の期待値の焼き出しエラー::作業コピーでgitが失敗して終わった {
+            作業コピー: 作業コピー.to_path_buf(),
+            引数の並び: 引数一覧.join(" "),
+        });
     }
-    let 文字列 = String::from_utf8(出力.stdout).map_err(|誤り| format!("gitの出力がUTF-8でない: {誤り}"))?;
+    let 文字列 = String::from_utf8(出力.stdout)
+        .map_err(|誤り| 大気の期待値の焼き出しエラー::作業コピーの照合の標準出力がUTF8でない { 誤り })?;
     Ok(文字列.trim_end().to_string())
 }

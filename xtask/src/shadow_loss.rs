@@ -8,6 +8,7 @@
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「シャドウ性能の是正(フェーズ2性能課題、2026-08-03着手)」
 
 mod args;
+mod argument_error;
 mod candidate_axis;
 mod compare;
 #[cfg(test)]
@@ -15,6 +16,7 @@ mod comparison_fixture;
 mod diagnostic_image;
 mod diff_image;
 mod distance;
+mod error;
 mod final_color;
 mod guard;
 mod launch;
@@ -26,6 +28,10 @@ mod scene_choice;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+use error::影の欠落計器のエラー;
+
+use crate::acceptance::検収エラー;
 
 const 出力ディレクトリ: &str = "target/shadow_loss";
 
@@ -42,7 +48,7 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     }
 }
 
-fn 測る(引数一覧: &[String]) -> Result<String, String> {
+fn 測る(引数一覧: &[String]) -> Result<String, 影の欠落計器のエラー> {
     let 指定 = args::引数を読む(引数一覧)?;
     match 指定.様式 {
         args::計器の様式::影の欠落を数える => 欠落と余分を数える(&指定),
@@ -51,14 +57,14 @@ fn 測る(引数一覧: &[String]) -> Result<String, String> {
 }
 
 /// 描く前の支度。検証用アセットを焼き、出力先を作る。両方の様式が同じ支度をする。
-fn 描く支度をする(構図: scene_choice::構図) -> Result<PathBuf, String> {
+fn 描く支度をする(構図: scene_choice::構図) -> Result<PathBuf, 影の欠落計器のエラー> {
     if !crate::gen_source_assets::生成する() || !アセットを焼く(構図) {
-        return Err("検証用アセットの生成に失敗した".to_string());
+        return Err(影の欠落計器のエラー::検証用アセットを生成できなかった);
     }
     Ok(PathBuf::from(出力ディレクトリ))
 }
 
-fn 欠落と余分を数える(指定: &args::指定) -> Result<String, String> {
+fn 欠落と余分を数える(指定: &args::指定) -> Result<String, 影の欠落計器のエラー> {
     guard::描く前に確かめる(指定.構図, &指定.候補)?;
     let 出力先 = 描く支度をする(指定.構図)?;
     let 実行環境 = run::実行環境を作る(指定.構図, 出力先.clone())?;
@@ -74,7 +80,10 @@ fn 欠落と余分を数える(指定: &args::指定) -> Result<String, String> 
     guard::負の対照を判定する(指定.構図, &比較)?;
     report::表示する(&比較);
     diff_image::書き出す(&差分先, 比較.幅, 比較.高さ, &比較)?;
-    let 差分png = crate::raw_png::変換する(&差分先).map_err(|破れ| 破れ.to_string())?;
+    let 差分png = crate::raw_png::変換する(&差分先).map_err(|破れ| 検収エラー::目視用の絵へ変換できなかった {
+        書き出し先: 差分先.clone(),
+        破れ,
+    })?;
     Ok(format!(
         "構図{}・候補{}、差分画像は{}",
         指定.構図.綴り(),

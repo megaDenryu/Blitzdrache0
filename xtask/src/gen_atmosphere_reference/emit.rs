@@ -4,6 +4,7 @@
 
 use std::path::Path;
 
+use super::error::大気の期待値の焼き出しエラー;
 use super::revision::実測リビジョン;
 
 const 出力パス: &str = "crates/blitz_render/data/bruneton_reference.txt";
@@ -20,17 +21,23 @@ const 各行の説明: &str = "\
 # phase <散乱角余弦> <レイリー> <ミー>                     位相関数の値
 ";
 
-pub(super) fn 書き出す(本文: &str, リビジョン: &実測リビジョン) -> Result<String, String> {
+pub(super) fn 書き出す(本文: &str, リビジョン: &実測リビジョン) -> Result<String, 大気の期待値の焼き出しエラー> {
     let 行数 = 本文.lines().filter(|行| !行.trim().is_empty()).count();
     if 行数 == 0 {
-        return Err("焼き出しが1行も出さなかった".to_string());
+        return Err(大気の期待値の焼き出しエラー::焼き出しが1行も出さなかった);
     }
     let 全体 = format!("{}{本文}", 見出し(リビジョン));
     let パス = Path::new(出力パス);
     if let Some(親) = パス.parent() {
-        std::fs::create_dir_all(親).map_err(|誤り| format!("{}を作れない: {誤り}", 親.display()))?;
+        std::fs::create_dir_all(親).map_err(|誤り| 大気の期待値の焼き出しエラー::出力先を作れなかった {
+            パス: 親.to_path_buf(),
+            誤り,
+        })?;
     }
-    std::fs::write(パス, 全体).map_err(|誤り| format!("{出力パス}へ書けない: {誤り}"))?;
+    std::fs::write(パス, 全体).map_err(|誤り| 大気の期待値の焼き出しエラー::生成物を書けなかった {
+        パス: パス.to_path_buf(),
+        誤り,
+    })?;
     Ok(format!("{出力パス}へ{行数}件のレコードを書いた"))
 }
 

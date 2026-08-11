@@ -9,6 +9,7 @@
 //! 絵の合否も判定に含まれない。書き出したPNGを見て決めるのは親エージェントである。
 //! 参照: `_doc/設計/クラスタ多光源と点光源の影.md`「第5段階の検収の入口」
 
+mod error;
 mod instrument;
 mod instrument_judgment;
 mod interior_judgment;
@@ -23,6 +24,8 @@ mod summary;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+use error::点光源の影の検収エラー;
 
 use crate::multi_light_world::world;
 
@@ -41,10 +44,10 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
-    world::屋内の世界を用意する().map_err(|破れ| 破れ.to_string())?;
-    world::夜の世界を用意する().map_err(|破れ| 破れ.to_string())?;
-    crate::release_build::計測用に構築する("point-light-shadow").map_err(|破れ| 破れ.to_string())?;
+fn 検収する() -> Result<String, 点光源の影の検収エラー> {
+    world::屋内の世界を用意する().map_err(点光源の影の検収エラー::検収世界を用意できなかった)?;
+    world::夜の世界を用意する().map_err(点光源の影の検収エラー::検収世界を用意できなかった)?;
+    crate::release_build::計測用に構築する("point-light-shadow").map_err(点光源の影の検収エラー::計測用の構築が失敗した)?;
     let 屋内の実行環境 = world::屋内の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
     let 夜の実行環境 = world::夜の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 

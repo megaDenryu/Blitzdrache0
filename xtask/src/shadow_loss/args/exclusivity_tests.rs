@@ -6,7 +6,7 @@ use super::計器の様式;
 use crate::shadow_loss::candidate_axis::計測軸;
 use crate::shadow_loss::scene_choice::構図;
 
-fn 読む(語一覧: &[&str]) -> Result<super::指定, String> {
+fn 読む(語一覧: &[&str]) -> Result<super::指定, super::影の欠落計器の引数の破れ> {
     引数を読む(&語一覧.iter().map(|語| (*語).to_string()).collect::<Vec<String>>())
 }
 

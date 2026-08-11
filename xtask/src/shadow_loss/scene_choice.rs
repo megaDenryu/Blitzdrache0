@@ -3,7 +3,7 @@
 //! 2つ持つのは、同じ計器がα/βの費用の裁定材料と、βの危険を露出する負の対照の両方を測るためである。
 //! 地形は代表世界を`csm-seam`と同じ構図で描き、影視距離は遠方キャスターと近距離対照だけを置いた検収世界を描く。
 
-use super::candidate_axis::計測軸;
+use super::{argument_error::影の欠落計器の引数の破れ, candidate_axis::計測軸};
 use crate::acceptance::{実行時アセットルート, 検収シーン名};
 
 /// その構図の結果に定まった期待があるか。
@@ -87,11 +87,12 @@ impl 構図 {
     }
 }
 
-pub(super) fn 綴りから読む(語: &str) -> Result<構図, String> {
-    match 構図::全構図.into_iter().find(|構図| 構図.綴り() == 語) {
-        Some(構図) => Ok(構図),
-        None => Err(format!("知らない構図である({語})。{}のいずれかを指定する", 綴りを並べる())),
-    }
+pub(super) fn 綴りから読む(語: &str) -> Result<構図, 影の欠落計器の引数の破れ> {
+    let 知らない構図 = || 影の欠落計器の引数の破れ::知らない構図を渡された {
+        語: 語.to_string(),
+        選べる構図: 綴りを並べる(),
+    };
+    構図::全構図.into_iter().find(|構図| 構図.綴り() == 語).ok_or_else(知らない構図)
 }
 
 pub(super) fn 綴りを並べる() -> String {

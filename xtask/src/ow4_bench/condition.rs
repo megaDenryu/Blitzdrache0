@@ -6,6 +6,13 @@
 #[cfg(test)]
 mod argument_tests;
 
+use super::error::物量計測エラー;
+
+/// 一日内時刻を渡す引数の綴り。破れの文面が打ち直す語をそのまま名指す。
+const 一日内時刻の引数名: &str = "--time-of-day";
+/// 物量点として渡された語の役目。数として読めなかったときの文面がこの名前で語を名指す。
+const 物量点の引数名: &str = "チャンクあたり個体数";
+
 /// 何を描くかの条件。予算のどの行を判定できるかがこの選択で決まる。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum 描画条件 {
@@ -29,7 +36,7 @@ pub(super) struct 引数の読み {
     pub(super) 条件: 計測条件,
 }
 
-pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<引数の読み, String> {
+pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<引数の読み, 物量計測エラー> {
     let mut 物量点一覧 = Vec::new();
     let mut 描画 = 描画条件::素の描画;
     let mut 一日内時刻の秒 = None;
@@ -41,7 +48,7 @@ pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<引数の読み
         }
         match 語.as_str() {
             "--production-draw" => 描画 = 描画条件::本番の描画,
-            "--time-of-day" => 一日内時刻の秒 = Some(一日内秒を読む(残り.next())?),
+            一日内時刻の引数名 => 一日内時刻の秒 = Some(一日内秒を読む(残り.next())?),
             _ => 物量点一覧.push(個体数を読む(語)?),
         }
     }
@@ -69,15 +76,23 @@ pub(super) fn 時刻の起動指定(条件: &計測条件) -> Vec<String> {
     vec!["--time-of-day".to_string(), 秒.to_string()]
 }
 
-fn 一日内秒を読む(語: Option<&String>) -> Result<u32, String> {
-    let 語 = 語.ok_or_else(|| "--time-of-dayの次に秒が無い".to_string())?;
-    語.parse().map_err(|誤り| format!("--time-of-dayの秒を数として読めない: {誤り}"))
+fn 一日内秒を読む(語: Option<&String>) -> Result<u32, 物量計測エラー> {
+    let 語 = 語.ok_or(物量計測エラー::引数の次に値が無い {
+        引数名: 一日内時刻の引数名
+    })?;
+    語.parse().map_err(|_| 物量計測エラー::引数の値を数として読めない {
+        引数名: 一日内時刻の引数名,
+        語: 語.clone(),
+    })
 }
 
-fn 個体数を読む(語: &str) -> Result<usize, String> {
+fn 個体数を読む(語: &str) -> Result<usize, 物量計測エラー> {
     match 語.parse::<usize>() {
         Ok(個体数) if 個体数 > 0 => Ok(個体数),
-        Ok(_) => Err("チャンクあたり個体数は1以上である必要がある".to_string()),
-        Err(誤り) => Err(format!("チャンクあたり個体数を数として読めない({語}): {誤り}")),
+        Ok(_) => Err(物量計測エラー::チャンクあたり個体数が零である),
+        Err(_) => Err(物量計測エラー::引数の値を数として読めない {
+            引数名: 物量点の引数名,
+            語: 語.to_string(),
+        }),
     }
 }

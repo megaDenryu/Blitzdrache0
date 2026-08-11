@@ -11,6 +11,7 @@
 
 mod assignment;
 mod determinism;
+mod error;
 mod gpu_time;
 #[cfg(test)]
 mod gpu_time_tests;
@@ -21,6 +22,8 @@ mod summary;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+use error::クラスタ多光源の検収エラー;
 
 use crate::multi_light_world::world;
 
@@ -39,10 +42,10 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
-    world::夜の世界を用意する().map_err(|破れ| 破れ.to_string())?;
-    world::屋内の世界を用意する().map_err(|破れ| 破れ.to_string())?;
-    crate::release_build::計測用に構築する("cluster-lights").map_err(|破れ| 破れ.to_string())?;
+fn 検収する() -> Result<String, クラスタ多光源の検収エラー> {
+    world::夜の世界を用意する().map_err(クラスタ多光源の検収エラー::検収世界を用意できなかった)?;
+    world::屋内の世界を用意する().map_err(クラスタ多光源の検収エラー::検収世界を用意できなかった)?;
+    crate::release_build::計測用に構築する("cluster-lights").map_err(クラスタ多光源の検収エラー::計測用の構築が失敗した)?;
     let 夜の実行環境 = world::夜の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
     let 屋内の実行環境 = world::屋内の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
