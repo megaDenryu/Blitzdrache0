@@ -7,12 +7,15 @@
 //! 参照: `_doc/設計/マルチマテリアルと材質境界.md`「段階導入」E段
 
 mod count_judgment;
+mod error;
 mod judgment;
 mod material_pixels;
 mod run;
 
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+
+use error::小物の材質境界の検収エラー;
 
 const 出力ディレクトリ: &str = "target/prop_multi_material_draw";
 /// 小物の実行時形式。宣言はこの安定IDを板の世界へ載せるため、既定の出力ルートへ焼かれる。
@@ -33,9 +36,9 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
+fn 検収する() -> Result<String, 小物の材質境界の検収エラー> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
-        return Err("検証用アセットの生成に失敗した".to_string());
+        return Err(小物の材質境界の検収エラー::検証用アセットを生成できなかった);
     }
     実行時形式の実在を確かめる()?;
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
@@ -60,11 +63,11 @@ fn 検収する() -> Result<String, String> {
 
 /// 外部のアセットリポジトリが無い環境では、実行時アセット生成が小物の宣言を飛ばしたうえで成功する。
 /// その場合はシーンの読込がカタログ未登録で落ちるため、どのファイルが作られなかったかをここで名指しして落とす。
-fn 実行時形式の実在を確かめる() -> Result<(), String> {
+fn 実行時形式の実在を確かめる() -> Result<(), 小物の材質境界の検収エラー> {
     if Path::new(実行時形式のパス).is_file() {
         return Ok(());
     }
-    Err(format!(
-        "{実行時形式のパス}が作られていない。外部のアセットリポジトリが見つからず宣言が飛ばされた可能性が高い(compile-assetsの出力に飛ばした理由が出る)"
-    ))
+    Err(小物の材質境界の検収エラー::実行時形式が作られていない {
+        パス: 実行時形式のパス
+    })
 }

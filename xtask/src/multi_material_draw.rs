@@ -4,12 +4,15 @@
 //! 参照: `_doc/設計/マルチマテリアルと材質境界.md`「段階導入」C段
 
 mod count_judgment;
+mod error;
 mod judgment;
 mod run;
 mod switch_judgment;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+use error::板の材質境界の検収エラー;
 
 const 出力ディレクトリ: &str = "target/multi_material_draw";
 
@@ -26,9 +29,9 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
+fn 検収する() -> Result<String, 板の材質境界の検収エラー> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
-        return Err("検証用アセットの生成に失敗した".to_string());
+        return Err(板の材質境界の検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
@@ -36,8 +39,8 @@ fn 検収する() -> Result<String, String> {
     二材質.報告().画面へ流す();
     let 単一材質 = 実行環境.描いて読み戻す(run::単一材質の実行名, &run::起動指定を組み立てる(run::条件::単一材質))?;
     単一材質.報告().画面へ流す();
-    let 二材質の色 = crate::plate_region::左右の代表色を採る(二材質.画像())?;
-    let 単一材質の色 = crate::plate_region::左右の代表色を採る(単一材質.画像())?;
+    let 二材質の色 = 代表色を採る(二材質.画像())?;
+    let 単一材質の色 = 代表色を採る(単一材質.画像())?;
     judgment::二材質の画素を検査する(&二材質の色)?;
     judgment::単一材質の画素を検査する(&単一材質の色)?;
     let 二材質計数 = crate::report_parse::取り出す(二材質.報告())?;
@@ -62,4 +65,12 @@ fn 検収する() -> Result<String, String> {
         "、シーンパスのパイプライン切替はどちらも{}回、材質切替は2材質{}回と1材質{}回",
         二材質計数.シーン.パイプライン切替, 二材質計数.シーン.材質切替, 単一材質計数.シーン.材質切替
     ))
+}
+
+/// 板の代表色を採る工程はまだ型付きエラーへ移っていないため、ここで理由の文をこの入口の誤りの型へ包む。
+fn 代表色を採る(
+    画像: &crate::acceptance::読み戻し画像,
+) -> Result<crate::plate_region::左右の代表色, 板の材質境界の検収エラー> {
+    crate::plate_region::左右の代表色を採る(画像)
+        .map_err(|理由| 板の材質境界の検収エラー::板の代表色を採れなかった { 理由 })
 }
