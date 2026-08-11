@@ -6,7 +6,6 @@ mod assemble;
 mod axis_split;
 mod chunk_rectangle;
 mod compile;
-mod edge_agreement;
 mod error;
 #[cfg(test)]
 mod height_field_tests;

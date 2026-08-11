@@ -5,6 +5,7 @@
 
 mod chunk_directory_source;
 mod compile;
+mod edge_agreement;
 mod error;
 mod fixed_placement;
 mod generation_ledger;
@@ -21,6 +22,9 @@ mod visual_sample;
 pub use chunk_directory_source::{チャンク目録ソースを読み込む, チャンク目録ソース項目};
 pub use compile::{
     コンパイル済みシーン, ソースシーンをコンパイルする, 寸法を合わせる倍率を与えてソースシーンをコンパイルする
+};
+pub use edge_agreement::{
+    ソースの高さ格子の重なり帯が一致することを確かめる, 縁の一致エラー, 隣り合うチャンクの重なり帯が一致することを確かめる
 };
 pub use error::アセットコンパイルエラー;
 pub use fixed_placement::{固定物の据え付け, 固定物を据えた地形チャンクをコンパイルする};
