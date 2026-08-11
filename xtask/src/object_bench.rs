@@ -1,21 +1,37 @@
 //! OW0の描画対象数スケーリング: 二対象の実機画素判定後、1・10・100対象を同じ固定カメラで計測する。
+//!
+//! 出力を捕まえずに画面へ流すのは、1条件が360フレーム走り、進み具合を人がその場で見るためである。
 
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
 
-const ベンチフレーム数: &str = "360";
+use crate::acceptance::{
+    アプリの起こし方, アプリの起動指定, 世界を読ませて報告を採る実行環境, 実行時アセットルート, 描画フレーム数, 検収の実行名, 検収シーン名,
+};
+
+const シーン名: 検収シーン名 = 検収シーン名::生成する("quad");
+const アセットルート: &str = "target/runtime_assets";
+const ベンチフレーム数: 描画フレーム数 = 描画フレーム数::生成する(360);
+/// 実機の画素判定を通す枚数。判定は最終フレームでだけ働くため、経路を一度通せば足りる。
+const スモークフレーム数: 描画フレーム数 = 描画フレーム数::生成する(2);
 const 描画対象数一覧: [&str; 3] = ["1", "10", "100"];
+/// スモークが描く描画対象の数。画素判定がこの数の板を前提に置いてある。
+const スモークの描画対象数: &str = "2";
+const 光と圧縮を外す選択肢: [&str; 2] = ["--unlit", "--no-post"];
+const 報告を出させる選択肢: [&str; 3] = ["--report-gpu-times", "--report-frame-times", "--report-memory"];
 
 pub fn 実行する() -> ExitCode {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }
+    let スモークの実行環境 = 実行環境を作る(アプリの起こし方::毎回cargoに構築させて起動する);
+    let 計測の実行環境 = 実行環境を作る(アプリの起こし方::毎回cargoにリリース版を構築させて起動する);
     println!("[xtask] 二描画対象の実機ピクセル判定を実行");
-    if !cargoを実行する(&スモーク引数()) {
+    if !走らせる(&スモークの実行環境, "smoke", &スモークの起動指定()) {
         return ExitCode::FAILURE;
     }
     for 描画対象数 in 描画対象数一覧 {
         println!("[xtask] 描画対象数{描画対象数}の固定ベンチを実行");
-        if !cargoを実行する(&ベンチ引数(描画対象数)) {
+        if !走らせる(&計測の実行環境, &format!("bench_x{描画対象数}"), &ベンチの起動指定(描画対象数)) {
             return ExitCode::FAILURE;
         }
     }
@@ -23,58 +39,37 @@ pub fn 実行する() -> ExitCode {
     ExitCode::SUCCESS
 }
 
-fn スモーク引数() -> Vec<&'static str> {
-    vec![
-        "run",
-        "-p",
-        "blitz_app",
-        "--",
-        "--scene",
-        "quad",
-        "--asset-root",
-        "target/runtime_assets",
-        "--frames",
-        "2",
-        "--object-count",
-        "2",
-        "--unlit",
-        "--no-post",
-    ]
+fn 実行環境を作る(起こし方: アプリの起こし方) -> 世界を読ませて報告を採る実行環境 {
+    世界を読ませて報告を採る実行環境::作る(起こし方, 実行時アセットルート::綴りから生成する(アセットルート))
 }
 
-fn ベンチ引数(描画対象数: &'static str) -> Vec<&'static str> {
-    vec![
-        "run",
-        "--release",
-        "-p",
-        "blitz_app",
-        "--",
-        "--scene",
-        "quad",
-        "--asset-root",
-        "target/runtime_assets",
-        "--benchmark-frames",
-        ベンチフレーム数,
-        "--object-count",
-        描画対象数,
-        "--unlit",
-        "--no-post",
-        "--report-gpu-times",
-        "--report-frame-times",
-        "--report-memory",
-    ]
+fn スモークの起動指定() -> アプリの起動指定 {
+    アプリの起動指定::シーンと枚数を決める(シーン名, スモークフレーム数)
+        .値を持つ選択肢を足す("--object-count", スモークの描画対象数)
+        .選択肢をまとめて足す(&光と圧縮を外す選択肢)
 }
 
-fn cargoを実行する(引数一覧: &[&str]) -> bool {
-    println!("[xtask] cargo {} を実行", 引数一覧.join(" "));
-    match Command::new("cargo").args(引数一覧).status() {
-        Ok(状態) if 状態.success() => true,
-        Ok(状態) => {
-            eprintln!("[xtask] 子プロセスが終了コード{状態}で失敗した");
-            false
-        }
+fn ベンチの起動指定(描画対象数: &str) -> アプリの起動指定 {
+    アプリの起動指定::シーンと計測の枚数を決める(シーン名, ベンチフレーム数)
+        .値を持つ選択肢を足す("--object-count", 描画対象数)
+        .選択肢をまとめて足す(&光と圧縮を外す選択肢)
+        .選択肢をまとめて足す(&報告を出させる選択肢)
+}
+
+fn 走らせる(
+    実行環境: &世界を読ませて報告を採る実行環境, 実行名の綴り: &str, 指定: &アプリの起動指定
+) -> bool {
+    let 実行名 = match 検収の実行名::生成する(実行名の綴り) {
+        Ok(実行名) => 実行名,
         Err(誤り) => {
-            eprintln!("[xtask] cargoの起動に失敗した: {誤り}");
+            eprintln!("[xtask] {誤り}");
+            return false;
+        }
+    };
+    match 実行環境.画面へ流したまま走らせる(実行名, 指定) {
+        Ok(()) => true,
+        Err(誤り) => {
+            eprintln!("[xtask] 子プロセスが失敗した: {誤り}");
             false
         }
     }

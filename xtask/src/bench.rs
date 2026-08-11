@@ -2,12 +2,20 @@
 //! 固定フレーム数で`blitz_app`を実行し、パス別GPU時間とCPU側フレーム間隔分布を表示する。
 //! スモークと同じ思想(繰り返す検証は資産化)で`cargo xtask bench`として登録する。
 //! 参照: `_doc/計画/評価軸.md`「3.4 計測の再現性」。
+//!
+//! 出力を捕まえずに画面へ流すのは、600フレーム走るあいだの進み具合を人がその場で見るためである。
+//! 読む世界の置き場をアプリの既定へ任せるのは、この入口が既定の世界の`helmet`だけを描くためである。
 
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
 
+use crate::acceptance::{
+    アプリの起こし方, アプリの起動指定, 世界を読ませて報告を採る実行環境, 描画フレーム数, 検収の実行名, 検収シーン名
+};
 use crate::fetch_assets;
 
-const フレーム数: &str = "600";
+const シーン名: 検収シーン名 = 検収シーン名::生成する("helmet");
+const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(600);
+const 報告を出させる選択肢: [&str; 4] = ["--particles", "--report-gpu-times", "--report-frame-times", "--report-memory"];
 
 /// 実表示計測を有効にするかどうか。2つの計測条件を取り違えないよう、真偽値でなく型で持つ。
 ///
@@ -17,6 +25,16 @@ const フレーム数: &str = "600";
 pub enum 実表示計測 {
     なし,
     あり,
+}
+
+impl 実表示計測 {
+    /// その条件の書き出しの基準名。2つの条件の記録が同じ名前を取らないようにする。
+    fn 実行名(self) -> 検収の実行名 {
+        match self {
+            Self::なし => 検収の実行名::定数から生成する("bench"),
+            Self::あり => 検収の実行名::定数から生成する("bench_display_timing"),
+        }
+    }
 }
 
 pub fn 実行する() -> ExitCode {
@@ -38,42 +56,25 @@ fn 条件を指定して実行する(実表示計測: 実表示計測) -> ExitCo
     if !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }
-
-    let mut 引数一覧 = vec![
-        "run",
-        "--release",
-        "-p",
-        "blitz_app",
-        "--",
-        "--scene",
-        "helmet",
-        "--benchmark-frames",
-        フレーム数,
-        "--particles",
-        "--report-gpu-times",
-        "--report-frame-times",
-        "--report-memory",
-    ];
-    if 実表示計測 == 実表示計測::あり {
-        引数一覧.push("--report-display-timing");
-    }
-    println!("[xtask] cargo {} を実行", 引数一覧.join(" "));
-    子プロセスを実行する(&引数一覧)
-}
-
-fn 子プロセスを実行する(引数一覧: &[&str]) -> ExitCode {
-    match Command::new("cargo").args(引数一覧).status() {
-        Ok(状態) if 状態.success() => {
+    let 実行環境 = 世界を読ませて報告を採る実行環境::世界の置き場をアプリの既定に任せて作る(
+        アプリの起こし方::毎回cargoにリリース版を構築させて起動する,
+    );
+    match 実行環境.画面へ流したまま走らせる(実表示計測.実行名(), &起動指定を組み立てる(実表示計測)) {
+        Ok(()) => {
             println!("[xtask] bench成功");
             ExitCode::SUCCESS
         }
-        Ok(状態) => {
-            eprintln!("[xtask] benchが終了コード{状態}で失敗した");
+        Err(誤り) => {
+            eprintln!("[xtask] benchが失敗した: {誤り}");
             ExitCode::FAILURE
         }
-        Err(起動誤り) => {
-            eprintln!("[xtask] cargoの起動に失敗: {起動誤り}");
-            ExitCode::FAILURE
-        }
+    }
+}
+
+fn 起動指定を組み立てる(実表示計測: 実表示計測) -> アプリの起動指定 {
+    let 指定 = アプリの起動指定::シーンと計測の枚数を決める(シーン名, フレーム数).選択肢をまとめて足す(&報告を出させる選択肢);
+    match 実表示計測 {
+        実表示計測::なし => 指定,
+        実表示計測::あり => 指定.選択肢を足す("--report-display-timing"),
     }
 }
