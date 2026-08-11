@@ -21,7 +21,6 @@ mod text_format;
 pub use content_hash::内容ハッシュ;
 pub use dependency_digest::ソース依存一式の内容ハッシュを求める;
 pub use error::生成台帳エラー;
-pub use generator_version::{現在の生成器の版, 生成器の版};
 pub use heading::生成台帳の見出し;
 pub use ledger::{チャンクの焼き直し判定, 生成台帳};
 pub use map_seed::{マップ生成の乱数の種, 種の由来};
