@@ -5,6 +5,7 @@ mod cloth_frame;
 mod cloth_setup;
 mod create;
 mod draw_dispatch;
+mod exit_report;
 pub(crate) mod frame;
 mod frame_dump;
 mod frame_timing;

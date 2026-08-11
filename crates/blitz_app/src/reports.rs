@@ -1,4 +1,4 @@
-//! 終了時に要求された計測値をコンソールへ表示する。どの報告を出すかの取りまとめは`exit`、
+//! 終了時に要求された計測値をコンソールへ表示する。どの報告をどの順で出すかの取りまとめは`app::exit_report`、
 //! 起動直後に出す構成の要約は`composition`にある。
 
 pub(crate) mod atmosphere_lut;
@@ -12,7 +12,6 @@ pub(crate) mod display_timing;
 pub(crate) mod distant_environment;
 pub(crate) mod distant_environment_key;
 pub(crate) mod draw_issue;
-pub(crate) mod exit;
 pub(crate) mod game;
 pub(crate) mod gpu_frame_samples;
 pub(crate) mod gpu_time_table;
