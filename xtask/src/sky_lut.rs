@@ -19,10 +19,13 @@ mod pass_count;
 mod run;
 mod series_integrity;
 mod stop_point;
+mod time_of_day_argument;
 
 use std::path::PathBuf;
 
 use std::process::ExitCode;
+
+use time_of_day_argument::一日内秒を読む;
 
 const 出力ディレクトリ: &str = "target/sky_lut";
 
@@ -46,17 +49,6 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     }
 }
 
-/// `--time-of-day <秒>`があればその値を返す。指定が無ければ世界の方針の既定時刻(11時)で走る。
-fn 一日内秒を読む(引数一覧: &[String]) -> Result<Option<String>, String> {
-    let Some(位置) = 引数一覧.iter().position(|引数| 引数 == "--time-of-day") else {
-        return Ok(None);
-    };
-    let 値 = 引数一覧.get(位置 + 1).ok_or_else(|| "--time-of-dayの後に秒が無い".to_string())?;
-    値.parse::<f64>()
-        .map_err(|誤り| format!("--time-of-dayの値を数として読めない({値}): {誤り}"))?;
-    Ok(Some(値.clone()))
-}
-
 fn 検収する(一日内秒: Option<&str>) -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
@@ -66,18 +58,18 @@ fn 検収する(一日内秒: Option<&str>) -> Result<String, String> {
     let 停止 = run::描く(&実行環境, run::時計停止の実行名, run::条件::時計停止, 一日内秒)?;
     let 進行 = run::描く(&実行環境, run::時計進行の実行名, run::条件::時計進行, 一日内秒)?;
     let 合成なし = run::描く(&実行環境, run::合成なしの実行名, run::条件::合成なし, 一日内秒)?;
-    let 停止の列 = pass_count::読む(停止.報告().本文(), "時計停止")?;
-    let 進行の列 = pass_count::読む(進行.報告().本文(), "時計進行")?;
-    let 合成なしの列 = pass_count::読む(合成なし.報告().本文(), "合成なし")?;
+    let 停止の列 = pass_count::読む(停止.報告(), "時計停止")?;
+    let 進行の列 = pass_count::読む(進行.報告(), "時計進行")?;
+    let 合成なしの列 = pass_count::読む(合成なし.報告(), "合成なし")?;
 
-    let 間接照明の要約 = indirect_pass_count::三条件を確かめる(停止.報告().本文(), 進行.報告().本文(), 合成なし.報告().本文())?;
+    let 間接照明の要約 = indirect_pass_count::三条件を確かめる(停止.報告(), 進行.報告(), 合成なし.報告())?;
     series_integrity::列の整合を確かめる(&停止の列, "時計停止")?;
     series_integrity::列の整合を確かめる(&進行の列, "時計進行")?;
     series_integrity::列の整合を確かめる(&合成なしの列, "合成なし")?;
     judgment::時計停止を判定する(&停止の列)?;
     judgment::時計進行を判定する(&進行の列)?;
-    let 停止点 = stop_point::停止点を判定する(合成なし.報告().本文(), &合成なしの列, 合成なし.画像().バイト列(), 停止.画像().バイト列())?;
-    let 計器 = gpu_time::区間を読む(停止.報告().本文())?;
+    let 停止点 = stop_point::停止点を判定する(合成なし.報告(), &合成なしの列, 合成なし.画像().バイト列(), 停止.画像().バイト列())?;
+    let 計器 = gpu_time::区間を読む(停止.報告())?;
 
     let png = 停止.書き出し先().目視用の絵へ変換する()?;
     let 合成なしのpng = 合成なし.書き出し先().目視用の絵へ変換する()?;

@@ -68,8 +68,8 @@ fn 計測する(引数一覧: &[String]) -> Result<String, String> {
             条件,
             実行番号,
         };
-        let 標準出力 = run::一回走らせる(&材料)?;
-        標本一覧.push(parse::標本を取り出す(&標準出力, 実行番号, 条件.名前)?);
+        let 報告 = run::一回走らせる(&材料)?;
+        標本一覧.push(parse::標本を取り出す(&報告, 実行番号, 条件.名前)?);
     }
     let 時計一覧: Vec<schedule::時計> = schedule::交互の並び.iter().map(|条件| 条件.時計).collect();
     judgment::本数が計画どおりであることを確かめる(&標本一覧, &時計一覧)?;

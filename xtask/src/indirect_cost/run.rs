@@ -14,7 +14,7 @@ use std::path::{Path, PathBuf};
 use super::plan::実行の指定;
 use super::schedule::{実行条件, 時計};
 use crate::acceptance::{
-    アプリの起こし方, アプリの起動指定, 世界を読ませて報告を採る実行環境, 実行時アセットルート, 検収の実行名, 検収シーン名
+    アプリの起こし方, アプリの起動指定, 世界を読ませて報告を採る実行環境, 実行時アセットルート, 検収の実行名, 検収シーン名, 終了時報告,
 };
 
 const シーン名: 検収シーン名 = 検収シーン名::生成する("terrain_origin");
@@ -34,15 +34,14 @@ pub(super) struct 実行の材料<'a> {
     pub(super) 実行番号: usize,
 }
 
-pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<String, String> {
+pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<終了時報告, String> {
     let 標準出力先 = PathBuf::from(材料.出力先).join(format!("run_{}_{}.log", 材料.実行番号, 材料.条件.名前));
     println!("[xtask] indirect-cost実行{}: {}", 材料.実行番号, 材料.条件.名前);
     let 報告 = 材料
         .実行環境
         .報告を採る(検収の実行名::生成する(材料.条件.名前)?, &起動指定を組み立てる(材料))?;
-    let 標準出力 = 報告.本文().to_string();
-    std::fs::write(&標準出力先, &標準出力).map_err(|誤り| format!("{}を書けなかった: {誤り}", 標準出力先.display()))?;
-    Ok(標準出力)
+    std::fs::write(&標準出力先, 報告.本文()).map_err(|誤り| format!("{}を書けなかった: {誤り}", 標準出力先.display()))?;
+    Ok(報告)
 }
 
 /// 計測の実行環境。GPU時間の窓へcargoのビルド判定を混ぜないため、構築済みのリリース版を直に起こす。
