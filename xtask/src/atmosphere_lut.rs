@@ -6,10 +6,12 @@
 //! シェーダーがCPU正本からずれる欠陥は、この検査だけが捉えられる(ユニットテストはCPU側しか見ない)。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「大気のベイク済み画像方式の設計(第7段で実装する)」
 
+mod heading;
 mod judgment;
 mod parse;
 mod table;
 mod thresholds;
+mod tolerance_choice;
 mod validation_judgment;
 
 use std::process::{Command, ExitCode};

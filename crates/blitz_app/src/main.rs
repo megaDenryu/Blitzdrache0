@@ -77,6 +77,10 @@ fn 描画する(起動設定: cli::起動設定) -> Result<ExitCode, 起動エ�
     終了処理する(アプリ)
 }
 
+/// 検収がvalidationの件数を読むための見出し。綴りは`xtask/src/validation_count.rs`の写しと一致していなければならず、
+/// 食い違いは`cargo xtask conform`の綴りの契約の検査が拒む。
+const 検証層の指摘件数の見出し: &str = "validationエラー・警告合計件数:";
+
 fn 終了処理する(mut アプリ: アプリ) -> Result<ExitCode, 起動エラー> {
     let 検証カウンタ = アプリ.検証カウンタを取得する();
     // 判断30: レンダラー内部(クエリプール・移動平均・作業領域)を読む報告は破棄より前に出す
@@ -90,6 +94,6 @@ fn 終了処理する(mut アプリ: アプリ) -> Result<ExitCode, 起動エラ
         return Ok(ExitCode::SUCCESS);
     };
     let 件数 = 検証カウンタ.件数を読む();
-    println!("validationエラー・警告合計件数: {件数}");
+    println!("{検証層の指摘件数の見出し} {件数}");
     if 件数 > 0 { Ok(ExitCode::FAILURE) } else { Ok(ExitCode::SUCCESS) }
 }

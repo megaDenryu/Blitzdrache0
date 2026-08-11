@@ -24,6 +24,7 @@ mod single_lighting_slot_write;
 mod split_debt;
 mod violation;
 mod whole_repository;
+mod wording_contract;
 
 use std::path::PathBuf;
 use std::process::ExitCode;

@@ -21,7 +21,7 @@ const 報告の見出し一覧: [&str; 5] = [
     "CPU側フレーム間隔",
     "パス別GPU時間",
     "Vulkanメモリ確保",
-    "validationエラー・警告合計件数",
+    crate::validation_count::検証層の指摘件数の見出し,
 ];
 
 pub(super) fn 描画する(ダンプ先: &Path) -> Result<String, String> {

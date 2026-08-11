@@ -2,6 +2,7 @@
 //! ストリーミング要約の読み取りそのものは`streaming_report`が持ち、ここはvalidation件数を足して要約文にすることだけを行う。
 
 use crate::streaming_report::{ストリーミング要約報告, 先頭整数};
+use crate::validation_count::検証層の指摘件数の見出し;
 
 pub(super) struct 計測値 {
     pub(super) 要約: ストリーミング要約報告,
@@ -12,8 +13,8 @@ pub(super) fn 読み取る(出力: &str) -> Result<計測値, String> {
     let validation行 = 出力
         .lines()
         .map(str::trim)
-        .find(|行| 行.starts_with("validationエラー・警告合計件数:"))
-        .ok_or_else(|| "報告に「validationエラー・警告合計件数」の行が無い".to_string())?;
+        .find(|行| 行.starts_with(検証層の指摘件数の見出し))
+        .ok_or_else(|| format!("報告に「{検証層の指摘件数の見出し}」の行が無い"))?;
     Ok(計測値 {
         要約: crate::streaming_report::取り出す(出力)?,
         validation件数: 先頭整数(validation行)?,

@@ -5,7 +5,8 @@
 //! 量ごとに違い、その選び分けと不合格の説明文が1組だからである。件数を数える検査とは判定の材料が重ならない。
 
 use super::super::parse::{代表行, 報告};
-use super::super::thresholds::{空中遠近の透過率の相対許容, 見出しから許容を選ぶ};
+use super::super::thresholds::空中遠近の透過率の相対許容;
+use super::super::tolerance_choice::見出しから許容を選ぶ;
 
 /// 一致の検査が観測した誤差の要約。3つとも代表の比較からしか出ないため、この工程が所有する。
 pub struct 判定結果 {

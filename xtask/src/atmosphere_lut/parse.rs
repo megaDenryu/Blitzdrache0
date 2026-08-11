@@ -7,6 +7,8 @@ mod aerial_row;
 mod field;
 mod row;
 
+use super::heading;
+
 pub use aerial_row::{ボリューム統計行, 透過率行};
 pub use row::{代表行, 再現性行, 検証行, 統計行};
 
@@ -33,9 +35,12 @@ pub fn 報告を取り出す(標準出力: &str) -> Result<報告, String> {
             Some("再現性") => 再現性 = Some(row::再現性を読む(&語一覧)?),
             Some("透過率統計" | "多重散乱統計" | "スカイビュー統計") => 統計一覧.push(row::統計を読む(&語一覧)?),
             Some("空中遠近統計") => ボリューム統計 = Some(aerial_row::ボリューム統計を読む(&語一覧)?),
-            Some("透過率代表" | "多重散乱代表" | "スカイビュー代表" | "空中遠近代表") => {
-                代表一覧.push(row::代表を読む(&語一覧)?)
-            }
+            Some(
+                heading::透過率の代表テクセルの見出し
+                | heading::多重散乱の代表テクセルの見出し
+                | heading::スカイビューの代表テクセルの見出し
+                | heading::空中遠近の代表テクセルの見出し,
+            ) => 代表一覧.push(row::代表を読む(&語一覧)?),
             Some("空中遠近透過率") => 透過率一覧.push(aerial_row::透過率を読む(&語一覧)?),
             _ => {}
         }

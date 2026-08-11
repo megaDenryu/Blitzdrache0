@@ -5,7 +5,7 @@
 //! 半精度の刻みに埋もれた値の相対誤差が1に近づき、表だけを見た人が不合格と読み違える。
 
 use super::parse::{代表行, 報告};
-use super::thresholds::見出しから許容を選ぶ;
+use super::tolerance_choice::見出しから許容を選ぶ;
 
 pub fn 表を出す(報告: &報告) {
     println!("[xtask] 大気のベイク済み画像統計");
