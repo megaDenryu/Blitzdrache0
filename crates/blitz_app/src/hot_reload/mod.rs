@@ -7,8 +7,10 @@
 
 mod asset_watch;
 mod compile;
+mod compile_error;
 mod dir_mtime;
 mod mtime;
+mod reload_result;
 mod shader_watch;
 mod slangc;
 mod watched_shader;
@@ -16,22 +18,13 @@ use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
 use asset_watch::アセット監視状態;
-use blitz_engine::{アセットID, カタログ, シーンデータ};
-use blitz_render::indirect_lighting::契約別の描画シェーダー;
+use blitz_engine::{アセットID, カタログ};
+pub(crate) use compile_error::シェーダー再コンパイルエラー;
+pub(crate) use reload_result::ホットリロード結果;
 use shader_watch::{シェーダー変化結果, シェーダー監視状態};
 pub(crate) use watched_shader::監視するシェーダーの入口ファイル;
 
 const 確認間隔: Duration = Duration::from_millis(500);
-
-/// `ホットリローダー::確認する` の結果。
-pub(crate) enum ホットリロード結果 {
-    変化なし,
-    シェーダー再コンパイル成功 { シェーダー: 契約別の描画シェーダー },
-    シェーダー再コンパイル失敗 { メッセージ: String },
-    // シーンデータがスキン・アニメーション追加(判断42)で大型化したためBoxで持つ(clippy::large_enum_variant)。
-    アセット再読込成功 { シーン: Box<シーンデータ> },
-    アセット再読込失敗 { メッセージ: String },
-}
 
 /// シェーダーソース・シーン参照ファイルの両方を約0.5秒間隔でポーリングする。
 /// どちらも監視対象が無い(パス不在・アセット未設定)場合は監視を無効化する。
@@ -76,8 +69,8 @@ impl ホットリローダー {
                 シェーダー変化結果::成功 { シェーダー } => {
                     return ホットリロード結果::シェーダー再コンパイル成功 { シェーダー };
                 }
-                シェーダー変化結果::失敗 { メッセージ } => {
-                    return ホットリロード結果::シェーダー再コンパイル失敗 { メッセージ };
+                シェーダー変化結果::失敗 { 誤り } => {
+                    return ホットリロード結果::シェーダー再コンパイル失敗 { 誤り };
                 }
             }
         }
@@ -89,9 +82,7 @@ impl ホットリローダー {
                 Ok(シーン) => ホットリロード結果::アセット再読込成功 {
                     シーン: Box::new(シーン)
                 },
-                Err(誤り) => ホットリロード結果::アセット再読込失敗 {
-                    メッセージ: 誤り.to_string(),
-                },
+                Err(誤り) => ホットリロード結果::アセット再読込失敗 { 誤り },
             };
         }
 

@@ -6,6 +6,8 @@
 
 use std::path::{Path, PathBuf};
 
+use crate::hot_reload::compile_error::シェーダー再コンパイルエラー;
+
 /// 遠方環境の契約の画素段のファイル名。監視先と同じ親ディレクトリから解決する。
 const 遠方環境のソースファイル名: &str = "scene_distant_environment.slang";
 
@@ -34,13 +36,15 @@ impl 画素段の契約 {
 
     /// 監視先からこの契約の画素段のソースを決める。遠方環境の契約は監視先と同じ親ディレクトリの別ファイルにあるため、
     /// 監視先を`--shader-source`で移した実行でも同じディレクトリの複製を読む。
-    pub(super) fn ソースパスを解決する(self, 監視先: &Path) -> Result<PathBuf, String> {
+    pub(super) fn ソースパスを解決する(self, 監視先: &Path) -> Result<PathBuf, シェーダー再コンパイルエラー> {
         match self {
             Self::定数近似 => Ok(監視先.to_path_buf()),
             Self::遠方環境 => {
                 let 親 = 監視先
                     .parent()
-                    .ok_or_else(|| format!("監視先{}に親ディレクトリが無く遠方環境の画素段を解決できない", 監視先.display()))?;
+                    .ok_or_else(|| シェーダー再コンパイルエラー::監視先に親ディレクトリが無い {
+                        監視先: 監視先.to_path_buf(),
+                    })?;
                 Ok(親.join(遠方環境のソースファイル名))
             }
         }

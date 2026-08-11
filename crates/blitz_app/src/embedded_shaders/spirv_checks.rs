@@ -10,4 +10,5 @@ mod no_contraction;
 mod nonuniform;
 mod nonuniform_scan;
 mod position_invariant;
+mod spirv_error;
 mod spirv_module;

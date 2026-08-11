@@ -1,12 +1,21 @@
 //! 描画対象数: 計測用に生成する描画対象の件数。
 
+use thiserror::Error;
+
+/// 描画対象数が受け取れない値だったこと。
+#[derive(Debug, Error)]
+pub(crate) enum 描画対象数エラー {
+    #[error("1以上でなければならない")]
+    零件は受けない,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct 描画対象数(u32);
 
 impl 描画対象数 {
-    pub(crate) fn 生成する(値: u32) -> Result<Self, String> {
+    pub(crate) fn 生成する(値: u32) -> Result<Self, 描画対象数エラー> {
         if 値 == 0 {
-            Err("1以上でなければならない".to_string())
+            Err(描画対象数エラー::零件は受けない)
         } else {
             Ok(Self(値))
         }

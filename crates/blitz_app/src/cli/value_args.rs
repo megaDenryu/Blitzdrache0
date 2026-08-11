@@ -34,7 +34,7 @@ pub(super) fn scene引数を処理する(引数: &mut Iter<String>) -> Result<su
 pub(super) fn object_count引数を処理する(引数: &mut Iter<String>) -> Result<描画対象数, 起動引数エラー> {
     let 値 = 次の値を読む(引数, "--object-count", 起動引数エラー::描画対象数不正)?;
     let 数 = 値.parse::<u32>().map_err(|_| 起動引数エラー::描画対象数不正(値.clone()))?;
-    描画対象数::生成する(数).map_err(起動引数エラー::描画対象数不正)
+    描画対象数::生成する(数).map_err(|誤り| 起動引数エラー::描画対象数不正(誤り.to_string()))
 }
 
 /// `--dump-frame`と`--dump-hdr-frame`と`--dump-depth-frame`は値の読み方が同じであるため、どれもこの1つが受ける。

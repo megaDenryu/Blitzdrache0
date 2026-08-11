@@ -13,6 +13,7 @@ mod expected_color;
 mod injection_dispatch;
 mod plates;
 mod projection;
+mod report_error;
 mod row;
 mod specular_lookup;
 
@@ -55,13 +56,15 @@ fn 板1枚を照合する(
     期待の材料: &expected_color::期待の材料<'_>,
     板: &plates::板の宣言,
     番号: usize,
-) -> Result<(), String> {
+) -> Result<(), report_error::代表板の照合エラー> {
     let 投影 = projection::板の中心を投影する(材料.視点情報, 板.中心, 材料.大域ずらし量, 材料.画像.幅(), 材料.画像.高さ())?;
     let 期待 = expected_color::期待を求める(期待の材料, 板, 投影.視線);
     let 実測 = 材料
         .画像
         .ピクセル(投影.横, 投影.縦)
-        .ok_or_else(|| format!("画素({}, {})が読み戻し画像の外にある", 投影.横, 投影.縦))?;
+        .ok_or(report_error::代表板の照合エラー::画素が画像の外にある {
+            横: 投影.横, 縦: 投影.縦
+        })?;
     row::行を出す(番号 + 1, &投影, &期待, [実測[0], 実測[1], 実測[2]]);
     Ok(())
 }
