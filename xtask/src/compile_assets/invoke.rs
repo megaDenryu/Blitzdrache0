@@ -7,8 +7,8 @@
 
 use std::path::Path;
 
+use crate::asset_generator::世界名;
 use crate::asset_generator::{アセット生成器の起動, 生成の指定};
-use crate::compile_assets::世界名;
 
 /// コンパイラの入口が受け取る指定一式。方針の名前を渡さない呼び出しは、コンパイラ側の既定(`全てRGBA8`)で焼かれる。
 pub(super) struct 実行時形式を焼く指定<'指定> {

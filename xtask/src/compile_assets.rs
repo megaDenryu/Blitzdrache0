@@ -1,19 +1,19 @@
 //! ソースアセットを版付き実行時形式へ変換する唯一の公開ツール入口。
 //! 1つの出力ルートは1つのチャンク世界を持つため、世界ごとに出力ルートを分けて順に生成する。
-//! 焼ける世界の数え上げは`world_name`が、テクスチャ格納方針を指す綴りは`texture_policy_name`が、
+//! テクスチャ格納方針を指す綴りは`texture_policy_name`が、
 //! 世界ごとの既定出力ルートは`default_root`が、コンパイラの起動は`invoke`が、コマンド行の引数の解釈は`command_arguments`が持つ。
 
 mod command_arguments;
 mod default_root;
 mod invoke;
 pub mod texture_policy_name;
-mod world_name;
 
 use std::path::Path;
 
+use crate::asset_generator::世界名;
+
 pub use command_arguments::実行する;
 pub use default_root::*;
-pub use world_name::*;
 
 use invoke::{
     アセットコンパイラを起動して実行時形式を焼く, アセットコンパイラを起動して標準出力を取り込む, 実行時形式を焼く指定

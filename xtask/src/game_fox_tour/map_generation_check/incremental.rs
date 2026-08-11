@@ -32,6 +32,6 @@ fn 既定の出力ルートへ焼く() -> Result<String, String> {
     crate::compile_assets::ルートを名指しして焼き標準出力を返す(
         crate::compile_assets::ソースルート(),
         crate::compile_assets::場所巡りの既定出力ルートのパス(),
-        crate::compile_assets::世界名::場所巡りの世界,
+        crate::asset_generator::世界名::場所巡りの世界,
     )
 }

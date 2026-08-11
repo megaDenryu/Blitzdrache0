@@ -8,8 +8,8 @@ use std::process::ExitCode;
 use super::default_root::{
     地形世界を既定で生成する, 夜の多光源世界を既定で生成する, 既定を生成する, 植生世界を既定で生成する
 };
-use super::world_name::世界名;
 use super::{個体数を添えて生成する, 生成する};
+use crate::asset_generator::世界名;
 
 pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     let 成否 = match 引数一覧 {

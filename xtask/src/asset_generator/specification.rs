@@ -9,7 +9,7 @@
 use std::path::Path;
 use std::process::Command;
 
-use crate::compile_assets::世界名;
+use super::world_name::世界名;
 
 /// 生成器を収めているクレート。全部の枝が同じクレートのexampleである。
 const 生成器のクレート: &str = "blitz_asset_compiler";

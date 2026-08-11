@@ -13,11 +13,11 @@ pub(in crate::shadow_probe) enum 計測世界 {
 }
 
 impl 計測世界 {
-    pub(in crate::shadow_probe) fn 世界名(self) -> crate::compile_assets::世界名 {
+    pub(in crate::shadow_probe) fn 世界名(self) -> crate::asset_generator::世界名 {
         match self {
-            Self::代表の地形世界 => crate::compile_assets::世界名::地形の世界,
-            Self::頂点診断の粗い世界 => crate::compile_assets::世界名::頂点診断の粗い世界,
-            Self::頂点診断の細かい世界 => crate::compile_assets::世界名::頂点診断の細かい世界,
+            Self::代表の地形世界 => crate::asset_generator::世界名::地形の世界,
+            Self::頂点診断の粗い世界 => crate::asset_generator::世界名::頂点診断の粗い世界,
+            Self::頂点診断の細かい世界 => crate::asset_generator::世界名::頂点診断の細かい世界,
         }
     }
 

@@ -6,7 +6,9 @@
 
 use std::path::Path;
 
-use super::{世界名, 生成する};
+use crate::asset_generator::世界名;
+
+use super::生成する;
 
 const 既定ソースルート: &str = "assets";
 const 既定出力ルート: &str = "target/runtime_assets";

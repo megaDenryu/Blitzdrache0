@@ -7,8 +7,9 @@
 use std::path::{Path, PathBuf};
 
 use crate::acceptance::検収シーン名;
+use crate::asset_generator::世界名;
 use crate::compile_assets::texture_policy_name::{ベースカラーのブロック圧縮, 全てRGBA8};
-use crate::compile_assets::{世界名, 方針を名指しして実行時形式を生成する};
+use crate::compile_assets::方針を名指しして実行時形式を生成する;
 
 /// 対照の板の世界を焼く先。3つ目は同じ方針で2度焼いた結果を突き合わせる決定性の検査のためだけに存在する。
 const 対照の非圧縮ルート: &str = "target/texture_compression_assets_rgba8";
