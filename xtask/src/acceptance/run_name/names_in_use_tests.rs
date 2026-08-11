@@ -41,6 +41,15 @@ fn 使っている実行名はすべて通る() {
         "night_x4_1",
         "night_shadow_x2",
         "hut_instrument_x2",
+        "halt_a",
+        "advance_b",
+        "halt_a2",
+        "camera_still",
+        "camera_moving",
+        "run_003",
+        "coarse_A",
+        "fine_A",
+        "ao128",
     ] {
         assert!(検収の実行名::生成する(綴り).is_ok(), "使っている実行名{綴り}が拒まれた");
     }
