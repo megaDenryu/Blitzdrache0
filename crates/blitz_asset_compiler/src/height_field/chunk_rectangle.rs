@@ -22,9 +22,9 @@ impl チャンクの矩形 {
         let mut 最小 = *先頭;
         let mut 最大 = *先頭;
         let mut 既出 = HashSet::new();
-        既出.insert((先頭.x(), 先頭.z()));
+        既出.insert(*先頭);
         for 座標 in 残り {
-            if !既出.insert((座標.x(), 座標.z())) {
+            if !既出.insert(*座標) {
                 return Err(高さ場コンパイルエラー::チャンク座標が重複している {
                     東: 座標.x(), 南: 座標.z()
                 });
@@ -46,10 +46,10 @@ impl チャンクの矩形 {
         最小と最大からチャンク数を求める(self.最小.z(), self.最大.z())
     }
 
-    fn 欠けが無いことを確かめる(&self, 既出: &HashSet<(i32, i32)>) -> Result<(), 高さ場コンパイルエラー> {
+    fn 欠けが無いことを確かめる(&self, 既出: &HashSet<チャンク座標>) -> Result<(), 高さ場コンパイルエラー> {
         for 南 in self.最小.z()..=self.最大.z() {
             for 東 in self.最小.x()..=self.最大.x() {
-                if !既出.contains(&(東, 南)) {
+                if !既出.contains(&チャンク座標::生成する(東, 南)) {
                     return Err(高さ場コンパイルエラー::チャンクの矩形に欠けがある { 東, 南 });
                 }
             }

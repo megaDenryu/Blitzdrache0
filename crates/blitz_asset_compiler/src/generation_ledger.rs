@@ -19,6 +19,8 @@ mod generator_version;
 mod heading;
 mod ledger;
 mod ledger_text;
+#[cfg(test)]
+mod ledger_text_tests;
 mod map_seed;
 mod output_root;
 mod rebake_tally;
