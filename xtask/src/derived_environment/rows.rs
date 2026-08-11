@@ -56,19 +56,3 @@ pub(super) struct 報告 {
     pub(super) 代表: Vec<代表行>,
     pub(super) 反射率積分表代表: Vec<反射率積分表行>,
 }
-
-impl 報告 {
-    pub(super) fn 空() -> Self {
-        Self {
-            検証: None,
-            定数環境拡散: Vec::new(),
-            定数環境鏡面: Vec::new(),
-            統計: Vec::new(),
-            分散: Vec::new(),
-            最詳細段の不一致: None,
-            面境界: Vec::new(),
-            代表: Vec::new(),
-            反射率積分表代表: Vec::new(),
-        }
-    }
-}

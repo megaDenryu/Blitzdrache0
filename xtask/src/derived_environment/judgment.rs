@@ -9,6 +9,9 @@ mod soundness;
 
 use super::rows::報告;
 use super::thresholds::検証層が有効な語;
+use crate::acceptance::{判定の名前, 判定の破れ};
+
+const 検証層の行: 判定の名前 = 判定の名前::定数から生成する("報告の検証層の行");
 
 pub(super) struct 判定 {
     pub(super) 代表テクセル数: usize,
@@ -18,7 +21,7 @@ pub(super) struct 判定 {
     pub(super) 検証の告知: String,
 }
 
-pub(super) fn 全項目を検査する(報告: &報告) -> Result<判定, String> {
+pub(super) fn 全項目を検査する(報告: &報告) -> Result<判定, 判定の破れ> {
     let 検証の告知 = 検証を検査する(報告)?;
     let 定数環境の最大相対誤差 = analytic::定数環境を検査する(報告)?;
     soundness::健全性を検査する(報告)?;
@@ -36,13 +39,11 @@ pub(super) fn 全項目を検査する(報告: &報告) -> Result<判定, String
 }
 
 /// 層が無い機材の0件を有効な機材の0件と読み違えないよう、状況の語を告知へ載せる。
-fn 検証を検査する(報告: &報告) -> Result<String, String> {
+fn 検証を検査する(報告: &報告) -> Result<String, 判定の破れ> {
     let Some((状況, 件数)) = &報告.検証 else {
-        return Err("報告に検証層の行が無い".to_string());
+        return Err(検証層の行.あるはずのものが無い破れ());
     };
-    if *件数 != 0 {
-        return Err(format!("validation層が{件数}件の指摘を出した(状況={状況})"));
-    }
+    判定の名前::組み立てた綴りから生成する(format!("validation層の指摘(状況={状況})")).零件であることを課す(*件数)?;
     if 状況 != 検証層が有効な語 {
         return Ok(format!("validation層は{状況}のため指摘0件は保証にならない"));
     }
