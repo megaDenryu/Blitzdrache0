@@ -4,20 +4,11 @@
 //! 個体数)を焼き直さずには作れないためである。前回の焼き上がりの項目がそのまま今回の項目であり、写せなければ
 //! 据え置く根拠が無いため、その対象は焼き直しへ倒す。
 
-use std::path::Path;
-
 use blitz_asset_compiler::{チャンクの焼き直し判定, 内容ハッシュ};
-use blitz_engine::{カタログ, カタログ項目, 実行時形式からカタログを読む};
+use blitz_engine::{カタログ, カタログ項目};
 
-use super::super::catalog::コンパイル対象;
-use super::super::実行時カタログのファイル名;
+use super::super::compile_target::コンパイル対象;
 use super::one_target::対象1件の仕上がり;
-
-/// 読めなければ値なしを返す。初回の生成にはカタログが無く、壊れたカタログを読み違えるよりも全部焼き直すほうが安全である。
-pub(super) fn 前回の実行時カタログを読む(出力ルート: &Path) -> Option<カタログ> {
-    let バイト列 = std::fs::read(出力ルート.join(実行時カタログのファイル名)).ok()?;
-    実行時形式からカタログを読む(&バイト列).ok()
-}
 
 pub(super) fn 前回の項目を参照する<'カタログ>(
     対象: &コンパイル対象,
@@ -32,7 +23,7 @@ pub(super) fn 前回の項目を写す(
     内容ハッシュ: 内容ハッシュ,
 ) -> Result<対象1件の仕上がり, String> {
     let 項目 = 前回の項目を参照する(対象, 前回のカタログ).ok_or_else(|| format!("据え置くと判定した{}の項目が前回のカタログに無い", 対象.id))?;
-    println!("[compile_assets] {}: 据え置き", 対象.出力パス.display());
+    println!("[compile_assets] {}: 据え置き", 対象.表示の綴り());
     Ok(対象1件の仕上がり {
         実行時パス: 項目.実行時パス().to_path_buf(),
         ソース依存一覧: 項目.ソース依存一覧().to_vec(),

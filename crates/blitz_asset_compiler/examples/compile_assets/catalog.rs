@@ -1,11 +1,11 @@
 //! 既知の開発用ソースアセットを安定IDと実行時形式の出力名へ対応付ける。
-//! 世界ごとに何を焼くかは`world`が決め、ここは宣言をカタログとコンパイル対象一覧へ写す。
+//! 世界ごとに何を焼くかは`world`が決め、ここは宣言をカタログとコンパイル対象一覧へ写す。対象1件の型は`compile_target`が持つ。
 
-use std::path::{Path, PathBuf};
-
+use blitz_asset_compiler::{ソースルート, 実行時形式の出力ルート};
 use blitz_engine::{アセットID, カタログ, チャンク座標};
 
 use super::chunk_ledger::台帳での扱い;
+use super::compile_target::コンパイル対象;
 use super::source_location::{self, ソースの基準};
 use super::world::対象世界;
 
@@ -28,16 +28,10 @@ pub(super) struct アセット定義 {
     pub(super) 種別: ソース種別,
 }
 
-pub(super) struct コンパイル対象 {
-    pub(super) id: アセットID,
-    pub(super) 所有チャンク: チャンク座標,
-    pub(super) 種別: ソース種別,
-    pub(super) 出力パス: PathBuf,
-    pub(super) 台帳での扱い: 台帳での扱い,
-}
-
 pub(super) fn 構築する(
-    ソースルート: &Path, 出力ルート: &Path, 世界: 対象世界
+    ソースルート: &ソースルート,
+    出力ルート: &実行時形式の出力ルート,
+    世界: 対象世界,
 ) -> Result<(カタログ, Vec<コンパイル対象>), String> {
     let mut カタログ = カタログ::空を作る();
     let mut 対象一覧 = Vec::new();
@@ -63,13 +57,13 @@ pub(super) fn 構築する(
         if !定義.実行時へ焼く {
             continue;
         }
-        対象一覧.push(コンパイル対象 {
+        対象一覧.push(コンパイル対象::生成する(
             id,
-            所有チャンク: 原点チャンク,
-            種別: 定義.種別,
-            出力パス: 出力ルート.join(format!("{}.blitzasset", 定義.名前)),
-            台帳での扱い: 台帳での扱い::毎回焼く,
-        });
+            原点チャンク,
+            定義.種別,
+            出力ルート,
+            台帳での扱い::毎回焼く,
+        ));
     }
     Ok((カタログ, 対象一覧))
 }

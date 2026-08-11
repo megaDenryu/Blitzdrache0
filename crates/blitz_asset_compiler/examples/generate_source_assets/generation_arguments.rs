@@ -7,7 +7,7 @@
 
 use std::path::PathBuf;
 
-use blitz_asset_compiler::マップ生成の乱数の種;
+use blitz_asset_compiler::{ソースルート, マップ生成の乱数の種};
 
 /// 種を導く選択肢の綴り。綴りは`xtask/src/gen_game_map.rs`にも同じものがある。
 const 種の選択肢の綴り: &str = "--game-map-seed";
@@ -22,7 +22,7 @@ pub(crate) enum 書き出す対象 {
     検証用の世界一式,
     場所巡りの世界 {
         種: マップ生成の乱数の種,
-        ソースルート: PathBuf,
+        ソースルート: ソースルート,
     },
 }
 
@@ -31,7 +31,7 @@ pub(crate) fn 引数一覧から書き出す対象を読む(引数一覧: &[Stri
         return Ok(書き出す対象::検証用の世界一式);
     }
     let mut 読んだ種 = None;
-    let mut ソースルート = PathBuf::from(既定のソースルート);
+    let mut ソースルートのパス = PathBuf::from(既定のソースルート);
     let mut 残りの引数 = 引数一覧;
     loop {
         let [綴り, 値, 続き @ ..] = 残りの引数 else {
@@ -40,7 +40,7 @@ pub(crate) fn 引数一覧から書き出す対象を読む(引数一覧: &[Stri
         if 綴り == 種の選択肢の綴り {
             読んだ種 = Some(種を解析する(値)?);
         } else if 綴り == ソースルートの選択肢の綴り {
-            ソースルート = PathBuf::from(値);
+            ソースルートのパス = PathBuf::from(値);
         } else {
             return Err(format!(
                 "知らない引数である: {綴り}(選べるのは{種の選択肢の綴り} <数>と{ソースルートの選択肢の綴り} <パス>だけである)"
@@ -54,7 +54,10 @@ pub(crate) fn 引数一覧から書き出す対象を読む(引数一覧: &[Stri
     let Some(種) = 読んだ種 else {
         return Err(format!("{種の選択肢の綴り}と種の値が要る"));
     };
-    Ok(書き出す対象::場所巡りの世界 { 種, ソースルート })
+    Ok(書き出す対象::場所巡りの世界 {
+        種,
+        ソースルート: ソースルート::生成する(ソースルートのパス),
+    })
 }
 
 fn 種を解析する(値: &str) -> Result<マップ生成の乱数の種, String> {

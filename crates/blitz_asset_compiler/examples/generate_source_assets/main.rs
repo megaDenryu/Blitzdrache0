@@ -49,8 +49,6 @@ mod village_world;
 
 use std::path::Path;
 
-use blitz_asset_compiler::マップ生成の乱数の種;
-
 use generation_arguments::書き出す対象;
 
 fn main() {
@@ -63,22 +61,9 @@ fn main() {
 fn 実行する() -> Result<(), String> {
     let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
     match generation_arguments::引数一覧から書き出す対象を読む(&引数一覧)? {
-        書き出す対象::場所巡りの世界 { 種, ソースルート } => 場所巡りの世界を書き出す(&ソースルート, 種),
+        書き出す対象::場所巡りの世界 { 種, ソースルート } => fox_tour_world::書き出す(&ソースルート, 種).map(|_| ()),
         書き出す対象::検証用の世界一式 => verification_worlds::一式を書き出す(),
     }
-}
-
-fn 場所巡りの世界を書き出す(ソースルート: &Path, 種: マップ生成の乱数の種) -> Result<(), String> {
-    let 出力先 = ソースルート.join(fox_tour_world::世界のディレクトリ名);
-    ディレクトリを作る(&出力先)?;
-    let 勘定 = fox_tour_world::書き出す(&出力先, 種)?;
-    println!(
-        "[generate_source_assets] {}へ種{}から生成完了、{}",
-        出力先.display(),
-        種.値(),
-        勘定.報告の行を作る()
-    );
-    Ok(())
 }
 
 pub(crate) fn ディレクトリを作る(パス: &Path) -> Result<(), String> {

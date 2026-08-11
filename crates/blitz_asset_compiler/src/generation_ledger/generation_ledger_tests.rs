@@ -5,11 +5,13 @@
 
 use std::collections::BTreeMap;
 
+use blitz_engine::チャンク座標;
+
 use super::content_hash::内容ハッシュ;
 use super::generator_version::生成器の版;
 use super::heading::生成台帳の見出し;
+use super::ledger_text::生成台帳の本文;
 use super::map_seed::{マップ生成の乱数の種, 種の由来};
-use super::text_format::{台帳のテキストを組み立てる, 台帳のテキストを解析する};
 
 /// FNV-1a(64ビット)の公開されている値。空の入力は開始値そのもの、"a"と"foobar"は仕様書が挙げる例である。
 #[test]
@@ -35,10 +37,9 @@ fn 十六進の綴りを往復する() {
 fn 台帳のテキストが往復する() {
     let 見出し = 見本の見出しを作る(種の由来::種から焼いた(マップ生成の乱数の種::生成する(20260810)));
     let mut 記録 = BTreeMap::new();
-    記録.insert((-1, 2), 内容ハッシュ::バイト列から求める("手前".as_bytes()));
-    記録.insert((3, -4), 内容ハッシュ::バイト列から求める("隣".as_bytes()));
-    let テキスト = 台帳のテキストを組み立てる(見出し, &記録);
-    let 中身 = 台帳のテキストを解析する(&テキスト).unwrap();
+    記録.insert(チャンク座標::生成する(-1, 2), 内容ハッシュ::バイト列から求める("手前".as_bytes()));
+    記録.insert(チャンク座標::生成する(3, -4), 内容ハッシュ::バイト列から求める("隣".as_bytes()));
+    let 中身 = 生成台帳の本文::組み立てる(見出し, &記録).解析する().unwrap();
     assert_eq!(中身.見出し, 見出し);
     assert_eq!(中身.チャンクごとの内容ハッシュ, 記録);
 }
@@ -46,13 +47,14 @@ fn 台帳のテキストが往復する() {
 #[test]
 fn 種を持たない見出しも往復する() {
     let 見出し = 見本の見出しを作る(種の由来::種を持たない);
-    let テキスト = 台帳のテキストを組み立てる(見出し, &BTreeMap::new());
-    assert_eq!(台帳のテキストを解析する(&テキスト).unwrap().見出し, 見出し);
+    let 本文 = 生成台帳の本文::組み立てる(見出し, &BTreeMap::new());
+    assert_eq!(本文.解析する().unwrap().見出し, 見出し);
 }
 
 #[test]
 fn 形式宣言が違うテキストを拒む() {
-    assert!(台帳のテキストを解析する("blitz_chunk_directory 1\nseed none\n").is_err());
+    let 別形式の本文 = 生成台帳の本文::読み取った綴りから作る("blitz_chunk_directory 1\nseed none\n".to_string());
+    assert!(別形式の本文.解析する().is_err());
 }
 
 fn 見本の見出しを作る(種の由来: 種の由来) -> 生成台帳の見出し {

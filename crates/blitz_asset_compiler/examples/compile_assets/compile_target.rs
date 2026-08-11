@@ -1,8 +1,12 @@
 //! コンパイル対象1件を、ソース種別に応じたコンパイル工程へ振り分ける割り当て。受け取るのはカタログと対象、
 //! 返すのは実行時バイト列と依存とメタデータの組である。
 //!
+//! 対象1件の型は`entry`が持つ。
+//!
 //! 割り当てを`main`から分けるのは、ソース種別が増えるたびに引数の解析と生成物の書き出しが同じファイルで押し合うためである。
 //! 宣言をコンパイラが受け取る指定へ写す手順は、写しが種別ごとに違うためこのモジュールが持つ。
+
+mod entry;
 
 use blitz_asset_compiler::{
     コンパイル済みシーン, ソースシーンをコンパイルする, テクスチャ格納方針, 同居植生の指定, 固定物を据えた地形チャンクをコンパイルする,
@@ -12,7 +16,9 @@ use blitz_asset_compiler::{
 };
 use blitz_engine::{アセットID, カタログ};
 
-use super::catalog::{コンパイル対象, ソース種別};
+pub(crate) use entry::コンパイル対象;
+
+use super::source_kind::ソース種別;
 use super::world::fixed_placement_declaration::据え付け一覧を作る;
 use super::world::prop_group_declaration::群の指定一覧を作る;
 use super::world::visual_sample_declaration::目視見本の指定を作る;

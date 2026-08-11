@@ -4,7 +4,9 @@
 
 use blitz_math::{大域メートル, 大域ワールド位置};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+/// 順序は東(x)を先、南(z)を後に見る辞書式である。並べ替えの規則を型が持つのは、座標を鍵にした表を書き出す側が
+/// 同じ入力から常に同じ並びを得るためであり、鍵をタプルへ剥がして並べ替える必要をなくすためである。
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct チャンク座標 {
     x: i32,
     z: i32,

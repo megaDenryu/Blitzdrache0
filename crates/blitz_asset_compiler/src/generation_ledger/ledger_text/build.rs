@@ -4,6 +4,8 @@
 
 use std::collections::BTreeMap;
 
+use blitz_engine::チャンク座標;
+
 use super::super::content_hash::内容ハッシュ;
 use super::super::heading::生成台帳の見出し;
 use super::super::map_seed::種の由来;
@@ -11,9 +13,9 @@ use super::{
     チャンクの欄, 対応版, 形式名, 焼き方の指定の欄, 生成器の実行ファイルの欄, 生成器の版の欄, 種の欄, 種を持たないときの綴り
 };
 
-pub(in crate::generation_ledger) fn 台帳のテキストを組み立てる(
+pub(super) fn 台帳のテキストを組み立てる(
     見出し: 生成台帳の見出し,
-    チャンクごとの内容ハッシュ: &BTreeMap<(i32, i32), 内容ハッシュ>,
+    チャンクごとの内容ハッシュ: &BTreeMap<チャンク座標, 内容ハッシュ>,
 ) -> String {
     let mut 本文 = format!(
         "{形式名} {対応版}\n{種の欄} {}\n{生成器の版の欄} {}\n{生成器の実行ファイルの欄} {}\n{焼き方の指定の欄} {}\n",
@@ -22,8 +24,8 @@ pub(in crate::generation_ledger) fn 台帳のテキストを組み立てる(
         見出し.生成器の実行ファイルの内容ハッシュ().十六進の綴りを作る(),
         見出し.焼き方の指定の内容ハッシュ().十六進の綴りを作る()
     );
-    for ((東, 南), ハッシュ) in チャンクごとの内容ハッシュ {
-        本文.push_str(&format!("{チャンクの欄} {東} {南} {}\n", ハッシュ.十六進の綴りを作る()));
+    for (座標, ハッシュ) in チャンクごとの内容ハッシュ {
+        本文.push_str(&format!("{チャンクの欄} {} {} {}\n", 座標.x(), 座標.z(), ハッシュ.十六進の綴りを作る()));
     }
     本文
 }

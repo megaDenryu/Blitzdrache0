@@ -3,6 +3,7 @@
 
 #![forbid(unsafe_code)]
 
+mod asset_layout;
 mod chunk_directory_source;
 mod compile;
 mod edge_agreement;
@@ -19,6 +20,9 @@ mod vegetation;
 mod village;
 mod visual_sample;
 
+pub use asset_layout::{
+    ソースルート, チャンク目録ソースの置き場, 世界のソースディレクトリ, 場所巡りの世界のディレクトリ名, 実行時形式の出力ルート
+};
 pub use chunk_directory_source::{チャンク目録ソースを読み込む, チャンク目録ソース項目};
 pub use compile::{
     コンパイル済みシーン, ソースシーンをコンパイルする, 寸法を合わせる倍率を与えてソースシーンをコンパイルする
@@ -27,8 +31,8 @@ pub use edge_agreement::{ソースの高さ格子の重なり帯が一致する�
 pub use error::アセットコンパイルエラー;
 pub use fixed_placement::{固定物の据え付け, 固定物を据えた地形チャンクをコンパイルする};
 pub use generation_ledger::{
-    チャンクの焼き直し判定, マップ生成の乱数の種, 今回の宣言と依存一式の内容ハッシュを求める, 内容ハッシュ, 焼き直しの勘定, 生成台帳,
-    生成台帳の見出し, 生成台帳エラー, 種の由来,
+    チャンクの焼き直し判定, マップ生成の乱数の種, 今回の宣言と依存一式の内容ハッシュを求める, 内容ハッシュ, 焼き直しの勘定, 生成の出力ルート,
+    生成台帳, 生成台帳の見出し, 生成台帳エラー, 種の由来,
 };
 pub use height_field::{
     コンパイル済み高さ場, チャンクごとの高さ格子から高さ場を組み立てる, 高さ場アセットをコンパイルする, 高さ場コンパイルエラー

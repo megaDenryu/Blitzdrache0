@@ -1,92 +1,30 @@
-//! クソゲー1本目「キツネの場所巡り」が遊ばれる世界の定義と、そのソースアセット一式の書き出し。
-//! 地形の世界とも目視見本とも別の目録を持つ独立した世界である。
-//! 世界の広がり(3×3)・一辺長・格子の細かさという世界そのものの決め事をこのモジュールが持ち、
-//! チャンク1つずつの書き出しと増分の判定は`ground`が、種から高さを決める関数は`height`が、
-//! 目印の柱の形と文書は`marker_geometry`と`marker_gltf_json`が持つ。
+//! クソゲー1本目「キツネの場所巡り」が遊ばれる世界のソース一式の書き出しの入口。
 //!
-//! 世界を3×3に留めるのは、1本目の遊びが3つの目的地を巡って終わる短いものであり、300メートル四方あれば
-//! 目的地の間を歩く距離が取れるためである。大規模化は同じ器のまま広がりの定数を増やして行う。
-//! 参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「判断7: 地図の正本を持ち、生成は2系統に分ける」
+//! 世界そのものの決め事は`world_definition`が、ソース一式の置き場とファイル名の規則は`source_directory`が、
+//! 1回の書き出しが持ち回る状態と操作は`source_writing`が、種から高さを決める関数は`height`が、
+//! 目印の柱の形と文書は`marker_geometry`と`marker_gltf_json`が持つ。
 
-mod ground;
 mod height;
+mod height_grid_file;
 mod lattice_noise;
 mod marker_geometry;
 mod marker_gltf_json;
-mod seed_file;
+mod source_directory;
+mod source_writing;
+mod world_definition;
 
-use std::path::Path;
+use blitz_asset_compiler::{ソースルート, マップ生成の乱数の種, 焼き直しの勘定};
 
-use blitz_asset_compiler::{マップ生成の乱数の種, 焼き直しの勘定, 生成台帳, 生成台帳の見出し, 種の由来};
-use blitz_engine::チャンク座標;
+use source_writing::場所巡りの世界のソース書き出し;
 
-use crate::directory_source::目録ソースを作る;
-
-/// ソースルートから見たこの世界のディレクトリ名。綴りは実行時形式へ焼く側
-/// (`crates/blitz_asset_compiler/examples/compile_assets/world/directory_source_path.rs`)にも同じものがあり、
-/// 食い違えば実行時アセット生成が目録ソースを見つけられずに失敗する。
-pub(crate) const 世界のディレクトリ名: &str = "fox_tour_world";
-
-/// 世界が覆うチャンク座標の範囲。原点チャンクを中心に東西南北へ1つずつ広げた3×3である。
-const 座標最小: i32 = -1;
-const 座標最大: i32 = 1;
-const 一辺メートル: f32 = 100.0;
-
-/// 地形の世界と同じ細かさにして、段の作られ方と接地の求め方をそのまま流用できるようにする。
-const 辺分割数: u16 = 64;
-
-/// 隣接チャンクと重ねる縁の幅。中央差分で法線を求めるのに前後1点あれば足りる。
-const 重なり幅: u8 = 1;
-
-const 目録ソースファイル名: &str = "chunk_directory.txt";
-const 目印のバイナリファイル名: &str = "destination_marker.bin";
-const 目印の文書ファイル名: &str = "destination_marker.gltf";
-
-pub(crate) fn 書き出す(出力先ディレクトリ: &Path, 種: マップ生成の乱数の種) -> Result<焼き直しの勘定, String> {
-    let 見出し = 生成台帳の見出し::実行中の生成器から作る(種の由来::種から焼いた(種), 世界のディレクトリ名).map_err(|誤り| 誤り.to_string())?;
-    let mut 台帳 = 生成台帳::出力ルートから読み込む(出力先ディレクトリ, 見出し);
-    let 地面 = ground::種から地面のチャンク一式を書き出す(出力先ディレクトリ, 種, &mut 台帳)?;
-    書き込む(
-        &出力先ディレクトリ.join(目録ソースファイル名),
-        目録ソースを作る(&地面.目録項目一覧).as_bytes(),
-    )?;
-    目印の柱を書き出す(出力先ディレクトリ)?;
-    seed_file::マップの生成に使った乱数の種をファイルへ書き出す(出力先ディレクトリ, 種)?;
-    // 注意: 生成台帳は書き出す一式の最後に確定させる。ここより前で書くと、目録ソースか目印の書き出しに失敗した実行が
-    // 「新しい台帳と揃っていないソース一式」を残し、次の実行がチャンクを据え置いて欠けたまま先へ進む。
-    台帳.出力ルートへ書き出す(出力先ディレクトリ).map_err(|誤り| 誤り.to_string())?;
-    Ok(地面.勘定)
-}
-
-fn 世界が覆う座標一覧() -> Vec<チャンク座標> {
-    let mut 座標一覧 = Vec::new();
-    for z in 座標最小..=座標最大 {
-        for x in 座標最小..=座標最大 {
-            座標一覧.push(チャンク座標::生成する(x, z));
-        }
-    }
-    座標一覧
-}
-
-fn 目印の柱を書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
-    書き込む(
-        &出力先ディレクトリ.join(目印のバイナリファイル名),
-        &marker_geometry::バッファバイト列を作る(),
-    )?;
-    書き込む(
-        &出力先ディレクトリ.join(目印の文書ファイル名),
-        marker_gltf_json::文書(目印のバイナリファイル名).as_bytes(),
-    )
-}
-
-fn チャンクの名前を作る(座標: チャンク座標) -> String {
-    format!("fox_tour_x{}_z{}", 座標.x(), 座標.z())
-}
-
-fn 格子ファイル名を作る(座標: チャンク座標) -> String {
-    format!("{}.heightgrid", チャンクの名前を作る(座標))
-}
-
-fn 書き込む(パス: &Path, バイト列: &[u8]) -> Result<(), String> {
-    std::fs::write(パス, バイト列).map_err(|誤り| format!("{}: {誤り}", パス.display()))
+pub(crate) fn 書き出す(ソースルート: &ソースルート, 種: マップ生成の乱数の種) -> Result<焼き直しの勘定, String> {
+    let 書き出し = 場所巡りの世界のソース書き出し::始める(ソースルート, 種)?;
+    let 置き場の綴り = 書き出し.表示の綴り().to_string();
+    let 勘定 = 書き出し.ソース一式を書き出して台帳を確定する()?;
+    println!(
+        "[generate_source_assets] {置き場の綴り}へ種{}から生成完了、{}",
+        種.値(),
+        勘定.報告の行を作る()
+    );
+    Ok(勘定)
 }

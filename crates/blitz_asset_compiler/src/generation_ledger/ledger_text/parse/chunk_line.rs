@@ -3,6 +3,8 @@
 
 use std::collections::BTreeMap;
 
+use blitz_engine::チャンク座標;
+
 use super::super::super::content_hash::内容ハッシュ;
 use super::super::super::error::生成台帳エラー;
 use super::super::チャンクの欄;
@@ -10,7 +12,9 @@ use super::super::チャンクの欄;
 /// 形式宣言と見出しが占める行数。チャンクの行の行番号はこの次から始まる。
 const 見出しが占める行数: usize = 5;
 
-pub(super) fn チャンクの行一覧を読む(行一覧: &[&str]) -> Result<BTreeMap<(i32, i32), 内容ハッシュ>, 生成台帳エラー> {
+pub(super) fn チャンクの行一覧を読む(
+    行一覧: &[&str]
+) -> Result<BTreeMap<チャンク座標, 内容ハッシュ>, 生成台帳エラー> {
     let mut 記録 = BTreeMap::new();
     for (添字, 行) in 行一覧.iter().enumerate() {
         if 行.trim().is_empty() {
@@ -22,7 +26,7 @@ pub(super) fn チャンクの行一覧を読む(行一覧: &[&str]) -> Result<BT
     Ok(記録)
 }
 
-fn 一行を読む(行番号: usize, 行: &str) -> Result<((i32, i32), 内容ハッシュ), 生成台帳エラー> {
+fn 一行を読む(行番号: usize, 行: &str) -> Result<(チャンク座標, 内容ハッシュ), 生成台帳エラー> {
     let 欄一覧: Vec<&str> = 行.split_whitespace().collect();
     let 行不正 = || 生成台帳エラー::行を読めない {
         行番号,
@@ -37,5 +41,6 @@ fn 一行を読む(行番号: usize, 行: &str) -> Result<((i32, i32), 内容ハ
     if *名前 != チャンクの欄 {
         return Err(行不正());
     }
-    Ok(((東, 南), 内容ハッシュ::十六進の綴りから復元する(ハッシュの綴り).ok_or_else(行不正)?))
+    let ハッシュ = 内容ハッシュ::十六進の綴りから復元する(ハッシュの綴り).ok_or_else(行不正)?;
+    Ok((チャンク座標::生成する(東, 南), ハッシュ))
 }

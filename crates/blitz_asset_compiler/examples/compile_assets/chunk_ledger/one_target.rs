@@ -11,7 +11,7 @@ use blitz_asset_compiler::{
 };
 use blitz_engine::{アセットメタデータ, カタログ};
 
-use super::super::catalog::コンパイル対象;
+use super::super::compile_target::コンパイル対象;
 use super::{bake_one, carried_entry, 台帳での扱い};
 
 /// 対象1件の仕上がり。実行時カタログの項目3つと、台帳へ記録する内容ハッシュと、勘定へ渡す判定を持つ。
@@ -70,6 +70,6 @@ fn 焼き直しを判定する(
     Ok(Some(前回の台帳.チャンクを焼き直すかを判定する(
         対象.所有チャンク,
         今の内容ハッシュ,
-        &対象.出力パス,
+        対象.生成物が揃っているか(),
     )))
 }
