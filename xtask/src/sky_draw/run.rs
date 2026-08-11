@@ -1,4 +1,5 @@
-//! 検収1条件ぶんのblitz_app起動と読み戻し画像の取り込み。担当するのは「条件と出力名を受け取り、標準出力と最終フレームの画素を返す」ことである。
+//! 検収1条件ぶんの起動の指定。受け取るのは条件、返すのは実行環境へ渡す起動指定である。
+//! 起こす手順そのものは検収の共通語彙の実行環境が持つ。
 //!
 //! 地形世界は空を持つ方針であるため、空ありの条件は起動指定を足さない。空なしの条件だけが`--no-sky`で空パスを外す。
 //! `--no-sky`はライティングと露出を方針のまま残すため、2条件のジオメトリ画素は空の有無だけで比べられる。
@@ -9,17 +10,23 @@
 //! カメラはシーン既定の見下ろし35度のままだと視野が地平線より下に収まり、空が1画素も入らない。25度戻して地平線より上を画面へ入れる。
 //! 時間再構成は`--no-taa`で外す。この入口の判定がバイト一致に依るため、フレームをまたぐ混合が入ると前のフレームの残りが絵に混ざる。
 
-use std::path::Path;
-use std::process::Command;
+use std::path::PathBuf;
 
-use crate::acceptance::{検収の実行名, 終了時報告, 読み戻しの書き出し先, 読み戻し画像};
+use crate::acceptance::{
+    アプリの起こし方, アプリの起動指定, 実行時アセットルート, 描画フレーム数, 描画検収の実行環境, 検収の実行名, 検収エラー, 検収シーン名,
+};
 
 const アセットルート: &str = "target/terrain_assets";
-const シーン名: &str = "terrain_origin";
-const フレーム数: &str = "160";
+const シーン名: 検収シーン名 = 検収シーン名::生成する("terrain_origin");
+const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(160);
 const 先読み半径: &str = "2";
 const 容量上限バイト: &str = "16777216";
 const カメラ俯角差分度: &str = "-25";
+
+/// 3条件の書き出しの基準名。絵のファイル名になり、失敗の文面もこの名前で実行を名指す。
+pub(super) const 空あり本番経路の実行名: 検収の実行名 = 検収の実行名::定数から生成する("post_sky");
+pub(super) const 空ありポストなしの実行名: 検収の実行名 = 検収の実行名::定数から生成する("flat_sky");
+pub(super) const 空なしポストなしの実行名: 検収の実行名 = 検収の実行名::定数から生成する("flat_nosky");
 
 #[derive(Clone, Copy)]
 pub(super) enum 条件 {
@@ -31,51 +38,32 @@ pub(super) enum 条件 {
     空なしポストなし,
 }
 
-/// 1条件を描いた結果。GPU時間の行を読む条件があるため、報告と絵を対で返す。
-pub(super) struct 描いた結果 {
-    pub(super) 報告: 終了時報告,
-    pub(super) 画像: 読み戻し画像,
+pub(super) fn 実行環境を作る(出力ディレクトリ: PathBuf) -> Result<描画検収の実行環境, 検収エラー> {
+    描画検収の実行環境::作る(
+        アプリの起こし方::毎回cargoに構築させて起動する,
+        実行時アセットルート::綴りから生成する(アセットルート),
+        出力ディレクトリ,
+    )
 }
 
-pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: 条件) -> Result<描いた結果, String> {
-    let 実行名 = 検収の実行名::生成する(出力名)?;
-    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 実行名);
-    let mut コマンド = Command::new("cargo");
-    コマンド
-        .args(["run", "-p", "blitz_app", "--", "--scene", シーン名])
-        .args(["--asset-root", アセットルート])
-        .args(["--frames", フレーム数])
-        .args(["--streaming", "--streaming-preload-radius", 先読み半径])
-        .args(["--streaming-ram-limit", 容量上限バイト])
-        .args(["--streaming-vram-limit", 容量上限バイト])
-        .args(["--camera-pitch", カメラ俯角差分度])
-        .args(条件別引数(条件))
-        .arg("--no-taa")
-        .arg("--dump-frame")
-        .arg(書き出し先.起動引数として渡す綴り());
-    let 出力 = コマンド
-        .output()
-        .map_err(|誤り| format!("blitz_appを起動できなかった({出力名}): {誤り}"))?;
-    let 報告 = 終了時報告::取り込む(
-        書き出し先.実行名(),
-        String::from_utf8_lossy(&出力.stdout).into_owned(),
-        String::from_utf8_lossy(&出力.stderr).into_owned(),
-    );
-    if !出力.status.success() {
-        return Err(format!("blitz_appが{}で失敗した({出力名})", 出力.status));
-    }
-    報告.検証層の指摘が零件であることを確かめる()?;
-    let 画像 = 読み戻し画像::読み込む(&書き出し先)?;
-    Ok(描いた結果 { 報告, 画像 })
+pub(super) fn 起動指定を組み立てる(条件: 条件) -> アプリの起動指定 {
+    アプリの起動指定::シーンと枚数を決める(シーン名, フレーム数)
+        .選択肢を足す("--streaming")
+        .値を持つ選択肢を足す("--streaming-preload-radius", 先読み半径)
+        .値を持つ選択肢を足す("--streaming-ram-limit", 容量上限バイト)
+        .値を持つ選択肢を足す("--streaming-vram-limit", 容量上限バイト)
+        .値を持つ選択肢を足す("--camera-pitch", カメラ俯角差分度)
+        .選択肢をまとめて足す(条件別の選択肢(条件))
+        .選択肢を足す("--no-taa")
 }
 
-fn 条件別引数(条件: 条件) -> Vec<&'static str> {
+fn 条件別の選択肢(条件: 条件) -> &'static [&'static str] {
     match 条件 {
-        条件::空あり本番経路 => vec!["--report-gpu-times"],
+        条件::空あり本番経路 => &["--report-gpu-times"],
         // 空中遠近合成は大気のベイク済み画像方式に常に同居する(参照: 設計文書「大気のベイク済み画像方式の設計」)。
         // ここで確かめたい不変条件は空パス自身の限定(クリア深度の画素にしか描かない)であり、
         // 地表を霞ませる合成の効果はその範囲外のため外す(合成自体は`cargo xtask sky-lut`が別に検収する)。
-        条件::空ありポストなし => vec!["--no-post", "--no-aerial-composite"],
-        条件::空なしポストなし => vec!["--no-sky", "--no-post"],
+        条件::空ありポストなし => &["--no-post", "--no-aerial-composite"],
+        条件::空なしポストなし => &["--no-sky", "--no-post"],
     }
 }
