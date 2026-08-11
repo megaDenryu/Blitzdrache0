@@ -15,7 +15,7 @@ mod sample_bodies;
 mod sphere_mask;
 
 pub use ground_mask::地面マスク;
-pub use mask_run::領域マスクを撮る;
+pub use mask_run::{領域マスクの実行名, 領域マスクの起動指定を組み立てる};
 use sample_bodies::球の材質;
 
 use crate::acceptance::読み戻し画像;

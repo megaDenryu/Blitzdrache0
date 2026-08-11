@@ -6,56 +6,21 @@
 //!
 //! 完成させるメソッドを別に置かないのは、この型自身が完成物であるためである。
 //! アセットルートと書き出し先は条件ごとに変わらないため、この型でなく実行環境の側が足す。
+//!
+//! 選択肢を`OsString`で溜めるのは、値にパスを取る選択肢(監視対象シェーダーの入口等)があるためである。
+//! `String`で溜めると、パスを綴りへ写す工程が呼び出し側に散り、写せない綴りの扱いが入口ごとに分かれる。
 
+use std::ffi::OsString;
+use std::path::Path;
 use std::process::Command;
 
-/// アプリへ渡すシーンの名前。プロセス境界の綴りであり、綴りの正本はアプリの世界の宣言が持つ。
-///
-/// 世界名のように枝で数え上げないのは、シーンの一覧がアプリの側にしか無く、xtaskがそれを型として持てないためである。
-/// 数え上げは構造是正計画の順3(blitz_appのシーン名の判別共用体化)が作り、そこができたらこの型はその枝を包む。
-/// それまでの下支えとして、プロセス境界の1語として成立することだけを構築時に確かめる。
-#[repr(transparent)]
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub struct 検収シーン名(&'static str);
-
-impl 検収シーン名 {
-    /// 注意: 空の綴りと空白を含む綴りは、コマンドの引数として1語にならず別の引数と混ざる。
-    /// 綴りは原文のリテラルであるため、破れは書き誤りであり、定数として使う限りコンパイル時に落ちる。
-    pub const fn 生成する(綴り: &'static str) -> Self {
-        assert!(!綴り.is_empty(), "検収シーン名が空である");
-        let バイト列 = 綴り.as_bytes();
-        let mut 位置 = 0;
-        while 位置 < バイト列.len() {
-            assert!(!バイト列[位置].is_ascii_whitespace(), "検収シーン名が空白を含む");
-            位置 += 1;
-        }
-        Self(綴り)
-    }
-
-    fn 綴り(self) -> &'static str {
-        self.0
-    }
-}
-
-/// 描き切る枚数。読み戻すのは最後の1枚であり、それまでの枚数がストリーミングと時間再構成を落ち着かせる。
-#[repr(transparent)]
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub struct 描画フレーム数(u32);
-
-impl 描画フレーム数 {
-    /// 注意: 0枚は「読み戻す最後の1枚」が存在しない指定であり、書き出しの無いまま読み戻しへ進んで
-    /// 遠い場所で「ファイルが無い」に化ける。枚数は原文のリテラルであるため、破れは書き誤りであり、
-    /// 定数として使う限りコンパイル時に落ちる。
-    pub const fn 生成する(枚数: u32) -> Self {
-        assert!(枚数 > 0, "描画フレーム数が0である");
-        Self(枚数)
-    }
-}
+use super::frame_count::描画フレーム数;
+use super::scene_name::検収シーン名;
 
 pub struct アプリの起動指定 {
     シーン名: 検収シーン名,
     フレーム数: 描画フレーム数,
-    追加の選択肢: Vec<String>,
+    追加の選択肢: Vec<OsString>,
 }
 
 impl アプリの起動指定 {
@@ -69,20 +34,35 @@ impl アプリの起動指定 {
 
     /// 値を持たない選択肢を1つ足す。
     pub fn 選択肢を足す(mut self, 綴り: &str) -> Self {
-        self.追加の選択肢.push(綴り.to_string());
+        self.追加の選択肢.push(OsString::from(綴り));
         self
     }
 
     /// 値を持たない選択肢をまとめて足す。条件ごとの並びを1つの配列で持つ入口のための口である。
     pub fn 選択肢をまとめて足す(mut self, 綴り一覧: &[&str]) -> Self {
-        self.追加の選択肢.extend(綴り一覧.iter().map(|綴り| (*綴り).to_string()));
+        self.追加の選択肢.extend(綴り一覧.iter().map(OsString::from));
+        self
+    }
+
+    /// 値を1つ取る選択肢を足す。選択肢とその値を離して足せる口を作らないのは、
+    /// 値だけが抜けた指定が組み上がるとアプリ側で別の選択肢の値として読まれるためである。
+    pub fn 値を持つ選択肢を足す(mut self, 綴り: &str, 値: &str) -> Self {
+        self.追加の選択肢.push(OsString::from(綴り));
+        self.追加の選択肢.push(OsString::from(値));
+        self
+    }
+
+    /// 値にパスを取る選択肢を足す。綴りへ写さずに渡すのは、写せない綴りのパスを黙って落とさないためである。
+    pub fn パスを値に持つ選択肢を足す(mut self, 綴り: &str, 値: &Path) -> Self {
+        self.追加の選択肢.push(OsString::from(綴り));
+        self.追加の選択肢.push(値.as_os_str().to_os_string());
         self
     }
 
     pub(super) fn コマンドへ並べる(&self, コマンド: &mut Command) {
         コマンド
             .args(["--scene", self.シーン名.綴り()])
-            .args(["--frames", &self.フレーム数.0.to_string()])
+            .args(["--frames", &self.フレーム数.綴り()])
             .args(&self.追加の選択肢);
     }
 }

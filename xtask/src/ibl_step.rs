@@ -24,14 +24,12 @@ mod summary;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
+use crate::acceptance::{アプリの起こし方, 描画検収の実行環境};
 use crate::release_build::計測の生値のファイル;
 
 use crate::sample_world_region::固定領域一覧を作る;
 
 const 出力ディレクトリ: &str = "target/ibl_step";
-/// 領域マスクを撮るときのダンプ名。パスはASCIIで保つ。
-const 領域マスクのファイル名: &str = "region_mask";
 /// 段差を測る撮影のダンプのベース名。跨ぎの識別と向きと側が後ろへ付く。
 const 撮影のベース名: &str = "shot";
 /// 代表点の絵のダンプのベース名。段差を測る撮影と分けるのは、走査の生の画像を束ごとに捨てる一方、代表点の対は目視の材料として残すためである。
@@ -53,13 +51,16 @@ pub fn 実行する() -> ExitCode {
 fn 計測する() -> Result<String, String> {
     crate::visual_sample_world::用意する()?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
-    let 領域マスクの実行名 = 検収の実行名::生成する(領域マスクのファイル名)?;
-    let マスクの絵 = crate::sample_world_region::領域マスクを撮る(&読み戻しの書き出し先::出力ディレクトリの中に決める(
-        &出力先,
-        領域マスクの実行名,
-    ))?;
-    let 領域一覧 = 固定領域一覧を作る(&マスクの絵)?;
+    let マスクの実行環境 = 描画検収の実行環境::作る(
+        アプリの起こし方::毎回cargoに構築させて起動する,
+        crate::visual_sample_world::目視見本世界のアセットルートを作る(),
+        出力先.clone(),
+    )?;
+    let マスクの実行 = マスクの実行環境.描いて読み戻す(
+        crate::sample_world_region::領域マスクの実行名,
+        &crate::sample_world_region::領域マスクの起動指定を組み立てる(),
+    )?;
+    let 領域一覧 = 固定領域一覧を作る(マスクの実行.画像())?;
     let 跨ぎ一覧 = crossing::一覧を読む()?;
     let ベース名 = 出力先.join(撮影のベース名);
 

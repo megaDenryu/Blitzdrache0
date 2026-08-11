@@ -13,13 +13,10 @@ mod run;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
+use crate::acceptance::検収の実行名;
 use crate::day_moment::代表時刻一覧;
 
 const 出力ディレクトリ: &str = "target/terrain_visual";
-
-/// 地面の領域マスクを撮るときのダンプ名。パスはASCIIで保つ。
-const 領域マスクのファイル名: &str = "ground_mask";
 
 pub fn 実行する() -> ExitCode {
     match 検収する() {
@@ -36,28 +33,24 @@ pub fn 実行する() -> ExitCode {
 
 fn 検収する() -> Result<String, String> {
     crate::visual_sample_world::用意する()?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
-    let 領域マスクの実行名 = 検収の実行名::生成する(領域マスクのファイル名)?;
-    let マスクの絵 = crate::sample_world_region::領域マスクを撮る(&読み戻しの書き出し先::出力ディレクトリの中に決める(
-        &出力先,
-        領域マスクの実行名,
-    ))?;
-    let マスク = crate::sample_world_region::地面マスク::作る(&マスクの絵)?;
+    let マスクの実行 = 実行環境.描いて読み戻す(
+        crate::sample_world_region::領域マスクの実行名,
+        &crate::sample_world_region::領域マスクの起動指定を組み立てる(),
+    )?;
+    let マスク = crate::sample_world_region::地面マスク::作る(マスクの実行.画像())?;
     let mut 帯の行一覧 = Vec::new();
     let mut 絵の置き場一覧 = Vec::new();
     for 時刻 in &代表時刻一覧 {
-        let 実行名 = 検収の実行名::生成する(時刻.ファイル名)?;
-        let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(&出力先, 実行名);
-        let 画像 = run::描画する(&書き出し先, 時刻.一日内秒)?;
+        let 実行 = 実行環境.描いて読み戻す(検収の実行名::生成する(時刻.ファイル名)?, &run::時刻の起動指定を組み立てる(時刻.一日内秒))?;
         帯の行一覧.push(band::破綻防止帯を判定する(
             時刻.名前,
-            &画像,
+            実行.画像(),
             &マスク,
             &地面を照らす光を選ぶ(時刻),
         )?);
-        絵の置き場一覧.push(書き出し先.目視用の絵へ変換する()?.display().to_string());
+        絵の置き場一覧.push(実行.書き出し先().目視用の絵へ変換する()?.display().to_string());
     }
     Ok(format!(
         "5つの起動すべてでvalidationの指摘0件、地面{}画素の破綻防止帯は{}。絵は{}",

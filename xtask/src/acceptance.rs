@@ -9,29 +9,37 @@
 //! 直し漏れた入口だけが静かに壊れる。
 //!
 //! 誤りの型は`error`、読み戻した絵は`readback_image`、その置き場は`readback_dump`、
+//! 書き出された寸法の読み取りは`readback_size`、
 //! アプリが読む実行時形式の置き場は`runtime_asset_root`、アプリの終了時報告は`exit_report`、
-//! 起こし方の綴りは`app_executable`、1回ぶんの起動の指定は`launch_specification`、
+//! 起こし方の綴りは`app_executable`、1回ぶんの起動の組み立てと実行は`app_launch`、
+//! 起動へ渡すシーンは`scene_name`、枚数は`frame_count`、それらと選択肢を束ねた指定は`launch_specification`、
 //! 画像の寸法と画素の位置は`pixel_geometry`が、1回の実行を指す名前は`run_name`が、
 //! それらを束ねる操作サービスは`run_environment`が持つ。
 
 mod app_executable;
+mod app_launch;
 mod error;
 mod exit_report;
+mod frame_count;
 mod launch_specification;
 mod pixel_geometry;
 mod readback_dump;
 mod readback_image;
+mod readback_size;
 mod run_environment;
 mod run_name;
 mod runtime_asset_root;
+mod scene_name;
 
 pub use app_executable::アプリの起こし方;
 pub use error::検収エラー;
 pub use exit_report::終了時報告;
-pub use launch_specification::{アプリの起動指定, 描画フレーム数, 検収シーン名};
+pub use frame_count::描画フレーム数;
+pub use launch_specification::アプリの起動指定;
 pub use pixel_geometry::{画像の幅, 画像の高さ, 画素の横位置, 画素の番号, 画素の縦位置};
-pub use readback_dump::{読み戻しの書き出し先, 読み戻しの置き場};
+pub use readback_dump::読み戻しの書き出し先;
 pub use readback_image::読み戻し画像;
 pub use run_environment::{描画検収の実行環境, 検収の1回の実行};
 pub use run_name::検収の実行名;
 pub use runtime_asset_root::実行時アセットルート;
+pub use scene_name::検収シーン名;

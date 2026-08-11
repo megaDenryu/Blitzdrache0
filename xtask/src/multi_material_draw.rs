@@ -12,8 +12,6 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 const 出力ディレクトリ: &str = "target/multi_material_draw";
-const 二材質シーン: &str = "multi_material_two";
-const 単一材質シーン: &str = "multi_material_one";
 
 pub fn 実行する() -> ExitCode {
     match 検収する() {
@@ -32,11 +30,12 @@ fn 検収する() -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
-    let 二材質 = run::描画する(&出力先, 二材質シーン)?;
-    let 単一材質 = run::描画する(&出力先, 単一材質シーン)?;
+    let 二材質 = 実行環境.描いて読み戻す(run::二材質の実行名, &run::起動指定を組み立てる(run::条件::二材質))?;
+    二材質.報告().画面へ流す();
+    let 単一材質 = 実行環境.描いて読み戻す(run::単一材質の実行名, &run::起動指定を組み立てる(run::条件::単一材質))?;
+    単一材質.報告().画面へ流す();
     let 二材質の色 = crate::plate_region::左右の代表色を採る(二材質.画像())?;
     let 単一材質の色 = crate::plate_region::左右の代表色を採る(単一材質.画像())?;
     judgment::二材質の画素を検査する(&二材質の色)?;

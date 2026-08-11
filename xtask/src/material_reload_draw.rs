@@ -14,7 +14,6 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 const 出力ディレクトリ: &str = "target/material_reload_draw";
-const 差し替えシーン: &str = "material_reload";
 
 pub fn 実行する() -> ExitCode {
     match 検収する() {
@@ -33,9 +32,10 @@ fn 検収する() -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
-    let 実行 = run::差し替えを挟んで描画する(&出力先, 差し替えシーン)?;
-    judgment::差し替えの画素を検査する(&実行.差し替え前, &実行.差し替え後)
+    let 差し替え後 = 実行環境.描いて読み戻す(run::差し替え後の実行名, &run::起動指定を組み立てる())?;
+    差し替え後.報告().画面へ流す();
+    let 差し替え前 = 実行環境.同じ置き場の書き出しを読み戻す(run::差し替え前の実行名)?;
+    judgment::差し替えの画素を検査する(&差し替え前, 差し替え後.画像())
 }

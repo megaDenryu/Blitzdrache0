@@ -29,7 +29,11 @@ pub(crate) fn 走らせる(条件: &描画条件<'_>) -> Result<実行結果, St
         .arg(条件.書き出し先.起動引数として渡す綴り())
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({}): {誤り}", 条件.シーン名))?;
-    let 報告 = 終了時報告::取り込む(条件.書き出し先.実行名(), String::from_utf8_lossy(&出力.stdout).into_owned());
+    let 報告 = 終了時報告::取り込む(
+        条件.書き出し先.実行名(),
+        String::from_utf8_lossy(&出力.stdout).into_owned(),
+        String::from_utf8_lossy(&出力.stderr).into_owned(),
+    );
     if !出力.status.success() {
         報告.画面へ流す();
         return Err(format!("blitz_appが{}で失敗した({})", 出力.status, 条件.シーン名));

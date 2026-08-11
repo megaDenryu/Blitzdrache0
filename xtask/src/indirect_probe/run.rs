@@ -50,7 +50,11 @@ pub(super) fn 描画する(
         .arg(書き出し先.起動引数として渡す綴り())
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({}): {誤り}", 書き出し先.実行名()))?;
-    let 報告 = 終了時報告::取り込む(書き出し先.実行名(), String::from_utf8_lossy(&出力.stdout).into_owned());
+    let 報告 = 終了時報告::取り込む(
+        書き出し先.実行名(),
+        String::from_utf8_lossy(&出力.stdout).into_owned(),
+        String::from_utf8_lossy(&出力.stderr).into_owned(),
+    );
     if !出力.status.success() {
         eprintln!("{}", String::from_utf8_lossy(&出力.stderr));
         return Err(format!("blitz_appが{}で失敗した({})", 出力.status, 書き出し先.実行名()));

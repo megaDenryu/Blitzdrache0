@@ -11,12 +11,13 @@ mod pixel_check;
 
 use std::path::Path;
 
-use crate::acceptance::{検収の実行名, 読み戻しの置き場};
+use crate::acceptance::{描画フレーム数, 描画検収の実行環境, 検収の実行名, 検収シーン名};
 use crate::report_parse::計数報告;
 use crate::vegetation_run;
 
-const シーン: &str = "vegetation_single";
-const フレーム数: &str = "12";
+const シーンの綴り: &str = "vegetation_single";
+const シーン: 検収シーン名 = 検収シーン名::生成する(シーンの綴り);
+const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(12);
 
 /// 影を見るため`--unlit`を付けない。可視判定は既定の有効のまま通し、単一個体が可視判定の経路も踏むことを同時に見る。
 const 起動引数: [&str; 3] = ["--no-post", "--report-draw-issue", "--report-memory"];
@@ -25,10 +26,12 @@ const 起動引数: [&str; 3] = ["--no-post", "--report-draw-issue", "--report-m
 const 期待発行数: u64 = 2;
 const 期待個体数: u64 = 2;
 
-pub(super) fn 検収する(出力先: &読み戻しの置き場, シェーダー入口: &Path) -> Result<String, String> {
-    let 実行名 = 検収の実行名::生成する(シーン)?;
-    let 書き出し先 = 出力先.中の書き出し先(実行名);
-    let 実行 = vegetation_run::描画する(書き出し先, シーン, シェーダー入口, フレーム数, &起動引数)?;
+pub(super) fn 検収する(実行環境: &描画検収の実行環境, シェーダー入口: &Path) -> Result<String, String> {
+    let 実行 = 実行環境.描いて読み戻す(
+        検収の実行名::生成する(シーンの綴り)?,
+        &vegetation_run::植生世界の起動指定を組み立てる(シーン, フレーム数, シェーダー入口, &起動引数),
+    )?;
+    実行.報告().画面へ流す();
     let 画素 = pixel_check::判定する(実行.画像())?;
     計数を検査する(&crate::report_parse::取り出す(実行.報告().本文())?)?;
     Ok(format!("個体の明部{}画素・影の暗部{}画素", 画素.個体の明部画素数, 画素.影の暗部画素数))

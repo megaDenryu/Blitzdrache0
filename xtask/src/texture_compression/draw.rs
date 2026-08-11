@@ -42,7 +42,11 @@ pub(super) fn 条件1つを描いて読み戻す(
         .arg(書き出し先.起動引数として渡す綴り())
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({}): {誤り}", 書き出し先.実行名()))?;
-    let 報告 = 終了時報告::取り込む(書き出し先.実行名(), String::from_utf8_lossy(&出力.stdout).into_owned());
+    let 報告 = 終了時報告::取り込む(
+        書き出し先.実行名(),
+        String::from_utf8_lossy(&出力.stdout).into_owned(),
+        String::from_utf8_lossy(&出力.stderr).into_owned(),
+    );
     if !出力.status.success() {
         報告.画面へ流す();
         eprintln!("{}", String::from_utf8_lossy(&出力.stderr));

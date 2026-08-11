@@ -13,14 +13,14 @@ mod judgment;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use crate::acceptance::{検収の1回の実行, 検収の実行名, 読み戻しの置き場};
+use crate::acceptance::{描画フレーム数, 描画検収の実行環境, 検収の1回の実行, 検収の実行名, 検収シーン名};
 
 const 出力ディレクトリ: &str = "target/cloth_night";
 const シェーダーコピー先: &str = "target/cloth_night_shaders";
 /// 群がどちらの視錐台にも入らない世界。布だけが画素に出るため、布の領域を切り出しやすい。
-const シーン: &str = "instance_all_culled";
+const シーン: 検収シーン名 = 検収シーン名::生成する("instance_all_culled");
 /// 布が垂れて画素に出る最小の歩進。自己衝突の揺れを溜めないため短く取る。
-const フレーム数: &str = "12";
+const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(12);
 /// 一日内秒。`cargo xtask sky-time`の代表時刻と同じ値を使い、同じ場面を別の観点で語れるようにする。
 const 夜の一日内秒: &str = "75600";
 const 昼の一日内秒: &str = "43200";
@@ -42,28 +42,39 @@ fn 検収する() -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::植生世界を既定で生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = 読み戻しの置き場::作って受け取る(PathBuf::from(出力ディレクトリ))?;
+    let 実行環境 = crate::vegetation_run::植生世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
     let 入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
 
-    let 夜 = 布領域を測る(&出力先, &入口, "night", 夜の一日内秒)?;
-    let 昼 = 布領域を測る(&出力先, &入口, "day", 昼の一日内秒)?;
+    let (夜, 夜png) = 布領域を測る(&実行環境, &入口, "night", 夜の一日内秒)?;
+    let (昼, _) = 布領域を測る(&実行環境, &入口, "day", 昼の一日内秒)?;
 
     let 明るさ = judgment::明るさの時刻への追従を判定する(&夜, &昼)?;
-    let 夜png = 出力先.中の書き出し先(検収の実行名::生成する("night_cloth")?).目視用の絵へ変換する()?;
     Ok(format!("{明るさ}、絵は{}", 夜png.display()))
 }
 
-fn 布領域を測る(出力先: &読み戻しの置き場, 入口: &Path, 名前: &str, 一日内秒: &str) -> Result<judgment::布領域, String> {
-    let 布あり = 描く(出力先, &format!("{名前}_cloth"), 入口, 一日内秒, &["--cloth"])?;
-    let 布なし = 描く(出力先, &format!("{名前}_no_cloth"), 入口, 一日内秒, &[])?;
-    judgment::布領域を測る(布あり.画像(), 布なし.画像())
+/// 1つの時刻の布ありと布なしを描き、布の領域と布ありの絵の置き場を返す。
+fn 布領域を測る(
+    実行環境: &描画検収の実行環境,
+    入口: &Path,
+    名前: &str,
+    一日内秒: &str,
+) -> Result<(judgment::布領域, std::path::PathBuf), String> {
+    let 布あり = 描く(実行環境, &format!("{名前}_cloth"), 入口, 一日内秒, &["--cloth"])?;
+    let 布なし = 描く(実行環境, &format!("{名前}_no_cloth"), 入口, 一日内秒, &[])?;
+    let 領域 = judgment::布領域を測る(布あり.画像(), 布なし.画像())?;
+    let png = 布あり.書き出し先().目視用の絵へ変換する()?;
+    Ok((領域, png))
 }
 
 fn 描く(
-    出力先: &読み戻しの置き場, 名前: &str, 入口: &Path, 一日内秒: &str, 追加: &[&str]
+    実行環境: &描画検収の実行環境, 名前: &str, 入口: &Path, 一日内秒: &str, 追加: &[&str]
 ) -> Result<検収の1回の実行, String> {
     let mut 引数: Vec<&str> = vec!["--sky", "--time-of-day", 一日内秒];
     引数.extend_from_slice(追加);
-    let 実行名 = 検収の実行名::生成する(名前)?;
-    crate::vegetation_run::描画する(出力先.中の書き出し先(実行名), シーン, 入口, フレーム数, &引数)
+    let 実行 = 実行環境.描いて読み戻す(
+        検収の実行名::生成する(名前)?,
+        &crate::vegetation_run::植生世界の起動指定を組み立てる(シーン, フレーム数, 入口, &引数),
+    )?;
+    実行.報告().画面へ流す();
+    Ok(実行)
 }

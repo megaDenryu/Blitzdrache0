@@ -9,14 +9,14 @@ mod pixel_check;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use crate::acceptance::{検収の実行名, 読み戻しの置き場};
+use crate::acceptance::{描画フレーム数, 描画検収の実行環境, 検収の実行名, 検収シーン名};
 use crate::vegetation_run;
 
 const 出力ディレクトリ: &str = "target/instance_lod";
 const シェーダーコピー先: &str = "target/instance_lod_shaders";
 /// 段を2つ持つ原型を等距離の弧へ並べた世界。
-const 検収シーン: &str = "vegetation_lod";
-const フレーム数: &str = "12";
+const 検収シーン: 検収シーン名 = 検収シーン名::生成する("vegetation_lod");
+const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(12);
 
 /// 段の選択を入れた実行と止めた実行で共通の引数。ライティングを止めるのは、この検収が段ごとのジオメトリの違いを
 /// 背景色との差で数えるためであり、陰影が入ると近景の領域が遠景の段の影で動きうるからである。
@@ -46,13 +46,13 @@ fn 検収する() -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::植生世界を既定で生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = 読み戻しの置き場::作って受け取る(PathBuf::from(出力ディレクトリ))?;
+    let 実行環境 = vegetation_run::植生世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
     let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
 
-    let 段あり = 描く(&出力先, "on", &シェーダー入口, &[])?;
-    let 段なし = 描く(&出力先, "off", &シェーダー入口, &["--no-instance-lod"])?;
-    let 帯の内側 = 描く(&出力先, "band_inside", &シェーダー入口, &["--lod-probe-step", 帯の内側の刻み])?;
-    let 帯の外側 = 描く(&出力先, "band_outside", &シェーダー入口, &["--lod-probe-step", 帯の外側の刻み])?;
+    let 段あり = 描く(&実行環境, "on", &シェーダー入口, &[])?;
+    let 段なし = 描く(&実行環境, "off", &シェーダー入口, &["--no-instance-lod"])?;
+    let 帯の内側 = 描く(&実行環境, "band_inside", &シェーダー入口, &["--lod-probe-step", 帯の内側の刻み])?;
+    let 帯の外側 = 描く(&実行環境, "band_outside", &シェーダー入口, &["--lod-probe-step", 帯の外側の刻み])?;
 
     let 段別 = judgment::段が同時に立つことを検査する(&段あり)?;
     let 画素 = judgment::段の違いが絵に出ることを検査する(&段あり, &段なし)?;
@@ -65,13 +65,15 @@ fn 検収する() -> Result<String, String> {
 }
 
 fn 描く(
-    出力先: &読み戻しの置き場, 名前: &str, シェーダー入口: &Path, 追加引数: &[&str]
+    実行環境: &描画検収の実行環境, 名前: &str, シェーダー入口: &Path, 追加引数: &[&str]
 ) -> Result<judgment::実行, String> {
     let mut 引数: Vec<&str> = 共通引数.to_vec();
     引数.extend_from_slice(追加引数);
-    let 実行名 = 検収の実行名::生成する(名前)?;
-    let 書き出し先 = 出力先.中の書き出し先(実行名);
-    let 結果 = vegetation_run::描画する(書き出し先, 検収シーン, シェーダー入口, フレーム数, &引数)?;
+    let 結果 = 実行環境.描いて読み戻す(
+        検収の実行名::生成する(名前)?,
+        &vegetation_run::植生世界の起動指定を組み立てる(検収シーン, フレーム数, シェーダー入口, &引数),
+    )?;
+    結果.報告().画面へ流す();
     let 計数 = crate::report_parse::取り出す(結果.報告().本文())?;
     Ok(judgment::実行 {
         名前: 名前.to_string(),
