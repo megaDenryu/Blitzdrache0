@@ -4,6 +4,7 @@
 //! 地形は代表世界を`csm-seam`と同じ構図で描き、影視距離は遠方キャスターと近距離対照だけを置いた検収世界を描く。
 
 use super::candidate_axis::計測軸;
+use crate::acceptance::{実行時アセットルート, 検収シーン名};
 
 /// その構図の結果に定まった期待があるか。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -30,17 +31,18 @@ impl 構図 {
         }
     }
 
-    pub(super) fn アセットルート(self) -> &'static str {
-        match self {
+    /// その構図が読む実行時アセットの置き場。
+    pub(super) fn アセットルートを作る(self) -> 実行時アセットルート {
+        実行時アセットルート::綴りから生成する(match self {
             Self::地形 => "target/terrain_assets",
             Self::影視距離の検収 => "target/vegetation_assets",
-        }
+        })
     }
 
-    pub(super) fn シーン名(self) -> &'static str {
+    pub(super) fn シーン名(self) -> 検収シーン名 {
         match self {
-            Self::地形 => "terrain_origin",
-            Self::影視距離の検収 => "vegetation_shadow_range",
+            Self::地形 => 検収シーン名::生成する("terrain_origin"),
+            Self::影視距離の検収 => 検収シーン名::生成する("vegetation_shadow_range"),
         }
     }
 

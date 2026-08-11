@@ -6,17 +6,19 @@
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「シャドウ性能の是正(フェーズ2性能課題、2026-08-03着手)」
 //! 時間再構成は`--no-taa`で外す。この入口の判定がバイト一致に依るため、フレームをまたぐ混合が入ると前のフレームの残りが絵に混ざる。
 
-use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::path::PathBuf;
 
 use super::args::指定;
 use super::candidate_axis::候補の計測指定;
+use super::run;
 use super::scene_choice::構図;
+use crate::acceptance::{描画検収の実行環境, 検収の実行名};
 
 pub(super) fn 二枚を撮る(指定: &指定) -> Result<String, String> {
     let 出力先 = super::描く支度をする(指定.構図)?;
-    let 基準 = 撮る(&出力先, &出力名を作る(&指定.候補, "baseline"), 指定.構図, &[])?;
-    let 候補 = 撮る(&出力先, &出力名を作る(&指定.候補, "candidate"), 指定.構図, &指定.候補.起動指定へ写す())?;
+    let 実行環境 = run::実行環境を作る(指定.構図, 出力先)?;
+    let 基準 = 撮る(&実行環境, &実行名を組む(&指定.候補, "baseline"), 指定.構図, &[])?;
+    let 候補 = 撮る(&実行環境, &実行名を組む(&指定.候補, "candidate"), 指定.構図, &指定.候補.起動指定へ写す())?;
     Ok(format!(
         "最終色の2枚を撮った(比較も判定もしない)。基準は{}、候補は{}",
         基準.display(),
@@ -26,30 +28,17 @@ pub(super) fn 二枚を撮る(指定: &指定) -> Result<String, String> {
 
 /// 撮った絵の名前。軸と距離を名前へ入れるのは、αの組とβの組を続けて撮ったときに上書きし合わないためである。
 /// 4枚を並べて選ぶには4枚が同時にディスクへ残っている必要がある。
-fn 出力名を作る(候補: &候補の計測指定, 役: &str) -> String {
+fn 実行名を組む(候補: &候補の計測指定, 役: &str) -> String {
     let 軸 = 候補.綴り().trim_start_matches("--").replace('-', "_");
     format!("final_{軸}_{}_{役}", 候補.距離の綴り())
 }
 
-fn 撮る(出力先: &Path, 出力名: &str, 構図: 構図, 候補の起動指定: &[String]) -> Result<PathBuf, String> {
-    let ダンプ先 = PathBuf::from(出力先).join(出力名);
-    let mut コマンド = Command::new("cargo");
-    コマンド
-        .args(["run", "-p", "blitz_app", "--", "--scene", 構図.シーン名()])
-        .args(["--asset-root", 構図.アセットルート()])
-        .args(["--frames", super::フレーム数])
-        .args(["--time-of-day", super::一日内秒])
-        .arg("--no-taa")
-        .args(構図.追加の起動指定())
-        .args(候補の起動指定)
-        .arg("--dump-frame")
-        .arg(&ダンプ先);
-    let 出力 = コマンド
-        .output()
-        .map_err(|誤り| format!("blitz_appを起動できなかった({出力名}): {誤り}"))?;
-    if !出力.status.success() {
-        return Err(format!("blitz_appが{}で失敗した({出力名})", 出力.status));
-    }
-    crate::validation_count::零件数を確かめる(&String::from_utf8_lossy(&出力.stdout), 出力名)?;
-    crate::raw_png::変換する(&ダンプ先)
+fn 撮る(
+    実行環境: &描画検収の実行環境, 実行名の綴り: &str, 構図: 構図, 候補の起動指定: &[String]
+) -> Result<PathBuf, String> {
+    let 指定 = super::launch::共通の起動指定を組み立てる(構図)
+        .選択肢を足す("--no-taa")
+        .選択肢をまとめて足す(&候補の起動指定.iter().map(String::as_str).collect::<Vec<&str>>());
+    let 実行 = 実行環境.描いて読み戻す(検収の実行名::生成する(実行名の綴り)?, &指定)?;
+    Ok(実行.書き出し先().目視用の絵へ変換する()?)
 }

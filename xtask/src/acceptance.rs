@@ -43,7 +43,6 @@ pub use exit_report::終了時報告;
 pub use frame_count::描画フレーム数;
 pub use launch_specification::アプリの起動指定;
 pub use pixel_geometry::{画像の幅, 画像の高さ, 画素の横位置, 画素の番号, 画素の縦位置};
-pub use readback_dump::読み戻しの書き出し先;
 pub use readback_hdr_image::圧縮前のHDR画像;
 pub use readback_image::読み戻し画像;
 pub use report_only_environment::世界を読まずに報告を採る実行環境;

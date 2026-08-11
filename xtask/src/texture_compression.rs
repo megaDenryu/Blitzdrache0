@@ -42,7 +42,6 @@ fn ブロック圧縮の絵を撮って判定する() -> Result<String, String> 
         return Err("検証用ソースアセットの生成に失敗した".to_string());
     }
     let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
     let mut 行一覧 = contrast_run::対照の板を検収する(&出力先)?;
     行一覧.extend(helmet_run::ヘルメットの目視材料を作る(&出力先)?);
     Ok(行一覧.join("、"))

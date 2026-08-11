@@ -6,28 +6,23 @@
 //! 機械が見るのはvalidationの指摘0件と、2枚の絵が実際に食い違うことだけである。後者を見るのは、
 //! 起動指定の取り違えで同じ絵を2枚並べたまま「破綻していない」と読む事故を防ぐためである。
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use crate::acceptance::読み戻し画像;
-use crate::acceptance::{検収の実行名, 読み戻しの書き出し先};
 
-use super::world_bake::{ヘルメットのシーン名, 実行時形式のバイト数を読む};
+use super::world_bake::ヘルメットのシーン名;
 use super::{difference, draw, helmet_crop, summary, world_bake};
 
 pub(super) fn ヘルメットの目視材料を作る(出力先: &Path) -> Result<Vec<String>, String> {
     let ルート = world_bake::ヘルメットの世界を方針違いで焼く()?;
-    let 非圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(
-        &ルート.非圧縮,
-        ヘルメットのシーン名,
-        &読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 検収の実行名::生成する("helmet_rgba8")?),
-    )
-    .map_err(|誤り| format!("DamagedHelmet(全てRGBA8): {誤り}"))?;
-    let 圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(
-        &ルート.ブロック圧縮,
-        ヘルメットのシーン名,
-        &読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 検収の実行名::生成する("helmet_bc1")?),
-    )
-    .map_err(|誤り| format!("DamagedHelmet(ベースカラーのブロック圧縮): {誤り}"))?;
+    let 出力ディレクトリ = PathBuf::from(出力先);
+    let 非圧縮の実行環境 = draw::実行環境を作る(&ルート.非圧縮, 出力ディレクトリ.clone())?;
+    let 圧縮の実行環境 = draw::実行環境を作る(&ルート.ブロック圧縮, 出力ディレクトリ)?;
+
+    let 非圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(&非圧縮の実行環境, ヘルメットのシーン名, "helmet_rgba8")
+        .map_err(|誤り| format!("DamagedHelmet(全てRGBA8): {誤り}"))?;
+    let 圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(&圧縮の実行環境, ヘルメットのシーン名, "helmet_bc1")
+        .map_err(|誤り| format!("DamagedHelmet(ベースカラーのブロック圧縮): {誤り}"))?;
     let 統計 = 画面全体の統計を採る(&非圧縮.画像, &圧縮.画像)?;
     if 統計.差のある画素数 == 0 {
         return Err("DamagedHelmetの2枚の絵が1画素も食い違わない(方針の取り違えの疑いがある)".to_string());
@@ -39,8 +34,8 @@ pub(super) fn ヘルメットの目視材料を作る(出力先: &Path) -> Resul
         format!("DamagedHelmetの{}(判定値なしの観測)", summary::統計の行を作る("絵の差", &統計)),
         summary::格納バイト数の行を作る(
             "DamagedHelmet",
-            実行時形式のバイト数を読む(&ルート.非圧縮, ヘルメットのシーン名)?,
-            実行時形式のバイト数を読む(&ルート.ブロック圧縮, ヘルメットのシーン名)?,
+            world_bake::ヘルメットの格納バイト数を読む(&ルート.非圧縮)?,
+            world_bake::ヘルメットの格納バイト数を読む(&ルート.ブロック圧縮)?,
         )?,
         format!(
             "DamagedHelmetの絵は{}と{}(拡大は{}と{})",

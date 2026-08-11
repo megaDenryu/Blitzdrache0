@@ -17,6 +17,7 @@ mod diff_image;
 mod distance;
 mod final_color;
 mod guard;
+mod launch;
 mod range_world;
 mod region_count;
 mod report;
@@ -27,11 +28,6 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 const 出力ディレクトリ: &str = "target/shadow_loss";
-
-/// 描くフレーム数と一日内時刻。両方の様式が同じ値を使うのは、数えた絵と目で見る絵を同じ条件の絵にするためである。
-/// 時刻17時は太陽が低く、影が受光面を長く横切る(`csm-seam`が継ぎ目の検収に使う時刻と同じである)。
-const フレーム数: &str = "160";
-const 一日内秒: &str = "61200";
 
 pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     match 測る(引数一覧) {
@@ -59,19 +55,18 @@ fn 描く支度をする(構図: scene_choice::構図) -> Result<PathBuf, String
     if !crate::gen_source_assets::生成する() || !アセットを焼く(構図) {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
-    Ok(出力先)
+    Ok(PathBuf::from(出力ディレクトリ))
 }
 
 fn 欠落と余分を数える(指定: &args::指定) -> Result<String, String> {
     guard::描く前に確かめる(指定.構図, &指定.候補)?;
     let 出力先 = 描く支度をする(指定.構図)?;
+    let 実行環境 = run::実行環境を作る(指定.構図, 出力先.clone())?;
     let 差分先 = 出力先.join("diff");
     diff_image::前の実行が残した画像を消す(&差分先)?;
     let 候補の起動指定 = 指定.候補.起動指定へ写す();
-    let 基準 = run::描画する(&出力先, "baseline", 指定.構図, &[])?;
-    let 候補 = run::描画する(&出力先, "candidate", 指定.構図, &候補の起動指定)?;
+    let 基準 = run::描画する(&実行環境, "baseline", 指定.構図, &[])?;
+    let 候補 = run::描画する(&実行環境, "candidate", 指定.構図, &候補の起動指定)?;
     let 比較 = compare::比べる(&基準, &候補)?;
     // 前提と期待の判定を表と差分画像より先に置く。比較が成立しない実行や期待を破った実行が、
     // 裁定材料に見える成果物を残してはならないためである。

@@ -6,6 +6,7 @@
 
 use std::path::{Path, PathBuf};
 
+use crate::acceptance::検収シーン名;
 use crate::compile_assets::texture_policy_name::{ベースカラーのブロック圧縮, 全てRGBA8};
 use crate::compile_assets::{世界名, 方針を名指しして実行時形式を生成する};
 
@@ -18,10 +19,29 @@ const 対照のブロック圧縮の再現ルート: &str = "target/texture_comp
 const ヘルメットの非圧縮ルート: &str = "target/texture_compression_helmet_rgba8";
 const ヘルメットのブロック圧縮ルート: &str = "target/texture_compression_helmet_bc1";
 
-/// 対照の板のシーン名。この安定IDが実行時形式のファイル名にもなる。
-pub(super) const 対照の板のシーン名: &str = "texture_compression";
-/// DamagedHelmetのシーン名。板の世界が任意アセットとして持つ既存の安定IDである。
-pub(super) const ヘルメットのシーン名: &str = "helmet";
+/// 対照の板のシーンの綴り。この安定IDが実行時形式のファイル名にもなる。
+const 対照の板のシーンの綴り: &str = "texture_compression";
+/// DamagedHelmetのシーンの綴り。板の世界が任意アセットとして持つ既存の安定IDである。
+const ヘルメットのシーンの綴り: &str = "helmet";
+
+pub(super) const 対照の板のシーン名: 検収シーン名 = 検収シーン名::生成する(対照の板のシーンの綴り);
+pub(super) const ヘルメットのシーン名: 検収シーン名 = 検収シーン名::生成する(ヘルメットのシーンの綴り);
+
+/// 対照の板の実行時形式のバイト数。焼いた生成物の綴りを外へ出さないための口である。
+pub(super) fn 対照の板の格納バイト数を読む(出力ルート: &Path) -> Result<u64, String> {
+    実行時形式のバイト数を読む(出力ルート, 対照の板のシーンの綴り)
+}
+
+/// DamagedHelmetの実行時形式のバイト数。
+pub(super) fn ヘルメットの格納バイト数を読む(出力ルート: &Path) -> Result<u64, String> {
+    実行時形式のバイト数を読む(出力ルート, ヘルメットのシーンの綴り)
+}
+
+/// 対照の板の実行時形式そのもの。焼き付けの決定性を突き合わせる検査が読む。
+pub(super) fn 対照の板の実行時形式を読む(出力ルート: &Path) -> Result<Vec<u8>, String> {
+    let パス = 実行時形式のパス(出力ルート, 対照の板のシーンの綴り);
+    std::fs::read(&パス).map_err(|誤り| format!("{}を読めない: {誤り}", パス.display()))
+}
 
 pub(super) struct 焼いた出力ルート {
     pub(super) 非圧縮: PathBuf,
@@ -60,12 +80,12 @@ fn 方針を指定して世界を焼く(世界: 世界名, 出力ルート: &str
 }
 
 /// そのシーンの実行時形式1件のバイト数。テクスチャ格納バイト数の比を採るための実測値である。
-pub(super) fn 実行時形式のバイト数を読む(出力ルート: &Path, シーン名: &str) -> Result<u64, String> {
+fn 実行時形式のバイト数を読む(出力ルート: &Path, シーン名: &str) -> Result<u64, String> {
     let パス = 実行時形式のパス(出力ルート, シーン名);
     let メタデータ = std::fs::metadata(&パス).map_err(|誤り| format!("{}の大きさを読めない: {誤り}", パス.display()))?;
     Ok(メタデータ.len())
 }
 
-pub(super) fn 実行時形式のパス(出力ルート: &Path, シーン名: &str) -> PathBuf {
+fn 実行時形式のパス(出力ルート: &Path, シーン名: &str) -> PathBuf {
     出力ルート.join(format!("{シーン名}.blitzasset"))
 }
