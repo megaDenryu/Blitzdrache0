@@ -6,25 +6,25 @@
 
 use std::path::PathBuf;
 
-use blitz_asset_compiler::内容ハッシュ;
+use crate::generation_ledger::{内容ハッシュ, 生成台帳エラー};
 
 #[repr(transparent)]
-pub(crate) struct 高さ格子のファイル(PathBuf);
+pub struct 高さ格子のファイル(PathBuf);
 
 impl 高さ格子のファイル {
     pub(super) fn パスから作る(パス: PathBuf) -> Self {
         Self(パス)
     }
 
-    pub(crate) fn 揃っているか(&self) -> bool {
+    pub fn 揃っているか(&self) -> bool {
         self.0.is_file()
     }
 
-    pub(crate) fn 内容ハッシュを求める(&self) -> Result<Option<内容ハッシュ>, String> {
-        内容ハッシュ::ファイルがあれば中身から求める(&self.0).map_err(|誤り| 誤り.to_string())
+    pub fn 内容ハッシュを求める(&self) -> Result<Option<内容ハッシュ>, 生成台帳エラー> {
+        内容ハッシュ::ファイルがあれば中身から求める(&self.0)
     }
 
-    pub(crate) fn 書き出す(&self, バイト列: &[u8]) -> Result<(), String> {
+    pub fn 書き出す(&self, バイト列: &[u8]) -> Result<(), String> {
         std::fs::write(&self.0, バイト列).map_err(|誤り| format!("{}: {誤り}", self.0.display()))
     }
 }

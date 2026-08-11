@@ -10,13 +10,15 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
+use blitz_asset_compiler::生成台帳のファイル名;
+
 use super::file_digest::ディレクトリの全ファイルを畳む;
 
 /// 検収が使い捨てるルートの親。既定のルート(assets/とtarget/fox_tour_assets)とは別の場所へ置く。
 const 検収用の親ディレクトリ: &str = "target/fox_tour_generation_check";
 
-/// 突き合わせから除くファイル。綴りはアセットコンパイラ側の生成台帳の置き場にも同じものがある。
-const 突き合わせから除くファイル名: [&str; 1] = ["generation_ledger.txt"];
+/// 突き合わせから除くファイル。綴りの正本はアセットコンパイラの生成の出力ルートにあり、ここは写しを持たない。
+const 突き合わせから除くファイル名: [&str; 1] = [生成台帳のファイル名];
 
 #[repr(transparent)]
 pub(super) struct 検収用のルート(PathBuf);

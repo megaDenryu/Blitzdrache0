@@ -21,6 +21,8 @@ mod vertex_diagnostic_declaration;
 mod village_declaration;
 pub(super) mod visual_sample_declaration;
 
+use blitz_asset_compiler::{アセット配置エラー, 世界のディレクトリ名};
+
 use super::catalog::{アセット定義, ソース種別};
 use vertex_diagnostic_declaration::診断の原型;
 
@@ -51,7 +53,7 @@ impl 対象世界 {
         argument_name::解析する(引数名)
     }
 
-    pub(super) fn 世界のソースディレクトリ名(self) -> &'static str {
+    pub(super) fn 世界のソースディレクトリ名(self) -> Result<世界のディレクトリ名, アセット配置エラー> {
         directory_source_path::世界のソースディレクトリ名を選ぶ(self)
     }
 

@@ -3,8 +3,11 @@ name = "xtask"
 edition.workspace = true
 version.workspace = true
 
-# 開発ツールの唯一の入口。外部依存ゼロ（std のみ）を保つ
+# 開発ツールの唯一の入口。外部のクレートへは依存しない。
+# ワークスペース内のblitz_asset_compilerだけは依存する。生成物の置き場とファイル名の綴りの正本がそこにあり、
+# 写しを持つと検収と生成で綴りが食い違ったときに「ファイルが無い」という遠い場所の失敗になるためである。
 [dependencies]
+blitz_asset_compiler = { path = "../crates/blitz_asset_compiler" }
 
 [lints]
 workspace = true

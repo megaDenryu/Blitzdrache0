@@ -1,15 +1,14 @@
 //! クソゲー1本目「キツネの場所巡り」が遊ばれる世界のソース一式の書き出しの入口。
 //!
-//! 世界そのものの決め事は`world_definition`が、ソース一式の置き場とファイル名の規則は`source_directory`が、
+//! 世界そのものの決め事は`world_definition`が、ソース一式の置き場とファイル名の規則はライブラリの
+//! `場所巡りの世界のソースディレクトリ`が、
 //! 1回の書き出しが持ち回る状態と操作は`source_writing`が、種から高さを決める関数は`height`が、
 //! 目印の柱の形と文書は`marker_geometry`と`marker_gltf_json`が持つ。
 
 mod height;
-mod height_grid_file;
 mod lattice_noise;
 mod marker_geometry;
 mod marker_gltf_json;
-mod source_directory;
 mod source_writing;
 mod world_definition;
 

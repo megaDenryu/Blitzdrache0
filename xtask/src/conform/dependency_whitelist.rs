@@ -38,7 +38,8 @@ const 白リスト: [(&str, &[&str]); 8] = [
             "egui-winit",
         ],
     ),
-    ("xtask", &[]),
+    // 置き場とファイル名の綴りの正本を読むためだけの依存。検収が写しを持たないための唯一の例外である
+    ("xtask", &["blitz_asset_compiler"]),
 ];
 
 pub fn 全クレートを検査する() -> Result<Vec<違反>, String> {

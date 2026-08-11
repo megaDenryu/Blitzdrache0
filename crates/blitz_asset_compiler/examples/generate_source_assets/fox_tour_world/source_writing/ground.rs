@@ -9,13 +9,12 @@
 //! 座標の順で行うため、出力は実行のたびに同じになる。
 
 use blitz_asset_compiler::{
-    チャンクの焼き直し判定, 内容ハッシュ, 焼き直しの勘定, 高さ格子を切り出す, 高さ格子を格納する
+    チャンクの焼き直し判定, 内容ハッシュ, 場所巡りの世界のソースディレクトリ, 焼き直しの勘定, 高さ格子を切り出す, 高さ格子を格納する,
 };
 use blitz_engine::チャンク座標;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use super::super::height;
-use super::super::source_directory::場所巡りの世界のソースディレクトリ;
 use super::場所巡りの世界のソース書き出し;
 use crate::directory_source::目録項目;
 
@@ -56,7 +55,7 @@ impl 場所巡りの世界のソース書き出し {
         let 高さ格子のファイル = self.ソースディレクトリ.高さ格子のファイル(座標);
         let 判定 = self.生成台帳.チャンクを焼き直すかを判定する(
             座標,
-            高さ格子のファイル.内容ハッシュを求める()?,
+            高さ格子のファイル.内容ハッシュを求める().map_err(|誤り| 誤り.to_string())?,
             高さ格子のファイル.揃っているか(),
         );
         let 書き上がりの内容ハッシュ = match 判定 {

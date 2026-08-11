@@ -14,9 +14,10 @@ use std::path::PathBuf;
 use super::error::生成台帳エラー;
 use super::ledger_text::生成台帳の本文;
 
-/// 台帳のファイル名。出力ルートの直下に置く。
+/// 台帳のファイル名。出力ルートの直下に置く。生成の決定性の検収が突き合わせから台帳を除くためにこの綴りを読むため、
+/// クレートの外へも見せる。写しを持たせないための正本である。
 /// 参照: `_doc/設計/大規模世界の生成と遠景.md`
-const 台帳のファイル名: &str = "generation_ledger.txt";
+pub const 生成台帳のファイル名: &str = "generation_ledger.txt";
 
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -36,12 +37,13 @@ impl 生成の出力ルート {
     }
 
     /// この直下に置くファイルのパス。包む側の置き場の型が、自分の持つファイル名の綴りを渡して組む。
-    pub fn 直下のファイルのパス(&self, ファイル名: &str) -> PathBuf {
+    /// クレートの外へ出さないのは、任意のファイル名を流せる汎用の口にしないためである。
+    pub(crate) fn 直下のファイルのパス(&self, ファイル名: &str) -> PathBuf {
         self.0.join(ファイル名)
     }
 
     /// 相対パスとして与えられたファイルのパス。綴りへ写し替えずに組む。
-    pub fn 直下の相対パスが指すファイル(&self, 相対パス: &std::path::Path) -> PathBuf {
+    pub(crate) fn 直下の相対パスが指すファイル(&self, 相対パス: &std::path::Path) -> PathBuf {
         self.0.join(相対パス)
     }
 
@@ -52,13 +54,13 @@ impl 生成の出力ルート {
     /// 台帳が無いときと読めないときは値なしを返す。どちらも記録を1件も使えない点で同じであり、
     /// 呼び出し側は空の台帳として扱って全部を焼き直す。
     pub(super) fn 台帳の本文を読む(&self) -> Option<生成台帳の本文> {
-        std::fs::read_to_string(self.直下のファイルのパス(台帳のファイル名))
+        std::fs::read_to_string(self.直下のファイルのパス(生成台帳のファイル名))
             .ok()
             .map(生成台帳の本文::読み取った綴りから作る)
     }
 
     pub(super) fn 台帳の本文を書く(&self, 本文: &生成台帳の本文) -> Result<(), 生成台帳エラー> {
-        let パス = self.直下のファイルのパス(台帳のファイル名);
+        let パス = self.直下のファイルのパス(生成台帳のファイル名);
         std::fs::write(&パス, 本文.綴り()).map_err(|誤り| 生成台帳エラー::ファイルの書き出しに失敗した {
             パス,
             事由: 誤り.to_string(),
