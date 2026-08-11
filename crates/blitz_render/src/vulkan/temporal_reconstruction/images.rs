@@ -14,6 +14,7 @@ mod create;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 /// 動きベクトル画像の形式。横と縦の2成分に正規化装置座標の差分を持つ。
@@ -56,14 +57,11 @@ pub(crate) struct 時間再構成の画像組 {
 
 impl 時間再構成の画像組 {
     /// 途中で失敗したら、それまでに確保した画像をその場で片付ける。部分的に確保された組を呼び出し元へ渡さない。
-    pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        寸法: vk::Extent2D,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, 寸法: vk::Extent2D) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let mut 確保済み = Vec::with_capacity(形式の並び.len());
         for 形式 in 形式の並び {
-            match create::生成する(device, メモリプロパティ, 形式, 寸法) {
+            match create::生成する(確保係, 形式, 寸法) {
                 Ok(画像) => 確保済み.push(画像),
                 Err(誤り) => {
                     for 画像 in &確保済み {

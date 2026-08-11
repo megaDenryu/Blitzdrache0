@@ -7,16 +7,17 @@ use ash::vk;
 
 use super::{binding, 空中遠近合成の束縛先, 空中遠近合成ディスクリプタ};
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::descriptor_common;
 use crate::vulkan::sync::フレームスロット添字;
-use crate::vulkan::{linear_sampler, nearest_sampler};
 
 pub(super) fn 生成する(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     束縛先: &空中遠近合成の束縛先,
 ) -> Result<空中遠近合成ディスクリプタ, レンダラーエラー> {
-    let 深度サンプラー = nearest_sampler::最近傍サンプラーを作る(device)?;
-    let ボリュームサンプラー = match linear_sampler::線形サンプラーを作る(device) {
+    let device = 確保係.論理デバイス();
+    let 深度サンプラー = 確保係.最近傍サンプラーを作る()?;
+    let ボリュームサンプラー = match 確保係.線形サンプラーを作る() {
         Ok(sampler) => sampler,
         Err(誤り) => return Err(作ったサンプラーを片付けて返す(device, &[深度サンプラー], 誤り)),
     };

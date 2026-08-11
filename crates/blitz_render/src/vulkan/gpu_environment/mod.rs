@@ -16,6 +16,7 @@ use ash::vk;
 use crate::descriptor_indexing_limits::ディスクリプタ索引上限;
 use crate::error::レンダラーエラー;
 use crate::present_display::実表示計測状況;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::debug_messenger::デバッグメッセンジャー;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -71,8 +72,10 @@ impl GPU環境 {
         物理デバイス問い合わせ::生成する(&self.instance, self.physical_device)
     }
 
-    pub(crate) fn メモリプロパティを取得する(&self) -> vk::PhysicalDeviceMemoryProperties {
-        self.物理デバイス問い合わせ().メモリプロパティを取得する()
+    /// GPU資源を確保する道具を貸す。論理デバイスとメモリ性質をこの環境が持ち続けるため、
+    /// 確保を頼む側はこの2つを引数で運ばずに済む。
+    pub(crate) fn 資源の確保係を貸す(&self) -> GPU資源の確保係<'_> {
+        GPU資源の確保係::生成する(&self.device, self.物理デバイス問い合わせ().メモリプロパティを取得する())
     }
 
     /// GPU上の全作業の完了を待つ。使用中リソースの破棄によるvalidationエラーを避けるため、

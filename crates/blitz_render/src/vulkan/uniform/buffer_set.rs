@@ -7,48 +7,27 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::host_buffer;
-use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
+use crate::vulkan::allocator::{GPU資源の確保係, フレームスロットごとのバッファ};
+use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct 定数バッファ一式 {
-    buffer一覧: [vk::Buffer; 進行中フレーム数],
-    memory一覧: [vk::DeviceMemory; 進行中フレーム数],
+    スロットごとのバッファ: フレームスロットごとのバッファ,
 }
 
 impl 定数バッファ一式 {
-    pub(super) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        バイト長: usize,
-    ) -> Result<Self, レンダラーエラー> {
-        let mut buffer一覧 = [vk::Buffer::null(); 進行中フレーム数];
-        let mut memory一覧 = [vk::DeviceMemory::null(); 進行中フレーム数];
-        let 初期バイト列 = vec![0u8; バイト長];
-
-        for 添字 in 0..進行中フレーム数 {
-            let 用途 = vk::BufferUsageFlags::UNIFORM_BUFFER;
-            match host_buffer::確保して書き込む(device, メモリプロパティ, &初期バイト列, 用途) {
-                Ok((buffer, memory)) => {
-                    buffer一覧[添字] = buffer;
-                    memory一覧[添字] = memory;
-                }
-                Err(誤り) => {
-                    for 破棄添字 in 0..添字 {
-                        // 安全性: 生成途中のバッファはこのスコープの唯一の所有者で、以降使用しない。
-                        unsafe { device.destroy_buffer(buffer一覧[破棄添字], None) };
-                        device.メモリを解放する(memory一覧[破棄添字]);
-                    }
-                    return Err(誤り);
-                }
-            }
-        }
-
-        Ok(Self { buffer一覧, memory一覧 })
+    pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, バイト長: usize) -> Result<Self, レンダラーエラー> {
+        let スロットごとのバッファ = 確保係.フレームスロットごとのホスト可視バッファを確保して書き込む(
+            &vec![0u8; バイト長],
+            vk::BufferUsageFlags::UNIFORM_BUFFER,
+        )?;
+        Ok(Self {
+            スロットごとのバッファ
+        })
     }
 
     pub(super) fn buffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
-        self.buffer一覧[フレーム添字.配列添字()]
+        self.スロットごとのバッファ.スロットのバッファ(フレーム添字)
     }
 
     pub(super) fn 書き込む(
@@ -57,19 +36,11 @@ impl 定数バッファ一式 {
         フレーム添字: フレームスロット添字,
         バイト列: &[u8],
     ) -> Result<(), レンダラーエラー> {
-        host_buffer::上書きする(device, self.memory一覧[フレーム添字.配列添字()], バイト列)
+        self.スロットごとのバッファ.スロットの中身を書き換える(device, フレーム添字, バイト列)
     }
 
+    /// 前提: 破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
-        // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
-        // device_wait_idle済みであることを呼び出し元が保証する。
-        unsafe {
-            for &buffer in &self.buffer一覧 {
-                device.destroy_buffer(buffer, None);
-            }
-        }
-        for &memory in &self.memory一覧 {
-            device.メモリを解放する(memory);
-        }
+        self.スロットごとのバッファ.破棄する(device);
     }
 }

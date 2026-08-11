@@ -26,6 +26,7 @@ mod sky_write_order_tests;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 use buffer_set::定数バッファ一式;
@@ -41,11 +42,8 @@ pub(crate) struct フレームシェーダー定数一式 {
 }
 
 impl フレームシェーダー定数一式 {
-    pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-    ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, メモリプロパティ)
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>) -> Result<Self, レンダラーエラー> {
+        create::生成する(確保係)
     }
 
     pub(crate) fn ビュー定数のbuffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {

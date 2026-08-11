@@ -10,6 +10,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 pub(crate) struct 空パイプライン {
     pub(crate) handle: vk::Pipeline,
@@ -22,13 +23,13 @@ impl 空パイプライン {
     /// `ディスクリプタlayout一覧`はset0から順に並べたレイアウトであり、set0はビューとパスのセット、
     /// set1は大気のベイク済み画像を参照するレイアウトである。
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         カラー形式: vk::Format,
         深度形式: vk::Format,
         ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, カラー形式, 深度形式, ディスクリプタlayout一覧, シェーダー)
+        create::生成する(確保係, カラー形式, 深度形式, ディスクリプタlayout一覧, シェーダー)
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

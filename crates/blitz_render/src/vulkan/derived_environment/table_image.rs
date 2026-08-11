@@ -8,6 +8,7 @@ mod create;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 /// 反射率積分表の画素形式。第1成分が垂直入射の反射率に掛かる倍率、第2成分が反射率に依らず足す量である。
@@ -22,13 +23,8 @@ pub(in crate::vulkan) struct 反射率積分表の画像 {
 }
 
 impl 反射率積分表の画像 {
-    pub(in crate::vulkan) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        横: u32,
-        縦: u32,
-    ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, メモリプロパティ, 横, 縦)
+    pub(in crate::vulkan) fn 生成する(確保係: &GPU資源の確保係<'_>, 横: u32, 縦: u32) -> Result<Self, レンダラーエラー> {
+        create::生成する(確保係, 横, 縦)
     }
 
     pub(in crate::vulkan) fn 範囲(&self) -> vk::Extent3D {

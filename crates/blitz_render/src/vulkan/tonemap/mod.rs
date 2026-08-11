@@ -9,7 +9,8 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
-use crate::vulkan::{fullscreen_pipeline, linear_sampler};
+use crate::vulkan::allocator::GPU資源の確保係;
+use crate::vulkan::fullscreen_pipeline;
 
 /// 明るさの圧縮が押し込む定数のバイト数。`shaders/tonemap.slang`の`ExposurePush`(単精度2つと32ビット1つ)と一致させる。
 pub(crate) const 露出プッシュ定数バイト数: u32 = 12;
@@ -25,13 +26,14 @@ pub(crate) struct 明るさの圧縮一式 {
 
 impl 明るさの圧縮一式 {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         スワップチェーン形式: vk::Format,
         シェーダー: &シェーダー一式,
         hdrビュー: vk::ImageView,
         光のにじみビュー: vk::ImageView,
     ) -> Result<Self, レンダラーエラー> {
-        let sampler = linear_sampler::線形サンプラーを作る(device)?;
+        let device = 確保係.論理デバイス();
+        let sampler = 確保係.線形サンプラーを作る()?;
         let ディスクリプタ = match descriptor::生成する(device) {
             Ok(ディスクリプタ) => ディスクリプタ,
             Err(誤り) => {
@@ -41,7 +43,7 @@ impl 明るさの圧縮一式 {
             }
         };
         let 組 = fullscreen_pipeline::組み立てる(
-            device,
+            確保係,
             スワップチェーン形式,
             ディスクリプタ.layout,
             シェーダー,

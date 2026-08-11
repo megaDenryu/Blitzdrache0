@@ -5,20 +5,21 @@ mod image;
 
 use ash::vk;
 
-use self::image::{メモリを確保して結びつける, 画像を作る, 距離区分ビューを作る, 配列ビューを作る};
+use self::image::{画像を作る, 距離区分ビューを作る, 配列ビューを作る};
 use super::sampler::比較サンプラーを作る;
 use super::シャドウマップ;
 use crate::cascade::{影の一辺解像度, 距離区分数};
 use crate::error::レンダラーエラー;
+use crate::gpu_memory_stats::GPUメモリ用途;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) fn 生成する(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-    一辺: 影の一辺解像度,
+    確保係: &GPU資源の確保係<'_>, 一辺: 影の一辺解像度
 ) -> Result<シャドウマップ, レンダラーエラー> {
+    let device = 確保係.論理デバイス();
     let 画像 = 画像を作る(device, 一辺)?;
-    let memory = match メモリを確保して結びつける(device, メモリプロパティ, 画像) {
+    let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(画像, GPUメモリ用途::描画画像) {
         Ok(memory) => memory,
         Err(誤り) => {
             // 安全性: 画像はこのスコープの唯一の所有者で、以降使用しない。

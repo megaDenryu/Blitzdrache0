@@ -6,15 +6,16 @@ use ash::vk;
 
 use super::{binding, 大気のベイク済み画像標本の束縛先, 大気のベイク済み画像標本ディスクリプタ};
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::descriptor_common;
-use crate::vulkan::linear_sampler;
 use crate::vulkan::sync::フレームスロット添字;
 
 pub(super) fn 生成する(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     束縛先: &大気のベイク済み画像標本の束縛先,
 ) -> Result<大気のベイク済み画像標本ディスクリプタ, レンダラーエラー> {
-    let sampler = linear_sampler::線形サンプラーを作る(device)?;
+    let device = 確保係.論理デバイス();
+    let sampler = 確保係.線形サンプラーを作る()?;
     let layout = match binding::レイアウトを作る(device) {
         Ok(layout) => layout,
         Err(誤り) => return Err(サンプラーを片付けて返す(device, sampler, 誤り)),

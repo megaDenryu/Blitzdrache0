@@ -4,47 +4,35 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::allocator::{GPU資源の確保係, 専用メモリ付きバッファ};
 use crate::vulkan::transfer::転送実行環境;
-use crate::vulkan::{device_buffer, host_buffer};
 
 pub(crate) fn ステージング経由でアップロードする(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     転送環境: &転送実行環境,
     データ: &[u8],
     用途: vk::BufferUsageFlags,
-) -> Result<(vk::Buffer, vk::DeviceMemory), レンダラーエラー> {
-    let (ステージングバッファ, ステージングメモリ) =
-        host_buffer::確保して書き込む(device, メモリプロパティ, データ, vk::BufferUsageFlags::TRANSFER_SRC)?;
+) -> Result<専用メモリ付きバッファ, レンダラーエラー> {
+    let ステージング = 確保係.ホスト可視バッファを確保して書き込む(データ, vk::BufferUsageFlags::TRANSFER_SRC)?;
 
     let バイト数 = u64::try_from(データ.len()).unwrap_or_else(|_| panic!("転送データ長がu64に収まらない"));
-    let 確保結果 = device_buffer::確保する(device, メモリプロパティ, バイト数, 用途 | vk::BufferUsageFlags::TRANSFER_DST);
-    let (先バッファ, 先メモリ) = match 確保結果 {
-        Ok(結果) => 結果,
+    let 転送先 = match 確保係.デバイスローカルバッファを確保する(バイト数, 用途 | vk::BufferUsageFlags::TRANSFER_DST) {
+        Ok(転送先) => 転送先,
         Err(誤り) => {
-            // 安全性: ステージングバッファはこのスコープの唯一の所有者で、以降使用しない。
-            unsafe { device.destroy_buffer(ステージングバッファ, None) };
-            device.メモリを解放する(ステージングメモリ);
+            ステージング.破棄する(確保係.論理デバイス());
             return Err(誤り);
         }
     };
 
     let コピー結果 =
-        ステージングバッファから転送先バッファへコピーする(転送環境, ステージングバッファ, 先バッファ, バイト数);
-
-    // 安全性: 転送実行は完了済みで、ステージングバッファは以降使用しない。
-    unsafe { device.destroy_buffer(ステージングバッファ, None) };
-    device.メモリを解放する(ステージングメモリ);
+        ステージングバッファから転送先バッファへコピーする(転送環境, ステージング.バッファ(), 転送先.バッファ(), バイト数);
+    ステージング.破棄する(確保係.論理デバイス());
 
     if let Err(誤り) = コピー結果 {
-        // 安全性: 転送先バッファはこのスコープの唯一の所有者で、以降使用しない。
-        unsafe { device.destroy_buffer(先バッファ, None) };
-        device.メモリを解放する(先メモリ);
+        転送先.破棄する(確保係.論理デバイス());
         return Err(誤り);
     }
-
-    Ok((先バッファ, 先メモリ))
+    Ok(転送先)
 }
 
 fn ステージングバッファから転送先バッファへコピーする(

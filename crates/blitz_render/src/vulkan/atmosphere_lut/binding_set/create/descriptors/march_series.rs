@@ -7,16 +7,18 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::base_resources::大気のベイク済み画像の基盤資源;
 use crate::vulkan::atmosphere_lut::march_descriptor::{経路生成の束縛先, 経路生成ディスクリプタ};
 use crate::vulkan::sync::進行中フレーム数;
 
 pub(super) fn 経路生成を順に作る<const 個数: usize>(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     基盤: &大気のベイク済み画像の基盤資源,
     シェーダー定数一覧: &[vk::Buffer; 進行中フレーム数],
     書き込み先一覧: [vk::ImageView; 個数],
 ) -> Result<[経路生成ディスクリプタ; 個数], レンダラーエラー> {
+    let device = 確保係.論理デバイス();
     let mut 作った: Vec<経路生成ディスクリプタ> = Vec::with_capacity(書き込み先一覧.len());
     for 書き込み先ビュー in 書き込み先一覧 {
         let 束縛先 = 経路生成の束縛先 {
@@ -25,7 +27,7 @@ pub(super) fn 経路生成を順に作る<const 個数: usize>(
             多重散乱ビュー: 基盤.多重散乱.画像ビュー,
             書き込み先ビュー,
         };
-        match 経路生成ディスクリプタ::生成する(device, 束縛先) {
+        match 経路生成ディスクリプタ::生成する(確保係, 束縛先) {
             Ok(ディスクリプタ) => 作った.push(ディスクリプタ),
             Err(誤り) => {
                 while let Some(ディスクリプタ) = 作った.pop() {

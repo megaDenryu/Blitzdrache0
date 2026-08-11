@@ -6,17 +6,16 @@ use ash::vk;
 use super::{大気のベイク済み画像, 大気のベイク済み画像形式};
 use crate::error::レンダラーエラー;
 use crate::gpu_memory_stats::GPUメモリ用途;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像の形;
-use crate::vulkan::memory;
-use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) fn 生成する(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     形: 大気のベイク済み画像の形,
 ) -> Result<大気のベイク済み画像, レンダラーエラー> {
+    let device = 確保係.論理デバイス();
     let 画像 = 画像を作る(device, 形)?;
-    let memory = match メモリを確保して結びつける(device, メモリプロパティ, 画像) {
+    let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(画像, GPUメモリ用途::描画画像) {
         Ok(memory) => memory,
         Err(誤り) => {
             // 安全性: 画像はこのスコープの唯一の所有者で、以降使用しない。
@@ -54,23 +53,6 @@ fn 画像を作る(device: &ash::Device, 形: 大気のベイク済み画像の�
         .initial_layout(vk::ImageLayout::UNDEFINED);
     // 安全性: deviceは生成済みで有効。
     Ok(unsafe { device.create_image(&create_info, None)? })
-}
-
-fn メモリを確保して結びつける(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-    画像: vk::Image,
-) -> Result<vk::DeviceMemory, レンダラーエラー> {
-    // 安全性: 画像は直前に生成済み。
-    let 要件 = unsafe { device.get_image_memory_requirements(画像) };
-    let メモリ型添字 = memory::デバイスローカルメモリ型を選ぶ(メモリプロパティ, 要件.memory_type_bits)?;
-    let memory = memory::専用メモリを確保する(device, 要件.size, メモリ型添字, GPUメモリ用途::描画画像)?;
-    // 安全性: 画像・memoryはともに直前に生成済みで、offsetは0(専用確保のため衝突しない)。
-    if let Err(誤り) = unsafe { device.bind_image_memory(画像, memory, 0) } {
-        device.メモリを解放する(memory);
-        return Err(誤り.into());
-    }
-    Ok(memory)
 }
 
 fn 画像ビューを作る(

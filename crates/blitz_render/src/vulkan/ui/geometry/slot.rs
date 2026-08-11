@@ -4,30 +4,28 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::host_buffer;
+use crate::vulkan::allocator::{GPU資源の確保係, 専用メモリ付きバッファ};
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct バッファスロット {
-    pub(super) buffer: vk::Buffer,
-    memory: vk::DeviceMemory,
+    バッファ: 専用メモリ付きバッファ,
     容量バイト数: u64,
 }
 
 impl バッファスロット {
+    pub(super) fn buffer(&self) -> vk::Buffer {
+        self.バッファ.バッファ()
+    }
+
+    /// 前提: 破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
-        // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
-        // device_wait_idle済みであることを呼び出し元が保証する。
-        unsafe {
-            device.destroy_buffer(self.buffer, None);
-        }
-        device.メモリを解放する(self.memory);
+        self.バッファ.破棄する(device);
     }
 }
 
 pub(super) fn 書き込む(
     スロット: &mut Option<バッファスロット>,
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     データ: &[u8],
     用途: vk::BufferUsageFlags,
 ) -> Result<vk::Buffer, レンダラーエラー> {
@@ -38,19 +36,18 @@ pub(super) fn 書き込む(
     };
     if 再確保が必要 {
         if let Some(古い) = スロット.take() {
-            古い.破棄する(device);
+            古い.破棄する(確保係.論理デバイス());
         }
-        let (buffer, memory) = host_buffer::確保して書き込む(device, メモリプロパティ, データ, 用途)?;
+        let バッファ = 確保係.ホスト可視バッファを確保して書き込む(データ, 用途)?;
         *スロット = Some(バッファスロット {
-            buffer,
-            memory,
+            バッファ,
             容量バイト数: 必要バイト数,
         });
     } else if let Some(既存) = スロット {
-        host_buffer::上書きする(device, 既存.memory, データ)?;
+        既存.バッファ.ホスト可視の中身を書き換える(確保係.論理デバイス(), データ)?;
     }
     Ok(スロット
         .as_ref()
         .unwrap_or_else(|| panic!("UIジオメトリバッファスロットの確保に失敗した(実装のバグ)"))
-        .buffer)
+        .buffer())
 }

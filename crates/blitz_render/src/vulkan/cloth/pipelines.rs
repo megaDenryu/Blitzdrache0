@@ -5,6 +5,7 @@ use ash::vk;
 
 use crate::cloth_shader_set::布シェーダー一式;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::compute_pipeline;
 
 pub(super) struct 布パイプライン群 {
@@ -21,10 +22,11 @@ pub(super) struct 布パイプライン群 {
 }
 
 pub(super) fn 生成する(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     ディスクリプタlayout: vk::DescriptorSetLayout,
     シェーダー: &布シェーダー一式,
 ) -> Result<布パイプライン群, レンダラーエラー> {
+    let device = 確保係.論理デバイス();
     let ディスクリプタlayout一覧 = [ディスクリプタlayout];
     let layout_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&ディスクリプタlayout一覧);
     // 安全性: deviceは生成済みで有効。layout_infoは本関数内で構築した値のみを参照する。
@@ -43,7 +45,7 @@ pub(super) fn 生成する(
     ];
     let mut 生成済み: Vec<vk::Pipeline> = Vec::with_capacity(仕様一覧.len());
     for (spirv, エントリ名) in 仕様一覧 {
-        match compute_pipeline::生成する(device, layout, spirv, エントリ名) {
+        match compute_pipeline::生成する(確保係, layout, spirv, エントリ名) {
             Ok(handle) => 生成済み.push(handle),
             Err(誤り) => {
                 // 安全性: 生成済みパイプラインとlayoutはこのスコープの唯一の所有者で、以降使用しない。

@@ -12,6 +12,7 @@ use ash::vk;
 
 use super::{大気のベイク済み画像の形, 大気のベイク済み画像の画像入力};
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) const 大気のベイク済み画像形式: vk::Format = vk::Format::R16G16B16A16_SFLOAT;
@@ -25,11 +26,9 @@ pub(crate) struct 大気のベイク済み画像 {
 
 impl 大気のベイク済み画像 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        形: 大気のベイク済み画像の形,
+        確保係: &GPU資源の確保係<'_>, 形: 大気のベイク済み画像の形
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, メモリプロパティ, 形)
+        create::生成する(確保係, 形)
     }
 
     /// グラフへ資源を登録するのに要る3つだけを取り出す。メモリのハンドルは外へ出さない。

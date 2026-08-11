@@ -22,6 +22,7 @@ use ash::vk;
 
 use crate::auto_exposure::{自動露出のシェーダー一式, 自動露出の設定};
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
@@ -34,14 +35,14 @@ pub(crate) struct 自動露出一式 {
 
 impl 自動露出一式 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
         シェーダー: &自動露出のシェーダー一式,
         設定: 自動露出の設定,
         hdrビュー: vk::ImageView,
     ) -> Result<Self, レンダラーエラー> {
-        let バッファ = storage::自動露出のバッファ一式::生成する(device, メモリプロパティ, 転送環境, &設定.境界の線形輝度)?;
+        let device = 確保係.論理デバイス();
+        let バッファ = storage::自動露出のバッファ一式::生成する(確保係, 転送環境, &設定.境界の線形輝度)?;
         let ディスクリプタ = match descriptor::自動露出のディスクリプタ::生成する(device) {
             Ok(ディスクリプタ) => ディスクリプタ,
             Err(誤り) => {
@@ -50,7 +51,7 @@ impl 自動露出一式 {
             }
         };
         let パイプライン =
-            match pipelines::自動露出のパイプライン一式::生成する(device, &ディスクリプタ, &シェーダー.集計, &シェーダー.導出と適応)
+            match pipelines::自動露出のパイプライン一式::生成する(確保係, &ディスクリプタ, &シェーダー.集計, &シェーダー.導出と適応)
             {
                 Ok(パイプライン) => パイプライン,
                 Err(誤り) => {
@@ -71,7 +72,7 @@ impl 自動露出一式 {
 
     /// 明るさの圧縮のディスクリプタが束縛する、GPU上の露出状態。
     pub(crate) fn 露出状態バッファ(&self) -> vk::Buffer {
-        self.バッファ.露出状態.handle
+        self.バッファ.露出状態.handle()
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {

@@ -13,7 +13,7 @@ pub(super) fn 書く(
         バッファ.レスト頂点buffer(),
         バッファ.属性buffer(),
         バッファ.行列buffer(フレーム添字),
-        バッファ.出力.0,
+        バッファ.出力.バッファ(),
     ];
     let 情報一覧: Vec<[vk::DescriptorBufferInfo; 1]> = buffer一覧
         .iter()

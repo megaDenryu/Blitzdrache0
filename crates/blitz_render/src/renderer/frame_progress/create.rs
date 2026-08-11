@@ -5,22 +5,22 @@ use super::slot_cycle::フレームスロット巡回;
 use super::フレーム進行;
 use crate::error::レンダラーエラー;
 use crate::vulkan;
-use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 impl フレーム進行 {
-    pub(in crate::renderer) fn 生成する(device: &GPUデバイス, キューファミリ添字: u32) -> Result<Self, レンダラーエラー> {
-        let (command_pool, command_buffer一覧) = vulkan::commands::生成する(device, キューファミリ添字)?;
-        let フレーム同期 = match vulkan::sync::フレーム同期::生成する(device) {
+    pub(in crate::renderer) fn 生成する(
+        確保係: &GPU資源の確保係<'_>, キューファミリ添字: u32
+    ) -> Result<Self, レンダラーエラー> {
+        let コマンド一式 = 確保係.フレーム記録のコマンド一式を確保する(キューファミリ添字)?;
+        let フレーム同期 = match vulkan::sync::フレーム同期::生成する(確保係.論理デバイス()) {
             Ok(値) => 値,
             Err(誤り) => {
-                // 安全性: command_poolは直前に確保したばかりで、まだどこにも渡していないためGPUは使用していない。
-                unsafe { device.destroy_command_pool(command_pool, None) };
+                コマンド一式.破棄する(確保係.論理デバイス());
                 return Err(誤り);
             }
         };
         Ok(Self {
-            command_pool,
-            command_buffer一覧,
+            コマンド一式,
             フレーム同期,
             巡回: フレームスロット巡回::先頭から始める(),
             見送り累計: 0,

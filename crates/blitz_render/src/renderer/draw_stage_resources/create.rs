@@ -13,14 +13,13 @@ use crate::frame_composition::フレーム構成;
 use crate::indirect_lighting::照明問い合わせ契約;
 use crate::shader_bundle::シェーダー束;
 use crate::vulkan;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::cluster_light_assignment::クラスタ選別一式;
 use crate::vulkan::descriptor::{シーンセットレイアウト一式, 照明問い合わせのバッファ組};
-use crate::vulkan::tracked_device::GPUデバイス;
 
 /// 器を組み立てるのに要る材料一式。
 pub(in crate::renderer) struct 生成要求<'a> {
-    pub(in crate::renderer) device: &'a GPUデバイス,
-    pub(in crate::renderer) メモリプロパティ: &'a vk::PhysicalDeviceMemoryProperties,
+    pub(in crate::renderer) 確保係: &'a GPU資源の確保係<'a>,
     /// シーン段階の色アタッチメントの形式(ポスト処理があればHDR中間画像、無ければスワップチェーン)。
     /// 影段階は深度だけへ書くため色形式を要らない。
     pub(in crate::renderer) シーンカラー形式: vk::Format,
@@ -36,23 +35,23 @@ pub(in crate::renderer) struct 生成要求<'a> {
 /// 選別を先に作るのは、この後に続く任意段階の資源に破棄をまとめて呼ぶ口が無く、後から作ると
 /// 任意段階の失敗で選別だけが漏れる経路と、選別の失敗で任意段階が漏れる経路のどちらかが必ず残るためである。
 pub(super) fn 生成する(要求: 生成要求<'_>) -> Result<描画段階資源, レンダラーエラー> {
-    let クラスタ選別 = クラスタ選別一式::生成する(要求.device, &要求.シェーダー.クラスタ選別, 要求.クラスタ選別が読むバッファ組一覧)?;
+    let クラスタ選別 = クラスタ選別一式::生成する(要求.確保係, &要求.シェーダー.クラスタ選別, 要求.クラスタ選別が読むバッファ組一覧)?;
     let 点光源の影 = match vulkan::pipeline::点光源の影のパイプライン::生成する(
-        要求.device,
+        要求.確保係,
         &要求.セットレイアウト.シャドウの並び(),
         &要求.シェーダー.点光源の影,
     ) {
         Ok(値) => 値,
         Err(誤り) => {
-            クラスタ選別.破棄する(要求.device);
+            クラスタ選別.破棄する(要求.確保係.論理デバイス());
             return Err(誤り);
         }
     };
     let 任意 = match optional_stages::組み立てる(&要求) {
         Ok(値) => 値,
         Err(誤り) => {
-            点光源の影.破棄する(要求.device);
-            クラスタ選別.破棄する(要求.device);
+            点光源の影.破棄する(要求.確保係.論理デバイス());
+            クラスタ選別.破棄する(要求.確保係.論理デバイス());
             return Err(誤り);
         }
     };

@@ -6,16 +6,18 @@ use ash::vk;
 use super::{descriptor, 光のにじみ一式};
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
+use crate::vulkan::fullscreen_pipeline;
 use crate::vulkan::hdr_target::HDR形式;
-use crate::vulkan::{fullscreen_pipeline, linear_sampler};
 
 pub(super) fn パイプライン部を生成する(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     前処理シェーダー: &シェーダー一式,
     縮小シェーダー: &シェーダー一式,
     拡大シェーダー: &シェーダー一式,
 ) -> Result<光のにじみ一式, レンダラーエラー> {
-    let sampler = linear_sampler::線形サンプラーを作る(device)?;
+    let device = 確保係.論理デバイス();
+    let sampler = 確保係.線形サンプラーを作る()?;
     let (単一読みlayout, 二読みlayout) = match descriptor::レイアウト2種を作る(device) {
         Ok(組) => 組,
         Err(誤り) => {
@@ -33,7 +35,7 @@ pub(super) fn パイプライン部を生成する(
     ];
     let mut 組一覧: Vec<(vk::Pipeline, vk::PipelineLayout)> = Vec::new();
     for (シェーダー, エントリ名, layout) in 仕様一覧 {
-        match fullscreen_pipeline::組み立てる(device, HDR形式, layout, シェーダー, エントリ名, 0) {
+        match fullscreen_pipeline::組み立てる(確保係, HDR形式, layout, シェーダー, エントリ名, 0) {
             Ok(組) => 組一覧.push(組),
             Err(誤り) => {
                 // 安全性: 生成済みのパイプラインとlayoutはこのスコープの唯一の所有者で、以降使用しない。

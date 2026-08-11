@@ -11,7 +11,7 @@ use ash::vk;
 
 use super::{fill, images::局所可視度の画像組, 局所可視性一式};
 use crate::error::レンダラーエラー;
-use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::transfer::転送実行環境;
 
 impl 局所可視性一式 {
@@ -19,13 +19,13 @@ impl 局所可視性一式 {
     /// 深度ビューは作り直された後の新しいものを渡す。
     pub(crate) fn 寸法に追従する(
         &mut self,
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
         寸法: vk::Extent2D,
         深度ビュー: vk::ImageView,
     ) -> Result<(), レンダラーエラー> {
-        let 新画像組 = 局所可視度の画像組::生成する(device, メモリプロパティ, 寸法)?;
+        let device = 確保係.論理デバイス();
+        let 新画像組 = 局所可視度の画像組::生成する(確保係, 寸法)?;
         if let Err(誤り) = fill::一定の符号値で埋める(転送環境, &新画像組, self.描画設定.埋める符号値()) {
             新画像組.破棄する(device);
             return Err(誤り);

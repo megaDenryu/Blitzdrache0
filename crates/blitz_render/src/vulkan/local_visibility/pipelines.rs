@@ -10,6 +10,7 @@ use super::setting::即時定数バイト数;
 use crate::compute_shader::コンピュートシェーダー;
 use crate::error::レンダラーエラー;
 use crate::local_visibility::局所可視性のシェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::compute_pipeline;
 
 pub(crate) struct 局所可視性のパイプライン一式 {
@@ -21,12 +22,13 @@ pub(crate) struct 局所可視性のパイプライン一式 {
 
 impl 局所可視性のパイプライン一式 {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         ディスクリプタ: &局所可視性のディスクリプタ,
         シェーダー: &局所可視性のシェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let レイアウト = レイアウトを作る(device, ディスクリプタ.レイアウト)?;
-        match 両方を作る(device, レイアウト, シェーダー) {
+        match 両方を作る(確保係, レイアウト, シェーダー) {
             Ok((遮蔽の標本化, 両側ぼかし)) => Ok(Self {
                 遮蔽の標本化,
                 両側ぼかし,
@@ -51,12 +53,13 @@ impl 局所可視性のパイプライン一式 {
 }
 
 fn 両方を作る(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     レイアウト: vk::PipelineLayout,
     シェーダー: &局所可視性のシェーダー一式,
 ) -> Result<(vk::Pipeline, vk::Pipeline), レンダラーエラー> {
-    let 遮蔽の標本化 = パイプラインを作る(device, レイアウト, &シェーダー.遮蔽の標本化)?;
-    match パイプラインを作る(device, レイアウト, &シェーダー.両側ぼかし) {
+    let device = 確保係.論理デバイス();
+    let 遮蔽の標本化 = パイプラインを作る(確保係, レイアウト, &シェーダー.遮蔽の標本化)?;
+    match パイプラインを作る(確保係, レイアウト, &シェーダー.両側ぼかし) {
         Ok(両側ぼかし) => Ok((遮蔽の標本化, 両側ぼかし)),
         Err(誤り) => {
             // 安全性: 遮蔽の標本化はこのスコープの唯一の所有者で、以降使用しない。
@@ -67,11 +70,11 @@ fn 両方を作る(
 }
 
 fn パイプラインを作る(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     レイアウト: vk::PipelineLayout,
     シェーダー: &コンピュートシェーダー,
 ) -> Result<vk::Pipeline, レンダラーエラー> {
-    compute_pipeline::生成する(device, レイアウト, シェーダー.コード(), c"computeMain")
+    compute_pipeline::生成する(確保係, レイアウト, シェーダー.コード(), c"computeMain")
 }
 
 fn レイアウトを作る(

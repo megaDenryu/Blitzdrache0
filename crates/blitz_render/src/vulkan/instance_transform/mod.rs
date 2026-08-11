@@ -19,22 +19,22 @@ pub(crate) use reference::個体レコード参照;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
+use crate::vulkan::allocator::専用メモリ付きバッファ;
 use crate::vulkan::geometry::upload;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 use content::個体変換内容;
 
 pub(crate) struct 個体変換バッファ {
-    pub(crate) buffer: vk::Buffer,
-    memory: vk::DeviceMemory,
+    バッファ: 専用メモリ付きバッファ,
     /// バッファが保持する個体変換のバイト数。ディスクリプタの範囲に使う。
     pub(crate) 範囲: vk::DeviceSize,
 }
 
 impl 個体変換バッファ {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
         内容一覧: &[個体変換内容],
     ) -> Result<Self, レンダラーエラー> {
@@ -42,24 +42,17 @@ impl 個体変換バッファ {
         for 内容 in 内容一覧 {
             バイト列.extend_from_slice(&bytes::バイト列にする(内容));
         }
-        let (buffer, memory) = upload::ステージング経由でアップロードする(
-            device,
-            メモリプロパティ,
-            転送環境,
-            &バイト列,
-            vk::BufferUsageFlags::STORAGE_BUFFER,
-        )?;
+        let バッファ =
+            upload::ステージング経由でアップロードする(確保係, 転送環境, &バイト列, vk::BufferUsageFlags::STORAGE_BUFFER)?;
         let 範囲 = u64::try_from(バイト列.len()).unwrap_or_else(|_| panic!("個体変換バッファの長さがu64に収まらない"));
-        Ok(Self { buffer, memory, 範囲 })
+        Ok(Self { バッファ, 範囲 })
     }
 
     pub(crate) fn 参照(&self) -> 個体レコード参照 {
-        個体レコード参照::全スロット共通のバッファから生成する(self.buffer, self.範囲)
+        個体レコード参照::全スロット共通のバッファから生成する(self.バッファ.バッファ(), self.範囲)
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
-        // 安全性: bufferとmemoryはSelfが所有し、呼び出し元がGPU使用完了を保証する。
-        unsafe { device.destroy_buffer(self.buffer, None) };
-        device.メモリを解放する(self.memory);
+        self.バッファ.破棄する(device);
     }
 }

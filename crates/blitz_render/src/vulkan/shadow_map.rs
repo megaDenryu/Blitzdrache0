@@ -15,6 +15,7 @@ use ash::vk;
 
 use crate::cascade::{影の一辺解像度, 距離区分数};
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) const シャドウマップ形式: vk::Format = vk::Format::D32_SFLOAT;
@@ -37,12 +38,8 @@ pub(crate) struct シャドウマップ {
 }
 
 impl シャドウマップ {
-    pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        一辺: 影の一辺解像度,
-    ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, メモリプロパティ, 一辺)
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, 一辺: 影の一辺解像度) -> Result<Self, レンダラーエラー> {
+        create::生成する(確保係, 一辺)
     }
 
     pub(crate) fn 一辺(&self) -> 影の一辺解像度 {

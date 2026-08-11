@@ -8,6 +8,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::{空中遠近合成の束縛先, 空中遠近合成ディスクリプタ};
 use crate::vulkan::frame::空中遠近合成描画入力;
 use crate::vulkan::pipeline::空中遠近合成パイプライン;
@@ -21,15 +22,16 @@ pub(crate) struct 空中遠近合成資源 {
 impl 空中遠近合成資源 {
     /// ディスクリプタを先に作る。パイプラインレイアウトがそのディスクリプタセットレイアウトを要るためである。
     pub(super) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         カラー形式: vk::Format,
         ビューとパスlayout: vk::DescriptorSetLayout,
         束縛先: &空中遠近合成の束縛先,
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        let ディスクリプタ = 空中遠近合成ディスクリプタ::生成する(device, 束縛先)?;
+        let device = 確保係.論理デバイス();
+        let ディスクリプタ = 空中遠近合成ディスクリプタ::生成する(確保係, 束縛先)?;
         let layout一覧 = [ビューとパスlayout, ディスクリプタ.layout];
-        match 空中遠近合成パイプライン::生成する(device, カラー形式, &layout一覧, シェーダー) {
+        match 空中遠近合成パイプライン::生成する(確保係, カラー形式, &layout一覧, シェーダー) {
             Ok(パイプライン) => Ok(Self {
                 パイプライン,
                 ディスクリプタ,

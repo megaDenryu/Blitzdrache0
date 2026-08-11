@@ -8,6 +8,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::ui_texture_material::UIテクスチャ素材;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
@@ -20,15 +21,14 @@ pub(crate) struct UIテクスチャ {
 
 impl UIテクスチャ {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
         素材: &UIテクスチャ素材,
     ) -> Result<Self, レンダラーエラー> {
-        let (image, memory) = image::生成する(device, メモリプロパティ, 素材.幅(), 素材.高さ())?;
+        let device = 確保係.論理デバイス();
+        let (image, memory) = image::生成する(確保係, 素材.幅(), 素材.高さ())?;
 
-        if let Err(誤り) =
-            upload::ホストの画素列を画像へ転送する(device, メモリプロパティ, 転送環境, image, 素材.幅(), 素材.高さ(), 素材.rgba8())
+        if let Err(誤り) = upload::ホストの画素列を画像へ転送する(確保係, 転送環境, image, 素材.幅(), 素材.高さ(), 素材.rgba8())
         {
             画像を破棄する(device, image, memory);
             return Err(誤り);

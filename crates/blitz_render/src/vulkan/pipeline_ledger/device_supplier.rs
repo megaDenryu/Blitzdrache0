@@ -12,6 +12,7 @@ use ash::vk;
 
 use crate::error::{パイプライン台帳エラー, レンダラーエラー};
 use crate::shader_set::シェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 use super::key::パイプラインキー;
 use super::layouts::材質描画族のレイアウト;
@@ -36,7 +37,7 @@ impl 材質描画族 {
 }
 
 pub(super) struct デバイスパイプライン供給元<'借用> {
-    device: &'借用 ash::Device,
+    確保係: &'借用 GPU資源の確保係<'借用>,
     族: 材質描画族,
     レイアウト: &'借用 材質描画族のレイアウト,
     シェーダー: &'借用 シェーダー一式,
@@ -44,13 +45,13 @@ pub(super) struct デバイスパイプライン供給元<'借用> {
 
 impl<'借用> デバイスパイプライン供給元<'借用> {
     pub(super) const fn 生成する(
-        device: &'借用 ash::Device,
+        確保係: &'借用 GPU資源の確保係<'借用>,
         族: 材質描画族,
         レイアウト: &'借用 材質描画族のレイアウト,
         シェーダー: &'借用 シェーダー一式,
     ) -> Self {
         Self {
-            device,
+            確保係,
             族,
             レイアウト,
             シェーダー,
@@ -74,7 +75,7 @@ impl パイプライン供給元 for デバイスパイプライン供給元<'_>
     }
 
     fn 破棄する(&mut self, 実体: vk::Pipeline) {
-        pipelineを破棄する(self.device, 実体);
+        pipelineを破棄する(self.確保係.論理デバイス(), 実体);
     }
 }
 

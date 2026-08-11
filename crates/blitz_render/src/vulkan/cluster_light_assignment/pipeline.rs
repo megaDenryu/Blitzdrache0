@@ -9,6 +9,7 @@ use ash::vk;
 use super::view_rows::即時定数のバイト数;
 use crate::compute_shader::コンピュートシェーダー;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::compute_pipeline;
 
 pub(super) struct クラスタ選別のパイプライン {
@@ -18,12 +19,13 @@ pub(super) struct クラスタ選別のパイプライン {
 
 impl クラスタ選別のパイプライン {
     pub(super) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         セットレイアウト: vk::DescriptorSetLayout,
         シェーダー: &コンピュートシェーダー,
     ) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let レイアウト = レイアウトを作る(device, セットレイアウト)?;
-        match compute_pipeline::生成する(device, レイアウト, シェーダー.コード(), c"computeMain") {
+        match compute_pipeline::生成する(確保係, レイアウト, シェーダー.コード(), c"computeMain") {
             Ok(パイプライン) => Ok(Self {
                 パイプライン, レイアウト
             }),

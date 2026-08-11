@@ -13,6 +13,7 @@ use ash::vk;
 use super::{image, medium_uniform, 大気のベイク済み画像の形};
 use crate::atmosphere::{大気のベイク済み画像の解像度, 大気散乱媒体};
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -28,10 +29,9 @@ pub(super) struct 大気のベイク済み画像の基盤資源 {
 
 impl 大気のベイク済み画像の基盤資源 {
     pub(super) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        解像度: 大気のベイク済み画像の解像度,
+        確保係: &GPU資源の確保係<'_>, 解像度: 大気のベイク済み画像の解像度
     ) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let 多重散乱の一辺 = 解像度.多重散乱の一辺();
         let スカイビューの形 = 平面(解像度.スカイビューの幅(), 解像度.スカイビューの高さ());
         let 形一覧 = [
@@ -43,8 +43,8 @@ impl 大気のベイク済み画像の基盤資源 {
                 一辺: 解像度.空中遠近の一辺(),
             },
         ];
-        let [透過率, 多重散乱, スカイビュー, 遠方環境用スカイビュー, 空中遠近] = images::順に作る(device, メモリプロパティ, 形一覧)?;
-        match medium_uniform::媒体シェーダー定数一式::生成する(device, メモリプロパティ) {
+        let [透過率, 多重散乱, スカイビュー, 遠方環境用スカイビュー, 空中遠近] = images::順に作る(確保係, 形一覧)?;
+        match medium_uniform::媒体シェーダー定数一式::生成する(確保係) {
             Ok(媒体シェーダー定数) => Ok(Self {
                 透過率,
                 多重散乱,

@@ -4,8 +4,6 @@
 //!
 //! 受け取るのがGPU資源を持たない登録状態であるのは、この工程を終えた時点の登録簿全体から最初の資源表世代を1つだけ作るためである。
 
-use ash::vk;
-
 use super::shared;
 use crate::error::レンダラーエラー;
 use crate::render_scene_material::描画シーン素材;
@@ -13,8 +11,7 @@ use crate::renderer::scene_draw_resources::{シーン描画資源, シーン描�
 use crate::vulkan::material_table::材質の登録状態;
 
 pub(super) fn 起動シーンの束を作る(
-    device: &crate::vulkan::tracked_device::GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &crate::vulkan::allocator::GPU資源の確保係<'_>,
     共有: &shared::共有資源,
     登録状態: &mut 材質の登録状態,
     描画シーン: &描画シーン素材,
@@ -22,9 +19,9 @@ pub(super) fn 起動シーンの束を作る(
     let (材質id一覧, 下書き) =
         登録状態.束の材質を下書きする(crate::renderer::scene_draw_resources::起動シーンの束ID, 描画シーン.描画対象一覧())?;
     let 結果 = シーン描画資源::生成する(
-        device,
+        確保係,
         シーン描画資源生成要求 {
-            メモリプロパティ,
+            確保係,
             転送環境: &共有.転送,
             セットレイアウト: &共有.セットレイアウト,
             描画シーン,

@@ -13,6 +13,7 @@ use super::upload_buffer::注入元バッファ;
 use crate::atmosphere::遠方環境の解像度;
 use crate::distant_environment::遠方環境の焼かせる解析入力;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::derived_environment::派生表現一式;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -31,15 +32,15 @@ pub(crate) struct 焼かせる注入資源 {
 
 impl 焼かせる注入資源 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         派生表現: &派生表現一式,
         解像度: 遠方環境の解像度,
         入力: &遠方環境の焼かせる解析入力,
     ) -> Result<Self, レンダラーエラー> {
-        let 遠方環境 = 注入元バッファ::生成する(device, メモリプロパティ, &bytes::遠方環境のバイト列(入力, 解像度))?;
+        let device = 確保係.論理デバイス();
+        let 遠方環境 = 注入元バッファ::生成する(確保係, &bytes::遠方環境のバイト列(入力, 解像度))?;
         let 表のバイト列 = bytes::反射率積分表のバイト列(入力.反射率積分表(), 派生表現.反射率積分表の解像度());
-        match 注入元バッファ::生成する(device, メモリプロパティ, &表のバイト列) {
+        match 注入元バッファ::生成する(確保係, &表のバイト列) {
             Ok(反射率積分表) => Ok(Self {
                 遠方環境, 反射率積分表
             }),
@@ -52,8 +53,8 @@ impl 焼かせる注入資源 {
 
     pub(crate) fn 転送の材料を作る(&self, 派生表現: &派生表現一式) -> 焼かせる注入 {
         焼かせる注入 {
-            遠方環境の元: self.遠方環境.handle,
-            反射率積分表の元: self.反射率積分表.handle,
+            遠方環境の元: self.遠方環境.handle(),
+            反射率積分表の元: self.反射率積分表.handle(),
             反射率積分表の範囲: 派生表現.反射率積分表の画像().範囲(),
         }
     }

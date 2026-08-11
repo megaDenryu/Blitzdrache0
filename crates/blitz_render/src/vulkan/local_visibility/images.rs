@@ -13,6 +13,7 @@ mod create;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 /// 前提: R8G8B8A8_UNORMの記憶画像・サンプル・転送はVulkan仕様の必須対応のため、実行時の対応確認は行わない。
@@ -44,13 +45,10 @@ pub(crate) struct 局所可視度の画像組 {
 
 impl 局所可視度の画像組 {
     /// ぼかし後の生成に失敗したら生の側を片付ける。
-    pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        寸法: vk::Extent2D,
-    ) -> Result<Self, レンダラーエラー> {
-        let 生 = create::生成する(device, メモリプロパティ, 寸法)?;
-        match create::生成する(device, メモリプロパティ, 寸法) {
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, 寸法: vk::Extent2D) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
+        let 生 = create::生成する(確保係, 寸法)?;
+        match create::生成する(確保係, 寸法) {
             Ok(ぼかし後) => Ok(Self { 生, ぼかし後 }),
             Err(誤り) => {
                 生.破棄する(device);

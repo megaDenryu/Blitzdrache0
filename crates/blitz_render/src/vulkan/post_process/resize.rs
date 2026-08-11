@@ -6,7 +6,7 @@ use ash::vk;
 
 use super::{sized_images, ポスト処理一式};
 use crate::error::レンダラーエラー;
-use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 impl ポスト処理一式 {
     /// 前提: 呼び出し時点でGPUがこれらの画像とディスクリプタを使用していないこと(device_wait_idle後)。
@@ -14,12 +14,10 @@ impl ポスト処理一式 {
     /// 新しい画像を作ってから古い画像を破棄するため、画像生成が失敗しても呼び出し前の一式がそのまま残り、
     /// 保持側は一部だけが欠けた状態を見ない。交換の間だけ新旧の画像が同時に存在する分のGPUメモリを使う。
     pub(crate) fn 寸法に追従する(
-        &mut self,
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        寸法: vk::Extent2D,
+        &mut self, 確保係: &GPU資源の確保係<'_>, 寸法: vk::Extent2D
     ) -> Result<(), レンダラーエラー> {
-        let (新hdr, 新ピラミッド) = sized_images::生成する(device, メモリプロパティ, 寸法)?;
+        let device = 確保係.論理デバイス();
+        let (新hdr, 新ピラミッド) = sized_images::生成する(確保係, 寸法)?;
         // ピラミッドの段数が解像度に依存するため光のにじみのディスクリプタは作り直し、明るさの圧縮は新しいビューへ束縛し直す。
         if let Err(誤り) = self.光のにじみ.ディスクリプタを作り直す(device, 新hdr.画像ビュー, &新ピラミッド) {
             新ピラミッド.破棄する(device);

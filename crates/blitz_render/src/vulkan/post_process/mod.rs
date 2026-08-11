@@ -16,6 +16,7 @@ use ash::vk;
 use crate::auto_exposure::自動露出の設定;
 use crate::error::レンダラーエラー;
 use crate::shader_bundle::シェーダー束;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::auto_exposure::自動露出一式;
 use crate::vulkan::bloom::光のにじみ一式;
 use crate::vulkan::bloom_targets::光のにじみピラミッド;
@@ -34,8 +35,7 @@ pub(crate) struct ポスト処理一式 {
 
 impl ポスト処理一式 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         スワップチェーン画像形式: vk::Format,
         寸法: vk::Extent2D,
         シェーダー: &シェーダー束,
@@ -43,8 +43,7 @@ impl ポスト処理一式 {
         自動露出の設定: 自動露出の設定,
     ) -> Result<Self, レンダラーエラー> {
         create::生成する(create::生成材料 {
-            device,
-            メモリプロパティ,
+            確保係,
             スワップチェーン画像形式,
             寸法,
             シェーダー,
@@ -56,11 +55,10 @@ impl ポスト処理一式 {
     /// GPU上の自動露出の中身を検収へ渡す。前提: 呼び出し元がGPUの全作業完了を待ってから呼ぶ。
     pub(crate) fn 自動露出の観測を読み戻す(
         &self,
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
     ) -> Result<crate::auto_exposure::自動露出の観測, レンダラーエラー> {
-        self.自動露出.観測を読み戻す(device, メモリプロパティ, 転送環境)
+        self.自動露出.観測を読み戻す(確保係, 転送環境)
     }
 
     /// 読み手である明るさの圧縮・光のにじみのパイプラインとディスクリプタを先に、読まれる側の画像を後に破棄する。

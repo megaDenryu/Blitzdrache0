@@ -14,9 +14,9 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::point_light_shadow_map::点光源の影の形式;
 use crate::vulkan::point_light_shadow_push;
-use crate::vulkan::shader_module;
 
 pub(crate) struct 点光源の影のパイプライン {
     pub(crate) handle: vk::Pipeline,
@@ -27,12 +27,13 @@ impl 点光源の影のパイプライン {
     /// `ディスクリプタlayout一覧`はset0から順にビューとパス・ジオメトリの2つである。頂点段が読むのは
     /// ジオメトリのセットの個体変換だけであるが、セット番号を1に固定するためset0も宣言する。
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let layout = super::layout::生成する(device, ディスクリプタlayout一覧, point_light_shadow_push::プッシュ定数範囲())?;
-        match pipelineを生成する(device, layout, シェーダー) {
+        match pipelineを生成する(確保係, layout, シェーダー) {
             Ok(handle) => Ok(Self { handle, layout }),
             Err(誤り) => {
                 super::layout::破棄する(device, layout);
@@ -51,12 +52,13 @@ impl 点光源の影のパイプライン {
 
 /// シェーダーモジュールの生成から破棄までの局面。パイプラインの生成呼び出しの間だけモジュールが要る。
 fn pipelineを生成する(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     layout: vk::PipelineLayout,
     シェーダー: &シェーダー一式,
 ) -> Result<vk::Pipeline, レンダラーエラー> {
-    let 頂点モジュール = shader_module::生成する(device, シェーダー.頂点コード())?;
-    let 画素段モジュール = match shader_module::生成する(device, シェーダー.画素段コード()) {
+    let device = 確保係.論理デバイス();
+    let 頂点モジュール = 確保係.シェーダーモジュールを生成する(シェーダー.頂点コード())?;
+    let 画素段モジュール = match 確保係.シェーダーモジュールを生成する(シェーダー.画素段コード()) {
         Ok(モジュール) => モジュール,
         Err(誤り) => {
             // 安全性: 頂点モジュールはこのスコープの唯一の所有者で、以降使用しない。

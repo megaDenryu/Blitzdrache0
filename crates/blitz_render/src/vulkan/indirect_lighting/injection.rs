@@ -18,6 +18,7 @@ use ash::vk;
 
 use upload_buffer::注入元バッファ;
 
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::derived_environment::派生表現一式;
 
 use crate::vulkan::tracked_device::GPUデバイス;
@@ -44,21 +45,20 @@ pub(crate) struct 解析入力の注入資源 {
 
 impl 解析入力の注入資源 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         派生表現: &派生表現一式,
         入力: &crate::distant_environment::遠方環境の解析入力,
     ) -> Result<Self, crate::error::レンダラーエラー> {
-        create::生成する(device, メモリプロパティ, 派生表現, 入力)
+        create::生成する(確保係, 派生表現, 入力)
     }
 
     /// そのフレームの転送の材料。範囲は焼いた画像の解像度が答えるため、注入する側が段の一辺を別に持たない。
     pub(crate) fn 転送の材料を作る(&self, 派生表現: &派生表現一式) -> 解析入力の注入 {
         let 鏡面 = 派生表現.鏡面畳込み画像();
         解析入力の注入 {
-            拡散照度の元: self.拡散照度.handle,
-            鏡面畳込みの元: self.鏡面畳込み.handle,
-            反射率積分表の元: self.反射率積分表.handle,
+            拡散照度の元: self.拡散照度.handle(),
+            鏡面畳込みの元: self.鏡面畳込み.handle(),
+            反射率積分表の元: self.反射率積分表.handle(),
             鏡面畳込みの段ごとの範囲: (0..鏡面.段数()).map(|段| 鏡面.段の範囲(段)).collect(),
             拡散照度の範囲: 派生表現.拡散照度画像().段の範囲(0),
             反射率積分表の範囲: 派生表現.反射率積分表の画像().範囲(),

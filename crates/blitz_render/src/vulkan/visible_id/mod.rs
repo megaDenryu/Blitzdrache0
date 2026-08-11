@@ -18,8 +18,7 @@ mod write;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::host_buffer;
-use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
+use crate::vulkan::allocator::{GPU資源の確保係, フレームスロットごとのバッファ};
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) use reference::可視ID列参照;
@@ -28,65 +27,31 @@ pub(crate) use reference::可視ID列参照;
 pub(crate) const 可視IDバイト長: usize = 4;
 
 pub(crate) struct 可視ID列バッファ {
-    buffer一覧: [vk::Buffer; 進行中フレーム数],
-    memory一覧: [vk::DeviceMemory; 進行中フレーム数],
+    スロットごとのバッファ: フレームスロットごとのバッファ,
     範囲: vk::DeviceSize,
     /// 書き込める可視IDの件数。個体数とパス数の積であり、書き込みの側はこれを超えないことだけを確かめる。
     容量件数: usize,
 }
 
 impl 可視ID列バッファ {
-    pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        個体数: u32,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, 個体数: u32) -> Result<Self, レンダラーエラー> {
         let 初期列 = capacity::初期バイト列を作る(個体数);
-        let mut buffer一覧 = [vk::Buffer::null(); 進行中フレーム数];
-        let mut memory一覧 = [vk::DeviceMemory::null(); 進行中フレーム数];
-        for 添字 in 0..進行中フレーム数 {
-            match host_buffer::確保して書き込む(device, メモリプロパティ, &初期列, vk::BufferUsageFlags::STORAGE_BUFFER) {
-                Ok((buffer, memory)) => {
-                    buffer一覧[添字] = buffer;
-                    memory一覧[添字] = memory;
-                }
-                Err(誤り) => {
-                    確保済みを解放する(device, &buffer一覧, &memory一覧, 添字);
-                    return Err(誤り);
-                }
-            }
-        }
+        let スロットごとのバッファ = 確保係
+            .フレームスロットごとのホスト可視バッファを確保して書き込む(&初期列, vk::BufferUsageFlags::STORAGE_BUFFER)?;
         let 範囲 = u64::try_from(初期列.len()).unwrap_or_else(|_| panic!("可視ID列のバイト長がu64に収まらない"));
         Ok(Self {
-            buffer一覧,
-            memory一覧,
+            スロットごとのバッファ,
             範囲,
             容量件数: capacity::容量件数を求める(個体数),
         })
     }
 
     pub(crate) fn 参照(&self) -> 可視ID列参照 {
-        可視ID列参照::生成する(self.buffer一覧, self.範囲)
+        可視ID列参照::生成する(self.スロットごとのバッファ.全スロットのバッファ(), self.範囲)
     }
 
+    /// 前提: 呼び出し元がGPU側の使用完了を保証する。
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
-        確保済みを解放する(device, &self.buffer一覧, &self.memory一覧, 進行中フレーム数);
-    }
-
-    fn memory(&self, フレーム添字: フレームスロット添字) -> vk::DeviceMemory {
-        self.memory一覧[フレーム添字.配列添字()]
-    }
-}
-
-fn 確保済みを解放する(
-    device: &GPUデバイス,
-    buffer一覧: &[vk::Buffer; 進行中フレーム数],
-    memory一覧: &[vk::DeviceMemory; 進行中フレーム数],
-    件数: usize,
-) {
-    for 添字 in 0..件数 {
-        // 安全性: bufferとmemoryはSelfが所有し、呼び出し元がGPU使用完了を保証する。
-        unsafe { device.destroy_buffer(buffer一覧[添字], None) };
-        device.メモリを解放する(memory一覧[添字]);
+        self.スロットごとのバッファ.破棄する(device);
     }
 }

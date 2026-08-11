@@ -7,38 +7,30 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::particle_material::粒子素材;
+use crate::vulkan::allocator::GPU資源の確保係;
+use crate::vulkan::allocator::専用メモリ付きバッファ;
 use crate::vulkan::geometry::upload;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 pub(crate) struct 粒子バッファ {
-    pub(crate) buffer: vk::Buffer,
-    memory: vk::DeviceMemory,
+    バッファ: 専用メモリ付きバッファ,
 }
 
 impl 粒子バッファ {
+    pub(crate) fn buffer(&self) -> vk::Buffer {
+        self.バッファ.バッファ()
+    }
+
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        転送環境: &転送実行環境,
-        素材: &粒子素材,
+        確保係: &GPU資源の確保係<'_>, 転送環境: &転送実行環境, 素材: &粒子素材
     ) -> Result<Self, レンダラーエラー> {
-        let (buffer, memory) = upload::ステージング経由でアップロードする(
-            device,
-            メモリプロパティ,
-            転送環境,
-            &素材.初期バイト列,
-            vk::BufferUsageFlags::STORAGE_BUFFER,
-        )?;
-        Ok(Self { buffer, memory })
+        let バッファ =
+            upload::ステージング経由でアップロードする(確保係, 転送環境, &素材.初期バイト列, vk::BufferUsageFlags::STORAGE_BUFFER)?;
+        Ok(Self { バッファ })
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
-        // 安全性: buffer・memoryはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
-        // device_wait_idle済みであることを呼び出し元が保証する。
-        unsafe {
-            device.destroy_buffer(self.buffer, None);
-        }
-        device.メモリを解放する(self.memory);
+        self.バッファ.破棄する(device);
     }
 }

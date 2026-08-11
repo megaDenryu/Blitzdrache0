@@ -5,6 +5,7 @@
 //! したがって`進行中フレーム数`回の`破棄待ちを一フレーム進める`を経てから破棄する。
 //! 同じ束IDの内容を入れ替える差し替えは`replace`にある。
 
+mod pending_bundle;
 mod replace;
 
 use super::chunk_draw_resources::チャンク描画資源;
@@ -13,32 +14,16 @@ use super::シーン描画資源;
 use crate::draw_bundle_id::描画束ID;
 use crate::error::レンダラーエラー;
 use crate::render_object_material::描画対象素材;
-use crate::vulkan::sync::進行中フレーム数;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 
-/// 解除予約された束と、破棄までに待つ残りフレーム数。
-pub(super) struct 破棄待ち束 {
-    束: チャンク描画資源,
-    残りフレーム: usize,
-}
-
-impl 破棄待ち束 {
-    pub(super) fn 束(&self) -> &チャンク描画資源 {
-        &self.束
-    }
-
-    /// 残りを1減らし、破棄してよくなったかを返す。
-    fn 一フレーム進める(&mut self) -> bool {
-        self.残りフレーム = self.残りフレーム.saturating_sub(1);
-        self.残りフレーム == 0
-    }
-}
+pub(in crate::renderer) use pending_bundle::破棄待ち束;
 
 impl シーン描画資源 {
     /// 注意: 同じIDの束を解除せずに追加するのは呼び出し元のバグである。上書きを許すと旧い束のGPU資源を辿れなくなり漏れるため、回復可能な失敗ではなく破られた不変条件として扱う。
     pub(in crate::renderer) fn 束を追加する(
         &mut self,
-        device: &GPUデバイス,
+        確保係: &GPU資源の確保係<'_>,
         材料: 束追加材料<'_>,
         id: 描画束ID,
         描画対象一覧: &[描画対象素材],
@@ -48,7 +33,7 @@ impl シーン描画資源 {
             "同じ束ID{}を解除せずに二重追加した",
             id.番号を返す()
         );
-        let 束 = チャンク描画資源::生成する(device, 材料, id, 描画対象一覧)?;
+        let 束 = チャンク描画資源::生成する(確保係, 材料, id, 描画対象一覧)?;
         self.チャンク一覧.push(束);
         Ok(())
     }
@@ -60,10 +45,7 @@ impl シーン描画資源 {
             return false;
         };
         let 束 = self.チャンク一覧.remove(位置);
-        self.破棄待ち.push(破棄待ち束 {
-            束,
-            残りフレーム: 進行中フレーム数,
-        });
+        self.破棄待ち.push(破棄待ち束::解除予約から作る(束));
         true
     }
 
@@ -74,8 +56,7 @@ impl シーン描画資源 {
     /// 前提: 呼び出し元がGPUの全作業完了を待ってから呼ぶ。提示が止まって`破棄待ちを一フレーム進める`が呼ばれない間に溜まった束を、フレームの進行に頼らず解放するための経路である。
     pub(in crate::renderer) fn 破棄待ちを全て破棄する(&mut self, device: &GPUデバイス) {
         for 待ち in self.破棄待ち.drain(..) {
-            待ち.束.破棄する(device);
-            self.実破棄済みid一覧.push(待ち.束.id());
+            self.実破棄済みid一覧.push(待ち.破棄してその束の識別子を返す(device));
         }
     }
 
@@ -84,8 +65,7 @@ impl シーン描画資源 {
         let mut 残す = Vec::with_capacity(self.破棄待ち.len());
         for mut 待ち in self.破棄待ち.drain(..) {
             if 待ち.一フレーム進める() {
-                待ち.束.破棄する(device);
-                self.実破棄済みid一覧.push(待ち.束.id());
+                self.実破棄済みid一覧.push(待ち.破棄してその束の識別子を返す(device));
             } else {
                 残す.push(待ち);
             }

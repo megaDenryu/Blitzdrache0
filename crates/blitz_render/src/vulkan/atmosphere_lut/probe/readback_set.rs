@@ -5,6 +5,7 @@
 //! 見せる理由が無いためである。
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::readback_buffer::ベイク済み画像の読み戻しバッファ;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -13,14 +14,11 @@ pub(super) struct 受け皿一式 {
 }
 
 impl 受け皿一式 {
-    pub(super) fn 確保する(
-        device: &GPUデバイス,
-        メモリプロパティ: &ash::vk::PhysicalDeviceMemoryProperties,
-        テクセル数一覧: [usize; 4],
-    ) -> Result<Self, レンダラーエラー> {
+    pub(super) fn 確保する(確保係: &GPU資源の確保係<'_>, テクセル数一覧: [usize; 4]) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let mut 作った: Vec<ベイク済み画像の読み戻しバッファ> = Vec::with_capacity(テクセル数一覧.len());
         for テクセル数 in テクセル数一覧 {
-            match ベイク済み画像の読み戻しバッファ::生成する(device, メモリプロパティ, テクセル数) {
+            match ベイク済み画像の読み戻しバッファ::生成する(確保係, テクセル数) {
                 Ok(バッファ) => 作った.push(バッファ),
                 Err(誤り) => {
                     while let Some(バッファ) = 作った.pop() {

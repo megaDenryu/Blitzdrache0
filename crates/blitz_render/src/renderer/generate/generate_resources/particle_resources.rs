@@ -8,18 +8,18 @@ use super::base_resources::基礎資源;
 use super::request::生成要求;
 use crate::error::レンダラーエラー;
 use crate::vulkan;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::depth::深度形式;
 
 pub(super) fn 組み立てる(
     要求: &生成要求<'_>,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     基礎: &基礎資源,
     シーンカラー形式: vk::Format,
 ) -> Result<Option<vulkan::particles::粒子リソース一式>, レンダラーエラー> {
     match (要求.シェーダー.粒子.as_ref(), 要求.粒子素材) {
         (Some(シェーダー), Some(素材)) => Ok(Some(vulkan::particles::粒子リソース一式::生成する(
-            要求.環境.device(),
-            メモリプロパティ,
+            確保係,
             &基礎.転送環境,
             シーンカラー形式,
             深度形式,

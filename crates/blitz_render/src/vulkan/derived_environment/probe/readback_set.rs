@@ -2,10 +2,9 @@
 //! 記録へ渡すハンドルの組と読み取った結果を返すことである。反射率積分表だけを2成分で作るのは、
 //! その画像だけが画素形式に2成分の半精度を採るためである。
 
-use ash::vk;
-
 use super::resources::受けバッファの口;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::readback_buffer::ベイク済み画像の読み戻しバッファ;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -27,18 +26,17 @@ pub(super) struct 受けバッファ四点 {
 
 impl 受けバッファ四点 {
     pub(super) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        テクセル数: &受けバッファのテクセル数,
+        確保係: &GPU資源の確保係<'_>, テクセル数: &受けバッファのテクセル数
     ) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let mut 作った = Vec::with_capacity(3);
         for 数 in [テクセル数.遠方環境, テクセル数.拡散照度, テクセル数.鏡面畳込み] {
-            match ベイク済み画像の読み戻しバッファ::生成する(device, メモリプロパティ, 数) {
+            match ベイク済み画像の読み戻しバッファ::生成する(確保係, 数) {
                 Ok(バッファ) => 作った.push(バッファ),
                 Err(誤り) => return Err(作った途中を片付けて返す(device, &作った, 誤り)),
             }
         }
-        let 表 = ベイク済み画像の読み戻しバッファ::二成分で生成する(device, メモリプロパティ, テクセル数.反射率積分表);
+        let 表 = ベイク済み画像の読み戻しバッファ::二成分で生成する(確保係, テクセル数.反射率積分表);
         let 反射率積分表 = match 表 {
             Ok(バッファ) => バッファ,
             Err(誤り) => return Err(作った途中を片付けて返す(device, &作った, 誤り)),
@@ -56,10 +54,10 @@ impl 受けバッファ四点 {
 
     pub(super) fn 口(&self) -> 受けバッファの口 {
         受けバッファの口 {
-            遠方環境: self.遠方環境.handle,
-            拡散照度: self.拡散照度.handle,
-            鏡面畳込み: self.鏡面畳込み.handle,
-            反射率積分表: self.反射率積分表.handle,
+            遠方環境: self.遠方環境.handle(),
+            拡散照度: self.拡散照度.handle(),
+            鏡面畳込み: self.鏡面畳込み.handle(),
+            反射率積分表: self.反射率積分表.handle(),
         }
     }
 

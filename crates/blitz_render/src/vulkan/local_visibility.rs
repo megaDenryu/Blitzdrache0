@@ -18,6 +18,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::local_visibility::{局所可視性のシェーダー一式, 局所可視性の描画設定};
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
@@ -30,15 +31,15 @@ pub(crate) struct 局所可視性一式 {
 
 impl 局所可視性一式 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
         シェーダー: &局所可視性のシェーダー一式,
         描画設定: 局所可視性の描画設定,
         画面: 画面の入力,
     ) -> Result<Self, レンダラーエラー> {
-        let 画像組 = images::局所可視度の画像組::生成する(device, メモリプロパティ, 画面.寸法)?;
-        let 一式 = 組み上げる(device, シェーダー, 描画設定, 画像組)?;
+        let device = 確保係.論理デバイス();
+        let 画像組 = images::局所可視度の画像組::生成する(確保係, 画面.寸法)?;
+        let 一式 = 組み上げる(確保係, シェーダー, 描画設定, 画像組)?;
         if let Err(誤り) = fill::一定の符号値で埋める(転送環境, &一式.画像組, 描画設定.埋める符号値()) {
             一式.破棄する(device);
             return Err(誤り);
@@ -68,11 +69,12 @@ pub(crate) struct 画面の入力 {
 
 /// 確保済みの画像組へディスクリプタとパイプラインを足す。失敗したら受け取った画像組まで片付ける。
 fn 組み上げる(
-    device: &GPUデバイス,
+    確保係: &GPU資源の確保係<'_>,
     シェーダー: &局所可視性のシェーダー一式,
     描画設定: 局所可視性の描画設定,
     画像組: images::局所可視度の画像組,
 ) -> Result<局所可視性一式, レンダラーエラー> {
+    let device = 確保係.論理デバイス();
     let ディスクリプタ = match descriptor::局所可視性のディスクリプタ::生成する(device) {
         Ok(ディスクリプタ) => ディスクリプタ,
         Err(誤り) => {
@@ -80,7 +82,7 @@ fn 組み上げる(
             return Err(誤り);
         }
     };
-    match pipelines::局所可視性のパイプライン一式::生成する(device, &ディスクリプタ, シェーダー) {
+    match pipelines::局所可視性のパイプライン一式::生成する(確保係, &ディスクリプタ, シェーダー) {
         Ok(パイプライン) => Ok(局所可視性一式 {
             画像組,
             ディスクリプタ,

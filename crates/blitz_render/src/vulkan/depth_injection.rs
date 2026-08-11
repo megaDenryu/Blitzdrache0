@@ -15,28 +15,22 @@ pub(crate) use pass::合成深度の注入を作る;
 
 use crate::error::レンダラーエラー;
 use crate::local_visibility::深度画像;
-use crate::vulkan::host_buffer;
+use crate::vulkan::allocator::{GPU資源の確保係, 専用メモリ付きバッファ};
 use crate::vulkan::tracked_device::GPUデバイス;
 
 /// 合成深度1枚ぶんのホスト可視バッファと、その深度が焼かれた寸法。
 pub(crate) struct 合成深度の注入一式 {
-    バッファ: vk::Buffer,
-    memory: vk::DeviceMemory,
+    バッファ: 専用メモリ付きバッファ,
     寸法: vk::Extent2D,
 }
 
 impl 合成深度の注入一式 {
     /// 前提: 深度画像の寸法がスワップチェーンの寸法と一致することは呼び出し元が確かめている。
-    pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        深度画像: &深度画像,
-    ) -> Result<Self, レンダラーエラー> {
-        let (バッファ, memory) =
-            host_buffer::確保して書き込む(device, メモリプロパティ, &バイト列へ写す(深度画像), vk::BufferUsageFlags::TRANSFER_SRC)?;
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, 深度画像: &深度画像) -> Result<Self, レンダラーエラー> {
+        let バッファ =
+            確保係.ホスト可視バッファを確保して書き込む(&バイト列へ写す(深度画像), vk::BufferUsageFlags::TRANSFER_SRC)?;
         Ok(Self {
             バッファ,
-            memory,
             寸法: vk::Extent2D {
                 width: 深度画像.寸法().幅(),
                 height: 深度画像.寸法().高さ(),
@@ -46,15 +40,14 @@ impl 合成深度の注入一式 {
 
     pub(crate) fn 描画入力を作る(&self) -> 合成深度の注入入力 {
         合成深度の注入入力 {
-            バッファ: self.バッファ,
+            バッファ: self.バッファ.バッファ(),
             寸法: self.寸法,
         }
     }
 
+    /// 前提: 破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
-        // 安全性: バッファ・memoryはSelfが唯一の所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
-        unsafe { device.destroy_buffer(self.バッファ, None) };
-        device.メモリを解放する(self.memory);
+        self.バッファ.破棄する(device);
     }
 }
 

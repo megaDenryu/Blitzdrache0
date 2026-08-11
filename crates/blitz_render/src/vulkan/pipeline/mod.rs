@@ -17,6 +17,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::relative_anchor;
 
 pub(crate) use aerial_composite_pipeline::空中遠近合成パイプライン;
@@ -42,15 +43,16 @@ impl パイプライン {
     /// 布描画用の変種(判断54): 接線を宣言しない3属性の頂点入力で生成する。
     /// `ディスクリプタlayout一覧`のset1とset2は、布が読まない役割を表す空のレイアウトである。
     pub(crate) fn 布用に生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         カラー形式: vk::Format,
         深度形式: vk::Format,
         ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let layout = layout::生成する(device, ディスクリプタlayout一覧, relative_anchor::プッシュ定数範囲())?;
         let 結果 = create::生成する(
-            device,
+            確保係,
             カラー形式,
             深度形式,
             描画の標本数,

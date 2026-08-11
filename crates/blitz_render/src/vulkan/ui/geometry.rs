@@ -9,6 +9,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::ui_vertex::UI頂点;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::tracked_device::GPUデバイス;
 use slot::バッファスロット;
@@ -31,8 +32,7 @@ impl UIジオメトリバッファ {
     /// フレームでは本メソッド自体を呼ばない契約)。
     pub(crate) fn 書き込む(
         &mut self,
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         フレーム添字: フレームスロット添字,
         頂点一覧: &[UI頂点],
         インデックス一覧: &[u32],
@@ -41,15 +41,13 @@ impl UIジオメトリバッファ {
         let インデックスバイト列 = bytes::インデックスをバイト列にする(インデックス一覧);
         let 頂点バッファ = slot::書き込む(
             &mut self.頂点一覧[フレーム添字.配列添字()],
-            device,
-            メモリプロパティ,
+            確保係,
             &頂点バイト列,
             vk::BufferUsageFlags::VERTEX_BUFFER,
         )?;
         let インデックスバッファ = slot::書き込む(
             &mut self.インデックス一覧[フレーム添字.配列添字()],
-            device,
-            メモリプロパティ,
+            確保係,
             &インデックスバイト列,
             vk::BufferUsageFlags::INDEX_BUFFER,
         )?;

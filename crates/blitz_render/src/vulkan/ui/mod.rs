@@ -15,6 +15,7 @@ use crate::shader_set::シェーダー一式;
 use crate::ui_texture_id::UIテクスチャID;
 use crate::ui_texture_material::UIテクスチャ素材;
 use crate::ui_vertex::UI頂点;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
@@ -27,10 +28,14 @@ pub(crate) struct UIリソース一式 {
 
 impl UIリソース一式 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス, カラー形式: vk::Format, シェーダー: &シェーダー一式
+        確保係: &GPU資源の確保係<'_>,
+        カラー形式: vk::Format,
+        シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let テクスチャ台帳 = registry::UIテクスチャレジストリ::生成する(device)?;
-        let pipeline = match pipeline::UIパイプライン::生成する(device, カラー形式, テクスチャ台帳.layout(), シェーダー) {
+        let pipeline = match pipeline::UIパイプライン::生成する(確保係, カラー形式, テクスチャ台帳.layout(), シェーダー)
+        {
             Ok(pipeline) => pipeline,
             Err(誤り) => {
                 テクスチャ台帳.破棄する(device);
@@ -46,13 +51,12 @@ impl UIリソース一式 {
 
     pub(crate) fn テクスチャを反映する(
         &mut self,
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
         id: UIテクスチャID,
         素材: &UIテクスチャ素材,
     ) -> Result<(), レンダラーエラー> {
-        self.テクスチャ台帳.反映する(device, メモリプロパティ, 転送環境, id, 素材)
+        self.テクスチャ台帳.反映する(確保係, 転送環境, id, 素材)
     }
 
     pub(crate) fn テクスチャを削除する(&mut self, device: &GPUデバイス, id: UIテクスチャID) {
@@ -66,14 +70,12 @@ impl UIリソース一式 {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn ジオメトリを書き込む(
         &mut self,
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         フレーム添字: フレームスロット添字,
         頂点一覧: &[UI頂点],
         インデックス一覧: &[u32],
     ) -> Result<(vk::Buffer, vk::Buffer), レンダラーエラー> {
-        self.ジオメトリ
-            .書き込む(device, メモリプロパティ, フレーム添字, 頂点一覧, インデックス一覧)
+        self.ジオメトリ.書き込む(確保係, フレーム添字, 頂点一覧, インデックス一覧)
     }
 
     pub(crate) fn pipeline_handle(&self) -> vk::Pipeline {

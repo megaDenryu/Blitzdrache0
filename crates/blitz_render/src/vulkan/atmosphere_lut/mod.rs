@@ -32,9 +32,9 @@ mod transmittance_descriptor;
 use crate::atmosphere::{大気のベイク済み画像の解像度, 大気散乱媒体};
 use crate::error::レンダラーエラー;
 use crate::shader_bundle::大気のベイク済み画像のシェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
-use ash::vk;
 pub(crate) use composite_descriptor::{空中遠近合成の束縛先, 空中遠近合成ディスクリプタ};
 pub(crate) use distant_skyview::遠方環境用スカイビューの焼く条件;
 pub(crate) use draw_input::描画入力の材料;
@@ -52,13 +52,13 @@ pub(crate) struct 大気のベイク済み画像一式 {
 }
 impl 大気のベイク済み画像一式 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         解像度: 大気のベイク済み画像の解像度,
         シェーダー: &大気のベイク済み画像のシェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        let 基盤 = base_resources::大気のベイク済み画像の基盤資源::生成する(device, メモリプロパティ, 解像度)?;
-        match binding_set::大気のベイク済み画像の束縛一式::生成する(device, &基盤, シェーダー) {
+        let device = 確保係.論理デバイス();
+        let 基盤 = base_resources::大気のベイク済み画像の基盤資源::生成する(確保係, 解像度)?;
+        match binding_set::大気のベイク済み画像の束縛一式::生成する(確保係, &基盤, シェーダー) {
             Ok(束縛) => Ok(Self { 基盤, 束縛 }),
             Err(誤り) => {
                 基盤.破棄する(device);

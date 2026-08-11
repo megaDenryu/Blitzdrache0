@@ -6,15 +6,13 @@
 //! 語の列を区間表と添字列へ意味づけるのがここである。並びの正本は`shaders/local_light_records.slang`の
 //! `ClusterCell`(開始位置と件数の2つ)であり、その並びを知るのがこのモジュールだけになるようにしてある。
 
-use ash::vk;
-
 use super::cluster_buffers::格子と光添字列のバイト数;
 use super::照明問い合わせ資源束;
 use crate::clustered_lighting::セルの光の区間;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::readback::語列を読み戻す;
 use crate::vulkan::sync::フレームスロット添字;
-use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 /// 読み戻したクラスタ格子の中身。区間表と添字列の2つで1つの答えになるため、別々に返さない。
@@ -35,15 +33,14 @@ impl 照明問い合わせ資源束 {
     /// 前提: 呼び出し時点でGPUがこのスロットのクラスタ格子を使用していないこと(device_wait_idle後)。
     pub(crate) fn クラスタ格子を読み戻す(
         &self,
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
         フレーム添字: フレームスロット添字,
     ) -> Result<クラスタ格子の読み戻し, レンダラーエラー> {
         let (格子のバイト数, 光添字列のバイト数) = 格子と光添字列のバイト数();
         let バッファ組 = self.スロットのバッファ組(フレーム添字);
-        let 格子の語列 = 語列を読み戻す(device, メモリプロパティ, 転送環境, バッファ組.クラスタ格子, 格子のバイト数)?;
-        let 光添字列 = 語列を読み戻す(device, メモリプロパティ, 転送環境, バッファ組.クラスタ光添字列, 光添字列のバイト数)?;
+        let 格子の語列 = 語列を読み戻す(確保係, 転送環境, バッファ組.クラスタ格子, 格子のバイト数)?;
+        let 光添字列 = 語列を読み戻す(確保係, 転送環境, バッファ組.クラスタ光添字列, 光添字列のバイト数)?;
         Ok(クラスタ格子の読み戻し {
             区間一覧: 区間表へ意味づける(&格子の語列),
             光添字列,

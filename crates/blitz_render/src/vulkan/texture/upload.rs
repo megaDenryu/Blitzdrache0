@@ -11,16 +11,14 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::texture_material::テクスチャ素材;
-use crate::vulkan::host_buffer;
-use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::transfer::転送実行環境;
 
 use super::create::縮小段の積み方;
 use super::mip_chain;
 
 pub(super) fn 素材の縮小段を画像へ転送する(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     転送環境: &転送実行環境,
     image: vk::Image,
     素材: &テクスチャ素材,
@@ -28,14 +26,11 @@ pub(super) fn 素材の縮小段を画像へ転送する(
     積み方: 縮小段の積み方,
 ) -> Result<(), レンダラーエラー> {
     let 転送するバイト列 = 段を1本のバイト列へ束ねる(素材.段ごとのバイト列());
-    let (ステージングバッファ, ステージングメモリ) =
-        host_buffer::確保して書き込む(device, メモリプロパティ, &転送するバイト列, vk::BufferUsageFlags::TRANSFER_SRC)?;
+    let ステージング = 確保係.ホスト可視バッファを確保して書き込む(&転送するバイト列, vk::BufferUsageFlags::TRANSFER_SRC)?;
 
-    let 実行結果 = 積み込んで送信する(転送環境, ステージングバッファ, image, 素材, 縮小段数, 積み方);
+    let 実行結果 = 積み込んで送信する(転送環境, ステージング.バッファ(), image, 素材, 縮小段数, 積み方);
 
-    // 安全性: 転送実行は完了済みで、ステージングバッファは以降使用しない。
-    unsafe { device.destroy_buffer(ステージングバッファ, None) };
-    device.メモリを解放する(ステージングメモリ);
+    ステージング.破棄する(確保係.論理デバイス());
     実行結果
 }
 

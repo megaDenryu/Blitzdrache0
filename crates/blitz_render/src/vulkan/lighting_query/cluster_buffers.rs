@@ -11,7 +11,7 @@ use ash::vk;
 
 use crate::clustered_lighting::{クラスタ光添字列の要素数, クラスタ格子の分割数};
 use crate::error::レンダラーエラー;
-use crate::vulkan::device_buffer;
+use crate::vulkan::allocator::{GPU資源の確保係, 専用メモリ付きバッファ};
 use crate::vulkan::tracked_device::GPUデバイス;
 
 /// セル1つぶんの区間表のバイト数。`shaders/local_light_records.slang`の`ClusterCell`(開始位置と件数の2つ)と一致させる。
@@ -20,10 +20,8 @@ const セル1つのバイト数: usize = 8;
 const 添字1つのバイト数: usize = 4;
 
 pub(super) struct クラスタ格子の資源 {
-    pub(super) 格子: vk::Buffer,
-    格子のメモリ: vk::DeviceMemory,
-    pub(super) 光添字列: vk::Buffer,
-    光添字列のメモリ: vk::DeviceMemory,
+    格子: 専用メモリ付きバッファ,
+    光添字列: 専用メモリ付きバッファ,
 }
 
 /// 仮置きの分割数が決める格子の2本のバイト数。ヘッダへ書く分割数と同じ1箇所から読む。
@@ -38,38 +36,33 @@ pub(super) fn 格子と光添字列のバイト数() -> (u64, u64) {
 
 impl クラスタ格子の資源 {
     /// 2本を順に確保する。途中で失敗したら、そこまでに確保したぶんをその場で破棄する。
-    pub(super) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>) -> Result<Self, レンダラーエラー> {
         let (格子のバイト数, 光添字列のバイト数) = 格子と光添字列のバイト数();
         // 転送元の用途を足すのは、検収の読み戻しがこの2本をホスト可視のバッファへコピーするためである。
         // 本番のフレーム経路はコピーを1度も積まないが、用途は確保のときにしか宣言できない。
         let 用途 = vk::BufferUsageFlags::STORAGE_BUFFER | vk::BufferUsageFlags::TRANSFER_SRC;
-        let (格子, 格子のメモリ) = device_buffer::確保する(device, メモリプロパティ, 格子のバイト数, 用途)?;
-        match device_buffer::確保する(device, メモリプロパティ, 光添字列のバイト数, 用途) {
-            Ok((光添字列, 光添字列のメモリ)) => Ok(Self {
-                格子,
-                格子のメモリ,
-                光添字列,
-                光添字列のメモリ,
-            }),
+        let 格子 = 確保係.デバイスローカルバッファを確保する(格子のバイト数, 用途)?;
+        match 確保係.デバイスローカルバッファを確保する(光添字列のバイト数, 用途) {
+            Ok(光添字列) => Ok(Self { 格子, 光添字列 }),
             Err(誤り) => {
-                // 安全性: 格子はこのスコープの唯一の所有者で、以降使用しない。
-                unsafe { device.destroy_buffer(格子, None) };
-                device.メモリを解放する(格子のメモリ);
+                格子.破棄する(確保係.論理デバイス());
                 Err(誤り)
             }
         }
     }
 
+    pub(super) fn 格子のバッファ(&self) -> vk::Buffer {
+        self.格子.バッファ()
+    }
+
+    pub(super) fn 光添字列のバッファ(&self) -> vk::Buffer {
+        self.光添字列.バッファ()
+    }
+
     /// 注意: 確保の逆順に破棄する。
+    /// 前提: 破棄時点でGPU側の使用完了を呼び出し元が保証する。
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
-        // 安全性: 2本のバッファとメモリはSelfが唯一の所有者であり、破棄時点でGPU側の使用完了を呼び出し元が保証する。
-        unsafe { device.destroy_buffer(self.光添字列, None) };
-        device.メモリを解放する(self.光添字列のメモリ);
-        // 安全性: 同上。
-        unsafe { device.destroy_buffer(self.格子, None) };
-        device.メモリを解放する(self.格子のメモリ);
+        self.光添字列.破棄する(device);
+        self.格子.破棄する(device);
     }
 }

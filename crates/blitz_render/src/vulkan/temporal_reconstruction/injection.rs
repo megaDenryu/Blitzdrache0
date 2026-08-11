@@ -11,22 +11,22 @@ use ash::vk;
 pub(crate) use pass::{合成入力の書き戻し先, 合成入力の注入を作る, 合成入力の注入入力};
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::{GPU資源の確保係, 専用メモリ付きバッファ};
 use buffers::{片付ける, 配列にする};
 use byte_layout::{半精度のバイト列へ写す, 単精度のバイト列へ写す};
 
 use crate::temporal_reconstruction::時間再構成の合成入力;
-use crate::vulkan::host_buffer;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 impl super::時間再構成一式 {
     /// 検収が焼いた合成入力を据える。既に据えてあれば入れ替える。前提: 呼び出し元はGPUの全作業完了を待ってから呼ぶ(旧いバッファをその場で破棄するため)。
     pub(crate) fn 合成入力を据える(
         &mut self,
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         入力: &時間再構成の合成入力,
     ) -> Result<(), レンダラーエラー> {
-        let 新しい注入 = 合成入力の注入一式::生成する(device, メモリプロパティ, 入力)?;
+        let device = 確保係.論理デバイス();
+        let 新しい注入 = 合成入力の注入一式::生成する(確保係, 入力)?;
         if let Some(旧い) = self.合成入力の注入.replace(新しい注入) {
             旧い.破棄する(device);
         }
@@ -41,16 +41,15 @@ impl super::時間再構成一式 {
 
 /// 4枚ぶんのホスト可視バッファと、その入力が焼かれた寸法。
 pub(crate) struct 合成入力の注入一式 {
-    バッファ一覧: [(vk::Buffer, vk::DeviceMemory); 4],
+    バッファ一覧: [専用メモリ付きバッファ; 4],
     寸法: vk::Extent2D,
 }
 
 impl 合成入力の注入一式 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        入力: &時間再構成の合成入力,
+        確保係: &GPU資源の確保係<'_>, 入力: &時間再構成の合成入力
     ) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let バイト列一覧 = [
             半精度のバイト列へ写す(入力.今のフレームの色()),
             半精度のバイト列へ写す(入力.履歴()),
@@ -59,7 +58,7 @@ impl 合成入力の注入一式 {
         ];
         let mut 確保済み = Vec::with_capacity(バイト列一覧.len());
         for バイト列 in &バイト列一覧 {
-            let 結果 = host_buffer::確保して書き込む(device, メモリプロパティ, バイト列, vk::BufferUsageFlags::TRANSFER_SRC);
+            let 結果 = 確保係.ホスト可視バッファを確保して書き込む(バイト列, vk::BufferUsageFlags::TRANSFER_SRC);
             match 結果 {
                 Ok(組) => 確保済み.push(組),
                 Err(誤り) => {
@@ -79,10 +78,10 @@ impl 合成入力の注入一式 {
 
     pub(crate) fn 描画入力を作る(&self) -> 合成入力の注入入力 {
         合成入力の注入入力 {
-            今のフレームの色: self.バッファ一覧[0].0,
-            履歴: self.バッファ一覧[1].0,
-            動きベクトル: self.バッファ一覧[2].0,
-            深度: self.バッファ一覧[3].0,
+            今のフレームの色: self.バッファ一覧[0].バッファ(),
+            履歴: self.バッファ一覧[1].バッファ(),
+            動きベクトル: self.バッファ一覧[2].バッファ(),
+            深度: self.バッファ一覧[3].バッファ(),
             寸法: self.寸法,
         }
     }

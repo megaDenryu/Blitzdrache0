@@ -17,11 +17,10 @@ mod injection;
 mod injection_material;
 mod inputs;
 
-use ash::vk;
-
 use crate::distant_environment::遠方環境のシェーダー一式;
 use crate::error::レンダラーエラー;
 use crate::indirect_lighting::{焼き上げ本数の見込み, 焼き始めの記録};
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::derived_environment::派生表現一式;
 use crate::vulkan::descriptor::lighting_set::distant_environment::遠方環境の束縛先;
 use crate::vulkan::distant_environment::{遠方環境が借りる束縛先, 遠方環境一式};
@@ -44,12 +43,11 @@ pub(crate) struct 遠方環境の照明資源 {
 
 impl 遠方環境の照明資源 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         借りる束縛先: 遠方環境が借りる束縛先<'_>,
         シェーダー: &遠方環境のシェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, メモリプロパティ, 借りる束縛先, シェーダー)
+        create::生成する(確保係, 借りる束縛先, シェーダー)
     }
 
     /// 標準PBRが読む3つの画像のビュー。焼き直しても束縛先が変わらないため、照明問い合わせのセットは

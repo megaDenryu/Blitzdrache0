@@ -4,15 +4,16 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::shader_module;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 pub(crate) fn 生成する(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     layout: vk::PipelineLayout,
     spirv: &[u8],
     エントリ名: &std::ffi::CStr,
 ) -> Result<vk::Pipeline, レンダラーエラー> {
-    let モジュール = shader_module::生成する(device, spirv)?;
+    let device = 確保係.論理デバイス();
+    let モジュール = 確保係.シェーダーモジュールを生成する(spirv)?;
     let stage = vk::PipelineShaderStageCreateInfo::default()
         .stage(vk::ShaderStageFlags::COMPUTE)
         .module(モジュール)

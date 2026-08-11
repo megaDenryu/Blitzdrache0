@@ -16,6 +16,7 @@ pub(crate) use aerial_composite::空中遠近合成資源;
 
 use crate::error::レンダラーエラー;
 use crate::shader_bundle::空シェーダー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::{大気のベイク済み画像一式, 大気のベイク済み画像標本ディスクリプタ};
 use crate::vulkan::pipeline::空パイプライン;
 
@@ -40,8 +41,10 @@ pub(crate) struct 空段階の生成要求<'a> {
 }
 
 impl 空段階資源 {
-    pub(crate) fn 生成する(device: &ash::Device, 要求: 空段階の生成要求<'_>) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, 要求)
+    pub(crate) fn 生成する(
+        確保係: &GPU資源の確保係<'_>, 要求: 空段階の生成要求<'_>
+    ) -> Result<Self, レンダラーエラー> {
+        create::生成する(確保係, 要求)
     }
 
     /// 空中遠近ボリュームを参照する合成パスを持つか。ボリュームを焼くかどうかがこの1つで決まる。

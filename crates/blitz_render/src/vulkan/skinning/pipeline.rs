@@ -5,7 +5,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::shader_module;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 const エントリ名: &std::ffi::CStr = c"computeMain";
 pub(crate) const 頂点数プッシュ定数バイト数: u32 = 4;
@@ -16,11 +16,12 @@ pub(super) struct スキニングパイプライン {
 }
 
 pub(super) fn 生成する(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     ディスクリプタlayout: vk::DescriptorSetLayout,
     コンピュートspirv: &[u8],
 ) -> Result<スキニングパイプライン, レンダラーエラー> {
-    let モジュール = shader_module::生成する(device, コンピュートspirv)?;
+    let device = 確保係.論理デバイス();
+    let モジュール = 確保係.シェーダーモジュールを生成する(コンピュートspirv)?;
 
     let プッシュ定数範囲一覧 = [vk::PushConstantRange::default()
         .stage_flags(vk::ShaderStageFlags::COMPUTE)

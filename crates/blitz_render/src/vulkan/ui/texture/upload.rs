@@ -7,27 +7,22 @@ mod barrier;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::host_buffer;
-use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::transfer::転送実行環境;
 
 pub(super) fn ホストの画素列を画像へ転送する(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     転送環境: &転送実行環境,
     image: vk::Image,
     幅: u32,
     高さ: u32,
     rgba8: &[u8],
 ) -> Result<(), レンダラーエラー> {
-    let (ステージングバッファ, ステージングメモリ) =
-        host_buffer::確保して書き込む(device, メモリプロパティ, rgba8, vk::BufferUsageFlags::TRANSFER_SRC)?;
+    let ステージング = 確保係.ホスト可視バッファを確保して書き込む(rgba8, vk::BufferUsageFlags::TRANSFER_SRC)?;
 
-    let 実行結果 = ステージングバッファから唯一の縮小段レベルへ転送する(転送環境, ステージングバッファ, image, 幅, 高さ);
+    let 実行結果 = ステージングバッファから唯一の縮小段レベルへ転送する(転送環境, ステージング.バッファ(), image, 幅, 高さ);
 
-    // 安全性: 転送実行は完了済みで、ステージングバッファは以降使用しない。
-    unsafe { device.destroy_buffer(ステージングバッファ, None) };
-    device.メモリを解放する(ステージングメモリ);
+    ステージング.破棄する(確保係.論理デバイス());
     実行結果
 }
 

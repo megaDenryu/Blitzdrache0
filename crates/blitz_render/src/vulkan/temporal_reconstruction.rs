@@ -18,6 +18,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::temporal_reconstruction::{時間再構成のシェーダー一式, 時間再構成の描画設定};
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
@@ -46,15 +47,15 @@ pub(crate) struct 画面の入力 {
 
 impl 時間再構成一式 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
         シェーダー: &時間再構成のシェーダー一式,
         設定: 時間再構成の描画設定,
         画面: 画面の入力,
     ) -> Result<Self, レンダラーエラー> {
-        let 画像組 = images::時間再構成の画像組::生成する(device, メモリプロパティ, 画面.寸法)?;
-        let 一式 = assemble::組み上げる(device, シェーダー, 設定, 画像組)?;
+        let device = 確保係.論理デバイス();
+        let 画像組 = images::時間再構成の画像組::生成する(確保係, 画面.寸法)?;
+        let 一式 = assemble::組み上げる(確保係, シェーダー, 設定, 画像組)?;
         if let Err(誤り) = 一式.履歴の初期値を書く(転送環境, &一式.画像組) {
             一式.破棄する(device);
             return Err(誤り);

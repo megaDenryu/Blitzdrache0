@@ -15,6 +15,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::point_light_shadow::点光源の影の層の総数;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) const 点光源の影の形式: vk::Format = vk::Format::D32_SFLOAT;
@@ -35,11 +36,8 @@ pub(crate) struct 点光源の影の立方体配列 {
 }
 
 impl 点光源の影の立方体配列 {
-    pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-    ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, メモリプロパティ)
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>) -> Result<Self, レンダラーエラー> {
+        create::生成する(確保係)
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {

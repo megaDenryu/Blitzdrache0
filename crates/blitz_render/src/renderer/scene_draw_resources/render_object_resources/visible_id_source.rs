@@ -5,10 +5,9 @@
 //! 全対象へ進行中フレーム数ぶんのストレージバッファを足すと、既存の描画対象のGPU確保数が対象ごとに増える
 //! (参照: `_doc/設計/植生インスタンスと物量計測.md`「レンダラーの資源配置」)。
 
-use ash::vk;
-
 use super::shared_single_column;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::visible_id::{可視ID列バッファ, 可視ID列参照};
@@ -21,19 +20,11 @@ pub(super) enum 可視ID列の出どころ {
 }
 
 impl 可視ID列の出どころ {
-    pub(super) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        個体数: u32,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, 個体数: u32) -> Result<Self, レンダラーエラー> {
         if 個体数 <= 1 {
             return Ok(Self::束の単一個体列);
         }
-        Ok(Self::専用バッファ(可視ID列バッファ::生成する(
-            device,
-            メモリプロパティ,
-            個体数,
-        )?))
+        Ok(Self::専用バッファ(可視ID列バッファ::生成する(確保係, 個体数)?))
     }
 
     pub(super) fn 参照(&self, 束の単一個体列: &可視ID列バッファ) -> 可視ID列参照 {

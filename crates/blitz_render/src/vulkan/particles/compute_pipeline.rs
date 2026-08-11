@@ -4,7 +4,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::shader_module;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 const エントリ名: &std::ffi::CStr = c"computeMain";
 
@@ -15,11 +15,12 @@ pub(crate) struct 粒子コンピュートパイプライン {
 
 impl 粒子コンピュートパイプライン {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         ディスクリプタlayout: vk::DescriptorSetLayout,
         コンピュートspirv: &[u8],
     ) -> Result<Self, レンダラーエラー> {
-        let モジュール = shader_module::生成する(device, コンピュートspirv)?;
+        let device = 確保係.論理デバイス();
+        let モジュール = 確保係.シェーダーモジュールを生成する(コンピュートspirv)?;
 
         let ディスクリプタlayout一覧 = [ディスクリプタlayout];
         let layout_create_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&ディスクリプタlayout一覧);

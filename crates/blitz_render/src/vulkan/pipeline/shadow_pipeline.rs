@@ -12,6 +12,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::shadow_map::シャドウマップ形式;
 use crate::vulkan::shadow_push;
 
@@ -27,12 +28,13 @@ impl シャドウパイプライン {
     /// 材質描画族のシャドウはレイアウトを台帳が族ごとに1つ持つため、この入口を通らない。
     /// `ディスクリプタlayout一覧` はset0から順に並べたビューとパス・ジオメトリの2つである。
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let layout = super::layout::生成する(device, ディスクリプタlayout一覧, shadow_push::プッシュ定数範囲())?;
-        match create::生成する(device, シャドウマップ形式, super::描画の標本数, layout, シェーダー) {
+        match create::生成する(確保係, シャドウマップ形式, super::描画の標本数, layout, シェーダー) {
             Ok(handle) => Ok(Self { handle, layout }),
             Err(誤り) => {
                 super::layout::破棄する(device, layout);

@@ -11,6 +11,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::bloom_targets::光のにじみピラミッド;
 
 pub(crate) struct 光のにじみ一式 {
@@ -31,14 +32,15 @@ pub(crate) struct 光のにじみ一式 {
 
 impl 光のにじみ一式 {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         前処理シェーダー: &シェーダー一式,
         縮小シェーダー: &シェーダー一式,
         拡大シェーダー: &シェーダー一式,
         hdrビュー: vk::ImageView,
         ピラミッド: &光のにじみピラミッド,
     ) -> Result<Self, レンダラーエラー> {
-        let mut 一式 = create::パイプライン部を生成する(device, 前処理シェーダー, 縮小シェーダー, 拡大シェーダー)?;
+        let device = 確保係.論理デバイス();
+        let mut 一式 = create::パイプライン部を生成する(確保係, 前処理シェーダー, 縮小シェーダー, 拡大シェーダー)?;
         if let Err(誤り) = 一式.ディスクリプタを作り直す(device, hdrビュー, ピラミッド) {
             一式.破棄する(device);
             return Err(誤り);

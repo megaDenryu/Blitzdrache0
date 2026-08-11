@@ -6,33 +6,32 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::host_buffer;
+use crate::vulkan::allocator::{GPU資源の確保係, 専用メモリ付きバッファ};
 use crate::vulkan::tracked_device::GPUデバイス;
 
 /// 1本ぶんのホスト可視バッファ。バッファとメモリは常に組で生き死にする。
 pub(super) struct 書き換えバッファ {
-    pub(super) buffer: vk::Buffer,
-    memory: vk::DeviceMemory,
+    バッファ: 専用メモリ付きバッファ,
 }
 
 impl 書き換えバッファ {
     pub(super) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        バイト長: usize,
-        用途: vk::BufferUsageFlags,
+        確保係: &GPU資源の確保係<'_>, バイト長: usize, 用途: vk::BufferUsageFlags
     ) -> Result<Self, レンダラーエラー> {
-        let (buffer, memory) = host_buffer::確保して書き込む(device, メモリプロパティ, &vec![0u8; バイト長], 用途)?;
-        Ok(Self { buffer, memory })
+        let バッファ = 確保係.ホスト可視バッファを確保して書き込む(&vec![0u8; バイト長], 用途)?;
+        Ok(Self { バッファ })
+    }
+
+    pub(super) fn buffer(&self) -> vk::Buffer {
+        self.バッファ.バッファ()
     }
 
     pub(super) fn 書き込む(&self, device: &ash::Device, バイト列: &[u8]) -> Result<(), レンダラーエラー> {
-        host_buffer::上書きする(device, self.memory, バイト列)
+        self.バッファ.ホスト可視の中身を書き換える(device, バイト列)
     }
 
+    /// 前提: 破棄時点でGPU側の使用完了を呼び出し元が保証する。
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
-        // 安全性: bufferはSelfが唯一の所有者であり、破棄時点でGPU側の使用完了を呼び出し元が保証する。
-        unsafe { device.destroy_buffer(self.buffer, None) };
-        device.メモリを解放する(self.memory);
+        self.バッファ.破棄する(device);
     }
 }

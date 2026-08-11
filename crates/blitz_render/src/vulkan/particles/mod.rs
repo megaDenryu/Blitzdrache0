@@ -18,6 +18,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::particle_material::粒子素材;
 use crate::particle_shader_set::粒子シェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 use crate::vulkan::uniform::フレームシェーダー定数一式;
@@ -34,8 +35,7 @@ pub(crate) struct 粒子リソース一式 {
 impl 粒子リソース一式 {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
         カラー形式: vk::Format,
         深度形式: vk::Format,
@@ -43,8 +43,9 @@ impl 粒子リソース一式 {
         シェーダー: &粒子シェーダー一式,
         素材: &粒子素材,
     ) -> Result<Self, レンダラーエラー> {
-        let バッファ = 粒子バッファ::生成する(device, メモリプロパティ, 転送環境, 素材)?;
-        let ディスクリプタ = match 粒子ディスクリプタ一式::生成する(device, バッファ.buffer, シェーダー定数) {
+        let device = 確保係.論理デバイス();
+        let バッファ = 粒子バッファ::生成する(確保係, 転送環境, 素材)?;
+        let ディスクリプタ = match 粒子ディスクリプタ一式::生成する(device, バッファ.buffer(), シェーダー定数) {
             Ok(ディスクリプタ) => ディスクリプタ,
             Err(誤り) => {
                 バッファ.破棄する(device);
@@ -52,7 +53,7 @@ impl 粒子リソース一式 {
             }
         };
         let コンピュートパイプライン =
-            match 粒子コンピュートパイプライン::生成する(device, ディスクリプタ.layout, シェーダー.コンピュートコード())
+            match 粒子コンピュートパイプライン::生成する(確保係, ディスクリプタ.layout, シェーダー.コンピュートコード())
             {
                 Ok(パイプライン) => パイプライン,
                 Err(誤り) => {
@@ -62,7 +63,7 @@ impl 粒子リソース一式 {
                 }
             };
         let 描画パイプライン = match 粒子描画パイプライン::生成する(
-            device,
+            確保係,
             カラー形式,
             深度形式,
             ディスクリプタ.layout,

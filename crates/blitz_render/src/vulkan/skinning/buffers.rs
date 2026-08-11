@@ -7,30 +7,30 @@ mod create;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::host_buffer;
-use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
+use crate::vulkan::allocator::{フレームスロットごとのバッファ, 専用メモリ付きバッファ};
+use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct スキニングバッファ {
-    レスト頂点: (vk::Buffer, vk::DeviceMemory),
-    属性: (vk::Buffer, vk::DeviceMemory),
-    行列一覧: [(vk::Buffer, vk::DeviceMemory); 進行中フレーム数],
-    pub(super) 出力: (vk::Buffer, vk::DeviceMemory),
+    レスト頂点: 専用メモリ付きバッファ,
+    属性: 専用メモリ付きバッファ,
+    行列一覧: フレームスロットごとのバッファ,
+    pub(super) 出力: 専用メモリ付きバッファ,
 }
 
 pub(super) use create::生成する;
 
 impl スキニングバッファ {
     pub(super) fn レスト頂点buffer(&self) -> vk::Buffer {
-        self.レスト頂点.0
+        self.レスト頂点.バッファ()
     }
 
     pub(super) fn 属性buffer(&self) -> vk::Buffer {
-        self.属性.0
+        self.属性.バッファ()
     }
 
     pub(super) fn 行列buffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
-        self.行列一覧[フレーム添字.配列添字()].0
+        self.行列一覧.スロットのバッファ(フレーム添字)
     }
 
     /// 前提: 呼び出しはフェンス待ち後(このスロットの前回GPU使用の完了後。判断24と同じ規律)。
@@ -46,14 +46,14 @@ impl スキニングバッファ {
                 バイト列.extend_from_slice(&成分.to_le_bytes());
             }
         }
-        host_buffer::上書きする(device, self.行列一覧[フレーム添字.配列添字()].1, &バイト列)
+        self.行列一覧.スロットの中身を書き換える(device, フレーム添字, &バイト列)
     }
 
+    /// 前提: 破棄時点でGPU側の使用が完了していることを呼び出し元が保証する。
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
-        for &(buffer, memory) in [self.レスト頂点, self.属性, self.出力].iter().chain(self.行列一覧.iter()) {
-            // 安全性: 各バッファはSelfが唯一の所有者で、GPU側の使用は完了済み。
-            unsafe { device.destroy_buffer(buffer, None) };
-            device.メモリを解放する(memory);
+        for バッファ in [&self.レスト頂点, &self.属性, &self.出力] {
+            バッファ.破棄する(device);
         }
+        self.行列一覧.破棄する(device);
     }
 }

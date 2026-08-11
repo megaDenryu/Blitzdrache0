@@ -7,6 +7,7 @@ use super::{チャンク描画資源, 資源一覧を破棄する};
 use crate::draw_bundle_id::描画束ID;
 use crate::error::レンダラーエラー;
 use crate::render_object_material::描画対象素材;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::descriptor::{ジオメトリセット参照, 描画対象ディスクリプタプール};
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::visible_id::可視ID列バッファ;
@@ -14,20 +15,20 @@ use crate::vulkan::visible_id::可視ID列バッファ;
 impl チャンク描画資源 {
     /// 失敗したときは生成途中のGPU資源をすべて解放してからエラーを返すため、呼び出し元は自分が保持中の束をそのまま使い続けられる。
     pub(in crate::renderer::scene_draw_resources) fn 生成する(
-        device: &GPUデバイス,
+        確保係: &GPU資源の確保係<'_>,
         材料: チャンク描画資源生成材料<'_>,
         id: 描画束ID,
         描画対象一覧: &[描画対象素材],
     ) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let 描画対象資源一覧 = render_object_resources::描画対象資源一覧を生成する(
-            device,
-            材料.メモリプロパティ,
+            確保係,
             材料.転送環境,
             描画対象一覧,
             材料.材質id一覧,
             材料.動く個体一覧,
         )?;
-        let 単一個体用可視id列 = match 可視ID列バッファ::生成する(device, 材料.メモリプロパティ, 1) {
+        let 単一個体用可視id列 = match 可視ID列バッファ::生成する(材料.確保係, 1) {
             Ok(値) => 値,
             Err(誤り) => {
                 資源一覧を破棄する(device, &描画対象資源一覧);

@@ -23,8 +23,8 @@ pub(crate) struct 自動露出描画入力 {
 impl 自動露出一式 {
     pub(crate) fn 描画入力を作る(&self, 経過秒: f32) -> 自動露出描画入力 {
         自動露出描画入力 {
-            ヒストグラムバッファ: self.バッファ.ヒストグラム.handle,
-            露出状態バッファ: self.バッファ.露出状態.handle,
+            ヒストグラムバッファ: self.バッファ.ヒストグラム.handle(),
+            露出状態バッファ: self.バッファ.露出状態.handle(),
             集計pipeline: self.パイプライン.集計,
             集計layout: self.パイプライン.集計レイアウト,
             導出pipeline: self.パイプライン.導出,

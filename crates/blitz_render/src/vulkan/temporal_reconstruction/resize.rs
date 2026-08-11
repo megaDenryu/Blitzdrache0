@@ -7,24 +7,22 @@
 //! 履歴の内容を引き継がず、履歴を無効へ戻すのは、スワップチェーンの作り直しが判断cの無効化条件の1つだからである。
 //! 寸法の変わった画面へ前の寸法の履歴を混ぜる意味は無い。
 
-use ash::vk;
-
 use super::images::時間再構成の画像組;
 use super::{時間再構成一式, 画面の入力};
 use crate::error::レンダラーエラー;
-use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::transfer::転送実行環境;
 
 impl 時間再構成一式 {
     /// 前提: 呼び出し時点でGPUがこれらの画像とディスクリプタを使用していないこと(device_wait_idle後)。
     pub(crate) fn 寸法に追従する(
         &mut self,
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
         画面: 画面の入力,
     ) -> Result<(), レンダラーエラー> {
-        let 新画像組 = 時間再構成の画像組::生成する(device, メモリプロパティ, 画面.寸法)?;
+        let device = 確保係.論理デバイス();
+        let 新画像組 = 時間再構成の画像組::生成する(確保係, 画面.寸法)?;
         if let Err(誤り) = self.履歴の初期値を書く(転送環境, &新画像組) {
             新画像組.破棄する(device);
             return Err(誤り);

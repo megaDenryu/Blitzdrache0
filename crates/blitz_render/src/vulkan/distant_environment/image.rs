@@ -16,6 +16,7 @@ use ash::vk;
 
 use crate::atmosphere::立方体の面数;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(in crate::vulkan) struct 遠方環境の立方体画像 {
@@ -29,12 +30,8 @@ pub(in crate::vulkan) struct 遠方環境の立方体画像 {
 }
 
 impl 遠方環境の立方体画像 {
-    pub(in crate::vulkan) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        面の一辺: u32,
-    ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, メモリプロパティ, 面の一辺)
+    pub(in crate::vulkan) fn 生成する(確保係: &GPU資源の確保係<'_>, 面の一辺: u32) -> Result<Self, レンダラーエラー> {
+        create::生成する(確保係, 面の一辺)
     }
 
     /// 全6層を1度に走査する計算の発行の大きさ。奥行きが面の層番号である。

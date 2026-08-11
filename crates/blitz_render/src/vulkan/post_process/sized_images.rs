@@ -7,18 +7,18 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::bloom_targets::光のにじみピラミッド;
 use crate::vulkan::hdr_target::HDRターゲット;
-use crate::vulkan::tracked_device::GPUデバイス;
 
 /// ピラミッドの生成に失敗したらHDR中間画像を片付ける。
 pub(super) fn 生成する(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     寸法: vk::Extent2D,
 ) -> Result<(HDRターゲット, 光のにじみピラミッド), レンダラーエラー> {
-    let hdr = HDRターゲット::生成する(device, メモリプロパティ, 寸法)?;
-    match 光のにじみピラミッド::生成する(device, メモリプロパティ, 寸法) {
+    let device = 確保係.論理デバイス();
+    let hdr = HDRターゲット::生成する(確保係, 寸法)?;
+    match 光のにじみピラミッド::生成する(確保係, 寸法) {
         Ok(ピラミッド) => Ok((hdr, ピラミッド)),
         Err(誤り) => {
             hdr.破棄する(device);

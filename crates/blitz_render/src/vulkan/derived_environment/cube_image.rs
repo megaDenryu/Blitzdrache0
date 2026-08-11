@@ -14,6 +14,7 @@ use ash::vk;
 
 use crate::atmosphere::立方体の面数;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(in crate::vulkan) struct 派生の立方体画像 {
@@ -29,12 +30,9 @@ pub(in crate::vulkan) struct 派生の立方体画像 {
 
 impl 派生の立方体画像 {
     pub(in crate::vulkan) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        最詳細段の一辺: u32,
-        段数: u32,
+        確保係: &GPU資源の確保係<'_>, 最詳細段の一辺: u32, 段数: u32
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, メモリプロパティ, 最詳細段の一辺, 段数)
+        create::生成する(確保係, 最詳細段の一辺, 段数)
     }
 
     pub(in crate::vulkan) fn 段の一辺(&self, 段: u32) -> u32 {

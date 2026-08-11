@@ -4,12 +4,11 @@
 mod scene_bundle;
 mod shared;
 
-use ash::vk;
-
 use crate::error::レンダラーエラー;
 use crate::render_scene_material::描画シーン素材;
 use crate::renderer::scene_draw_resources::シーン描画資源;
 use crate::vulkan;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::descriptor::{シーンセットレイアウト一式, 共有ディスクリプタセット};
 use crate::vulkan::gpu_environment::GPU環境;
 use crate::vulkan::material_table::{テクスチャ表レイアウト容量, 材質の登録状態, 材質資源の作業環境, 材質資源表};
@@ -30,31 +29,22 @@ pub(super) struct 基礎資源 {
 /// 起動直後の1フレームだけ新旧2つの世代が同時に生き、GPU資源の同時確保数の最大が定常より高い位置に残る。
 pub(super) fn 組み立てる(
     環境: &GPU環境,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     描画シーン: &描画シーン素材,
     影の一辺: crate::cascade::影の一辺解像度,
     照明束縛: crate::vulkan::pipeline_ledger::照明束縛レイアウト,
 ) -> Result<基礎資源, レンダラーエラー> {
     let device = 環境.device();
     let 表容量 = テクスチャ表レイアウト容量::起動時に決める(環境.ディスクリプタ索引上限())?;
-    let 共有 = shared::create::生成する(
-        device,
-        メモリプロパティ,
-        環境.queue(),
-        環境.キューファミリ添字(),
-        表容量,
-        影の一辺,
-        照明束縛,
-    )?;
+    let 共有 = shared::create::生成する(確保係, 環境.queue(), 環境.キューファミリ添字(), 表容量, 影の一辺, 照明束縛)?;
     let 作業環境 = 材質資源の作業環境 {
-        device,
+        確保係,
         問い合わせ: 環境.物理デバイス問い合わせ(),
-        メモリプロパティ,
         転送環境: &共有.転送,
         セットレイアウト: &共有.セットレイアウト,
     };
     let mut 登録状態 = 材質の登録状態::新規(表容量);
-    let 束 = match scene_bundle::起動シーンの束を作る(device, メモリプロパティ, &共有, &mut 登録状態, 描画シーン) {
+    let 束 = match scene_bundle::起動シーンの束を作る(確保係, &共有, &mut 登録状態, 描画シーン) {
         Ok(値) => 値,
         Err(誤り) => {
             共有.破棄する(device);

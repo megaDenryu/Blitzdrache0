@@ -4,6 +4,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::compute_pipeline;
 
 /// そのパイプラインが受け取る即時定数の枠。持たないパスと持つパスを型で分ける。
@@ -22,13 +23,14 @@ pub(in crate::vulkan) struct 生成パイプライン {
 
 impl 生成パイプライン {
     pub(in crate::vulkan) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         ディスクリプタlayout: vk::DescriptorSetLayout,
         押し込み: 即時定数の枠,
         spirv: &[u8],
     ) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let layout = レイアウトを作る(device, ディスクリプタlayout, 押し込み)?;
-        match compute_pipeline::生成する(device, layout, spirv, c"computeMain") {
+        match compute_pipeline::生成する(確保係, layout, spirv, c"computeMain") {
             Ok(handle) => Ok(Self { handle, layout }),
             Err(誤り) => {
                 // 安全性: layoutはこのスコープの唯一の所有者で、以降使用しない。

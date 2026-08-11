@@ -17,6 +17,7 @@ mod create;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 pub(crate) struct 空中遠近合成ディスクリプタ {
@@ -33,8 +34,10 @@ pub(crate) struct 空中遠近合成の束縛先 {
 }
 
 impl 空中遠近合成ディスクリプタ {
-    pub(crate) fn 生成する(device: &ash::Device, 束縛先: &空中遠近合成の束縛先) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, 束縛先)
+    pub(crate) fn 生成する(
+        確保係: &GPU資源の確保係<'_>, 束縛先: &空中遠近合成の束縛先
+    ) -> Result<Self, レンダラーエラー> {
+        create::生成する(確保係, 束縛先)
     }
 
     pub(crate) fn set(&self, フレーム添字: フレームスロット添字) -> vk::DescriptorSet {

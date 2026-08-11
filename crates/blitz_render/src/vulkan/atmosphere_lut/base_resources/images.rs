@@ -4,21 +4,19 @@
 //! 巻き戻しをここに閉じるのは、確保の回数が増えるたびに入れ子の分岐が深くなり、
 //! 何を持っていて何を片付けるべきかが呼び出し元から見えにくくなるためである。
 
-use ash::vk;
-
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::image::大気のベイク済み画像;
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像の形;
-use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) fn 順に作る<const 枚数: usize>(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     形一覧: [大気のベイク済み画像の形; 枚数],
 ) -> Result<[大気のベイク済み画像; 枚数], レンダラーエラー> {
+    let device = 確保係.論理デバイス();
     let mut 作った: Vec<大気のベイク済み画像> = Vec::with_capacity(形一覧.len());
     for 形 in 形一覧 {
-        match 大気のベイク済み画像::生成する(device, メモリプロパティ, 形) {
+        match 大気のベイク済み画像::生成する(確保係, 形) {
             Ok(画像) => 作った.push(画像),
             Err(誤り) => {
                 while let Some(画像) = 作った.pop() {

@@ -24,12 +24,8 @@ impl レンダラー {
         if let Some(古い) = self.読み戻しバッファ.take() {
             古い.破棄する(self.環境.device());
         }
-        let メモリプロパティ = self.環境.メモリプロパティを取得する();
-        self.読み戻しバッファ = Some(vulkan::readback::読み戻しバッファ::生成する(
-            self.環境.device(),
-            &メモリプロパティ,
-            必要バイト数,
-        )?);
+        let 確保係 = self.環境.資源の確保係を貸す();
+        self.読み戻しバッファ = Some(vulkan::readback::読み戻しバッファ::生成する(&確保係, 必要バイト数)?);
         Ok(())
     }
 

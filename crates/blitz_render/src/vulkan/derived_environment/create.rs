@@ -12,7 +12,7 @@ use super::pipelines::{派生表現のシェーダー一式, 派生表現のパ�
 use super::派生表現一式;
 use crate::distant_environment::derived::{反射率積分表の解像度, 拡散照度の解像度, 鏡面畳込みの解像度};
 use crate::error::レンダラーエラー;
-use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 /// 3つの派生表現の解像度。引数の列が伸び続けるのを避けて1つに束ねる。
 #[derive(Debug, Clone, Copy)]
@@ -23,13 +23,13 @@ pub(in crate::vulkan) struct 派生表現の解像度一式 {
 }
 
 pub(super) fn 生成する(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     解像度: 派生表現の解像度一式,
     遠方環境の配列ビュー: vk::ImageView,
     シェーダー: &派生表現のシェーダー一式<'_>,
 ) -> Result<派生表現一式, レンダラーエラー> {
-    let 画像 = 派生表現の画像三点::生成する(device, メモリプロパティ, 解像度)?;
+    let device = 確保係.論理デバイス();
+    let 画像 = 派生表現の画像三点::生成する(確保係, 解像度)?;
     let ディスクリプタ = match 派生表現のディスクリプタ三点::生成する(device, 遠方環境の配列ビュー, &画像) {
         Ok(ディスクリプタ) => ディスクリプタ,
         Err(誤り) => {
@@ -37,7 +37,7 @@ pub(super) fn 生成する(
             return Err(誤り);
         }
     };
-    match 派生表現のパイプライン三点::生成する(device, &ディスクリプタ, シェーダー) {
+    match 派生表現のパイプライン三点::生成する(確保係, &ディスクリプタ, シェーダー) {
         Ok(パイプライン) => Ok(派生表現一式 {
             画像,
             ディスクリプタ,

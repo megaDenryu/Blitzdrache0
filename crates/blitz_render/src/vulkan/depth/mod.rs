@@ -7,6 +7,7 @@ mod create;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) const 深度形式: vk::Format = vk::Format::D32_SFLOAT;
@@ -18,12 +19,8 @@ pub(crate) struct 深度バッファ {
 }
 
 impl 深度バッファ {
-    pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        寸法: vk::Extent2D,
-    ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, メモリプロパティ, 寸法)
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, 寸法: vk::Extent2D) -> Result<Self, レンダラーエラー> {
+        create::生成する(確保係, 寸法)
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {

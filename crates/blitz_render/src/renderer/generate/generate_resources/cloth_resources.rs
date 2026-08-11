@@ -7,15 +7,14 @@ use crate::cloth_material::布素材;
 use crate::cloth_shader_set::布シェーダー一式;
 use crate::error::レンダラーエラー;
 use crate::vulkan;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::descriptor::シーンセットレイアウト一式;
 use crate::vulkan::skinning::スキニング一式;
-use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn 組み立てる(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     転送環境: &転送実行環境,
     シーンカラー形式: vk::Format,
     セットレイアウト: &シーンセットレイアウト一式,
@@ -45,8 +44,7 @@ pub(super) fn 組み立てる(
         Some(スキニング.出力バッファ())
     };
     Ok(Some(vulkan::cloth::布一式を生成する(
-        device,
-        メモリプロパティ,
+        確保係,
         転送環境,
         シーンカラー形式,
         セットレイアウト,

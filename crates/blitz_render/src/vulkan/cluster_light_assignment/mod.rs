@@ -21,6 +21,7 @@ use ash::vk;
 use crate::clustered_lighting::クラスタ格子の分割数;
 use crate::compute_shader::コンピュートシェーダー;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::descriptor::照明問い合わせのバッファ組;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -43,12 +44,13 @@ pub(crate) struct クラスタ選別一式 {
 impl クラスタ選別一式 {
     /// 呼び出しタイミング: レンダラー生成時の1回だけ。照明問い合わせ資源束が組み上がった後に呼ぶ。
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
+        確保係: &GPU資源の確保係<'_>,
         シェーダー: &コンピュートシェーダー,
         バッファ組一覧: &[照明問い合わせのバッファ組],
     ) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let ディスクリプタ = descriptor::クラスタ選別のディスクリプタ::生成する(device, バッファ組一覧)?;
-        let パイプライン = match pipeline::クラスタ選別のパイプライン::生成する(device, ディスクリプタ.レイアウト, シェーダー)
+        let パイプライン = match pipeline::クラスタ選別のパイプライン::生成する(確保係, ディスクリプタ.レイアウト, シェーダー)
         {
             Ok(値) => 値,
             Err(誤り) => {

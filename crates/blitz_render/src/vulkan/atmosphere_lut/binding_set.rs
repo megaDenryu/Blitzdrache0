@@ -12,6 +12,7 @@ use super::march_descriptor::経路生成ディスクリプタ;
 use super::multiscatter_descriptor::多重散乱ディスクリプタ;
 use super::{pipeline, transmittance_descriptor};
 use crate::shader_bundle::大気のベイク済み画像のシェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::sync::フレームスロット添字;
 
 pub(super) struct 大気のベイク済み画像の束縛一式 {
@@ -29,11 +30,11 @@ pub(super) struct 大気のベイク済み画像の束縛一式 {
 
 impl 大気のベイク済み画像の束縛一式 {
     pub(super) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         基盤: &大気のベイク済み画像の基盤資源,
         シェーダー: &大気のベイク済み画像のシェーダー一式,
     ) -> Result<Self, crate::error::レンダラーエラー> {
-        create::生成する(device, 基盤, シェーダー)
+        create::生成する(確保係, 基盤, シェーダー)
     }
 
     pub(super) fn 透過率セット(&self, フレーム添字: フレームスロット添字) -> vk::DescriptorSet {

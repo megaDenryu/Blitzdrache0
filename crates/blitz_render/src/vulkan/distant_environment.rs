@@ -15,11 +15,10 @@ mod inputs;
 pub(crate) mod pass;
 mod probe;
 
-use ash::vk;
-
 use crate::atmosphere::遠方環境の解像度;
 use crate::compute_shader::コンピュートシェーダー;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::pipeline::生成パイプライン;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
@@ -38,13 +37,12 @@ pub(crate) struct 遠方環境一式 {
 
 impl 遠方環境一式 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         解像度: 遠方環境の解像度,
         借りる束縛先: 遠方環境が借りる束縛先<'_>,
         シェーダー: &コンピュートシェーダー,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, メモリプロパティ, 解像度, 借りる束縛先, シェーダー)
+        create::生成する(確保係, 解像度, 借りる束縛先, シェーダー)
     }
 
     pub(crate) fn 画像入力を作る(&self) -> 遠方環境の画像入力 {

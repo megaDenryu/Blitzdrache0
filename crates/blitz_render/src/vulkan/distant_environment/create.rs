@@ -3,24 +3,22 @@
 //!
 //! 受け取るのは解像度と大気のベイク済み画像一式から借りる束縛先とシェーダー、返すのは組み上がった一式である。
 
-use ash::vk;
-
 use super::{descriptor, image, inputs, 遠方環境が借りる束縛先, 遠方環境一式};
 use crate::atmosphere::遠方環境の解像度;
 use crate::compute_shader::コンピュートシェーダー;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::pipeline::{即時定数の枠, 生成パイプライン};
-use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) fn 生成する(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     解像度: 遠方環境の解像度,
     借りる束縛先: 遠方環境が借りる束縛先<'_>,
     シェーダー: &コンピュートシェーダー,
 ) -> Result<遠方環境一式, レンダラーエラー> {
-    let 画像 = image::遠方環境の立方体画像::生成する(device, メモリプロパティ, 解像度.面の一辺())?;
-    match 束縛を組む(device, &画像, 借りる束縛先, シェーダー) {
+    let device = 確保係.論理デバイス();
+    let 画像 = image::遠方環境の立方体画像::生成する(確保係, 解像度.面の一辺())?;
+    match 束縛を組む(確保係, &画像, 借りる束縛先, シェーダー) {
         Ok((ディスクリプタ, パイプライン)) => Ok(遠方環境一式 {
             画像,
             ディスクリプタ,
@@ -34,13 +32,14 @@ pub(super) fn 生成する(
 }
 
 fn 束縛を組む(
-    device: &GPUデバイス,
+    確保係: &GPU資源の確保係<'_>,
     画像: &image::遠方環境の立方体画像,
     借りる束縛先: 遠方環境が借りる束縛先<'_>,
     シェーダー: &コンピュートシェーダー,
 ) -> Result<(descriptor::遠方環境ディスクリプタ, 生成パイプライン), レンダラーエラー> {
+    let device = 確保係.論理デバイス();
     let ディスクリプタ = descriptor::遠方環境ディスクリプタ::生成する(
-        device,
+        確保係,
         descriptor::遠方環境の束縛先 {
             シェーダー定数一覧: 借りる束縛先.シェーダー定数一覧,
             遠方環境用スカイビュービュー: 借りる束縛先.遠方環境用スカイビュービュー,
@@ -48,7 +47,7 @@ fn 束縛を組む(
         },
     )?;
     let 枠 = 即時定数の枠::バイト数(inputs::遠方環境の即時定数のバイト数);
-    match 生成パイプライン::生成する(device, ディスクリプタ.layout, 枠, シェーダー.コード()) {
+    match 生成パイプライン::生成する(確保係, ディスクリプタ.layout, 枠, シェーダー.コード()) {
         Ok(パイプライン) => Ok((ディスクリプタ, パイプライン)),
         Err(誤り) => {
             ディスクリプタ.破棄する(device);

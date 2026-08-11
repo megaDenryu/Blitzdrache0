@@ -6,14 +6,13 @@ use super::{buffers, descriptor, params, pipelines, 布一式};
 use crate::cloth_material::布素材;
 use crate::cloth_shader_set::布シェーダー一式;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::pipeline::パイプライン;
-use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn 生成する(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     転送環境: &転送実行環境,
     シーンカラー形式: vk::Format,
     セットレイアウト: &crate::vulkan::descriptor::シーンセットレイアウト一式,
@@ -21,7 +20,8 @@ pub(crate) fn 生成する(
     シェーダー: &布シェーダー一式,
     スキン済み頂点buffer: Option<vk::Buffer>,
 ) -> Result<布一式, レンダラーエラー> {
-    let バッファ = buffers::生成する(device, メモリプロパティ, 転送環境, 素材)?;
+    let device = 確保係.論理デバイス();
+    let バッファ = buffers::生成する(確保係, 転送環境, 素材)?;
     let ディスクリプタ = match descriptor::生成する(device, &バッファ, スキン済み頂点buffer) {
         Ok(一式) => 一式,
         Err(誤り) => {
@@ -29,7 +29,7 @@ pub(crate) fn 生成する(
             return Err(誤り);
         }
     };
-    let パイプライン群 = match pipelines::生成する(device, ディスクリプタ.layout, シェーダー) {
+    let パイプライン群 = match pipelines::生成する(確保係, ディスクリプタ.layout, シェーダー) {
         Ok(群) => 群,
         Err(誤り) => {
             ディスクリプタ.破棄する(device);
@@ -39,7 +39,7 @@ pub(crate) fn 生成する(
     };
     // 布描画はシーンと同構成のパイプライン(cull無効・同じ48バイト頂点レイアウト・同じディスクリプタ)。
     let 描画パイプライン = match パイプライン::布用に生成する(
-        device,
+        確保係,
         シーンカラー形式,
         crate::vulkan::depth::深度形式,
         &セットレイアウト.布描画の並び(),

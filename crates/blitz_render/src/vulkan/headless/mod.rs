@@ -50,9 +50,11 @@ impl ウィンドウなし実行GPU環境 {
         self.検証カウンタ.clone()
     }
 
-    pub(crate) fn メモリプロパティを取得する(&self) -> vk::PhysicalDeviceMemoryProperties {
+    /// GPU資源を確保する道具を貸す。ウィンドウのある実行と同じ形で確保を頼めるようにするためである。
+    pub(crate) fn 資源の確保係を貸す(&self) -> crate::vulkan::allocator::GPU資源の確保係<'_> {
         // 安全性: instance・physical_deviceは生成済みで有効。
-        unsafe { self.検証.instance.get_physical_device_memory_properties(self.physical_device) }
+        let メモリプロパティ = unsafe { self.検証.instance.get_physical_device_memory_properties(self.physical_device) };
+        crate::vulkan::allocator::GPU資源の確保係::生成する(&self.device, メモリプロパティ)
     }
 
     /// 一時コマンドバッファを1本確保して積み込みを開始する。

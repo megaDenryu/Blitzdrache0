@@ -5,20 +5,24 @@
 use super::{空中遠近合成資源, 空段階の生成要求, 空段階資源};
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像標本ディスクリプタ;
 use crate::vulkan::pipeline::空パイプライン;
 
-pub(super) fn 生成する(device: &ash::Device, 要求: 空段階の生成要求<'_>) -> Result<空段階資源, レンダラーエラー> {
-    let 標本 = 大気のベイク済み画像標本ディスクリプタ::生成する(device, &要求.大気のベイク済み画像.標本の束縛先())?;
+pub(super) fn 生成する(
+    確保係: &GPU資源の確保係<'_>, 要求: 空段階の生成要求<'_>
+) -> Result<空段階資源, レンダラーエラー> {
+    let device = 確保係.論理デバイス();
+    let 標本 = 大気のベイク済み画像標本ディスクリプタ::生成する(確保係, &要求.大気のベイク済み画像.標本の束縛先())?;
     let layout一覧 = [要求.ビューとパスlayout, 標本.layout];
-    let パイプライン = match パイプラインを作る(device, &要求, &layout一覧, &要求.シェーダー.放射輝度) {
+    let パイプライン = match パイプラインを作る(確保係, &要求, &layout一覧, &要求.シェーダー.放射輝度) {
         Ok(パイプライン) => パイプライン,
         Err(誤り) => {
             標本.破棄する(device);
             return Err(誤り);
         }
     };
-    match 合成を作る(device, &要求) {
+    match 合成を作る(確保係, &要求) {
         Ok(合成) => Ok(空段階資源 {
             パイプライン, 標本, 合成
         }),
@@ -31,13 +35,13 @@ pub(super) fn 生成する(device: &ash::Device, 要求: 空段階の生成要�
 }
 
 fn 合成を作る(
-    device: &ash::Device, 要求: &空段階の生成要求<'_>
+    確保係: &GPU資源の確保係<'_>, 要求: &空段階の生成要求<'_>
 ) -> Result<Option<空中遠近合成資源>, レンダラーエラー> {
     let Some(シェーダー) = 要求.シェーダー.空中遠近合成.as_ref() else {
         return Ok(None);
     };
     Ok(Some(空中遠近合成資源::生成する(
-        device,
+        確保係,
         要求.カラー形式,
         要求.ビューとパスlayout,
         &要求.大気のベイク済み画像.合成の束縛先(),
@@ -46,10 +50,10 @@ fn 合成を作る(
 }
 
 fn パイプラインを作る(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     要求: &空段階の生成要求<'_>,
     layout一覧: &[ash::vk::DescriptorSetLayout],
     シェーダー: &シェーダー一式,
 ) -> Result<空パイプライン, レンダラーエラー> {
-    空パイプライン::生成する(device, 要求.カラー形式, 要求.深度形式, layout一覧, シェーダー)
+    空パイプライン::生成する(確保係, 要求.カラー形式, 要求.深度形式, layout一覧, シェーダー)
 }

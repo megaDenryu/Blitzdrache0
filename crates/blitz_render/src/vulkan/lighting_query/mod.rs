@@ -38,6 +38,7 @@ mod shader_struct_tests;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::descriptor::{lighting_set, シーンセットレイアウト一式};
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::{pipeline_ledger::照明束縛レイアウト, shadow_resources::影の資源の組, tracked_device::GPUデバイス};
@@ -59,12 +60,11 @@ pub(crate) struct 照明問い合わせ資源束 {
 
 impl 照明問い合わせ資源束 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         レイアウト: &シーンセットレイアウト一式,
         影の資源: &影の資源の組,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, メモリプロパティ, レイアウト, 影の資源)
+        create::生成する(確保係, レイアウト, 影の資源)
     }
 
     /// 注意: 呼び出し元はこのスロットの描画完了フェンスを待ってから呼ぶ(renderer/uniform_write.rsの経路)。

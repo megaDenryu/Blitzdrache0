@@ -3,32 +3,23 @@
 //!
 //! 注意: 進行中のフレームが同じバッファを書いている最中に読むと中身が定まらないため、呼び出し元はGPUの待機を済ませてから呼ぶ。
 
-use ash::vk;
-
 use super::storage::{ヒストグラムのバイト数, 露出状態のバイト数};
 use super::自動露出一式;
 use crate::auto_exposure::{ビン数, 自動露出の観測};
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::readback::語列を読み戻す;
-use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 impl 自動露出一式 {
     /// 前提: 呼び出し時点でGPUがこの2本のバッファを使用していないこと(device_wait_idle後)。
     pub(crate) fn 観測を読み戻す(
         &self,
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
     ) -> Result<自動露出の観測, レンダラーエラー> {
-        let ヒストグラム = 語列を読み戻す(
-            device,
-            メモリプロパティ,
-            転送環境,
-            self.バッファ.ヒストグラム.handle,
-            ヒストグラムのバイト数(),
-        )?;
-        let 状態 = 語列を読み戻す(device, メモリプロパティ, 転送環境, self.バッファ.露出状態.handle, 露出状態のバイト数)?;
+        let ヒストグラム = 語列を読み戻す(確保係, 転送環境, self.バッファ.ヒストグラム.handle(), ヒストグラムのバイト数())?;
+        let 状態 = 語列を読み戻す(確保係, 転送環境, self.バッファ.露出状態.handle(), 露出状態のバイト数)?;
         Ok(観測へ組む(&ヒストグラム, &状態))
     }
 }

@@ -6,7 +6,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::device_buffer;
+use crate::vulkan::allocator::{GPU資源の確保係, 専用メモリ付きバッファ};
 use crate::vulkan::geometry::upload::ステージング経由でアップロードする;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
@@ -17,30 +17,28 @@ fn 記憶と転送の用途() -> vk::BufferUsageFlags {
 }
 
 pub(crate) struct 記憶バッファ {
-    pub(crate) handle: vk::Buffer,
-    memory: vk::DeviceMemory,
+    バッファ: 専用メモリ付きバッファ,
 }
 
 impl 記憶バッファ {
     /// 中身を書かずに確保する。呼び出し側が最初の書き込みを行うまで中身は未定義である。
-    pub(crate) fn 確保する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        バイト数: u64,
-    ) -> Result<Self, レンダラーエラー> {
-        let (handle, memory) = device_buffer::確保する(device, メモリプロパティ, バイト数, 記憶と転送の用途())?;
-        Ok(Self { handle, memory })
+    pub(crate) fn 確保する(確保係: &GPU資源の確保係<'_>, バイト数: u64) -> Result<Self, レンダラーエラー> {
+        let バッファ = 確保係.デバイスローカルバッファを確保する(バイト数, 記憶と転送の用途())?;
+        Ok(Self { バッファ })
     }
 
     /// 与えたバイト列でデバイスローカルに作る。起動時に1度だけ書いて以降変えない列が使う。
     pub(crate) fn 書き込んで確保する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
         バイト列: &[u8],
     ) -> Result<Self, レンダラーエラー> {
-        let (handle, memory) = ステージング経由でアップロードする(device, メモリプロパティ, 転送環境, バイト列, 記憶と転送の用途())?;
-        Ok(Self { handle, memory })
+        let バッファ = ステージング経由でアップロードする(確保係, 転送環境, バイト列, 記憶と転送の用途())?;
+        Ok(Self { バッファ })
+    }
+
+    pub(crate) fn handle(&self) -> vk::Buffer {
+        self.バッファ.バッファ()
     }
 
     /// 全体を0で埋める。生成直後の1回だけ呼ぶ。
@@ -50,14 +48,13 @@ impl 記憶バッファ {
         unsafe {
             一時
                 .論理デバイス()
-                .cmd_fill_buffer(一時.積む先のコマンドバッファ(), self.handle, 0, バイト数, 0)
+                .cmd_fill_buffer(一時.積む先のコマンドバッファ(), self.バッファ.バッファ(), 0, バイト数, 0)
         };
         一時.送信して完了を待つ()
     }
 
+    /// 前提: 破棄時点でGPU側の使用が完了していることを呼び出し元が保証する。
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
-        // 安全性: handleとmemoryはSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了していることを呼び出し元が保証する。
-        unsafe { device.destroy_buffer(self.handle, None) };
-        device.メモリを解放する(self.memory);
+        self.バッファ.破棄する(device);
     }
 }

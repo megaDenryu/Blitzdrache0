@@ -9,15 +9,15 @@ mod slot_cycle;
 use ash::vk;
 
 use crate::vulkan;
-use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
+use crate::vulkan::allocator::フレーム記録のコマンド一式;
+use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 use slot_cycle::フレームスロット巡回;
 
 pub(super) use slot_cycle::フレーム結末;
 
 pub(super) struct フレーム進行 {
-    command_pool: vk::CommandPool,
-    command_buffer一覧: [vk::CommandBuffer; 進行中フレーム数],
+    コマンド一式: フレーム記録のコマンド一式,
     フレーム同期: vulkan::sync::フレーム同期,
     巡回: フレームスロット巡回,
     /// 提示へ到達しなかったフレームの累計。提示停止に起因する異常(破棄待ちの滞留・フレームループの空転)を実行中に観測する計器である。
@@ -39,7 +39,7 @@ impl フレーム進行 {
             スロット,
             フェンス: self.フレーム同期.フェンス(スロット),
             取得セマフォ: self.フレーム同期.取得セマフォ(スロット),
-            command_buffer: self.command_buffer一覧[スロット.配列添字()],
+            command_buffer: self.コマンド一式.スロットのコマンドバッファ(スロット.配列添字()),
         }
     }
 
@@ -61,11 +61,9 @@ impl フレーム進行 {
         self.見送り累計
     }
 
-    /// 注意: コマンドバッファはコマンドプールの破棄で暗黙に解放されるため、個別のfree_command_buffersは不要。
     /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この束はその1段として呼ばれる(GPU待機済み)。
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
         self.フレーム同期.破棄する(device);
-        // 安全性: command_poolはSelfが唯一の所有者で、破棄時点でGPU側の使用完了を呼び出し元が保証する。
-        unsafe { device.destroy_command_pool(self.command_pool, None) };
+        self.コマンド一式.破棄する(device);
     }
 }

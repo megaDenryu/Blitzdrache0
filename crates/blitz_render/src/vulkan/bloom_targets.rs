@@ -6,6 +6,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::hdr_target::HDRターゲット;
 use crate::vulkan::tracked_device::GPUデバイス;
 
@@ -22,11 +23,8 @@ pub(crate) struct 光のにじみピラミッド {
 }
 
 impl 光のにじみピラミッド {
-    pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-        フル解像度: vk::Extent2D,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, フル解像度: vk::Extent2D) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let 寸法一覧 = 段の寸法列(フル解像度);
         let mut 一式 = Self {
             縮小一覧: Vec::new(),
@@ -35,7 +33,7 @@ impl 光のにじみピラミッド {
         };
         for 添字 in 0..一式.寸法一覧.len() {
             let 寸法 = 一式.寸法一覧[添字];
-            match HDRターゲット::生成する(device, メモリプロパティ, 寸法) {
+            match HDRターゲット::生成する(確保係, 寸法) {
                 Ok(画像) => 一式.縮小一覧.push(画像),
                 Err(誤り) => {
                     一式.破棄する(device);
@@ -43,7 +41,7 @@ impl 光のにじみピラミッド {
                 }
             }
             if 添字 + 1 < 一式.寸法一覧.len() {
-                match HDRターゲット::生成する(device, メモリプロパティ, 寸法) {
+                match HDRターゲット::生成する(確保係, 寸法) {
                     Ok(画像) => 一式.拡大一覧.push(画像),
                     Err(誤り) => {
                         一式.破棄する(device);

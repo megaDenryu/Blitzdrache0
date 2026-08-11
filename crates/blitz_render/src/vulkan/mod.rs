@@ -3,6 +3,7 @@
 //!
 //! 参照: CLAUDE.md「unsafe の規律」
 
+pub(crate) mod allocator;
 pub(crate) mod atmosphere_lut;
 pub(crate) mod auto_exposure;
 pub(crate) mod bloom;
@@ -10,7 +11,6 @@ pub(crate) mod bloom_targets;
 pub(crate) mod cloth;
 pub(crate) mod cloth_shadow;
 pub(crate) mod cluster_light_assignment;
-pub(crate) mod commands;
 pub(crate) mod compute_pipeline;
 pub(crate) mod debug_messenger;
 pub(crate) mod depth;
@@ -19,7 +19,6 @@ pub(crate) mod derived_environment;
 pub(crate) mod descriptor;
 pub(crate) mod descriptor_indexing;
 pub(crate) mod device;
-pub(crate) mod device_buffer;
 pub(crate) mod distant_environment;
 pub(crate) mod frame;
 pub(crate) mod fullscreen_pipeline;
@@ -29,19 +28,15 @@ pub(crate) mod gpu_timing;
 pub(crate) mod graph;
 pub(crate) mod hdr_target;
 pub(crate) mod headless;
-pub(crate) mod host_buffer;
 pub(crate) mod indirect_lighting;
 pub(crate) mod instance;
 pub(crate) mod instance_transform;
 pub(crate) mod lighting_query;
-pub(crate) mod linear_sampler;
 pub(crate) mod local_visibility;
 pub(crate) mod material_record;
 pub(crate) mod material_table;
 pub(crate) mod material_variant;
-pub(crate) mod memory;
 pub(crate) mod memory_ledger;
-pub(crate) mod nearest_sampler;
 pub(crate) mod particles;
 pub(crate) mod physical_device;
 pub(crate) mod pipeline;
@@ -55,7 +50,6 @@ pub(crate) mod present_timing;
 pub(crate) mod readback;
 pub(crate) mod relative_anchor;
 pub(crate) mod scene_draw_constants;
-pub(crate) mod shader_module;
 #[cfg(test)]
 pub(crate) mod shader_struct;
 pub(crate) mod shadow_map;

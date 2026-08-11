@@ -4,24 +4,22 @@
 
 mod create;
 
-use ash::vk;
-
 use crate::error::レンダラーエラー;
-use crate::vulkan::host_buffer;
-use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
+use crate::vulkan::allocator::{フレームスロットごとのバッファ, 専用メモリ付きバッファ};
+use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct 布バッファ {
-    pub(super) 粒子: (vk::Buffer, vk::DeviceMemory),
-    pub(super) 前位置: (vk::Buffer, vk::DeviceMemory),
-    pub(super) 隣接: (vk::Buffer, vk::DeviceMemory),
-    pub(super) セルカウント: (vk::Buffer, vk::DeviceMemory),
-    pub(super) セル格納: (vk::Buffer, vk::DeviceMemory),
-    pub(super) 布頂点: (vk::Buffer, vk::DeviceMemory),
-    pub(super) インデックス: (vk::Buffer, vk::DeviceMemory),
-    pub(super) アタッチ: (vk::Buffer, vk::DeviceMemory),
-    pub(super) 介入一覧: [(vk::Buffer, vk::DeviceMemory); 進行中フレーム数],
-    pub(super) 定数一覧: [(vk::Buffer, vk::DeviceMemory); 進行中フレーム数],
+    pub(super) 粒子: 専用メモリ付きバッファ,
+    pub(super) 前位置: 専用メモリ付きバッファ,
+    pub(super) 隣接: 専用メモリ付きバッファ,
+    pub(super) セルカウント: 専用メモリ付きバッファ,
+    pub(super) セル格納: 専用メモリ付きバッファ,
+    pub(super) 布頂点: 専用メモリ付きバッファ,
+    pub(super) インデックス: 専用メモリ付きバッファ,
+    pub(super) アタッチ: 専用メモリ付きバッファ,
+    pub(super) 介入一覧: フレームスロットごとのバッファ,
+    pub(super) 定数一覧: フレームスロットごとのバッファ,
 }
 
 pub(super) use create::生成する;
@@ -34,7 +32,7 @@ impl 布バッファ {
         フレーム添字: フレームスロット添字,
         バイト列: &[u8],
     ) -> Result<(), レンダラーエラー> {
-        host_buffer::上書きする(device, self.介入一覧[フレーム添字.配列添字()].1, バイト列)
+        self.介入一覧.スロットの中身を書き換える(device, フレーム添字, バイト列)
     }
 
     /// 前提: 同上。
@@ -44,24 +42,25 @@ impl 布バッファ {
         フレーム添字: フレームスロット添字,
         バイト列: &[u8],
     ) -> Result<(), レンダラーエラー> {
-        host_buffer::上書きする(device, self.定数一覧[フレーム添字.配列添字()].1, バイト列)
+        self.定数一覧.スロットの中身を書き換える(device, フレーム添字, バイト列)
     }
 
+    /// 前提: 破棄時点でGPU側の使用が完了していることを呼び出し元が保証する。
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
         let 固定一覧 = [
-            self.粒子,
-            self.前位置,
-            self.隣接,
-            self.セルカウント,
-            self.セル格納,
-            self.布頂点,
-            self.インデックス,
-            self.アタッチ,
+            &self.粒子,
+            &self.前位置,
+            &self.隣接,
+            &self.セルカウント,
+            &self.セル格納,
+            &self.布頂点,
+            &self.インデックス,
+            &self.アタッチ,
         ];
-        for &(buffer, memory) in 固定一覧.iter().chain(self.介入一覧.iter()).chain(self.定数一覧.iter()) {
-            // 安全性: 各バッファはSelfが唯一の所有者で、GPU側の使用は完了済み。
-            unsafe { device.destroy_buffer(buffer, None) };
-            device.メモリを解放する(memory);
+        for バッファ in 固定一覧 {
+            バッファ.破棄する(device);
         }
+        self.介入一覧.破棄する(device);
+        self.定数一覧.破棄する(device);
     }
 }

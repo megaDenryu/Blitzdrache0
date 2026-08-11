@@ -7,18 +7,17 @@ use super::ポスト処理一式;
 use crate::auto_exposure::自動露出の設定;
 use crate::error::レンダラーエラー;
 use crate::shader_bundle::シェーダー束;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::auto_exposure::自動露出一式;
 use crate::vulkan::bloom::光のにじみ一式;
 use crate::vulkan::bloom_targets::光のにじみピラミッド;
 use crate::vulkan::hdr_target::HDRターゲット;
 use crate::vulkan::tonemap::明るさの圧縮一式;
-use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
 /// 生成に要る材料一式。
 pub(super) struct 生成材料<'a> {
-    pub(super) device: &'a GPUデバイス,
-    pub(super) メモリプロパティ: &'a vk::PhysicalDeviceMemoryProperties,
+    pub(super) 確保係: &'a GPU資源の確保係<'a>,
     pub(super) スワップチェーン画像形式: vk::Format,
     pub(super) 寸法: vk::Extent2D,
     pub(super) シェーダー: &'a シェーダー束,
@@ -27,8 +26,8 @@ pub(super) struct 生成材料<'a> {
 }
 
 pub(super) fn 生成する(材料: 生成材料<'_>) -> Result<ポスト処理一式, レンダラーエラー> {
-    let device = 材料.device;
-    let (hdrターゲット, 光のにじみピラミッド) = super::sized_images::生成する(device, 材料.メモリプロパティ, 材料.寸法)?;
+    let device = 材料.確保係.論理デバイス();
+    let (hdrターゲット, 光のにじみピラミッド) = super::sized_images::生成する(材料.確保係, 材料.寸法)?;
     match 束を生成する(&材料, &hdrターゲット, &光のにじみピラミッド) {
         Ok((光のにじみ, 明るさの圧縮, 自動露出)) => Ok(ポスト処理一式 {
             hdrターゲット,
@@ -52,9 +51,9 @@ fn 束を生成する(
     hdr: &HDRターゲット,
     ピラミッド: &光のにじみピラミッド,
 ) -> Result<(光のにじみ一式, 明るさの圧縮一式, 自動露出一式), レンダラーエラー> {
-    let device = 材料.device;
+    let device = 材料.確保係.論理デバイス();
     let 光のにじみ = 光のにじみ一式::生成する(
-        device,
+        材料.確保係,
         &材料.シェーダー.光のにじみ前処理,
         &材料.シェーダー.光のにじみ縮小,
         &材料.シェーダー.光のにじみ拡大,
@@ -62,7 +61,7 @@ fn 束を生成する(
         ピラミッド,
     )?;
     let 圧縮結果 = 明るさの圧縮一式::生成する(
-        device,
+        材料.確保係,
         材料.スワップチェーン画像形式,
         &材料.シェーダー.明るさの圧縮,
         hdr.画像ビュー,
@@ -75,14 +74,7 @@ fn 束を生成する(
             return Err(誤り);
         }
     };
-    let 自動露出結果 = 自動露出一式::生成する(
-        device,
-        材料.メモリプロパティ,
-        材料.転送環境,
-        &材料.シェーダー.自動露出,
-        材料.自動露出の設定,
-        hdr.画像ビュー,
-    );
+    let 自動露出結果 = 自動露出一式::生成する(材料.確保係, 材料.転送環境, &材料.シェーダー.自動露出, 材料.自動露出の設定, hdr.画像ビュー);
     match 自動露出結果 {
         Ok(一式) => {
             明るさの圧縮.露出状態を束縛する(device, 一式.露出状態バッファ());

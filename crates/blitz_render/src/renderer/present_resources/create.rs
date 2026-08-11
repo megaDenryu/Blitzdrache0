@@ -15,8 +15,8 @@ impl 提示資源 {
     pub(in crate::renderer) fn 生成する(環境: &GPU環境, 要求寸法: ウィンドウ寸法) -> Result<Self, レンダラーエラー> {
         let device = 環境.device();
         let swapchain = 環境.スワップチェーンを作る(要求寸法, None)?;
-        let メモリプロパティ = 環境.メモリプロパティを取得する();
-        let 深度バッファ = match vulkan::depth::深度バッファ::生成する(device, &メモリプロパティ, swapchain.寸法) {
+        let 確保係 = 環境.資源の確保係を貸す();
+        let 深度バッファ = match vulkan::depth::深度バッファ::生成する(&確保係, swapchain.寸法) {
             Ok(値) => 値,
             Err(誤り) => {
                 swapchain.破棄する(device, 環境.swapchain_loader());

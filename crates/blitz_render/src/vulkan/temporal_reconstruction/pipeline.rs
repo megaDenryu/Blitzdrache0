@@ -10,7 +10,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
-use crate::vulkan::shader_module;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 pub(super) struct 時間再構成のパイプライン {
     pub(super) pipeline: vk::Pipeline,
@@ -19,12 +19,13 @@ pub(super) struct 時間再構成のパイプライン {
 
 impl 時間再構成のパイプライン {
     pub(super) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         セットレイアウト: vk::DescriptorSetLayout,
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        let 頂点モジュール = shader_module::生成する(device, シェーダー.頂点コード())?;
-        let 画素段モジュール = match shader_module::生成する(device, シェーダー.画素段コード()) {
+        let device = 確保係.論理デバイス();
+        let 頂点モジュール = 確保係.シェーダーモジュールを生成する(シェーダー.頂点コード())?;
+        let 画素段モジュール = match 確保係.シェーダーモジュールを生成する(シェーダー.画素段コード()) {
             Ok(モジュール) => モジュール,
             Err(誤り) => {
                 // 安全性: 頂点モジュールはこのスコープの唯一の所有者で、以降使用しない。

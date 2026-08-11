@@ -9,7 +9,7 @@ mod finish;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::shader_module;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 pub(crate) struct 粒子描画パイプライン {
     pub(crate) handle: vk::Pipeline,
@@ -18,15 +18,16 @@ pub(crate) struct 粒子描画パイプライン {
 
 impl 粒子描画パイプライン {
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         カラー形式: vk::Format,
         深度形式: vk::Format,
         ディスクリプタlayout: vk::DescriptorSetLayout,
         頂点spirv: &[u8],
         画素段spirv: &[u8],
     ) -> Result<Self, レンダラーエラー> {
-        let 頂点モジュール = shader_module::生成する(device, 頂点spirv)?;
-        let 画素段モジュール = match shader_module::生成する(device, 画素段spirv) {
+        let device = 確保係.論理デバイス();
+        let 頂点モジュール = 確保係.シェーダーモジュールを生成する(頂点spirv)?;
+        let 画素段モジュール = match 確保係.シェーダーモジュールを生成する(画素段spirv) {
             Ok(モジュール) => モジュール,
             Err(誤り) => {
                 // 安全性: 頂点モジュールはこのスコープの唯一の所有者で、以降使用しない。

@@ -11,6 +11,7 @@ use ash::vk;
 use march_series::経路生成を順に作る;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::base_resources::大気のベイク済み画像の基盤資源;
 use crate::vulkan::atmosphere_lut::march_descriptor::経路生成ディスクリプタ;
 use crate::vulkan::atmosphere_lut::multiscatter_descriptor::{多重散乱の束縛先, 多重散乱ディスクリプタ};
@@ -37,11 +38,13 @@ impl ディスクリプタ五点 {
 }
 
 pub(super) fn 作る(
-    device: &ash::Device, 基盤: &大気のベイク済み画像の基盤資源
+    確保係: &GPU資源の確保係<'_>,
+    基盤: &大気のベイク済み画像の基盤資源,
 ) -> Result<ディスクリプタ五点, レンダラーエラー> {
+    let device = 確保係.論理デバイス();
     let シェーダー定数一覧 = 基盤.シェーダー定数一覧();
     let 透過率 = 透過率ディスクリプタ::生成する(device, シェーダー定数一覧, 基盤.透過率.画像ビュー)?;
-    let 多重散乱 = match 多重散乱を作る(device, 基盤, &シェーダー定数一覧) {
+    let 多重散乱 = match 多重散乱を作る(確保係, 基盤, &シェーダー定数一覧) {
         Ok(値) => 値,
         Err(誤り) => {
             透過率.破棄する(device);
@@ -53,7 +56,7 @@ pub(super) fn 作る(
         基盤.遠方環境用スカイビュー.画像ビュー,
         基盤.空中遠近.画像ビュー,
     ];
-    match 経路生成を順に作る(device, 基盤, &シェーダー定数一覧, 書き込み先一覧) {
+    match 経路生成を順に作る(確保係, 基盤, &シェーダー定数一覧, 書き込み先一覧) {
         Ok([スカイビュー, 遠方環境用スカイビュー, 空中遠近]) => Ok(ディスクリプタ五点 {
             透過率,
             多重散乱,
@@ -70,12 +73,12 @@ pub(super) fn 作る(
 }
 
 fn 多重散乱を作る(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     基盤: &大気のベイク済み画像の基盤資源,
     シェーダー定数一覧: &[vk::Buffer; 進行中フレーム数],
 ) -> Result<多重散乱ディスクリプタ, レンダラーエラー> {
     多重散乱ディスクリプタ::生成する(
-        device,
+        確保係,
         多重散乱の束縛先 {
             シェーダー定数一覧,
             透過率ビュー: 基盤.透過率.画像ビュー,

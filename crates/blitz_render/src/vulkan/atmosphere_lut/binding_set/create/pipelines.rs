@@ -8,6 +8,7 @@
 use super::descriptors::ディスクリプタ五点;
 use crate::error::レンダラーエラー;
 use crate::shader_bundle::大気のベイク済み画像のシェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::pipeline::{即時定数の枠, 生成パイプライン};
 
 /// スカイビュー生成が押し込む定数のバイト数。`shaders/atmosphere_skyview.slang`の`SkyViewCondition`(float2つ)と一致させる。
@@ -17,10 +18,11 @@ const スカイビュー押し込みバイト数: u32 = 8;
 const 空中遠近押し込みバイト数: u32 = 64;
 
 pub(super) fn 作る(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     ディスクリプタ: &ディスクリプタ五点,
     シェーダー: &大気のベイク済み画像のシェーダー一式,
 ) -> Result<[生成パイプライン; 5], レンダラーエラー> {
+    let device = 確保係.論理デバイス();
     let 仕様一覧 = [
         (ディスクリプタ.透過率.layout, 即時定数の枠::無し, シェーダー.透過率.コード()),
         (ディスクリプタ.多重散乱.layout, 即時定数の枠::無し, シェーダー.多重散乱.コード()),
@@ -42,7 +44,7 @@ pub(super) fn 作る(
     ];
     let mut 作った: Vec<生成パイプライン> = Vec::with_capacity(仕様一覧.len());
     for (layout, 押し込み, コード) in 仕様一覧 {
-        match 生成パイプライン::生成する(device, layout, 押し込み, コード) {
+        match 生成パイプライン::生成する(確保係, layout, 押し込み, コード) {
             Ok(パイプライン) => 作った.push(パイプライン),
             Err(誤り) => {
                 while let Some(パイプライン) = 作った.pop() {

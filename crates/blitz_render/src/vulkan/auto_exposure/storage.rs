@@ -4,11 +4,10 @@
 //! 露出状態は世界の1本の時系列であり、生成時に全要素0(未初期化)へ落として以降はGPUだけが書く。
 //! 注意: 露出状態を進行中フレームのスロット別に分けてはならない。分けるとNフレームがN-2フレームの状態を読む別系列ができる。
 
-use ash::vk;
-
 use super::storage_buffer::記憶バッファ;
 use crate::auto_exposure::ビン数;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
@@ -31,21 +30,21 @@ pub(crate) struct 自動露出のバッファ一式 {
 
 impl 自動露出のバッファ一式 {
     pub(crate) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
         境界の線形輝度: &[f32; ビン数],
     ) -> Result<Self, レンダラーエラー> {
+        let device = 確保係.論理デバイス();
         let バイト列: Vec<u8> = 境界の線形輝度.iter().flat_map(|値| 値.to_le_bytes()).collect();
-        let 境界 = 記憶バッファ::書き込んで確保する(device, メモリプロパティ, 転送環境, &バイト列)?;
-        let ヒストグラム = match 記憶バッファ::確保する(device, メモリプロパティ, ヒストグラムのバイト数()) {
+        let 境界 = 記憶バッファ::書き込んで確保する(確保係, 転送環境, &バイト列)?;
+        let ヒストグラム = match 記憶バッファ::確保する(確保係, ヒストグラムのバイト数()) {
             Ok(バッファ) => バッファ,
             Err(誤り) => {
                 境界.破棄する(device);
                 return Err(誤り);
             }
         };
-        let 一式 = match 露出状態を用意する(device, メモリプロパティ, 転送環境) {
+        let 一式 = match 露出状態を用意する(確保係, 転送環境) {
             Ok(露出状態) => Self {
                 境界,
                 ヒストグラム,
@@ -69,11 +68,10 @@ impl 自動露出のバッファ一式 {
 
 /// 確保に続けて未初期化(全要素0)を書き込む。0を書き損ねると最初のフレームが不定の補正段を読む。
 fn 露出状態を用意する(
-    device: &GPUデバイス,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
-    転送環境: &転送実行環境,
+    確保係: &GPU資源の確保係<'_>, 転送環境: &転送実行環境
 ) -> Result<記憶バッファ, レンダラーエラー> {
-    let バッファ = 記憶バッファ::確保する(device, メモリプロパティ, 露出状態のバイト数)?;
+    let device = 確保係.論理デバイス();
+    let バッファ = 記憶バッファ::確保する(確保係, 露出状態のバイト数)?;
     if let Err(誤り) = バッファ.零で埋める(転送環境, 露出状態のバイト数) {
         バッファ.破棄する(device);
         return Err(誤り);

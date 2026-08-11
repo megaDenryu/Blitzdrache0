@@ -13,6 +13,7 @@ use super::texture::UIテクスチャ;
 use crate::error::レンダラーエラー;
 use crate::ui_texture_id::UIテクスチャID;
 use crate::ui_texture_material::UIテクスチャ素材;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;
 
@@ -30,13 +31,13 @@ impl UIテクスチャレジストリ {
     /// テクスチャを新規登録、または既存IDを新しい内容で置き換える。
     pub(crate) fn 反映する(
         &mut self,
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         転送環境: &転送実行環境,
         id: UIテクスチャID,
         素材: &UIテクスチャ素材,
     ) -> Result<(), レンダラーエラー> {
-        let 新テクスチャ = UIテクスチャ::生成する(device, メモリプロパティ, 転送環境, 素材)?;
+        let device = 確保係.論理デバイス();
+        let 新テクスチャ = UIテクスチャ::生成する(確保係, 転送環境, 素材)?;
         let 新set = match descriptor::割り当てて書き込む(device, self.pool, self.layout, &新テクスチャ) {
             Ok(set) => set,
             Err(誤り) => {

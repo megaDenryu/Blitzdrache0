@@ -28,11 +28,11 @@ impl 世代束縛資源 {
         画像集合: &[テクスチャ],
         レコード列: &[世代内材質レコード],
     ) -> Result<Self, レンダラーエラー> {
-        let レコードバッファ = 材質レコードバッファ::生成する(環境.device, 環境.メモリプロパティ, 環境.転送環境, レコード列)?;
+        let レコードバッファ = 材質レコードバッファ::生成する(環境.確保係, 環境.転送環境, レコード列)?;
         let pool = match プールを生成する(環境) {
             Ok(値) => 値,
             Err(誤り) => {
-                レコードバッファ.破棄する(環境.device);
+                レコードバッファ.破棄する(環境.論理デバイス());
                 return Err(誤り);
             }
         };
@@ -44,8 +44,8 @@ impl 世代束縛資源 {
             }),
             Err(誤り) => {
                 // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
-                unsafe { 環境.device.destroy_descriptor_pool(pool, None) };
-                レコードバッファ.破棄する(環境.device);
+                unsafe { 環境.論理デバイス().destroy_descriptor_pool(pool, None) };
+                レコードバッファ.破棄する(環境.論理デバイス());
                 Err(誤り)
             }
         }
@@ -77,7 +77,7 @@ fn プールを生成する(環境: 材質資源の作業環境<'_>) -> Result<v
     ];
     let create_info = vk::DescriptorPoolCreateInfo::default().max_sets(1).pool_sizes(&プールサイズ一覧);
     // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
-    Ok(unsafe { 環境.device.create_descriptor_pool(&create_info, None)? })
+    Ok(unsafe { 環境.論理デバイス().create_descriptor_pool(&create_info, None)? })
 }
 
 fn セットを割り当てて結ぶ(
@@ -86,7 +86,7 @@ fn セットを割り当てて結ぶ(
     レコードバッファ: &材質レコードバッファ,
     画像集合: &[テクスチャ],
 ) -> Result<vk::DescriptorSet, レンダラーエラー> {
-    let セット = 環境.セットレイアウト.材質のセットを1つ割り当てる(環境.device, pool)?;
-    material_set::世代の資源を結ぶ(環境.device, セット, (レコードバッファ.buffer, レコードバッファ.範囲), 画像集合);
+    let セット = 環境.セットレイアウト.材質のセットを1つ割り当てる(環境.論理デバイス(), pool)?;
+    material_set::世代の資源を結ぶ(環境.論理デバイス(), セット, (レコードバッファ.buffer(), レコードバッファ.範囲), 画像集合);
     Ok(セット)
 }

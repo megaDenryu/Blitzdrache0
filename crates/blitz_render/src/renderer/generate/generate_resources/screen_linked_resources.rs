@@ -6,12 +6,11 @@
 //! 起動は通り、リサイズしたときだけ古い寸法の画像を読む。
 //! 材料に転送環境を取るため、基礎資源の組み立て後に呼ぶ。
 
-use ash::vk;
-
 use super::base_resources::基礎資源;
 use super::request::生成要求;
 use crate::error::レンダラーエラー;
 use crate::vulkan;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 /// 画面寸法に連動する資源の組。
 pub(super) struct 画面連動資源 {
@@ -21,13 +20,12 @@ pub(super) struct 画面連動資源 {
 
 pub(super) fn 組み立てる(
     要求: &生成要求<'_>,
-    メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+    確保係: &GPU資源の確保係<'_>,
     基礎: &基礎資源,
 ) -> Result<画面連動資源, レンダラーエラー> {
     let device = 要求.環境.device();
     let 局所可視性 = vulkan::local_visibility::局所可視性一式::生成する(
-        device,
-        メモリプロパティ,
+        確保係,
         &基礎.転送環境,
         &要求.シェーダー.局所可視性,
         要求.局所可視性の描画設定,
@@ -37,8 +35,7 @@ pub(super) fn 組み立てる(
         },
     )?;
     match vulkan::temporal_reconstruction::時間再構成一式::生成する(
-        device,
-        メモリプロパティ,
+        確保係,
         &基礎.転送環境,
         &要求.シェーダー.時間再構成,
         要求.時間再構成の描画設定,

@@ -13,16 +13,16 @@ use super::pipeline::時間再構成のパイプライン;
 use super::時間再構成一式;
 use crate::error::レンダラーエラー;
 use crate::temporal_reconstruction::{時間再構成のシェーダー一式, 時間再構成の描画設定};
-use crate::vulkan::linear_sampler;
-use crate::vulkan::tracked_device::GPUデバイス;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 pub(super) fn 組み上げる(
-    device: &GPUデバイス,
+    確保係: &GPU資源の確保係<'_>,
     シェーダー: &時間再構成のシェーダー一式,
     設定: 時間再構成の描画設定,
     画像組: 時間再構成の画像組,
 ) -> Result<時間再構成一式, レンダラーエラー> {
-    let 標本器 = match linear_sampler::線形サンプラーを作る(device) {
+    let device = 確保係.論理デバイス();
+    let 標本器 = match 確保係.線形サンプラーを作る() {
         Ok(標本器) => 標本器,
         Err(誤り) => {
             画像組.破棄する(device);
@@ -37,7 +37,7 @@ pub(super) fn 組み上げる(
             return Err(誤り);
         }
     };
-    match 時間再構成のパイプライン::生成する(device, ディスクリプタ.レイアウト(), &シェーダー.再構成) {
+    match 時間再構成のパイプライン::生成する(確保係, ディスクリプタ.レイアウト(), &シェーダー.再構成) {
         Ok(パイプライン) => Ok(時間再構成一式 {
             画像組,
             ディスクリプタ,

@@ -13,6 +13,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::frame::布シャドウ描画入力;
 use crate::vulkan::pipeline::シャドウパイプライン;
 
@@ -23,11 +24,11 @@ pub(crate) struct 布シャドウ資源 {
 impl 布シャドウ資源 {
     /// `ビューとパスlayout`はscene系と同じset0のレイアウトである。ジオメトリのセットは読まないため宣言しない。
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         ビューとパスlayout: vk::DescriptorSetLayout,
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        let パイプライン = シャドウパイプライン::生成する(device, &[ビューとパスlayout], シェーダー)?;
+        let パイプライン = シャドウパイプライン::生成する(確保係, &[ビューとパスlayout], シェーダー)?;
         Ok(Self { パイプライン })
     }
 

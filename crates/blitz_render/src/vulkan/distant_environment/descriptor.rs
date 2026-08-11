@@ -16,6 +16,7 @@ mod create;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 pub(super) struct 遠方環境ディスクリプタ {
@@ -33,8 +34,10 @@ pub(super) struct 遠方環境の束縛先<'a> {
 }
 
 impl 遠方環境ディスクリプタ {
-    pub(super) fn 生成する(device: &ash::Device, 束縛先: 遠方環境の束縛先<'_>) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, 束縛先)
+    pub(super) fn 生成する(
+        確保係: &GPU資源の確保係<'_>, 束縛先: 遠方環境の束縛先<'_>
+    ) -> Result<Self, レンダラーエラー> {
+        create::生成する(確保係, 束縛先)
     }
 
     pub(super) fn set(&self, フレーム添字: フレームスロット添字) -> vk::DescriptorSet {

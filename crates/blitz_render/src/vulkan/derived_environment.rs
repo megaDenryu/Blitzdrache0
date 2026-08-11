@@ -26,6 +26,7 @@ use ash::vk;
 
 use crate::distant_environment::derived::{反射率積分表の解像度, 拡散照度の解像度, 鏡面畳込みの解像度};
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(in crate::vulkan) use create::派生表現の解像度一式;
@@ -44,13 +45,12 @@ pub(in crate::vulkan) struct 派生表現一式 {
 
 impl 派生表現一式 {
     pub(in crate::vulkan) fn 生成する(
-        device: &GPUデバイス,
-        メモリプロパティ: &vk::PhysicalDeviceMemoryProperties,
+        確保係: &GPU資源の確保係<'_>,
         解像度: 派生表現の解像度一式,
         遠方環境の配列ビュー: vk::ImageView,
         シェーダー: &派生表現のシェーダー一式<'_>,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, メモリプロパティ, 解像度, 遠方環境の配列ビュー, シェーダー)
+        create::生成する(確保係, 解像度, 遠方環境の配列ビュー, シェーダー)
     }
 
     pub(in crate::vulkan) fn 拡散照度画像(&self) -> &派生の立方体画像 {
