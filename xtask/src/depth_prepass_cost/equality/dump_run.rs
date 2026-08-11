@@ -5,7 +5,7 @@
 
 use super::super::schedule::実行条件;
 use super::super::world;
-use crate::acceptance::{描画フレーム数, 描画検収の実行環境, 書き出しの形式, 検収の実行名};
+use crate::acceptance::{描画フレーム数, 描画検収の実行環境, 書き出しの形式, 検収の実行名, 検収エラー};
 
 /// 撮る画像の別。1回の起動で1枚だけ撮る。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -46,7 +46,7 @@ pub(super) fn 撮る(
     実行名: 検収の実行名,
     一日内秒: Option<&String>,
     フレーム数: 描画フレーム数,
-) -> Result<(), String> {
+) -> Result<(), 検収エラー> {
     実行環境.書き出させて報告を採る(
         実行名,
         &world::撮影の起動指定を組み立てる(フレーム数, 条件, 一日内秒),

@@ -13,6 +13,7 @@
 //! 条件を1つも走らせる前にリリースビルドを1度だけ済ませ、そのバイナリの由来を要約と生値へ残す(`crate::release_build`が唯一の入口である)。
 
 mod equality;
+mod error;
 mod intervals;
 mod judgment;
 mod parse;
@@ -27,6 +28,8 @@ mod world;
 
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+
+use error::深度プリパスの費用計測エラー;
 
 use crate::release_build::計測の生値のファイル;
 
@@ -47,15 +50,17 @@ pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
     }
 }
 
-fn 計測する(引数一覧: &[String]) -> Result<String, String> {
+fn 計測する(引数一覧: &[String]) -> Result<String, 深度プリパスの費用計測エラー> {
     let 指定 = plan::引数を読む(引数一覧)?;
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
-        return Err("検証用アセットの生成に失敗した".to_string());
+        return Err(深度プリパスの費用計測エラー::検証用アセットを生成できなかった);
     }
-    let 由来 = crate::release_build::計測用に構築する("depth-prepass-cost")?;
+    let 由来 = crate::release_build::計測用に構築する("depth-prepass-cost")
+        .map_err(|理由| 深度プリパスの費用計測エラー::計測用の構築が失敗した { 理由 })?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
+    std::fs::create_dir_all(&出力先).map_err(|誤り| 深度プリパスの費用計測エラー::出力先を作れなかった { 誤り })?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+        .map_err(|理由| 深度プリパスの費用計測エラー::シェーダーの一時コピーを作れなかった { 理由 })?;
 
     let 標本一覧 = 周回する(&出力先, &シェーダー入口, &指定)?;
     judgment::値が有限であることを確かめる(&標本一覧)?;
@@ -67,7 +72,11 @@ fn 計測する(引数一覧: &[String]) -> Result<String, String> {
     Ok(summary::要約を組む(&観測一覧, &出力先, 指定.フレーム数, &由来))
 }
 
-fn 周回する(出力先: &Path, シェーダー入口: &Path, 指定: &plan::実行の指定) -> Result<Vec<record::一標本>, String> {
+fn 周回する(
+    出力先: &Path,
+    シェーダー入口: &Path,
+    指定: &plan::実行の指定,
+) -> Result<Vec<record::一標本>, 深度プリパスの費用計測エラー> {
     let 実行環境 = world::計測の実行環境を作る();
     let 並び = schedule::起動の並び();
     let mut 標本一覧 = Vec::with_capacity(並び.len());
@@ -81,8 +90,8 @@ fn 周回する(出力先: &Path, シェーダー入口: &Path, 指定: &plan::�
             位置,
             実行番号,
         };
-        let 標準出力 = run::一回走らせる(&材料)?;
-        標本一覧.push(parse::標本を取り出す(&標準出力, 実行番号, 位置, 条件)?);
+        let 報告 = run::一回走らせる(&材料)?;
+        標本一覧.push(parse::標本を取り出す(&報告, 実行番号, 位置, 条件)?);
     }
     Ok(標本一覧)
 }

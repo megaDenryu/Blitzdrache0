@@ -13,10 +13,15 @@ use std::path::Path;
 
 use crate::release_build::{tsvの前置き, 構築の由来};
 
+use super::super::error::深度プリパスの費用計測エラー;
 use super::super::intervals;
 use super::{一標本, 区間の観測};
 
-pub(in super::super) fn 生値を書く(書き先: &Path, 標本一覧: &[一標本], 由来: &構築の由来) -> Result<(), String> {
+pub(in super::super) fn 生値を書く(
+    書き先: &Path,
+    標本一覧: &[一標本],
+    由来: &構築の由来,
+) -> Result<(), 深度プリパスの費用計測エラー> {
     let mut 本文 = tsvの前置き(&由来.注記一覧());
     本文.push_str("実行番号\t周回\t順序位置\t条件\t読み取り順\t区間\t経過ミリ秒\n");
     for 標本 in 標本一覧 {
@@ -30,7 +35,11 @@ pub(in super::super) fn 生値を書く(書き先: &Path, 標本一覧: &[一標
     書く(書き先, &本文)
 }
 
-pub(in super::super) fn 窓の集約を書く(書き先: &Path, 標本一覧: &[一標本], 由来: &構築の由来) -> Result<(), String> {
+pub(in super::super) fn 窓の集約を書く(
+    書き先: &Path,
+    標本一覧: &[一標本],
+    由来: &構築の由来,
+) -> Result<(), 深度プリパスの費用計測エラー> {
     let mut 本文 = tsvの前置き(&由来.注記一覧());
     本文.push_str("実行番号\t周回\t順序位置\t条件\t区間\t平均ミリ秒\tp50ミリ秒\tp95ミリ秒\t標本数\n");
     for 標本 in 標本一覧 {
@@ -52,6 +61,9 @@ fn 行にする(標本: &一標本, 区間名: &str, 観測: 区間の観測) ->
     }
 }
 
-fn 書く(書き先: &Path, 本文: &str) -> Result<(), String> {
-    std::fs::write(書き先, 本文).map_err(|誤り| format!("{}を書けなかった: {誤り}", 書き先.display()))
+fn 書く(書き先: &Path, 本文: &str) -> Result<(), 深度プリパスの費用計測エラー> {
+    std::fs::write(書き先, 本文).map_err(|誤り| 深度プリパスの費用計測エラー::計測の結果を書けなかった {
+        パス: 書き先.to_path_buf(),
+        誤り,
+    })
 }
