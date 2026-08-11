@@ -1,31 +1,39 @@
 //! DamagedHelmetの目視材料の生成。担当するのは、2048画素級の実アセットのベースカラーをBC1化した絵と
 //! 非圧縮の絵を同じ構図で撮り、格納バイト数の比を測ることである。
 //!
-//! この絵に画素の判定値を持たないのは、順4の完了定義がこの絵について「目視で破綻しないこと」だからである
+//! この絵に画素の判定値を持たないのは、着手順4の完了定義がこの絵について「目視で破綻しないこと」だからである
 //! (参照: `_doc/設計/テクスチャのブロック圧縮と縮小段生成.md`「判断h」)。合否はオーナーが絵を見て決める。
 //! 機械が見るのはvalidationの指摘0件と、2枚の絵が実際に食い違うことだけである。後者を見るのは、
 //! 起動指定の取り違えで同じ絵を2枚並べたまま「破綻していない」と読む事故を防ぐためである。
 
 use std::path::{Path, PathBuf};
 
-use crate::acceptance::読み戻し画像;
+use crate::acceptance::{判定の名前, 読み戻し画像};
 
-use super::world_bake::ヘルメットのシーン名;
-use super::{difference, draw, helmet_crop, summary, world_bake};
+use super::baked_scene::ヘルメットのシーン名;
+use super::error::ブロック圧縮の検収エラー;
+use super::{baked_scene, difference, draw, helmet_crop, summary, world_bake};
 
-pub(super) fn ヘルメットの目視材料を作る(出力先: &Path) -> Result<Vec<String>, String> {
+const 非圧縮の条件の呼び名: &str = "DamagedHelmet(全てRGBA8)";
+const 圧縮の条件の呼び名: &str = "DamagedHelmet(ベースカラーのブロック圧縮)";
+
+/// 2枚が食い違うことを見る判定。1画素も食い違わない実行は、両方を同じ方針で撮った疑いがある。
+const 二枚の絵で食い違った画素: 判定の名前 =
+    判定の名前::定数から生成する("DamagedHelmetの2枚の絵で食い違った画素(1画素も食い違わないなら方針の取り違えの疑いがある)");
+
+pub(super) fn ヘルメットの目視材料を作る(出力先: &Path) -> Result<Vec<String>, ブロック圧縮の検収エラー> {
     let ルート = world_bake::ヘルメットの世界を方針違いで焼く()?;
     let 出力ディレクトリ = PathBuf::from(出力先);
     let 非圧縮の実行環境 = draw::実行環境を作る(&ルート.非圧縮, 出力ディレクトリ.clone())?;
     let 圧縮の実行環境 = draw::実行環境を作る(&ルート.ブロック圧縮, 出力ディレクトリ)?;
 
-    let 非圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(&非圧縮の実行環境, ヘルメットのシーン名, "helmet_rgba8")
-        .map_err(|誤り| format!("DamagedHelmet(全てRGBA8): {誤り}"))?;
-    let 圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(&圧縮の実行環境, ヘルメットのシーン名, "helmet_bc1")
-        .map_err(|誤り| format!("DamagedHelmet(ベースカラーのブロック圧縮): {誤り}"))?;
+    let 非圧縮 =
+        draw::条件1つを描いて読み戻しをpngへ書き出す(&非圧縮の実行環境, ヘルメットのシーン名, "helmet_rgba8", 非圧縮の条件の呼び名)?;
+    let 圧縮 =
+        draw::条件1つを描いて読み戻しをpngへ書き出す(&圧縮の実行環境, ヘルメットのシーン名, "helmet_bc1", 圧縮の条件の呼び名)?;
     let 統計 = 画面全体の統計を採る(&非圧縮.画像, &圧縮.画像)?;
     if 統計.差のある画素数 == 0 {
-        return Err("DamagedHelmetの2枚の絵が1画素も食い違わない(方針の取り違えの疑いがある)".to_string());
+        return Err(二枚の絵で食い違った画素.あるはずのものが無い破れ().into());
     }
     helmet_crop::区画が絵に収まるか確かめる(非圧縮.画像.幅().画素数(), 非圧縮.画像.高さ().画素数())?;
     let 非圧縮の拡大 = helmet_crop::ヘルメットの区画を切り取って拡大する(&非圧縮.png, &出力先.join("helmet_rgba8_crop.png"))?;
@@ -34,8 +42,8 @@ pub(super) fn ヘルメットの目視材料を作る(出力先: &Path) -> Resul
         format!("DamagedHelmetの{}(判定値なしの観測)", summary::統計の行を作る("絵の差", &統計)),
         summary::格納バイト数の行を作る(
             "DamagedHelmet",
-            world_bake::ヘルメットの格納バイト数を読む(&ルート.非圧縮)?,
-            world_bake::ヘルメットの格納バイト数を読む(&ルート.ブロック圧縮)?,
+            baked_scene::ヘルメットの格納バイト数を読む(&ルート.非圧縮)?,
+            baked_scene::ヘルメットの格納バイト数を読む(&ルート.ブロック圧縮)?,
         )?,
         format!(
             "DamagedHelmetの絵は{}と{}(拡大は{}と{})",
@@ -51,13 +59,14 @@ pub(super) fn ヘルメットの目視材料を作る(出力先: &Path) -> Resul
 /// 素材ごとに領域を分けず画面全体で統計を採る。背景の画素は差0として平均へ入るが、
 /// この値に判定を課さないため薄まりが判定を緩めることは無い。
 fn 画面全体の統計を採る(
-    非圧縮: &読み戻し画像, 圧縮: &読み戻し画像
-) -> Result<difference::画素の成分差の統計, String> {
+    非圧縮: &読み戻し画像,
+    圧縮: &読み戻し画像,
+) -> Result<difference::画素の成分差の統計, ブロック圧縮の検収エラー> {
     let 全体 = crate::pixel_region::画面領域 {
         x開始: 0,
         x終端: 非圧縮.幅().画素数(),
         y開始: 0,
         y終端: 非圧縮.高さ().画素数(),
     };
-    difference::領域内の成分差の統計を求める(非圧縮, 圧縮, &全体)
+    Ok(difference::領域内の成分差の統計を求める(非圧縮, 圧縮, &全体)?)
 }

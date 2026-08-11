@@ -9,9 +9,11 @@
 //! 既定の`全てRGBA8`のまま焼かれるためである。
 //! 参照: `_doc/設計/テクスチャのブロック圧縮と縮小段生成.md`「段割りと各段の完了条件」の段4
 
+mod baked_scene;
 mod contrast_run;
 mod difference;
 mod draw;
+mod error;
 mod helmet_crop;
 mod helmet_run;
 mod judgment;
@@ -21,6 +23,8 @@ mod world_bake;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+use error::ブロック圧縮の検収エラー;
 
 const 出力ディレクトリ: &str = "target/texture_compression";
 
@@ -37,9 +41,9 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn ブロック圧縮の絵を撮って判定する() -> Result<String, String> {
+fn ブロック圧縮の絵を撮って判定する() -> Result<String, ブロック圧縮の検収エラー> {
     if !crate::gen_source_assets::生成する() {
-        return Err("検証用ソースアセットの生成に失敗した".to_string());
+        return Err(ブロック圧縮の検収エラー::検証用ソースアセットを生成できなかった);
     }
     let 出力先 = PathBuf::from(出力ディレクトリ);
     let mut 行一覧 = contrast_run::対照の板を検収する(&出力先)?;
