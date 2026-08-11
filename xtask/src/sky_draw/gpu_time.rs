@@ -1,45 +1,50 @@
 //! パス別GPU時間の報告から空パスの平均ミリ秒を読む工程。
-//! 受け取るのはblitz_appの標準出力、返すのは空パスの移動平均ミリ秒である。
+//! 受け取るのは終了時報告、返すのは空パスの移動平均ミリ秒である。
 //! 行の形は「  空: 0.0154 ms」であり、パス名はレンダラーのパス宣言と一致する。
+//!
+//! パス名を見出しと鍵の両方で持つのは、この綴りが行の先頭に立つ接頭辞であると同時に、
+//! 続く語を値として結ぶ鍵でもあるためである。
 
-const 見出し: &str = "パス別GPU時間";
-const パス名: &str = "空:";
+use crate::acceptance::{検収エラー, 終了時報告};
+use crate::report_heading::報告の見出し;
+use crate::report_line_key::{報告の行の鍵, 鍵に値が結ばれる形};
 
-pub(super) fn 空パスの平均msを読む(標準出力: &str) -> Result<f64, String> {
-    let mut 行一覧 = 標準出力.lines().skip_while(|行| !行.contains(見出し));
-    行一覧.next().ok_or_else(|| format!("標準出力に{見出し}の区画が無い"))?;
-    let 行 = 行一覧
-        .take_while(|行| 行.starts_with("  "))
-        .find(|行| 行.trim_start().starts_with(パス名))
-        .ok_or_else(|| format!("{見出し}の区画に{パス名}の行が無い"))?;
-    let 値 = 行
-        .trim_start()
-        .trim_start_matches(パス名)
-        .split_whitespace()
-        .next()
-        .ok_or_else(|| format!("{パス名}の行に値が無い: {行}"))?;
-    値.parse().map_err(|誤り| format!("{パス名}の値を数として読めない({行}): {誤り}"))
+const 表の見出し: 報告の見出し = 報告の見出し::定数から生成する("パス別GPU時間");
+const 空パスの行の接頭辞: 報告の見出し = 報告の見出し::定数から生成する("空:");
+const 空パスの鍵: 報告の行の鍵 = 報告の行の鍵::定数から生成する("空:");
+
+pub(super) fn 空パスの平均msを読む(報告: &終了時報告) -> Result<f64, 検収エラー> {
+    報告
+        .見出しの区画(表の見出し)?
+        .接頭辞の行(&空パスの行の接頭辞)?
+        .鍵に結ばれた数(&空パスの鍵, 鍵に値が結ばれる形::次の語が値である)
 }
 
 #[cfg(test)]
 #[allow(clippy::unwrap_used)]
 mod tests {
     use super::*;
+    use crate::acceptance::検収の実行名;
 
+    const 標本の実行名: 検収の実行名 = 検収の実行名::定数から生成する("sky_draw_gpu_time");
     const 標本: &str = "パス別GPU時間(移動平均、60フレーム窓):\n  シーン描画: 0.0105 ms\n  空: 0.0154 ms\n  シャドウ: 0.0050 ms\n";
+
+    fn 報告にする(標準出力: &str) -> 終了時報告 {
+        終了時報告::取り込む(&標本の実行名, 標準出力.to_string(), String::new())
+    }
 
     #[test]
     fn 空パスの行から平均msを読む() {
-        assert!((空パスの平均msを読む(標本).unwrap() - 0.0154).abs() < 1e-9);
+        assert!((空パスの平均msを読む(&報告にする(標本)).unwrap() - 0.0154).abs() < 1e-9);
     }
 
     #[test]
     fn 区画が無ければ失敗にする() {
-        assert!(空パスの平均msを読む("何もない出力\n").is_err());
+        assert!(空パスの平均msを読む(&報告にする("何もない出力\n")).is_err());
     }
 
     #[test]
     fn 区画に空の行が無ければ失敗にする() {
-        assert!(空パスの平均msを読む("パス別GPU時間:\n  シーン描画: 0.0105 ms\n").is_err());
+        assert!(空パスの平均msを読む(&報告にする("パス別GPU時間:\n  シーン描画: 0.0105 ms\n")).is_err());
     }
 }
