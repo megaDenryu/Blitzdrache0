@@ -5,18 +5,20 @@ mod run;
 
 use std::process::{Command, ExitCode};
 
+use crate::acceptance::検収の1回の実行;
+
 const 上限バイト数: u64 = 16 * 1024 * 1024;
 
 pub fn 実行する() -> ExitCode {
     if !子xtaskを実行する("origin-invariance") || !子xtaskを実行する("lod-crack") {
         return ExitCode::FAILURE;
     }
-    let Some(実行結果) = run::統合経路を実行する() else {
+    let Some(実行結果) = 統合経路を走らせる() else {
         return ExitCode::FAILURE;
     };
-    print!("{}", 実行結果.標準出力);
-    eprint!("{}", 実行結果.標準エラー);
-    let 計測 = match metrics::読み取る(&実行結果.標準出力) {
+    実行結果.報告().画面へ流す();
+    実行結果.報告().標準エラーを画面へ流す();
+    let 計測 = match metrics::読み取る(実行結果.報告().本文()) {
         Ok(計測) => 計測,
         Err(理由) => {
             eprintln!("[xtask] ow3-dod失敗: 統合経路の計測行を読み取れなかった: {理由}");
@@ -36,8 +38,12 @@ pub fn 実行する() -> ExitCode {
         eprintln!("[xtask] ow3-dod失敗: {}", 計測.要約文());
         return ExitCode::FAILURE;
     }
-    let Some(png絶対パス) = run::pngへ変換する(&実行結果.ダンプ先) else {
-        return ExitCode::FAILURE;
+    let png絶対パス = match 実行結果.書き出し先().目視用の絵へ変換する() {
+        Ok(パス) => パス,
+        Err(誤り) => {
+            eprintln!("[xtask] ow3-dod失敗: {誤り}");
+            return ExitCode::FAILURE;
+        }
     };
     println!("[xtask] ow3-dod成功: {}", 計測.要約文());
     println!("[xtask] 複数LOD画像: {}", png絶対パス.display());
@@ -57,4 +63,13 @@ fn 子xtaskを実行する(名前: &str) -> bool {
             false
         }
     }
+}
+
+/// 統合経路を1回走らせる。失敗の理由を報せてから無しへ畳むのは、呼び出し元が無しを不合格として扱うためである。
+fn 統合経路を走らせる() -> Option<検収の1回の実行> {
+    let 実行環境 = run::実行環境を作る().map_err(|誤り| eprintln!("[xtask] {誤り}")).ok()?;
+    実行環境
+        .描いて読み戻す(run::統合経路の実行名, &run::起動指定を組み立てる())
+        .map_err(|誤り| eprintln!("[xtask] 統合経路の実行に失敗した: {誤り}"))
+        .ok()
 }

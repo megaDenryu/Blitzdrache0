@@ -9,7 +9,7 @@
 //! 絵への出方が違うためである。色の段差は成分ごとのEV差から共通の明るさの動きを引いた残りであり、
 //! 明るさが揃っていても色だけが動いた段差をこれが捉える。
 
-use super::hdr_image::HDR画像;
+use crate::acceptance::{圧縮前のHDR画像, 画素の番号};
 use crate::relative_luminance::相対輝度;
 use crate::sample_world_region::固定領域;
 
@@ -21,14 +21,15 @@ pub(super) struct 領域の段差 {
     pub(super) 測れなかった画素数: u64,
 }
 
-pub(super) fn 領域の段差を求める(下側: &HDR画像, 上側: &HDR画像, 領域: &固定領域) -> 領域の段差 {
+pub(super) fn 領域の段差を求める(下側: &圧縮前のHDR画像, 上側: &圧縮前のHDR画像, 領域: &固定領域) -> 領域の段差 {
     let mut 段差 = 領域の段差 {
         明るさのev一覧: Vec::with_capacity(領域.画素添字一覧.len()),
         色のev一覧: Vec::with_capacity(領域.画素添字一覧.len()),
         測れなかった画素数: 0,
     };
     for 添字 in &領域.画素添字一覧 {
-        match 画素の段差を求める(下側.画素(*添字), 上側.画素(*添字)) {
+        let 番号 = 画素の番号::生成する(*添字);
+        match 画素の段差を求める(&下側.番号の画素(番号), &上側.番号の画素(番号)) {
             Some((明るさ, 色)) => {
                 段差.明るさのev一覧.push(明るさ);
                 段差.色のev一覧.push(色);

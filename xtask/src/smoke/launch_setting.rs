@@ -1,24 +1,29 @@
-//! 1ステージ分の起動条件。子プロセスへ渡すフレーム数・シェーダー・アセット・シーンと、各機能の有無を保持する。
-//! 引数列への変換と子プロセス起動は`run_stage`が担う。
+//! 1ステージ分の起動条件。子プロセスへ渡すフレーム数・シェーダー・アセット・シーンと、各機能の有無を保持し、
+//! 起動指定へ写す。実行環境の用意と起動は`run_stage`が担う。
 
 use std::path::Path;
 
+use crate::acceptance::{アプリの起動指定, 描画フレーム数, 検収シーン名};
+
 pub(super) struct 起動設定<'a> {
-    pub(super) フレーム数: &'a str,
+    pub(super) フレーム数: 描画フレーム数,
     pub(super) シェーダーパス: &'a Path,
     pub(super) アセットルート: Option<&'a Path>,
-    pub(super) シーン名: &'a str,
-    pub(super) 照明なし: bool,
-    pub(super) 粒子あり: bool,
-    pub(super) 開発uiあり: bool,
-    pub(super) ポストなし: bool,
-    pub(super) 布あり: bool,
-    pub(super) ウィンドウ再構築検証あり: bool,
+    pub(super) シーン名: 検収シーン名,
+    照明なし: bool,
+    粒子あり: bool,
+    開発uiあり: bool,
+    ポストなし: bool,
+    布あり: bool,
+    ウィンドウ再構築検証あり: bool,
 }
 
 impl<'a> 起動設定<'a> {
     pub(super) fn 生成する(
-        フレーム数: &'a str, シェーダーパス: &'a Path, アセットルート: Option<&'a Path>, シーン名: &'a str
+        フレーム数: 描画フレーム数,
+        シェーダーパス: &'a Path,
+        アセットルート: Option<&'a Path>,
+        シーン名: 検収シーン名,
     ) -> Self {
         Self {
             フレーム数,
@@ -59,4 +64,27 @@ impl<'a> 起動設定<'a> {
         self.ウィンドウ再構築検証あり = true;
         self
     }
+
+    /// 各機能の有無を起動指定へ写す。
+    ///
+    /// 厳密ピクセル判定を使うステージはポストを外し、期待値を明るさの圧縮導入前のまま保つ(判断39)。
+    pub(super) fn 起動指定へ写す(&self) -> アプリの起動指定 {
+        let 有無と綴り = [
+            (self.照明なし, "--unlit"),
+            (self.粒子あり, "--particles"),
+            (self.開発uiあり, "--dev-ui"),
+            (self.ポストなし, "--no-post"),
+            (self.布あり, "--cloth"),
+            (self.ウィンドウ再構築検証あり, "--window-rebuild"),
+        ];
+        有無と綴り
+            .into_iter()
+            .filter(|(有るか, _)| *有るか)
+            .fold(基本の指定(self), |指定, (_, 綴り)| 指定.選択肢を足す(綴り))
+    }
+}
+
+fn 基本の指定(設定: &起動設定<'_>) -> アプリの起動指定 {
+    アプリの起動指定::シーンと枚数を決める(設定.シーン名, 設定.フレーム数)
+        .パスを値に持つ選択肢を足す("--shader-source", 設定.シェーダーパス)
 }

@@ -5,25 +5,23 @@
 //! この入口を置くのは、遊ぶのに5つの起動指定が要り、それを手で並べると検収が通った条件と違う条件で遊ぶことに
 //! なるためである。マップが未生成の環境では先に`cargo xtask gen-game-map --seed <数>`を実行する。
 
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
 
+use crate::acceptance::検収の実行名;
 use crate::fox_tour_map_seed::乱数の種の読み取り結果;
 
+/// この起動を指す名前。絵を1枚も書き出さないが、失敗の文面がどの起動かを名指すために要る。
+const 遊ぶ起動の実行名: 検収の実行名 = 検収の実行名::定数から生成する("fox_tour_play");
+
 pub fn 実行する() -> ExitCode {
-    let mut コマンド = Command::new("cargo");
-    コマンド.args(["run", "-p", "blitz_app", "--release", "--"]);
-    crate::fox_tour_launch::世界を開く指定を積む(&mut コマンド);
-    コマンド.args(["--game", "fox_tour"]);
     これから遊ぶマップの乱数の種を知らせる();
     println!("[xtask] キツネの場所巡りを起動する(Enterではじめる、矢印キーで歩く、Escで終了確認)");
-    match コマンド.status() {
-        Ok(終了状態) if 終了状態.success() => ExitCode::SUCCESS,
-        Ok(終了状態) => {
-            eprintln!("[xtask] blitz_appが{終了状態}で終わった");
-            ExitCode::FAILURE
-        }
+    let 実行環境 = crate::fox_tour_launch::場所巡りの世界を遊ぶ実行環境を作る();
+    let 指定 = crate::fox_tour_launch::人が終えるまで世界を開く().値を持つ選択肢を足す("--game", "fox_tour");
+    match 実行環境.画面へ流したまま走らせる(遊ぶ起動の実行名, &指定) {
+        Ok(()) => ExitCode::SUCCESS,
         Err(誤り) => {
-            eprintln!("[xtask] cargoの起動に失敗: {誤り}");
+            eprintln!("[xtask] {誤り}");
             ExitCode::FAILURE
         }
     }

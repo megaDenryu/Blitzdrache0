@@ -9,8 +9,10 @@ use std::path::{Path, PathBuf};
 use super::plan::実行の指定;
 use super::schedule::{周回の位置, 実行条件};
 use super::world;
+use crate::acceptance::世界を読ませて報告を採る実行環境;
 
 pub(super) struct 実行の材料<'a> {
+    pub(super) 実行環境: &'a 世界を読ませて報告を採る実行環境,
     pub(super) 出力先: &'a Path,
     pub(super) シェーダー入口: &'a Path,
     pub(super) 指定: &'a 実行の指定,
@@ -25,27 +27,14 @@ pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<String,
         "[xtask] depth-prepass-cost実行{}: 周回{}の{}番目 {}",
         材料.実行番号, 材料.位置.周回番号, 材料.位置.順序位置, 材料.条件.名前
     );
-    let 出力 = world::起こし方
-        .コマンドを作る()
-        .args(引数を作る(材料))
-        .output()
-        .map_err(|誤り| format!("{}を起動できなかった({}): {誤り}", world::起こし方.表示の綴り(), 材料.条件.名前))?;
-    let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
+    let 報告 = 材料.実行環境.報告を採る(材料.条件.実行名を組む("cost")?, &起動指定を組み立てる(材料))?;
+    let 標準出力 = 報告.本文().to_string();
     std::fs::write(&標準出力先, &標準出力).map_err(|誤り| format!("{}を書けなかった: {誤り}", 標準出力先.display()))?;
-    if !出力.status.success() {
-        return Err(format!("実行{}({})が{}で失敗した", 材料.実行番号, 材料.条件.名前, 出力.status));
-    }
-    crate::validation_count::零件数を確かめる(&標準出力, 材料.条件.名前)?;
     Ok(標準出力)
 }
 
-fn 引数を作る(材料: &実行の材料<'_>) -> Vec<String> {
-    let mut 引数一覧 = world::世界の引数();
-    引数一覧.push("--report-gpu-times".to_string());
-    引数一覧.push("--report-gpu-frame-times".to_string());
-    引数一覧.extend(["--benchmark-frames".to_string(), 材料.指定.フレーム数.to_string()]);
-    引数一覧.extend(["--shader-source".to_string(), 材料.シェーダー入口.display().to_string()]);
-    引数一覧.extend(world::時刻の引数(材料.指定.一日内秒.as_ref()));
-    引数一覧.extend(world::条件の引数(材料.条件));
-    引数一覧
+fn 起動指定を組み立てる(材料: &実行の材料<'_>) -> crate::acceptance::アプリの起動指定 {
+    world::計測の起動指定を組み立てる(材料.指定.フレーム数, 材料.条件, 材料.指定.一日内秒.as_ref())
+        .選択肢をまとめて足す(&["--report-gpu-times", "--report-gpu-frame-times"])
+        .パスを値に持つ選択肢を足す("--shader-source", 材料.シェーダー入口)
 }

@@ -13,9 +13,11 @@ use std::path::{Path, PathBuf};
 
 use super::plan::実行の指定;
 use super::schedule::{実行条件, 時計};
-use crate::acceptance::アプリの起こし方;
+use crate::acceptance::{
+    アプリの起こし方, アプリの起動指定, 世界を読ませて報告を採る実行環境, 実行時アセットルート, 検収の実行名, 検収シーン名
+};
 
-const シーン名: &str = "terrain_origin";
+const シーン名: 検収シーン名 = 検収シーン名::生成する("terrain_origin");
 const アセットルート: &str = "target/terrain_assets";
 const 先読み半径: &str = "2";
 const 容量上限バイト: &str = "16777216";
@@ -24,6 +26,7 @@ const カメラ俯角差分度: &str = "-25";
 const 時間倍率: &str = "3600";
 
 pub(super) struct 実行の材料<'a> {
+    pub(super) 実行環境: &'a 世界を読ませて報告を採る実行環境,
     pub(super) 出力先: &'a Path,
     pub(super) シェーダー入口: &'a Path,
     pub(super) 指定: &'a 実行の指定,
@@ -34,48 +37,37 @@ pub(super) struct 実行の材料<'a> {
 pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<String, String> {
     let 標準出力先 = PathBuf::from(材料.出力先).join(format!("run_{}_{}.log", 材料.実行番号, 材料.条件.名前));
     println!("[xtask] indirect-cost実行{}: {}", 材料.実行番号, 材料.条件.名前);
-    let 起こし方 = アプリの起こし方::構築済みのリリース版を直に起動する;
-    let 出力 = 起こし方
-        .コマンドを作る()
-        .args(引数を作る(材料))
-        .output()
-        .map_err(|誤り| format!("{}を起動できなかった({}): {誤り}", 起こし方.表示の綴り(), 材料.条件.名前))?;
-    let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
+    let 報告 = 材料
+        .実行環境
+        .報告を採る(検収の実行名::生成する(材料.条件.名前)?, &起動指定を組み立てる(材料))?;
+    let 標準出力 = 報告.本文().to_string();
     std::fs::write(&標準出力先, &標準出力).map_err(|誤り| format!("{}を書けなかった: {誤り}", 標準出力先.display()))?;
-    if !出力.status.success() {
-        return Err(format!("実行{}({})が{}で失敗した", 材料.実行番号, 材料.条件.名前, 出力.status));
-    }
-    crate::validation_count::零件数を確かめる(&標準出力, 材料.条件.名前)?;
     Ok(標準出力)
 }
 
-fn 引数を作る(材料: &実行の材料<'_>) -> Vec<String> {
-    let 固定 = [
-        "--scene",
-        シーン名,
-        "--asset-root",
-        アセットルート,
-        "--streaming",
-        "--streaming-preload-radius",
-        先読み半径,
-        "--streaming-ram-limit",
-        容量上限バイト,
-        "--streaming-vram-limit",
-        容量上限バイト,
-        "--camera-pitch",
-        カメラ俯角差分度,
-        "--report-gpu-times",
-        "--report-atmosphere-passes",
-        "--no-taa",
-    ];
-    let mut 引数一覧: Vec<String> = 固定.iter().map(|語| (*語).to_string()).collect();
-    引数一覧.extend(["--benchmark-frames".to_string(), 材料.指定.フレーム数.to_string()]);
-    引数一覧.extend(["--shader-source".to_string(), 材料.シェーダー入口.display().to_string()]);
-    if let Some(秒) = &材料.指定.一日内秒 {
-        引数一覧.extend(["--time-of-day".to_string(), 秒.clone()]);
+/// 計測の実行環境。GPU時間の窓へcargoのビルド判定を混ぜないため、構築済みのリリース版を直に起こす。
+pub(super) fn 実行環境を作る() -> 世界を読ませて報告を採る実行環境 {
+    世界を読ませて報告を採る実行環境::作る(
+        アプリの起こし方::構築済みのリリース版を直に起動する,
+        実行時アセットルート::綴りから生成する(アセットルート),
+    )
+}
+
+fn 起動指定を組み立てる(材料: &実行の材料<'_>) -> アプリの起動指定 {
+    let 指定 = アプリの起動指定::シーンと計測の枚数を決める(シーン名, 材料.指定.フレーム数)
+        .選択肢を足す("--streaming")
+        .値を持つ選択肢を足す("--streaming-preload-radius", 先読み半径)
+        .値を持つ選択肢を足す("--streaming-ram-limit", 容量上限バイト)
+        .値を持つ選択肢を足す("--streaming-vram-limit", 容量上限バイト)
+        .値を持つ選択肢を足す("--camera-pitch", カメラ俯角差分度)
+        .選択肢をまとめて足す(&["--report-gpu-times", "--report-atmosphere-passes", "--no-taa"])
+        .パスを値に持つ選択肢を足す("--shader-source", 材料.シェーダー入口);
+    let 時刻まで積んだ指定 = match &材料.指定.一日内秒 {
+        None => 指定,
+        Some(秒) => 指定.値を持つ選択肢を足す("--time-of-day", 秒),
+    };
+    match 材料.条件.時計 {
+        時計::進行 => 時刻まで積んだ指定.値を持つ選択肢を足す("--time-scale", 時間倍率),
+        時計::停止 => 時刻まで積んだ指定,
     }
-    if 材料.条件.時計 == 時計::進行 {
-        引数一覧.extend(["--time-scale".to_string(), 時間倍率.to_string()]);
-    }
-    引数一覧
 }

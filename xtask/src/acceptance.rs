@@ -21,6 +21,8 @@
 
 mod app_executable;
 mod app_launch;
+mod draw_end;
+mod dump_format;
 mod error;
 mod exit_report;
 mod frame_count;
@@ -38,6 +40,7 @@ mod scene_name;
 mod world_report_environment;
 
 pub use app_executable::アプリの起こし方;
+pub use dump_format::書き出しの形式;
 pub use error::検収エラー;
 pub use exit_report::終了時報告;
 pub use frame_count::描画フレーム数;

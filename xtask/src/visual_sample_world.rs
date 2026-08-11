@@ -12,11 +12,6 @@ pub const 目視見本世界のシーン名: 検収シーン名 = 検収シー�
 /// 目視見本の実行時形式の置き場。この世界だけの出力ルートである。
 const アセットルートの綴り: &str = "target/terrain_visual_assets";
 
-/// 実行環境をまだ通っていない入口が自分でコマンドを組むために読む生の綴り。
-/// 構造是正計画の順2の第2工程で全部の入口が型を通ると、この2つは消える。
-pub const シーン名: &str = シーン名の綴り;
-pub const アセットルート: &str = アセットルートの綴り;
-
 /// 目視見本の実行時形式。この世界だけの出力ルートへ焼かれる。
 const 実行時形式のパス: &str = "target/terrain_visual_assets/terrain_visual.blitzasset";
 

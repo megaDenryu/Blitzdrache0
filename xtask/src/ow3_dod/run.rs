@@ -1,71 +1,37 @@
-//! 半径2で25チャンクを先読みしてから100m境界とLOD閾値を横切る本番アプリ実行と、RGBA8からPNGへの変換を担う。
+//! 半径2で25チャンクを先読みしてから100m境界とLOD閾値を横切る本番アプリ実行の起動の指定。
+//! 受け取るのは無く、返すのは実行環境へ渡す起動指定である。起こす手順そのものは検収の共通語彙の実行環境が持つ。
 //! 時間再構成は`--no-taa`で外す。この入口の判定がバイト一致に依るため、フレームをまたぐ混合が入ると前のフレームの残りが絵に混ざる。
 
-use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::path::PathBuf;
 
-pub(super) struct 実行結果 {
-    pub(super) 標準出力: String,
-    pub(super) 標準エラー: String,
-    pub(super) ダンプ先: PathBuf,
+use crate::acceptance::{
+    アプリの起こし方, アプリの起動指定, 実行時アセットルート, 描画フレーム数, 描画検収の実行環境, 検収の実行名, 検収エラー, 検収シーン名,
+};
+
+const 出力ディレクトリ: &str = "target/ow3_dod";
+const アセットルート: &str = "target/terrain_assets";
+const シーン名: 検収シーン名 = 検収シーン名::生成する("terrain_origin");
+const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(160);
+const 先読み半径: &str = "2";
+const 容量上限バイト: &str = "16777216";
+const 統合経路の選択肢: [&str; 4] = ["--ow3-dod-route", "--report-streaming-summary", "--report-memory", "--no-taa"];
+
+/// 書き出しの基準名。絵のファイル名になり、失敗の文面もこの名前で実行を名指す。
+pub(super) const 統合経路の実行名: 検収の実行名 = 検収の実行名::定数から生成する("multi_lod");
+
+pub(super) fn 実行環境を作る() -> Result<描画検収の実行環境, 検収エラー> {
+    描画検収の実行環境::作る(
+        アプリの起こし方::毎回cargoに構築させて起動する,
+        実行時アセットルート::綴りから生成する(アセットルート),
+        PathBuf::from(出力ディレクトリ),
+    )
 }
 
-pub(super) fn 統合経路を実行する() -> Option<実行結果> {
-    let ダンプ先 = PathBuf::from("target/ow3_dod/multi_lod");
-    std::fs::create_dir_all(ダンプ先.parent()?).ok()?;
-    let 出力 = Command::new("cargo")
-        .args([
-            "run",
-            "-p",
-            "blitz_app",
-            "--",
-            "--frames",
-            "160",
-            "--scene",
-            "terrain_origin",
-            "--asset-root",
-            "target/terrain_assets",
-            "--streaming",
-            "--streaming-preload-radius",
-            "2",
-            "--streaming-ram-limit",
-            "16777216",
-            "--streaming-vram-limit",
-            "16777216",
-            "--no-taa",
-            "--ow3-dod-route",
-            "--report-streaming-summary",
-            "--report-memory",
-            "--dump-frame",
-        ])
-        .arg(&ダンプ先)
-        .output()
-        .ok()?;
-    if !出力.status.success() {
-        eprintln!("[xtask] 統合経路が{}で失敗した", 出力.status);
-        return None;
-    }
-    Some(実行結果 {
-        標準出力: String::from_utf8(出力.stdout).ok()?,
-        標準エラー: String::from_utf8(出力.stderr).ok()?,
-        ダンプ先,
-    })
-}
-
-pub(super) fn pngへ変換する(ダンプ先: &Path) -> Option<PathBuf> {
-    let 寸法 = std::fs::read_to_string(ダンプ先.with_extension("size")).ok()?;
-    let 大きさ = 寸法.split_whitespace().collect::<Vec<_>>().join("x");
-    let raw = ダンプ先.with_extension("raw");
-    let png = ダンプ先.with_extension("png");
-    let 状態 = Command::new("magick")
-        .args(["-size", &大きさ, "-depth", "8"])
-        .arg(format!("rgba:{}", raw.display()))
-        .arg(&png)
-        .status()
-        .ok()?;
-    if !状態.success() {
-        eprintln!("[xtask] ImageMagickが{状態}で失敗した");
-        return None;
-    }
-    std::fs::canonicalize(png).ok()
+pub(super) fn 起動指定を組み立てる() -> アプリの起動指定 {
+    アプリの起動指定::シーンと枚数を決める(シーン名, フレーム数)
+        .選択肢を足す("--streaming")
+        .値を持つ選択肢を足す("--streaming-preload-radius", 先読み半径)
+        .値を持つ選択肢を足す("--streaming-ram-limit", 容量上限バイト)
+        .値を持つ選択肢を足す("--streaming-vram-limit", 容量上限バイト)
+        .選択肢をまとめて足す(&統合経路の選択肢)
 }

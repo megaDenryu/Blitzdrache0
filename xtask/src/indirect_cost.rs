@@ -57,9 +57,11 @@ fn 計測する(引数一覧: &[String]) -> Result<String, String> {
     std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
     let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
 
+    let 実行環境 = run::実行環境を作る();
     let mut 標本一覧 = Vec::with_capacity(schedule::交互の並び.len());
     for (実行番号, 条件) in schedule::交互の並び.iter().enumerate() {
         let 材料 = run::実行の材料 {
+            実行環境: &実行環境,
             出力先: &出力先,
             シェーダー入口: &シェーダー入口,
             指定: &指定,
@@ -74,23 +76,5 @@ fn 計測する(引数一覧: &[String]) -> Result<String, String> {
     judgment::値が有限であることを確かめる(&標本一覧)?;
     record::生値を書く(&計測の生値のファイル::出力ディレクトリの中の場所(&出力先), &標本一覧, &由来)?;
     table::表示する(&標本一覧);
-    要約を組む(&標本一覧, &出力先, 指定.フレーム数, &由来)
-}
-
-/// 3実行がそろっていることを前提にせず、そろっていなければ何が足りないかを言って失敗にする。
-fn 要約を組む(
-    標本一覧: &[record::一標本], 出力先: &Path, フレーム数: u32, 由来: &crate::release_build::構築の由来
-) -> Result<String, String> {
-    let [停止a, 進行b, 停止a2] = 標本一覧 else {
-        return Err(format!("3実行そろわなかった(採れたのは{}件)", 標本一覧.len()));
-    };
-    Ok(format!(
-        "1実行{フレーム数}フレームの停止A・進行B・停止A'で、{}、{}、{}、{}。区間別の表と生値は{}にある。計測に使ったバイナリの由来は{}",
-        summary::全更新合計の行(進行b)?,
-        summary::更新なし定常の行(停止a),
-        summary::反射率積分表の行(標本一覧),
-        judgment::交互実行の食い違い(停止a, 停止a2),
-        出力先.display(),
-        由来.一行にする()
-    ))
+    summary::要約を組む(&標本一覧, &出力先, 指定.フレーム数, &由来)
 }

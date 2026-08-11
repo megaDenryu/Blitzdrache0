@@ -7,14 +7,11 @@ mod centroid;
 mod compare;
 mod run;
 
-use std::path::Path;
+use std::path::PathBuf;
 use std::process::ExitCode;
 
+use crate::acceptance::{描画検収の実行環境, 検収の実行名, 読み戻し画像};
 use run::検査条件;
-
-/// 検査対象のシーン。方向光の影と点光源を持つため、対象・カメラ・光源・影基準の4つすべてが同じ原点で相対化されていないと一致しない。
-const シーン名: &str = "shadow_scene";
-const フレーム数: &str = "60";
 /// km級の平行移動。設計のDoDが求める大座標での判定であり、f32へ直接持ち込めば桁が失われる大きさである。
 /// 3成分を別の値にするのは、軸を取り違えた実装が同じ値どうしの置換で見逃されないようにするためである。符号も揃えない。
 const 大移動メートル: [f64; 3] = [10_000_000.0, 20_000_000.0, -30_000_000.0];
@@ -33,27 +30,22 @@ pub fn 実行する() -> ExitCode {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }
-    let 出力先 = Path::new(出力ディレクトリ);
-    if let Err(誤り) = std::fs::create_dir_all(出力先) {
-        eprintln!("[xtask] 出力ディレクトリの作成に失敗した: {誤り}");
-        return ExitCode::FAILURE;
-    }
+    let 実行環境 = match run::実行環境を作る(PathBuf::from(出力ディレクトリ)) {
+        Ok(実行環境) => 実行環境,
+        Err(誤り) => {
+            eprintln!("[xtask] 出力ディレクトリの作成に失敗した: {誤り}");
+            return ExitCode::FAILURE;
+        }
+    };
 
-    let 近傍 = match run::読み戻しを取る(出力先, "a_near", &静止条件([0.0, 0.0, 0.0])) {
-        Some(画像) => 画像,
-        None => return ExitCode::FAILURE,
-    };
-    let 遠方 = match run::読み戻しを取る(出力先, "b_far", &静止条件(大移動メートル)) {
-        Some(画像) => 画像,
-        None => return ExitCode::FAILURE,
-    };
-    let 近傍カメラずらし = match run::読み戻しを取る(出力先, "a_near_nudged", &カメラずらし条件([0.0, 0.0, 0.0])) {
-        Some(画像) => 画像,
-        None => return ExitCode::FAILURE,
-    };
-    let 遠方カメラずらし = match run::読み戻しを取る(出力先, "b_far_nudged", &カメラずらし条件(大移動メートル)) {
-        Some(画像) => 画像,
-        None => return ExitCode::FAILURE,
+    let 条件一覧 = [
+        ("a_near", 静止条件([0.0, 0.0, 0.0])),
+        ("b_far", 静止条件(大移動メートル)),
+        ("a_near_nudged", カメラずらし条件([0.0, 0.0, 0.0])),
+        ("b_far_nudged", カメラずらし条件(大移動メートル)),
+    ];
+    let Some([近傍, 遠方, 近傍カメラずらし, 遠方カメラずらし]) = 四条件を描く(&実行環境, &条件一覧) else {
+        return ExitCode::FAILURE;
     };
 
     let 判定一覧 = [
@@ -68,5 +60,25 @@ fn カメラずらし条件(大域ずらし量: [f64; 3]) -> 検査条件 {
     検査条件 {
         大域ずらし量,
         カメラずれメートル,
+    }
+}
+
+/// 4条件を順に描いて絵を並べる。1つでも描けなければ理由を報せて無しへ畳む。
+fn 四条件を描く(実行環境: &描画検収の実行環境, 条件一覧: &[(&str, 検査条件); 4]) -> Option<[読み戻し画像; 4]> {
+    let mut 絵一覧 = Vec::with_capacity(条件一覧.len());
+    for (実行名の綴り, 条件) in 条件一覧 {
+        絵一覧.push(一条件を描く(実行環境, 実行名の綴り, 条件)?);
+    }
+    絵一覧.try_into().ok()
+}
+
+fn 一条件を描く(実行環境: &描画検収の実行環境, 実行名の綴り: &str, 条件: &検査条件) -> Option<読み戻し画像> {
+    let 実行名 = 検収の実行名::生成する(実行名の綴り).map_err(|誤り| eprintln!("[xtask] {誤り}")).ok()?;
+    match 実行環境.描いて読み戻す(実行名, &run::起動指定を組み立てる(条件)) {
+        Ok(実行) => Some(実行.画像を取り出す()),
+        Err(誤り) => {
+            eprintln!("[xtask] {実行名の綴り}の描画か読み戻しに失敗した: {誤り}");
+            None
+        }
     }
 }

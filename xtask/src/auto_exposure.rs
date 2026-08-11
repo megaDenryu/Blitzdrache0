@@ -42,11 +42,11 @@ pub(crate) fn 実行する() -> ExitCode {
 fn 検収する() -> Result<String, String> {
     crate::visual_sample_world::用意する()?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 実行環境 = run::実行環境を作る(出力先.clone())?;
 
-    let 一回目 = run::描画して報告を読む(&出力先, "noon_first", 正午の一日内秒, &run::探り色の扱い::流さない)?;
-    let 二回目 = run::描画して報告を読む(&出力先, "noon_second", 正午の一日内秒, &run::探り色の扱い::流さない)?;
-    let 探り = run::描画して報告を読む(&出力先, "noon_probe", 正午の一日内秒, &run::探り色の扱い::背景へ流す)?;
+    let 一回目 = run::描画して報告を読む(&実行環境, "noon_first", 正午の一日内秒, &run::探り色の扱い::流さない)?;
+    let 二回目 = run::描画して報告を読む(&実行環境, "noon_second", 正午の一日内秒, &run::探り色の扱い::流さない)?;
+    let 探り = run::描画して報告を読む(&実行環境, "noon_probe", 正午の一日内秒, &run::探り色の扱い::背景へ流す)?;
     judgment::一致を判定する(&一回目)?;
     judgment::二実行の一致を判定する(&一回目, &二回目)?;
     judgment::一致を判定する(&探り)?;

@@ -1,14 +1,18 @@
-//! 検査1条件ぶんのblitz_app起動と読み戻し画像の取り込み。
-//! 担当する工程: 検査条件を1つ受け取り、最終フレームの読み戻しを`<ベース名>.raw`と`<ベース名>.size`から画素バイト列として返す。
+//! 検査1条件ぶんの起動の指定。受け取るのは検査条件、返すのは実行環境へ渡す起動指定である。
+//! 起こす手順そのものは検収の共通語彙の実行環境が持つ。
+//!
+//! 読む世界の置き場をアプリの既定へ任せるのは、この検査が既定の世界の`shadow_scene`だけを描くためである。
+//! 置き場を名指しすると、既定の綴りの写しをこの入口が持つことになる。
 
-use std::path::Path;
-use std::process::Command;
+use std::path::PathBuf;
 
-/// 読み戻し画像の画素バイト列と寸法宣言。寸法まで含めて比べることで、条件ごとに解像度が変わった場合も不一致として検出できる。
-pub(super) struct 読み戻し画像 {
-    pub(super) 寸法宣言: String,
-    pub(super) 画素バイト列: Vec<u8>,
-}
+use crate::acceptance::{
+    アプリの起こし方, アプリの起動指定, 描画フレーム数, 描画検収の実行環境, 検収エラー, 検収シーン名
+};
+
+/// 検査対象のシーン。方向光の影と点光源を持つため、対象・カメラ・光源・影基準の4つすべてが同じ原点で相対化されていないと一致しない。
+const シーン名: 検収シーン名 = 検収シーン名::生成する("shadow_scene");
+const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(60);
 
 /// 1条件ぶんの起動設定。大域ずらし量は軸ごとに違う値を与えられるよう3成分で持ち、カメラずれは負の対照でのみ0以外にする。
 pub(super) struct 検査条件 {
@@ -16,64 +20,17 @@ pub(super) struct 検査条件 {
     pub(super) カメラずれメートル: f64,
 }
 
-pub(super) fn 読み戻しを取る(出力先: &Path, ベース名: &str, 条件: &検査条件) -> Option<読み戻し画像> {
-    let ダンプ先 = 出力先.join(ベース名);
-    let 引数一覧 = 引数列を作る(&ダンプ先, 条件);
-    println!("[xtask] cargo {} を実行", 引数一覧.join(" "));
-    match Command::new("cargo").args(&引数一覧).status() {
-        Ok(状態) if 状態.success() => {}
-        Ok(状態) => {
-            eprintln!("[xtask] blitz_appが終了コード{状態}で失敗した(条件{ベース名})");
-            return None;
-        }
-        Err(誤り) => {
-            eprintln!("[xtask] cargoの起動に失敗した: {誤り}");
-            return None;
-        }
-    }
-    読み込む(&ダンプ先)
+pub(super) fn 実行環境を作る(出力ディレクトリ: PathBuf) -> Result<描画検収の実行環境, 検収エラー> {
+    描画検収の実行環境::世界の置き場をアプリの既定に任せて作る(
+        アプリの起こし方::毎回cargoに構築させて起動する,
+        出力ディレクトリ,
+    )
 }
 
-fn 引数列を作る(ダンプ先: &Path, 条件: &検査条件) -> Vec<String> {
+pub(super) fn 起動指定を組み立てる(条件: &検査条件) -> アプリの起動指定 {
     let [x, y, z] = 条件.大域ずらし量;
-    vec![
-        "run".to_string(),
-        "-p".to_string(),
-        "blitz_app".to_string(),
-        "--".to_string(),
-        "--frames".to_string(),
-        super::フレーム数.to_string(),
-        "--scene".to_string(),
-        super::シーン名.to_string(),
-        "--dump-frame".to_string(),
-        ダンプ先.display().to_string(),
-        "--global-offset".to_string(),
-        format!("{x}"),
-        format!("{y}"),
-        format!("{z}"),
-        "--camera-nudge".to_string(),
-        format!("{}", 条件.カメラずれメートル),
-    ]
-}
-
-fn 読み込む(ダンプ先: &Path) -> Option<読み戻し画像> {
-    let rawパス = ダンプ先.with_extension("raw");
-    let sizeパス = ダンプ先.with_extension("size");
-    let 画素バイト列 = match std::fs::read(&rawパス) {
-        Ok(バイト列) => バイト列,
-        Err(誤り) => {
-            eprintln!("[xtask] 読み戻し画像を読めなかった({}): {誤り}", rawパス.display());
-            return None;
-        }
-    };
-    let 寸法宣言 = match std::fs::read_to_string(&sizeパス) {
-        Ok(内容) => 内容,
-        Err(誤り) => {
-            eprintln!("[xtask] 読み戻し寸法を読めなかった({}): {誤り}", sizeパス.display());
-            return None;
-        }
-    };
-    Some(読み戻し画像 {
-        寸法宣言, 画素バイト列
-    })
+    アプリの起動指定::シーンと枚数を決める(シーン名, フレーム数)
+        .選択肢を足す("--global-offset")
+        .選択肢をまとめて足す(&[x.to_string().as_str(), y.to_string().as_str(), z.to_string().as_str()])
+        .値を持つ選択肢を足す("--camera-nudge", &条件.カメラずれメートル.to_string())
 }

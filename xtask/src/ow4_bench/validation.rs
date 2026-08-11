@@ -9,44 +9,50 @@
 //! 時間再構成は`--no-taa`で外す。段3b以前に採った値と並べて読むため、パスを1本足した条件へ計測窓を変えない。
 
 use std::path::Path;
-use std::process::Command;
 
 use super::condition::計測条件;
 use super::{上限バイト数, 先読み半径, 起動時シーン};
+use crate::acceptance::{
+    アプリの起こし方, アプリの起動指定, 世界を読ませて報告を採る実行環境, 実行時アセットルート, 描画フレーム数, 検収の実行名
+};
 
 /// 静止先読み120フレームで25チャンクが全部載り、続く30フレームで往復が始まって解除も通る。
-const 検査フレーム数: &str = "180";
+const 検査フレーム数: 描画フレーム数 = 描画フレーム数::生成する(180);
+/// この実行を指す名前。絵を1枚も書き出さないが、失敗の文面がどの実行かを名指すために要る。
+const 検査の実行名: 検収の実行名 = 検収の実行名::定数から生成する("validation_check");
+const 報告を出させる選択肢: [&str; 5] = [
+    "--instance-stream-route",
+    "--report-streaming-summary",
+    "--report-memory",
+    "--report-draw-issue",
+    "--no-taa",
+];
 
 pub(super) fn 検査する(アセットルート: &Path, シェーダー入口: &Path, 条件: &計測条件) -> Result<u64, String> {
-    let 上限 = 上限バイト数.to_string();
-    let 一日内時刻 = super::condition::時刻の起動指定(条件);
     println!("[xtask] ow4-bench: {}をデバッグビルドでvalidation検査", アセットルート.display());
-    let 出力 = Command::new("cargo")
-        .args(["run", "-p", "blitz_app", "--"])
-        .args(["--scene", 起動時シーン, "--streaming", "--streaming-preload-radius", 先読み半径])
-        .args(["--instance-stream-route", "--benchmark-frames", 検査フレーム数])
-        .args(["--report-streaming-summary", "--report-memory", "--report-draw-issue", "--no-taa"])
-        // レイヤーの検査を計測本体と同じ描画構成で通すため、条件が足す起動指定をこちらへも同じだけ渡す。
-        .args(super::condition::描画の起動指定(条件.描画))
-        .args(&一日内時刻)
-        .args(条件.シャドウ.起動指定())
-        .args(["--streaming-ram-limit", &上限, "--streaming-vram-limit", &上限])
-        .arg("--asset-root")
-        .arg(アセットルート)
-        .arg("--shader-source")
-        .arg(シェーダー入口)
-        .output()
-        .map_err(|誤り| format!("validation検査のblitz_appを起動できなかった: {誤り}"))?;
-    let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
+    let 実行環境 = 世界を読ませて報告を採る実行環境::作る(
+        アプリの起こし方::毎回cargoに構築させて起動する,
+        実行時アセットルート::パスから生成する(アセットルート.to_path_buf()),
+    );
+    let 報告 = 実行環境.報告を採る(検査の実行名, &起動指定を組み立てる(シェーダー入口, 条件))?;
+    let 標準出力 = 報告.本文().to_string();
     出どころを付けて流す(&標準出力);
-    if !出力.status.success() {
-        return Err(format!("validation検査のblitz_appが{}で失敗した", 出力.status));
-    }
-    let 計数 = crate::report_parse::取り出す(&標準出力)?;
-    if 計数.validation件数 != 0 {
-        return Err(format!("validationのエラー・警告が{}件あった", 計数.validation件数));
-    }
-    Ok(計数.シーン.候補数)
+    Ok(crate::report_parse::取り出す(&標準出力)?.シーン.候補数)
+}
+
+fn 起動指定を組み立てる(シェーダー入口: &Path, 条件: &計測条件) -> アプリの起動指定 {
+    let 上限 = 上限バイト数.to_string();
+    アプリの起動指定::シーンと計測の枚数を決める(起動時シーン, 検査フレーム数)
+        .選択肢を足す("--streaming")
+        .値を持つ選択肢を足す("--streaming-preload-radius", 先読み半径)
+        .選択肢をまとめて足す(&報告を出させる選択肢)
+        // レイヤーの検査を計測本体と同じ描画構成で通すため、条件が足す起動指定をこちらへも同じだけ渡す。
+        .選択肢をまとめて足す(super::condition::描画の起動指定(条件.描画))
+        .選択肢をまとめて足す(&super::condition::時刻の起動指定(条件).iter().map(String::as_str).collect::<Vec<&str>>())
+        .選択肢をまとめて足す(&条件.シャドウ.起動指定().iter().map(String::as_str).collect::<Vec<&str>>())
+        .値を持つ選択肢を足す("--streaming-ram-limit", &上限)
+        .値を持つ選択肢を足す("--streaming-vram-limit", &上限)
+        .パスを値に持つ選択肢を足す("--shader-source", シェーダー入口)
 }
 
 /// 検査実行の報告を1行ずつ出どころ付きで流す。この実行はフレーム数が計測本体より短く、
@@ -54,6 +60,6 @@ pub(super) fn 検査する(アセットルート: &Path, シェーダー入口: 
 /// 印を付けずに流すと、計測本体の報告と同じ行の形で並んで、この実行の計数を計測条件として読み違える。
 fn 出どころを付けて流す(標準出力: &str) {
     for 行 in 標準出力.lines() {
-        println!("[validation検査 {検査フレーム数}フレーム] {行}");
+        println!("[validation検査 {}フレーム] {行}", 検査フレーム数.枚数());
     }
 }

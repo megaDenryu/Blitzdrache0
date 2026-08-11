@@ -21,6 +21,7 @@ mod quantile_check;
 mod record;
 mod run;
 mod schedule;
+mod summary;
 mod table;
 mod world;
 
@@ -61,16 +62,18 @@ fn 計測する(引数一覧: &[String]) -> Result<String, String> {
     quantile_check::報告の分位が生標本から再現されることを確かめる(&標本一覧)?;
     record::生値を書く(&計測の生値のファイル::出力ディレクトリの中の場所(&出力先), &標本一覧, &由来)?;
     record::窓の集約を書く(&出力先.join(窓の集約ファイル名), &標本一覧, &由来)?;
-    let 観測一覧 = equality::検収する(&出力先, &指定)?;
+    let 観測一覧 = equality::検収する(出力先.clone(), &指定)?;
     table::表示する(&標本一覧, &観測一覧);
-    Ok(要約を組む(&観測一覧, &出力先, 指定.フレーム数, &由来))
+    Ok(summary::要約を組む(&観測一覧, &出力先, 指定.フレーム数, &由来))
 }
 
 fn 周回する(出力先: &Path, シェーダー入口: &Path, 指定: &plan::実行の指定) -> Result<Vec<record::一標本>, String> {
+    let 実行環境 = world::計測の実行環境を作る();
     let 並び = schedule::起動の並び();
     let mut 標本一覧 = Vec::with_capacity(並び.len());
     for (実行番号, (位置, 条件)) in 並び.into_iter().enumerate() {
         let 材料 = run::実行の材料 {
+            実行環境: &実行環境,
             出力先,
             シェーダー入口,
             指定,
@@ -82,18 +85,4 @@ fn 周回する(出力先: &Path, シェーダー入口: &Path, 指定: &plan::�
         標本一覧.push(parse::標本を取り出す(&標準出力, 実行番号, 位置, 条件)?);
     }
     Ok(標本一覧)
-}
-
-fn 要約を組む(
-    観測一覧: &[equality::観測], 出力先: &Path, フレーム数: u32, 由来: &crate::release_build::構築の由来
-) -> String {
-    let 一致した数 = 観測一覧.iter().filter(|観測| 観測.一致するか).count();
-    format!(
-        "1実行{フレーム数}フレームのA・B・Cを回転順で{}周した。報告した分位はフレーム別の生標本から再現された。同値性の突き合わせ{}件のうち{}件がバイト一致した。区間別の表とフレーム別の生値と撮った画像は{}にある。計測に使ったバイナリの由来は{}",
-        schedule::周回数,
-        観測一覧.len(),
-        一致した数,
-        出力先.display(),
-        由来.一行にする()
-    )
 }

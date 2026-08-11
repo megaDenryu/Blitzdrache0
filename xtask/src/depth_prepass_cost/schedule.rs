@@ -34,9 +34,18 @@ impl 方式 {
     }
 }
 
+use crate::acceptance::{検収の実行名, 検収エラー};
+
 pub(super) struct 実行条件 {
     pub(super) 名前: &'static str,
     pub(super) 方式: 方式,
+}
+
+impl 実行条件 {
+    /// この条件の実行を指す名前。条件の名前は1文字のASCIIであり、そのまま書き出しの基準名になる。
+    pub(super) fn 実行名を組む(&self, 前置き: &str) -> Result<検収の実行名, 検収エラー> {
+        検収の実行名::生成する(&format!("{前置き}_{}", self.名前))
+    }
 }
 
 /// 測る3条件。同値性の検収もこの並びをそのまま使う。

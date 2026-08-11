@@ -8,6 +8,7 @@
 
 use std::path::{Path, PathBuf};
 
+use super::dump_format::書き出しの形式;
 use super::error::検収エラー;
 use super::run_name::検収の実行名;
 
@@ -41,8 +42,6 @@ pub struct 読み戻しの書き出し先 {
 }
 
 impl 読み戻しの書き出し先 {
-    const 画素の拡張子: &'static str = "raw";
-    const 圧縮前の画素の拡張子: &'static str = "hdr32";
     const 寸法の拡張子: &'static str = "size";
 
     fn 組み立てる(基準名までのパス: PathBuf, 実行名: 検収の実行名) -> Self {
@@ -56,12 +55,9 @@ impl 読み戻しの書き出し先 {
         &self.実行名
     }
 
-    pub(super) fn 画素のパス(&self) -> PathBuf {
-        self.基準名までのパス.with_extension(Self::画素の拡張子)
-    }
-
-    pub(super) fn 圧縮前の画素のパス(&self) -> PathBuf {
-        self.基準名までのパス.with_extension(Self::圧縮前の画素の拡張子)
+    /// その形式で書き出されたファイルの置き場。拡張子の綴りは形式の型が持つ。
+    pub(super) fn 形式のパス(&self, 形式: 書き出しの形式) -> PathBuf {
+        self.基準名までのパス.with_extension(形式.拡張子())
     }
 
     pub(super) fn 寸法のパス(&self) -> PathBuf {
@@ -71,6 +67,15 @@ impl 読み戻しの書き出し先 {
     /// アプリの`--dump-frame`へ渡す綴り。プロセス境界へ生のパスが出る唯一の場所である。
     pub fn 起動引数として渡す綴り(&self) -> &Path {
         &self.基準名までのパス
+    }
+
+    /// この書き出しが作った4つのファイルを消す。消せなかったことを失敗にしないのは、消す目的が
+    /// 置き場の占有を抑えることだけであり、残っても判定に混ざらないためである。
+    pub(super) fn 書き出したファイルを消す(&self) {
+        for 形式 in [書き出しの形式::提示画像, 書き出しの形式::明るさの圧縮前, 書き出しの形式::最終深度] {
+            let _ = std::fs::remove_file(self.形式のパス(形式));
+        }
+        let _ = std::fs::remove_file(self.寸法のパス());
     }
 
     /// この書き出しをPNGへ変換して、絵の置き場を返す。親エージェントの目視は生のRGBA8を開けないため、

@@ -21,6 +21,7 @@ mod series_integrity;
 mod stop_point;
 
 use std::path::PathBuf;
+
 use std::process::ExitCode;
 
 const 出力ディレクトリ: &str = "target/sky_lut";
@@ -60,27 +61,26 @@ fn 検収する(一日内秒: Option<&str>) -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
-    let 停止 = run::描画する(&出力先, "lut_stopped", run::条件::時計停止, 一日内秒)?;
-    let 進行 = run::描画する(&出力先, "lut_advancing", run::条件::時計進行, 一日内秒)?;
-    let 合成なし = run::描画する(&出力先, "lut_no_composite", run::条件::合成なし, 一日内秒)?;
-    let 停止の列 = pass_count::読む(&停止.標準出力, "時計停止")?;
-    let 進行の列 = pass_count::読む(&進行.標準出力, "時計進行")?;
-    let 合成なしの列 = pass_count::読む(&合成なし.標準出力, "合成なし")?;
+    let 停止 = run::描く(&実行環境, run::時計停止の実行名, run::条件::時計停止, 一日内秒)?;
+    let 進行 = run::描く(&実行環境, run::時計進行の実行名, run::条件::時計進行, 一日内秒)?;
+    let 合成なし = run::描く(&実行環境, run::合成なしの実行名, run::条件::合成なし, 一日内秒)?;
+    let 停止の列 = pass_count::読む(停止.報告().本文(), "時計停止")?;
+    let 進行の列 = pass_count::読む(進行.報告().本文(), "時計進行")?;
+    let 合成なしの列 = pass_count::読む(合成なし.報告().本文(), "合成なし")?;
 
-    let 間接照明の要約 = indirect_pass_count::三条件を確かめる(&停止.標準出力, &進行.標準出力, &合成なし.標準出力)?;
+    let 間接照明の要約 = indirect_pass_count::三条件を確かめる(停止.報告().本文(), 進行.報告().本文(), 合成なし.報告().本文())?;
     series_integrity::列の整合を確かめる(&停止の列, "時計停止")?;
     series_integrity::列の整合を確かめる(&進行の列, "時計進行")?;
     series_integrity::列の整合を確かめる(&合成なしの列, "合成なし")?;
     judgment::時計停止を判定する(&停止の列)?;
     judgment::時計進行を判定する(&進行の列)?;
-    let 停止点 = stop_point::停止点を判定する(&合成なし.標準出力, &合成なしの列, &合成なし.画素バイト列, &停止.画素バイト列)?;
-    let 計器 = gpu_time::区間を読む(&停止.標準出力)?;
+    let 停止点 = stop_point::停止点を判定する(合成なし.報告().本文(), &合成なしの列, 合成なし.画像().バイト列(), 停止.画像().バイト列())?;
+    let 計器 = gpu_time::区間を読む(停止.報告().本文())?;
 
-    let png = crate::raw_png::変換する(&出力先.join("lut_stopped"))?;
-    let 合成なしのpng = crate::raw_png::変換する(&出力先.join("lut_no_composite"))?;
+    let png = 停止.書き出し先().目視用の絵へ変換する()?;
+    let 合成なしのpng = 合成なし.書き出し先().目視用の絵へ変換する()?;
     Ok(format!(
         "一日内時刻{}で、時計停止は{}フレームで生成パス{}本(列の先頭{:?})、時計進行は{}フレームで生成パス{}本(うちスカイビューと空中遠近の2本を焼いたフレームが{}回)、計器は{}、{}、停止点は{}、間接照明は{}、絵は{}と{}",
         一日内秒.map_or("既定(11時)".to_string(), |秒| format!("{秒}秒")),

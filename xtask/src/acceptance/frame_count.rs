@@ -5,7 +5,7 @@
 //! 読み戻しへ進んで「ファイルが無い」という遠い失敗に化けるためである。
 
 #[repr(transparent)]
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct 描画フレーム数(u32);
 
 impl 描画フレーム数 {
@@ -13,6 +13,11 @@ impl 描画フレーム数 {
     pub const fn 生成する(枚数: u32) -> Self {
         assert!(枚数 > 0, "描画フレーム数が0である");
         Self(枚数)
+    }
+
+    /// 枚数そのもの。報告の文面へ数として埋める入口が読む。
+    pub const fn 枚数(self) -> u32 {
+        self.0
     }
 
     /// アプリの`--frames`へ渡す綴り。生の綴りへ戻るのはここだけである。

@@ -12,7 +12,7 @@ use crate::streaming_report::ストリーミング要約報告;
 use super::condition::計測条件;
 use super::gpu_table::GPU時間;
 use super::measure::{CPU区間一式, Vulkan確保};
-use super::{フレーム数, 上限バイト数, 先読み半径, 起動時シーン};
+use super::{フレーム数, 上限バイト数, 先読み半径, 起動時シーンの綴り};
 
 const 採取間隔: Duration = Duration::from_secs(1);
 /// 打ち切りは異常の検出であって計測の期限ではないため、100倍の物量でも余る長さを取る。
@@ -73,7 +73,7 @@ fn 読み取る(標準出力: &str, プロセス: メモリ最大) -> Result<一
 fn 引数を作る(アセットルート: &Path, シェーダー入口: &Path, 上限: &str, 条件: &計測条件) -> Vec<String> {
     let 固定 = [
         "--scene",
-        起動時シーン,
+        起動時シーンの綴り,
         "--streaming",
         "--streaming-preload-radius",
         先読み半径,

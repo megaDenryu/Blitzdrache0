@@ -18,7 +18,8 @@ use std::process::ExitCode;
 
 const 出力ディレクトリ: &str = "target/ow4_bench";
 const シェーダーコピー先: &str = "target/ow4_bench_shaders";
-const 起動時シーン: &str = "terrain_origin";
+const 起動時シーンの綴り: &str = "terrain_origin";
+const 起動時シーン: crate::acceptance::検収シーン名 = crate::acceptance::検収シーン名::生成する(起動時シーンの綴り);
 const 先読み半径: &str = "2";
 
 /// 静止先読み120、往復80、整定120の合計。先頭120フレームは集計から除かれるため、標本は往復と整定の200フレームである。

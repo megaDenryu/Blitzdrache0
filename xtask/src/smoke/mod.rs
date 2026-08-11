@@ -4,6 +4,7 @@
 mod copy_setup;
 mod launch_setting;
 mod run_stage;
+mod stage_catalog;
 mod stages;
 
 use std::process::ExitCode;

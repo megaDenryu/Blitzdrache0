@@ -3,7 +3,7 @@
 
 use std::process::ExitCode;
 
-use super::run::読み戻し画像;
+use crate::acceptance::読み戻し画像;
 
 /// 2枚がどう違うか。寸法やバイト長が違う場合は画素の差分を数えられないため、判別共用体で分ける。
 enum 比較 {
@@ -38,16 +38,13 @@ pub(super) fn 不合格にする(名前: &'static str, 理由: String) -> 判定
 }
 
 fn 比較する(左: &読み戻し画像, 右: &読み戻し画像) -> 比較 {
-    if 左.寸法宣言 != 右.寸法宣言 {
-        return 比較::形が違う(format!("寸法が違う: {} と {}", 左.寸法宣言.trim(), 右.寸法宣言.trim()));
-    }
-    if 左.画素バイト列.len() != 右.画素バイト列.len() {
-        return 比較::形が違う(format!("バイト長が違う: {} と {}", 左.画素バイト列.len(), 右.画素バイト列.len()));
+    if !左.寸法が同じか(右) {
+        return 比較::形が違う(format!("寸法が違う: {} と {}", 左.寸法の綴り(), 右.寸法の綴り()));
     }
     let 差分一覧: Vec<usize> = 左
-        .画素バイト列
+        .バイト列()
         .iter()
-        .zip(右.画素バイト列.iter())
+        .zip(右.バイト列().iter())
         .enumerate()
         .filter_map(|(添字, (左値, 右値))| (左値 != 右値).then_some(添字))
         .collect();

@@ -1,57 +1,43 @@
-//! blitz_appを`--frames`付きの子プロセスとして起動し、終了コードで合否を返す。
-//! 起動条件の保持は`launch_setting`が担い、ここは引数列への変換と起動だけを行う。
-
-use std::process::Command;
+//! 1ステージ分の実行環境の用意と起動。受け取るのは起動設定、返すのは合否である。
+//! 起動条件の保持と起動指定への写しは`launch_setting`が担う。
+//!
+//! 出力を捕まえずに画面へ流すのは、1ステージが600フレームまで走り、進み具合を人がその場で見るためである。
+//! 合否は終了状態で決まる。アプリは検証層の指摘が1件でもあれば失敗で終わるため、指摘の見落としは起きない。
 
 use super::launch_setting::起動設定;
+use crate::acceptance::{
+    アプリの起こし方, 世界を読ませて報告を採る実行環境, 実行時アセットルート, 検収の実行名
+};
 
-pub(super) fn 実行する(設定: &起動設定<'_>) -> bool {
-    let 引数一覧 = 引数列へ変換する(設定);
-    println!("[xtask] cargo {} を実行", 引数一覧.join(" "));
-    match Command::new("cargo").args(&引数一覧).status() {
-        Ok(状態) => 状態.success(),
+/// 1ステージを実行し、始まりと合否を画面へ報せる。飛ばしてよいステージを持つ`stages`が、飛ばさないと決めた
+/// ステージだけをこの口へ通す。
+pub(super) fn 必須ステージを実行する(実行名: 検収の実行名, 設定: 起動設定<'_>) -> bool {
+    println!("[xtask] {実行名}ステージ実行");
+    if !実行する(実行名.clone(), &設定) {
+        eprintln!("[xtask] smoke失敗: {実行名}ステージ");
+        return false;
+    }
+    println!("[xtask] {実行名}ステージ成功");
+    true
+}
+
+fn 実行する(実行名: 検収の実行名, 設定: &起動設定<'_>) -> bool {
+    match 実行環境を作る(設定).画面へ流したまま走らせる(実行名, &設定.起動指定へ写す()) {
+        Ok(()) => true,
         Err(誤り) => {
-            eprintln!("[xtask] cargoの起動に失敗: {誤り}");
+            eprintln!("[xtask] {誤り}");
             false
         }
     }
 }
 
-fn 引数列へ変換する(設定: &起動設定<'_>) -> Vec<String> {
-    let mut 引数一覧 = vec![
-        "run".to_string(),
-        "-p".to_string(),
-        "blitz_app".to_string(),
-        "--".to_string(),
-        "--frames".to_string(),
-        設定.フレーム数.to_string(),
-        "--shader-source".to_string(),
-        設定.シェーダーパス.display().to_string(),
-        "--scene".to_string(),
-        設定.シーン名.to_string(),
-    ];
-    if let Some(root) = 設定.アセットルート {
-        引数一覧.push("--asset-root".to_string());
-        引数一覧.push(root.display().to_string());
+/// アセットルートを持たないステージは、読む世界の置き場をアプリの既定へ任せる。
+fn 実行環境を作る(設定: &起動設定<'_>) -> 世界を読ませて報告を採る実行環境 {
+    let 起こし方 = アプリの起こし方::毎回cargoに構築させて起動する;
+    match 設定.アセットルート {
+        None => 世界を読ませて報告を採る実行環境::世界の置き場をアプリの既定に任せて作る(起こし方),
+        Some(ルート) => {
+            世界を読ませて報告を採る実行環境::作る(起こし方, 実行時アセットルート::パスから生成する(ルート.to_path_buf()))
+        }
     }
-    if 設定.照明なし {
-        引数一覧.push("--unlit".to_string());
-    }
-    if 設定.粒子あり {
-        引数一覧.push("--particles".to_string());
-    }
-    if 設定.開発uiあり {
-        引数一覧.push("--dev-ui".to_string());
-    }
-    // 厳密ピクセル判定を使うステージはポストを外し、期待値を明るさの圧縮導入前のまま保つ(判断39)。
-    if 設定.ポストなし {
-        引数一覧.push("--no-post".to_string());
-    }
-    if 設定.布あり {
-        引数一覧.push("--cloth".to_string());
-    }
-    if 設定.ウィンドウ再構築検証あり {
-        引数一覧.push("--window-rebuild".to_string());
-    }
-    引数一覧
 }
