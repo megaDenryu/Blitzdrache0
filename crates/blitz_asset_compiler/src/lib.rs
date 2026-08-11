@@ -7,6 +7,7 @@ mod chunk_directory_source;
 mod compile;
 mod error;
 mod fixed_placement;
+mod generation_ledger;
 mod height_field;
 mod height_grid;
 mod loader;
@@ -23,6 +24,10 @@ pub use compile::{
 };
 pub use error::アセットコンパイルエラー;
 pub use fixed_placement::{固定物の据え付け, 固定物を据えた地形チャンクをコンパイルする};
+pub use generation_ledger::{
+    チャンクの焼き直し判定, マップ生成の乱数の種, 内容ハッシュ, 焼き直しの勘定, 現在の生成器の版, 生成台帳, 生成台帳の見出し, 生成台帳エラー,
+    生成器の版, 種の由来,
+};
 pub use height_field::{
     コンパイル済み高さ場, チャンクごとの高さ格子から高さ場を組み立てる, 高さ場アセットをコンパイルする, 高さ場コンパイルエラー
 };
