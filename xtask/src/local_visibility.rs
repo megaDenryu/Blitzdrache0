@@ -30,7 +30,7 @@ mod tolerance;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use crate::acceptance::{圧縮前のHDR画像, 描画検収の実行環境, 検収の実行名};
+use crate::acceptance::{圧縮前のHDR画像, 描画検収の実行環境, 検収の実行名, 検収エラー};
 
 const 出力ディレクトリ: &str = "target/local_visibility";
 
@@ -66,7 +66,7 @@ fn 検収する() -> Result<String, String> {
     let mut 行一覧 = Vec::new();
     for 形 in 形の一覧 {
         let 報告 = 形の実行環境.報告を採る(検収の実行名::生成する(形)?, &run::形の起動指定を組み立てる(形))?;
-        let 行 = parse::形の行を取り出す(報告.本文())?;
+        let 行 = parse::形の行を取り出す(&報告)?;
         judgment::共通の判定を行う(&行)?;
         shape_property::形の性質を検査する(&行)?;
         行一覧.push(行);
@@ -83,6 +83,6 @@ fn 検収する() -> Result<String, String> {
 }
 
 /// 局所可視度を1つの符号値へ固定して1条件を撮る。
-fn 一つの符号値で描く(実行環境: &描画検収の実行環境, 符号値: u8) -> Result<圧縮前のHDR画像, String> {
-    Ok(実行環境.圧縮前の画素で描いて読み戻す(term_run::実行名を組む(符号値)?, &term_run::符号値の起動指定を組み立てる(符号値))?)
+fn 一つの符号値で描く(実行環境: &描画検収の実行環境, 符号値: u8) -> Result<圧縮前のHDR画像, 検収エラー> {
+    実行環境.圧縮前の画素で描いて読み戻す(term_run::実行名を組む(符号値)?, &term_run::符号値の起動指定を組み立てる(符号値))
 }
