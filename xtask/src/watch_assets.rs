@@ -1,7 +1,10 @@
 //! カタログの依存ファイルを監視し、変更時に実行時アセットを再生成する入口。
+//! 監視器の起こし方は`asset_generator`の器が持つ。
 
-use std::path::PathBuf;
-use std::process::{Command, ExitCode};
+use std::path::{Path, PathBuf};
+use std::process::ExitCode;
+
+use crate::asset_generator::{アセット生成器の起動, 生成の指定, 生成器エラー};
 
 pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     let (ソース, 出力) = match 引数一覧 {
@@ -16,20 +19,18 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
         return ExitCode::FAILURE;
     }
     println!("[xtask] アセット監視を開始。終了はCtrl+C");
-    let 状態 = Command::new("cargo")
-        .args(["run", "-p", "blitz_asset_compiler", "--example", "watch_assets", "--"])
-        .arg(ソース)
-        .arg(出力)
-        .status();
-    match 状態 {
-        Ok(終了状態) if 終了状態.success() => ExitCode::SUCCESS,
-        Ok(終了状態) => {
-            eprintln!("[xtask] アセット監視が終了コード{終了状態}で終了");
-            ExitCode::FAILURE
-        }
-        Err(誤り) => {
-            eprintln!("[xtask] cargoの起動に失敗: {誤り}");
+    match 監視器を走らせる(&ソース, &出力) {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(理由) => {
+            eprintln!("[xtask] アセット監視が終わった: {理由}");
             ExitCode::FAILURE
         }
     }
+}
+
+fn 監視器を走らせる(ソースルート: &Path, 出力ルート: &Path) -> Result<(), 生成器エラー> {
+    アセット生成器の起動::始める(&生成の指定::アセットの変更を見張る {
+        ソースルート, 出力ルート
+    })?
+    .画面へ流したまま走らせて終わりを待つ()
 }

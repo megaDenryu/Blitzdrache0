@@ -4,6 +4,7 @@
 use std::process::ExitCode;
 
 mod acceptance;
+mod asset_generator;
 mod atmosphere_lut;
 mod auto_exposure;
 mod bench;

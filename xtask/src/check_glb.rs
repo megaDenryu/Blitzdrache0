@@ -1,28 +1,25 @@
-//! glTF入力契約の検査の入口。実体はアセットコンパイラの検査器exampleであり、ここが担当するのは引数の受け渡しと終了コードの写しだけである。
+//! glTF入力契約の検査の入口。実体はアセットコンパイラの検査器exampleであり、ここが担当するのは引数の受け渡しと
+//! 終了コードの写しだけである。起こし方は`asset_generator`の器が持つ。
 //! 参照: CLAUDE.md「ツールとドキュメントの配置」(xtaskはツールの唯一の入口)。
 
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
+
+use crate::asset_generator::{アセット生成器の起動, 生成の指定, 生成器エラー};
 
 pub fn 実行する(引数一覧: &[String]) -> ExitCode {
-    if 引数一覧.is_empty() {
-        eprintln!("使い方: cargo xtask check-glb <検査するglbまたはgltfのパス> ...");
-        return ExitCode::FAILURE;
-    }
-
-    let 状態 = Command::new("cargo")
-        .args(["run", "--quiet", "-p", "blitz_asset_compiler", "--example", "check_glb", "--"])
-        .args(引数一覧)
-        .status();
-
-    match 状態 {
-        Ok(終了状態) if 終了状態.success() => ExitCode::SUCCESS,
-        Ok(終了状態) => {
-            eprintln!("[xtask] glb契約検査が終了コード{終了状態}で不合格または失敗");
-            ExitCode::FAILURE
-        }
-        Err(誤り) => {
-            eprintln!("[xtask] cargoの起動に失敗: {誤り}");
+    match 検査器を走らせる(引数一覧) {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(理由) => {
+            eprintln!("[xtask] glb契約検査が不合格または失敗である: {理由}");
+            eprintln!("使い方: cargo xtask check-glb <検査するglbまたはgltfのパス> ...");
             ExitCode::FAILURE
         }
     }
+}
+
+fn 検査器を走らせる(引数一覧: &[String]) -> Result<(), 生成器エラー> {
+    アセット生成器の起動::始める(&生成の指定::入力するglTFの契約を検査する {
+        検査するファイル一覧: 引数一覧,
+    })?
+    .画面へ流したまま走らせて終わりを待つ()
 }

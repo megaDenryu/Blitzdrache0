@@ -1,30 +1,32 @@
-//! 検証用ソースアセットの生成。実体はアセットコンパイラの生成器example。
+//! 検証用ソースアセットの生成。実体はアセットコンパイラの生成器exampleであり、その起こし方は`asset_generator`が持つ。
 //! 参照: CLAUDE.md「ツールとドキュメントの配置」(xtaskはツールの唯一の入口)。
 
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
+
+use crate::asset_generator::{アセット生成器の起動, 生成の指定, 生成器エラー};
 
 pub fn 実行する() -> ExitCode {
     if 生成する() { ExitCode::SUCCESS } else { ExitCode::FAILURE }
 }
 
 pub fn 生成する() -> bool {
-    println!("[xtask] cargo run -p blitz_asset_compiler --example generate_source_assets を実行");
-    let 起動結果 = Command::new("cargo")
-        .args(["run", "-p", "blitz_asset_compiler", "--example", "generate_source_assets"])
-        .status();
-
-    match 起動結果 {
-        Ok(終了状態) if 終了状態.success() => {
+    println!("[xtask] 検証用ソースアセットの生成器を実行");
+    match 生成器を走らせる() {
+        Ok(()) => {
             println!("[xtask] ソースアセット生成成功");
             true
         }
-        Ok(終了状態) => {
-            eprintln!("[xtask] ソースアセット生成が終了コード{終了状態}で失敗");
-            false
-        }
-        Err(起動誤り) => {
-            eprintln!("[xtask] cargoの起動に失敗: {起動誤り}");
+        Err(理由) => {
+            eprintln!("[xtask] ソースアセット生成に失敗した: {理由}");
             false
         }
     }
+}
+
+fn 生成器を走らせる() -> Result<(), 生成器エラー> {
+    アセット生成器の起動::始める(&生成の指定::ソースアセットを生成する {
+        場所巡りの世界の種: None,
+        ソースルート: None,
+    })?
+    .画面へ流したまま走らせて終わりを待つ()
 }
