@@ -6,6 +6,8 @@
 
 use std::path::{Path, PathBuf};
 
+use crate::asset_generator::同居植生の個体数;
+
 use super::error::律速切り分けの計測エラー;
 use super::plan::{計測世界, 計測条件};
 
@@ -23,8 +25,11 @@ impl アセットの置き場 {
                 continue;
             }
             let ルート = 根.join(format!("{}_{チャンクあたり個体数}", 条件.世界.置き場の名前()));
-            if !crate::compile_assets::世界を個体数指定で生成する(&ルート, 条件.世界.世界名(), チャンクあたり個体数)
-            {
+            if !crate::compile_assets::世界を個体数指定で生成する(
+                &ルート,
+                条件.世界.世界名(),
+                同居植生の個体数::生成する(チャンクあたり個体数),
+            ) {
                 return Err(律速切り分けの計測エラー::計測世界の実行時アセットを生成できなかった {
                     世界: 条件.世界.世界名(),
                 });

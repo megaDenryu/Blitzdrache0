@@ -12,6 +12,8 @@ mod map_generation_check;
 mod run;
 mod shot_plan;
 
+use blitz_asset_compiler::マップ生成の乱数の種;
+
 use std::path::PathBuf;
 use std::process::ExitCode;
 
@@ -27,7 +29,7 @@ const 出力ディレクトリ: &str = "target/game_fox_tour";
 
 /// 検収が使う乱数の種。リポジトリへ収めたassets/fox_tour_world/はこの種から作ったものであり、
 /// 別の種を使うと生成物が入れ替わって差分が出る。
-const 検収の種: &str = "20260810";
+const 検収の種: マップ生成の乱数の種 = マップ生成の乱数の種::生成する(20260810);
 
 pub fn 実行する() -> ExitCode {
     match 検収する() {

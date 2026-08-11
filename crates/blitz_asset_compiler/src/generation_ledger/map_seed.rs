@@ -8,11 +8,11 @@
 pub struct マップ生成の乱数の種(u32);
 
 impl マップ生成の乱数の種 {
-    pub fn 生成する(値: u32) -> Self {
+    pub const fn 生成する(値: u32) -> Self {
         Self(値)
     }
 
-    pub fn 値(self) -> u32 {
+    pub const fn 値(self) -> u32 {
         self.0
     }
 }

@@ -4,6 +4,8 @@
 
 use std::path::{Path, PathBuf};
 
+use crate::asset_generator::同居植生の個体数;
+
 use super::error::物量計測エラー;
 use super::{condition, point, run, validation};
 use super::{シェーダーコピー先, 出力ディレクトリ, 反復回数};
@@ -32,7 +34,8 @@ fn 一物量点を測る(
     条件: &condition::計測条件,
 ) -> Result<point::物量点の結果, 物量計測エラー> {
     let アセットルート = 出力先.join(format!("assets_{チャンクあたり個体数}"));
-    if !crate::compile_assets::地形世界を個体数指定で生成する(&アセットルート, チャンクあたり個体数) {
+    if !crate::compile_assets::地形世界を個体数指定で生成する(&アセットルート, 同居植生の個体数::生成する(チャンクあたり個体数))
+    {
         return Err(物量計測エラー::物量点の実行時アセットを生成できなかった {
             チャンクあたり個体数
         });

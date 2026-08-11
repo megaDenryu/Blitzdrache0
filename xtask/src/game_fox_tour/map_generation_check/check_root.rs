@@ -10,7 +10,7 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use blitz_asset_compiler::生成の出力ルート;
+use blitz_asset_compiler::{ソースルート, 生成の出力ルート};
 
 use super::super::error::場所巡りの通しの検収エラー;
 use super::file_digest::ディレクトリの全ファイルを畳む;
@@ -60,6 +60,11 @@ impl 検収用のルート {
     /// 生値へ戻す唯一の口。生成器とコンパイラをプロセスとして起動するとき、引数の綴りとして渡すためだけに使う。
     pub(super) fn プロセスへ渡すパス(&self) -> &Path {
         &self.0
+    }
+
+    /// この置き場をソースルートとして読む。生成器はソースの置き場を役割の型で受けるため、ここで着せ替える。
+    pub(super) fn ソースルートとして読む(&self) -> ソースルート {
+        ソースルート::生成する(self.0.clone())
     }
 
     fn 末端の名前から作る(末端の名前: &str) -> Self {

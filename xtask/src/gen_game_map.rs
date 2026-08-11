@@ -10,6 +10,8 @@ pub mod source_write;
 
 use std::process::ExitCode;
 
+use blitz_asset_compiler::マップ生成の乱数の種;
+
 use crate::compile_assets;
 use error::種の引数の破れ;
 
@@ -25,7 +27,7 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
             return ExitCode::FAILURE;
         }
     };
-    if 種からマップを生成する(&種) {
+    if 種からマップを生成する(種) {
         ExitCode::SUCCESS
     } else {
         ExitCode::FAILURE
@@ -33,7 +35,7 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
 }
 
 /// ソースアセットを種から書き出し、続けて実行時形式へ焼く。焼く工程は既存のコンパイル入口をそのまま呼ぶ。
-pub fn 種からマップを生成する(種: &str) -> bool {
+pub fn 種からマップを生成する(種: マップ生成の乱数の種) -> bool {
     match source_write::既定のソースルートへ書き出す(種) {
         Ok(_) => compile_assets::場所巡り世界を既定で生成する(),
         Err(理由) => {
@@ -43,7 +45,7 @@ pub fn 種からマップを生成する(種: &str) -> bool {
     }
 }
 
-fn 引数一覧から種を読む(引数一覧: &[String]) -> Result<String, 種の引数の破れ> {
+fn 引数一覧から種を読む(引数一覧: &[String]) -> Result<マップ生成の乱数の種, 種の引数の破れ> {
     let [綴り, 値] = 引数一覧 else {
         return Err(種の引数の破れ::引数が選択肢と値の2語でない);
     };
@@ -51,6 +53,6 @@ fn 引数一覧から種を読む(引数一覧: &[String]) -> Result<String, 種
         return Err(種の引数の破れ::知らない引数を渡された { 綴り: 綴り.clone() });
     }
     値.parse::<u32>()
-        .map(|種| 種.to_string())
+        .map(マップ生成の乱数の種::生成する)
         .map_err(|誤り| 種の引数の破れ::種を32ビットの非負整数として読めない { 綴り: 値.clone(), 誤り })
 }

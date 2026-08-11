@@ -12,11 +12,15 @@
 
 mod arguments;
 mod error;
+mod inspection_files;
 mod launch;
+mod planting_count;
 mod specification;
 mod world_name;
 
 pub use error::生成器エラー;
+pub use inspection_files::検査するファイル一覧;
 pub use launch::アセット生成器の起動;
+pub use planting_count::同居植生の個体数;
 pub use specification::生成の指定;
 pub use world_name::世界名;

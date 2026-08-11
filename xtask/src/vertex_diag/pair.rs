@@ -9,7 +9,7 @@ use std::path::{Path, PathBuf};
 use super::error::頂点量の診断の検収エラー;
 use super::run;
 use crate::acceptance::描画検収の実行環境;
-use crate::asset_generator::世界名;
+use crate::asset_generator::{世界名, 同居植生の個体数};
 
 pub(super) struct 診断の対 {
     粗い世界の実行環境: 描画検収の実行環境,
@@ -41,7 +41,8 @@ fn 一世界を焼く(
     出力先: &Path, 名前: &str, 世界: 世界名, チャンクあたり個体数: usize
 ) -> Result<PathBuf, 頂点量の診断の検収エラー> {
     let ルート = 出力先.join(format!("assets_{名前}"));
-    if crate::compile_assets::世界を個体数指定で生成する(&ルート, 世界, チャンクあたり個体数) {
+    if crate::compile_assets::世界を個体数指定で生成する(&ルート, 世界, 同居植生の個体数::生成する(チャンクあたり個体数))
+    {
         return Ok(ルート);
     }
     Err(頂点量の診断の検収エラー::診断世界の実行時アセットを生成できなかった { 世界 })

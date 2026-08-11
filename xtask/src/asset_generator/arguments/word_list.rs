@@ -26,18 +26,16 @@ impl 語の並び {
     /// 選択肢を伴う値と、位置で渡す値の両方をここが積む。値が選択肢に見えると、生成器側の
     /// 「知らない引数である」という遠い失敗になるため、積む手前で落とす。
     pub(super) fn 値を足す(
-        &mut self, 選択肢: Option<&'static str>, 役割: &'static str, 値: Option<&str>
+        &mut self, 選択肢: Option<&'static str>, 役割: &'static str, 値: Option<String>
     ) -> Result<(), 生成器エラー> {
         let Some(語) = 値 else { return Ok(()) };
         if 語.starts_with('-') {
-            return Err(生成器エラー::値が選択肢の綴りに見える {
-                役割, 綴り: 語.to_string()
-            });
+            return Err(生成器エラー::値が選択肢の綴りに見える { 役割, 綴り: 語 });
         }
         if let Some(綴り) = 選択肢 {
             self.語を足す(綴り);
         }
-        self.語を足す(語);
+        self.語を足す(&語);
         Ok(())
     }
 
