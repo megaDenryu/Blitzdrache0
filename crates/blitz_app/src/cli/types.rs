@@ -10,18 +10,19 @@ pub(crate) use {frame_dump_setting::フレームダンプ指定, launch_mode::�
 
 use super::{シャドウ計測起動設定, ストリーミング起動設定, 布モード, 平行移動起動設定, 遊ぶゲームの指定};
 use super::{描画対象の並べ方, 時間帯起動設定, 画面画素位置, 粒子表示モード};
-use std::path::PathBuf;
+use crate::hot_reload::監視するシェーダーの入口ファイル;
+use crate::runtime_assets::実行時アセットの置き場;
 
 /// CLI引数から得た起動設定一式。
 pub(crate) struct 起動設定 {
     pub(crate) モード: 起動モード,
-    /// ホットリロードの監視対象となるエントリファイル。既定は`shaders/scene.slang`(存在しなければ監視無効)。
-    /// `import`で参照される他の.slangファイル(`pbr.slang`等)はこのエントリファイルと同じディレクトリから解決されるため、個別指定はしない。ディレクトリ全体をmtime走査で監視する。
-    pub(crate) シェーダー監視パス: PathBuf,
+    /// ホットリロードの監視対象となる入口ファイル。既定は`shaders/scene.slang`(存在しなければ監視無効)。
+    /// `import`で参照される他の.slangファイル(`pbr.slang`等)はこの入口ファイルと同じディレクトリから解決されるため、個別指定はしない。ディレクトリ全体をmtime走査で監視する。
+    pub(crate) シェーダーの入口ファイル: 監視するシェーダーの入口ファイル,
     /// 表示するシーン。綴りは実行時アセットの安定IDであり、既定は平面板の世界(常に存在し決定的)。
     pub(crate) シーン: super::起動時シーン,
-    /// カタログの実行時アセットパスの基準ディレクトリ。既定は`target/runtime_assets`。
-    pub(crate) アセットルート: PathBuf,
+    /// カタログ・チャンク目録・生成物がぶら下がる実行時アセットの置き場。既定は`target/runtime_assets`。
+    pub(crate) アセットの置き場: 実行時アセットの置き場,
     /// 起動時シーンの描画対象の並べ方。`--object-count`が複製する件数を、`--reverse-draw-order`が束の中の走査順を決める。
     pub(crate) 描画対象の並べ方: 描画対象の並べ方,
     /// 世界が宣言したライティングへの起動側の上書き。`--unlit`と`--local-light-count`が据える。

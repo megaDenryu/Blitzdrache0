@@ -11,14 +11,13 @@ mod storage_byte_agreement_tests;
 pub(in crate::app) use catalog_setup::カタログを構築して高さ場を据える;
 pub(crate) use render_input::{描画入力エラー, 束の描画入力, 束の登録一式};
 
-use std::path::Path;
-
 use blitz_engine::{
     アセットID, カタログ, シーンデータ, チャンク座標, チャンク目録, 実行時シーンを読み込む, 実行時チャンク目録を読み込む
 };
 use blitz_math::大域ワールド位置;
 
 use crate::error::起動エラー;
+use crate::runtime_assets::実行時アセットの置き場;
 
 /// 起動時シーンはストリーミング対象でないため世界の原点チャンクに属する。
 /// 参照: `_doc/計画/ユビキタス言語.md`「所有チャンク」
@@ -28,9 +27,9 @@ pub(super) const 起動時シーンの所有チャンク: チャンク座標 = �
 /// 注意: この番号はレンダラー側の`起動シーンの束ID`と同じ値でなければならない(参照: `crates/blitz_render/src/renderer/scene_draw_resources/create.rs`)。
 pub(crate) const 起動時シーンの束ID: blitz_render::描画束ID = blitz_render::描画束ID::生成する(0);
 
-/// `アセットルート`配下の版付きチャンク目録を読み、座標からアセットIDへの解決表を作る。
-pub(crate) fn チャンク目録を構築する(アセットルート: &Path) -> Result<チャンク目録, 起動エラー> {
-    実行時チャンク目録を読み込む(&アセットルート.join("chunk_directory.blitzchunks")).map_err(起動エラー::チャンク目録読込失敗)
+/// 置き場の版付きチャンク目録を読み、座標からアセットIDへの解決表を作る。
+pub(crate) fn チャンク目録を構築する(置き場: &実行時アセットの置き場) -> Result<チャンク目録, 起動エラー> {
+    実行時チャンク目録を読み込む(&置き場.チャンク目録のパス()).map_err(起動エラー::チャンク目録読込失敗)
 }
 
 /// シーンのスキン情報をレンダラーのスキンメッシュ素材へ変換する(判断44)。

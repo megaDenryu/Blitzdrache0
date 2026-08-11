@@ -6,8 +6,8 @@ use std::slice::Iter;
 
 use super::{
     auto_exposure_probe_args, depth_prepass_args, game_selection, ibl_step_scan_args, indirect_probe_args, instance_lod_args, local_light_count_args,
-    local_visibility_settings, lod_crack_args, placement_args, point_light_shadow_count_args, screen_pixel_args, shadow_args, time_args, value_args,
-    起動設定,
+    local_visibility_settings, lod_crack_args, path_args, placement_args, point_light_shadow_count_args, screen_pixel_args, shadow_args, time_args,
+    value_args, 起動設定,
 };
 use crate::error::起動エラー;
 
@@ -16,10 +16,10 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--frames" => 設定.モード = value_args::frames引数を処理する(残り)?,
         "--benchmark-frames" => 設定.モード = value_args::benchmark_frames引数を処理する(残り)?,
         "--ibl-step-scan" | "--ibl-step-control" => 設定.モード = ibl_step_scan_args::引数を処理する(残り, 引数値)?,
-        "--shader-source" => 設定.シェーダー監視パス = value_args::shader_source引数を処理する(残り)?,
+        "--shader-source" => 設定.シェーダーの入口ファイル = path_args::shader_source引数を処理する(残り)?,
         "--scene" => 設定.シーン = value_args::scene引数を処理する(残り)?,
         "--game" => 設定.遊ぶゲーム = game_selection::遊ぶゲームの指定の引数を処理する(残り)?,
-        "--asset-root" => 設定.アセットルート = value_args::asset_root引数を処理する(残り)?,
+        "--asset-root" => 設定.アセットの置き場 = path_args::asset_root引数を処理する(残り)?,
         "--object-count" => 設定.描画対象の並べ方.件数 = Some(value_args::object_count引数を処理する(残り)?),
         "--dump-frame" | "--dump-hdr-frame" | "--dump-depth-frame" => {
             value_args::フレームダンプ引数を反映する(&mut 設定.フレームダンプ先, 残り, 引数値)?

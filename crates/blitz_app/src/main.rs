@@ -25,6 +25,7 @@ mod hot_reload;
 mod input;
 mod overlay_ui;
 mod reports;
+mod runtime_assets;
 mod smoke;
 
 use std::process::ExitCode;

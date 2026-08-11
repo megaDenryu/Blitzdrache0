@@ -11,12 +11,12 @@ use crate::error::起動エラー;
 pub(in crate::app) fn 構築する(
     起動設定: &ストリーミング起動設定,
     モード: 起動モード,
-    アセットルート: &std::path::Path,
+    置き場: &crate::runtime_assets::実行時アセットの置き場,
 ) -> Result<Option<ストリーミング配線>, 起動エラー> {
     if !起動設定.有効 {
         return Ok(None);
     }
-    let 目録 = crate::app::scene_load::チャンク目録を構築する(アセットルート)?;
+    let 目録 = crate::app::scene_load::チャンク目録を構築する(置き場)?;
     let 設定 = ストリーミング調停設定 {
         一辺: blitz_math::大域メートル::生成する(一辺メートル),
         先読み半径: 起動設定.先読み半径,

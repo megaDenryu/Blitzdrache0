@@ -27,18 +27,8 @@ pub(super) fn benchmark_frames引数を処理する(引数: &mut Iter<String>) -
     Ok(起動モード::ベンチ実行 { フレーム数 })
 }
 
-pub(super) fn shader_source引数を処理する(引数: &mut Iter<String>) -> Result<PathBuf, 起動引数エラー> {
-    let 値 = 次の値を読む(引数, "--shader-source", 起動引数エラー::シェーダーソース不正)?;
-    Ok(PathBuf::from(値))
-}
-
 pub(super) fn scene引数を処理する(引数: &mut Iter<String>) -> Result<super::起動時シーン, 起動引数エラー> {
     super::起動時シーン::綴りから解析する(次の値を読む(引数, "--scene", 起動引数エラー::シーン名不正)?)
-}
-
-pub(super) fn asset_root引数を処理する(引数: &mut Iter<String>) -> Result<PathBuf, 起動引数エラー> {
-    let 値 = 次の値を読む(引数, "--asset-root", 起動引数エラー::アセットルート不正)?;
-    Ok(PathBuf::from(値))
 }
 
 pub(super) fn object_count引数を処理する(引数: &mut Iter<String>) -> Result<描画対象数, 起動引数エラー> {

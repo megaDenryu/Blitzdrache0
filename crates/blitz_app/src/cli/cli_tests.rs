@@ -17,9 +17,10 @@ fn 描画設定を解析する(引数一覧: &[String]) -> 起動設定 {
 fn 引数なしは既定値を保つ() {
     let 設定 = 描画設定を解析する(&[]);
     assert!(matches!(設定.モード, 起動モード::無期限実行));
-    assert_eq!(設定.シェーダー監視パス, Path::new("shaders/scene.slang"));
+    assert_eq!(設定.シェーダーの入口ファイル.パス(), Path::new("shaders/scene.slang"));
     assert_eq!(設定.シーン.安定id().文字列を返す(), "quad");
-    assert_eq!(設定.アセットルート, Path::new("target/runtime_assets"));
+    let 既定のカタログ = Path::new("target/runtime_assets/catalog.blitzcatalog");
+    assert_eq!(設定.アセットの置き場.カタログのパス(), 既定のカタログ);
     assert!(設定.描画対象の並べ方.件数.is_none());
     assert_eq!(設定.描画対象の並べ方.走査順, 描画対象の走査順::読込順);
     assert!(設定.ライティング.有効);

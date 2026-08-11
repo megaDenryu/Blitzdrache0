@@ -1,0 +1,47 @@
+//! 実行時アセットの置き場。担当するのは、`--asset-root`が指すディレクトリを1つの値として保持し、その配下の
+//! ファイル名の綴り(カタログ・チャンク目録・生成物の拡張子)を私有して、配下への読み書きの入口を全部メソッドで出すことである。
+//!
+//! 裸の`&Path`で持ち回らないのは、置き場と監視先とダンプ先が同じ`&Path`の姿をしており、取り違えを型が止められないためである。
+//! 配下のファイル名の綴りをこの型が持つのは、同じ綴りが読む側と書く側へ分かれて複製されるのを防ぐためである。
+
+mod replacement;
+
+use std::path::PathBuf;
+
+use blitz_engine::アセットID;
+
+/// カタログの版付きファイルの名前。生成側の`blitz_asset_compiler`が書き出す綴りと同じである。
+const カタログのファイル名: &str = "catalog.blitzcatalog";
+/// チャンク目録の版付きファイルの名前。同じく生成側が書き出す綴りである。
+const チャンク目録のファイル名: &str = "chunk_directory.blitzchunks";
+/// 生成物1つぶんのファイルの拡張子。
+const 生成物の拡張子: &str = "blitzasset";
+
+/// `--asset-root`が指す実行時アセットのディレクトリ。
+#[derive(Debug, Clone)]
+pub(crate) struct 実行時アセットの置き場 {
+    ディレクトリ: PathBuf,
+}
+
+impl 実行時アセットの置き場 {
+    pub(crate) fn 綴りから生成する(綴り: &str) -> Self {
+        Self {
+            ディレクトリ: PathBuf::from(綴り),
+        }
+    }
+
+    /// カタログの版付きファイルのパス。
+    pub(crate) fn カタログのパス(&self) -> PathBuf {
+        self.ディレクトリ.join(カタログのファイル名)
+    }
+
+    /// チャンク目録の版付きファイルのパス。
+    pub(crate) fn チャンク目録のパス(&self) -> PathBuf {
+        self.ディレクトリ.join(チャンク目録のファイル名)
+    }
+
+    /// 安定IDが指す生成物1つのパス。
+    fn 生成物のパス(&self, 安定id: &アセットID) -> PathBuf {
+        self.ディレクトリ.join(format!("{安定id}.{生成物の拡張子}"))
+    }
+}

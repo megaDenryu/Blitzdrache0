@@ -3,23 +3,16 @@
 //! 「リサイズ・最小化で落ちない」をウィンドウの自己操作とピクセル読み戻しで機械検証する。
 //! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断9」「判断22」。
 
-mod asset_rewrite;
+mod execution;
 mod material_reload;
 mod pixel_judgment;
 mod plan;
-mod shader_rewrite;
 mod verification_plan;
 mod window_operation;
 mod world_plan;
 
-use crate::cli::{世界の種別, 粒子表示モード};
-
-pub(crate) use asset_rewrite::アセットを書き換える;
+pub(crate) use execution::スモーク実行;
 pub(crate) use pixel_judgment::{アニメーション差分を判定する, ピクセルを判定する};
-pub(crate) use shader_rewrite::シェーダーを書き換える;
-pub(crate) use verification_plan::{
-    現在フレームからウィンドウ再構築の動作を導出する, 現在フレームからシェーダー差し替えの動作を導出する
-};
 pub(crate) use window_operation::ウィンドウへ操作を適用する;
 
 /// フレーム番号に応じて、このフレームで行う自己操作・検証を表す。
@@ -45,34 +38,4 @@ pub(crate) enum スモークアクション {
     フォックス基準保存,
     /// foxステージ: 保存済み基準とこのフレームの読み戻し画像を比較し、アニメーションで絵が動いたことを判定する。
     フォックス差分判定,
-}
-
-/// `布有効`なら差分計画(布は厳密ピクセル判定と両立しないため。判断55・56)、`開発ui有効`なら
-/// devui計画、粒子トイならparticles計画、表面流ならGPU計測だけを行う。どれにも当たらなければ、
-/// 世界の種別ごとの計画を`world_plan`が選ぶ(判断29・34・37・45)。
-pub(crate) fn 判定する(
-    現在フレーム: u32,
-    総フレーム数: u32,
-    種別: 世界の種別,
-    粒子表示: 粒子表示モード,
-    開発ui有効: bool,
-    布有効: bool,
-    描画対象数: Option<crate::cli::描画対象数>,
-) -> スモークアクション {
-    if 描画対象数.map(crate::cli::描画対象数::usize値) == Some(2) {
-        plan::現在フレームから複数描画対象の動作を導出する(現在フレーム, 総フレーム数)
-    } else if 布有効 {
-        plan::現在フレームからフォックスの動作を導出する(現在フレーム)
-    } else if 開発ui有効 {
-        plan::現在フレームから開発uiの動作を導出する(現在フレーム, 総フレーム数)
-    } else if matches!(
-        粒子表示,
-        粒子表示モード::表面流 | 粒子表示モード::Sph512 | 粒子表示モード::Sph1024 | 粒子表示モード::Sph2048
-    ) {
-        スモークアクション::通常描画
-    } else if 粒子表示 == 粒子表示モード::粒子トイ {
-        plan::現在フレームから粒子の動作を導出する(現在フレーム, 総フレーム数)
-    } else {
-        world_plan::世界ごとの動作を導出する(現在フレーム, 総フレーム数, 種別)
-    }
 }

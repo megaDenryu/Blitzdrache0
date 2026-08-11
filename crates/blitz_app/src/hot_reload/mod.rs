@@ -11,15 +11,15 @@ mod dir_mtime;
 mod mtime;
 mod shader_watch;
 mod slangc;
-
+mod watched_shader;
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
+use asset_watch::アセット監視状態;
 use blitz_engine::{アセットID, カタログ, シーンデータ};
 use blitz_render::indirect_lighting::契約別の描画シェーダー;
-
-use asset_watch::アセット監視状態;
 use shader_watch::{シェーダー変化結果, シェーダー監視状態};
+pub(crate) use watched_shader::監視するシェーダーの入口ファイル;
 
 const 確認間隔: Duration = Duration::from_millis(500);
 
@@ -42,9 +42,9 @@ pub(crate) struct ホットリローダー {
 }
 
 impl ホットリローダー {
-    pub(crate) fn 生成する(シェーダー監視パス: PathBuf) -> Self {
+    pub(crate) fn 生成する(入口ファイル: &監視するシェーダーの入口ファイル) -> Self {
         Self {
-            シェーダー監視: shader_watch::構築する(シェーダー監視パス),
+            シェーダー監視: shader_watch::構築する(入口ファイル.パス().to_path_buf()),
             アセット監視: None,
             前回確認時刻: Instant::now(),
         }
