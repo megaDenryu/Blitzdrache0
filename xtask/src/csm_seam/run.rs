@@ -23,7 +23,7 @@
 use std::path::Path;
 use std::process::Command;
 
-use crate::acceptance::{検収の実行名, 終了時報告, 読み戻しの書き出し先, 読み戻し画像};
+use crate::acceptance::{検収の実行名, 画素の番号, 終了時報告, 読み戻しの書き出し先, 読み戻し画像};
 
 const アセットルート: &str = "target/terrain_assets";
 const シーン名: &str = "terrain_origin";
@@ -36,7 +36,7 @@ const 一日内秒: &str = "61200";
 
 /// 8bitのRGB平均。輝度の段差はこの値で測る。依存も副作用も持たない計算であるため自由関数で置く。
 pub(super) fn 輝度を求める(画像: &読み戻し画像, 添字: usize) -> f64 {
-    let 画素 = 画像.添字の画素(添字);
+    let 画素 = 画像.番号の画素(画素の番号::生成する(添字));
     (f64::from(画素[0]) + f64::from(画素[1]) + f64::from(画素[2])) / 3.0
 }
 

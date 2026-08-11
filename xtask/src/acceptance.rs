@@ -11,12 +11,14 @@
 //! 誤りの型は`error`、読み戻した絵は`readback_image`、その置き場は`readback_dump`、
 //! アプリが読む実行時形式の置き場は`runtime_asset_root`、アプリの終了時報告は`exit_report`、
 //! 起こし方の綴りは`app_executable`、1回ぶんの起動の指定は`launch_specification`、
-//! 1回の実行を指す名前は`run_name`が、それらを束ねる操作サービスは`run_environment`が持つ。
+//! 画像の寸法と画素の位置は`pixel_geometry`が、1回の実行を指す名前は`run_name`が、
+//! それらを束ねる操作サービスは`run_environment`が持つ。
 
 mod app_executable;
 mod error;
 mod exit_report;
 mod launch_specification;
+mod pixel_geometry;
 mod readback_dump;
 mod readback_image;
 mod run_environment;
@@ -27,6 +29,7 @@ pub use app_executable::アプリの起こし方;
 pub use error::検収エラー;
 pub use exit_report::終了時報告;
 pub use launch_specification::{アプリの起動指定, 描画フレーム数, 検収シーン名};
+pub use pixel_geometry::{画像の幅, 画像の高さ, 画素の横位置, 画素の番号, 画素の縦位置};
 pub use readback_dump::{読み戻しの書き出し先, 読み戻しの置き場};
 pub use readback_image::読み戻し画像;
 pub use run_environment::{描画検収の実行環境, 検収の1回の実行};

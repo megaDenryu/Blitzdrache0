@@ -32,7 +32,7 @@ pub(super) fn ヘルメットの目視材料を作る(出力先: &Path) -> Resul
     if 統計.差のある画素数 == 0 {
         return Err("DamagedHelmetの2枚の絵が1画素も食い違わない(方針の取り違えの疑いがある)".to_string());
     }
-    helmet_crop::区画が絵に収まるか確かめる(非圧縮.画像.幅(), 非圧縮.画像.高さ())?;
+    helmet_crop::区画が絵に収まるか確かめる(非圧縮.画像.幅().画素数(), 非圧縮.画像.高さ().画素数())?;
     let 非圧縮の拡大 = helmet_crop::ヘルメットの区画を切り取って拡大する(&非圧縮.png, &出力先.join("helmet_rgba8_crop.png"))?;
     let 圧縮の拡大 = helmet_crop::ヘルメットの区画を切り取って拡大する(&圧縮.png, &出力先.join("helmet_bc1_crop.png"))?;
     Ok(vec![
@@ -60,9 +60,9 @@ fn 画面全体の統計を採る(
 ) -> Result<difference::画素の成分差の統計, String> {
     let 全体 = crate::pixel_region::画面領域 {
         x開始: 0,
-        x終端: 非圧縮.幅(),
+        x終端: 非圧縮.幅().画素数(),
         y開始: 0,
-        y終端: 非圧縮.高さ(),
+        y終端: 非圧縮.高さ().画素数(),
     };
     difference::領域内の成分差の統計を求める(非圧縮, 圧縮, &全体)
 }

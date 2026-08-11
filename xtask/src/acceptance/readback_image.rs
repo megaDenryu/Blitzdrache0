@@ -19,6 +19,7 @@ mod pixel_access;
 mod test_support;
 
 use super::error::検収エラー;
+use super::pixel_geometry::{画像の幅, 画像の高さ};
 use super::readback_dump::読み戻しの書き出し先;
 
 /// 1画素あたりのバイト数。書き出しはRGBA8の連結であり、寸法からバイト長を求めるのにこの数を掛ける。
@@ -54,12 +55,12 @@ impl 読み戻し画像 {
         Ok(Self { 幅, 高さ, rgba8 })
     }
 
-    pub fn 幅(&self) -> usize {
-        self.幅
+    pub fn 幅(&self) -> 画像の幅 {
+        画像の幅::生成する(self.幅)
     }
 
-    pub fn 高さ(&self) -> usize {
-        self.高さ
+    pub fn 高さ(&self) -> 画像の高さ {
+        画像の高さ::生成する(self.高さ)
     }
 
     pub fn 画素数(&self) -> usize {

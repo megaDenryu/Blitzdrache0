@@ -2,7 +2,7 @@
 //! 投影座標は`terrain_origin`の初期カメラと1280×720画面を前提とし、向きごとにラスタライズで所有される共有辺側の1画素帯へ固定する。
 
 use super::cases::継ぎ目方向;
-use crate::acceptance::読み戻し画像;
+use crate::acceptance::{画素の横位置, 画素の縦位置, 読み戻し画像};
 
 const 背景RGB: [u8; 3] = [63, 75, 97];
 const 帯半幅画素: f64 = 0.49;
@@ -24,8 +24,8 @@ pub(super) fn 継ぎ目を検査する(画像: &読み戻し画像, 方向: 継�
     };
     let mut roi画素数 = 0_u64;
     let mut 背景画素数 = 0_u64;
-    for y in 1..画像.高さ() - 1 {
-        for x in 1..画像.幅() - 1 {
+    for y in 1..画像.高さ().画素数() - 1 {
+        for x in 1..画像.幅().画素数() - 1 {
             let 点 = (
                 f64::from(u32::try_from(x).map_err(|_| "X座標がu32を超えた".to_string())?),
                 f64::from(u32::try_from(y).map_err(|_| "Y座標がu32を超えた".to_string())?),
@@ -70,5 +70,5 @@ fn 線分からの距離(点: (f64, f64), 始点: (f64, f64), 終点: (f64, f64)
 }
 
 fn 背景か(画像: &読み戻し画像, x: usize, y: usize) -> bool {
-    画像.座標の画素(x, y) == 背景RGB
+    画像.座標の画素(画素の横位置::生成する(x), 画素の縦位置::生成する(y)) == 背景RGB
 }

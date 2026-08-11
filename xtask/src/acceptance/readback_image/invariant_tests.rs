@@ -6,6 +6,7 @@
 
 #![allow(clippy::unwrap_used)]
 
+use super::super::pixel_geometry::{画像の幅, 画像の高さ};
 use super::load::幅と高さの2数を解く;
 use super::読み戻し画像;
 
@@ -17,8 +18,8 @@ fn 二画素ぶんのバイト列() -> Vec<u8> {
 #[test]
 fn 寸法とバイト長が合う構築は通る() {
     let 画像 = 読み戻し画像::テスト用に作る(2, 1, 二画素ぶんのバイト列()).unwrap();
-    assert_eq!(画像.幅(), 2);
-    assert_eq!(画像.高さ(), 1);
+    assert_eq!(画像.幅(), 画像の幅::生成する(2));
+    assert_eq!(画像.高さ(), 画像の高さ::生成する(1));
     assert_eq!(画像.画素数(), 2);
 }
 

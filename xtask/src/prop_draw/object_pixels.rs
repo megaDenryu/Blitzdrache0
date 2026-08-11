@@ -2,7 +2,7 @@
 //! 何を合格とみなすかは`judgment`が決め、ここは数えることだけを担う。
 
 use super::background_color::同じ色か;
-use crate::acceptance::読み戻し画像;
+use crate::acceptance::{画素の横位置, 画素の縦位置, 読み戻し画像};
 
 pub(super) struct 囲む矩形 {
     pub(super) x最小: usize,
@@ -25,16 +25,16 @@ pub(super) enum 物体画素の要約 {
 pub(super) fn 要約する(画像: &読み戻し画像, 背景色: [u8; 3]) -> 物体画素の要約 {
     let mut 件数 = 0u64;
     let mut 矩形 = 囲む矩形 {
-        x最小: 画像.幅(),
+        x最小: 画像.幅().画素数(),
         x最大: 0,
-        y最小: 画像.高さ(),
+        y最小: 画像.高さ().画素数(),
         y最大: 0,
     };
     let mut 明度最小 = u8::MAX;
     let mut 明度最大 = u8::MIN;
-    for y in 0..画像.高さ() {
-        for x in 0..画像.幅() {
-            let 色 = 画像.座標の画素(x, y);
+    for y in 0..画像.高さ().画素数() {
+        for x in 0..画像.幅().画素数() {
+            let 色 = 画像.座標の画素(画素の横位置::生成する(x), 画素の縦位置::生成する(y));
             if 同じ色か(色, 背景色) {
                 continue;
             }
