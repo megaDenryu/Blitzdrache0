@@ -11,6 +11,9 @@
 //! 自分で検査の対象を名指しする台帳は数から外す。どのファイルを外したかは`self_reference`が1件ずつ持つ。
 
 mod allowance;
+mod builtin_include_bytes;
+#[cfg(test)]
+mod builtin_include_bytes_tests;
 mod extract;
 mod include_bytes_argument;
 mod scan_scope;
@@ -28,12 +31,13 @@ use super::violation::違反;
 use tally::検査の集計;
 
 pub fn 全ファイルを検査する() -> Result<Vec<違反>, String> {
-    let 出現表 = 出現箇所を集める(&scan_scope::走査するファイル一覧を集める()?)?;
+    let ファイル一覧 = scan_scope::走査するファイル一覧を集める()?;
     let mut 集計 = 検査の集計::新しく作る();
-    for (綴り, 出現箇所一覧) in 出現表 {
+    for (綴り, 出現箇所一覧) in 出現箇所を集める(&ファイル一覧)? {
         集計.綴り1つを見る(&綴り, &出現箇所一覧);
     }
     let mut 違反一覧 = 集計.違反一覧にする();
+    違反一覧.extend(builtin_include_bytes::全ファイルを検査する(&ファイル一覧)?);
     違反一覧.extend(self_reference::一覧の陳腐化を検査する()?);
     Ok(違反一覧)
 }
