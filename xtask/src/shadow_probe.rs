@@ -56,7 +56,7 @@ fn 走らせる(引数一覧: &[String]) -> Result<Vec<record::一標本>, Strin
     let ルート = PathBuf::from(出力ディレクトリ);
     let 出力先 = ルート.join(指定.軸.綴り());
     std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先)).map_err(|破れ| 破れ.to_string())?;
     let 置き場 = assets::アセットの置き場::焼く(&ルート, &条件一覧, 指定.チャンクあたり個体数)?;
     let 順序 = schedule::交互の順序(条件一覧.len(), 周回数);
     let mut 標本一覧 = Vec::with_capacity(順序.len());

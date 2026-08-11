@@ -40,7 +40,7 @@ pub(crate) fn 実行する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, String> {
-    crate::visual_sample_world::用意する()?;
+    crate::visual_sample_world::用意する().map_err(|破れ| 破れ.to_string())?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
     let 実行環境 = run::実行環境を作る(出力先.clone())?;
 

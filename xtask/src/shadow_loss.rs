@@ -74,7 +74,7 @@ fn 欠落と余分を数える(指定: &args::指定) -> Result<String, String> 
     guard::負の対照を判定する(指定.構図, &比較)?;
     report::表示する(&比較);
     diff_image::書き出す(&差分先, 比較.幅, 比較.高さ, &比較)?;
-    let 差分png = crate::raw_png::変換する(&差分先)?;
+    let 差分png = crate::raw_png::変換する(&差分先).map_err(|破れ| 破れ.to_string())?;
     Ok(format!(
         "構図{}・候補{}、差分画像は{}",
         指定.構図.綴り(),

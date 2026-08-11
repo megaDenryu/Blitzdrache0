@@ -32,7 +32,7 @@ pub fn 実行する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, String> {
-    crate::visual_sample_world::用意する()?;
+    crate::visual_sample_world::用意する().map_err(|破れ| 破れ.to_string())?;
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
     let マスクの実行 = 実行環境.描いて読み戻す(

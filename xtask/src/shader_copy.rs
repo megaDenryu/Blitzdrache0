@@ -1,8 +1,16 @@
 //! 監視対象シェーダーの一時コピーを作る工程。受け取るのはコピー先ディレクトリ、返すのはエントリファイルのパスである。
 //! リポジトリ本体のshaders/を監視対象にすると、スモーク計画の書き換えがリポジトリのファイルを変えてしまう。
 //! importで分割されているためディレクトリ単位で複製する。
+//! 破れうる前提の数え上げは`error`が持つ。
+
+mod error;
 
 use std::path::{Path, PathBuf};
+
+pub use error::シェーダーの一時コピーの破れ;
+
+/// 複製の元になるシェーダーのディレクトリ。リポジトリの根からの相対で置かれている。
+const 元のディレクトリ: &str = "shaders";
 
 /// シェーダーの入口のファイル。名前を私有し、コピー先と結んだ置き場所だけを外へ出す。
 /// importで分割された残りはこのファイルから辿るため、置き場所を知る側は入口の綴りを持たなくてよい。
@@ -17,18 +25,30 @@ impl シェーダーの入口のファイル {
     }
 }
 
-pub fn 一時コピーを作る(コピー先: &Path) -> Result<PathBuf, String> {
-    std::fs::create_dir_all(コピー先).map_err(|誤り| format!("シェーダーのコピー先を作れなかった: {誤り}"))?;
-    let 読み取り結果 = std::fs::read_dir("shaders").map_err(|誤り| format!("shaders/の読み取りに失敗した: {誤り}"))?;
+pub fn 一時コピーを作る(コピー先: &Path) -> Result<PathBuf, シェーダーの一時コピーの破れ> {
+    std::fs::create_dir_all(コピー先).map_err(|誤り| シェーダーの一時コピーの破れ::コピー先を作れなかった {
+        コピー先: コピー先.to_path_buf(),
+        誤り,
+    })?;
+    let 元 = Path::new(元のディレクトリ);
+    let 読み取り結果 = std::fs::read_dir(元).map_err(|誤り| 読めなかった破れ(元, 誤り))?;
     for エントリ結果 in 読み取り結果 {
-        let エントリ = エントリ結果.map_err(|誤り| format!("shaders/の読み取りに失敗した: {誤り}"))?;
+        let エントリ = エントリ結果.map_err(|誤り| 読めなかった破れ(元, 誤り))?;
         let 元パス = エントリ.path();
         if !元パス.is_file() || 元パス.extension().and_then(std::ffi::OsStr::to_str) != Some("slang") {
             continue;
         }
-        std::fs::copy(&元パス, コピー先.join(エントリ.file_name())).map_err(|誤り| format!("{}のコピーに失敗した: {誤り}", 元パス.display()))?;
+        std::fs::copy(&元パス, コピー先.join(エントリ.file_name()))
+            .map_err(|誤り| シェーダーの一時コピーの破れ::シェーダーの1枚を写せなかった { 元パス, 誤り })?;
     }
     Ok(シェーダーの入口のファイル::コピー先の中の場所(コピー先))
+}
+
+fn 読めなかった破れ(元: &Path, 誤り: std::io::Error) -> シェーダーの一時コピーの破れ {
+    シェーダーの一時コピーの破れ::元のディレクトリを読めなかった {
+        元のディレクトリ: 元.to_path_buf(),
+        誤り,
+    }
 }
 
 #[cfg(test)]
@@ -43,7 +63,7 @@ mod tests {
         let リポジトリの根 = Path::new(env!("CARGO_MANIFEST_DIR"))
             .parent()
             .expect("xtaskの親ディレクトリがリポジトリの根である");
-        let 場所 = シェーダーの入口のファイル::コピー先の中の場所(&リポジトリの根.join("shaders"));
+        let 場所 = シェーダーの入口のファイル::コピー先の中の場所(&リポジトリの根.join(元のディレクトリ));
         assert!(場所.is_file(), "入口のファイルが無い: {}", 場所.display());
     }
 }

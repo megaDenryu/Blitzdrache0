@@ -5,11 +5,13 @@
 //! 同じ出力ルートで見分けられなくなるためである。生成器の起動そのものは`source_write`が持つ。
 //! 参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「判断7: 地図の正本を持ち、生成は2系統に分ける」
 
+mod error;
 pub mod source_write;
 
 use std::process::ExitCode;
 
 use crate::compile_assets;
+use error::種の引数の破れ;
 
 /// 種を導く選択肢の綴り。この綴りの直後の1語が種の値である。
 const 種の選択肢の綴り: &str = "--seed";
@@ -41,14 +43,14 @@ pub fn 種からマップを生成する(種: &str) -> bool {
     }
 }
 
-fn 引数一覧から種を読む(引数一覧: &[String]) -> Result<String, String> {
+fn 引数一覧から種を読む(引数一覧: &[String]) -> Result<String, 種の引数の破れ> {
     let [綴り, 値] = 引数一覧 else {
-        return Err(format!("引数は{種の選択肢の綴り}と種の値の2語である"));
+        return Err(種の引数の破れ::引数が選択肢と値の2語でない);
     };
     if 綴り != 種の選択肢の綴り {
-        return Err(format!("知らない引数である: {綴り}"));
+        return Err(種の引数の破れ::知らない引数を渡された { 綴り: 綴り.clone() });
     }
     値.parse::<u32>()
         .map(|種| 種.to_string())
-        .map_err(|誤り| format!("種を32ビットの非負整数として読めない({値}): {誤り}"))
+        .map_err(|誤り| 種の引数の破れ::種を32ビットの非負整数として読めない { 綴り: 値.clone(), 誤り })
 }

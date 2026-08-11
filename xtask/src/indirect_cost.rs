@@ -56,12 +56,11 @@ fn 計測する(引数一覧: &[String]) -> Result<String, 間接照明の費用
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
         return Err(間接照明の費用計測エラー::検証用アセットを生成できなかった);
     }
-    let 由来 = crate::release_build::計測用に構築する("indirect-cost")
-        .map_err(|理由| 間接照明の費用計測エラー::計測用の構築が失敗した { 理由 })?;
+    let 由来 = crate::release_build::計測用に構築する("indirect-cost").map_err(間接照明の費用計測エラー::計測用の構築が失敗した)?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| 間接照明の費用計測エラー::出力先を作れなかった { 誤り })?;
     let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
-        .map_err(|理由| 間接照明の費用計測エラー::シェーダーの一時コピーを作れなかった { 理由 })?;
+        .map_err(間接照明の費用計測エラー::シェーダーの一時コピーを作れなかった)?;
 
     let 実行環境 = run::実行環境を作る();
     let mut 標本一覧 = Vec::with_capacity(schedule::交互の並び.len());

@@ -56,7 +56,7 @@ pub fn 実行する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, String> {
-    crate::visual_sample_world::用意する()?;
+    crate::visual_sample_world::用意する().map_err(|破れ| 破れ.to_string())?;
     if !crate::compile_assets::既定を生成する() {
         return Err("間接照明の検収世界のアセット生成に失敗した".to_string());
     }

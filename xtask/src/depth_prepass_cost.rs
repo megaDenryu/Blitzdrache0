@@ -55,12 +55,11 @@ fn 計測する(引数一覧: &[String]) -> Result<String, 深度プリパスの
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
         return Err(深度プリパスの費用計測エラー::検証用アセットを生成できなかった);
     }
-    let 由来 = crate::release_build::計測用に構築する("depth-prepass-cost")
-        .map_err(|理由| 深度プリパスの費用計測エラー::計測用の構築が失敗した { 理由 })?;
+    let 由来 = crate::release_build::計測用に構築する("depth-prepass-cost").map_err(深度プリパスの費用計測エラー::計測用の構築が失敗した)?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| 深度プリパスの費用計測エラー::出力先を作れなかった { 誤り })?;
     let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
-        .map_err(|理由| 深度プリパスの費用計測エラー::シェーダーの一時コピーを作れなかった { 理由 })?;
+        .map_err(深度プリパスの費用計測エラー::シェーダーの一時コピーを作れなかった)?;
 
     let 標本一覧 = 周回する(&出力先, &シェーダー入口, &指定)?;
     judgment::値が有限であることを確かめる(&標本一覧)?;

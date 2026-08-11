@@ -9,6 +9,7 @@
 //!
 //! 構築の標準出力と所要時間は計測窓へ入らない。ここが戻ってから初めて条件列が始まるためである。
 
+mod error;
 mod provenance;
 mod raw_value_file;
 mod tsv_prefix;
@@ -17,6 +18,7 @@ use std::process::Command;
 
 use crate::acceptance::アプリの起こし方;
 
+pub use error::計測用の構築の破れ;
 pub use provenance::構築の由来;
 pub use raw_value_file::計測の生値のファイル;
 pub use tsv_prefix::tsvの前置き;
@@ -25,16 +27,17 @@ pub use tsv_prefix::tsvの前置き;
 ///
 /// 失敗を文脈付きで返すのは、構築が失敗した実行を「計測が失敗した」と読み替えないためである。
 /// 構築が通らないまま条件列へ進むと、そこに在る前の構築物で測った値が、いま直したはずの版の値として残る。
-pub fn 計測用に構築する(コマンド名: &str) -> Result<構築の由来, String> {
+pub fn 計測用に構築する(コマンド名: &'static str) -> Result<構築の由来, 計測用の構築の破れ> {
     println!("[xtask] {コマンド名}用リリースビルド");
     let 状態 = Command::new("cargo")
         .args(["build", "--release", "-p", "blitz_app"])
         .status()
-        .map_err(|誤り| format!("{コマンド名}のリリースビルドでcargoを起動できなかった: {誤り}"))?;
+        .map_err(|誤り| 計測用の構築の破れ::構築の道具cargoを起こせなかった { コマンド名, 誤り })?;
     if !状態.success() {
-        return Err(format!(
-            "{コマンド名}のリリースビルドが終了コード{状態}で失敗した(直そうとした版で測れないためここで止める)"
-        ));
+        return Err(計測用の構築の破れ::構築が失敗して終わった {
+            コマンド名,
+            終了状態: 状態.to_string(),
+        });
     }
     let 由来 = 構築の由来::採る(アプリの起こし方::リリース実行ファイルのパス());
     for 注記 in 由来.注記一覧() {
@@ -44,7 +47,7 @@ pub fn 計測用に構築する(コマンド名: &str) -> Result<構築の由来
 }
 
 /// 由来を要らない計測入口のための形。中身は`計測用に構築する`と同じであり、失敗の理由はその場で出す。
-pub fn 実行する(コマンド名: &str) -> bool {
+pub fn 実行する(コマンド名: &'static str) -> bool {
     match 計測用に構築する(コマンド名) {
         Ok(_) => true,
         Err(理由) => {

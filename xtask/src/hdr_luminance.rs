@@ -41,8 +41,7 @@ pub(crate) fn 実行する() -> ExitCode {
 }
 
 fn 計測する() -> Result<String, 圧縮前の輝度分布の計測エラー> {
-    crate::visual_sample_world::用意する()
-        .map_err(|理由| 圧縮前の輝度分布の計測エラー::目視見本世界を用意できなかった { 理由 })?;
+    crate::visual_sample_world::用意する().map_err(圧縮前の輝度分布の計測エラー::目視見本世界を用意できなかった)?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
     let 実行環境 = run::実行環境を作る(出力先.clone())?;
 

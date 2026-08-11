@@ -46,8 +46,7 @@ pub fn 実行する() -> ExitCode {
 }
 
 fn 計測する() -> Result<String, 間引きの段差の計測エラー> {
-    crate::visual_sample_world::用意する()
-        .map_err(|理由| 間引きの段差の計測エラー::目視見本世界を用意できなかった { 理由 })?;
+    crate::visual_sample_world::用意する().map_err(間引きの段差の計測エラー::目視見本世界を用意できなかった)?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
     let マスクの実行環境 = 描画検収の実行環境::作る(
         アプリの起こし方::毎回cargoに構築させて起動する,

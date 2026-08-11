@@ -39,7 +39,7 @@ fn 検収する() -> Result<String, String> {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let 監視先 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
+    let 監視先 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先)).map_err(|破れ| 破れ.to_string())?;
 
     let 差し替え後 = 実行環境.描いて読み戻す(run::差し替え後の実行名, &run::起動指定を組み立てる(&監視先))?;
     let 差し替え前 = 実行環境.同じ置き場の書き出しを読み戻す(run::差し替え前の実行名)?;

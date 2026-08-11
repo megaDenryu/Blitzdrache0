@@ -3,12 +3,23 @@
 //! リポジトリ本体は汚さない。shaders/はimportでモジュール分割されているため
 //! エントリファイル(scene.slang)単体でなくディレクトリ単位でコピーする
 //! (分割先のpbr.slangがコピー先に無いとslangcのimport解決が失敗する)。
+//!
+//! シェーダーの複製そのものは`crate::shader_copy`が持ち、ここはコピー先を名指すだけである。
+//! 計測の入口が使う一時コピーと手順が同じであり、片方だけが拡張子の扱いを変えると、
+//! 同じ「監視対象の一時コピー」が入口ごとに別のものになる。
+//! アセットの複製で破れうる前提の数え上げは`error`が持つ。
+
+mod error;
 
 use std::path::{Path, PathBuf};
 
-use crate::shader_copy::シェーダーの入口のファイル;
+use crate::shader_copy::シェーダーの一時コピーの破れ;
+
+pub(in crate::smoke) use error::スモークのアセットの一時コピーの破れ;
 
 const チャンク世界ディレクトリ名: &str = "chunk_world";
+const シェーダーのコピー先: &str = "target/smoke_shaders";
+const アセットの元ディレクトリ: &str = "assets/smoke";
 /// 一時ソースへ複製するassets/smoke/のファイル。スモークが描くのはquadだけだが、実行時アセット生成器は板の世界の必須アセットが
 /// 1つでも欠けると失敗するため、同じディレクトリの宣言に並ぶものはすべて複製する。
 const アセットファイル一覧: [&str; 14] = [
@@ -28,55 +39,53 @@ const アセットファイル一覧: [&str; 14] = [
     "indirect_probe.gltf",
 ];
 
-pub(super) fn シェーダーを一時コピーする() -> Result<PathBuf, String> {
-    let コピー先ディレクトリ = PathBuf::from("target/smoke_shaders");
-    std::fs::create_dir_all(&コピー先ディレクトリ).map_err(|誤り| format!("コピー先ディレクトリの作成に失敗した: {誤り}"))?;
-
-    let 読み取り結果 = std::fs::read_dir("shaders").map_err(|誤り| format!("shaders/ディレクトリの読み取りに失敗した: {誤り}"))?;
-    for エントリ結果 in 読み取り結果 {
-        let エントリ = エントリ結果.map_err(|誤り| format!("shaders/ディレクトリの読み取りに失敗した: {誤り}"))?;
-        let 元パス = エントリ.path();
-        let 拡張子が対象か = 元パス.extension().and_then(|拡張子| 拡張子.to_str()) == Some("slang");
-        if !元パス.is_file() || !拡張子が対象か {
-            continue;
-        }
-        let ファイル名 = エントリ.file_name();
-        std::fs::copy(&元パス, コピー先ディレクトリ.join(&ファイル名)).map_err(|誤り| format!("{}のコピーに失敗した: {誤り}", 元パス.display()))?;
-    }
-
-    Ok(シェーダーの入口のファイル::コピー先の中の場所(
-        &コピー先ディレクトリ,
-    ))
+pub(super) fn シェーダーを一時コピーする() -> Result<PathBuf, シェーダーの一時コピーの破れ> {
+    crate::shader_copy::一時コピーを作る(Path::new(シェーダーのコピー先))
 }
 
-pub(super) fn アセットを一時コピーする() -> Result<PathBuf, String> {
+pub(super) fn アセットを一時コピーする() -> Result<PathBuf, スモークのアセットの一時コピーの破れ> {
     let ルート = PathBuf::from("target/smoke_assets");
     let コピー先ディレクトリ = ルート.join("smoke");
-    std::fs::create_dir_all(&コピー先ディレクトリ).map_err(|誤り| format!("コピー先ディレクトリの作成に失敗した: {誤り}"))?;
+    ディレクトリを作る(&コピー先ディレクトリ)?;
 
     for ファイル名 in アセットファイル一覧 {
-        let 元 = PathBuf::from("assets/smoke").join(ファイル名);
-        let 先 = コピー先ディレクトリ.join(ファイル名);
-        std::fs::copy(&元, &先).map_err(|誤り| format!("{}のコピーに失敗した: {誤り}", 元.display()))?;
+        let 元 = PathBuf::from(アセットの元ディレクトリ).join(ファイル名);
+        写す(元, &コピー先ディレクトリ.join(ファイル名))?;
     }
     チャンク世界を複製する(&ルート)?;
     Ok(ルート)
 }
 
 /// スモークはチャンク世界を描かないが、実行時アセット生成器はチャンク目録ソースの不在を失敗として扱うため、一式を一時ソースへ複製する。
-fn チャンク世界を複製する(ルート: &Path) -> Result<(), String> {
+fn チャンク世界を複製する(ルート: &Path) -> Result<(), スモークのアセットの一時コピーの破れ> {
     let 元ディレクトリ = PathBuf::from("assets").join(チャンク世界ディレクトリ名);
     let 先ディレクトリ = ルート.join(チャンク世界ディレクトリ名);
-    std::fs::create_dir_all(&先ディレクトリ).map_err(|誤り| format!("チャンク世界のコピー先を作れない: {誤り}"))?;
-    let 読み取り結果 = std::fs::read_dir(&元ディレクトリ).map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", 元ディレクトリ.display()))?;
+    ディレクトリを作る(&先ディレクトリ)?;
+    let 読めなかった = |誤り| スモークのアセットの一時コピーの破れ::元のディレクトリを読めなかった {
+        元のディレクトリ: 元ディレクトリ.clone(),
+        誤り,
+    };
+    let 読み取り結果 = std::fs::read_dir(&元ディレクトリ).map_err(読めなかった)?;
     for エントリ結果 in 読み取り結果 {
-        let エントリ = エントリ結果.map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", 元ディレクトリ.display()))?;
+        let エントリ = エントリ結果.map_err(読めなかった)?;
         let 元パス = エントリ.path();
         if !元パス.is_file() {
             continue;
         }
-        std::fs::copy(&元パス, 先ディレクトリ.join(エントリ.file_name()))
-            .map_err(|誤り| format!("{}のコピーに失敗した: {誤り}", 元パス.display()))?;
+        写す(元パス, &先ディレクトリ.join(エントリ.file_name()))?;
     }
     Ok(())
+}
+
+fn ディレクトリを作る(コピー先: &Path) -> Result<(), スモークのアセットの一時コピーの破れ> {
+    std::fs::create_dir_all(コピー先).map_err(|誤り| スモークのアセットの一時コピーの破れ::コピー先を作れなかった {
+        コピー先: コピー先.to_path_buf(),
+        誤り,
+    })
+}
+
+fn 写す(元パス: PathBuf, 先: &Path) -> Result<(), スモークのアセットの一時コピーの破れ> {
+    std::fs::copy(&元パス, 先)
+        .map(|_| ())
+        .map_err(|誤り| スモークのアセットの一時コピーの破れ::アセットの1枚を写せなかった { 元パス, 誤り })
 }

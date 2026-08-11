@@ -4,6 +4,7 @@
 //! 片方だけがルートを変えると、絵を撮る入口と数を採る入口が別の世界を見ることになり、並べて読む根拠が消える。
 
 use crate::acceptance::{実行時アセットルート, 検収シーン名};
+use crate::world_setup::{検収世界の用意, 検収世界の用意の破れ};
 
 const シーン名の綴り: &str = "terrain_visual";
 
@@ -13,7 +14,7 @@ pub const 目視見本世界のシーン名: 検収シーン名 = 検収シー�
 const アセットルートの綴り: &str = "target/terrain_visual_assets";
 
 /// 目視見本の実行時形式。この世界だけの出力ルートへ焼かれる。
-const 実行時形式のパス: &str = "target/terrain_visual_assets/terrain_visual.blitzasset";
+const 用意: 検収世界の用意 = 検収世界の用意::生成する("目視見本", "target/terrain_visual_assets/terrain_visual.blitzasset");
 
 /// この世界を起動するときに渡す実行時アセットルート。
 pub fn 目視見本世界のアセットルートを作る() -> 実行時アセットルート {
@@ -21,20 +22,6 @@ pub fn 目視見本世界のアセットルートを作る() -> 実行時アセ�
 }
 
 /// ソースアセットの生成から実行時形式の実在確認までを行う。
-pub fn 用意する() -> Result<(), String> {
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::目視見本世界を既定で生成する() {
-        return Err("目視見本のアセット生成に失敗した".to_string());
-    }
-    実行時形式の実在を確かめる()
-}
-
-/// 外部のアセットリポジトリが無い環境では、小物の原型が1つも解決できずコンパイルが失敗する。
-/// 失敗を見落として起動へ進むと、カタログ未登録という遠い場所の失敗に化けるため、ここで名指しして落とす。
-fn 実行時形式の実在を確かめる() -> Result<(), String> {
-    if std::path::Path::new(実行時形式のパス).is_file() {
-        return Ok(());
-    }
-    Err(format!(
-        "{実行時形式のパス}が作られていない。外部のアセットリポジトリが見つからなかった可能性が高い(compile-assetsの出力に理由が出る)"
-    ))
+pub fn 用意する() -> Result<(), 検収世界の用意の破れ> {
+    用意.焼き上がりを確かめる(crate::gen_source_assets::生成する() && crate::compile_assets::目視見本世界を既定で生成する())
 }

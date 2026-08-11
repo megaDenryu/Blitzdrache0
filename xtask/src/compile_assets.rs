@@ -10,7 +10,7 @@ pub mod texture_policy_name;
 
 use std::path::Path;
 
-use crate::asset_generator::世界名;
+use crate::asset_generator::{世界名, 生成器エラー};
 
 pub use command_arguments::実行する;
 pub use default_root::*;
@@ -25,8 +25,10 @@ pub fn 生成する(ソースルート: &Path, 出力ルート: &Path, 世界: �
 
 /// ソースルートと出力ルートを名指しして焼き、コンパイラの標準出力を返す。焼き直した本数を読む検収がこの入口を通る。
 pub fn ルートを名指しして焼き標準出力を返す(
-    ソースルート: &Path, 出力ルート: &Path, 世界: 世界名
-) -> Result<String, String> {
+    ソースルート: &Path,
+    出力ルート: &Path,
+    世界: 世界名,
+) -> Result<String, 生成器エラー> {
     アセットコンパイラを起動して標準出力を取り込む(&実行時形式を焼く指定 {
         ソースルート,
         出力ルート,

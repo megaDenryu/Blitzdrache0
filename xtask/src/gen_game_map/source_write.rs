@@ -6,21 +6,21 @@
 
 use std::path::Path;
 
-use crate::asset_generator::{アセット生成器の起動, 生成の指定};
+use crate::asset_generator::{アセット生成器の起動, 生成の指定, 生成器エラー};
 
-pub fn 既定のソースルートへ書き出す(種: &str) -> Result<String, String> {
+pub fn 既定のソースルートへ書き出す(種: &str) -> Result<String, 生成器エラー> {
     書き出させる(種, None)
 }
 
-pub fn ソースルートを指定して書き出す(種: &str, ソースルート: &Path) -> Result<String, String> {
+pub fn ソースルートを指定して書き出す(種: &str, ソースルート: &Path) -> Result<String, 生成器エラー> {
     書き出させる(種, Some(ソースルート))
 }
 
-fn 書き出させる(種: &str, ソースルート: Option<&Path>) -> Result<String, String> {
+fn 書き出させる(種: &str, ソースルート: Option<&Path>) -> Result<String, 生成器エラー> {
     println!("[xtask] 場所巡りの世界のソースアセットを種{種}から生成");
     let 指定 = 生成の指定::ソースアセットを生成する {
         場所巡りの世界の種: Some(種),
         ソースルート,
     };
-    Ok(アセット生成器の起動::始める(&指定)?.走らせて標準出力を取り込む()?)
+    アセット生成器の起動::始める(&指定)?.走らせて標準出力を取り込む()
 }

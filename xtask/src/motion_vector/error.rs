@@ -17,7 +17,7 @@ use crate::acceptance::{判定の破れ, 検収エラー};
 pub(super) enum 動きベクトルの検収エラー {
     検収の器が破れた(検収エラー),
     判定が破れた(判定の破れ),
-    目視見本世界を用意できなかった { 理由: String },
+    目視見本世界を用意できなかった(crate::world_setup::検収世界の用意の破れ),
 }
 
 impl std::error::Error for 動きベクトルの検収エラー {}

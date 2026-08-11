@@ -89,6 +89,7 @@ mod vertex_diag;
 mod village_draw;
 mod visual_sample_world;
 mod watch_assets;
+mod world_setup;
 
 fn main() -> ExitCode {
     let 引数一覧: Vec<String> = std::env::args().skip(1).collect();

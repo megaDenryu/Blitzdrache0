@@ -33,8 +33,7 @@ pub fn 実行する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, 動きベクトルの検収エラー> {
-    crate::visual_sample_world::用意する()
-        .map_err(|理由| 動きベクトルの検収エラー::目視見本世界を用意できなかった { 理由 })?;
+    crate::visual_sample_world::用意する().map_err(動きベクトルの検収エラー::目視見本世界を用意できなかった)?;
     let 実行環境 = run::実行環境を作る();
     let 静止 = run::観測を採る(&実行環境, 条件::カメラを止める)?;
     let 移動 = run::観測を採る(&実行環境, 条件::カメラを動かす)?;

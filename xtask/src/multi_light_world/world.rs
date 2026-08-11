@@ -12,14 +12,15 @@ use std::path::PathBuf;
 use crate::acceptance::{
     アプリの起こし方, 実行時アセットルート, 描画フレーム数, 描画検収の実行環境, 検収エラー, 検収シーン名
 };
+use crate::world_setup::{検収世界の用意, 検収世界の用意の破れ};
 
 pub(crate) const 夜のシーン: 検収シーン名 = 検収シーン名::生成する("terrain_night_lights");
 const 夜のアセットルート: &str = "target/night_lights_assets";
-const 夜の実行時形式: &str = "target/night_lights_assets/terrain_night_lights.blitzasset";
+const 夜の用意: 検収世界の用意 = 検収世界の用意::生成する("夜の多光源", "target/night_lights_assets/terrain_night_lights.blitzasset");
 
 pub(crate) const 屋内のシーン: 検収シーン名 = 検収シーン名::生成する("prop_stone_hut_interior");
 const 屋内のアセットルート: &str = "target/stone_hut_assets";
-const 屋内の実行時形式: &str = "target/stone_hut_assets/prop_stone_hut_interior.blitzasset";
+const 屋内の用意: 検収世界の用意 = 検収世界の用意::生成する("屋内の多光源", "target/stone_hut_assets/prop_stone_hut_interior.blitzasset");
 
 /// 夜の多光源の世界を起こす実行環境。リリース版の実行ファイルを直に起こすのは、GPU時間を測る条件を
 /// デバッグ版の実行と混ぜないためである。
@@ -51,27 +52,10 @@ pub(crate) const 絵の枚数: 描画フレーム数 = 描画フレーム数::�
 /// 間接照明と大気の焼き上げが済んだ定常状態だけが窓に入る。窓が満ちたことは入口が標本数で必ず確かめる。
 pub(crate) const 計測の枚数: 描画フレーム数 = 描画フレーム数::生成する(90);
 
-pub(crate) fn 夜の世界を用意する() -> Result<(), String> {
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::夜の多光源世界を既定で生成する() {
-        return Err("夜の多光源の検収世界のアセット生成に失敗した".to_string());
-    }
-    実在を確かめる(夜の実行時形式, "夜の多光源")
+pub(crate) fn 夜の世界を用意する() -> Result<(), 検収世界の用意の破れ> {
+    夜の用意.焼き上がりを確かめる(crate::gen_source_assets::生成する() && crate::compile_assets::夜の多光源世界を既定で生成する())
 }
 
-pub(crate) fn 屋内の世界を用意する() -> Result<(), String> {
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::屋内の多光源世界を既定で生成する() {
-        return Err("屋内の多光源の検収世界のアセット生成に失敗した".to_string());
-    }
-    実在を確かめる(屋内の実行時形式, "屋内の多光源")
-}
-
-/// 外部のアセットリポジトリが無い環境では、小屋の原型が解決できずコンパイルが失敗する。失敗を見落として
-/// 起動へ進むと、カタログ未登録という遠い場所の失敗に化けるため、ここで名指しして落とす。
-fn 実在を確かめる(パス: &str, 世界名: &str) -> Result<(), String> {
-    if std::path::Path::new(パス).is_file() {
-        return Ok(());
-    }
-    Err(format!(
-        "{世界名}の実行時形式{パス}が作られていない(外部のアセットリポジトリが見つからなかった可能性が高い。compile-assetsの出力に理由が出る)"
-    ))
+pub(crate) fn 屋内の世界を用意する() -> Result<(), 検収世界の用意の破れ> {
+    屋内の用意.焼き上がりを確かめる(crate::gen_source_assets::生成する() && crate::compile_assets::屋内の多光源世界を既定で生成する())
 }

@@ -69,7 +69,7 @@ fn 計測する(物量点一覧: &[usize], 条件: &condition::計測条件) -> 
     }
     let 出力先 = PathBuf::from(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先)).map_err(|破れ| 破れ.to_string())?;
     物量点一覧
         .iter()
         .map(|個体数| 一物量点を測る(&出力先, &シェーダー入口, *個体数, 条件))

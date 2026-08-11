@@ -37,8 +37,7 @@ pub fn 実行する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, 時間再構成の検収エラー> {
-    crate::visual_sample_world::用意する()
-        .map_err(|理由| 時間再構成の検収エラー::目視見本世界を用意できなかった { 理由 })?;
+    crate::visual_sample_world::用意する().map_err(時間再構成の検収エラー::目視見本世界を用意できなかった)?;
     let 実行環境 = run::実行環境を作る();
     let 注入 = injection::取り出して判定する(&run::合成入力の観測を採る(&実行環境)?)?;
     let 一回目 = observation::取り出す(&run::観測を採る(&実行環境, run::一回目の実行名, "1回目")?)?;

@@ -40,9 +40,9 @@ pub fn 実行する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, String> {
-    world::夜の世界を用意する()?;
-    world::屋内の世界を用意する()?;
-    crate::release_build::計測用に構築する("cluster-lights")?;
+    world::夜の世界を用意する().map_err(|破れ| 破れ.to_string())?;
+    world::屋内の世界を用意する().map_err(|破れ| 破れ.to_string())?;
+    crate::release_build::計測用に構築する("cluster-lights").map_err(|破れ| 破れ.to_string())?;
     let 夜の実行環境 = world::夜の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
     let 屋内の実行環境 = world::屋内の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 

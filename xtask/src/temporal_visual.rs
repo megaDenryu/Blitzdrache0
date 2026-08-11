@@ -42,8 +42,7 @@ pub fn 実行する() -> ExitCode {
 }
 
 fn 撮る() -> Result<String, 時間再構成の目視材料の撮影エラー> {
-    crate::visual_sample_world::用意する()
-        .map_err(|理由| 時間再構成の目視材料の撮影エラー::目視見本世界を用意できなかった { 理由 })?;
+    crate::visual_sample_world::用意する().map_err(時間再構成の目視材料の撮影エラー::目視見本世界を用意できなかった)?;
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
     let mut 行一覧 = Vec::new();
