@@ -10,6 +10,8 @@
 
 #[cfg(test)]
 mod names_in_use_tests;
+#[cfg(test)]
+mod offending_character_tests;
 pub(super) mod validation;
 #[cfg(test)]
 mod validation_tests;
@@ -61,12 +63,24 @@ fn 破れを誤りへ写す(破れ: 実行名の破れ, 綴り: &str) -> 検収�
         実行名の破れ::空である => 検収エラー::検収の実行名が空である,
         実行名の破れ::使えない文字を含む => 検収エラー::検収の実行名が使えない文字を含む {
             名前: 綴り.to_string(),
-            文字: 綴り.bytes().find(|バイト| !validation::使ってよい文字か(*バイト)).map_or('?', char::from),
+            文字: 最初の使えない文字(綴り),
         },
         実行名の破れ::予約された装置の名前である => {
             検収エラー::検収の実行名が予約された装置の名前である { 名前: 綴り.to_string() }
         }
     }
+}
+
+/// 綴りの中で最初に許可の集合から外れる文字。
+///
+/// 注意: バイトで探してはならない。ASCII以外の文字はUTF-8で複数バイトになるため、先頭バイトを文字へ写すと
+/// 元の文字と無関係な文字を名指す(`対`の先頭バイトは`å`になる)。文字で走査し、ASCIIへ収まらない文字は
+/// その時点で許可の集合の外である。
+fn 最初の使えない文字(綴り: &str) -> char {
+    綴り
+        .chars()
+        .find(|文字| !u8::try_from(*文字).is_ok_and(validation::使ってよい文字か))
+        .unwrap_or('?')
 }
 
 impl std::fmt::Display for 検収の実行名 {
