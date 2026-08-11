@@ -7,7 +7,6 @@
 #![allow(clippy::unwrap_used)]
 
 use std::path::Path;
-use std::process::Command;
 
 use super::アプリの起動指定;
 use crate::acceptance::{描画フレーム数, 検収シーン名};
@@ -20,7 +19,7 @@ fn 指定を始める() -> アプリの起動指定 {
 }
 
 fn 並べてみる(指定: &アプリの起動指定) -> Result<(), crate::acceptance::検収エラー> {
-    指定.コマンドへ並べる(&mut Command::new("cargo"))
+    指定.引数列へ写す().map(|_| ())
 }
 
 #[test]

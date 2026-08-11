@@ -26,6 +26,7 @@ mod dump_format;
 mod error;
 mod exit_report;
 mod frame_count;
+mod launch_arguments;
 mod launch_specification;
 mod pixel_geometry;
 mod readback_dump;

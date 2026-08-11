@@ -16,12 +16,11 @@ mod option_stack;
 mod reserved_tests;
 
 use std::ffi::OsString;
-use std::process::Command;
 
 use super::draw_end::描き終わりの決め方;
 use super::error::検収エラー;
 use super::frame_count::描画フレーム数;
-use super::reserved_option::予約された選択肢の綴り一覧;
+use super::launch_arguments::{予約を積んだ誤り, 完成した起動引数};
 use super::scene_name::検収シーン名;
 
 /// シーンをアプリへ渡す選択肢の綴り。生の綴りが在るのはこの1行だけである。
@@ -60,16 +59,16 @@ impl アプリの起動指定 {
     }
 
     /// 完成させる操作。積んだ選択肢に型の組み立てる選択肢が混じっていれば、ここで型付きエラーを返す。
-    pub(super) fn コマンドへ並べる(&self, コマンド: &mut Command) -> Result<(), 検収エラー> {
+    ///
+    /// コマンドへ直に並べずに引数列を返すのは、この検証がセッションを始める前に済んでいなければならないためである。
+    /// セッションの中で落とすと、未終了のセッションが破棄されて閉じ忘れのpanicが型付きエラーを隠す。
+    pub(super) fn 引数列へ写す(&self) -> Result<完成した起動引数, 検収エラー> {
         if let Some(綴り) = &self.予約を積んだ綴り {
-            return Err(検収エラー::予約された選択肢を汎用の口から積んだ {
-                綴り: 綴り.clone(),
-                予約の一覧: 予約された選択肢の綴り一覧().join(" "),
-            });
+            return Err(予約を積んだ誤り(綴り));
         }
-        コマンド.args([シーンの選択肢の綴り, self.シーン名.綴り()]);
-        self.描き終わり.コマンドへ並べる(コマンド);
-        コマンド.args(&self.追加の選択肢);
-        Ok(())
+        let mut 並び = vec![OsString::from(シーンの選択肢の綴り), OsString::from(self.シーン名.綴り())];
+        self.描き終わり.引数列へ足す(&mut 並び);
+        並び.extend(self.追加の選択肢.iter().cloned());
+        Ok(完成した起動引数::検査済みの並びから受け取る(並び))
     }
 }
