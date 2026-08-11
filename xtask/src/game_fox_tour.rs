@@ -6,6 +6,7 @@
 //! 終了まで進む条件は途中でイベントループを閉じるため絵を残さない。そちらが確かめるのは終了の決定へ至ることである。
 //! 絵の合否は親エージェントの目視が決める。ここが担うのは、決定性と進行の値を機械で確かめることである。
 
+mod error;
 mod judgment;
 mod map_generation_check;
 mod run;
@@ -14,7 +15,9 @@ mod shot_plan;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use crate::acceptance::{描画検収の実行環境, 検収の実行名};
+use error::場所巡りの通しの検収エラー;
+
+use crate::acceptance::{描画検収の実行環境, 検収の実行名, 検収エラー};
 
 use shot_plan::{
     タイトルの撮影, プレイ中の撮影, 台本なしの実行, 撮影の条件, 目的地付近の二度目の撮影, 目的地付近の撮影, 終了までの実行, 終了確認の撮影,
@@ -39,7 +42,7 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
+fn 検収する() -> Result<String, 場所巡りの通しの検収エラー> {
     let マップの要約 = map_generation_check::種からの生成を確かめる(検収の種)?;
     let 実行環境 = crate::fox_tour_launch::場所巡りの世界の検収の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
@@ -77,11 +80,13 @@ fn 検収する() -> Result<String, String> {
 
 fn 台本の操作でその条件の絵を撮る(
     実行環境: &描画検収の実行環境, 条件: &撮影の条件
-) -> Result<run::実行の進行, String> {
+) -> Result<run::実行の進行, 検収エラー> {
     run::描画する(実行環境, 条件.出力名, 条件.フレーム数, run::操作の出どころ::決定的な台本)
 }
 
-fn 目視材料のパスを並べる(実行環境: &描画検収の実行環境, 条件一覧: &[&撮影の条件]) -> Result<String, String> {
+fn 目視材料のパスを並べる(
+    実行環境: &描画検収の実行環境, 条件一覧: &[&撮影の条件]
+) -> Result<String, 検収エラー> {
     let mut パス一覧 = Vec::with_capacity(条件一覧.len());
     for 条件 in 条件一覧 {
         let 実行名 = 検収の実行名::生成する(条件.出力名)?;

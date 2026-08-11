@@ -12,43 +12,71 @@ use std::collections::BTreeMap;
 use std::io::Read;
 use std::path::{Path, PathBuf};
 
+use super::super::error::場所巡りの通しの検収エラー;
+use crate::acceptance::判定の名前;
+
 const 畳み込みの開始値: u64 = 0xcbf2_9ce4_8422_2325;
 const 畳み込みに掛ける値: u64 = 0x0000_0100_0000_01b3;
 const 読み取りの一区切りのバイト数: usize = 1 << 20;
 
-pub(super) fn ディレクトリの全ファイルを畳む(ルート: &Path) -> Result<BTreeMap<PathBuf, u64>, String> {
+pub(super) fn ディレクトリの全ファイルを畳む(
+    ルート: &Path,
+) -> Result<BTreeMap<PathBuf, u64>, 場所巡りの通しの検収エラー> {
     let mut 対応表 = BTreeMap::new();
     ディレクトリを辿る(ルート, ルート, &mut 対応表)?;
     if 対応表.is_empty() {
-        return Err(format!("{}に畳む対象のファイルが1本も無い", ルート.display()));
+        return Err(畳む対象のファイルの判定名(ルート).あるはずのものが無い破れ().into());
     }
     Ok(対応表)
 }
 
-fn ディレクトリを辿る(ルート: &Path, ディレクトリ: &Path, 対応表: &mut BTreeMap<PathBuf, u64>) -> Result<(), String> {
-    let 一覧 = std::fs::read_dir(ディレクトリ).map_err(|誤り| format!("{}を開けなかった: {誤り}", ディレクトリ.display()))?;
+fn 畳む対象のファイルの判定名(ルート: &Path) -> 判定の名前 {
+    判定の名前::組み立てた綴りから生成する(format!("{}の下の畳む対象のファイル", ルート.display()))
+}
+
+fn ディレクトリを辿る(
+    ルート: &Path,
+    ディレクトリ: &Path,
+    対応表: &mut BTreeMap<PathBuf, u64>,
+) -> Result<(), 場所巡りの通しの検収エラー> {
+    let 一覧 = std::fs::read_dir(ディレクトリ).map_err(|誤り| 場所巡りの通しの検収エラー::ディレクトリを開けなかった {
+        パス: ディレクトリ.to_path_buf(),
+        誤り,
+    })?;
     for 項目 in 一覧 {
-        let パス = 項目.map_err(|誤り| format!("{}の走査に失敗した: {誤り}", ディレクトリ.display()))?.path();
+        let パス = 項目
+            .map_err(|誤り| 場所巡りの通しの検収エラー::ディレクトリの走査に失敗した {
+                パス: ディレクトリ.to_path_buf(),
+                誤り,
+            })?
+            .path();
         if パス.is_dir() {
             ディレクトリを辿る(ルート, &パス, 対応表)?;
             continue;
         }
         let 相対パス = パス
             .strip_prefix(ルート)
-            .map_err(|誤り| format!("{}の相対化に失敗した: {誤り}", パス.display()))?;
+            .map_err(|_| 場所巡りの通しの検収エラー::相対パスを求められなかった { パス: パス.clone() })?;
         対応表.insert(相対パス.to_path_buf(), ファイルの中身を畳む(&パス)?);
     }
     Ok(())
 }
 
-fn ファイルの中身を畳む(パス: &Path) -> Result<u64, String> {
-    let mut ファイル = std::fs::File::open(パス).map_err(|誤り| format!("{}を開けなかった: {誤り}", パス.display()))?;
+fn ファイルの中身を畳む(パス: &Path) -> Result<u64, 場所巡りの通しの検収エラー> {
+    let mut ファイル = std::fs::File::open(パス).map_err(|誤り| 場所巡りの通しの検収エラー::ファイルを開けなかった {
+        パス: パス.to_path_buf(),
+        誤り,
+    })?;
     let mut 区切り = vec![0_u8; 読み取りの一区切りのバイト数];
     let mut 畳んだ値 = 畳み込みの開始値;
     loop {
-        let 読み取ったバイト数 = ファイル
-            .read(&mut 区切り)
-            .map_err(|誤り| format!("{}を読めなかった: {誤り}", パス.display()))?;
+        let 読み取ったバイト数 =
+            ファイル
+                .read(&mut 区切り)
+                .map_err(|誤り| 場所巡りの通しの検収エラー::ファイルを読めなかった {
+                    パス: パス.to_path_buf(),
+                    誤り,
+                })?;
         if 読み取ったバイト数 == 0 {
             return Ok(畳んだ値);
         }

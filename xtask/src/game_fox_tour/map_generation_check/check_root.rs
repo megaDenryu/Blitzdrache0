@@ -12,6 +12,7 @@ use std::path::{Path, PathBuf};
 
 use blitz_asset_compiler::生成の出力ルート;
 
+use super::super::error::場所巡りの通しの検収エラー;
 use super::file_digest::ディレクトリの全ファイルを畳む;
 
 /// 検収が使い捨てるルートの親。既定のルート(assets/とtarget/fox_tour_assets)とは別の場所へ置く。
@@ -38,17 +39,19 @@ impl 検収用のルート {
     }
 
     /// 増分を無効にするため、走らせる前にルートごと消す。台帳も生成物も残っていない状態から焼き直させる。
-    pub(super) fn 掃除する(&self) -> Result<(), String> {
+    pub(super) fn 掃除する(&self) -> Result<(), 場所巡りの通しの検収エラー> {
         match std::fs::remove_dir_all(&self.0) {
             Ok(()) => Ok(()),
             Err(誤り) if 誤り.kind() == std::io::ErrorKind::NotFound => Ok(()),
-            Err(誤り) => Err(format!("{}を消せなかった: {誤り}", self.0.display())),
+            Err(誤り) => Err(場所巡りの通しの検収エラー::検収用のルートを消せなかった {
+                パス: self.0.clone(), 誤り
+            }),
         }
     }
 
     /// 突き合わせに使う畳んだ値。生成台帳は取り除く。台帳かどうかの判定はアセットコンパイラの側が持つため、
     /// ここは台帳のファイル名の綴りを1文字も持たない。
-    pub(super) fn 全ファイルを畳む(&self) -> Result<BTreeMap<PathBuf, u64>, String> {
+    pub(super) fn 全ファイルを畳む(&self) -> Result<BTreeMap<PathBuf, u64>, 場所巡りの通しの検収エラー> {
         let mut 対応表 = ディレクトリの全ファイルを畳む(&self.0)?;
         対応表.retain(|相対パス, _| !生成の出力ルート::生成台帳を指すパスか(相対パス));
         Ok(対応表)

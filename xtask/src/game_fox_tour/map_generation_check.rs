@@ -13,7 +13,9 @@ mod file_digest;
 mod incremental;
 mod tally_line;
 
-pub(super) fn 種からの生成を確かめる(種: &str) -> Result<String, String> {
+use super::error::場所巡りの通しの検収エラー;
+
+pub(super) fn 種からの生成を確かめる(種: &str) -> Result<String, 場所巡りの通しの検収エラー> {
     let 増分 = incremental::同じ種での再実行が焼き直さないことを確かめる(種)?;
     let 決定性 = determinism::同じ種から同じバイト列が出ることを確かめる(種)?;
     Ok(format!("{決定性}、{増分}"))
