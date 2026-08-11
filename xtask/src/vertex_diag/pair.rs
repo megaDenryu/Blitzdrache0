@@ -16,8 +16,8 @@ pub(super) struct 診断の対 {
 
 impl 診断の対 {
     pub(super) fn 焼く(出力先: &Path, チャンクあたり個体数: usize) -> Result<Self, String> {
-        let 粗いルート = 一世界を焼く(出力先, "coarse", crate::compile_assets::頂点診断の粗い世界, チャンクあたり個体数)?;
-        let 細かいルート = 一世界を焼く(出力先, "fine", crate::compile_assets::頂点診断の細かい世界, チャンクあたり個体数)?;
+        let 粗いルート = 一世界を焼く(出力先, "coarse", crate::compile_assets::世界名::頂点診断の粗い世界, チャンクあたり個体数)?;
+        let 細かいルート = 一世界を焼く(出力先, "fine", crate::compile_assets::世界名::頂点診断の細かい世界, チャンクあたり個体数)?;
         Ok(Self {
             出力先: 出力先.to_path_buf(),
             粗いルート,
@@ -32,10 +32,12 @@ impl 診断の対 {
     }
 }
 
-fn 一世界を焼く(出力先: &Path, 名前: &str, 世界名: &str, チャンクあたり個体数: usize) -> Result<PathBuf, String> {
+fn 一世界を焼く(
+    出力先: &Path, 名前: &str, 世界: crate::compile_assets::世界名, チャンクあたり個体数: usize
+) -> Result<PathBuf, String> {
     let ルート = 出力先.join(format!("assets_{名前}"));
-    if crate::compile_assets::世界を個体数指定で生成する(&ルート, 世界名, チャンクあたり個体数) {
+    if crate::compile_assets::世界を個体数指定で生成する(&ルート, 世界, チャンクあたり個体数) {
         return Ok(ルート);
     }
-    Err(format!("{世界名}の実行時アセット生成に失敗した"))
+    Err(format!("{世界}の実行時アセット生成に失敗した"))
 }

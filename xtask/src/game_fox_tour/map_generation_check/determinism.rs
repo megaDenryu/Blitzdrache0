@@ -49,7 +49,7 @@ fn 掃除してから実行時形式を焼く(出力ルート: &検収用のル�
     crate::compile_assets::ルートを名指しして焼き標準出力を返す(
         crate::compile_assets::ソースルート(),
         出力ルート.プロセスへ渡すパス(),
-        crate::compile_assets::場所巡りの世界,
+        crate::compile_assets::世界名::場所巡りの世界,
     )?;
     出力ルート.全ファイルを畳む()
 }

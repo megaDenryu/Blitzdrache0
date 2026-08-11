@@ -7,11 +7,13 @@
 use std::path::Path;
 use std::process::Command;
 
+use super::world_name::世界名;
+
 /// コンパイラの入口が受け取る指定一式。方針の名前を渡さない呼び出しは、コンパイラ側の既定(`全てRGBA8`)で焼かれる。
 pub(super) struct 実行時形式を焼く指定<'指定> {
     pub(super) ソースルート: &'指定 Path,
     pub(super) 出力ルート: &'指定 Path,
-    pub(super) 世界名: &'指定 str,
+    pub(super) 世界: 世界名,
     pub(super) 同居植生個体数: Option<&'指定 str>,
     pub(super) テクスチャ格納方針の名前: Option<&'指定 str>,
 }
@@ -43,7 +45,7 @@ pub(super) fn アセットコンパイラを起動して実行時形式を焼く
 fn これから焼く対象を告げる(指定: &実行時形式を焼く指定) {
     println!(
         "[xtask] 実行時アセット生成({}{}{}): {} -> {}",
-        指定.世界名,
+        指定.世界,
         指定.同居植生個体数.map_or_else(String::new, |個体数| format!(", 同居植生{個体数}体")),
         指定.テクスチャ格納方針の名前.map_or_else(String::new, |名前| format!(", 格納方針{名前}")),
         指定.ソースルート.display(),
@@ -57,7 +59,7 @@ fn 起動するコマンドを組み立てる(指定: &実行時形式を焼く�
         .args(["run", "-p", "blitz_asset_compiler", "--example", "compile_assets", "--"])
         .arg(指定.ソースルート)
         .arg(指定.出力ルート)
-        .arg(指定.世界名);
+        .arg(指定.世界.綴り());
     if let Some(個体数) = 指定.同居植生個体数 {
         コマンド.arg(個体数);
     }

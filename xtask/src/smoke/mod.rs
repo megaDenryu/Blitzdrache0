@@ -28,7 +28,7 @@ pub fn 実行する() -> ExitCode {
     };
     let 実行時アセットルート = std::path::Path::new("target/smoke_runtime_assets");
     if !crate::compile_assets::既定を生成する()
-        || !crate::compile_assets::生成する(&アセットルート, 実行時アセットルート, crate::compile_assets::板の世界)
+        || !crate::compile_assets::生成する(&アセットルート, 実行時アセットルート, crate::compile_assets::世界名::板の世界)
     {
         return ExitCode::FAILURE;
     }
