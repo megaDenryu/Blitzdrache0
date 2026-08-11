@@ -23,7 +23,6 @@ use std::process::ExitCode;
 
 const 出力ディレクトリ: &str = "target/shadow_probe";
 const シェーダーコピー先: &str = "target/shadow_probe_shaders";
-const 生値ファイル名: &str = "raw.tsv";
 
 pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
     match 走らせる(引数一覧) {
@@ -71,7 +70,7 @@ fn 走らせる(引数一覧: &[String]) -> Result<Vec<record::一標本>, Strin
         };
         標本一覧.push(run::一回走らせる(&材料)?);
     }
-    record::生値を書く(&出力先.join(生値ファイル名), &標本一覧)?;
+    record::生値を書く(&出力先.join(crate::release_build::計測の生値ファイル名), &標本一覧)?;
     println!("[xtask] shadow-probe: 生値と実行ログは{}にある", 出力先.display());
     Ok(標本一覧)
 }

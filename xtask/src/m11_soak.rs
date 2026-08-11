@@ -23,7 +23,7 @@ pub fn 実行する() -> ExitCode {
     }
 
     let 条件 = 採取条件 {
-        実行ファイル: "target/release/blitz_app.exe",
+        実行ファイル: crate::release_build::計測用の実行ファイル,
         引数一覧: &["--scene", "helmet", "--benchmark-frames", フレーム数, "--particles"],
         採取間隔,
         制限時間,

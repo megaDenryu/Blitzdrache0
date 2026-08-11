@@ -20,7 +20,6 @@ use std::process::ExitCode;
 use crate::day_moment::代表時刻一覧;
 
 const 出力ディレクトリ: &str = "target/hdr_luminance";
-const 生値ファイル名: &str = "raw.tsv";
 
 pub(crate) fn 実行する() -> ExitCode {
     match 計測する() {
@@ -49,7 +48,7 @@ fn 計測する() -> Result<String, String> {
         統計.値が有限であることを確かめる(時刻.名前)?;
         標本一覧.push((時刻.名前, 統計));
     }
-    record::生値を書く(&出力先.join(生値ファイル名), &標本一覧)?;
+    record::生値を書く(&出力先.join(crate::release_build::計測の生値ファイル名), &標本一覧)?;
     table::表示する(&標本一覧);
     Ok(要約を組む(&標本一覧, &出力先))
 }

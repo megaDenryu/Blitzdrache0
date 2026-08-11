@@ -12,7 +12,7 @@ use crate::streaming_report::ストリーミング要約報告;
 use super::condition::計測条件;
 use super::gpu_table::GPU時間;
 use super::measure::{CPU区間一式, Vulkan確保};
-use super::{フレーム数, 上限バイト数, 先読み半径, 実行ファイル, 起動時シーン};
+use super::{フレーム数, 上限バイト数, 先読み半径, 計測用の実行ファイル, 起動時シーン};
 
 const 採取間隔: Duration = Duration::from_secs(1);
 /// 打ち切りは異常の検出であって計測の期限ではないため、100倍の物量でも余る長さを取る。
@@ -43,7 +43,7 @@ pub(super) fn 走らせる(
     let 引数参照: Vec<&str> = 引数一覧.iter().map(String::as_str).collect();
     println!("[xtask] ow4-bench実行{名前}: {}", 引数参照.join(" "));
     let 条件 = 採取条件 {
-        実行ファイル,
+        実行ファイル: 計測用の実行ファイル,
         引数一覧: &引数参照,
         採取間隔,
         制限時間,

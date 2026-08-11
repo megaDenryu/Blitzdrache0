@@ -31,7 +31,6 @@ use std::process::ExitCode;
 
 const 出力ディレクトリ: &str = "target/indirect_cost";
 const シェーダーコピー先: &str = "target/indirect_cost_shaders";
-const 生値ファイル名: &str = "raw.tsv";
 
 pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
     match 計測する(引数一覧) {
@@ -71,7 +70,7 @@ fn 計測する(引数一覧: &[String]) -> Result<String, String> {
     let 時計一覧: Vec<schedule::時計> = schedule::交互の並び.iter().map(|条件| 条件.時計).collect();
     judgment::本数が計画どおりであることを確かめる(&標本一覧, &時計一覧)?;
     judgment::値が有限であることを確かめる(&標本一覧)?;
-    record::生値を書く(&出力先.join(生値ファイル名), &標本一覧, &由来)?;
+    record::生値を書く(&出力先.join(crate::release_build::計測の生値ファイル名), &標本一覧, &由来)?;
     table::表示する(&標本一覧);
     要約を組む(&標本一覧, &出力先, 指定.フレーム数, &由来)
 }

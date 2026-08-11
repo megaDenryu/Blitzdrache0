@@ -4,7 +4,8 @@
 
 use std::path::{Path, PathBuf};
 
-const エントリファイル名: &str = "scene.slang";
+/// シェーダーの入口となるファイルの名前。importで分割された残りはこのファイルから辿る。
+pub const シェーダーのエントリファイル名: &str = "scene.slang";
 
 pub fn 一時コピーを作る(コピー先: &Path) -> Result<PathBuf, String> {
     std::fs::create_dir_all(コピー先).map_err(|誤り| format!("シェーダーのコピー先を作れなかった: {誤り}"))?;
@@ -17,5 +18,5 @@ pub fn 一時コピーを作る(コピー先: &Path) -> Result<PathBuf, String> 
         }
         std::fs::copy(&元パス, コピー先.join(エントリ.file_name())).map_err(|誤り| format!("{}のコピーに失敗した: {誤り}", 元パス.display()))?;
     }
-    Ok(コピー先.join(エントリファイル名))
+    Ok(コピー先.join(シェーダーのエントリファイル名))
 }

@@ -21,7 +21,7 @@ pub(super) fn 実行する(フレーム数: &str) -> bool {
     let 引数一覧 = 引数を作る(フレーム数);
     println!("[xtask] 条件A: 固定経路を{フレーム数}フレーム、RAM上限{RAM上限}・VRAM上限{VRAM上限}バイトで実行");
     let 条件 = 採取条件 {
-        実行ファイル: "target/release/blitz_app.exe",
+        実行ファイル: crate::release_build::計測用の実行ファイル,
         引数一覧: &引数一覧,
         採取間隔,
         制限時間: 制限時間を求める(フレーム数),

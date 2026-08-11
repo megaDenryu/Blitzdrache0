@@ -7,6 +7,7 @@ mod dependency_whitelist;
 mod doc_reference;
 mod doc_section;
 mod drop_impl;
+mod duplicate_file_literal;
 mod forbidden_strings;
 mod lighting_query_declaration;
 mod line_count;

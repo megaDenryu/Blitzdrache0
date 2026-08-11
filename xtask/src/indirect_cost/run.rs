@@ -14,8 +14,8 @@ use std::process::Command;
 
 use super::plan::実行の指定;
 use super::schedule::{実行条件, 時計};
+use crate::release_build::計測用の実行ファイル;
 
-const 実行ファイル: &str = "target/release/blitz_app.exe";
 const シーン名: &str = "terrain_origin";
 const アセットルート: &str = "target/terrain_assets";
 const 先読み半径: &str = "2";
@@ -35,10 +35,10 @@ pub(super) struct 実行の材料<'a> {
 pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<String, String> {
     let 標準出力先 = PathBuf::from(材料.出力先).join(format!("run_{}_{}.log", 材料.実行番号, 材料.条件.名前));
     println!("[xtask] indirect-cost実行{}: {}", 材料.実行番号, 材料.条件.名前);
-    let 出力 = Command::new(実行ファイル)
+    let 出力 = Command::new(計測用の実行ファイル)
         .args(引数を作る(材料))
         .output()
-        .map_err(|誤り| format!("{実行ファイル}を起動できなかった({}): {誤り}", 材料.条件.名前))?;
+        .map_err(|誤り| format!("{計測用の実行ファイル}を起動できなかった({}): {誤り}", 材料.条件.名前))?;
     let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
     std::fs::write(&標準出力先, &標準出力).map_err(|誤り| format!("{}を書けなかった: {誤り}", 標準出力先.display()))?;
     if !出力.status.success() {

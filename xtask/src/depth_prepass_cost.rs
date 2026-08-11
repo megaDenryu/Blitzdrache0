@@ -29,7 +29,6 @@ use std::process::ExitCode;
 
 const 出力ディレクトリ: &str = "target/depth_prepass_cost";
 const シェーダーコピー先: &str = "target/depth_prepass_cost_shaders";
-const 生値ファイル名: &str = "raw.tsv";
 const 窓の集約ファイル名: &str = "window.tsv";
 
 pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
@@ -58,7 +57,7 @@ fn 計測する(引数一覧: &[String]) -> Result<String, String> {
     let 標本一覧 = 周回する(&出力先, &シェーダー入口, &指定)?;
     judgment::値が有限であることを確かめる(&標本一覧)?;
     quantile_check::報告の分位が生標本から再現されることを確かめる(&標本一覧)?;
-    record::生値を書く(&出力先.join(生値ファイル名), &標本一覧, &由来)?;
+    record::生値を書く(&出力先.join(crate::release_build::計測の生値ファイル名), &標本一覧, &由来)?;
     record::窓の集約を書く(&出力先.join(窓の集約ファイル名), &標本一覧, &由来)?;
     let 観測一覧 = equality::検収する(&出力先, &指定)?;
     table::表示する(&標本一覧, &観測一覧);
