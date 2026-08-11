@@ -8,6 +8,7 @@ mod judgment;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
+use crate::acceptance::{検収の1回の実行, 読み戻しの置き場};
 use crate::vegetation_run;
 
 const 出力ディレクトリ: &str = "target/cloth_empty";
@@ -39,25 +40,26 @@ fn 検収する() -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::植生世界を既定で生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 出力先 = 読み戻しの置き場::作って受け取る(PathBuf::from(出力ディレクトリ))?;
     let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
 
     let 布あり = 描く(&出力先, "cloth", &シェーダー入口, &布ありの引数)?;
     let 布なし = 描く(&出力先, "no_cloth", &シェーダー入口, &布なしの引数)?;
-    let 布あり計数 = crate::report_parse::取り出す(&布あり.標準出力)?;
-    let 布なし計数 = crate::report_parse::取り出す(&布なし.標準出力)?;
+    let 布あり計数 = crate::report_parse::取り出す(布あり.報告().本文())?;
+    let 布なし計数 = crate::report_parse::取り出す(布なし.報告().本文())?;
     judgment::入力が空であることを検査する("布あり", &布あり計数)?;
     judgment::入力が空であることを検査する("布なし", &布なし計数)?;
     judgment::布の段階切替を検査する("布あり", &布あり計数, true)?;
     judgment::布の段階切替を検査する("布なし", &布なし計数, false)?;
-    let 布の画素数 = judgment::布だけが画素を描くことを検査する(&布あり, &布なし)?;
+    let 布の画素数 = judgment::布だけが画素を描くことを検査する(布あり.画像(), 布なし.画像())?;
     Ok(format!(
         "{シーン}はシーンと全距離区分のどれも候補{}体・可視0体・発行0件で、布ありの実行だけが{布の画素数}画素を描いた(布ありはどのパスもパイプライン切替1回・描画1回、布なしはどちらも0回。validationは両実行とも0件)",
         布あり計数.シーン.候補数
     ))
 }
 
-fn 描く(出力先: &Path, 名前: &str, シェーダー入口: &Path, 追加引数: &[&str]) -> Result<vegetation_run::実行結果, String> {
-    vegetation_run::描画する(&出力先.join(名前), シーン, シェーダー入口, フレーム数, 追加引数)
+fn 描く(
+    出力先: &読み戻しの置き場, 名前: &str, シェーダー入口: &Path, 追加引数: &[&str]
+) -> Result<検収の1回の実行, String> {
+    vegetation_run::描画する(&出力先.中の書き出し先(名前), シーン, シェーダー入口, フレーム数, 追加引数)
 }

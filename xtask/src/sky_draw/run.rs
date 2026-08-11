@@ -12,6 +12,8 @@
 use std::path::Path;
 use std::process::Command;
 
+use crate::acceptance::{終了時報告, 読み戻しの書き出し先, 読み戻し画像};
+
 const アセットルート: &str = "target/terrain_assets";
 const シーン名: &str = "terrain_origin";
 const フレーム数: &str = "160";
@@ -29,23 +31,14 @@ pub(super) enum 条件 {
     空なしポストなし,
 }
 
-pub(super) struct 実行結果 {
-    pub(super) 標準出力: String,
-    pub(super) 幅: usize,
-    pub(super) 高さ: usize,
-    rgba8: Vec<u8>,
+/// 1条件を描いた結果。GPU時間の行を読む条件があるため、報告と絵を対で返す。
+pub(super) struct 描いた結果 {
+    pub(super) 報告: 終了時報告,
+    pub(super) 画像: 読み戻し画像,
 }
 
-impl 実行結果 {
-    /// 位置の画素のRGB。バイト列の並べ方を知るのはこの型だけであり、判定側は座標だけで読む。
-    pub(super) fn 画素(&self, x: usize, y: usize) -> [u8; 3] {
-        let 先頭 = (y * self.幅 + x) * 4;
-        [self.rgba8[先頭], self.rgba8[先頭 + 1], self.rgba8[先頭 + 2]]
-    }
-}
-
-pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: 条件) -> Result<実行結果, String> {
-    let ダンプ先 = 出力先.join(出力名);
+pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: 条件) -> Result<描いた結果, String> {
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 出力名);
     let mut コマンド = Command::new("cargo");
     コマンド
         .args(["run", "-p", "blitz_app", "--", "--scene", シーン名])
@@ -58,19 +51,17 @@ pub(super) fn 描画する(出力先: &Path, 出力名: &str, 条件: 条件) ->
         .args(条件別引数(条件))
         .arg("--no-taa")
         .arg("--dump-frame")
-        .arg(&ダンプ先);
+        .arg(書き出し先.起動引数として渡す綴り());
     let 出力 = コマンド
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({出力名}): {誤り}"))?;
-    let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
+    let 報告 = 終了時報告::取り込む(出力名, String::from_utf8_lossy(&出力.stdout).into_owned());
     if !出力.status.success() {
         return Err(format!("blitz_appが{}で失敗した({出力名})", 出力.status));
     }
-    crate::validation_count::零件数を確かめる(&標準出力, 出力名)?;
-    let (幅, 高さ, rgba8) = crate::raw_image::読み込む(&ダンプ先)?;
-    Ok(実行結果 {
-        標準出力, 幅, 高さ, rgba8
-    })
+    報告.検証層の指摘が零件であることを確かめる()?;
+    let 画像 = 読み戻し画像::読み込む(&書き出し先)?;
+    Ok(描いた結果 { 報告, 画像 })
 }
 
 fn 条件別引数(条件: 条件) -> Vec<&'static str> {

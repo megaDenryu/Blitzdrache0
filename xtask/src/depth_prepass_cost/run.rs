@@ -5,7 +5,6 @@
 //! 標準出力をファイルへ落とすのは、誰も読まないパイプが埋まると子プロセスが書き込みで止まるためである。
 
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 use super::plan::実行の指定;
 use super::schedule::{周回の位置, 実行条件};
@@ -26,10 +25,11 @@ pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<String,
         "[xtask] depth-prepass-cost実行{}: 周回{}の{}番目 {}",
         材料.実行番号, 材料.位置.周回番号, 材料.位置.順序位置, 材料.条件.名前
     );
-    let 出力 = Command::new(world::実行ファイル)
+    let 出力 = world::起こし方
+        .コマンドを作る()
         .args(引数を作る(材料))
         .output()
-        .map_err(|誤り| format!("{}を起動できなかった({}): {誤り}", world::実行ファイル, 材料.条件.名前))?;
+        .map_err(|誤り| format!("{}を起動できなかった({}): {誤り}", world::起こし方.表示の綴り(), 材料.条件.名前))?;
     let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
     std::fs::write(&標準出力先, &標準出力).map_err(|誤り| format!("{}を書けなかった: {誤り}", 標準出力先.display()))?;
     if !出力.status.success() {

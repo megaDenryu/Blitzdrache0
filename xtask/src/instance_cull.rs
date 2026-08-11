@@ -9,6 +9,7 @@ mod pixel_check;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
+use crate::acceptance::読み戻しの置き場;
 use crate::vegetation_run;
 
 const 出力ディレクトリ: &str = "target/instance_cull";
@@ -39,8 +40,7 @@ fn 検収する() -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::植生世界を既定で生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 出力先 = 読み戻しの置き場::作って受け取る(PathBuf::from(出力ディレクトリ))?;
     let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
 
     let 正判定 = 対で描く(&出力先, 正判定シーン, &シェーダー入口)?;
@@ -61,27 +61,17 @@ fn 検収する() -> Result<String, String> {
 }
 
 /// 同じシーンを可視判定のオンとオフで1回ずつ描く。読み戻し画像と終了時報告を対で返す。
-fn 対で描く(出力先: &Path, シーン名: &str, シェーダー入口: &Path) -> Result<judgment::実行の対, String> {
-    let オン = vegetation_run::描画する(
-        &出力先.join(format!("{シーン名}_on")),
-        シーン名,
-        シェーダー入口,
-        フレーム数,
-        &可視判定オンの引数,
-    )?;
-    let オフ = vegetation_run::描画する(
-        &出力先.join(format!("{シーン名}_off")),
-        シーン名,
-        シェーダー入口,
-        フレーム数,
-        &可視判定オフの引数,
-    )?;
-    let オン計数 = crate::report_parse::取り出す(&オン.標準出力)?;
-    let オフ計数 = crate::report_parse::取り出す(&オフ.標準出力)?;
+fn 対で描く(出力先: &読み戻しの置き場, シーン名: &str, シェーダー入口: &Path) -> Result<judgment::実行の対, String> {
+    let オンの書き出し先 = 出力先.中の書き出し先(&format!("{シーン名}_on"));
+    let オフの書き出し先 = 出力先.中の書き出し先(&format!("{シーン名}_off"));
+    let オン = vegetation_run::描画する(&オンの書き出し先, シーン名, シェーダー入口, フレーム数, &可視判定オンの引数)?;
+    let オフ = vegetation_run::描画する(&オフの書き出し先, シーン名, シェーダー入口, フレーム数, &可視判定オフの引数)?;
+    let オン計数 = crate::report_parse::取り出す(オン.報告().本文())?;
+    let オフ計数 = crate::report_parse::取り出す(オフ.報告().本文())?;
     Ok(judgment::実行の対 {
         シーン名: シーン名.to_string(),
-        オン,
-        オフ,
+        オン: オン.画像を取り出す(),
+        オフ: オフ.画像を取り出す(),
         オン計数,
         オフ計数,
     })

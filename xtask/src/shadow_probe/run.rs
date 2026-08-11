@@ -4,9 +4,8 @@
 //! 時間再構成は`--no-taa`で外す。段3b以前に採った値と並べて読むため、パスを1本足した条件へ計測窓を変えない。
 
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
-use crate::release_build::計測用の実行ファイル;
+use crate::acceptance::アプリの起こし方;
 
 use super::parse;
 use super::plan::{実行の指定, 条件の時刻, 計測条件};
@@ -31,10 +30,12 @@ pub(super) fn 一回走らせる(材料: &実行の材料<'_>) -> Result<一標�
     let 標準出力先 = PathBuf::from(材料.出力先).join(format!("run_{:03}.log", 材料.実行番号));
     let 引数一覧 = 引数を作る(材料);
     println!("[xtask] shadow-probe実行{}: {}", 材料.実行番号, 材料.条件.名前);
-    let 出力 = Command::new(計測用の実行ファイル)
+    let 起こし方 = アプリの起こし方::構築済みのリリース版を直に起動する;
+    let 出力 = 起こし方
+        .コマンドを作る()
         .args(&引数一覧)
         .output()
-        .map_err(|誤り| format!("{計測用の実行ファイル}を起動できなかった: {誤り}"))?;
+        .map_err(|誤り| format!("{}を起動できなかった: {誤り}", 起こし方.表示の綴り()))?;
     let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
     std::fs::write(&標準出力先, &標準出力).map_err(|誤り| format!("{}を書けなかった: {誤り}", 標準出力先.display()))?;
     if !出力.status.success() {

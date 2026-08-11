@@ -5,8 +5,9 @@
 
 use super::band_map::距離区分の地図;
 use super::boundary;
-use super::run::実行結果;
+use super::run::輝度を求める;
 use super::{境界の数, 影画素数の下限, 段差の絶対上限, 近傍の幅};
+use crate::acceptance::読み戻し画像;
 
 pub(super) fn 全距離区分に影があることを検査する(地図: &距離区分の地図) -> Result<[usize; 4], String> {
     let 数 = 地図.距離区分別の影画素数();
@@ -38,7 +39,7 @@ pub(super) fn 境界の両側に影があることを検査する(地図: &距�
 
 /// 境界を挟む2つの距離区分の平均輝度の差を、同じ幅ぶん内側へ入った位置との差(距離区分の内側の勾配)と比べる。
 /// 境界の段差が距離区分の内側の勾配を超えなければ、その段差は普通の陰影の変化に埋もれている。
-pub(super) fn 境界の輝度段差を検査する(地図: &距離区分の地図, 本番: &実行結果) -> Result<Vec<(f64, f64)>, String> {
+pub(super) fn 境界の輝度段差を検査する(地図: &距離区分の地図, 本番: &読み戻し画像) -> Result<Vec<(f64, f64)>, String> {
     let mut 実測 = Vec::with_capacity(境界の数);
     for 境界番号 in 0..境界の数 {
         let 近傍 = boundary::集める(地図, 境界番号, 1, 近傍の幅);
@@ -67,10 +68,10 @@ fn 影の数(地図: &距離区分の地図, 添字一覧: &[usize]) -> usize {
         .count()
 }
 
-fn 平均輝度(本番: &実行結果, 添字一覧: &[usize]) -> Result<f64, String> {
+fn 平均輝度(本番: &読み戻し画像, 添字一覧: &[usize]) -> Result<f64, String> {
     if 添字一覧.is_empty() {
         return Err("平均輝度を測る画素が1つも無い: 境界が画面に現れていない".to_string());
     }
     let 数 = u32::try_from(添字一覧.len()).map_err(|_| "画素数がu32に収まらない".to_string())?;
-    Ok(添字一覧.iter().map(|&添字| 本番.輝度(添字)).sum::<f64>() / f64::from(数))
+    Ok(添字一覧.iter().map(|&添字| 輝度を求める(本番, 添字)).sum::<f64>() / f64::from(数))
 }

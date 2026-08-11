@@ -1,4 +1,4 @@
-//! 目視見本1条件ぶんのblitz_app起動と読み戻し画像の取り込み。受け取るのはダンプ先と条件、返すのは標準出力と最終フレームの画素である。
+//! 目視見本1条件ぶんのblitz_app起動と読み戻し画像の取り込み。受け取るのは書き出し先と条件、返すのは最終フレームの画素である。
 //!
 //! シーン名を`terrain_visual`にすることが、庭を正面から見る初期カメラと、書き換えもピクセル判定も持たない検収計画と、
 //! 天空の遠方環境の間接照明方針を同時に選ばせる。時刻の絵は空も本番の経路のまま描くため、起動指定で空を足す必要はない。
@@ -7,34 +7,32 @@
 //! 時間再構成は世界の宣言どおりに効かせる。この入口が出すのはオーナーが本番の絵として見る材料であり、本番と違う軸で描いた絵は見本にならない。
 //! 破綻防止帯の判定は地面の画素の割合を見ており、バイト一致に依らないため、フレームをまたぐ混合が入っても成立する。
 
-use std::path::Path;
 use std::process::Command;
 
-use crate::vegetation_run::実行結果;
+use crate::acceptance::{終了時報告, 読み戻しの書き出し先, 読み戻し画像};
 use crate::visual_sample_world::{アセットルート, シーン名};
 
 /// 描くフレーム数。空と間接照明の焼き上げが定常へ入り、絵が時刻だけで決まる状態まで進める本数である。
 const フレーム数: &str = "120";
 
-pub(super) fn 描画する(ダンプ先: &Path, 一日内秒: &str, 条件名: &str) -> Result<実行結果, String> {
+pub(super) fn 描画する(
+    書き出し先: &読み戻しの書き出し先, 一日内秒: &str, 条件名: &str
+) -> Result<読み戻し画像, String> {
     let 出力 = Command::new("cargo")
         .args(["run", "-p", "blitz_app", "--", "--scene", シーン名])
         .args(["--asset-root", アセットルート])
         .args(["--frames", フレーム数])
         .args(["--time-of-day", 一日内秒])
         .arg("--dump-frame")
-        .arg(ダンプ先)
+        .arg(書き出し先.起動引数として渡す綴り())
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({条件名}): {誤り}"))?;
-    let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
+    let 報告 = 終了時報告::取り込む(条件名, String::from_utf8_lossy(&出力.stdout).into_owned());
     if !出力.status.success() {
-        print!("{標準出力}");
+        報告.画面へ流す();
         eprintln!("{}", String::from_utf8_lossy(&出力.stderr));
         return Err(format!("blitz_appが{}で失敗した({条件名})", 出力.status));
     }
-    crate::validation_count::零件数を確かめる(&標準出力, 条件名)?;
-    let (幅, 高さ, rgba8) = crate::raw_image::読み込む(ダンプ先)?;
-    Ok(実行結果 {
-        標準出力, 幅, 高さ, rgba8
-    })
+    報告.検証層の指摘が零件であることを確かめる()?;
+    Ok(読み戻し画像::読み込む(書き出し先)?)
 }

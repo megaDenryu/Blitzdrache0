@@ -52,7 +52,7 @@ fn 検収する() -> Result<String, String> {
     std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
 
     let マスク = draw::領域マスクを撮る(&出力先)?;
-    let 幅 = マスク.幅;
+    let 幅 = マスク.幅();
     let 区分 = region::領域区分::作る(&マスク)?;
     let 絵 = draw::絵を撮る(&出力先)?;
     let mut 実測一覧 = Vec::new();

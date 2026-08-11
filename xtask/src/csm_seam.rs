@@ -49,7 +49,7 @@ fn 検収する() -> Result<String, String> {
 
     let 本番 = run::描画する(&出力先, "scene", false)?;
     let 可視化 = run::描画する(&出力先, "bands", true)?;
-    if 本番.幅 != 可視化.幅 || 本番.高さ != 可視化.高さ {
+    if !本番.寸法が同じか(&可視化) {
         return Err("本番と可視化の読み戻し寸法が違う".to_string());
     }
     let 地図 = band_map::距離区分の地図::読み取る(&可視化);

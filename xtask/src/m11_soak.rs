@@ -23,7 +23,7 @@ pub fn 実行する() -> ExitCode {
     }
 
     let 条件 = 採取条件 {
-        実行ファイル: crate::release_build::計測用の実行ファイル,
+        起こし方: crate::acceptance::アプリの起こし方::構築済みのリリース版を直に起動する,
         引数一覧: &["--scene", "helmet", "--benchmark-frames", フレーム数, "--particles"],
         採取間隔,
         制限時間,

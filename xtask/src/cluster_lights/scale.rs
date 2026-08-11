@@ -11,6 +11,7 @@ use std::path::Path;
 use super::assignment::割り当ての統計;
 use super::gpu_time::区間の中央値;
 use super::{assignment, gpu_time};
+use crate::acceptance::読み戻しの書き出し先;
 use crate::multi_light_world::{run, world};
 
 /// 振る光の件数。
@@ -36,7 +37,7 @@ fn 一件数を測る(出力先: &Path, 光の件数: usize) -> Result<件数ご
     let mut シーン描画一覧 = Vec::with_capacity(反復回数);
     let mut 最後の標準出力 = String::new();
     for 回 in 1..=反復回数 {
-        let 書き出し先 = 出力先.join(format!("night_x{光の件数}_{回}"));
+        let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, &format!("night_x{光の件数}_{回}"));
         let 結果 = run::走らせる(&run::描画条件 {
             シーン名: world::夜のシーン,
             アセットルート: world::夜のアセットルート,
@@ -52,10 +53,10 @@ fn 一件数を測る(出力先: &Path, 光の件数: usize) -> Result<件数ご
                 "--report-cluster-assignment",
             ],
         })?;
-        let 区間の中央値 { 選別ms, シーン描画ms } = gpu_time::取り出す(&結果.標準出力)?;
+        let 区間の中央値 { 選別ms, シーン描画ms } = gpu_time::取り出す(結果.報告.本文())?;
         選別一覧.push(選別ms);
         シーン描画一覧.push(シーン描画ms);
-        最後の標準出力 = 結果.標準出力;
+        最後の標準出力 = 結果.報告.本文().to_string();
     }
     let 割り当て = assignment::取り出す(&最後の標準出力)?;
     宣言された件数を確かめる(&割り当て, 光の件数)?;

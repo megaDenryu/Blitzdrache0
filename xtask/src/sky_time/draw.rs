@@ -7,18 +7,19 @@ pub(super) mod sun_disk_pair;
 use std::path::Path;
 
 use super::moment;
-use super::run::{実行結果, 描画する, 条件};
+use super::run::{描画する, 条件};
+use crate::acceptance::読み戻し画像;
 use sun_disk_pair::円盤の対;
 
 pub(super) struct 絵の束 {
-    pub(super) 時刻ごと: Vec<実行結果>,
+    pub(super) 時刻ごと: Vec<読み戻し画像>,
     /// 決定性を測るための同一時刻の2枚目。
-    pub(super) 再描画: 実行結果,
+    pub(super) 再描画: 読み戻し画像,
     /// 太陽円盤の放射輝度だけを0にした対と、その構図の領域区分。
     pub(super) 円盤: 円盤の対,
 }
 
-pub(super) fn 領域マスクを撮る(出力先: &Path) -> Result<実行結果, String> {
+pub(super) fn 領域マスクを撮る(出力先: &Path) -> Result<読み戻し画像, String> {
     描画する(出力先, "region_mask", &条件::領域マスク { カメラ方位度: "0" })
 }
 

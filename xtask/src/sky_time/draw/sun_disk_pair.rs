@@ -12,15 +12,16 @@ use std::path::Path;
 
 use super::super::moment;
 use super::super::region::領域区分;
-use super::super::run::{実行結果, 描画して標準出力も得る, 描画する, 条件};
+use super::super::run::{描画して標準出力も得る, 描画する, 条件};
+use crate::acceptance::読み戻し画像;
 
 /// 円盤の明るさだけが違う対と、その構図の領域区分。
 pub(in crate::sky_time) struct 円盤の対 {
-    pub(in crate::sky_time) ポストあり: 実行結果,
-    pub(in crate::sky_time) ポストあり対照: 実行結果,
+    pub(in crate::sky_time) ポストあり: 読み戻し画像,
+    pub(in crate::sky_time) ポストあり対照: 読み戻し画像,
     /// ポスト処理を外した円盤ありの絵。地形の表面画素のバイト一致をこの組で見る。
-    pub(in crate::sky_time) ポスト無し: 実行結果,
-    pub(in crate::sky_time) ポスト無し対照: 実行結果,
+    pub(in crate::sky_time) ポスト無し: 読み戻し画像,
+    pub(in crate::sky_time) ポスト無し対照: 読み戻し画像,
     /// この構図で、どの画素が空でどの画素が地形かの区分。
     pub(in crate::sky_time) 領域区分: 領域区分,
     pub(in crate::sky_time) 標準出力: String,
@@ -59,7 +60,7 @@ pub(in crate::sky_time) fn 撮る(出力先: &Path) -> Result<円盤の対, Stri
 }
 
 /// 4枚すべてを同じ時刻・同じカメラ方位で撮る。1つでも動かすと、円盤以外の画素が対で決定的に一致しなくなる。
-fn 円盤の条件で撮る(出力先: &Path, 出力名: &str, 追加引数: &[&str]) -> Result<(実行結果, String), String> {
+fn 円盤の条件で撮る(出力先: &Path, 出力名: &str, 追加引数: &[&str]) -> Result<(読み戻し画像, String), String> {
     描画して標準出力も得る(
         出力先,
         出力名,

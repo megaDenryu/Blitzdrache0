@@ -15,7 +15,6 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 const 出力ディレクトリ: &str = "target/prop_multi_material_draw";
-const シーン名: &str = "prop_banded_chest";
 /// 小物の実行時形式。宣言はこの安定IDを板の世界へ載せるため、既定の出力ルートへ焼かれる。
 const 実行時形式のパス: &str = "target/runtime_assets/prop_banded_chest.blitzasset";
 /// アセットが宣言している材質の数。glbは材質スロットごとにプリミティブを分けるため、シーンパスの発行数もこの数になる。
@@ -39,18 +38,17 @@ fn 検収する() -> Result<String, String> {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
     実行時形式の実在を確かめる()?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
-    let 材質色 = run::描画する(&出力先, "flat", run::条件::材質の色をそのまま読む)?;
-    let 分布 = material_pixels::色の分布を採る(&材質色)?;
+    let 材質色 = 実行環境.描いて読み戻す("flat", &run::起動指定を組み立てる(run::条件::材質の色をそのまま読む))?;
+    let 分布 = material_pixels::色の分布を採る(材質色.画像())?;
     let 画素判定 = judgment::材質の境界を検査する(&分布)?;
-    let 計数 = crate::report_parse::取り出す(&材質色.標準出力)?;
+    let 計数 = crate::report_parse::取り出す(材質色.報告().本文())?;
     count_judgment::検査する(&計数, 材質の数)?;
-    let 平面png = crate::raw_png::変換する(&出力先.join("flat"))?;
+    let 平面png = 材質色.書き出し先().目視用の絵へ変換する()?;
 
-    run::描画する(&出力先, "post", run::条件::本番経路)?;
-    let 本番png = crate::raw_png::変換する(&出力先.join("post"))?;
+    let 本番 = 実行環境.描いて読み戻す("post", &run::起動指定を組み立てる(run::条件::本番経路))?;
+    let 本番png = 本番.書き出し先().目視用の絵へ変換する()?;
     Ok(format!(
         "{画素判定}、シーンパスの発行数は{}、シーン可視数は{}、材質の色の絵は{}、本番経路の絵は{}",
         計数.シーン.発行数,

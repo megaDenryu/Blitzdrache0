@@ -13,6 +13,7 @@ mod run;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
+use crate::acceptance::読み戻しの書き出し先;
 use crate::day_moment::代表時刻一覧;
 
 const 出力ディレクトリ: &str = "target/terrain_visual";
@@ -38,20 +39,23 @@ fn 検収する() -> Result<String, String> {
     let 出力先 = PathBuf::from(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
 
-    let マスクの絵 = crate::sample_world_region::領域マスクを撮る(&出力先.join(領域マスクのファイル名), 領域マスクのファイル名)?;
+    let マスクの絵 = crate::sample_world_region::領域マスクを撮る(
+        &読み戻しの書き出し先::出力ディレクトリの中に決める(&出力先, 領域マスクのファイル名),
+        領域マスクのファイル名,
+    )?;
     let マスク = crate::sample_world_region::地面マスク::作る(&マスクの絵)?;
     let mut 帯の行一覧 = Vec::new();
     let mut 絵の置き場一覧 = Vec::new();
     for 時刻 in &代表時刻一覧 {
-        let ダンプ先 = 出力先.join(時刻.ファイル名);
-        let 画像 = run::描画する(&ダンプ先, 時刻.一日内秒, 時刻.ファイル名)?;
+        let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(&出力先, 時刻.ファイル名);
+        let 画像 = run::描画する(&書き出し先, 時刻.一日内秒, 時刻.ファイル名)?;
         帯の行一覧.push(band::破綻防止帯を判定する(
             時刻.名前,
             &画像,
             &マスク,
             &地面を照らす光を選ぶ(時刻),
         )?);
-        絵の置き場一覧.push(crate::raw_png::変換する(&ダンプ先)?.display().to_string());
+        絵の置き場一覧.push(書き出し先.目視用の絵へ変換する()?.display().to_string());
     }
     Ok(format!(
         "5つの起動すべてでvalidationの指摘0件、地面{}画素の破綻防止帯は{}。絵は{}",

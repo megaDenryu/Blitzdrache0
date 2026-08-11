@@ -9,6 +9,7 @@ mod pixel_check;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
+use crate::acceptance::読み戻しの置き場;
 use crate::vegetation_run;
 
 const 出力ディレクトリ: &str = "target/instance_lod";
@@ -45,8 +46,7 @@ fn 検収する() -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::植生世界を既定で生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 出力先 = 読み戻しの置き場::作って受け取る(PathBuf::from(出力ディレクトリ))?;
     let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
 
     let 段あり = 描く(&出力先, "on", &シェーダー入口, &[])?;
@@ -64,14 +64,17 @@ fn 検収する() -> Result<String, String> {
     ))
 }
 
-fn 描く(出力先: &Path, 名前: &str, シェーダー入口: &Path, 追加引数: &[&str]) -> Result<judgment::実行, String> {
+fn 描く(
+    出力先: &読み戻しの置き場, 名前: &str, シェーダー入口: &Path, 追加引数: &[&str]
+) -> Result<judgment::実行, String> {
     let mut 引数: Vec<&str> = 共通引数.to_vec();
     引数.extend_from_slice(追加引数);
-    let 結果 = vegetation_run::描画する(&出力先.join(名前), 検収シーン, シェーダー入口, フレーム数, &引数)?;
-    let 計数 = crate::report_parse::取り出す(&結果.標準出力)?;
+    let 書き出し先 = 出力先.中の書き出し先(名前);
+    let 結果 = vegetation_run::描画する(&書き出し先, 検収シーン, シェーダー入口, フレーム数, &引数)?;
+    let 計数 = crate::report_parse::取り出す(結果.報告().本文())?;
     Ok(judgment::実行 {
         名前: 名前.to_string(),
-        画像: 結果,
+        画像: 結果.画像を取り出す(),
         計数,
     })
 }

@@ -16,8 +16,6 @@ mod validation;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use crate::release_build::計測用の実行ファイル;
-
 const 出力ディレクトリ: &str = "target/ow4_bench";
 const シェーダーコピー先: &str = "target/ow4_bench_shaders";
 const 起動時シーン: &str = "terrain_origin";

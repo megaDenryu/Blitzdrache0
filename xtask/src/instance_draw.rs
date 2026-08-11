@@ -10,6 +10,7 @@ mod single_instance;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
+use crate::acceptance::読み戻しの置き場;
 use crate::report_parse::計数報告;
 use crate::vegetation_run;
 
@@ -39,17 +40,18 @@ fn 検収する() -> Result<String, String> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::植生世界を既定で生成する() {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 出力先 = 読み戻しの置き場::作って受け取る(PathBuf::from(出力ディレクトリ))?;
     let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
 
-    let 少数 = vegetation_run::描画する(&出力先.join(画素判定シーン), 画素判定シーン, &シェーダー入口, フレーム数, &起動引数)?;
-    let 画素 = pixel_check::判定する(&少数)?;
-    let 少数計数 = crate::report_parse::取り出す(&少数.標準出力)?;
+    let 画素判定の書き出し先 = 出力先.中の書き出し先(画素判定シーン);
+    let 少数 = vegetation_run::描画する(&画素判定の書き出し先, 画素判定シーン, &シェーダー入口, フレーム数, &起動引数)?;
+    let 画素 = pixel_check::判定する(少数.画像())?;
+    let 少数計数 = crate::report_parse::取り出す(少数.報告().本文())?;
     計数を検査する(&少数計数, 画素判定の個体数)?;
 
-    let 多数 = vegetation_run::描画する(&出力先.join(計数判定シーン), 計数判定シーン, &シェーダー入口, フレーム数, &起動引数)?;
-    let 多数計数 = crate::report_parse::取り出す(&多数.標準出力)?;
+    let 計数判定の書き出し先 = 出力先.中の書き出し先(計数判定シーン);
+    let 多数 = vegetation_run::描画する(&計数判定の書き出し先, 計数判定シーン, &シェーダー入口, フレーム数, &起動引数)?;
+    let 多数計数 = crate::report_parse::取り出す(多数.報告().本文())?;
     計数を検査する(&多数計数, 計数判定の個体数)?;
     if 少数計数.現在確保数 != 多数計数.現在確保数 {
         return Err(format!(

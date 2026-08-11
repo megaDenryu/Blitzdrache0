@@ -39,14 +39,14 @@ fn 検収する() -> Result<String, String> {
     std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
 
     let 本番 = run::描画する(&出力先, "post_sky", run::条件::空あり本番経路)?;
-    let 空パスms = gpu_time::空パスの平均msを読む(&本番.標準出力)?;
+    let 空パスms = gpu_time::空パスの平均msを読む(本番.報告.本文())?;
     if 空パスms >= 空パスの予算ミリ秒 {
         return Err(format!("空パスのGPU時間{空パスms:.4}msが独立枠{空パスの予算ミリ秒}msに収まらなかった"));
     }
 
     let 空あり = run::描画する(&出力先, "flat_sky", run::条件::空ありポストなし)?;
     let 空なし = run::描画する(&出力先, "flat_nosky", run::条件::空なしポストなし)?;
-    let 判定 = judgment::画素を判定する(&空あり, &空なし)?;
+    let 判定 = judgment::画素を判定する(&空あり.画像, &空なし.画像)?;
 
     let png = crate::raw_png::変換する(&出力先.join("post_sky"))?;
     Ok(format!(

@@ -6,6 +6,7 @@
 
 use std::path::{Path, PathBuf};
 
+use crate::acceptance::読み戻しの書き出し先;
 use crate::multi_light_world::{run, world};
 
 use super::instrument::{点光源の影の計器, 点光源の影の計器を取り出す};
@@ -49,7 +50,7 @@ pub(super) fn 夜の世界を影付きの件数3つで撮る(出力先: &Path) -
 
 fn 夜を一条件で撮る(出力先: &Path, 影付きの件数: usize) -> Result<(Vec<f64>, 点光源の影の計器, PathBuf), String> {
     let 件数文字列 = 影付きの件数.to_string();
-    let 書き出し先 = 出力先.join(format!("night_shadow_x{影付きの件数}"));
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, &format!("night_shadow_x{影付きの件数}"));
     let 結果 = run::走らせる(&run::描画条件 {
         シーン名: world::夜のシーン,
         アセットルート: world::夜のアセットルート,
@@ -67,8 +68,8 @@ fn 夜を一条件で撮る(出力先: &Path, 影付きの件数: usize) -> Resu
     })?;
     let 平均輝度一覧 = 夜の判定領域の一覧
         .iter()
-        .map(|領域| 矩形の平均輝度を採る(&結果, &領域.矩形))
+        .map(|領域| 矩形の平均輝度を採る(&結果.画像, &領域.矩形))
         .collect::<Result<Vec<f64>, String>>()?;
-    let 計器 = 点光源の影の計器を取り出す(&結果.標準出力, 影付きの件数)?;
-    Ok((平均輝度一覧, 計器, crate::raw_png::変換する(&書き出し先)?))
+    let 計器 = 点光源の影の計器を取り出す(結果.報告.本文(), 影付きの件数)?;
+    Ok((平均輝度一覧, 計器, 書き出し先.目視用の絵へ変換する()?))
 }

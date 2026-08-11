@@ -8,6 +8,9 @@
 
 use std::path::Path;
 
+use crate::acceptance::読み戻しの書き出し先;
+use crate::acceptance::読み戻し画像;
+
 use super::world_bake::{ヘルメットのシーン名, 実行時形式のバイト数を読む};
 use super::{difference, draw, helmet_crop, summary, world_bake};
 
@@ -16,20 +19,20 @@ pub(super) fn ヘルメットの目視材料を作る(出力先: &Path) -> Resul
     let 非圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(
         &ルート.非圧縮,
         ヘルメットのシーン名,
-        &出力先.join("helmet_rgba8"),
+        &読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, "helmet_rgba8"),
         "DamagedHelmet(全てRGBA8)",
     )?;
     let 圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(
         &ルート.ブロック圧縮,
         ヘルメットのシーン名,
-        &出力先.join("helmet_bc1"),
+        &読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, "helmet_bc1"),
         "DamagedHelmet(ベースカラーのブロック圧縮)",
     )?;
     let 統計 = 画面全体の統計を採る(&非圧縮.画像, &圧縮.画像)?;
     if 統計.差のある画素数 == 0 {
         return Err("DamagedHelmetの2枚の絵が1画素も食い違わない(方針の取り違えの疑いがある)".to_string());
     }
-    helmet_crop::区画が絵に収まるか確かめる(非圧縮.画像.幅, 非圧縮.画像.高さ)?;
+    helmet_crop::区画が絵に収まるか確かめる(非圧縮.画像.幅(), 非圧縮.画像.高さ())?;
     let 非圧縮の拡大 = helmet_crop::ヘルメットの区画を切り取って拡大する(&非圧縮.png, &出力先.join("helmet_rgba8_crop.png"))?;
     let 圧縮の拡大 = helmet_crop::ヘルメットの区画を切り取って拡大する(&圧縮.png, &出力先.join("helmet_bc1_crop.png"))?;
     Ok(vec![
@@ -53,14 +56,13 @@ pub(super) fn ヘルメットの目視材料を作る(出力先: &Path) -> Resul
 /// 素材ごとに領域を分けず画面全体で統計を採る。背景の画素は差0として平均へ入るが、
 /// この値に判定を課さないため薄まりが判定を緩めることは無い。
 fn 画面全体の統計を採る(
-    非圧縮: &crate::vegetation_run::実行結果,
-    圧縮: &crate::vegetation_run::実行結果,
+    非圧縮: &読み戻し画像, 圧縮: &読み戻し画像
 ) -> Result<difference::画素の成分差の統計, String> {
     let 全体 = crate::pixel_region::画面領域 {
         x開始: 0,
-        x終端: 非圧縮.幅,
+        x終端: 非圧縮.幅(),
         y開始: 0,
-        y終端: 非圧縮.高さ,
+        y終端: 非圧縮.高さ(),
     };
     difference::領域内の成分差の統計を求める(非圧縮, 圧縮, &全体)
 }

@@ -12,10 +12,12 @@
 use std::path::{Path, PathBuf};
 
 use super::assignment;
+use crate::acceptance::読み戻しの書き出し先;
+use crate::acceptance::読み戻し画像;
 use crate::multi_light_world::{run, world};
 
 pub(super) fn 確かめる(出力先: &Path) -> Result<PathBuf, String> {
-    let 書き出し先 = 出力先.join("night");
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, "night");
     let 結果 = run::走らせる(&run::描画条件 {
         シーン名: world::夜のシーン,
         アセットルート: world::夜のアセットルート,
@@ -29,15 +31,15 @@ pub(super) fn 確かめる(出力先: &Path) -> Result<PathBuf, String> {
             "--report-cluster-assignment",
         ],
     })?;
-    割り当ての行が一致することを確かめる(&結果.標準出力)?;
-    let (_, _, 最終) = run::読み込む(&書き出し先)?;
-    let 先行の書き出し先 = 出力先.join("night_preceding");
-    let (_, _, 先行) = run::読み込む(&先行の書き出し先)?;
-    let 違う画素数 = 違う画素を数える(&最終, &先行)?;
+    割り当ての行が一致することを確かめる(結果.報告.本文())?;
+    let 最終 = 結果.画像;
+    let 先行の書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, "night_preceding");
+    let 先行 = 読み戻し画像::読み込む(&先行の書き出し先)?;
+    let 違う画素数 = 違う画素を数える(最終.バイト列(), 先行.バイト列())?;
     if 違う画素数 != 0 {
         return Err(format!("同一起動の中で撮った2枚が{違う画素数}画素で違った"));
     }
-    crate::raw_png::変換する(&書き出し先)
+    書き出し先.目視用の絵へ変換する()
 }
 
 /// 同じ起動の中で出た割り当ての報告行が全部同じ綴りであることを課す。先行フレームと最終フレームの2行が出るため、

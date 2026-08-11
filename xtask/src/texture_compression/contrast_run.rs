@@ -6,6 +6,9 @@
 
 use std::path::Path;
 
+use crate::acceptance::読み戻しの書き出し先;
+use crate::acceptance::読み戻し画像;
+
 use super::world_bake::{実行時形式のバイト数を読む, 実行時形式のパス, 対照の板のシーン名};
 use super::{difference, draw, judgment, plate_area, summary, world_bake};
 
@@ -16,22 +19,22 @@ pub(super) fn 対照の板を検収する(出力先: &Path) -> Result<Vec<String
     let 非圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(
         &ルート.非圧縮,
         対照の板のシーン名,
-        &出力先.join("contrast_rgba8"),
+        &読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, "contrast_rgba8"),
         "対照の板(全てRGBA8)",
     )?;
     let 圧縮 = draw::条件1つを描いて読み戻しをpngへ書き出す(
         &ルート.ブロック圧縮,
         対照の板のシーン名,
-        &出力先.join("contrast_bc1"),
+        &読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, "contrast_bc1"),
         "対照の板(ベースカラーのブロック圧縮)",
     )?;
     let 再実行 = draw::条件1つを描いて読み戻す(
         &ルート.ブロック圧縮,
         対照の板のシーン名,
-        &出力先.join("contrast_bc1_repeat"),
+        &読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, "contrast_bc1_repeat"),
         "対照の板(ベースカラーのブロック圧縮、2実行目)",
     )?;
-    judgment::バイト一致を確かめる("ブロック圧縮の方針の2実行の読み戻し画像", &圧縮.画像.rgba8, &再実行.rgba8)?;
+    judgment::バイト一致を確かめる("ブロック圧縮の方針の2実行の読み戻し画像", 圧縮.画像.バイト列(), 再実行.バイト列())?;
 
     let mut 行一覧 = 誤差の統計を判定する(&非圧縮.画像, &圧縮.画像)?;
     行一覧.push(summary::格納バイト数の行を作る(
@@ -57,10 +60,8 @@ fn 対照の板の実行時形式を読む(出力ルート: &Path) -> Result<Vec
 
 /// 素材ごとに領域を分けて統計を採り、素材ごとの判定値で判定する。1枚にまとめないのは、
 /// 端点の丸めによる段差と線分へ載せられない色の誤差が別の現象であり、同じ上界で見ると片方が必ず薄まるためである。
-fn 誤差の統計を判定する(
-    非圧縮: &crate::vegetation_run::実行結果, 圧縮: &crate::vegetation_run::実行結果
-) -> Result<Vec<String>, String> {
-    let (幅, 高さ) = (非圧縮.幅, 非圧縮.高さ);
+fn 誤差の統計を判定する(非圧縮: &読み戻し画像, 圧縮: &読み戻し画像) -> Result<Vec<String>, String> {
+    let (幅, 高さ) = (非圧縮.幅(), 非圧縮.高さ());
     let グラデーション = difference::領域内の成分差の統計を求める(非圧縮, 圧縮, &plate_area::グラデーションの板の領域(幅, 高さ))?;
     let 雑音 = difference::領域内の成分差の統計を求める(非圧縮, 圧縮, &plate_area::雑音の板の領域(幅, 高さ))?;
     judgment::グラデーションの板を判定する(&グラデーション)?;

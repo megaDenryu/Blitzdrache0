@@ -3,6 +3,7 @@
 
 use std::process::ExitCode;
 
+mod acceptance;
 mod atmosphere_lut;
 mod auto_exposure;
 mod bench;
@@ -56,7 +57,6 @@ mod play_fox_tour;
 mod point_light_shadow;
 mod prop_draw;
 mod prop_multi_material_draw;
-mod raw_image;
 mod raw_png;
 mod relative_luminance;
 mod release_build;

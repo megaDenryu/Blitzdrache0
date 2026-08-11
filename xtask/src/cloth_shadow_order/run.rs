@@ -12,6 +12,8 @@
 use std::path::Path;
 use std::process::Command;
 
+use crate::acceptance::{終了時報告, 読み戻しの書き出し先, 読み戻し画像};
+
 const アセットルート: &str = "target/runtime_assets";
 const シーン名: &str = "quad";
 const 描画対象数: &str = "2";
@@ -29,25 +31,8 @@ pub(super) enum 条件 {
     布なし逆順,
 }
 
-pub(super) struct 実行結果 {
-    幅: usize,
-    高さ: usize,
-    rgba8: Vec<u8>,
-}
-
-impl 実行結果 {
-    pub(super) fn 寸法(&self) -> (usize, usize) {
-        (self.幅, self.高さ)
-    }
-
-    /// 画素を4バイトずつ先頭から並べた並び。バイト列の並べ方を知るのはこの型だけであり、判定側は画素の組で読む。
-    pub(super) fn 画素列(&self) -> impl Iterator<Item = &[u8]> {
-        self.rgba8.chunks_exact(4)
-    }
-}
-
-pub(super) fn 描画する(出力先: &Path, 出力名: &str, シェーダー入口: &Path, 条件: 条件) -> Result<実行結果, String> {
-    let ダンプ先 = 出力先.join(出力名);
+pub(super) fn 描画する(出力先: &Path, 出力名: &str, シェーダー入口: &Path, 条件: 条件) -> Result<読み戻し画像, String> {
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 出力名);
     let mut コマンド = Command::new("cargo");
     コマンド
         .args(["run", "-p", "blitz_app", "--", "--scene", シーン名])
@@ -59,17 +44,16 @@ pub(super) fn 描画する(出力先: &Path, 出力名: &str, シェーダー入
         .arg("--shader-source")
         .arg(シェーダー入口)
         .arg("--dump-frame")
-        .arg(&ダンプ先);
+        .arg(書き出し先.起動引数として渡す綴り());
     let 出力 = コマンド
         .output()
         .map_err(|誤り| format!("blitz_appを起動できなかった({出力名}): {誤り}"))?;
-    let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
+    let 報告 = 終了時報告::取り込む(出力名, String::from_utf8_lossy(&出力.stdout).into_owned());
     if !出力.status.success() {
         return Err(format!("blitz_appが{}で失敗した({出力名})", 出力.status));
     }
-    crate::validation_count::零件数を確かめる(&標準出力, 出力名)?;
-    let (幅, 高さ, rgba8) = crate::raw_image::読み込む(&ダンプ先)?;
-    Ok(実行結果 { 幅, 高さ, rgba8 })
+    報告.検証層の指摘が零件であることを確かめる()?;
+    Ok(読み戻し画像::読み込む(&書き出し先)?)
 }
 
 fn 条件別引数(条件: 条件) -> Vec<&'static str> {

@@ -3,12 +3,12 @@
 //! 段が切り替わる実行でもGPU確保とディスク読込が動かないことである。
 
 use super::pixel_check;
+use crate::acceptance::読み戻し画像;
 use crate::report_parse::計数報告;
-use crate::vegetation_run::実行結果;
 
 pub(super) struct 実行 {
     pub(super) 名前: String,
-    pub(super) 画像: 実行結果,
+    pub(super) 画像: 読み戻し画像,
     pub(super) 計数: 計数報告,
 }
 

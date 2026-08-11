@@ -9,7 +9,9 @@ mod tests;
 
 use super::schedule::実行条件;
 
-pub(super) const 実行ファイル: &str = crate::release_build::計測用の実行ファイル;
+/// 計測がこの世界を叩くときの起こし方。GPU時間の窓へcargoのビルド判定を混ぜないため、構築済みのリリース版を直に起こす。
+pub(super) const 起こし方: crate::acceptance::アプリの起こし方 =
+    crate::acceptance::アプリの起こし方::構築済みのリリース版を直に起動する;
 const シーン名: &str = "terrain_origin";
 const アセットルート: &str = "target/terrain_assets";
 const 先読み半径: &str = "2";

@@ -35,15 +35,14 @@ fn 検収する() -> Result<String, String> {
         return Err("検証用アセットの生成に失敗した".to_string());
     }
     実行時形式の実在を確かめる()?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
+    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
-    let ポストなし = run::描画する(&出力先, "flat", run::条件::ポストなし)?;
-    let 判定 = judgment::画素を判定する(&ポストなし)?;
-    let 平面png = crate::raw_png::変換する(&出力先.join("flat"))?;
+    let ポストなし = 実行環境.描いて読み戻す("flat", &run::起動指定を組み立てる(run::条件::ポストなし))?;
+    let 判定 = judgment::画素を判定する(ポストなし.画像())?;
+    let 平面png = ポストなし.書き出し先().目視用の絵へ変換する()?;
 
-    run::描画する(&出力先, "post", run::条件::本番経路)?;
-    let 本番png = crate::raw_png::変換する(&出力先.join("post"))?;
+    let 本番 = 実行環境.描いて読み戻す("post", &run::起動指定を組み立てる(run::条件::本番経路))?;
+    let 本番png = 本番.書き出し先().目視用の絵へ変換する()?;
     Ok(format!(
         "{判定}、ポストなしの絵は{}、本番経路の絵は{}",
         平面png.display(),

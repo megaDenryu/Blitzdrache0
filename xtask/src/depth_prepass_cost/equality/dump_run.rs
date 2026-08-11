@@ -4,7 +4,6 @@
 //! スモーク実行(`--frames`)で起動するのは、フレームダンプが最終フレームでだけ働く仕組みだからである。
 
 use std::path::Path;
-use std::process::Command;
 
 use super::super::schedule::実行条件;
 use super::super::world;
@@ -48,10 +47,14 @@ pub(super) fn 撮る(
     引数一覧.extend(world::条件の引数(条件));
     引数一覧.push(別.起動引数().to_string());
     引数一覧.push(ダンプ先.display().to_string());
-    let 出力 = Command::new(world::実行ファイル)
-        .args(引数一覧)
-        .output()
-        .map_err(|誤り| format!("{}を起動できなかった({}の{}): {誤り}", world::実行ファイル, 条件.名前, 別.呼び名()))?;
+    let 出力 = world::起こし方.コマンドを作る().args(引数一覧).output().map_err(|誤り| {
+        format!(
+            "{}を起動できなかった({}の{}): {誤り}",
+            world::起こし方.表示の綴り(),
+            条件.名前,
+            別.呼び名()
+        )
+    })?;
     let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
     if !出力.status.success() {
         print!("{標準出力}");

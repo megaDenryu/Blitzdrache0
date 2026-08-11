@@ -6,6 +6,7 @@
 
 use std::path::{Path, PathBuf};
 
+use crate::acceptance::読み戻しの書き出し先;
 use crate::multi_light_world::{run, world};
 
 use super::interior_region::屋内の判定領域の一覧;
@@ -47,7 +48,7 @@ pub(super) fn 屋内を3条件で撮る(出力先: &Path) -> Result<屋内の測
 }
 
 fn 屋内を一条件で撮る(出力先: &Path, 名前: &str, 追加引数: &[&str]) -> Result<(Vec<f64>, PathBuf), String> {
-    let 書き出し先 = 出力先.join(名前);
+    let 書き出し先 = 読み戻しの書き出し先::出力ディレクトリの中に決める(出力先, 名前);
     let 結果 = run::走らせる(&run::描画条件 {
         シーン名: world::屋内のシーン,
         アセットルート: world::屋内のアセットルート,
@@ -57,7 +58,7 @@ fn 屋内を一条件で撮る(出力先: &Path, 名前: &str, 追加引数: &[&
     })?;
     let 平均輝度一覧 = 屋内の判定領域の一覧
         .iter()
-        .map(|領域| 矩形の平均輝度を採る(&結果, &領域.矩形))
+        .map(|領域| 矩形の平均輝度を採る(&結果.画像, &領域.矩形))
         .collect::<Result<Vec<f64>, String>>()?;
-    Ok((平均輝度一覧, crate::raw_png::変換する(&書き出し先)?))
+    Ok((平均輝度一覧, 書き出し先.目視用の絵へ変換する()?))
 }

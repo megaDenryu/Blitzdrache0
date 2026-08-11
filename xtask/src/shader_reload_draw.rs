@@ -42,6 +42,6 @@ fn 検収する() -> Result<String, String> {
     std::fs::create_dir_all(&出力先).map_err(|誤り| format!("出力先を作れなかった: {誤り}"))?;
     let 監視先 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))?;
 
-    let (差し替え前, 差し替え後) = run::差し替えを挟んで描画する(&出力先, &監視先)?;
-    judgment::差し替えを検査する(&差し替え前, &差し替え後)
+    let 実行 = run::差し替えを挟んで描画する(&出力先, &監視先)?;
+    judgment::差し替えを検査する(&実行)
 }

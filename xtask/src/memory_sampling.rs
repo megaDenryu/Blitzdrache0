@@ -1,17 +1,17 @@
 //! 子プロセスを起動し、終了するまでRAM・VRAMの標本を周期採取して推移と要約を標準出力へ出す。
-//! 呼出し側は実行ファイル・引数・採取間隔・制限時間を渡すだけでよく、採取の手順と打ち切りの判断はここが持つ。
+//! 呼出し側は起こし方・引数・採取間隔・制限時間を渡すだけでよく、採取の手順と打ち切りの判断はここが持つ。
 
 mod sample;
 
 use std::path::Path;
-use std::process::{Child, Command, ExitStatus, Stdio};
+use std::process::{Child, ExitStatus, Stdio};
 use std::thread;
 use std::time::{Duration, Instant};
 
 pub(crate) use sample::メモリ最大;
 
 pub(crate) struct 採取条件<'a> {
-    pub(crate) 実行ファイル: &'a str,
+    pub(crate) 起こし方: crate::acceptance::アプリの起こし方,
     pub(crate) 引数一覧: &'a [&'a str],
     pub(crate) 採取間隔: Duration,
     /// これを超えても子プロセスが終わらなければ失敗として打ち切る。
@@ -31,7 +31,7 @@ enum 一巡結果 {
 /// 戻り値は実行中に観測した最大値であり、子プロセスが失敗したか標本を1つも採れなかったときは`None`である。
 pub(crate) fn 実行しながら採取する(条件: &採取条件<'_>) -> Option<メモリ最大> {
     let Ok(mut 子) = 起動する(条件) else {
-        eprintln!("[xtask] {}の起動に失敗した", 条件.実行ファイル);
+        eprintln!("[xtask] {}の起動に失敗した", 条件.起こし方.表示の綴り());
         return None;
     };
     let 開始 = Instant::now();
@@ -56,7 +56,7 @@ pub(crate) fn 実行しながら採取する(条件: &採取条件<'_>) -> Optio
 }
 
 fn 起動する(条件: &採取条件<'_>) -> std::io::Result<Child> {
-    let mut コマンド = Command::new(条件.実行ファイル);
+    let mut コマンド = 条件.起こし方.コマンドを作る();
     コマンド.args(条件.引数一覧);
     if let Some(出力先) = 条件.標準出力先 {
         コマンド.stdout(Stdio::from(std::fs::File::create(出力先)?));
