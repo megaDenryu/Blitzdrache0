@@ -62,7 +62,7 @@ pub(crate) use animation_blend::アニメーションのブレンド係数;
 pub(crate) use argument_error::起動引数エラー;
 pub(crate) use draw_object_layout::描画対象の並べ方;
 pub(crate) use draw_object_order::描画対象の走査順;
-pub(crate) use exposure_scale::露出倍率;
+pub(crate) use exposure_scale::{露出倍率, 露出倍率エラー};
 pub(crate) use game_operation_source::ゲーム操作の出どころ;
 pub(crate) use game_selection::遊ぶゲームの指定;
 pub(crate) use launch_request::起動要求;
