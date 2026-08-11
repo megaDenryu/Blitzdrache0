@@ -10,6 +10,7 @@
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「検証の設計」、`_doc/設計/放射輝度問い合わせ階層.md`「3-Ic-3bの実装」
 
 mod draw;
+mod error;
 mod image_judgment;
 #[cfg(test)]
 mod image_judgment_tests;
@@ -29,6 +30,8 @@ mod terrain_band;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
+use error::時刻帯ごとの空の検収エラー;
+
 const 出力ディレクトリ: &str = "target/sky_time";
 
 pub fn 実行する() -> ExitCode {
@@ -44,9 +47,9 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
+fn 検収する() -> Result<String, 時刻帯ごとの空の検収エラー> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
-        return Err("検証用アセットの生成に失敗した".to_string());
+        return Err(時刻帯ごとの空の検収エラー::検証用アセットを生成できなかった);
     }
     let 出力先 = PathBuf::from(出力ディレクトリ);
     let 実行環境 = run::実行環境を作る(出力先.clone())?;

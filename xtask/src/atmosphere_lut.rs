@@ -6,6 +6,7 @@
 //! シェーダーがCPU正本からずれる欠陥は、この検査だけが捉えられる(ユニットテストはCPU側しか見ない)。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「大気のベイク済み画像方式の設計(第7段で実装する)」
 
+mod error;
 mod heading;
 mod judgment;
 mod parse;
@@ -15,6 +16,8 @@ mod tolerance_choice;
 mod validation_judgment;
 
 use std::process::ExitCode;
+
+use error::大気のベイク済み画像の検収エラー;
 
 use crate::acceptance::{
     アプリの起こし方, 世界を読まずに報告を採る実行環境, 検収の実行名, 検収エラー, 終了時報告
@@ -36,7 +39,7 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
+fn 検収する() -> Result<String, 大気のベイク済み画像の検収エラー> {
     let 出力 = 報告を採る()?;
     let 報告 = parse::報告を取り出す(&出力)?;
     let 検証の告知 = validation_judgment::検証を検査する(&報告.検証).inspect_err(|_| eprint!("{}", 出力.標準エラーの本文()))?;

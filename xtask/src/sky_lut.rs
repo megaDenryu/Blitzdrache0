@@ -12,6 +12,7 @@
 //! 一日内時刻を引数で選べるのは、絵の目視が代表時刻ごとに要るためである(判定は時刻に依らず同じ)。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「更新判定の置き場所」「予算と計器」
 
+mod error;
 pub(crate) mod gpu_time;
 pub(crate) mod indirect_pass_count;
 mod judgment;
@@ -22,8 +23,9 @@ mod stop_point;
 mod time_of_day_argument;
 
 use std::path::PathBuf;
-
 use std::process::ExitCode;
+
+use error::空のベイク済み画像の生成の検収エラー;
 
 use time_of_day_argument::一日内秒を読む;
 
@@ -49,9 +51,9 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     }
 }
 
-fn 検収する(一日内秒: Option<&str>) -> Result<String, String> {
+fn 検収する(一日内秒: Option<&str>) -> Result<String, 空のベイク済み画像の生成の検収エラー> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
-        return Err("検証用アセットの生成に失敗した".to_string());
+        return Err(空のベイク済み画像の生成の検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 

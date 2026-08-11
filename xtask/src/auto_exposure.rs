@@ -13,6 +13,7 @@
 //! 画素がたまたま1つも無い実行で融合の有無が絵に出ない。融合が起きればこの探り色のビンだけが1つずれる。
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「順3-IIの実装設計」
 
+mod error;
 mod judgment;
 mod parse;
 mod run;
@@ -21,6 +22,8 @@ mod summary;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+use error::自動露出の検収エラー;
 
 const 出力ディレクトリ: &str = "target/auto_exposure";
 /// 判定に使う時刻。正午は明部が上寄りで画面全体の分布が広く、集計と導出の食い違いが最も出やすい。
@@ -39,8 +42,8 @@ pub(crate) fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
-    crate::visual_sample_world::用意する().map_err(|破れ| 破れ.to_string())?;
+fn 検収する() -> Result<String, 自動露出の検収エラー> {
+    crate::visual_sample_world::用意する().map_err(自動露出の検収エラー::目視見本世界を用意できなかった)?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
     let 実行環境 = run::実行環境を作る(出力先.clone())?;
 

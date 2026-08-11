@@ -8,10 +8,13 @@
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「3-Ic-3bの実装」
 
 mod band;
+mod error;
 mod run;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+use error::目視見本の絵の撮影エラー;
 
 use crate::acceptance::検収の実行名;
 use crate::day_moment::代表時刻一覧;
@@ -31,8 +34,8 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
-    crate::visual_sample_world::用意する().map_err(|破れ| 破れ.to_string())?;
+fn 検収する() -> Result<String, 目視見本の絵の撮影エラー> {
+    crate::visual_sample_world::用意する().map_err(目視見本の絵の撮影エラー::目視見本世界を用意できなかった)?;
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
     let マスクの実行 = 実行環境.描いて読み戻す(

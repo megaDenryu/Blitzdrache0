@@ -11,13 +11,17 @@
 
 mod band_map;
 mod boundary;
+mod error;
 mod judgment;
 mod run;
 
 use std::path::PathBuf;
 
-use crate::acceptance::検収の実行名;
 use std::process::ExitCode;
+
+use error::距離区分の継ぎ目の検収エラー;
+
+use crate::acceptance::{判定の名前, 検収の実行名};
 
 /// 2条件の書き出しの基準名。絵のファイル名になり、失敗の文面もこの名前で実行を名指す。
 const 本番の実行名: 検収の実行名 = 検収の実行名::定数から生成する("scene");
@@ -32,6 +36,8 @@ const 近傍の幅: usize = 6;
 const 影画素数の下限: usize = 100;
 /// 輝度段差の絶対上限(8bit)。距離区分の内側の勾配が小さい構図でも、これを超える段差は目に見える継ぎ目である。
 const 段差の絶対上限: f64 = 12.0;
+/// 2条件の絵を同じ座標で突き合わせるための前提。寸法が違えば距離区分の地図と本番の絵で同じ添字が別の位置を指す。
+const 本番と可視化の寸法: 判定の名前 = 判定の名前::定数から生成する("本番と可視化の読み戻し寸法が同じであること");
 
 pub fn 実行する() -> ExitCode {
     match 検収する() {
@@ -46,18 +52,16 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
+fn 検収する() -> Result<String, 距離区分の継ぎ目の検収エラー> {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
-        return Err("検証用アセットの生成に失敗した".to_string());
+        return Err(距離区分の継ぎ目の検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 
     let 本番の実行 = 実行環境.描いて読み戻す(本番の実行名, &run::起動指定を組み立てる(false))?;
     let 可視化の実行 = 実行環境.描いて読み戻す(可視化の実行名, &run::起動指定を組み立てる(true))?;
     let (本番, 可視化) = (本番の実行.画像(), 可視化の実行.画像());
-    if !本番.寸法が同じか(可視化) {
-        return Err("本番と可視化の読み戻し寸法が違う".to_string());
-    }
+    本番と可視化の寸法.真であることを課す(本番.寸法が同じか(可視化))?;
     let 地図 = band_map::距離区分の地図::読み取る(可視化);
 
     let 距離区分別の影画素数 = judgment::全距離区分に影があることを検査する(&地図)?;

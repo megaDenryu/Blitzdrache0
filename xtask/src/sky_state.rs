@@ -4,6 +4,7 @@
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「検証の設計」
 
 mod altitude_check;
+mod error;
 mod judgment;
 mod parse;
 mod row_check;
@@ -13,6 +14,8 @@ mod series_check_tests;
 mod table;
 
 use std::process::ExitCode;
+
+use error::天空状態の検収エラー;
 
 use crate::acceptance::{
     アプリの起こし方, 世界を読まずに報告を採る実行環境, 検収の実行名, 検収エラー, 終了時報告
@@ -34,7 +37,7 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
+fn 検収する() -> Result<String, 天空状態の検収エラー> {
     let 報告 = 報告を採る()?;
     let 行一覧 = parse::行一覧を取り出す(&報告)?;
     judgment::全項目を検査する(&行一覧)?;

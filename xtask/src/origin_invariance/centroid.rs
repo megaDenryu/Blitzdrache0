@@ -1,9 +1,11 @@
 //! 高コントラストな無彩色標識の画素重心を測り、原点移動前後でカメラ移動への応答が一致することを判定する。
 
 use super::compare::{不合格にする, 判定結果, 合格にする};
-use crate::acceptance::読み戻し画像;
+use crate::acceptance::{判定の名前, 判定の破れ, 読み戻し画像};
 
 const 移動差許容画素: f64 = 0.25;
+/// 標識が画面に1つも写らない構図では重心が定義できない。
+const 高コントラスト標識の画素: 判定の名前 = 判定の名前::定数から生成する("高コントラスト標識の画素");
 
 #[derive(Clone, Copy)]
 struct 画素重心 {
@@ -19,7 +21,7 @@ pub(super) fn 移動を比較する(
         let 理由 = 重心一覧
             .into_iter()
             .find_map(Result::err)
-            .unwrap_or_else(|| "重心を取得できなかった".to_string());
+            .map_or_else(|| "重心を取得できなかった".to_string(), |破れ| 破れ.to_string());
         return 不合格にする("標識重心の移動が原点移動前後で一致する", 理由);
     };
     let a移動 = 差分(a重心, a後重心);
@@ -35,25 +37,30 @@ pub(super) fn 移動を比較する(
     }
 }
 
-fn 重心を測る(画像: &読み戻し画像) -> Result<画素重心, String> {
+fn 重心を測る(画像: &読み戻し画像) -> Result<画素重心, 判定の破れ> {
     let 幅 = 画像.幅().画素数();
     let mut x合計 = 0.0;
     let mut y合計 = 0.0;
     let mut 件数 = 0.0;
     for (添字, 画素) in 画像.画素列().enumerate() {
         if 標識画素か(画素) {
-            x合計 += f64::from(u32::try_from(添字 % 幅).map_err(|_| "画素Xが範囲外".to_string())?);
-            y合計 += f64::from(u32::try_from(添字 / 幅).map_err(|_| "画素Yが範囲外".to_string())?);
+            x合計 += 実数へ写す(添字 % 幅);
+            y合計 += 実数へ写す(添字 / 幅);
             件数 += 1.0;
         }
     }
     if 件数 == 0.0 {
-        return Err("高コントラスト標識の画素が0件だった".to_string());
+        return Err(高コントラスト標識の画素.あるはずのものが無い破れ());
     }
     Ok(画素重心 {
         x: x合計 / 件数,
         y: y合計 / 件数,
     })
+}
+
+/// 注意: 画面の幅も高さも4096を超えないため、収まらない位置は存在しない。
+fn 実数へ写す(位置: usize) -> f64 {
+    f64::from(u32::try_from(位置).unwrap_or(u32::MAX))
 }
 
 fn 標識画素か(画素: &[u8]) -> bool {

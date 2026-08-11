@@ -16,6 +16,7 @@
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「IIaの実装設計」
 
 mod composition_guard;
+mod error;
 mod judgment;
 mod parse;
 mod run;
@@ -29,6 +30,8 @@ mod tolerance;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+use error::局所可視性補正の検収エラー;
 
 use crate::acceptance::{圧縮前のHDR画像, 描画検収の実行環境, 検収の実行名, 検収エラー};
 
@@ -55,10 +58,10 @@ pub fn 実行する() -> ExitCode {
     }
 }
 
-fn 検収する() -> Result<String, String> {
-    crate::visual_sample_world::用意する().map_err(|破れ| 破れ.to_string())?;
+fn 検収する() -> Result<String, 局所可視性補正の検収エラー> {
+    crate::visual_sample_world::用意する().map_err(局所可視性補正の検収エラー::目視見本世界を用意できなかった)?;
     if !crate::compile_assets::既定を生成する() {
-        return Err("間接照明の検収世界のアセット生成に失敗した".to_string());
+        return Err(局所可視性補正の検収エラー::間接照明の検収世界のアセットを生成できなかった);
     }
     let 形の実行環境 = run::実行環境を作る();
     let 項別の実行環境 = term_run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
