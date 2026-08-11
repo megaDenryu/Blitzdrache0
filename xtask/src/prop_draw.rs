@@ -6,6 +6,7 @@
 //! 参照: `_doc/設計/Blenderアセット運用.md`「絵に出すまでの経路」
 
 mod background_color;
+mod bounding_box_judgment;
 mod judgment;
 mod object_pixels;
 mod run;

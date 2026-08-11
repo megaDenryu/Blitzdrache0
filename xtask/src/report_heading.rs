@@ -3,20 +3,29 @@
 //! 見出しを裸の文字列で配ると、受け取った側がそれぞれの流儀で照合を書く。実際に、字下げを落としてから
 //! 先頭一致を見る入口と、行に含むかだけを見る入口と、先頭一致の後に別々の数の読み方をする入口の3つに分かれていた。
 //! 照合の仕方が入口ごとに違うと、報告の書式が変わったときに一部の入口だけが静かに読めなくなる。
+//!
+//! 綴りを所有する形にするのは、パス別や距離区分別の見出しを実行時に組み立てる読み取りがあるためである。
+//! 原文のリテラルは借りたまま持てるため、固定の見出しに確保の費用は掛からない。
 
+use std::borrow::Cow;
 use std::fmt;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct 報告の見出し(&'static str);
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct 報告の見出し(Cow<'static, str>);
 
 impl 報告の見出し {
-    pub const fn 生成する(綴り: &'static str) -> Self {
-        Self(綴り)
+    pub const fn 定数から生成する(綴り: &'static str) -> Self {
+        Self(Cow::Borrowed(綴り))
+    }
+
+    /// 実行時に組み立てた綴りから作る。パス名や距離区分の番号を含む見出しがこの口を通る。
+    pub fn 組み立てた綴りから生成する(綴り: String) -> Self {
+        Self(Cow::Owned(綴り))
     }
 
     /// その行がこの見出しで始まるか。字下げは落としてから見る。報告は入れ子の深さで字下げされるためである。
     pub fn 行の始まりか(&self, 行: &str) -> bool {
-        行.trim_start().starts_with(self.0)
+        行.trim_start().starts_with(self.0.as_ref())
     }
 
     /// 標準出力からこの見出しの行を探す。見つからないことを失敗と読み替えず、無いことを返す。
@@ -26,7 +35,7 @@ impl 報告の見出し {
 
     /// 見出しに続く本文。前後の空白は落とす。行がこの見出しで始まらないときは行そのものを返す。
     pub fn 見出しに続く本文<'a>(&self, 行: &'a str) -> &'a str {
-        行.trim_start().trim_start_matches(self.0).trim()
+        行.trim_start().trim_start_matches(self.0.as_ref()).trim()
     }
 }
 

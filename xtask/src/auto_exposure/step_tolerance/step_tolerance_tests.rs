@@ -21,34 +21,34 @@ fn 許容ちょうどは合格する() {
 
 #[test]
 fn 許容を超えると落ちる() {
-    let 誤り = 近さを判定する("0.0", "-0.00002").unwrap_err();
-    assert!(誤り.contains("許容"), "許容超過の理由になっていない: {誤り}");
+    let 誤り = 近さを判定する("0.0", "-0.00002").unwrap_err().to_string();
+    assert!(誤り.contains("上限"), "許容超過の理由になっていない: {誤り}");
 }
 
 #[test]
 fn 片方が非数なら落ちる() {
     for (正本, 写し) in [("NaN", "-0.88"), ("-0.88", "NaN")] {
-        let 誤り = 近さを判定する(正本, 写し).unwrap_err();
+        let 誤り = 近さを判定する(正本, 写し).unwrap_err().to_string();
         assert!(誤り.contains("有限でない"), "{正本}と{写し}が有限でないと言われていない: {誤り}");
     }
 }
 
 #[test]
 fn 両方が非数でも落ちる() {
-    let 誤り = 近さを判定する("NaN", "NaN").unwrap_err();
+    let 誤り = 近さを判定する("NaN", "NaN").unwrap_err().to_string();
     assert!(誤り.contains("有限でない"), "非数どうしが合格した: {誤り}");
 }
 
 #[test]
 fn 無限大は符号が同じでも違っても落ちる() {
     for (正本, 写し) in [("inf", "inf"), ("-inf", "-inf"), ("inf", "-inf"), ("-0.88", "inf")] {
-        let 誤り = 近さを判定する(正本, 写し).unwrap_err();
+        let 誤り = 近さを判定する(正本, 写し).unwrap_err().to_string();
         assert!(誤り.contains("有限でない"), "{正本}と{写し}が合格した: {誤り}");
     }
 }
 
 #[test]
 fn 数として読めない語は落ちる() {
-    let 誤り = 近さを判定する("導出不能", "-0.88").unwrap_err();
+    let 誤り = 近さを判定する("導出不能", "-0.88").unwrap_err().to_string();
     assert!(誤り.contains("数として読めない"), "読めない語の理由になっていない: {誤り}");
 }

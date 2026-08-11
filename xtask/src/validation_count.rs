@@ -7,7 +7,7 @@ use crate::report_heading::報告の見出し;
 
 /// blitz_appが終了時に出す件数の行の見出し。読む側の綴りをここが1つ持ち、他の入口はこれを参照する。
 /// 綴りはblitz_appの出力と一致していなければならず、食い違いは`cargo xtask conform`の綴りの契約の検査が拒む。
-pub const 検証層の指摘件数の見出し: 報告の見出し = 報告の見出し::生成する("validationエラー・警告合計件数:");
+pub const 検証層の指摘件数の見出し: 報告の見出し = 報告の見出し::定数から生成する("validationエラー・警告合計件数:");
 
 pub fn 件数を読む(標準出力: &str, 読み手の名前: &str) -> Result<u64, String> {
     let 行 = 検証層の指摘件数の見出し

@@ -15,7 +15,7 @@ pub(super) struct 囲む矩形 {
 pub(super) enum 物体画素の要約 {
     背景だけ,
     物体あり {
-        件数: u64,
+        件数: usize,
         矩形: 囲む矩形,
         明度最小: u8,
         明度最大: u8,
@@ -23,7 +23,7 @@ pub(super) enum 物体画素の要約 {
 }
 
 pub(super) fn 要約する(画像: &読み戻し画像, 背景色: [u8; 3]) -> 物体画素の要約 {
-    let mut 件数 = 0u64;
+    let mut 件数 = 0usize;
     let mut 矩形 = 囲む矩形 {
         x最小: 画像.幅().画素数(),
         x最大: 0,
