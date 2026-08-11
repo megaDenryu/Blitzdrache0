@@ -16,7 +16,28 @@ pub(super) struct 実行時形式を焼く指定<'指定> {
     pub(super) テクスチャ格納方針の名前: Option<&'指定 str>,
 }
 
+/// 標準出力を取り込んで返す形で焼く。増分が効いたかを外から見る材料が、コンパイラの報告の行だけであるためである。
+/// 取り込んだ内容はそのまま表示するため、画面に出るものは流したときと変わらない。
+pub(super) fn アセットコンパイラを起動して標準出力を取り込む(
+    指定: &実行時形式を焼く指定
+) -> Result<String, String> {
+    let mut コマンド = 起動するコマンドを組み立てる(指定);
+    let 出力 = コマンド.output().map_err(|誤り| format!("cargoの起動に失敗: {誤り}"))?;
+    let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
+    print!("{標準出力}");
+    eprint!("{}", String::from_utf8_lossy(&出力.stderr));
+    if 出力.status.success() {
+        Ok(標準出力)
+    } else {
+        Err(format!("実行時アセット生成が終了コード{}で失敗", 出力.status))
+    }
+}
+
 pub(super) fn アセットコンパイラを起動して実行時形式を焼く(指定: &実行時形式を焼く指定) -> bool {
+    コンパイラの起動結果を成否へ読む(起動するコマンドを組み立てる(指定).status())
+}
+
+fn 起動するコマンドを組み立てる(指定: &実行時形式を焼く指定) -> Command {
     println!(
         "[xtask] 実行時アセット生成({}{}{}): {} -> {}",
         指定.世界名,
@@ -37,7 +58,7 @@ pub(super) fn アセットコンパイラを起動して実行時形式を焼く
     if let Some(名前) = 指定.テクスチャ格納方針の名前 {
         コマンド.args(super::texture_policy_name::方針の選択肢の2語を組み立てる(名前));
     }
-    コンパイラの起動結果を成否へ読む(コマンド.status())
+    コマンド
 }
 
 fn コンパイラの起動結果を成否へ読む(状態: std::io::Result<std::process::ExitStatus>) -> bool {

@@ -1,0 +1,77 @@
+//! ディレクトリの下の全ファイルを、相対パスから内容の畳んだ値への対応表へ変える工程。受け取るのはルート、
+//! 返すのは相対パスを鍵にした対応表である。
+//!
+//! ファイルを1本ずつ読んで畳んだ値だけを残すのは、突き合わせる2組を丸ごとメモリへ載せないためである。
+//! 8km×10kmの世界では2組で約6.9GiBになり、全バイトを覚える形はその規模で破綻する。
+//!
+//! 畳み方はFNV-1a(64ビット)であり、アセットコンパイラの内容ハッシュと同じ考え方である。値そのものを向こうと
+//! 突き合わせることは無く、この工程が作った2つの対応表どうしを比べるだけであるため、双方の実装を揃える義務は無い。
+//! xtaskが外部の依存を1つも持たない方針であるため、畳み方をここへ持つ。
+
+use std::collections::BTreeMap;
+use std::io::Read;
+use std::path::{Path, PathBuf};
+
+const 畳み込みの開始値: u64 = 0xcbf2_9ce4_8422_2325;
+const 畳み込みに掛ける値: u64 = 0x0000_0100_0000_01b3;
+const 読み取りの一区切りのバイト数: usize = 1 << 20;
+
+pub(super) fn ディレクトリの全ファイルを畳む(
+    ルート: &Path, 除くファイル名: &[&str]
+) -> Result<BTreeMap<PathBuf, u64>, String> {
+    let mut 対応表 = BTreeMap::new();
+    ディレクトリを辿る(ルート, ルート, 除くファイル名, &mut 対応表)?;
+    if 対応表.is_empty() {
+        return Err(format!("{}に畳む対象のファイルが1本も無い", ルート.display()));
+    }
+    Ok(対応表)
+}
+
+fn ディレクトリを辿る(
+    ルート: &Path,
+    ディレクトリ: &Path,
+    除くファイル名: &[&str],
+    対応表: &mut BTreeMap<PathBuf, u64>,
+) -> Result<(), String> {
+    let 一覧 = std::fs::read_dir(ディレクトリ).map_err(|誤り| format!("{}を開けなかった: {誤り}", ディレクトリ.display()))?;
+    for 項目 in 一覧 {
+        let パス = 項目.map_err(|誤り| format!("{}の走査に失敗した: {誤り}", ディレクトリ.display()))?.path();
+        if パス.is_dir() {
+            ディレクトリを辿る(ルート, &パス, 除くファイル名, 対応表)?;
+            continue;
+        }
+        if 除くファイル名に当たるか(&パス, 除くファイル名) {
+            continue;
+        }
+        let 相対パス = パス
+            .strip_prefix(ルート)
+            .map_err(|誤り| format!("{}の相対化に失敗した: {誤り}", パス.display()))?;
+        対応表.insert(相対パス.to_path_buf(), ファイルの中身を畳む(&パス)?);
+    }
+    Ok(())
+}
+
+fn 除くファイル名に当たるか(パス: &Path, 除くファイル名: &[&str]) -> bool {
+    パス
+        .file_name()
+        .and_then(|名前| 名前.to_str())
+        .is_some_and(|名前| 除くファイル名.contains(&名前))
+}
+
+fn ファイルの中身を畳む(パス: &Path) -> Result<u64, String> {
+    let mut ファイル = std::fs::File::open(パス).map_err(|誤り| format!("{}を開けなかった: {誤り}", パス.display()))?;
+    let mut 区切り = vec![0_u8; 読み取りの一区切りのバイト数];
+    let mut 畳んだ値 = 畳み込みの開始値;
+    loop {
+        let 読み取ったバイト数 = ファイル
+            .read(&mut 区切り)
+            .map_err(|誤り| format!("{}を読めなかった: {誤り}", パス.display()))?;
+        if 読み取ったバイト数 == 0 {
+            return Ok(畳んだ値);
+        }
+        for バイト in 区切り.iter().copied().take(読み取ったバイト数) {
+            畳んだ値 ^= u64::from(バイト);
+            畳んだ値 = 畳んだ値.wrapping_mul(畳み込みに掛ける値);
+        }
+    }
+}
