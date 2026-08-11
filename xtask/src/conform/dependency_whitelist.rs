@@ -10,7 +10,10 @@ use super::violation::違反;
 const 白リスト: [(&str, &[&str]); 8] = [
     ("blitz_math", &["glam"]),
     ("blitz_engine", &["blitz_math", "blitz_render", "thiserror"]),
-    ("blitz_asset_compiler", &["blitz_engine", "blitz_math", "gltf", "image", "thiserror"]),
+    (
+        "blitz_asset_compiler",
+        &["blitz_engine", "blitz_math", "gltf", "image", "rayon", "thiserror"],
+    ),
     (
         "blitz_render",
         &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"],

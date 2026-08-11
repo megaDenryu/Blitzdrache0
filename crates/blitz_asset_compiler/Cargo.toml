@@ -12,3 +12,4 @@ blitz_math = { path = "../blitz_math" }
 thiserror = { workspace = true }
 gltf = { workspace = true }
 image = { workspace = true }
+rayon = { workspace = true }
