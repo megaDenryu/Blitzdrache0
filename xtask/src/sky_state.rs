@@ -14,7 +14,9 @@ mod table;
 
 use std::process::ExitCode;
 
-use crate::acceptance::{アプリの起こし方, 世界を読まずに報告を採る実行環境, 検収の実行名};
+use crate::acceptance::{
+    アプリの起こし方, 世界を読まずに報告を採る実行環境, 検収の実行名, 検収エラー, 終了時報告
+};
 
 /// この実行を指す名前。絵は書き出さないが、失敗の文面がどの実行かを名指すために要る。
 const 天空状態の実行名: 検収の実行名 = 検収の実行名::定数から生成する("sky_state");
@@ -33,8 +35,8 @@ pub fn 実行する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, String> {
-    let 標準出力 = 報告を採る()?;
-    let 行一覧 = parse::行一覧を取り出す(&標準出力)?;
+    let 報告 = 報告を採る()?;
+    let 行一覧 = parse::行一覧を取り出す(&報告)?;
     judgment::全項目を検査する(&行一覧)?;
     table::表を出す(&行一覧)?;
     let 代表時刻数 = 行一覧.iter().filter(|行| 行.系列 == "初回").count();
@@ -44,8 +46,8 @@ fn 検収する() -> Result<String, String> {
     ))
 }
 
-fn 報告を採る() -> Result<String, String> {
+fn 報告を採る() -> Result<終了時報告, 検収エラー> {
     println!("[xtask] blitz_appの天空状態報告を実行");
     let 実行環境 = 世界を読まずに報告を採る実行環境::作る(アプリの起こし方::毎回cargoに構築させて起動する);
-    Ok(実行環境.報告を採る(天空状態の実行名, &["--report-sky-state"])?.本文().to_string())
+    実行環境.報告を採る(天空状態の実行名, &["--report-sky-state"])
 }
