@@ -37,6 +37,13 @@ fn 一行で閉じる試験の宣言の後ろを打ち切らない() {
 }
 
 #[test]
+fn 試験の項目の中の波括弧の文字リテラルで範囲が伸びない() {
+    let 原文 = "#[cfg(test)]\nfn t() {\n    let c = '{';\n}\nconst 後: &str = \"after.png\";";
+    let 初出 = ファイル内の初出を集める(原文);
+    assert_eq!(初出.get("after.png"), Some(&5), "試験の項目の範囲が末尾まで伸びている");
+}
+
+#[test]
 fn コメントと文字列の中の属性を項目の始まりと読まない() {
     let 原文 = "// #[cfg(test)]\nconst 名: &str = \"d.png\";\nlet 語 = \"#[cfg(test)]\";\nconst 後: &str = \"e.png\";";
     assert!(試験の項目の行範囲一覧(原文).is_empty());
