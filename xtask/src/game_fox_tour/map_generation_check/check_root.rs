@@ -10,15 +10,12 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use blitz_asset_compiler::生成台帳のファイル名;
+use blitz_asset_compiler::生成の出力ルート;
 
 use super::file_digest::ディレクトリの全ファイルを畳む;
 
 /// 検収が使い捨てるルートの親。既定のルート(assets/とtarget/fox_tour_assets)とは別の場所へ置く。
 const 検収用の親ディレクトリ: &str = "target/fox_tour_generation_check";
-
-/// 突き合わせから除くファイル。綴りの正本はアセットコンパイラの生成の出力ルートにあり、ここは写しを持たない。
-const 突き合わせから除くファイル名: [&str; 1] = [生成台帳のファイル名];
 
 #[repr(transparent)]
 pub(super) struct 検収用のルート(PathBuf);
@@ -49,8 +46,12 @@ impl 検収用のルート {
         }
     }
 
+    /// 突き合わせに使う畳んだ値。生成台帳は取り除く。台帳かどうかの判定はアセットコンパイラの側が持つため、
+    /// ここは台帳のファイル名の綴りを1文字も持たない。
     pub(super) fn 全ファイルを畳む(&self) -> Result<BTreeMap<PathBuf, u64>, String> {
-        ディレクトリの全ファイルを畳む(&self.0, &突き合わせから除くファイル名)
+        let mut 対応表 = ディレクトリの全ファイルを畳む(&self.0)?;
+        対応表.retain(|相対パス, _| !生成の出力ルート::生成台帳を指すパスか(相対パス));
+        Ok(対応表)
     }
 
     /// 生値へ戻す唯一の口。生成器とコンパイラをプロセスとして起動するとき、引数の綴りとして渡すためだけに使う。

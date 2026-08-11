@@ -31,5 +31,5 @@ pub use error::生成台帳エラー;
 pub use heading::生成台帳の見出し;
 pub use ledger::{チャンクの焼き直し判定, 生成台帳};
 pub use map_seed::{マップ生成の乱数の種, 種の由来};
-pub use output_root::{生成の出力ルート, 生成台帳のファイル名};
+pub use output_root::生成の出力ルート;
 pub use rebake_tally::焼き直しの勘定;
