@@ -3,8 +3,9 @@
 
 use ash::vk;
 
-use super::UIテクスチャのディスクリプタ資源;
+use super::{UIテクスチャのディスクリプタ資源, 束縛の宣言};
 use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor::結ぶ現物;
 use crate::vulkan::ui::texture::UIテクスチャ;
 
 impl UIテクスチャのディスクリプタ資源 {
@@ -23,18 +24,11 @@ impl UIテクスチャのディスクリプタ資源 {
             panic!("allocate_descriptor_setsが1個でなく{}個のセットを返した", set一覧.len());
         };
 
-        let 画像情報一覧 = [vk::DescriptorImageInfo::default()
-            .sampler(テクスチャ.sampler)
-            .image_view(テクスチャ.image_view)
-            .image_layout(vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL)];
-        let 書き込み一覧 = [vk::WriteDescriptorSet::default()
-            .dst_set(set)
-            .dst_binding(0)
-            .dst_array_element(0)
-            .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-            .image_info(&画像情報一覧)];
-        // 安全性: setは割当済み、テクスチャの画像ビュー・サンプラーは生成済みで有効。
-        unsafe { device.update_descriptor_sets(&書き込み一覧, &[]) };
+        束縛の宣言.書き込み先(device, set).並びの位置ごとに結ぶ([結ぶ現物::サンプラー付きの画像 {
+            ビュー: テクスチャ.image_view,
+            サンプラー: テクスチャ.sampler,
+            レイアウト: vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL,
+        }]);
         Ok(set)
     }
 

@@ -8,9 +8,20 @@ use ash::vk;
 
 use super::buffers::スキニングバッファ;
 use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号};
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 const バインディング数: u32 = 4;
+const 計算段: vk::ShaderStageFlags = vk::ShaderStageFlags::COMPUTE;
+const 記憶: vk::DescriptorType = vk::DescriptorType::STORAGE_BUFFER;
+
+/// 束縛の並び。レスト頂点・スキン属性・スキン行列・スキン済み頂点の順である。
+pub(super) const 束縛の宣言: 宣言した束縛の並び<4> = 宣言した束縛の並び::生成する([
+    (束縛番号::生成する(0), 記憶, 計算段),
+    (束縛番号::生成する(1), 記憶, 計算段),
+    (束縛番号::生成する(2), 記憶, 計算段),
+    (束縛番号::生成する(3), 記憶, 計算段),
+]);
 
 pub(super) struct スキニングディスクリプタ {
     pub(super) layout: vk::DescriptorSetLayout,
@@ -32,15 +43,7 @@ pub(super) fn 生成する(
     device: &ash::Device,
     バッファ: &スキニングバッファ,
 ) -> Result<スキニングディスクリプタ, レンダラーエラー> {
-    let binding一覧: Vec<vk::DescriptorSetLayoutBinding<'_>> = (0..バインディング数)
-        .map(|添字| {
-            vk::DescriptorSetLayoutBinding::default()
-                .binding(添字)
-                .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
-                .descriptor_count(1)
-                .stage_flags(vk::ShaderStageFlags::COMPUTE)
-        })
-        .collect();
+    let binding一覧 = 束縛の宣言.セットレイアウトの宣言();
     let layout_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&binding一覧);
     // 安全性: deviceは生成済みで有効。
     let layout = unsafe { device.create_descriptor_set_layout(&layout_info, None)? };

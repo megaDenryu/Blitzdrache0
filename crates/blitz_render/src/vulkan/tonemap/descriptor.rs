@@ -7,6 +7,16 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号};
+
+const 画素段: vk::ShaderStageFlags = vk::ShaderStageFlags::FRAGMENT;
+
+/// 束縛の並び。HDR画像・光のにじみ結果・GPU上の露出状態の順である。
+pub(super) const 束縛の宣言: 宣言した束縛の並び<3> = 宣言した束縛の並び::生成する([
+    (束縛番号::生成する(0), vk::DescriptorType::COMBINED_IMAGE_SAMPLER, 画素段),
+    (束縛番号::生成する(1), vk::DescriptorType::COMBINED_IMAGE_SAMPLER, 画素段),
+    (束縛番号::生成する(2), vk::DescriptorType::STORAGE_BUFFER, 画素段),
+]);
 
 pub(super) struct 明るさの圧縮ディスクリプタ {
     pub(super) layout: vk::DescriptorSetLayout,
@@ -25,23 +35,7 @@ impl 明るさの圧縮ディスクリプタ {
 }
 
 pub(super) fn 生成する(device: &ash::Device) -> Result<明るさの圧縮ディスクリプタ, レンダラーエラー> {
-    let binding一覧 = [
-        vk::DescriptorSetLayoutBinding::default()
-            .binding(0)
-            .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-            .descriptor_count(1)
-            .stage_flags(vk::ShaderStageFlags::FRAGMENT),
-        vk::DescriptorSetLayoutBinding::default()
-            .binding(1)
-            .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-            .descriptor_count(1)
-            .stage_flags(vk::ShaderStageFlags::FRAGMENT),
-        vk::DescriptorSetLayoutBinding::default()
-            .binding(2)
-            .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
-            .descriptor_count(1)
-            .stage_flags(vk::ShaderStageFlags::FRAGMENT),
-    ];
+    let binding一覧 = 束縛の宣言.セットレイアウトの宣言();
     let layout_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&binding一覧);
     // 安全性: deviceは生成済みで有効。
     let layout = unsafe { device.create_descriptor_set_layout(&layout_info, None)? };

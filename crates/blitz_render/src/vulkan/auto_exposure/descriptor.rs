@@ -7,9 +7,18 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号};
 
 const 記憶: vk::DescriptorType = vk::DescriptorType::STORAGE_BUFFER;
-const 束縛の種別一覧: [vk::DescriptorType; 4] = [vk::DescriptorType::SAMPLED_IMAGE, 記憶, 記憶, 記憶];
+const 計算段: vk::ShaderStageFlags = vk::ShaderStageFlags::COMPUTE;
+
+/// 束縛の並び。HDR中間画像・境界の線形輝度・ヒストグラム・露出状態の順である。
+pub(super) const 束縛の宣言: 宣言した束縛の並び<4> = 宣言した束縛の並び::生成する([
+    (束縛番号::生成する(0), vk::DescriptorType::SAMPLED_IMAGE, 計算段),
+    (束縛番号::生成する(1), 記憶, 計算段),
+    (束縛番号::生成する(2), 記憶, 計算段),
+    (束縛番号::生成する(3), 記憶, 計算段),
+]);
 
 pub(crate) struct 自動露出のディスクリプタ {
     pub(crate) レイアウト: vk::DescriptorSetLayout,
@@ -42,18 +51,7 @@ impl 自動露出のディスクリプタ {
 }
 
 fn レイアウトを作る(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let binding一覧: Vec<vk::DescriptorSetLayoutBinding<'_>> = 束縛の種別一覧
-        .iter()
-        .enumerate()
-        .map(|(位置, &種別)| {
-            let 番号 = u32::try_from(位置).unwrap_or_else(|_| panic!("ディスクリプタの束縛番号がu32に収まらない: {位置}"));
-            vk::DescriptorSetLayoutBinding::default()
-                .binding(番号)
-                .descriptor_type(種別)
-                .descriptor_count(1)
-                .stage_flags(vk::ShaderStageFlags::COMPUTE)
-        })
-        .collect();
+    let binding一覧 = 束縛の宣言.セットレイアウトの宣言();
     let 生成情報 = vk::DescriptorSetLayoutCreateInfo::default().bindings(&binding一覧);
     // 安全性: deviceは生成済みで有効。
     Ok(unsafe { device.create_descriptor_set_layout(&生成情報, None)? })

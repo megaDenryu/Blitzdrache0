@@ -4,6 +4,17 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号};
+
+const 標本器つき: vk::DescriptorType = vk::DescriptorType::COMBINED_IMAGE_SAMPLER;
+const 画素段: vk::ShaderStageFlags = vk::ShaderStageFlags::FRAGMENT;
+
+/// 読み元1枚のセットの宣言。前処理と縮小が使う。
+pub(super) const 単一読みの宣言: 宣言した束縛の並び<1> = 宣言した束縛の並び::生成する([(束縛番号::生成する(0), 標本器つき, 画素段)]);
+
+/// 読み元2枚のセットの宣言。拡大が1段小さい結果と同じ段の縮小結果を混ぜるために使う。
+pub(super) const 二読みの宣言: 宣言した束縛の並び<2> =
+    宣言した束縛の並び::生成する([(束縛番号::生成する(0), 標本器つき, 画素段), (束縛番号::生成する(1), 標本器つき, 画素段)]);
 
 pub(super) struct 光のにじみセット群 {
     pub(super) pool: vk::DescriptorPool,
@@ -16,8 +27,8 @@ pub(super) struct 光のにじみセット群 {
 pub(super) fn レイアウト2種を作る(
     device: &ash::Device,
 ) -> Result<(vk::DescriptorSetLayout, vk::DescriptorSetLayout), レンダラーエラー> {
-    let 単一読み = 読みレイアウトを作る(device, 1)?;
-    match 読みレイアウトを作る(device, 2) {
+    let 単一読み = 読みレイアウトを作る(device, &単一読みの宣言.セットレイアウトの宣言())?;
+    match 読みレイアウトを作る(device, &二読みの宣言.セットレイアウトの宣言()) {
         Ok(二読み) => Ok((単一読み, 二読み)),
         Err(誤り) => {
             // 安全性: 単一読みはこのスコープの唯一の所有者で、以降使用しない。
@@ -27,17 +38,11 @@ pub(super) fn レイアウト2種を作る(
     }
 }
 
-fn 読みレイアウトを作る(device: &ash::Device, バインディング数: u32) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let binding一覧: Vec<vk::DescriptorSetLayoutBinding<'_>> = (0..バインディング数)
-        .map(|添字| {
-            vk::DescriptorSetLayoutBinding::default()
-                .binding(添字)
-                .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-                .descriptor_count(1)
-                .stage_flags(vk::ShaderStageFlags::FRAGMENT)
-        })
-        .collect();
-    let layout_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&binding一覧);
+fn 読みレイアウトを作る(
+    device: &ash::Device,
+    binding一覧: &[vk::DescriptorSetLayoutBinding<'_>],
+) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
+    let layout_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(binding一覧);
     // 安全性: deviceは生成済みで有効。
     Ok(unsafe { device.create_descriptor_set_layout(&layout_info, None)? })
 }

@@ -10,10 +10,19 @@ use ash::vk;
 
 use super::images::履歴の枚数;
 use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号};
 
 const 標本: vk::DescriptorType = vk::DescriptorType::SAMPLED_IMAGE;
 const 標本器つき: vk::DescriptorType = vk::DescriptorType::COMBINED_IMAGE_SAMPLER;
-const 束縛の種別一覧: [vk::DescriptorType; 4] = [標本, 標本器つき, 標本, 標本];
+const 画素段: vk::ShaderStageFlags = vk::ShaderStageFlags::FRAGMENT;
+
+/// 束縛の並び。今のフレームの色・履歴・動きベクトル・深度の順である。
+pub(super) const 束縛の宣言: 宣言した束縛の並び<4> = 宣言した束縛の並び::生成する([
+    (束縛番号::生成する(0), 標本, 画素段),
+    (束縛番号::生成する(1), 標本器つき, 画素段),
+    (束縛番号::生成する(2), 標本, 画素段),
+    (束縛番号::生成する(3), 標本, 画素段),
+]);
 
 pub(super) struct 時間再構成のディスクリプタ {
     レイアウト: vk::DescriptorSetLayout,
@@ -52,18 +61,7 @@ impl 時間再構成のディスクリプタ {
 }
 
 fn レイアウトを作る(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let binding一覧: Vec<vk::DescriptorSetLayoutBinding<'_>> = 束縛の種別一覧
-        .iter()
-        .enumerate()
-        .map(|(位置, &種別)| {
-            let 番号 = u32::try_from(位置).unwrap_or_else(|_| panic!("ディスクリプタの束縛番号がu32に収まらない: {位置}"));
-            vk::DescriptorSetLayoutBinding::default()
-                .binding(番号)
-                .descriptor_type(種別)
-                .descriptor_count(1)
-                .stage_flags(vk::ShaderStageFlags::FRAGMENT)
-        })
-        .collect();
+    let binding一覧 = 束縛の宣言.セットレイアウトの宣言();
     let 生成情報 = vk::DescriptorSetLayoutCreateInfo::default().bindings(&binding一覧);
     // 安全性: deviceは生成済みで有効。
     Ok(unsafe { device.create_descriptor_set_layout(&生成情報, None)? })

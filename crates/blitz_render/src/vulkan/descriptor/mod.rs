@@ -12,6 +12,7 @@
 mod alloc;
 mod binding_number;
 mod cluster_assignment_set;
+mod declared_bindings;
 mod empty_set;
 mod geometry_set;
 pub(crate) mod lighting_set;
@@ -26,6 +27,7 @@ pub(crate) use binding_number::束縛番号;
 pub(crate) use cluster_assignment_set::{
     クラスタ選別のセットの書き込み先, クラスタ選別のセットレイアウト, クラスタ選別の束縛の種別一覧
 };
+pub(crate) use declared_bindings::{宣言した束縛の並び, 結ぶ現物};
 pub(crate) use lighting_set::{
     照明問い合わせのセットの書き込み先, 照明問い合わせのディスクリプタプール, 照明問い合わせのバッファ組
 };

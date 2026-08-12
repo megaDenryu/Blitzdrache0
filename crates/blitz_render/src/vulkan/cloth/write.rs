@@ -1,14 +1,14 @@
-//! 布ディスクリプタセットへの10バッファ書き込み。
-//! バインディング順はcloth_step.slang冒頭の表(b0=UBO b1=粒子 b2=前位置 b3=介入 b4=隣接
-//! b5=セルカウント b6=セル格納 b7=布頂点 b8=スキン済み頂点 b9=アタッチ対応)。
+//! 布ディスクリプタセットへの10バッファ書き込み。並びの順と番号と種別は`descriptor`が持つ束縛の宣言が決める。
 
 use ash::vk;
 
 use super::buffers::布バッファ;
+use super::descriptor::束縛の宣言;
+use crate::vulkan::descriptor::結ぶ現物;
 use crate::vulkan::sync::フレームスロット添字;
 
 /// 前提: setは割り当て済みで、生成直後(GPU未使用)にのみ呼ばれる。
-/// スキン済み頂点が無い(吊るし布=アタッチ0件、判断56)場合はb8へ粒子バッファをダミー束縛する
+/// スキン済み頂点が無い(吊るし布=アタッチ0件、判断56)場合は9番目へ粒子バッファをダミー束縛する
 /// (アタッチパスが積まれないため読まれない。レイアウト上の束縛だけが必要)。
 pub(super) fn 書く(
     device: &ash::Device,
@@ -17,38 +17,16 @@ pub(super) fn 書く(
     スキン済み頂点buffer: Option<vk::Buffer>,
     フレーム添字: フレームスロット添字,
 ) {
-    let buffer一覧 = [
-        バッファ.定数一覧.スロットのバッファ(フレーム添字),
-        バッファ.粒子.バッファのハンドル(),
-        バッファ.前位置.バッファのハンドル(),
-        バッファ.介入一覧.スロットのバッファ(フレーム添字),
-        バッファ.隣接.バッファのハンドル(),
-        バッファ.セルカウント.バッファのハンドル(),
-        バッファ.セル格納.バッファのハンドル(),
-        バッファ.布頂点.バッファのハンドル(),
-        スキン済み頂点buffer.unwrap_or(バッファ.粒子.バッファのハンドル()),
-        バッファ.アタッチ.バッファのハンドル(),
-    ];
-    let 情報一覧: Vec<[vk::DescriptorBufferInfo; 1]> = buffer一覧
-        .iter()
-        .map(|&buffer| [vk::DescriptorBufferInfo::default().buffer(buffer).range(vk::WHOLE_SIZE)])
-        .collect();
-    let write一覧: Vec<vk::WriteDescriptorSet<'_>> = 情報一覧
-        .iter()
-        .enumerate()
-        .map(|(binding, 情報)| {
-            let 種別 = if binding == 0 {
-                vk::DescriptorType::UNIFORM_BUFFER
-            } else {
-                vk::DescriptorType::STORAGE_BUFFER
-            };
-            vk::WriteDescriptorSet::default()
-                .dst_set(set)
-                .dst_binding(u32::try_from(binding).unwrap_or_else(|_| panic!("binding番号がu32に収まらない: {binding}")))
-                .descriptor_type(種別)
-                .buffer_info(情報)
-        })
-        .collect();
-    // 安全性: 呼び出し元の前提のとおりGPU未使用の時点でのみ呼ばれる。
-    unsafe { device.update_descriptor_sets(&write一覧, &[]) };
+    束縛の宣言.書き込み先(device, set).並びの位置ごとに結ぶ([
+        結ぶ現物::バッファ全体(バッファ.定数一覧.スロットのバッファ(フレーム添字)),
+        結ぶ現物::バッファ全体(バッファ.粒子.バッファのハンドル()),
+        結ぶ現物::バッファ全体(バッファ.前位置.バッファのハンドル()),
+        結ぶ現物::バッファ全体(バッファ.介入一覧.スロットのバッファ(フレーム添字)),
+        結ぶ現物::バッファ全体(バッファ.隣接.バッファのハンドル()),
+        結ぶ現物::バッファ全体(バッファ.セルカウント.バッファのハンドル()),
+        結ぶ現物::バッファ全体(バッファ.セル格納.バッファのハンドル()),
+        結ぶ現物::バッファ全体(バッファ.布頂点.バッファのハンドル()),
+        結ぶ現物::バッファ全体(スキン済み頂点buffer.unwrap_or(バッファ.粒子.バッファのハンドル())),
+        結ぶ現物::バッファ全体(バッファ.アタッチ.バッファのハンドル()),
+    ]);
 }

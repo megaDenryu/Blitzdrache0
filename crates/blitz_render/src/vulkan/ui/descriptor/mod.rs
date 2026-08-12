@@ -15,6 +15,14 @@ mod set;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号};
+
+/// 束縛の並び。UIテクスチャ1枚を読むcombined image samplerが1本だけである。
+pub(super) const 束縛の宣言: 宣言した束縛の並び<1> = 宣言した束縛の並び::生成する([(
+    束縛番号::生成する(0),
+    vk::DescriptorType::COMBINED_IMAGE_SAMPLER,
+    vk::ShaderStageFlags::FRAGMENT,
+)]);
 
 /// 同時に保持できるUIテクスチャ数の上限。
 pub(crate) const 最大テクスチャ数: u32 = 32;
@@ -59,20 +67,14 @@ impl UIテクスチャのディスクリプタ資源 {
 }
 
 fn レイアウトを作る(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let バインド一覧 = [vk::DescriptorSetLayoutBinding::default()
-        .binding(0)
-        .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-        .descriptor_count(1)
-        .stage_flags(vk::ShaderStageFlags::FRAGMENT)];
+    let バインド一覧 = 束縛の宣言.セットレイアウトの宣言();
     let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
     // 安全性: deviceは生成済みで有効。
     Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
 }
 
 fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
-    let プールサイズ一覧 = [vk::DescriptorPoolSize::default()
-        .ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-        .descriptor_count(最大テクスチャ数)];
+    let プールサイズ一覧 = 束縛の宣言.プールの内訳(最大テクスチャ数);
     let create_info = vk::DescriptorPoolCreateInfo::default()
         .flags(vk::DescriptorPoolCreateFlags::FREE_DESCRIPTOR_SET)
         .max_sets(最大テクスチャ数)

@@ -11,24 +11,22 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号, 結ぶ現物};
 
-const 種別一覧: [(u32, vk::DescriptorType); 2] = [(0, vk::DescriptorType::SAMPLED_IMAGE), (1, vk::DescriptorType::STORAGE_IMAGE)];
+const 宣言: 宣言した束縛の並び<2> = 宣言した束縛の並び::生成する([
+    (束縛番号::生成する(0), vk::DescriptorType::SAMPLED_IMAGE, vk::ShaderStageFlags::COMPUTE),
+    (束縛番号::生成する(1), vk::DescriptorType::STORAGE_IMAGE, vk::ShaderStageFlags::COMPUTE),
+]);
 
 pub(super) fn レイアウトを作る(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let バインド一覧 = 種別一覧.map(|(番号, 種別)| {
-        vk::DescriptorSetLayoutBinding::default()
-            .binding(番号)
-            .descriptor_type(種別)
-            .descriptor_count(1)
-            .stage_flags(vk::ShaderStageFlags::COMPUTE)
-    });
+    let バインド一覧 = 宣言.セットレイアウトの宣言();
     let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
     // 安全性: deviceは生成済みで有効。
     Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
 }
 
 pub(super) fn プールを作る(device: &ash::Device, セット数: u32) -> Result<vk::DescriptorPool, レンダラーエラー> {
-    let プールサイズ一覧 = 種別一覧.map(|(_, 種別)| vk::DescriptorPoolSize::default().ty(種別).descriptor_count(セット数));
+    let プールサイズ一覧 = 宣言.プールの内訳(セット数);
     let create_info = vk::DescriptorPoolCreateInfo::default().max_sets(セット数).pool_sizes(&プールサイズ一覧);
     // 安全性: deviceは生成済みで有効。
     Ok(unsafe { device.create_descriptor_pool(&create_info, None)? })
@@ -37,24 +35,14 @@ pub(super) fn プールを作る(device: &ash::Device, セット数: u32) -> Res
 pub(super) fn 書き込む(
     device: &ash::Device, set: vk::DescriptorSet, 遠方環境の配列ビュー: vk::ImageView, 書き込み先: vk::ImageView
 ) {
-    let 読み情報 = [vk::DescriptorImageInfo::default()
-        .image_view(遠方環境の配列ビュー)
-        .image_layout(vk::ImageLayout::GENERAL)];
-    let 書き込み先情報 = [vk::DescriptorImageInfo::default()
-        .image_view(書き込み先)
-        .image_layout(vk::ImageLayout::GENERAL)];
-    let 書き込み一覧 = [
-        vk::WriteDescriptorSet::default()
-            .dst_set(set)
-            .dst_binding(種別一覧[0].0)
-            .descriptor_type(種別一覧[0].1)
-            .image_info(&読み情報),
-        vk::WriteDescriptorSet::default()
-            .dst_set(set)
-            .dst_binding(種別一覧[1].0)
-            .descriptor_type(種別一覧[1].1)
-            .image_info(&書き込み先情報),
-    ];
-    // 安全性: setは割当済み、画像ビューは生成済みで有効。
-    unsafe { device.update_descriptor_sets(&書き込み一覧, &[]) };
+    宣言.書き込み先(device, set).並びの位置ごとに結ぶ([
+        結ぶ現物::サンプラー無しの画像 {
+            ビュー: 遠方環境の配列ビュー,
+            レイアウト: vk::ImageLayout::GENERAL,
+        },
+        結ぶ現物::サンプラー無しの画像 {
+            ビュー: 書き込み先,
+            レイアウト: vk::ImageLayout::GENERAL,
+        },
+    ]);
 }

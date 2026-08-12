@@ -4,7 +4,9 @@
 
 use ash::vk;
 
+use super::layout::束縛の宣言;
 use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor::結ぶ現物;
 use crate::vulkan::sync::進行中フレーム数;
 
 pub(super) fn 割り当てる(
@@ -23,22 +25,7 @@ pub(super) fn 割り当てる(
 }
 
 pub(super) fn 書き込む(device: &ash::Device, set: vk::DescriptorSet, 粒子バッファ: vk::Buffer, uniform: vk::Buffer) {
-    let 粒子バッファ情報 = [vk::DescriptorBufferInfo::default().buffer(粒子バッファ).offset(0).range(vk::WHOLE_SIZE)];
-    let uniform情報 = [vk::DescriptorBufferInfo::default().buffer(uniform).offset(0).range(vk::WHOLE_SIZE)];
-    let 書き込み一覧 = [
-        vk::WriteDescriptorSet::default()
-            .dst_set(set)
-            .dst_binding(0)
-            .dst_array_element(0)
-            .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
-            .buffer_info(&uniform情報),
-        vk::WriteDescriptorSet::default()
-            .dst_set(set)
-            .dst_binding(3)
-            .dst_array_element(0)
-            .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
-            .buffer_info(&粒子バッファ情報),
-    ];
-    // 安全性: setは割当済み、粒子バッファ・uniformは生成済みで有効。
-    unsafe { device.update_descriptor_sets(&書き込み一覧, &[]) };
+    束縛の宣言
+        .書き込み先(device, set)
+        .並びの位置ごとに結ぶ([結ぶ現物::バッファ全体(uniform), 結ぶ現物::バッファ全体(粒子バッファ)]);
 }

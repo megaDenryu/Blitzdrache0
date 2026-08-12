@@ -1,50 +1,36 @@
-//! 明るさの圧縮のディスクリプタセットへHDRビュー(binding0)と光のにじみビュー(binding1)と
-//! GPU上の露出状態(binding2)を束縛する。露出状態は作り直さないため、生成直後の1回だけ別の入口で書く。
+//! 明るさの圧縮のディスクリプタセットへHDRビュー(並びの0番目)と光のにじみビュー(1番目)と
+//! GPU上の露出状態(2番目)を束縛する。露出状態は作り直さないため、生成直後の1回だけ別の入口で書く。
 
 use ash::vk;
 
+use super::descriptor::束縛の宣言;
 use super::明るさの圧縮一式;
+use crate::vulkan::descriptor::結ぶ現物;
+
+/// 露出状態の並びの位置。作り直しの対象にならないため、他の2つと別の入口で結ぶ。
+const 露出状態の位置: usize = 2;
 
 impl 明るさの圧縮一式 {
     /// 生成直後と、スワップチェーン再構築でHDR/光のにじみ画像を作り直した後に呼ぶ。
     /// 前提: 呼び出し時点でGPUがこのディスクリプタセットを使用していないこと(生成直後またはdevice_wait_idle後)。
     pub(crate) fn ビューを再束縛する(&self, device: &ash::Device, hdrビュー: vk::ImageView, 光のにじみビュー: vk::ImageView) {
-        let hdr情報一覧 = [vk::DescriptorImageInfo::default()
-            .sampler(self.sampler)
-            .image_view(hdrビュー)
-            .image_layout(vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL)];
-        let 光のにじみ情報一覧 = [vk::DescriptorImageInfo::default()
-            .sampler(self.sampler)
-            .image_view(光のにじみビュー)
-            .image_layout(vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL)];
-        let write一覧 = [
-            vk::WriteDescriptorSet::default()
-                .dst_set(self.descriptor_set)
-                .dst_binding(0)
-                .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-                .image_info(&hdr情報一覧),
-            vk::WriteDescriptorSet::default()
-                .dst_set(self.descriptor_set)
-                .dst_binding(1)
-                .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-                .image_info(&光のにじみ情報一覧),
-        ];
-        // 安全性: setは割り当て済みで、前提によりGPU未使用の時点でのみ呼ばれる。
-        unsafe { device.update_descriptor_sets(&write一覧, &[]) };
+        let 書き込み先 = 束縛の宣言.書き込み先(device, self.descriptor_set);
+        for (位置, ビュー) in [hdrビュー, 光のにじみビュー].into_iter().enumerate() {
+            書き込み先.並びの位置へ結ぶ(
+                位置,
+                結ぶ現物::サンプラー付きの画像 {
+                    ビュー,
+                    サンプラー: self.sampler,
+                    レイアウト: vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL,
+                },
+            );
+        }
     }
 
     /// 生成直後に1度だけ呼ぶ。露出状態のバッファはスワップチェーン再構築で作り直さないため、再束縛の対象にしない。
     pub(crate) fn 露出状態を束縛する(&self, device: &ash::Device, 露出状態バッファ: vk::Buffer) {
-        let 情報一覧 = [vk::DescriptorBufferInfo::default()
-            .buffer(露出状態バッファ)
-            .offset(0)
-            .range(vk::WHOLE_SIZE)];
-        let write一覧 = [vk::WriteDescriptorSet::default()
-            .dst_set(self.descriptor_set)
-            .dst_binding(2)
-            .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
-            .buffer_info(&情報一覧)];
-        // 安全性: setは割り当て済みで、生成直後のGPU未使用の時点でのみ呼ばれる。
-        unsafe { device.update_descriptor_sets(&write一覧, &[]) };
+        束縛の宣言
+            .書き込み先(device, self.descriptor_set)
+            .並びの位置へ結ぶ(露出状態の位置, 結ぶ現物::バッファ全体(露出状態バッファ));
     }
 }
