@@ -12,9 +12,10 @@
 use ash::vk;
 
 use super::照明問い合わせのバッファ組;
+use crate::vulkan::descriptor::束縛番号;
 
-pub(crate) const クラスタ格子の束縛番号: u32 = 8;
-pub(crate) const クラスタ光添字列の束縛番号: u32 = 9;
+pub(crate) const クラスタ格子の束縛番号: 束縛番号 = 束縛番号::生成する(8);
+pub(crate) const クラスタ光添字列の束縛番号: 束縛番号 = 束縛番号::生成する(9);
 
 pub(super) fn バインド一覧() -> [vk::DescriptorSetLayoutBinding<'static>; 2] {
     [
@@ -24,16 +25,16 @@ pub(super) fn バインド一覧() -> [vk::DescriptorSetLayoutBinding<'static>; 
 }
 
 /// そのスロットの2本を、番号と対にして返す。結ぶ手順は呼び出し元が直接光の3本と共有する。
-pub(super) fn 番号とバッファの対(バッファ組: 照明問い合わせのバッファ組) -> [(u32, vk::Buffer); 2] {
+pub(super) fn 番号とバッファの対(バッファ組: 照明問い合わせのバッファ組) -> [(束縛番号, vk::Buffer); 2] {
     [
         (クラスタ格子の束縛番号, バッファ組.クラスタ格子),
         (クラスタ光添字列の束縛番号, バッファ組.クラスタ光添字列),
     ]
 }
 
-fn 画素段の記憶バインド(binding: u32) -> vk::DescriptorSetLayoutBinding<'static> {
+fn 画素段の記憶バインド(番号: 束縛番号) -> vk::DescriptorSetLayoutBinding<'static> {
     vk::DescriptorSetLayoutBinding::default()
-        .binding(binding)
+        .binding(番号.gpu境界値())
         .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
         .descriptor_count(1)
         .stage_flags(vk::ShaderStageFlags::FRAGMENT)

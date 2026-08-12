@@ -5,7 +5,8 @@ use ash::vk;
 
 use super::共有ディスクリプタセット;
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{alloc, view_pass_set, シーンセットレイアウト一式};
+use crate::vulkan::descriptor::view_pass_set::ビューとパスのセットの書き込み先;
+use crate::vulkan::descriptor::{alloc, シーンセットレイアウト一式};
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::uniform::フレームシェーダー定数一式;
 
@@ -39,7 +40,8 @@ fn 割り当てて結ぶ(
         Err(_) => panic!("ビューとパスのセット数が進行中フレーム数と一致しない"),
     };
     for フレーム添字 in フレームスロット添字::全スロット() {
-        view_pass_set::定数を結ぶ(device, ビューとパス一覧[フレーム添字.配列添字()], シェーダー定数, フレーム添字);
+        ビューとパスのセットの書き込み先::生成する(device, ビューとパス一覧[フレーム添字.配列添字()])
+            .フレームの定数3本を結ぶ(シェーダー定数, フレーム添字);
     }
     Ok(ビューとパス一覧)
 }

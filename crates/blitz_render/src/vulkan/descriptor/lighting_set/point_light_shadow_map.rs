@@ -13,31 +13,30 @@
 
 use ash::vk;
 
-pub(crate) const 点光源の影の束縛番号: u32 = 10;
+use super::照明問い合わせのセットの書き込み先;
+use crate::vulkan::descriptor::束縛番号;
+
+pub(crate) const 点光源の影の束縛番号: 束縛番号 = 束縛番号::生成する(10);
+
+impl 照明問い合わせのセットの書き込み先<'_> {
+    /// 立方体の配列のビューと比較サンプラーを1つのセットへ結ぶ。
+    ///
+    /// 束縛するのは層ごとのビューでなく配列全体の立方体のビューであり、灯の選択はシェーダーが立方体の添字で行う。
+    /// この資源はスワップチェーン再構築と独立の固定資源のため、生成時に一度だけ結べばよい。
+    pub(super) fn 点光源の影の立方体配列を結ぶ(&self, ビュー: vk::ImageView, sampler: vk::Sampler) {
+        self.ディスクリプタの書き込み先().サンプラー付きの画像を結ぶ(
+            点光源の影の束縛番号,
+            ビュー,
+            sampler,
+            vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL,
+        );
+    }
+}
 
 pub(super) fn バインド() -> vk::DescriptorSetLayoutBinding<'static> {
     vk::DescriptorSetLayoutBinding::default()
-        .binding(点光源の影の束縛番号)
+        .binding(点光源の影の束縛番号.gpu境界値())
         .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
         .descriptor_count(1)
         .stage_flags(vk::ShaderStageFlags::FRAGMENT)
-}
-
-/// 立方体の配列のビューと比較サンプラーを1つのセットへ結ぶ。
-///
-/// 束縛するのは層ごとのビューでなく配列全体の立方体のビューであり、灯の選択はシェーダーが立方体の添字で行う。
-/// この資源はスワップチェーン再構築と独立の固定資源のため、生成時に一度だけ結べばよい。
-pub(super) fn 結ぶ(device: &ash::Device, set: vk::DescriptorSet, ビュー: vk::ImageView, sampler: vk::Sampler) {
-    let 画像情報一覧 = [vk::DescriptorImageInfo::default()
-        .sampler(sampler)
-        .image_view(ビュー)
-        .image_layout(vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL)];
-    let 書き込み一覧 = [vk::WriteDescriptorSet::default()
-        .dst_set(set)
-        .dst_binding(点光源の影の束縛番号)
-        .dst_array_element(0)
-        .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-        .image_info(&画像情報一覧)];
-    // 安全性: setは割当済み、立方体の配列のビューとサンプラーは生成済みで有効。
-    unsafe { device.update_descriptor_sets(&書き込み一覧, &[]) };
 }

@@ -6,7 +6,8 @@ use ash::vk;
 
 use super::{ジオメトリセット参照, 位置を求める, 描画対象ディスクリプタプール};
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{alloc, geometry_set, シーンセットレイアウト一式};
+use crate::vulkan::descriptor::geometry_set::ジオメトリと可視のセットの書き込み先;
+use crate::vulkan::descriptor::{alloc, シーンセットレイアウト一式};
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 impl 描画対象ディスクリプタプール {
@@ -59,9 +60,11 @@ fn 割り当てて書き込む(
             let Some(set) = set一覧.get(位置を求める(描画対象添字, フレーム添字)).copied() else {
                 panic!("ジオメトリのセット一覧が走査中の位置を持たない");
             };
-            let 個体レコード = (参照.個体レコード.buffer(フレーム添字), 参照.個体レコード.範囲());
-            let 可視id列 = (参照.可視id列.buffer(フレーム添字), 参照.可視id列.範囲());
-            geometry_set::資源を結ぶ(device, set, 個体レコード, 可視id列);
+            ジオメトリと可視のセットの書き込み先::生成する(device, set).個体レコードと可視id列を結ぶ(
+                &参照.個体レコード,
+                &参照.可視id列,
+                フレーム添字,
+            );
         }
     }
     Ok(set一覧)

@@ -10,13 +10,13 @@
 use ash::vk;
 
 use super::照明問い合わせ資源束;
-use crate::vulkan::descriptor::lighting_set::local_visibility::結ぶ;
+use crate::vulkan::descriptor::照明問い合わせのセットの書き込み先;
 
 impl 照明問い合わせ資源束 {
     /// 前提: 呼び出し時点でGPUがこれらのセットを使用していないこと(生成直後またはdevice_wait_idle後)。
     pub(crate) fn 局所可視度の画像を結ぶ(&self, device: &ash::Device, ビュー: vk::ImageView) {
         for スロット in &self.スロット一覧 {
-            結ぶ(device, スロット.セット, ビュー);
+            照明問い合わせのセットの書き込み先::生成する(device, スロット.セット).局所可視度の画像を結ぶ(ビュー);
         }
     }
 }

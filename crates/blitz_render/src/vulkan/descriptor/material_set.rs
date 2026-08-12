@@ -1,5 +1,5 @@
-//! set2(材質のセット)のレイアウトと、1つの資源表世代の資源をそのセットへ結ぶ操作。触れるのは材質レコードのストレージバッファ
-//! (binding0)・材質テクスチャ表(binding1)・表を読む固定サンプラー(binding2)だけである。
+//! set2(材質のセット)のレイアウトと束縛番号。触れるのは材質レコードのストレージバッファ(binding0)・
+//! 材質テクスチャ表(binding1)・表を読む固定サンプラー(binding2)だけである。
 //! 番号の正本は`shaders/material_record.slang`と`shaders/scene.slang`の宣言である。
 //!
 //! テクスチャを1枚ずつのcombined image samplerでなく要素数固定のsampled image配列にするのは、材質やプリミティブの数だけ
@@ -7,16 +7,23 @@
 //! テクスチャの枚数と無関係だからである(参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「ディスクリプタ索引の採用範囲」)。
 //! 注意: 表の要素数はレイアウトの一部であり、世代の常駐枚数で動かさない。常駐枚数に満たない残りは
 //! `PARTIALLY_BOUND`で未書込のまま束縛する。
+//!
+//! 割り当て済みのセットへ1つの資源表世代を書き込む型は`set_write`が持つ。レイアウトを決めるのがレンダラー生成時の
+//! 1回だけであるのに対し、書き込みは世代を作り直すたびに繰り返され、呼ばれる頻度が違うためである。
+
+mod set_write;
 
 use ash::vk;
 
+pub(crate) use set_write::材質のセットの書き込み先;
+
+use super::束縛番号;
 use crate::error::レンダラーエラー;
 use crate::vulkan::material_table::テクスチャ表レイアウト容量;
-use crate::vulkan::texture::テクスチャ;
 
-pub(crate) const 材質レコードの束縛番号: u32 = 0;
-pub(crate) const 材質テクスチャ表の束縛番号: u32 = 1;
-pub(crate) const 材質サンプラーの束縛番号: u32 = 2;
+pub(crate) const 材質レコードの束縛番号: 束縛番号 = 束縛番号::生成する(0);
+pub(crate) const 材質テクスチャ表の束縛番号: 束縛番号 = 束縛番号::生成する(1);
+pub(crate) const 材質サンプラーの束縛番号: 束縛番号 = 束縛番号::生成する(2);
 
 pub(super) fn レイアウトを生成する(
     device: &ash::Device,
@@ -26,17 +33,17 @@ pub(super) fn レイアウトを生成する(
     let 固定サンプラー一覧 = [サンプラー];
     let バインド一覧 = [
         vk::DescriptorSetLayoutBinding::default()
-            .binding(材質レコードの束縛番号)
+            .binding(材質レコードの束縛番号.gpu境界値())
             .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
             .descriptor_count(1)
             .stage_flags(vk::ShaderStageFlags::FRAGMENT),
         vk::DescriptorSetLayoutBinding::default()
-            .binding(材質テクスチャ表の束縛番号)
+            .binding(材質テクスチャ表の束縛番号.gpu境界値())
             .descriptor_type(vk::DescriptorType::SAMPLED_IMAGE)
             .descriptor_count(容量.枚数())
             .stage_flags(vk::ShaderStageFlags::FRAGMENT),
         vk::DescriptorSetLayoutBinding::default()
-            .binding(材質サンプラーの束縛番号)
+            .binding(材質サンプラーの束縛番号.gpu境界値())
             .descriptor_type(vk::DescriptorType::SAMPLER)
             .descriptor_count(1)
             .stage_flags(vk::ShaderStageFlags::FRAGMENT)
@@ -53,43 +60,4 @@ pub(super) fn レイアウトを生成する(
         .push_next(&mut フラグ情報);
     // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
     Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
-}
-
-/// 1つの資源表世代の材質レコード列と常駐画像をセットへ書き込む。書き込むのは常駐した枚数までであり、
-/// 残りの要素は部分束縛のまま未書込で残す。
-pub(crate) fn 世代の資源を結ぶ(
-    device: &ash::Device,
-    set: vk::DescriptorSet,
-    材質レコード: (vk::Buffer, vk::DeviceSize),
-    画像集合: &[テクスチャ],
-) {
-    let buffer情報一覧 = [vk::DescriptorBufferInfo::default().buffer(材質レコード.0).offset(0).range(材質レコード.1)];
-    let 画像情報一覧 = 画像集合
-        .iter()
-        .map(|画像| {
-            vk::DescriptorImageInfo::default()
-                .image_view(画像.image_view)
-                .image_layout(vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL)
-        })
-        .collect::<Vec<vk::DescriptorImageInfo>>();
-    let mut 書き込み一覧 = vec![
-        vk::WriteDescriptorSet::default()
-            .dst_set(set)
-            .dst_binding(材質レコードの束縛番号)
-            .dst_array_element(0)
-            .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
-            .buffer_info(&buffer情報一覧),
-    ];
-    if !画像情報一覧.is_empty() {
-        書き込み一覧.push(
-            vk::WriteDescriptorSet::default()
-                .dst_set(set)
-                .dst_binding(材質テクスチャ表の束縛番号)
-                .dst_array_element(0)
-                .descriptor_type(vk::DescriptorType::SAMPLED_IMAGE)
-                .image_info(&画像情報一覧),
-        );
-    }
-    // 安全性: setは割当済み、bufferと各画像ビューは生成済みで有効。
-    unsafe { device.update_descriptor_sets(&書き込み一覧, &[]) };
 }

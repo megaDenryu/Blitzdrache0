@@ -8,7 +8,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::material_set;
+use crate::vulkan::descriptor::材質のセットの書き込み先;
 use crate::vulkan::material_record::材質レコードバッファ;
 use crate::vulkan::texture::テクスチャ;
 use crate::vulkan::tracked_device::GPUデバイス;
@@ -87,11 +87,6 @@ fn セットを割り当てて結ぶ(
     画像集合: &[テクスチャ],
 ) -> Result<vk::DescriptorSet, レンダラーエラー> {
     let セット = 環境.セットレイアウト.材質のセットを1つ割り当てる(環境.論理デバイス(), pool)?;
-    material_set::世代の資源を結ぶ(
-        環境.論理デバイス(),
-        セット,
-        (レコードバッファ.バッファのハンドル(), レコードバッファ.範囲),
-        画像集合,
-    );
+    材質のセットの書き込み先::生成する(環境.論理デバイス(), セット).世代の資源を結ぶ(レコードバッファ, 画像集合);
     Ok(セット)
 }

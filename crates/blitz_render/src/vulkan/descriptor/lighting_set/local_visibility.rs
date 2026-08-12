@@ -14,30 +14,26 @@
 
 use ash::vk;
 
-pub(crate) const 局所可視度の束縛番号: u32 = 7;
+use super::照明問い合わせのセットの書き込み先;
+use crate::vulkan::descriptor::束縛番号;
+
+pub(crate) const 局所可視度の束縛番号: 束縛番号 = 束縛番号::生成する(7);
+
+impl 照明問い合わせのセットの書き込み先<'_> {
+    /// ぼかし後の画像のビューを1つのセットへ結ぶ。
+    ///
+    /// 注意: この画像は画面寸法に連動するため、スワップチェーンを作り直すたびに全スロットで結び直す。
+    /// 結び直しを落とすと、破棄済みのビューを指したままのセットで描くことになる。
+    pub(crate) fn 局所可視度の画像を結ぶ(&self, ビュー: vk::ImageView) {
+        self.ディスクリプタの書き込み先()
+            .サンプラー無しの画像を結ぶ(局所可視度の束縛番号, ビュー, vk::ImageLayout::GENERAL);
+    }
+}
 
 pub(super) fn バインド() -> vk::DescriptorSetLayoutBinding<'static> {
     vk::DescriptorSetLayoutBinding::default()
-        .binding(局所可視度の束縛番号)
+        .binding(局所可視度の束縛番号.gpu境界値())
         .descriptor_type(vk::DescriptorType::SAMPLED_IMAGE)
         .descriptor_count(1)
         .stage_flags(vk::ShaderStageFlags::FRAGMENT)
-}
-
-/// ぼかし後の画像のビューを1つのセットへ結ぶ。
-///
-/// 注意: この画像は画面寸法に連動するため、スワップチェーンを作り直すたびに全スロットで結び直す。
-/// 結び直しを落とすと、破棄済みのビューを指したままのセットで描くことになる。
-pub(crate) fn 結ぶ(device: &ash::Device, set: vk::DescriptorSet, ビュー: vk::ImageView) {
-    let 画像情報一覧 = [vk::DescriptorImageInfo::default()
-        .image_view(ビュー)
-        .image_layout(vk::ImageLayout::GENERAL)];
-    let 書き込み一覧 = [vk::WriteDescriptorSet::default()
-        .dst_set(set)
-        .dst_binding(局所可視度の束縛番号)
-        .dst_array_element(0)
-        .descriptor_type(vk::DescriptorType::SAMPLED_IMAGE)
-        .image_info(&画像情報一覧)];
-    // 安全性: setは割当済み、画像ビューは生成済みで有効。
-    unsafe { device.update_descriptor_sets(&書き込み一覧, &[]) };
 }

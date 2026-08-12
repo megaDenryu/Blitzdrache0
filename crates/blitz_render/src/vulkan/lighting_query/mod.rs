@@ -39,7 +39,8 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
-use crate::vulkan::descriptor::{lighting_set, シーンセットレイアウト一式};
+use crate::vulkan::descriptor::lighting_set::distant_environment::遠方環境を読むサンプラー;
+use crate::vulkan::descriptor::{シーンセットレイアウト一式, 照明問い合わせのディスクリプタプール};
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::{pipeline_ledger::照明束縛レイアウト, shadow_resources::影の資源の組, tracked_device::GPUデバイス};
 use {pack::照明問い合わせのバイト列, slot_resources::スロット資源};
@@ -50,12 +51,12 @@ pub(crate) use {
 };
 
 pub(crate) struct 照明問い合わせ資源束 {
-    pool: vk::DescriptorPool,
+    pool: 照明問い合わせのディスクリプタプール,
     スロット一覧: Vec<スロット資源>,
     /// このセットが宣言した枝。遠方環境の3つの画像を結ぶかどうかをこの値だけが決める。
     束縛レイアウト: 照明束縛レイアウト,
     /// 遠方環境の枝のときだけ持つ、3つの画像を読む固定サンプラー。
-    遠方環境サンプラー: Option<vk::Sampler>,
+    遠方環境サンプラー: Option<遠方環境を読むサンプラー>,
 }
 
 impl 照明問い合わせ資源束 {
@@ -87,13 +88,12 @@ impl 照明問い合わせ資源束 {
     /// 注意: プールの破棄がセットの解放を暗黙に行う。バッファは確保の逆順に破棄する。
     /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この束はその1段として呼ばれる(GPU待機済み)。
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
-        if let Some(サンプラー) = self.遠方環境サンプラー {
-            lighting_set::distant_environment::サンプラーを破棄する(device, サンプラー);
+        if let Some(サンプラー) = &self.遠方環境サンプラー {
+            サンプラー.破棄する(device);
         }
         for スロット in self.スロット一覧.iter().rev() {
             スロット.破棄する(device);
         }
-        // 安全性: poolはSelfが唯一の所有者であり、破棄時点でGPU側の使用完了を呼び出し元が保証する。
-        unsafe { device.destroy_descriptor_pool(self.pool, None) };
+        self.pool.破棄する(device);
     }
 }
