@@ -25,7 +25,7 @@ impl スキニング一式 {
         }
         let 頂点数 = u32::try_from(頂点一覧.len()).unwrap_or_else(|_| panic!("頂点数がu32に収まらない: {}", 頂点一覧.len()));
 
-        let バッファ = buffers::生成する(転送係, 頂点一覧, 素材)?;
+        let バッファ = buffers::スキニングバッファ::生成する(転送係, 頂点一覧, 素材)?;
         let ディスクリプタ = match descriptor::生成する(device, &バッファ) {
             Ok(ディスクリプタ) => ディスクリプタ,
             Err(誤り) => {

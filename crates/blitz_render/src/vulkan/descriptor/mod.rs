@@ -24,7 +24,7 @@ mod view_pass_set;
 
 pub(crate) use binding_number::束縛番号;
 pub(crate) use cluster_assignment_set::{
-    クラスタ選別のセットの書き込み先, クラスタ選別のセットレイアウトを作る, クラスタ選別の束縛の種別一覧
+    クラスタ選別のセットの書き込み先, クラスタ選別のセットレイアウト, クラスタ選別の束縛の種別一覧
 };
 pub(crate) use lighting_set::{
     照明問い合わせのセットの書き込み先, 照明問い合わせのディスクリプタプール, 照明問い合わせのバッファ組

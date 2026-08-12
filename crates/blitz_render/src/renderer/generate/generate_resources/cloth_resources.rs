@@ -41,7 +41,7 @@ pub(super) fn 組み立てる(
         }
         Some(スキニング.出力バッファ())
     };
-    Ok(Some(vulkan::cloth::布一式を生成する(
+    Ok(Some(vulkan::cloth::布一式::生成する(
         転送係,
         シーンカラー形式,
         セットレイアウト,

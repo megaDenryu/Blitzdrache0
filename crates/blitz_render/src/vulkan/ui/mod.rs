@@ -18,7 +18,7 @@ use crate::ui_vertex::UI頂点;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 pub(crate) struct UIリソース一式 {
     テクスチャ台帳: registry::UIテクスチャレジストリ,
@@ -51,12 +51,11 @@ impl UIリソース一式 {
 
     pub(crate) fn テクスチャを反映する(
         &mut self,
-        確保係: &GPU資源の確保係<'_>,
-        転送環境: &転送実行環境,
+        転送係: ステージング経由の転送係<'_>,
         id: UIテクスチャID,
         素材: &UIテクスチャ素材,
     ) -> Result<(), レンダラーエラー> {
-        self.テクスチャ台帳.反映する(確保係, 転送環境, id, 素材)
+        self.テクスチャ台帳.反映する(転送係, id, 素材)
     }
 
     pub(crate) fn テクスチャを削除する(&mut self, device: &GPUデバイス, id: UIテクスチャID) {

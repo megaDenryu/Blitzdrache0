@@ -9,11 +9,11 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::descriptor::{
-    クラスタ選別のセットの書き込み先, クラスタ選別のセットレイアウトを作る, 照明問い合わせのバッファ組
+    クラスタ選別のセットの書き込み先, クラスタ選別のセットレイアウト, 照明問い合わせのバッファ組
 };
 
 pub(super) struct クラスタ選別のディスクリプタ {
-    pub(super) レイアウト: vk::DescriptorSetLayout,
+    レイアウト: クラスタ選別のセットレイアウト,
     pool: vk::DescriptorPool,
     pub(super) スロットごとのセット: Vec<vk::DescriptorSet>,
 }
@@ -23,8 +23,8 @@ impl クラスタ選別のディスクリプタ {
     pub(super) fn 生成する(
         device: &ash::Device, バッファ組一覧: &[照明問い合わせのバッファ組]
     ) -> Result<Self, レンダラーエラー> {
-        let レイアウト = クラスタ選別のセットレイアウトを作る(device)?;
-        match pool::セットを割り当てる(device, レイアウト, バッファ組一覧.len()) {
+        let レイアウト = クラスタ選別のセットレイアウト::確保する(device)?;
+        match pool::セットを割り当てる(device, レイアウト.レイアウトのハンドル(), バッファ組一覧.len()) {
             Ok((pool, スロットごとのセット)) => {
                 for (セット, バッファ組) in スロットごとのセット.iter().zip(バッファ組一覧) {
                     クラスタ選別のセットの書き込み先::生成する(device, *セット).バッファ組を結ぶ(*バッファ組);
@@ -36,18 +36,20 @@ impl クラスタ選別のディスクリプタ {
                 })
             }
             Err(誤り) => {
-                // 安全性: レイアウトはこのスコープの唯一の所有者で、以降使用しない。
-                unsafe { device.destroy_descriptor_set_layout(レイアウト, None) };
+                レイアウト.破棄する(device);
                 Err(誤り)
             }
         }
     }
 
+    /// パイプラインレイアウトの宣言へ渡す境界。
+    pub(super) const fn レイアウトのハンドル(&self) -> vk::DescriptorSetLayout {
+        self.レイアウト.レイアウトのハンドル()
+    }
+
     pub(super) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: 各ハンドルはSelfが唯一の所有者。プールの破棄がセットの解放を暗黙に行う。
-        unsafe {
-            device.destroy_descriptor_pool(self.pool, None);
-            device.destroy_descriptor_set_layout(self.レイアウト, None);
-        }
+        // 安全性: プールはSelfが唯一の所有者であり、その破棄がセットの解放を暗黙に行う。
+        unsafe { device.destroy_descriptor_pool(self.pool, None) };
+        self.レイアウト.破棄する(device);
     }
 }

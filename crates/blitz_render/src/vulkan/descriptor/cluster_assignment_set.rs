@@ -45,23 +45,38 @@ impl<'書き込み> クラスタ選別のセットの書き込み先<'書き込�
     }
 }
 
-pub(crate) fn クラスタ選別のセットレイアウトを作る(
-    device: &ash::Device,
-) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let バインド一覧: Vec<vk::DescriptorSetLayoutBinding<'_>> = クラスタ選別の束縛の種別一覧
-        .iter()
-        .enumerate()
-        .map(|(位置, &種別)| {
-            vk::DescriptorSetLayoutBinding::default()
-                .binding(束縛番号にする(位置).gpu境界値())
-                .descriptor_type(種別)
-                .descriptor_count(1)
-                .stage_flags(vk::ShaderStageFlags::COMPUTE)
-        })
-        .collect();
-    let 生成情報 = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
-    // 安全性: deviceは生成済みで有効。生成情報は本関数内で構築した値のみを参照する。
-    Ok(unsafe { device.create_descriptor_set_layout(&生成情報, None)? })
+/// クラスタ選別のセットの宣言そのものを1つのVkDescriptorSetLayoutとして所有する資源型。
+/// 注意: `Drop`を持たない。破棄の順番はこのレイアウトから割り当てたプールの持ち主が決める。
+pub(crate) struct クラスタ選別のセットレイアウト(vk::DescriptorSetLayout);
+
+impl クラスタ選別のセットレイアウト {
+    pub(crate) fn 確保する(device: &ash::Device) -> Result<Self, レンダラーエラー> {
+        let バインド一覧: Vec<vk::DescriptorSetLayoutBinding<'_>> = クラスタ選別の束縛の種別一覧
+            .iter()
+            .enumerate()
+            .map(|(位置, &種別)| {
+                vk::DescriptorSetLayoutBinding::default()
+                    .binding(束縛番号にする(位置).gpu境界値())
+                    .descriptor_type(種別)
+                    .descriptor_count(1)
+                    .stage_flags(vk::ShaderStageFlags::COMPUTE)
+            })
+            .collect();
+        let 生成情報 = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
+        // 安全性: deviceは生成済みで有効。生成情報は本関数内で構築した値のみを参照する。
+        Ok(Self(unsafe { device.create_descriptor_set_layout(&生成情報, None)? }))
+    }
+
+    /// セットの割り当てとパイプラインレイアウトの宣言へ渡す境界。
+    pub(crate) const fn レイアウトのハンドル(&self) -> vk::DescriptorSetLayout {
+        self.0
+    }
+
+    /// 前提: このレイアウトから割り当てたセットを持つプールをすべて破棄した後に呼ぶ。
+    pub(crate) fn 破棄する(&self, device: &ash::Device) {
+        // 安全性: レイアウトはSelfが唯一の所有者である。
+        unsafe { device.destroy_descriptor_set_layout(self.0, None) };
+    }
 }
 
 fn 束縛番号にする(位置: usize) -> 束縛番号 {

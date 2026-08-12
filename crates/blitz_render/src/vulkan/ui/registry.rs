@@ -8,37 +8,34 @@ use std::collections::HashMap;
 
 use ash::vk;
 
-use super::descriptor;
+use super::descriptor::UIテクスチャのディスクリプタ資源;
 use super::texture::UIテクスチャ;
 use crate::error::レンダラーエラー;
 use crate::ui_texture_id::UIテクスチャID;
 use crate::ui_texture_material::UIテクスチャ素材;
-use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 pub(crate) struct UIテクスチャレジストリ {
-    layout: vk::DescriptorSetLayout,
-    pool: vk::DescriptorPool,
+    ディスクリプタ資源: UIテクスチャのディスクリプタ資源,
     表: HashMap<UIテクスチャID, (UIテクスチャ, vk::DescriptorSet)>,
 }
 
 impl UIテクスチャレジストリ {
     pub(crate) fn layout(&self) -> vk::DescriptorSetLayout {
-        self.layout
+        self.ディスクリプタ資源.レイアウトのハンドル()
     }
 
     /// テクスチャを新規登録、または既存IDを新しい内容で置き換える。
     pub(crate) fn 反映する(
         &mut self,
-        確保係: &GPU資源の確保係<'_>,
-        転送環境: &転送実行環境,
+        転送係: ステージング経由の転送係<'_>,
         id: UIテクスチャID,
         素材: &UIテクスチャ素材,
     ) -> Result<(), レンダラーエラー> {
-        let device = 確保係.論理デバイス();
-        let 新テクスチャ = UIテクスチャ::生成する(確保係, 転送環境, 素材)?;
-        let 新set = match descriptor::割り当てて書き込む(device, self.pool, self.layout, &新テクスチャ) {
+        let device = 転送係.論理デバイス();
+        let 新テクスチャ = UIテクスチャ::生成する(転送係, 素材)?;
+        let 新set = match self.ディスクリプタ資源.テクスチャのセットを割り当てて書き込む(device, &新テクスチャ) {
             Ok(set) => set,
             Err(誤り) => {
                 新テクスチャ.破棄する(device);
@@ -50,7 +47,7 @@ impl UIテクスチャレジストリ {
             // 安全性: 旧テクスチャ・旧セットの破棄前にGPU使用完了を待つ。
             let _ = unsafe { device.device_wait_idle() };
             旧テクスチャ.破棄する(device);
-            descriptor::解放する(device, self.pool, 旧set);
+            self.ディスクリプタ資源.セットを解放する(device, 旧set);
         }
         self.表.insert(id, (新テクスチャ, 新set));
         Ok(())
@@ -63,7 +60,7 @@ impl UIテクスチャレジストリ {
         // 安全性: 破棄前にGPU使用完了を待つ。
         let _ = unsafe { device.device_wait_idle() };
         テクスチャ.破棄する(device);
-        descriptor::解放する(device, self.pool, set);
+        self.ディスクリプタ資源.セットを解放する(device, set);
     }
 
     /// `id`に対応するディスクリプタセットを返す。未登録IDの解決は呼び出し側
@@ -80,11 +77,6 @@ impl UIテクスチャレジストリ {
         for (テクスチャ, _) in self.表.values() {
             テクスチャ.破棄する(device);
         }
-        // 安全性: poolの破棄が残存setの解放を暗黙に行う。layout・poolはSelfが唯一の
-        // 所有者であり、破棄時点でGPU側の使用が完了していることを呼び出し元が保証する。
-        unsafe {
-            device.destroy_descriptor_pool(self.pool, None);
-            device.destroy_descriptor_set_layout(self.layout, None);
-        }
+        self.ディスクリプタ資源.破棄する(device);
     }
 }

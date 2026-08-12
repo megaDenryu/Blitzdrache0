@@ -18,8 +18,6 @@ pub(super) struct スキニングバッファ {
     pub(super) 出力: 専用メモリ付きバッファ,
 }
 
-pub(super) use create::生成する;
-
 impl スキニングバッファ {
     pub(super) fn レスト頂点buffer(&self) -> vk::Buffer {
         self.レスト頂点.バッファのハンドル()

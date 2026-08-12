@@ -16,7 +16,7 @@ use crate::vulkan::lighting_query::照明問い合わせ資源束;
 use crate::vulkan::material_table::テクスチャ表レイアウト容量;
 use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
 
-pub(in crate::renderer) fn 生成する(
+pub(in crate::renderer::generate) fn 生成する(
     確保係: &GPU資源の確保係<'_>,
     queue: vk::Queue,
     queue_family_index: u32,

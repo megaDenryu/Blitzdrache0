@@ -5,6 +5,7 @@ use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::ui_texture_id::UIテクスチャID;
 use crate::ui_texture_material::UIテクスチャ素材;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 impl レンダラー {
     /// `id`のテクスチャを新規登録する、または既存なら新しい内容で置き換える。
@@ -12,7 +13,8 @@ impl レンダラー {
         &mut self, id: UIテクスチャID, 素材: UIテクスチャ素材
     ) -> Result<(), レンダラーエラー> {
         let 確保係 = self.環境.資源の確保係を貸す();
-        self.ui一式.テクスチャを反映する(&確保係, &self.転送環境, id, &素材)
+        let 転送係 = ステージング経由の転送係::生成する(&確保係, &self.転送環境);
+        self.ui一式.テクスチャを反映する(転送係, id, &素材)
     }
 
     /// `id`のテクスチャを削除する。未登録IDへの呼び出しは無視する

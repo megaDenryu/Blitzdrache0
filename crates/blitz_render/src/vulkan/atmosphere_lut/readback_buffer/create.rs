@@ -8,14 +8,14 @@ use super::ベイク済み画像の読み戻しバッファ;
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 
-pub(in crate::vulkan) fn 四成分で生成する(
+pub(super) fn 四成分で生成する(
     確保係: &GPU資源の確保係<'_>,
     テクセル数: usize,
 ) -> Result<ベイク済み画像の読み戻しバッファ, レンダラーエラー> {
     生成する(確保係, テクセル数, 四成分のテクセルのバイト数)
 }
 
-pub(in crate::vulkan) fn 二成分で生成する(
+pub(super) fn 二成分で生成する(
     確保係: &GPU資源の確保係<'_>,
     テクセル数: usize,
 ) -> Result<ベイク済み画像の読み戻しバッファ, レンダラーエラー> {

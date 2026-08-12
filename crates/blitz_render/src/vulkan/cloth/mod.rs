@@ -16,8 +16,6 @@ use crate::vulkan::pipeline::パイプライン;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
 
-pub(crate) use create::生成する as 布一式を生成する;
-
 pub(crate) struct 布一式 {
     バッファ: buffers::布バッファ,
     ディスクリプタ: descriptor::布ディスクリプタ,

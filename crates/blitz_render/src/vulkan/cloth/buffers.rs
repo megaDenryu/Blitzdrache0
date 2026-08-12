@@ -22,8 +22,6 @@ pub(super) struct 布バッファ {
     pub(super) 定数一覧: フレームスロットごとのバッファ,
 }
 
-pub(super) use create::生成する;
-
 impl 布バッファ {
     /// 前提: 呼び出しはフェンス待ち後(このスロットの前回GPU使用の完了後。判断24と同じ規律)。
     pub(super) fn 介入を書き込む(
