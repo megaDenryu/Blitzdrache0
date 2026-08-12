@@ -15,6 +15,7 @@ use ash::vk;
 
 use super::{点光源の影の層数, 点光源の影の立方体配列};
 use crate::error::レンダラーエラー;
+use crate::vulkan::command_sink::積み込みを開始したコマンドバッファ;
 use crate::vulkan::transfer::転送実行環境;
 
 impl 点光源の影の立方体配列 {

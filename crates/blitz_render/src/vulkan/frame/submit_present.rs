@@ -13,6 +13,7 @@ use super::submit_outcome::送信後の結末;
 use super::types::読み戻しの待機;
 use super::{同期入力, 提示先};
 use crate::error::レンダラーエラー;
+use crate::vulkan::command_sink::積み込みを開始したコマンドバッファ;
 
 impl フレームのGPU命令を積むコマンドバッファ<'_> {
     /// `Err`は送信へ到達しなかったことだけを表す。呼び出し元はこの区別で、そのフレームが資源表世代を保持したかどうかを決める。

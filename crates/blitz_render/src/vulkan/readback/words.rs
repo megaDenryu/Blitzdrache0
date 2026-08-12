@@ -9,6 +9,7 @@ use ash::vk;
 use super::buffer::読み戻しバッファ;
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
+use crate::vulkan::command_sink::積み込みを開始したコマンドバッファ;
 use crate::vulkan::transfer::転送実行環境;
 
 /// 前提: 呼び出し時点でGPUが読み戻し元のバッファを使用していないこと(device_wait_idle後)。

@@ -14,6 +14,7 @@ use crate::vulkan::headless::ウィンドウなし実行GPU環境;
 
 use super::readback_set::受け皿一式;
 use super::大気のベイク済み画像の読み戻し;
+use crate::vulkan::command_sink::積み込みを開始したコマンドバッファ;
 
 pub(super) fn 焼いて読み戻す(
     環境: &ウィンドウなし実行GPU環境,

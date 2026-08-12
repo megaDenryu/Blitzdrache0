@@ -14,6 +14,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::{
     pass as 大気パス, 大気のベイク済み画像の描画入力, 大気のベイク済み画像の生成入力, 大気のベイク済み画像の画像入力, 生成する組,
 };
+use crate::vulkan::command_sink::積み込みを開始したコマンドバッファ;
 use crate::vulkan::distant_environment::{pass as 遠方環境パス, 遠方環境の生成入力, 遠方環境の画像入力};
 use crate::vulkan::graph;
 use crate::vulkan::headless::GPU命令を積む一時コマンドバッファ;

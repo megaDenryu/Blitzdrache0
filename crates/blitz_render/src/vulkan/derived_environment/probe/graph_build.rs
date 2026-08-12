@@ -12,6 +12,7 @@ use ash::vk;
 
 use super::resources::積む材料;
 use crate::error::レンダラーエラー;
+use crate::vulkan::command_sink::積み込みを開始したコマンドバッファ;
 use crate::vulkan::derived_environment::{copy_pass, pass};
 use crate::vulkan::graph;
 use crate::vulkan::headless::GPU命令を積む一時コマンドバッファ;

@@ -9,6 +9,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::command_sink::GPU命令の積み先;
+use crate::vulkan::command_sink::積み込みを開始したコマンドバッファ;
 use crate::vulkan::transfer::転送実行環境;
 
 pub(super) fn ホストの画素列を画像へ転送する(

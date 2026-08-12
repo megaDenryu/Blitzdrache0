@@ -2,29 +2,88 @@
 //!
 //! 2つを組で持つのは、命令を積む工程へ論理デバイスとコマンドバッファを別々に運ばせると、
 //! 別の局面のコマンドバッファと組み合わせた呼び出しが署名の上で成立してしまうためである。
-//! 組を作れるのはコマンドバッファの積み込みを開始したセッション型だけであり、工程の側は組を受け取って積むだけになる。
+//!
+//! 組を作れる型をこのファイルが名指しで列挙するのは、生の論理デバイスとコマンドバッファから組を作り直せる場所を
+//! 1つも残さないためである。`積み込みを開始したコマンドバッファ`の実装に要する封印はこのモジュールの私有であり、
+//! ほかのモジュールは新しい実装を書けない。積み先の寿命は積み込み中の局面の借用に縛られるため、
+//! 局面を閉じた後(送信の後)に積み先を使う形はコンパイルできない。
 //!
 //! 参照: _doc/計画/ユビキタス言語.md「セッション型」
 
 use ash::vk;
 
+use crate::vulkan::frame::フレームのGPU命令を積むコマンドバッファ;
+use crate::vulkan::headless::GPU命令を積む一時コマンドバッファ;
+use crate::vulkan::transfer::転送コマンドを積む一時コマンドバッファ;
+
+mod 封印 {
+    /// 積み先を作ってよい局面であることの封印。このモジュールが外から見えないため、
+    /// `積み込みを開始したコマンドバッファ`をほかのモジュールが実装することはできない。
+    pub trait 積み先を作ってよい局面 {}
+}
+
 #[derive(Clone, Copy)]
-pub(crate) struct GPU命令の積み先<'デバイス> {
-    device: &'デバイス ash::Device,
+pub(crate) struct GPU命令の積み先<'積み込み> {
+    device: &'積み込み ash::Device,
     command_buffer: vk::CommandBuffer,
 }
 
-impl<'デバイス> GPU命令の積み先<'デバイス> {
-    /// 前提: command_bufferは呼び出し元が積み込みを開始したものであり、deviceはそれを配った論理デバイスである。
-    pub(crate) fn 生成する(device: &'デバイス ash::Device, command_buffer: vk::CommandBuffer) -> Self {
-        Self { device, command_buffer }
-    }
-
-    pub(crate) fn 論理デバイス(&self) -> &'デバイス ash::Device {
+impl<'積み込み> GPU命令の積み先<'積み込み> {
+    pub(crate) fn 論理デバイス(&self) -> &'積み込み ash::Device {
         self.device
     }
 
     pub(crate) fn コマンドバッファ(&self) -> vk::CommandBuffer {
         self.command_buffer
+    }
+}
+
+/// 積み込みを開始したコマンドバッファを保持している局面。積み先を作れるのはこれを実装した型だけである。
+pub(crate) trait 積み込みを開始したコマンドバッファ: 封印::積み先を作ってよい局面 {
+    fn 積み込み中の論理デバイス(&self) -> &ash::Device;
+    fn 積み込み中のコマンドバッファ(&self) -> vk::CommandBuffer;
+
+    /// 命令を積む工程へ渡す組。借りるのはこの局面自身であるため、閉じた後の積み先は使えない。
+    fn 積み先(&self) -> GPU命令の積み先<'_> {
+        GPU命令の積み先 {
+            device: self.積み込み中の論理デバイス(),
+            command_buffer: self.積み込み中のコマンドバッファ(),
+        }
+    }
+}
+
+impl 封印::積み先を作ってよい局面 for 転送コマンドを積む一時コマンドバッファ<'_> {}
+
+impl 積み込みを開始したコマンドバッファ for 転送コマンドを積む一時コマンドバッファ<'_> {
+    fn 積み込み中の論理デバイス(&self) -> &ash::Device {
+        self.論理デバイス()
+    }
+
+    fn 積み込み中のコマンドバッファ(&self) -> vk::CommandBuffer {
+        self.積む先のコマンドバッファ()
+    }
+}
+
+impl 封印::積み先を作ってよい局面 for GPU命令を積む一時コマンドバッファ<'_> {}
+
+impl 積み込みを開始したコマンドバッファ for GPU命令を積む一時コマンドバッファ<'_> {
+    fn 積み込み中の論理デバイス(&self) -> &ash::Device {
+        self.論理デバイス()
+    }
+
+    fn 積み込み中のコマンドバッファ(&self) -> vk::CommandBuffer {
+        self.積む先のコマンドバッファ()
+    }
+}
+
+impl 封印::積み先を作ってよい局面 for フレームのGPU命令を積むコマンドバッファ<'_> {}
+
+impl 積み込みを開始したコマンドバッファ for フレームのGPU命令を積むコマンドバッファ<'_> {
+    fn 積み込み中の論理デバイス(&self) -> &ash::Device {
+        self.論理デバイス()
+    }
+
+    fn 積み込み中のコマンドバッファ(&self) -> vk::CommandBuffer {
+        self.積む先のコマンドバッファ()
     }
 }

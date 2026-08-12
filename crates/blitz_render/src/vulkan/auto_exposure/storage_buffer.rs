@@ -7,6 +7,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::{GPU資源の確保係, 専用メモリ付きバッファ};
+use crate::vulkan::command_sink::積み込みを開始したコマンドバッファ;
 use crate::vulkan::geometry::upload::ステージング経由でアップロードする;
 use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::transfer::転送実行環境;

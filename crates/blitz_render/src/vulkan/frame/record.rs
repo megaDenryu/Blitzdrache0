@@ -36,6 +36,7 @@ use super::session::フレームのGPU命令を積むコマンドバッファ;
 use super::{フレーム画像一式, 任意描画入力, 描画対象入力, 描画方式};
 use crate::clear_color::クリアカラー;
 use crate::frame_composition::フレーム構成;
+use crate::vulkan::command_sink::積み込みを開始したコマンドバッファ;
 use crate::vulkan::graph;
 
 /// 1フレームぶんの記録が読む材料の束。1つの束にするのは、この7つがどれもそのフレームのグラフの形を決める材料であり、

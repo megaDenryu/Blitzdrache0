@@ -16,6 +16,7 @@ use crate::vulkan::transfer::転送実行環境;
 
 use super::create::縮小段の積み方;
 use super::mip_chain;
+use crate::vulkan::command_sink::積み込みを開始したコマンドバッファ;
 
 pub(super) fn 素材の縮小段を画像へ転送する(
     確保係: &GPU資源の確保係<'_>,

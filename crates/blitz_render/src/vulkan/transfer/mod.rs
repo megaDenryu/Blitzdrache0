@@ -10,6 +10,8 @@ mod session;
 
 use ash::vk;
 
+pub(crate) use session::転送コマンドを積む一時コマンドバッファ;
+
 use crate::error::レンダラーエラー;
 use crate::vulkan::unsent_command_buffers::未送信のコマンドバッファ数;
 

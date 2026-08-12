@@ -8,7 +8,6 @@ use ash::vk;
 
 use super::environment::フレームの記録の実行環境;
 use crate::error::レンダラーエラー;
-use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::gpu_timing;
 
 /// 注意: `記録を閉じて送信し提示する`を呼ばずに捨てると勘定が戻らない。
@@ -49,9 +48,14 @@ impl<'環境> フレームのGPU命令を積むコマンドバッファ<'環境>
         })
     }
 
-    /// 返る組が借りるのは実行環境であり、この値ではない。積んだ後にこの値を送信で消費できる。
-    pub(crate) fn 積み先(&self) -> GPU命令の積み先<'環境> {
-        GPU命令の積み先::生成する(self.環境.論理デバイス(), self.command_buffer)
+    /// 積み先を組む材料。`command_sink`が積み先を作るためだけに開ける口であり、返る参照はこの値を借りる。
+    /// 記録を閉じて送信した後の積み先が残らないよう、`'環境`でなくこの値の借用へ縛る。
+    pub(in crate::vulkan) fn 論理デバイス(&self) -> &ash::Device {
+        self.環境.論理デバイス()
+    }
+
+    pub(in crate::vulkan) fn 積む先のコマンドバッファ(&self) -> vk::CommandBuffer {
+        self.command_buffer
     }
 
     pub(super) fn 環境(&self) -> &'環境 フレームの記録の実行環境 {

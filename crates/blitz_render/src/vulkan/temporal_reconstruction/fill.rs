@@ -12,6 +12,7 @@ use ash::vk;
 use super::images::時間再構成の画像組;
 use crate::error::レンダラーエラー;
 use crate::vulkan::command_sink::GPU命令の積み先;
+use crate::vulkan::command_sink::積み込みを開始したコマンドバッファ;
 use crate::vulkan::transfer::転送実行環境;
 
 fn 部分範囲() -> vk::ImageSubresourceRange {
