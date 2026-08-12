@@ -65,11 +65,9 @@ impl 粒子ディスクリプタ一式 {
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: poolの破棄がsetの解放を暗黙に行う。layout・poolはSelfが唯一の
-        // 所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを
-        // 呼び出し元が保証する。
-        unsafe {
-            device.destroy_descriptor_pool(self.pool, None);
-        }
+        // 安全性: poolの破棄がsetの解放を暗黙に行う。poolはSelfが唯一の所有者であり、
+        // 破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
+        unsafe { device.destroy_descriptor_pool(self.pool, None) };
+        self.layout.破棄する(device);
     }
 }
