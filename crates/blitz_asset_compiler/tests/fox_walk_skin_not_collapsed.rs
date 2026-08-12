@@ -8,7 +8,8 @@
 use std::path::PathBuf;
 
 use blitz_asset_compiler::{ソースアセットのコンパイル係, テクスチャ格納方針};
-use blitz_engine::{アセットID, カタログ, スキンデータ, チャンク座標, 姿勢, 姿勢を評価する};
+use blitz_engine::animation::{姿勢, 姿勢を評価する};
+use blitz_engine::{アセットID, カタログ, スキンデータ, チャンク座標};
 
 fn リポジトリルートからのパス(相対パス: &str) -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..").join(相対パス)

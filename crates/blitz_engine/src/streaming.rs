@@ -2,6 +2,7 @@
 
 mod chunk_diff;
 mod chunk_directory;
+mod chunk_directory_file;
 mod chunk_grid;
 mod chunk_ledger;
 mod chunk_request;
@@ -12,7 +13,6 @@ mod coordinator_progress;
 mod coordinator_settings;
 mod directory_error;
 mod directory_load_error;
-mod directory_loader;
 mod error;
 mod eviction_hysteresis;
 mod eviction_result;
@@ -31,6 +31,7 @@ mod transfer_total;
 
 pub use chunk_diff::{GPU転送完了結果, チャンク集合差分, 準備完了結果, 解除報告結果};
 pub use chunk_directory::チャンク目録;
+pub use chunk_directory_file::実行時チャンク目録のファイル;
 pub use chunk_grid::チャンク格子;
 pub use chunk_ledger::チャンク台帳;
 pub use chunk_request::チャンク要求;
@@ -41,7 +42,6 @@ pub use coordinator_progress::ストリーミング進行;
 pub use coordinator_settings::ストリーミング調停設定;
 pub use directory_error::チャンク目録エラー;
 pub use directory_load_error::実行時チャンク目録読込エラー;
-pub use directory_loader::実行時チャンク目録を読み込む;
 pub use error::チャンク格子エラー;
 pub use eviction_result::退避結果;
 pub use fixed_route::固定経路;

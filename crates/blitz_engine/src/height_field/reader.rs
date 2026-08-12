@@ -8,7 +8,7 @@ use super::field::高さ場;
 use super::load_error::高さ場読込エラー;
 use super::query_result::地表高さの問い合わせ結果;
 use super::stable_id::世界の高さ場の安定IDの綴り;
-use crate::asset::{アセットID, カタログ, 実行時形式から高さ場を読む};
+use crate::asset::{アセットID, カタログ, 実行時形式から高さ場を読む, 実行時形式のファイル};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum 高さ場の読み口 {
@@ -26,9 +26,10 @@ impl 高さ場の読み口 {
         let Some(パス) = カタログ.パスを参照する(&id) else {
             return Ok(Self::高さ場を持たない世界);
         };
-        let バイト列 =
-            std::fs::read(パス).map_err(|誤り| 高さ場読込エラー::ファイル読込失敗(format!("{}: {誤り}", パス.display())))?;
-        Ok(Self::高さ場を持つ世界(実行時形式から高さ場を読む(&バイト列)?))
+        let ファイル = 実行時形式のファイル::パスから作る(パス.to_path_buf());
+        Ok(Self::高さ場を持つ世界(実行時形式から高さ場を読む(
+            &ファイル.バイト列を読む()?,
+        )?))
     }
 
     pub fn 大域の水平位置から地表高さを求める(&self, 位置: 大域ワールド位置) -> 地表高さの問い合わせ結果 {

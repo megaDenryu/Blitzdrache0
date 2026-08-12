@@ -3,7 +3,7 @@
 use std::path::PathBuf;
 use std::time::SystemTime;
 
-use blitz_engine::{アセットID, カタログ, シーンデータ, 実行時シーンを読み込む, 実行時シーン読込エラー};
+use blitz_engine::{アセットID, カタログ, シーンデータ, 実行時シーンのファイル, 実行時シーン読込エラー};
 
 use super::mtime;
 
@@ -37,7 +37,9 @@ impl アセット監視状態 {
             return None;
         }
 
-        let 結果 = 実行時シーンを読み込む(&self.カタログ, &self.id);
+        let 結果 = 実行時シーンのファイル::カタログの安定idから作る(&self.カタログ, &self.id)
+            .ok_or_else(|| 実行時シーン読込エラー::カタログ未登録(self.id.clone()))
+            .and_then(|ファイル| ファイル.読み込む());
         if let Ok(シーン) = &結果 {
             self.参照ファイル一覧 = 時刻一覧を取得する(&シーン.参照ファイル一覧);
         }

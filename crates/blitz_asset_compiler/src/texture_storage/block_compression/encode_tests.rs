@@ -3,7 +3,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use blitz_engine::texture_storage::テクスチャ格納形式;
+use blitz_engine::texture_storage::{テクスチャ格納形式, 縮小段の寸法};
 use blitz_engine::テクスチャデータ;
 
 use super::super::pixel_color::ブロックの画素色;
@@ -46,7 +46,9 @@ fn 段のバイト数はエンジンの算術と一致する() {
     for (幅, 高さ) in [(4, 4), (5, 3), (1, 1), (16, 16), (7, 9)] {
         let 段 = 一様な段を作る(幅, 高さ, [10, 200, 30, 255]);
         let バイト列 = rgba8の縮小段をbc1のバイト列へ符号化する(&段).unwrap();
-        let 期待 = テクスチャ格納形式::BC1.縮小段の格納バイト数を求める(幅, 高さ).unwrap();
+        let 期待 = テクスチャ格納形式::BC1
+            .縮小段の格納バイト数を求める(縮小段の寸法::生成する(幅, 高さ).unwrap())
+            .unwrap();
         assert_eq!(u64::try_from(バイト列.len()).unwrap(), 期待);
     }
 }

@@ -10,35 +10,31 @@ use super::stage_bucket::段別並べ替え;
 use super::visible_pass_set::可視パス集合;
 
 #[derive(Default)]
-pub struct 段別ID受け皿 {
+pub(super) struct 段別ID受け皿 {
     id列: Vec<u32>,
     段範囲列: Vec<段別描画範囲>,
     並べ替え: 段別並べ替え,
 }
 
 impl 段別ID受け皿 {
-    pub fn 生成する() -> Self {
-        Self::default()
-    }
-
-    pub fn 空にする(&mut self) {
+    pub(super) fn 空にする(&mut self) {
         self.id列.clear();
         self.段範囲列.clear();
     }
 
-    pub fn id列(&self) -> &[u32] {
+    pub(super) fn id列(&self) -> &[u32] {
         &self.id列
     }
 
-    pub fn 段範囲列(&self) -> &[段別描画範囲] {
+    pub(super) fn 段範囲列(&self) -> &[段別描画範囲] {
         &self.段範囲列
     }
 
-    pub fn id列の長さ(&self) -> usize {
+    pub(super) fn id列の長さ(&self) -> usize {
         self.id列.len()
     }
 
-    pub fn 段範囲列の長さ(&self) -> usize {
+    pub(super) fn 段範囲列の長さ(&self) -> usize {
         self.段範囲列.len()
     }
 

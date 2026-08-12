@@ -7,7 +7,9 @@
 use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::読取位置;
 use super::super::texture_format_tag::判別値から格納形式を読む;
-use crate::asset::texture_storage::{テクスチャ格納形式, 格納済みテクスチャ, 格納済みテクスチャエラー};
+use crate::asset::texture_storage::{
+    テクスチャ格納形式, 格納済みテクスチャ, 格納済みテクスチャエラー, 縮小段の寸法
+};
 
 /// 縮小段1本ぶんの最小バイト数。宣言長のu64と、最も小さい段であるRGBA8の1x1の4バイトの合計である。
 const 縮小段最小長: usize = 12;
@@ -23,8 +25,8 @@ pub(in crate::asset::runtime_format::scene) fn 版4までのテクスチャを�
         return Ok(None);
     };
     let 宣言長 = 入力.u64()?;
-    let 期待長 = テクスチャ格納形式::RGBA8
-        .縮小段の格納バイト数を求める(幅, 高さ)
+    let 期待長 = 縮小段の寸法::生成する(幅, 高さ)
+        .and_then(|寸法| テクスチャ格納形式::RGBA8.縮小段の格納バイト数を求める(寸法))
         .map_err(格納済みテクスチャエラー::from)?;
     if 期待長 != 宣言長 {
         return Err(アセット実行時形式エラー::テクスチャ長不一致 {

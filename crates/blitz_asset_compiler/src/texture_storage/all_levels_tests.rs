@@ -3,7 +3,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use blitz_engine::texture_storage::テクスチャ格納形式;
+use blitz_engine::texture_storage::{テクスチャ格納形式, 縮小段の寸法};
 use blitz_engine::テクスチャデータ;
 
 use super::srgbの色の全段をbc1のバイト列へ符号化する;
@@ -19,7 +19,10 @@ fn 全段のバイト数が段ごとの算術と一致する() {
     let 長さ一覧: Vec<usize> = 全段.iter().map(Vec::len).collect();
     let 期待一覧: Vec<usize> = [(8, 8), (4, 4), (2, 2), (1, 1)]
         .into_iter()
-        .map(|(幅, 高さ)| usize::try_from(テクスチャ格納形式::BC1.縮小段の格納バイト数を求める(幅, 高さ).unwrap()).unwrap())
+        .map(|(幅, 高さ)| {
+            let 寸法 = 縮小段の寸法::生成する(幅, 高さ).unwrap();
+            usize::try_from(テクスチャ格納形式::BC1.縮小段の格納バイト数を求める(寸法).unwrap()).unwrap()
+        })
         .collect();
     assert_eq!(長さ一覧, 期待一覧);
 }

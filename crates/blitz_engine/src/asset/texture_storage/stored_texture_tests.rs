@@ -2,17 +2,19 @@
 
 #![allow(clippy::unwrap_used)]
 
-use super::level_extent::{縮小段の幅と高さを求める, 縮小段数の上限を求める};
+use super::level_extent::縮小段の寸法;
 use super::stored_texture::格納済みテクスチャ;
 use super::stored_texture_error::格納済みテクスチャエラー;
 use super::テクスチャ格納形式;
 use crate::asset::texture_data::テクスチャデータ;
 
 fn bc1の全段を作る(幅: u32, 高さ: u32) -> Vec<Vec<u8>> {
-    (0..縮小段数の上限を求める(幅, 高さ).unwrap())
+    let 原寸 = 縮小段の寸法::生成する(幅, 高さ).unwrap();
+    (0..原寸.縮小段数の上限を返す())
         .map(|段番号| {
-            let (段の幅, 段の高さ) = 縮小段の幅と高さを求める(幅, 高さ, 段番号).unwrap();
-            let 長さ = テクスチャ格納形式::BC1.縮小段の格納バイト数を求める(段の幅, 段の高さ).unwrap();
+            let 長さ = テクスチャ格納形式::BC1
+                .縮小段の格納バイト数を求める(原寸.縮小段番号が指す寸法(段番号))
+                .unwrap();
             vec![0; usize::try_from(長さ).unwrap()]
         })
         .collect()
@@ -20,11 +22,12 @@ fn bc1の全段を作る(幅: u32, 高さ: u32) -> Vec<Vec<u8>> {
 
 #[test]
 fn 段番号が増えるごとに寸法が半分になり1で止まる() {
-    assert_eq!(縮小段の幅と高さを求める(8, 5, 0).unwrap(), (8, 5));
-    assert_eq!(縮小段の幅と高さを求める(8, 5, 1).unwrap(), (4, 2));
-    assert_eq!(縮小段の幅と高さを求める(8, 5, 3).unwrap(), (1, 1));
-    assert_eq!(縮小段数の上限を求める(8, 5).unwrap(), 4);
-    assert_eq!(縮小段数の上限を求める(1, 1).unwrap(), 1);
+    let 原寸 = 縮小段の寸法::生成する(8, 5).unwrap();
+    assert_eq!(原寸.縮小段番号が指す寸法(0), 原寸);
+    assert_eq!(原寸.縮小段番号が指す寸法(1), 縮小段の寸法::生成する(4, 2).unwrap());
+    assert_eq!(原寸.縮小段番号が指す寸法(3), 縮小段の寸法::生成する(1, 1).unwrap());
+    assert_eq!(原寸.縮小段数の上限を返す(), 4);
+    assert_eq!(縮小段の寸法::生成する(1, 1).unwrap().縮小段数の上限を返す(), 1);
 }
 
 #[test]

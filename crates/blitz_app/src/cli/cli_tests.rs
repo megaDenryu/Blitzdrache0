@@ -1,8 +1,9 @@
 //! CLI既定値とフレーム時間報告フラグの解析を検証する。
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use super::{布モード, 引数を解析する, 描画対象の走査順, 粒子表示モード, 起動モード, 起動要求, 起動設定};
+use blitz_engine::実行時カタログのファイル;
 
 /// 描画実行の要求として解析できることを前提に、起動設定だけを取り出す。
 fn 描画設定を解析する(引数一覧: &[String]) -> 起動設定 {
@@ -19,8 +20,8 @@ fn 引数なしは既定値を保つ() {
     assert!(matches!(設定.モード, 起動モード::無期限実行));
     assert_eq!(設定.シェーダーの入口ファイル.パス(), Path::new("shaders/scene.slang"));
     assert_eq!(設定.シーン.安定id().文字列を返す(), "quad");
-    let 既定のカタログ = Path::new("target/runtime_assets/catalog.blitzcatalog");
-    assert_eq!(設定.アセットの置き場.カタログのパス(), 既定のカタログ);
+    let 既定のカタログ = 実行時カタログのファイル::パスから作る(PathBuf::from("target/runtime_assets/catalog.blitzcatalog"));
+    assert_eq!(設定.アセットの置き場.カタログのファイル(), 既定のカタログ);
     assert!(設定.描画対象の並べ方.件数.is_none());
     assert_eq!(設定.描画対象の並べ方.走査順, 描画対象の走査順::読込順);
     assert!(設定.ライティング.有効);
@@ -32,7 +33,7 @@ fn 引数なしは既定値を保つ() {
     assert!(!設定.フレームダンプ先.書き出すか());
     assert!(設定.ポスト処理有効);
     assert_eq!(設定.露出.値(), 1.0);
-    assert_eq!(設定.ブレンド.値(), 0.0);
+    assert_eq!(設定.ブレンド, super::アニメーションのブレンド係数::既定());
     assert_eq!(設定.布モード, 布モード::なし);
     assert!(!設定.実表示時間報告);
 }

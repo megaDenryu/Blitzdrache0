@@ -14,6 +14,7 @@
 
 #![allow(clippy::unwrap_used)]
 
+use super::hdr_pixel::明るさの圧縮前のHDR画素;
 use super::luminance::相対輝度を求める;
 use crate::temporal_reconstruction::{相対輝度を求める as 時間再構成の相対輝度を求める, 線形色};
 
@@ -31,7 +32,7 @@ const 検査する色一覧: [[f32; 3]; 7] = [
 #[test]
 fn 二つの層の相対輝度は完全に一致する() {
     for 色 in 検査する色一覧 {
-        let 自動露出の値 = 相対輝度を求める(色[0], 色[1], 色[2]);
+        let 自動露出の値 = 相対輝度を求める(明るさの圧縮前のHDR画素::成分から生成する(色)).値();
         let 時間再構成の値 = 時間再構成の相対輝度を求める(線形色::成分から生成する(色).unwrap()).値();
         assert_eq!(
             自動露出の値.to_bits(),
