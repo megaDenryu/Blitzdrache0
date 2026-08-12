@@ -72,7 +72,7 @@ impl 自動露出一式 {
 
     /// 明るさの圧縮のディスクリプタが束縛する、GPU上の露出状態。
     pub(crate) fn 露出状態バッファ(&self) -> vk::Buffer {
-        self.バッファ.露出状態.handle()
+        self.バッファ.露出状態.バッファのハンドル()
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {

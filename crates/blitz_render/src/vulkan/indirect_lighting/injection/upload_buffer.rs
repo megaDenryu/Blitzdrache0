@@ -23,7 +23,7 @@ impl 注入元バッファ {
         Ok(Self { バッファ })
     }
 
-    pub(in crate::vulkan::indirect_lighting) fn handle(&self) -> vk::Buffer {
+    pub(in crate::vulkan::indirect_lighting) fn バッファのハンドル(&self) -> vk::Buffer {
         self.バッファ.バッファのハンドル()
     }
 

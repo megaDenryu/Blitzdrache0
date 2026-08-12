@@ -47,15 +47,15 @@ impl フレームシェーダー定数一式 {
     }
 
     pub(crate) fn ビュー定数のbuffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
-        self.ビュー.buffer(フレーム添字)
+        self.ビュー.フレームスロットのバッファ(フレーム添字)
     }
 
     pub(crate) fn 多段影のbuffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
-        self.多段影.buffer(フレーム添字)
+        self.多段影.フレームスロットのバッファ(フレーム添字)
     }
 
     pub(crate) fn 空パスのbuffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
-        self.空パス.buffer(フレーム添字)
+        self.空パス.フレームスロットのバッファ(フレーム添字)
     }
 
     pub(crate) fn ビュー定数を書き込む(

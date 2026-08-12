@@ -22,7 +22,7 @@ impl 遠方環境の書き込みバッファ {
         Ok(Self { バッファ })
     }
 
-    pub(super) fn handle(&self) -> vk::Buffer {
+    pub(super) fn バッファのハンドル(&self) -> vk::Buffer {
         self.バッファ.バッファのハンドル()
     }
 

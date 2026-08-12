@@ -14,7 +14,7 @@ impl 読み戻しバッファ {
         Ok(Self { バッファ })
     }
 
-    pub(crate) fn handle(&self) -> ash::vk::Buffer {
+    pub(crate) fn バッファのハンドル(&self) -> ash::vk::Buffer {
         self.バッファ.バッファのハンドル()
     }
 

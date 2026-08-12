@@ -26,7 +26,7 @@ impl 定数バッファ一式 {
         })
     }
 
-    pub(super) fn buffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
+    pub(super) fn フレームスロットのバッファ(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
         self.スロットごとのバッファ.スロットのバッファ(フレーム添字)
     }
 

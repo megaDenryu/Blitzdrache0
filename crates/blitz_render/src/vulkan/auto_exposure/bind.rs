@@ -15,9 +15,9 @@ impl 自動露出一式 {
         let 画像情報一覧 = [vk::DescriptorImageInfo::default()
             .image_view(hdrビュー)
             .image_layout(vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL)];
-        let 境界情報一覧 = [バッファ全体(self.バッファ.境界.handle())];
-        let ヒストグラム情報一覧 = [バッファ全体(self.バッファ.ヒストグラム.handle())];
-        let 露出状態情報一覧 = [バッファ全体(self.バッファ.露出状態.handle())];
+        let 境界情報一覧 = [バッファ全体(self.バッファ.境界.バッファのハンドル())];
+        let ヒストグラム情報一覧 = [バッファ全体(self.バッファ.ヒストグラム.バッファのハンドル())];
+        let 露出状態情報一覧 = [バッファ全体(self.バッファ.露出状態.バッファのハンドル())];
         let セット = self.ディスクリプタ.セット;
         let write一覧 = [
             vk::WriteDescriptorSet::default()

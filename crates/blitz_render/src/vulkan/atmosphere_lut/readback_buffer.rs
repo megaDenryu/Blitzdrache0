@@ -33,7 +33,7 @@ impl ベイク済み画像の読み戻しバッファ {
         create::二成分で生成する(確保係, テクセル数)
     }
 
-    pub(in crate::vulkan) fn handle(&self) -> vk::Buffer {
+    pub(in crate::vulkan) fn バッファのハンドル(&self) -> vk::Buffer {
         self.バッファ.バッファのハンドル()
     }
 

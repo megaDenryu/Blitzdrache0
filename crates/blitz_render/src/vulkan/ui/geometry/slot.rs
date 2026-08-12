@@ -13,7 +13,7 @@ pub(super) struct バッファスロット {
 }
 
 impl バッファスロット {
-    pub(super) fn buffer(&self) -> vk::Buffer {
+    pub(super) fn バッファのハンドル(&self) -> vk::Buffer {
         self.バッファ.バッファのハンドル()
     }
 
@@ -49,5 +49,5 @@ pub(super) fn 書き込む(
     Ok(スロット
         .as_ref()
         .unwrap_or_else(|| panic!("UIジオメトリバッファスロットの確保に失敗した(実装のバグ)"))
-        .buffer())
+        .バッファのハンドル())
 }

@@ -22,7 +22,7 @@ impl 書き換えバッファ {
         Ok(Self { バッファ })
     }
 
-    pub(super) fn buffer(&self) -> vk::Buffer {
+    pub(super) fn バッファのハンドル(&self) -> vk::Buffer {
         self.バッファ.バッファのハンドル()
     }
 

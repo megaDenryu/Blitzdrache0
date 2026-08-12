@@ -37,7 +37,7 @@ impl 記憶バッファ {
         Ok(Self { バッファ })
     }
 
-    pub(crate) fn handle(&self) -> vk::Buffer {
+    pub(crate) fn バッファのハンドル(&self) -> vk::Buffer {
         self.バッファ.バッファのハンドル()
     }
 

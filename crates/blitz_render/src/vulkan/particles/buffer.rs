@@ -18,7 +18,7 @@ pub(crate) struct 粒子バッファ {
 }
 
 impl 粒子バッファ {
-    pub(crate) fn buffer(&self) -> vk::Buffer {
+    pub(crate) fn バッファのハンドル(&self) -> vk::Buffer {
         self.バッファ.バッファのハンドル()
     }
 
