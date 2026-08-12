@@ -8,7 +8,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::材質のセットの書き込み先;
+use crate::vulkan::descriptor::材質の割り当て済みセット;
 use crate::vulkan::material_record::材質レコードバッファ;
 use crate::vulkan::texture::テクスチャ;
 use crate::vulkan::tracked_device::GPUデバイス;
@@ -19,7 +19,7 @@ use crate::vulkan::material_table::resource_table::材質資源の作業環境;
 pub(in crate::vulkan::material_table) struct 世代束縛資源 {
     レコードバッファ: 材質レコードバッファ,
     pool: vk::DescriptorPool,
-    材質のセット: vk::DescriptorSet,
+    材質のセット: 材質の割り当て済みセット,
 }
 
 impl 世代束縛資源 {
@@ -52,7 +52,7 @@ impl 世代束縛資源 {
     }
 
     pub(in crate::vulkan::material_table) fn 材質のセット(&self) -> vk::DescriptorSet {
-        self.材質のセット
+        self.材質のセット.セットのハンドル()
     }
 
     /// 注意: プールの破棄がセットの解放を暗黙に行う。
@@ -85,8 +85,8 @@ fn セットを割り当てて結ぶ(
     pool: vk::DescriptorPool,
     レコードバッファ: &材質レコードバッファ,
     画像集合: &[テクスチャ],
-) -> Result<vk::DescriptorSet, レンダラーエラー> {
+) -> Result<材質の割り当て済みセット, レンダラーエラー> {
     let セット = 環境.セットレイアウト.材質のセットを1つ割り当てる(環境.論理デバイス(), pool)?;
-    材質のセットの書き込み先::生成する(環境.論理デバイス(), セット).世代の資源を結ぶ(レコードバッファ, 画像集合);
+    セット.書き込み先(環境.論理デバイス()).世代の資源を結ぶ(レコードバッファ, 画像集合);
     Ok(セット)
 }

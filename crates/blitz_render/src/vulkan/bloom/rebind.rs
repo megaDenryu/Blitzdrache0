@@ -4,33 +4,32 @@
 
 use ash::vk;
 
-use super::descriptor::{二読みの宣言, 単一読みの宣言};
 use super::光のにじみ一式;
 use crate::vulkan::bloom_targets::光のにじみピラミッド;
-use crate::vulkan::descriptor::結ぶ現物;
+use crate::vulkan::descriptor::{宣言から割り当てたセット, 結ぶ現物};
 
 impl 光のにじみ一式 {
     /// 前提: 呼び出し時点でGPUがこれらのディスクリプタセットを使用していないこと
     /// (`ディスクリプタを作り直す`経由でのみ呼ばれ、その前提を引き継ぐ)。
     pub(super) fn ビューを書く(&self, device: &ash::Device, hdrビュー: vk::ImageView, ピラミッド: &光のにじみピラミッド) {
-        self.読み元1枚を書く(device, self.前処理set, hdrビュー);
-        for (添字, &set) in self.縮小set一覧.iter().enumerate() {
+        let セット群 = self.確保済みのセット群();
+        self.読み元1枚を書く(device, &セット群.前処理set, hdrビュー);
+        for (添字, set) in セット群.縮小set一覧.iter().enumerate() {
             self.読み元1枚を書く(device, set, ピラミッド.縮小一覧[添字].画像ビュー);
         }
-        for (添字, &set) in self.拡大set一覧.iter().enumerate() {
-            let 小さい方 = if 添字 + 1 < self.拡大set一覧.len() {
+        for (添字, set) in セット群.拡大set一覧.iter().enumerate() {
+            let 小さい方 = if 添字 + 1 < セット群.拡大set一覧.len() {
                 ピラミッド.拡大一覧[添字 + 1].画像ビュー
             } else {
                 ピラミッド.縮小一覧[添字 + 1].画像ビュー
             };
-            二読みの宣言
-                .書き込み先(device, set)
+            set.書き込み先(device)
                 .並びの位置ごとに結ぶ([self.読み元(小さい方), self.読み元(ピラミッド.縮小一覧[添字].画像ビュー)]);
         }
     }
 
-    fn 読み元1枚を書く(&self, device: &ash::Device, set: vk::DescriptorSet, ビュー: vk::ImageView) {
-        単一読みの宣言.書き込み先(device, set).並びの位置ごとに結ぶ([self.読み元(ビュー)]);
+    fn 読み元1枚を書く(&self, device: &ash::Device, set: &宣言から割り当てたセット<1>, ビュー: vk::ImageView) {
+        set.書き込み先(device).並びの位置ごとに結ぶ([self.読み元(ビュー)]);
     }
 
     fn 読み元(&self, ビュー: vk::ImageView) -> 結ぶ現物 {

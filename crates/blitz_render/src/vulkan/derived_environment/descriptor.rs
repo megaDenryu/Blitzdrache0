@@ -10,11 +10,12 @@ mod binding;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット};
 
 pub(super) struct 派生表現ディスクリプタ {
-    pub(super) layout: vk::DescriptorSetLayout,
+    layout: 宣言から作ったセットレイアウト<2>,
     pool: vk::DescriptorPool,
-    set一覧: Vec<vk::DescriptorSet>,
+    set一覧: Vec<宣言から割り当てたセット<2>>,
 }
 
 impl 派生表現ディスクリプタ {
@@ -28,21 +29,18 @@ impl 派生表現ディスクリプタ {
         let layout = binding::レイアウトを作る(device)?;
         let pool = match binding::プールを作る(device, セット数) {
             Ok(pool) => pool,
-            Err(誤り) => return Err(レイアウトを片付けて返す(device, layout, 誤り)),
+            Err(誤り) => return Err(レイアウトを片付けて返す(device, &layout, 誤り)),
         };
-        let layout一覧 = vec![layout; 書き込み先一覧.len()];
-        let alloc_info = vk::DescriptorSetAllocateInfo::default().descriptor_pool(pool).set_layouts(&layout一覧);
-        // 安全性: pool・layoutは直前に生成済みで有効。
-        let set一覧 = match unsafe { device.allocate_descriptor_sets(&alloc_info) } {
+        let set一覧 = match layout.プールからセットを割り当てる(device, pool, 書き込み先一覧.len()) {
             Ok(set一覧) => set一覧,
             Err(誤り) => {
                 // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
                 unsafe { device.destroy_descriptor_pool(pool, None) };
-                return Err(レイアウトを片付けて返す(device, layout, 誤り.into()));
+                return Err(レイアウトを片付けて返す(device, &layout, 誤り));
             }
         };
         for (set, 書き込み先) in set一覧.iter().zip(書き込み先一覧) {
-            binding::書き込む(device, *set, 遠方環境の配列ビュー, *書き込み先);
+            binding::書き込む(device, set, 遠方環境の配列ビュー, *書き込み先);
         }
         Ok(Self { layout, pool, set一覧 })
     }
@@ -51,22 +49,26 @@ impl 派生表現ディスクリプタ {
         let Some(set) = self.set一覧.get(添字) else {
             panic!("派生表現ディスクリプタの範囲外のセット{添字}が要求された");
         };
-        *set
+        set.セットのハンドル()
+    }
+
+    /// パイプラインレイアウトの宣言へ渡す境界。
+    pub(super) fn レイアウトのハンドル(&self) -> vk::DescriptorSetLayout {
+        self.layout.レイアウトのハンドル()
     }
 
     pub(super) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: poolの破棄がsetの解放を暗黙に行う。layout・poolはSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了している。
-        unsafe {
-            device.destroy_descriptor_pool(self.pool, None);
-            device.destroy_descriptor_set_layout(self.layout, None);
-        }
+        // 安全性: poolの破棄がsetの解放を暗黙に行う。poolはSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了している。
+        unsafe { device.destroy_descriptor_pool(self.pool, None) };
+        self.layout.破棄する(device);
     }
 }
 
 fn レイアウトを片付けて返す(
-    device: &ash::Device, layout: vk::DescriptorSetLayout, 誤り: レンダラーエラー
+    device: &ash::Device,
+    layout: &宣言から作ったセットレイアウト<2>,
+    誤り: レンダラーエラー,
 ) -> レンダラーエラー {
-    // 安全性: layoutはこのスコープの唯一の所有者で、以降使用しない。
-    unsafe { device.destroy_descriptor_set_layout(layout, None) };
+    layout.破棄する(device);
     誤り
 }

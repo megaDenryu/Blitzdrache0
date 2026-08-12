@@ -11,7 +11,9 @@ use ash::vk;
 use super::空中遠近合成の束縛先;
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::descriptor_common;
-use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号, 結ぶ現物};
+use crate::vulkan::descriptor::{
+    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物
+};
 
 /// 並びの位置。深度は毎フレーム結び直し、ボリュームは生成時に1度だけ結ぶ。
 const 深度の位置: usize = 0;
@@ -30,11 +32,8 @@ const 宣言: 宣言した束縛の並び<2> = 宣言した束縛の並び::生�
     ),
 ]);
 
-pub(super) fn レイアウトを作る(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let バインド一覧 = 宣言.セットレイアウトの宣言();
-    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
+pub(super) fn レイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<2>, レンダラーエラー> {
+    宣言.セットレイアウトを確保する(device)
 }
 
 pub(super) fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
@@ -47,20 +46,30 @@ pub(super) fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorP
 
 /// ボリュームを結ぶ。生成時に1度だけ書けば足りるのは、ボリュームが起動時に1度確保して使い回す画像だからである。
 pub(super) fn ボリュームを書き込む(
-    device: &ash::Device, set: vk::DescriptorSet, sampler: vk::Sampler, 束縛先: &空中遠近合成の束縛先
+    device: &ash::Device,
+    セット: &宣言から割り当てたセット<2>,
+    sampler: vk::Sampler,
+    束縛先: &空中遠近合成の束縛先,
 ) {
-    書き込む(device, set, ボリュームの位置, sampler, 束縛先.空中遠近ビュー, vk::ImageLayout::GENERAL);
+    書き込む(device, セット, ボリュームの位置, sampler, 束縛先.空中遠近ビュー, vk::ImageLayout::GENERAL);
 }
 
 /// 深度を結ぶ。毎フレーム呼ぶ理由は`composite_descriptor`の冒頭にある。
-pub(super) fn 深度を書き込む(device: &ash::Device, set: vk::DescriptorSet, sampler: vk::Sampler, 深度ビュー: vk::ImageView) {
-    書き込む(device, set, 深度の位置, sampler, 深度ビュー, vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL);
+pub(super) fn 深度を書き込む(
+    device: &ash::Device, セット: &宣言から割り当てたセット<2>, sampler: vk::Sampler, 深度ビュー: vk::ImageView
+) {
+    書き込む(device, セット, 深度の位置, sampler, 深度ビュー, vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL);
 }
 
 fn 書き込む(
-    device: &ash::Device, set: vk::DescriptorSet, 位置: usize, sampler: vk::Sampler, ビュー: vk::ImageView, レイアウト: vk::ImageLayout
+    device: &ash::Device,
+    セット: &宣言から割り当てたセット<2>,
+    位置: usize,
+    sampler: vk::Sampler,
+    ビュー: vk::ImageView,
+    レイアウト: vk::ImageLayout,
 ) {
-    宣言.書き込み先(device, set).並びの位置へ結ぶ(
+    セット.書き込み先(device).並びの位置へ結ぶ(
         位置,
         結ぶ現物::サンプラー付きの画像 {
             ビュー,

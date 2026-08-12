@@ -5,7 +5,6 @@
 
 use ash::vk;
 
-use super::descriptor::束縛の宣言;
 use super::自動露出一式;
 use crate::vulkan::descriptor::結ぶ現物;
 
@@ -15,7 +14,7 @@ impl 自動露出一式 {
     /// 注意: 画像のレイアウトは`画像用途::シェーダー読みコンピュート段`が導くSHADER_READ_ONLY_OPTIMALと一致させる。
     /// 食い違うとvalidationがディスクリプタのレイアウト不一致を報告する。
     pub(crate) fn 資源を束縛する(&self, device: &ash::Device, hdrビュー: vk::ImageView) {
-        束縛の宣言.書き込み先(device, self.ディスクリプタ.セット).並びの位置ごとに結ぶ([
+        self.ディスクリプタ.セット.書き込み先(device).並びの位置ごとに結ぶ([
             結ぶ現物::サンプラー無しの画像 {
                 ビュー: hdrビュー,
                 レイアウト: vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL,

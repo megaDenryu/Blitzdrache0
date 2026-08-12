@@ -29,7 +29,7 @@ impl 布一式 {
                 return Err(誤り);
             }
         };
-        let パイプライン群 = match pipelines::生成する(確保係, ディスクリプタ.layout, シェーダー) {
+        let パイプライン群 = match pipelines::生成する(確保係, ディスクリプタ.レイアウトのハンドル(), シェーダー) {
             Ok(群) => 群,
             Err(誤り) => {
                 ディスクリプタ.破棄する(device);

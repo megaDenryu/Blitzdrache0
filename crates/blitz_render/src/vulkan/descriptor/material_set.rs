@@ -11,10 +11,12 @@
 //! 割り当て済みのセットへ1つの資源表世代を書き込む型は`set_write`が持つ。レイアウトを決めるのがレンダラー生成時の
 //! 1回だけであるのに対し、書き込みは世代を作り直すたびに繰り返され、呼ばれる頻度が違うためである。
 
+mod allocated_set;
 mod set_write;
 
 use ash::vk;
 
+pub(crate) use allocated_set::材質の割り当て済みセット;
 pub(crate) use set_write::材質のセットの書き込み先;
 
 use super::束縛番号;

@@ -3,7 +3,7 @@
 
 use ash::vk;
 
-use super::{UIテクスチャのディスクリプタ資源, 束縛の宣言};
+use super::UIテクスチャのディスクリプタ資源;
 use crate::error::レンダラーエラー;
 use crate::vulkan::descriptor::結ぶ現物;
 use crate::vulkan::ui::texture::UIテクスチャ;
@@ -14,22 +14,16 @@ impl UIテクスチャのディスクリプタ資源 {
         device: &ash::Device,
         テクスチャ: &UIテクスチャ,
     ) -> Result<vk::DescriptorSet, レンダラーエラー> {
-        let layout一覧 = [self.レイアウトのハンドル()];
-        let alloc_info = vk::DescriptorSetAllocateInfo::default()
-            .descriptor_pool(self.プールのハンドル())
-            .set_layouts(&layout一覧);
-        // 安全性: pool・layoutは生成済みで有効。
-        let set一覧 = unsafe { device.allocate_descriptor_sets(&alloc_info)? };
-        let Some(&set) = set一覧.first() else {
-            panic!("allocate_descriptor_setsが1個でなく{}個のセットを返した", set一覧.len());
+        let 一覧 = self.セットレイアウト().プールからセットを割り当てる(device, self.プールのハンドル(), 1)?;
+        let Some(セット) = 一覧.into_iter().next() else {
+            panic!("要求した1つのUIテクスチャのセットが返らなかった");
         };
-
-        束縛の宣言.書き込み先(device, set).並びの位置ごとに結ぶ([結ぶ現物::サンプラー付きの画像 {
+        セット.書き込み先(device).並びの位置ごとに結ぶ([結ぶ現物::サンプラー付きの画像 {
             ビュー: テクスチャ.image_view,
             サンプラー: テクスチャ.sampler,
             レイアウト: vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL,
         }]);
-        Ok(set)
+        Ok(セット.セットのハンドル())
     }
 
     /// 前提: 破棄時点でGPU側の使用が完了していることを呼び出し元(device_wait_idle)が保証する。

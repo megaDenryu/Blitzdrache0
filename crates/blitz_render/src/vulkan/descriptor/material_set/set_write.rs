@@ -12,7 +12,7 @@ use crate::vulkan::texture::テクスチャ;
 pub(crate) struct 材質のセットの書き込み先<'書き込み>(ディスクリプタの書き込み先<'書き込み>);
 
 impl<'書き込み> 材質のセットの書き込み先<'書き込み> {
-    pub(crate) fn 生成する(device: &'書き込み ash::Device, セット: vk::DescriptorSet) -> Self {
+    pub(in crate::vulkan::descriptor) fn 生成する(device: &'書き込み ash::Device, セット: vk::DescriptorSet) -> Self {
         Self(ディスクリプタの書き込み先::生成する(device, セット))
     }
 

@@ -20,7 +20,7 @@ use crate::vulkan::shadow_resources::影の資源の組;
 pub(crate) struct 照明問い合わせのセットの書き込み先<'書き込み>(ディスクリプタの書き込み先<'書き込み>);
 
 impl<'書き込み> 照明問い合わせのセットの書き込み先<'書き込み> {
-    pub(crate) fn 生成する(device: &'書き込み ash::Device, セット: vk::DescriptorSet) -> Self {
+    pub(in crate::vulkan::descriptor) fn 生成する(device: &'書き込み ash::Device, セット: vk::DescriptorSet) -> Self {
         Self(ディスクリプタの書き込み先::生成する(device, セット))
     }
 

@@ -13,6 +13,7 @@ use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::bloom_targets::光のにじみピラミッド;
+use crate::vulkan::descriptor::宣言から作ったセットレイアウト;
 use crate::vulkan::fullscreen_pipeline::全画面パスのパイプライン;
 
 pub(crate) struct 光のにじみ一式 {
@@ -20,12 +21,11 @@ pub(crate) struct 光のにじみ一式 {
     pub(crate) 縮小: 全画面パスのパイプライン,
     pub(crate) 拡大: 全画面パスのパイプライン,
     sampler: vk::Sampler,
-    単一読みlayout: vk::DescriptorSetLayout,
-    二読みlayout: vk::DescriptorSetLayout,
-    descriptor_pool: vk::DescriptorPool,
-    pub(crate) 前処理set: vk::DescriptorSet,
-    pub(crate) 縮小set一覧: Vec<vk::DescriptorSet>,
-    pub(crate) 拡大set一覧: Vec<vk::DescriptorSet>,
+    単一読みlayout: 宣言から作ったセットレイアウト<1>,
+    二読みlayout: 宣言から作ったセットレイアウト<2>,
+    /// 段数が解像度に依存するため、ピラミッドを作り直すたびに丸ごと入れ替える。作り直しの途中で失敗したときに
+    /// 破棄済みのプールが残らないよう、有無を`Option`で表して破棄済みの状態を`None`で持つ。
+    セット群: Option<descriptor::光のにじみセット群>,
 }
 
 impl 光のにじみ一式 {
@@ -55,19 +55,26 @@ impl 光のにじみ一式 {
         hdrビュー: vk::ImageView,
         ピラミッド: &光のにじみピラミッド,
     ) -> Result<(), レンダラーエラー> {
-        if self.descriptor_pool != vk::DescriptorPool::null() {
-            // 安全性: 旧プールと旧セットは前提によりGPU未使用。プールの破棄がセットの解放を暗黙に行う。
-            unsafe { device.destroy_descriptor_pool(self.descriptor_pool, None) };
-            // 注意: 破棄したハンドルを即座に外す。以降の生成が失敗して抜けたとき、破棄済みハンドルが残っていると`破棄する`が二重破棄する。
-            self.descriptor_pool = vk::DescriptorPool::null();
+        // 注意: 旧いセット群を先に外してから破棄する。以降の生成が失敗して抜けたとき、破棄済みのプールが残っていると`破棄する`が二重破棄する。
+        if let Some(旧い) = self.セット群.take() {
+            旧い.破棄する(device);
         }
-        let ディスクリプタ = descriptor::生成する(device, self.単一読みlayout, self.二読みlayout, ピラミッド.縮小一覧.len())?;
-        self.descriptor_pool = ディスクリプタ.pool;
-        self.前処理set = ディスクリプタ.前処理set;
-        self.縮小set一覧 = ディスクリプタ.縮小set一覧;
-        self.拡大set一覧 = ディスクリプタ.拡大set一覧;
+        self.セット群 = Some(descriptor::生成する(
+            device,
+            &self.単一読みlayout,
+            &self.二読みlayout,
+            ピラミッド.縮小一覧.len(),
+        )?);
         self.ビューを書く(device, hdrビュー, ピラミッド);
         Ok(())
+    }
+
+    /// フレームの記録とビューの束縛へ渡す境界。
+    /// 前提: 生成の直後にセット群が入っており、`None`は呼び出し規律の破れである。
+    pub(crate) fn 確保済みのセット群(&self) -> &descriptor::光のにじみセット群 {
+        self.セット群
+            .as_ref()
+            .unwrap_or_else(|| panic!("光のにじみのセット群が未確保のまま参照された"))
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {
@@ -75,13 +82,12 @@ impl 光のにじみ一式 {
         for パイプライン in [&self.前処理, &self.縮小, &self.拡大] {
             パイプライン.破棄する(device);
         }
-        unsafe {
-            if self.descriptor_pool != vk::DescriptorPool::null() {
-                device.destroy_descriptor_pool(self.descriptor_pool, None);
-            }
-            device.destroy_descriptor_set_layout(self.単一読みlayout, None);
-            device.destroy_descriptor_set_layout(self.二読みlayout, None);
-            device.destroy_sampler(self.sampler, None);
+        if let Some(セット群) = &self.セット群 {
+            セット群.破棄する(device);
         }
+        // 安全性: samplerはSelfが唯一の所有者である。
+        unsafe { device.destroy_sampler(self.sampler, None) };
+        self.二読みlayout.破棄する(device);
+        self.単一読みlayout.破棄する(device);
     }
 }

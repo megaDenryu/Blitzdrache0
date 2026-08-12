@@ -6,7 +6,6 @@
 
 use ash::vk;
 
-use super::descriptor::束縛の宣言;
 use super::局所可視性一式;
 use crate::vulkan::descriptor::結ぶ現物;
 
@@ -17,7 +16,7 @@ impl 局所可視性一式 {
     /// 2枚の可視度画像は`コンピュート書き`と`コンピュート記憶読み`が導くGENERALと一致させる。
     /// 食い違うとvalidationがディスクリプタのレイアウト不一致を報告する。
     pub(crate) fn 資源を束縛する(&self, device: &ash::Device, 深度ビュー: vk::ImageView) {
-        束縛の宣言.書き込み先(device, self.ディスクリプタ.セット).並びの位置ごとに結ぶ([
+        self.ディスクリプタ.セット.書き込み先(device).並びの位置ごとに結ぶ([
             結ぶ現物::サンプラー無しの画像 {
                 ビュー: 深度ビュー,
                 レイアウト: vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL,

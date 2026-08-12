@@ -11,18 +11,17 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号, 結ぶ現物};
+use crate::vulkan::descriptor::{
+    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物
+};
 
 const 宣言: 宣言した束縛の並び<2> = 宣言した束縛の並び::生成する([
     (束縛番号::生成する(0), vk::DescriptorType::SAMPLED_IMAGE, vk::ShaderStageFlags::COMPUTE),
     (束縛番号::生成する(1), vk::DescriptorType::STORAGE_IMAGE, vk::ShaderStageFlags::COMPUTE),
 ]);
 
-pub(super) fn レイアウトを作る(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let バインド一覧 = 宣言.セットレイアウトの宣言();
-    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
+pub(super) fn レイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<2>, レンダラーエラー> {
+    宣言.セットレイアウトを確保する(device)
 }
 
 pub(super) fn プールを作る(device: &ash::Device, セット数: u32) -> Result<vk::DescriptorPool, レンダラーエラー> {
@@ -33,9 +32,12 @@ pub(super) fn プールを作る(device: &ash::Device, セット数: u32) -> Res
 }
 
 pub(super) fn 書き込む(
-    device: &ash::Device, set: vk::DescriptorSet, 遠方環境の配列ビュー: vk::ImageView, 書き込み先: vk::ImageView
+    device: &ash::Device,
+    セット: &宣言から割り当てたセット<2>,
+    遠方環境の配列ビュー: vk::ImageView,
+    書き込み先: vk::ImageView,
 ) {
-    宣言.書き込み先(device, set).並びの位置ごとに結ぶ([
+    セット.書き込み先(device).並びの位置ごとに結ぶ([
         結ぶ現物::サンプラー無しの画像 {
             ビュー: 遠方環境の配列ビュー,
             レイアウト: vk::ImageLayout::GENERAL,

@@ -8,12 +8,13 @@ mod create;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット};
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 pub(super) struct 透過率ディスクリプタ {
-    pub(super) layout: vk::DescriptorSetLayout,
+    layout: 宣言から作ったセットレイアウト<2>,
     pool: vk::DescriptorPool,
-    set一覧: [vk::DescriptorSet; 進行中フレーム数],
+    set一覧: [宣言から割り当てたセット<2>; 進行中フレーム数],
 }
 
 impl 透過率ディスクリプタ {
@@ -26,14 +27,19 @@ impl 透過率ディスクリプタ {
     }
 
     pub(super) fn set(&self, フレーム添字: フレームスロット添字) -> vk::DescriptorSet {
-        self.set一覧[フレーム添字.配列添字()]
+        self.set一覧[フレーム添字.配列添字()].セットのハンドル()
+    }
+
+    /// パイプラインレイアウトの宣言へ渡す境界。
+    pub(super) fn レイアウトのハンドル(&self) -> vk::DescriptorSetLayout {
+        self.layout.レイアウトのハンドル()
     }
 
     pub(super) fn 破棄する(&self, device: &ash::Device) {
         // 安全性: poolの破棄がsetの解放を暗黙に行う。layout・poolはSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了している。
         unsafe {
             device.destroy_descriptor_pool(self.pool, None);
-            device.destroy_descriptor_set_layout(self.layout, None);
         }
+        self.layout.破棄する(device);
     }
 }

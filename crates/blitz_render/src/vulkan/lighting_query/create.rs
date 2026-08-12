@@ -7,12 +7,10 @@ use super::照明問い合わせ資源束;
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::descriptor::lighting_set::distant_environment::遠方環境を読むサンプラー;
-use crate::vulkan::descriptor::{
-    シーンセットレイアウト一式, 照明問い合わせのセットの書き込み先, 照明問い合わせのディスクリプタプール
-};
+use crate::vulkan::descriptor::{シーンセットレイアウト一式, 照明問い合わせのディスクリプタプール};
 use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
 use crate::vulkan::shadow_resources::影の資源の組;
-use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
+use crate::vulkan::sync::進行中フレーム数;
 
 pub(super) fn 生成する(
     確保係: &GPU資源の確保係<'_>,
@@ -80,11 +78,10 @@ fn スロット一覧を作る(
     let device = 確保係.論理デバイス();
     let セット一覧 = レイアウト.照明問い合わせのセットを割り当てる(device, pool.プールのハンドル(), 進行中フレーム数)?;
     let mut スロット一覧: Vec<スロット資源> = Vec::with_capacity(進行中フレーム数);
-    for 添字 in フレームスロット添字::全スロット() {
-        let セット = セット一覧[添字.配列添字()];
+    for セット in セット一覧 {
         match スロット資源::生成する(確保係, セット) {
             Ok(資源) => {
-                照明問い合わせのセットの書き込み先::生成する(device, セット).バッファ組と影の資源を結ぶ(資源.バッファ組(), 影の資源);
+                資源.セット.書き込み先(device).バッファ組と影の資源を結ぶ(資源.バッファ組(), 影の資源);
                 スロット一覧.push(資源);
             }
             Err(誤り) => {

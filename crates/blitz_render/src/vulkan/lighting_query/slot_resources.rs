@@ -14,6 +14,7 @@ use super::writable_buffer::書き換えバッファ;
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::descriptor::照明問い合わせのバッファ組;
+use crate::vulkan::descriptor::照明問い合わせの割り当て済みセット;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) struct スロット資源 {
@@ -22,12 +23,14 @@ pub(super) struct スロット資源 {
     pub(super) 局所光列: 書き換えバッファ,
     /// 選別のコンピュートだけが書く2本。CPUからの書き込みの口を持たない。
     pub(super) クラスタ格子: クラスタ格子の資源,
-    pub(super) セット: vk::DescriptorSet,
+    pub(super) セット: 照明問い合わせの割り当て済みセット,
 }
 
 impl スロット資源 {
     /// 3本のバッファを順に確保する。途中で失敗したら、そこまでに確保したぶんをその場で逆順に破棄する。
-    pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, セット: vk::DescriptorSet) -> Result<Self, レンダラーエラー> {
+    pub(super) fn 生成する(
+        確保係: &GPU資源の確保係<'_>, セット: 照明問い合わせの割り当て済みセット
+    ) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
         let 定数用途 = vk::BufferUsageFlags::UNIFORM_BUFFER;
         let 列用途 = vk::BufferUsageFlags::STORAGE_BUFFER;

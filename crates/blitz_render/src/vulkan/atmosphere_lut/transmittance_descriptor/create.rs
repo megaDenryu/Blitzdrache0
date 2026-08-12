@@ -6,7 +6,9 @@ use ash::vk;
 use super::透過率ディスクリプタ;
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::descriptor_common;
-use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号, 結ぶ現物};
+use crate::vulkan::descriptor::{
+    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物
+};
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 const 宣言: 宣言した束縛の並び<2> = 宣言した束縛の並び::生成する([
@@ -23,28 +25,27 @@ pub(super) fn 生成する(
     let pool = match プールを作る(device) {
         Ok(pool) => pool,
         Err(誤り) => {
-            descriptor_common::途中の資源を片付ける(device, layout, None);
+            layout.破棄する(device);
             return Err(誤り);
         }
     };
-    let set一覧 = match descriptor_common::セットを割り当てる(device, pool, layout) {
+    let set一覧 = match layout.進行中フレームスロットごとのセットを割り当てる(device, pool) {
         Ok(set一覧) => set一覧,
         Err(誤り) => {
-            descriptor_common::途中の資源を片付ける(device, layout, Some(pool));
+            // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
+            unsafe { device.destroy_descriptor_pool(pool, None) };
+            layout.破棄する(device);
             return Err(誤り);
         }
     };
     for 添字 in フレームスロット添字::全スロット() {
-        書き込む(device, set一覧[添字.配列添字()], シェーダー定数一覧[添字.配列添字()], 書き込み先);
+        書き込む(device, &set一覧[添字.配列添字()], シェーダー定数一覧[添字.配列添字()], 書き込み先);
     }
     Ok(透過率ディスクリプタ { layout, pool, set一覧 })
 }
 
-fn レイアウトを作る(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let バインド一覧 = 宣言.セットレイアウトの宣言();
-    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
+fn レイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<2>, レンダラーエラー> {
+    宣言.セットレイアウトを確保する(device)
 }
 
 fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
@@ -57,8 +58,10 @@ fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レン
 
 /// 注意: ストレージ画像のレイアウトはGENERALである。レンダーグラフの画像用途「コンピュート書き」が同じレイアウトへ遷移させており、
 /// ここの値とバリアの導出先が食い違うとvalidationがレイアウト不一致を報告する。
-fn 書き込む(device: &ash::Device, set: vk::DescriptorSet, シェーダー定数: vk::Buffer, 書き込み先: vk::ImageView) {
-    宣言.書き込み先(device, set).並びの位置ごとに結ぶ([
+fn 書き込む(
+    device: &ash::Device, セット: &宣言から割り当てたセット<2>, シェーダー定数: vk::Buffer, 書き込み先: vk::ImageView
+) {
+    セット.書き込み先(device).並びの位置ごとに結ぶ([
         結ぶ現物::バッファ全体(シェーダー定数),
         結ぶ現物::サンプラー無しの画像 {
             ビュー: 書き込み先,

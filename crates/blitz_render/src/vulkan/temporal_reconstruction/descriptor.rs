@@ -10,7 +10,9 @@ use ash::vk;
 
 use super::images::履歴の枚数;
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号};
+use crate::vulkan::descriptor::{
+    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号
+};
 
 const 標本: vk::DescriptorType = vk::DescriptorType::SAMPLED_IMAGE;
 const 標本器つき: vk::DescriptorType = vk::DescriptorType::COMBINED_IMAGE_SAMPLER;
@@ -25,52 +27,46 @@ pub(super) const 束縛の宣言: 宣言した束縛の並び<4> = 宣言した�
 ]);
 
 pub(super) struct 時間再構成のディスクリプタ {
-    レイアウト: vk::DescriptorSetLayout,
+    レイアウト: 宣言から作ったセットレイアウト<4>,
     pool: vk::DescriptorPool,
-    pub(super) セット一覧: [vk::DescriptorSet; 履歴の枚数],
+    pub(super) セット一覧: [宣言から割り当てたセット<4>; 履歴の枚数],
 }
 
 impl 時間再構成のディスクリプタ {
     pub(super) fn 生成する(device: &ash::Device) -> Result<Self, レンダラーエラー> {
         let レイアウト = レイアウトを作る(device)?;
-        match プールから割り当てる(device, レイアウト) {
+        match プールから割り当てる(device, &レイアウト) {
             Ok((pool, セット一覧)) => Ok(Self {
                 レイアウト,
                 pool,
                 セット一覧,
             }),
             Err(誤り) => {
-                // 安全性: レイアウトはこのスコープの唯一の所有者で、以降使用しない。
-                unsafe { device.destroy_descriptor_set_layout(レイアウト, None) };
+                レイアウト.破棄する(device);
                 Err(誤り)
             }
         }
     }
 
     pub(super) fn レイアウト(&self) -> vk::DescriptorSetLayout {
-        self.レイアウト
+        self.レイアウト.レイアウトのハンドル()
     }
 
     pub(super) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: 各ハンドルはSelfが唯一の所有者。プールの破棄がセットの解放を暗黙に行う。
-        unsafe {
-            device.destroy_descriptor_pool(self.pool, None);
-            device.destroy_descriptor_set_layout(self.レイアウト, None);
-        }
+        // 安全性: プールはSelfが唯一の所有者であり、その破棄がセットの解放を暗黙に行う。
+        unsafe { device.destroy_descriptor_pool(self.pool, None) };
+        self.レイアウト.破棄する(device);
     }
 }
 
-fn レイアウトを作る(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let binding一覧 = 束縛の宣言.セットレイアウトの宣言();
-    let 生成情報 = vk::DescriptorSetLayoutCreateInfo::default().bindings(&binding一覧);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_descriptor_set_layout(&生成情報, None)? })
+fn レイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<4>, レンダラーエラー> {
+    束縛の宣言.セットレイアウトを確保する(device)
 }
 
 fn プールから割り当てる(
     device: &ash::Device,
-    レイアウト: vk::DescriptorSetLayout,
-) -> Result<(vk::DescriptorPool, [vk::DescriptorSet; 履歴の枚数]), レンダラーエラー> {
+    レイアウト: &宣言から作ったセットレイアウト<4>,
+) -> Result<(vk::DescriptorPool, [宣言から割り当てたセット<4>; 履歴の枚数]), レンダラーエラー> {
     let 枚数 = u32::try_from(履歴の枚数).unwrap_or_else(|_| panic!("履歴の枚数がu32に収まらない: {履歴の枚数}"));
     let 大きさ一覧 = [
         vk::DescriptorPoolSize::default().ty(標本).descriptor_count(3 * 枚数),
@@ -79,20 +75,15 @@ fn プールから割り当てる(
     let プール情報 = vk::DescriptorPoolCreateInfo::default().max_sets(枚数).pool_sizes(&大きさ一覧);
     // 安全性: deviceは生成済みで有効。
     let pool = unsafe { device.create_descriptor_pool(&プール情報, None)? };
-    let レイアウト一覧 = [レイアウト; 履歴の枚数];
-    let 割当情報 = vk::DescriptorSetAllocateInfo::default()
-        .descriptor_pool(pool)
-        .set_layouts(&レイアウト一覧);
-    // 安全性: poolは直前に生成済みで、レイアウトは呼び出し元が生成済みのものを渡す。
-    match unsafe { device.allocate_descriptor_sets(&割当情報) } {
-        Ok(一覧) => match <[vk::DescriptorSet; 履歴の枚数]>::try_from(一覧.as_slice()) {
+    match レイアウト.プールからセットを割り当てる(device, pool, 履歴の枚数) {
+        Ok(一覧) => match <[宣言から割り当てたセット<4>; 履歴の枚数]>::try_from(一覧) {
             Ok(セット一覧) => Ok((pool, セット一覧)),
-            Err(_) => panic!("allocate_descriptor_setsが要求した{履歴の枚数}個のセットを返さなかった(Vulkan実装の契約違反)"),
+            Err(_) => panic!("割り当てたセットの件数が履歴の枚数と一致しない"),
         },
         Err(誤り) => {
             // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
             unsafe { device.destroy_descriptor_pool(pool, None) };
-            Err(誤り.into())
+            Err(誤り)
         }
     }
 }

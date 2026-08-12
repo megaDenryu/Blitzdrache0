@@ -3,7 +3,6 @@
 
 use ash::vk;
 
-use super::descriptor::束縛の宣言;
 use super::明るさの圧縮一式;
 use crate::vulkan::descriptor::結ぶ現物;
 
@@ -14,7 +13,7 @@ impl 明るさの圧縮一式 {
     /// 生成直後と、スワップチェーン再構築でHDR/光のにじみ画像を作り直した後に呼ぶ。
     /// 前提: 呼び出し時点でGPUがこのディスクリプタセットを使用していないこと(生成直後またはdevice_wait_idle後)。
     pub(crate) fn ビューを再束縛する(&self, device: &ash::Device, hdrビュー: vk::ImageView, 光のにじみビュー: vk::ImageView) {
-        let 書き込み先 = 束縛の宣言.書き込み先(device, self.descriptor_set);
+        let 書き込み先 = self.ディスクリプタ.set.書き込み先(device);
         for (位置, ビュー) in [hdrビュー, 光のにじみビュー].into_iter().enumerate() {
             書き込み先.並びの位置へ結ぶ(
                 位置,
@@ -29,8 +28,9 @@ impl 明るさの圧縮一式 {
 
     /// 生成直後に1度だけ呼ぶ。露出状態のバッファはスワップチェーン再構築で作り直さないため、再束縛の対象にしない。
     pub(crate) fn 露出状態を束縛する(&self, device: &ash::Device, 露出状態バッファ: vk::Buffer) {
-        束縛の宣言
-            .書き込み先(device, self.descriptor_set)
+        self.ディスクリプタ
+            .set
+            .書き込み先(device)
             .並びの位置へ結ぶ(露出状態の位置, 結ぶ現物::バッファ全体(露出状態バッファ));
     }
 }

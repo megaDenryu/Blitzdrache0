@@ -18,14 +18,15 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット};
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 pub(crate) struct 空中遠近合成ディスクリプタ {
-    pub(crate) layout: vk::DescriptorSetLayout,
+    layout: 宣言から作ったセットレイアウト<2>,
     pool: vk::DescriptorPool,
     深度サンプラー: vk::Sampler,
     ボリュームサンプラー: vk::Sampler,
-    set一覧: [vk::DescriptorSet; 進行中フレーム数],
+    set一覧: [宣言から割り当てたセット<2>; 進行中フレーム数],
 }
 
 /// 生成時に結ぶ束縛先。深度はフレームごとに変わるためここに載せない。
@@ -41,7 +42,12 @@ impl 空中遠近合成ディスクリプタ {
     }
 
     pub(crate) fn set(&self, フレーム添字: フレームスロット添字) -> vk::DescriptorSet {
-        self.set一覧[フレーム添字.配列添字()]
+        self.set一覧[フレーム添字.配列添字()].セットのハンドル()
+    }
+
+    /// パイプラインレイアウトの宣言へ渡す境界。
+    pub(crate) fn レイアウトのハンドル(&self) -> vk::DescriptorSetLayout {
+        self.layout.レイアウトのハンドル()
     }
 
     /// そのスロットのセットへ、このフレームの深度画像を結び直す。
@@ -49,16 +55,16 @@ impl 空中遠近合成ディスクリプタ {
     pub(crate) fn 深度を結び直す(
         &self, device: &ash::Device, フレーム添字: フレームスロット添字, 深度ビュー: vk::ImageView
     ) {
-        binding::深度を書き込む(device, self.set(フレーム添字), self.深度サンプラー, 深度ビュー);
+        binding::深度を書き込む(device, &self.set一覧[フレーム添字.配列添字()], self.深度サンプラー, 深度ビュー);
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {
         // 安全性: poolの破棄がsetの解放を暗黙に行う。sampler・layout・poolはSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了している。
         unsafe {
             device.destroy_descriptor_pool(self.pool, None);
-            device.destroy_descriptor_set_layout(self.layout, None);
             device.destroy_sampler(self.ボリュームサンプラー, None);
             device.destroy_sampler(self.深度サンプラー, None);
         }
+        self.layout.破棄する(device);
     }
 }

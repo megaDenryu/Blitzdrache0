@@ -8,7 +8,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言した束縛の並び, 束縛番号};
 
 /// 束縛の並び。ビュー定数と粒子ストレージバッファの順である。番号が連番でないのは、粒子のバッファを
 /// scene系が使わない番号3へ置いているからである。
@@ -21,9 +21,6 @@ pub(super) const 束縛の宣言: 宣言した束縛の並び<2> = 宣言した�
     ),
 ]);
 
-pub(super) fn 生成する(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let バインド一覧 = 束縛の宣言.セットレイアウトの宣言();
-    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
+pub(super) fn 生成する(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<2>, レンダラーエラー> {
+    束縛の宣言.セットレイアウトを確保する(device)
 }

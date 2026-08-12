@@ -8,7 +8,6 @@ use ash::vk;
 use super::{binding, 空中遠近合成の束縛先, 空中遠近合成ディスクリプタ};
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
-use crate::vulkan::atmosphere_lut::descriptor_common;
 use crate::vulkan::sync::フレームスロット添字;
 
 pub(super) fn 生成する(
@@ -29,19 +28,21 @@ pub(super) fn 生成する(
     let pool = match binding::プールを作る(device) {
         Ok(pool) => pool,
         Err(誤り) => {
-            descriptor_common::途中の資源を片付ける(device, layout, None);
+            layout.破棄する(device);
             return Err(作ったサンプラーを片付けて返す(device, &二本, 誤り));
         }
     };
-    let set一覧 = match descriptor_common::セットを割り当てる(device, pool, layout) {
+    let set一覧 = match layout.進行中フレームスロットごとのセットを割り当てる(device, pool) {
         Ok(set一覧) => set一覧,
         Err(誤り) => {
-            descriptor_common::途中の資源を片付ける(device, layout, Some(pool));
+            // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
+            unsafe { device.destroy_descriptor_pool(pool, None) };
+            layout.破棄する(device);
             return Err(作ったサンプラーを片付けて返す(device, &二本, 誤り));
         }
     };
     for 添字 in フレームスロット添字::全スロット() {
-        binding::ボリュームを書き込む(device, set一覧[添字.配列添字()], ボリュームサンプラー, 束縛先);
+        binding::ボリュームを書き込む(device, &set一覧[添字.配列添字()], ボリュームサンプラー, 束縛先);
     }
     Ok(空中遠近合成ディスクリプタ {
         layout,

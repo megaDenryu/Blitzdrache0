@@ -15,7 +15,7 @@ mod set;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言した束縛の並び, 束縛番号};
 
 /// 束縛の並び。UIテクスチャ1枚を読むcombined image samplerが1本だけである。
 pub(super) const 束縛の宣言: 宣言した束縛の並び<1> = 宣言した束縛の並び::生成する([(
@@ -28,26 +28,25 @@ pub(super) const 束縛の宣言: 宣言した束縛の並び<1> = 宣言した�
 pub(crate) const 最大テクスチャ数: u32 = 32;
 
 pub(crate) struct UIテクスチャのディスクリプタ資源 {
-    layout: vk::DescriptorSetLayout,
+    layout: 宣言から作ったセットレイアウト<1>,
     pool: vk::DescriptorPool,
 }
 
 impl UIテクスチャのディスクリプタ資源 {
     pub(crate) fn 確保する(device: &ash::Device) -> Result<Self, レンダラーエラー> {
-        let layout = レイアウトを作る(device)?;
+        let layout = 束縛の宣言.セットレイアウトを確保する(device)?;
         match プールを作る(device) {
             Ok(pool) => Ok(Self { layout, pool }),
             Err(誤り) => {
-                // 安全性: layoutはこのスコープの唯一の所有者で、以降使用しない。
-                unsafe { device.destroy_descriptor_set_layout(layout, None) };
+                layout.破棄する(device);
                 Err(誤り)
             }
         }
     }
 
     /// UIパイプラインの宣言へ渡す境界。
-    pub(crate) const fn レイアウトのハンドル(&self) -> vk::DescriptorSetLayout {
-        self.layout
+    pub(crate) fn レイアウトのハンドル(&self) -> vk::DescriptorSetLayout {
+        self.layout.レイアウトのハンドル()
     }
 
     /// セットの割り当てと解放へ渡す境界。プールのハンドルはこの型の外へ出さない。
@@ -55,22 +54,18 @@ impl UIテクスチャのディスクリプタ資源 {
         self.pool
     }
 
+    /// セットの割り当ての起点。割り当てはこのレイアウトからしか始められない。
+    const fn セットレイアウト(&self) -> &宣言から作ったセットレイアウト<1> {
+        &self.layout
+    }
+
     /// 前提: 破棄時点でGPU側の使用が完了していることを呼び出し元が保証する。
     /// 注意: プールの破棄が残存セットの解放を暗黙に行う。
     pub(crate) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: layoutとpoolはSelfが唯一の所有者である。
-        unsafe {
-            device.destroy_descriptor_pool(self.pool, None);
-            device.destroy_descriptor_set_layout(self.layout, None);
-        }
+        // 安全性: poolはSelfが唯一の所有者である。
+        unsafe { device.destroy_descriptor_pool(self.pool, None) };
+        self.layout.破棄する(device);
     }
-}
-
-fn レイアウトを作る(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let バインド一覧 = 束縛の宣言.セットレイアウトの宣言();
-    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
 }
 
 fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {

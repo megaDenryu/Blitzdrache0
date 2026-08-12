@@ -8,6 +8,7 @@
 //! 割り当て済みのセットへ現物を書き込む型は`set_write`が持つ。呼ばれるのが生成時とスワップチェーン再構築の直後だけであり、
 //! レイアウトを決める局面と呼ばれる頻度が違うためである。
 
+mod allocated_set;
 mod buffer_group;
 pub(crate) mod cluster_grid;
 pub(crate) mod distant_environment;
@@ -18,6 +19,7 @@ mod set_write;
 
 use ash::vk;
 
+pub(crate) use allocated_set::照明問い合わせの割り当て済みセット;
 pub(crate) use buffer_group::照明問い合わせのバッファ組;
 pub(crate) use pool::照明問い合わせのディスクリプタプール;
 pub(crate) use set_write::照明問い合わせのセットの書き込み先;

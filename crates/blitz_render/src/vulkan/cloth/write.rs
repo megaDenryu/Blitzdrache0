@@ -3,8 +3,7 @@
 use ash::vk;
 
 use super::buffers::布バッファ;
-use super::descriptor::束縛の宣言;
-use crate::vulkan::descriptor::結ぶ現物;
+use crate::vulkan::descriptor::{宣言から割り当てたセット, 結ぶ現物};
 use crate::vulkan::sync::フレームスロット添字;
 
 /// 前提: setは割り当て済みで、生成直後(GPU未使用)にのみ呼ばれる。
@@ -12,12 +11,12 @@ use crate::vulkan::sync::フレームスロット添字;
 /// (アタッチパスが積まれないため読まれない。レイアウト上の束縛だけが必要)。
 pub(super) fn 書く(
     device: &ash::Device,
-    set: vk::DescriptorSet,
+    セット: &宣言から割り当てたセット<10>,
     バッファ: &布バッファ,
     スキン済み頂点buffer: Option<vk::Buffer>,
     フレーム添字: フレームスロット添字,
 ) {
-    束縛の宣言.書き込み先(device, set).並びの位置ごとに結ぶ([
+    セット.書き込み先(device).並びの位置ごとに結ぶ([
         結ぶ現物::バッファ全体(バッファ.定数一覧.スロットのバッファ(フレーム添字)),
         結ぶ現物::バッファ全体(バッファ.粒子.バッファのハンドル()),
         結ぶ現物::バッファ全体(バッファ.前位置.バッファのハンドル()),

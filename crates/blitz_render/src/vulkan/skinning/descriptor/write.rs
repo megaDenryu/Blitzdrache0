@@ -1,18 +1,15 @@
 //! スキニングディスクリプタセットへの4バッファ書き込み。並びの順はレスト頂点・スキン属性・スキン行列・スキン済み頂点であり、
 //! 番号と種別は`descriptor`が持つ束縛の宣言が決める。
 
-use ash::vk;
-
 use super::super::buffers::スキニングバッファ;
-use super::束縛の宣言;
-use crate::vulkan::descriptor::結ぶ現物;
+use crate::vulkan::descriptor::{宣言から割り当てたセット, 結ぶ現物};
 use crate::vulkan::sync::フレームスロット添字;
 
 /// 前提: setは割り当て済みで、生成直後(GPU未使用)にのみ呼ばれる。
 pub(super) fn 書く(
-    device: &ash::Device, set: vk::DescriptorSet, バッファ: &スキニングバッファ, フレーム添字: フレームスロット添字
+    device: &ash::Device, セット: &宣言から割り当てたセット<4>, バッファ: &スキニングバッファ, フレーム添字: フレームスロット添字
 ) {
-    束縛の宣言.書き込み先(device, set).並びの位置ごとに結ぶ([
+    セット.書き込み先(device).並びの位置ごとに結ぶ([
         結ぶ現物::バッファ全体(バッファ.レスト頂点buffer()),
         結ぶ現物::バッファ全体(バッファ.属性buffer()),
         結ぶ現物::バッファ全体(バッファ.行列buffer(フレーム添字)),

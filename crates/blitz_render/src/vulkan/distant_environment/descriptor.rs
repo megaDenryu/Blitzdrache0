@@ -17,13 +17,14 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット};
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 pub(super) struct 遠方環境ディスクリプタ {
-    pub(super) layout: vk::DescriptorSetLayout,
+    layout: 宣言から作ったセットレイアウト<3>,
     pool: vk::DescriptorPool,
     sampler: vk::Sampler,
-    set一覧: [vk::DescriptorSet; 進行中フレーム数],
+    set一覧: [宣言から割り当てたセット<3>; 進行中フレーム数],
 }
 
 /// ディスクリプタが結ぶ束縛先。2枚の画像のビューを取り違えないよう名前で受け取る。
@@ -41,15 +42,20 @@ impl 遠方環境ディスクリプタ {
     }
 
     pub(super) fn set(&self, フレーム添字: フレームスロット添字) -> vk::DescriptorSet {
-        self.set一覧[フレーム添字.配列添字()]
+        self.set一覧[フレーム添字.配列添字()].セットのハンドル()
+    }
+
+    /// パイプラインレイアウトの宣言へ渡す境界。
+    pub(super) fn レイアウトのハンドル(&self) -> vk::DescriptorSetLayout {
+        self.layout.レイアウトのハンドル()
     }
 
     pub(super) fn 破棄する(&self, device: &ash::Device) {
         // 安全性: poolの破棄がsetの解放を暗黙に行う。sampler・layout・poolはSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了している。
         unsafe {
             device.destroy_descriptor_pool(self.pool, None);
-            device.destroy_descriptor_set_layout(self.layout, None);
             device.destroy_sampler(self.sampler, None);
         }
+        self.layout.破棄する(device);
     }
 }

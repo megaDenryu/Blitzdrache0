@@ -6,7 +6,6 @@
 
 use ash::vk;
 
-use super::descriptor::束縛の宣言;
 use super::時間再構成一式;
 use crate::vulkan::descriptor::結ぶ現物;
 
@@ -23,18 +22,16 @@ impl 時間再構成一式 {
     /// 深度のレイアウトは`画像用途::深度シェーダー読み`が導くDEPTH_READ_ONLY_OPTIMALと一致させる。
     /// 食い違うとvalidationがディスクリプタのレイアウト不一致を報告する。
     fn 一つのセットを束縛する(&self, device: &ash::Device, 深度ビュー: vk::ImageView, 読み添字: usize) {
-        束縛の宣言
-            .書き込み先(device, self.ディスクリプタ.セット一覧[読み添字])
-            .並びの位置ごとに結ぶ([
-                読み取る画像(self.画像組.今のフレームの色.画像ビュー, vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL),
-                結ぶ現物::サンプラー付きの画像 {
-                    ビュー: self.画像組.履歴[読み添字].画像ビュー,
-                    サンプラー: self.標本器,
-                    レイアウト: vk::ImageLayout::GENERAL,
-                },
-                読み取る画像(self.画像組.動きベクトル.画像ビュー, vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL),
-                読み取る画像(深度ビュー, vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL),
-            ]);
+        self.ディスクリプタ.セット一覧[読み添字].書き込み先(device).並びの位置ごとに結ぶ([
+            読み取る画像(self.画像組.今のフレームの色.画像ビュー, vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL),
+            結ぶ現物::サンプラー付きの画像 {
+                ビュー: self.画像組.履歴[読み添字].画像ビュー,
+                サンプラー: self.標本器,
+                レイアウト: vk::ImageLayout::GENERAL,
+            },
+            読み取る画像(self.画像組.動きベクトル.画像ビュー, vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL),
+            読み取る画像(深度ビュー, vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL),
+        ]);
     }
 }
 

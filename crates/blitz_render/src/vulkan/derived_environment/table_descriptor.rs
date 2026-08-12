@@ -10,15 +10,17 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号, 結ぶ現物};
+use crate::vulkan::descriptor::{
+    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物
+};
 
 const 宣言: 宣言した束縛の並び<1> =
     宣言した束縛の並び::生成する([(束縛番号::生成する(0), vk::DescriptorType::STORAGE_IMAGE, vk::ShaderStageFlags::COMPUTE)]);
 
 pub(super) struct 反射率積分表ディスクリプタ {
-    pub(super) layout: vk::DescriptorSetLayout,
+    layout: 宣言から作ったセットレイアウト<1>,
     pool: vk::DescriptorPool,
-    set: vk::DescriptorSet,
+    set: 宣言から割り当てたセット<1>,
 }
 
 impl 反射率積分表ディスクリプタ {
@@ -26,44 +28,41 @@ impl 反射率積分表ディスクリプタ {
         let layout = レイアウトを作る(device)?;
         let pool = match プールを作る(device) {
             Ok(pool) => pool,
-            Err(誤り) => return Err(レイアウトを片付けて返す(device, layout, 誤り)),
+            Err(誤り) => return Err(レイアウトを片付けて返す(device, &layout, 誤り)),
         };
-        let layout一覧 = [layout];
-        let alloc_info = vk::DescriptorSetAllocateInfo::default().descriptor_pool(pool).set_layouts(&layout一覧);
-        // 安全性: pool・layoutは直前に生成済みで有効。
-        let set一覧 = match unsafe { device.allocate_descriptor_sets(&alloc_info) } {
+        let set一覧 = match layout.プールからセットを割り当てる(device, pool, 1) {
             Ok(set一覧) => set一覧,
             Err(誤り) => {
                 // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
                 unsafe { device.destroy_descriptor_pool(pool, None) };
-                return Err(レイアウトを片付けて返す(device, layout, 誤り.into()));
+                return Err(レイアウトを片付けて返す(device, &layout, 誤り));
             }
         };
-        let Some(&set) = set一覧.first() else {
+        let Some(set) = set一覧.into_iter().next() else {
             panic!("反射率積分表のディスクリプタセットが1つも割り当てられなかった");
         };
-        書き込む(device, set, 書き込み先);
+        書き込む(device, &set, 書き込み先);
         Ok(Self { layout, pool, set })
     }
 
     pub(super) fn set(&self) -> vk::DescriptorSet {
-        self.set
+        self.set.セットのハンドル()
+    }
+
+    /// パイプラインレイアウトの宣言へ渡す境界。
+    pub(super) fn レイアウトのハンドル(&self) -> vk::DescriptorSetLayout {
+        self.layout.レイアウトのハンドル()
     }
 
     pub(super) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: poolの破棄がsetの解放を暗黙に行う。layout・poolはSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了している。
-        unsafe {
-            device.destroy_descriptor_pool(self.pool, None);
-            device.destroy_descriptor_set_layout(self.layout, None);
-        }
+        // 安全性: poolの破棄がsetの解放を暗黙に行う。poolはSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了している。
+        unsafe { device.destroy_descriptor_pool(self.pool, None) };
+        self.layout.破棄する(device);
     }
 }
 
-fn レイアウトを作る(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let バインド一覧 = 宣言.セットレイアウトの宣言();
-    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
+fn レイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<1>, レンダラーエラー> {
+    宣言.セットレイアウトを確保する(device)
 }
 
 fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
@@ -73,17 +72,18 @@ fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レン
     Ok(unsafe { device.create_descriptor_pool(&create_info, None)? })
 }
 
-fn 書き込む(device: &ash::Device, set: vk::DescriptorSet, 書き込み先: vk::ImageView) {
-    宣言.書き込み先(device, set).並びの位置ごとに結ぶ([結ぶ現物::サンプラー無しの画像 {
+fn 書き込む(device: &ash::Device, セット: &宣言から割り当てたセット<1>, 書き込み先: vk::ImageView) {
+    セット.書き込み先(device).並びの位置ごとに結ぶ([結ぶ現物::サンプラー無しの画像 {
         ビュー: 書き込み先,
         レイアウト: vk::ImageLayout::GENERAL,
     }]);
 }
 
 fn レイアウトを片付けて返す(
-    device: &ash::Device, layout: vk::DescriptorSetLayout, 誤り: レンダラーエラー
+    device: &ash::Device,
+    layout: &宣言から作ったセットレイアウト<1>,
+    誤り: レンダラーエラー,
 ) -> レンダラーエラー {
-    // 安全性: layoutはこのスコープの唯一の所有者で、以降使用しない。
-    unsafe { device.destroy_descriptor_set_layout(layout, None) };
+    layout.破棄する(device);
     誤り
 }

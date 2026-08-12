@@ -29,9 +29,9 @@ pub(super) fn パイプライン部を生成する(
 
     // 描画先はすべてHDR形式のピラミッド画像(判断41)。プッシュ定数は使わない。
     let 仕様一覧: [(&シェーダー一式, &std::ffi::CStr, vk::DescriptorSetLayout); 3] = [
-        (前処理シェーダー, c"prefilterMain", 単一読みlayout),
-        (縮小シェーダー, c"downsampleMain", 単一読みlayout),
-        (拡大シェーダー, c"upsampleMain", 二読みlayout),
+        (前処理シェーダー, c"prefilterMain", 単一読みlayout.レイアウトのハンドル()),
+        (縮小シェーダー, c"downsampleMain", 単一読みlayout.レイアウトのハンドル()),
+        (拡大シェーダー, c"upsampleMain", 二読みlayout.レイアウトのハンドル()),
     ];
     let mut 一覧: Vec<全画面パスのパイプライン> = Vec::new();
     for (シェーダー, エントリ名, layout) in 仕様一覧 {
@@ -41,12 +41,10 @@ pub(super) fn パイプライン部を生成する(
                 for 生成済み in &一覧 {
                     生成済み.破棄する(device);
                 }
-                // 安全性: 2つのレイアウトとサンプラーはこのスコープの唯一の所有者で、以降使用しない。
-                unsafe {
-                    device.destroy_descriptor_set_layout(単一読みlayout, None);
-                    device.destroy_descriptor_set_layout(二読みlayout, None);
-                    device.destroy_sampler(sampler, None);
-                }
+                二読みlayout.破棄する(device);
+                単一読みlayout.破棄する(device);
+                // 安全性: samplerはこのスコープの唯一の所有者で、以降使用しない。
+                unsafe { device.destroy_sampler(sampler, None) };
                 return Err(誤り);
             }
         }
@@ -62,9 +60,6 @@ pub(super) fn パイプライン部を生成する(
         sampler,
         単一読みlayout,
         二読みlayout,
-        descriptor_pool: vk::DescriptorPool::null(),
-        前処理set: vk::DescriptorSet::null(),
-        縮小set一覧: Vec::new(),
-        拡大set一覧: Vec::new(),
+        セット群: None,
     })
 }

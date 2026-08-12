@@ -11,7 +11,9 @@ use ash::vk;
 use super::多重散乱の束縛先;
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::descriptor_common;
-use crate::vulkan::descriptor::{宣言した束縛の並び, 束縛番号, 結ぶ現物};
+use crate::vulkan::descriptor::{
+    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物
+};
 use crate::vulkan::sync::フレームスロット添字;
 
 const 宣言: 宣言した束縛の並び<3> = 宣言した束縛の並び::生成する([
@@ -24,11 +26,8 @@ const 宣言: 宣言した束縛の並び<3> = 宣言した束縛の並び::生�
     (束縛番号::生成する(2), vk::DescriptorType::STORAGE_IMAGE, vk::ShaderStageFlags::COMPUTE),
 ]);
 
-pub(super) fn レイアウトを作る(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let バインド一覧 = 宣言.セットレイアウトの宣言();
-    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
+pub(super) fn レイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<3>, レンダラーエラー> {
+    宣言.セットレイアウトを確保する(device)
 }
 
 pub(super) fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
@@ -41,12 +40,12 @@ pub(super) fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorP
 
 pub(super) fn 書き込む(
     device: &ash::Device,
-    set: vk::DescriptorSet,
+    セット: &宣言から割り当てたセット<3>,
     sampler: vk::Sampler,
     束縛先: &多重散乱の束縛先<'_>,
     添字: フレームスロット添字,
 ) {
-    宣言.書き込み先(device, set).並びの位置ごとに結ぶ([
+    セット.書き込み先(device).並びの位置ごとに結ぶ([
         結ぶ現物::バッファ全体(束縛先.シェーダー定数一覧[添字.配列添字()]),
         結ぶ現物::サンプラー付きの画像 {
             ビュー: 束縛先.透過率ビュー,

@@ -6,15 +6,25 @@
 //!
 //! 役割ごとに型を分けたシーンの4セット(`lighting_set`等)と違い、これは1つのサブシステムが自分だけで使うセットのための
 //! 器である。書ける番号がそのサブシステム自身の宣言に限られるため、低水準の書き込み先を木の外へ出さずに済む。
+//!
+//! 注意: 宣言から作ったセットレイアウト(`set_layout`)と、そのレイアウトから割り当てたセット(`allocated_set`)を経なければ
+//! 書き込み先を作れない。生の`vk::DescriptorSet`を受け取る口を1つも持たないのは、別の宣言で割り当てたセットを
+//! この宣言の書き込み先へ包む呼び出しを、型検査で成立させないためである。
 
+mod allocated_set;
 mod bound_resource;
+mod set_layout;
 mod write_target;
 
 use ash::vk;
 
 use super::束縛番号;
+pub(crate) use allocated_set::宣言から割り当てたセット;
 pub(crate) use bound_resource::結ぶ現物;
+pub(crate) use set_layout::宣言から作ったセットレイアウト;
 pub(crate) use write_target::宣言どおりに結ぶ書き込み先;
+
+use crate::error::レンダラーエラー;
 
 /// 束縛1本の宣言。番号・記述子の種別・その束縛を読むシェーダーの段の3つで1つの契約になる。
 pub(crate) type 束縛1本の宣言 = (束縛番号, vk::DescriptorType, vk::ShaderStageFlags);
@@ -29,8 +39,16 @@ impl<const 本数: usize> 宣言した束縛の並び<本数> {
         Self { 並び }
     }
 
+    /// この宣言そのものをセットレイアウトとして確保する。以降の割り当ても書き込みも、返るレイアウトから始まる。
+    pub(crate) fn セットレイアウトを確保する(
+        &self,
+        device: &ash::Device,
+    ) -> Result<宣言から作ったセットレイアウト<本数>, レンダラーエラー> {
+        宣言から作ったセットレイアウト::確保する(device, *self)
+    }
+
     /// セットレイアウトの生成へ渡すバインドの並び。要素数はどれも1であり、配列の束縛はこの器を通らない。
-    pub(crate) fn セットレイアウトの宣言(&self) -> [vk::DescriptorSetLayoutBinding<'static>; 本数] {
+    pub(super) fn セットレイアウトの宣言(&self) -> [vk::DescriptorSetLayoutBinding<'static>; 本数] {
         self.並び.map(|(番号, 種別, 段)| {
             vk::DescriptorSetLayoutBinding::default()
                 .binding(番号.gpu境界値())
@@ -44,16 +62,6 @@ impl<const 本数: usize> 宣言した束縛の並び<本数> {
     pub(crate) fn プールの内訳(&self, セット数: u32) -> [vk::DescriptorPoolSize; 本数] {
         self.並び
             .map(|(_, 種別, _)| vk::DescriptorPoolSize::default().ty(種別).descriptor_count(セット数))
-    }
-
-    /// この宣言で割り当てたセット1枚へ現物を書き込む先。
-    /// 前提: セットはこの宣言から作ったレイアウトで割り当て済みであり、書き込みの時点でGPUがそのセットを使用していない。
-    pub(crate) fn 書き込み先<'書き込み>(
-        &self,
-        device: &'書き込み ash::Device,
-        セット: vk::DescriptorSet,
-    ) -> 宣言どおりに結ぶ書き込み先<'書き込み, 本数> {
-        宣言どおりに結ぶ書き込み先::生成する(device, セット, *self)
     }
 
     pub(super) const fn 位置の束縛(&self, 位置: usize) -> 束縛1本の宣言 {
