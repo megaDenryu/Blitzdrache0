@@ -52,6 +52,7 @@ fn 一件を記録する(積み先: GPU命令の積み先<'_>, 入力: &ジオ�
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
     // 安全性: command_bufferは記録中で、入力のバッファとディスクリプタセットは生成済み。
+    // layoutは頂点ステージと画素段ステージの16バイト範囲(シーン描画定数)を宣言済みである。
     unsafe {
         入力.描画定数.プッシュ定数として積む(積み先, 入力.layout);
         device.cmd_bind_descriptor_sets(

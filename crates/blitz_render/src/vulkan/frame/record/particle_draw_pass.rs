@@ -47,6 +47,7 @@ pub(super) fn 粒子描画パスを宣言する<'a>(
             let シザー一覧 = [シザー];
 
             // 安全性: command_bufferは記録中で、pipeline・ディスクリプタセットは生成済み。
+            // 粒子の描画layoutは頂点ステージの16バイト範囲(カメラ相対の基準原点)を宣言済みである。
             unsafe {
                 device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 粒子入力.描画パイプライン);
                 device.cmd_set_viewport(command_buffer, 0, &viewport一覧);

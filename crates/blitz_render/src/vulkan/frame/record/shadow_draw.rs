@@ -59,7 +59,7 @@ fn 対象を記録する(積み先: GPU命令の積み先<'_>, 番号: 距離区
     let command_buffer = 積み先.コマンドバッファ();
     let セット一覧 = [入力.ジオメトリセット];
     let ジオメトリのセット番号 = shared_set_bind::ジオメトリのセット番号;
-    // 安全性: command_bufferは記録中で、入力のバッファとディスクリプタセットは生成済み。
+    // 安全性: command_bufferは記録中で、入力のバッファとディスクリプタセットは生成済みであり、入力のlayoutは頂点ステージの20バイト範囲(シャドウ描画定数)を宣言済みである。
     unsafe {
         シャドウ描画定数::生成する(入力.相対の基準原点, 番号).プッシュ定数として積む(積み先, 入力.layout);
         let 束縛先 = vk::PipelineBindPoint::GRAPHICS;
@@ -83,7 +83,7 @@ fn 布を記録する(積み先: GPU命令の積み先<'_>, 番号: 距離区分
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
     let シャドウ = &布.入力.外部資源.シャドウ;
-    // 安全性: command_bufferは記録中で、布のパイプラインは生成済み。
+    // 安全性: command_bufferは記録中で、布のパイプラインは生成済みであり、シャドウのlayoutは頂点ステージの20バイト範囲(シャドウ描画定数)を宣言済みである。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, シャドウ.pipeline);
         シャドウ描画定数::生成する(布.入力.相対の基準原点, 番号).プッシュ定数として積む(積み先, シャドウ.layout);

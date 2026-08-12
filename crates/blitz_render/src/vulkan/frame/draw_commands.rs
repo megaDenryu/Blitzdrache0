@@ -39,6 +39,7 @@ pub(super) fn 描画コマンドを積む(
     let 開始位置一覧 = [0u64];
 
     // 安全性: command_bufferは記録中で、pipelineと全対象のバッファ・ディスクリプタセットは生成済み。
+    // 各対象のlayoutは頂点ステージと画素段ステージの16バイト範囲(シーン描画定数)を宣言済みである。
     unsafe {
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
         device.cmd_set_scissor(command_buffer, 0, &シザー一覧);

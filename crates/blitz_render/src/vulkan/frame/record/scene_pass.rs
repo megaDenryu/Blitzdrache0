@@ -81,6 +81,7 @@ fn 布を記録する(積み先: GPU命令の積み先<'_>, 布: &布ドロー<'
     let command_buffer = 積み先.コマンドバッファ();
     let 入力 = 布.入力;
     // 安全性: command_bufferは記録中で、布のパイプライン・バッファは生成済み。
+    // 布の描画layoutは頂点ステージの16バイト範囲(カメラ相対の基準原点)を宣言済みである。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.描画pipeline);
         入力.相対の基準原点.プッシュ定数として積む(積み先, 入力.描画layout);
