@@ -8,9 +8,8 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::{GPU資源の確保係, 専用メモリ付きバッファ};
 use crate::vulkan::command_sink::積み込みを開始したコマンドバッファ;
-use crate::vulkan::geometry::upload::ステージング経由でアップロードする;
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::transfer::{ステージング経由の転送係, 転送実行環境};
 
 /// 記憶と転送の両方に使う用途。検収がGPUの中身を読み戻せるように転送元も開ける。
 fn 記憶と転送の用途() -> vk::BufferUsageFlags {
@@ -30,11 +29,9 @@ impl 記憶バッファ {
 
     /// 与えたバイト列でデバイスローカルに作る。起動時に1度だけ書いて以降変えない列が使う。
     pub(crate) fn 書き込んで確保する(
-        確保係: &GPU資源の確保係<'_>,
-        転送環境: &転送実行環境,
-        バイト列: &[u8],
+        転送係: ステージング経由の転送係<'_>, バイト列: &[u8]
     ) -> Result<Self, レンダラーエラー> {
-        let バッファ = ステージング経由でアップロードする(確保係, 転送環境, バイト列, 記憶と転送の用途())?;
+        let バッファ = 転送係.データからデバイスローカルバッファを確保する(バイト列, 記憶と転送の用途())?;
         Ok(Self { バッファ })
     }
 

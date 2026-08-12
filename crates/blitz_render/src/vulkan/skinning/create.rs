@@ -5,18 +5,17 @@ use crate::compute_shader::コンピュートシェーダー;
 use crate::error::レンダラーエラー;
 use crate::skin_mesh::スキンメッシュ素材;
 use crate::vertex::頂点;
-use crate::vulkan::allocator::GPU資源の確保係;
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 impl スキニング一式 {
     pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        転送環境: &転送実行環境,
+        転送係: ステージング経由の転送係<'_>,
         頂点一覧: &[頂点],
         素材: &スキンメッシュ素材,
         シェーダー: &コンピュートシェーダー,
     ) -> Result<Self, レンダラーエラー> {
-        let device = 確保係.論理デバイス();
+        let device = 転送係.論理デバイス();
+        let 確保係 = 転送係.確保係();
         if 素材.属性一覧().len() != 頂点一覧.len() {
             return Err(crate::error::生成要求不一致エラー::スキン属性数不一致 {
                 属性数: 素材.属性一覧().len(),
@@ -26,7 +25,7 @@ impl スキニング一式 {
         }
         let 頂点数 = u32::try_from(頂点一覧.len()).unwrap_or_else(|_| panic!("頂点数がu32に収まらない: {}", 頂点一覧.len()));
 
-        let バッファ = buffers::生成する(確保係, 転送環境, 頂点一覧, 素材)?;
+        let バッファ = buffers::生成する(転送係, 頂点一覧, 素材)?;
         let ディスクリプタ = match descriptor::生成する(device, &バッファ) {
             Ok(ディスクリプタ) => ディスクリプタ,
             Err(誤り) => {

@@ -1,5 +1,5 @@
 //! カラー添付を2枚持つ全画面三角形パイプラインの固定機能ステートとパイプラインレイアウトの構築。
-//! 受け取るのはセットレイアウトと2つのシェーダーモジュール、返すのはパイプラインとそのレイアウトである。
+//! 受け取るのはセットレイアウトと2つのシェーダーモジュール、返すのはパイプラインとそのレイアウトの組である。
 //!
 //! 前提: シェーダーモジュールの生存期間は呼び出し元(`pipeline`)が持ち、ここでは受け取ったモジュールを参照するだけで破棄しない。
 //!
@@ -14,7 +14,7 @@ use ash::vk;
 use super::super::images::履歴の形式;
 use super::super::setting::即時定数バイト数;
 use crate::error::レンダラーエラー;
-use crate::vulkan::fullscreen_pipeline;
+use crate::vulkan::fullscreen_pipeline::全画面パスのパイプライン;
 use crate::vulkan::hdr_target::HDR形式;
 
 pub(super) fn 二枚書きを組み立てる(
@@ -22,7 +22,7 @@ pub(super) fn 二枚書きを組み立てる(
     セットレイアウト: vk::DescriptorSetLayout,
     頂点モジュール: vk::ShaderModule,
     画素段モジュール: vk::ShaderModule,
-) -> Result<(vk::Pipeline, vk::PipelineLayout), レンダラーエラー> {
+) -> Result<全画面パスのパイプライン, レンダラーエラー> {
     let layout = レイアウトを作る(device, セットレイアウト)?;
     let ステージ一覧 = [
         vk::PipelineShaderStageCreateInfo::default()
@@ -62,7 +62,7 @@ pub(super) fn 二枚書きを組み立てる(
         .push_next(&mut rendering情報);
     // 安全性: 各stateは本関数内で構築した値のみを参照し、deviceは生成済みで有効。
     let 生成結果 = unsafe { device.create_graphics_pipelines(vk::PipelineCache::null(), &[create_info], None) };
-    fullscreen_pipeline::パイプラインを取り出す(device, layout, 生成結果)
+    全画面パスのパイプライン::生成結果から取り出す(device, layout, 生成結果)
 }
 
 fn レイアウトを作る(

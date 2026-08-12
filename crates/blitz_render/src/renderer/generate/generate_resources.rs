@@ -16,6 +16,7 @@ use crate::error::レンダラーエラー;
 use crate::renderer::draw_stage_resources::{描画段階資源, 生成要求 as 描画段階資源生成要求};
 use crate::renderer::frame_progress::フレーム進行;
 use crate::vulkan;
+use crate::vulkan::transfer::ステージング経由の転送係;
 use post_process_resources::描画先構成;
 
 pub(in crate::renderer::generate) use request::生成要求;
@@ -51,10 +52,10 @@ pub(super) fn 組み立てる(要求: 生成要求<'_>) -> Result<フレーム�
     ];
     let gpu計測 = vulkan::gpu_timing::パス別GPU計測::生成する(device, 要求.タイムスタンプ対応か, 要求.タイムスタンプ周期ns, 合成区間一覧)?;
     let ui一式 = vulkan::ui::UIリソース一式::生成する(&確保係, 要求.提示.画像形式(), &要求.シェーダー.ui)?;
-    let ポスト処理 = 描画先.組み立てる(&確保係, 要求.提示, 要求.シェーダー, &基礎.転送環境, 要求.自動露出の設定)?;
+    let 転送係 = ステージング経由の転送係::生成する(&確保係, &基礎.転送環境);
+    let ポスト処理 = 描画先.組み立てる(転送係, 要求.提示, 要求.シェーダー, 要求.自動露出の設定)?;
     let (スキニング, 布) = simulation_resources::組み立てる(
-        &確保係,
-        &基礎.転送環境,
+        転送係,
         シーンカラー形式,
         &基礎.セットレイアウト,
         要求.描画シーン.先頭の描画対象().最詳細段の頂点一覧(),

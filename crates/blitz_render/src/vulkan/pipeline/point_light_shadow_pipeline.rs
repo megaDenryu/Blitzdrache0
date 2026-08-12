@@ -18,9 +18,11 @@ use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::point_light_shadow_map::点光源の影の形式;
 use crate::vulkan::point_light_shadow_push::点光源の影の描画定数;
 
+use super::パイプラインレイアウト;
+
 pub(crate) struct 点光源の影のパイプライン {
     pub(crate) handle: vk::Pipeline,
-    pub(crate) layout: vk::PipelineLayout,
+    layout: パイプラインレイアウト,
 }
 
 impl 点光源の影のパイプライン {
@@ -31,22 +33,26 @@ impl 点光源の影のパイプライン {
         ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        let device = 確保係.論理デバイス();
-        let layout = super::layout::生成する(device, ディスクリプタlayout一覧, 点光源の影の描画定数::プッシュ定数範囲())?;
-        match pipelineを生成する(確保係, layout, シェーダー) {
+        let layout = パイプラインレイアウト::確保する(確保係, ディスクリプタlayout一覧, 点光源の影の描画定数::プッシュ定数範囲())?;
+        match pipelineを生成する(確保係, layout.レイアウトのハンドル(), シェーダー) {
             Ok(handle) => Ok(Self { handle, layout }),
             Err(誤り) => {
-                super::layout::破棄する(device, layout);
+                layout.破棄する(確保係.論理デバイス());
                 Err(誤り)
             }
         }
+    }
+
+    /// ディスクリプタセットの束縛とプッシュ定数の積み込みへ渡す境界。
+    pub(crate) const fn パイプラインレイアウトのハンドル(&self) -> vk::PipelineLayout {
+        self.layout.レイアウトのハンドル()
     }
 
     /// 前提: レンダラー全体の破棄順を持つ`renderer/destroy.rs`が、GPU待機の済んだ1段として呼ぶ。
     pub(crate) fn 破棄する(&self, device: &ash::Device) {
         // 安全性: handleはSelfが唯一の所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
         unsafe { device.destroy_pipeline(self.handle, None) };
-        super::layout::破棄する(device, self.layout);
+        self.layout.破棄する(device);
     }
 }
 

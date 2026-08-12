@@ -11,25 +11,28 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::descriptor::シーンセットレイアウト一式;
-use crate::vulkan::pipeline;
+use crate::vulkan::pipeline::パイプラインレイアウト;
 use crate::vulkan::scene_draw_constants::シーン描画定数;
 use crate::vulkan::shadow_push::シャドウ描画定数;
 
 pub(crate) struct 材質描画族のレイアウト {
-    シーン: vk::PipelineLayout,
-    シャドウ: vk::PipelineLayout,
+    シーン: パイプラインレイアウト,
+    シャドウ: パイプラインレイアウト,
 }
 
 impl 材質描画族のレイアウト {
     /// 呼ばれるのはレンダラー生成時の1回だけである。シャドウの生成に失敗したらシーンのぶんをその場で破棄する。
-    pub(super) fn 生成する(device: &ash::Device, セット: &シーンセットレイアウト一式) -> Result<Self, レンダラーエラー> {
-        let シーン = pipeline::レイアウトを生成する(device, &セット.シーンの並び(), シーン描画定数::プッシュ定数範囲())?;
-        let シャドウ = match pipeline::レイアウトを生成する(device, &セット.シャドウの並び(), シャドウ描画定数::プッシュ定数範囲())
+    pub(super) fn 生成する(
+        確保係: &GPU資源の確保係<'_>, セット: &シーンセットレイアウト一式
+    ) -> Result<Self, レンダラーエラー> {
+        let シーン = パイプラインレイアウト::確保する(確保係, &セット.シーンの並び(), シーン描画定数::プッシュ定数範囲())?;
+        let シャドウ = match パイプラインレイアウト::確保する(確保係, &セット.シャドウの並び(), シャドウ描画定数::プッシュ定数範囲())
         {
             Ok(レイアウト) => レイアウト,
             Err(誤り) => {
-                pipeline::レイアウトを破棄する(device, シーン);
+                シーン.破棄する(確保係.論理デバイス());
                 return Err(誤り);
             }
         };
@@ -37,16 +40,16 @@ impl 材質描画族のレイアウト {
     }
 
     pub(crate) const fn シーン(&self) -> vk::PipelineLayout {
-        self.シーン
+        self.シーン.レイアウトのハンドル()
     }
 
     pub(crate) const fn シャドウ(&self) -> vk::PipelineLayout {
-        self.シャドウ
+        self.シャドウ.レイアウトのハンドル()
     }
 
     /// 前提: このレイアウトで作った全パイプラインを破棄した後に呼ぶ。
     pub(super) fn 破棄する(&self, device: &ash::Device) {
-        pipeline::レイアウトを破棄する(device, self.シャドウ);
-        pipeline::レイアウトを破棄する(device, self.シーン);
+        self.シャドウ.破棄する(device);
+        self.シーン.破棄する(device);
     }
 }

@@ -5,7 +5,6 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
-use crate::vulkan::compute_pipeline;
 
 /// そのパイプラインが受け取る即時定数の枠。持たないパスと持つパスを型で分ける。
 /// バイト数0で「無し」を表さないのは、0の範囲を宣言したレイアウトと範囲を持たないレイアウトが別物であり、
@@ -30,7 +29,7 @@ impl 生成パイプライン {
     ) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
         let layout = レイアウトを作る(device, ディスクリプタlayout, 押し込み)?;
-        match compute_pipeline::生成する(確保係, layout, spirv, c"computeMain") {
+        match 確保係.コンピュートパイプラインを生成する(layout, spirv, c"computeMain") {
             Ok(handle) => Ok(Self { handle, layout }),
             Err(誤り) => {
                 // 安全性: layoutはこのスコープの唯一の所有者で、以降使用しない。

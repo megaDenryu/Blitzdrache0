@@ -11,9 +11,8 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::texture_material::level_extent::縮小段数の上限を求める;
 use crate::texture_material::{テクスチャ格納形式, テクスチャ素材};
-use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 use super::{format_support, image, upload, view, テクスチャ, 画像を破棄する};
 
@@ -27,11 +26,11 @@ pub(super) enum 縮小段の積み方 {
 }
 
 pub(super) fn テクスチャを生成する(
-    確保係: &GPU資源の確保係<'_>,
+    転送係: ステージング経由の転送係<'_>,
     問い合わせ: 物理デバイス問い合わせ<'_>,
-    転送環境: &転送実行環境,
     素材: &テクスチャ素材,
 ) -> Result<テクスチャ, レンダラーエラー> {
+    let 確保係 = 転送係.確保係();
     let device = 確保係.論理デバイス();
     let 形式 = format_support::vulkan形式を選ぶ(素材.用途(), 素材.格納形式())?;
     let 積み方 = 縮小段の積み方を選ぶ(素材.格納形式());
@@ -40,7 +39,7 @@ pub(super) fn テクスチャを生成する(
     let 縮小段数 = 縮小段数を求める(素材, 積み方);
     let (image, memory) = image::生成する(確保係, 素材.幅(), 素材.高さ(), 縮小段数, 形式, 画像の使い道(積み方))?;
 
-    if let Err(誤り) = upload::素材の縮小段を画像へ転送する(確保係, 転送環境, image, 素材, 縮小段数, 積み方) {
+    if let Err(誤り) = upload::素材の縮小段を画像へ転送する(転送係, image, 素材, 縮小段数, 積み方) {
         画像を破棄する(device, image, memory);
         return Err(誤り);
     }

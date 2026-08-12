@@ -10,6 +10,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::depth::深度形式;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 pub(super) fn 組み立てる(
     要求: &生成要求<'_>,
@@ -19,8 +20,7 @@ pub(super) fn 組み立てる(
 ) -> Result<Option<vulkan::particles::粒子リソース一式>, レンダラーエラー> {
     match (要求.シェーダー.粒子.as_ref(), 要求.粒子素材) {
         (Some(シェーダー), Some(素材)) => Ok(Some(vulkan::particles::粒子リソース一式::生成する(
-            確保係,
-            &基礎.転送環境,
+            ステージング経由の転送係::生成する(確保係, &基礎.転送環境),
             シーンカラー形式,
             深度形式,
             &基礎.シェーダー定数,

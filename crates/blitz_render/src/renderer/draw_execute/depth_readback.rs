@@ -12,7 +12,6 @@ use crate::error::レンダラーエラー;
 use crate::frame_input::フレーム描画入力;
 use crate::readback_image::深度読み戻し画像;
 use crate::readback_image::読み戻し結果;
-use crate::vulkan;
 use crate::vulkan::readback::読み戻し対象;
 
 impl レンダラー {
@@ -29,6 +28,6 @@ impl レンダラー {
 
     /// 提示成功直後に読み戻しバッファをホストから読み、最終深度画像へ変換する。
     fn 読み戻しバッファから深度画像を作る(&self) -> Result<深度読み戻し画像, レンダラーエラー> {
-        vulkan::readback::深度を読み取る(self.環境.device(), self.確保済みの読み戻しバッファ(), self.提示.寸法())
+        self.読み戻し画像の読み出し元().深度画像として開く()
     }
 }

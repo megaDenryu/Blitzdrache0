@@ -16,14 +16,13 @@ use ash::vk;
 use crate::auto_exposure::自動露出の設定;
 use crate::error::レンダラーエラー;
 use crate::shader_bundle::シェーダー束;
-use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::auto_exposure::自動露出一式;
 use crate::vulkan::bloom::光のにじみ一式;
 use crate::vulkan::bloom_targets::光のにじみピラミッド;
 use crate::vulkan::hdr_target::HDRターゲット;
 use crate::vulkan::tonemap::明るさの圧縮一式;
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 pub(crate) struct ポスト処理一式 {
     hdrターゲット: HDRターゲット,
@@ -35,19 +34,17 @@ pub(crate) struct ポスト処理一式 {
 
 impl ポスト処理一式 {
     pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
+        転送係: ステージング経由の転送係<'_>,
         スワップチェーン画像形式: vk::Format,
         寸法: vk::Extent2D,
         シェーダー: &シェーダー束,
-        転送環境: &転送実行環境,
         自動露出の設定: 自動露出の設定,
     ) -> Result<Self, レンダラーエラー> {
         create::生成する(create::生成材料 {
-            確保係,
+            転送係,
             スワップチェーン画像形式,
             寸法,
             シェーダー,
-            転送環境,
             自動露出の設定,
         })
     }
@@ -55,10 +52,9 @@ impl ポスト処理一式 {
     /// GPU上の自動露出の中身を検収へ渡す。前提: 呼び出し元がGPUの全作業完了を待ってから呼ぶ。
     pub(crate) fn 自動露出の観測を読み戻す(
         &self,
-        確保係: &GPU資源の確保係<'_>,
-        転送環境: &転送実行環境,
+        転送係: ステージング経由の転送係<'_>,
     ) -> Result<crate::auto_exposure::自動露出の観測, レンダラーエラー> {
-        self.自動露出.観測を読み戻す(確保係, 転送環境)
+        self.自動露出.観測を読み戻す(転送係)
     }
 
     /// 読み手である明るさの圧縮・光のにじみのパイプラインとディスクリプタを先に、読まれる側の画像を後に破棄する。

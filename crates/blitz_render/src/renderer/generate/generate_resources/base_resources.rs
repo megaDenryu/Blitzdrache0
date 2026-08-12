@@ -12,6 +12,7 @@ use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::descriptor::{シーンセットレイアウト一式, 共有ディスクリプタセット};
 use crate::vulkan::gpu_environment::GPU環境;
 use crate::vulkan::material_table::{テクスチャ表レイアウト容量, 材質の登録状態, 材質資源の作業環境, 材質資源表};
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 pub(super) struct 基礎資源 {
     pub(super) 影の資源: vulkan::shadow_resources::影の資源の組,
@@ -38,9 +39,8 @@ pub(super) fn 組み立てる(
     let 表容量 = テクスチャ表レイアウト容量::起動時に決める(環境.ディスクリプタ索引上限())?;
     let 共有 = shared::create::生成する(確保係, 環境.queue(), 環境.キューファミリ添字(), 表容量, 影の一辺, 照明束縛)?;
     let 作業環境 = 材質資源の作業環境 {
-        確保係,
+        転送係: ステージング経由の転送係::生成する(確保係, &共有.転送),
         問い合わせ: 環境.物理デバイス問い合わせ(),
-        転送環境: &共有.転送,
         セットレイアウト: &共有.セットレイアウト,
     };
     let mut 登録状態 = 材質の登録状態::新規(表容量);

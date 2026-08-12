@@ -6,22 +6,21 @@ use super::{buffers, descriptor, params, pipelines, 布一式};
 use crate::cloth_material::布素材;
 use crate::cloth_shader_set::布シェーダー一式;
 use crate::error::レンダラーエラー;
-use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::pipeline::パイプライン;
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn 生成する(
-    確保係: &GPU資源の確保係<'_>,
-    転送環境: &転送実行環境,
+    転送係: ステージング経由の転送係<'_>,
     シーンカラー形式: vk::Format,
     セットレイアウト: &crate::vulkan::descriptor::シーンセットレイアウト一式,
     素材: &布素材,
     シェーダー: &布シェーダー一式,
     スキン済み頂点buffer: Option<vk::Buffer>,
 ) -> Result<布一式, レンダラーエラー> {
-    let device = 確保係.論理デバイス();
-    let バッファ = buffers::生成する(確保係, 転送環境, 素材)?;
+    let device = 転送係.論理デバイス();
+    let 確保係 = 転送係.確保係();
+    let バッファ = buffers::生成する(転送係, 素材)?;
     let ディスクリプタ = match descriptor::生成する(device, &バッファ, スキン済み頂点buffer) {
         Ok(一式) => 一式,
         Err(誤り) => {

@@ -9,35 +9,25 @@ use super::スキニングバッファ;
 use crate::error::レンダラーエラー;
 use crate::skin_mesh::スキンメッシュ素材;
 use crate::vertex::頂点;
-use crate::vulkan::allocator::{GPU資源の確保係, 巻き戻せる確保の台帳};
-use crate::vulkan::geometry::{bytes, upload};
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::allocator::巻き戻せる確保の台帳;
+use crate::vulkan::geometry::bytes;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 const 行列バイト長: usize = 64;
 
 pub(crate) fn 生成する(
-    確保係: &GPU資源の確保係<'_>,
-    転送環境: &転送実行環境,
+    転送係: ステージング経由の転送係<'_>,
     頂点一覧: &[頂点],
     素材: &スキンメッシュ素材,
 ) -> Result<スキニングバッファ, レンダラーエラー> {
+    let 確保係 = 転送係.確保係();
     let mut 台帳 = 巻き戻せる確保の台帳::始める(確保係);
 
     let 頂点バイト列 = bytes::頂点をバイト列にする(頂点一覧);
-    let レスト頂点 = 台帳.積む(upload::ステージング経由でアップロードする(
-        確保係,
-        転送環境,
-        &頂点バイト列,
-        vk::BufferUsageFlags::STORAGE_BUFFER,
-    ))?;
+    let レスト頂点 = 台帳.積む(転送係.データからデバイスローカルバッファを確保する(&頂点バイト列, vk::BufferUsageFlags::STORAGE_BUFFER))?;
 
     let 属性バイト列 = 属性をバイト列にする(素材);
-    let 属性 = 台帳.積む(upload::ステージング経由でアップロードする(
-        確保係,
-        転送環境,
-        &属性バイト列,
-        vk::BufferUsageFlags::STORAGE_BUFFER,
-    ))?;
+    let 属性 = 台帳.積む(転送係.データからデバイスローカルバッファを確保する(&属性バイト列, vk::BufferUsageFlags::STORAGE_BUFFER))?;
 
     let 行列初期値 = vec![0u8; 素材.ジョイント数() * 行列バイト長];
     let 行列一覧 = 台帳.フレームスロットごとに積む(確保係.フレームスロットごとのホスト可視バッファを確保して書き込む(

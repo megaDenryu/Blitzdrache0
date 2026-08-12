@@ -16,11 +16,13 @@ use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::shadow_map::シャドウマップ形式;
 use crate::vulkan::shadow_push::シャドウ描画定数;
 
+use super::パイプラインレイアウト;
+
 pub(super) use create::生成する as pipelineを生成する;
 
 pub(crate) struct シャドウパイプライン {
     pub(crate) handle: vk::Pipeline,
-    pub(crate) layout: vk::PipelineLayout,
+    layout: パイプラインレイアウト,
 }
 
 impl シャドウパイプライン {
@@ -32,20 +34,25 @@ impl シャドウパイプライン {
         ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        let device = 確保係.論理デバイス();
-        let layout = super::layout::生成する(device, ディスクリプタlayout一覧, シャドウ描画定数::プッシュ定数範囲())?;
-        match create::生成する(確保係, シャドウマップ形式, super::描画の標本数, layout, シェーダー) {
+        let layout = パイプラインレイアウト::確保する(確保係, ディスクリプタlayout一覧, シャドウ描画定数::プッシュ定数範囲())?;
+        match create::生成する(確保係, シャドウマップ形式, super::描画の標本数, layout.レイアウトのハンドル(), シェーダー)
+        {
             Ok(handle) => Ok(Self { handle, layout }),
             Err(誤り) => {
-                super::layout::破棄する(device, layout);
+                layout.破棄する(確保係.論理デバイス());
                 Err(誤り)
             }
         }
     }
 
+    /// ディスクリプタセットの束縛とプッシュ定数の積み込みへ渡す境界。
+    pub(crate) const fn パイプラインレイアウトのハンドル(&self) -> vk::PipelineLayout {
+        self.layout.レイアウトのハンドル()
+    }
+
     pub(crate) fn 破棄する(&self, device: &ash::Device) {
         // 安全性: handleはSelfが唯一の所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
         unsafe { device.destroy_pipeline(self.handle, None) };
-        super::layout::破棄する(device, self.layout);
+        self.layout.破棄する(device);
     }
 }

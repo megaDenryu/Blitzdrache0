@@ -3,7 +3,7 @@
 
 use ash::vk;
 
-use super::finish;
+use super::全画面パスのパイプライン;
 use crate::error::レンダラーエラー;
 
 #[allow(clippy::too_many_arguments)]
@@ -16,7 +16,7 @@ pub(super) fn 組み立てる(
     画素段モジュール: vk::ShaderModule,
     画素段エントリ名: &std::ffi::CStr,
     プッシュ定数バイト数: u32,
-) -> Result<(vk::Pipeline, vk::PipelineLayout), レンダラーエラー> {
+) -> Result<全画面パスのパイプライン, レンダラーエラー> {
     let ステージ一覧 = [
         vk::PipelineShaderStageCreateInfo::default()
             .stage(vk::ShaderStageFlags::VERTEX)
@@ -73,5 +73,5 @@ pub(super) fn 組み立てる(
         .push_next(&mut rendering情報);
     // 安全性: 各stateは本関数内で構築した値のみを参照し、deviceは生成済みで有効。
     let 生成結果 = unsafe { device.create_graphics_pipelines(vk::PipelineCache::null(), &[create_info], None) };
-    finish::取り出す(device, layout, 生成結果)
+    全画面パスのパイプライン::生成結果から取り出す(device, layout, 生成結果)
 }

@@ -5,6 +5,7 @@
 
 use super::レンダラー;
 use crate::vulkan::material_table::材質資源の作業環境;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 impl レンダラー {
     pub(super) fn 破棄する(&mut self) {
@@ -22,8 +23,7 @@ impl レンダラー {
         let 確保係 = self.環境.資源の確保係を貸す();
         let 作業環境 = 材質資源の作業環境 {
             問い合わせ: self.環境.物理デバイス問い合わせ(),
-            確保係: &確保係,
-            転送環境: &self.転送環境,
+            転送係: ステージング経由の転送係::生成する(&確保係, &self.転送環境),
             セットレイアウト: &self.セットレイアウト,
         };
         self.材質資源表.破棄する(作業環境);

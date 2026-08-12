@@ -7,7 +7,7 @@ use super::{descriptor, 光のにじみ一式};
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan::allocator::GPU資源の確保係;
-use crate::vulkan::fullscreen_pipeline;
+use crate::vulkan::fullscreen_pipeline::全画面パスのパイプライン;
 use crate::vulkan::hdr_target::HDR形式;
 
 pub(super) fn パイプライン部を生成する(
@@ -33,17 +33,16 @@ pub(super) fn パイプライン部を生成する(
         (縮小シェーダー, c"downsampleMain", 単一読みlayout),
         (拡大シェーダー, c"upsampleMain", 二読みlayout),
     ];
-    let mut 組一覧: Vec<(vk::Pipeline, vk::PipelineLayout)> = Vec::new();
+    let mut 一覧: Vec<全画面パスのパイプライン> = Vec::new();
     for (シェーダー, エントリ名, layout) in 仕様一覧 {
-        match fullscreen_pipeline::組み立てる(確保係, HDR形式, layout, シェーダー, エントリ名, 0) {
-            Ok(組) => 組一覧.push(組),
+        match 全画面パスのパイプライン::組み立てる(確保係, HDR形式, layout, シェーダー, エントリ名, 0) {
+            Ok(パイプライン) => 一覧.push(パイプライン),
             Err(誤り) => {
-                // 安全性: 生成済みのパイプラインとlayoutはこのスコープの唯一の所有者で、以降使用しない。
+                for 生成済み in &一覧 {
+                    生成済み.破棄する(device);
+                }
+                // 安全性: 2つのレイアウトとサンプラーはこのスコープの唯一の所有者で、以降使用しない。
                 unsafe {
-                    for &(pipeline, pipeline_layout) in &組一覧 {
-                        device.destroy_pipeline(pipeline, None);
-                        device.destroy_pipeline_layout(pipeline_layout, None);
-                    }
                     device.destroy_descriptor_set_layout(単一読みlayout, None);
                     device.destroy_descriptor_set_layout(二読みlayout, None);
                     device.destroy_sampler(sampler, None);
@@ -52,14 +51,14 @@ pub(super) fn パイプライン部を生成する(
             }
         }
     }
+    let [前処理, 縮小, 拡大] = 一覧
+        .try_into()
+        .unwrap_or_else(|_| panic!("全画面パスのパイプラインが仕様の本数ぶん揃わなかった"));
 
     Ok(光のにじみ一式 {
-        前処理pipeline: 組一覧[0].0,
-        前処理layout: 組一覧[0].1,
-        縮小pipeline: 組一覧[1].0,
-        縮小layout: 組一覧[1].1,
-        拡大pipeline: 組一覧[2].0,
-        拡大layout: 組一覧[2].1,
+        前処理,
+        縮小,
+        拡大,
         sampler,
         単一読みlayout,
         二読みlayout,

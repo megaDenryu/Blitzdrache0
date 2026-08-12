@@ -9,7 +9,6 @@ use super::descriptor::自動露出のディスクリプタ;
 use crate::compute_shader::コンピュートシェーダー;
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
-use crate::vulkan::compute_pipeline;
 
 pub(crate) struct 自動露出のパイプライン一式 {
     pub(crate) 集計: vk::Pipeline,
@@ -61,7 +60,7 @@ fn 残りを作る(
     集計レイアウト: vk::PipelineLayout,
 ) -> Result<(vk::Pipeline, vk::Pipeline, vk::PipelineLayout), レンダラーエラー> {
     let device = 確保係.論理デバイス();
-    let 集計 = compute_pipeline::生成する(確保係, 集計レイアウト, 集計シェーダー.コード(), c"computeMain")?;
+    let 集計 = 確保係.コンピュートパイプラインを生成する(集計レイアウト, 集計シェーダー.コード(), c"computeMain")?;
     let 導出レイアウト = match layout::導出のレイアウトを作る(device, ディスクリプタ.レイアウト) {
         Ok(レイアウト) => レイアウト,
         Err(誤り) => {
@@ -70,7 +69,7 @@ fn 残りを作る(
             return Err(誤り);
         }
     };
-    match compute_pipeline::生成する(確保係, 導出レイアウト, 導出シェーダー.コード(), c"computeMain") {
+    match 確保係.コンピュートパイプラインを生成する(導出レイアウト, 導出シェーダー.コード(), c"computeMain") {
         Ok(導出) => Ok((集計, 導出, 導出レイアウト)),
         Err(誤り) => {
             // 安全性: 導出レイアウトと集計パイプラインはこのスコープの唯一の所有者で、以降使用しない。

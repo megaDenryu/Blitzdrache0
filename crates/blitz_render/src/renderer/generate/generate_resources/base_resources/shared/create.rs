@@ -25,7 +25,7 @@ pub(in crate::renderer) fn 生成する(
     照明束縛: 照明束縛レイアウト,
 ) -> Result<共有資源, レンダラーエラー> {
     let device = 確保係.論理デバイス();
-    let 影の資源 = vulkan::shadow_resources::生成する(確保係, 影の一辺)?;
+    let 影の資源 = vulkan::shadow_resources::影の資源の組::確保する(確保係, 影の一辺)?;
     let 転送 = match vulkan::transfer::転送実行環境::生成する(device, queue, queue_family_index) {
         Ok(値) => 値,
         Err(誤り) => {

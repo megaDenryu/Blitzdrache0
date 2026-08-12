@@ -13,14 +13,12 @@ use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::bloom_targets::光のにじみピラミッド;
+use crate::vulkan::fullscreen_pipeline::全画面パスのパイプライン;
 
 pub(crate) struct 光のにじみ一式 {
-    pub(crate) 前処理pipeline: vk::Pipeline,
-    pub(crate) 前処理layout: vk::PipelineLayout,
-    pub(crate) 縮小pipeline: vk::Pipeline,
-    pub(crate) 縮小layout: vk::PipelineLayout,
-    pub(crate) 拡大pipeline: vk::Pipeline,
-    pub(crate) 拡大layout: vk::PipelineLayout,
+    pub(crate) 前処理: 全画面パスのパイプライン,
+    pub(crate) 縮小: 全画面パスのパイプライン,
+    pub(crate) 拡大: 全画面パスのパイプライン,
     sampler: vk::Sampler,
     単一読みlayout: vk::DescriptorSetLayout,
     二読みlayout: vk::DescriptorSetLayout,
@@ -74,13 +72,10 @@ impl 光のにじみ一式 {
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {
         // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
+        for パイプライン in [&self.前処理, &self.縮小, &self.拡大] {
+            パイプライン.破棄する(device);
+        }
         unsafe {
-            device.destroy_pipeline(self.前処理pipeline, None);
-            device.destroy_pipeline_layout(self.前処理layout, None);
-            device.destroy_pipeline(self.縮小pipeline, None);
-            device.destroy_pipeline_layout(self.縮小layout, None);
-            device.destroy_pipeline(self.拡大pipeline, None);
-            device.destroy_pipeline_layout(self.拡大layout, None);
             if self.descriptor_pool != vk::DescriptorPool::null() {
                 device.destroy_descriptor_pool(self.descriptor_pool, None);
             }

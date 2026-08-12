@@ -7,10 +7,12 @@
 
 mod pool;
 mod session;
+mod staging;
 
 use ash::vk;
 
 pub(crate) use session::転送コマンドを積む一時コマンドバッファ;
+pub(crate) use staging::ステージング経由の転送係;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::unsent_command_buffers::未送信のコマンドバッファ数;

@@ -9,12 +9,11 @@ use blitz_math::{ワールド, 位置};
 
 use crate::error::{フレーム入力不一致エラー, レンダラーエラー};
 use crate::frame_input::読込時の向きから天頂軸まわりに回す角;
-use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::instance_transform::content::個体変換内容;
 use crate::vulkan::instance_transform::{個体レコード参照, 個体変換バッファ, 動く個体の変換バッファ};
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 pub(super) enum 個体レコードの置き場 {
     /// 動く個体を1体も持たない対象。読込時に一度だけ書いたデバイスローカルの1本を全フレームスロットが読む。
@@ -25,20 +24,18 @@ pub(super) enum 個体レコードの置き場 {
 
 impl 個体レコードの置き場 {
     pub(super) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        転送環境: &転送実行環境,
+        転送係: ステージング経由の転送係<'_>,
         内容一覧: &[個体変換内容],
         動く個体添字一覧: &[u32],
     ) -> Result<Self, レンダラーエラー> {
         if 動く個体添字一覧.is_empty() {
             return Ok(Self::読込時に一度だけ書いた静的バッファ(個体変換バッファ::生成する(
-                確保係,
-                転送環境,
+                転送係,
                 内容一覧,
             )?));
         }
         Ok(Self::毎フレーム書き込むスロット別バッファ(
-            動く個体の変換バッファ::生成する(確保係, 内容一覧, 動く個体添字一覧)?,
+            動く個体の変換バッファ::生成する(転送係.確保係(), 内容一覧, 動く個体添字一覧)?,
         ))
     }
 

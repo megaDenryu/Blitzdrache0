@@ -11,7 +11,7 @@ use ash::vk;
 
 use super::空中遠近合成パイプライン;
 use crate::error::レンダラーエラー;
-use crate::vulkan::fullscreen_pipeline;
+use crate::vulkan::fullscreen_pipeline::全画面パスのパイプライン;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
@@ -80,6 +80,9 @@ pub(super) fn 組み立てる(
 
     // 安全性: 各stateは本関数内で構築した値のみを参照し、deviceは生成済みで有効。
     let 生成結果 = unsafe { device.create_graphics_pipelines(vk::PipelineCache::null(), &[create_info], None) };
-    let (handle, layout) = fullscreen_pipeline::パイプラインを取り出す(device, layout, 生成結果)?;
-    Ok(空中遠近合成パイプライン { handle, layout })
+    let 組 = 全画面パスのパイプライン::生成結果から取り出す(device, layout, 生成結果)?;
+    Ok(空中遠近合成パイプライン {
+        handle: 組.パイプラインのハンドル(),
+        layout: 組.パイプラインレイアウトのハンドル(),
+    })
 }

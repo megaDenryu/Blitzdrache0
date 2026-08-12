@@ -16,10 +16,10 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::material_table::テクスチャ表レイアウト容量;
 use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
-use crate::vulkan::texture::table_sampler;
+use crate::vulkan::texture::table_sampler::材質テクスチャ表のサンプラー;
 
 pub(crate) struct シーンセットレイアウト一式 {
-    材質サンプラー: vk::Sampler,
+    材質サンプラー: 材質テクスチャ表のサンプラー,
     材質テクスチャ表容量: テクスチャ表レイアウト容量,
     /// 照明問い合わせのセットが宣言した枝。資源を結ぶ側がこの値から結ぶ先を決める。
     照明束縛: 照明束縛レイアウト,
@@ -77,6 +77,6 @@ impl シーンセットレイアウト一式 {
             // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用完了を呼び出し元が保証する。
             unsafe { device.destroy_descriptor_set_layout(handle, None) };
         }
-        table_sampler::破棄する(device, self.材質サンプラー);
+        self.材質サンプラー.破棄する(device);
     }
 }

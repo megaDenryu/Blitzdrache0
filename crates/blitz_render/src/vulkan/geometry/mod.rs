@@ -4,16 +4,14 @@
 //! (参照: `_doc/設計/マルチマテリアルと材質境界.md`「可視ID列の契約」)。
 
 pub(crate) mod bytes;
-pub(crate) mod upload;
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vertex::頂点;
-use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::allocator::専用メモリ付きバッファ;
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 pub(crate) struct ジオメトリバッファ {
     頂点: 専用メモリ付きバッファ,
@@ -22,23 +20,19 @@ pub(crate) struct ジオメトリバッファ {
 
 impl ジオメトリバッファ {
     pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        転送環境: &転送実行環境,
+        転送係: ステージング経由の転送係<'_>,
         頂点一覧: &[頂点],
         インデックス一覧: &[u32],
     ) -> Result<Self, レンダラーエラー> {
-        let device = 確保係.論理デバイス();
+        let device = 転送係.論理デバイス();
         let 頂点バイト列 = bytes::頂点をバイト列にする(頂点一覧);
         let 頂点バッファ =
-            upload::ステージング経由でアップロードする(確保係, 転送環境, &頂点バイト列, vk::BufferUsageFlags::VERTEX_BUFFER)?;
+            転送係.データからデバイスローカルバッファを確保する(&頂点バイト列, vk::BufferUsageFlags::VERTEX_BUFFER)?;
 
         let インデックスバイト列 = bytes::インデックスをバイト列にする(インデックス一覧);
-        let インデックスバッファ = match upload::ステージング経由でアップロードする(
-            確保係,
-            転送環境,
-            &インデックスバイト列,
-            vk::BufferUsageFlags::INDEX_BUFFER,
-        ) {
+        let インデックスバッファ = match 転送係
+            .データからデバイスローカルバッファを確保する(&インデックスバイト列, vk::BufferUsageFlags::INDEX_BUFFER)
+        {
             Ok(結果) => 結果,
             Err(誤り) => {
                 頂点バッファ.破棄する(device);

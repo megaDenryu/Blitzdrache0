@@ -14,6 +14,7 @@ use super::scene_draw_resources::{束追加材料, 起動シーンの束ID};
 use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::render_scene_material::描画シーン素材;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 impl レンダラー {
     pub fn シーンを差し替える(&mut self, 描画シーン: 描画シーン素材) -> Result<(), レンダラーエラー> {
@@ -25,8 +26,7 @@ impl レンダラー {
         let (材質id一覧, 下書き) = self.材質資源表.束の材質を下書きする(起動シーンの束ID, 描画シーン.描画対象一覧())?;
         let 確保係 = self.環境.資源の確保係を貸す();
         let 材料 = 束追加材料 {
-            確保係: &確保係,
-            転送環境: &self.転送環境,
+            転送係: ステージング経由の転送係::生成する(&確保係, &self.転送環境),
             セットレイアウト: &self.セットレイアウト,
             材質id一覧: &材質id一覧,
             動く個体一覧: 描画シーン.動く個体一覧(),

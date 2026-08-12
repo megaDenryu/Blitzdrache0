@@ -22,9 +22,8 @@ use ash::vk;
 
 use crate::auto_exposure::{自動露出のシェーダー一式, 自動露出の設定};
 use crate::error::レンダラーエラー;
-use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 pub(crate) struct 自動露出一式 {
     バッファ: storage::自動露出のバッファ一式,
@@ -35,14 +34,14 @@ pub(crate) struct 自動露出一式 {
 
 impl 自動露出一式 {
     pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        転送環境: &転送実行環境,
+        転送係: ステージング経由の転送係<'_>,
         シェーダー: &自動露出のシェーダー一式,
         設定: 自動露出の設定,
         hdrビュー: vk::ImageView,
     ) -> Result<Self, レンダラーエラー> {
-        let device = 確保係.論理デバイス();
-        let バッファ = storage::自動露出のバッファ一式::生成する(確保係, 転送環境, &設定.境界の線形輝度)?;
+        let device = 転送係.論理デバイス();
+        let 確保係 = 転送係.確保係();
+        let バッファ = storage::自動露出のバッファ一式::生成する(転送係, &設定.境界の線形輝度)?;
         let ディスクリプタ = match descriptor::自動露出のディスクリプタ::生成する(device) {
             Ok(ディスクリプタ) => ディスクリプタ,
             Err(誤り) => {

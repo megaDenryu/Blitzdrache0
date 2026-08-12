@@ -11,11 +11,9 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan::allocator::GPU資源の確保係;
+use crate::vulkan::fullscreen_pipeline::全画面パスのパイプライン;
 
-pub(super) struct 時間再構成のパイプライン {
-    pub(super) pipeline: vk::Pipeline,
-    pub(super) レイアウト: vk::PipelineLayout,
-}
+pub(super) struct 時間再構成のパイプライン(全画面パスのパイプライン);
 
 impl 時間再構成のパイプライン {
     pub(super) fn 生成する(
@@ -39,14 +37,19 @@ impl 時間再構成のパイプライン {
             device.destroy_shader_module(頂点モジュール, None);
             device.destroy_shader_module(画素段モジュール, None);
         }
-        結果.map(|(pipeline, レイアウト)| Self { pipeline, レイアウト })
+        結果.map(Self)
     }
 
+    pub(super) const fn パイプラインのハンドル(&self) -> vk::Pipeline {
+        self.0.パイプラインのハンドル()
+    }
+
+    pub(super) const fn パイプラインレイアウトのハンドル(&self) -> vk::PipelineLayout {
+        self.0.パイプラインレイアウトのハンドル()
+    }
+
+    /// 前提: 破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
     pub(super) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
-        unsafe {
-            device.destroy_pipeline(self.pipeline, None);
-            device.destroy_pipeline_layout(self.レイアウト, None);
-        }
+        self.0.破棄する(device);
     }
 }

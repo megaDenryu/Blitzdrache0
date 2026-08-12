@@ -9,6 +9,7 @@ use crate::error::レンダラーエラー;
 use crate::render_scene_material::描画シーン素材;
 use crate::renderer::scene_draw_resources::{シーン描画資源, シーン描画資源生成要求};
 use crate::vulkan::material_table::材質の登録状態;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 pub(super) fn 起動シーンの束を作る(
     確保係: &crate::vulkan::allocator::GPU資源の確保係<'_>,
@@ -21,8 +22,7 @@ pub(super) fn 起動シーンの束を作る(
     let 結果 = シーン描画資源::生成する(
         確保係,
         シーン描画資源生成要求 {
-            確保係,
-            転送環境: &共有.転送,
+            転送係: ステージング経由の転送係::生成する(確保係, &共有.転送),
             セットレイアウト: &共有.セットレイアウト,
             描画シーン,
             材質id一覧: &材質id一覧,

@@ -11,7 +11,6 @@ use super::描画対象資源;
 use crate::error::レンダラーエラー;
 use crate::render_object_material::描画対象素材;
 use crate::vulkan;
-use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::instance_transform::content::個体変換内容;
 use crate::vulkan::material_table::大域材質ID;
 
@@ -19,15 +18,14 @@ impl 描画対象資源 {
     /// `材質id一覧`は材質資源表がこの対象の材質スロット素材一覧と同じ並びで発番した大域材質IDである。
     /// `動く個体添字一覧`はこの対象について宣言された動く個体の添字であり、空なら個体レコードは静的な1本になる。
     pub(in crate::renderer::scene_draw_resources) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        転送環境: &vulkan::transfer::転送実行環境,
+        転送係: vulkan::transfer::ステージング経由の転送係<'_>,
         素材: &描画対象素材,
         材質id一覧: &[大域材質ID],
         動く個体添字一覧: &[u32],
     ) -> Result<Self, レンダラーエラー> {
-        let device = 確保係.論理デバイス();
+        let device = 転送係.論理デバイス();
         let 個体数 = u32::try_from(素材.個体変換一覧().len()).map_err(|_| レンダラーエラー::個体数過大(素材.個体変換一覧().len()))?;
-        let 段別ジオメトリ = 段別ジオメトリ::生成する(確保係, 転送環境, 素材.段一覧())?;
+        let 段別ジオメトリ = 段別ジオメトリ::生成する(転送係, 素材.段一覧())?;
         let 個体変換内容一覧 = match 個体変換内容::一覧を作る(素材.個体変換一覧()) {
             Ok(値) => 値,
             Err(誤り) => {
@@ -35,15 +33,14 @@ impl 描画対象資源 {
                 return Err(誤り);
             }
         };
-        let 個体変換 = match 個体レコードの置き場::生成する(確保係, 転送環境, &個体変換内容一覧, 動く個体添字一覧)
-        {
+        let 個体変換 = match 個体レコードの置き場::生成する(転送係, &個体変換内容一覧, 動く個体添字一覧) {
             Ok(値) => 値,
             Err(誤り) => {
                 段別ジオメトリ.破棄する(device);
                 return Err(誤り);
             }
         };
-        let 可視id列 = match 可視ID列の出どころ::生成する(確保係, 個体数) {
+        let 可視id列 = match 可視ID列の出どころ::生成する(転送係.確保係(), 個体数) {
             Ok(値) => 値,
             Err(誤り) => {
                 個体変換.破棄する(device);

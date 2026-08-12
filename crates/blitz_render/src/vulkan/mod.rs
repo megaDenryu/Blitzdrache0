@@ -12,7 +12,6 @@ pub(crate) mod cloth;
 pub(crate) mod cloth_shadow;
 pub(crate) mod cluster_light_assignment;
 pub(crate) mod command_sink;
-pub(crate) mod compute_pipeline;
 pub(crate) mod debug_messenger;
 pub(crate) mod depth;
 pub(crate) mod depth_injection;

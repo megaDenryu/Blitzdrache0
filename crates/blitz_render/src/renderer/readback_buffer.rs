@@ -6,7 +6,7 @@ use super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::readback_image::読み戻し画像;
 use crate::vulkan;
-use crate::vulkan::readback::読み戻し対象;
+use crate::vulkan::readback::{読み戻し対象, 読み戻し画像の読み出し元};
 
 impl レンダラー {
     /// 現在のスワップチェーン寸法と読み戻し対象のぶんの容量を持つ読み戻しバッファを確保する。
@@ -31,17 +31,15 @@ impl レンダラー {
 
     /// 提示成功直後に読み戻しバッファをホストから読み、提示画像の`読み戻し画像` へ変換する。
     pub(super) fn 読み戻しバッファから提示画像を作る(&self) -> Result<読み戻し画像, レンダラーエラー> {
-        vulkan::readback::読み取る(
-            self.環境.device(),
-            self.確保済みの読み戻しバッファ(),
-            self.提示.寸法(),
-            self.提示.画像形式(),
-        )
+        self.読み戻し画像の読み出し元().提示画像として開く(self.提示.画像形式())
     }
 
-    pub(super) fn 確保済みの読み戻しバッファ(&self) -> &vulkan::readback::読み戻しバッファ {
-        self.読み戻しバッファ
+    /// 提示成功直後の読み戻しバッファを、そのフレームの寸法とともに開く口。対象ごとの変換はこの読み出し元が持つ。
+    pub(super) fn 読み戻し画像の読み出し元(&self) -> 読み戻し画像の読み出し元<'_> {
+        let バッファ = self
+            .読み戻しバッファ
             .as_ref()
-            .unwrap_or_else(|| panic!("提示成功時に読み戻しバッファが未確保だった"))
+            .unwrap_or_else(|| panic!("提示成功時に読み戻しバッファが未確保だった"));
+        読み戻し画像の読み出し元::生成する(self.環境.device(), バッファ, self.提示.寸法())
     }
 }

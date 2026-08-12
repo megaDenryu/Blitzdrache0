@@ -10,7 +10,7 @@ use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::descriptor::{empty_set, geometry_set, lighting_set, material_set, view_pass_set};
 use crate::vulkan::material_table::テクスチャ表レイアウト容量;
 use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
-use crate::vulkan::texture::table_sampler;
+use crate::vulkan::texture::table_sampler::材質テクスチャ表のサンプラー;
 
 /// 生成する5つのレイアウトの数。4つの役割に、役割を読まない位置を埋める空のレイアウトを足したものである。
 const レイアウト数: usize = 5;
@@ -21,11 +21,11 @@ pub(super) fn 生成する(
     照明束縛: 照明束縛レイアウト,
 ) -> Result<シーンセットレイアウト一式, レンダラーエラー> {
     let device = 確保係.論理デバイス();
-    let 材質サンプラー = table_sampler::生成する(確保係)?;
-    let 一覧 = match 順に生成する(device, 表容量, 材質サンプラー, 照明束縛) {
+    let 材質サンプラー = 材質テクスチャ表のサンプラー::確保する(確保係)?;
+    let 一覧 = match 順に生成する(device, 表容量, 材質サンプラー.サンプラーのハンドル(), 照明束縛) {
         Ok(値) => 値,
         Err(誤り) => {
-            table_sampler::破棄する(device, 材質サンプラー);
+            材質サンプラー.破棄する(device);
             return Err(誤り);
         }
     };

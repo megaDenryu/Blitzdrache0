@@ -35,7 +35,7 @@ impl 布シャドウ資源 {
     pub(crate) fn 描画入力を作る(&self) -> 布シャドウ描画入力 {
         布シャドウ描画入力 {
             pipeline: self.パイプライン.handle,
-            layout: self.パイプライン.layout,
+            layout: self.パイプライン.パイプラインレイアウトのハンドル(),
         }
     }
 

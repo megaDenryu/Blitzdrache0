@@ -19,6 +19,7 @@ use crate::vulkan::material_table::{材質資源の作業環境, 資源表世代
 use crate::vulkan::point_light_shadow_plan::点光源の影の描画計画;
 use crate::vulkan::skinning::スキニング一式;
 use crate::vulkan::sync::フレームスロット添字;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 /// フレームごとに変わる、レンダラーのフィールドから取れない材料。
 pub(super) struct 充填の材料<'a> {
@@ -77,8 +78,7 @@ impl レンダラー {
         let 確保係 = self.環境.資源の確保係を貸す();
         let 作業環境 = 材質資源の作業環境 {
             問い合わせ: self.環境.物理デバイス問い合わせ(),
-            確保係: &確保係,
-            転送環境: &self.転送環境,
+            転送係: ステージング経由の転送係::生成する(&確保係, &self.転送環境),
             セットレイアウト: &self.セットレイアウト,
         };
         self.材質資源表.世代を最新にする(作業環境)?;

@@ -12,7 +12,7 @@ impl 描画段階資源 {
     pub(in crate::renderer) fn 点光源の影の束縛を作る(&self) -> 点光源の影の束縛 {
         点光源の影の束縛 {
             pipeline: self.点光源の影.handle,
-            layout: self.点光源の影.layout,
+            layout: self.点光源の影.パイプラインレイアウトのハンドル(),
         }
     }
 }

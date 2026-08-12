@@ -19,19 +19,19 @@ impl ポスト処理一式 {
     pub(crate) fn 描画入力を作る(&self, 露出: f32, 自動露出の経過秒: f32) -> ポスト描画入力 {
         ポスト描画入力 {
             光のにじみ: 光のにじみ描画入力 {
-                前処理pipeline: self.光のにじみ.前処理pipeline,
-                前処理layout: self.光のにじみ.前処理layout,
-                縮小pipeline: self.光のにじみ.縮小pipeline,
-                縮小layout: self.光のにじみ.縮小layout,
-                拡大pipeline: self.光のにじみ.拡大pipeline,
-                拡大layout: self.光のにじみ.拡大layout,
+                前処理pipeline: self.光のにじみ.前処理.パイプラインのハンドル(),
+                前処理layout: self.光のにじみ.前処理.パイプラインレイアウトのハンドル(),
+                縮小pipeline: self.光のにじみ.縮小.パイプラインのハンドル(),
+                縮小layout: self.光のにじみ.縮小.パイプラインレイアウトのハンドル(),
+                拡大pipeline: self.光のにじみ.拡大.パイプラインのハンドル(),
+                拡大layout: self.光のにじみ.拡大.パイプラインレイアウトのハンドル(),
                 前処理set: self.光のにじみ.前処理set,
                 縮小set一覧: self.光のにじみ.縮小set一覧.clone(),
                 拡大set一覧: self.光のにじみ.拡大set一覧.clone(),
             },
             明るさの圧縮: 明るさの圧縮描画入力 {
-                pipeline: self.明るさの圧縮.pipeline,
-                layout: self.明るさの圧縮.layout,
+                pipeline: self.明るさの圧縮.パイプライン.パイプラインのハンドル(),
+                layout: self.明るさの圧縮.パイプライン.パイプラインレイアウトのハンドル(),
                 ディスクリプタセット: self.明るさの圧縮.descriptor_set,
                 露出,
                 芸術的バイアスの補正段: self.自動露出.方式().芸術的バイアスの補正段(),

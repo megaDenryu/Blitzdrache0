@@ -9,6 +9,7 @@
 
 mod allocated_buffer;
 mod buffer;
+mod compute_pipeline;
 mod dedicated_memory;
 mod frame_commands;
 mod image;

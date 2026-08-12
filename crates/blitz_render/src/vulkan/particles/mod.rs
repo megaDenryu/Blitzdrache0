@@ -18,9 +18,8 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::particle_material::粒子素材;
 use crate::particle_shader_set::粒子シェーダー一式;
-use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::transfer::ステージング経由の転送係;
 use crate::vulkan::uniform::フレームシェーダー定数一式;
 
 pub(crate) struct 粒子リソース一式 {
@@ -35,16 +34,16 @@ pub(crate) struct 粒子リソース一式 {
 impl 粒子リソース一式 {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        転送環境: &転送実行環境,
+        転送係: ステージング経由の転送係<'_>,
         カラー形式: vk::Format,
         深度形式: vk::Format,
         シェーダー定数: &フレームシェーダー定数一式,
         シェーダー: &粒子シェーダー一式,
         素材: &粒子素材,
     ) -> Result<Self, レンダラーエラー> {
-        let device = 確保係.論理デバイス();
-        let バッファ = 粒子バッファ::生成する(確保係, 転送環境, 素材)?;
+        let device = 転送係.論理デバイス();
+        let 確保係 = 転送係.確保係();
+        let バッファ = 粒子バッファ::生成する(転送係, 素材)?;
         let ディスクリプタ = match 粒子ディスクリプタ一式::生成する(device, バッファ.バッファのハンドル(), シェーダー定数)
         {
             Ok(ディスクリプタ) => ディスクリプタ,

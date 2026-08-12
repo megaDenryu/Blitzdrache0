@@ -11,27 +11,27 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::texture_material::テクスチャ素材;
-use crate::vulkan::allocator::GPU資源の確保係;
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::transfer::{ステージング経由の転送係, 転送実行環境};
 
 use super::create::縮小段の積み方;
 use super::mip_chain;
 use crate::vulkan::command_sink::積み込みを開始したコマンドバッファ;
 
 pub(super) fn 素材の縮小段を画像へ転送する(
-    確保係: &GPU資源の確保係<'_>,
-    転送環境: &転送実行環境,
+    転送係: ステージング経由の転送係<'_>,
     image: vk::Image,
     素材: &テクスチャ素材,
     縮小段数: u32,
     積み方: 縮小段の積み方,
 ) -> Result<(), レンダラーエラー> {
     let 転送するバイト列 = 段を1本のバイト列へ束ねる(素材.段ごとのバイト列());
-    let ステージング = 確保係.ホスト可視バッファを確保して書き込む(&転送するバイト列, vk::BufferUsageFlags::TRANSFER_SRC)?;
+    let ステージング = 転送係
+        .確保係()
+        .ホスト可視バッファを確保して書き込む(&転送するバイト列, vk::BufferUsageFlags::TRANSFER_SRC)?;
 
-    let 実行結果 = 積み込んで送信する(転送環境, ステージング.バッファのハンドル(), image, 素材, 縮小段数, 積み方);
+    let 実行結果 = 積み込んで送信する(転送係.転送環境(), ステージング.バッファのハンドル(), image, 素材, 縮小段数, 積み方);
 
-    ステージング.破棄する(確保係.論理デバイス());
+    ステージング.破棄する(転送係.論理デバイス());
     実行結果
 }
 

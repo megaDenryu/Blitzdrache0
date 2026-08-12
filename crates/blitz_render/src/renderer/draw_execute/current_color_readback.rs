@@ -11,7 +11,6 @@ use super::super::レンダラー;
 use crate::error::レンダラーエラー;
 use crate::frame_input::フレーム描画入力;
 use crate::readback_image::{HDR読み戻し画像, 読み戻し結果};
-use crate::vulkan;
 use crate::vulkan::readback::読み戻し対象;
 
 impl レンダラー {
@@ -31,11 +30,7 @@ impl レンダラー {
 
     /// 提示成功直後に読み戻しバッファをホストから読み、今のフレームの色へ変換する。
     fn 読み戻しバッファから今のフレームの色を作る(&self) -> Result<HDR読み戻し画像, レンダラーエラー> {
-        vulkan::readback::半精度四成分を読み取る(
-            self.環境.device(),
-            self.確保済みの読み戻しバッファ(),
-            self.提示.寸法(),
-            読み戻し対象::今のフレームの色,
-        )
+        self.読み戻し画像の読み出し元()
+            .半精度四成分の画像として開く(読み戻し対象::今のフレームの色)
     }
 }

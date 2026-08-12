@@ -10,7 +10,6 @@ use super::view_rows::即時定数のバイト数;
 use crate::compute_shader::コンピュートシェーダー;
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
-use crate::vulkan::compute_pipeline;
 
 pub(super) struct クラスタ選別のパイプライン {
     pub(super) パイプライン: vk::Pipeline,
@@ -25,7 +24,7 @@ impl クラスタ選別のパイプライン {
     ) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
         let レイアウト = レイアウトを作る(device, セットレイアウト)?;
-        match compute_pipeline::生成する(確保係, レイアウト, シェーダー.コード(), c"computeMain") {
+        match 確保係.コンピュートパイプラインを生成する(レイアウト, シェーダー.コード(), c"computeMain") {
             Ok(パイプライン) => Ok(Self {
                 パイプライン, レイアウト
             }),

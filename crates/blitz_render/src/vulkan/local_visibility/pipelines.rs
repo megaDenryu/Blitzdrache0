@@ -11,7 +11,6 @@ use crate::compute_shader::コンピュートシェーダー;
 use crate::error::レンダラーエラー;
 use crate::local_visibility::局所可視性のシェーダー一式;
 use crate::vulkan::allocator::GPU資源の確保係;
-use crate::vulkan::compute_pipeline;
 
 pub(crate) struct 局所可視性のパイプライン一式 {
     pub(crate) 遮蔽の標本化: vk::Pipeline,
@@ -74,7 +73,7 @@ fn パイプラインを作る(
     レイアウト: vk::PipelineLayout,
     シェーダー: &コンピュートシェーダー,
 ) -> Result<vk::Pipeline, レンダラーエラー> {
-    compute_pipeline::生成する(確保係, レイアウト, シェーダー.コード(), c"computeMain")
+    確保係.コンピュートパイプラインを生成する(レイアウト, シェーダー.コード(), c"computeMain")
 }
 
 fn レイアウトを作る(

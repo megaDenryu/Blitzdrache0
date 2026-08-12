@@ -18,10 +18,9 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::texture_material::テクスチャ素材;
-use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::transfer::転送実行環境;
+use crate::vulkan::transfer::ステージング経由の転送係;
 
 pub(crate) struct テクスチャ {
     image: vk::Image,
@@ -31,12 +30,11 @@ pub(crate) struct テクスチャ {
 
 impl テクスチャ {
     pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
+        転送係: ステージング経由の転送係<'_>,
         問い合わせ: 物理デバイス問い合わせ<'_>,
-        転送環境: &転送実行環境,
         素材: &テクスチャ素材,
     ) -> Result<Self, レンダラーエラー> {
-        create::テクスチャを生成する(確保係, 問い合わせ, 転送環境, 素材)
+        create::テクスチャを生成する(転送係, 問い合わせ, 素材)
     }
 
     fn 部品から組み立てる(image: vk::Image, memory: vk::DeviceMemory, image_view: vk::ImageView) -> Self {
