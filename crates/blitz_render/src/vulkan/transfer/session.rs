@@ -26,7 +26,7 @@ impl<'環境> 転送コマンドを積む一時コマンドバッファ<'環境>
             unsafe { 環境.device.free_command_buffers(環境.command_pool, &[command_buffer]) };
             return Err(誤り.into());
         }
-        環境.未送信の一時コマンドバッファ数.積み始めた1本を加える();
+        環境.未送信のコマンドバッファ数.積み始めた1本を加える();
         Ok(Self { 環境, command_buffer })
     }
 
@@ -44,7 +44,7 @@ impl<'環境> 転送コマンドを積む一時コマンドバッファ<'環境>
         let 送信結果 = self.積み込みを閉じて送信し待つ();
         // 安全性: command_bufferはこの値が唯一の所有者で、fence待ちの後か送信前の失敗のいずれでも以降使用しない。
         unsafe { self.環境.device.free_command_buffers(self.環境.command_pool, &[self.command_buffer]) };
-        self.環境.未送信の一時コマンドバッファ数.送信し終えた1本を差し引く();
+        self.環境.未送信のコマンドバッファ数.送信し終えた1本を差し引く();
         送信結果
     }
 

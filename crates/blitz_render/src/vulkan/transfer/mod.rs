@@ -11,13 +11,13 @@ mod session;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::unsent_command_buffers::未送信の一時コマンドバッファ数;
+use crate::vulkan::unsent_command_buffers::未送信のコマンドバッファ数;
 
 pub(crate) struct 転送実行環境 {
     device: ash::Device,
     queue: vk::Queue,
     command_pool: vk::CommandPool,
-    未送信の一時コマンドバッファ数: 未送信の一時コマンドバッファ数,
+    未送信のコマンドバッファ数: 未送信のコマンドバッファ数,
 }
 
 impl 転送実行環境 {
@@ -27,7 +27,7 @@ impl 転送実行環境 {
             device: device.clone(),
             queue,
             command_pool,
-            未送信の一時コマンドバッファ数: 未送信の一時コマンドバッファ数::零から数え始める(),
+            未送信のコマンドバッファ数: 未送信のコマンドバッファ数::零から数え始める(),
         })
     }
 
@@ -41,7 +41,7 @@ impl 転送実行環境 {
 
     /// 前提: 呼び出し元はGPUの全作業の完了を待っており、この環境から取った一時コマンドバッファをすべて送信済みである。
     pub(crate) fn 破棄する(&self) {
-        self.未送信の一時コマンドバッファ数.未送信が1本も残っていないことを確かめる();
+        self.未送信のコマンドバッファ数.未送信が1本も残っていないことを確かめる();
         // 安全性: command_poolはSelfが唯一の所有者であり、破棄時点でGPU側の使用が
         // device_wait_idle済みであることを呼び出し元が保証する。
         unsafe { self.device.destroy_command_pool(self.command_pool, None) };

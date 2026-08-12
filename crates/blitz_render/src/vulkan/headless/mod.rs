@@ -19,7 +19,7 @@ pub(crate) use session::GPU命令を積む一時コマンドバッファ;
 
 use crate::validation_counter::{検証カウンタ, 検証層の状況};
 use crate::vulkan::tracked_device::GPUデバイス;
-use crate::vulkan::unsent_command_buffers::未送信の一時コマンドバッファ数;
+use crate::vulkan::unsent_command_buffers::未送信のコマンドバッファ数;
 
 pub(crate) struct ウィンドウなし実行GPU環境 {
     // 注意: 値としては読まれないが、破棄まで保持し続けることに意味がある。
@@ -32,7 +32,7 @@ pub(crate) struct ウィンドウなし実行GPU環境 {
     device: GPUデバイス,
     queue: vk::Queue,
     command_pool: vk::CommandPool,
-    未送信の一時コマンドバッファ数: 未送信の一時コマンドバッファ数,
+    未送信のコマンドバッファ数: 未送信のコマンドバッファ数,
 }
 
 impl ウィンドウなし実行GPU環境 {
@@ -68,7 +68,7 @@ impl ウィンドウなし実行GPU環境 {
     /// 前提: 呼び出し元はGPUの全作業の完了を待っており(`送信して完了を待つ`が送信ごとに待つ)、
     /// この環境で確保した資源をすべて破棄済みである。残っていれば`全メモリ解放を確認する`が止める。
     pub(crate) fn 破棄する(&self) {
-        self.未送信の一時コマンドバッファ数.未送信が1本も残っていないことを確かめる();
+        self.未送信のコマンドバッファ数.未送信が1本も残っていないことを確かめる();
         self.device.全メモリ解放を確認する();
         // 安全性: どのハンドルもSelfが唯一の所有者であり、破棄時点でGPU側の使用が完了している。
         unsafe {
