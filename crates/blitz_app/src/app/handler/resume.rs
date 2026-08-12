@@ -61,7 +61,7 @@ fn 格納する(アプリ: &mut アプリ, event_loop: &ActiveEventLoop, 一式:
     let 注入 = アプリ
         .読み戻し検収
         .遠方環境の検収条件
-        .map(|条件| crate::reports::indirect_probe::レンダラーへ注入する(条件, &mut レンダラー));
+        .map(|条件| 条件.レンダラーへ注入する(&mut レンダラー));
     if let Some(Err(誤り)) = 注入 {
         アプリ.起動時エラー = Some(crate::error::起動エラー::from(誤り));
         event_loop.exit();

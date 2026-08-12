@@ -22,7 +22,6 @@ use blitz_render::distant_environment::derived::鏡面畳込みの解像度;
 use blitz_render::読み戻し画像;
 
 pub(crate) use condition::遠方環境の検収条件;
-pub(crate) use injection_dispatch::レンダラーへ注入する;
 
 use crate::app::frame::フレーム視点;
 

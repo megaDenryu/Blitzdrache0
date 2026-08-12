@@ -20,7 +20,7 @@ use candidate::選定候補;
 /// 基礎要件(グラフィックス描画とサーフェス提示、dynamicRendering・synchronization2・shaderDrawParameters)と
 /// ディスクリプタ索引の最低機能要件とテクスチャのブロック圧縮と立方体の配列画像への対応をすべて満たす物理デバイスを選ぶ。
 /// 満たす候補の中ではdiscrete GPUを優先する。
-pub(crate) fn 選定する(
+pub(in crate::vulkan) fn 選定する(
     instance: &ash::Instance,
     surface_loader: &ash::khr::surface::Instance,
     surface: vk::SurfaceKHR,
@@ -92,7 +92,7 @@ fn 物理デバイスが立方体の配列画像に対応するか(instance: &as
 /// 物理デバイスが`largePoints`(1.0を超えるSV_PointSize出力)に対応するか。
 /// 粒子描画のPointSize指定(判断29)が効くかどうかを左右するのみで、
 /// 未対応でも点は既定サイズで描かれ続けるため物理デバイス選定条件には含めない。
-pub(crate) fn 大きな点描画に対応するか(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> bool {
+pub(in crate::vulkan) fn 大きな点描画に対応するか(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> bool {
     // 安全性: instance・物理デバイスは列挙済みで有効。
     let 機能 = unsafe { instance.get_physical_device_features(物理デバイス) };
     機能.large_points == vk::TRUE

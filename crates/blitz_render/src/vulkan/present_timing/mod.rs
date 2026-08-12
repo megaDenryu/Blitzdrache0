@@ -14,7 +14,7 @@ use crate::present_display::実表示観測;
 use crate::present_display::実表示計測状況;
 use record::表示時刻記録;
 
-pub(crate) use support::{有効化する拡張名一覧, 調べる};
+pub(in crate::vulkan) use support::{有効化する拡張名一覧, 調べる};
 
 /// 実表示計測の使用可否。非対応の理由まで型で保持し、記録は使用可能なときだけ持つ。
 pub(crate) enum 実表示計測 {

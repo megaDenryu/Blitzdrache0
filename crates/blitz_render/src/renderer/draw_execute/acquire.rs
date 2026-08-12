@@ -6,7 +6,6 @@ use super::super::cpu_timing::CPU区間時計;
 use super::super::presentation::取得済み提示;
 use super::super::レンダラー;
 use crate::error::レンダラーエラー;
-use crate::vulkan;
 use crate::vulkan::frame::取得結果;
 
 /// 提示状態へ反映する前の取得の事実。反映は`実行する`が行う。
@@ -45,7 +44,9 @@ fn 取得して束ねる(レンダラー: &レンダラー, 取得セマフォ: 
     let Some(許可) = レンダラー.提示.描画許可() else {
         return Ok(取得結末::再構築へ);
     };
-    let 結果 = vulkan::frame::acquire::取得する(レンダラー.環境.swapchain_loader(), 許可.スワップチェーンハンドル(), 取得セマフォ)?;
+    let 結果 = レンダラー
+        .環境
+        .スワップチェーンの次の画像を取得する(許可.スワップチェーンハンドル(), 取得セマフォ)?;
     match 結果 {
         取得結果::取得した { 添字, 劣化 } => Ok(取得結末::束ねた {
             取得済み: 許可.取得した画像を束ねる(添字),

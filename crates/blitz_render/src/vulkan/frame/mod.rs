@@ -25,7 +25,7 @@ mod submit_present;
 mod types;
 mod ui_types;
 
-pub(crate) mod acquire;
+mod acquire;
 pub(crate) mod depth_prepass_draw;
 pub(crate) mod draw_commands;
 

@@ -8,7 +8,7 @@ use crate::present_display::実表示計測状況;
 use crate::vulkan::present_timing;
 use crate::vulkan::tracked_device::GPUデバイス;
 
-pub(crate) fn 生成する(
+pub(in crate::vulkan) fn 生成する(
     instance: &ash::Instance,
     物理デバイス: vk::PhysicalDevice,
     キューファミリ添字: u32,

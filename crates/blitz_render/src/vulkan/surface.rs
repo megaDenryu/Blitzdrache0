@@ -9,7 +9,7 @@ use crate::error::レンダラーエラー;
 ///
 /// 前提: `表示ハンドル` と `ウィンドウハンドル` の指すウィンドウは、戻り値の
 /// サーフェスより長生きすることを呼び出し元が保証する。
-pub(crate) fn 生成する(
+pub(in crate::vulkan) fn 生成する(
     entry: &ash::Entry,
     instance: &ash::Instance,
     表示ハンドル: RawDisplayHandle,

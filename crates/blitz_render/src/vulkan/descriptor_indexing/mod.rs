@@ -11,7 +11,7 @@
 mod descriptor_indexing_tests;
 mod query;
 
-pub(crate) use query::{上限を採取する, 機能を採取する};
+pub(in crate::vulkan) use query::{上限を採取する, 機能を採取する};
 
 use crate::error::ディスクリプタ索引機能項目;
 

@@ -1,8 +1,13 @@
-//! スワップチェーンからの次画像取得。
+//! スワップチェーンからの次画像取得。GPU環境が保持するスワップチェーンローダーだけを触る操作であるため、
+//! この局面をGPU環境のメソッドとしてここへ分けて置く(触れるフィールドが限定された操作の分離)。
+//!
+//! 呼び出し側がローダーを持参しないのは、ローダーが取得の材料ではなくGPU環境が持ち続ける依存だからである。
+//! 呼び出し側が渡すのは、そのフレームに描く相手であるスワップチェーンと、取得の完了を知らせるセマフォだけである。
 
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::gpu_environment::GPU環境;
 use crate::vulkan::swapchain::スワップチェーン画像添字;
 
 /// 次画像取得の結果。
@@ -15,21 +20,26 @@ pub(crate) enum 取得結果 {
     再構築が必要,
 }
 
-pub(crate) fn 取得する(
-    swapchain_loader: &ash::khr::swapchain::Device,
-    swapchain: vk::SwapchainKHR,
-    取得セマフォ: vk::Semaphore,
-) -> Result<取得結果, レンダラーエラー> {
-    // 安全性: swapchain・取得セマフォはいずれも生成済みで、呼び出し元が
-    // フェンス待機によりセマフォが未シグナル状態であることを保証する。
-    let 結果 = unsafe { swapchain_loader.acquire_next_image(swapchain, u64::MAX, 取得セマフォ, vk::Fence::null()) };
+impl GPU環境 {
+    pub(crate) fn スワップチェーンの次の画像を取得する(
+        &self,
+        スワップチェーン: vk::SwapchainKHR,
+        取得セマフォ: vk::Semaphore,
+    ) -> Result<取得結果, レンダラーエラー> {
+        // 安全性: スワップチェーン・取得セマフォはいずれも生成済みで、呼び出し元が
+        // フェンス待機によりセマフォが未シグナル状態であることを保証する。
+        let 結果 = unsafe {
+            self.swapchain_loader()
+                .acquire_next_image(スワップチェーン, u64::MAX, 取得セマフォ, vk::Fence::null())
+        };
 
-    match 結果 {
-        Ok((添字, 劣化)) => Ok(取得結果::取得した {
-            添字: スワップチェーン画像添字::取得結果から生成する(添字),
-            劣化,
-        }),
-        Err(vk::Result::ERROR_OUT_OF_DATE_KHR) => Ok(取得結果::再構築が必要),
-        Err(誤り) => Err(誤り.into()),
+        match 結果 {
+            Ok((添字, 劣化)) => Ok(取得結果::取得した {
+                添字: スワップチェーン画像添字::取得結果から生成する(添字),
+                劣化,
+            }),
+            Err(vk::Result::ERROR_OUT_OF_DATE_KHR) => Ok(取得結果::再構築が必要),
+            Err(誤り) => Err(誤り.into()),
+        }
     }
 }

@@ -9,7 +9,7 @@ use crate::error::レンダラーエラー;
 ///
 /// `デバッグ有効か` が真のとき、`VK_LAYER_KHRONOS_validation` を有効化し、
 /// `VkValidationFeaturesEXT` でSYNCHRONIZATION_VALIDATIONを追加で有効にする。
-pub(crate) fn 生成する(
+pub(in crate::vulkan) fn 生成する(
     entry: &ash::Entry,
     表示ハンドル: RawDisplayHandle,
     デバッグ有効か: bool,

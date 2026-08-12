@@ -23,7 +23,7 @@ use super::texture_registry::必要枚数を数える;
 type 構築結果<供給元> =
     Result<資源表世代<<供給元 as 常駐テクスチャ供給元>::常駐画像, <供給元 as 常駐テクスチャ供給元>::世代付属資源>, レンダラーエラー>;
 
-pub(crate) fn 構築する<供給元: 常駐テクスチャ供給元>(
+pub(in crate::vulkan::material_table) fn 構築する<供給元: 常駐テクスチャ供給元>(
     供給元: &mut 供給元,
     世代id: 資源表世代ID,
     レイアウト容量: テクスチャ表レイアウト容量,
