@@ -4,7 +4,7 @@
 
 use std::path::Path;
 
-use blitz_asset_compiler::入力契約を検査する;
+use blitz_asset_compiler::入力契約を検査するglTFのファイル;
 
 fn main() {
     let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
@@ -27,7 +27,7 @@ fn main() {
 }
 
 fn 検査して報告する(パス: &Path) -> bool {
-    let 結果 = 入力契約を検査する(パス);
+    let 結果 = 入力契約を検査するglTFのファイル::生成する(パス).全項目を検査する();
     println!("=== {} ===", パス.display());
     println!("{結果}");
     結果.合格か()

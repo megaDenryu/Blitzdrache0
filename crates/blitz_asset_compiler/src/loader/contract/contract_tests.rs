@@ -9,11 +9,11 @@ mod material_tests;
 use super::fixture_json::{三角形のプリミティブ, 合格の指定, 文書jsonを作る};
 use super::glb_fixture::{glbを書き出す, 三角形のバイナリ};
 use super::result::契約検査結果;
-use super::入力契約を検査する;
+use super::target_file::入力契約を検査するglTFのファイル;
 
 pub(super) fn 検査する(名前: &str, 指定: &super::fixture_json::文書の指定<'_>) -> 契約検査結果 {
     let パス = glbを書き出す(名前, &文書jsonを作る(指定), &三角形のバイナリ()).unwrap();
-    入力契約を検査する(&パス)
+    入力契約を検査するglTFのファイル::生成する(&パス).全項目を検査する()
 }
 
 #[test]
@@ -66,7 +66,7 @@ fn 三角形以外の並び方は違反になる() {
 #[test]
 fn 開けないパスは違反として報告する() {
     let 存在しないパス = std::env::temp_dir().join("blitzdrache0_contract_fixture").join("存在しない.glb");
-    let 結果 = 入力契約を検査する(&存在しないパス);
+    let 結果 = 入力契約を検査するglTFのファイル::生成する(&存在しないパス).全項目を検査する();
     assert!(!結果.合格か());
     assert!(結果.概要().is_none());
 }

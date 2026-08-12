@@ -1,44 +1,40 @@
-//! 先頭メッシュの幾何をローダーに読ませ、概要を計測する工程。受け取るのは開いた文書、返すのは概要と指摘一覧である。
+//! 先頭メッシュの幾何をローダーに読ませ、概要を計測する工程。受け取るのは開いた文書、記すのは概要と指摘である。
 //! 頂点とインデックスを`loader::mesh`にそのまま読ませるのは、検査が読み方の写しを持たないためである。読めなかったこと自体を1件の違反として報告する。
 //! 読み終えたデータが実行時形式の要求を満たすかの判定は`mesh_data_check`が持つ。
 
 use blitz_engine::メッシュデータ;
 
-use super::super::document::開いた文書;
 use super::super::material_slots::材質スロット語彙;
 use super::super::mesh;
-use super::finding::契約指摘;
-use super::mesh_data_check;
-use super::primitive_preservation;
+use super::inspection::開いた文書の契約検査;
 use super::result::契約検査概要;
 use super::target::{名前を写す, 対象位置};
 
-pub(super) fn 検査する(文書: &開いた文書) -> (Option<契約検査概要>, Vec<契約指摘>) {
-    let メッシュ数 = 文書.document.meshes().len();
-    let Some(メッシュ) = 文書.document.meshes().next() else {
-        return (None, Vec::new());
-    };
-    let 位置 = 対象位置::メッシュ {
-        添字: 0,
-        名前: 名前を写す(メッシュ.name()),
-    };
-    let プリミティブ数 = メッシュ.primitives().len();
+impl 開いた文書の契約検査<'_> {
+    pub(super) fn 先頭メッシュの幾何を読んで概要を計る(&mut self) {
+        let メッシュ数 = self.文書の全体().meshes().len();
+        let Some(メッシュ) = self.文書の全体().meshes().next() else {
+            return;
+        };
+        let 位置 = 対象位置::メッシュ {
+            添字: 0,
+            名前: 名前を写す(メッシュ.name()),
+        };
+        let プリミティブ数 = メッシュ.primitives().len();
 
-    let 語彙 = 材質スロット語彙::メッシュ列から作る(std::slice::from_ref(&メッシュ));
-    match mesh::メッシュデータを取り出す(文書, &メッシュ, None, &語彙) {
-        Ok(データ) => {
-            let mut 指摘一覧 = mesh_data_check::検査する(&データ);
-            指摘一覧.extend(primitive_preservation::検査する(プリミティブ数, &データ));
-            (Some(概要を作る(メッシュ数, プリミティブ数, &データ)), 指摘一覧)
-        }
-        Err(誤り) => (
-            None,
-            vec![契約指摘::違反を作る(
+        let 語彙 = 材質スロット語彙::メッシュ列から作る(std::slice::from_ref(&メッシュ));
+        match mesh::メッシュデータを取り出す(self.開いた文書を参照する(), &メッシュ, None, &語彙) {
+            Ok(データ) => {
+                self.概要を記す(概要を作る(メッシュ数, プリミティブ数, &データ));
+                self.メッシュデータが実行時形式の要求を満たすことを検査する(&データ);
+                self.焼いた結果にプリミティブが残ったことを検査する(プリミティブ数, &データ);
+            }
+            Err(誤り) => self.違反を記す(
                 位置,
                 format!("頂点とインデックスを読めなかった: {誤り}"),
                 "頂点位置(POSITION)を持つ三角形メッシュを書き出す。Blenderの書き出し設定で位置とインデックスを除いていないかを確かめる",
-            )],
-        ),
+            ),
+        }
     }
 }
 

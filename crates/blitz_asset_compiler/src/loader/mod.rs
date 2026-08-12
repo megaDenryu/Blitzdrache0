@@ -22,7 +22,7 @@ use crate::texture_storage::テクスチャ格納方針;
 use crate::uniform_scale::寸法を合わせる一様倍率;
 
 pub use archetype::{原型ソース, 原型ソースを読み込む};
-pub use contract::{入力契約を検査する, 契約指摘, 契約検査概要, 契約検査結果, 重大度};
+pub use contract::{入力契約を検査するglTFのファイル, 契約指摘, 契約検査概要, 契約検査結果, 重大度};
 pub(crate) use fixed_object::固定物の描画対象を読み込む;
 
 use crate::error::アセットコンパイルエラー;

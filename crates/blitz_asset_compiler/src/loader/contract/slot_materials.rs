@@ -13,20 +13,23 @@ pub(super) struct 材質スロットの参照<'文書> {
     pub(super) プリミティブ: gltf::Primitive<'文書>,
 }
 
-pub(super) fn 数え上げる(文書: &gltf::Document) -> Vec<材質スロットの参照<'_>> {
-    let Some(メッシュ) = 文書.meshes().next() else {
-        return Vec::new();
-    };
-    let 語彙 = 材質スロット語彙::メッシュ列から作る(std::slice::from_ref(&メッシュ));
-    let mut 一覧: Vec<材質スロットの参照<'_>> = Vec::new();
-    for プリミティブ in メッシュ.primitives() {
-        let Some(番号) = 語彙.スロットを参照する(&プリミティブ).map(blitz_engine::材質スロットID::番号を返す) else {
-            continue;
+impl<'文書> 材質スロットの参照<'文書> {
+    pub(super) fn 先頭メッシュの材質スロットを数え上げる(文書: &'文書 gltf::Document) -> Vec<Self> {
+        let Some(メッシュ) = 文書.meshes().next() else {
+            return Vec::new();
         };
-        if 一覧.iter().any(|登録済み| 登録済み.番号 == 番号) {
-            continue;
+        let 語彙 = 材質スロット語彙::メッシュ列から作る(std::slice::from_ref(&メッシュ));
+        let mut 一覧: Vec<Self> = Vec::new();
+        for プリミティブ in メッシュ.primitives() {
+            let Some(番号) = 語彙.スロットを参照する(&プリミティブ).map(blitz_engine::材質スロットID::番号を返す)
+            else {
+                continue;
+            };
+            if 一覧.iter().any(|登録済み| 登録済み.番号 == 番号) {
+                continue;
+            }
+            一覧.push(Self { 番号, プリミティブ });
         }
-        一覧.push(材質スロットの参照 { 番号, プリミティブ });
+        一覧
     }
-    一覧
 }
