@@ -70,7 +70,7 @@ impl 照明問い合わせのディスクリプタプール {
     }
 
     /// セットの割り当てへ渡す境界。
-    pub(crate) fn ハンドル(&self) -> vk::DescriptorPool {
+    pub(crate) fn プールのハンドル(&self) -> vk::DescriptorPool {
         self.0
     }
 

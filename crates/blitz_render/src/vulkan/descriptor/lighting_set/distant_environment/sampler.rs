@@ -30,7 +30,7 @@ impl 遠方環境を読むサンプラー {
     }
 
     /// 書き込み記述子へ渡す境界。
-    pub(super) fn ハンドル(&self) -> vk::Sampler {
+    pub(super) fn サンプラーのハンドル(&self) -> vk::Sampler {
         self.0
     }
 
