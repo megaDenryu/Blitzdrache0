@@ -6,6 +6,7 @@ use ash::vk;
 
 use super::シーンセットレイアウト一式;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::descriptor::{empty_set, geometry_set, lighting_set, material_set, view_pass_set};
 use crate::vulkan::material_table::テクスチャ表レイアウト容量;
 use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
@@ -15,11 +16,12 @@ use crate::vulkan::texture::table_sampler;
 const レイアウト数: usize = 5;
 
 pub(super) fn 生成する(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     表容量: テクスチャ表レイアウト容量,
     照明束縛: 照明束縛レイアウト,
 ) -> Result<シーンセットレイアウト一式, レンダラーエラー> {
-    let 材質サンプラー = table_sampler::生成する(device)?;
+    let device = 確保係.論理デバイス();
+    let 材質サンプラー = table_sampler::生成する(確保係)?;
     let 一覧 = match 順に生成する(device, 表容量, 材質サンプラー, 照明束縛) {
         Ok(値) => 値,
         Err(誤り) => {

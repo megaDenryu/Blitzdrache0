@@ -4,6 +4,7 @@ use ash::vk;
 
 use super::image::形式;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 pub(super) fn 画像ビューを作る(device: &ash::Device, image: vk::Image) -> Result<vk::ImageView, レンダラーエラー> {
     let 部分範囲 = vk::ImageSubresourceRange::default()
@@ -21,7 +22,7 @@ pub(super) fn 画像ビューを作る(device: &ash::Device, image: vk::Image) -
     Ok(unsafe { device.create_image_view(&create_info, None)? })
 }
 
-pub(super) fn サンプラーを作る(device: &ash::Device) -> Result<vk::Sampler, レンダラーエラー> {
+pub(super) fn サンプラーを作る(確保係: &GPU資源の確保係<'_>) -> Result<vk::Sampler, レンダラーエラー> {
     let create_info = vk::SamplerCreateInfo::default()
         .mag_filter(vk::Filter::LINEAR)
         .min_filter(vk::Filter::LINEAR)
@@ -33,6 +34,5 @@ pub(super) fn サンプラーを作る(device: &ash::Device) -> Result<vk::Sampl
         .max_lod(0.0)
         .border_color(vk::BorderColor::INT_OPAQUE_BLACK)
         .unnormalized_coordinates(false);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_sampler(&create_info, None)? })
+    確保係.標本の取り方からサンプラーを確保する(&create_info)
 }

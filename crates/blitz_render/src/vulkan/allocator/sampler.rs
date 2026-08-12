@@ -1,5 +1,7 @@
-//! 画像を読むときの標本の取り方を決めるサンプラーの確保。エンジンが使う取り方は2つだけであり、
-//! どちらも縁の外を縁の色で埋める(CLAMP_TO_EDGE)。
+//! 画像を読むときの標本の取り方を決めるサンプラーの確保。ここが持つ取り方は2つであり、どちらも縁の外を縁の色で埋める(CLAMP_TO_EDGE)。
+//!
+//! 取り方そのものは、深度の比較や材質テクスチャ表のように読む側の都合で決まるため、読む側の階層が組んで
+//! `標本の取り方からサンプラーを確保する`へ渡す。確保の口をここ1つに閉じるのは、論理デバイスを読む側へ運ばせないためである。
 
 use ash::vk;
 
@@ -22,6 +24,16 @@ impl GPU資源の確保係<'_> {
         self.サンプラーを作る(vk::Filter::NEAREST)
     }
 
+    /// 読む側が組んだ標本の取り方でサンプラーを確保する。比較サンプラーや材質テクスチャ表のサンプラーのように、
+    /// 取り方の理由を読む側の階層が持つものがこの口を通る。
+    pub(crate) fn 標本の取り方からサンプラーを確保する(
+        &self,
+        取り方: &vk::SamplerCreateInfo<'_>,
+    ) -> Result<vk::Sampler, レンダラーエラー> {
+        // 安全性: deviceは生成済みで有効。取り方は呼び出し元がこの呼び出しの間だけ生存する値として組み立てる。
+        Ok(unsafe { self.device.create_sampler(取り方, None)? })
+    }
+
     fn サンプラーを作る(&self, テクセルの混ぜ方: vk::Filter) -> Result<vk::Sampler, レンダラーエラー> {
         let create_info = vk::SamplerCreateInfo::default()
             .mag_filter(テクセルの混ぜ方)
@@ -30,7 +42,6 @@ impl GPU資源の確保係<'_> {
             .address_mode_u(vk::SamplerAddressMode::CLAMP_TO_EDGE)
             .address_mode_v(vk::SamplerAddressMode::CLAMP_TO_EDGE)
             .address_mode_w(vk::SamplerAddressMode::CLAMP_TO_EDGE);
-        // 安全性: deviceは生成済みで有効。
-        Ok(unsafe { self.device.create_sampler(&create_info, None)? })
+        self.標本の取り方からサンプラーを確保する(&create_info)
     }
 }

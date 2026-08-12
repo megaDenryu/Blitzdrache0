@@ -13,6 +13,7 @@ mod create;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::material_table::テクスチャ表レイアウト容量;
 use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
 use crate::vulkan::texture::table_sampler;
@@ -32,11 +33,11 @@ pub(crate) struct シーンセットレイアウト一式 {
 impl シーンセットレイアウト一式 {
     /// 材質テクスチャ表の要素数を受け取るのは、それがレイアウトの一部だからである。世代の内容ではこの値を変えない。
     pub(crate) fn 生成する(
-        device: &ash::Device,
+        確保係: &GPU資源の確保係<'_>,
         表容量: テクスチャ表レイアウト容量,
         照明束縛: 照明束縛レイアウト,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, 表容量, 照明束縛)
+        create::生成する(確保係, 表容量, 照明束縛)
     }
 
     pub(crate) fn 照明束縛(&self) -> 照明束縛レイアウト {

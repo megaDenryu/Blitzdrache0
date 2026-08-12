@@ -11,6 +11,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 pub(crate) const 拡散照度のバインディング番号: u32 = 4;
 pub(crate) const 鏡面畳込みのバインディング番号: u32 = 5;
@@ -26,7 +27,7 @@ pub(crate) struct 遠方環境の束縛先 {
 
 /// 3つの画像を読む1つの固定サンプラー。段の間を補間するのは、粗さが段の間の値を取るためである。
 /// 縁を伸ばすのは、反射率積分表の端(粗さ0と1、視線が面と平行)で表の外を読ませないためである。
-pub(crate) fn サンプラーを生成する(device: &ash::Device) -> Result<vk::Sampler, レンダラーエラー> {
+pub(crate) fn サンプラーを生成する(確保係: &GPU資源の確保係<'_>) -> Result<vk::Sampler, レンダラーエラー> {
     let create_info = vk::SamplerCreateInfo::default()
         .mag_filter(vk::Filter::LINEAR)
         .min_filter(vk::Filter::LINEAR)
@@ -38,8 +39,7 @@ pub(crate) fn サンプラーを生成する(device: &ash::Device) -> Result<vk:
         .max_lod(vk::LOD_CLAMP_NONE)
         .border_color(vk::BorderColor::INT_OPAQUE_BLACK)
         .unnormalized_coordinates(false);
-    // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
-    Ok(unsafe { device.create_sampler(&create_info, None)? })
+    確保係.標本の取り方からサンプラーを確保する(&create_info)
 }
 
 pub(crate) fn サンプラーを破棄する(device: &ash::Device, サンプラー: vk::Sampler) {

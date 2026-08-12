@@ -41,7 +41,7 @@ impl UIテクスチャ {
                 return Err(誤り);
             }
         };
-        let sampler = match view::サンプラーを作る(device) {
+        let sampler = match view::サンプラーを作る(確保係) {
             Ok(sampler) => sampler,
             Err(誤り) => {
                 // 安全性: image・image_view・memoryはこのスコープの唯一の所有者で、以降使用しない。

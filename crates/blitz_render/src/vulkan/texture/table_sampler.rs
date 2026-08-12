@@ -7,8 +7,9 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 
-pub(crate) fn 生成する(device: &ash::Device) -> Result<vk::Sampler, レンダラーエラー> {
+pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>) -> Result<vk::Sampler, レンダラーエラー> {
     let create_info = vk::SamplerCreateInfo::default()
         .mag_filter(vk::Filter::LINEAR)
         .min_filter(vk::Filter::LINEAR)
@@ -20,8 +21,7 @@ pub(crate) fn 生成する(device: &ash::Device) -> Result<vk::Sampler, レン�
         .max_lod(vk::LOD_CLAMP_NONE)
         .border_color(vk::BorderColor::INT_OPAQUE_BLACK)
         .unnormalized_coordinates(false);
-    // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
-    Ok(unsafe { device.create_sampler(&create_info, None)? })
+    確保係.標本の取り方からサンプラーを確保する(&create_info)
 }
 
 /// 注意: このサンプラーを固定サンプラーとして宣言したセットレイアウトをすべて破棄した後に呼ぶ。

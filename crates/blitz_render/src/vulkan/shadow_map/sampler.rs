@@ -3,10 +3,11 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 /// PCF用の比較サンプラー: 深度比較をハードウェアで行い、範囲外(border)は
 /// 「常に比較成立=非シャドウ」として扱う(FLOAT_OPAQUE_WHITE。判断35)。
-pub(super) fn 比較サンプラーを作る(device: &ash::Device) -> Result<vk::Sampler, レンダラーエラー> {
+pub(super) fn 比較サンプラーを作る(確保係: &GPU資源の確保係<'_>) -> Result<vk::Sampler, レンダラーエラー> {
     let create_info = vk::SamplerCreateInfo::default()
         .mag_filter(vk::Filter::LINEAR)
         .min_filter(vk::Filter::LINEAR)
@@ -20,6 +21,5 @@ pub(super) fn 比較サンプラーを作る(device: &ash::Device) -> Result<vk:
         .min_lod(0.0)
         .max_lod(0.0)
         .unnormalized_coordinates(false);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_sampler(&create_info, None)? })
+    確保係.標本の取り方からサンプラーを確保する(&create_info)
 }

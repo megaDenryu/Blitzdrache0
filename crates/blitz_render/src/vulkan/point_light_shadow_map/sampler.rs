@@ -3,6 +3,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 /// PCF用の比較サンプラー。深度比較をハードウェアで行い、比較の向きは順Zに合わせて`LESS_OR_EQUAL`にする
 /// (記録された遮蔽より手前か等しければ照らされる。多段影と同じ読み方である)。
@@ -10,7 +11,7 @@ use crate::error::レンダラーエラー;
 /// 端の扱いをCLAMP_TO_EDGEにするのは、立方体として標本する限り面の境界がハードウェアの側で
 /// 隣の面へつながり、範囲の外という状態がそもそも現れないためである。多段影が使う「範囲外は影なし」の
 /// 縁の色は、正射影の外側を持つあちら固有の必要である(参照: `_doc/設計/クラスタ多光源と点光源の影.md`「判断o」)。
-pub(super) fn 比較サンプラーを作る(device: &ash::Device) -> Result<vk::Sampler, レンダラーエラー> {
+pub(super) fn 比較サンプラーを作る(確保係: &GPU資源の確保係<'_>) -> Result<vk::Sampler, レンダラーエラー> {
     let create_info = vk::SamplerCreateInfo::default()
         .mag_filter(vk::Filter::LINEAR)
         .min_filter(vk::Filter::LINEAR)
@@ -23,6 +24,5 @@ pub(super) fn 比較サンプラーを作る(device: &ash::Device) -> Result<vk:
         .min_lod(0.0)
         .max_lod(0.0)
         .unnormalized_coordinates(false);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_sampler(&create_info, None)? })
+    確保係.標本の取り方からサンプラーを確保する(&create_info)
 }

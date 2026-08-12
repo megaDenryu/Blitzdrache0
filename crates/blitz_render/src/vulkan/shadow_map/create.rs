@@ -12,7 +12,6 @@ use crate::cascade::{影の一辺解像度, 距離区分数};
 use crate::error::レンダラーエラー;
 use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::allocator::GPU資源の確保係;
-use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) fn 生成する(
     確保係: &GPU資源の確保係<'_>, 一辺: 影の一辺解像度
@@ -27,7 +26,7 @@ pub(super) fn 生成する(
             return Err(誤り);
         }
     };
-    match 続きを生成する(device, 画像) {
+    match 続きを生成する(確保係, 画像) {
         Ok((配列ビュー, 距離区分別のビュー一覧, sampler)) => Ok(シャドウマップ {
             一辺,
             画像,
@@ -47,11 +46,12 @@ pub(super) fn 生成する(
 
 /// ビュー群とサンプラーを作る。1つでも失敗したら、この関数が作ったハンドルだけを逆順に破棄して失敗を返す。
 fn 続きを生成する(
-    device: &GPUデバイス,
+    確保係: &GPU資源の確保係<'_>,
     画像: vk::Image,
 ) -> Result<(vk::ImageView, [vk::ImageView; 距離区分数], vk::Sampler), レンダラーエラー> {
     let mut 作成済みビュー: Vec<vk::ImageView> = Vec::with_capacity(距離区分数 + 1);
-    let 結果 = ビュー群とサンプラーを作る(device, 画像, &mut 作成済みビュー);
+    let device = 確保係.論理デバイス();
+    let 結果 = ビュー群とサンプラーを作る(確保係, 画像, &mut 作成済みビュー);
     if 結果.is_err() {
         for &ビュー in &作成済みビュー {
             // 安全性: 作成済みビューはこの関数が作ったもので、失敗時は誰も参照していない。
@@ -62,10 +62,11 @@ fn 続きを生成する(
 }
 
 fn ビュー群とサンプラーを作る(
-    device: &GPUデバイス,
+    確保係: &GPU資源の確保係<'_>,
     画像: vk::Image,
     作成済みビュー: &mut Vec<vk::ImageView>,
 ) -> Result<(vk::ImageView, [vk::ImageView; 距離区分数], vk::Sampler), レンダラーエラー> {
+    let device = 確保係.論理デバイス();
     let 配列ビュー = 配列ビューを作る(device, 画像)?;
     作成済みビュー.push(配列ビュー);
     let mut 距離区分別のビュー一覧 = [vk::ImageView::null(); 距離区分数];
@@ -75,6 +76,6 @@ fn ビュー群とサンプラーを作る(
         作成済みビュー.push(ビュー);
         *保存先 = ビュー;
     }
-    let sampler = 比較サンプラーを作る(device)?;
+    let sampler = 比較サンプラーを作る(確保係)?;
     Ok((配列ビュー, 距離区分別のビュー一覧, sampler))
 }

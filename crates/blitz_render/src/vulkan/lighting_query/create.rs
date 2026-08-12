@@ -12,7 +12,6 @@ use crate::vulkan::descriptor::{lighting_set, シーンセットレイアウト�
 use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
 use crate::vulkan::shadow_resources::影の資源の組;
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
-use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(super) fn 生成する(
     確保係: &GPU資源の確保係<'_>,
@@ -42,7 +41,7 @@ fn 束を組み上げる(
     let device = 確保係.論理デバイス();
     let 束縛レイアウト = レイアウト.照明束縛();
     let スロット一覧 = スロット一覧を作る(確保係, pool, レイアウト, 影の資源)?;
-    let 遠方環境サンプラー = match 遠方環境サンプラーを作る(device, 束縛レイアウト) {
+    let 遠方環境サンプラー = match 遠方環境サンプラーを作る(確保係, 束縛レイアウト) {
         Ok(値) => 値,
         Err(誤り) => {
             for スロット in スロット一覧.iter().rev() {
@@ -60,13 +59,13 @@ fn 束を組み上げる(
 }
 
 fn 遠方環境サンプラーを作る(
-    device: &GPUデバイス,
+    確保係: &GPU資源の確保係<'_>,
     束縛レイアウト: 照明束縛レイアウト,
 ) -> Result<Option<vk::Sampler>, レンダラーエラー> {
     if !束縛レイアウト.遠方環境の画像を結ぶか() {
         return Ok(None);
     }
-    Ok(Some(lighting_set::distant_environment::サンプラーを生成する(device)?))
+    Ok(Some(lighting_set::distant_environment::サンプラーを生成する(確保係)?))
 }
 
 fn スロット一覧を作る(
