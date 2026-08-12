@@ -2,18 +2,19 @@
 //! 群と床の組み立ては`floor_scene`が、配置の座標は`cull_placement`が持つ。
 //! 参照: `_doc/設計/植生インスタンスと物量計測.md`「段階導入」
 
-use blitz_engine::{アセットID, カタログ, チャンク座標};
+use blitz_engine::{アセットID, チャンク座標};
 
-use super::{cull_placement, floor_scene};
+use super::cull_placement;
 use crate::compile::コンパイル済みシーン;
 use crate::error::アセットコンパイルエラー;
-use crate::texture_storage::テクスチャ格納方針;
+use crate::scene_compiler::ソースアセットのコンパイル係;
 
-pub fn 植生可視判定シーンをコンパイルする(
-    カタログ: &カタログ,
-    id: &アセットID,
-    所有チャンク: チャンク座標,
-    方針: テクスチャ格納方針,
-) -> Result<コンパイル済みシーン, アセットコンパイルエラー> {
-    floor_scene::群と床のシーンをコンパイルする(カタログ, id, 所有チャンク, cull_placement::配置列を作る()?, 方針)
+impl ソースアセットのコンパイル係<'_> {
+    pub fn 植生可視判定シーンをコンパイルする(
+        &self,
+        id: &アセットID,
+        所有チャンク: チャンク座標,
+    ) -> Result<コンパイル済みシーン, アセットコンパイルエラー> {
+        self.群と床のシーンをコンパイルする(id, 所有チャンク, cull_placement::配置列を作る()?)
+    }
 }

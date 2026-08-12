@@ -8,7 +8,7 @@
 
 use std::path::PathBuf;
 
-use blitz_asset_compiler::{ソースシーンを読み込む, テクスチャ格納方針};
+use blitz_asset_compiler::{ソースアセットのコンパイル係, テクスチャ格納方針};
 use blitz_engine::{アセットID, カタログ, チャンク座標};
 
 fn リポジトリルートからのパス(相対パス: &str) -> PathBuf {
@@ -31,9 +31,9 @@ fn 試験用カタログ() -> (カタログ, アセットID) {
 #[test]
 fn foxのスキンとアニメーションを読み込める() {
     let (カタログ, id) = 試験用カタログ();
+    let コンパイル係 = ソースアセットのコンパイル係::生成する(&カタログ, テクスチャ格納方針::全てRGBA8);
 
-    let シーン = match ソースシーンを読み込む(&カタログ, &id, チャンク座標::生成する(0, 0), テクスチャ格納方針::全てRGBA8)
-    {
+    let シーン = match コンパイル係.ソースシーンを読み込む(&id, チャンク座標::生成する(0, 0)) {
         Ok(シーン) => シーン,
         Err(誤り) => panic!("assets/samples/Fox/Fox.glbの読込に失敗した(cargo xtask fetch-assetsで取得済みか確認): {誤り}"),
     };
