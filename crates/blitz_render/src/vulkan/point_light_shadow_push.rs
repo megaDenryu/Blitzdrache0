@@ -8,6 +8,7 @@ use ash::vk;
 
 use blitz_math::{ワールド, 変換, 点光源の面クリップ};
 
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 
 /// 基準原点のfloat4(16バイト)に続けて列優先の4x4行列(64バイト)を置く。
@@ -24,12 +25,13 @@ pub(crate) fn プッシュ定数範囲() -> vk::PushConstantRange {
 /// 注意: 呼び出し元がコマンド記録中であることと、layoutがこの範囲を宣言済みであることを保証する。
 /// 前提: 基準原点とライトビュー射影は同じカメラ大域原点で狭めた値である。原点が違うと影が世界ごとずれる。
 pub(crate) unsafe fn 積む(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
+    積み先: GPU命令の積み先<'_>,
     layout: vk::PipelineLayout,
     基準原点: カメラ相対の基準原点,
     面のライトビュー射影: 変換<ワールド, 点光源の面クリップ>,
 ) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let mut バイト列 = [0u8; 80];
     バイト列[..16].copy_from_slice(&基準原点.バイト列());
     let 列優先 = 面のライトビュー射影.gpu境界用列優先配列();

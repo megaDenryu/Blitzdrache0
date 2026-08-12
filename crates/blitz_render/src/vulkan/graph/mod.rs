@@ -32,7 +32,7 @@ pub(crate) use clear_spec::クリア指定;
 pub(crate) use color_attachments::カラー添付列;
 pub(crate) use context::GPU命令の積み先と宣言済み資源の取り出し口;
 pub(crate) use depth_attachment::深度アタッチメント;
-pub(crate) use executor::実行する;
+pub(crate) use executor::グラフ実行器;
 pub(crate) use handle::{バッファハンドル, 画像ハンドル};
 pub(crate) use initial_state::{
     前フレームhdr読み直後状態, 前フレームコンピュート読み直後状態, 前フレームシャドウマップ読み直後状態, 前フレーム今のフレームの色読み直後状態,

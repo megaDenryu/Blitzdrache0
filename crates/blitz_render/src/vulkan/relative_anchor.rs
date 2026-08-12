@@ -5,6 +5,8 @@
 use ash::vk;
 use blitz_math::{カメラ相対位置, 大域ワールド位置, 座標変換エラー};
 
+use crate::vulkan::command_sink::GPU命令の積み先;
+
 /// 16バイト境界へ揃えるため、xyzの3成分に余白1つを足した4成分で持つ。
 const 成分数: usize = 4;
 const バイト長: u32 = 16;
@@ -48,9 +50,9 @@ pub(crate) fn プッシュ定数範囲() -> vk::PushConstantRange {
 }
 
 /// 注意: 呼び出し元がコマンド記録中であることと、layoutがこの範囲を宣言済みであることを保証する。
-pub(crate) unsafe fn 積む(
-    device: &ash::Device, command_buffer: vk::CommandBuffer, layout: vk::PipelineLayout, 基準原点: カメラ相対の基準原点
-) {
+pub(crate) unsafe fn 積む(積み先: GPU命令の積み先<'_>, layout: vk::PipelineLayout, 基準原点: カメラ相対の基準原点) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     // 安全性: 呼び出し元がコマンド記録中と、layoutが頂点ステージの16バイト範囲を宣言済みであることを保証する。
     unsafe {
         device.cmd_push_constants(command_buffer, layout, vk::ShaderStageFlags::VERTEX, 0, &基準原点.バイト列());

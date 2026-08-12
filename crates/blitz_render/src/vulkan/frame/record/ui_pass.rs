@@ -5,6 +5,7 @@
 
 use ash::vk;
 
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::frame::UI描画入力;
 use crate::vulkan::graph::{カラー添付列, クリア指定, パス宣言, パス種別, 画像ハンドル, 画像用途};
 
@@ -23,14 +24,14 @@ pub(super) fn ui描画パスを宣言する<'a>(
             クリア指定: クリア指定::ロードする,
         },
         move |文脈| {
-            let device = 文脈.device();
-            let command_buffer = 文脈.コマンドバッファ();
-            記録する(device, command_buffer, ui入力, 寸法);
+            記録する(文脈.積み先(), ui入力, 寸法);
         },
     )
 }
 
-fn 記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, ui入力: &UI描画入力, 寸法: vk::Extent2D) {
+fn 記録する(積み先: GPU命令の積み先<'_>, ui入力: &UI描画入力, 寸法: vk::Extent2D) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let viewport = vk::Viewport::default()
         .x(0.0)
         .y(0.0)

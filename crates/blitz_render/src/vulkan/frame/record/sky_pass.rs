@@ -8,6 +8,7 @@
 
 use ash::vk;
 
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::frame::draw_commands::u32を丸めずf32へ変換する;
 use crate::vulkan::frame::空描画入力;
 use crate::vulkan::graph::{
@@ -40,8 +41,9 @@ pub(super) fn 空パスを宣言する<'a>(
             クリア指定: クリア指定::ロードする,
         },
         move |文脈| {
-            let device = 文脈.device();
-            let command_buffer = 文脈.コマンドバッファ();
+            let 積み先 = 文脈.積み先();
+            let device = 積み先.論理デバイス();
+            let command_buffer = 積み先.コマンドバッファ();
             let viewport一覧 = [vk::Viewport::default()
                 .x(0.0)
                 .y(0.0)
@@ -60,7 +62,7 @@ pub(super) fn 空パスを宣言する<'a>(
                 device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
                 device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
             }
-            セットを束縛する(device, command_buffer, 入力);
+            セットを束縛する(積み先, 入力);
             // 安全性: 直前にパイプラインとディスクリプタを束縛済みで、頂点は全画面三角形の3頂点である。
             unsafe { device.cmd_draw(command_buffer, 3, 1, 0, 0) };
         },
@@ -68,7 +70,9 @@ pub(super) fn 空パスを宣言する<'a>(
 }
 
 /// set0にシーンのセット、set1にベイク済み画像の標本セットを束縛する。空パイプラインのレイアウトは常にこの2本を持つ。
-fn セットを束縛する(device: &ash::Device, command_buffer: vk::CommandBuffer, 入力: &空描画入力) {
+fn セットを束縛する(積み先: GPU命令の積み先<'_>, 入力: &空描画入力) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let セット一覧 = [入力.ディスクリプタセット, 入力.標本セット];
     // 安全性: command_bufferは記録中で、layoutとセットは互換の組として生成済みである。
     unsafe {

@@ -22,8 +22,8 @@ pub(super) fn 粒子更新パスを宣言する<'a>(
             // 束縛で既に解決済みのため使わない)。
             let _ = 文脈.バッファを解決する(粒子ハンドル);
 
-            let device = 文脈.device();
-            let command_buffer = 文脈.コマンドバッファ();
+            let device = 文脈.積み先().論理デバイス();
+            let command_buffer = 文脈.積み先().コマンドバッファ();
             let set一覧 = [粒子入力.ディスクリプタセット];
             let 計算の班数 = 粒子入力.更新スレッド数.div_ceil(64);
 

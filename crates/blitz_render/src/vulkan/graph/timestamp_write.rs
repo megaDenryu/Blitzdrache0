@@ -3,6 +3,7 @@
 
 use ash::vk;
 
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::gpu_timing::パス数上限;
 
 /// パス添字(0起点)からこのパスのクエリ開始添字(前後2発ぶんの前半)を求める。
@@ -16,9 +17,13 @@ pub(super) fn クエリ開始添字を求める(パス添字: usize) -> u32 {
     パス添字u32 * 2
 }
 
-pub(super) fn タイムスタンプを書く(device: &ash::Device, command_buffer: vk::CommandBuffer, pool: vk::QueryPool, クエリ添字: u32) {
-    // 安全性: command_bufferは記録中で、poolはフレーム記録開始時にリセット済み
-    // (`frame::record::コマンドを記録する`)。ALL_COMMANDS基準はTOP_OF_PIPE相当を
+pub(super) fn タイムスタンプを書く(積み先: GPU命令の積み先<'_>, pool: vk::QueryPool, クエリ添字: u32) {
+    // 安全性: command_bufferは記録中で、poolはフレーム記録の積み始めでリセット済み
+    // (`frame::session::積み始める`)。ALL_COMMANDS基準はTOP_OF_PIPE相当を
     // 避けるため(参照: `_doc/設計/レンダーグラフ.md`「GPU計測」)。
-    unsafe { device.cmd_write_timestamp2(command_buffer, vk::PipelineStageFlags2::ALL_COMMANDS, pool, クエリ添字) };
+    unsafe {
+        積み先
+            .論理デバイス()
+            .cmd_write_timestamp2(積み先.コマンドバッファ(), vk::PipelineStageFlags2::ALL_COMMANDS, pool, クエリ添字)
+    };
 }

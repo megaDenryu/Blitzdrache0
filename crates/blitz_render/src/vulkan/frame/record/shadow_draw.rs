@@ -8,13 +8,13 @@ use ash::vk;
 use super::scene_pass::布ドロー;
 use crate::cascade::{影の一辺解像度, 距離区分番号};
 use crate::visible_instance_selection::可視パス;
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::frame::shared_set_bind;
 use crate::vulkan::frame::{シャドウ描画入力, 共有セット束縛};
 use crate::vulkan::shadow_push;
 
 pub(super) fn 記録する(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
+    積み先: GPU命令の積み先<'_>,
     番号: 距離区分番号,
     一辺: 影の一辺解像度,
     入力一覧: &[シャドウ描画入力],
@@ -26,6 +26,8 @@ pub(super) fn 記録する(
         // パスそのものは通してシャドウマップを消去する。消去しないと前フレームの深度が影として残る。
         return;
     }
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let 実数の一辺 = 一辺.実数のテクセル数();
     let viewport = vk::Viewport::default().width(実数の一辺).height(実数の一辺).min_depth(0.0).max_depth(1.0);
     let テクセル数 = 一辺.テクセル数();
@@ -40,30 +42,28 @@ pub(super) fn 記録する(
         // 安全性: command_bufferは記録中で、pipelineは生成済み。
         unsafe { device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 先頭.pipeline) };
         共有.計器.描画切替().パイプライン束縛を数える(パス);
-        shared_set_bind::ビューとパスのセットを束縛する(device, command_buffer, 先頭.layout, 共有);
+        shared_set_bind::ビューとパスのセットを束縛する(積み先, 先頭.layout, 共有);
         for 入力 in 入力一覧 {
             共有.計器.セット別束縛().数える(shared_set_bind::ジオメトリのセット番号);
-            対象を記録する(device, command_buffer, 番号, 入力);
+            対象を記録する(積み先, 番号, 入力);
             共有.計器.描画切替().描画を数える(パス);
         }
     }
     if let Some(布) = 布ドロー {
-        布を記録する(device, command_buffer, 番号, 布, 共有);
+        布を記録する(積み先, 番号, 布, 共有);
     }
 }
 
-fn 対象を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 番号: 距離区分番号, 入力: &シャドウ描画入力) {
+fn 対象を記録する(積み先: GPU命令の積み先<'_>, 番号: 距離区分番号, 入力: &シャドウ描画入力) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
+    let セット一覧 = [入力.ジオメトリセット];
+    let ジオメトリのセット番号 = shared_set_bind::ジオメトリのセット番号;
     // 安全性: command_bufferは記録中で、入力のバッファとディスクリプタセットは生成済み。
     unsafe {
-        shadow_push::積む(device, command_buffer, 入力.layout, 入力.相対の基準原点, 番号);
-        device.cmd_bind_descriptor_sets(
-            command_buffer,
-            vk::PipelineBindPoint::GRAPHICS,
-            入力.layout,
-            shared_set_bind::ジオメトリのセット番号,
-            &[入力.ジオメトリセット],
-            &[],
-        );
+        shadow_push::積む(積み先, 入力.layout, 入力.相対の基準原点, 番号);
+        let 束縛先 = vk::PipelineBindPoint::GRAPHICS;
+        device.cmd_bind_descriptor_sets(command_buffer, 束縛先, 入力.layout, ジオメトリのセット番号, &セット一覧, &[]);
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &[0]);
         device.cmd_bind_index_buffer(command_buffer, 入力.インデックスバッファ, 0, vk::IndexType::UINT32);
         device.cmd_draw_indexed(
@@ -79,17 +79,17 @@ fn 対象を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer
 
 /// 布は専用のシャドウパイプラインを束縛し、ジオメトリのセットを読まない。パイプラインもセットも描画対象から借りないため、
 /// 描画対象が1件も無いフレームでも、走査順が入れ替わったフレームでも、布の影は同じ位置に出る。
-fn 布を記録する(
-    device: &ash::Device, command_buffer: vk::CommandBuffer, 番号: 距離区分番号, 布: 布ドロー<'_>, 共有: 共有セット束縛<'_>
-) {
+fn 布を記録する(積み先: GPU命令の積み先<'_>, 番号: 距離区分番号, 布: 布ドロー<'_>, 共有: 共有セット束縛<'_>) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let シャドウ = &布.入力.外部資源.シャドウ;
     // 安全性: command_bufferは記録中で、布のパイプラインは生成済み。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, シャドウ.pipeline);
-        shadow_push::積む(device, command_buffer, シャドウ.layout, 布.入力.相対の基準原点, 番号);
+        shadow_push::積む(積み先, シャドウ.layout, 布.入力.相対の基準原点, 番号);
     }
     共有.計器.描画切替().パイプライン束縛を数える(可視パス::影の距離区分(番号));
-    shared_set_bind::ビューとパスのセットを束縛する(device, command_buffer, シャドウ.layout, 共有);
+    shared_set_bind::ビューとパスのセットを束縛する(積み先, シャドウ.layout, 共有);
     // 安全性: command_bufferは記録中で、布の頂点・インデックスバッファは生成済み。
     unsafe {
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[布.入力.布頂点バッファ], &[0]);

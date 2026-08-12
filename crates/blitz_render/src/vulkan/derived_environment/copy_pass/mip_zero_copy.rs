@@ -35,8 +35,8 @@ pub(in crate::vulkan) fn 最詳細段の複製を作る(
                 .extent(範囲)];
             // 安全性: command_bufferは記録中、2つの画像は用途宣言からグラフが導いた転送元・転送先のレイアウトへ遷移済みである。
             unsafe {
-                文脈.device().cmd_copy_image(
-                    文脈.コマンドバッファ(),
+                文脈.積み先().論理デバイス().cmd_copy_image(
+                    文脈.積み先().コマンドバッファ(),
                     元の画像,
                     vk::ImageLayout::TRANSFER_SRC_OPTIMAL,
                     先の画像,

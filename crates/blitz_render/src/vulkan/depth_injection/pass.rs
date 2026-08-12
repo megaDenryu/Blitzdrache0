@@ -44,8 +44,8 @@ fn コピーを積む(
     // 安全性: command_bufferは記録中、深度画像はグラフの導いたバリアでTRANSFER_DST_OPTIMALへ遷移済み、
     // バッファは寸法ぶんの単精度の列で確保済みである(`合成深度の注入一式::生成する`が同じ寸法から作る)。
     unsafe {
-        文脈.device().cmd_copy_buffer_to_image(
-            文脈.コマンドバッファ(),
+        文脈.積み先().論理デバイス().cmd_copy_buffer_to_image(
+            文脈.積み先().コマンドバッファ(),
             入力.バッファ,
             画像,
             vk::ImageLayout::TRANSFER_DST_OPTIMAL,

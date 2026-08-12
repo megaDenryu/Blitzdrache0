@@ -54,7 +54,7 @@ pub(super) fn 点光源の影パスを宣言する<'a>(
             },
         },
         move |文脈| {
-            point_light_shadow_draw::記録する(文脈.device(), 文脈.コマンドバッファ(), 灯, 面, 束縛, 発行一覧, 共有);
+            point_light_shadow_draw::記録する(文脈.積み先(), 灯, 面, 束縛, 発行一覧, 共有);
         },
     )
 }

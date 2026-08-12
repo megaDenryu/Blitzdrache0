@@ -8,6 +8,7 @@
 
 use ash::vk;
 
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::frame::draw_commands::u32を丸めずf32へ変換する;
 use crate::vulkan::frame::空中遠近合成描画入力;
 use crate::vulkan::graph::{カラー添付列, クリア指定, パス宣言, パス種別, 画像ハンドル, 画像用途};
@@ -30,11 +31,13 @@ pub(super) fn 空中遠近合成パスを宣言する<'a>(
             深度: None,
             クリア指定: クリア指定::ロードする,
         },
-        move |文脈| コマンドを積む(文脈.device(), 文脈.コマンドバッファ(), 入力, 寸法),
+        move |文脈| コマンドを積む(文脈.積み先(), 入力, 寸法),
     )
 }
 
-fn コマンドを積む(device: &ash::Device, command_buffer: vk::CommandBuffer, 入力: &空中遠近合成描画入力, 寸法: vk::Extent2D) {
+fn コマンドを積む(積み先: GPU命令の積み先<'_>, 入力: &空中遠近合成描画入力, 寸法: vk::Extent2D) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let viewport一覧 = [vk::Viewport::default()
         .x(0.0)
         .y(0.0)

@@ -65,9 +65,13 @@ fn 転送パスを作る(
             // 安全性: command_bufferは記録中、画像はTRANSFER_DST_OPTIMALへ遷移済み(用途宣言からグラフが導く)、
             // 元バッファは全段の全層ぶんのテクセル数の容量で確保し中身を書き終えている。
             unsafe {
-                文脈
-                    .device()
-                    .cmd_copy_buffer_to_image(文脈.コマンドバッファ(), 元, 画像ハンドル, vk::ImageLayout::TRANSFER_DST_OPTIMAL, &領域);
+                文脈.積み先().論理デバイス().cmd_copy_buffer_to_image(
+                    文脈.積み先().コマンドバッファ(),
+                    元,
+                    画像ハンドル,
+                    vk::ImageLayout::TRANSFER_DST_OPTIMAL,
+                    &領域,
+                );
             }
         },
     )

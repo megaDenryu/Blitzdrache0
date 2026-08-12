@@ -52,17 +52,16 @@ fn 積み込んで送信する(
     積み方: 縮小段の積み方,
 ) -> Result<(), レンダラーエラー> {
     let 一時 = 転送環境.転送コマンドを積み始める()?;
-    let device = 一時.論理デバイス();
-    let command_buffer = 一時.積む先のコマンドバッファ();
-    barrier::全レベルを転送先レイアウトへ遷移する(device, command_buffer, image, 縮小段数);
+    let 積み先 = 一時.積み先();
+    barrier::全レベルを転送先レイアウトへ遷移する(積み先, image, 縮小段数);
     match 積み方 {
         縮小段の積み方::原寸の転送とGPUのblit => {
-            copy::原寸の段を画像へコピーする(device, command_buffer, ステージングバッファ, image, 素材.幅(), 素材.高さ());
-            mip_chain::縮小段チェーンを積む(device, command_buffer, image, 素材.幅(), 素材.高さ(), 縮小段数);
+            copy::原寸の段を画像へコピーする(積み先, ステージングバッファ, image, 素材.幅(), 素材.高さ());
+            mip_chain::縮小段チェーンを積む(積み先, image, 素材.幅(), 素材.高さ(), 縮小段数);
         }
         縮小段の積み方::全段の転送 => {
-            copy::全段を画像へコピーする(device, command_buffer, ステージングバッファ, image, 素材);
-            barrier::全レベルをshader_readへ遷移する(device, command_buffer, image, 縮小段数);
+            copy::全段を画像へコピーする(積み先, ステージングバッファ, image, 素材);
+            barrier::全レベルをshader_readへ遷移する(積み先, image, 縮小段数);
         }
     }
     一時.送信して完了を待つ()

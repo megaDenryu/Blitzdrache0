@@ -2,14 +2,17 @@
 
 use ash::vk;
 
+use crate::vulkan::command_sink::GPU命令の積み先;
+
 pub(super) fn コピーを記録する(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
+    積み先: GPU命令の積み先<'_>,
     画像: vk::Image,
     バッファ: vk::Buffer,
     寸法: vk::Extent2D,
     面: vk::ImageAspectFlags,
 ) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let 領域 = vk::BufferImageCopy::default()
         .image_subresource(
             vk::ImageSubresourceLayers::default()

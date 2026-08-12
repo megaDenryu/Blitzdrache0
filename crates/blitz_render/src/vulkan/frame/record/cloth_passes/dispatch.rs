@@ -25,8 +25,8 @@ pub(super) fn 積む<'a>(
         書き,
         パス種別::コンピュート,
         move |文脈| {
-            let device = 文脈.device();
-            let command_buffer = 文脈.コマンドバッファ();
+            let device = 文脈.積み先().論理デバイス();
+            let command_buffer = 文脈.積み先().コマンドバッファ();
             // 安全性: command_bufferは記録中で、pipeline・ディスクリプタセットは生成済み。
             unsafe {
                 device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::COMPUTE, pipeline);

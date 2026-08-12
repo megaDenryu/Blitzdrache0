@@ -37,8 +37,7 @@ pub(super) fn 明るさの圧縮パスを宣言する<'a>(
             露出バイト列[4..8].copy_from_slice(&入力.芸術的バイアスの補正段.to_le_bytes());
             露出バイト列[8..12].copy_from_slice(&入力.自動か.to_le_bytes());
             fullscreen_draw::コマンドを積む(
-                文脈.device(),
-                文脈.コマンドバッファ(),
+                文脈.積み先(),
                 入力.pipeline,
                 入力.layout,
                 入力.ディスクリプタセット,

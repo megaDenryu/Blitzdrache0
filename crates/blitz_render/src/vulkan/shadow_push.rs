@@ -8,6 +8,7 @@
 use ash::vk;
 
 use crate::cascade::距離区分番号;
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 
 /// 基準原点のfloat4(16バイト)に続けて距離区分番号のuint(4バイト)を置く。
@@ -23,12 +24,10 @@ pub(crate) fn プッシュ定数範囲() -> vk::PushConstantRange {
 
 /// 注意: 呼び出し元がコマンド記録中であることと、layoutがこの範囲を宣言済みであることを保証する。
 pub(crate) unsafe fn 積む(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
-    layout: vk::PipelineLayout,
-    基準原点: カメラ相対の基準原点,
-    番号: 距離区分番号,
+    積み先: GPU命令の積み先<'_>, layout: vk::PipelineLayout, 基準原点: カメラ相対の基準原点, 番号: 距離区分番号
 ) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let mut バイト列 = [0u8; 20];
     バイト列[..16].copy_from_slice(&基準原点.バイト列());
     バイト列[16..].copy_from_slice(&距離区分番号のgpu境界値(番号).to_le_bytes());

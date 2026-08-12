@@ -6,6 +6,7 @@
 use ash::vk;
 
 use super::submit_outcome::送信後の結末;
+use super::types::読み戻しの待機;
 use super::{同期入力, 提示先};
 
 pub(super) fn 待って提示する(
@@ -13,9 +14,9 @@ pub(super) fn 待って提示する(
     queue: vk::Queue,
     提示先: 提示先<'_>,
     同期: &同期入力,
-    読み戻し待機が必要: bool,
+    読み戻しの待機: 読み戻しの待機,
 ) -> 送信後の結末 {
-    if 読み戻し待機が必要 {
+    if let 読み戻しの待機::待つ = 読み戻しの待機 {
         // 安全性: 直前に送信した同じフェンスを待つ。読み戻しバッファへのコピー完了をホストが読む前に保証するため、
         // 通常経路と異なりここで同期的に待機する(判断9: GPU同期を伴うためスモーク用途)。
         if let Err(誤り) = unsafe { device.wait_for_fences(&[同期.描画完了フェンス], true, u64::MAX) } {

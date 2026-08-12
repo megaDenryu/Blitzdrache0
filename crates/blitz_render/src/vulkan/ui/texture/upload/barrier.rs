@@ -3,6 +3,8 @@
 
 use ash::vk;
 
+use crate::vulkan::command_sink::GPU命令の積み先;
+
 fn 部分範囲() -> vk::ImageSubresourceRange {
     vk::ImageSubresourceRange::default()
         .aspect_mask(vk::ImageAspectFlags::COLOR)
@@ -12,7 +14,9 @@ fn 部分範囲() -> vk::ImageSubresourceRange {
         .layer_count(1)
 }
 
-pub(super) fn 転送先へ遷移する(device: &ash::Device, command_buffer: vk::CommandBuffer, image: vk::Image) {
+pub(super) fn 転送先へ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let バリア = vk::ImageMemoryBarrier2::default()
         .src_stage_mask(vk::PipelineStageFlags2::TOP_OF_PIPE)
         .dst_stage_mask(vk::PipelineStageFlags2::COPY)
@@ -30,7 +34,9 @@ pub(super) fn 転送先へ遷移する(device: &ash::Device, command_buffer: vk:
     unsafe { device.cmd_pipeline_barrier2(command_buffer, &依存情報) };
 }
 
-pub(super) fn シェーダー読み取り専用へ遷移する(device: &ash::Device, command_buffer: vk::CommandBuffer, image: vk::Image) {
+pub(super) fn シェーダー読み取り専用へ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let バリア = vk::ImageMemoryBarrier2::default()
         .src_stage_mask(vk::PipelineStageFlags2::COPY)
         .src_access_mask(vk::AccessFlags2::TRANSFER_WRITE)

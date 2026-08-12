@@ -8,6 +8,7 @@ use ash::vk;
 
 use crate::cube_image::立方体の面;
 use crate::point_light_shadow::点光源の影の面の一辺;
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::frame::shared_set_bind;
 use crate::vulkan::frame::{共有セット束縛, 点光源の影の描画発行, 点光源の影の束縛};
 use crate::vulkan::point_light_shadow_cull::面ごとの絞り;
@@ -15,8 +16,7 @@ use crate::vulkan::point_light_shadow_plan::影を落とす灯;
 use crate::vulkan::point_light_shadow_push;
 
 pub(super) fn 記録する(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
+    積み先: GPU命令の積み先<'_>,
     灯: 影を落とす灯,
     面: 立方体の面,
     束縛: 点光源の影の束縛,
@@ -33,18 +33,18 @@ pub(super) fn 記録する(
     for 発行 in 発行一覧.iter().filter(|発行| 発行.候補か(絞り)) {
         共有.計器.点光源の影().候補を数える();
         if !束縛済みか {
-            面の状態を束縛する(device, command_buffer, 束縛, 共有);
+            面の状態を束縛する(積み先, 束縛, 共有);
             束縛済みか = true;
         }
-        一件を記録する(device, command_buffer, 束縛, 発行, ライトビュー射影);
+        一件を記録する(積み先, 束縛, 発行, ライトビュー射影);
         共有.計器.点光源の影().描画を数える();
     }
 }
 
 /// その面の全発行で変わらない状態(ビューポート・シザー・パイプライン・ビューとパスのセット)を1回だけ束縛する。
-fn 面の状態を束縛する(
-    device: &ash::Device, command_buffer: vk::CommandBuffer, 束縛: 点光源の影の束縛, 共有: 共有セット束縛<'_>
-) {
+fn 面の状態を束縛する(積み先: GPU命令の積み先<'_>, 束縛: 点光源の影の束縛, 共有: 共有セット束縛<'_>) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let 実数の一辺 = f32::from(u16::try_from(点光源の影の面の一辺).unwrap_or_else(|_| panic!("面の一辺がu16に収まらない")));
     let viewport = vk::Viewport::default().width(実数の一辺).height(実数の一辺).min_depth(0.0).max_depth(1.0);
     let シザー = vk::Rect2D::default().extent(vk::Extent2D::default().width(点光源の影の面の一辺).height(点光源の影の面の一辺));
@@ -54,19 +54,20 @@ fn 面の状態を束縛する(
         device.cmd_set_scissor(command_buffer, 0, &[シザー]);
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 束縛.pipeline);
     }
-    shared_set_bind::ビューとパスのセットを束縛する(device, command_buffer, 束縛.layout, 共有);
+    shared_set_bind::ビューとパスのセットを束縛する(積み先, 束縛.layout, 共有);
 }
 
 fn 一件を記録する(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
+    積み先: GPU命令の積み先<'_>,
     束縛: 点光源の影の束縛,
     発行: &点光源の影の描画発行,
     ライトビュー射影: blitz_math::変換<blitz_math::ワールド, blitz_math::点光源の面クリップ>,
 ) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     // 安全性: command_bufferは記録中で、発行のバッファとディスクリプタセットは生成済み。layoutは80バイトの範囲を宣言済み。
     unsafe {
-        point_light_shadow_push::積む(device, command_buffer, 束縛.layout, 発行.相対の基準原点, ライトビュー射影);
+        point_light_shadow_push::積む(積み先, 束縛.layout, 発行.相対の基準原点, ライトビュー射影);
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,

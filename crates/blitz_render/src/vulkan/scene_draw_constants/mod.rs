@@ -11,6 +11,7 @@ mod layout_tests;
 
 use ash::vk;
 
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 
 const バイト長: u32 = 16;
@@ -47,9 +48,9 @@ pub(crate) fn プッシュ定数範囲() -> vk::PushConstantRange {
 }
 
 /// 注意: 呼び出し元がコマンド記録中であることと、layoutがこの範囲を宣言済みであることを保証する。
-pub(crate) unsafe fn 積む(
-    device: &ash::Device, command_buffer: vk::CommandBuffer, layout: vk::PipelineLayout, 描画定数: シーン描画定数
-) {
+pub(crate) unsafe fn 積む(積み先: GPU命令の積み先<'_>, layout: vk::PipelineLayout, 描画定数: シーン描画定数) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     // 安全性: 呼び出し元がコマンド記録中と、layoutが両ステージの16バイト範囲を宣言済みであることを保証する。
     unsafe {
         device.cmd_push_constants(

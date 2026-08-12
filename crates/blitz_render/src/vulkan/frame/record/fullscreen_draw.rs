@@ -3,20 +3,22 @@
 
 use ash::vk;
 
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::frame::draw_commands::u32を丸めずf32へ変換する;
 use crate::vulkan::graph::クリア指定;
 
 /// 前提: command_bufferは記録中で、pipeline・layout・ディスクリプタセットは互換の組として
 /// 生成済み。プッシュ定数を渡す場合、そのバイト数はlayoutのFRAGMENT範囲宣言と一致すること。
 pub(super) fn コマンドを積む(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
+    積み先: GPU命令の積み先<'_>,
     pipeline: vk::Pipeline,
     layout: vk::PipelineLayout,
     ディスクリプタセット: vk::DescriptorSet,
     寸法: vk::Extent2D,
     プッシュ定数: Option<&[u8]>,
 ) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let viewport = vk::Viewport::default()
         .x(0.0)
         .y(0.0)

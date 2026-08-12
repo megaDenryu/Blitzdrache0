@@ -32,7 +32,7 @@ pub(super) fn 光のにじみ拡大パスを宣言する<'a>(
             クリア指定: fullscreen_draw::黒クリア(),
         },
         move |文脈| {
-            fullscreen_draw::コマンドを積む(文脈.device(), 文脈.コマンドバッファ(), pipeline, layout, set, 寸法, None);
+            fullscreen_draw::コマンドを積む(文脈.積み先(), pipeline, layout, set, 寸法, None);
         },
     )
 }

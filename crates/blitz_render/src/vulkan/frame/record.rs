@@ -1,7 +1,9 @@
-//! コマンド記録: レンダーグラフを構築して実行するだけにする。バリア発行・
+//! コマンド記録の局面: レンダーグラフを構築して実行するだけにする。バリア発行・
 //! begin/end renderingはグラフ実行器に集約する（参照: `_doc/設計/レンダーグラフ.md`、
 //! `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`判断27〜28）。グラフの
 //! 組み立て自体は`graph_build`に委ねる。
+//!
+//! セッション型のうち「積む」局面だけをここが持つ。積み始めは`session`、閉じて送信し提示する局面は`submit_present`にある。
 
 mod aerial_composite_pass;
 mod auto_exposure_passes;
@@ -30,12 +32,24 @@ mod ui_pass;
 
 use ash::vk;
 
+use super::session::フレームのGPU命令を積むコマンドバッファ;
 use super::{フレーム画像一式, 任意描画入力, 描画対象入力, 描画方式};
 use crate::clear_color::クリアカラー;
-use crate::error::レンダラーエラー;
 use crate::frame_composition::フレーム構成;
-use crate::vulkan::gpu_timing;
 use crate::vulkan::graph;
+
+/// 1フレームぶんの記録が読む材料の束。1つの束にするのは、この7つがどれもそのフレームのグラフの形を決める材料であり、
+/// 別々に受け取ると記録の署名と、グラフを組む工程の署名の両方が同じ並びで長くなるためである。
+#[derive(Clone, Copy)]
+pub(crate) struct フレームの記録の材料<'材料> {
+    pub(crate) フレーム構成: &'材料 フレーム構成,
+    pub(crate) 画像一式: &'材料 フレーム画像一式<'材料>,
+    pub(crate) 寸法: vk::Extent2D,
+    pub(crate) クリア色: クリアカラー,
+    pub(crate) 描画対象: 描画対象入力<'材料>,
+    pub(crate) 任意入力: 任意描画入力<'材料>,
+    pub(crate) 描画方式: &'材料 描画方式,
+}
 
 /// 1フレームぶんの記録の実績。GPU計測のマッピングと、計器が数える大気のベイク済み画像生成パスの本数を返す。
 pub(crate) struct 記録の実績 {
@@ -44,46 +58,15 @@ pub(crate) struct 記録の実績 {
     pub(crate) 間接照明生成パス数: crate::distant_environment::間接照明生成パス数,
 }
 
-#[allow(clippy::too_many_arguments)]
-pub(super) fn コマンドを記録する(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
-    フレーム構成: &フレーム構成,
-    画像一式: &フレーム画像一式<'_>,
-    寸法: vk::Extent2D,
-    クリア色: クリアカラー,
-    描画対象: 描画対象入力<'_>,
-    任意入力: 任意描画入力<'_>,
-    描画方式: &描画方式,
-    クエリプール: Option<vk::QueryPool>,
-) -> Result<記録の実績, レンダラーエラー> {
-    記録を開始する(device, command_buffer, クエリプール)?;
-    let 構築 = graph_build::グラフを構築する(画像一式, フレーム構成, 寸法, クリア色, 描画対象, 任意入力, 描画方式);
-    let 計測マッピング = graph::実行する(device, command_buffer, 構築.グラフ, クエリプール);
-    // 安全性: command_bufferは記録開始済みで、対応するend呼び出し。
-    unsafe { device.end_command_buffer(command_buffer)? };
-    Ok(記録の実績 {
-        計測マッピング,
-        大気のベイク済み画像生成パス数: 構築.大気のベイク済み画像生成パス数,
-        間接照明生成パス数: 構築.間接照明生成パス数,
-    })
-}
-
-fn 記録を開始する(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
-    クエリプール: Option<vk::QueryPool>,
-) -> Result<(), レンダラーエラー> {
-    let begin_info = vk::CommandBufferBeginInfo::default().flags(vk::CommandBufferUsageFlags::ONE_TIME_SUBMIT);
-    // 安全性: command_bufferはRESET_COMMAND_BUFFERフラグ付きプール由来で、
-    // ここでの開始が暗黙的に前回の記録をリセットする。
-    unsafe { device.begin_command_buffer(command_buffer, &begin_info)? };
-
-    if let Some(pool) = クエリプール {
-        // 安全性: command_bufferは記録開始済みで、poolはこのスロット専用に生成済み。
-        // このフレームで書くクエリより前に必ずリセットする(未リセットのクエリへの
-        // 書き込みはVulkanの契約違反になる)。
-        unsafe { device.cmd_reset_query_pool(command_buffer, pool, 0, gpu_timing::パス数上限 * 2) };
+impl フレームのGPU命令を積むコマンドバッファ<'_> {
+    /// そのフレームのグラフを組み、パス列を宣言順に積む。閉じるのは`記録を閉じて送信し提示する`である。
+    pub(crate) fn フレームのgpu命令を積む(&self, 材料: フレームの記録の材料<'_>) -> 記録の実績 {
+        let 構築 = graph_build::グラフを構築する(材料);
+        let 計測マッピング = graph::グラフ実行器::生成する(self.積み先(), self.計測のクエリプール()).グラフを積む(構築.グラフ);
+        記録の実績 {
+            計測マッピング,
+            大気のベイク済み画像生成パス数: 構築.大気のベイク済み画像生成パス数,
+            間接照明生成パス数: 構築.間接照明生成パス数,
+        }
     }
-    Ok(())
 }

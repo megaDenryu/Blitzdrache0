@@ -7,6 +7,7 @@ use ash::vk;
 
 use super::ウィンドウなし実行GPU環境;
 use crate::error::レンダラーエラー;
+use crate::vulkan::command_sink::GPU命令の積み先;
 
 /// 注意: `送信して完了を待つ`を呼ばずに捨てると、コマンドバッファが解放されず勘定も戻らない。
 /// 残りはウィンドウなし実行GPU環境の`破棄する`が見つけてpanicする。
@@ -35,8 +36,9 @@ impl<'環境> GPU命令を積む一時コマンドバッファ<'環境> {
         &self.環境.device
     }
 
-    pub(crate) fn 積む先のコマンドバッファ(&self) -> vk::CommandBuffer {
-        self.command_buffer
+    /// 命令を積む工程へ渡す組。返る組が借りるのはウィンドウなし実行GPU環境であり、この値ではない。
+    pub(crate) fn 積み先(&self) -> GPU命令の積み先<'環境> {
+        GPU命令の積み先::生成する(self.論理デバイス(), self.command_buffer)
     }
 
     /// 積み込みを閉じてコンピュートキューへ送信し、フェンスで完了を待つ。戻った時点でGPUの作業は終わっている。

@@ -10,24 +10,20 @@ mod mip_barrier;
 use ash::vk;
 
 use crate::texture_material::level_extent::縮小段の幅と高さを求める;
+use crate::vulkan::command_sink::GPU命令の積み先;
 
-pub(super) fn 縮小段チェーンを積む(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
-    image: vk::Image,
-    幅: u32,
-    高さ: u32,
-    mip数: u32,
-) {
+pub(super) fn 縮小段チェーンを積む(積み先: GPU命令の積み先<'_>, image: vk::Image, 幅: u32, 高さ: u32, mip数: u32) {
     for mip in 1..mip数 {
-        mip_barrier::レベルをsrcへ遷移する(device, command_buffer, image, mip - 1);
-        blitを積む(device, command_buffer, image, 幅, 高さ, mip);
-        mip_barrier::レベルをshader_readへ遷移する(device, command_buffer, image, mip - 1);
+        mip_barrier::レベルをsrcへ遷移する(積み先, image, mip - 1);
+        blitを積む(積み先, image, 幅, 高さ, mip);
+        mip_barrier::レベルをshader_readへ遷移する(積み先, image, mip - 1);
     }
-    mip_barrier::最終レベルをshader_readへ遷移する(device, command_buffer, image, mip数 - 1);
+    mip_barrier::最終レベルをshader_readへ遷移する(積み先, image, mip数 - 1);
 }
 
-fn blitを積む(device: &ash::Device, command_buffer: vk::CommandBuffer, image: vk::Image, 幅: u32, 高さ: u32, mip: u32) {
+fn blitを積む(積み先: GPU命令の積み先<'_>, image: vk::Image, 幅: u32, 高さ: u32, mip: u32) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let 元寸法 = 寸法を求める(幅, 高さ, mip - 1);
     let 先寸法 = 寸法を求める(幅, 高さ, mip);
     let blit = vk::ImageBlit::default()

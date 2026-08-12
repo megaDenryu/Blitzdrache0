@@ -8,11 +8,11 @@ use super::barrier_derivation::画像バリア記述;
 use super::buffer_barrier_derivation::バッファバリア記述;
 use super::buffer_registry::バッファレジストリ;
 use super::registry::画像レジストリ;
+use crate::vulkan::command_sink::GPU命令の積み先;
 
 /// 画像・バッファのバリア一覧を1回の`cmd_pipeline_barrier2`で発行する。両方空なら何もしない。
-pub(crate) fn 発行する(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
+pub(super) fn 発行する(
+    積み先: GPU命令の積み先<'_>,
     画像レジストリ: &画像レジストリ,
     バッファレジストリ: &バッファレジストリ,
     画像バリア一覧: &[画像バリア記述],
@@ -30,7 +30,7 @@ pub(crate) fn 発行する(
         .image_memory_barriers(&vk画像バリア一覧)
         .buffer_memory_barriers(&vkバッファバリア一覧);
     // 安全性: command_bufferは記録中で、各画像・バッファはレジストリに登録済みのVulkanリソース。
-    unsafe { device.cmd_pipeline_barrier2(command_buffer, &依存情報) };
+    unsafe { 積み先.論理デバイス().cmd_pipeline_barrier2(積み先.コマンドバッファ(), &依存情報) };
 }
 
 fn 画像バリアへ変換する<'a>(

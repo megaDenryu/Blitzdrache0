@@ -5,6 +5,7 @@ use ash::vk;
 
 use super::pass_names;
 use crate::visible_instance_selection::可視パス;
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::frame::{draw_commands, shared_set_bind, ジオメトリ入力, 共有セット束縛, 布描画入力};
 use crate::vulkan::graph::{
     カラー添付列, クリア指定, バッファハンドル, バッファ用途, パス宣言, パス種別, 深度アタッチメント, 画像ハンドル, 画像用途,
@@ -64,9 +65,9 @@ pub(super) fn シーン描画パスを宣言する<'a>(
             クリア指定: クリア,
         },
         move |文脈| {
-            draw_commands::描画コマンドを積む(文脈.device(), 文脈.コマンドバッファ(), 寸法, ジオメトリ一覧, 共有);
+            draw_commands::描画コマンドを積む(文脈.積み先(), 寸法, ジオメトリ一覧, 共有);
             if let Some(布) = &布ドロー {
-                布を記録する(文脈.device(), 文脈.コマンドバッファ(), 布, 共有);
+                布を記録する(文脈.積み先(), 布, 共有);
             }
         },
     )
@@ -76,15 +77,17 @@ pub(super) fn シーン描画パスを宣言する<'a>(
 /// 布自身のパイプラインのレイアウトと共有のセットから取る。布のパイプラインレイアウトはset1とset2を空のレイアウトで
 /// 宣言するため、通常の描画対象が束縛したset0とset3は無効になっており、ここで結び直す必要がある。
 /// 材質のセットは布が読まないため結ばない(空のレイアウトの位置へ実レイアウトのセットを結ぶと互換でない)。
-fn 布を記録する(device: &ash::Device, command_buffer: vk::CommandBuffer, 布: &布ドロー<'_>, 共有: 共有セット束縛<'_>) {
+fn 布を記録する(積み先: GPU命令の積み先<'_>, 布: &布ドロー<'_>, 共有: 共有セット束縛<'_>) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let 入力 = 布.入力;
     // 安全性: command_bufferは記録中で、布のパイプライン・バッファは生成済み。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.描画pipeline);
-        relative_anchor::積む(device, command_buffer, 入力.描画layout, 入力.相対の基準原点);
+        relative_anchor::積む(積み先, 入力.描画layout, 入力.相対の基準原点);
     }
     共有.計器.描画切替().パイプライン束縛を数える(可視パス::シーン);
-    shared_set_bind::布の共有セットを束縛する(device, command_buffer, 入力.描画layout, 共有);
+    shared_set_bind::布の共有セットを束縛する(積み先, 入力.描画layout, 共有);
     // 安全性: command_bufferは記録中で、布の頂点・インデックスバッファは生成済み。
     unsafe {
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.布頂点バッファ], &[0]);

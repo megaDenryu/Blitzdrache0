@@ -9,11 +9,7 @@ mod post_setup;
 mod readback_stage;
 mod stages;
 
-use ash::vk;
-
-use crate::clear_color::クリアカラー;
-use crate::frame_composition::フレーム構成;
-use crate::vulkan::frame::{フレーム画像一式, 任意描画入力, 描画対象入力, 描画方式};
+use crate::vulkan::frame::フレームの記録の材料;
 use crate::vulkan::graph;
 
 /// 構築したグラフと、そのフレームで積んだ大気のベイク済み画像生成パスの本数。本数を返すのは、生成の更新判定が意図どおりに
@@ -24,16 +20,16 @@ pub(super) struct 構築結果<'a> {
     pub(super) 間接照明生成パス数: crate::distant_environment::間接照明生成パス数,
 }
 
-#[allow(clippy::too_many_arguments)]
-pub(super) fn グラフを構築する<'a>(
-    画像一式: &フレーム画像一式<'_>,
-    フレーム構成: &フレーム構成,
-    寸法: vk::Extent2D,
-    クリア色: クリアカラー,
-    描画対象: 描画対象入力<'a>,
-    任意入力: 任意描画入力<'a>,
-    描画方式: &'a 描画方式,
-) -> 構築結果<'a> {
+pub(super) fn グラフを構築する<'材料>(材料: フレームの記録の材料<'材料>) -> 構築結果<'材料> {
+    let フレームの記録の材料 {
+        フレーム構成,
+        画像一式,
+        寸法,
+        クリア色,
+        描画対象,
+        任意入力,
+        描画方式,
+    } = 材料;
     let mut グラフ = graph::グラフ::新規();
     let 基本 = base_images::登録する(&mut グラフ, 画像一式, 任意入力.時間再構成, 寸法);
 

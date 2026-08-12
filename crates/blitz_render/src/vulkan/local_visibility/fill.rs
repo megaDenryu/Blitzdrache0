@@ -13,6 +13,7 @@ use ash::vk;
 use super::images::局所可視度の画像組;
 use crate::error::レンダラーエラー;
 use crate::local_visibility::局所可視度の符号値;
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::transfer::転送実行環境;
 
 fn 部分範囲() -> vk::ImageSubresourceRange {
@@ -33,10 +34,11 @@ pub(super) fn 一定の符号値で埋める(
     let 色 = 消去色へ写す(符号値);
     let 画像一覧 = [画像組.生.画像, 画像組.ぼかし後.画像];
     let 一時 = 転送環境.転送コマンドを積み始める()?;
-    let device = 一時.論理デバイス();
-    let command_buffer = 一時.積む先のコマンドバッファ();
+    let 積み先 = 一時.積み先();
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     for 画像 in 画像一覧 {
-        汎用へ遷移する(device, command_buffer, 画像);
+        汎用へ遷移する(積み先, 画像);
     }
     for 画像 in 画像一覧 {
         // 安全性: command_bufferは積み込み中で、画像は直前のバリアでGENERALへ移っている。
@@ -48,7 +50,9 @@ pub(super) fn 一定の符号値で埋める(
 }
 
 /// 消去の宛先にも記憶画像の書き込みにも使えるGENERALへ移す。以降このレイアウトから二度と動かさない。
-fn 汎用へ遷移する(device: &ash::Device, command_buffer: vk::CommandBuffer, 画像: vk::Image) {
+fn 汎用へ遷移する(積み先: GPU命令の積み先<'_>, 画像: vk::Image) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let バリア = vk::ImageMemoryBarrier2::default()
         .src_stage_mask(vk::PipelineStageFlags2::TOP_OF_PIPE)
         .dst_stage_mask(vk::PipelineStageFlags2::CLEAR)

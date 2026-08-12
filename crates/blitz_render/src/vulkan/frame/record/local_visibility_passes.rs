@@ -58,8 +58,8 @@ fn 班数(寸法: vk::Extent2D) -> [u32; 3] {
 fn コンピュートを積む(
     文脈: &GPU命令の積み先と宣言済み資源の取り出し口, 入力: &局所可視性描画入力, pipeline: vk::Pipeline, 班数: [u32; 3]
 ) {
-    let device = 文脈.device();
-    let command_buffer = 文脈.コマンドバッファ();
+    let device = 文脈.積み先().論理デバイス();
+    let command_buffer = 文脈.積み先().コマンドバッファ();
     let セット一覧 = [入力.セット];
     // 安全性: command_bufferは記録中で、pipeline・layout・セットは生成済み。定数の長さはレイアウトが宣言した範囲と一致する。
     unsafe {

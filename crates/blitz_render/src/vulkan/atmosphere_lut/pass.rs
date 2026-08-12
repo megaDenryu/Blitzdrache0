@@ -8,6 +8,7 @@
 use ash::vk;
 
 use super::大気のベイク済み画像の生成入力;
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::graph::{パス宣言, パス種別, 画像ハンドル, 画像用途};
 
 pub(crate) fn 作る<'a>(
@@ -28,8 +29,9 @@ pub(crate) fn 作る<'a>(
             // 戻り値のvk::Image自体はディスクリプタセット経由の束縛で既に解決済みのため使わない。
             let _ = 文脈.画像を解決する(書き込み先);
 
-            let device = 文脈.device();
-            let command_buffer = 文脈.コマンドバッファ();
+            let 積み先 = 文脈.積み先();
+            let device = 積み先.論理デバイス();
+            let command_buffer = 積み先.コマンドバッファ();
             let set一覧 = [入力.ディスクリプタセット];
             let [横の計算の班数, 縦の計算の班数, 奥の計算の班数] = 入力.計算の班数;
 
@@ -38,7 +40,7 @@ pub(crate) fn 作る<'a>(
                 device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::COMPUTE, 入力.pipeline);
                 device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::COMPUTE, 入力.layout, 0, &set一覧, &[]);
             }
-            押し込む(device, command_buffer, 入力);
+            押し込む(積み先, 入力);
             // 安全性: 直前にパイプラインとディスクリプタを束縛済みで、計算の班数は寸法から切り上げた正当な値。
             unsafe {
                 device.cmd_dispatch(command_buffer, 横の計算の班数, 縦の計算の班数, 奥の計算の班数);
@@ -49,7 +51,9 @@ pub(crate) fn 作る<'a>(
 
 /// 即時定数を持つパスだけが計算の発行前に書く。持たないパスのレイアウトには範囲が無く、書けば
 /// validationが範囲外として指摘するため、空のバイト列では発行しない。
-fn 押し込む(device: &ash::Device, command_buffer: vk::CommandBuffer, 入力: &大気のベイク済み画像の生成入力) {
+fn 押し込む(積み先: GPU命令の積み先<'_>, 入力: &大気のベイク済み画像の生成入力) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let バイト列 = 入力.即時定数.バイト列();
     if バイト列.is_empty() {
         return;

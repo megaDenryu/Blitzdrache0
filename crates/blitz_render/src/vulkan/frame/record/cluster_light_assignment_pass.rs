@@ -34,8 +34,8 @@ pub(in crate::vulkan::frame) fn クラスタ選別パスを宣言する<'a>(
 fn クラスタ選別のgpu命令を積む(
     文脈: &GPU命令の積み先と宣言済み資源の取り出し口, 入力: &クラスタ選別の描画入力
 ) {
-    let device = 文脈.device();
-    let command_buffer = 文脈.コマンドバッファ();
+    let device = 文脈.積み先().論理デバイス();
+    let command_buffer = 文脈.積み先().コマンドバッファ();
     let セット一覧 = [入力.セット];
     // 安全性: command_bufferは記録中で、pipeline・layout・セットは生成済み。即時定数の長さはレイアウトが宣言した範囲と一致する。
     unsafe {

@@ -6,10 +6,10 @@ use ash::vk;
 use super::buffer_registry::バッファレジストリ;
 use super::handle::{バッファハンドル, 画像ハンドル};
 use super::registry::画像レジストリ;
+use crate::vulkan::command_sink::GPU命令の積み先;
 
 pub(crate) struct GPU命令の積み先と宣言済み資源の取り出し口<'a> {
-    device: &'a ash::Device,
-    command_buffer: vk::CommandBuffer,
+    積み先: GPU命令の積み先<'a>,
     画像レジストリ: &'a 画像レジストリ,
     バッファレジストリ: &'a バッファレジストリ,
     パス名: &'static str,
@@ -18,10 +18,8 @@ pub(crate) struct GPU命令の積み先と宣言済み資源の取り出し口<'
 }
 
 impl<'a> GPU命令の積み先と宣言済み資源の取り出し口<'a> {
-    #[allow(clippy::too_many_arguments)]
     pub(crate) fn 生成する(
-        device: &'a ash::Device,
-        command_buffer: vk::CommandBuffer,
+        積み先: GPU命令の積み先<'a>,
         画像レジストリ: &'a 画像レジストリ,
         バッファレジストリ: &'a バッファレジストリ,
         パス名: &'static str,
@@ -29,8 +27,7 @@ impl<'a> GPU命令の積み先と宣言済み資源の取り出し口<'a> {
         宣言済みバッファ: Vec<バッファハンドル>,
     ) -> Self {
         Self {
-            device,
-            command_buffer,
+            積み先,
             画像レジストリ,
             バッファレジストリ,
             パス名,
@@ -39,12 +36,9 @@ impl<'a> GPU命令の積み先と宣言済み資源の取り出し口<'a> {
         }
     }
 
-    pub(crate) fn device(&self) -> &ash::Device {
-        self.device
-    }
-
-    pub(crate) fn コマンドバッファ(&self) -> vk::CommandBuffer {
-        self.command_buffer
+    /// 積む先を貸す。パスの中身を書く工程は、この組を受け取って命令を積む。
+    pub(crate) fn 積み先(&self) -> GPU命令の積み先<'a> {
+        self.積み先
     }
 
     /// 宣言済みの画像ハンドルをvk::Imageへ解決する。

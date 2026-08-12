@@ -88,8 +88,12 @@ fn 一枚を写す(
     // 安全性: command_bufferは記録中、対象の画像はグラフの導いたバリアでTRANSFER_DST_OPTIMALへ遷移済み、
     // バッファは同じ寸法の成分列で確保済みである(`合成入力の注入一式::生成する`が同じ寸法から作る)。
     unsafe {
-        文脈
-            .device()
-            .cmd_copy_buffer_to_image(文脈.コマンドバッファ(), バッファ, 画像, vk::ImageLayout::TRANSFER_DST_OPTIMAL, &領域一覧);
+        文脈.積み先().論理デバイス().cmd_copy_buffer_to_image(
+            文脈.積み先().コマンドバッファ(),
+            バッファ,
+            画像,
+            vk::ImageLayout::TRANSFER_DST_OPTIMAL,
+            &領域一覧,
+        );
     }
 }

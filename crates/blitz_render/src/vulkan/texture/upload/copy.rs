@@ -12,15 +12,17 @@ use ash::vk;
 
 use crate::texture_material::level_extent::縮小段の幅と高さを求める;
 use crate::texture_material::テクスチャ素材;
+use crate::vulkan::command_sink::GPU命令の積み先;
 
 pub(super) fn 原寸の段を画像へコピーする(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
+    積み先: GPU命令の積み先<'_>,
     ステージングバッファ: vk::Buffer,
     image: vk::Image,
     幅: u32,
     高さ: u32,
 ) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let 領域 = コピー領域を組み立てる(0, 0, 幅, 高さ);
     // 安全性: command_bufferは積み込み中。imageはTRANSFER_DST_OPTIMALへ遷移済み。
     // ステージングバッファは呼び出し元が原寸の画素列と同じ長さで確保・書き込み済み。
@@ -37,12 +39,13 @@ pub(super) fn 原寸の段を画像へコピーする(
 
 /// 素材が運ぶ全段を、段0から順に並べたステージングバッファの中身から1回のコマンドで写す。
 pub(super) fn 全段を画像へコピーする(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
+    積み先: GPU命令の積み先<'_>,
     ステージングバッファ: vk::Buffer,
     image: vk::Image,
     素材: &テクスチャ素材,
 ) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let mut 開始位置: vk::DeviceSize = 0;
     let mut 領域一覧: Vec<vk::BufferImageCopy> = Vec::with_capacity(素材.段ごとのバイト列().len());
     for (添字, バイト列) in 素材.段ごとのバイト列().iter().enumerate() {

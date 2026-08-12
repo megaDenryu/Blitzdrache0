@@ -8,10 +8,10 @@ use super::clear_spec::クリア指定;
 use super::color_attachments::カラー添付列;
 use super::depth_attachment::深度アタッチメント;
 use super::registry::画像レジストリ;
+use crate::vulkan::command_sink::GPU命令の積み先;
 
-pub(crate) fn 開始する(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
+pub(super) fn 開始する(
+    積み先: GPU命令の積み先<'_>,
     レジストリ: &画像レジストリ,
     カラー: カラー添付列,
     深度: Option<深度アタッチメント>,
@@ -58,7 +58,7 @@ pub(crate) fn 開始する(
 
     // 安全性: command_bufferは記録中で、各画像は直前のバリア発行でOPTIMALレイアウトへ
     // 遷移済み。
-    unsafe { device.cmd_begin_rendering(command_buffer, &rendering_info) };
+    unsafe { 積み先.論理デバイス().cmd_begin_rendering(積み先.コマンドバッファ(), &rendering_info) };
 }
 
 /// 返すのはカラーのloadOp・深度のloadOp・カラーのクリア値の3つである。
@@ -79,7 +79,7 @@ fn ロードオペレーションとカラークリア値(
     }
 }
 
-pub(crate) fn 終了する(device: &ash::Device, command_buffer: vk::CommandBuffer) {
+pub(super) fn 終了する(積み先: GPU命令の積み先<'_>) {
     // 安全性: 対応する開始する呼び出しで記録中のrenderingを閉じる。
-    unsafe { device.cmd_end_rendering(command_buffer) };
+    unsafe { 積み先.論理デバイス().cmd_end_rendering(積み先.コマンドバッファ()) };
 }

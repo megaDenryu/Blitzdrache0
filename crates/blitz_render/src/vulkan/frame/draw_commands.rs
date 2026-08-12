@@ -13,15 +13,17 @@ use ash::vk;
 use super::shared_set_bind;
 use super::{ジオメトリ入力, 共有セット束縛};
 use crate::visible_instance_selection::可視パス;
+use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::scene_draw_constants;
 
 pub(super) fn 描画コマンドを積む(
-    device: &ash::Device,
-    command_buffer: vk::CommandBuffer,
+    積み先: GPU命令の積み先<'_>,
     寸法: vk::Extent2D,
     ジオメトリ一覧: &[ジオメトリ入力],
     共有: 共有セット束縛<'_>,
 ) {
+    let device = 積み先.論理デバイス();
+    let command_buffer = 積み先.コマンドバッファ();
     let viewport = vk::Viewport::default()
         .x(0.0)
         .y(0.0)
@@ -42,7 +44,7 @@ pub(super) fn 描画コマンドを積む(
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
         device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
         if let Some(先頭) = ジオメトリ一覧.first() {
-            shared_set_bind::シーンの共有セットを束縛する(device, command_buffer, 先頭.layout, 共有);
+            shared_set_bind::シーンの共有セットを束縛する(積み先, 先頭.layout, 共有);
         }
         let mut 直前のキー = None;
         for 入力 in ジオメトリ一覧 {
@@ -52,7 +54,7 @@ pub(super) fn 描画コマンドを積む(
                 直前のキー = Some(入力.パイプラインキー);
             }
             共有.計器.描画切替().材質を見る(可視パス::シーン, 入力.大域材質id);
-            scene_draw_constants::積む(device, command_buffer, 入力.layout, 入力.描画定数);
+            scene_draw_constants::積む(積み先, 入力.layout, 入力.描画定数);
             共有.計器.セット別束縛().数える(shared_set_bind::ジオメトリのセット番号);
             device.cmd_bind_descriptor_sets(
                 command_buffer,

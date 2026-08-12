@@ -42,10 +42,9 @@ impl 点光源の影の立方体配列 {
         let 障壁一覧 = [障壁];
         let 依存情報 = vk::DependencyInfo::default().image_memory_barriers(&障壁一覧);
         // 安全性: コマンドバッファは積み込み中であり、画像はbind_image_memory済みで他の誰も使っていない。
+        let 積み先 = セッション.積み先();
         unsafe {
-            セッション
-                .論理デバイス()
-                .cmd_pipeline_barrier2(セッション.積む先のコマンドバッファ(), &依存情報);
+            積み先.論理デバイス().cmd_pipeline_barrier2(積み先.コマンドバッファ(), &依存情報);
         }
         セッション.送信して完了を待つ()
     }

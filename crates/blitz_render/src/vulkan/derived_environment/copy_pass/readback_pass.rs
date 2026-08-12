@@ -30,8 +30,8 @@ pub(in crate::vulkan) fn 立方体の読み戻しを作る(
             // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ遷移済み(用途宣言からグラフが導く)、
             // 受けバッファは全段全層ぶんのテクセル数の容量で確保済みである。
             unsafe {
-                文脈.device().cmd_copy_image_to_buffer(
-                    文脈.コマンドバッファ(),
+                文脈.積み先().論理デバイス().cmd_copy_image_to_buffer(
+                    文脈.積み先().コマンドバッファ(),
                     画像ハンドル,
                     vk::ImageLayout::TRANSFER_SRC_OPTIMAL,
                     受け,
@@ -59,9 +59,13 @@ pub(in crate::vulkan) fn 表の読み戻しを作る(
             let 領域 = [vk::BufferImageCopy::default().image_subresource(層の部分範囲(0, 1)).image_extent(範囲)];
             // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ遷移済み、受けバッファは全テクセルの容量で確保済みである。
             unsafe {
-                文脈
-                    .device()
-                    .cmd_copy_image_to_buffer(文脈.コマンドバッファ(), 画像ハンドル, vk::ImageLayout::TRANSFER_SRC_OPTIMAL, 受け, &領域);
+                文脈.積み先().論理デバイス().cmd_copy_image_to_buffer(
+                    文脈.積み先().コマンドバッファ(),
+                    画像ハンドル,
+                    vk::ImageLayout::TRANSFER_SRC_OPTIMAL,
+                    受け,
+                    &領域,
+                );
             }
         },
     )

@@ -33,9 +33,13 @@ pub(super) fn 作る(
             // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ遷移済み(用途宣言からグラフが導く)、
             // 受けバッファは全層ぶんのテクセル数の容量で確保済みである。
             unsafe {
-                文脈
-                    .device()
-                    .cmd_copy_image_to_buffer(文脈.コマンドバッファ(), 画像ハンドル, vk::ImageLayout::TRANSFER_SRC_OPTIMAL, 受け, &領域);
+                文脈.積み先().論理デバイス().cmd_copy_image_to_buffer(
+                    文脈.積み先().コマンドバッファ(),
+                    画像ハンドル,
+                    vk::ImageLayout::TRANSFER_SRC_OPTIMAL,
+                    受け,
+                    &領域,
+                );
             }
         },
     )
