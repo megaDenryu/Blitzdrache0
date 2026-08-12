@@ -105,7 +105,7 @@ scene系のパイプラインレイアウトは次の4セットを正本にす�
 
 シャドウパイプラインはset 0-1だけ、シーンは0-3、空/コンピュート/布は必要な役割だけを持つ。全パイプラインへ空の巨大共通セットを強制しない。旧の「描画対象のセットからフレーム/影/材質を全部借りる」結合(対象数×材質スロット数×進行中フレーム数のシェーダー定数・影・テクスチャ複製)は段4bのセット再編で解消した。
 
-この4セットは実装済みである(2026-08-02)。実装の所在は次のとおりである。5つのレイアウトと材質テクスチャ表の固定サンプラーの所有者が`crates/blitz_render/src/vulkan/descriptor/scene_set_layouts.rs`(生成は同名ディレクトリの`create.rs`)、役割ごとのバインディング番号と結び方が同じ階層の`view_pass_set.rs`・`geometry_set.rs`・`material_set.rs`・`lighting_set.rs`、描画対象で変わらないset 0の所有者が`shared_sets.rs`、フレームスロットごとのset 3の所有者が`crates/blitz_render/src/vulkan/lighting_query/`、束ごとのset 1の所有者が`object_sets.rs`、コマンド記録側が知るセット番号と束縛の規律が`crates/blitz_render/src/vulkan/frame/shared_set_bind.rs`である。
+この4セットは実装済みである(2026-08-02)。実装の所在は次のとおりである。5つのレイアウトと材質テクスチャ表の固定サンプラーの所有者が`crates/blitz_render/src/vulkan/descriptor/scene_set_layouts.rs`(生成は同名ディレクトリの`create.rs`)、役割ごとの束縛番号と結び方が同じ階層の`view_pass_set.rs`・`geometry_set.rs`・`material_set.rs`・`lighting_set.rs`、描画対象で変わらないset 0の所有者が`shared_sets.rs`、フレームスロットごとのset 3の所有者が`crates/blitz_render/src/vulkan/lighting_query/`、束ごとのset 1の所有者が`object_sets.rs`、コマンド記録側が知るセット番号と束縛の規律が`crates/blitz_render/src/vulkan/frame/shared_set_bind.rs`である。
 
 **set 2は束が持たず、資源表世代が1つだけ持つ**(段4bで実装済み)。シーン描画はパスの先頭でset 0・set 2・set 3を1回だけ結び、描画発行ごとに結ぶのはset 1だけである。束縛の回数が材質の数にもプリミティブの数にも比例しないことの実装がこの形である。布はset 2を資源を持たない空のレイアウトで宣言するため材質のセットを結ばず、シャドウ記録はset 0だけを結ぶ。
 

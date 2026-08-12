@@ -15,7 +15,7 @@ use table::{取り込む側, 検査対象一覧};
 
 /// ビューとパスのセット(set0)でフレームの定数を指す番号。この番号へ自前の`ConstantBuffer`を結ぶ宣言が
 /// 取り込む側に残っていたら違反とする。
-const フレーム定数のバインディング番号一覧: [u32; 3] = [0, 1, 2];
+const フレーム定数の束縛番号一覧: [u32; 3] = [0, 1, 2];
 
 pub fn 全シェーダーを検査する() -> Result<Vec<違反>, String> {
     let mut 違反一覧 = Vec::new();
@@ -29,7 +29,7 @@ pub fn 全シェーダーを検査する() -> Result<Vec<違反>, String> {
 
 fn 自前の宣言を探す(対象: &取り込む側, 内容: &str) -> Vec<違反> {
     let mut 違反一覧 = Vec::new();
-    for 番号 in フレーム定数のバインディング番号一覧 {
+    for 番号 in フレーム定数の束縛番号一覧 {
         let 宣言 = format!("[[vk::binding({番号}, 0)]]");
         for (行番号, _) in 内容.lines().enumerate().filter(|(_, 行)| 行.trim_start().starts_with(&宣言)) {
             違反一覧.push(違反::行単位(

@@ -10,15 +10,15 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::sync::フレームスロット添字;
 use crate::vulkan::uniform::フレームシェーダー定数一式;
 
-pub(crate) const ビュー定数のバインディング番号: u32 = 0;
-pub(crate) const 多段影の定数のバインディング番号: u32 = 1;
-pub(crate) const 空パスの定数のバインディング番号: u32 = 2;
+pub(crate) const ビュー定数の束縛番号: u32 = 0;
+pub(crate) const 多段影の定数の束縛番号: u32 = 1;
+pub(crate) const 空パスの定数の束縛番号: u32 = 2;
 
 pub(super) fn レイアウトを生成する(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
     let バインド一覧 = [
-        定数バインド(ビュー定数のバインディング番号),
-        定数バインド(多段影の定数のバインディング番号),
-        定数バインド(空パスの定数のバインディング番号),
+        定数バインド(ビュー定数の束縛番号),
+        定数バインド(多段影の定数の束縛番号),
+        定数バインド(空パスの定数の束縛番号),
     ];
     let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
     // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
@@ -30,9 +30,9 @@ pub(super) fn 定数を結ぶ(
     device: &ash::Device, set: vk::DescriptorSet, 定数: &フレームシェーダー定数一式, フレーム添字: フレームスロット添字
 ) {
     let 対応 = [
-        (ビュー定数のバインディング番号, 定数.ビュー定数のbuffer(フレーム添字)),
-        (多段影の定数のバインディング番号, 定数.多段影のbuffer(フレーム添字)),
-        (空パスの定数のバインディング番号, 定数.空パスのbuffer(フレーム添字)),
+        (ビュー定数の束縛番号, 定数.ビュー定数のbuffer(フレーム添字)),
+        (多段影の定数の束縛番号, 定数.多段影のbuffer(フレーム添字)),
+        (空パスの定数の束縛番号, 定数.空パスのbuffer(フレーム添字)),
     ];
     for (番号, buffer) in 対応 {
         let buffer情報一覧 = [vk::DescriptorBufferInfo::default().buffer(buffer).offset(0).range(vk::WHOLE_SIZE)];

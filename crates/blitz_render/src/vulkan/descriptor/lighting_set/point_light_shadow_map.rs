@@ -13,11 +13,11 @@
 
 use ash::vk;
 
-pub(crate) const 点光源の影のバインディング番号: u32 = 10;
+pub(crate) const 点光源の影の束縛番号: u32 = 10;
 
 pub(super) fn バインド() -> vk::DescriptorSetLayoutBinding<'static> {
     vk::DescriptorSetLayoutBinding::default()
-        .binding(点光源の影のバインディング番号)
+        .binding(点光源の影の束縛番号)
         .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
         .descriptor_count(1)
         .stage_flags(vk::ShaderStageFlags::FRAGMENT)
@@ -34,7 +34,7 @@ pub(super) fn 結ぶ(device: &ash::Device, set: vk::DescriptorSet, ビュー: vk
         .image_layout(vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL)];
     let 書き込み一覧 = [vk::WriteDescriptorSet::default()
         .dst_set(set)
-        .dst_binding(点光源の影のバインディング番号)
+        .dst_binding(点光源の影の束縛番号)
         .dst_array_element(0)
         .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
         .image_info(&画像情報一覧)];

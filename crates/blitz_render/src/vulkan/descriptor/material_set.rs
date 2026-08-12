@@ -14,9 +14,9 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::material_table::テクスチャ表レイアウト容量;
 use crate::vulkan::texture::テクスチャ;
 
-pub(crate) const 材質レコードのバインディング番号: u32 = 0;
-pub(crate) const 材質テクスチャ表のバインディング番号: u32 = 1;
-pub(crate) const 材質サンプラーのバインディング番号: u32 = 2;
+pub(crate) const 材質レコードの束縛番号: u32 = 0;
+pub(crate) const 材質テクスチャ表の束縛番号: u32 = 1;
+pub(crate) const 材質サンプラーの束縛番号: u32 = 2;
 
 pub(super) fn レイアウトを生成する(
     device: &ash::Device,
@@ -26,17 +26,17 @@ pub(super) fn レイアウトを生成する(
     let 固定サンプラー一覧 = [サンプラー];
     let バインド一覧 = [
         vk::DescriptorSetLayoutBinding::default()
-            .binding(材質レコードのバインディング番号)
+            .binding(材質レコードの束縛番号)
             .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
             .descriptor_count(1)
             .stage_flags(vk::ShaderStageFlags::FRAGMENT),
         vk::DescriptorSetLayoutBinding::default()
-            .binding(材質テクスチャ表のバインディング番号)
+            .binding(材質テクスチャ表の束縛番号)
             .descriptor_type(vk::DescriptorType::SAMPLED_IMAGE)
             .descriptor_count(容量.枚数())
             .stage_flags(vk::ShaderStageFlags::FRAGMENT),
         vk::DescriptorSetLayoutBinding::default()
-            .binding(材質サンプラーのバインディング番号)
+            .binding(材質サンプラーの束縛番号)
             .descriptor_type(vk::DescriptorType::SAMPLER)
             .descriptor_count(1)
             .stage_flags(vk::ShaderStageFlags::FRAGMENT)
@@ -75,7 +75,7 @@ pub(crate) fn 世代の資源を結ぶ(
     let mut 書き込み一覧 = vec![
         vk::WriteDescriptorSet::default()
             .dst_set(set)
-            .dst_binding(材質レコードのバインディング番号)
+            .dst_binding(材質レコードの束縛番号)
             .dst_array_element(0)
             .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
             .buffer_info(&buffer情報一覧),
@@ -84,7 +84,7 @@ pub(crate) fn 世代の資源を結ぶ(
         書き込み一覧.push(
             vk::WriteDescriptorSet::default()
                 .dst_set(set)
-                .dst_binding(材質テクスチャ表のバインディング番号)
+                .dst_binding(材質テクスチャ表の束縛番号)
                 .dst_array_element(0)
                 .descriptor_type(vk::DescriptorType::SAMPLED_IMAGE)
                 .image_info(&画像情報一覧),

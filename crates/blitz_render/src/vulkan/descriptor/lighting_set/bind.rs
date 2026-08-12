@@ -15,10 +15,10 @@ pub(crate) fn 資源を結ぶ(
 ) {
     シャドウマップを結ぶ(device, set, &影の資源.多段影);
     point_light_shadow_map::結ぶ(device, set, 影の資源.点光源の影.立方体配列ビュー, 影の資源.点光源の影.sampler);
-    let 定数の対 = [(super::ヘッダのバインディング番号, vk::DescriptorType::UNIFORM_BUFFER, バッファ組.ヘッダ)];
+    let 定数の対 = [(super::ヘッダの束縛番号, vk::DescriptorType::UNIFORM_BUFFER, バッファ組.ヘッダ)];
     let 記憶の対 = [
-        (super::方向光列のバインディング番号, バッファ組.方向光列),
-        (super::局所光列のバインディング番号, バッファ組.局所光列),
+        (super::方向光列の束縛番号, バッファ組.方向光列),
+        (super::局所光列の束縛番号, バッファ組.局所光列),
     ];
     for (番号, 種別, buffer) in 定数の対 {
         バッファを結ぶ(device, set, 番号, 種別, buffer);
@@ -51,7 +51,7 @@ fn シャドウマップを結ぶ(
         .image_layout(vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL)];
     let 書き込み一覧 = [vk::WriteDescriptorSet::default()
         .dst_set(set)
-        .dst_binding(super::シャドウマップのバインディング番号)
+        .dst_binding(super::シャドウマップの束縛番号)
         .dst_array_element(0)
         .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
         .image_info(&画像情報一覧)];

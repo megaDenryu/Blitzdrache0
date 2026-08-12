@@ -24,10 +24,10 @@ pub(crate) use buffer_group::照明問い合わせのバッファ組;
 use crate::error::レンダラーエラー;
 use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
 
-pub(crate) const シャドウマップのバインディング番号: u32 = 0;
-pub(crate) const ヘッダのバインディング番号: u32 = 1;
-pub(crate) const 方向光列のバインディング番号: u32 = 2;
-pub(crate) const 局所光列のバインディング番号: u32 = 3;
+pub(crate) const シャドウマップの束縛番号: u32 = 0;
+pub(crate) const ヘッダの束縛番号: u32 = 1;
+pub(crate) const 方向光列の束縛番号: u32 = 2;
+pub(crate) const 局所光列の束縛番号: u32 = 3;
 
 /// 束縛レイアウトの枝ごとに宣言するバインドの並びを変える。定数近似の枝へ未使用のダミー束縛を強制しない。
 pub(super) fn レイアウトを生成する(
@@ -35,10 +35,10 @@ pub(super) fn レイアウトを生成する(
     束縛レイアウト: 照明束縛レイアウト,
 ) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
     let mut バインド一覧 = vec![
-        画素段のバインド(シャドウマップのバインディング番号, vk::DescriptorType::COMBINED_IMAGE_SAMPLER),
-        画素段のバインド(ヘッダのバインディング番号, vk::DescriptorType::UNIFORM_BUFFER),
-        画素段のバインド(方向光列のバインディング番号, vk::DescriptorType::STORAGE_BUFFER),
-        画素段のバインド(局所光列のバインディング番号, vk::DescriptorType::STORAGE_BUFFER),
+        画素段のバインド(シャドウマップの束縛番号, vk::DescriptorType::COMBINED_IMAGE_SAMPLER),
+        画素段のバインド(ヘッダの束縛番号, vk::DescriptorType::UNIFORM_BUFFER),
+        画素段のバインド(方向光列の束縛番号, vk::DescriptorType::STORAGE_BUFFER),
+        画素段のバインド(局所光列の束縛番号, vk::DescriptorType::STORAGE_BUFFER),
     ];
     if 束縛レイアウト.遠方環境の画像を結ぶか() {
         バインド一覧.extend(distant_environment::バインド一覧());

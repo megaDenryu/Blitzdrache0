@@ -14,11 +14,11 @@
 
 use ash::vk;
 
-pub(crate) const 局所可視度のバインディング番号: u32 = 7;
+pub(crate) const 局所可視度の束縛番号: u32 = 7;
 
 pub(super) fn バインド() -> vk::DescriptorSetLayoutBinding<'static> {
     vk::DescriptorSetLayoutBinding::default()
-        .binding(局所可視度のバインディング番号)
+        .binding(局所可視度の束縛番号)
         .descriptor_type(vk::DescriptorType::SAMPLED_IMAGE)
         .descriptor_count(1)
         .stage_flags(vk::ShaderStageFlags::FRAGMENT)
@@ -34,7 +34,7 @@ pub(crate) fn 結ぶ(device: &ash::Device, set: vk::DescriptorSet, ビュー: vk
         .image_layout(vk::ImageLayout::GENERAL)];
     let 書き込み一覧 = [vk::WriteDescriptorSet::default()
         .dst_set(set)
-        .dst_binding(局所可視度のバインディング番号)
+        .dst_binding(局所可視度の束縛番号)
         .dst_array_element(0)
         .descriptor_type(vk::DescriptorType::SAMPLED_IMAGE)
         .image_info(&画像情報一覧)];

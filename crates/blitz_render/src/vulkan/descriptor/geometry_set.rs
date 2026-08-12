@@ -8,13 +8,13 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 
-pub(crate) const 個体レコードのバインディング番号: u32 = 0;
-pub(crate) const 可視ID列のバインディング番号: u32 = 1;
+pub(crate) const 個体レコードの束縛番号: u32 = 0;
+pub(crate) const 可視ID列の束縛番号: u32 = 1;
 
 pub(super) fn レイアウトを生成する(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
     let バインド一覧 = [
-        頂点段のストレージバッファバインド(個体レコードのバインディング番号),
-        頂点段のストレージバッファバインド(可視ID列のバインディング番号),
+        頂点段のストレージバッファバインド(個体レコードの束縛番号),
+        頂点段のストレージバッファバインド(可視ID列の束縛番号),
     ];
     let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
     // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
@@ -28,7 +28,7 @@ pub(super) fn 資源を結ぶ(
     個体レコード: (vk::Buffer, vk::DeviceSize),
     可視id列: (vk::Buffer, vk::DeviceSize),
 ) {
-    let 対応 = [(個体レコードのバインディング番号, 個体レコード), (可視ID列のバインディング番号, 可視id列)];
+    let 対応 = [(個体レコードの束縛番号, 個体レコード), (可視ID列の束縛番号, 可視id列)];
     for (番号, (buffer, 範囲)) in 対応 {
         let buffer情報一覧 = [vk::DescriptorBufferInfo::default().buffer(buffer).offset(0).range(範囲)];
         let 書き込み一覧 = [vk::WriteDescriptorSet::default()
