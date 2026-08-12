@@ -9,6 +9,7 @@
 
 use std::path::{Path, PathBuf};
 
+use super::error::規約検査の破れ;
 use super::violation::違反;
 
 const 正本パス: &str = "crates/blitz_asset_compiler/examples/generate_source_assets/terrain_visual_world/sample_bodies.rs";
@@ -17,9 +18,9 @@ const 写しパス: &str = "xtask/src/sample_world_region/sample_bodies.rs";
 /// 突き合わせる宣言の名前。正本と写しで同じ名前を使うため、前置きは1つで足りる。
 const 宣言名一覧: [&str; 3] = ["const 金属の色", "const 誘電体の色", "const 材質の水準一覧"];
 
-pub fn 全宣言を検査する() -> Result<Vec<違反>, String> {
-    let 正本 = std::fs::read_to_string(Path::new(正本パス)).map_err(|誤り| format!("{正本パス}の読み取りに失敗した: {誤り}"))?;
-    let 写し = std::fs::read_to_string(Path::new(写しパス)).map_err(|誤り| format!("{写しパス}の読み取りに失敗した: {誤り}"))?;
+pub fn 全宣言を検査する() -> Result<Vec<違反>, 規約検査の破れ> {
+    let 正本 = 宣言の並ぶファイルを読む(正本パス)?;
+    let 写し = 宣言の並ぶファイルを読む(写しパス)?;
     let mut 違反一覧 = Vec::new();
     for 宣言名 in 宣言名一覧 {
         let 正本の値 = 値を読む(&正本, 宣言名, 正本パス)?;
@@ -34,32 +35,38 @@ pub fn 全宣言を検査する() -> Result<Vec<違反>, String> {
     Ok(違反一覧)
 }
 
+fn 宣言の並ぶファイルを読む(パス: &'static str) -> Result<String, 規約検査の破れ> {
+    std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))
+}
+
 /// 宣言の等号から終端の`];`までに現れる数をすべて読む。等号より後だけを見るのは、型の`[f32; 3]`や
 /// `[(f32, f32); 球の個数]`に含まれる数を値と取り違えないためである。
 /// 宣言が見つからない場合を違反でなく失敗として扱うのは、宣言の消失を「一致した」と読み替えないためである。
-fn 値を読む(内容: &str, 宣言名: &str, パス: &str) -> Result<Vec<f64>, String> {
-    let 開始 = 内容.find(宣言名).ok_or_else(|| format!("{パス}に「{宣言名}」の宣言が無い"))?;
+fn 値を読む(内容: &str, 宣言名: &'static str, パス: &'static str) -> Result<Vec<f64>, 規約検査の破れ> {
+    let 開始 = 内容.find(宣言名).ok_or(規約検査の破れ::見本の宣言が無い { パス, 宣言名 })?;
     let 残り = &内容[開始..];
-    let 等号の後 = 残り.find('=').ok_or_else(|| format!("{パス}の「{宣言名}」に等号が無い"))?;
+    let 等号の後 = 残り.find('=').ok_or(規約検査の破れ::見本の宣言に等号が無い { パス, 宣言名 })?;
     let 終端 = 残り[等号の後..]
         .find("];")
-        .ok_or_else(|| format!("{パス}の「{宣言名}」が`];`で終わっていない"))?;
+        .ok_or(規約検査の破れ::見本の宣言が閉じていない { パス, 宣言名 })?;
     数を集める(&残り[等号の後..等号の後 + 終端], 宣言名, パス)
 }
 
-fn 数を集める(本文: &str, 宣言名: &str, パス: &str) -> Result<Vec<f64>, String> {
+fn 数を集める(本文: &str, 宣言名: &'static str, パス: &'static str) -> Result<Vec<f64>, 規約検査の破れ> {
     let mut 一覧 = Vec::new();
     for 語 in 本文.split(|文字: char| !文字.is_ascii_digit() && 文字 != '.' && 文字 != '-') {
         if 語.is_empty() {
             continue;
         }
-        一覧.push(
-            語.parse::<f64>()
-                .map_err(|誤り| format!("{パス}の「{宣言名}」の値を数として読めない: {語}({誤り})"))?,
-        );
+        一覧.push(語.parse::<f64>().map_err(|誤り| 規約検査の破れ::見本の宣言の値を数として読めない {
+            パス,
+            宣言名,
+            綴り: 語.to_string(),
+            誤り,
+        })?);
     }
     if 一覧.is_empty() {
-        return Err(format!("{パス}の「{宣言名}」に値が1つも無い"));
+        return Err(規約検査の破れ::見本の宣言に値が1つも無い { パス, 宣言名 });
     }
     Ok(一覧)
 }

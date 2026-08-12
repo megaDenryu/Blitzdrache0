@@ -15,14 +15,16 @@ mod tests;
 
 use std::path::{Path, PathBuf};
 
+use super::error::規約検査の破れ;
 use super::source_lexing;
 use super::violation::違反;
 
-pub fn 全綴りを検査する() -> Result<Vec<違反>, String> {
+pub fn 全綴りを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
     for 契約 in table::領域一覧.iter().copied().flatten() {
         for パス in 契約.現れるファイル一覧 {
-            let 内容 = std::fs::read_to_string(Path::new(パス)).map_err(|誤り| format!("{パス}の読み取りに失敗した: {誤り}"))?;
+            let 内容 = std::fs::read_to_string(Path::new(パス))
+                .map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
             if !文字列リテラルの中に現れるか(&内容, 契約.綴り) {
                 違反一覧.push(違反::ファイル単位(
                     PathBuf::from(*パス),

@@ -10,6 +10,7 @@ mod table;
 
 use std::path::{Path, PathBuf};
 
+use super::error::規約検査の破れ;
 use super::violation::違反;
 use table::{取り込む側, 検査対象一覧};
 
@@ -17,10 +18,11 @@ use table::{取り込む側, 検査対象一覧};
 /// 取り込む側に残っていたら違反とする。
 const フレーム定数の束縛番号一覧: [u32; 3] = [0, 1, 2];
 
-pub fn 全シェーダーを検査する() -> Result<Vec<違反>, String> {
+pub fn 全シェーダーを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
     for 対象 in &検査対象一覧 {
-        let 内容 = std::fs::read_to_string(Path::new(対象.パス)).map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", 対象.パス))?;
+        let 内容 = std::fs::read_to_string(Path::new(対象.パス))
+            .map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(対象.パス), 誤り))?;
         違反一覧.extend(自前の宣言を探す(対象, &内容));
         違反一覧.extend(取り込みの欠落を探す(対象, &内容));
     }

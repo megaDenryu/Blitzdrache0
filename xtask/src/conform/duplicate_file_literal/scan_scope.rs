@@ -7,12 +7,13 @@
 use std::path::{Path, PathBuf};
 
 use crate::conform::allow_lint::パスがテストまたは例か;
+use crate::conform::error::規約検査の破れ;
 use crate::file_scan;
 
 const 走査するディレクトリ一覧: [&str; 2] = ["crates", "xtask/src"];
 const 走査する拡張子一覧: [&str; 1] = ["rs"];
 
-pub(super) fn 走査するファイル一覧を集める() -> Result<Vec<PathBuf>, String> {
+pub(super) fn 走査するファイル一覧を集める() -> Result<Vec<PathBuf>, 規約検査の破れ> {
     let 全ファイル = file_scan::対象ファイル一覧を集める(&走査するディレクトリ一覧, &走査する拡張子一覧)?;
     Ok(全ファイル.into_iter().filter(|パス| !試験のためのファイルか(パス)).collect())
 }

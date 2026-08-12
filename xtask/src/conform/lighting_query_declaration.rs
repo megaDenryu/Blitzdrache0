@@ -13,25 +13,28 @@ mod table;
 
 use std::path::{Path, PathBuf};
 
+use super::error::規約検査の破れ;
 use super::violation::違反;
 use table::{取り込む側一覧, 宣言の正本, 正本一覧};
 
-pub fn 全シェーダーを検査する() -> Result<Vec<違反>, String> {
+pub fn 全シェーダーを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
     for 正本 in &正本一覧 {
         違反一覧.extend(正本の宣言を確かめる(正本)?);
     }
     for パス in 取り込む側一覧 {
-        let 内容 = std::fs::read_to_string(Path::new(パス)).map_err(|誤り| format!("{パス}の読み取りに失敗した: {誤り}"))?;
+        let 内容 = std::fs::read_to_string(Path::new(パス))
+            .map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
         違反一覧.extend(自前の宣言を探す(パス, &内容));
     }
     Ok(違反一覧)
 }
 
 /// 宣言の消失を「一致した」と読み替えないため、正本に受け持つ番号が揃っていることを先に確かめる。
-fn 正本の宣言を確かめる(正本: &宣言の正本) -> Result<Vec<違反>, String> {
+fn 正本の宣言を確かめる(正本: &宣言の正本) -> Result<Vec<違反>, 規約検査の破れ> {
     let パス = 正本.パス;
-    let 内容 = std::fs::read_to_string(Path::new(パス)).map_err(|誤り| format!("{パス}の読み取りに失敗した: {誤り}"))?;
+    let 内容 =
+        std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
     let mut 違反一覧 = Vec::new();
     for 番号 in 正本.束縛番号一覧 {
         if !内容.contains(&宣言の書き出し(*番号)) {

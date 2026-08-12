@@ -13,6 +13,8 @@ mod attribute_tests;
 
 use std::path::Path;
 
+use crate::conform::error::規約検査の破れ;
+
 const 属性の書き出し: &str = "[[vk::binding(";
 
 /// 1つの宣言に付いた束縛の属性。番号とセット番号を名前で持つのは、2つの数の並びを取り違えないためである。
@@ -21,9 +23,10 @@ pub(super) struct 束縛の属性 {
     pub(super) セット番号: u32,
 }
 
-pub(super) fn 写しの束縛の属性を読む(パス: &str, 変数名: &str) -> Result<束縛の属性, String> {
-    let 内容 = std::fs::read_to_string(Path::new(パス)).map_err(|誤り| format!("{パス}の読み取りに失敗した: {誤り}"))?;
-    属性を探す(&内容, 変数名).ok_or_else(|| format!("{パス}に{変数名}の宣言と束縛の属性の組が無い"))
+pub(super) fn 写しの束縛の属性を読む(パス: &'static str, 変数名: &'static str) -> Result<束縛の属性, 規約検査の破れ> {
+    let 内容 =
+        std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
+    属性を探す(&内容, 変数名).ok_or(規約検査の破れ::束縛の属性が無い { パス, 変数名 })
 }
 
 /// 変数名が語として現れる最初の行を宣言とみなし、その行から属性を読む。同じ行に無いときだけ、

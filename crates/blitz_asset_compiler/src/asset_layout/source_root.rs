@@ -5,9 +5,11 @@
 
 use std::path::{Path, PathBuf};
 
+use super::error::アセット配置エラー;
 use super::world_directory_name::世界のディレクトリ名;
 use super::world_source_directory::世界のソースディレクトリ;
 use crate::chunk_directory_source::{チャンク目録ソースを読み込む, チャンク目録ソース項目};
+use crate::error::アセットコンパイルエラー;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -60,17 +62,19 @@ pub struct チャンク目録ソースの置き場 {
 }
 
 impl チャンク目録ソースの置き場 {
-    pub fn 目録の項目一覧を読み込む(&self) -> Result<Vec<チャンク目録ソース項目>, String> {
-        チャンク目録ソースを読み込む(&self.目録ソース).map_err(|誤り| format!("{}: {誤り}", self.目録ソース.display()))
+    /// 目録ソースの読み解きの破れをそのまま返すのは、その誤りが読めなかったファイルを自分で名指しており、
+    /// 置き場の側から重ねて名指す必要が無いためである。
+    pub fn 目録の項目一覧を読み込む(&self) -> Result<Vec<チャンク目録ソース項目>, アセットコンパイルエラー> {
+        チャンク目録ソースを読み込む(&self.目録ソース)
     }
 
     /// 目録の1行が置き場からの相対で指すチャンクのソース。存在しなければ失敗させ、無いまま焼き進めない。
-    pub fn 目録が指すチャンクのソース(&self, 相対パス: &Path) -> Result<PathBuf, String> {
+    pub fn 目録が指すチャンクのソース(&self, 相対パス: &Path) -> Result<PathBuf, アセット配置エラー> {
         let パス = self.世界のディレクトリ.直下の相対パスが指すファイル(相対パス);
         if パス.is_file() {
             Ok(パス)
         } else {
-            Err(format!("チャンク世界のソースアセットが存在しない: {}", パス.display()))
+            Err(アセット配置エラー::目録が指すチャンクのソースが無い { パス })
         }
     }
 

@@ -26,11 +26,12 @@ mod tests;
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 
+use super::error::規約検査の破れ;
 use super::source_lexing;
 use super::violation::違反;
 use tally::検査の集計;
 
-pub fn 全ファイルを検査する() -> Result<Vec<違反>, String> {
+pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let ファイル一覧 = scan_scope::走査するファイル一覧を集める()?;
     let mut 集計 = 検査の集計::新しく作る();
     for (綴り, 出現箇所一覧) in 出現箇所を集める(&ファイル一覧)? {
@@ -49,10 +50,10 @@ pub(super) struct 出現箇所 {
     pub(super) 取り込みの引数か: bool,
 }
 
-fn 出現箇所を集める(ファイル一覧: &[PathBuf]) -> Result<BTreeMap<String, Vec<出現箇所>>, String> {
+fn 出現箇所を集める(ファイル一覧: &[PathBuf]) -> Result<BTreeMap<String, Vec<出現箇所>>, 規約検査の破れ> {
     let mut 出現表: BTreeMap<String, Vec<出現箇所>> = BTreeMap::new();
     for パス in ファイル一覧 {
-        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", パス.display()))?;
+        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(パス, 誤り))?;
         for (綴り, 行番号, 取り込みの引数か) in ファイル内の出現を集める(&内容) {
             出現表.entry(綴り).or_default().push(出現箇所 {
                 パス: パス.to_path_buf(),

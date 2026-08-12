@@ -8,6 +8,7 @@
 
 use std::path::PathBuf;
 
+use super::error::規約検査の破れ;
 use super::violation::違反;
 use crate::file_scan;
 
@@ -20,14 +21,13 @@ const 定義ファイル: &str = "lighting_query/mod.rs";
 /// 唯一の呼び出し元。フェンス待ちの後に呼ばれることをこのファイルの冒頭が述べる。
 const 唯一の呼び出し元: &str = "renderer/uniform_write.rs";
 
-pub fn 検査する() -> Result<Vec<違反>, String> {
-    let ファイル一覧 = file_scan::対象ファイル一覧を集める(&走査対象ディレクトリ一覧, &走査対象拡張子一覧)
-        .map_err(|誤り| format!("照明スロットの書き込み地点の検査のファイル走査に失敗した: {誤り}"))?;
+pub fn 検査する() -> Result<Vec<違反>, 規約検査の破れ> {
+    let ファイル一覧 = file_scan::対象ファイル一覧を集める(&走査対象ディレクトリ一覧, &走査対象拡張子一覧)?;
     let mut 違反一覧 = Vec::new();
     let mut 呼び出し元を見たか = false;
     for パス in &ファイル一覧 {
         let 表示 = パス.display().to_string().replace(std::path::MAIN_SEPARATOR, "/");
-        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| format!("{表示}の読み取りに失敗した: {誤り}"))?;
+        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(パス, 誤り))?;
         if !内容.contains(書き込みの名前) || 表示.ends_with(定義ファイル) {
             continue;
         }

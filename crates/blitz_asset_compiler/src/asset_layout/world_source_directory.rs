@@ -8,6 +8,7 @@
 
 use std::path::{Path, PathBuf};
 
+use super::error::アセット配置エラー;
 use super::world_directory_name::世界のディレクトリ名;
 use crate::generation_ledger::生成の出力ルート;
 
@@ -23,8 +24,8 @@ impl 世界のソースディレクトリ {
     }
 
     /// ディレクトリを作ってから返す。書き出す側は最初にこれを通り、読む側は通らない。
-    pub(super) fn 作ってから開く(self) -> Result<Self, String> {
-        self.0.ディレクトリを作る().map_err(|誤り| 誤り.to_string())?;
+    pub(super) fn 作ってから開く(self) -> Result<Self, アセット配置エラー> {
+        self.0.ディレクトリを作る()?;
         Ok(self)
     }
 
@@ -32,7 +33,7 @@ impl 世界のソースディレクトリ {
         self.0.直下のファイルのパス(チャンク目録ソースのファイル名)
     }
 
-    pub(super) fn チャンク目録ソースへ書き込む(&self, バイト列: &[u8]) -> Result<(), String> {
+    pub(super) fn チャンク目録ソースへ書き込む(&self, バイト列: &[u8]) -> Result<(), アセット配置エラー> {
         self.直下へ書き込む(チャンク目録ソースのファイル名, バイト列)
     }
 
@@ -46,14 +47,20 @@ impl 世界のソースディレクトリ {
     }
 
     /// この置き場がファイルへ書く唯一の口。生値のパスがここより外へ出ない。
-    pub(super) fn 直下へ書き込む(&self, ファイル名: &str, バイト列: &[u8]) -> Result<(), String> {
+    pub(super) fn 直下へ書き込む(&self, ファイル名: &str, バイト列: &[u8]) -> Result<(), アセット配置エラー> {
         let パス = self.直下のファイルのパス(ファイル名);
-        std::fs::write(&パス, バイト列).map_err(|誤り| format!("{}: {誤り}", パス.display()))
+        std::fs::write(&パス, バイト列).map_err(|誤り| アセット配置エラー::ファイルへ書き出せなかった {
+            パス,
+            事由: 誤り.to_string(),
+        })
     }
 
-    pub(super) fn 直下のファイルを綴りとして読む(&self, ファイル名: &str) -> Result<String, String> {
+    pub(super) fn 直下のファイルを綴りとして読む(&self, ファイル名: &str) -> Result<String, アセット配置エラー> {
         let パス = self.直下のファイルのパス(ファイル名);
-        std::fs::read_to_string(&パス).map_err(|誤り| format!("{}を読めなかった: {誤り}", パス.display()))
+        std::fs::read_to_string(&パス).map_err(|誤り| アセット配置エラー::ファイルを読めなかった {
+            パス,
+            事由: 誤り.to_string(),
+        })
     }
 
     /// 生成台帳の置き場としてのこの置き場。台帳の読み書きは生成の出力ルートの側が担う。

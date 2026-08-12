@@ -6,6 +6,7 @@
 
 use std::path::PathBuf;
 
+use super::error::アセット配置エラー;
 use crate::generation_ledger::{内容ハッシュ, 生成台帳エラー};
 use crate::height_grid::{高さ格子, 高さ格子を読み込む, 高さ格子エラー};
 
@@ -35,7 +36,10 @@ impl 高さ格子のファイル {
         self.0.clone()
     }
 
-    pub fn 書き出す(&self, バイト列: &[u8]) -> Result<(), String> {
-        std::fs::write(&self.0, バイト列).map_err(|誤り| format!("{}: {誤り}", self.0.display()))
+    pub fn 書き出す(&self, バイト列: &[u8]) -> Result<(), アセット配置エラー> {
+        std::fs::write(&self.0, バイト列).map_err(|誤り| アセット配置エラー::ファイルへ書き出せなかった {
+            パス: self.0.clone(),
+            事由: 誤り.to_string(),
+        })
     }
 }

@@ -6,16 +6,17 @@
 
 use std::path::{Component, Path, PathBuf};
 
+use super::error::規約検査の破れ;
 use super::section_reference::節名を抽出する;
 use super::violation::違反;
 use crate::file_scan;
 
-pub fn 全文書を検査する() -> Result<Vec<違反>, String> {
+pub fn 全文書を検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 対象一覧 = file_scan::対象ファイル一覧を集める(&["_doc"], &["md"])?;
     対象一覧.push(PathBuf::from("README.md"));
     let mut 違反一覧 = Vec::new();
     for パス in 対象一覧.iter().filter(|パス| 対象文書か(パス)) {
-        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", パス.display()))?;
+        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(パス, 誤り))?;
         違反一覧.extend(検査する(パス, &内容));
     }
     Ok(違反一覧)

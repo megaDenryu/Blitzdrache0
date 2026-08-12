@@ -10,6 +10,7 @@
 
 use std::path::{Path, PathBuf};
 
+use super::error::規約検査の破れ;
 use super::violation::違反;
 use crate::file_scan;
 
@@ -25,12 +26,11 @@ const 廃止語一覧: [&str; 5] = [
     "個体変換の出どころ",
 ];
 
-pub fn 全ファイルを検査する() -> Result<Vec<違反>, String> {
-    let ファイル一覧 = file_scan::対象ファイル一覧を集める(&走査対象ディレクトリ一覧, &走査対象拡張子一覧)
-        .map_err(|誤り| format!("廃止語検査のファイル走査に失敗した: {誤り}"))?;
+pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
+    let ファイル一覧 = file_scan::対象ファイル一覧を集める(&走査対象ディレクトリ一覧, &走査対象拡張子一覧)?;
     let mut 違反一覧 = Vec::new();
     for パス in &ファイル一覧 {
-        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", パス.display()))?;
+        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(パス, 誤り))?;
         違反一覧.extend(ファイル1つを検査する(パス, &内容));
     }
     Ok(違反一覧)

@@ -14,6 +14,7 @@
 
 mod body_kind;
 mod definition_line;
+mod error;
 mod impl_line;
 mod keyword;
 mod member_line;
@@ -26,6 +27,7 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 use crate::file_scan;
+use error::型計測の破れ;
 use observation::観測;
 
 const 走査対象ディレクトリ一覧: [&str; 2] = ["crates", "xtask/src"];
@@ -50,10 +52,13 @@ pub fn 実行する() -> ExitCode {
     ExitCode::SUCCESS
 }
 
-fn 全ファイルを走査する(ファイル一覧: &[PathBuf]) -> Result<Vec<(PathBuf, Vec<観測>)>, String> {
+fn 全ファイルを走査する(ファイル一覧: &[PathBuf]) -> Result<Vec<(PathBuf, Vec<観測>)>, 型計測の破れ> {
     let mut 結果 = Vec::new();
     for パス in ファイル一覧 {
-        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", パス.display()))?;
+        let 内容 = std::fs::read_to_string(パス)
+            .map_err(|誤り| 型計測の破れ::計測対象のファイルを読めなかった {
+                パス: パス.clone(), 誤り
+            })?;
         結果.push((パス.clone(), scan::走査する(&内容)));
     }
     Ok(結果)

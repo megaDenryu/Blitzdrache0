@@ -6,9 +6,12 @@
 
 use std::path::Path;
 
-pub(super) fn 正本の束縛番号を読む(パス: &str, 前置き: &str) -> Result<u32, String> {
-    let 内容 = std::fs::read_to_string(Path::new(パス)).map_err(|誤り| format!("{パス}の読み取りに失敗した: {誤り}"))?;
-    番号を取り出す(&内容, 前置き).ok_or_else(|| format!("{パス}の「{前置き}」から束縛番号を読めない"))
+use crate::conform::error::規約検査の破れ;
+
+pub(super) fn 正本の束縛番号を読む(パス: &'static str, 前置き: &'static str) -> Result<u32, 規約検査の破れ> {
+    let 内容 =
+        std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
+    番号を取り出す(&内容, 前置き).ok_or(規約検査の破れ::束縛番号を読めない { パス, 前置き })
 }
 
 /// 前置きで始まる行を1本見つけ、前置きを取り除いた残りの最初の丸括弧の中身を数として読む。

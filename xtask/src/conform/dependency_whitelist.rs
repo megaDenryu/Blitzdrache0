@@ -5,7 +5,11 @@
 use std::path::{Path, PathBuf};
 
 use super::cargo_toml_parse::{クレート名を取り出す, 依存名一覧を取り出す};
+use super::error::規約検査の破れ;
 use super::violation::違反;
+
+/// クレートが並ぶ置き場。ここを開いて対象のCargo.tomlを集める。
+const クレートの置き場: &str = "crates";
 
 const 白リスト: [(&str, &[&str]); 8] = [
     ("blitz_math", &["glam"]),
@@ -42,11 +46,15 @@ const 白リスト: [(&str, &[&str]); 8] = [
     ("xtask", &["blitz_asset_compiler"]),
 ];
 
-pub fn 全クレートを検査する() -> Result<Vec<違反>, String> {
+pub fn 全クレートを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
+    let 読めなかった = |誤り| 規約検査の破れ::検査対象のディレクトリを読めなかった {
+        ディレクトリ: PathBuf::from(クレートの置き場),
+        誤り,
+    };
     let mut 対象一覧: Vec<PathBuf> = Vec::new();
-    let 読み取り結果 = std::fs::read_dir("crates").map_err(|誤り| format!("crates/の読み取りに失敗した: {誤り}"))?;
+    let 読み取り結果 = std::fs::read_dir(クレートの置き場).map_err(読めなかった)?;
     for エントリ結果 in 読み取り結果 {
-        let エントリ = エントリ結果.map_err(|誤り| format!("crates/の読み取りに失敗した: {誤り}"))?;
+        let エントリ = エントリ結果.map_err(読めなかった)?;
         let 候補 = エントリ.path().join("Cargo.toml");
         if 候補.is_file() {
             対象一覧.push(候補);
@@ -56,7 +64,7 @@ pub fn 全クレートを検査する() -> Result<Vec<違反>, String> {
 
     let mut 違反一覧 = Vec::new();
     for パス in &対象一覧 {
-        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", パス.display()))?;
+        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(パス, 誤り))?;
         違反一覧.extend(単一クレートを検査する(パス, &内容));
     }
     Ok(違反一覧)

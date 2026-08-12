@@ -9,6 +9,7 @@
 
 use std::path::{Path, PathBuf};
 
+use crate::conform::error::規約検査の破れ;
 use crate::conform::source_lexing::コードだけの行一覧;
 use crate::conform::violation::違反;
 
@@ -16,10 +17,10 @@ const 定義の綴り: [&str; 2] = ["macro_rules!", concat!("include_", "bytes")
 const 取り込みの綴り: [&str; 2] = ["use ", concat!("include_", "bytes")];
 const 禁じる理由: &str = "組み込みの取り込みの名前を奪う宣言である(ビルド時の成果物の綴りを許す規則の根拠を壊すため禁じる)";
 
-pub(super) fn 全ファイルを検査する(ファイル一覧: &[PathBuf]) -> Result<Vec<違反>, String> {
+pub(super) fn 全ファイルを検査する(ファイル一覧: &[PathBuf]) -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
     for パス in ファイル一覧 {
-        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", パス.display()))?;
+        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(パス, 誤り))?;
         違反一覧.extend(ファイル1つを検査する(パス, &内容));
     }
     Ok(違反一覧)

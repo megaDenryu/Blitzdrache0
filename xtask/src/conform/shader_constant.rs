@@ -10,9 +10,10 @@ mod table;
 
 use std::path::{Path, PathBuf};
 
+use super::error::規約検査の破れ;
 use super::violation::違反;
 
-pub fn 全定数を検査する() -> Result<Vec<違反>, String> {
+pub fn 全定数を検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
     for 組 in table::領域一覧.iter().copied().flatten() {
         let 正本 = 値を読む(組.正本パス, 組.正本の前置き)?;
@@ -33,14 +34,18 @@ pub fn 全定数を検査する() -> Result<Vec<違反>, String> {
 
 /// 前置きで始まる行を1本見つけ、そのセミコロンまでを数として読む。
 /// 見つからない場合を違反でなく失敗として扱うのは、宣言の消失を「一致した」と読み替えないためである。
-fn 値を読む(パス: &str, 前置き: &str) -> Result<f64, String> {
-    let 内容 = std::fs::read_to_string(Path::new(パス)).map_err(|誤り| format!("{パス}の読み取りに失敗した: {誤り}"))?;
+fn 値を読む(パス: &'static str, 前置き: &'static str) -> Result<f64, 規約検査の破れ> {
+    let 内容 =
+        std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
     let 行 = 内容
         .lines()
         .find(|行| 行.trim_start().starts_with(前置き))
-        .ok_or_else(|| format!("{パス}に「{前置き}」で始まる行が無い"))?;
+        .ok_or(規約検査の破れ::定数の宣言が無い { パス, 前置き })?;
     let 数値 = 行.trim_start().trim_start_matches(前置き).split(';').next().unwrap_or("").trim();
-    数値
-        .parse::<f64>()
-        .map_err(|誤り| format!("{パス}の「{前置き}」の値を数として読めない: {数値}({誤り})"))
+    数値.parse::<f64>().map_err(|誤り| 規約検査の破れ::定数の値を数として読めない {
+        パス,
+        前置き,
+        綴り: 数値.to_string(),
+        誤り,
+    })
 }

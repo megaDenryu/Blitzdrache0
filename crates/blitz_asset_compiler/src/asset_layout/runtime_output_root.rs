@@ -10,6 +10,7 @@ use std::path::PathBuf;
 
 use blitz_engine::{アセットID, カタログ, 実行時形式からカタログを読む};
 
+use super::error::アセット配置エラー;
 use crate::generation_ledger::生成の出力ルート;
 
 const 実行時カタログのファイル名: &str = "catalog.blitzcatalog";
@@ -20,9 +21,10 @@ const アセットの拡張子つきの綴り: &str = ".blitzasset";
 pub struct 実行時形式の出力ルート(生成の出力ルート);
 
 impl 実行時形式の出力ルート {
-    pub fn 作る(ディレクトリ: PathBuf) -> Result<Self, String> {
-        std::fs::create_dir_all(&ディレクトリ).map_err(|誤り| format!("出力ディレクトリ{}を作れない: {誤り}", ディレクトリ.display()))?;
-        Ok(Self(生成の出力ルート::生成する(ディレクトリ)))
+    pub fn 作る(ディレクトリ: PathBuf) -> Result<Self, アセット配置エラー> {
+        let 置き場 = Self::ディレクトリを作らずに指す(ディレクトリ);
+        置き場.0.ディレクトリを作る()?;
+        Ok(置き場)
     }
 
     pub fn アセットの出力パス(&self, 安定id: &アセットID) -> PathBuf {
@@ -31,10 +33,9 @@ impl 実行時形式の出力ルート {
 
     /// アセット1件を書き出し、カタログが実行時パスとして持つファイル名を返す。ファイル名を1回だけ組んで
     /// 書き出しと戻り値の両方に使う。
-    pub fn アセットを書き出す(&self, 安定id: &アセットID, バイト列: &[u8]) -> Result<PathBuf, String> {
+    pub fn アセットを書き出す(&self, 安定id: &アセットID, バイト列: &[u8]) -> Result<PathBuf, アセット配置エラー> {
         let ファイル名 = Self::アセットのファイル名(安定id);
-        let パス = self.0.直下のファイルのパス(&ファイル名);
-        std::fs::write(&パス, バイト列).map_err(|誤り| format!("{}を書き出せない: {誤り}", パス.display()))?;
+        let パス = self.直下へ書き込む(&ファイル名, バイト列)?;
         println!("[compile_assets] {}: {}バイト", パス.display(), バイト列.len());
         Ok(PathBuf::from(ファイル名))
     }
@@ -50,13 +51,13 @@ impl 実行時形式の出力ルート {
         実行時形式からカタログを読む(&バイト列).ok()
     }
 
-    pub fn 実行時カタログを書き出す(&self, バイト列: &[u8]) -> Result<(), String> {
+    pub fn 実行時カタログを書き出す(&self, バイト列: &[u8]) -> Result<(), アセット配置エラー> {
         let パス = self.直下へ書き込む(実行時カタログのファイル名, バイト列)?;
         println!("[compile_assets] {}: {}バイト", パス.display(), バイト列.len());
         Ok(())
     }
 
-    pub fn チャンク目録を書き出す(&self, バイト列: &[u8], チャンク数: usize) -> Result<(), String> {
+    pub fn チャンク目録を書き出す(&self, バイト列: &[u8], チャンク数: usize) -> Result<(), アセット配置エラー> {
         let パス = self.直下へ書き込む(実行時目録のファイル名, バイト列)?;
         println!("[compile_assets] {}: {}バイト({}チャンク)", パス.display(), バイト列.len(), チャンク数);
         Ok(())
@@ -87,9 +88,12 @@ impl 実行時形式の出力ルート {
     }
 
     /// この置き場がファイルへ書く唯一の口。書いた先を返すのは、報せの行がパスを載せるためである。
-    fn 直下へ書き込む(&self, ファイル名: &str, バイト列: &[u8]) -> Result<PathBuf, String> {
+    fn 直下へ書き込む(&self, ファイル名: &str, バイト列: &[u8]) -> Result<PathBuf, アセット配置エラー> {
         let パス = self.0.直下のファイルのパス(ファイル名);
-        std::fs::write(&パス, バイト列).map_err(|誤り| format!("{}を書き出せない: {誤り}", パス.display()))?;
+        std::fs::write(&パス, バイト列).map_err(|誤り| アセット配置エラー::ファイルへ書き出せなかった {
+            パス: パス.clone(),
+            事由: 誤り.to_string(),
+        })?;
         Ok(パス)
     }
 }

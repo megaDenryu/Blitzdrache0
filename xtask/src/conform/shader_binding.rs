@@ -14,10 +14,11 @@ mod table;
 
 use std::path::PathBuf;
 
+use super::error::規約検査の破れ;
 use super::violation::違反;
 use table::束縛番号の組;
 
-pub fn 全束縛番号を検査する() -> Result<Vec<違反>, String> {
+pub fn 全束縛番号を検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
     for 組 in table::領域ごとの台帳の一覧.iter().copied().flatten() {
         違反一覧.extend(組1つを検査する(組)?);
@@ -25,7 +26,7 @@ pub fn 全束縛番号を検査する() -> Result<Vec<違反>, String> {
     Ok(違反一覧)
 }
 
-fn 組1つを検査する(組: &束縛番号の組) -> Result<Vec<違反>, String> {
+fn 組1つを検査する(組: &束縛番号の組) -> Result<Vec<違反>, 規約検査の破れ> {
     let 正本の番号 = master_number::正本の束縛番号を読む(組.正本パス, 組.正本の前置き)?;
     let 属性 = shader_attribute::写しの束縛の属性を読む(組.写しパス, 組.写しの変数名)?;
     let mut 違反一覧 = Vec::new();

@@ -8,6 +8,7 @@ mod doc_reference;
 mod doc_section;
 mod drop_impl;
 mod duplicate_file_literal;
+mod error;
 mod forbidden_strings;
 mod lighting_query_declaration;
 mod line_count;
@@ -33,43 +34,35 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 use crate::file_scan;
+use error::規約検査の破れ;
 use violation::違反;
 
 const 検査対象ディレクトリ一覧: [&str; 3] = ["crates", "xtask/src", "shaders"];
 const 検査対象拡張子一覧: [&str; 3] = ["rs", "slang", "md"];
 
 pub fn 実行する() -> ExitCode {
-    let ファイル一覧 = match file_scan::対象ファイル一覧を集める(&検査対象ディレクトリ一覧, &検査対象拡張子一覧) {
-        Ok(一覧) => 一覧,
-        Err(誤り) => {
-            eprintln!("[xtask] conformのファイル走査に失敗した: {誤り}");
-            return ExitCode::FAILURE;
-        }
-    };
-
-    let mut 違反一覧 = match ファイル単位の違反を集める(&ファイル一覧) {
-        Ok(一覧) => 一覧,
-        Err(誤り) => {
-            eprintln!("[xtask] conformのファイル読み取りに失敗した: {誤り}");
-            return ExitCode::FAILURE;
-        }
-    };
-
-    match whole_repository::集める() {
-        Ok(全体違反一覧) => 違反一覧.extend(全体違反一覧),
-        Err(誤り) => {
-            eprintln!("[xtask] conformの{誤り}");
-            return ExitCode::FAILURE;
+    match 全違反を集める() {
+        Ok(違反一覧) => 結果を表示する(違反一覧),
+        Err(破れ) => {
+            eprintln!("[xtask] conformの検査を実行できなかった: {破れ}");
+            ExitCode::FAILURE
         }
     }
-
-    結果を表示する(違反一覧)
 }
 
-fn ファイル単位の違反を集める(ファイル一覧: &[PathBuf]) -> Result<Vec<違反>, String> {
+/// 走査・ファイル単位・全体の3段を順に回して違反を集める。どの段で検査を実行できなくても同じ破れの型で返るため、
+/// 段ごとに終了コードへの写し方を書き分けない。
+fn 全違反を集める() -> Result<Vec<違反>, 規約検査の破れ> {
+    let ファイル一覧 = file_scan::対象ファイル一覧を集める(&検査対象ディレクトリ一覧, &検査対象拡張子一覧)?;
+    let mut 違反一覧 = ファイル単位の違反を集める(&ファイル一覧)?;
+    違反一覧.extend(whole_repository::集める()?);
+    Ok(違反一覧)
+}
+
+fn ファイル単位の違反を集める(ファイル一覧: &[PathBuf]) -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
     for パス in ファイル一覧 {
-        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| format!("{}の読み取りに失敗した: {誤り}", パス.display()))?;
+        let 内容 = std::fs::read_to_string(パス).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(パス, 誤り))?;
         let 拡張子 = パス.extension().and_then(|拡張子| 拡張子.to_str()).unwrap_or("");
         if 拡張子 == "rs" || 拡張子 == "slang" {
             違反一覧.extend(line_count::検査する(パス, &内容));
