@@ -45,7 +45,7 @@ pub(super) fn テクスチャを生成する(
         return Err(誤り);
     }
 
-    let image_view = match view::画像ビューを作る(device, image, 縮小段数, 形式) {
+    let image_view = match view::画像ビューを作る(確保係, image, 縮小段数, 形式) {
         Ok(view) => view,
         Err(誤り) => {
             画像を破棄する(device, image, memory);

@@ -3,9 +3,10 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 
 pub(super) fn 画像ビューを作る(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     image: vk::Image,
     mip数: u32,
     形式: vk::Format,
@@ -21,6 +22,5 @@ pub(super) fn 画像ビューを作る(
         .view_type(vk::ImageViewType::TYPE_2D)
         .format(形式)
         .subresource_range(部分範囲);
-    // 安全性: imageはbind_image_memory済みで有効。
-    Ok(unsafe { device.create_image_view(&create_info, None)? })
+    確保係.画像の見え方から画像ビューを確保する(&create_info)
 }

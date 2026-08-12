@@ -13,7 +13,7 @@ pub(super) fn 生成する(
     確保係: &GPU資源の確保係<'_>, 横: u32, 縦: u32
 ) -> Result<反射率積分表の画像, レンダラーエラー> {
     let device = 確保係.論理デバイス();
-    let 画像 = 画像を作る(device, 横, 縦)?;
+    let 画像 = 画像を作る(確保係, 横, 縦)?;
     let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(画像, GPUメモリ用途::描画画像) {
         Ok(memory) => memory,
         Err(誤り) => {
@@ -22,7 +22,7 @@ pub(super) fn 生成する(
             return Err(誤り);
         }
     };
-    match ビューを作る(device, 画像) {
+    match ビューを作る(確保係, 画像) {
         Ok(ビュー) => Ok(反射率積分表の画像 {
             画像,
             ビュー,
@@ -41,7 +41,7 @@ pub(super) fn 生成する(
 
 /// 用途にSTORAGEとSAMPLEDとTRANSFER_SRCとTRANSFER_DSTを立てるのは、コンピュートが書き、標準PBRがサンプラーで読み、
 /// 検査が読み戻し、検収が解析入力を転送で書き込むためである。
-fn 画像を作る(device: &ash::Device, 横: u32, 縦: u32) -> Result<vk::Image, レンダラーエラー> {
+fn 画像を作る(確保係: &GPU資源の確保係<'_>, 横: u32, 縦: u32) -> Result<vk::Image, レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
         .format(反射率積分表の画像形式)
@@ -57,11 +57,10 @@ fn 画像を作る(device: &ash::Device, 横: u32, 縦: u32) -> Result<vk::Image
         .usage(vk::ImageUsageFlags::STORAGE | vk::ImageUsageFlags::SAMPLED | vk::ImageUsageFlags::TRANSFER_SRC | vk::ImageUsageFlags::TRANSFER_DST)
         .sharing_mode(vk::SharingMode::EXCLUSIVE)
         .initial_layout(vk::ImageLayout::UNDEFINED);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_image(&create_info, None)? })
+    確保係.画像の作り方から画像を確保する(&create_info)
 }
 
-fn ビューを作る(device: &ash::Device, 画像: vk::Image) -> Result<vk::ImageView, レンダラーエラー> {
+fn ビューを作る(確保係: &GPU資源の確保係<'_>, 画像: vk::Image) -> Result<vk::ImageView, レンダラーエラー> {
     let 部分範囲 = vk::ImageSubresourceRange::default()
         .aspect_mask(vk::ImageAspectFlags::COLOR)
         .base_mip_level(0)
@@ -73,6 +72,5 @@ fn ビューを作る(device: &ash::Device, 画像: vk::Image) -> Result<vk::Ima
         .view_type(vk::ImageViewType::TYPE_2D)
         .format(反射率積分表の画像形式)
         .subresource_range(部分範囲);
-    // 安全性: 画像はbind_image_memory済みで有効。
-    Ok(unsafe { device.create_image_view(&create_info, None)? })
+    確保係.画像の見え方から画像ビューを確保する(&create_info)
 }

@@ -8,10 +8,13 @@ use ash::vk;
 
 use crate::atmosphere::立方体の面数;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::image::大気のベイク済み画像形式;
 
 /// 立方体互換の旗を立てるのは、同じ画像から立方体ビューを作るためである。旗が無いと立方体ビューの生成が失敗する。
-pub(super) fn 画像を作る(device: &ash::Device, 最詳細段の一辺: u32, 段数: u32) -> Result<vk::Image, レンダラーエラー> {
+pub(super) fn 画像を作る(
+    確保係: &GPU資源の確保係<'_>, 最詳細段の一辺: u32, 段数: u32
+) -> Result<vk::Image, レンダラーエラー> {
     let 範囲 = vk::Extent3D {
         width: 最詳細段の一辺,
         height: 最詳細段の一辺,
@@ -29,22 +32,29 @@ pub(super) fn 画像を作る(device: &ash::Device, 最詳細段の一辺: u32, 
         .usage(vk::ImageUsageFlags::STORAGE | vk::ImageUsageFlags::SAMPLED | vk::ImageUsageFlags::TRANSFER_SRC | vk::ImageUsageFlags::TRANSFER_DST)
         .sharing_mode(vk::SharingMode::EXCLUSIVE)
         .initial_layout(vk::ImageLayout::UNDEFINED);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_image(&create_info, None)? })
+    確保係.画像の作り方から画像を確保する(&create_info)
 }
 
 /// 1つの縮小段だけを指す2次元配列ビュー。コンピュートが書き込み先に取る。
-pub(super) fn 段の配列ビューを作る(device: &ash::Device, 画像: vk::Image, 段: u32) -> Result<vk::ImageView, レンダラーエラー> {
-    ビューを作る(device, 画像, vk::ImageViewType::TYPE_2D_ARRAY, 段, 1)
+pub(super) fn 段の配列ビューを作る(
+    確保係: &GPU資源の確保係<'_>,
+    画像: vk::Image,
+    段: u32,
+) -> Result<vk::ImageView, レンダラーエラー> {
+    ビューを作る(確保係, 画像, vk::ImageViewType::TYPE_2D_ARRAY, 段, 1)
 }
 
 /// 全段を含む立方体ビュー。消費側が向きと粗さで参照する。
-pub(super) fn 立方体ビューを作る(device: &ash::Device, 画像: vk::Image, 段数: u32) -> Result<vk::ImageView, レンダラーエラー> {
-    ビューを作る(device, 画像, vk::ImageViewType::CUBE, 0, 段数)
+pub(super) fn 立方体ビューを作る(
+    確保係: &GPU資源の確保係<'_>,
+    画像: vk::Image,
+    段数: u32,
+) -> Result<vk::ImageView, レンダラーエラー> {
+    ビューを作る(確保係, 画像, vk::ImageViewType::CUBE, 0, 段数)
 }
 
 fn ビューを作る(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     画像: vk::Image,
     種別: vk::ImageViewType,
     先頭段: u32,
@@ -61,6 +71,5 @@ fn ビューを作る(
         .view_type(種別)
         .format(大気のベイク済み画像形式)
         .subresource_range(部分範囲);
-    // 安全性: 画像はbind_image_memory済みで有効。
-    Ok(unsafe { device.create_image_view(&create_info, None)? })
+    確保係.画像の見え方から画像ビューを確保する(&create_info)
 }

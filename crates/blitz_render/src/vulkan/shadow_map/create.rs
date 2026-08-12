@@ -17,7 +17,7 @@ pub(super) fn 生成する(
     確保係: &GPU資源の確保係<'_>, 一辺: 影の一辺解像度
 ) -> Result<シャドウマップ, レンダラーエラー> {
     let device = 確保係.論理デバイス();
-    let 画像 = 画像を作る(device, 一辺)?;
+    let 画像 = 画像を作る(確保係, 一辺)?;
     let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(画像, GPUメモリ用途::描画画像) {
         Ok(memory) => memory,
         Err(誤り) => {
@@ -66,13 +66,12 @@ fn ビュー群とサンプラーを作る(
     画像: vk::Image,
     作成済みビュー: &mut Vec<vk::ImageView>,
 ) -> Result<(vk::ImageView, [vk::ImageView; 距離区分数], vk::Sampler), レンダラーエラー> {
-    let device = 確保係.論理デバイス();
-    let 配列ビュー = 配列ビューを作る(device, 画像)?;
+    let 配列ビュー = 配列ビューを作る(確保係, 画像)?;
     作成済みビュー.push(配列ビュー);
     let mut 距離区分別のビュー一覧 = [vk::ImageView::null(); 距離区分数];
     for (添字, 保存先) in 距離区分別のビュー一覧.iter_mut().enumerate() {
         let 層 = u32::try_from(添字).unwrap_or_else(|_| panic!("距離区分の添字がu32に収まらない: {添字}"));
-        let ビュー = 距離区分ビューを作る(device, 画像, 層)?;
+        let ビュー = 距離区分ビューを作る(確保係, 画像, 層)?;
         作成済みビュー.push(ビュー);
         *保存先 = ビュー;
     }

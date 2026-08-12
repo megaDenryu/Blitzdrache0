@@ -14,7 +14,7 @@ use crate::vulkan::allocator::GPU資源の確保係;
 
 pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>) -> Result<点光源の影の立方体配列, レンダラーエラー> {
     let device = 確保係.論理デバイス();
-    let 画像 = 画像を作る(device)?;
+    let 画像 = 画像を作る(確保係)?;
     let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(画像, GPUメモリ用途::点光源の影の立方体配列)
     {
         Ok(memory) => memory,
@@ -65,12 +65,11 @@ fn ビュー群とサンプラーを作る(
     画像: vk::Image,
     作成済みビュー: &mut Vec<vk::ImageView>,
 ) -> Result<(vk::ImageView, Vec<vk::ImageView>, vk::Sampler), レンダラーエラー> {
-    let device = 確保係.論理デバイス();
-    let 立方体配列ビュー = 立方体配列ビューを作る(device, 画像)?;
+    let 立方体配列ビュー = 立方体配列ビューを作る(確保係, 画像)?;
     作成済みビュー.push(立方体配列ビュー);
     let mut 層別のビュー一覧 = Vec::with_capacity(作成済みビュー.capacity());
     for 層 in 0..点光源の影の層数() {
-        let ビュー = 層ビューを作る(device, 画像, 層)?;
+        let ビュー = 層ビューを作る(確保係, 画像, 層)?;
         作成済みビュー.push(ビュー);
         層別のビュー一覧.push(ビュー);
     }

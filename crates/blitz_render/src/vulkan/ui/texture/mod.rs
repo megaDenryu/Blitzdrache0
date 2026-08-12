@@ -34,7 +34,7 @@ impl UIテクスチャ {
             return Err(誤り);
         }
 
-        let image_view = match view::画像ビューを作る(device, image) {
+        let image_view = match view::画像ビューを作る(確保係, image) {
             Ok(view) => view,
             Err(誤り) => {
                 画像を破棄する(device, image, memory);

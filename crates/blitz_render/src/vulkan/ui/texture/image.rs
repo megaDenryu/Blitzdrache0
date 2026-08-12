@@ -28,7 +28,7 @@ pub(super) fn 生成する(
         .sharing_mode(vk::SharingMode::EXCLUSIVE)
         .initial_layout(vk::ImageLayout::UNDEFINED);
     // 安全性: deviceは生成済みで有効。
-    let image = unsafe { device.create_image(&create_info, None)? };
+    let image = 確保係.画像の作り方から画像を確保する(&create_info)?;
 
     let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(image, GPUメモリ用途::テクスチャ画像) {
         Ok(memory) => memory,

@@ -5,8 +5,9 @@ use ash::vk;
 use super::super::{シャドウマップ層数, シャドウマップ形式};
 use crate::cascade::影の一辺解像度;
 use crate::error::レンダラーエラー;
+use crate::vulkan::allocator::GPU資源の確保係;
 
-pub(super) fn 画像を作る(device: &ash::Device, 一辺: 影の一辺解像度) -> Result<vk::Image, レンダラーエラー> {
+pub(super) fn 画像を作る(確保係: &GPU資源の確保係<'_>, 一辺: 影の一辺解像度) -> Result<vk::Image, レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
         .format(シャドウマップ形式)
@@ -22,22 +23,25 @@ pub(super) fn 画像を作る(device: &ash::Device, 一辺: 影の一辺解像�
         .usage(vk::ImageUsageFlags::DEPTH_STENCIL_ATTACHMENT | vk::ImageUsageFlags::SAMPLED)
         .sharing_mode(vk::SharingMode::EXCLUSIVE)
         .initial_layout(vk::ImageLayout::UNDEFINED);
-    // 安全性: deviceは生成済みで有効。
-    Ok(unsafe { device.create_image(&create_info, None)? })
+    確保係.画像の作り方から画像を確保する(&create_info)
 }
 
 /// 全層を1つの2D配列として見るビュー。シーンの画素段が距離区分を添字で選ぶために使う。
-pub(super) fn 配列ビューを作る(device: &ash::Device, 画像: vk::Image) -> Result<vk::ImageView, レンダラーエラー> {
-    ビューを作る(device, 画像, vk::ImageViewType::TYPE_2D_ARRAY, 0, シャドウマップ層数())
+pub(super) fn 配列ビューを作る(確保係: &GPU資源の確保係<'_>, 画像: vk::Image) -> Result<vk::ImageView, レンダラーエラー> {
+    ビューを作る(確保係, 画像, vk::ImageViewType::TYPE_2D_ARRAY, 0, シャドウマップ層数())
 }
 
 /// 指定した層だけを見る2Dビュー。距離区分別のシャドウ記録が深度アタッチメントとして使う。
-pub(super) fn 距離区分ビューを作る(device: &ash::Device, 画像: vk::Image, 層: u32) -> Result<vk::ImageView, レンダラーエラー> {
-    ビューを作る(device, 画像, vk::ImageViewType::TYPE_2D, 層, 1)
+pub(super) fn 距離区分ビューを作る(
+    確保係: &GPU資源の確保係<'_>,
+    画像: vk::Image,
+    層: u32,
+) -> Result<vk::ImageView, レンダラーエラー> {
+    ビューを作る(確保係, 画像, vk::ImageViewType::TYPE_2D, 層, 1)
 }
 
 fn ビューを作る(
-    device: &ash::Device,
+    確保係: &GPU資源の確保係<'_>,
     画像: vk::Image,
     種別: vk::ImageViewType,
     開始層: u32,
@@ -54,6 +58,5 @@ fn ビューを作る(
         .view_type(種別)
         .format(シャドウマップ形式)
         .subresource_range(部分範囲);
-    // 安全性: 画像はbind_image_memory済みで有効。
-    Ok(unsafe { device.create_image_view(&create_info, None)? })
+    確保係.画像の見え方から画像ビューを確保する(&create_info)
 }

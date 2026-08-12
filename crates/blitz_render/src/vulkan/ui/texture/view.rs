@@ -6,7 +6,7 @@ use super::image::形式;
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 
-pub(super) fn 画像ビューを作る(device: &ash::Device, image: vk::Image) -> Result<vk::ImageView, レンダラーエラー> {
+pub(super) fn 画像ビューを作る(確保係: &GPU資源の確保係<'_>, image: vk::Image) -> Result<vk::ImageView, レンダラーエラー> {
     let 部分範囲 = vk::ImageSubresourceRange::default()
         .aspect_mask(vk::ImageAspectFlags::COLOR)
         .base_mip_level(0)
@@ -18,8 +18,7 @@ pub(super) fn 画像ビューを作る(device: &ash::Device, image: vk::Image) -
         .view_type(vk::ImageViewType::TYPE_2D)
         .format(形式)
         .subresource_range(部分範囲);
-    // 安全性: imageはbind_image_memory済みで有効。
-    Ok(unsafe { device.create_image_view(&create_info, None)? })
+    確保係.画像の見え方から画像ビューを確保する(&create_info)
 }
 
 pub(super) fn サンプラーを作る(確保係: &GPU資源の確保係<'_>) -> Result<vk::Sampler, レンダラーエラー> {
