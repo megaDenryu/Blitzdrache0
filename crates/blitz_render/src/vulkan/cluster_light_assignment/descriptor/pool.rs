@@ -6,8 +6,8 @@
 
 use ash::vk;
 
-use super::binding_table::束縛の種別一覧;
 use crate::error::レンダラーエラー;
+use crate::vulkan::descriptor::クラスタ選別の束縛の種別一覧;
 
 pub(super) fn セットを割り当てる(
     device: &ash::Device,
@@ -39,7 +39,10 @@ pub(super) fn セットを割り当てる(
 
 /// 束縛の並びからストレージバッファの数を数える。並びを増やしたときにプールだけが古くなることを防ぐ。
 fn 記憶バッファの束縛数() -> u32 {
-    let 数 = 束縛の種別一覧.iter().filter(|種別| **種別 == vk::DescriptorType::STORAGE_BUFFER).count();
+    let 数 = クラスタ選別の束縛の種別一覧
+        .iter()
+        .filter(|種別| **種別 == vk::DescriptorType::STORAGE_BUFFER)
+        .count();
     u32::try_from(数).unwrap_or_else(|_| panic!("記憶バッファの束縛数がu32に収まらない"))
 }
 

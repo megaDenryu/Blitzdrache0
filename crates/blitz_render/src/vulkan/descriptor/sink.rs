@@ -6,28 +6,32 @@
 //!
 //! この型が知るのはVulkanの書き込み記述子の組み立て方だけであり、どの番号に何を結ぶかは知らない。
 //! 同じ形の組は命令の記録側にもある(参照: `crates/blitz_render/src/vulkan/command_sink.rs`)。
+//!
+//! 注意: この型と書き込みのメソッドは`descriptor`の木の内側だけへ閉じている。木の外から作れると、
+//! 照明問い合わせのセットへ材質の束縛番号を書く呼び出しが署名の上で成立し、役割ごとに型を分けた意味が消える。
+//! 役割の型を6つ目として足すにはこの木の中へ置くことになり、置いた時点で番号の持ち主と同じ場所で読める。
 
 use ash::vk;
 
 use super::束縛番号;
 
 #[derive(Clone, Copy)]
-pub(crate) struct ディスクリプタの書き込み先<'書き込み> {
+pub(super) struct ディスクリプタの書き込み先<'書き込み> {
     device: &'書き込み ash::Device,
     セット: vk::DescriptorSet,
 }
 
 impl<'書き込み> ディスクリプタの書き込み先<'書き込み> {
     /// 前提: セットは`device`が配ったプールから割り当て済みであり、書き込みの時点でGPUがそのセットを使用していない。
-    pub(crate) fn 生成する(device: &'書き込み ash::Device, セット: vk::DescriptorSet) -> Self {
+    pub(super) fn 生成する(device: &'書き込み ash::Device, セット: vk::DescriptorSet) -> Self {
         Self { device, セット }
     }
 
-    pub(crate) fn バッファ全体を結ぶ(&self, 番号: 束縛番号, 種別: vk::DescriptorType, buffer: vk::Buffer) {
+    pub(super) fn バッファ全体を結ぶ(&self, 番号: 束縛番号, 種別: vk::DescriptorType, buffer: vk::Buffer) {
         self.バッファの先頭からの範囲を結ぶ(番号, 種別, buffer, vk::WHOLE_SIZE);
     }
 
-    pub(crate) fn バッファの先頭からの範囲を結ぶ(
+    pub(super) fn バッファの先頭からの範囲を結ぶ(
         &self,
         番号: 束縛番号,
         種別: vk::DescriptorType,
@@ -44,7 +48,7 @@ impl<'書き込み> ディスクリプタの書き込み先<'書き込み> {
         self.書き込みを送る(&書き込み一覧);
     }
 
-    pub(crate) fn サンプラー付きの画像を結ぶ(
+    pub(super) fn サンプラー付きの画像を結ぶ(
         &self,
         番号: 束縛番号,
         ビュー: vk::ImageView,
@@ -58,13 +62,13 @@ impl<'書き込み> ディスクリプタの書き込み先<'書き込み> {
         self.画像の並びを結ぶ(番号, vk::DescriptorType::COMBINED_IMAGE_SAMPLER, &情報一覧);
     }
 
-    pub(crate) fn サンプラー無しの画像を結ぶ(&self, 番号: 束縛番号, ビュー: vk::ImageView, レイアウト: vk::ImageLayout) {
+    pub(super) fn サンプラー無しの画像を結ぶ(&self, 番号: 束縛番号, ビュー: vk::ImageView, レイアウト: vk::ImageLayout) {
         let 情報一覧 = [vk::DescriptorImageInfo::default().image_view(ビュー).image_layout(レイアウト)];
         self.画像の並びを結ぶ(番号, vk::DescriptorType::SAMPLED_IMAGE, &情報一覧);
     }
 
     /// 配列の束縛先へ先頭から順に結ぶ。並びが空なら1件も書かず、要素を部分束縛のまま未書込で残す。
-    pub(crate) fn サンプラー無しの画像の並びを結ぶ(
+    pub(super) fn サンプラー無しの画像の並びを結ぶ(
         &self, 番号: 束縛番号, ビュー一覧: &[vk::ImageView], レイアウト: vk::ImageLayout
     ) {
         let 情報一覧: Vec<vk::DescriptorImageInfo> = ビュー一覧
