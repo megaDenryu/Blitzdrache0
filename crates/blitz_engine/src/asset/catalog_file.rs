@@ -34,8 +34,4 @@ impl 実行時カタログのファイル {
         }
         Ok(解決済み)
     }
-
-    pub fn 表示の綴り(&self) -> std::path::Display<'_> {
-        self.0.表示の綴り()
-    }
 }

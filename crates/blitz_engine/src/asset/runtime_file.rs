@@ -37,9 +37,4 @@ impl 実行時形式のファイル {
     pub(crate) fn パスの写しを作る(&self) -> PathBuf {
         self.0.clone()
     }
-
-    /// 人へ見せるための綴り。
-    pub fn 表示の綴り(&self) -> std::path::Display<'_> {
-        self.0.display()
-    }
 }
