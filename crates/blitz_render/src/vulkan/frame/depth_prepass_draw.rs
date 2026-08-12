@@ -12,7 +12,6 @@ use ash::vk;
 use super::draw_commands::u32を丸めずf32へ変換する;
 use super::{shared_set_bind, ジオメトリ入力, 共有セット束縛};
 use crate::vulkan::command_sink::GPU命令の積み先;
-use crate::vulkan::scene_draw_constants;
 
 pub(super) fn 描画コマンドを積む(
     積み先: GPU命令の積み先<'_>,
@@ -54,7 +53,7 @@ fn 一件を記録する(積み先: GPU命令の積み先<'_>, 入力: &ジオ�
     let command_buffer = 積み先.コマンドバッファ();
     // 安全性: command_bufferは記録中で、入力のバッファとディスクリプタセットは生成済み。
     unsafe {
-        scene_draw_constants::積む(積み先, 入力.layout, 入力.描画定数);
+        入力.描画定数.プッシュ定数として積む(積み先, 入力.layout);
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,

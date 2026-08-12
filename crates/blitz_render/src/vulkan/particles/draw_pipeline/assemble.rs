@@ -7,7 +7,7 @@ use ash::vk;
 use super::finish;
 use super::粒子描画パイプライン;
 use crate::error::レンダラーエラー;
-use crate::vulkan::relative_anchor;
+use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
@@ -52,7 +52,7 @@ pub(super) fn 組み立てる(
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
     let ディスクリプタlayout一覧 = [ディスクリプタlayout];
-    let プッシュ定数範囲一覧 = [relative_anchor::プッシュ定数範囲()];
+    let プッシュ定数範囲一覧 = [カメラ相対の基準原点::プッシュ定数範囲()];
     let layout_create_info = vk::PipelineLayoutCreateInfo::default()
         .set_layouts(&ディスクリプタlayout一覧)
         .push_constant_ranges(&プッシュ定数範囲一覧);

@@ -18,7 +18,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan::allocator::GPU資源の確保係;
-use crate::vulkan::relative_anchor;
+use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 
 pub(crate) use aerial_composite_pipeline::空中遠近合成パイプライン;
 pub(crate) use color_pass_depth::色パスの深度状態;
@@ -50,7 +50,7 @@ impl パイプライン {
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
-        let layout = layout::生成する(device, ディスクリプタlayout一覧, relative_anchor::プッシュ定数範囲())?;
+        let layout = layout::生成する(device, ディスクリプタlayout一覧, カメラ相対の基準原点::プッシュ定数範囲())?;
         let 結果 = create::生成する(
             確保係,
             カラー形式,

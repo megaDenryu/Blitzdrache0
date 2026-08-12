@@ -12,7 +12,9 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::descriptor::シーンセットレイアウト一式;
-use crate::vulkan::{pipeline, scene_draw_constants, shadow_push};
+use crate::vulkan::pipeline;
+use crate::vulkan::scene_draw_constants::シーン描画定数;
+use crate::vulkan::shadow_push::シャドウ描画定数;
 
 pub(crate) struct 材質描画族のレイアウト {
     シーン: vk::PipelineLayout,
@@ -22,8 +24,8 @@ pub(crate) struct 材質描画族のレイアウト {
 impl 材質描画族のレイアウト {
     /// 呼ばれるのはレンダラー生成時の1回だけである。シャドウの生成に失敗したらシーンのぶんをその場で破棄する。
     pub(super) fn 生成する(device: &ash::Device, セット: &シーンセットレイアウト一式) -> Result<Self, レンダラーエラー> {
-        let シーン = pipeline::レイアウトを生成する(device, &セット.シーンの並び(), scene_draw_constants::プッシュ定数範囲())?;
-        let シャドウ = match pipeline::レイアウトを生成する(device, &セット.シャドウの並び(), shadow_push::プッシュ定数範囲())
+        let シーン = pipeline::レイアウトを生成する(device, &セット.シーンの並び(), シーン描画定数::プッシュ定数範囲())?;
+        let シャドウ = match pipeline::レイアウトを生成する(device, &セット.シャドウの並び(), シャドウ描画定数::プッシュ定数範囲())
         {
             Ok(レイアウト) => レイアウト,
             Err(誤り) => {

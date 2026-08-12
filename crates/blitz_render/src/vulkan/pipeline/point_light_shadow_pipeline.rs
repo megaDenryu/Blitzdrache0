@@ -16,7 +16,7 @@ use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::point_light_shadow_map::点光源の影の形式;
-use crate::vulkan::point_light_shadow_push;
+use crate::vulkan::point_light_shadow_push::点光源の影の描画定数;
 
 pub(crate) struct 点光源の影のパイプライン {
     pub(crate) handle: vk::Pipeline,
@@ -32,7 +32,7 @@ impl 点光源の影のパイプライン {
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
-        let layout = super::layout::生成する(device, ディスクリプタlayout一覧, point_light_shadow_push::プッシュ定数範囲())?;
+        let layout = super::layout::生成する(device, ディスクリプタlayout一覧, 点光源の影の描画定数::プッシュ定数範囲())?;
         match pipelineを生成する(確保係, layout, シェーダー) {
             Ok(handle) => Ok(Self { handle, layout }),
             Err(誤り) => {

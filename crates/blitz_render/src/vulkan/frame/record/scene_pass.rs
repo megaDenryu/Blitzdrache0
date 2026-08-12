@@ -10,7 +10,6 @@ use crate::vulkan::frame::{draw_commands, shared_set_bind, ジオメトリ入力
 use crate::vulkan::graph::{
     カラー添付列, クリア指定, バッファハンドル, バッファ用途, パス宣言, パス種別, 深度アタッチメント, 画像ハンドル, 画像用途,
 };
-use crate::vulkan::relative_anchor;
 
 /// シーン/シャドウパス内の布の第2ドロー(判断54)。頂点ハンドルは布頂点生成パスの出力。
 #[derive(Clone, Copy)]
@@ -84,7 +83,7 @@ fn 布を記録する(積み先: GPU命令の積み先<'_>, 布: &布ドロー<'
     // 安全性: command_bufferは記録中で、布のパイプライン・バッファは生成済み。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.描画pipeline);
-        relative_anchor::積む(積み先, 入力.描画layout, 入力.相対の基準原点);
+        入力.相対の基準原点.プッシュ定数として積む(積み先, 入力.描画layout);
     }
     共有.計器.描画切替().パイプライン束縛を数える(可視パス::シーン);
     shared_set_bind::布の共有セットを束縛する(積み先, 入力.描画layout, 共有);

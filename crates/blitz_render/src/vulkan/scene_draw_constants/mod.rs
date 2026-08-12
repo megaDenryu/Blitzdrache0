@@ -37,28 +37,26 @@ impl シーン描画定数 {
         バイト列[材質レコード添字の開始位置..].copy_from_slice(&self.材質レコード添字.to_le_bytes());
         バイト列
     }
-}
 
-/// パイプラインレイアウト生成時に宣言する範囲。頂点ステージが基準原点を、画素段ステージが材質レコード添字を読む。
-pub(crate) fn プッシュ定数範囲() -> vk::PushConstantRange {
-    vk::PushConstantRange::default()
-        .stage_flags(vk::ShaderStageFlags::VERTEX | vk::ShaderStageFlags::FRAGMENT)
-        .offset(0)
-        .size(バイト長)
-}
+    /// パイプラインレイアウト生成時に宣言する範囲。頂点ステージが基準原点を、画素段ステージが材質レコード添字を読む。
+    pub(crate) fn プッシュ定数範囲() -> vk::PushConstantRange {
+        vk::PushConstantRange::default()
+            .stage_flags(vk::ShaderStageFlags::VERTEX | vk::ShaderStageFlags::FRAGMENT)
+            .offset(0)
+            .size(バイト長)
+    }
 
-/// 注意: 呼び出し元がコマンド記録中であることと、layoutがこの範囲を宣言済みであることを保証する。
-pub(crate) unsafe fn 積む(積み先: GPU命令の積み先<'_>, layout: vk::PipelineLayout, 描画定数: シーン描画定数) {
-    let device = 積み先.論理デバイス();
-    let command_buffer = 積み先.コマンドバッファ();
-    // 安全性: 呼び出し元がコマンド記録中と、layoutが両ステージの16バイト範囲を宣言済みであることを保証する。
-    unsafe {
-        device.cmd_push_constants(
-            command_buffer,
-            layout,
-            vk::ShaderStageFlags::VERTEX | vk::ShaderStageFlags::FRAGMENT,
-            0,
-            &描画定数.バイト列(),
-        );
+    /// 注意: 呼び出し元がコマンド記録中であることと、layoutがこの範囲を宣言済みであることを保証する。
+    pub(crate) unsafe fn プッシュ定数として積む(self, 積み先: GPU命令の積み先<'_>, layout: vk::PipelineLayout) {
+        // 安全性: 呼び出し元がコマンド記録中と、layoutが両ステージの16バイト範囲を宣言済みであることを保証する。
+        unsafe {
+            積み先.論理デバイス().cmd_push_constants(
+                積み先.コマンドバッファ(),
+                layout,
+                vk::ShaderStageFlags::VERTEX | vk::ShaderStageFlags::FRAGMENT,
+                0,
+                &self.バイト列(),
+            );
+        }
     }
 }

@@ -8,7 +8,6 @@ use crate::vulkan::frame::粒子描画入力;
 use crate::vulkan::graph::{
     カラー添付列, クリア指定, バッファハンドル, バッファ用途, パス宣言, パス種別, 深度アタッチメント, 画像ハンドル, 画像用途,
 };
-use crate::vulkan::relative_anchor;
 
 pub(super) fn 粒子描画パスを宣言する<'a>(
     カラー: 画像ハンドル,
@@ -52,7 +51,7 @@ pub(super) fn 粒子描画パスを宣言する<'a>(
                 device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 粒子入力.描画パイプライン);
                 device.cmd_set_viewport(command_buffer, 0, &viewport一覧);
                 device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
-                relative_anchor::積む(積み先, 粒子入力.描画layout, 粒子入力.相対の基準原点);
+                粒子入力.相対の基準原点.プッシュ定数として積む(積み先, 粒子入力.描画layout);
                 device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::GRAPHICS, 粒子入力.描画layout, 0, &set一覧, &[]);
                 device.cmd_draw(command_buffer, 粒子入力.描画要素数, 1, 0, 0);
             }

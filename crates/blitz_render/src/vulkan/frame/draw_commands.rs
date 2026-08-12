@@ -14,7 +14,6 @@ use super::shared_set_bind;
 use super::{ジオメトリ入力, 共有セット束縛};
 use crate::visible_instance_selection::可視パス;
 use crate::vulkan::command_sink::GPU命令の積み先;
-use crate::vulkan::scene_draw_constants;
 
 pub(super) fn 描画コマンドを積む(
     積み先: GPU命令の積み先<'_>,
@@ -54,7 +53,7 @@ pub(super) fn 描画コマンドを積む(
                 直前のキー = Some(入力.パイプラインキー);
             }
             共有.計器.描画切替().材質を見る(可視パス::シーン, 入力.大域材質id);
-            scene_draw_constants::積む(積み先, 入力.layout, 入力.描画定数);
+            入力.描画定数.プッシュ定数として積む(積み先, 入力.layout);
             共有.計器.セット別束縛().数える(shared_set_bind::ジオメトリのセット番号);
             device.cmd_bind_descriptor_sets(
                 command_buffer,

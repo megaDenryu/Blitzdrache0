@@ -13,7 +13,7 @@ use crate::vulkan::frame::shared_set_bind;
 use crate::vulkan::frame::{共有セット束縛, 点光源の影の描画発行, 点光源の影の束縛};
 use crate::vulkan::point_light_shadow_cull::面ごとの絞り;
 use crate::vulkan::point_light_shadow_plan::影を落とす灯;
-use crate::vulkan::point_light_shadow_push;
+use crate::vulkan::point_light_shadow_push::点光源の影の描画定数;
 
 pub(super) fn 記録する(
     積み先: GPU命令の積み先<'_>,
@@ -67,7 +67,7 @@ fn 一件を記録する(
     let command_buffer = 積み先.コマンドバッファ();
     // 安全性: command_bufferは記録中で、発行のバッファとディスクリプタセットは生成済み。layoutは80バイトの範囲を宣言済み。
     unsafe {
-        point_light_shadow_push::積む(積み先, 束縛.layout, 発行.相対の基準原点, ライトビュー射影);
+        点光源の影の描画定数::生成する(発行.相対の基準原点, ライトビュー射影).プッシュ定数として積む(積み先, 束縛.layout);
         device.cmd_bind_descriptor_sets(
             command_buffer,
             vk::PipelineBindPoint::GRAPHICS,

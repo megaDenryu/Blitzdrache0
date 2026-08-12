@@ -11,7 +11,7 @@ use crate::visible_instance_selection::可視パス;
 use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::frame::shared_set_bind;
 use crate::vulkan::frame::{シャドウ描画入力, 共有セット束縛};
-use crate::vulkan::shadow_push;
+use crate::vulkan::shadow_push::シャドウ描画定数;
 
 pub(super) fn 記録する(
     積み先: GPU命令の積み先<'_>,
@@ -61,7 +61,7 @@ fn 対象を記録する(積み先: GPU命令の積み先<'_>, 番号: 距離区
     let ジオメトリのセット番号 = shared_set_bind::ジオメトリのセット番号;
     // 安全性: command_bufferは記録中で、入力のバッファとディスクリプタセットは生成済み。
     unsafe {
-        shadow_push::積む(積み先, 入力.layout, 入力.相対の基準原点, 番号);
+        シャドウ描画定数::生成する(入力.相対の基準原点, 番号).プッシュ定数として積む(積み先, 入力.layout);
         let 束縛先 = vk::PipelineBindPoint::GRAPHICS;
         device.cmd_bind_descriptor_sets(command_buffer, 束縛先, 入力.layout, ジオメトリのセット番号, &セット一覧, &[]);
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &[0]);
@@ -86,7 +86,7 @@ fn 布を記録する(積み先: GPU命令の積み先<'_>, 番号: 距離区分
     // 安全性: command_bufferは記録中で、布のパイプラインは生成済み。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, シャドウ.pipeline);
-        shadow_push::積む(積み先, シャドウ.layout, 布.入力.相対の基準原点, 番号);
+        シャドウ描画定数::生成する(布.入力.相対の基準原点, 番号).プッシュ定数として積む(積み先, シャドウ.layout);
     }
     共有.計器.描画切替().パイプライン束縛を数える(可視パス::影の距離区分(番号));
     shared_set_bind::ビューとパスのセットを束縛する(積み先, シャドウ.layout, 共有);

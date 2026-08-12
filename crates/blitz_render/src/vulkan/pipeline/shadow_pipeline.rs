@@ -14,7 +14,7 @@ use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::shadow_map::シャドウマップ形式;
-use crate::vulkan::shadow_push;
+use crate::vulkan::shadow_push::シャドウ描画定数;
 
 pub(super) use create::生成する as pipelineを生成する;
 
@@ -33,7 +33,7 @@ impl シャドウパイプライン {
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
-        let layout = super::layout::生成する(device, ディスクリプタlayout一覧, shadow_push::プッシュ定数範囲())?;
+        let layout = super::layout::生成する(device, ディスクリプタlayout一覧, シャドウ描画定数::プッシュ定数範囲())?;
         match create::生成する(確保係, シャドウマップ形式, super::描画の標本数, layout, シェーダー) {
             Ok(handle) => Ok(Self { handle, layout }),
             Err(誤り) => {
