@@ -13,7 +13,7 @@ use std::collections::HashSet;
 use super::super::scene::bytes::読取位置;
 use super::super::アセット実行時形式エラー;
 use super::bytes;
-use crate::asset::{asset_metadata::アセットメタデータ, catalog::カタログ};
+use crate::asset::{asset_metadata::アセットメタデータ, catalog::カタログ, 高さ場の標本数};
 
 /// 版2の容量メタデータ。テクスチャの欄が展開済みで数えた値である点だけが最新版と違う。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -32,6 +32,7 @@ impl メタデータV2 {
             インデックス数: self.インデックス数,
             テクスチャ格納バイト数: self.展開済みテクスチャバイト数,
             個体数: self.個体数,
+            高さ場の標本数: 高さ場の標本数::生成する(0),
         }
     }
 }

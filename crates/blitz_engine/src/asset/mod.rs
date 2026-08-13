@@ -1,5 +1,3 @@
-//! アセット層: 実行時形式、安定ID、カタログ、シーンデータ。
-
 mod animation_clip;
 mod asset_metadata;
 mod catalog;
@@ -7,6 +5,7 @@ mod catalog_entry;
 mod catalog_file;
 mod catalog_load_error;
 mod draw_shape;
+mod height_field_sample_count;
 mod id;
 mod instance;
 mod interpolation_kind;
@@ -53,10 +52,9 @@ mod skin_vertex_attribute;
 mod static_trs;
 mod terrain_lod_meshes;
 mod texture_data;
-/// テクスチャの格納の語彙は形式・ブロックの格子・バイト数の算術のエラーと数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
 pub mod texture_storage;
 mod vertex_attribute;
-
+mod world_provenance;
 pub use animation_clip::アニメーションクリップ;
 pub use asset_metadata::アセットメタデータ;
 pub use catalog::カタログ;
@@ -64,6 +62,7 @@ pub use catalog_entry::カタログ項目;
 pub use catalog_file::実行時カタログのファイル;
 pub use catalog_load_error::実行時カタログ読込エラー;
 pub use draw_shape::描画形状;
+pub use height_field_sample_count::高さ場の標本数;
 pub use id::{アセットID, アセットIDエラー};
 pub use instance::{
     インスタンス群, インスタンス群エラー, チャンクの基準原点からの許容メートル, 個体配置, 原型, 境界球, 群境界, 軸平行包囲領域
@@ -98,3 +97,4 @@ pub use static_trs::静的TRS;
 pub use terrain_lod_meshes::{地形LODメッシュ群, 地形LODメッシュ群エラー};
 pub use texture_data::テクスチャデータ;
 pub use vertex_attribute::メッシュ頂点属性;
+pub use world_provenance::{世界の乱数の種, 世界の生成器の版, 世界の由来};

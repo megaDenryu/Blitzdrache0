@@ -6,20 +6,30 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 use super::id::アセットID;
-use super::{asset_metadata::アセットメタデータ, catalog_entry::カタログ項目};
+use super::{asset_metadata::アセットメタデータ, catalog_entry::カタログ項目, world_provenance::世界の由来};
 
 /// アセットID → ファイルパスの対応表。
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct カタログ {
     登録一覧: HashMap<アセットID, カタログ項目>,
+    世界の由来: 世界の由来,
 }
 
 impl カタログ {
     /// 空のカタログを作る。
     pub fn 空を作る() -> Self {
         Self {
-            登録一覧: HashMap::new()
+            登録一覧: HashMap::new(),
+            世界の由来: 世界の由来::生成による由来を持たない,
         }
+    }
+
+    pub fn 世界の由来を記録する(&mut self, 世界の由来: 世界の由来) {
+        self.世界の由来 = 世界の由来;
+    }
+
+    pub fn 世界の由来(&self) -> 世界の由来 {
+        self.世界の由来
     }
 
     /// アセットIDにファイルパスを対応付ける。
@@ -49,5 +59,11 @@ impl カタログ {
 
     pub fn 全項目を走査する(&self) -> impl Iterator<Item = (&アセットID, &カタログ項目)> {
         self.登録一覧.iter()
+    }
+}
+
+impl Default for カタログ {
+    fn default() -> Self {
+        Self::空を作る()
     }
 }
