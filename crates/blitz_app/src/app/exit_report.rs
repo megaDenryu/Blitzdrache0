@@ -45,10 +45,6 @@ impl super::アプリ {
                 Some(内訳) => crate::reports::draw_issue::描画発行内訳を表示する(&内訳),
                 None => println!("描画発行内訳: レンダラーが生成されなかったため取得できない"),
             }
-            match self.点光源の影の記録内訳を取得する() {
-                Some(内訳) => crate::reports::point_light_shadow::点光源の影の記録内訳を表示する(&内訳),
-                None => println!("点光源の影の記録内訳: レンダラーが生成されなかったため取得できない"),
-            }
             let 計器 = self.可視個体の選別の計器を取得する();
             crate::reports::draw_issue::可視個体の選別の計数を表示する(計器.計数);
             crate::reports::draw_issue::距離区分の世界メートル毎テクセルを表示する(計器.解像度密度);
@@ -64,6 +60,10 @@ impl super::アプリ {
             crate::reports::draw_issue::可視材料登録数を表示する(self.可視材料登録数を取得する());
             let (読込総数, 起動後読込) = self.シーン読込回数を取得する();
             crate::reports::draw_issue::シーン読込回数を表示する(読込総数, 起動後読込);
+            match self.点光源の影の記録内訳を取得する() {
+                Some(内訳) => crate::reports::point_light_shadow::点光源の影の記録内訳を表示する(&内訳),
+                None => println!("点光源の影の記録内訳: レンダラーが生成されなかったため取得できない"),
+            }
         }
         if self.キャスター距離分布報告が必要か() {
             crate::reports::draw_issue::キャスター距離分布を表示する(&self.可視個体の選別の計器を取得する().距離分布);
