@@ -13,18 +13,19 @@ pub use error::チャンク読込エラー;
 pub use result::{チャンク読込完了, チャンク読込成果};
 use worker::読込ジョブ;
 
+use super::loader_settings::チャンク読込設定;
 use super::reset_generation::リセット世代;
 
 pub struct チャンク読込器 {
     要求送信: SyncSender<読込ジョブ>,
     完了受信: Option<Receiver<チャンク読込完了>>,
     停止: Arc<AtomicBool>,
-    スレッド: Option<JoinHandle<()>>,
+    スレッド一覧: Vec<JoinHandle<()>>,
 }
 
 impl チャンク読込器 {
-    pub fn 起動する() -> Result<Self, チャンク読込エラー> {
-        worker::起動する()
+    pub fn 起動する(設定: チャンク読込設定) -> Result<Self, チャンク読込エラー> {
+        worker::起動する(設定)
     }
 
     /// `世代`は投入した時点のリセット世代であり、完了通知がそのまま持ち帰る。
@@ -60,7 +61,7 @@ impl Drop for チャンク読込器 {
     fn drop(&mut self) {
         self.完了受信.take();
         self.停止.store(true, std::sync::atomic::Ordering::Release);
-        if let Some(スレッド) = self.スレッド.take() {
+        for スレッド in self.スレッド一覧.drain(..) {
             let _終了結果 = スレッド.join();
         }
     }
