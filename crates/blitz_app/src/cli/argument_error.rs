@@ -47,6 +47,10 @@ pub(crate) enum 起動引数エラー {
     Lod継ぎ目検査不正(String),
     #[error("--streaming-preload-radius引数が不正だった: {0}")]
     先読み半径不正(String),
+    #[error("固定経路の引数が不正だった: {0}")]
+    固定経路不正(String),
+    #[error("チャンク読込設定の引数が不正だった: {0}")]
+    チャンク読込設定不正(String),
     #[error("--indirect-probe引数が不正だった: {0}")]
     遠方環境の検収条件不正(String),
 

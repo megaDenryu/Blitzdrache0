@@ -6,8 +6,8 @@ use std::slice::Iter;
 
 use super::{
     auto_exposure_probe_args, depth_prepass_args, game_selection, ibl_step_scan_args, indirect_probe_args, instance_lod_args, local_light_count_args,
-    local_visibility_settings, lod_crack_args, path_args, placement_args, point_light_shadow_count_args, screen_pixel_args, shadow_args, time_args,
-    value_args, 起動設定,
+    local_visibility_settings, lod_crack_args, path_args, placement_args, point_light_shadow_count_args, screen_pixel_args, shadow_args,
+    streaming_value_args, time_args, value_args, 起動設定,
 };
 use crate::error::起動エラー;
 
@@ -59,6 +59,12 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         }
         "--streaming-preload-radius" => {
             設定.ストリーミング.先読み半径 = value_args::先読み半径引数を処理する(残り)?;
+        }
+        "--streaming-route-start-x" | "--streaming-route-end-x" | "--streaming-route-meters-per-frame" => {
+            streaming_value_args::固定経路引数を反映する(&mut 設定.ストリーミング.固定経路, 残り, 引数値)?;
+        }
+        "--streaming-loader-workers" | "--streaming-request-capacity" | "--streaming-completion-capacity" => {
+            設定.ストリーミング.読込 = streaming_value_args::読込引数を反映する(設定.ストリーミング.読込, 残り, 引数値)?;
         }
         "--depth-prepass" => 設定.深度プリパス方式 = Some(depth_prepass_args::引数を処理する(残り)?),
         "--local-visibility-shape" => 設定.読み戻し検収.局所可視性の検収の形 = Some(local_visibility_settings::形の引数を処理する(残り)?),

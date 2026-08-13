@@ -46,15 +46,15 @@ impl チャンク読込設定 {
         }
     }
 
-    pub(super) const fn ワーカー本数(self) -> usize {
+    pub const fn ワーカー本数(self) -> usize {
         self.ワーカー本数
     }
 
-    pub(super) const fn 要求キュー容量(self) -> usize {
+    pub const fn 要求キュー容量(self) -> usize {
         self.要求キュー容量
     }
 
-    pub(super) const fn 完了キュー容量(self) -> usize {
+    pub const fn 完了キュー容量(self) -> usize {
         self.完了キュー容量
     }
 }
