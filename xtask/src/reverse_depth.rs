@@ -3,6 +3,7 @@
 mod compare;
 mod depth_image;
 mod error;
+mod overlap_counterexample;
 mod plan;
 mod precision_counterexample;
 mod run;
@@ -51,7 +52,8 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 逆Z検収エラー> 
             由来を書く(&出力先.join("candidate.txt"), &由来, "reverse-z far=2000")?;
             let 実景 = compare::対照と候補を比べる(&実行環境)?;
             let 精度 = precision_counterexample::奥行き精度を反証する()?;
-            Ok(format!("{実景}、{精度}"))
+            let 重なり = overlap_counterexample::前面色の保持を反証する()?;
+            Ok(format!("{実景}、{精度}、{重なり}"))
         }
         実行の別::計画を表示する => Ok(plan::計画を表示する()),
     }
