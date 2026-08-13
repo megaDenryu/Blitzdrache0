@@ -28,12 +28,12 @@ struct VertexOutput
 VertexOutput vertexMain(uint vertexID : SV_VertexID)
 {
     // 全画面三角形: 頂点ID 0,1,2 をクリップ座標 (-1,-1),(3,-1),(-1,3) に写す。
-    // 深度は遠平面ちょうど(z=w=1)に置く。深度クリア値と同じ値であり、パイプラインのEQUAL比較が未描画画素だけを選ぶ。
+    // 深度は逆Zの遠平面ちょうど(z=0、w=1)に置く。深度クリア値と同じ値であり、EQUAL比較が未描画画素だけを選ぶ。
     float2 corner = float2(float((vertexID << 1) & 2), float(vertexID & 2));
     float2 ndc = corner * 2.0 - 1.0;
     VertexOutput output;
-    output.position = float4(ndc, 1.0, 1.0);
-    float4 farPoint = mul(skyPassUniform.inverseViewProjection, float4(ndc, 1.0, 1.0));
+    output.position = float4(ndc, 0.0, 1.0);
+    float4 farPoint = mul(skyPassUniform.inverseViewProjection, float4(ndc, 0.0, 1.0));
     output.viewRay = farPoint.xyz / farPoint.w - viewUniform.cameraRelativePosition.xyz;
     output.currentClipPosition = mul(viewUniform.viewProjection, float4(output.viewRay, 0.0));
     output.previousClipPosition = mul(viewUniform.previousViewProjection, float4(output.viewRay, 0.0));

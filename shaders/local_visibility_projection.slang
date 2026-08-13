@@ -6,7 +6,7 @@
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 // 透視投影の逆変換に要る4つの量と、深度を書いた射影が受けた画素内ずらし(正規化装置座標)。
-// 深度の規約はVulkanのクリップ空間であり、0が近クリップ面、1が遠クリップ面である。
+// 深度はカメラの逆Z規約であり、1が近クリップ面、0が遠クリップ面である。
 struct LocalVisibilityProjection
 {
     float nearClip;
@@ -19,7 +19,7 @@ struct LocalVisibilityProjection
 // 深度が表すカメラからの奥行き。
 float localVisibilityViewDepthOfDepth(LocalVisibilityProjection projection, float depth)
 {
-    return projection.farClip * projection.nearClip / (projection.farClip - depth * (projection.farClip - projection.nearClip));
+    return projection.farClip * projection.nearClip / (projection.nearClip + depth * (projection.farClip - projection.nearClip));
 }
 
 // カメラから見た奥行き。ビュー空間では視線が奥行きの負の向きであるため、符号を反転した値が距離になる。

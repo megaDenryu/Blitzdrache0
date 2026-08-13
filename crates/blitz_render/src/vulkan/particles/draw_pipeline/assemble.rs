@@ -47,7 +47,7 @@ pub(super) fn 組み立てる(
     let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
         .depth_test_enable(true)
         .depth_write_enable(false)
-        .depth_compare_op(vk::CompareOp::LESS_OR_EQUAL);
+        .depth_compare_op(vk::CompareOp::GREATER_OR_EQUAL);
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 

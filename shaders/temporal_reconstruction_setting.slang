@@ -2,7 +2,7 @@
 // 注意: 並びと値の意味は`crates/blitz_render/src/vulkan/temporal_reconstruction/setting.rs`の写しである。
 // 押し込む側の並びが正本であり、片方だけを直すと値が1つずれたまま絵にしか出ない。
 // 注意: 奥行きの復元の式は`crates/blitz_render/src/local_visibility/projection.rs`の`奥行きを復元する`と同じである。
-// 深度の規約はVulkanのクリップ空間であり、0が近クリップ面、1が遠クリップ面である。
+// 深度はカメラの逆Z規約であり、1が近クリップ面、0が遠クリップ面である。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 struct TemporalReconstructionSetting
@@ -22,7 +22,7 @@ struct TemporalReconstructionSetting
 // 深度が表すカメラからの奥行き。近クリップ面で近クリップ距離、遠クリップ面で遠クリップ距離になる。
 float temporalViewDepthOfDepth(TemporalReconstructionSetting setting, float depth)
 {
-    return setting.farClip * setting.nearClip / (setting.farClip - depth * (setting.farClip - setting.nearClip));
+    return setting.farClip * setting.nearClip / (setting.nearClip + depth * (setting.farClip - setting.nearClip));
 }
 
 // 画素の中心が当たる正規化装置座標。横は右が正、縦は下が正である。

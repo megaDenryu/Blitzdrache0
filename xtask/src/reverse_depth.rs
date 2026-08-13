@@ -13,6 +13,7 @@ use error::逆Z検収エラー;
 use plan::実行の別;
 
 const 出力ディレクトリ: &str = "target/reverse_depth";
+pub(super) const 対照の由来ファイル名: &str = "reference.txt";
 
 pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
     match 検収する(引数一覧) {
@@ -41,7 +42,7 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 逆Z検収エラー> 
     match 別 {
         実行の別::対照を採る => {
             run::対照を採る(&実行環境)?;
-            由来を書く(&出力先.join("reference.txt"), &由来, "standard-z far=2000")?;
+            由来を書く(&出力先.join(対照の由来ファイル名), &由来, "standard-z far=2000")?;
             Ok(format!("標準Zの対照を{}へ保存した", 出力先.display()))
         }
         実行の別::候補を比較する => {

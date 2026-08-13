@@ -11,9 +11,9 @@ const 奥行きの絶対許容メートル: f64 = 0.001;
 const 奥行きの相対許容: f64 = 1.0e-5;
 
 pub(super) fn 対照と候補を比べる(環境: &描画検収の実行環境) -> Result<String, 逆Z検収エラー> {
-    let 由来 = Path::new("target/reverse_depth/reference.txt");
+    let 由来 = Path::new("target/reverse_depth").join(super::対照の由来ファイル名);
     if !由来.exists() {
-        return Err(逆Z検収エラー::対照の由来が無い(由来.to_path_buf()));
+        return Err(逆Z検収エラー::対照の由来が無い(由来));
     }
     let 対照色 = 環境.同じ置き場の書き出しを読み戻す(名前("reference_color")?)?;
     let 候補色 = 環境.同じ置き場の書き出しを読み戻す(名前("candidate_color")?)?;

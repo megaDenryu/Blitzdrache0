@@ -7,14 +7,15 @@
 use super::error::規約検査の破れ;
 use super::violation::違反;
 use super::{
-    dependency_whitelist, doc_section, duplicate_file_literal, lighting_query_declaration, reload_without_device_wait, removed_object_uniform,
-    removed_slot_material_set, removed_view_pass_lighting, sample_bodies_consistency, shader_binding, shader_constant, shader_uniform_alias,
-    single_lighting_slot_write, wording_contract,
+    dependency_whitelist, depth_contract, doc_section, duplicate_file_literal, lighting_query_declaration, reload_without_device_wait,
+    removed_object_uniform, removed_slot_material_set, removed_view_pass_lighting, sample_bodies_consistency, shader_binding, shader_constant,
+    shader_uniform_alias, single_lighting_slot_write, wording_contract,
 };
 
 pub fn 集める() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
     違反一覧.extend(dependency_whitelist::全クレートを検査する()?);
+    違反一覧.extend(depth_contract::全接点を検査する()?);
     違反一覧.extend(doc_section::全文書を検査する()?);
     違反一覧.extend(shader_constant::全定数を検査する()?);
     違反一覧.extend(shader_binding::全束縛番号を検査する()?);

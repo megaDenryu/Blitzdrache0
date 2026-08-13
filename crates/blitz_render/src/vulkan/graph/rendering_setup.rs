@@ -29,14 +29,17 @@ pub(super) fn 開始する(
     let (カラーload_op, 深度load_op, カラークリア値) = ロードオペレーションとカラークリア値(クリア指定);
     let カラーアタッチメント一覧 = カラー.記述を並べる(レジストリ, カラーload_op, カラークリア値);
 
-    let 深度クリア値 = vk::ClearValue {
-        depth_stencil: vk::ClearDepthStencilValue { depth: 1.0, stencil: 0 },
-    };
     // 注意: 深度のstore_opは常にSTOREにする。DONT_CAREにするとパス終了時に内容が未定義になり、
     // 後段が深度をLOADするパス(粒子)やサンプリングするパス(シャドウマップを読むシーン)が
     // 未定義の値を読む(validationは検出しない。M6で全面影バグとして実際に踏んだ)。
     // 誰も後で読まない深度のDONT_CARE化は、グラフの後続用途から導出できるようになった時点で行う。
     let 深度アタッチメント = 深度.map(|深度| {
+        let 深度クリア値 = vk::ClearValue {
+            depth_stencil: vk::ClearDepthStencilValue {
+                depth: 深度.消去値(),
+                stencil: 0,
+            },
+        };
         vk::RenderingAttachmentInfo::default()
             .image_view(深度.描画先ビュー(レジストリ.ビューを取得する(深度.ハンドル)))
             .image_layout(vk::ImageLayout::DEPTH_ATTACHMENT_OPTIMAL)

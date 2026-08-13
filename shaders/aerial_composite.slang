@@ -44,7 +44,7 @@ float4 fragmentMain(VertexOutput input) : SV_Target
     // 深度バッファは描画先と1対1であるため、画素の中心がそのままテクセルの中心であり画面の単位位置でもある。
     float2 screenPosition = input.position.xy / float2(float(depthWidth), float(depthHeight));
     float depth = sceneDepth.SampleLevel(screenPosition, 0.0).x;
-    if (depth >= 1.0)
+    if (depth <= 0.0)
     {
         // 返す値はブレンドの恒等元(散乱0・透過率1)である。discardが効かない経路でも絵が変わらない。
         discard;

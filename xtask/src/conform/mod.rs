@@ -4,6 +4,7 @@
 mod allow_lint;
 mod cargo_toml_parse;
 mod dependency_whitelist;
+mod depth_contract;
 mod doc_reference;
 mod doc_section;
 mod drop_impl;
