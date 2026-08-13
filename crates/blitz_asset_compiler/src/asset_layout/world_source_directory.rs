@@ -73,4 +73,8 @@ impl 世界のソースディレクトリ {
     pub(super) fn 表示の綴り(&self) -> std::path::Display<'_> {
         self.0.表示の綴り()
     }
+
+    pub(super) fn ファイル走査へ貸すディレクトリ(&self) -> &Path {
+        self.0.ファイル走査へ貸すディレクトリ()
+    }
 }

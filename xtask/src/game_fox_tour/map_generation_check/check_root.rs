@@ -10,7 +10,11 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use blitz_asset_compiler::{ソースルート, 実行時形式の出力ルート, 生成の出力ルート};
+use blitz_asset_compiler::{ソースルート, 場所巡りの世界のソースディレクトリ, 生成の出力ルート};
+
+mod source_fixture;
+#[cfg(test)]
+mod tests;
 
 use super::super::error::場所巡りの通しの検収エラー;
 use super::file_digest::ディレクトリの全ファイルを畳む;
@@ -38,6 +42,14 @@ impl 検収用のルート {
         Self::末端の名前から作る("runtime_y")
     }
 
+    pub(super) fn 増分のソース() -> Self {
+        Self::末端の名前から作る("incremental_source")
+    }
+
+    pub(super) fn 増分の実行時形式() -> Self {
+        Self::末端の名前から作る("incremental_runtime")
+    }
+
     /// 増分を無効にするため、走らせる前にルートごと消す。台帳も生成物も残っていない状態から焼き直させる。
     pub(super) fn 掃除する(&self) -> Result<(), 場所巡りの通しの検収エラー> {
         match std::fs::remove_dir_all(&self.0) {
@@ -53,9 +65,16 @@ impl 検収用のルート {
     /// ここは台帳のファイル名の綴りを1文字も持たない。
     pub(super) fn 全ファイルを畳む(&self) -> Result<BTreeMap<PathBuf, u64>, 場所巡りの通しの検収エラー> {
         let mut 対応表 = ディレクトリの全ファイルを畳む(&self.0)?;
-        対応表.retain(|相対パス, _| {
-            !生成の出力ルート::生成台帳を指すパスか(相対パス) && !実行時形式の出力ルート::実行時カタログを指すパスか(相対パス)
-        });
+        対応表.retain(|相対パス, _| !生成の出力ルート::生成台帳を指すパスか(相対パス));
+        Ok(対応表)
+    }
+
+    pub(super) fn 場所巡りの生成物を畳む(&self) -> Result<BTreeMap<PathBuf, u64>, 場所巡りの通しの検収エラー> {
+        let ソースルート = self.ソースルートとして読む();
+        let 世界 = 場所巡りの世界のソースディレクトリ::ソースルートの下を開く(&ソースルート)
+            .map_err(|誤り| 場所巡りの通しの検収エラー::ソースの置き場を作れなかった(誤り.to_string()))?;
+        let mut 対応表 = ディレクトリの全ファイルを畳む(世界.ファイル走査へ貸すディレクトリ())?;
+        対応表.retain(|相対パス, _| !生成の出力ルート::生成台帳を指すパスか(相対パス));
         Ok(対応表)
     }
 
@@ -69,19 +88,11 @@ impl 検収用のルート {
         ソースルート::生成する(self.0.clone())
     }
 
+    pub(super) fn 実行時アセットルートとして読む(&self) -> crate::acceptance::実行時アセットルート {
+        crate::acceptance::実行時アセットルート::パスから生成する(self.0.clone())
+    }
+
     fn 末端の名前から作る(末端の名前: &str) -> Self {
         Self(Path::new(検収用の親ディレクトリ).join(末端の名前))
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn 検収用の実行時形式ルートは遊ぶルートと別である() {
-        let 検収 = 検収用のルート::実行時形式の一度目();
-        let 遊ぶ = crate::fox_tour_launch::場所巡りの世界を遊ぶ実行時形式の出力ルート();
-        assert_ne!(検収.プロセスへ渡すパス(), 遊ぶ.プロセスの引数へ渡すディレクトリ());
     }
 }

@@ -20,7 +20,9 @@ impl 生成器の版 {
         self.0
     }
 
-    pub const fn 世界の生成器の版へ写す(self) -> blitz_engine::世界の生成器の版 {
+    pub const fn 世界の生成器の版へ写す(
+        self,
+    ) -> Result<blitz_engine::世界の生成器の版, blitz_engine::アセット実行時形式エラー> {
         blitz_engine::世界の生成器の版::生成する(self.0)
     }
 

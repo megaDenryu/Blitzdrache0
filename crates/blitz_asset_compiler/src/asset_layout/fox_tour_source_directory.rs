@@ -8,15 +8,20 @@
 //! 置き場のパスは包んだ世界のソースディレクトリが1回だけ所有し、台帳の置き場として渡すときも借用で貸す。
 
 use blitz_engine::チャンク座標;
+use std::ffi::OsStr;
+use std::path::Path;
 
 mod cleanup;
+mod seed;
+#[cfg(test)]
+mod seed_tests;
 
 use super::error::アセット配置エラー;
 use super::height_grid_file::高さ格子のファイル;
 use super::source_root::ソースルート;
 use super::world_directory_name::世界のディレクトリ名;
 use super::world_source_directory::世界のソースディレクトリ;
-use crate::generation_ledger::{マップ生成の乱数の種, 生成の出力ルート};
+use crate::generation_ledger::生成の出力ルート;
 
 const ディレクトリ名の綴り: &str = "fox_tour_world";
 const 目印のバイナリファイル名: &str = "destination_marker.bin";
@@ -33,6 +38,10 @@ pub struct 場所巡りの世界のソースディレクトリ(世界のソー�
 impl 場所巡りの世界のソースディレクトリ {
     pub fn ディレクトリ名() -> Result<世界のディレクトリ名, アセット配置エラー> {
         世界のディレクトリ名::生成する(ディレクトリ名の綴り)
+    }
+
+    pub fn この世界のディレクトリ名か(候補: &OsStr) -> bool {
+        候補 == ディレクトリ名の綴り
     }
 
     /// 置き場を開くだけで、ディレクトリは作らない。読むだけの呼び出し側はこちらを通る。
@@ -72,21 +81,6 @@ impl 場所巡りの世界のソースディレクトリ {
         目印のバイナリファイル名
     }
 
-    pub fn 生成に使った乱数の種を書き出す(&self, 種: マップ生成の乱数の種) -> Result<(), アセット配置エラー> {
-        self.0.直下へ書き込む(種を書き出すファイル名, format!("{}\n", 種.値()).as_bytes())
-    }
-
-    /// 生成に使った乱数の種を書いたファイルの中身。書き出す側と同じ綴りのファイルを読むため、読み手は名前を持たない。
-    pub fn 生成に使った乱数の種を読む(&self) -> Result<マップ生成の乱数の種, アセット配置エラー> {
-        let パス = self.0.直下のファイルのパス(種を書き出すファイル名);
-        let 綴り = self.0.直下のファイルを綴りとして読む(種を書き出すファイル名)?;
-        綴り
-            .trim()
-            .parse::<u32>()
-            .map(マップ生成の乱数の種::生成する)
-            .map_err(|_| アセット配置エラー::乱数の種が不正 { パス, 綴り })
-    }
-
     /// 生成台帳の置き場としてのこの置き場。台帳の読み書きは生成の出力ルートの側が担う。
     pub fn 台帳の置き場(&self) -> &生成の出力ルート {
         self.0.台帳の置き場()
@@ -94,5 +88,9 @@ impl 場所巡りの世界のソースディレクトリ {
 
     pub fn 表示の綴り(&self) -> std::path::Display<'_> {
         self.0.表示の綴り()
+    }
+
+    pub fn ファイル走査へ貸すディレクトリ(&self) -> &Path {
+        self.0.ファイル走査へ貸すディレクトリ()
     }
 }

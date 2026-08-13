@@ -1,5 +1,7 @@
 //! 実行時世界がどの生成規則と乱数の種から焼かれたかを表す由来。
 
+use super::runtime_format::アセット実行時形式エラー;
+
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct 世界の乱数の種(u32);
@@ -19,9 +21,12 @@ impl 世界の乱数の種 {
 pub struct 世界の生成器の版(u32);
 
 impl 世界の生成器の版 {
-    pub const fn 生成する(値: u32) -> Self {
-        assert!(値 > 0, "世界の生成器の版は1以上でなければならない");
-        Self(値)
+    pub const fn 生成する(値: u32) -> Result<Self, アセット実行時形式エラー> {
+        if 値 == 0 {
+            Err(アセット実行時形式エラー::世界の由来が不正("生成器の版が0"))
+        } else {
+            Ok(Self(値))
+        }
     }
 
     pub const fn 値(self) -> u32 {
