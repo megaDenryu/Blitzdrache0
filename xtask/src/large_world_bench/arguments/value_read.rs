@@ -17,9 +17,9 @@ pub(super) fn 正の有限値を読む(名前: &str, 値: &str) -> Result<f64, S
     (数 > 0.0).then_some(数).ok_or_else(|| format!("{名前}は正でなければならない"))
 }
 
-pub(super) fn シーンを読む(値: &str) -> Result<String, String> {
-    (値 == "terrain_fox_tour")
-        .then(|| 値.to_string())
+pub(super) fn シーンを読む(値: &str) -> Result<crate::acceptance::検収シーン名, String> {
+    (値 == crate::fox_tour_launch::シーン名.綴り())
+        .then_some(crate::fox_tour_launch::シーン名)
         .ok_or_else(|| format!("大規模世界で選べないシーンである: {値}"))
 }
 

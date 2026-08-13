@@ -1,4 +1,5 @@
-//! 1本のワーカーで要求順を保ち、ファイル読込と形式検査を行う。
+//! 設定された本数のワーカーでファイル読込と形式検査を行う。要求順を保つのは1本の場合だけである。
+//! 完了順に依存せず、座標とリセット世代で対応づけて反映する。参照: `streaming/coordinator/prepared_data.rs`
 
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::{self, RecvTimeoutError};
@@ -57,6 +58,7 @@ fn ワーカーを走らせる(
     要求受信: &Mutex<mpsc::Receiver<読込ジョブ>>, 完了送信: &mpsc::SyncSender<チャンク読込完了>, 停止: &AtomicBool
 ) {
     while !停止.load(Ordering::Acquire) {
+        // mpscの受信側は共有できないため、ジョブを1件受け取るまでだけMutexを保持し、読込中は次のワーカーへ受信権を渡す。
         let Ok(受信) = 要求受信.lock() else { break };
         let 結果 = 受信.recv_timeout(Duration::from_millis(10));
         drop(受信);

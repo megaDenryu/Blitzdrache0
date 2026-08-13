@@ -4,10 +4,6 @@ mod arguments;
 
 use std::process::ExitCode;
 
-use blitz_asset_compiler::マップ生成の乱数の種;
-
-const 検収の種: マップ生成の乱数の種 = マップ生成の乱数の種::生成する(20260810);
-
 pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
     let 広がり = match arguments::世界の広がりを読む(引数一覧) {
         Ok(広がり) => 広がり,
@@ -16,7 +12,8 @@ pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
             return ExitCode::FAILURE;
         }
     };
-    match crate::game_fox_tour::map_generation_check::大規模世界を確かめる(検収の種, 広がり) {
+    match crate::game_fox_tour::map_generation_check::大規模世界を確かめる(crate::fox_tour_map_seed::決定性検収の乱数の種, 広がり)
+    {
         Ok(要約) => {
             let 東西 = 広がり.東西チャンク数();
             let 南北 = 広がり.南北チャンク数();

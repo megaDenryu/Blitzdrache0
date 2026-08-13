@@ -2,6 +2,8 @@
 
 use std::path::PathBuf;
 
+use crate::acceptance::検収シーン名;
+
 mod value_read;
 
 use value_read::{
@@ -9,9 +11,9 @@ use value_read::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
-pub(crate) struct 計測指定 {
+pub(crate) struct 大規模世界の計測指定 {
     pub(crate) アセットルート: PathBuf,
-    pub(crate) シーン: String,
+    pub(crate) シーン: 検収シーン名,
     pub(crate) フレーム数: u32,
     pub(crate) 先読み半径: u8,
     pub(crate) ram上限: u64,
@@ -27,11 +29,11 @@ pub(crate) struct 計測指定 {
     pub(crate) 計画だけ: bool,
 }
 
-impl Default for 計測指定 {
+impl Default for 大規模世界の計測指定 {
     fn default() -> Self {
         Self {
-            アセットルート: PathBuf::from("target/large_world_generation_check/runtime_x"),
-            シーン: "terrain_fox_tour".to_string(),
+            アセットルート: crate::game_fox_tour::map_generation_check::大規模世界の計測入力パス(),
+            シーン: crate::fox_tour_launch::シーン名,
             フレーム数: 1_000,
             先読み半径: 8,
             ram上限: 512 * 1024 * 1024,
@@ -49,8 +51,8 @@ impl Default for 計測指定 {
     }
 }
 
-pub(crate) fn 引数を読む(引数一覧: &[String]) -> Result<計測指定, String> {
-    let mut 指定 = 計測指定::default();
+pub(crate) fn 引数を読む(引数一覧: &[String]) -> Result<大規模世界の計測指定, String> {
+    let mut 指定 = 大規模世界の計測指定::default();
     let mut 残り = 引数一覧.iter();
     while let Some(名前) = 残り.next() {
         if 名前 == "--print-plan" {
@@ -76,6 +78,7 @@ pub(crate) fn 引数を読む(引数一覧: &[String]) -> Result<計測指定, S
             _ => return Err(format!("知らない引数である: {名前}")),
         }
     }
+    // 半径16は1,089チャンクを同時候補にする。これを超える入力は誤指定でメモリ要求を急増させるため拒む。
     if 指定.先読み半径 > 16 {
         return Err("--preload-radiusは16以下でなければならない".to_string());
     }

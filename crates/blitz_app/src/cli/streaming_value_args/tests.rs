@@ -47,11 +47,19 @@ fn 固定経路の端点と速さを変えられる() {
 }
 
 #[test]
-fn 零の容量と速さを拒む() {
+fn 零の容量を拒む() {
     let 引数 = 語("0");
     assert!(読込引数を反映する(チャンク読込設定::既定値(), &mut 引数.iter(), "--streaming-request-capacity").is_err());
+}
+
+#[test]
+fn 不正な固定経路値を拒んでも設定を変えない() {
     let mut 経路 = 固定経路起動設定::既定値();
+    let 変更前 = 経路;
+    assert!(固定経路引数を反映する(&mut 経路, &mut 語("NaN").iter(), "--streaming-route-start-east-meters").is_err());
+    assert_eq!(経路, 変更前);
     assert!(固定経路引数を反映する(&mut 経路, &mut 語("0").iter(), "--streaming-route-meters-per-frame").is_err());
+    assert_eq!(経路, 変更前);
 }
 
 #[test]

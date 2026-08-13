@@ -19,6 +19,12 @@ pub(super) fn 固定経路引数を反映する(
     let メートル = 値
         .parse::<f64>()
         .map_err(|誤り| 起動引数エラー::固定経路不正(format!("{引数名}: {誤り}")))?;
+    if !メートル.is_finite() {
+        return Err(起動引数エラー::固定経路不正(format!("{引数名}は有限値でなければならない")));
+    }
+    if 引数名 == "--streaming-route-meters-per-frame" && メートル <= 0.0 {
+        return Err(起動引数エラー::固定経路不正(format!("{引数名}は正でなければならない")));
+    }
     match 引数名 {
         "--streaming-route-start-east-meters" => 設定.始点東メートル = メートル,
         "--streaming-route-start-south-meters" => 設定.始点南メートル = メートル,
@@ -26,12 +32,6 @@ pub(super) fn 固定経路引数を反映する(
         "--streaming-route-end-south-meters" => 設定.終点南メートル = メートル,
         "--streaming-route-meters-per-frame" => 設定.一フレーム移動量メートル = メートル,
         _ => return Err(起動引数エラー::固定経路不正(format!("知らない引数である: {引数名}"))),
-    }
-    if !メートル.is_finite() {
-        return Err(起動引数エラー::固定経路不正(format!("{引数名}は有限値でなければならない")));
-    }
-    if 引数名 == "--streaming-route-meters-per-frame" && メートル <= 0.0 {
-        return Err(起動引数エラー::固定経路不正(format!("{引数名}は正でなければならない")));
     }
     Ok(())
 }

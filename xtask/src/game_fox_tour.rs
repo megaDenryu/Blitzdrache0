@@ -12,7 +12,6 @@ pub(crate) mod map_generation_check;
 mod run;
 mod shot_plan;
 
-use blitz_asset_compiler::マップ生成の乱数の種;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
@@ -25,9 +24,6 @@ use shot_plan::{
 };
 
 const 出力ディレクトリ: &str = "target/game_fox_tour";
-
-/// 検収が使う乱数の種。検収専用ルートだけへ書き、遊ぶ世界とリポジトリ内ソースは変更しない。
-const 検収の種: マップ生成の乱数の種 = マップ生成の乱数の種::生成する(20260810);
 
 pub fn 実行する() -> ExitCode {
     match 検収する() {
@@ -43,7 +39,7 @@ pub fn 実行する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, 場所巡りの通しの検収エラー> {
-    let マップの要約 = map_generation_check::種からの生成を確かめる(検収の種)?;
+    let マップの要約 = map_generation_check::種からの生成を確かめる(crate::fox_tour_map_seed::決定性検収の乱数の種)?;
     let 実行環境 = crate::fox_tour_launch::場所巡りの世界の検収の実行環境を作る(
         PathBuf::from(出力ディレクトリ),
         map_generation_check::撮影用の実行時アセットルート(),

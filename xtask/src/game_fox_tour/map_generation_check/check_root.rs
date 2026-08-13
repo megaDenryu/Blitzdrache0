@@ -12,12 +12,14 @@ use std::path::{Path, PathBuf};
 
 use blitz_asset_compiler::{ソースルート, 場所巡りの世界のソースディレクトリ, 生成の出力ルート};
 
+mod cleanup;
 mod parent;
 mod source_fixture;
 #[cfg(test)]
 mod tests;
 
-pub(super) use parent::検収用の親;
+pub(super) use cleanup::{大規模世界の計測入力パス, 大規模世界の計測入力以外を掃除する};
+pub(super) use parent::生成検収の親ディレクトリ;
 
 use super::super::error::場所巡りの通しの検収エラー;
 use super::file_digest::ディレクトリの全ファイルを畳む;
@@ -26,27 +28,27 @@ use super::file_digest::ディレクトリの全ファイルを畳む;
 pub(super) struct 検収用のルート(PathBuf);
 
 impl 検収用のルート {
-    pub(super) fn ソースの一度目(親: 検収用の親) -> Self {
+    pub(super) fn ソースの一度目(親: 生成検収の親ディレクトリ) -> Self {
         Self::末端の名前から作る(親, "source_a")
     }
 
-    pub(super) fn ソースの二度目(親: 検収用の親) -> Self {
+    pub(super) fn ソースの二度目(親: 生成検収の親ディレクトリ) -> Self {
         Self::末端の名前から作る(親, "source_b")
     }
 
-    pub(super) fn 実行時形式の一度目(親: 検収用の親) -> Self {
+    pub(super) fn 実行時形式の一度目(親: 生成検収の親ディレクトリ) -> Self {
         Self::末端の名前から作る(親, "runtime_x")
     }
 
-    pub(super) fn 実行時形式の二度目(親: 検収用の親) -> Self {
+    pub(super) fn 実行時形式の二度目(親: 生成検収の親ディレクトリ) -> Self {
         Self::末端の名前から作る(親, "runtime_y")
     }
 
-    pub(super) fn 増分のソース(親: 検収用の親) -> Self {
+    pub(super) fn 増分のソース(親: 生成検収の親ディレクトリ) -> Self {
         Self::末端の名前から作る(親, "incremental_source")
     }
 
-    pub(super) fn 増分の実行時形式(親: 検収用の親) -> Self {
+    pub(super) fn 増分の実行時形式(親: 生成検収の親ディレクトリ) -> Self {
         Self::末端の名前から作る(親, "incremental_runtime")
     }
 
@@ -92,7 +94,7 @@ impl 検収用のルート {
         crate::acceptance::実行時アセットルート::パスから生成する(self.0.clone())
     }
 
-    fn 末端の名前から作る(親: 検収用の親, 末端の名前: &str) -> Self {
+    fn 末端の名前から作る(親: 生成検収の親ディレクトリ, 末端の名前: &str) -> Self {
         Self(親.ディレクトリ().join(末端の名前))
     }
 }

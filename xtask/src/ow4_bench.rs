@@ -53,7 +53,7 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
     }
 }
 
-pub(crate) fn 大規模世界を測る(指定: &crate::large_world_bench::計測指定) -> Result<(), String> {
+pub(crate) fn 大規模世界を測る(指定: &crate::large_world_bench::大規模世界の計測指定) -> Result<(), String> {
     large_world_measure::測る(指定).map_err(|誤り| 誤り.to_string())
 }
 

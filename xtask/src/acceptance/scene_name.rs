@@ -5,7 +5,7 @@
 //! それまでの下支えとして、プロセス境界の1語として成立することだけを構築時に確かめる。
 
 #[repr(transparent)]
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct 検収シーン名(&'static str);
 
 impl 検収シーン名 {
@@ -23,7 +23,7 @@ impl 検収シーン名 {
     }
 
     /// アプリの`--scene`へ渡す綴り。生の綴りへ戻るのはここだけである。
-    pub(super) fn 綴り(self) -> &'static str {
+    pub(crate) fn 綴り(self) -> &'static str {
         self.0
     }
 }

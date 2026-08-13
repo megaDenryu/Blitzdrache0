@@ -14,6 +14,7 @@ const 種の選択肢の綴り: &str = "--game-map-seed";
 
 /// ソースルートを導く選択肢の綴り。綴りは`xtask/src/gen_game_map.rs`にも同じものがある。
 const ソースルートの選択肢の綴り: &str = "--source-root";
+/// 次の2つの綴りはxtask側の呼び出し境界`xtask/src/asset_generator/arguments/source_assets.rs`にも置く。
 const 東西チャンク数の選択肢の綴り: &str = "--world-east-chunks";
 const 南北チャンク数の選択肢の綴り: &str = "--world-south-chunks";
 
