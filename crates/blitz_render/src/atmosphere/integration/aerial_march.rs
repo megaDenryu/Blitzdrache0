@@ -20,7 +20,7 @@
 //! 密度を0にする処理をCPU正本もslangの写しも持たない。現行の遠クリップ(10000メートル)と観測高度(1.5メートル)では
 //! 標本の高度が大気の厚み(100キロメートル)の10分の1に届かず、上端へ達しないため絵に影響しない。
 //! どちらかを大気の厚みに近い桁へ広げるときは、上端で密度を0にするか経路を上端との交差で切ることが要る。
-//! 参照: `crates/blitz_engine/src/camera/mod.rs`の`遠クリップ距離`、`crates/blitz_engine/src/sky/sky_draw_policy/default.rs`の`既定の観測高度メートル`、`crates/blitz_engine/src/sky/atmosphere/planet_shape.rs`の`地球の上端半径のメートル`
+//! 参照: `crates/blitz_engine/src/camera/projection.rs`の`遠クリップ距離`、`crates/blitz_engine/src/sky/sky_draw_policy/default.rs`の`既定の観測高度メートル`、`crates/blitz_engine/src/sky/atmosphere/planet_shape.rs`の`地球の上端半径のメートル`
 //!
 //! 地表より下が真空になることで下向きの視線の遠いスライスが値を持たないが、これは合成の絵に現れない。カメラの高さを
 //! h、視線が水平から下へ向く角をθとすると、地形が理想球の上にある限り視線が地形へ当たる距離はh/sinθであり、

@@ -9,7 +9,7 @@ use super::error::局所可視性エラー;
 use super::image_size::画像の寸法;
 
 /// 深度プリパスの消去値。この値のままの画素にはジオメトリが1つも描かれていない。
-/// 注意: `crates/blitz_render/src/vulkan/graph/rendering_setup.rs`の深度の消去値と同じでなければならない。
+/// 注意: `crates/blitz_render/src/vulkan/graph/depth_attachment.rs`の深度の消去値と同じでなければならない。
 /// 違えると空の画素が遮蔽の標本として読まれ、画面全体へ偽の遮蔽が乗る。
 pub const 深度の消去値: f32 = 0.0;
 
