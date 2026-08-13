@@ -186,6 +186,8 @@ cargo xtask cloth-empty # 群がカメラ視錐台にもライト視錐台にも
 cargo xtask cloth-shadow-order # 異なる配置変換を持つ描画対象を2つ並べたシーンを布ありで描き、束の中の走査順を入れ替えても布の影が覆う画素が変わらないことを確認する
 cargo xtask ow4-bench [チャンクあたり個体数...] [--production-draw] [--time-of-day <秒>] # 植生の密度だけを変えた25チャンク世界を各3回走らせ、CPU区間・GPU時間・計数・会計・プロセス実測と4予算の判定を採る物量計測入口（既定は400・4000・40000体、ライティングとポスト処理と空を止めた従来条件。--production-drawで本番の描画、--time-of-dayで時刻を選ぶ）
 cargo xtask gen-game-map --seed <32ビットの非負整数> # クソゲー1本目のマップを乱数の種から作る。ソースアセットの生成から実行時形式へ焼くまでを1つの入口で行い、使った種をassets/fox_tour_world/map_seed.txtへ残す
+cargo xtask large-world-assets [--east-chunks <数> --south-chunks <数>] # target配下へ原点中心の大規模世界を生成し、クリーンな2生成のバイト一致と同一条件の再実行が焼き直し0件であることを検収する（既定80×100）
+cargo xtask large-world-bench [--preload-radius <数> --ram-limit <bytes> --vram-limit <bytes> --frames <数> --scene terrain_fox_tour ...] # km級2D固定経路を3回走らせ、OW4と同じCPU/GPU/計数/会計を採る。--print-planはGPUを起動せず起動条件だけを表示する
 cargo xtask play-fox-tour # クソゲー1本目「キツネの場所巡り」を遊ぶ。起動の前に、これから遊ぶマップがどの乱数の種の生成物かを出す（Enterではじめる・矢印キーで歩く・Escで終了確認）
 cargo xtask game-fox-tour # クソゲー1本目の通しの検収。同じ種から同じマップが出ることと、決定的な台本がタイトルから終了まで1周することを機械で判定し、目視の材料の絵を4枚書き出す（検収の種でassets/fox_tour_world/を作り直す）
 cargo xtask gen-source-assets # 検証用ソースアセット（スモーク用quad・影検証シーン・板の世界25チャンク・地形世界25チャンクの高さ格子・植生世界の原型）の再生成

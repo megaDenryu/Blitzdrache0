@@ -40,6 +40,7 @@ mod instance_draw;
 mod instance_lod;
 mod instance_stream;
 mod large_world_assets;
+mod large_world_bench;
 mod local_visibility;
 mod lod_crack;
 mod m10_bench;

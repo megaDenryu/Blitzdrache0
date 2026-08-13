@@ -3,7 +3,7 @@
 //! 説明文を配列で持つのは、コマンドが増えるたびに表示の手続きでなくこの一覧だけを触れば済むようにするためである。
 //! 表示の側が説明の数を知らないため、コマンドを足しても表示の手続きは1行も変わらない。
 
-pub(super) const コマンドの説明一覧: [&str; 56] = [
+pub(super) const コマンドの説明一覧: [&str; 57] = [
     "  verify           検証の標準列 (conform -> fmt --check -> check -> clippy -D warnings -> test) を実行する",
     "  conform          規約適合の機械検査 (100行制限/禁止文字列/不正allow/依存白リスト/参照パス実在/節参照実在/vulkan配下のDrop実装禁止)",
     "  type-metrics     型ごとのフィールド数・impl分散ファイル数・メソッド数を多い順に表示する (違反判定はしない)",
@@ -14,6 +14,7 @@ pub(super) const コマンドの説明一覧: [&str; 56] = [
     "  gen-source-assets 検証用ソースアセット(スモーク用quad・影検証シーン・材質境界シーン・板の世界・地形世界・植生世界・見本の集落の各25チャンク級)をassets/へ生成する",
     "  gen-game-map --seed <数>  クソゲー1本目の3×3チャンクのマップを乱数の種から作り、目印つきの地形と高さ場とキツネを実行時形式まで焼く",
     "  large-world-assets [--east-chunks <数> --south-chunks <数>]  target配下へ大規模世界を生成し、クリーンな2生成のバイト一致と同一条件の再実行が焼き直し0件であることを検収する(省略時80×100)",
+    "  large-world-bench [条件...]  8km×10km世界をkm級固定経路で3回走らせ、CPU区間・GPU時間・会計・validation・p50/p99を表示する(--print-planはGPUを起動しない)",
     "  fetch-assets     標準サンプル(DamagedHelmet・Fox)をassets/samples/へ取得する(curl.exe使用)",
     "  gen-atmosphere-reference <precomputed_atmospheric_scatteringの作業コピー>  Bruneton 2017実装のCPU参照から大気の物理量の期待値を焼く(出典・手順・要るツールはgen_atmosphere_reference.rsの冒頭。Windows専用)",
     "  bench            リリース版の固定シーンを600フレーム実行し、GPU時間とCPU側フレーム間隔分布を表示する",

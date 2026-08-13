@@ -45,10 +45,14 @@ pub(super) fn 走らせる(
     条件: &計測条件,
 ) -> Result<一回の実行, 物量計測エラー> {
     let 上限 = 上限の綴り();
-    let 標準出力先 = PathBuf::from(出力先).join(format!("{名前}.log"));
     let 引数一覧 = 引数を作る(アセットルート, シェーダー入口, &上限, 条件);
+    起動引数で走らせる(出力先, 名前, &引数一覧)
+}
+
+pub(super) fn 起動引数で走らせる(出力先: &Path, 名前: &str, 引数一覧: &[String]) -> Result<一回の実行, 物量計測エラー> {
+    let 標準出力先 = PathBuf::from(出力先).join(format!("{名前}.log"));
     let 引数参照: Vec<&str> = 引数一覧.iter().map(String::as_str).collect();
-    println!("[xtask] ow4-bench実行{名前}: {}", 引数参照.join(" "));
+    println!("[xtask] 計測実行{名前}: {}", 引数参照.join(" "));
     let 条件 = 採取条件 {
         起こし方: crate::acceptance::アプリの起こし方::構築済みのリリース版を直に起動する,
         引数一覧: &引数参照,

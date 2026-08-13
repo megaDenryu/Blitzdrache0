@@ -53,3 +53,39 @@ fn 零の容量と速さを拒む() {
     let mut 経路 = 固定経路起動設定::既定値();
     assert!(固定経路引数を反映する(&mut 経路, &mut 語("0").iter(), "--streaming-route-meters-per-frame").is_err());
 }
+
+#[test]
+fn 起動引数の全配線が二次元経路と読込設定へ届く() {
+    let 引数: Vec<String> = [
+        "--streaming-route-start-east-meters",
+        "-3000",
+        "--streaming-route-start-south-meters",
+        "-4000",
+        "--streaming-route-end-east-meters",
+        "3000",
+        "--streaming-route-end-south-meters",
+        "4000",
+        "--streaming-route-meters-per-frame",
+        "20",
+        "--streaming-loader-workers",
+        "3",
+        "--streaming-request-capacity",
+        "96",
+        "--streaming-completion-capacity",
+        "12",
+    ]
+    .map(str::to_string)
+    .to_vec();
+    let Ok(crate::cli::起動要求::描画実行(設定)) = crate::cli::引数を解析する(&引数) else {
+        panic!("固定経路と読込設定の起動引数を解析できなかった");
+    };
+    let 経路 = 設定.ストリーミング.固定経路;
+    assert_eq!(
+        (経路.始点東メートル, 経路.始点南メートル, 経路.終点東メートル, 経路.終点南メートル),
+        (-3000.0, -4000.0, 3000.0, 4000.0)
+    );
+    assert_eq!(
+        設定.ストリーミング.読込,
+        チャンク読込設定::生成する(3, 96, 12).ok().unwrap_or(チャンク読込設定::既定値())
+    );
+}
