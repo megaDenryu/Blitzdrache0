@@ -11,7 +11,7 @@ use crate::local_visibility::{位置が落ちる画素を求める, 射影の復
 use super::{検査する寸法, 検査する射影, 検査する幅, 検査する高さ};
 
 const 近クリップ: f32 = 0.1;
-const 遠クリップ: f32 = 2000.0;
+const 遠クリップ: f32 = 10000.0;
 
 fn 横縦比() -> f32 {
     f32::from(u16::try_from(検査する幅).unwrap()) / f32::from(u16::try_from(検査する高さ).unwrap())

@@ -44,12 +44,12 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 逆Z検収エラー> 
     match 別 {
         実行の別::対照を採る => {
             run::対照を採る(&実行環境)?;
-            由来を書く(&出力先.join(対照の由来ファイル名), &由来, "standard-z far=2000")?;
+            由来を書く(&出力先.join(対照の由来ファイル名), &由来, "standard-z far=10000")?;
             Ok(format!("標準Zの対照を{}へ保存した", 出力先.display()))
         }
         実行の別::候補を比較する => {
             run::候補を採る(&実行環境)?;
-            由来を書く(&出力先.join("candidate.txt"), &由来, "reverse-z far=2000")?;
+            由来を書く(&出力先.join("candidate.txt"), &由来, "reverse-z far=10000")?;
             let 実景 = compare::対照と候補を比べる(&実行環境)?;
             let 精度 = precision_counterexample::奥行き精度を反証する()?;
             let 重なり = overlap_counterexample::前面色の保持を反証する()?;

@@ -10,7 +10,7 @@ use super::depth_range::クラスタの奥行き範囲;
 use super::single_precision_transcript::単精度で段の境界の奥行きを求める;
 
 pub(super) const 近: f32 = 0.1;
-pub(super) const 遠: f32 = 2000.0;
+pub(super) const 遠: f32 = 10000.0;
 pub(super) const 奥行きの分割数: u32 = 24;
 /// 横と縦それぞれの、画素数と分割数の組。仮置きの分割数と代表的な画面の寸法である。
 pub(super) const 画素数と分割数の組一覧: [(u32, u32); 2] = [(1280, 16), (720, 8)];

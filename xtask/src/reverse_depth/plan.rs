@@ -19,5 +19,5 @@ pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<実行の別, �
 }
 
 pub(super) fn 計画を表示する() -> String {
-    "scene=terrain_origin frames=120 time-of-day=43200 depth-prepass=equal streaming-radius=2 color=RGBA8 depth=D32".to_string()
+    "scene=terrain_origin frames=120 time-of-day=43200 far=10000 depth-prepass=equal streaming-radius=2 color=RGBA8 depth=D32".to_string()
 }

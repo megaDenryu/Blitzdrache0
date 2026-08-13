@@ -7,7 +7,7 @@
     { "buffer": 0, "byteOffset": 96, "byteLength": 12, "target": 34963 }
   ],
   "accessors": [
-    { "bufferView": 0, "componentType": 5126, "count": 4, "type": "VEC3", "min": [-2400, -5, -2400], "max": [2400, -5, 2400] },
+    { "bufferView": 0, "componentType": 5126, "count": 4, "type": "VEC3", "min": [-12000, -5, -12000], "max": [12000, -5, 12000] },
     { "bufferView": 1, "componentType": 5126, "count": 4, "type": "VEC3" },
     { "bufferView": 2, "componentType": 5123, "count": 6, "type": "SCALAR" }
   ],

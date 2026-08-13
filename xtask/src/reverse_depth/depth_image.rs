@@ -3,7 +3,7 @@
 use super::error::逆Z検収エラー;
 
 pub(super) const 近クリップ: f32 = 0.1;
-pub(super) const 遠クリップ: f32 = 2000.0;
+pub(super) const 遠クリップ: f32 = 10000.0;
 
 pub(super) struct 深度画像 {
     深度: Vec<f32>,
