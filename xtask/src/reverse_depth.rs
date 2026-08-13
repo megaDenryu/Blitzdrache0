@@ -4,6 +4,7 @@ mod compare;
 mod depth_image;
 mod error;
 mod plan;
+mod precision_counterexample;
 mod run;
 
 use std::path::{Path, PathBuf};
@@ -48,7 +49,9 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 逆Z検収エラー> 
         実行の別::候補を比較する => {
             run::候補を採る(&実行環境)?;
             由来を書く(&出力先.join("candidate.txt"), &由来, "reverse-z far=2000")?;
-            Ok(compare::対照と候補を比べる(&実行環境)?)
+            let 実景 = compare::対照と候補を比べる(&実行環境)?;
+            let 精度 = precision_counterexample::奥行き精度を反証する()?;
+            Ok(format!("{実景}、{精度}"))
         }
         実行の別::計画を表示する => Ok(plan::計画を表示する()),
     }
