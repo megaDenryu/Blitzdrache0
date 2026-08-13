@@ -4,7 +4,9 @@ use std::path::PathBuf;
 
 mod value_read;
 
-use value_read::{シーンを読む, 数の誤り, 有限値を読む, 正の数を読む, 正の有限値を読む};
+use value_read::{
+    シーンを読む, 数が読めない誤り文を組み立てる, 有限値を読む, 正の数を読む, 正の有限値を読む
+};
 
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct 計測指定 {
@@ -60,7 +62,7 @@ pub(crate) fn 引数を読む(引数一覧: &[String]) -> Result<計測指定, S
             "--asset-root" => 指定.アセットルート = PathBuf::from(値),
             "--scene" => 指定.シーン = シーンを読む(値)?,
             "--frames" => 指定.フレーム数 = 正の数を読む(名前, 値)?,
-            "--preload-radius" => 指定.先読み半径 = 値.parse().map_err(|_| 数の誤り(名前, 値))?,
+            "--preload-radius" => 指定.先読み半径 = 値.parse().map_err(|_| 数が読めない誤り文を組み立てる(名前, 値))?,
             "--ram-limit" => 指定.ram上限 = 正の数を読む(名前, 値)?,
             "--vram-limit" => 指定.vram上限 = 正の数を読む(名前, 値)?,
             "--loader-workers" => 指定.ワーカー本数 = 正の数を読む(名前, 値)?,
