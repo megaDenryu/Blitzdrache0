@@ -9,8 +9,9 @@ use crate::{
     gen_source_assets, hdr_luminance, ibl_step, indirect_cost, indirect_probe, instance_cull, instance_draw, instance_lod, instance_stream,
     large_world_assets, large_world_bench, local_visibility, lod_crack, m10_bench, m11_soak, material_reload_draw, motion_vector,
     multi_material_draw, object_bench, origin_invariance, ow3_dod, ow4_bench, play_fox_tour, point_light_shadow, prop_draw, prop_multi_material_draw,
-    shader_reload_draw, shadow_loss, shadow_probe, sky_draw, sky_lut, sky_state, sky_time, smoke, streaming_bench, temporal_reconstruction,
-    temporal_visual, terrain_visual, texture_compression, type_metrics, usage, verify, vertex_diag, village_draw, watch_assets,
+    reverse_depth, shader_reload_draw, shadow_loss, shadow_probe, sky_draw, sky_lut, sky_state, sky_time, smoke, streaming_bench,
+    temporal_reconstruction, temporal_visual, terrain_visual, texture_compression, type_metrics, usage, verify, vertex_diag, village_draw,
+    watch_assets,
 };
 
 pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
@@ -72,6 +73,7 @@ pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
         Some("temporal-reconstruction") => temporal_reconstruction::実行する(),
         Some("indirect-cost") => indirect_cost::実行する(&引数一覧[1..]),
         Some("depth-prepass-cost") => depth_prepass_cost::実行する(&引数一覧[1..]),
+        Some("reverse-depth") => reverse_depth::実行する(&引数一覧[1..]),
         Some("sky-time") => sky_time::実行する(),
         Some("ow3-dod") => ow3_dod::実行する(),
         Some("ow4-bench") => ow4_bench::実行する(&引数一覧[1..]),

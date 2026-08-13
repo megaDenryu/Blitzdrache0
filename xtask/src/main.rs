@@ -66,6 +66,7 @@ mod release_build;
 mod report_heading;
 mod report_line_key;
 mod report_parse;
+mod reverse_depth;
 mod sample_world_region;
 mod shader_copy;
 mod shader_reload_draw;
