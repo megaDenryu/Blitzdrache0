@@ -18,7 +18,7 @@ use crate::acceptance::{判定の破れ, 検収エラー};
 use crate::asset_generator::生成器エラー;
 
 #[derive(Debug)]
-pub(super) enum 場所巡りの通しの検収エラー {
+pub(crate) enum 場所巡りの通しの検収エラー {
     検収の器が破れた(検収エラー),
     判定が破れた(判定の破れ),
     ソースの生成が失敗した(生成器エラー),

@@ -12,42 +12,42 @@ use std::path::{Path, PathBuf};
 
 use blitz_asset_compiler::{ソースルート, 場所巡りの世界のソースディレクトリ, 生成の出力ルート};
 
+mod parent;
 mod source_fixture;
 #[cfg(test)]
 mod tests;
 
+pub(super) use parent::検収用の親;
+
 use super::super::error::場所巡りの通しの検収エラー;
 use super::file_digest::ディレクトリの全ファイルを畳む;
-
-/// 検収が使い捨てるルートの親。既定のルート(assets/とtarget/fox_tour_assets)とは別の場所へ置く。
-const 検収用の親ディレクトリ: &str = "target/fox_tour_generation_check";
 
 #[repr(transparent)]
 pub(super) struct 検収用のルート(PathBuf);
 
 impl 検収用のルート {
-    pub(super) fn ソースの一度目() -> Self {
-        Self::末端の名前から作る("source_a")
+    pub(super) fn ソースの一度目(親: 検収用の親) -> Self {
+        Self::末端の名前から作る(親, "source_a")
     }
 
-    pub(super) fn ソースの二度目() -> Self {
-        Self::末端の名前から作る("source_b")
+    pub(super) fn ソースの二度目(親: 検収用の親) -> Self {
+        Self::末端の名前から作る(親, "source_b")
     }
 
-    pub(super) fn 実行時形式の一度目() -> Self {
-        Self::末端の名前から作る("runtime_x")
+    pub(super) fn 実行時形式の一度目(親: 検収用の親) -> Self {
+        Self::末端の名前から作る(親, "runtime_x")
     }
 
-    pub(super) fn 実行時形式の二度目() -> Self {
-        Self::末端の名前から作る("runtime_y")
+    pub(super) fn 実行時形式の二度目(親: 検収用の親) -> Self {
+        Self::末端の名前から作る(親, "runtime_y")
     }
 
-    pub(super) fn 増分のソース() -> Self {
-        Self::末端の名前から作る("incremental_source")
+    pub(super) fn 増分のソース(親: 検収用の親) -> Self {
+        Self::末端の名前から作る(親, "incremental_source")
     }
 
-    pub(super) fn 増分の実行時形式() -> Self {
-        Self::末端の名前から作る("incremental_runtime")
+    pub(super) fn 増分の実行時形式(親: 検収用の親) -> Self {
+        Self::末端の名前から作る(親, "incremental_runtime")
     }
 
     /// 増分を無効にするため、走らせる前にルートごと消す。台帳も生成物も残っていない状態から焼き直させる。
@@ -92,7 +92,7 @@ impl 検収用のルート {
         crate::acceptance::実行時アセットルート::パスから生成する(self.0.clone())
     }
 
-    fn 末端の名前から作る(末端の名前: &str) -> Self {
-        Self(Path::new(検収用の親ディレクトリ).join(末端の名前))
+    fn 末端の名前から作る(親: 検収用の親, 末端の名前: &str) -> Self {
+        Self(親.ディレクトリ().join(末端の名前))
     }
 }

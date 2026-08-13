@@ -6,9 +6,9 @@
 //! 終了まで進む条件は途中でイベントループを閉じるため絵を残さない。そちらが確かめるのは終了の決定へ至ることである。
 //! 絵の合否は親エージェントの目視が決める。ここが担うのは、決定性と進行の値を機械で確かめることである。
 
-mod error;
+pub(crate) mod error;
 mod judgment;
-mod map_generation_check;
+pub(crate) mod map_generation_check;
 mod run;
 mod shot_plan;
 

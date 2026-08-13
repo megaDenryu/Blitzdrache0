@@ -61,7 +61,9 @@ fn main() {
 fn 実行する() -> Result<(), String> {
     let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
     match generation_arguments::引数一覧から書き出す対象を読む(&引数一覧)? {
-        書き出す対象::場所巡りの世界 { 種, ソースルート } => fox_tour_world::書き出す(&ソースルート, 種).map(|_| ()),
+        書き出す対象::場所巡りの世界 {
+            種, ソースルート, 広がり
+        } => fox_tour_world::書き出す(&ソースルート, 種, 広がり).map(|_| ()),
         書き出す対象::検証用の世界一式 => verification_worlds::一式を書き出す(),
     }
 }

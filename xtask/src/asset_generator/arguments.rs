@@ -11,6 +11,7 @@
 //! 指定の側は最後まで役割の型で運び、写しはこの器の中へ閉じる。値ごとの綴りは`spelling`が、
 //! 積み方と値の検査は`word_list`が持つ。
 
+mod source_assets;
 mod spelling;
 mod word_list;
 
@@ -20,13 +21,10 @@ use std::process::Command;
 use super::error::生成器エラー;
 use super::planting_count::同居植生の個体数;
 use super::specification::生成の指定;
-use spelling::{方針の綴り, 種の綴り};
+use source_assets::ソース生成の引数を足す;
+use spelling::方針の綴り;
 use word_list::語の並び;
 
-/// 生成器へ種を渡す選択肢の綴り。
-const 種の選択肢の綴り: &str = "--game-map-seed";
-/// 生成器へソースルートを渡す選択肢の綴り。
-const ソースルートの選択肢の綴り: &str = "--source-root";
 /// 生成器へテクスチャ格納方針を渡す選択肢の綴り。この綴りの直後の1語が方針の名前である。
 const テクスチャ格納方針の選択肢の綴り: &str = "--texture-storage-policy";
 
@@ -59,12 +57,9 @@ impl 完成した生成引数 {
             生成の指定::ソースアセットを生成する {
                 場所巡りの世界の種,
                 ソースルート,
+                世界の広がり,
             } => {
-                並び.値を足す(Some(種の選択肢の綴り), "場所巡りの世界の種", 場所巡りの世界の種.map(種の綴り))?;
-                if let Some(ルート) = ソースルート {
-                    並び.語を足す(ソースルートの選択肢の綴り);
-                    並び.パスを足す(ルート.プロセスの引数へ渡すディレクトリ());
-                }
+                ソース生成の引数を足す(&mut 並び, *場所巡りの世界の種, *ソースルート, *世界の広がり)?;
             }
             生成の指定::入力するglTFの契約を検査する {
                 検査するファイル一覧

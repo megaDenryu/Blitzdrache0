@@ -17,6 +17,7 @@ mod height_grid_file;
 mod runtime_output_root;
 mod source_root;
 mod world_directory_name;
+mod world_extent;
 mod world_source_directory;
 
 pub use chunk_height_grid::{チャンクの高さ格子, チャンクの高さ格子ソース};
@@ -26,3 +27,4 @@ pub use height_grid_file::高さ格子のファイル;
 pub use runtime_output_root::実行時形式の出力ルート;
 pub use source_root::{ソースルート, チャンク目録ソースの置き場};
 pub use world_directory_name::世界のディレクトリ名;
+pub use world_extent::{世界の広がり, 世界の広がりエラー};

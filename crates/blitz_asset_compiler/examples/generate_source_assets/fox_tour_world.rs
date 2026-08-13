@@ -12,12 +12,14 @@ mod marker_gltf_json;
 mod source_writing;
 mod world_definition;
 
-use blitz_asset_compiler::{ソースルート, マップ生成の乱数の種, 焼き直しの勘定};
+use blitz_asset_compiler::{ソースルート, マップ生成の乱数の種, 世界の広がり, 焼き直しの勘定};
 
 use source_writing::場所巡りの世界のソース書き出し;
 
-pub(crate) fn 書き出す(ソースルート: &ソースルート, 種: マップ生成の乱数の種) -> Result<焼き直しの勘定, String> {
-    let 書き出し = 場所巡りの世界のソース書き出し::始める(ソースルート, 種)?;
+pub(crate) fn 書き出す(
+    ソースルート: &ソースルート, 種: マップ生成の乱数の種, 広がり: 世界の広がり
+) -> Result<焼き直しの勘定, String> {
+    let 書き出し = 場所巡りの世界のソース書き出し::始める(ソースルート, 種, 広がり)?;
     let 置き場の綴り = 書き出し.表示の綴り().to_string();
     let 勘定 = 書き出し.ソース一式を書き出して台帳を確定する()?;
     println!(
