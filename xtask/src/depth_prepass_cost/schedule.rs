@@ -13,7 +13,7 @@ mod schedule_tests;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum 方式 {
     積まない,
-    色は同値以下,
+    色は近いか同値,
     色は等値,
 }
 
@@ -21,7 +21,7 @@ impl 方式 {
     pub(super) const fn 起動指定の語(self) -> &'static str {
         match self {
             Self::積まない => "none",
-            Self::色は同値以下 => "less-equal",
+            Self::色は近いか同値 => "near-or-equal",
             Self::色は等値 => "equal",
         }
     }
@@ -29,7 +29,7 @@ impl 方式 {
     pub(super) const fn 深度プリパスを積むか(self) -> bool {
         match self {
             Self::積まない => false,
-            Self::色は同値以下 | Self::色は等値 => true,
+            Self::色は近いか同値 | Self::色は等値 => true,
         }
     }
 }
@@ -56,7 +56,7 @@ pub(super) const 三条件: [実行条件; 3] = [
     },
     実行条件 {
         名前: "B",
-        方式: 方式::色は同値以下,
+        方式: 方式::色は近いか同値,
     },
     実行条件 {
         名前: "C",
