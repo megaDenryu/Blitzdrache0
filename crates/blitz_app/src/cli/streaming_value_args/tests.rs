@@ -23,22 +23,26 @@ fn 読込設定の三値を別々に変えられる() {
 
 #[test]
 fn 固定経路の端点と速さを変えられる() {
-    let mut 設定 = 固定経路起動設定 {
-        始点xメートル: -150.0,
-        終点xメートル: 250.0,
-        一フレーム移動量メートル: 5.0,
-    };
+    let mut 設定 = 固定経路起動設定::既定値();
     for (名前, 値) in [
-        ("--streaming-route-start-x", "-3000"),
-        ("--streaming-route-end-x", "3000"),
+        ("--streaming-route-start-east-meters", "-3000"),
+        ("--streaming-route-start-south-meters", "-4000"),
+        ("--streaming-route-end-east-meters", "3000"),
+        ("--streaming-route-end-south-meters", "4000"),
         ("--streaming-route-meters-per-frame", "20"),
     ] {
         let 引数 = 語(値);
         assert!(固定経路引数を反映する(&mut 設定, &mut 引数.iter(), 名前).is_ok());
     }
     assert_eq!(
-        (設定.始点xメートル, 設定.終点xメートル, 設定.一フレーム移動量メートル),
-        (-3000.0, 3000.0, 20.0)
+        (
+            設定.始点東メートル,
+            設定.始点南メートル,
+            設定.終点東メートル,
+            設定.終点南メートル,
+            設定.一フレーム移動量メートル
+        ),
+        (-3000.0, -4000.0, 3000.0, 4000.0, 20.0)
     );
 }
 
@@ -46,10 +50,6 @@ fn 固定経路の端点と速さを変えられる() {
 fn 零の容量と速さを拒む() {
     let 引数 = 語("0");
     assert!(読込引数を反映する(チャンク読込設定::既定値(), &mut 引数.iter(), "--streaming-request-capacity").is_err());
-    let mut 経路 = 固定経路起動設定 {
-        始点xメートル: -1.0,
-        終点xメートル: 1.0,
-        一フレーム移動量メートル: 1.0,
-    };
+    let mut 経路 = 固定経路起動設定::既定値();
     assert!(固定経路引数を反映する(&mut 経路, &mut 語("0").iter(), "--streaming-route-meters-per-frame").is_err());
 }

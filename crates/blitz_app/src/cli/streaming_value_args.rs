@@ -20,8 +20,10 @@ pub(super) fn 固定経路引数を反映する(
         .parse::<f64>()
         .map_err(|誤り| 起動引数エラー::固定経路不正(format!("{引数名}: {誤り}")))?;
     match 引数名 {
-        "--streaming-route-start-x" => 設定.始点xメートル = メートル,
-        "--streaming-route-end-x" => 設定.終点xメートル = メートル,
+        "--streaming-route-start-east-meters" => 設定.始点東メートル = メートル,
+        "--streaming-route-start-south-meters" => 設定.始点南メートル = メートル,
+        "--streaming-route-end-east-meters" => 設定.終点東メートル = メートル,
+        "--streaming-route-end-south-meters" => 設定.終点南メートル = メートル,
         "--streaming-route-meters-per-frame" => 設定.一フレーム移動量メートル = メートル,
         _ => return Err(起動引数エラー::固定経路不正(format!("知らない引数である: {引数名}"))),
     }

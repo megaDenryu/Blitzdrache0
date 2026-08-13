@@ -60,7 +60,11 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--streaming-preload-radius" => {
             設定.ストリーミング.先読み半径 = value_args::先読み半径引数を処理する(残り)?;
         }
-        "--streaming-route-start-x" | "--streaming-route-end-x" | "--streaming-route-meters-per-frame" => {
+        "--streaming-route-start-east-meters"
+        | "--streaming-route-start-south-meters"
+        | "--streaming-route-end-east-meters"
+        | "--streaming-route-end-south-meters"
+        | "--streaming-route-meters-per-frame" => {
             streaming_value_args::固定経路引数を反映する(&mut 設定.ストリーミング.固定経路, 残り, 引数値)?;
         }
         "--streaming-loader-workers" | "--streaming-request-capacity" | "--streaming-completion-capacity" => {
