@@ -15,7 +15,7 @@ mod bake_options;
 mod carried_entry;
 mod one_target;
 
-use blitz_asset_compiler::{焼き直しの勘定, 生成台帳, 生成台帳の見出し, 種の由来};
+use blitz_asset_compiler::{焼き直しの勘定, 生成台帳, 生成台帳の見出し};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 use super::compilation::実行時アセットのコンパイル;
@@ -44,7 +44,9 @@ impl 実行時アセットのコンパイル {
         &mut self, 対象一覧: &[コンパイル対象]
     ) -> Result<焼き上がりの一式, String> {
         let 綴り = self.焼き方の指定を作る().綴りを作る();
-        let 見出し = 生成台帳の見出し::実行中の生成器から作る(種の由来::種を持たない, &綴り).map_err(|誤り| 誤り.to_string())?;
+        let 種の由来 = self.世界.種の由来を読む(&self.ソースルート).map_err(|誤り| 誤り.to_string())?;
+        let 見出し = 生成台帳の見出し::実行中の生成器から作る(種の由来, &綴り).map_err(|誤り| 誤り.to_string())?;
+        self.実行時カタログ.世界の由来を記録する(見出し.世界の由来());
         let 仕上がり一覧 = self.対象一覧を並列に仕上げる(対象一覧, 見出し)?;
         let mut 今回の台帳 = 生成台帳::見出しを与えて空を作る(見出し);
         let mut 判定一覧 = Vec::with_capacity(仕上がり一覧.len());
@@ -68,7 +70,11 @@ impl 実行時アセットのコンパイル {
         対象一覧: &[コンパイル対象],
         見出し: 生成台帳の見出し,
     ) -> Result<Vec<one_target::対象1件の仕上がり>, String> {
-        let 前回の台帳 = 生成台帳::出力ルートから読み込む(self.出力ルート.台帳の置き場(), 見出し);
+        let 読み込み = 生成台帳::出力ルートから読み込む(self.出力ルート.台帳の置き場(), 見出し);
+        if 読み込み.種または生成器の版が変わったか() {
+            self.出力ルート.生成物一式を削除する().map_err(|誤り| 誤り.to_string())?;
+        }
+        let 前回の台帳 = 読み込み.台帳を受け取る();
         let 前回のカタログ = self.出力ルート.前回の実行時カタログを読む();
         let コンパイル係 = self.ソースアセットのコンパイル係を作る();
         let 仕上げ係 = 対象1件の仕上げ係::生成する(&コンパイル係, &前回の台帳, 前回のカタログ.as_ref());

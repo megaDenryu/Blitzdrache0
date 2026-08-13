@@ -9,6 +9,8 @@
 //! 参照: `_doc/設計/大規模世界の生成と遠景.md`
 
 mod chunk_height_grid;
+#[cfg(test)]
+mod cleanup_tests;
 mod error;
 mod fox_tour_source_directory;
 mod height_grid_file;

@@ -15,6 +15,7 @@ pub(super) mod fixed_placement_declaration;
 pub(super) mod fox_tour_declaration;
 mod night_lights_declaration;
 pub(super) mod prop_group_declaration;
+mod provenance;
 pub(super) mod stone_hut_declaration;
 mod vegetation_declaration;
 mod vertex_diagnostic_declaration;

@@ -15,6 +15,10 @@ impl マップ生成の乱数の種 {
     pub const fn 値(self) -> u32 {
         self.0
     }
+
+    pub const fn 世界の乱数の種へ写す(self) -> blitz_engine::世界の乱数の種 {
+        blitz_engine::世界の乱数の種::生成する(self.0)
+    }
 }
 
 /// その世界が乱数の種から焼かれたものかどうか。種を持たない世界(手で書いた検証用の世界と、

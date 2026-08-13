@@ -12,6 +12,8 @@ use super::error::アセット配置エラー;
 use super::world_directory_name::世界のディレクトリ名;
 use crate::generation_ledger::生成の出力ルート;
 
+mod cleanup;
+
 /// どの世界のソースディレクトリにも同じ名前で置く、チャンク目録ソースのファイル名。
 const チャンク目録ソースのファイル名: &str = "chunk_directory.txt";
 

@@ -20,6 +20,10 @@ impl 生成器の版 {
         self.0
     }
 
+    pub const fn 世界の生成器の版へ写す(self) -> blitz_engine::世界の生成器の版 {
+        blitz_engine::世界の生成器の版::生成する(self.0)
+    }
+
     pub(super) fn 十進の綴りから復元する(綴り: &str) -> Result<Self, 生成台帳エラー> {
         綴り
             .parse::<u32>()

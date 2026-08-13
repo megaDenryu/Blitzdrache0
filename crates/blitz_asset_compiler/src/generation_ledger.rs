@@ -8,6 +8,8 @@
 //! 増分が効いたかの数え上げは`rebake_tally`、材料が複数あるときの畳み方は`dependency_digest`にある。
 //! 参照: `_doc/計画/ユビキタス言語.md`、`_doc/設計/大規模世界の生成と遠景.md`
 
+#[cfg(test)]
+mod cleanup_tests;
 mod content_hash;
 mod dependency_digest;
 #[cfg(test)]
@@ -23,13 +25,16 @@ mod ledger_text;
 mod ledger_text_tests;
 mod map_seed;
 mod output_root;
+mod read_result;
 mod rebake_tally;
 
 pub use content_hash::内容ハッシュ;
 pub use dependency_digest::今回の宣言と依存一式の内容ハッシュを求める;
 pub use error::生成台帳エラー;
+pub use generator_version::{現在の生成器の版, 生成器の版};
 pub use heading::生成台帳の見出し;
 pub use ledger::{チャンクの焼き直し判定, 生成台帳};
 pub use map_seed::{マップ生成の乱数の種, 種の由来};
 pub use output_root::生成の出力ルート;
+pub use read_result::生成台帳の読み込み結果;
 pub use rebake_tally::焼き直しの勘定;

@@ -11,6 +11,8 @@
 
 use std::path::{Path, PathBuf};
 
+mod cleanup;
+
 use super::error::生成台帳エラー;
 use super::ledger_text::生成台帳の本文;
 

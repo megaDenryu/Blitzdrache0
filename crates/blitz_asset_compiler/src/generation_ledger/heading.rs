@@ -14,6 +14,7 @@ use super::content_hash::内容ハッシュ;
 use super::error::生成台帳エラー;
 use super::generator_version::{現在の生成器の版, 生成器の版};
 use super::map_seed::種の由来;
+use blitz_engine::世界の由来;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct 生成台帳の見出し {
@@ -53,6 +54,20 @@ impl 生成台帳の見出し {
 
     pub(super) fn 種の由来(self) -> 種の由来 {
         self.種の由来
+    }
+
+    pub(super) fn 種または生成器の版が同じか(self, 別の見出し: Self) -> bool {
+        self.種の由来 == 別の見出し.種の由来 && self.生成器の版 == 別の見出し.生成器の版
+    }
+
+    pub fn 世界の由来(self) -> 世界の由来 {
+        match self.種の由来 {
+            種の由来::種から焼いた(種) => 世界の由来::種から生成した {
+                乱数の種: 種.世界の乱数の種へ写す(),
+                生成器の版: self.生成器の版.世界の生成器の版へ写す(),
+            },
+            種の由来::種を持たない => 世界の由来::生成による由来を持たない,
+        }
     }
 
     pub(super) fn 生成器の版(self) -> 生成器の版 {

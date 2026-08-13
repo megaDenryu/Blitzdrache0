@@ -6,12 +6,14 @@
 //!
 //! 置き場のパスは包んだ生成の出力ルートが1回だけ所有する。台帳の置き場として渡すときも借用で貸し、複製を作らない。
 
+use blitz_engine::アセットID;
 use std::path::PathBuf;
-
-use blitz_engine::{アセットID, カタログ, 実行時形式からカタログを読む};
 
 use super::error::アセット配置エラー;
 use crate::generation_ledger::生成の出力ルート;
+
+mod catalog_read;
+mod cleanup;
 
 const 実行時カタログのファイル名: &str = "catalog.blitzcatalog";
 const 実行時目録のファイル名: &str = "chunk_directory.blitzchunks";
@@ -21,6 +23,10 @@ const アセットの拡張子つきの綴り: &str = ".blitzasset";
 pub struct 実行時形式の出力ルート(生成の出力ルート);
 
 impl 実行時形式の出力ルート {
+    pub fn 実行時カタログを指すパスか(パス: &std::path::Path) -> bool {
+        パス.file_name().is_some_and(|名前| 名前 == 実行時カタログのファイル名)
+    }
+
     pub fn 作る(ディレクトリ: PathBuf) -> Result<Self, アセット配置エラー> {
         let 置き場 = Self::ディレクトリを作らずに指す(ディレクトリ);
         置き場.0.ディレクトリを作る()?;
@@ -46,11 +52,6 @@ impl 実行時形式の出力ルート {
 
     /// 前回の実行時カタログ。読めなければ値なしを返す。初回の生成にはカタログが無く、
     /// 壊れたカタログを読み違えるよりも全部焼き直すほうが安全である。
-    pub fn 前回の実行時カタログを読む(&self) -> Option<カタログ> {
-        let バイト列 = std::fs::read(self.0.直下のファイルのパス(実行時カタログのファイル名)).ok()?;
-        実行時形式からカタログを読む(&バイト列).ok()
-    }
-
     pub fn 実行時カタログを書き出す(&self, バイト列: &[u8]) -> Result<(), アセット配置エラー> {
         let パス = self.直下へ書き込む(実行時カタログのファイル名, バイト列)?;
         println!("[compile_assets] {}: {}バイト", パス.display(), バイト列.len());
