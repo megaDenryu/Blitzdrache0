@@ -32,28 +32,6 @@ fn 広げる(結果: &mut [bool], 幅: usize, 高さ: usize, x: usize, y: usize)
     }
 }
 
-pub(super) fn 先読み縁の空隙を数える(対照: &検収画像, 候補: &検収画像) -> usize {
-    let mut 件数 = 0;
-    for y in 0..候補.高さ {
-        for x in 0..候補.幅 {
-            let 添字 = y * 候補.幅 + x;
-            if 候補.深度[添字] != 0.0 {
-                continue;
-            }
-            let mut 近傍あり = false;
-            let mut 遠景あり = false;
-            for 隣 in 隣接位置(候補.幅, 候補.高さ, x, y) {
-                近傍あり |= 対照.深度[隣] > 0.0;
-                遠景あり |= 対照.深度[隣] == 0.0 && 候補.深度[隣] > 0.0;
-            }
-            if 近傍あり && 遠景あり {
-                件数 += 1;
-            }
-        }
-    }
-    件数
-}
-
 fn 隣接位置(幅: usize, 高さ: usize, x: usize, y: usize) -> impl Iterator<Item = usize> {
     let 左 = x.saturating_sub(1);
     let 右 = (x + 1).min(幅 - 1);

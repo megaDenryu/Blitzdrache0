@@ -18,8 +18,11 @@ pub(super) fn 実行環境を作る(出力先: PathBuf) -> Result<描画検収�
     )?)
 }
 
-pub(super) fn 固定構図を二回採る(環境: &描画検収の実行環境, 名前: &str) -> Result<String, 遠景構図の検収エラー> {
-    let 指定 = 起動指定();
+pub(super) fn 固定構図を二回採る(
+    環境: &描画検収の実行環境, 条件: &super::plan::採取条件
+) -> Result<String, 遠景構図の検収エラー> {
+    let 名前 = 条件.名前;
+    let 指定 = 起動指定(条件);
     let 色名 = 実行名(&format!("{名前}_color"))?;
     let 色の再撮影名 = 実行名(&format!("{名前}_color_repeat"))?;
     let 色 = 環境.描いて読み戻す(色名.clone(), &指定)?;
@@ -58,8 +61,8 @@ pub(super) fn 固定構図を二回採る(環境: &描画検収の実行環境, 
     ))
 }
 
-fn 起動指定() -> アプリの起動指定 {
-    アプリの起動指定::シーンと枚数を決める(crate::fox_tour_launch::シーン名, 枚数)
+fn 起動指定(条件: &super::plan::採取条件) -> アプリの起動指定 {
+    let mut 指定 = アプリの起動指定::シーンと枚数を決める(crate::fox_tour_launch::シーン名, 枚数)
         .選択肢を足す("--streaming")
         .値を持つ選択肢を足す("--streaming-preload-radius", "8")
         .値を持つ選択肢を足す("--streaming-ram-limit", "536870912")
@@ -71,7 +74,14 @@ fn 起動指定() -> アプリの起動指定 {
         .値を持つ選択肢を足す("--time-of-day", "43200")
         .選択肢を足す("--no-taa")
         .選択肢を足す("--no-auto-exposure")
-        .値を持つ選択肢を足す("--depth-prepass", "equal")
+        .値を持つ選択肢を足す("--depth-prepass", "equal");
+    if 条件.ssaoを使わない {
+        指定 = 指定.選択肢を足す("--no-ssao");
+    }
+    if 条件.遠景影を使わない {
+        指定 = 指定.選択肢を足す("--no-distant-shadow");
+    }
+    指定
 }
 
 fn 実行名(名前: &str) -> Result<検収の実行名, 遠景構図の検収エラー> {

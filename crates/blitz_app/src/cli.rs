@@ -6,6 +6,8 @@ mod adjustable_amount_tests;
 #[cfg(test)]
 mod cli_tests;
 #[cfg(test)]
+mod distant_shadow_flag_tests;
+#[cfg(test)]
 mod frame_dump_args_tests;
 #[cfg(test)]
 mod game_selection_tests;

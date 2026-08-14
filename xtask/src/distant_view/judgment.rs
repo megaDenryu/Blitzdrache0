@@ -1,6 +1,9 @@
 //! 工程Dのreference/candidateを、近傍不変・遠景の許可域・深度・空隙の契約で比較する。
 
 mod contour;
+mod gap;
+#[cfg(test)]
+mod gap_tests;
 mod image_pair;
 
 use std::path::Path;
@@ -35,7 +38,7 @@ pub(super) fn 判定する(置き場: &Path) -> Result<String, String> {
         }
     }
     let 非有限 = 対照.非有限深度数() + 候補.非有限深度数();
-    let 空隙 = contour::先読み縁の空隙を数える(&対照, &候補);
+    let 空隙 = gap::閉じた先読み縁の空隙画素を数える(&対照, &候補);
     if 近傍差 != 0 || 許可外差 != 0 || 遠景勝利 != 0 || 非有限 != 0 || 空隙 != 0 || 背景から遠景 == 0 {
         return Err(format!(
             "近傍差={近傍差} 許可外差={許可外差} 遠景勝利={遠景勝利} 非有限={非有限} 空隙={空隙} 背景→遠景={背景から遠景}"

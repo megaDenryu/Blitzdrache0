@@ -3,6 +3,8 @@
 mod error;
 mod judgment;
 mod plan;
+#[cfg(test)]
+mod plan_tests;
 mod run;
 
 use std::path::{Path, PathBuf};
@@ -37,13 +39,9 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 遠景構図の検収
     let 由来 = crate::release_build::計測用に構築する("distant-view")?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
     let 環境 = run::実行環境を作る(出力先.clone())?;
-    let 名前 = match 別 {
-        実行の別::対照を採る => "reference",
-        実行の別::候補を採る => "candidate",
-        実行の別::計画を表示する => return Ok(plan::計画を表示する()),
-        実行の別::判定する => return judgment::判定する(&出力先).map_err(遠景構図の検収エラー::判定が失敗した),
-    };
-    let 結果 = run::固定構図を二回採る(&環境, 名前)?;
+    let 条件 = 別.採取条件().ok_or_else(|| 遠景構図の検収エラー::引数が不正(引数一覧.join(" ")))?;
+    let 名前 = 条件.名前;
+    let 結果 = run::固定構図を二回採る(&環境, &条件)?;
     由来を書く(&出力先.join(format!("{名前}.txt")), &由来, &結果)?;
     Ok(format!("{結果}、由来を{}へ保存した", 出力先.display()))
 }

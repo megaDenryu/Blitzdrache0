@@ -82,7 +82,7 @@ impl アプリ {
                 影の視距離: 起動設定.シャドウ計測.影の視距離,
             }),
             プリミティブ描画項目台帳: super::primitive_draw_item_registry::プリミティブ描画項目台帳::default(),
-            永続束: super::persistent_bundles::永続束の状態::default(),
+            永続束: super::persistent_bundles::永続束の状態::生成する(起動設定.遠景影キャスター有効),
             可視個体の選別の計測: 起動設定
                 .インスタンス区間報告
                 .then(|| super::section_timing::区間計測::生成する(起動設定.モード)),

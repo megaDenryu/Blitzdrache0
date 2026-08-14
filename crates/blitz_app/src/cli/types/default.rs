@@ -34,6 +34,7 @@ impl 起動設定 {
             インスタンス段選択有効: true,
             インスタンス影キャスター有効: true,
             影キャスター全体有効: true,
+            遠景影キャスター有効: true,
             個体詳細段探査刻み: None,
             開発ui初期有効: false,
             画素診断: blitz_render::cascade::画素診断::出さない,

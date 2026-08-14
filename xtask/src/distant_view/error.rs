@@ -28,10 +28,7 @@ impl From<crate::acceptance::検収エラー> for 遠景構図の検収エラー
 impl std::fmt::Display for 遠景構図の検収エラー {
     fn fmt(&self, 書き手: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::引数が不正(引数) => write!(
-                書き手,
-                "引数は--capture-reference、--capture-candidate、--print-plan、--judgeのいずれか1つである: {引数}"
-            ),
+            Self::引数が不正(引数) => write!(書き手, "distant-viewの採取・診断・計画・判定の引数を1つだけ指定する必要がある: {引数}"),
             Self::構築が失敗した(理由) => write!(書き手, "{理由}"),
             Self::描画検収が失敗した(理由) => write!(書き手, "{理由}"),
             Self::由来を書けなかった { パス, 誤り } => write!(書き手, "{}へ由来を書けなかった: {誤り}", パス.display()),

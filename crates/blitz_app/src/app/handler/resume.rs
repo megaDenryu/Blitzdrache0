@@ -72,6 +72,7 @@ fn 格納する(アプリ: &mut アプリ, event_loop: &ActiveEventLoop, 一式:
         Some((シーン, 入力)) => (Some(シーン), Some(入力)),
         None => (None, None),
     };
+    let 遠景の影方針 = アプリ.永続束.遠景の影方針();
     if let Err(誤り) = crate::app::persistent_bundles::登録する(
         &mut レンダラー,
         &mut アプリ.可視判定,
@@ -79,6 +80,7 @@ fn 格納する(アプリ: &mut アプリ, event_loop: &ActiveEventLoop, 一式:
         登録一式,
         遠景入力,
         &mut アプリ.永続束.遠景をレンダラーへ登録済み,
+        遠景の影方針,
     ) {
         アプリ.起動時エラー = Some(誤り);
         event_loop.exit();

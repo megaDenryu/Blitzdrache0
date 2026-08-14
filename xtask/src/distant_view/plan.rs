@@ -13,14 +13,44 @@ const 丸め許容メートル: f64 = 0.000_002;
 pub(super) enum 実行の別 {
     対照を採る,
     候補を採る,
+    Ssaoなし対照を採る,
+    Ssaoなし候補を採る,
+    遠景影なし候補を採る,
     計画を表示する,
     判定する,
+}
+
+pub(super) struct 採取条件 {
+    pub(super) 名前: &'static str,
+    pub(super) ssaoを使わない: bool,
+    pub(super) 遠景影を使わない: bool,
+}
+
+impl 実行の別 {
+    pub(super) fn 採取条件(self) -> Option<採取条件> {
+        let (名前, ssaoを使わない, 遠景影を使わない) = match self {
+            Self::対照を採る => ("reference", false, false),
+            Self::候補を採る => ("candidate", false, false),
+            Self::Ssaoなし対照を採る => ("reference_no_ssao", true, false),
+            Self::Ssaoなし候補を採る => ("candidate_no_ssao", true, false),
+            Self::遠景影なし候補を採る => ("candidate_no_distant_shadow", false, true),
+            Self::計画を表示する | Self::判定する => return None,
+        };
+        Some(採取条件 {
+            名前,
+            ssaoを使わない,
+            遠景影を使わない,
+        })
+    }
 }
 
 pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<実行の別, 遠景構図の検収エラー> {
     match 引数一覧 {
         [引数] if 引数 == "--capture-reference" => Ok(実行の別::対照を採る),
         [引数] if 引数 == "--capture-candidate" => Ok(実行の別::候補を採る),
+        [引数] if 引数 == "--capture-reference-no-ssao" => Ok(実行の別::Ssaoなし対照を採る),
+        [引数] if 引数 == "--capture-candidate-no-ssao" => Ok(実行の別::Ssaoなし候補を採る),
+        [引数] if 引数 == "--capture-candidate-no-distant-shadow" => Ok(実行の別::遠景影なし候補を採る),
         [引数] if 引数 == "--print-plan" => Ok(実行の別::計画を表示する),
         [引数] if 引数 == "--judge" => Ok(実行の別::判定する),
         _ => Err(遠景構図の検収エラー::引数が不正(引数一覧.join(" "))),
@@ -49,42 +79,4 @@ fn 天頂成分を読む(本文: &str) -> Result<f64, String> {
         .ok_or_else(|| format!("大域位置に天頂成分が無い: {本文}"))?
         .parse::<f64>()
         .map_err(|誤り| format!("大域位置の天頂成分を読めない: {誤り}"))
-}
-
-#[cfg(test)]
-#[allow(clippy::unwrap_used)]
-mod tests {
-    use super::{実行の別, 引数を読む, 構図を検査する};
-    use crate::acceptance::{検収の実行名, 終了時報告};
-
-    #[test]
-    fn 三つの実行の別を一つずつ受け付ける() {
-        for (綴り, 期待) in [
-            ("--capture-reference", 実行の別::対照を採る),
-            ("--capture-candidate", 実行の別::候補を採る),
-            ("--print-plan", 実行の別::計画を表示する),
-            ("--judge", 実行の別::判定する),
-        ] {
-            assert_eq!(引数を読む(&[綴り.to_string()]).unwrap(), 期待);
-        }
-    }
-
-    #[test]
-    fn 複数の実行指定を拒む() {
-        let 引数 = ["--capture-reference".to_string(), "--capture-candidate".to_string()];
-        assert!(引数を読む(&引数).is_err());
-    }
-
-    #[test]
-    fn 報告したカメラ高が地表高より一メートル半高いことを課す() {
-        let 正常 = 報告("3.750000");
-        let 低すぎる = 報告("3.749000");
-        assert!(構図を検査する(&正常).is_ok());
-        assert!(構図を検査する(&低すぎる).is_err());
-    }
-
-    fn 報告(カメラ高: &str) -> 終了時報告 {
-        let 本文 = format!("  プレイヤーの大域位置: 東0.000000 天頂2.250000 南0.000000\n  カメラの大域位置: 東0.000000 天頂{カメラ高} 南9.000000\n");
-        終了時報告::取り込む(&検収の実行名::生成する("view_contract").unwrap(), 本文, String::new())
-    }
 }
