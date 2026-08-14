@@ -1,8 +1,6 @@
 //! 開発ツールの唯一の入口。`cargo xtask <コマンド>` で呼ぶ。
 //! 参照: CLAUDE.md「ツールとドキュメントの配置」
 
-use std::process::ExitCode;
-
 mod acceptance;
 mod asset_generator;
 mod atmosphere_lut;
@@ -23,6 +21,7 @@ mod depth_prepass_cost;
 mod derived_environment;
 mod dispatch;
 mod distant_environment;
+mod distant_view;
 mod fetch_assets;
 mod file_scan;
 mod fox_tour_launch;
@@ -94,7 +93,7 @@ mod visual_sample_world;
 mod watch_assets;
 mod world_setup;
 
-fn main() -> ExitCode {
+fn main() -> std::process::ExitCode {
     let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
     dispatch::割り当てる(&引数一覧)
 }
