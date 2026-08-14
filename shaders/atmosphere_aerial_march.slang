@@ -1,4 +1,4 @@
-// 空中遠近ボリュームの1ボクセルぶんの積分。カメラから与えられた区間数ぶんだけ視線を刻み、散乱と通過率を積む。
+// 空中遠近ボリュームの連続する区間の積分。呼び出し元が保持する散乱と通過率へ続きを積む。
 // 1区間ぶんの積み方はスカイビューと同じ`atmosphere_skyview_step`を使う。
 // 区間の刻みを全ボクセルで同じ格子に固定し、ボクセルごとに区間数だけを変えるため、遠いスライスの積分が
 // 近いスライスの積分の厳密な延長になる。経路を惑星の地表でも大気上端でも切らない。地表より下を切らなくてよいのは
@@ -24,32 +24,30 @@ struct AerialPathResult
     float3 throughput;
 };
 
-AerialPathResult marchAerialPath(
+void marchAerialSegments(
+    inout AerialPathResult result,
     AtmosphereMedium medium,
     Sampler2D transmittanceLut,
     Sampler2D multiScatterLut,
     SkyViewGeometry geometry,
+    float2 phase,
+    uint firstSegment,
     uint segmentCount,
     float segmentLength)
 {
-    AerialPathResult result;
-    result.scattering = float3(0.0, 0.0, 0.0);
-    result.throughput = float3(1.0, 1.0, 1.0);
     if (segmentCount == 0 || segmentLength <= 0.0)
     {
-        return result;
+        return;
     }
 
-    float2 phase = skyViewPhasePair(medium, geometry);
     for (uint step = 0; step < segmentCount; ++step)
     {
-        float sampleDistance = (float(step) + aerialStepSamplePosition) * segmentLength;
+        float sampleDistance = (float(firstSegment + step) + aerialStepSamplePosition) * segmentLength;
         float3 position = geometry.observerPosition + geometry.viewDirection * sampleDistance;
         accumulateViewSegment(
             result.scattering, result.throughput, medium, transmittanceLut, multiScatterLut, position,
             geometry.sunDirection, segmentLength, phase);
     }
-    return result;
 }
 
 // 3成分の通過率を1つの代表値へ丸める。等重みの平均を採るのは、色に偏らずに面の色がどれだけ残るかを表すためである。

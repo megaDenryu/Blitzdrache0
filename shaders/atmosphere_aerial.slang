@@ -28,14 +28,14 @@ struct AerialCondition
 static const uint threadsPerSide = 4;
 
 [shader("compute")]
-[numthreads(threadsPerSide, threadsPerSide, threadsPerSide)]
+[numthreads(threadsPerSide, threadsPerSide, 1)]
 void computeMain(uint3 threadId : SV_DispatchThreadID)
 {
     uint width;
     uint height;
     uint depth;
     aerialVolume.GetDimensions(width, height, depth);
-    if (threadId.x >= width || threadId.y >= height || threadId.z >= depth)
+    if (threadId.x >= width || threadId.y >= height)
     {
         return;
     }
@@ -47,15 +47,22 @@ void computeMain(uint3 threadId : SV_DispatchThreadID)
 
     SkyViewGeometry geometry;
     geometry.observerPosition = float3(0.0, aerialCondition.baseDirectionAndObserverRadius.w, 0.0);
-    geometry.viewDirection = aerialViewDirection(rays, aerialScreenPositionOfVoxel(threadId.xy, width));
+    geometry.viewDirection = aerialViewDirection(rays, aerialScreenPositionOfVoxel(threadId.xy, uint2(width, height)));
     geometry.sunDirection = aerialCondition.sunDirection.xyz;
 
-    // 1区間の長さは解像度と最遠距離だけで決まる。奥行きの添字がそのまま積む区間の数の係数になる。
+    // XYごとに1スレッドが経路を一度だけ前進し、各スライスへその時点の累積値を書く。
     float intervalCount = float(depth - 1) * float(aerialSegmentsPerSlice);
     float segmentLength = aerialCondition.horizontalDeltaAndFarDistance.w / intervalCount;
-    AerialPathResult path = marchAerialPath(
-        atmosphereMedium, transmittanceLut, multiScatterLut, geometry, threadId.z * aerialSegmentsPerSlice,
-        segmentLength);
-
-    aerialVolume[threadId] = float4(path.scattering, aerialRepresentativeTransmittance(path.throughput));
+    AerialPathResult path;
+    path.scattering = float3(0.0, 0.0, 0.0);
+    path.throughput = float3(1.0, 1.0, 1.0);
+    float2 phase = skyViewPhasePair(atmosphereMedium, geometry);
+    aerialVolume[uint3(threadId.xy, 0)] = float4(path.scattering, aerialRepresentativeTransmittance(path.throughput));
+    for (uint slice = 1; slice < depth; ++slice)
+    {
+        marchAerialSegments(
+            path, atmosphereMedium, transmittanceLut, multiScatterLut, geometry, phase,
+            (slice - 1) * aerialSegmentsPerSlice, aerialSegmentsPerSlice, segmentLength);
+        aerialVolume[uint3(threadId.xy, slice)] = float4(path.scattering, aerialRepresentativeTransmittance(path.throughput));
+    }
 }

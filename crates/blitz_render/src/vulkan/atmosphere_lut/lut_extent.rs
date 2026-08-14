@@ -10,7 +10,7 @@ use ash::vk;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum 大気のベイク済み画像の形 {
     平面 { 幅: u32, 高さ: u32 },
-    立体 { 一辺: u32 },
+    立体 { 幅: u32, 高さ: u32, 奥行き: u32 },
 }
 
 impl 大気のベイク済み画像の形 {
@@ -35,10 +35,10 @@ impl 大気のベイク済み画像の形 {
                 height: 高さ,
                 depth: 1,
             },
-            Self::立体 { 一辺 } => vk::Extent3D {
-                width: 一辺,
-                height: 一辺,
-                depth: 一辺,
+            Self::立体 { 幅, 高さ, 奥行き } => vk::Extent3D {
+                width: 幅,
+                height: 高さ,
+                depth: 奥行き,
             },
         }
     }
