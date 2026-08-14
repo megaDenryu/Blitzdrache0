@@ -5,8 +5,10 @@
 //! 増分・決定性・続く撮影はすべて検収専用ルートを使い、遊ぶ世界とリポジトリ内のソースへ書かない。
 //! 参照: `_doc/設計/大規模世界の生成と遠景.md`
 
+mod capacity;
 mod check_root;
 mod determinism;
+mod digest_compare;
 mod file_digest;
 mod incremental;
 mod tally_line;
@@ -34,8 +36,9 @@ fn 確かめる(
     親: check_root::生成検収の親ディレクトリ,
 ) -> Result<String, 場所巡りの通しの検収エラー> {
     let 増分 = incremental::同じ種での再実行が焼き直さないことを確かめる(種, 広がり, 親)?;
-    let 決定性 = determinism::同じ種から同じバイト列が出ることを確かめる(種, 広がり, 親)?;
-    Ok(format!("{決定性}、{増分}"))
+    let (決定性, 遠景報告) = determinism::同じ種から同じバイト列が出ることを確かめる(種, 広がり, 親)?;
+    let 容量 = capacity::遠景容量を確かめる(&遠景報告, 広がり).map_err(場所巡りの通しの検収エラー::遠景容量検収が失敗した)?;
+    Ok(format!("{決定性}、{増分}、{容量}、{遠景報告}"))
 }
 
 pub(super) fn 撮影用の実行時アセットルート() -> crate::acceptance::実行時アセットルート {

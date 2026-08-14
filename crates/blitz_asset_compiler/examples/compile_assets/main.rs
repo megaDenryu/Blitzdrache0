@@ -8,6 +8,7 @@ mod chunk_ledger;
 mod chunk_world;
 mod compilation;
 mod compile_target;
+mod distant_terrain;
 mod height_field;
 mod source_kind;
 mod source_location;

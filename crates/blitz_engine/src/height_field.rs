@@ -5,6 +5,7 @@
 //! 参照: `_doc/計画/ユビキタス言語.md`「高さ場」、`_doc/設計/ゲーム制作アーキテクチャ.md`「判断7: 地図の正本を持ち、生成は2系統に分ける」
 
 mod bilinear;
+mod distant_stable_id;
 mod error;
 mod field;
 mod grid_index;
@@ -16,6 +17,7 @@ mod reader;
 mod specification;
 mod stable_id;
 
+pub use distant_stable_id::世界の遠景地形の安定IDの綴り;
 pub use error::高さ場エラー;
 pub use field::高さ場;
 pub use load_error::高さ場読込エラー;
