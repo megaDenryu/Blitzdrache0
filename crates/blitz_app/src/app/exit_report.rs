@@ -9,7 +9,8 @@ use crate::reports::{display_timing, streaming_summary};
 impl super::アプリ {
     pub(crate) fn 終了時報告を出す(&self) {
         if let Some(要約) = self.ゲームの進行の要約を作る() {
-            crate::reports::game::ゲームの進行を表示する(&要約);
+            let カメラ大域位置 = super::frame::カメラ大域位置を組み立てる(self.カメラ.視点ワールド位置(), self.大域ずらし量);
+            crate::reports::game::ゲームの進行を表示する(&要約, カメラ大域位置);
         }
         if self.gpu時間報告が必要か() {
             crate::reports::gpu_time_table::表示する(&self.パス別gpu時間を取得する());

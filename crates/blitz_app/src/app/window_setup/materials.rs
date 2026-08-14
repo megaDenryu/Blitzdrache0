@@ -49,4 +49,5 @@ pub(in crate::app) struct 起動時に組み上げた一式 {
     pub(in crate::app) アニメーション: Option<アニメーション再生>,
     pub(in crate::app) 布プリセット: Option<布プリセット>,
     pub(in crate::app) 登録一式: scene_load::束の登録一式,
+    pub(in crate::app) 遠景: Option<(blitz_engine::シーンデータ, scene_load::束の描画入力)>,
 }

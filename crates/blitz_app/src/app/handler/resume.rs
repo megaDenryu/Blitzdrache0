@@ -51,6 +51,7 @@ fn 格納する(アプリ: &mut アプリ, event_loop: &ActiveEventLoop, 一式:
         アニメーション,
         布プリセット,
         登録一式,
+        遠景,
     } = 一式;
     // 起動時シーンをディスクから読んだのはこの1回である。
     アプリ.シーン読込計数.読み込んだ(アプリ.現在フレーム);
@@ -67,9 +68,23 @@ fn 格納する(アプリ: &mut アプリ, event_loop: &ActiveEventLoop, 一式:
         event_loop.exit();
         return;
     }
-    let 束id = crate::app::scene_load::起動時シーンの束ID;
-    アプリ.可視判定.束を登録する(束id, 登録一式.可視材料一覧);
-    アプリ.プリミティブ描画項目台帳.束を登録する(束id, 登録一式.プリミティブ描画項目一覧);
+    let (遠景シーン, 遠景入力) = match 遠景 {
+        Some((シーン, 入力)) => (Some(シーン), Some(入力)),
+        None => (None, None),
+    };
+    if let Err(誤り) = crate::app::persistent_bundles::登録する(
+        &mut レンダラー,
+        &mut アプリ.可視判定,
+        &mut アプリ.プリミティブ描画項目台帳,
+        登録一式,
+        遠景入力,
+        &mut アプリ.永続束.遠景をレンダラーへ登録済み,
+    ) {
+        アプリ.起動時エラー = Some(誤り);
+        event_loop.exit();
+        return;
+    }
+    アプリ.永続束.遠景シーン = 遠景シーン;
     アプリ.window = Some(window);
     アプリ.レンダラー = Some(レンダラー);
     アプリ.画面へ重ねるui = Some(画面へ重ねるui);

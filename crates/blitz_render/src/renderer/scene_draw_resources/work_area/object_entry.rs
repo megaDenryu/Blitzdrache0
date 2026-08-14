@@ -21,6 +21,7 @@ use blitz_math::カメラ相対位置;
 pub(super) struct 描画対象の材料<'a> {
     pub(super) 入力: &'a 作業領域更新入力<'a>,
     pub(super) 束id: 描画束ID,
+    pub(super) 影方針: crate::描画束の影方針,
     pub(super) 対象添字: usize,
     pub(super) 資源: &'a 描画対象資源,
     pub(super) ディスクリプタ選択: 対象のディスクリプタ選択<'a>,

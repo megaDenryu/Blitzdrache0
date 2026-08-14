@@ -4,11 +4,13 @@
 
 mod catalog_setup;
 mod convert;
+mod distant;
 mod render_input;
 #[cfg(test)]
 mod storage_byte_agreement_tests;
 
 pub(in crate::app) use catalog_setup::カタログを構築して高さ場を据える;
+pub(super) use distant::遠景を読み込んで変換する;
 pub(crate) use render_input::{描画入力エラー, 束の描画入力, 束の登録一式};
 
 use blitz_engine::{

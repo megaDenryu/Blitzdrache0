@@ -15,6 +15,7 @@ mod hot_reload_apply;
 mod lod_probe;
 mod measurement_setup;
 mod particle_setup;
+mod persistent_bundles;
 mod primitive_draw_item_registry;
 mod queries;
 mod report_requests;
@@ -63,8 +64,7 @@ pub(crate) struct アプリ {
     /// 空の放射輝度の評価方式。空パスのシェーダーの選択がこの値で決まり、実行中は変わらない。
     空中遠近合成: 空中遠近合成指定,
     粒子表示: 粒子表示モード,
-    /// 終了時に出す報告の要求。起動指定から写した真偽値だけを持つ。
-    報告要求: report_requests::報告要求,
+    報告要求: report_requests::報告要求, // 終了時に出す報告の要求。
     フレーム間隔計測: Option<frame_timing::フレーム間隔計測>,
     画面へ重ねるui: Option<画面へ重ねるUI>,
     開発ui初期有効: bool,
@@ -88,8 +88,8 @@ pub(crate) struct アプリ {
     可視判定: visibility::可視判定配線,
     /// 束ごとのプリミティブ描画項目と、それをレンダラーが読む形へ詰め直す受け皿。可視判定の台帳と同じ束IDで対になり、束の追加と解除で一緒に出入りする。
     プリミティブ描画項目台帳: primitive_draw_item_registry::プリミティブ描画項目台帳,
-    /// `--report-instance-sections`指定時だけ`Some`。可視判定と個体別LODの1フレーム分の走査が占めた時間を貯める。
-    可視個体の選別の計測: Option<section_timing::区間計測>,
+    永続束: persistent_bundles::永続束の状態,
+    可視個体の選別の計測: Option<section_timing::区間計測>, // 指定時だけ1フレーム分の走査時間を貯める。
     /// `--lod-probe-step`指定時だけ`Some`。段の境界をまたぐ往復を決定的に作るためにカメラを前後させる。
     個体詳細段探査: Option<lod_probe::個体詳細段探査>,
     /// ディスクから実行時シーンを読んだ回数。段の選択や可視判定がディスクI/Oを起こさないことをこの数で示す。

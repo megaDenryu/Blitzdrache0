@@ -13,6 +13,7 @@ use winit::event_loop::ActiveEventLoop;
 
 use super::アプリ;
 
+pub(super) use draw_input::frame_view::カメラ大域位置を組み立てる;
 pub(crate) use draw_input::フレーム視点;
 pub(super) use draw_input::{描画の計測つまみ, 組み立てる as 描画入力を組み立てる, 視点の履歴};
 

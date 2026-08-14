@@ -1,0 +1,65 @@
+//! 対照の幾何輪郭2pxと、近傍・遠景の間に残る1px空隙を求める。
+
+use super::image_pair::検収画像;
+
+pub(super) fn 輪郭を二画素広げる(画像: &検収画像) -> Vec<bool> {
+    let mut 輪郭 = vec![false; 画像.画素数()];
+    for y in 0..画像.高さ {
+        for x in 0..画像.幅 {
+            let 添字 = y * 画像.幅 + x;
+            let 幾何 = 画像.深度[添字] > 0.0;
+            if 隣に別領域がある(画像, x, y, 幾何) {
+                広げる(&mut 輪郭, 画像.幅, 画像.高さ, x, y);
+            }
+        }
+    }
+    輪郭
+}
+
+fn 隣に別領域がある(画像: &検収画像, x: usize, y: usize, 幾何: bool) -> bool {
+    隣接位置(画像.幅, 画像.高さ, x, y).any(|添字| (画像.深度[添字] > 0.0) != 幾何)
+}
+
+fn 広げる(結果: &mut [bool], 幅: usize, 高さ: usize, x: usize, y: usize) {
+    let 最小x = x.saturating_sub(2);
+    let 最大x = (x + 2).min(幅 - 1);
+    let 最小y = y.saturating_sub(2);
+    let 最大y = (y + 2).min(高さ - 1);
+    for 周辺y in 最小y..=最大y {
+        for 周辺x in 最小x..=最大x {
+            結果[周辺y * 幅 + 周辺x] = true;
+        }
+    }
+}
+
+pub(super) fn 先読み縁の空隙を数える(対照: &検収画像, 候補: &検収画像) -> usize {
+    let mut 件数 = 0;
+    for y in 0..候補.高さ {
+        for x in 0..候補.幅 {
+            let 添字 = y * 候補.幅 + x;
+            if 候補.深度[添字] != 0.0 {
+                continue;
+            }
+            let mut 近傍あり = false;
+            let mut 遠景あり = false;
+            for 隣 in 隣接位置(候補.幅, 候補.高さ, x, y) {
+                近傍あり |= 対照.深度[隣] > 0.0;
+                遠景あり |= 対照.深度[隣] == 0.0 && 候補.深度[隣] > 0.0;
+            }
+            if 近傍あり && 遠景あり {
+                件数 += 1;
+            }
+        }
+    }
+    件数
+}
+
+fn 隣接位置(幅: usize, 高さ: usize, x: usize, y: usize) -> impl Iterator<Item = usize> {
+    let 左 = x.saturating_sub(1);
+    let 右 = (x + 1).min(幅 - 1);
+    let 上 = y.saturating_sub(1);
+    let 下 = (y + 1).min(高さ - 1);
+    (上..=下)
+        .flat_map(move |周辺y| (左..=右).map(move |周辺x| 周辺y * 幅 + 周辺x))
+        .filter(move |添字| *添字 != y * 幅 + x)
+}
