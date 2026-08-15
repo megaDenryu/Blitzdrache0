@@ -8,7 +8,7 @@ pub(super) const コマンドの説明一覧: [&str; 58] = [
     "  conform          規約適合の機械検査 (100行制限/禁止文字列/不正allow/依存白リスト/参照パス実在/節参照実在/vulkan配下のDrop実装禁止)",
     "  type-metrics     型ごとのフィールド数・impl分散ファイル数・メソッド数を多い順に表示する (違反判定はしない)",
     "  smoke            blitz_appを--framesで自動実行し、validation件数0を終了コードで確認する",
-    "  check-glb <glbまたはgltfのパス...>  エンジンのglTF入力契約への適合を全項目検査し、違反と是正方法を全件並べる(違反があれば終了コード1。警告では落とさない)",
+    "  check-glb [--archetype] <glbまたはgltfのパス...>  エンジンのglTF入力契約への適合を全項目検査し、違反と是正方法を全件並べる(既定は1ファイル1メッシュの静的シーンの契約。--archetypeを付けると、詳細段の列を持つ群の原型の契約で検査する。違反があれば終了コード1。警告では落とさない)",
     "  compile-assets [ソースルート 出力ルート [世界名]]  ソースを検証して実行時形式を生成する(引数なしでchunk_worldをtarget/runtime_assetsへ、terrain_worldをtarget/terrain_assetsへ)",
     "  watch-assets     カタログのソース依存を監視し、変更時に実行時形式を再生成する",
     "  gen-source-assets 検証用ソースアセット(スモーク用quad・影検証シーン・材質境界シーン・板の世界・地形世界・植生世界・見本の集落の各25チャンク級)をassets/へ生成する",

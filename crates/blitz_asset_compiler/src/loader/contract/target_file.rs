@@ -8,6 +8,7 @@
 use std::path::{Path, PathBuf};
 
 use super::super::document;
+use super::inspected_contract::検査する契約;
 use super::inspection::開いた文書の契約検査;
 use super::result::契約検査結果;
 
@@ -22,13 +23,14 @@ impl 入力契約を検査するglTFのファイル {
         }
     }
 
-    pub fn 全項目を検査する(&self) -> 契約検査結果 {
+    /// どちらの契約で読まれるファイルなのかは呼び出し側が渡す。文書の形から推し量ると、契約を取り違えた合格が返る。
+    pub fn 契約を選んで全項目を検査する(&self, 契約: 検査する契約) -> 契約検査結果 {
         let 文書 = match document::文書を開く(&self.パス) {
             Ok(文書) => 文書,
             Err(誤り) => return 契約検査結果::開けなかった(誤り.to_string()),
         };
         let mut 検査 = 開いた文書の契約検査::文書から始める(&文書);
-        検査.全項目を走査する();
+        検査.全項目を走査する(契約);
         検査.結果へ畳む()
     }
 }

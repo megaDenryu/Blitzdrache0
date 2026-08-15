@@ -1,34 +1,43 @@
 //! `cargo xtask check-glb`から呼ばれるglTF入力契約の検査器。
-//! 受け取るのは1つ以上の.glbまたは.gltfのパス、返すのはファイルごとの報告と、違反が1件でもあれば非0の終了コードである。
+//! 受け取るのは検査する契約を選ぶ綴りと1つ以上の.glbまたは.gltfのパス、返すのはファイルごとの報告と、違反が1件でもあれば非0の終了コードである。
 //! 検査の中身は`blitz_asset_compiler`が持つ。ここが担当するのは引数の解釈と、全ファイルを走らせてから終了コードを1つに畳むことだけである。
+//! 契約の綴りはその実行の全ファイルへ同じに効く。ファイルごとに契約を変えたいなら実行を分ける。
 
 use std::path::Path;
 
-use blitz_asset_compiler::入力契約を検査するglTFのファイル;
+use blitz_asset_compiler::{入力契約を検査するglTFのファイル, 検査する契約};
 
 fn main() {
-    let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
-    if 引数一覧.is_empty() {
-        eprintln!("[check_glb] 使い方: check_glb <検査するglbまたはgltfのパス> ...");
+    let (契約, パス一覧) = 検査する契約::引数一覧から取り出す(&std::env::args().skip(1).collect::<Vec<String>>());
+    if パス一覧.is_empty() {
+        eprintln!("[check_glb] 使い方: check_glb [--archetype] <検査するglbまたはgltfのパス> ...");
         std::process::exit(2);
     }
 
     let mut 不合格数 = 0;
-    for パス文字列 in &引数一覧 {
-        if !検査して報告する(Path::new(パス文字列)) {
+    for パス文字列 in &パス一覧 {
+        if !検査して報告する(Path::new(パス文字列), 契約) {
             不合格数 += 1;
         }
     }
 
-    println!("[check_glb] 検査{}件のうち不合格{不合格数}件", 引数一覧.len());
+    println!("[check_glb] 検査{}件のうち不合格{不合格数}件", パス一覧.len());
     if 不合格数 > 0 {
         std::process::exit(1);
     }
 }
 
-fn 検査して報告する(パス: &Path) -> bool {
-    let 結果 = 入力契約を検査するglTFのファイル::生成する(パス).全項目を検査する();
-    println!("=== {} ===", パス.display());
+fn 検査して報告する(パス: &Path, 契約: 検査する契約) -> bool {
+    let 結果 = 入力契約を検査するglTFのファイル::生成する(パス).契約を選んで全項目を検査する(契約);
+    println!("=== {} ({}) ===", パス.display(), 契約の名(契約));
     println!("{結果}");
     結果.合格か()
+}
+
+/// 報告の見出しに契約を書く。どちらの契約で検査した結果なのかが読み手に分からないと、合格の意味が決まらない。
+fn 契約の名(契約: 検査する契約) -> &'static str {
+    match 契約 {
+        検査する契約::静的シーン => "静的シーンの契約",
+        検査する契約::群の原型 => "群の原型の契約",
+    }
 }

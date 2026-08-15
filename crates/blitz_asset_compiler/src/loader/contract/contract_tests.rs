@@ -1,19 +1,28 @@
 //! 入力契約検査の試験。合格する材料と、契約を1箇所だけ崩した負の対照を突き合わせる。
-//! ここが持つのは文書と幾何の契約であり、材質スロットの契約は`material_tests`が持つ。
-//! 材料を組み立てて検査へ通す手順は両者が共有するため、この階層が所有して子へ貸す。
+//! ここが持つのは静的シーンの文書と幾何の契約であり、材質スロットの契約は`material_tests`が、群の原型の契約は`archetype_tests`が持つ。
+//! 材料を組み立てて検査へ通す手順は3者が共有するため、この階層が所有して子へ貸す。
 
 #![allow(clippy::unwrap_used)]
 
+mod archetype_tests;
 mod material_tests;
 
+use super::archetype_fixture::{原型の文書jsonを作る, 原型の文書の指定, 原型の段の列のバイナリ};
 use super::fixture_json::{三角形のプリミティブ, 合格の指定, 文書jsonを作る};
 use super::glb_fixture::{glbを書き出す, 三角形のバイナリ};
+use super::inspected_contract::検査する契約;
 use super::result::契約検査結果;
 use super::target_file::入力契約を検査するglTFのファイル;
 
 pub(super) fn 検査する(名前: &str, 指定: &super::fixture_json::文書の指定<'_>) -> 契約検査結果 {
     let パス = glbを書き出す(名前, &文書jsonを作る(指定), &三角形のバイナリ()).unwrap();
-    入力契約を検査するglTFのファイル::生成する(&パス).全項目を検査する()
+    入力契約を検査するglTFのファイル::生成する(&パス).契約を選んで全項目を検査する(検査する契約::静的シーン)
+}
+
+/// 群の原型の契約で検査する。段の列の材料は`archetype_fixture`が組み立てる。
+pub(super) fn 原型として検査する(名前: &str, 指定: &原型の文書の指定<'_>) -> 契約検査結果 {
+    let パス = glbを書き出す(名前, &原型の文書jsonを作る(指定), &原型の段の列のバイナリ()).unwrap();
+    入力契約を検査するglTFのファイル::生成する(&パス).契約を選んで全項目を検査する(検査する契約::群の原型)
 }
 
 #[test]
@@ -66,7 +75,7 @@ fn 三角形以外の並び方は違反になる() {
 #[test]
 fn 開けないパスは違反として報告する() {
     let 存在しないパス = std::env::temp_dir().join("blitzdrache0_contract_fixture").join("存在しない.glb");
-    let 結果 = 入力契約を検査するglTFのファイル::生成する(&存在しないパス).全項目を検査する();
+    let 結果 = 入力契約を検査するglTFのファイル::生成する(&存在しないパス).契約を選んで全項目を検査する(検査する契約::静的シーン);
     assert!(!結果.合格か());
     assert!(結果.概要().is_none());
 }

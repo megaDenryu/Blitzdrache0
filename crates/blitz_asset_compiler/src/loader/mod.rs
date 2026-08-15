@@ -22,7 +22,9 @@ use crate::scene_compiler::ソースアセットのコンパイル係;
 use crate::uniform_scale::寸法を合わせる一様倍率;
 
 pub use archetype::原型ソース;
-pub use contract::{入力契約を検査するglTFのファイル, 契約指摘, 契約検査概要, 契約検査結果, 重大度};
+pub use contract::{
+    入力契約を検査するglTFのファイル, 契約指摘, 契約検査概要, 契約検査結果, 検査する契約, 重大度
+};
 
 use crate::error::アセットコンパイルエラー;
 
