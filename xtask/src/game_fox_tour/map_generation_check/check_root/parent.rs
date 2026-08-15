@@ -2,6 +2,8 @@
 
 use std::path::Path;
 
+use blitz_asset_compiler::遠景地形の焼き方;
+
 const 場所巡りの検収用ディレクトリ: &str = "target/fox_tour_generation_check";
 const 大規模世界の検収用ディレクトリ: &str = "target/large_world_generation_check";
 
@@ -12,6 +14,17 @@ pub(in crate::game_fox_tour::map_generation_check) enum 生成検収の親ディ
 }
 
 impl 生成検収の親ディレクトリ {
+    /// この親の下で焼く世界が遠景地形を持つか。大規模世界だけが持つ。
+    ///
+    /// 世界の種別で決めないのは、場所巡りの世界が3×3のクソゲーの世界としても8km×10kmの大規模世界としても
+    /// 焼かれるためである。3×3の側にも遠景が入ると、遠景の有無で大規模世界を見分ける実行時の判別が誤爆する。
+    pub(in crate::game_fox_tour::map_generation_check) fn 遠景地形の焼き方(self) -> 遠景地形の焼き方 {
+        match self {
+            Self::場所巡り => 遠景地形の焼き方::焼かない,
+            Self::大規模世界 => 遠景地形の焼き方::焼く,
+        }
+    }
+
     pub(super) fn ディレクトリ(self) -> &'static Path {
         match self {
             Self::場所巡り => Path::new(場所巡りの検収用ディレクトリ),

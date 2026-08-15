@@ -7,6 +7,7 @@ mod asset_layout;
 mod chunk_directory_source;
 mod compile;
 mod distant_terrain;
+mod distant_terrain_bake;
 mod edge_agreement;
 mod error;
 mod fixed_placement;
@@ -31,6 +32,7 @@ pub use compile::コンパイル済みシーン;
 pub use distant_terrain::{
     コンパイル済み遠景, 遠景の沈み統計, 遠景アセットをコンパイルする, 遠景コンパイルエラー
 };
+pub use distant_terrain_bake::遠景地形の焼き方;
 pub use edge_agreement::{ソースの高さ格子の重なり帯が一致することを確かめる, 縁の一致エラー};
 pub use error::アセットコンパイルエラー;
 pub use fixed_placement::固定物の据え付け;

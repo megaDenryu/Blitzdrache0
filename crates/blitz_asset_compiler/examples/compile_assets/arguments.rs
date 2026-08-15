@@ -5,7 +5,7 @@
 
 use std::path::PathBuf;
 
-use blitz_asset_compiler::{ソースルート, テクスチャ格納方針};
+use blitz_asset_compiler::{ソースルート, テクスチャ格納方針, 遠景地形の焼き方};
 
 use super::texture_policy_argument;
 use super::world::対象世界;
@@ -23,10 +23,13 @@ pub(super) struct 焼く世界の指定 {
     pub(super) 世界名: String,
     pub(super) 同居植生個体数: usize,
     pub(super) テクスチャ格納方針: テクスチャ格納方針,
+    /// 世界に1枚だけの遠景地形を焼くか。大規模世界の生成だけがこれを立てる。
+    pub(super) 遠景地形: 遠景地形の焼き方,
 }
 
 pub(super) fn 引数一覧から焼く世界の指定を読む(全引数一覧: &[String]) -> Result<焼く世界の指定, String> {
-    let (指定された方針, 引数一覧) = texture_policy_argument::引数一覧から方針の指定を取り出す(全引数一覧)?;
+    let (遠景地形, 遠景を除いた引数一覧) = 遠景地形の焼き方::引数一覧から取り出す(全引数一覧);
+    let (指定された方針, 引数一覧) = texture_policy_argument::引数一覧から方針の指定を取り出す(&遠景を除いた引数一覧)?;
     let (ソースルート文字列, 出力ルート文字列, 世界名, 同居植生個体数) = match 引数一覧.as_slice() {
         [ソース, 出力, 世界名] => (ソース, 出力, 世界名, 対象世界::同居植生の既定個体数()),
         [ソース, 出力, 世界名, 個体数] => (ソース, 出力, 世界名, 同居植生個体数を解析する(個体数)?),
@@ -39,6 +42,7 @@ pub(super) fn 引数一覧から焼く世界の指定を読む(全引数一覧: 
         世界名: 世界名.clone(),
         同居植生個体数,
         テクスチャ格納方針: 指定された方針.unwrap_or(既定のテクスチャ格納方針),
+        遠景地形,
     })
 }
 

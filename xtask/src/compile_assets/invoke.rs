@@ -4,7 +4,7 @@
 //! 「どの世界をどの出力ルートへ焼くか」の対応と別の関心事だからである。
 //! 起こし方と引数の組み立ては`asset_generator`の器が持つ。
 
-use blitz_asset_compiler::{ソースルート, テクスチャ格納方針, 実行時形式の出力ルート};
+use blitz_asset_compiler::{ソースルート, テクスチャ格納方針, 実行時形式の出力ルート, 遠景地形の焼き方};
 
 use super::texture_policy_name::方針の呼び名;
 use crate::asset_generator::{アセット生成器の起動, 世界名, 同居植生の個体数, 生成の指定, 生成器エラー};
@@ -16,6 +16,7 @@ pub(super) struct 実行時形式を焼く指定 {
     pub(super) 世界: 世界名,
     pub(super) 同居植生個体数: Option<同居植生の個体数>,
     pub(super) テクスチャ格納方針: Option<テクスチャ格納方針>,
+    pub(super) 遠景地形: 遠景地形の焼き方,
 }
 
 impl 実行時形式を焼く指定 {
@@ -26,6 +27,7 @@ impl 実行時形式を焼く指定 {
             世界: self.世界,
             同居植生個体数: self.同居植生個体数,
             テクスチャ格納方針: self.テクスチャ格納方針,
+            遠景地形: self.遠景地形,
         }
     }
 }
