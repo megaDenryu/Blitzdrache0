@@ -8,6 +8,7 @@
 //! 参照: `_doc/設計/大規模世界の生成と遠景.md`第5段階の検査点4
 
 mod bloom_footprint;
+mod bloom_source;
 mod color_difference;
 mod contour;
 mod gap;
