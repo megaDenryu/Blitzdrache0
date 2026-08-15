@@ -7,6 +7,7 @@
 
 mod change_direction;
 mod changed_pixel;
+mod distribution;
 mod verdict_names;
 
 pub(in crate::distant_view) use change_direction::色の動く向き;
