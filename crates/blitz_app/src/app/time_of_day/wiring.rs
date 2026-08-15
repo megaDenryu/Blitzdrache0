@@ -5,6 +5,8 @@
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「露出の時間変化」
 
 mod bake_input;
+mod band_decision;
+mod clock_advance;
 mod create;
 mod exposure;
 mod scan_override;
@@ -62,14 +64,6 @@ impl 天空配線 {
     pub(in crate::app) fn 照明問い合わせ契約(&self) -> 照明問い合わせ契約 {
         self.照明問い合わせ契約
     }
-    /// 実時間の経過ぶん時計を進め、時刻が動いたぶんだけライティングと空入力を導き直す。
-    pub(in crate::app) fn 進める(&mut self) {
-        let Some(時間帯) = &mut self.時間帯 else {
-            return;
-        };
-        時間帯.進める();
-        self.ライティングを導き直す();
-    }
     /// シャドウマップ資源を確保するときの一辺。シーンの基準ライティングが持つ多段設定から読むため、
     /// 資源の一辺と多段の構築が使う一辺が同じ1つの値から出る。
     pub(in crate::app) fn 影の一辺解像度(&self) -> blitz_render::cascade::影の一辺解像度 {
@@ -88,13 +82,5 @@ impl 天空配線 {
     /// そのフレームで使っている天空状態。空の方針を持たない世界では無い。
     pub(in crate::app) fn 天空状態(&self) -> Option<&blitz_engine::sky::天空状態> {
         self.時間帯.as_ref().map(時間帯::状態)
-    }
-    fn ライティングを導き直す(&mut self) {
-        let Some(時間帯) = &self.時間帯 else {
-            self.ライティング = self.基準ライティング;
-            return;
-        };
-        self.ライティング = blitz_engine::天空状態をライティングへ写す(self.基準ライティング, 時間帯.状態())
-            .unwrap_or_else(|誤り| panic!("天空状態からライティング入力を作れなかった: {誤り}"));
     }
 }

@@ -72,6 +72,8 @@ fn 格納する(アプリ: &mut アプリ, event_loop: &ActiveEventLoop, 一式:
         Some((シーン, 入力)) => (Some(シーン), Some(入力)),
         None => (None, None),
     };
+    // 距離区分の分け方はカタログを読んで初めて決まる。最初のフレームより前で確定させる。
+    アプリ.天空.距離区分の分け方を確定する(遠景入力.is_some());
     let 遠景の影方針 = アプリ.永続束.遠景の影方針();
     if let Err(誤り) = crate::app::persistent_bundles::登録する(
         &mut レンダラー,

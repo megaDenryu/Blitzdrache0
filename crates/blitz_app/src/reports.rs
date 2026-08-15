@@ -19,6 +19,7 @@ pub(crate) mod indirect_probe;
 pub(crate) mod local_visibility;
 pub(crate) mod motion_vector;
 pub(crate) mod point_light_shadow;
+pub(crate) mod shadow_band_assignment;
 pub(crate) mod shadow_gpu_time;
 pub(crate) mod sky_pixel;
 pub(crate) mod sky_state;

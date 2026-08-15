@@ -8,6 +8,9 @@ mod light_count_tests;
 
 mod cascade_policy;
 mod indirect_probe;
+mod large_world_bands;
+
+pub(in crate::app) use large_world_bands::大規模世界の距離区分の割り当てを作る;
 mod night_lights;
 mod stone_hut_interior;
 mod vegetation_verification;

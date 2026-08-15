@@ -57,11 +57,11 @@ impl 距離区分の割り当て {
         Self::生成する(最大影距離, 距離区分の分け方::明示の境界(境界))
     }
 
-    pub(super) fn 最大影距離(self) -> メートル {
+    pub fn 最大影距離(self) -> メートル {
         self.最大影距離
     }
 
-    pub(super) fn 分け方(self) -> 距離区分の分け方 {
+    pub fn 分け方(self) -> 距離区分の分け方 {
         self.分け方
     }
 }

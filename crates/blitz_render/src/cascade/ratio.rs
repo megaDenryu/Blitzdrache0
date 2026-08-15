@@ -15,7 +15,7 @@ impl 実用分割混合率 {
         Ok(Self(値))
     }
 
-    pub(super) fn 値(self) -> f32 {
+    pub fn 値(self) -> f32 {
         self.0
     }
 }
