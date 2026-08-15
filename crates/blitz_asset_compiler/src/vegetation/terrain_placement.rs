@@ -7,8 +7,8 @@
 
 use blitz_engine::{チャンク座標, 個体配置};
 
-use super::deterministic_value::{用途, 零以上一未満};
 use crate::error::アセットコンパイルエラー;
+use crate::placement::deterministic_value::{用途, 零以上一未満};
 
 /// 配置を敷き詰める正方領域の一辺。一辺100メートルのチャンクの内側に6メートルの余白を残す。
 /// 余白を置くのは、格子の揺らぎと個体の広がりを足してもチャンクの外へ出さないためである。

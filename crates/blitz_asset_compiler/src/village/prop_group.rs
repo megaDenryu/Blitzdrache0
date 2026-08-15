@@ -10,10 +10,10 @@ use std::path::PathBuf;
 
 use blitz_engine::{チャンク座標, 描画対象データ};
 
-use super::placement;
 use super::小物群の指定;
 use crate::error::アセットコンパイルエラー;
 use crate::height_grid::高さ格子;
+use crate::placement;
 use crate::scene_compiler::ソースアセットのコンパイル係;
 use crate::terrain::ground_height;
 use crate::vegetation::group_object;

@@ -8,14 +8,12 @@
 //! 別の三角形が出たり、同じ宣言から別の配置が出たりして、どちらが正かが決まらなくなる。
 //! 参照: `_doc/設計/Blenderアセット運用.md`「段3: 小物の量産と見本の集落」
 
-mod layout;
-mod placement;
 pub(crate) mod prop_group;
 mod scene;
 
-pub use placement::配置様式;
-
 use blitz_engine::{アセットID, チャンク座標};
+
+use crate::placement::配置様式;
 
 use crate::compile::コンパイル済みシーン;
 use crate::error::アセットコンパイルエラー;

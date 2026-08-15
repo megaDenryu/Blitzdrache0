@@ -14,7 +14,9 @@ mod fixed_placement;
 mod generation_ledger;
 mod height_field;
 mod height_grid;
+mod lattice_noise;
 mod loader;
+mod placement;
 mod scene_compiler;
 mod terrain;
 mod texture_storage;
@@ -46,7 +48,9 @@ pub use height_field::{
 pub use height_grid::{
     高さ格子, 高さ格子を切り出す, 高さ格子を格納する, 高さ格子を読み込む, 高さ格子エラー, 高さ格子諸元
 };
+pub use lattice_noise::格子雑音の値;
 pub use loader::{入力契約を検査するglTFのファイル, 原型ソース, 契約指摘, 契約検査概要, 契約検査結果, 重大度};
+pub use placement::配置様式;
 pub use scene_compiler::ソースアセットのコンパイル係;
 pub use texture_storage::{
     rgba8の縮小段をbc1のバイト列へ符号化する, srgbの色として縦横を半分に縮める, srgbの色として縮小段の連なりを作る,
@@ -54,5 +58,5 @@ pub use texture_storage::{
 };
 pub use uniform_scale::寸法を合わせる一様倍率;
 pub use vegetation::同居植生の指定;
-pub use village::{小物群の指定, 配置様式};
+pub use village::小物群の指定;
 pub use visual_sample::目視見本の指定;

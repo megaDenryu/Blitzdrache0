@@ -6,7 +6,6 @@
 //! 目印の柱の形と文書は`marker_geometry`と`marker_gltf_json`が持つ。
 
 mod height;
-mod lattice_noise;
 mod marker_geometry;
 mod marker_gltf_json;
 mod source_writing;

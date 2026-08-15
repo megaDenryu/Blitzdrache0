@@ -4,8 +4,8 @@
 
 use blitz_engine::個体配置;
 
-use super::deterministic_value::{用途, 零以上一未満};
 use crate::error::アセットコンパイルエラー;
+use crate::placement::deterministic_value::{用途, 零以上一未満};
 
 /// 配置を敷き詰める正方領域の一辺。一辺100メートルのチャンクの内側に収め、個体数が変わっても領域は変えない。
 /// 個体数を増やすと格子の刻みだけが細かくなるため、画素判定の構図が個体数に依らず同じ範囲へ収まる。

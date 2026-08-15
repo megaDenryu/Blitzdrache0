@@ -5,7 +5,6 @@
 mod bounds;
 mod cull_placement;
 mod cull_scene;
-pub(crate) mod deterministic_value;
 mod floor_scene;
 pub(crate) mod group_object;
 mod lod_placement;
