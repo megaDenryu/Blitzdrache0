@@ -4,6 +4,7 @@
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「多段シャドウ(CSM)」
 
 mod band;
+mod band_assignment;
 mod band_mask;
 mod blend;
 mod bounding;
@@ -11,12 +12,14 @@ mod build;
 mod camera_frustum;
 mod cascade_set;
 mod diagnostic;
+mod explicit_boundaries;
 mod ortho;
 mod ratio;
 mod resolution;
 mod settings;
 mod snap;
 mod split;
+mod split_policy;
 mod texel_density;
 
 #[cfg(test)]
@@ -28,13 +31,16 @@ pub const 距離区分数: usize = 4;
 pub const 距離区分の境界数: usize = 距離区分数 - 1;
 
 pub use band::{距離区分の区間, 距離区分番号};
+pub use band_assignment::距離区分の割り当て;
 pub use band_mask::距離区分マスク;
 pub use blend::{距離区分のブレンド, 距離区分を選ぶ};
 pub use cascade_set::多段一式;
 pub use diagnostic::{受光距離帯の幅メートル, 受光距離帯数, 画素診断};
+pub use explicit_boundaries::明示の距離区分境界;
 pub use ratio::{実用分割混合率, 距離区分の重なり率};
 pub use resolution::影の一辺解像度;
 pub use settings::多段設定;
+pub use split_policy::距離区分の分け方;
 pub use texel_density::影の解像度密度;
 
 pub(crate) use build::組み立てる;

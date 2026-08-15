@@ -3,6 +3,7 @@
 
 #![allow(clippy::unwrap_used)]
 
+mod explicit_split_tests;
 mod ortho_tests;
 mod snap_tests;
 mod split_tests;
