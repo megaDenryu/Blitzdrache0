@@ -1,15 +1,24 @@
 //! 世界の高さ場から25メートル格子の遠景メッシュを焼く入口。
 
+mod cell_corner;
+mod cell_scan;
 mod deviation;
 mod error;
+mod gap;
 mod grid;
+mod grid_measure;
 mod mesh;
 mod scene;
+mod sink;
 mod statistics;
+mod subdivision_point;
 #[cfg(test)]
 mod tests;
+mod vertex;
 
 use std::path::PathBuf;
+
+use blitz_math::メートル;
 
 use crate::asset_layout::チャンクの高さ格子ソース;
 use crate::compile::コンパイル済みシーン;
@@ -24,13 +33,15 @@ pub struct コンパイル済み遠景 {
 
 pub fn 遠景アセットをコンパイルする(
     ソース一覧: &[チャンクの高さ格子ソース],
-    安全幅メートル: f32,
+    安全幅: メートル,
 ) -> Result<コンパイル済み遠景, 遠景コンパイルエラー> {
     let (高さ場, 依存一覧) = 高さ場を作る(ソース一覧)?;
     let 格子 = grid::遠景格子::高さ場から作る(高さ場)?;
-    let 偏差 = deviation::セルごとの最大正偏差を求める(&格子)?;
-    let 沈み = deviation::頂点ごとの沈みを求める(&格子, &偏差, 安全幅メートル)?;
-    let 統計 = statistics::統計を求める(&格子, &偏差, &沈み, 安全幅メートル)?;
+    let 走査 = cell_scan::細分点の走査::生成する(&格子)?;
+    let 偏差 = 走査.セルごとの最大正偏差を求める()?;
+    let 沈み = sink::頂点ごとの沈み::求める(&格子, &偏差, 安全幅)?;
+    let 隙間 = 走査.沈めた面と詳細面の隙間を調べる(&沈み)?;
+    let 統計 = 遠景の沈み統計::求める(&偏差, &隙間, 安全幅)?;
     let メッシュ = mesh::沈めたメッシュを作る(&格子, &沈み)?;
     let シーンデータ = scene::通常シーンを作る(メッシュ, 依存一覧);
     Ok(コンパイル済み遠景 {

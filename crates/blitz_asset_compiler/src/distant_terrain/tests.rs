@@ -3,23 +3,30 @@
 use blitz_engine::height_field::{高さ場, 高さ場諸元};
 use blitz_math::{メートル, 大域メートル};
 
-use super::{deviation, grid, statistics};
+use super::{cell_scan, grid, sink, 遠景の沈み統計};
 
 #[test]
 fn 平面でも安全幅だけ沈み正の隙間を作る() {
     let 格子 = 平らな格子を作る();
-    let Ok(偏差) = deviation::セルごとの最大正偏差を求める(&格子) else {
+    let Ok(走査) = cell_scan::細分点の走査::生成する(&格子) else {
+        panic!("細分点の走査を作れなかった");
+    };
+    let Ok(偏差) = 走査.セルごとの最大正偏差を求める() else {
         panic!("平面の偏差を求められなかった");
     };
-    assert!(偏差.iter().all(|値| *値 == 0.0));
-    let Ok(沈み) = deviation::頂点ごとの沈みを求める(&格子, &偏差, 0.10) else {
+    assert!(偏差.小さい順に並べた写し().iter().all(|値| *値 == メートル::生成する(0.0)));
+    let 安全幅 = メートル::生成する(0.10);
+    let Ok(沈み) = sink::頂点ごとの沈み::求める(&格子, &偏差, 安全幅) else {
         panic!("平面の沈みを求められなかった");
     };
-    let Ok(統計) = statistics::統計を求める(&格子, &偏差, &沈み, 0.10) else {
+    let Ok(隙間) = 走査.沈めた面と詳細面の隙間を調べる(&沈み) else {
+        panic!("平面の隙間を調べられなかった");
+    };
+    let Ok(統計) = 遠景の沈み統計::求める(&偏差, &隙間, 安全幅) else {
         panic!("平面の隙間を集計できなかった");
     };
     assert_eq!(統計.正でない隙間数, 0);
-    assert!((統計.最小隙間 - 0.10).abs() < 1.0e-6);
+    assert!((統計.最小隙間.値() - 0.10).abs() < 1.0e-6);
 }
 
 fn 平らな格子を作る() -> grid::遠景格子 {
