@@ -60,7 +60,7 @@ pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
         Some("cluster-lights") => cluster_lights::実行する(),
         Some("point-light-shadow") => point_light_shadow::実行する(),
         Some("cloth-shadow-order") => cloth_shadow_order::実行する(),
-        Some("csm-seam") => csm_seam::実行する(),
+        Some("csm-seam") => csm_seam::実行する(&引数一覧[1..]),
         Some("vertex-diag") => vertex_diag::実行する(),
         Some("sky-draw") => sky_draw::実行する(),
         Some("sky-state") => sky_state::実行する(),
