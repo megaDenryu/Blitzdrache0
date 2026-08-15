@@ -30,12 +30,14 @@ use super::背景と光を外す選択肢;
 use crate::acceptance::{アプリの起動指定, 描画フレーム数};
 
 const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(360);
+pub(in crate::csm_seam) const 大規模世界のシーン名の綴り: &str = "terrain_fox_tour";
 const 先読み半径: &str = "8";
 const 容量上限バイト: &str = "536870912";
 const カメラ方位度: &str = "180";
 const カメラ俯角度: &str = "-11.0107";
 /// 夕方の時刻。緯度35度・太陽赤緯0度でこの時刻の太陽高度は6.14度であり、緩い起伏でも陰が受光面へ長く伸びる。
-const 一日内秒: &str = "63000";
+pub(in crate::csm_seam) const 大規模世界の一日内秒: &str = "63000";
+const 一日内秒: &str = 大規模世界の一日内秒;
 
 pub(super) fn 大規模世界で世界を開く指定を作る() -> アプリの起動指定 {
     アプリの起動指定::シーンと枚数を決める(crate::fox_tour_launch::シーン名, フレーム数)

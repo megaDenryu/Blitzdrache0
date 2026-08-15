@@ -19,6 +19,7 @@ pub(super) enum 距離区分の継ぎ目の検収エラー {
     判定が破れた(判定の破れ),
     検証用アセットを生成できなかった,
     引数が不正(String),
+    由来を書けなかった { パス: std::path::PathBuf, 誤り: std::io::Error },
 }
 
 impl std::error::Error for 距離区分の継ぎ目の検収エラー {}

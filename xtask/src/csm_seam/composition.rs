@@ -34,6 +34,40 @@ impl 継ぎ目を見る構図 {
         }
     }
 
+    /// この構図が要る検証用アセットを焼く。大規模世界は`large-world-assets`が別に焼いた世界を読むため何もしない。
+    pub(super) fn 要るアセットを用意する(self) -> Result<(), 距離区分の継ぎ目の検収エラー> {
+        if self == Self::大規模世界 {
+            return Ok(());
+        }
+        if crate::gen_source_assets::生成する() && crate::compile_assets::地形世界を既定で生成する() {
+            return Ok(());
+        }
+        Err(距離区分の継ぎ目の検収エラー::検証用アセットを生成できなかった)
+    }
+
+    /// 人が読む構図の名前。由来と要約が名指し、成果物のディレクトリを取り違えられないようにする。
+    pub(super) fn 呼び名(self) -> &'static str {
+        match self {
+            Self::検証用地形世界 => "検証用地形世界(5×5チャンク・箱の植生)",
+            Self::大規模世界 => "大規模世界(8km×10km・遠景の固定構図)",
+        }
+    }
+
+    /// 開く世界の綴りと時刻。由来がそのまま書き、人が絵と突き合わせられるようにする。
+    pub(super) fn シーン名の綴り(self) -> &'static str {
+        match self {
+            Self::検証用地形世界 => super::run::検証用地形世界のシーン名の綴り,
+            Self::大規模世界 => super::run::large_world_options::大規模世界のシーン名の綴り,
+        }
+    }
+
+    pub(super) fn 一日内秒(self) -> &'static str {
+        match self {
+            Self::検証用地形世界 => super::run::検証用地形世界の一日内秒,
+            Self::大規模世界 => super::run::large_world_options::大規模世界の一日内秒,
+        }
+    }
+
     /// この構図が要る影の距離区分の分け方。大規模世界だけが名指しの境界で走る。
     pub(super) fn 明示の境界を要るか(self) -> bool {
         match self {

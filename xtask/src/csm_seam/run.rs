@@ -23,7 +23,7 @@
 
 use std::path::PathBuf;
 
-mod large_world_options;
+pub(super) mod large_world_options;
 
 use super::composition::継ぎ目を見る構図;
 use crate::acceptance::{
@@ -31,13 +31,15 @@ use crate::acceptance::{
 };
 
 const アセットルート: &str = "target/terrain_assets";
-const シーン名: 検収シーン名 = 検収シーン名::生成する("terrain_origin");
+pub(super) const 検証用地形世界のシーン名の綴り: &str = "terrain_origin";
+const シーン名: 検収シーン名 = 検収シーン名::生成する(検証用地形世界のシーン名の綴り);
 const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(160);
 const 先読み半径: &str = "2";
 const 容量上限バイト: &str = "16777216";
 const カメラ俯角差分度: &str = "-30";
 const カメラ方位差分度: &str = "45";
-const 一日内秒: &str = "61200";
+pub(super) const 検証用地形世界の一日内秒: &str = "61200";
+const 一日内秒: &str = 検証用地形世界の一日内秒;
 const 背景と光を外す選択肢: [&str; 3] = ["--no-sky", "--no-post", "--no-taa"];
 
 /// 8bitのRGB平均。輝度の段差はこの値で測る。依存も副作用も持たない計算であるため自由関数で置く。
@@ -46,15 +48,18 @@ pub(super) fn 輝度を求める(画像: &読み戻し画像, 添字: usize) -> 
     (f64::from(画素[0]) + f64::from(画素[1]) + f64::from(画素[2])) / 3.0
 }
 
+/// 構図が実際に開くアセットルート。由来が同じ値を書き、絵と一緒に残す。
+pub(super) fn アセットルートのパス(構図: 継ぎ目を見る構図) -> PathBuf {
+    match 構図 {
+        継ぎ目を見る構図::検証用地形世界 => PathBuf::from(アセットルート),
+        継ぎ目を見る構図::大規模世界 => crate::game_fox_tour::map_generation_check::大規模世界の計測入力パス(),
+    }
+}
+
 pub(super) fn 実行環境を作る(
     構図: 継ぎ目を見る構図, 出力ディレクトリ: PathBuf
 ) -> Result<描画検収の実行環境, 検収エラー> {
-    let ルート = match 構図 {
-        継ぎ目を見る構図::検証用地形世界 => 実行時アセットルート::綴りから生成する(アセットルート),
-        継ぎ目を見る構図::大規模世界 => {
-            実行時アセットルート::パスから生成する(crate::game_fox_tour::map_generation_check::大規模世界の計測入力パス())
-        }
-    };
+    let ルート = 実行時アセットルート::パスから生成する(アセットルートのパス(構図));
     描画検収の実行環境::作る(アプリの起こし方::毎回cargoに構築させて起動する, ルート, 出力ディレクトリ)
 }
 

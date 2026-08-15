@@ -15,10 +15,11 @@ mod boundary;
 mod composition;
 mod error;
 mod judgment;
+mod provenance;
 mod run;
 mod summary;
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use std::process::ExitCode;
 
@@ -57,11 +58,7 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
 
 fn 検収する(引数一覧: &[String]) -> Result<String, 距離区分の継ぎ目の検収エラー> {
     let 構図 = 継ぎ目を見る構図::引数を読む(引数一覧)?;
-    if 構図 == 継ぎ目を見る構図::検証用地形世界
-        && (!crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する())
-    {
-        return Err(距離区分の継ぎ目の検収エラー::検証用アセットを生成できなかった);
-    }
+    構図.要るアセットを用意する()?;
     let 実行環境 = run::実行環境を作る(構図, PathBuf::from(構図.出力ディレクトリ()))?;
 
     let 本番の実行 = 実行環境.描いて読み戻す(本番の実行名, &run::起動指定を組み立てる(構図, false))?;
@@ -69,6 +66,8 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 距離区分の継ぎ
     let (本番, 可視化) = (本番の実行.画像(), 可視化の実行.画像());
     本番と可視化の寸法.真であることを課す(本番.寸法が同じか(可視化))?;
     let 分け方 = band_assignment_line::読んで課す(本番の実行.報告(), 構図)?;
+    // 由来は判定より前に書く。落ちた実行ほど、残った絵がどの世界のものかを後から知る必要がある。
+    provenance::書く(Path::new(構図.出力ディレクトリ()), 構図, &run::アセットルートのパス(構図), &分け方)?;
     let 地図 = band_map::距離区分の地図::読み取る(可視化);
 
     let 四区分の成立 = if 構図.影の画素で四区分の成立を見るか() {
