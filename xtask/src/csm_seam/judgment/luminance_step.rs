@@ -23,7 +23,7 @@ pub(in crate::csm_seam) fn 実在する境界の輝度段差を検査する(
     内側の勾配と比べるか: bool,
 ) -> Result<Vec<境界の段差>, 判定の破れ> {
     let mut 実測 = Vec::new();
-    for 境界番号 in 一覧.iter().filter(|実在| 実在.影が両側にあるか()).map(|実在| 実在.境界番号) {
+    for 境界番号 in 一覧.iter().filter(|実在| 実在.判定の対象か()).map(|実在| 実在.境界番号) {
         let 近傍 = boundary::集める(地図, 境界番号, 1, 近傍の幅);
         let 内側 = boundary::集める(地図, 境界番号, 近傍の幅 + 1, 近傍の幅 * 2);
         let 近傍手前 = 平均輝度(本番, &近傍.手前側)?;

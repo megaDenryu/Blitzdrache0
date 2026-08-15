@@ -25,19 +25,27 @@ pub(in crate::csm_seam) struct 境界の実在 {
     pub(in crate::csm_seam) 境界番号: usize,
     pub(in crate::csm_seam) 手前側の影画素数: usize,
     pub(in crate::csm_seam) 奥側の影画素数: usize,
+    /// 影が片側に1画素も無い境界を外す構図か。外さない構図では影が無くても判定の対象に残す。
+    間引く構図か: bool,
 }
 
 impl 境界の実在 {
-    pub(in crate::csm_seam) fn 影が両側にあるか(&self) -> bool {
+    fn 影が両側にあるか(&self) -> bool {
         self.手前側の影画素数 > 0 && self.奥側の影画素数 > 0
+    }
+
+    /// 継ぎ目の判定を課す境界か。間引かない構図ではすべての境界が対象である。
+    pub(in crate::csm_seam) fn 判定の対象か(&self) -> bool {
+        !self.間引く構図か || self.影が両側にあるか()
     }
 }
 
-pub(in crate::csm_seam) fn 境界ごとに数える(地図: &距離区分の地図) -> Vec<境界の実在> {
+pub(in crate::csm_seam) fn 境界ごとに数える(地図: &距離区分の地図, 間引く構図か: bool) -> Vec<境界の実在> {
     (0..境界の数)
         .map(|境界番号| {
             let 近傍 = boundary::集める(地図, 境界番号, 1, 近傍の幅);
             境界の実在 {
+                間引く構図か,
                 境界番号,
                 手前側の影画素数: 影の数(地図, &近傍.手前側),
                 奥側の影画素数: 影の数(地図, &近傍.奥側),
@@ -48,7 +56,7 @@ pub(in crate::csm_seam) fn 境界ごとに数える(地図: &距離区分の地�
 
 /// 継ぎ目を見られる境界が1つも無ければ落とす。実測は境界ごとの両側の影の画素数をそのまま名指す。
 pub(in crate::csm_seam) fn 継ぎ目を見られる境界があることを検査する(一覧: &[境界の実在]) -> Result<(), 判定の破れ> {
-    if 一覧.iter().any(境界の実在::影が両側にあるか) {
+    if 一覧.iter().any(境界の実在::判定の対象か) {
         return Ok(());
     }
     Err(継ぎ目を見られる境界の判定名(一覧).あるはずのものが無い破れ())
@@ -69,7 +77,7 @@ fn 継ぎ目を見られる境界の判定名(一覧: &[境界の実在]) -> 判
 pub(in crate::csm_seam) fn 対象から外した境界の綴り(一覧: &[境界の実在]) -> String {
     let 外した: Vec<String> = 一覧
         .iter()
-        .filter(|実在| !実在.影が両側にあるか())
+        .filter(|実在| !実在.判定の対象か())
         .map(|実在| {
             format!(
                 "境界{}(手前側の影{}画素・奥側の影{}画素)",
