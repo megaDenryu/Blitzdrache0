@@ -68,27 +68,19 @@ fn 格納する(アプリ: &mut アプリ, event_loop: &ActiveEventLoop, 一式:
         event_loop.exit();
         return;
     }
-    let (遠景シーン, 遠景入力) = match 遠景 {
-        Some((シーン, 入力)) => (Some(シーン), Some(入力)),
-        None => (None, None),
-    };
     // 距離区分の分け方はカタログを読んで初めて決まる。最初のフレームより前で確定させる。
-    アプリ.天空.距離区分の分け方を確定する(遠景入力.is_some());
-    let 遠景の影方針 = アプリ.永続束.遠景の影方針();
-    if let Err(誤り) = crate::app::persistent_bundles::登録する(
+    アプリ.天空.距離区分の分け方を確定する(遠景.is_some());
+    if let Err(誤り) = アプリ.永続束.起動時に登録する(
         &mut レンダラー,
         &mut アプリ.可視判定,
         &mut アプリ.プリミティブ描画項目台帳,
         登録一式,
-        遠景入力,
-        &mut アプリ.永続束.遠景をレンダラーへ登録済み,
-        遠景の影方針,
+        遠景,
     ) {
         アプリ.起動時エラー = Some(誤り);
         event_loop.exit();
         return;
     }
-    アプリ.永続束.遠景シーン = 遠景シーン;
     アプリ.window = Some(window);
     アプリ.レンダラー = Some(レンダラー);
     アプリ.画面へ重ねるui = Some(画面へ重ねるui);
