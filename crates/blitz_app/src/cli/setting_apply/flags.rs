@@ -30,6 +30,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str) {
         "--no-instance-shadow" => 設定.インスタンス影キャスター有効 = false,
         "--no-shadow-casters" => 設定.影キャスター全体有効 = false,
         "--no-distant-shadow" => 設定.遠景影キャスター有効 = false,
+        "--no-explicit-shadow-bands" => 設定.シャドウ計測.明示境界を使わない = true,
         "--no-ssao" => 設定.局所可視性.方式の上書き = 拡散間接方式の起動上書き::環境のみで描く,
         "--no-taa" => 設定.時間再構成 = 時間再構成方式の起動上書き::使わないで描く,
         "--report-motion-vector" => 設定.読み戻し検収.動きベクトルを報告するか = true,

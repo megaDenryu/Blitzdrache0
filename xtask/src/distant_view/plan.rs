@@ -34,22 +34,26 @@ pub(super) struct 採取条件 {
     /// 本番の色の代わりに影の欠落計器の診断色を出す指定。影の検査点が色差の帰属に使う。
     /// 参照: `_doc/設計/大規模世界の生成と遠景.md`第5段階の検査点5
     pub(super) 影可視度を可視化する: bool,
+    /// 大規模世界でも距離区分を再配分せず実用分割のまま採る指定。影の検査点の対照側が使う。
+    /// 対照を再配分前のコミットの作業ツリーから採ると、比べている差に再配分以外のコミットの差が混ざる。
+    /// 同じバイナリで旗だけを分ければ、2枚の違いは再配分だけになる。
+    pub(super) 明示境界を使わない: bool,
 }
 
 impl 実行の別 {
     pub(super) fn 採取条件(self) -> Option<採取条件> {
-        let (名前, ssaoを使わない, 遠景影を使わない, 後処理を使わない, 影可視度を可視化する) = match self {
-            Self::対照を採る => ("reference", false, false, false, false),
-            Self::候補を採る => ("candidate", false, false, false, false),
-            Self::Ssaoなし対照を採る => ("reference_no_ssao", true, false, false, false),
-            Self::Ssaoなし候補を採る => ("candidate_no_ssao", true, false, false, false),
-            Self::遠景影なし候補を採る => ("candidate_no_distant_shadow", false, true, false, false),
-            Self::後処理なし対照を採る => ("reference_no_post", false, false, true, false),
-            Self::後処理なし候補を採る => ("candidate_no_post", false, false, true, false),
-            Self::影の対照を採る => ("shadow_reference", false, false, true, false),
-            Self::影の候補を採る => ("shadow_candidate", false, false, true, false),
-            Self::影の対照の可視度を採る => ("shadow_reference_visibility", false, false, true, true),
-            Self::影の候補の可視度を採る => ("shadow_candidate_visibility", false, false, true, true),
+        let (名前, ssaoを使わない, 遠景影を使わない, 後処理を使わない, 影可視度を可視化する, 明示境界を使わない) = match self {
+            Self::対照を採る => ("reference", false, false, false, false, false),
+            Self::候補を採る => ("candidate", false, false, false, false, false),
+            Self::Ssaoなし対照を採る => ("reference_no_ssao", true, false, false, false, false),
+            Self::Ssaoなし候補を採る => ("candidate_no_ssao", true, false, false, false, false),
+            Self::遠景影なし候補を採る => ("candidate_no_distant_shadow", false, true, false, false, false),
+            Self::後処理なし対照を採る => ("reference_no_post", false, false, true, false, false),
+            Self::後処理なし候補を採る => ("candidate_no_post", false, false, true, false, false),
+            Self::影の対照を採る => ("shadow_reference", false, false, true, false, true),
+            Self::影の候補を採る => ("shadow_candidate", false, false, true, false, false),
+            Self::影の対照の可視度を採る => ("shadow_reference_visibility", false, false, true, true, true),
+            Self::影の候補の可視度を採る => ("shadow_candidate_visibility", false, false, true, true, false),
             Self::計画を表示する | Self::判定する | Self::影を判定する => return None,
         };
         Some(採取条件 {
@@ -58,6 +62,7 @@ impl 実行の別 {
             遠景影を使わない,
             後処理を使わない,
             影可視度を可視化する,
+            明示境界を使わない,
         })
     }
 }

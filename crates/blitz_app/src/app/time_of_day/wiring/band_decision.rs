@@ -16,7 +16,7 @@ use crate::app::scene_lighting::大規模世界の距離区分の割り当てを
 
 impl 天空配線 {
     pub(in crate::app) fn 距離区分の分け方を確定する(&mut self, 世界級の遠景がある: bool) {
-        if 世界級の遠景がある {
+        if 世界級の遠景がある && !self.明示境界を使わない {
             let 多段設定 = self
                 .基準ライティング
                 .多段設定()
@@ -27,6 +27,7 @@ impl 天空配線 {
         crate::reports::shadow_band_assignment::影の距離区分の分け方を表示する(
             self.基準ライティング.多段設定().割り当て(),
             世界級の遠景がある,
+            self.明示境界を使わない,
         );
     }
 }

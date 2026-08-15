@@ -5,6 +5,10 @@
 //! 突き合わせても、綴りがずれていれば誰も気づかないためである。旗の記録が無ければ、判定は自分がどの構成の絵を
 //! 見ているかを絵からは知りようがない。
 
+mod on_off;
+
+use on_off::{入切, 入切を読む, 記録があれば入切を読む};
+
 use std::path::Path;
 
 use super::super::plan::採取条件;
@@ -21,6 +25,8 @@ pub(in crate::distant_view) struct 採取の旗 {
     /// 欄の有無で失敗させるのは、その欄を実際に要る段(影の検査点)だけにする。遠景の検査点は影可視度を読まないため、
     /// 古い採取のままでも判定を続けられる。無いことを`false`へ丸めると、診断の絵を本番の絵として突き合わせうる。
     影可視度を可視化したか: Option<bool>,
+    /// 距離区分の再配分を切って走ったかの記録。この欄が無い由来は、欄を足す前に採った古い採取である。
+    明示境界を切ったか: Option<bool>,
 }
 
 impl 採取の旗 {
@@ -30,6 +36,7 @@ impl 採取の旗 {
             遠景の影を使うか: !条件.遠景影を使わない,
             後処理を使うか: !条件.後処理を使わない,
             影可視度を可視化したか: Some(条件.影可視度を可視化する),
+            明示境界を切ったか: Some(条件.明示境界を使わない),
         }
     }
 
@@ -42,13 +49,19 @@ impl 採取の旗 {
         self.影可視度を可視化したか
     }
 
+    /// 距離区分の再配分を切って走ったかの記録。欄を持たない古い採取では`None`である。
+    pub(in crate::distant_view) fn 明示境界を切ったか(&self) -> Option<bool> {
+        self.明示境界を切ったか
+    }
+
     pub(super) fn 行にする(&self) -> String {
         format!(
-            "{旗の行の前置き}ssao={} distant-shadow={} post={} shadow-visibility={}",
+            "{旗の行の前置き}ssao={} distant-shadow={} post={} shadow-visibility={} no-explicit-bands={}",
             入切(self.局所可視性を使うか),
             入切(self.遠景の影を使うか),
             入切(self.後処理を使うか),
-            self.影可視度を可視化したか.map_or("unrecorded", 入切)
+            self.影可視度を可視化したか.map_or("unrecorded", 入切),
+            self.明示境界を切ったか.map_or("unrecorded", 入切)
         )
     }
 
@@ -66,30 +79,7 @@ impl 採取の旗 {
             遠景の影を使うか: 入切を読む(本文, "distant-shadow=")?,
             後処理を使うか: 入切を読む(本文, "post=")?,
             影可視度を可視化したか: 記録があれば入切を読む(本文, "shadow-visibility=")?,
+            明示境界を切ったか: 記録があれば入切を読む(本文, "no-explicit-bands=")?,
         })
-    }
-}
-
-fn 入切(使うか: bool) -> &'static str {
-    if 使うか { "on" } else { "off" }
-}
-
-/// 欄が無ければ記録が無いものとして返す。欄はあるのに綴りが不正なら、記録が無いのと同じには扱わず失敗にする。
-fn 記録があれば入切を読む(本文: &str, 前置き: &str) -> Result<Option<bool>, String> {
-    if !本文.split_whitespace().any(|語| 語.starts_with(前置き)) {
-        return Ok(None);
-    }
-    入切を読む(本文, 前置き).map(Some)
-}
-
-fn 入切を読む(本文: &str, 前置き: &str) -> Result<bool, String> {
-    let 綴り = 本文
-        .split_whitespace()
-        .find_map(|語| 語.strip_prefix(前置き))
-        .ok_or_else(|| format!("採取の旗に{前置き}が無い: {本文}"))?;
-    match 綴り {
-        "on" => Ok(true),
-        "off" => Ok(false),
-        _ => Err(format!("採取の旗の{前置き}がonでもoffでもない: {綴り}")),
     }
 }
