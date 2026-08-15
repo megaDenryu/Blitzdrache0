@@ -34,6 +34,9 @@ pub(super) fn 起動指定(条件: &採取条件) -> アプリの起動指定 {
     if 条件.影可視度を可視化する {
         指定 = 指定.選択肢を足す("--debug-shadow-loss");
     }
+    if 条件.影のキャスターを使わない {
+        指定 = 指定.選択肢を足す("--no-shadow-casters");
+    }
     if 条件.明示境界を使わない {
         指定 = 指定.選択肢を足す("--no-explicit-shadow-bands");
     }

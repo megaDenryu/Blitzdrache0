@@ -30,6 +30,8 @@ pub(in crate::distant_view) struct 採取の旗 {
     影可視度を可視化したか: Option<bool>,
     /// 距離区分の再配分を切って走ったかの記録。この欄が無い由来は、欄を足す前に採った古い採取である。
     明示境界を切ったか: Option<bool>,
+    /// 影のキャスターを1つも積まずに走ったかの記録。この欄が無い由来は、欄を足す前に採った古い採取である。
+    影のキャスターを切ったか: Option<bool>,
 }
 
 impl 採取の旗 {
@@ -40,6 +42,7 @@ impl 採取の旗 {
             後処理を使うか: !条件.後処理を使わない,
             影可視度を可視化したか: Some(条件.影可視度を可視化する),
             明示境界を切ったか: Some(条件.明示境界を使わない),
+            影のキャスターを切ったか: Some(条件.影のキャスターを使わない),
         }
     }
 
@@ -57,14 +60,25 @@ impl 採取の旗 {
         self.明示境界を切ったか
     }
 
+    /// 影のキャスターを切って走ったかの記録。欄を持たない古い採取では`None`である。
+    pub(in crate::distant_view) fn 影のキャスターを切ったか(&self) -> Option<bool> {
+        self.影のキャスターを切ったか
+    }
+
+    /// 局所可視性(SSAO)を使って走ったかの記録。散布の主判定が、幾何だけが変わる対であることを確かめる。
+    pub(in crate::distant_view) fn 局所可視性を使うか(&self) -> bool {
+        self.局所可視性を使うか
+    }
+
     pub(super) fn 行にする(&self) -> String {
         format!(
-            "{旗の行の前置き}ssao={} distant-shadow={} post={} shadow-visibility={} no-explicit-bands={}",
+            "{旗の行の前置き}ssao={} distant-shadow={} post={} shadow-visibility={} no-explicit-bands={} no-shadow-casters={}",
             入切(self.局所可視性を使うか),
             入切(self.遠景の影を使うか),
             入切(self.後処理を使うか),
             self.影可視度を可視化したか.map_or("unrecorded", 入切),
-            self.明示境界を切ったか.map_or("unrecorded", 入切)
+            self.明示境界を切ったか.map_or("unrecorded", 入切),
+            self.影のキャスターを切ったか.map_or("unrecorded", 入切)
         )
     }
 
@@ -78,6 +92,7 @@ impl 採取の旗 {
             後処理を使うか: 行.入切を読む("post=")?,
             影可視度を可視化したか: 行.記録があれば入切を読む("shadow-visibility=")?,
             明示境界を切ったか: 行.記録があれば入切を読む("no-explicit-bands=")?,
+            影のキャスターを切ったか: 行.記録があれば入切を読む("no-shadow-casters=")?,
         })
     }
 }

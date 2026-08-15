@@ -28,6 +28,8 @@ fn 綴りから選ぶ(引数: &str) -> Option<実行の別> {
         "--capture-scatter-reference" => 実行の別::散布の対照を採る,
         "--capture-scatter-candidate" => 実行の別::散布の候補を採る,
         "--capture-scatter-reference-no-post" => 実行の別::後処理なし散布の対照を採る,
+        "--capture-scatter-reference-bare" => 実行の別::素の散布の対照を採る,
+        "--capture-scatter-candidate-bare" => 実行の別::素の散布の候補を採る,
         "--capture-scatter-candidate-no-post" => 実行の別::後処理なし散布の候補を採る,
         "--bake-scatter-reference" => 実行の別::散布の対照を焼く,
         "--print-plan" => 実行の別::計画を表示する,
