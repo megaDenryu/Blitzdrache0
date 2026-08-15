@@ -6,7 +6,9 @@ use std::path::PathBuf;
 
 use blitz_engine::{シーンデータ, チャンク座標, メッシュデータ, メッシュ頂点属性, 描画形状};
 
+use crate::generation_ledger::種の由来;
 use crate::height_grid::{高さ格子, 高さ格子を切り出す, 高さ格子諸元};
+use crate::placement::配置の種;
 use crate::scene_compiler::ソースアセットのコンパイル係;
 use crate::terrain::lod_level::地形段諸元;
 
@@ -47,9 +49,13 @@ pub(super) fn 段一覧() -> Vec<地形段諸元> {
 /// 高さ格子だけで閉じているこの検査へファイルの実在という別の前提が入る。
 pub(super) fn シーンを焼く(チャンク: チャンク座標) -> シーンデータ {
     let カタログ = blitz_engine::カタログ::空を作る();
-    ソースアセットのコンパイル係::生成する(&カタログ, テクスチャ格納方針::全てRGBA8)
-        .地形のシーンを組み立てる(&格子を切り出す(チャンク), チャンク, PathBuf::from("検査用"), None)
-        .unwrap()
+    ソースアセットのコンパイル係::生成する(
+        &カタログ,
+        テクスチャ格納方針::全てRGBA8,
+        配置の種::種の由来から作る(種の由来::種を持たない),
+    )
+    .地形のシーンを組み立てる(&格子を切り出す(チャンク), チャンク, PathBuf::from("検査用"), None)
+    .unwrap()
 }
 
 pub(super) fn 段別メッシュを取り出す(シーン: &シーンデータ) -> Vec<メッシュデータ> {

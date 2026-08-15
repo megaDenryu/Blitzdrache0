@@ -8,31 +8,22 @@
 //! 別の三角形が出たり、同じ宣言から別の配置が出たりして、どちらが正かが決まらなくなる。
 //! 参照: `_doc/設計/Blenderアセット運用.md`「段3: 小物の量産と見本の集落」
 
-pub(crate) mod prop_group;
 mod scene;
 
 use blitz_engine::{アセットID, チャンク座標};
 
-use crate::placement::配置様式;
-
 use crate::compile::コンパイル済みシーン;
 use crate::error::アセットコンパイルエラー;
 use crate::height_grid::高さ格子を読み込む;
+use crate::placement::原型と置き方の指定;
 use crate::scene_compiler::ソースアセットのコンパイル係;
-
-/// 集落へ散らす小物1種の指定。原型と個体数と並べ方の3つで1種が決まる。
-pub struct 小物群の指定 {
-    pub 原型id: アセットID,
-    pub 個体数: usize,
-    pub 配置様式: 配置様式,
-}
 
 impl ソースアセットのコンパイル係<'_> {
     pub fn 見本の集落チャンクをコンパイルする(
         &self,
         id: &アセットID,
         所有チャンク: チャンク座標,
-        群一覧: &[小物群の指定],
+        群一覧: &[原型と置き方の指定],
     ) -> Result<コンパイル済みシーン, アセットコンパイルエラー> {
         let パス = self.安定idが指すソースのパスを参照する(id)?;
         let 格子 = 高さ格子を読み込む(パス)?;

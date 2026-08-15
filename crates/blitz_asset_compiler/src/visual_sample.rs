@@ -16,15 +16,15 @@ use blitz_engine::{アセットID, チャンク座標};
 use crate::compile::コンパイル済みシーン;
 use crate::error::アセットコンパイルエラー;
 use crate::height_grid::高さ格子を読み込む;
+use crate::placement::原型と置き方の指定;
 use crate::scene_compiler::ソースアセットのコンパイル係;
-use crate::village::小物群の指定;
 
 /// この世界が地面の上へ据えるものの指定。材質見本の立体と遠景地面は1つずつ、小物の群は種の数だけ持つ。
 /// 群の一覧を借用でなく所有で持つのは、宣言から指定へ写す工程がその場で作った一覧をそのまま渡せるようにするためである。
 pub struct 目視見本の指定 {
     pub 材質見本の立体id: アセットID,
     pub 遠景地面id: アセットID,
-    pub 群一覧: Vec<小物群の指定>,
+    pub 群一覧: Vec<原型と置き方の指定>,
 }
 
 impl ソースアセットのコンパイル係<'_> {

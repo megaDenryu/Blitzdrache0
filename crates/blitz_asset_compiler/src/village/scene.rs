@@ -10,9 +10,9 @@ use blitz_engine::{
     シーンデータ, チャンク座標, マテリアルデータ, 描画対象ID, 描画対象データ, 描画形状, 材質集合, 金属粗さPBRデータ
 };
 
-use super::小物群の指定;
 use crate::error::アセットコンパイルエラー;
 use crate::height_grid::高さ格子;
+use crate::placement::原型と置き方の指定;
 use crate::scene_compiler::ソースアセットのコンパイル係;
 use crate::terrain::lod_bake;
 use crate::vegetation::group_object;
@@ -26,7 +26,7 @@ impl ソースアセットのコンパイル係<'_> {
         格子: &高さ格子,
         所有チャンク: チャンク座標,
         ソースパス: PathBuf,
-        群一覧: &[小物群の指定],
+        群一覧: &[原型と置き方の指定],
     ) -> Result<シーンデータ, アセットコンパイルエラー> {
         if 群一覧.is_empty() {
             return Err(アセットコンパイルエラー::見本の集落に群が無い);
@@ -43,9 +43,11 @@ impl ソースアセットのコンパイル係<'_> {
         let mut 通し番号 = 地面の描画対象番号;
         for 指定 in 群一覧 {
             通し番号 += 1;
-            let (対象, 参照一覧) = self.小物群の描画対象を作る(格子, 所有チャンク, 通し番号, 指定)?;
-            参照ファイル一覧.extend(参照一覧);
-            群の描画対象一覧.push(対象);
+            let Some(群) = self.原型1つ分の群の描画対象を作る(格子, 所有チャンク, 通し番号, 指定)? else {
+                continue;
+            };
+            参照ファイル一覧.extend(群.参照ファイル一覧);
+            群の描画対象一覧.push(群.描画対象);
         }
         Ok(シーンデータ::生成する(
             地面,

@@ -7,7 +7,7 @@
 
 use std::path::PathBuf;
 
-use blitz_asset_compiler::{ソースアセットのコンパイル係, テクスチャ格納方針};
+use blitz_asset_compiler::{ソースアセットのコンパイル係, テクスチャ格納方針, 種の由来, 配置の種};
 use blitz_engine::animation::{姿勢, 姿勢を評価する};
 use blitz_engine::{アセットID, カタログ, スキンデータ, チャンク座標};
 
@@ -55,7 +55,11 @@ fn 距離(a: [f32; 3], b: [f32; 3]) -> f32 {
 #[test]
 fn walk評価で平行移動チャンネルの無い関節は親位置へ潰れない() {
     let (カタログ, id) = 試験用カタログ();
-    let コンパイル係 = ソースアセットのコンパイル係::生成する(&カタログ, テクスチャ格納方針::全てRGBA8);
+    let コンパイル係 = ソースアセットのコンパイル係::生成する(
+        &カタログ,
+        テクスチャ格納方針::全てRGBA8,
+        配置の種::種の由来から作る(種の由来::種を持たない),
+    );
     let シーン = match コンパイル係.ソースシーンを読み込む(&id, チャンク座標::生成する(0, 0)) {
         Ok(シーン) => シーン,
         Err(誤り) => panic!("assets/samples/Fox/Fox.glbの読込に失敗した(cargo xtask fetch-assetsで取得済みか確認): {誤り}"),
