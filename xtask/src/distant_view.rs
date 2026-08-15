@@ -5,6 +5,7 @@ mod judgment;
 mod plan;
 #[cfg(test)]
 mod plan_tests;
+mod provenance;
 mod run;
 
 use std::path::{Path, PathBuf};
@@ -40,20 +41,7 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 遠景構図の検収
     let 出力先 = PathBuf::from(出力ディレクトリ);
     let 環境 = run::実行環境を作る(出力先.clone())?;
     let 条件 = 別.採取条件().ok_or_else(|| 遠景構図の検収エラー::引数が不正(引数一覧.join(" ")))?;
-    let 名前 = 条件.名前;
     let 結果 = run::固定構図を二回採る(&環境, &条件)?;
-    由来を書く(&出力先.join(format!("{名前}.txt")), &由来, &結果)?;
+    provenance::由来を書く(&出力先, &条件, &由来, &結果)?;
     Ok(format!("{結果}、由来を{}へ保存した", 出力先.display()))
-}
-
-fn 由来を書く(
-    パス: &Path, 由来: &crate::release_build::構築の由来, 構図の実測: &str
-) -> Result<(), 遠景構図の検収エラー> {
-    let mut 行一覧 = vec![format!("distant-view-contract=v1 {}", plan::計画を表示する())];
-    行一覧.extend(由来.注記一覧());
-    行一覧.push(format!("view-measurement={構図の実測}"));
-    std::fs::write(パス, 行一覧.join("\n")).map_err(|誤り| 遠景構図の検収エラー::由来を書けなかった {
-        パス: パス.to_path_buf(),
-        誤り,
-    })
 }

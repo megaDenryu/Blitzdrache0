@@ -13,10 +13,27 @@ fn 全ての実行の別を一つずつ受け付ける() {
         ("--capture-reference-no-ssao", 実行の別::Ssaoなし対照を採る),
         ("--capture-candidate-no-ssao", 実行の別::Ssaoなし候補を採る),
         ("--capture-candidate-no-distant-shadow", 実行の別::遠景影なし候補を採る),
+        ("--capture-reference-no-post", 実行の別::後処理なし対照を採る),
+        ("--capture-candidate-no-post", 実行の別::後処理なし候補を採る),
         ("--print-plan", 実行の別::計画を表示する),
         ("--judge", 実行の別::判定する),
     ] {
         assert_eq!(引数を読む(&[綴り.to_string()]).unwrap(), 期待);
+    }
+}
+
+/// 主判定が読む対だけが後処理を組まない。旗が採取の別と食い違うと、判定が別の構成の絵を突き合わせる。
+#[test]
+fn 後処理なしの採取だけが後処理を切る() {
+    for (別, 後処理を使わない) in [
+        (実行の別::対照を採る, false),
+        (実行の別::候補を採る, false),
+        (実行の別::Ssaoなし候補を採る, false),
+        (実行の別::遠景影なし候補を採る, false),
+        (実行の別::後処理なし対照を採る, true),
+        (実行の別::後処理なし候補を採る, true),
+    ] {
+        assert_eq!(別.採取条件().unwrap().後処理を使わない, 後処理を使わない);
     }
 }
 

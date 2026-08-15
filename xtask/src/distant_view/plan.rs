@@ -16,6 +16,8 @@ pub(super) enum 実行の別 {
     Ssaoなし対照を採る,
     Ssaoなし候補を採る,
     遠景影なし候補を採る,
+    後処理なし対照を採る,
+    後処理なし候補を採る,
     計画を表示する,
     判定する,
 }
@@ -24,22 +26,28 @@ pub(super) struct 採取条件 {
     pub(super) 名前: &'static str,
     pub(super) ssaoを使わない: bool,
     pub(super) 遠景影を使わない: bool,
+    /// 光のにじみと明るさの圧縮を組まない構成で採る指定。主判定はこの対で近傍不変を課す。
+    /// 参照: `_doc/設計/大規模世界の生成と遠景.md`第5段階の検査点4
+    pub(super) 後処理を使わない: bool,
 }
 
 impl 実行の別 {
     pub(super) fn 採取条件(self) -> Option<採取条件> {
-        let (名前, ssaoを使わない, 遠景影を使わない) = match self {
-            Self::対照を採る => ("reference", false, false),
-            Self::候補を採る => ("candidate", false, false),
-            Self::Ssaoなし対照を採る => ("reference_no_ssao", true, false),
-            Self::Ssaoなし候補を採る => ("candidate_no_ssao", true, false),
-            Self::遠景影なし候補を採る => ("candidate_no_distant_shadow", false, true),
+        let (名前, ssaoを使わない, 遠景影を使わない, 後処理を使わない) = match self {
+            Self::対照を採る => ("reference", false, false, false),
+            Self::候補を採る => ("candidate", false, false, false),
+            Self::Ssaoなし対照を採る => ("reference_no_ssao", true, false, false),
+            Self::Ssaoなし候補を採る => ("candidate_no_ssao", true, false, false),
+            Self::遠景影なし候補を採る => ("candidate_no_distant_shadow", false, true, false),
+            Self::後処理なし対照を採る => ("reference_no_post", false, false, true),
+            Self::後処理なし候補を採る => ("candidate_no_post", false, false, true),
             Self::計画を表示する | Self::判定する => return None,
         };
         Some(採取条件 {
             名前,
             ssaoを使わない,
             遠景影を使わない,
+            後処理を使わない,
         })
     }
 }
@@ -51,6 +59,8 @@ pub(super) fn 引数を読む(引数一覧: &[String]) -> Result<実行の別, �
         [引数] if 引数 == "--capture-reference-no-ssao" => Ok(実行の別::Ssaoなし対照を採る),
         [引数] if 引数 == "--capture-candidate-no-ssao" => Ok(実行の別::Ssaoなし候補を採る),
         [引数] if 引数 == "--capture-candidate-no-distant-shadow" => Ok(実行の別::遠景影なし候補を採る),
+        [引数] if 引数 == "--capture-reference-no-post" => Ok(実行の別::後処理なし対照を採る),
+        [引数] if 引数 == "--capture-candidate-no-post" => Ok(実行の別::後処理なし候補を採る),
         [引数] if 引数 == "--print-plan" => Ok(実行の別::計画を表示する),
         [引数] if 引数 == "--judge" => Ok(実行の別::判定する),
         _ => Err(遠景構図の検収エラー::引数が不正(引数一覧.join(" "))),

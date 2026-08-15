@@ -32,7 +32,7 @@ impl 検収画像 {
         if self.幅 == 相手.幅 && self.高さ == 相手.高さ {
             Ok(())
         } else {
-            Err("referenceとcandidateの寸法が違う".to_string())
+            Err("突き合わせる2枚の寸法が違う".to_string())
         }
     }
 
