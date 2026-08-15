@@ -21,7 +21,7 @@ pub(super) struct 検収の実測<'実測> {
     pub(super) 可視化png: &'実測 Path,
 }
 
-pub(super) fn 組み立てる(構図: 継ぎ目を見る構図, 実測: &検収の実測<'_>) -> String {
+pub(super) fn 検収の要約を組み立てる(構図: 継ぎ目を見る構図, 実測: &検収の実測<'_>) -> String {
     let 成立の呼び名 = if 構図.影の画素で四区分の成立を見るか() {
         "影画素数"
     } else {
