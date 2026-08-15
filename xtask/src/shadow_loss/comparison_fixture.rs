@@ -4,9 +4,9 @@
 //! 描画を伴わずに正例と負例を作れる。領域別の判定の固定と、矩形の数え上げの固定の両方がこの組み立てを使う。
 
 use super::compare::{帯の集計, 比較結果};
-use super::diagnostic_image::帯数;
 use super::range_world;
 use super::region_count::受光面の領域;
+use crate::shadow_diagnostic_image::帯数;
 
 /// 固定が使う読み戻し画像の寸法。受光面の矩形がこの寸法へ固定されているため、固定も同じ寸法で作る。
 pub(super) const 固定の幅: usize = 1280;

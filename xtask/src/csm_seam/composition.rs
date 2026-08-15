@@ -34,6 +34,14 @@ impl 継ぎ目を見る構図 {
         }
     }
 
+    /// この構図が要る影の距離区分の分け方。大規模世界だけが名指しの境界で走る。
+    pub(super) fn 明示の境界を要るか(self) -> bool {
+        match self {
+            Self::検証用地形世界 => false,
+            Self::大規模世界 => true,
+        }
+    }
+
     /// 距離区分の成立を影の画素で見るか、受光画素で見るか。
     pub(super) fn 影の画素で四区分の成立を見るか(self) -> bool {
         match self {

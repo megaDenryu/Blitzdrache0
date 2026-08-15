@@ -2,7 +2,7 @@
 //! 合否の裁定は行わない。どこまでの欠落を許すかはオーナーが決める値であり、この計器は数を出すことだけを担う。
 
 use super::compare::比較結果;
-use super::diagnostic_image::{帯の幅メートル, 帯数};
+use crate::shadow_diagnostic_image::{帯の幅メートル, 帯数};
 
 pub(super) fn 表示する(比較: &比較結果) {
     println!();

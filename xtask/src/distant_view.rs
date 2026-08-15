@@ -37,6 +37,9 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 遠景構図の検収
     if 別 == 実行の別::判定する {
         return judgment::判定する(Path::new(出力ディレクトリ)).map_err(遠景構図の検収エラー::判定が失敗した);
     }
+    if 別 == 実行の別::影を判定する {
+        return judgment::影を判定する(Path::new(出力ディレクトリ)).map_err(遠景構図の検収エラー::判定が失敗した);
+    }
     let 由来 = crate::release_build::計測用に構築する("distant-view")?;
     let 出力先 = PathBuf::from(出力ディレクトリ);
     let 環境 = run::実行環境を作る(出力先.clone())?;

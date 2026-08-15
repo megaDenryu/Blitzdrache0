@@ -16,6 +16,8 @@ mod gap_tests;
 mod geometry_contract;
 mod image_pair;
 mod pixel_class;
+mod shadow_stage;
+mod shadow_visibility;
 
 use std::path::Path;
 
@@ -25,6 +27,11 @@ use image_pair::検収画像;
 use pixel_class::画素の区分;
 
 use super::provenance::採取の旗;
+
+/// 影の距離区分の再配分の検査点。遠景の検査点と分けて呼ぶのは、空中遠近・遠景・影の変化を同じ比較へ混ぜないためである。
+pub(super) fn 影を判定する(置き場: &Path) -> Result<String, String> {
+    shadow_stage::判定する(置き場)
+}
 
 pub(super) fn 判定する(置き場: &Path) -> Result<String, String> {
     let 主判定 = 主判定を課す(置き場)?;

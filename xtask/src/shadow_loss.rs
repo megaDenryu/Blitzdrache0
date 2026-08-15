@@ -13,7 +13,6 @@ mod candidate_axis;
 mod compare;
 #[cfg(test)]
 mod comparison_fixture;
-mod diagnostic_image;
 mod diff_image;
 mod distance;
 mod error;

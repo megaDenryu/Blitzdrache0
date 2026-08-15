@@ -7,9 +7,9 @@
 
 use std::path::PathBuf;
 
-use super::diagnostic_image::診断画像;
 use super::scene_choice::構図;
 use crate::acceptance::{アプリの起こし方, アプリの起動指定, 描画検収の実行環境, 検収の実行名, 検収エラー};
+use crate::shadow_diagnostic_image::診断画像;
 
 const 診断の枝を選ぶ選択肢: [&str; 4] = ["--no-sky", "--no-post", "--no-taa", "--debug-shadow-loss"];
 

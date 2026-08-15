@@ -69,6 +69,7 @@ mod reverse_depth;
 mod sample_world_region;
 mod shader_copy;
 mod shader_reload_draw;
+mod shadow_diagnostic_image;
 mod shadow_loss;
 mod shadow_probe;
 mod sky_draw;
