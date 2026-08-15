@@ -13,6 +13,7 @@ mod determinism;
 mod digest_compare;
 mod file_digest;
 mod incremental;
+mod scatter_reference;
 mod tally_line;
 
 use blitz_asset_compiler::{マップ生成の乱数の種, 世界の広がり};
@@ -68,6 +69,8 @@ fn 散布が効いたことを確かめる(
 pub(super) fn 撮影用の実行時アセットルート() -> crate::acceptance::実行時アセットルート {
     check_root::検収用のルート::実行時形式の一度目(check_root::生成検収の親ディレクトリ::場所巡り).実行時アセットルートとして読む()
 }
+
+pub(crate) use scatter_reference::{散布なしの対照を焼く, 散布対照の実行時形式パス};
 
 pub(crate) fn 大規模世界の計測入力パス() -> std::path::PathBuf {
     check_root::大規模世界の計測入力パス()

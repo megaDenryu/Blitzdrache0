@@ -1,16 +1,27 @@
 //! 大規模世界の固定構図を提示色と深度で2回ずつ採り、再撮影の一致を判定する工程。
+//! 採取条件から起動の選択肢を組む手順は`launch_options`が持つ。
+
+mod launch_options;
 
 use std::path::PathBuf;
 
 use super::error::遠景構図の検収エラー;
+use super::plan::読むアセットルート;
 use crate::acceptance::{
-    アプリの起こし方, アプリの起動指定, 実行時アセットルート, 描画フレーム数, 描画検収の実行環境, 書き出しの形式, 検収の実行名
+    アプリの起こし方, 実行時アセットルート, 描画検収の実行環境, 書き出しの形式, 検収の実行名
 };
+use launch_options::起動指定;
 
-const 枚数: 描画フレーム数 = 描画フレーム数::生成する(360);
-
-pub(super) fn 実行環境を作る(出力先: PathBuf) -> Result<描画検収の実行環境, 遠景構図の検収エラー> {
-    let アセット = crate::game_fox_tour::map_generation_check::大規模世界の計測入力パス();
+/// 散布の検査点の対照だけが別のアセットルートを読む。散布の有無は焼き方の指定であり起動の旗ではないため、
+/// 同じバイナリで旗を分ける形にはできず、別のルートを焼いて読む形になる。
+pub(super) fn 実行環境を作る(
+    出力先: PathBuf,
+    読むルート: 読むアセットルート,
+) -> Result<描画検収の実行環境, 遠景構図の検収エラー> {
+    let アセット = match 読むルート {
+        読むアセットルート::計測入力 => crate::game_fox_tour::map_generation_check::大規模世界の計測入力パス(),
+        読むアセットルート::散布を焼かない対照 => crate::game_fox_tour::map_generation_check::散布対照の実行時形式パス(),
+    };
     Ok(描画検収の実行環境::作る(
         アプリの起こし方::構築済みのリリース版を直に起動する,
         実行時アセットルート::パスから生成する(アセット),
@@ -59,38 +70,6 @@ pub(super) fn 固定構図を二回採る(
         色.画像().画素数(),
         絵.display()
     ))
-}
-
-fn 起動指定(条件: &super::plan::採取条件) -> アプリの起動指定 {
-    let mut 指定 = アプリの起動指定::シーンと枚数を決める(crate::fox_tour_launch::シーン名, 枚数)
-        .選択肢を足す("--streaming")
-        .値を持つ選択肢を足す("--streaming-preload-radius", "8")
-        .値を持つ選択肢を足す("--streaming-ram-limit", "536870912")
-        .値を持つ選択肢を足す("--streaming-vram-limit", "536870912")
-        .値を持つ選択肢を足す("--streaming-loader-workers", "1")
-        .値を持つ選択肢を足す("--game", "fox_tour")
-        .値を持つ選択肢を足す("--camera-yaw", "180")
-        .値を持つ選択肢を足す("--camera-pitch", "-11.0107")
-        .値を持つ選択肢を足す("--time-of-day", "43200")
-        .選択肢を足す("--no-taa")
-        .選択肢を足す("--no-auto-exposure")
-        .値を持つ選択肢を足す("--depth-prepass", "equal");
-    if 条件.ssaoを使わない {
-        指定 = 指定.選択肢を足す("--no-ssao");
-    }
-    if 条件.遠景影を使わない {
-        指定 = 指定.選択肢を足す("--no-distant-shadow");
-    }
-    if 条件.後処理を使わない {
-        指定 = 指定.選択肢を足す("--no-post");
-    }
-    if 条件.影可視度を可視化する {
-        指定 = 指定.選択肢を足す("--debug-shadow-loss");
-    }
-    if 条件.明示境界を使わない {
-        指定 = 指定.選択肢を足す("--no-explicit-shadow-bands");
-    }
-    指定
 }
 
 fn 実行名(名前: &str) -> Result<検収の実行名, 遠景構図の検収エラー> {

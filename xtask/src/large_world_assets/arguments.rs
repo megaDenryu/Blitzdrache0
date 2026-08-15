@@ -7,7 +7,7 @@ const 南北の選択肢: &str = "--south-chunks";
 
 pub(super) fn 世界の広がりを読む(引数一覧: &[String]) -> Result<世界の広がり, String> {
     if 引数一覧.is_empty() {
-        return 世界の広がり::生成する(80, 100).map_err(|誤り| 誤り.to_string());
+        return Ok(世界の広がり::大規模世界の既定値());
     }
     let mut 東西 = None;
     let mut 南北 = None;

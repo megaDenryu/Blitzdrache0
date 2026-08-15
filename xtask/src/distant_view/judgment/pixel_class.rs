@@ -49,4 +49,13 @@ impl 画素の区分 {
     pub(super) fn 候補幾何か(&self, 添字: usize) -> bool {
         self.候補幾何[添字]
     }
+
+    /// 色差の工程へ貸す真偽の並び。工程を遠景と散布で共有するため、区分の読み方でなく並びで渡す。
+    pub(super) fn 許可域の外の一覧(&self) -> Vec<bool> {
+        (0..self.画素数()).map(|添字| self.許可域の外か(添字)).collect()
+    }
+
+    pub(super) fn 近傍の一覧(&self) -> Vec<bool> {
+        (0..self.画素数()).map(|添字| self.近傍か(添字)).collect()
+    }
 }

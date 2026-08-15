@@ -17,6 +17,9 @@ mod geometry_contract;
 mod image_pair;
 mod pixel_class;
 mod pixel_location;
+mod scatter_class;
+mod scatter_geometry;
+mod scatter_stage;
 mod shadow_stage;
 mod shadow_visibility;
 mod verdict_names;
@@ -24,7 +27,7 @@ mod verdict_names;
 use std::path::Path;
 
 use bloom_footprint::にじみの足跡;
-use color_difference::許可域外の色差;
+use color_difference::{色の動く向き, 許可域外の色差};
 use geometry_contract::幾何の実測;
 use image_pair::検収画像;
 use pixel_class::画素の区分;
@@ -38,6 +41,11 @@ pub(super) fn 影を判定する(置き場: &Path) -> Result<String, 遠景構�
     shadow_stage::判定する(置き場)
 }
 
+/// 散布の検査点。遠景と影の検査点と分けて呼ぶのは、空中遠近・遠景・影・散布の変化を同じ比較へ混ぜないためである。
+pub(super) fn 散布を判定する(置き場: &Path) -> Result<String, 遠景構図の検収エラー> {
+    scatter_stage::判定する(置き場)
+}
+
 pub(super) fn 判定する(置き場: &Path) -> Result<String, 遠景構図の検収エラー> {
     let 主判定 = 主判定を課す(置き場)?;
     let 有界検査 = 有界検査を課す(置き場)?;
@@ -48,7 +56,7 @@ pub(super) fn 判定する(置き場: &Path) -> Result<String, 遠景構図の�
 fn 主判定を課す(置き場: &Path) -> Result<String, 遠景構図の検収エラー> {
     let (対照, 候補, 区分) = 対を読む(置き場, "reference_no_post", "candidate_no_post", false)?;
     let 幾何 = 幾何の実測::測る(&対照, &候補, &区分).課す()?;
-    let 色 = 許可域外の色差::集める(&対照, &候補, &区分).一画素も無いことを課す(&区分)?;
+    let 色 = 許可域外の色差::集める(&対照, &候補, &区分.許可域の外の一覧()).一画素も無いことを課す(&区分.近傍の一覧())?;
     Ok(format!("{幾何}・{色}"))
 }
 
@@ -58,7 +66,9 @@ fn 有界検査を課す(置き場: &Path) -> Result<String, 遠景構図の検�
     let 幾何 = 幾何の実測::測る(&対照, &候補, &区分).課す()?;
     let 発生源: Vec<bool> = (0..区分.画素数()).map(|添字| 区分.遠景が背景を置き換えたか(添字)).collect();
     let 足跡 = にじみの足跡::求める(対照.幅, 対照.高さ, &発生源);
-    let 色 = 許可域外の色差::集める(&対照, &候補, &区分).有界であることを課す(&足跡)?;
+    // 遠景は明るい空を暗い地形へ置き換えるため、発生源の向きは暗化に決まっている。散布の検査点は
+    // 地面より明るい岩も暗い木も置くため、向きを発生源の平均輝度の動きから決める。
+    let 色 = 許可域外の色差::集める(&対照, &候補, &区分.許可域の外の一覧()).有界であることを課す(&足跡, 色の動く向き::暗化)?;
     Ok(format!("{幾何}・{色}"))
 }
 
