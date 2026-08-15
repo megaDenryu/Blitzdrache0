@@ -51,10 +51,6 @@ impl にじみの足跡 {
         self.上限
     }
 
-    pub(super) fn 足跡の外か(&self, 添字: usize) -> bool {
-        self.発生源からの距離[添字] > self.上限
-    }
-
     pub(super) fn 発生源からの距離(&self, 添字: usize) -> usize {
         self.発生源からの距離[添字]
     }

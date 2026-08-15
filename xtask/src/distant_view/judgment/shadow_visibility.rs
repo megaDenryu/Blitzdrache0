@@ -16,6 +16,8 @@
 use std::path::Path;
 
 use super::image_pair::検収画像;
+use crate::acceptance::{判定の名前, 判定の破れ};
+use crate::distant_view::error::採取の読み取りの破れ;
 use crate::shadow_diagnostic_image::診断画像;
 
 pub(super) struct 影可視度の対 {
@@ -24,7 +26,7 @@ pub(super) struct 影可視度の対 {
 }
 
 impl 影可視度の対 {
-    pub(super) fn 読む(置き場: &Path) -> Result<Self, String> {
+    pub(super) fn 読む(置き場: &Path) -> Result<Self, 採取の読み取りの破れ> {
         Ok(Self {
             対照: 診断の絵を読む(置き場, "shadow_reference_visibility")?,
             候補: 診断の絵を読む(置き場, "shadow_candidate_visibility")?,
@@ -32,15 +34,10 @@ impl 影可視度の対 {
     }
 
     /// 色の対と同じ画素数であることを課す。違えば同じ添字が2枚で別の位置を指す。
-    pub(super) fn 同じ画素数であることを課す(&self, 色の画素数: usize) -> Result<(), String> {
-        if self.対照.画素数() == 色の画素数 && self.候補.画素数() == 色の画素数 {
-            return Ok(());
-        }
-        Err(format!(
-            "影可視度の診断の画素数が色の採取と違う(色{色の画素数}・対照{}・候補{})",
-            self.対照.画素数(),
-            self.候補.画素数()
-        ))
+    pub(super) fn 同じ画素数であることを課す(&self, 色の画素数: usize) -> Result<(), 判定の破れ> {
+        let 名前 = 影可視度の診断の画素数の判定名(色の画素数, self.対照.画素数(), self.候補.画素数());
+        名前.一致を課す(self.対照.画素数(), 色の画素数)?;
+        名前.一致を課す(self.候補.画素数(), 色の画素数)
     }
 
     pub(super) fn 記録が動いたか(&self, 添字: usize) -> bool {
@@ -60,7 +57,14 @@ impl 影可視度の対 {
 }
 
 /// 採取が書いた提示色の対の2ファイルを、起動を伴わずにそのまま読み直して診断として復号する。
-fn 診断の絵を読む(置き場: &Path, 名前: &str) -> Result<診断画像, String> {
+fn 診断の絵を読む(置き場: &Path, 名前: &str) -> Result<診断画像, 採取の読み取りの破れ> {
     let 絵 = 検収画像::読む(置き場, 名前)?;
     Ok(診断画像::rgba8から読み取る(絵.幅, 絵.高さ, &絵.色))
+}
+
+/// 2枚の診断と色の採取の画素数を丸ごと名前へ入れるのは、どちらの診断がずれているかを同じ行で読めるようにするためである。
+fn 影可視度の診断の画素数の判定名(色の画素数: usize, 対照の画素数: usize, 候補の画素数: usize) -> 判定の名前 {
+    判定の名前::組み立てた綴りから生成する(format!(
+        "影可視度の診断の画素数(色の採取は{色の画素数}画素・対照の診断は{対照の画素数}画素・候補の診断は{候補の画素数}画素である)"
+    ))
 }

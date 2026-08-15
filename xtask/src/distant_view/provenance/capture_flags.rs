@@ -5,13 +5,16 @@
 //! 突き合わせても、綴りがずれていれば誰も気づかないためである。旗の記録が無ければ、判定は自分がどの構成の絵を
 //! 見ているかを絵からは知りようがない。
 
+mod flag_line;
 mod on_off;
 
-use on_off::{入切, 入切を読む, 記録があれば入切を読む};
+use flag_line::採取の旗の行;
+use on_off::入切;
 
 use std::path::Path;
 
 use super::super::plan::採取条件;
+use crate::distant_view::error::採取の読み取りの破れ;
 
 const 旗の行の前置き: &str = "capture-flags ";
 
@@ -66,20 +69,15 @@ impl 採取の旗 {
     }
 
     /// 名前の由来ファイルから旗の行を1本読む。行が無いのは古い採取であり、判定が
-    /// 条件を確かめられないまま通ることを防ぐため、値の食い違いと同じく失敗にする。
-    pub(in crate::distant_view) fn 由来ファイルから読む(置き場: &Path, 名前: &str) -> Result<Self, String> {
-        let パス = 置き場.join(format!("{名前}.txt"));
-        let 内容 = std::fs::read_to_string(&パス).map_err(|誤り| format!("{}を読めない: {誤り}", パス.display()))?;
-        let 本文 = 内容
-            .lines()
-            .find_map(|行| 行.strip_prefix(旗の行の前置き))
-            .ok_or_else(|| format!("{}に採取の旗の行が無い。この名前を採り直す必要がある", パス.display()))?;
+    /// 条件を確かめられないまま通ることを防ぐため、読めない綴りと同じく採取の読み取りの破れにする。
+    pub(in crate::distant_view) fn 由来ファイルから読む(置き場: &Path, 名前: &str) -> Result<Self, 採取の読み取りの破れ> {
+        let 行 = 採取の旗の行::由来ファイルから読み出す(置き場, 名前)?;
         Ok(Self {
-            局所可視性を使うか: 入切を読む(本文, "ssao=")?,
-            遠景の影を使うか: 入切を読む(本文, "distant-shadow=")?,
-            後処理を使うか: 入切を読む(本文, "post=")?,
-            影可視度を可視化したか: 記録があれば入切を読む(本文, "shadow-visibility=")?,
-            明示境界を切ったか: 記録があれば入切を読む(本文, "no-explicit-bands=")?,
+            局所可視性を使うか: 行.入切を読む("ssao=")?,
+            遠景の影を使うか: 行.入切を読む("distant-shadow=")?,
+            後処理を使うか: 行.入切を読む("post=")?,
+            影可視度を可視化したか: 行.記録があれば入切を読む("shadow-visibility=")?,
+            明示境界を切ったか: 行.記録があれば入切を読む("no-explicit-bands=")?,
         })
     }
 }

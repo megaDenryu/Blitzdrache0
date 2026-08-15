@@ -6,12 +6,18 @@
 //! 集める規則を2つに割ると、2段が別の画素集合を数えていても要約の見た目だけは揃ってしまう。
 
 mod changed_pixel;
+mod verdict_names;
 
 use changed_pixel::変化した画素;
+use verdict_names::{
+    明るくなった画素の判定名, 最大の階調差の判定名, 発生源からの距離の判定名, 許可域外の色差の判定名
+};
 
 use super::bloom_footprint::にじみの足跡;
 use super::image_pair::検収画像;
 use super::pixel_class::画素の区分;
+use super::pixel_location::画素の位置;
+use crate::acceptance::{判定の破れ, 画像の幅, 画素の番号};
 
 /// 有界検査が許す1画素あたりの最大の階調差。
 ///
@@ -22,7 +28,7 @@ use super::pixel_class::画素の区分;
 const 許す階調差: u16 = 2;
 
 pub(super) struct 許可域外の色差 {
-    幅: usize,
+    幅: 画像の幅,
     一覧: Vec<変化した画素>,
 }
 
@@ -32,45 +38,31 @@ impl 許可域外の色差 {
             .filter(|添字| 区分.許可域の外か(*添字))
             .filter_map(|添字| 変化した画素::求める(対照, 候補, 添字))
             .collect();
-        Self { 幅: 対照.幅, 一覧 }
+        Self {
+            幅: 対照.画像の幅(), 一覧
+        }
     }
 
     /// 主判定。近傍チャンクの幾何画素は深度も色も動かないという第5段階の検査点4の要求そのものである。
-    pub(super) fn 一画素も無いことを課す(&self, 区分: &画素の区分) -> Result<String, String> {
+    pub(super) fn 一画素も無いことを課す(&self, 区分: &画素の区分) -> Result<String, 判定の破れ> {
         let 近傍差 = self.一覧.iter().filter(|画素| 区分.近傍か(画素.添字)).count();
-        if self.一覧.is_empty() {
-            return Ok("近傍差0・許可域外の色差0".to_string());
-        }
-        Err(format!(
-            "近傍差={近傍差} 許可域外の色差={} 最初の画素={} 最大階調差={}",
-            self.一覧.len(),
-            self.位置の綴り(0),
-            self.一覧.iter().map(|画素| 画素.最大階調差).max().unwrap_or(0)
-        ))
+        let 最大階調差 = self.一覧.iter().map(|画素| 画素.最大階調差).max().unwrap_or(0);
+        許可域外の色差の判定名(近傍差, &self.位置の綴り(self.一覧.first()), 最大階調差).零件であることを課す(self.一覧.len())?;
+        Ok("近傍差0・許可域外の色差0".to_string())
     }
 
     /// 有界検査。差が残ること自体は認めるが、滲みとして説明できる形に収まっていることを課す。
-    pub(super) fn 有界であることを課す(&self, 足跡: &にじみの足跡) -> Result<String, String> {
-        if let Some(画素) = self.一覧.iter().find(|画素| 画素.最大階調差 > 許す階調差) {
-            return Err(format!(
-                "{}で{}階調変わった。許す階調差は{許す階調差}である",
-                self.位置の綴り追跡(画素),
-                画素.最大階調差
-            ));
+    ///
+    /// 最も大きい差と最も遠い差だけへ上限を課すのは、それが上限を守るなら残り全部も守るためである。
+    /// 1件ずつ課すと、破れの文面が「たまたま最初に見つかった画素」を名指すことになる。
+    pub(super) fn 有界であることを課す(&self, 足跡: &にじみの足跡) -> Result<String, 判定の破れ> {
+        if let Some(画素) = self.一覧.iter().max_by_key(|画素| 画素.最大階調差) {
+            最大の階調差の判定名(self.位置(画素)).上限を課す(画素.最大階調差, 許す階調差)?;
         }
-        if let Some(画素) = self.一覧.iter().find(|画素| 画素.明化を含むか) {
-            return Err(format!(
-                "{}が明るくなった。滲みの減少で説明できるのは暗化だけである",
-                self.位置の綴り追跡(画素)
-            ));
-        }
-        if let Some(画素) = self.一覧.iter().find(|画素| 足跡.足跡の外か(画素.添字)) {
-            return Err(format!(
-                "{}が発生源から{}画素離れている。にじみの足跡の上限は{}画素である",
-                self.位置の綴り追跡(画素),
-                足跡.発生源からの距離(画素.添字),
-                足跡.上限()
-            ));
+        明るくなった画素の判定名(&self.位置の綴り(self.一覧.iter().find(|画素| 画素.明化を含むか)))
+            .零件であることを課す(self.一覧.iter().filter(|画素| 画素.明化を含むか).count())?;
+        if let Some(画素) = self.一覧.iter().max_by_key(|画素| 足跡.発生源からの距離(画素.添字)) {
+            発生源からの距離の判定名(self.位置(画素)).上限を課す(足跡.発生源からの距離(画素.添字), 足跡.上限())?;
         }
         Ok(format!(
             "許可域外の色差{}画素が全て{許す階調差}階調以内の暗化であり、発生源から{}画素以内に収まった",
@@ -79,11 +71,11 @@ impl 許可域外の色差 {
         ))
     }
 
-    fn 位置の綴り(&self, 順番: usize) -> String {
-        self.一覧.get(順番).map_or_else(|| "無し".to_string(), |画素| self.位置の綴り追跡(画素))
+    fn 位置(&self, 画素: &変化した画素) -> 画素の位置 {
+        画素の位置::番号と幅から求める(画素の番号::生成する(画素.添字), self.幅)
     }
 
-    fn 位置の綴り追跡(&self, 画素: &変化した画素) -> String {
-        format!("画素(横{}・縦{})", 画素.添字 % self.幅, 画素.添字 / self.幅)
+    fn 位置の綴り(&self, 画素: Option<&変化した画素>) -> String {
+        画素.map_or_else(|| "無し".to_string(), |画素| self.位置(画素).to_string())
     }
 }
