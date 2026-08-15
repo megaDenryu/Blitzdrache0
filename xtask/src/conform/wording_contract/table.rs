@@ -3,6 +3,7 @@
 
 mod atmosphere_readback;
 mod exit_report;
+mod instance_tally;
 mod shader_reload;
 mod shadow_band_assignment;
 
@@ -14,9 +15,10 @@ pub(super) struct 綴りの契約 {
 }
 
 /// 領域ごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域一覧: [&[綴りの契約]; 4] = [
+pub(super) const 領域一覧: [&[綴りの契約]; 5] = [
     &atmosphere_readback::綴り一覧,
     &exit_report::綴り一覧,
+    &instance_tally::綴り一覧,
     &shader_reload::綴り一覧,
     &shadow_band_assignment::綴り一覧,
 ];

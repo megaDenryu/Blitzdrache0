@@ -18,6 +18,7 @@ mod lattice_noise;
 mod loader;
 mod nonnegative_floor;
 mod placement;
+mod scatter_bake;
 mod scene_compiler;
 mod terrain;
 mod texture_storage;
@@ -54,6 +55,7 @@ pub use loader::{入力契約を検査するglTFのファイル, 原型ソース
 pub use placement::{
     個数を決める並べ方, 傾きの好み, 出現割合の範囲, 原型と置き方の指定, 地表への据え方, 大きさの範囲, 密度場の指定, 密度場の散布, 配置の種, 配置様式,
 };
+pub use scatter_bake::散布の焼き方;
 pub use scene_compiler::ソースアセットのコンパイル係;
 pub use texture_storage::{
     rgba8の縮小段をbc1のバイト列へ符号化する, srgbの色として縦横を半分に縮める, srgbの色として縮小段の連なりを作る,

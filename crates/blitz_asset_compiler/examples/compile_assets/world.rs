@@ -13,6 +13,7 @@ mod definition_kind;
 mod directory_source_path;
 pub(super) mod fixed_placement_declaration;
 pub(super) mod fox_tour_declaration;
+mod fox_tour_scatter_declaration;
 mod night_lights_declaration;
 pub(super) mod prop_group_declaration;
 mod provenance;
@@ -23,7 +24,7 @@ mod vertex_diagnostic_declaration;
 mod village_declaration;
 pub(super) mod visual_sample_declaration;
 
-use blitz_asset_compiler::{アセット配置エラー, 世界のディレクトリ名};
+use blitz_asset_compiler::{アセット配置エラー, 世界のディレクトリ名, 散布の焼き方};
 
 use super::catalog::{アセット定義, ソース種別};
 use vertex_diagnostic_declaration::診断の原型;
@@ -60,8 +61,8 @@ impl 対象世界 {
     }
 
     /// その世界のチャンクがどのソース形式で書かれているか。台帳は`chunk_source_kind`が持つ。
-    pub(super) fn チャンクのソース種別(self, 同居植生個体数: usize) -> ソース種別 {
-        chunk_source_kind::チャンクのソース種別を選ぶ(self, 同居植生個体数)
+    pub(super) fn チャンクのソース種別(self, 同居植生個体数: usize, 散布: 散布の焼き方) -> ソース種別 {
+        chunk_source_kind::チャンクのソース種別を選ぶ(self, 同居植生個体数, 散布)
     }
 
     /// 同居植生の個体数を指定されなかったときに使う値。地形と頂点診断以外の世界は同居植生を持たないため、この値を読まない。

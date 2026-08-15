@@ -5,13 +5,17 @@
 //! 地形のチャンクだけが同居植生の宣言を伴う。本番のストリーミング経路で植生が出入りすることをこの世界で検査するためである。
 //! 同居植生の個体数だけを外から受け取るのは、物量計測が原型・マテリアル・座標を固定したまま密度を変えるためである。
 
+use blitz_asset_compiler::散布の焼き方;
+
 use super::super::catalog::ソース種別;
 use super::{
     asset_declaration, fox_tour_declaration, night_lights_declaration, stone_hut_declaration, vegetation_declaration, vertex_diagnostic_declaration,
     village_declaration, visual_sample_declaration, 対象世界,
 };
 
-pub(super) fn チャンクのソース種別を選ぶ(世界: 対象世界, 同居植生個体数: usize) -> ソース種別 {
+pub(super) fn チャンクのソース種別を選ぶ(
+    世界: 対象世界, 同居植生個体数: usize, 散布: 散布の焼き方
+) -> ソース種別 {
     match 世界 {
         対象世界::板の世界 | 対象世界::ブロック圧縮の対照世界 => ソース種別::Gltfシーン,
         対象世界::地形の世界 => ソース種別::高さ格子 {
@@ -31,6 +35,6 @@ pub(super) fn チャンクのソース種別を選ぶ(世界: 対象世界, 同�
         },
         対象世界::夜の多光源の世界 => night_lights_declaration::チャンクのソース種別(),
         対象世界::屋内の多光源の世界 => stone_hut_declaration::チャンクのソース種別(),
-        対象世界::場所巡りの世界 => fox_tour_declaration::チャンクのソース種別(),
+        対象世界::場所巡りの世界 => fox_tour_declaration::チャンクのソース種別(散布),
     }
 }
