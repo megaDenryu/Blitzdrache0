@@ -9,14 +9,14 @@
 use std::path::Path;
 
 use super::composition::継ぎ目を見る構図;
-use super::judgment::{境界の実在, 対象から外した境界の綴り};
+use super::judgment::{境界の実在, 境界の段差, 対象から外した境界の綴り};
 
 pub(super) struct 検収の実測<'実測> {
     pub(super) 分け方: &'実測 str,
     pub(super) 四区分の成立: [usize; 4],
     pub(super) 境界の実在: &'実測 [境界の実在],
     pub(super) 境界の影: Vec<(usize, usize)>,
-    pub(super) 段差: Vec<(f64, f64)>,
+    pub(super) 段差: Vec<境界の段差>,
     pub(super) 本番png: &'実測 Path,
     pub(super) 可視化png: &'実測 Path,
 }
@@ -41,12 +41,15 @@ pub(super) fn 組み立てる(構図: 継ぎ目を見る構図, 実測: &検収�
 }
 
 fn 段差の記述(実測: &検収の実測<'_>) -> String {
-    let 実在する境界番号 = 実測.境界の実在.iter().filter(|実在| 実在.影が両側にあるか()).map(|実在| 実在.境界番号);
     let 記述: Vec<String> = 実測
         .段差
         .iter()
-        .zip(実在する境界番号)
-        .map(|(&(段差, 勾配), 番号)| format!("境界{番号}は段差{段差:.2}(距離区分の内側の勾配{勾配:.2})"))
+        .map(|測定| {
+            format!(
+                "境界{}は段差{:.3}(距離区分の内側の勾配{:.3}、{})",
+                測定.境界番号, 測定.段差, 測定.内側の勾配, 測定.内訳
+            )
+        })
         .collect();
     if 記述.is_empty() {
         return "輝度段差を測れた境界は無い".to_string();
