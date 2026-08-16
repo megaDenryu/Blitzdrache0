@@ -4,6 +4,7 @@
 #![forbid(unsafe_code)]
 
 mod assembled_scene;
+mod assembly_parts;
 mod assembly_reference;
 mod asset_layout;
 mod chunk_directory_source;

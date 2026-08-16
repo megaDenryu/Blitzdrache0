@@ -14,11 +14,11 @@ use blitz_engine::{
 };
 
 use super::expansion_run::部品で組んだ並びの展開係;
-use super::parts::部品で組んだ並びの部品一式;
 use super::site::部品で組んだ並びの敷地;
 use super::specification::部品で組んだ並びの指定;
 use super::tally::部品で組んだ並びの勘定;
 use crate::assembled_scene::組み立てたシーン;
+use crate::assembly_parts::組み立てに使う部品一式;
 use crate::error::アセットコンパイルエラー;
 use crate::height_grid::高さ格子;
 use crate::placed_instance_count::置いた個体の数;
@@ -37,7 +37,7 @@ impl ソースアセットのコンパイル係<'_> {
         ソースパス: PathBuf,
         指定: &部品で組んだ並びの指定,
     ) -> Result<組み立てたシーン, アセットコンパイルエラー> {
-        let 部品一式 = 部品で組んだ並びの部品一式::宣言から読み取る(self, 指定.部品の安定id一覧())?;
+        let 部品一式 = 組み立てに使う部品一式::宣言から読み取る(self, 指定.部品の安定id一覧())?;
         let 敷地 = 部品で組んだ並びの敷地::生成する(格子, 指定.件数(), self.配置の種を貸す());
         let 集約 = 部品で組んだ並びの展開係::生成する(部品一式.カタログを組み上げる()?, 敷地).件数ぶん展開する(
             指定.規則(),
