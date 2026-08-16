@@ -4,6 +4,8 @@
 
 use blitz_asset_compiler::配置様式;
 
+use super::archetype_identity::原型の識別;
+
 /// 地形チャンクへ同居させる植生の宣言。原型を安定IDの綴りで指すのは、`ソース種別`を`Copy`のまま保つためである。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) struct 同居植生宣言 {
@@ -11,13 +13,12 @@ pub(super) struct 同居植生宣言 {
     pub(super) 個体数: usize,
 }
 
-/// 地面へ置く原型1つ分の宣言。原型を安定IDの綴りとソース相対パスの両方で持つのは、
-/// 同じ1件がアセット定義の一覧(ソースの置き場を決める側)と群の指定(コンパイラへ渡す側)の両方を生むためである。
-/// 2つを別の表に分けると、片方だけ足した宣言がカタログ未登録という遠い場所の失敗になる。
+/// 地面へ置く原型1つ分の宣言。持つのは「どの原型か」と「どう置くか」の2つだけである。
+/// 原型を綴りで指すのは、`ソース種別`を`Copy`のまま保つためである。
+/// 参照: `crates/blitz_asset_compiler/examples/compile_assets/archetype_identity.rs`
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct 原型と置き方の宣言 {
-    pub(super) 原型の安定id: &'static str,
-    pub(super) ソース相対パス: &'static str,
+    pub(super) 原型の識別: 原型の識別,
     pub(super) 配置様式: 配置様式,
 }
 

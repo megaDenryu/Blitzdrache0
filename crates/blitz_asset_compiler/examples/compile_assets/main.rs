@@ -2,6 +2,7 @@
 //! 1回の実行が焼くのは1つのチャンク世界であり、出力ルートには1つのカタログと1つのチャンク目録が並ぶ。
 //! この入口が担うのは起動引数の受け取りだけであり、焼く工程は`compilation`の実行時アセットのコンパイルが持つ。
 
+mod archetype_identity;
 mod arguments;
 mod catalog;
 mod chunk_ledger;

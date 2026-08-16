@@ -12,6 +12,7 @@
 
 use blitz_asset_compiler::散布の焼き方;
 
+use super::super::archetype_identity::原型の識別;
 use super::super::catalog::アセット定義;
 use super::super::source_kind::{ソース種別, 原型と置き方の宣言, 固定物の据え付け宣言};
 use super::definition_kind::{ソース専用定義, 外部ソース専用定義, 必須定義};
@@ -19,13 +20,13 @@ use super::fox_tour_scatter_declaration::散らす原型の一覧;
 
 /// 起動時に読むキツネのシーンの安定ID。名前が`terrain`で始まることが、この世界の空方針・間接照明方針・露出方式を
 /// 地形の本番世界と同じものにする。参照: `crates/blitz_app/src/app/time_of_day/scene_policy.rs`
-pub(super) const キツネのシーン: (&str, &str) = ("terrain_fox_tour", "samples/Fox/Fox.glb");
+pub(super) const キツネのシーン: 原型の識別 = 原型の識別::生成する("terrain_fox_tour", "samples/Fox/Fox.glb");
 
 /// キツネの標準サンプルを実寸へ合わせる倍率。ソースは体長がおよそ120で書かれているため、100分の1で体長1.2メートルになる。
 const キツネの寸法の倍率: f32 = 0.01;
 
 /// 目的地に立てる目印の柱の原型を指す安定ID。実行時形式は焼かず、目印を据えるチャンクが素材として読むだけである。
-const 目印の柱: (&str, &str) = ("fox_tour_destination_marker", "fox_tour_world/destination_marker.gltf");
+const 目印の柱: 原型の識別 = 原型の識別::生成する("fox_tour_destination_marker", "fox_tour_world/destination_marker.gltf");
 
 /// 巡る3つの目的地。1つ目は出発地点の真北にあり、2つ目と3つ目は向きを変えないと着かない位置に置く。
 const 巡る目的地の一覧: &[固定物の据え付け宣言] = &[目的地(0, -15), 目的地(-40, -45), 目的地(45, -70)];
@@ -33,7 +34,7 @@ const 巡る目的地の一覧: &[固定物の据え付け宣言] = &[目的地(
 /// 目的地1つの宣言。据える原型はどれも同じ目印の柱である。
 const fn 目的地(東メートル: i32, 南メートル: i32) -> 固定物の据え付け宣言 {
     固定物の据え付け宣言 {
-        原型の安定id: 目印の柱.0,
+        原型の安定id: 目印の柱.安定id(),
         東メートル,
         南メートル,
     }
@@ -56,18 +57,18 @@ pub(super) fn 散布の宣言一覧() -> &'static [原型と置き方の宣言] 
 pub(super) fn 一覧() -> Vec<アセット定義> {
     let mut 定義一覧 = vec![
         必須定義(
-            キツネのシーン.0,
-            キツネのシーン.1,
+            キツネのシーン.安定id(),
+            キツネのシーン.ソース相対パス(),
             ソース種別::寸法を合わせるGltfシーン {
                 一様倍率: キツネの寸法の倍率,
             },
         ),
-        ソース専用定義(目印の柱.0, 目印の柱.1),
+        ソース専用定義(目印の柱.安定id(), 目印の柱.ソース相対パス()),
     ];
     定義一覧.extend(
         散らす原型の一覧
             .iter()
-            .map(|宣言| 外部ソース専用定義(宣言.原型の安定id, 宣言.ソース相対パス)),
+            .map(|宣言| 外部ソース専用定義(宣言.原型の識別.安定id(), 宣言.原型の識別.ソース相対パス())),
     );
     定義一覧
 }
