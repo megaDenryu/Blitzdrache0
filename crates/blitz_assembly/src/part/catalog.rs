@@ -30,10 +30,6 @@ impl 部品カタログ {
         self.収蔵部品一覧.len()
     }
 
-    pub fn 収蔵部品一覧(&self) -> &[収蔵部品] {
-        &self.収蔵部品一覧
-    }
-
     pub fn 接合点の総数(&self) -> usize {
         self.収蔵部品一覧.iter().map(|部品| 部品.定義().接合点数()).sum()
     }
