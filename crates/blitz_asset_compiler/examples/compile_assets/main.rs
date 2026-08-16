@@ -4,6 +4,7 @@
 
 mod archetype_identity;
 mod arguments;
+mod bake_report;
 mod catalog;
 mod chunk_ledger;
 mod chunk_world;

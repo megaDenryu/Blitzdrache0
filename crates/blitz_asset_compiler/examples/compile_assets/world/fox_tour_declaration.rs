@@ -16,7 +16,9 @@ use super::super::archetype_identity::原型の識別;
 use super::super::catalog::アセット定義;
 use super::super::source_kind::{ソース種別, 原型と置き方の宣言, 固定物の据え付け宣言};
 use super::definition_kind::{ソース専用定義, 外部ソース専用定義, 必須定義};
+use super::fox_tour_assembled_scatter_declaration::散らす部品で組んだ木の一覧;
 use super::fox_tour_scatter_declaration::散らす原型の一覧;
+use super::part_row_declaration::部品のアセット定義一覧を作る;
 
 /// 起動時に読むキツネのシーンの安定ID。名前が`terrain`で始まることが、この世界の空方針・間接照明方針・露出方式を
 /// 地形の本番世界と同じものにする。参照: `crates/blitz_app/src/app/time_of_day/scene_policy.rs`
@@ -44,7 +46,7 @@ pub(super) fn チャンクのソース種別(散布: 散布の焼き方) -> ソ�
     ソース種別::固定物を据えた高さ格子 {
         据え付け一覧: 巡る目的地の一覧,
         散布一覧: 散布.適用する(散らす原型の一覧),
-        部品で組む散布一覧: &[],
+        部品で組む散布一覧: 散布.適用する(散らす部品で組んだ木の一覧),
     }
 }
 
@@ -71,5 +73,10 @@ pub(super) fn 一覧() -> Vec<アセット定義> {
             .iter()
             .map(|宣言| 外部ソース専用定義(宣言.原型の識別.安定id(), 宣言.原型の識別.ソース相対パス())),
     );
+    // 部品で組んで散らす種は、規則が指す部品を1件ずつ素材として読む。規則の種類が部品の一覧を答えるため、
+    // 宣言の側が部品を書き足す必要は無い。
+    for 宣言 in 散らす部品で組んだ木の一覧 {
+        定義一覧.extend(部品のアセット定義一覧を作る(宣言.規則の種類.部品一覧()));
+    }
     定義一覧
 }

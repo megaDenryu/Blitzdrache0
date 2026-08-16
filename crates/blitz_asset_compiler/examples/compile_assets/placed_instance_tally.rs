@@ -10,16 +10,18 @@
 //! 注意: 報告の行の綴りは`xtask/src/game_fox_tour/map_generation_check/compile_report.rs`が読み取る側として
 //! 同じものを持つ。両側にあることは`cargo xtask conform`の綴りの契約の検査が守る。
 
-use blitz_asset_compiler::置いた個体の数;
+use blitz_asset_compiler::{種類ごとの置いた個体の数, 置いた個体の数};
 
 pub(super) struct 置いた個体の勘定 {
     合計: 置いた個体の数,
+    種類ごとの内訳: 種類ごとの置いた個体の数,
 }
 
 impl 置いた個体の勘定 {
     pub(super) fn 零から始める() -> Self {
         Self {
-            合計: 置いた個体の数::零()
+            合計: 置いた個体の数::零(),
+            種類ごとの内訳: 種類ごとの置いた個体の数::空から始める(),
         }
     }
 
@@ -28,7 +30,28 @@ impl 置いた個体の勘定 {
         Ok(())
     }
 
+    pub(super) fn 内訳を取り込む(&mut self, 内訳: &種類ごとの置いた個体の数) -> Result<(), String> {
+        self.種類ごとの内訳.内訳を取り込む(内訳).map_err(|誤り| 誤り.to_string())
+    }
+
     pub(super) fn 報告の行を作る(&self) -> String {
         format!("置いた個体の合計={}", self.合計.値())
+    }
+
+    /// 種類ごとの内訳の行。**合計だけでは木と岩の取り分が分からない。** 散らした種類が1つも無い実行では
+    /// 「なし」と綴る。行そのものを出さない形にすると、読む側が「内訳が0件」と「行を出し忘れた」を区別できない。
+    pub(super) fn 内訳の行を作る(&self) -> String {
+        let 綴り一覧: Vec<String> = self
+            .種類ごとの内訳
+            .名前の順に並べる()
+            .iter()
+            .map(|(名前, 数)| format!("{}={}", 名前.綴り(), 数.値()))
+            .collect();
+        let 中身 = if 綴り一覧.is_empty() {
+            "なし".to_string()
+        } else {
+            綴り一覧.join(" ")
+        };
+        format!("種類ごとの置いた個体: {中身}")
     }
 }

@@ -9,30 +9,20 @@
 //! 5本では3列2行になって1つだけ空く。本数を増やしても部品の種類は3のままであり、絵に要る最小で足りる。
 //! 参照: `_doc/設計/部品カタログと接合点.md`「段5の到達点」
 
-use super::super::archetype_identity::原型の識別;
 use super::super::catalog::{アセット定義, ソース種別};
 use super::assembly_rule_choice::部品の組み立て規則の種類;
 use super::part_row_declaration::{部品で組んだ並びの宣言, 部品のアセット定義一覧を作る};
-
-/// 樫の木を組み立てる部品の一覧。原型はすべて外部のアセットリポジトリの`parts/`から引く。
-/// 幹の一節を3つ積むのは規則の仕事であり、この表は部品の種類を1件ずつ持つだけである。
-const 木の部品一覧: &[原型の識別] = &[
-    原型の識別::生成する("part_tree_oak_trunk_segment", "parts/Mod_Tree_Oak_Trunk_Segment.glb"),
-    原型の識別::生成する("part_tree_oak_branch_large", "parts/Mod_Tree_Oak_Branch_Large.glb"),
-    原型の識別::生成する("part_tree_oak_foliage_cluster", "parts/Mod_Tree_Oak_Foliage_Cluster.glb"),
-];
 
 /// 並べる木の本数。
 const 木の本数: usize = 4;
 
 /// この世界がチャンク以外に焼くもの。
 pub(super) fn 一覧() -> Vec<アセット定義> {
-    部品のアセット定義一覧を作る(木の部品一覧)
+    部品のアセット定義一覧を作る(部品の組み立て規則の種類::樫の木.部品一覧())
 }
 
 pub(super) fn チャンクのソース種別() -> ソース種別 {
     ソース種別::部品で組んだ並び(部品で組んだ並びの宣言::生成する(
-        木の部品一覧,
         木の本数,
         部品の組み立て規則の種類::樫の木,
     ))

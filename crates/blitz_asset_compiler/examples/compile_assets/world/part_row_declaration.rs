@@ -21,19 +21,19 @@ use super::definition_kind::外部ソース専用定義;
 /// `ソース種別`を`Copy`のまま保つため、部品を静的な並びで指す。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct 部品で組んだ並びの宣言 {
-    部品一覧: &'static [原型の識別],
     件数: usize,
     規則の種類: 部品の組み立て規則の種類,
 }
 
 impl 部品で組んだ並びの宣言 {
     /// 宣言の表が`const`のまま書けるように`const fn`にする。
-    pub(super) const fn 生成する(
-        部品一覧: &'static [原型の識別], 件数: usize, 規則の種類: 部品の組み立て規則の種類
-    ) -> Self {
-        Self {
-            部品一覧, 件数, 規則の種類
-        }
+    pub(super) const fn 生成する(件数: usize, 規則の種類: 部品の組み立て規則の種類) -> Self {
+        Self { 件数, 規則の種類 }
+    }
+
+    /// この並びが読む部品の一覧。規則の種類が答えるため、宣言は部品を書かない。
+    pub(super) fn 部品一覧(self) -> &'static [原型の識別] {
+        self.規則の種類.部品一覧()
     }
 }
 
@@ -50,7 +50,7 @@ pub(crate) fn 部品で組んだ並びの指定を作る(
     宣言: 部品で組んだ並びの宣言
 ) -> Result<部品で組んだ並びの指定, String> {
     let 安定id一覧 = 宣言
-        .部品一覧
+        .部品一覧()
         .iter()
         .map(|識別| アセットID::生成する(識別.安定id()).map_err(|誤り| 誤り.to_string()))
         .collect::<Result<Vec<アセットID>, String>>()?;

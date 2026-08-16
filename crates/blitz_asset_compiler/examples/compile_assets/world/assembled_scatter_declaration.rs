@@ -10,14 +10,11 @@
 use blitz_asset_compiler::{密度場の散布, 部品で組む散布の指定};
 use blitz_engine::アセットID;
 
-use super::super::archetype_identity::原型の識別;
 use super::assembly_rule_choice::部品の組み立て規則の種類;
 
 /// 地面へ部品で組んだ個体を1種散らす宣言。
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) struct 部品で組む散布の宣言 {
-    /// カタログへ載せる部品。規則が指す部品はすべてこの一覧に在る必要がある。
-    pub(crate) 部品一覧: &'static [原型の識別],
     pub(crate) 規則の種類: 部品の組み立て規則の種類,
     pub(crate) 密度場の散布: 密度場の散布,
 }
@@ -31,12 +28,14 @@ pub(crate) fn 部品で組む散布の指定一覧を作る(
 
 fn 指定を1件作る(宣言: &部品で組む散布の宣言) -> Result<部品で組む散布の指定, String> {
     let 部品の安定id一覧 = 宣言
-        .部品一覧
+        .規則の種類
+        .部品一覧()
         .iter()
         .map(|識別| アセットID::生成する(識別.安定id()).map_err(|誤り| 誤り.to_string()))
         .collect::<Result<Vec<アセットID>, String>>()?;
     let (規則, 種の起点) = 宣言.規則の種類.規則と種の起点を組む()?;
     Ok(部品で組む散布の指定 {
+        種類の名前: 宣言.規則の種類.名前(),
         部品の安定id一覧,
         規則,
         種の起点,

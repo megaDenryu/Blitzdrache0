@@ -16,6 +16,7 @@ mod chunk_source_kind;
 mod definition_kind;
 mod directory_source_path;
 pub(super) mod fixed_placement_declaration;
+mod fox_tour_assembled_scatter_declaration;
 pub(super) mod fox_tour_declaration;
 mod fox_tour_scatter_declaration;
 mod night_lights_declaration;

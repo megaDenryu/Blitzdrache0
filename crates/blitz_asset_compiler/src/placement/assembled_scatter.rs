@@ -9,11 +9,15 @@
 //! 参照: `_doc/設計/部品カタログと接合点.md`「段6: 散布の針葉樹を部品で組んだ木へ差し替える」
 
 use blitz_assembly::{生成の種, 組み立て規則};
+
+use crate::placed_instance_count::散らした種類の名前;
 use blitz_engine::アセットID;
 
 use super::scatter_specification::密度場の散布;
 
 pub struct 部品で組む散布の指定 {
+    /// 報告の内訳へ載せるこの種類の名前。1本が複数の部品になるため、部品の名前では取り分を読めない。
+    pub 種類の名前: 散らした種類の名前,
     /// カタログへ載せる部品の安定ID。規則が指す部品はすべてこの一覧に在る必要がある。
     pub 部品の安定id一覧: Vec<アセットID>,
     pub 規則: 組み立て規則,
