@@ -18,7 +18,9 @@ mod normal_offset;
 mod positive_length;
 
 #[cfg(test)]
-mod joint_kind_tests;
+mod joint_kind_pairing_tests;
+#[cfg(test)]
+mod joint_kind_style_tests;
 #[cfg(test)]
 mod joint_tests;
 
