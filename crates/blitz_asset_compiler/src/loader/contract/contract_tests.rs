@@ -8,6 +8,7 @@ mod archetype_tests;
 mod base_color_tests;
 mod joint_tests;
 mod material_tests;
+mod part_stage_tests;
 
 use super::archetype_fixture::{原型の文書jsonを作る, 原型の文書の指定, 原型の段の列のバイナリ};
 use super::fixture_json::{三角形のプリミティブ, 合格の指定, 文書jsonを作る};
@@ -25,6 +26,12 @@ pub(super) fn 検査する(名前: &str, 指定: &super::fixture_json::文書の
 pub(super) fn 原型として検査する(名前: &str, 指定: &原型の文書の指定<'_>) -> 契約検査結果 {
     let パス = glbを書き出す(名前, &原型の文書jsonを作る(指定), &原型の段の列のバイナリ()).unwrap();
     入力契約を検査するglTFのファイル::生成する(&パス).契約を選んで全項目を検査する(検査する契約::群の原型)
+}
+
+/// 部品の契約で、段の列の材料を検査する。材料は群の原型と同じものを使い、接合点を載せたノード列だけが違う。
+pub(super) fn 部品の段の列として検査する(名前: &str, 指定: &原型の文書の指定<'_>) -> 契約検査結果 {
+    let パス = glbを書き出す(名前, &原型の文書jsonを作る(指定), &原型の段の列のバイナリ()).unwrap();
+    入力契約を検査するglTFのファイル::生成する(&パス).契約を選んで全項目を検査する(検査する契約::部品)
 }
 
 #[test]

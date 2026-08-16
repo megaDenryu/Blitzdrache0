@@ -31,7 +31,7 @@ impl 開いた文書の契約検査<'_> {
         );
     }
 
-    fn 段の描画の並び方を検査する(&mut self, 段番号: usize, 添字: usize, プリミティブ: &gltf::Primitive<'_>) {
+    pub(super) fn 段の描画の並び方を検査する(&mut self, 段番号: usize, 添字: usize, プリミティブ: &gltf::Primitive<'_>) {
         if プリミティブ.mode() == gltf::mesh::Mode::Triangles {
             return;
         }
