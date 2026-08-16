@@ -8,7 +8,7 @@
 //! 焼く工程が数えた数を持ち回ると、据え置いたチャンクの個体を数え落として、増分が効いた実行だけ合計が減る。
 //! 据え置きの項目は前回のカタログから写されており、容量メタデータの個体数もそのまま写っている。
 //!
-//! 注意: 報告の行の綴りは`xtask/src/game_fox_tour/map_generation_check/instance_tally.rs`が読み取る側として
+//! 注意: 報告の行の綴りは`xtask/src/game_fox_tour/map_generation_check/compile_report.rs`が読み取る側として
 //! 同じものを持つ。食い違えば検収が合計を読めずに失敗する。両側にあることは`cargo xtask conform`の
 //! 綴りの契約の検査が守る。
 
