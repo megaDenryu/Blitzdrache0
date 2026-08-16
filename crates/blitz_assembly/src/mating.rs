@@ -14,6 +14,8 @@ mod scaled_face;
 mod mating_rejection_tests;
 #[cfg(test)]
 mod mating_tests;
+#[cfg(test)]
+mod rotated_root_tests;
 
 pub use error::接合エラー;
 pub use joint_fit::接合;
