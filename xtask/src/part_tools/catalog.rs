@@ -9,7 +9,7 @@ use std::process::ExitCode;
 
 use crate::asset_generator::{アセット生成器の起動, 検査するファイル一覧, 生成の指定, 生成器エラー};
 
-pub fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub fn カタログを組み上げる(引数一覧: &[String]) -> ExitCode {
     match 組み上げ器を走らせる(引数一覧) {
         Ok(()) => ExitCode::SUCCESS,
         Err(理由) => {

@@ -14,6 +14,7 @@ mod arguments;
 mod error;
 mod inspection_files;
 mod launch;
+mod launch_command;
 mod planting_count;
 mod specification;
 mod world_name;

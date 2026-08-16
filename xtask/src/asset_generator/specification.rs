@@ -10,8 +10,6 @@
 //!
 //! example名の綴りをこの型が私有するのは、5つの入口がそれぞれ同じ綴りを書いていたためである。
 
-use std::process::Command;
-
 use blitz_asset_compiler::{
     ソースルート, テクスチャ格納方針, マップ生成の乱数の種, 世界の広がり, 実行時形式の出力ルート, 散布の焼き方, 検査する契約, 遠景地形の焼き方,
 };
@@ -19,9 +17,6 @@ use blitz_asset_compiler::{
 use super::inspection_files::検査するファイル一覧;
 use super::planting_count::同居植生の個体数;
 use super::world_name::世界名;
-
-/// 生成器を収めているクレート。全部の枝が同じクレートのexampleである。
-const 生成器のクレート: &str = "blitz_asset_compiler";
 
 pub enum 生成の指定<'指定> {
     /// ソースアセットを版付き実行時形式へ焼く。
@@ -57,38 +52,14 @@ pub enum 生成の指定<'指定> {
     部品カタログを組み上げる {
         部品のファイル一覧: &'指定 検査するファイル一覧
     },
+    /// 部品を組み立て、Blender側の正解表と突き合わせる。正解表の置き場は外部にあるため引数で受ける。
+    組み立てを正解表と突き合わせる {
+        正解表のパス: &'指定 std::path::Path,
+        部品のファイル一覧: &'指定 検査するファイル一覧,
+    },
     /// カタログの依存ファイルを見張り、変更のたびに実行時形式を焼き直す。
     アセットの変更を見張る {
         ソースルート: &'指定 ソースルート,
         出力ルート: &'指定 実行時形式の出力ルート,
     },
-}
-
-impl 生成の指定<'_> {
-    /// この生成器を起こすcargoのコマンド。生成器自身の引数は`完成した生成引数`が続けて並べる。
-    pub(super) fn cargoの起動コマンドを組む(&self) -> Command {
-        let mut コマンド = Command::new("cargo");
-        コマンド.arg("run");
-        if self.構築の知らせを伏せるか() {
-            コマンド.arg("--quiet");
-        }
-        コマンド.args(["-p", 生成器のクレート, "--example", self.生成器の名前(), "--"]);
-        コマンド
-    }
-
-    /// 起こす生成器のexample名。破れの文面もこの名前で生成器を名指す。
-    pub(super) fn 生成器の名前(&self) -> &'static str {
-        match self {
-            Self::実行時形式を焼く { .. } => "compile_assets",
-            Self::ソースアセットを生成する { .. } => "generate_source_assets",
-            Self::入力するglTFの契約を検査する { .. } => "check_glb",
-            Self::部品カタログを組み上げる { .. } => "part_catalog",
-            Self::アセットの変更を見張る { .. } => "watch_assets",
-        }
-    }
-
-    /// cargo自身の構築の知らせを伏せるか。検査の結果だけを読む入口が伏せる。
-    fn 構築の知らせを伏せるか(&self) -> bool {
-        matches!(self, Self::入力するglTFの契約を検査する { .. } | Self::部品カタログを組み上げる { .. })
-    }
 }
