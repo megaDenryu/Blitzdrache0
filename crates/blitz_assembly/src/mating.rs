@@ -27,8 +27,6 @@ mod mating_tests;
 mod normal_offset_tests;
 #[cfg(test)]
 mod rotated_root_tests;
-#[cfg(test)]
-mod tree_fixture;
 
 pub use error::接合エラー;
 pub use joint_fit::接合;

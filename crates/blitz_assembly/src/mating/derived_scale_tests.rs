@@ -13,7 +13,7 @@ use crate::joint::接合面上の位置;
 use super::mating_fixture::{原点の配置, 寄せずに組む};
 use super::scaled_face::接合面の実寸;
 use super::size_match_check::実寸がそろうことを確かめる;
-use super::tree_fixture::{幹の基部, 幹の頂部, 枝の根元, 枝の生え口, 葉房の根元, 頂芽};
+use crate::tree_fixture::{幹の基部, 幹の頂部, 枝の根元, 枝の生え口, 葉房の根元, 頂芽};
 
 fn 倍率が近いか(得た: [f32; 3], 期待: f32) -> bool {
     得た.iter().all(|成分| (成分 - 期待).abs() < 1.0e-5)

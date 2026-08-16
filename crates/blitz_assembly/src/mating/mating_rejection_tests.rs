@@ -9,7 +9,7 @@ use crate::joint::{接合種別, 接合面上の位置};
 
 use super::error::接合エラー;
 use super::mating_fixture::{倍率つきの配置, 原点の配置, 基礎の上面, 寄せずに組む, 接合点を作る};
-use super::tree_fixture::{幹の基部, 幹の頂部};
+use crate::tree_fixture::{幹の基部, 幹の頂部};
 
 #[test]
 fn 噛み合わない種別の組を拒む() {
