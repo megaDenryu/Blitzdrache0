@@ -5,6 +5,8 @@
 
 use crate::joint::{全接合種別, 接合種別};
 
+use super::definition::部品定義;
+use super::part_id::部品ID;
 use super::stored_part::収蔵部品;
 
 /// 1つの接合種別と、カタログ全体でその種別を宣言している接合点の件数。0件の種別も落とさずに持つ。
@@ -28,6 +30,11 @@ impl 部品カタログ {
 
     pub fn 部品数(&self) -> usize {
         self.収蔵部品一覧.len()
+    }
+
+    /// 識別子で部品の定義を引く。展開器が指示の指す部品を取り出すために使う。
+    pub fn 部品を引く(&self, 識別子: &部品ID) -> Option<&部品定義> {
+        self.収蔵部品一覧.iter().find(|部品| 部品.識別子() == 識別子).map(収蔵部品::定義)
     }
 
     pub fn 接合点の総数(&self) -> usize {
