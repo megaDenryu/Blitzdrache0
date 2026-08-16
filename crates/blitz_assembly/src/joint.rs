@@ -27,5 +27,5 @@ pub use face_size::接合面寸法;
 pub use joint_kind::{全接合種別, 接合種別};
 pub use joint_name::接合点名;
 pub use joint_point::接合点;
-pub use mating_style::{取付の役割, 接合の様式};
+pub use mating_style::{包含の役割, 接合の様式};
 pub use normal_offset::法線方向のずらし;
