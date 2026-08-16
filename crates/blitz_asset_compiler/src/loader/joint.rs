@@ -7,6 +7,7 @@
 //! それを違反とするかは契約の側が決めることだからである。ここは読むだけで、何が違反かを持たない。
 //! 参照: `_doc/設計/部品カタログと接合点.md`「置き場所はglTFの`extras`である」
 
+mod catalog_loader;
 mod declaration;
 mod error;
 mod outcome;
@@ -23,7 +24,8 @@ use serde_json::Value;
 
 use declaration::接合点の宣言;
 
-pub use error::{接合点読み取りエラー, 部品の読み取りエラー};
+pub use catalog_loader::部品カタログの読み込み係;
+pub use error::{接合点読み取りエラー, 部品の読み取りエラー, 部品カタログの読み込みエラー};
 pub use outcome::接合点の読み取りの成否;
 pub use part_file::部品のglTFのファイル;
 

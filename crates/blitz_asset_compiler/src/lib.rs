@@ -55,7 +55,7 @@ pub use height_grid::{
 pub use lattice_noise::格子雑音の値;
 pub use loader::{
     入力契約を検査するglTFのファイル, 原型ソース, 契約指摘, 契約検査概要, 契約検査結果, 接合点の読み取りの成否, 接合点読み取りエラー, 検査する契約,
-    部品のglTFのファイル, 部品の接合点の読み取り, 部品の読み取りエラー, 重大度,
+    部品のglTFのファイル, 部品の接合点の読み取り, 部品の読み取りエラー, 部品カタログの読み込みエラー, 部品カタログの読み込み係, 重大度,
 };
 pub use placed_instance_count::置いた個体の数;
 pub use placement::{
