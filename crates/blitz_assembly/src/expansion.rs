@@ -56,5 +56,5 @@ pub use placement_table::{据えた配置, 部品ごとの配置表};
 pub use rule::組み立て規則;
 pub use tree_parts::{幹の指定, 枝の指定, 葉房の指定};
 pub use tree_rule::木の規則;
-pub use trunk_segment::{幹の節の番号, 幹の節数};
+pub use trunk_segment::{幹の節数, 幹を下から数えた節の番号};
 pub use wall_choice::{壁面の指定, 壁面の飾り};

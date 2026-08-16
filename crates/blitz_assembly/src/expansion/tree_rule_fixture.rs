@@ -17,7 +17,7 @@ use super::placement_table::部品ごとの配置表;
 use super::rule::組み立て規則;
 use super::tree_parts::{幹の指定, 枝の指定, 葉房の指定};
 use super::tree_rule::木の規則;
-use super::trunk_segment::{幹の節の番号, 幹の節数};
+use super::trunk_segment::{幹の節数, 幹を下から数えた節の番号};
 
 pub(super) fn 名前(綴り: &str) -> 接合点名 {
     接合点名::生成する(綴り).unwrap()
@@ -56,7 +56,7 @@ pub(super) fn 樫の木の規則(節数: usize) -> 組み立て規則 {
     let 規則 = 木の規則::生成する(
         幹の指定を作る(),
         幹の節数::生成する(節数).unwrap(),
-        幹の節の番号::生成する(2).unwrap(),
+        幹を下から数えた節の番号::生成する(2).unwrap(),
         枝の指定を作る(),
         葉房の指定を作る(),
     );

@@ -23,15 +23,15 @@ impl 幹の節数 {
     }
 }
 
-/// 下から数えた幹の節の番号。根の節が1である。
+/// 幹を下から数えて何節目かを指す番号。根に据わる節が1である。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
-pub struct 幹の節の番号(usize);
+pub struct 幹を下から数えた節の番号(usize);
 
-impl 幹の節の番号 {
+impl 幹を下から数えた節の番号 {
     pub fn 生成する(番号: usize) -> Result<Self, 規則エラー> {
         if 番号 == 0 {
-            return Err(規則エラー::幹の節の番号が零である);
+            return Err(規則エラー::幹を下から数えた節の番号が零である);
         }
         Ok(Self(番号))
     }

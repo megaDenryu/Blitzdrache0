@@ -13,13 +13,13 @@ use super::error_rule::規則エラー;
 use super::instruction::{据えた部品の番号, 接合の指示, 組み立て手順};
 use super::instruction_list_builder::指示の並びの組み手;
 use super::tree_parts::{幹の指定, 枝の指定, 葉房の指定};
-use super::trunk_segment::{幹の節の番号, 幹の節数};
+use super::trunk_segment::{幹の節数, 幹を下から数えた節の番号};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct 木の規則 {
     幹: 幹の指定,
     幹の節数: 幹の節数,
-    枝を生やす節: 幹の節の番号,
+    枝を生やす節: 幹を下から数えた節の番号,
     枝: 枝の指定,
     葉房: 葉房の指定,
 }
@@ -29,7 +29,7 @@ impl 木の規則 {
     pub fn 生成する(
         幹: 幹の指定,
         幹の節数: 幹の節数,
-        枝を生やす節: 幹の節の番号,
+        枝を生やす節: 幹を下から数えた節の番号,
         枝: 枝の指定,
         葉房: 葉房の指定,
     ) -> Result<Self, 規則エラー> {
