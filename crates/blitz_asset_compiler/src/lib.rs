@@ -3,6 +3,7 @@
 
 #![forbid(unsafe_code)]
 
+mod assembled_scatter;
 mod assembled_scene;
 mod assembly_parts;
 mod assembly_reference;
@@ -64,7 +65,8 @@ pub use loader::{
 pub use part_row::{部品で組んだ並びのコンパイルエラー, 部品で組んだ並びの件数, 部品で組んだ並びの指定};
 pub use placed_instance_count::置いた個体の数;
 pub use placement::{
-    個数を決める並べ方, 傾きの好み, 出現割合の範囲, 原型と置き方の指定, 地表への据え方, 大きさの範囲, 密度場の指定, 密度場の散布, 配置の種, 配置様式,
+    個数を決める並べ方, 傾きの好み, 出現割合の範囲, 原型と置き方の指定, 地表への据え方, 大きさの範囲, 密度場の指定, 密度場の散布,
+    部品で組む散布の指定, 配置の種, 配置様式,
 };
 pub use scatter_bake::散布の焼き方;
 pub use scene_compiler::ソースアセットのコンパイル係;

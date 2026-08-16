@@ -8,6 +8,8 @@
 //! `part_tree_row_declaration`にあり、部品で組んだ並びの宣言の型と規則は`part_row_declaration`が持つ。
 
 mod argument_name;
+pub(super) mod assembled_scatter_declaration;
+mod assembly_rule_choice;
 mod asset_declaration;
 mod asset_definition_list;
 mod chunk_source_kind;

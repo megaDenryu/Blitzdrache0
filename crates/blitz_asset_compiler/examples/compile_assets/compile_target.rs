@@ -15,6 +15,7 @@ pub(crate) use entry::コンパイル対象;
 
 use super::chunk_ledger::対象1件の仕上げ係;
 use super::source_kind::ソース種別;
+use super::world::assembled_scatter_declaration::部品で組む散布の指定一覧を作る;
 use super::world::fixed_placement_declaration::据え付け一覧を作る;
 use super::world::part_row_declaration::部品で組んだ並びの指定を作る;
 use super::world::prop_group_declaration::原型と置き方の指定一覧を作る;
@@ -51,10 +52,18 @@ impl 対象1件の仕上げ係<'_> {
             ソース種別::固定物を据えた高さ格子 {
                 据え付け一覧: 宣言一覧,
                 散布一覧,
+                部品で組む散布一覧,
             } => {
                 let 据え付け一覧 = 据え付け一覧を作る(宣言一覧, 所有チャンク)?;
                 let 散布の指定一覧 = 原型と置き方の指定一覧を作る(散布一覧)?;
-                コンパイル係.固定物を据えた地形チャンクをコンパイルする(id, 所有チャンク, &据え付け一覧, &散布の指定一覧)
+                let 部品で組む散布の指定一覧 = 部品で組む散布の指定一覧を作る(部品で組む散布一覧)?;
+                コンパイル係.固定物を据えた地形チャンクをコンパイルする(
+                    id,
+                    所有チャンク,
+                    &据え付け一覧,
+                    &散布の指定一覧,
+                    &部品で組む散布の指定一覧,
+                )
             }
             ソース種別::目視見本 {
                 材質見本の立体の安定id,
