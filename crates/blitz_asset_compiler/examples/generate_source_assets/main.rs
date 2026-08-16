@@ -9,6 +9,7 @@
 //! assets/terrain_world/ へ25チャンク分の高さ格子と目録ソースを、
 //! assets/vegetation_world/ へ植生の原型glTFと頂点量の診断用に面を細分化した原型glTFと1チャンクの目録ソースを、
 //! assets/village_world/ へ見本の集落の地面1チャンク分の高さ格子と目録ソースを、
+//! assets/part_house_row_world/ へ部品で建てた家並みの平らな地面1チャンク分の高さ格子と目録ソースを、
 //! assets/terrain_visual_world/ へ目視見本の地面1チャンク分の高さ格子と目録ソースと材質見本の立体のglTFを、
 //! assets/night_lights_world/ へ夜の多光源の地面1チャンク分の高さ格子と目録ソースを、
 //! assets/stone_hut_world/ へ屋内の多光源の平らな地面1チャンク分の高さ格子と目録ソースを、
@@ -34,6 +35,7 @@ mod indirect_probe_plates;
 mod multi_material_geometry;
 mod multi_material_gltf_json;
 mod night_lights_world;
+mod part_house_row_world;
 mod shadow_scene_geometry;
 mod shadow_scene_gltf_json;
 mod shadow_scene_texture;

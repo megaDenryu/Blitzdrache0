@@ -16,6 +16,7 @@ mod material_slots;
 mod mesh;
 mod mesh_bounds;
 mod mesh_bounds_reason;
+mod part_archetype;
 mod skin;
 mod static_scene;
 mod texture_decode;

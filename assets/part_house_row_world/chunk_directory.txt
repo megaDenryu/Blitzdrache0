@@ -1,0 +1,2 @@
+blitz_chunk_directory 1
+0 0 prop_part_house_row prop_part_house_row.heightgrid

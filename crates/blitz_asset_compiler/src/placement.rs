@@ -29,6 +29,7 @@ pub use archetype_placement::原型と置き方の指定;
 pub use fixed_count::個数を決める並べ方;
 pub use ground_preference::{傾きの好み, 地表への据え方};
 pub(crate) use mixing_serial::配置の混合の通し番号;
+pub(crate) use orientation::天頂まわりの回転を作る;
 pub use scatter_ranges::{出現割合の範囲, 大きさの範囲};
 pub use scatter_specification::{密度場の指定, 密度場の散布};
 pub use seed::配置の種;
