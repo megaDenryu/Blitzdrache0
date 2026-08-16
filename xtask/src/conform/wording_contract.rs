@@ -12,6 +12,7 @@
 mod table;
 #[cfg(test)]
 mod tests;
+mod unregistered_key;
 
 use std::path::{Path, PathBuf};
 
@@ -20,6 +21,16 @@ use super::source_lexing;
 use super::violation::違反;
 
 pub fn 全綴りを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
+    let mut 違反一覧 = 登録した綴りが両側に在るかを検査する()?;
+    違反一覧.extend(unregistered_key::登録の無い鍵を探す(
+        &登録済みの綴り一覧(),
+        &台帳に載る全ファイル(),
+    )?);
+    Ok(違反一覧)
+}
+
+/// 台帳が登録した綴りが、並べたファイルのすべてに文字列リテラルとして在るか。
+fn 登録した綴りが両側に在るかを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
     for 契約 in table::領域一覧.iter().copied().flatten() {
         for パス in 契約.現れるファイル一覧 {
@@ -38,6 +49,24 @@ pub fn 全綴りを検査する() -> Result<Vec<違反>, 規約検査の破れ> 
         }
     }
     Ok(違反一覧)
+}
+
+/// 台帳に載る綴りの全部。鍵が登録済みかの引き当てに使う。
+fn 登録済みの綴り一覧() -> Vec<&'static str> {
+    table::領域一覧.iter().copied().flatten().map(|契約| 契約.綴り).collect()
+}
+
+/// 台帳に載るファイルの全部。同じファイルが複数の契約に並ぶため、重複を畳んでから返す。
+fn 台帳に載る全ファイル() -> Vec<&'static str> {
+    let mut 一覧: Vec<&'static str> = table::領域一覧
+        .iter()
+        .copied()
+        .flatten()
+        .flat_map(|契約| 契約.現れるファイル一覧.iter().copied())
+        .collect();
+    一覧.sort_unstable();
+    一覧.dedup();
+    一覧
 }
 
 fn 文字列リテラルの中に現れるか(内容: &str, 綴り: &str) -> bool {

@@ -42,10 +42,21 @@ pub(super) fn 実行する() -> ExitCode {
     }
 }
 
+/// 焼く前に前回の焼き上がりを消す。**この入口は焼く工程の報告の行を計数と突き合わせる期待値に使うため、
+/// 生成台帳が据え置きを選ぶと行が1本も出ず、比べる相手を失う。** 消してよいのは、この置き場をこの入口だけが
+/// 使うためである。まだ無いことは破れではない。
+fn 前回の焼き上がりを消す() -> std::io::Result<()> {
+    match std::fs::remove_dir_all(crate::compile_assets::部品で組んだ木の並びの出力ルート()) {
+        Err(誤り) if 誤り.kind() == std::io::ErrorKind::NotFound => Ok(()),
+        他 => 他,
+    }
+}
+
 fn 検収する() -> Result<String, 木の並びの撮影エラー> {
     if !crate::gen_source_assets::生成する() {
         return Err(木の並びの撮影エラー::ソースアセットを生成できなかった);
     }
+    前回の焼き上がりを消す().map_err(木の並びの撮影エラー::前回の焼き上がりを消せなかった)?;
     let 標準出力 = crate::compile_assets::既定のソースから焼き標準出力を返す(
         crate::compile_assets::部品で組んだ木の並びの出力ルート(),
         crate::asset_generator::世界名::部品で組んだ木の並びの世界,
