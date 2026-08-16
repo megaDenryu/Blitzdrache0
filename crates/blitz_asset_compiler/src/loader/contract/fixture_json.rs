@@ -22,6 +22,9 @@ pub(super) fn 合格の指定() -> 文書の指定<'static> {
 
 pub(super) const 三角形のプリミティブ: &str = r#"{ "attributes": { "POSITION": 0, "NORMAL": 1, "TEXCOORD_0": 2 }, "indices": 3, "material": 0 }"#;
 
+/// マテリアルを1つも宣言しないプリミティブ。glTFの既定マテリアルが当たる形であり、群の原型がこの形を採る。
+pub(super) const マテリアルなしの三角形: &str = r#"{ "attributes": { "POSITION": 0, "NORMAL": 1, "TEXCOORD_0": 2 }, "indices": 3 }"#;
+
 pub(super) const 不透明の茶色: &str =
     r#"{ "doubleSided": true, "pbrMetallicRoughness": { "baseColorFactor": [0.8, 0.3, 0.2, 1.0], "metallicFactor": 0.5, "roughnessFactor": 0.4 } }"#;
 

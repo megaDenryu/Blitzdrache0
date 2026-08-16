@@ -12,21 +12,24 @@
 //! 工程ごとのファイルにある。
 //! 参照: `_doc/設計/Blenderアセット運用.md`
 
-mod archetype_bounds;
 mod archetype_detail_order_scan;
 mod archetype_ground_origin_scan;
 mod archetype_material_agreement;
 mod archetype_node_scan;
 mod archetype_primitive_scan;
 mod archetype_scan;
+mod base_color_scan;
 mod document_scan;
 mod finding;
 mod geometry_scan;
 mod inspected_contract;
 mod inspection;
+mod joint_placement_scan;
+mod joint_scan;
 mod material_declaration_scan;
 mod material_drop_scan;
 mod material_scan;
+mod mesh_bounds;
 mod mesh_data_check;
 mod node_scan;
 mod node_transform;

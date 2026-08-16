@@ -1,10 +1,12 @@
 //! 入力契約検査の試験。合格する材料と、契約を1箇所だけ崩した負の対照を突き合わせる。
-//! ここが持つのは静的シーンの文書と幾何の契約であり、材質スロットの契約は`material_tests`が、群の原型の契約は`archetype_tests`が持つ。
+//! ここが持つのは静的シーンの文書と幾何の契約であり、材質スロットの契約は`material_tests`が、群の原型の契約は`archetype_tests`が、部品の契約は`joint_tests`が持つ。
 //! 材料を組み立てて検査へ通す手順は3者が共有するため、この階層が所有して子へ貸す。
 
 #![allow(clippy::unwrap_used)]
 
 mod archetype_tests;
+mod base_color_tests;
+mod joint_tests;
 mod material_tests;
 
 use super::archetype_fixture::{原型の文書jsonを作る, 原型の文書の指定, 原型の段の列のバイナリ};

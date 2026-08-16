@@ -10,7 +10,7 @@ use blitz_asset_compiler::{入力契約を検査するglTFのファイル, 検�
 fn main() {
     let (契約, パス一覧) = 検査する契約::引数一覧から取り出す(&std::env::args().skip(1).collect::<Vec<String>>());
     if パス一覧.is_empty() {
-        eprintln!("[check_glb] 使い方: check_glb [--archetype] <検査するglbまたはgltfのパス> ...");
+        eprintln!("[check_glb] 使い方: check_glb [--archetype|--part] <検査するglbまたはgltfのパス> ...");
         std::process::exit(2);
     }
 
@@ -39,5 +39,6 @@ fn 契約の名(契約: 検査する契約) -> &'static str {
     match 契約 {
         検査する契約::静的シーン => "静的シーンの契約",
         検査する契約::群の原型 => "群の原型の契約",
+        検査する契約::部品 => "部品の契約",
     }
 }

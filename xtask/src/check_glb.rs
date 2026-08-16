@@ -13,7 +13,7 @@ pub fn 実行する(引数一覧: &[String]) -> ExitCode {
         Ok(()) => ExitCode::SUCCESS,
         Err(理由) => {
             eprintln!("[xtask] glb契約検査が不合格または失敗である: {理由}");
-            eprintln!("使い方: cargo xtask check-glb [--archetype] <検査するglbまたはgltfのパス> ...");
+            eprintln!("使い方: cargo xtask check-glb [--archetype|--part] <検査するglbまたはgltfのパス> ...");
             ExitCode::FAILURE
         }
     }
