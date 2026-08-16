@@ -3,7 +3,7 @@
 
 use std::path::PathBuf;
 
-use blitz_asset_compiler::{今回の宣言と依存一式の内容ハッシュを求める, 内容ハッシュ};
+use blitz_asset_compiler::{今回の宣言と依存一式の内容ハッシュを求める, 内容ハッシュ, 置いた個体の数};
 use blitz_engine::アセットメタデータ;
 
 use super::super::compile_target::コンパイル対象;
@@ -13,6 +13,7 @@ pub(super) struct 焼き上がり {
     pub(super) 実行時パス: PathBuf,
     pub(super) ソース依存一覧: Vec<PathBuf>,
     pub(super) メタデータ: アセットメタデータ,
+    pub(super) 置いた個体の数: 置いた個体の数,
     pub(super) 内容ハッシュ: 内容ハッシュ,
 }
 
@@ -29,6 +30,7 @@ impl 対象1件の仕上げ係<'_> {
             実行時パス,
             ソース依存一覧: 結果.ソース依存一覧,
             メタデータ: 結果.メタデータ,
+            置いた個体の数: 結果.置いた個体の数,
             内容ハッシュ,
         })
     }

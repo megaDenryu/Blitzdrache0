@@ -12,6 +12,7 @@ mod compile_target;
 mod distant_terrain;
 mod height_field;
 mod instance_tally;
+mod placed_instance_tally;
 mod source_kind;
 mod source_location;
 mod texture_policy_argument;

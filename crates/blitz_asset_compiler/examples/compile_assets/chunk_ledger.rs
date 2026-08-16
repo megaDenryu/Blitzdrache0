@@ -15,7 +15,7 @@ mod bake_options;
 mod carried_entry;
 mod one_target;
 
-use blitz_asset_compiler::{焼き直しの勘定, 生成台帳, 生成台帳の見出し};
+use blitz_asset_compiler::{焼き直しの勘定, 生成台帳, 生成台帳の見出し, 置いた個体の数};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 use super::compilation::実行時アセットのコンパイル;
@@ -28,6 +28,8 @@ pub(crate) use one_target::対象1件の仕上げ係;
 /// チャンクを据え置きながら、据え置いた項目を古いカタログから写すため、実行時ファイルとカタログの中身が食い違う。
 pub(super) struct 焼き上がりの一式 {
     pub(super) 勘定: 焼き直しの勘定,
+    /// 焼いた対象が置いた個体の合計。据え置いた対象は焼く工程を通らないため0体として積み上がる。
+    pub(super) 置いた個体の数: 置いた個体の数,
     pub(super) 書き出しを待つ生成台帳: 生成台帳,
 }
 
@@ -50,7 +52,9 @@ impl 実行時アセットのコンパイル {
         let 仕上がり一覧 = self.対象一覧を並列に仕上げる(対象一覧, 見出し)?;
         let mut 今回の台帳 = 生成台帳::見出しを与えて空を作る(見出し);
         let mut 判定一覧 = Vec::with_capacity(仕上がり一覧.len());
+        let mut 置いた個体の数 = 置いた個体の数::零();
         for (対象, 仕上がり) in 対象一覧.iter().zip(仕上がり一覧) {
+            置いた個体の数 = 置いた個体の数.足す(仕上がり.置いた個体の数).map_err(|誤り| 誤り.to_string())?;
             self.実行時カタログ
                 .詳細を登録する(対象.id.clone(), 仕上がり.実行時パス, 仕上がり.ソース依存一覧, 仕上がり.メタデータ);
             if let Some(内容ハッシュ) = 仕上がり.台帳へ記録する内容ハッシュ {
@@ -60,6 +64,7 @@ impl 実行時アセットのコンパイル {
         }
         Ok(焼き上がりの一式 {
             勘定: 焼き直しの勘定::判定の一覧から数える(判定一覧.into_iter()),
+            置いた個体の数,
             書き出しを待つ生成台帳: 今回の台帳,
         })
     }

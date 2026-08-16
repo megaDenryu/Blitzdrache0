@@ -16,12 +16,14 @@ use super::archetype_placement::原型と置き方の指定;
 use super::mixing_serial::配置の混合の通し番号;
 use crate::error::アセットコンパイルエラー;
 use crate::height_grid::高さ格子;
+use crate::placed_instance_count::置いた個体の数;
 use crate::scene_compiler::ソースアセットのコンパイル係;
 use crate::vegetation::group_object;
 
-/// 原型1つ分の群と、その原型が読んだファイルの一覧。
+/// 原型1つ分の群と、そこへ置いた個体の数と、その原型が読んだファイルの一覧。
 pub(crate) struct 原型1つ分の群 {
     pub(crate) 描画対象: 描画対象データ,
+    pub(crate) 置いた個体の数: 置いた個体の数,
     pub(crate) 参照ファイル一覧: Vec<PathBuf>,
 }
 
@@ -39,9 +41,10 @@ impl ソースアセットのコンパイル係<'_> {
             return Ok(None);
         }
         let 原型ソース = self.原型ソースを読み込む(&指定.原型id)?;
-        let 描画対象 = group_object::群の描画対象を作る(描画対象番号, 所有チャンク, 原型ソース.段一覧, 原型ソース.材質集合, 配置一覧)?;
+        let 群 = group_object::群の描画対象を作る(描画対象番号, 所有チャンク, 原型ソース.段一覧, 原型ソース.材質集合, 配置一覧)?;
         Ok(Some(原型1つ分の群 {
-            描画対象,
+            描画対象: 群.描画対象,
+            置いた個体の数: 群.置いた個体の数,
             参照ファイル一覧: 原型ソース.参照ファイル一覧,
         }))
     }

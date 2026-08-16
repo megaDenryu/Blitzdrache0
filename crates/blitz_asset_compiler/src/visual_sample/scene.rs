@@ -12,8 +12,10 @@ use blitz_engine::{
 
 use super::fixed_objects;
 use super::目視見本の指定;
+use crate::assembled_scene::組み立てたシーン;
 use crate::error::アセットコンパイルエラー;
 use crate::height_grid::高さ格子;
+use crate::placed_instance_count::置いた個体の数;
 use crate::placement::配置の混合の通し番号;
 use crate::scene_compiler::ソースアセットのコンパイル係;
 use crate::terrain::lod_bake;
@@ -29,7 +31,7 @@ impl ソースアセットのコンパイル係<'_> {
         所有チャンク: チャンク座標,
         ソースパス: PathBuf,
         指定: &目視見本の指定,
-    ) -> Result<シーンデータ, アセットコンパイルエラー> {
+    ) -> Result<組み立てたシーン, アセットコンパイルエラー> {
         let 庭の地面 = 描画対象データ::生成する(
             描画対象ID::生成する(庭の地面の描画対象番号),
             所有チャンク,
@@ -40,6 +42,7 @@ impl ソースアセットのコンパイル係<'_> {
         let (mut 残りの描画対象, 固定物の参照一覧) = self.庭の地面へ固定物を据える(格子, 所有チャンク, 指定)?;
         let mut 参照ファイル一覧 = vec![ソースパス];
         参照ファイル一覧.extend(固定物の参照一覧);
+        let mut 置いた個体の数 = 置いた個体の数::零();
         let mut 群の描画対象番号 = fixed_objects::最後の描画対象番号;
         for 群の指定 in &指定.群一覧 {
             群の描画対象番号 += 1;
@@ -50,15 +53,14 @@ impl ソースアセットのコンパイル係<'_> {
             else {
                 continue;
             };
+            置いた個体の数 = 置いた個体の数.足す(群.置いた個体の数)?;
             参照ファイル一覧.extend(群.参照ファイル一覧);
             残りの描画対象.push(群.描画対象);
         }
-        Ok(シーンデータ::生成する(
-            庭の地面,
-            残りの描画対象,
-            参照ファイル一覧,
-            None,
-            Vec::new(),
+        let シーン = シーンデータ::生成する(庭の地面, 残りの描画対象, 参照ファイル一覧, None, Vec::new());
+        Ok(組み立てたシーン::置いた個体の数を添えて生成する(
+            シーン,
+            置いた個体の数,
         ))
     }
 }

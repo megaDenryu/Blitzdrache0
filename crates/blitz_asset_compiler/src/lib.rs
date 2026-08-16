@@ -3,6 +3,7 @@
 
 #![forbid(unsafe_code)]
 
+mod assembled_scene;
 mod asset_layout;
 mod chunk_directory_source;
 mod compile;
@@ -17,6 +18,7 @@ mod height_grid;
 mod lattice_noise;
 mod loader;
 mod nonnegative_floor;
+mod placed_instance_count;
 mod placement;
 mod scatter_bake;
 mod scene_compiler;
@@ -54,6 +56,7 @@ pub use lattice_noise::格子雑音の値;
 pub use loader::{
     入力契約を検査するglTFのファイル, 原型ソース, 契約指摘, 契約検査概要, 契約検査結果, 検査する契約, 重大度
 };
+pub use placed_instance_count::置いた個体の数;
 pub use placement::{
     個数を決める並べ方, 傾きの好み, 出現割合の範囲, 原型と置き方の指定, 地表への据え方, 大きさの範囲, 密度場の指定, 密度場の散布, 配置の種, 配置様式,
 };
