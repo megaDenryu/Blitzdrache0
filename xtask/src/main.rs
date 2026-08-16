@@ -1,5 +1,4 @@
-//! 開発ツールの唯一の入口。`cargo xtask <コマンド>` で呼ぶ。
-//! 参照: CLAUDE.md「ツールとドキュメントの配置」
+//! 開発ツールの唯一の入口。`cargo xtask <コマンド>` で呼ぶ。参照: CLAUDE.md「ツールとドキュメントの配置」
 
 mod acceptance;
 mod asset_generator;
@@ -53,6 +52,7 @@ mod object_bench;
 mod origin_invariance;
 mod ow3_dod;
 mod ow4_bench;
+mod part_catalog;
 mod pixel_region;
 mod plate_region;
 mod play_fox_tour;

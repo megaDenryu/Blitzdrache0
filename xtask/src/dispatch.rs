@@ -8,10 +8,10 @@ use crate::{
     depth_prepass_cost, derived_environment, distant_environment, distant_view, fetch_assets, game_fox_tour, gen_atmosphere_reference, gen_game_map,
     gen_source_assets, hdr_luminance, ibl_step, indirect_cost, indirect_probe, instance_cull, instance_draw, instance_lod, instance_stream,
     large_world_assets, large_world_bench, local_visibility, lod_crack, m10_bench, m11_soak, material_reload_draw, motion_vector,
-    multi_material_draw, object_bench, origin_invariance, ow3_dod, ow4_bench, play_fox_tour, point_light_shadow, prop_draw, prop_multi_material_draw,
-    reverse_depth, shader_reload_draw, shadow_loss, shadow_probe, sky_draw, sky_lut, sky_state, sky_time, smoke, streaming_bench,
-    temporal_reconstruction, temporal_visual, terrain_visual, texture_compression, type_metrics, usage, verify, vertex_diag, village_draw,
-    watch_assets,
+    multi_material_draw, object_bench, origin_invariance, ow3_dod, ow4_bench, part_catalog, play_fox_tour, point_light_shadow, prop_draw,
+    prop_multi_material_draw, reverse_depth, shader_reload_draw, shadow_loss, shadow_probe, sky_draw, sky_lut, sky_state, sky_time, smoke,
+    streaming_bench, temporal_reconstruction, temporal_visual, terrain_visual, texture_compression, type_metrics, usage, verify, vertex_diag,
+    village_draw, watch_assets,
 };
 
 pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
@@ -21,6 +21,7 @@ pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
         Some("type-metrics") => type_metrics::実行する(),
         Some("smoke") => smoke::実行する(),
         Some("check-glb") => check_glb::実行する(&引数一覧[1..]),
+        Some("part-catalog") => part_catalog::実行する(&引数一覧[1..]),
         Some("compile-assets") => compile_assets::実行する(&引数一覧[1..]),
         Some("watch-assets") => watch_assets::実行する(&引数一覧[1..]),
         Some("gen-source-assets") => gen_source_assets::実行する(),

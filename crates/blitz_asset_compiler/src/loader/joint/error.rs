@@ -6,7 +6,7 @@
 //! JSONの解析の失敗を文字列で持つのは、`serde_json::Error`が複製できず、この型が複製できないと
 //! 契約検査が指摘を集めて並べられなくなるためである。位置の情報は文面に含まれる。
 
-use blitz_assembly::接合点エラー;
+use blitz_assembly::{カタログエラー, 接合点エラー};
 use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq, Error)]
@@ -40,4 +40,23 @@ pub enum 接合点読み取りエラー {
 
     #[error("接合点の宣言が接合点として成り立たない: {0}")]
     接合点として成り立たない(#[from] 接合点エラー),
+}
+
+/// 部品1件をファイルから読むときの失敗。読み取りの破れに、ファイルを開けないことと識別子を作れないことを足したものである。
+#[derive(Debug, Error)]
+pub enum 部品の読み取りエラー {
+    #[error("部品のファイルを開けない: {0}")]
+    ファイルを開けない(String),
+
+    #[error("ファイル名から部品IDを作れない: {パス}")]
+    ファイル名から部品IDを作れない { パス: String },
+
+    #[error(transparent)]
+    接合点を読めない(#[from] 接合点読み取りエラー),
+
+    #[error(transparent)]
+    部品定義が成り立たない(#[from] 接合点エラー),
+
+    #[error(transparent)]
+    部品IDが成り立たない(#[from] カタログエラー),
 }

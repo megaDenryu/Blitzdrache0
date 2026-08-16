@@ -10,6 +10,7 @@
 mod declaration;
 mod error;
 mod outcome;
+mod part_file;
 mod value_read;
 
 #[cfg(test)]
@@ -22,8 +23,9 @@ use serde_json::Value;
 
 use declaration::接合点の宣言;
 
-pub use error::接合点読み取りエラー;
+pub use error::{接合点読み取りエラー, 部品の読み取りエラー};
 pub use outcome::接合点の読み取りの成否;
+pub use part_file::部品のglTFのファイル;
 
 /// extrasが接合点の宣言を並べるキー。Blender側の生成スクリプトが綴る名前と同じである。
 const 接合点のキー: &str = "接合点";
