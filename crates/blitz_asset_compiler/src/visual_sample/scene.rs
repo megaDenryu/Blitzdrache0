@@ -14,6 +14,7 @@ use super::fixed_objects;
 use super::目視見本の指定;
 use crate::error::アセットコンパイルエラー;
 use crate::height_grid::高さ格子;
+use crate::placement::配置の混合の通し番号;
 use crate::scene_compiler::ソースアセットのコンパイル係;
 use crate::terrain::lod_bake;
 use crate::vegetation::group_object;
@@ -39,10 +40,14 @@ impl ソースアセットのコンパイル係<'_> {
         let (mut 残りの描画対象, 固定物の参照一覧) = self.庭の地面へ固定物を据える(格子, 所有チャンク, 指定)?;
         let mut 参照ファイル一覧 = vec![ソースパス];
         参照ファイル一覧.extend(固定物の参照一覧);
-        let mut 通し番号 = fixed_objects::最後の描画対象番号;
+        let mut 群の描画対象番号 = fixed_objects::最後の描画対象番号;
         for 群の指定 in &指定.群一覧 {
-            通し番号 += 1;
-            let Some(群) = self.原型1つ分の群の描画対象を作る(格子, 所有チャンク, 通し番号, 群の指定)? else {
+            群の描画対象番号 += 1;
+            // 群より前に置く固定物の数はこの世界の宣言で固定されている。混合の通し番号を描画対象番号のまま取るのは、
+            // 既に焼いた見本の絵の判定値を動かさないためである。
+            let 通し番号 = 配置の混合の通し番号::描画対象番号から生成する(群の描画対象番号);
+            let Some(群) = self.原型1つ分の群の描画対象を作る(格子, 所有チャンク, 群の描画対象番号, 通し番号, 群の指定)?
+            else {
                 continue;
             };
             参照ファイル一覧.extend(群.参照ファイル一覧);

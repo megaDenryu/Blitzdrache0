@@ -12,7 +12,7 @@ use blitz_engine::{
 
 use crate::error::アセットコンパイルエラー;
 use crate::height_grid::高さ格子;
-use crate::placement::原型と置き方の指定;
+use crate::placement::{原型と置き方の指定, 配置の混合の通し番号};
 use crate::scene_compiler::ソースアセットのコンパイル係;
 use crate::terrain::lod_bake;
 use crate::vegetation::group_object;
@@ -40,10 +40,14 @@ impl ソースアセットのコンパイル係<'_> {
         );
         let mut 参照ファイル一覧 = vec![ソースパス];
         let mut 群の描画対象一覧 = Vec::with_capacity(群一覧.len());
-        let mut 通し番号 = 地面の描画対象番号;
+        let mut 群の描画対象番号 = 地面の描画対象番号;
         for 指定 in 群一覧 {
-            通し番号 += 1;
-            let Some(群) = self.原型1つ分の群の描画対象を作る(格子, 所有チャンク, 通し番号, 指定)? else {
+            群の描画対象番号 += 1;
+            // 群より前に置くのは地面1つだけであり、描画対象番号は宣言の並びの順番と1つずれるだけである。
+            // 混合の通し番号を描画対象番号のまま取るのは、既に焼いた集落の絵の判定値を動かさないためである。
+            let 通し番号 = 配置の混合の通し番号::描画対象番号から生成する(群の描画対象番号);
+            let Some(群) = self.原型1つ分の群の描画対象を作る(格子, 所有チャンク, 群の描画対象番号, 通し番号, 指定)?
+            else {
                 continue;
             };
             参照ファイル一覧.extend(群.参照ファイル一覧);

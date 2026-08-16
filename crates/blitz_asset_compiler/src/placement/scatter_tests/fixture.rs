@@ -6,6 +6,7 @@
 use blitz_engine::{チャンク座標, 個体配置};
 
 use super::super::ground_preference::{傾きの好み, 地表への据え方};
+use super::super::mixing_serial::配置の混合の通し番号;
 use super::super::scatter_ranges::{出現割合の範囲, 大きさの範囲};
 use super::super::scatter_specification::{密度場の指定, 密度場の散布};
 use super::super::seed::配置の種;
@@ -48,7 +49,12 @@ pub(super) fn 必ず置く() -> 出現割合の範囲 {
 }
 
 pub(super) fn 散らす(チャンク: チャンク座標, 種: 配置の種, 様式: 配置様式, 東の傾き: f32) -> Vec<個体配置> {
-    配置列を作る(&一定の傾きの格子(チャンク, 東の傾き), チャンク, 3, 種, 様式).unwrap()
+    配置列を作る(&一定の傾きの格子(チャンク, 東の傾き), チャンク, 検査用の通し番号(), 種, 様式).unwrap()
+}
+
+/// 検査が使う配置の混合の通し番号。散布どうしの並びの違いはここでは見ないため、1つの値へ固定する。
+pub(super) fn 検査用の通し番号() -> 配置の混合の通し番号 {
+    配置の混合の通し番号::描画対象番号から生成する(3)
 }
 
 pub(super) fn 種から作る(値: u32) -> 配置の種 {
