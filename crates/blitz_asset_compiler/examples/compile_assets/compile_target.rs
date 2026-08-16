@@ -16,7 +16,7 @@ pub(crate) use entry::コンパイル対象;
 use super::chunk_ledger::対象1件の仕上げ係;
 use super::source_kind::ソース種別;
 use super::world::fixed_placement_declaration::据え付け一覧を作る;
-use super::world::part_house_row_declaration::家並みの指定を作る;
+use super::world::part_house_row_declaration::部品で組んだ並びの指定を作る;
 use super::world::prop_group_declaration::原型と置き方の指定一覧を作る;
 use super::world::visual_sample_declaration::目視見本の指定を作る;
 
@@ -44,9 +44,9 @@ impl 対象1件の仕上げ係<'_> {
                 let 指定一覧 = 原型と置き方の指定一覧を作る(群一覧)?;
                 コンパイル係.見本の集落チャンクをコンパイルする(id, 所有チャンク, &指定一覧)
             }
-            ソース種別::部品で建てた家並み(宣言) => {
-                let 指定 = 家並みの指定を作る(宣言)?;
-                コンパイル係.部品で建てた家並みチャンクをコンパイルする(id, 所有チャンク, &指定)
+            ソース種別::部品で組んだ並び(宣言) => {
+                let 指定 = 部品で組んだ並びの指定を作る(宣言)?;
+                コンパイル係.部品で組んだ並びのチャンクをコンパイルする(id, 所有チャンク, &指定)
             }
             ソース種別::固定物を据えた高さ格子 {
                 据え付け一覧: 宣言一覧,

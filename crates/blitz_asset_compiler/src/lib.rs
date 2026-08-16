@@ -16,10 +16,10 @@ mod fixed_placement;
 mod generation_ledger;
 mod height_field;
 mod height_grid;
-mod house_row;
 mod lattice_noise;
 mod loader;
 mod nonnegative_floor;
+mod part_row;
 mod placed_instance_count;
 mod placement;
 mod scatter_bake;
@@ -55,12 +55,12 @@ pub use height_field::{
 pub use height_grid::{
     高さ格子, 高さ格子を切り出す, 高さ格子を格納する, 高さ格子を読み込む, 高さ格子エラー, 高さ格子諸元
 };
-pub use house_row::{家並みの指定, 家並みの軒数, 部品の家並みのコンパイルエラー};
 pub use lattice_noise::格子雑音の値;
 pub use loader::{
     入力契約を検査するglTFのファイル, 原型ソース, 契約指摘, 契約検査概要, 契約検査結果, 接合点の読み取りの成否, 接合点読み取りエラー, 検査する契約,
     部品のglTFのファイル, 部品の接合点の読み取り, 部品の読み取りエラー, 部品カタログの読み込みエラー, 部品カタログの読み込み係, 重大度,
 };
+pub use part_row::{部品で組んだ並びのコンパイルエラー, 部品で組んだ並びの件数, 部品で組んだ並びの指定};
 pub use placed_instance_count::置いた個体の数;
 pub use placement::{
     個数を決める並べ方, 傾きの好み, 出現割合の範囲, 原型と置き方の指定, 地表への据え方, 大きさの範囲, 密度場の指定, 密度場の散布, 配置の種, 配置様式,

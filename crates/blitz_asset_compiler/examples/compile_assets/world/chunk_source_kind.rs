@@ -25,7 +25,7 @@ pub(super) fn チャンクのソース種別を選ぶ(
         対象世界::見本の集落の世界 => ソース種別::見本の集落 {
             群一覧: village_declaration::集落の小物一覧,
         },
-        対象世界::部品で建てた家並みの世界(規模) => part_house_row_declaration::チャンクのソース種別(規模),
+        対象世界::部品で組んだ家の並びの世界(規模) => part_house_row_declaration::チャンクのソース種別(規模),
         対象世界::目視見本の世界 => ソース種別::目視見本 {
             材質見本の立体の安定id: visual_sample_declaration::材質見本の立体,
             遠景地面の安定id: visual_sample_declaration::遠景地面,

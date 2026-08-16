@@ -7,7 +7,7 @@
 
 use std::path::PathBuf;
 
-use super::scale::家並みの規模;
+use super::scale::家の並びの規模;
 use crate::acceptance::{
     アプリの起こし方, アプリの起動指定, 描画フレーム数, 描画検収の実行環境, 検収エラー, 検収シーン名
 };
@@ -21,7 +21,7 @@ const 一日内秒: &str = "54000";
 const 報告を出させる選択肢: [&str; 3] = ["--sky", "--report-draw-issue", "--report-memory"];
 
 pub(super) fn 実行環境を作る(
-    規模: 家並みの規模, 出力ディレクトリ: PathBuf
+    規模: 家の並びの規模, 出力ディレクトリ: PathBuf
 ) -> Result<描画検収の実行環境, 検収エラー> {
     描画検収の実行環境::作る(
         アプリの起こし方::毎回cargoに構築させて起動する,

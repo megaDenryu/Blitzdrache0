@@ -5,13 +5,13 @@
 
 use std::path::PathBuf;
 
-use super::scale::家並みの規模;
-use super::tally_line::焼いた家並みの勘定;
+use super::scale::家の並びの規模;
+use super::tally_line::焼いた並びの勘定;
 use crate::report_parse::計数報告;
 
 pub(super) struct 規模ごとの実測 {
-    pub(super) 規模: 家並みの規模,
-    pub(super) 勘定: 焼いた家並みの勘定,
+    pub(super) 規模: 家の並びの規模,
+    pub(super) 勘定: 焼いた並びの勘定,
     pub(super) 計数: 計数報告,
     pub(super) 絵: PathBuf,
 }

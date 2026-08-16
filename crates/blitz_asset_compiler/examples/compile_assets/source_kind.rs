@@ -8,7 +8,7 @@ mod ground_grid_ledger;
 use blitz_asset_compiler::配置様式;
 
 use super::archetype_identity::原型の識別;
-use super::world::part_house_row_declaration::家並みの宣言;
+use super::world::part_house_row_declaration::部品で組んだ並びの宣言;
 
 /// 地形チャンクへ同居させる植生の宣言。原型を安定IDの綴りで指すのは、`ソース種別`を`Copy`のまま保つためである。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -73,8 +73,8 @@ pub(super) enum ソース種別 {
         据え付け一覧: &'static [固定物の据え付け宣言],
         散布一覧: &'static [原型と置き方の宣言],
     },
-    /// 高さ格子を平らな地面として焼き、宣言した部品を組み立て規則で軒数ぶん展開し、部品の種類ごとの群にまとめる。
-    部品で建てた家並み(家並みの宣言),
+    /// 高さ格子を平らな地面として焼き、宣言した部品を組み立て規則で件数ぶん展開し、部品の種類ごとの群にまとめる。
+    部品で組んだ並び(部品で組んだ並びの宣言),
     /// 高さ格子を庭の地面として焼き、材質見本の立体と遠景地面を据え、宣言した種の数だけインスタンス群を同居させる。
     目視見本 {
         材質見本の立体の安定id: &'static str,

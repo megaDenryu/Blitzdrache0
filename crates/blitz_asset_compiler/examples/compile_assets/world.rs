@@ -28,7 +28,7 @@ pub(super) mod visual_sample_declaration;
 use blitz_asset_compiler::{アセット配置エラー, 世界のディレクトリ名, 散布の焼き方};
 
 use super::catalog::{アセット定義, ソース種別};
-use part_house_row_declaration::家並みの規模;
+use part_house_row_declaration::家の並びの規模;
 use vertex_diagnostic_declaration::診断の原型;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -37,9 +37,9 @@ pub(super) enum 対象世界 {
     地形の世界,
     植生の世界,
     見本の集落の世界,
-    /// 部品を組み合わせて家を建てる世界。同じ地面へ規模だけが違う2つがあり、発行数が軒数に依らないことをこの対で見る。
+    /// 部品を組み合わせて家を建てる世界。同じ地面へ規模だけが違う2つがあり、発行数が件数に依らないことをこの対で見る。
     /// 参照: `_doc/設計/部品カタログと接合点.md`「段の計画」
-    部品で建てた家並みの世界(家並みの規模),
+    部品で組んだ家の並びの世界(家の並びの規模),
     /// 間接照明の絵をオーナーが目で確かめるための世界。地面の上へ材質見本の立体と少数の小物を据える。
     目視見本の世界,
     /// 頂点処理量の係数を同定するための計測専用の世界。地形の代表世界と同じ地面と配置を持ち、同居植生の原型のトポロジー量だけが違う。
@@ -88,7 +88,7 @@ impl 対象世界 {
             Self::地形の世界 => asset_declaration::地形の世界の一覧(),
             Self::植生の世界 => vegetation_declaration::一覧(),
             Self::見本の集落の世界 => village_declaration::一覧(),
-            Self::部品で建てた家並みの世界(_) => part_house_row_declaration::一覧(),
+            Self::部品で組んだ家の並びの世界(_) => part_house_row_declaration::一覧(),
             Self::目視見本の世界 => visual_sample_declaration::一覧(),
             Self::頂点診断の世界(原型) => vertex_diagnostic_declaration::一覧(原型),
             Self::ブロック圧縮の対照世界 => Vec::new(),
