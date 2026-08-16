@@ -4,19 +4,22 @@
 
 use std::path::{Path, PathBuf};
 
-use super::cargo_toml_parse::{クレート名を取り出す, 依存名一覧を取り出す};
+use super::cargo_toml_parse::{クレート名を取り出す, パッケージ宣言のファイル名, 依存名一覧を取り出す};
 use super::error::規約検査の破れ;
 use super::violation::違反;
 
-/// クレートが並ぶ置き場。ここを開いて対象のCargo.tomlを集める。
+/// クレートが並ぶ置き場。ここを開いて対象のパッケージ宣言を集める。
 const クレートの置き場: &str = "crates";
+
+/// ツールの唯一の入口が住む置き場。クレートの置き場の外にあるため、走査でなく名指しで足す。
+const ツールの入口の置き場: &str = "xtask";
 
 const 白リスト: [(&str, &[&str]); 8] = [
     ("blitz_math", &["glam"]),
     ("blitz_engine", &["blitz_math", "blitz_render", "thiserror"]),
     (
         "blitz_asset_compiler",
-        &["blitz_engine", "blitz_math", "gltf", "image", "rayon", "thiserror"],
+        &["blitz_engine", "blitz_math", "gltf", "image", "rayon", "serde_json", "thiserror"],
     ),
     (
         "blitz_render",
@@ -55,12 +58,12 @@ pub fn 全クレートを検査する() -> Result<Vec<違反>, 規約検査の�
     let 読み取り結果 = std::fs::read_dir(クレートの置き場).map_err(読めなかった)?;
     for エントリ結果 in 読み取り結果 {
         let エントリ = エントリ結果.map_err(読めなかった)?;
-        let 候補 = エントリ.path().join("Cargo.toml");
+        let 候補 = エントリ.path().join(パッケージ宣言のファイル名);
         if 候補.is_file() {
             対象一覧.push(候補);
         }
     }
-    対象一覧.push(PathBuf::from("xtask/Cargo.toml"));
+    対象一覧.push(Path::new(ツールの入口の置き場).join(パッケージ宣言のファイル名));
 
     let mut 違反一覧 = Vec::new();
     for パス in &対象一覧 {

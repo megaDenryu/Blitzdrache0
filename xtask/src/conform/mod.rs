@@ -30,6 +30,7 @@ mod split_debt;
 mod violation;
 mod whole_repository;
 mod wording_contract;
+mod workspace_dependency_features;
 
 use std::path::PathBuf;
 use std::process::ExitCode;

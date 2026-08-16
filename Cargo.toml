@@ -31,8 +31,13 @@ raw-window-handle = "0.6"
 glam = "0.30"
 thiserror = "2"
 # 参照: README「利用ライブラリ」gltf/image の採用審査(M3)。imageは機能を絞って依存を軽くする
-gltf = "1"
+# gltfのextrasは部品の接合点をglTFのextrasから読むために要る。既定に入っておらず、無いとextrasが空の型別名になる
+# (参照: `_doc/設計/部品カタログと接合点.md`「実地で確かめた事実」)。機能一覧はconformの機能台帳が検査する
+gltf = { version = "1", features = ["extras"] }
 image = { version = "0.25", default-features = false, features = ["png", "jpeg"] }
+# 参照: README「利用ライブラリ」serde_json の採用審査。接合点のextrasを解くためだけの依存であり、
+# gltf-jsonが無条件で引いているため依存の木に増えるものは無い。blitz_asset_compilerのみが依存する
+serde_json = { version = "1", features = ["raw_value"] }
 # 参照: README「利用ライブラリ」rayon の採用審査。チャンクごとに独立な生成の並列化専用、blitz_asset_compilerのみが依存
 rayon = "1"
 # 参照: README「利用ライブラリ」egui/egui-winit の採用審査(M5)。開発用UI専用、blitz_appのみが依存
