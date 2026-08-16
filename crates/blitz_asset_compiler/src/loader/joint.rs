@@ -10,10 +10,16 @@
 mod catalog_loader;
 mod declaration;
 mod error;
+mod extras_scan;
+mod face_read;
 mod outcome;
 mod part_file;
 mod value_read;
 
+#[cfg(test)]
+mod declaration_fixture;
+#[cfg(test)]
+mod face_read_rejection_tests;
 #[cfg(test)]
 mod joint_rejection_tests;
 #[cfg(test)]
@@ -23,14 +29,12 @@ use blitz_assembly::接合点;
 use serde_json::Value;
 
 use declaration::接合点の宣言;
+use extras_scan::接合点の宣言の並びを取り出す;
 
 pub use catalog_loader::部品カタログの読み込み係;
 pub use error::{接合点読み取りエラー, 部品の読み取りエラー, 部品カタログの読み込みエラー};
 pub use outcome::接合点の読み取りの成否;
 pub use part_file::部品のglTFのファイル;
-
-/// extrasが接合点の宣言を並べるキー。Blender側の生成スクリプトが綴る名前と同じである。
-const 接合点のキー: &str = "接合点";
 
 pub struct 部品の接合点の読み取り {
     宣言ごとの結果: Vec<接合点の読み取りの成否>,
@@ -82,17 +86,4 @@ fn 宣言1件を読み取る(添字: usize, 宣言: Value) -> 接合点の読み
         return 接合点の読み取りの成否::結果から生成する(添字, Err(接合点読み取りエラー::宣言が表でない { 添字 }));
     }
     接合点の読み取りの成否::結果から生成する(添字, 接合点の宣言::表から生成する(宣言).接合点へ組み上げる())
-}
-
-/// extrasが無い、または接合点のキーが無いときは空の並びを返す。宣言の不在は読み取りの破れではない。
-fn 接合点の宣言の並びを取り出す(ノード: &gltf::Node<'_>) -> Result<Vec<Value>, 接合点読み取りエラー> {
-    let Some(宣言の綴り) = ノード.extras().as_ref() else {
-        return Ok(Vec::new());
-    };
-    let 解いた値: Value = serde_json::from_str(宣言の綴り.get())
-        .map_err(|誤り| 接合点読み取りエラー::宣言のJSONを解けない { 誤り: 誤り.to_string() })?;
-    let Some(宣言) = 解いた値.get(接合点のキー) else {
-        return Ok(Vec::new());
-    };
-    宣言.as_array().cloned().ok_or(接合点読み取りエラー::接合点の宣言が配列でない)
 }

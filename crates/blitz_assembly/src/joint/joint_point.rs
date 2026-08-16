@@ -9,7 +9,7 @@
 use blitz_math::{位置, 部品ローカル};
 
 use super::face_pose::接合面の姿勢;
-use super::face_size::接合面寸法;
+use super::face_size::接合面の形と寸法;
 use super::joint_kind::接合種別;
 use super::joint_name::接合点名;
 
@@ -19,12 +19,12 @@ pub struct 接合点 {
     種別: 接合種別,
     位置: 位置<部品ローカル>,
     姿勢: 接合面の姿勢,
-    接合面: 接合面寸法,
+    接合面: 接合面の形と寸法,
 }
 
 impl 接合点 {
     pub fn 生成する(
-        名前: 接合点名, 種別: 接合種別, 位置: 位置<部品ローカル>, 姿勢: 接合面の姿勢, 接合面: 接合面寸法
+        名前: 接合点名, 種別: 接合種別, 位置: 位置<部品ローカル>, 姿勢: 接合面の姿勢, 接合面: 接合面の形と寸法
     ) -> Self {
         Self {
             名前,
@@ -51,7 +51,7 @@ impl 接合点 {
         self.姿勢
     }
 
-    pub fn 接合面(&self) -> 接合面寸法 {
+    pub fn 接合面(&self) -> 接合面の形と寸法 {
         self.接合面
     }
 }

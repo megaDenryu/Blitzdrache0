@@ -4,11 +4,13 @@
 //! 部品が何であるかを知らずに、2つの接合点と親の配置だけから答えを出す。
 //! 参照: `_doc/設計/部品カタログと接合点.md`「接合の定義」
 
+mod containment_check;
 mod error;
 mod facing_frame;
 mod fit_check;
 mod joint_fit;
 mod scaled_face;
+mod size_match_check;
 
 #[cfg(test)]
 mod mating_fixture;

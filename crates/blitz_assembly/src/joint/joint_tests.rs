@@ -10,7 +10,7 @@ use blitz_math::{メートル, 方向, 部品ローカル};
 
 use super::error::接合点エラー;
 use super::face_pose::接合面の姿勢;
-use super::face_size::接合面寸法;
+use super::face_size::接合面の形と寸法;
 use super::joint_kind::{全接合種別, 接合種別};
 use super::joint_name::接合点名;
 
@@ -61,6 +61,6 @@ fn 上面の接合面の姿勢は横軸をx軸に沿わせる() {
 #[test]
 fn 零や負の接合面の寸法を拒む() {
     for 幅 in [0.0, -1.0, f32::NAN] {
-        assert!(接合面寸法::生成する(メートル::生成する(幅), メートル::生成する(1.0)).is_err());
+        assert!(接合面の形と寸法::矩形を生成する(メートル::生成する(幅), メートル::生成する(1.0)).is_err());
     }
 }

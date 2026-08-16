@@ -14,6 +14,7 @@ mod joint_name;
 mod joint_point;
 mod mating_style;
 mod normal_offset;
+mod positive_length;
 
 #[cfg(test)]
 mod joint_kind_tests;
@@ -23,9 +24,10 @@ mod joint_tests;
 pub use error::接合点エラー;
 pub use face_pose::接合面の姿勢;
 pub use face_position::接合面上の位置;
-pub use face_size::接合面寸法;
+pub use face_size::接合面の形と寸法;
 pub use joint_kind::{全接合種別, 接合種別};
 pub use joint_name::接合点名;
 pub use joint_point::接合点;
 pub use mating_style::{包含の役割, 接合の様式};
 pub use normal_offset::法線方向のずらし;
+pub use positive_length::正で有限な長さ;
