@@ -14,6 +14,7 @@ use super::house_rule::家の規則;
 use super::placement_table::部品ごとの配置表;
 use super::rule::組み立て規則;
 use super::wall_choice::{壁面の指定, 壁面の飾り};
+use crate::joint::法線方向のずらし;
 
 use super::wall_fixture::出窓つきのカタログ;
 use blitz_math::メートル;
@@ -31,6 +32,7 @@ fn 四面に出窓を選ぶ規則() -> 組み立て規則 {
                         部品: 識別子("出窓"),
                         接合点: 名前("差込口"),
                         横のずらし: メートル::生成する(0.0),
+                        法線方向のずらし: 法線方向のずらし::寄せない(),
                     },
                 ],
             )

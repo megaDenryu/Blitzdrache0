@@ -11,9 +11,13 @@ mod joint_fit;
 mod scaled_face;
 
 #[cfg(test)]
+mod mating_fixture;
+#[cfg(test)]
 mod mating_rejection_tests;
 #[cfg(test)]
 mod mating_tests;
+#[cfg(test)]
+mod normal_offset_tests;
 #[cfg(test)]
 mod rotated_root_tests;
 

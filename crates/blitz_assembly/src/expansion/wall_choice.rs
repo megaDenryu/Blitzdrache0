@@ -8,7 +8,7 @@ use blitz_math::メートル;
 
 use super::super::part::部品ID;
 use super::error_rule::規則エラー;
-use crate::joint::接合点名;
+use crate::joint::{接合点名, 法線方向のずらし};
 
 /// 壁面へ付けるものの1つの候補。
 #[derive(Debug, Clone, PartialEq)]
@@ -19,6 +19,8 @@ pub enum 壁面の飾り {
         接合点: 接合点名,
         /// 面の中心から横へずらす量。部品の寸法から導けない意匠の決定である。
         横のずらし: メートル,
+        /// 壁面へ寄せる量。部品を互いに食い込ませて組むために負の値を取る。
+        法線方向のずらし: 法線方向のずらし,
     },
 }
 
