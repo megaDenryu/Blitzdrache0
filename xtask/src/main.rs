@@ -52,6 +52,7 @@ mod object_bench;
 mod origin_invariance;
 mod ow3_dod;
 mod ow4_bench;
+mod part_house_row_draw;
 mod part_tools;
 mod pixel_region;
 mod plate_region;
@@ -95,6 +96,5 @@ mod watch_assets;
 mod world_setup;
 
 fn main() -> std::process::ExitCode {
-    let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
-    dispatch::割り当てる(&引数一覧)
+    dispatch::コマンド行の引数を割り当てる()
 }

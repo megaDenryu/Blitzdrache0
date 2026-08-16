@@ -8,13 +8,19 @@ use crate::{
     depth_prepass_cost, derived_environment, distant_environment, distant_view, fetch_assets, game_fox_tour, gen_atmosphere_reference, gen_game_map,
     gen_source_assets, hdr_luminance, ibl_step, indirect_cost, indirect_probe, instance_cull, instance_draw, instance_lod, instance_stream,
     large_world_assets, large_world_bench, local_visibility, lod_crack, m10_bench, m11_soak, material_reload_draw, motion_vector,
-    multi_material_draw, object_bench, origin_invariance, ow3_dod, ow4_bench, part_tools, play_fox_tour, point_light_shadow, prop_draw,
-    prop_multi_material_draw, reverse_depth, shader_reload_draw, shadow_loss, shadow_probe, sky_draw, sky_lut, sky_state, sky_time, smoke,
+    multi_material_draw, object_bench, origin_invariance, ow3_dod, ow4_bench, part_house_row_draw, part_tools, play_fox_tour, point_light_shadow,
+    prop_draw, prop_multi_material_draw, reverse_depth, shader_reload_draw, shadow_loss, shadow_probe, sky_draw, sky_lut, sky_state, sky_time, smoke,
     streaming_bench, temporal_reconstruction, temporal_visual, terrain_visual, texture_compression, type_metrics, usage, verify, vertex_diag,
     village_draw, watch_assets,
 };
 
-pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
+/// コマンド行の引数を読んで割り当てる。読み取りをここが持つのは、どの語がコマンド名でどこからが
+/// コマンドの引数かを決めるのが対応表そのものだからである。
+pub(crate) fn コマンド行の引数を割り当てる() -> ExitCode {
+    割り当てる(&std::env::args().skip(1).collect::<Vec<String>>())
+}
+
+fn 割り当てる(引数一覧: &[String]) -> ExitCode {
     match 引数一覧.first().map(String::as_str) {
         Some("verify") => verify::検証列を実行する(),
         Some("conform") => conform::実行する(),
@@ -23,6 +29,7 @@ pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
         Some("check-glb") => check_glb::実行する(&引数一覧[1..]),
         Some("part-catalog") => part_tools::カタログを組み上げる(&引数一覧[1..]),
         Some("part-assembly") => part_tools::組み立てを突き合わせる(&引数一覧[1..]),
+        Some("part-house-row-draw") => part_house_row_draw::実行する(),
         Some("compile-assets") => compile_assets::実行する(&引数一覧[1..]),
         Some("watch-assets") => watch_assets::実行する(&引数一覧[1..]),
         Some("gen-source-assets") => gen_source_assets::実行する(),

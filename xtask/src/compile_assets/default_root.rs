@@ -6,7 +6,9 @@
 
 use std::path::Path;
 
-use crate::asset_generator::世界名;
+use blitz_asset_compiler::{散布の焼き方, 遠景地形の焼き方};
+
+use crate::asset_generator::{世界名, 生成器エラー};
 
 use super::生成する;
 
@@ -15,6 +17,8 @@ const 既定出力ルート: &str = "target/runtime_assets";
 const 地形の既定出力ルート: &str = "target/terrain_assets";
 const 植生の既定出力ルート: &str = "target/vegetation_assets";
 const 見本の集落の既定出力ルート: &str = "target/village_assets";
+const 部品で建てた十軒の既定出力ルート: &str = "target/part_house_row_ten_assets";
+const 部品で建てた百軒の既定出力ルート: &str = "target/part_house_row_hundred_assets";
 const 目視見本の既定出力ルート: &str = "target/terrain_visual_assets";
 const 場所巡りの既定出力ルート: &str = "target/fox_tour_assets";
 const 夜の多光源の既定出力ルート: &str = "target/night_lights_assets";
@@ -44,6 +48,23 @@ pub fn 植生世界を既定で生成する() -> bool {
 /// 既存の検証が全部止まる。この世界を要るのは`village-draw`だけであり、そこが名指しで呼ぶ。
 pub fn 見本の集落世界を既定で生成する() -> bool {
     生成する(ソースルート(), Path::new(見本の集落の既定出力ルート), 世界名::見本の集落の世界)
+}
+
+/// 部品で建てた家並みの10軒と100軒はどちらも原点チャンクを占めるため、規模ごとに別の既定出力ルートへ焼く。
+pub fn 部品で建てた十軒の出力ルート() -> &'static Path {
+    Path::new(部品で建てた十軒の既定出力ルート)
+}
+
+pub fn 部品で建てた百軒の出力ルート() -> &'static Path {
+    Path::new(部品で建てた百軒の既定出力ルート)
+}
+
+/// 既定のソースルートから名指しの出力ルートへ焼き、コンパイラの標準出力を返す。
+/// 標準出力を返すのは、段4の検収が期待する発行数と個体数を、焼いた側が数えた報告の行から採るためである。
+/// 一括生成へ入れないのは、家並みの部品が本体リポジトリの外にあるアセットリポジトリだけにあり、
+/// それを持たない環境では焼けないためである。
+pub fn 既定のソースから焼き標準出力を返す(出力ルート: &Path, 世界: 世界名) -> Result<String, 生成器エラー> {
+    super::ルートを名指しして焼き標準出力を返す(ソースルート(), 出力ルート, 世界, 遠景地形の焼き方::焼かない, 散布の焼き方::焼く)
 }
 
 /// 目視見本も原点チャンクを占めるため、専用の既定出力ルートへ焼く。一括生成へ入れない理由は見本の集落と同じであり、
