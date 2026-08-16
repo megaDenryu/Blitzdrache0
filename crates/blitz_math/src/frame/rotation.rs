@@ -5,6 +5,7 @@ use std::marker::PhantomData;
 
 use glam::Quat;
 
+pub(super) use super::rotation_error::クォータニオンエラー;
 use super::space::空間;
 
 /// `入力空間`から`出力空間`への回転(判断43: 数学DDD)。`変換`と対になる幻影型様式で、
@@ -75,22 +76,3 @@ impl<入力空間, 出力空間> fmt::Debug for クォータニオン<入力空�
         f.debug_struct("クォータニオン").field("内部", &self.内部).finish()
     }
 }
-
-/// クォータニオン生成の失敗。
-///
-/// 注意: blitz_mathはglamのみに依存する方針(数学DDD最小セットの外部依存最小化)のため
-/// thiserrorを使わず`std::error::Error`を手動実装する。
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum クォータニオンエラー {
-    ゼロ長,
-}
-
-impl fmt::Display for クォータニオンエラー {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::ゼロ長 => write!(f, "回転を表すクォータニオンの長さがゼロに近い"),
-        }
-    }
-}
-
-impl std::error::Error for クォータニオンエラー {}

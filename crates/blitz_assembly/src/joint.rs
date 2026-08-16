@@ -6,6 +6,7 @@
 
 mod error;
 mod face_pose;
+mod face_position;
 mod face_size;
 mod joint_kind;
 mod joint_kind_pairing;
@@ -14,12 +15,15 @@ mod joint_point;
 mod mating_style;
 
 #[cfg(test)]
+mod joint_kind_tests;
+#[cfg(test)]
 mod joint_tests;
 
 pub use error::接合点エラー;
 pub use face_pose::接合面の姿勢;
+pub use face_position::接合面上の位置;
 pub use face_size::接合面寸法;
 pub use joint_kind::{全接合種別, 接合種別};
 pub use joint_name::接合点名;
 pub use joint_point::接合点;
-pub use mating_style::接合の様式;
+pub use mating_style::{取付の役割, 接合の様式};
