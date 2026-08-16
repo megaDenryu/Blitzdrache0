@@ -8,8 +8,8 @@
 //! 参照: `_doc/設計/部品カタログと接合点.md`「接合点の検査項目」
 
 use super::super::joint::部品の接合点の読み取り;
+use super::super::mesh_bounds::メッシュの境界箱;
 use super::inspection::開いた文書の契約検査;
-use super::mesh_bounds::メッシュの境界箱;
 use super::target::対象位置;
 
 impl 開いた文書の契約検査<'_> {

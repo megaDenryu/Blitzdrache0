@@ -4,8 +4,10 @@
 //! カタログは全部品を読み終えるまで不変条件を検査できないため、組み立て器を通してのみ完成させる。
 //! 参照: `_doc/設計/部品カタログと接合点.md`「部品カタログと展開器」
 
+mod bounding_box;
 mod catalog;
 mod catalog_builder;
+mod corner_transform;
 mod definition;
 mod error;
 mod part_id;
@@ -14,6 +16,7 @@ mod stored_part;
 #[cfg(test)]
 mod part_tests;
 
+pub use bounding_box::{群ローカルの箱, 部品の境界箱};
 pub use catalog::{接合種別ごとの員数, 部品カタログ};
 pub use catalog_builder::部品カタログ組み立て器;
 pub use definition::部品定義;

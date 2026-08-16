@@ -29,7 +29,6 @@ mod joint_scan;
 mod material_declaration_scan;
 mod material_drop_scan;
 mod material_scan;
-mod mesh_bounds;
 mod mesh_data_check;
 mod node_scan;
 mod node_transform;

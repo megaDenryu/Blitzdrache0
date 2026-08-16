@@ -6,15 +6,22 @@
 //! 外部リポジトリの置き場を本体のコードへ焼かないためである。
 
 mod comparison;
+mod contact_check;
+mod part_boxes;
+mod report;
 mod tavern_recipe;
 
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use blitz_assembly::展開器;
-use blitz_asset_compiler::{組み立ての正解表のファイル, 部品カタログの読み込み係};
+use blitz_assembly::{展開器, 部品の境界箱};
+use blitz_asset_compiler::{組み立ての正解表のファイル, 部品のglTFのファイル, 部品カタログの読み込み係};
 use blitz_engine::個体配置;
 
 use comparison::突き合わせの結果;
+use contact_check::接触の検査結果;
+use part_boxes::部品ごとの箱;
+use report::{接触を報告する, 結果を報告する};
 use tavern_recipe::酒場宿屋の手順;
 
 fn main() {
@@ -51,36 +58,21 @@ fn 突き合わせを走らせる(正解表のパス: &Path, 部品のパス一�
         .手順を展開する(&手順, 根の配置)
         .map_err(|誤り| 誤り.to_string())?;
     let 結果 = 突き合わせの結果::配置表と正解表を突き合わせる(&配置表, &正解表);
-    Ok(結果を報告する(&正解表, &結果))
+    let 箱の表 = 境界箱を全件読む(&パス一覧)?;
+    let 箱一覧 = 部品ごとの箱::配置表と箱の表から作る(&配置表, &箱の表);
+    let 接触 = 接触の検査結果::手順にそって確かめる(&手順, &箱一覧);
+    let 突き合わせは合格か = 結果を報告する(&正解表, &結果);
+    let 接触は合格か = 接触を報告する(&接触);
+    Ok(突き合わせは合格か && 接触は合格か)
 }
 
-fn 結果を報告する(正解表: &blitz_asset_compiler::正解表, 結果: &突き合わせの結果) -> bool {
-    println!("=== 組み立ての突き合わせ: {} ===", 正解表.建物の識別子());
-    let 突き合わせた件数 = 結果.一致した件数 + 結果.食い違いの行一覧.len();
-    println!(
-        "正解表の姿勢{}件のうち{}件を突き合わせ、一致{}件・食い違い{}件",
-        正解表.姿勢一覧().len(),
-        突き合わせた件数,
-        結果.一致した件数,
-        結果.食い違いの行一覧.len()
-    );
-    if !結果.展開していない部品一覧.is_empty() {
-        println!(
-            "正解表にあるが、この手順では展開していない部品: {}",
-            結果.展開していない部品一覧.join("・")
-        );
+fn 境界箱を全件読む(パス一覧: &[PathBuf]) -> Result<BTreeMap<String, 部品の境界箱>, String> {
+    let mut 表 = BTreeMap::new();
+    for パス in パス一覧 {
+        let ファイル = 部品のglTFのファイル::生成する(パス);
+        let 識別子 = ファイル.部品idを作る().map_err(|誤り| 誤り.to_string())?;
+        let 箱 = ファイル.境界箱を読み取る().map_err(|誤り| 誤り.to_string())?;
+        表.insert(識別子.綴り().to_string(), 箱);
     }
-    if !結果.正解表に無い部品一覧.is_empty() {
-        println!("正解表に載っていない部品: {}", 結果.正解表に無い部品一覧.join("・"));
-    }
-    if 結果.食い違いの行一覧.is_empty() {
-        println!("判定: 全件が正解表と一致した");
-        return 結果.合格か();
-    }
-    println!("食い違い{}件:", 結果.食い違いの行一覧.len());
-    for 行 in &結果.食い違いの行一覧 {
-        println!("{行}");
-    }
-    println!("判定: 正解表と食い違う配置がある");
-    false
+    Ok(表)
 }

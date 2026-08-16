@@ -14,6 +14,8 @@ mod joint;
 mod material;
 mod material_slots;
 mod mesh;
+mod mesh_bounds;
+mod mesh_bounds_reason;
 mod skin;
 mod static_scene;
 mod texture_decode;

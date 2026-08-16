@@ -23,4 +23,4 @@ mod expansion_tests;
 pub use error::展開エラー;
 pub use expander::展開器;
 pub use instruction::{据えた部品の番号, 接合の指示, 組み立て手順};
-pub use placement_table::{部品ごとの配置, 部品ごとの配置表};
+pub use placement_table::{据えた配置, 部品ごとの配置, 部品ごとの配置表};
