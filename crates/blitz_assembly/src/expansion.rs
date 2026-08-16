@@ -8,10 +8,16 @@
 //! 参照: `_doc/設計/部品カタログと接合点.md`「部品カタログと展開器」
 
 mod error;
+mod error_rule;
 mod expander;
+mod generation_seed;
+mod house_rule;
 mod instruction;
 mod placed_parts;
 mod placement_table;
+mod rule;
+mod step_builder;
+mod wall_choice;
 
 #[cfg(test)]
 mod expansion_fixture;
@@ -19,8 +25,17 @@ mod expansion_fixture;
 mod expansion_rejection_tests;
 #[cfg(test)]
 mod expansion_tests;
+#[cfg(test)]
+mod rule_tests;
+#[cfg(test)]
+mod wall_fixture;
 
 pub use error::展開エラー;
+pub use error_rule::規則エラー;
 pub use expander::展開器;
+pub use generation_seed::生成の種;
+pub use house_rule::{家の規則, 積む階};
 pub use instruction::{据えた部品の番号, 接合の指示, 組み立て手順};
 pub use placement_table::{据えた配置, 部品ごとの配置, 部品ごとの配置表};
+pub use rule::組み立て規則;
+pub use wall_choice::{壁面の指定, 壁面の飾り};
