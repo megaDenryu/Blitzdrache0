@@ -14,9 +14,12 @@ const クレートの置き場: &str = "crates";
 /// ツールの唯一の入口が住む置き場。クレートの置き場の外にあるため、走査でなく名指しで足す。
 const ツールの入口の置き場: &str = "xtask";
 
-const 白リスト: [(&str, &[&str]); 8] = [
+const 白リスト: [(&str, &[&str]); 9] = [
     ("blitz_math", &["glam"]),
     ("blitz_engine", &["blitz_math", "blitz_render", "thiserror"]),
+    // 部品の接合と組み立ての層。glTFもファイルシステムも知らない純粋計算であることを、
+    // 文書でなくこの表で守る(参照: `_doc/設計/部品カタログと接合点.md`「機械強制の手段」)
+    ("blitz_assembly", &["blitz_engine", "blitz_math", "thiserror"]),
     (
         "blitz_asset_compiler",
         &["blitz_engine", "blitz_math", "gltf", "image", "rayon", "serde_json", "thiserror"],

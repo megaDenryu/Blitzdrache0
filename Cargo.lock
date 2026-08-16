@@ -147,6 +147,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "blitz_assembly"
+version = "0.1.0"
+dependencies = [
+ "blitz_engine",
+ "blitz_math",
+ "thiserror 2.0.19",
+]
+
+[[package]]
 name = "blitz_asset_compiler"
 version = "0.1.0"
 dependencies = [

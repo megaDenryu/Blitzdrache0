@@ -1,0 +1,12 @@
+[package]
+name = "blitz_assembly"
+edition.workspace = true
+version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+blitz_engine = { path = "../blitz_engine" }
+blitz_math = { path = "../blitz_math" }
+thiserror = { workspace = true }
