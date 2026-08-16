@@ -31,9 +31,9 @@ const 実物の綴り: &str = r#"{
 fn 実物の綴りをそのまま読む() {
     let パス = 一時ファイルへ書く("正解表.json", 実物の綴り);
     let 表 = 組み立ての正解表のファイル::生成する(&パス).正解表を読み取る().unwrap();
-    assert_eq!(表.建物の識別子(), "Building_TavernInn");
+    assert_eq!(表.組み立ての識別子(), "Building_TavernInn");
     assert_eq!(表.姿勢一覧().len(), 2);
-    let 二階 = 表.部品で引く("Mod_Tavern_F2_Jetty").unwrap();
+    let 二階 = 表.部品で全件引く("Mod_Tavern_F2_Jetty")[0];
     assert_eq!(二階.平行移動, [0.0, 3.0, 0.0]);
     assert_eq!(二階.回転, [0.0, 0.0, 0.0, 1.0]);
     assert_eq!(二階.倍率, [1.0, 1.0, 1.0]);

@@ -23,7 +23,7 @@ const 家の部品一覧: &[原型の識別] = &[
     原型の識別::生成する("part_tavern_chimney", "parts/Mod_Tavern_Chimney.glb"),
 ];
 
-/// 家の並びの規模。同じ地面と同じ規則で軒数だけが違う2つの世界を、この枝が分ける。
+/// 家の並びの規模。同じ地面と同じ規則で件数だけが違う2つの世界を、この枝が分ける。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum 家の並びの規模 {
     十軒,
@@ -31,7 +31,7 @@ pub(crate) enum 家の並びの規模 {
 }
 
 impl 家の並びの規模 {
-    fn 軒数(self) -> usize {
+    fn 件数(self) -> usize {
         match self {
             Self::十軒 => 10,
             Self::百軒 => 100,
@@ -47,7 +47,7 @@ pub(super) fn 一覧() -> Vec<アセット定義> {
 pub(super) fn チャンクのソース種別(規模: 家の並びの規模) -> ソース種別 {
     ソース種別::部品で組んだ並び(部品で組んだ並びの宣言::生成する(
         家の部品一覧,
-        規模.軒数(),
+        規模.件数(),
         並びの規則の種類::酒場宿屋,
     ))
 }

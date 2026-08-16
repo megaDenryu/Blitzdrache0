@@ -5,11 +5,15 @@
 //! 分解する前の建物から採った姿勢と突き合わせて初めて分かる。正解表のパスを引数で受けるのは、
 //! 外部リポジトリの置き場を本体のコードへ焼かないためである。
 
+mod assignment;
 mod comparison;
 mod contact_check;
 mod part_boxes;
+mod recipe_choice;
 mod report;
 mod tavern_recipe;
+mod tolerance;
+mod tree_recipe;
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -21,8 +25,8 @@ use blitz_engine::個体配置;
 use comparison::突き合わせの結果;
 use contact_check::接触の検査結果;
 use part_boxes::部品ごとの箱;
+use recipe_choice::正解表の識別子から手順を選ぶ;
 use report::{接触を報告する, 結果を報告する};
-use tavern_recipe::酒場宿屋の手順;
 
 fn main() {
     let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
@@ -52,7 +56,7 @@ fn 突き合わせを走らせる(正解表のパス: &Path, 部品のパス一�
     let カタログ = 部品カタログの読み込み係::パスの並びから生成する(&パス一覧)
         .組み上げる()
         .map_err(|誤り| 誤り.to_string())?;
-    let 手順 = 酒場宿屋の手順()?;
+    let 手順 = 正解表の識別子から手順を選ぶ(正解表.組み立ての識別子())?;
     let 根の配置 = 個体配置::生成する([0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], [1.0; 3]).map_err(|誤り| 誤り.to_string())?;
     let 配置表 = 展開器::カタログを持たせて生成する(カタログ)
         .手順を展開する(&手順, 根の配置)

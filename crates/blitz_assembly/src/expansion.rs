@@ -8,6 +8,8 @@
 //! 参照: `_doc/設計/部品カタログと接合点.md`「部品カタログと展開器」
 
 mod aggregated_placements;
+mod branch_choice;
+mod choice_index;
 mod error;
 mod error_rule;
 mod expander;
@@ -22,6 +24,7 @@ mod rule;
 mod step_builder;
 mod tree_parts;
 mod tree_rule;
+mod tree_step_builder;
 mod trunk_segment;
 mod wall_choice;
 
@@ -40,11 +43,14 @@ mod stacking_tests;
 #[cfg(test)]
 mod tree_rule_fixture;
 #[cfg(test)]
-mod tree_rule_tests;
+mod tree_scale_tests;
+#[cfg(test)]
+mod tree_shape_tests;
 #[cfg(test)]
 mod wall_fixture;
 
 pub use aggregated_placements::部品ごとの配置の集約;
+pub use branch_choice::{節ごとの枝の候補, 節の枝};
 pub use error::展開エラー;
 pub use error_rule::規則エラー;
 pub use expander::展開器;
@@ -56,5 +62,5 @@ pub use placement_table::{据えた配置, 部品ごとの配置表};
 pub use rule::組み立て規則;
 pub use tree_parts::{幹の指定, 枝の指定, 葉房の指定};
 pub use tree_rule::木の規則;
-pub use trunk_segment::{幹の節数, 幹を下から数えた節の番号};
+pub use trunk_segment::幹の節数;
 pub use wall_choice::{壁面の指定, 壁面の飾り};
