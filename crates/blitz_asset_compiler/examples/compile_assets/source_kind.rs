@@ -8,7 +8,7 @@ mod ground_grid_ledger;
 use blitz_asset_compiler::配置様式;
 
 use super::archetype_identity::原型の識別;
-use super::world::part_house_row_declaration::部品で組んだ並びの宣言;
+use super::world::part_row_declaration::部品で組んだ並びの宣言;
 
 /// 地形チャンクへ同居させる植生の宣言。原型を安定IDの綴りで指すのは、`ソース種別`を`Copy`のまま保つためである。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

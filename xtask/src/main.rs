@@ -52,7 +52,7 @@ mod object_bench;
 mod origin_invariance;
 mod ow3_dod;
 mod ow4_bench;
-mod part_house_row_draw;
+mod part_row_draw;
 mod part_tools;
 mod pixel_region;
 mod plate_region;

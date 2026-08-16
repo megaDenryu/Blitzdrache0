@@ -19,6 +19,7 @@ const 植生の既定出力ルート: &str = "target/vegetation_assets";
 const 見本の集落の既定出力ルート: &str = "target/village_assets";
 const 部品で建てた十軒の既定出力ルート: &str = "target/part_house_row_ten_assets";
 const 部品で建てた百軒の既定出力ルート: &str = "target/part_house_row_hundred_assets";
+const 部品で組んだ木の並びの既定出力ルート: &str = "target/part_tree_row_assets";
 const 目視見本の既定出力ルート: &str = "target/terrain_visual_assets";
 const 場所巡りの既定出力ルート: &str = "target/fox_tour_assets";
 const 夜の多光源の既定出力ルート: &str = "target/night_lights_assets";
@@ -57,6 +58,12 @@ pub fn 部品で建てた十軒の出力ルート() -> &'static Path {
 
 pub fn 部品で建てた百軒の出力ルート() -> &'static Path {
     Path::new(部品で建てた百軒の既定出力ルート)
+}
+
+/// 木の並びも原点チャンクを占めるため、専用の既定出力ルートへ焼く。一括生成へ入れない理由は家の並びと同じであり、
+/// 木の部品が本体リポジトリの外にあるアセットリポジトリだけにある。この世界を要るのは`part-tree-row-draw`だけである。
+pub fn 部品で組んだ木の並びの出力ルート() -> &'static Path {
+    Path::new(部品で組んだ木の並びの既定出力ルート)
 }
 
 /// 既定のソースルートから名指しの出力ルートへ焼き、コンパイラの標準出力を返す。

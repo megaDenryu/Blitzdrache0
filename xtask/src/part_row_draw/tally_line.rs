@@ -22,16 +22,16 @@ const 個体数の欄: &str = "据えた部品の個体数=";
 
 /// 焼く工程が数えた部品で組んだ並びの勘定。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) struct 焼いた並びの勘定 {
-    pub(super) 件数: u64,
-    pub(super) 部品の種類数: u64,
-    pub(super) 材質スロット数の総和: u64,
-    pub(super) プリミティブ数の総和: u64,
-    pub(super) 据えた部品の個体数: u64,
+pub(crate) struct 焼いた並びの勘定 {
+    pub(crate) 件数: u64,
+    pub(crate) 部品の種類数: u64,
+    pub(crate) 材質スロット数の総和: u64,
+    pub(crate) プリミティブ数の総和: u64,
+    pub(crate) 据えた部品の個体数: u64,
 }
 
 impl 焼いた並びの勘定 {
-    pub(super) fn 標準出力から読む(標準出力: String) -> Result<Self, 検収エラー> {
+    pub(crate) fn 標準出力から読む(標準出力: String) -> Result<Self, 検収エラー> {
         let 報告 = 終了時報告::取り込む(&検収の実行名::定数から生成する("house_row_compile"), 標準出力, String::new());
         Ok(Self {
             件数: 欄を読む(&報告, 件数の欄)?,

@@ -6,7 +6,7 @@
 use std::path::PathBuf;
 
 use super::scale::家の並びの規模;
-use super::tally_line::焼いた並びの勘定;
+use crate::part_row_draw::tally_line::焼いた並びの勘定;
 use crate::report_parse::計数報告;
 
 pub(super) struct 規模ごとの実測 {

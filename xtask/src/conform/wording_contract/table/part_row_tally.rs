@@ -12,7 +12,7 @@ use super::綴りの契約;
 /// 書き手と読み手の置き場。どの欄も同じ1行に並ぶため、両側とも1つのファイルである。
 const 現れるファイル一覧: &[&str] = &[
     "crates/blitz_asset_compiler/src/part_row/tally.rs",
-    "xtask/src/part_house_row_draw/tally_line.rs",
+    "xtask/src/part_row_draw/tally_line.rs",
 ];
 
 pub(super) const 綴り一覧: [綴りの契約; 5] = [

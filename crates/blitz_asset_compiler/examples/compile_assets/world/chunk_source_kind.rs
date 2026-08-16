@@ -9,8 +9,8 @@ use blitz_asset_compiler::散布の焼き方;
 
 use super::super::catalog::ソース種別;
 use super::{
-    asset_declaration, fox_tour_declaration, night_lights_declaration, part_house_row_declaration, stone_hut_declaration, vegetation_declaration,
-    vertex_diagnostic_declaration, village_declaration, visual_sample_declaration, 対象世界,
+    asset_declaration, fox_tour_declaration, night_lights_declaration, part_house_row_declaration, part_tree_row_declaration, stone_hut_declaration,
+    vegetation_declaration, vertex_diagnostic_declaration, village_declaration, visual_sample_declaration, 対象世界,
 };
 
 pub(super) fn チャンクのソース種別を選ぶ(
@@ -26,6 +26,7 @@ pub(super) fn チャンクのソース種別を選ぶ(
             群一覧: village_declaration::集落の小物一覧,
         },
         対象世界::部品で組んだ家の並びの世界(規模) => part_house_row_declaration::チャンクのソース種別(規模),
+        対象世界::部品で組んだ木の並びの世界 => part_tree_row_declaration::チャンクのソース種別(),
         対象世界::目視見本の世界 => ソース種別::目視見本 {
             材質見本の立体の安定id: visual_sample_declaration::材質見本の立体,
             遠景地面の安定id: visual_sample_declaration::遠景地面,

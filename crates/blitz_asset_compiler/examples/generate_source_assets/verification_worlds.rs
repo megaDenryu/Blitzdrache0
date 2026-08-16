@@ -7,7 +7,7 @@
 use std::path::Path;
 
 use crate::{
-    chunk_world, night_lights_world, part_house_row_world, smoke_assets, stone_hut_world, terrain_visual_world, terrain_world,
+    chunk_world, night_lights_world, part_house_row_world, part_tree_row_world, smoke_assets, stone_hut_world, terrain_visual_world, terrain_world,
     texture_compression_world, vegetation_world, village_world, ディレクトリを作る,
 };
 
@@ -37,10 +37,15 @@ pub(crate) fn 一式を書き出す() -> Result<(), String> {
     village_world::書き出す(見本の集落出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 見本の集落出力先.display());
 
-    let 家並み出力先 = Path::new("assets/part_house_row_world");
-    ディレクトリを作る(家並み出力先)?;
-    part_house_row_world::書き出す(家並み出力先)?;
-    println!("[generate_source_assets] {}へ生成完了", 家並み出力先.display());
+    let 家の並び出力先 = Path::new("assets/part_house_row_world");
+    ディレクトリを作る(家の並び出力先)?;
+    part_house_row_world::書き出す(家の並び出力先)?;
+    println!("[generate_source_assets] {}へ生成完了", 家の並び出力先.display());
+
+    let 木の並び出力先 = Path::new("assets/part_tree_row_world");
+    ディレクトリを作る(木の並び出力先)?;
+    part_tree_row_world::書き出す(木の並び出力先)?;
+    println!("[generate_source_assets] {}へ生成完了", 木の並び出力先.display());
 
     let 目視見本出力先 = Path::new("assets/terrain_visual_world");
     ディレクトリを作る(目視見本出力先)?;

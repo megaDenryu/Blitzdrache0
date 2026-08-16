@@ -14,19 +14,18 @@ mod judgment;
 mod measurement;
 mod run;
 mod scale;
-mod tally_line;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
 
+use super::tally_line::焼いた並びの勘定;
 use error::部品で組んだ家の並びの検収エラー;
 use measurement::規模ごとの実測;
 use scale::家の並びの規模;
-use tally_line::焼いた並びの勘定;
 
 const 出力ディレクトリ: &str = "target/part_house_row_draw";
 
-pub fn 実行する() -> ExitCode {
+pub(super) fn 実行する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] part-house-row-draw成功: {要約}");

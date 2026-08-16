@@ -6,6 +6,7 @@ mod fox_tour_view;
 mod fox_view;
 mod night_lights_view;
 mod part_house_row_view;
+mod part_tree_row_view;
 mod prop_view;
 mod shadow_view;
 mod stone_hut_doorway_view;
@@ -44,6 +45,7 @@ fn 世界ごとの姿勢を与える(カメラ: &mut カメラ, 種別: 世界�
         世界の種別::小物世界(小物世界の種別::集落) => village_view::姿勢を与える(カメラ),
         世界の種別::小物世界(小物世界の種別::石の小屋の屋内) => stone_hut_doorway_view::姿勢を与える(カメラ),
         世界の種別::小物世界(小物世界の種別::部品で組んだ家の並び) => part_house_row_view::姿勢を与える(カメラ),
+        世界の種別::小物世界(小物世界の種別::部品で組んだ木の並び) => part_tree_row_view::姿勢を与える(カメラ),
         世界の種別::小物世界(小物世界の種別::名前で選ばれない小物) => prop_view::姿勢を与える(カメラ),
         世界の種別::平面板
         | 世界の種別::ヘルメット

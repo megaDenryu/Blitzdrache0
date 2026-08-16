@@ -29,6 +29,8 @@ const 集落の小物世界の綴り: &str = "prop_village";
 /// 10軒の世界と100軒の世界が同じ綴りのシーンを持つ。地面も規則も同じであり、違うのは焼いた件数だけである。
 /// 参照: `crates/blitz_asset_compiler/examples/generate_source_assets/part_house_row_world.rs`
 const 部品で組んだ家の並びの小物世界の綴り: &str = "prop_part_house_row";
+/// 参照: `crates/blitz_asset_compiler/examples/generate_source_assets/part_tree_row_world.rs`
+const 部品で組んだ木の並びの小物世界の綴り: &str = "prop_part_tree_row";
 /// 局所光の件数の上書きを読む2つの世界の一方。失敗の文面が`--scene`へ渡すべき値をそのまま出すため公開する。
 /// 参照: `crates/blitz_asset_compiler/examples/generate_source_assets/stone_hut_world.rs`
 pub(crate) const 石の小屋の屋内の小物世界の綴り: &str = "prop_stone_hut_interior";
@@ -64,6 +66,7 @@ fn 名前つきの世界を見分ける(綴り: &str) -> Option<世界の種別>
         地形の夜灯り世界の綴り => 世界の種別::地形世界(地形世界の種別::夜灯り),
         集落の小物世界の綴り => 世界の種別::小物世界(小物世界の種別::集落),
         部品で組んだ家の並びの小物世界の綴り => 世界の種別::小物世界(小物世界の種別::部品で組んだ家の並び),
+        部品で組んだ木の並びの小物世界の綴り => 世界の種別::小物世界(小物世界の種別::部品で組んだ木の並び),
         石の小屋の屋内の小物世界の綴り => 世界の種別::小物世界(小物世界の種別::石の小屋の屋内),
         名前つきでない綴り => {
             if 床を同居させた植生の検収世界の綴り一覧.contains(&名前つきでない綴り) {

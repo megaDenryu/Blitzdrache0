@@ -4,10 +4,12 @@
 //! プロセス境界の綴りとその解析は`argument_name`が、世界のソースディレクトリ名は`directory_source_path`が、
 //! チャンクのソース形式は`chunk_source_kind`が、地面へ散らす原型の一覧は`scatter_declaration`が持つ。宣言をコンパイラが受け取る指定へ写す手順は、
 //! 小物群を`prop_group_declaration`が、目視見本を`visual_sample_declaration`が、地面へ据える固定物を`fixed_placement_declaration`が持ち、
-//! 世界ごとの宣言は`fox_tour_declaration`と`stone_hut_declaration`と`night_lights_declaration`と`part_house_row_declaration`にある。
+//! 世界ごとの宣言は`fox_tour_declaration`と`stone_hut_declaration`と`night_lights_declaration`と`part_house_row_declaration`と
+//! `part_tree_row_declaration`にあり、部品で組んだ並びの宣言の型と規則は`part_row_declaration`が持つ。
 
 mod argument_name;
 mod asset_declaration;
+mod asset_definition_list;
 mod chunk_source_kind;
 mod definition_kind;
 mod directory_source_path;
@@ -16,6 +18,8 @@ pub(super) mod fox_tour_declaration;
 mod fox_tour_scatter_declaration;
 mod night_lights_declaration;
 pub(super) mod part_house_row_declaration;
+pub(super) mod part_row_declaration;
+mod part_tree_row_declaration;
 pub(super) mod prop_group_declaration;
 mod provenance;
 mod scatter_declaration;
@@ -40,6 +44,9 @@ pub(super) enum 対象世界 {
     /// 部品を組み合わせて家を建てる世界。同じ地面へ規模だけが違う2つがあり、発行数が件数に依らないことをこの対で見る。
     /// 参照: `_doc/設計/部品カタログと接合点.md`「段の計画」
     部品で組んだ家の並びの世界(家の並びの規模),
+    /// 部品を組み合わせて樫の木を組み、平らな地面へ数本並べる世界。組み上がった木の姿を人が近くで見るためのものであり、
+    /// 計器の実証は家の並びが持つ。参照: `_doc/設計/部品カタログと接合点.md`「段5の到達点」
+    部品で組んだ木の並びの世界,
     /// 間接照明の絵をオーナーが目で確かめるための世界。地面の上へ材質見本の立体と少数の小物を据える。
     目視見本の世界,
     /// 頂点処理量の係数を同定するための計測専用の世界。地形の代表世界と同じ地面と配置を持ち、同居植生の原型のトポロジー量だけが違う。
@@ -81,20 +88,8 @@ impl 対象世界 {
         self == Self::場所巡りの世界
     }
 
-    /// チャンク以外に焼く、この世界のアセット一覧。
+    /// チャンク以外に焼く、この世界のアセット一覧。台帳は`asset_definition_list`が持つ。
     pub(super) fn アセット定義一覧(self) -> Vec<アセット定義> {
-        match self {
-            Self::板の世界 => asset_declaration::板の世界の一覧(),
-            Self::地形の世界 => asset_declaration::地形の世界の一覧(),
-            Self::植生の世界 => vegetation_declaration::一覧(),
-            Self::見本の集落の世界 => village_declaration::一覧(),
-            Self::部品で組んだ家の並びの世界(_) => part_house_row_declaration::一覧(),
-            Self::目視見本の世界 => visual_sample_declaration::一覧(),
-            Self::頂点診断の世界(原型) => vertex_diagnostic_declaration::一覧(原型),
-            Self::ブロック圧縮の対照世界 => Vec::new(),
-            Self::夜の多光源の世界 => night_lights_declaration::一覧(),
-            Self::屋内の多光源の世界 => stone_hut_declaration::一覧(),
-            Self::場所巡りの世界 => fox_tour_declaration::一覧(),
-        }
+        asset_definition_list::アセット定義一覧を選ぶ(self)
     }
 }
