@@ -14,6 +14,7 @@ use super::house_rule::家の規則;
 use super::placement_table::部品ごとの配置表;
 use super::rule::組み立て規則;
 use super::wall_choice::{壁面の指定, 壁面の飾り};
+
 use super::wall_fixture::出窓つきのカタログ;
 use blitz_math::メートル;
 

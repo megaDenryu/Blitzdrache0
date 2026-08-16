@@ -28,6 +28,8 @@ mod expansion_tests;
 #[cfg(test)]
 mod rule_tests;
 #[cfg(test)]
+mod stacking_tests;
+#[cfg(test)]
 mod wall_fixture;
 
 pub use error::展開エラー;
