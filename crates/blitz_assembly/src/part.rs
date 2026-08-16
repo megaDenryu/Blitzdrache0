@@ -14,6 +14,8 @@ mod part_id;
 mod stored_part;
 
 #[cfg(test)]
+mod part_fixture;
+#[cfg(test)]
 mod part_tests;
 
 pub use bounding_box::{群ローカルの箱, 部品の境界箱};
