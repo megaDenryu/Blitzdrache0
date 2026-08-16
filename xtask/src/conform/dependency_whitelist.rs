@@ -2,55 +2,20 @@
 //! 依存追加は親の採用審査 + この表の更新が必要（意図的な二重台帳。Cargo.toml側の
 //! 変更だけでは通らないことが検査の目的）。
 
+mod ledger;
+
 use std::path::{Path, PathBuf};
 
 use super::cargo_toml_parse::{クレート名を取り出す, パッケージ宣言のファイル名, 依存名一覧を取り出す};
 use super::error::規約検査の破れ;
 use super::violation::違反;
+use ledger::白リスト;
 
 /// クレートが並ぶ置き場。ここを開いて対象のパッケージ宣言を集める。
 const クレートの置き場: &str = "crates";
 
 /// ツールの唯一の入口が住む置き場。クレートの置き場の外にあるため、走査でなく名指しで足す。
 const ツールの入口の置き場: &str = "xtask";
-
-const 白リスト: [(&str, &[&str]); 9] = [
-    ("blitz_math", &["glam"]),
-    ("blitz_engine", &["blitz_math", "blitz_render", "thiserror"]),
-    // 部品の接合と組み立ての層。glTFもファイルシステムも知らない純粋計算であることを、
-    // 文書でなくこの表で守る(参照: `_doc/設計/部品カタログと接合点.md`「機械強制の手段」)
-    ("blitz_assembly", &["blitz_engine", "blitz_math", "thiserror"]),
-    (
-        "blitz_asset_compiler",
-        &["blitz_engine", "blitz_math", "gltf", "image", "rayon", "serde_json", "thiserror"],
-    ),
-    (
-        "blitz_render",
-        &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"],
-    ),
-    // 判断51: シミュレーション基盤層。手法の数学のみでashもblitz_renderも知らない
-    ("blitz_sim", &["blitz_math", "thiserror"]),
-    // ゲームロジック層。設計正本が許すのはblitz_engineとblitz_mathの2つであり、白リストへは実依存になった時点で足す
-    // (参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「第1段階の定義」)。winit・egui・ashへは依存させない
-    ("blitz_game", &["blitz_math"]),
-    (
-        "blitz_app",
-        &[
-            "blitz_engine",
-            "blitz_game",
-            "blitz_math",
-            "blitz_render",
-            "blitz_sim",
-            "winit",
-            "raw-window-handle",
-            "thiserror",
-            "egui",
-            "egui-winit",
-        ],
-    ),
-    // 置き場とファイル名の綴りの正本を読むためだけの依存。検収が写しを持たないための唯一の例外である
-    ("xtask", &["blitz_asset_compiler"]),
-];
 
 pub fn 全クレートを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let 読めなかった = |誤り| 規約検査の破れ::検査対象のディレクトリを読めなかった {

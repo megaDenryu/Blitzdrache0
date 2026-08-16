@@ -159,6 +159,7 @@ dependencies = [
 name = "blitz_asset_compiler"
 version = "0.1.0"
 dependencies = [
+ "blitz_assembly",
  "blitz_engine",
  "blitz_math",
  "gltf",
