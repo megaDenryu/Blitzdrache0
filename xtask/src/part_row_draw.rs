@@ -10,8 +10,11 @@
 //! 木の並びだけ器を分けるのは、見るものが違うためである。あちらは1本の姿を人が判定できる大きさで写すことが目的であり、
 //! 件数を変えた対を持たない。
 
+mod bake_root;
+mod baked_asset_file;
 mod frame_row;
 mod house_row;
+mod row_path_rule;
 mod row_target;
 mod scale_pair;
 mod tally_line;

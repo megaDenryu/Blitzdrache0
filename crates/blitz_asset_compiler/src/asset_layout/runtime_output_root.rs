@@ -17,7 +17,9 @@ mod cleanup;
 
 const 実行時カタログのファイル名: &str = "catalog.blitzcatalog";
 const 実行時目録のファイル名: &str = "chunk_directory.blitzchunks";
-const アセットの拡張子つきの綴り: &str = ".blitzasset";
+/// 実行時形式のアセット1件のファイル名が終わる綴り。**この綴りの正本はここ1つである。**
+/// 公開するのは、焼き上がりの実在を確かめる検収の側が同じ綴りを持つと二重台帳になるためである。
+pub const 実行時形式のアセットの拡張子: &str = ".blitzasset";
 
 #[repr(transparent)]
 pub struct 実行時形式の出力ルート(生成の出力ルート);
@@ -43,7 +45,7 @@ impl 実行時形式の出力ルート {
     }
 
     fn アセットのファイル名(安定id: &アセットID) -> String {
-        format!("{安定id}{アセットの拡張子つきの綴り}")
+        format!("{安定id}{実行時形式のアセットの拡張子}")
     }
 
     pub fn 実行時カタログを書き出す(&self, バイト列: &[u8]) -> Result<(), アセット配置エラー> {

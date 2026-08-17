@@ -24,7 +24,7 @@ pub use chunk_height_grid::{チャンクの高さ格子, チャンクの高さ�
 pub use error::アセット配置エラー;
 pub use fox_tour_source_directory::場所巡りの世界のソースディレクトリ;
 pub use height_grid_file::高さ格子のファイル;
-pub use runtime_output_root::実行時形式の出力ルート;
+pub use runtime_output_root::{実行時形式のアセットの拡張子, 実行時形式の出力ルート};
 pub use source_root::{ソースルート, チャンク目録ソースの置き場};
 pub use world_directory_name::世界のディレクトリ名;
 pub use world_extent::{世界の広がり, 世界の広がりエラー};

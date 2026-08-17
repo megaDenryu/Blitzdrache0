@@ -11,6 +11,8 @@
 
 use std::process::ExitCode;
 
+use super::bake_root::並びの実行時形式の置き場;
+use super::baked_asset_file::焼き上がりを確かめるファイル;
 use super::row_target::検収する並び1つ;
 use super::scale_pair::件数を変えた並びの対;
 use crate::acceptance::{検収の実行名, 検収シーン名};
@@ -19,8 +21,8 @@ use crate::asset_generator::世界名;
 const 十棟: 検収する並び1つ = 検収する並び1つ::生成する(
     "10棟の一間四方の骨格の並び",
     世界名::一間四方の骨格を十棟建てた世界,
-    "target/part_frame_row_ten_assets",
-    "target/part_frame_row_ten_assets/prop_part_frame_row.blitzasset",
+    並びの実行時形式の置き場::定数から生成する("target/part_frame_row_ten_assets"),
+    焼き上がりを確かめるファイル::定数から生成する("target/part_frame_row_ten_assets/prop_part_frame_row.blitzasset"),
     検収の実行名::定数から生成する("ten"),
     10,
 );
@@ -28,8 +30,8 @@ const 十棟: 検収する並び1つ = 検収する並び1つ::生成する(
 const 百棟: 検収する並び1つ = 検収する並び1つ::生成する(
     "100棟の一間四方の骨格の並び",
     世界名::一間四方の骨格を百棟建てた世界,
-    "target/part_frame_row_hundred_assets",
-    "target/part_frame_row_hundred_assets/prop_part_frame_row.blitzasset",
+    並びの実行時形式の置き場::定数から生成する("target/part_frame_row_hundred_assets"),
+    焼き上がりを確かめるファイル::定数から生成する("target/part_frame_row_hundred_assets/prop_part_frame_row.blitzasset"),
     検収の実行名::定数から生成する("hundred"),
     100,
 );
