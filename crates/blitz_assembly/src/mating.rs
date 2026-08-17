@@ -4,6 +4,7 @@
 //! 部品が何であるかを知らずに、2つの接合点と親の配置だけから答えを出す。
 //! 参照: `_doc/設計/部品カタログと接合点.md`「接合の定義」
 
+mod center_position_check;
 mod child_origin;
 mod child_scale;
 mod containment_check;
