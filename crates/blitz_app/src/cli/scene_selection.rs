@@ -1,18 +1,19 @@
 //! 起動時に読むシーンの識別。担当するのは「`--scene`の綴りを起動の入口で1回だけ世界の種別へ解き、
 //! 以降の方針の引き当てを網羅`match`で書けるようにする」ことである。綴りの正本と見分けの工程は`parse`が、
-//! 種別の数え上げは`world_kind`が、ホットリロード検収の差し替えの対は`rewrite_pair`が持つ。
+//! 種別の数え上げは`world_kind`が、綴りの正本は`scene_name`が、ホットリロード検収の差し替えの対は`rewrite_pair`が持つ。
 //!
 //! 綴りを入口で1回だけ解くのは、同じ名前の比較が方針ごとに散ると、世界を1つ足したときに
 //! どの方針が判断を求められているのかを機械が指摘できなくなるためである。
 
 mod parse;
 mod rewrite_pair;
+mod scene_name;
 #[cfg(test)]
 mod scene_selection_tests;
 mod world_kind;
 
-pub(crate) use parse::{地形の夜灯り世界の綴り, 石の小屋の屋内の小物世界の綴り};
 pub(crate) use rewrite_pair::差し替える生成物の対;
+pub(crate) use scene_name::{地形の夜灯り世界の綴り, 石の小屋の屋内の小物世界の綴り};
 pub(crate) use world_kind::{世界の種別, 地形世界の種別, 小物世界の種別, 植生の検収世界の種別};
 
 use blitz_engine::アセットID;
@@ -37,7 +38,7 @@ impl 起動時シーン {
 
     /// `--scene`の指定が無い起動が読むシーン。
     pub(crate) fn 既定() -> Self {
-        Self::綴りから解析する(parse::平面板の綴り).unwrap_or_else(|誤り| panic!("既定のシーンの綴りの定数が不正だった: {誤り}"))
+        Self::綴りから解析する(scene_name::平面板の綴り).unwrap_or_else(|誤り| panic!("既定のシーンの綴りの定数が不正だった: {誤り}"))
     }
 
     pub(crate) fn 安定id(&self) -> &アセットID {

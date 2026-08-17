@@ -1,72 +1,47 @@
-//! 部品で組んだ家の並びの検収入口。同じ規則で10軒と100軒を焼き、どちらも本番の描画経路へ通して、
-//! シーンパスの発行数が件数に依らないことと、個体数が焼く工程の勘定と一致することを確かめ、目視用のPNGを書き出す。
+//! 部品で組んだ家の並びの検収入口。10軒と100軒の対を`scale_pair`の器へ渡すだけであり、この階層が持つのは
+//! 世界と出力ルートとシーン名と件数の対応だけである。
 //!
 //! **これが段4の実証である。** 発行数が件数に比例し始めたら、部品の組み合わせでバリエーションを作るという
 //! 設計は前提から誤っている。
 //!
-//! 画素の合否判定を置かないのは、この入口の目的が「絵として成立しているか」の判断材料を出すことであり、
-//! その判断は親エージェントの目視が行うためである。機械が見るのはvalidationが0件であることと、
-//! 焼いた側の勘定と走らせた側の計数が噛み合うことだけである。
+//! シーン名を`prop_part_house_row`にすることが、家並みの全体を収める初期カメラと、書き換えもピクセル判定も持たない
+//! 検収計画を選ばせる。10軒と100軒は同じシーン名を持ち、読む出力ルートだけが違う。
 //! 参照: `_doc/設計/部品カタログと接合点.md`「検収の形」段4の完了条件
 
-mod error;
-mod judgment;
-mod measurement;
-mod run;
-mod scale;
-
-use std::path::PathBuf;
 use std::process::ExitCode;
 
-use super::tally_line::焼いた並びの勘定;
-use error::部品で組んだ家の並びの検収エラー;
-use measurement::規模ごとの実測;
-use scale::家の並びの規模;
+use super::row_target::検収する並び1つ;
+use super::scale_pair::件数を変えた並びの対;
+use crate::acceptance::{検収の実行名, 検収シーン名};
+use crate::asset_generator::世界名;
 
-const 出力ディレクトリ: &str = "target/part_house_row_draw";
+const 十軒: 検収する並び1つ = 検収する並び1つ::生成する(
+    "10軒の家並み",
+    世界名::部品で建てた十軒の世界,
+    "target/part_house_row_ten_assets",
+    "target/part_house_row_ten_assets/prop_part_house_row.blitzasset",
+    検収の実行名::定数から生成する("ten"),
+    10,
+);
+
+const 百軒: 検収する並び1つ = 検収する並び1つ::生成する(
+    "100軒の家並み",
+    世界名::部品で建てた百軒の世界,
+    "target/part_house_row_hundred_assets",
+    "target/part_house_row_hundred_assets/prop_part_house_row.blitzasset",
+    検収の実行名::定数から生成する("hundred"),
+    100,
+);
+
+const 家の並びの対: 件数を変えた並びの対 = 件数を変えた並びの対::生成する(
+    "part-house-row-draw",
+    "10軒と100軒の突き合わせ",
+    検収シーン名::生成する("prop_part_house_row"),
+    "target/part_house_row_draw",
+    十軒,
+    百軒,
+);
 
 pub(super) fn 実行する() -> ExitCode {
-    match 検収する() {
-        Ok(要約) => {
-            println!("[xtask] part-house-row-draw成功: {要約}");
-            ExitCode::SUCCESS
-        }
-        Err(理由) => {
-            eprintln!("[xtask] part-house-row-draw失敗: {理由}");
-            ExitCode::FAILURE
-        }
-    }
-}
-
-fn 検収する() -> Result<String, 部品で組んだ家の並びの検収エラー> {
-    if !crate::gen_source_assets::生成する() {
-        return Err(部品で組んだ家の並びの検収エラー::ソースアセットを生成できなかった);
-    }
-    let [少ないほう, 多いほう] = 家の並びの規模::全規模();
-    let 十軒の実測 = 規模1つを測る(少ないほう)?;
-    let 百軒の実測 = 規模1つを測る(多いほう)?;
-    judgment::規模どうしを突き合わせる(&十軒の実測, &百軒の実測)?;
-    Ok(format!("{}。{}", 十軒の実測.要約の1行(), 百軒の実測.要約の1行()))
-}
-
-/// 規模1つを焼いて走らせ、勘定と計数と絵を採る。判定もここで通すのは、破れたときにどの規模で落ちたかを
-/// 先に言うためである。
-fn 規模1つを測る(規模: 家の並びの規模) -> Result<規模ごとの実測, 部品で組んだ家の並びの検収エラー> {
-    規模
-        .前回の焼き上がりを消す()
-        .map_err(部品で組んだ家の並びの検収エラー::前回の焼き上がりを消せなかった)?;
-    let 標準出力 = crate::compile_assets::既定のソースから焼き標準出力を返す(規模.出力ルート(), 規模.世界())?;
-    print!("{標準出力}");
-    let 勘定 = 焼いた並びの勘定::標準出力から読む(標準出力)?;
-    規模
-        .焼き上がりの確かめ方()
-        .焼き上がりを確かめる(true)
-        .map_err(部品で組んだ家の並びの検収エラー::検収世界を用意できなかった)?;
-    let 実行環境 = run::実行環境を作る(規模, PathBuf::from(出力ディレクトリ))?;
-    let 実行 = 実行環境.描いて読み戻す(規模.実行名(), &run::起動指定を組み立てる())?;
-    let 計数 = crate::report_parse::取り出す(実行.報告())?;
-    let 絵 = 実行.書き出し先().目視用の絵へ変換する()?;
-    let 実測 = 規模ごとの実測 { 規模, 勘定, 計数, 絵 };
-    judgment::規模1つを検査する(&実測)?;
-    Ok(実測)
+    家の並びの対.実行する()
 }

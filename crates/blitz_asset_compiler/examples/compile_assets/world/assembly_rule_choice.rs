@@ -7,6 +7,7 @@
 //! 規則そのものは種類ごとのモジュールが持つ。網羅的matchで書くため、種類を1つ足すと規則を書き足すまで通らない。
 //! 参照: `_doc/設計/部品カタログと接合点.md`「部品カタログと展開器」
 
+mod frame_rule;
 mod house_rule;
 mod tree_rule;
 
@@ -20,6 +21,7 @@ use super::super::archetype_identity::原型の識別;
 pub(crate) enum 部品の組み立て規則の種類 {
     酒場宿屋,
     樫の木,
+    一間四方の骨格,
 }
 
 /// 酒場宿屋を組み立てる部品の一覧。原型はすべて外部のアセットリポジトリの`parts/`から引く。
@@ -41,12 +43,22 @@ const 樫の木の部品一覧: &[原型の識別] = &[
     原型の識別::生成する("part_tree_oak_foliage_cluster", "parts/Mod_Tree_Oak_Foliage_Cluster.glb"),
 ];
 
+/// 一間四方の骨格を組み立てる部品の一覧。骨格1件と壁3種であり、材質スロットは1・2・3・2で総和8である。
+/// 壁3種のどれにも必ず入れる面を割り当ててあるため、この4件はどの種でも据わる。
+const 一間四方の骨格の部品一覧: &[原型の識別] = &[
+    原型の識別::生成する("part_frame_bay_single", "parts/Mod_Frame_Bay_Single.glb"),
+    原型の識別::生成する("part_wall_halftimber_solid", "parts/Mod_Wall_HalfTimber_Solid.glb"),
+    原型の識別::生成する("part_wall_halftimber_window", "parts/Mod_Wall_HalfTimber_Window.glb"),
+    原型の識別::生成する("part_wall_halftimber_doorframe", "parts/Mod_Wall_HalfTimber_DoorFrame.glb"),
+];
+
 impl 部品の組み立て規則の種類 {
     /// 報告の内訳へ載せるこの種類の名前。人が読んで何を散らしたのかが分かる語を使う。
     pub(super) fn 名前(self) -> 散らした種類の名前 {
         散らした種類の名前::綴りから生成する(match self {
             Self::酒場宿屋 => "酒場宿屋",
             Self::樫の木 => "樫の木",
+            Self::一間四方の骨格 => "一間四方の骨格",
         })
     }
 
@@ -57,6 +69,7 @@ impl 部品の組み立て規則の種類 {
         match self {
             Self::酒場宿屋 => 酒場宿屋の部品一覧,
             Self::樫の木 => 樫の木の部品一覧,
+            Self::一間四方の骨格 => 一間四方の骨格の部品一覧,
         }
     }
 
@@ -65,6 +78,7 @@ impl 部品の組み立て規則の種類 {
         match self {
             Self::酒場宿屋 => Ok((house_rule::酒場宿屋の規則()?, house_rule::家の並びの展開の種())),
             Self::樫の木 => Ok((tree_rule::樫の木の規則()?, tree_rule::木の並びの展開の種())),
+            Self::一間四方の骨格 => Ok((frame_rule::一間四方の骨格の規則を組む()?, frame_rule::一間四方の骨格の並びの展開の種())),
         }
     }
 }

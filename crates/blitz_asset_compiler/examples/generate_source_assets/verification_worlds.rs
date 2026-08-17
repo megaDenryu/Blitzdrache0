@@ -7,8 +7,8 @@
 use std::path::Path;
 
 use crate::{
-    chunk_world, night_lights_world, part_house_row_world, part_tree_row_world, smoke_assets, stone_hut_world, terrain_visual_world, terrain_world,
-    texture_compression_world, vegetation_world, village_world, ディレクトリを作る,
+    chunk_world, night_lights_world, part_frame_row_world, part_house_row_world, part_tree_row_world, smoke_assets, stone_hut_world,
+    terrain_visual_world, terrain_world, texture_compression_world, vegetation_world, village_world, ディレクトリを作る,
 };
 
 pub(crate) fn 一式を書き出す() -> Result<(), String> {
@@ -46,6 +46,11 @@ pub(crate) fn 一式を書き出す() -> Result<(), String> {
     ディレクトリを作る(木の並び出力先)?;
     part_tree_row_world::書き出す(木の並び出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 木の並び出力先.display());
+
+    let 一間四方の骨格の並び出力先 = Path::new("assets/part_frame_row_world");
+    ディレクトリを作る(一間四方の骨格の並び出力先)?;
+    part_frame_row_world::書き出す(一間四方の骨格の並び出力先)?;
+    println!("[generate_source_assets] {}へ生成完了", 一間四方の骨格の並び出力先.display());
 
     let 目視見本出力先 = Path::new("assets/terrain_visual_world");
     ディレクトリを作る(目視見本出力先)?;

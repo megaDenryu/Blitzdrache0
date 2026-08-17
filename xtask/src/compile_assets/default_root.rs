@@ -17,8 +17,6 @@ const 既定出力ルート: &str = "target/runtime_assets";
 const 地形の既定出力ルート: &str = "target/terrain_assets";
 const 植生の既定出力ルート: &str = "target/vegetation_assets";
 const 見本の集落の既定出力ルート: &str = "target/village_assets";
-const 部品で建てた十軒の既定出力ルート: &str = "target/part_house_row_ten_assets";
-const 部品で建てた百軒の既定出力ルート: &str = "target/part_house_row_hundred_assets";
 const 部品で組んだ木の並びの既定出力ルート: &str = "target/part_tree_row_assets";
 const 目視見本の既定出力ルート: &str = "target/terrain_visual_assets";
 const 場所巡りの既定出力ルート: &str = "target/fox_tour_assets";
@@ -51,14 +49,10 @@ pub fn 見本の集落世界を既定で生成する() -> bool {
     生成する(ソースルート(), Path::new(見本の集落の既定出力ルート), 世界名::見本の集落の世界)
 }
 
-/// 部品で組んだ家の並びの10軒と100軒はどちらも原点チャンクを占めるため、規模ごとに別の既定出力ルートへ焼く。
-pub fn 部品で建てた十軒の出力ルート() -> &'static Path {
-    Path::new(部品で建てた十軒の既定出力ルート)
-}
-
-pub fn 部品で建てた百軒の出力ルート() -> &'static Path {
-    Path::new(部品で建てた百軒の既定出力ルート)
-}
+// 件数を変えた並びの対(家の並びと一間四方の骨格の並び)の出力ルートをここが持たないのは、規模ごとの出力ルートと
+// 実行時アセットルートと実行時形式のパスが同じ綴りから決まり、それを1箇所で持つのが検収の入口の側だからである。
+// 綴りが2つのファイルへ分かれると、`cargo xtask conform`のファイル名の重複の検査が拒む。
+// 置き場は`xtask/src/part_row_draw/house_row.rs`と`xtask/src/part_row_draw/frame_row.rs`である。
 
 /// 木の並びも原点チャンクを占めるため、専用の既定出力ルートへ焼く。一括生成へ入れない理由は家の並びと同じであり、
 /// 木の部品が本体リポジトリの外にあるアセットリポジトリだけにある。この世界を要るのは`part-tree-row-draw`だけである。

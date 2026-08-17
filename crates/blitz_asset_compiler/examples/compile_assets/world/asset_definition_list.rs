@@ -7,8 +7,9 @@
 
 use super::super::catalog::アセット定義;
 use super::{
-    asset_declaration, fox_tour_declaration, night_lights_declaration, part_house_row_declaration, part_tree_row_declaration, stone_hut_declaration,
-    vegetation_declaration, vertex_diagnostic_declaration, village_declaration, visual_sample_declaration, 対象世界,
+    asset_declaration, fox_tour_declaration, night_lights_declaration, part_frame_row_declaration, part_house_row_declaration,
+    part_tree_row_declaration, stone_hut_declaration, vegetation_declaration, vertex_diagnostic_declaration, village_declaration,
+    visual_sample_declaration, 対象世界,
 };
 
 pub(super) fn アセット定義一覧を選ぶ(世界: 対象世界) -> Vec<アセット定義> {
@@ -19,6 +20,7 @@ pub(super) fn アセット定義一覧を選ぶ(世界: 対象世界) -> Vec<ア
         対象世界::見本の集落の世界 => village_declaration::一覧(),
         対象世界::部品で組んだ家の並びの世界(_) => part_house_row_declaration::一覧(),
         対象世界::部品で組んだ木の並びの世界 => part_tree_row_declaration::一覧(),
+        対象世界::部品で組んだ一間四方の骨格の並びの世界(_) => part_frame_row_declaration::一覧(),
         対象世界::目視見本の世界 => visual_sample_declaration::一覧(),
         対象世界::頂点診断の世界(原型) => vertex_diagnostic_declaration::一覧(原型),
         対象世界::ブロック圧縮の対照世界 => Vec::new(),

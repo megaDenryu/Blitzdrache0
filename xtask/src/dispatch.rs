@@ -30,6 +30,7 @@ fn 割り当てる(引数一覧: &[String]) -> ExitCode {
         Some("part-catalog") => part_tools::カタログを組み上げる(&引数一覧[1..]),
         Some("part-assembly") => part_tools::組み立てを突き合わせる(&引数一覧[1..]),
         Some("part-house-row-draw") => part_row_draw::家の並びを検収する(),
+        Some("part-frame-row-draw") => part_row_draw::一間四方の骨格の並びを検収する(),
         Some("part-tree-row-draw") => part_row_draw::木の並びを撮影する(),
         Some("compile-assets") => compile_assets::実行する(&引数一覧[1..]),
         Some("watch-assets") => watch_assets::実行する(&引数一覧[1..]),

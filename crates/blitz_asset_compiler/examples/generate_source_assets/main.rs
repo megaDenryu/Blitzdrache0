@@ -36,6 +36,7 @@ mod indirect_probe_plates;
 mod multi_material_geometry;
 mod multi_material_gltf_json;
 mod night_lights_world;
+mod part_frame_row_world;
 mod part_house_row_world;
 mod part_tree_row_world;
 mod shadow_scene_geometry;
