@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenWorld Global Grid Manager & Seamless Slicer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
+  <!-- JSZip for Bulk Chunk Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; user-select: none; background: #070b14; }
+    #canvas-container { width: 100vw; height: 100vh; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+  </style>
+</head>
+<body class="text-slate-200 font-sans text-xs">
+
+  <div id="canvas-container" class="absolute inset-0"></div>
+
+  <!-- Global Inspector Panel -->
+  <div class="absolute top-4 left-4 z-10 w-96 max-h-[calc(100vh-2rem)] overflow-y-auto bg-slate-900/95 backdrop-blur-md border border-slate-800 rounded-xl p-4 shadow-2xl flex flex-col gap-4">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div>
+        <h1 class="text-sm font-bold text-emerald-400 uppercase tracking-wider">World Grid Manager</h1>
+        <p class="text-[10px] text-slate-400 font-mono">Macro Level & Seamless Slicer</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800">World: 1024m (4x4)</span>
+        <button id="btn-open-help" title="仕様とClaudeプロンプト" class="w-6 h-6 rounded-full bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white font-bold border border-slate-700 hover:border-emerald-500 transition flex items-center justify-center text-xs shadow">
+          ?
+        </button>
+      </div>
+    </div>
+
+    <!-- Mode Selector -->
+    <div class="grid grid-cols-4 gap-1 p-1 bg-slate-950 rounded-lg border border-slate-800 text-center">
+      <button id="mode-nav" class="py-1.5 rounded font-medium bg-emerald-600 text-white transition">大域カメラ</button>
+      <button id="mode-macro-sculpt" class="py-1.5 rounded font-medium text-slate-400 hover:text-white transition">大域造成</button>
+      <button id="mode-highway-add" class="py-1.5 rounded font-medium text-slate-400 hover:text-white transition">広域道路作成</button>
+      <button id="mode-highway-edit" class="py-1.5 rounded font-medium text-slate-400 hover:text-white transition">広域道路編集</button>
+    </div>
+
+    <!-- Mode Hint Notification -->
+    <div id="mode-hint" class="text-[11px] px-3 py-2 bg-slate-950/80 rounded-lg border border-slate-800 text-slate-400">
+      💡 <span class="text-slate-300">大域カメラモード:</span> 左ドラッグで視点回転、右ドラッグで平行移動
+    </div>
+
+    <!-- Macro Sculpt Settings -->
+    <div id="panel-macro-sculpt" class="space-y-2.5 p-3 bg-slate-950/50 rounded-lg border border-slate-800/80 hidden">
+      <div class="text-[11px] font-semibold text-slate-300 flex justify-between">
+        <span>マクロ山脈・盆地造成ブラシ</span>
+        <span class="text-emerald-400">[Shift: 削り / 平滑化]</span>
+      </div>
+      <div class="grid grid-cols-3 gap-1">
+        <button id="brush-raise" class="py-1 bg-emerald-900/50 border border-emerald-600 rounded text-emerald-300 font-mono">山脈造成</button>
+        <button id="brush-smooth" class="py-1 bg-slate-800 border border-slate-700 rounded text-slate-300 font-mono">平滑化</button>
+        <button id="brush-flatten" class="py-1 bg-slate-800 border border-slate-700 rounded text-slate-300 font-mono">水平化</button>
+      </div>
+      <div>
+        <div class="flex justify-between text-slate-400"><span>大域ブラシ半径 (m)</span><span id="lbl-brush-radius" class="font-mono text-emerald-400">80.0</span></div>
+        <input id="in-brush-radius" type="range" min="20" max="250" step="5" value="80" class="w-full accent-emerald-500">
+      </div>
+      <div>
+        <div class="flex justify-between text-slate-400"><span>造成強度</span><span id="lbl-brush-str" class="font-mono text-emerald-400">1.2</span></div>
+        <input id="in-brush-str" type="range" min="0.1" max="5.0" step="0.1" value="1.2" class="w-full accent-emerald-500">
+      </div>
+    </div>
+
+    <!-- Highway & Spline Settings -->
+    <div id="panel-highway" class="space-y-3 p-3 bg-slate-950/50 rounded-lg border border-slate-800/80">
+      <div class="text-[11px] font-semibold text-slate-300">広域幹線道路 (Cross-Chunk Highway)</div>
+      <div>
+        <div class="flex justify-between text-slate-400"><span>道路全幅 (Width)</span><span id="lbl-width" class="font-mono text-emerald-400">12.0m</span></div>
+        <input id="in-width" type="range" min="4" max="32" step="1" value="12" class="w-full accent-emerald-500">
+      </div>
+      <div>
+        <div class="flex justify-between text-slate-400"><span>カーブ細分割数 (Resolution)</span><span id="lbl-res" class="font-mono text-emerald-400">120</span></div>
+        <input id="in-res" type="range" min="40" max="400" step="20" value="120" class="w-full accent-emerald-500">
+      </div>
+
+      <div class="pt-2 border-t border-slate-800 flex gap-2">
+        <button id="btn-delete-node" class="flex-1 py-1 bg-rose-950 border border-rose-800 hover:bg-rose-900 text-rose-300 rounded disabled:opacity-30" disabled>選択点を削除</button>
+        <button id="btn-clear-highway" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded">全消去</button>
+      </div>
+    </div>
+
+    <!-- Chunk Grid Slicing & Export Options -->
+    <div class="space-y-3 p-3 bg-slate-950/50 rounded-lg border border-slate-800/80">
+      <div class="text-[11px] font-semibold text-slate-300 flex justify-between items-center">
+        <span>シームレス・スライス設定</span>
+        <span class="text-[10px] text-emerald-400 font-mono">129x129 (1px Overlap)</span>
+      </div>
+      <div class="text-[11px] text-slate-400 space-y-1">
+        <p>• 各チャンク境界を<strong>1px重複共有</strong>して出力。</p>
+        <p>• 道路スプラインを各チャンクのAABBで自動クリップ。</p>
+      </div>
+      
+      <button id="btn-slice-and-download-zip" class="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-lg shadow-lg transition flex items-center justify-center gap-2">
+        <span>📦 全16チャンクを一括スライスしてZIP保存</span>
+      </button>
+      <div id="export-progress" class="text-[10px] text-center text-slate-400 font-mono hidden">ZIPパッケージ生成中...</div>
+    </div>
+  </div>
+
+  <!-- Help & Spec Modal -->
+  <div id="modal-help" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/60">
+        <div>
+          <h2 class="text-base font-bold text-emerald-400">大域グリッドマネージャー & スライサー仕様</h2>
+          <p class="text-xs text-slate-400">境界シームレス解決アーキテクチャ / Claude共有用</p>
+        </div>
+        <button id="btn-close-help" class="text-slate-400 hover:text-white text-lg font-bold px-2 py-1">✕</button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 text-xs leading-relaxed text-slate-300 flex-1">
+        <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 space-y-2">
+          <h3 class="text-sm font-bold text-slate-100">■ 境界クラック（隙間）と法線破綻の解決仕様</h3>
+          <p>オープンワールドを分割ロード（Streaming）する際、最も問題となる「チャンク境界の隙間」を以下の方式で完全解決しています。</p>
+          <ul class="list-disc pl-5 space-y-1 text-slate-400">
+            <li><strong class="text-slate-200">1ピクセル・オーバーラップ ($129 \times 129$):</strong> 各256mチャンクの解像度を $128 \times 128$ ではなく $129 \times 129$ で切り出し、隣接チャンクの左端/上端と完全に同一の頂点高さを共有させます。</li>
+            <li><strong class="text-slate-200">マザーハイトマップ方式:</strong> 大域 $513 \times 513$ の連続バッファ上で地形造成を行うため、境界での傾斜や法線の不連続が原理的に発生しません。</li>
+            <li><strong class="text-slate-200">スプライン自動クリッピング:</strong> チャンクをまたぐ長い道路は、エクスポート時に各チャンクの境界ボックス（AABB）内に存在する制御点・補間点へと自動分割されます。</li>
+          </ul>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-200">Claude（AI）共有用 プロンプト仕様書:</span>
+            <button id="btn-copy-prompt" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded text-xs transition">プロンプトをコピー</button>
+          </div>
+          <textarea id="claude-prompt-text" readonly class="w-full h-64 bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-[11px] text-slate-300 select-all resize-none"></textarea>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 border-t border-slate-800 bg-slate-950/60 flex justify-end">
+        <button id="btn-close-help-footer" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-medium transition">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Global World Architecture Constants ---
+    const WORLD_SIZE = 1024;      // 1024m x 1024m Total World
+    const CHUNK_COUNT_AXIS = 4;   // 4x4 = 16 Chunks
+    const CHUNK_SIZE = WORLD_SIZE / CHUNK_COUNT_AXIS; // 256m per Chunk
+    const CHUNK_RES = 128;        // Subdivisions per chunk (Vertices: 129x129)
+    const GLOBAL_RES = CHUNK_RES * CHUNK_COUNT_AXIS + 1; // 513x513 Master Grid
+    const GLOBAL_CELL_SIZE = WORLD_SIZE / (GLOBAL_RES - 1); // 2.0m per vertex
+
+    // --- Master Continuous Height Buffer (Float32 / 513x513) ---
+    const globalHeightData = new Float32Array(GLOBAL_RES * GLOBAL_RES);
+
+    // Procedural Macro Landscape Initialization (Massive Mountains & Valleys)
+    for (let gz = 0; gz < GLOBAL_RES; gz++) {
+      for (let gx = 0; gx < GLOBAL_RES; gx++) {
+        const wx = (gx * GLOBAL_CELL_SIZE) - (WORLD_SIZE / 2);
+        const wz = (gz * GLOBAL_CELL_SIZE) - (WORLD_SIZE / 2);
+        
+        let h = Math.sin(wx * 0.005) * Math.cos(wz * 0.005) * 35.0; // Macro mountains
+        h += Math.sin(wx * 0.012 + 0.5) * Math.sin(wz * 0.012) * 15.0;
+        h += Math.sin(wx * 0.03) * Math.cos(wz * 0.03) * 4.0;
+        
+        globalHeightData[gz * GLOBAL_RES + gx] = h;
+      }
+    }
+
+    function sampleGlobalHeight(worldX, worldZ) {
+      const gx = (worldX + (WORLD_SIZE / 2)) / GLOBAL_CELL_SIZE;
+      const gz = (worldZ + (WORLD_SIZE / 2)) / GLOBAL_CELL_SIZE;
+
+      if (gx < 0 || gx >= GLOBAL_RES - 1 || gz < 0 || gz >= GLOBAL_RES - 1) return 0;
+
+      const x0 = Math.floor(gx), z0 = Math.floor(gz);
+      const fx = gx - x0, fz = gz - z0;
+
+      const h00 = globalHeightData[z0 * GLOBAL_RES + x0];
+      const h10 = globalHeightData[z0 * GLOBAL_RES + (x0 + 1)];
+      const h01 = globalHeightData[(z0 + 1) * GLOBAL_RES + x0];
+      const h11 = globalHeightData[(z0 + 1) * GLOBAL_RES + (x0 + 1)];
+
+      return (1 - fx) * (1 - fz) * h00 + fx * (1 - fz) * h10 + (1 - fx) * fz * h01 + fx * fz * h11;
+    }
+
+    const STATE = {
+      mode: 'nav',
+      brushType: 'raise',
+      brushRadius: 80.0,
+      brushStrength: 1.2,
+      highwayWidth: 12.0,
+      highwayResolution: 120,
+      highwayNodes: [],
+      selectedNodeIndex: -1
+    };
+
+    // --- Three.js Setup ---
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x070b14);
+    scene.fog = new THREE.FogExp2(0x070b14, 0.0012);
+
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 5000);
+    camera.position.set(0, 450, 700);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.maxPolarAngle = Math.PI / 2 - 0.01;
+
+    renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
+
+    function updateControlMouseButtons() {
+      if (STATE.mode === 'nav') {
+        controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
+      } else {
+        controls.mouseButtons = { LEFT: null, MIDDLE: THREE.MOUSE.PAN, RIGHT: THREE.MOUSE.ROTATE };
+      }
+    }
+    updateControlMouseButtons();
+
+    const transformControl = new THREE.TransformControls(camera, renderer.domElement);
+    transformControl.size = 1.0;
+    scene.add(transformControl);
+
+    transformControl.addEventListener('dragging-changed', (e) => { controls.enabled = !e.value; });
+    transformControl.addEventListener('change', () => {
+      if (STATE.selectedNodeIndex >= 0 && nodeMeshes[STATE.selectedNodeIndex]) {
+        STATE.highwayNodes[STATE.selectedNodeIndex].copy(nodeMeshes[STATE.selectedNodeIndex].position);
+        rebuildHighwayMesh();
+      }
+    });
+
+    const hemiLight = new THREE.HemisphereLight(0xe2e8f0, 0x1e293b, 0.5);
+    scene.add(hemiLight);
+
+    const sun = new THREE.DirectionalLight(0xffedd5, 1.2);
+    sun.position.set(400, 800, 300);
+    sun.castShadow = true;
+    sun.shadow.mapSize.width = 2048;
+    sun.shadow.mapSize.height = 2048;
+    sun.shadow.camera.near = 100;
+    sun.shadow.camera.far = 2000;
+    sun.shadow.camera.left = -WORLD_SIZE / 2;
+    sun.shadow.camera.right = WORLD_SIZE / 2;
+    sun.shadow.camera.top = WORLD_SIZE / 2;
+    sun.shadow.camera.bottom = -WORLD_SIZE / 2;
+    scene.add(sun);
+
+    // --- Master Terrain Mesh ---
+    const terrainGeo = new THREE.PlaneGeometry(WORLD_SIZE, WORLD_SIZE, GLOBAL_RES - 1, GLOBAL_RES - 1);
+    terrainGeo.rotateX(-Math.PI / 2);
+
+    function syncMasterTerrainGeometry() {
+      const pos = terrainGeo.attributes.position;
+      for (let i = 0; i < pos.count; i++) pos.setY(i, globalHeightData[i]);
+      terrainGeo.computeVertexNormals();
+      pos.needsUpdate = true;
+      terrainGeo.normalsNeedUpdate = true;
+    }
+    syncMasterTerrainGeometry();
+
+    const terrainMat = new THREE.MeshStandardMaterial({
+      color: 0x1e293b,
+      roughness: 0.85,
+      metalness: 0.1,
+      flatShading: false
+    });
+    const terrainMesh = new THREE.Mesh(terrainGeo, terrainMat);
+    terrainMesh.receiveShadow = true;
+    scene.add(terrainMesh);
+
+    // Chunk Boundary Grid Visualizer (Red lines showing the 4x4 chunks)
+    const chunkGridHelper = new THREE.GridHelper(WORLD_SIZE, CHUNK_COUNT_AXIS, 0x10b981, 0x334155);
+    chunkGridHelper.position.y = 1.0;
+    scene.add(chunkGridHelper);
+
+    // Sculpt Indicator
+    const brushIndicatorGeo = new THREE.RingGeometry(0.1, 1, 48);
+    brushIndicatorGeo.rotateX(-Math.PI / 2);
+    const brushIndicatorMat = new THREE.MeshBasicMaterial({ color: 0x10b981, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
+    const brushIndicator = new THREE.Mesh(brushIndicatorGeo, brushIndicatorMat);
+    brushIndicator.visible = false;
+    scene.add(brushIndicator);
+
+    // --- Highway Meshes ---
+    let highwayMesh = null;
+    let nodeMeshes = [];
+
+    const nodeGeo = new THREE.SphereGeometry(2.0, 16, 16);
+    const nodeMatDefault = new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x064e3b });
+    const nodeMatSelected = new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0x78350f });
+
+    const highwayMat = new THREE.MeshStandardMaterial({
+      color: 0x475569,
+      roughness: 0.7,
+      polygonOffset: true,
+      polygonOffsetFactor: -3,
+      polygonOffsetUnits: -3,
+      side: THREE.DoubleSide
+    });
+
+    function rebuildHighwayMesh() {
+      if (highwayMesh) { scene.remove(highwayMesh); highwayMesh.geometry.dispose(); }
+
+      if (STATE.highwayNodes.length < 2) return;
+
+      const curve = new THREE.CatmullRomCurve3(STATE.highwayNodes, false, 'centripetal');
+      const divisions = STATE.highwayResolution;
+      const width = STATE.highwayWidth;
+      const points = curve.getSpacedPoints(divisions);
+      const vertices = [], uvs = [], indices = [];
+
+      for (let i = 0; i <= divisions; i++) {
+        const t = i / divisions;
+        const pt = points[i];
+        const tangent = curve.getTangentAt(t).normalize();
+        const lateral = new THREE.Vector3(-tangent.z, 0, tangent.x).normalize();
+
+        const pL = pt.clone().addScaledVector(lateral, width * 0.5);
+        const pR = pt.clone().addScaledVector(lateral, -width * 0.5);
+
+        pL.y = sampleGlobalHeight(pL.x, pL.z) + 0.3;
+        pR.y = sampleGlobalHeight(pR.x, pR.z) + 0.3;
+
+        vertices.push(pL.x, pL.y, pL.z);
+        vertices.push(pR.x, pR.y, pR.z);
+        uvs.push(0, t * 40, 1, t * 40);
+
+        if (i < divisions) {
+          const b = i * 2;
+          indices.push(b, b + 1, b + 2, b + 1, b + 3, b + 2);
+        }
+      }
+
+      const geom = new THREE.BufferGeometry();
+      geom.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+      geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+      geom.setIndex(indices);
+      geom.computeVertexNormals();
+
+      highwayMesh = new THREE.Mesh(geom, highwayMat);
+      highwayMesh.receiveShadow = true;
+      scene.add(highwayMesh);
+    }
+
+    function rebuildNodeMeshes() {
+      nodeMeshes.forEach(m => scene.remove(m));
+      nodeMeshes = [];
+      STATE.highwayNodes.forEach((pt, idx) => {
+        const mesh = new THREE.Mesh(nodeGeo, idx === STATE.selectedNodeIndex ? nodeMatSelected : nodeMatDefault);
+        mesh.position.copy(pt);
+        mesh.userData = { nodeIndex: idx };
+        scene.add(mesh);
+        nodeMeshes.push(mesh);
+      });
+    }
+
+    function selectNode(index) {
+      STATE.selectedNodeIndex = index;
+      document.getElementById('btn-delete-node').disabled = (index < 0);
+      rebuildNodeMeshes();
+      if (index >= 0) transformControl.attach(nodeMeshes[index]);
+      else transformControl.detach();
+    }
+
+    // --- Interaction & Sculpting ---
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let isLeftMouseDown = false;
+
+    function getTerrainHit(e) {
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObject(terrainMesh);
+      return hits.length > 0 ? hits[0] : null;
+    }
+
+    function applyMacroBrush(centerPoint, isShift) {
+      const radius = STATE.brushRadius;
+      const str = STATE.brushStrength * (isShift ? -1 : 1);
+      const brushType = STATE.brushType;
+
+      let targetAvgHeight = 0, count = 0;
+      if (brushType === 'smooth' || brushType === 'flatten') {
+        for (let gz = 0; gz < GLOBAL_RES; gz++) {
+          for (let gx = 0; gx < GLOBAL_RES; gx++) {
+            const wx = (gx * GLOBAL_CELL_SIZE) - (WORLD_SIZE / 2);
+            const wz = (gz * GLOBAL_CELL_SIZE) - (WORLD_SIZE / 2);
+            if (Math.hypot(wx - centerPoint.x, wz - centerPoint.z) < radius) {
+              targetAvgHeight += globalHeightData[gz * GLOBAL_RES + gx];
+              count++;
+            }
+          }
+        }
+        if (count > 0) targetAvgHeight /= count;
+      }
+
+      for (let gz = 0; gz < GLOBAL_RES; gz++) {
+        for (let gx = 0; gx < GLOBAL_RES; gx++) {
+          const wx = (gx * GLOBAL_CELL_SIZE) - (WORLD_SIZE / 2);
+          const wz = (gz * GLOBAL_CELL_SIZE) - (WORLD_SIZE / 2);
+          const d = Math.hypot(wx - centerPoint.x, wz - centerPoint.z);
+
+          if (d < radius) {
+            const falloff = Math.cos((d / radius) * (Math.PI / 2));
+            const idx = gz * GLOBAL_RES + gx;
+            if (brushType === 'raise') globalHeightData[idx] += str * falloff;
+            else if (brushType === 'smooth') globalHeightData[idx] = THREE.MathUtils.lerp(globalHeightData[idx], targetAvgHeight, 0.2 * falloff);
+            else if (brushType === 'flatten') globalHeightData[idx] = THREE.MathUtils.lerp(globalHeightData[idx], centerPoint.y, 0.3 * falloff);
+          }
+        }
+      }
+      syncMasterTerrainGeometry();
+      rebuildHighwayMesh();
+    }
+
+    window.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('.w-96') || e.target.closest('#modal-help')) return;
+
+      if (e.button === 0) {
+        isLeftMouseDown = true;
+        if (STATE.mode === 'macro-sculpt') {
+          const hit = getTerrainHit(e);
+          if (hit) applyMacroBrush(hit.point, e.shiftKey);
+        } else if (STATE.mode === 'highway-add') {
+          const hit = getTerrainHit(e);
+          if (hit) {
+            const pt = hit.point.clone();
+            pt.y += 0.5;
+            STATE.highwayNodes.push(pt);
+            selectNode(STATE.highwayNodes.length - 1);
+            rebuildHighwayMesh();
+          }
+        } else if (STATE.mode === 'highway-edit') {
+          mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+          raycaster.setFromCamera(mouse, camera);
+          const nodeHits = raycaster.intersectObjects(nodeMeshes);
+          if (nodeHits.length > 0) selectNode(nodeHits[0].object.userData.nodeIndex);
+        }
+      }
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (STATE.mode === 'macro-sculpt') {
+        const hit = getTerrainHit(e);
+        if (hit) {
+          brushIndicator.visible = true;
+          brushIndicator.position.copy(hit.point);
+          brushIndicator.position.y += 0.5;
+          brushIndicator.scale.set(STATE.brushRadius, STATE.brushRadius, 1);
+          if (isLeftMouseDown) applyMacroBrush(hit.point, e.shiftKey);
+        } else {
+          brushIndicator.visible = false;
+        }
+      } else {
+        brushIndicator.visible = false;
+      }
+    });
+
+    window.addEventListener('pointerup', (e) => { if (e.button === 0) isLeftMouseDown = false; });
+
+    // Mode Routing
+    const btnNav = document.getElementById('mode-nav');
+    const btnSculpt = document.getElementById('mode-macro-sculpt');
+    const btnHighwayAdd = document.getElementById('mode-highway-add');
+    const btnHighwayEdit = document.getElementById('mode-highway-edit');
+    const panelSculpt = document.getElementById('panel-macro-sculpt');
+    const panelHighway = document.getElementById('panel-highway');
+    const modeHint = document.getElementById('mode-hint');
+
+    function setMode(mode) {
+      STATE.mode = mode;
+      [btnNav, btnSculpt, btnHighwayAdd, btnHighwayEdit].forEach(b => {
+        b.className = "py-1.5 rounded font-medium text-center text-slate-400 hover:text-white transition";
+      });
+      panelSculpt.classList.add('hidden');
+      panelHighway.classList.add('hidden');
+      transformControl.detach();
+      updateControlMouseButtons();
+
+      if (mode === 'nav') {
+        btnNav.className = "py-1.5 rounded font-medium text-center bg-emerald-600 text-white transition";
+        panelHighway.classList.remove('hidden');
+        modeHint.innerHTML = `💡 <span class="text-slate-300">大域カメラモード:</span> 左ドラッグで視点回転、右ドラッグで平行移動`;
+      } else if (mode === 'macro-sculpt') {
+        btnSculpt.className = "py-1.5 rounded font-medium text-center bg-emerald-600 text-white transition";
+        panelSculpt.classList.remove('hidden');
+        modeHint.innerHTML = `🏔️ <span class="text-slate-300">大域造成モード:</span> <strong class="text-emerald-400">左ドラッグで山脈造成</strong> (Shiftで削り/平滑化)。※右ドラッグでカメラ回転`;
+      } else if (mode === 'highway-add') {
+        btnHighwayAdd.className = "py-1.5 rounded font-medium text-center bg-emerald-600 text-white transition";
+        panelHighway.classList.remove('hidden');
+        modeHint.innerHTML = `🛣️ <span class="text-slate-300">広域道路作成:</span> <strong class="text-emerald-400">左クリックで点追加</strong>（チャンク境界を跨いで配置可能）。※右ドラッグでカメラ回転`;
+      } else if (mode === 'highway-edit') {
+        btnHighwayEdit.className = "py-1.5 rounded font-medium text-center bg-emerald-600 text-white transition";
+        panelHighway.classList.remove('hidden');
+        modeHint.innerHTML = `🔧 <span class="text-slate-300">広域道路編集:</span> 点をクリックしてギズモ操作。※右ドラッグでカメラ回転`;
+        if (STATE.selectedNodeIndex >= 0) selectNode(STATE.selectedNodeIndex);
+      }
+    }
+
+    btnNav.onclick = () => setMode('nav');
+    btnSculpt.onclick = () => setMode('macro-sculpt');
+    btnHighwayAdd.onclick = () => setMode('highway-add');
+    btnHighwayEdit.onclick = () => setMode('highway-edit');
+
+    const bRaise = document.getElementById('brush-raise');
+    const bSmooth = document.getElementById('brush-smooth');
+    const bFlatten = document.getElementById('brush-flatten');
+    function setBrushType(t) {
+      STATE.brushType = t;
+      [bRaise, bSmooth, bFlatten].forEach(b => b.className = "py-1 bg-slate-800 border border-slate-700 rounded text-slate-300 font-mono");
+      if (t === 'raise') bRaise.className = "py-1 bg-emerald-900/50 border border-emerald-600 rounded text-emerald-300 font-mono";
+      if (t === 'smooth') bSmooth.className = "py-1 bg-emerald-900/50 border border-emerald-600 rounded text-emerald-300 font-mono";
+      if (t === 'flatten') bFlatten.className = "py-1 bg-emerald-900/50 border border-emerald-600 rounded text-emerald-300 font-mono";
+    }
+    bRaise.onclick = () => setBrushType('raise');
+    bSmooth.onclick = () => setBrushType('smooth');
+    bFlatten.onclick = () => setBrushType('flatten');
+
+    document.getElementById('in-brush-radius').oninput = (e) => {
+      STATE.brushRadius = parseFloat(e.target.value);
+      document.getElementById('lbl-brush-radius').textContent = STATE.brushRadius.toFixed(1);
+    };
+    document.getElementById('in-brush-str').oninput = (e) => {
+      STATE.brushStrength = parseFloat(e.target.value);
+      document.getElementById('lbl-brush-str').textContent = STATE.brushStrength.toFixed(2);
+    };
+    document.getElementById('in-width').oninput = (e) => {
+      STATE.highwayWidth = parseFloat(e.target.value);
+      document.getElementById('lbl-width').textContent = `${STATE.highwayWidth.toFixed(1)}m`;
+      rebuildHighwayMesh();
+    };
+    document.getElementById('in-res').oninput = (e) => {
+      STATE.highwayResolution = parseInt(e.target.value);
+      document.getElementById('lbl-res').textContent = `${STATE.highwayResolution}`;
+      rebuildHighwayMesh();
+    };
+
+    document.getElementById('btn-delete-node').onclick = () => {
+      if (STATE.selectedNodeIndex >= 0) {
+        STATE.highwayNodes.splice(STATE.selectedNodeIndex, 1);
+        selectNode(-1);
+        rebuildHighwayMesh();
+      }
+    };
+    document.getElementById('btn-clear-highway').onclick = () => {
+      STATE.highwayNodes = [];
+      selectNode(-1);
+      rebuildHighwayMesh();
+    };
+
+    // --- Seamless 1px Overlap Chunk Slicer & Bulk ZIP Exporter ---
+    document.getElementById('btn-slice-and-download-zip').onclick = async () => {
+      const progressLbl = document.getElementById('export-progress');
+      progressLbl.classList.remove('hidden');
+      progressLbl.textContent = "チャンク切り出し中 (129x129 Overlap)...";
+
+      const zip = new JSZip();
+      const manifestChunks = [];
+
+      // Calculate global min/max for 16-bit normalization
+      let gMinH = 9999, gMaxH = -9999;
+      for (let i = 0; i < globalHeightData.length; i++) {
+        if (globalHeightData[i] < gMinH) gMinH = globalHeightData[i];
+        if (globalHeightData[i] > gMaxH) gMaxH = globalHeightData[i];
+      }
+      const gRange = (gMaxH - gMinH) === 0 ? 1 : (gMaxH - gMinH);
+
+      // Pre-sample global highway curve
+      let highwaySampledPts = [];
+      if (STATE.highwayNodes.length >= 2) {
+        const curve = new THREE.CatmullRomCurve3(STATE.highwayNodes, false, 'centripetal');
+        highwaySampledPts = curve.getSpacedPoints(STATE.highwayResolution * 3);
+      }
+
+      // Slice into 4x4 = 16 Chunks with 129x129 Overlap
+      for (let cz = 0; cz < CHUNK_COUNT_AXIS; cz++) {
+        for (let cx = 0; cx < CHUNK_COUNT_AXIS; cx++) {
+          const chunkId = `chunk_${cx}_${cz}`;
+          const minWorldX = (cx * CHUNK_SIZE) - (WORLD_SIZE / 2);
+          const maxWorldX = minWorldX + CHUNK_SIZE;
+          const minWorldZ = (cz * CHUNK_SIZE) - (WORLD_SIZE / 2);
+          const maxWorldZ = minWorldZ + CHUNK_SIZE;
+
+          // 129x129 raw buffer for this chunk (includes +1 overlap right and bottom)
+          const sliceDim = CHUNK_RES + 1; // 129
+          const chunkU16 = new Uint16Array(sliceDim * sliceDim);
+
+          const startGx = cx * CHUNK_RES;
+          const startGz = cz * CHUNK_RES;
+
+          for (let lz = 0; lz < sliceDim; lz++) {
+            for (let lx = 0; lx < sliceDim; lx++) {
+              const srcGx = startGx + lx;
+              const srcGz = startGz + lz;
+              const h = globalHeightData[srcGz * GLOBAL_RES + srcGx];
+              const normalized = (h - gMinH) / gRange;
+              chunkU16[lz * sliceDim + lx] = Math.floor(normalized * 65535);
+            }
+          }
+
+          // Clip highway points inside this chunk's AABB
+          const localHighwayPts = [];
+          for (let pt of highwaySampledPts) {
+            if (pt.x >= minWorldX && pt.x <= maxWorldX && pt.z >= minWorldZ && pt.z <= maxWorldZ) {
+              localHighwayPts.push([Number(pt.x.toFixed(3)), Number(pt.y.toFixed(3)), Number(pt.z.toFixed(3))]);
+            }
+          }
+
+          // Chunk Payload JSON
+          const chunkJson = {
+            chunk_coord: [cx, cz],
+            bounds_world: { min: [minWorldX, minWorldZ], max: [maxWorldX, maxWorldZ] },
+            heightmap_file: `${chunkId}_129x129_r16.raw`,
+            height_scale: { min: Number(gMinH.toFixed(3)), max: Number(gMaxH.toFixed(3)) },
+            local_highway_points: localHighwayPts
+          };
+
+          zip.file(`${chunkId}_129x129_r16.raw`, chunkU16.buffer);
+          zip.file(`${chunkId}.json`, JSON.stringify(chunkJson, null, 2));
+
+          manifestChunks.push({
+            coord: [cx, cz],
+            chunk_id: chunkId,
+            origin_world: [minWorldX, minWorldZ]
+          });
+        }
+      }
+
+      // World Manifest Root JSON
+      const worldManifest = {
+        meta: {
+          generator: "OpenWorldGridManager",
+          world_dimension: [WORLD_SIZE, WORLD_SIZE],
+          chunk_count: [CHUNK_COUNT_AXIS, CHUNK_COUNT_AXIS],
+          chunk_size: CHUNK_SIZE,
+          chunk_resolution: 129,
+          overlap_mode: "1px_shared_edge",
+          timestamp: new Date().toISOString()
+        },
+        chunks: manifestChunks
+      };
+
+      zip.file("world_manifest.json", JSON.stringify(worldManifest, null, 2));
+
+      progressLbl.textContent = "ZIP圧縮中...";
+      const content = await zip.generateAsync({ type: "blob" });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(content);
+      a.download = `world_stream_package_1024m_${Date.now()}.zip`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+
+      progressLbl.textContent = "エクスポート完了！";
+      setTimeout(() => progressLbl.classList.add('hidden'), 3000);
+    };
+
+    // Modal
+    const modalHelp = document.getElementById('modal-help');
+    const btnOpenHelp = document.getElementById('btn-open-help');
+    const btnCloseHelp = document.getElementById('btn-close-help');
+    const btnCloseHelpFooter = document.getElementById('btn-close-help-footer');
+    const claudePromptText = document.getElementById('claude-prompt-text');
+    const btnCopyPrompt = document.getElementById('btn-copy-prompt');
+
+    const CLAUDE_PROMPT_DOC = `## 概要
+これは自作ゲームエンジン向けの「大域ワールドグリッド・マネージャー＆シームレス・チャンクスライサー（1HTML/Three.js製）」です。
+1024m×1024m（4×4 = 16チャンク、513×513マザーグリッド）の大域造成および広域幹線道路の敷設を行い、境界クラック（隙間）を防止する「1px重複共有（129x129頂点）」で16チャンク分を一括ZIPエクスポートします。
+
+## 主要アーキテクチャ・データ仕様
+1. **大域マザーハイトマップ (Float32 / 513x513):**
+   - 連続した1枚の大域バッファ \`globalHeightData\` 上で造成を行うため、境界での不連続や法線クラックが原理的に発生しません。
+
+2. **シームレス・スライス仕様 (129x129 / 1px Overlap):**
+   - 各チャンク（256m）を切り出す際、隣接チャンクとの境界頂点を完全に共有するため、解像度 \`128x128\` ではなく \`129x129\`（右端・下端の1pxを含む）のRAW16ファイルとして切り出します。
+
+3. **ZIPパッケージ構造:**
+   - \`world_manifest.json\`: ワールド全体のチャンク座標・AABB一覧マニフェスト
+   - \`chunk_X_Z.json\`: チャンクごとの標高スケール（min/max）およびAABB内クリップ済み道路座標
+   - \`chunk_X_Z_129x129_r16.raw\`: 各チャンクの16-bit符号なし整数ハイトマップバイナリ`;
+
+    claudePromptText.value = CLAUDE_PROMPT_DOC;
+
+    btnOpenHelp.onclick = () => modalHelp.classList.remove('hidden');
+    btnCloseHelp.onclick = () => modalHelp.classList.add('hidden');
+    btnCloseHelpFooter.onclick = () => modalHelp.classList.add('hidden');
+
+    btnCopyPrompt.onclick = () => {
+      navigator.clipboard.writeText(CLAUDE_PROMPT_DOC).then(() => {
+        btnCopyPrompt.textContent = "コピー完了！";
+        btnCopyPrompt.className = "px-3 py-1 bg-emerald-600 text-white font-semibold rounded text-xs transition";
+        setTimeout(() => {
+          btnCopyPrompt.textContent = "プロンプトをコピー";
+          btnCopyPrompt.className = "px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded text-xs transition";
+        }, 2000);
+      });
+    };
+
+    // Initial Highway Setup
+    STATE.highwayNodes = [
+      new THREE.Vector3(-380, sampleGlobalHeight(-380, -300) + 1, -300),
+      new THREE.Vector3(-120, sampleGlobalHeight(-120, -50) + 1, -50),
+      new THREE.Vector3(150, sampleGlobalHeight(150, 100) + 1, 100),
+      new THREE.Vector3(400, sampleGlobalHeight(400, 350) + 1, 350)
+    ];
+
+    rebuildNodeMeshes();
+    rebuildHighwayMesh();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Master OpenWorld Chunk Pipeline Editor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; user-select: none; background: #0b0f19; }
+    #canvas-container { width: 100vw; height: 100vh; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+  </style>
+</head>
+<body class="text-slate-200 font-sans text-xs">
+
+  <div id="canvas-container" class="absolute inset-0"></div>
+
+  <!-- Unified Inspector Panel -->
+  <div class="absolute top-4 left-4 z-10 w-96 max-h-[calc(100vh-2rem)] overflow-y-auto bg-slate-900/95 backdrop-blur-md border border-slate-800 rounded-xl p-4 shadow-2xl flex flex-col gap-4">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div>
+        <h1 class="text-sm font-bold text-cyan-400 uppercase tracking-wider">World Pipeline Editor</h1>
+        <p class="text-[10px] text-slate-400 font-mono">Master Chunk Editor (Splatmap v1.0)</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <span id="stats-badge" class="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950 text-cyan-400 border border-cyan-800">Chunk: 256m</span>
+        <button id="btn-open-help" title="仕様とClaudeプロンプト" class="w-6 h-6 rounded-full bg-slate-800 hover:bg-cyan-600 text-slate-300 hover:text-white font-bold border border-slate-700 hover:border-cyan-500 transition flex items-center justify-center text-xs shadow">
+          ?
+        </button>
+      </div>
+    </div>
+
+    <!-- Mode Selector (6 Modes) -->
+    <div class="grid grid-cols-3 gap-1 p-1 bg-slate-950 rounded-lg border border-slate-800 text-center">
+      <button id="mode-nav" class="py-1.5 rounded font-medium bg-cyan-600 text-white transition">カメラ</button>
+      <button id="mode-sculpt" class="py-1.5 rounded font-medium text-slate-400 hover:text-white transition">地形造成</button>
+      <button id="mode-paint" class="py-1.5 rounded font-medium text-slate-400 hover:text-white transition">地表ペイント</button>
+      <button id="mode-road-add" class="py-1.5 rounded font-medium text-slate-400 hover:text-white transition">道作成</button>
+      <button id="mode-road-edit" class="py-1.5 rounded font-medium text-slate-400 hover:text-white transition">道編集</button>
+      <button id="mode-poi" class="py-1.5 rounded font-medium text-slate-400 hover:text-white transition">建物/POI</button>
+    </div>
+
+    <!-- Mode Hint Notification -->
+    <div id="mode-hint" class="text-[11px] px-3 py-2 bg-slate-950/80 rounded-lg border border-slate-800 text-slate-400">
+      💡 <span class="text-slate-300">カメラモード:</span> 左ドラッグで視点回転、右ドラッグで平行移動
+    </div>
+
+    <!-- Sculpt Settings -->
+    <div id="panel-sculpt" class="space-y-2.5 p-3 bg-slate-950/50 rounded-lg border border-slate-800/80 hidden">
+      <div class="text-[11px] font-semibold text-slate-300 flex justify-between">
+        <span>地形ブラシ設定</span>
+        <span class="text-cyan-400">[Shift: 削り / 平滑化]</span>
+      </div>
+      <div class="grid grid-cols-3 gap-1">
+        <button id="brush-raise" class="py-1 bg-cyan-900/50 border border-cyan-600 rounded text-cyan-300 font-mono">盛土/削り</button>
+        <button id="brush-smooth" class="py-1 bg-slate-800 border border-slate-700 rounded text-slate-300 font-mono">平滑化</button>
+        <button id="brush-flatten" class="py-1 bg-slate-800 border border-slate-700 rounded text-slate-300 font-mono">水平化</button>
+      </div>
+      <div>
+        <div class="flex justify-between text-slate-400"><span>半径 (m)</span><span id="lbl-brush-radius" class="font-mono text-cyan-400">20.0</span></div>
+        <input id="in-brush-radius" type="range" min="5" max="60" step="1" value="20" class="w-full accent-cyan-500">
+      </div>
+      <div>
+        <div class="flex justify-between text-slate-400"><span>強度</span><span id="lbl-brush-str" class="font-mono text-cyan-400">0.5</span></div>
+        <input id="in-brush-str" type="range" min="0.05" max="2.0" step="0.05" value="0.5" class="w-full accent-cyan-500">
+      </div>
+    </div>
+
+    <!-- Splatmap Texture Paint Settings -->
+    <div id="panel-paint" class="space-y-3 p-3 bg-slate-950/50 rounded-lg border border-slate-800/80 hidden">
+      <div class="text-[11px] font-semibold text-slate-300 flex justify-between">
+        <span>地表マテリアルペイント (Splatmap)</span>
+      </div>
+      <div class="grid grid-cols-4 gap-1">
+        <button id="mat-grass" class="py-1.5 bg-emerald-950/80 border border-emerald-500 rounded text-emerald-300 font-medium flex flex-col items-center">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mb-0.5"></span>草地 (R)
+        </button>
+        <button id="mat-dirt" class="py-1.5 bg-slate-800 border border-slate-700 rounded text-slate-300 font-medium flex flex-col items-center">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-700 mb-0.5"></span>泥/土 (G)
+        </button>
+        <button id="mat-rock" class="py-1.5 bg-slate-800 border border-slate-700 rounded text-slate-300 font-medium flex flex-col items-center">
+          <span class="w-2.5 h-2.5 rounded-full bg-slate-400 mb-0.5"></span>岩肌 (B)
+        </button>
+        <button id="mat-sand" class="py-1.5 bg-slate-800 border border-slate-700 rounded text-slate-300 font-medium flex flex-col items-center">
+          <span class="w-2.5 h-2.5 rounded-full bg-yellow-200 mb-0.5"></span>砂 (A)
+        </button>
+      </div>
+
+      <div>
+        <div class="flex justify-between text-slate-400"><span>ペイント半径 (m)</span><span id="lbl-paint-radius" class="font-mono text-cyan-400">15.0</span></div>
+        <input id="in-paint-radius" type="range" min="3" max="50" step="1" value="15" class="w-full accent-cyan-500">
+      </div>
+      <div>
+        <div class="flex justify-between text-slate-400"><span>流量 (Opacity)</span><span id="lbl-paint-str" class="font-mono text-cyan-400">0.4</span></div>
+        <input id="in-paint-str" type="range" min="0.05" max="1.0" step="0.05" value="0.4" class="w-full accent-cyan-500">
+      </div>
+
+      <div class="pt-2 border-t border-slate-800 space-y-1.5">
+        <button id="btn-auto-rock" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-slate-200 font-medium transition flex items-center justify-center gap-1">
+          ⛰️ 急勾配(>30°)を自動で岩肌にベイク
+        </button>
+        <button id="btn-auto-road-dirt" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-slate-200 font-medium transition flex items-center justify-center gap-1">
+          🚜 道路下を自動で泥・砂利にベイク
+        </button>
+      </div>
+    </div>
+
+    <!-- POI / Building Settings -->
+    <div id="panel-poi" class="space-y-3 p-3 bg-slate-950/50 rounded-lg border border-slate-800/80 hidden">
+      <div class="text-[11px] font-semibold text-slate-300 flex justify-between">
+        <span>建物 / POI 配置</span>
+        <span id="lbl-poi-count" class="font-mono text-cyan-400">0 件</span>
+      </div>
+      <div class="grid grid-cols-3 gap-1">
+        <button id="btn-spawn-house" class="py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-slate-200">+ 家屋 (12m)</button>
+        <button id="btn-spawn-tower" class="py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-slate-200">+ 塔 (8m)</button>
+        <button id="btn-spawn-chest" class="py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-slate-200">+ 宝箱 (2m)</button>
+      </div>
+      <div class="space-y-2 pt-2 border-t border-slate-800">
+        <button id="btn-carve-building" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded shadow transition flex items-center justify-center gap-1">
+          🏗️ 選択建物の基礎に合わせて地形造成
+        </button>
+        <div class="flex gap-2">
+          <button id="btn-snap-building" class="flex-1 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded">地面に接地</button>
+          <button id="btn-delete-building" class="flex-1 py-1 bg-rose-950 border border-rose-800 hover:bg-rose-900 text-rose-300 rounded disabled:opacity-30" disabled>削除</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spline & Road Settings -->
+    <div id="panel-road" class="space-y-3 p-3 bg-slate-950/50 rounded-lg border border-slate-800/80">
+      <div class="text-[11px] font-semibold text-slate-300">道路 & プロシージャルパラメータ</div>
+      <div>
+        <div class="flex justify-between text-slate-400"><span>道路全幅 (Width)</span><span id="lbl-width" class="font-mono text-cyan-400">8.0m</span></div>
+        <input id="in-width" type="range" min="2" max="24" step="0.5" value="8" class="w-full accent-cyan-500">
+      </div>
+      <div>
+        <div class="flex justify-between text-slate-400"><span>散布除外バッファ (Exclusion)</span><span id="lbl-buf" class="font-mono text-cyan-400">14.0m</span></div>
+        <input id="in-buf" type="range" min="4" max="40" step="1" value="14" class="w-full accent-cyan-500">
+      </div>
+      <div>
+        <div class="flex justify-between text-slate-400"><span>細分割数 (Resolution)</span><span id="lbl-res" class="font-mono text-cyan-400">80</span></div>
+        <input id="in-res" type="range" min="20" max="300" step="10" value="80" class="w-full accent-cyan-500">
+      </div>
+
+      <div class="pt-2 border-t border-slate-800 flex flex-col gap-1.5">
+        <button id="btn-carve-terrain" class="w-full py-1.5 bg-amber-600/80 hover:bg-amber-600 text-white font-medium rounded transition">
+          🛣️ 道路に合わせて地形を切土・盛土 (Carve)
+        </button>
+        <div class="flex gap-2">
+          <button id="btn-delete-node" class="flex-1 py-1 bg-rose-950 border border-rose-800 hover:bg-rose-900 text-rose-300 rounded disabled:opacity-30" disabled>ノード削除</button>
+          <button id="btn-clear-spline" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded">リセット</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scattering Settings -->
+    <div class="space-y-2 p-3 bg-slate-950/50 rounded-lg border border-slate-800/80">
+      <div class="text-[11px] font-semibold text-slate-300 flex justify-between">
+        <span>植生散布 (Poisson Disk)</span>
+        <span id="lbl-tree-count" class="font-mono text-emerald-400">0 本</span>
+      </div>
+      <div>
+        <div class="flex justify-between text-slate-400"><span>最小間隔 (Min Distance)</span><span id="lbl-poisson-r" class="font-mono text-cyan-400">5.5m</span></div>
+        <input id="in-poisson-r" type="range" min="2.0" max="15.0" step="0.5" value="5.5" class="w-full accent-cyan-500">
+      </div>
+      <button id="btn-rebake-scatter" class="w-full py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-mono">散布再ベイク</button>
+    </div>
+
+    <!-- Pipeline I/O -->
+    <div class="flex flex-col gap-2 pt-2 border-t border-slate-800">
+      <div class="grid grid-cols-3 gap-1.5">
+        <button id="btn-export-json" class="py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded shadow transition flex items-center justify-center gap-1">
+          <span>JSON</span>
+        </button>
+        <button id="btn-export-heightmap" class="py-2 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-cyan-300 font-semibold rounded transition">
+          <span>RAW16</span>
+        </button>
+        <button id="btn-export-splatmap" class="py-2 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-emerald-400 font-semibold rounded transition">
+          <span>Splat PNG</span>
+        </button>
+      </div>
+      <label class="w-full py-1.5 bg-slate-950 hover:bg-slate-800 border border-dashed border-slate-700 text-slate-400 text-center rounded cursor-pointer transition">
+        JSONプロジェクトをインポート
+        <input id="file-import-json" type="file" accept=".json" class="hidden">
+      </label>
+    </div>
+  </div>
+
+  <!-- Help & Spec Modal -->
+  <div id="modal-help" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/60">
+        <div>
+          <h2 class="text-base font-bold text-cyan-400">エディター仕様書 & パイプライン解説</h2>
+          <p class="text-xs text-slate-400">自作エンジンへの連携仕様 / Claude向けプロンプト</p>
+        </div>
+        <button id="btn-close-help" class="text-slate-400 hover:text-white text-lg font-bold px-2 py-1">✕</button>
+      </div>
+
+      <div class="flex border-b border-slate-800 bg-slate-950 px-6 gap-4">
+        <button id="tab-btn-manual" class="py-2.5 text-xs font-semibold border-b-2 border-cyan-400 text-cyan-400">操作マニュアル・概要</button>
+        <button id="tab-btn-claude" class="py-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200">Claude共有用・技術仕様（Prompt）</button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 text-xs leading-relaxed text-slate-300 flex-1">
+        <div id="tab-content-manual" class="space-y-4">
+          <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 space-y-2">
+            <h3 class="text-sm font-bold text-slate-100">■ スプラットマップ（4層マテリアル）ペイント機能</h3>
+            <p>地表を4つのマテリアル（草・泥・岩・砂）で塗り分けることができます。<br>
+            • <strong class="text-emerald-400">急勾配自動ベイク:</strong> スロープ角度が30度以上の崖に自動で岩肌テクスチャを塗ります。<br>
+            • <strong class="text-amber-400">道路下自動ベイク:</strong> 道路メッシュ直下に自動で泥・土テクスチャを塗ります。<br>
+            • <strong class="text-cyan-400">Splat PNG 出力:</strong> RGBA 4チャンネルの8-bit PNGテクスチャとして出力します。</p>
+          </div>
+        </div>
+
+        <div id="tab-content-claude" class="space-y-3 hidden">
+          <div class="flex items-center justify-between bg-cyan-950/40 p-3 rounded-lg border border-cyan-800/60">
+            <span class="text-slate-300">以下のテキストをコピーしてClaudeに渡すと、このエディターの全貌と拡張方針を即座に理解させることができます。</span>
+            <button id="btn-copy-prompt" class="px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded shadow transition text-xs">
+              プロンプトをコピー
+            </button>
+          </div>
+          <textarea id="claude-prompt-text" readonly class="w-full h-80 bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-[11px] text-slate-300 leading-normal focus:outline-none select-all resize-none"></textarea>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 border-t border-slate-800 bg-slate-950/60 flex justify-end">
+        <button id="btn-close-help-footer" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-medium transition">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Configuration & Constants ---
+    const CHUNK_SIZE = 256;
+    const GRID_RES = 128;
+    const CELL_SIZE = CHUNK_SIZE / (GRID_RES - 1);
+
+    // Heightmap Data Buffer (Row-Major Float32)
+    const heightData = new Float32Array(GRID_RES * GRID_RES);
+
+    // Splatmap Data Buffer (RGBA Uint8Array: R=Grass, G=Dirt, B=Rock, A=Sand)
+    const splatData = new Uint8Array(GRID_RES * GRID_RES * 4);
+
+    // Initialize Height & Splatmap
+    for (let gz = 0; gz < GRID_RES; gz++) {
+      for (let gx = 0; gx < GRID_RES; gx++) {
+        const wx = (gx * CELL_SIZE) - (CHUNK_SIZE / 2);
+        const wz = (gz * CELL_SIZE) - (CHUNK_SIZE / 2);
+        
+        let h = Math.sin(wx * 0.02) * Math.cos(wz * 0.02) * 8.0;
+        h += Math.sin(wx * 0.05 + 1.2) * Math.sin(wz * 0.05) * 3.0;
+        h += Math.sin(wx * 0.1) * Math.cos(wz * 0.1) * 0.8;
+        
+        const idx = gz * GRID_RES + gx;
+        heightData[idx] = h;
+
+        // Default: 100% Grass (R=255, G=0, B=0, A=0)
+        splatData[idx * 4 + 0] = 255;
+        splatData[idx * 4 + 1] = 0;
+        splatData[idx * 4 + 2] = 0;
+        splatData[idx * 4 + 3] = 0;
+      }
+    }
+
+    // Dynamic Splat Texture for Three.js Shader
+    const splatTexture = new THREE.DataTexture(
+      splatData,
+      GRID_RES,
+      GRID_RES,
+      THREE.RGBAFormat,
+      THREE.UnsignedByteType
+    );
+    splatTexture.needsUpdate = true;
+
+    function sampleHeight(worldX, worldZ) {
+      const gx = (worldX + (CHUNK_SIZE / 2)) / CELL_SIZE;
+      const gz = (worldZ + (CHUNK_SIZE / 2)) / CELL_SIZE;
+      if (gx < 0 || gx >= GRID_RES - 1 || gz < 0 || gz >= GRID_RES - 1) return 0;
+
+      const x0 = Math.floor(gx), z0 = Math.floor(gz);
+      const fx = gx - x0, fz = gz - z0;
+
+      const h00 = heightData[z0 * GRID_RES + x0];
+      const h10 = heightData[z0 * GRID_RES + (x0 + 1)];
+      const h01 = heightData[(z0 + 1) * GRID_RES + x0];
+      const h11 = heightData[(z0 + 1) * GRID_RES + (x0 + 1)];
+
+      return (1 - fx) * (1 - fz) * h00 + fx * (1 - fz) * h10 + (1 - fx) * fz * h01 + fx * fz * h11;
+    }
+
+    function sampleNormal(worldX, worldZ) {
+      const eps = 0.5;
+      const hL = sampleHeight(worldX - eps, worldZ);
+      const hR = sampleHeight(worldX + eps, worldZ);
+      const hD = sampleHeight(worldX, worldZ - eps);
+      const hU = sampleHeight(worldX, worldZ + eps);
+      return new THREE.Vector3(hL - hR, 2.0 * eps, hD - hU).normalize();
+    }
+
+    const STATE = {
+      mode: 'nav',
+      brushType: 'raise',
+      brushRadius: 20.0,
+      brushStrength: 0.5,
+      paintChannel: 0, // 0: Grass(R), 1: Dirt(G), 2: Rock(B), 3: Sand(A)
+      paintRadius: 15.0,
+      paintStrength: 0.4,
+      roadWidth: 8.0,
+      exclusionBuffer: 14.0,
+      splineResolution: 80,
+      poissonRadius: 5.5,
+      nodes: [],
+      selectedNodeIndex: -1,
+      pois: [],
+      selectedPoiIndex: -1
+    };
+
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0b0f19);
+    scene.fog = new THREE.FogExp2(0x0b0f19, 0.005);
+
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.5, 2000);
+    camera.position.set(0, 80, 140);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.maxPolarAngle = Math.PI / 2 - 0.02;
+
+    renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
+
+    function updateControlMouseButtons() {
+      if (STATE.mode === 'nav') {
+        controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
+      } else {
+        controls.mouseButtons = { LEFT: null, MIDDLE: THREE.MOUSE.PAN, RIGHT: THREE.MOUSE.ROTATE };
+      }
+    }
+    updateControlMouseButtons();
+
+    const transformControl = new THREE.TransformControls(camera, renderer.domElement);
+    transformControl.size = 0.8;
+    scene.add(transformControl);
+
+    transformControl.addEventListener('dragging-changed', (e) => { controls.enabled = !e.value; });
+    transformControl.addEventListener('change', () => {
+      if (STATE.mode === 'road-edit' && STATE.selectedNodeIndex >= 0 && nodeMeshes[STATE.selectedNodeIndex]) {
+        const mesh = nodeMeshes[STATE.selectedNodeIndex];
+        STATE.nodes[STATE.selectedNodeIndex].copy(mesh.position);
+        rebuildRoadAndBuffer();
+      } else if (STATE.mode === 'poi' && STATE.selectedPoiIndex >= 0 && STATE.pois[STATE.selectedPoiIndex]) {
+        updateScatterInstances();
+      }
+    });
+
+    const hemiLight = new THREE.HemisphereLight(0xe2e8f0, 0x1e293b, 0.6);
+    scene.add(hemiLight);
+
+    const sun = new THREE.DirectionalLight(0xffedd5, 1.2);
+    sun.position.set(120, 200, 80);
+    sun.castShadow = true;
+    sun.shadow.mapSize.width = 2048;
+    sun.shadow.mapSize.height = 2048;
+    sun.shadow.camera.near = 10;
+    sun.shadow.camera.far = 500;
+    sun.shadow.camera.left = -CHUNK_SIZE / 2;
+    sun.shadow.camera.right = CHUNK_SIZE / 2;
+    sun.shadow.camera.top = CHUNK_SIZE / 2;
+    sun.shadow.camera.bottom = -CHUNK_SIZE / 2;
+    scene.add(sun);
+
+    // --- Custom Splatmap Terrain Shader ---
+    const terrainGeo = new THREE.PlaneGeometry(CHUNK_SIZE, CHUNK_SIZE, GRID_RES - 1, GRID_RES - 1);
+    terrainGeo.rotateX(-Math.PI / 2);
+
+    function syncTerrainGeometry() {
+      const pos = terrainGeo.attributes.position;
+      for (let i = 0; i < pos.count; i++) pos.setY(i, heightData[i]);
+      terrainGeo.computeVertexNormals();
+      pos.needsUpdate = true;
+      terrainGeo.normalsNeedUpdate = true;
+    }
+    syncTerrainGeometry();
+
+    const terrainCustomMat = new THREE.ShaderMaterial({
+      uniforms: {
+        splatTex: { value: splatTexture },
+        sunDirection: { value: sun.position.clone().normalize() },
+        colGrass: { value: new THREE.Color(0x2d5a27) },
+        colDirt:  { value: new THREE.Color(0x5c4033) },
+        colRock:  { value: new THREE.Color(0x64748b) },
+        colSand:  { value: new THREE.Color(0xd4b483) }
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        varying vec3 vNormal;
+        varying vec3 vWorldPos;
+        void main() {
+          vUv = uv;
+          vNormal = normalize(normalMatrix * normal);
+          vec4 wp = modelMatrix * vec4(position, 1.0);
+          vWorldPos = wp.xyz;
+          gl_Position = projectionMatrix * viewMatrix * wp;
+        }
+      `,
+      fragmentShader: `
+        uniform sampler2D splatTex;
+        uniform vec3 sunDirection;
+        uniform vec3 colGrass;
+        uniform vec3 colDirt;
+        uniform vec3 colRock;
+        uniform vec3 colSand;
+        varying vec2 vUv;
+        varying vec3 vNormal;
+
+        void main() {
+          vec4 splat = texture2D(splatTex, vUv);
+          float total = splat.r + splat.g + splat.b + splat.a;
+          if (total > 0.0) splat /= total; else splat = vec4(1.0, 0.0, 0.0, 0.0);
+
+          vec3 baseColor = colGrass * splat.r + colDirt * splat.g + colRock * splat.b + colSand * splat.a;
+
+          // Simple directional lighting + ambient
+          vec3 lightDir = normalize(vec3(0.5, 0.8, 0.3));
+          float diff = max(dot(vNormal, lightDir), 0.0);
+          vec3 finalColor = baseColor * (diff * 0.7 + 0.35);
+
+          gl_FragColor = vec4(finalColor, 1.0);
+        }
+      `
+    });
+
+    const terrainMesh = new THREE.Mesh(terrainGeo, terrainCustomMat);
+    terrainMesh.receiveShadow = true;
+    scene.add(terrainMesh);
+
+    const grid = new THREE.GridHelper(CHUNK_SIZE, 32, 0x334155, 0x1e293b);
+    grid.position.y = 0.05;
+    scene.add(grid);
+
+    // Indicator
+    const brushIndicatorGeo = new THREE.RingGeometry(0.1, 1, 32);
+    brushIndicatorGeo.rotateX(-Math.PI / 2);
+    const brushIndicatorMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
+    const brushIndicator = new THREE.Mesh(brushIndicatorGeo, brushIndicatorMat);
+    brushIndicator.visible = false;
+    scene.add(brushIndicator);
+
+    // Road Meshes
+    let roadMesh = null;
+    let bufferMesh = null;
+    let nodeMeshes = [];
+
+    const nodeGeo = new THREE.SphereGeometry(0.8, 16, 16);
+    const nodeMatDefault = new THREE.MeshStandardMaterial({ color: 0x06b6d4, emissive: 0x083344 });
+    const nodeMatSelected = new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0x451a03 });
+
+    const roadMat = new THREE.MeshStandardMaterial({
+      color: 0x334155,
+      roughness: 0.7,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+      polygonOffsetUnits: -2,
+      side: THREE.DoubleSide
+    });
+
+    const bufferMat = new THREE.MeshBasicMaterial({
+      color: 0xf43f5e,
+      transparent: true,
+      opacity: 0.12,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    });
+
+    function buildProductionRoadMesh(curve, width, resolution, yOffset = 0.05) {
+      const crossSections = 4;
+      const points = curve.getSpacedPoints(resolution);
+      const vertices = [], uvs = [], indices = [];
+
+      for (let i = 0; i <= resolution; i++) {
+        const t = i / resolution;
+        const pt = points[i];
+        const tangent = curve.getTangentAt(t).normalize();
+        const lateral = new THREE.Vector3(-tangent.z, 0, tangent.x).normalize();
+
+        for (let j = 0; j <= crossSections; j++) {
+          const crossFrac = (j / crossSections) - 0.5;
+          const wx = pt.x + lateral.x * (width * crossFrac);
+          const wz = pt.z + lateral.z * (width * crossFrac);
+          vertices.push(wx, sampleHeight(wx, wz) + yOffset, wz);
+          uvs.push(j / crossSections, t * 20);
+        }
+
+        if (i < resolution) {
+          for (let j = 0; j < crossSections; j++) {
+            const row1 = i * (crossSections + 1) + j;
+            const row2 = (i + 1) * (crossSections + 1) + j;
+            indices.push(row1, row2, row1 + 1);
+            indices.push(row1 + 1, row2, row2 + 1);
+          }
+        }
+      }
+
+      const geom = new THREE.BufferGeometry();
+      geom.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+      geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+      geom.setIndex(indices);
+      geom.computeVertexNormals();
+      return geom;
+    }
+
+    function rebuildRoadAndBuffer() {
+      if (roadMesh) { scene.remove(roadMesh); roadMesh.geometry.dispose(); }
+      if (bufferMesh) { scene.remove(bufferMesh); bufferMesh.geometry.dispose(); }
+
+      if (STATE.nodes.length >= 2) {
+        const curve = new THREE.CatmullRomCurve3(STATE.nodes, false, 'centripetal');
+        roadMesh = new THREE.Mesh(buildProductionRoadMesh(curve, STATE.roadWidth, STATE.splineResolution, 0.06), roadMat);
+        roadMesh.receiveShadow = true;
+        scene.add(roadMesh);
+
+        bufferMesh = new THREE.Mesh(buildProductionRoadMesh(curve, STATE.exclusionBuffer * 2, STATE.splineResolution, 0.02), bufferMat);
+        scene.add(bufferMesh);
+      }
+      updateScatterInstances();
+    }
+
+    // --- POI / Prefab System ---
+    const poiMaterials = {
+      house: new THREE.MeshStandardMaterial({ color: 0xca8a04, roughness: 0.7 }),
+      tower: new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.6 }),
+      chest: new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.4 })
+    };
+
+    function createBuildingMesh(type) {
+      const group = new THREE.Group();
+      if (type === 'house') {
+        const body = new THREE.Mesh(new THREE.BoxGeometry(10, 6, 8), poiMaterials.house);
+        body.position.y = 3;
+        const roof = new THREE.Mesh(new THREE.ConeGeometry(7.5, 4, 4), new THREE.MeshStandardMaterial({ color: 0x991b1b }));
+        roof.position.y = 8;
+        roof.rotation.y = Math.PI / 4;
+        group.add(body, roof);
+        group.userData = { footprintRadius: 7.0, blendRadius: 14.0 };
+      } else if (type === 'tower') {
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(3.5, 4, 16, 8), poiMaterials.tower);
+        body.position.y = 8;
+        group.add(body);
+        group.userData = { footprintRadius: 5.0, blendRadius: 11.0 };
+      } else if (type === 'chest') {
+        const body = new THREE.Mesh(new THREE.BoxGeometry(2, 1.5, 1.5), poiMaterials.chest);
+        body.position.y = 0.75;
+        group.add(body);
+        group.userData = { footprintRadius: 1.5, blendRadius: 3.5 };
+      }
+      return group;
+    }
+
+    function spawnPOI(type) {
+      const poiMesh = createBuildingMesh(type);
+      const spawnX = (Math.random() - 0.5) * 40;
+      const spawnZ = (Math.random() - 0.5) * 40;
+      poiMesh.position.set(spawnX, sampleHeight(spawnX, spawnZ), spawnZ);
+      scene.add(poiMesh);
+
+      STATE.pois.push({
+        id: `poi_${type}_${Date.now().toString().slice(-4)}`,
+        type: type,
+        mesh: poiMesh,
+        footprintRadius: poiMesh.userData.footprintRadius,
+        blendRadius: poiMesh.userData.blendRadius
+      });
+      selectPOI(STATE.pois.length - 1);
+      document.getElementById('lbl-poi-count').textContent = `${STATE.pois.length} 件`;
+      updateScatterInstances();
+    }
+
+    function selectPOI(index) {
+      STATE.selectedPoiIndex = index;
+      document.getElementById('btn-delete-building').disabled = (index < 0);
+      if (index >= 0 && STATE.pois[index]) transformControl.attach(STATE.pois[index].mesh);
+      else transformControl.detach();
+    }
+
+    document.getElementById('btn-spawn-house').onclick = () => spawnPOI('house');
+    document.getElementById('btn-spawn-tower').onclick = () => spawnPOI('tower');
+    document.getElementById('btn-spawn-chest').onclick = () => spawnPOI('chest');
+
+    document.getElementById('btn-snap-building').onclick = () => {
+      if (STATE.selectedPoiIndex >= 0 && STATE.pois[STATE.selectedPoiIndex]) {
+        const poi = STATE.pois[STATE.selectedPoiIndex];
+        poi.mesh.position.y = sampleHeight(poi.mesh.position.x, poi.mesh.position.z);
+      }
+    };
+
+    document.getElementById('btn-delete-building').onclick = () => {
+      if (STATE.selectedPoiIndex >= 0 && STATE.pois[STATE.selectedPoiIndex]) {
+        scene.remove(STATE.pois[STATE.selectedPoiIndex].mesh);
+        STATE.pois.splice(STATE.selectedPoiIndex, 1);
+        selectPOI(-1);
+        document.getElementById('lbl-poi-count').textContent = `${STATE.pois.length} 件`;
+        updateScatterInstances();
+      }
+    };
+
+    document.getElementById('btn-carve-building').onclick = () => {
+      if (STATE.selectedPoiIndex < 0 || !STATE.pois[STATE.selectedPoiIndex]) {
+        alert('造成を行う対象の建物を選択してください。');
+        return;
+      }
+      const poi = STATE.pois[STATE.selectedPoiIndex];
+      const bx = poi.mesh.position.x, bz = poi.mesh.position.z, baseHeight = poi.mesh.position.y;
+      const fpRadius = poi.footprintRadius, blendRadius = poi.blendRadius;
+
+      for (let gz = 0; gz < GRID_RES; gz++) {
+        for (let gx = 0; gx < GRID_RES; gx++) {
+          const wx = (gx * CELL_SIZE) - (CHUNK_SIZE / 2);
+          const wz = (gz * CELL_SIZE) - (CHUNK_SIZE / 2);
+          const d = Math.hypot(wx - bx, wz - bz);
+          const currentH = heightData[gz * GRID_RES + gx];
+
+          if (d <= fpRadius) {
+            heightData[gz * GRID_RES + gx] = baseHeight;
+          } else if (d < blendRadius) {
+            const t = (d - fpRadius) / (blendRadius - fpRadius);
+            heightData[gz * GRID_RES + gx] = THREE.MathUtils.lerp(baseHeight, currentH, t * t * (3 - 2 * t));
+          }
+        }
+      }
+      syncTerrainGeometry();
+      rebuildRoadAndBuffer();
+    };
+
+    // --- Splatmap Painting & Auto-Bake Logic ---
+    function applySplatPaint(centerPoint) {
+      const radius = STATE.paintRadius;
+      const str = STATE.paintStrength;
+      const channel = STATE.paintChannel; // 0=R, 1=G, 2=B, 3=A
+
+      for (let gz = 0; gz < GRID_RES; gz++) {
+        for (let gx = 0; gx < GRID_RES; gx++) {
+          const wx = (gx * CELL_SIZE) - (CHUNK_SIZE / 2);
+          const wz = (gz * CELL_SIZE) - (CHUNK_SIZE / 2);
+          const d = Math.hypot(wx - centerPoint.x, wz - centerPoint.z);
+
+          if (d < radius) {
+            const falloff = Math.cos((d / radius) * (Math.PI / 2)) * str;
+            const idx = (gz * GRID_RES + gx) * 4;
+
+            // Target channel increments, others diminish
+            const oldVal = splatData[idx + channel];
+            const newVal = Math.min(255, oldVal + Math.floor(falloff * 255));
+            splatData[idx + channel] = newVal;
+
+            // Normalize weights
+            let sum = splatData[idx + 0] + splatData[idx + 1] + splatData[idx + 2] + splatData[idx + 3];
+            if (sum > 0) {
+              splatData[idx + 0] = Math.floor((splatData[idx + 0] / sum) * 255);
+              splatData[idx + 1] = Math.floor((splatData[idx + 1] / sum) * 255);
+              splatData[idx + 2] = Math.floor((splatData[idx + 2] / sum) * 255);
+              splatData[idx + 3] = Math.floor((splatData[idx + 3] / sum) * 255);
+            }
+          }
+        }
+      }
+      splatTexture.needsUpdate = true;
+    }
+
+    // Auto-Bake Rock on steep slopes (> 30 deg)
+    document.getElementById('btn-auto-rock').onclick = () => {
+      const up = new THREE.Vector3(0, 1, 0);
+      for (let gz = 0; gz < GRID_RES; gz++) {
+        for (let gx = 0; gx < GRID_RES; gx++) {
+          const wx = (gx * CELL_SIZE) - (CHUNK_SIZE / 2);
+          const wz = (gz * CELL_SIZE) - (CHUNK_SIZE / 2);
+          const norm = sampleNormal(wx, wz);
+          const slopeAngle = norm.angleTo(up) * (180 / Math.PI); // Angle in degrees
+
+          if (slopeAngle > 30) {
+            const rockWeight = Math.min(1.0, (slopeAngle - 30) / 25); // 30 deg = 0, 55 deg = 1.0
+            const idx = (gz * GRID_RES + gx) * 4;
+            splatData[idx + 2] = Math.floor(rockWeight * 255); // Set Rock (B)
+            splatData[idx + 0] = Math.floor((1.0 - rockWeight) * splatData[idx + 0]); // Reduce Grass
+          }
+        }
+      }
+      splatTexture.needsUpdate = true;
+    };
+
+    // Auto-Bake Dirt under Road
+    document.getElementById('btn-auto-road-dirt').onclick = () => {
+      if (STATE.nodes.length < 2) {
+        alert('道路が存在しません。');
+        return;
+      }
+      const curve = new THREE.CatmullRomCurve3(STATE.nodes, false, 'centripetal');
+      const sampledCurvePts = curve.getSpacedPoints(STATE.splineResolution * 3);
+      const halfWidth = STATE.roadWidth * 0.5 + 2.0;
+
+      for (let gz = 0; gz < GRID_RES; gz++) {
+        for (let gx = 0; gx < GRID_RES; gx++) {
+          const wx = (gx * CELL_SIZE) - (CHUNK_SIZE / 2);
+          const wz = (gz * CELL_SIZE) - (CHUNK_SIZE / 2);
+
+          let minDist = 999999;
+          for (let p of sampledCurvePts) {
+            const d = Math.hypot(wx - p.x, wz - p.z);
+            if (d < minDist) minDist = d;
+          }
+
+          if (minDist <= halfWidth) {
+            const idx = (gz * GRID_RES + gx) * 4;
+            splatData[idx + 1] = 255; // 100% Dirt (G)
+            splatData[idx + 0] = 0;   // 0% Grass
+            splatData[idx + 2] = 0;   // 0% Rock
+            splatData[idx + 3] = 0;   // 0% Sand
+          }
+        }
+      }
+      splatTexture.needsUpdate = true;
+    };
+
+    // --- Poisson Disk System ---
+    const MAX_INSTANCES = 1500;
+    const treeGeo = new THREE.ConeGeometry(1.2, 4.5, 5);
+    treeGeo.translate(0, 2.25, 0);
+    const treeMat = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.9 });
+    const instancedTrees = new THREE.InstancedMesh(treeGeo, treeMat, MAX_INSTANCES);
+    instancedTrees.castShadow = true;
+    instancedTrees.receiveShadow = true;
+    scene.add(instancedTrees);
+
+    let rawCandidatePoints = [];
+
+    function generatePoissonDistribution(minDist) {
+      const points = [];
+      const k = 30;
+      const cellSize = minDist / Math.SQRT2;
+      const gridDim = Math.ceil(CHUNK_SIZE / cellSize);
+      const sampleGrid = new Int32Array(gridDim * gridDim).fill(-1);
+      const spawnList = [];
+
+      function addPoint(x, z) {
+        const idx = points.length;
+        points.push(new THREE.Vector2(x, z));
+        const gx = Math.floor((x + CHUNK_SIZE / 2) / cellSize);
+        const gz = Math.floor((z + CHUNK_SIZE / 2) / cellSize);
+        if (gx >= 0 && gx < gridDim && gz >= 0 && gz < gridDim) sampleGrid[gz * gridDim + gx] = idx;
+        spawnList.push(idx);
+      }
+
+      addPoint(0, 0);
+
+      while (spawnList.length > 0 && points.length < MAX_INSTANCES) {
+        const spawnIdx = Math.floor(Math.random() * spawnList.length);
+        const center = points[spawnList[spawnIdx]];
+        let found = false;
+
+        for (let i = 0; i < k; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const radius = minDist * (1 + Math.random());
+          const nx = center.x + Math.cos(angle) * radius;
+          const nz = center.y + Math.sin(angle) * radius;
+
+          if (nx < -CHUNK_SIZE / 2 + 5 || nx > CHUNK_SIZE / 2 - 5 || nz < -CHUNK_SIZE / 2 + 5 || nz > CHUNK_SIZE / 2 - 5) continue;
+
+          const gx = Math.floor((nx + CHUNK_SIZE / 2) / cellSize);
+          const gz = Math.floor((nz + CHUNK_SIZE / 2) / cellSize);
+          let ok = true;
+
+          for (let dy = -2; dy <= 2; dy++) {
+            for (let dx = -2; dx <= 2; dx++) {
+              const cx = gx + dx;
+              const cz = gz + dy;
+              if (cx >= 0 && cx < gridDim && cz >= 0 && cz < gridDim) {
+                const neighborIdx = sampleGrid[cz * gridDim + cx];
+                if (neighborIdx >= 0 && points[neighborIdx].distanceTo(new THREE.Vector2(nx, nz)) < minDist) {
+                  ok = false;
+                  break;
+                }
+              }
+            }
+            if (!ok) break;
+          }
+
+          if (ok) {
+            addPoint(nx, nz);
+            found = true;
+            break;
+          }
+        }
+        if (!found) spawnList.splice(spawnIdx, 1);
+      }
+      return points;
+    }
+
+    function rebakeScatterCandidates() {
+      rawCandidatePoints = generatePoissonDistribution(STATE.poissonRadius);
+      updateScatterInstances();
+    }
+
+    function updateScatterInstances() {
+      const dummy = new THREE.Object3D();
+      let activeCount = 0;
+      const curve = STATE.nodes.length >= 2 ? new THREE.CatmullRomCurve3(STATE.nodes, false, 'centripetal') : null;
+      const sampledSplinePts = curve ? curve.getSpacedPoints(STATE.splineResolution * 2) : [];
+      const bufSq = STATE.exclusionBuffer * STATE.exclusionBuffer;
+
+      for (let i = 0; i < rawCandidatePoints.length; i++) {
+        if (activeCount >= MAX_INSTANCES) break;
+
+        const p2 = rawCandidatePoints[i];
+        let isExcluded = false;
+
+        if (curve) {
+          for (let sp of sampledSplinePts) {
+            if ((p2.x - sp.x) ** 2 + (p2.y - sp.z) ** 2 < bufSq) { isExcluded = true; break; }
+          }
+        }
+
+        if (!isExcluded) {
+          for (let poi of STATE.pois) {
+            if ((p2.x - poi.mesh.position.x) ** 2 + (p2.y - poi.mesh.position.z) ** 2 < (poi.footprintRadius + 1.0) ** 2) {
+              isExcluded = true;
+              break;
+            }
+          }
+        }
+
+        if (!isExcluded) {
+          const y = sampleHeight(p2.x, p2.y);
+          const norm = sampleNormal(p2.x, p2.y);
+
+          dummy.position.set(p2.x, y, p2.y);
+          dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), norm);
+          const sc = 0.8 + (Math.sin(p2.x * 5.0) * 0.5 + 0.5) * 0.5;
+          dummy.scale.set(sc, sc, sc);
+          dummy.updateMatrix();
+
+          instancedTrees.setMatrixAt(activeCount, dummy.matrix);
+          activeCount++;
+        }
+      }
+
+      for (let j = activeCount; j < MAX_INSTANCES; j++) {
+        dummy.scale.set(0, 0, 0);
+        dummy.updateMatrix();
+        instancedTrees.setMatrixAt(j, dummy.matrix);
+      }
+
+      instancedTrees.instanceMatrix.needsUpdate = true;
+      document.getElementById('lbl-tree-count').textContent = `${activeCount} 本`;
+    }
+
+    // Carve Terrain
+    document.getElementById('btn-carve-terrain').onclick = () => {
+      if (STATE.nodes.length < 2) return;
+      const curve = new THREE.CatmullRomCurve3(STATE.nodes, false, 'centripetal');
+      const sampledCurvePts = curve.getSpacedPoints(STATE.splineResolution * 3);
+      const halfWidth = STATE.roadWidth * 0.5;
+      const blendDist = STATE.exclusionBuffer;
+
+      for (let gz = 0; gz < GRID_RES; gz++) {
+        for (let gx = 0; gx < GRID_RES; gx++) {
+          const wx = (gx * CELL_SIZE) - (CHUNK_SIZE / 2);
+          const wz = (gz * CELL_SIZE) - (CHUNK_SIZE / 2);
+          const currentH = heightData[gz * GRID_RES + gx];
+
+          let minDist = 999999, targetH = currentH;
+          for (let p of sampledCurvePts) {
+            const d = Math.hypot(wx - p.x, wz - p.z);
+            if (d < minDist) { minDist = d; targetH = p.y; }
+          }
+
+          if (minDist <= halfWidth) {
+            heightData[gz * GRID_RES + gx] = targetH;
+          } else if (minDist < blendDist) {
+            const t = (minDist - halfWidth) / (blendDist - halfWidth);
+            heightData[gz * GRID_RES + gx] = THREE.MathUtils.lerp(targetH, currentH, t * t * (3 - 2 * t));
+          }
+        }
+      }
+      syncTerrainGeometry();
+      rebuildRoadAndBuffer();
+    };
+
+    function rebuildNodeMeshes() {
+      nodeMeshes.forEach(m => scene.remove(m));
+      nodeMeshes = [];
+      STATE.nodes.forEach((pt, idx) => {
+        const mesh = new THREE.Mesh(nodeGeo, idx === STATE.selectedNodeIndex ? nodeMatSelected : nodeMatDefault);
+        mesh.position.copy(pt);
+        mesh.userData = { nodeIndex: idx };
+        scene.add(mesh);
+        nodeMeshes.push(mesh);
+      });
+    }
+
+    function selectNode(index) {
+      STATE.selectedNodeIndex = index;
+      document.getElementById('btn-delete-node').disabled = (index < 0);
+      rebuildNodeMeshes();
+      if (index >= 0) transformControl.attach(nodeMeshes[index]);
+      else transformControl.detach();
+    }
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let isLeftMouseDown = false;
+
+    function getTerrainHit(e) {
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObject(terrainMesh);
+      return hits.length > 0 ? hits[0] : null;
+    }
+
+    function applySculptBrush(centerPoint, isShift) {
+      const radius = STATE.brushRadius;
+      const str = STATE.brushStrength * (isShift ? -1 : 1);
+      const brushType = STATE.brushType;
+
+      let targetAvgHeight = 0, count = 0;
+      if (brushType === 'smooth' || brushType === 'flatten') {
+        for (let gz = 0; gz < GRID_RES; gz++) {
+          for (let gx = 0; gx < GRID_RES; gx++) {
+            const wx = (gx * CELL_SIZE) - (CHUNK_SIZE / 2);
+            const wz = (gz * CELL_SIZE) - (CHUNK_SIZE / 2);
+            if (Math.hypot(wx - centerPoint.x, wz - centerPoint.z) < radius) {
+              targetAvgHeight += heightData[gz * GRID_RES + gx];
+              count++;
+            }
+          }
+        }
+        if (count > 0) targetAvgHeight /= count;
+      }
+
+      for (let gz = 0; gz < GRID_RES; gz++) {
+        for (let gx = 0; gx < GRID_RES; gx++) {
+          const wx = (gx * CELL_SIZE) - (CHUNK_SIZE / 2);
+          const wz = (gz * CELL_SIZE) - (CHUNK_SIZE / 2);
+          const d = Math.hypot(wx - centerPoint.x, wz - centerPoint.z);
+
+          if (d < radius) {
+            const falloff = Math.cos((d / radius) * (Math.PI / 2));
+            const idx = gz * GRID_RES + gx;
+            if (brushType === 'raise') heightData[idx] += str * falloff;
+            else if (brushType === 'smooth') heightData[idx] = THREE.MathUtils.lerp(heightData[idx], targetAvgHeight, 0.2 * falloff);
+            else if (brushType === 'flatten') heightData[idx] = THREE.MathUtils.lerp(heightData[idx], centerPoint.y, 0.3 * falloff);
+          }
+        }
+      }
+      syncTerrainGeometry();
+      rebuildRoadAndBuffer();
+    }
+
+    window.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('.w-96') || e.target.closest('#modal-help')) return;
+
+      if (e.button === 0) {
+        isLeftMouseDown = true;
+        if (STATE.mode === 'sculpt') {
+          const hit = getTerrainHit(e);
+          if (hit) applySculptBrush(hit.point, e.shiftKey);
+        } else if (STATE.mode === 'paint') {
+          const hit = getTerrainHit(e);
+          if (hit) applySplatPaint(hit.point);
+        } else if (STATE.mode === 'road-add') {
+          const hit = getTerrainHit(e);
+          if (hit) {
+            const pt = hit.point.clone();
+            STATE.nodes.push(pt);
+            selectNode(STATE.nodes.length - 1);
+            rebuildRoadAndBuffer();
+          }
+        } else if (STATE.mode === 'road-edit') {
+          mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+          raycaster.setFromCamera(mouse, camera);
+          const nodeHits = raycaster.intersectObjects(nodeMeshes);
+          if (nodeHits.length > 0) selectNode(nodeHits[0].object.userData.nodeIndex);
+        } else if (STATE.mode === 'poi') {
+          mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+          raycaster.setFromCamera(mouse, camera);
+          const poiMeshes = STATE.pois.map(p => p.mesh);
+          const hits = raycaster.intersectObjects(poiMeshes, true);
+          if (hits.length > 0) {
+            let topGroup = hits[0].object;
+            while (topGroup.parent && topGroup.parent !== scene) topGroup = topGroup.parent;
+            const idx = STATE.pois.findIndex(p => p.mesh === topGroup);
+            if (idx >= 0) selectPOI(idx);
+          }
+        }
+      }
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (STATE.mode === 'sculpt' || STATE.mode === 'paint') {
+        const hit = getTerrainHit(e);
+        if (hit) {
+          brushIndicator.visible = true;
+          brushIndicator.position.copy(hit.point);
+          brushIndicator.position.y += 0.1;
+          const rad = STATE.mode === 'sculpt' ? STATE.brushRadius : STATE.paintRadius;
+          brushIndicator.scale.set(rad, rad, 1);
+
+          if (isLeftMouseDown) {
+            if (STATE.mode === 'sculpt') applySculptBrush(hit.point, e.shiftKey);
+            else if (STATE.mode === 'paint') applySplatPaint(hit.point);
+          }
+        } else {
+          brushIndicator.visible = false;
+        }
+      } else {
+        brushIndicator.visible = false;
+      }
+    });
+
+    window.addEventListener('pointerup', (e) => { if (e.button === 0) isLeftMouseDown = false; });
+
+    // Mode Routing
+    const btnNav = document.getElementById('mode-nav');
+    const btnSculpt = document.getElementById('mode-sculpt');
+    const btnPaint = document.getElementById('mode-paint');
+    const btnRoadAdd = document.getElementById('mode-road-add');
+    const btnRoadEdit = document.getElementById('mode-road-edit');
+    const btnPoi = document.getElementById('mode-poi');
+
+    const panelSculpt = document.getElementById('panel-sculpt');
+    const panelPaint = document.getElementById('panel-paint');
+    const panelRoad = document.getElementById('panel-road');
+    const panelPoi = document.getElementById('panel-poi');
+    const modeHint = document.getElementById('mode-hint');
+
+    function setMode(mode) {
+      STATE.mode = mode;
+      [btnNav, btnSculpt, btnPaint, btnRoadAdd, btnRoadEdit, btnPoi].forEach(b => {
+        b.className = "py-1.5 rounded font-medium text-center text-slate-400 hover:text-white transition";
+      });
+      panelSculpt.classList.add('hidden');
+      panelPaint.classList.add('hidden');
+      panelRoad.classList.add('hidden');
+      panelPoi.classList.add('hidden');
+      transformControl.detach();
+      updateControlMouseButtons();
+
+      if (mode === 'nav') {
+        btnNav.className = "py-1.5 rounded font-medium text-center bg-cyan-600 text-white transition";
+        panelRoad.classList.remove('hidden');
+        modeHint.innerHTML = `💡 <span class="text-slate-300">カメラモード:</span> 左ドラッグで視点回転、右ドラッグで平行移動`;
+      } else if (mode === 'sculpt') {
+        btnSculpt.className = "py-1.5 rounded font-medium text-center bg-cyan-600 text-white transition";
+        panelSculpt.classList.remove('hidden');
+        modeHint.innerHTML = `🎨 <span class="text-slate-300">造成モード:</span> <strong class="text-cyan-400">左ドラッグで造成</strong> (Shiftで削り)。※右ドラッグでカメラ回転`;
+      } else if (mode === 'paint') {
+        btnPaint.className = "py-1.5 rounded font-medium text-center bg-cyan-600 text-white transition";
+        panelPaint.classList.remove('hidden');
+        modeHint.innerHTML = `🖌️ <span class="text-slate-300">ペイントモード:</span> <strong class="text-cyan-400">左ドラッグでマテリアル描画</strong>。※右ドラッグでカメラ回転`;
+      } else if (mode === 'road-add') {
+        btnRoadAdd.className = "py-1.5 rounded font-medium text-center bg-cyan-600 text-white transition";
+        panelRoad.classList.remove('hidden');
+        modeHint.innerHTML = `🛣️ <span class="text-slate-300">道作成モード:</span> <strong class="text-cyan-400">左クリックで点追加</strong>。※右ドラッグでカメラ回転`;
+      } else if (mode === 'road-edit') {
+        btnRoadEdit.className = "py-1.5 rounded font-medium text-center bg-cyan-600 text-white transition";
+        panelRoad.classList.remove('hidden');
+        modeHint.innerHTML = `🔧 <span class="text-slate-300">道編集モード:</span> 点をクリックしてギズモ操作。※右ドラッグでカメラ回転`;
+        if (STATE.selectedNodeIndex >= 0) selectNode(STATE.selectedNodeIndex);
+      } else if (mode === 'poi') {
+        btnPoi.className = "py-1.5 rounded font-medium text-center bg-cyan-600 text-white transition";
+        panelPoi.classList.remove('hidden');
+        modeHint.innerHTML = `🏛️ <span class="text-slate-300">建物/POIモード:</span> 追加ボタンで配置、選択してギズモ移動。造成ボタンで基礎を平坦化。`;
+        if (STATE.selectedPoiIndex >= 0) selectPOI(STATE.selectedPoiIndex);
+      }
+    }
+
+    btnNav.onclick = () => setMode('nav');
+    btnSculpt.onclick = () => setMode('sculpt');
+    btnPaint.onclick = () => setMode('paint');
+    btnRoadAdd.onclick = () => setMode('road-add');
+    btnRoadEdit.onclick = () => setMode('road-edit');
+    btnPoi.onclick = () => setMode('poi');
+
+    // Material Selection Buttons
+    const matBtns = [
+      document.getElementById('mat-grass'),
+      document.getElementById('mat-dirt'),
+      document.getElementById('mat-rock'),
+      document.getElementById('mat-sand')
+    ];
+    function selectPaintChannel(ch) {
+      STATE.paintChannel = ch;
+      matBtns.forEach((b, i) => {
+        b.className = (i === ch)
+          ? "py-1.5 bg-cyan-950 border border-cyan-500 rounded text-cyan-300 font-medium flex flex-col items-center shadow"
+          : "py-1.5 bg-slate-800 border border-slate-700 rounded text-slate-300 font-medium flex flex-col items-center";
+      });
+    }
+    matBtns[0].onclick = () => selectPaintChannel(0);
+    matBtns[1].onclick = () => selectPaintChannel(1);
+    matBtns[2].onclick = () => selectPaintChannel(2);
+    matBtns[3].onclick = () => selectPaintChannel(3);
+
+    // Sculpt Buttons
+    const bRaise = document.getElementById('brush-raise');
+    const bSmooth = document.getElementById('brush-smooth');
+    const bFlatten = document.getElementById('brush-flatten');
+    function setBrushType(t) {
+      STATE.brushType = t;
+      [bRaise, bSmooth, bFlatten].forEach(b => b.className = "py-1 bg-slate-800 border border-slate-700 rounded text-slate-300 font-mono");
+      if (t === 'raise') bRaise.className = "py-1 bg-cyan-900/50 border border-cyan-600 rounded text-cyan-300 font-mono";
+      if (t === 'smooth') bSmooth.className = "py-1 bg-cyan-900/50 border border-cyan-600 rounded text-cyan-300 font-mono";
+      if (t === 'flatten') bFlatten.className = "py-1 bg-cyan-900/50 border border-cyan-600 rounded text-cyan-300 font-mono";
+    }
+    bRaise.onclick = () => setBrushType('raise');
+    bSmooth.onclick = () => setBrushType('smooth');
+    bFlatten.onclick = () => setBrushType('flatten');
+
+    document.getElementById('in-brush-radius').oninput = (e) => {
+      STATE.brushRadius = parseFloat(e.target.value);
+      document.getElementById('lbl-brush-radius').textContent = STATE.brushRadius.toFixed(1);
+    };
+    document.getElementById('in-brush-str').oninput = (e) => {
+      STATE.brushStrength = parseFloat(e.target.value);
+      document.getElementById('lbl-brush-str').textContent = STATE.brushStrength.toFixed(2);
+    };
+    document.getElementById('in-paint-radius').oninput = (e) => {
+      STATE.paintRadius = parseFloat(e.target.value);
+      document.getElementById('lbl-paint-radius').textContent = STATE.paintRadius.toFixed(1);
+    };
+    document.getElementById('in-paint-str').oninput = (e) => {
+      STATE.paintStrength = parseFloat(e.target.value);
+      document.getElementById('lbl-paint-str').textContent = STATE.paintStrength.toFixed(2);
+    };
+    document.getElementById('in-width').oninput = (e) => {
+      STATE.roadWidth = parseFloat(e.target.value);
+      document.getElementById('lbl-width').textContent = `${STATE.roadWidth.toFixed(1)}m`;
+      rebuildRoadAndBuffer();
+    };
+    document.getElementById('in-buf').oninput = (e) => {
+      STATE.exclusionBuffer = parseFloat(e.target.value);
+      document.getElementById('lbl-buf').textContent = `${STATE.exclusionBuffer.toFixed(1)}m`;
+      rebuildRoadAndBuffer();
+    };
+    document.getElementById('in-res').oninput = (e) => {
+      STATE.splineResolution = parseInt(e.target.value);
+      document.getElementById('lbl-res').textContent = `${STATE.splineResolution}`;
+      rebuildRoadAndBuffer();
+    };
+    document.getElementById('in-poisson-r').oninput = (e) => {
+      STATE.poissonRadius = parseFloat(e.target.value);
+      document.getElementById('lbl-poisson-r').textContent = `${STATE.poissonRadius.toFixed(1)}m`;
+      rebakeScatterCandidates();
+    };
+    document.getElementById('btn-rebake-scatter').onclick = () => rebakeScatterCandidates();
+
+    document.getElementById('btn-delete-node').onclick = () => {
+      if (STATE.selectedNodeIndex >= 0) {
+        STATE.nodes.splice(STATE.selectedNodeIndex, 1);
+        selectNode(-1);
+        rebuildRoadAndBuffer();
+      }
+    };
+    document.getElementById('btn-clear-spline').onclick = () => {
+      STATE.nodes = [];
+      selectNode(-1);
+      rebuildRoadAndBuffer();
+    };
+
+    // --- Exporters ---
+    document.getElementById('btn-export-json').onclick = () => {
+      let bakedPositions = [], bakedTangents = [];
+      if (STATE.nodes.length >= 2) {
+        const curve = new THREE.CatmullRomCurve3(STATE.nodes, false, 'centripetal');
+        const pts = curve.getSpacedPoints(STATE.splineResolution);
+        bakedPositions = pts.map(p => [Number(p.x.toFixed(3)), Number(p.y.toFixed(3)), Number(p.z.toFixed(3))]);
+        bakedTangents = pts.map((_, i) => {
+          const t = curve.getTangentAt(i / STATE.splineResolution);
+          return [Number(t.x.toFixed(3)), Number(t.y.toFixed(3)), Number(t.z.toFixed(3))];
+        });
+      }
+
+      const activeTrees = [];
+      const mat = new THREE.Matrix4(), pos = new THREE.Vector3(), rot = new THREE.Quaternion(), scale = new THREE.Vector3();
+      for (let i = 0; i < instancedTrees.count; i++) {
+        instancedTrees.getMatrixAt(i, mat);
+        mat.decompose(pos, rot, scale);
+        if (scale.x > 0.001) {
+          activeTrees.push({
+            pos: [Number(pos.x.toFixed(3)), Number(pos.y.toFixed(3)), Number(pos.z.toFixed(3))],
+            rot: [Number(rot.x.toFixed(4)), Number(rot.y.toFixed(4)), Number(rot.z.toFixed(4)), Number(rot.w.toFixed(4))],
+            scale: Number(scale.x.toFixed(3))
+          });
+        }
+      }
+
+      const exportedPois = STATE.pois.map(p => ({
+        id: p.id,
+        type: p.type,
+        pos: [Number(p.mesh.position.x.toFixed(3)), Number(p.mesh.position.y.toFixed(3)), Number(p.mesh.position.z.toFixed(3))],
+        rot_y: Number(p.mesh.rotation.y.toFixed(3)),
+        footprint_radius: p.footprintRadius
+      }));
+
+      const payload = {
+        meta: { generator: "MasterChunkPipelineEditor", chunk_size: CHUNK_SIZE, heightmap_dim: GRID_RES, timestamp: new Date().toISOString() },
+        road: {
+          width: STATE.roadWidth,
+          exclusion_buffer: STATE.exclusionBuffer,
+          nodes: STATE.nodes.map(n => [Number(n.x.toFixed(3)), Number(n.y.toFixed(3)), Number(n.z.toFixed(3))]),
+          baked_spline: { positions: bakedPositions, tangents: bakedTangents }
+        },
+        pois: exportedPois,
+        vegetation_instances: { count: activeTrees.length, instances: activeTrees }
+      };
+
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `chunk_0_0_data_${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    };
+
+    // Export 16-bit RAW
+    document.getElementById('btn-export-heightmap').onclick = () => {
+      let minH = 9999, maxH = -9999;
+      for (let i = 0; i < heightData.length; i++) {
+        if (heightData[i] < minH) minH = heightData[i];
+        if (heightData[i] > maxH) maxH = heightData[i];
+      }
+      const range = (maxH - minH) === 0 ? 1 : (maxH - minH);
+
+      const uint16Buf = new Uint16Array(GRID_RES * GRID_RES);
+      for (let i = 0; i < heightData.length; i++) {
+        uint16Buf[i] = Math.floor(((heightData[i] - minH) / range) * 65535);
+      }
+
+      const blob = new Blob([uint16Buf.buffer], { type: 'application/octet-stream' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `heightmap_${GRID_RES}x${GRID_RES}_r16_${Date.now()}.raw`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    };
+
+    // Export Splatmap PNG (8-bit RGBA)
+    document.getElementById('btn-export-splatmap').onclick = () => {
+      const offscreen = document.createElement('canvas');
+      offscreen.width = GRID_RES;
+      offscreen.height = GRID_RES;
+      const ctx = offscreen.getContext('2d');
+      const imgData = ctx.createImageData(GRID_RES, GRID_RES);
+
+      for (let i = 0; i < splatData.length; i++) {
+        imgData.data[i] = splatData[i];
+      }
+      ctx.putImageData(imgData, 0, 0);
+
+      offscreen.toBlob(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `splatmap_${GRID_RES}x${GRID_RES}_rgba_${Date.now()}.png`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }, 'image/png');
+    };
+
+    // Modal
+    const modalHelp = document.getElementById('modal-help');
+    const btnOpenHelp = document.getElementById('btn-open-help');
+    const btnCloseHelp = document.getElementById('btn-close-help');
+    const btnCloseHelpFooter = document.getElementById('btn-close-help-footer');
+    const tabBtnManual = document.getElementById('tab-btn-manual');
+    const tabBtnClaude = document.getElementById('tab-btn-claude');
+    const tabContentManual = document.getElementById('tab-content-manual');
+    const tabContentClaude = document.getElementById('tab-content-claude');
+    const claudePromptText = document.getElementById('claude-prompt-text');
+    const btnCopyPrompt = document.getElementById('btn-copy-prompt');
+
+    const CLAUDE_PROMPT_DOC = `## 概要
+これは自作ゲームエンジン向けの「マスター・オープンワールドチャンク統合エディター（1HTML/Three.js製）」です。
+1チャンク（256m×256m、128x128グリッド）の地形造成、スプラットマップ（4層PBRマテリアル）ペイント、道路スプライン敷設、建物基礎造成（Flatten Carving）、樹木インスタンスの散布除外を一括管理し、エンジン用JSON、16-bit RAWハイトマップ、RGBA PNGスプラットマップを出力します。
+
+## 主要アーキテクチャ・データ仕様
+1. **地形ハイトマップ (Float32Array / 128x128):**
+   - 内部バッファ \`heightData\` で管理。16-bit RAW出力に対応。
+2. **スプラットマップ (Uint8Array RGBA / 128x128x4):**
+   - R: 草地 (Grass), G: 泥・土 (Dirt), B: 岩肌 (Rock), A: 砂 (Sand)
+   - シェーダー上でリアルタイムにマルチテクスチャブレンド。
+   - 急勾配(>30°)への岩肌自動ベイク、道路直下への泥道自動ベイク機能を実装。
+   - 8-bit RGBA PNGテクスチャとして出力。
+3. **道路スプライン & 建物基礎造成:**
+   - 道路・建物底面に合わせて地形を切土・盛土（Carve / Flatten）。
+4. **プロシージャル散布 (2D Poisson Disk Sampling):**
+   - 道路バッファおよび建物の底面バッファ内の樹木を自動除外。`;
+
+    claudePromptText.value = CLAUDE_PROMPT_DOC;
+
+    btnOpenHelp.onclick = () => modalHelp.classList.remove('hidden');
+    btnCloseHelp.onclick = () => modalHelp.classList.add('hidden');
+    btnCloseHelpFooter.onclick = () => modalHelp.classList.add('hidden');
+
+    tabBtnManual.onclick = () => {
+      tabBtnManual.className = "py-2.5 text-xs font-semibold border-b-2 border-cyan-400 text-cyan-400";
+      tabBtnClaude.className = "py-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200";
+      tabContentManual.classList.remove('hidden');
+      tabContentClaude.classList.add('hidden');
+    };
+
+    tabBtnClaude.onclick = () => {
+      tabBtnClaude.className = "py-2.5 text-xs font-semibold border-b-2 border-cyan-400 text-cyan-400";
+      tabBtnManual.className = "py-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200";
+      tabContentClaude.classList.remove('hidden');
+      tabContentManual.classList.add('hidden');
+    };
+
+    btnCopyPrompt.onclick = () => {
+      navigator.clipboard.writeText(CLAUDE_PROMPT_DOC).then(() => {
+        btnCopyPrompt.textContent = "コピー完了！";
+        btnCopyPrompt.className = "px-3 py-1 bg-emerald-600 text-white font-semibold rounded shadow transition text-xs";
+        setTimeout(() => {
+          btnCopyPrompt.textContent = "プロンプトをコピー";
+          btnCopyPrompt.className = "px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded shadow transition text-xs";
+        }, 2000);
+      });
+    };
+
+    // Initial Execution
+    STATE.nodes = [
+      new THREE.Vector3(-80, sampleHeight(-80, -60), -60),
+      new THREE.Vector3(-30, sampleHeight(-30, -20), -20),
+      new THREE.Vector3(20, sampleHeight(20, 20), 20),
+      new THREE.Vector3(75, sampleHeight(75, 70), 70)
+    ];
+
+    rebuildNodeMeshes();
+    rebakeScatterCandidates();
+    rebuildRoadAndBuffer();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>

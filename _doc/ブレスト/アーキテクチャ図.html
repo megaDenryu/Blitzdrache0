@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blitzdrache0 アーキテクチャ図</title>
+<style>
+  :root {
+    --bg: #0b0e14;
+    --panel: #131722;
+    --panel2: #1a2030;
+    --border: #2a3245;
+    --text: #d7deea;
+    --text-dim: #8b96a8;
+    --app: #8f6bff;
+    --engine: #3d9fff;
+    --render: #ff8a3d;
+    --sim: #35d07f;
+    --math: #2fc4c0;
+    --asset: #ff5d8f;
+    --xtask: #e6c34a;
+    --ash: #a87bff;
+    --accent: #5ba8ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    line-height: 1.7;
+    font-size: 15px;
+  }
+  header {
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #141a28 0%, var(--bg) 100%);
+    padding: 40px 24px 28px;
+    text-align: center;
+  }
+  header h1 {
+    font-size: 26px;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+  header p { color: var(--text-dim); margin-top: 6px; font-size: 14px; }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    margin: 0 4px;
+  }
+  .badge.warn { color: #f0c674; border-color: #f0c67455; }
+
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(11,14,20,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 8px 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  nav a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  nav a:hover { background: var(--panel2); color: var(--text); }
+
+  main {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+  section { margin-bottom: 56px; }
+  section h2 {
+    font-size: 20px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  section h2 .no {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+  section h3 {
+    font-size: 15px;
+    color: var(--text);
+    margin: 22px 0 8px;
+  }
+  .lead { color: var(--text-dim); font-size: 14px; margin-bottom: 18px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .card svg { display: block; width: 100%; height: auto; }
+  svg text {
+    font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meireyo, sans-serif;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+    flex: none;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 10px;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 600; width: 130px; white-space: nowrap; }
+  code {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 1px 7px;
+    font-family: Consolas, "Cascadia Code", monospace;
+    font-size: 12.5px;
+    color: #a8d6ff;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    border-radius: 4px;
+    padding: 1px 8px;
+    margin-left: 8px;
+    vertical-align: 2px;
+  }
+  .tag.survival { background: #35d07f22; color: #35d07f; border: 1px solid #35d07f44; }
+  .tag.log { background: #e6c34a22; color: #e6c34a; border: 1px solid #e6c34a44; }
+  .note {
+    background: #1c2333;
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 14px;
+  }
+  footer {
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    text-align: center;
+    font-size: 12px;
+    padding: 24px;
+  }
+  .arrow-head { fill: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Blitzdrache0 アーキテクチャ図</h1>
+  <p>Rust / Vulkan 自作ゲームエンジン — 2026-08-08 時点のコードから作成 <span class="badge warn">M11 完了・エンジンフェーズ2 着手前</span></p>
+</header>
+
+<nav>
+  <a href="#s1">1. 全体レイヤー</a>
+  <a href="#s2">2. フレーム構成</a>
+  <a href="#s3">3. GPU資源束縛</a>
+  <a href="#s4">4. シミュレーション</a>
+  <a href="#s5">5. ストリーミング</a>
+  <a href="#s6">6. データとツール</a>
+  <a href="#s7">7. 機械的強制</a>
+</nav>
+
+<main>
+
+<!-- ============================== 1. レイヤー ============================== -->
+<section id="s1">
+  <h2><span class="no">01</span>クレートのレイヤー構造</h2>
+  <p class="lead">依存方向は Cargo ワークスペースのクレート分割でコンパイル時強制。unsafe と ash 型は blitz_render の実装内部へ封じ込め、公開APIには安全な日本語語彙の型だけを出す。</p>
+
+  <div class="card">
+    <svg viewBox="0 0 1000 620" role="img" aria-label="クレートのレイヤー構造">
+      <defs>
+        <marker id="down" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <path d="M1,1 L9,5 L1,9 Z" class="arrow-head"/>
+        </marker>
+        <linearGradient id="gApp" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#9a7bff"/><stop offset="1" stop-color="#7a4fe0"/>
+        </linearGradient>
+        <linearGradient id="gEngine" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#5db4ff"/><stop offset="1" stop-color="#2f7fd6"/>
+        </linearGradient>
+        <linearGradient id="gRender" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffa45c"/><stop offset="1" stop-color="#e06a1e"/>
+        </linearGradient>
+      </defs>
+
+      <!-- ラベル -->
+      <text x="40" y="30" fill="#8b96a8" font-size="13">実行時のデータは上から下へ流れる</text>
+      <text x="700" y="30" fill="#8b96a8" font-size="13">オフライン・開発時</text>
+
+      <!-- blitz_app -->
+      <rect x="60" y="50" width="420" height="86" rx="12" fill="url(#gApp)" opacity="0.16" stroke="#8f6bff" stroke-width="2"/>
+      <text x="80" y="80" fill="#d9c8ff" font-size="17" font-weight="bold">blitz_app</text>
+      <text x="80" y="102" fill="#cfc4ef" font-size="12.5">起動バイナリ / コンポジションルート（依存の配線とフレーム内実行順序を一元支配）</text>
+      <text x="80" y="122" fill="#b9a9e0" font-size="11.5">winit・egui に依存 ・ #![forbid(unsafe_code)] ・ ゲームロジックを書かない</text>
+
+      <!-- blitz_engine -->
+      <rect x="60" y="196" width="420" height="86" rx="12" fill="url(#gEngine)" opacity="0.16" stroke="#3d9fff" stroke-width="2"/>
+      <text x="80" y="226" fill="#b8d9ff" font-size="17" font-weight="bold">blitz_engine</text>
+      <text x="80" y="248" fill="#b3cdec" font-size="12.5">シーン・アセット・マテリアル・ストリーミング・可視判定・空と時間帯</text>
+      <text x="80" y="268" fill="#93b3d8" font-size="11.5">winit / ash 非依存 ・ 入力はデバイス非依存の「入力インテント」だけ受け取る</text>
+
+      <!-- blitz_render -->
+      <rect x="60" y="342" width="420" height="86" rx="12" fill="url(#gRender)" opacity="0.16" stroke="#ff8a3d" stroke-width="2"/>
+      <text x="80" y="372" fill="#ffd2a8" font-size="17" font-weight="bold">blitz_render</text>
+      <text x="80" y="394" fill="#eec3a0" font-size="12.5">レンダーグラフ + リソースシステム。Vulkan の unsafe を内部に封じ込める型安全層</text>
+      <text x="80" y="414" fill="#d8a87a" font-size="11.5">ash 型（vk::* ・ 生ハンドル）を公開APIに露出しない</text>
+
+      <!-- ash -->
+      <rect x="60" y="488" width="420" height="56" rx="12" fill="#241a33" stroke="#a87bff" stroke-width="2"/>
+      <text x="80" y="514" fill="#cbb0ff" font-size="17" font-weight="bold">ash</text>
+      <text x="80" y="533" fill="#a18cc9" font-size="11.5">Vulkan の thin wrapper。非同期コンピュート対応は生 Vulkan 採用の理由</text>
+
+      <!-- 依存矢印 -->
+      <line x1="270" y1="136" x2="270" y2="196" stroke="#8b96a8" stroke-width="1.6" marker-end="url(#down)"/>
+      <line x1="270" y1="282" x2="270" y2="342" stroke="#8b96a8" stroke-width="1.6" marker-end="url(#down)"/>
+      <line x1="270" y1="428" x2="270" y2="488" stroke="#8b96a8" stroke-width="1.6" marker-end="url(#down)"/>
+      <text x="288" y="170" fill="#8b96a8" font-size="12">依存</text>
+      <text x="288" y="316" fill="#8b96a8" font-size="12">依存</text>
+      <text x="288" y="462" fill="#8b96a8" font-size="12">依存</text>
+
+      <!-- 側面クレート -->
+      <rect x="560" y="50" width="380" height="60" rx="10" fill="#0f2730" stroke="#2fc4c0" stroke-width="1.6"/>
+      <text x="580" y="76" fill="#8fe8e5" font-size="15" font-weight="bold">blitz_math</text>
+      <text x="580" y="96" fill="#7cc4c2" font-size="11.5">数学DDD: フレーム型（座標系）・単位型（メートル/秒/ラジアン）を幻影型で区別</text>
+
+      <rect x="560" y="130" width="380" height="60" rx="10" fill="#10381f" stroke="#35d07f" stroke-width="1.6"/>
+      <text x="580" y="156" fill="#9be8bd" font-size="15" font-weight="bold">blitz_sim</text>
+      <text x="580" y="176" fill="#7cc49a" font-size="11.5">シミュレーション基盤層: XPBD・SPH・表面流・介入の数学と GPU バッファ定義</text>
+
+      <rect x="560" y="210" width="380" height="60" rx="10" fill="#33111f" stroke="#ff5d8f" stroke-width="1.6"/>
+      <text x="580" y="236" fill="#ffb3c8" font-size="15" font-weight="bold">blitz_asset_compiler</text>
+      <text x="580" y="256" fill="#d490a8" font-size="11.5">オフラインCLI: glTF・画像・高さ格子を検証済みの版付き実行時形式へ変換（rustc相当）</text>
+
+      <rect x="560" y="290" width="380" height="60" rx="10" fill="#332b10" stroke="#e6c34a" stroke-width="1.6"/>
+      <text x="580" y="316" fill="#f2dc8a" font-size="15" font-weight="bold">xtask</text>
+      <text x="580" y="336" fill="#c9b968" font-size="11.5">ツールの唯一の入口（cargo xtask）: 検証・生成・計測・診断の全コマンドを集約</text>
+
+      <!-- 側面矢印 -->
+      <path d="M480,80 C 520,80 520,80 560,80" stroke="#2fc4c0" stroke-width="1.4" fill="none" stroke-dasharray="5,4"/>
+      <path d="M480,160 C 520,160 520,160 560,160" stroke="#35d07f" stroke-width="1.4" fill="none" stroke-dasharray="5,4"/>
+      <path d="M480,342 C 520,342 520,160 560,160" stroke="#35d07f" stroke-width="1.4" fill="none" stroke-dasharray="5,4" opacity="0.7"/>
+      <text x="486" y="140" fill="#8b96a8" font-size="11" opacity="0.9">blitz_render が</text>
+      <text x="486" y="154" fill="#8b96a8" font-size="11" opacity="0.9">コンピュートパスで実行</text>
+
+      <!-- 非依存の注記 -->
+      <text x="560" y="400" fill="#8b96a8" font-size="12">blitz_sim は ash にも blitz_render にも依存しない（手法の数学だけを持つ）</text>
+      <text x="560" y="420" fill="#8b96a8" font-size="12">blitz_math は全クレートが参照し、glam 生型は GPU 境界でのみ露出</text>
+      <text x="560" y="440" fill="#8b96a8" font-size="12">blitz_asset_compiler は実行時のアプリ・エンジンから分離済み（OW1）</text>
+
+      <text x="560" y="520" fill="#8b96a8" font-size="12">将来: blitz_game（ゲームロジック）が blitz_app の上に積まれる</text>
+      <text x="560" y="540" fill="#5a6474" font-size="11.5">RHI（マルチグラフィックスAPI抽象層）はコンソール対応まで作らない。ash型の封じ込めが差し替え布石</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ============================== 2. フレーム構成 ============================== -->
+<section id="s2">
+  <h2><span class="no">02</span>1フレームの実行順序</h2>
+  <p class="lead">blitz_engine が「フレーム段階」の列を宣言し（フレーム構成）、blitz_render が各段階を1つ以上のGPUパスへ展開する。依存は宣言順のまま実行し、バリアはレンダーグラフが入出力宣言から自動導出する。</p>
+
+  <div class="card">
+    <svg viewBox="0 0 1000 330" role="img" aria-label="1フレームの実行順序">
+      <defs>
+        <marker id="arr2" markerWidth="9" markerHeight="9" refX="4" refY="4.5" orient="auto">
+          <path d="M1,1 L8,4.5 L1,8 Z" class="arrow-head"/>
+        </marker>
+      </defs>
+
+      <!-- 段階ボックス列（2行） -->
+      <g>
+        <!-- 行1 -->
+        <rect x="20"  y="40" width="118" height="58" rx="9" fill="#10303f" stroke="#3d9fff" stroke-width="1.6"/>
+        <text x="79"  y="66" fill="#b8d9ff" font-size="13" font-weight="bold" text-anchor="middle">スキニング</text>
+        <text x="79"  y="84" fill="#7d9dbd" font-size="10.5" text-anchor="middle">GPUスキニング</text>
+
+        <rect x="156" y="40" width="138" height="58" rx="9" fill="#10381f" stroke="#35d07f" stroke-width="1.6"/>
+        <text x="225" y="66" fill="#9be8bd" font-size="13" font-weight="bold" text-anchor="middle">布シミュレーション</text>
+        <text x="225" y="84" fill="#7cc49a" font-size="10.5" text-anchor="middle">XPBD コンピュート</text>
+
+        <rect x="312" y="40" width="110" height="58" rx="9" fill="#3d2a14" stroke="#ffb03d" stroke-width="1.6"/>
+        <text x="367" y="66" fill="#ffd9a8" font-size="13" font-weight="bold" text-anchor="middle">影</text>
+        <text x="367" y="84" fill="#c9a778" font-size="10.5" text-anchor="middle">4距離区分 CSM</text>
+
+        <rect x="440" y="40" width="120" height="58" rx="9" fill="#12304a" stroke="#5ba8ff" stroke-width="1.6"/>
+        <text x="500" y="66" fill="#b8d9ff" font-size="13" font-weight="bold" text-anchor="middle">シーン</text>
+        <text x="500" y="84" fill="#7d9dbd" font-size="10.5" text-anchor="middle">PBR 本描画</text>
+
+        <rect x="578" y="40" width="100" height="58" rx="9" fill="#2d1b3d" stroke="#a87bff" stroke-width="1.6"/>
+        <text x="628" y="66" fill="#d9c8ff" font-size="13" font-weight="bold" text-anchor="middle">空</text>
+        <text x="628" y="84" fill="#a18cc9" font-size="10.5" text-anchor="middle">スカイ</text>
+
+        <rect x="696" y="40" width="110" height="58" rx="9" fill="#10303f" stroke="#3d9fff" stroke-width="1.6"/>
+        <text x="751" y="66" fill="#b8d9ff" font-size="13" font-weight="bold" text-anchor="middle">粒子</text>
+        <text x="751" y="84" fill="#7d9dbd" font-size="10.5" text-anchor="middle">パーティクル</text>
+
+        <rect x="824" y="40" width="156" height="58" rx="9" fill="#2d1b2d" stroke="#ff5d8f" stroke-width="1.6"/>
+        <text x="902" y="66" fill="#ffb3c8" font-size="13" font-weight="bold" text-anchor="middle">光のにじみと明るさの圧縮</text>
+        <text x="902" y="84" fill="#d490a8" font-size="10.5" text-anchor="middle">Bloom + ACES</text>
+
+        <rect x="20"  y="140" width="100" height="58" rx="9" fill="#12304a" stroke="#5ba8ff" stroke-width="1.6"/>
+        <text x="70"  y="166" fill="#b8d9ff" font-size="13" font-weight="bold" text-anchor="middle">UI</text>
+        <text x="70"  y="184" fill="#7d9dbd" font-size="10.5" text-anchor="middle">開発用 egui</text>
+
+        <rect x="138" y="140" width="120" height="58" rx="9" fill="#10381f" stroke="#35d07f" stroke-width="1.6"/>
+        <text x="198" y="166" fill="#9be8bd" font-size="13" font-weight="bold" text-anchor="middle">読み戻し</text>
+        <text x="198" y="184" fill="#7cc49a" font-size="10.5" text-anchor="middle">検収・計測用</text>
+      </g>
+
+      <!-- 行1の矢印 -->
+      <line x1="138" y1="69" x2="156" y2="69" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <line x1="294" y1="69" x2="312" y2="69" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <line x1="422" y1="69" x2="440" y2="69" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <line x1="560" y1="69" x2="578" y2="69" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <line x1="678" y1="69" x2="696" y2="69" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <line x1="806" y1="69" x2="824" y2="69" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <line x1="980" y1="69" x2="988" y2="110" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <line x1="70"  y1="98"  x2="70"  y2="140" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <line x1="120" y1="169" x2="138" y2="169" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <line x1="988" y1="169" x2="988" y2="220" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <!-- 提示 -->
+      <rect x="860" y="228" width="120" height="50" rx="10" fill="#241a33" stroke="#a87bff" stroke-width="2"/>
+      <text x="920" y="250" fill="#cbb0ff" font-size="13" font-weight="bold" text-anchor="middle">提示 (present)</text>
+      <text x="920" y="268" fill="#a18cc9" font-size="10.5" text-anchor="middle">FIFO 同期</text>
+
+      <!-- フレームループの注記 -->
+      <rect x="20" y="228" width="760" height="70" rx="10" fill="none" stroke="#2a3245" stroke-width="1.2" stroke-dasharray="6,5"/>
+      <text x="40" y="252" fill="#8b96a8" font-size="12.5">フレームループは winit 所有（パターンA）。CPU/GPU は進行中フレーム2で並行</text>
+      <text x="40" y="272" fill="#5a6474" font-size="11.5">フレーム内実行順序はコンポジションルートが一元支配。空とポストは起動指定で抜ける任意段階</text>
+
+      <text x="20" y="316" fill="#8b96a8" font-size="12">段階列の宣言元: blitz_engine の フレーム構成（9段階）　→　blitz_render がパス列へ展開</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ============================== 3. GPU資源束縛 ============================== -->
+<section id="s3">
+  <h2><span class="no">03</span>GPU資源束縛の分離</h2>
+  <p class="lead">scene系パイプラインのレイアウトは更新頻度で4つのディスクリプタセットへ分ける。材質テクスチャは索引表（bindless）。set 0・set 2・set 3 はパス先頭で1回だけ結び、描画発行ごとに結ぶのは set 1 だけ。</p>
+
+  <div class="card">
+    <svg viewBox="0 0 1000 470" role="img" aria-label="GPU資源束縛の4セット">
+      <defs>
+        <marker id="arr3" markerWidth="9" markerHeight="9" refX="4" refY="4.5" orient="auto">
+          <path d="M1,1 L8,4.5 L1,8 Z" class="arrow-head"/>
+        </marker>
+      </defs>
+
+      <!-- パイプライン -->
+      <rect x="30" y="20" width="220" height="60" rx="10" fill="#12304a" stroke="#5ba8ff" stroke-width="1.6"/>
+      <text x="140" y="47" fill="#b8d9ff" font-size="14" font-weight="bold" text-anchor="middle">scene系パイプライン</text>
+      <text x="140" y="66" fill="#7d9dbd" font-size="11" text-anchor="middle">4セットの正本契約</text>
+
+      <line x1="250" y1="50" x2="300" y2="50" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <!-- set 0 -->
+      <rect x="300" y="10" width="330" height="100" rx="10" fill="#10202e" stroke="#3d9fff" stroke-width="1.6"/>
+      <text x="316" y="32" fill="#3d9fff" font-size="12.5" font-weight="bold">set 0  View/Pass</text>
+      <text x="316" y="50" fill="#7d9dbd" font-size="11">更新頻度: フレーム×ビューで1回</text>
+      <text x="316" y="68" fill="#a9c0d8" font-size="11">・ビュー定数（96B）: ビュー射影・カメラ相対位置・カメラ前方向</text>
+      <text x="316" y="84" fill="#a9c0d8" font-size="11">・多段影定数（304B）: 4距離区分のライトビュー射影・分割深度・遷移域</text>
+      <text x="316" y="100" fill="#a9c0d8" font-size="11">・空パス定数（112B）: 逆ビュー射影・太陽・夜空</text>
+
+      <!-- set 1 -->
+      <rect x="300" y="130" width="330" height="80" rx="10" fill="#10202e" stroke="#ffb03d" stroke-width="1.6"/>
+      <text x="316" y="152" fill="#ffb03d" font-size="12.5" font-weight="bold">set 1  Geometry/Visibility</text>
+      <text x="316" y="170" fill="#7d9dbd" font-size="11">更新頻度: 描画対象ごと（毎フレーム）</text>
+      <text x="316" y="188" fill="#a9c0d8" font-size="11">・個体レコード（112B/個体）: 変換・法線変換</text>
+      <text x="316" y="204" fill="#a9c0d8" font-size="11">・可視ID列: パス優先5区間 × LOD段順の毎フレーム列</text>
+
+      <!-- set 2 -->
+      <rect x="300" y="230" width="330" height="100" rx="10" fill="#10202e" stroke="#35d07f" stroke-width="1.6"/>
+      <text x="316" y="252" fill="#35d07f" font-size="12.5" font-weight="bold">set 2  Materials</text>
+      <text x="316" y="270" fill="#7d9dbd" font-size="11">更新頻度: 資源表の世代ごと（束は持たない）</text>
+      <text x="316" y="288" fill="#a9c0d8" font-size="11">・材質レコード（48B/材質）: 係数・特徴ビット・テクスチャスロット</text>
+      <text x="316" y="304" fill="#a9c0d8" font-size="11">・材質テクスチャ表: 256要素の sampled image 配列（PartiallyBound）</text>
+      <text x="316" y="320" fill="#a9c0d8" font-size="11">・固定サンプラー1つ</text>
+
+      <!-- set 3 -->
+      <rect x="300" y="350" width="330" height="100" rx="10" fill="#10202e" stroke="#a87bff" stroke-width="1.6"/>
+      <text x="316" y="372" fill="#a87bff" font-size="12.5" font-weight="bold">set 3  LightingQuery</text>
+      <text x="316" y="390" fill="#7d9dbd" font-size="11">更新頻度: フレーム×ビュー×照明品質方式ごと</text>
+      <text x="316" y="408" fill="#a9c0d8" font-size="11">・照明問い合わせヘッダ（32B）: 件数・照明の有効性・間接照明</text>
+      <text x="316" y="424" fill="#a9c0d8" font-size="11">・方向光レコード列 / 局所光レコード列（各48B）</text>
+      <text x="316" y="440" fill="#a9c0d8" font-size="11">・シャドウマップ + 遠方環境の派生表現（拡散/鏡面/反射率積分表）</text>
+
+      <!-- 束縛の回数注記 -->
+      <rect x="680" y="10" width="290" height="230" rx="10" fill="#141a28" stroke="#2a3245" stroke-width="1.2"/>
+      <text x="698" y="34" fill="#d7deea" font-size="12.5" font-weight="bold">束縛の回数</text>
+      <text x="698" y="56" fill="#8b96a8" font-size="11.5">パス先頭で1回だけ結ぶ: set 0 / set 2 / set 3</text>
+      <text x="698" y="74" fill="#8b96a8" font-size="11.5">描画発行ごとに結ぶ: set 1</text>
+      <text x="698" y="92" fill="#5a6474" font-size="11">束縛回数が材質数・プリミティブ数に比例しない</text>
+      <line x1="698" y1="106" x2="952" y2="106" stroke="#2a3245" stroke-width="1"/>
+      <text x="698" y="128" fill="#d7deea" font-size="12.5" font-weight="bold">番号契約</text>
+      <text x="698" y="150" fill="#8b96a8" font-size="11.5">シャドウ記録: set 0-1 だけ</text>
+      <text x="698" y="168" fill="#8b96a8" font-size="11.5">シーン: set 0-3</text>
+      <text x="698" y="186" fill="#8b96a8" font-size="11.5">布: set 0 と set 3（間は空セット）</text>
+      <text x="698" y="204" fill="#8b96a8" font-size="11.5">粒子/SPH/表面流: 独自レイアウト（空セット強制なし）</text>
+      <text x="698" y="228" fill="#5a6474" font-size="11">宣言の正本: shaders/*.slang と vulkan/uniform の bytes.rs を単体テストで一致検査</text>
+
+      <!-- 書き込み規律 -->
+      <rect x="680" y="255" width="290" height="190" rx="10" fill="#141a28" stroke="#2a3245" stroke-width="1.2"/>
+      <text x="698" y="279" fill="#d7deea" font-size="12.5" font-weight="bold">寿命の規律</text>
+      <text x="698" y="301" fill="#8b96a8" font-size="11.5">資源表の世代で束ね、旧世代は進行中フレームの</text>
+      <text x="698" y="319" fill="#8b96a8" font-size="11.5">フェンス通過後に退役させる</text>
+      <text x="698" y="343" fill="#8b96a8" font-size="11.5">ホットリロード/ストリーミングは材質レコードと</text>
+      <text x="698" y="361" fill="#8b96a8" font-size="11.5">テクスチャを同一世代として原子的に公開</text>
+      <line x1="698" y1="375" x2="952" y2="375" stroke="#2a3245" stroke-width="1"/>
+      <text x="698" y="397" fill="#d7deea" font-size="12.5" font-weight="bold">「無し」の扱い</text>
+      <text x="698" y="419" fill="#8b96a8" font-size="11.5">マジック番号でなく 特徴ビット + 正準フォールバック</text>
+      <text x="698" y="437" fill="#8b96a8" font-size="11.5">スロット（白・平坦法線・中立金属粗さの実資源）</text>
+
+      <text x="30" y="455" fill="#8b96a8" font-size="12">材質テクスチャ表は bindless 索引化の初期対象。update-after-bind は世代の作り直しが律速になった場合のみ第2段で審査</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ============================== 4. シミュレーション ============================== -->
+<section id="s4">
+  <h2><span class="no">04</span>シミュレーションと介入</h2>
+  <p class="lead">切断線は「表現はドメイン、数学は基盤」。プレイヤーイベントは型付きの「介入」として GPU シミュレーションへ流し込み、結果バッファは描画パスとゼロコピー共有する。</p>
+
+  <div class="card">
+    <svg viewBox="0 0 1000 340" role="img" aria-label="シミュレーション層と介入モデル">
+      <defs>
+        <marker id="arr4" markerWidth="9" markerHeight="9" refX="4" refY="4.5" orient="auto">
+          <path d="M1,1 L8,4.5 L1,8 Z" class="arrow-head"/>
+        </marker>
+      </defs>
+
+      <!-- 3層 -->
+      <rect x="30" y="20" width="300" height="54" rx="10" fill="#33111f" stroke="#ff5d8f" stroke-width="1.6"/>
+      <text x="50" y="43" fill="#ffb3c8" font-size="14" font-weight="bold">ドメイン表現層（将来 blitz_game）</text>
+      <text x="50" y="62" fill="#d490a8" font-size="11">「この服」「唾液」という絵ごとの組み立て。汎用化しない</text>
+
+      <line x1="180" y1="74" x2="180" y2="104" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="30" y="104" width="300" height="54" rx="10" fill="#10381f" stroke="#35d07f" stroke-width="1.6"/>
+      <text x="50" y="127" fill="#9be8bd" font-size="14" font-weight="bold">シミュレーション基盤層（blitz_sim）</text>
+      <text x="50" y="146" fill="#7cc49a" font-size="11">XPBDソルバ・拘束・SPH・表面流の数学と GPU バッファ定義</text>
+
+      <line x1="180" y1="158" x2="180" y2="188" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="30" y="188" width="300" height="54" rx="10" fill="#3d2a14" stroke="#ffb03d" stroke-width="1.6"/>
+      <text x="50" y="211" fill="#ffd9a8" font-size="14" font-weight="bold">blitz_render（GPU実行基盤）</text>
+      <text x="50" y="230" fill="#c9a778" font-size="11">コンピュートパスで実行。結果バッファを描画とゼロコピー共有</text>
+
+      <!-- 介入フロー -->
+      <rect x="430" y="20" width="540" height="300" rx="12" fill="#141a28" stroke="#2a3245" stroke-width="1.2"/>
+      <text x="452" y="46" fill="#d7deea" font-size="13" font-weight="bold">介入モデル（フレーム内の一方向の流れ）</text>
+
+      <rect x="452" y="62" width="92" height="44" rx="8" fill="#12304a" stroke="#5ba8ff" stroke-width="1.4"/>
+      <text x="498" y="88" fill="#b8d9ff" font-size="12.5" text-anchor="middle">入力</text>
+
+      <rect x="566" y="62" width="108" height="44" rx="8" fill="#12304a" stroke="#5ba8ff" stroke-width="1.4"/>
+      <text x="620" y="88" fill="#b8d9ff" font-size="12.5" text-anchor="middle">ゲームロジック</text>
+
+      <rect x="696" y="62" width="108" height="44" rx="8" fill="#3d2a14" stroke="#ffb03d" stroke-width="1.4"/>
+      <text x="750" y="88" fill="#ffd9a8" font-size="12.5" text-anchor="middle">介入キュー</text>
+
+      <rect x="826" y="62" width="124" height="44" rx="8" fill="#10381f" stroke="#35d07f" stroke-width="1.4"/>
+      <text x="888" y="80" fill="#9be8bd" font-size="12.5" text-anchor="middle">シミュレーション</text>
+      <text x="888" y="96" fill="#7cc49a" font-size="10.5" text-anchor="middle">(GPU)</text>
+
+      <rect x="888" y="128" width="62" height="34" rx="8" fill="#12304a" stroke="#5ba8ff" stroke-width="1.4"/>
+      <text x="919" y="150" fill="#b8d9ff" font-size="12" text-anchor="middle">描画</text>
+
+      <line x1="544" y1="84" x2="566" y2="84" stroke="#8b96a8" stroke-width="1.4" marker-end="url(#arr4)"/>
+      <line x1="674" y1="84" x2="696" y2="84" stroke="#8b96a8" stroke-width="1.4" marker-end="url(#arr4)"/>
+      <line x1="804" y1="84" x2="826" y2="84" stroke="#8b96a8" stroke-width="1.4" marker-end="url(#arr4)"/>
+      <line x1="888" y1="106" x2="919" y2="128" stroke="#8b96a8" stroke-width="1.4" marker-end="url(#arr4)"/>
+      <line x1="950" y1="84" x2="962" y2="128" stroke="#8b96a8" stroke-width="1.4" marker-end="url(#arr4)" opacity="0.5"/>
+
+      <!-- 介入の4種 -->
+      <text x="452" y="196" fill="#d7deea" font-size="12.5" font-weight="bold">介入（intervention）= 型付きの値。4種:</text>
+      <text x="452" y="220" fill="#8b96a8" font-size="11.5">・インパルス: 位置 + 力（触る・叩く・風）</text>
+      <text x="452" y="240" fill="#8b96a8" font-size="11.5">・拘束の着脱: 点の固定（掴む）・拘束の切断（服を破る）</text>
+      <text x="452" y="260" fill="#8b96a8" font-size="11.5">・放出: 位置 + 粒子種 + レート（液体の発生源）</text>
+      <text x="452" y="280" fill="#8b96a8" font-size="11.5">・パラメータ場の書き換え: 領域 + 物性値</text>
+      <text x="452" y="308" fill="#5a6474" font-size="11">逆方向（引きちぎれ・着地）は GPU 読み戻しで1フレーム遅れ</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ============================== 5. ストリーミング ============================== -->
+<section id="s5">
+  <h2><span class="no">05</span>ストリーミング（エンジンフェーズ2の柱）</h2>
+  <p class="lead">世界をチャンク分割し、プレイヤー位置に応じて非同期ロード/アンロード。RAM・VRAM の予算管理と、描画はカメラ相対レンダリング（f32精度の崩壊を回避）。</p>
+
+  <div class="card">
+    <svg viewBox="0 0 1000 340" role="img" aria-label="ストリーミング">
+      <defs>
+        <marker id="arr5" markerWidth="9" markerHeight="9" refX="4" refY="4.5" orient="auto">
+          <path d="M1,1 L8,4.5 L1,8 Z" class="arrow-head"/>
+        </marker>
+      </defs>
+
+      <!-- チャンク格子 -->
+      <g transform="translate(30,24)">
+        <rect x="0" y="0" width="70" height="70" rx="6" fill="#161d2c" stroke="#2a3245"/>
+        <rect x="70" y="0" width="70" height="70" rx="6" fill="#161d2c" stroke="#2a3245"/>
+        <rect x="140" y="0" width="70" height="70" rx="6" fill="#161d2c" stroke="#2a3245"/>
+        <rect x="0" y="70" width="70" height="70" rx="6" fill="#161d2c" stroke="#2a3245"/>
+        <rect x="70" y="70" width="70" height="70" rx="6" fill="#1c2c44" stroke="#3d9fff" stroke-width="2"/>
+        <rect x="140" y="70" width="70" height="70" rx="6" fill="#161d2c" stroke="#2a3245"/>
+        <rect x="0" y="140" width="70" height="70" rx="6" fill="#161d2c" stroke="#2a3245"/>
+        <rect x="70" y="140" width="70" height="70" rx="6" fill="#161d2c" stroke="#2a3245"/>
+        <rect x="140" y="140" width="70" height="70" rx="6" fill="#161d2c" stroke="#2a3245"/>
+        <circle cx="105" cy="105" r="10" fill="#5ba8ff" opacity="0.9"/>
+        <text x="105" y="109" fill="#0b0e14" font-size="11" font-weight="bold" text-anchor="middle">P</text>
+        <text x="105" y="92" fill="#5ba8ff" font-size="11" text-anchor="middle">先読み半径1</text>
+        <text x="10" y="262" fill="#8b96a8" font-size="11.5">チャンク格子: XZ平面を一定の一辺長で区切る</text>
+        <text x="10" y="280" fill="#8b96a8" font-size="11.5">負の大域位置は数学的な床で所属を決める</text>
+        <text x="10" y="298" fill="#8b96a8" font-size="11.5">カメラ相対レンダリング: f64 の大域位置から</text>
+        <text x="10" y="316" fill="#8b96a8" font-size="11.5">f32 のカメラ相対位置へ狭めて GPU へ渡す</text>
+      </g>
+
+      <!-- 調停の内部 -->
+      <rect x="310" y="24" width="660" height="296" rx="12" fill="#141a28" stroke="#2a3245" stroke-width="1.2"/>
+      <text x="330" y="48" fill="#d7deea" font-size="13" font-weight="bold">ストリーミング調停（1フレーム分の進行を束ねる型）</text>
+
+      <g font-size="11.5">
+        <rect x="330" y="62" width="130" height="40" rx="8" fill="#12304a" stroke="#5ba8ff" stroke-width="1.3"/>
+        <text x="395" y="86" fill="#b8d9ff" text-anchor="middle">チャンク格子</text>
+        <rect x="330" y="118" width="130" height="40" rx="8" fill="#12304a" stroke="#5ba8ff" stroke-width="1.3"/>
+        <text x="395" y="142" fill="#b8d9ff" text-anchor="middle">チャンク目録</text>
+        <rect x="330" y="174" width="130" height="40" rx="8" fill="#12304a" stroke="#5ba8ff" stroke-width="1.3"/>
+        <text x="395" y="198" fill="#b8d9ff" text-anchor="middle">ストリーミング予算</text>
+        <rect x="330" y="230" width="130" height="40" rx="8" fill="#12304a" stroke="#5ba8ff" stroke-width="1.3"/>
+        <text x="395" y="254" fill="#b8d9ff" text-anchor="middle">チャンク台帳</text>
+        <rect x="330" y="270" width="130" height="40" rx="8" fill="#12304a" stroke="#5ba8ff" stroke-width="1.3"/>
+        <text x="395" y="294" fill="#b8d9ff" text-anchor="middle">チャンク読込器</text>
+
+        <!-- フロー -->
+        <text x="480" y="86" fill="#8b96a8" text-anchor="middle">必要集合</text>
+        <line x1="460" y1="82" x2="520" y2="82" stroke="#8b96a8" stroke-width="1.3" marker-end="url(#arr5)"/>
+        <rect x="520" y="62" width="150" height="40" rx="8" fill="#3d2a14" stroke="#ffb03d" stroke-width="1.3"/>
+        <text x="595" y="86" fill="#ffd9a8" text-anchor="middle">目録で解決</text>
+        <line x1="670" y1="82" x2="730" y2="82" stroke="#8b96a8" stroke-width="1.3" marker-end="url(#arr5)"/>
+        <rect x="730" y="62" width="160" height="40" rx="8" fill="#3d2a14" stroke="#ffb03d" stroke-width="1.3"/>
+        <text x="810" y="80" fill="#ffd9a8" text-anchor="middle">予算で縮退</text>
+        <text x="810" y="95" fill="#c9a778" text-anchor="middle">（中心優先で収まる範囲だけ）</text>
+
+        <rect x="520" y="118" width="190" height="40" rx="8" fill="#10381f" stroke="#35d07f" stroke-width="1.3"/>
+        <text x="615" y="136" fill="#9be8bd" text-anchor="middle">RAM/VRAM 見積</text>
+        <text x="615" y="152" fill="#7cc49a" text-anchor="middle">読込後は観測済み読込量へ置換</text>
+
+        <rect x="520" y="174" width="190" height="40" rx="8" fill="#10381f" stroke="#35d07f" stroke-width="1.3"/>
+        <text x="615" y="192" fill="#9be8bd" text-anchor="middle">非同期読込</text>
+        <text x="615" y="208" fill="#7cc49a" text-anchor="middle">→ 準備完了 → CPUデータ破棄</text>
+
+        <rect x="520" y="230" width="190" height="40" rx="8" fill="#33111f" stroke="#ff5d8f" stroke-width="1.3"/>
+        <text x="615" y="248" fill="#ffb3c8" text-anchor="middle">退避（安全/優先度）</text>
+        <text x="615" y="264" fill="#d490a8" text-anchor="middle">犠牲選択: 遠い順・足元は残す</text>
+
+        <rect x="730" y="230" width="160" height="40" rx="8" fill="#10202e" stroke="#a87bff" stroke-width="1.3"/>
+        <text x="810" y="248" fill="#cbb0ff" text-anchor="middle">GPU 資源の解除待ち</text>
+        <text x="810" y="264" fill="#a18cc9" text-anchor="middle">フェンス通過後に破棄</text>
+      </g>
+
+      <text x="330" y="306" fill="#5a6474" font-size="11">ストリーミング予算（容量上限）はフレーム時間予算（16.6msの配分）とは別物。退避・解除待ち・世代公開はすべてフェンスで寿命を守る</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ============================== 6. データとツール ============================== -->
+<section id="s6">
+  <h2><span class="no">06</span>アセットの流れとツールの入口</h2>
+  <p class="lead">ソースアセット（glTF・画像・高さ格子）はオフラインで検証・変換され、版付きの実行時形式へ落とされる。エンジンは実行時に汎用パースをしない（理論値志向）。</p>
+
+  <div class="card">
+    <svg viewBox="0 0 1000 300" role="img" aria-label="アセットの流れ">
+      <defs>
+        <marker id="arr6" markerWidth="9" markerHeight="9" refX="4" refY="4.5" orient="auto">
+          <path d="M1,1 L8,4.5 L1,8 Z" class="arrow-head"/>
+        </marker>
+      </defs>
+
+      <rect x="20" y="60" width="150" height="64" rx="10" fill="#161d2c" stroke="#2a3245" stroke-width="1.4"/>
+      <text x="95" y="86" fill="#d7deea" font-size="12.5" text-anchor="middle">ソースアセット</text>
+      <text x="95" y="104" fill="#8b96a8" font-size="11" text-anchor="middle">glTF / 画像 / 高さ格子</text>
+
+      <line x1="170" y1="92" x2="210" y2="92" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr6)"/>
+
+      <rect x="210" y="48" width="220" height="88" rx="10" fill="#33111f" stroke="#ff5d8f" stroke-width="1.6"/>
+      <text x="320" y="74" fill="#ffb3c8" font-size="13" font-weight="bold" text-anchor="middle">blitz_asset_compiler</text>
+      <text x="320" y="94" fill="#d490a8" font-size="11" text-anchor="middle">入力契約の検査 → 変換 →</text>
+      <text x="320" y="110" fill="#d490a8" font-size="11" text-anchor="middle">カタログ登録 → 版付きバイナリ出力</text>
+      <text x="320" y="128" fill="#b06887" font-size="10.5" text-anchor="middle">地形メッシュ・植生・見本集落の経路も持つ</text>
+
+      <line x1="430" y1="92" x2="470" y2="92" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr6)"/>
+
+      <rect x="470" y="48" width="220" height="88" rx="10" fill="#10381f" stroke="#35d07f" stroke-width="1.6"/>
+      <text x="580" y="74" fill="#9be8bd" font-size="13" font-weight="bold" text-anchor="middle">アセット実行時形式</text>
+      <text x="580" y="94" fill="#7cc49a" font-size="11" text-anchor="middle">固定8バイト識別 + 形式版 + 種別 + 内容</text>
+      <text x="580" y="110" fill="#7cc49a" font-size="11" text-anchor="middle">カタログ: 安定ID・版・依存の台帳</text>
+      <text x="580" y="128" fill="#4d7d63" font-size="10.5" text-anchor="middle">チャンク目録: 座標 → アセットID</text>
+
+      <line x1="690" y1="92" x2="730" y2="92" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr6)"/>
+
+      <rect x="730" y="60" width="250" height="64" rx="10" fill="#12304a" stroke="#5ba8ff" stroke-width="1.4"/>
+      <text x="855" y="86" fill="#b8d9ff" font-size="12.5" text-anchor="middle">blitz_engine（実行時読込）</text>
+      <text x="855" y="104" fill="#7d9dbd" font-size="11" text-anchor="middle">汎用パースをせず版付き形式を直接読む</text>
+
+      <!-- バージョン互換 -->
+      <rect x="470" y="176" width="510" height="80" rx="10" fill="#141a28" stroke="#2a3245" stroke-width="1.2"/>
+      <text x="490" y="200" fill="#d7deea" font-size="12.5" font-weight="bold">後方互換は「版ごとの型 + 最新への変換」で表す</text>
+      <text x="490" y="222" fill="#8b96a8" font-size="11.5">1つの可変型に互換ハックを足し続けず、旧版型を定義して 旧版.to最新() で型→型変換</text>
+      <text x="490" y="244" fill="#8b96a8" font-size="11.5">ロード時に版を判別し、旧版なら最新へ変換。最新型は互換の都合から解放されてクリーンに保たれる</text>
+
+      <!-- xtask -->
+      <rect x="20" y="176" width="330" height="80" rx="10" fill="#332b10" stroke="#e6c34a" stroke-width="1.4"/>
+      <text x="40" y="200" fill="#f2dc8a" font-size="13" font-weight="bold">cargo xtask （ツールの唯一の入口）</text>
+      <text x="40" y="222" fill="#c9b968" font-size="11.5">verify / conform / smoke / bench / 生成 / 計測 / 診断</text>
+      <text x="40" y="244" fill="#a8945a" font-size="11.5">シェルスクリプトを散らさず、全コマンドを xtask クレートに登録</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ============================== 7. 機械的強制 ============================== -->
+<section id="s7">
+  <h2><span class="no">07</span>機械的強制と検証列</h2>
+  <p class="lead">規約の多くはコードレビューでなく機械検査で強制する。検証列が通らないコードはコミットしない。</p>
+
+  <div class="card">
+    <svg viewBox="0 0 1000 250" role="img" aria-label="検証列">
+      <defs>
+        <marker id="arr7" markerWidth="9" markerHeight="9" refX="4" refY="4.5" orient="auto">
+          <path d="M1,1 L8,4.5 L1,8 Z" class="arrow-head"/>
+        </marker>
+      </defs>
+      <g>
+        <rect x="20" y="70" width="150" height="54" rx="9" fill="#12304a" stroke="#5ba8ff" stroke-width="1.5"/>
+        <text x="95" y="94" fill="#b8d9ff" font-size="12.5" font-weight="bold" text-anchor="middle">conform</text>
+        <text x="95" y="112" fill="#7d9dbd" font-size="10.5" text-anchor="middle">規約の機械検査</text>
+
+        <line x1="170" y1="97" x2="198" y2="97" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr7)"/>
+        <rect x="198" y="70" width="150" height="54" rx="9" fill="#12304a" stroke="#5ba8ff" stroke-width="1.5"/>
+        <text x="273" y="94" fill="#b8d9ff" font-size="12.5" font-weight="bold" text-anchor="middle">fmt --check</text>
+        <text x="273" y="112" fill="#7d9dbd" font-size="10.5" text-anchor="middle">整形の一致</text>
+
+        <line x1="348" y1="97" x2="376" y2="97" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr7)"/>
+        <rect x="376" y="70" width="120" height="54" rx="9" fill="#12304a" stroke="#5ba8ff" stroke-width="1.5"/>
+        <text x="436" y="94" fill="#b8d9ff" font-size="12.5" font-weight="bold" text-anchor="middle">check</text>
+        <text x="436" y="112" fill="#7d9dbd" font-size="10.5" text-anchor="middle">型検査</text>
+
+        <line x1="496" y1="97" x2="524" y2="97" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr7)"/>
+        <rect x="524" y="70" width="190" height="54" rx="9" fill="#12304a" stroke="#5ba8ff" stroke-width="1.5"/>
+        <text x="619" y="94" fill="#b8d9ff" font-size="12.5" font-weight="bold" text-anchor="middle">clippy -D warnings</text>
+        <text x="619" y="112" fill="#7d9dbd" font-size="10.5" text-anchor="middle">lint を警告でなくエラー化</text>
+
+        <line x1="714" y1="97" x2="742" y2="97" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr7)"/>
+        <rect x="742" y="70" width="120" height="54" rx="9" fill="#10381f" stroke="#35d07f" stroke-width="1.5"/>
+        <text x="802" y="94" fill="#9be8bd" font-size="12.5" font-weight="bold" text-anchor="middle">test</text>
+        <text x="802" y="112" fill="#7cc49a" font-size="10.5" text-anchor="middle">単体・状態テスト</text>
+
+        <line x1="862" y1="97" x2="890" y2="97" stroke="#8b96a8" stroke-width="1.5" marker-end="url(#arr7)"/>
+        <rect x="890" y="70" width="90" height="54" rx="9" fill="#3d2a14" stroke="#ffb03d" stroke-width="1.5"/>
+        <text x="935" y="94" fill="#ffd9a8" font-size="12.5" font-weight="bold" text-anchor="middle">smoke</text>
+        <text x="935" y="112" fill="#c9a778" font-size="10.5" text-anchor="middle">validation 0件</text>
+      </g>
+
+      <text x="20" y="164" fill="#d7deea" font-size="12.5" font-weight="bold">conform が検査する主な規約</text>
+      <text x="20" y="186" fill="#8b96a8" font-size="11.5">・.rs/.slang の 1ファイル100行 / 禁止文字列 / 切り出しの経緯語</text>
+      <text x="20" y="204" fill="#8b96a8" font-size="11.5">・クレート依存の白リスト・文書内の節参照実在・CPU正本と slang 写しの定数一致</text>
+      <text x="20" y="222" fill="#8b96a8" font-size="11.5">・blitz_render 配下での Drop 実装禁止（単一RAIIオーナーのみ例外）・テスト外の unwrap/expect allow 禁止</text>
+    </svg>
+  </div>
+
+  <div class="card">
+    <h3>ワークスペース lint（緩和する変更は禁止）</h3>
+    <table>
+      <tr><th>deny</th><td><code>unwrap_used</code> / <code>expect_used</code> / <code>as_conversions</code> — テストモジュールでの局所 allow のみ可</td></tr>
+      <tr><th>unsafe</th><td><code>blitz_render</code> 実装内部のみ。他クレートは <code>#![forbid(unsafe_code)]</code>。unsafe 直前には「安全性:」コメント必須</td></tr>
+      <tr><th>型安全性</th><td>数値の <code>as</code> キャスト禁止（<code>From</code>/<code>TryFrom</code>）、失敗は層ごとの thiserror 型付きエラーを <code>?</code> で伝播</td></tr>
+      <tr><th>命名</th><td>ドメイン層は日本語命名・略語禁止・フルスペル。数学DDD は幻影型で単位と座標系を区別</td></tr>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Blitzdrache0 アーキテクチャ図 — コードと <code>_doc/計画/ユビキタス言語.md</code> を元に手書き SVG で作成（外部ライブラリ不使用）
+</footer>
+
+</body>
+</html>
