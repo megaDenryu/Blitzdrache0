@@ -1,11 +1,6 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import type {
-    大域世界構造,
-    チャンク座標,
-    チャンク構造,
-    編集コマンド,
-} from '../生成/編集資源契約.ts'
+import type { 大域世界構造, チャンク座標, チャンク構造, 編集コマンド } from '../生成/編集資源契約.ts'
 import type { プロジェクト保管庫接続, 読込結果, 保存結果 } from '../境界/通信/index.ts'
 import { 読込成功, 読込無し, 保存成功 } from '../境界/通信/index.ts'
 import { 編集コマンドを一括適用する } from './編集コマンド一括適用処理.ts'

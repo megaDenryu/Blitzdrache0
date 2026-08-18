@@ -21,6 +21,7 @@ const 操作コマンド = '操作コマンド'
 const 画面 = '画面'
 const ツールルート = 'ツールルート'
 const 入り口 = '入り口'
+const ヘッドレス = 'ヘッドレス'
 const コンポジションルート = 'main'
 // SengenUI・VscodeShellLayout・SengenThreeはいずれもGitサブモジュールであり、
 // 本リポジトリの層の対象外（触ってはいけない範囲）。各層の表の「知ってよい相手」に
@@ -60,6 +61,7 @@ export default tseslint.config(
                 // 「ツールルート」の行。
                 { type: ツールルート, mode: 'full', pattern: ['src/ツール/*/*.ts'] },
                 { type: 入り口, mode: 'full', pattern: ['src/入り口/**'] },
+                { type: ヘッドレス, mode: 'full', pattern: ['src/ヘッドレス/**'] },
                 { type: コンポジションルート, mode: 'full', pattern: ['src/main.ts'] },
                 { type: SengenUI, mode: 'full', pattern: ['submodules/SengenUI/**'] },
                 { type: VscodeShellLayout, mode: 'full', pattern: ['submodules/VscodeShellLayout/**'] },
@@ -84,6 +86,7 @@ export default tseslint.config(
                             allow: [ツールルート, 境界, 操作コマンド, 編集モデル, 画面, 生成, SengenUI, SengenThree],
                         },
                         { from: [入り口], allow: [入り口, 境界, ツールルート, SengenUI, VscodeShellLayout] },
+                        { from: [ヘッドレス], allow: [ヘッドレス, 境界, 操作コマンド, 編集モデル, 生成] },
                         {
                             from: [コンポジションルート],
                             allow: [
