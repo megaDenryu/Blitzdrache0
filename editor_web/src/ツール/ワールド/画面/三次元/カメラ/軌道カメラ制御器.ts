@@ -6,11 +6,19 @@ export class 軌道カメラ制御器 {
     private readonly _注視点: Vector3 = new Vector3(0, 0, 0)
     private _水平角: number = 0
     private _垂直角: number = Math.PI / 4
-    private _距離: number = 180
+    private _距離: number
+    private readonly _最小距離: number
+    private readonly _最大距離: number
 
     public constructor(
         private readonly _カメラ: 透視カメラ,
+        初期距離: number = 180,
+        最小距離: number = 10,
+        最大距離: number = 1000,
     ) {
+        this._距離 = 初期距離
+        this._最小距離 = 最小距離
+        this._最大距離 = 最大距離
         this.更新する()
     }
 
@@ -40,7 +48,7 @@ export class 軌道カメラ制御器 {
 
     public 拡大縮小する(デルタY: number): void {
         const 変化量 = デルタY * 0.1
-        this._距離 = Math.max(10, Math.min(1000, this._距離 + 変化量))
+        this._距離 = Math.max(this._最小距離, Math.min(this._最大距離, this._距離 + 変化量))
         this.更新する()
     }
 
