@@ -2,6 +2,7 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import { 地表材質 } from './地表材質.ts'
 import { 高さ場 } from './高さ場.ts'
+import { 合計255へ正規化する } from './地表材質正規化.ts'
 
 describe('地表材質編集モデル', () => {
     it('正規化関数が任意の入力に対し合計厳密に255を返すこと', () => {
@@ -15,7 +16,7 @@ describe('地表材質編集モデル', () => {
             [1000, 50, 0, 12],
         ]
         for (const [草, 泥, 岩, 砂] of テスト入力一覧) {
-            const [r, g, b, a] = 地表材質.合計255へ正規化する(草, 泥, 岩, 砂)
+            const [r, g, b, a] = 合計255へ正規化する(草, 泥, 岩, 砂)
             const 合計 = r + g + b + a
             assert.strictEqual(合計, 255, `合計が255であるべき: (${草},${泥},${岩},${砂}) => (${r},${g},${b},${a})`)
         }

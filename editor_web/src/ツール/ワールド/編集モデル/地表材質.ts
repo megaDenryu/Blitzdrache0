@@ -34,13 +34,9 @@ export class 地表材質 {
         return new 地表材質(this.解像度, this.一辺のメートル, this.材質データ)
     }
 
-    public static 合計255へ正規化する(草: number, 泥: number, 岩: number, 砂: number): [number, number, number, number] {
-        return 合計255へ正規化する(草, 泥, 岩, 砂)
-    }
-
     // 材質筆致を通過点列に沿って適用する。
     public 材質筆致を適用する(筆致: 材質の筆致): void {
-        const 層インデックス = this.層をインデックスに変換する(筆致.層)
+        const 層添字 = this.層を添字に変換する(筆致.層)
         for (const 通過点 of 筆致.通過点列) {
             for (let gz = 0; gz < this.解像度; gz++) {
                 for (let gx = 0; gx < this.解像度; gx++) {
@@ -49,21 +45,21 @@ export class 地表材質 {
                     const 距離 = Math.hypot(wx - 通過点.x, wz - 通過点.z)
                     if (距離 < 筆致.半径メートル) {
                         const コサイン減衰 = Math.cos((距離 / 筆致.半径メートル) * (Math.PI / 2)) * 筆致.流量
-                        const ピクセル先頭 = (gz * this.解像度 + gx) * 4
-                        const 現在草 = this.材質データ[ピクセル先頭 + 0] ?? 0
-                        const 現在泥 = this.材質データ[ピクセル先頭 + 1] ?? 0
-                        const 現在岩 = this.材質データ[ピクセル先頭 + 2] ?? 0
-                        const 現在砂 = this.材質データ[ピクセル先頭 + 3] ?? 0
+                        const 画素先頭 = (gz * this.解像度 + gx) * 4
+                        const 現在草 = this.材質データ[画素先頭 + 0] ?? 0
+                        const 現在泥 = this.材質データ[画素先頭 + 1] ?? 0
+                        const 現在岩 = this.材質データ[画素先頭 + 2] ?? 0
+                        const 現在砂 = this.材質データ[画素先頭 + 3] ?? 0
                         const 加算値 = Math.floor(コサイン減衰 * 255)
-                        const 新草 = 層インデックス === 0 ? Math.min(255, 現在草 + 加算値) : 現在草
-                        const 新泥 = 層インデックス === 1 ? Math.min(255, 現在泥 + 加算値) : 現在泥
-                        const 新岩 = 層インデックス === 2 ? Math.min(255, 現在岩 + 加算値) : 現在岩
-                        const 新砂 = 層インデックス === 3 ? Math.min(255, 現在砂 + 加算値) : 現在砂
+                        const 新草 = 層添字 === 0 ? Math.min(255, 現在草 + 加算値) : 現在草
+                        const 新泥 = 層添字 === 1 ? Math.min(255, 現在泥 + 加算値) : 現在泥
+                        const 新岩 = 層添字 === 2 ? Math.min(255, 現在岩 + 加算値) : 現在岩
+                        const 新砂 = 層添字 === 3 ? Math.min(255, 現在砂 + 加算値) : 現在砂
                         const [正規化草, 正規化泥, 正規化岩, 正規化砂] = 合計255へ正規化する(新草, 新泥, 新岩, 新砂)
-                        this.材質データ[ピクセル先頭 + 0] = 正規化草
-                        this.材質データ[ピクセル先頭 + 1] = 正規化泥
-                        this.材質データ[ピクセル先頭 + 2] = 正規化岩
-                        this.材質データ[ピクセル先頭 + 3] = 正規化砂
+                        this.材質データ[画素先頭 + 0] = 正規化草
+                        this.材質データ[画素先頭 + 1] = 正規化泥
+                        this.材質データ[画素先頭 + 2] = 正規化岩
+                        this.材質データ[画素先頭 + 3] = 正規化砂
                     }
                 }
             }
@@ -78,7 +74,7 @@ export class 地表材質 {
         道路下を泥へベイクする処理(this.材質データ, this.解像度, this.一辺のメートル, this.格子間隔, 道路)
     }
 
-    private 層をインデックスに変換する(層: 地表材質層): number {
+    private 層を添字に変換する(層: 地表材質層): number {
         switch (層) {
             case '草': return 0
             case '泥': return 1

@@ -27,29 +27,29 @@ export class 散布 {
         const 散布結果: Array<散布点> = []
         for (const 候補 of 候補点列) {
             if (散布結果.length >= this.最大散布数) break
-            let 除外フラグ = false
+            let 除外対象 = false
             if (道路 !== null && 道路標本点列.length > 0) {
                 for (const sp of 道路標本点列) {
                     const dx = 候補.x - sp.x
                     const dz = 候補.z - sp.z
                     if (dx * dx + dz * dz < 道路バッファ自乗) {
-                        除外フラグ = true
+                        除外対象 = true
                         break
                     }
                 }
             }
-            if (!除外フラグ) {
+            if (!除外対象) {
                 for (const 建物 of 建物一覧) {
                     const dx = 候補.x - 建物.位置.x
                     const dz = 候補.z - 建物.位置.z
                     const 除外距離 = 建物.基礎半径メートル + 1.0
                     if (dx * dx + dz * dz < 除外距離 * 除外距離) {
-                        除外フラグ = true
+                        除外対象 = true
                         break
                     }
                 }
             }
-            if (!除外フラグ) {
+            if (!除外対象) {
                 散布結果.push(候補)
             }
         }

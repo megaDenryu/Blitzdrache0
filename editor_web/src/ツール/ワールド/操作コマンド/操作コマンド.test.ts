@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import { ワールド編集状態 } from '../編集モデル/index.ts'
-import { 編集コマンドを適用する, 差し戻す } from './index.ts'
+import { 編集コマンドを適用する, 差し戻しを適用する } from './index.ts'
 import type { 編集コマンド, 大域世界構造, チャンク構造 } from '../../../生成/編集資源契約.ts'
 
 function 初期状態を作成する(): ワールド編集状態 {
@@ -131,7 +131,7 @@ describe('操作コマンド層の適用と差し戻し', () => {
 
         // 逆順に差し戻しを実行
         for (let i = 断片一覧.length - 1; i >= 0; i--) {
-            差し戻す(状態, 断片一覧[i]!)
+            差し戻しを適用する(状態, 断片一覧[i]!)
         }
 
         // 差し戻し後の完全バイト一致検査
