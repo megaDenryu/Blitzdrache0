@@ -11,7 +11,7 @@ pub(super) struct 機能台帳の項 {
 }
 
 /// 既定機能を切るのはimageとegui-winitの2件、機能を明示するのはimageとgltfとserde_jsonの3件である。残りは版だけを綴る。
-pub(super) const 機能台帳: [機能台帳の項; 12] = [
+pub(super) const 機能台帳: [機能台帳の項; 13] = [
     項を作る("ash", true, &[]),
     項を作る("ash-window", true, &[]),
     項を作る("winit", true, &[]),
@@ -24,6 +24,7 @@ pub(super) const 機能台帳: [機能台帳の項; 12] = [
     項を作る("rayon", true, &[]),
     項を作る("egui", true, &[]),
     項を作る("egui-winit", false, &[]),
+    項を作る("crossterm", true, &[]),
 ];
 
 pub(super) const fn 項を作る(

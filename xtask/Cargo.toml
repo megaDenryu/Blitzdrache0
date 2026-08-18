@@ -3,11 +3,14 @@ name = "xtask"
 edition.workspace = true
 version.workspace = true
 
-# 開発ツールの唯一の入口。外部のクレートへは依存しない。
-# ワークスペース内のblitz_asset_compilerだけは依存する。生成物の置き場とファイル名の綴りの正本がそこにあり、
-# 写しを持つと検収と生成で綴りが食い違ったときに「ファイルが無い」という遠い場所の失敗になるためである。
+# 開発ツールの唯一の入口。ワークスペース内のblitz_asset_compilerだけは依存する。生成物の置き場と
+# ファイル名の綴りの正本がそこにあり、写しを持つと検収と生成で綴りが食い違ったときに
+# 「ファイルが無い」という遠い場所の失敗になるためである。
+# crosstermは唯一の外部依存であり、`cargo xtask menu`の端末の生モード制御とキー入力読み取りにのみ使う
+# (参照: README「利用ライブラリ」crossterm の採用審査)。
 [dependencies]
 blitz_asset_compiler = { path = "../crates/blitz_asset_compiler" }
+crossterm = { workspace = true }
 
 [lints]
 workspace = true

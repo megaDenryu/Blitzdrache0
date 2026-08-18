@@ -44,6 +44,8 @@ rayon = "1"
 # 参照: README「利用ライブラリ」egui/egui-winit の採用審査(M5)。開発用UI専用、blitz_appのみが依存
 egui = "0.31"
 egui-winit = { version = "0.31", default-features = false }
+# 参照: README「利用ライブラリ」crossterm の採用審査。`cargo xtask menu`の矢印キー入力専用、xtaskのみが依存
+crossterm = "0.28"
 
 [profile.dev]
 # シェーダー・アセット処理はデバッグビルドでも最適化がないと遅すぎるため、依存クレートのみ最適化

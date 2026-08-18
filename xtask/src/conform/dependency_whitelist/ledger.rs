@@ -46,6 +46,7 @@ pub(super) const 白リスト: [(&str, &[&str]); 9] = [
             "egui-winit",
         ],
     ),
-    // 置き場とファイル名の綴りの正本を読むためだけの依存。検収が写しを持たないための唯一の例外である
-    ("xtask", &["blitz_asset_compiler"]),
+    // blitz_asset_compilerは置き場とファイル名の綴りの正本を読むためだけの依存であり、検収が写しを
+    // 持たないための唯一の例外である。crosstermは`cargo xtask menu`の端末の生モード制御専用
+    ("xtask", &["blitz_asset_compiler", "crossterm"]),
 ];
