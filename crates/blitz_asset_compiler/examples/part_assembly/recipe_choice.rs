@@ -8,18 +8,21 @@
 
 use blitz_assembly::組み立て手順;
 
+use super::frame_recipe::壁をはめた一間四方の骨格の手順;
 use super::tavern_recipe::酒場宿屋の手順;
 use super::tree_recipe::標準の樫の木の手順;
 
 const 酒場宿屋の識別子: &str = "Building_TavernInn";
 const 標準の樫の木の識別子: &str = "Tree_Oak_Standard";
+const 壁をはめた一間四方の骨格の識別子: &str = "Frame_Bay_Single_Walled";
 
 pub fn 正解表の識別子から手順を選ぶ(識別子: &str) -> Result<組み立て手順, String> {
     match 識別子 {
         酒場宿屋の識別子 => 酒場宿屋の手順(),
         標準の樫の木の識別子 => 標準の樫の木の手順(),
+        壁をはめた一間四方の骨格の識別子 => 壁をはめた一間四方の骨格の手順(),
         他 => Err(format!(
-            "この突き合わせ器が手順を持たない組み立てである: {他}(持っているのは{酒場宿屋の識別子}と{標準の樫の木の識別子}の2つ)"
+            "この突き合わせ器が手順を持たない組み立てである: {他}(持っているのは{酒場宿屋の識別子}と{標準の樫の木の識別子}と{壁をはめた一間四方の骨格の識別子}の3つ)"
         )),
     }
 }

@@ -8,6 +8,7 @@
 mod assignment;
 mod comparison;
 mod contact_check;
+mod frame_recipe;
 mod part_boxes;
 mod recipe_choice;
 mod report;
