@@ -1,11 +1,13 @@
 import { div, LV2HtmlComponentBase, type DivC } from 'sengen-ui'
-import type { ワールド編集状態 } from './編集モデル/index.ts'
-import { 初期ワールド状態を生成する } from './初期ワールド生成.ts'
+import type { プロジェクト保管庫接続 } from '../../境界/通信/index.ts'
+import { 実サーバー接続 } from '../../境界/通信/index.ts'
+import { ワールド編集状態, 初期ワールド状態を生成する } from './編集モデル/index.ts'
 import { ワールド画面 } from './画面/index.ts'
 import { ワールドエディター状態 } from './ワールドエディター状態.ts'
 import { ワールドエディター同期サービス } from './ワールドエディター同期サービス.ts'
 import { ワールドエディター操作サービス } from './ワールドエディター操作サービス.ts'
 import { パネルイベントを配線する } from './ワールドエディター配線.ts'
+import { 永続化イベントを配線する, 起動時にワールドを読み込む } from './ワールドエディター永続化配線.ts'
 import { ポインタとキー入力を配線する } from './ワールドエディターポインタ配線.ts'
 
 // ワールドパイプラインエディターの編集モデル・画面・描画ループ・操作配線を統括するツールルート。
@@ -16,10 +18,12 @@ export class ワールドパイプラインエディター extends LV2HtmlCompon
     public readonly UI状態: ワールドエディター状態
     public readonly 同期サービス: ワールドエディター同期サービス
     public readonly 操作サービス: ワールドエディター操作サービス
+    public readonly 保管庫: プロジェクト保管庫接続
     private readonly _購読解除: () => void
 
-    public constructor(初期状態?: ワールド編集状態) {
+    public constructor(初期状態?: ワールド編集状態, 保管庫?: プロジェクト保管庫接続) {
         super()
+        this.保管庫 = 保管庫 ?? new 実サーバー接続()
         this.編集状態 = 初期状態 ?? 初期ワールド状態を生成する()
         this.画面 = new ワールド画面(this.編集状態)
         this._componentRoot = div().setStyleCSS({ width: '100%', height: '100%', position: 'relative' }).child(this.画面)
@@ -35,6 +39,12 @@ export class ワールドパイプラインエディター extends LV2HtmlCompon
             this.同期サービス,
             this.編集状態,
         )
+        永続化イベントを配線する(
+            this.画面.部品.インスペクター.部品.永続化,
+            this.保管庫,
+            this.編集状態,
+            this.同期サービス,
+        )
         this._購読解除 = ポインタとキー入力を配線する(
             this.画面.部品,
             this.UI状態,
@@ -45,6 +55,15 @@ export class ワールドパイプラインエディター extends LV2HtmlCompon
 
         this.同期サービス.全体を同期する()
         this.画面.部品.三次元ビュー.描画ループ.開始する()
+
+        if (初期状態 === undefined) {
+            void 起動時にワールドを読み込む(
+                this.画面.部品.インスペクター.部品.永続化,
+                this.保管庫,
+                this.編集状態,
+                this.同期サービス,
+            )
+        }
     }
 
     public 寸法を合わせる(幅: number, 高さ: number, ピクセル比: number = 1): void {

@@ -1,21 +1,26 @@
 import { div, span, LV2HtmlComponentBase, type DivC } from 'sengen-ui'
 import { 外殻レイアウト, アクティビティID } from 'VscodeShellLayout'
+import type { プロジェクト保管庫接続 } from '../境界/通信/index.ts'
+import { 実サーバー接続 } from '../境界/通信/index.ts'
 import type { ツール項目, 実行可能ツール } from './ツール定義.ts'
-import { ツール登録一覧 } from './ツール一覧.ts'
+import { ツール登録一覧を生成する } from './ツール一覧.ts'
 import { 外殻ルート } from './スタイル.css.ts'
 
 // VscodeShellLayoutを構築し、複数のツールをアクティビティバーから切り替えてホストする外殻。
 export class エディター外殻 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     public readonly シェル: 外殻レイアウト
+    public readonly 保管庫: プロジェクト保管庫接続
     private readonly _ホスト: DivC
     private readonly _ツールマップ: Map<string, ツール項目> = new Map<string, ツール項目>()
     private _現在ツール: 実行可能ツール | null = null
     private _現在ツールID: string | null = null
 
-    public constructor() {
+    public constructor(保管庫?: プロジェクト保管庫接続) {
         super()
-        for (const t of ツール登録一覧) {
+        this.保管庫 = 保管庫 ?? new 実サーバー接続()
+        const 登録一覧 = ツール登録一覧を生成する(this.保管庫)
+        for (const t of 登録一覧) {
             this._ツールマップ.set(t.識別子, t)
         }
 
@@ -33,7 +38,7 @@ export class エディター外殻 extends LV2HtmlComponentBase {
 
         this.シェル = new 外殻レイアウト({
             タイトル: 'Blitzdrache0 エディター',
-            アクティビティ項目一覧: ツール登録一覧.map((t) => ({
+            アクティビティ項目一覧: 登録一覧.map((t) => ({
                 id: アクティビティID(t.識別子),
                 ラベル: t.ラベル,
                 アイコン: アイコン描画(t.アイコン記号),

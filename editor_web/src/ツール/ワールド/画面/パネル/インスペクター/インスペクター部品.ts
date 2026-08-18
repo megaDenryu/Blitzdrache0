@@ -5,6 +5,7 @@ import { 地表ペイントパネル } from '../地表ペイント/地表ペイ�
 import { 道路パネル } from '../道路/道路パネル.ts'
 import { 建物パネル } from '../建物/建物パネル.ts'
 import { 散布パネル } from '../散布/散布パネル.ts'
+import { 永続化パネル } from '../永続化/永続化パネル.ts'
 
 // インスペクターパネルが集約する各設定サブパネルの部品DTO。
 export class インスペクター部品 {
@@ -15,6 +16,7 @@ export class インスペクター部品 {
         public readonly 道路: 道路パネル,
         public readonly 建物: 建物パネル,
         public readonly 散布: 散布パネル,
+        public readonly 永続化: 永続化パネル,
     ) {}
 
     public static 作る(初期モード: 編集モード): インスペクター部品 {
@@ -25,6 +27,7 @@ export class インスペクター部品 {
             new 道路パネル(8.0, 14.0, 80),
             new 建物パネル(),
             new 散布パネル(5.5),
+            new 永続化パネル(),
         )
     }
 
@@ -35,5 +38,6 @@ export class インスペクター部品 {
         this.道路.delete()
         this.建物.delete()
         this.散布.delete()
+        this.永続化.delete()
     }
 }
