@@ -1,0 +1,44 @@
+import type { チャンク座標, チャンク構造, 散布の設定, 位置3次元 } from '../../../生成/編集資源契約.ts'
+import { 道路スプライン } from './道路スプライン.ts'
+import { 建物の管理 } from './建物.ts'
+import { 高さ場 } from './高さ場.ts'
+import { 地表材質 } from './地表材質.ts'
+
+// 単一チャンク内の地形高さ・地表材質・道路・建物・散布の各モデルを保持する。
+export class チャンク編集状態 {
+    public readonly 座標: チャンク座標
+    public readonly 道路: 道路スプライン
+    public readonly 建物: 建物の管理
+    public 散布: 散布の設定
+    public readonly 高さ場: 高さ場
+    public readonly 地表材質: 地表材質
+
+    public constructor(
+        座標: チャンク座標,
+        構造: チャンク構造,
+        一辺のメートル: number,
+        格子解像度: number,
+        初期高さデータ?: Float32Array,
+        初期材質データ?: Uint8Array,
+    ) {
+        this.座標 = { x: 座標.x, z: 座標.z }
+        this.道路 = new 道路スプライン(構造.道路)
+        this.建物 = new 建物の管理(構造.建物一覧)
+        this.散布 = { 最小間隔メートル: 構造.散布.最小間隔メートル, 乱数の種: 構造.散布.乱数の種 }
+        this.高さ場 = new 高さ場(格子解像度, 一辺のメートル, 初期高さデータ)
+        this.地表材質 = new 地表材質(格子解像度, 一辺のメートル, 初期材質データ)
+    }
+
+    public 構造を取得する(): チャンク構造 {
+        return {
+            道路: {
+                制御点列: this.道路.制御点列.map((p: 位置3次元) => ({ x: p.x, y: p.y, z: p.z })),
+                全幅メートル: this.道路.全幅メートル,
+                散布除外バッファメートル: this.道路.散布除外バッファメートル,
+                細分割数: this.道路.細分割数,
+            },
+            建物一覧: this.建物.一覧を取得する(),
+            散布: { ...this.散布 },
+        }
+    }
+}
