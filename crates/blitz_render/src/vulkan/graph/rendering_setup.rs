@@ -10,7 +10,7 @@ use super::depth_attachment::深度アタッチメント;
 use super::registry::画像レジストリ;
 use crate::vulkan::command_sink::GPU命令の積み先;
 
-pub(super) fn 開始する(
+pub(super) fn 動的レンダリングを開始する(
     積み先: GPU命令の積み先<'_>,
     レジストリ: &画像レジストリ,
     カラー: カラー添付列,
@@ -82,7 +82,7 @@ fn ロードオペレーションとカラークリア値(
     }
 }
 
-pub(super) fn 終了する(積み先: GPU命令の積み先<'_>) {
-    // 安全性: 対応する開始する呼び出しで記録中のrenderingを閉じる。
+pub(super) fn 動的レンダリングを終了する(積み先: GPU命令の積み先<'_>) {
+    // 安全性: 対応する動的レンダリングを開始する呼び出しで記録中のrenderingを閉じる。
     unsafe { 積み先.論理デバイス().cmd_end_rendering(積み先.コマンドバッファ()) };
 }

@@ -9,7 +9,7 @@ use std::collections::HashMap;
 use ash::vk;
 
 use super::空のパス;
-use crate::vulkan::graph::barrier_derivation::{導出する, 画像バリア記述};
+use crate::vulkan::graph::barrier_derivation::{バリアを導出する, 画像バリア記述};
 use crate::vulkan::graph::handle::画像ハンドル;
 use crate::vulkan::graph::initial_state::{前フレーム深度書き込み直後状態, 取得直後の色画像状態};
 use crate::vulkan::graph::pass_resource_usage::パスリソース使用;
@@ -31,7 +31,7 @@ fn 続けて書く2パスの2つめの前のバリア(初期状態の値: 画像
             ..空のパス("ロードしてから書くパス")
         },
     ];
-    let 結果 = 導出する(&初期状態, &パス列, &[]);
+    let 結果 = バリアを導出する(&初期状態, &パス列, &[]);
     assert_eq!(結果[1].バリア一覧.len(), 1, "書き込みが絡むためバリアは省略されない");
     結果[1].バリア一覧[0]
 }

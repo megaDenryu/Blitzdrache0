@@ -7,7 +7,7 @@ mod difference_tests;
 
 use std::collections::HashMap;
 
-use super::{導出する, 遷移地点};
+use super::{バリアを導出する, 遷移地点};
 use crate::vulkan::graph::handle::画像ハンドル;
 use crate::vulkan::graph::initial_state::{前フレーム深度書き込み直後状態, 取得直後の色画像状態};
 use crate::vulkan::graph::pass_resource_usage::パスリソース使用;
@@ -44,7 +44,7 @@ fn シーン描画から読み戻しコピー提示までの3パス列で期待�
     ];
     let 最終用途 = [(カラー, 画像用途::提示)];
 
-    let 結果 = 導出する(&初期状態, &パス列, &最終用途);
+    let 結果 = バリアを導出する(&初期状態, &パス列, &最終用途);
 
     assert_eq!(結果.len(), 3, "パス数2 + グラフ終端で3地点になるはず");
 

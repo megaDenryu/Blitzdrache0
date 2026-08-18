@@ -11,7 +11,7 @@ use super::registry::画像レジストリ;
 use crate::vulkan::command_sink::GPU命令の積み先;
 
 /// 画像・バッファのバリア一覧を1回の`cmd_pipeline_barrier2`で発行する。両方空なら何もしない。
-pub(super) fn 発行する(
+pub(super) fn バリアを発行する(
     積み先: GPU命令の積み先<'_>,
     画像レジストリ: &画像レジストリ,
     バッファレジストリ: &バッファレジストリ,

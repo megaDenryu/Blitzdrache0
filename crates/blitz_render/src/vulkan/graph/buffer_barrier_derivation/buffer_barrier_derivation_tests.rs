@@ -4,7 +4,7 @@
 
 use std::collections::HashMap;
 
-use super::{導出する, 差分を計算する};
+use super::{バッファバリアを導出する, 差分を計算する};
 use crate::vulkan::graph::handle::バッファハンドル;
 use crate::vulkan::graph::initial_state::前フレーム粒子読み直後状態;
 use crate::vulkan::graph::pass_resource_usage::パスリソース使用;
@@ -35,7 +35,7 @@ fn コンピュートで書いてから読む(読み用途: バッファ用途) 
             ..空のパス("読み")
         },
     ];
-    導出する(&初期状態, &パス列)
+    バッファバリアを導出する(&初期状態, &パス列)
 }
 
 #[test]
@@ -84,7 +84,7 @@ fn 差分がない地点はバリア一覧が空になる() {
     初期状態.insert(粒子, 前フレーム粒子読み直後状態());
 
     let パス列 = vec![空のパス("何もしないパス")];
-    let 結果 = 導出する(&初期状態, &パス列);
+    let 結果 = バッファバリアを導出する(&初期状態, &パス列);
 
     assert_eq!(結果.len(), 1);
     assert!(結果[0].is_empty());
