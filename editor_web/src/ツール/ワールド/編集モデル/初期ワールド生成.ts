@@ -17,16 +17,17 @@ export function 初期ワールド状態を生成する(): ワールド編集状
     }
 
     const 状態 = new ワールド編集状態(大域構造)
-    const 解像度 = 128
-    const チャンク一辺 = 256
-    const 格子間隔 = チャンク一辺 / (解像度 - 1)
+    // チャンク格子の頂点数はサーバーの契約と同じく「チャンクあたり格子解像度+1」(1px重複共有)
+    const 頂点数 = 大域構造.区画割り.チャンクあたり格子解像度 + 1
+    const チャンク一辺 = 大域構造.区画割り.一辺のメートル
+    const 格子間隔 = チャンク一辺 / (頂点数 - 1)
     const 半分 = チャンク一辺 / 2
 
-    const 高さデータ = new Float32Array(解像度 * 解像度)
-    const 材質データ = new Uint8Array(解像度 * 解像度 * 4)
+    const 高さデータ = new Float32Array(頂点数 * 頂点数)
+    const 材質データ = new Uint8Array(頂点数 * 頂点数 * 4)
 
-    for (let gz = 0; gz < 解像度; gz++) {
-        for (let gx = 0; gx < 解像度; gx++) {
+    for (let gz = 0; gz < 頂点数; gz++) {
+        for (let gx = 0; gx < 頂点数; gx++) {
             const wx = gx * 格子間隔 - 半分
             const wz = gz * 格子間隔 - 半分
 
@@ -34,7 +35,7 @@ export function 初期ワールド状態を生成する(): ワールド編集状
             h += Math.sin(wx * 0.05 + 1.2) * Math.sin(wz * 0.05) * 3.0
             h += Math.sin(wx * 0.1) * Math.cos(wz * 0.1) * 0.8
 
-            const 添字 = gz * 解像度 + gx
+            const 添字 = gz * 頂点数 + gx
             高さデータ[添字] = h
 
             材質データ[添字 * 4 + 0] = 255
