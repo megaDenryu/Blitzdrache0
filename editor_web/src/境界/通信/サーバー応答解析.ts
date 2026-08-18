@@ -1,5 +1,5 @@
 import type { サーバーエラー } from './サーバー通信結果.ts'
-import { isObject, isString } from './契約検証/オブジェクト判定.ts'
+import { オブジェクトか, 文字列か } from './契約検証/オブジェクト判定.ts'
 
 // crates/editor_server の失敗応答は `{ "種別": "...", "説明": "..." }` の形で返される。
 export async function 応答からエラーを読み取る(応答: Response): Promise<サーバーエラー> {
@@ -19,8 +19,9 @@ export function 通信例外をエラーへ変換する(原因: unknown): サー
 }
 
 function サーバーエラーの形か(値: unknown): 値 is サーバーエラー {
-    if (!isObject(値)) {
+    if (!オブジェクトか(値)) {
         return false
     }
-    return isString(値['種別']) && isString(値['説明'])
+    return 文字列か(値['種別']) && 文字列か(値['説明'])
 }
+
