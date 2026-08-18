@@ -2,6 +2,7 @@
 //! 番号入力だけの簡易一覧から選び、選ばれたコマンドをdispatchの対応表(`dispatch::割り当てる`)へ
 //! そのまま渡して実行する。名前→実装の対応をここへ二重に持たないのはこのためである。
 
+mod argument_line;
 mod argument_prompt;
 mod cursor;
 mod display_state;
