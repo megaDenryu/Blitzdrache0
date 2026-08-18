@@ -9,7 +9,7 @@ use crate::error::レンダラーエラー;
 use crate::shader_set::シェーダー一式;
 use crate::vulkan::allocator::GPU資源の確保係;
 
-pub(super) fn 生成する(
+pub(super) fn 空中遠近合成パイプラインを生成する(
     確保係: &GPU資源の確保係<'_>,
     カラー形式: vk::Format,
     ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],

@@ -76,10 +76,11 @@ impl 材質描画族パイプライン台帳 {
     /// 前提: レンダラー全体の破棄順を持つ`renderer/destroy.rs`が、GPU待機の済んだ1段として呼ぶ。
     /// パイプラインを全部捨ててからレイアウトを捨てる。レイアウトを参照するパイプラインが残っていてはならないためである。
     pub(crate) fn 破棄する(&mut self, device: &ash::Device) {
-        self.シーン.破棄する(|pipeline| device_supplier::pipelineを破棄する(device, pipeline));
-        self.シャドウ.破棄する(|pipeline| device_supplier::pipelineを破棄する(device, pipeline));
+        self.シーン.破棄する(|pipeline| device_supplier::パイプラインを破棄する(device, pipeline));
+        self.シャドウ
+            .破棄する(|pipeline| device_supplier::パイプラインを破棄する(device, pipeline));
         self.深度プリパス
-            .破棄する(|pipeline| device_supplier::pipelineを破棄する(device, pipeline));
+            .破棄する(|pipeline| device_supplier::パイプラインを破棄する(device, pipeline));
         self.レイアウト.破棄する(device);
     }
 }

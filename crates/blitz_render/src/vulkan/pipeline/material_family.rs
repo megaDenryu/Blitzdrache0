@@ -25,7 +25,7 @@ impl<'借用> 材質描画族のパイプラインの生成係<'借用> {
         Self { 確保係, シェーダー }
     }
 
-    pub(crate) fn シーンのpipelineを生成する(
+    pub(crate) fn シーンのパイプラインを生成する(
         &self,
         カラー形式: vk::Format,
         深度形式: vk::Format,
@@ -33,7 +33,7 @@ impl<'借用> 材質描画族のパイプラインの生成係<'借用> {
         layout: vk::PipelineLayout,
         深度状態: 色パスの深度状態,
     ) -> Result<vk::Pipeline, レンダラーエラー> {
-        create::生成する(
+        create::グラフィックスパイプラインを生成する(
             self.確保係,
             カラー形式,
             深度形式,
@@ -46,21 +46,21 @@ impl<'借用> 材質描画族のパイプラインの生成係<'借用> {
     }
 
     /// 深度プリパスのパイプライン。色パスと同じレイアウトと同じ`シェーダー一式`を使い、頂点段だけを使う。
-    pub(crate) fn 深度プリパスのpipelineを生成する(
+    pub(crate) fn 深度プリパスのパイプラインを生成する(
         &self,
         深度形式: vk::Format,
         標本数: vk::SampleCountFlags,
         layout: vk::PipelineLayout,
     ) -> Result<vk::Pipeline, レンダラーエラー> {
-        depth_prepass_pipeline::生成する(self.確保係, 深度形式, 標本数, layout, self.シェーダー)
+        depth_prepass_pipeline::深度プリパスのパイプラインを生成する(self.確保係, 深度形式, 標本数, layout, self.シェーダー)
     }
 
-    pub(crate) fn シャドウのpipelineを生成する(
+    pub(crate) fn シャドウのパイプラインを生成する(
         &self,
         深度形式: vk::Format,
         標本数: vk::SampleCountFlags,
         layout: vk::PipelineLayout,
     ) -> Result<vk::Pipeline, レンダラーエラー> {
-        shadow_pipeline::pipelineを生成する(self.確保係, 深度形式, 標本数, layout, self.シェーダー)
+        shadow_pipeline::シャドウパイプラインを生成する(self.確保係, 深度形式, 標本数, layout, self.シェーダー)
     }
 }

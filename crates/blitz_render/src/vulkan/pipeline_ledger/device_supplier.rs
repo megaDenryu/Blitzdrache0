@@ -76,13 +76,13 @@ impl パイプライン供給元 for デバイスパイプライン供給元<'_>
     }
 
     fn 破棄する(&mut self, 実体: vk::Pipeline) {
-        pipelineを破棄する(self.確保係.論理デバイス(), 実体);
+        パイプラインを破棄する(self.確保係.論理デバイス(), 実体);
     }
 }
 
 /// 台帳が所有するパイプライン1本の破棄。台帳の3つの表と供給元の差し替えがこの1つを共有する。
 /// 前提: 呼び出し元がGPUの使用完了を保証してから呼ぶ。
-pub(super) fn pipelineを破棄する(device: &ash::Device, pipeline: vk::Pipeline) {
+pub(super) fn パイプラインを破棄する(device: &ash::Device, pipeline: vk::Pipeline) {
     // 安全性: pipelineは台帳が唯一の所有者であり、破棄時点でGPU側の使用完了を呼び出し元が保証する。
     unsafe { device.destroy_pipeline(pipeline, None) };
 }

@@ -18,7 +18,7 @@ use crate::vulkan::shadow_push::シャドウ描画定数;
 
 use super::パイプラインレイアウト;
 
-pub(super) use create::生成する as pipelineを生成する;
+pub(super) use create::シャドウパイプラインを生成する;
 
 pub(crate) struct シャドウパイプライン {
     pub(crate) handle: vk::Pipeline,
@@ -35,8 +35,13 @@ impl シャドウパイプライン {
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
         let layout = パイプラインレイアウト::確保する(確保係, ディスクリプタlayout一覧, シャドウ描画定数::プッシュ定数範囲())?;
-        match create::生成する(確保係, シャドウマップ形式, super::描画の標本数, layout.レイアウトのハンドル(), シェーダー)
-        {
+        match create::シャドウパイプラインを生成する(
+            確保係,
+            シャドウマップ形式,
+            super::描画の標本数,
+            layout.レイアウトのハンドル(),
+            シェーダー,
+        ) {
             Ok(handle) => Ok(Self { handle, layout }),
             Err(誤り) => {
                 layout.破棄する(確保係.論理デバイス());

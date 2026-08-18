@@ -13,7 +13,7 @@ use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::pipeline::色パスの深度状態;
 
 use super::create::台帳の成分;
-use super::device_supplier::{pipelineを破棄する, デバイスパイプライン供給元, 材質描画族};
+use super::device_supplier::{デバイスパイプライン供給元, パイプラインを破棄する, 材質描画族};
 use super::entry_table::パイプライン記載表;
 use super::layouts::材質描画族のレイアウト;
 use super::required_keys;
@@ -45,7 +45,7 @@ pub(super) fn 三族の表を構築する(
     {
         Ok(表) => 表,
         Err(誤り) => {
-            シーン.破棄する(|pipeline| pipelineを破棄する(device, pipeline));
+            シーン.破棄する(|pipeline| パイプラインを破棄する(device, pipeline));
             return Err(誤り);
         }
     };
@@ -55,8 +55,8 @@ pub(super) fn 三族の表を構築する(
     match パイプライン記載表::構築する(&mut プリパス供給元, &プリパスのキー一覧) {
         Ok(深度プリパス) => Ok((シーン, シャドウ, 深度プリパス)),
         Err(誤り) => {
-            シャドウ.破棄する(|pipeline| pipelineを破棄する(device, pipeline));
-            シーン.破棄する(|pipeline| pipelineを破棄する(device, pipeline));
+            シャドウ.破棄する(|pipeline| パイプラインを破棄する(device, pipeline));
+            シーン.破棄する(|pipeline| パイプラインを破棄する(device, pipeline));
             Err(誤り)
         }
     }

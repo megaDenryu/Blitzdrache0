@@ -10,7 +10,7 @@ use crate::shader_set::シェーダー一式;
 use crate::vulkan::allocator::GPU資源の確保係;
 
 #[allow(clippy::too_many_arguments)]
-pub(super) fn 生成する(
+pub(super) fn グラフィックスパイプラインを生成する(
     確保係: &GPU資源の確保係<'_>,
     カラー形式: vk::Format,
     深度形式: vk::Format,

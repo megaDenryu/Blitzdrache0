@@ -29,7 +29,7 @@ impl 空パイプライン {
         ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
         シェーダー: &シェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(確保係, カラー形式, 深度形式, ディスクリプタlayout一覧, シェーダー)
+        create::空パイプラインを生成する(確保係, カラー形式, 深度形式, ディスクリプタlayout一覧, シェーダー)
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {
