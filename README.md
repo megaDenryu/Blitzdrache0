@@ -152,6 +152,46 @@ glTF・画像 → blitz_asset_compiler → アセット実行時形式 → blitz
 - 差し替えコスト: 低。使うのは`xtask/src/command_ui/menu`配下の端末制御を持つ1つの型（`端末セッション`）だけに閉じており、他のxtaskコマンドはcrosstermを知らない
 - 制約: `xtask`だけが依存する
 
+### serde + serde_json — 編集資源の直列化（ゲーム開発用エディター段1で採用）
+
+- 何か: Rustのデータ構造をJSON等へ直列化・逆直列化する事実上の標準ライブラリ一式
+- メリット: 型からの導出（derive）で直列化コードを書かずに済む。ts-rsがserdeの型情報を読んでTypeScript契約を生成するため、この2つは不可分
+- デメリット: derive proc-macroのぶんコンパイル時間へ寄与する
+- 採用理由: `プロジェクト保管庫`（段2）とts-rs契約生成の両方がserdeの型情報を前提にする。エンジン本体（blitz_*）はこれまでJSONを持たなかったが、editor_serverはブラウザとJSONで通信するブラウザ側エディターであり、エンジンの理論値性能志向とは別の関心事に閉じる
+- 再構築判定: (a) 定型コード生成。超える対象が無く、価値は記述コストの削減のみ
+- 差し替えコスト: 低。`editor_server`だけが依存し、blitz_*エンジン本体は一切知らない
+- 制約: `editor_server`だけが依存する
+
+### axum + tower + tower-http — 編集サーバーのHTTP層（ゲーム開発用エディター段1で採用）
+
+- 何か: tokio上のHTTPフレームワーク(axum)と、そのミドルウェア基盤(tower)、静的ファイル配信等の既製ミドルウェア(tower-http)。GameScriptingTheoryのeditor_serverで先行採用済み
+- メリット: ルーティング・状態注入・静的配信という定型のHTTPサーバー実装を自作せずに済む。tower::Serviceトレイトの上に薄い独自層（経路正規化アプリ）を重ねられるため、非ASCII経路のパーセント符号化という実地の落とし穴だけを自前で解決すればよい
+- デメリット: HTTP・非同期ランタイムという、このエンジンが本来関わらない関心事の依存が増える。ただし editor_server はエンジン本体から独立したブラウザ用ツールであり、blitz_*クレートはこれらを一切知らない
+- 採用理由: ブラウザ向けの開発ツールサーバーを自作のHTTP実装で書く利益が無い（枯れた仕様の実装であり、このエンジンの存在意義に関わらない）。GameScriptingTheoryで既に同じ構成が動いており、実装形を引き写せる
+- 再構築判定: (a) 導出可能な定型実装。HTTP/1.1というよく仕様化されたプロトコルの実装であり、自作の利益がない
+- 差し替えコスト: 低〜中。依存は`editor_server`クレート1つに閉じ、公開APIは`ルーターを組み立てる`等のこのクレートの語彙だけを出す
+- 制約: `editor_server`だけが依存する
+
+### tokio — 非同期ランタイム（ゲーム開発用エディター段1で採用）
+
+- 何か: axumが要求する非同期ランタイム。Rustの非同期エコシステムの事実上の標準
+- メリット: axumの実行に必須。マルチスレッドランタイムが1リクエストごとの並行処理を素直に扱える
+- デメリット: このエンジンの本体（blitz_app等）はフレームループを自前で持ちtokioを使わないため、editor_serverだけが持つ独立した実行モデルになる
+- 採用理由: axumを使う以上必須
+- 再構築判定: (b)寄り。非同期I/Oのスケジューリングという経験的知識の蓄積があるが、editor_serverの用途では自作する動機が無い
+- 差し替えコスト: 低。`editor_server`だけが依存する
+- 制約: `editor_server`だけが依存する
+
+### ts-rs — Rust型からTypeScript型契約の生成（ゲーム開発用エディター段1で採用）
+
+- 何か: Rustの型定義からTypeScriptの型宣言を生成するderiveマクロ
+- メリット: 編集資源の型契約をRust側1箇所を正本にでき、TypeScript側の写しを手で書いて食い違わせる二重管理を防ぐ。GameScriptingTheoryの`sprite_cut`・`editor_server`で先行採用済みの「鮮度検査テスト」様式をそのまま引き写せる
+- デメリット: 生成結果の型の書式（プロパティの並び順・オブジェクト型の綴り）がライブラリ任せになる
+- 採用理由: 判断1（操作コマンドはTS側1実装）・判断2（永続化境界）を支える型契約の正本をRust側に置くという設計判断（`_doc/設計/ゲーム開発用エディター基盤.md`）に必須
+- 再構築判定: (a) 導出可能な定型変換。型情報からの機械的な文字列生成であり、自作の動機が薄い
+- 差し替えコスト: 低。`editor_server`の`typescript`フィーチャの中に閉じ、既定ビルドでは依存しない（`optional = true`）
+- 制約: `editor_server`だけが依存する（`typescript`フィーチャのみ）
+
 ## 候補ライブラリ（未採用。採用時に上記方針の審査を通す）
 
 以下は計画上の候補であり、**まだ採用していない**。各マイルストーン着手時に説明責任テストを通し、本節へ移してから使う。
@@ -170,6 +210,8 @@ cargo xtask compile-assets  # glTF・画像・高さ格子からtarget/runtime_a
 cargo xtask watch-assets    # ソース依存を監視し、変更時に実行時アセットを再生成
 cargo run -p blitz_app  # 実行（--scene <id> / --dev-ui / --particles / --report-gpu-times 等はcli.rs参照）
 cargo xtask             # 開発ツールの一覧表示（ツールの唯一の入口）
+cargo xtask editor      # ゲーム開発用エディター(ブラウザ)の編集サーバーとeditor_webの開発サーバーを併せて起動する(段1: 環境構築のみ実装済み)
+cargo xtask contract-export # editor_serverのRust側の型からeditor_web/src/生成配下のTypeScript契約ファイルを生成し直す
 cargo xtask verify      # 検証の標準列 (conform -> fmt --check -> check -> clippy -D warnings -> test)
 cargo xtask conform     # 規約適合の機械検査（行数・禁止文字列・依存白リスト・参照パス実在・文書内の節参照実在・vulkan配下のDrop実装禁止）
 cargo xtask type-metrics  # 型ごとのフィールド数・impl分散ファイル数・メソッド数を多い順に表示（違反判定はしない計測専用）

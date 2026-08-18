@@ -1,0 +1,29 @@
+[package]
+name = "editor_server"
+edition.workspace = true
+version.workspace = true
+# contract_exportという第2の実行ファイルがあるため、cargo runの既定をサーバー本体に固定する
+default-run = "editor_server"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+axum = { workspace = true }
+tokio = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+ts-rs = { workspace = true, optional = true }
+
+[dev-dependencies]
+
+[features]
+typescript = ["dep:ts-rs"]
+
+[[bin]]
+name = "contract_export"
+path = "src/bin/contract_export.rs"
+required-features = ["typescript"]
+
+[lints]
+workspace = true

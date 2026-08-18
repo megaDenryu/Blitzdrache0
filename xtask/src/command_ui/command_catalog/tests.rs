@@ -8,9 +8,9 @@ use super::全件;
 
 /// dispatchの各分類ファイルが持つ`"名前" => Some(...)`という形の match式から、
 /// コマンド名の集合を取り出す。分類ファイルの数だけ読む対象を持つのは、dispatchが
-/// command_catalogと同じ7分類へ実装を分けているためである。
+/// command_catalogと同じ8分類へ実装を分けているためである。
 fn dispatchのコマンド名一覧() -> BTreeSet<&'static str> {
-    let ソース一覧: [&str; 7] = [
+    let ソース一覧: [&str; 8] = [
         include_str!("../../dispatch/core.rs"),
         include_str!("../../dispatch/asset.rs"),
         include_str!("../../dispatch/benchmark.rs"),
@@ -18,6 +18,7 @@ fn dispatchのコマンド名一覧() -> BTreeSet<&'static str> {
         include_str!("../../dispatch/play.rs"),
         include_str!("../../dispatch/render_check.rs"),
         include_str!("../../dispatch/sky_environment.rs"),
+        include_str!("../../dispatch/editor.rs"),
     ];
     let mut 結果 = BTreeSet::new();
     for ソース in ソース一覧 {

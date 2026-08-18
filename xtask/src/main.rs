@@ -1,5 +1,4 @@
 //! 開発ツールの唯一の入口。`cargo xtask <コマンド>` で呼ぶ。参照: CLAUDE.md「ツールとドキュメントの配置」
-
 mod acceptance;
 mod asset_generator;
 mod atmosphere_lut;
@@ -13,6 +12,7 @@ mod cluster_lights;
 mod command_ui;
 mod compile_assets;
 mod conform;
+mod contract_export;
 mod count_consistency;
 mod csm_seam;
 mod damage_band;
@@ -22,6 +22,7 @@ mod derived_environment;
 mod dispatch;
 mod distant_environment;
 mod distant_view;
+mod editor;
 mod fetch_assets;
 mod file_scan;
 mod fox_tour_launch;
@@ -94,7 +95,6 @@ mod village_draw;
 mod visual_sample_world;
 mod watch_assets;
 mod world_setup;
-
 fn main() -> std::process::ExitCode {
     dispatch::コマンド行の引数を割り当てる()
 }

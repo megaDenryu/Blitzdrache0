@@ -6,6 +6,7 @@
 mod asset;
 mod benchmark;
 mod core;
+mod editor;
 mod entry;
 mod measurement;
 mod play;
@@ -24,6 +25,7 @@ pub(crate) fn 全件() -> Vec<コマンド項目> {
         play::一覧,
         render_check::一覧,
         sky_environment::一覧,
+        editor::一覧,
     ]
     .into_iter()
     .flatten()

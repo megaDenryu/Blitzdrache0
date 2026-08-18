@@ -1,0 +1,24 @@
+//! エディター関連コマンドの割り当て。command_catalogの`editor`分類と同じ範囲
+//! (エディターサーバーの起動・型契約の書き出しの2件)を担当する。
+
+use std::process::ExitCode;
+
+use crate::{contract_export, editor};
+
+pub(super) fn 割り当てる(名前: &str, _引数一覧: &[String]) -> Option<ExitCode> {
+    match 名前 {
+        "editor" => Some(実行結果をコードへ変換する(editor::実行する())),
+        "contract-export" => Some(実行結果をコードへ変換する(contract_export::実行する())),
+        _ => None,
+    }
+}
+
+fn 実行結果をコードへ変換する(結果: Result<(), String>) -> ExitCode {
+    match 結果 {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(誤り) => {
+            eprintln!("[xtask] {誤り}");
+            ExitCode::FAILURE
+        }
+    }
+}

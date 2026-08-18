@@ -3,7 +3,7 @@
 //! 検査の工程から分けているのは、クレートや依存を足すときに触るのがこの表だけであり、工程の側は触らないためである。
 //! 触れる対象と変わる理由が別であることが分ける根拠である。
 
-pub(super) const 白リスト: [(&str, &[&str]); 9] = [
+pub(super) const 白リスト: [(&str, &[&str]); 10] = [
     ("blitz_math", &["glam"]),
     ("blitz_engine", &["blitz_math", "blitz_render", "thiserror"]),
     // 部品の接合と組み立ての層。glTFもファイルシステムも知らない純粋計算であることを、
@@ -49,4 +49,10 @@ pub(super) const 白リスト: [(&str, &[&str]); 9] = [
     // blitz_asset_compilerは置き場とファイル名の綴りの正本を読むためだけの依存であり、検収が写しを
     // 持たないための唯一の例外である。crosstermは`cargo xtask menu`の端末の生モード制御専用
     ("xtask", &["blitz_asset_compiler", "crossterm"]),
+    // ゲーム開発用エディター段1で新設。ブラウザからの静的配信と生存確認の口だけを持つ独立サーバーであり、
+    // blitz_*のエンジン本体クレートには依存しない(参照: `_doc/設計/ゲーム開発用エディター基盤.md`)
+    (
+        "editor_server",
+        &["serde", "serde_json", "thiserror", "axum", "tokio", "tower", "tower-http", "ts-rs"],
+    ),
 ];

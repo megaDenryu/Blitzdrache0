@@ -1,0 +1,28 @@
+{
+  "name": "editor_web",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "node --experimental-transform-types --test \"src/!(submodules)/**/*.test.ts\""
+  },
+  "dependencies": {
+    "@vanilla-extract/css": "^1.18.0",
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@types/three": "^0.180.0",
+    "@vanilla-extract/vite-plugin": "^5.1.4",
+    "eslint": "^9.39.5",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-boundaries": "^7.2.0",
+    "eslint-plugin-import": "^2.32.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.66.0",
+    "vite": "^6.3.5"
+  }
+}

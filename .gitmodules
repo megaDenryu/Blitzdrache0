@@ -1,0 +1,9 @@
+[submodule "editor_web/submodules/SengenUI"]
+	path = editor_web/submodules/SengenUI
+	url = https://github.com/megaDenryu/SengenUI.git
+[submodule "editor_web/submodules/VscodeShellLayout"]
+	path = editor_web/submodules/VscodeShellLayout
+	url = git@github.com:megaDenryu/VscodeShellLayout.git
+[submodule "editor_web/submodules/SengenThree"]
+	path = editor_web/submodules/SengenThree
+	url = https://github.com/megaDenryu/SengenThree.git
