@@ -39,9 +39,7 @@ export const 生成ボタン = style({
     color: '#cbd5e1',
     cursor: 'pointer',
     transition: 'all 0.15s ease',
-    ':hover': {
-        backgroundColor: '#334155',
-    },
+    ':hover': { backgroundColor: '#334155' },
 })
 
 export const アクション区画 = style({
@@ -62,9 +60,7 @@ export const 平坦化ボタン = style({
     color: '#ffffff',
     cursor: 'pointer',
     transition: 'all 0.15s ease',
-    ':hover': {
-        backgroundColor: '#10b981',
-    },
+    ':hover': { backgroundColor: '#10b981' },
 })
 
 export const 行ボタン群 = style({
@@ -81,9 +77,7 @@ export const 接地ボタン = style({
     backgroundColor: '#1e293b',
     color: '#cbd5e1',
     cursor: 'pointer',
-    ':hover': {
-        backgroundColor: '#334155',
-    },
+    ':hover': { backgroundColor: '#334155' },
 })
 
 export const 削除ボタン = style({
@@ -95,8 +89,5 @@ export const 削除ボタン = style({
     backgroundColor: '#4c0519',
     color: '#fda4af',
     cursor: 'pointer',
-    ':disabled': {
-        opacity: 0.3,
-        cursor: 'not-allowed',
-    },
+    ':disabled': { opacity: 0.3, cursor: 'not-allowed' },
 })

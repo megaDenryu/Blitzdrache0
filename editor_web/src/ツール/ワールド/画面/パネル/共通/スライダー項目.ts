@@ -1,17 +1,30 @@
 import { div, span, input, DivC, SpanC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
-import * as styles from './スタイル.css.ts'
+import { 行コンテナ, ラベル行, 値ラベル, スライダー入力 } from './スタイル.css.ts'
 
 export interface Iスライダー配線 {
     readonly on値変更: (新値: number) => void
+}
+
+class スライダー値ラベル extends SpanC {
+    private readonly _接尾辞: string
+
+    public constructor(初期値: number, 接尾辞: string) {
+        super({ class: 値ラベル, text: `${初期値}${接尾辞}` })
+        this._接尾辞 = 接尾辞
+    }
+
+    public 値を更新する(新値: number): this {
+        this.setTextContent(`${新値}${this._接尾辞}`)
+        return this
+    }
 }
 
 // 項目名・現在値ラベル・レンジ入力を一体化したLV2素部品。
 export class スライダー項目 extends LV2HtmlComponentBase implements I配線可能<Iスライダー配線> {
     protected _componentRoot: DivC
     private readonly _配線: 配線ポート<Iスライダー配線> = new 配線ポート<Iスライダー配線>('スライダー項目')
-    private readonly _値表示: SpanC
-    private readonly _接尾辞: string
+    private readonly _値表示: スライダー値ラベル
 
     public constructor(
         ラベル名: string,
@@ -22,9 +35,7 @@ export class スライダー項目 extends LV2HtmlComponentBase implements I配�
         接尾辞: string = '',
     ) {
         super()
-        this._接尾辞 = 接尾辞
-        this._値表示 = span({ class: styles.値ラベル, text: `${初期値}${接尾辞}` })
-
+        this._値表示 = new スライダー値ラベル(初期値, 接尾辞)
         this._componentRoot = this._ルートを構築する(ラベル名, 最小値, 最大値, 刻み幅, 初期値)
     }
 
@@ -34,7 +45,7 @@ export class スライダー項目 extends LV2HtmlComponentBase implements I配�
     }
 
     public 値を更新する(新値: number): void {
-        this._値表示.setTextContent(`${新値}${this._接尾辞}`)
+        this._値表示.値を更新する(新値)
     }
 
     private _ルートを構築する(
@@ -45,12 +56,12 @@ export class スライダー項目 extends LV2HtmlComponentBase implements I配�
         初期値: number,
     ): DivC {
         return (
-            div({ class: styles.行コンテナ }).childs([
-                div({ class: styles.ラベル行 }).childs([
+            div({ class: 行コンテナ }).childs([
+                div({ class: ラベル行 }).childs([
                     span({ text: ラベル名 }),
                     this._値表示]),
                 input({
-                    class: styles.スライダー入力,
+                    class: スライダー入力,
                     type: 'range',
                     value: 初期値.toString(),
                 })

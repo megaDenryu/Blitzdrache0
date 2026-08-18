@@ -1,5 +1,4 @@
-import { canvas, div, DivC, LV2HtmlComponentBase } from 'sengen-ui'
-import type { CanvasC } from 'sengen-ui'
+import { div, DivC, CanvasC, LV2HtmlComponentBase } from 'sengen-ui'
 import {
     場面を作る,
     透視カメラを作る,
@@ -16,16 +15,22 @@ import { 道路ノードメッシュ部品 } from './道路/道路ノードメ�
 import { 建物メッシュ部品 } from './建物/建物メッシュ部品.ts'
 import { 散布個体群部品 } from './散布/散布個体群部品.ts'
 import { 軌道カメラ制御器 } from './カメラ/軌道カメラ制御器.ts'
-import * as styles from './三次元ビュー部品スタイル.css.ts'
+import { コンテナ, キャンバス } from './三次元ビュー部品スタイル.css.ts'
 
 function HTMLキャンバスか(要素: HTMLElement): 要素 is HTMLCanvasElement {
     return 'getContext' in 要素
 }
 
+export class 描画キャンバス要素 extends CanvasC {
+    public constructor() {
+        super({ class: キャンバス })
+    }
+}
+
 // 三次元シーングラフ・描画ループ・レイキャスト・カメラ操作を束ねるビュー部品。
 export class 三次元ビュー部品 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
-    public readonly キャンバス要素: CanvasC
+    public readonly キャンバス要素: 描画キャンバス要素
     public readonly 場面: ReturnType<typeof 場面を作る>
     public readonly カメラ: ReturnType<typeof 透視カメラを作る>
     public readonly カメラ制御: 軌道カメラ制御器
@@ -67,14 +72,8 @@ export class 三次元ビュー部品 extends LV2HtmlComponentBase {
                 this.散布,
             ])
 
-        let キャンバス参照: CanvasC | null = null
-        this._componentRoot = div({ class: styles.コンテナ }).child(
-            canvas({ class: styles.キャンバス }).tap((c: CanvasC) => {
-                キャンバス参照 = c
-            }),
-        )
-        if (キャンバス参照 === null) throw new Error('キャンバス生成に失敗しました')
-        this.キャンバス要素 = キャンバス参照
+        this.キャンバス要素 = new 描画キャンバス要素()
+        this._componentRoot = div({ class: コンテナ }).child(this.キャンバス要素)
 
         const dom要素 = this.キャンバス要素.dom.element
         if (!HTMLキャンバスか(dom要素)) {
@@ -93,6 +92,7 @@ export class 三次元ビュー部品 extends LV2HtmlComponentBase {
         this.レイキャスト.破棄する()
         this.描画ループ.破棄する()
         this.場面.破棄する()
+        this.キャンバス要素.delete()
         super.delete()
     }
 }

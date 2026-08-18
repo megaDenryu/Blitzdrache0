@@ -1,7 +1,7 @@
 import { div, span, p, DivC, LV2部品集約Base } from 'sengen-ui'
 import type { 編集モード } from '../モード切替/モード定義.ts'
 import { インスペクター部品 } from './インスペクター部品.ts'
-import * as styles from './スタイル.css.ts'
+import { インスペクター枠, ヘッダー, タイトル, サブタイトル, バッジ } from './スタイル.css.ts'
 
 // インスペクター枠・ヘッダー・モードに応じたサブパネルの表示切り替えを統括する部品集約。
 export class インスペクターパネル extends LV2部品集約Base<インスペクター部品> {
@@ -25,14 +25,19 @@ export class インスペクターパネル extends LV2部品集約Base<イン�
         this.部品.建物.setStyleCSS({ display: モード === '建物' ? 'flex' : 'none' })
     }
 
+    public override delete(): void {
+        this.部品.delete()
+        super.delete()
+    }
+
     protected _ルートを構築する(部品: インスペクター部品): DivC {
         return (
-            div({ class: styles.インスペクター枠 }).childs([
-                div({ class: styles.ヘッダー }).childs([
+            div({ class: インスペクター枠 }).childs([
+                div({ class: ヘッダー }).childs([
                     div().childs([
-                        div({ class: styles.タイトル, text: 'ワールドパイプラインエディター' }),
-                        p({ class: styles.サブタイトル, text: 'チャンク編集パイプライン' })]),
-                    span({ class: styles.バッジ, text: 'チャンク: 256m' })]),
+                        div({ class: タイトル, text: 'ワールドパイプラインエディター' }),
+                        p({ class: サブタイトル, text: 'チャンク編集パイプライン' })]),
+                    span({ class: バッジ, text: 'チャンク: 256m' })]),
                 部品.モード切替,
                 部品.造成,
                 部品.地表ペイント,

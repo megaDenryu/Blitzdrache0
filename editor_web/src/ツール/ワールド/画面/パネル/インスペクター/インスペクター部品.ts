@@ -27,4 +27,13 @@ export class インスペクター部品 {
             new 散布パネル(5.5),
         )
     }
+
+    public delete(): void {
+        this.モード切替.delete()
+        this.造成.delete()
+        this.地表ペイント.delete()
+        this.道路.delete()
+        this.建物.delete()
+        this.散布.delete()
+    }
 }

@@ -1,22 +1,45 @@
-import { div, button, DivC, ButtonC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
+import { div, DivC, ButtonC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
 import { モード一覧, モードヒント写像, type 編集モード } from './モード定義.ts'
-import * as styles from './スタイル.css.ts'
+import { コンテナ, グリッド, モードボタン, ヒント枠 } from './スタイル.css.ts'
 
 export interface Iモード切替配線 {
     readonly onモード変更: (新モード: 編集モード) => void
+}
+
+class モードヒント表示 extends DivC {
+    public constructor(初期ヒント: string) {
+        super({ class: ヒント枠, text: 初期ヒント })
+    }
+
+    public ヒントを更新する(新ヒント: string): this {
+        this.setTextContent(新ヒント)
+        return this
+    }
+}
+
+class モード選択ボタン extends ButtonC {
+    public constructor(モード名: string, 選択中: boolean) {
+        super({ class: モードボタン, text: モード名 })
+        this.setAttribute('data-selected', 選択中 ? 'true' : 'false')
+    }
+
+    public 選択状態を設定する(選択中: boolean): this {
+        this.setAttribute('data-selected', 選択中 ? 'true' : 'false')
+        return this
+    }
 }
 
 // 6種類の編集モード切り替えボタンとヒント文を表示するLV2素部品。
 export class モード切替パネル extends LV2HtmlComponentBase implements I配線可能<Iモード切替配線> {
     protected _componentRoot: DivC
     private readonly _配線: 配線ポート<Iモード切替配線> = new 配線ポート<Iモード切替配線>('モード切替パネル')
-    private readonly _ボタンマップ: Map<編集モード, ButtonC> = new Map<編集モード, ButtonC>()
-    private readonly _ヒント要素: DivC
+    private readonly _ボタンマップ: Map<編集モード, モード選択ボタン> = new Map<編集モード, モード選択ボタン>()
+    private readonly _ヒント要素: モードヒント表示
 
     public constructor(初期モード: 編集モード) {
         super()
-        this._ヒント要素 = div({ class: styles.ヒント枠, text: モードヒント写像[初期モード] })
+        this._ヒント要素 = new モードヒント表示(モードヒント写像[初期モード])
         this._componentRoot = this._ルートを構築する(初期モード)
     }
 
@@ -27,29 +50,23 @@ export class モード切替パネル extends LV2HtmlComponentBase implements I�
 
     public モードを更新する(選択モード: 編集モード): void {
         for (const [モード, ボタン] of this._ボタンマップ.entries()) {
-            ボタン.setAttribute('data-selected', モード === 選択モード ? 'true' : 'false')
+            ボタン.選択状態を設定する(モード === 選択モード)
         }
-        this._ヒント要素.setTextContent(モードヒント写像[選択モード])
+        this._ヒント要素.ヒントを更新する(モードヒント写像[選択モード])
     }
 
     private _ルートを構築する(初期モード: 編集モード): DivC {
         return (
-            div({ class: styles.コンテナ }).childs([
-                div({ class: styles.グリッド }).childs(
-                    モード一覧.map((モード) =>
-                        button({
-                            class: styles.モードボタン,
-                            text: モード,
+            div({ class: コンテナ }).childs([
+                div({ class: グリッド }).childs(
+                    モード一覧.map((モード) => {
+                        const btn = new モード選択ボタン(モード, モード === 初期モード)
+                        this._ボタンマップ.set(モード, btn)
+                        return btn.onClick(() => {
+                            this.モードを更新する(モード)
+                            this._配線.先.onモード変更(モード)
                         })
-                            .setAttribute('data-selected', モード === 初期モード ? 'true' : 'false')
-                            .tap((btn: ButtonC) => {
-                                this._ボタンマップ.set(モード, btn)
-                            })
-                            .onClick(() => {
-                                this.モードを更新する(モード)
-                                this._配線.先.onモード変更(モード)
-                            }),
-                    ),
+                    }),
                 ),
                 this._ヒント要素])
         )

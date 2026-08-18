@@ -1,7 +1,7 @@
 import { div, DivC, LV2部品集約Base } from 'sengen-ui'
 import type { ワールド編集状態 } from '../編集モデル/index.ts'
 import { ワールド画面部品 } from './ワールド画面部品.ts'
-import * as styles from './スタイル.css.ts'
+import { 画面ルート } from './スタイル.css.ts'
 
 // 三次元ビューとインスペクターパネルを画面上に統合配置するLV2部品集約Orchestrator。
 export class ワールド画面 extends LV2部品集約Base<ワールド画面部品> {
@@ -20,7 +20,7 @@ export class ワールド画面 extends LV2部品集約Base<ワールド画面�
 
     protected _ルートを構築する(部品: ワールド画面部品): DivC {
         return (
-            div({ class: styles.画面ルート }).childs([
+            div({ class: 画面ルート }).childs([
                 部品.三次元ビュー,
                 部品.インスペクター])
         )

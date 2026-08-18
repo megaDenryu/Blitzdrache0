@@ -68,11 +68,10 @@ export function ポインタとキー入力を配線する(
         対象部品一覧: [ビュー.地形, ビュー.道路ノード, ビュー.建物],
     })
 
-    const キャンバスDOM = ビュー.キャンバス要素.dom.element
     const ホイール処理 = (e: WheelEvent): void => { ビュー.カメラ制御.拡大縮小する(e.deltaY) }
-    const コンテキストメニュー抑止 = (e: Event): void => { e.preventDefault() }
-    キャンバスDOM.addEventListener('wheel', ホイール処理, { passive: true })
-    キャンバスDOM.addEventListener('contextmenu', コンテキストメニュー抑止)
+    const コンテキストメニュー抑止 = (e: MouseEvent): void => { e.preventDefault() }
+    ビュー.キャンバス要素.addTypedEventListener('wheel', ホイール処理, { passive: true })
+    ビュー.キャンバス要素.addTypedEventListener('contextmenu', コンテキストメニュー抑止)
 
     const キーボード処理 = (e: KeyboardEvent): void => {
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
@@ -83,8 +82,9 @@ export function ポインタとキー入力を配線する(
     window.addEventListener('keydown', キーボード処理)
 
     return () => {
-        キャンバスDOM.removeEventListener('wheel', ホイール処理)
-        キャンバスDOM.removeEventListener('contextmenu', コンテキストメニュー抑止)
+        ビュー.レイキャスト.キャンバスの購読を解除する()
+        ビュー.キャンバス要素.removeTypedEventListener('wheel', ホイール処理)
+        ビュー.キャンバス要素.removeTypedEventListener('contextmenu', コンテキストメニュー抑止)
         window.removeEventListener('keydown', キーボード処理)
     }
 }
