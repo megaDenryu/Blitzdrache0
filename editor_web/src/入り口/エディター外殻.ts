@@ -41,6 +41,8 @@ export class エディター外殻 extends LV2HtmlComponentBase {
             メニューバー表示: true,
             ステータスバー表示: true,
             ステータスバー右テキスト: 'Blitzdrache0 v0.1.0',
+            // 中身の無いパネルエリアが白い帯として常時出るため、使うツールが現れるまで閉じておく
+            パネル初期表示: false,
         })
 
         this._ホスト = div().setStyleCSS({ width: '100%', height: '100%', position: 'relative' })
