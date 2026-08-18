@@ -12,16 +12,11 @@ export interface I広域道路パネル配線 {
 
 class 削除操作ボタン extends ButtonC {
     public constructor() {
-        super({ class: 削除ボタン, text: '選択点を削除' })
-        this.setAttribute('disabled', 'true')
+        super({ class: 削除ボタン, text: '選択点を削除', disabled: true })
     }
 
     public 有効状態を設定する(有効: boolean): this {
-        if (有効) {
-            this.dom.element.removeAttribute('disabled')
-        } else {
-            this.setAttribute('disabled', 'true')
-        }
+        this.setDisabled(!有効)
         return this
     }
 }
