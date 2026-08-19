@@ -1,13 +1,15 @@
 import { style } from '@vanilla-extract/css'
+import { エディターCSS変数 } from '../../../../../境界/index.ts'
 
 export const パネル = style({
     display: 'flex',
     flexDirection: 'column',
     gap: '10px',
     padding: '12px',
-    backgroundColor: 'rgba(2, 6, 23, 0.6)',
+    backgroundColor: エディターCSS変数('カード背景'),
+    backdropFilter: エディターCSS変数('ガラス背景ぼかし'),
     borderRadius: '8px',
-    border: '1px solid rgba(30, 41, 59, 0.8)',
+    border: `1px solid ${エディターCSS変数('カード枠線')}`,
 })
 
 export const 見出し行 = style({
@@ -15,12 +17,12 @@ export const 見出し行 = style({
     justifyContent: 'space-between',
     fontSize: '11px',
     fontWeight: 600,
-    color: '#cbd5e1',
+    color: エディターCSS変数('テキスト副'),
 })
 
 export const 件数ラベル = style({
     fontFamily: 'monospace',
-    color: '#22d3ee',
+    color: エディターCSS変数('テキストコード'),
 })
 
 export const 生成ボタングリッド = style({
@@ -34,12 +36,12 @@ export const 生成ボタン = style({
     fontSize: '10px',
     fontWeight: 500,
     borderRadius: '4px',
-    border: '1px solid #334155',
-    backgroundColor: '#1e293b',
-    color: '#cbd5e1',
+    border: `1px solid ${エディターCSS変数('ボタン枠線')}`,
+    backgroundColor: エディターCSS変数('ボタン背景'),
+    color: エディターCSS変数('テキスト副'),
     cursor: 'pointer',
     transition: 'all 0.15s ease',
-    ':hover': { backgroundColor: '#334155' },
+    ':hover': { backgroundColor: エディターCSS変数('ボタンホバー背景') },
 })
 
 export const アクション区画 = style({
@@ -47,7 +49,7 @@ export const アクション区画 = style({
     flexDirection: 'column',
     gap: '6px',
     paddingTop: '8px',
-    borderTop: '1px solid #1e293b',
+    borderTop: `1px solid ${エディターCSS変数('境界線')}`,
 })
 
 export const 平坦化ボタン = style({
@@ -56,11 +58,11 @@ export const 平坦化ボタン = style({
     fontWeight: 600,
     borderRadius: '4px',
     border: 'none',
-    backgroundColor: '#059669',
-    color: '#ffffff',
+    backgroundColor: エディターCSS変数('アクセント背景'),
+    color: エディターCSS変数('アクセント文字白'),
     cursor: 'pointer',
     transition: 'all 0.15s ease',
-    ':hover': { backgroundColor: '#10b981' },
+    ':hover': { backgroundColor: エディターCSS変数('アクセントホバー') },
 })
 
 export const 行ボタン群 = style({
@@ -73,11 +75,11 @@ export const 接地ボタン = style({
     padding: '4px 8px',
     fontSize: '11px',
     borderRadius: '4px',
-    border: '1px solid #334155',
-    backgroundColor: '#1e293b',
-    color: '#cbd5e1',
+    border: `1px solid ${エディターCSS変数('ボタン枠線')}`,
+    backgroundColor: エディターCSS変数('ボタン背景'),
+    color: エディターCSS変数('テキスト副'),
     cursor: 'pointer',
-    ':hover': { backgroundColor: '#334155' },
+    ':hover': { backgroundColor: エディターCSS変数('ボタンホバー背景') },
 })
 
 export const 削除ボタン = style({
@@ -85,9 +87,10 @@ export const 削除ボタン = style({
     padding: '4px 8px',
     fontSize: '11px',
     borderRadius: '4px',
-    border: '1px solid #9f1239',
-    backgroundColor: '#4c0519',
-    color: '#fda4af',
+    border: `1px solid ${エディターCSS変数('危険ボタン枠線')}`,
+    backgroundColor: エディターCSS変数('危険ボタン背景'),
+    color: エディターCSS変数('危険ボタン文字'),
     cursor: 'pointer',
     ':disabled': { opacity: 0.3, cursor: 'not-allowed' },
+    ':hover': { backgroundColor: エディターCSS変数('危険ボタンホバー') },
 })

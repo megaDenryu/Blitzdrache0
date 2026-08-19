@@ -1,4 +1,5 @@
 import type { 実行可能ツール } from './ツール定義.ts'
+import type { エディターテーマ定義 } from './テーマ/index.ts'
 
 // エディタエリアに開かれた複数ツールの寿命と前面・背面ライフサイクルを統括する。
 export class タブ管理サービス {
@@ -7,6 +8,12 @@ export class タブ管理サービス {
 
     public ツールを登録する(タブID: string, ツール: 実行可能ツール): void {
         this._ツールマップ.set(タブID, ツール)
+    }
+
+    public 全ツールへテーマを適用する(テーマ: エディターテーマ定義): void {
+        for (const ツール of this._ツールマップ.values()) {
+            ツール.テーマを適用する?.(テーマ)
+        }
     }
 
     public タブを選択する(タブID: string, 幅?: number, 高さ?: number): 実行可能ツール | undefined {

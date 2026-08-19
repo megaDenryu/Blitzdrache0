@@ -52,7 +52,7 @@ export class エクスプローラーパネル extends LV2HtmlComponentBase impl
             span({ text: `チャンク (${軸あたりチャンク数}×${軸あたりチャンク数})` }),
         ]).onClick(() => {
             this._チャンク展開中 = !this._チャンク展開中
-            this._チャンク展開アイコン.setText(this._チャンク展開中 ? '▼' : '▶')
+            this._チャンク展開アイコン.setTextContent(this._チャンク展開中 ? '▼' : '▶')
             this._チャンク子項目コンテナ.setStyleCSS({ display: this._チャンク展開中 ? 'flex' : 'none' })
         })
 
@@ -80,7 +80,7 @@ export class エクスプローラーパネル extends LV2HtmlComponentBase impl
         this._大域世界ノード.setAttribute('data-selected', 'false')
         if (!this._チャンク展開中) {
             this._チャンク展開中 = true
-            this._チャンク展開アイコン.setText('▼')
+            this._チャンク展開アイコン.setTextContent('▼')
             this._チャンク子項目コンテナ.setStyleCSS({ display: 'flex' })
         }
         const 対象キー = `${座標.x},${座標.z}`

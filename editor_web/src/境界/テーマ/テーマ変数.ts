@@ -1,0 +1,56 @@
+import type { エディター配色 } from './テーマ型.ts'
+
+// エディターテーマの配色トークンとCSSカスタムプロパティ名（--editor-xxx）を1対1対応させる。
+export const エディターCSS変数名: { readonly [K in keyof エディター配色]: `--editor-${string}` } = {
+    アプリ背景: '--editor-app-bg',
+    ビューポート背景: '--editor-viewport-bg',
+    サイドバー背景: '--editor-sidebar-bg',
+    パネル背景: '--editor-panel-bg',
+    カード背景: '--editor-card-bg',
+    カード枠線: '--editor-card-border',
+    カード不透明背景: '--editor-card-solid-bg',
+    境界線: '--editor-border',
+    境界線薄: '--editor-border-subtle',
+    テキスト主: '--editor-text-primary',
+    テキスト副: '--editor-text-secondary',
+    テキスト薄: '--editor-text-tertiary',
+    テキストコード: '--editor-text-code',
+    アイコン色: '--editor-icon-color',
+    フォルダアイコン色: '--editor-folder-icon-color',
+    項目ホバー背景: '--editor-item-hover-bg',
+    項目ホバー文字: '--editor-item-hover-text',
+    選択背景: '--editor-selected-bg',
+    選択枠線: '--editor-selected-border',
+    選択文字: '--editor-selected-text',
+    ボタン背景: '--editor-btn-bg',
+    ボタン枠線: '--editor-btn-border',
+    ボタン文字: '--editor-btn-text',
+    ボタンホバー背景: '--editor-btn-hover-bg',
+    アクセント背景: '--editor-accent-bg',
+    アクセントホバー: '--editor-accent-hover',
+    アクセント文字白: '--editor-accent-text-white',
+    アクセント文字: '--editor-accent-text',
+    バッジ背景: '--editor-badge-bg',
+    バッジ枠線: '--editor-badge-border',
+    バッジ文字: '--editor-badge-text',
+    プライマリボタン背景: '--editor-primary-btn-bg',
+    プライマリボタン枠線: '--editor-primary-btn-border',
+    プライマリボタン文字: '--editor-primary-btn-text',
+    プライマリボタンホバー: '--editor-primary-btn-hover',
+    危険ボタン背景: '--editor-danger-bg',
+    危険ボタン枠線: '--editor-danger-border',
+    危険ボタン文字: '--editor-danger-text',
+    危険ボタンホバー: '--editor-danger-hover',
+    土工ボタン背景: '--editor-earth-btn-bg',
+    土工ボタン枠線: '--editor-earth-btn-border',
+    土工ボタン文字: '--editor-earth-btn-text',
+    土工ボタンホバー: '--editor-earth-btn-hover',
+    非活性背景: '--editor-disabled-bg',
+    非活性文字: '--editor-disabled-text',
+    ガラス背景ぼかし: '--editor-glass-backdrop',
+}
+
+// 各 style.css.ts からCSS変数を参照するためのヘルパー関数。
+export function エディターCSS変数(トークン: keyof エディター配色): string {
+    return `var(${エディターCSS変数名[トークン]})`
+}

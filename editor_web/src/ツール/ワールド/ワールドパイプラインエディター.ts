@@ -69,6 +69,10 @@ export class ワールドパイプラインエディター extends LV2HtmlCompon
         this.画面.寸法を合わせる(幅, 高さ, ピクセル比)
     }
 
+    public テーマを適用する(テーマ: { readonly 三次元背景色: number }): void {
+        this.画面.背景色を設定する(テーマ.三次元背景色)
+    }
+
     public override delete(): void {
         this._購読解除()
         this.画面.delete()

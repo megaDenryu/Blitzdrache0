@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css'
+import { エディターCSS変数 } from '../../../../境界/index.ts'
 
 export const コンテナ = style({
     position: 'absolute',
@@ -6,7 +7,7 @@ export const コンテナ = style({
     width: '100%',
     height: '100%',
     overflow: 'hidden',
-    backgroundColor: '#0b0f19',
+    backgroundColor: エディターCSS変数('ビューポート背景'),
 })
 
 export const キャンバス = style({

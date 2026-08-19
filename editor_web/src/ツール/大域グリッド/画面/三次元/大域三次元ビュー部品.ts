@@ -41,7 +41,7 @@ export class 大域三次元ビュー部品 extends LV2HtmlComponentBase {
     public readonly 道路帯: 道路帯メッシュ部品
     public readonly 道路ノード: 道路ノードメッシュ部品
 
-    public constructor(編集状態: ワールド編集状態) {
+    public constructor(編集状態: ワールド編集状態, 初期背景色: string | number = 0x070b14) {
         super()
         const 地表材質モデル = new 地表材質(編集状態.大域高さ場.解像度, 編集状態.大域高さ場.一辺のメートル)
         this.地形 = new 地形メッシュ部品(編集状態.大域高さ場, 地表材質モデル)
@@ -57,7 +57,7 @@ export class 大域三次元ビュー部品 extends LV2HtmlComponentBase {
         this.カメラ制御 = new 軌道カメラ制御器(this.カメラ, 800, 20, 3000)
 
         this.場面 = 場面を作る()
-            .背景色を設定する(0x070b14)
+            .背景色を設定する(初期背景色)
             .childs([
                 this.カメラ,
                 環境光を作る({ 色: 0xe2e8f0, 強さ: 0.5 }),
@@ -79,6 +79,11 @@ export class 大域三次元ビュー部品 extends LV2HtmlComponentBase {
 
         this.描画ループ = 描画ループ.キャンバスへ作る(dom要素, this.場面, this.カメラ)
         this.レイキャスト = new レイキャスト入力()
+    }
+
+    public 背景色を設定する(色: string | number): this {
+        this.場面.背景色を設定する(色)
+        return this
     }
 
     public 寸法を合わせる(幅: number, 高さ: number, ピクセル比: number = 1): void {

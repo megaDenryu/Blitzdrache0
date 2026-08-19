@@ -1,7 +1,8 @@
 import { style } from '@vanilla-extract/css'
+import { エディターCSS変数 } from '../テーマ/テーマ変数.ts'
 
 // 左サイドバーのエクスプローラー木ビューのスタイル定義。
-// 背景色 #0f172a に対して WCAG AA(4.5:1)以上のコントラスト比を保証する。
+// テーマCSS変数により各配色トークンを参照し、WCAG AA(4.5:1以上)のコントラスト比を保証する。
 export const コンテナ = style({
     display: 'flex',
     flexDirection: 'column',
@@ -11,14 +12,14 @@ export const コンテナ = style({
     overflowY: 'auto',
     userSelect: 'none',
     boxSizing: 'border-box',
-    backgroundColor: '#0f172a',
+    backgroundColor: エディターCSS変数('サイドバー背景'),
 })
 
 export const セクション見出し = style({
     fontSize: '11px',
     fontWeight: 'bold',
     textTransform: 'uppercase',
-    color: '#94a3b8',
+    color: エディターCSS変数('テキスト薄'),
     padding: '6px 12px 2px 12px',
     letterSpacing: '0.5px',
 })
@@ -28,19 +29,19 @@ export const 木項目 = style({
     alignItems: 'center',
     padding: '4px 12px',
     fontSize: '13px',
-    color: '#e2e8f0',
+    color: エディターCSS変数('テキスト主'),
     cursor: 'pointer',
     borderRadius: '3px',
     margin: '1px 4px',
     transition: 'background-color 0.1s',
     selectors: {
         '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.08)',
-            color: '#ffffff',
+            backgroundColor: エディターCSS変数('項目ホバー背景'),
+            color: エディターCSS変数('項目ホバー文字'),
         },
         '&[data-selected="true"]': {
-            backgroundColor: 'rgba(56, 189, 248, 0.18)',
-            color: '#38bdf8',
+            backgroundColor: エディターCSS変数('選択背景'),
+            color: エディターCSS変数('選択文字'),
             fontWeight: 'bold',
         },
     },
@@ -56,19 +57,19 @@ export const 子木項目 = style({
     alignItems: 'center',
     padding: '4px 12px 4px 28px',
     fontSize: '12px',
-    color: '#cbd5e1',
+    color: エディターCSS変数('テキスト副'),
     cursor: 'pointer',
     borderRadius: '3px',
     margin: '1px 4px',
     transition: 'background-color 0.1s',
     selectors: {
         '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.08)',
-            color: '#ffffff',
+            backgroundColor: エディターCSS変数('項目ホバー背景'),
+            color: エディターCSS変数('項目ホバー文字'),
         },
         '&[data-selected="true"]': {
-            backgroundColor: 'rgba(56, 189, 248, 0.18)',
-            color: '#38bdf8',
+            backgroundColor: エディターCSS変数('選択背景'),
+            color: エディターCSS変数('選択文字'),
             fontWeight: 'bold',
         },
     },
@@ -79,7 +80,7 @@ export const アイコン = style({
     fontSize: '12px',
     width: '16px',
     textAlign: 'center',
-    color: '#38bdf8',
+    color: エディターCSS変数('アイコン色'),
 })
 
 export const フォルダアイコン = style({
@@ -87,5 +88,5 @@ export const フォルダアイコン = style({
     fontSize: '12px',
     width: '16px',
     textAlign: 'center',
-    color: '#fbbf24',
+    color: エディターCSS変数('フォルダアイコン色'),
 })

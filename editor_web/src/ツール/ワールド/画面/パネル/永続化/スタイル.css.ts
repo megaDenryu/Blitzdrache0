@@ -1,13 +1,14 @@
 import { style } from '@vanilla-extract/css'
+import { エディターCSS変数 } from '../../../../../境界/index.ts'
 
 export const 永続化枠 = style({
     display: 'flex',
     flexDirection: 'column',
     gap: '8px',
     padding: '12px',
-    backgroundColor: '#1e1e1e',
+    backgroundColor: エディターCSS変数('カード不透明背景'),
     borderRadius: '4px',
-    border: '1px solid #333',
+    border: `1px solid ${エディターCSS変数('境界線')}`,
     marginTop: '8px',
 })
 
@@ -19,33 +20,33 @@ export const ボタン行 = style({
 export const アクションボタン = style({
     flex: 1,
     padding: '6px 12px',
-    backgroundColor: '#0e639c',
-    color: '#ffffff',
-    border: 'none',
+    backgroundColor: エディターCSS変数('プライマリボタン背景'),
+    color: エディターCSS変数('プライマリボタン文字'),
+    border: `1px solid ${エディターCSS変数('プライマリボタン枠線')}`,
     borderRadius: '3px',
     cursor: 'pointer',
     fontSize: '12px',
     fontWeight: 'bold',
     ':hover': {
-        backgroundColor: '#1177bb',
+        backgroundColor: エディターCSS変数('プライマリボタンホバー'),
     },
     ':disabled': {
-        backgroundColor: '#444444',
-        color: '#888888',
+        backgroundColor: エディターCSS変数('非活性背景'),
+        color: エディターCSS変数('非活性文字'),
         cursor: 'not-allowed',
     },
 })
 
 export const 状態メッセージ = style({
     fontSize: '11px',
-    color: '#cccccc',
+    color: エディターCSS変数('テキスト副'),
     wordBreak: 'break-all',
     minHeight: '16px',
 })
 
 export const エラー状態メッセージ = style({
     fontSize: '11px',
-    color: '#f48771',
+    color: エディターCSS変数('危険ボタン文字'),
     wordBreak: 'break-all',
     minHeight: '16px',
 })

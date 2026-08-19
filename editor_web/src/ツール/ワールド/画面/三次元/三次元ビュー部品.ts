@@ -43,7 +43,7 @@ export class 三次元ビュー部品 extends LV2HtmlComponentBase {
     public readonly 建物: 建物メッシュ部品
     public readonly 散布: 散布個体群部品
 
-    public constructor(編集状態: ワールド編集状態) {
+    public constructor(編集状態: ワールド編集状態, 初期背景色: string | number = 0x0b0f19) {
         super()
         const チャンク = 編集状態.チャンク一覧マップ.values().next().value
         if (!チャンク) throw new Error('初期チャンクが登録されていません')
@@ -59,7 +59,7 @@ export class 三次元ビュー部品 extends LV2HtmlComponentBase {
         this.カメラ制御 = new 軌道カメラ制御器(this.カメラ)
 
         this.場面 = 場面を作る()
-            .背景色を設定する(0x0b0f19)
+            .背景色を設定する(初期背景色)
             .childs([
                 this.カメラ,
                 環境光を作る({ 色: 0xe2e8f0, 強さ: 0.6 }),
@@ -82,6 +82,11 @@ export class 三次元ビュー部品 extends LV2HtmlComponentBase {
 
         this.描画ループ = 描画ループ.キャンバスへ作る(dom要素, this.場面, this.カメラ)
         this.レイキャスト = new レイキャスト入力()
+    }
+
+    public 背景色を設定する(色: string | number): this {
+        this.場面.背景色を設定する(色)
+        return this
     }
 
     public 寸法を合わせる(幅: number, 高さ: number, ピクセル比: number = 1): void {

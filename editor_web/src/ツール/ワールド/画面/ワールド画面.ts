@@ -18,6 +18,10 @@ export class ワールド画面 extends LV2部品集約Base<ワールド画面�
         this.部品.三次元ビュー.寸法を合わせる(幅, 高さ, ピクセル比)
     }
 
+    public 背景色を設定する(色: string | number): void {
+        this.部品.三次元ビュー.背景色を設定する(色)
+    }
+
     protected _ルートを構築する(部品: ワールド画面部品): DivC {
         return div({ class: 画面ルート }).childs([部品.三次元ビュー])
     }

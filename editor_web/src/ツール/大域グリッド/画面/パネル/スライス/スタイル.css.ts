@@ -1,13 +1,15 @@
 import { style } from '@vanilla-extract/css'
+import { エディターCSS変数 } from '../../../../../境界/index.ts'
 
 export const パネル = style({
     display: 'flex',
     flexDirection: 'column',
     gap: '8px',
     padding: '12px',
-    backgroundColor: 'rgba(2, 6, 23, 0.6)',
+    backgroundColor: エディターCSS変数('カード背景'),
+    backdropFilter: エディターCSS変数('ガラス背景ぼかし'),
     borderRadius: '8px',
-    border: '1px solid rgba(30, 41, 59, 0.8)',
+    border: `1px solid ${エディターCSS変数('カード枠線')}`,
 })
 
 export const 見出し行 = style({
@@ -16,15 +18,15 @@ export const 見出し行 = style({
     alignItems: 'center',
     fontSize: '11px',
     fontWeight: 600,
-    color: '#cbd5e1',
+    color: エディターCSS変数('テキスト副'),
 })
 
 export const バッジ = style({
     fontSize: '10px',
     fontFamily: 'monospace',
-    color: '#34d399',
-    backgroundColor: 'rgba(6, 78, 59, 0.5)',
-    border: '1px solid #059669',
+    color: エディターCSS変数('バッジ文字'),
+    backgroundColor: エディターCSS変数('バッジ背景'),
+    border: `1px solid ${エディターCSS変数('バッジ枠線')}`,
     borderRadius: '4px',
     padding: '1px 6px',
 })
@@ -35,5 +37,5 @@ export const 説明リスト = style({
     gap: '4px',
     fontSize: '11px',
     lineHeight: '1.4',
-    color: '#94a3b8',
+    color: エディターCSS変数('テキスト薄'),
 })

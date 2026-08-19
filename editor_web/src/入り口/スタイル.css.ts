@@ -1,4 +1,5 @@
 import { style, globalStyle } from '@vanilla-extract/css'
+import { エディターCSS変数 } from './テーマ/テーマ変数.ts'
 
 // ビューポート全高を占有し、余白とスクロールバーを抑止するためのグローバル定義。
 globalStyle('html, body', {
@@ -7,7 +8,7 @@ globalStyle('html, body', {
     margin: 0,
     padding: 0,
     overflow: 'hidden',
-    backgroundColor: '#070b14',
+    backgroundColor: エディターCSS変数('アプリ背景'),
 })
 
 globalStyle('#app', {
