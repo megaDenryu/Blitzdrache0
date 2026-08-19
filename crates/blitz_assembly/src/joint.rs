@@ -10,6 +10,7 @@ mod face_position;
 mod face_size;
 mod joint_kind;
 mod joint_kind_pairing;
+mod joint_kind_spelling;
 mod joint_kind_style;
 mod joint_name;
 mod joint_point;
