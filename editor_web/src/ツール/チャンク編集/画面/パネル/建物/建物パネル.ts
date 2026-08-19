@@ -1,47 +1,24 @@
-import { div, span, button, DivC, SpanC, ButtonC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
+import { div, span, button, DivC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
 import type { 建物種別 } from '../../../../../生成/編集資源契約.ts'
 import {
     パネル,
     見出し行,
-    件数ラベル,
     生成ボタングリッド,
     生成ボタン,
     アクション区画,
     平坦化ボタン,
     行ボタン群,
     接地ボタン,
-    削除ボタン,
 } from './スタイル.css.ts'
+import { 建物件数ラベル } from './建物パネル/建物件数ラベル.ts'
+import { 建物削除ボタン } from './建物パネル/建物削除ボタン.ts'
 
 export interface I建物パネル配線 {
     readonly on建物生成: (種別: 建物種別) => void
     readonly on基礎平坦化: () => void
     readonly on地面接地: () => void
     readonly on建物削除: () => void
-}
-
-class 建物件数ラベル extends SpanC {
-    public constructor(初期件数: number) {
-        super({ class: 件数ラベル, text: `${初期件数} 件` })
-    }
-
-    public 件数を更新する(件数: number): this {
-        this.setTextContent(`${件数} 件`)
-        return this
-    }
-}
-
-class 建物削除ボタン extends ButtonC {
-    public constructor() {
-        super({ class: 削除ボタン, text: '削除', disabled: true })
-        this.setTooltip('削除')
-    }
-
-    public 有効状態を設定する(有効: boolean): this {
-        this.setDisabled(!有効)
-        return this
-    }
 }
 
 // 建物の新規配置・基礎平坦化・接地・削除操作を提供するLV2素部品。

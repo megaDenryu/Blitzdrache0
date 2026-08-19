@@ -1,19 +1,8 @@
 import { div, DivC, CanvasC, LV2HtmlComponentBase } from 'sengen-ui'
-import {
-    場面を作る,
-    透視カメラを作る,
-    環境光を作る,
-    平行光源を作る,
-    描画ループ,
-    レイキャスト入力,
-} from 'SengenThree'
-import { ワールド編集状態, 地表材質 } from '../../../チャンク編集/編集モデル/index.ts'
-import { 地形メッシュ部品 } from '../../../チャンク編集/画面/三次元/地形/地形メッシュ部品.ts'
-import { ブラシリング部品 } from '../../../チャンク編集/画面/三次元/ブラシ/ブラシリング部品.ts'
-import { 道路帯メッシュ部品 } from '../../../チャンク編集/画面/三次元/道路/道路帯メッシュ部品.ts'
-import { 道路ノードメッシュ部品 } from '../../../チャンク編集/画面/三次元/道路/道路ノードメッシュ部品.ts'
-import { 軌道カメラ制御器 } from '../../../チャンク編集/画面/三次元/カメラ/軌道カメラ制御器.ts'
-import { チャンク境界格子部品 } from './チャンク境界格子部品.ts'
+import { 描画ループ, レイキャスト入力 } from 'SengenThree'
+import { ワールド編集状態 } from '../../../チャンク編集/編集モデル/index.ts'
+import type { 大域シーン部品束 } from './大域三次元ビュー部品/シーン構築.ts'
+import { 大域シーンを構築する } from './大域三次元ビュー部品/シーン構築.ts'
 import { コンテナ, キャンバス } from './大域三次元ビュー部品スタイル.css.ts'
 
 function HTMLキャンバスか(要素: HTMLElement): 要素 is HTMLCanvasElement {
@@ -27,47 +16,32 @@ export class 描画キャンバス要素 extends CanvasC {
 }
 
 // 1024m大域地形・4x4境界線・広域道路・マクロブラシを束ねる大域ビュー部品。
+// シーンの内訳の組み立ては大域三次元ビュー部品/シーン構築.ts が持つ。
 export class 大域三次元ビュー部品 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     public readonly キャンバス要素: 描画キャンバス要素
-    public readonly 場面: ReturnType<typeof 場面を作る>
-    public readonly カメラ: ReturnType<typeof 透視カメラを作る>
-    public readonly カメラ制御: 軌道カメラ制御器
+    public readonly 場面: 大域シーン部品束['場面']
+    public readonly カメラ: 大域シーン部品束['カメラ']
+    public readonly カメラ制御: 大域シーン部品束['カメラ制御']
     public readonly 描画ループ: 描画ループ
     public readonly レイキャスト: レイキャスト入力
-    public readonly 地形: 地形メッシュ部品
-    public readonly チャンク境界: チャンク境界格子部品
-    public readonly ブラシリング: ブラシリング部品
-    public readonly 道路帯: 道路帯メッシュ部品
-    public readonly 道路ノード: 道路ノードメッシュ部品
+    public readonly 地形: 大域シーン部品束['地形']
+    public readonly チャンク境界: 大域シーン部品束['チャンク境界']
+    public readonly ブラシリング: 大域シーン部品束['ブラシリング']
+    public readonly 道路帯: 大域シーン部品束['道路帯']
+    public readonly 道路ノード: 大域シーン部品束['道路ノード']
 
     public constructor(編集状態: ワールド編集状態, 初期背景色: string | number = 0x070b14) {
         super()
-        const 地表材質モデル = new 地表材質(編集状態.大域高さ場.解像度, 編集状態.大域高さ場.一辺のメートル)
-        this.地形 = new 地形メッシュ部品(編集状態.大域高さ場, 地表材質モデル)
-        this.チャンク境界 = new チャンク境界格子部品(
-            編集状態.大域世界構造.区画割り.一辺のメートル,
-            編集状態.大域世界構造.区画割り.軸あたりチャンク数,
-        )
-        this.ブラシリング = new ブラシリング部品()
-        this.道路帯 = new 道路帯メッシュ部品()
-        this.道路ノード = new 道路ノードメッシュ部品()
-
-        this.カメラ = 透視カメラを作る({ 画角: 50, アスペクト比: 16 / 9, 奥クリップ距離: 5000 })
-        this.カメラ制御 = new 軌道カメラ制御器(this.カメラ, 800, 20, 3000)
-
-        this.場面 = 場面を作る()
-            .背景色を設定する(初期背景色)
-            .childs([
-                this.カメラ,
-                環境光を作る({ 色: 0xe2e8f0, 強さ: 0.5 }),
-                平行光源を作る({ 色: 0xffedd5, 強さ: 1.2 }).位置を設定する(400, 800, 300),
-                this.地形,
-                this.チャンク境界,
-                this.ブラシリング,
-                this.道路帯,
-                this.道路ノード,
-            ])
+        const シーン = 大域シーンを構築する(編集状態, 初期背景色)
+        this.場面 = シーン.場面
+        this.カメラ = シーン.カメラ
+        this.カメラ制御 = シーン.カメラ制御
+        this.地形 = シーン.地形
+        this.チャンク境界 = シーン.チャンク境界
+        this.ブラシリング = シーン.ブラシリング
+        this.道路帯 = シーン.道路帯
+        this.道路ノード = シーン.道路ノード
 
         this.キャンバス要素 = new 描画キャンバス要素()
         this._componentRoot = div({ class: コンテナ }).child(this.キャンバス要素)

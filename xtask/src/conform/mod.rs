@@ -39,8 +39,8 @@ use crate::file_scan;
 use error::規約検査の破れ;
 use violation::違反;
 
-const 検査対象ディレクトリ一覧: [&str; 3] = ["crates", "xtask/src", "shaders"];
-const 検査対象拡張子一覧: [&str; 3] = ["rs", "slang", "md"];
+const 検査対象ディレクトリ一覧: [&str; 4] = ["crates", "xtask/src", "shaders", "editor_web/src"];
+const 検査対象拡張子一覧: [&str; 4] = ["rs", "slang", "md", "ts"];
 
 pub fn 実行する() -> ExitCode {
     match 全違反を集める() {
@@ -69,6 +69,9 @@ fn ファイル単位の違反を集める(ファイル一覧: &[PathBuf]) -> Re
         if 拡張子 == "rs" || 拡張子 == "slang" {
             違反一覧.extend(line_count::検査する(パス, &内容));
             違反一覧.extend(forbidden_strings::検査する(パス, &内容));
+        }
+        if 拡張子 == "ts" && !line_count::生成ファイルか(パス) {
+            違反一覧.extend(line_count::検査する(パス, &内容));
         }
         if 拡張子 == "slang" {
             違反一覧.extend(module_import_boundary::検査する(パス, &内容));
