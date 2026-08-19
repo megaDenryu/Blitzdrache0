@@ -5,7 +5,7 @@
 
 use crate::texture_material::テクスチャ用途;
 use crate::vulkan::material_table::generation::資源表世代;
-use crate::vulkan::material_table::generation_build::構築する;
+use crate::vulkan::material_table::generation_build::資源表世代を構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::generation_record::世代内材質レコード;
 use crate::vulkan::material_table::material_id::大域材質ID;
@@ -28,7 +28,7 @@ fn 役割別スロット(レコード: &世代内材質レコード) -> Vec<u32>
 fn テクスチャ無しの材質は用途ごとの実在スロットを指し特徴ビットが立たない() {
     let mut 供給元 = 検査用供給元::常に成功する();
     let 材質一覧 = [材質を作る(1, None), 材質を作る(2, None)];
-    let 世代 = 構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &材質一覧).unwrap();
+    let 世代 = 資源表世代を構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &材質一覧).unwrap();
 
     let レコード = レコードを引く(&世代, 1);
     let 画像枚数 = u32::try_from(世代.画像枚数()).unwrap();
@@ -53,7 +53,7 @@ fn テクスチャ有りの役割だけビットが立ちフォールバック�
     let 素材 = 検査用素材(テクスチャ用途::色);
     let mut 供給元 = 検査用供給元::常に成功する();
     let 材質一覧 = [材質を作る(1, Some(&素材)), 材質を作る(2, None)];
-    let 世代 = 構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &材質一覧).unwrap();
+    let 世代 = 資源表世代を構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &材質一覧).unwrap();
 
     let テクスチャ有り = レコードを引く(&世代, 1);
     let テクスチャ無し = レコードを引く(&世代, 2);

@@ -7,7 +7,7 @@
 
 use crate::texture_material::テクスチャ用途;
 use crate::vulkan::material_table::dry_run::検査専用供給元;
-use crate::vulkan::material_table::generation_build::構築する;
+use crate::vulkan::material_table::generation_build::資源表世代を構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::ledger::資源表世代台帳;
 
@@ -17,7 +17,7 @@ use super::material_fixture::{余裕のあるレイアウト容量, 四枚の容
 fn 世代を作る(
     供給元: &mut 検査用供給元, 世代id: 資源表世代ID
 ) -> crate::vulkan::material_table::generation::資源表世代<u32, ()> {
-    構築する(供給元, 世代id, 余裕のあるレイアウト容量(), &[]).unwrap()
+    資源表世代を構築する(供給元, 世代id, 余裕のあるレイアウト容量(), &[]).unwrap()
 }
 
 #[test]
@@ -49,7 +49,7 @@ fn 構築に失敗した後は次の番号を発行して公開できる() {
 
     let 失敗した発行id = 台帳.次の世代idを発行する().unwrap();
     let mut 失敗する供給元 = 検査用供給元::指定回で失敗する(1);
-    assert!(構築する(&mut 失敗する供給元, 失敗した発行id, 余裕のあるレイアウト容量(), &[]).is_err());
+    assert!(資源表世代を構築する(&mut 失敗する供給元, 失敗した発行id, 余裕のあるレイアウト容量(), &[]).is_err());
 
     let 次の発行id = 台帳.次の世代idを発行する().unwrap();
     assert_ne!(次の発行id, 失敗した発行id, "失敗した番号は再利用しない");
@@ -66,14 +66,14 @@ fn 容量超過で登録が拒まれた後も次の世代を作り直して公�
     let 別素材 = 検査用素材(テクスチャ用途::線形データ);
     let 容量 = 四枚の容量();
     let mut 供給元 = 検査用供給元::常に成功する();
-    let mut 台帳 = 資源表世代台帳::最初の世代を公開する(構築する(&mut 供給元, 資源表世代ID::最初(), 容量, &[]).unwrap());
+    let mut 台帳 = 資源表世代台帳::最初の世代を公開する(資源表世代を構築する(&mut 供給元, 資源表世代ID::最初(), 容量, &[]).unwrap());
 
     let 拒まれる一覧 = [画像を選んだ材質(1, 1, 1, &素材), 画像を選んだ材質(2, 2, 2, &別素材)];
-    assert!(構築する(&mut 検査専用供給元, 資源表世代ID::最初(), 容量, &拒まれる一覧).is_err());
+    assert!(資源表世代を構築する(&mut 検査専用供給元, 資源表世代ID::最初(), 容量, &拒まれる一覧).is_err());
     assert_eq!(供給元.生存枚数(), 3, "拒まれた登録は常駐画像を1枚も増やさない");
 
     let 発行id = 台帳.次の世代idを発行する().unwrap();
-    台帳.公開する(構築する(&mut 供給元, 発行id, 容量, &[画像を選んだ材質(1, 1, 1, &素材)]).unwrap());
+    台帳.公開する(資源表世代を構築する(&mut 供給元, 発行id, 容量, &[画像を選んだ材質(1, 1, 1, &素材)]).unwrap());
     assert_eq!(台帳.公開中().材質件数(), 1);
     assert_eq!(
         台帳.公開中().画像枚数(),

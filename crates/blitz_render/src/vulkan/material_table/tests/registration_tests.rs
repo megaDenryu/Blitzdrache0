@@ -12,7 +12,7 @@ use crate::error::{レンダラーエラー, 材質資源表エラー};
 use crate::texture_material::テクスチャ用途;
 use crate::vulkan::material_table::capacity::テクスチャ表レイアウト容量;
 use crate::vulkan::material_table::dry_run::検査専用供給元;
-use crate::vulkan::material_table::generation_build::構築する;
+use crate::vulkan::material_table::generation_build::資源表世代を構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::pack_input::梱包対象材質;
 use crate::vulkan::material_table::registration::材質登録簿;
@@ -23,7 +23,7 @@ use super::material_fixture::{四枚の容量, 検査用素材, 画像を選ん�
 fn 資源を作らずに試す(
     材質一覧: &[梱包対象材質<'_>], 容量: テクスチャ表レイアウト容量
 ) -> Result<(), レンダラーエラー> {
-    構築する(&mut 検査専用供給元, 資源表世代ID::最初(), 容量, 材質一覧).map(|_| ())
+    資源表世代を構築する(&mut 検査専用供給元, 資源表世代ID::最初(), 容量, 材質一覧).map(|_| ())
 }
 
 /// 容量ちょうどは通り、1枚超えると型付きの失敗になる。本番の登録はこの判定を束を足した呼び出しの中で行うため、
@@ -62,7 +62,7 @@ fn 検査専用供給元と資源を作る供給元の判定が一致する() {
     ] {
         let 試しの結果 = 資源を作らずに試す(&材質一覧, 容量).is_ok();
         let mut 供給元 = 検査用供給元::常に成功する();
-        let 本番の結果 = 構築する(&mut 供給元, 資源表世代ID::最初(), 容量, &材質一覧).is_ok();
+        let 本番の結果 = 資源表世代を構築する(&mut 供給元, 資源表世代ID::最初(), 容量, &材質一覧).is_ok();
         assert_eq!(試しの結果, 本番の結果, "材質{}件で判定が食い違った", 材質一覧.len());
     }
 }

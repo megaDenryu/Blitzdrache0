@@ -10,7 +10,7 @@
 
 use crate::error::材質資源表エラー;
 use crate::vulkan::material_table::generation::資源表世代;
-use crate::vulkan::material_table::generation_build::構築する;
+use crate::vulkan::material_table::generation_build::資源表世代を構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::material_id::大域材質ID;
 use crate::vulkan::material_table::pack_input::梱包対象材質;
@@ -39,7 +39,7 @@ fn 世代を作る(供給元: &mut 検査用供給元, 番号: u32, 赤: f32) ->
     } else {
         資源表世代ID::最初().次を作る().unwrap()
     };
-    構築する(供給元, 世代id, 余裕のあるレイアウト容量(), &[赤の材質(赤)]).unwrap()
+    資源表世代を構築する(供給元, 世代id, 余裕のあるレイアウト容量(), &[赤の材質(赤)]).unwrap()
 }
 
 fn 赤成分を読む(世代: &検査用世代) -> f32 {

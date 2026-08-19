@@ -8,7 +8,7 @@ use crate::descriptor_indexing_limits::ディスクリプタ索引上限;
 use crate::error::{レンダラーエラー, 材質資源表エラー};
 use crate::texture_material::テクスチャ用途;
 use crate::vulkan::material_table::capacity::テクスチャ表レイアウト容量;
-use crate::vulkan::material_table::generation_build::構築する;
+use crate::vulkan::material_table::generation_build::資源表世代を構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::stage_reserve::画素段の予約枠;
 
@@ -59,7 +59,7 @@ fn 常駐枚数がレイアウト容量より1枚少なければ公開できる(
     let mut 供給元 = 検査用供給元::常に成功する();
     // 正準フォールバック3枚だけで、レイアウト容量4枚より1枚少ない。
     let 容量 = 容量を決める(予算が9枚になる上限(), 4).unwrap();
-    let 世代 = 構築する(&mut 供給元, 資源表世代ID::最初(), 容量, &[]).unwrap();
+    let 世代 = 資源表世代を構築する(&mut 供給元, 資源表世代ID::最初(), 容量, &[]).unwrap();
     assert_eq!(世代.画像枚数(), 3);
     assert_eq!(供給元.生存枚数(), 3);
 }
@@ -70,7 +70,7 @@ fn 常駐枚数がレイアウト容量ちょうどなら公開できる() {
     let mut 供給元 = 検査用供給元::常に成功する();
     // 正準フォールバック3枚と材質テクスチャ1枚で、レイアウト容量4枚とちょうど並ぶ。
     let 容量 = 容量を決める(予算が9枚になる上限(), 4).unwrap();
-    let 世代 = 構築する(&mut 供給元, 資源表世代ID::最初(), 容量, &[画像を選んだ材質(1, 1, 1, &素材)]).unwrap();
+    let 世代 = 資源表世代を構築する(&mut 供給元, 資源表世代ID::最初(), 容量, &[画像を選んだ材質(1, 1, 1, &素材)]).unwrap();
     assert_eq!(世代.画像枚数(), 4);
     assert_eq!(供給元.生存枚数(), 4);
 }
@@ -80,7 +80,7 @@ fn レイアウト容量の超過はディスクリプタを1つも作る前に�
     let 素材 = 検査用素材(テクスチャ用途::色);
     let mut 供給元 = 検査用供給元::常に成功する();
     let 容量 = 容量を決める(予算が9枚になる上限(), 3).unwrap();
-    let 結果 = 構築する(&mut 供給元, 資源表世代ID::最初(), 容量, &[画像を選んだ材質(1, 1, 1, &素材)]);
+    let 結果 = 資源表世代を構築する(&mut 供給元, 資源表世代ID::最初(), 容量, &[画像を選んだ材質(1, 1, 1, &素材)]);
     assert!(matches!(
         結果,
         Err(レンダラーエラー::材質資源表不正(材質資源表エラー::レイアウト容量超過 {

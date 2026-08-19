@@ -5,7 +5,7 @@
 
 use crate::error::{レンダラーエラー, 材質資源表エラー};
 use crate::texture_material::テクスチャ用途;
-use crate::vulkan::material_table::generation_build::構築する;
+use crate::vulkan::material_table::generation_build::資源表世代を構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::{
     image_id::画像ID, material_id::大域材質ID, pack_input::梱包対象材質, texture_id::テクスチャID, texture_spec::テクスチャ指定,
@@ -27,7 +27,7 @@ fn 同じ画像を指す3つのテクスチャidを1枚へ重複除去する() {
         画像を選んだ材質(2, 102, 7, &素材),
         画像を選んだ材質(3, 103, 7, &素材),
     ];
-    let 世代 = 構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &材質一覧).unwrap();
+    let 世代 = 資源表世代を構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &材質一覧).unwrap();
     assert_eq!(世代.画像枚数() - フォールバック枚数, 1);
     assert_eq!(供給元.生存枚数(), 世代.画像枚数());
 }
@@ -47,7 +47,7 @@ fn 同じ画像でもビュー契約が違えば別のスロットにする() {
         1.0,
         [Some(ベースカラー), Some(金属粗さ), None],
     )];
-    let 世代 = 構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &材質一覧).unwrap();
+    let 世代 = 資源表世代を構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &材質一覧).unwrap();
     assert_eq!(世代.画像枚数() - フォールバック枚数, 2);
 }
 
@@ -56,7 +56,7 @@ fn 同じテクスチャidが別の画像を指したら拒む() {
     let 素材 = 検査用素材(テクスチャ用途::色);
     let mut 供給元 = 検査用供給元::常に成功する();
     let 材質一覧 = [画像を選んだ材質(1, 301, 7, &素材), 画像を選んだ材質(2, 301, 8, &素材)];
-    let 結果 = 構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &材質一覧);
+    let 結果 = 資源表世代を構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &材質一覧);
     assert!(matches!(
         結果,
         Err(レンダラーエラー::材質資源表不正(材質資源表エラー::テクスチャIDの衝突 {

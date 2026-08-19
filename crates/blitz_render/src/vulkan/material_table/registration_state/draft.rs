@@ -74,6 +74,6 @@ impl 材質の登録状態 {
     fn 資源を作らずに構築を試す(&self) -> Result<(), レンダラーエラー> {
         let 材質一覧 = self.梱包対象を並べる();
         let mut 供給元 = 検査専用供給元;
-        generation_build::構築する(&mut 供給元, 資源表世代ID::最初(), self.レイアウト容量, &材質一覧).map(|_| ())
+        generation_build::資源表世代を構築する(&mut 供給元, 資源表世代ID::最初(), self.レイアウト容量, &材質一覧).map(|_| ())
     }
 }

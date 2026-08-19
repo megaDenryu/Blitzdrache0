@@ -23,7 +23,7 @@ use super::texture_registry::必要枚数を数える;
 type 構築結果<供給元> =
     Result<資源表世代<<供給元 as 常駐テクスチャ供給元>::常駐画像, <供給元 as 常駐テクスチャ供給元>::世代付属資源>, レンダラーエラー>;
 
-pub(in crate::vulkan::material_table) fn 構築する<供給元: 常駐テクスチャ供給元>(
+pub(in crate::vulkan::material_table) fn 資源表世代を構築する<供給元: 常駐テクスチャ供給元>(
     供給元: &mut 供給元,
     世代id: 資源表世代ID,
     レイアウト容量: テクスチャ表レイアウト容量,
@@ -36,7 +36,7 @@ pub(in crate::vulkan::material_table) fn 構築する<供給元: 常駐テクス
 
     let mut 画像集合 = Vec::new();
     let 結果 = residency::積む(供給元, &mut 画像集合, 常駐枚数, 材質一覧)
-        .and_then(|常駐| packer::梱包する(材質一覧, &常駐.台帳, &常駐.フォールバック).map_err(レンダラーエラー::from))
+        .and_then(|常駐| packer::材質一覧を梱包する(材質一覧, &常駐.台帳, &常駐.フォールバック).map_err(レンダラーエラー::from))
         .and_then(|梱包| {
             let 付属資源 = 供給元.世代を仕上げる(&画像集合, &梱包.レコード列)?;
             Ok((梱包, 付属資源))

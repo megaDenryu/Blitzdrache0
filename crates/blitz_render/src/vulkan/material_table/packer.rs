@@ -30,7 +30,7 @@ pub(in crate::vulkan::material_table) struct 梱包結果 {
     pub(in crate::vulkan::material_table) 材質別解決: HashMap<大域材質ID, 世代内材質解決>,
 }
 
-pub(in crate::vulkan::material_table) fn 梱包する(
+pub(in crate::vulkan::material_table) fn 材質一覧を梱包する(
     材質一覧: &[梱包対象材質<'_>],
     台帳: &テクスチャ台帳,
     フォールバック: &正準フォールバック解決,

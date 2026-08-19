@@ -5,7 +5,7 @@
 
 use crate::error::{テクスチャ形式エラー, レンダラーエラー};
 use crate::texture_material::テクスチャ用途;
-use crate::vulkan::material_table::generation_build::構築する;
+use crate::vulkan::material_table::generation_build::資源表世代を構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::ledger::資源表世代台帳;
 
@@ -16,7 +16,7 @@ use super::material_fixture::{余裕のあるレイアウト容量, 材質を作
 fn 構築の失敗は部分生成資源だけを破棄し公開中の世代を変えない() {
     let 素材 = 検査用素材(テクスチャ用途::色);
     let mut 供給元 = 検査用供給元::常に成功する();
-    let 初期世代 = 構築する(
+    let 初期世代 = 資源表世代を構築する(
         &mut 供給元,
         資源表世代ID::最初(),
         余裕のあるレイアウト容量(),
@@ -29,7 +29,7 @@ fn 構築の失敗は部分生成資源だけを破棄し公開中の世代を�
 
     // 正準フォールバック3枚を常駐させた後、材質のテクスチャを常駐させる4回目で失敗させる。
     let mut 失敗する供給元 = 検査用供給元::指定回で失敗する(4);
-    let 新世代 = 構築する(
+    let 新世代 = 資源表世代を構築する(
         &mut 失敗する供給元,
         台帳.次の世代idを発行する().unwrap(),
         余裕のあるレイアウト容量(),

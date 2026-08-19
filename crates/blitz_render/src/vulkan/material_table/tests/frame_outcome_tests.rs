@@ -8,7 +8,7 @@
 #![allow(clippy::unwrap_used)]
 
 use crate::vulkan::material_table::generation::資源表世代;
-use crate::vulkan::material_table::generation_build::構築する;
+use crate::vulkan::material_table::generation_build::資源表世代を構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::ledger::資源表世代台帳;
 use crate::vulkan::sync::フレームスロット添字;
@@ -17,13 +17,13 @@ use super::fixture::検査用供給元;
 use super::material_fixture::余裕のあるレイアウト容量;
 
 fn 世代を1つ公開した台帳(供給元: &mut 検査用供給元) -> 資源表世代台帳<u32, ()> {
-    let 初期世代: 資源表世代<u32, ()> = 構築する(供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &[]).unwrap();
+    let 初期世代: 資源表世代<u32, ()> = 資源表世代を構築する(供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &[]).unwrap();
     資源表世代台帳::最初の世代を公開する(初期世代)
 }
 
 fn 次の世代を公開する(台帳: &mut 資源表世代台帳<u32, ()>, 供給元: &mut 検査用供給元) {
     let 発行id = 台帳.次の世代idを発行する().unwrap();
-    台帳.公開する(構築する(供給元, 発行id, 余裕のあるレイアウト容量(), &[]).unwrap());
+    台帳.公開する(資源表世代を構築する(供給元, 発行id, 余裕のあるレイアウト容量(), &[]).unwrap());
 }
 
 /// 世代の作り直しや記録の途中で失敗して送信へ到達しなかったフレームを表す。束縛先を借りただけで保持は記録しない。
