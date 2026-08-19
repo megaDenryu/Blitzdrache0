@@ -13,6 +13,9 @@ import { 大域世界構造の形か } from './契約検証/大域世界構造�
 import { チャンク構造の形か } from './契約検証/チャンク構造検証.ts'
 import { チャンク構造をJSON文字列へ直列化する, JSON文字列からチャンク構造を復元する } from './チャンク構造直列化.ts'
 
+type 大域世界資源区分 = '構造' | '高さ格子'
+type チャンク資源区分 = '構造' | '高さ格子' | '材質重み'
+
 // crates/editor_server（127.0.0.1:7901）への実通信を行う境界実装。
 // ブラウザではViteプロキシ越しの相対/api経路を用い、Nodeヘッドレスでは基底URLを受け取って接続する。
 export class 実サーバー接続 implements プロジェクト保管庫接続, ソースアセット書き出し接続 {
@@ -24,33 +27,27 @@ export class 実サーバー接続 implements プロジェクト保管庫接続,
 
     public async 大域世界の構造を読む(): Promise<読込結果<大域世界構造>> {
         return JSONを取得する(
-            `${this._基底URL}/api/大域世界/構造`,
+            this._大域世界パス('構造'),
             (テキスト) => JSON.parse(テキスト),
             大域世界構造の形か,
         )
     }
 
     public async 大域世界の構造を保存する(構造: 大域世界構造): Promise<保存結果> {
-        return JSONを送信する(
-            `${this._基底URL}/api/大域世界/構造`,
-            JSON.stringify(構造),
-        )
+        return JSONを送信する(this._大域世界パス('構造'), JSON.stringify(構造))
     }
 
     public async 大域世界の高さ格子を読む(): Promise<読込結果<ArrayBufferLike>> {
-        return バイナリを取得する(`${this._基底URL}/api/大域世界/高さ格子`)
+        return バイナリを取得する(this._大域世界パス('高さ格子'))
     }
 
     public async 大域世界の高さ格子を保存する(バイト列: ArrayBufferLike): Promise<保存結果> {
-        return バイナリを送信する(
-            `${this._基底URL}/api/大域世界/高さ格子`,
-            バイト列,
-        )
+        return バイナリを送信する(this._大域世界パス('高さ格子'), バイト列)
     }
 
     public async チャンクの構造を読む(座標: チャンク座標): Promise<読込結果<チャンク構造>> {
         return JSONを取得する(
-            `${this._基底URL}/api/チャンク/${座標.x}/${座標.z}/構造`,
+            this._チャンクパス(座標, '構造'),
             (テキスト) => JSON文字列からチャンク構造を復元する(テキスト),
             チャンク構造の形か,
         )
@@ -58,35 +55,43 @@ export class 実サーバー接続 implements プロジェクト保管庫接続,
 
     public async チャンクの構造を保存する(座標: チャンク座標, 構造: チャンク構造): Promise<保存結果> {
         return JSONを送信する(
-            `${this._基底URL}/api/チャンク/${座標.x}/${座標.z}/構造`,
+            this._チャンクパス(座標, '構造'),
             チャンク構造をJSON文字列へ直列化する(構造),
         )
     }
 
     public async チャンクの高さ格子を読む(座標: チャンク座標): Promise<読込結果<ArrayBufferLike>> {
-        return バイナリを取得する(`${this._基底URL}/api/チャンク/${座標.x}/${座標.z}/高さ格子`)
+        return バイナリを取得する(this._チャンクパス(座標, '高さ格子'))
     }
 
     public async チャンクの高さ格子を保存する(座標: チャンク座標, バイト列: ArrayBufferLike): Promise<保存結果> {
-        return バイナリを送信する(
-            `${this._基底URL}/api/チャンク/${座標.x}/${座標.z}/高さ格子`,
-            バイト列,
-        )
+        return バイナリを送信する(this._チャンクパス(座標, '高さ格子'), バイト列)
     }
 
     public async チャンクの材質重みを読む(座標: チャンク座標): Promise<読込結果<ArrayBufferLike>> {
-        return バイナリを取得する(`${this._基底URL}/api/チャンク/${座標.x}/${座標.z}/材質重み`)
+        return バイナリを取得する(this._チャンクパス(座標, '材質重み'))
     }
 
     public async チャンクの材質重みを保存する(座標: チャンク座標, バイト列: ArrayBufferLike): Promise<保存結果> {
-        return バイナリを送信する(
-            `${this._基底URL}/api/チャンク/${座標.x}/${座標.z}/材質重み`,
-            バイト列,
-        )
+        return バイナリを送信する(this._チャンクパス(座標, '材質重み'), バイト列)
     }
 
     public async ソースアセットへ書き出す(世界名?: string): Promise<書き出し結果> {
-        return 書き出しを要求する(`${this._基底URL}/api/書き出し/ソースアセット`, 世界名)
+        return 書き出しを要求する(this._書き出しパス(), 世界名)
+    }
+
+    // 大域世界資源のAPI経路を1箇所へ集約する。基底URLの綴りはこのメソッドだけが知る。
+    private _大域世界パス(区分: 大域世界資源区分): string {
+        return `${this._基底URL}/api/大域世界/${区分}`
+    }
+
+    // チャンク資源のAPI経路を1箇所へ集約する。基底URLの綴りはこのメソッドだけが知る。
+    private _チャンクパス(座標: チャンク座標, 区分: チャンク資源区分): string {
+        return `${this._基底URL}/api/チャンク/${座標.x}/${座標.z}/${区分}`
+    }
+
+    // 書き出しAPI経路を1箇所へ集約する。基底URLの綴りはこのメソッドだけが知る。
+    private _書き出しパス(): string {
+        return `${this._基底URL}/api/書き出し/ソースアセット`
     }
 }
-
