@@ -9,7 +9,7 @@ export class 決定的乱数生成器 {
     }
 
     // 0以上1未満の64ビット浮動小数点実数を生成する。
-    public 次の実数(): number {
+    public 次の実数を生成する(): number {
         // xorshift64starのアルゴリズムにより内部状態を更新する。
         let x = this.状態
         x ^= (x >> 12n) & 0xffffffffffffffffn

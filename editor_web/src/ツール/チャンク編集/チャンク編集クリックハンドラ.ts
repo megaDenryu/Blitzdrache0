@@ -15,7 +15,7 @@ export class チャンク編集クリックハンドラ {
         private readonly _同期: チャンク編集同期サービス,
     ) {}
 
-    public クリック処理(最前面当たり: 部品交差情報 | null, 当たり一覧: readonly 部品交差情報[]): void {
+    public クリックを処理する(最前面当たり: 部品交差情報 | null, 当たり一覧: readonly 部品交差情報[]): void {
         const ビュー = this._部品.三次元ビュー
 
         if (this._状態.モード === '道作成' && 最前面当たり && 最前面当たり.部品 === ビュー.地形) {

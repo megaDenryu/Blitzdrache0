@@ -61,7 +61,7 @@ export function ポインタとキー入力を配線する(
             筆致.離し時(原初事象.button)
         },
         クリック時: ({ 最前面当たり, 当たり一覧 }) => {
-            クリック.クリック処理(最前面当たり, 当たり一覧)
+            クリック.クリックを処理する(最前面当たり, 当たり一覧)
         },
     })
 
@@ -79,7 +79,7 @@ export function ポインタとキー入力を配線する(
     const キーボード処理 = (e: KeyboardEvent): void => {
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
             e.preventDefault()
-            操作.取り消す()
+            操作.直前の操作を取り消す()
         }
     }
     window.addEventListener('keydown', キーボード処理)

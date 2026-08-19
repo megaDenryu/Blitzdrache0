@@ -29,12 +29,12 @@ export function ポアソンディスク候補を生成する(
 
     点を追加する(0, 0)
     while (生成待ち一覧.length > 0 && 点列.length < 最大数) {
-        const 待ち添字 = Math.floor(乱数.次の実数() * 生成待ち一覧.length)
+        const 待ち添字 = Math.floor(乱数.次の実数を生成する() * 生成待ち一覧.length)
         const 中心点 = 点列[生成待ち一覧[待ち添字]!]!
         let 候補追加成功 = false
         for (let i = 0; i < k; i++) {
-            const 角度 = 乱数.次の実数() * Math.PI * 2
-            const 距離 = 最小間隔 * (1 + 乱数.次の実数())
+            const 角度 = 乱数.次の実数を生成する() * Math.PI * 2
+            const 距離 = 最小間隔 * (1 + 乱数.次の実数を生成する())
             const nx = 中心点.x + Math.cos(角度) * 距離
             const nz = 中心点.z + Math.sin(角度) * 距離
             if (nx < -一辺 / 2 + 5 || nx > 一辺 / 2 - 5 || nz < -一辺 / 2 + 5 || nz > 一辺 / 2 - 5) continue

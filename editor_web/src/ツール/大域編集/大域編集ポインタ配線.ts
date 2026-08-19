@@ -80,7 +80,7 @@ export function 大域ポインタとキー入力を配線する(
     const キーボード処理 = (e: KeyboardEvent): void => {
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
             e.preventDefault()
-            操作.取り消す()
+            操作.直前の操作を取り消す()
         }
     }
     window.addEventListener('keydown', キーボード処理)

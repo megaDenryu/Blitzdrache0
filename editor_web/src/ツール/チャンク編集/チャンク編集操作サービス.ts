@@ -18,7 +18,7 @@ export class チャンク編集操作サービス {
         this._同期.全体を同期する()
     }
 
-    public 取り消す(): void {
+    public 直前の操作を取り消す(): void {
         const 差し戻し = this._UI状態.取り消し断片を取り出す()
         if (差し戻し !== undefined) {
             差し戻しを適用する(this._モデル, 差し戻し)
@@ -53,7 +53,7 @@ export class チャンク編集操作サービス {
         this._同期.UIを同期する()
     }
 
-    public 基礎平坦化(): void {
+    public 基礎を平坦化する(): void {
         if (this._UI状態.選択中建物識別子 === null) return
         this.コマンドを実行する({
             種類: '建物基礎を平坦化する',
@@ -64,7 +64,7 @@ export class チャンク編集操作サービス {
         })
     }
 
-    public 地面接地(): void {
+    public 建物を地面へ接地させる(): void {
         if (this._UI状態.選択中建物識別子 === null) return
         const チャンク = this._モデル.チャンクを取得する(this._UI状態.対象チャンク座標)
         const 建物 = チャンク.建物.取得する(this._UI状態.選択中建物識別子)

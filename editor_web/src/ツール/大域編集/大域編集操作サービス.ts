@@ -18,7 +18,7 @@ export class 大域編集操作サービス {
         this._同期.全体を同期する()
     }
 
-    public 取り消す(): void {
+    public 直前の操作を取り消す(): void {
         const 差し戻し = this._UI状態.取り消し断片を取り出す()
         if (差し戻し !== undefined) {
             差し戻しを適用する(this._モデル, 差し戻し)
