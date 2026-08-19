@@ -5,12 +5,14 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
+mod source_asset_export_fixture;
 mod world_layout;
 
 use std::path::{Path, PathBuf};
 
 use editor_server::{ファイル保管庫, プロジェクトルート};
 
+pub use source_asset_export_fixture::{マザーを一意な値で保存する, 大域世界を保存する, 小さな区画割り};
 pub use world_layout::{区画割りJson, 区画割りを保存する};
 
 /// 一時プロジェクトとは、実リポジトリ(`editor_data/`)を汚さずに

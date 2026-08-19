@@ -8,6 +8,7 @@ mod chunk_structure_get;
 mod chunk_structure_put;
 mod health_get;
 mod project_info_get;
+mod source_asset_export_post;
 mod static_serve;
 mod world_heightmap_get;
 mod world_heightmap_put;
@@ -15,7 +16,7 @@ mod world_layout_lookup;
 mod world_structure_get;
 mod world_structure_put;
 
-use axum::{Router, routing::get};
+use axum::{Router, routing::get, routing::post};
 
 use crate::{normalized_app::経路正規化アプリ, server_state::サーバー状態};
 
@@ -43,7 +44,8 @@ pub fn ルーターを組み立てる(状態: サーバー状態) -> 経路正�
         .route(
             "/api/チャンク/{x}/{z}/材質重み",
             get(chunk_splat_weights_get::チャンク材質重みを返す).put(chunk_splat_weights_put::チャンク材質重みを保存する),
-        );
+        )
+        .route("/api/書き出し/ソースアセット", post(source_asset_export_post::ソースアセットを書き出す));
     let ルーター = static_serve::静的配信を組み込む(ルーター, &静的配信ディレクトリ).with_state(状態);
     経路正規化アプリ::組み立てる(ルーター)
 }

@@ -49,10 +49,25 @@ pub(super) const 白リスト: [(&str, &[&str]); 10] = [
     // blitz_asset_compilerは置き場とファイル名の綴りの正本を読むためだけの依存であり、検収が写しを
     // 持たないための唯一の例外である。crosstermは`cargo xtask menu`の端末の生モード制御専用
     ("xtask", &["blitz_asset_compiler", "crossterm"]),
-    // ゲーム開発用エディター段1で新設。ブラウザからの静的配信と生存確認の口だけを持つ独立サーバーであり、
-    // blitz_*のエンジン本体クレートには依存しない(参照: `_doc/設計/ゲーム開発用エディター基盤.md`)
+    // ゲーム開発用エディター段1で新設。ブラウザからの静的配信と生存確認の口を持つ独立サーバー。
+    // 判断5(ソースアセットの書き出し)でblitz_asset_compilerへの依存を追加した。高さ格子の
+    // バイト書式の正本(書き手)を再利用するためであり、editor_server側では書式を写さない。
+    // blitz_engineはその関数(`高さ格子を切り出す`)の引数型(チャンク座標)を組み立てるために直接要る。
+    // blitz_asset_compilerが既にblitz_engine(→blitz_render→ash)を連鎖依存に持つため、この2つの追加は
+    // 依存木の到達範囲を広げない(参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断5」)
     (
         "editor_server",
-        &["serde", "serde_json", "thiserror", "axum", "tokio", "tower", "tower-http", "ts-rs"],
+        &[
+            "serde",
+            "serde_json",
+            "thiserror",
+            "axum",
+            "tokio",
+            "tower",
+            "tower-http",
+            "ts-rs",
+            "blitz_asset_compiler",
+            "blitz_engine",
+        ],
     ),
 ];

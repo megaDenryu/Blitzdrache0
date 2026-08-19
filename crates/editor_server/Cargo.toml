@@ -14,6 +14,13 @@ tokio = { workspace = true }
 tower = { workspace = true }
 tower-http = { workspace = true }
 ts-rs = { workspace = true, optional = true }
+# ソースアセットの書き出し(判断5)専用。高さ格子の書式(バイト構造)の正本を持つため、
+# editor_server側で書式を写さずここへ依存を張る。参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断5」
+blitz_asset_compiler = { path = "../blitz_asset_compiler" }
+# blitz_asset_compilerの`高さ格子を切り出す`の引数型(チャンク座標)を直接構築するために要る。
+# blitz_asset_compilerへ依存した時点でblitz_engine(および連鎖するblitz_render)は既に依存木へ入るため、
+# この依存はビルド範囲を追加で広げない
+blitz_engine = { path = "../blitz_engine" }
 
 [dev-dependencies]
 

@@ -2,8 +2,10 @@
 //! 統合テストがルーターを直接組み立てて使えるよう、状態とルーター構築だけを公開する。
 #![forbid(unsafe_code)]
 
+mod atomic_file_write;
 #[cfg(feature = "typescript")]
 mod contract;
+mod export;
 mod failure_response;
 mod health_contract;
 mod normalized_app;
@@ -17,6 +19,9 @@ mod storage;
 
 #[cfg(feature = "typescript")]
 pub use contract::{契約ファイルの本文を組み立てる, 編集資源契約の本文を組み立てる};
+pub use export::{
+    ソースアセット書き出しコマンド, 世界ソース出力先, 出力世界名, 書き出しエラー, 書き出し結果
+};
 pub use health_contract::生存確認応答;
 pub use normalized_app::経路正規化アプリ;
 pub use project_info_contract::プロジェクト情報応答;

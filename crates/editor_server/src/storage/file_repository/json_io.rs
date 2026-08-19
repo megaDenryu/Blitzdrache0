@@ -6,7 +6,7 @@ use std::path::Path;
 
 use serde::{Serialize, de::DeserializeOwned};
 
-use super::atomic_save::一時ファイル経由で書き込む;
+use crate::atomic_file_write::一時ファイル経由で書き込む;
 use crate::storage::{保存要求エラー, 読み込みエラー};
 
 pub(super) fn json構造体を読む<T: DeserializeOwned>(パス: &Path) -> Result<Option<T>, 読み込みエラー> {

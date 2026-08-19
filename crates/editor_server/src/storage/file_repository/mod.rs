@@ -3,7 +3,6 @@
 //! (参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断2」)。
 //! 実処理は`world`・`chunk`(触れるパスが互いに独立な私有モジュール)へ委譲する。
 
-mod atomic_save;
 mod chunk;
 mod data_directory;
 mod file_names;
