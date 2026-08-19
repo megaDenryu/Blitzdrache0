@@ -1,7 +1,7 @@
 import { div, span, LV2HtmlComponentBase, type DivC } from 'sengen-ui'
 import { 外殻レイアウト, アクティビティID } from 'VscodeShellLayout'
 import type { プロジェクト保管庫接続, チャンク座標 } from '../境界/通信/index.ts'
-import { 実サーバー接続 } from '../境界/通信/index.ts'
+import { 実サーバー接続, 状態通知付き保管庫接続 } from '../境界/通信/index.ts'
 import { ワールドパイプラインエディター } from '../ツール/ワールド/index.ts'
 import { 大域グリッドエディター } from '../ツール/大域グリッド/index.ts'
 import { エクスプローラーパネル } from './エクスプローラー/index.ts'
@@ -16,34 +16,37 @@ export class エディター外殻 extends LV2HtmlComponentBase {
     public readonly 保管庫: プロジェクト保管庫接続
     private readonly _エクスプローラー: エクスプローラーパネル = new エクスプローラーパネル()
     private readonly _タブ管理: タブ管理サービス = new タブ管理サービス()
+    private readonly _インスペクタースロット: DivC = div().setStyleCSS({ width: '100%', height: '100%', overflowY: 'auto' })
 
     public constructor(保管庫?: プロジェクト保管庫接続) {
         super()
-        this.保管庫 = 保管庫 ?? new 実サーバー接続()
+        this.保管庫 = 保管庫 instanceof 状態通知付き保管庫接続 ? 保管庫 : new 状態通知付き保管庫接続(保管庫 ?? new 実サーバー接続())
         this.シェル = new 外殻レイアウト({
+            テーマ: {
+                パネル背景: '#0f172a', パネル表面: '#0f172a', パネル境界線: '#1e293b',
+                パネルホバー: '#1e293b', パネルテキスト主: '#f8fafc', パネルテキスト副: '#94a3b8', パネルテキスト薄: '#64748b',
+            },
             タイトル: 'Blitzdrache0 エディター',
             アクティビティ項目一覧: [{
-                id: アクティビティID('explorer'),
-                ラベル: 'エクスプローラー',
+                id: アクティビティID('explorer'), ラベル: 'エクスプローラー',
                 アイコン: (size, color) => span({ text: 'E' }).setStyleCSS({
                     fontWeight: 'bold', fontSize: `${size * 0.8}px`, color,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    width: `${size}px`, height: `${size}px`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', width: `${size}px`, height: `${size}px`,
                 }),
             }],
-            メニューバー表示: true,
-            ステータスバー表示: true,
-            ステータスバー右テキスト: 'Blitzdrache0 v0.1.0',
-            パネル初期表示: false,
+            メニューバー表示: true, ステータスバー表示: true, ステータスバー右テキスト: 'Blitzdrache0 v0.1.0',
+            パネル初期表示: false, 右サイドバー有効: true, 右サイドバー内容: this._インスペクタースロット,
         })
         this.シェル.左サイドバーへビューを登録する(アクティビティID('explorer'), this._エクスプローラー)
         this._エクスプローラー.配線する({
-            on大域世界を開く: () => this.大域世界を開く(),
-            onチャンクを開く: (座標) => this.チャンクを開く(座標),
+            on大域世界を開く: () => this.大域世界を開く(), onチャンクを開く: (座標) => this.チャンクを開く(座標),
         })
         this.シェル.onタブイベント({
             onタブ選択: (id) => this._タブ選択時処理(id),
-            onタブ閉じる: (id) => this._タブ管理.タブを破棄する(id),
+            onタブ閉じる: (id) => {
+                this._タブ管理.タブを破棄する(id)
+                if (this._タブ管理.前面ツールを取得する() === undefined) this._インスペクタースロット.clearChildren()
+            },
         })
         this._componentRoot = div({ class: 外殻ルート }).child(this.シェル)
         this.大域世界を開く()
@@ -73,7 +76,9 @@ export class エディター外殻 extends LV2HtmlComponentBase {
     }
 
     private _タブ選択時処理(タブID: string): void {
-        this._タブ管理.タブを選択する(タブID)
+        const ツール = this._タブ管理.タブを選択する(タブID)
+        this._インスペクタースロット.clearChildren()
+        if (ツール?.インスペクター !== undefined) this._インスペクタースロット.child(ツール.インスペクター)
         if (タブID === 大域世界タブID) {
             this._エクスプローラー.大域世界を選択表示する()
         } else {

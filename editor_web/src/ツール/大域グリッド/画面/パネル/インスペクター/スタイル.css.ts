@@ -1,19 +1,13 @@
 import { style } from '@vanilla-extract/css'
 
+// VSL右サイドバースロットに収まる大域インスペクターパネルのスタイル定義。
 export const インスペクター枠 = style({
-    position: 'absolute',
-    top: '16px',
-    left: '16px',
-    zIndex: 10,
-    width: '380px',
-    maxHeight: 'calc(100vh - 32px)',
+    width: '100%',
+    height: '100%',
     overflowY: 'auto',
-    backgroundColor: 'rgba(15, 23, 42, 0.95)',
-    backdropFilter: 'blur(12px)',
-    border: '1px solid #1e293b',
-    borderRadius: '12px',
+    backgroundColor: '#0f172a',
     padding: '16px',
-    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+    boxSizing: 'border-box',
     display: 'flex',
     flexDirection: 'column',
     gap: '14px',

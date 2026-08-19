@@ -3,7 +3,7 @@ import type { ワールド編集状態 } from '../../ワールド/編集モデ�
 import { 大域グリッド画面部品 } from './大域グリッド画面部品.ts'
 import { 画面ルート } from './スタイル.css.ts'
 
-// 大域三次元ビューと大域インスペクターパネルを画面上に統合配置するLV2部品集約Orchestrator。
+// 大域三次元ビューを画面いっぱいに配置し、大域インスペクター部品を保持するLV2部品集約Orchestrator。
 export class 大域グリッド画面 extends LV2部品集約Base<大域グリッド画面部品> {
     protected _componentRoot: DivC
     public readonly 部品: 大域グリッド画面部品
@@ -19,7 +19,7 @@ export class 大域グリッド画面 extends LV2部品集約Base<大域グリ�
     }
 
     protected _ルートを構築する(部品: 大域グリッド画面部品): DivC {
-        return div({ class: 画面ルート }).childs([部品.三次元ビュー, 部品.インスペクター])
+        return div({ class: 画面ルート }).childs([部品.三次元ビュー])
     }
 
     public override delete(): void {

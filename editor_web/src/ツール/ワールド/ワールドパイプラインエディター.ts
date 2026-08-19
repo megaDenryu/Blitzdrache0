@@ -4,6 +4,7 @@ import { 実サーバー接続 } from '../../境界/通信/index.ts'
 import type { チャンク座標 } from '../../生成/編集資源契約.ts'
 import { ワールド編集状態, 初期ワールド状態を生成する } from './編集モデル/index.ts'
 import { ワールド画面 } from './画面/index.ts'
+import type { インスペクターパネル } from './画面/パネル/インスペクター/インスペクターパネル.ts'
 import { ワールドエディター状態 } from './ワールドエディター状態.ts'
 import { ワールドエディター同期サービス } from './ワールドエディター同期サービス.ts'
 import { ワールドエディター操作サービス } from './ワールドエディター操作サービス.ts'
@@ -17,6 +18,7 @@ export class ワールドパイプラインエディター extends LV2HtmlCompon
     public readonly 対象座標: チャンク座標
     public readonly 編集状態: ワールド編集状態
     public readonly 画面: ワールド画面
+    public readonly インスペクター: インスペクターパネル
     public readonly UI状態: ワールドエディター状態
     public readonly 同期サービス: ワールドエディター同期サービス
     public readonly 操作サービス: ワールドエディター操作サービス
@@ -34,44 +36,24 @@ export class ワールドパイプラインエディター extends LV2HtmlCompon
         this.編集状態 = 初期状態 ?? 初期ワールド状態を生成する(this.対象座標)
         this.編集状態.選択中チャンク座標 = this.対象座標
         this.画面 = new ワールド画面(this.編集状態)
+        this.インスペクター = this.画面.部品.インスペクター
         this._componentRoot = div().setStyleCSS({ width: '100%', height: '100%', position: 'relative' }).child(this.画面)
 
         this.UI状態 = new ワールドエディター状態(this.対象座標)
         this.同期サービス = new ワールドエディター同期サービス(this.編集状態, this.UI状態, this.画面.部品)
         this.操作サービス = new ワールドエディター操作サービス(this.編集状態, this.UI状態, this.同期サービス)
 
-        パネルイベントを配線する(
-            this.画面.部品,
-            this.UI状態,
-            this.操作サービス,
-            this.同期サービス,
-            this.編集状態,
-        )
-        永続化イベントを配線する(
-            this.画面.部品.インスペクター.部品.永続化,
-            this.保管庫,
-            this.編集状態,
-            this.同期サービス,
-            this.対象座標,
-        )
-        this._購読解除 = ポインタとキー入力を配線する(
-            this.画面.部品,
-            this.UI状態,
-            this.操作サービス,
-            this.同期サービス,
-            this.編集状態,
-        )
+        パネルイベントを配線する(this.画面.部品, this.UI状態, this.操作サービス, this.同期サービス, this.編集状態)
+        const 永続化解除 = 永続化イベントを配線する(this.インスペクター.部品.永続化, this.保管庫, this.編集状態, this.同期サービス, this.対象座標)
+        const ポインタ解除 = ポインタとキー入力を配線する(this.画面.部品, this.UI状態, this.操作サービス, this.同期サービス, this.編集状態)
+        this._購読解除 = (): void => {
+            ポインタ解除()
+            永続化解除()
+        }
 
         this.同期サービス.全体を同期する()
-
         if (初期状態 === undefined) {
-            void 起動時にワールドを読み込む(
-                this.画面.部品.インスペクター.部品.永続化,
-                this.保管庫,
-                this.編集状態,
-                this.同期サービス,
-                this.対象座標,
-            )
+            void 起動時にワールドを読み込む(this.インスペクター.部品.永続化, this.保管庫, this.編集状態, this.同期サービス, this.対象座標)
         }
     }
 
@@ -89,7 +71,6 @@ export class ワールドパイプラインエディター extends LV2HtmlCompon
 
     public override delete(): void {
         this._購読解除()
-        this.画面.部品.三次元ビュー.描画ループ.停止する()
         this.画面.delete()
         super.delete()
     }

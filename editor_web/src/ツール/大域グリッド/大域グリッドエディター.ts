@@ -4,6 +4,7 @@ import { 実サーバー接続 } from '../../境界/通信/index.ts'
 import type { ワールド編集状態 } from '../ワールド/編集モデル/index.ts'
 import { 初期大域ワールド状態を生成する } from './初期大域ワールド生成.ts'
 import { 大域グリッド画面 } from './画面/index.ts'
+import type { 大域インスペクターパネル } from './画面/パネル/インスペクター/index.ts'
 import { 大域グリッド状態 } from './大域グリッド状態.ts'
 import { 大域グリッド同期サービス } from './大域グリッド同期サービス.ts'
 import { 大域グリッド操作サービス } from './大域グリッド操作サービス.ts'
@@ -16,6 +17,7 @@ export class 大域グリッドエディター extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     public readonly 編集状態: ワールド編集状態
     public readonly 画面: 大域グリッド画面
+    public readonly インスペクター: 大域インスペクターパネル
     public readonly UI状態: 大域グリッド状態
     public readonly 同期サービス: 大域グリッド同期サービス
     public readonly 操作サービス: 大域グリッド操作サービス
@@ -27,42 +29,24 @@ export class 大域グリッドエディター extends LV2HtmlComponentBase {
         this.保管庫 = 保管庫 ?? new 実サーバー接続()
         this.編集状態 = 初期状態 ?? 初期大域ワールド状態を生成する()
         this.画面 = new 大域グリッド画面(this.編集状態)
+        this.インスペクター = this.画面.部品.インスペクター
         this._componentRoot = div().setStyleCSS({ width: '100%', height: '100%', position: 'relative' }).child(this.画面)
 
         this.UI状態 = new 大域グリッド状態()
         this.同期サービス = new 大域グリッド同期サービス(this.編集状態, this.UI状態, this.画面.部品)
         this.操作サービス = new 大域グリッド操作サービス(this.編集状態, this.UI状態, this.同期サービス)
 
-        大域パネルイベントを配線する(
-            this.画面.部品,
-            this.UI状態,
-            this.操作サービス,
-            this.同期サービス,
-            this.編集状態,
-        )
-        大域永続化イベントを配線する(
-            this.画面.部品.インスペクター.部品.永続化,
-            this.保管庫,
-            this.編集状態,
-            this.同期サービス,
-        )
-        this._購読解除 = 大域ポインタとキー入力を配線する(
-            this.画面.部品,
-            this.UI状態,
-            this.操作サービス,
-            this.同期サービス,
-            this.編集状態,
-        )
+        大域パネルイベントを配線する(this.画面.部品, this.UI状態, this.操作サービス, this.同期サービス, this.編集状態)
+        const 永続化解除 = 大域永続化イベントを配線する(this.インスペクター.部品.永続化, this.保管庫, this.編集状態, this.同期サービス)
+        const ポインタ解除 = 大域ポインタとキー入力を配線する(this.画面.部品, this.UI状態, this.操作サービス, this.同期サービス, this.編集状態)
+        this._購読解除 = (): void => {
+            ポインタ解除()
+            永続化解除()
+        }
 
         this.同期サービス.全体を同期する()
-
         if (初期状態 === undefined) {
-            void 起動時に大域ワールドを読み込む(
-                this.画面.部品.インスペクター.部品.永続化,
-                this.保管庫,
-                this.編集状態,
-                this.同期サービス,
-            )
+            void 起動時に大域ワールドを読み込む(this.インスペクター.部品.永続化, this.保管庫, this.編集状態, this.同期サービス)
         }
     }
 
@@ -80,7 +64,6 @@ export class 大域グリッドエディター extends LV2HtmlComponentBase {
 
     public override delete(): void {
         this._購読解除()
-        this.画面.部品.三次元ビュー.描画ループ.停止する()
         this.画面.delete()
         super.delete()
     }

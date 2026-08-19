@@ -3,7 +3,7 @@ import type { ワールド編集状態 } from '../編集モデル/index.ts'
 import { ワールド画面部品 } from './ワールド画面部品.ts'
 import { 画面ルート } from './スタイル.css.ts'
 
-// 三次元ビューとインスペクターパネルを画面上に統合配置するLV2部品集約Orchestrator。
+// 三次元ビューを画面いっぱいに配置し、インスペクター部品を保持するLV2部品集約Orchestrator。
 export class ワールド画面 extends LV2部品集約Base<ワールド画面部品> {
     protected _componentRoot: DivC
     public readonly 部品: ワールド画面部品
@@ -19,11 +19,7 @@ export class ワールド画面 extends LV2部品集約Base<ワールド画面�
     }
 
     protected _ルートを構築する(部品: ワールド画面部品): DivC {
-        return (
-            div({ class: 画面ルート }).childs([
-                部品.三次元ビュー,
-                部品.インスペクター])
-        )
+        return div({ class: 画面ルート }).childs([部品.三次元ビュー])
     }
 
     public override delete(): void {
