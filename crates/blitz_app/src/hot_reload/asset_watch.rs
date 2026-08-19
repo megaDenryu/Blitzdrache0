@@ -13,7 +13,7 @@ pub(super) struct アセット監視状態 {
     参照ファイル一覧: Vec<(PathBuf, SystemTime)>,
 }
 
-pub(super) fn 構築する(カタログ: カタログ, id: アセットID, 参照ファイル一覧: &[PathBuf]) -> アセット監視状態 {
+pub(super) fn アセット監視状態を構築する(カタログ: カタログ, id: アセットID, 参照ファイル一覧: &[PathBuf]) -> アセット監視状態 {
     アセット監視状態 {
         カタログ,
         id,

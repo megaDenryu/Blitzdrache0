@@ -8,7 +8,7 @@ use crate::cli::{ストリーミング起動設定, 起動モード};
 use crate::error::起動エラー;
 
 /// `--streaming`が無ければ`None`を返す。既存のスモークとベンチはチャンク世界を使わないため、既定では読込器のスレッドも起動しない。
-pub(in crate::app) fn 構築する(
+pub(in crate::app) fn ストリーミング配線を構築する(
     起動設定: &ストリーミング起動設定,
     モード: 起動モード,
     置き場: &crate::runtime_assets::実行時アセットの置き場,

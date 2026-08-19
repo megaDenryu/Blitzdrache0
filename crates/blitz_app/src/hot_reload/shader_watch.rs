@@ -29,7 +29,7 @@ pub(super) struct シェーダー監視状態 {
     最終更新時刻: SystemTime,
 }
 
-pub(super) fn 構築する(エントリパス: PathBuf) -> Option<シェーダー監視状態> {
+pub(super) fn シェーダー監視状態を構築する(エントリパス: PathBuf) -> Option<シェーダー監視状態> {
     let 監視ディレクトリ = エントリパス.parent()?.to_path_buf();
     let 最終更新時刻 = dir_mtime::最新更新時刻を取得する(&監視ディレクトリ)?;
     Some(シェーダー監視状態 {
