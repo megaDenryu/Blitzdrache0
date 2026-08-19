@@ -1,6 +1,6 @@
 import type { プロジェクト保管庫接続 } from '../境界/通信/index.ts'
 import type { チャンク座標 } from '../生成/編集資源契約.ts'
-import { ワールド編集状態, 初期ワールド状態を生成する } from '../ツール/ワールド/編集モデル/index.ts'
+import { ワールド編集状態, 初期ワールド状態を生成する } from '../ツール/チャンク編集/編集モデル/index.ts'
 
 // 保管庫から大域世界およびチャンク資源を読み出し、ワールド編集状態を復元する。
 export async function ワールド状態を復元する(

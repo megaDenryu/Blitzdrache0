@@ -1,6 +1,6 @@
 import type { 編集コマンド, チャンク座標 } from '../生成/編集資源契約.ts'
 import type { プロジェクト保管庫接続 } from '../境界/通信/index.ts'
-import { 編集コマンドを適用する } from '../ツール/ワールド/操作コマンド/index.ts'
+import { 編集コマンドを適用する } from '../ツール/チャンク編集/操作コマンド/index.ts'
 import { ワールド状態を復元する } from './ワールド復元.ts'
 import { ワールド状態を保存する } from './ワールド保存.ts'
 

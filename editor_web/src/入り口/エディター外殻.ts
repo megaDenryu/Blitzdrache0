@@ -2,8 +2,9 @@ import { div, span, LV2HtmlComponentBase, type DivC } from 'sengen-ui'
 import { 外殻レイアウト, アクティビティID, 設定アイコン } from 'VscodeShellLayout'
 import type { プロジェクト保管庫接続, チャンク座標 } from '../境界/通信/index.ts'
 import { 実サーバー接続, 状態通知付き保管庫接続 } from '../境界/通信/index.ts'
-import { ワールドパイプラインエディター } from '../ツール/ワールド/index.ts'
-import { 大域グリッドエディター } from '../ツール/大域グリッド/index.ts'
+import { 大域世界表示名, チャンク表示名を生成する } from '../境界/index.ts'
+import { チャンク編集ツール } from '../ツール/チャンク編集/index.ts'
+import { 大域編集ツール } from '../ツール/大域編集/index.ts'
 import { エクスプローラーパネル } from './エクスプローラー/index.ts'
 import { 設定パネル } from './設定/index.ts'
 import { テーマ管理サービス } from './テーマ/index.ts'
@@ -99,10 +100,10 @@ export class エディター外殻 extends LV2HtmlComponentBase {
             this.シェル.タブを選択する(大域世界タブID)
             return
         }
-        const ツール = new 大域グリッドエディター(undefined, this.保管庫)
+        const ツール = new 大域編集ツール(undefined, this.保管庫)
         ツール.テーマを適用する(this.テーマ管理.現在テーマを取得する())
         this._タブ管理.ツールを登録する(大域世界タブID, ツール)
-        this.シェル.タブを追加する(大域世界タブID, '大域世界', ツール)
+        this.シェル.タブを追加する(大域世界タブID, 大域世界表示名, ツール)
         this.シェル.タブを選択する(大域世界タブID)
     }
 
@@ -112,10 +113,10 @@ export class エディター外殻 extends LV2HtmlComponentBase {
             this.シェル.タブを選択する(タブID)
             return
         }
-        const ツール = new ワールドパイプラインエディター(座標, undefined, this.保管庫)
+        const ツール = new チャンク編集ツール(座標, undefined, this.保管庫)
         ツール.テーマを適用する(this.テーマ管理.現在テーマを取得する())
         this._タブ管理.ツールを登録する(タブID, ツール)
-        this.シェル.タブを追加する(タブID, `チャンク (${座標.x}, ${座標.z})`, ツール)
+        this.シェル.タブを追加する(タブID, チャンク表示名を生成する(座標), ツール)
         this.シェル.タブを選択する(タブID)
     }
 

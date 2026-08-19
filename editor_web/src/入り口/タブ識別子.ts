@@ -1,6 +1,7 @@
 import type { チャンク座標 } from '../境界/通信/index.ts'
+import { 大域世界表示名 } from '../境界/index.ts'
 
-export const 大域世界タブID = '大域世界'
+export const 大域世界タブID = 大域世界表示名
 
 // チャンク座標からタブの一意識別子を生成する。
 export function チャンクタブIDを生成する(座標: チャンク座標): string {
