@@ -19,6 +19,8 @@ mod size_match_check;
 #[cfg(test)]
 mod derived_scale_tests;
 #[cfg(test)]
+mod floor_placement_tests;
+#[cfg(test)]
 mod mating_fixture;
 #[cfg(test)]
 mod mating_rejection_tests;
