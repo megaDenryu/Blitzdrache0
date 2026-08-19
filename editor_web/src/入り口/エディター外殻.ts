@@ -1,91 +1,94 @@
 import { div, span, LV2HtmlComponentBase, type DivC } from 'sengen-ui'
 import { 外殻レイアウト, アクティビティID } from 'VscodeShellLayout'
-import type { プロジェクト保管庫接続 } from '../境界/通信/index.ts'
+import type { プロジェクト保管庫接続, チャンク座標 } from '../境界/通信/index.ts'
 import { 実サーバー接続 } from '../境界/通信/index.ts'
-import type { ツール項目, 実行可能ツール } from './ツール定義.ts'
-import { ツール登録一覧を生成する } from './ツール一覧.ts'
+import { ワールドパイプラインエディター } from '../ツール/ワールド/index.ts'
+import { 大域グリッドエディター } from '../ツール/大域グリッド/index.ts'
+import { エクスプローラーパネル } from './エクスプローラー/index.ts'
+import { 大域世界タブID, チャンクタブIDを生成する, タブIDからチャンク座標を復元する } from './タブ識別子.ts'
+import { タブ管理サービス } from './タブ管理サービス.ts'
 import { 外殻ルート } from './スタイル.css.ts'
 
-// VscodeShellLayoutを構築し、複数のツールをアクティビティバーから切り替えてホストする外殻。
+// エクスプローラーと文書タブ形式で大域世界およびチャンク編集ツールを統括する外殻。
 export class エディター外殻 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     public readonly シェル: 外殻レイアウト
     public readonly 保管庫: プロジェクト保管庫接続
-    private readonly _ホスト: DivC
-    private readonly _ツールマップ: Map<string, ツール項目> = new Map<string, ツール項目>()
-    private _現在ツール: 実行可能ツール | null = null
-    private _現在ツールID: string | null = null
+    private readonly _エクスプローラー: エクスプローラーパネル = new エクスプローラーパネル()
+    private readonly _タブ管理: タブ管理サービス = new タブ管理サービス()
 
     public constructor(保管庫?: プロジェクト保管庫接続) {
         super()
         this.保管庫 = 保管庫 ?? new 実サーバー接続()
-        const 登録一覧 = ツール登録一覧を生成する(this.保管庫)
-        for (const t of 登録一覧) {
-            this._ツールマップ.set(t.識別子, t)
-        }
-
-        const アイコン描画 = (文字: string) => (size: number, color: string) =>
-            span({ text: 文字 }).setStyleCSS({
-                fontWeight: 'bold',
-                fontSize: `${size * 0.8}px`,
-                color: color,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: `${size}px`,
-                height: `${size}px`,
-            })
-
         this.シェル = new 外殻レイアウト({
             タイトル: 'Blitzdrache0 エディター',
-            アクティビティ項目一覧: 登録一覧.map((t) => ({
-                id: アクティビティID(t.識別子),
-                ラベル: t.ラベル,
-                アイコン: アイコン描画(t.アイコン記号),
-            })),
+            アクティビティ項目一覧: [{
+                id: アクティビティID('explorer'),
+                ラベル: 'エクスプローラー',
+                アイコン: (size, color) => span({ text: 'E' }).setStyleCSS({
+                    fontWeight: 'bold', fontSize: `${size * 0.8}px`, color,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    width: `${size}px`, height: `${size}px`,
+                }),
+            }],
             メニューバー表示: true,
             ステータスバー表示: true,
             ステータスバー右テキスト: 'Blitzdrache0 v0.1.0',
-            // 中身の無いパネルエリアが白い帯として常時出るため、使うツールが現れるまで閉じておく
             パネル初期表示: false,
         })
-
-        this._ホスト = div().setStyleCSS({ width: '100%', height: '100%', position: 'relative' })
-        this.シェル.タブを追加する('editor-main', 'エディター', this._ホスト)
-        this.シェル.タブを選択する('editor-main')
-
-        this.シェル.onアクティビティ選択((id) => {
-            this.ツールを切り替える(id)
+        this.シェル.左サイドバーへビューを登録する(アクティビティID('explorer'), this._エクスプローラー)
+        this._エクスプローラー.配線する({
+            on大域世界を開く: () => this.大域世界を開く(),
+            onチャンクを開く: (座標) => this.チャンクを開く(座標),
         })
-
-        this.ツールを切り替える('world-pipeline')
+        this.シェル.onタブイベント({
+            onタブ選択: (id) => this._タブ選択時処理(id),
+            onタブ閉じる: (id) => this._タブ管理.タブを破棄する(id),
+        })
         this._componentRoot = div({ class: 外殻ルート }).child(this.シェル)
+        this.大域世界を開く()
     }
 
-    public ツールを切り替える(ツールID: string): void {
-        if (this._現在ツールID === ツールID) return
-        const 定義 = this._ツールマップ.get(ツールID)
-        if (定義 === undefined) {
-            throw new Error(`未登録のツール識別子: ${ツールID}`)
+    public 大域世界を開く(): void {
+        if (this.シェル.タブが存在するか(大域世界タブID)) {
+            this.シェル.タブを選択する(大域世界タブID)
+            return
         }
+        const ツール = new 大域グリッドエディター(undefined, this.保管庫)
+        this._タブ管理.ツールを登録する(大域世界タブID, ツール)
+        this.シェル.タブを追加する(大域世界タブID, '大域世界', ツール)
+        this.シェル.タブを選択する(大域世界タブID)
+    }
 
-        if (this._現在ツール !== null) {
-            this._現在ツール.delete()
-            this._ホスト.clearChildren()
+    public チャンクを開く(座標: チャンク座標): void {
+        const タブID = チャンクタブIDを生成する(座標)
+        if (this.シェル.タブが存在するか(タブID)) {
+            this.シェル.タブを選択する(タブID)
+            return
         }
+        const ツール = new ワールドパイプラインエディター(座標, undefined, this.保管庫)
+        this._タブ管理.ツールを登録する(タブID, ツール)
+        this.シェル.タブを追加する(タブID, `チャンク (${座標.x}, ${座標.z})`, ツール)
+        this.シェル.タブを選択する(タブID)
+    }
 
-        this._現在ツール = 定義.ツールを生成する()
-        this._現在ツールID = ツールID
-        this._ホスト.child(this._現在ツール)
-        this._現在ツール.寸法を合わせる(window.innerWidth, window.innerHeight)
+    private _タブ選択時処理(タブID: string): void {
+        this._タブ管理.タブを選択する(タブID)
+        if (タブID === 大域世界タブID) {
+            this._エクスプローラー.大域世界を選択表示する()
+        } else {
+            const 座標 = タブIDからチャンク座標を復元する(タブID)
+            if (座標 !== null) this._エクスプローラー.チャンクを選択表示する(座標)
+        }
     }
 
     public 寸法を合わせる(幅: number, 高さ: number): void {
-        this._現在ツール?.寸法を合わせる(幅, 高さ)
+        this._タブ管理.前面ツールを取得する()?.寸法を合わせる(幅, 高さ)
     }
 
     public override delete(): void {
-        this._現在ツール?.delete()
+        this._タブ管理.全て破棄する()
+        this._エクスプローラー.delete()
         this.シェル.delete()
         super.delete()
     }

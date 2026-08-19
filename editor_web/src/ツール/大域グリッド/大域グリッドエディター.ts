@@ -55,7 +55,6 @@ export class 大域グリッドエディター extends LV2HtmlComponentBase {
         )
 
         this.同期サービス.全体を同期する()
-        this.画面.部品.三次元ビュー.描画ループ.開始する()
 
         if (初期状態 === undefined) {
             void 起動時に大域ワールドを読み込む(
@@ -65,6 +64,14 @@ export class 大域グリッドエディター extends LV2HtmlComponentBase {
                 this.同期サービス,
             )
         }
+    }
+
+    public 前面になった(): void {
+        this.画面.部品.三次元ビュー.描画ループ.開始する()
+    }
+
+    public 背面になった(): void {
+        this.画面.部品.三次元ビュー.描画ループ.停止する()
     }
 
     public 寸法を合わせる(幅: number, 高さ: number, ピクセル比: number = 1): void {

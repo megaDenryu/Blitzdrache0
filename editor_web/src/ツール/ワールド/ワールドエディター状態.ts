@@ -13,9 +13,13 @@ export class ワールドエディター状態 {
     public ペイント流量: number = 0.4
     public 選択中ノード添字: number = -1
     public 選択中建物識別子: string | null = null
-    public readonly 対象チャンク座標: チャンク座標 = { x: 0, z: 0 }
+    public readonly 対象チャンク座標: チャンク座標
     public static readonly 履歴スタック上限: number = 50
     public readonly 取り消し履歴スタック: 差し戻し断片[] = []
+
+    public constructor(対象チャンク座標: チャンク座標 = { x: 0, z: 0 }) {
+        this.対象チャンク座標 = { ...対象チャンク座標 }
+    }
 
     public 取り消し断片を積む(断片: 差し戻し断片): void {
         this.取り消し履歴スタック.push(断片)

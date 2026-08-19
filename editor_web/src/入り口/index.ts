@@ -1,2 +1,5 @@
 export { エディター外殻 } from './エディター外殻.ts'
-export type { ツール項目, 実行可能ツール } from './ツール定義.ts'
+export type { 実行可能ツール } from './ツール定義.ts'
+export { エクスプローラーパネル, type Iエクスプローラー配線 } from './エクスプローラー/index.ts'
+export { タブ管理サービス } from './タブ管理サービス.ts'
+export { 大域世界タブID, チャンクタブIDを生成する, タブIDからチャンク座標を復元する } from './タブ識別子.ts'
