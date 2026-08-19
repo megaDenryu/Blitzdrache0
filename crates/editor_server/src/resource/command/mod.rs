@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 
 pub use building_ops::{建物を削除する, 建物を移動する, 建物を配置する};
 pub use material_stroke::{地表材質層, 材質の筆致};
-pub use road_point_ops::{道路点を削除する, 道路点を移動する, 道路点を追加する};
+pub use road_point_ops::{道路点を削除する, 道路点を挿入する, 道路点を移動する, 道路点を追加する};
 pub use road_target::道路対象;
 pub use scatter_settings_change::散布設定を変更する;
 pub use sculpt_stroke::{造成筆致, 造成筆致種別};
@@ -31,6 +31,7 @@ pub enum 編集コマンド {
     造成筆致(造成筆致),
     材質の筆致(材質の筆致),
     道路点を追加する(道路点を追加する),
+    道路点を挿入する(道路点を挿入する),
     道路点を移動する(道路点を移動する),
     道路点を削除する(道路点を削除する),
     建物を配置する(建物を配置する),

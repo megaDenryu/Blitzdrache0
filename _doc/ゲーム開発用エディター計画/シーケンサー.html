@@ -4,6 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>リアル音源対応 宣言的マルチトラック・シーケンサー</title>
+  <!--
+    コンセプト（2026-08-20 確認済み）:
+    この試作は「宣言的な（＝コード進行で正しさが保証された）マルチトラック・シーケンサー」を、
+    リアルな生楽器音源で鳴らすための道具である。
+    - 幹は宣言的な作曲。コード進行パターンを定義し、そのコードに含まれる音だけが打てる。
+      ハズレ音を構造的に作れないのは、世界編集エディターと同じ「編集結果が常に正しい状態に保たれる」思想。
+    - 葉はメロディ/バッキング/ベース/ドラムの4トラック。曲想の型はゲームシーン名でプリセット化されており、
+      ゲームBGM作曲の道具として想定されている。
+    - 音源は実在楽器のシンセモデル（ピアノ=加算合成+ハンマー、ギター=Karplus-Strong、弦=デチューン重層、
+      フルート=奇数次倍音+ブレス、ベース、エレピ=FM、生ドラム）をWeb Audioで個別にモデリングしている。
+    - 編集操作はドラッグで音を伸ばすノートホールド、右クリックで消去、トラック別の楽器選択、BPM可変、デモ投入。
+    - 和音の定義は根音(ピッチクラス)+種類+ステップ数で持ち、トラックごとに進行を差し替えられる。
+      音楽上、通常は周波数を持つトラック(メロディ/バッキング/ベース)は同一の進行を共有するため、
+      既定は「全体の進行に従う」であり、トラックごとの上書きは例外的な使い方として選べる。
+  -->
   <style>
     :root {
       --bg: #0d1117;
@@ -104,6 +119,8 @@
       padding: 4px 0;
       border-radius: 3px;
     }
+    .chord-chip.custom { color: #d29922; }
+    .chord-chip.loop { opacity: 0.55; }
 
     .track-banner {
       grid-column: 1 / -1;
@@ -116,6 +133,25 @@
       justify-content: space-between;
       align-items: center;
     }
+
+    .track-banner.extra {
+      border-top: none;
+      margin-top: 0;
+      padding-top: 0;
+      padding-bottom: 4px;
+      font-weight: normal;
+    }
+
+    .banner-ctrl {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    .banner-ctrl input[type="range"] { width: 70px; padding: 0; }
+    .banner-ctrl select { padding: 2px 6px; font-size: 0.7rem; }
 
     .label {
       display: flex;
@@ -159,6 +195,92 @@
       outline: 2px solid #fff;
       z-index: 10;
     }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .panel .group { flex-direction: column; align-items: flex-start; gap: 2px; }
+    .panel .group label { font-size: 0.7rem; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    .overlay.open { display: flex; }
+
+    .modal {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px;
+      width: min(720px, 94vw);
+      max-height: 90vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal h3 { font-size: 0.9rem; }
+    .modal .section { border-top: 1px solid var(--border); padding-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .modal .section h4 { font-size: 0.8rem; color: var(--text-dim); }
+
+    .prog-row {
+      display: grid;
+      grid-template-columns: 90px 150px 80px 40px;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .modal textarea {
+      width: 100%;
+      height: 110px;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.75rem;
+      resize: vertical;
+    }
+
+    .modal input[type="text"], .modal input[type="url"] {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+    }
+
+    .status { min-height: 1.2em; font-size: 0.72rem; color: var(--t2); }
+
+    .btn-row { display: flex; gap: 8px; }
+
+    .custom-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 0.75rem;
+    }
   </style>
 </head>
 <body oncontextmenu="return false;">
@@ -169,15 +291,13 @@
       <button id="btnPlay">再生 / 停止</button>
       <button id="btnDemo" class="sec">生楽器アンサンブル デモ</button>
       <button id="btnClear" class="sec">全クリア</button>
+      <button id="btnMix" class="sec">ミックス</button>
     </div>
 
     <div class="group">
       <label for="selProg">進行:</label>
-      <select id="selProg">
-        <option value="pokemonRoute">戦闘・道路 (Am - F - G - Em ×2)</option>
-        <option value="pop">王道進行 (F - G - Em - Am ×2)</option>
-        <option value="town">街・やすらぎ (C - Em - F - G ×2)</option>
-      </select>
+      <select id="selProg"></select>
+      <button id="btnProgEdit" class="sec">進行を編集/追加</button>
     </div>
 
     <div class="group">
@@ -186,8 +306,84 @@
     </div>
   </div>
 
+  <div class="panel" id="mixPanel" style="display:none;">
+    <div class="group">
+      <label for="rngMasterVol">マスター音量 <span id="valMasterVol">100</span></label>
+      <input type="range" id="rngMasterVol" min="0" max="100" value="100">
+    </div>
+    <div class="group">
+      <label for="rngReverb">リバーブ <span id="valReverb">30</span></label>
+      <input type="range" id="rngReverb" min="0" max="100" value="30">
+    </div>
+    <div class="group">
+      <label for="rngDelay">ディレイ量 <span id="valDelay">15</span></label>
+      <input type="range" id="rngDelay" min="0" max="100" value="15">
+    </div>
+    <div class="group">
+      <label for="rngDelayTime">ディレイ時間(16分の倍数) <span id="valDelayTime">3</span></label>
+      <input type="range" id="rngDelayTime" min="1" max="6" value="3">
+    </div>
+  </div>
+
   <div class="canvas-wrap" id="boardWrapper">
     <div class="grid-board" id="gridBoard"></div>
+  </div>
+</div>
+
+<!-- 進行エディター -->
+<div class="overlay" id="progOverlay">
+  <div class="modal">
+    <h3>進行エディター</h3>
+
+    <div class="section">
+      <h4>プリセットの読み込み（編集前に選ぶ）</h4>
+      <div class="btn-row">
+        <select id="progPreset" style="flex:1;"></select>
+        <button id="btnProgLoad">読み込む</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>和音の並び（左→右へ時系列）</h4>
+      <div class="status" id="progStatus">行は「根音 / 種類 / ステップ数（何ステップ続くか）」。合計は32に揃えると綺麗に繰り返します。</div>
+      <div id="progRows" style="display:flex;flex-direction:column;gap:6px;"></div>
+      <div class="btn-row">
+        <button id="btnProgAddChord">和音を追加</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>カスタムとして保存</h4>
+      <div class="btn-row">
+        <input type="text" id="progName" placeholder="進行の名前（例: 夕焼けの町）" style="flex:1;">
+        <button id="btnProgSave">保存して使う</button>
+      </div>
+      <div class="status" id="progSaveStatus"></div>
+      <div id="customList" style="display:flex;flex-direction:column;gap:4px;"></div>
+    </div>
+
+    <div class="section">
+      <h4>JSON 読み込み / 書き出し</h4>
+      <textarea id="progJson" placeholder="{&#10;  &quot;名前&quot;: &quot;マイ進行&quot;,&#10;  &quot;和音&quot;: [&#10;    { &quot;根音&quot;: &quot;C&quot;, &quot;種類&quot;: &quot;maj&quot;, &quot;ステップ&quot;: 4 },&#10;    { &quot;根音&quot;: &quot;A&quot;, &quot;種類&quot;: &quot;min&quot;, &quot;ステップ&quot;: 4 }&#10;  ]&#10;}"></textarea>
+      <div class="btn-row">
+        <button id="btnJsonImport" class="sec">読み込む</button>
+        <button id="btnJsonExport" class="sec">現在の進行を書き出す</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>REST 同期（外部サーバー / AI からの入力用）</h4>
+      <div class="btn-row">
+        <input type="url" id="restUrl" placeholder="http://localhost:7901/api/進行" style="flex:1;">
+        <button id="btnRestGet" class="sec">GET で取得</button>
+        <button id="btnRestPost" class="sec">POST で送信</button>
+      </div>
+      <div class="status" id="restStatus"></div>
+    </div>
+
+    <div class="btn-row">
+      <button id="btnProgClose" class="sec">閉じる</button>
+    </div>
   </div>
 </div>
 
@@ -246,42 +442,154 @@
     }
   ];
 
-  const PROGS = {
-    pokemonRoute: [
-      { name: 'Am', allowed: [9,0,4], root: 45 }, { name: 'F', allowed: [5,9,0], root: 41 },
-      { name: 'G', allowed: [7,11,2], root: 43 }, { name: 'Em', allowed: [4,7,11], root: 40 },
-      { name: 'Am', allowed: [9,0,4], root: 45 }, { name: 'F', allowed: [5,9,0], root: 41 },
-      { name: 'G', allowed: [7,11,2], root: 43 }, { name: 'Em', allowed: [4,7,11], root: 40 }
-    ],
-    pop: [
-      { name: 'F', allowed: [5,9,0], root: 41 }, { name: 'G', allowed: [7,11,2], root: 43 },
-      { name: 'Em', allowed: [4,7,11], root: 40 }, { name: 'Am', allowed: [9,0,4], root: 45 },
-      { name: 'F', allowed: [5,9,0], root: 41 }, { name: 'G', allowed: [7,11,2], root: 43 },
-      { name: 'Em', allowed: [4,7,11], root: 40 }, { name: 'Am', allowed: [9,0,4], root: 45 }
-    ],
-    town: [
-      { name: 'C', allowed: [0,4,7], root: 36 }, { name: 'Em', allowed: [4,7,11], root: 40 },
-      { name: 'F', allowed: [5,9,0], root: 41 }, { name: 'G', allowed: [7,11,2], root: 43 },
-      { name: 'C', allowed: [0,4,7], root: 36 }, { name: 'Em', allowed: [4,7,11], root: 40 },
-      { name: 'F', allowed: [5,9,0], root: 41 }, { name: 'G', allowed: [7,11,2], root: 43 }
-    ]
+  // --- 和音の定義 ---
+  // NOTE_PC: 音名 → ピッチクラス(0..11)
+  const NOTE_PC = {
+    'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4, 'F': 5,
+    'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8, 'A': 9, 'A#': 10, 'Bb': 10, 'B': 11
   };
+  const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+  // 和音種類: 根音からの音程(半音)。NOTE: ハズレ音を構造的に作らないための音の集合になる
+  const CHORD_TYPES = {
+    'maj':   { label: '',        intervals: [0, 4, 7] },
+    'min':   { label: 'm',       intervals: [0, 3, 7] },
+    'maj7':  { label: 'M7',      intervals: [0, 4, 7, 11] },
+    'm7':    { label: 'm7',      intervals: [0, 3, 7, 10] },
+    '7':     { label: '7',       intervals: [0, 4, 7, 10] },
+    'sus4':  { label: 'sus4',    intervals: [0, 5, 7] },
+    'dim':   { label: 'dim',     intervals: [0, 3, 6] },
+    'aug':   { label: 'aug',     intervals: [0, 4, 8] }
+  };
+  const CHORD_TYPE_KEYS = Object.keys(CHORD_TYPES);
+
+  // コード進行プリセット。各和音: {root: ピッチクラス, type: 種類, steps: 続くステップ数}
+  function ch(root, type, steps) { return { root: NOTE_PC[root], type, steps }; }
+
+  const PROG_PRESETS = [
+    {
+      key: 'pokemonRoute', name: '戦闘・道路 (Am-F-G-Em ×2)',
+      chords: [
+        ch('A', 'min', 4), ch('F', 'maj', 4), ch('G', 'maj', 4), ch('E', 'min', 4),
+        ch('A', 'min', 4), ch('F', 'maj', 4), ch('G', 'maj', 4), ch('E', 'min', 4)
+      ]
+    },
+    {
+      key: 'pop', name: '王道進行 (F-G-Em-Am ×2)',
+      chords: [
+        ch('F', 'maj', 4), ch('G', 'maj', 4), ch('E', 'min', 4), ch('A', 'min', 4),
+        ch('F', 'maj', 4), ch('G', 'maj', 4), ch('E', 'min', 4), ch('A', 'min', 4)
+      ]
+    },
+    {
+      key: 'town', name: '街・やすらぎ (C-Em-F-G ×2)',
+      chords: [
+        ch('C', 'maj', 4), ch('E', 'min', 4), ch('F', 'maj', 4), ch('G', 'maj', 4),
+        ch('C', 'maj', 4), ch('E', 'min', 4), ch('F', 'maj', 4), ch('G', 'maj', 4)
+      ]
+    },
+    {
+      key: 'canon', name: 'カノン進行 (C-G-Am-Em-F-C-F-G)',
+      chords: [
+        ch('C', 'maj', 4), ch('G', 'maj', 4), ch('A', 'min', 4), ch('E', 'min', 4),
+        ch('F', 'maj', 4), ch('C', 'maj', 4), ch('F', 'maj', 4), ch('G', 'maj', 4)
+      ]
+    },
+    {
+      key: 'komuro', name: '小室進行 (Am-F-G-C ×2)',
+      chords: [
+        ch('A', 'min', 4), ch('F', 'maj', 4), ch('G', 'maj', 4), ch('C', 'maj', 4),
+        ch('A', 'min', 4), ch('F', 'maj', 4), ch('G', 'maj', 4), ch('C', 'maj', 4)
+      ]
+    },
+    {
+      key: 'sad', name: '哀愁進行 (Am-Em-F-C ×2)',
+      chords: [
+        ch('A', 'min', 4), ch('E', 'min', 4), ch('F', 'maj', 4), ch('C', 'maj', 4),
+        ch('A', 'min', 4), ch('E', 'min', 4), ch('F', 'maj', 4), ch('C', 'maj', 4)
+      ]
+    },
+    {
+      key: 'adventure', name: '冒険 (Em-C-G-D ×2)',
+      chords: [
+        ch('E', 'min', 4), ch('C', 'maj', 4), ch('G', 'maj', 4), ch('D', 'maj', 4),
+        ch('E', 'min', 4), ch('C', 'maj', 4), ch('G', 'maj', 4), ch('D', 'maj', 4)
+      ]
+    },
+    {
+      key: 'blues', name: 'ブルース (A7-D7-A7-E7 ×2)',
+      chords: [
+        ch('A', '7', 4), ch('D', '7', 4), ch('A', '7', 4), ch('E', '7', 4),
+        ch('A', '7', 4), ch('D', '7', 4), ch('A', '7', 4), ch('E', '7', 4)
+      ]
+    }
+  ];
+
+  // カスタム進行: [{ name, chords }]
+  const CUSTOM_PROGS = [];
+
+  function chordAllowedChordPcs(chord) {
+    return CHORD_TYPES[chord.type].intervals.map(iv => (chord.root + iv) % 12);
+  }
+
+  function chordName(chord) {
+    return NOTE_NAMES[chord.root] + CHORD_TYPES[chord.type].label;
+  }
+
+  // 進行を key から引く（プリセット / カスタム）
+  function getProgByKey(key) {
+    const preset = PROG_PRESETS.find(p => p.key === key);
+    if (preset) return preset;
+    return CUSTOM_PROGS.find(c => c.name === key) || null;
+  }
+
+  // ステップ s の和音。和音のステップ数を周期的に辿る
+  function chordAtStep(prog, s) {
+    const chords = prog.chords;
+    const total = chords.reduce((a, c) => a + c.steps, 0) || 1;
+    let pos = s % total;
+    for (const c of chords) {
+      if (pos < c.steps) return c;
+      pos -= c.steps;
+    }
+    return chords[chords.length - 1];
+  }
+
+  // 32ステップを埋めるチップ分割（ループ継ぎ目で色を変える）
+  function progRuns(prog) {
+    const runs = [];
+    let s = 0;
+    let ci = 0;
+    while (s < STEPS) {
+      const c = prog.chords[ci % prog.chords.length];
+      const span = Math.min(c.steps, STEPS - s);
+      runs.push({ chord: c, span, loop: ci >= prog.chords.length });
+      s += span;
+      ci++;
+    }
+    return runs;
+  }
 
   const state = {
     progKey: 'pokemonRoute',
+    trackProg: [null, null, null, null],
     bpm: 124,
     isPlaying: false,
     currentStep: 0,
     tracks: SCHEMA.map(t => Array.from({ length: t.notes.length }, () => Array(STEPS).fill(0))),
     insts: SCHEMA.map(t => t.inst),
+    trackVols: [0.9, 0.8, 0.9, 1.0],
+    mix: { master: 1.0, reverb: 0.30, delay: 0.15, delaySteps: 3 },
     drag: null
   };
 
-  function isAllowed(pitch, sIdx, tIdx, progKey) {
+  function isAllowed(pitch, sIdx, tIdx) {
     if (SCHEMA[tIdx].type === 'drum') return true;
-    const prog = PROGS[progKey];
-    const chord = prog[Math.floor(sIdx / 4)];
-    return chord.allowed.includes(pitch % 12);
+    const key = state.trackProg[tIdx] || state.progKey;
+    const prog = getProgByKey(key);
+    if (!prog) return true;
+    const chord = chordAtStep(prog, sIdx);
+    return chordAllowedChordPcs(chord).includes(pitch % 12);
   }
 
   function sanitizeState() {
@@ -289,9 +597,7 @@
       track.forEach((row, rIdx) => {
         const pitch = SCHEMA[tIdx].notes[rIdx].p;
         for (let s = 0; s < STEPS; s++) {
-          if (!isAllowed(pitch, s, tIdx, state.progKey)) {
-            row[s] = 0;
-          }
+          if (!isAllowed(pitch, s, tIdx)) row[s] = 0;
         }
       });
     });
@@ -299,20 +605,85 @@
 
   // --- 高品位シンセシス エンジン (Web Audio API) ---
   let audioCtx = null;
+  let trackGain = [];
+  let masterNodes = null;
+
+  function makeImpulse(ctx, seconds, decay) {
+    const rate = ctx.sampleRate;
+    const len = Math.floor(rate * seconds);
+    const buf = ctx.createBuffer(2, len, rate);
+    for (let c = 0; c < 2; c++) {
+      const d = buf.getChannelData(c);
+      for (let i = 0; i < len; i++) {
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+      }
+    }
+    return buf;
+  }
+
   function getAudioContext() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    return audioCtx;
+    if (audioCtx) return audioCtx;
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx = ctx;
+
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -20;
+    comp.knee.value = 12;
+    comp.ratio.value = 4;
+    comp.attack.value = 0.003;
+    comp.release.value = 0.25;
+
+    const master = ctx.createGain();
+    master.connect(comp);
+    comp.connect(ctx.destination);
+
+    const convolver = ctx.createConvolver();
+    convolver.buffer = makeImpulse(ctx, 2.2, 3.5);
+    const reverbWet = ctx.createGain();
+    reverbWet.gain.value = state.mix.reverb;
+    convolver.connect(reverbWet);
+    reverbWet.connect(master);
+
+    const delay = ctx.createDelay(2.0);
+    delay.delayTime.value = (60 / state.bpm / 4) * state.mix.delaySteps;
+    const feedback = ctx.createGain();
+    feedback.gain.value = 0.35;
+    const delayWet = ctx.createGain();
+    delayWet.gain.value = state.mix.delay;
+    delay.connect(feedback);
+    feedback.connect(delay);
+    delay.connect(delayWet);
+    delayWet.connect(master);
+
+    trackGain = SCHEMA.map((_, i) => {
+      const g = ctx.createGain();
+      g.gain.value = state.trackVols[i];
+      g.connect(master);
+      g.connect(convolver);
+      g.connect(delay);
+      return g;
+    });
+
+    masterNodes = { master, convolver, reverbWet, delay, delayWet, comp };
+    return ctx;
+  }
+
+  function updateMixNodes() {
+    if (!audioCtx) return;
+    masterNodes.master.gain.value = state.mix.master;
+    masterNodes.reverbWet.gain.value = state.mix.reverb;
+    masterNodes.delayWet.gain.value = state.mix.delay;
+    masterNodes.delay.delayTime.value = (60 / state.bpm / 4) * state.mix.delaySteps;
   }
 
   function midiToFreq(m) { return 440 * Math.pow(2, (m - 69) / 12); }
 
   // 1. グランドピアノ (加算合成＋ハンマーインパルス)
-  function playPiano(freq, dur) {
+  function playPiano(freq, dur, out) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     const masterGain = ctx.createGain();
 
-    // ハンマーのアタックノイズ
     const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.015, ctx.sampleRate);
     const nData = noiseBuf.getChannelData(0);
     for (let i = 0; i < nData.length; i++) nData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.003));
@@ -328,7 +699,6 @@
     noiseGain.connect(masterGain);
     noise.start(now);
 
-    // 弦の倍音群（非整数次倍音でアコースティックピアノのインハーモニシティを再現）
     const harmonics = [
       { ratio: 1.0, gain: 0.35, decay: dur + 0.8 },
       { ratio: 2.003, gain: 0.22, decay: dur * 0.8 + 0.4 },
@@ -352,11 +722,11 @@
       osc.stop(now + h.decay);
     });
 
-    masterGain.connect(ctx.destination);
+    masterGain.connect(out);
   }
 
   // 2. アコースティックギター (Karplus-Strong 撥弦合成)
-  function playGuitar(freq, dur) {
+  function playGuitar(freq, dur, out) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     const sampleRate = ctx.sampleRate;
@@ -392,14 +762,14 @@
     feedback.connect(delay);
 
     lowpass.connect(outGain);
-    outGain.connect(ctx.destination);
+    outGain.connect(out);
 
     noise.start(now);
     noise.stop(now + 0.015);
   }
 
   // 3. ストリングスアンサンブル (デチューン重層＋スローアタック)
-  function playStrings(freq, dur) {
+  function playStrings(freq, dur, out) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     const masterGain = ctx.createGain();
@@ -420,16 +790,16 @@
     });
 
     masterGain.gain.setValueAtTime(0.001, now);
-    masterGain.gain.linearRampToValueAtTime(0.12, now + 0.08); // なめらかなアタック
+    masterGain.gain.linearRampToValueAtTime(0.12, now + 0.08);
     masterGain.gain.setValueAtTime(0.12, now + dur - 0.04);
     masterGain.gain.exponentialRampToValueAtTime(0.001, now + dur + 0.1);
 
     filter.connect(masterGain);
-    masterGain.connect(ctx.destination);
+    masterGain.connect(out);
   }
 
   // 4. フルート (奇数次倍音＋ブレスノイズ)
-  function playFlute(freq, dur) {
+  function playFlute(freq, dur, out) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -437,7 +807,6 @@
     osc.type = 'triangle';
     osc.frequency.setValueAtTime(freq, now);
 
-    // ビブラート
     const vib = ctx.createOscillator();
     const vibGain = ctx.createGain();
     vib.frequency.value = 5.5;
@@ -453,13 +822,13 @@
     gain.gain.exponentialRampToValueAtTime(0.001, now + dur + 0.05);
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(out);
     osc.start(now);
     osc.stop(now + dur + 0.05);
   }
 
   // 5. ウッドベース / ピチカート
-  function playWoodBass(freq, dur) {
+  function playWoodBass(freq, dur, out) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -478,14 +847,14 @@
 
     osc.connect(filter);
     filter.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(out);
 
     osc.start(now);
     osc.stop(now + dur);
   }
 
   // 6. エレキベース
-  function playElectricBass(freq, dur) {
+  function playElectricBass(freq, dur, out) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -504,14 +873,14 @@
 
     osc.connect(filter);
     filter.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(out);
 
     osc.start(now);
     osc.stop(now + dur);
   }
 
   // 7. エレピ (FM合成)
-  function playEpiano(freq, dur) {
+  function playEpiano(freq, dur, out) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     const carrier = ctx.createOscillator();
@@ -534,7 +903,7 @@
     mainGain.gain.exponentialRampToValueAtTime(0.001, now + dur + 0.3);
 
     carrier.connect(mainGain);
-    mainGain.connect(ctx.destination);
+    mainGain.connect(out);
 
     carrier.start(now);
     modulator.start(now);
@@ -543,7 +912,7 @@
   }
 
   // 8. レトロシンセ (矩形波・三角波)
-  function playRetroSynth(freq, type, dur) {
+  function playRetroSynth(freq, type, dur, out) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -553,18 +922,17 @@
     gain.gain.setValueAtTime(type === 'square' ? 0.12 : 0.28, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(out);
     osc.start(now);
     osc.stop(now + dur);
   }
 
   // 9. 生ドラムキット
-  function playAcousticDrum(t) {
+  function playAcousticDrum(t, out) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
 
     if (t === 'bd') {
-      // 生キック (太い皮の響き)
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.frequency.setValueAtTime(100, now);
@@ -572,11 +940,10 @@
       gain.gain.setValueAtTime(0.6, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(out);
       osc.start(now);
       osc.stop(now + 0.22);
     } else if (t === 'sn') {
-      // スネア (胴鳴りトーン + スナッピーノイズ)
       const osc = ctx.createOscillator();
       const oscGain = ctx.createGain();
       osc.frequency.setValueAtTime(180, now);
@@ -584,7 +951,7 @@
       oscGain.gain.setValueAtTime(0.2, now);
       oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
       osc.connect(oscGain);
-      oscGain.connect(ctx.destination);
+      oscGain.connect(out);
       osc.start(now);
       osc.stop(now + 0.08);
 
@@ -601,10 +968,9 @@
       g.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
       src.connect(f);
       f.connect(g);
-      g.connect(ctx.destination);
+      g.connect(out);
       src.start(now);
     } else if (t === 'hh') {
-      // ハイハット (高域バンドパス)
       const buf = ctx.createBuffer(1, ctx.sampleRate * 0.04, ctx.sampleRate);
       const d = buf.getChannelData(0);
       for (let i = 0; i < buf.length; i++) d[i] = (Math.random() * 2 - 1);
@@ -619,40 +985,57 @@
       g.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
       src.connect(f);
       f.connect(g);
-      g.connect(ctx.destination);
+      g.connect(out);
       src.start(now);
     }
   }
 
   // ディスパッチャ
-  function playNote(pitch, instId, durSec) {
+  function playNote(pitch, instId, durSec, tIdx) {
+    const out = getAudioContext();
+    const dest = trackGain[tIdx];
     if (instId === 'acousticDrum') {
-      playAcousticDrum(pitch);
+      playAcousticDrum(pitch, dest);
       return;
     }
     if (instId === 'retroDrum') {
-      if (pitch === 'bd') playRetroSynth(80, 'triangle', 0.1);
-      else playAcousticDrum(pitch);
+      if (pitch === 'bd') playRetroSynth(80, 'triangle', 0.1, dest);
+      else playAcousticDrum(pitch, dest);
       return;
     }
 
     const freq = midiToFreq(pitch);
     switch (instId) {
-      case 'piano': playPiano(freq, durSec); break;
-      case 'guitar': playGuitar(freq, durSec); break;
-      case 'strings': playStrings(freq, durSec); break;
-      case 'flute': playFlute(freq, durSec); break;
-      case 'woodBass': playWoodBass(freq, durSec); break;
-      case 'electricBass': playElectricBass(freq, durSec); break;
-      case 'epiano': playEpiano(freq, durSec); break;
-      case 'synthLead': playRetroSynth(freq, 'square', durSec); break;
-      case 'synthBass': playRetroSynth(freq, 'triangle', durSec); break;
-      default: playPiano(freq, durSec); break;
+      case 'piano': playPiano(freq, durSec, dest); break;
+      case 'guitar': playGuitar(freq, durSec, dest); break;
+      case 'strings': playStrings(freq, durSec, dest); break;
+      case 'flute': playFlute(freq, durSec, dest); break;
+      case 'woodBass': playWoodBass(freq, durSec, dest); break;
+      case 'electricBass': playElectricBass(freq, durSec, dest); break;
+      case 'epiano': playEpiano(freq, durSec, dest); break;
+      case 'synthLead': playRetroSynth(freq, 'square', durSec, dest); break;
+      case 'synthBass': playRetroSynth(freq, 'triangle', durSec, dest); break;
+      default: playPiano(freq, durSec, dest); break;
     }
   }
 
   // --- 宣言的レンダリング ---
   let domNodes = null;
+
+  // allowDefault=true はトラック別の進行選択のときだけ。「全体の進行に従う」= 空 key を含める
+  function populateProgSelect(sel, selectedKey, allowDefault) {
+    sel.innerHTML = '';
+    const opts = (allowDefault ? [{ key: '', label: '全体の進行に従う' }] : [])
+      .concat(PROG_PRESETS.map(p => ({ key: p.key, label: p.name })))
+      .concat(CUSTOM_PROGS.map(c => ({ key: c.name, label: c.name + ' (カスタム)' })));
+    opts.forEach(o => {
+      const el = document.createElement('option');
+      el.value = o.key;
+      el.textContent = o.label;
+      if (o.key === selectedKey) el.selected = true;
+      sel.appendChild(el);
+    });
+  }
 
   function createBoardStructure() {
     const root = document.getElementById('gridBoard');
@@ -661,21 +1044,23 @@
     const emptyCorner = document.createElement('div');
     root.appendChild(emptyCorner);
 
-    const chordEls = [];
-    for (let c = 0; c < 8; c++) {
+    const prog = getProgByKey(state.progKey);
+    const isCustom = CUSTOM_PROGS.some(c => c.name === state.progKey);
+    progRuns(prog).forEach(run => {
       const el = document.createElement('div');
-      el.className = 'chord-chip';
-      el.style.gridColumn = 'span 4';
+      el.className = 'chord-chip' + (isCustom ? ' custom' : '') + (run.loop ? ' loop' : '');
+      el.style.gridColumn = 'span ' + run.span;
+      el.textContent = chordName(run.chord);
+      el.title = (run.loop ? '(ループ継ぎ目) ' : '') + chordName(run.chord);
       root.appendChild(el);
-      chordEls.push(el);
-    }
+    });
 
     const cellMap = new Map();
 
     SCHEMA.forEach((t, tIdx) => {
       const banner = document.createElement('div');
       banner.className = 'track-banner';
-      
+
       const titleSpan = document.createElement('span');
       titleSpan.style.color = `var(--t${tIdx})`;
       titleSpan.textContent = t.name;
@@ -688,7 +1073,6 @@
         if (opt.id === state.insts[tIdx]) o.selected = true;
         instSelect.appendChild(o);
       });
-
       instSelect.addEventListener('change', (e) => {
         state.insts[tIdx] = e.target.value;
       });
@@ -696,6 +1080,46 @@
       banner.appendChild(titleSpan);
       banner.appendChild(instSelect);
       root.appendChild(banner);
+
+      // 2行目: トラック音量 + トラック別の進行（ドラムを除く）
+      const extra = document.createElement('div');
+      extra.className = 'track-banner extra';
+
+      const volWrap = document.createElement('span');
+      volWrap.className = 'banner-ctrl';
+      const volLabel = document.createElement('span');
+      volLabel.textContent = '音量';
+      const vol = document.createElement('input');
+      vol.type = 'range';
+      vol.min = 0;
+      vol.max = 100;
+      vol.value = Math.round(state.trackVols[tIdx] * 100);
+      vol.addEventListener('input', (e) => {
+        state.trackVols[tIdx] = parseInt(e.target.value, 10) / 100;
+        if (audioCtx) trackGain[tIdx].gain.value = state.trackVols[tIdx];
+      });
+      volWrap.appendChild(volLabel);
+      volWrap.appendChild(vol);
+      extra.appendChild(volWrap);
+
+      if (t.type !== 'drum') {
+        const progWrap = document.createElement('span');
+        progWrap.className = 'banner-ctrl';
+        const progLabel = document.createElement('span');
+        progLabel.textContent = '進行';
+        const progSelect = document.createElement('select');
+        populateProgSelect(progSelect, state.trackProg[tIdx] || '', true);
+        progSelect.addEventListener('change', (e) => {
+          state.trackProg[tIdx] = e.target.value || null;
+          sanitizeState();
+          render();
+        });
+        progWrap.appendChild(progLabel);
+        progWrap.appendChild(progSelect);
+        extra.appendChild(progWrap);
+      }
+
+      root.appendChild(extra);
 
       t.notes.forEach((note, rIdx) => {
         const lbl = document.createElement('div');
@@ -719,23 +1143,18 @@
       });
     });
 
-    domNodes = { chordEls, cellMap };
+    domNodes = { cellMap };
   }
 
   function render() {
     if (!domNodes) createBoardStructure();
-
-    const prog = PROGS[state.progKey];
-    domNodes.chordEls.forEach((el, idx) => {
-      el.textContent = prog[idx].name;
-    });
 
     SCHEMA.forEach((t, tIdx) => {
       t.notes.forEach((note, rIdx) => {
         for (let s = 0; s < STEPS; s++) {
           const cell = domNodes.cellMap.get(`${tIdx}-${rIdx}-${s}`);
           const val = state.tracks[tIdx][rIdx][s];
-          const allowed = isAllowed(note.p, s, tIdx, state.progKey);
+          const allowed = isAllowed(note.p, s, tIdx);
 
           cell.className = `cell t-${tIdx}`;
           if (s % 4 === 0) cell.classList.add('measure');
@@ -774,7 +1193,7 @@
     const sIdx = parseInt(target.dataset.s, 10);
 
     const pitch = SCHEMA[tIdx].notes[rIdx].p;
-    if (!isAllowed(pitch, sIdx, tIdx, state.progKey)) return;
+    if (!isAllowed(pitch, sIdx, tIdx)) return;
 
     getAudioContext();
     const isErase = (e.button === 2);
@@ -784,7 +1203,7 @@
       state.tracks[tIdx][rIdx][sIdx] = 0;
     } else {
       state.tracks[tIdx][rIdx][sIdx] = 1;
-      playNote(pitch, state.insts[tIdx], 0.25);
+      playNote(pitch, state.insts[tIdx], 0.25, tIdx);
     }
     render();
   });
@@ -800,7 +1219,7 @@
 
     const { tIdx: dt, rIdx: dr, anchorStep, isErase } = state.drag;
     const pitch = SCHEMA[tIdx].notes[rIdx].p;
-    if (!isAllowed(pitch, sIdx, tIdx, state.progKey)) return;
+    if (!isAllowed(pitch, sIdx, tIdx)) return;
 
     if (isErase) {
       state.tracks[tIdx][rIdx][sIdx] = 0;
@@ -838,7 +1257,7 @@
             else break;
           }
           const dur = hold * stepDurSec;
-          playNote(note.p, state.insts[tIdx], dur);
+          playNote(note.p, state.insts[tIdx], dur, tIdx);
         }
       });
     });
@@ -861,7 +1280,153 @@
     render();
   }
 
+  // --- 進行エディター ---
+  let editChords = [];
+
+  function fillEditChords(prog) {
+    editChords = prog.chords.map(c => ({ root: c.root, type: c.type, steps: c.steps }));
+    renderProgRows();
+  }
+
+  const renderProgRows = () => {
+    const container = document.getElementById('progRows');
+    container.innerHTML = '';
+
+    editChords.forEach((c, i) => {
+      const row = document.createElement('div');
+      row.className = 'prog-row';
+
+      const rootSel = document.createElement('select');
+      NOTE_NAMES.forEach((n, pc) => {
+        const o = document.createElement('option');
+        o.value = pc;
+        o.textContent = n;
+        if (pc === c.root) o.selected = true;
+        rootSel.appendChild(o);
+      });
+      rootSel.addEventListener('change', (e) => { c.root = parseInt(e.target.value, 10); });
+
+      const typeSel = document.createElement('select');
+      CHORD_TYPE_KEYS.forEach((k) => {
+        const o = document.createElement('option');
+        o.value = k;
+        o.textContent = k + ' (' + CHORD_TYPES[k].label + ')';
+        if (k === c.type) o.selected = true;
+        typeSel.appendChild(o);
+      });
+      typeSel.addEventListener('change', (e) => { c.type = e.target.value; });
+
+      const stepsSel = document.createElement('select');
+      [1, 2, 4, 8, 16].forEach(n => {
+        const o = document.createElement('option');
+        o.value = n;
+        o.textContent = n + ' ステップ';
+        if (n === c.steps) o.selected = true;
+        stepsSel.appendChild(o);
+      });
+      stepsSel.addEventListener('change', (e) => { c.steps = parseInt(e.target.value, 10); });
+
+      const del = document.createElement('button');
+      del.className = 'sec';
+      del.textContent = '×';
+      del.addEventListener('click', () => {
+        editChords.splice(i, 1);
+        renderProgRows();
+      });
+
+      row.appendChild(rootSel);
+      row.appendChild(typeSel);
+      row.appendChild(stepsSel);
+      row.appendChild(del);
+      container.appendChild(row);
+    });
+  };
+
+  function refreshCustomList() {
+    const box = document.getElementById('customList');
+    box.innerHTML = '';
+    CUSTOM_PROGS.forEach(c => {
+      const item = document.createElement('div');
+      item.className = 'custom-item';
+      const label = document.createElement('span');
+      label.textContent = c.name;
+      const btn = document.createElement('button');
+      btn.className = 'sec';
+      btn.textContent = '削除';
+      btn.addEventListener('click', () => {
+        CUSTOM_PROGS.splice(CUSTOM_PROGS.indexOf(c), 1);
+        state.trackProg = state.trackProg.map(p => p === c.name ? null : p);
+        if (state.progKey === c.name) state.progKey = PREFIX_DEFAULT_KEY;
+        const sel = document.getElementById('selProg');
+        populateProgSelect(sel, state.progKey);
+        sel.value = state.progKey;
+        sanitizeState();
+        createBoardStructure();
+        render();
+        refreshCustomList();
+        document.getElementById('progStatus').textContent = 'カスタム「' + c.name + '」を削除しました。';
+      });
+      item.appendChild(label);
+      item.appendChild(btn);
+      box.appendChild(item);
+    });
+  }
+
+  function populatePresetSel(sel) {
+    sel.innerHTML = '';
+    PROG_PRESETS.forEach(p => {
+      const o = document.createElement('option');
+      o.value = p.key;
+      o.textContent = p.name;
+      sel.appendChild(o);
+    });
+  }
+
+  // JSON 形式: { 名前, 和音: [{ 根音, 種類, ステップ }] }
+  function parseChordDef(def) {
+    const root = String(def['根音'] ?? '').trim();
+    if (!(root in NOTE_PC)) throw new Error('根音が不明: ' + root);
+    const type = String(def['種類'] ?? 'maj').trim();
+    if (!(type in CHORD_TYPES)) throw new Error('種類が不明: ' + type);
+    const steps = parseInt(def['ステップ'] ?? 4, 10);
+    if (!(steps >= 1 && steps <= 32)) throw new Error('ステップ数が範囲外: ' + steps);
+    return { root: NOTE_PC[root], type, steps };
+  }
+
+  function parseProgJson(json) {
+    const name = String(json['名前'] ?? '').trim() || 'インポート進行';
+    const rawChords = json['和音'];
+    if (!Array.isArray(rawChords) || rawChords.length === 0) throw new Error('和音が空です');
+    const chords = rawChords.map(parseChordDef);
+    return { name, chords };
+  }
+
+  function progToJson(prog) {
+    return {
+      名前: prog.name,
+      和音: prog.chords.map(c => ({ 根音: NOTE_NAMES[c.root], 種類: c.type, ステップ: c.steps }))
+    };
+  }
+
+  function applyProgFile(parsed) {
+    const existing = CUSTOM_PROGS.find(c => c.name === parsed.name);
+    if (existing) existing.chords = parsed.chords;
+    else CUSTOM_PROGS.push(parsed);
+
+    state.progKey = parsed.name;
+    const sel = document.getElementById('selProg');
+    populateProgSelect(sel, state.progKey);
+    sel.value = state.progKey;
+    sanitizeState();
+    createBoardStructure();
+    render();
+    refreshCustomList();
+    document.getElementById('progJson').value = JSON.stringify(progToJson(parsed), null, 2);
+  }
+
   // --- イベントバインド ---
+  const PREFIX_DEFAULT_KEY = 'pokemonRoute';
+
   document.getElementById('btnPlay').addEventListener('click', () => {
     if (state.isPlaying) stop();
     else start();
@@ -872,19 +1437,156 @@
     render();
   });
 
-  document.getElementById('selProg').addEventListener('change', (e) => {
+  const selProg = document.getElementById('selProg');
+  populateProgSelect(selProg, state.progKey);
+  selProg.value = state.progKey;
+  selProg.addEventListener('change', (e) => {
     state.progKey = e.target.value;
     sanitizeState();
+    createBoardStructure();
     render();
   });
 
+  document.getElementById('btnProgEdit').addEventListener('click', () => {
+    document.getElementById('progOverlay').classList.add('open');
+    const sel = document.getElementById('progPreset');
+    populatePresetSel(sel);
+    sel.value = PROG_PRESETS.some(p => p.key === state.progKey) ? state.progKey : PROG_PRESETS[0].key;
+    document.getElementById('btnProgLoad').click();
+    refreshCustomList();
+  });
+  document.getElementById('btnProgClose').addEventListener('click', () => {
+    document.getElementById('progOverlay').classList.remove('open');
+  });
+
+  document.getElementById('btnProgLoad').addEventListener('click', () => {
+    const sel = document.getElementById('progPreset');
+    const prog = getProgByKey(sel.value);
+    if (prog) {
+      fillEditChords(prog);
+      document.getElementById('progName').value = prog.name;
+      document.getElementById('progStatus').textContent = '読み込んだ進行: ' + prog.name;
+    }
+  });
+
+  document.getElementById('btnProgAddChord').addEventListener('click', () => {
+    editChords.push({ root: 0, type: 'maj', steps: 4 });
+    renderProgRows();
+  });
+
+  document.getElementById('btnProgSave').addEventListener('click', () => {
+    const name = document.getElementById('progName').value.trim();
+    if (!name) {
+      document.getElementById('progSaveStatus').textContent = '名前を入力してください。';
+      return;
+    }
+    if (editChords.length === 0) {
+      document.getElementById('progSaveStatus').textContent = '和音が1つもありません。';
+      return;
+    }
+    const existing = CUSTOM_PROGS.find(c => c.name === name);
+    if (existing) existing.chords = editChords.map(c => ({ root: c.root, type: c.type, steps: c.steps }));
+    else CUSTOM_PROGS.push({ name, chords: editChords.map(c => ({ root: c.root, type: c.type, steps: c.steps })) });
+
+    state.progKey = name;
+    const sel = document.getElementById('selProg');
+    populateProgSelect(sel, state.progKey);
+    sel.value = state.progKey;
+    sanitizeState();
+    createBoardStructure();
+    render();
+    refreshCustomList();
+    document.getElementById('progSaveStatus').textContent = '保存しました: ' + name;
+    document.getElementById('progOverlay').classList.remove('open');
+  });
+
+  document.getElementById('btnJsonImport').addEventListener('click', () => {
+    const text = document.getElementById('progJson').value.trim();
+    if (!text) return;
+    try {
+      const parsed = parseProgJson(JSON.parse(text));
+      applyProgFile(parsed);
+      document.getElementById('progStatus').textContent = 'JSON を読み込んで適用しました: ' + parsed.name;
+    } catch (e) {
+      document.getElementById('progStatus').textContent = 'JSON エラー: ' + e.message;
+    }
+  });
+
+  document.getElementById('btnJsonExport').addEventListener('click', () => {
+    const prog = getProgByKey(state.progKey);
+    document.getElementById('progJson').value = JSON.stringify(progToJson(prog), null, 2);
+    document.getElementById('progStatus').textContent = '現在の進行 (' + (prog.name) + ') を JSON 欄へ書き出しました。';
+  });
+
+  document.getElementById('btnRestGet').addEventListener('click', async () => {
+    const url = document.getElementById('restUrl').value.trim();
+    const st = document.getElementById('restStatus');
+    if (!url) { st.textContent = 'URL を入力してください。'; return; }
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const json = await res.json();
+      const list = Array.isArray(json) ? json : [json];
+      list.forEach(item => applyProgFile(parseProgJson(item)));
+      st.textContent = 'GET 成功: ' + list.map(i => i['名前'] ?? '?').join(', ');
+    } catch (e) {
+      st.textContent = 'GET 失敗: ' + e.message;
+    }
+  });
+
+  document.getElementById('btnRestPost').addEventListener('click', async () => {
+    const url = document.getElementById('restUrl').value.trim();
+    const st = document.getElementById('restStatus');
+    if (!url) { st.textContent = 'URL を入力してください。'; return; }
+    const prog = getProgByKey(state.progKey);
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(progToJson(prog))
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      st.textContent = 'POST 成功: ' + prog.name;
+    } catch (e) {
+      st.textContent = 'POST 失敗: ' + e.message;
+    }
+  });
+
+  // BPM / ミックス
   document.getElementById('rngBpm').addEventListener('input', (e) => {
     state.bpm = parseInt(e.target.value, 10);
     if (state.isPlaying) {
       clearInterval(timerId);
       timerId = setInterval(tick, (60 / state.bpm / 4) * 1000);
     }
+    updateMixNodes();
     render();
+  });
+
+  document.getElementById('btnMix').addEventListener('click', () => {
+    const panel = document.getElementById('mixPanel');
+    panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+  });
+
+  document.getElementById('rngMasterVol').addEventListener('input', (e) => {
+    state.mix.master = parseInt(e.target.value, 10) / 100;
+    document.getElementById('valMasterVol').textContent = e.target.value;
+    updateMixNodes();
+  });
+  document.getElementById('rngReverb').addEventListener('input', (e) => {
+    state.mix.reverb = parseInt(e.target.value, 10) / 100;
+    document.getElementById('valReverb').textContent = e.target.value;
+    updateMixNodes();
+  });
+  document.getElementById('rngDelay').addEventListener('input', (e) => {
+    state.mix.delay = parseInt(e.target.value, 10) / 100;
+    document.getElementById('valDelay').textContent = e.target.value;
+    updateMixNodes();
+  });
+  document.getElementById('rngDelayTime').addEventListener('input', (e) => {
+    state.mix.delaySteps = parseInt(e.target.value, 10);
+    document.getElementById('valDelayTime').textContent = e.target.value;
+    updateMixNodes();
   });
 
   document.getElementById('btnDemo').addEventListener('click', () => {
@@ -893,39 +1595,45 @@
     state.bpm = 110;
     document.getElementById('rngBpm').value = 110;
     state.tracks = SCHEMA.map(t => Array.from({ length: t.notes.length }, () => Array(STEPS).fill(0)));
+    state.trackProg = [null, null, null, null];
 
-    // 楽器セレクトをアコースティック系に切り替え
     state.insts[0] = 'piano';
     state.insts[1] = 'guitar';
     state.insts[2] = 'woodBass';
     state.insts[3] = 'acousticDrum';
     createBoardStructure();
 
-    // 生ドラム (落ち着いたリム＆キック)
     for (let s = 0; s < STEPS; s++) {
-      if (s % 8 === 0) state.tracks[3][2][s] = 1; // Kick
-      if (s % 8 === 4) state.tracks[3][1][s] = 1; // Snare
-      if (s % 2 === 0) state.tracks[3][0][s] = 1; // HH
+      if (s % 8 === 0) state.tracks[3][2][s] = 1;
+      if (s % 8 === 4) state.tracks[3][1][s] = 1;
+      if (s % 2 === 0) state.tracks[3][0][s] = 1;
     }
 
-    // ウッドベース (深みのあるピチカート)
-    const prog = PROGS.town;
-    for (let c = 0; c < 8; c++) {
-      const rIdx = SCHEMA[2].notes.findIndex(n => n.p === prog[c].root) || 0;
+    const prog = getProgByKey('town');
+    for (let c = 0; c < prog.chords.length; c++) {
+      if (c * 4 >= STEPS) break;
+      const chordPc = prog.chords[c].root;
+      const rootMidi = chordPc + 36;
+      const rIdx = SCHEMA[2].notes.findIndex(n => n.p === rootMidi);
+      if (rIdx < 0) continue;
       state.tracks[2][rIdx][c * 4] = 1;
       state.tracks[2][rIdx][c * 4 + 1] = 2;
       state.tracks[2][rIdx][c * 4 + 2] = 1;
     }
 
-    // ギター アルペジオ
-    for (let c = 0; c < 8; c++) {
-      state.tracks[1][4][c * 4] = 1;
-      state.tracks[1][3][c * 4 + 1] = 1;
-      state.tracks[1][1][c * 4 + 2] = 1;
-      state.tracks[1][2][c * 4 + 3] = 1;
+    for (let c = 0; c < prog.chords.length; c++) {
+      if (c * 4 >= STEPS) break;
+      const pcs = chordAllowedChordPcs(prog.chords[c]);
+      const rows = [];
+      SCHEMA[1].notes.forEach((n, idx) => {
+        if (pcs.includes(n.p % 12)) rows.push(idx);
+      });
+      if (rows.length === 0) continue;
+      rows.forEach((r, k) => {
+        if (c * 4 + k < STEPS) state.tracks[1][r][c * 4 + k] = 1;
+      });
     }
 
-    // ピアノ メロディ (情緒的な旋律)
     state.tracks[0][5][0] = 1; state.tracks[0][5][1] = 2; state.tracks[0][5][2] = 2;
     state.tracks[0][4][3] = 1;
     state.tracks[0][7][4] = 1; state.tracks[0][7][5] = 2; state.tracks[0][7][6] = 2;

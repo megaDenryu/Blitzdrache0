@@ -15,6 +15,11 @@ export type 道路点を追加する差し戻し = {
     readonly 対象: 道路対象
     readonly 追加された添字: number
 }
+export type 道路点を挿入する差し戻し = {
+    readonly 種類: '道路点を挿入する'
+    readonly 対象: 道路対象
+    readonly 挿入された添字: number
+}
 export type 道路点を移動する差し戻し = {
     readonly 種類: '道路点を移動する'
     readonly 対象: 道路対象
@@ -75,6 +80,7 @@ export type 差し戻し断片 =
     | 造成筆致差し戻し
     | 材質の筆致差し戻し
     | 道路点を追加する差し戻し
+    | 道路点を挿入する差し戻し
     | 道路点を移動する差し戻し
     | 道路点を削除する差し戻し
     | 建物を配置する差し戻し

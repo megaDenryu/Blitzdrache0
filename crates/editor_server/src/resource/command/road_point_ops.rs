@@ -1,4 +1,4 @@
-//! 道路の点を追加・移動・削除する3つの操作コマンドの型契約。いずれも`道路対象`で
+//! 道路の点を追加・挿入・移動・削除する4つの操作コマンドの型契約。いずれも`道路対象`で
 //! 広域道路かチャンクの道路かを指す。
 
 use serde::{Deserialize, Serialize};
@@ -11,6 +11,16 @@ use crate::resource::position::位置3次元;
 #[cfg_attr(feature = "typescript", derive(ts_rs::TS))]
 pub struct 道路点を追加する {
     pub 対象: 道路対象,
+    pub 位置: 位置3次元,
+}
+
+/// 道路点を挿入するとは、対象の道路の制御点列の指定した添字の位置へ1点を割り込ませる操作コマンドの
+/// ことである。既にその添字に居た点と、それより後ろの点は1つずつ後ろへずれる。
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(ts_rs::TS))]
+pub struct 道路点を挿入する {
+    pub 対象: 道路対象,
+    pub 添字: u32,
     pub 位置: 位置3次元,
 }
 
