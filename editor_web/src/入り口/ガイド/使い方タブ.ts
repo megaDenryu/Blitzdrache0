@@ -20,12 +20,14 @@ export class 使い方タブ extends LV2HtmlComponentBase {
                 this._テーマの切替(),
             ]),
         )
-        使い方の閲覧記録を書く()
     }
 
     public 寸法を合わせる(): void {}
 
-    public 前面になった(): void {}
+    // 実際に前面へ出て見られたときに閲覧済みとして記録する(構築しただけでは記録しない)。
+    public 前面になった(): void {
+        使い方の閲覧記録を書く()
+    }
 
     public 背面になった(): void {}
 
