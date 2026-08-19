@@ -40,6 +40,30 @@ export const アクションボタン = style({
     },
 })
 
+// 保存(主ボタン)に対する読み込みの副ボタン。枠と文字だけで示す控えめな見た目にする。
+export const 副アクションボタン = style({
+    flex: 1,
+    padding: '6px 12px',
+    backgroundColor: エディターCSS変数('ボタン背景'),
+    color: エディターCSS変数('ボタン文字'),
+    border: `1px solid ${エディターCSS変数('ボタン枠線')}`,
+    borderRadius: '3px',
+    cursor: 'pointer',
+    fontSize: '12px',
+    fontWeight: 500,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    ':hover': {
+        backgroundColor: エディターCSS変数('ボタンホバー背景'),
+    },
+    ':disabled': {
+        backgroundColor: エディターCSS変数('非活性背景'),
+        color: エディターCSS変数('非活性文字'),
+        cursor: 'not-allowed',
+    },
+})
+
 // 状態文言は保存/読込結果やエラーメッセージを表示する1行物のため、任意の位置で
 // 折り返す(word-break: break-all)のではなく、末尾を省略記号で収める。全文は
 // 呼び出し側がtitle属性で提供する(永続化パネル.ts の 状態文言を更新する 参照)。

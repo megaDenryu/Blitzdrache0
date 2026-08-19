@@ -1,7 +1,7 @@
 import { div, span, p, DivC, LV2HtmlComponentBase } from 'sengen-ui'
 import { パネル, 見出し行, バッジ, 説明リスト } from './スタイル.css.ts'
 
-// 129x129の1px重複共有と道路クリップ仕様を案内するLV2素部品。
+// 129×129の境界頂点共有(1画素重複)と道路クリップ仕様を案内するLV2素部品。
 export class スライス仕様パネル extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
 
@@ -14,12 +14,12 @@ export class スライス仕様パネル extends LV2HtmlComponentBase {
         return (
             div({ class: パネル }).childs([
                 div({ class: 見出し行 }).childs([
-                    span({ text: 'シームレス・スライス設定' }).setTooltip('シームレス・スライス設定'),
-                    span({ class: バッジ, text: '129x129 (1px Overlap)' }).setTooltip('129x129 (1px Overlap)'),
+                    span({ text: 'チャンク切り出しの設定' }).setTooltip('チャンク切り出しの設定'),
+                    span({ class: バッジ, text: '129×129 (1画素重複)' }).setTooltip('129×129 (1画素重複)'),
                 ]),
                 div({ class: 説明リスト }).childs([
-                    p({ text: '・ 各チャンク境界を1px重複共有して出力。' }),
-                    p({ text: '・ 道路スプラインを各チャンクのAABBで自動クリップ。' }),
+                    p({ text: '・ 境界の頂点を隣と共有(1画素重複)して出力。' }),
+                    p({ text: '・ 道路スプラインを各チャンクの外接範囲で自動クリップ。' }),
                 ]),
             ])
         )

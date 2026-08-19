@@ -47,6 +47,11 @@ export const エディターCSS変数名: { readonly [K in keyof エディター
     土工ボタンホバー: '--editor-earth-btn-hover',
     非活性背景: '--editor-disabled-bg',
     非活性文字: '--editor-disabled-text',
+    中立バッジ背景: '--editor-neutral-badge-bg',
+    中立バッジ枠線: '--editor-neutral-badge-border',
+    中立バッジ文字: '--editor-neutral-badge-text',
+    カード影: '--editor-card-shadow',
+    ヒント背景: '--editor-hint-bg',
     ガラス背景ぼかし: '--editor-glass-backdrop',
 }
 

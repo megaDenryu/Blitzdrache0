@@ -75,7 +75,7 @@ export class 建物パネル extends LV2HtmlComponentBase implements I配線可�
         return (
             div({ class: パネル }).childs([
                 div({ class: 見出し行 }).childs([
-                    span({ text: '建物 / POI 配置' }).setTooltip('建物 / POI 配置'),
+                    span({ text: '建物・目印の配置' }).setTooltip('建物・目印の配置'),
                     this._件数表示]),
                 div({ class: 生成ボタングリッド }).childs([
                     button({ class: 生成ボタン, text: '+ 家屋 (12m)' })

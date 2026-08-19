@@ -22,6 +22,14 @@ export class 大域グリッド画面 extends LV2部品集約Base<大域グリ�
         this.部品.三次元ビュー.背景色を設定する(色)
     }
 
+    public 地形色を設定する(色: number): void {
+        this.部品.三次元ビュー.地形色を設定する(色)
+    }
+
+    public 道路色を設定する(色: number): void {
+        this.部品.三次元ビュー.道路色を設定する(色)
+    }
+
     protected _ルートを構築する(部品: 大域グリッド画面部品): DivC {
         return div({ class: 画面ルート }).childs([部品.三次元ビュー])
     }

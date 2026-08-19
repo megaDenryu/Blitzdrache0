@@ -10,6 +10,7 @@ export const パネル = style({
     backdropFilter: エディターCSS変数('ガラス背景ぼかし'),
     borderRadius: '8px',
     border: `1px solid ${エディターCSS変数('カード枠線')}`,
+    boxShadow: エディターCSS変数('カード影'),
 })
 
 export const 見出し = style({
@@ -63,7 +64,7 @@ export const 副ボタン = style({
     borderRadius: '4px',
     border: `1px solid ${エディターCSS変数('ボタン枠線')}`,
     backgroundColor: エディターCSS変数('ボタン背景'),
-    color: エディターCSS変数('テキスト副'),
+    color: エディターCSS変数('ボタン文字'),
     cursor: 'pointer',
     transition: 'all 0.15s ease',
     whiteSpace: 'nowrap',

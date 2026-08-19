@@ -60,6 +60,14 @@ export interface エディター配色 {
     // 非活性状態
     readonly 非活性背景: string
     readonly 非活性文字: string
+    // 中立バッジ(情報表示。成功・活性の意味を持たないバッジ)
+    readonly 中立バッジ背景: string
+    readonly 中立バッジ枠線: string
+    readonly 中立バッジ文字: string
+    // カードの立体感(白基調3段の面と区別するための影)
+    readonly カード影: string
+    // ヒント帯(操作案内。カードや情報バッジと区別する灯りの色)
+    readonly ヒント背景: string
     // 演出
     readonly ガラス背景ぼかし: string
 }
@@ -72,4 +80,8 @@ export interface エディターテーマ定義 {
     readonly エディター配色: エディター配色
     readonly 三次元背景色: number
     readonly 大域三次元背景色: number
+    // 3Dビューの地形・植生・道路の材質色(テーマごとの見え方を統一するための色トークン)
+    readonly 地形基本色: number
+    readonly 植生色: number
+    readonly 道路色: number
 }

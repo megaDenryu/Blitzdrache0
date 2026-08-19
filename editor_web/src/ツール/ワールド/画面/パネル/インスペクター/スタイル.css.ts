@@ -52,14 +52,15 @@ export const サブタイトル = style({
     textOverflow: 'ellipsis',
 })
 
+// 情報表示のバッジであり、成功・活性の意味を持たないため中立トーンにする。
 export const バッジ = style({
     padding: '2px 8px',
     borderRadius: '4px',
     fontSize: '10px',
     fontFamily: 'monospace',
-    backgroundColor: エディターCSS変数('バッジ背景'),
-    color: エディターCSS変数('バッジ文字'),
-    border: `1px solid ${エディターCSS変数('バッジ枠線')}`,
+    backgroundColor: エディターCSS変数('中立バッジ背景'),
+    color: エディターCSS変数('中立バッジ文字'),
+    border: `1px solid ${エディターCSS変数('中立バッジ枠線')}`,
     whiteSpace: 'nowrap',
     flexShrink: 0,
 })

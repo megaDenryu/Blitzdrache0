@@ -1,11 +1,11 @@
-import { DataTexture, RGBAFormat, UnsignedByteType, LinearFilter, ClampToEdgeWrapping } from 'three'
+import { DataTexture, RGBAFormat, UnsignedByteType, LinearFilter, ClampToEdgeWrapping, Color, ShaderMaterial } from 'three'
 import { メッシュ部品, ジオメトリ包み } from 'SengenThree'
 import type { 高さ場, 地表材質 } from '../../../編集モデル/index.ts'
 import { 地形幾何データを生成する, 地形頂点高さを更新する } from './地形頂点計算.ts'
 import { 地形マテリアルを生成する } from './地形シェーダー.ts'
 
 // 高さ場と地表材質データを保持し、ジオメトリバッファとテクスチャの高速更新を提供する地形メッシュ部品。
-export class 地形メッシュ部品 extends メッシュ部品<ジオメトリ包み> {
+export class 地形メッシュ部品 extends メッシュ部品<ジオメトリ包み, ShaderMaterial> {
     private readonly _解像度: number
     private readonly _スプラットテクスチャ: DataTexture
     private readonly _頂点バッファ: Float32Array
@@ -59,5 +59,11 @@ export class 地形メッシュ部品 extends メッシュ部品<ジオメトリ
 
     public 地表材質を更新する(): void {
         this._スプラットテクスチャ.needsUpdate = true
+    }
+
+    // テーマ切替時に地形の基本色(草の色)を差し替える。他の3層(泥・岩・砂)は
+    // テーマに依存しない地質色として据え置く(参照: 工房テーマ/夜間テーマの地形基本色)。
+    public 地形色を更新する(地形基本色: number): void {
+        this.マテリアル.uniforms.colGrass.value = new Color(地形基本色)
     }
 }

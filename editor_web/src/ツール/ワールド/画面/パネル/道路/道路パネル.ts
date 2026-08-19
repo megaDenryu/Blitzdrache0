@@ -14,8 +14,8 @@ export interface I道路パネル配線 {
 
 class 道路削除ボタン extends ButtonC {
     public constructor() {
-        super({ class: 削除ボタン, text: 'ノード削除', disabled: true })
-        this.setTooltip('ノード削除')
+        super({ class: 削除ボタン, text: '選択点を削除', disabled: true })
+        this.setTooltip('選択点を削除')
     }
 
     public 有効状態を設定する(有効: boolean): this {

@@ -59,7 +59,7 @@ export class 広域道路パネル extends LV2HtmlComponentBase implements I配�
     private _ルートを構築する(): DivC {
         return (
             div({ class: パネル }).childs([
-                div({ class: 見出し, text: '広域幹線道路 (Cross-Chunk Highway)' }).setTooltip('広域幹線道路 (Cross-Chunk Highway)'),
+                div({ class: 見出し, text: '広域幹線道路' }).setTooltip('広域幹線道路'),
                 this._全幅スライダー,
                 this._細分割スライダー,
                 div({ class: アクション区画 }).child(

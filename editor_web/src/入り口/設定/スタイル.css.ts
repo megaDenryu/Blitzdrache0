@@ -43,6 +43,7 @@ export const テーマカード = style({
     border: `1px solid ${エディターCSS変数('境界線')}`,
     backgroundColor: エディターCSS変数('カード背景'),
     backdropFilter: エディターCSS変数('ガラス背景ぼかし'),
+    boxShadow: エディターCSS変数('カード影'),
     cursor: 'pointer',
     transition: 'all 0.15s ease',
     ':hover': {
@@ -74,12 +75,15 @@ export const テーマ表示名 = style({
     textOverflow: 'ellipsis',
 })
 
+// 活性表現はエクスプローラーの選択項目・モード切替の選択ボタンと同じ淡若葉地+糸杉文字+
+// 糸杉の細枠に揃える(工房テーマの活性表現の統一)。
 export const 選択バッジ = style({
     fontSize: '10px',
     padding: '2px 6px',
     borderRadius: '4px',
-    backgroundColor: エディターCSS変数('アクセント背景'),
-    color: エディターCSS変数('アクセント文字白'),
+    backgroundColor: エディターCSS変数('選択背景'),
+    color: エディターCSS変数('選択文字'),
+    border: `1px solid ${エディターCSS変数('選択枠線')}`,
     fontWeight: 'bold',
     whiteSpace: 'nowrap',
     flexShrink: 0,

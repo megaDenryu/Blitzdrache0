@@ -1,5 +1,5 @@
 import { button, div, span, DivC, ButtonC, LV2HtmlComponentBase } from 'sengen-ui'
-import { 永続化枠, ボタン行, アクションボタン, 状態メッセージ, エラー状態メッセージ } from './スタイル.css.ts'
+import { 永続化枠, ボタン行, アクションボタン, 副アクションボタン, 状態メッセージ, エラー状態メッセージ } from './スタイル.css.ts'
 
 // 保存・読み込みの操作ボタンと現在の通信結果・エラー文言を表示するパネル。
 export class 永続化パネル extends LV2HtmlComponentBase {
@@ -11,7 +11,7 @@ export class 永続化パネル extends LV2HtmlComponentBase {
     public constructor() {
         super()
         this._保存ボタン = button({ class: アクションボタン, text: '保存' }).setTooltip('保存')
-        this._読込ボタン = button({ class: アクションボタン, text: '読み込み' }).setTooltip('読み込み')
+        this._読込ボタン = button({ class: 副アクションボタン, text: '読み込み' }).setTooltip('読み込み')
         this._状態表示コンテナ = div({ class: 状態メッセージ }).setTooltip('未保存').child(span({ text: '未保存' }))
 
         this._componentRoot = div({ class: 永続化枠 }).childs([

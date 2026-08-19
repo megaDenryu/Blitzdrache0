@@ -10,6 +10,7 @@ export const パネル = style({
     backdropFilter: エディターCSS変数('ガラス背景ぼかし'),
     borderRadius: '8px',
     border: `1px solid ${エディターCSS変数('カード枠線')}`,
+    boxShadow: エディターCSS変数('カード影'),
 })
 
 export const 見出し行 = style({

@@ -68,7 +68,7 @@ export class 大域造成パネル extends LV2HtmlComponentBase implements I配�
             div({ class: パネル }).childs([
                 div({ class: 見出し行 }).childs([
                     span({ text: 'マクロ山脈・盆地造成ブラシ' }).setTooltip('マクロ山脈・盆地造成ブラシ'),
-                    span({ class: 補助テキスト, text: '[Shift: 削り / 平滑化]' }).setTooltip('[Shift: 削り / 平滑化]'),
+                    span({ class: 補助テキスト, text: '[シフト: 削り / 平滑化]' }).setTooltip('[シフト: 削り / 平滑化]'),
                 ]),
                 div({ class: ボタングループ }).childs(
                     筆致種別一覧.map(({ 種別, ラベル }) => {

@@ -35,9 +35,9 @@ export class 大域インスペクターパネル extends LV2部品集約Base<�
                 div({ class: ヘッダー }).childs([
                     div({ class: タイトル群 }).childs([
                         div({ class: タイトル, text: '大域グリッドマネージャー' }).setTooltip('大域グリッドマネージャー'),
-                        p({ class: サブタイトル, text: 'マクロ造成＆シームレススライサー' }).setTooltip('マクロ造成＆シームレススライサー'),
+                        p({ class: サブタイトル, text: '大域の造成とチャンク切り出し' }).setTooltip('大域の造成とチャンク切り出し'),
                     ]),
-                    span({ class: バッジ, text: 'World: 1024m (4x4)' }).setTooltip('World: 1024m (4x4)'),
+                    span({ class: バッジ, text: '世界 1024m (4×4)' }).setTooltip('世界 1024m (4×4)'),
                 ]),
                 部品.モード切替,
                 部品.ヒント,

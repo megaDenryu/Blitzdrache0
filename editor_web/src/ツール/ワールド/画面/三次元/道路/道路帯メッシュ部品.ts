@@ -9,13 +9,14 @@ export class 道路帯メッシュ部品 extends グループ {
     private readonly _バッファジオメトリ: ジオメトリ包み
     private readonly _路面メッシュ: Mesh
     private readonly _バッファメッシュ: Mesh
+    private readonly _路面材質: MeshStandardMaterial
 
     public constructor() {
         super()
         this._路面ジオメトリ = new ジオメトリ包み()
         this._バッファジオメトリ = new ジオメトリ包み()
 
-        const 路面材質 = new MeshStandardMaterial({
+        this._路面材質 = new MeshStandardMaterial({
             color: 0x334155,
             roughness: 0.7,
             polygonOffset: true,
@@ -31,7 +32,7 @@ export class 道路帯メッシュ部品 extends グループ {
             side: DoubleSide,
         })
 
-        this._路面メッシュ = new Mesh(this._路面ジオメトリ.実体, 路面材質)
+        this._路面メッシュ = new Mesh(this._路面ジオメトリ.実体, this._路面材質)
         this._バッファメッシュ = new Mesh(this._バッファジオメトリ.実体, バッファ材質)
         this._路面メッシュ.visible = false
         this._バッファメッシュ.visible = false
@@ -41,7 +42,7 @@ export class 道路帯メッシュ部品 extends グループ {
 
         this.資源台帳.登録する(this._路面ジオメトリ)
         this.資源台帳.登録する(this._バッファジオメトリ)
-        this.資源台帳.登録する(路面材質)
+        this.資源台帳.登録する(this._路面材質)
         this.資源台帳.登録する(バッファ材質)
     }
 
@@ -79,5 +80,10 @@ export class 道路帯メッシュ部品 extends グループ {
             this._路面メッシュ.visible = false
             this._バッファメッシュ.visible = false
         }
+    }
+
+    // テーマ切替時に路面の色を差し替える(参照: 工房テーマ/夜間テーマの道路色)。
+    public 道路色を更新する(道路色: number): void {
+        this._路面材質.color.set(道路色)
     }
 }

@@ -86,6 +86,17 @@ export class 大域三次元ビュー部品 extends LV2HtmlComponentBase {
         return this
     }
 
+    // テーマ切替時に地形・道路の材質色を差し替える(大域三次元ビューに植生は無い)。
+    public 地形色を設定する(色: number): this {
+        this.地形.地形色を更新する(色)
+        return this
+    }
+
+    public 道路色を設定する(色: number): this {
+        this.道路帯.道路色を更新する(色)
+        return this
+    }
+
     public 寸法を合わせる(幅: number, 高さ: number, ピクセル比: number = 1): void {
         this.描画ループ.寸法を合わせる(幅, 高さ, ピクセル比)
     }
