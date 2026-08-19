@@ -1,10 +1,12 @@
 import { div, DivC, ButtonC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
+import { 地形追従切替 } from '../共通/地形追従切替.ts'
 import { モード一覧, モードヒント写像, type 編集モード } from './モード定義.ts'
 import { コンテナ, グリッド, モードボタン, ヒント枠, キー操作説明 } from './スタイル.css.ts'
 
 export interface Iモード切替配線 {
     readonly onモード変更: (新モード: 編集モード) => void
+    readonly on地形追従変更: (有効: boolean) => void
 }
 
 class モードヒント表示 extends DivC {
@@ -70,6 +72,7 @@ export class モード切替パネル extends LV2HtmlComponentBase implements I�
                     }),
                 ),
                 div({ class: キー操作説明, text: 'Alt: 次のモード / Shift+Alt: 前のモード' }),
+                new 地形追従切替().切替時((有効) => this._配線.先.on地形追従変更(有効)),
                 this._ヒント要素])
         )
     }

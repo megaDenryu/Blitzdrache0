@@ -3,6 +3,7 @@ import { 描画ループ, レイキャスト入力 } from 'SengenThree'
 import { ワールド編集状態 } from '../../../チャンク編集/編集モデル/index.ts'
 import type { 大域シーン部品束 } from './大域三次元ビュー部品/シーン構築.ts'
 import { 大域シーンを構築する } from './大域三次元ビュー部品/シーン構築.ts'
+import { 注視点マーカー表示制御器 } from '../../../チャンク編集/画面/三次元/カメラ/注視点マーカー表示制御器.ts'
 import { コンテナ, キャンバス } from './大域三次元ビュー部品スタイル.css.ts'
 
 function HTMLキャンバスか(要素: HTMLElement): 要素 is HTMLCanvasElement {
@@ -28,6 +29,8 @@ export class 大域三次元ビュー部品 extends LV2HtmlComponentBase {
     public readonly 地形: 大域シーン部品束['地形']
     public readonly チャンク境界: 大域シーン部品束['チャンク境界']
     public readonly ブラシリング: 大域シーン部品束['ブラシリング']
+    public readonly 注視点マーカー: 大域シーン部品束['注視点マーカー']
+    public readonly 注視点表示制御: 注視点マーカー表示制御器
     public readonly 道路帯: 大域シーン部品束['道路帯']
     public readonly 道路ノード: 大域シーン部品束['道路ノード']
 
@@ -40,6 +43,8 @@ export class 大域三次元ビュー部品 extends LV2HtmlComponentBase {
         this.地形 = シーン.地形
         this.チャンク境界 = シーン.チャンク境界
         this.ブラシリング = シーン.ブラシリング
+        this.注視点マーカー = シーン.注視点マーカー
+        this.注視点表示制御 = new 注視点マーカー表示制御器(this.注視点マーカー)
         this.道路帯 = シーン.道路帯
         this.道路ノード = シーン.道路ノード
 
@@ -76,6 +81,7 @@ export class 大域三次元ビュー部品 extends LV2HtmlComponentBase {
     }
 
     public override delete(): void {
+        this.注視点表示制御.破棄する()
         this.レイキャスト.破棄する()
         this.描画ループ.破棄する()
         this.場面.破棄する()
