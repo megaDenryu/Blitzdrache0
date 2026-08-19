@@ -94,6 +94,6 @@ pub(super) fn 接合点名を作る(綴り: &str) -> Result<接合点名, String
     接合点名::生成する(綴り).map_err(|誤り| 誤り.to_string())
 }
 
-fn 部品idを作る(綴り: &str) -> Result<部品ID, String> {
+pub(super) fn 部品idを作る(綴り: &str) -> Result<部品ID, String> {
     部品ID::生成する(綴り).map_err(|誤り| 誤り.to_string())
 }

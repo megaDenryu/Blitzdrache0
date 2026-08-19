@@ -11,6 +11,7 @@ mod contact_check;
 mod frame_bay_face;
 mod frame_bay_instruction;
 mod frame_bay_spelling;
+mod frame_chimney_instruction;
 mod frame_recipe;
 mod frame_shared_layout;
 mod frame_wall_ornament_instruction;

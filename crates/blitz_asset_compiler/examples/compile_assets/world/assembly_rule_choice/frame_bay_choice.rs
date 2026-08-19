@@ -16,7 +16,7 @@ use blitz_assembly::{
 
 use blitz_math::メートル;
 
-use super::frame_ornament_choice::{出窓を必ず差し込む, 飾りを付けない};
+use super::frame_ornament_choice::{出窓を必ず差し込む, 煙突を必ず立てる, 飾りを付けない};
 
 const 食い込ませる量: f32 = 0.02;
 
@@ -30,6 +30,7 @@ pub(super) const 扉枠付きの壁の綴り: &str = "Mod_Wall_HalfTimber_DoorFr
 pub(super) const 切妻屋根の綴り: &str = "Mod_Frame_Roof_Gable";
 pub(super) const 床板の綴り: &str = "Mod_Frame_Floor";
 pub(super) const 出窓の綴り: &str = "Mod_Tavern_Oriel_F2";
+pub(super) const 煙突の綴り: &str = "Mod_Frame_Chimney_Segment";
 
 /// 候補が1つだけのはめ口。その面には必ずその壁が入り、外面には何も付かない。
 pub(super) fn 必ず入れるはめ口(はめ口の綴り: &str, 部品の綴り: &str) -> Result<はめ口の指定, String> {
@@ -40,6 +41,11 @@ pub(super) fn 必ず入れるはめ口(はめ口の綴り: &str, 部品の綴り
 /// **候補を1つに固定するのは、絵に写ったものが突き合わせで確かめた組み立てと同じであることを言えるようにするためである。**
 pub(super) fn 外面へ出窓を差し込むはめ口(はめ口の綴り: &str, 部品の綴り: &str) -> Result<はめ口の指定, String> {
     指定を組む(はめ口の綴り, vec![壁をはめる(部品の綴り, 出窓を必ず差し込む()?)?])
+}
+
+/// 候補が1つだけのはめ口で、入った壁の外面へ必ず煙突が立つ。**煙突は葉でなく、1段目の上へさらに段が積まれる。**
+pub(super) fn 外面へ煙突を立てるはめ口(はめ口の綴り: &str, 部品の綴り: &str) -> Result<はめ口の指定, String> {
+    指定を組む(はめ口の綴り, vec![壁をはめる(部品の綴り, 煙突を必ず立てる()?)?])
 }
 
 /// 何も入れないか平壁か窓壁かを3分の1ずつで引くはめ口。候補の数がそのまま割合を決める。

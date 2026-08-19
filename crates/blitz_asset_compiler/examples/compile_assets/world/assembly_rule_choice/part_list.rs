@@ -57,6 +57,20 @@ const 屋根つきの家の部品一覧: &[原型の識別] = &[
     原型の識別::生成する("part_frame_roof_gable", "parts/Mod_Frame_Roof_Gable.glb"),
 ];
 
+/// 煙突を付けた家を組み立てる部品の一覧。屋根つきの家の7件へ煙突セグメントを足した8件である。
+/// **煙突は1つの部品を2段積むため、部品の種類は1件しか増えない。** 材質を1つしか持たないため、
+/// 材質スロットの総和は15から16へ1つだけ増える。
+const 煙突を付けた家の部品一覧: &[原型の識別] = &[
+    原型の識別::生成する("part_frame_bay_single", "parts/Mod_Frame_Bay_Single.glb"),
+    原型の識別::生成する("part_wall_halftimber_solid", "parts/Mod_Wall_HalfTimber_Solid.glb"),
+    原型の識別::生成する("part_wall_halftimber_window", "parts/Mod_Wall_HalfTimber_Window.glb"),
+    原型の識別::生成する("part_wall_halftimber_doorframe", "parts/Mod_Wall_HalfTimber_DoorFrame.glb"),
+    原型の識別::生成する("part_frame_floor", "parts/Mod_Frame_Floor.glb"),
+    原型の識別::生成する("part_tavern_oriel_f2", "parts/Mod_Tavern_Oriel_F2.glb"),
+    原型の識別::生成する("part_frame_roof_gable", "parts/Mod_Frame_Roof_Gable.glb"),
+    原型の識別::生成する("part_frame_chimney_segment", "parts/Mod_Frame_Chimney_Segment.glb"),
+];
+
 pub(super) fn 部品一覧を選ぶ(種類: 部品の組み立て規則の種類) -> &'static [原型の識別] {
     match 種類 {
         部品の組み立て規則の種類::酒場宿屋 => 酒場宿屋の部品一覧,
@@ -67,5 +81,6 @@ pub(super) fn 部品一覧を選ぶ(種類: 部品の組み立て規則の種類
         部品の組み立て規則の種類::屋根を載せた一間四方の家 | 部品の組み立て規則の種類::屋根を載せた二段の家 => {
             屋根つきの家の部品一覧
         }
+        部品の組み立て規則の種類::煙突を付けた一間四方の家 => 煙突を付けた家の部品一覧,
     }
 }
