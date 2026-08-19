@@ -15,7 +15,7 @@ use super::measurement::並び1つの実測;
 use super::{judgment, run};
 use crate::acceptance::検収シーン名;
 
-pub(super) fn 並び1つを焼いて走らせて測る(
+pub(in crate::part_row_draw) fn 並び1つを焼いて走らせて測る(
     並び: &検収する並び1つ,
     シーン名: 検収シーン名,
     出力ディレクトリ: &str,

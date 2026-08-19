@@ -13,6 +13,7 @@ mod choice_index;
 mod error;
 mod error_rule;
 mod expander;
+mod frame_extension;
 mod frame_rule;
 mod frame_step_builder;
 mod generation_seed;
@@ -40,6 +41,12 @@ mod expansion_rejection_tests;
 #[cfg(test)]
 mod expansion_tests;
 #[cfg(test)]
+mod frame_bay_joint_fixture;
+#[cfg(test)]
+mod frame_chain_fixture;
+#[cfg(test)]
+mod frame_chain_tests;
+#[cfg(test)]
 mod frame_fixture;
 #[cfg(test)]
 mod frame_placement_tests;
@@ -65,6 +72,7 @@ pub use branch_choice::{節ごとの枝の候補, 節の枝};
 pub use error::展開エラー;
 pub use error_rule::規則エラー;
 pub use expander::展開器;
+pub use frame_extension::骨格の継ぎ足し;
 pub use frame_rule::一間四方の骨格の規則;
 pub use generation_seed::生成の種;
 pub use house_rule::{家の規則, 積む階};

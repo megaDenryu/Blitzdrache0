@@ -15,6 +15,7 @@ pub(super) fn 割り当てる(名前: &str, 引数一覧: &[String]) -> Option<E
         "part-assembly" => Some(part_tools::組み立てを突き合わせる(引数一覧)),
         "part-house-row-draw" => Some(part_row_draw::家の並びを検収する()),
         "part-frame-row-draw" => Some(part_row_draw::一間四方の骨格の並びを検収する()),
+        "part-frame-chain-draw" => Some(part_row_draw::骨格を連ねた見本を撮影する()),
         "part-tree-row-draw" => Some(part_row_draw::木の並びを撮影する()),
         "compile-assets" => Some(compile_assets::実行する(引数一覧)),
         "watch-assets" => Some(watch_assets::実行する(引数一覧)),

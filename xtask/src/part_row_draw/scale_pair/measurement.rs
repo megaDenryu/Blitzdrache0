@@ -9,7 +9,7 @@ use super::super::row_target::検収する並び1つ;
 use crate::part_row_draw::tally_line::焼いた並びの勘定;
 use crate::report_parse::計数報告;
 
-pub(super) struct 並び1つの実測 {
+pub(in crate::part_row_draw) struct 並び1つの実測 {
     pub(super) 並び: 検収する並び1つ,
     pub(super) 勘定: 焼いた並びの勘定,
     pub(super) 計数: 計数報告,
@@ -32,7 +32,7 @@ impl 並び1つの実測 {
         self.計数.シーン.候補数.saturating_sub(self.計数.可視個体の選別.候補数)
     }
 
-    pub(super) fn 要約の1行(&self) -> String {
+    pub(in crate::part_row_draw) fn 要約の1行(&self) -> String {
         format!(
             "{}は発行数{}・部品の種類{}・材質スロット総和{}・個体{}体、絵は{}",
             self.並び.呼び名(),

@@ -14,7 +14,7 @@ use crate::asset_generator::生成器エラー;
 use crate::world_setup::検収世界の用意の破れ;
 
 #[derive(Debug)]
-pub(super) enum 部品で組んだ並びの検収エラー {
+pub(in crate::part_row_draw) enum 部品で組んだ並びの検収エラー {
     検収の器が破れた(検収エラー),
     判定が破れた(判定の破れ),
     検収世界を用意できなかった(検収世界の用意の破れ),

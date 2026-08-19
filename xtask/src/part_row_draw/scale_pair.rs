@@ -24,8 +24,11 @@ use std::process::ExitCode;
 
 use super::row_target::検収する並び1つ;
 use crate::acceptance::検収シーン名;
-use error::部品で組んだ並びの検収エラー;
-use single_measurement::並び1つを焼いて走らせて測る;
+/// 並び1つを焼いて走らせて測る工程と、その実測と型付きエラーは、件数の対を持たない見本の撮影(`frame_chain`)も使う。
+/// 器そのものを共有させないのは、あちらが対でないためである。突き合わせるべき数の関係が2つのあいだに無い。
+pub(super) use error::部品で組んだ並びの検収エラー;
+pub(super) use measurement::並び1つの実測;
+pub(super) use single_measurement::並び1つを焼いて走らせて測る;
 
 /// 件数だけが違う2つの世界と、その対に共通の写し方。
 pub(super) struct 件数を変えた並びの対 {
