@@ -34,6 +34,14 @@ export class 地表材質 {
         return new 地表材質(this.解像度, this.一辺のメートル, this.材質データ)
     }
 
+    // 材質データ全体を差し戻し用の別データへ置き換える。要素数の不一致は例外にする。
+    public 材質データを置き換える(データ: Uint8Array): void {
+        if (データ.length !== this.材質データ.length) {
+            throw new Error(`置き換える材質データの要素数が不正: 期待=${this.材質データ.length}, 実際=${データ.length}`)
+        }
+        this.材質データ.set(データ)
+    }
+
     // 材質筆致を通過点列に沿って適用する。
     public 材質筆致を適用する(筆致: 材質の筆致): void {
         const 層添字 = this.層を添字に変換する(筆致.層)

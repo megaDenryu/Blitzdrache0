@@ -29,6 +29,22 @@ export class 高さ場 {
         return new 高さ場(this.解像度, this.一辺のメートル, this.格子データ)
     }
 
+    // 格子データ全体を差し戻し・上書き用の別データへ置き換える。要素数の不一致は例外にする。
+    public 格子データを置き換える(データ: Float32Array): void {
+        if (データ.length !== this.格子データ.length) {
+            throw new Error(`置き換える格子データの要素数が不正: 期待=${this.格子データ.length}, 実際=${データ.length}`)
+        }
+        this.格子データ.set(データ)
+    }
+
+    // 単一の格子点の標高を設定する。範囲外添字は例外にする。
+    public 標高を格子添字で設定する(格子添字: number, 標高: number): void {
+        if (格子添字 < 0 || 格子添字 >= this.格子データ.length) {
+            throw new Error(`格子添字が範囲外: 添字=${格子添字}, 要素数=${this.格子データ.length}`)
+        }
+        this.格子データ[格子添字] = 標高
+    }
+
     // 双線形補間により任意のワールド座標における標本高さを計算する。
     public 標本高さを取得する(ワールドX: number, ワールドZ: number): number {
         const gx = (ワールドX + this.一辺のメートル / 2) / this.格子間隔
