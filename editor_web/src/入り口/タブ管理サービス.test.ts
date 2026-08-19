@@ -54,4 +54,37 @@ describe('タブ管理サービスのライフサイクルテスト', () => {
         assert.strictEqual(ツール.破棄回数, 1)
         assert.strictEqual(管理.前面ツールを取得する(), undefined)
     })
+
+    it('タブ破棄後に同じタブIDで再登録・選択したとき新ツールが前面化すること', () => {
+        const 管理 = new タブ管理サービス()
+        const 旧ツール = new 偽ツール()
+        const 新ツール = new 偽ツール()
+
+        管理.ツールを登録する('chunk_0_0', 旧ツール)
+        管理.タブを選択する('chunk_0_0')
+        管理.タブを破棄する('chunk_0_0')
+
+        assert.strictEqual(旧ツール.破棄回数, 1)
+
+        管理.ツールを登録する('chunk_0_0', 新ツール)
+        管理.タブを選択する('chunk_0_0')
+
+        assert.strictEqual(新ツール.前面化回数, 1)
+        assert.strictEqual(新ツール.破棄回数, 0)
+        assert.strictEqual(旧ツール.前面化回数, 1)
+    })
+
+    it('全て破棄するで全登録ツールが破棄されること', () => {
+        const 管理 = new タブ管理サービス()
+        const ツール1 = new 偽ツール()
+        const ツール2 = new 偽ツール()
+
+        管理.ツールを登録する('tab1', ツール1)
+        管理.ツールを登録する('tab2', ツール2)
+        管理.全て破棄する()
+
+        assert.strictEqual(ツール1.破棄回数, 1)
+        assert.strictEqual(ツール2.破棄回数, 1)
+        assert.strictEqual(管理.前面ツールを取得する(), undefined)
+    })
 })

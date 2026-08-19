@@ -7,7 +7,7 @@ import { チャンク編集状態 } from './チャンク状態.ts'
 export class ワールド編集状態 {
     public readonly 大域世界構造: 大域世界構造
     public readonly 広域道路: 道路スプライン
-    public readonly 大域高さ場: 高さ場
+    public 大域高さ場: 高さ場
     public readonly チャンク一覧マップ: Map<string, チャンク編集状態>
     public 選択中チャンク座標: チャンク座標 | null
 
@@ -72,7 +72,15 @@ export class ワールド編集状態 {
         for (const p of 新状態.広域道路.制御点列) {
             this.広域道路.制御点列.push({ ...p })
         }
-        this.大域高さ場.格子データ.set(新状態.大域高さ場.格子データ)
+        if (this.大域高さ場.解像度 === 新状態.大域高さ場.解像度 && this.大域高さ場.一辺のメートル === 新状態.大域高さ場.一辺のメートル) {
+            this.大域高さ場.格子データ.set(新状態.大域高さ場.格子データ)
+        } else {
+            this.大域高さ場 = new 高さ場(
+                新状態.大域高さ場.解像度,
+                新状態.大域高さ場.一辺のメートル,
+                新状態.大域高さ場.格子データ,
+            )
+        }
         this.チャンク一覧マップ.clear()
         for (const [k, c] of 新状態.チャンク一覧マップ) {
             this.チャンク一覧マップ.set(k, c)

@@ -44,6 +44,9 @@ export class タブ管理サービス {
     }
 
     public 全て破棄する(): void {
+        if (this._前面ツールID !== null) {
+            this._ツールマップ.get(this._前面ツールID)?.背面になった()
+        }
         for (const ツール of this._ツールマップ.values()) {
             ツール.delete()
         }
