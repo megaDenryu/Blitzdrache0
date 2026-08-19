@@ -31,7 +31,7 @@ struct 応答本体 {
 }
 
 pub async fn ソースアセットを書き出す(State(状態): State<サーバー状態>, 本文: Bytes) -> Response {
-    match 実行する(&状態, &本文) {
+    match ソースアセットの書き出しを実行する(&状態, &本文) {
         Ok(応答) => Json(応答).into_response(),
         Err(応答) => *応答,
     }
@@ -39,7 +39,7 @@ pub async fn ソースアセットを書き出す(State(状態): State<サーバ
 
 /// 応答は`Response`本体を直接返すと`Result`全体が大きくなる(clippyの
 /// `result_large_err`が検出する)ため、拒否応答だけ`Box`で包む。
-fn 実行する(状態: &サーバー状態, 本文: &[u8]) -> Result<応答本体, Box<Response>> {
+fn ソースアセットの書き出しを実行する(状態: &サーバー状態, 本文: &[u8]) -> Result<応答本体, Box<Response>> {
     let 要求 = 要求本体を解く(本文)?;
     let 世界名 = 出力世界名::生成する(要求.出力先の世界名).map_err(|エラー| Box::new(エラー.into_response()))?;
     let 出力先 = 世界ソース出力先::生成する(状態.リポジトリルート(), &世界名);
