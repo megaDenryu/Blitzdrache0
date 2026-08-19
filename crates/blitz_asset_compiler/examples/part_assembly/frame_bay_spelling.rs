@@ -13,6 +13,7 @@ const 骨格の綴り: &str = "Mod_Frame_Bay_Single";
 const 平壁の綴り: &str = "Mod_Wall_HalfTimber_Solid";
 const 窓壁の綴り: &str = "Mod_Wall_HalfTimber_Window";
 const 扉枠付きの壁の綴り: &str = "Mod_Wall_HalfTimber_DoorFrame";
+const 切妻屋根の綴り: &str = "Mod_Frame_Roof_Gable";
 
 /// 骨格の4つの側面。1つの面が壁のはめ口とベイの継ぎ口を重ねて持ち、どちらか一方だけを使う。
 #[derive(Debug, Clone, Copy)]
@@ -64,6 +65,15 @@ impl はめる壁の種類 {
 
 pub(super) fn 骨格の部品id() -> Result<部品ID, String> {
     部品idを作る(骨格の綴り)
+}
+
+/// 1ベイぶんの切妻屋根。宣言する接合点は下面積層1件だけであり、骨格の上面へ載ることしかできない。
+pub(super) fn 切妻屋根の部品id() -> Result<部品ID, String> {
+    部品idを作る(切妻屋根の綴り)
+}
+
+pub(super) fn 屋根の下面の接合点名() -> Result<接合点名, String> {
+    接合点名を作る("屋根の下面")
 }
 
 /// 壁3種が共通で持つ、骨格のはめ口と噛み合う接合点の名前。
