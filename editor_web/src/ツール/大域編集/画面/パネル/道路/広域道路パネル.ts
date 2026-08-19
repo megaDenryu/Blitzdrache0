@@ -6,7 +6,7 @@ import { パネル, 見出し, アクション区画, 行ボタン群, 削除ボ
 export interface I広域道路パネル配線 {
     readonly on全幅変更: (全幅: number) => void
     readonly on細分割数変更: (細分割: number) => void
-    readonly on選択ノード削除: () => void
+    readonly on選択中の道路点を削除: () => void
     readonly on道路リセット: () => void
 }
 
@@ -22,7 +22,7 @@ class 削除操作ボタン extends ButtonC {
     }
 }
 
-// 広域幹線道路の幅・細分割数・ノード削除・全消去を管理するLV2素部品。
+// 広域幹線道路の幅・細分割数・選択中の道路点の削除・全消去を管理するLV2素部品。
 export class 広域道路パネル extends LV2HtmlComponentBase implements I配線可能<I広域道路パネル配線> {
     protected _componentRoot: DivC
     private readonly _配線: 配線ポート<I広域道路パネル配線> = new 配線ポート<I広域道路パネル配線>('広域道路パネル')
@@ -45,7 +45,7 @@ export class 広域道路パネル extends LV2HtmlComponentBase implements I配�
         return this
     }
 
-    public 選択ノード有効状態を設定する(有効: boolean): void {
+    public 選択中の道路点があるか設定する(有効: boolean): void {
         this._削除ボタン.有効状態を設定する(有効)
     }
 
@@ -64,7 +64,7 @@ export class 広域道路パネル extends LV2HtmlComponentBase implements I配�
                 this._細分割スライダー,
                 div({ class: アクション区画 }).child(
                     div({ class: 行ボタン群 }).childs([
-                        this._削除ボタン.onClick(() => this._配線.先.on選択ノード削除()),
+                        this._削除ボタン.onClick(() => this._配線.先.on選択中の道路点を削除()),
                         new ButtonC({ class: 副ボタン, text: '全消去' }).setTooltip('全消去').onClick(() =>
                             this._配線.先.on道路リセット(),
                         ),

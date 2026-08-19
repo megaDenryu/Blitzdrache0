@@ -36,7 +36,7 @@ export class 大域編集操作サービス {
                 },
             })
         }
-        this._UI状態.選択中ノード添字 = null
+        this._UI状態.選択中の道路点の添字 = null
         this._同期.道路を同期する()
         this._同期.UIを同期する()
     }

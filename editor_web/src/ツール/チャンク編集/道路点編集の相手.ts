@@ -16,7 +16,7 @@ export interface 道路点編集対象ビュー {
 
 // ドラッグとクリックの間に書き換えるUI状態。両ツールの編集状態クラスが満たす。
 export interface 道路点の選択状態 {
-    選択中ノード添字: number | null
+    選択中の道路点の添字: number | null
     つかんでいる道路点の添字: number | null
 }
 

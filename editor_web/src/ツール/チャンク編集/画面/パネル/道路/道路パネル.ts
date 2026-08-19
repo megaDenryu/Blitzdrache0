@@ -8,7 +8,7 @@ export interface I道路パネル配線 {
     readonly on除外バッファ変更: (バッファ: number) => void
     readonly on細分割数変更: (細分割: number) => void
     readonly on道路切土盛土: () => void
-    readonly on選択ノード削除: () => void
+    readonly on選択中の道路点を削除: () => void
     readonly on道路リセット: () => void
 }
 
@@ -51,7 +51,7 @@ export class 道路パネル extends LV2HtmlComponentBase implements I配線可�
         return this
     }
 
-    public 選択ノード有効状態を設定する(選択あり: boolean): void {
+    public 選択中の道路点があるか設定する(選択あり: boolean): void {
         this._削除ボタン.有効状態を設定する(選択あり)
     }
 
@@ -75,7 +75,7 @@ export class 道路パネル extends LV2HtmlComponentBase implements I配線可�
                         .onClick(() => this._配線.先.on道路切土盛土()),
                     div({ class: 行ボタン群 }).childs([
                         this._削除ボタン
-                            .onClick(() => this._配線.先.on選択ノード削除()),
+                            .onClick(() => this._配線.先.on選択中の道路点を削除()),
                         button({ class: 副ボタン, text: 'リセット' })
                             .setTooltip('リセット')
                             .onClick(() => this._配線.先.on道路リセット())])])])
