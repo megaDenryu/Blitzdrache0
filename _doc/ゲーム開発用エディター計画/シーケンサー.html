@@ -281,6 +281,18 @@
       padding: 3px 8px;
       font-size: 0.75rem;
     }
+
+    .free-hint {
+      display: none;
+      font-size: 0.7rem;
+      color: #ffa657;
+      border: 1px solid #ffa657;
+      border-radius: 4px;
+      padding: 2px 8px;
+    }
+    .free-hint.on { display: inline-block; }
+
+    .cell.free { box-shadow: inset 0 0 0 2px rgba(255, 166, 87, 0.45); }
   </style>
 </head>
 <body oncontextmenu="return false;">
@@ -303,6 +315,10 @@
     <div class="group">
       <label for="rngBpm">BPM: <span id="valBpm">124</span></label>
       <input type="range" id="rngBpm" min="80" max="180" value="124">
+    </div>
+
+    <div class="group">
+      <span id="freeHint" class="free-hint">ALT: コード進行の制約を解放中</span>
     </div>
   </div>
 
@@ -573,6 +589,7 @@
   const state = {
     progKey: 'pokemonRoute',
     trackProg: [null, null, null, null],
+    freeMode: false,
     bpm: 124,
     isPlaying: false,
     currentStep: 0,
@@ -592,12 +609,17 @@
     return chordAllowedChordPcs(chord).includes(pitch % 12);
   }
 
+  // セル値の解釈。1=通常の音, 2=通常のホールド, 3=ALTで自由に打った音, 4=そのホールド。
+  // 3/4 はコード進行の変更に巻き込まれない（sanitizeState の対象外）
+  function isStart(v) { return v === 1 || v === 3; }
+  function isHold(v) { return v === 2 || v === 4; }
+
   function sanitizeState() {
     state.tracks.forEach((track, tIdx) => {
       track.forEach((row, rIdx) => {
         const pitch = SCHEMA[tIdx].notes[rIdx].p;
         for (let s = 0; s < STEPS; s++) {
-          if (!isAllowed(pitch, s, tIdx)) row[s] = 0;
+          if (!isAllowed(pitch, s, tIdx) && row[s] < 3) row[s] = 0;
         }
       });
     });
@@ -726,46 +748,50 @@
   }
 
   // 2. アコースティックギター (Karplus-Strong 撥弦合成)
+  // DelayNode の帰還ループで組むと、補間とフィルタの遅延がループ周期を崩して
+  // 音程がぶれ金属的な暴れが出る。そこで弦の応答を事前に整数サンプルで丸ごと
+  // 計算したバッファを鳴らす（移動平均が遅延線のかわり）
   function playGuitar(freq, dur, out) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     const sampleRate = ctx.sampleRate;
-    const period = Math.round(sampleRate / freq);
-    const buffer = ctx.createBuffer(1, period, sampleRate);
-    const channel = buffer.getChannelData(0);
 
+    const period = Math.max(2, Math.round(sampleRate / freq));
+    const length = Math.floor((dur + 0.6) * sampleRate) + period + 1;
+    const buf = ctx.createBuffer(1, length, sampleRate);
+    const d = buf.getChannelData(0);
+
+    // 撥弦: 短いノイズバーストをピックのアタックとして入れる
     for (let i = 0; i < period; i++) {
-      channel[i] = (Math.random() * 2 - 1);
+      d[i] = (Math.random() * 2 - 1) * Math.exp(-5 * i / period);
+    }
+    // 弦の振動: 周期ぶん前の波形とその1つ前の移動平均を取り、高次倍音を
+    // 減衰させながら響かせる。減衰量は音の長さで揃える（低音ほど周回数が少ない）
+    const loopCount = Math.max(1, (dur * sampleRate) / period);
+    const decay = Math.pow(0.25, 1 / loopCount);
+    for (let i = period; i < length; i++) {
+      const prev = (i - period - 1 >= 0) ? d[i - period - 1] : 0;
+      d[i] = decay * (d[i - period] + prev) * 0.5;
     }
 
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
 
-    const delay = ctx.createDelay();
-    delay.delayTime.value = 1 / freq;
+    // 胴鳴り: 全体を軽くローパスし、ノートの終わりへ向けて閉じる
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.setValueAtTime(6000, now);
+    lp.frequency.exponentialRampToValueAtTime(2600, now + dur + 0.4);
 
-    const feedback = ctx.createGain();
-    feedback.gain.setValueAtTime(0.975, now);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.5, now);
+    g.gain.setValueAtTime(0.5, now + dur * 0.8);
+    g.gain.exponentialRampToValueAtTime(0.001, now + dur + 0.6);
 
-    const lowpass = ctx.createBiquadFilter();
-    lowpass.type = 'lowpass';
-    lowpass.frequency.setValueAtTime(freq * 3.5, now);
-    lowpass.frequency.exponentialRampToValueAtTime(freq * 0.8, now + dur);
-
-    const outGain = ctx.createGain();
-    outGain.gain.setValueAtTime(0.35, now);
-    outGain.gain.exponentialRampToValueAtTime(0.001, now + dur + 0.4);
-
-    noise.connect(delay);
-    delay.connect(lowpass);
-    lowpass.connect(feedback);
-    feedback.connect(delay);
-
-    lowpass.connect(outGain);
-    outGain.connect(out);
-
-    noise.start(now);
-    noise.stop(now + 0.015);
+    src.connect(lp);
+    lp.connect(g);
+    g.connect(out);
+    src.start(now);
   }
 
   // 3. ストリングスアンサンブル (デチューン重層＋スローアタック)
@@ -1154,7 +1180,7 @@
         for (let s = 0; s < STEPS; s++) {
           const cell = domNodes.cellMap.get(`${tIdx}-${rIdx}-${s}`);
           const val = state.tracks[tIdx][rIdx][s];
-          const allowed = isAllowed(note.p, s, tIdx);
+          const allowed = state.freeMode || isAllowed(note.p, s, tIdx);
 
           cell.className = `cell t-${tIdx}`;
           if (s % 4 === 0) cell.classList.add('measure');
@@ -1165,9 +1191,10 @@
           } else if (val > 0) {
             cell.classList.add('active');
             const next = (s + 1 < STEPS) ? state.tracks[tIdx][rIdx][s + 1] : 0;
-            if (val === 1 && next === 2) cell.classList.add('note-start');
-            else if (val === 1) cell.classList.add('note-single');
-            else if (val === 2) cell.classList.add('note-hold');
+            if (isStart(val) && isHold(next)) cell.classList.add('note-start');
+            else if (isStart(val)) cell.classList.add('note-single');
+            else if (isHold(val)) cell.classList.add('note-hold');
+            if (val >= 3) cell.classList.add('free');
           }
 
           if (state.isPlaying && state.currentStep === s) {
@@ -1179,6 +1206,7 @@
 
     document.getElementById('valBpm').textContent = state.bpm;
     document.getElementById('btnPlay').textContent = state.isPlaying ? '停止' : '再生';
+    document.getElementById('freeHint').classList.toggle('on', state.freeMode);
   }
 
   // --- ドラッグ入力 ---
@@ -1193,7 +1221,7 @@
     const sIdx = parseInt(target.dataset.s, 10);
 
     const pitch = SCHEMA[tIdx].notes[rIdx].p;
-    if (!isAllowed(pitch, sIdx, tIdx)) return;
+    if (!isAllowed(pitch, sIdx, tIdx) && !state.freeMode) return;
 
     getAudioContext();
     const isErase = (e.button === 2);
@@ -1202,7 +1230,7 @@
     if (isErase) {
       state.tracks[tIdx][rIdx][sIdx] = 0;
     } else {
-      state.tracks[tIdx][rIdx][sIdx] = 1;
+      state.tracks[tIdx][rIdx][sIdx] = state.freeMode ? 3 : 1;
       playNote(pitch, state.insts[tIdx], 0.25, tIdx);
     }
     render();
@@ -1219,27 +1247,52 @@
 
     const { tIdx: dt, rIdx: dr, anchorStep, isErase } = state.drag;
     const pitch = SCHEMA[tIdx].notes[rIdx].p;
-    if (!isAllowed(pitch, sIdx, tIdx)) return;
+    if (!isAllowed(pitch, sIdx, tIdx) && !state.freeMode) return;
 
     if (isErase) {
       state.tracks[tIdx][rIdx][sIdx] = 0;
     } else if (tIdx === dt && rIdx === dr) {
       const minS = Math.min(anchorStep, sIdx);
       const maxS = Math.max(anchorStep, sIdx);
-      state.tracks[dt][dr][minS] = 1;
-      for (let s = minS + 1; s <= maxS; s++) {
-        if (isAllowed(pitch, s, dt, state.progKey)) {
-          state.tracks[dt][dr][s] = 2;
+      if (state.freeMode) {
+        state.tracks[dt][dr][minS] = 3;
+        for (let s = minS + 1; s <= maxS; s++) state.tracks[dt][dr][s] = 4;
+      } else {
+        state.tracks[dt][dr][minS] = 1;
+        for (let s = minS + 1; s <= maxS; s++) {
+          if (isAllowed(pitch, s, dt)) state.tracks[dt][dr][s] = 2;
         }
       }
     } else {
-      state.tracks[tIdx][rIdx][sIdx] = 1;
+      state.tracks[tIdx][rIdx][sIdx] = state.freeMode ? 3 : 1;
     }
     render();
   });
 
   window.addEventListener('pointerup', () => { state.drag = null; });
   window.addEventListener('pointercancel', () => { state.drag = null; });
+  window.addEventListener('blur', () => {
+    if (state.freeMode) { state.freeMode = false; render(); }
+  });
+
+  // --- キーボード ---
+  // スペース: 再生/停止（フォーカス中の入力系へは干渉しない）
+  window.addEventListener('keydown', (e) => {
+    if (e.code !== 'Space') return;
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'BUTTON') return;
+    e.preventDefault();
+    if (state.isPlaying) stop();
+    else start();
+  });
+
+  // ALT: 押している間だけ進行の制約を解放する（離すと元へ戻る）
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Alt' && !state.freeMode) { state.freeMode = true; render(); }
+  });
+  window.addEventListener('keyup', (e) => {
+    if (e.key === 'Alt' && state.freeMode) { state.freeMode = false; render(); }
+  });
 
   // --- 再生ループ ---
   let timerId = null;
@@ -1250,10 +1303,10 @@
 
     SCHEMA.forEach((track, tIdx) => {
       track.notes.forEach((note, rIdx) => {
-        if (state.tracks[tIdx][rIdx][s] === 1) {
+        if (isStart(state.tracks[tIdx][rIdx][s])) {
           let hold = 1;
           for (let n = s + 1; n < STEPS; n++) {
-            if (state.tracks[tIdx][rIdx][n] === 2) hold++;
+            if (isHold(state.tracks[tIdx][rIdx][n])) hold++;
             else break;
           }
           const dur = hold * stepDurSec;
