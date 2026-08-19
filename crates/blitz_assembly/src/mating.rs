@@ -29,6 +29,8 @@ mod mating_tests;
 #[cfg(test)]
 mod normal_offset_tests;
 #[cfg(test)]
+mod oriel_placement_tests;
+#[cfg(test)]
 mod rotated_root_tests;
 
 pub use error::接合エラー;
