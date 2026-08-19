@@ -27,9 +27,9 @@ pub fn 全文書を検査する() -> Result<Vec<違反>, 規約検査の破れ> 
 const ログ型ディレクトリ一覧: [&str; 3] = ["開発スレッド", "ブレスト", "ゲーム開発用エディター計画"];
 
 fn 対象文書か(パス: &Path) -> bool {
-    !パス.components().any(|部品| {
-        matches!(部品, Component::Normal(名前) if ログ型ディレクトリ一覧.iter().any(|ログ型| 名前 == *ログ型))
-    })
+    !パス
+        .components()
+        .any(|部品| matches!(部品, Component::Normal(名前) if ログ型ディレクトリ一覧.iter().any(|ログ型| 名前 == *ログ型)))
 }
 
 /// 見出し行から `#` と前後の空白を除いた文字列を返す。括弧付きの見出しを取りこぼさないため、
