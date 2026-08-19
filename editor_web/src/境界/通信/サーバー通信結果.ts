@@ -35,3 +35,15 @@ export function 保存成功(): 保存結果 {
 export function 保存失敗(エラー: サーバーエラー): 保存結果 {
     return { 種別: '失敗', エラー }
 }
+
+export type 書き出し結果 =
+    | { readonly 種別: '成功'; readonly 書いたファイル数: number; readonly 出力先: string }
+    | { readonly 種別: '失敗'; readonly エラー: サーバーエラー }
+
+export function 書き出し成功(書いたファイル数: number, 出力先: string): 書き出し結果 {
+    return { 種別: '成功', 書いたファイル数, 出力先 }
+}
+
+export function 書き出し失敗(エラー: サーバーエラー): 書き出し結果 {
+    return { 種別: '失敗', エラー }
+}

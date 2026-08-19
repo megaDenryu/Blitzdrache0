@@ -89,4 +89,48 @@ describe('実サーバー接続の通信とbigint往復テスト', () => {
             assert.strictEqual(読込結果.値.散布.乱数の種, 超巨大種, '乱数の種が1ビットも落ちずに復元されること')
         }
     })
+
+    it('ソースアセットの書き出しが成功したら書いたファイル数と出力先を返すこと', async () => {
+        モックレスポンス = new Response(
+            JSON.stringify({ 書いたファイル数: 12, 出力先: 'assets/my_world' }),
+            { status: 200, headers: { 'Content-Type': 'application/json' } },
+        )
+        const 接続 = new 実サーバー接続()
+        const 結果 = await 接続.ソースアセットへ書き出す('my_world')
+
+        assert.strictEqual(結果.種別, '成功')
+        if (結果.種別 === '成功') {
+            assert.strictEqual(結果.書いたファイル数, 12)
+            assert.strictEqual(結果.出力先, 'assets/my_world')
+        }
+        assert.strictEqual(最後の要求URL, '/api/書き出し/ソースアセット')
+        assert.strictEqual(最後の要求オプション?.method, 'POST')
+        assert.strictEqual(最後の要求オプション?.body, JSON.stringify({ 出力先の世界名: 'my_world' }))
+    })
+
+    it('世界名を省略したら要求本体が空オブジェクトになること', async () => {
+        モックレスポンス = new Response(
+            JSON.stringify({ 書いたファイル数: 3, 出力先: 'assets/editor_world' }),
+            { status: 200, headers: { 'Content-Type': 'application/json' } },
+        )
+        const 接続 = new 実サーバー接続()
+        await 接続.ソースアセットへ書き出す()
+
+        assert.strictEqual(最後の要求オプション?.body, JSON.stringify({}))
+    })
+
+    it('ソースアセットの書き出しが422で失敗したらエラー種別と説明を返すこと', async () => {
+        モックレスポンス = new Response(
+            JSON.stringify({ 種別: '前提条件エラー', 説明: '大域世界が未保存' }),
+            { status: 422, headers: { 'Content-Type': 'application/json' } },
+        )
+        const 接続 = new 実サーバー接続()
+        const 結果 = await 接続.ソースアセットへ書き出す()
+
+        assert.strictEqual(結果.種別, '失敗')
+        if (結果.種別 === '失敗') {
+            assert.strictEqual(結果.エラー.種別, '前提条件エラー')
+            assert.strictEqual(結果.エラー.説明, '大域世界が未保存')
+        }
+    })
 })

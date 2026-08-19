@@ -2,13 +2,14 @@ import { div, span, LV2HtmlComponentBase, type DivC } from 'sengen-ui'
 import { 外殻レイアウト, アクティビティID, 設定アイコン } from 'VscodeShellLayout'
 import type { プロジェクト保管庫接続, チャンク座標 } from '../境界/通信/index.ts'
 import { 実サーバー接続, 状態通知付き保管庫接続 } from '../境界/通信/index.ts'
-import { 大域世界表示名, チャンク表示名を生成する } from '../境界/index.ts'
+import { 大域世界表示名, チャンク表示名を生成する, 使い方を閲覧済みか } from '../境界/index.ts'
 import { チャンク編集ツール } from '../ツール/チャンク編集/index.ts'
 import { 大域編集ツール } from '../ツール/大域編集/index.ts'
 import { エクスプローラーパネル } from './エクスプローラー/index.ts'
+import { 使い方タブ } from './ガイド/index.ts'
 import { 設定パネル } from './設定/index.ts'
 import { テーマ管理サービス } from './テーマ/index.ts'
-import { 大域世界タブID, チャンクタブIDを生成する, タブIDからチャンク座標を復元する } from './タブ識別子.ts'
+import { 大域世界タブID, 使い方タブID, チャンクタブIDを生成する, タブIDからチャンク座標を復元する } from './タブ識別子.ts'
 import { タブ管理サービス } from './タブ管理サービス.ts'
 import { 外殻ルート } from './スタイル.css.ts'
 
@@ -73,6 +74,7 @@ export class エディター外殻 extends LV2HtmlComponentBase {
         this._エクスプローラー.配線する({
             on大域世界を開く: () => this.大域世界を開く(),
             onチャンクを開く: (座標) => this.チャンクを開く(座標),
+            on使い方を開く: () => this.使い方を開く(),
         })
 
         this.シェル.onタブイベント({
@@ -93,6 +95,9 @@ export class エディター外殻 extends LV2HtmlComponentBase {
 
         this._componentRoot = div({ class: 外殻ルート }).child(this.シェル)
         this.大域世界を開く()
+        if (!使い方を閲覧済みか()) {
+            this.使い方を開く()
+        }
     }
 
     public 大域世界を開く(): void {
@@ -105,6 +110,17 @@ export class エディター外殻 extends LV2HtmlComponentBase {
         this._タブ管理.ツールを登録する(大域世界タブID, ツール)
         this.シェル.タブを追加する(大域世界タブID, 大域世界表示名, ツール)
         this.シェル.タブを選択する(大域世界タブID)
+    }
+
+    public 使い方を開く(): void {
+        if (this.シェル.タブが存在するか(使い方タブID)) {
+            this.シェル.タブを選択する(使い方タブID)
+            return
+        }
+        const タブ = new 使い方タブ()
+        this._タブ管理.ツールを登録する(使い方タブID, タブ)
+        this.シェル.タブを追加する(使い方タブID, 使い方タブID, タブ)
+        this.シェル.タブを選択する(使い方タブID)
     }
 
     public チャンクを開く(座標: チャンク座標): void {
@@ -126,6 +142,8 @@ export class エディター外殻 extends LV2HtmlComponentBase {
         if (ツール?.インスペクター !== undefined) this._インスペクタースロット.child(ツール.インスペクター)
         if (タブID === 大域世界タブID) {
             this._エクスプローラー.大域世界を選択表示する()
+        } else if (タブID === 使い方タブID) {
+            this._エクスプローラー.使い方を選択表示する()
         } else {
             const 座標 = タブIDからチャンク座標を復元する(タブID)
             if (座標 !== null) this._エクスプローラー.チャンクを選択表示する(座標)

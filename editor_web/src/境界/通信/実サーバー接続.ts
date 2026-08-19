@@ -1,11 +1,13 @@
 import type { 大域世界構造, チャンク座標, チャンク構造 } from '../../生成/編集資源契約.ts'
 import type { プロジェクト保管庫接続 } from './プロジェクト保管庫接続.ts'
-import type { 読込結果, 保存結果 } from './サーバー通信結果.ts'
+import type { ソースアセット書き出し接続 } from './ソースアセット書き出し接続.ts'
+import type { 読込結果, 保存結果, 書き出し結果 } from './サーバー通信結果.ts'
 import {
     JSONを取得する,
     バイナリを取得する,
     JSONを送信する,
     バイナリを送信する,
+    書き出しを要求する,
 } from './通信要求.ts'
 import { 大域世界構造の形か } from './契約検証/大域世界構造検証.ts'
 import { チャンク構造の形か } from './契約検証/チャンク構造検証.ts'
@@ -13,7 +15,7 @@ import { チャンク構造をJSON文字列へ直列化する, JSON文字列か�
 
 // crates/editor_server（127.0.0.1:7901）への実通信を行う境界実装。
 // ブラウザではViteプロキシ越しの相対/api経路を用い、Nodeヘッドレスでは基底URLを受け取って接続する。
-export class 実サーバー接続 implements プロジェクト保管庫接続 {
+export class 実サーバー接続 implements プロジェクト保管庫接続, ソースアセット書き出し接続 {
     private readonly _基底URL: string
 
     public constructor(基底URL: string = '') {
@@ -81,6 +83,10 @@ export class 実サーバー接続 implements プロジェクト保管庫接続 
             `${this._基底URL}/api/チャンク/${座標.x}/${座標.z}/材質重み`,
             バイト列,
         )
+    }
+
+    public async ソースアセットへ書き出す(世界名?: string): Promise<書き出し結果> {
+        return 書き出しを要求する(`${this._基底URL}/api/書き出し/ソースアセット`, 世界名)
     }
 }
 

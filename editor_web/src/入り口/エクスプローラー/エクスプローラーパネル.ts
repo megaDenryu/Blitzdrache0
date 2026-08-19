@@ -6,6 +6,7 @@ import { コンテナ, セクション見出し, 木項目, 子木項目コン�
 export interface Iエクスプローラー配線 {
     readonly on大域世界を開く: () => void
     readonly onチャンクを開く: (座標: チャンク座標) => void
+    readonly on使い方を開く: () => void
 }
 
 // 大域世界と全チャンクの木構造を左サイドバーに表示し開く操作を仲介するLV2素部品。
@@ -17,6 +18,7 @@ export class エクスプローラーパネル extends LV2HtmlComponentBase impl
     private readonly _チャンク展開アイコン: SpanC
     private readonly _チャンク子項目コンテナ: DivC
     private readonly _チャンクノードマップ: Map<string, DivC> = new Map<string, DivC>()
+    private readonly _使い方ノード: DivC
     private _チャンク展開中: boolean = true
 
     public constructor(軸あたりチャンク数: number = 4) {
@@ -58,11 +60,20 @@ export class エクスプローラーパネル extends LV2HtmlComponentBase impl
             this._チャンク子項目コンテナ.setStyleCSS({ display: this._チャンク展開中 ? 'flex' : 'none' })
         })
 
+        this._使い方ノード = div({ class: 木項目 }).childs([
+            span({ class: アイコン, text: '?' }),
+            span({ text: '使い方' }).setTooltip('使い方'),
+        ]).onClick(() => {
+            this._配線.先.on使い方を開く()
+        })
+
         this._componentRoot = div({ class: コンテナ }).childs([
             div({ class: セクション見出し, text: 'プロジェクト' }),
             this._大域世界ノード,
             this._チャンク親ノード,
             this._チャンク子項目コンテナ,
+            div({ class: セクション見出し, text: 'ヘルプ' }),
+            this._使い方ノード,
         ])
     }
 
@@ -73,6 +84,7 @@ export class エクスプローラーパネル extends LV2HtmlComponentBase impl
 
     public 大域世界を選択表示する(): void {
         this._大域世界ノード.setAttribute('data-selected', 'true')
+        this._使い方ノード.setAttribute('data-selected', 'false')
         for (const ノード of this._チャンクノードマップ.values()) {
             ノード.setAttribute('data-selected', 'false')
         }
@@ -80,6 +92,7 @@ export class エクスプローラーパネル extends LV2HtmlComponentBase impl
 
     public チャンクを選択表示する(座標: チャンク座標): void {
         this._大域世界ノード.setAttribute('data-selected', 'false')
+        this._使い方ノード.setAttribute('data-selected', 'false')
         if (!this._チャンク展開中) {
             this._チャンク展開中 = true
             this._チャンク展開アイコン.setTextContent('▼')
@@ -88,6 +101,14 @@ export class エクスプローラーパネル extends LV2HtmlComponentBase impl
         const 対象キー = `${座標.x},${座標.z}`
         for (const [キー, ノード] of this._チャンクノードマップ.entries()) {
             ノード.setAttribute('data-selected', キー === 対象キー ? 'true' : 'false')
+        }
+    }
+
+    public 使い方を選択表示する(): void {
+        this._大域世界ノード.setAttribute('data-selected', 'false')
+        this._使い方ノード.setAttribute('data-selected', 'true')
+        for (const ノード of this._チャンクノードマップ.values()) {
+            ノード.setAttribute('data-selected', 'false')
         }
     }
 }
