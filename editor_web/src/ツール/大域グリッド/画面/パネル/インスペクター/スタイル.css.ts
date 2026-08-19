@@ -15,21 +15,20 @@ export const インスペクター枠 = style({
     color: エディターCSS変数('テキスト主'),
 })
 
+// タイトル行(全幅)とバッジ行(左寄せ)を縦に積む。同じ行で幅を奪い合わせると
+// タイトルが省略され情報が欠けるため、バッジは見出しの下の行へ分離する。
 export const ヘッダー = style({
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: '8px',
+    flexDirection: 'column',
+    gap: '6px',
     borderBottom: `1px solid ${エディターCSS変数('境界線')}`,
     paddingBottom: '10px',
 })
 
-// タイトル・サブタイトルの折返し防止分だけヘッダーの残り幅を占有し、バッジ側を圧迫しない
-// ようにするための包み。flexコンテナの子は既定でminWidth:autoのため、これが無いと
-// 日本語文字が任意の位置で折り返されて読めなくなる(ellipsisも効かない)。
+// タイトル・サブタイトルの折返し防止用の包み。nowrap+ellipsisは280px程度の
+// サイドバー幅でも通常は全文が収まるが、極端な狭幅時の保険として残す。
 export const タイトル群 = style({
     minWidth: 0,
-    flex: '1',
     overflow: 'hidden',
 })
 
@@ -53,7 +52,9 @@ export const サブタイトル = style({
 })
 
 // 情報表示のバッジであり、成功・活性の意味を持たないため中立トーンにする。
+// alignSelf:flex-startでヘッダー(縦積み)内の既定引き伸ばしを打ち消し、内容幅で左寄せにする。
 export const バッジ = style({
+    alignSelf: 'flex-start',
     padding: '2px 8px',
     borderRadius: '4px',
     fontSize: '10px',

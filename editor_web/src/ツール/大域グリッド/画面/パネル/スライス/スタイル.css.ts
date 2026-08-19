@@ -13,29 +13,30 @@ export const パネル = style({
     boxShadow: エディターCSS変数('カード影'),
 })
 
+// 見出しラベル行(全幅)とバッジ行(左寄せ)を縦に積む。同じ行で幅を奪い合わせると
+// 見出しが省略され情報が欠けるため、バッジは見出しの下の行へ分離する。
 export const 見出し行 = style({
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: '8px',
+    flexDirection: 'column',
+    gap: '4px',
     fontSize: '11px',
     fontWeight: 600,
     color: エディターCSS変数('テキスト副'),
 })
 
-// 見出しラベル(1つ目の子)は残り幅を占有して省略記号で収め、バッジ(2つ目の子)は
-// 縮まず常に全文表示する。flex子は既定でminWidth:autoのため明示しないと、狭い枠内で
-// 日本語文字が任意の位置で折り返される(「129×129 (1画素重複)」の分断の原因)。
+// 見出しラベル(1つ目の子)。nowrap+ellipsisは280px程度のサイドバー幅でも通常は
+// 全文が収まるが、極端な狭幅時の保険として残す。
 globalStyle(`${見出し行} > *:first-child`, {
     minWidth: 0,
-    flex: '1',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
 })
 
 // 情報表示のバッジであり、成功・活性の意味を持たないため中立トーンにする。
+// alignSelf:flex-startでヘッダー(縦積み)内の既定引き伸ばしを打ち消し、内容幅で左寄せにする。
 export const バッジ = style({
+    alignSelf: 'flex-start',
     fontSize: '10px',
     fontFamily: 'monospace',
     color: エディターCSS変数('中立バッジ文字'),
