@@ -16,3 +16,4 @@ export type {
 } from './差し戻し断片.ts'
 export { 編集コマンドを適用する } from './編集コマンドの適用.ts'
 export { 差し戻しを適用する } from './差し戻しの適用.ts'
+export { ワールド永続化サービス, type ワールド読込結果 } from './永続化サービス.ts'

@@ -11,6 +11,7 @@ import { チャンク編集操作サービス } from './チャンク編集操作
 import { パネルイベントを配線する } from './チャンク編集配線.ts'
 import { 永続化イベントを配線する, 起動時にワールドを読み込む } from './チャンク編集永続化配線.ts'
 import { ポインタとキー入力を配線する } from './チャンク編集ポインタ配線.ts'
+import { ワールド永続化サービス } from './操作コマンド/index.ts'
 
 // 開いたチャンク座標を受け取り、編集モデル・画面・描画ループ・操作配線を統括するツールルート。
 export class チャンク編集ツール extends LV2HtmlComponentBase {
@@ -23,6 +24,7 @@ export class チャンク編集ツール extends LV2HtmlComponentBase {
     public readonly 同期サービス: チャンク編集同期サービス
     public readonly 操作サービス: チャンク編集操作サービス
     public readonly 保管庫: プロジェクト保管庫接続
+    public readonly 永続化: ワールド永続化サービス
     private readonly _購読解除: () => void
 
     public constructor(
@@ -33,6 +35,7 @@ export class チャンク編集ツール extends LV2HtmlComponentBase {
         super()
         this.対象座標 = { ...対象座標 }
         this.保管庫 = 保管庫 ?? new 実サーバー接続()
+        this.永続化 = new ワールド永続化サービス(this.保管庫)
         this.編集状態 = 初期状態 ?? 初期ワールド状態を生成する(this.対象座標)
         this.編集状態.選択中チャンク座標 = this.対象座標
         this.画面 = new チャンク編集画面(this.編集状態, this.対象座標)
@@ -44,7 +47,7 @@ export class チャンク編集ツール extends LV2HtmlComponentBase {
         this.操作サービス = new チャンク編集操作サービス(this.編集状態, this.UI状態, this.同期サービス)
 
         パネルイベントを配線する(this.画面.部品, this.UI状態, this.操作サービス, this.同期サービス, this.編集状態)
-        const 永続化解除 = 永続化イベントを配線する(this.インスペクター.部品.永続化, this.保管庫, this.編集状態, this.同期サービス, this.対象座標)
+        const 永続化解除 = 永続化イベントを配線する(this.インスペクター.部品.永続化, this.永続化, this.保管庫, this.編集状態, this.同期サービス, this.対象座標)
         const ポインタ解除 = ポインタとキー入力を配線する(this.画面.部品, this.UI状態, this.操作サービス, this.同期サービス, this.編集状態)
         this._購読解除 = (): void => {
             ポインタ解除()
@@ -53,7 +56,7 @@ export class チャンク編集ツール extends LV2HtmlComponentBase {
 
         this.同期サービス.全体を同期する()
         if (初期状態 === undefined) {
-            void 起動時にワールドを読み込む(this.インスペクター.部品.永続化, this.保管庫, this.編集状態, this.同期サービス, this.対象座標)
+            void 起動時にワールドを読み込む(this.インスペクター.部品.永続化, this.永続化, this.編集状態, this.同期サービス, this.対象座標)
         }
     }
 

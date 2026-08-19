@@ -12,6 +12,7 @@ import { 大域パネルイベントを配線する } from './大域編集配線
 import { 大域書き出しイベントを配線する } from './大域編集書き出し配線.ts'
 import { 大域永続化イベントを配線する, 起動時に大域ワールドを読み込む } from './大域編集永続化配線.ts'
 import { 大域ポインタとキー入力を配線する } from './大域編集ポインタ配線.ts'
+import { 大域永続化サービス } from './大域永続化サービス.ts'
 
 // 1024m四方の大域造成と広域道路を統括する大域編集ツールのツールルート。
 export class 大域編集ツール extends LV2HtmlComponentBase {
@@ -24,6 +25,7 @@ export class 大域編集ツール extends LV2HtmlComponentBase {
     public readonly 操作サービス: 大域編集操作サービス
     public readonly 保管庫: プロジェクト保管庫接続
     public readonly 書き出し接続: ソースアセット書き出し接続
+    public readonly 永続化: 大域永続化サービス
     private readonly _購読解除: () => void
 
     public constructor(
@@ -34,6 +36,7 @@ export class 大域編集ツール extends LV2HtmlComponentBase {
         super()
         this.保管庫 = 保管庫 ?? new 実サーバー接続()
         this.書き出し接続 = 書き出し接続 ?? new 実サーバー接続()
+        this.永続化 = new 大域永続化サービス(this.保管庫)
         this.編集状態 = 初期状態 ?? 初期大域ワールド状態を生成する()
         this.画面 = new 大域編集画面(this.編集状態)
         this.インスペクター = this.画面.部品.インスペクター
@@ -45,7 +48,7 @@ export class 大域編集ツール extends LV2HtmlComponentBase {
 
         大域パネルイベントを配線する(this.画面.部品, this.UI状態, this.操作サービス, this.同期サービス, this.編集状態)
         大域書き出しイベントを配線する(this.インスペクター.部品.スライス, this.書き出し接続)
-        const 永続化解除 = 大域永続化イベントを配線する(this.インスペクター.部品.永続化, this.保管庫, this.編集状態, this.同期サービス)
+        const 永続化解除 = 大域永続化イベントを配線する(this.インスペクター.部品.永続化, this.永続化, this.保管庫, this.編集状態, this.同期サービス)
         const ポインタ解除 = 大域ポインタとキー入力を配線する(this.画面.部品, this.UI状態, this.操作サービス, this.同期サービス, this.編集状態)
         this._購読解除 = (): void => {
             ポインタ解除()
@@ -54,7 +57,7 @@ export class 大域編集ツール extends LV2HtmlComponentBase {
 
         this.同期サービス.全体を同期する()
         if (初期状態 === undefined) {
-            void 起動時に大域ワールドを読み込む(this.インスペクター.部品.永続化, this.保管庫, this.編集状態, this.同期サービス)
+            void 起動時に大域ワールドを読み込む(this.インスペクター.部品.永続化, this.永続化, this.編集状態, this.同期サービス)
         }
     }
 
