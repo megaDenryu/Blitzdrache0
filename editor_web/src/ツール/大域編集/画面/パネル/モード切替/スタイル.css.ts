@@ -46,3 +46,11 @@ globalStyle(`${モードボタン}[data-selected="true"]`, {
     borderColor: エディターCSS変数('選択枠線'),
     color: エディターCSS変数('選択文字'),
 })
+
+// Alt/Shift+Altでのモード循環の説明行。モードボタンの近くに常時表示する控えめな注釈であり、
+// ヒント枠より一段沈んだテキスト薄トーンにする。
+export const キー操作説明 = style({
+    padding: '0 4px',
+    fontSize: '10px',
+    color: エディターCSS変数('テキスト薄'),
+})

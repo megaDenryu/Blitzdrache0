@@ -5,9 +5,13 @@ import type { 大域編集同期サービス } from './大域編集同期サー�
 import { 大域編集筆致ハンドラ } from './大域編集筆致ハンドラ.ts'
 import { 大域編集クリックハンドラ } from './大域編集クリックハンドラ.ts'
 import type { ワールド編集状態 } from '../チャンク編集/編集モデル/index.ts'
+import { 大域編集モード一覧 } from './画面/パネル/モード切替/大域モード定義.ts'
 import { ポインタ操作の割り当てを決める } from '../チャンク編集/画面/三次元/カメラ/ポインタ操作割り当て.ts'
+import { キーボード入力を配線する } from '../チャンク編集/画面/三次元/カメラ/キーボード配線.ts'
 
 // 大域三次元ビューのポインタ操作およびレイキャスト入力を配線する。
+// キーボード入力(取り消し・WASDQE移動・Altのモード循環)はチャンク編集ツールと共有する
+// 画面/三次元/カメラ/キーボード配線.ts が持つ。
 export function 大域ポインタとキー入力を配線する(
     部品: 大域編集画面部品,
     状態: 大域編集状態,
@@ -35,7 +39,7 @@ export function 大域ポインタとキー入力を配線する(
             // 統一操作規則: 右・中は全モードで常にカメラ、左はそのモードの主作業。
             const アクティブボタン = 右ボタン押下中 ? 2 : 中ボタン押下中 ? 1 : 左ボタン押下中 ? 0 : null
             if (アクティブボタン !== null) {
-                const 操作種別 = ポインタ操作の割り当てを決める(アクティブボタン, 状態.モード === '大域カメラ')
+                const 操作種別 = ポインタ操作の割り当てを決める(アクティブボタン)
                 if (操作種別 === 'カメラ回転') { ビュー.カメラ制御.回転する(dx, dy); return }
                 if (操作種別 === 'カメラ平行移動') { ビュー.カメラ制御.移動する(dx, dy); return }
             }
@@ -80,18 +84,12 @@ export function 大域ポインタとキー入力を配線する(
     ビュー.キャンバス要素.addTypedEventListener('wheel', ホイール処理, { passive: true })
     ビュー.キャンバス要素.addTypedEventListener('contextmenu', コンテキストメニュー抑止)
 
-    const キーボード処理 = (e: KeyboardEvent): void => {
-        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-            e.preventDefault()
-            操作.直前の操作を取り消す()
-        }
-    }
-    window.addEventListener('keydown', キーボード処理)
+    const キーボード解除 = キーボード入力を配線する(部品, 状態, 操作, 同期, 大域編集モード一覧)
 
     return () => {
         ビュー.レイキャスト.キャンバスの購読を解除する()
         ビュー.キャンバス要素.removeTypedEventListener('wheel', ホイール処理)
         ビュー.キャンバス要素.removeTypedEventListener('contextmenu', コンテキストメニュー抑止)
-        window.removeEventListener('keydown', キーボード処理)
+        キーボード解除()
     }
 }

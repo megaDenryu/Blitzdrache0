@@ -46,6 +46,12 @@ export class 軌道カメラ制御器 {
         this.更新する()
     }
 
+    public 昇降する(デルタ: number): void {
+        const 係数 = this._距離 * 0.002
+        this._注視点.y += デルタ * 係数
+        this.更新する()
+    }
+
     public 拡大縮小する(デルタY: number): void {
         const 変化量 = デルタY * 0.1
         this._距離 = Math.max(this._最小距離, Math.min(this._最大距離, this._距離 + 変化量))

@@ -1,7 +1,7 @@
 import { div, DivC, ButtonC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
 import { モード一覧, モードヒント写像, type 編集モード } from './モード定義.ts'
-import { コンテナ, グリッド, モードボタン, ヒント枠 } from './スタイル.css.ts'
+import { コンテナ, グリッド, モードボタン, ヒント枠, キー操作説明 } from './スタイル.css.ts'
 
 export interface Iモード切替配線 {
     readonly onモード変更: (新モード: 編集モード) => void
@@ -69,6 +69,7 @@ export class モード切替パネル extends LV2HtmlComponentBase implements I�
                         })
                     }),
                 ),
+                div({ class: キー操作説明, text: 'Alt: 次のモード / Shift+Alt: 前のモード' }),
                 this._ヒント要素])
         )
     }
