@@ -8,6 +8,8 @@
 mod assignment;
 mod comparison;
 mod contact_check;
+mod frame_bay_instruction;
+mod frame_bay_spelling;
 mod frame_recipe;
 mod part_boxes;
 mod recipe_choice;
