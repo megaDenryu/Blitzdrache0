@@ -1,8 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import type { 大域世界構造, チャンク座標, チャンク構造 } from '../../生成/編集資源契約.ts'
-import type { プロジェクト保管庫接続, 読込結果, 保存結果 } from './index.ts'
-import { 読込成功, 読込無し, 保存成功, 保存失敗 } from './index.ts'
+import { 読込成功, 読込無し, 保存成功 } from './index.ts'
 import { 保存状態サービス } from './保存状態サービス.ts'
 import { 状態通知付き保管庫接続 } from './状態通知付き保管庫接続.ts'
 

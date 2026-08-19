@@ -8,6 +8,7 @@ import { エクスプローラーパネル } from './エクスプローラー/in
 import { 大域世界タブID, チャンクタブIDを生成する, タブIDからチャンク座標を復元する } from './タブ識別子.ts'
 import { タブ管理サービス } from './タブ管理サービス.ts'
 import { 外殻ルート } from './スタイル.css.ts'
+import { エディターテーマ配色 } from './エディターテーマ.ts'
 
 // エクスプローラーと文書タブ形式で大域世界およびチャンク編集ツールを統括する外殻。
 export class エディター外殻 extends LV2HtmlComponentBase {
@@ -22,10 +23,7 @@ export class エディター外殻 extends LV2HtmlComponentBase {
         super()
         this.保管庫 = 保管庫 instanceof 状態通知付き保管庫接続 ? 保管庫 : new 状態通知付き保管庫接続(保管庫 ?? new 実サーバー接続())
         this.シェル = new 外殻レイアウト({
-            テーマ: {
-                パネル背景: '#0f172a', パネル表面: '#0f172a', パネル境界線: '#1e293b',
-                パネルホバー: '#1e293b', パネルテキスト主: '#f8fafc', パネルテキスト副: '#94a3b8', パネルテキスト薄: '#64748b',
-            },
+            テーマ: エディターテーマ配色,
             タイトル: 'Blitzdrache0 エディター',
             アクティビティ項目一覧: [{
                 id: アクティビティID('explorer'), ラベル: 'エクスプローラー',

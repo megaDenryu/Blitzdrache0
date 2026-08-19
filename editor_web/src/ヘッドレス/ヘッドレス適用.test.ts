@@ -12,48 +12,20 @@ class 偽保管庫接続 implements プロジェクト保管庫接続 {
     public readonly 保存されたチャンク高さマップ = new Map<string, ArrayBufferLike>()
     public readonly 保存されたチャンク材質マップ = new Map<string, ArrayBufferLike>()
 
-    public async 大域世界の構造を読む(): Promise<読込結果<大域世界構造>> {
-        return this.保存された大域構造 !== null ? 読込成功(this.保存された大域構造) : 読込無し()
-    }
-    public async 大域世界の構造を保存する(構造: 大域世界構造): Promise<保存結果> {
-        this.保存された大域構造 = 構造
-        return 保存成功()
-    }
-    public async 大域世界の高さ格子を読む(): Promise<読込結果<ArrayBufferLike>> {
-        return this.保存された大域高さ格子 !== null ? 読込成功(this.保存された大域高さ格子) : 読込無し()
-    }
-    public async 大域世界の高さ格子を保存する(バイト列: ArrayBufferLike): Promise<保存結果> {
-        this.保存された大域高さ格子 = バイト列
-        return 保存成功()
-    }
-    public async チャンクの構造を読む(座標: チャンク座標): Promise<読込結果<チャンク構造>> {
-        const 構造 = this.保存されたチャンク構造マップ.get(`${座標.x},${座標.z}`)
-        return 構造 !== undefined ? 読込成功(構造) : 読込無し()
-    }
-    public async チャンクの構造を保存する(座標: チャンク座標, 構造: チャンク構造): Promise<保存結果> {
-        this.保存されたチャンク構造マップ.set(`${座標.x},${座標.z}`, 構造)
-        return 保存成功()
-    }
-    public async チャンクの高さ格子を読む(座標: チャンク座標): Promise<読込結果<ArrayBufferLike>> {
-        const 格子 = this.保存されたチャンク高さマップ.get(`${座標.x},${座標.z}`)
-        return 格子 !== undefined ? 読込成功(格子) : 読込無し()
-    }
-    public async チャンクの高さ格子を保存する(座標: チャンク座標, バイト列: ArrayBufferLike): Promise<保存結果> {
-        this.保存されたチャンク高さマップ.set(`${座標.x},${座標.z}`, バイト列)
-        return 保存成功()
-    }
-    public async チャンクの材質重みを読む(座標: チャンク座標): Promise<読込結果<ArrayBufferLike>> {
-        const 材質 = this.保存されたチャンク材質マップ.get(`${座標.x},${座標.z}`)
-        return 材質 !== undefined ? 読込成功(材質) : 読込無し()
-    }
-    public async チャンクの材質重みを保存する(座標: チャンク座標, バイト列: ArrayBufferLike): Promise<保存結果> {
-        this.保存されたチャンク材質マップ.set(`${座標.x},${座標.z}`, バイト列)
-        return 保存成功()
-    }
+    public async 大域世界の構造を読む(): Promise<読込結果<大域世界構造>> { return this.保存された大域構造 !== null ? 読込成功(this.保存された大域構造) : 読込無し() }
+    public async 大域世界の構造を保存する(構造: 大域世界構造): Promise<保存結果> { this.保存された大域構造 = 構造; return 保存成功() }
+    public async 大域世界の高さ格子を読む(): Promise<読込結果<ArrayBufferLike>> { return this.保存された大域高さ格子 !== null ? 読込成功(this.保存された大域高さ格子) : 読込無し() }
+    public async 大域世界の高さ格子を保存する(バイト列: ArrayBufferLike): Promise<保存結果> { this.保存された大域高さ格子 = バイト列; return 保存成功() }
+    public async チャンクの構造を読む(座標: チャンク座標): Promise<読込結果<チャンク構造>> { const 構造 = this.保存されたチャンク構造マップ.get(`${座標.x},${座標.z}`); return 構造 !== undefined ? 読込成功(構造) : 読込無し() }
+    public async チャンクの構造を保存する(座標: チャンク座標, 構造: チャンク構造): Promise<保存結果> { this.保存されたチャンク構造マップ.set(`${座標.x},${座標.z}`, 構造); return 保存成功() }
+    public async チャンクの高さ格子を読む(座標: チャンク座標): Promise<読込結果<ArrayBufferLike>> { const 格子 = this.保存されたチャンク高さマップ.get(`${座標.x},${座標.z}`); return 格子 !== undefined ? 読込成功(格子) : 読込無し() }
+    public async チャンクの高さ格子を保存する(座標: チャンク座標, バイト列: ArrayBufferLike): Promise<保存結果> { this.保存されたチャンク高さマップ.set(`${座標.x},${座標.z}`, バイト列); return 保存成功() }
+    public async チャンクの材質重みを読む(座標: チャンク座標): Promise<読込結果<ArrayBufferLike>> { const 材質 = this.保存されたチャンク材質マップ.get(`${座標.x},${座標.z}`); return 材質 !== undefined ? 読込成功(材質) : 読込無し() }
+    public async チャンクの材質重みを保存する(座標: チャンク座標, バイト列: ArrayBufferLike): Promise<保存結果> { this.保存されたチャンク材質マップ.set(`${座標.x},${座標.z}`, バイト列); return 保存成功() }
 }
 
 describe('ヘッドレス編集コマンド一括適用のテスト', () => {
-    it('偽保管庫接続へ初期状態から13枝のコマンドを適用し、更新結果が保存されること', async () => {
+    it('偽保管庫接続へ初期状態から13枝のコマンドを適用し、大域高さ格子を書かずにチャンクが保存されること', async () => {
         const 偽保管庫 = new 偽保管庫接続()
         const チャンク座標 = { x: 0, z: 0 }
 
@@ -77,8 +49,8 @@ describe('ヘッドレス編集コマンド一括適用のテスト', () => {
         const 適用件数 = await 編集コマンドを一括適用する(偽保管庫, コマンド一覧)
         assert.strictEqual(適用件数, コマンド一覧.length, '全コマンド件数が返されること')
 
-        assert.ok(偽保管庫.保存された大域構造 !== null, '大域世界構造が保存されること')
-        assert.ok(偽保管庫.保存された大域高さ格子 !== null, '大域高さ格子が保存されること')
+        assert.ok(偽保管庫.保存された大域構造 !== null, '初期時は大域世界構造が保存されること')
+        assert.strictEqual(偽保管庫.保存された大域高さ格子, null, '大域高さ格子は一切保存されないこと')
 
         const 保存チャンク = 偽保管庫.保存されたチャンク構造マップ.get('0,0')
         assert.ok(保存チャンク !== undefined, 'チャンク(0,0)の構造が保存されること')
@@ -91,5 +63,20 @@ describe('ヘッドレス編集コマンド一括適用のテスト', () => {
 
         const 保存材質 = 偽保管庫.保存されたチャンク材質マップ.get('0,0')
         assert.ok(保存材質 !== undefined, 'チャンク(0,0)の材質重みが保存されること')
+    })
+
+    it('保管庫に既存の大域構造がある場合、ヘッドレス保存で既存大域構造が上書きされないこと', async () => {
+        const 偽保管庫 = new 偽保管庫接続()
+        const 既存道路 = [{ x: 100, y: 0, z: 200 }]
+        偽保管庫.保存された大域構造 = {
+            区画割り: { 一辺のメートル: 1024, 軸あたりチャンク数: 4, チャンクあたり格子解像度: 128 },
+            広域道路: { 制御点列: 既存道路, 全幅メートル: 10, 細分割数: 50 },
+        }
+        const チャンク座標 = { x: 0, z: 0 }
+        await 編集コマンドを一括適用する(偽保管庫, [
+            { 種類: '道路下を泥へベイクする', 値: { チャンク座標 } },
+        ])
+        assert.deepStrictEqual(偽保管庫.保存された大域構造.広域道路.制御点列, 既存道路, '既存広域道路が上書きされないこと')
+        assert.strictEqual(偽保管庫.保存された大域高さ格子, null, '大域高さ格子は保存されないこと')
     })
 })
