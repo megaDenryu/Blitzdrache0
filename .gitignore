@@ -1,4 +1,5 @@
 /target
+/target-*
 
 # 標準サンプルglTF(DamagedHelmet等)。xtask fetch-assetsで取得する（ネット由来のためコミットしない）
 assets/samples/
