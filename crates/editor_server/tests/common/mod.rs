@@ -10,7 +10,7 @@ mod world_layout;
 
 use std::path::{Path, PathBuf};
 
-use editor_server::{ファイル保管庫, プロジェクトルート};
+use editor_server::{ファイル保管庫, プロジェクトルート, リポジトリルート};
 
 pub use source_asset_export_fixture::{マザーを一意な値で保存する, 大域世界を保存する, 小さな区画割り};
 pub use world_layout::{区画割りJson, 区画割りを保存する};
@@ -36,6 +36,10 @@ impl 一時プロジェクト {
     pub fn プロジェクトルート(&self) -> プロジェクトルート {
         プロジェクトルート::生成する(self.ルート.clone())
     }
+
+    pub fn リポジトリルート(&self) -> リポジトリルート {
+        リポジトリルート::生成する(self.ルート.clone())
+    }
 }
 
 impl Drop for 一時プロジェクト {
@@ -49,7 +53,7 @@ impl Drop for 一時プロジェクト {
 /// API経路のテストには影響しない。
 pub fn ルーターを作る(一時プロジェクト: &一時プロジェクト) -> editor_server::経路正規化アプリ {
     editor_server::ルーターを組み立てる(editor_server::サーバー状態::生成する(
-        一時プロジェクト.ルート(),
+        &一時プロジェクト.リポジトリルート(),
         &一時プロジェクト.プロジェクトルート(),
     ))
 }

@@ -26,7 +26,7 @@ pub use health_contract::生存確認応答;
 pub use normalized_app::経路正規化アプリ;
 pub use project_info_contract::プロジェクト情報応答;
 pub use project_root::{プロジェクトルート, プロジェクトルートを解決する};
-pub use repository_root::リポジトリルートを解決する;
+pub use repository_root::リポジトリルート;
 pub use resource::{
     チャンクの道路, チャンクの高さ編集, チャンク座標, チャンク構造, マザーハイトマップ, 世界の区画割り, 位置3次元, 地表材質の重み, 地表材質層,
     大域世界構造, 広域道路, 建物の配置, 建物を削除する, 建物を移動する, 建物を配置する, 建物基礎を平坦化する, 建物種別, 急勾配を岩肌へベイクする,

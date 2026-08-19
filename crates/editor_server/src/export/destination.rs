@@ -4,10 +4,11 @@
 //! 書き込みの技法自体(一時ファイルへ書いてから改名)は`storage::file_repository`の保存規律と
 //! 同じであり、綴り(".tmp")を2箇所へ書かないよう`crate::atomic_file_write`へ寄せてある。
 
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use super::world_name::出力世界名;
 use crate::atomic_file_write::一時ファイル経由で書き込む;
+use crate::repository_root::リポジトリルート;
 
 const アセットの親ディレクトリ名: &str = "assets";
 
@@ -15,8 +16,8 @@ const アセットの親ディレクトリ名: &str = "assets";
 pub struct 世界ソース出力先(PathBuf);
 
 impl 世界ソース出力先 {
-    pub fn 生成する(リポジトリルート: &Path, 世界名: &出力世界名) -> Self {
-        Self(リポジトリルート.join(アセットの親ディレクトリ名).join(世界名.綴り()))
+    pub fn 生成する(リポジトリルート: &リポジトリルート, 世界名: &出力世界名) -> Self {
+        Self(リポジトリルート.パス().join(アセットの親ディレクトリ名).join(世界名.綴り()))
     }
 
     pub fn 表示の綴り(&self) -> String {

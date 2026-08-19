@@ -7,6 +7,8 @@
 
 use std::path::{Path, PathBuf};
 
+use crate::repository_root::リポジトリルート;
+
 /// プロジェクトルートとは、いま開いている1つのゲームプロジェクトのルートディレクトリのことである。
 #[derive(Debug, Clone)]
 pub struct プロジェクトルート(PathBuf);
@@ -35,14 +37,14 @@ impl プロジェクトルート {
 }
 
 /// `--project <ルート>`引数を探す。無ければ既定ルート(リポジトリルート)を使う。
-pub fn プロジェクトルートを解決する(引数一覧: &[String], 既定ルート: &Path) -> プロジェクトルート {
+pub fn プロジェクトルートを解決する(引数一覧: &[String], 既定ルート: &リポジトリルート) -> プロジェクトルート {
     let 指定パス = 引数一覧
         .iter()
         .position(|引数| 引数 == "--project")
         .and_then(|添字| 引数一覧.get(添字 + 1));
     match 指定パス {
         Some(パス) => プロジェクトルート::生成する(PathBuf::from(パス)),
-        None => プロジェクトルート::生成する(既定ルート.to_path_buf()),
+        None => プロジェクトルート::生成する(既定ルート.パス().to_path_buf()),
     }
 }
 
@@ -53,14 +55,16 @@ mod tests {
 
     #[test]
     fn 指定が無ければ既定ルートを使う() {
-        let 解決結果 = プロジェクトルートを解決する(&[], Path::new("/repo"));
+        let 既定ルート = リポジトリルート::生成する(PathBuf::from("/repo"));
+        let 解決結果 = プロジェクトルートを解決する(&[], &既定ルート);
         assert_eq!(解決結果.パス(), Path::new("/repo"));
     }
 
     #[test]
     fn projectフラグの次の引数を使う() {
+        let 既定ルート = リポジトリルート::生成する(PathBuf::from("/repo"));
         let 引数一覧 = vec!["--project".to_string(), "/game".to_string()];
-        let 解決結果 = プロジェクトルートを解決する(&引数一覧, Path::new("/repo"));
+        let 解決結果 = プロジェクトルートを解決する(&引数一覧, &既定ルート);
         assert_eq!(解決結果.パス(), Path::new("/game"));
     }
 }
