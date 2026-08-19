@@ -24,7 +24,7 @@ export class 道路ノードメッシュ部品 extends グループ {
         return this._ノードメッシュ一覧
     }
 
-    public 更新する(スプライン: 道路スプライン, 選択中添字: number): void {
+    public 更新する(スプライン: 道路スプライン, 選択中添字: number | null): void {
         for (const m of this._ノードメッシュ一覧) {
             this.実体.remove(m)
         }

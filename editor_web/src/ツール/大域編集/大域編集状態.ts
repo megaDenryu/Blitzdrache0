@@ -10,7 +10,7 @@ export class 大域編集状態 {
     public 造成強さ: number = 1.2
     public 道路全幅: number = 12.0
     public 道路細分割数: number = 120
-    public 選択中ノード添字: number = -1
+    public 選択中ノード添字: number | null = null
     public static readonly 履歴スタック上限: number = 50
     public readonly 取り消し履歴スタック: 差し戻し断片[] = []
 

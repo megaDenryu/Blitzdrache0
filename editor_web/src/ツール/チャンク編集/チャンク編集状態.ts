@@ -11,7 +11,7 @@ export class チャンク編集状態 {
     public 材質層: 地表材質層 = '草'
     public ペイント半径: number = 15.0
     public ペイント流量: number = 0.4
-    public 選択中ノード添字: number = -1
+    public 選択中ノード添字: number | null = null
     public 選択中建物識別子: string | null = null
     public readonly 対象チャンク座標: チャンク座標
     public static readonly 履歴スタック上限: number = 50
