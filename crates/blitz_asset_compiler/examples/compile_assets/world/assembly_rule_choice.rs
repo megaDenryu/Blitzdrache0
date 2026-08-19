@@ -11,6 +11,7 @@ mod frame_bay_choice;
 mod frame_chain_rule;
 mod frame_rule;
 mod house_rule;
+mod part_list;
 mod tree_rule;
 
 use blitz_assembly::{生成の種, 組み立て規則};
@@ -27,35 +28,10 @@ pub(crate) enum 部品の組み立て規則の種類 {
     /// 骨格を連ねた見本2つ。部品の一覧は1ベイ1段と同じであり、違うのは規則だけである。継いだ面には壁を入れない。
     二段に積んだ骨格,
     横に二ベイ継いだ骨格,
+    /// 骨格の上へ切妻屋根を載せた家2つ。部品の一覧に屋根が1件加わって5件になる。
+    屋根を載せた一間四方の家,
+    屋根を載せた二段の家,
 }
-
-/// 酒場宿屋を組み立てる部品の一覧。原型はすべて外部のアセットリポジトリの`parts/`から引く。
-/// 部品IDはglTFのファイル名から決まるため、この表はファイル名と安定IDの対応だけを持つ。
-const 酒場宿屋の部品一覧: &[原型の識別] = &[
-    原型の識別::生成する("part_tavern_f1_base", "parts/Mod_Tavern_F1_Base.glb"),
-    原型の識別::生成する("part_tavern_f2_jetty", "parts/Mod_Tavern_F2_Jetty.glb"),
-    原型の識別::生成する("part_tavern_f3_jetty", "parts/Mod_Tavern_F3_Jetty.glb"),
-    原型の識別::生成する("part_tavern_roof_gable", "parts/Mod_Tavern_Roof_Gable.glb"),
-    原型の識別::生成する("part_tavern_oriel_f2", "parts/Mod_Tavern_Oriel_F2.glb"),
-    原型の識別::生成する("part_tavern_dormer_roof", "parts/Mod_Tavern_Dormer_Roof.glb"),
-    原型の識別::生成する("part_tavern_chimney", "parts/Mod_Tavern_Chimney.glb"),
-];
-
-/// 樫の木を組み立てる部品の一覧。幹の一節を何節積むかは規則の仕事であり、この表は部品の種類を1件ずつ持つだけである。
-const 樫の木の部品一覧: &[原型の識別] = &[
-    原型の識別::生成する("part_tree_oak_trunk_segment", "parts/Mod_Tree_Oak_Trunk_Segment.glb"),
-    原型の識別::生成する("part_tree_oak_branch_large", "parts/Mod_Tree_Oak_Branch_Large.glb"),
-    原型の識別::生成する("part_tree_oak_foliage_cluster", "parts/Mod_Tree_Oak_Foliage_Cluster.glb"),
-];
-
-/// 一間四方の骨格を組み立てる部品の一覧。骨格1件と壁3種であり、材質スロットは1・2・3・2で総和8である。
-/// 壁3種のどれにも必ず入れる面を割り当ててあるため、この4件はどの種でも据わる。
-const 一間四方の骨格の部品一覧: &[原型の識別] = &[
-    原型の識別::生成する("part_frame_bay_single", "parts/Mod_Frame_Bay_Single.glb"),
-    原型の識別::生成する("part_wall_halftimber_solid", "parts/Mod_Wall_HalfTimber_Solid.glb"),
-    原型の識別::生成する("part_wall_halftimber_window", "parts/Mod_Wall_HalfTimber_Window.glb"),
-    原型の識別::生成する("part_wall_halftimber_doorframe", "parts/Mod_Wall_HalfTimber_DoorFrame.glb"),
-];
 
 impl 部品の組み立て規則の種類 {
     /// 報告の内訳へ載せるこの種類の名前。人が読んで何を散らしたのかが分かる語を使う。
@@ -66,20 +42,16 @@ impl 部品の組み立て規則の種類 {
             Self::一間四方の骨格 => "一間四方の骨格",
             Self::二段に積んだ骨格 => "二段に積んだ骨格",
             Self::横に二ベイ継いだ骨格 => "横に二ベイ継いだ骨格",
+            Self::屋根を載せた一間四方の家 => "屋根を載せた一間四方の家",
+            Self::屋根を載せた二段の家 => "屋根を載せた二段の家",
         })
     }
 
     /// その規則が指す部品の一覧。**規則と部品の一覧は常に対で使うため、種類が両方を答える。**
     /// 宣言の側が2つを別々に書くと、規則が指す部品を一覧へ書き忘れた宣言が型を通り、
-    /// 「カタログに無い部品」という遠い場所の失敗になる。
+    /// 「カタログに無い部品」という遠い場所の失敗になる。台帳は`part_list`が持つ。
     pub(super) fn 部品一覧(self) -> &'static [原型の識別] {
-        match self {
-            Self::酒場宿屋 => 酒場宿屋の部品一覧,
-            Self::樫の木 => 樫の木の部品一覧,
-            Self::一間四方の骨格 | Self::二段に積んだ骨格 | Self::横に二ベイ継いだ骨格 => {
-                一間四方の骨格の部品一覧
-            }
-        }
+        part_list::部品一覧を選ぶ(self)
     }
 
     /// その種類の規則と、展開の種の起点を組む。
@@ -90,6 +62,10 @@ impl 部品の組み立て規則の種類 {
             Self::一間四方の骨格 => Ok((frame_rule::一間四方の骨格の規則を組む()?, frame_rule::一間四方の骨格の並びの展開の種())),
             Self::二段に積んだ骨格 => 骨格を連ねた規則へ種を添える(frame_chain_rule::二段に積んだ骨格の規則を組む()?),
             Self::横に二ベイ継いだ骨格 => 骨格を連ねた規則へ種を添える(frame_chain_rule::横に二ベイ継いだ骨格の規則を組む()?),
+            Self::屋根を載せた一間四方の家 => {
+                骨格を連ねた規則へ種を添える(frame_chain_rule::屋根を載せた一間四方の家の規則を組む()?)
+            }
+            Self::屋根を載せた二段の家 => 骨格を連ねた規則へ種を添える(frame_chain_rule::屋根を載せた二段の家の規則を組む()?),
         }
     }
 }

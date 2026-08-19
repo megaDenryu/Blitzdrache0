@@ -11,9 +11,8 @@
 
 #![allow(clippy::unwrap_used)]
 
-use super::frame_chain_fixture::{
-    二段に積んだ骨格の規則, 平行移動が近いか, 恒等の姿勢か, 横に二ベイ継いだ骨格の規則, 綴りごとの配置, 骨格の綴り
-};
+use super::frame_chain_fixture::{平行移動が近いか, 恒等の姿勢か, 綴りごとの配置, 骨格の綴り};
+use super::frame_chain_rule_fixture::{二段に積んだ骨格の規則, 横に二ベイ継いだ骨格の規則};
 use super::frame_rule_fixture::規則と種で展開する;
 
 /// 階高。骨格の上面の接合点の高さそのものである。

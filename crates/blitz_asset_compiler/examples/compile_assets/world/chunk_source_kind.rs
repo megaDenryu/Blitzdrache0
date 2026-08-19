@@ -28,8 +28,8 @@ pub(super) fn チャンクのソース種別を選ぶ(
         },
         対象世界::部品で組んだ家の並びの世界(規模) => part_house_row_declaration::チャンクのソース種別(規模),
         対象世界::部品で組んだ木の並びの世界 => part_tree_row_declaration::チャンクのソース種別(),
-        対象世界::部品で組んだ一間四方の骨格の並びの世界(規模) => {
-            part_frame_row_declaration::チャンクのソース種別(規模)
+        対象世界::部品で組んだ一間四方の骨格の並びの世界(種類) => {
+            part_frame_row_declaration::チャンクのソース種別(種類)
         }
         対象世界::目視見本の世界 => ソース種別::目視見本 {
             材質見本の立体の安定id: visual_sample_declaration::材質見本の立体,

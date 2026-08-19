@@ -20,7 +20,7 @@ pub(super) fn アセット定義一覧を選ぶ(世界: 対象世界) -> Vec<ア
         対象世界::見本の集落の世界 => village_declaration::一覧(),
         対象世界::部品で組んだ家の並びの世界(_) => part_house_row_declaration::一覧(),
         対象世界::部品で組んだ木の並びの世界 => part_tree_row_declaration::一覧(),
-        対象世界::部品で組んだ一間四方の骨格の並びの世界(_) => part_frame_row_declaration::一覧(),
+        対象世界::部品で組んだ一間四方の骨格の並びの世界(種類) => part_frame_row_declaration::一覧(種類),
         対象世界::目視見本の世界 => visual_sample_declaration::一覧(),
         対象世界::頂点診断の世界(原型) => vertex_diagnostic_declaration::一覧(原型),
         対象世界::ブロック圧縮の対照世界 => Vec::new(),

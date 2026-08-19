@@ -10,7 +10,9 @@
 //! 壁の背面がちょうど同一平面になり、深度が競合する。**この破れは接触の検査に掛からず絵にだけ出る。**
 //! 参照: `_doc/設計/部品カタログと接合点.md`「骨格と壁の対、扉の対」
 
-use blitz_assembly::{はめ口の指定, はめ口へ入れるもの, 接合点名, 法線方向のずらし, 部品ID};
+use blitz_assembly::{
+    はめ口の指定, はめ口へ入れるもの, 接合点名, 法線方向のずらし, 部品ID, 骨格へ継ぎ足すもの
+};
 use blitz_math::メートル;
 
 const 食い込ませる量: f32 = 0.02;
@@ -22,6 +24,7 @@ pub(super) const 骨格の綴り: &str = "Mod_Frame_Bay_Single";
 pub(super) const 平壁の綴り: &str = "Mod_Wall_HalfTimber_Solid";
 pub(super) const 窓壁の綴り: &str = "Mod_Wall_HalfTimber_Window";
 pub(super) const 扉枠付きの壁の綴り: &str = "Mod_Wall_HalfTimber_DoorFrame";
+pub(super) const 切妻屋根の綴り: &str = "Mod_Frame_Roof_Gable";
 
 /// 候補が1つだけのはめ口。その面には必ずその壁が入る。
 pub(super) fn 必ず入れるはめ口(はめ口の綴り: &str, 部品の綴り: &str) -> Result<はめ口の指定, String> {
@@ -32,6 +35,14 @@ pub(super) fn 必ず入れるはめ口(はめ口の綴り: &str, 部品の綴り
 pub(super) fn 選べるはめ口(はめ口の綴り: &str) -> Result<はめ口の指定, String> {
     let 候補一覧 = vec![はめ口へ入れるもの::入れない, 壁をはめる(平壁の綴り)?, 壁をはめる(窓壁の綴り)?];
     指定を組む(はめ口の綴り, 候補一覧)
+}
+
+/// 骨格の上面へ屋根を載せる候補。屋根が宣言する接合点は下面積層1件だけであり、その上へ継げるものは無い。
+pub(super) fn 屋根を載せる候補() -> Result<骨格へ継ぎ足すもの, String> {
+    Ok(骨格へ継ぎ足すもの::屋根を載せる {
+        部品: 識別子(切妻屋根の綴り)?,
+        下面: 名前("屋根の下面")?,
+    })
 }
 
 pub(super) fn 名前(綴り: &str) -> Result<接合点名, String> {

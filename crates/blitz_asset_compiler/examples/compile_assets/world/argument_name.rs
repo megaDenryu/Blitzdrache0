@@ -18,6 +18,8 @@ const 一間四方の骨格を十棟建てた世界: &str = "part_frame_row_ten_
 const 一間四方の骨格を百棟建てた世界: &str = "part_frame_row_hundred_world";
 const 二段に積んだ骨格の見本の世界: &str = "part_frame_two_story_world";
 const 横に二ベイ継いだ骨格の見本の世界: &str = "part_frame_row_two_world";
+const 屋根を載せた一間四方の家の見本の世界: &str = "part_frame_bay_house_world";
+const 屋根を載せた二段の家の見本の世界: &str = "part_frame_two_story_house_world";
 const 目視見本の世界: &str = "terrain_visual_world";
 const 頂点診断の粗い世界: &str = "vertex_diag_coarse_world";
 const 頂点診断の細かい世界: &str = "vertex_diag_fine_world";
@@ -26,7 +28,7 @@ const 夜の多光源の世界: &str = "night_lights_world";
 const 屋内の多光源の世界: &str = "stone_hut_world";
 const 場所巡りの世界: &str = "fox_tour_world";
 
-const 有効な綴り: [&str; 18] = [
+const 有効な綴り: [&str; 20] = [
     板の世界,
     地形の世界,
     植生の世界,
@@ -38,6 +40,8 @@ const 有効な綴り: [&str; 18] = [
     一間四方の骨格を百棟建てた世界,
     二段に積んだ骨格の見本の世界,
     横に二ベイ継いだ骨格の見本の世界,
+    屋根を載せた一間四方の家の見本の世界,
+    屋根を載せた二段の家の見本の世界,
     目視見本の世界,
     頂点診断の粗い世界,
     頂点診断の細かい世界,
@@ -67,6 +71,12 @@ pub(super) fn 解析する(引数名: &str) -> Result<対象世界, String> {
         )),
         横に二ベイ継いだ骨格の見本の世界 => Ok(対象世界::部品で組んだ一間四方の骨格の並びの世界(
             一間四方の骨格の並びの種類::横に二ベイ継いだ骨格の見本,
+        )),
+        屋根を載せた一間四方の家の見本の世界 => Ok(対象世界::部品で組んだ一間四方の骨格の並びの世界(
+            一間四方の骨格の並びの種類::屋根を載せた一間四方の家の見本,
+        )),
+        屋根を載せた二段の家の見本の世界 => Ok(対象世界::部品で組んだ一間四方の骨格の並びの世界(
+            一間四方の骨格の並びの種類::屋根を載せた二段の家の見本,
         )),
         目視見本の世界 => Ok(対象世界::目視見本の世界),
         頂点診断の粗い世界 => Ok(対象世界::頂点診断の世界(粗い原型)),
