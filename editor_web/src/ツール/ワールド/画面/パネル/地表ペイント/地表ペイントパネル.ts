@@ -23,6 +23,7 @@ class 材質選択ボタン extends ButtonC {
     public constructor(ラベル: string, 選択中: boolean) {
         super({ class: 材質ボタン, text: ラベル })
         this.setAttribute('data-selected', 選択中 ? 'true' : 'false')
+        this.setTooltip(ラベル)
     }
 
     public 選択状態を設定する(選択中: boolean): this {
@@ -68,7 +69,7 @@ export class 地表ペイントパネル extends LV2HtmlComponentBase implements
     private _ルートを構築する(初期層: 地表材質層): DivC {
         return (
             div({ class: パネル }).childs([
-                span({ class: 見出し, text: '地表マテリアルペイント' }),
+                span({ class: 見出し, text: '地表マテリアルペイント' }).setTooltip('地表マテリアルペイント'),
                 div({ class: 材質グリッド }).childs(
                     材質層一覧.map(({ 層, ラベル }) => {
                         const btn = new 材質選択ボタン(ラベル, 層 === 初期層)
@@ -83,8 +84,10 @@ export class 地表ペイントパネル extends LV2HtmlComponentBase implements
                 this._流量スライダー,
                 div({ class: ベイク区画 }).childs([
                     button({ class: アクションボタン, text: '急勾配(>30度)を自動で岩肌にベイク' })
+                        .setTooltip('急勾配(>30度)を自動で岩肌にベイク')
                         .onClick(() => this._配線.先.on急勾配ベイク()),
                     button({ class: アクションボタン, text: '道路下を自動で泥にベイク' })
+                        .setTooltip('道路下を自動で泥にベイク')
                         .onClick(() => this._配線.先.on道路下泥ベイク())])])
         )
     }

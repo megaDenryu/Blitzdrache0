@@ -14,8 +14,8 @@ export class スライス仕様パネル extends LV2HtmlComponentBase {
         return (
             div({ class: パネル }).childs([
                 div({ class: 見出し行 }).childs([
-                    span({ text: 'シームレス・スライス設定' }),
-                    span({ class: バッジ, text: '129x129 (1px Overlap)' }),
+                    span({ text: 'シームレス・スライス設定' }).setTooltip('シームレス・スライス設定'),
+                    span({ class: バッジ, text: '129x129 (1px Overlap)' }).setTooltip('129x129 (1px Overlap)'),
                 ]),
                 div({ class: 説明リスト }).childs([
                     p({ text: '・ 各チャンク境界を1px重複共有して出力。' }),

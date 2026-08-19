@@ -58,7 +58,7 @@ export class スライダー項目 extends LV2HtmlComponentBase implements I配�
         return (
             div({ class: 行コンテナ }).childs([
                 div({ class: ラベル行 }).childs([
-                    span({ text: ラベル名 }),
+                    span({ text: ラベル名 }).setTooltip(ラベル名),
                     this._値表示]),
                 input({
                     class: スライダー入力,

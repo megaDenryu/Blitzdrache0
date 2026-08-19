@@ -1,7 +1,7 @@
 import { div, span, p, DivC, LV2部品集約Base } from 'sengen-ui'
 import type { 大域編集モード } from '../モード切替/index.ts'
 import { 大域インスペクター部品 } from './大域インスペクター部品.ts'
-import { インスペクター枠, ヘッダー, タイトル, サブタイトル, バッジ } from './スタイル.css.ts'
+import { インスペクター枠, ヘッダー, タイトル群, タイトル, サブタイトル, バッジ } from './スタイル.css.ts'
 
 // 大域インスペクター枠・ヘッダー・モードに応じたサブパネルの表示切り替えを統括する部品集約。
 export class 大域インスペクターパネル extends LV2部品集約Base<大域インスペクター部品> {
@@ -33,11 +33,11 @@ export class 大域インスペクターパネル extends LV2部品集約Base<�
         return (
             div({ class: インスペクター枠 }).childs([
                 div({ class: ヘッダー }).childs([
-                    div().childs([
-                        div({ class: タイトル, text: '大域グリッドマネージャー' }),
-                        p({ class: サブタイトル, text: 'マクロ造成＆シームレススライサー' }),
+                    div({ class: タイトル群 }).childs([
+                        div({ class: タイトル, text: '大域グリッドマネージャー' }).setTooltip('大域グリッドマネージャー'),
+                        p({ class: サブタイトル, text: 'マクロ造成＆シームレススライサー' }).setTooltip('マクロ造成＆シームレススライサー'),
                     ]),
-                    span({ class: バッジ, text: 'World: 1024m (4x4)' }),
+                    span({ class: バッジ, text: 'World: 1024m (4x4)' }).setTooltip('World: 1024m (4x4)'),
                 ]),
                 部品.モード切替,
                 部品.ヒント,

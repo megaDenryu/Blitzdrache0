@@ -22,6 +22,7 @@ class モード選択ボタン extends ButtonC {
     public constructor(モード名: string, 選択中: boolean) {
         super({ class: モードボタン, text: モード名 })
         this.setAttribute('data-selected', 選択中 ? 'true' : 'false')
+        this.setTooltip(モード名)
     }
 
     public 選択状態を設定する(選択中: boolean): this {

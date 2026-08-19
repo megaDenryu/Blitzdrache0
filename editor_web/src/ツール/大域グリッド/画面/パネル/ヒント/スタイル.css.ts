@@ -1,6 +1,8 @@
 import { style } from '@vanilla-extract/css'
 import { エディターCSS変数 } from '../../../../../境界/index.ts'
 
+// ヒント文は複数語からなる操作案内であり折返しを許す。text-wrap: prettyで折り位置を
+// 最適化する(グローバルのline-break: strictと組み合わせ、禁則も守った読みやすい折返しにする)。
 export const ヒント枠 = style({
     padding: '8px 12px',
     fontSize: '11px',
@@ -9,6 +11,7 @@ export const ヒント枠 = style({
     borderRadius: '8px',
     border: `1px solid ${エディターCSS変数('境界線')}`,
     color: エディターCSS変数('テキスト薄'),
+    textWrap: 'pretty',
 })
 
 export const 強調 = style({

@@ -23,6 +23,9 @@ export const セクション見出し = style({
     textTransform: 'uppercase',
     color: エディターCSS変数('テキスト薄'),
     letterSpacing: '0.5px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
 })
 
 export const テーマリスト = style({
@@ -57,12 +60,18 @@ export const カードヘッダー = style({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: '8px',
 })
 
 export const テーマ表示名 = style({
     fontSize: '13px',
     fontWeight: 600,
     color: エディターCSS変数('テキスト主'),
+    minWidth: 0,
+    flex: '1',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
 })
 
 export const 選択バッジ = style({
@@ -72,12 +81,17 @@ export const 選択バッジ = style({
     backgroundColor: エディターCSS変数('アクセント背景'),
     color: エディターCSS変数('アクセント文字白'),
     fontWeight: 'bold',
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
 })
 
+// テーマ説明は複数語からなる文であり折返しを許す。text-wrap: prettyで折り位置を最適化する
+// (グローバルのline-break: strictと組み合わせ、禁則も守った読みやすい折返しにする)。
 export const テーマ説明 = style({
     fontSize: '11px',
     color: エディターCSS変数('テキスト副'),
     lineHeight: '1.4',
+    textWrap: 'pretty',
 })
 
 export const パレットプレビュー = style({

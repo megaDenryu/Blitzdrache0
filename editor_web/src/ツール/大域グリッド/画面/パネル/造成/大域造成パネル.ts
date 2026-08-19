@@ -20,6 +20,7 @@ class 筆致選択ボタン extends ButtonC {
     public constructor(ラベル: string, 選択中: boolean) {
         super({ class: ブラシ種別ボタン, text: ラベル })
         this.setAttribute('data-selected', 選択中 ? 'true' : 'false')
+        this.setTooltip(ラベル)
     }
 
     public 選択状態を設定する(選択中: boolean): this {
@@ -66,8 +67,8 @@ export class 大域造成パネル extends LV2HtmlComponentBase implements I配�
         return (
             div({ class: パネル }).childs([
                 div({ class: 見出し行 }).childs([
-                    span({ text: 'マクロ山脈・盆地造成ブラシ' }),
-                    span({ class: 補助テキスト, text: '[Shift: 削り / 平滑化]' }),
+                    span({ text: 'マクロ山脈・盆地造成ブラシ' }).setTooltip('マクロ山脈・盆地造成ブラシ'),
+                    span({ class: 補助テキスト, text: '[Shift: 削り / 平滑化]' }).setTooltip('[Shift: 削り / 平滑化]'),
                 ]),
                 div({ class: ボタングループ }).childs(
                     筆致種別一覧.map(({ 種別, ラベル }) => {

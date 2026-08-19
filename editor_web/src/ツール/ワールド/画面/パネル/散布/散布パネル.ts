@@ -52,10 +52,11 @@ export class 散布パネル extends LV2HtmlComponentBase implements I配線可�
         return (
             div({ class: パネル }).childs([
                 div({ class: 見出し行 }).childs([
-                    span({ text: '植生散布 (ポアソンディスク)' }),
+                    span({ text: '植生散布 (ポアソンディスク)' }).setTooltip('植生散布 (ポアソンディスク)'),
                     this._本数表示]),
                 this._間隔スライダー,
                 button({ class: 再ベイクボタン, text: '散布再ベイク' })
+                    .setTooltip('散布再ベイク')
                     .onClick(() => this._配線.先.on散布再ベイク())])
         )
     }

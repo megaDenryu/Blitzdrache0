@@ -10,9 +10,9 @@ export class 大域永続化パネル extends LV2HtmlComponentBase {
 
     public constructor() {
         super()
-        this._保存ボタン = button({ class: アクションボタン, text: '保存' })
-        this._読込ボタン = button({ class: アクションボタン, text: '読み込み' })
-        this._状態表示コンテナ = div({ class: 状態メッセージ }).child(span({ text: '未保存' }))
+        this._保存ボタン = button({ class: アクションボタン, text: '保存' }).setTooltip('保存')
+        this._読込ボタン = button({ class: アクションボタン, text: '読み込み' }).setTooltip('読み込み')
+        this._状態表示コンテナ = div({ class: 状態メッセージ }).setTooltip('未保存').child(span({ text: '未保存' }))
 
         this._componentRoot = div({ class: 永続化枠 }).childs([
             div({ class: ボタン行 }).childs([this._保存ボタン, this._読込ボタン]),
@@ -40,7 +40,7 @@ export class 大域永続化パネル extends LV2HtmlComponentBase {
     }
 
     public 状態文言を更新する(文言: string, エラーか: boolean = false): void {
-        this._状態表示コンテナ.clearChildren()
+        this._状態表示コンテナ.setTooltip(文言).clearChildren()
         this._状態表示コンテナ.child(
             span({ class: エラーか ? エラー状態メッセージ : 状態メッセージ, text: 文言 }),
         )

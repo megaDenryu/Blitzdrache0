@@ -19,8 +19,18 @@ export const ヘッダー = style({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: '8px',
     borderBottom: `1px solid ${エディターCSS変数('境界線')}`,
     paddingBottom: '10px',
+})
+
+// タイトル・サブタイトルの折返し防止分だけヘッダーの残り幅を占有し、バッジ側を圧迫しない
+// ようにするための包み。flexコンテナの子は既定でminWidth:autoのため、これが無いと
+// 日本語文字が任意の位置で折り返されて読めなくなる(ellipsisも効かない)。
+export const タイトル群 = style({
+    minWidth: 0,
+    flex: '1',
+    overflow: 'hidden',
 })
 
 export const タイトル = style({
@@ -28,12 +38,18 @@ export const タイトル = style({
     fontWeight: 700,
     color: エディターCSS変数('アクセント文字'),
     letterSpacing: '0.05em',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
 })
 
 export const サブタイトル = style({
     fontSize: '10px',
     fontFamily: 'monospace',
     color: エディターCSS変数('テキスト薄'),
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
 })
 
 export const バッジ = style({
@@ -44,4 +60,6 @@ export const バッジ = style({
     backgroundColor: エディターCSS変数('バッジ背景'),
     color: エディターCSS変数('バッジ文字'),
     border: `1px solid ${エディターCSS変数('バッジ枠線')}`,
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
 })

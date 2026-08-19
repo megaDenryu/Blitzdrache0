@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { style, globalStyle } from '@vanilla-extract/css'
 import { エディターCSS変数 } from '../テーマ/テーマ変数.ts'
 
 // 左サイドバーのエクスプローラー木ビューのスタイル定義。
@@ -22,6 +22,9 @@ export const セクション見出し = style({
     color: エディターCSS変数('テキスト薄'),
     padding: '6px 12px 2px 12px',
     letterSpacing: '0.5px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
 })
 
 export const 木項目 = style({
@@ -73,6 +76,24 @@ export const 子木項目 = style({
             fontWeight: 'bold',
         },
     },
+})
+
+// 木の項目名(アイコンに続く2つ目の子)は1行物のため折返しを許さない。幅が足りない場合は
+// 末尾を省略記号で収める(木項目・子木項目のどちらも構成はアイコン+ラベルの2要素で固定)。
+globalStyle(`${木項目} > *:last-child`, {
+    minWidth: 0,
+    flex: '1',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+})
+
+globalStyle(`${子木項目} > *:last-child`, {
+    minWidth: 0,
+    flex: '1',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
 })
 
 export const アイコン = style({

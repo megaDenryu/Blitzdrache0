@@ -9,7 +9,9 @@ export const コンテナ = style({
 
 export const グリッド = style({
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
+    // 4列だと右サイドバー幅では1セルの余白が足りず、日本語ラベルが任意の位置で
+    // 折り返される(「大域カメ/ラ」の分断の原因)。2列にしてセル幅を確保する。
+    gridTemplateColumns: 'repeat(2, 1fr)',
     gap: '4px',
     padding: '4px',
     backgroundColor: エディターCSS変数('カード不透明背景'),
@@ -28,6 +30,9 @@ export const モードボタン = style({
     color: エディターCSS変数('テキスト薄'),
     transition: 'all 0.15s ease',
     textAlign: 'center',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
     ':hover': {
         color: エディターCSS変数('テキスト主'),
         backgroundColor: エディターCSS変数('ボタン背景'),

@@ -70,7 +70,7 @@ export class 設定パネル extends LV2HtmlComponentBase {
             .setAttribute('data-selected', 現在選択中 ? 'true' : 'false')
             .childs([
                 div({ class: カードヘッダー }).childs([
-                    span({ class: テーマ表示名, text: テーマ.表示名 }),
+                    span({ class: テーマ表示名, text: テーマ.表示名 }).setTooltip(テーマ.表示名),
                     バッジ要素,
                 ]),
                 span({ class: テーマ説明, text: テーマ.説明 }),

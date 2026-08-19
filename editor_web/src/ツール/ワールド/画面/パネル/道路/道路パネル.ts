@@ -15,6 +15,7 @@ export interface I道路パネル配線 {
 class 道路削除ボタン extends ButtonC {
     public constructor() {
         super({ class: 削除ボタン, text: 'ノード削除', disabled: true })
+        this.setTooltip('ノード削除')
     }
 
     public 有効状態を設定する(有効: boolean): this {
@@ -64,17 +65,19 @@ export class 道路パネル extends LV2HtmlComponentBase implements I配線可�
     private _ルートを構築する(): DivC {
         return (
             div({ class: パネル }).childs([
-                span({ class: 見出し, text: '道路 & パラメータ' }),
+                span({ class: 見出し, text: '道路 & パラメータ' }).setTooltip('道路 & パラメータ'),
                 this._全幅スライダー,
                 this._除外バッファスライダー,
                 this._細分割スライダー,
                 div({ class: アクション区画 }).childs([
                     button({ class: 切土盛土ボタン, text: '道路に合わせて地形を切土・盛土' })
+                        .setTooltip('道路に合わせて地形を切土・盛土')
                         .onClick(() => this._配線.先.on道路切土盛土()),
                     div({ class: 行ボタン群 }).childs([
                         this._削除ボタン
                             .onClick(() => this._配線.先.on選択ノード削除()),
                         button({ class: 副ボタン, text: 'リセット' })
+                            .setTooltip('リセット')
                             .onClick(() => this._配線.先.on道路リセット())])])])
         )
     }

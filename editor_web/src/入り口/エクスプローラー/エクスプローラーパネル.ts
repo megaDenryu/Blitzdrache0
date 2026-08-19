@@ -23,7 +23,7 @@ export class エクスプローラーパネル extends LV2HtmlComponentBase impl
         super()
         this._大域世界ノード = div({ class: 木項目 }).childs([
             span({ class: アイコン, text: 'G' }),
-            span({ text: '大域世界' }),
+            span({ text: '大域世界' }).setTooltip('大域世界'),
         ]).onClick(() => {
             this._配線.先.on大域世界を開く()
         })
@@ -33,9 +33,10 @@ export class エクスプローラーパネル extends LV2HtmlComponentBase impl
             for (let x = 0; x < 軸あたりチャンク数; x++) {
                 const 座標: チャンク座標 = { x, z }
                 const キー = `${x},${z}`
+                const チャンクラベル = `チャンク (${x}, ${z})`
                 const 項目 = div({ class: 子木項目 }).childs([
                     span({ class: アイコン, text: 'C' }),
-                    span({ text: `チャンク (${x}, ${z})` }),
+                    span({ text: チャンクラベル }).setTooltip(チャンクラベル),
                 ]).onClick(() => {
                     this._配線.先.onチャンクを開く(座標)
                 })
@@ -47,9 +48,10 @@ export class エクスプローラーパネル extends LV2HtmlComponentBase impl
         this._チャンク展開アイコン = span({ class: フォルダアイコン, text: '▼' })
         this._チャンク子項目コンテナ = div({ class: 子木項目コンテナ }).childs(チャンク子項目一覧)
 
+        const チャンク親ラベル = `チャンク (${軸あたりチャンク数}×${軸あたりチャンク数})`
         this._チャンク親ノード = div({ class: 木項目 }).childs([
             this._チャンク展開アイコン,
-            span({ text: `チャンク (${軸あたりチャンク数}×${軸あたりチャンク数})` }),
+            span({ text: チャンク親ラベル }).setTooltip(チャンク親ラベル),
         ]).onClick(() => {
             this._チャンク展開中 = !this._チャンク展開中
             this._チャンク展開アイコン.setTextContent(this._チャンク展開中 ? '▼' : '▶')

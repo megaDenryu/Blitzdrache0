@@ -27,6 +27,9 @@ export const アクションボタン = style({
     cursor: 'pointer',
     fontSize: '12px',
     fontWeight: 'bold',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
     ':hover': {
         backgroundColor: エディターCSS変数('プライマリボタンホバー'),
     },
@@ -37,16 +40,23 @@ export const アクションボタン = style({
     },
 })
 
+// 状態文言は保存/読込結果やエラーメッセージを表示する1行物のため、任意の位置で
+// 折り返す(word-break: break-all)のではなく、末尾を省略記号で収める。全文は
+// 呼び出し側がtitle属性で提供する(大域永続化パネル.ts の 状態文言を更新する 参照)。
 export const 状態メッセージ = style({
     fontSize: '11px',
     color: エディターCSS変数('テキスト副'),
-    wordBreak: 'break-all',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
     minHeight: '16px',
 })
 
 export const エラー状態メッセージ = style({
     fontSize: '11px',
     color: エディターCSS変数('危険ボタン文字'),
-    wordBreak: 'break-all',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
     minHeight: '16px',
 })

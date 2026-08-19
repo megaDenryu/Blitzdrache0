@@ -35,6 +35,7 @@ class 建物件数ラベル extends SpanC {
 class 建物削除ボタン extends ButtonC {
     public constructor() {
         super({ class: 削除ボタン, text: '削除', disabled: true })
+        this.setTooltip('削除')
     }
 
     public 有効状態を設定する(有効: boolean): this {
@@ -74,20 +75,25 @@ export class 建物パネル extends LV2HtmlComponentBase implements I配線可�
         return (
             div({ class: パネル }).childs([
                 div({ class: 見出し行 }).childs([
-                    span({ text: '建物 / POI 配置' }),
+                    span({ text: '建物 / POI 配置' }).setTooltip('建物 / POI 配置'),
                     this._件数表示]),
                 div({ class: 生成ボタングリッド }).childs([
                     button({ class: 生成ボタン, text: '+ 家屋 (12m)' })
+                        .setTooltip('+ 家屋 (12m)')
                         .onClick(() => this._配線.先.on建物生成('家屋')),
                     button({ class: 生成ボタン, text: '+ 塔 (8m)' })
+                        .setTooltip('+ 塔 (8m)')
                         .onClick(() => this._配線.先.on建物生成('塔')),
                     button({ class: 生成ボタン, text: '+ 宝箱 (2m)' })
+                        .setTooltip('+ 宝箱 (2m)')
                         .onClick(() => this._配線.先.on建物生成('宝箱'))]),
                 div({ class: アクション区画 }).childs([
                     button({ class: 平坦化ボタン, text: '選択建物の基礎に合わせて地形造成' })
+                        .setTooltip('選択建物の基礎に合わせて地形造成')
                         .onClick(() => this._配線.先.on基礎平坦化()),
                     div({ class: 行ボタン群 }).childs([
                         button({ class: 接地ボタン, text: '地面に接地' })
+                            .setTooltip('地面に接地')
                             .onClick(() => this._配線.先.on地面接地()),
                         this._削除ボタン
                             .onClick(() => this._配線.先.on建物削除())])])])

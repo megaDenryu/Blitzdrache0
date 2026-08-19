@@ -16,6 +16,9 @@ export const 見出し = style({
     fontSize: '11px',
     fontWeight: 600,
     color: エディターCSS変数('テキスト副'),
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
 })
 
 export const アクション区画 = style({
@@ -41,6 +44,9 @@ export const 削除ボタン = style({
     color: エディターCSS変数('危険ボタン文字'),
     cursor: 'pointer',
     transition: 'all 0.15s ease',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
     ':hover': {
         backgroundColor: エディターCSS変数('危険ボタンホバー'),
     },
@@ -60,6 +66,9 @@ export const 副ボタン = style({
     color: エディターCSS変数('テキスト副'),
     cursor: 'pointer',
     transition: 'all 0.15s ease',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
     ':hover': {
         backgroundColor: エディターCSS変数('ボタンホバー背景'),
     },

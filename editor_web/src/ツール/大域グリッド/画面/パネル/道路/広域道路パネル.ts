@@ -13,6 +13,7 @@ export interface I広域道路パネル配線 {
 class 削除操作ボタン extends ButtonC {
     public constructor() {
         super({ class: 削除ボタン, text: '選択点を削除', disabled: true })
+        this.setTooltip('選択点を削除')
     }
 
     public 有効状態を設定する(有効: boolean): this {
@@ -58,13 +59,13 @@ export class 広域道路パネル extends LV2HtmlComponentBase implements I配�
     private _ルートを構築する(): DivC {
         return (
             div({ class: パネル }).childs([
-                div({ class: 見出し, text: '広域幹線道路 (Cross-Chunk Highway)' }),
+                div({ class: 見出し, text: '広域幹線道路 (Cross-Chunk Highway)' }).setTooltip('広域幹線道路 (Cross-Chunk Highway)'),
                 this._全幅スライダー,
                 this._細分割スライダー,
                 div({ class: アクション区画 }).child(
                     div({ class: 行ボタン群 }).childs([
                         this._削除ボタン.onClick(() => this._配線.先.on選択ノード削除()),
-                        new ButtonC({ class: 副ボタン, text: '全消去' }).onClick(() =>
+                        new ButtonC({ class: 副ボタン, text: '全消去' }).setTooltip('全消去').onClick(() =>
                             this._配線.先.on道路リセット(),
                         ),
                     ]),
