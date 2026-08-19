@@ -1,9 +1,11 @@
 import { Vector3 } from 'three'
 import type { 透視カメラ } from 'SengenThree'
+import type { 位置3次元 } from '../../../../../生成/編集資源契約.ts'
 
 // 軌道カメラの姿勢・注視点・距離を保持し、透視カメラへ反映する制御器。
 export class 軌道カメラ制御器 {
     private readonly _注視点: Vector3 = new Vector3(0, 0, 0)
+    private readonly _カメラ位置キャッシュ: Vector3 = new Vector3(0, 0, 0)
     private _水平角: number = 0
     private _垂直角: number = Math.PI / 4
     private _距離: number
@@ -68,7 +70,27 @@ export class 軌道カメラ制御器 {
         const y = this._注視点.y + this._距離 * cosPhi
         const z = this._注視点.z + this._距離 * sinPhi * cosTheta
 
+        this._カメラ位置キャッシュ.set(x, y, z)
         this._カメラ.位置を設定する(x, y, z)
         this._カメラ.注視点を設定する(this._注視点.x, this._注視点.y, this._注視点.z)
+    }
+
+    // 注視点の高さだけを直接差し替える。地形追従カメラ制御器が地形の高さへ追従させるために使う
+    // (水平角・垂直角・距離は変えないため、カメラは注視点と同じ量だけ上下する)。
+    public 注視点の高さを設定する(高さ: number): void {
+        this._注視点.y = 高さ
+        this.更新する()
+    }
+
+    public 注視点を取得する(): 位置3次元 {
+        return { x: this._注視点.x, y: this._注視点.y, z: this._注視点.z }
+    }
+
+    public カメラ位置を取得する(): 位置3次元 {
+        return { x: this._カメラ位置キャッシュ.x, y: this._カメラ位置キャッシュ.y, z: this._カメラ位置キャッシュ.z }
+    }
+
+    public 距離を取得する(): number {
+        return this._距離
     }
 }

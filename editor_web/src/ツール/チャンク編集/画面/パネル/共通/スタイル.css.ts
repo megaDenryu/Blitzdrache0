@@ -38,3 +38,17 @@ export const スライダー入力 = style({
     accentColor: エディターCSS変数('アクセントホバー'),
     cursor: 'pointer',
 })
+
+export const チェック行 = style({
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '2px 4px',
+    fontSize: '11px',
+    color: エディターCSS変数('テキスト薄'),
+})
+
+export const チェック入力 = style({
+    accentColor: エディターCSS変数('アクセントホバー'),
+    cursor: 'pointer',
+})
