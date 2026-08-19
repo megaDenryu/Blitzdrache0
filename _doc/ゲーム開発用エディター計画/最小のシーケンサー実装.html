@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: monospace; padding: 20px; background: #111; color: #fff; }
+    .grid { display: grid; grid-template-columns: 60px repeat(16, 24px); gap: 3px; margin: 15px 0; }
+    .cell { width: 24px; height: 24px; background: #222; border: 1px solid #444; cursor: pointer; }
+    .cell.disabled { background: #000; border-color: #111; pointer-events: none; opacity: 0.1; }
+    .cell.active { background: #06b6d4; }
+    .cell.play { outline: 2px solid #fff; }
+  </style>
+</head>
+<body>
+  <button id="btn">再生 / 停止</button>
+  <div class="grid" id="grid"></div>
+
+<script>
+  // ------------------------------
+  // 1. 理論データ: ピッチ一覧 と コード進行
+  // ------------------------------
+  // PITCHES: MIDI ノート番号の配列。ここでは上から下へ並んだ8音（C5〜C4）を使う。
+  //  例: 60 = C4, 72 = C5
+  const PITCHES = [72, 71, 69, 67, 65, 64, 62, 60]; // C5 ~ C4
+
+  // CHORDS: 4ステップごとの和音（各コードは mod12 の音程インデックスで定義）。
+  //  各配列はそのコードに含まれる音の半音オフセット(0..11)の集合。
+  //  例: [5,9,0] は F メジャー相当（Cキー基準での構成音のインデックス）を示す。
+  const CHORDS  = [ [5,9,0], [7,11,2], [4,7,11], [9,0,4] ]; // F, G, Em, Am (各4ステップ)
+
+  // ------------------------------
+  // 2. 状態管理: グリッド（行 = 音、列 = ステップ）の初期化
+  // ------------------------------
+  // grid は 8 行（PITCHES.length）× 16 列の二次元配列で、各セルは boolean。
+  //  true = その音がそのステップで鳴るようにユーザーがオンにした状態。
+  //  Array(16).fill(false) の意味:
+  //   - Array(16) は「長さ16の空スロットを持つ配列」を作る（中身は undefined ではなく空スロット）。
+  //   - .fill(false) を呼ぶとその16個のスロットすべてに false をセットして初期化する。
+  //  この組合せで「16個の false を持つ配列」が作れる。
+  const grid = PITCHES.map(() => Array(16).fill(false));
+
+  // 現在のステップ番号とタイマーのハンドル、AudioContext
+  let step = 0, timer = null;
+  const ctx = new AudioContext();
+
+  // ------------------------------
+  // 3. ヘルパ関数: 和音判定と周波数変換
+  // ------------------------------
+  // isAllowed(p, s): MIDI ノート p が、ステップ s のコードに含まれるかを判定する。
+  //  - p % 12: MIDI のノート番号を 12 で割った余りでピッチクラス（オクターブ無視）を得る
+  //  - Math.floor(s / 4): 4ステップごとにコードを切り替えているため、どの CHORDS 要素を参照するかを決める
+  const isAllowed = (p, s) => CHORDS[Math.floor(s / 4)].includes(p % 12);
+
+  // m2f(m): MIDI ノート番号 m を周波数(Hz)へ変換する関数。
+  //  A4 (MIDI 69) = 440Hz を基準に対数的に計算する標準的な式。
+  const m2f = m => 440 * Math.pow(2, (m - 69) / 12);
+
+  // ------------------------------
+  // 4. 発音関数 beep(freq)
+  // ------------------------------
+  // WebAudio の基本的な発音処理。短いエンベロープを付けて音を鳴らす。
+  //  - Oscillator を作り、Gain に接続して音量の立ち上がり/減衰を設定する
+  //  - osc.start/stop で短時間だけ音を出す
+  function beep(freq) {
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.frequency.value = freq;
+    // 即座に音を出すために最初のゲインを設定
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    // 0.2秒後に指数的にフェードアウトさせる（自然な消え方）
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + 0.2);
+  }
+
+  // ------------------------------
+  // 5. UI生成とイベント（クリックでセルを ON/OFF）
+  // ------------------------------
+  // ここで DOM に 8 行 × 16 列 のセルを作っていく。セルはクリック可能。
+  const container = document.getElementById('grid');
+  PITCHES.forEach((pitch, r) => {
+    // 左端にピッチ番号のラベルを置く
+    const label = document.createElement('div');
+    label.textContent = pitch;
+    container.appendChild(label);
+
+    for (let s = 0; s < 16; s++) {
+      const el = document.createElement('div');
+      // isAllowed が false の場合は `disabled` クラスを付けてクリック不可能に見せる
+      el.className = 'cell' + (isAllowed(pitch, s) ? '' : ' disabled');
+      el.id = `c-${r}-${s}`;
+      // クリック時の振る舞い:
+      //  - AudioContext を resume() してサウンドが鳴るようにする（ブラウザの自動再生ポリシー対応）
+      //  - grid の該当セルをトグルして状態を保持
+      //  - 見た目のクラスを切り替え、オンになったら即座に短い音を鳴らす
+      el.onclick = () => {
+        ctx.resume();
+        grid[r][s] = !grid[r][s];
+        el.classList.toggle('active', grid[r][s]);
+        if (grid[r][s]) beep(m2f(pitch));
+      };
+      container.appendChild(el);
+    }
+  });
+
+  // ------------------------------
+  // 6. クロック更新ループ (tick)
+  // ------------------------------
+  // tick は16分音符ごとに呼ばれ、各行について現在ステップのセルを再生（もしオンなら beep）
+  //  - 見た目のために前ステップの `play` クラスを消し、現在ステップに `play` を付ける
+  function tick() {
+    const prev = (step - 1 + 16) % 16;
+    PITCHES.forEach((_, r) => {
+      // ?. は optional chaining で、要素が見つからない場合に例外を投げないための書き方
+      document.getElementById(`c-${r}-${prev}`)?.classList.remove('play');
+      const cur = document.getElementById(`c-${r}-${step}`);
+      cur?.classList.add('play');
+      if (grid[r][step]) beep(m2f(PITCHES[r]));
+    });
+    // 次のステップへ
+    step = (step + 1) % 16;
+  }
+
+  // ------------------------------
+  // 7. 再生ボタンの挙動
+  // ------------------------------
+  // ボタンを押すと再生/停止が切り替わる。setInterval で tick を定期実行する。
+  // ここでは125ms 間隔なので、16分音符＝125ms → BPM 120 相当になる。
+  document.getElementById('btn').onclick = () => {
+    ctx.resume();
+    if (timer) { clearInterval(timer); timer = null; }
+    else { timer = setInterval(tick, 125); } // BPM 120 (16分音符 = 125ms)
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>リアル音源対応 宣言的マルチトラック・シーケンサー</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --text-dim: #8b949e;
+      --t0: #58a6ff;
+      --t1: #3fb950;
+      --t2: #d29922;
+      --t3: #f85149;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    body {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app {
+      max-width: 1400px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toolbar {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .group { display: flex; gap: 8px; align-items: center; }
+
+    button {
+      background: #238636;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    button:hover { background: #2ea043; }
+    button.sec { background: #21262d; border-color: var(--border); }
+    button.sec:hover { background: #30363d; }
+
+    select, input[type="range"] {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+    }
+
+    .canvas-wrap {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      overflow-x: auto;
+      touch-action: none;
+    }
+
+    .grid-board {
+      display: grid;
+      grid-template-columns: 120px repeat(32, 26px);
+      gap: 2px;
+      width: max-content;
+    }
+
+    .chord-chip {
+      background: #21262d;
+      color: #58a6ff;
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 4px 0;
+      border-radius: 3px;
+    }
+
+    .track-banner {
+      grid-column: 1 / -1;
+      padding: 6px 4px 2px;
+      font-weight: bold;
+      font-size: 0.75rem;
+      border-top: 1px solid var(--border);
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .label {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    .cell {
+      width: 26px;
+      height: 24px;
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .cell.downbeat { border-left: 1px solid #484f58; }
+    .cell.measure { border-left: 2px solid #8b949e; }
+
+    .cell.disabled {
+      background: #06080b;
+      border-color: #121418;
+      cursor: not-allowed;
+      opacity: 0.15;
+    }
+
+    .cell.note-start { border-radius: 4px 0 0 4px; border-right: none; }
+    .cell.note-hold  { border-radius: 0; border-left: none; border-right: none; opacity: 0.85; }
+    .cell.note-single { border-radius: 4px; }
+
+    .cell.t-0.active { background: var(--t0); }
+    .cell.t-1.active { background: var(--t1); }
+    .cell.t-2.active { background: var(--t2); }
+    .cell.t-3.active { background: var(--t3); }
+
+    .cell.playhead {
+      outline: 2px solid #fff;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false;">
+
+<div class="app">
+  <div class="toolbar">
+    <div class="group">
+      <button id="btnPlay">再生 / 停止</button>
+      <button id="btnDemo" class="sec">生楽器アンサンブル デモ</button>
+      <button id="btnClear" class="sec">全クリア</button>
+    </div>
+
+    <div class="group">
+      <label for="selProg">進行:</label>
+      <select id="selProg">
+        <option value="pokemonRoute">戦闘・道路 (Am - F - G - Em ×2)</option>
+        <option value="pop">王道進行 (F - G - Em - Am ×2)</option>
+        <option value="town">街・やすらぎ (C - Em - F - G ×2)</option>
+      </select>
+    </div>
+
+    <div class="group">
+      <label for="rngBpm">BPM: <span id="valBpm">124</span></label>
+      <input type="range" id="rngBpm" min="80" max="180" value="124">
+    </div>
+  </div>
+
+  <div class="canvas-wrap" id="boardWrapper">
+    <div class="grid-board" id="gridBoard"></div>
+  </div>
+</div>
+
+<script>
+  const STEPS = 32;
+
+  const INSTRUMENT_OPTIONS = {
+    melody: [
+      { id: 'piano', label: 'Grand Piano (アコースティックピアノ)' },
+      { id: 'strings', label: 'Strings Ensemble (ストリングス)' },
+      { id: 'flute', label: 'Woodwind Flute (フルート)' },
+      { id: 'synthLead', label: 'Retro 8bit (矩形波)' }
+    ],
+    backing: [
+      { id: 'guitar', label: 'Acoustic Guitar (ギター撥弦)' },
+      { id: 'piano', label: 'Piano (ピアノ和音)' },
+      { id: 'epiano', label: 'Electric Piano (エレピ)' }
+    ],
+    bass: [
+      { id: 'woodBass', label: 'Wood Bass / Pizz (ウッドベース)' },
+      { id: 'electricBass', label: 'Finger Bass (エレキベース)' },
+      { id: 'synthBass', label: 'Retro Bass (三角波)' }
+    ],
+    drum: [
+      { id: 'acousticDrum', label: 'Acoustic Kit (生ドラム)' },
+      { id: 'retroDrum', label: '8bit Noise Kit (ファミコン風)' }
+    ]
+  };
+
+  const SCHEMA = [
+    {
+      id: 0, name: 'Track 1 (Melody)', type: 'melody', inst: 'piano',
+      notes: [
+        { name: 'E5', p: 76 }, { name: 'D5', p: 74 }, { name: 'C5', p: 72 }, { name: 'B4', p: 71 },
+        { name: 'A4', p: 69 }, { name: 'G4', p: 67 }, { name: 'F4', p: 65 }, { name: 'E4', p: 64 }
+      ]
+    },
+    {
+      id: 1, name: 'Track 2 (Backing)', type: 'backing', inst: 'guitar',
+      notes: [
+        { name: 'C5', p: 72 }, { name: 'A4', p: 69 }, { name: 'G4', p: 67 }, { name: 'E4', p: 64 }, { name: 'C4', p: 60 }
+      ]
+    },
+    {
+      id: 2, name: 'Track 3 (Bass)', type: 'bass', inst: 'woodBass',
+      notes: [
+        { name: 'A2', p: 45 }, { name: 'G2', p: 43 }, { name: 'F2', p: 41 },
+        { name: 'E2', p: 40 }, { name: 'D2', p: 38 }, { name: 'C2', p: 36 }
+      ]
+    },
+    {
+      id: 3, name: 'Track 4 (Rhythm)', type: 'drum', inst: 'acousticDrum',
+      notes: [
+        { name: 'HiHat', p: 'hh' }, { name: 'Snare', p: 'sn' }, { name: 'Kick', p: 'bd' }
+      ]
+    }
+  ];
+
+  const PROGS = {
+    pokemonRoute: [
+      { name: 'Am', allowed: [9,0,4], root: 45 }, { name: 'F', allowed: [5,9,0], root: 41 },
+      { name: 'G', allowed: [7,11,2], root: 43 }, { name: 'Em', allowed: [4,7,11], root: 40 },
+      { name: 'Am', allowed: [9,0,4], root: 45 }, { name: 'F', allowed: [5,9,0], root: 41 },
+      { name: 'G', allowed: [7,11,2], root: 43 }, { name: 'Em', allowed: [4,7,11], root: 40 }
+    ],
+    pop: [
+      { name: 'F', allowed: [5,9,0], root: 41 }, { name: 'G', allowed: [7,11,2], root: 43 },
+      { name: 'Em', allowed: [4,7,11], root: 40 }, { name: 'Am', allowed: [9,0,4], root: 45 },
+      { name: 'F', allowed: [5,9,0], root: 41 }, { name: 'G', allowed: [7,11,2], root: 43 },
+      { name: 'Em', allowed: [4,7,11], root: 40 }, { name: 'Am', allowed: [9,0,4], root: 45 }
+    ],
+    town: [
+      { name: 'C', allowed: [0,4,7], root: 36 }, { name: 'Em', allowed: [4,7,11], root: 40 },
+      { name: 'F', allowed: [5,9,0], root: 41 }, { name: 'G', allowed: [7,11,2], root: 43 },
+      { name: 'C', allowed: [0,4,7], root: 36 }, { name: 'Em', allowed: [4,7,11], root: 40 },
+      { name: 'F', allowed: [5,9,0], root: 41 }, { name: 'G', allowed: [7,11,2], root: 43 }
+    ]
+  };
+
+  const state = {
+    progKey: 'pokemonRoute',
+    bpm: 124,
+    isPlaying: false,
+    currentStep: 0,
+    tracks: SCHEMA.map(t => Array.from({ length: t.notes.length }, () => Array(STEPS).fill(0))),
+    insts: SCHEMA.map(t => t.inst),
+    drag: null
+  };
+
+  function isAllowed(pitch, sIdx, tIdx, progKey) {
+    if (SCHEMA[tIdx].type === 'drum') return true;
+    const prog = PROGS[progKey];
+    const chord = prog[Math.floor(sIdx / 4)];
+    return chord.allowed.includes(pitch % 12);
+  }
+
+  function sanitizeState() {
+    state.tracks.forEach((track, tIdx) => {
+      track.forEach((row, rIdx) => {
+        const pitch = SCHEMA[tIdx].notes[rIdx].p;
+        for (let s = 0; s < STEPS; s++) {
+          if (!isAllowed(pitch, s, tIdx, state.progKey)) {
+            row[s] = 0;
+          }
+        }
+      });
+    });
+  }
+
+  // --- 高品位シンセシス エンジン (Web Audio API) ---
+  let audioCtx = null;
+  function getAudioContext() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+
+  function midiToFreq(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+
+  // 1. グランドピアノ (加算合成＋ハンマーインパルス)
+  function playPiano(freq, dur) {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+
+    // ハンマーのアタックノイズ
+    const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.015, ctx.sampleRate);
+    const nData = noiseBuf.getChannelData(0);
+    for (let i = 0; i < nData.length; i++) nData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.003));
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuf;
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.value = freq * 2;
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.08, now);
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(masterGain);
+    noise.start(now);
+
+    // 弦の倍音群（非整数次倍音でアコースティックピアノのインハーモニシティを再現）
+    const harmonics = [
+      { ratio: 1.0, gain: 0.35, decay: dur + 0.8 },
+      { ratio: 2.003, gain: 0.22, decay: dur * 0.8 + 0.4 },
+      { ratio: 3.01, gain: 0.12, decay: dur * 0.6 + 0.2 },
+      { ratio: 4.02, gain: 0.06, decay: dur * 0.4 + 0.1 },
+      { ratio: 5.035, gain: 0.03, decay: dur * 0.2 + 0.05 }
+    ];
+
+    harmonics.forEach(h => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq * h.ratio, now);
+
+      gain.gain.setValueAtTime(h.gain, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + h.decay);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start(now);
+      osc.stop(now + h.decay);
+    });
+
+    masterGain.connect(ctx.destination);
+  }
+
+  // 2. アコースティックギター (Karplus-Strong 撥弦合成)
+  function playGuitar(freq, dur) {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    const sampleRate = ctx.sampleRate;
+    const period = Math.round(sampleRate / freq);
+    const buffer = ctx.createBuffer(1, period, sampleRate);
+    const channel = buffer.getChannelData(0);
+
+    for (let i = 0; i < period; i++) {
+      channel[i] = (Math.random() * 2 - 1);
+    }
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const delay = ctx.createDelay();
+    delay.delayTime.value = 1 / freq;
+
+    const feedback = ctx.createGain();
+    feedback.gain.setValueAtTime(0.975, now);
+
+    const lowpass = ctx.createBiquadFilter();
+    lowpass.type = 'lowpass';
+    lowpass.frequency.setValueAtTime(freq * 3.5, now);
+    lowpass.frequency.exponentialRampToValueAtTime(freq * 0.8, now + dur);
+
+    const outGain = ctx.createGain();
+    outGain.gain.setValueAtTime(0.35, now);
+    outGain.gain.exponentialRampToValueAtTime(0.001, now + dur + 0.4);
+
+    noise.connect(delay);
+    delay.connect(lowpass);
+    lowpass.connect(feedback);
+    feedback.connect(delay);
+
+    lowpass.connect(outGain);
+    outGain.connect(ctx.destination);
+
+    noise.start(now);
+    noise.stop(now + 0.015);
+  }
+
+  // 3. ストリングスアンサンブル (デチューン重層＋スローアタック)
+  function playStrings(freq, dur) {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(800, now);
+    filter.frequency.linearRampToValueAtTime(2500, now + 0.15);
+    filter.frequency.linearRampToValueAtTime(600, now + dur);
+
+    [-8, 0, 7].forEach(detune => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, now);
+      osc.detune.setValueAtTime(detune, now);
+      osc.connect(filter);
+      osc.start(now);
+      osc.stop(now + dur + 0.1);
+    });
+
+    masterGain.gain.setValueAtTime(0.001, now);
+    masterGain.gain.linearRampToValueAtTime(0.12, now + 0.08); // なめらかなアタック
+    masterGain.gain.setValueAtTime(0.12, now + dur - 0.04);
+    masterGain.gain.exponentialRampToValueAtTime(0.001, now + dur + 0.1);
+
+    filter.connect(masterGain);
+    masterGain.connect(ctx.destination);
+  }
+
+  // 4. フルート (奇数次倍音＋ブレスノイズ)
+  function playFlute(freq, dur) {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(freq, now);
+
+    // ビブラート
+    const vib = ctx.createOscillator();
+    const vibGain = ctx.createGain();
+    vib.frequency.value = 5.5;
+    vibGain.gain.value = freq * 0.015;
+    vib.connect(vibGain);
+    vibGain.connect(osc.frequency);
+    vib.start(now + 0.1);
+    vib.stop(now + dur);
+
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.linearRampToValueAtTime(0.2, now + 0.05);
+    gain.gain.setValueAtTime(0.2, now + dur - 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + dur + 0.05);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + dur + 0.05);
+  }
+
+  // 5. ウッドベース / ピチカート
+  function playWoodBass(freq, dur) {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(freq, now);
+
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(450, now);
+    filter.frequency.exponentialRampToValueAtTime(70, now + dur);
+
+    gain.gain.setValueAtTime(0.4, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + dur);
+  }
+
+  // 6. エレキベース
+  function playElectricBass(freq, dur) {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(freq, now);
+
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(800, now);
+    filter.frequency.exponentialRampToValueAtTime(150, now + dur);
+
+    gain.gain.setValueAtTime(0.45, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + dur);
+  }
+
+  // 7. エレピ (FM合成)
+  function playEpiano(freq, dur) {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    const carrier = ctx.createOscillator();
+    const modulator = ctx.createOscillator();
+    const modGain = ctx.createGain();
+    const mainGain = ctx.createGain();
+
+    carrier.type = 'sine';
+    carrier.frequency.setValueAtTime(freq, now);
+
+    modulator.type = 'sine';
+    modulator.frequency.setValueAtTime(freq * 2, now);
+    modGain.gain.setValueAtTime(freq * 1.8, now);
+    modGain.gain.exponentialRampToValueAtTime(1, now + dur);
+
+    modulator.connect(modGain);
+    modGain.connect(carrier.frequency);
+
+    mainGain.gain.setValueAtTime(0.25, now);
+    mainGain.gain.exponentialRampToValueAtTime(0.001, now + dur + 0.3);
+
+    carrier.connect(mainGain);
+    mainGain.connect(ctx.destination);
+
+    carrier.start(now);
+    modulator.start(now);
+    carrier.stop(now + dur + 0.3);
+    modulator.stop(now + dur + 0.3);
+  }
+
+  // 8. レトロシンセ (矩形波・三角波)
+  function playRetroSynth(freq, type, dur) {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    gain.gain.setValueAtTime(type === 'square' ? 0.12 : 0.28, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + dur);
+  }
+
+  // 9. 生ドラムキット
+  function playAcousticDrum(t) {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+
+    if (t === 'bd') {
+      // 生キック (太い皮の響き)
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.frequency.setValueAtTime(100, now);
+      osc.frequency.exponentialRampToValueAtTime(45, now + 0.1);
+      gain.gain.setValueAtTime(0.6, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.22);
+    } else if (t === 'sn') {
+      // スネア (胴鳴りトーン + スナッピーノイズ)
+      const osc = ctx.createOscillator();
+      const oscGain = ctx.createGain();
+      osc.frequency.setValueAtTime(180, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
+      oscGain.gain.setValueAtTime(0.2, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.connect(oscGain);
+      oscGain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.08);
+
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.14, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < buf.length; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.04));
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      const f = ctx.createBiquadFilter();
+      f.type = 'highpass';
+      f.frequency.value = 1200;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.28, now);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+      src.connect(f);
+      f.connect(g);
+      g.connect(ctx.destination);
+      src.start(now);
+    } else if (t === 'hh') {
+      // ハイハット (高域バンドパス)
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.04, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < buf.length; i++) d[i] = (Math.random() * 2 - 1);
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      const f = ctx.createBiquadFilter();
+      f.type = 'bandpass';
+      f.frequency.value = 9000;
+      f.Q.value = 3;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.18, now);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      src.connect(f);
+      f.connect(g);
+      g.connect(ctx.destination);
+      src.start(now);
+    }
+  }
+
+  // ディスパッチャ
+  function playNote(pitch, instId, durSec) {
+    if (instId === 'acousticDrum') {
+      playAcousticDrum(pitch);
+      return;
+    }
+    if (instId === 'retroDrum') {
+      if (pitch === 'bd') playRetroSynth(80, 'triangle', 0.1);
+      else playAcousticDrum(pitch);
+      return;
+    }
+
+    const freq = midiToFreq(pitch);
+    switch (instId) {
+      case 'piano': playPiano(freq, durSec); break;
+      case 'guitar': playGuitar(freq, durSec); break;
+      case 'strings': playStrings(freq, durSec); break;
+      case 'flute': playFlute(freq, durSec); break;
+      case 'woodBass': playWoodBass(freq, durSec); break;
+      case 'electricBass': playElectricBass(freq, durSec); break;
+      case 'epiano': playEpiano(freq, durSec); break;
+      case 'synthLead': playRetroSynth(freq, 'square', durSec); break;
+      case 'synthBass': playRetroSynth(freq, 'triangle', durSec); break;
+      default: playPiano(freq, durSec); break;
+    }
+  }
+
+  // --- 宣言的レンダリング ---
+  let domNodes = null;
+
+  function createBoardStructure() {
+    const root = document.getElementById('gridBoard');
+    root.innerHTML = '';
+
+    const emptyCorner = document.createElement('div');
+    root.appendChild(emptyCorner);
+
+    const chordEls = [];
+    for (let c = 0; c < 8; c++) {
+      const el = document.createElement('div');
+      el.className = 'chord-chip';
+      el.style.gridColumn = 'span 4';
+      root.appendChild(el);
+      chordEls.push(el);
+    }
+
+    const cellMap = new Map();
+
+    SCHEMA.forEach((t, tIdx) => {
+      const banner = document.createElement('div');
+      banner.className = 'track-banner';
+      
+      const titleSpan = document.createElement('span');
+      titleSpan.style.color = `var(--t${tIdx})`;
+      titleSpan.textContent = t.name;
+
+      const instSelect = document.createElement('select');
+      INSTRUMENT_OPTIONS[t.type].forEach(opt => {
+        const o = document.createElement('option');
+        o.value = opt.id;
+        o.textContent = opt.label;
+        if (opt.id === state.insts[tIdx]) o.selected = true;
+        instSelect.appendChild(o);
+      });
+
+      instSelect.addEventListener('change', (e) => {
+        state.insts[tIdx] = e.target.value;
+      });
+
+      banner.appendChild(titleSpan);
+      banner.appendChild(instSelect);
+      root.appendChild(banner);
+
+      t.notes.forEach((note, rIdx) => {
+        const lbl = document.createElement('div');
+        lbl.className = 'label';
+        lbl.textContent = note.name;
+        root.appendChild(lbl);
+
+        for (let s = 0; s < STEPS; s++) {
+          const cell = document.createElement('div');
+          cell.className = `cell t-${tIdx}`;
+          if (s % 4 === 0) cell.classList.add('measure');
+          else if (s % 2 === 0) cell.classList.add('downbeat');
+
+          cell.dataset.t = tIdx;
+          cell.dataset.r = rIdx;
+          cell.dataset.s = s;
+
+          root.appendChild(cell);
+          cellMap.set(`${tIdx}-${rIdx}-${s}`, cell);
+        }
+      });
+    });
+
+    domNodes = { chordEls, cellMap };
+  }
+
+  function render() {
+    if (!domNodes) createBoardStructure();
+
+    const prog = PROGS[state.progKey];
+    domNodes.chordEls.forEach((el, idx) => {
+      el.textContent = prog[idx].name;
+    });
+
+    SCHEMA.forEach((t, tIdx) => {
+      t.notes.forEach((note, rIdx) => {
+        for (let s = 0; s < STEPS; s++) {
+          const cell = domNodes.cellMap.get(`${tIdx}-${rIdx}-${s}`);
+          const val = state.tracks[tIdx][rIdx][s];
+          const allowed = isAllowed(note.p, s, tIdx, state.progKey);
+
+          cell.className = `cell t-${tIdx}`;
+          if (s % 4 === 0) cell.classList.add('measure');
+          else if (s % 2 === 0) cell.classList.add('downbeat');
+
+          if (!allowed) {
+            cell.classList.add('disabled');
+          } else if (val > 0) {
+            cell.classList.add('active');
+            const next = (s + 1 < STEPS) ? state.tracks[tIdx][rIdx][s + 1] : 0;
+            if (val === 1 && next === 2) cell.classList.add('note-start');
+            else if (val === 1) cell.classList.add('note-single');
+            else if (val === 2) cell.classList.add('note-hold');
+          }
+
+          if (state.isPlaying && state.currentStep === s) {
+            cell.classList.add('playhead');
+          }
+        }
+      });
+    });
+
+    document.getElementById('valBpm').textContent = state.bpm;
+    document.getElementById('btnPlay').textContent = state.isPlaying ? '停止' : '再生';
+  }
+
+  // --- ドラッグ入力 ---
+  const boardEl = document.getElementById('boardWrapper');
+
+  boardEl.addEventListener('pointerdown', (e) => {
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    if (!target || !target.dataset.s) return;
+
+    const tIdx = parseInt(target.dataset.t, 10);
+    const rIdx = parseInt(target.dataset.r, 10);
+    const sIdx = parseInt(target.dataset.s, 10);
+
+    const pitch = SCHEMA[tIdx].notes[rIdx].p;
+    if (!isAllowed(pitch, sIdx, tIdx, state.progKey)) return;
+
+    getAudioContext();
+    const isErase = (e.button === 2);
+    state.drag = { tIdx, rIdx, anchorStep: sIdx, isErase };
+
+    if (isErase) {
+      state.tracks[tIdx][rIdx][sIdx] = 0;
+    } else {
+      state.tracks[tIdx][rIdx][sIdx] = 1;
+      playNote(pitch, state.insts[tIdx], 0.25);
+    }
+    render();
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!state.drag) return;
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    if (!target || !target.dataset.s) return;
+
+    const tIdx = parseInt(target.dataset.t, 10);
+    const rIdx = parseInt(target.dataset.r, 10);
+    const sIdx = parseInt(target.dataset.s, 10);
+
+    const { tIdx: dt, rIdx: dr, anchorStep, isErase } = state.drag;
+    const pitch = SCHEMA[tIdx].notes[rIdx].p;
+    if (!isAllowed(pitch, sIdx, tIdx, state.progKey)) return;
+
+    if (isErase) {
+      state.tracks[tIdx][rIdx][sIdx] = 0;
+    } else if (tIdx === dt && rIdx === dr) {
+      const minS = Math.min(anchorStep, sIdx);
+      const maxS = Math.max(anchorStep, sIdx);
+      state.tracks[dt][dr][minS] = 1;
+      for (let s = minS + 1; s <= maxS; s++) {
+        if (isAllowed(pitch, s, dt, state.progKey)) {
+          state.tracks[dt][dr][s] = 2;
+        }
+      }
+    } else {
+      state.tracks[tIdx][rIdx][sIdx] = 1;
+    }
+    render();
+  });
+
+  window.addEventListener('pointerup', () => { state.drag = null; });
+  window.addEventListener('pointercancel', () => { state.drag = null; });
+
+  // --- 再生ループ ---
+  let timerId = null;
+
+  function tick() {
+    const stepDurSec = 60 / state.bpm / 4;
+    const s = state.currentStep;
+
+    SCHEMA.forEach((track, tIdx) => {
+      track.notes.forEach((note, rIdx) => {
+        if (state.tracks[tIdx][rIdx][s] === 1) {
+          let hold = 1;
+          for (let n = s + 1; n < STEPS; n++) {
+            if (state.tracks[tIdx][rIdx][n] === 2) hold++;
+            else break;
+          }
+          const dur = hold * stepDurSec;
+          playNote(note.p, state.insts[tIdx], dur);
+        }
+      });
+    });
+
+    render();
+    state.currentStep = (state.currentStep + 1) % STEPS;
+  }
+
+  function start() {
+    getAudioContext();
+    state.isPlaying = true;
+    timerId = setInterval(tick, (60 / state.bpm / 4) * 1000);
+    render();
+  }
+
+  function stop() {
+    state.isPlaying = false;
+    clearInterval(timerId);
+    state.currentStep = 0;
+    render();
+  }
+
+  // --- イベントバインド ---
+  document.getElementById('btnPlay').addEventListener('click', () => {
+    if (state.isPlaying) stop();
+    else start();
+  });
+
+  document.getElementById('btnClear').addEventListener('click', () => {
+    state.tracks = SCHEMA.map(t => Array.from({ length: t.notes.length }, () => Array(STEPS).fill(0)));
+    render();
+  });
+
+  document.getElementById('selProg').addEventListener('change', (e) => {
+    state.progKey = e.target.value;
+    sanitizeState();
+    render();
+  });
+
+  document.getElementById('rngBpm').addEventListener('input', (e) => {
+    state.bpm = parseInt(e.target.value, 10);
+    if (state.isPlaying) {
+      clearInterval(timerId);
+      timerId = setInterval(tick, (60 / state.bpm / 4) * 1000);
+    }
+    render();
+  });
+
+  document.getElementById('btnDemo').addEventListener('click', () => {
+    state.progKey = 'town';
+    document.getElementById('selProg').value = 'town';
+    state.bpm = 110;
+    document.getElementById('rngBpm').value = 110;
+    state.tracks = SCHEMA.map(t => Array.from({ length: t.notes.length }, () => Array(STEPS).fill(0)));
+
+    // 楽器セレクトをアコースティック系に切り替え
+    state.insts[0] = 'piano';
+    state.insts[1] = 'guitar';
+    state.insts[2] = 'woodBass';
+    state.insts[3] = 'acousticDrum';
+    createBoardStructure();
+
+    // 生ドラム (落ち着いたリム＆キック)
+    for (let s = 0; s < STEPS; s++) {
+      if (s % 8 === 0) state.tracks[3][2][s] = 1; // Kick
+      if (s % 8 === 4) state.tracks[3][1][s] = 1; // Snare
+      if (s % 2 === 0) state.tracks[3][0][s] = 1; // HH
+    }
+
+    // ウッドベース (深みのあるピチカート)
+    const prog = PROGS.town;
+    for (let c = 0; c < 8; c++) {
+      const rIdx = SCHEMA[2].notes.findIndex(n => n.p === prog[c].root) || 0;
+      state.tracks[2][rIdx][c * 4] = 1;
+      state.tracks[2][rIdx][c * 4 + 1] = 2;
+      state.tracks[2][rIdx][c * 4 + 2] = 1;
+    }
+
+    // ギター アルペジオ
+    for (let c = 0; c < 8; c++) {
+      state.tracks[1][4][c * 4] = 1;
+      state.tracks[1][3][c * 4 + 1] = 1;
+      state.tracks[1][1][c * 4 + 2] = 1;
+      state.tracks[1][2][c * 4 + 3] = 1;
+    }
+
+    // ピアノ メロディ (情緒的な旋律)
+    state.tracks[0][5][0] = 1; state.tracks[0][5][1] = 2; state.tracks[0][5][2] = 2;
+    state.tracks[0][4][3] = 1;
+    state.tracks[0][7][4] = 1; state.tracks[0][7][5] = 2; state.tracks[0][7][6] = 2;
+    state.tracks[0][4][8] = 1; state.tracks[0][4][9] = 2;
+    state.tracks[0][2][10] = 1; state.tracks[0][3][11] = 1;
+    state.tracks[0][4][12] = 1; state.tracks[0][4][13] = 2; state.tracks[0][4][14] = 2; state.tracks[0][4][15] = 2;
+
+    sanitizeState();
+    render();
+  });
+
+  createBoardStructure();
+  render();
+</script>
+</body>
+</html>
