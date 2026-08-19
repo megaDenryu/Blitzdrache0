@@ -8,12 +8,12 @@
 
 use crate::joint::接合点名;
 
-use super::error_rule::規則エラー;
+use super::super::error_rule::規則エラー;
+use super::super::opening_choice::{はめ口の指定, はめ口へ入れるもの};
+use super::super::placement_table::部品ごとの配置表;
+use super::super::rule::組み立て規則;
 use super::frame_fixture::識別子;
 use super::frame_rule_fixture::{四面とも同じ候補の規則, 壁をはめる候補, 必ず三種が入る規則, 規則と種で展開する};
-use super::opening_choice::{はめ口の指定, はめ口へ入れるもの};
-use super::placement_table::部品ごとの配置表;
-use super::rule::組み立て規則;
 
 fn 件数を数える(配置表: &部品ごとの配置表, 綴り: &str) -> usize {
     配置表.据えた順().iter().filter(|据えた| 据えた.識別子() == &識別子(綴り)).count()

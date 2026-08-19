@@ -10,16 +10,16 @@
 #![cfg(test)]
 #![allow(clippy::unwrap_used)]
 
+use super::super::frame_extension::{継ぎ足しの指定, 骨格へ継ぎ足すもの};
+use super::super::frame_floor::骨格へ張る床;
+use super::super::frame_rule::一間四方の骨格の規則;
+use super::super::rule::組み立て規則;
 use super::frame_bay_joint_fixture::骨格の下面の名前;
 use super::frame_chain_choice_fixture::{
     上面の継ぎ足し, 屋根を載せる候補, 床を張る宣言, 継いだ骨格が床を張る候補, 骨格を継ぐ候補
 };
 use super::frame_chain_fixture::{四面すべてのはめ口の綴り, 平壁を必ず入れるはめ口一覧};
-use super::frame_extension::{継ぎ足しの指定, 骨格へ継ぎ足すもの};
 use super::frame_fixture::{名前, 骨格の部品};
-use super::frame_floor::骨格へ張る床;
-use super::frame_rule::一間四方の骨格の規則;
-use super::rule::組み立て規則;
 
 fn 四面へ平壁を入れた規則(連なり: Vec<継ぎ足しの指定>) -> 組み立て規則 {
     根が床を張る四面へ平壁を入れた規則(骨格へ張る床::張らない, 連なり)

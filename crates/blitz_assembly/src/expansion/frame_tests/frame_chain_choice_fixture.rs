@@ -7,11 +7,11 @@
 #![cfg(test)]
 #![allow(clippy::unwrap_used)]
 
+use super::super::frame_extension::{継ぎ足しの指定, 骨格へ継ぎ足すもの};
+use super::super::frame_floor::骨格へ張る床;
 use super::frame_bay_joint_fixture::{床のはめ口の名前, 骨格の上面の名前};
 use super::frame_chain_fixture::平壁を必ず入れるはめ口一覧;
-use super::frame_extension::{継ぎ足しの指定, 骨格へ継ぎ足すもの};
 use super::frame_fixture::{名前, 屋根の部品, 床板の部品};
-use super::frame_floor::骨格へ張る床;
 
 /// 床を張らずに骨格を継ぐ候補。骨格の継ぎ方だけを見る見本の規則が使う。
 pub(super) fn 骨格を継ぐ候補(自分の接合点: &str, 面の綴り一覧: &[&str]) -> 骨格へ継ぎ足すもの {

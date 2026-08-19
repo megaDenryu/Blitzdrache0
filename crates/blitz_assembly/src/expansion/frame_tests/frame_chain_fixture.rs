@@ -9,11 +9,11 @@
 
 use blitz_engine::個体配置;
 
+use super::super::opening_choice::はめ口の指定;
+use super::super::placement_table::部品ごとの配置表;
 use super::frame_bay_joint_fixture::はめ口の宣言一覧;
 use super::frame_fixture::{名前, 識別子};
 use super::frame_rule_fixture::壁をはめる候補;
-use super::opening_choice::はめ口の指定;
-use super::placement_table::部品ごとの配置表;
 
 /// 骨格の部品の綴り。試験が骨格と壁と屋根を数え分けるために使う。
 pub(super) const 骨格の綴り: &str = "一間四方の骨格";

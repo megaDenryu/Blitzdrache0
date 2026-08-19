@@ -11,9 +11,9 @@
 
 #![allow(clippy::unwrap_used)]
 
+use super::super::placement_table::部品ごとの配置表;
 use super::frame_fixture::識別子;
 use super::frame_rule_fixture::{四面とも同じ候補の規則, 壁をはめる候補, 規則と種で展開する};
-use super::placement_table::部品ごとの配置表;
 
 /// 4面すべてへ平壁を必ず入れる規則。候補を1つだけにして、どの種でも4枚が同じ位置へ据わるようにする。
 fn 四面すべてに平壁を入れた配置表() -> 部品ごとの配置表 {

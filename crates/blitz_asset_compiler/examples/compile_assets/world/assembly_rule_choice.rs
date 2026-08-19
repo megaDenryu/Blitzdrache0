@@ -9,6 +9,7 @@
 
 mod frame_bay_choice;
 mod frame_chain_rule;
+mod frame_ornament_choice;
 mod frame_rule;
 mod frame_wall_assignment;
 mod house_rule;

@@ -9,12 +9,12 @@
 
 use crate::joint::接合点名;
 
-use super::error_rule::規則エラー;
+use super::super::error_rule::規則エラー;
+use super::super::frame_extension::継ぎ足しの指定;
 use super::frame_chain_fixture::{屋根の綴り, 平行移動が近いか, 恒等の姿勢か, 綴りごとの配置, 骨格の綴り};
 use super::frame_chain_rule_fixture::{
     上面が三択の規則, 屋根を載せた一間四方の家の規則, 屋根を載せた二段の家の規則
 };
-use super::frame_extension::継ぎ足しの指定;
 use super::frame_rule_fixture::規則と種で展開する;
 
 /// 階高。骨格の上面の接合点の高さそのものである。

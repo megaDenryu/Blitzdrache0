@@ -11,29 +11,28 @@
 use blitz_engine::個体配置;
 use blitz_math::メートル;
 
+use super::super::frame_ornament::壁の外面の飾り;
 use crate::joint::法線方向のずらし;
 
-use super::expander::展開器;
+use super::super::expander::展開器;
+use super::super::frame_floor::骨格へ張る床;
+use super::super::frame_rule::一間四方の骨格の規則;
+use super::super::generation_seed::生成の種;
+use super::super::opening_choice::{はめ口の指定, はめ口へ入れるもの};
+use super::super::placement_table::部品ごとの配置表;
+use super::super::rule::組み立て規則;
 use super::frame_bay_joint_fixture::はめ口の宣言一覧;
-use super::frame_fixture::{一間四方の骨格のカタログ, 名前, 識別子, 骨格の部品};
-use super::frame_floor::骨格へ張る床;
-use super::frame_rule::一間四方の骨格の規則;
-use super::generation_seed::生成の種;
-use super::opening_choice::{はめ口の指定, はめ口へ入れるもの};
-use super::placement_table::部品ごとの配置表;
-use super::rule::組み立て規則;
+use super::frame_fixture::{一間四方の骨格のカタログ, 名前, 骨格の部品};
+use super::frame_ornament_fixture::外面へ飾りを引く壁の候補;
 
 /// 骨格の面へ壁を食い込ませる量。2026-08-18の裁定で決めた仮値であり、絵で最終確定する。
 pub(super) fn 食い込ませる量() -> 法線方向のずらし {
     法線方向のずらし::食い込ませる量から生成する(メートル::生成する(0.02)).unwrap()
 }
 
+/// 外面に飾りを付けない壁の候補。飾りの候補が付けないだけであるため、どの種でも飾りは据わらない。
 pub(super) fn 壁をはめる候補(綴り: &str) -> はめ口へ入れるもの {
-    はめ口へ入れるもの::壁をはめる {
-        部品: 識別子(綴り),
-        外枠: 名前("壁の外枠"),
-        法線方向のずらし: 食い込ませる量(),
-    }
+    外面へ飾りを引く壁の候補(綴り, vec![壁の外面の飾り::付けない])
 }
 
 /// 4面とも同じ候補の並びを持つ規則。候補のどの枝も選ばれうることを見る試験が使う。
