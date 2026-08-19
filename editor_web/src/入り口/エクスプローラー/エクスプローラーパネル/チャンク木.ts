@@ -1,5 +1,6 @@
 import { div, span, DivC, SpanC } from 'sengen-ui'
 import type { チャンク座標 } from '../../../境界/通信/index.ts'
+import { チャンク座標キーを生成する } from '../../../境界/通信/index.ts'
 import { 木項目, 子木項目コンテナ, 子木項目, アイコン, フォルダアイコン } from '../スタイル.css.ts'
 
 // エクスプローラーの「チャンク (n×n)」親ノードと、その配下に並ぶ全チャンクの子項目群。
@@ -16,7 +17,7 @@ export class チャンク木 {
         for (let z = 0; z < 軸あたりチャンク数; z++) {
             for (let x = 0; x < 軸あたりチャンク数; x++) {
                 const 座標: チャンク座標 = { x, z }
-                const キー = `${x},${z}`
+                const キー = チャンク座標キーを生成する(座標)
                 const ラベル = `チャンク (${x}, ${z})`
                 const 項目 = div({ class: 子木項目 }).childs([
                     span({ class: アイコン, text: 'C' }),
@@ -45,7 +46,7 @@ export class チャンク木 {
         if (!this._展開中) {
             this._展開を切り替える()
         }
-        const 対象キー = `${座標.x},${座標.z}`
+        const 対象キー = チャンク座標キーを生成する(座標)
         for (const [キー, ノード] of this._ノードマップ.entries()) {
             ノード.setAttribute('data-selected', キー === 対象キー ? 'true' : 'false')
         }

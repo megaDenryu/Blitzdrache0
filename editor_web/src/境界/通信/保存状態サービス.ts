@@ -1,4 +1,5 @@
 import type { チャンク座標 } from '../../生成/編集資源契約.ts'
+import { チャンク座標キーを生成する } from './チャンク座標キー.ts'
 
 export interface 保存状態情報 {
     readonly 文言: string
@@ -17,7 +18,7 @@ export class 保存状態サービス {
     }
 
     public チャンク状態を取得する(座標: チャンク座標): 保存状態情報 {
-        const キー = `${座標.x},${座標.z}`
+        const キー = チャンク座標キーを生成する(座標)
         return this._チャンク状態マップ.get(キー) ?? { 文言: '未保存(初期生成)', エラーか: false }
     }
 
@@ -29,7 +30,7 @@ export class 保存状態サービス {
     }
 
     public チャンク状態を更新する(座標: チャンク座標, 文言: string, エラーか: boolean): void {
-        const キー = `${座標.x},${座標.z}`
+        const キー = チャンク座標キーを生成する(座標)
         const 状態: 保存状態情報 = { 文言, エラーか }
         this._チャンク状態マップ.set(キー, 状態)
         const リスナー群 = this._チャンクリスナーマップ.get(キー)
@@ -49,7 +50,7 @@ export class 保存状態サービス {
     }
 
     public チャンク状態を購読する(座標: チャンク座標, リスナー: (状態: 保存状態情報) => void): () => void {
-        const キー = `${座標.x},${座標.z}`
+        const キー = チャンク座標キーを生成する(座標)
         let リスナー群 = this._チャンクリスナーマップ.get(キー)
         if (リスナー群 === undefined) {
             リスナー群 = new Set()
