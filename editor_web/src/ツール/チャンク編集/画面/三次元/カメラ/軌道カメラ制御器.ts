@@ -24,7 +24,7 @@ export class 軌道カメラ制御器 {
 
     public 回転する(デルタX: number, デルタY: number): void {
         this._水平角 -= デルタX * 0.005
-        this._垂直角 = Math.max(0.05, Math.min(Math.PI / 2 - 0.02, this._垂直角 + デルタY * 0.005))
+        this._垂直角 = Math.max(0.05, Math.min(Math.PI / 2 - 0.02, this._垂直角 - デルタY * 0.005))
         this.更新する()
     }
 

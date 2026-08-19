@@ -19,25 +19,25 @@ export class 大域ヒントパネル extends LV2HtmlComponentBase {
         switch (モード) {
             case '大域カメラ':
                 this._テキスト要素.childs([
-                    span({ text: '左ドラッグで視点回転、右ドラッグで平行移動' }),
+                    span({ text: '左ドラッグ・右ドラッグで視点回転、中ドラッグで平行移動' }),
                 ])
                 break
             case '大域造成':
                 this._テキスト要素.childs([
                     span({ class: 強調, text: '左ドラッグで山脈造成' }),
-                    span({ text: ' (シフトで削り/平滑化)。※右ドラッグでカメラ回転' }),
+                    span({ text: ' (シフトで削り/平滑化)。※右ドラッグでカメラ回転、中ドラッグでカメラ平行移動' }),
                 ])
                 break
             case '広域道路作成':
                 this._テキスト要素.childs([
                     span({ class: 強調, text: '左クリックで点追加' }),
-                    span({ text: ' (チャンク境界を跨いで配置可能)。※右ドラッグでカメラ回転' }),
+                    span({ text: ' (チャンク境界を跨いで配置可能)。※右ドラッグでカメラ回転、中ドラッグでカメラ平行移動' }),
                 ])
                 break
             case '広域道路編集':
                 this._テキスト要素.childs([
                     span({ class: 強調, text: '点を選択して削除・調整' }),
-                    span({ text: '。※右ドラッグでカメラ回転' }),
+                    span({ text: '。※右ドラッグでカメラ回転、中ドラッグでカメラ平行移動' }),
                 ])
                 break
         }
