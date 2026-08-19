@@ -1,6 +1,9 @@
 //! `editor` コマンド: 編集サーバー(`editor_server`)とeditor_webの開発サーバーを併せて起動する。
 //! 一方が終了したらもう一方を道連れに止める。Ctrl+Cでの正常終了までは面倒を見ない
 //! （xtaskの責務は起動の一箇所化であり、シグナル配送の実装はしない）。
+//! `--project <ルート>`を受け取った場合はそのまま`editor_server`へ引き渡す
+//! (参照: `crates/editor_server/src/project_root.rs`)。検証用の使い捨てルートを渡すことで、
+//! E2Eや検証が本物の`editor_data`を汚さずに済む。
 
 use std::{
     path::Path,
@@ -8,11 +11,11 @@ use std::{
     time::Duration,
 };
 
-pub fn 実行する() -> Result<(), String> {
+pub fn 実行する(追加引数: &[String]) -> Result<(), String> {
     let リポジトリルート = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
     let editor_web = リポジトリルート.join("editor_web");
 
-    let mut サーバー = 編集サーバーを起動する(&リポジトリルート)?;
+    let mut サーバー = 編集サーバーを起動する(&リポジトリルート, 追加引数)?;
     let mut web開発サーバー = editor_web開発サーバーを起動する試み(&editor_web);
 
     いずれかの終了を待つ(&mut サーバー, &mut web開発サーバー);
@@ -20,13 +23,28 @@ pub fn 実行する() -> Result<(), String> {
     Ok(())
 }
 
-fn 編集サーバーを起動する(リポジトリルート: &Path) -> Result<Child, String> {
+fn 編集サーバーを起動する(リポジトリルート: &Path, 追加引数: &[String]) -> Result<Child, String> {
     Command::new("cargo")
         .args(["run", "-p", "editor_server"])
+        .args(editor_serverへ渡す引数を組み立てる(追加引数))
         .current_dir(リポジトリルート)
         .spawn()
         .map_err(|原因| format!("編集サーバーの起動に失敗した: {原因}"))
 }
+
+/// `cargo run`自身の引数と`editor_server`本体への引数を`--`で区切る。追加引数が無ければ
+/// `--`ごと付けない(空の`--`が付いても実害は無いが、無駄な引数を渡さないほうが素直である)。
+fn editor_serverへ渡す引数を組み立てる(追加引数: &[String]) -> Vec<String> {
+    if 追加引数.is_empty() {
+        return Vec::new();
+    }
+    let mut 結果 = vec!["--".to_string()];
+    結果.extend(追加引数.iter().cloned());
+    結果
+}
+
+#[cfg(test)]
+mod tests;
 
 fn editor_web開発サーバーを起動する試み(editor_web: &Path) -> Option<Child> {
     if !editor_web.join("node_modules").is_dir() {

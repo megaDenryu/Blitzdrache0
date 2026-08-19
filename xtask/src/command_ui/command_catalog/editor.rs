@@ -7,7 +7,7 @@ use super::entry::コマンド項目;
 pub(super) const 一覧: &[コマンド項目] = &[
     コマンド項目 {
         日本語名: "エディターサーバーの起動",
-        説明文: "  editor           編集サーバー(editor_server)とeditor_webの開発サーバーを併せて起動する(editor_web/node_modules未導入時はサーバーのみ起動する)",
+        説明文: "  editor [--project <ルート>]  編集サーバー(editor_server)とeditor_webの開発サーバーを併せて起動する(editor_web/node_modules未導入時はサーバーのみ起動する)。--projectを付けるとそのディレクトリを検証用プロジェクトルートとして開き、本物のeditor_dataを汚さない",
     },
     コマンド項目 {
         日本語名: "型契約の書き出し",

@@ -5,9 +5,9 @@ use std::process::ExitCode;
 
 use crate::{contract_export, editor};
 
-pub(super) fn 割り当てる(名前: &str, _引数一覧: &[String]) -> Option<ExitCode> {
+pub(super) fn 割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
-        "editor" => Some(実行結果をコードへ変換する(editor::実行する())),
+        "editor" => Some(実行結果をコードへ変換する(editor::実行する(引数一覧))),
         "contract-export" => Some(実行結果をコードへ変換する(contract_export::実行する())),
         _ => None,
     }
