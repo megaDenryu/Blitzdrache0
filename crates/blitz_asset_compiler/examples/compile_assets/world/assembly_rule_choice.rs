@@ -10,6 +10,7 @@
 mod frame_bay_choice;
 mod frame_chain_rule;
 mod frame_rule;
+mod frame_wall_assignment;
 mod house_rule;
 mod part_list;
 mod tree_rule;
@@ -28,7 +29,7 @@ pub(crate) enum 部品の組み立て規則の種類 {
     /// 骨格を連ねた見本2つ。部品の一覧は1ベイ1段と同じであり、違うのは規則だけである。継いだ面には壁を入れない。
     二段に積んだ骨格,
     横に二ベイ継いだ骨格,
-    /// 骨格の上へ切妻屋根を載せた家2つ。部品の一覧に屋根が1件加わって5件になる。
+    /// 骨格の上へ切妻屋根を載せた家2つ。骨格ごとに床を1枚張り、部品の一覧に屋根が1件加わって6件になる。
     屋根を載せた一間四方の家,
     屋根を載せた二段の家,
 }

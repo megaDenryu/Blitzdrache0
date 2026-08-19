@@ -18,6 +18,7 @@ use super::placement_table::部品ごとの配置表;
 /// 骨格の部品の綴り。試験が骨格と壁と屋根を数え分けるために使う。
 pub(super) const 骨格の綴り: &str = "一間四方の骨格";
 pub(super) const 屋根の綴り: &str = "切妻屋根";
+pub(super) const 床板の綴り: &str = "床板";
 
 /// 配置表から、名指した部品の配置を据えた順に取り出す。
 pub(super) fn 綴りごとの配置(配置表: &部品ごとの配置表, 綴り: &str) -> Vec<個体配置> {

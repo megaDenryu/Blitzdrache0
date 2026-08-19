@@ -11,7 +11,7 @@
 //! 参照: `_doc/設計/部品カタログと接合点.md`「骨格と壁の対、扉の対」
 
 use blitz_assembly::{
-    はめ口の指定, はめ口へ入れるもの, 接合点名, 法線方向のずらし, 部品ID, 骨格へ継ぎ足すもの
+    はめ口の指定, はめ口へ入れるもの, 接合点名, 法線方向のずらし, 部品ID, 骨格へ張る床, 骨格へ継ぎ足すもの
 };
 use blitz_math::メートル;
 
@@ -25,6 +25,7 @@ pub(super) const 平壁の綴り: &str = "Mod_Wall_HalfTimber_Solid";
 pub(super) const 窓壁の綴り: &str = "Mod_Wall_HalfTimber_Window";
 pub(super) const 扉枠付きの壁の綴り: &str = "Mod_Wall_HalfTimber_DoorFrame";
 pub(super) const 切妻屋根の綴り: &str = "Mod_Frame_Roof_Gable";
+pub(super) const 床板の綴り: &str = "Mod_Frame_Floor";
 
 /// 候補が1つだけのはめ口。その面には必ずその壁が入る。
 pub(super) fn 必ず入れるはめ口(はめ口の綴り: &str, 部品の綴り: &str) -> Result<はめ口の指定, String> {
@@ -42,6 +43,16 @@ pub(super) fn 屋根を載せる候補() -> Result<骨格へ継ぎ足すもの, 
     Ok(骨格へ継ぎ足すもの::屋根を載せる {
         部品: 識別子(切妻屋根の綴り)?,
         下面: 名前("屋根の下面")?,
+    })
+}
+
+/// 骨格の床のはめ口へ床板を1枚張る宣言。**種で引かないのは、床の抜けが意匠の振れでなく破れに見えるためである。**
+/// 食い込ませる量を持たないのは、床のはめ口と床の外枠が面の向かい合う隣接であり、重なる面をそもそも持たないためである。
+pub(super) fn 床を張る宣言() -> Result<骨格へ張る床, String> {
+    Ok(骨格へ張る床::床を張る {
+        部品: 識別子(床板の綴り)?,
+        床のはめ口: 名前("床のはめ口")?,
+        床の外枠: 名前("床の外枠")?,
     })
 }
 

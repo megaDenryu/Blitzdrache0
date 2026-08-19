@@ -28,21 +28,28 @@ const 樫の木の部品一覧: &[原型の識別] = &[
     原型の識別::生成する("part_tree_oak_foliage_cluster", "parts/Mod_Tree_Oak_Foliage_Cluster.glb"),
 ];
 
-/// 一間四方の骨格を組み立てる部品の一覧。骨格1件と壁3種であり、材質スロットは1・2・3・2で総和8である。
-/// 壁3種のどれにも必ず入れる面を割り当ててあるため、この4件はどの種でも据わる。
+/// 一間四方の骨格を組み立てる部品の一覧。骨格1件と壁3種と床板1件である。
+/// 壁3種のどれにも必ず入れる面を割り当ててあるため、その4件はどの種でも据わる。
+///
+/// **床板を載せるのは、骨格が床のはめ口を宣言しているためである。** カタログの組み上げは接合種別の対の相手が
+/// カタログに在ることを課すため、床板を外すと組み上げが落ちる。これらの世界の規則は床を張らないため、
+/// 床板は据わらず群も作られない。**据えた部品の種類数は4のままであり、材質スロットの総和も8のままである。**
 const 一間四方の骨格の部品一覧: &[原型の識別] = &[
     原型の識別::生成する("part_frame_bay_single", "parts/Mod_Frame_Bay_Single.glb"),
     原型の識別::生成する("part_wall_halftimber_solid", "parts/Mod_Wall_HalfTimber_Solid.glb"),
     原型の識別::生成する("part_wall_halftimber_window", "parts/Mod_Wall_HalfTimber_Window.glb"),
     原型の識別::生成する("part_wall_halftimber_doorframe", "parts/Mod_Wall_HalfTimber_DoorFrame.glb"),
+    原型の識別::生成する("part_frame_floor", "parts/Mod_Frame_Floor.glb"),
 ];
 
-/// 屋根つきの家を組み立てる部品の一覧。骨格方式の4件へ切妻屋根を足した5件であり、材質スロットは1・2・3・2・2で総和10である。
+/// 屋根つきの家を組み立てる部品の一覧。骨格方式の5件へ切妻屋根を足した6件であり、
+/// **この2つの世界の規則だけが床を張るため、据わる部品は6種類で材質スロットの総和は11になる**(1・2・3・2・1・2)。
 const 屋根つきの家の部品一覧: &[原型の識別] = &[
     原型の識別::生成する("part_frame_bay_single", "parts/Mod_Frame_Bay_Single.glb"),
     原型の識別::生成する("part_wall_halftimber_solid", "parts/Mod_Wall_HalfTimber_Solid.glb"),
     原型の識別::生成する("part_wall_halftimber_window", "parts/Mod_Wall_HalfTimber_Window.glb"),
     原型の識別::生成する("part_wall_halftimber_doorframe", "parts/Mod_Wall_HalfTimber_DoorFrame.glb"),
+    原型の識別::生成する("part_frame_floor", "parts/Mod_Frame_Floor.glb"),
     原型の識別::生成する("part_frame_roof_gable", "parts/Mod_Frame_Roof_Gable.glb"),
 ];
 
