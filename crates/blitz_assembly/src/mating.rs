@@ -17,6 +17,8 @@ mod scaled_face;
 mod size_match_check;
 
 #[cfg(test)]
+mod chimney_placement_tests;
+#[cfg(test)]
 mod derived_scale_tests;
 #[cfg(test)]
 mod floor_placement_tests;
