@@ -1,9 +1,9 @@
-import type { 描画ループ } from 'SengenThree'
 import type { 地形追従カメラ制御器 } from './地形追従カメラ制御器.ts'
 import type { 注視点マーカー表示制御器 } from './注視点マーカー表示制御器.ts'
 import { キー状態から移動方向を決める } from './キー移動割り当て.ts'
 import { 入力欄がフォーカス中か } from './キー入力ガード.ts'
 import { モードを循環させる } from '../../パネル/モード切替/モード循環.ts'
+import type { 毎フレーム処理の束 } from '../毎フレーム処理の束.ts'
 
 // WASDQEでの移動基準速度。移動する/昇降するは距離*0.002を係数として使うため、
 // この値は「1ミリ秒あたりの仮想ドラッグ量」に相当する。既定ズーム距離(180m)で
@@ -13,7 +13,7 @@ const 移動キー一覧 = new Set<string>(['w', 'a', 's', 'd', 'q', 'e'])
 
 interface キーボード配線対象部品 {
     readonly 三次元ビュー: {
-        readonly 描画ループ: 描画ループ
+        readonly 毎フレーム処理: 毎フレーム処理の束
         readonly カメラ制御: 地形追従カメラ制御器
         readonly 注視点表示制御: 注視点マーカー表示制御器
     }
@@ -32,7 +32,7 @@ export function キーボード入力を配線する<Tモード>(
 
     const 押下中キー集合 = new Set<string>()
     let 前回時刻: number | null = null
-    ビュー.描画ループ.前処理を設定する((時刻) => {
+    const 毎フレーム処理の解除 = ビュー.毎フレーム処理.加える((時刻) => {
         if (前回時刻 === null) { 前回時刻 = 時刻; return }
         const 経過ミリ秒 = 時刻 - 前回時刻
         前回時刻 = 時刻
@@ -79,7 +79,7 @@ export function キーボード入力を配線する<Tモード>(
     window.addEventListener('keyup', キー解放処理)
 
     return () => {
-        ビュー.描画ループ.前処理を解除する()
+        毎フレーム処理の解除()
         window.removeEventListener('keydown', キー押下処理)
         window.removeEventListener('keyup', キー解放処理)
     }

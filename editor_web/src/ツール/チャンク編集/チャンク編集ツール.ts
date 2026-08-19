@@ -4,6 +4,7 @@ import { 実サーバー接続 } from '../../境界/通信/index.ts'
 import type { チャンク座標 } from '../../生成/編集資源契約.ts'
 import { ワールド編集状態, 初期ワールド状態を生成する } from './編集モデル/index.ts'
 import { チャンク編集画面 } from './画面/index.ts'
+import { 色トークンから三次元の配色を作る, type 三次元の色トークン } from './画面/三次元/三次元の配色.ts'
 import type { インスペクターパネル } from './画面/パネル/インスペクター/インスペクターパネル.ts'
 import { チャンク編集状態 } from './チャンク編集状態.ts'
 import { チャンク編集同期サービス } from './チャンク編集同期サービス.ts'
@@ -72,16 +73,9 @@ export class チャンク編集ツール extends LV2HtmlComponentBase {
         this.画面.寸法を合わせる(幅, 高さ, ピクセル比)
     }
 
-    public テーマを適用する(テーマ: {
-        readonly 三次元背景色: number
-        readonly 地形基本色: number
-        readonly 植生色: number
-        readonly 道路色: number
-    }): void {
+    public テーマを適用する(テーマ: 三次元の色トークン & { readonly 三次元背景色: number }): void {
         this.画面.背景色を設定する(テーマ.三次元背景色)
-        this.画面.地形色を設定する(テーマ.地形基本色)
-        this.画面.植生色を設定する(テーマ.植生色)
-        this.画面.道路色を設定する(テーマ.道路色)
+        this.画面.三次元の配色を設定する(色トークンから三次元の配色を作る(テーマ))
     }
 
     public override delete(): void {

@@ -1,4 +1,4 @@
-import { DoubleSide, Mesh, MeshStandardMaterial, MeshBasicMaterial } from 'three'
+import { DoubleSide, Mesh, MeshStandardMaterial, MeshBasicMaterial, type Object3D } from 'three'
 import { グループ, ジオメトリ包み } from 'SengenThree'
 import type { 道路スプライン, 高さ場 } from '../../../編集モデル/index.ts'
 import { 道路帯幾何データを生成する } from './道路帯ジオメトリ生成.ts'
@@ -80,6 +80,12 @@ export class 道路帯メッシュ部品 extends グループ {
             this._路面メッシュ.visible = false
             this._バッファメッシュ.visible = false
         }
+    }
+
+    // 当たったのが路面そのものかを判別する。散布除外バッファのメッシュは路面より広く張り出すため、
+    // 帯の上のクリックを受け付ける処理は路面だけを見る必要がある。
+    public 路面メッシュか(物体: Object3D): boolean {
+        return 物体 === this._路面メッシュ
     }
 
     // テーマ切替時に路面の色を差し替える(参照: 工房テーマ/夜間テーマの道路色)。

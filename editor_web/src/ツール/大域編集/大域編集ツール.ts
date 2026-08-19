@@ -4,6 +4,7 @@ import { 実サーバー接続 } from '../../境界/通信/index.ts'
 import type { ワールド編集状態 } from '../チャンク編集/編集モデル/index.ts'
 import { 初期大域ワールド状態を生成する } from './初期大域ワールド生成.ts'
 import { 大域編集画面 } from './画面/index.ts'
+import { 色トークンから三次元の配色を作る, type 三次元の色トークン } from '../チャンク編集/画面/三次元/三次元の配色.ts'
 import type { 大域インスペクターパネル } from './画面/パネル/インスペクター/index.ts'
 import { 大域編集状態 } from './大域編集状態.ts'
 import { 大域編集同期サービス } from './大域編集同期サービス.ts'
@@ -73,14 +74,9 @@ export class 大域編集ツール extends LV2HtmlComponentBase {
         this.画面.寸法を合わせる(幅, 高さ, ピクセル比)
     }
 
-    public テーマを適用する(テーマ: {
-        readonly 大域三次元背景色: number
-        readonly 地形基本色: number
-        readonly 道路色: number
-    }): void {
+    public テーマを適用する(テーマ: 三次元の色トークン & { readonly 大域三次元背景色: number }): void {
         this.画面.背景色を設定する(テーマ.大域三次元背景色)
-        this.画面.地形色を設定する(テーマ.地形基本色)
-        this.画面.道路色を設定する(テーマ.道路色)
+        this.画面.三次元の配色を設定する(色トークンから三次元の配色を作る(テーマ))
     }
 
     public override delete(): void {

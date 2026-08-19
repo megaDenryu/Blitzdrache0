@@ -2,16 +2,17 @@ import type { 部品交差情報 } from 'SengenThree'
 import type { ワールド編集状態 } from './編集モデル/index.ts'
 import type { チャンク編集画面部品 } from './画面/index.ts'
 import type { チャンク編集状態 } from './チャンク編集状態.ts'
-import type { チャンク編集操作サービス } from './チャンク編集操作サービス.ts'
+import type { 道路点クリックハンドラ } from './道路点クリックハンドラ.ts'
 import type { チャンク編集同期サービス } from './チャンク編集同期サービス.ts'
 
-// クリック時の道路点追加・道路ノード選択・建物選択を処理する。
+// クリック時の道路点の追加・選択・挿入と、建物の選択を処理する。
+// 道路点まわりの手順そのものは道路点クリックハンドラが持ち、ここはモードによる振り分けを担う。
 export class チャンク編集クリックハンドラ {
     public constructor(
         private readonly _モデル: ワールド編集状態,
         private readonly _状態: チャンク編集状態,
         private readonly _部品: チャンク編集画面部品,
-        private readonly _操作: チャンク編集操作サービス,
+        private readonly _道路点: 道路点クリックハンドラ,
         private readonly _同期: チャンク編集同期サービス,
     ) {}
 
@@ -19,42 +20,16 @@ export class チャンク編集クリックハンドラ {
         const ビュー = this._部品.三次元ビュー
 
         if (this._状態.モード === '道作成' && 最前面当たり && 最前面当たり.部品 === ビュー.地形) {
-            const pt = 最前面当たり.交差点
-            this._操作.コマンドを実行する({
-                種類: '道路点を追加する',
-                値: {
-                    対象: { 種類: 'チャンク', 値: { ...this._状態.対象チャンク座標 } },
-                    位置: { x: pt.x, y: pt.y, z: pt.z },
-                },
-            })
+            const 交差点 = 最前面当たり.交差点
+            this._道路点.末尾へ追加する({ x: 交差点.x, y: 交差点.y, z: 交差点.z })
         } else if (this._状態.モード === '道編集') {
-            this._道路ノードを選択する(当たり一覧)
-        } else if (this._状態.モード === '建物') {
+            // 点の上のクリックは選択を優先し、点に当たらず帯の上だったときだけ点を割り込ませる。
+            if (!this._道路点.道路点を選択する(当たり一覧)) {
+                this._道路点.帯の上へ挿入する(当たり一覧)
+            }
+        } else if (this._状態.モード === '建物' || this._状態.モード === '選択') {
             this._建物を選択する(当たり一覧)
-        } else if (this._状態.モード === '選択') {
-            // 選択モードの主作業: 道路ノード・建物のうち左クリックで拾えたものを選択する。
-            if (!this._道路ノードを選択する(当たり一覧)) {
-                this._建物を選択する(当たり一覧)
-            }
         }
-    }
-
-    private _道路ノードを選択する(当たり一覧: readonly 部品交差情報[]): boolean {
-        const ビュー = this._部品.三次元ビュー
-        for (const 当たり of 当たり一覧) {
-            if (当たり.部品 === ビュー.道路ノード) {
-                const ノード一覧 = ビュー.道路ノード.ノードメッシュ一覧
-                for (let i = 0; i < ノード一覧.length; i++) {
-                    if (ノード一覧[i] === 当たり.原初交差情報.object) {
-                        this._状態.選択中ノード添字 = i
-                        this._同期.道路を同期する()
-                        this._同期.UIを同期する()
-                        return true
-                    }
-                }
-            }
-        }
-        return false
     }
 
     private _建物を選択する(当たり一覧: readonly 部品交差情報[]): boolean {

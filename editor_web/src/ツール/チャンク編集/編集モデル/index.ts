@@ -4,6 +4,8 @@ export { 単一通過点の造成筆致を適用する } from './造成筆致適
 export { 地表材質 } from './地表材質.ts'
 export { 合計255へ正規化する } from './地表材質正規化.ts'
 export { 道路スプライン } from './道路スプライン.ts'
+export { 道路対象の道路スプラインを取り出す } from './道路対象の解決.ts'
+export { 道路点の挿入先を求める, type 道路点の挿入先 } from './道路点の挿入先.ts'
 export { 建物の管理 } from './建物.ts'
 export { 散布, type 散布点 } from './散布.ts'
 export { ポアソンディスク候補を生成する } from './ポアソンディスク候補生成.ts'

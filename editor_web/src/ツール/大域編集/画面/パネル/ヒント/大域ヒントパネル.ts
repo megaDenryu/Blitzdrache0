@@ -19,8 +19,8 @@ export class 大域ヒントパネル extends LV2HtmlComponentBase {
         switch (モード) {
             case '選択':
                 this._テキスト要素.childs([
-                    span({ text: '左クリックで道路点を選択してインスペクター表示' }),
-                    span({ text: ' (左ドラッグは何もしません)。※右ドラッグでカメラ回転、中ドラッグでカメラ平行移動' }),
+                    span({ text: '道路点は広域道路編集モードで選びます' }),
+                    span({ text: ' (このモードでは左クリック・左ドラッグとも何もしません)。※右ドラッグでカメラ回転、中ドラッグでカメラ平行移動' }),
                 ])
                 break
             case '大域造成':
@@ -31,14 +31,14 @@ export class 大域ヒントパネル extends LV2HtmlComponentBase {
                 break
             case '広域道路作成':
                 this._テキスト要素.childs([
-                    span({ class: 強調, text: '左クリックで点追加' }),
+                    span({ class: 強調, text: '左クリックで道の終わりへ点を追加' }),
                     span({ text: ' (チャンク境界を跨いで配置可能)。※右ドラッグでカメラ回転、中ドラッグでカメラ平行移動' }),
                 ])
                 break
             case '広域道路編集':
                 this._テキスト要素.childs([
-                    span({ class: 強調, text: '点を選択して削除・調整' }),
-                    span({ text: '。※右ドラッグでカメラ回転、中ドラッグでカメラ平行移動' }),
+                    span({ class: 強調, text: '点を左ドラッグで移動、クリックで選択' }),
+                    span({ text: '。道の上をクリックすると、その場所へ点を割り込ませます。選んだ点は道路パネルの削除ボタンで消せます。※右ドラッグでカメラ回転、中ドラッグでカメラ平行移動' }),
                 ])
                 break
         }

@@ -84,4 +84,8 @@ export interface エディターテーマ定義 {
     readonly 地形基本色: number
     readonly 植生色: number
     readonly 道路色: number
+    // 3Dビューの道路点マーカーの色。通常・選択中・つかんでいる、の3状態を描き分ける
+    readonly 道路点通常色: number
+    readonly 道路点選択色: number
+    readonly 道路点つかんでいる色: number
 }

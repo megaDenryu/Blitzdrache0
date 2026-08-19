@@ -4,6 +4,7 @@ import { ワールド編集状態 } from '../../../チャンク編集/編集モ�
 import type { 大域シーン部品束 } from './大域三次元ビュー部品/シーン構築.ts'
 import { 大域シーンを構築する } from './大域三次元ビュー部品/シーン構築.ts'
 import { 注視点マーカー表示制御器 } from '../../../チャンク編集/画面/三次元/カメラ/注視点マーカー表示制御器.ts'
+import type { 三次元の配色 } from '../../../チャンク編集/画面/三次元/三次元の配色.ts'
 import { コンテナ, キャンバス } from './大域三次元ビュー部品スタイル.css.ts'
 
 function HTMLキャンバスか(要素: HTMLElement): 要素 is HTMLCanvasElement {
@@ -32,7 +33,8 @@ export class 大域三次元ビュー部品 extends LV2HtmlComponentBase {
     public readonly 注視点マーカー: 大域シーン部品束['注視点マーカー']
     public readonly 注視点表示制御: 注視点マーカー表示制御器
     public readonly 道路帯: 大域シーン部品束['道路帯']
-    public readonly 道路ノード: 大域シーン部品束['道路ノード']
+    public readonly 道路点マーカー: 大域シーン部品束['道路点マーカー']
+    public readonly 毎フレーム処理: 大域シーン部品束['毎フレーム処理']
 
     public constructor(編集状態: ワールド編集状態, 初期背景色: string | number = 0x070b14) {
         super()
@@ -46,7 +48,8 @@ export class 大域三次元ビュー部品 extends LV2HtmlComponentBase {
         this.注視点マーカー = シーン.注視点マーカー
         this.注視点表示制御 = new 注視点マーカー表示制御器(this.注視点マーカー)
         this.道路帯 = シーン.道路帯
-        this.道路ノード = シーン.道路ノード
+        this.道路点マーカー = シーン.道路点マーカー
+        this.毎フレーム処理 = シーン.毎フレーム処理
 
         this.キャンバス要素 = new 描画キャンバス要素()
         this._componentRoot = div({ class: コンテナ }).child(this.キャンバス要素)
@@ -57,6 +60,7 @@ export class 大域三次元ビュー部品 extends LV2HtmlComponentBase {
         }
 
         this.描画ループ = 描画ループ.キャンバスへ作る(dom要素, this.場面, this.カメラ)
+        this.毎フレーム処理.描画ループへ差し込む(this.描画ループ)
         this.レイキャスト = new レイキャスト入力()
     }
 
@@ -65,14 +69,11 @@ export class 大域三次元ビュー部品 extends LV2HtmlComponentBase {
         return this
     }
 
-    // テーマ切替時に地形・道路の材質色を差し替える(大域三次元ビューに植生は無い)。
-    public 地形色を設定する(色: number): this {
-        this.地形.地形色を更新する(色)
-        return this
-    }
-
-    public 道路色を設定する(色: number): this {
-        this.道路帯.道路色を更新する(色)
+    // テーマ切替時に地形・道路・道路点マーカーの材質色をまとめて差し替える(大域ビューに植生は無い)。
+    public 三次元の配色を設定する(配色: 三次元の配色): this {
+        this.地形.地形色を更新する(配色.地形基本色)
+        this.道路帯.道路色を更新する(配色.道路色)
+        this.道路点マーカー.配色を設定する(配色.道路点マーカー配色)
         return this
     }
 

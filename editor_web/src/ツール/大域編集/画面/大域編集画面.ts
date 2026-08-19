@@ -1,6 +1,7 @@
 import { div, DivC, LV2部品集約Base } from 'sengen-ui'
 import type { ワールド編集状態 } from '../../チャンク編集/編集モデル/index.ts'
 import { 大域編集画面部品 } from './大域編集画面部品.ts'
+import type { 三次元の配色 } from '../../チャンク編集/画面/三次元/三次元の配色.ts'
 import { 画面ルート } from './スタイル.css.ts'
 
 // 大域三次元ビューを画面いっぱいに配置し、大域インスペクター部品を保持するLV2部品集約Orchestrator。
@@ -22,12 +23,8 @@ export class 大域編集画面 extends LV2部品集約Base<大域編集画面�
         this.部品.三次元ビュー.背景色を設定する(色)
     }
 
-    public 地形色を設定する(色: number): void {
-        this.部品.三次元ビュー.地形色を設定する(色)
-    }
-
-    public 道路色を設定する(色: number): void {
-        this.部品.三次元ビュー.道路色を設定する(色)
+    public 三次元の配色を設定する(配色: 三次元の配色): void {
+        this.部品.三次元ビュー.三次元の配色を設定する(配色)
     }
 
     protected _ルートを構築する(部品: 大域編集画面部品): DivC {
