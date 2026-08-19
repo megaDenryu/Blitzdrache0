@@ -4,7 +4,7 @@ import type { 大域編集モード } from './画面/パネル/モード切替/�
 
 // 大域編集ツールセッション中のUI選択・操作パラメータ・取り消し履歴を保持する。
 export class 大域編集状態 {
-    public モード: 大域編集モード = '大域カメラ'
+    public モード: 大域編集モード = '選択'
     public 造成筆致種別: 造成筆致種別 = '盛る'
     public 造成半径: number = 80.0
     public 造成強さ: number = 1.2

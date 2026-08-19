@@ -28,39 +28,56 @@ export class チャンク編集クリックハンドラ {
                 },
             })
         } else if (this._状態.モード === '道編集') {
-            for (const 当たり of 当たり一覧) {
-                if (当たり.部品 === ビュー.道路ノード) {
-                    const ノード一覧 = ビュー.道路ノード.ノードメッシュ一覧
-                    for (let i = 0; i < ノード一覧.length; i++) {
-                        if (ノード一覧[i] === 当たり.原初交差情報.object) {
-                            this._状態.選択中ノード添字 = i
-                            this._同期.道路を同期する()
-                            this._同期.UIを同期する()
-                            return
-                        }
-                    }
-                }
-            }
+            this._道路ノードを選択する(当たり一覧)
         } else if (this._状態.モード === '建物') {
-            const チャンク = this._モデル.チャンクを取得する(this._状態.対象チャンク座標)
-            for (const 建物 of チャンク.建物.一覧を取得する()) {
-                const グループ = ビュー.建物.識別子からグループを取得する(建物.識別子)
-                if (グループ) {
-                    const 一致 = 当たり一覧.some((hit) => {
-                        let 親 = hit.原初交差情報.object.parent
-                        while (親 !== null) {
-                            if (親 === グループ) return true
-                            親 = 親.parent
-                        }
-                        return false
-                    })
-                    if (一致) {
-                        this._状態.選択中建物識別子 = 建物.識別子
+            this._建物を選択する(当たり一覧)
+        } else if (this._状態.モード === '選択') {
+            // 選択モードの主作業: 道路ノード・建物のうち左クリックで拾えたものを選択する。
+            if (!this._道路ノードを選択する(当たり一覧)) {
+                this._建物を選択する(当たり一覧)
+            }
+        }
+    }
+
+    private _道路ノードを選択する(当たり一覧: readonly 部品交差情報[]): boolean {
+        const ビュー = this._部品.三次元ビュー
+        for (const 当たり of 当たり一覧) {
+            if (当たり.部品 === ビュー.道路ノード) {
+                const ノード一覧 = ビュー.道路ノード.ノードメッシュ一覧
+                for (let i = 0; i < ノード一覧.length; i++) {
+                    if (ノード一覧[i] === 当たり.原初交差情報.object) {
+                        this._状態.選択中ノード添字 = i
+                        this._同期.道路を同期する()
                         this._同期.UIを同期する()
-                        return
+                        return true
                     }
                 }
             }
         }
+        return false
+    }
+
+    private _建物を選択する(当たり一覧: readonly 部品交差情報[]): boolean {
+        const ビュー = this._部品.三次元ビュー
+        const チャンク = this._モデル.チャンクを取得する(this._状態.対象チャンク座標)
+        for (const 建物 of チャンク.建物.一覧を取得する()) {
+            const グループ = ビュー.建物.識別子からグループを取得する(建物.識別子)
+            if (グループ) {
+                const 一致 = 当たり一覧.some((hit) => {
+                    let 親 = hit.原初交差情報.object.parent
+                    while (親 !== null) {
+                        if (親 === グループ) return true
+                        親 = 親.parent
+                    }
+                    return false
+                })
+                if (一致) {
+                    this._状態.選択中建物識別子 = 建物.識別子
+                    this._同期.UIを同期する()
+                    return true
+                }
+            }
+        }
+        return false
     }
 }

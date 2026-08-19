@@ -9,7 +9,7 @@ export class 大域インスペクターパネル extends LV2部品集約Base<�
     protected _componentRoot: DivC
     public readonly 部品: 大域インスペクター部品
 
-    public constructor(初期モード: 大域編集モード = '大域カメラ') {
+    public constructor(初期モード: 大域編集モード = '選択') {
         super()
         this.部品 = 大域インスペクター部品.作る(初期モード)
         this._componentRoot = this._ルートを構築する(this.部品)
@@ -21,7 +21,7 @@ export class 大域インスペクターパネル extends LV2部品集約Base<�
         this.部品.ヒント.モードを更新する(モード)
         this.部品.造成.setStyleCSS({ display: モード === '大域造成' ? 'flex' : 'none' })
         this.部品.道路.setStyleCSS({
-            display: モード === '大域カメラ' || モード === '広域道路作成' || モード === '広域道路編集' ? 'flex' : 'none',
+            display: モード === '選択' || モード === '広域道路作成' || モード === '広域道路編集' ? 'flex' : 'none',
         })
     }
 

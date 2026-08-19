@@ -11,7 +11,7 @@ export class インスペクターパネル extends LV2部品集約Base<イン�
     public readonly 部品: インスペクター部品
     private readonly _対象座標: チャンク座標
 
-    public constructor(対象座標: チャンク座標, 初期モード: 編集モード = 'カメラ') {
+    public constructor(対象座標: チャンク座標, 初期モード: 編集モード = '選択') {
         super()
         this._対象座標 = 対象座標
         this.部品 = インスペクター部品.作る(初期モード)
@@ -24,7 +24,7 @@ export class インスペクターパネル extends LV2部品集約Base<イン�
         this.部品.造成.setStyleCSS({ display: モード === '造成' ? 'flex' : 'none' })
         this.部品.地表ペイント.setStyleCSS({ display: モード === '地表ペイント' ? 'flex' : 'none' })
         this.部品.道路.setStyleCSS({
-            display: モード === 'カメラ' || モード === '道作成' || モード === '道編集' ? 'flex' : 'none',
+            display: モード === '選択' || モード === '道作成' || モード === '道編集' ? 'flex' : 'none',
         })
         this.部品.建物.setStyleCSS({ display: モード === '建物' ? 'flex' : 'none' })
     }

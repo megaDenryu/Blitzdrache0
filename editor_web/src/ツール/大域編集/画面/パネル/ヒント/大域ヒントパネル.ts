@@ -7,7 +7,7 @@ export class 大域ヒントパネル extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     private readonly _テキスト要素: SpanC
 
-    public constructor(初期モード: 大域編集モード = '大域カメラ') {
+    public constructor(初期モード: 大域編集モード = '選択') {
         super()
         this._テキスト要素 = span()
         this._componentRoot = div({ class: ヒント枠 }).child(this._テキスト要素)
@@ -17,9 +17,10 @@ export class 大域ヒントパネル extends LV2HtmlComponentBase {
     public モードを更新する(モード: 大域編集モード): void {
         this._テキスト要素.clearChildren()
         switch (モード) {
-            case '大域カメラ':
+            case '選択':
                 this._テキスト要素.childs([
-                    span({ text: '左ドラッグ・右ドラッグで視点回転、中ドラッグで平行移動' }),
+                    span({ text: '左クリックで道路点を選択してインスペクター表示' }),
+                    span({ text: ' (左ドラッグは何もしません)。※右ドラッグでカメラ回転、中ドラッグでカメラ平行移動' }),
                 ])
                 break
             case '大域造成':

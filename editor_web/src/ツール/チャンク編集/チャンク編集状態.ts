@@ -4,7 +4,7 @@ import type { 編集モード } from './画面/index.ts'
 
 // エディターセッション中のUI選択・操作パラメータ・取り消し履歴スタックを保持する状態。
 export class チャンク編集状態 {
-    public モード: 編集モード = 'カメラ'
+    public モード: 編集モード = '選択'
     public 造成筆致種別: 造成筆致種別 = '盛る'
     public 造成半径: number = 20.0
     public 造成強さ: number = 0.5
