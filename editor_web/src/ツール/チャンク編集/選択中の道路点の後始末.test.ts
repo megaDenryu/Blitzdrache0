@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { 道路の一覧 } from './編集モデル/index.ts'
 import type { 道路点の在り処 } from './編集モデル/index.ts'
 import { 居なくなった道路と道路点の選択を外す } from './選択中の道路点の後始末.ts'
+import type { 道路点の選択状態 } from './道路点編集の相手.ts'
 
 function 制御点の数だけ並べた道路一覧(制御点の数一覧: readonly number[]): 道路の一覧 {
     return new 道路の一覧(
@@ -15,8 +16,11 @@ function 制御点の数だけ並べた道路一覧(制御点の数一覧: reado
     )
 }
 
-function 選択状態を作る(選択中の道路点: 道路点の在り処 | null, アクティブな道路の添字: number | null) {
-    return { 選択中の道路点, つかんでいる道路点: null as 道路点の在り処 | null, アクティブな道路の添字 }
+function 選択状態を作る(
+    選択中の道路点: 道路点の在り処 | null,
+    アクティブな道路の添字: number | null,
+): 道路点の選択状態 {
+    return { 選択中の道路点, つかんでいる道路点: null, アクティブな道路の添字 }
 }
 
 describe('選択中の道路点の後始末', () => {
