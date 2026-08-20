@@ -88,8 +88,9 @@ export interface エディターテーマ定義 {
     readonly 標高低色: number
     readonly 標高中色: number
     readonly 標高高色: number
-    // 3Dビューの道路点マーカーの色。通常・選択中・つかんでいる、の3状態を描き分ける
+    // 3Dビューの道路点マーカーの色。通常・いま描き足している道の点・選択中・つかんでいる、の4状態を描き分ける
     readonly 道路点通常色: number
+    readonly 道路点アクティブ道色: number
     readonly 道路点選択色: number
     readonly 道路点つかんでいる色: number
 }

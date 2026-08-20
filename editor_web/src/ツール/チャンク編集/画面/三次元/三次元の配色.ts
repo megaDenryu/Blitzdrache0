@@ -22,6 +22,7 @@ export interface 三次元の色トークン {
     readonly 標高中色: number
     readonly 標高高色: number
     readonly 道路点通常色: number
+    readonly 道路点アクティブ道色: number
     readonly 道路点選択色: number
     readonly 道路点つかんでいる色: number
 }
@@ -37,6 +38,7 @@ export function 色トークンから三次元の配色を作る(トークン: �
         標高高色: トークン.標高高色,
         道路点マーカー配色: {
             通常色: トークン.道路点通常色,
+            アクティブ道色: トークン.道路点アクティブ道色,
             選択色: トークン.道路点選択色,
             ドラッグ色: トークン.道路点つかんでいる色,
         },

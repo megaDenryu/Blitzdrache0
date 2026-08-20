@@ -1,95 +1,48 @@
-import { DoubleSide, Mesh, MeshStandardMaterial, MeshBasicMaterial, type Object3D } from 'three'
-import { グループ, ジオメトリ包み } from 'SengenThree'
-import type { 道路スプライン, 高さ場 } from '../../../編集モデル/index.ts'
-import { 道路帯幾何データを生成する } from './道路帯ジオメトリ生成.ts'
+import type { Object3D } from 'three'
+import { グループ } from 'SengenThree'
+import type { 道路の一覧, 高さ場 } from '../../../編集モデル/index.ts'
+import { 道路1本の帯メッシュ部品 } from './道路1本の帯メッシュ部品.ts'
 
-// 道路の路面メッシュおよび散布除外バッファメッシュを表示・更新する部品。
+// 道路一覧のすべての道路の帯を表示する部品。1本につき1つの子部品を持ち、本数の増減に合わせて
+// 子部品を作り足し、余った子部品は破棄する(破棄で形状と材質の資源も解放される)。
 export class 道路帯メッシュ部品 extends グループ {
-    private readonly _路面ジオメトリ: ジオメトリ包み
-    private readonly _バッファジオメトリ: ジオメトリ包み
-    private readonly _路面メッシュ: Mesh
-    private readonly _バッファメッシュ: Mesh
-    private readonly _路面材質: MeshStandardMaterial
+    private _帯一覧: 道路1本の帯メッシュ部品[] = []
+    private _道路色: number
 
-    public constructor() {
+    public constructor(初期道路色: number) {
         super()
-        this._路面ジオメトリ = new ジオメトリ包み()
-        this._バッファジオメトリ = new ジオメトリ包み()
-
-        this._路面材質 = new MeshStandardMaterial({
-            color: 0x334155,
-            roughness: 0.7,
-            polygonOffset: true,
-            polygonOffsetFactor: -2,
-            polygonOffsetUnits: -2,
-            side: DoubleSide,
-        })
-        const バッファ材質 = new MeshBasicMaterial({
-            color: 0xf43f5e,
-            transparent: true,
-            opacity: 0.12,
-            depthWrite: false,
-            side: DoubleSide,
-        })
-
-        this._路面メッシュ = new Mesh(this._路面ジオメトリ.実体, this._路面材質)
-        this._バッファメッシュ = new Mesh(this._バッファジオメトリ.実体, バッファ材質)
-        this._路面メッシュ.visible = false
-        this._バッファメッシュ.visible = false
-
-        this.実体.add(this._路面メッシュ)
-        this.実体.add(this._バッファメッシュ)
-
-        this.資源台帳.登録する(this._路面ジオメトリ)
-        this.資源台帳.登録する(this._バッファジオメトリ)
-        this.資源台帳.登録する(this._路面材質)
-        this.資源台帳.登録する(バッファ材質)
+        this._道路色 = 初期道路色
     }
 
-    public 更新する(スプライン: 道路スプライン, 高さ場モデル: 高さ場): void {
-        const 路面幾何 = 道路帯幾何データを生成する(
-            スプライン,
-            スプライン.全幅メートル,
-            スプライン.細分割数,
-            高さ場モデル,
-            0.06,
-        )
-        const バッファ幾何 = 道路帯幾何データを生成する(
-            スプライン,
-            スプライン.散布除外バッファメートル * 2,
-            スプライン.細分割数,
-            高さ場モデル,
-            0.02,
-        )
+    public 更新する(道路一覧: 道路の一覧, 高さ場モデル: 高さ場): void {
+        this._本数を合わせる(道路一覧.件数)
+        道路一覧.全ての道路.forEach((道路, 添字) => {
+            this._帯一覧[添字]?.更新する(道路, 高さ場モデル)
+        })
+    }
 
-        if (路面幾何 !== null && バッファ幾何 !== null) {
-            this._路面ジオメトリ
-                .頂点位置を設定する(路面幾何.頂点配列)
-                .UV座標を設定する(路面幾何.UV配列)
-                .添字を設定する(路面幾何.添字配列)
-                .法線を自動計算する()
-            this._バッファジオメトリ
-                .頂点位置を設定する(バッファ幾何.頂点配列)
-                .UV座標を設定する(バッファ幾何.UV配列)
-                .添字を設定する(バッファ幾何.添字配列)
-                .法線を自動計算する()
-
-            this._路面メッシュ.visible = true
-            this._バッファメッシュ.visible = true
-        } else {
-            this._路面メッシュ.visible = false
-            this._バッファメッシュ.visible = false
+    // 交差した物体が路面なら、その路面が属する道路の添字を返す。路面でなければnullを返す。
+    public 当たった路面の道路添字を求める(交差した物体: Object3D): number | null {
+        for (let 添字 = 0; 添字 < this._帯一覧.length; 添字++) {
+            if (this._帯一覧[添字]?.路面メッシュか(交差した物体) === true) return 添字
         }
+        return null
     }
 
-    // 当たったのが路面そのものかを判別する。散布除外バッファのメッシュは路面より広く張り出すため、
-    // 帯の上のクリックを受け付ける処理は路面だけを見る必要がある。
-    public 路面メッシュか(物体: Object3D): boolean {
-        return 物体 === this._路面メッシュ
-    }
-
-    // テーマ切替時に路面の色を差し替える(参照: 工房テーマ/夜間テーマの道路色)。
+    // テーマ切替時に全ての道路の路面の色を差し替える。後から作る帯にも同じ色を渡すため色を覚えておく。
     public 道路色を更新する(道路色: number): void {
-        this._路面材質.color.set(道路色)
+        this._道路色 = 道路色
+        for (const 帯 of this._帯一覧) 帯.道路色を更新する(道路色)
+    }
+
+    private _本数を合わせる(本数: number): void {
+        while (this._帯一覧.length > 本数) {
+            this._帯一覧.pop()?.破棄する()
+        }
+        while (this._帯一覧.length < 本数) {
+            const 帯 = new 道路1本の帯メッシュ部品(this._道路色)
+            this.child(帯)
+            this._帯一覧.push(帯)
+        }
     }
 }
