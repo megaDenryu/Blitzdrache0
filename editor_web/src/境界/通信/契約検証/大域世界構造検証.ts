@@ -4,7 +4,9 @@ import { 配列か, 数値か, オブジェクトか } from './オブジェク�
 // 受信した大域世界構造のJSONが型契約に適合しているかを実行時に検査する。
 export function 大域世界構造の形か(値: unknown): 値 is 大域世界構造 {
     if (!オブジェクトか(値)) return false
-    return 世界の区画割りの形か(値['区画割り']) && 広域道路の形か(値['広域道路'])
+    if (!配列か(値['広域道路一覧'])) return false
+    if (!値['広域道路一覧'].every(広域道路の形か)) return false
+    return 世界の区画割りの形か(値['区画割り'])
 }
 
 export function 世界の区画割りの形か(値: unknown): 値 is 世界の区画割り {
