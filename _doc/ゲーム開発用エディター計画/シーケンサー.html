@@ -308,6 +308,7 @@
       <button id="btnDemo" class="sec">生楽器アンサンブル デモ</button>
       <button id="btnClear" class="sec">全クリア</button>
       <button id="btnMix" class="sec">ミックス</button>
+      <button id="btnSongEdit" class="sec">曲構成</button>
     </div>
 
     <div class="group">
@@ -320,6 +321,13 @@
       <label for="selProg">進行:</label>
       <select id="selProg"></select>
       <button id="btnProgEdit" class="sec">進行を編集/追加</button>
+    </div>
+
+    <div class="group">
+      <label for="selPattern">パターン:</label>
+      <select id="selPattern"></select>
+      <button id="btnPatNew" class="sec">新規</button>
+      <button id="btnPatDel" class="sec">削除</button>
     </div>
 
     <div class="group">
@@ -409,6 +417,21 @@
 
     <div class="btn-row">
       <button id="btnProgClose" class="sec">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<!-- 曲構成エディター（パターンを並べて曲にする） -->
+<div class="overlay" id="songOverlay">
+  <div class="modal">
+    <h3>曲構成（パターンを並べて曲にする）</h3>
+    <div class="status" id="songStatus"></div>
+    <div id="songRows" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
+    <div class="btn-row">
+      <button id="btnSongAdd">節を追加（繰り返しなし）</button>
+    </div>
+    <div class="btn-row">
+      <button id="btnSongClose" class="sec">閉じる</button>
     </div>
   </div>
 </div>
@@ -596,19 +619,33 @@
     return runs;
   }
 
+  function emptyGrid() {
+    return SCHEMA.map(t => Array.from({ length: t.notes.length }, () => Array(STEPS).fill(0)));
+  }
+
   const state = {
-    progKey: 'pokemonRoute',
-    trackProg: [null, null, null, null],
-    freeMode: false,
     bpm: 124,
     isPlaying: false,
     currentStep: 0,
-    tracks: SCHEMA.map(t => Array.from({ length: t.notes.length }, () => Array(STEPS).fill(0))),
-    insts: SCHEMA.map(t => t.inst),
+    // 曲全体でのステップ位置。パターンのつなぎ目で0へ折り返す
+    songStep: 0,
+    // 現在再生中のパターン番号。トグル開始/停止ごとに -1 へ戻す
+    playingPat: -1,
+    freeMode: false,
     trackVols: [0.9, 0.8, 0.9, 1.0],
     mix: { master: 1.0, reverb: 0.30, delay: 0.15, delaySteps: 3 },
-    drag: null
+    drag: null,
+    // パターン（節）群と曲構成（アレンジ）。tracks/progKey は表示中のパターンの投影
+    patterns: [{ name: 'パターン1', progKey: 'pokemonRoute' }],
+    grids: [emptyGrid()],
+    currentPat: 0,
+    song: [],
+    insts: SCHEMA.map(t => t.inst),
+    trackProg: [null, null, null, null],
+    progKey: 'pokemonRoute',
+    tracks: null
   };
+  state.tracks = state.grids[0];
 
   function isAllowed(pitch, sIdx, tIdx) {
     if (SCHEMA[tIdx].type === 'drum') return true;
@@ -633,6 +670,65 @@
         }
       });
     });
+  }
+
+  // --- パターン（節）と曲構成（アレンジ） ---
+  // グリッドを安全な形（各トラックが音符行の配列、各セル0〜4）へ整える
+  function normalizeGrid(src) {
+    return SCHEMA.map((t, i) => {
+      const tsrc = src[i];
+      if (!Array.isArray(tsrc)) return emptyGrid()[i];
+      return t.notes.map((note, r) => {
+        const row = tsrc[r];
+        if (!Array.isArray(row)) return Array(STEPS).fill(0);
+        return Array.from({ length: STEPS }, (_, s) => {
+          const v = row[s];
+          return (Number.isInteger(v) && v >= 0 && v <= 4) ? v : 0;
+        });
+      });
+    });
+  }
+
+  // 曲全体の長さ（ステップ）。曲構成が空なら0（＝現在のパターンのみループ）
+  function songTotalStep() {
+    if (state.song.length === 0) return 0;
+    return state.song.reduce((a, e) => a + STEPS * e.reps, 0);
+  }
+
+  // 曲全体のステップ位置を「どのパターンの・このパターン内の何ステップ目」へ解決する
+  function songPosition(songStep) {
+    if (state.song.length === 0) return { patIdx: state.currentPat, local: songStep % STEPS };
+    const total = songTotalStep();
+    let pos = songStep % total;
+    for (const e of state.song) {
+      const span = STEPS * e.reps;
+      if (pos < span) return { patIdx: e.p, local: pos % STEPS };
+      pos -= span;
+    }
+    const last = state.song[state.song.length - 1];
+    return { patIdx: last.p, local: 0 };
+  }
+
+  function fillPatternSelect(selected) {
+    const sel = document.getElementById('selPattern');
+    sel.innerHTML = '';
+    state.patterns.forEach((p, i) => {
+      const o = document.createElement('option');
+      o.value = i;
+      o.textContent = p.name;
+      if (i === selected) o.selected = true;
+      sel.appendChild(o);
+    });
+  }
+
+  function loadPattern(i) {
+    state.currentPat = i;
+    state.tracks = state.grids[i];
+    state.progKey = state.patterns[i].progKey;
+    document.getElementById('selPattern').value = i;
+    selProg.value = state.progKey;
+    createBoardStructure();
+    render();
   }
 
   // --- 高品位シンセシス エンジン (Web Audio API) ---
@@ -1306,13 +1402,26 @@
 
   function tick() {
     const stepDurSec = 60 / state.bpm / 4;
-    const s = state.currentStep;
+    const { patIdx, local } = songPosition(state.songStep);
+
+    // 曲構成でパターンが切り替わった時だけグリッドと進行を差し替える。
+    // 同じパターンの繰り返し中は組み立て直さない（＝編集状態とプレイヘッドを維持する）
+    if (state.playingPat !== patIdx || state.currentPat !== patIdx) {
+      state.playingPat = patIdx;
+      state.currentPat = patIdx;
+      state.tracks = state.grids[patIdx];
+      state.progKey = state.patterns[patIdx].progKey;
+      document.getElementById('selPattern').value = patIdx;
+      selProg.value = state.progKey;
+      createBoardStructure();
+    }
+    state.currentStep = local;
 
     SCHEMA.forEach((track, tIdx) => {
       track.notes.forEach((note, rIdx) => {
-        if (isStart(state.tracks[tIdx][rIdx][s])) {
+        if (isStart(state.tracks[tIdx][rIdx][local])) {
           let hold = 1;
-          for (let n = s + 1; n < STEPS; n++) {
+          for (let n = local + 1; n < STEPS; n++) {
             if (isHold(state.tracks[tIdx][rIdx][n])) hold++;
             else break;
           }
@@ -1323,12 +1432,15 @@
     });
 
     render();
-    state.currentStep = (state.currentStep + 1) % STEPS;
+    const total = songTotalStep();
+    state.songStep = (state.songStep + 1) % (total || STEPS);
   }
 
   function start() {
     getAudioContext();
     state.isPlaying = true;
+    state.songStep = 0;
+    state.playingPat = -1;
     timerId = setInterval(tick, (60 / state.bpm / 4) * 1000);
     render();
   }
@@ -1337,6 +1449,8 @@
     state.isPlaying = false;
     clearInterval(timerId);
     state.currentStep = 0;
+    state.songStep = 0;
+    state.playingPat = -1;
     render();
   }
 
@@ -1493,7 +1607,7 @@
   });
 
   document.getElementById('btnClear').addEventListener('click', () => {
-    state.tracks = SCHEMA.map(t => Array.from({ length: t.notes.length }, () => Array(STEPS).fill(0)));
+    state.tracks.forEach(t => t.forEach(row => row.fill(0)));
     render();
   });
 
@@ -1502,6 +1616,7 @@
   selProg.value = state.progKey;
   selProg.addEventListener('change', (e) => {
     state.progKey = e.target.value;
+    state.patterns[state.currentPat].progKey = state.progKey;
     sanitizeState();
     createBoardStructure();
     render();
@@ -1651,10 +1766,12 @@
 
   document.getElementById('btnDemo').addEventListener('click', () => {
     state.progKey = 'town';
+    state.patterns[state.currentPat].progKey = 'town';
     document.getElementById('selProg').value = 'town';
     state.bpm = 110;
     document.getElementById('rngBpm').value = 110;
-    state.tracks = SCHEMA.map(t => Array.from({ length: t.notes.length }, () => Array(STEPS).fill(0)));
+    state.grids[state.currentPat] = emptyGrid();
+    state.tracks = state.grids[state.currentPat];
     state.trackProg = [null, null, null, null];
 
     state.insts[0] = 'piano';
@@ -1705,6 +1822,107 @@
     render();
   });
 
+  // --- パターン（節）と曲構成（アレンジ）の操作 ---
+  document.getElementById('selPattern').addEventListener('change', (e) => {
+    loadPattern(parseInt(e.target.value, 10));
+  });
+
+  document.getElementById('btnPatNew').addEventListener('click', () => {
+    const num = state.patterns.length + 1;
+    const got = prompt('新しいパターンの名前', 'パターン' + num);
+    const name = (got && got.trim()) ? got.trim() : 'パターン' + num;
+    state.patterns.push({ name, progKey: state.progKey });
+    state.grids.push(emptyGrid());
+    fillPatternSelect(state.patterns.length - 1);
+    loadPattern(state.patterns.length - 1);
+  });
+
+  document.getElementById('btnPatDel').addEventListener('click', () => {
+    if (state.patterns.length <= 1) return;
+    const del = state.currentPat;
+    state.patterns.splice(del, 1);
+    state.grids.splice(del, 1);
+    // 曲構成は、消えたパターンを参照する節を取り除き、後ろの節の番号を繰り上げる
+    state.song = state.song
+      .filter(e => e.p !== del)
+      .map(e => ({ p: e.p > del ? e.p - 1 : e.p, reps: e.reps }));
+    const target = Math.min(del, state.patterns.length - 1);
+    fillPatternSelect(target);
+    loadPattern(target);
+  });
+
+  // --- 曲構成エディター ---
+  function renderSongRows() {
+    const container = document.getElementById('songRows');
+    container.innerHTML = '';
+    if (state.song.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'prog-row';
+      empty.textContent = '曲構成は空です。再生は今のパターンのループになります。';
+      container.appendChild(empty);
+    }
+    state.song.forEach((e, i) => {
+      const row = document.createElement('div');
+      row.className = 'prog-row';
+
+      const patSel = document.createElement('select');
+      state.patterns.forEach((p, pi) => {
+        const o = document.createElement('option');
+        o.value = pi;
+        o.textContent = p.name;
+        if (pi === e.p) o.selected = true;
+        patSel.appendChild(o);
+      });
+      patSel.addEventListener('change', () => { e.p = parseInt(patSel.value, 10); refreshSongStatus(); });
+
+      const repsSel = document.createElement('select');
+      for (let r = 1; r <= 8; r++) {
+        const o = document.createElement('option');
+        o.value = r;
+        o.textContent = r + '回';
+        if (r === e.reps) o.selected = true;
+        repsSel.appendChild(o);
+      }
+      repsSel.addEventListener('change', () => { e.reps = parseInt(repsSel.value, 10); refreshSongStatus(); });
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'sec';
+      delBtn.textContent = '×';
+      delBtn.addEventListener('click', () => { state.song.splice(i, 1); renderSongRows(); });
+
+      row.appendChild(patSel);
+      row.appendChild(repsSel);
+      row.appendChild(delBtn);
+      container.appendChild(row);
+    });
+    refreshSongStatus();
+  }
+
+  function refreshSongStatus() {
+    const el = document.getElementById('songStatus');
+    if (state.song.length === 0) {
+      el.textContent = '全 0 小節（現在のパターンのみループ）';
+      return;
+    }
+    const bars = songTotalStep() / 4;
+    const labeled = state.song.map(e => state.patterns[e.p].name + '×' + e.reps).join(' → ');
+    el.textContent = '全 ' + bars + ' 小節  /  ' + labeled;
+  }
+
+  document.getElementById('btnSongEdit').addEventListener('click', () => {
+    renderSongRows();
+    document.getElementById('songOverlay').classList.add('open');
+  });
+
+  document.getElementById('btnSongClose').addEventListener('click', () => {
+    document.getElementById('songOverlay').classList.remove('open');
+  });
+
+  document.getElementById('btnSongAdd').addEventListener('click', () => {
+    state.song.push({ p: state.currentPat, reps: 1 });
+    renderSongRows();
+  });
+
   // --- サーバー同期 ---
   // ローカル HTTP サーバー (server.js) の /state を、チェックが入っている間だけ
   // 2秒ごとに取得して適用する。AI が POST で置いた状態がページへ反映される。
@@ -1714,6 +1932,52 @@
     if (typeof payload.bpm === 'number' && payload.bpm >= 40 && payload.bpm <= 300) {
       state.bpm = payload.bpm;
       document.getElementById('rngBpm').value = state.bpm;
+    }
+
+    // パターン群と曲構成が来た場合は丸ごと適用する（サーバーを正本にした運用手順）
+    if (Array.isArray(payload.patterns) && payload.patterns.length > 0) {
+      payload.patterns.forEach((pd, i) => {
+        if (!state.patterns[i]) state.patterns.push({ name: 'パターン' + (i + 1), progKey: 'pokemonRoute' });
+        if (!state.grids[i]) state.grids[i] = emptyGrid();
+        if (typeof pd.name === 'string' && pd.name) state.patterns[i].name = pd.name;
+        if (Array.isArray(pd.tracks) && pd.tracks.length === SCHEMA.length) {
+          state.grids[i] = normalizeGrid(pd.tracks);
+        }
+        if (Array.isArray(pd.chords) && pd.chords.length > 0) {
+          const def = { name: pd.progName || pd.name, chords: pd.chords };
+          const existing = CUSTOM_PROGS.find(c => c.name === def.name);
+          if (existing) existing.chords = def.chords;
+          else CUSTOM_PROGS.push(def);
+          state.patterns[i].progKey = def.name;
+        } else if (typeof pd.progKey === 'string' && getProgByKey(pd.progKey)) {
+          state.patterns[i].progKey = pd.progKey;
+        }
+      });
+      if (payload.patterns.length < state.patterns.length) {
+        state.patterns.length = payload.patterns.length;
+        state.grids.length = payload.patterns.length;
+      }
+      if (Array.isArray(payload.song)) {
+        state.song = payload.song
+          .filter(e => Number.isInteger(e.p) && e.p >= 0 && e.p < state.patterns.length
+            && Number.isInteger(e.reps) && e.reps >= 1)
+          .map(e => ({ p: e.p, reps: e.reps }));
+      }
+      if (Array.isArray(payload.insts) && payload.insts.length === SCHEMA.length) {
+        state.insts = payload.insts.map((v, i) =>
+          INSTRUMENT_OPTIONS[SCHEMA[i].type].some(o => o.id === v) ? v : SCHEMA[i].inst);
+      }
+      if (Array.isArray(payload.trackVols) && payload.trackVols.length === state.trackVols.length) {
+        state.trackVols = payload.trackVols.map(v => (typeof v === 'number') ? Math.min(1, Math.max(0, v)) : 1);
+      }
+      if (payload.mix && typeof payload.mix === 'object') {
+        Object.assign(state.mix, payload.mix);
+      }
+      updateMixNodes();
+      const target = Math.min(state.currentPat, state.patterns.length - 1);
+      loadPattern(target);
+      fillPatternSelect(target);
+      return;
     }
     if (Array.isArray(payload.insts) && payload.insts.length === SCHEMA.length) {
       state.insts = payload.insts.map((v, i) =>
@@ -1726,13 +1990,15 @@
       if (existing) existing.chords = def.chords;
       else CUSTOM_PROGS.push(def);
       state.progKey = def.name;
+      state.patterns[state.currentPat].progKey = state.progKey;
       populateProgSelect(selProg, state.progKey);
       selProg.value = state.progKey;
     } else if (typeof payload.progKey === 'string' && getProgByKey(payload.progKey)) {
       state.progKey = payload.progKey;
+      state.patterns[state.currentPat].progKey = state.progKey;
     }
     if (Array.isArray(payload.tracks) && payload.tracks.length === SCHEMA.length) {
-      state.tracks = SCHEMA.map((t, i) => {
+      state.grids[state.currentPat] = SCHEMA.map((t, i) => {
         const src = payload.tracks[i];
         if (!Array.isArray(src)) return state.tracks[i];
         return t.notes.map((note, r) => {
@@ -1744,6 +2010,7 @@
           });
         });
       });
+      state.tracks = state.grids[state.currentPat];
     }
     if (Array.isArray(payload.trackVols) && payload.trackVols.length === state.trackVols.length) {
       state.trackVols = payload.trackVols.map(v => (typeof v === 'number') ? Math.min(1, Math.max(0, v)) : 1);
@@ -1782,6 +2049,17 @@
   document.getElementById('btnPushState').addEventListener('click', async () => {
     const st = document.getElementById('syncStatus');
     const payload = {
+      // パターン群と曲構成をまとめて送る。カスタム進行は中身も埋め込んで正本を成立させる
+      patterns: state.patterns.map((p, i) => {
+        const out = { name: p.name, progKey: p.progKey, tracks: state.grids[i] };
+        const prog = getProgByKey(p.progKey);
+        if (prog && CUSTOM_PROGS.some(c => c.name === p.progKey)) {
+          out.progName = p.progKey;
+          out.chords = prog.chords;
+        }
+        return out;
+      }),
+      song: state.song,
       progKey: state.progKey,
       bpm: state.bpm,
       insts: state.insts,
@@ -1803,6 +2081,7 @@
     }
   });
 
+  fillPatternSelect(state.currentPat);
   createBoardStructure();
   render();
 </script>

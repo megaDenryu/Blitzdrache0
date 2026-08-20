@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Substance-Style Procedural Material Generator</title>
+  <style>
+    :root {
+      --bg: #1a1a20;
+      --panel: #24242c;
+      --node-bg: #2c2c36;
+      --border: #3e3e4e;
+      --accent: #5078ff;
+      --text: #e2e2ea;
+      --text-sub: #9e9eb0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", sans-serif;
+      overflow: hidden;
+    }
+    #sidebar {
+      width: 340px;
+      height: 100%;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+    }
+    #viewport-container {
+      width: 100%;
+      height: 280px;
+      background: #000;
+      position: relative;
+    }
+    #viewport-3d { width: 100%; height: 100%; }
+    .sidebar-controls {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .node-category {
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .node-btn-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .btn {
+      background: #343442;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn:hover {
+      background: #424254;
+      border-color: var(--accent);
+    }
+    .btn span { font-size: 10px; color: var(--text-sub); }
+    #graph-container {
+      flex: 1;
+      height: 100%;
+      position: relative;
+      background-size: 24px 24px;
+      background-image: 
+        linear-gradient(to right, #202028 1px, transparent 1px),
+        linear-gradient(to bottom, #202028 1px, transparent 1px);
+      overflow: hidden;
+    }
+    #connections-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .node {
+      position: absolute;
+      width: 180px;
+      background: var(--node-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      font-size: 11px;
+    }
+    .node-header {
+      background: #383846;
+      padding: 6px 8px;
+      font-weight: bold;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      cursor: grab;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .node-header:active { cursor: grabbing; }
+    .node-body {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .node-preview-wrapper {
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+    .node-preview {
+      width: 128px;
+      height: 128px;
+      background: #000;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      image-rendering: pixelated;
+    }
+    .pins {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      position: relative;
+    }
+    .pin-col { display: flex; flex-direction: column; gap: 8px; }
+    .pin-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      color: var(--text-sub);
+    }
+    .pin {
+      width: 12px;
+      height: 12px;
+      background: #707086;
+      border: 2px solid var(--node-bg);
+      border-radius: 50%;
+      cursor: crosshair;
+      transition: transform 0.1s, background 0.1s;
+    }
+    .pin:hover {
+      background: #fff;
+      transform: scale(1.3);
+    }
+    .node-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .node-controls label {
+      font-size: 10px;
+      color: var(--text-sub);
+      display: flex;
+      justify-content: space-between;
+    }
+    .node-controls input { width: 100%; accent-color: var(--accent); }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <div id="sidebar">
+    <div id="viewport-container">
+      <canvas id="viewport-3d"></canvas>
+    </div>
+    <div class="sidebar-controls">
+      <div class="node-category">生成系 (ジェネレータ)</div>
+      <div class="node-btn-grid">
+        <button class="btn" onclick="createNode('noise')">
+          連続ノイズ生成器
+          <span>雲・自然なムラを作る基本ノイズ</span>
+        </button>
+        <button class="btn" onclick="createNode('cellular')">
+          細胞・亀裂パターン生成器
+          <span>ボロノイ分割による細胞・ひび割れ</span>
+        </button>
+        <button class="btn" onclick="createNode('brick')">
+          規則的グリッド・レンガ生成器
+          <span>規則的なタイルやブロック模様</span>
+        </button>
+      </div>
+
+      <div class="node-category">加工・変換系 (フィルター)</div>
+      <div class="node-btn-grid">
+        <button class="btn" onclick="createNode('blend')">
+          2素材の割合ブレンド合成器
+          <span>比率に応じて2枚のマップを重ね合わせ</span>
+        </button>
+        <button class="btn" onclick="createNode('levels')">
+          明暗コントラスト・閾値調整器
+          <span>白黒のコントラストや閾値を調整</span>
+        </button>
+        <button class="btn" onclick="createNode('invert')">
+          階調反転器 (ネガポジ反転)
+          <span>白と黒の明度を完全に逆転</span>
+        </button>
+        <button class="btn" onclick="createNode('normal')">
+          高低差から法線ベクトル変換器
+          <span>白黒の凹凸から光を反射する法線マップを算出</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="graph-container">
+    <svg id="connections-layer"></svg>
+  </div>
+
+<script>
+const RES = 128;
+let nodes = [];
+let connections = [];
+let draggingNode = null;
+let dragOffset = { x: 0, y: 0 };
+let activeConnectingPin = null;
+let mousePos = { x: 0, y: 0 };
+
+// --- 3D Viewport ---
+const vpCanvas = document.getElementById('viewport-3d');
+const vpScene = new THREE.Scene();
+const vpCamera = new THREE.PerspectiveCamera(45, vpCanvas.clientWidth / vpCanvas.clientHeight, 0.1, 100);
+vpCamera.position.z = 2.3;
+const vpRenderer = new THREE.WebGLRenderer({ canvas: vpCanvas, antialias: true });
+vpRenderer.setSize(vpCanvas.clientWidth, vpCanvas.clientHeight);
+
+const light1 = new THREE.DirectionalLight(0xffffff, 1.4);
+light1.position.set(3, 4, 3);
+vpScene.add(light1);
+vpScene.add(new THREE.AmbientLight(0x555566, 0.9));
+
+const sphereGeo = new THREE.SphereGeometry(0.8, 64, 64);
+const colorTex = new THREE.DataTexture(new Uint8Array(RES * RES * 4), RES, RES, THREE.RGBAFormat);
+const normalTex = new THREE.DataTexture(new Uint8Array(RES * RES * 4), RES, RES, THREE.RGBAFormat);
+const roughnessTex = new THREE.DataTexture(new Uint8Array(RES * RES * 4), RES, RES, THREE.RGBAFormat);
+
+const pbrMaterial = new THREE.MeshStandardMaterial({
+  map: colorTex,
+  normalMap: normalTex,
+  roughnessMap: roughnessTex,
+  roughness: 0.5,
+  metalness: 0.1
+});
+const mesh = new THREE.Mesh(sphereGeo, pbrMaterial);
+vpScene.add(mesh);
+
+function animate() {
+  requestAnimationFrame(animate);
+  mesh.rotation.y += 0.004;
+  vpRenderer.render(vpScene, vpCamera);
+}
+animate();
+
+// --- Procedural Generation Algorithms ---
+function generateNoise(scale) {
+  const data = new Float32Array(RES * RES);
+  for (let y = 0; y < RES; y++) {
+    for (let x = 0; x < RES; x++) {
+      let v = 0, amp = 1, freq = scale * 0.04, maxAmp = 0;
+      for (let o = 0; o < 3; o++) {
+        v += (Math.sin(x * freq) * Math.cos(y * freq)) * amp;
+        maxAmp += amp;
+        amp *= 0.5;
+        freq *= 2.0;
+      }
+      data[y * RES + x] = (v / maxAmp + 1) * 0.5;
+    }
+  }
+  return data;
+}
+
+function generateCellular(scale) {
+  const data = new Float32Array(RES * RES);
+  const count = Math.max(3, Math.floor(scale * 1.5));
+  const points = Array.from({ length: count }, () => ({ x: Math.random() * RES, y: Math.random() * RES }));
+  for (let y = 0; y < RES; y++) {
+    for (let x = 0; x < RES; x++) {
+      let dMin = RES * 2;
+      for (let p of points) {
+        const d = Math.hypot(x - p.x, y - p.y);
+        if (d < dMin) dMin = d;
+      }
+      data[y * RES + x] = Math.min(1, dMin / (RES / 3.5));
+    }
+  }
+  return data;
+}
+
+function generateBrick(scale) {
+  const data = new Float32Array(RES * RES);
+  const tiles = Math.max(2, Math.floor(scale));
+  const tileSize = RES / tiles;
+  for (let y = 0; y < RES; y++) {
+    const row = Math.floor(y / (tileSize * 0.5));
+    const xOffset = (row % 2 === 0) ? 0 : tileSize * 0.5;
+    for (let x = 0; x < RES; x++) {
+      const u = (x + xOffset) % tileSize;
+      const v = y % (tileSize * 0.5);
+      const isEdge = (u < 2 || v < 2);
+      data[y * RES + x] = isEdge ? 0.1 : 0.9;
+    }
+  }
+  return data;
+}
+
+function heightToNormal(heightData) {
+  const out = new Uint8Array(RES * RES * 4);
+  for (let y = 0; y < RES; y++) {
+    for (let x = 0; x < RES; x++) {
+      const left = heightData[y * RES + Math.max(0, x - 1)];
+      const right = heightData[y * RES + Math.min(RES - 1, x + 1)];
+      const down = heightData[Math.max(0, y - 1) * RES + x];
+      const up = heightData[Math.min(RES - 1, y + 1) * RES + x];
+
+      const dx = (left - right) * 2.5;
+      const dy = (down - up) * 2.5;
+      const dz = 1.0;
+      const len = Math.hypot(dx, dy, dz);
+
+      const idx = (y * RES + x) * 4;
+      out[idx] = ((dx / len) * 0.5 + 0.5) * 255;
+      out[idx + 1] = ((dy / len) * 0.5 + 0.5) * 255;
+      out[idx + 2] = ((dz / len) * 0.5 + 0.5) * 255;
+      out[idx + 3] = 255;
+    }
+  }
+  return out;
+}
+
+// --- Node Setup & Metadata ---
+const NODE_DEFINITIONS = {
+  noise: {
+    title: '連続ノイズ生成器',
+    inputs: [],
+    outputs: ['出力テクスチャ'],
+    params: [{ id: 'scale', label: '密度・スケール', min: 1, max: 20, step: 1, default: 6 }]
+  },
+  cellular: {
+    title: '細胞・亀裂生成器',
+    inputs: [],
+    outputs: ['出力テクスチャ'],
+    params: [{ id: 'scale', label: '細胞密度', min: 1, max: 20, step: 1, default: 5 }]
+  },
+  brick: {
+    title: '規則的グリッド生成器',
+    inputs: [],
+    outputs: ['出力テクスチャ'],
+    params: [{ id: 'scale', label: '分割数', min: 2, max: 16, step: 1, default: 4 }]
+  },
+  blend: {
+    title: '2素材の割合合成器',
+    inputs: ['下地テクスチャ', '重ねテクスチャ'],
+    outputs: ['合成結果'],
+    params: [{ id: 'blend', label: '合成比率', min: 0, max: 1, step: 0.01, default: 0.5 }]
+  },
+  levels: {
+    title: '明暗コントラスト調整器',
+    inputs: ['元テクスチャ'],
+    outputs: ['補正結果'],
+    params: [
+      { id: 'contrast', label: 'コントラスト強度', min: 0.5, max: 3.0, step: 0.1, default: 1.5 },
+      { id: 'brightness', label: '全体明度オフセット', min: -0.5, max: 0.5, step: 0.02, default: 0.0 }
+    ]
+  },
+  invert: {
+    title: '階調反転器',
+    inputs: ['元テクスチャ'],
+    outputs: ['反転結果'],
+    params: []
+  },
+  normal: {
+    title: '法線ベクトル変換器',
+    inputs: ['高低差マップ'],
+    outputs: ['法線マップ'],
+    params: []
+  },
+  output: {
+    title: '最終マテリアル出力',
+    inputs: ['表面色 (Color)', '凹凸法線 (Normal)', '表面の粗さ (Roughness)'],
+    outputs: [],
+    params: []
+  }
+};
+
+const graphContainer = document.getElementById('graph-container');
+const svgLayer = document.getElementById('connections-layer');
+
+function createNode(type, x = 80, y = 80) {
+  const def = NODE_DEFINITIONS[type];
+  const id = 'node_' + Math.random().toString(36).substr(2, 9);
+  const el = document.createElement('div');
+  el.className = 'node';
+  el.style.left = `${x}px`;
+  el.style.top = `${y}px`;
+
+  const nodeObj = { id, type, x, y, el, params: {}, cache: null };
+  def.params.forEach(p => { nodeObj.params[p.id] = p.default; });
+
+  let controlsHtml = def.params.map(p => `
+    <div class="node-controls">
+      <label><span>${p.label}</span><span id="val_${id}_${p.id}">${p.default}</span></label>
+      <input type="range" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.default}" 
+             oninput="updateParam('${id}', '${p.id}', this.value)">
+    </div>
+  `).join('');
+
+  el.innerHTML = `
+    <div class="node-header">${def.title}</div>
+    <div class="node-body">
+      ${type !== 'output' ? `<div class="node-preview-wrapper"><canvas class="node-preview" width="${RES}" height="${RES}"></canvas></div>` : ''}
+      ${controlsHtml}
+      <div class="pins">
+        <div class="pin-col">
+          ${def.inputs.map((pinName, i) => `
+            <div class="pin-row">
+              <div class="pin" data-node="${id}" data-pin="${pinName}" data-dir="in"></div>
+              <span>${pinName}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="pin-col">
+          ${def.outputs.map((pinName, i) => `
+            <div class="pin-row" style="justify-content: flex-end;">
+              <span>${pinName}</span>
+              <div class="pin" data-node="${id}" data-pin="${pinName}" data-dir="out"></div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  const header = el.querySelector('.node-header');
+  header.addEventListener('mousedown', (e) => {
+    draggingNode = nodeObj;
+    dragOffset = { x: e.clientX - nodeObj.x, y: e.clientY - nodeObj.y };
+  });
+
+  graphContainer.appendChild(el);
+  nodes.push(nodeObj);
+  evaluateGraph();
+  return nodeObj;
+}
+
+window.updateParam = (id, param, value) => {
+  const node = nodes.find(n => n.id === id);
+  if (node) {
+    node.params[param] = parseFloat(value);
+    const labelVal = document.getElementById(`val_${id}_${param}`);
+    if (labelVal) labelVal.innerText = value;
+    evaluateGraph();
+  }
+};
+
+// Dragging Nodes & Global Mouse
+window.addEventListener('mousemove', (e) => {
+  const gR = graphContainer.getBoundingClientRect();
+  mousePos = { x: e.clientX - gR.left, y: e.clientY - gR.top };
+
+  if (draggingNode) {
+    draggingNode.x = e.clientX - dragOffset.x;
+    draggingNode.y = e.clientY - dragOffset.y;
+    draggingNode.el.style.left = `${draggingNode.x}px`;
+    draggingNode.el.style.top = `${draggingNode.y}px`;
+  }
+  drawConnections();
+});
+
+window.addEventListener('mouseup', (e) => {
+  draggingNode = null;
+  if (activeConnectingPin) {
+    // Check if released over a pin
+    const elem = document.elementFromPoint(e.clientX, e.clientY);
+    if (elem && elem.classList.contains('pin')) {
+      handlePinConnection(activeConnectingPin, {
+        nodeId: elem.dataset.node,
+        pin: elem.dataset.pin,
+        dir: elem.dataset.dir
+      });
+    }
+    activeConnectingPin = null;
+    drawConnections();
+  }
+});
+
+// Robust Pin-to-Pin Connection
+graphContainer.addEventListener('mousedown', (e) => {
+  if (e.target.classList.contains('pin')) {
+    activeConnectingPin = {
+      nodeId: e.target.dataset.node,
+      pin: e.target.dataset.pin,
+      dir: e.target.dataset.dir,
+      el: e.target
+    };
+    e.stopPropagation();
+  }
+});
+
+function handlePinConnection(pinA, pinB) {
+  if (pinA.nodeId === pinB.nodeId) return; // Prevent connecting node to itself
+  if (pinA.dir === pinB.dir) return; // Must be In to Out or Out to In
+
+  const from = pinA.dir === 'out' ? pinA : pinB;
+  const to = pinA.dir === 'in' ? pinA : pinB;
+
+  // Single input connection constraint
+  connections = connections.filter(c => !(c.toNode === to.nodeId && c.toPin === to.pin));
+  connections.push({ fromNode: from.nodeId, fromPin: from.pin, toNode: to.nodeId, toPin: to.pin });
+  evaluateGraph();
+}
+
+function drawConnections() {
+  svgLayer.innerHTML = '';
+  for (let c of connections) {
+    const fromEl = document.querySelector(`.pin[data-node="${c.fromNode}"][data-pin="${c.fromPin}"][data-dir="out"]`);
+    const toEl = document.querySelector(`.pin[data-node="${c.toNode}"][data-pin="${c.toPin}"][data-dir="in"]`);
+    if (!fromEl || !toEl) continue;
+
+    const r1 = fromEl.getBoundingClientRect();
+    const r2 = toEl.getBoundingClientRect();
+    const gR = graphContainer.getBoundingClientRect();
+
+    const x1 = r1.left - gR.left + 6;
+    const y1 = r1.top - gR.top + 6;
+    const x2 = r2.left - gR.left + 6;
+    const y2 = r2.top - gR.top + 6;
+
+    const dx = Math.max(30, Math.abs(x2 - x1) * 0.5);
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`);
+    path.setAttribute('stroke', '#5078ff');
+    path.setAttribute('stroke-width', '2.5');
+    path.setAttribute('fill', 'none');
+    svgLayer.appendChild(path);
+  }
+
+  // Active Dragging Line
+  if (activeConnectingPin && activeConnectingPin.el) {
+    const r1 = activeConnectingPin.el.getBoundingClientRect();
+    const gR = graphContainer.getBoundingClientRect();
+    const x1 = r1.left - gR.left + 6;
+    const y1 = r1.top - gR.top + 6;
+    const x2 = mousePos.x;
+    const y2 = mousePos.y;
+
+    const dx = Math.max(30, Math.abs(x2 - x1) * 0.5);
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`);
+    path.setAttribute('stroke', '#ffcc00');
+    path.setAttribute('stroke-dasharray', '4');
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute('fill', 'none');
+    svgLayer.appendChild(path);
+  }
+}
+
+// --- Graph Evaluation Engine ---
+function evaluateGraph() {
+  for (let n of nodes) {
+    if (n.type === 'noise') n.cache = generateNoise(n.params.scale);
+    if (n.type === 'cellular') n.cache = generateCellular(n.params.scale);
+    if (n.type === 'brick') n.cache = generateBrick(n.params.scale);
+  }
+
+  // Filters Evaluation
+  for (let n of nodes) {
+    const getIn = (pinName) => {
+      const c = connections.find(cn => cn.toNode === n.id && cn.toPin === pinName);
+      if (!c) return new Float32Array(RES * RES);
+      const src = nodes.find(sn => sn.id === c.fromNode);
+      return src && src.cache ? src.cache : new Float32Array(RES * RES);
+    };
+
+    if (n.type === 'invert') {
+      const src = getIn('元テクスチャ');
+      const out = new Float32Array(RES * RES);
+      for (let i = 0; i < src.length; i++) out[i] = 1.0 - src[i];
+      n.cache = out;
+    } else if (n.type === 'blend') {
+      const a = getIn('下地テクスチャ');
+      const b = getIn('重ねテクスチャ');
+      const m = n.params.blend;
+      const out = new Float32Array(RES * RES);
+      for (let i = 0; i < a.length; i++) out[i] = a[i] * (1 - m) + b[i] * m;
+      n.cache = out;
+    } else if (n.type === 'levels') {
+      const src = getIn('元テクスチャ');
+      const out = new Float32Array(RES * RES);
+      const cont = n.params.contrast;
+      const b = n.params.brightness;
+      for (let i = 0; i < src.length; i++) {
+        let v = (src[i] - 0.5) * cont + 0.5 + b;
+        out[i] = Math.max(0, Math.min(1, v));
+      }
+      n.cache = out;
+    } else if (n.type === 'normal') {
+      n.cache = heightToNormal(getIn('高低差マップ'));
+    }
+
+    // Render Preview Thumbnail
+    if (n.type !== 'output' && n.cache) {
+      const cvs = n.el.querySelector('.node-preview');
+      const ctx = cvs.getContext('2d');
+      const img = ctx.createImageData(RES, RES);
+      if (n.type === 'normal') {
+        img.data.set(n.cache);
+      } else {
+        for (let i = 0; i < n.cache.length; i++) {
+          const v = Math.floor(n.cache[i] * 255);
+          const idx = i * 4;
+          img.data[idx] = v;
+          img.data[idx + 1] = v;
+          img.data[idx + 2] = v;
+          img.data[idx + 3] = 255;
+        }
+      }
+      ctx.putImageData(img, 0, 0);
+    }
+  }
+
+  // Update Output PBR Maps
+  const outNode = nodes.find(n => n.type === 'output');
+  if (outNode) {
+    const getSrc = (pinName) => {
+      const c = connections.find(cn => cn.toNode === outNode.id && cn.toPin === pinName);
+      return c ? nodes.find(sn => sn.id === c.fromNode) : null;
+    };
+
+    const cSrc = getSrc('表面色 (Color)');
+    const nSrc = getSrc('凹凸法線 (Normal)');
+    const rSrc = getSrc('表面の粗さ (Roughness)');
+
+    if (cSrc && cSrc.cache) {
+      const d = colorTex.image.data;
+      for (let i = 0; i < RES * RES; i++) {
+        const v = cSrc.cache[i] * 255;
+        d[i * 4] = v; d[i * 4 + 1] = v; d[i * 4 + 2] = v; d[i * 4 + 3] = 255;
+      }
+      colorTex.needsUpdate = true;
+    }
+    if (nSrc && nSrc.cache && nSrc.type === 'normal') {
+      normalTex.image.data.set(nSrc.cache);
+      normalTex.needsUpdate = true;
+    }
+    if (rSrc && rSrc.cache) {
+      const d = roughnessTex.image.data;
+      for (let i = 0; i < RES * RES; i++) {
+        const v = rSrc.cache[i] * 255;
+        d[i * 4] = v; d[i * 4 + 1] = v; d[i * 4 + 2] = v; d[i * 4 + 3] = 255;
+      }
+      roughnessTex.needsUpdate = true;
+    }
+  }
+  drawConnections();
+}
+
+// Initial Preset Graph Setup
+const outNode = createNode('output', 680, 160);
+const n1 = createNode('noise', 40, 60);
+const n2 = createNode('brick', 40, 360);
+const blend = createNode('blend', 270, 160);
+const norm = createNode('normal', 470, 360);
+const lev = createNode('levels', 470, 160);
+
+connections.push({ fromNode: n1.id, fromPin: '出力テクスチャ', toNode: blend.id, toPin: '下地テクスチャ' });
+connections.push({ fromNode: n2.id, fromPin: '出力テクスチャ', toNode: blend.id, toPin: '重ねテクスチャ' });
+connections.push({ fromNode: blend.id, fromPin: '合成結果', toNode: lev.id, toPin: '元テクスチャ' });
+connections.push({ fromNode: lev.id, fromPin: '補正結果', toNode: outNode.id, toPin: '表面色 (Color)' });
+connections.push({ fromNode: n2.id, fromPin: '出力テクスチャ', toNode: norm.id, toPin: '高低差マップ' });
+connections.push({ fromNode: norm.id, fromPin: '法線マップ', toNode: outNode.id, toPin: '凹凸法線 (Normal)' });
+connections.push({ fromNode: n1.id, fromPin: '出力テクスチャ', toNode: outNode.id, toPin: '表面の粗さ (Roughness)' });
+
+evaluateGraph();
+</script>
+</body>
+</html>
