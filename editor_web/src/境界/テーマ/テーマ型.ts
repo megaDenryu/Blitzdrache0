@@ -84,6 +84,10 @@ export interface エディターテーマ定義 {
     readonly 地形基本色: number
     readonly 植生色: number
     readonly 道路色: number
+    // 大域編集の地形に入れる標高グラデーション(表示専用。低い側から高い側への3段)
+    readonly 標高低色: number
+    readonly 標高中色: number
+    readonly 標高高色: number
     // 3Dビューの道路点マーカーの色。通常・選択中・つかんでいる、の3状態を描き分ける
     readonly 道路点通常色: number
     readonly 道路点選択色: number

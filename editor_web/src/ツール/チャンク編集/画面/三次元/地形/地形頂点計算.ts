@@ -63,6 +63,25 @@ export function 地形幾何データを生成する(
     return { 頂点配列, 法線配列, UV配列, 添字配列 }
 }
 
+// 高さデータの最小値・最大値を求める。標高グラデーション表示の正規化範囲に使う。
+export interface 高さの範囲 {
+    readonly 最小: number
+    readonly 最大: number
+}
+
+export function 高さの範囲を求める(高さデータ: Float32Array): 高さの範囲 {
+    let 最小 = Number.POSITIVE_INFINITY
+    let 最大 = Number.NEGATIVE_INFINITY
+    for (const 標高 of 高さデータ) {
+        if (標高 < 最小) 最小 = 標高
+        if (標高 > 最大) 最大 = 標高
+    }
+    if (!Number.isFinite(最小) || !Number.isFinite(最大)) {
+        return { 最小: 0, 最大: 1 }
+    }
+    return { 最小, 最大 }
+}
+
 // 既存の頂点配列バッファへ高さ場データを書き戻す。
 export function 地形頂点高さを更新する(
     頂点配列: Float32Array,

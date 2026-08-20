@@ -7,6 +7,9 @@ export interface 三次元の配色 {
     readonly 地形基本色: number
     readonly 植生色: number
     readonly 道路色: number
+    readonly 標高低色: number
+    readonly 標高中色: number
+    readonly 標高高色: number
     readonly 道路点マーカー配色: 道路点マーカー配色
 }
 
@@ -15,6 +18,9 @@ export interface 三次元の色トークン {
     readonly 地形基本色: number
     readonly 植生色: number
     readonly 道路色: number
+    readonly 標高低色: number
+    readonly 標高中色: number
+    readonly 標高高色: number
     readonly 道路点通常色: number
     readonly 道路点選択色: number
     readonly 道路点つかんでいる色: number
@@ -26,6 +32,9 @@ export function 色トークンから三次元の配色を作る(トークン: �
         地形基本色: トークン.地形基本色,
         植生色: トークン.植生色,
         道路色: トークン.道路色,
+        標高低色: トークン.標高低色,
+        標高中色: トークン.標高中色,
+        標高高色: トークン.標高高色,
         道路点マーカー配色: {
             通常色: トークン.道路点通常色,
             選択色: トークン.道路点選択色,
