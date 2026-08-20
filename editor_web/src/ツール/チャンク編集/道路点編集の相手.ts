@@ -32,6 +32,15 @@ export interface 当たりの記録 {
     readonly 原初交差情報: { readonly object: Object3D }
 }
 
+// ポインタ事象の記録とは、レイキャストが配る1回ぶんの事象のうち、道路の編集が読む部分だけを
+// 表したもののことである。SengenThreeのポインタ事象情報はこの形を満たす。
+// 原初事象の押した回数は、1回のクリックか続けざまの2回かを見分けるために読む。
+export interface ポインタ事象の記録 {
+    readonly 当たり一覧: readonly 当たりの記録[]
+    readonly 最前面当たり: 当たりの記録 | null
+    readonly 原初事象: { readonly detail: number }
+}
+
 export interface 道路点編集対象ビュー {
     readonly 道路点マーカー: 道路点マーカーの当たり
     readonly 道路帯: 路面の当たり
