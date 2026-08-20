@@ -1,3 +1,11 @@
+// チャンク座標と塩(用途ごとに乱数系列を分けるための定数)から決定的な乱数の種を作る。
+// 同一の座標・同一の塩からは常に同一の種になり、塩を変えると座標が同じでも別系列になる。
+export function チャンク座標から乱数の種を作る(座標: { readonly x: number; readonly z: number }, 塩: bigint): bigint {
+    const cx = BigInt(座標.x >= 0 ? 座標.x * 2 : -座標.x * 2 - 1)
+    const cz = BigInt(座標.z >= 0 ? 座標.z * 2 : -座標.z * 2 - 1)
+    return ((cx * 73856093n ^ cz * 19349663n ^ 塩) & 0x7fffffffffffffffn) || 12345n
+}
+
 // 乱数の種から決定的な擬似乱数列を生成する。
 // 同一の種に対しては常に同一の乱数列が得られることを保証する。
 export class 決定的乱数生成器 {
