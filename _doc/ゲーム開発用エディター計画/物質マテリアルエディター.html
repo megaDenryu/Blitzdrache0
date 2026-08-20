@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Substance-Style Procedural Material Generator</title>
+  <title>物質マテリアルエディター</title>
   <style>
     :root {
       --bg: #1a1a20;
@@ -10,6 +10,7 @@
       --node-bg: #2c2c36;
       --border: #3e3e4e;
       --accent: #5078ff;
+      --hit: #ffcc00;
       --text: #e2e2ea;
       --text-sub: #9e9eb0;
     }
@@ -78,22 +79,43 @@
       border-color: var(--accent);
     }
     .btn span { font-size: 10px; color: var(--text-sub); }
+    .export-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .export-grid .btn { font-size: 11px; align-items: flex-start; }
+    .hint {
+      font-size: 10px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+    .hint b { color: var(--text); font-weight: 600; }
     #graph-container {
       flex: 1;
       height: 100%;
       position: relative;
-      background-size: 24px 24px;
-      background-image: 
+      overflow: hidden;
+      cursor: default;
+    }
+    #graph-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100000px;
+      height: 100000px;
+      background-image:
         linear-gradient(to right, #202028 1px, transparent 1px),
         linear-gradient(to bottom, #202028 1px, transparent 1px);
-      overflow: hidden;
+      transform-origin: 0 0;
     }
     #connections-layer {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      width: 100000px;
+      height: 100000px;
+      overflow: visible;
       pointer-events: none;
     }
     .node {
@@ -105,9 +127,10 @@
       box-shadow: 0 4px 16px rgba(0,0,0,0.6);
       font-size: 11px;
     }
+    .node.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 4px 16px rgba(0,0,0,0.6); }
     .node-header {
       background: #383846;
-      padding: 6px 8px;
+      padding: 6px 26px 6px 8px;
       font-weight: bold;
       border-top-left-radius: 5px;
       border-top-right-radius: 5px;
@@ -115,8 +138,23 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: relative;
     }
     .node-header:active { cursor: grabbing; }
+    .node-delete {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      width: 16px;
+      height: 16px;
+      line-height: 14px;
+      text-align: center;
+      border-radius: 4px;
+      color: var(--text-sub);
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .node-delete:hover { color: #ff6b6b; background: #4a2a2e; }
     .node-body {
       padding: 8px;
       display: flex;
@@ -175,6 +213,32 @@
       justify-content: space-between;
     }
     .node-controls input { width: 100%; accent-color: var(--accent); }
+    .graph-toolbar {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+    }
+    .graph-toolbar .btn { padding: 6px 10px; font-size: 11px; }
+    #toast {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2e2e38;
+      border: 1px solid var(--hit);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      display: none;
+      z-index: 30;
+      pointer-events: none;
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -187,54 +251,86 @@
     <div class="sidebar-controls">
       <div class="node-category">生成系 (ジェネレータ)</div>
       <div class="node-btn-grid">
-        <button class="btn" onclick="createNode('noise')">
+        <button class="btn" onclick="createNodeDefault('noise')">
           連続ノイズ生成器
-          <span>雲・自然なムラを作る基本ノイズ</span>
+          <span>雲・自然なムラを作るタイル化ノイズ</span>
         </button>
-        <button class="btn" onclick="createNode('cellular')">
+        <button class="btn" onclick="createNodeDefault('cellular')">
           細胞・亀裂パターン生成器
-          <span>ボロノイ分割による細胞・ひび割れ</span>
+          <span>一定の乱数から作るタイル化ボロノイ</span>
         </button>
-        <button class="btn" onclick="createNode('brick')">
+        <button class="btn" onclick="createNodeDefault('brick')">
           規則的グリッド・レンガ生成器
           <span>規則的なタイルやブロック模様</span>
+        </button>
+        <button class="btn" onclick="createNodeDefault('constant')">
+          一定値生成器
+          <span>単一の濃さを敷き詰める</span>
         </button>
       </div>
 
       <div class="node-category">加工・変換系 (フィルター)</div>
       <div class="node-btn-grid">
-        <button class="btn" onclick="createNode('blend')">
+        <button class="btn" onclick="createNodeDefault('blend')">
           2素材の割合ブレンド合成器
           <span>比率に応じて2枚のマップを重ね合わせ</span>
         </button>
-        <button class="btn" onclick="createNode('levels')">
+        <button class="btn" onclick="createNodeDefault('levels')">
           明暗コントラスト・閾値調整器
           <span>白黒のコントラストや閾値を調整</span>
         </button>
-        <button class="btn" onclick="createNode('invert')">
+        <button class="btn" onclick="createNodeDefault('invert')">
           階調反転器 (ネガポジ反転)
           <span>白と黒の明度を完全に逆転</span>
         </button>
-        <button class="btn" onclick="createNode('normal')">
+        <button class="btn" onclick="createNodeDefault('normal')">
           高低差から法線ベクトル変換器
-          <span>白黒の凹凸から光を反射する法線マップを算出</span>
+          <span>白黒の凹凸から法線マップを算出</span>
         </button>
+      </div>
+
+      <div class="node-category">出力マップの書き出し</div>
+      <div class="export-grid">
+        <button class="btn" onclick="exportMap('color')">表面色<span>base_color.png</span></button>
+        <button class="btn" onclick="exportMap('normal')">法線<span>normal.png</span></button>
+        <button class="btn" onclick="exportMap('roughness')">粗さ<span>roughness.png</span></button>
+        <button class="btn" onclick="exportMap('metallic')">金属度<span>metallic.png</span></button>
+      </div>
+
+      <div class="hint">
+        <b>操作</b><br>
+        ノードはヘッダをドラッグして移動<br>
+        余白をドラッグで描画領域を移動<br>
+        ホイールで拡大・縮小<br>
+        <b>Delete</b> で選択中のノードや接続を削除
       </div>
     </div>
   </div>
 
   <div id="graph-container">
-    <svg id="connections-layer"></svg>
+    <div id="graph-layer">
+      <svg id="connections-layer"></svg>
+    </div>
+    <div class="graph-toolbar">
+      <button class="btn" onclick="buildPresetGraph()">初期グラフに戻す</button>
+      <button class="btn" onclick="deleteSelected()">選択を削除 (Delete)</button>
+    </div>
+    <div id="toast"></div>
   </div>
 
 <script>
 const RES = 128;
+const ZERO_CACHE = new Float32Array(RES * RES);
+let view = { x: 0, y: 0, zoom: 1 };
 let nodes = [];
 let connections = [];
+let selectedNode = null;
+let selectedConn = null;
+let panning = null;
 let draggingNode = null;
-let dragOffset = { x: 0, y: 0 };
-let activeConnectingPin = null;
-let mousePos = { x: 0, y: 0 };
+let dragOffsetWorld = { x: 0, y: 0 };
+let activeConnectingEl = null;
+let toastTimer = null;
 
 // --- 3D Viewport ---
 const vpCanvas = document.getElementById('viewport-3d');
@@ -250,14 +346,25 @@ vpScene.add(light1);
 vpScene.add(new THREE.AmbientLight(0x555566, 0.9));
 
 const sphereGeo = new THREE.SphereGeometry(0.8, 64, 64);
-const colorTex = new THREE.DataTexture(new Uint8Array(RES * RES * 4), RES, RES, THREE.RGBAFormat);
-const normalTex = new THREE.DataTexture(new Uint8Array(RES * RES * 4), RES, RES, THREE.RGBAFormat);
-const roughnessTex = new THREE.DataTexture(new Uint8Array(RES * RES * 4), RES, RES, THREE.RGBAFormat);
+
+function makeTex(r, g, b, a) {
+  const d = new Uint8Array(RES * RES * 4);
+  for (let i = 0; i < RES * RES; i++) {
+    d[i * 4] = r; d[i * 4 + 1] = g; d[i * 4 + 2] = b; d[i * 4 + 3] = a;
+  }
+  return new THREE.DataTexture(d, RES, RES, THREE.RGBAFormat);
+}
+
+const colorTex = makeTex(0, 0, 0, 255);
+const normalTex = makeTex(128, 128, 255, 255);
+const roughnessTex = makeTex(128, 128, 128, 255);
+const metallicTex = makeTex(26, 26, 26, 255);
 
 const pbrMaterial = new THREE.MeshStandardMaterial({
   map: colorTex,
   normalMap: normalTex,
   roughnessMap: roughnessTex,
+  metalnessMap: metallicTex,
   roughness: 0.5,
   metalness: 0.1
 });
@@ -271,33 +378,84 @@ function animate() {
 }
 animate();
 
-// --- Procedural Generation Algorithms ---
-function generateNoise(scale) {
+window.addEventListener('resize', () => {
+  const w = vpCanvas.clientWidth, h = vpCanvas.clientHeight;
+  vpCamera.aspect = w / h;
+  vpCamera.updateProjectionMatrix();
+  vpRenderer.setSize(w, h);
+});
+
+// --- Seeded Random ---
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function hash2(x, y, seed) {
+  let h = seed ^ Math.imul(x, 374761393) ^ Math.imul(y, 668265263);
+  h = Math.imul(h ^ (h >>> 13), 1274126177);
+  h ^= h >>> 16;
+  return (h >>> 0) / 4294967296;
+}
+
+function valueNoise(u, v, period, seed) {
+  const x = u * period;
+  const y = v * period;
+  const xi = Math.floor(x) % period;
+  const yi = Math.floor(y) % period;
+  const xi1 = (xi + 1) % period;
+  const yi1 = (yi + 1) % period;
+  const xf = x - Math.floor(x);
+  const yf = y - Math.floor(y);
+  const sx = xf * xf * (3 - 2 * xf);
+  const sy = yf * yf * (3 - 2 * yf);
+  const a = hash2(xi, yi, seed);
+  const b = hash2(xi1, yi, seed);
+  const c = hash2(xi, yi1, seed);
+  const d = hash2(xi1, yi1, seed);
+  return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy;
+}
+
+// --- Procedural Generation Algorithms (all tileable) ---
+function generateNoise(scale, seed) {
   const data = new Float32Array(RES * RES);
-  for (let y = 0; y < RES; y++) {
-    for (let x = 0; x < RES; x++) {
-      let v = 0, amp = 1, freq = scale * 0.04, maxAmp = 0;
-      for (let o = 0; o < 3; o++) {
-        v += (Math.sin(x * freq) * Math.cos(y * freq)) * amp;
-        maxAmp += amp;
-        amp *= 0.5;
-        freq *= 2.0;
+  const base = Math.max(1, Math.round(scale));
+  let amp = 1, total = 0;
+  for (let o = 0; o < 3; o++) {
+    const period = base << o;
+    total += amp;
+    for (let y = 0; y < RES; y++) {
+      const v = y / RES;
+      for (let x = 0; x < RES; x++) {
+        const u = x / RES;
+        data[y * RES + x] += valueNoise(u, v, period, seed + o * 131) * amp;
       }
-      data[y * RES + x] = (v / maxAmp + 1) * 0.5;
     }
+    amp *= 0.5;
   }
+  for (let i = 0; i < data.length; i++) data[i] /= total;
   return data;
 }
 
-function generateCellular(scale) {
-  const data = new Float32Array(RES * RES);
+function generateCellular(scale, seed) {
+  const rng = mulberry32(seed);
   const count = Math.max(3, Math.floor(scale * 1.5));
-  const points = Array.from({ length: count }, () => ({ x: Math.random() * RES, y: Math.random() * RES }));
+  const points = [];
+  for (let i = 0; i < count; i++) points.push({ x: rng() * RES, y: rng() * RES });
+  const data = new Float32Array(RES * RES);
   for (let y = 0; y < RES; y++) {
     for (let x = 0; x < RES; x++) {
       let dMin = RES * 2;
-      for (let p of points) {
-        const d = Math.hypot(x - p.x, y - p.y);
+      for (const p of points) {
+        let dx = Math.abs(x - p.x);
+        let dy = Math.abs(y - p.y);
+        if (dx > RES / 2) dx = RES - dx;
+        if (dy > RES / 2) dy = RES - dy;
+        const d = Math.hypot(dx, dy);
         if (d < dMin) dMin = d;
       }
       data[y * RES + x] = Math.min(1, dMin / (RES / 3.5));
@@ -306,39 +464,42 @@ function generateCellular(scale) {
   return data;
 }
 
-function generateBrick(scale) {
+function generateBrick(scale, mortar) {
   const data = new Float32Array(RES * RES);
   const tiles = Math.max(2, Math.floor(scale));
   const tileSize = RES / tiles;
+  const mw = Math.min(mortar, tileSize * 0.5 - 0.5);
   for (let y = 0; y < RES; y++) {
     const row = Math.floor(y / (tileSize * 0.5));
     const xOffset = (row % 2 === 0) ? 0 : tileSize * 0.5;
+    const v = y % (tileSize * 0.5);
     for (let x = 0; x < RES; x++) {
       const u = (x + xOffset) % tileSize;
-      const v = y % (tileSize * 0.5);
-      const isEdge = (u < 2 || v < 2);
+      const isEdge = (u < mw || v < mw);
       data[y * RES + x] = isEdge ? 0.1 : 0.9;
     }
   }
   return data;
 }
 
-function heightToNormal(heightData) {
+function heightToNormal(heightData, strength) {
   const out = new Uint8Array(RES * RES * 4);
+  if (!heightData) heightData = ZERO_CACHE;
+  const s2 = 2.5 * strength;
   for (let y = 0; y < RES; y++) {
     for (let x = 0; x < RES; x++) {
-      const left = heightData[y * RES + Math.max(0, x - 1)];
-      const right = heightData[y * RES + Math.min(RES - 1, x + 1)];
-      const down = heightData[Math.max(0, y - 1) * RES + x];
-      const up = heightData[Math.min(RES - 1, y + 1) * RES + x];
+      const left  = heightData[y * RES + (x - 1 + RES) % RES];
+      const right = heightData[y * RES + (x + 1) % RES];
+      const down  = heightData[((y + 1) % RES) * RES + x];
+      const up    = heightData[((y - 1 + RES) % RES) * RES + x];
 
-      const dx = (left - right) * 2.5;
-      const dy = (down - up) * 2.5;
+      const dx = (left - right) * s2;
+      const dy = (down - up) * s2;
       const dz = 1.0;
       const len = Math.hypot(dx, dy, dz);
 
       const idx = (y * RES + x) * 4;
-      out[idx] = ((dx / len) * 0.5 + 0.5) * 255;
+      out[idx]     = ((dx / len) * 0.5 + 0.5) * 255;
       out[idx + 1] = ((dy / len) * 0.5 + 0.5) * 255;
       out[idx + 2] = ((dz / len) * 0.5 + 0.5) * 255;
       out[idx + 3] = 255;
@@ -348,35 +509,56 @@ function heightToNormal(heightData) {
 }
 
 // --- Node Setup & Metadata ---
+const PIN_GRAY = 'gray';
+const PIN_NORMAL = 'normal';
+
 const NODE_DEFINITIONS = {
   noise: {
     title: '連続ノイズ生成器',
     inputs: [],
-    outputs: ['出力テクスチャ'],
-    params: [{ id: 'scale', label: '密度・スケール', min: 1, max: 20, step: 1, default: 6 }]
+    outputs: [{ name: '出力テクスチャ', type: PIN_GRAY }],
+    params: [
+      { id: 'scale', label: '密度・スケール', min: 1, max: 20, step: 1, default: 6 },
+      { id: 'seed', label: '乱数の種', min: 1, max: 1000, step: 1, default: 1 }
+    ]
   },
   cellular: {
     title: '細胞・亀裂生成器',
     inputs: [],
-    outputs: ['出力テクスチャ'],
-    params: [{ id: 'scale', label: '細胞密度', min: 1, max: 20, step: 1, default: 5 }]
+    outputs: [{ name: '出力テクスチャ', type: PIN_GRAY }],
+    params: [
+      { id: 'scale', label: '細胞密度', min: 1, max: 20, step: 1, default: 5 },
+      { id: 'seed', label: '乱数の種', min: 1, max: 1000, step: 1, default: 2 }
+    ]
   },
   brick: {
     title: '規則的グリッド生成器',
     inputs: [],
-    outputs: ['出力テクスチャ'],
-    params: [{ id: 'scale', label: '分割数', min: 2, max: 16, step: 1, default: 4 }]
+    outputs: [{ name: '出力テクスチャ', type: PIN_GRAY }],
+    params: [
+      { id: 'scale', label: '分割数', min: 2, max: 16, step: 1, default: 4 },
+      { id: 'mortar', label: '目地の幅', min: 1, max: 8, step: 1, default: 2 }
+    ]
+  },
+  constant: {
+    title: '一定値生成器',
+    inputs: [],
+    outputs: [{ name: '一定値', type: PIN_GRAY }],
+    params: [{ id: 'value', label: '値', min: 0, max: 1, step: 0.01, default: 0.5 }]
   },
   blend: {
     title: '2素材の割合合成器',
-    inputs: ['下地テクスチャ', '重ねテクスチャ'],
-    outputs: ['合成結果'],
+    inputs: [
+      { name: '下地テクスチャ', type: PIN_GRAY },
+      { name: '重ねテクスチャ', type: PIN_GRAY }
+    ],
+    outputs: [{ name: '合成結果', type: PIN_GRAY }],
     params: [{ id: 'blend', label: '合成比率', min: 0, max: 1, step: 0.01, default: 0.5 }]
   },
   levels: {
     title: '明暗コントラスト調整器',
-    inputs: ['元テクスチャ'],
-    outputs: ['補正結果'],
+    inputs: [{ name: '元テクスチャ', type: PIN_GRAY }],
+    outputs: [{ name: '補正結果', type: PIN_GRAY }],
     params: [
       { id: 'contrast', label: 'コントラスト強度', min: 0.5, max: 3.0, step: 0.1, default: 1.5 },
       { id: 'brightness', label: '全体明度オフセット', min: -0.5, max: 0.5, step: 0.02, default: 0.0 }
@@ -384,30 +566,66 @@ const NODE_DEFINITIONS = {
   },
   invert: {
     title: '階調反転器',
-    inputs: ['元テクスチャ'],
-    outputs: ['反転結果'],
+    inputs: [{ name: '元テクスチャ', type: PIN_GRAY }],
+    outputs: [{ name: '反転結果', type: PIN_GRAY }],
     params: []
   },
   normal: {
     title: '法線ベクトル変換器',
-    inputs: ['高低差マップ'],
-    outputs: ['法線マップ'],
-    params: []
+    inputs: [{ name: '高低差マップ', type: PIN_GRAY }],
+    outputs: [{ name: '法線マップ', type: PIN_NORMAL }],
+    params: [{ id: 'strength', label: '凹凸の強さ', min: 0.2, max: 3.0, step: 0.05, default: 1.0 }]
   },
   output: {
     title: '最終マテリアル出力',
-    inputs: ['表面色 (Color)', '凹凸法線 (Normal)', '表面の粗さ (Roughness)'],
+    inputs: [
+      { name: '表面色 (Color)', type: PIN_GRAY },
+      { name: '凹凸法線 (Normal)', type: PIN_NORMAL },
+      { name: '表面の粗さ (Roughness)', type: PIN_GRAY },
+      { name: '金属度 (Metallic)', type: PIN_GRAY }
+    ],
     outputs: [],
-    params: []
+    params: [
+      { id: 'metalness', label: '金属度（基準）', min: 0, max: 1, step: 0.01, default: 0.1 },
+      { id: 'roughness', label: '粗さ（基準）', min: 0, max: 1, step: 0.01, default: 0.5 }
+    ]
   }
 };
 
+// --- View / Transform (pan & zoom) ---
 const graphContainer = document.getElementById('graph-container');
+const graphLayer = document.getElementById('graph-layer');
 const svgLayer = document.getElementById('connections-layer');
 
-function createNode(type, x = 80, y = 80) {
+function applyView() {
+  const g = 24;
+  graphLayer.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.zoom})`;
+  graphLayer.style.backgroundSize = `${g * view.zoom}px ${g * view.zoom}px`;
+  drawConnections();
+}
+
+function clientToWorld(cx, cy) {
+  const rect = graphContainer.getBoundingClientRect();
+  return { x: (cx - rect.left - view.x) / view.zoom, y: (cy - rect.top - view.y) / view.zoom };
+}
+
+function createNodeDefault(type) {
+  const rect = graphContainer.getBoundingClientRect();
+  const cur = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+  const w = clientToWorld(cur.x, cur.y);
+  return createNode(type, w.x + (Math.random() * 40 - 20), w.y + (Math.random() * 40 - 20));
+}
+
+function nodeCenterWorld() {
+  const rect = graphContainer.getBoundingClientRect();
+  return clientToWorld(rect.left + rect.width / 2, rect.top + rect.height / 2);
+}
+
+// --- Node Creation ---
+let nodeSeq = 1;
+function createNode(type, x, y) {
   const def = NODE_DEFINITIONS[type];
-  const id = 'node_' + Math.random().toString(36).substr(2, 9);
+  const id = 'node_' + (nodeSeq++);
   const el = document.createElement('div');
   el.className = 'node';
   el.style.left = `${x}px`;
@@ -419,30 +637,35 @@ function createNode(type, x = 80, y = 80) {
   let controlsHtml = def.params.map(p => `
     <div class="node-controls">
       <label><span>${p.label}</span><span id="val_${id}_${p.id}">${p.default}</span></label>
-      <input type="range" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.default}" 
+      <input type="range" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.default}"
              oninput="updateParam('${id}', '${p.id}', this.value)">
     </div>
   `).join('');
 
+  const pinName = (pin) => `<span>${pin.name}</span>`;
+
   el.innerHTML = `
-    <div class="node-header">${def.title}</div>
+    <div class="node-header">
+      ${def.title}
+      <span class="node-delete" title="削除">×</span>
+    </div>
     <div class="node-body">
       ${type !== 'output' ? `<div class="node-preview-wrapper"><canvas class="node-preview" width="${RES}" height="${RES}"></canvas></div>` : ''}
       ${controlsHtml}
       <div class="pins">
         <div class="pin-col">
-          ${def.inputs.map((pinName, i) => `
+          ${def.inputs.map(pin => `
             <div class="pin-row">
-              <div class="pin" data-node="${id}" data-pin="${pinName}" data-dir="in"></div>
-              <span>${pinName}</span>
+              <div class="pin" data-node="${id}" data-pin="${pin.name}" data-dir="in"></div>
+              ${pinName(pin)}
             </div>
           `).join('')}
         </div>
         <div class="pin-col">
-          ${def.outputs.map((pinName, i) => `
+          ${def.outputs.map(pin => `
             <div class="pin-row" style="justify-content: flex-end;">
-              <span>${pinName}</span>
-              <div class="pin" data-node="${id}" data-pin="${pinName}" data-dir="out"></div>
+              ${pinName(pin)}
+              <div class="pin" data-node="${id}" data-pin="${pin.name}" data-dir="out"></div>
             </div>
           `).join('')}
         </div>
@@ -450,13 +673,24 @@ function createNode(type, x = 80, y = 80) {
     </div>
   `;
 
+  const body = el.querySelector('.node-body');
+  body.addEventListener('mousedown', () => selectNode(nodeObj));
+
   const header = el.querySelector('.node-header');
   header.addEventListener('mousedown', (e) => {
+    if (e.target.classList.contains('node-delete')) return;
+    selectNode(nodeObj);
     draggingNode = nodeObj;
-    dragOffset = { x: e.clientX - nodeObj.x, y: e.clientY - nodeObj.y };
+    const w = clientToWorld(e.clientX, e.clientY);
+    dragOffsetWorld = { x: w.x - nodeObj.x, y: w.y - nodeObj.y };
+    el.style.zIndex = 100;
   });
 
-  graphContainer.appendChild(el);
+  const delBtn = el.querySelector('.node-delete');
+  delBtn.addEventListener('mousedown', (e) => e.stopPropagation());
+  delBtn.addEventListener('click', () => deleteNode(nodeObj));
+
+  graphLayer.appendChild(el);
   nodes.push(nodeObj);
   evaluateGraph();
   return nodeObj;
@@ -472,225 +706,437 @@ window.updateParam = (id, param, value) => {
   }
 };
 
-// Dragging Nodes & Global Mouse
-window.addEventListener('mousemove', (e) => {
-  const gR = graphContainer.getBoundingClientRect();
-  mousePos = { x: e.clientX - gR.left, y: e.clientY - gR.top };
-
-  if (draggingNode) {
-    draggingNode.x = e.clientX - dragOffset.x;
-    draggingNode.y = e.clientY - dragOffset.y;
-    draggingNode.el.style.left = `${draggingNode.x}px`;
-    draggingNode.el.style.top = `${draggingNode.y}px`;
-  }
+// --- Selection & Deletion ---
+function selectNode(node) {
+  if (selectedNode === node) return;
+  cssNode(selectedNode, false);
+  selectedNode = node;
+  cssNode(node, true);
+  selectConn(null);
+}
+function cssNode(node, on) {
+  if (node) node.el.classList.toggle('selected', on);
+}
+function selectConn(conn) {
+  if (selectedConn === conn) return;
+  selectedConn = conn;
   drawConnections();
+}
+function clearSelection() {
+  cssNode(selectedNode, false);
+  selectedNode = null;
+  selectConn(null);
+}
+
+function deleteNode(node) {
+  nodes = nodes.filter(n => n.id !== node.id);
+  connections = connections.filter(c => c.fromNode !== node.id && c.toNode !== node.id);
+  node.el.remove();
+  if (selectedNode === node) selectedNode = null;
+  evaluateGraph();
+}
+
+function deleteConnection(conn) {
+  connections = connections.filter(c => c !== conn);
+  if (selectedConn === conn) selectedConn = null;
+  evaluateGraph();
+}
+
+function deleteSelected() {
+  if (selectedConn) { deleteConnection(selectedConn); return; }
+  if (selectedNode && selectedNode.type !== 'output') { deleteNode(selectedNode); return; }
+  if (selectedNode && selectedNode.type === 'output') toast('出力ノードは削除できません');
+  else toast('選択中のノードや接続がありません');
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Delete' || e.key === 'Backspace') {
+    e.preventDefault();
+    deleteSelected();
+  }
 });
 
-window.addEventListener('mouseup', (e) => {
-  draggingNode = null;
-  if (activeConnectingPin) {
-    // Check if released over a pin
-    const elem = document.elementFromPoint(e.clientX, e.clientY);
-    if (elem && elem.classList.contains('pin')) {
-      handlePinConnection(activeConnectingPin, {
-        nodeId: elem.dataset.node,
-        pin: elem.dataset.pin,
-        dir: elem.dataset.dir
-      });
-    }
-    activeConnectingPin = null;
+// --- Connection Logic with type & cycle guard ---
+graphContainer.addEventListener('mousedown', (e) => {
+  if (e.target.closest('.pin')) {
+    activeConnectingEl = e.target;
+    e.stopPropagation();
+    return;
+  }
+  if (e.target.closest('.node')) return;
+  if (e.target.closest('.graph-toolbar')) return;
+  panning = { startX: e.clientX, startY: e.clientY, viewX: view.x, viewY: view.y };
+  clearSelection();
+});
+
+graphContainer.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const rect = graphContainer.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const factor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+  const nz = Math.min(4, Math.max(0.2, view.zoom * factor));
+  view.x = mx - (mx - view.x) * (nz / view.zoom);
+  view.y = my - (my - view.y) * (nz / view.zoom);
+  view.zoom = nz;
+  applyView();
+}, { passive: false });
+
+window.addEventListener('mousemove', (e) => {
+  mouseClientX = e.clientX;
+  mouseClientY = e.clientY;
+  if (panning) {
+    view.x = panning.viewX + (e.clientX - panning.startX);
+    view.y = panning.viewY + (e.clientY - panning.startY);
+    applyView();
+  }
+  if (draggingNode) {
+    const w = clientToWorld(e.clientX, e.clientY);
+    draggingNode.x = w.x - dragOffsetWorld.x;
+    draggingNode.y = w.y - dragOffsetWorld.y;
+    draggingNode.el.style.left = `${draggingNode.x}px`;
+    draggingNode.el.style.top = `${draggingNode.y}px`;
+    drawConnections();
+  }
+  if (activeConnectingEl) {
     drawConnections();
   }
 });
 
-// Robust Pin-to-Pin Connection
-graphContainer.addEventListener('mousedown', (e) => {
-  if (e.target.classList.contains('pin')) {
-    activeConnectingPin = {
-      nodeId: e.target.dataset.node,
-      pin: e.target.dataset.pin,
-      dir: e.target.dataset.dir,
-      el: e.target
-    };
-    e.stopPropagation();
+window.addEventListener('mouseup', (e) => {
+  panning = null;
+  draggingNode = null;
+  if (activeConnectingEl) {
+    const elem = document.elementFromPoint(e.clientX, e.clientY);
+    if (elem && elem.classList && elem.classList.contains('pin')) {
+      handlePinConnection(activeConnectingEl, elem);
+    }
+    activeConnectingEl = null;
+    drawConnections();
   }
 });
 
-function handlePinConnection(pinA, pinB) {
-  if (pinA.nodeId === pinB.nodeId) return; // Prevent connecting node to itself
-  if (pinA.dir === pinB.dir) return; // Must be In to Out or Out to In
+function pinType(nodeId, pinName, dir) {
+  const def = NODE_DEFINITIONS[nodes.find(n => n.id === nodeId).type];
+  const list = dir === 'in' ? def.inputs : def.outputs;
+  const found = list.find(p => p.name === pinName);
+  return found ? found.type : null;
+}
+
+function wouldCreateCycle(fromNodeId, toNodeId) {
+  if (fromNodeId === toNodeId) return true;
+  const stack = [toNodeId];
+  const visited = new Set();
+  while (stack.length) {
+    const id = stack.pop();
+    if (id === fromNodeId) return true;
+    if (visited.has(id)) continue;
+    visited.add(id);
+    for (const c of connections) {
+      if (c.toNode === id) stack.push(c.fromNode);
+    }
+  }
+  return false;
+}
+
+function handlePinConnection(elA, elB) {
+  const pinA = { nodeId: elA.dataset.node, pin: elA.dataset.pin, dir: elA.dataset.dir };
+  const pinB = { nodeId: elB.dataset.node, pin: elB.dataset.pin, dir: elB.dataset.dir };
+  if (pinA.nodeId === pinB.nodeId) { toast('同じノードへは接続できません'); return; }
+  if (pinA.dir === pinB.dir) { toast('入力と出力の組み合わせで接続してください'); return; }
 
   const from = pinA.dir === 'out' ? pinA : pinB;
   const to = pinA.dir === 'in' ? pinA : pinB;
 
-  // Single input connection constraint
+  if (wouldCreateCycle(from.nodeId, to.nodeId)) { toast('循環する接続はできません'); return; }
+
+  const fromType = pinType(from.nodeId, from.pin, 'out');
+  const toType = pinType(to.nodeId, to.pin, 'in');
+  if (fromType !== toType) { toast('型の合わない接続です（法線は法線入力のみ）'); return; }
+
   connections = connections.filter(c => !(c.toNode === to.nodeId && c.toPin === to.pin));
   connections.push({ fromNode: from.nodeId, fromPin: from.pin, toNode: to.nodeId, toPin: to.pin });
   evaluateGraph();
 }
 
+function pinWorldPos(node, pinEl) {
+  const nRect = node.el.getBoundingClientRect();
+  const pRect = pinEl.getBoundingClientRect();
+  return {
+    x: node.x + (pRect.left - nRect.left) / view.zoom + pRect.width / (2 * view.zoom),
+    y: node.y + (pRect.top - nRect.top) / view.zoom + pRect.height / (2 * view.zoom)
+  };
+}
+
 function drawConnections() {
   svgLayer.innerHTML = '';
-  for (let c of connections) {
-    const fromEl = document.querySelector(`.pin[data-node="${c.fromNode}"][data-pin="${c.fromPin}"][data-dir="out"]`);
-    const toEl = document.querySelector(`.pin[data-node="${c.toNode}"][data-pin="${c.toPin}"][data-dir="in"]`);
+  for (const c of connections) {
+    const fromEl = document.querySelector(`.pin[data-node="${c.fromNode}"][data-pin="${CSS.escape(c.fromPin)}"][data-dir="out"]`);
+    const toEl = document.querySelector(`.pin[data-node="${c.toNode}"][data-pin="${CSS.escape(c.toPin)}"][data-dir="in"]`);
     if (!fromEl || !toEl) continue;
 
-    const r1 = fromEl.getBoundingClientRect();
-    const r2 = toEl.getBoundingClientRect();
-    const gR = graphContainer.getBoundingClientRect();
+    const fromNode = nodes.find(n => n.id === c.fromNode);
+    const toNode = nodes.find(n => n.id === c.toNode);
+    if (!fromNode || !toNode) continue;
 
-    const x1 = r1.left - gR.left + 6;
-    const y1 = r1.top - gR.top + 6;
-    const x2 = r2.left - gR.left + 6;
-    const y2 = r2.top - gR.top + 6;
+    const p1 = pinWorldPos(fromNode, fromEl);
+    const p2 = pinWorldPos(toNode, toEl);
 
-    const dx = Math.max(30, Math.abs(x2 - x1) * 0.5);
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`);
-    path.setAttribute('stroke', '#5078ff');
-    path.setAttribute('stroke-width', '2.5');
-    path.setAttribute('fill', 'none');
-    svgLayer.appendChild(path);
+    const dx = Math.max(30, Math.abs(p2.x - p1.x) * 0.5);
+    const d = `M ${p1.x} ${p1.y} C ${p1.x + dx} ${p1.y}, ${p2.x - dx} ${p2.y}, ${p2.x} ${p2.y}`;
+
+    const hit = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    hit.setAttribute('d', d);
+    hit.setAttribute('stroke', 'transparent');
+    hit.setAttribute('stroke-width', '12');
+    hit.setAttribute('fill', 'none');
+    hit.style.pointerEvents = 'stroke';
+    hit.addEventListener('click', () => selectConn(c));
+    svgLayer.appendChild(hit);
+
+    const vis = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    vis.setAttribute('d', d);
+    vis.setAttribute('stroke', selectedConn === c ? '#ffcc00' : '#5078ff');
+    vis.setAttribute('stroke-width', selectedConn === c ? '3.5' : '2.5');
+    vis.setAttribute('fill', 'none');
+    vis.style.pointerEvents = 'none';
+    svgLayer.appendChild(vis);
   }
 
-  // Active Dragging Line
-  if (activeConnectingPin && activeConnectingPin.el) {
-    const r1 = activeConnectingPin.el.getBoundingClientRect();
-    const gR = graphContainer.getBoundingClientRect();
-    const x1 = r1.left - gR.left + 6;
-    const y1 = r1.top - gR.top + 6;
-    const x2 = mousePos.x;
-    const y2 = mousePos.y;
-
-    const dx = Math.max(30, Math.abs(x2 - x1) * 0.5);
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`);
-    path.setAttribute('stroke', '#ffcc00');
-    path.setAttribute('stroke-dasharray', '4');
-    path.setAttribute('stroke-width', '2');
-    path.setAttribute('fill', 'none');
-    svgLayer.appendChild(path);
+  if (activeConnectingEl) {
+    const srcNode = nodes.find(n => n.id === activeConnectingEl.dataset.node);
+    if (srcNode) {
+      const p1 = pinWorldPos(srcNode, activeConnectingEl);
+      const rect = graphContainer.getBoundingClientRect();
+      const w = { x: (mouseClientX - rect.left - view.x) / view.zoom, y: (mouseClientY - rect.top - view.y) / view.zoom };
+      const dx = Math.max(30, Math.abs(w.x - p1.x) * 0.5);
+      const d = `M ${p1.x} ${p1.y} C ${p1.x + dx} ${p1.y}, ${w.x - dx} ${w.y}, ${w.x} ${w.y}`;
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('stroke', '#ffcc00');
+      path.setAttribute('stroke-dasharray', '4');
+      path.setAttribute('stroke-width', '2');
+      path.setAttribute('fill', 'none');
+      path.style.pointerEvents = 'none';
+      svgLayer.appendChild(path);
+    }
   }
 }
 
-// --- Graph Evaluation Engine ---
-function evaluateGraph() {
-  for (let n of nodes) {
-    if (n.type === 'noise') n.cache = generateNoise(n.params.scale);
-    if (n.type === 'cellular') n.cache = generateCellular(n.params.scale);
-    if (n.type === 'brick') n.cache = generateBrick(n.params.scale);
+let mouseClientX = 0, mouseClientY = 0;
+
+// --- Graph Evaluation (topological order) ---
+function topoOrder() {
+  const byId = new Map(nodes.map(n => [n.id, n]));
+  const indeg = new Map(nodes.map(n => [n.id, 0]));
+  connections.forEach(c => { indeg.set(c.toNode, (indeg.get(c.toNode) || 0) + 1); });
+  const queue = [];
+  nodes.forEach(n => { if ((indeg.get(n.id) || 0) === 0) queue.push(n.id); });
+  const order = [];
+  while (queue.length) {
+    const id = queue.shift();
+    order.push(id);
+    connections.forEach(c => {
+      if (c.fromNode !== id) return;
+      indeg.set(c.toNode, indeg.get(c.toNode) - 1);
+      if (indeg.get(c.toNode) === 0) queue.push(c.toNode);
+    });
   }
+  nodes.forEach(n => { if (!order.includes(n.id)) order.push(n.id); });
+  return order.map(id => byId.get(id));
+}
 
-  // Filters Evaluation
-  for (let n of nodes) {
-    const getIn = (pinName) => {
-      const c = connections.find(cn => cn.toNode === n.id && cn.toPin === pinName);
-      if (!c) return new Float32Array(RES * RES);
-      const src = nodes.find(sn => sn.id === c.fromNode);
-      return src && src.cache ? src.cache : new Float32Array(RES * RES);
-    };
+function evalNode(n) {
+  const getIn = (pinName) => {
+    const c = connections.find(cn => cn.toNode === n.id && cn.toPin === pinName);
+    if (!c) return null;
+    const src = nodes.find(sn => sn.id === c.fromNode);
+    return src ? src.cache : null;
+  };
 
-    if (n.type === 'invert') {
+  switch (n.type) {
+    case 'noise':
+      n.cache = generateNoise(n.params.scale, n.params.seed);
+      break;
+    case 'cellular':
+      n.cache = generateCellular(n.params.scale, n.params.seed);
+      break;
+    case 'brick':
+      n.cache = generateBrick(n.params.scale, n.params.mortar);
+      break;
+    case 'constant': {
+      const d = new Float32Array(RES * RES);
+      d.fill(n.params.value);
+      n.cache = d;
+      break;
+    }
+    case 'invert': {
       const src = getIn('元テクスチャ');
       const out = new Float32Array(RES * RES);
-      for (let i = 0; i < src.length; i++) out[i] = 1.0 - src[i];
+      for (let i = 0; i < out.length; i++) out[i] = 1.0 - (src ? src[i] : 0);
       n.cache = out;
-    } else if (n.type === 'blend') {
+      break;
+    }
+    case 'blend': {
       const a = getIn('下地テクスチャ');
       const b = getIn('重ねテクスチャ');
       const m = n.params.blend;
       const out = new Float32Array(RES * RES);
-      for (let i = 0; i < a.length; i++) out[i] = a[i] * (1 - m) + b[i] * m;
+      for (let i = 0; i < out.length; i++) out[i] = (a ? a[i] : 0) * (1 - m) + (b ? b[i] : 0) * m;
       n.cache = out;
-    } else if (n.type === 'levels') {
+      break;
+    }
+    case 'levels': {
       const src = getIn('元テクスチャ');
       const out = new Float32Array(RES * RES);
       const cont = n.params.contrast;
       const b = n.params.brightness;
-      for (let i = 0; i < src.length; i++) {
-        let v = (src[i] - 0.5) * cont + 0.5 + b;
+      for (let i = 0; i < out.length; i++) {
+        let v = ((src ? src[i] : 0) - 0.5) * cont + 0.5 + b;
         out[i] = Math.max(0, Math.min(1, v));
       }
       n.cache = out;
-    } else if (n.type === 'normal') {
-      n.cache = heightToNormal(getIn('高低差マップ'));
+      break;
     }
+    case 'normal':
+      n.cache = heightToNormal(getIn('高低差マップ'), n.params.strength);
+      break;
+    case 'output':
+      n.cache = null;
+      break;
+  }
+}
 
-    // Render Preview Thumbnail
-    if (n.type !== 'output' && n.cache) {
-      const cvs = n.el.querySelector('.node-preview');
-      const ctx = cvs.getContext('2d');
-      const img = ctx.createImageData(RES, RES);
-      if (n.type === 'normal') {
-        img.data.set(n.cache);
-      } else {
-        for (let i = 0; i < n.cache.length; i++) {
-          const v = Math.floor(n.cache[i] * 255);
-          const idx = i * 4;
-          img.data[idx] = v;
-          img.data[idx + 1] = v;
-          img.data[idx + 2] = v;
-          img.data[idx + 3] = 255;
-        }
-      }
-      ctx.putImageData(img, 0, 0);
+function renderPreview(n) {
+  if (n.type === 'output' || !n.cache) return;
+  const cvs = n.el.querySelector('.node-preview');
+  if (!cvs) return;
+  const ctx = cvs.getContext('2d');
+  const img = ctx.createImageData(RES, RES);
+  if (n.cache instanceof Uint8Array) {
+    img.data.set(n.cache);
+  } else {
+    for (let i = 0; i < n.cache.length; i++) {
+      const v = Math.floor(n.cache[i] * 255);
+      const idx = i * 4;
+      img.data[idx] = v;
+      img.data[idx + 1] = v;
+      img.data[idx + 2] = v;
+      img.data[idx + 3] = 255;
     }
   }
+  ctx.putImageData(img, 0, 0);
+}
 
-  // Update Output PBR Maps
+function getSourceForPin(node, pinName) {
+  const c = connections.find(cn => cn.toNode === node.id && cn.toPin === pinName);
+  if (!c) return null;
+  return nodes.find(sn => sn.id === c.fromNode) || null;
+}
+
+function writeGrayToTex(tex, cache) {
+  const d = tex.image.data;
+  for (let i = 0; i < RES * RES; i++) {
+    const v = cache ? Math.floor(cache[i] * 255) : 0;
+    d[i * 4] = v; d[i * 4 + 1] = v; d[i * 4 + 2] = v; d[i * 4 + 3] = 255;
+  }
+  tex.needsUpdate = true;
+}
+
+function updateOutput() {
   const outNode = nodes.find(n => n.type === 'output');
-  if (outNode) {
-    const getSrc = (pinName) => {
-      const c = connections.find(cn => cn.toNode === outNode.id && cn.toPin === pinName);
-      return c ? nodes.find(sn => sn.id === c.fromNode) : null;
-    };
+  if (!outNode) return;
 
-    const cSrc = getSrc('表面色 (Color)');
-    const nSrc = getSrc('凹凸法線 (Normal)');
-    const rSrc = getSrc('表面の粗さ (Roughness)');
+  const cSrc = getSourceForPin(outNode, '表面色 (Color)');
+  const nSrc = getSourceForPin(outNode, '凹凸法線 (Normal)');
+  const rSrc = getSourceForPin(outNode, '表面の粗さ (Roughness)');
+  const mSrc = getSourceForPin(outNode, '金属度 (Metallic)');
 
-    if (cSrc && cSrc.cache) {
-      const d = colorTex.image.data;
-      for (let i = 0; i < RES * RES; i++) {
-        const v = cSrc.cache[i] * 255;
-        d[i * 4] = v; d[i * 4 + 1] = v; d[i * 4 + 2] = v; d[i * 4 + 3] = 255;
-      }
-      colorTex.needsUpdate = true;
-    }
-    if (nSrc && nSrc.cache && nSrc.type === 'normal') {
-      normalTex.image.data.set(nSrc.cache);
-      normalTex.needsUpdate = true;
-    }
-    if (rSrc && rSrc.cache) {
-      const d = roughnessTex.image.data;
-      for (let i = 0; i < RES * RES; i++) {
-        const v = rSrc.cache[i] * 255;
-        d[i * 4] = v; d[i * 4 + 1] = v; d[i * 4 + 2] = v; d[i * 4 + 3] = 255;
-      }
-      roughnessTex.needsUpdate = true;
-    }
+  if (cSrc && cSrc.cache) writeGrayToTex(colorTex, cSrc.cache);
+  if (nSrc && nSrc.cache instanceof Uint8Array) {
+    normalTex.image.data.set(nSrc.cache);
+    normalTex.needsUpdate = true;
   }
+  if (rSrc && rSrc.cache) writeGrayToTex(roughnessTex, rSrc.cache);
+  if (mSrc && mSrc.cache) writeGrayToTex(metallicTex, mSrc.cache);
+
+  pbrMaterial.metalness = outNode.params.metalness;
+  pbrMaterial.roughness = outNode.params.roughness;
+}
+
+function evaluateGraph() {
+  const order = topoOrder();
+  for (const n of order) evalNode(n);
+  for (const n of order) renderPreview(n);
+  updateOutput();
   drawConnections();
 }
 
-// Initial Preset Graph Setup
-const outNode = createNode('output', 680, 160);
-const n1 = createNode('noise', 40, 60);
-const n2 = createNode('brick', 40, 360);
-const blend = createNode('blend', 270, 160);
-const norm = createNode('normal', 470, 360);
-const lev = createNode('levels', 470, 160);
+// --- PNG Export ---
+function exportMap(kind) {
+  const map = {
+    color: { tex: colorTex, name: 'base_color.png' },
+    normal: { tex: normalTex, name: 'normal.png' },
+    roughness: { tex: roughnessTex, name: 'roughness.png' },
+    metallic: { tex: metallicTex, name: 'metallic.png' }
+  }[kind];
+  if (!map) return;
+  const canvas = document.createElement('canvas');
+  canvas.width = RES; canvas.height = RES;
+  const ctx = canvas.getContext('2d');
+  const img = ctx.createImageData(RES, RES);
+  img.data.set(map.tex.image.data);
+  ctx.putImageData(img, 0, 0);
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = map.name;
+  a.click();
+  toast(`書き出しました: ${map.name}`);
+}
 
-connections.push({ fromNode: n1.id, fromPin: '出力テクスチャ', toNode: blend.id, toPin: '下地テクスチャ' });
-connections.push({ fromNode: n2.id, fromPin: '出力テクスチャ', toNode: blend.id, toPin: '重ねテクスチャ' });
-connections.push({ fromNode: blend.id, fromPin: '合成結果', toNode: lev.id, toPin: '元テクスチャ' });
-connections.push({ fromNode: lev.id, fromPin: '補正結果', toNode: outNode.id, toPin: '表面色 (Color)' });
-connections.push({ fromNode: n2.id, fromPin: '出力テクスチャ', toNode: norm.id, toPin: '高低差マップ' });
-connections.push({ fromNode: norm.id, fromPin: '法線マップ', toNode: outNode.id, toPin: '凹凸法線 (Normal)' });
-connections.push({ fromNode: n1.id, fromPin: '出力テクスチャ', toNode: outNode.id, toPin: '表面の粗さ (Roughness)' });
+// --- Toast ---
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.innerText = msg;
+  el.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.style.display = 'none'; }, 1800);
+}
 
-evaluateGraph();
+// --- Preset Graph ---
+function buildPresetGraph() {
+  nodes.forEach(n => n.el.remove());
+  nodes = [];
+  connections = [];
+  selectedNode = null;
+  selectedConn = null;
+
+  const c = nodeCenterWorld();
+  const outNode = createNode('output', c.x + 250, c.y - 60);
+  const n1 = createNode('noise', c.x - 350, c.y - 160);
+  const n2 = createNode('brick', c.x - 350, c.y + 120);
+  const blend = createNode('blend', c.x - 130, c.y - 60);
+  const norm = createNode('normal', c.x + 60, c.y + 120);
+  const lev = createNode('levels', c.x + 60, c.y - 60);
+  const met = createNode('constant', c.x - 130, c.y + 260);
+  met.params.value = 0.3;
+  const metLabel = document.getElementById(`val_${met.id}_value`);
+  if (metLabel) metLabel.innerText = '0.3';
+
+  connections.push({ fromNode: n1.id, fromPin: '出力テクスチャ', toNode: blend.id, toPin: '下地テクスチャ' });
+  connections.push({ fromNode: n2.id, fromPin: '出力テクスチャ', toNode: blend.id, toPin: '重ねテクスチャ' });
+  connections.push({ fromNode: blend.id, fromPin: '合成結果', toNode: lev.id, toPin: '元テクスチャ' });
+  connections.push({ fromNode: lev.id, fromPin: '補正結果', toNode: outNode.id, toPin: '表面色 (Color)' });
+  connections.push({ fromNode: n2.id, fromPin: '出力テクスチャ', toNode: norm.id, toPin: '高低差マップ' });
+  connections.push({ fromNode: norm.id, fromPin: '法線マップ', toNode: outNode.id, toPin: '凹凸法線 (Normal)' });
+  connections.push({ fromNode: n1.id, fromPin: '出力テクスチャ', toNode: outNode.id, toPin: '表面の粗さ (Roughness)' });
+  connections.push({ fromNode: met.id, fromPin: '一定値', toNode: outNode.id, toPin: '金属度 (Metallic)' });
+
+  evaluateGraph();
+  applyView();
+}
+
+buildPresetGraph();
 </script>
 </body>
 </html>
