@@ -4,11 +4,14 @@
 
 use super::data_directory::編集データディレクトリ;
 use super::json_io::{json構造体を保存する, json構造体を読む, バイナリを保存する, バイナリを読む};
-use crate::resource::{マザーハイトマップ, 大域世界構造};
+use crate::resource::{マザーハイトマップ, 大域世界構造, 読み込んだ大域世界構造の版};
 use crate::storage::{保存要求エラー, 読み込みエラー};
 
+/// 保存済みのJSONは広域道路が1本だけだった頃の形のこともあるため、版を判別してから最新の形へ変換する
+/// (参照: `resource/world_structure_version.rs`)。
 pub(super) fn 構造を読む(ディレクトリ: &編集データディレクトリ) -> Result<Option<大域世界構造>, 読み込みエラー> {
-    json構造体を読む(&ディレクトリ.大域世界構造パス())
+    let 読み込んだ版: Option<読み込んだ大域世界構造の版> = json構造体を読む(&ディレクトリ.大域世界構造パス())?;
+    Ok(読み込んだ版.map(読み込んだ大域世界構造の版::最新の形へ変換する))
 }
 
 pub(super) fn 構造を検証して保存する(
