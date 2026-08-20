@@ -1,4 +1,4 @@
-import { div, span, input, DivC, SpanC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
+import { div, span, input, DivC, InputC, SpanC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
 import { 行コンテナ, ラベル行, 値ラベル, スライダー入力 } from './スタイル.css.ts'
 
@@ -25,6 +25,7 @@ export class スライダー項目 extends LV2HtmlComponentBase implements I配�
     protected _componentRoot: DivC
     private readonly _配線: 配線ポート<Iスライダー配線> = new 配線ポート<Iスライダー配線>('スライダー項目')
     private readonly _値表示: スライダー値ラベル
+    private readonly _入力欄: InputC
 
     public constructor(
         ラベル名: string,
@@ -36,7 +37,9 @@ export class スライダー項目 extends LV2HtmlComponentBase implements I配�
     ) {
         super()
         this._値表示 = new スライダー値ラベル(初期値, 接尾辞)
-        this._componentRoot = this._ルートを構築する(ラベル名, 最小値, 最大値, 刻み幅, 初期値)
+        this._入力欄 = input({ class: スライダー入力, type: 'range', value: 初期値.toString() })
+            .setRangeParam({ min: 最小値, max: 最大値, step: 刻み幅 })
+        this._componentRoot = this._ルートを構築する(ラベル名)
     }
 
     public 配線する(配線: Iスライダー配線): this {
@@ -48,34 +51,32 @@ export class スライダー項目 extends LV2HtmlComponentBase implements I配�
         this._値表示.値を更新する(新値)
     }
 
-    private _ルートを構築する(
-        ラベル名: string,
-        最小値: number,
-        最大値: number,
-        刻み幅: number,
-        初期値: number,
-    ): DivC {
+    // 編集対象が切り替わったときに、つまみの位置と数値ラベルの両方をモデルの値へ合わせる。
+    public 値を設定する(新値: number): void {
+        this._入力欄.setValue(新値.toString())
+        this._値表示.値を更新する(新値)
+    }
+
+    public 操作できるか設定する(操作できるか: boolean): void {
+        this._入力欄.setDisabled(!操作できるか)
+    }
+
+    private _ルートを構築する(ラベル名: string): DivC {
         return (
             div({ class: 行コンテナ }).childs([
                 div({ class: ラベル行 }).childs([
                     span({ text: ラベル名 }).setTooltip(ラベル名),
                     this._値表示]),
-                input({
-                    class: スライダー入力,
-                    type: 'range',
-                    value: 初期値.toString(),
-                })
-                    .setRangeParam({ min: 最小値, max: 最大値, step: 刻み幅 })
-                    .onInput((e: Event) => {
-                        const 要素 = e.target
-                        if (要素 instanceof HTMLInputElement) {
-                            const 数値 = parseFloat(要素.value)
-                            if (Number.isFinite(数値)) {
-                                this.値を更新する(数値)
-                                this._配線.先.on値変更(数値)
-                            }
+                this._入力欄.onInput((e: Event) => {
+                    const 要素 = e.target
+                    if (要素 instanceof HTMLInputElement) {
+                        const 数値 = parseFloat(要素.value)
+                        if (Number.isFinite(数値)) {
+                            this.値を更新する(数値)
+                            this._配線.先.on値変更(数値)
                         }
-                    })])
+                    }
+                })])
         )
     }
 }

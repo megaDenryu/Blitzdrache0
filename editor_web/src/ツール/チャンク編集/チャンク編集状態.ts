@@ -1,4 +1,5 @@
 import type { 造成筆致種別, 地表材質層, チャンク座標 } from '../../生成/編集資源契約.ts'
+import type { 道路点の在り処 } from './編集モデル/index.ts'
 import type { 差し戻し断片 } from './操作コマンド/index.ts'
 import type { 編集モード } from './画面/index.ts'
 
@@ -11,8 +12,10 @@ export class チャンク編集状態 {
     public 材質層: 地表材質層 = '草'
     public ペイント半径: number = 15.0
     public ペイント流量: number = 0.4
-    public 選択中の道路点の添字: number | null = null
-    public つかんでいる道路点の添字: number | null = null
+    // 描き足す先の道。nullは「次に地形をクリックしたら新しい道を1本始める」ことを表す。
+    public アクティブな道路の添字: number | null = 0
+    public 選択中の道路点: 道路点の在り処 | null = null
+    public つかんでいる道路点: 道路点の在り処 | null = null
     public 選択中建物識別子: string | null = null
     public readonly 対象チャンク座標: チャンク座標
     public static readonly 履歴スタック上限: number = 50

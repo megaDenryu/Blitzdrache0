@@ -1,8 +1,8 @@
-import type { 部品交差情報 } from 'SengenThree'
-import type { 位置3次元, 道路対象 } from '../../生成/編集資源契約.ts'
-import type { ワールド編集状態, 道路スプライン } from './編集モデル/index.ts'
-import { 道路対象の道路スプラインを取り出す } from './編集モデル/index.ts'
+import type { 位置3次元 } from '../../生成/編集資源契約.ts'
+import type { 編集対象の道路一覧, 道路スプライン, 道路点の在り処 } from './編集モデル/index.ts'
+import { 当たった道路点の在り処を求める } from './道路の当たり判定.ts'
 import type {
+    当たりの記録,
     道路点の選択状態,
     道路点編集の同期先,
     道路点編集の操作先,
@@ -18,12 +18,11 @@ export class 道路点ドラッグハンドラ {
     private _ドラッグ直後のクリックか: boolean = false
 
     public constructor(
-        private readonly _モデル: ワールド編集状態,
+        private readonly _道路一覧: 編集対象の道路一覧,
         private readonly _状態: 道路点の選択状態,
         private readonly _ビュー: 道路点編集対象ビュー,
         private readonly _操作: 道路点編集の操作先,
         private readonly _同期: 道路点編集の同期先,
-        private readonly _道路対象: 道路対象,
     ) {}
 
     // 動かして離した直後には、ブラウザがクリックも続けて配る。そのクリックを選択や挿入として
@@ -37,29 +36,30 @@ export class 道路点ドラッグハンドラ {
     }
 
     // 道路点をつかめたらtrueを返す。呼び出し元はそのとき筆致もカメラ操作も走らせない。
-    public 押された(ボタン: number, 当たり一覧: readonly 部品交差情報[]): boolean {
+    public 押された(ボタン: number, 当たり一覧: readonly 当たりの記録[]): boolean {
         if (ボタン !== 0) return false
-        const 添字 = this._当たった道路点の添字を探す(当たり一覧)
-        const 点 = 添字 === null ? undefined : this._道路スプライン.制御点列[添字]
-        if (添字 === null || 点 === undefined) return false
+        const 在り処 = 当たった道路点の在り処を求める(当たり一覧, this._ビュー.道路点マーカー)
+        const 点 = 在り処 === null ? null : this._道路一覧.道路点の位置を求める(在り処)
+        if (在り処 === null || 点 === null) return false
 
         this._つかんだ時の位置 = { ...点 }
         this._つかんでから動かしたか = false
-        this._状態.つかんでいる道路点の添字 = 添字
-        this._状態.選択中の道路点の添字 = 添字
+        this._状態.つかんでいる道路点 = 在り処
+        this._状態.選択中の道路点 = 在り処
+        this._状態.アクティブな道路の添字 = 在り処.道路添字
         this._同期.道路を同期する()
         this._同期.UIを同期する()
         return true
     }
 
     // つかんでいる間はtrueを返し、呼び出し元にブラシ表示や筆致を飛ばさせる。
-    public 動かされた(当たり一覧: readonly 部品交差情報[]): boolean {
-        const 添字 = this._状態.つかんでいる道路点の添字
-        if (添字 === null) return false
-        const 地形の当たり = 当たり一覧.find((当たり) => 当たり.部品 === this._ビュー.地形)
+    public 動かされた(当たり一覧: readonly 当たりの記録[]): boolean {
+        const 在り処 = this._状態.つかんでいる道路点
+        if (在り処 === null) return false
+        const 地形の当たり = 当たり一覧.find((当たり) => 当たり.部品.実体 === this._ビュー.地形.実体)
         if (地形の当たり !== undefined) {
             const 交差点 = 地形の当たり.交差点
-            this._道路スプライン.点を移動する(添字, { x: 交差点.x, y: 交差点.y, z: 交差点.z })
+            this._道路スプライン(在り処).点を移動する(在り処.制御点添字, { x: 交差点.x, y: 交差点.y, z: 交差点.z })
             this._つかんでから動かしたか = true
             this._同期.道路を同期する()
         }
@@ -67,34 +67,28 @@ export class 道路点ドラッグハンドラ {
     }
 
     public 離された(ボタン: number): void {
-        const 添字 = this._状態.つかんでいる道路点の添字
+        const 在り処 = this._状態.つかんでいる道路点
         const つかんだ時の位置 = this._つかんだ時の位置
-        if (ボタン !== 0 || 添字 === null) return
-        this._状態.つかんでいる道路点の添字 = null
+        if (ボタン !== 0 || 在り処 === null) return
+        this._状態.つかんでいる道路点 = null
         this._つかんだ時の位置 = null
 
-        const 離した位置 = this._道路スプライン.制御点列[添字]
-        if (!this._つかんでから動かしたか || つかんだ時の位置 === null || 離した位置 === undefined) {
+        const 離した位置 = this._道路一覧.道路点の位置を求める(在り処)
+        if (!this._つかんでから動かしたか || つかんだ時の位置 === null || 離した位置 === null) {
             this._同期.道路を同期する()
             return
         }
         this._ドラッグ直後のクリックか = true
         const 新しい位置 = { ...離した位置 }
         // 取り消しの断片がつかむ前の位置を覚えるよう、いったん元へ戻してからコマンドとして積み直す。
-        this._道路スプライン.点を移動する(添字, つかんだ時の位置)
-        this._操作.コマンドを実行する({ 種類: '道路点を移動する', 値: { 対象: this._道路対象, 添字, 新しい位置 } })
+        this._道路スプライン(在り処).点を移動する(在り処.制御点添字, つかんだ時の位置)
+        this._操作.コマンドを実行する({
+            種類: '道路点を移動する',
+            値: { 対象: this._道路一覧.道路対象を作る(在り処.道路添字), 添字: 在り処.制御点添字, 新しい位置 },
+        })
     }
 
-    private get _道路スプライン(): 道路スプライン {
-        return 道路対象の道路スプラインを取り出す(this._モデル, this._道路対象)
-    }
-
-    private _当たった道路点の添字を探す(当たり一覧: readonly 部品交差情報[]): number | null {
-        for (const 当たり of 当たり一覧) {
-            if (当たり.部品 !== this._ビュー.道路点マーカー) continue
-            const 添字 = this._ビュー.道路点マーカー.当たった道路点の添字を求める(当たり.原初交差情報.object)
-            if (添字 !== null) return 添字
-        }
-        return null
+    private _道路スプライン(在り処: 道路点の在り処): 道路スプライン {
+        return this._道路一覧.道路を取り出す(在り処.道路添字)
     }
 }

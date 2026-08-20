@@ -1,4 +1,5 @@
 import type { 造成筆致種別 } from '../../生成/編集資源契約.ts'
+import type { 道路点の在り処 } from '../チャンク編集/編集モデル/index.ts'
 import type { 差し戻し断片 } from '../チャンク編集/操作コマンド/index.ts'
 import type { 大域編集モード } from './画面/パネル/モード切替/大域モード定義.ts'
 
@@ -8,10 +9,10 @@ export class 大域編集状態 {
     public 造成筆致種別: 造成筆致種別 = '盛る'
     public 造成半径: number = 80.0
     public 造成強さ: number = 1.2
-    public 道路全幅: number = 12.0
-    public 道路細分割数: number = 120
-    public 選択中の道路点の添字: number | null = null
-    public つかんでいる道路点の添字: number | null = null
+    // 描き足す先の道。nullは「次に地形をクリックしたら新しい道を1本始める」ことを表す。
+    public アクティブな道路の添字: number | null = 0
+    public 選択中の道路点: 道路点の在り処 | null = null
+    public つかんでいる道路点: 道路点の在り処 | null = null
     public static readonly 履歴スタック上限: number = 50
     public readonly 取り消し履歴スタック: 差し戻し断片[] = []
 
