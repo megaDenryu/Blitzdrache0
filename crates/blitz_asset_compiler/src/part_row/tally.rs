@@ -11,7 +11,7 @@
 //! 段を足すたびに増えるが、1つの個体はそのとき選ばれた1つの段でしか描かれない。近くで写す構図では全個体が
 //! 最詳細段で描かれるため、発行数の期待値になるのは最詳細段の側である。
 //!
-//! 注意: 報告の行の綴りは`xtask/src/part_house_row_draw/compile_report.rs`が読み取る側として同じものを持つ。
+//! 注意: 報告の行の綴りは`xtask/src/part_row_draw/tally_line.rs`が読み取る側として同じものを持つ。
 //! 両側にあることは`cargo xtask conform`の綴りの契約の検査が守る。
 
 use super::row_count::部品で組んだ並びの件数;

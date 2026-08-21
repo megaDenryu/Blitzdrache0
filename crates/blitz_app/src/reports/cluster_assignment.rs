@@ -2,7 +2,7 @@
 //!
 //! 1行へまとめるのは、検収の入口が語頭で行を見つけて名前付きの数を読むためである
 //! (`xtask/src/report_parse/line_read.rs`の`名前付きの数を読む`が読む形)。
-//! 行の綴りを変えるときは`xtask/src/cluster_lights/assignment_parse.rs`も同時に直す。
+//! 行の綴りを変えるときは`xtask/src/cluster_lights/assignment.rs`も同時に直す。
 
 use blitz_render::clustered_lighting::クラスタ選別の割り当て統計;
 

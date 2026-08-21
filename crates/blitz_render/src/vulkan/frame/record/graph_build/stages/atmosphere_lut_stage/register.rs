@@ -3,7 +3,7 @@
 //!
 //! 「このフレームで焼く画像」と「参照するだけの画像」で初期状態を分けるのが担当であり、どちらを選ぶかは呼び出し元が決める。
 //! 選択を誤ると、焼き直さないフレームの内容が捨てられて空の色が跳ぶ
-//! (参照: `crates/blitz_render/src/vulkan/graph/initial_state/atmosphere_lut.rs`)。
+//! (参照: `crates/blitz_render/src/vulkan/graph/initial_state/baked_image.rs`)。
 
 use crate::vulkan::atmosphere_lut::pass as atmosphere_lut_pass;
 use crate::vulkan::atmosphere_lut::{大気のベイク済み画像の生成入力, 大気のベイク済み画像の画像入力};

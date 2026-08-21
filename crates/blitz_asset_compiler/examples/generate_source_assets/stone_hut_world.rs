@@ -25,7 +25,7 @@ const 辺分割数: u16 = 64;
 const 重なり幅: u8 = 1;
 
 /// 屋内の検収シーンを指す安定ID。`prop_`で始めることが、書き換えもピクセル判定も行わない読み戻しだけの
-/// 検収計画を選ばせる。参照: `crates/blitz_app/src/smoke/readback_only_scene.rs`
+/// 検収計画を選ばせる。参照: `crates/blitz_app/src/smoke/world_plan.rs`
 const シーン名: &str = "prop_stone_hut_interior";
 
 const 格子ファイル名: &str = "prop_stone_hut_interior.heightgrid";

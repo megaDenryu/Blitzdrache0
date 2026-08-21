@@ -1,5 +1,5 @@
 //! プロセス境界で世界を指す綴りの台帳と、綴りから対象世界を選ぶ解析。
-//! 綴りはxtask側(`xtask/src/compile_assets/world_name.rs`)にも同じものがあり、2つの実行ファイルの
+//! 綴りはxtask側(`xtask/src/asset_generator/world_name.rs`)にも同じものがあり、2つの実行ファイルの
 //! 引数の受け渡しがこの綴りで一致していることを、知らない綴りを失敗にすることで確かめる。
 
 use super::part_frame_row_declaration::一間四方の骨格の並びの種類;

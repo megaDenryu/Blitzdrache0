@@ -6,7 +6,7 @@
 //!
 //! 注意: ディスクリプタのレイアウトはGENERALである。3つの画像は焼き直さないフレームも中身を保ち、
 //! 休むレイアウトをGENERALに固定する不変条件を大気のベイク済み画像と共有するためである
-//! (参照: `crates/blitz_render/src/vulkan/graph/initial_state/atmosphere_lut.rs`)。
+//! (参照: `crates/blitz_render/src/vulkan/graph/initial_state/baked_image.rs`)。
 //!
 //! 3つを読む固定サンプラーは`sampler`が所有する。
 

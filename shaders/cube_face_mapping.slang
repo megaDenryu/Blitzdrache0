@@ -1,5 +1,5 @@
 // 立方体の面の中の位置と向きとの行き来。軸の割り当てと符号はVulkanの立方体画像の面選択の規約に合わせる。
-// 注意: この写像は`crates/blitz_render/src/atmosphere/mapping/cube_face_mapping.rs`の写しである。
+// 注意: この写像は`crates/blitz_render/src/cube_image/face_mapping.rs`の写しである。
 // 正本はRust側にあり、往復が恒等であることのユニットテストもそちらが持つ。ここが正本から外れると、
 // 焼いた面と参照する面が食い違って絵が面ごとに入れ替わる。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
