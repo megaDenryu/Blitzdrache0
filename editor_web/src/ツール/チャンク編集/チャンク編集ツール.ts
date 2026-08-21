@@ -9,6 +9,7 @@ import type { インスペクターパネル } from './画面/パネル/イン�
 import { チャンク編集状態 } from './チャンク編集状態.ts'
 import { チャンク編集同期サービス } from './チャンク編集同期サービス.ts'
 import { チャンク編集操作サービス } from './チャンク編集操作サービス.ts'
+import { 地表材質色を注入する } from './チャンク編集地表材質色配線.ts'
 import { パネルイベントを配線する } from './チャンク編集配線.ts'
 import { 永続化イベントを配線する, 起動時にワールドを読み込む } from './チャンク編集永続化配線.ts'
 import { ポインタとキー入力を配線する } from './チャンク編集ポインタ配線.ts'
@@ -59,6 +60,7 @@ export class チャンク編集ツール extends LV2HtmlComponentBase {
         if (初期状態 === undefined) {
             void 起動時にワールドを読み込む(this.インスペクター.部品.永続化, this.永続化, this.編集状態, this.同期サービス, this.対象座標)
         }
+        void 地表材質色を注入する(this.画面, this.保管庫)
     }
 
     public 前面になった(): void {

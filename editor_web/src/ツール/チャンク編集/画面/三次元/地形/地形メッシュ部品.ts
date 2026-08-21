@@ -3,10 +3,11 @@ import { メッシュ部品, ジオメトリ包み } from 'SengenThree'
 import type { 高さ場, 地表材質 } from '../../../編集モデル/index.ts'
 import { 地形幾何データを生成する, 地形頂点高さを更新する, 高さの範囲を求める } from './地形頂点計算.ts'
 import { 地形マテリアルを生成する, type 標高グラデーション配色 } from './地形シェーダー.ts'
+import type { 地表材質色 } from './地表材質色.ts'
 
 // 高さ場と地表材質データを保持し、ジオメトリバッファとテクスチャの高速更新を提供する地形メッシュ部品。
-// 標高グラデーションを渡すと大域編集向けの標高色分け表示になり、以降の高さ場更新のたびに
-// 標高範囲を再計算する(渡さないチャンク編集側は従来どおりスプラットブレンド表示のまま)。
+// 標高グラデーションを渡すと大域編集向けの標高色分け表示になり、渡さないチャンク編集側は
+// スプラットブレンド表示のまま、以降の高さ場更新のたびに標高範囲を再計算する。
 export class 地形メッシュ部品 extends メッシュ部品<ジオメトリ包み, ShaderMaterial> {
     private readonly _解像度: number
     private readonly _スプラットテクスチャ: DataTexture
@@ -20,11 +21,7 @@ export class 地形メッシュ部品 extends メッシュ部品<ジオメトリ
     ) {
         const 解像度 = 高さ場モデル.解像度
         const 一辺 = 高さ場モデル.一辺のメートル
-        const { 頂点配列, 法線配列, UV配列, 添字配列 } = 地形幾何データを生成する(
-            解像度,
-            一辺,
-            高さ場モデル.格子データ,
-        )
+        const { 頂点配列, 法線配列, UV配列, 添字配列 } = 地形幾何データを生成する(解像度, 一辺, 高さ場モデル.格子データ)
 
         const ジオメトリ = new ジオメトリ包み()
             .頂点位置を設定する(頂点配列)
@@ -72,10 +69,17 @@ export class 地形メッシュ部品 extends メッシュ部品<ジオメトリ
         this._スプラットテクスチャ.needsUpdate = true
     }
 
-    // テーマ切替時に地形の基本色(草の色)を差し替える。他の3層(泥・岩・砂)は
-    // テーマに依存しない地質色として据え置く(参照: 工房テーマ/夜間テーマの地形基本色)。
+    // 大域編集の標高グラデーション表示では実質無効(colGrass不使用)だが配線の一本化のため残す。
     public 地形色を更新する(地形基本色: number): void {
         this.マテリアル.uniforms.colGrass.value = new Color(地形基本色)
+    }
+
+    // スプラットブレンド4層の識別色を、マテリアル台帳由来の値へ差し替える(判断9)。
+    public 地表材質色を更新する(材質色: 地表材質色): void {
+        this.マテリアル.uniforms.colGrass.value = new Color(材質色.草)
+        this.マテリアル.uniforms.colDirt.value = new Color(材質色.泥)
+        this.マテリアル.uniforms.colRock.value = new Color(材質色.岩)
+        this.マテリアル.uniforms.colSand.value = new Color(材質色.砂)
     }
 
     // テーマ切替時に大域編集の標高グラデーション3色を差し替える。
