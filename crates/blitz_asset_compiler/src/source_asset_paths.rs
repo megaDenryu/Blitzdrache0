@@ -26,3 +26,4 @@ pub const 小物の木箱のソース: &str = "props/wooden_crate.glb";
 pub const 小物の岩のソース: &str = "props/boulder.glb";
 pub const 小物の切り株のソース: &str = "props/tree_stump.glb";
 pub const 小物の小石のソース: &str = "props/rock.glb";
+pub const 針葉樹のソース: &str = "props/conifer.glb";

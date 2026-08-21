@@ -1,5 +1,6 @@
-//! エディターチャンクソースの版の判別と最新への変換の検査。担当するのは、形式版1と形式版2の両方が読めること、
+//! エディターチャンクソースの版の判別と最新への変換の検査。担当するのは、形式版1から形式版3までが読めること、
 //! 版1が「先頭の層だけの重み」へ写ること、素材のパスがソースの隣から解決されることである。
+//! 散布の欄の検査は`scatter_tests`が持ち、この検査が用意する置き場と素材の下ごしらえを共有する。
 
 #![allow(clippy::unwrap_used)]
 
@@ -8,24 +9,24 @@ use std::path::{Path, PathBuf};
 use super::エディターチャンクソース;
 use crate::surface_material::weights::{地表材質の重み格子, 地表材質の重み格子を格納する, 地表材質の重み格子諸元};
 
-const 一辺の標本数: u32 = 3;
+pub(super) const 一辺の標本数: u32 = 3;
 
 /// 検査ごとに別の場所へ書くのは、同じ名前のファイルを並行実行の検査どうしが上書きし合わないためである。
-fn 検査の置き場を用意する(名前: &str) -> PathBuf {
+pub(super) fn 検査の置き場を用意する(名前: &str) -> PathBuf {
     let 置き場 = std::env::temp_dir().join("blitzdrache0_editor_chunk_source").join(名前);
     std::fs::remove_dir_all(&置き場).ok();
     std::fs::create_dir_all(&置き場).unwrap();
     置き場
 }
 
-fn 高さ格子を置く(置き場: &Path) {
+pub(super) fn 高さ格子を置く(置き場: &Path) {
     let 諸元 = crate::height_grid::高さ格子諸元::生成する(2, 1, 4.0).unwrap();
     let 標本数 = usize::try_from(諸元.標本数()).unwrap();
     let 格子 = crate::height_grid::高さ格子::生成する(諸元, vec![0.0; 標本数]).unwrap();
     std::fs::write(置き場.join("地形.heightgrid"), crate::height_grid::高さ格子を格納する(&格子)).unwrap();
 }
 
-fn 重み格子を置く(置き場: &Path) {
+pub(super) fn 重み格子を置く(置き場: &Path) {
     let 諸元 = 地表材質の重み格子諸元::生成する(一辺の標本数).unwrap();
     let 標本数 = usize::try_from(一辺の標本数 * 一辺の標本数).unwrap();
     let mut 重み一覧 = Vec::new();
@@ -36,7 +37,7 @@ fn 重み格子を置く(置き場: &Path) {
     std::fs::write(置き場.join("材質.surfaceweights"), 地表材質の重み格子を格納する(&格子)).unwrap();
 }
 
-fn ソースを置いて読む(名前: &str, 本文: &str, 重みを置くか: bool) -> エディターチャンクソース {
+pub(super) fn ソースを置いて読む(名前: &str, 本文: &str, 重みを置くか: bool) -> エディターチャンクソース {
     let 置き場 = 検査の置き場を用意する(名前);
     高さ格子を置く(&置き場);
     if 重みを置くか {

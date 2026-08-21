@@ -39,8 +39,9 @@ async fn 正常な書き出しはファイル数と出力先を返しチャン�
     for 項目 in &項目一覧 {
         let ソースパス = 目録パス.parent().unwrap().join(項目.ソース相対パス());
         let ソース: serde_json::Value = serde_json::from_slice(&std::fs::read(&ソースパス).unwrap()).unwrap();
-        assert_eq!(ソース["形式版"], 2);
+        assert_eq!(ソース["形式版"], 3);
         assert_eq!(ソース["建物配置一覧"], serde_json::json!([]));
+        assert_eq!(ソース["散布の群一覧"], serde_json::json!([]));
         let 素材の置き場 = ソースパス.parent().unwrap();
         let 格子 = 高さ格子を読み込む(&素材の置き場.join(ソース["高さ格子"].as_str().unwrap())).unwrap();
         assert_eq!(格子.諸元().格子点数(), 3);

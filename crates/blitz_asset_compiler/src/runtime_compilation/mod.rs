@@ -18,6 +18,7 @@ mod placed_instance_tally;
 mod source_kind;
 mod source_location;
 mod surface_layer_texture_set;
+mod vegetation_definition;
 mod world;
 
 pub use building_outline_catalog::{
@@ -28,4 +29,5 @@ pub(crate) use building_outline_catalog::{建物定義の正本, 識別子から
 pub use compilation::実行時アセットのコンパイル;
 pub use compilation_specification::{焼く世界の指定, 焼く世界の指定組み立て器};
 pub use error::実行時アセットのコンパイルエラー;
+pub(crate) use vegetation_definition::{全植生定義, 植生の実体, 識別子から植生定義を参照する};
 pub use world::{一間四方の骨格の並びの種類, 家の並びの規模, 対象世界, 診断の原型};

@@ -1,19 +1,24 @@
-//! エディターチャンクの版付きソース。高さ格子と地表材質の重み格子と建物配置を1つの明示的な入口から参照させる。
+//! エディターチャンクの版付きソース。高さ格子と地表材質の重み格子と建物配置と散布の群を、
+//! 1つの明示的な入口から参照させる。
 
 use serde::Serialize;
 
 use self::coordinates::エディターのチャンク中心座標;
+use self::scatter::散布の群ソース;
 use super::error::書き出しエラー;
 use super::numeric_conversion::単精度へ狭める;
-use crate::resource::{建物の配置, 建物外形カタログ, 建物定義ID};
+use crate::resource::{建物の配置, 建物外形カタログ, 建物定義ID, 散布の個体};
 
 mod coordinates;
+mod scatter;
+#[cfg(test)]
+mod scatter_tests;
 #[cfg(test)]
 mod tests;
 
 /// 書き出す形式版。読み手はblitz_asset_compilerの`editor_chunk/source.rs`にあり、
 /// 両者の版が食い違うと焼きが必ず「形式版に対応していない」で落ちる。一致は`cargo xtask conform`の定数の組が見る。
-pub(super) const エディターチャンクソースの形式版: u32 = 2;
+pub(super) const エディターチャンクソースの形式版: u32 = 3;
 
 #[derive(Serialize)]
 pub(super) struct エディターチャンクソース {
@@ -21,6 +26,7 @@ pub(super) struct エディターチャンクソース {
     高さ格子: String,
     地表材質の重み格子: String,
     建物配置一覧: Vec<建物配置ソース>,
+    散布の群一覧: Vec<散布の群ソース>,
 }
 
 #[derive(Serialize)]
@@ -38,6 +44,7 @@ impl エディターチャンクソース {
         高さ格子: String,
         地表材質の重み格子: String,
         建物一覧: Vec<建物の配置>,
+        散布の個体一覧: Vec<散布の個体>,
         チャンク一辺メートル: f32,
         カタログ: &建物外形カタログ,
     ) -> Result<Self, 書き出しエラー> {
@@ -51,6 +58,7 @@ impl エディターチャンクソース {
             高さ格子,
             地表材質の重み格子,
             建物配置一覧,
+            散布の群一覧: 散布の群ソース::エディターの個体一覧から組み立てる(散布の個体一覧, チャンク一辺)?,
         })
     }
 

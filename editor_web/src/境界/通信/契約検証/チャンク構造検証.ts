@@ -2,6 +2,7 @@ import type {
     チャンク構造,
     チャンクの道路,
     建物の配置,
+    散布の個体,
     散布の設定,
 } from '../../../生成/編集資源契約.ts'
 import { 配列か, 長整数か, 数値か, オブジェクトか, 文字列か } from './オブジェクト判定.ts'
@@ -12,7 +13,8 @@ export function チャンク構造の形か(値: unknown): 値 is チャンク�
     if (!オブジェクトか(値)) return false
     if (!配列か(値['道路一覧'])) return false
     if (!値['道路一覧'].every(チャンクの道路の形か)) return false
-    return 建物一覧の形か(値['建物一覧']) && 散布の設定の形か(値['散布'])
+    if (!建物一覧の形か(値['建物一覧']) || !散布の設定の形か(値['散布'])) return false
+    return 散布の個体一覧の形か(値['散布の個体一覧'])
 }
 
 export function チャンクの道路の形か(値: unknown): 値 is チャンクの道路 {
@@ -46,5 +48,19 @@ export function 建物の配置の形か(値: unknown): 値 is 建物の配置 {
 export function 散布の設定の形か(値: unknown): 値 is 散布の設定 {
     if (!オブジェクトか(値)) return false
     return 数値か(値['最小間隔メートル']) && 長整数か(値['乱数の種'])
+}
+
+export function 散布の個体一覧の形か(値: unknown): 値 is Array<散布の個体> {
+    if (!配列か(値)) return false
+    return 値.every(散布の個体の形か)
+}
+
+export function 散布の個体の形か(値: unknown): 値 is 散布の個体 {
+    if (!オブジェクトか(値)) return false
+    return (
+        文字列か(値['安定識別子']) &&
+        数値か(値['チャンク中心からの東メートル']) &&
+        数値か(値['チャンク中心からの南メートル'])
+    )
 }
 

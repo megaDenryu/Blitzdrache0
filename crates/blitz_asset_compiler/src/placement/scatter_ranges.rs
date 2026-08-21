@@ -55,7 +55,7 @@ impl 大きさの範囲 {
         })
     }
 
-    pub(super) fn 零以上一未満の値から求める(self, 比: f32) -> f32 {
+    pub(crate) fn 零以上一未満の値から求める(self, 比: f32) -> f32 {
         self.下限 + (self.上限 - self.下限) * 比
     }
 }

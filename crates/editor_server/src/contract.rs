@@ -19,7 +19,7 @@ pub fn 契約ファイルの本文を組み立てる() -> String {
 
 pub fn 編集資源契約の本文を組み立てる() -> String {
     let 設定 = Config::new();
-    let 型宣言一覧: [String; 39] = [
+    let 型宣言一覧: [String; 40] = [
         <crate::プロジェクト情報応答 as TS>::decl(&設定),
         <crate::建物定義の用途 as TS>::decl(&設定),
         <crate::ベイ構造 as TS>::decl(&設定),
@@ -34,6 +34,7 @@ pub fn 編集資源契約の本文を組み立てる() -> String {
         <crate::チャンクの道路 as TS>::decl(&設定),
         <crate::建物の配置 as TS>::decl(&設定),
         <crate::散布の設定 as TS>::decl(&設定),
+        <crate::散布の個体 as TS>::decl(&設定),
         <crate::マテリアル定義 as TS>::decl(&設定),
         <crate::層割当 as TS>::decl(&設定),
         <crate::マテリアル台帳 as TS>::decl(&設定),

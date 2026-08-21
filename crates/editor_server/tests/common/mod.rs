@@ -6,6 +6,8 @@
 #![allow(unused_imports)]
 
 mod building_outline_catalog_fixture;
+mod scatter_export_fixture;
+mod scatter_fixture;
 mod source_asset_export_fixture;
 mod world_layout;
 
@@ -14,6 +16,13 @@ use std::path::{Path, PathBuf};
 use editor_server::{ファイル保管庫, プロジェクトルート, リポジトリルート};
 
 pub use building_outline_catalog_fixture::{カタログに無い識別子, 一間四方の家の識別子, 建物外形カタログを作る};
+pub use scatter_export_fixture::{
+    散布を載せて書き出す, 書き出したチャンクソースを読む, 焼いたチャンクのバイト列を読む
+};
+pub use scatter_fixture::{
+    個体の水平位置一覧, 建物が散布を避ける距離メートル, 建物までの距離, 散布の個体一覧を作る, 散布を載せたチャンク構造を保存する,
+    検査のチャンク一辺メートル, 道路の中心線までの距離, 道路の散布除外バッファメートル,
+};
 pub use source_asset_export_fixture::{
     エディターの区画割り, フォックスのソースを配置する, マザーを一意な値で保存する, 地表層のタイルを配置する, 大域世界を保存する, 小さな区画割り,
     建物を据えられる区画割り, 零のマザーを保存する,

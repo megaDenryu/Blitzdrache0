@@ -1,56 +1,54 @@
 //! 版付きエディターチャンクJSONの最新の形と、版の判別から最新への変換の入口。旧版・欠損・不正値を推測で補わない。
-//! 版ごとの型と最新への変換は`version1`・`version2`が、素材のパスの解決は`manifest_file`が、
-//! 建物配置の形と検証は`placement`が、地表材質の重みの由来は`weight_source`が持つ。
+//! 版ごとの型と最新への変換は`version1`から`version3`が、素材のパスの解決は`manifest_file`が、建物配置の形と検証は`placement`が、散布の群と個体の形と検証は`scatter`が、地表材質の重みの由来は`weight_source`が持つ。
 
 mod manifest_file;
 mod placement;
+mod scatter;
+#[cfg(test)]
+mod scatter_tests;
 mod version1;
 mod version2;
+mod version3;
 #[cfg(test)]
 mod version_tests;
 mod weight_source;
 
 use std::path::{Path, PathBuf};
 
-use serde::Deserialize;
-
 use self::manifest_file::エディターチャンクソースのファイル;
 use crate::error::アセットコンパイルエラー;
 use crate::surface_material::weights::地表材質の重み格子;
-
 pub(crate) use placement::建物配置ソース;
+pub(crate) use scatter::散布の群ソース;
 pub(crate) use weight_source::地表材質の重みのソース;
 
 /// エディターが書き出すチャンクソースの最新の形式版。書き手はeditor_serverの`export/editor_chunk_source.rs`にあり、
 /// 両者の版が食い違うと焼きが必ず「形式版に対応していない」で落ちる。一致は`cargo xtask conform`の定数の組が見る。
-pub(super) const エディターチャンクソースの現在の形式版: u32 = 2;
-
-/// 版の判別だけを先に読むための形。欄が増えても読み取りが壊れないよう、版以外の欄は無視する。
-#[derive(Debug, Deserialize)]
-struct 形式版の宣言 {
-    形式版: u32,
-}
+pub(super) const エディターチャンクソースの現在の形式版: u32 = 3;
 
 pub(crate) struct エディターチャンクソース {
     高さ格子パス: PathBuf,
     地表材質の重み: 地表材質の重みのソース,
     pub(crate) 建物配置一覧: Vec<建物配置ソース>,
+    pub(crate) 散布の群一覧: Vec<散布の群ソース>,
 }
 
 impl エディターチャンクソース {
     pub(crate) fn ファイルから読む(パス: &Path) -> Result<Self, アセットコンパイルエラー> {
         let ファイル = エディターチャンクソースのファイル::生成する(パス);
         let 本文 = ファイル.本文を読む()?;
-        let 宣言: 形式版の宣言 = ファイル.版の型として解析する(&本文)?;
-        match 宣言.形式版 {
+        match ファイル.形式版を読む(&本文)? {
             1 => ファイル
                 .版の型として解析する::<version1::形式版1のエディターチャンクソース>(&本文)?
                 .最新へ変換する(&ファイル),
             2 => ファイル
                 .版の型として解析する::<version2::形式版2のエディターチャンクソース>(&本文)?
                 .最新へ変換する(&ファイル),
+            3 => ファイル
+                .版の型として解析する::<version3::形式版3のエディターチャンクソース>(&本文)?
+                .最新へ変換する(&ファイル),
             未対応 => Err(ファイル.読み込み失敗のエラーを作る(format!(
-                "形式版{未対応}には対応していない（対応版: 1と{エディターチャンクソースの現在の形式版}）"
+                "形式版{未対応}には対応していない（対応版: 1から{エディターチャンクソースの現在の形式版}まで）"
             ))),
         }
     }
@@ -60,13 +58,16 @@ impl エディターチャンクソース {
         高さ格子パス: PathBuf,
         地表材質の重み: 地表材質の重みのソース,
         建物配置一覧: Vec<建物配置ソース>,
+        散布の群一覧: Vec<散布の群ソース>,
         ファイル: &エディターチャンクソースのファイル<'_>,
     ) -> Result<Self, アセットコンパイルエラー> {
         placement::建物配置一覧を検証する(&建物配置一覧, ファイル)?;
+        scatter::散布の群一覧を検証する(&散布の群一覧, ファイル)?;
         Ok(Self {
             高さ格子パス,
             地表材質の重み,
             建物配置一覧,
+            散布の群一覧,
         })
     }
 
