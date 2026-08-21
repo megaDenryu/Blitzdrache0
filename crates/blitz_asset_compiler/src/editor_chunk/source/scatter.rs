@@ -16,12 +16,12 @@ use crate::error::アセットコンパイルエラー;
 #[allow(non_snake_case)]
 pub(crate) struct 散布の群ソース {
     pub(crate) 植生定義ID: String,
-    pub(crate) 個体一覧: Vec<散布個体ソース>,
+    pub(crate) 個体一覧: Vec<散布の個体ソース>,
 }
 
 /// 散布の個体1件。位置はチャンクの北西角を原点とする実行時のチャンク内座標である。
 #[derive(Debug, Deserialize)]
-pub(crate) struct 散布個体ソース {
+pub(crate) struct 散布の個体ソース {
     pub(crate) 配置識別子: String,
     pub(crate) チャンク原点からの東メートル: f32,
     pub(crate) チャンク原点からの南メートル: f32,
