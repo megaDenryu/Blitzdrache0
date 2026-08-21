@@ -1,7 +1,5 @@
-//! `POST /api/書き出し/ソースアセット`のREST経路のふるまいを確かめる。担当するのは、
-//! 大域未保存の422と、正常な書き出しの応答本体・書き出したチャンク目録がblitz_asset_compilerの
-//! 読み手で読めることの2点である。幾何(1px重複共有・縁クランプ・編集済み優先)は
-//! `source_asset_export_geometry.rs`が担当する。
+//! `POST /api/書き出し/ソースアセット`が成果物一式を公開する境界を確かめる。
+//! 正常応答・チャンク目録の読み戻し・同じ出力先への再公開を担当する。
 #![allow(clippy::unwrap_used)]
 #![allow(non_snake_case)]
 
@@ -11,50 +9,8 @@ use axum::{
     body::Body,
     http::{Request, StatusCode},
 };
-use blitz_asset_compiler::{チャンク目録ソースを読み込む, フォックスのソース, 高さ格子を読み込む};
+use blitz_asset_compiler::{チャンク目録ソースを読み込む, 高さ格子を読み込む};
 use tower::ServiceExt;
-
-#[tokio::test]
-async fn 大域世界未保存での書き出しは422を返す() {
-    let 一時 = common::一時プロジェクト::生成する("export_no_world");
-    let 応答 = common::ルーターを作る(&一時)
-        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
-    assert_eq!(応答.status(), StatusCode::UNPROCESSABLE_ENTITY);
-}
-
-#[tokio::test]
-async fn 書き出したソースの依存が欠ける場合は422を返す() {
-    let 一時 = common::一時プロジェクト::生成する("export_invalid_source");
-    let 保管庫 = editor_server::ファイル保管庫::生成する(&一時.プロジェクトルート());
-    let 区画割り = common::小さな区画割り();
-    common::大域世界を保存する(&保管庫, 区画割り);
-    common::マザーを一意な値で保存する(&保管庫, 区画割り);
-    let 応答 = common::ルーターを作る(&一時)
-        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
-    assert_eq!(応答.status(), StatusCode::UNPROCESSABLE_ENTITY);
-}
-
-#[tokio::test]
-async fn 実行時出力先を作れない場合は500を返す() {
-    let 一時 = common::一時プロジェクト::生成する("export_io_failure");
-    let 保管庫 = editor_server::ファイル保管庫::生成する(&一時.プロジェクトルート());
-    let 区画割り = common::小さな区画割り();
-    common::大域世界を保存する(&保管庫, 区画割り);
-    common::マザーを一意な値で保存する(&保管庫, 区画割り);
-    フォックスのソースを配置する(&一時);
-    let 出力先 = 一時.ルート().join("target/editor_world_assets");
-    std::fs::create_dir_all(出力先.parent().unwrap()).unwrap();
-    std::fs::write(出力先, b"directory creation must fail").unwrap();
-    let 応答 = common::ルーターを作る(&一時)
-        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
-    assert_eq!(応答.status(), StatusCode::INTERNAL_SERVER_ERROR);
-}
 
 #[tokio::test]
 async fn 正常な書き出しはファイル数と出力先を返しチャンク目録を読み戻せる() {
@@ -63,7 +19,7 @@ async fn 正常な書き出しはファイル数と出力先を返しチャン�
     let 区画割り = common::小さな区画割り();
     common::大域世界を保存する(&保管庫, 区画割り);
     common::マザーを一意な値で保存する(&保管庫, 区画割り);
-    フォックスのソースを配置する(&一時);
+    common::フォックスのソースを配置する(&一時);
 
     let 応答 = common::ルーターを作る(&一時)
         .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
@@ -101,7 +57,7 @@ async fn 次回書き出す目録は既存のエディター世界の更新済�
     let 区画割り = common::エディターの区画割り();
     common::大域世界を保存する(&保管庫, 区画割り);
     common::零のマザーを保存する(&保管庫, 区画割り);
-    フォックスのソースを配置する(&一時);
+    common::フォックスのソースを配置する(&一時);
     let 応答 = common::ルーターを作る(&一時)
         .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
         .await
@@ -111,18 +67,4 @@ async fn 次回書き出す目録は既存のエディター世界の更新済�
     let 書き出した目録 = std::fs::read(一時.ルート().join("assets/editor_world/chunk_directory.txt")).unwrap();
     let 既存目録 = std::fs::read(std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets/editor_world/chunk_directory.txt")).unwrap();
     assert_eq!(書き出した目録, 既存目録);
-}
-
-fn フォックスのソースを配置する(一時: &common::一時プロジェクト) {
-    let 相対 = std::path::Path::new(フォックスのソース);
-    let 元 = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets").join(相対);
-    let 先 = 一時.ルート().join("assets").join(相対);
-    let 親 = 先.parent().unwrap_or_else(|| {
-        panic!(
-            "フォックスの配置先に親が無い。`cargo xtask fetch-assets`で素材を取得し直す: {}",
-            先.display()
-        )
-    });
-    std::fs::create_dir_all(親).unwrap_or_else(|誤り| panic!("フォックスの配置先を作れない。`cargo xtask fetch-assets`で素材を取得し直す: {誤り}"));
-    std::fs::copy(元, 先).unwrap_or_else(|誤り| panic!("フォックスのソースを複製できない。`cargo xtask fetch-assets`で素材を取得し直す: {誤り}"));
 }

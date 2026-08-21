@@ -1,6 +1,9 @@
 //! `source_asset_export_*`試験が共有する、小さな区画割りと大域世界の組み立てヘルパー。
 #![allow(clippy::unwrap_used)]
 
+use std::path::{Path, PathBuf};
+
+use blitz_asset_compiler::フォックスのソース;
 use editor_server::{
     ファイル保管庫, プロジェクト保管庫, マザーハイトマップ, 世界の区画割り, 位置3次元, 大域世界構造, 広域道路
 };
@@ -53,4 +56,18 @@ pub fn 零のマザーを保存する(保管庫: &ファイル保管庫, 区画�
     let 標本数 = usize::try_from(一辺頂点数).unwrap().pow(2);
     let 格子 = マザーハイトマップ::生成する(一辺頂点数, vec![0; 標本数 * 4]).unwrap();
     保管庫.大域世界の高さ格子を検証して保存する(格子).unwrap();
+}
+
+pub fn フォックスのソースを配置する(一時: &super::一時プロジェクト) {
+    let 相対 = Path::new(フォックスのソース);
+    let 元 = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets").join(相対);
+    let 先 = 一時.ルート().join("assets").join(相対);
+    let 親 = 先.parent().unwrap_or_else(|| {
+        panic!(
+            "フォックスの配置先に親が無い。`cargo xtask fetch-assets`で素材を取得し直す: {}",
+            先.display()
+        )
+    });
+    std::fs::create_dir_all(親).unwrap_or_else(|誤り| panic!("フォックスの配置先を作れない。`cargo xtask fetch-assets`で素材を取得し直す: {誤り}"));
+    std::fs::copy(元, 先).unwrap_or_else(|誤り| panic!("フォックスのソースを複製できない。`cargo xtask fetch-assets`で素材を取得し直す: {誤り}"));
 }
