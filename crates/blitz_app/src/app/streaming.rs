@@ -7,6 +7,7 @@ mod build;
 mod bundle_sync;
 #[cfg(test)]
 mod bundle_sync_tests;
+mod directory_replace;
 mod lod_override;
 mod lod_sync;
 mod measurement;
@@ -26,19 +27,14 @@ pub(super) struct ストリーミング配線 {
     描画除外座標: Option<blitz_engine::チャンク座標>,
     /// 実破棄済み束IDの受け皿。毎フレーム使い回し、破棄バッチごとのヒープ再確保を避ける。
     実破棄受け皿: Vec<blitz_render::描画束ID>,
+    /// 世界差し替えで旧台帳を消した後に届く実破棄を、新世界の台帳へ報告しないための識別一覧。
+    差し替え前の実破棄待ち束: Vec<blitz_render::描画束ID>,
     地形lod: lod_sync::地形LOD配線,
 }
 
 impl ストリーミング配線 {
     pub(super) fn 一辺(&self) -> チャンク一辺 {
         self.チャンク一辺
-    }
-
-    pub(super) fn チャンク目録を差し替える(
-        &mut self,
-        新しい目録: blitz_engine::チャンク目録,
-    ) -> Result<(), blitz_engine::チャンク目録差し替えエラー> {
-        self.調停.チャンク目録を差し替える(新しい目録)
     }
 
     pub(super) fn チャンク目録の一辺を検査する(
@@ -50,8 +46,8 @@ impl ストリーミング配線 {
             return Ok(());
         }
         Err(blitz_engine::チャンク目録差し替えエラー::チャンク一辺変更 {
-            旧メートル: self.チャンク一辺.f32値(),
-            新メートル: 新一辺.f32値(),
+            旧: self.チャンク一辺,
+            新: 新一辺,
         })
     }
 

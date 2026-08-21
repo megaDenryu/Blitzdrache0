@@ -4,6 +4,7 @@ mod chunk_diff;
 mod chunk_directory;
 mod chunk_directory_file;
 mod chunk_edge_length;
+mod chunk_edge_length_display;
 mod chunk_grid;
 mod chunk_ledger;
 mod chunk_request;

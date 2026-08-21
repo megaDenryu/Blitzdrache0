@@ -1,6 +1,7 @@
 //! チャンク座標と描画束IDの対応規則を所有し、そのフレームの進行が挙げた座標へ束の追加と解除を適用する。
 //! 台帳の段階順は調停が持ち、ここは調停とレンダラーのあいだで座標・束ID・描画シーン素材を受け渡すだけである。
 
+mod old_world_destruction;
 mod transfer_without_draw;
 
 use blitz_engine::{ストリーミング調停, ストリーミング進行, チャンク一辺, チャンク座標};
@@ -10,6 +11,7 @@ use crate::app::persistent_bundles::遠景の束ID;
 use crate::app::scene_load::起動時シーンの束ID;
 use crate::error::起動エラー;
 
+use old_world_destruction::差し替え前の実破棄を処理する;
 use transfer_without_draw::描画せず転送を完了する;
 
 /// チャンク座標の永続化番号が持つXとZの符号ビット。排他的論理和を取ると座標空間の原点が識別空間の中央へ移る。
@@ -40,6 +42,7 @@ pub(super) fn 適用する(
     プリミティブ描画項目台帳: &mut crate::app::primitive_draw_item_registry::プリミティブ描画項目台帳,
     進行: &ストリーミング進行,
     実破棄受け皿: &mut Vec<描画束ID>,
+    差し替え前の実破棄待ち束: &mut Vec<描画束ID>,
     大域平行移動: blitz_math::大域ワールド位置,
     チャンク一辺: チャンク一辺,
     描画除外座標: Option<チャンク座標>,
@@ -61,9 +64,7 @@ pub(super) fn 適用する(
         プリミティブ描画項目台帳.束を解除する(束id);
     }
     レンダラー.実破棄済み描画束を引き取る(実破棄受け皿);
-    for 束id in 実破棄受け皿.iter() {
-        調停.gpu資源の解除を報告する(束idから座標を復元する(*束id))?;
-    }
+    差し替え前の実破棄を処理する(調停, 実破棄受け皿, 差し替え前の実破棄待ち束)?;
     Ok(())
 }
 

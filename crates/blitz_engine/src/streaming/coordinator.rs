@@ -18,14 +18,13 @@ use std::collections::HashMap;
 
 use blitz_math::大域ワールド位置;
 
-use generation::世代状態;
-
 use super::{
     chunk_directory::チャンク目録, chunk_grid::チャンク格子, chunk_ledger::チャンク台帳, coordinator_error::ストリーミング調停エラー,
     coordinator_progress::ストリーミング進行, coordinator_settings::ストリーミング調停設定, eviction_hysteresis::退避優位計数,
     loader::チャンク読込器, memory_budget::ストリーミング予算, observed_read_size::観測済み読込量, transfer_total::ストリーミング転送量,
 };
 use crate::{カタログ, シーンデータ, チャンク座標};
+use generation::世代状態;
 
 pub struct ストリーミング調停 {
     格子: チャンク格子,
@@ -67,6 +66,11 @@ impl ストリーミング調停 {
     /// 常駐しているチャンクの座標を受け皿へ集める。地形LODの選択が対象にできるのは常駐しているチャンクだけであり、その集合を持つのは台帳であるためここが仲介する。
     pub fn 常駐座標を集める(&self, 受け皿: &mut Vec<チャンク座標>) {
         self.台帳.常駐座標を集める(受け皿);
+    }
+
+    /// 目録差し替え前に、旧世界がレンダラーへ渡した描画束の座標を列挙する。
+    pub fn gpu資源を持つ座標を集める(&self, 受け皿: &mut Vec<チャンク座標>) {
+        self.台帳.gpu資源を持つ座標を集める(受け皿);
     }
 
     /// プレイヤーの大域位置を受け取り、そのフレームで実際に起きた読込・準備完了・解除と予算判定を返す。
