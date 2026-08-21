@@ -6,10 +6,12 @@
 //! 注意: blitz_engineがファイルの中身を読むのはこの型の中だけである。読み口が自分で`std::fs`を呼ぶと、
 //! ファイルシステムへ触る地点が形式の数だけ散り、どの経路がどのパスを開くのかが呼び出し側の記憶になる。
 
+mod publication_marker;
 mod read_error;
 
 use std::path::{Path, PathBuf};
 
+pub use publication_marker::実行時アセットの公開完了印;
 pub use read_error::実行時形式のファイルの読み取りの破れ;
 
 #[repr(transparent)]

@@ -7,8 +7,11 @@
 mod replacement;
 
 use std::path::PathBuf;
+use std::time::SystemTime;
 
-use blitz_engine::{アセットID, 実行時カタログのファイル, 実行時チャンク目録のファイル};
+use blitz_engine::{
+    アセットID, 実行時アセットの公開完了印, 実行時カタログのファイル, 実行時チャンク目録のファイル
+};
 
 /// カタログの版付きファイルの名前。生成側の`blitz_asset_compiler`が書き出す綴りと同じである。
 const カタログのファイル名: &str = "catalog.blitzcatalog";
@@ -38,6 +41,11 @@ impl 実行時アセットの置き場 {
     /// 配下の版付きチャンク目録。読み込みはこの型が持つ。
     pub(crate) fn チャンク目録のファイル(&self) -> 実行時チャンク目録のファイル {
         実行時チャンク目録のファイル::パスから作る(self.ディレクトリ.join(チャンク目録のファイル名))
+    }
+
+    /// 生成台帳は出力一式の最後に確定するため、この時刻の変化だけを公開完了として扱う。
+    pub(crate) fn 生成台帳の更新時刻を取得する(&self) -> Result<SystemTime, std::io::Error> {
+        std::fs::metadata(self.ディレクトリ.join(実行時アセットの公開完了印::ファイル名()))?.modified()
     }
 
     /// 安定IDが指す生成物1つのパス。

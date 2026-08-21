@@ -1,10 +1,8 @@
-//! ホットリロード: シェーダーソースと、現在シーンの参照ファイル一覧を
-//! std のみのmtimeポーリングで監視する。新規依存クレートは追加しない。
-//! シェーダーはimportでモジュール分割されているため、監視はエントリファイル
-//! 単体でなくエントリが属するディレクトリ内の全.slangファイルを対象にする
-//! (dir_mtime参照)。
+//! ホットリロード: シェーダーソースと、公開完了を示す生成台帳をstdのみのmtimeポーリングで監視する。新規依存クレートは追加しない。
+//! シェーダーはimportでモジュール分割されているため、監視はエントリファイル単体でなくエントリが属するディレクトリ内の全.slangファイルを対象にする(dir_mtime参照)。
 //! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断7」「判断22」。
 
+mod asset_reload_error;
 mod asset_watch;
 mod compile;
 mod compile_error;
@@ -14,13 +12,13 @@ mod reload_result;
 mod shader_watch;
 mod slangc;
 mod watched_shader;
-use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
+pub(crate) use asset_reload_error::実行時アセット一式の再読込エラー;
 use asset_watch::アセット監視状態;
 use blitz_engine::{アセットID, カタログ};
 pub(crate) use compile_error::シェーダー再コンパイルエラー;
-pub(crate) use reload_result::ホットリロード結果;
+pub(crate) use reload_result::{ホットリロード結果, 公開済みの実行時アセット一式};
 use shader_watch::{シェーダー変化結果, シェーダー監視状態};
 pub(crate) use watched_shader::監視するシェーダーの入口ファイル;
 
@@ -45,8 +43,13 @@ impl ホットリローダー {
 
     /// 初回シーン読込成功後に呼び、アセットの監視対象を設定する
     /// (カタログ・シーン読込はウィンドウ・レンダラー生成後にしか確定しないため)。
-    pub(crate) fn アセット監視を設定する(&mut self, カタログ: カタログ, id: アセットID, 参照ファイル一覧: &[PathBuf]) {
-        self.アセット監視 = Some(asset_watch::アセット監視状態を構築する(カタログ, id, 参照ファイル一覧));
+    pub(crate) fn アセット監視を設定する(
+        &mut self,
+        置き場: crate::runtime_assets::実行時アセットの置き場,
+        カタログ: カタログ,
+        id: アセットID,
+    ) {
+        self.アセット監視 = Some(asset_watch::アセット監視状態を構築する(置き場, カタログ, id));
     }
 
     /// アセット監視が所有するカタログを読み取り専用で貸す。カタログは初回シーン読込で1つだけ作られる台帳であり、
@@ -54,6 +57,12 @@ impl ホットリローダー {
     /// 設定前(初回シーン読込前)は`None`を返す。
     pub(crate) fn カタログを参照する(&self) -> Option<&カタログ> {
         self.アセット監視.as_ref().map(asset_watch::アセット監視状態::カタログ)
+    }
+
+    pub(crate) fn カタログを採用する(&mut self, カタログ: カタログ) {
+        if let Some(監視) = &mut self.アセット監視 {
+            監視.カタログを採用する(カタログ);
+        }
     }
 
     pub(crate) fn 確認する(&mut self) -> ホットリロード結果 {
@@ -76,12 +85,10 @@ impl ホットリローダー {
         }
 
         if let Some(監視) = &mut self.アセット監視
-            && let Some(結果) = 監視.変化を確認して再読込する()
+            && let Some(結果) = 監視.公開完了を確認して一式を再読込する()
         {
             return match 結果 {
-                Ok(シーン) => ホットリロード結果::アセット再読込成功 {
-                    シーン: Box::new(シーン)
-                },
+                Ok(一式) => ホットリロード結果::アセット再読込成功 { 一式: Box::new(一式) },
                 Err(誤り) => ホットリロード結果::アセット再読込失敗 { 誤り },
             };
         }

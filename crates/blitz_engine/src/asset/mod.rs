@@ -81,7 +81,7 @@ pub use mesh_primitive::メッシュプリミティブ;
 pub use pbr_material_data::{材質特徴集合, 金属粗さPBRデータ};
 pub use render_object_data::描画対象データ;
 pub use render_object_id::描画対象ID;
-pub use runtime_file::{実行時形式のファイル, 実行時形式のファイルの読み取りの破れ};
+pub use runtime_file::*;
 pub(crate) use runtime_format::mesh_layout;
 pub use runtime_format::{
     アセット実行時形式エラー, アセット形式版, カタログを実行時形式へ格納する, シーンを実行時形式へ格納する, チャンク目録を実行時形式へ格納する,

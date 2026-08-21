@@ -12,6 +12,7 @@ mod frame_timing;
 mod frame_ui;
 mod handler;
 mod hot_reload_apply;
+mod hot_reload_asset_apply;
 mod lod_probe;
 mod measurement_setup;
 mod particle_setup;
@@ -38,7 +39,6 @@ pub(crate) use frame_timing::{フレーム時間統計, 集計する};
 pub(crate) use time_of_day::{太陽天頂区間の記録, 空の再現条件, 遠方環境の鍵の記録, 遠方環境更新判定};
 use winit::window::Window;
 pub(crate) use {draw_dispatch::時間再構成の突き合わせの要約, streaming::ストリーミング要約};
-
 /// 前提: `レンダラー`フィールドは`window`より前に宣言する。Rustは構造体フィールドを宣言順にDropするため、この順序がレンダラー破棄(surface等)をウィンドウ破棄より必ず先に行うことを保証する(レンダラーの生成前提を満たす)。
 pub(crate) struct アプリ {
     レンダラー: Option<レンダラー>,

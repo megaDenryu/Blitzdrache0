@@ -4,6 +4,7 @@
 
 mod candidates;
 mod degradation;
+mod directory_replace;
 mod generation;
 mod gpu_handoff;
 mod load_dispatch;
