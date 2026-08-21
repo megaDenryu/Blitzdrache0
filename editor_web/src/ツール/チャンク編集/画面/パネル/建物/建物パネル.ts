@@ -53,7 +53,8 @@ export class 建物パネル extends LV2HtmlComponentBase implements I配線可�
 
     public 建物定義一覧を更新する(定義一覧: ReadonlyArray<建物外形定義>): void {
         this._生成ボタン領域.clearChildren()
-        this._カタログ診断 = 定義一覧.length === 0 ? '外部アセットの置き場が無いため、配置できる建物定義がありません' : ''
+        this._カタログ診断 =
+            定義一覧.length === 0 ? '配置できる建物定義がありません(外部アセットの置き場が無い環境では定義0件になります)' : ''
         this._診断表示.setTextContent(this._カタログ診断)
         for (const 定義 of 定義一覧.filter((候補) => 候補.用途 === '家屋')) {
             const 表示 = `+ ${定義.表示名}`
