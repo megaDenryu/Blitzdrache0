@@ -5,6 +5,8 @@
 
 use std::path::{Path, PathBuf};
 
+use blitz_engine::surface_layer_textures::エンジン材質名;
+
 use super::error::地表層テクスチャ集コンパイルエラー;
 use crate::asset_layout::ソースルート;
 
@@ -29,14 +31,14 @@ impl 地表層タイルの置き場 {
         self.0.display()
     }
 
-    pub(super) fn 材質のタイル画像のパス(&self, 材質名: &str) -> PathBuf {
-        self.0.join(format!("{材質名}.{タイル画像の拡張子}"))
+    pub(super) fn 材質のタイル画像のパス(&self, 材質名: &エンジン材質名) -> PathBuf {
+        self.0.join(format!("{}.{タイル画像の拡張子}", 材質名.綴り()))
     }
 
     /// 材質1つ分のタイル画像のバイト列と、依存一覧へ載せるパスを返す。
     pub(super) fn 材質のタイル画像を読む(
         &self,
-        材質名: &str,
+        材質名: &エンジン材質名,
     ) -> Result<(Vec<u8>, PathBuf), 地表層テクスチャ集コンパイルエラー> {
         let パス = self.材質のタイル画像のパス(材質名);
         if !パス.is_file() {

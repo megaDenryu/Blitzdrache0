@@ -6,6 +6,7 @@
 //! 焼く側が行い、実行時に名前で引く経路は持たない。
 //! 参照: `_doc/設計/マルチマテリアルと材質境界.md`
 
+mod engine_material_name;
 mod error;
 mod layer_index;
 mod load_error;
@@ -14,6 +15,7 @@ mod stable_id;
 mod texture_set;
 mod tile;
 
+pub use engine_material_name::エンジン材質名;
 pub use error::地表層テクスチャ集エラー;
 pub use layer_index::地表層ごとの材質索引;
 pub use load_error::地表層テクスチャ集読込エラー;

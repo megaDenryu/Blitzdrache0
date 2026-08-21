@@ -50,7 +50,7 @@ fn 同じ層割当で2度焼いたバイト列は一致する() {
 
 #[test]
 fn 同じ材質名を2つの層が指しても焼けて索引が一致する() {
-    let 層割当 = 地表材質の層割当::生成する(["grass_a", "grass_a", "rock_a", "sand_a"].map(str::to_string)).unwrap();
+    let 層割当 = 地表材質の層割当::綴りから生成する(["grass_a", "grass_a", "rock_a", "sand_a"]).unwrap();
     let テクスチャ集 = 実行時形式から地表層テクスチャ集を読む(&焼く(&層割当).unwrap()).unwrap();
     // タイルは重複を除いて3枚になり、層0と層1が同じ索引を指す。
     assert_eq!(テクスチャ集.材質ごとのタイル().len(), 3);
@@ -60,12 +60,12 @@ fn 同じ材質名を2つの層が指しても焼けて索引が一致する() {
 
 #[test]
 fn 置き場にタイルが無い材質名を指す層割当は型付きエラーになる() {
-    let 層割当 = 地表材質の層割当::生成する(["存在しない材質", "dirt_a", "rock_a", "sand_a"].map(str::to_string)).unwrap();
+    let 層割当 = 地表材質の層割当::綴りから生成する(["存在しない材質", "dirt_a", "rock_a", "sand_a"]).unwrap();
     let 誤り = 焼く(&層割当).unwrap_err();
     assert!(誤り.contains("存在しない材質"), "失敗の文言が材質名を名指していない: {誤り}");
 }
 
 #[test]
 fn 空の材質名を持つ層割当は生成の時点で拒む() {
-    assert!(地表材質の層割当::生成する(["  ", "dirt_a", "rock_a", "sand_a"].map(str::to_string)).is_err());
+    assert!(地表材質の層割当::綴りから生成する(["  ", "dirt_a", "rock_a", "sand_a"]).is_err());
 }
