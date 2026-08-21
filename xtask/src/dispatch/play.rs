@@ -1,5 +1,6 @@
-//! ゲーム実行系コマンドの割り当て。command_catalogの`play`分類と同じ範囲
-//! (クソゲー1本目「キツネの場所巡り」の決定性確認と起動の2件)を担当する。
+//! ゲーム実行系コマンドの割り当て。キツネの場所巡りの決定性確認と起動、およびエディター世界の起動を担当する。
+
+mod editor_world;
 
 use std::process::ExitCode;
 
@@ -9,6 +10,7 @@ pub(super) fn 割り当てる(名前: &str, _引数一覧: &[String]) -> Option<
     match 名前 {
         "game-fox-tour" => Some(game_fox_tour::実行する()),
         "play-fox-tour" => Some(play_fox_tour::実行する()),
+        "play-editor-world" => Some(editor_world::実行する()),
         _ => None,
     }
 }
