@@ -29,7 +29,7 @@ mod runtime_catalog_tests;
 #[cfg(test)]
 mod runtime_chunk_directory_tests;
 mod runtime_file;
-mod runtime_format;
+pub(crate) mod runtime_format;
 #[cfg(test)]
 mod runtime_format_tests;
 #[cfg(test)]

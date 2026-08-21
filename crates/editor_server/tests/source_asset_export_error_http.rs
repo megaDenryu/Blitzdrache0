@@ -43,6 +43,7 @@ async fn 実行時出力先を作れない場合は500を返す() {
     common::大域世界を保存する(&保管庫, 区画割り);
     common::マザーを一意な値で保存する(&保管庫, 区画割り);
     common::フォックスのソースを配置する(&一時);
+    common::地表層のタイルを配置する(&一時);
     let 出力先 = 一時.ルート().join("target/editor_world_assets");
     std::fs::create_dir_all(出力先.parent().unwrap()).unwrap();
     std::fs::write(出力先, b"directory creation must fail").unwrap();

@@ -34,7 +34,7 @@ pub(in crate::asset::runtime_format::scene) fn 版4までのテクスチャを�
     Ok(())
 }
 
-pub(in crate::asset::runtime_format::scene) fn 版5のテクスチャを書く(
+pub(in crate::asset::runtime_format) fn 版5のテクスチャを書く(
     出力: &mut 書込先,
     テクスチャ: Option<&格納済みテクスチャ>,
 ) -> Result<(), アセット実行時形式エラー> {

@@ -6,7 +6,7 @@
 use std::path::{Path, PathBuf};
 
 use super::エディターチャンクソース;
-use crate::surface_material_weights::{地表材質の重み格子, 地表材質の重み格子を格納する, 地表材質の重み格子諸元};
+use crate::surface_material::weights::{地表材質の重み格子, 地表材質の重み格子を格納する, 地表材質の重み格子諸元};
 
 const 一辺の標本数: u32 = 3;
 

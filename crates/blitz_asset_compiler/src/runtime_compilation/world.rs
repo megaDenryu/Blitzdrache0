@@ -29,6 +29,7 @@ pub(super) mod prop_group_declaration;
 mod provenance;
 mod scatter_declaration;
 pub(super) mod stone_hut_declaration;
+mod surface_layer_bake_choice;
 mod vegetation_declaration;
 mod vertex_diagnostic_declaration;
 mod village_declaration;

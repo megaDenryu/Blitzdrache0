@@ -6,6 +6,7 @@ use std::path::PathBuf;
 
 use blitz_engine::テクスチャデータ;
 
+use super::image_decode::画像のバイト列をrgba8へ復号する;
 use crate::error::アセットコンパイルエラー;
 
 use super::document::開いた文書;
@@ -19,19 +20,9 @@ pub(super) fn デコードする(
     let 画像 = テクスチャ.source();
     let (バイト列, 参照パス) = 画像バイト列を取り出す(文書, &画像)?;
 
-    let デコード画像 = image::load_from_memory(&バイト列)
-        .map_err(|誤り| アセットコンパイルエラー::画像デコード失敗(誤り.to_string()))?
-        .into_rgba8();
-    let (幅, 高さ) = デコード画像.dimensions();
-
-    Ok((
-        テクスチャデータ {
-            幅,
-            高さ,
-            rgba8: デコード画像.into_raw(),
-        },
-        参照パス,
-    ))
+    let 復号済み = 画像のバイト列をrgba8へ復号する(&バイト列)
+        .map_err(|誤り| アセットコンパイルエラー::画像デコード失敗(誤り.to_string()))?;
+    Ok((復号済み, 参照パス))
 }
 
 fn 画像バイト列を取り出す(

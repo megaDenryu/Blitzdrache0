@@ -15,7 +15,8 @@
 //! assets/night_lights_world/ へ夜の多光源の地面1チャンク分の高さ格子と目録ソースを、
 //! assets/stone_hut_world/ へ屋内の多光源の平らな地面1チャンク分の高さ格子と目録ソースを、
 //! assets/texture_compression_world/ へブロック圧縮の対照の素材(512画素四方の滑らかなグラデーションと決定的な雑音)と
-//! それらをベースカラーに持つ板2枚のglTFと1チャンクの目録ソースを書き出す。
+//! それらをベースカラーに持つ板2枚のglTFと1チャンクの目録ソースを、
+//! assets/surface_layer_textures/ へ地表材質の4層(草・泥・岩・砂)の純色タイル画像を書き出す。
 //!
 //! `--game-map-seed <数>`(`cargo xtask gen-game-map --seed <数>`)では場所巡りの世界だけを書き出す。行き先は
 //! ソースルート(既定はassets/、`--source-root <パス>`で差し替える)の下のfox_tour_world/であり、種から決めた
@@ -44,6 +45,7 @@ mod shadow_scene_gltf_json;
 mod shadow_scene_texture;
 mod smoke_assets;
 mod stone_hut_world;
+mod surface_layer_tiles;
 mod terrain_visual_world;
 mod terrain_world;
 mod texture_compression_world;

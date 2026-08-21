@@ -3,6 +3,7 @@
 #![forbid(unsafe_code)]
 
 mod atomic_file_write;
+mod bake_editor_world;
 #[cfg(feature = "typescript")]
 mod contract;
 mod export;

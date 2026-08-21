@@ -8,7 +8,7 @@
 use std::path::PathBuf;
 
 use crate::error::アセットコンパイルエラー;
-use crate::surface_material_weights::{地表材質の重み格子, 地表材質の重み格子を読み込む, 地表材質の重み格子諸元};
+use crate::surface_material::weights::{地表材質の重み格子, 地表材質の重み格子を読み込む, 地表材質の重み格子諸元};
 
 pub(crate) enum 地表材質の重みのソース {
     /// 形式版1のチャンク。塗られていないチャンクと同じ「先頭の層だけの重み」として扱う。

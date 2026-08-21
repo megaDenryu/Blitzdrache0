@@ -20,6 +20,7 @@ async fn 正常な書き出しはファイル数と出力先を返しチャン�
     common::大域世界を保存する(&保管庫, 区画割り);
     common::マザーを一意な値で保存する(&保管庫, 区画割り);
     common::フォックスのソースを配置する(&一時);
+    common::地表層のタイルを配置する(&一時);
 
     let 応答 = common::ルーターを作る(&一時)
         .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
@@ -66,6 +67,7 @@ async fn 次回書き出す目録は既存のエディター世界の更新済�
     common::大域世界を保存する(&保管庫, 区画割り);
     common::零のマザーを保存する(&保管庫, 区画割り);
     common::フォックスのソースを配置する(&一時);
+    common::地表層のタイルを配置する(&一時);
     let 応答 = common::ルーターを作る(&一時)
         .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
         .await

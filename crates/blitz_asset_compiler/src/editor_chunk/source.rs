@@ -16,7 +16,7 @@ use serde::Deserialize;
 
 use self::manifest_file::エディターチャンクソースのファイル;
 use crate::error::アセットコンパイルエラー;
-use crate::surface_material_weights::地表材質の重み格子;
+use crate::surface_material::weights::地表材質の重み格子;
 
 pub(crate) use placement::建物配置ソース;
 pub(crate) use weight_source::地表材質の重みのソース;

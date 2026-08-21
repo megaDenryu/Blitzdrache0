@@ -37,7 +37,7 @@ pub enum アセットコンパイルエラー {
     #[error("高さ格子の扱いに失敗した: {0}")]
     高さ格子失敗(#[from] crate::height_grid::高さ格子エラー),
     #[error("地表材質の重み格子の扱いに失敗した: {0}")]
-    地表材質の重み格子失敗(#[from] crate::surface_material_weights::地表材質の重み格子エラー),
+    地表材質の重み格子失敗(#[from] crate::surface_material::weights::地表材質の重み格子エラー),
     #[error("地形の詳細段の組み立てに失敗した: {0}")]
     地形LODメッシュ群失敗(#[from] blitz_engine::地形LODメッシュ群エラー),
     #[error("インスタンス群の組み立てに失敗した: {0}")]

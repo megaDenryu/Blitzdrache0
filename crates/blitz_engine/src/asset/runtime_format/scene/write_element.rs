@@ -26,6 +26,7 @@ pub(super) use mesh::旧版を書く as 旧版のメッシュを書く;
 pub(super) use mesh::書く as メッシュを書く;
 pub(super) use mesh_list::書く as メッシュ列を書く;
 pub(super) use skin::書く as スキンを書く;
+pub(super) use texture::テクスチャを書く工程;
 #[cfg(test)]
 pub(super) use texture::版4までのテクスチャを書く;
-pub(super) use texture::{テクスチャを書く工程, 版5のテクスチャを書く};
+pub(in crate::asset::runtime_format) use texture::版5のテクスチャを書く;

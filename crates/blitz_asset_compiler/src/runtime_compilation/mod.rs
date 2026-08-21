@@ -17,6 +17,7 @@ mod instance_tally;
 mod placed_instance_tally;
 mod source_kind;
 mod source_location;
+mod surface_layer_texture_set;
 mod world;
 
 pub use building_outline_catalog::{

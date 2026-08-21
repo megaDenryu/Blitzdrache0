@@ -68,6 +68,22 @@ pub fn 零のマザーを保存する(保管庫: &ファイル保管庫, 区画�
     保管庫.大域世界の高さ格子を検証して保存する(格子).unwrap();
 }
 
+/// 地表層のタイル画像をリポジトリの`assets/surface_layer_textures/`から一時プロジェクトへ複製する。
+/// エディターの世界を焼く経路が地表層テクスチャ集を必ず焼くため、タイルの無い一時プロジェクトでは書き出しが拒まれる。
+pub fn 地表層のタイルを配置する(一時: &super::一時プロジェクト) {
+    let ディレクトリ名 = Path::new("surface_layer_textures");
+    let 元ディレクトリ = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets").join(ディレクトリ名);
+    let 先ディレクトリ = 一時.ルート().join("assets").join(ディレクトリ名);
+    std::fs::create_dir_all(&先ディレクトリ).unwrap();
+    let 一覧 = std::fs::read_dir(&元ディレクトリ)
+        .unwrap_or_else(|誤り| panic!("地表層のタイルを読めない。`cargo xtask gen-source-assets`で生成し直す: {誤り}"));
+    for 項目 in 一覧 {
+        let 元 = 項目.unwrap().path();
+        let 名前 = 元.file_name().unwrap_or_else(|| panic!("タイルのファイル名が無い: {}", 元.display()));
+        std::fs::copy(&元, 先ディレクトリ.join(名前)).unwrap();
+    }
+}
+
 pub fn フォックスのソースを配置する(一時: &super::一時プロジェクト) {
     let 相対 = Path::new(フォックスのソース);
     let 元 = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets").join(相対);

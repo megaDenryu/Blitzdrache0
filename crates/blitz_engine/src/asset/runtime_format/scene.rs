@@ -5,7 +5,7 @@
 pub(crate) mod bytes;
 pub(crate) mod mesh_layout;
 mod multi_material_body;
-mod read_element;
+pub(super) mod read_element;
 mod shape_tag;
 mod texture_format_tag;
 mod v1;
@@ -13,7 +13,7 @@ mod v2;
 mod v3;
 mod v4;
 mod v5;
-mod write_element;
+pub(super) mod write_element;
 
 use super::{アセット実行時形式エラー, アセット形式版, 実行時アセットを開く, 実行時アセット種別};
 use crate::asset::scene_data::シーンデータ;
@@ -26,8 +26,10 @@ pub fn 実行時形式からシーンを読む(バイト列: &[u8]) -> Result<�
     let アセット = 実行時アセットを開く(バイト列)?;
     match アセット.種別 {
         実行時アセット種別::シーン => {}
-        種別 @ (実行時アセット種別::カタログ | 実行時アセット種別::チャンク目録 | 実行時アセット種別::高さ場) =>
-        {
+        種別 @ (実行時アセット種別::カタログ
+        | 実行時アセット種別::チャンク目録
+        | 実行時アセット種別::高さ場
+        | 実行時アセット種別::地表層テクスチャ集) => {
             return Err(アセット実行時形式エラー::アセット種別不一致 {
                 期待: 実行時アセット種別::シーン.番号(),
                 実際: 種別.番号(),

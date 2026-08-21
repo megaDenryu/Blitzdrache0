@@ -4,10 +4,10 @@
 
 use super::error::地表材質の重み格子エラー;
 use super::specification::地表材質の重み格子諸元;
-use super::地表材質の層数;
+use super::地表層の数;
 
 /// 塗られていないチャンクを表す重み。先頭の層(草)だけが満量であり、合計は255である。
-const 先頭の層だけの重み: [u8; 地表材質の層数] = [255, 0, 0, 0];
+const 先頭の層だけの重み: [u8; 地表層の数] = [255, 0, 0, 0];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct 地表材質の重み格子 {
@@ -32,7 +32,7 @@ impl 地表材質の重み格子 {
         諸元: 地表材質の重み格子諸元
     ) -> Result<Self, 地表材質の重み格子エラー> {
         let バイト数 = 諸元.本体のバイト数()?;
-        let 標本数 = バイト数 / 地表材質の層数;
+        let 標本数 = バイト数 / 地表層の数;
         let mut 重み一覧 = Vec::with_capacity(バイト数);
         for _ in 0..標本数 {
             重み一覧.extend_from_slice(&先頭の層だけの重み);
@@ -49,9 +49,7 @@ impl 地表材質の重み格子 {
     }
 
     /// 標本1つ分の層ごとの重みを参照する。範囲外は型付きエラーにする。
-    pub fn 標本の重み(
-        &self, 標本添字x: u32, 標本添字z: u32
-    ) -> Result<[u8; 地表材質の層数], 地表材質の重み格子エラー> {
+    pub fn 標本の重み(&self, 標本添字x: u32, 標本添字z: u32) -> Result<[u8; 地表層の数], 地表材質の重み格子エラー> {
         let 範囲外 = || 地表材質の重み格子エラー::標本添字範囲外 {
             x: 標本添字x, z: 標本添字z
         };
@@ -64,10 +62,10 @@ impl 地表材質の重み格子 {
             .and_then(|z| z.checked_mul(usize::try_from(一辺).ok()?))
             .ok_or_else(範囲外)?;
         let 標本番号 = usize::try_from(標本添字x).ok().and_then(|x| 行の先頭.checked_add(x)).ok_or_else(範囲外)?;
-        let 開始 = 標本番号.checked_mul(地表材質の層数).ok_or_else(範囲外)?;
+        let 開始 = 標本番号.checked_mul(地表層の数).ok_or_else(範囲外)?;
         self.重み一覧
-            .get(開始..開始.saturating_add(地表材質の層数))
-            .and_then(|範囲| <[u8; 地表材質の層数]>::try_from(範囲).ok())
+            .get(開始..開始.saturating_add(地表層の数))
+            .and_then(|範囲| <[u8; 地表層の数]>::try_from(範囲).ok())
             .ok_or_else(範囲外)
     }
 

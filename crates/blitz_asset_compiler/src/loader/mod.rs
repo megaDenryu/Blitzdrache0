@@ -10,6 +10,7 @@ mod contract;
 mod document;
 mod file;
 mod fixed_object;
+pub(crate) mod image_decode;
 mod joint;
 mod material;
 mod material_slots;

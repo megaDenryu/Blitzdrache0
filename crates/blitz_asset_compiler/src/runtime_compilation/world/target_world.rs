@@ -8,7 +8,7 @@
 //! 地面へ散らす原型は`scatter_declaration`が持つ。ここが持つのは枝の定義と、どの台帳へ問い合わせるかだけである。
 //! モジュールの木は親の`world`が持つ。
 
-use crate::{アセット配置エラー, 世界のディレクトリ名, 散布の焼き方};
+use crate::{アセット配置エラー, 世界のディレクトリ名, 地表層テクスチャ集の焼き方, 散布の焼き方};
 
 use super::super::catalog::{アセット定義, ソース種別};
 use super::part_frame_row_declaration::一間四方の骨格の並びの種類;
@@ -77,6 +77,11 @@ impl 対象世界 {
     /// 検収の世界は高さ場を持たない(持たせると既存の世界のカタログの中身が変わる)。
     pub(in crate::runtime_compilation) fn 高さ場を焼くか(self) -> bool {
         matches!(self, Self::場所巡りの世界 | Self::エディターの世界)
+    }
+
+    /// その世界が地表層テクスチャ集を焼くか、焼くならどの層割当で焼くか。台帳は`surface_layer_bake_choice`が持つ。
+    pub fn 地表層テクスチャ集の焼き方を選ぶ(self) -> 地表層テクスチャ集の焼き方 {
+        super::surface_layer_bake_choice::地表層テクスチャ集の焼き方を選ぶ(self)
     }
 
     /// チャンク以外に焼く、この世界のアセット一覧。台帳は`asset_definition_list`が持つ。

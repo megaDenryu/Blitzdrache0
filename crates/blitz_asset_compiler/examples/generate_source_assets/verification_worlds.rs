@@ -8,7 +8,7 @@ use std::path::Path;
 
 use crate::{
     chunk_world, night_lights_world, part_frame_row_world, part_house_row_world, part_tree_row_world, smoke_assets, stone_hut_world,
-    terrain_visual_world, terrain_world, texture_compression_world, vegetation_world, village_world, ディレクトリを作る,
+    surface_layer_tiles, terrain_visual_world, terrain_world, texture_compression_world, vegetation_world, village_world, ディレクトリを作る,
 };
 
 pub(crate) fn 一式を書き出す() -> Result<(), String> {
@@ -71,5 +71,10 @@ pub(crate) fn 一式を書き出す() -> Result<(), String> {
     ディレクトリを作る(ブロック圧縮の対照出力先)?;
     texture_compression_world::対照素材のソース一式を書き出す(ブロック圧縮の対照出力先)?;
     println!("[generate_source_assets] {}へ生成完了", ブロック圧縮の対照出力先.display());
+
+    let 地表層タイル出力先 = Path::new("assets/surface_layer_textures");
+    ディレクトリを作る(地表層タイル出力先)?;
+    surface_layer_tiles::書き出す(地表層タイル出力先)?;
+    println!("[generate_source_assets] {}へ生成完了", 地表層タイル出力先.display());
     Ok(())
 }

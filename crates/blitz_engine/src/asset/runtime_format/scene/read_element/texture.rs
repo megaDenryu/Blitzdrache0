@@ -42,7 +42,7 @@ pub(in crate::asset::runtime_format::scene) fn 版4までのテクスチャを�
     )?))
 }
 
-pub(in crate::asset::runtime_format::scene) fn 版5のテクスチャを読む(
+pub(in crate::asset::runtime_format) fn 版5のテクスチャを読む(
     入力: &mut 読取位置<'_>,
 ) -> Result<Option<格納済みテクスチャ>, アセット実行時形式エラー> {
     let Some((幅, 高さ)) = 有無と寸法を読む(入力)? else {

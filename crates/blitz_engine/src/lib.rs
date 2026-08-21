@@ -1,5 +1,7 @@
 //! エンジン層: ゲームロジックに描画対象の世界を表現する語彙を提供し、blitz_renderのレンダーグラフへ描画内容を翻訳する。注意: このクレートはwinitにもashにも依存せず、入力はデバイス非依存の`カメラインテント`としてのみ受け取る（参照: `_doc/計画/ユビキタス言語.md`「入力インテント」）。
 #![forbid(unsafe_code)]
+// `pub mod`で公開する語彙は、いずれも型と定数の数が多く、クレート直下の平坦な再エクスポートへ混ぜると
+// 呼び出し側が出どころを追えなくなるものである。そのためモジュールごと公開する。
 pub mod animation;
 mod asset;
 pub mod auto_exposure;
@@ -11,11 +13,9 @@ mod instance_lod;
 #[cfg(test)]
 mod instance_lod_tests;
 mod lighting;
-/// プリミティブ描画項目の語彙は識別・区間・材質束縛・可視個体区間の参照と数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
 pub mod local_visibility;
 mod lod_threshold;
 pub mod primitive_draw_item;
-/// 空と太陽の語彙は数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
 pub mod sky;
 mod streaming;
 #[cfg(test)]
@@ -58,12 +58,11 @@ mod streaming_tests;
 mod streaming_transfer_tests;
 #[cfg(test)]
 mod streaming_usage_tests;
-/// 時間再構成の語彙は動きベクトルの規約・履歴の混合・棄却・画素内ずらしの列と数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
+pub mod surface_layer_textures;
 pub mod temporal_reconstruction;
 mod terrain_lod;
 #[cfg(test)]
 mod terrain_lod_tests;
-/// 時刻の型は数が多く、平坦な再エクスポートへ混ぜると呼び出し側が出どころを追えなくなるため、モジュールごと公開する。
 pub mod time;
 mod visibility;
 #[cfg(test)]
