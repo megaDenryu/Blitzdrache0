@@ -27,6 +27,10 @@ impl 出力世界名 {
     pub fn 綴り(&self) -> &str {
         &self.0
     }
+
+    pub fn エディターの世界か(&self) -> bool {
+        self.0 == 既定の世界名
+    }
 }
 
 fn 世界名の綴りを検証する(名前: &str) -> Result<(), 書き出しエラー> {

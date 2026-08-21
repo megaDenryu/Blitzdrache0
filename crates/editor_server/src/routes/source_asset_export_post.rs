@@ -10,6 +10,7 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
+use blitz_asset_compiler::{実行時アセットのコンパイル, 焼く世界の指定};
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -31,24 +32,50 @@ struct 応答本体 {
 }
 
 pub async fn ソースアセットを書き出す(State(状態): State<サーバー状態>, 本文: Bytes) -> Response {
-    match ソースアセットの書き出しを実行する(&状態, &本文) {
-        Ok(応答) => Json(応答).into_response(),
-        Err(応答) => *応答,
+    match tokio::task::spawn_blocking(move || ソースアセットの書き出しとベイクを実行する(&状態, &本文)).await {
+        Ok(Ok(応答)) => Json(応答).into_response(),
+        Ok(Err(応答)) => *応答,
+        Err(誤り) => 失敗応答を組み立てる(StatusCode::INTERNAL_SERVER_ERROR, "内部エラー", 誤り.to_string()),
     }
 }
 
 /// 応答は`Response`本体を直接返すと`Result`全体が大きくなる(clippyの
 /// `result_large_err`が検出する)ため、拒否応答だけ`Box`で包む。
-fn ソースアセットの書き出しを実行する(状態: &サーバー状態, 本文: &[u8]) -> Result<応答本体, Box<Response>> {
+fn ソースアセットの書き出しとベイクを実行する(
+    状態: &サーバー状態, 本文: &[u8]
+) -> Result<応答本体, Box<Response>> {
+    let _排他権 = 状態.ソースアセット書き出しの排他権().lock().map_err(|誤り| {
+        Box::new(失敗応答を組み立てる(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "内部エラー",
+            誤り.to_string(),
+        ))
+    })?;
     let 要求 = 要求本体を解く(本文)?;
     let 世界名 = 出力世界名::生成する(要求.出力先の世界名).map_err(|エラー| Box::new(エラー.into_response()))?;
+    if !世界名.エディターの世界か() {
+        return Err(Box::new(失敗応答を組み立てる(
+            StatusCode::BAD_REQUEST,
+            "世界名エラー",
+            "同期ベイクの対象はeditor_worldだけである".to_string(),
+        )));
+    }
     let 出力先 = 世界ソース出力先::生成する(状態.リポジトリルート(), &世界名);
     let コマンド = ソースアセット書き出しコマンド::生成する(状態.保管庫().clone(), 出力先);
     let 結果 = コマンド.実行する().map_err(|エラー| Box::new(エラー.into_response()))?;
+    エディターの世界をベイクする(状態)?;
     Ok(応答本体 {
         書いたファイル数: 結果.書いたファイル数(),
         出力先: 結果.出力先ディレクトリ().to_string(),
     })
+}
+
+fn エディターの世界をベイクする(状態: &サーバー状態) -> Result<(), Box<Response>> {
+    let ルート = 状態.リポジトリルート();
+    let 指定 = 焼く世界の指定::エディターの世界を焼く(ルート.ソースルート(), ルート.エディター実行時形式の出力先());
+    実行時アセットのコンパイル::始める(指定)
+        .and_then(実行時アセットのコンパイル::世界を焼く)
+        .map_err(|誤り| Box::new(失敗応答を組み立てる(StatusCode::INTERNAL_SERVER_ERROR, "ベイクエラー", 誤り)))
 }
 
 fn 要求本体を解く(本文: &[u8]) -> Result<要求本体, Box<Response>> {

@@ -5,6 +5,8 @@
 
 use std::path::{Path, PathBuf};
 
+use blitz_asset_compiler::ソースルート;
+
 /// リポジトリルートとは、Blitzdrache0リポジトリの直下ディレクトリのことである。
 #[derive(Debug, Clone)]
 pub struct リポジトリルート(PathBuf);
@@ -28,5 +30,13 @@ impl リポジトリルート {
     /// editor_webのビルド成果物を配信するディレクトリ。導出の綴りをここへ閉じる。
     pub fn 静的配信ディレクトリ(&self) -> PathBuf {
         self.0.join("editor_web/dist")
+    }
+
+    pub fn ソースルート(&self) -> ソースルート {
+        ソースルート::生成する(self.0.join("assets"))
+    }
+
+    pub fn エディター実行時形式の出力先(&self) -> PathBuf {
+        self.0.join("target/editor_world_assets")
     }
 }

@@ -11,7 +11,7 @@ use axum::{
     body::Body,
     http::{Request, StatusCode},
 };
-use blitz_asset_compiler::{チャンク目録ソースを読み込む, 高さ格子を読み込む};
+use blitz_asset_compiler::{チャンク目録ソースを読み込む, フォックスのソース, 高さ格子を読み込む};
 use tower::ServiceExt;
 
 #[tokio::test]
@@ -31,6 +31,7 @@ async fn 正常な書き出しはファイル数と出力先を返しチャン�
     let 区画割り = common::小さな区画割り();
     common::大域世界を保存する(&保管庫, 区画割り);
     common::マザーを一意な値で保存する(&保管庫, 区画割り);
+    フォックスのソースを配置する(&一時);
 
     let 応答 = common::ルーターを作る(&一時)
         .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
@@ -51,6 +52,9 @@ async fn 正常な書き出しはファイル数と出力先を返しチャン�
         let 格子 = 高さ格子を読み込む(&ソースパス).unwrap();
         assert_eq!(格子.諸元().格子点数(), 3);
     }
+    assert!(一時.ルート().join("target/editor_world_assets/catalog.blitzcatalog").is_file());
+    assert!(一時.ルート().join("target/editor_world_assets/chunk_directory.blitzchunks").is_file());
+    assert!(一時.ルート().join("target/editor_world_assets/generation_ledger.txt").is_file());
 }
 
 #[tokio::test]
@@ -60,6 +64,7 @@ async fn 次回書き出す目録は既存のエディター世界の更新済�
     let 区画割り = common::エディターの区画割り();
     common::大域世界を保存する(&保管庫, 区画割り);
     common::零のマザーを保存する(&保管庫, 区画割り);
+    フォックスのソースを配置する(&一時);
     let 応答 = common::ルーターを作る(&一時)
         .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
         .await
@@ -69,4 +74,12 @@ async fn 次回書き出す目録は既存のエディター世界の更新済�
     let 書き出した目録 = std::fs::read(一時.ルート().join("assets/editor_world/chunk_directory.txt")).unwrap();
     let 既存目録 = std::fs::read(std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets/editor_world/chunk_directory.txt")).unwrap();
     assert_eq!(書き出した目録, 既存目録);
+}
+
+fn フォックスのソースを配置する(一時: &common::一時プロジェクト) {
+    let 相対 = std::path::Path::new(フォックスのソース);
+    let 元 = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets").join(相対);
+    let 先 = 一時.ルート().join("assets").join(相対);
+    std::fs::create_dir_all(先.parent().unwrap()).unwrap();
+    std::fs::copy(元, 先).unwrap();
 }
