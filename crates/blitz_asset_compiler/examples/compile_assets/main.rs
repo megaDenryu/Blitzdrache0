@@ -17,5 +17,7 @@ fn main() {
 fn 実行する() -> Result<(), String> {
     let 全引数一覧: Vec<String> = std::env::args().skip(1).collect();
     let 指定 = arguments::引数一覧から焼く世界の指定を読む(&全引数一覧)?;
-    実行時アセットのコンパイル::始める(指定)?.世界を焼く()
+    実行時アセットのコンパイル::始める(指定)
+        .and_then(実行時アセットのコンパイル::世界を焼く)
+        .map_err(|誤り| 誤り.to_string())
 }

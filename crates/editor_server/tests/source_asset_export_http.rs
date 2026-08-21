@@ -25,6 +25,38 @@ async fn 大域世界未保存での書き出しは422を返す() {
 }
 
 #[tokio::test]
+async fn 書き出したソースの依存が欠ける場合は422を返す() {
+    let 一時 = common::一時プロジェクト::生成する("export_invalid_source");
+    let 保管庫 = editor_server::ファイル保管庫::生成する(&一時.プロジェクトルート());
+    let 区画割り = common::小さな区画割り();
+    common::大域世界を保存する(&保管庫, 区画割り);
+    common::マザーを一意な値で保存する(&保管庫, 区画割り);
+    let 応答 = common::ルーターを作る(&一時)
+        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
+        .await
+        .unwrap();
+    assert_eq!(応答.status(), StatusCode::UNPROCESSABLE_ENTITY);
+}
+
+#[tokio::test]
+async fn 実行時出力先を作れない場合は500を返す() {
+    let 一時 = common::一時プロジェクト::生成する("export_io_failure");
+    let 保管庫 = editor_server::ファイル保管庫::生成する(&一時.プロジェクトルート());
+    let 区画割り = common::小さな区画割り();
+    common::大域世界を保存する(&保管庫, 区画割り);
+    common::マザーを一意な値で保存する(&保管庫, 区画割り);
+    フォックスのソースを配置する(&一時);
+    let 出力先 = 一時.ルート().join("target/editor_world_assets");
+    std::fs::create_dir_all(出力先.parent().unwrap()).unwrap();
+    std::fs::write(出力先, b"directory creation must fail").unwrap();
+    let 応答 = common::ルーターを作る(&一時)
+        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
+        .await
+        .unwrap();
+    assert_eq!(応答.status(), StatusCode::INTERNAL_SERVER_ERROR);
+}
+
+#[tokio::test]
 async fn 正常な書き出しはファイル数と出力先を返しチャンク目録を読み戻せる() {
     let 一時 = common::一時プロジェクト::生成する("export_ok");
     let 保管庫 = editor_server::ファイル保管庫::生成する(&一時.プロジェクトルート());
@@ -55,6 +87,11 @@ async fn 正常な書き出しはファイル数と出力先を返しチャン�
     assert!(一時.ルート().join("target/editor_world_assets/catalog.blitzcatalog").is_file());
     assert!(一時.ルート().join("target/editor_world_assets/chunk_directory.blitzchunks").is_file());
     assert!(一時.ルート().join("target/editor_world_assets/generation_ledger.txt").is_file());
+    let 再書き出し = common::ルーターを作る(&一時)
+        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
+        .await
+        .unwrap();
+    assert_eq!(再書き出し.status(), StatusCode::OK);
 }
 
 #[tokio::test]
@@ -80,6 +117,12 @@ fn フォックスのソースを配置する(一時: &common::一時プロジ�
     let 相対 = std::path::Path::new(フォックスのソース);
     let 元 = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets").join(相対);
     let 先 = 一時.ルート().join("assets").join(相対);
-    std::fs::create_dir_all(先.parent().unwrap()).unwrap();
-    std::fs::copy(元, 先).unwrap();
+    let 親 = 先.parent().unwrap_or_else(|| {
+        panic!(
+            "フォックスの配置先に親が無い。`cargo xtask fetch-assets`で素材を取得し直す: {}",
+            先.display()
+        )
+    });
+    std::fs::create_dir_all(親).unwrap_or_else(|誤り| panic!("フォックスの配置先を作れない。`cargo xtask fetch-assets`で素材を取得し直す: {誤り}"));
+    std::fs::copy(元, 先).unwrap_or_else(|誤り| panic!("フォックスのソースを複製できない。`cargo xtask fetch-assets`で素材を取得し直す: {誤り}"));
 }

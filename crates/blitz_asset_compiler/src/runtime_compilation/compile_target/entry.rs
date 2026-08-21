@@ -42,9 +42,14 @@ impl コンパイル対象 {
     }
 
     /// この対象の生成物をファイルへ書く唯一の口。書いた先の名前を返すのは、カタログが実行時パスとして持つためである。
-    pub(crate) fn 生成物を書き出す(&self, バイト列: &[u8]) -> Result<PathBuf, String> {
-        std::fs::write(&self.出力パス, バイト列).map_err(|誤り| format!("{}を書き出せない: {誤り}", self.出力パス.display()))?;
-        let ファイル名 = self.出力パス.file_name().ok_or_else(|| "生成物のファイル名が無い".to_string())?;
+    pub(crate) fn 生成物を書き出す(&self, バイト列: &[u8]) -> Result<PathBuf, crate::実行時アセットのコンパイルエラー> {
+        crate::atomic_file_write::一時ファイル経由で書き込む(&self.出力パス, バイト列).map_err(|誤り| {
+            crate::実行時アセットのコンパイルエラー::入出力に失敗(format!("{}を書き出せない: {誤り}", self.出力パス.display()))
+        })?;
+        let ファイル名 = self
+            .出力パス
+            .file_name()
+            .ok_or_else(|| crate::実行時アセットのコンパイルエラー::ソースが不正("生成物のファイル名が無い"))?;
         println!("[compile_assets] {}: {}バイト", self.出力パス.display(), バイト列.len());
         Ok(PathBuf::from(ファイル名))
     }

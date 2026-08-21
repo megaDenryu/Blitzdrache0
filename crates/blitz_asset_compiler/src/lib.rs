@@ -8,6 +8,7 @@ mod assembled_scene;
 mod assembly_parts;
 mod assembly_reference;
 mod asset_layout;
+mod atomic_file_write;
 mod chunk_directory_source;
 mod compile;
 mod distant_terrain;
@@ -71,7 +72,8 @@ pub use placement::{
     部品で組む散布の指定, 配置の種, 配置様式,
 };
 pub use runtime_compilation::{
-    一間四方の骨格の並びの種類, 実行時アセットのコンパイル, 家の並びの規模, 対象世界, 焼く世界の指定, 焼く世界の指定組み立て器, 診断の原型,
+    一間四方の骨格の並びの種類, 実行時アセットのコンパイル, 実行時アセットのコンパイルエラー, 家の並びの規模, 対象世界, 焼く世界の指定,
+    焼く世界の指定組み立て器, 診断の原型,
 };
 pub use scatter_bake::散布の焼き方;
 pub use scene_compiler::ソースアセットのコンパイル係;

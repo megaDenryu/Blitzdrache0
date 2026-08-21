@@ -58,4 +58,14 @@ impl サーバー状態 {
     pub fn ソースアセット書き出しの排他権(&self) -> &Mutex<()> {
         &self.ソースアセット書き出しの排他権
     }
+
+    pub(crate) fn エディターの世界をベイクする(
+        &self,
+    ) -> Result<(), blitz_asset_compiler::実行時アセットのコンパイルエラー> {
+        let 指定 = blitz_asset_compiler::焼く世界の指定::エディターの世界を焼く(
+            self.リポジトリルート.ソースルート(),
+            self.リポジトリルート.エディター実行時形式の出力先(),
+        );
+        blitz_asset_compiler::実行時アセットのコンパイル::始める(指定)?.世界を焼く()
+    }
 }

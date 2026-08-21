@@ -10,7 +10,7 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
-use blitz_asset_compiler::{実行時アセットのコンパイル, 焼く世界の指定};
+use blitz_asset_compiler::実行時アセットのコンパイルエラー;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -63,19 +63,23 @@ fn ソースアセットの書き出しとベイクを実行する(
     let 出力先 = 世界ソース出力先::生成する(状態.リポジトリルート(), &世界名);
     let コマンド = ソースアセット書き出しコマンド::生成する(状態.保管庫().clone(), 出力先);
     let 結果 = コマンド.実行する().map_err(|エラー| Box::new(エラー.into_response()))?;
-    エディターの世界をベイクする(状態)?;
+    状態.エディターの世界をベイクする().map_err(ベイク失敗の応答)?;
     Ok(応答本体 {
         書いたファイル数: 結果.書いたファイル数(),
         出力先: 結果.出力先ディレクトリ().to_string(),
     })
 }
 
-fn エディターの世界をベイクする(状態: &サーバー状態) -> Result<(), Box<Response>> {
-    let ルート = 状態.リポジトリルート();
-    let 指定 = 焼く世界の指定::エディターの世界を焼く(ルート.ソースルート(), ルート.エディター実行時形式の出力先());
-    実行時アセットのコンパイル::始める(指定)
-        .and_then(実行時アセットのコンパイル::世界を焼く)
-        .map_err(|誤り| Box::new(失敗応答を組み立てる(StatusCode::INTERNAL_SERVER_ERROR, "ベイクエラー", 誤り)))
+fn ベイク失敗の応答(誤り: 実行時アセットのコンパイルエラー) -> Box<Response> {
+    let 状態 = match 誤り {
+        実行時アセットのコンパイルエラー::ソース不正(_) => StatusCode::UNPROCESSABLE_ENTITY,
+        実行時アセットのコンパイルエラー::入出力(_) => StatusCode::INTERNAL_SERVER_ERROR,
+    };
+    Box::new(失敗応答を組み立てる(
+        状態,
+        "ベイクエラー",
+        format!("ソースアセットは書き出したが、ベイクに失敗した: {誤り}"),
+    ))
 }
 
 fn 要求本体を解く(本文: &[u8]) -> Result<要求本体, Box<Response>> {

@@ -10,6 +10,7 @@ mod compilation;
 mod compilation_specification;
 mod compile_target;
 mod distant_terrain;
+mod error;
 mod height_field;
 mod instance_tally;
 mod placed_instance_tally;
@@ -19,4 +20,5 @@ mod world;
 
 pub use compilation::実行時アセットのコンパイル;
 pub use compilation_specification::{焼く世界の指定, 焼く世界の指定組み立て器};
+pub use error::実行時アセットのコンパイルエラー;
 pub use world::{一間四方の骨格の並びの種類, 家の並びの規模, 対象世界, 診断の原型};

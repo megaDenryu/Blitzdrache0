@@ -49,6 +49,10 @@ pub enum 対象世界 {
 }
 
 impl 対象世界 {
+    pub const fn エディターの世界名() -> &'static str {
+        super::argument_name::エディターの世界
+    }
+
     pub fn 引数名から解析する(引数名: &str) -> Result<Self, String> {
         super::argument_name::解析する(引数名)
     }

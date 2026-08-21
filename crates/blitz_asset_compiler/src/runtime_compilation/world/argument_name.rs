@@ -9,7 +9,7 @@ use super::対象世界;
 
 const 板の世界: &str = "chunk_world";
 const 地形の世界: &str = "terrain_world";
-const エディターの世界: &str = "editor_world";
+pub(super) const エディターの世界: &str = "editor_world";
 const 植生の世界: &str = "vegetation_world";
 const 見本の集落の世界: &str = "village_world";
 const 部品で建てた十軒の世界: &str = "part_house_row_ten_world";
