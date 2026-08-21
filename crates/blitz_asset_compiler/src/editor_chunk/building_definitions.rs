@@ -6,7 +6,7 @@ use blitz_engine::アセットID;
 
 use super::source::建物配置ソース;
 use crate::error::アセットコンパイルエラー;
-use crate::runtime_compilation::{建物定義の正本, 識別子で引く};
+use crate::runtime_compilation::{建物定義の正本, 識別子から建物定義を参照する};
 
 pub(super) fn 建物配置一覧が指す建物定義を引く(
     建物配置一覧: &[建物配置ソース],
@@ -14,7 +14,8 @@ pub(super) fn 建物配置一覧が指す建物定義を引く(
     建物配置一覧
         .iter()
         .map(|配置| {
-            識別子で引く(配置.建物定義ID.綴り()).ok_or_else(|| エディター建物のエラー(format!("未知の建物定義ID: {}", 配置.建物定義ID)))
+            識別子から建物定義を参照する(配置.建物定義ID.綴り())
+                .ok_or_else(|| エディター建物のエラーを作る(format!("未知の建物定義ID: {}", 配置.建物定義ID)))
         })
         .collect()
 }
@@ -27,7 +28,7 @@ pub(super) fn 建物定義一覧が使う部品の識別子一覧を作る(
     let mut 一覧: Vec<アセットID> = Vec::new();
     for 定義 in 定義一覧 {
         for 部品 in 定義.規則.部品一覧() {
-            let 識別子 = アセットID::生成する(部品.安定id()).map_err(|原因| エディター建物のエラー(原因.to_string()))?;
+            let 識別子 = アセットID::生成する(部品.安定id()).map_err(|原因| エディター建物のエラーを作る(原因.to_string()))?;
             if !一覧.contains(&識別子) {
                 一覧.push(識別子);
             }
@@ -36,6 +37,6 @@ pub(super) fn 建物定義一覧が使う部品の識別子一覧を作る(
     Ok(一覧)
 }
 
-pub(super) fn エディター建物のエラー(原因: String) -> アセットコンパイルエラー {
+pub(super) fn エディター建物のエラーを作る(原因: String) -> アセットコンパイルエラー {
     アセットコンパイルエラー::エディター建物配置不正(原因)
 }

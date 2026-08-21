@@ -12,7 +12,7 @@ mod outline_builder;
 pub use building_definition_id::建物定義ID;
 pub use catalog::{ベイ構造, 建物の入口方向, 建物の外接箱, 建物外形カタログ, 建物定義, 建物定義の用途};
 pub use catalog_file::建物外形カタログのファイル;
-pub(crate) use definition_source::{全建物の部品識別一覧, 建物定義の正本, 識別子で引く};
+pub(crate) use definition_source::{全建物の部品識別一覧, 建物定義の正本, 識別子から建物定義を参照する};
 pub use error::建物外形カタログエラー;
 
 pub fn 建物外形カタログを組み立てる() -> Result<建物外形カタログ, 建物外形カタログエラー> {
