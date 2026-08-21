@@ -71,7 +71,7 @@ pub use interpolation_kind::補間種別;
 pub use joint::ジョイント;
 pub use joint_channel::ジョイントアニメーションチャンネル;
 pub use keyframe_channel::チャンネル;
-pub use material_data::マテリアルデータ;
+pub use material_data::{マテリアルデータ, 地表の層の重ね合わせデータ, 地表の層の重ね合わせデータエラー};
 pub use material_set::材質集合;
 pub use material_set_error::材質集合エラー;
 pub use material_slot_assignment::材質スロット割当;

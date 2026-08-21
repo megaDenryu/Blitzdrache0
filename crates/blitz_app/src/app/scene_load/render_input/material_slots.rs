@@ -7,13 +7,16 @@
 use blitz_engine::材質集合;
 use blitz_render::{材質スロット素材, 材質スロット素材一覧};
 
+use super::super::surface_layer_tiles::地表の層のタイル一式;
 use super::convert;
 use crate::error::起動エラー;
 
-pub(super) fn 変換する(材質集合: &材質集合) -> Result<材質スロット素材一覧, 起動エラー> {
+pub(super) fn 変換する(
+    材質集合: &材質集合, 地表の層のタイル: &地表の層のタイル一式
+) -> Result<材質スロット素材一覧, 起動エラー> {
     let mut 素材一覧 = Vec::with_capacity(材質集合.件数());
     for 割当 in 材質集合.割当一覧() {
-        let マテリアル = convert::マテリアルを変換する(&割当.マテリアル)?;
+        let マテリアル = convert::マテリアルを変換する(&割当.マテリアル, 地表の層のタイル)?;
         素材一覧.push(材質スロット素材::生成する(割当.スロット.番号を返す(), マテリアル));
     }
     let mut 反復 = 素材一覧.into_iter();

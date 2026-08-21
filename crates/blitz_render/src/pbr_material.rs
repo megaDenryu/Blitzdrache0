@@ -6,11 +6,14 @@
 use thiserror::Error;
 
 use crate::texture_material::テクスチャ素材;
+use crate::vulkan::material_table::材質テクスチャ役割;
 
 #[derive(Debug, Error, Clone, Copy, PartialEq)]
 pub enum マテリアル素材エラー {
     #[error("マテリアル係数が0.0から1.0の範囲外だった: {0}")]
     係数範囲外(f32),
+    #[error("地表の層のタイル倍率が正の有限値でなかった: {0}")]
+    タイル倍率が正の有限値でない(f32),
 }
 
 #[derive(Debug, Clone)]
@@ -48,16 +51,18 @@ impl 金属粗さPBR素材 {
         })
     }
 
-    pub(crate) fn ベースカラー(&self) -> Option<&テクスチャ素材> {
-        self.ベースカラー.as_ref()
-    }
-
-    pub(crate) fn 金属粗さ(&self) -> Option<&テクスチャ素材> {
-        self.金属粗さ.as_ref()
-    }
-
-    pub(crate) fn 法線マップ(&self) -> Option<&テクスチャ素材> {
-        self.法線マップ.as_ref()
+    /// 役割で1枚を引く。この枝が持たない役割が`None`になるのは、その材質がその役割のテクスチャを持たないという意味そのものである。
+    pub(crate) fn 役割のテクスチャ(&self, 役割: 材質テクスチャ役割) -> Option<&テクスチャ素材> {
+        match 役割 {
+            材質テクスチャ役割::ベースカラー => self.ベースカラー.as_ref(),
+            材質テクスチャ役割::金属粗さ => self.金属粗さ.as_ref(),
+            材質テクスチャ役割::法線マップ => self.法線マップ.as_ref(),
+            材質テクスチャ役割::地表の層の重み
+            | 材質テクスチャ役割::地表の層0のタイル
+            | 材質テクスチャ役割::地表の層1のタイル
+            | 材質テクスチャ役割::地表の層2のタイル
+            | 材質テクスチャ役割::地表の層3のタイル => None,
+        }
     }
 
     pub(crate) fn ベースカラー係数(&self) -> [f32; 4] {

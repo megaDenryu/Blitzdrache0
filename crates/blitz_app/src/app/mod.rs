@@ -32,7 +32,6 @@ mod visibility;
 mod window_setup;
 use crate::cli::{布モード, 描画対象の並べ方, 空中遠近合成指定, 粒子表示モード, 起動モード};
 use crate::{error::起動エラー, hot_reload::ホットリローダー, input::入力状態, overlay_ui::画面へ重ねるUI};
-use blitz_engine::カメラ;
 use blitz_render::{クリアカラー, レンダラー};
 pub(crate) use frame_timing::{フレーム時間統計, 集計する};
 pub(crate) use time_of_day::{太陽天頂区間の記録, 空の再現条件, 遠方環境の鍵の記録, 遠方環境更新判定};
@@ -50,7 +49,7 @@ pub(crate) struct アプリ {
     大域ずらし量: blitz_math::大域ワールド位置,
     描画対象の並べ方: 描画対象の並べ方,
     ホットリローダー: ホットリローダー,
-    カメラ: カメラ,
+    カメラ: blitz_engine::カメラ,
     入力状態: 入力状態,
     ゲーム配線: crate::game::ゲーム配線,
     現在フレーム: u32,
@@ -96,5 +95,6 @@ pub(crate) struct アプリ {
     シーン読込計数: scene_read_count::シーン読込計数,
     /// `--frames`で起動したときだけ`Some`。自己操作の計画と書き換えの依存をこの1つが持つ。
     スモーク実行: Option<crate::smoke::スモーク実行>,
+    地表の層のタイル: scene_load::地表の層のタイル一式, // カタログを読むまで決まらず、レンダラーと同じく起動の途中で据わる。
     起動時エラー: Option<起動エラー>,
 }

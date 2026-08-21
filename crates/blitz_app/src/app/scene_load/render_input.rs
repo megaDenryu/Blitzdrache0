@@ -22,16 +22,23 @@ mod visibility_material;
 
 use blitz_engine::primitive_draw_item::プリミティブ描画項目一覧;
 use blitz_engine::{シーンデータ, チャンク座標};
-use blitz_math::大域ワールド位置;
 use blitz_render::描画シーン素材;
 
 pub(crate) use error::描画入力エラー;
 
+/// 検査の材料。地表の層のタイルを持たない世界を選ぶのは、検査の材質がどれも標準金属粗さPBRであり、層のタイルを1枚も引かないためである。
 #[cfg(test)]
-fn 検査用のチャンク一辺を作る() -> Option<blitz_engine::チャンク一辺> {
-    Some(blitz_engine::チャンク一辺::生成する(100.0).unwrap_or_else(|誤り| panic!("検査用チャンク一辺が不正だった: {誤り}")))
+fn 検査用の材料(タイル: &super::surface_layer_tiles::地表の層のタイル一式) -> シーンを描画入力へ写す材料<'_> {
+    let 一辺 = blitz_engine::チャンク一辺::生成する(100.0).unwrap_or_else(|誤り| panic!("検査用チャンク一辺が不正だった: {誤り}"));
+    シーンを描画入力へ写す材料::生成する(blitz_math::大域ワールド位置::原点(), Some(一辺), タイル)
 }
 
+#[cfg(test)]
+fn 検査用の地表の層のタイル() -> super::surface_layer_tiles::地表の層のタイル一式 {
+    super::surface_layer_tiles::地表の層のタイル一式::タイルを持たない世界
+}
+
+use super::conversion_materials::シーンを描画入力へ写す材料;
 use super::convert;
 use crate::app::visibility::群可視材料の登録;
 use crate::error::起動エラー;
@@ -52,10 +59,9 @@ pub(super) fn 変換する(
     シーン: &シーンデータ,
     並べ方: crate::cli::描画対象の並べ方,
     束座標: チャンク座標,
-    大域平行移動: 大域ワールド位置,
-    チャンク一辺: Option<blitz_engine::チャンク一辺>,
+    材料: シーンを描画入力へ写す材料<'_>,
 ) -> Result<束の描画入力, 起動エラー> {
-    let 大域の基準原点 = anchor::導出する(シーン, 束座標, 大域平行移動, チャンク一辺)?;
+    let 大域の基準原点 = anchor::導出する(シーン, 束座標, 材料.大域平行移動(), 材料.チャンク一辺())?;
     let 件数 = 並べ方.件数.map_or(シーン.描画対象一覧().len(), crate::cli::描画対象数::usize値);
     let mut 受け皿 = tray::変換の受け皿::生成する(件数);
     // 位置は束の中での並び順、添字はシーンデータの中での並び順である。走査順が逆順のときだけ2つが食い違い、
@@ -66,7 +72,7 @@ pub(super) fn 変換する(
         let 変換 = 並べ方.件数.map_or(元.ローカルからワールド(), |_| {
             元.ローカルからワールド().合成する(layout::配置する(添字, 件数))
         });
-        受け皿.積む(元, 位置, 大域の基準原点, 変換)?;
+        受け皿.積む(元, 位置, 大域の基準原点, 変換, 材料.地表の層のタイル())?;
     }
     Ok(受け皿.仕上げる())
 }

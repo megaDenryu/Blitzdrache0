@@ -6,14 +6,18 @@ mod instance;
 #[cfg(test)]
 mod material;
 mod material_element;
+mod material_kind;
 mod material_set;
 mod matrix;
 mod mesh;
 mod mesh_list;
 mod mesh_primitive;
 mod mesh_skin_vertex;
+mod pbr_material_body;
 mod skin;
+mod surface_layer_body;
 mod texture;
+mod version_codec;
 
 pub(super) use animation::一覧を書く as アニメーション一覧を書く;
 pub(super) use instance::{境界を書く, 配置列を書く};
@@ -26,7 +30,5 @@ pub(super) use mesh::旧版を書く as 旧版のメッシュを書く;
 pub(super) use mesh::書く as メッシュを書く;
 pub(super) use mesh_list::書く as メッシュ列を書く;
 pub(super) use skin::書く as スキンを書く;
-pub(super) use texture::テクスチャを書く工程;
-#[cfg(test)]
-pub(super) use texture::版4までのテクスチャを書く;
 pub(in crate::asset::runtime_format) use texture::版5のテクスチャを書く;
+pub(super) use version_codec::版ごとの要素の書き方;

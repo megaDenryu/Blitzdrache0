@@ -8,7 +8,7 @@
 use std::path::PathBuf;
 use std::time::SystemTime;
 
-use blitz_render::indirect_lighting::契約別の描画シェーダー;
+use blitz_render::indirect_lighting::契約別のシーン描画シェーダー;
 
 use super::{compile, dir_mtime};
 
@@ -16,7 +16,7 @@ use super::{compile, dir_mtime};
 pub(super) enum シェーダー変化結果 {
     変化なし,
     成功 {
-        シェーダー: 契約別の描画シェーダー,
+        シェーダー: 契約別のシーン描画シェーダー,
     },
     失敗 {
         誤り: super::シェーダー再コンパイルエラー,
@@ -51,7 +51,7 @@ impl シェーダー監視状態 {
         // 失敗時もmtimeを更新し、次の保存で再試行される形にする。
         self.最終更新時刻 = 現在更新時刻;
 
-        match compile::契約別の描画シェーダーをコンパイルする(&self.エントリパス) {
+        match compile::シーン描画シェーダーをコンパイルする(&self.エントリパス) {
             Ok(シェーダー) => シェーダー変化結果::成功 { シェーダー },
             Err(誤り) => シェーダー変化結果::失敗 { 誤り },
         }

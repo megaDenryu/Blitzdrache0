@@ -1,5 +1,9 @@
-//! 寄せられない綴りと、その綴りが現れてよい場所と、載せた理由の台帳。
-//! 判定の手順は親モジュールが持ち、どの綴りをどこまで許すかはこの台帳だけが決める。
+//! 寄せられない綴りの台帳の型と、領域ごとの台帳の束ね。担当するのは「どの台帳が検査の対象か」だけである。
+//! どの綴りをどこまで許すかは領域ごとの台帳が決め、判定の手順は`allowance`が持つ。
+//! 領域で分けるのは、綴りを足すときに触るのがその領域の台帳1つになるようにするためである。
+
+mod other_files;
+mod shader_files;
 
 /// この台帳自身の置き場所。違反の報告先として親が使う。
 pub(super) const 台帳のファイル: &str = "xtask/src/conform/duplicate_file_literal/allowance/table.rs";
@@ -13,69 +17,5 @@ pub(super) struct 寄せられない綴り {
     pub(super) 寄せられない理由: &'static str,
 }
 
-const ビルドスクリプトとの契約: &str = "blitz_appのビルドスクリプトが読む入力の名前であり、本体も同じ入力を実行中に読む。build_supportはビルドスクリプトのモジュールで本体から参照できないため、両側が同じ綴りを持つほかない";
-const ホットリロードの一時出力: &str = "綴りは同じだが別のファイルを指す。ビルドスクリプトの出力はOUT_DIRへ焼く成果物、ホットリロードの出力は実行中に一時ディレクトリへ焼く成果物であり、どちらの綴りを変えても他方は壊れない";
-const 書き手が非公開: &str = "blitz_asset_compilerのworld_source_directoryが持つ正本の定数はpub(super)で非公開であり、editor_serverクレートから届かない。blitz_*クレート本体の変更はゲーム開発用エディター段の対象外(参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断5」)であるため、editor_server側に同じ綴りの書き手を独立に持つ";
-
-const 焼く側の入口: &str = "crates/blitz_app/build_support/spirv_compile.rs";
-const 取り込む側の入口: &str = "crates/blitz_app/src/embedded_shaders/scene_shaders.rs";
-
-/// 注意: この一覧への追加は、正本を1箇所へ寄せられないと示せたときだけ許す。減らす方向にのみ動かす。
-pub(super) const 許した綴り一覧: [寄せられない綴り; 7] = [
-    寄せられない綴り {
-        綴り: "vertex.spv",
-        現れてよい場所一覧: &[焼く側の入口, 取り込む側の入口, "crates/blitz_app/src/hot_reload/compile.rs"],
-        寄せられない理由: ホットリロードの一時出力,
-    },
-    寄せられない綴り {
-        綴り: "fragment.spv",
-        現れてよい場所一覧: &[
-            焼く側の入口,
-            取り込む側の入口,
-            "crates/blitz_app/src/hot_reload/compile/fragment_contract.rs",
-        ],
-        寄せられない理由: ホットリロードの一時出力,
-    },
-    寄せられない綴り {
-        綴り: "scene_distant_environment_fragment.spv",
-        現れてよい場所一覧: &[
-            焼く側の入口,
-            取り込む側の入口,
-            "crates/blitz_app/src/hot_reload/compile/fragment_contract.rs",
-        ],
-        寄せられない理由: ホットリロードの一時出力,
-    },
-    寄せられない綴り {
-        綴り: "scene.slang",
-        現れてよい場所一覧: &[
-            "crates/blitz_app/build_support/mod.rs",
-            "xtask/src/shader_copy.rs",
-            "crates/blitz_app/src/cli/types/default.rs",
-        ],
-        寄せられない理由: "blitz_appのビルドスクリプトとxtaskが別のクレートに在り、xtaskからビルドスクリプトへ依存を張れない",
-    },
-    寄せられない綴り {
-        綴り: "scene_distant_environment.slang",
-        現れてよい場所一覧: &[
-            "crates/blitz_app/build_support/mod.rs",
-            "crates/blitz_app/src/hot_reload/compile/fragment_contract.rs",
-        ],
-        寄せられない理由: ビルドスクリプトとの契約,
-    },
-    寄せられない綴り {
-        綴り: "slangc.exe",
-        現れてよい場所一覧: &[
-            "crates/blitz_app/build_support/slangc_locate.rs",
-            "crates/blitz_app/src/hot_reload/slangc.rs",
-        ],
-        寄せられない理由: ビルドスクリプトとの契約,
-    },
-    寄せられない綴り {
-        綴り: "chunk_directory.txt",
-        現れてよい場所一覧: &[
-            "crates/blitz_asset_compiler/src/asset_layout/world_source_directory.rs",
-            "crates/editor_server/src/export/chunk_directory_text.rs",
-        ],
-        寄せられない理由: 書き手が非公開,
-    },
-];
+/// 領域ごとの台帳。並びは検査の順にだけ効く。
+pub(super) const 領域一覧: [&[寄せられない綴り]; 2] = [&shader_files::一覧, &other_files::一覧];

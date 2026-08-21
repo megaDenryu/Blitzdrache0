@@ -1,11 +1,13 @@
-//! マテリアルデータの抽出: ベースカラー・metallicRoughness・法線マップ
+//! 金属粗さPBRデータの抽出: ベースカラー・metallicRoughness・法線マップ
 //! (いずれも無ければNone)と係数(baseColor/metallic/roughness)をまとめる(判断23)。
 //! テクスチャは復号した原寸を、テクスチャ格納方針と材質テクスチャ役割の組が決める格納形式へ焼いてから持つ。
+//! 返すのが`マテリアルデータ`でなく金属粗さPBRの枝そのものなのは、glTFが表せるシェーディングモデルがこれ1つだからである。
+//! 判別共用体で返すと、呼び出し側にglTFからは決して出てこない枝の手当てを強いることになる。
 
 use std::path::PathBuf;
 
 use blitz_engine::texture_storage::格納済みテクスチャ;
-use blitz_engine::{マテリアルデータ, 金属粗さPBRデータ};
+use blitz_engine::金属粗さPBRデータ;
 
 use crate::error::アセットコンパイルエラー;
 use crate::texture_storage::{
@@ -19,7 +21,7 @@ pub(super) fn マテリアルを取り出す(
     文書: &開いた文書,
     プリミティブ: &gltf::Primitive<'_>,
     方針: テクスチャ格納方針,
-) -> Result<(マテリアルデータ, Vec<PathBuf>), アセットコンパイルエラー> {
+) -> Result<(金属粗さPBRデータ, Vec<PathBuf>), アセットコンパイルエラー> {
     let マテリアル = プリミティブ.material();
     let pbr = マテリアル.pbr_metallic_roughness();
     let mut 参照ファイル一覧 = Vec::new();
@@ -41,14 +43,14 @@ pub(super) fn マテリアルを取り出す(
     let 法線マップ = 法線情報から取り出す(文書, マテリアル.normal_texture(), &mut 参照ファイル一覧, 方針)?;
 
     Ok((
-        マテリアルデータ::金属粗さPBR(金属粗さPBRデータ {
+        金属粗さPBRデータ {
             ベースカラー,
             金属粗さ,
             法線マップ,
             ベースカラー係数: pbr.base_color_factor(),
             金属度係数: pbr.metallic_factor(),
             粗さ係数: pbr.roughness_factor(),
-        }),
+        },
         参照ファイル一覧,
     ))
 }

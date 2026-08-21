@@ -21,7 +21,7 @@ use super::material_id::大域材質ID;
 use super::pack_input::梱包対象材質;
 use super::record_index::材質レコード添字;
 use super::texture_registry::テクスチャ台帳;
-use super::texture_role::材質テクスチャ役割;
+use super::texture_role::{役割の数, 材質テクスチャ役割};
 use super::texture_slot::テクスチャスロット;
 use fallback_slots::正準フォールバック解決;
 
@@ -63,8 +63,8 @@ fn 一件を梱包する(
     台帳: &テクスチャ台帳,
     フォールバック: &正準フォールバック解決,
 ) -> Result<(世代内材質レコード, crate::vulkan::material_variant::材質変種キー), 材質資源表エラー> {
-    let mut 有無 = [false; 3];
-    let mut 役割別スロット: [テクスチャスロット; 3] =
+    let mut 有無 = [false; 役割の数];
+    let mut 役割別スロット: [テクスチャスロット; 役割の数] =
         std::array::from_fn(|添字| フォールバック.用途で引く(材質テクスチャ役割::全役割[添字].正準フォールバック用途()));
     for 役割 in 材質テクスチャ役割::全役割 {
         let Some(指定) = 材質.役割の指定(役割) else {
@@ -90,6 +90,7 @@ fn 一件を梱包する(
         材質.粗さ係数(),
         三軸.特徴集合(),
         役割別スロット,
+        材質.地表の層ごとのタイル倍率(),
     );
     Ok((レコード, 変種キー))
 }

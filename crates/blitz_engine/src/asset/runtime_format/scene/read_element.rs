@@ -5,14 +5,18 @@ mod animation;
 mod instance;
 mod material;
 mod material_element;
+mod material_kind;
 mod material_set;
 mod matrix;
 mod mesh;
 mod mesh_list;
 mod mesh_primitive;
 mod mesh_skin_vertex;
+mod pbr_material_body;
 mod skin;
+mod surface_layer_body;
 mod texture;
+mod version_codec;
 
 pub(super) use animation::一覧を読む as アニメーション一覧を読む;
 pub(super) use instance::{境界を読む, 配置列を読む};
@@ -23,7 +27,7 @@ pub(super) use mesh::{旧版を読む as 旧版のメッシュを読む, 読む 
 pub(super) use mesh_list::読む as メッシュ列を読む;
 pub(super) use skin::{読む as スキンを読む, 頂点属性を検査する};
 pub(in crate::asset::runtime_format) use texture::版5のテクスチャを読む;
-pub(super) use texture::{テクスチャを読む工程, 版4までのテクスチャを読む};
+pub(super) use version_codec::版ごとの要素の読み方;
 
 /// 版1から版3のメッシュ1つ分の最小バイト数。頂点数4 + 頂点1件48 + 添字数4 + 添字1件4 + スキン頂点属性の有無1の合計である。
 pub(super) const メッシュ最小長: usize = 61;

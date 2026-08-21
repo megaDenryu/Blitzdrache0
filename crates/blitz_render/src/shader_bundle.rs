@@ -5,7 +5,7 @@ use crate::auto_exposure::自動露出のシェーダー一式;
 use crate::cloth_shader_set::布シェーダー一式;
 use crate::compute_shader::コンピュートシェーダー;
 use crate::distant_environment::遠方環境のシェーダー一式;
-use crate::indirect_lighting::契約別の描画シェーダー;
+use crate::indirect_lighting::契約別のシーン描画シェーダー;
 use crate::local_visibility::局所可視性のシェーダー一式;
 use crate::particle_shader_set::粒子シェーダー一式;
 use crate::shader_set::シェーダー一式;
@@ -36,7 +36,7 @@ pub struct 空シェーダー {
 #[derive(Debug, Clone)]
 pub struct シェーダー束 {
     /// シーン描画の画素段は照明問い合わせ契約ごとに分かれる。頂点段は両方が同じものを持つ。
-    pub シーン: 契約別の描画シェーダー,
+    pub シーン: 契約別のシーン描画シェーダー,
     pub シャドウ: シェーダー一式,
     /// 点光源の影の面ごとの記録。可視ID列を参照せず、面のライトビュー射影をプッシュ定数で受け取る点が多段影と違う。
     /// 影を落とす灯を1件も持たない世界でもパイプラインは作る。灯の宣言は毎フレームの入力であり、

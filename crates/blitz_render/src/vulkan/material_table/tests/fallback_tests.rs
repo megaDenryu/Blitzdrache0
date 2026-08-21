@@ -4,6 +4,7 @@
 #![allow(clippy::unwrap_used)]
 
 use crate::texture_material::テクスチャ用途;
+use crate::vulkan::material_table::fallback_usage::正準フォールバック用途;
 use crate::vulkan::material_table::generation::資源表世代;
 use crate::vulkan::material_table::generation_build::資源表世代を構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
@@ -40,7 +41,7 @@ fn テクスチャ無しの材質は用途ごとの実在スロットを指し�
     let mut 重複除去 = 役割別スロット(レコード);
     重複除去.sort_unstable();
     重複除去.dedup();
-    assert_eq!(重複除去.len(), 3, "用途ごとに別の既定テクスチャを指す");
+    assert_eq!(重複除去.len(), 正準フォールバック用途::全用途.len(), "用途ごとに別の既定テクスチャを指す");
     assert_eq!(
         役割別スロット(レコード),
         役割別スロット(レコードを引く(&世代, 2)),

@@ -48,4 +48,7 @@ pub(crate) use generation_resolution::世代内材質解決;
 pub(crate) use material_id::大域材質ID;
 pub(crate) use registration_state::{描画対象別の材質ID, 材質の登録状態};
 pub(crate) use resource_table::{材質資源の作業環境, 材質資源表, 資源表世代の束縛};
+/// 役割の並びを直に組み立てるのは材質変種の検査だけであり、本番は`材質テクスチャ役割::全役割`を走査する。
+#[cfg(test)]
+pub(crate) use texture_role::役割の数;
 pub(crate) use texture_role::材質テクスチャ役割;

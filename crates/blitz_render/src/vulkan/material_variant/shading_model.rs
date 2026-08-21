@@ -7,6 +7,10 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) enum シェーディングモデル種別 {
     標準金属粗さPBR,
+    /// アルベドを4層のタイルの重み付き混ぜ合わせから作る地表の材質。ベースカラー1枚を読む標準金属粗さPBRとは
+    /// 照明式へ渡す入力の組み立てが相互排他に変わるため、特徴ビットでなく枝で分ける
+    /// (参照: `_doc/設計/マルチマテリアルと材質境界.md`「地表の層の重ね合わせ」)。
+    地表の層の重ね合わせ,
 }
 
 impl シェーディングモデル種別 {
@@ -14,6 +18,7 @@ impl シェーディングモデル種別 {
     pub(crate) const fn 名前(self) -> &'static str {
         match self {
             Self::標準金属粗さPBR => "標準金属粗さPBR",
+            Self::地表の層の重ね合わせ => "地表の層の重ね合わせ",
         }
     }
 }

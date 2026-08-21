@@ -7,6 +7,7 @@ use blitz_engine::描画対象データ;
 use blitz_math::{ローカル, ワールド, 変換, 大域ワールド位置};
 use blitz_render::{描画シーン素材, 描画対象素材};
 
+use super::super::surface_layer_tiles::地表の層のタイル一式;
 use super::{convert, instance_transforms, material_slots, visibility_material};
 use super::{束の描画入力, 束の登録一式};
 use crate::app::visibility::群可視材料の登録;
@@ -34,6 +35,7 @@ impl 変換の受け皿 {
         位置: usize,
         大域の基準原点: 大域ワールド位置,
         ローカルからワールド: 変換<ローカル, ワールド>,
+        地表の層のタイル: &地表の層のタイル一式,
     ) -> Result<(), 起動エラー> {
         self.プリミティブ描画項目一覧
             .描画対象1つぶんを積む(元.形状(), 元.材質集合(), 位置)
@@ -42,7 +44,7 @@ impl 変換の受け皿 {
             大域の基準原点,
             instance_transforms::組み立てる(元.形状(), ローカルからワールド),
             convert::形状を変換する(元.形状()),
-            material_slots::変換する(元.材質集合())?,
+            material_slots::変換する(元.材質集合(), 地表の層のタイル)?,
         ));
         if let Some(登録) = visibility_material::群可視材料の登録を作る(元.形状(), 位置, 大域の基準原点, ローカルからワールド)?
         {

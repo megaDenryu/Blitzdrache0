@@ -27,7 +27,8 @@ fn 赤の材質(赤: f32) -> 梱包対象材質<'static> {
         [赤, 0.0, 0.0, 1.0],
         0.0,
         1.0,
-        [None, None, None],
+        [None, None, None, None, None, None, None, None],
+        [1.0; 4],
     )
 }
 

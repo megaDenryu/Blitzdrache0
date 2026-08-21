@@ -3,20 +3,23 @@
 //! マテリアル・頂点の個別変換は`convert`にある。
 
 mod catalog_setup;
+mod conversion_materials;
 mod convert;
 mod distant;
 mod render_input;
 #[cfg(test)]
 mod storage_byte_agreement_tests;
+mod surface_layer_tiles;
 
 pub(in crate::app) use catalog_setup::カタログを構築して高さ場を据える;
+pub(in crate::app) use conversion_materials::シーンを描画入力へ写す材料;
 pub(super) use distant::遠景を読み込んで変換する;
 pub(crate) use render_input::{描画入力エラー, 束の描画入力, 束の登録一式};
+pub(in crate::app) use surface_layer_tiles::地表の層のタイル一式;
 
 use blitz_engine::{
     アセットID, カタログ, シーンデータ, チャンク座標, チャンク目録, 実行時シーンのファイル, 実行時シーン読込エラー
 };
-use blitz_math::大域ワールド位置;
 
 use crate::error::起動エラー;
 use crate::runtime_assets::実行時アセットの置き場;
@@ -68,26 +71,23 @@ pub(super) fn シーンを読み込んで変換する(
     カタログ: &カタログ,
     安定id: &アセットID,
     並べ方: crate::cli::描画対象の並べ方,
-    大域平行移動: 大域ワールド位置,
-    チャンク一辺: Option<blitz_engine::チャンク一辺>,
+    材料: シーンを描画入力へ写す材料<'_>,
 ) -> Result<(シーンデータ, 束の描画入力), 起動エラー> {
     let シーン = 実行時シーンのファイル::カタログの安定idから作る(カタログ, 安定id)
         .ok_or_else(|| 実行時シーン読込エラー::カタログ未登録(安定id.clone()))
         .and_then(|ファイル| ファイル.読み込む())
         .map_err(起動エラー::シーン読込失敗)?;
-    let 描画入力 = シーンをレンダラー入力に変換する(&シーン, 並べ方, 起動時シーンの所有チャンク, 大域平行移動, チャンク一辺)?;
+    let 描画入力 = シーンをレンダラー入力に変換する(&シーン, 並べ方, 起動時シーンの所有チャンク, 材料)?;
     Ok((シーン, 描画入力))
 }
 
 /// 既に読み込み済みの`シーンデータ`をレンダラー入力へ変換する(ホットリロード再読込とチャンク束の追加で使う)。
 /// `束座標`はそのシーンを載せる描画束のチャンク座標である。描画の基準原点はこの座標から導出し、シーン内の全描画対象がこの座標を所有チャンクに持つことを検証する。
-/// `大域平行移動`は`--global-offset`が世界全体へ加える平行移動であり、導出した基準原点へ最後に合成する。
 pub(crate) fn シーンをレンダラー入力に変換する(
     シーン: &シーンデータ,
     並べ方: crate::cli::描画対象の並べ方,
     束座標: チャンク座標,
-    大域平行移動: 大域ワールド位置,
-    チャンク一辺: Option<blitz_engine::チャンク一辺>,
+    材料: シーンを描画入力へ写す材料<'_>,
 ) -> Result<束の描画入力, 起動エラー> {
-    render_input::変換する(シーン, 並べ方, 束座標, 大域平行移動, チャンク一辺)
+    render_input::変換する(シーン, 並べ方, 束座標, 材料)
 }

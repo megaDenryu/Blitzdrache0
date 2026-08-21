@@ -20,7 +20,8 @@ fn 範囲外の係数を型付きの失敗にする() {
         [1.0, 1.0, 1.0, 1.0],
         1.5,
         0.5,
-        [None, None, None],
+        [None, None, None, None, None, None, None, None],
+        [1.0; 4],
     )];
     let 結果 = 資源表世代を構築する(&mut 供給元, 資源表世代ID::最初(), 余裕のあるレイアウト容量(), &材質一覧);
     assert!(matches!(

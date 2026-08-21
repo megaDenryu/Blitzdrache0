@@ -18,9 +18,13 @@ impl アプリ {
         let 起動時シーンの内容 = match 一式.起動時シーン {
             起動時シーンの更新::同じ内容 { 内容 } => 内容,
             起動時シーンの更新::変更あり { 内容, シーン } => {
-                let Some(登録一式) =
-                    起動時シーンを差し替える(レンダラー, &シーン, self.描画対象の並べ方, self.大域ずらし量, 準備.一辺, &self.ゲーム配線)
-                else {
+                let Some(登録一式) = 起動時シーンを差し替える(
+                    レンダラー,
+                    &シーン,
+                    self.描画対象の並べ方,
+                    super::scene_load::シーンを描画入力へ写す材料::生成する(self.大域ずらし量, 準備.一辺, &self.地表の層のタイル),
+                    &self.ゲーム配線,
+                ) else {
                     return;
                 };
                 if let Err(誤り) = self.永続束.再登録する(
@@ -28,8 +32,7 @@ impl アプリ {
                     &mut self.可視判定,
                     &mut self.プリミティブ描画項目台帳,
                     登録一式,
-                    self.大域ずらし量,
-                    準備.一辺,
+                    super::scene_load::シーンを描画入力へ写す材料::生成する(self.大域ずらし量, 準備.一辺, &self.地表の層のタイル),
                 ) {
                     eprintln!("[hot-reload] 永続束を再登録できなかった: {誤り}");
                     return;
@@ -58,13 +61,11 @@ fn 起動時シーンを差し替える(
     レンダラー: &mut blitz_render::レンダラー,
     シーン: &blitz_engine::シーンデータ,
     並べ方: crate::cli::描画対象の並べ方,
-    大域平行移動: blitz_math::大域ワールド位置,
-    一辺: Option<blitz_engine::チャンク一辺>,
+    材料: super::scene_load::シーンを描画入力へ写す材料<'_>,
     ゲーム配線: &crate::game::ゲーム配線,
 ) -> Option<super::scene_load::束の登録一式> {
     let 束座標 = super::scene_load::起動時シーンの所有チャンク;
-    let mut 描画入力 = match super::scene_load::シーンをレンダラー入力に変換する(シーン, 並べ方, 束座標, 大域平行移動, 一辺)
-    {
+    let mut 描画入力 = match super::scene_load::シーンをレンダラー入力に変換する(シーン, 並べ方, 束座標, 材料) {
         Ok(入力) => 入力,
         Err(誤り) => {
             eprintln!("[hot-reload] 再読込したシーンの変換に失敗した: {誤り}");

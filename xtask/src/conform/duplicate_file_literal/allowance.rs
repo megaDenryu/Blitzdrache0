@@ -14,7 +14,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
 use build_output::焼いてそのまま取り込む対か;
-use table::{台帳のファイル, 寄せられない綴り, 許した綴り一覧};
+use table::{台帳のファイル, 寄せられない綴り, 領域一覧};
 
 use super::出現箇所;
 use crate::conform::violation::違反;
@@ -31,8 +31,10 @@ fn 台帳の表記へ揃える(パス: &Path) -> String {
 }
 
 pub(super) fn 既知の寄せられない綴りか(綴り: &str, 出現一覧: &[&出現箇所]) -> bool {
-    let 台帳が許す = 許した綴り一覧
+    let 台帳が許す = 領域一覧
         .iter()
+        .copied()
+        .flatten()
         .any(|許容| 許容.綴り == 綴り && 出現一覧.iter().all(|出現| 許容.現れてよい場所か(&出現.パス)));
     台帳が許す || 焼いてそのまま取り込む対か(綴り, 出現一覧)
 }
@@ -41,8 +43,10 @@ pub(super) fn 既知の寄せられない綴りか(綴り: &str, 出現一覧: &
 /// これがないと是正済みの項目が残り続け、次に同じ綴りを2箇所へ書いたときに見逃す穴になる。
 pub(super) fn 台帳の陳腐化を検査する(綴りごとの出現場所: &BTreeMap<String, BTreeSet<String>>) -> Vec<違反> {
     let 空の場所 = BTreeSet::new();
-    許した綴り一覧
+    領域一覧
         .iter()
+        .copied()
+        .flatten()
         .flat_map(|許容| {
             let 出現場所 = 綴りごとの出現場所.get(許容.綴り).unwrap_or(&空の場所);
             許容

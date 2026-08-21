@@ -7,19 +7,22 @@ pub(crate) mod mesh_layout;
 mod multi_material_body;
 pub(super) mod read_element;
 mod shape_tag;
+#[cfg(test)]
+mod surface_layer_fixture;
 mod texture_format_tag;
 mod v1;
 mod v2;
 mod v3;
 mod v4;
 mod v5;
+mod v6;
 pub(super) mod write_element;
 
 use super::{アセット実行時形式エラー, アセット形式版, 実行時アセットを開く, 実行時アセット種別};
 use crate::asset::scene_data::シーンデータ;
 
 pub fn シーンを実行時形式へ格納する(シーン: &シーンデータ) -> Result<Vec<u8>, アセット実行時形式エラー> {
-    v5::シーン内容を格納する(シーン)
+    v6::シーン内容を格納する(シーン)
 }
 
 pub fn 実行時形式からシーンを読む(バイト列: &[u8]) -> Result<シーンデータ, アセット実行時形式エラー> {
@@ -42,5 +45,6 @@ pub fn 実行時形式からシーンを読む(バイト列: &[u8]) -> Result<�
         アセット形式版::V3 => Ok(v3::シーン内容を読む(アセット.内容)?.最新へ変換する()),
         アセット形式版::V4 => v4::シーン内容を読む(アセット.内容),
         アセット形式版::V5 => v5::シーン内容を読む(アセット.内容),
+        アセット形式版::V6 => v6::シーン内容を読む(アセット.内容),
     }
 }

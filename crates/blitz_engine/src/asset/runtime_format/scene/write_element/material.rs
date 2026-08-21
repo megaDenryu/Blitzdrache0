@@ -22,7 +22,9 @@ pub(in crate::asset::runtime_format::scene) fn 書く(
         }
         .into());
     };
-    let マテリアルデータ::金属粗さPBR(値) = マテリアル;
+    let マテリアルデータ::金属粗さPBR(値) = マテリアル else {
+        return Err(材質割当エラー::旧版が表せない地表の層の重ね合わせ.into());
+    };
     出力.u32(金属粗さPBRの種別番号);
     テクスチャを書く(出力, 値.ベースカラー.as_ref())?;
     テクスチャを書く(出力, 値.金属粗さ.as_ref())?;

@@ -30,7 +30,6 @@ use std::path::PathBuf;
 
 const シェーダーディレクトリ相対パス: &str = "../../shaders";
 const エントリファイル名: &str = "scene.slang";
-const 遠方環境のシーン画素段ファイル名: &str = "scene_distant_environment.slang";
 const 粒子エントリファイル名: &str = "particle.slang";
 const 表面流エントリファイル名: &str = "surface_flow.slang";
 const SPHエントリファイル名: &str = "sph.slang";
@@ -53,8 +52,7 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
 
     let ソース絶対パス = シェーダーディレクトリ絶対パス.join(エントリファイル名);
     spirv_compile::頂点と画素段をコンパイルする(&slangc, &ソース絶対パス, &出力先ディレクトリ)?;
-    let 遠方環境のシーン画素段パス = シェーダーディレクトリ絶対パス.join(遠方環境のシーン画素段ファイル名);
-    spirv_compile::遠方環境の画素段をコンパイルする(&slangc, &遠方環境のシーン画素段パス, &出力先ディレクトリ)?;
+    spirv_compile::残りのシーンの画素段をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
 
     let 粒子ソース絶対パス = シェーダーディレクトリ絶対パス.join(粒子エントリファイル名);
     particle_spirv_compile::三エントリをコンパイルする(&slangc, &粒子ソース絶対パス, &出力先ディレクトリ)?;
