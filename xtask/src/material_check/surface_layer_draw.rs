@@ -1,0 +1,71 @@
+//! 段Eの検収入口。地表の層の重ね合わせで塗った専用のエディター世界を実機で描き、層のタイルが重みのとおりに
+//! 出ていること・南北と東西の向きが正しいこと・チャンクの境界で色が飛ばないこと・validationが0件であることを
+//! ヘッドレスの読み戻しで確かめる。
+//!
+//! 専用の世界を書き出してから焼くのは、本物の`assets/editor_world/`の中身が判定値になると、オーナーが
+//! 編集するたびに検収が動いてしまうためである。世界の組み立ては`world_source`、塗り分けの形は`weight_pattern`、
+//! 起動の指定は`run`、層の色の数え上げは`layer_color`、合否は`judgment`が持つ。
+//! 参照: `_doc/設計/マルチマテリアルと材質境界.md`「地表の層の重ね合わせ」
+
+mod error;
+mod judgment;
+mod layer_color;
+mod run;
+mod weight_pattern;
+mod world_source;
+
+use std::path::PathBuf;
+use std::process::ExitCode;
+
+use crate::acceptance::{検収の実行名, 読み戻し画像};
+use error::地表の層の検収エラー;
+use run::見る向き;
+use weight_pattern::塗り分けの形;
+use world_source::検収用の世界のソース;
+
+const 出力ディレクトリ: &str = "target/surface_layer_draw";
+
+pub fn 実行する() -> ExitCode {
+    match 検収する() {
+        Ok(要約) => {
+            println!("[xtask] surface-layer-draw成功: {要約}");
+            ExitCode::SUCCESS
+        }
+        Err(理由) => {
+            eprintln!("[xtask] surface-layer-draw失敗: {理由}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+fn 検収する() -> Result<String, 地表の層の検収エラー> {
+    let 象限の北 = 条件を描く(塗り分けの形::象限ごとの単一の層, 見る向き::北)?;
+    judgment::北から見た象限の四隅を検査する(&象限の北)?;
+    let 象限の南 = 条件を描く(塗り分けの形::象限ごとの単一の層, 見る向き::南)?;
+    judgment::南から見た象限の四隅を検査する(&象限の南)?;
+    let 南北 = 条件を描く(塗り分けの形::北が岩で南が砂, 見る向き::北)?;
+    judgment::北が岩で南が砂の四隅を検査する(&南北)?;
+    let 台地 = 条件を描く(塗り分けの形::中央の台地だけ砂, 見る向き::北)?;
+    let 混ざり物 = judgment::台地の世界が一様であることを検査する(&台地)?;
+    Ok(format!(
+        "象限の絵の四隅は北向きが草・泥・岩・砂で南向きがその逆順、南北の絵は上が岩で下が砂、台地の絵で砂の純色でない画素は{混ざり物}個(全{}画素)",
+        台地.画素数()
+    ))
+}
+
+/// 1条件ぶんの世界を書き出して焼き、1回描いて読み戻す。世界の書き出しと焼きを条件ごとに行うのは、
+/// 塗り分けの形が変わると重みの格子が変わり、焼き直さないと前の条件の絵が出るためである。
+fn 条件を描く(形: 塗り分けの形, 向き: 見る向き) -> Result<読み戻し画像, 地表の層の検収エラー> {
+    let 置き場 = PathBuf::from(出力ディレクトリ).join(形.呼び名());
+    let ソース = 検収用の世界のソース::書き出す(置き場.join("source"), 形)?;
+    let 実行時ルート = 置き場.join("runtime_assets");
+    if !crate::compile_assets::生成する(ソース.ソースルート(), &実行時ルート, crate::asset_generator::世界名::エディターの世界)
+    {
+        return Err(地表の層の検収エラー::実行時アセットを焼けなかった);
+    }
+    let 実行環境 = run::実行環境を作る(実行時ルート, 置き場.join("readback"))?;
+    let 実行名 = 検収の実行名::生成する(&format!("{}_{}", 形.呼び名(), 向き.呼び名()))?;
+    let 実行 = 実行環境.描いて読み戻す(実行名, &run::起動指定を組み立てる(向き))?;
+    実行.報告().画面へ流す();
+    Ok(実行.画像を取り出す())
+}

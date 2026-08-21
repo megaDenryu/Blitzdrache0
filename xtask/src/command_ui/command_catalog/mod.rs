@@ -8,6 +8,7 @@ mod benchmark;
 mod core;
 mod editor;
 mod entry;
+mod material_check;
 mod measurement;
 mod play;
 mod render_check;
@@ -24,6 +25,7 @@ pub(crate) fn 全件() -> Vec<コマンド項目> {
         measurement::一覧,
         play::一覧,
         render_check::一覧,
+        material_check::一覧,
         sky_environment::一覧,
         editor::一覧,
     ]

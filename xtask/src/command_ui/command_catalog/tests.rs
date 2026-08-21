@@ -10,13 +10,14 @@ use super::全件;
 /// コマンド名の集合を取り出す。分類ファイルの数だけ読む対象を持つのは、dispatchが
 /// command_catalogと同じ8分類へ実装を分けているためである。
 fn dispatchのコマンド名一覧() -> BTreeSet<&'static str> {
-    let ソース一覧: [&str; 8] = [
+    let ソース一覧: [&str; 9] = [
         include_str!("../../dispatch/core.rs"),
         include_str!("../../dispatch/asset.rs"),
         include_str!("../../dispatch/benchmark.rs"),
         include_str!("../../dispatch/measurement.rs"),
         include_str!("../../dispatch/play.rs"),
         include_str!("../../dispatch/render_check.rs"),
+        include_str!("../../dispatch/material_check.rs"),
         include_str!("../../dispatch/sky_environment.rs"),
         include_str!("../../dispatch/editor.rs"),
     ];

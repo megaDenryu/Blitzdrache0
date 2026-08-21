@@ -51,4 +51,6 @@ pub(in crate::app) struct 起動時に組み上げた一式 {
     pub(in crate::app) 布プリセット: Option<布プリセット>,
     pub(in crate::app) 登録一式: scene_load::束の登録一式,
     pub(in crate::app) 遠景: Option<(blitz_engine::シーンデータ, scene_load::束の描画入力)>,
+    /// カタログを読んで初めて決まる層ごとのタイル。呼び出し元がアプリのフィールドへそのまま移す。
+    pub(in crate::app) 地表の層のタイル: scene_load::地表の層のタイル一式,
 }

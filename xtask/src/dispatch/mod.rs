@@ -1,13 +1,14 @@
 //! コマンド名から実装への割り当て。担当するのは分類ごとの割り当てを順に試す進行だけであり、
 //! モジュール構成は`main`が、説明文は`command_ui::usage`が持つ。分類ごとの割り当ての実体は
-//! command_catalogと同じ8区分(core・asset・benchmark・measurement・play・render_check・
-//! sky_environment・editor)の各ファイルが所有しており、この`mod.rs`はどの分類が引き受けるかを
+//! command_catalogと同じ9区分(core・asset・benchmark・measurement・play・render_check・
+//! material_check・sky_environment・editor)の各ファイルが所有しており、この`mod.rs`はどの分類が引き受けるかを
 //! 順に試すだけの進行を持つ。
 
 mod asset;
 mod benchmark;
 mod core;
 mod editor;
+mod material_check;
 mod measurement;
 mod play;
 mod render_check;
@@ -35,6 +36,7 @@ pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
         .or_else(|| measurement::割り当てる(名前, 残り引数))
         .or_else(|| play::割り当てる(名前, 残り引数))
         .or_else(|| render_check::割り当てる(名前, 残り引数))
+        .or_else(|| material_check::割り当てる(名前))
         .or_else(|| sky_environment::割り当てる(名前, 残り引数))
         .or_else(|| editor::割り当てる(名前, 残り引数))
         .unwrap_or_else(|| {
