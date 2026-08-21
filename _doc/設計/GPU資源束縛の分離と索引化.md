@@ -381,7 +381,7 @@ set 3の直接光は最初から配列契約にする(固定フィールドに�
 
 実測は次のとおりである。差し替え前が左(243, 97, 89)・右(89, 124, 243)、差し替え後が左(89, 225, 124)・右(237, 218, 89)、自分の世代の色を持つ画素は前後とも114000個、相手の世代の色を持つ画素はどちらも0個、起動後のシーン読込1回、公開中の資源表世代の番号3、validationは0件だった。
 
-実装の所在は次のとおりである。差し替え後の材質を持つglTF文書が`crates/blitz_asset_compiler/examples/generate_source_assets/multi_material_gltf_json.rs`、検収シーンと上書き元の安定IDの宣言が`crates/blitz_asset_compiler/examples/compile_assets/world/asset_declaration.rs`、フレーム番号から自己操作を決める計画と安定IDの対が`crates/blitz_app/src/smoke/material_reload.rs`、差し替え前の絵の書き出しが`crates/blitz_app/src/app/frame_dump.rs`、検収入口が`xtask/src/material_reload_draw.rs`、板の判定領域と代表色の正本が`xtask/src/plate_region.rs`である。
+実装の所在は次のとおりである。差し替え後の材質を持つglTF文書が`crates/blitz_asset_compiler/examples/generate_source_assets/multi_material_gltf_json.rs`、検収シーンと上書き元の安定IDの宣言が`crates/blitz_asset_compiler/src/runtime_compilation/world/asset_declaration.rs`、フレーム番号から自己操作を決める計画と安定IDの対が`crates/blitz_app/src/smoke/material_reload.rs`、差し替え前の絵の書き出しが`crates/blitz_app/src/app/frame_dump.rs`、検収入口が`xtask/src/material_reload_draw.rs`、板の判定領域と代表色の正本が`xtask/src/plate_region.rs`である。
 
 ## 段4bの補遺で直した取引と寿命の欠陥
 

@@ -19,7 +19,7 @@ use blitz_render::{
 
 use crate::cli::{局所光の件数の起動指定, 影を落とす灯の件数の起動指定, 起動引数エラー};
 
-/// 小屋を据えた位置。宣言側(`crates/blitz_asset_compiler/examples/compile_assets/world/stone_hut_declaration.rs`)と同じ値である。
+/// 小屋を据えた位置。宣言側(`crates/blitz_asset_compiler/src/runtime_compilation/world/stone_hut_declaration.rs`)と同じ値である。
 const 小屋の中心メートル: f64 = 50.0;
 
 /// 屋外を残す弱い方向光の強度。

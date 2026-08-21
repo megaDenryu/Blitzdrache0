@@ -24,8 +24,10 @@ mod nonnegative_floor;
 mod part_row;
 mod placed_instance_count;
 mod placement;
+mod runtime_compilation;
 mod scatter_bake;
 mod scene_compiler;
+mod source_asset_paths;
 mod terrain;
 mod texture_storage;
 mod uniform_scale;
@@ -68,8 +70,12 @@ pub use placement::{
     個数を決める並べ方, 傾きの好み, 出現割合の範囲, 原型と置き方の指定, 地表への据え方, 大きさの範囲, 密度場の指定, 密度場の散布,
     部品で組む散布の指定, 配置の種, 配置様式,
 };
+pub use runtime_compilation::{
+    一間四方の骨格の並びの種類, 実行時アセットのコンパイル, 家の並びの規模, 対象世界, 焼く世界の指定, 焼く世界の指定組み立て器, 診断の原型,
+};
 pub use scatter_bake::散布の焼き方;
 pub use scene_compiler::ソースアセットのコンパイル係;
+pub use source_asset_paths::*;
 pub use texture_storage::{
     rgba8の縮小段をbc1のバイト列へ符号化する, srgbの色として縦横を半分に縮める, srgbの色として縮小段の連なりを作る,
     srgbの色の全段をbc1のバイト列へ符号化する, テクスチャ格納方針, 方針と役割に従って原寸を格納済みテクスチャへ焼く, 材質テクスチャ役割,

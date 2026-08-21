@@ -1,5 +1,5 @@
 //! 屋内の多光源の検収世界の定義と、そのソースアセットの書き出し。焼くのは石積みの小屋を載せる地面だけであり、
-//! 小屋そのものは外部のアセットリポジトリから来る(宣言は`crates/blitz_asset_compiler/examples/compile_assets/world/stone_hut_declaration.rs`)。
+//! 小屋そのものは外部のアセットリポジトリから来る(宣言は`crates/blitz_asset_compiler/src/runtime_compilation/world/stone_hut_declaration.rs`)。
 //!
 //! 地面を起伏の無い平面にするのは、小屋の4枚の壁の底辺が1つの水平面に載るためである。起伏があると、
 //! 壁の底辺と地面のあいだに隙間が空く辺と、壁が地面へ埋まる辺が同時に生まれ、戸口から差す光が

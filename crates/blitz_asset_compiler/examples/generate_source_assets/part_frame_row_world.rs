@@ -1,6 +1,6 @@
 //! 部品で組んだ一間四方の骨格の並びの世界の定義と、そのソースアセットの書き出し。書き出すのは骨格を載せる地面だけであり、
 //! 部品そのものは本体リポジトリの外にあるアセットリポジトリから来る
-//! (宣言は`crates/blitz_asset_compiler/examples/compile_assets/world/part_frame_row_declaration.rs`)。
+//! (宣言は`crates/blitz_asset_compiler/src/runtime_compilation/world/part_frame_row_declaration.rs`)。
 //!
 //! 地面を起伏の無い平面にするのは、骨格の底面が1つの水平面に載るためである。起伏があると、2.4メートル四方の
 //! ベイの一方の辺が地面へ埋まり、もう一方の辺の下に隙間が空く。この世界が見るのは描画発行数と個体数と絵の成立であり、

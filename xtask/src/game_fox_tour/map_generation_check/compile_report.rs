@@ -4,8 +4,8 @@
 //! 4つを1つの型が持つのは、どれも同じ1回の焼き付けの標準出力からしか読めず、読み落としを同じ場所で
 //! 拒みたいためである。行を探す綴りを呼び出し側へ散らすと、1つだけが静かに読めなくなる。
 //!
-//! 注意: 個体数の行の綴りは書き手(`crates/blitz_asset_compiler/examples/compile_assets/instance_tally.rs`)にも、
-//! 置いた個体の行の綴りは書き手(`crates/blitz_asset_compiler/examples/compile_assets/placed_instance_tally.rs`)にも、
+//! 注意: 個体数の行の綴りは書き手(`crates/blitz_asset_compiler/src/runtime_compilation/instance_tally.rs`)にも、
+//! 置いた個体の行の綴りは書き手(`crates/blitz_asset_compiler/src/runtime_compilation/placed_instance_tally.rs`)にも、
 //! 据え置いたチャンク数の綴りは書き手(`crates/blitz_asset_compiler/src/generation_ledger/rebake_tally.rs`)にも
 //! 同じものがある。両側にあることは`cargo xtask conform`の綴りの契約の検査が守る。
 

@@ -7,7 +7,7 @@
 //! 一覧から切り離された枝や、綴りを持たない枝を書き表せない。表の書式と生成物は`table`の冒頭にある。
 //!
 //! 綴りへ戻すのはプロセス境界の1箇所だけである。綴りはアセットコンパイラ側
-//! (`crates/blitz_asset_compiler/examples/compile_assets/world/argument_name.rs`)にも同じものがあり、
+//! (`crates/blitz_asset_compiler/src/runtime_compilation/world/argument_name.rs`)にも同じものがあり、
 //! 食い違えば実行時アセット生成が「未知の世界名である」で失敗する。
 
 #[cfg(test)]

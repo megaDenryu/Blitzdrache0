@@ -3,7 +3,7 @@
 //!
 //! 影を落とす灯は中心から近い順に選ばれ、1件目が大域(46.25, 4.0, 46.25)、2件目が(53.75, 4.0, 46.25)に立つ
 //! (正本: `crates/blitz_app/src/app/scene_lighting/night_lights/lamp_field.rs`)。1件目の傍らに細く高い角柱が、
-//! 2件目の傍らに幅広く低い壁が立つ(正本: `crates/blitz_asset_compiler/examples/compile_assets/world/night_lights_declaration.rs`)。
+//! 2件目の傍らに幅広く低い壁が立つ(正本: `crates/blitz_asset_compiler/src/runtime_compilation/world/night_lights_declaration.rs`)。
 //!
 //! 4つの領域は、2つの灯の影の形が正反対であることを写す。角柱の影は南北に長く東西に狭く、壁の影は東西に広く南北に短い。
 //! 1つの立方体では、南北に長い影と東西に広い影を同時に作れない。したがって「角柱の影の南北に長い先が暗く、東西の脇が明るい」ことと

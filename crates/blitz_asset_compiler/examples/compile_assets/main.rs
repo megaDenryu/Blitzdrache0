@@ -2,24 +2,10 @@
 //! 1回の実行が焼くのは1つのチャンク世界であり、出力ルートには1つのカタログと1つのチャンク目録が並ぶ。
 //! この入口が担うのは起動引数の受け取りだけであり、焼く工程は`compilation`の実行時アセットのコンパイルが持つ。
 
-mod archetype_identity;
 mod arguments;
-mod bake_report;
-mod catalog;
-mod chunk_ledger;
-mod chunk_world;
-mod compilation;
-mod compile_target;
-mod distant_terrain;
-mod height_field;
-mod instance_tally;
-mod placed_instance_tally;
-mod source_kind;
-mod source_location;
 mod texture_policy_argument;
-mod world;
 
-use compilation::実行時アセットのコンパイル;
+use blitz_asset_compiler::実行時アセットのコンパイル;
 
 fn main() {
     if let Err(誤り) = 実行する() {

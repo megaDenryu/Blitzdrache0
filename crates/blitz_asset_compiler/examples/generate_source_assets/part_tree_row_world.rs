@@ -1,6 +1,6 @@
 //! 部品で組んだ木の並びの世界の定義と、そのソースアセットの書き出し。書き出すのは木を並べる地面だけであり、
 //! 木の部品そのものは本体リポジトリの外にあるアセットリポジトリから来る
-//! (宣言は`crates/blitz_asset_compiler/examples/compile_assets/world/part_tree_row_declaration.rs`)。
+//! (宣言は`crates/blitz_asset_compiler/src/runtime_compilation/world/part_tree_row_declaration.rs`)。
 //!
 //! 地面を起伏の無い平面にするのは、木の姿だけを見るためである。起伏があると幹の傾きと地面の傾きが混ざり、
 //! 「木が傾いている」のか「地面が傾いている」のかを絵から切り分けられない。

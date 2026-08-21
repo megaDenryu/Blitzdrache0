@@ -22,10 +22,10 @@ use super::source_root::ソースルート;
 use super::world_directory_name::世界のディレクトリ名;
 use super::world_source_directory::世界のソースディレクトリ;
 use crate::generation_ledger::生成の出力ルート;
+use crate::source_asset_paths::目印の柱のファイル名;
 
 const ディレクトリ名の綴り: &str = "fox_tour_world";
 const 目印のバイナリファイル名: &str = "destination_marker.bin";
-const 目印の文書ファイル名: &str = "destination_marker.gltf";
 
 /// 生成に使った乱数の種を書き出すファイルの名前。書き手も読み手もこの1つを見る。
 const 種を書き出すファイル名: &str = "map_seed.txt";
@@ -73,7 +73,7 @@ impl 場所巡りの世界のソースディレクトリ {
 
     pub fn 目印の柱を書き出す(&self, バッファのバイト列: &[u8], 文書の綴り: &str) -> Result<(), アセット配置エラー> {
         self.0.直下へ書き込む(目印のバイナリファイル名, バッファのバイト列)?;
-        self.0.直下へ書き込む(目印の文書ファイル名, 文書の綴り.as_bytes())
+        self.0.直下へ書き込む(目印の柱のファイル名, 文書の綴り.as_bytes())
     }
 
     /// 目印の文書が自分の中で参照するバッファのファイル名。文書の綴りを組む側へ渡す。

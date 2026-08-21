@@ -18,7 +18,7 @@ use crate::acceptance::判定の名前;
 /// 種類ごとの置いた個体の内訳を持つ行を見分ける語。**合計だけでは木と岩の取り分が分からない。**
 /// 1本が幹と枝と葉房の複数の部品になる散布を入れた以上、種類ごとの内訳が無いと物量の議論ができない。
 ///
-/// 注意: 綴りは書き手(`crates/blitz_asset_compiler/examples/compile_assets/placed_instance_tally.rs`)にも
+/// 注意: 綴りは書き手(`crates/blitz_asset_compiler/src/runtime_compilation/placed_instance_tally.rs`)にも
 /// 同じものがある。両側にあることは`cargo xtask conform`の綴りの契約の検査が守る。
 const 内訳の行を見分ける語: &str = "種類ごとの置いた個体:";
 

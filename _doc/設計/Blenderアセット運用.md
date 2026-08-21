@@ -43,7 +43,7 @@ Blenderの実体は `C:\Program Files\Blender Foundation\Blender 5.2\blender.exe
 
 ## 本体からの参照の仕組み
 
-本体リポジトリのアセット宣言表が、外部のアセットリポジトリのglbを名指しで参照する。宣言の実体は `crates/blitz_asset_compiler/examples/compile_assets/world/asset_declaration.rs` にあり、置き場の解決は `crates/blitz_asset_compiler/examples/compile_assets/source_location.rs` が1箇所で持つ。
+本体リポジトリのアセット宣言表が、外部のアセットリポジトリのglbを名指しで参照する。宣言の実体は `crates/blitz_asset_compiler/src/runtime_compilation/world/asset_declaration.rs` にあり、置き場の解決は `crates/blitz_asset_compiler/src/runtime_compilation/source_location.rs` が1箇所で持つ。
 
 宣言1件は、安定IDと相対パスと**基準**の3つで書く。基準は2つあり、`本体のソースルート` は `assets/` からの相対、`外部ソースルート` は外部のアセットリポジトリからの相対である。宣言の1行1行は起点の実パスを持たないため、置き場を移しても宣言を書き換えない。
 
@@ -104,7 +104,7 @@ Blenderが生成した小物は、板の世界(`chunk_world`)の宣言に並ぶ�
 
 シーンは描画対象を11個持つ。地面が1個で、小物の群が種ごとに1個ずつ10個である。地面は地形の世界と同じ経路で高さ格子から地形LODメッシュ群として焼き、小物の接地の高さは最詳細段が張る三角形の平面から引く。群の共有マテリアルは**原型のglTFが宣言したものをそのまま使う。** 小物は種ごとに色が違い、その色は生成した本人がベースカラー係数で与えているため、コンパイラが選び直すと作者の宣言と絵が食い違う。植生の同居がマテリアルを選び直すのは原型が既定の白のままで地形と画素で見分けられないからであり、こちらにその事情は無い。
 
-配置は種ごとに様式を選ぶ。様式は3つあり、`輪に沿う`は中心を囲む輪へ等間隔に並べて個体を接線へ向け、`集まり`は指定した点のまわりの円板へ集め、`一様に散らす`は正方領域へ格子状に散らす。囲いを作る石垣・柵・杭は半径15.0・26.0・30.5メートルの3重の輪になり、荷と器は輪の内側の4箇所へ寄せ、岩と切り株は一辺84から88メートルの領域へ散る。合計は1035体である。配分の表は `crates/blitz_asset_compiler/examples/compile_assets/world/village_declaration.rs` が持つ。
+配置は種ごとに様式を選ぶ。様式は3つあり、`輪に沿う`は中心を囲む輪へ等間隔に並べて個体を接線へ向け、`集まり`は指定した点のまわりの円板へ集め、`一様に散らす`は正方領域へ格子状に散らす。囲いを作る石垣・柵・杭は半径15.0・26.0・30.5メートルの3重の輪になり、荷と器は輪の内側の4箇所へ寄せ、岩と切り株は一辺84から88メートルの領域へ散る。合計は1035体である。配分の表は `crates/blitz_asset_compiler/src/runtime_compilation/world/village_declaration.rs` が持つ。
 
 **この世界は `cargo xtask compile-assets` の引数なし実行に入れていない。** 小物の原型が外部のアセットリポジトリにしか無く、それを持たない環境では焼けないためである。焼けない世界を一括生成へ入れると、アセットリポジトリを持たない環境で既存の検証が全部止まる。この世界を焼くのは `cargo xtask village-draw` と、世界名を明示した `cargo xtask compile-assets assets target/village_assets village_world` の2つである。
 

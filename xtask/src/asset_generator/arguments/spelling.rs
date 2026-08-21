@@ -1,7 +1,7 @@
 //! 役割の型を、生成器へ渡す生の綴りへ写す変換。所有するのは値ごとの綴りだけであり、並べ方は親が持つ。
 //!
 //! 綴りは生成器側にも同じものがある。方針は
-//! `crates/blitz_asset_compiler/examples/compile_assets/texture_policy_argument.rs`が持ち、食い違えば生成器が
+//! `crates/blitz_asset_compiler/src/runtime_compilation/texture_policy_argument.rs`が持ち、食い違えば生成器が
 //! 「未知のテクスチャ格納方針である」で失敗する。種は10進の非負整数であり、生成器が同じ形で読み戻す。
 
 use blitz_asset_compiler::{テクスチャ格納方針, マップ生成の乱数の種, 世界の広がり};

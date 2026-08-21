@@ -1,6 +1,6 @@
 //! 部品で組んだ家の並びの世界の定義と、そのソースアセットの書き出し。書き出すのは家を載せる地面だけであり、
 //! 部品そのものは本体リポジトリの外にあるアセットリポジトリから来る
-//! (宣言は`crates/blitz_asset_compiler/examples/compile_assets/world/part_house_row_declaration.rs`)。
+//! (宣言は`crates/blitz_asset_compiler/src/runtime_compilation/world/part_house_row_declaration.rs`)。
 //!
 //! 地面を起伏の無い平面にするのは、家の底面が1つの水平面に載るためである。起伏があると、
 //! 6メートル四方の土台の一方の辺が地面へ埋まり、もう一方の辺の下に隙間が空く。段4が見るのは

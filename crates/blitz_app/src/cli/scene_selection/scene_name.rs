@@ -18,7 +18,7 @@ pub(super) const 両視錐台外の群の検収世界の綴り: &str = "instance
 pub(super) const 地形の起点世界の綴り: &str = "terrain_origin";
 /// 参照: `crates/blitz_asset_compiler/examples/generate_source_assets/terrain_visual_world.rs`
 pub(super) const 地形の目視見本世界の綴り: &str = "terrain_visual";
-/// 参照: `crates/blitz_asset_compiler/examples/compile_assets/world/fox_tour_declaration.rs`
+/// 参照: `crates/blitz_asset_compiler/src/runtime_compilation/world/fox_tour_declaration.rs`
 pub(super) const 地形の場所巡り世界の綴り: &str = "terrain_fox_tour";
 /// 局所光の件数の上書きを読む2つの世界の一方。失敗の文面が`--scene`へ渡すべき値をそのまま出すため公開する。
 /// 参照: `crates/blitz_asset_compiler/examples/generate_source_assets/night_lights_world.rs`

@@ -13,6 +13,11 @@ mod error;
 
 use std::path::{Path, PathBuf};
 
+use blitz_asset_compiler::{
+    二材質のファイル名, 代替二材質のファイル名, 代替板のファイル名, 単一材質のファイル名, 影のシーンのファイル名, 板のファイル名,
+    遠方環境の検収ファイル名,
+};
+
 use crate::shader_copy::シェーダーの一時コピーの破れ;
 
 pub(in crate::smoke) use error::スモークのアセットの一時コピーの破れ;
@@ -23,20 +28,20 @@ const アセットの元ディレクトリ: &str = "assets/smoke";
 /// 一時ソースへ複製するassets/smoke/のファイル。スモークが描くのはquadだけだが、実行時アセット生成器は板の世界の必須アセットが
 /// 1つでも欠けると失敗するため、同じディレクトリの宣言に並ぶものはすべて複製する。
 const アセットファイル一覧: [&str; 14] = [
-    "quad.gltf",
-    "quad_alt.gltf",
+    板のファイル名,
+    代替板のファイル名,
     "quad.bin",
     "quad_base_color.png",
     "quad_alt_color.png",
-    "shadow_scene.gltf",
+    影のシーンのファイル名,
     "shadow_scene.bin",
     "shadow_scene_white.png",
     "multi_material.bin",
-    "multi_material_two.gltf",
-    "multi_material_two_alt.gltf",
-    "multi_material_one.gltf",
+    二材質のファイル名,
+    代替二材質のファイル名,
+    単一材質のファイル名,
     "indirect_probe.bin",
-    "indirect_probe.gltf",
+    遠方環境の検収ファイル名,
 ];
 
 pub(super) fn シェーダーを一時コピーする() -> Result<PathBuf, シェーダーの一時コピーの破れ> {

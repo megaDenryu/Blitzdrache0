@@ -11,7 +11,7 @@ use blitz_render::frame_input::読込時の向きから天頂軸まわりに回�
 
 /// キツネの標準サンプルが読込時に向いている方位角。glTFの慣習でモデルの正面が+Zを向いており、ワールド軸のZが南であるため南を向く。
 /// 焼くときに掛けるのは寸法を合わせる一様倍率だけで向きを変えないため、読込時の向きはモデルのままである。
-/// 参照: `crates/blitz_asset_compiler/examples/compile_assets/world/fox_tour_declaration.rs`
+/// 参照: `crates/blitz_asset_compiler/src/runtime_compilation/world/fox_tour_declaration.rs`
 const 読込時に向いている方位の度: f32 = 180.0;
 
 /// キツネが読込時に向いている方位角。出発時の姿勢を焼かれた向きに合わせるため、ゲームの開始時の状態にも渡す。

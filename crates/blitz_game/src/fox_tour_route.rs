@@ -7,7 +7,7 @@
 //! コンポジションルートが世界の高さ場を据えるときに`天頂成分を据えた目的地を返す`で置き直す。
 //!
 //! 注意: 水平の位置は、目印の柱を据えるアセットコンパイラの宣言
-//! (`crates/blitz_asset_compiler/examples/compile_assets/world/fox_tour_declaration.rs`)と同じ数でなければならない。
+//! (`crates/blitz_asset_compiler/src/runtime_compilation/world/fox_tour_declaration.rs`)と同じ数でなければならない。
 //! 食い違うと、柱が立っていない場所で到達が成立するか、柱の足元で到達が成立しないかのどちらかになる。
 
 use blitz_math::{メートル, 大域メートル, 大域ワールド位置};
