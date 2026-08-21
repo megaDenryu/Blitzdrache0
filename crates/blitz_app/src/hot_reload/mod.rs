@@ -1,7 +1,4 @@
-//! ホットリロード: シェーダーソースと、公開完了を示す生成台帳をstdのみのmtimeポーリングで監視する。新規依存クレートは追加しない。
-//! シェーダーはimportでモジュール分割されているため、監視はエントリファイル単体でなくエントリが属するディレクトリ内の全.slangファイルを対象にする(dir_mtime参照)。
-//! 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断7」「判断22」。
-
+//! ホットリロード: シェーダーの更新時刻と生成台帳の内容をstdだけで監視し、公開済みのアセット一式を差し替える。参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`「判断7」「判断22」。
 mod asset_reload_error;
 mod asset_watch;
 mod compile;
@@ -18,7 +15,7 @@ pub(crate) use asset_reload_error::実行時アセット一式の再読込エラ
 use asset_watch::アセット監視状態;
 use blitz_engine::{アセットID, カタログ};
 pub(crate) use compile_error::シェーダー再コンパイルエラー;
-pub(crate) use reload_result::{ホットリロード結果, 公開済みの実行時アセット一式};
+pub(crate) use reload_result::{ホットリロード結果, 公開済みの実行時アセット一式, 起動時シーンの更新};
 use shader_watch::{シェーダー変化結果, シェーダー監視状態};
 pub(crate) use watched_shader::監視するシェーダーの入口ファイル;
 
@@ -59,9 +56,14 @@ impl ホットリローダー {
         self.アセット監視.as_ref().map(asset_watch::アセット監視状態::カタログ)
     }
 
-    pub(crate) fn カタログを採用する(&mut self, カタログ: カタログ) {
+    pub(crate) fn 実行時アセット一式を採用する(
+        &mut self,
+        カタログ: カタログ,
+        起動時シーン: blitz_engine::実行時シーンの内容,
+        公開完了印: crate::runtime_assets::生成台帳の公開内容,
+    ) {
         if let Some(監視) = &mut self.アセット監視 {
-            監視.カタログを採用する(カタログ);
+            監視.実行時アセット一式を採用する(カタログ, 起動時シーン, 公開完了印);
         }
     }
 

@@ -10,6 +10,9 @@ use super::runtime_format::実行時形式からシーンを読む;
 use super::runtime_load_error::実行時シーン読込エラー;
 use super::scene_data::シーンデータ;
 
+mod content;
+pub use content::実行時シーンの内容;
+
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct 実行時シーンのファイル(実行時形式のファイル);
@@ -27,17 +30,20 @@ impl 実行時シーンのファイル {
     }
 
     pub fn 読み込む(&self) -> Result<シーンデータ, 実行時シーン読込エラー> {
-        self.読み込んで読み込んだバイト数も返す().map(|(シーン, _)| シーン)
+        self.内容を読み込む()?.シーンデータへ読む()
+    }
+
+    pub fn 内容を読み込む(&self) -> Result<実行時シーンの内容, 実行時シーン読込エラー> {
+        実行時シーンの内容::ファイルから読み込む(self.0.clone())
     }
 
     /// 読み込みと同時に、読んだバイト数を返す。ストリーミングの計器が1チャンクあたりの読込量を数える。
     pub(crate) fn 読み込んで読み込んだバイト数も返す(
         &self,
     ) -> Result<(シーンデータ, usize), 実行時シーン読込エラー> {
-        let バイト列 = self.0.バイト列を読む()?;
-        let 読込バイト数 = バイト列.len();
-        let mut シーン = 実行時形式からシーンを読む(&バイト列)?;
-        シーン.参照ファイル一覧.push(self.0.パスの写しを作る());
+        let 内容 = self.内容を読み込む()?;
+        let 読込バイト数 = 内容.バイト数();
+        let シーン = 内容.シーンデータへ読む()?;
         Ok((シーン, 読込バイト数))
     }
 }

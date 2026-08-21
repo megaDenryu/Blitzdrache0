@@ -10,12 +10,15 @@ mod entity_id;
 mod entity_ledger;
 mod fox_player;
 mod fox_tour;
+mod ground_height;
+mod height_field_adoption;
 mod render_supply;
 mod scripted_operation;
 mod step_seconds;
 mod summary;
 mod walk_only;
 
+pub(crate) use height_field_adoption::ゲーム用高さ場;
 pub(crate) use summary::ゲーム進行の要約;
 
 use blitz_game::前へ進む向きの方位角;
@@ -67,18 +70,6 @@ impl ゲーム配線 {
             Self::歩くだけ(配線) => 配線.一刻み進める(入力状態.ゲームの操作入力を確定する(), カメラのヨー),
         }
         ゲームの終了要求::続ける
-    }
-
-    /// カタログを構築した直後に、その世界の高さ場をゲームへ据える。遊ばない起動では高さ場を1度も読まない。
-    pub(crate) fn カタログから高さ場を据える(
-        &mut self,
-        カタログ: &blitz_engine::カタログ,
-    ) -> Result<(), blitz_engine::height_field::高さ場読込エラー> {
-        match self {
-            Self::ゲームを遊ばない => Ok(()),
-            Self::キツネの場所巡り(配線) => 配線.カタログから高さ場を据える(カタログ),
-            Self::歩くだけ(配線) => 配線.カタログから高さ場を据える(カタログ),
-        }
     }
 
     /// 終了時の報告へ渡す要約。遊ばない起動では報告する対象が無いため`None`を返す。

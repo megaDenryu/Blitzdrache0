@@ -4,14 +4,16 @@
 //! 裸の`&Path`で持ち回らないのは、置き場と監視先とダンプ先が同じ`&Path`の姿をしており、取り違えを型が止められないためである。
 //! 配下のファイル名の綴りをこの型が持つのは、同じ綴りが読む側と書く側へ分かれて複製されるのを防ぐためである。
 
+mod publication_marker_content;
 mod replacement;
 
 use std::path::PathBuf;
-use std::time::SystemTime;
 
 use blitz_engine::{
     アセットID, 実行時アセットの公開完了印, 実行時カタログのファイル, 実行時チャンク目録のファイル
 };
+
+pub(crate) use publication_marker_content::生成台帳の公開内容;
 
 /// カタログの版付きファイルの名前。生成側の`blitz_asset_compiler`が書き出す綴りと同じである。
 const カタログのファイル名: &str = "catalog.blitzcatalog";
@@ -43,9 +45,9 @@ impl 実行時アセットの置き場 {
         実行時チャンク目録のファイル::パスから作る(self.ディレクトリ.join(チャンク目録のファイル名))
     }
 
-    /// 生成台帳は出力一式の最後に確定するため、この時刻の変化だけを公開完了として扱う。
-    pub(crate) fn 生成台帳の更新時刻を取得する(&self) -> Result<SystemTime, std::io::Error> {
-        std::fs::metadata(self.ディレクトリ.join(実行時アセットの公開完了印::ファイル名()))?.modified()
+    /// 生成台帳は出力一式の最後に確定するため、その内容の変化だけを公開完了として扱う。
+    pub(crate) fn 生成台帳の公開内容を読む(&self) -> Result<生成台帳の公開内容, std::io::Error> {
+        生成台帳の公開内容::ファイルから読む(self.ディレクトリ.join(実行時アセットの公開完了印::ファイル名()))
     }
 
     /// 安定IDが指す生成物1つのパス。

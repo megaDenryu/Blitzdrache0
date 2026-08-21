@@ -6,4 +6,8 @@ impl 実行時アセットの公開完了印 {
     pub const fn ファイル名() -> &'static str {
         "generation_ledger.txt"
     }
+
+    pub const fn 公開前の一時ファイル接尾辞() -> &'static str {
+        ".tmp"
+    }
 }

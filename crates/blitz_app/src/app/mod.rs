@@ -30,7 +30,6 @@ mod streaming;
 pub(crate) mod time_of_day;
 mod visibility;
 mod window_setup;
-
 use crate::cli::{布モード, 描画対象の並べ方, 空中遠近合成指定, 粒子表示モード, 起動モード};
 use crate::{error::起動エラー, hot_reload::ホットリローダー, input::入力状態, overlay_ui::画面へ重ねるUI};
 use blitz_engine::カメラ;
@@ -39,6 +38,7 @@ pub(crate) use frame_timing::{フレーム時間統計, 集計する};
 pub(crate) use time_of_day::{太陽天頂区間の記録, 空の再現条件, 遠方環境の鍵の記録, 遠方環境更新判定};
 use winit::window::Window;
 pub(crate) use {draw_dispatch::時間再構成の突き合わせの要約, streaming::ストリーミング要約};
+
 /// 前提: `レンダラー`フィールドは`window`より前に宣言する。Rustは構造体フィールドを宣言順にDropするため、この順序がレンダラー破棄(surface等)をウィンドウ破棄より必ず先に行うことを保証する(レンダラーの生成前提を満たす)。
 pub(crate) struct アプリ {
     レンダラー: Option<レンダラー>,

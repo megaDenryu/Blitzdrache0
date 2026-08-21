@@ -90,7 +90,7 @@ pub use runtime_format::{
 };
 pub use runtime_load_error::実行時シーン読込エラー;
 pub use scene_data::シーンデータ;
-pub use scene_file::実行時シーンのファイル;
+pub use scene_file::{実行時シーンのファイル, 実行時シーンの内容};
 pub use skin_data::スキンデータ;
 pub use skin_vertex_attribute::スキン頂点属性;
 pub use static_trs::静的TRS;
