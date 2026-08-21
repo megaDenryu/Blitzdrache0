@@ -72,7 +72,7 @@ pub use gpu_memory_stats::{GPUメモリ用途, GPUメモリ用途別確保量, G
 pub use lighting_input::{ライティング入力, ライティング入力エラー, 光強度, 光色, 影の落ち方};
 pub use lighting_input::{局所光源列, 影入力, 影正射影範囲, 方向光入力, 点光源の可視性, 点光源入力, 環境光係数};
 pub use lod_mesh::{メッシュ素材, 詳細段メッシュ列};
-pub use material::{マテリアル素材, 地表の層の重ね合わせ素材, 地表層の数};
+pub use material::{マテリアル素材, 地表の層の重ね合わせ素材};
 pub use material_table_summary::材質資源表の要約;
 pub use particle_material::{粒子素材, 粒子素材エラー};
 pub use particle_shader_set::{粒子シェーダー一式, 粒子シェーダー一式エラー};

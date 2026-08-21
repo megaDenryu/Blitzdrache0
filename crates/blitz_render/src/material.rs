@@ -1,9 +1,12 @@
 //! シェーディングモデルごとのマテリアル素材。地表の層の重ね合わせの素材は`surface_layer`、層の数の写しは`layer_count`が持つ。
+//!
+//! 層の数をクレートの外へ公開しないのは、外から渡る層ごとの配列の長さがblitz_engineの同名の定数で決まり、
+//! 2つが食い違えばその受け渡しがコンパイルエラーになるためである。写す先を公開すると、どちらを使うかの選択が呼び出し側に生まれる。
 
 mod layer_count;
 mod surface_layer;
 
-pub use layer_count::地表層の数;
+pub(crate) use layer_count::地表層の数;
 pub use surface_layer::地表の層の重ね合わせ素材;
 
 use crate::pbr_material::金属粗さPBR素材;
