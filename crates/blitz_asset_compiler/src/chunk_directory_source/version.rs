@@ -9,7 +9,7 @@ use crate::error::チャンク目録コンパイルエラー;
 
 const 形式名: &str = "blitz_chunk_directory";
 
-pub(super) fn 最新の一辺へ変換する(宣言行: &str) -> Result<チャンク一辺, チャンク目録コンパイルエラー> {
+pub(super) fn 宣言行を最新の一辺へ変換する(宣言行: &str) -> Result<チャンク一辺, チャンク目録コンパイルエラー> {
     let 欄一覧: Vec<&str> = 宣言行.split_whitespace().collect();
     match 欄一覧.as_slice() {
         [形式名の欄, "1"] if *形式名の欄 == 形式名 => 版1の宣言.最新へ変換する(),

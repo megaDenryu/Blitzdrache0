@@ -68,7 +68,7 @@ impl 永続束の状態 {
         項目台帳: &mut プリミティブ描画項目台帳,
         起動時: 束の登録一式,
         大域平行移動: blitz_math::大域ワールド位置,
-        一辺: Option<blitz_engine::チャンク一辺>,
+        チャンク一辺: Option<blitz_engine::チャンク一辺>,
     ) -> Result<(), 起動エラー> {
         let 遠景 = self
             .遠景シーン
@@ -79,7 +79,7 @@ impl 永続束の状態 {
                     crate::cli::描画対象の並べ方::そのまま読む(),
                     super::scene_load::起動時シーンの所有チャンク,
                     大域平行移動,
-                    一辺,
+                    チャンク一辺,
                 )
             })
             .transpose()?;
