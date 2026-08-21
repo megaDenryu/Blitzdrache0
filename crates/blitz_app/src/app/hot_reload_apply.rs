@@ -20,7 +20,7 @@ impl アプリ {
         }
         let 並べ方 = self.描画対象の並べ方;
         let 大域ずらし量 = self.大域ずらし量;
-        let チャンク一辺 = self.チャンク一辺;
+        let チャンク一辺 = self.ストリーミング.as_ref().map(super::streaming::ストリーミング配線::一辺);
         let ゲーム配線 = &self.ゲーム配線;
         let Some(レンダラー) = &mut self.レンダラー else {
             return;
@@ -70,7 +70,7 @@ fn アセット再読込を反映する(
     シーン: &blitz_engine::シーンデータ,
     並べ方: crate::cli::描画対象の並べ方,
     大域平行移動: blitz_math::大域ワールド位置,
-    一辺: blitz_engine::チャンク一辺,
+    一辺: Option<blitz_engine::チャンク一辺>,
     ゲーム配線: &crate::game::ゲーム配線,
 ) -> Option<super::scene_load::束の登録一式> {
     // 再読込の対象は起動時シーンであり、束の入れ替えを伴わないため所有チャンクは起動時と同じ原点チャンクである。

@@ -2,7 +2,7 @@
 //! 正本は、blitz_asset_compilerの`チャンク目録ソースを読み込む`(読み手、`entry.rs`の`行から解析する`)が持つ。
 //! 対応する公開の書き手はそのクレートに無い(書き手は`examples/generate_source_assets/directory_source.rs`に
 //! あるが`pub(crate)`でexamplesの外から届かない)ため、この書き手をここへ置く。書式が読み手とずれないことは
-//! `tests/source_asset_export.rs`で、書き出した本文を実際に`チャンク目録ソースを読み込む`へ通す往復試験として検査する。
+//! `tests/source_asset_export_http.rs`で、書き出した本文を実際に`チャンク目録ソースを読み込む`へ通す往復試験として検査する。
 
 /// チャンク目録ソースの`chunk_directory.txt`というファイル名。この綴りが2箇所目になる理由は
 /// `xtask/src/conform/duplicate_file_literal/allowance/table.rs`に記した

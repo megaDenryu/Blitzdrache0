@@ -9,7 +9,7 @@ use crate::error::起動エラー;
 pub(in crate::app) fn 遠景を読み込んで変換する(
     カタログ: &カタログ,
     大域平行移動: 大域ワールド位置,
-    一辺: blitz_engine::チャンク一辺,
+    一辺: Option<blitz_engine::チャンク一辺>,
 ) -> Result<Option<(シーンデータ, 束の描画入力)>, 起動エラー> {
     let id = アセットID::生成する(blitz_engine::height_field::世界の遠景地形の安定IDの綴り)?;
     let Some(ファイル) = 実行時シーンのファイル::カタログの安定idから作る(カタログ, &id) else {

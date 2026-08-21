@@ -28,8 +28,8 @@ use blitz_render::描画シーン素材;
 pub(crate) use error::描画入力エラー;
 
 #[cfg(test)]
-fn 検査用チャンク一辺() -> blitz_engine::チャンク一辺 {
-    blitz_engine::チャンク一辺::生成する(100.0).unwrap_or_else(|誤り| panic!("検査用チャンク一辺が不正だった: {誤り}"))
+fn 検査用チャンク一辺() -> Option<blitz_engine::チャンク一辺> {
+    Some(blitz_engine::チャンク一辺::生成する(100.0).unwrap_or_else(|誤り| panic!("検査用チャンク一辺が不正だった: {誤り}")))
 }
 
 use super::convert;
@@ -53,7 +53,7 @@ pub(super) fn 変換する(
     並べ方: crate::cli::描画対象の並べ方,
     束座標: チャンク座標,
     大域平行移動: 大域ワールド位置,
-    一辺: blitz_engine::チャンク一辺,
+    一辺: Option<blitz_engine::チャンク一辺>,
 ) -> Result<束の描画入力, 起動エラー> {
     let 大域の基準原点 = anchor::導出する(シーン, 束座標, 大域平行移動, 一辺)?;
     let 件数 = 並べ方.件数.map_or(シーン.描画対象一覧().len(), crate::cli::描画対象数::usize値);

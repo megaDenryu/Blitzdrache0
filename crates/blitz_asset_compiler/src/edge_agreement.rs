@@ -11,6 +11,8 @@ mod edge_agreement_tests;
 mod error;
 mod pairwise;
 mod source_check;
+#[cfg(test)]
+mod source_check_tests;
 
 pub use error::縁の一致エラー;
 pub use pairwise::隣り合うチャンクの重なり帯が一致することを確かめる;

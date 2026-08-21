@@ -21,7 +21,7 @@ pub(in crate::app) struct 読み込む世界の材料<'材料> {
     pub(in crate::app) 描画対象の並べ方: 描画対象の並べ方,
     /// `--global-offset`が世界全体へ加える平行移動。描画の基準原点へ最後に合成する。
     pub(in crate::app) 大域平行移動: blitz_math::大域ワールド位置,
-    pub(in crate::app) チャンク一辺: blitz_engine::チャンク一辺,
+    pub(in crate::app) チャンク一辺: Option<blitz_engine::チャンク一辺>,
     pub(in crate::app) 布モード: 布モード,
 }
 

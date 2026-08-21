@@ -50,13 +50,21 @@ fn 撮る(環境: &描画検収の実行環境, 色名: &str, 深度名: &str) -
 
 #[cfg(test)]
 mod tests {
+    use std::path::PathBuf;
+
+    use blitz_asset_compiler::チャンク目録ソースを読み込む;
+
     use super::先読み半径の綴り;
 
     #[test]
     fn 常駐範囲は旧遠クリップの内側に収まる() {
-        const 検収世界のチャンク一辺メートル: f32 = 100.0;
         const 地形と視点の垂直差の保守上限メートル: f32 = 200.0;
         const 旧遠クリップメートル: f32 = 2000.0;
+        let 目録パス = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../assets/chunk_world/chunk_directory.txt");
+        let 検収世界のチャンク一辺メートル = match チャンク目録ソースを読み込む(&目録パス) {
+            Ok(目録) => 目録.一辺().f32値(),
+            Err(誤り) => panic!("検収世界のチャンク目録を読めなかった: {誤り}"),
+        };
         let 先読み半径 = 先読み半径の綴り.parse::<f32>().unwrap_or(f32::INFINITY);
         let 常駐範囲の水平上限 = (先読み半径 + 1.0) * 検収世界のチャンク一辺メートル * std::f32::consts::SQRT_2;
         // 地形の振幅9.5mと検収カメラの距離150mを足した159.5mを上回る200mで包む。
