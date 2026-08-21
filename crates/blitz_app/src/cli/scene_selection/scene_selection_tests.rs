@@ -26,6 +26,7 @@ fn 群の中の名前つきの世界が群の既定より先に選ばれる() {
     assert_eq!(種別を解く("terrain_origin"), 世界の種別::地形世界(地形世界の種別::起点));
     assert_eq!(種別を解く("terrain_visual"), 世界の種別::地形世界(地形世界の種別::目視見本));
     assert_eq!(種別を解く("terrain_fox_tour"), 世界の種別::地形世界(地形世界の種別::場所巡り));
+    assert_eq!(種別を解く("terrain_editor_world"), 世界の種別::地形世界(地形世界の種別::エディター));
     assert_eq!(種別を解く("terrain_night_lights"), 世界の種別::地形世界(地形世界の種別::夜灯り));
     assert_eq!(種別を解く("prop_village"), 世界の種別::小物世界(小物世界の種別::集落));
     assert_eq!(

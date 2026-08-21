@@ -1,9 +1,9 @@
-//! ゲームロジック層: クソゲー1本目「キツネの場所巡り」の状態・進行・操作の意味付けだけを持つ。
+//! ゲームロジック層: 「キツネの場所巡り」と、目的地を持たず歩くだけのゲームの状態・進行・操作の意味付けだけを持つ。
 //!
 //! 注意: このクレートはwinitにもashにもblitz_renderにも依存しない。デバイスの入力の蓄積と確定はコンポジションルート(blitz_app)が行い、
 //! ここが受け取るのは確定済みの操作入力だけである。参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「判断3」。
 //!
-//! ゲームの実体の持ち方をエンジンが強制しないため、1本目は素朴な構造体の群れで持つ。参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「判断2」。
+//! ゲームの実体の持ち方をエンジンが強制しないため、各ゲームは専用の状態型で持つ。参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「判断2」。
 
 #![forbid(unsafe_code)]
 
@@ -38,6 +38,7 @@ mod tour_progress;
 #[cfg(test)]
 mod tour_progress_tests;
 mod tour_route;
+mod walk_only_state;
 
 pub use confirmed_input::確定済みの操作入力;
 pub use destination::目的地;
@@ -52,3 +53,4 @@ pub use player_placement::プレイヤーの位置と向き;
 pub use progress_stage::{ゲームの進行段階, 終了確認から戻る段階};
 pub use tour_progress::場所巡りの進行;
 pub use tour_route::場所巡りの道順;
+pub use walk_only_state::歩くだけのゲームの状態;

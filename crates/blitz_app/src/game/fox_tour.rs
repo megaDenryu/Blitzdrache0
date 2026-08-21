@@ -8,7 +8,7 @@
 //! キツネが読込時に向いている方位と描画側への向きの写しは`facing`にある。
 
 mod create;
-mod facing;
+pub(super) mod facing;
 mod ground;
 #[cfg(test)]
 mod ground_tests;

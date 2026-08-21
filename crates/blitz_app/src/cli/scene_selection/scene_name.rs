@@ -20,6 +20,7 @@ pub(super) const 地形の起点世界の綴り: &str = "terrain_origin";
 pub(super) const 地形の目視見本世界の綴り: &str = "terrain_visual";
 /// 参照: `crates/blitz_asset_compiler/src/runtime_compilation/world/fox_tour_declaration.rs`
 pub(super) const 地形の場所巡り世界の綴り: &str = "terrain_fox_tour";
+pub(super) const 地形のエディター世界の綴り: &str = "terrain_editor_world";
 /// 局所光の件数の上書きを読む2つの世界の一方。失敗の文面が`--scene`へ渡すべき値をそのまま出すため公開する。
 /// 参照: `crates/blitz_asset_compiler/examples/generate_source_assets/night_lights_world.rs`
 pub(crate) const 地形の夜灯り世界の綴り: &str = "terrain_night_lights";
