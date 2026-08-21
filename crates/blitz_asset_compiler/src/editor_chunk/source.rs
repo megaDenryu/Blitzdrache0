@@ -1,83 +1,91 @@
-//! 版付きエディターチャンクJSONの読み取りと検証。旧版・欠損・不正値を推測で補わない。
+//! 版付きエディターチャンクJSONの最新の形と、版の判別から最新への変換の入口。旧版・欠損・不正値を推測で補わない。
+//! 版ごとの型と最新への変換は`version1`・`version2`が、素材のパスの解決は`manifest_file`が、
+//! 建物配置の形と検証は`placement`が、地表材質の重みの由来は`weight_source`が持つ。
 
-use std::{
-    collections::HashSet,
-    path::{Component, Path, PathBuf},
-};
+mod manifest_file;
+mod placement;
+mod version1;
+mod version2;
+#[cfg(test)]
+mod version_tests;
+mod weight_source;
+
+use std::path::{Path, PathBuf};
 
 use serde::Deserialize;
 
+use self::manifest_file::エディターチャンクソースのファイル;
 use crate::error::アセットコンパイルエラー;
-use crate::runtime_compilation::建物定義ID;
+use crate::surface_material_weights::地表材質の重み格子;
 
-const 現在の形式版: u32 = 1;
+pub(crate) use placement::建物配置ソース;
+pub(crate) use weight_source::地表材質の重みのソース;
 
+/// エディターが書き出すチャンクソースの最新の形式版。書き手はeditor_serverの`export/editor_chunk_source.rs`にあり、
+/// 両者の版が食い違うと焼きが必ず「形式版に対応していない」で落ちる。一致は`cargo xtask conform`の定数の組が見る。
+pub(super) const エディターチャンクソースの現在の形式版: u32 = 2;
+
+/// 版の判別だけを先に読むための形。欄が増えても読み取りが壊れないよう、版以外の欄は無視する。
 #[derive(Debug, Deserialize)]
-pub(crate) struct エディターチャンクソース {
+struct 形式版の宣言 {
     形式版: u32,
-    高さ格子: String,
-    pub(crate) 建物配置一覧: Vec<建物配置ソース>,
-    #[serde(skip)]
-    高さ格子パス: PathBuf,
 }
 
-#[derive(Debug, Deserialize)]
-#[allow(non_snake_case)]
-pub(crate) struct 建物配置ソース {
-    pub(crate) 配置識別子: String,
-    pub(crate) 建物定義ID: 建物定義ID,
-    pub(crate) チャンク原点からの東メートル: f32,
-    pub(crate) チャンク原点からの南メートル: f32,
-    pub(crate) 向きラジアン: f32,
+pub(crate) struct エディターチャンクソース {
+    高さ格子パス: PathBuf,
+    地表材質の重み: 地表材質の重みのソース,
+    pub(crate) 建物配置一覧: Vec<建物配置ソース>,
 }
 
 impl エディターチャンクソース {
     pub(crate) fn ファイルから読む(パス: &Path) -> Result<Self, アセットコンパイルエラー> {
-        let 本文 = std::fs::read_to_string(パス).map_err(|原因| 読み込み失敗のエラーを作る(パス, 原因.to_string()))?;
-        let mut ソース: Self =
-            serde_json::from_str(&本文).map_err(|原因| 読み込み失敗のエラーを作る(パス, format!("JSONが不正である: {原因}")))?;
-        if ソース.形式版 != 現在の形式版 {
-            return Err(読み込み失敗のエラーを作る(
-                パス,
-                format!("形式版{}には対応していない（対応版: {現在の形式版}）", ソース.形式版),
-            ));
+        let ファイル = エディターチャンクソースのファイル::生成する(パス);
+        let 本文 = ファイル.本文を読む()?;
+        let 宣言: 形式版の宣言 = ファイル.版の型として解析する(&本文)?;
+        match 宣言.形式版 {
+            1 => ファイル
+                .版の型として解析する::<version1::形式版1のエディターチャンクソース>(&本文)?
+                .最新へ変換する(&ファイル),
+            2 => ファイル
+                .版の型として解析する::<version2::形式版2のエディターチャンクソース>(&本文)?
+                .最新へ変換する(&ファイル),
+            未対応 => Err(ファイル.読み込み失敗のエラーを作る(format!(
+                "形式版{未対応}には対応していない（対応版: 1と{エディターチャンクソースの現在の形式版}）"
+            ))),
         }
-        let 相対 = Path::new(&ソース.高さ格子);
-        if 相対.is_absolute() || 相対.components().any(|成分| !matches!(成分, Component::Normal(_))) {
-            return Err(読み込み失敗のエラーを作る(
-                パス,
-                format!("高さ格子の相対パスが不正である: {}", ソース.高さ格子),
-            ));
-        }
-        let 親 = パス
-            .parent()
-            .ok_or_else(|| 読み込み失敗のエラーを作る(パス, "親ディレクトリが無い".to_string()))?;
-        ソース.高さ格子パス = 親.join(相対);
-        let mut 配置識別子一覧 = HashSet::new();
-        for 配置 in &ソース.建物配置一覧 {
-            if 配置.配置識別子.trim().is_empty()
-                || !配置識別子一覧.insert(&配置.配置識別子)
-                || !配置.チャンク原点からの東メートル.is_finite()
-                || !配置.チャンク原点からの南メートル.is_finite()
-                || !配置.向きラジアン.is_finite()
-            {
-                return Err(読み込み失敗のエラーを作る(
-                    パス,
-                    "建物配置に空の識別子または有限でない数値がある".to_string(),
-                ));
-            }
-        }
-        Ok(ソース)
+    }
+
+    /// 版ごとの変換だけが呼ぶ組み立て。検証をここへ集めるため、版の側は欄の並びと写し方だけを持つ。
+    fn 組み立てる(
+        高さ格子パス: PathBuf,
+        地表材質の重み: 地表材質の重みのソース,
+        建物配置一覧: Vec<建物配置ソース>,
+        ファイル: &エディターチャンクソースのファイル<'_>,
+    ) -> Result<Self, アセットコンパイルエラー> {
+        placement::建物配置一覧を検証する(&建物配置一覧, ファイル)?;
+        Ok(Self {
+            高さ格子パス,
+            地表材質の重み,
+            建物配置一覧,
+        })
     }
 
     pub(crate) fn 高さ格子パス(&self) -> &Path {
         &self.高さ格子パス
     }
-}
 
-fn 読み込み失敗のエラーを作る(パス: &Path, 原因: String) -> アセットコンパイルエラー {
-    アセットコンパイルエラー::エディターチャンクソース不正 {
-        パス: パス.display().to_string(),
-        原因,
+    /// 増分の鍵が読む、このチャンクが素材として開くファイルの一覧。
+    pub(crate) fn 素材ファイルのパス一覧(&self) -> Vec<PathBuf> {
+        let mut 一覧 = vec![self.高さ格子パス.clone()];
+        一覧.extend(self.地表材質の重み.開くファイルのパス());
+        一覧
+    }
+
+    /// 高さ格子の格子点と1対1に並ぶ重みの格子を得る。
+    pub(crate) fn 地表材質の重み格子を得る(
+        &self,
+        高さ格子の格子点数: u32,
+    ) -> Result<地表材質の重み格子, アセットコンパイルエラー> {
+        self.地表材質の重み.重み格子を得る(高さ格子の格子点数)
     }
 }

@@ -6,7 +6,7 @@
 #[cfg(test)]
 mod range_tests;
 
-use crate::error::アセットコンパイルエラー;
+use crate::error::散布コンパイルエラー;
 
 /// 密度場の値から出現の割合へ写す範囲。密度場が最も低い所で下限、最も高い所で上限になる。
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -23,7 +23,7 @@ pub struct 大きさの範囲 {
 }
 
 impl 出現割合の範囲 {
-    pub(super) fn 検証する(self) -> Result<(), アセットコンパイルエラー> {
+    pub(super) fn 検証する(self) -> Result<(), 散布コンパイルエラー> {
         let 受け取れる = self.下限.is_finite()
             && self.上限.is_finite()
             && (0.0..=1.0).contains(&self.下限)
@@ -32,7 +32,7 @@ impl 出現割合の範囲 {
         if 受け取れる {
             return Ok(());
         }
-        Err(アセットコンパイルエラー::散布の出現割合不正 {
+        Err(散布コンパイルエラー::出現割合不正 {
             下限: self.下限,
             上限: self.上限,
         })
@@ -45,11 +45,11 @@ impl 出現割合の範囲 {
 }
 
 impl 大きさの範囲 {
-    pub(super) fn 検証する(self) -> Result<(), アセットコンパイルエラー> {
+    pub(super) fn 検証する(self) -> Result<(), 散布コンパイルエラー> {
         if self.下限.is_finite() && self.上限.is_finite() && self.下限 > 0.0 && self.下限 <= self.上限 {
             return Ok(());
         }
-        Err(アセットコンパイルエラー::散布の大きさの範囲不正 {
+        Err(散布コンパイルエラー::大きさの範囲不正 {
             下限: self.下限,
             上限: self.上限,
         })

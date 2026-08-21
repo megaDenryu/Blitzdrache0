@@ -16,7 +16,7 @@ use super::ground_preference::地表への据え方;
 use super::orientation::{地表法線へ倒した回転を作る, 天頂まわりの回転を作る};
 use super::scatter_specification::密度場の散布;
 use super::seed::配置の種;
-use crate::error::アセットコンパイルエラー;
+use crate::error::{アセットコンパイルエラー, 散布コンパイルエラー};
 use crate::height_grid::高さ格子;
 use crate::lattice_noise::格子雑音の値;
 use crate::nonnegative_floor::負でない床をu16にする;
@@ -87,6 +87,7 @@ fn 大域サンプル添字を求める(
     let 合計 = チャンク成分
         .checked_mul(i32::from(辺分割数))
         .and_then(|基点| 基点.checked_add(局所))
-        .ok_or(アセットコンパイルエラー::散布の大域サンプル添字が範囲外 { チャンク成分 })?;
-    i16::try_from(合計).map_err(|_| アセットコンパイルエラー::散布の大域サンプル添字が範囲外 { チャンク成分 })
+        .ok_or_else(|| アセットコンパイルエラー::from(散布コンパイルエラー::大域サンプル添字が範囲外 { チャンク成分 }))?;
+    i16::try_from(合計)
+        .map_err(|_| アセットコンパイルエラー::from(散布コンパイルエラー::大域サンプル添字が範囲外 { チャンク成分 }))
 }

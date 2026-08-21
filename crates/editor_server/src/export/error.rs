@@ -16,6 +16,9 @@ pub enum 書き出しエラー {
     #[error("高さ格子の諸元または切り出しの計算に失敗した: {0}")]
     高さ格子処理に失敗(#[from] blitz_asset_compiler::高さ格子エラー),
 
+    #[error("地表材質の重み格子の諸元または組み立てに失敗した: {0}")]
+    地表材質の重み格子処理に失敗(#[from] blitz_asset_compiler::地表材質の重み格子エラー),
+
     #[error("アセットIDの生成に失敗した: {0}")]
     アセットIDが不正(#[from] blitz_engine::アセットIDエラー),
 

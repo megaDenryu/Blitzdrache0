@@ -8,6 +8,7 @@ mod bloom;
 mod building_outline_catalog;
 mod clustered_lighting;
 mod distant_environment;
+mod editor_chunk_source;
 mod instance_transform;
 mod point_light_shadow;
 mod scene;
@@ -23,13 +24,14 @@ pub(super) struct 定数の組 {
 }
 
 /// 領域ごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域一覧: [&[定数の組]; 11] = [
+pub(super) const 領域一覧: [&[定数の組]; 12] = [
     &atmosphere::定数一覧,
     &auto_exposure::定数一覧,
     &bloom::定数一覧,
     &building_outline_catalog::定数一覧,
     &clustered_lighting::定数一覧,
     &distant_environment::定数一覧,
+    &editor_chunk_source::定数一覧,
     &instance_transform::定数一覧,
     &point_light_shadow::定数一覧,
     &scene::定数一覧,

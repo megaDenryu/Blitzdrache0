@@ -4,6 +4,7 @@
 //! (グローバルCLAUDE.md「デザインパターンの既定」)。地形と建物は版付きのエディターチャンクソースを介して焼き、
 //! 散布と道路のエンジン変換はしない(参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断10」)。
 
+mod chunk_weight_grid;
 mod chunk_write;
 
 use blitz_asset_compiler::高さ格子諸元;

@@ -8,7 +8,7 @@
 
 use super::ground_preference::{傾きの好み, 地表への据え方};
 use super::scatter_ranges::{出現割合の範囲, 大きさの範囲};
-use crate::error::アセットコンパイルエラー;
+use crate::error::散布コンパイルエラー;
 
 /// 密度場で散らす様式の指定。
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -37,12 +37,12 @@ pub struct 密度場の指定 {
 impl 密度場の散布 {
     /// 受け取れない指定を1つ残らず拒む。散布は個体数を宣言せず密度から決めるため、指定の破れが
     /// 「1体も置かれない」または「候補の全部が置かれる」という絵の異常として遠くに現れる。
-    pub(super) fn 検証する(self) -> Result<(), アセットコンパイルエラー> {
+    pub(super) fn 検証する(self) -> Result<(), 散布コンパイルエラー> {
         if self.走査の列数 == 0 {
-            return Err(アセットコンパイルエラー::散布の走査の列数不正(self.走査の列数));
+            return Err(散布コンパイルエラー::走査の列数不正(self.走査の列数));
         }
         if self.密度場.升目の標本数 <= 0 {
-            return Err(アセットコンパイルエラー::散布の密度場の升目が正でない(
+            return Err(散布コンパイルエラー::密度場の升目が正でない(
                 self.密度場.升目の標本数,
             ));
         }
