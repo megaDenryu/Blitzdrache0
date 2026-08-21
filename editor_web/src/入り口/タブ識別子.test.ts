@@ -30,4 +30,9 @@ describe('タブ識別子の相互変換テスト', () => {
         assert.strictEqual(タブ識別子.綴りから復元する('unknown_tab').チャンク座標を復元する(), null)
         assert.strictEqual(タブ識別子.綴りから復元する('チャンク_abc_def').チャンク座標を復元する(), null)
     })
+
+    it('マテリアルタブ識別子はチャンク座標を持たないこと', () => {
+        assert.strictEqual(タブ識別子.マテリアル().綴り(), 'マテリアル')
+        assert.strictEqual(タブ識別子.マテリアル().チャンク座標を復元する(), null)
+    })
 })

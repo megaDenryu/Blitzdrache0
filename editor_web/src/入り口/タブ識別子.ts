@@ -14,6 +14,10 @@ export class タブ識別子 {
         return new タブ識別子('使い方')
     }
 
+    public static マテリアル(): タブ識別子 {
+        return new タブ識別子('マテリアル')
+    }
+
     public static チャンクから生成する(座標: チャンク座標): タブ識別子 {
         return new タブ識別子(`チャンク_${座標.x}_${座標.z}`)
     }
