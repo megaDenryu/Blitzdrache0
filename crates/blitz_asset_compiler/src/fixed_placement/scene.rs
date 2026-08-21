@@ -37,7 +37,7 @@ impl ソースアセットのコンパイル係<'_> {
             格子,
             所有チャンク,
             地面の描画対象番号,
-            crate::terrain::草地のベースカラー係数,
+            ground_object::地形の単色材質を作る(crate::terrain::草地のベースカラー係数),
         )?;
         let mut 参照ファイル一覧 = vec![ソースパス];
         let mut 残りの描画対象 = Vec::new();
