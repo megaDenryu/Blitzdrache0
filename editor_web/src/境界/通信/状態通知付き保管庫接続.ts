@@ -1,4 +1,4 @@
-import type { 大域世界構造, チャンク座標, チャンク構造 } from '../../生成/編集資源契約.ts'
+import type { 大域世界構造, チャンク座標, チャンク構造, マテリアル台帳 } from '../../生成/編集資源契約.ts'
 import type { 読込結果, 保存結果 } from './サーバー通信結果.ts'
 import type { プロジェクト保管庫接続 } from './プロジェクト保管庫接続.ts'
 import { 保存状態サービス } from './保存状態サービス.ts'
@@ -80,5 +80,13 @@ export class 状態通知付き保管庫接続 implements プロジェクト保�
 
     public チャンクの材質重みを保存する(座標: チャンク座標, バイト列: ArrayBufferLike): Promise<保存結果> {
         return this._内側保管庫.チャンクの材質重みを保存する(座標, バイト列)
+    }
+
+    public マテリアル台帳を読む(): Promise<読込結果<マテリアル台帳>> {
+        return this._内側保管庫.マテリアル台帳を読む()
+    }
+
+    public マテリアル台帳を保存する(台帳: マテリアル台帳): Promise<保存結果> {
+        return this._内側保管庫.マテリアル台帳を保存する(台帳)
     }
 }
