@@ -9,7 +9,7 @@
 
 mod argument_name;
 pub(super) mod assembled_scatter_declaration;
-mod assembly_rule_choice;
+pub(super) mod assembly_rule_choice;
 mod asset_declaration;
 mod asset_definition_list;
 mod chunk_source_kind;

@@ -22,8 +22,10 @@ fn 状態と種別を決める(エラー: &書き出しエラー) -> (StatusCode
         書き出しエラー::区画割りの導出に失敗(_) => (StatusCode::UNPROCESSABLE_ENTITY, "構造検証エラー"),
         書き出しエラー::高さ格子処理に失敗(_) => (StatusCode::UNPROCESSABLE_ENTITY, "構造検証エラー"),
         書き出しエラー::数値変換に失敗(_) => (StatusCode::UNPROCESSABLE_ENTITY, "構造検証エラー"),
+        書き出しエラー::建物が所有チャンクの外にある { .. } => (StatusCode::UNPROCESSABLE_ENTITY, "構造検証エラー"),
         書き出しエラー::アセットIDが不正(_) => (StatusCode::INTERNAL_SERVER_ERROR, "内部エラー"),
         書き出しエラー::読み込みに失敗(_) => (StatusCode::INTERNAL_SERVER_ERROR, "読み込みエラー"),
         書き出しエラー::書き込みに失敗(_) => (StatusCode::INTERNAL_SERVER_ERROR, "保存エラー"),
+        書き出しエラー::JSON組み立てに失敗(_) => (StatusCode::INTERNAL_SERVER_ERROR, "内部エラー"),
     }
 }

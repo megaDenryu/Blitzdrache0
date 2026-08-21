@@ -3,13 +3,18 @@
 //   cargo xtask contract-export
 
 export type プロジェクト情報応答 = { ルートパス: string, プロジェクト名: string, };
+export type 建物定義の用途 = "骨格見本" | "家屋";
+export type ベイ構造 = { 横: number, 奥: number, 階: number, };
+export type 建物の入口方向 = { x: number, z: number, };
+export type 建物の外接箱 = { 最小: [number, number, number], 最大: [number, number, number], };
+export type 建物外形定義 = { 識別子: string, 表示名: string, 用途: 建物定義の用途, 部品の識別子一覧: Array<string>, ベイ: ベイ構造, 高さメートル: number, 入口のローカル方向: 建物の入口方向, 外接箱: 建物の外接箱, };
+export type 建物外形カタログ = { 形式版: number, 建物定義一覧: Array<建物外形定義>, };
 export type 位置3次元 = { x: number, y: number, z: number, };
 export type チャンク座標 = { x: number, z: number, };
 export type 世界の区画割り = { 一辺のメートル: number, 軸あたりチャンク数: number, チャンクあたり格子解像度: number, };
 export type 広域道路 = { 制御点列: Array<位置3次元>, 全幅メートル: number, 細分割数: number, };
 export type チャンクの道路 = { 制御点列: Array<位置3次元>, 全幅メートル: number, 散布除外バッファメートル: number, 細分割数: number, };
-export type 建物種別 = "家屋" | "塔" | "宝箱";
-export type 建物の配置 = { 識別子: string, 種別: 建物種別, 位置: 位置3次元, 向きラジアン: number, 基礎半径メートル: number, なじみ半径メートル: number, };
+export type 建物の配置 = { 識別子: string, 建物定義ID: string, 位置: 位置3次元, 向きラジアン: number, 基礎半径メートル: number, なじみ半径メートル: number, };
 export type 散布の設定 = { 最小間隔メートル: number, 乱数の種: bigint, };
 export type マテリアル定義 = { エンジン材質名: string, 識別色: string, };
 export type 層割当 = { 草: string, 泥: string, 岩: string, 砂: string, };

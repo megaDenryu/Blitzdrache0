@@ -14,6 +14,7 @@ mod compile;
 mod distant_terrain;
 mod distant_terrain_bake;
 mod edge_agreement;
+mod editor_chunk;
 mod error;
 mod fixed_placement;
 mod generation_ledger;
@@ -70,6 +71,10 @@ pub use placed_instance_count::{散らした種類の名前, 種類ごとの置�
 pub use placement::{
     個数を決める並べ方, 傾きの好み, 出現割合の範囲, 原型と置き方の指定, 地表への据え方, 大きさの範囲, 密度場の指定, 密度場の散布,
     部品で組む散布の指定, 配置の種, 配置様式,
+};
+pub use runtime_compilation::{
+    ベイ構造, 建物の入口方向, 建物の外接箱, 建物外形カタログ, 建物外形カタログのファイル, 建物外形カタログを組み立てる, 建物外形カタログエラー,
+    建物定義, 建物定義の用途,
 };
 pub use runtime_compilation::{
     一間四方の骨格の並びの種類, 実行時アセットのコンパイル, 実行時アセットのコンパイルエラー, 家の並びの規模, 対象世界, 焼く世界の指定,

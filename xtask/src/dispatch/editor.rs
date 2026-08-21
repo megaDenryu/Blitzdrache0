@@ -3,11 +3,13 @@
 
 use std::process::ExitCode;
 
-use crate::{contract_export, editor};
+use crate::contract_export;
+use crate::editor_commands::{building_outline_catalog, editor};
 
 pub(super) fn 割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
         "editor" => Some(実行結果をコードへ変換する(editor::実行する(引数一覧))),
+        "building-outline-catalog" => Some(実行結果をコードへ変換する(building_outline_catalog::実行する())),
         "contract-export" => Some(実行結果をコードへ変換する(contract_export::実行する())),
         _ => None,
     }

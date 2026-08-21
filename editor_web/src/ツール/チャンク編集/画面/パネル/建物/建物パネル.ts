@@ -1,6 +1,6 @@
 import { div, span, button, DivC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
-import type { 建物種別 } from '../../../../../生成/編集資源契約.ts'
+import type { 建物外形定義 } from '../../../../../生成/編集資源契約.ts'
 import {
     パネル,
     見出し行,
@@ -15,7 +15,7 @@ import { 建物件数ラベル } from './建物パネル/建物件数ラベル.t
 import { 建物削除ボタン } from './建物パネル/建物削除ボタン.ts'
 
 export interface I建物パネル配線 {
-    readonly on建物生成: (種別: 建物種別) => void
+    readonly on建物生成: (建物定義ID: string) => void
     readonly on基礎平坦化: () => void
     readonly on地面接地: () => void
     readonly on建物削除: () => void
@@ -27,6 +27,7 @@ export class 建物パネル extends LV2HtmlComponentBase implements I配線可�
     private readonly _配線: 配線ポート<I建物パネル配線> = new 配線ポート<I建物パネル配線>('建物パネル')
     private readonly _件数表示: 建物件数ラベル
     private readonly _削除ボタン: 建物削除ボタン
+    private readonly _生成ボタン領域: DivC = div({ class: 生成ボタングリッド })
 
     public constructor() {
         super()
@@ -48,22 +49,25 @@ export class 建物パネル extends LV2HtmlComponentBase implements I配線可�
         this._削除ボタン.有効状態を設定する(選択あり)
     }
 
+    public 建物定義一覧を更新する(定義一覧: ReadonlyArray<建物外形定義>): void {
+        this._生成ボタン領域.clearChildren()
+        for (const 定義 of 定義一覧.filter((候補) => 候補.用途 === '家屋')) {
+            const 表示 = `+ ${定義.表示名}`
+            this._生成ボタン領域.child(
+                button({ class: 生成ボタン, text: 表示 })
+                    .setTooltip(`${定義.表示名}（${定義.ベイ.横}×${定義.ベイ.奥}ベイ・${定義.ベイ.階}階）`)
+                    .onClick(() => this._配線.先.on建物生成(定義.識別子)),
+            )
+        }
+    }
+
     private _ルートを構築する(): DivC {
         return (
             div({ class: パネル }).childs([
                 div({ class: 見出し行 }).childs([
                     span({ text: '建物・目印の配置' }).setTooltip('建物・目印の配置'),
                     this._件数表示]),
-                div({ class: 生成ボタングリッド }).childs([
-                    button({ class: 生成ボタン, text: '+ 家屋 (12m)' })
-                        .setTooltip('+ 家屋 (12m)')
-                        .onClick(() => this._配線.先.on建物生成('家屋')),
-                    button({ class: 生成ボタン, text: '+ 塔 (8m)' })
-                        .setTooltip('+ 塔 (8m)')
-                        .onClick(() => this._配線.先.on建物生成('塔')),
-                    button({ class: 生成ボタン, text: '+ 宝箱 (2m)' })
-                        .setTooltip('+ 宝箱 (2m)')
-                        .onClick(() => this._配線.先.on建物生成('宝箱'))]),
+                this._生成ボタン領域,
                 div({ class: アクション区画 }).childs([
                     button({ class: 平坦化ボタン, text: '選択建物の基礎に合わせて地形造成' })
                         .setTooltip('選択建物の基礎に合わせて地形造成')

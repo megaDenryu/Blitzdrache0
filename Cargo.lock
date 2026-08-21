@@ -217,6 +217,7 @@ dependencies = [
  "gltf",
  "image",
  "rayon",
+ "serde",
  "serde_json",
  "thiserror 2.0.19",
 ]

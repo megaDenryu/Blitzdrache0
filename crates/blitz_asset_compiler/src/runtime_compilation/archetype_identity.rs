@@ -10,24 +10,24 @@
 
 /// 原型1つを指す識別。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) struct 原型の識別 {
+pub(crate) struct 原型の識別 {
     安定id: &'static str,
     ソース相対パス: &'static str,
 }
 
 impl 原型の識別 {
     /// 宣言の表が`const`のまま1行で書けるように`const fn`にする。
-    pub(super) const fn 生成する(安定id: &'static str, ソース相対パス: &'static str) -> Self {
+    pub(crate) const fn 生成する(安定id: &'static str, ソース相対パス: &'static str) -> Self {
         Self {
             安定id, ソース相対パス
         }
     }
 
-    pub(super) const fn 安定id(self) -> &'static str {
+    pub(crate) const fn 安定id(self) -> &'static str {
         self.安定id
     }
 
-    pub(super) const fn ソース相対パス(self) -> &'static str {
+    pub(crate) const fn ソース相対パス(self) -> &'static str {
         self.ソース相対パス
     }
 }

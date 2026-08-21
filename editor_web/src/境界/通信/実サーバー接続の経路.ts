@@ -16,3 +16,7 @@ export function チャンクパスを組み立てる(基底URL: string, 座標: 
 export function 書き出しパスを組み立てる(基底URL: string): string {
     return `${基底URL}/api/書き出し/ソースアセット`
 }
+
+export function 建物外形カタログパスを組み立てる(基底URL: string): string {
+    return `${基底URL}/api/建物外形カタログ`
+}

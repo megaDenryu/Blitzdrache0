@@ -39,4 +39,8 @@ impl リポジトリルート {
     pub fn エディター実行時形式の出力先(&self) -> PathBuf {
         self.0.join("target/editor_world_assets")
     }
+
+    pub fn 建物外形カタログのファイル(&self) -> blitz_asset_compiler::建物外形カタログのファイル {
+        blitz_asset_compiler::建物外形カタログのファイル::リポジトリルートから生成する(&self.0)
+    }
 }

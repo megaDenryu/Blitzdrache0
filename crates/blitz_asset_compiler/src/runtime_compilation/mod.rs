@@ -3,6 +3,7 @@
 
 mod archetype_identity;
 mod bake_report;
+mod building_outline_catalog;
 mod catalog;
 mod chunk_ledger;
 mod chunk_world;
@@ -18,6 +19,11 @@ mod source_kind;
 mod source_location;
 mod world;
 
+pub use building_outline_catalog::{
+    ベイ構造, 建物の入口方向, 建物の外接箱, 建物外形カタログ, 建物外形カタログのファイル, 建物外形カタログを組み立てる, 建物外形カタログエラー,
+    建物定義, 建物定義の用途,
+};
+pub(crate) use building_outline_catalog::{全建物の部品識別一覧, 識別子で引く};
 pub use compilation::実行時アセットのコンパイル;
 pub use compilation_specification::{焼く世界の指定, 焼く世界の指定組み立て器};
 pub use error::実行時アセットのコンパイルエラー;

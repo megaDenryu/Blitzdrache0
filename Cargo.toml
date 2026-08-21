@@ -48,7 +48,8 @@ egui-winit = { version = "0.31", default-features = false }
 # 参照: README「利用ライブラリ」crossterm の採用審査。`cargo xtask menu`の矢印キー入力専用、xtaskのみが依存
 crossterm = "0.28"
 # 参照: README「利用ライブラリ」editor_server(ゲーム開発用エディター段1)の採用審査。
-# serde/axum/tokio/tower/tower-http/ts-rsはeditor_serverのみが依存する
+# serdeはeditor_serverの編集契約とblitz_asset_compilerの建物外形カタログ生成が依存する。
+# axum/tokio/tower/tower-http/ts-rsはeditor_serverのみが依存する
 serde = { version = "1", features = ["derive"] }
 axum = "0.8"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "fs"] }

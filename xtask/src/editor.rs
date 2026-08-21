@@ -15,6 +15,9 @@ pub fn 実行する(追加引数: &[String]) -> Result<(), String> {
     let リポジトリルート = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
     let editor_web = リポジトリルート.join("editor_web");
 
+    let カタログ = super::building_outline_catalog::既定のファイルへ書き出す(&リポジトリルート)?;
+    println!("建物外形カタログ: {}", カタログ.display());
+
     let mut サーバー = 編集サーバーを起動する(&リポジトリルート, 追加引数)?;
     let mut web開発サーバー = editor_web開発サーバーを起動する試み(&editor_web);
 
@@ -44,6 +47,7 @@ fn editor_serverへ渡す引数を組み立てる(追加引数: &[String]) -> Ve
 }
 
 #[cfg(test)]
+#[path = "editor/tests.rs"]
 mod tests;
 
 fn editor_web開発サーバーを起動する試み(editor_web: &Path) -> Option<Child> {

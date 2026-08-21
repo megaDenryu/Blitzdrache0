@@ -16,7 +16,15 @@ pub(super) fn アセット定義一覧を選ぶ(世界: 対象世界) -> Vec<ア
     match 世界 {
         対象世界::板の世界 => asset_declaration::板の世界の一覧(),
         対象世界::地形の世界 => asset_declaration::地形の世界の一覧(),
-        対象世界::エディターの世界 => vec![fox_declaration::キツネのシーン定義を作る("terrain_editor_world")],
+        対象世界::エディターの世界 => {
+            let mut 一覧 = vec![fox_declaration::キツネのシーン定義を作る("terrain_editor_world")];
+            一覧.extend(
+                crate::runtime_compilation::building_outline_catalog::全建物の部品識別一覧()
+                    .into_iter()
+                    .map(|(安定id, 相対パス)| super::definition_kind::外部ソース専用定義(安定id, 相対パス)),
+            );
+            一覧
+        }
         対象世界::植生の世界 => vegetation_declaration::一覧(),
         対象世界::見本の集落の世界 => village_declaration::一覧(),
         対象世界::部品で組んだ家の並びの世界(_) => part_house_row_declaration::一覧(),

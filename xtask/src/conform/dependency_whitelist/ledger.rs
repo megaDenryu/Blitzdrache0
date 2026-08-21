@@ -18,6 +18,7 @@ pub(super) const 白リスト: [(&str, &[&str]); 10] = [
             "gltf",
             "image",
             "rayon",
+            "serde",
             "serde_json",
             "thiserror",
         ],

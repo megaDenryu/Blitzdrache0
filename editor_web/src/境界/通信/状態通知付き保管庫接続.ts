@@ -1,10 +1,11 @@
-import type { 大域世界構造, チャンク座標, チャンク構造, マテリアル台帳 } from '../../生成/編集資源契約.ts'
+import type { 大域世界構造, チャンク座標, チャンク構造, マテリアル台帳, 建物外形カタログ } from '../../生成/編集資源契約.ts'
+import { 建物外形カタログ接続か, type 建物外形カタログ接続 } from './建物外形カタログ接続.ts'
 import type { 読込結果, 保存結果 } from './サーバー通信結果.ts'
 import type { プロジェクト保管庫接続 } from './プロジェクト保管庫接続.ts'
 import { 保存状態サービス } from './保存状態サービス.ts'
 
 // 保管庫通信を包み、大域世界およびチャンクの読込・保存の成否を単一の保存状態サービスへ通知するデコレータ。
-export class 状態通知付き保管庫接続 implements プロジェクト保管庫接続 {
+export class 状態通知付き保管庫接続 implements プロジェクト保管庫接続, 建物外形カタログ接続 {
     public readonly 通知: 保存状態サービス
 
     public constructor(
@@ -24,6 +25,13 @@ export class 状態通知付き保管庫接続 implements プロジェクト保�
             this.通知.大域状態を更新する(`読込失敗: ${結果.エラー.種別} ${結果.エラー.説明}`, true)
         }
         return 結果
+    }
+
+    public 建物外形カタログを読む(): Promise<読込結果<建物外形カタログ>> {
+        if (!建物外形カタログ接続か(this._内側保管庫)) {
+            return Promise.resolve({ 種別: '失敗', エラー: { 種別: '未対応', 説明: 'この接続は建物外形カタログを提供しない' } })
+        }
+        return this._内側保管庫.建物外形カタログを読む()
     }
 
     public async 大域世界の構造を保存する(構造: 大域世界構造): Promise<保存結果> {

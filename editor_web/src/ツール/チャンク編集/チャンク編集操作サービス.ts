@@ -1,4 +1,4 @@
-import type { 編集コマンド, 建物種別 } from '../../生成/編集資源契約.ts'
+import type { 編集コマンド, 建物外形定義 } from '../../生成/編集資源契約.ts'
 import type { ワールド編集状態 } from './編集モデル/index.ts'
 import { 編集コマンドを適用する, 差し戻しを適用する } from './操作コマンド/index.ts'
 import type { チャンク編集状態 } from './チャンク編集状態.ts'
@@ -6,6 +6,7 @@ import type { チャンク編集同期サービス } from './チャンク編集�
 
 // 操作コマンドの適用・取り消しおよびドメイン操作のディスパッチを担当するサービス。
 export class チャンク編集操作サービス {
+    private readonly _建物定義: Map<string, 建物外形定義> = new Map()
     public constructor(
         private readonly _モデル: ワールド編集状態,
         private readonly _UI状態: チャンク編集状態,
@@ -26,13 +27,22 @@ export class チャンク編集操作サービス {
         }
     }
 
-    public 建物生成(種別: 建物種別): void {
+    public 建物定義一覧を更新する(定義一覧: ReadonlyArray<建物外形定義>): void {
+        this._建物定義.clear()
+        for (const 定義 of 定義一覧) this._建物定義.set(定義.識別子, 定義)
+    }
+
+    public 建物生成(建物定義ID: string): void {
+        const 定義 = this._建物定義.get(建物定義ID)
+        if (定義 === undefined || 定義.用途 !== '家屋') throw new Error(`配置可能な家屋定義ではない: ${建物定義ID}`)
         const チャンク = this._モデル.チャンクを取得する(this._UI状態.対象チャンク座標)
-        const 識別子 = `建物_${種別}_${Date.now()}`
+        const 識別子 = `建物_${建物定義ID}_${Date.now()}`
         const x = (Math.random() - 0.5) * 40
         const z = (Math.random() - 0.5) * 40
         const y = チャンク.高さ場.標本高さを取得する(x, z)
-        const 半径情報 = 種別 === '家屋' ? { 基礎: 7.0, なじみ: 14.0 } : 種別 === '塔' ? { 基礎: 5.0, なじみ: 11.0 } : { 基礎: 1.5, なじみ: 3.5 }
+        const x半径 = Math.max(Math.abs(定義.外接箱.最小[0]), Math.abs(定義.外接箱.最大[0]))
+        const z半径 = Math.max(Math.abs(定義.外接箱.最小[2]), Math.abs(定義.外接箱.最大[2]))
+        const 基礎半径 = Math.hypot(x半径, z半径)
 
         this.コマンドを実行する({
             種類: '建物を配置する',
@@ -40,11 +50,11 @@ export class チャンク編集操作サービス {
                 チャンク座標: { ...this._UI状態.対象チャンク座標 },
                 建物: {
                     識別子,
-                    種別,
+                    建物定義ID,
                     位置: { x, y, z },
                     向きラジアン: 0,
-                    基礎半径メートル: 半径情報.基礎,
-                    なじみ半径メートル: 半径情報.なじみ,
+                    基礎半径メートル: 基礎半径,
+                    なじみ半径メートル: 基礎半径 * 2,
                 },
             },
         })

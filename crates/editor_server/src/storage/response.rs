@@ -13,6 +13,7 @@ impl IntoResponse for 読み込みエラー {
         let 種別 = match &self {
             読み込みエラー::ファイル読み込みに失敗(_) => "読み込みエラー",
             読み込みエラー::Json解釈に失敗(_) => "JSON解析エラー",
+            読み込みエラー::旧版移行に失敗(_) => "旧版移行エラー",
         };
         失敗応答を組み立てる(StatusCode::INTERNAL_SERVER_ERROR, 種別, self.to_string())
     }

@@ -14,6 +14,7 @@ impl ソース種別 {
     pub(crate) fn 地面が高さ格子で書かれているか(self) -> bool {
         match self {
             Self::高さ格子 { .. }
+            | Self::エディターチャンク
             | Self::固定物を据えた高さ格子 { .. }
             | Self::見本の集落 { .. }
             | Self::部品で組んだ並び(_)

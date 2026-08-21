@@ -1,4 +1,4 @@
-//! 建物の配置の型契約。チャンクの編集資源であり、家屋・塔・宝箱のいずれか1件を
+//! 建物の配置の型契約。チャンクの編集資源であり、建物外形カタログの定義1件を
 //! 位置・向き・基礎半径・なじみ半径とともに表す。基礎半径は地形を平坦化する範囲、
 //! なじみ半径はその外側で元の地形へ滑らかに戻す範囲であり、モックアップの
 //! `footprintRadius`/`blendRadius`に対応する。
@@ -9,21 +9,13 @@ use super::numeric_check::{有限であることを確かめる, 正の有限数
 use super::position::位置3次元;
 use super::validation_error::資源検証エラー;
 
-/// 建物種別とは、配置できる建物の原型を区別する判別のことである。
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[cfg_attr(feature = "typescript", derive(ts_rs::TS))]
-pub enum 建物種別 {
-    家屋,
-    塔,
-    宝箱,
-}
-
 /// 建物の配置とは、1件の建物をチャンクへ据える指定のことである。
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "typescript", derive(ts_rs::TS))]
+#[allow(non_snake_case)]
 pub struct 建物の配置 {
     pub 識別子: String,
-    pub 種別: 建物種別,
+    pub 建物定義ID: String,
     pub 位置: 位置3次元,
     pub 向きラジアン: f64,
     pub 基礎半径メートル: f64,
@@ -33,6 +25,9 @@ pub struct 建物の配置 {
 impl 建物の配置 {
     pub fn 検証する(&self) -> Result<(), 資源検証エラー> {
         if self.識別子.trim().is_empty() {
+            return Err(資源検証エラー::識別子が空);
+        }
+        if self.建物定義ID.trim().is_empty() {
             return Err(資源検証エラー::識別子が空);
         }
         self.位置.検証する()?;

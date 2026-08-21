@@ -2,6 +2,7 @@
 //! 参照: `_doc/設計/ゲーム開発用エディター基盤.md`「層の定義」サーバー側の型契約層。
 
 mod building;
+mod building_outline_catalog;
 mod chunk_coordinate;
 mod chunk_road;
 mod chunk_structure;
@@ -20,11 +21,16 @@ mod world_layout;
 mod world_structure;
 mod world_structure_version;
 
-pub use building::{建物の配置, 建物種別};
+pub use building::建物の配置;
+pub use building_outline_catalog::{
+    ベイ構造, 建物の入口方向, 建物の外接箱, 建物外形カタログ, 建物外形カタログの現在の形式版, 建物外形カタログ読み込みエラー, 建物外形定義,
+    建物定義の用途,
+};
 pub use chunk_coordinate::チャンク座標;
 pub use chunk_road::チャンクの道路;
 pub use chunk_structure::チャンク構造;
-pub use chunk_structure_version::読み込んだチャンク構造の版;
+pub use chunk_structure_version::チャンク構造移行エラー;
+pub(crate) use chunk_structure_version::読み込んだチャンク構造の版;
 pub use command::{
     地表材質層, 建物を削除する, 建物を移動する, 建物を配置する, 建物基礎を平坦化する, 急勾配を岩肌へベイクする, 散布設定を変更する, 材質の筆致,
     編集コマンド, 造成筆致, 造成筆致種別, 道路に合わせて切土盛土する, 道路を削除する, 道路を追加する, 道路下を泥へベイクする, 道路対象,

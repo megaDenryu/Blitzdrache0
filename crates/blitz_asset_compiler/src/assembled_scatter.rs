@@ -13,7 +13,7 @@
 
 mod error;
 mod expansion_run;
-mod groups;
+pub(crate) mod groups;
 
 use blitz_assembly::部品ごとの配置の集約;
 use blitz_engine::チャンク座標;

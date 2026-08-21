@@ -1,5 +1,6 @@
 //! ルーターの組み立て。経路とハンドラの対応付けをこの1箇所へ集約する。
 
+mod building_outline_catalog_get;
 mod chunk_heightmap_get;
 mod chunk_heightmap_put;
 mod chunk_splat_weights_get;
@@ -26,6 +27,7 @@ pub fn ルーターを組み立てる(状態: サーバー状態) -> 経路正�
     let 静的配信ディレクトリ = 状態.静的配信ディレクトリ().to_path_buf();
     let ルーター = Router::new()
         .route("/api/生存確認", get(health_get::生存確認を返す))
+        .route("/api/建物外形カタログ", get(building_outline_catalog_get::建物外形カタログを返す))
         .route("/api/プロジェクト情報", get(project_info_get::プロジェクト情報を返す))
         .route(
             "/api/大域世界/構造",

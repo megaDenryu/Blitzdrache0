@@ -1,6 +1,6 @@
 import { div, LV2HtmlComponentBase, type DivC } from 'sengen-ui'
 import type { プロジェクト保管庫接続 } from '../../境界/通信/index.ts'
-import { 実サーバー接続 } from '../../境界/通信/index.ts'
+import { 実サーバー接続, 建物外形カタログ接続か } from '../../境界/通信/index.ts'
 import type { チャンク座標 } from '../../生成/編集資源契約.ts'
 import { ワールド編集状態, 初期ワールド状態を生成する } from './編集モデル/index.ts'
 import { チャンク編集画面 } from './画面/index.ts'
@@ -61,6 +61,18 @@ export class チャンク編集ツール extends LV2HtmlComponentBase {
             void 起動時にワールドを読み込む(this.インスペクター.部品.永続化, this.永続化, this.編集状態, this.同期サービス, this.対象座標)
         }
         void 地表材質色を注入する(this.画面, this.保管庫)
+        void this._建物外形カタログを注入する()
+    }
+
+    private async _建物外形カタログを注入する(): Promise<void> {
+        if (!建物外形カタログ接続か(this.保管庫)) return
+        const 結果 = await this.保管庫.建物外形カタログを読む()
+        if (結果.種別 !== '成功') return
+        const 定義一覧 = 結果.値.建物定義一覧
+        this.操作サービス.建物定義一覧を更新する(定義一覧)
+        this.インスペクター.部品.建物.建物定義一覧を更新する(定義一覧)
+        this.画面.部品.三次元ビュー.建物.建物定義一覧を更新する(定義一覧)
+        this.同期サービス.建物を同期する()
     }
 
     public 前面になった(): void {

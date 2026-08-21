@@ -22,7 +22,7 @@ mod derived_environment;
 mod dispatch;
 mod distant_environment;
 mod distant_view;
-mod editor;
+mod editor_commands;
 mod fetch_assets;
 mod file_scan;
 mod fox_tour_launch;
