@@ -8,6 +8,7 @@ import { 建物形状共有資源 } from './建物形状生成.ts'
 export class 建物メッシュ部品 extends グループ {
     private readonly _共有資源: 建物形状共有資源
     private _建物メッシュ写像: Map<string, Group> = new Map<string, Group>()
+    private _未解決ID一覧: string[] = []
 
     public constructor() {
         super()
@@ -31,14 +32,22 @@ export class 建物メッシュ部品 extends グループ {
             this.実体.remove(グループ)
         }
         this._建物メッシュ写像.clear()
+        this._未解決ID一覧 = []
 
         const 建物一覧 = 建物管理.一覧を取得する()
         for (const 建物 of 建物一覧) {
+            if (!this._共有資源.建物定義があるか(建物.建物定義ID) && !this._未解決ID一覧.includes(建物.建物定義ID)) {
+                this._未解決ID一覧.push(建物.建物定義ID)
+            }
             const 建物グループ = this._共有資源.建物グループを生成する(建物.建物定義ID)
             建物グループ.position.set(建物.位置.x, 建物.位置.y, 建物.位置.z)
             建物グループ.rotation.y = 建物.向きラジアン
             this.実体.add(建物グループ)
             this._建物メッシュ写像.set(建物.識別子, 建物グループ)
         }
+    }
+
+    public 未解決の建物定義ID一覧を取得する(): readonly string[] {
+        return this._未解決ID一覧
     }
 }

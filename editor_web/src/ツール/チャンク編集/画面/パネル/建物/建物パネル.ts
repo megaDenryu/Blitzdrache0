@@ -28,6 +28,8 @@ export class 建物パネル extends LV2HtmlComponentBase implements I配線可�
     private readonly _件数表示: 建物件数ラベル
     private readonly _削除ボタン: 建物削除ボタン
     private readonly _生成ボタン領域: DivC = div({ class: 生成ボタングリッド })
+    private readonly _診断表示 = span({ text: '' })
+    private _カタログ診断 = ''
 
     public constructor() {
         super()
@@ -51,6 +53,8 @@ export class 建物パネル extends LV2HtmlComponentBase implements I配線可�
 
     public 建物定義一覧を更新する(定義一覧: ReadonlyArray<建物外形定義>): void {
         this._生成ボタン領域.clearChildren()
+        this._カタログ診断 = 定義一覧.length === 0 ? '外部アセットの置き場が無いため、配置できる建物定義がありません' : ''
+        this._診断表示.setTextContent(this._カタログ診断)
         for (const 定義 of 定義一覧.filter((候補) => 候補.用途 === '家屋')) {
             const 表示 = `+ ${定義.表示名}`
             this._生成ボタン領域.child(
@@ -61,6 +65,16 @@ export class 建物パネル extends LV2HtmlComponentBase implements I配線可�
         }
     }
 
+    public カタログ取得失敗を表示する(説明: string): void {
+        this._カタログ診断 = `建物外形カタログを取得できません: ${説明}`
+        this._診断表示.setTextContent(this._カタログ診断)
+    }
+
+    public 未解決の建物定義を表示する(ID一覧: readonly string[]): void {
+        const 未解決 = ID一覧.map((ID) => `定義未解決: ${ID}`).join(' / ')
+        this._診断表示.setTextContent([this._カタログ診断, 未解決].filter((文言) => 文言.length > 0).join(' / '))
+    }
+
     private _ルートを構築する(): DivC {
         return (
             div({ class: パネル }).childs([
@@ -68,6 +82,7 @@ export class 建物パネル extends LV2HtmlComponentBase implements I配線可�
                     span({ text: '建物・目印の配置' }).setTooltip('建物・目印の配置'),
                     this._件数表示]),
                 this._生成ボタン領域,
+                this._診断表示,
                 div({ class: アクション区画 }).childs([
                     button({ class: 平坦化ボタン, text: '選択建物の基礎に合わせて地形造成' })
                         .setTooltip('選択建物の基礎に合わせて地形造成')
