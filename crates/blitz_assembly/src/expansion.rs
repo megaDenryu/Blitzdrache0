@@ -60,6 +60,9 @@ mod tree_shape_tests;
 #[cfg(test)]
 mod wall_fixture;
 
+/// ベイ格子の変換が同じ規律で指示を積むための口。クレートの外へは出さない。
+pub(crate) use instruction_list_builder::指示の並びの組み手;
+
 pub use aggregated_placements::部品ごとの配置の集約;
 pub use branch_choice::{節ごとの枝の候補, 節の枝};
 pub use error::展開エラー;
