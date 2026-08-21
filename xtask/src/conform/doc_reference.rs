@@ -1,5 +1,5 @@
 //! 参照パス実在検査: バッククォート囲みで`_doc/`または`shaders/`から始まる文字列を
-//! 参照パスとみなし、リポジトリルート相対で実在するか確認する。
+//! `crates/`または`xtask/`から始まる参照も同じくリポジトリルート相対で実在するか確認する。
 
 use std::path::Path;
 
@@ -12,7 +12,7 @@ pub fn バッククォート内パスを抽出する(行: &str) -> Vec<String> {
         let 開始後 = &残り[開始 + 1..];
         let Some(終了) = 開始後.find('`') else { break };
         let 中身 = &開始後[..終了];
-        if 中身.starts_with("_doc/") || 中身.starts_with("shaders/") {
+        if ["_doc/", "shaders/", "crates/", "xtask/"].iter().any(|接頭辞| 中身.starts_with(接頭辞)) {
             結果.push(中身.to_string());
         }
         残り = &開始後[終了 + 1..];
@@ -48,9 +48,16 @@ mod tests {
     }
 
     #[test]
-    fn 対象外の接頭辞は無視する() {
-        let 行 = "既定は`shaders/scene.slang`。他の`crates/x.rs`は対象外。";
-        assert_eq!(バッククォート内パスを抽出する(行), vec!["shaders/scene.slang".to_string()]);
+    fn ソース配下のパスも抽出する() {
+        let 行 = "既定は`shaders/scene.slang`。実装は`crates/blitz_engine/src/lib.rs`と`xtask/src/main.rs`。";
+        assert_eq!(
+            バッククォート内パスを抽出する(行),
+            vec![
+                "shaders/scene.slang".to_string(),
+                "crates/blitz_engine/src/lib.rs".to_string(),
+                "xtask/src/main.rs".to_string()
+            ]
+        );
     }
 
     #[test]
