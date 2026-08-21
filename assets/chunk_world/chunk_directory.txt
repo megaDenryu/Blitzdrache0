@@ -1,4 +1,4 @@
-blitz_chunk_directory 1
+blitz_chunk_directory 2 100
 -2 -2 chunk_x-2_z-2 chunk_x-2_z-2.gltf
 -1 -2 chunk_x-1_z-2 chunk_x-1_z-2.gltf
 0 -2 chunk_x0_z-2 chunk_x0_z-2.gltf

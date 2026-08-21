@@ -1,2 +1,2 @@
-blitz_chunk_directory 1
+blitz_chunk_directory 2 100
 0 0 terrain_night_lights terrain_night_lights.heightgrid

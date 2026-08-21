@@ -1,2 +1,2 @@
-blitz_chunk_directory 1
+blitz_chunk_directory 2 100
 0 0 prop_part_tree_row prop_part_tree_row.heightgrid

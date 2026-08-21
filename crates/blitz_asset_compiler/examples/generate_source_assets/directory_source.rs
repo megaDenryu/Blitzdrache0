@@ -4,17 +4,14 @@
 
 use blitz_engine::チャンク座標;
 
-const 形式宣言: &str = "blitz_chunk_directory 1";
-
 pub(crate) struct 目録項目 {
     pub(crate) 座標: チャンク座標,
     pub(crate) アセット識別子: String,
     pub(crate) ソース相対パス: String,
 }
 
-pub(crate) fn 目録ソースを作る(項目一覧: &[目録項目]) -> String {
-    let mut 本文 = String::from(形式宣言);
-    本文.push('\n');
+pub(crate) fn 目録ソースを作る(一辺メートル: f32, 項目一覧: &[目録項目]) -> String {
+    let mut 本文 = format!("blitz_chunk_directory 2 {一辺メートル}\n");
     for 項目 in 項目一覧 {
         本文.push_str(&format!(
             "{} {} {} {}\n",
