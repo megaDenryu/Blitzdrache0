@@ -16,6 +16,7 @@ pub(super) fn アセット定義一覧を選ぶ(世界: 対象世界) -> Vec<ア
     match 世界 {
         対象世界::板の世界 => asset_declaration::板の世界の一覧(),
         対象世界::地形の世界 => asset_declaration::地形の世界の一覧(),
+        対象世界::エディターの世界 => Vec::new(),
         対象世界::植生の世界 => vegetation_declaration::一覧(),
         対象世界::見本の集落の世界 => village_declaration::一覧(),
         対象世界::部品で組んだ家の並びの世界(_) => part_house_row_declaration::一覧(),

@@ -15,6 +15,7 @@ impl 対象世界 {
             Self::場所巡りの世界 => fox_tour_declaration::散布の宣言一覧(),
             Self::板の世界
             | Self::地形の世界
+            | Self::エディターの世界
             | Self::植生の世界
             | Self::見本の集落の世界
             | Self::部品で組んだ家の並びの世界(_)

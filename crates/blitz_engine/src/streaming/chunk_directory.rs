@@ -4,19 +4,25 @@
 
 use std::collections::HashMap;
 
-use super::directory_error::チャンク目録エラー;
+use super::{chunk_edge_length::チャンク一辺, directory_error::チャンク目録エラー};
 use crate::{アセットID, チャンク座標};
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct チャンク目録 {
+    一辺: チャンク一辺,
     登録一覧: HashMap<チャンク座標, アセットID>,
 }
 
 impl チャンク目録 {
-    pub fn 空を作る() -> Self {
+    pub fn 空を作る(一辺: チャンク一辺) -> Self {
         Self {
-            登録一覧: HashMap::new()
+            一辺,
+            登録一覧: HashMap::new(),
         }
+    }
+
+    pub fn 一辺(&self) -> チャンク一辺 {
+        self.一辺
     }
 
     /// 1つの座標へ2つのアセットを割り当てると、どちらを読むかが登録順に依存するため座標重複を拒否する。

@@ -17,6 +17,7 @@ mod table;
 table::世界の表! {
     板の世界 => "chunk_world",
     地形の世界 => "terrain_world",
+    エディターの世界 => "editor_world",
     植生の世界 => "vegetation_world",
     見本の集落の世界 => "village_world",
     /// 部品を組み合わせて家を10軒建てる世界。100軒の世界と同じ地面と同じ規則を使い、件数だけが違う。

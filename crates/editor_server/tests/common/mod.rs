@@ -12,7 +12,9 @@ use std::path::{Path, PathBuf};
 
 use editor_server::{ファイル保管庫, プロジェクトルート, リポジトリルート};
 
-pub use source_asset_export_fixture::{マザーを一意な値で保存する, 大域世界を保存する, 小さな区画割り};
+pub use source_asset_export_fixture::{
+    エディターの区画割り, マザーを一意な値で保存する, 大域世界を保存する, 小さな区画割り, 零のマザーを保存する
+};
 pub use world_layout::{区画割りJson, 区画割りを保存する};
 
 /// 一時プロジェクトとは、実リポジトリ(`editor_data/`)を汚さずに

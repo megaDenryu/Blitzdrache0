@@ -12,15 +12,13 @@ mod lod_sync;
 mod measurement;
 mod route;
 
-use blitz_engine::{ストリーミングメモリ量, ストリーミング調停};
+use blitz_engine::{ストリーミングメモリ量, ストリーミング調停, チャンク一辺};
 pub(in crate::app) use build::ストリーミング配線を構築する;
 pub(crate) use measurement::ストリーミング要約;
 
-/// チャンク1辺の大域メートル。検証用世界の格子寸法に合わせる。描画束の基準原点導出も同じ値を使う。
-pub(super) const 一辺メートル: f64 = 100.0;
-
 pub(super) struct ストリーミング配線 {
     調停: ストリーミング調停,
+    一辺: チャンク一辺,
     位置決定: route::プレイヤー位置決定,
     計測: measurement::ストリーミング計測,
     上限: ストリーミングメモリ量,

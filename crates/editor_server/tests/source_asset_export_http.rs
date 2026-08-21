@@ -42,11 +42,31 @@ async fn 正常な書き出しはファイル数と出力先を返しチャン�
     assert_eq!(本体["書いたファイル数"], 5); // チャンク4 + 目録1
 
     let 目録パス = 一時.ルート().join("assets/editor_world/chunk_directory.txt");
-    let 項目一覧 = チャンク目録ソースを読み込む(&目録パス).unwrap();
+    let 目録ソース = チャンク目録ソースを読み込む(&目録パス).unwrap();
+    assert_eq!(目録ソース.一辺().f32値(), 4.0);
+    let 項目一覧 = 目録ソース.項目一覧();
     assert_eq!(項目一覧.len(), 4);
     for 項目 in &項目一覧 {
         let ソースパス = 目録パス.parent().unwrap().join(項目.ソース相対パス());
         let 格子 = 高さ格子を読み込む(&ソースパス).unwrap();
         assert_eq!(格子.諸元().格子点数(), 3);
     }
+}
+
+#[tokio::test]
+async fn 次回書き出す目録は既存のエディター世界の更新済み目録と一致する() {
+    let 一時 = common::一時プロジェクト::生成する("export_editor_directory");
+    let 保管庫 = editor_server::ファイル保管庫::生成する(&一時.プロジェクトルート());
+    let 区画割り = common::エディターの区画割り();
+    common::大域世界を保存する(&保管庫, 区画割り);
+    common::零のマザーを保存する(&保管庫, 区画割り);
+    let 応答 = common::ルーターを作る(&一時)
+        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
+        .await
+        .unwrap();
+    assert_eq!(応答.status(), StatusCode::OK);
+
+    let 書き出した目録 = std::fs::read(一時.ルート().join("assets/editor_world/chunk_directory.txt")).unwrap();
+    let 既存目録 = std::fs::read(std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets/editor_world/chunk_directory.txt")).unwrap();
+    assert_eq!(書き出した目録, 既存目録);
 }

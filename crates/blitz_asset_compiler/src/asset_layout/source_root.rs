@@ -8,7 +8,7 @@ use std::path::{Path, PathBuf};
 use super::error::アセット配置エラー;
 use super::world_directory_name::世界のディレクトリ名;
 use super::world_source_directory::世界のソースディレクトリ;
-use crate::chunk_directory_source::{チャンク目録ソースを読み込む, チャンク目録ソース項目};
+use crate::chunk_directory_source::{チャンク目録ソース, チャンク目録ソースを読み込む};
 use crate::error::アセットコンパイルエラー;
 
 #[repr(transparent)]
@@ -64,7 +64,7 @@ pub struct チャンク目録ソースの置き場 {
 impl チャンク目録ソースの置き場 {
     /// 目録ソースの読み解きの破れをそのまま返すのは、その誤りが読めなかったファイルを自分で名指しており、
     /// 置き場の側から重ねて名指す必要が無いためである。
-    pub fn 目録の項目一覧を読み込む(&self) -> Result<Vec<チャンク目録ソース項目>, アセットコンパイルエラー> {
+    pub fn 目録を読み込む(&self) -> Result<チャンク目録ソース, アセットコンパイルエラー> {
         チャンク目録ソースを読み込む(&self.目録ソース)
     }
 

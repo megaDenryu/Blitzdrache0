@@ -17,11 +17,12 @@ fn 地形の世界のソース一覧() -> Vec<チャンクの高さ格子ソー�
     let 目録ソースパス = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
         .join("assets/terrain_world/chunk_directory.txt");
-    let 項目一覧 = match チャンク目録ソースを読み込む(&目録ソースパス) {
-        Ok(一覧) => 一覧,
+    let 目録ソース = match チャンク目録ソースを読み込む(&目録ソースパス) {
+        Ok(目録ソース) => 目録ソース,
         Err(誤り) => panic!("チャンク目録ソースの読込に失敗した(cargo xtask gen-source-assetsで生成済みか確認): {誤り}"),
     };
-    項目一覧
+    目録ソース
+        .項目一覧()
         .iter()
         .map(|項目| {
             チャンクの高さ格子ソース::生成する(

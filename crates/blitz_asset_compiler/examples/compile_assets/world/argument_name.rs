@@ -9,6 +9,7 @@ use super::対象世界;
 
 const 板の世界: &str = "chunk_world";
 const 地形の世界: &str = "terrain_world";
+const エディターの世界: &str = "editor_world";
 const 植生の世界: &str = "vegetation_world";
 const 見本の集落の世界: &str = "village_world";
 const 部品で建てた十軒の世界: &str = "part_house_row_ten_world";
@@ -29,9 +30,10 @@ const 夜の多光源の世界: &str = "night_lights_world";
 const 屋内の多光源の世界: &str = "stone_hut_world";
 const 場所巡りの世界: &str = "fox_tour_world";
 
-const 有効な綴り: [&str; 21] = [
+const 有効な綴り: [&str; 22] = [
     板の世界,
     地形の世界,
+    エディターの世界,
     植生の世界,
     見本の集落の世界,
     部品で建てた十軒の世界,
@@ -57,6 +59,7 @@ pub(super) fn 解析する(引数名: &str) -> Result<対象世界, String> {
     match 引数名 {
         板の世界 => Ok(対象世界::板の世界),
         地形の世界 => Ok(対象世界::地形の世界),
+        エディターの世界 => Ok(対象世界::エディターの世界),
         植生の世界 => Ok(対象世界::植生の世界),
         見本の集落の世界 => Ok(対象世界::見本の集落の世界),
         部品で建てた十軒の世界 => Ok(対象世界::部品で組んだ家の並びの世界(家の並びの規模::十軒)),

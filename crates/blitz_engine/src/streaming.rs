@@ -3,6 +3,7 @@
 mod chunk_diff;
 mod chunk_directory;
 mod chunk_directory_file;
+mod chunk_edge_length;
 mod chunk_grid;
 mod chunk_ledger;
 mod chunk_request;
@@ -33,6 +34,7 @@ mod transfer_total;
 pub use chunk_diff::{GPU転送完了結果, チャンク集合差分, 準備完了結果, 解除報告結果};
 pub use chunk_directory::チャンク目録;
 pub use chunk_directory_file::実行時チャンク目録のファイル;
+pub use chunk_edge_length::{チャンク一辺, チャンク一辺エラー};
 pub use chunk_grid::チャンク格子;
 pub use chunk_ledger::チャンク台帳;
 pub use chunk_request::チャンク要求;
