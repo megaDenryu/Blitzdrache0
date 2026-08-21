@@ -8,6 +8,7 @@ use std::{
 use serde::Deserialize;
 
 use crate::error::アセットコンパイルエラー;
+use crate::runtime_compilation::建物定義ID;
 
 const 現在の形式版: u32 = 1;
 
@@ -24,7 +25,7 @@ pub(crate) struct エディターチャンクソース {
 #[allow(non_snake_case)]
 pub(crate) struct 建物配置ソース {
     pub(crate) 配置識別子: String,
-    pub(crate) 建物定義ID: String,
+    pub(crate) 建物定義ID: 建物定義ID,
     pub(crate) チャンク原点からの東メートル: f32,
     pub(crate) チャンク原点からの南メートル: f32,
     pub(crate) 向きラジアン: f32,
@@ -50,7 +51,6 @@ impl エディターチャンクソース {
         for 配置 in &ソース.建物配置一覧 {
             if 配置.配置識別子.trim().is_empty()
                 || !配置識別子一覧.insert(&配置.配置識別子)
-                || 配置.建物定義ID.trim().is_empty()
                 || !配置.チャンク原点からの東メートル.is_finite()
                 || !配置.チャンク原点からの南メートル.is_finite()
                 || !配置.向きラジアン.is_finite()

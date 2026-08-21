@@ -5,6 +5,7 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
+mod building_outline_catalog_fixture;
 mod source_asset_export_fixture;
 mod world_layout;
 
@@ -12,8 +13,10 @@ use std::path::{Path, PathBuf};
 
 use editor_server::{ファイル保管庫, プロジェクトルート, リポジトリルート};
 
+pub use building_outline_catalog_fixture::{カタログに無い識別子, 一間四方の家の識別子, 建物外形カタログを作る};
 pub use source_asset_export_fixture::{
-    エディターの区画割り, フォックスのソースを配置する, マザーを一意な値で保存する, 大域世界を保存する, 小さな区画割り, 零のマザーを保存する,
+    エディターの区画割り, フォックスのソースを配置する, マザーを一意な値で保存する, 大域世界を保存する, 小さな区画割り, 建物を据えられる区画割り,
+    零のマザーを保存する,
 };
 pub use world_layout::{区画割りJson, 区画割りを保存する};
 
@@ -57,10 +60,7 @@ pub fn ルーターを作る(一時プロジェクト: &一時プロジェクト
     editor_server::ルーターを組み立てる(editor_server::サーバー状態::生成する(
         &一時プロジェクト.リポジトリルート(),
         &一時プロジェクト.プロジェクトルート(),
-        editor_server::建物外形カタログ {
-            形式版: editor_server::建物外形カタログの現在の形式版,
-            建物定義一覧: Vec::new(),
-        },
+        建物外形カタログを作る(),
     ))
 }
 

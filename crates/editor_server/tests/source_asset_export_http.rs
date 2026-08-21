@@ -55,7 +55,7 @@ async fn 正常な書き出しはファイル数と出力先を返しチャン�
 }
 
 #[tokio::test]
-async fn エディター世界の目録は全チャンクで版付きソースを指す() {
+async fn 次回書き出す目録は既存のエディター世界の更新済み目録と一致する() {
     let 一時 = common::一時プロジェクト::生成する("export_editor_directory");
     let 保管庫 = editor_server::ファイル保管庫::生成する(&一時.プロジェクトルート());
     let 区画割り = common::エディターの区画割り();
@@ -76,4 +76,8 @@ async fn エディター世界の目録は全チャンクで版付きソース�
         assert!(項目.ソース相対パス().to_string_lossy().ends_with(".json"));
         assert!(目録パス.parent().unwrap().join(項目.ソース相対パス()).is_file());
     }
+
+    let 書き出した目録 = std::fs::read(&目録パス).unwrap();
+    let 既存目録 = std::fs::read(std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets/editor_world/chunk_directory.txt")).unwrap();
+    assert_eq!(書き出した目録, 既存目録, "次回の書き出しがリポジトリの目録と食い違う");
 }

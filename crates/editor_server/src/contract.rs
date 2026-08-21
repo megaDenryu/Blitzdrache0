@@ -60,7 +60,12 @@ pub fn 編集資源契約の本文を組み立てる() -> String {
         <crate::道路下を泥へベイクする as TS>::decl(&設定),
         <crate::編集コマンド as TS>::decl(&設定),
     ];
-    本文を組み立てる(&型宣言一覧)
+    let mut 本文 = 本文を組み立てる(&型宣言一覧);
+    本文.push_str(&format!(
+        "export const 建物外形カタログ形式版 = {} as const;\n",
+        crate::建物外形カタログの現在の形式版
+    ));
+    本文
 }
 
 fn 本文を組み立てる(型宣言一覧: &[String]) -> String {

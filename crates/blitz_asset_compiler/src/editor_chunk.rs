@@ -1,5 +1,6 @@
 //! エディターが書いた版付きチャンクソースから、地面と部品建物の群を同じチャンクへ焼く。
 
+mod building_definitions;
 mod scene;
 mod source;
 

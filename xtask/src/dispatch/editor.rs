@@ -4,7 +4,7 @@
 use std::process::ExitCode;
 
 use crate::contract_export;
-use crate::editor_commands::{building_outline_catalog, editor};
+use crate::editor::{self, building_outline_catalog};
 
 pub(super) fn 割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {

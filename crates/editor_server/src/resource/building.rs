@@ -5,6 +5,7 @@
 
 use serde::{Deserialize, Serialize};
 
+use super::building_definition_id::建物定義ID;
 use super::numeric_check::{有限であることを確かめる, 正の有限数であることを確かめる};
 use super::position::位置3次元;
 use super::validation_error::資源検証エラー;
@@ -15,7 +16,8 @@ use super::validation_error::資源検証エラー;
 #[allow(non_snake_case)]
 pub struct 建物の配置 {
     pub 識別子: String,
-    pub 建物定義ID: String,
+    #[cfg_attr(feature = "typescript", ts(type = "string"))]
+    pub 建物定義ID: 建物定義ID,
     pub 位置: 位置3次元,
     pub 向きラジアン: f64,
     pub 基礎半径メートル: f64,
@@ -25,9 +27,6 @@ pub struct 建物の配置 {
 impl 建物の配置 {
     pub fn 検証する(&self) -> Result<(), 資源検証エラー> {
         if self.識別子.trim().is_empty() {
-            return Err(資源検証エラー::識別子が空);
-        }
-        if self.建物定義ID.trim().is_empty() {
             return Err(資源検証エラー::識別子が空);
         }
         self.位置.検証する()?;

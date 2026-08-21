@@ -1,0 +1,70 @@
+//! チャンク1件ぶんの書き出しの工程。受け取るのはチャンクの添字と高さ格子の諸元とマザーの材料であり、
+//! 返すのは目録項目と、そのチャンクで実際に書いたファイルの枚数である。枚数を返すのは、
+//! 応答の「書いたファイル数」を係数の暗黙の埋め込みでなく、書いた枚数の積算で出すためである。
+
+use blitz_asset_compiler::{高さ格子を切り出す, 高さ格子を格納する, 高さ格子諸元};
+use blitz_engine::アセットID;
+
+use super::super::chunk_directory_text::目録項目;
+use super::super::chunk_height_sample::高さ関数材料;
+use super::super::editor_chunk_source::エディターチャンクソース;
+use super::super::error::書き出しエラー;
+use super::super::numeric_conversion::チャンク添字へ変換する;
+use super::ソースアセット書き出しコマンド;
+use crate::resource::チャンク座標;
+use crate::storage::プロジェクト保管庫;
+
+/// 書き出したチャンクとは、チャンク1件の書き出しが残した目録項目と、そのとき書いたファイルの枚数のことである。
+pub(super) struct 書き出したチャンク {
+    pub(super) 目録項目: 目録項目,
+    pub(super) 書いた枚数: usize,
+}
+
+impl ソースアセット書き出しコマンド {
+    pub(super) fn チャンクを書き出す(
+        &self,
+        x: u32,
+        z: u32,
+        諸元: 高さ格子諸元,
+        解像度: u16,
+        マザーバイト列: &[u8],
+        マザー一辺頂点数: u32,
+    ) -> Result<書き出したチャンク, 書き出しエラー> {
+        let x = チャンク添字へ変換する(x)?;
+        let z = チャンク添字へ変換する(z)?;
+        let 座標 = チャンク座標::生成する(x, z);
+        let チャンク別バイト列 = self.保管庫.チャンクの高さ格子を読む(座標)?;
+        let 材料 = 高さ関数材料 {
+            チャンクx: x,
+            チャンクz: z,
+            解像度,
+            マザー一辺頂点数,
+            マザーバイト列,
+            チャンク別バイト列: チャンク別バイト列.as_deref(),
+        };
+        let エンジン座標 = blitz_engine::チャンク座標::生成する(x, z);
+        let 格子 = 高さ格子を切り出す(諸元, エンジン座標, |添字x, 添字z| 材料.高さを求める(添字x, 添字z))?;
+
+        let mut 書いた枚数: usize = 0;
+        let 名前 = format!("editor_terrain_x{x}_z{z}");
+        let ファイル名 = format!("editor_terrain_x{x}_z{z}.heightgrid");
+        self.出力先.直下へ書き込む(&ファイル名, &高さ格子を格納する(&格子))?;
+        書いた枚数 = 書いた枚数.saturating_add(1);
+
+        let 建物一覧 = self.保管庫.チャンクの構造を読む(座標)?.map(|構造| 構造.建物一覧).unwrap_or_default();
+        let ソース = エディターチャンクソース::組み立てる(ファイル名, 建物一覧, 諸元.一辺メートル(), &self.建物外形カタログ)?;
+        let ソースファイル名 = format!("editor_chunk_x{x}_z{z}.json");
+        self.出力先.直下へ書き込む(&ソースファイル名, &ソース.整形済みjsonを作る()?)?;
+        書いた枚数 = 書いた枚数.saturating_add(1);
+
+        Ok(書き出したチャンク {
+            目録項目: 目録項目 {
+                x,
+                z,
+                アセットid: アセットID::生成する(&名前)?.文字列を返す().to_string(),
+                相対ファイル名: ソースファイル名,
+            },
+            書いた枚数,
+        })
+    }
+}

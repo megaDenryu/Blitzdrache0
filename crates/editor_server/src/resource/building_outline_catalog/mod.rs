@@ -7,6 +7,8 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "typescript")]
 use ts_rs::TS;
 
+use super::建物定義ID;
+
 pub use loading::建物外形カタログ読み込みエラー;
 
 pub const 建物外形カタログの現在の形式版: u32 = 1;
@@ -43,12 +45,12 @@ pub struct 建物の外接箱 {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "typescript", derive(TS))]
 pub struct 建物外形定義 {
-    pub 識別子: String,
+    #[cfg_attr(feature = "typescript", ts(type = "string"))]
+    pub 識別子: 建物定義ID,
     pub 表示名: String,
     pub 用途: 建物定義の用途,
     pub 部品の識別子一覧: Vec<String>,
     pub ベイ: ベイ構造,
-    pub 高さメートル: f32,
     pub 入口のローカル方向: 建物の入口方向,
     pub 外接箱: 建物の外接箱,
 }
@@ -61,7 +63,11 @@ pub struct 建物外形カタログ {
 }
 
 impl 建物外形カタログ {
-    pub fn 建物定義を含む(&self, 識別子: &str) -> bool {
-        self.建物定義一覧.iter().any(|定義| 定義.識別子 == 識別子)
+    pub fn 建物定義を含む(&self, 識別子: &建物定義ID) -> bool {
+        self.建物定義一覧.iter().any(|定義| &定義.識別子 == 識別子)
+    }
+
+    pub fn 建物定義を取得する(&self, 識別子: &建物定義ID) -> Option<&建物外形定義> {
+        self.建物定義一覧.iter().find(|定義| &定義.識別子 == 識別子)
     }
 }

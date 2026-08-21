@@ -5,6 +5,7 @@
 mod atmosphere;
 mod auto_exposure;
 mod bloom;
+mod building_outline_catalog;
 mod clustered_lighting;
 mod distant_environment;
 mod instance_transform;
@@ -22,10 +23,11 @@ pub(super) struct 定数の組 {
 }
 
 /// 領域ごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域一覧: [&[定数の組]; 10] = [
+pub(super) const 領域一覧: [&[定数の組]; 11] = [
     &atmosphere::定数一覧,
     &auto_exposure::定数一覧,
     &bloom::定数一覧,
+    &building_outline_catalog::定数一覧,
     &clustered_lighting::定数一覧,
     &distant_environment::定数一覧,
     &instance_transform::定数一覧,

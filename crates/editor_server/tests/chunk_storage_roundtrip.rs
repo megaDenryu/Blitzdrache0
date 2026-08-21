@@ -30,7 +30,7 @@ fn チャンク構造を保存して読み戻すと一致する() {
         }],
         建物一覧: vec![建物の配置 {
             識別子: "poi_house_0001".to_string(),
-            建物定義ID: "frame_house_one_bay".to_string(),
+            建物定義ID: editor_server::建物定義ID::生成する("frame_house_one_bay").unwrap(),
             位置: 位置3次元 { x: 5.0, y: 0.0, z: 5.0 },
             向きラジアン: 0.5,
             基礎半径メートル: 7.0,
@@ -58,7 +58,7 @@ fn 建物のなじみ半径が基礎半径未満なら保存を拒む() {
         }],
         建物一覧: vec![建物の配置 {
             識別子: "poi_tower_0001".to_string(),
-            建物定義ID: "frame_house_two_story".to_string(),
+            建物定義ID: editor_server::建物定義ID::生成する("frame_house_two_story").unwrap(),
             位置: 位置3次元 { x: 0.0, y: 0.0, z: 0.0 },
             向きラジアン: 0.0,
             基礎半径メートル: 10.0,

@@ -16,7 +16,7 @@ use tower::ServiceExt;
 async fn 保存した家屋は中心基準座標を変換して高さ格子上へ部品群として焼かれる() {
     let 一時 = common::一時プロジェクト::生成する("export_building");
     let 保管庫 = editor_server::ファイル保管庫::生成する(&一時.プロジェクトルート());
-    let 区画割り = common::小さな区画割り();
+    let 区画割り = common::建物を据えられる区画割り();
     common::大域世界を保存する(&保管庫, 区画割り);
     common::マザーを一意な値で保存する(&保管庫, 区画割り);
     common::フォックスのソースを配置する(&一時);
@@ -27,7 +27,7 @@ async fn 保存した家屋は中心基準座標を変換して高さ格子上�
                 道路一覧: Vec::new(),
                 建物一覧: vec![建物の配置 {
                     識別子: "stable-house-1".to_string(),
-                    建物定義ID: "frame_house_one_bay".to_string(),
+                    建物定義ID: editor_server::建物定義ID::生成する(common::一間四方の家の識別子).unwrap(),
                     位置: 位置3次元 { x: 0.0, y: 999.0, z: 0.0 },
                     向きラジアン: 0.25,
                     基礎半径メートル: 4.0,

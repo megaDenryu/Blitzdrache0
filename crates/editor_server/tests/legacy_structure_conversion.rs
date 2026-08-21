@@ -65,7 +65,7 @@ fn 旧版の家屋は一間四方の家の定義IDへ移行する() {
     .unwrap();
 
     let 読み込み結果 = 保管庫.チャンクの構造を読む(座標).unwrap().unwrap();
-    assert_eq!(読み込み結果.建物一覧[0].建物定義ID, "frame_house_one_bay");
+    assert_eq!(読み込み結果.建物一覧[0].建物定義ID.綴り(), common::一間四方の家の識別子);
 }
 
 #[test]

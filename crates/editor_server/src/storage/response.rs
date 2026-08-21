@@ -28,6 +28,7 @@ impl IntoResponse for 保存要求エラー {
 
 fn 状態と種別を決める(エラー: &保存要求エラー) -> (StatusCode, &'static str) {
     match エラー {
+        保存要求エラー::既存正本を読めない(_) => (StatusCode::CONFLICT, "既存正本エラー"),
         保存要求エラー::検証に失敗(_) => (StatusCode::UNPROCESSABLE_ENTITY, "構造検証エラー"),
         保存要求エラー::Json処理に失敗(_) => (StatusCode::BAD_REQUEST, "JSON解析エラー"),
         保存要求エラー::書き込みに失敗(_) => (StatusCode::INTERNAL_SERVER_ERROR, "保存エラー"),
