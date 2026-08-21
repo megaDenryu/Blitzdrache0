@@ -7,6 +7,8 @@ mod chunk_splat_weights_put;
 mod chunk_structure_get;
 mod chunk_structure_put;
 mod health_get;
+mod material_board_get;
+mod material_board_put;
 mod project_info_get;
 mod source_asset_export_post;
 mod static_serve;
@@ -32,6 +34,10 @@ pub fn ルーターを組み立てる(状態: サーバー状態) -> 経路正�
         .route(
             "/api/大域世界/高さ格子",
             get(world_heightmap_get::大域世界高さ格子を返す).put(world_heightmap_put::大域世界高さ格子を保存する),
+        )
+        .route(
+            "/api/マテリアル台帳",
+            get(material_board_get::マテリアル台帳を返す).put(material_board_put::マテリアル台帳を保存する),
         )
         .route(
             "/api/チャンク/{x}/{z}/構造",

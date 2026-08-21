@@ -8,6 +8,9 @@ mod chunk_structure;
 mod chunk_structure_version;
 mod command;
 mod grid;
+mod material_board;
+mod material_definition;
+mod material_layer_assignment;
 mod numeric_check;
 mod position;
 mod regional_road;
@@ -28,6 +31,9 @@ pub use command::{
     道路点を削除する, 道路点を挿入する, 道路点を移動する, 道路点を追加する,
 };
 pub use grid::{チャンクの高さ編集, マザーハイトマップ, 地表材質の重み};
+pub use material_board::マテリアル台帳;
+pub use material_definition::マテリアル定義;
+pub use material_layer_assignment::層割当;
 pub use position::位置3次元;
 pub use regional_road::広域道路;
 pub use scatter_settings::散布の設定;

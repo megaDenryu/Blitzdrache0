@@ -5,7 +5,7 @@
 
 use std::path::PathBuf;
 
-use super::file_names::{材質重みファイル名, 構造ファイル名, 高さ格子ファイル名};
+use super::file_names::{マテリアル台帳ファイル名, 材質重みファイル名, 構造ファイル名, 高さ格子ファイル名};
 use crate::{project_root::プロジェクトルート, resource::チャンク座標};
 
 #[derive(Clone)]
@@ -22,6 +22,10 @@ impl 編集データディレクトリ {
 
     pub(super) fn 大域世界高さ格子パス(&self) -> PathBuf {
         self.0.join("大域世界").join(高さ格子ファイル名)
+    }
+
+    pub(super) fn マテリアル台帳パス(&self) -> PathBuf {
+        self.0.join(マテリアル台帳ファイル名)
     }
 
     fn チャンクディレクトリ(&self, 座標: チャンク座標) -> PathBuf {
