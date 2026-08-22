@@ -23,11 +23,11 @@ pub fn ストリーミング経路の資源を計測する(引数一覧: &[Strin
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }
-    if !condition_a::実行する(&フレーム数) {
+    if !condition_a::固定経路を反復実行しながら資源を採取する(&フレーム数) {
         eprintln!("[xtask] streaming-bench失敗: 条件A(予算を十分に取った反復)");
         return ExitCode::FAILURE;
     }
-    if !condition_b::実行する() {
+    if !condition_b::固定経路を二回実行して読込解除順を突き合わせる() {
         eprintln!("[xtask] streaming-bench失敗: 条件B(縮退させた順序の再現)");
         return ExitCode::FAILURE;
     }

@@ -61,7 +61,7 @@ impl 件数を変えた並びの対 {
         }
     }
 
-    pub(super) fn 実行する(&self) -> ExitCode {
+    pub(super) fn 検収してコードへ変換する(&self) -> ExitCode {
         match self.検収する() {
             Ok(要約) => {
                 println!("[xtask] {}成功: {要約}", self.入口の名前);

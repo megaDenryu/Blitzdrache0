@@ -26,17 +26,17 @@ mod tree_row;
 use std::process::ExitCode;
 
 pub fn 家の並びを検収する() -> ExitCode {
-    house_row::実行する()
+    house_row::家の並びの対を検収する()
 }
 
 pub fn 一間四方の骨格の並びを検収する() -> ExitCode {
-    frame_row::実行する()
+    frame_row::一間四方の骨格の並びの対を検収する()
 }
 
 pub fn 骨格を連ねた見本を撮影する() -> ExitCode {
-    frame_chain::実行する()
+    frame_chain::撮影してコードへ変換する()
 }
 
 pub fn 木の並びを撮影する() -> ExitCode {
-    tree_row::実行する()
+    tree_row::検収してコードへ変換する()
 }

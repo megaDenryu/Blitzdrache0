@@ -5,7 +5,7 @@ use std::process::ExitCode;
 
 use crate::{depth_prepass_cost, indirect_cost, ow4_bench, reverse_depth, shadow_loss, shadow_probe, streaming_bench};
 
-pub(super) fn 割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
+pub(super) fn 律速切り分け計測コマンドを割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
         "ow4-bench" => Some(ow4_bench::植生密度別に性能を計測する(引数一覧)),
         "shadow-probe" => Some(shadow_probe::影の律速切り分けを計測する(引数一覧)),

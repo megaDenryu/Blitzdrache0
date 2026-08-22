@@ -14,8 +14,8 @@ const 採取間隔: Duration = Duration::from_secs(5);
 /// 60fpsで進む想定のフレーム数に、起動・アセット読込・終了処理ぶんの余裕を足す。
 const 余裕秒: u64 = 120;
 
-pub(super) fn 実行する(フレーム数: &str) -> bool {
-    if !crate::release_build::実行する("streaming-bench条件A") {
+pub(super) fn 固定経路を反復実行しながら資源を採取する(フレーム数: &str) -> bool {
+    if !crate::release_build::構築して合否を返す("streaming-bench条件A") {
         return false;
     }
     let 引数一覧 = 引数を作る(フレーム数);

@@ -72,7 +72,7 @@ const 見本一覧: [検収する並び1つ; 5] = [
     屋根を載せた二段の家,
 ];
 
-pub(super) fn 実行する() -> ExitCode {
+pub(super) fn 撮影してコードへ変換する() -> ExitCode {
     match 撮影する() {
         Ok(要約) => {
             println!("[xtask] part-frame-chain-draw成功: {要約}");

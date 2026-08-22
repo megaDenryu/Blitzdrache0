@@ -13,7 +13,7 @@ const フレーム数: 描画フレーム数 = 描画フレーム数::生成す�
 const RAM上限: &str = "400";
 const VRAM上限: &str = "4096";
 
-pub(super) fn 実行する() -> bool {
+pub(super) fn 固定経路を二回実行して読込解除順を突き合わせる() -> bool {
     let Some(一回目) = 一度実行する(1) else {
         return false;
     };

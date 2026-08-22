@@ -5,7 +5,7 @@ use std::process::ExitCode;
 
 use crate::{bench, distant_view, large_world_bench, lod_crack, m10_bench, m11_soak, object_bench, origin_invariance, ow3_dod};
 
-pub(super) fn 割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
+pub(super) fn 性能計測コマンドを割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
         "bench" => Some(bench::固定シーンを計測する()),
         "bench-display-timing" => Some(bench::実表示計測つきで実行する()),

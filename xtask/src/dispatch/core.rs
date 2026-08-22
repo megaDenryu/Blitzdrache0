@@ -6,7 +6,7 @@ use std::process::ExitCode;
 use crate::command_ui::menu;
 use crate::{conform, smoke, type_metrics, verify};
 
-pub(super) fn 割り当てる(名前: &str, _引数一覧: &[String]) -> Option<ExitCode> {
+pub(super) fn 中核コマンドを割り当てる(名前: &str, _引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
         "verify" => Some(verify::検証列を実行する()),
         "conform" => Some(conform::規約を検査する()),

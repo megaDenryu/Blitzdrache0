@@ -18,7 +18,7 @@ pub fn 連続実行のメモリ推移を計測する() -> ExitCode {
     if !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }
-    if !crate::release_build::実行する("m11-soak") {
+    if !crate::release_build::構築して合否を返す("m11-soak") {
         return ExitCode::FAILURE;
     }
 

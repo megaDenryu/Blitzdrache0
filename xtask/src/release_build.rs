@@ -47,7 +47,7 @@ pub fn 計測用に構築する(コマンド名: &'static str) -> Result<構築�
 }
 
 /// 由来を要らない計測入口のための形。中身は`計測用に構築する`と同じであり、失敗の理由はその場で出す。
-pub fn 実行する(コマンド名: &'static str) -> bool {
+pub fn 構築して合否を返す(コマンド名: &'static str) -> bool {
     match 計測用に構築する(コマンド名) {
         Ok(_) => true,
         Err(理由) => {

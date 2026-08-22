@@ -9,7 +9,7 @@ use crate::{
     vertex_diag, village_draw,
 };
 
-pub(super) fn 割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
+pub(super) fn 描画検収コマンドを割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
         "prop-draw" => Some(prop_draw::小物1体の描画を確認する()),
         "village-draw" => Some(village_draw::見本集落の描画を確認する()),

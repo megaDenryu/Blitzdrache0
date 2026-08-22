@@ -7,7 +7,7 @@ use crate::bake_building;
 use crate::contract_export;
 use crate::editor::{self, building_outline_catalog};
 
-pub(super) fn 割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
+pub(super) fn エディターコマンドを割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
         "editor" => Some(実行結果をコードへ変換する(editor::エディターサーバーを起動する(引数一覧))),
         "building-outline-catalog" => Some(実行結果をコードへ変換する(

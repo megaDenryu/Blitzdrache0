@@ -8,7 +8,7 @@ use crate::{
     part_tools, watch_assets,
 };
 
-pub(super) fn 割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
+pub(super) fn アセットコマンドを割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
         "check-glb" => Some(check_glb::gltf入力契約を検査する(引数一覧)),
         "part-catalog" => Some(part_tools::カタログを組み上げる(引数一覧)),

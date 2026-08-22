@@ -8,7 +8,7 @@ use crate::{
     sky_time, temporal_reconstruction,
 };
 
-pub(super) fn 割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
+pub(super) fn 空環境コマンドを割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
         "sky-draw" => Some(sky_draw::空の描画を確認する()),
         "sky-state" => Some(sky_state::天空状態の導出を確認する()),

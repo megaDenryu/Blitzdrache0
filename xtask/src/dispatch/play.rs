@@ -6,7 +6,7 @@ use std::process::ExitCode;
 
 use crate::{game_fox_tour, play_fox_tour};
 
-pub(super) fn 割り当てる(名前: &str, _引数一覧: &[String]) -> Option<ExitCode> {
+pub(super) fn ゲーム実行コマンドを割り当てる(名前: &str, _引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
         "game-fox-tour" => Some(game_fox_tour::決定的実行を確認する()),
         "play-fox-tour" => Some(play_fox_tour::クソゲー1本目を起動する()),

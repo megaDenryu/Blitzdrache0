@@ -29,7 +29,7 @@ const 出力ディレクトリ: &str = "target/part_tree_row_draw";
 const 検収世界: 検収世界の用意 =
     検収世界の用意::生成する("部品で組んだ木の並び", "target/part_tree_row_assets/prop_part_tree_row.blitzasset");
 
-pub(super) fn 実行する() -> ExitCode {
+pub(super) fn 検収してコードへ変換する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] part-tree-row-draw成功: {要約}");

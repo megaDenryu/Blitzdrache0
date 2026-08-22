@@ -5,7 +5,7 @@ use std::process::ExitCode;
 
 use crate::material_check::{material_reload_draw, multi_material_draw, prop_multi_material_draw, surface_layer_draw};
 
-pub(super) fn 割り当てる(名前: &str) -> Option<ExitCode> {
+pub(super) fn 材質検収コマンドを割り当てる(名前: &str) -> Option<ExitCode> {
     match 名前 {
         "prop-multi-material-draw" => Some(prop_multi_material_draw::多材質小物の描画を確認する()),
         "multi-material-draw" => Some(multi_material_draw::多材質シーンの描画を確認する()),

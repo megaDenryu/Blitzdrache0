@@ -30,15 +30,15 @@ pub(crate) fn 割り当てる(引数一覧: &[String]) -> ExitCode {
         return ExitCode::FAILURE;
     };
     let 残り引数 = &引数一覧[1..];
-    core::割り当てる(名前, 残り引数)
-        .or_else(|| asset::割り当てる(名前, 残り引数))
-        .or_else(|| benchmark::割り当てる(名前, 残り引数))
-        .or_else(|| measurement::割り当てる(名前, 残り引数))
-        .or_else(|| play::割り当てる(名前, 残り引数))
-        .or_else(|| render_check::割り当てる(名前, 残り引数))
-        .or_else(|| material_check::割り当てる(名前))
-        .or_else(|| sky_environment::割り当てる(名前, 残り引数))
-        .or_else(|| editor::割り当てる(名前, 残り引数))
+    core::中核コマンドを割り当てる(名前, 残り引数)
+        .or_else(|| asset::アセットコマンドを割り当てる(名前, 残り引数))
+        .or_else(|| benchmark::性能計測コマンドを割り当てる(名前, 残り引数))
+        .or_else(|| measurement::律速切り分け計測コマンドを割り当てる(名前, 残り引数))
+        .or_else(|| play::ゲーム実行コマンドを割り当てる(名前, 残り引数))
+        .or_else(|| render_check::描画検収コマンドを割り当てる(名前, 残り引数))
+        .or_else(|| material_check::材質検収コマンドを割り当てる(名前))
+        .or_else(|| sky_environment::空環境コマンドを割り当てる(名前, 残り引数))
+        .or_else(|| editor::エディターコマンドを割り当てる(名前, 残り引数))
         .unwrap_or_else(|| {
             usage::使い方を表示する();
             ExitCode::FAILURE
