@@ -8,4 +8,6 @@ pub(crate) enum 実行時アセット一式の再読込エラー {
     チャンク目録(#[from] blitz_engine::実行時チャンク目録読込エラー),
     #[error("起動時シーンを読み直せなかった: {0}")]
     起動時シーン(#[from] blitz_engine::実行時シーン読込エラー),
+    #[error("地表層テクスチャ集を読み直せなかった: {0}")]
+    地表層テクスチャ集(#[from] blitz_engine::surface_layer_textures::地表層テクスチャ集読込エラー),
 }
