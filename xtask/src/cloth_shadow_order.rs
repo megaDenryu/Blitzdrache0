@@ -28,7 +28,7 @@ const 布影の下限画素数: usize = 1000;
 /// 走査順への依存が作る食い違い(領域の半分の桁)より十分小さい。
 const 一致とみなす差の割合の逆数: usize = 100;
 
-pub fn 実行する() -> ExitCode {
+pub fn 布の影の走査順を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] cloth-shadow-order成功: {要約}");

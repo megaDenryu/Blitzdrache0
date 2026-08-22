@@ -25,7 +25,7 @@ use shot_plan::{
 
 const 出力ディレクトリ: &str = "target/game_fox_tour";
 
-pub fn 実行する() -> ExitCode {
+pub fn 決定的実行を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] game-fox-tour成功: {要約}");

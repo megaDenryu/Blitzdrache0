@@ -10,20 +10,20 @@ use crate::{
 
 pub(super) fn 割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
-        "check-glb" => Some(check_glb::実行する(引数一覧)),
+        "check-glb" => Some(check_glb::gltf入力契約を検査する(引数一覧)),
         "part-catalog" => Some(part_tools::カタログを組み上げる(引数一覧)),
         "part-assembly" => Some(part_tools::組み立てを突き合わせる(引数一覧)),
         "part-house-row-draw" => Some(part_row_draw::家の並びを検収する()),
         "part-frame-row-draw" => Some(part_row_draw::一間四方の骨格の並びを検収する()),
         "part-frame-chain-draw" => Some(part_row_draw::骨格を連ねた見本を撮影する()),
         "part-tree-row-draw" => Some(part_row_draw::木の並びを撮影する()),
-        "compile-assets" => Some(compile_assets::実行する(引数一覧)),
-        "watch-assets" => Some(watch_assets::実行する(引数一覧)),
-        "gen-source-assets" => Some(gen_source_assets::実行する()),
-        "gen-atmosphere-reference" => Some(gen_atmosphere_reference::実行する(引数一覧)),
-        "gen-game-map" => Some(gen_game_map::実行する(引数一覧)),
-        "large-world-assets" => Some(large_world_assets::実行する(引数一覧)),
-        "fetch-assets" => Some(fetch_assets::実行する()),
+        "compile-assets" => Some(compile_assets::実行時アセットを生成する(引数一覧)),
+        "watch-assets" => Some(watch_assets::アセットを監視して再生成する(引数一覧)),
+        "gen-source-assets" => Some(gen_source_assets::検証用ソースアセットを生成する()),
+        "gen-atmosphere-reference" => Some(gen_atmosphere_reference::大気の期待値を生成する(引数一覧)),
+        "gen-game-map" => Some(gen_game_map::クソゲー1本目の地図を生成する(引数一覧)),
+        "large-world-assets" => Some(large_world_assets::大規模世界アセットを生成する(引数一覧)),
+        "fetch-assets" => Some(fetch_assets::標準サンプルを取得する()),
         _ => None,
     }
 }

@@ -23,7 +23,7 @@ const 出力ディレクトリ: &str = "target/village_draw";
 /// 失敗を見落として起動へ進むと、カタログ未登録という遠い場所の失敗に化けるため、焼いた直後に実在を確かめる。
 const 検収世界: 検収世界の用意 = 検収世界の用意::生成する("見本の集落", "target/village_assets/prop_village.blitzasset");
 
-pub fn 実行する() -> ExitCode {
+pub fn 見本集落の描画を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] village-draw成功: {要約}");

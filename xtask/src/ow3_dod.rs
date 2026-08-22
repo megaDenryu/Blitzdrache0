@@ -9,7 +9,7 @@ use crate::acceptance::検収の1回の実行;
 
 const 上限バイト数: u64 = 16 * 1024 * 1024;
 
-pub fn 実行する() -> ExitCode {
+pub fn 原点移動と地形段を一括計測する() -> ExitCode {
     if !子xtaskを実行する("origin-invariance") || !子xtaskを実行する("lod-crack") {
         return ExitCode::FAILURE;
     }

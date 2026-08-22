@@ -84,7 +84,7 @@ impl 標準サンプルの取得対象 {
     }
 }
 
-pub fn 実行する() -> ExitCode {
+pub fn 標準サンプルを取得する() -> ExitCode {
     for 対象 in 取得対象一覧 {
         if 対象.取得する() == ExitCode::FAILURE {
             return ExitCode::FAILURE;

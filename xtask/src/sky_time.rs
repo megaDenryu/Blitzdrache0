@@ -34,7 +34,7 @@ use error::時刻帯ごとの空の検収エラー;
 
 const 出力ディレクトリ: &str = "target/sky_time";
 
-pub fn 実行する() -> ExitCode {
+pub fn 時刻別の空を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] sky-time成功: {要約}");

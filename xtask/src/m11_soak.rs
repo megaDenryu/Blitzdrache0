@@ -10,8 +10,8 @@ const フレーム数: &str = "3600";
 const 採取間隔: Duration = Duration::from_secs(5);
 const 制限時間: Duration = Duration::from_secs(120);
 
-pub fn 実行する() -> ExitCode {
-    if fetch_assets::実行する() != ExitCode::SUCCESS {
+pub fn 連続実行のメモリ推移を計測する() -> ExitCode {
+    if fetch_assets::標準サンプルを取得する() != ExitCode::SUCCESS {
         eprintln!("[xtask] m11-soakのアセット取得に失敗した");
         return ExitCode::FAILURE;
     }

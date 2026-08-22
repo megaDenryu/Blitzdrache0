@@ -37,7 +37,7 @@ const 出力ディレクトリ: &str = "target/depth_prepass_cost";
 const シェーダーコピー先: &str = "target/depth_prepass_cost_shaders";
 const 窓の集約ファイル名: &str = "window.tsv";
 
-pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub(crate) fn 深度プリパス費用を計測する(引数一覧: &[String]) -> ExitCode {
     match 計測する(引数一覧) {
         Ok(要約) => {
             println!("[xtask] depth-prepass-cost成功: {要約}");

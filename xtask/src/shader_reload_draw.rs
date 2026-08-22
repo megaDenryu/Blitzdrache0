@@ -24,7 +24,7 @@ const 出力ディレクトリ: &str = "target/shader_reload_draw";
 /// リポジトリのファイルを変えてしまう。
 const シェーダーコピー先: &str = "target/shader_reload_shaders";
 
-pub fn 実行する() -> ExitCode {
+pub fn シェーダー差し替えの描画を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] shader-reload-draw成功: {要約}");

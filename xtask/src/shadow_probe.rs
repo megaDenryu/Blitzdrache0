@@ -29,7 +29,7 @@ use crate::release_build::計測の生値のファイル;
 const 出力ディレクトリ: &str = "target/shadow_probe";
 const シェーダーコピー先: &str = "target/shadow_probe_shaders";
 
-pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub(crate) fn 影の律速切り分けを計測する(引数一覧: &[String]) -> ExitCode {
     match 走らせる(引数一覧) {
         Ok(標本一覧) => {
             table::表示する(&標本一覧);

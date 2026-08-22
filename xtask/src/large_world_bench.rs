@@ -8,7 +8,7 @@ use std::process::ExitCode;
 
 pub(crate) use arguments::大規模世界の計測指定;
 
-pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub(crate) fn 大規模世界の固定経路を計測する(引数一覧: &[String]) -> ExitCode {
     let 指定 = match arguments::引数を読む(引数一覧) {
         Ok(指定) => 指定,
         Err(理由) => {

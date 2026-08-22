@@ -23,7 +23,7 @@ const 実行時形式のパス: &str = "target/runtime_assets/prop_banded_chest.
 /// アセットが宣言している材質の数。glbは材質スロットごとにプリミティブを分けるため、シーンパスの発行数もこの数になる。
 const 材質の数: usize = 3;
 
-pub fn 実行する() -> ExitCode {
+pub fn 多材質小物の描画を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] prop-multi-material-draw成功: {要約}");

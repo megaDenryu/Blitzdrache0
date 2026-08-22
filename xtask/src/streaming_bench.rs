@@ -11,7 +11,7 @@ use std::process::ExitCode;
 
 const 既定条件Aフレーム数: &str = "3600";
 
-pub fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub fn ストリーミング経路の資源を計測する(引数一覧: &[String]) -> ExitCode {
     let フレーム数 = match 引数一覧 {
         [] => 既定条件Aフレーム数.to_string(),
         [フレーム数] if フレーム数.parse::<u32>().is_ok() => フレーム数.clone(),

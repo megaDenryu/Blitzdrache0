@@ -23,7 +23,7 @@ use std::process::ExitCode;
 
 use error::時間再構成の検収エラー;
 
-pub fn 実行する() -> ExitCode {
+pub fn 時間再構成を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] temporal-reconstruction成功: {要約}");

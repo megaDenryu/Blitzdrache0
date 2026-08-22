@@ -26,7 +26,7 @@ use crate::acceptance::{
 /// この実行を指す名前。絵は書き出さないが、失敗の文面がどの実行かを名指すために要る。
 const 大気の焼き上げの実行名: 検収の実行名 = 検収の実行名::定数から生成する("atmosphere_lut");
 
-pub fn 実行する() -> ExitCode {
+pub fn 大気のベイク済み画像の生成を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] atmosphere-lut成功: {要約}");

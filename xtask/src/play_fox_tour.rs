@@ -13,7 +13,7 @@ use crate::fox_tour_map_seed::乱数の種の読み取り結果;
 /// この起動を指す名前。絵を1枚も書き出さないが、失敗の文面がどの起動かを名指すために要る。
 const 遊ぶ起動の実行名: 検収の実行名 = 検収の実行名::定数から生成する("fox_tour_play");
 
-pub fn 実行する() -> ExitCode {
+pub fn クソゲー1本目を起動する() -> ExitCode {
     これから遊ぶマップの乱数の種を知らせる();
     println!("[xtask] キツネの場所巡りを起動する(Enterではじめる、矢印キーで歩く、Escで終了確認)");
     let 実行環境 = crate::fox_tour_launch::場所巡りの世界を遊ぶ実行環境を作る();

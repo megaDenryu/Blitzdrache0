@@ -38,7 +38,7 @@ use crate::release_build::計測の生値のファイル;
 const 出力ディレクトリ: &str = "target/indirect_cost";
 const シェーダーコピー先: &str = "target/indirect_cost_shaders";
 
-pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub(crate) fn 間接照明費用を計測する(引数一覧: &[String]) -> ExitCode {
     match 計測する(引数一覧) {
         Ok(要約) => {
             println!("[xtask] indirect-cost成功: {要約}");

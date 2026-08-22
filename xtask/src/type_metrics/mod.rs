@@ -33,7 +33,7 @@ use observation::観測;
 const 走査対象ディレクトリ一覧: [&str; 2] = ["crates", "xtask/src"];
 const 表示件数: usize = 20;
 
-pub fn 実行する() -> ExitCode {
+pub fn 型ごとの分量を計測する() -> ExitCode {
     let ファイル一覧 = match file_scan::対象ファイル一覧を集める(&走査対象ディレクトリ一覧, &["rs"]) {
         Ok(一覧) => 一覧,
         Err(誤り) => {

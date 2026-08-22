@@ -34,7 +34,7 @@ const カメラ往復の刻み: &str = "120";
 /// 実行へ渡すRAMとVRAMの上限。`run`が同じ値を引数として渡し、ここは判定に使う。
 const 上限バイト数: u64 = 16 * 1024 * 1024;
 
-pub fn 実行する() -> ExitCode {
+pub fn 地形植生ストリーミングを確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] instance-stream成功: {要約}");

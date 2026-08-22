@@ -34,7 +34,7 @@ use crate::acceptance::検収エラー;
 
 const 出力ディレクトリ: &str = "target/shadow_loss";
 
-pub fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub fn 影の欠落を計測する(引数一覧: &[String]) -> ExitCode {
     match 測る(引数一覧) {
         Ok(要約) => {
             println!("[xtask] shadow-loss成功: {要約}");

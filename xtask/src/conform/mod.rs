@@ -42,7 +42,7 @@ use violation::違反;
 const 検査対象ディレクトリ一覧: [&str; 4] = ["crates", "xtask/src", "shaders", "editor_web/src"];
 const 検査対象拡張子一覧: [&str; 4] = ["rs", "slang", "md", "ts"];
 
-pub fn 実行する() -> ExitCode {
+pub fn 規約を検査する() -> ExitCode {
     match 全違反を集める() {
         Ok(違反一覧) => 結果を表示する(違反一覧),
         Err(破れ) => {

@@ -18,7 +18,7 @@ use blitz_asset_compiler::{テクスチャ格納方針, 散布の焼き方, 遠�
 
 use crate::asset_generator::{世界名, 同居植生の個体数, 生成器エラー};
 
-pub use command_arguments::実行する;
+pub use command_arguments::実行時アセットを生成する;
 pub use default_root::*;
 
 use bake_specification::実行時形式を焼く指定;

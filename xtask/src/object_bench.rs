@@ -19,7 +19,7 @@ const スモークの描画対象数: &str = "2";
 const 光と圧縮を外す選択肢: [&str; 2] = ["--unlit", "--no-post"];
 const 報告を出させる選択肢: [&str; 3] = ["--report-gpu-times", "--report-frame-times", "--report-memory"];
 
-pub fn 実行する() -> ExitCode {
+pub fn 対象数別に性能を計測する() -> ExitCode {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }

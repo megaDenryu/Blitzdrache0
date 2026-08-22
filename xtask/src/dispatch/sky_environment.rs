@@ -10,17 +10,17 @@ use crate::{
 
 pub(super) fn 割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
-        "sky-draw" => Some(sky_draw::実行する()),
-        "sky-state" => Some(sky_state::実行する()),
-        "sky-lut" => Some(sky_lut::実行する(引数一覧)),
-        "atmosphere-lut" => Some(atmosphere_lut::実行する()),
-        "distant-environment" => Some(distant_environment::実行する()),
-        "derived-environment" => Some(derived_environment::実行する()),
-        "indirect-probe" => Some(indirect_probe::実行する()),
-        "local-visibility" => Some(local_visibility::実行する()),
-        "motion-vector" => Some(motion_vector::実行する()),
-        "temporal-reconstruction" => Some(temporal_reconstruction::実行する()),
-        "sky-time" => Some(sky_time::実行する()),
+        "sky-draw" => Some(sky_draw::空の描画を確認する()),
+        "sky-state" => Some(sky_state::天空状態の導出を確認する()),
+        "sky-lut" => Some(sky_lut::大気のベイク済み画像の更新を確認する(引数一覧)),
+        "atmosphere-lut" => Some(atmosphere_lut::大気のベイク済み画像の生成を確認する()),
+        "distant-environment" => Some(distant_environment::遠方環境画像の生成を確認する()),
+        "derived-environment" => Some(derived_environment::派生環境画像の生成を確認する()),
+        "indirect-probe" => Some(indirect_probe::間接照明の解析値を突き合わせる()),
+        "local-visibility" => Some(local_visibility::局所可視度を突き合わせる()),
+        "motion-vector" => Some(motion_vector::動きベクトルを確認する()),
+        "temporal-reconstruction" => Some(temporal_reconstruction::時間再構成を確認する()),
+        "sky-time" => Some(sky_time::時刻別の空を確認する()),
         _ => None,
     }
 }

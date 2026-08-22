@@ -11,7 +11,7 @@ use super::default_root::{
 use super::{個体数を添えて生成する, 生成する};
 use crate::asset_generator::{世界名, 同居植生の個体数};
 
-pub fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub fn 実行時アセットを生成する(引数一覧: &[String]) -> ExitCode {
     let 成否 = match 引数一覧 {
         [] => 既定を生成する() && 地形世界を既定で生成する() && 植生世界を既定で生成する() && 夜の多光源世界を既定で生成する(),
         [ソース, 出力] => 生成する(Path::new(ソース), Path::new(出力), 世界名::板の世界),

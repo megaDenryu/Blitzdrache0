@@ -5,7 +5,7 @@ use std::process::ExitCode;
 
 use crate::asset_generator::{アセット生成器の起動, 生成の指定, 生成器エラー};
 
-pub fn 実行する() -> ExitCode {
+pub fn 検証用ソースアセットを生成する() -> ExitCode {
     if 生成する() { ExitCode::SUCCESS } else { ExitCode::FAILURE }
 }
 

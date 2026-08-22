@@ -31,7 +31,7 @@ use time_of_day_argument::一日内秒を読む;
 
 const 出力ディレクトリ: &str = "target/sky_lut";
 
-pub fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub fn 大気のベイク済み画像の更新を確認する(引数一覧: &[String]) -> ExitCode {
     let 時刻 = match 一日内秒を読む(引数一覧) {
         Ok(時刻) => 時刻,
         Err(理由) => {

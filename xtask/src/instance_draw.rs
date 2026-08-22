@@ -30,7 +30,7 @@ const 計数判定の個体数: u64 = 64;
 const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(12);
 const 起動引数: [&str; 4] = ["--unlit", "--no-post", "--report-draw-issue", "--report-memory"];
 
-pub fn 実行する() -> ExitCode {
+pub fn 植生インスタンスの描画を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] instance-draw成功: {要約}");

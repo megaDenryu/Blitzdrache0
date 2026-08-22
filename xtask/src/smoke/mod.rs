@@ -9,7 +9,7 @@ mod stages;
 
 use std::process::ExitCode;
 
-pub fn 実行する() -> ExitCode {
+pub fn スモークを実行する() -> ExitCode {
     if !crate::gen_source_assets::生成する() {
         return ExitCode::FAILURE;
     }

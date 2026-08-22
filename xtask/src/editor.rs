@@ -16,7 +16,7 @@ use self::project_root::プロジェクトルート;
 pub(crate) mod building_outline_catalog;
 pub(crate) mod project_root;
 
-pub fn 実行する(追加引数: &[String]) -> Result<(), String> {
+pub fn エディターサーバーを起動する(追加引数: &[String]) -> Result<(), String> {
     let リポジトリルート = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
     let editor_web = リポジトリルート.join("editor_web");
     let プロジェクトルート = プロジェクトルート::引数から解く(追加引数, &リポジトリルート);

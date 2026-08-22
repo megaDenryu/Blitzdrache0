@@ -18,7 +18,7 @@ use error::資源表世代の差し替えの検収エラー;
 
 const 出力ディレクトリ: &str = "target/material_reload_draw";
 
-pub fn 実行する() -> ExitCode {
+pub fn 材質差し替えの描画を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] material-reload-draw成功: {要約}");

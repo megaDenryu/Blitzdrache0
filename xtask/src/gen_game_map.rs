@@ -18,7 +18,7 @@ use error::種の引数の破れ;
 /// 種を導く選択肢の綴り。この綴りの直後の1語が種の値である。
 const 種の選択肢の綴り: &str = "--seed";
 
-pub fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub fn クソゲー1本目の地図を生成する(引数一覧: &[String]) -> ExitCode {
     let 種 = match 引数一覧から種を読む(引数一覧) {
         Ok(種) => 種,
         Err(理由) => {

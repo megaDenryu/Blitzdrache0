@@ -6,7 +6,7 @@ use crate::conform;
 
 pub fn 検証列を実行する() -> ExitCode {
     println!("[xtask] conform を実行");
-    if conform::実行する() != ExitCode::SUCCESS {
+    if conform::規約を検査する() != ExitCode::SUCCESS {
         eprintln!("[xtask] conform が失敗した。ここで中断する");
         return ExitCode::FAILURE;
     }

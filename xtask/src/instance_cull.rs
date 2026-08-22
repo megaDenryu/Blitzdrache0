@@ -25,7 +25,7 @@ const 正判定シーン: 検収シーン名 = 検収シーン名::生成する(
 const 負対照シーンの綴り: &str = "vegetation_cull";
 const 負対照シーン: 検収シーン名 = 検収シーン名::生成する(負対照シーンの綴り);
 
-pub fn 実行する() -> ExitCode {
+pub fn 植生の可視判定を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] instance-cull成功: {要約}");

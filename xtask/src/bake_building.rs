@@ -24,7 +24,7 @@ const 検証世界の出力ルート: &str = "target/one_building_assets";
 /// 焼きまでで止めて窓を開かない選択肢。機械の検収がこれを付けて呼ぶ。
 const 焼きまでで止める選択肢: &str = "--bake-only";
 
-pub fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub fn 建物1棟を焼いて起動する(引数一覧: &[String]) -> ExitCode {
     match 焼いて開く(引数一覧) {
         Ok(コード) => コード,
         Err(誤り) => {

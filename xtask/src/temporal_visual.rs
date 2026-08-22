@@ -28,7 +28,7 @@ const 出力ディレクトリ: &str = "target/temporal_visual";
 /// 4時刻すべてを撮らないのは、目視の対がその都度2枚に増え、見る側の負担が増えるためである。
 const 撮る時刻のファイル名: [&str; 2] = ["dawn", "noon"];
 
-pub fn 実行する() -> ExitCode {
+pub fn 時間再構成を目視確認する() -> ExitCode {
     match 撮る() {
         Ok(要約) => {
             println!("[xtask] temporal-visual成功: {要約}");

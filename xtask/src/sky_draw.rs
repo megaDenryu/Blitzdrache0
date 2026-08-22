@@ -23,7 +23,7 @@ const 出力ディレクトリ: &str = "target/sky_draw";
 /// 空パスの独立枠(ミリ秒)。予算はポスト処理の枠へ混ぜない。
 const 空パスの予算ミリ秒: f64 = 1.0;
 
-pub fn 実行する() -> ExitCode {
+pub fn 空の描画を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] sky-draw成功: {要約}");

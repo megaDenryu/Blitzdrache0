@@ -26,7 +26,7 @@ const 出力ディレクトリ: &str = "target/prop_draw";
 /// その場合はシーンの読込がカタログ未登録で落ちるため、焼いた直後にこの実在を確かめて落とす。
 const 検収世界: 検収世界の用意 = 検収世界の用意::生成する("小物の描画", "target/runtime_assets/prop_wooden_crate.blitzasset");
 
-pub fn 実行する() -> ExitCode {
+pub fn 小物1体の描画を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] prop-draw成功: {要約}");

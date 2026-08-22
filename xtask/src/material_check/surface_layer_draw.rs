@@ -25,7 +25,7 @@ use world_source::検収用の世界のソース;
 
 const 出力ディレクトリ: &str = "target/surface_layer_draw";
 
-pub fn 実行する() -> ExitCode {
+pub fn 地表の層の重ね合わせの描画を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] surface-layer-draw成功: {要約}");

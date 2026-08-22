@@ -28,7 +28,7 @@ const フレーム数: 描画フレーム数 = 描画フレーム数::生成す�
 const 夜の一日内秒: &str = "75600";
 const 昼の一日内秒: &str = "43200";
 
-pub fn 実行する() -> ExitCode {
+pub fn 布ライティングの追従を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] cloth-night成功: {要約}");

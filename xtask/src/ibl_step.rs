@@ -32,7 +32,7 @@ use crate::release_build::計測の生値のファイル;
 use crate::sample_world_region::固定領域一覧を作る;
 
 const 出力ディレクトリ: &str = "target/ibl_step";
-pub fn 実行する() -> ExitCode {
+pub fn 遠方環境更新境界を実測する() -> ExitCode {
     match 計測する() {
         Ok(要約) => {
             println!("[xtask] ibl-step成功: {要約}");

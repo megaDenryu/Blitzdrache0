@@ -16,7 +16,7 @@ use error::板の材質境界の検収エラー;
 
 const 出力ディレクトリ: &str = "target/multi_material_draw";
 
-pub fn 実行する() -> ExitCode {
+pub fn 多材質シーンの描画を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] multi-material-draw成功: {要約}");

@@ -19,7 +19,7 @@ use crate::dispatch;
 
 use super::command_catalog;
 
-pub(crate) fn 実行する() -> ExitCode {
+pub(crate) fn 対話メニューを起動する() -> ExitCode {
     let 項目一覧 = command_catalog::全件();
     let 選択位置 = if 対話端末か() {
         match interactive::選択する(&項目一覧) {

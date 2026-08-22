@@ -20,7 +20,7 @@ use crate::acceptance::{
 /// この実行を指す名前。絵は書き出さないが、失敗の文面がどの実行かを名指すために要る。
 const 遠方環境の実行名: 検収の実行名 = 検収の実行名::定数から生成する("distant_environment");
 
-pub fn 実行する() -> ExitCode {
+pub fn 遠方環境画像の生成を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] distant-environment成功: {要約}");

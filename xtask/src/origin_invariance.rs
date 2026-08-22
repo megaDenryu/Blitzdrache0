@@ -26,7 +26,7 @@ fn 静止条件(大域ずらし量: [f64; 3]) -> 検査条件 {
     }
 }
 
-pub fn 実行する() -> ExitCode {
+pub fn 原点移動の不変性を確認する() -> ExitCode {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }

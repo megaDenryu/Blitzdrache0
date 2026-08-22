@@ -29,7 +29,7 @@ use crate::multi_light_world::world;
 
 const 出力ディレクトリ: &str = "target/cluster_lights";
 
-pub fn 実行する() -> ExitCode {
+pub fn 多光源クラスタを確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] cluster-lights成功: {要約}");

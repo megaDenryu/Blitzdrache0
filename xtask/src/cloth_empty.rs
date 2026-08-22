@@ -27,7 +27,7 @@ const フレーム数: 描画フレーム数 = 描画フレーム数::生成す�
 const 布ありの引数: [&str; 4] = ["--no-post", "--report-draw-issue", "--report-memory", "--cloth"];
 const 布なしの引数: [&str; 3] = ["--no-post", "--report-draw-issue", "--report-memory"];
 
-pub fn 実行する() -> ExitCode {
+pub fn 視錐台外の布描画を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] cloth-empty成功: {要約}");

@@ -45,7 +45,7 @@ const 全遮蔽の符号値: u8 = 0;
 const 中間の符号値: u8 = 128;
 const 遮蔽なしの符号値: u8 = 255;
 
-pub fn 実行する() -> ExitCode {
+pub fn 局所可視度を突き合わせる() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] local-visibility成功: {要約}");

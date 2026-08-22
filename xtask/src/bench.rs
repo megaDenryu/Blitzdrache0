@@ -37,7 +37,7 @@ impl 実表示計測 {
     }
 }
 
-pub fn 実行する() -> ExitCode {
+pub fn 固定シーンを計測する() -> ExitCode {
     条件を指定して実行する(実表示計測::なし)
 }
 
@@ -49,7 +49,7 @@ pub fn 実表示計測つきで実行する() -> ExitCode {
 
 fn 条件を指定して実行する(実表示計測: 実表示計測) -> ExitCode {
     println!("[xtask] ベンチ用アセットの取得確認");
-    if fetch_assets::実行する() != ExitCode::SUCCESS {
+    if fetch_assets::標準サンプルを取得する() != ExitCode::SUCCESS {
         eprintln!("[xtask] benchのアセット取得に失敗した");
         return ExitCode::FAILURE;
     }

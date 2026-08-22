@@ -24,7 +24,7 @@ use crate::acceptance::{
 /// この実行を指す名前。絵は書き出さないが、失敗の文面がどの実行かを名指すために要る。
 const 天空状態の実行名: 検収の実行名 = 検収の実行名::定数から生成する("sky_state");
 
-pub fn 実行する() -> ExitCode {
+pub fn 天空状態の導出を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] sky-state成功: {要約}");

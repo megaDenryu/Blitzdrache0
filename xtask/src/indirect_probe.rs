@@ -42,7 +42,7 @@ const 方位の違う夜の一日内秒: &str = "68277";
 /// 破綻防止帯を測る時刻。太陽が高く、大気から焼いた遠方環境が最も明るくなる条件である。
 const 昼の一日内秒: &str = "43200";
 
-pub fn 実行する() -> ExitCode {
+pub fn 間接照明の解析値を突き合わせる() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] indirect-probe成功: {要約}");

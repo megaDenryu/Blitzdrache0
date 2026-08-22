@@ -4,7 +4,7 @@ mod arguments;
 
 use std::process::ExitCode;
 
-pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub(crate) fn 大規模世界アセットを生成する(引数一覧: &[String]) -> ExitCode {
     let 広がり = match arguments::世界の広がりを読む(引数一覧) {
         Ok(広がり) => 広がり,
         Err(理由) => {

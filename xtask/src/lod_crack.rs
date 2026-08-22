@@ -11,7 +11,7 @@ use crate::acceptance::{描画検収の実行環境, 検収の実行名};
 
 const 出力ディレクトリ: &str = "target/lod_crack";
 
-pub fn 実行する() -> ExitCode {
+pub fn 地形段差の継ぎ目を確認する() -> ExitCode {
     if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
         return ExitCode::FAILURE;
     }

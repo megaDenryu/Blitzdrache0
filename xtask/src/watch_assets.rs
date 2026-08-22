@@ -9,7 +9,7 @@ use std::process::ExitCode;
 
 use crate::asset_generator::{アセット生成器の起動, 生成の指定, 生成器エラー};
 
-pub fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub fn アセットを監視して再生成する(引数一覧: &[String]) -> ExitCode {
     let (ソース, 出力) = match 引数一覧 {
         [] => (PathBuf::from("assets"), PathBuf::from("target/runtime_assets")),
         [ソース, 出力] => (PathBuf::from(ソース), PathBuf::from(出力)),

@@ -20,7 +20,7 @@ use blitz_asset_compiler::{
 
 use super::project_root::プロジェクトルート;
 
-pub fn 実行する(引数一覧: &[String]) -> Result<(), String> {
+pub fn 建物外形カタログを書き出す(引数一覧: &[String]) -> Result<(), String> {
     let リポジトリルート = Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
     let プロジェクトルート = プロジェクトルート::引数から解く(引数一覧, &リポジトリルート);
     let 出力 = 既定のファイルへ書き出す(&リポジトリルート, &プロジェクトルート)?;

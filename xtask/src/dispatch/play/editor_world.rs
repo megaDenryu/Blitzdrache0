@@ -10,7 +10,7 @@ const 実行名: 検収の実行名 = 検収の実行名::定数から生成す�
 const シーン名: 検収シーン名 = 検収シーン名::生成する("terrain_editor_world");
 const 容量上限バイト: &str = "67108864";
 
-pub(super) fn 実行する() -> ExitCode {
+pub(super) fn エディター世界を起動する() -> ExitCode {
     let 環境 = 世界を読ませて報告を採る実行環境::作る(
         アプリの起こし方::毎回cargoにリリース版を構築させて起動する,
         実行時アセットルート::綴りから生成する("target/editor_world_assets"),

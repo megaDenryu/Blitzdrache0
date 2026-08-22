@@ -27,7 +27,7 @@ use std::process::ExitCode;
 
 use error::大気の期待値の焼き出しエラー;
 
-pub fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub fn 大気の期待値を生成する(引数一覧: &[String]) -> ExitCode {
     let Some(参照パス) = 引数一覧.first() else {
         eprintln!("[xtask] gen-atmosphere-reference失敗: precomputed_atmospheric_scatteringの作業コピーのパスを引数に渡すこと");
         return ExitCode::FAILURE;

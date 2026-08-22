@@ -16,7 +16,7 @@ use plan::実行の別;
 
 const 出力ディレクトリ: &str = "target/distant_view";
 
-pub(crate) fn 実行する(引数一覧: &[String]) -> ExitCode {
+pub(crate) fn 遠景を撮影して判定する(引数一覧: &[String]) -> ExitCode {
     match 検収する(引数一覧) {
         Ok(要約) => {
             println!("[xtask] distant-view成功: {要約}");

@@ -28,7 +28,7 @@ use error::ブロック圧縮の検収エラー;
 
 const 出力ディレクトリ: &str = "target/texture_compression";
 
-pub fn 実行する() -> ExitCode {
+pub fn テクスチャ圧縮を確認する() -> ExitCode {
     match ブロック圧縮の絵を撮って判定する() {
         Ok(要約) => {
             println!("[xtask] texture-compression成功: {要約}");

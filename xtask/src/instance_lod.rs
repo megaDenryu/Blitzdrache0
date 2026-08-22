@@ -32,7 +32,7 @@ const 帯の内側の刻み: &str = "3";
 /// 帯を超える刻み。同じ弧が55メートルを超えるため段が粗い側へ入れ替わり、帯の内側の判定が空振りでないことを示す。
 const 帯の外側の刻み: &str = "12";
 
-pub fn 実行する() -> ExitCode {
+pub fn 植生段の切替を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] instance-lod成功: {要約}");

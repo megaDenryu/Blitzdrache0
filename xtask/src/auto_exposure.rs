@@ -29,7 +29,7 @@ const 出力ディレクトリ: &str = "target/auto_exposure";
 /// 判定に使う時刻。正午は明部が上寄りで画面全体の分布が広く、集計と導出の食い違いが最も出やすい。
 const 正午の一日内秒: &str = "43200";
 
-pub(crate) fn 実行する() -> ExitCode {
+pub(crate) fn 自動露出を判定する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] auto-exposure成功: {要約}");

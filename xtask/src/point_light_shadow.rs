@@ -31,7 +31,7 @@ use crate::multi_light_world::world;
 
 const 出力ディレクトリ: &str = "target/point_light_shadow";
 
-pub fn 実行する() -> ExitCode {
+pub fn 点光源の影を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] point-light-shadow成功: {要約}");

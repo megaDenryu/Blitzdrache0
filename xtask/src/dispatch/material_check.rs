@@ -7,10 +7,10 @@ use crate::material_check::{material_reload_draw, multi_material_draw, prop_mult
 
 pub(super) fn 割り当てる(名前: &str) -> Option<ExitCode> {
     match 名前 {
-        "prop-multi-material-draw" => Some(prop_multi_material_draw::実行する()),
-        "multi-material-draw" => Some(multi_material_draw::実行する()),
-        "surface-layer-draw" => Some(surface_layer_draw::実行する()),
-        "material-reload-draw" => Some(material_reload_draw::実行する()),
+        "prop-multi-material-draw" => Some(prop_multi_material_draw::多材質小物の描画を確認する()),
+        "multi-material-draw" => Some(multi_material_draw::多材質シーンの描画を確認する()),
+        "surface-layer-draw" => Some(surface_layer_draw::地表の層の重ね合わせの描画を確認する()),
+        "material-reload-draw" => Some(material_reload_draw::材質差し替えの描画を確認する()),
         _ => None,
     }
 }

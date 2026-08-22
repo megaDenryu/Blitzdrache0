@@ -9,10 +9,10 @@ use crate::{conform, smoke, type_metrics, verify};
 pub(super) fn 割り当てる(名前: &str, _引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
         "verify" => Some(verify::検証列を実行する()),
-        "conform" => Some(conform::実行する()),
-        "type-metrics" => Some(type_metrics::実行する()),
-        "smoke" => Some(smoke::実行する()),
-        "menu" => Some(menu::実行する()),
+        "conform" => Some(conform::規約を検査する()),
+        "type-metrics" => Some(type_metrics::型ごとの分量を計測する()),
+        "smoke" => Some(smoke::スモークを実行する()),
+        "menu" => Some(menu::対話メニューを起動する()),
         _ => None,
     }
 }

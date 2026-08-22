@@ -21,7 +21,7 @@ use crate::day_moment::代表時刻一覧;
 
 const 出力ディレクトリ: &str = "target/terrain_visual";
 
-pub fn 実行する() -> ExitCode {
+pub fn 地形庭を目視確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] terrain-visual成功: {要約}");

@@ -6,7 +6,7 @@ use std::process::Command;
 /// 契約を書き出すクレート名の一覧。いずれも`typescript`フィーチャの`contract_export`ビンを持つ。
 const 契約を持つクレート一覧: [&str; 1] = ["editor_server"];
 
-pub fn 実行する() -> Result<(), String> {
+pub fn 型契約を書き出す() -> Result<(), String> {
     let リポジトリルート = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
     for クレート名 in 契約を持つクレート一覧 {
         println!("== 契約書き出し: {クレート名} ==");

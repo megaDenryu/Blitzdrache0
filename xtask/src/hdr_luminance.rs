@@ -27,7 +27,7 @@ use crate::day_moment::代表時刻一覧;
 
 const 出力ディレクトリ: &str = "target/hdr_luminance";
 
-pub(crate) fn 実行する() -> ExitCode {
+pub(crate) fn hdr輝度を実測する() -> ExitCode {
     match 計測する() {
         Ok(要約) => {
             println!("[xtask] hdr-luminance成功: {要約}");
