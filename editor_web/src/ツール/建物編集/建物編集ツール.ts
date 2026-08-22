@@ -22,9 +22,19 @@ export class 建物編集ツール extends LV2HtmlComponentBase {
         this._componentRoot = div().setStyleCSS({ width: '100%', height: '100%' }).child(this.画面)
 
         this.画面.表示名入力.setValue(表示名)
-        this.同期.画面の出来事を配線する()
+        this.画面の出来事を同期サービスへ結ぶ()
         this.同期.表示を作り直す()
         void this.同期.永続化.読み直す(() => this.同期.表示を作り直す())
+    }
+
+    // 画面の押しボタンを同期サービスのメソッドへ結ぶ。配線をこのツールが持つのは、ここがこの道具の
+    // コンポジションルートであり、画面とサービスの両方を知ってよい唯一の場所だからである。
+    private 画面の出来事を同期サービスへ結ぶ(): void {
+        this.画面.取り消しボタン.onClick(() => this.同期.取り消す())
+        this.画面.やり直しボタン.onClick(() => this.同期.やり直す())
+        this.画面.表示名入力.onChange(() => this.同期.表示名を変える())
+        this.画面.永続化.on保存クリック(() => void this.同期.永続化.保存する())
+        this.画面.永続化.on読込クリック(() => void this.同期.永続化.読み直す(() => this.同期.表示を作り直す()))
     }
 
     public 寸法を合わせる(): void {}

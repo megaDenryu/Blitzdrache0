@@ -1,5 +1,6 @@
 import { div, span, textInput, DivC, TextInputC, LV2HtmlComponentBase } from 'sengen-ui'
 import { 永続化パネル } from '../../チャンク編集/画面/パネル/永続化/index.ts'
+import { 入口の向きパネル } from './入口の向きパネル.ts'
 import { 平面図パネル } from './平面図パネル.ts'
 import { 筆パネル } from './筆パネル.ts'
 import { 階の切替パネル } from './階の切替パネル.ts'
@@ -11,6 +12,7 @@ export class 建物編集画面 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     public readonly 平面図: 平面図パネル = new 平面図パネル()
     public readonly 筆: 筆パネル = new 筆パネル()
+    public readonly 入口の向き: 入口の向きパネル = new 入口の向きパネル()
     public readonly 階の切替: 階の切替パネル = new 階の切替パネル()
     public readonly 永続化: 永続化パネル = new 永続化パネル()
     public readonly 表示名入力: TextInputC
@@ -35,6 +37,7 @@ export class 建物編集画面 extends LV2HtmlComponentBase {
                     div({ class: 横並び }).child(this.表示名入力),
                 ]),
                 this.階の切替,
+                this.入口の向き,
                 this.筆,
                 div({ class: セクション }).childs([
                     div({ class: セクション見出し, text: '平面図' }),
@@ -61,6 +64,7 @@ export class 建物編集画面 extends LV2HtmlComponentBase {
     public override delete(): void {
         this.平面図.delete()
         this.筆.delete()
+        this.入口の向き.delete()
         this.階の切替.delete()
         this.永続化.delete()
         this.表示名入力.delete()

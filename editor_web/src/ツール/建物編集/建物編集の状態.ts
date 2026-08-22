@@ -1,13 +1,15 @@
 import type { 建物の格子 } from '../../生成/編集資源契約.ts'
+import { 煙突の段数 } from './編集モデル/index.ts'
 import { 建物編集の操作履歴, type 升目への筆, type 面への筆 } from './操作コマンド/index.ts'
 
-// 建物1件を編集しているあいだの状態。操作履歴と、いま選んでいる筆と階を持つ。
+// 建物1件を編集しているあいだの状態。操作履歴と、いま選んでいる筆と階と煙突の段数を持つ。
 // 画面から分けるのは、同じ状態を画面の作り直しをまたいで保つためである。
 export class 建物編集の状態 {
     private _履歴: 建物編集の操作履歴
     private _選んだ升目への筆: 升目への筆 = '升目を置く'
     private _選んだ面への筆: 面への筆 = '平壁'
     private _選んだ階 = 0
+    private _選んだ煙突の段数: 煙突の段数 = 煙突の段数.既定を作る()
 
     public constructor(格子: 建物の格子) {
         this._履歴 = new 建物編集の操作履歴(格子)
@@ -34,6 +36,14 @@ export class 建物編集の状態 {
 
     public get 選んだ階(): number {
         return this._選んだ階
+    }
+
+    public get 選んだ煙突の段数(): 煙突の段数 {
+        return this._選んだ煙突の段数
+    }
+
+    public 煙突の段数を選ぶ(段数: 煙突の段数): void {
+        this._選んだ煙突の段数 = 段数
     }
 
     public 升目への筆を選ぶ(筆: 升目への筆): void {
