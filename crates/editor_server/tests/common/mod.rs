@@ -5,6 +5,7 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
+mod building_grid_fixture;
 mod building_outline_catalog_fixture;
 mod scatter_export_fixture;
 mod scatter_fixture;
@@ -15,6 +16,9 @@ use std::path::{Path, PathBuf};
 
 use editor_server::{ファイル保管庫, プロジェクトルート, リポジトリルート};
 
+pub use building_grid_fixture::{
+    初期の格子のjson, 升目を空にした格子のjson, 外部アセットの置き場があるか, 試験の建物定義の識別子
+};
 pub use building_outline_catalog_fixture::{カタログに無い識別子, 一間四方の家の識別子, 建物外形カタログを作る};
 pub use scatter_export_fixture::{
     散布を載せて書き出す, 書き出したチャンクソースを読む, 焼いたチャンクのバイト列を読む
@@ -66,10 +70,21 @@ impl Drop for 一時プロジェクト {
 /// 使うため、静的配信ディレクトリ(editor_web/dist)は存在せず代替応答になるが、
 /// API経路のテストには影響しない。
 pub fn ルーターを作る(一時プロジェクト: &一時プロジェクト) -> editor_server::経路正規化アプリ {
+    let カタログのファイル = blitz_asset_compiler::建物外形カタログのファイル::リポジトリルートから生成する(
+        一時プロジェクト.リポジトリルート().パス(),
+    );
+    let 保存係 = match editor_server::建物の格子の保存係::起動時の材料から生成する(
+        &一時プロジェクト.プロジェクトルート(),
+        カタログのファイル,
+        建物外形カタログを作る(),
+    ) {
+        Ok(保存係) => 保存係,
+        Err(原因) => panic!("一時プロジェクトの建物の格子の台帳を読めない: {原因}"),
+    };
     editor_server::ルーターを組み立てる(editor_server::サーバー状態::生成する(
         &一時プロジェクト.リポジトリルート(),
         &一時プロジェクト.プロジェクトルート(),
-        建物外形カタログを作る(),
+        保存係,
     ))
 }
 

@@ -3,6 +3,7 @@
 
 mod building;
 mod building_definition_id;
+mod building_grid;
 mod building_outline_catalog;
 mod chunk_coordinate;
 mod chunk_road;
@@ -25,6 +26,10 @@ mod world_structure_version;
 
 pub use building::建物の配置;
 pub use building_definition_id::建物定義ID;
+pub use building_grid::{
+    はめ口の値, 升目の宣言, 升目の屋根, 升目の床, 升目の座標, 升目の複体, 壁の外面の飾り, 壁の種類, 建物の格子, 建物の格子の一覧項目,
+    建物の格子の現在の形式版, 建物の格子の装飾,
+};
 pub use building_outline_catalog::{
     ベイ構造, 建物の入口方向, 建物の外接箱, 建物外形カタログ, 建物外形カタログの現在の形式版, 建物外形カタログ読み込みエラー, 建物外形定義,
     建物定義の用途,

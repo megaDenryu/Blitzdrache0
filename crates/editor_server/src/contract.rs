@@ -19,7 +19,7 @@ pub fn 契約ファイルの本文を組み立てる() -> String {
 
 pub fn 編集資源契約の本文を組み立てる() -> String {
     let 設定 = Config::new();
-    let 型宣言一覧: [String; 40] = [
+    let 型宣言一覧: [String; 51] = [
         <crate::プロジェクト情報応答 as TS>::decl(&設定),
         <crate::建物定義の用途 as TS>::decl(&設定),
         <crate::ベイ構造 as TS>::decl(&設定),
@@ -27,6 +27,17 @@ pub fn 編集資源契約の本文を組み立てる() -> String {
         <crate::建物の外接箱 as TS>::decl(&設定),
         <crate::建物外形定義 as TS>::decl(&設定),
         <crate::建物外形カタログ as TS>::decl(&設定),
+        <crate::壁の種類 as TS>::decl(&設定),
+        <crate::壁の外面の飾り as TS>::decl(&設定),
+        <crate::はめ口の値 as TS>::decl(&設定),
+        <crate::升目の座標 as TS>::decl(&設定),
+        <crate::升目の床 as TS>::decl(&設定),
+        <crate::升目の屋根 as TS>::decl(&設定),
+        <crate::升目の宣言 as TS>::decl(&設定),
+        <crate::升目の複体 as TS>::decl(&設定),
+        <crate::建物の格子の装飾 as TS>::decl(&設定),
+        <crate::建物の格子 as TS>::decl(&設定),
+        <crate::建物の格子の一覧項目 as TS>::decl(&設定),
         <crate::位置3次元 as TS>::decl(&設定),
         <crate::チャンク座標 as TS>::decl(&設定),
         <crate::世界の区画割り as TS>::decl(&設定),

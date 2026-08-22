@@ -6,9 +6,13 @@
 
 use std::{
     path::{Path, PathBuf},
-    sync::{Arc, Mutex},
+    sync::{Arc, Mutex, MutexGuard},
 };
 
+use axum::{http::StatusCode, response::Response};
+
+use crate::building_grid_store::建物の格子の保存係;
+use crate::failure_response::失敗応答を組み立てる;
 use crate::project_info_contract::プロジェクト情報応答;
 use crate::project_root::プロジェクトルート;
 use crate::repository_root::リポジトリルート;
@@ -22,13 +26,15 @@ pub struct サーバー状態 {
     プロジェクト情報: プロジェクト情報応答,
     静的配信ディレクトリ: PathBuf,
     リポジトリルート: リポジトリルート,
-    建物外形カタログ: 建物外形カタログ,
+    建物の格子の保存係: Arc<Mutex<建物の格子の保存係>>,
     ソースアセット書き出しの排他権: Arc<Mutex<()>>,
 }
 
 impl サーバー状態 {
     pub fn 生成する(
-        リポジトリルート: &リポジトリルート, プロジェクトルート: &プロジェクトルート, 建物外形カタログ: 建物外形カタログ
+        リポジトリルート: &リポジトリルート,
+        プロジェクトルート: &プロジェクトルート,
+        建物の格子の保存係: 建物の格子の保存係,
     ) -> Self {
         Self {
             保管庫: ファイル保管庫::生成する(プロジェクトルート),
@@ -38,7 +44,7 @@ impl サーバー状態 {
             ),
             静的配信ディレクトリ: リポジトリルート.静的配信ディレクトリ(),
             リポジトリルート: リポジトリルート.clone(),
-            建物外形カタログ,
+            建物の格子の保存係: Arc::new(Mutex::new(建物の格子の保存係)),
             ソースアセット書き出しの排他権: Arc::new(Mutex::new(())),
         }
     }
@@ -65,7 +71,19 @@ impl サーバー状態 {
         &self.ソースアセット書き出しの排他権
     }
 
-    pub fn 建物外形カタログ(&self) -> &建物外形カタログ {
-        &self.建物外形カタログ
+    /// 建物の格子の保存係を貸す。保存が台帳とカタログを同時に書き換えるため、読みも書きも1つの錠で守る。
+    pub fn 建物の格子の保存係を借りる(&self) -> Result<MutexGuard<'_, 建物の格子の保存係>, Box<Response>> {
+        self.建物の格子の保存係.lock().map_err(|誤り| {
+            Box::new(失敗応答を組み立てる(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "内部エラー",
+                誤り.to_string(),
+            ))
+        })
+    }
+
+    /// いま有効な建物外形カタログの写し。保存のたびに差し替わるため、呼び出しごとに錠を取って写しを作る。
+    pub fn 建物外形カタログの写しを取る(&self) -> Result<建物外形カタログ, Box<Response>> {
+        Ok(self.建物の格子の保存係を借りる()?.現在のカタログ().clone())
     }
 }

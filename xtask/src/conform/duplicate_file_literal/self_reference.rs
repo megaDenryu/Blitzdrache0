@@ -17,7 +17,7 @@ use crate::conform::source_lexing;
 use crate::conform::violation::違反;
 
 /// 注意: 載せてよいのは、対象の綴りを列挙する検査の台帳だけである。
-const 対象の綴りを列挙する台帳一覧: [&str; 27] = [
+const 対象の綴りを列挙する台帳一覧: [&str; 30] = [
     "xtask/src/conform/depth_contract/table/camera.rs",
     "xtask/src/conform/depth_contract/table/camera_compare.rs",
     "xtask/src/conform/depth_contract/table/shadow.rs",
@@ -32,6 +32,9 @@ const 対象の綴りを列挙する台帳一覧: [&str; 27] = [
     "xtask/src/conform/shader_binding/table/material_set.rs",
     "xtask/src/conform/shader_binding/table/view_pass_set.rs",
     "xtask/src/conform/shader_constant/table/atmosphere.rs",
+    "xtask/src/conform/shader_constant/table/building_grid_source.rs",
+    "xtask/src/conform/shader_constant/table/building_outline_catalog.rs",
+    "xtask/src/conform/shader_constant/table/editor_chunk_source.rs",
     "xtask/src/conform/shader_constant/table/auto_exposure.rs",
     "xtask/src/conform/shader_constant/table/clustered_lighting.rs",
     "xtask/src/conform/shader_constant/table/distant_environment.rs",
