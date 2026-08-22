@@ -9,6 +9,7 @@ mod assembly_parts;
 mod assembly_reference;
 mod asset_layout;
 mod atomic_file_write;
+mod building_grid_source;
 mod chunk_directory_source;
 mod compile;
 mod distant_terrain;
@@ -43,6 +44,7 @@ pub use asset_layout::{
     アセット配置エラー, ソースルート, チャンクの高さ格子, チャンクの高さ格子ソース, チャンク目録ソースの置き場, 世界のディレクトリ名, 世界の広がり,
     世界の広がりエラー, 場所巡りの世界のソースディレクトリ, 実行時形式のアセットの拡張子, 実行時形式の出力ルート, 高さ格子のファイル,
 };
+pub use building_grid_source::*;
 pub use chunk_directory_source::{チャンク目録ソース, チャンク目録ソースを読み込む, チャンク目録ソース項目};
 pub use compile::コンパイル済みシーン;
 pub use distant_terrain::{
@@ -74,12 +76,9 @@ pub use placement::{
     部品で組む散布の指定, 配置の種, 配置様式,
 };
 pub use runtime_compilation::{
-    ベイ構造, 建物の入口方向, 建物の外接箱, 建物外形カタログ, 建物外形カタログのファイル, 建物外形カタログを組み立てる, 建物外形カタログエラー,
-    建物定義, 建物定義ID, 建物定義の用途, 建物定義の識別子一覧, 空の建物外形カタログを作る,
-};
-pub use runtime_compilation::{
-    一間四方の骨格の並びの種類, 実行時アセットのコンパイル, 実行時アセットのコンパイルエラー, 家の並びの規模, 対象世界, 焼く世界の指定,
-    焼く世界の指定組み立て器, 診断の原型,
+    ベイ構造, 一間四方の骨格の並びの種類, 実行時アセットのコンパイル, 実行時アセットのコンパイルエラー, 家の並びの規模, 対象世界, 建物の入口方向,
+    建物の外接箱, 建物外形カタログ, 建物外形カタログのファイル, 建物外形カタログの組み立て係, 建物外形カタログエラー, 建物定義, 建物定義ID,
+    建物定義の用途, 建物定義の識別子一覧, 焼く世界の指定, 焼く世界の指定組み立て器, 空の建物外形カタログを作る, 診断の原型,
 };
 pub use scatter_bake::散布の焼き方;
 pub use scene_compiler::ソースアセットのコンパイル係;

@@ -8,6 +8,7 @@
 //! 参照: `_doc/設計/部品カタログと接合点.md`「部品カタログと展開器」
 
 mod frame_bay_choice;
+mod frame_bay_part_spelling;
 mod frame_chain_rule;
 mod frame_ornament_choice;
 mod frame_rule;
@@ -20,6 +21,11 @@ use crate::散らした種類の名前;
 use blitz_assembly::{生成の種, 組み立て規則};
 
 use super::super::archetype_identity::原型の識別;
+
+/// ベイ格子の変換と建物外形カタログの組み立てが使う口。綴りと部品の一覧の正本はこの束の中にあり、
+/// 呼び出し側が自分で綴りを書かないようにここから配る。
+pub(crate) use frame_bay_part_spelling::骨格方式の部品の綴りを組む;
+pub(crate) use part_list::骨格方式の全部品の一覧;
 
 /// どの規則で1件を組むか。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
