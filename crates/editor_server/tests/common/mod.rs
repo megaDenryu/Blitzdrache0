@@ -17,7 +17,7 @@ use std::path::{Path, PathBuf};
 use editor_server::{ファイル保管庫, プロジェクトルート, リポジトリルート};
 
 pub use building_grid_fixture::{
-    初期の格子のjson, 升目を空にした格子のjson, 外部アセットの置き場があるか, 格子の建物を1件置いた構造, 試験の建物定義の識別子,
+    初期の格子のjson, 升目を空にした格子のjson, 外部アセットの置き場があるか, 格子の台帳を読む, 格子の建物を1件置いた構造, 試験の建物定義の識別子,
 };
 pub use building_outline_catalog_fixture::{カタログに無い識別子, 一間四方の家の識別子, 建物外形カタログを作る};
 pub use scatter_export_fixture::{

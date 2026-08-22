@@ -14,6 +14,7 @@ mod definition_material;
 mod definition_source;
 mod error;
 mod outline_builder;
+mod replacement_candidate;
 
 pub use building_definition_id::建物定義ID;
 pub use catalog::{ベイ構造, 建物の入口方向, 建物の外接箱, 建物外形カタログ, 建物定義, 建物定義の用途};
@@ -21,6 +22,7 @@ pub use catalog_builder::建物外形カタログの組み立て係;
 pub use catalog_file::建物外形カタログのファイル;
 pub(crate) use definition_source::{全建物の部品識別一覧, 建物定義の正本, 識別子から建物定義を参照する};
 pub use error::建物外形カタログエラー;
+pub use replacement_candidate::差し替えの候補;
 
 /// 外部アセットの置き場が無い環境でも編集サーバーを起動できるようにするための、定義0件の版付きカタログ。
 /// 「定義が読めなかった」ことは呼び出し側が診断として印字し、無言の代替にはしない。

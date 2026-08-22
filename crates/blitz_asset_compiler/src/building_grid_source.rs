@@ -13,11 +13,14 @@ mod error;
 mod grid_definition;
 mod grid_file;
 mod ledger;
+mod ledger_entry;
 mod opening_source;
 mod source;
 
 #[cfg(test)]
 mod initial_grid_tests;
+#[cfg(test)]
+mod ledger_tests;
 #[cfg(test)]
 mod rejection_tests;
 #[cfg(test)]
@@ -29,6 +32,7 @@ pub use error::建物の格子のソースエラー;
 pub use grid_definition::格子由来の建物定義;
 pub use grid_file::建物の格子のファイル;
 pub use ledger::建物の格子の台帳;
+pub use ledger_entry::台帳に載る建物;
 pub use opening_source::{はめ口ソース, 壁の外面の飾りソース, 壁の種類ソース};
 pub use source::{
     升目の複体ソース, 建物の入口方向ソース, 建物の格子ソース, 建物の格子ソースの現在の形式版, 建物の装飾ソース
