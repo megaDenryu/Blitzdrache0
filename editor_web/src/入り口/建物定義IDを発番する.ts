@@ -1,3 +1,5 @@
+import { 建物定義IDを生成する, type 建物定義ID } from '../境界/建物定義ID.ts'
+
 // 新しい建物へ与える建物定義IDを1つ発番する純粋関数
 // (自由関数の許容2条件(a): 依存も副作用も持たない)。
 //
@@ -6,13 +8,13 @@
 // 既に在る識別子を避けるため、連番は既存の一覧を見て決める。
 const 接頭辞 = 'grid_building_'
 
-export function 建物定義IDを発番する(既にある識別子一覧: readonly string[]): string {
+export function 建物定義IDを発番する(既にある識別子一覧: readonly 建物定義ID[]): 建物定義ID {
     const 使われている番号 = new Set(既にある識別子一覧)
     for (let 番号 = 1; 番号 <= 既にある識別子一覧.length + 1; 番号 += 1) {
-        const 候補 = `${接頭辞}${番号}`
+        const 候補 = 建物定義IDを生成する(`${接頭辞}${番号}`)
         if (!使われている番号.has(候補)) return 候補
     }
-    return `${接頭辞}${既にある識別子一覧.length + 1}`
+    return 建物定義IDを生成する(`${接頭辞}${既にある識別子一覧.length + 1}`)
 }
 
 export function 新しい建物の既定の表示名(): string {

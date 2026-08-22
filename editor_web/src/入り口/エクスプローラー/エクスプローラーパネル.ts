@@ -1,6 +1,6 @@
 import { div, DivC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
-import type { チャンク座標, 建物の格子の一覧項目 } from '../../境界/通信/index.ts'
+import type { チャンク座標, 建物の格子の一覧項目, 建物定義ID } from '../../境界/通信/index.ts'
 import { コンテナ, セクション見出し } from './スタイル.css.ts'
 import { 単一項目ノードを作る } from './エクスプローラーパネル/単一項目ノード.ts'
 import { チャンク木 } from './エクスプローラーパネル/チャンク木.ts'
@@ -10,7 +10,7 @@ export interface Iエクスプローラー配線 {
     readonly on大域世界を開く: () => void
     readonly onチャンクを開く: (座標: チャンク座標) => void
     readonly onマテリアルを開く: () => void
-    readonly on建物を開く: (建物定義ID: string, 表示名: string) => void
+    readonly on建物を開く: (建物定義ID: 建物定義ID, 表示名: string) => void
     readonly on建物を作る: () => void
     readonly on使い方を開く: () => void
 }
@@ -71,7 +71,7 @@ export class エクスプローラーパネル extends LV2HtmlComponentBase impl
         this._建物木.一覧を作り直す(一覧)
     }
 
-    public 建物を選択表示する(建物定義ID: string): void {
+    public 建物を選択表示する(建物定義ID: 建物定義ID): void {
         this._選択表示を解除する()
         this._建物木.選択表示する(建物定義ID)
     }

@@ -1,5 +1,5 @@
 import { div, span, DivC } from 'sengen-ui'
-import type { 建物の格子の一覧項目 } from '../../../境界/通信/index.ts'
+import { 建物定義IDを生成する, type 建物の格子の一覧項目, type 建物定義ID } from '../../../境界/通信/index.ts'
 import { 木項目, 子木項目コンテナ, 子木項目, アイコン, フォルダアイコン } from '../スタイル.css.ts'
 
 // エクスプローラーの「建物」親ノードと、その配下に並ぶ保存済みの建物の一覧。
@@ -7,10 +7,10 @@ import { 木項目, 子木項目コンテナ, 子木項目, アイコン, フォ
 export class 建物木 {
     private readonly _親ノード: DivC
     private readonly _子項目コンテナ: DivC = div({ class: 子木項目コンテナ })
-    private readonly _ノードマップ: Map<string, DivC> = new Map<string, DivC>()
+    private readonly _ノードマップ: Map<建物定義ID, DivC> = new Map<建物定義ID, DivC>()
 
     public constructor(
-        private readonly _on建物を開く: (建物定義ID: string, 表示名: string) => void,
+        private readonly _on建物を開く: (建物定義ID: 建物定義ID, 表示名: string) => void,
         on建物を作る: () => void,
     ) {
         this._親ノード = div({ class: 木項目 })
@@ -26,16 +26,17 @@ export class 建物木 {
         this._子項目コンテナ.clearChildren()
         this._ノードマップ.clear()
         for (const 項目 of 一覧) {
+            const 建物定義ID = 建物定義IDを生成する(項目.識別子)
             const ラベル = `${項目.表示名} (${項目.升目の数}升目)`
             const ノード = div({ class: 子木項目 })
                 .childs([span({ class: アイコン, text: 'B' }), span({ text: ラベル }).setTooltip(項目.識別子)])
-                .onClick(() => this._on建物を開く(項目.識別子, 項目.表示名))
-            this._ノードマップ.set(項目.識別子, ノード)
+                .onClick(() => this._on建物を開く(建物定義ID, 項目.表示名))
+            this._ノードマップ.set(建物定義ID, ノード)
             this._子項目コンテナ.child(ノード)
         }
     }
 
-    public 選択表示する(建物定義ID: string): void {
+    public 選択表示する(建物定義ID: 建物定義ID): void {
         for (const [識別子, ノード] of this._ノードマップ.entries()) {
             ノード.setAttribute('data-selected', String(識別子 === 建物定義ID))
         }

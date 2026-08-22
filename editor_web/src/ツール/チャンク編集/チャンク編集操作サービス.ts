@@ -1,4 +1,5 @@
 import type { 編集コマンド, 建物外形定義 } from '../../生成/編集資源契約.ts'
+import { 建物定義IDを生成する, type 建物定義ID } from '../../境界/建物定義ID.ts'
 import type { ワールド編集状態 } from './編集モデル/index.ts'
 import { 編集コマンドを適用する, 差し戻しを適用する } from './操作コマンド/index.ts'
 import type { チャンク編集状態 } from './チャンク編集状態.ts'
@@ -6,7 +7,7 @@ import type { チャンク編集同期サービス } from './チャンク編集�
 
 // 操作コマンドの適用・取り消しおよびドメイン操作のディスパッチを担当するサービス。
 export class チャンク編集操作サービス {
-    private readonly _建物定義: Map<string, 建物外形定義> = new Map()
+    private readonly _建物定義: Map<建物定義ID, 建物外形定義> = new Map()
     public constructor(
         private readonly _モデル: ワールド編集状態,
         private readonly _UI状態: チャンク編集状態,
@@ -29,10 +30,10 @@ export class チャンク編集操作サービス {
 
     public 建物定義一覧を更新する(定義一覧: ReadonlyArray<建物外形定義>): void {
         this._建物定義.clear()
-        for (const 定義 of 定義一覧) this._建物定義.set(定義.識別子, 定義)
+        for (const 定義 of 定義一覧) this._建物定義.set(建物定義IDを生成する(定義.識別子), 定義)
     }
 
-    public 建物生成(建物定義ID: string): void {
+    public 建物生成(建物定義ID: 建物定義ID): void {
         const 定義 = this._建物定義.get(建物定義ID)
         if (定義 === undefined || 定義.用途 !== '家屋') throw new Error(`配置可能な家屋定義ではない: ${建物定義ID}`)
         const チャンク = this._モデル.チャンクを取得する(this._UI状態.対象チャンク座標)

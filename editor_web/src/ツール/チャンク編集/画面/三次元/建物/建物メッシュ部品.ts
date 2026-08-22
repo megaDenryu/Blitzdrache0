@@ -2,13 +2,14 @@ import { Group } from 'three'
 import { グループ } from 'SengenThree'
 import type { 建物の管理 } from '../../../編集モデル/index.ts'
 import type { 建物外形定義 } from '../../../../../生成/編集資源契約.ts'
+import { 建物定義IDを生成する, type 建物定義ID } from '../../../../../境界/建物定義ID.ts'
 import { 建物形状共有資源 } from './建物形状生成.ts'
 
 // 配置されている建物の簡易形状メッシュ群を統括・更新する部品。
 export class 建物メッシュ部品 extends グループ {
     private readonly _共有資源: 建物形状共有資源
     private _建物メッシュ写像: Map<string, Group> = new Map<string, Group>()
-    private _未解決ID一覧: string[] = []
+    private _未解決ID一覧: 建物定義ID[] = []
 
     public constructor() {
         super()
@@ -36,10 +37,11 @@ export class 建物メッシュ部品 extends グループ {
 
         const 建物一覧 = 建物管理.一覧を取得する()
         for (const 建物 of 建物一覧) {
-            if (!this._共有資源.建物定義があるか(建物.建物定義ID) && !this._未解決ID一覧.includes(建物.建物定義ID)) {
-                this._未解決ID一覧.push(建物.建物定義ID)
+            const 建物定義ID = 建物定義IDを生成する(建物.建物定義ID)
+            if (!this._共有資源.建物定義があるか(建物定義ID) && !this._未解決ID一覧.includes(建物定義ID)) {
+                this._未解決ID一覧.push(建物定義ID)
             }
-            const 建物グループ = this._共有資源.建物グループを生成する(建物.建物定義ID)
+            const 建物グループ = this._共有資源.建物グループを生成する(建物定義ID)
             建物グループ.position.set(建物.位置.x, 建物.位置.y, 建物.位置.z)
             建物グループ.rotation.y = 建物.向きラジアン
             this.実体.add(建物グループ)
@@ -47,7 +49,7 @@ export class 建物メッシュ部品 extends グループ {
         }
     }
 
-    public 未解決の建物定義ID一覧を取得する(): readonly string[] {
+    public 未解決の建物定義ID一覧を取得する(): readonly 建物定義ID[] {
         return this._未解決ID一覧
     }
 }

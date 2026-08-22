@@ -4,6 +4,8 @@ import { 建物の格子の形式版, type はめ口の値, type 建物の格子
 // この形は3箇所に同じ形を手書きしている(ここ・サーバー側の受入の検査の材料・HTTPの往復の材料)。言語と境界が
 // 違うため綴りを1つに束ねられず、一致は目視と、サーバー側の試験(同じ形が保存の検査を通ること)で保つ。
 // 参照: `crates/blitz_asset_compiler/src/building_grid_source/source_fixture.rs`
+// 建物定義IDは呼び出し元(ツールルート層)がbranded型から生のstringとして渡す
+// (branded型はstringの部分型のため変換不要。編集モデル層は境界層のbranded型を知らない)。
 export function 初期の建物の格子を作る(建物定義ID: string, 表示名: string): 建物の格子 {
     return {
         形式版: 建物の格子の形式版,

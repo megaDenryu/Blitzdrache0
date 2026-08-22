@@ -1,6 +1,6 @@
 import type { DivC, HtmlComponentBase } from 'sengen-ui'
 import type { 外殻レイアウト } from 'VscodeShellLayout'
-import type { プロジェクト保管庫接続, チャンク座標, 建物の格子接続 } from '../../境界/通信/index.ts'
+import type { プロジェクト保管庫接続, チャンク座標, 建物の格子接続, 建物定義ID } from '../../境界/通信/index.ts'
 import { 大域世界表示名, チャンク表示名を生成する } from '../../境界/index.ts'
 import { チャンク編集ツール } from '../../ツール/チャンク編集/index.ts'
 import { 建物編集ツール } from '../../ツール/建物編集/index.ts'
@@ -46,7 +46,7 @@ export class タブ開閉サービス {
 
     // 建物1件の格子を編集するタブを開く。保管庫の接続が格子の口を持たないときは、
     // ツールの内側で明示の失敗として画面へ出る(無言で編集できないタブにはしない)。
-    public 建物を開く(建物定義ID: string, 表示名: string): void {
+    public 建物を開く(建物定義ID: 建物定義ID, 表示名: string): void {
         const 綴り = タブ識別子.建物から生成する(建物定義ID).綴り()
         this.タブを開くか選ぶ(綴り, 表示名, () => new 建物編集ツール(建物定義ID, 表示名, this._保管庫))
     }

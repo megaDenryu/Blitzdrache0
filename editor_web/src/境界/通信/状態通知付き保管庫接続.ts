@@ -1,14 +1,7 @@
-import type {
-    大域世界構造,
-    チャンク座標,
-    チャンク構造,
-    マテリアル台帳,
-    建物の格子,
-    建物の格子の一覧項目,
-    建物外形カタログ,
-} from '../../生成/編集資源契約.ts'
+import type { 大域世界構造, チャンク座標, チャンク構造, マテリアル台帳, 建物の格子, 建物の格子の一覧項目, 建物外形カタログ } from '../../生成/編集資源契約.ts'
 import type { 建物外形カタログ接続 } from './建物外形カタログ接続.ts'
 import type { 建物の格子接続 } from './建物の格子接続.ts'
+import type { 建物定義ID } from '../建物定義ID.ts'
 import type { 読込結果, 保存結果 } from './サーバー通信結果.ts'
 import type { プロジェクト保管庫接続 } from './プロジェクト保管庫接続.ts'
 import { 保存状態サービス } from './保存状態サービス.ts'
@@ -88,7 +81,7 @@ export class 状態通知付き保管庫接続 implements プロジェクト保�
         return this._補助の口.建物一覧を読む()
     }
 
-    public 建物の格子を読む(建物定義ID: string): Promise<読込結果<建物の格子>> {
+    public 建物の格子を読む(建物定義ID: 建物定義ID): Promise<読込結果<建物の格子>> {
         return this._補助の口.建物の格子を読む(建物定義ID)
     }
 

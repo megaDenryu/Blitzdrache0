@@ -1,6 +1,7 @@
 import { div, span, button, DivC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
 import type { 建物外形定義 } from '../../../../../生成/編集資源契約.ts'
+import { 建物定義IDを生成する, type 建物定義ID } from '../../../../../境界/建物定義ID.ts'
 import {
     パネル,
     見出し行,
@@ -15,7 +16,7 @@ import { 建物件数ラベル } from './建物パネル/建物件数ラベル.t
 import { 建物削除ボタン } from './建物パネル/建物削除ボタン.ts'
 
 export interface I建物パネル配線 {
-    readonly on建物生成: (建物定義ID: string) => void
+    readonly on建物生成: (建物定義ID: 建物定義ID) => void
     readonly on基礎平坦化: () => void
     readonly on地面接地: () => void
     readonly on建物削除: () => void
@@ -61,7 +62,7 @@ export class 建物パネル extends LV2HtmlComponentBase implements I配線可�
             this._生成ボタン領域.child(
                 button({ class: 生成ボタン, text: 表示 })
                     .setTooltip(`${定義.表示名}（${定義.ベイ.横}×${定義.ベイ.奥}ベイ・${定義.ベイ.階}階）`)
-                    .onClick(() => this._配線.先.on建物生成(定義.識別子)),
+                    .onClick(() => this._配線.先.on建物生成(建物定義IDを生成する(定義.識別子))),
             )
         }
     }
@@ -71,7 +72,7 @@ export class 建物パネル extends LV2HtmlComponentBase implements I配線可�
         this._診断表示.setTextContent(this._カタログ診断)
     }
 
-    public 未解決の建物定義を表示する(ID一覧: readonly string[]): void {
+    public 未解決の建物定義を表示する(ID一覧: readonly 建物定義ID[]): void {
         const 未解決 = ID一覧.map((ID) => `定義未解決: ${ID}`).join(' / ')
         this._診断表示.setTextContent([this._カタログ診断, 未解決].filter((文言) => 文言.length > 0).join(' / '))
     }

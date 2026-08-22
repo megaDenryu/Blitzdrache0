@@ -1,11 +1,12 @@
 import { BoxGeometry, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial } from 'three'
 import type { 建物外形定義 } from '../../../../../生成/編集資源契約.ts'
+import { 建物定義IDを生成する, type 建物定義ID } from '../../../../../境界/建物定義ID.ts'
 import type { 破棄可能資源, 資源台帳 } from 'SengenThree'
 
 // コンパイラが実部品の展開から算出した外接箱を、編集画面の配置外形へ写す共有資源。
 export class 建物形状共有資源 implements 破棄可能資源 {
-    private readonly _幾何: Map<string, BoxGeometry> = new Map()
-    private readonly _定義: Map<string, 建物外形定義> = new Map()
+    private readonly _幾何: Map<建物定義ID, BoxGeometry> = new Map()
+    private readonly _定義: Map<建物定義ID, 建物外形定義> = new Map()
     private readonly _材質: MeshStandardMaterial
     private readonly _未解決幾何: BoxGeometry
     private readonly _未解決材質: MeshBasicMaterial
@@ -21,17 +22,18 @@ export class 建物形状共有資源 implements 破棄可能資源 {
 
     public 定義一覧を更新する(定義一覧: ReadonlyArray<建物外形定義>): void {
         for (const 定義 of 定義一覧) {
-            if (this._幾何.has(定義.識別子)) continue
+            const 建物定義ID = 建物定義IDを生成する(定義.識別子)
+            if (this._幾何.has(建物定義ID)) continue
             const 最小 = 定義.外接箱.最小
             const 最大 = 定義.外接箱.最大
             const 幾何 = new BoxGeometry(最大[0] - 最小[0], 最大[1] - 最小[1], 最大[2] - 最小[2])
-            this._幾何.set(定義.識別子, 幾何)
-            this._定義.set(定義.識別子, 定義)
+            this._幾何.set(建物定義ID, 幾何)
+            this._定義.set(建物定義ID, 定義)
             this._台帳.登録する(幾何)
         }
     }
 
-    public 建物グループを生成する(建物定義ID: string): Group {
+    public 建物グループを生成する(建物定義ID: 建物定義ID): Group {
         const グループ = new Group()
         const 定義 = this._定義.get(建物定義ID)
         const 幾何 = this._幾何.get(建物定義ID)
@@ -49,7 +51,7 @@ export class 建物形状共有資源 implements 破棄可能資源 {
         return グループ
     }
 
-    public 建物定義があるか(建物定義ID: string): boolean {
+    public 建物定義があるか(建物定義ID: 建物定義ID): boolean {
         return this._定義.has(建物定義ID)
     }
 

@@ -11,6 +11,8 @@ export { 保存状態サービス, type 保存状態情報 } from './保存状�
 export { 状態通知付き保管庫接続 } from './状態通知付き保管庫接続.ts'
 export { チャンク構造をJSON文字列へ直列化する, JSON文字列からチャンク構造を復元する } from './チャンク構造直列化.ts'
 export { チャンク座標キーを生成する } from './チャンク座標キー.ts'
+export { 建物定義IDを生成する } from '../建物定義ID.ts'
+export type { 建物定義ID } from '../建物定義ID.ts'
 export type {
     チャンク座標,
     大域世界構造,

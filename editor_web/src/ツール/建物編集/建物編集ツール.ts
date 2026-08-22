@@ -1,5 +1,6 @@
 import { div, LV2HtmlComponentBase, type DivC } from 'sengen-ui'
 import { 実サーバー接続, type 建物の格子接続 } from '../../境界/通信/index.ts'
+import type { 建物定義ID } from '../../境界/建物定義ID.ts'
 import { 建物編集画面 } from './画面/index.ts'
 import { 初期の建物の格子を作る } from './編集モデル/index.ts'
 import { 建物編集の状態 } from './建物編集の状態.ts'
@@ -13,7 +14,7 @@ export class 建物編集ツール extends LV2HtmlComponentBase {
     public readonly 状態: 建物編集の状態
     public readonly 同期: 建物編集同期サービス
 
-    public constructor(建物定義ID: string, 表示名: string, 接続?: 建物の格子接続) {
+    public constructor(建物定義ID: 建物定義ID, 表示名: string, 接続?: 建物の格子接続) {
         super()
         this.画面 = new 建物編集画面(建物定義ID)
         this.状態 = new 建物編集の状態(初期の建物の格子を作る(建物定義ID, 表示名))

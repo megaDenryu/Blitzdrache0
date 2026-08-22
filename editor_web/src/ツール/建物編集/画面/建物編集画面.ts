@@ -1,4 +1,5 @@
 import { div, span, textInput, DivC, TextInputC, LV2HtmlComponentBase } from 'sengen-ui'
+import type { 建物定義ID } from '../../../境界/建物定義ID.ts'
 import { 永続化パネル } from '../../チャンク編集/画面/パネル/永続化/index.ts'
 import { 建物の三次元パネル } from './三次元/建物の三次元パネル.ts'
 import { 入口の向きパネル } from './入口の向きパネル.ts'
@@ -24,7 +25,7 @@ export class 建物編集画面 extends LV2HtmlComponentBase {
     private readonly _表題: DivC
     private readonly _触りの知らせ: DivC
 
-    public constructor(建物定義ID: string) {
+    public constructor(建物定義ID: 建物定義ID) {
         super()
         this._表題 = div({ class: 表題, text: 建物定義ID })
         this._触りの知らせ = div({ class: 触りの知らせ, text: '' })

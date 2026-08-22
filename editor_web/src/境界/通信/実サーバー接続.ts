@@ -1,14 +1,7 @@
-import type {
-    大域世界構造,
-    チャンク座標,
-    チャンク構造,
-    マテリアル台帳,
-    建物の格子,
-    建物の格子の一覧項目,
-    建物外形カタログ,
-} from '../../生成/編集資源契約.ts'
+import type { 大域世界構造, チャンク座標, チャンク構造, マテリアル台帳, 建物の格子, 建物の格子の一覧項目, 建物外形カタログ } from '../../生成/編集資源契約.ts'
 import type { 建物外形カタログ接続 } from './建物外形カタログ接続.ts'
 import type { 建物の格子接続 } from './建物の格子接続.ts'
+import type { 建物定義ID } from '../建物定義ID.ts'
 import type { プロジェクト保管庫接続 } from './プロジェクト保管庫接続.ts'
 import type { ソースアセット書き出し接続 } from './ソースアセット書き出し接続.ts'
 import type { 読込結果, 保存結果, 書き出し結果 } from './サーバー通信結果.ts'
@@ -82,7 +75,7 @@ export class 実サーバー接続 implements プロジェクト保管庫接続,
         return 建物の格子要求.建物一覧を読む(this._基底URL)
     }
 
-    public 建物の格子を読む(建物定義ID: string): Promise<読込結果<建物の格子>> {
+    public 建物の格子を読む(建物定義ID: 建物定義ID): Promise<読込結果<建物の格子>> {
         return 建物の格子要求.建物の格子を読む(this._基底URL, 建物定義ID)
     }
 
