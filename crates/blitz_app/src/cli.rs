@@ -79,9 +79,7 @@ pub(crate) use scene_selection::{
 };
 pub(crate) use screen_pixel_args::画面画素位置;
 pub(crate) use shadow_args::シャドウ計測起動設定;
-pub(crate) use streaming_settings::{
-    LOD継ぎ目検査設定, ストリーミング起動設定, プレイヤー位置源, 固定経路起動設定
-};
+pub(crate) use streaming_settings::{LOD継ぎ目検査設定, ストリーミング起動設定, プレイヤー位置源};
 pub(crate) use time_of_day_settings::{
     太陽円盤指定, 時間帯起動設定, 空の起動指定, 空中遠近合成指定, 自動露出の起動指定
 };

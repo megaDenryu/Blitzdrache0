@@ -8,10 +8,13 @@ mod bundle_sync;
 #[cfg(test)]
 mod bundle_sync_tests;
 mod directory_replace;
+mod integration_route;
 mod lod_override;
 mod lod_sync;
 mod measurement;
 mod route;
+#[cfg(test)]
+mod route_tests;
 
 use blitz_engine::{ストリーミングメモリ量, ストリーミング調停, チャンク一辺};
 pub(in crate::app) use build::ストリーミング配線を構築する;

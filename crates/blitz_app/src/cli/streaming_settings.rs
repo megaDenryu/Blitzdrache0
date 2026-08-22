@@ -53,7 +53,7 @@ pub(crate) struct ストリーミング起動設定 {
 }
 
 impl ストリーミング起動設定 {
-    pub(super) fn 既定値() -> Self {
+    pub(crate) fn 既定値() -> Self {
         Self {
             有効: false,
             上限: ストリーミングメモリ量::生成する(既定RAM上限バイト数, 既定VRAM上限バイト数),
