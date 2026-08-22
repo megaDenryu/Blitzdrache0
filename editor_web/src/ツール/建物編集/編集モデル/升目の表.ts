@@ -23,6 +23,10 @@ export class 升目の表 {
         return this._座標ごとの宣言.has(升目の鍵を作る(座標))
     }
 
+    public 升目が1つでもあるか(): boolean {
+        return this._座標ごとの宣言.size > 0
+    }
+
     public 昇順に並べる(): 升目の宣言[] {
         return Array.from(this._座標ごとの宣言.values()).sort((左, 右) => 升目の座標を比べる(左.座標, 右.座標))
     }

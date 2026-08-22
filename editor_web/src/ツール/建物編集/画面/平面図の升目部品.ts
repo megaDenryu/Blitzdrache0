@@ -1,6 +1,6 @@
 import { div, span, DivC, LV2HtmlComponentBase } from 'sengen-ui'
 import type { はめ口の値, 升目の宣言, 升目の座標 } from '../../../生成/編集資源契約.ts'
-import { 側面のはめ口を読む, 全側面, type 升目の側面 } from '../編集モデル/index.ts'
+import { 側面のはめ口を読む, 全側面, type 升目の側面, type 升目を置けない理由 } from '../編集モデル/index.ts'
 import { 升目中央, 升目枠, 右面ボタン, 左面ボタン, 正面ボタン, 背面ボタン, 面ボタン } from './スタイル.css.ts'
 
 export interface I升目の配線 {
@@ -13,7 +13,7 @@ export interface I升目の見取り {
     readonly 座標: 升目の座標
     readonly 宣言: 升目の宣言 | undefined
     readonly 根か: boolean
-    readonly 置けるか: boolean
+    readonly 升目を置けない理由: 升目を置けない理由 | undefined
     readonly 隣に升目があるか: (側面: 升目の側面) => boolean
 }
 
@@ -25,16 +25,17 @@ const 側面ごとの位置: Record<升目の側面, string> = {
 }
 
 // 平面図の1升目。中央が升目そのもの、周囲の4つが面である。升目が無い座標も枠として描くが、
-// 置けない座標(真下に升目が無い上の階)は不活性にして触れなくする。置ける場所が画面から読めるようにするためである。
+// 置けない座標(真下に升目が無い上の階・格子から離れた座標)は不活性にして触れなくする。
+// 置ける場所が画面から読めるようにするためである。
 export class 平面図の升目部品 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
 
     public constructor(見取り: I升目の見取り, 配線: I升目の配線) {
         super()
-        const 触れるか = 見取り.宣言 !== undefined || 見取り.置けるか
+        const 触れるか = 見取り.宣言 !== undefined || 見取り.升目を置けない理由 === undefined
         const 中央 = div({ class: 升目中央 })
             .child(span({ text: 見取り.宣言 === undefined ? `${見取り.座標.横},${見取り.座標.奥}` : 中央の綴り(見取り.宣言) }))
-            .setTooltip(中央の説明(見取り, 触れるか))
+            .setTooltip(中央の説明(見取り))
             .setAttribute('data-升目あり', String(見取り.宣言 !== undefined))
             .setAttribute('data-根', String(見取り.根か))
             .setAttribute('data-触れる', String(触れるか))
@@ -55,9 +56,11 @@ export class 平面図の升目部品 extends LV2HtmlComponentBase {
     }
 }
 
-function 中央の説明(見取り: I升目の見取り, 触れるか: boolean): string {
+// 置けない事情の綴りは`格子の成り立ちの判定`が持つ1つの正本であり、ここでは括弧に入れて添えるだけである。
+function 中央の説明(見取り: I升目の見取り): string {
     const 位置 = `横${見取り.座標.横}・奥${見取り.座標.奥}・階${見取り.座標.階}`
-    return 触れるか ? 位置 : `${位置}(真下に升目が無いため置けない)`
+    if (見取り.宣言 !== undefined || 見取り.升目を置けない理由 === undefined) return 位置
+    return `${位置}(${見取り.升目を置けない理由})`
 }
 
 function 壁の印(値: はめ口の値): string {

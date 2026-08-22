@@ -49,6 +49,10 @@ export class 建物の格子の編集モデル {
         return this._升目の表.升目があるか(座標)
     }
 
+    public 升目が1つでもあるか(): boolean {
+        return this._升目の表.升目が1つでもあるか()
+    }
+
     public 表示名を定める(表示名: string): void {
         this._表示名 = 表示名
     }
