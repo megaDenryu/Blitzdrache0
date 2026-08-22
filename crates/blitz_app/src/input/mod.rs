@@ -4,6 +4,8 @@
 //! カメラはこの層がインテントまで作るが、ゲームはデバイス非依存の入力までを作って渡し、意味付けの写像はゲーム側が持つ
 //! （参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「判断3」）。
 
+#[cfg(test)]
+mod camera_distance_tests;
 mod camera_intent_policy;
 #[cfg(test)]
 mod camera_intent_tests;
