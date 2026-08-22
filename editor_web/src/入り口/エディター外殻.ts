@@ -68,9 +68,6 @@ export class エディター外殻 extends LV2HtmlComponentBase {
         }
     }
 
-    public 建物の一覧を読み直す(): Promise<void> {
-        return this._建物の一覧.読み直す()
-    }
     public 大域世界を開く(): void {
         this._タブ開閉.大域世界を開く()
     }
