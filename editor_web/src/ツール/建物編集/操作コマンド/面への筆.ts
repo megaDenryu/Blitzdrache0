@@ -22,7 +22,7 @@ export const 全ての面への筆: readonly 面への筆[] = ['平壁', '窓壁
 
 const 飾りへの筆の並び: readonly 面への筆[] = ['出窓を差し込む', '煙突を立てる', '飾りを外す']
 
-export function 飾りへの筆か(筆: 面への筆): 筆 is 飾りへの筆 {
+function 飾りへの筆か(筆: 面への筆): 筆 is 飾りへの筆 {
     return 飾りへの筆の並び.includes(筆)
 }
 

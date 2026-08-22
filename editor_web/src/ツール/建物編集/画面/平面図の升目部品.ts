@@ -48,9 +48,10 @@ export class 平面図の升目部品 extends LV2HtmlComponentBase {
 
     private 面のボタンを作る(見取り: I升目の見取り, 側面: 升目の側面, 配線: I升目の配線): DivC {
         const 隣があるか = 見取り.隣に升目があるか(側面)
-        const 印 = 見取り.宣言 === undefined ? '空' : 隣があるか ? '継ぎ口' : 壁の印(側面のはめ口を読む(見取り.宣言, 側面))
+        const 値 = 見取り.宣言 === undefined ? undefined : 側面のはめ口を読む(見取り.宣言, 側面)
+        const 印 = 見取り.宣言 === undefined ? '空' : 隣があるか ? '継ぎ口' : 壁の印(値)
         return div({ class: `${面ボタン} ${側面ごとの位置[側面]}` })
-            .setTooltip(`${側面}: ${印}`)
+            .setTooltip(`${側面}: ${印}${飾りの説明(値)}`)
             .setAttribute('data-壁', 印)
             .onClick(() => 配線.on面を触る(見取り.座標, 側面))
     }
@@ -63,8 +64,15 @@ function 中央の説明(見取り: I升目の見取り): string {
     return `${位置}(${見取り.升目を置けない理由})`
 }
 
-function 壁の印(値: はめ口の値): string {
-    return 値.種類 === '入れない' ? '空' : 値.値.壁の種類
+function 壁の印(値: はめ口の値 | undefined): string {
+    return 値 === undefined || 値.種類 === '入れない' ? '空' : 値.値.壁の種類
+}
+
+// 面に付いている飾りの説明。飾りを平面図に出さないと、煙突を立てた面と立てていない面が同じ姿に見える。
+function 飾りの説明(値: はめ口の値 | undefined): string {
+    if (値 === undefined || 値.種類 === '入れない' || 値.値.外面の飾り.種類 === '付けない') return ''
+    const 飾り = 値.値.外面の飾り
+    return 飾り.種類 === '煙突を立てる' ? `・煙突を立てる(${飾り.値.段数}段)` : `・${飾り.種類}`
 }
 
 function 中央の綴り(宣言: 升目の宣言): string {
