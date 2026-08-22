@@ -30,4 +30,6 @@ pub use compilation::実行時アセットのコンパイル;
 pub use compilation_specification::{焼く世界の指定, 焼く世界の指定組み立て器};
 pub use error::実行時アセットのコンパイルエラー;
 pub(crate) use vegetation_definition::{全植生定義, 植生の実体, 識別子から植生定義を参照する};
+/// 骨格方式の部品の綴りと部品の一覧。エディターチャンクの焼き込みが格子から手順を作るために使う。
+pub(crate) use world::assembly_rule_choice::{骨格方式の全部品の一覧, 骨格方式の部品の綴りを組む};
 pub use world::{一間四方の骨格の並びの種類, 家の並びの規模, 対象世界, 診断の原型};

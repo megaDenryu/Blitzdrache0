@@ -47,6 +47,9 @@ pub enum 書き出しエラー {
     #[error("出力先ファイルへの書き込みに失敗した: {0}")]
     書き込みに失敗(#[from] std::io::Error),
 
+    #[error("建物の格子を読めない: {0}")]
+    建物の格子を読めない(String),
+
     #[error("版付きチャンクソースのJSONを組み立てられない: {0}")]
     JSON組み立てに失敗(#[from] serde_json::Error),
 }

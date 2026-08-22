@@ -10,7 +10,7 @@ mod common;
 async fn 保存した散布の個体は件数も識別子も座標も変えずに書き出される() {
     let 一時 = common::散布を載せて書き出す("export_scatter_roundtrip").await;
     let ソース = common::書き出したチャンクソースを読む(&一時);
-    assert_eq!(ソース.形式版, 3);
+    assert_eq!(ソース.形式版, 4);
     assert_eq!(ソース.散布の群一覧.len(), 1);
     let 群 = &ソース.散布の群一覧[0];
     assert_eq!(群.植生定義ID, "conifer");
