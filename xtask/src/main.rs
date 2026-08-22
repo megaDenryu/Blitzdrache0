@@ -3,6 +3,7 @@ mod acceptance;
 mod asset_generator;
 mod atmosphere_lut;
 mod auto_exposure;
+mod bake_building;
 mod bench;
 mod check_glb;
 mod cloth_empty;

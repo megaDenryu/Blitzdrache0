@@ -16,14 +16,7 @@ pub(super) fn アセット定義一覧を選ぶ(世界: 対象世界) -> Vec<ア
     match 世界 {
         対象世界::板の世界 => asset_declaration::板の世界の一覧(),
         対象世界::地形の世界 => asset_declaration::地形の世界の一覧(),
-        対象世界::エディターの世界 => {
-            let mut 一覧 = vec![fox_declaration::キツネのシーン定義を作る("terrain_editor_world")];
-            let 素材の識別一覧 = crate::runtime_compilation::building_outline_catalog::全建物の部品識別一覧()
-                .into_iter()
-                .chain(crate::runtime_compilation::vegetation_definition::全植生の原型識別一覧());
-            一覧.extend(素材の識別一覧.map(|識別| super::definition_kind::外部ソース専用定義(識別.安定id(), 識別.ソース相対パス())));
-            一覧
-        }
+        対象世界::エディターの世界 | 対象世界::建物一棟の検証世界 => エディター由来の世界の一覧(),
         対象世界::植生の世界 => vegetation_declaration::一覧(),
         対象世界::見本の集落の世界 => village_declaration::一覧(),
         対象世界::部品で組んだ家の並びの世界(_) => part_house_row_declaration::一覧(),
@@ -36,4 +29,15 @@ pub(super) fn アセット定義一覧を選ぶ(世界: 対象世界) -> Vec<ア
         対象世界::屋内の多光源の世界 => stone_hut_declaration::一覧(),
         対象世界::場所巡りの世界 => fox_tour_declaration::一覧(),
     }
+}
+
+/// エディターが書き出したチャンクを読む世界(本物のエディターの世界と、建物1棟だけの検証世界)が焼く、
+/// チャンク以外のアセットの一覧。2つの世界がまったく同じ素材を読むのは、検証の世界が本物と同じ絵を出すためである。
+fn エディター由来の世界の一覧() -> Vec<アセット定義> {
+    let mut 一覧 = vec![fox_declaration::キツネのシーン定義を作る("terrain_editor_world")];
+    let 素材の識別一覧 = crate::runtime_compilation::building_outline_catalog::全建物の部品識別一覧()
+        .into_iter()
+        .chain(crate::runtime_compilation::vegetation_definition::全植生の原型識別一覧());
+    一覧.extend(素材の識別一覧.map(|識別| super::definition_kind::外部ソース専用定義(識別.安定id(), 識別.ソース相対パス())));
+    一覧
 }

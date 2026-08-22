@@ -7,6 +7,7 @@ use blitz_asset_compiler::{
 };
 use blitz_engine::アセットID;
 
+use super::super::chunk_asset_file_names::チャンクの素材のファイル名;
 use super::super::chunk_directory_text::目録項目;
 use super::super::chunk_height_sample::高さ関数材料;
 use super::super::editor_chunk_source::エディターチャンクソース;
@@ -48,13 +49,13 @@ impl ソースアセット書き出しコマンド {
         let 格子 = 高さ格子を切り出す(諸元, エンジン座標, |添字x, 添字z| 材料.高さを求める(添字x, 添字z))?;
 
         let mut 書いた枚数: usize = 0;
-        let 名前 = format!("editor_terrain_x{x}_z{z}");
-        let ファイル名 = format!("editor_terrain_x{x}_z{z}.heightgrid");
+        let 素材のファイル名 = チャンクの素材のファイル名::チャンクの添字から生成する(x, z);
+        let ファイル名 = 素材のファイル名.高さ格子();
         self.出力先.直下へ書き込む(&ファイル名, &高さ格子を格納する(&格子))?;
         書いた枚数 = 書いた枚数.saturating_add(1);
 
         let 重み格子 = self.チャンクの地表材質の重み格子を組む(座標, 諸元.格子点数())?;
-        let 重みファイル名 = format!("editor_terrain_x{x}_z{z}.surfaceweights");
+        let 重みファイル名 = 素材のファイル名.地表材質の重み格子();
         self.出力先.直下へ書き込む(&重みファイル名, &地表材質の重み格子を格納する(&重み格子))?;
         書いた枚数 = 書いた枚数.saturating_add(1);
 
@@ -73,7 +74,7 @@ impl ソースアセット書き出しコマンド {
             諸元.一辺メートル(),
             &self.建物外形カタログ,
         )?;
-        let ソースファイル名 = format!("editor_chunk_x{x}_z{z}.json");
+        let ソースファイル名 = 素材のファイル名.版付きチャンクソース();
         self.出力先.直下へ書き込む(&ソースファイル名, &ソース.整形済みjsonを作る()?)?;
         書いた枚数 = 書いた枚数.saturating_add(1);
 
@@ -81,7 +82,9 @@ impl ソースアセット書き出しコマンド {
             目録項目: 目録項目 {
                 x,
                 z,
-                アセットid: アセットID::生成する(&名前)?.文字列を返す().to_string(),
+                アセットid: アセットID::生成する(&素材のファイル名.目録が指すアセットの名前())?
+                    .文字列を返す()
+                    .to_string(),
                 相対ファイル名: ソースファイル名,
             },
             書いた枚数,

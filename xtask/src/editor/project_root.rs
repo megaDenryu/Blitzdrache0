@@ -11,11 +11,11 @@
 use std::path::{Path, PathBuf};
 
 /// プロジェクトルートとは、いま開いている1つのゲームプロジェクトのルートディレクトリのことである。
-pub(super) struct プロジェクトルート(PathBuf);
+pub(crate) struct プロジェクトルート(PathBuf);
 
 impl プロジェクトルート {
     /// `--project <ルート>`の次の引数を開くルートにする。指定が無ければ既定ルート(リポジトリルート)を使う。
-    pub(super) fn 引数から解く(引数一覧: &[String], 既定ルート: &Path) -> Self {
+    pub(crate) fn 引数から解く(引数一覧: &[String], 既定ルート: &Path) -> Self {
         let 指定パス = 引数一覧
             .iter()
             .position(|引数| 引数 == "--project")
@@ -24,7 +24,7 @@ impl プロジェクトルート {
     }
 
     /// 境界: 建物の格子の置き場を組み立てるためにパスを貸す。生のパスへ戻るのはこの1箇所である。
-    pub(super) fn パス(&self) -> &Path {
+    pub(crate) fn パス(&self) -> &Path {
         &self.0
     }
 }

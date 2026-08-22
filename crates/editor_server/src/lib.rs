@@ -23,7 +23,7 @@ pub use building_grid_store::{建物の格子の保存エラー, 建物の格子
 #[cfg(feature = "typescript")]
 pub use contract::{契約ファイルの本文を組み立てる, 編集資源契約の本文を組み立てる};
 pub use export::{
-    ソースアセット書き出しコマンド, 世界ソース出力先, 出力世界名, 書き出しエラー, 書き出し結果
+    ソースアセット書き出しコマンド, 一棟だけの検証世界を書き出すコマンド, 世界ソース出力先, 出力世界名, 書き出しエラー, 書き出し結果
 };
 pub use health_contract::生存確認応答;
 pub use normalized_app::経路正規化アプリ;

@@ -5,5 +5,9 @@
 assets/samples/
 opencode.json
 
+# 建物1棟だけの検証世界のソース。cargo xtask bake-buildingが実行のたびに書き直す使い捨てであり、
+# 中身は名指した建物によって変わるためコミットしない
+assets/one_building_world/
+
 # 生成台帳。生成器の実行ファイルの内容ハッシュを持つため機械ごとに中身が違い、ソースではなく生成の途中状態である
 generation_ledger.txt

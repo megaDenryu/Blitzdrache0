@@ -28,7 +28,7 @@ pub fn 実行する(引数一覧: &[String]) -> Result<(), String> {
     Ok(())
 }
 
-pub(super) fn 既定のファイルへ書き出す(
+pub(crate) fn 既定のファイルへ書き出す(
     リポジトリルート: &Path, プロジェクトルート: &プロジェクトルート
 ) -> Result<PathBuf, String> {
     let ファイル = 建物外形カタログのファイル::リポジトリルートから生成する(リポジトリルート);

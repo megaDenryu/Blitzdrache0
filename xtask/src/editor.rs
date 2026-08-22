@@ -14,7 +14,7 @@ use std::{
 use self::project_root::プロジェクトルート;
 
 pub(crate) mod building_outline_catalog;
-mod project_root;
+pub(crate) mod project_root;
 
 pub fn 実行する(追加引数: &[String]) -> Result<(), String> {
     let リポジトリルート = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");

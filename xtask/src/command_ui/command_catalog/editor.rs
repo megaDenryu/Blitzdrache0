@@ -14,6 +14,10 @@ pub(super) const 一覧: &[コマンド項目] = &[
         説明文: "  building-outline-catalog  実際の部品を展開してtarget/editor/building_outline_catalog.jsonへ版付きの建物定義と外形を書き出す",
     },
     コマンド項目 {
+        日本語名: "建物1棟だけの焼きと起動",
+        説明文: "  bake-building <建物定義ID> [--project <ルート>] [--bake-only]  建物エディターが保存した格子1件を平らな1チャンクの中央へ据えた検証世界を焼き、歩行の器で開く。--bake-onlyを付けると焼きまでで止めて窓を開かない",
+    },
+    コマンド項目 {
         日本語名: "型契約の書き出し",
         説明文: "  contract-export  editor_serverのRust側の型からeditor_web/src/生成配下のTypeScript契約ファイルを生成し直す",
     },
