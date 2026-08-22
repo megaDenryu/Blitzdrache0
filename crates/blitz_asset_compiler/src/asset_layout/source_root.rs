@@ -10,6 +10,7 @@ use super::world_directory_name::世界のディレクトリ名;
 use super::world_source_directory::世界のソースディレクトリ;
 use crate::chunk_directory_source::{チャンク目録ソース, チャンク目録ソースを読み込む};
 use crate::error::アセットコンパイルエラー;
+use crate::source_asset_paths::ソースアセットの相対パス;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -40,8 +41,19 @@ impl ソースルート {
 
     /// 宣言1件がソースルートからの相対で指すソースの実パス。世界のディレクトリをまたぐ宣言もあるため、
     /// 1つのディレクトリ名でなく相対パスを受け取る。
-    pub fn 宣言の相対パスが指すソース(&self, 相対パス: &Path) -> PathBuf {
-        self.0.join(相対パス)
+    pub fn 宣言の相対パスが指すソース(&self, 相対パス: ソースアセットの相対パス) -> PathBuf {
+        相対パス.ルートの下のファイル(&self.0)
+    }
+
+    /// 宣言1件のソースを収めるディレクトリ。取得したソースを書き込む前に作る側が読む。
+    pub fn 宣言の相対パスが指すソースを収める場所(&self, 相対パス: ソースアセットの相対パス) -> PathBuf {
+        相対パス.ルートの下の収める場所(&self.0)
+    }
+
+    /// ソースルートの直下に置く、世界のディレクトリでない置き場のパス。地表層のタイル画像の置き場がこれである。
+    /// ディレクトリ名の綴りは呼び出す置き場の型が自分の中に持ち、その1箇所からだけここへ渡る。
+    pub fn 直下の置き場のパス(&self, ディレクトリ名: &str) -> PathBuf {
+        self.0.join(ディレクトリ名)
     }
 
     pub fn 世界のチャンク目録ソースの置き場(

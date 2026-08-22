@@ -5,18 +5,16 @@
 //! 見本の集落の小物の表を`village_declaration`が持つのと同じ分け方である。
 //! 参照: `_doc/設計/大規模世界の生成と遠景.md`「判断j」
 
-use crate::{
-    傾きの好み, 出現割合の範囲, 地表への据え方, 大きさの範囲, 小物の小石のソース, 小物の岩のソース, 針葉樹のソース
-};
+use crate::{ソースアセットの相対パス, 傾きの好み, 出現割合の範囲, 地表への据え方, 大きさの範囲};
 
 use super::super::archetype_identity::原型の識別;
 use super::super::source_kind::原型と置き方の宣言;
 use super::prop_group_declaration::密度で散らす;
 
 /// 散らす岩2種と木1種の原型。実行時形式は焼かず、散布する地面のチャンクが素材として読むだけである。
-pub(super) const 小岩: 原型の識別 = 原型の識別::生成する("fox_tour_rock", 小物の小石のソース);
-pub(super) const 大岩: 原型の識別 = 原型の識別::生成する("fox_tour_boulder", 小物の岩のソース);
-pub(super) const 針葉樹: 原型の識別 = 原型の識別::生成する("fox_tour_conifer", 針葉樹のソース);
+pub(super) const 小岩: 原型の識別 = 原型の識別::生成する("fox_tour_rock", ソースアセットの相対パス::小物の小石);
+pub(super) const 大岩: 原型の識別 = 原型の識別::生成する("fox_tour_boulder", ソースアセットの相対パス::小物の岩);
+pub(super) const 針葉樹: 原型の識別 = 原型の識別::生成する("fox_tour_conifer", ソースアセットの相対パス::針葉樹);
 
 /// 木と岩を分ける傾き。部品で組んだ木の宣言も同じ値を読むため、この表が1つだけ持つ。
 /// 元の説明: この値より緩い面には木だけが、急な面には岩だけが立つ。1つの値で分けるのは、

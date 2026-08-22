@@ -12,6 +12,7 @@ use super::chunk_ledger::台帳での扱い;
 use super::compilation::実行時アセットのコンパイル;
 use super::compile_target::コンパイル対象;
 use super::source_location::{self, ソースの基準};
+use crate::source_asset_paths::ソースアセットの相対パス;
 
 /// ストリーミング対象でないアセットは世界の原点チャンクへ帰属させる。
 /// 参照: `_doc/計画/ユビキタス言語.md`「所有チャンク」
@@ -25,7 +26,7 @@ pub(super) use super::source_kind::{ソース種別, 同居植生宣言};
 /// `基準`は`相対パス`をどのルートから参照するかであり、宣言側は起点の実パスを持たない。
 pub(super) struct アセット定義 {
     pub(super) 名前: &'static str,
-    pub(super) 相対パス: &'static str,
+    pub(super) 相対パス: ソースアセットの相対パス,
     pub(super) 基準: ソースの基準,
     pub(super) 必須: bool,
     pub(super) 実行時へ焼く: bool,

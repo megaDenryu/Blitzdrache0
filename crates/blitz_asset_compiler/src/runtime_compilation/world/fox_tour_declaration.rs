@@ -23,10 +23,10 @@ use super::part_row_declaration::部品のアセット定義一覧を作る;
 
 /// 起動時に読むキツネのシーンの安定ID。名前が`terrain`で始まることが、この世界の空方針・間接照明方針・露出方式を
 /// 地形の本番世界と同じものにする。参照: `crates/blitz_app/src/app/time_of_day/scene_policy.rs`
-pub(super) const キツネのシーン: 原型の識別 = 原型の識別::生成する("terrain_fox_tour", crate::フォックスのソース);
+pub(super) const キツネのシーン: 原型の識別 = 原型の識別::生成する("terrain_fox_tour", crate::ソースアセットの相対パス::フォックス);
 
 /// 目的地に立てる目印の柱の原型を指す安定ID。実行時形式は焼かず、目印を据えるチャンクが素材として読むだけである。
-const 目印の柱: 原型の識別 = 原型の識別::生成する("fox_tour_destination_marker", crate::目印の柱のソース);
+const 目印の柱: 原型の識別 = 原型の識別::生成する("fox_tour_destination_marker", crate::ソースアセットの相対パス::目印の柱);
 
 /// 巡る3つの目的地。1つ目は出発地点の真北にあり、2つ目と3つ目は向きを変えないと着かない位置に置く。
 const 巡る目的地の一覧: &[固定物の据え付け宣言] = &[目的地(0, -15), 目的地(-40, -45), 目的地(45, -70)];

@@ -82,7 +82,7 @@ pub use runtime_compilation::{
 };
 pub use scatter_bake::散布の焼き方;
 pub use scene_compiler::ソースアセットのコンパイル係;
-pub use source_asset_paths::*;
+pub use source_asset_paths::{ソースアセットのファイル名, ソースアセットの相対パス};
 pub use surface_material::layer_texture_set::{
     コンパイル済み地表層テクスチャ集, 地表層タイルの置き場, 地表層テクスチャ集の焼き方, 地表層テクスチャ集アセットをコンパイルする,
     地表層テクスチャ集コンパイルエラー, 地表材質の層割当,

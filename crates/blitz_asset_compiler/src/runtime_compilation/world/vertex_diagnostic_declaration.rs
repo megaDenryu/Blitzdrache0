@@ -9,25 +9,25 @@
 use super::super::catalog::{アセット定義, ソース種別, 同居植生宣言};
 use super::asset_declaration::地形世界の起動時シーン;
 use super::definition_kind::{ソース専用定義, 必須定義};
-use crate::植生診断原型のソース;
+use crate::ソースアセットの相対パス;
 
 /// 診断世界が同居させる原型1件。安定IDとソースの対応をここで結ぶ。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct 診断の原型 {
     安定id: &'static str,
-    ソース相対パス: &'static str,
+    ソース相対パス: ソースアセットの相対パス,
 }
 
 /// 粗い側。代表世界と同じ原型ソースを読むため、焼き上がりのチャンクは代表世界と一致する。
 pub(crate) const 粗い原型: 診断の原型 = 診断の原型 {
     安定id: "vertex_diag_coarse_archetype",
-    ソース相対パス: 植生診断原型のソース,
+    ソース相対パス: ソースアセットの相対パス::植生診断原型,
 };
 
 /// 細かい側。外形も段の寸法も粗い側と同じで、面を格子へ細分化した原型を読む。
 pub(crate) const 細かい原型: 診断の原型 = 診断の原型 {
     安定id: "vertex_diag_fine_archetype",
-    ソース相対パス: "vegetation_world/archetype_lod_subdivided.gltf",
+    ソース相対パス: ソースアセットの相対パス::生成する("vegetation_world/archetype_lod_subdivided.gltf"),
 };
 
 pub(super) fn 一覧(原型: 診断の原型) -> Vec<アセット定義> {

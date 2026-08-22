@@ -13,12 +13,19 @@
 use super::super::catalog::アセット定義;
 use super::super::source_kind::{ソース種別, 固定物の据え付け宣言};
 use super::definition_kind::ソース専用定義;
+use crate::ソースアセットの相対パス;
 
 /// 影付きの1件目の灯の傍らに立てる、細く高い角柱の原型を指す安定ID。実行時形式は焼かず、地面のチャンクが素材として読むだけである。
-const 細く高い角柱: (&str, &str) = ("night_lights_tall_pillar", "night_lights_world/tall_pillar.gltf");
+const 細く高い角柱: (&str, ソースアセットの相対パス) = (
+    "night_lights_tall_pillar",
+    ソースアセットの相対パス::生成する("night_lights_world/tall_pillar.gltf"),
+);
 
 /// 影付きの2件目の灯の傍らに立てる、幅広く低い壁の原型を指す安定ID。
-const 幅広く低い壁: (&str, &str) = ("night_lights_wide_wall", "night_lights_world/wide_wall.gltf");
+const 幅広く低い壁: (&str, ソースアセットの相対パス) = (
+    "night_lights_wide_wall",
+    ソースアセットの相対パス::生成する("night_lights_world/wide_wall.gltf"),
+);
 
 /// 遮蔽物を据える大域の水平位置。整数のメートルでしか据えられないため、灯の東西位置(46.25と53.75)を挟む46と54へ置く。
 /// 南北は灯の46.25からカメラ側へ2.75メートル離した49である。

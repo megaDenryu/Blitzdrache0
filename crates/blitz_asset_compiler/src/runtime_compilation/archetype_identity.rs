@@ -8,16 +8,18 @@
 //! 群の指定(コンパイラへ渡す側)の両方を生むためである。2つを別の表に分けると、片方だけ足した宣言が
 //! カタログ未登録という遠い場所の失敗になる。
 
+use crate::source_asset_paths::ソースアセットの相対パス;
+
 /// 原型1つを指す識別。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct 原型の識別 {
     安定id: &'static str,
-    ソース相対パス: &'static str,
+    ソース相対パス: ソースアセットの相対パス,
 }
 
 impl 原型の識別 {
     /// 宣言の表が`const`のまま1行で書けるように`const fn`にする。
-    pub(crate) const fn 生成する(安定id: &'static str, ソース相対パス: &'static str) -> Self {
+    pub(crate) const fn 生成する(安定id: &'static str, ソース相対パス: ソースアセットの相対パス) -> Self {
         Self {
             安定id, ソース相対パス
         }
@@ -27,7 +29,7 @@ impl 原型の識別 {
         self.安定id
     }
 
-    pub(crate) const fn ソース相対パス(self) -> &'static str {
+    pub(crate) const fn ソース相対パス(self) -> ソースアセットの相対パス {
         self.ソース相対パス
     }
 }

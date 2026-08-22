@@ -13,9 +13,10 @@
 use super::super::catalog::アセット定義;
 use super::super::source_kind::{ソース種別, 固定物の据え付け宣言};
 use super::definition_kind::外部ソース専用定義;
+use crate::ソースアセットの相対パス;
 
 /// 小屋の原型。幅4.0・奥行3.0・高さ3.0メートルの、人が入れる大きさの石積みの小屋である。内部は空洞で戸口が1つ開いている。
-const 小屋: (&str, &str) = ("stone_hut_interior_hut", "props/stone_hut.glb");
+const 小屋: (&str, ソースアセットの相対パス) = ("stone_hut_interior_hut", ソースアセットの相対パス::生成する("props/stone_hut.glb"));
 
 /// 小屋を据える大域の水平位置。一辺100メートルの原点チャンクの中央である。
 const 小屋を据える位置: &[固定物の据え付け宣言] = &[固定物の据え付け宣言 {

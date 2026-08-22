@@ -3,25 +3,33 @@
 //!
 //! 取得先の綴りを型の私有にして、取得済みかの判定と取得の実行だけを外へ出す。スモークが同じ綴りを
 //! 持ち直していると、取得先を動かしたときに「取得はできるがステージが見つけられない」状態になる。
+//!
+//! 取得先はソースルートからの相対で持ち、置き場の組み立てはソースルートの型のメソッドが行う。
+//! 取得先を裸の綴りで持って連結を書くと、取得先とアセットの読み手が別々の綴り方でルートを組むことになる。
 
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
 
-use blitz_asset_compiler::{フォックスのソース, ヘルメットのソース};
+use blitz_asset_compiler::{ソースアセットの相対パス, ソースルート};
+
+/// 本体リポジトリのソースルート。作業ディレクトリはリポジトリの根であり、取得先はここからの相対で決まる。
+fn 本体のソースルート() -> ソースルート {
+    ソースルート::生成する(PathBuf::from("assets"))
+}
 
 /// 取得する標準サンプル1件。どこから採ってどこへ置くかを持ち、その置き場所の綴りは外へ出さない。
 pub struct 標準サンプルの取得対象 {
-    取得先相対パス: &'static str,
+    取得先相対パス: ソースアセットの相対パス,
     取得元ディレクトリurl: &'static str,
 }
 
 pub const ヘルメットの取得対象: 標準サンプルの取得対象 = 標準サンプルの取得対象 {
-    取得先相対パス: ヘルメットのソース,
+    取得先相対パス: ソースアセットの相対パス::ヘルメット,
     取得元ディレクトリurl: "https://github.com/KhronosGroup/glTF-Sample-Assets/raw/main/Models/DamagedHelmet/glTF-Binary",
 };
 
 pub const フォックスの取得対象: 標準サンプルの取得対象 = 標準サンプルの取得対象 {
-    取得先相対パス: フォックスのソース,
+    取得先相対パス: ソースアセットの相対パス::フォックス,
     取得元ディレクトリurl: "https://github.com/KhronosGroup/glTF-Sample-Assets/raw/main/Models/Fox/glTF-Binary",
 };
 
@@ -34,7 +42,7 @@ impl 標準サンプルの取得対象 {
     }
 
     fn 取得先の場所(&self) -> PathBuf {
-        Path::new("assets").join(self.取得先相対パス)
+        本体のソースルート().宣言の相対パスが指すソース(self.取得先相対パス)
     }
 
     fn 取得する(&self) -> ExitCode {
@@ -43,19 +51,12 @@ impl 標準サンプルの取得対象 {
             println!("[xtask] 既に取得済み: {}", 取得先パス.display());
             return ExitCode::SUCCESS;
         }
-        let Some(取得先ディレクトリ) = 取得先パス.parent() else {
-            eprintln!("[xtask] 取得先パスに親ディレクトリが無い: {}", 取得先パス.display());
-            return ExitCode::FAILURE;
-        };
-        if let Err(誤り) = std::fs::create_dir_all(取得先ディレクトリ) {
+        let 取得先ディレクトリ = 本体のソースルート().宣言の相対パスが指すソースを収める場所(self.取得先相対パス);
+        if let Err(誤り) = std::fs::create_dir_all(&取得先ディレクトリ) {
             eprintln!("[xtask] 取得先ディレクトリの作成に失敗: {誤り}");
             return ExitCode::FAILURE;
         }
-        let Some(取得先ファイル名) = 取得先パス.file_name() else {
-            eprintln!("[xtask] 取得先パスにファイル名が無い: {}", 取得先パス.display());
-            return ExitCode::FAILURE;
-        };
-        let 取得元url = format!("{}/{}", self.取得元ディレクトリurl, 取得先ファイル名.to_string_lossy());
+        let 取得元url = format!("{}/{}", self.取得元ディレクトリurl, self.取得先相対パス.末尾のファイル名().綴りを見せる());
         println!("[xtask] curl.exe -L -f -o {} {} を実行", 取得先パス.display(), 取得元url);
         let 起動結果 = Command::new("curl.exe")
             .args(["-L", "-f", "-o"])

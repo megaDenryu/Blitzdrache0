@@ -2,13 +2,13 @@
 
 use super::super::catalog::{アセット定義, ソース種別};
 use super::definition_kind::必須定義;
-use crate::フォックスのソース;
+use crate::ソースアセットの相対パス;
 const キツネの寸法の倍率: f32 = 0.01;
 
 pub(super) fn キツネのシーン定義を作る(安定id: &'static str) -> アセット定義 {
     必須定義(
         安定id,
-        フォックスのソース,
+        ソースアセットの相対パス::フォックス,
         ソース種別::寸法を合わせるGltfシーン {
             一様倍率: キツネの寸法の倍率,
         },

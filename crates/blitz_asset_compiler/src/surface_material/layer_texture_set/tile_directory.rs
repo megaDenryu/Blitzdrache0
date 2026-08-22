@@ -3,7 +3,7 @@
 //!
 //! 綴り(ディレクトリ名と拡張子)をこの型の中へ閉じるのは、置き場を移したときに触る場所を1つにするためである。
 
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use blitz_engine::surface_layer_textures::エンジン材質名;
 
@@ -20,7 +20,7 @@ pub struct 地表層タイルの置き場(PathBuf);
 
 impl 地表層タイルの置き場 {
     pub fn ソースルートの下に作る(ソースルート: &ソースルート) -> Self {
-        Self(ソースルート.宣言の相対パスが指すソース(Path::new(タイルのディレクトリ名)))
+        Self(ソースルート.直下の置き場のパス(タイルのディレクトリ名))
     }
 
     pub fn 存在するか(&self) -> bool {

@@ -5,9 +5,10 @@
 use super::super::catalog::{アセット定義, ソース種別};
 use super::asset_declaration::植生詳細段原型ソース;
 use super::definition_kind::必須定義;
+use crate::ソースアセットの相対パス;
 
 /// 植生世界の原型ソース。起動時シーンもチャンクもこの1つのglTFを原型として読む。
-const 植生原型ソース: &str = "vegetation_world/archetype.gltf";
+const 植生原型ソース: ソースアセットの相対パス = ソースアセットの相対パス::生成する("vegetation_world/archetype.gltf");
 
 /// 画素判定に使う個体数。2×2の格子になり、画面を4分割した各領域へ1体ずつ描かれる構図になる。
 pub(super) const 画素判定の個体数: usize = 4;

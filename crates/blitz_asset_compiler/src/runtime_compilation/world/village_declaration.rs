@@ -9,23 +9,27 @@ use super::super::catalog::アセット定義;
 use super::super::source_kind::原型と置き方の宣言;
 use super::definition_kind::外部ソース専用定義;
 use super::prop_group_declaration::{小物, 散らす, 輪, 集まり};
-use crate::{
-    小物の切り株のソース, 小物の小石のソース, 小物の岩のソース, 小物の木箱のソース, 小物の柵のソース, 小物の樽のソース
-};
+use crate::ソースアセットの相対パス;
+
+/// この世界だけが読む小物の原型のソース。他の世界と共有するものは`ソースアセットの相対パス`の関連定数が持つ。
+const 石垣のソース: ソースアセットの相対パス = ソースアセットの相対パス::生成する("props/stone_wall.glb");
+const 杭のソース: ソースアセットの相対パス = ソースアセットの相対パス::生成する("props/wooden_stake.glb");
+const 壺のソース: ソースアセットの相対パス = ソースアセットの相対パス::生成する("props/clay_pot.glb");
+const 薪の山のソース: ソースアセットの相対パス = ソースアセットの相対パス::生成する("props/firewood_pile.glb");
 
 /// 集落を作る小物の一覧。原型はすべて外部のアセットリポジトリの`props/`から引く。
 /// 囲いの3種は半径の違う3重の輪になり、内から石垣・柵・杭の順に外へ広がる。荷と器の4種は輪の内側の4箇所へ寄せてある。
 pub(super) const 集落の小物一覧: &[原型と置き方の宣言] = &[
-    小物("village_stone_wall", "props/stone_wall.glb", 輪(40, 15.0, 0.5)),
-    小物("village_fence_section", 小物の柵のソース, 輪(96, 26.0, 0.6)),
-    小物("village_wooden_stake", "props/wooden_stake.glb", 輪(120, 30.5, 0.9)),
-    小物("village_wooden_crate", 小物の木箱のソース, 集まり(60, 58.0, 44.0, 5.0)),
-    小物("village_barrel", 小物の樽のソース, 集まり(55, 42.0, 56.0, 5.0)),
-    小物("village_clay_pot", "props/clay_pot.glb", 集まり(48, 44.0, 42.5, 4.0)),
-    小物("village_firewood_pile", "props/firewood_pile.glb", 集まり(36, 56.5, 57.5, 5.0)),
-    小物("village_tree_stump", 小物の切り株のソース, 散らす(90, 88.0)),
-    小物("village_boulder", 小物の岩のソース, 散らす(70, 84.0)),
-    小物("village_rock", 小物の小石のソース, 散らす(420, 88.0)),
+    小物("village_stone_wall", 石垣のソース, 輪(40, 15.0, 0.5)),
+    小物("village_fence_section", ソースアセットの相対パス::小物の柵, 輪(96, 26.0, 0.6)),
+    小物("village_wooden_stake", 杭のソース, 輪(120, 30.5, 0.9)),
+    小物("village_wooden_crate", ソースアセットの相対パス::小物の木箱, 集まり(60, 58.0, 44.0, 5.0)),
+    小物("village_barrel", ソースアセットの相対パス::小物の樽, 集まり(55, 42.0, 56.0, 5.0)),
+    小物("village_clay_pot", 壺のソース, 集まり(48, 44.0, 42.5, 4.0)),
+    小物("village_firewood_pile", 薪の山のソース, 集まり(36, 56.5, 57.5, 5.0)),
+    小物("village_tree_stump", ソースアセットの相対パス::小物の切り株, 散らす(90, 88.0)),
+    小物("village_boulder", ソースアセットの相対パス::小物の岩, 散らす(70, 84.0)),
+    小物("village_rock", ソースアセットの相対パス::小物の小石, 散らす(420, 88.0)),
 ];
 
 /// この世界がチャンク以外に焼くもの。小物の原型は群が素材として読むだけであり、実行時形式は作らない。

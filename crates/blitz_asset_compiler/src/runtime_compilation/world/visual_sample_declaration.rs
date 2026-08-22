@@ -6,9 +6,7 @@
 //! 塊の中心はZが庭の中心から4メートル以上離れた位置を選んである。
 //! 参照: `_doc/設計/Blenderアセット運用.md`「段3: 小物の量産と見本の集落」
 
-use crate::{
-    小物の切り株のソース, 小物の岩のソース, 小物の木箱のソース, 小物の柵のソース, 小物の樽のソース, 目視見本の指定
-};
+use crate::{ソースアセットの相対パス, 目視見本の指定};
 use blitz_engine::アセットID;
 
 use super::super::catalog::アセット定義;
@@ -18,19 +16,28 @@ use super::prop_group_declaration::{原型と置き方の指定一覧を作る, 
 
 /// 材質見本の立体を指す安定ID。庭の地面のチャンクが素材として読むだけであり、実行時形式は作らない。
 pub(super) const 材質見本の立体: &str = "terrain_visual_sample_bodies";
-const 材質見本の立体のソース: &str = "terrain_visual_world/material_sample_bodies.gltf";
+const 材質見本の立体のソース: ソースアセットの相対パス =
+    ソースアセットの相対パス::生成する("terrain_visual_world/material_sample_bodies.gltf");
 
 /// チャンクの外へ広がる遠景地面を指す安定ID。こちらも庭の地面のチャンクが素材として読むだけである。
 pub(super) const 遠景地面: &str = "terrain_visual_distant_ground";
-const 遠景地面のソース: &str = "terrain_visual_world/distant_ground.gltf";
+const 遠景地面のソース: ソースアセットの相対パス = ソースアセットの相対パス::生成する("terrain_visual_world/distant_ground.gltf");
 
 /// 庭を作る小物の一覧。原型はすべて外部のアセットリポジトリの`props/`から引く。
 pub(super) const 庭の小物一覧: &[原型と置き方の宣言] = &[
-    小物("terrain_visual_fence_section", 小物の柵のソース, 輪(40, 14.0, 0.5)),
-    小物("terrain_visual_barrel", 小物の樽のソース, 集まり(5, 43.5, 55.5, 1.8)),
-    小物("terrain_visual_wooden_crate", 小物の木箱のソース, 集まり(5, 56.5, 55.0, 2.0)),
-    小物("terrain_visual_boulder", 小物の岩のソース, 集まり(4, 42.5, 45.0, 2.5)),
-    小物("terrain_visual_tree_stump", 小物の切り株のソース, 集まり(4, 57.5, 44.5, 2.2)),
+    小物("terrain_visual_fence_section", ソースアセットの相対パス::小物の柵, 輪(40, 14.0, 0.5)),
+    小物("terrain_visual_barrel", ソースアセットの相対パス::小物の樽, 集まり(5, 43.5, 55.5, 1.8)),
+    小物(
+        "terrain_visual_wooden_crate",
+        ソースアセットの相対パス::小物の木箱,
+        集まり(5, 56.5, 55.0, 2.0),
+    ),
+    小物("terrain_visual_boulder", ソースアセットの相対パス::小物の岩, 集まり(4, 42.5, 45.0, 2.5)),
+    小物(
+        "terrain_visual_tree_stump",
+        ソースアセットの相対パス::小物の切り株,
+        集まり(4, 57.5, 44.5, 2.2),
+    ),
 ];
 
 /// この世界がチャンク以外に焼くもの。材質見本の立体も遠景地面も小物の原型も、庭の地面のチャンクが素材として読むだけである。
