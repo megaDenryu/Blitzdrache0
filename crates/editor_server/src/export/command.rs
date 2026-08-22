@@ -10,15 +10,14 @@ mod chunk_building_grids;
 mod chunk_weight_grid;
 mod chunk_write;
 
-use blitz_asset_compiler::{建物の格子の台帳, 高さ格子諸元};
+use blitz_asset_compiler::建物の格子の台帳;
 
 use self::chunk_write::書き出したチャンク;
 use super::chunk_directory_text::{ファイル名 as 目録ファイル名, 本文を組み立てる};
-use super::chunk_edge_length;
 use super::destination::世界ソース出力先;
 use super::error::書き出しエラー;
-use super::numeric_conversion::辺分割数へ変換する;
 use super::result::書き出し結果;
+use crate::mother_height_cutout::高さ格子諸元を区画割りから組む;
 use crate::resource::建物外形カタログ;
 use crate::storage::{ファイル保管庫, プロジェクト保管庫};
 
@@ -54,9 +53,7 @@ impl ソースアセット書き出しコマンド {
         let マザーバイト列 = self.保管庫.大域世界の高さ格子を読む()?.ok_or(書き出しエラー::大域世界が未保存)?;
         let 区画割り = 構造.区画割り;
         let マザー一辺頂点数 = 区画割り.マザーハイトマップの格子解像度()?;
-        let 解像度 = 辺分割数へ変換する(区画割り.チャンクあたり格子解像度)?;
-        let チャンク一辺メートル = chunk_edge_length::求める(区画割り.一辺のメートル, 区画割り.軸あたりチャンク数)?;
-        let 諸元 = 高さ格子諸元::生成する(解像度, 1, チャンク一辺メートル)?;
+        let 諸元 = 高さ格子諸元を区画割りから組む(区画割り)?;
 
         self.出力先.ディレクトリを用意する()?;
         let mut 項目一覧 = Vec::new();
@@ -65,13 +62,13 @@ impl ソースアセット書き出しコマンド {
             for x in 0..区画割り.軸あたりチャンク数 {
                 let 書き出したチャンク {
                     目録項目, 書いた枚数
-                } = self.チャンクを書き出す(x, z, 諸元, 解像度, &マザーバイト列, マザー一辺頂点数)?;
+                } = self.チャンクを書き出す(x, z, 諸元, &マザーバイト列, マザー一辺頂点数)?;
                 書いたファイル数 = 書いたファイル数.saturating_add(書いた枚数);
                 項目一覧.push(目録項目);
             }
         }
 
-        let 目録本文 = 本文を組み立てる(チャンク一辺メートル, &項目一覧);
+        let 目録本文 = 本文を組み立てる(諸元.一辺メートル(), &項目一覧);
         self.出力先.直下へ書き込む(目録ファイル名, 目録本文.as_bytes())?;
         書いたファイル数 = 書いたファイル数.saturating_add(1);
 

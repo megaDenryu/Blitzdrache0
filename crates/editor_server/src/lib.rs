@@ -5,11 +5,13 @@
 mod atomic_file_write;
 mod bake_editor_world;
 mod building_grid_store;
+mod chunk_height_supply;
 #[cfg(feature = "typescript")]
 mod contract;
 mod export;
 mod failure_response;
 mod health_contract;
+mod mother_height_cutout;
 mod normalized_app;
 mod project_info_contract;
 mod project_root;
@@ -26,6 +28,7 @@ pub use export::{
     ソースアセット書き出しコマンド, 一棟だけの検証世界を書き出すコマンド, 世界ソース出力先, 出力世界名, 書き出しエラー, 書き出し結果
 };
 pub use health_contract::生存確認応答;
+pub use mother_height_cutout::高さの切り出しエラー;
 pub use normalized_app::経路正規化アプリ;
 pub use project_info_contract::プロジェクト情報応答;
 pub use project_root::{プロジェクトルート, プロジェクトルートを解決する};

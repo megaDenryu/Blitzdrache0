@@ -3,17 +3,17 @@
 //! それを使い、無ければマザーハイトマップを参照する)をここへ閉じる。世界の外側へはみ出す
 //! 添字(1px重複の縁が世界の端に掛かる場合)はマザーハイトマップの縁の値へ丸めて拡張する。
 
-pub(super) struct 高さ関数材料<'a> {
-    pub(super) チャンクx: i32,
-    pub(super) チャンクz: i32,
-    pub(super) 解像度: u16,
-    pub(super) マザー一辺頂点数: u32,
-    pub(super) マザーバイト列: &'a [u8],
-    pub(super) チャンク別バイト列: Option<&'a [u8]>,
+pub(crate) struct 高さ関数材料<'a> {
+    pub(crate) チャンクx: i32,
+    pub(crate) チャンクz: i32,
+    pub(crate) 解像度: u16,
+    pub(crate) マザー一辺頂点数: u32,
+    pub(crate) マザーバイト列: &'a [u8],
+    pub(crate) チャンク別バイト列: Option<&'a [u8]>,
 }
 
 impl 高さ関数材料<'_> {
-    pub(super) fn 高さを求める(&self, 添字x: i16, 添字z: i16) -> f32 {
+    pub(crate) fn 高さを求める(&self, 添字x: i16, 添字z: i16) -> f32 {
         let ローカルx = ローカル添字を求める(添字x, self.チャンクx, self.解像度);
         let ローカルz = ローカル添字を求める(添字z, self.チャンクz, self.解像度);
         if let (Some(チャンク別), Some(行), Some(列)) = (

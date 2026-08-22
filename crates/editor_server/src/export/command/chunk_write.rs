@@ -9,11 +9,11 @@ use blitz_engine::アセットID;
 
 use super::super::chunk_asset_file_names::チャンクの素材のファイル名;
 use super::super::chunk_directory_text::目録項目;
-use super::super::chunk_height_sample::高さ関数材料;
 use super::super::editor_chunk_source::エディターチャンクソース;
 use super::super::error::書き出しエラー;
 use super::super::numeric_conversion::チャンク添字へ変換する;
 use super::ソースアセット書き出しコマンド;
+use crate::mother_height_cutout::高さ関数材料;
 use crate::resource::チャンク座標;
 use crate::storage::プロジェクト保管庫;
 
@@ -29,7 +29,6 @@ impl ソースアセット書き出しコマンド {
         x: u32,
         z: u32,
         諸元: 高さ格子諸元,
-        解像度: u16,
         マザーバイト列: &[u8],
         マザー一辺頂点数: u32,
     ) -> Result<書き出したチャンク, 書き出しエラー> {
@@ -40,7 +39,7 @@ impl ソースアセット書き出しコマンド {
         let 材料 = 高さ関数材料 {
             チャンクx: x,
             チャンクz: z,
-            解像度,
+            解像度: 諸元.辺分割数(),
             マザー一辺頂点数,
             マザーバイト列,
             チャンク別バイト列: チャンク別バイト列.as_deref(),

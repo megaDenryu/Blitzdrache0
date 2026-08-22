@@ -7,6 +7,7 @@
 
 mod building_grid_fixture;
 mod building_outline_catalog_fixture;
+mod chunk_height_cutout_fixture;
 mod scatter_export_fixture;
 mod scatter_fixture;
 mod source_asset_export_fixture;
@@ -20,6 +21,9 @@ pub use building_grid_fixture::{
     初期の格子のjson, 升目を空にした格子のjson, 外部アセットの置き場があるか, 格子の台帳を読む, 格子の建物を1件置いた構造, 試験の建物定義の識別子,
 };
 pub use building_outline_catalog_fixture::{カタログに無い識別子, 一間四方の家の識別子, 建物外形カタログを作る};
+pub use chunk_height_cutout_fixture::{
+    チャンク一辺頂点数, マザーの高さ, 大域を一意な値で用意する, 高さ一覧へ解く, 高さ格子を取得する
+};
 pub use scatter_export_fixture::{
     散布を載せて書き出す, 書き出したチャンクソースを読む, 焼いたチャンクのバイト列を読む
 };

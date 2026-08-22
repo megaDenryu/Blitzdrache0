@@ -4,8 +4,6 @@
 
 mod chunk_asset_file_names;
 mod chunk_directory_text;
-mod chunk_edge_length;
-mod chunk_height_sample;
 mod command;
 mod destination;
 mod editor_chunk_source;

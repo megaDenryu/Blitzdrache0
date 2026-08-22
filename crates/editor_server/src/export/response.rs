@@ -21,6 +21,7 @@ fn 状態と種別を決める(エラー: &書き出しエラー) -> (StatusCode
         書き出しエラー::大域世界が未保存 => (StatusCode::UNPROCESSABLE_ENTITY, "前提条件エラー"),
         書き出しエラー::区画割りの導出に失敗(_) => (StatusCode::UNPROCESSABLE_ENTITY, "構造検証エラー"),
         書き出しエラー::高さ格子処理に失敗(_) => (StatusCode::UNPROCESSABLE_ENTITY, "構造検証エラー"),
+        書き出しエラー::マザーからの切り出しに失敗(_) => (StatusCode::UNPROCESSABLE_ENTITY, "構造検証エラー"),
         書き出しエラー::地表材質の重み格子処理に失敗(_) => (StatusCode::UNPROCESSABLE_ENTITY, "構造検証エラー"),
         書き出しエラー::数値変換に失敗(_) => (StatusCode::UNPROCESSABLE_ENTITY, "構造検証エラー"),
         書き出しエラー::建物が所有チャンクの外にある { .. } => (StatusCode::UNPROCESSABLE_ENTITY, "構造検証エラー"),
