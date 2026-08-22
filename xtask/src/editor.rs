@@ -11,15 +11,15 @@ use std::{
     time::Duration,
 };
 
-use self::project_root_argument::プロジェクトルートを引数から解く;
+use self::project_root::プロジェクトルート;
 
 pub(crate) mod building_outline_catalog;
-mod project_root_argument;
+mod project_root;
 
 pub fn 実行する(追加引数: &[String]) -> Result<(), String> {
     let リポジトリルート = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
     let editor_web = リポジトリルート.join("editor_web");
-    let プロジェクトルート = プロジェクトルートを引数から解く(追加引数, &リポジトリルート);
+    let プロジェクトルート = プロジェクトルート::引数から解く(追加引数, &リポジトリルート);
 
     let カタログ = building_outline_catalog::既定のファイルへ書き出す(&リポジトリルート, &プロジェクトルート)?;
     println!("建物外形カタログ: {}", カタログ.display());
