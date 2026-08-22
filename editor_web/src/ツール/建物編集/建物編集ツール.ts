@@ -36,17 +36,19 @@ export class 建物編集ツール extends LV2HtmlComponentBase {
         this.画面.永続化.on読込クリック(() => void this.同期.永続化.読み直す(() => this.同期.表示を作り直す()))
     }
 
-    // 描画の解像度を要るのは三次元表示のキャンバスだけである。大きさはパネルが自分で測る。
-    public 寸法を合わせる(): void {
-        this.画面.三次元.いまの枠の大きさへ合わせる(window.devicePixelRatio)
+    // 幅と高さを使わないのは、三次元表示が画面いっぱいでなく、巻き取る文書の中の高さの決まった箱だからである。
+    // 箱の大きさはCSSが決めるため、パネルが自分のキャンバスを測る。ピクセル比だけを外殻から受け取る。
+    public 寸法を合わせる(_幅: number, _高さ: number, ピクセル比: number = 1): void {
+        this.画面.三次元.いまの枠の大きさへ合わせる(ピクセル比)
     }
 
-    // 背面のタブは大きさが零で測れるため、前面へ戻った時点で測り直す。
     public 前面になった(): void {
-        this.寸法を合わせる()
+        this.画面.三次元.描画を始める()
     }
 
-    public 背面になった(): void {}
+    public 背面になった(): void {
+        this.画面.三次元.描画を止める()
+    }
 
     public override delete(): void {
         this.画面.delete()
