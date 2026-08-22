@@ -1,9 +1,9 @@
-import { div, textInput, DivC, TextInputC, LV2HtmlComponentBase } from 'sengen-ui'
+import { div, span, textInput, DivC, TextInputC, LV2HtmlComponentBase } from 'sengen-ui'
 import { 永続化パネル } from '../../チャンク編集/画面/パネル/永続化/index.ts'
 import { 平面図パネル } from './平面図パネル.ts'
 import { 筆パネル } from './筆パネル.ts'
 import { 階の切替パネル } from './階の切替パネル.ts'
-import { コンテナ, セクション, セクション見出し, 名前入力, 本文幅, 横並び, 表題, 説明文, 選択ボタン } from './スタイル.css.ts'
+import { コンテナ, セクション, セクション見出し, 名前入力, 断りの文言, 本文幅, 横並び, 触りの知らせ, 表題, 説明文, 選択ボタン } from './スタイル.css.ts'
 
 // 建物1件を編集する文書タブの画面全体。平面図・筆・階の切替・取り消しやり直し・保存を1枚に並べる。
 // 三次元の確認はエンジンで実際に世界を歩いて行う(判断9)。
@@ -17,10 +17,12 @@ export class 建物編集画面 extends LV2HtmlComponentBase {
     public readonly 取り消しボタン: DivC
     public readonly やり直しボタン: DivC
     private readonly _表題: DivC
+    private readonly _触りの知らせ: DivC
 
     public constructor(建物定義ID: string) {
         super()
         this._表題 = div({ class: 表題, text: 建物定義ID })
+        this._触りの知らせ = div({ class: 触りの知らせ, text: '' })
         this.表示名入力 = textInput({ class: 名前入力, value: '', placeholder: '表示名' }).setTooltip('表示名')
         this.取り消しボタン = div({ class: 選択ボタン, text: '取り消し' }).setTooltip('取り消し')
         this.やり直しボタン = div({ class: 選択ボタン, text: 'やり直し' }).setTooltip('やり直し')
@@ -37,11 +39,18 @@ export class 建物編集画面 extends LV2HtmlComponentBase {
                 div({ class: セクション }).childs([
                     div({ class: セクション見出し, text: '平面図' }),
                     this.平面図,
+                    this._触りの知らせ,
                     div({ class: 横並び }).childs([this.取り消しボタン, this.やり直しボタン]),
                 ]),
                 this.永続化,
             ]),
         )
+    }
+
+    // 筆が断られた事情を平面図の下へ出す。断りを黙って捨てると、触ったのに何も起きない理由が人に読めない。
+    public 触りの知らせを更新する(文言: string): void {
+        this._触りの知らせ.setTooltip(文言).clearChildren()
+        if (文言 !== '') this._触りの知らせ.child(span({ class: 断りの文言, text: 文言 }))
     }
 
     public 取り消しとやり直しの活性を更新する(取り消せるか: boolean, やり直せるか: boolean): void {

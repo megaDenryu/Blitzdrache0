@@ -41,6 +41,16 @@ export const 説明文 = style({
     color: エディターCSS変数('テキスト副'),
 })
 
+// 筆が断られた事情を出す帯。断りが無いときは中身を持たないため、高さを固定して平面図の下が跳ねないようにする。
+export const 触りの知らせ = style({
+    minHeight: '16px',
+    fontSize: '12px',
+})
+
+export const 断りの文言 = style({
+    color: エディターCSS変数('危険ボタン文字'),
+})
+
 export const 横並び = style({
     display: 'flex',
     alignItems: 'center',

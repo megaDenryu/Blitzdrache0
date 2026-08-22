@@ -8,6 +8,15 @@ export interface I升目の配線 {
     readonly on面を触る: (座標: 升目の座標, 側面: 升目の側面) => void
 }
 
+// 1升目を描くのに要る、格子から読んだ事実の組。触ったときに何が起きるかは筆が決めるため、この部品は持たない。
+export interface I升目の見取り {
+    readonly 座標: 升目の座標
+    readonly 宣言: 升目の宣言 | undefined
+    readonly 根か: boolean
+    readonly 置けるか: boolean
+    readonly 隣に升目があるか: (側面: 升目の側面) => boolean
+}
+
 const 側面ごとの位置: Record<升目の側面, string> = {
     正面: 正面ボタン,
     背面: 背面ボタン,
@@ -15,44 +24,40 @@ const 側面ごとの位置: Record<升目の側面, string> = {
     右面: 右面ボタン,
 }
 
-// 平面図の1升目。中央が升目そのもの、周囲の4つが面である。升目が無い座標も枠として描き、
-// そこを触ると升目が置かれる(置ける場所が画面から読めるようにするため)。
+// 平面図の1升目。中央が升目そのもの、周囲の4つが面である。升目が無い座標も枠として描くが、
+// 置けない座標(真下に升目が無い上の階)は不活性にして触れなくする。置ける場所が画面から読めるようにするためである。
 export class 平面図の升目部品 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
 
-    public constructor(
-        座標: 升目の座標,
-        宣言: 升目の宣言 | undefined,
-        根か: boolean,
-        隣に升目があるか: (側面: 升目の側面) => boolean,
-        配線: I升目の配線,
-    ) {
+    public constructor(見取り: I升目の見取り, 配線: I升目の配線) {
         super()
+        const 触れるか = 見取り.宣言 !== undefined || 見取り.置けるか
         const 中央 = div({ class: 升目中央 })
-            .child(span({ text: 宣言 === undefined ? `${座標.横},${座標.奥}` : 中央の綴り(宣言) }))
-            .setTooltip(`横${座標.横}・奥${座標.奥}・階${座標.階}`)
-            .setAttribute('data-升目あり', String(宣言 !== undefined))
-            .setAttribute('data-根', String(根か))
-            .onClick(() => 配線.on升目を触る(座標))
+            .child(span({ text: 見取り.宣言 === undefined ? `${見取り.座標.横},${見取り.座標.奥}` : 中央の綴り(見取り.宣言) }))
+            .setTooltip(中央の説明(見取り, 触れるか))
+            .setAttribute('data-升目あり', String(見取り.宣言 !== undefined))
+            .setAttribute('data-根', String(見取り.根か))
+            .setAttribute('data-触れる', String(触れるか))
+        if (触れるか) 中央.onClick(() => 配線.on升目を触る(見取り.座標))
         this._componentRoot = div({ class: 升目枠 }).childs([
             中央,
-            ...全側面.map((側面) => this.面のボタンを作る(座標, 宣言, 側面, 隣に升目があるか(側面), 配線)),
+            ...全側面.map((側面) => this.面のボタンを作る(見取り, 側面, 配線)),
         ])
     }
 
-    private 面のボタンを作る(
-        座標: 升目の座標,
-        宣言: 升目の宣言 | undefined,
-        側面: 升目の側面,
-        隣があるか: boolean,
-        配線: I升目の配線,
-    ): DivC {
-        const 印 = 宣言 === undefined ? '空' : 隣があるか ? '継ぎ口' : 壁の印(側面のはめ口を読む(宣言, 側面))
+    private 面のボタンを作る(見取り: I升目の見取り, 側面: 升目の側面, 配線: I升目の配線): DivC {
+        const 隣があるか = 見取り.隣に升目があるか(側面)
+        const 印 = 見取り.宣言 === undefined ? '空' : 隣があるか ? '継ぎ口' : 壁の印(側面のはめ口を読む(見取り.宣言, 側面))
         return div({ class: `${面ボタン} ${側面ごとの位置[側面]}` })
             .setTooltip(`${側面}: ${印}`)
             .setAttribute('data-壁', 印)
-            .onClick(() => 配線.on面を触る(座標, 側面))
+            .onClick(() => 配線.on面を触る(見取り.座標, 側面))
     }
+}
+
+function 中央の説明(見取り: I升目の見取り, 触れるか: boolean): string {
+    const 位置 = `横${見取り.座標.横}・奥${見取り.座標.奥}・階${見取り.座標.階}`
+    return 触れるか ? 位置 : `${位置}(真下に升目が無いため置けない)`
 }
 
 function 壁の印(値: はめ口の値): string {
