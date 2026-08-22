@@ -18,6 +18,10 @@ export class タブ識別子 {
         return new タブ識別子('マテリアル')
     }
 
+    public static 建物から生成する(建物定義ID: string): タブ識別子 {
+        return new タブ識別子(`建物_${建物定義ID}`)
+    }
+
     public static チャンクから生成する(座標: チャンク座標): タブ識別子 {
         return new タブ識別子(`チャンク_${座標.x}_${座標.z}`)
     }
@@ -37,6 +41,13 @@ export class タブ識別子 {
         const z = Number(部分[1])
         if (Number.isNaN(x) || Number.isNaN(z)) return null
         return { x, z }
+    }
+
+    // タブ識別子が建物のものであれば建物定義IDを復元する。建物以外の識別子ならnull。
+    public 建物定義IDを復元する(): string | null {
+        if (!this._綴り.startsWith('建物_')) return null
+        const 綴り = this._綴り.slice('建物_'.length)
+        return 綴り === '' ? null : 綴り
     }
 
     public 綴り(): string {

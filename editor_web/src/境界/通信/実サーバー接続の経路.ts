@@ -20,3 +20,11 @@ export function 書き出しパスを組み立てる(基底URL: string): string 
 export function 建物外形カタログパスを組み立てる(基底URL: string): string {
     return `${基底URL}/api/建物外形カタログ`
 }
+
+export function 建物一覧パスを組み立てる(基底URL: string): string {
+    return `${基底URL}/api/建物一覧`
+}
+
+export function 建物の格子パスを組み立てる(基底URL: string, 建物定義ID: string): string {
+    return `${基底URL}/api/建物/${encodeURIComponent(建物定義ID)}/格子`
+}

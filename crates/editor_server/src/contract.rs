@@ -77,6 +77,11 @@ pub fn 編集資源契約の本文を組み立てる() -> String {
         "export const 建物外形カタログ形式版 = {} as const;\n",
         crate::建物外形カタログの現在の形式版
     ));
+    本文.push_str(&format!(
+        "export const 建物の格子の形式版 = {} as const;
+",
+        crate::建物の格子の現在の形式版
+    ));
     本文
 }
 

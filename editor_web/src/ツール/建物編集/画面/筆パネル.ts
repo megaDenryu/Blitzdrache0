@@ -1,0 +1,44 @@
+import { div, DivC, LV2HtmlComponentBase } from 'sengen-ui'
+import { 全ての升目への筆, 全ての面への筆, type 升目への筆, type 面への筆 } from '../操作コマンド/index.ts'
+import { セクション, セクション見出し, 横並び, 選択ボタン } from './スタイル.css.ts'
+
+export interface I筆パネル配線 {
+    readonly on升目への筆を選ぶ: (筆: 升目への筆) => void
+    readonly on面への筆を選ぶ: (筆: 面への筆) => void
+}
+
+// いま選んでいる筆を見せ、切り替えを配線先へ伝えるパネル。升目そのものへ効く筆と面へ効く筆を
+// 別の列にするのは、触る場所が違うためである(中央か周囲か)。
+export class 筆パネル extends LV2HtmlComponentBase {
+    protected _componentRoot: DivC
+    private readonly _升目の列: DivC = div({ class: 横並び })
+    private readonly _面の列: DivC = div({ class: 横並び })
+
+    public constructor() {
+        super()
+        this._componentRoot = div({ class: セクション }).childs([
+            div({ class: セクション見出し, text: '升目への筆(升目の中央を触る)' }),
+            this._升目の列,
+            div({ class: セクション見出し, text: '面への筆(升目の周りの帯を触る)' }),
+            this._面の列,
+        ])
+    }
+
+    public 再構築する(選んだ升目への筆: 升目への筆, 選んだ面への筆: 面への筆, 配線: I筆パネル配線): void {
+        this._升目の列.clearChildren()
+        for (const 筆 of 全ての升目への筆) {
+            this._升目の列.child(この筆のボタン(筆, 筆 === 選んだ升目への筆, () => 配線.on升目への筆を選ぶ(筆)))
+        }
+        this._面の列.clearChildren()
+        for (const 筆 of 全ての面への筆) {
+            this._面の列.child(この筆のボタン(筆, 筆 === 選んだ面への筆, () => 配線.on面への筆を選ぶ(筆)))
+        }
+    }
+}
+
+function この筆のボタン(綴り: string, 選んでいるか: boolean, 押されたら: () => void): DivC {
+    return div({ class: 選択ボタン, text: 綴り })
+        .setTooltip(綴り)
+        .setAttribute('data-selected', String(選んでいるか))
+        .onClick(押されたら)
+}

@@ -7,6 +7,8 @@ import { エクスプローラーパネル } from './エクスプローラー/in
 import { 設定パネル } from './設定/index.ts'
 import { テーマ管理サービス } from './テーマ/index.ts'
 import { 起動時タブ計画を立てる } from './起動時タブ計画.ts'
+import { 建物の一覧サービス } from './エディター外殻/建物の一覧サービス.ts'
+import { エクスプローラーとタブを結ぶ } from './エディター外殻/エクスプローラーとタブを結ぶ.ts'
 import { エクスプローラーアクティビティID, 設定アクティビティID, シェルを構築する } from './エディター外殻/シェルを構築する.ts'
 import { タブ開閉サービス } from './エディター外殻/タブ開閉サービス.ts'
 import { 外殻ルート } from './スタイル.css.ts'
@@ -17,12 +19,13 @@ import { 外殻ルート } from './スタイル.css.ts'
 export class エディター外殻 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     public readonly シェル: 外殻レイアウト
-    public readonly 保管庫: プロジェクト保管庫接続
+    public readonly 保管庫: 状態通知付き保管庫接続
     public readonly テーマ管理: テーマ管理サービス
     private readonly _エクスプローラー: エクスプローラーパネル = new エクスプローラーパネル()
     private readonly _設定パネル: 設定パネル
     private readonly _インスペクタースロット: DivC = div().setStyleCSS({ width: '100%', height: '100%', overflowY: 'auto' })
     private readonly _タブ開閉: タブ開閉サービス
+    private readonly _建物の一覧: 建物の一覧サービス
     private readonly _テーマ購読解除: () => void
 
     public constructor(保管庫?: プロジェクト保管庫接続) {
@@ -37,20 +40,12 @@ export class エディター外殻 extends LV2HtmlComponentBase {
             this.シェル, this._エクスプローラー, this._インスペクタースロット, this.保管庫, this.テーマ管理,
         )
 
+        this._建物の一覧 = new 建物の一覧サービス(this.保管庫, this._エクスプローラー, this._タブ開閉)
+
         this.シェル.左サイドバーへビューを登録する(エクスプローラーアクティビティID, this._エクスプローラー)
         this.シェル.左サイドバーへビューを登録する(設定アクティビティID, this._設定パネル)
 
-        this._エクスプローラー.配線する({
-            on大域世界を開く: () => this._タブ開閉.大域世界を開く(),
-            onチャンクを開く: (座標) => this._タブ開閉.チャンクを開く(座標),
-            onマテリアルを開く: () => this._タブ開閉.マテリアルを開く(),
-            on使い方を開く: () => this._タブ開閉.使い方を開く(),
-        })
-
-        this.シェル.onタブイベント({
-            onタブ選択: (id) => this._タブ開閉.タブ選択時処理(id),
-            onタブ閉じる: (id) => this._タブ開閉.タブを閉じたときの後処理(id),
-        })
+        エクスプローラーとタブを結ぶ(this.シェル, this._エクスプローラー, this._タブ開閉, this._建物の一覧)
 
         // ルート要素へのCSS変数の初期一括適用
         this.テーマ管理.DOMへ適用する(初期テーマ)
@@ -63,6 +58,7 @@ export class エディター外殻 extends LV2HtmlComponentBase {
         this._componentRoot = div({ class: 外殻ルート }).child(this.シェル)
         // 起動時に開くタブの並びは、大域世界を開いた後の状態を見て後追いで判定するのではなく、
         // 使い方ガイドの閲覧記録だけから先に決める(起動シーケンスの途中経過に依存させない)。
+        void this._建物の一覧.読み直す()
         for (const タブ種別 of 起動時タブ計画を立てる(使い方を閲覧済みか())) {
             if (タブ種別 === '大域世界') {
                 this._タブ開閉.大域世界を開く()
@@ -72,6 +68,9 @@ export class エディター外殻 extends LV2HtmlComponentBase {
         }
     }
 
+    public 建物の一覧を読み直す(): Promise<void> {
+        return this._建物の一覧.読み直す()
+    }
     public 大域世界を開く(): void {
         this._タブ開閉.大域世界を開く()
     }
