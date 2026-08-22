@@ -38,7 +38,7 @@ fn 形式版3は散布の群と個体を読む() {
     let ソース = ソースを置いて読む("version3", &本文, true);
     assert_eq!(ソース.散布の群一覧.len(), 1);
     let 群 = &ソース.散布の群一覧[0];
-    assert_eq!(群.植生定義ID, "conifer");
+    assert_eq!(群.植生定義ID.綴り(), "conifer");
     assert_eq!(群.個体一覧.len(), 1);
     assert_eq!(群.個体一覧[0].配置識別子, "散布-x0z0-0");
     assert_eq!(群.個体一覧[0].チャンク原点からの東メートル, 1.5);

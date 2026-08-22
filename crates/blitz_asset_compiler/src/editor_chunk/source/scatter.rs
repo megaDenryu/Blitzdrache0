@@ -1,5 +1,6 @@
 //! 版付きエディターチャンクソースが運ぶ散布の群と個体の型と、群一覧の検証。担当するのは、散布の直列化の形と、
-//! 識別子の空・重複・有限でない数値の3つを拒む判定である。
+//! 配置識別子の空・重複と有限でない数値を拒む判定である。植生定義IDの空は`植生定義ID`の読み取りが拒むため、
+//! ここでは見ない(検査の正本を2つ持たない)。
 //!
 //! 個体が向き・大きさ・高さを持たないのは、その3つを焼く側が導くためである。高さは高さ格子の面から、
 //! 向きと大きさは配置識別子から導く。エディターは同じ木を同じ場所へ置いたことだけを伝える。
@@ -10,12 +11,13 @@ use serde::Deserialize;
 
 use super::manifest_file::エディターチャンクソースのファイル;
 use crate::error::アセットコンパイルエラー;
+use crate::runtime_compilation::植生定義ID;
 
 /// 同じ植生定義を持つ個体をまとめた群1つ分。
 #[derive(Debug, Deserialize)]
 #[allow(non_snake_case)]
 pub(crate) struct 散布の群ソース {
-    pub(crate) 植生定義ID: String,
+    pub(crate) 植生定義ID: 植生定義ID,
     pub(crate) 個体一覧: Vec<散布の個体ソース>,
 }
 
@@ -35,9 +37,6 @@ pub(super) fn 散布の群一覧を検証する(
 ) -> Result<(), アセットコンパイルエラー> {
     let mut 配置識別子一覧 = HashSet::new();
     for 群 in 一覧 {
-        if 群.植生定義ID.trim().is_empty() {
-            return Err(ファイル.読み込み失敗のエラーを作る("散布の群に空の植生定義IDがある".to_string()));
-        }
         for 個体 in &群.個体一覧 {
             if 個体.配置識別子.trim().is_empty()
                 || !配置識別子一覧.insert(&個体.配置識別子)

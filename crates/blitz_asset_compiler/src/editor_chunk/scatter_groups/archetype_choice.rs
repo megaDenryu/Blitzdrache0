@@ -8,7 +8,7 @@ use blitz_engine::アセットID;
 
 use crate::error::アセットコンパイルエラー;
 use crate::placement::大きさの範囲;
-use crate::runtime_compilation::{全植生定義, 植生の実体, 識別子から植生定義を参照する};
+use crate::runtime_compilation::{全植生定義, 植生の実体, 植生定義ID, 識別子から植生定義を参照する};
 
 /// 植生定義1件を焼くのに要る2つ。
 pub(super) struct 焼く原型 {
@@ -17,7 +17,7 @@ pub(super) struct 焼く原型 {
 }
 
 pub(super) fn 植生定義の識別子から焼く原型を引く(
-    植生定義id: &str
+    植生定義id: &植生定義ID,
 ) -> Result<焼く原型, アセットコンパイルエラー> {
     let 定義 = 識別子から植生定義を参照する(植生定義id).ok_or_else(|| {
         アセットコンパイルエラー::エディター散布不正(
@@ -49,16 +49,21 @@ fn 正本に在る植生定義の綴り() -> String {
 #[allow(clippy::unwrap_used)]
 mod tests {
     use super::植生定義の識別子から焼く原型を引く;
+    use crate::runtime_compilation::植生定義ID;
+
+    fn 識別子を作る(綴り: &str) -> 植生定義ID {
+        植生定義ID::生成する(綴り).unwrap()
+    }
 
     #[test]
     fn 正本に在る針葉樹は原型として引ける() {
-        let 引いた = 植生定義の識別子から焼く原型を引く("conifer").unwrap();
+        let 引いた = 植生定義の識別子から焼く原型を引く(&識別子を作る("conifer")).unwrap();
         assert_eq!(引いた.原型の安定id.文字列を返す(), "editor_conifer");
     }
 
     #[test]
     fn 未知の植生定義idは型付きエラーで拒む() {
-        let 結果 = 植生定義の識別子から焼く原型を引く("存在しない木");
+        let 結果 = 植生定義の識別子から焼く原型を引く(&識別子を作る("存在しない木"));
         assert!(結果.is_err());
     }
 }

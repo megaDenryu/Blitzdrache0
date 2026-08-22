@@ -6,6 +6,10 @@
 //! 画面が寸法も選択肢も要らないためである。種類を選ばせる時点で建物と同じ外形カタログの口を足す。
 //! 参照: `_doc/計画/エディターからゲームまでの統合の作戦.md`「段F」
 
+mod definition_id;
+
+pub use definition_id::植生定義ID;
+
 use super::archetype_identity::原型の識別;
 use super::world::assembly_rule_choice::部品の組み立て規則の種類;
 use crate::大きさの範囲;
@@ -47,20 +51,19 @@ pub(crate) fn 全植生定義() -> [植生定義の正本; 1] {
     }]
 }
 
-pub(crate) fn 識別子から植生定義を参照する(識別子: &str) -> Option<植生定義の正本> {
-    全植生定義().into_iter().find(|定義| 定義.識別子 == 識別子)
+pub(crate) fn 識別子から植生定義を参照する(識別子: &植生定義ID) -> Option<植生定義の正本> {
+    全植生定義().into_iter().find(|定義| 定義.識別子 == 識別子.綴り())
 }
 
-/// 植生定義の正本が読む原型の安定IDとソース相対パスの対。世界のアセット定義の一覧がこれをそのまま登録する。
+/// 植生定義の正本が読む原型の識別。世界のアセット定義の一覧がこれをそのまま登録する。
 /// 部品で組む枝を持つ定義は原型を1つも持たないため、この一覧には現れない。
-pub(crate) fn 全植生の原型識別一覧() -> Vec<(&'static str, &'static str)> {
-    let mut 一覧 = Vec::new();
+pub(crate) fn 全植生の原型識別一覧() -> Vec<原型の識別> {
+    let mut 一覧: Vec<原型の識別> = Vec::new();
     for 定義 in 全植生定義() {
-        if let 植生の実体::原型を散らす(識別) = 定義.実体 {
-            let 対 = (識別.安定id(), 識別.ソース相対パス());
-            if !一覧.contains(&対) {
-                一覧.push(対);
-            }
+        if let 植生の実体::原型を散らす(識別) = 定義.実体
+            && !一覧.contains(&識別)
+        {
+            一覧.push(識別);
         }
     }
     一覧

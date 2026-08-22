@@ -1,6 +1,7 @@
 //! 建物定義5件の正本。識別子・表示名・用途・規則・部品・ベイ構造・入口方向を1件として持つ。
 
 use super::catalog::{ベイ構造, 建物の入口方向, 建物定義の用途};
+use crate::runtime_compilation::archetype_identity::原型の識別;
 use crate::runtime_compilation::world::assembly_rule_choice::部品の組み立て規則の種類;
 
 #[derive(Clone, Copy)]
@@ -67,14 +68,12 @@ pub(crate) fn 識別子から建物定義を参照する(識別子: &str) -> Opt
     全定義().into_iter().find(|定義| 定義.識別子 == 識別子)
 }
 
-pub(crate) fn 全建物の部品識別一覧() -> Vec<(&'static str, &'static str)> {
-    let mut 一覧 = Vec::new();
-    for 定義 in 全定義() {
-        for 部品 in 定義.規則.部品一覧() {
-            let 対 = (部品.安定id(), 部品.ソース相対パス());
-            if !一覧.contains(&対) {
-                一覧.push(対);
-            }
+/// 建物定義の正本が読む部品の識別を、重複なく並べる。安定IDとソース相対パスを裸のタプルへ剥がさないのは、どちらがどちらか添字でしか見分けられなくなるためである(`原型の識別`の冒頭コメント参照)。
+pub(crate) fn 全建物の部品識別一覧() -> Vec<原型の識別> {
+    let mut 一覧: Vec<原型の識別> = Vec::new();
+    for 部品 in 全定義().into_iter().flat_map(|定義| 定義.規則.部品一覧()) {
+        if !一覧.contains(部品) {
+            一覧.push(*部品);
         }
     }
     一覧

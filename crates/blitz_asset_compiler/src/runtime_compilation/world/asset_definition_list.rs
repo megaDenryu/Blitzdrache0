@@ -21,7 +21,7 @@ pub(super) fn アセット定義一覧を選ぶ(世界: 対象世界) -> Vec<ア
             let 素材の識別一覧 = crate::runtime_compilation::building_outline_catalog::全建物の部品識別一覧()
                 .into_iter()
                 .chain(crate::runtime_compilation::vegetation_definition::全植生の原型識別一覧());
-            一覧.extend(素材の識別一覧.map(|(安定id, 相対パス)| super::definition_kind::外部ソース専用定義(安定id, 相対パス)));
+            一覧.extend(素材の識別一覧.map(|識別| super::definition_kind::外部ソース専用定義(識別.安定id(), 識別.ソース相対パス())));
             一覧
         }
         対象世界::植生の世界 => vegetation_declaration::一覧(),
