@@ -1,6 +1,7 @@
 export { 建物編集画面 } from './建物編集画面.ts'
 export { 入口の向きパネル } from './入口の向きパネル.ts'
 export type { I入口の向き配線 } from './入口の向きパネル.ts'
+export { 建物の三次元パネル } from './三次元/建物の三次元パネル.ts'
 export { 平面図パネル } from './平面図パネル.ts'
 export type { I升目の配線 } from './平面図の升目部品.ts'
 export { 筆パネル } from './筆パネル.ts'

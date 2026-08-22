@@ -1,16 +1,19 @@
 import { div, span, textInput, DivC, TextInputC, LV2HtmlComponentBase } from 'sengen-ui'
 import { 永続化パネル } from '../../チャンク編集/画面/パネル/永続化/index.ts'
+import { 建物の三次元パネル } from './三次元/建物の三次元パネル.ts'
 import { 入口の向きパネル } from './入口の向きパネル.ts'
 import { 平面図パネル } from './平面図パネル.ts'
 import { 筆パネル } from './筆パネル.ts'
 import { 階の切替パネル } from './階の切替パネル.ts'
 import { コンテナ, セクション, セクション見出し, 名前入力, 断りの文言, 本文幅, 横並び, 触りの知らせ, 表題, 説明文, 選択ボタン } from './スタイル.css.ts'
 
-// 建物1件を編集する文書タブの画面全体。平面図・筆・階の切替・取り消しやり直し・保存を1枚に並べる。
-// 三次元の確認はエンジンで実際に世界を歩いて行う(判断9)。
+// 建物1件を編集する文書タブの画面全体。平面図・筆・階の切替・入口の向き・取り消しやり直し・保存と、
+// 役割ごとの識別色の三次元表示を1枚に並べる。三次元表示は部品の役割と占める場所を見せるだけであり、
+// 絵の確認はエンジンで実際に世界を歩いて行う(判断9)。
 export class 建物編集画面 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     public readonly 平面図: 平面図パネル = new 平面図パネル()
+    public readonly 三次元: 建物の三次元パネル = new 建物の三次元パネル()
     public readonly 筆: 筆パネル = new 筆パネル()
     public readonly 入口の向き: 入口の向きパネル = new 入口の向きパネル()
     public readonly 階の切替: 階の切替パネル = new 階の切替パネル()
@@ -45,6 +48,7 @@ export class 建物編集画面 extends LV2HtmlComponentBase {
                     this._触りの知らせ,
                     div({ class: 横並び }).childs([this.取り消しボタン, this.やり直しボタン]),
                 ]),
+                this.三次元,
                 this.永続化,
             ]),
         )
@@ -63,6 +67,7 @@ export class 建物編集画面 extends LV2HtmlComponentBase {
 
     public override delete(): void {
         this.平面図.delete()
+        this.三次元.delete()
         this.筆.delete()
         this.入口の向き.delete()
         this.階の切替.delete()
