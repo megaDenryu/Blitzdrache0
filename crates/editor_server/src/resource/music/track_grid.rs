@@ -10,6 +10,7 @@ use super::super::numeric_check::整数が範囲内であることを確かめ�
 use super::super::validation_error::資源検証エラー;
 
 pub const パターンのステップ数: usize = 32;
+pub(super) const ステップの位置の上限: u32 = 31; // 位置は0から始まるため格子の長さの1つ手前。一致は`command::target`の試験が見る
 const セルの値の上限: u8 = 4;
 
 /// トラックの格子とは、1つのパターンの中でトラック1本が鳴らす音を、行と32のステップの表で表したもののことである。

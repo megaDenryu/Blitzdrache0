@@ -14,8 +14,8 @@ use super::note_rows::音の並び;
 use super::progression_reference::コード進行参照;
 use super::progression_roster::進行の名簿;
 
-const 音量の下限: f64 = 0.0;
-const 音量の上限: f64 = 1.0;
+pub(super) const 音量の下限: f64 = 0.0;
+pub(super) const 音量の上限: f64 = 1.0;
 
 /// トラックの種類とは、そのトラックが曲の中で受け持つ役割の区別のことである。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -28,7 +28,7 @@ pub enum トラックの種類 {
 }
 
 impl トラックの種類 {
-    fn 受け入れる楽器か(self, 割り当てた楽器: 楽器) -> bool {
+    pub(super) fn 受け入れる楽器か(self, 割り当てた楽器: 楽器) -> bool {
         match self {
             トラックの種類::旋律 => matches!(
                 割り当てた楽器,

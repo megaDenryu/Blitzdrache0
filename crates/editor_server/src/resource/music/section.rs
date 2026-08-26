@@ -10,8 +10,8 @@ use super::super::validation_error::資源検証エラー;
 use super::pattern_id::パターンID;
 use super::pattern_roster::パターンの名簿;
 
-const 繰り返し回数の下限: u32 = 1;
-const 繰り返し回数の上限: u32 = 8;
+pub(super) const 繰り返し回数の下限: u32 = 1;
+pub(super) const 繰り返し回数の上限: u32 = 8;
 
 /// 曲の節とは、1つのパターンを何回続けて鳴らすかの指定のことである。
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
