@@ -6,7 +6,10 @@
 use std::path::PathBuf;
 
 use super::file_names::{マテリアル台帳ファイル名, 材質重みファイル名, 構造ファイル名, 高さ格子ファイル名};
-use crate::{project_root::プロジェクトルート, resource::チャンク座標};
+use crate::{
+    project_root::プロジェクトルート,
+    resource::{チャンク座標, 楽曲ID},
+};
 
 #[derive(Clone)]
 pub(super) struct 編集データディレクトリ(PathBuf);
@@ -26,6 +29,14 @@ impl 編集データディレクトリ {
 
     pub(super) fn マテリアル台帳パス(&self) -> PathBuf {
         self.0.join(マテリアル台帳ファイル名)
+    }
+
+    pub(super) fn 楽曲ディレクトリ(&self) -> PathBuf {
+        self.0.join("楽曲")
+    }
+
+    pub(super) fn 楽曲パス(&self, 名乗り: &楽曲ID) -> PathBuf {
+        self.楽曲ディレクトリ().join(format!("{名乗り}.json"))
     }
 
     fn チャンクディレクトリ(&self, 座標: チャンク座標) -> PathBuf {

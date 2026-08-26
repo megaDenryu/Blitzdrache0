@@ -13,6 +13,9 @@ mod chunk_structure_put;
 mod health_get;
 mod material_board_get;
 mod material_board_put;
+mod music_get;
+mod music_list_get;
+mod music_put;
 mod project_info_get;
 mod source_asset_export_post;
 mod static_serve;
@@ -36,6 +39,8 @@ pub fn ルーターを組み立てる(状態: サーバー状態) -> 経路正�
             "/api/建物/{建物定義ID}/格子",
             get(building_grid_get::建物の格子を返す).put(building_grid_put::建物の格子を保存する),
         )
+        .route("/api/楽曲一覧", get(music_list_get::楽曲一覧を返す))
+        .route("/api/楽曲/{楽曲ID}", get(music_get::楽曲を返す).put(music_put::楽曲を保存する))
         .route("/api/プロジェクト情報", get(project_info_get::プロジェクト情報を返す))
         .route(
             "/api/大域世界/構造",

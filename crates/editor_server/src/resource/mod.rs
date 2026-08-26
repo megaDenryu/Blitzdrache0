@@ -14,6 +14,7 @@ mod grid;
 mod material_board;
 mod material_definition;
 mod material_layer_assignment;
+mod music;
 mod numeric_check;
 mod position;
 mod regional_road;
@@ -48,6 +49,10 @@ pub use grid::{チャンクの高さ編集, マザーハイトマップ, 地表�
 pub use material_board::マテリアル台帳;
 pub use material_definition::マテリアル定義;
 pub use material_layer_assignment::層割当;
+pub use music::{
+    コード進行, コード進行参照, トラックの格子, トラックの種類, トラック定義, パターン, パターンID, パターンのステップ数, ミキサー設定, 和音,
+    和音の種類, 打楽器の種類, 既定の進行の識別子一覧, 曲の節, 楽器, 楽曲, 楽曲ID, 音の並び,
+};
 pub use position::位置3次元;
 pub use regional_road::広域道路;
 pub use scatter_settings::散布の設定;

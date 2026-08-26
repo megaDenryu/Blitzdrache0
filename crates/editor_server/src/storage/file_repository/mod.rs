@@ -8,13 +8,14 @@ mod data_directory;
 mod file_names;
 mod json_io;
 mod material_board;
+mod music;
 mod world;
 
 use data_directory::編集データディレクトリ;
 
 use crate::project_root::プロジェクトルート;
 use crate::resource::{
-    チャンクの高さ編集, チャンク座標, チャンク構造, マザーハイトマップ, マテリアル台帳, 地表材質の重み, 大域世界構造
+    チャンクの高さ編集, チャンク座標, チャンク構造, マザーハイトマップ, マテリアル台帳, 地表材質の重み, 大域世界構造, 楽曲, 楽曲ID,
 };
 use crate::storage::{プロジェクト保管庫, 保存要求エラー, 読み込みエラー};
 
@@ -89,5 +90,17 @@ impl プロジェクト保管庫 for ファイル保管庫 {
 
     fn マテリアル台帳を検証して保存する(&self, データ: マテリアル台帳) -> Result<(), 保存要求エラー> {
         material_board::検証して保存する(&self.編集データディレクトリ, データ)
+    }
+
+    fn 楽曲の一覧を読む(&self) -> Result<Vec<楽曲ID>, 読み込みエラー> {
+        music::楽曲の一覧を読む(&self.編集データディレクトリ)
+    }
+
+    fn 楽曲を読む(&self, 名乗り: &楽曲ID) -> Result<Option<楽曲>, 読み込みエラー> {
+        music::楽曲を読む(&self.編集データディレクトリ, 名乗り)
+    }
+
+    fn 楽曲を検証して保存する(&self, データ: 楽曲) -> Result<(), 保存要求エラー> {
+        music::楽曲を検証して保存する(&self.編集データディレクトリ, データ)
     }
 }

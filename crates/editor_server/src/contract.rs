@@ -19,7 +19,7 @@ pub fn 契約ファイルの本文を組み立てる() -> String {
 
 pub fn 編集資源契約の本文を組み立てる() -> String {
     let 設定 = Config::new();
-    let 型宣言一覧: [String; 51] = [
+    let 型宣言一覧: [String; 65] = [
         <crate::プロジェクト情報応答 as TS>::decl(&設定),
         <crate::建物定義の用途 as TS>::decl(&設定),
         <crate::ベイ構造 as TS>::decl(&設定),
@@ -71,6 +71,20 @@ pub fn 編集資源契約の本文を組み立てる() -> String {
         <crate::急勾配を岩肌へベイクする as TS>::decl(&設定),
         <crate::道路下を泥へベイクする as TS>::decl(&設定),
         <crate::編集コマンド as TS>::decl(&設定),
+        <crate::楽器 as TS>::decl(&設定),
+        <crate::打楽器の種類 as TS>::decl(&設定),
+        <crate::音の並び as TS>::decl(&設定),
+        <crate::トラックの種類 as TS>::decl(&設定),
+        <crate::コード進行参照 as TS>::decl(&設定),
+        <crate::トラック定義 as TS>::decl(&設定),
+        <crate::ミキサー設定 as TS>::decl(&設定),
+        <crate::和音の種類 as TS>::decl(&設定),
+        <crate::和音 as TS>::decl(&設定),
+        <crate::コード進行 as TS>::decl(&設定),
+        <crate::トラックの格子 as TS>::decl(&設定),
+        <crate::パターン as TS>::decl(&設定),
+        <crate::曲の節 as TS>::decl(&設定),
+        <crate::楽曲 as TS>::decl(&設定),
     ];
     let mut 本文 = 本文を組み立てる(&型宣言一覧);
     本文.push_str(&format!(

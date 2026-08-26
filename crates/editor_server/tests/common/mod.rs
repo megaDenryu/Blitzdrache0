@@ -8,6 +8,7 @@
 mod building_grid_fixture;
 mod building_outline_catalog_fixture;
 mod chunk_height_cutout_fixture;
+mod music_fixture;
 mod scatter_export_fixture;
 mod scatter_fixture;
 mod source_asset_export_fixture;
@@ -24,6 +25,7 @@ pub use building_outline_catalog_fixture::{カタログに無い識別子, 一�
 pub use chunk_height_cutout_fixture::{
     チャンク一辺頂点数, マザーの高さ, 大域を一意な値で用意する, 高さ一覧へ解く, 高さ格子を取得する
 };
+pub use music_fixture::{パターンの名乗り, 名乗り, 打点のない格子, 最初のパターン, 楽曲の例, 独自の進行};
 pub use scatter_export_fixture::{
     散布を載せて書き出す, 書き出したチャンクソースを読む, 焼いたチャンクのバイト列を読む
 };
