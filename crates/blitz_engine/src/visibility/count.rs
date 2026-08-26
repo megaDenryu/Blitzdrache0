@@ -13,8 +13,7 @@ use blitz_render::cascade::距離区分数;
 pub(super) struct 群のパス別可視数 {
     pub(super) シーン: usize,
     pub(super) 距離区分別: [usize; 距離区分数],
-    /// 1つ以上の距離区分へ影を落とした個体の数。
-    pub(super) 距離区分の和集合: usize,
+    pub(super) 距離区分の和集合: usize, // 1つ以上の距離区分へ影を落とした個体の数
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]

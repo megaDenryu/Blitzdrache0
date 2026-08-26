@@ -1,5 +1,6 @@
 //! 設定された本数のワーカーでファイル読込と形式検査を行う。要求順を保つのは1本の場合だけである。
-//! 完了順に依存せず、座標とリセット世代で対応づけて反映する。参照: `streaming/coordinator/prepared_data.rs`
+//! 完了順に依存せず、座標とリセット世代で対応づけて反映する。`読込ジョブ`の`世代`は完了通知がそのまま持ち帰り、呼出し側が古い世代の完了を退ける根拠になる。
+//! 参照: `streaming/coordinator/prepared_data.rs`
 
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::{self, RecvTimeoutError};
@@ -16,8 +17,7 @@ use crate::streaming::loader_settings::チャンク読込設定;
 pub(super) struct 読込ジョブ {
     pub(super) チャンク: チャンク座標,
     pub(super) ファイル: 実行時シーンのファイル,
-    /// 投入した時点のリセット世代。完了通知がそのまま持ち帰り、呼出し側が古い世代の完了を退ける根拠にする。
-    pub(super) 世代: リセット世代,
+    pub(super) 世代: リセット世代, // 投入した時点のリセット世代
 }
 
 pub(super) fn 起動する(設定: チャンク読込設定) -> Result<チャンク読込器, チャンク読込エラー> {
