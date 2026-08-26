@@ -3,7 +3,7 @@
 
 use ts_rs::{Config, TS};
 
-pub(super) fn 楽曲の型宣言の並び(設定: &Config) -> [String; 36] {
+pub(super) fn 楽曲の型宣言の並び(設定: &Config) -> [String; 38] {
     [
         <crate::既定のコード進行 as TS>::decl(設定),
         <crate::楽器 as TS>::decl(設定),
@@ -28,6 +28,7 @@ pub(super) fn 楽曲の型宣言の並び(設定: &Config) -> [String; 36] {
         <crate::パターンの打点を全部消す as TS>::decl(設定),
         <crate::拍毎分を変える as TS>::decl(設定),
         <crate::ミキサー設定を変える as TS>::decl(設定),
+        <crate::楽曲の表示名を変える as TS>::decl(設定),
         <crate::トラックの楽器を変える as TS>::decl(設定),
         <crate::トラックの音量を変える as TS>::decl(設定),
         <crate::トラックの進行の割り当てを変える as TS>::decl(設定),
@@ -40,6 +41,7 @@ pub(super) fn 楽曲の型宣言の並び(設定: &Config) -> [String; 36] {
         <crate::曲の節を追加する as TS>::decl(設定),
         <crate::曲の節を変える as TS>::decl(設定),
         <crate::曲の節を削除する as TS>::decl(設定),
+        <crate::曲の節を並べ替える as TS>::decl(設定),
         <crate::楽曲編集コマンド as TS>::decl(設定),
     ]
 }
