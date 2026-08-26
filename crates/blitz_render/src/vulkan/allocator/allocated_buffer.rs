@@ -15,10 +15,8 @@ use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) struct 専用メモリ付きバッファ {
     buffer: vk::Buffer,
-    /// 注意: このハンドルを確保係の外へ出さない。写像と解放の対をこの型の中だけに閉じるためである。
-    pub(super) memory: vk::DeviceMemory,
-    /// メモリ要件が求めた確保量。要求したバイト数以上になりうるため、要求値と別に保つ。
-    確保バイト数: u64,
+    pub(super) memory: vk::DeviceMemory, // 注意: このハンドルを確保係の外へ出さない
+    確保バイト数: u64,                   // メモリ要件が求めた確保量。要求値以上になりうるため別に保つ
 }
 
 impl 専用メモリ付きバッファ {

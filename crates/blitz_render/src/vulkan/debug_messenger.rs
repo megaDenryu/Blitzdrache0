@@ -14,8 +14,7 @@ use crate::validation_counter::検証カウンタ;
 pub(crate) struct デバッグメッセンジャー {
     loader: ash::ext::debug_utils::Instance,
     handle: vk::DebugUtilsMessengerEXT,
-    // 注意: コールバックへ渡した生ポインタの指す先を、破棄までここで生存させ続ける。
-    _カウンタ保持: Arc<AtomicU64>,
+    _カウンタ保持: Arc<AtomicU64>, // 注意: コールバックへ渡した生ポインタの指す先を破棄まで生存させる
 }
 
 impl デバッグメッセンジャー {
