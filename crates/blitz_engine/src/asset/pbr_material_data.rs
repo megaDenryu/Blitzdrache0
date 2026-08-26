@@ -15,8 +15,7 @@ pub use features_error::材質特徴集合エラー;
 #[derive(Debug, Clone, PartialEq)]
 pub struct 金属粗さPBRデータ {
     pub ベースカラー: Option<格納済みテクスチャ>,
-    /// glTF規約ではG成分が粗さ、B成分が金属度を表す。
-    pub 金属粗さ: Option<格納済みテクスチャ>,
+    pub 金属粗さ: Option<格納済みテクスチャ>, // glTF規約ではG成分が粗さ、B成分が金属度を表す
     pub 法線マップ: Option<格納済みテクスチャ>,
     pub ベースカラー係数: [f32; 4],
     pub 金属度係数: f32,
