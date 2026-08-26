@@ -18,6 +18,7 @@ pub use local_lights::局所光源列;
 pub use {directional_light::方向光入力, point_light::点光源入力, point_light_visibility::点光源の可視性};
 pub use {shadow::影入力, shadow::影正射影範囲, shadow_casting::影の落ち方};
 
+/// 1フレームのライティングの入力一式。`多段設定`は`生成する`が既定値を入れ、変えるときだけ差し替える。
 #[derive(Debug, Clone, Copy)]
 pub struct ライティング入力 {
     方向光: 方向光入力,
@@ -25,8 +26,7 @@ pub struct ライティング入力 {
     環境光: 環境光係数,
     影: 影入力,
     影の落ち方: 影の落ち方,
-    /// 多段の分割と正射影の形を決める設定。`生成する`は既定値を入れ、変えるときだけ差し替える。
-    多段設定: 多段設定,
+    多段設定: 多段設定, // 多段の分割と正射影の形を決める設定
     有効: bool,
 }
 
