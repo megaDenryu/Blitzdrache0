@@ -7,6 +7,8 @@
 //!
 //! 注意: 破棄の順序はコマンドプール→論理デバイス→メッセンジャー→インスタンスである。この順序をこの型の内部に閉じる。
 //! 注意: 検証カウンタはインスタンス破棄より後に読む。破棄そのものが発する指摘も件数へ含めるためである。
+//! 注意: `entry`は値としては読まれないが、破棄まで保持し続けることに意味がある。
+//! ash::Entryを破棄するとVulkanローダーがアンロードされ得るため、instance/deviceより先に破棄してはならない。
 
 mod create;
 mod select;
@@ -22,10 +24,8 @@ use crate::vulkan::tracked_device::GPUデバイス;
 use crate::vulkan::unsent_command_buffers::未送信のコマンドバッファ数;
 
 pub(crate) struct ウィンドウなし実行GPU環境 {
-    // 注意: 値としては読まれないが、破棄まで保持し続けることに意味がある。
-    // ash::Entryを破棄するとVulkanローダーがアンロードされ得るため、instance/deviceより先に破棄してはならない。
     #[allow(dead_code)]
-    entry: ash::Entry,
+    entry: ash::Entry, // 注意: 破棄順(ファイル冒頭)を守るためだけに保持する。
     検証: validation::検証つきインスタンス,
     検証カウンタ: 検証カウンタ,
     physical_device: vk::PhysicalDevice,

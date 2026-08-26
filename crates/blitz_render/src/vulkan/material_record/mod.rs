@@ -18,8 +18,7 @@ use crate::vulkan::transfer::ステージング経由の転送係;
 
 pub(crate) struct 材質レコードバッファ {
     バッファ: 専用メモリ付きバッファ,
-    /// バッファが保持する材質レコードのバイト数。ディスクリプタの範囲に使う。
-    pub(crate) 範囲: vk::DeviceSize,
+    pub(crate) 範囲: vk::DeviceSize, // バッファが保持する材質レコードのバイト数。ディスクリプタの範囲に使う。
 }
 
 impl 材質レコードバッファ {

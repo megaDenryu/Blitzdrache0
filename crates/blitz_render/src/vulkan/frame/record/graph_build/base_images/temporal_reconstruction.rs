@@ -9,9 +9,8 @@ use ash::vk;
 use crate::vulkan::graph;
 use crate::vulkan::temporal_reconstruction::時間再構成描画入力;
 
-/// 時間再構成のパスが読み書きする3枚のハンドル。
+/// 時間再構成のパスが読み書きする3枚のハンドル。`今のフレームの色`はシーン・空・粒子の描画先であり、時間再構成のパスがこれを読む。
 pub(in crate::vulkan::frame::record::graph_build) struct 時間再構成の登録 {
-    /// シーン・空・粒子の描画先。時間再構成のパスがこれを読む。
     pub(in crate::vulkan::frame::record::graph_build) 今のフレームの色: graph::画像ハンドル,
     pub(in crate::vulkan::frame::record::graph_build) 履歴読み: graph::画像ハンドル,
     pub(in crate::vulkan::frame::record::graph_build) 履歴書き: graph::画像ハンドル,

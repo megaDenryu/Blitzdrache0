@@ -4,8 +4,6 @@
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum テクスチャ用途 {
-    /// ベースカラー等、人の目に見える色。sRGBの画像形式で解釈する。
-    色,
-    /// metallicRoughness・法線マップ等、色でない量。符号なし正規化の画像形式で解釈する。
-    線形データ,
+    色,         // ベースカラー等、人の目に見える色。sRGBの画像形式で解釈する
+    線形データ, // metallicRoughness・法線マップ等、色でない量。符号なし正規化の画像形式で解釈する
 }

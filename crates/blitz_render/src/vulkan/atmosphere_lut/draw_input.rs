@@ -15,14 +15,14 @@ use crate::atmosphere_lut_input::大気のベイク済み画像の生成指示;
 use crate::vulkan::sync::フレームスロット添字;
 
 /// 1フレームぶんの描画入力を組むのに要る条件。引数の列が伸び続けるのを避けて1つに束ねる。
+/// `空中遠近を参照するか`は`--no-aerial-composite`で合成を切った構成では空中遠近を1度も焼かないための判定に使う。
 pub(crate) struct 描画入力の材料<'a> {
     pub(crate) フレーム添字: フレームスロット添字,
     pub(crate) 媒体: &'a 大気散乱媒体,
     pub(crate) スカイビュー条件: スカイビュー観測条件,
     pub(crate) 空中遠近条件: 空中遠近観測条件,
     pub(crate) 指示: 大気のベイク済み画像の生成指示,
-    /// 空段階が空中遠近合成を持つか。`--no-aerial-composite`で合成を切った構成では空中遠近を1度も焼かない。
-    pub(crate) 空中遠近を参照するか: bool,
+    pub(crate) 空中遠近を参照するか: bool, // 空段階が空中遠近合成を持つか
 }
 
 impl 大気のベイク済み画像一式 {

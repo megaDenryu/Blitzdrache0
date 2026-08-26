@@ -24,8 +24,7 @@ pub(in crate::renderer) use tally::描画計数集計;
 pub(super) struct 描画発行受け皿<'a> {
     pub(super) ジオメトリ: &'a mut Vec<ジオメトリ入力>,
     pub(super) 距離区分別のシャドウ: &'a mut [Vec<シャドウ描画入力>; 距離区分数],
-    /// 点光源の影の発行。面ごとに分けず1本の列で持ち、面の絞りは記録の地点が行う。
-    pub(super) 点光源の影: &'a mut Vec<点光源の影の描画発行>,
+    pub(super) 点光源の影: &'a mut Vec<点光源の影の描画発行>, // 面ごとに分けず1本の列で持ち、面の絞りは記録の地点が行う
     pub(super) 集計: &'a mut 描画計数集計,
 }
 

@@ -20,10 +20,8 @@ pub(in crate::renderer) const 起動シーンの束ID: 描画束ID = 描画束ID
 pub(in crate::renderer) struct チャンク描画資源生成材料<'a> {
     pub(in crate::renderer) 転送係: ステージング経由の転送係<'a>,
     pub(in crate::renderer) セットレイアウト: &'a シーンセットレイアウト一式,
-    /// 材質資源表がこの束の描画対象一覧と同じ並びで発番した大域材質ID。
-    pub(in crate::renderer) 材質id一覧: &'a [描画対象別の材質ID],
-    /// この束の中で毎フレーム変換を書き換える個体の宣言。チャンクの束は1件も持たない。
-    pub(in crate::renderer) 動く個体一覧: &'a [動く個体の宣言],
+    pub(in crate::renderer) 材質id一覧: &'a [描画対象別の材質ID], // 材質資源表がこの束の描画対象一覧と同じ並びで発番した大域材質ID
+    pub(in crate::renderer) 動く個体一覧: &'a [動く個体の宣言],   // この束の中で毎フレーム変換を書き換える個体の宣言。チャンクの束は1件も持たない
     pub(in crate::renderer) 影方針: crate::描画束の影方針,
 }
 

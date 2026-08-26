@@ -19,10 +19,8 @@ use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(in crate::vulkan) struct 派生の立方体画像 {
     pub(in crate::vulkan) 画像: vk::Image,
-    /// 段番号の順に並べた書き込み先のビュー。要素数は段数と等しい。
-    pub(in crate::vulkan) 段ごとの配列ビュー: Vec<vk::ImageView>,
-    /// 消費側が向きと粗さで参照する先。全段を含む。
-    pub(in crate::vulkan) 立方体ビュー: vk::ImageView,
+    pub(in crate::vulkan) 段ごとの配列ビュー: Vec<vk::ImageView>, // 段番号の順に並べた書き込み先。要素数は段数と等しい
+    pub(in crate::vulkan) 立方体ビュー: vk::ImageView,            // 消費側が向きと粗さで参照する先。全段を含む
     最詳細段の一辺: u32,
     段数: u32,
     memory: vk::DeviceMemory,

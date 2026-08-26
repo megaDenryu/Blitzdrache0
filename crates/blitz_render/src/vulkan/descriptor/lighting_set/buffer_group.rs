@@ -15,8 +15,6 @@ pub(crate) struct 照明問い合わせのバッファ組 {
     pub(crate) ヘッダ: vk::Buffer,
     pub(crate) 方向光列: vk::Buffer,
     pub(crate) 局所光列: vk::Buffer,
-    /// クラスタ格子のセルごとの区間表。選別のコンピュートが書き、画素段が読む。
-    pub(crate) クラスタ格子: vk::Buffer,
-    /// セルの区間が指す局所光レコードの添字の列。
-    pub(crate) クラスタ光添字列: vk::Buffer,
+    pub(crate) クラスタ格子: vk::Buffer,     // セルごとの区間表。選別のコンピュートが書き、画素段が読む
+    pub(crate) クラスタ光添字列: vk::Buffer, // セルの区間が指す局所光レコードの添字の列
 }

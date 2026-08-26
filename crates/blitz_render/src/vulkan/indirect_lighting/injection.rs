@@ -25,12 +25,13 @@ use crate::vulkan::tracked_device::GPUデバイス;
 pub(crate) use bake_source::{焼かせる注入, 焼かせる注入資源};
 
 /// 注入の転送が使う元バッファと段ごとの範囲。1フレームの積み上げが名前で受け取る。
+///
+/// `鏡面畳込みの段ごとの範囲`の並びは段番号の昇順であり、バイト列の並びと同じである。
 #[derive(Clone)]
 pub(crate) struct 解析入力の注入 {
     pub(crate) 拡散照度の元: vk::Buffer,
     pub(crate) 鏡面畳込みの元: vk::Buffer,
     pub(crate) 反射率積分表の元: vk::Buffer,
-    /// 鏡面畳込みの段ごとの範囲。並びは段番号の昇順であり、バイト列の並びと同じである。
     pub(crate) 鏡面畳込みの段ごとの範囲: Vec<vk::Extent3D>,
     pub(crate) 拡散照度の範囲: vk::Extent3D,
     pub(crate) 反射率積分表の範囲: vk::Extent3D,

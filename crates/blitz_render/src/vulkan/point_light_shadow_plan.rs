@@ -17,8 +17,7 @@ use crate::point_light_shadow::{影を持てる灯の上限件数, 影資源添�
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct 影を落とす灯 {
     pub(crate) 影資源添字: 影資源添字,
-    /// 描く対象と同じカメラ大域原点で狭めた灯の位置。
-    pub(crate) カメラ相対位置: 位置<ワールド>,
+    pub(crate) カメラ相対位置: 位置<ワールド>, // 描く対象と同じカメラ大域原点で狭めた灯の位置
     pub(crate) 影響半径: 影響半径,
     pub(crate) 投影の契約: 投影の契約,
 }

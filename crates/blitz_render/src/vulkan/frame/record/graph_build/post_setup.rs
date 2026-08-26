@@ -7,6 +7,10 @@ use crate::vulkan::auto_exposure::自動露出描画入力;
 use crate::vulkan::frame::{フレーム画像一式, 光のにじみ描画入力, 明るさの圧縮描画入力};
 use crate::vulkan::graph;
 
+/// ポストプロセスの登録済みハンドル一式。
+///
+/// `自動露出`は露出方式がヒストグラム自動の世界だけ`Some`であり、入力と2本のバッファハンドルは同時に
+/// 有ることも無いこともある。
 pub(super) struct ポスト構成<'a> {
     pub(super) hdrハンドル: graph::画像ハンドル,
     pub(super) 縮小ハンドル一覧: Vec<graph::画像ハンドル>,
@@ -14,7 +18,6 @@ pub(super) struct ポスト構成<'a> {
     pub(super) 寸法一覧: Vec<vk::Extent2D>,
     pub(super) 明るさの圧縮: &'a 明るさの圧縮描画入力,
     pub(super) 光のにじみ: &'a 光のにじみ描画入力,
-    /// 露出方式がヒストグラム自動の世界だけ`Some`。入力と2本のバッファハンドルは同時に有ることも無いこともある。
     pub(super) 自動露出: Option<自動露出の登録<'a>>,
 }
 

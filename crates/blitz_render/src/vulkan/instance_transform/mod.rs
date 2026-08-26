@@ -26,8 +26,7 @@ use content::個体変換内容;
 
 pub(crate) struct 個体変換バッファ {
     バッファ: 専用メモリ付きバッファ,
-    /// バッファが保持する個体変換のバイト数。ディスクリプタの範囲に使う。
-    pub(crate) 範囲: vk::DeviceSize,
+    pub(crate) 範囲: vk::DeviceSize, // バッファが保持する個体変換のバイト数。ディスクリプタの範囲に使う
 }
 
 impl 個体変換バッファ {

@@ -15,8 +15,7 @@ use crate::vulkan::allocator::GPU資源の確保係;
 pub(crate) struct 局所可視性のパイプライン一式 {
     pub(crate) 遮蔽の標本化: vk::Pipeline,
     pub(crate) 両側ぼかし: vk::Pipeline,
-    /// 2本が共有する1つのレイアウト。セットレイアウトも即時定数の範囲も同じであるため分ける理由が無い。
-    pub(crate) レイアウト: vk::PipelineLayout,
+    pub(crate) レイアウト: vk::PipelineLayout, // 2本が共有する1つのレイアウト。セットレイアウトも即時定数の範囲も同じであるため分ける理由が無い
 }
 
 impl 局所可視性のパイプライン一式 {

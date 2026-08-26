@@ -33,8 +33,7 @@ pub(in crate::vulkan::frame::record::graph_build) use graph_images::遠方環境
 /// 積み上げの結果。本数の内訳と、消費側が読み宣言に使うハンドルである。
 pub(in crate::vulkan::frame::record::graph_build) struct 間接照明の積み上げ {
     pub(in crate::vulkan::frame::record::graph_build) 生成パス数: 間接照明生成パス数,
-    /// 照明問い合わせ契約が定数近似のフレームは`None`である。
-    pub(in crate::vulkan::frame::record::graph_build) 消費画像: Option<遠方環境の消費画像>,
+    pub(in crate::vulkan::frame::record::graph_build) 消費画像: Option<遠方環境の消費画像>, // 照明問い合わせ契約が定数近似のフレームは`None`
 }
 
 pub(in crate::vulkan::frame::record::graph_build) fn 間接照明を積む<'a>(

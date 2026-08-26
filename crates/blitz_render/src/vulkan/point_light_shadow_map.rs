@@ -27,10 +27,8 @@ pub(crate) fn 点光源の影の層数() -> u32 {
 
 pub(crate) struct 点光源の影の立方体配列 {
     pub(crate) 画像: vk::Image,
-    /// 全層を1つの立方体の配列として見るビュー。画素段の比較サンプリングが束縛する。
-    pub(crate) 立方体配列ビュー: vk::ImageView,
-    /// 層ごとに1層だけを見る2Dビュー。面ごとの影の記録が深度アタッチメントとして束縛する。
-    pub(crate) 層別のビュー一覧: Vec<vk::ImageView>,
+    pub(crate) 立方体配列ビュー: vk::ImageView, // 全層を1つの立方体の配列として見るビュー。画素段の比較サンプリングが束縛する
+    pub(crate) 層別のビュー一覧: Vec<vk::ImageView>, // 層ごとに1層だけを見る2Dビュー。面ごとの影の記録が深度アタッチメントとして束縛する
     pub(crate) sampler: vk::Sampler,
     memory: vk::DeviceMemory,
 }

@@ -19,10 +19,8 @@ use super::{format_support, image, upload, view, テクスチャ, 画像を破�
 /// 縮小段をどう用意するかの2系統。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum 縮小段の積み方 {
-    /// 原寸1枚を転送し、残りの段をGPUのblitの連鎖で作る。
-    原寸の転送とGPUのblit,
-    /// ファイルが持つ全段をbufferからimageへのコピーで積む。
-    全段の転送,
+    原寸の転送とGPUのblit, // 原寸1枚を転送し、残りの段をGPUのblitの連鎖で作る。
+    全段の転送,            // ファイルが持つ全段をbufferからimageへのコピーで積む。
 }
 
 pub(super) fn テクスチャを生成する(

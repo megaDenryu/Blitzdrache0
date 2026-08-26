@@ -12,22 +12,24 @@ use super::時間再構成一式;
 use crate::local_visibility::射影の復元;
 
 /// 時間再構成のパスが要るハンドルと即時定数。方式が使わないの世界と、ポスト処理を組まない構成では作らない。
+///
+/// `今のフレームの色の画像`とそのビューは、シーン・空・粒子がこのフレームの色を描く先であり、パスはこれを
+/// 読んでHDR中間画像へ結果を書く。`履歴読みの画像`とそのビューは前のフレームの結果を持つ側でパスが標本器で
+/// 参照し、`履歴書きの画像`とそのビューはこのフレームの結果を書き込む側で第2のカラー添付として束ねる。
+/// `セット`は履歴の読み側に対応するディスクリプタセットである。
+///
+/// 参照: `即時定数`の並びは`shaders/temporal_reconstruction_setting.slang`の`TemporalReconstructionSetting`と一致させる。
 #[derive(Clone)]
 pub(crate) struct 時間再構成描画入力 {
-    /// シーン・空・粒子がこのフレームの色を描く先。パスはこれを読み、HDR中間画像へ結果を書く。
     pub(crate) 今のフレームの色の画像: vk::Image,
     pub(crate) 今のフレームの色のビュー: vk::ImageView,
-    /// 前のフレームの結果を持つ側。パスが標本器で参照する。
     pub(crate) 履歴読みの画像: vk::Image,
     pub(crate) 履歴読みのビュー: vk::ImageView,
-    /// このフレームの結果を書き込む側。第2のカラー添付として束ねる。
     pub(crate) 履歴書きの画像: vk::Image,
     pub(crate) 履歴書きのビュー: vk::ImageView,
     pub(crate) pipeline: vk::Pipeline,
     pub(crate) layout: vk::PipelineLayout,
-    /// 履歴の読み側に対応するセット。
     pub(crate) セット: vk::DescriptorSet,
-    /// 並びは`shaders/temporal_reconstruction_setting.slang`の`TemporalReconstructionSetting`と一致させる。
     pub(crate) 即時定数: Vec<u8>,
 }
 

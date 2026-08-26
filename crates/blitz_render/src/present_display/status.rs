@@ -3,14 +3,10 @@
 /// 物理デバイスが実表示時刻の計測(VK_KHR_present_id + VK_KHR_present_wait)に対応しているか。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum 実表示計測状況 {
-    /// レンダラー生成時に計測を要求しなかったため、拡張を有効化していない(既定条件)。
-    要求していない,
-    /// VK_KHR_present_id と VK_KHR_present_wait の少なくとも一方が物理デバイスに無い。
-    拡張が無い,
-    /// 両拡張はあるが、presentId と presentWait の少なくとも一方の機能フラグが false である。
-    機能が無効,
-    /// 両拡張と両機能がそろっており、提示IDの発番と表示完了の待機ができる。
-    計測できる,
+    要求していない, // レンダラー生成時に計測を要求しなかったため、拡張を有効化していない(既定条件)
+    拡張が無い,     // VK_KHR_present_id と VK_KHR_present_wait の少なくとも一方が物理デバイスに無い
+    機能が無効,     // 両拡張はあるが、presentId と presentWait の少なくとも一方の機能フラグが false である
+    計測できる,     // 両拡張と両機能がそろっており、提示IDの発番と表示完了の待機ができる
 }
 
 impl 実表示計測状況 {

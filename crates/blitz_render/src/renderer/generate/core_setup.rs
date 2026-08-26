@@ -14,12 +14,9 @@ pub(super) struct コア資源 {
     pub(super) 環境: GPU環境,
     pub(super) 提示: 提示,
     pub(super) 検証カウンタ: 検証カウンタ,
-    /// 選定したキューファミリのtimestamp_valid_bits > 0 か(判断30)。
-    pub(super) タイムスタンプ対応か: bool,
-    /// `vk::PhysicalDeviceLimits::timestamp_period`(1tickあたりのns)。
-    pub(super) タイムスタンプ周期ns: f32,
-    /// 実表示時刻計測の使用可否。非対応環境でも生成は成立し、記録開始時に非対応を返す。
-    pub(super) 実表示計測: vulkan::present_timing::実表示計測,
+    pub(super) タイムスタンプ対応か: bool, // 選定したキューファミリのtimestamp_valid_bits > 0 か(判断30)。
+    pub(super) タイムスタンプ周期ns: f32,  // `vk::PhysicalDeviceLimits::timestamp_period`(1tickあたりのns)。
+    pub(super) 実表示計測: vulkan::present_timing::実表示計測, // 実表示時刻計測の使用可否。非対応環境でも生成は成立し、記録開始時に非対応を返す。
 }
 
 pub(super) fn 組み立てる(

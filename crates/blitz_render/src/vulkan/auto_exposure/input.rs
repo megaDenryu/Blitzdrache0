@@ -14,10 +14,8 @@ pub(crate) struct 自動露出描画入力 {
     pub(crate) 集計layout: vk::PipelineLayout,
     pub(crate) 導出pipeline: vk::Pipeline,
     pub(crate) 導出layout: vk::PipelineLayout,
-    /// 集計と導出が共有する1つのセット。どちらがどの束縛を触るかはレンダーグラフのパス宣言が持つ。
-    pub(crate) セット: vk::DescriptorSet,
-    /// 導出が押し込む定数の並び。順は`shaders/auto_exposure_resolve.slang`の`ResolveSetting`と一致させる。
-    pub(crate) 導出の即時定数: [f32; 6],
+    pub(crate) セット: vk::DescriptorSet, // 集計と導出が共有する1つのセット。どちらがどの束縛を触るかはレンダーグラフのパス宣言が持つ。
+    pub(crate) 導出の即時定数: [f32; 6],  // 順は`shaders/auto_exposure_resolve.slang`の`ResolveSetting`と一致させる。
 }
 
 impl 自動露出一式 {

@@ -14,18 +14,20 @@ use crate::vulkan::sync::フレームスロット添字;
 
 /// 選別のパスが要るハンドルと即時定数と班の数。値として持ち回れる大きさに収めてあるのは、この入力が
 /// 「そのフレームだけ存在しうる入力」ではなく全フレームで必ず在る入力であり、借用の束へ混ぜないためである。
+///
+/// `格子`と`光添字列`はレンダーグラフへ登録して用途を宣言する2本であり、書き込みの宣言がこの2本に立つ
+/// ことで画素段の読みとの間へバリアが立つ。`即時定数`はカメラ相対ワールドからビュー空間への変換の3行。
+///
+/// 参照: `即時定数`の並びは`shaders/cluster_light_assignment.slang`の宣言と一致させる。
 #[derive(Clone, Copy)]
 pub(crate) struct クラスタ選別の描画入力 {
-    /// レンダーグラフへ登録して用途を宣言する2本。書き込みの宣言がこの2本に立つことで、画素段の読みとの間へバリアが立つ。
     pub(crate) 格子: vk::Buffer,
     pub(crate) 光添字列: vk::Buffer,
     pub(crate) pipeline: vk::Pipeline,
     pub(crate) layout: vk::PipelineLayout,
     pub(crate) セット: vk::DescriptorSet,
-    /// カメラ相対ワールドからビュー空間への変換の3行。並びは`shaders/cluster_light_assignment.slang`の宣言と一致させる。
     pub(crate) 即時定数: [u8; 即時定数のバイト数],
-    /// 積む班の数。セルの総数を1班のスレッド数で割った切り上げである。
-    pub(crate) 班数: u32,
+    pub(crate) 班数: u32, // 積む班の数。セルの総数を1班のスレッド数で割った切り上げ
 }
 
 impl クラスタ選別一式 {

@@ -12,11 +12,11 @@ use crate::atmosphere::medium::medium_sample::媒体標本;
 use crate::atmosphere::table::transmittance_table::透過率表;
 use crate::atmosphere::大気散乱媒体;
 
+/// `積分幅`は経路長を区間数で割った一定値であり、標本位置どうしの差ではない。
 pub(in crate::atmosphere) struct 区間の条件 {
     pub(in crate::atmosphere) 位置: [f64; 3],
     pub(in crate::atmosphere) 太陽: [f64; 3],
-    /// この区間で消散へ掛ける積分幅。経路長を区間数で割った一定値であり、標本位置どうしの差ではない。
-    pub(in crate::atmosphere) 積分幅: f64,
+    pub(in crate::atmosphere) 積分幅: f64, // この区間で消散へ掛ける積分幅
 }
 
 pub(in crate::atmosphere) fn 区間を積む(

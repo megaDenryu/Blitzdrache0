@@ -35,19 +35,18 @@ pub(in crate::vulkan::frame::record::graph_build) struct 経路生成が読む�
 /// 大気のベイク済み画像方式であることだけを条件にし、合成のボリュームは合成パスが在ることを条件にする。
 #[derive(Clone, Copy)]
 pub(in crate::vulkan::frame::record::graph_build) struct 空段階の読み先 {
-    /// 空パスがベイク済み画像を参照するフレームでだけ値を持つ。
-    pub(in crate::vulkan::frame::record::graph_build) 空パスの二枚: Option<大気のベイク済み画像読みハンドル>,
-    /// 合成パスがあるフレームでだけ値を持つ。
-    pub(in crate::vulkan::frame::record::graph_build) 合成のボリューム: Option<graph::画像ハンドル>,
+    pub(in crate::vulkan::frame::record::graph_build) 空パスの二枚: Option<大気のベイク済み画像読みハンドル>, // 空パスがベイク済み画像を参照するフレームでだけ値を持つ
+    pub(in crate::vulkan::frame::record::graph_build) 合成のボリューム: Option<graph::画像ハンドル>,          // 合成パスがあるフレームでだけ値を持つ
 }
 
 /// 大気のベイク済み画像の積み上げの結果。
+///
+/// `経路の二枚`は透過率と多重散乱を登録したハンドルであり、ベイク済み画像を作らない構成では`None`である。
+/// `読み先`と別に持つのは、遠方環境用スカイビューの生成が空パスの有無に関わらずこの2枚を読むためである。
+/// `生成パス数`はこのフレームで積んだ生成パスの本数であり、0から4のいずれかを取り、計器がこの値を数える。
 pub(in crate::vulkan::frame::record::graph_build) struct 大気のベイク済み画像積み上げ結果 {
     pub(in crate::vulkan::frame::record::graph_build) 読み先: 空段階の読み先,
-    /// 透過率と多重散乱を登録したハンドル。ベイク済み画像を作らない構成では`None`である。
-    /// 空パスの読み先と別に持つのは、遠方環境用スカイビューの生成が空パスの有無に関わらずこの2枚を読むためである。
     pub(in crate::vulkan::frame::record::graph_build) 経路の二枚: Option<経路生成が読む二枚>,
-    /// このフレームで積んだ生成パスの本数。0から4のいずれかであり、計器がこの値を数える。
     pub(in crate::vulkan::frame::record::graph_build) 生成パス数: u32,
 }
 

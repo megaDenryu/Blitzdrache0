@@ -11,10 +11,8 @@ use crate::vulkan::graph;
 
 /// 段階列の展開の結果。計器へ渡す数だけを返す。
 pub(super) struct 積み上げの実績 {
-    /// このフレームで積んだ大気のベイク済み画像生成パスの本数。
-    pub(super) 大気のベイク済み画像生成パス数: u32,
-    /// このフレームで積んだ間接照明の表現の生成パスの本数の内訳。
-    pub(super) 間接照明生成パス数: crate::distant_environment::間接照明生成パス数,
+    pub(super) 大気のベイク済み画像生成パス数: u32, // このフレームで積んだ生成パスの本数
+    pub(super) 間接照明生成パス数: crate::distant_environment::間接照明生成パス数, // 生成パスの本数の内訳
 }
 
 #[allow(clippy::too_many_arguments)]

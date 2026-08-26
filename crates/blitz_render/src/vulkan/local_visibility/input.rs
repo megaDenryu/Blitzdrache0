@@ -8,6 +8,10 @@ use super::局所可視性一式;
 use crate::local_visibility::射影の復元;
 
 /// 遮蔽の標本化とぼかしのパスが要るハンドルと即時定数。拡散間接方式が環境のみの世界ではパスを積まないため使われない。
+///
+/// `layout`・`セット`・`即時定数`は遮蔽の標本化と両側ぼかしの2本のパイプラインが共有する。`セット`のどちらが
+/// どの束縛を触るかはレンダーグラフのパス宣言が持ち、`即時定数`のバイト列の並びは
+/// `shaders/local_visibility_setting.slang`の`LocalVisibilitySetting`と一致させる。
 #[derive(Clone)]
 pub(crate) struct 局所可視性描画入力 {
     pub(crate) 生の画像: vk::Image,
@@ -16,11 +20,8 @@ pub(crate) struct 局所可視性描画入力 {
     pub(crate) ぼかし後の画像ビュー: vk::ImageView,
     pub(crate) 遮蔽の標本化pipeline: vk::Pipeline,
     pub(crate) 両側ぼかしpipeline: vk::Pipeline,
-    /// 2本が共有する1つのレイアウト。
     pub(crate) layout: vk::PipelineLayout,
-    /// 2本が共有する1つのセット。どちらがどの束縛を触るかはレンダーグラフのパス宣言が持つ。
     pub(crate) セット: vk::DescriptorSet,
-    /// 2本が同じ並びで押し込む定数。順は`shaders/local_visibility_setting.slang`の`LocalVisibilitySetting`と一致させる。
     pub(crate) 即時定数: Vec<u8>,
 }
 

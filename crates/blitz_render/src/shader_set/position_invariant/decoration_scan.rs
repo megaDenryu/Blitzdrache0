@@ -10,8 +10,7 @@ use super::{命令_OP_DECORATE, 組み込み_POSITION, 装飾_BUILT_IN, 装飾_I
 #[derive(Clone, Copy)]
 pub(super) struct 位置の宣言 {
     pub(super) 変数id: u32,
-    /// この宣言の直後の語位置。装飾を足すときはここへ挿し込む。
-    pub(super) 直後の語位置: usize,
+    pub(super) 直後の語位置: usize, // 装飾を足すときはここへ挿し込む
 }
 
 pub(super) fn 位置の宣言を探す(語一覧: &[u32], 命令一覧: &[命令の範囲]) -> Option<位置の宣言> {

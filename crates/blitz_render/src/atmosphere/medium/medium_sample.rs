@@ -11,12 +11,9 @@ use crate::atmosphere::geometry::vector3::長さ;
 use crate::atmosphere::大気散乱媒体;
 
 pub(in crate::atmosphere) struct 媒体標本 {
-    /// 空気分子と浮遊粒子の散乱係数の和。多重散乱の近似が使う。
-    pub(in crate::atmosphere) 散乱係数: [f64; 3],
-    /// 空気分子だけの散乱係数。一次散乱でレイリー位相関数を掛ける相手である。
-    pub(in crate::atmosphere) レイリー散乱係数: [f64; 3],
-    /// 浮遊粒子だけの散乱係数。一次散乱でミー位相関数を掛ける相手である。
-    pub(in crate::atmosphere) ミー散乱係数: [f64; 3],
+    pub(in crate::atmosphere) 散乱係数: [f64; 3], // 空気分子と浮遊粒子の散乱係数の和。多重散乱の近似が使う。
+    pub(in crate::atmosphere) レイリー散乱係数: [f64; 3], // 空気分子だけの散乱係数。一次散乱でレイリー位相関数を掛ける相手である。
+    pub(in crate::atmosphere) ミー散乱係数: [f64; 3], // 浮遊粒子だけの散乱係数。一次散乱でミー位相関数を掛ける相手である。
     pub(in crate::atmosphere) 消散係数: [f64; 3],
 }
 
