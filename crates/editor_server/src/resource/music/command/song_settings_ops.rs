@@ -5,7 +5,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::resource::music::{拍毎分の上限, 拍毎分の下限};
+use crate::resource::music::value_range::{拍毎分の上限, 拍毎分の下限};
 use crate::resource::numeric_check::整数が範囲内であることを確かめる;
 use crate::resource::text_check::綴りが空でないことを確かめる;
 use crate::resource::validation_error::資源検証エラー;

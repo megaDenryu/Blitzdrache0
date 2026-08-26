@@ -8,8 +8,7 @@ use serde::{Deserialize, Serialize};
 use super::super::numeric_check::整数が範囲内であることを確かめる;
 use super::super::validation_error::資源検証エラー;
 use super::instrument::打楽器の種類;
-
-const 音高番号の上限: u8 = 127;
+use super::value_range::{音高番号の上限, 音高番号の下限};
 
 /// 音の並びとは、トラック1本の格子の行が上から順に何の音を受け持つかの一覧のことである。
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -42,7 +41,12 @@ impl 音の並び {
             return Ok(());
         };
         for 音高 in 音高一覧 {
-            整数が範囲内であることを確かめる("トラック定義.音の並び.音高の行一覧", i64::from(*音高), 0, i64::from(音高番号の上限))?;
+            整数が範囲内であることを確かめる(
+                "トラック定義.音の並び.音高の行一覧",
+                i64::from(*音高),
+                i64::from(音高番号の下限),
+                i64::from(音高番号の上限),
+            )?;
         }
         Ok(())
     }

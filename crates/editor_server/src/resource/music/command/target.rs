@@ -7,7 +7,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::reference_resolution::コマンドの指し先の解決係;
-use crate::resource::music::track_grid::ステップの位置の上限;
+use crate::resource::music::value_range::ステップの位置の上限;
 use crate::resource::numeric_check::整数が範囲内であることを確かめる;
 use crate::resource::validation_error::資源検証エラー;
 use crate::resource::パターンID;
@@ -36,7 +36,7 @@ pub(super) fn ステップの位置が格子の内側であることを確かめ
     フィールド名: &'static str,
     ステップ: u32,
 ) -> Result<(), 資源検証エラー> {
-    整数が範囲内であることを確かめる(フィールド名, i64::from(ステップ), 0, i64::from(ステップの位置の上限))
+    整数が範囲内であることを確かめる(フィールド名, i64::from(ステップ), 0, ステップの位置の上限())
 }
 
 /// 始まりが終わりより後ろの範囲は、どのステップを指すのか決まらないため拒む。
@@ -50,17 +50,4 @@ pub(super) fn 範囲の向きが正しいことを確かめる(
         フィールド名: "楽曲編集コマンド.終わりのステップ",
         説明: format!("始まりのステップ{始まりのステップ}より前の{終わりのステップ}を終わりにできない"),
     })
-}
-
-#[cfg(test)]
-#[allow(clippy::unwrap_used)]
-mod tests {
-    use super::ステップの位置の上限;
-    use crate::resource::パターンのステップ数;
-
-    /// 上限を格子の長さと別に書いているため、1つ手前であることを機械で突き合わせる。
-    #[test]
-    fn ステップの位置の上限は格子の長さの1つ手前である() {
-        assert_eq!(usize::try_from(ステップの位置の上限).unwrap() + 1, パターンのステップ数);
-    }
 }

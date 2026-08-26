@@ -6,7 +6,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::reference_resolution::コマンドの指し先の解決係;
-use crate::resource::music::section::{繰り返し回数の上限, 繰り返し回数の下限};
+use crate::resource::music::value_range::{曲の節の繰り返し回数の上限, 曲の節の繰り返し回数の下限};
 use crate::resource::numeric_check::整数が範囲内であることを確かめる;
 use crate::resource::validation_error::資源検証エラー;
 use crate::resource::パターンID;
@@ -82,7 +82,7 @@ fn 繰り返し回数を確かめる(フィールド名: &'static str, 繰り返
     整数が範囲内であることを確かめる(
         フィールド名,
         i64::from(繰り返し回数),
-        i64::from(繰り返し回数の下限),
-        i64::from(繰り返し回数の上限),
+        i64::from(曲の節の繰り返し回数の下限),
+        i64::from(曲の節の繰り返し回数の上限),
     )
 }

@@ -20,6 +20,7 @@ mod progression_roster;
 mod section;
 mod track;
 mod track_grid;
+mod value_range;
 mod version;
 
 use serde::{Deserialize, Serialize};
@@ -48,13 +49,15 @@ pub use preset_progression::{既定のコード進行, 既定のコード進行�
 pub use progression_reference::コード進行参照;
 pub use section::曲の節;
 pub use track::{トラックの種類, トラック定義};
-pub use track_grid::{トラックの格子, パターンのステップ数};
+pub use track_grid::トラックの格子;
+pub use value_range::{
+    パターンのステップ数, 和音の根音の上限, 和音の根音の下限, 和音の続くステップ数の上限, 和音の続くステップ数の下限, 拍毎分の上限, 拍毎分の下限,
+    曲の節の繰り返し回数の上限, 曲の節の繰り返し回数の下限, 遅延のステップ数の上限, 遅延のステップ数の下限, 音量と効果の比の上限,
+    音量と効果の比の下限, 音高番号の上限, 音高番号の下限,
+};
 pub use version::{楽曲の版の移行エラー, 読み込んだ楽曲の版};
 
 pub const 楽曲の現在の形式版: u32 = 1;
-
-pub(super) const 拍毎分の下限: u32 = 40;
-pub(super) const 拍毎分の上限: u32 = 300;
 
 /// 楽曲とは、1曲ぶんの打ち込みの内容(拍毎分・トラック構成・ミキサー設定・独自のコード進行・パターン・曲構成)を
 /// 束ねた、`editor_data/楽曲/<楽曲ID>.json`のJSON1本ぶんの内容のことである。

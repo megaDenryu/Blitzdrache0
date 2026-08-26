@@ -9,9 +9,7 @@ use super::super::numeric_check::整数が範囲内であることを確かめ�
 use super::super::validation_error::資源検証エラー;
 use super::pattern_id::パターンID;
 use super::pattern_roster::パターンの名簿;
-
-pub(super) const 繰り返し回数の下限: u32 = 1;
-pub(super) const 繰り返し回数の上限: u32 = 8;
+use super::value_range::{曲の節の繰り返し回数の上限, 曲の節の繰り返し回数の下限};
 
 /// 曲の節とは、1つのパターンを何回続けて鳴らすかの指定のことである。
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -28,8 +26,8 @@ impl 曲の節 {
         整数が範囲内であることを確かめる(
             "曲の節.繰り返し回数",
             i64::from(self.繰り返し回数),
-            i64::from(繰り返し回数の下限),
-            i64::from(繰り返し回数の上限),
+            i64::from(曲の節の繰り返し回数の下限),
+            i64::from(曲の節の繰り返し回数の上限),
         )
     }
 }

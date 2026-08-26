@@ -6,7 +6,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::reference_resolution::コマンドの指し先の解決係;
-use crate::resource::music::track::{音量の上限, 音量の下限};
+use crate::resource::music::value_range::{音量と効果の比の上限, 音量と効果の比の下限};
 use crate::resource::numeric_check::小数が範囲内であることを確かめる;
 use crate::resource::validation_error::資源検証エラー;
 use crate::resource::{コード進行参照, 楽器};
@@ -53,7 +53,7 @@ impl トラックの楽器を変える {
 impl トラックの音量を変える {
     pub(super) fn 検証する(&self, 解決係: &コマンドの指し先の解決係<'_>) -> Result<(), 資源検証エラー> {
         解決係.トラックを引く(self.トラックの位置)?;
-        小数が範囲内であることを確かめる("楽曲編集コマンド.新しい音量", self.新しい音量, 音量の下限, 音量の上限)
+        小数が範囲内であることを確かめる("楽曲編集コマンド.新しい音量", self.新しい音量, 音量と効果の比の下限, 音量と効果の比の上限)
     }
 }
 

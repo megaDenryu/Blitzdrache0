@@ -13,9 +13,7 @@ use super::instrument::楽器;
 use super::note_rows::音の並び;
 use super::progression_reference::コード進行参照;
 use super::progression_roster::進行の名簿;
-
-pub(super) const 音量の下限: f64 = 0.0;
-pub(super) const 音量の上限: f64 = 1.0;
+use super::value_range::{音量と効果の比の上限, 音量と効果の比の下限};
 
 /// トラックの種類とは、そのトラックが曲の中で受け持つ役割の区別のことである。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -81,7 +79,7 @@ impl トラック定義 {
             });
         }
         self.音の並び.検証する()?;
-        小数が範囲内であることを確かめる("トラック定義.音量", self.音量, 音量の下限, 音量の上限)?;
+        小数が範囲内であることを確かめる("トラック定義.音量", self.音量, 音量と効果の比の下限, 音量と効果の比の上限)?;
         match &self.進行の割り当て {
             Some(参照) => 進行の名簿.参照が解決できることを確かめる(参照),
             None => Ok(()),
