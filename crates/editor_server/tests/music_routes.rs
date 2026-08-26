@@ -86,3 +86,11 @@ async fn 検証に落ちる楽曲は422を返し種別と説明を持つ() {
     assert_eq!(本文["種別"], serde_json::json!("構造検証エラー"));
     assert!(本文["説明"].as_str().unwrap().contains("拍毎分"));
 }
+
+#[tokio::test]
+async fn 未対応の形式版は422を返す() {
+    let 一時 = common::一時プロジェクト::生成する("music_put_version");
+    let mut 未対応の版 = 楽曲のjson();
+    未対応の版["形式版"] = serde_json::json!(editor_server::楽曲の現在の形式版 + 1);
+    assert_eq!(保存を要求する(&一時, "試験の楽曲", &未対応の版).await, StatusCode::UNPROCESSABLE_ENTITY);
+}

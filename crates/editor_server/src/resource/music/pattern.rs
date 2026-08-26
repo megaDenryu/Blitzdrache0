@@ -5,6 +5,7 @@
 
 use serde::{Deserialize, Serialize};
 
+use super::super::text_check::綴りが空でないことを確かめる;
 use super::super::validation_error::資源検証エラー;
 use super::pattern_id::パターンID;
 use super::progression_reference::コード進行参照;
@@ -26,6 +27,7 @@ impl パターン {
     pub(super) fn 検証する(
         &self, トラック構成: &[トラック定義], 進行の名簿: &進行の名簿<'_>
     ) -> Result<(), 資源検証エラー> {
+        綴りが空でないことを確かめる("パターン.表示名", &self.表示名)?;
         進行の名簿.参照が解決できることを確かめる(&self.進行の参照)?;
         if self.格子.len() != トラック構成.len() {
             return Err(資源検証エラー::件数が期待と違う {

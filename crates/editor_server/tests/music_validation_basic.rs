@@ -69,3 +69,25 @@ fn 遅延のステップ数は0から32だけを受け入れる() {
     超過.ミキサー設定.遅延のステップ数 = 33;
     assert!(超過.検証する().is_err());
 }
+
+#[test]
+fn 現在の形式版は通り未対応の形式版を拒む() {
+    let mut 通る = common::楽曲の例();
+    通る.形式版 = editor_server::楽曲の現在の形式版;
+    通る.検証する().unwrap();
+
+    let mut 拒む = common::楽曲の例();
+    拒む.形式版 = editor_server::楽曲の現在の形式版 + 1;
+    assert!(拒む.検証する().is_err());
+}
+
+#[test]
+fn 楽曲の表示名が空白だけなら拒む() {
+    let mut 拒む = common::楽曲の例();
+    拒む.表示名 = "\t ".to_string();
+    assert!(拒む.検証する().is_err());
+
+    let mut 通る = common::楽曲の例();
+    通る.表示名 = "名前のある楽曲".to_string();
+    通る.検証する().unwrap();
+}

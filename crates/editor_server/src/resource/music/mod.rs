@@ -13,31 +13,38 @@ mod note_rows;
 mod pattern;
 mod pattern_id;
 mod pattern_roster;
+mod preset_progression;
 mod progression_reference;
 mod progression_roster;
 mod section;
 mod track;
 mod track_grid;
+mod version;
 
 use serde::{Deserialize, Serialize};
 
 use super::numeric_check::整数が範囲内であることを確かめる;
+use super::text_check::綴りが空でないことを確かめる;
 use super::validation_error::資源検証エラー;
 use pattern_roster::パターンの名簿;
 use progression_roster::進行の名簿;
 
 pub use chord::{和音, 和音の種類};
-pub use chord_progression::{コード進行, 既定の進行の識別子一覧};
+pub use chord_progression::コード進行;
 pub use instrument::{打楽器の種類, 楽器};
 pub use mixer::ミキサー設定;
 pub use music_id::楽曲ID;
 pub use note_rows::音の並び;
 pub use pattern::パターン;
 pub use pattern_id::パターンID;
+pub use preset_progression::{既定のコード進行, 既定のコード進行一覧};
 pub use progression_reference::コード進行参照;
 pub use section::曲の節;
 pub use track::{トラックの種類, トラック定義};
 pub use track_grid::{トラックの格子, パターンのステップ数};
+pub use version::{楽曲の版の移行エラー, 読み込んだ楽曲の版};
+
+pub const 楽曲の現在の形式版: u32 = 1;
 
 const 拍毎分の下限: u32 = 40;
 const 拍毎分の上限: u32 = 300;
@@ -47,6 +54,7 @@ const 拍毎分の上限: u32 = 300;
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "typescript", derive(ts_rs::TS))]
 pub struct 楽曲 {
+    pub 形式版: u32,
     #[cfg_attr(feature = "typescript", ts(type = "string"))]
     pub 名乗り: 楽曲ID,
     pub 表示名: String,
@@ -62,6 +70,14 @@ impl 楽曲 {
     /// 名簿を先に組み立てるのは、名簿の組み立て自体が名前と名乗りの重複を拒む検査だからである。
     /// 名簿が成り立ってはじめて、参照の解決が1件に定まる問いになる。
     pub fn 検証する(&self) -> Result<(), 資源検証エラー> {
+        if self.形式版 != 楽曲の現在の形式版 {
+            return Err(資源検証エラー::未対応の形式版 {
+                フィールド名: "楽曲",
+                実際: self.形式版,
+                対応: 楽曲の現在の形式版,
+            });
+        }
+        綴りが空でないことを確かめる("楽曲.表示名", &self.表示名)?;
         整数が範囲内であることを確かめる("楽曲.拍毎分", i64::from(self.拍毎分), i64::from(拍毎分の下限), i64::from(拍毎分の上限))?;
         self.ミキサー設定.検証する()?;
         let 進行の名簿 = 進行の名簿::独自進行一覧から組み立てる(&self.独自進行一覧)?;

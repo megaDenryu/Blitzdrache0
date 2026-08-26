@@ -10,7 +10,7 @@ use std::path::Path;
 
 use super::data_directory::編集データディレクトリ;
 use super::json_io::{json構造体を保存する, json構造体を読む};
-use crate::resource::{楽曲, 楽曲ID};
+use crate::resource::{楽曲, 楽曲ID, 読み込んだ楽曲の版};
 use crate::storage::{保存要求エラー, 読み込みエラー};
 
 pub(super) fn 楽曲の一覧を読む(ディレクトリ: &編集データディレクトリ) -> Result<Vec<楽曲ID>, 読み込みエラー> {
@@ -29,11 +29,13 @@ pub(super) fn 楽曲の一覧を読む(ディレクトリ: &編集データデ�
     Ok(名乗り一覧)
 }
 
+/// 保存済みのJSONは形式版の欄を持たない旧版のこともあるため、版を判別してから現在の形へ変換する
+/// (参照: `resource/music/version.rs`)。
 pub(super) fn 楽曲を読む(
     ディレクトリ: &編集データディレクトリ, 名乗り: &楽曲ID
 ) -> Result<Option<楽曲>, 読み込みエラー> {
-    let 読んだ内容: Option<楽曲> = json構造体を読む(&ディレクトリ.楽曲パス(名乗り))?;
-    match 読んだ内容 {
+    let 読み込んだ版: Option<読み込んだ楽曲の版> = json構造体を読む(&ディレクトリ.楽曲パス(名乗り))?;
+    match 読み込んだ版.map(読み込んだ楽曲の版::現在の形へ変換する).transpose()? {
         Some(読んだ楽曲) if &読んだ楽曲.名乗り != 名乗り => Err(読み込みエラー::名乗りとファイル名が食い違う {
             ファイル名: 名乗り.綴り().to_string(),
             名乗り: 読んだ楽曲.名乗り.綴り().to_string(),

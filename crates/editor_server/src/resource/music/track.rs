@@ -7,6 +7,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::super::numeric_check::小数が範囲内であることを確かめる;
+use super::super::text_check::綴りが空でないことを確かめる;
 use super::super::validation_error::資源検証エラー;
 use super::instrument::楽器;
 use super::note_rows::音の並び;
@@ -66,6 +67,7 @@ pub struct トラック定義 {
 
 impl トラック定義 {
     pub(super) fn 検証する(&self, 進行の名簿: &進行の名簿<'_>) -> Result<(), 資源検証エラー> {
+        綴りが空でないことを確かめる("トラック定義.表示名", &self.表示名)?;
         if !self.種類.受け入れる楽器か(self.楽器) {
             return Err(資源検証エラー::組み合わせが成り立たない {
                 フィールド名: "トラック定義.楽器",

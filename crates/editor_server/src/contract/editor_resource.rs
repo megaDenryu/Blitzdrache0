@@ -1,25 +1,14 @@
-//! ts-rsで、editor_serverの素データ型からTypeScriptの型契約の本文を組み立てる。
-//! この関数の結果を、書き出す側(`bin/contract_export.rs`)と検査する側
-//! (鮮度検査テスト)の両方が呼ぶ。ここでは文字列を作るだけで、ファイルへは触れない。
-//! `TS::decl()`は単体のimport文を作らないため、互いに参照し合う型は同じ1本の
-//! ファイルへまとめる(手本: GameScriptingTheoryの同名モジュール)。生存確認応答だけは
-//! 何にも依存しないため、段1どおり別ファイルのまま残す。
+//! `編集資源契約.ts`の本文。編集資源と操作コマンドの型宣言の並びと、値として出す定数をこのモジュールが所有する。
+//!
+//! 形式版と既定のコード進行を値として出すのは、ブラウザが同じ定数の写しを持たなくて済むようにするためである。
+//! 写しを持つと、片方だけが変わった食い違いが実行するまで出ない
+//! (参照: `_doc/設計/楽曲エディター.md`「判断9」「判断10」)。
 
 use ts_rs::{Config, TS};
 
-const 手書き禁止の注記: &str = "// このファイルはts-rsによる生成物である。手で編集しない。\n\
-// 生成し直す手順（リポジトリルートで実行する）:\n\
-//   cargo xtask contract-export\n";
-
-pub fn 契約ファイルの本文を組み立てる() -> String {
-    let 設定 = Config::new();
-    let 型宣言一覧: [String; 1] = [<crate::生存確認応答 as TS>::decl(&設定)];
-    本文を組み立てる(&型宣言一覧)
-}
-
 pub fn 編集資源契約の本文を組み立てる() -> String {
     let 設定 = Config::new();
-    let 型宣言一覧: [String; 65] = [
+    let 型宣言一覧: [String; 66] = [
         <crate::プロジェクト情報応答 as TS>::decl(&設定),
         <crate::建物定義の用途 as TS>::decl(&設定),
         <crate::ベイ構造 as TS>::decl(&設定),
@@ -71,6 +60,7 @@ pub fn 編集資源契約の本文を組み立てる() -> String {
         <crate::急勾配を岩肌へベイクする as TS>::decl(&設定),
         <crate::道路下を泥へベイクする as TS>::decl(&設定),
         <crate::編集コマンド as TS>::decl(&設定),
+        <crate::既定のコード進行 as TS>::decl(&設定),
         <crate::楽器 as TS>::decl(&設定),
         <crate::打楽器の種類 as TS>::decl(&設定),
         <crate::音の並び as TS>::decl(&設定),
@@ -86,26 +76,31 @@ pub fn 編集資源契約の本文を組み立てる() -> String {
         <crate::曲の節 as TS>::decl(&設定),
         <crate::楽曲 as TS>::decl(&設定),
     ];
-    let mut 本文 = 本文を組み立てる(&型宣言一覧);
+    let mut 本文 = super::本文を組み立てる(&型宣言一覧);
     本文.push_str(&format!(
         "export const 建物外形カタログ形式版 = {} as const;\n",
         crate::建物外形カタログの現在の形式版
     ));
     本文.push_str(&format!(
-        "export const 建物の格子の形式版 = {} as const;
-",
+        "export const 建物の格子の形式版 = {} as const;\n",
         crate::建物の格子の現在の形式版
+    ));
+    本文.push_str(&format!("export const 楽曲の形式版 = {} as const;\n", crate::楽曲の現在の形式版));
+    本文.push_str(&format!(
+        "export const 既定のコード進行一覧: 既定のコード進行[] = {};\n",
+        既定のコード進行一覧のjson()
     ));
     本文
 }
 
-fn 本文を組み立てる(型宣言一覧: &[String]) -> String {
-    let mut 本文 = String::from(手書き禁止の注記);
-    本文.push('\n');
-    for 宣言 in 型宣言一覧 {
-        本文.push_str("export ");
-        本文.push_str(宣言);
-        本文.push('\n');
-    }
-    本文
+/// 進行1件を1行へ畳むのは、生成物の差分が進行の単位で出るようにするためである。
+fn 既定のコード進行一覧のjson() -> String {
+    let 行一覧: Vec<String> = crate::既定のコード進行一覧().iter().map(進行1件のjson).collect();
+    format!("[\n  {}\n]", 行一覧.join(",\n  "))
+}
+
+/// 直列化できない欄を1つも持たない型のため、失敗したら型契約の組み立ての不変条件が破れている。
+fn 進行1件のjson(進行: &crate::既定のコード進行) -> String {
+    serde_json::to_string(進行)
+        .unwrap_or_else(|誤り| panic!("既定のコード進行を値として書き出せない。全ての欄がJSONへ写せるという不変条件に違反した: {誤り}"))
 }
