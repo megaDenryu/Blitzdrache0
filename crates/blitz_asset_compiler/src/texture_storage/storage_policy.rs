@@ -9,10 +9,8 @@ use blitz_engine::texture_storage::テクスチャ格納形式;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum テクスチャ格納方針 {
-    /// 全てのテクスチャを非圧縮のRGBA8で焼く。版4までと同じバイト列になる。
-    全てRGBA8,
-    /// ベースカラーだけをBC1で焼き、法線と金属粗さはRGBA8のまま残す。
-    ベースカラーのブロック圧縮,
+    全てRGBA8, // 非圧縮のRGBA8で焼く。版4までと同じバイト列になる
+    ベースカラーのブロック圧縮, // ベースカラーだけをBC1で焼き、他はRGBA8のまま残す
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
