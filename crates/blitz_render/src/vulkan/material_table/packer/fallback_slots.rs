@@ -9,8 +9,7 @@ use crate::vulkan::material_table::fallback_usage::正準フォールバック�
 use crate::vulkan::material_table::texture_slot::テクスチャスロット;
 
 pub(in crate::vulkan::material_table) struct 正準フォールバック解決 {
-    /// `正準フォールバック用途::全用途`と同じ並びで持つ。
-    用途別スロット: [テクスチャスロット; 正準フォールバック用途::全用途.len()],
+    用途別スロット: [テクスチャスロット; 正準フォールバック用途::全用途.len()], // `正準フォールバック用途::全用途`と同じ並びで持つ
 }
 
 impl 正準フォールバック解決 {
