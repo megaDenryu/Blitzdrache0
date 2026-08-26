@@ -17,14 +17,10 @@ const 既定VRAM上限バイト数: u64 = 4096;
 /// プレイヤーの大域位置をどこから得るか。位置の出どころで読込順の再現性が変わるため、真偽値でなく選択肢として持つ。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum プレイヤー位置源 {
-    /// 既定。カメラの視点位置をそのままプレイヤー位置として使う。
-    カメラ視点,
-    /// `--streaming-route`指定。フレーム番号から決まる固定経路を使い、実行のたびに同じ位置列を得る。
-    固定経路,
-    /// `cargo xtask ow3-dod`専用。中心から始めて半径2を全件先読みし、静止後に境界とLOD閾値を横切る。
-    Ow3Dod経路,
-    /// `cargo xtask instance-stream`専用。Ow3Dod経路と同じ先読みと横断のあと、始点まで戻って静止し整定する。
-    インスタンスストリーム経路,
+    カメラ視点,                 // 既定。カメラの視点位置をそのままプレイヤー位置として使う
+    固定経路,                   // --streaming-route指定。フレーム番号から決まる固定経路を使い、実行のたびに同じ位置列を得る
+    Ow3Dod経路,                 // cargo xtask ow3-dod専用。中心から始めて半径2を全件先読みし、静止後に境界とLOD閾値を横切る
+    インスタンスストリーム経路, // cargo xtask instance-stream専用。Ow3Dod経路と同じ先読みと横断のあと、始点まで戻って静止し整定する
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -36,15 +32,14 @@ pub(crate) struct LOD継ぎ目検査設定 {
     pub(crate) 欠落座標: Option<チャンク座標>,
 }
 
+/// チャンクストリーミングの起動設定一式。
+///
+/// - `要約を報告する`: `--report-streaming-summary`は毎フレームの順序出力(`報告する`)とは別の指定にする。順序出力が事象のあるフレームごとに複数行を出し、長時間実行では標準出力量が桁違いになるためである。
 pub(crate) struct ストリーミング起動設定 {
-    /// `--streaming`指定でtrue。既定はfalse(既存のスモーク8ステージとベンチの挙動を1つも変えない)。
-    pub(crate) 有効: bool,
+    pub(crate) 有効: bool, // --streaming指定でtrue。既定はfalse(既存のスモーク8ステージとベンチの挙動を1つも変えない)
     pub(crate) 上限: ストリーミングメモリ量,
-    /// `--report-streaming`指定でtrue。読込・解除の順を標準出力へ出す。
-    pub(crate) 報告する: bool,
-    /// `--report-streaming-summary`指定でtrue。終了時に転送量・処理時間分布・最大使用量を出す。
-    /// 毎フレームの順序出力とは別の指定にするのは、順序出力が事象のあるフレームごとに複数行を出し、長時間実行では標準出力量が桁違いになるためである。
-    pub(crate) 要約を報告する: bool,
+    pub(crate) 報告する: bool,       // --report-streaming指定でtrue。読込・解除の順を標準出力へ出す
+    pub(crate) 要約を報告する: bool, // --report-streaming-summary指定でtrue。終了時に転送量・処理時間分布・最大使用量を出す
     pub(crate) 位置源: プレイヤー位置源,
     pub(crate) lod継ぎ目検査: Option<LOD継ぎ目検査設定>,
     pub(crate) 先読み半径: u8,

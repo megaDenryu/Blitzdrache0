@@ -19,10 +19,8 @@ use blitz_render::frame_input::影のキャスター指定;
 /// アプリのフィールドとして別々に並べる理由が無いためである。
 #[derive(Clone, Copy)]
 pub(in crate::app) struct 描画の計測つまみ {
-    /// `--debug-cascade-bands`と`--debug-shadow-loss`が選ぶ、シーンの色に代えて出す診断。
-    pub(in crate::app) 画素診断: blitz_render::cascade::画素診断,
-    /// `--no-shadow-casters`で`全て外す`。距離区分のパスへ描画入力を1件も積まない対照になる。
-    pub(in crate::app) 影のキャスター: 影のキャスター指定,
+    pub(in crate::app) 画素診断: blitz_render::cascade::画素診断, // --debug-cascade-bandsと--debug-shadow-lossが選ぶ、シーンの色に代えて出す診断
+    pub(in crate::app) 影のキャスター: 影のキャスター指定,        // --no-shadow-castersで全て外す。距離区分のパスへ描画入力を1件も積まない対照になる
 }
 
 impl 描画の計測つまみ {

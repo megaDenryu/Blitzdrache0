@@ -23,19 +23,15 @@ pub(super) fn 段の閾値設定を作る() -> 個体LOD選択設定 {
 
 /// 起動指定から来る選別のつまみ。1つの型へまとめるのは、どれも計測と検収のために本番の選別を部分的に止めるか
 /// 本番の選別を観測する同じ性質の指定であり、配線が持つフィールドとして別々に並べる理由が無いためである。
+///
+/// - `キャスター距離分布を数える`: `--report-caster-distance`でtrue。選別と同じ判定でキャスター候補のカメラ距離分布を数える走査を1本足すだけであり、どの個体を描くかは1つも変えない。
 #[derive(Clone, Copy)]
 pub(in crate::app) struct 選別のつまみ {
-    /// `--no-instance-cull`でfalse。falseは視錐台で絞らず全個体を可視とする。
-    pub(in crate::app) 可視判定有効: bool,
-    /// `--no-instance-lod`でfalse。falseは全個体を最詳細段で描く。
-    pub(in crate::app) 段選択有効: bool,
-    /// `--no-instance-shadow`でfalse。falseはどの距離区分も個体を1体も影の候補にしない。
-    pub(in crate::app) 影キャスター有効: bool,
-    /// `--report-caster-distance`でtrue。trueは選別と同じ判定でキャスター候補のカメラ距離分布を数える走査を1本足す。
-    /// 数えるだけであり、どの個体を描くかは1つも変えない。
-    pub(in crate::app) キャスター距離分布を数える: bool,
-    /// `--shadow-caster-range`で与える影の視距離。`None`が本番であり、切断を1回も評価しない。
-    pub(in crate::app) 影の視距離: Option<影の視距離>,
+    pub(in crate::app) 可視判定有効: bool,     // --no-instance-cullでfalse。falseは視錐台で絞らず全個体を可視とする
+    pub(in crate::app) 段選択有効: bool,       // --no-instance-lodでfalse。falseは全個体を最詳細段で描く
+    pub(in crate::app) 影キャスター有効: bool, // --no-instance-shadowでfalse。falseはどの距離区分も個体を1体も影の候補にしない
+    pub(in crate::app) キャスター距離分布を数える: bool, // --report-caster-distanceでtrue
+    pub(in crate::app) 影の視距離: Option<影の視距離>, // --shadow-caster-rangeで与える。Noneが本番であり切断を1回も評価しない
 }
 
 /// そのフレームの段選択の方式。段の選択を止めた実行では全個体を最詳細段で描く。

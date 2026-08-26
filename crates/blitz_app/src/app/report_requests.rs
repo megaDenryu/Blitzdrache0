@@ -6,26 +6,19 @@
 
 use crate::cli::起動設定;
 
+/// 終了時に出す報告の要求一式。フィールドはどれも対応するCLI引数の指定有無を保つだけの真偽値である。
+///
+/// - `実表示時間`: `--report-display-timing`の計測は提示待機で描画ループを止めるため、フレーム時間報告とは独立に切り替える。
 pub(crate) struct 報告要求 {
-    /// `--report-gpu-times`。パス別GPU時間の移動平均を出す。
-    pub(super) gpu時間: bool,
-    /// `--report-gpu-frame-times`。パス別GPU時間の窓へ入る前の生の値をフレーム別に全件出す。
-    pub(super) gpu時間のフレーム別生値: bool,
-    /// `--report-atmosphere-passes`。フレームごとの大気のベイク済み画像生成パス本数を出す。
-    pub(super) 大気のベイク済み画像生成パス数: bool,
-    /// `--report-memory`。Vulkan専用メモリの確保数と用途別量を出す。
-    pub(super) gpuメモリ: bool,
-    /// `--report-draw-issue`。最終フレームのパス別描画発行数を出す。
-    pub(super) 描画発行: bool,
-    /// `--report-sun-angle`。その実行が使った太陽の高度と方位を出す。
-    pub(super) 太陽角度: bool,
-    /// `--report-caster-distance`。最終フレームのキャスター候補の距離帯別の分布を出す。
-    pub(super) キャスター距離分布: bool,
-    /// `--report-display-timing`。提示待機で測った実表示間隔を出す。この計測は描画ループを止めるため、
-    /// フレーム時間報告とは独立に切り替える。
-    pub(super) 実表示時間: bool,
-    /// `--report-streaming-summary`。ストリーミングが無効なときも指定の有無を保つ。
-    pub(super) ストリーミング要約: bool,
+    pub(super) gpu時間: bool,                        // --report-gpu-times。パス別GPU時間の移動平均を出す
+    pub(super) gpu時間のフレーム別生値: bool,        // --report-gpu-frame-times。パス別GPU時間の生値をフレーム別に全件出す
+    pub(super) 大気のベイク済み画像生成パス数: bool, // --report-atmosphere-passes。フレームごとの生成パス本数を出す
+    pub(super) gpuメモリ: bool,                      // --report-memory。Vulkan専用メモリの確保数と用途別量を出す
+    pub(super) 描画発行: bool,                       // --report-draw-issue。最終フレームのパス別描画発行数を出す
+    pub(super) 太陽角度: bool,                       // --report-sun-angle。その実行が使った太陽の高度と方位を出す
+    pub(super) キャスター距離分布: bool,             // --report-caster-distance。最終フレームのキャスター候補の距離帯別分布を出す
+    pub(super) 実表示時間: bool,                     // --report-display-timing。提示待機で測った実表示間隔を出す
+    pub(super) ストリーミング要約: bool,             // --report-streaming-summary。ストリーミング無効時も指定の有無を保つ
 }
 
 impl 報告要求 {

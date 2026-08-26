@@ -20,11 +20,9 @@ use crate::app::アプリ;
 /// 1フレームに1度だけ作って両方へ配る。
 pub(crate) struct フレーム視点 {
     pub(crate) ビュー射影の組: ビュー射影の組,
-    /// カメラ相対ワールドからビュー空間への変換。クラスタの選別が局所光の位置をビュー空間へ写すために読む。
-    pub(crate) カメラ相対ビュー変換: blitz_math::変換<blitz_math::ワールド, blitz_math::ビュー>,
+    pub(crate) カメラ相対ビュー変換: blitz_math::変換<blitz_math::ワールド, blitz_math::ビュー>, // クラスタの選別が局所光の位置をビュー空間へ写すために読む
     pub(crate) カメラ大域位置: blitz_math::大域ワールド位置,
-    /// 同じ視点のビュー射影を組み立てた透視投影の4つの量と画素内ずらし。局所可視性補正が深度から位置を戻すために読む。
-    pub(crate) 射影の復元: blitz_render::local_visibility::射影の復元,
+    pub(crate) 射影の復元: blitz_render::local_visibility::射影の復元, // 同じ視点のビュー射影を組み立てた透視投影の4つの量と画素内ずらし。局所可視性補正が深度から位置を戻すために読む
 }
 
 pub(in crate::app) fn 視点を求める(アプリ: &アプリ) -> フレーム視点 {

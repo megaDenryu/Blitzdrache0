@@ -22,8 +22,7 @@ use crate::error::起動エラー;
 pub(in crate::app) struct 世界の描画構成 {
     pub(in crate::app) フレーム構成: blitz_render::フレーム構成,
     pub(in crate::app) 局所可視性の描画設定: 局所可視性の描画設定,
-    /// 世界が宣言した時間再構成方式と、パスが押し込む2つの数をGPU境界の型へ写した値。レンダラーの生成へそのまま渡る。
-    pub(in crate::app) 時間再構成の描画設定: 時間再構成の描画設定,
+    pub(in crate::app) 時間再構成の描画設定: 時間再構成の描画設定, // 世界が宣言した方式と、パスが押し込む2つの数をGPU境界の型へ写した値。レンダラーの生成へそのまま渡る
 }
 
 pub(in crate::app) fn 決める(起動設定: &起動設定, 空を描くか: bool) -> Result<世界の描画構成, 起動エラー> {

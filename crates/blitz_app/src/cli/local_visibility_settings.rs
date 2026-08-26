@@ -20,18 +20,15 @@ use crate::reports::local_visibility::合成深度の形;
 /// 世界の宣言を書き換えずに外せると、判定値を持つ検収がどちらの条件でも同じ入口から走る。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum 拡散間接方式の起動上書き {
-    /// 既定。世界が宣言した拡散間接方式をそのまま使う。
-    宣言に従う,
-    /// `--no-ssao`。世界が局所可視性補正を宣言していても環境のみで描く。
-    環境のみで描く,
+    宣言に従う,     // 既定。世界が宣言した拡散間接方式をそのまま使う
+    環境のみで描く, // --no-ssao。世界が局所可視性補正を宣言していても環境のみで描く
 }
 
 /// 局所可視性補正の起動指定一式。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct 局所可視性の起動指定 {
     pub(crate) 方式の上書き: 拡散間接方式の起動上書き,
-    /// `--local-visibility-fixed <符号値>`で全画素の局所可視度をその値へ固定する。既定は上書きしない。
-    pub(crate) 可視度の固定: 局所可視度の上書き,
+    pub(crate) 可視度の固定: 局所可視度の上書き, // --local-visibility-fixed <符号値>で全画素の局所可視度をその値へ固定する。既定は上書きしない
 }
 
 impl 局所可視性の起動指定 {

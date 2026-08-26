@@ -19,8 +19,7 @@ pub(in crate::app) struct 読み込む世界の材料<'材料> {
     pub(in crate::app) シーン: &'材料 起動時シーン,
     pub(in crate::app) アセットの置き場: &'材料 実行時アセットの置き場,
     pub(in crate::app) 描画対象の並べ方: 描画対象の並べ方,
-    /// `--global-offset`が世界全体へ加える平行移動。描画の基準原点へ最後に合成する。
-    pub(in crate::app) 大域平行移動: blitz_math::大域ワールド位置,
+    pub(in crate::app) 大域平行移動: blitz_math::大域ワールド位置, // --global-offsetが世界全体へ加える平行移動。描画の基準原点へ最後に合成する
     pub(in crate::app) チャンク一辺: Option<blitz_engine::チャンク一辺>,
     pub(in crate::app) 布モード: 布モード,
 }
@@ -51,6 +50,5 @@ pub(in crate::app) struct 起動時に組み上げた一式 {
     pub(in crate::app) 布プリセット: Option<布プリセット>,
     pub(in crate::app) 登録一式: scene_load::束の登録一式,
     pub(in crate::app) 遠景: Option<(blitz_engine::シーンデータ, scene_load::束の描画入力)>,
-    /// カタログを読んで初めて決まる層ごとのタイル。呼び出し元がアプリのフィールドへそのまま移す。
-    pub(in crate::app) 地表の層のタイル: scene_load::地表の層のタイル一式,
+    pub(in crate::app) 地表の層のタイル: scene_load::地表の層のタイル一式, // カタログを読んで初めて決まる層ごとのタイル。呼び出し元がアプリのフィールドへそのまま移す
 }

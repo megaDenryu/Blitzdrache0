@@ -6,10 +6,8 @@ use std::process::Command;
 
 /// slangcの起動に使うプログラム指定。
 pub(super) enum スランガー位置 {
-    /// VULKAN_SDK配下で発見した絶対パス。
-    絶対パス(PathBuf),
-    /// PATH解決に委ねる（"slangc"をそのままプログラム名として渡す）。
-    パス経由,
+    絶対パス(PathBuf), // VULKAN_SDK配下で発見した絶対パス
+    パス経由,          // PATH解決に委ねる（"slangc"をそのままプログラム名として渡す）
 }
 
 impl スランガー位置 {

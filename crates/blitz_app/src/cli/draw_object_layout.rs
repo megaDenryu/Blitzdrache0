@@ -7,8 +7,7 @@ use super::{描画対象の走査順, 描画対象数};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct 描画対象の並べ方 {
-    /// `--object-count`指定でSome。指定があるときだけ、複製した描画対象を固定カメラ内の格子へ配置する変換を合成する。
-    pub(crate) 件数: Option<描画対象数>,
+    pub(crate) 件数: Option<描画対象数>, // --object-count指定でSome。指定があるときだけ、複製した描画対象を固定カメラ内の格子へ配置する変換を合成する
     pub(crate) 走査順: 描画対象の走査順,
 }
 

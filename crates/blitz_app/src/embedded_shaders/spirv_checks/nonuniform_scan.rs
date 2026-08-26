@@ -9,10 +9,8 @@ use super::spirv_error::シェーダー中間表現の読み解きエラー;
 use super::spirv_module::{名前からidを引く, 命令へ読み解く, 装飾の付いたidを集める};
 
 pub(super) struct 非一様装飾の集計 {
-    /// その変数を基点とするアクセス連鎖の件数。
-    pub(super) 参照件数: usize,
-    /// そのうち、アクセス連鎖の結果にNonUniformの装飾が付いていた件数。
-    pub(super) 非一様装飾付きの件数: usize,
+    pub(super) 参照件数: usize,             // その変数を基点とするアクセス連鎖の件数
+    pub(super) 非一様装飾付きの件数: usize, // そのうち、アクセス連鎖の結果にNonUniformの装飾が付いていた件数
 }
 
 const 命令_OP_ACCESS_CHAIN: u16 = 65;

@@ -13,37 +13,29 @@ use super::画面画素位置;
 use crate::reports::indirect_probe::遠方環境の検収条件;
 use crate::reports::local_visibility::合成深度の形;
 
+/// 読み戻した画像に対する照合の起動指定一式。
+///
+/// - `空の代表画素`: `--report-sky-pixel <横,縦;...>`指定で、その画素について空の色をCPU正本で求め直し、読み戻した画素と並べて出す。既定は空の一覧(報告しない)。
+/// - `遠方環境の検収条件`: `--indirect-probe <条件>`指定で、遠方環境の派生表現へ解析入力を注入し、板ごとの期待と実測を並べて出す。指定が無い実行は注入も報告も行わず、間接照明は大気から焼いた遠方環境のままである。
+/// - `自動露出を報告するか`: `--report-auto-exposure`指定で、圧縮前のHDRから求めたCPU正本のヒストグラムと目標補正段を、GPU上のヒストグラムと露出状態と並べて出す。`--dump-hdr-frame`と併せて指定する。
+/// - `自動露出の探り色`: `--auto-exposure-probe <赤,緑,青>`指定で、シーンパスのクリア色をこの線形RGBへ置き換える。背景の画素が探り色になり、その色をCPU正本とGPUがどのビンへ入れたかを突き合わせられる。
+/// - `局所可視性の検収の形`: `--local-visibility-shape <形>`指定で、その形の合成深度をGPUの深度画像へ注入し、読み戻した局所可視度をCPU正本と並べて出す。指定が無い実行は注入も報告も行わない。
+/// - `動きベクトルを報告するか`: `--report-motion-vector`指定で、最終フレームの動きベクトル画像を読み戻し、1画素の幅を超えた画素の数と大きさの最大を出す。この画像はどの絵にも現れないため、書かれていることは直に読む以外に確かめられない。
+/// - `時間再構成を報告するか`: `--report-temporal-reconstruction`指定で、最後の何フレームかの圧縮前HDRを読み戻して静止カメラでのフレーム間差分を並べ、最終フレームで履歴を無効にした直後の結果が今のフレームの色と一致することを画素で見る。
+/// - `時間再構成の合成入力を突き合わせるか`: `--report-temporal-reconstruction-injection`指定で、動きベクトル・履歴・今のフレームの色・深度を検収が決めた値へ差し替え、GPUが書いた再構成後の色をCPU正本と突き合わせる。
+/// - `クラスタ選別の割り当てを報告するか`: `--report-cluster-assignment`指定で、クラスタの選別が書いた区間表と添字列を読み戻し、セルごとの割り当て件数の統計と、厳密な交差判定で数えた偽陽性の件数を1行で出す。
+/// - `先行フレームも書き出すか`: `--dump-preceding-frame`指定で、最終フレームの1つ前も`<ベース名>_preceding`へ書き出す。同一起動の中で撮った2枚を突き合わせると、読み戻しがその起動の中で決定的であることを起動をまたがずに言える。
 pub(crate) struct 読み戻し検収起動設定 {
-    /// `--report-sky-pixel <横,縦;...>`指定で、その画素について空の色をCPU正本で求め直し、読み戻した画素と並べて出す。
-    /// 既定は空の一覧(報告しない)。
-    pub(crate) 空の代表画素: Vec<画面画素位置>,
-    /// `--indirect-probe <条件>`指定で、遠方環境の派生表現へ解析入力を注入し、板ごとの期待と実測を並べて出す。
-    /// 指定が無い実行は注入も報告も行わず、間接照明は大気から焼いた遠方環境のままである。
-    pub(crate) 遠方環境の検収条件: Option<遠方環境の検収条件>,
-    /// `--report-auto-exposure`指定で、圧縮前のHDRから求めたCPU正本のヒストグラムと目標補正段を、
-    /// GPU上のヒストグラムと露出状態と並べて出す。`--dump-hdr-frame`と併せて指定する。
-    pub(crate) 自動露出を報告するか: bool,
-    /// `--auto-exposure-probe <赤,緑,青>`指定で、シーンパスのクリア色をこの線形RGBへ置き換える。
-    /// 背景の画素が探り色になり、その色をCPU正本とGPUがどのビンへ入れたかを突き合わせられる。
-    pub(crate) 自動露出の探り色: Option<[f32; 3]>,
-    /// `--local-visibility-shape <形>`指定で、その形の合成深度をGPUの深度画像へ注入し、読み戻した局所可視度を
-    /// CPU正本と並べて出す。指定が無い実行は注入も報告も行わない。
-    pub(crate) 局所可視性の検収の形: Option<合成深度の形>,
-    /// `--report-motion-vector`指定で、最終フレームの動きベクトル画像を読み戻し、1画素の幅を超えた画素の数と
-    /// 大きさの最大を出す。この画像はどの絵にも現れないため、書かれていることは直に読む以外に確かめられない。
-    pub(crate) 動きベクトルを報告するか: bool,
-    /// `--report-temporal-reconstruction`指定で、最後の何フレームかの圧縮前HDRを読み戻して静止カメラでの
-    /// フレーム間差分を並べ、最終フレームで履歴を無効にした直後の結果が今のフレームの色と一致することを画素で見る。
-    pub(crate) 時間再構成を報告するか: bool,
-    /// `--report-temporal-reconstruction-injection`指定で、動きベクトル・履歴・今のフレームの色・深度を検収が決めた値へ
-    /// 差し替え、GPUが書いた再構成後の色をCPU正本と突き合わせる。
-    pub(crate) 時間再構成の合成入力を突き合わせるか: bool,
-    /// `--report-cluster-assignment`指定で、クラスタの選別が書いた区間表と添字列を読み戻し、
-    /// セルごとの割り当て件数の統計と、厳密な交差判定で数えた偽陽性の件数を1行で出す。
-    pub(crate) クラスタ選別の割り当てを報告するか: bool,
-    /// `--dump-preceding-frame`指定で、最終フレームの1つ前も`<ベース名>_preceding`へ書き出す。
-    /// 同一起動の中で撮った2枚を突き合わせると、読み戻しがその起動の中で決定的であることを起動をまたがずに言える。
-    pub(crate) 先行フレームも書き出すか: bool,
+    pub(crate) 空の代表画素: Vec<画面画素位置>, // --report-sky-pixel <横,縦;...>。既定は空(報告しない)
+    pub(crate) 遠方環境の検収条件: Option<遠方環境の検収条件>, // --indirect-probe <条件>。既定はなし
+    pub(crate) 自動露出を報告するか: bool,      // --report-auto-exposure。--dump-hdr-frameと併用
+    pub(crate) 自動露出の探り色: Option<[f32; 3]>, // --auto-exposure-probe <赤,緑,青>
+    pub(crate) 局所可視性の検収の形: Option<合成深度の形>, // --local-visibility-shape <形>
+    pub(crate) 動きベクトルを報告するか: bool,  // --report-motion-vector
+    pub(crate) 時間再構成を報告するか: bool,    // --report-temporal-reconstruction
+    pub(crate) 時間再構成の合成入力を突き合わせるか: bool, // --report-temporal-reconstruction-injection
+    pub(crate) クラスタ選別の割り当てを報告するか: bool, // --report-cluster-assignment
+    pub(crate) 先行フレームも書き出すか: bool,  // --dump-preceding-frame
 }
 
 impl 読み戻し検収起動設定 {

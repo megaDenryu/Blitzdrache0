@@ -8,7 +8,6 @@ use blitz_render::atmosphere::大気散乱媒体;
 #[derive(Clone, Copy)]
 pub(crate) struct 空の再現条件 {
     pub(crate) 大気: 大気散乱媒体,
-    /// 地表から太陽へ向かう単位ベクトル。Xが東、Yが天頂、Zが南である。
-    pub(crate) 太陽方向: [f32; 3],
+    pub(crate) 太陽方向: [f32; 3], // 地表から太陽へ向かう単位ベクトル。Xが東、Yが天頂、Zが南である
     pub(crate) 空描画: 空描画方針,
 }

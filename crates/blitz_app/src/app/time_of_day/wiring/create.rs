@@ -20,11 +20,9 @@ use crate::cli::{世界の種別, 時間帯起動設定, 起動モード};
 pub(in crate::app) struct 生成材料<'材料> {
     pub(in crate::app) 種別: 世界の種別,
     pub(in crate::app) 時間帯: &'材料 時間帯起動設定,
-    /// 自動露出の経過秒を実時間で進めるか固定の刻みで進めるかを決める。
-    pub(in crate::app) 起動モード: 起動モード,
+    pub(in crate::app) 起動モード: 起動モード, // 自動露出の経過秒を実時間で進めるか固定の刻みで進めるかを決める
     pub(in crate::app) 基準ライティング: ライティング入力,
-    /// `--no-explicit-shadow-bands`で真になる。大規模世界でも距離区分を再配分せず実用分割のまま走る。
-    pub(in crate::app) 明示境界を使わない: bool,
+    pub(in crate::app) 明示境界を使わない: bool, // --no-explicit-shadow-bandsで真になる。大規模世界でも距離区分を再配分せず実用分割のまま走る
 }
 
 pub(super) fn 生成する(材料: 生成材料<'_>) -> Result<天空配線, レンダラーエラー> {
