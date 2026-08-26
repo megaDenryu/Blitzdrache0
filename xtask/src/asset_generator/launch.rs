@@ -21,8 +21,7 @@ use super::specification::生成の指定;
 pub struct アセット生成器の起動 {
     生成器: &'static str,
     コマンド: Command,
-    /// 終端メソッドを通ったか。`Drop`がこれを見て閉じ忘れを落とす。
-    終了済みか: bool,
+    終了済みか: bool, // 終端メソッドを通ったか。`Drop`がこれを見て閉じ忘れを落とす
 }
 
 impl アセット生成器の起動 {

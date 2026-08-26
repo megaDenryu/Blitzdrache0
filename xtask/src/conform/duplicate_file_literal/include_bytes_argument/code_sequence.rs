@@ -10,8 +10,7 @@ const 取り込みの呼び出し: &str = "include_bytes!";
 
 pub(super) struct コードの並び {
     文字一覧: Vec<char>,
-    /// 同じ添字の文字が、原文のどこに在るか。
-    原文の位置一覧: Vec<usize>,
+    原文の位置一覧: Vec<usize>, // 同じ添字の文字が原文のどこに在るか
 }
 
 impl コードの並び {

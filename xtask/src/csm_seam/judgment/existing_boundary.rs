@@ -22,12 +22,12 @@ use super::super::{boundary, 境界の数, 近傍の幅};
 use crate::acceptance::{判定の名前, 判定の破れ};
 
 /// 境界1つの実在の別。実在するなら両側の影の画素数を持ち、しないなら数えた結果をそのまま持つ。
+/// `間引く構図か`が偽の構図では、影が無くても判定の対象に残す。
 pub(in crate::csm_seam) struct 境界の実在 {
     pub(in crate::csm_seam) 境界番号: usize,
     pub(in crate::csm_seam) 手前側の影画素数: usize,
     pub(in crate::csm_seam) 奥側の影画素数: usize,
-    /// 影が片側に1画素も無い境界を外す構図か。外さない構図では影が無くても判定の対象に残す。
-    間引く構図か: bool,
+    間引く構図か: bool, // 影が片側に1画素も無い境界を外す構図か
 }
 
 impl 境界の実在 {
