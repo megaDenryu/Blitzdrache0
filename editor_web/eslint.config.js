@@ -23,12 +23,13 @@ const ツールルート = 'ツールルート'
 const 入り口 = '入り口'
 const ヘッドレス = 'ヘッドレス'
 const コンポジションルート = 'main'
-// SengenUI・VscodeShellLayout・SengenThreeはいずれもGitサブモジュールであり、
+// SengenUI・VscodeShellLayout・SengenThree・SengenAudioはいずれもGitサブモジュールであり、
 // 本リポジトリの層の対象外（触ってはいけない範囲）。各層の表の「知ってよい相手」に
 // 現れる箇所だけからの参照を許す外部部品として扱う。
 const SengenUI = 'SengenUI'
 const VscodeShellLayout = 'VscodeShellLayout'
 const SengenThree = 'SengenThree'
+const SengenAudio = 'SengenAudio'
 
 export default tseslint.config(
     {
@@ -66,6 +67,7 @@ export default tseslint.config(
                 { type: SengenUI, mode: 'full', pattern: ['submodules/SengenUI/**'] },
                 { type: VscodeShellLayout, mode: 'full', pattern: ['submodules/VscodeShellLayout/**'] },
                 { type: SengenThree, mode: 'full', pattern: ['submodules/SengenThree/**'] },
+                { type: SengenAudio, mode: 'full', pattern: ['submodules/SengenAudio/**'] },
             ],
         },
         rules: {
@@ -80,10 +82,23 @@ export default tseslint.config(
                         { from: [境界], allow: [境界, 生成] },
                         { from: [編集モデル], allow: [編集モデル, 生成] },
                         { from: [操作コマンド], allow: [操作コマンド, 編集モデル, 境界, 生成] },
-                        { from: [画面], allow: [画面, 操作コマンド, 編集モデル, 境界, 生成, SengenUI, SengenThree] },
+                        {
+                            from: [画面],
+                            allow: [画面, 操作コマンド, 編集モデル, 境界, 生成, SengenUI, SengenThree, SengenAudio],
+                        },
                         {
                             from: [ツールルート],
-                            allow: [ツールルート, 境界, 操作コマンド, 編集モデル, 画面, 生成, SengenUI, SengenThree],
+                            allow: [
+                                ツールルート,
+                                境界,
+                                操作コマンド,
+                                編集モデル,
+                                画面,
+                                生成,
+                                SengenUI,
+                                SengenThree,
+                                SengenAudio,
+                            ],
                         },
                         { from: [入り口], allow: [入り口, 境界, ツールルート, SengenUI, VscodeShellLayout] },
                         { from: [ヘッドレス], allow: [ヘッドレス, 境界, 操作コマンド, 編集モデル, 生成] },
@@ -101,6 +116,7 @@ export default tseslint.config(
                                 SengenUI,
                                 VscodeShellLayout,
                                 SengenThree,
+                                SengenAudio,
                             ],
                         },
                     ],

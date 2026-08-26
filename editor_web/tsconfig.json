@@ -15,7 +15,8 @@
       "sengen-ui": ["submodules/SengenUI/index.ts"],
       "sengen-ui/*": ["submodules/SengenUI/*"],
       "VscodeShellLayout": ["submodules/VscodeShellLayout/src/index.ts"],
-      "SengenThree": ["submodules/SengenThree/src/index.ts"]
+      "SengenThree": ["submodules/SengenThree/src/index.ts"],
+      "SengenAudio": ["submodules/SengenAudio/src/index.ts"]
     }
   },
   "include": ["src"],

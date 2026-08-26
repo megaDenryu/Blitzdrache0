@@ -16,6 +16,7 @@ export default defineConfig({
       'sengen-ui': path.resolve(__dirname, 'submodules/SengenUI'),
       VscodeShellLayout: path.resolve(__dirname, 'submodules/VscodeShellLayout/src/index.ts'),
       SengenThree: path.resolve(__dirname, 'submodules/SengenThree/src/index.ts'),
+      SengenAudio: path.resolve(__dirname, 'submodules/SengenAudio/src/index.ts'),
     },
   },
   server: {

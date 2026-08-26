@@ -7,3 +7,6 @@
 [submodule "editor_web/submodules/SengenThree"]
 	path = editor_web/submodules/SengenThree
 	url = https://github.com/megaDenryu/SengenThree.git
+[submodule "editor_web/submodules/SengenAudio"]
+	path = editor_web/submodules/SengenAudio
+	url = https://github.com/megaDenryu/SengenAudio.git
