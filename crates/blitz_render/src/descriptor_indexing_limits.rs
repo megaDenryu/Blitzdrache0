@@ -10,16 +10,14 @@
 /// 材質テクスチャ表が実際に何枚まで置けるかを決める3つの上限。画像ディスクリプタそのものの上限2つに加えて
 /// シェーダー段の資源合計の上限を持つのは、同じ画素段が他のセットのバッファ・影の画像も一緒に消費し、
 /// 表の枚数がその合計側で先に頭打ちになるためである。
+/// `シェーダー段あたりの資源合計数`は1つのシェーダー段が全種別(入力添付を含む)あわせて参照できる資源の数である。
+/// 前提: 仕様は画素段に限り描画先の色添付もこの上限へ数えると定める(深度は数えない)。材質テクスチャ表を
+/// 消費するのは画素段のため、容量の見積は色添付のぶんも引いて立てる。参照: Vulkan仕様 VkPhysicalDeviceLimits。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ディスクリプタ索引上限 {
-    /// maxPerStageDescriptorSampledImages。
-    シェーダー段あたりの画像ディスクリプタ数: u32,
-    /// maxDescriptorSetSampledImages。
-    セットあたりの画像ディスクリプタ数: u32,
-    /// maxPerStageResources。1つのシェーダー段が全種別(入力添付を含む)あわせて参照できる資源の数。
-    /// 前提: 仕様は画素段に限り描画先の色添付もこの上限へ数えると定める(深度は数えない)。材質テクスチャ表を
-    /// 消費するのは画素段のため、容量の見積は色添付のぶんも引いて立てる。参照: Vulkan仕様 VkPhysicalDeviceLimits。
-    シェーダー段あたりの資源合計数: u32,
+    シェーダー段あたりの画像ディスクリプタ数: u32, // maxPerStageDescriptorSampledImages
+    セットあたりの画像ディスクリプタ数: u32,       // maxDescriptorSetSampledImages
+    シェーダー段あたりの資源合計数: u32,           // maxPerStageResources
 }
 
 impl ディスクリプタ索引上限 {
