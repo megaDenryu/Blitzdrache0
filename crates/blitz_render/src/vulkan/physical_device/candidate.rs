@@ -3,20 +3,18 @@
 //!
 //! Vulkanのハンドルを持たないのは、選ぶ規則を物理デバイス無しで検査できるようにするためである。
 //! 添字は候補を作った走査が振る番号であり、同じ走査で積んだハンドル一覧の位置を指す。
+//! `機材名`を持つのは、不足を機材別に報告するためである。
 
 use crate::error::ディスクリプタ索引機能項目;
 use crate::vulkan::descriptor_indexing::ディスクリプタ索引機能;
 
 pub(crate) struct 選定候補 {
     添字: usize,
-    /// `VkPhysicalDeviceProperties::deviceName`。不足を機材別に報告するために候補の段階で持つ。
-    機材名: String,
+    機材名: String, // `VkPhysicalDeviceProperties::deviceName`
     discreteか: bool,
     索引機能: ディスクリプタ索引機能,
-    /// `VkPhysicalDeviceFeatures::textureCompressionBC`。
-    テクスチャのブロック圧縮に対応するか: bool,
-    /// `VkPhysicalDeviceFeatures::imageCubeArray`。
-    立方体の配列画像に対応するか: bool,
+    テクスチャのブロック圧縮に対応するか: bool, // `VkPhysicalDeviceFeatures::textureCompressionBC`
+    立方体の配列画像に対応するか: bool,         // `VkPhysicalDeviceFeatures::imageCubeArray`
 }
 
 impl 選定候補 {
