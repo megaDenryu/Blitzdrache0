@@ -25,35 +25,13 @@ pub(crate) enum 場所巡りの通しの検収エラー {
     実行時形式の焼き付けが失敗した(生成器エラー),
     ソースの置き場を作れなかった(String),
     遠景容量検収が失敗した(String),
-    ファイルを複写できなかった {
-        元: PathBuf,
-        先: PathBuf,
-        誤り: std::io::Error,
-    },
-    検収用のルートを消せなかった {
-        パス: PathBuf,
-        誤り: std::io::Error,
-    },
-    ディレクトリを開けなかった {
-        パス: PathBuf,
-        誤り: std::io::Error,
-    },
-    ディレクトリの走査に失敗した {
-        パス: PathBuf,
-        誤り: std::io::Error,
-    },
-    /// ルートの下にあるはずのパスがルートから始まっていない。到達すれば走査の起点が食い違っている。
-    相対パスを求められなかった {
-        パス: PathBuf,
-    },
-    ファイルを開けなかった {
-        パス: PathBuf,
-        誤り: std::io::Error,
-    },
-    ファイルを読めなかった {
-        パス: PathBuf,
-        誤り: std::io::Error,
-    },
+    ファイルを複写できなかった { 元: PathBuf, 先: PathBuf, 誤り: std::io::Error },
+    検収用のルートを消せなかった { パス: PathBuf, 誤り: std::io::Error },
+    ディレクトリを開けなかった { パス: PathBuf, 誤り: std::io::Error },
+    ディレクトリの走査に失敗した { パス: PathBuf, 誤り: std::io::Error },
+    相対パスを求められなかった { パス: PathBuf }, // ルートの下にあるはずのパスがルートから始まっていない。到達すれば走査の起点が食い違っている
+    ファイルを開けなかった { パス: PathBuf, 誤り: std::io::Error },
+    ファイルを読めなかった { パス: PathBuf, 誤り: std::io::Error },
 }
 
 impl std::error::Error for 場所巡りの通しの検収エラー {}

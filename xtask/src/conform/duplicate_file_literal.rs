@@ -46,8 +46,7 @@ pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の�
 pub(super) struct 出現箇所 {
     pub(super) パス: PathBuf,
     pub(super) 行番号: usize,
-    /// その綴りが`include_bytes!`の引数の中に在るか。ビルド時に焼いた成果物の取り込みかの判定に使う。
-    pub(super) 取り込みの引数か: bool,
+    pub(super) 取り込みの引数か: bool, // `include_bytes!`の引数の中に在るか。ビルド時に焼いた成果物の取り込みかの判定に使う
 }
 
 fn 出現箇所を集める(ファイル一覧: &[PathBuf]) -> Result<BTreeMap<String, Vec<出現箇所>>, 規約検査の破れ> {

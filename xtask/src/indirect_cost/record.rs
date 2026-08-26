@@ -17,20 +17,16 @@ pub(super) struct 区間の分布 {
     pub(super) 平均ミリ秒: f64,
     pub(super) p50ミリ秒: f64,
     pub(super) p95ミリ秒: f64,
-    /// その区間の窓に入っている標本の件数。生成の区間では「そのぶんのフレームが焼いた」ことを意味する。
-    pub(super) 標本数: u64,
+    pub(super) 標本数: u64, // その区間の窓に入っている標本の件数。生成の区間では「そのぶんのフレームが焼いた」ことを意味する
 }
 
 pub(super) struct 一標本 {
-    /// 起動した順の通し番号。0から始まり、交互の並びがそのまま並ぶ。
-    pub(super) 実行番号: usize,
+    pub(super) 実行番号: usize, // 起動した順の通し番号。0から始まり、交互の並びがそのまま並ぶ
     pub(super) 条件名: &'static str,
-    /// 添字が`intervals::全区間一覧`の添字である。
-    pub(super) 区間別: Vec<区間の分布>,
+    pub(super) 区間別: Vec<区間の分布>, // 添字が`intervals::全区間一覧`の添字である
     pub(super) 焼き上げ: crate::sky_lut::indirect_pass_count::rows::実測,
     pub(super) 見込み: crate::sky_lut::indirect_pass_count::rows::見込み,
-    /// 太陽天頂区間が前のフレームから変わった回数。焼き直したフレーム数の期待をこの整数から立てる。
-    pub(super) 区間の変化回数: u64,
+    pub(super) 区間の変化回数: u64, // 太陽天頂区間が前のフレームから変わった回数。焼き直したフレーム数の期待をこの整数から立てる
 }
 
 impl 一標本 {

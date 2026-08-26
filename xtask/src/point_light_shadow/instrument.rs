@@ -24,8 +24,7 @@ pub(super) struct 点光源の影の計器 {
     pub(super) 絞りを通った発行数: u64,
     pub(super) 描画の発行数: u64,
     pub(super) 立方体配列の確保バイト数: u64,
-    /// 直近60フレームの窓のp50。影を落とす灯が0件のときは`None`である。
-    pub(super) gpu時間のp50ms: Option<f64>,
+    pub(super) gpu時間のp50ms: Option<f64>, // 直近60フレームの窓のp50。影を落とす灯が0件のときは`None`
 }
 
 pub(super) fn 点光源の影の計器を取り出す(

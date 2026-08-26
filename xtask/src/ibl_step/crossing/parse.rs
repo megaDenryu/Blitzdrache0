@@ -14,8 +14,7 @@ use crate::report_line_key::{報告の行の鍵, 鍵に値が結ばれる形};
 #[derive(Debug)]
 pub(in super::super) struct 跨ぎ {
     pub(in super::super) 上側の区間識別: u16,
-    /// 跨ぐ向きの語。報告が出すASCIIの語をそのまま持ち、ファイル名にも使う。
-    pub(in super::super) 方向: String,
+    pub(in super::super) 方向: String, // 跨ぐ向きの語。報告が出すASCIIの語をそのまま持ち、ファイル名にも使う
     pub(in super::super) 境界の天頂余弦: f64,
     pub(in super::super) 一日内秒: f64,
 }

@@ -19,8 +19,7 @@ pub(super) struct CPU区間一式 {
     pub(super) 作業領域更新: 区間分布,
     pub(super) 描画記録送信提示: 区間分布,
     pub(super) フェンス待機: 区間分布,
-    /// FIFO提示待ちを含むフレーム開始間隔。支配要因の判定には使わず、参考値として残す。
-    pub(super) フレーム間隔: 区間分布,
+    pub(super) フレーム間隔: 区間分布, // FIFO提示待ちを含むフレーム開始間隔。支配要因の判定には使わず、参考値として残す
 }
 
 pub(super) struct Vulkan確保 {

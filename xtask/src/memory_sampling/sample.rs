@@ -53,8 +53,7 @@ impl メモリ標本 {
 pub(crate) struct メモリ最大 {
     pub(crate) ワーキングセットmib: f64,
     pub(crate) プライベートmib: f64,
-    /// GPUカウンターを1標本も引けなかった実行では`None`になる。0と区別するため真偽の代わりに不在で表す。
-    pub(crate) 専用vrammib: Option<f64>,
+    pub(crate) 専用vrammib: Option<f64>, // GPUカウンターを1標本も引けなかった実行では`None`。0と区別するため真偽でなく不在で表す
 }
 
 pub(super) fn 要約を表示して最大を返す(一覧: &[メモリ標本]) -> Option<メモリ最大> {

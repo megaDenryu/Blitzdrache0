@@ -11,8 +11,7 @@ mod shadow_band_assignment;
 /// 契約する綴り1件。出す側と読む側が同じ文字列を持つことを、綴りを台帳が1つ持つことで守る。
 pub(super) struct 綴りの契約 {
     pub(super) 綴り: &'static str,
-    /// この綴りが文字列リテラルとして現れなければならないファイル。出す側と読む側の両方を並べる。
-    pub(super) 現れるファイル一覧: &'static [&'static str],
+    pub(super) 現れるファイル一覧: &'static [&'static str], // 出す側と読む側の両方を並べる
 }
 
 /// 領域ごとの台帳。並びは検査の順にだけ効く。

@@ -18,8 +18,7 @@ pub(in crate::shadow_probe) use round_count::決める as 周回数を決める;
 
 pub(super) struct 実行の指定 {
     pub(super) 軸: 振る軸,
-    /// `--rounds`で与えられた周回数。実際に回す数は条件数が決まってから`周回数を決める`が求める。
-    pub(super) 指定された周回数: Option<usize>,
+    pub(super) 指定された周回数: Option<usize>, // `--rounds`で与えられた周回数。実際に回す数は条件数が決まってから`周回数を決める`が求める
     pub(super) チャンクあたり個体数: usize,
     pub(super) 一日内時刻の秒: u32,
 }

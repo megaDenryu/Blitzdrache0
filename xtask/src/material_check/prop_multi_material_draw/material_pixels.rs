@@ -23,8 +23,7 @@ pub(super) struct 色の分布 {
     pub(super) 背景色: [u8; 3],
     pub(super) 全画素数: usize,
     pub(super) 物体画素数: usize,
-    /// 背景でない画素の色を、件数の多い順に並べたもの。同数のときは色の並びで順序を決める。
-    pub(super) 多い順の色: Vec<([u8; 3], usize)>,
+    pub(super) 多い順の色: Vec<([u8; 3], usize)>, // 背景でない画素の色を件数の多い順に並べる。同数は色の並びで順序を決める
 }
 
 pub(super) fn 色の分布を採る(画像: &読み戻し画像) -> Result<色の分布, 判定の破れ> {

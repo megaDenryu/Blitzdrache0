@@ -12,8 +12,7 @@ const 突き合わせる2つの書き出しのバイト長: 判定の名前 = �
 /// 2条件のバイト列の突き合わせの結果。
 pub(super) struct 突き合わせ {
     pub(super) 一致するか: bool,
-    /// 食い違ったバイトの数。一致していれば0である。
-    pub(super) 食い違いバイト数: usize,
+    pub(super) 食い違いバイト数: usize, // 一致していれば0である
     pub(super) 全バイト数: usize,
 }
 

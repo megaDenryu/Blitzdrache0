@@ -10,16 +10,14 @@ use std::time::{Duration, Instant};
 
 pub(crate) use sample::メモリ最大;
 
+/// `標準出力先`をパイプでなくファイルにするのは、採取のあいだ誰も読まないパイプが埋まると
+/// 子プロセスが書き込みで止まるためである。
 pub(crate) struct 採取条件<'a> {
     pub(crate) 起こし方: crate::acceptance::アプリの起こし方,
     pub(crate) 引数一覧: &'a [&'a str],
     pub(crate) 採取間隔: Duration,
-    /// これを超えても子プロセスが終わらなければ失敗として打ち切る。
-    pub(crate) 制限時間: Duration,
-    /// 子プロセスの標準出力の行き先。`None`なら呼出し側の画面へ継承する。パスを渡すと、同じ実行の
-    /// 終了時報告を後から読める。パイプでなくファイルにするのは、採取のあいだ誰も読まないパイプが埋まると
-    /// 子プロセスが書き込みで止まるためである。
-    pub(crate) 標準出力先: Option<&'a Path>,
+    pub(crate) 制限時間: Duration,           // これを超えても子プロセスが終わらなければ失敗として打ち切る
+    pub(crate) 標準出力先: Option<&'a Path>, // `None`なら画面へ継承。パスを渡すと同じ実行の終了時報告を後から読める
 }
 
 enum 一巡結果 {

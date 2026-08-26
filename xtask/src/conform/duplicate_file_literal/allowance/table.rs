@@ -12,8 +12,7 @@ pub(super) const 台帳のファイル: &str = "xtask/src/conform/duplicate_file
 /// 「何が変われば消せるのか」を読み手が判断できるようにするためである。
 pub(super) struct 寄せられない綴り {
     pub(super) 綴り: &'static str,
-    /// この綴りが現れてよいファイル。ここに無い場所へ書かれたら許さず、ここから消えたら陳腐化として報告する。
-    pub(super) 現れてよい場所一覧: &'static [&'static str],
+    pub(super) 現れてよい場所一覧: &'static [&'static str], // ここに無い場所へ書かれたら許さず、ここから消えたら陳腐化として報告する
     pub(super) 寄せられない理由: &'static str,
 }
 

@@ -7,9 +7,7 @@ use super::run::一回の実行;
 pub(super) struct 物量点の結果 {
     pub(super) 名前: String,
     pub(super) チャンクあたり個体数: usize,
-    /// validationレイヤーが有効なデバッグビルドの実行が最終フレームに数えた候補数。レイヤーの検査を
-    /// どの物量で通したかを、リリース実行の候補数とは別に残す。
-    pub(super) 検査候補数: u64,
+    pub(super) 検査候補数: u64, // validationレイヤーが有効なデバッグビルドの実行が最終フレームに数えた候補数。リリース実行の候補数とは別に残す
     pub(super) 実行一覧: Vec<一回の実行>,
 }
 

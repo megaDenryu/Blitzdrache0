@@ -17,8 +17,7 @@ use crate::sample_world_region::固定領域;
 pub(super) struct 領域の段差 {
     pub(super) 明るさのev一覧: Vec<f64>,
     pub(super) 色のev一覧: Vec<f64>,
-    /// 3成分のどれかが正でないか非有限だったために段差を定められなかった画素の数。
-    pub(super) 測れなかった画素数: u64,
+    pub(super) 測れなかった画素数: u64, // 3成分のどれかが正でないか非有限だったために段差を定められなかった画素の数
 }
 
 pub(super) fn 領域の段差を求める(下側: &圧縮前のHDR画像, 上側: &圧縮前のHDR画像, 領域: &固定領域) -> 領域の段差 {

@@ -20,11 +20,9 @@ pub(super) struct 区間の分布 {
 }
 
 pub(super) struct 一標本 {
-    /// 起動した順の通し番号。0から始まり、交互の順序がそのまま並ぶ。
-    pub(super) 実行番号: usize,
+    pub(super) 実行番号: usize, // 起動した順の通し番号。0から始まり、交互の順序がそのまま並ぶ
     pub(super) 条件名: String,
-    /// 添字が距離区分番号である。
-    pub(super) 距離区分別: Vec<区間の分布>,
+    pub(super) 距離区分別: Vec<区間の分布>, // 添字が距離区分番号である
     pub(super) 合計: 区間の分布,
     pub(super) 投入インデックス数: Vec<u64>,
     pub(super) 可視数: Vec<u64>,
