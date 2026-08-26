@@ -30,7 +30,7 @@ pub struct 密度場の散布 {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct 密度場の指定 {
     pub 升目の標本数: i16, // 格子雑音の升目の幅を大域サンプル添字の数で表した値
-    pub 層のずらし: u32, // この種の密度場を他の種からずらす量
+    pub 層のずらし: u32,   // この種の密度場を他の種からずらす量
 }
 
 impl 密度場の散布 {

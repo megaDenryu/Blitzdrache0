@@ -6,7 +6,7 @@ use std::fmt;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum 可視判定エラー {
     個体数過大 { 個体数: usize }, // 添字はu32でGPUへ渡るため、収まらない群は材料にできない
-    影の視距離不正, // 影の視距離は正の有限でなければならない
+    影の視距離不正,               // 影の視距離は正の有限でなければならない
 }
 
 impl fmt::Display for 可視判定エラー {

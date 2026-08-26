@@ -9,37 +9,14 @@ use std::fmt;
 /// 名前だけではどの材質の宣言が破れているかを読み手が特定できないためである。
 pub enum 対象位置 {
     文書,
-    メッシュ {
-        添字: usize,
-        名前: Option<String>,
-    },
-    プリミティブ {
-        メッシュ添字: usize,
-        添字: usize,
-    },
-    ノード {
-        添字: usize,
-        名前: Option<String>,
-    },
-    マテリアル {
-        スロット: u32,
-        名前: Option<String>,
-    },
-    テクスチャ {
-        スロット: u32,
-        用途: &'static str,
-    },
-    画像 {
-        添字: usize,
-    },
-    アニメーション {
-        添字: usize,
-        名前: Option<String>,
-    },
-    接合点 {
-        添字: usize,
-        名前: Option<String>,
-    },
+    メッシュ { 添字: usize, 名前: Option<String> },
+    プリミティブ { メッシュ添字: usize, 添字: usize },
+    ノード { 添字: usize, 名前: Option<String> },
+    マテリアル { スロット: u32, 名前: Option<String> },
+    テクスチャ { スロット: u32, 用途: &'static str },
+    画像 { 添字: usize },
+    アニメーション { 添字: usize, 名前: Option<String> },
+    接合点 { 添字: usize, 名前: Option<String> },
 }
 
 impl fmt::Display for 対象位置 {
