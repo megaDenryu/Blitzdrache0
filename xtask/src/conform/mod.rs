@@ -3,6 +3,7 @@
 
 mod allow_lint;
 mod cargo_toml_parse;
+mod declaration_comment_line;
 mod dependency_whitelist;
 mod depth_contract;
 mod doc_reference;
@@ -69,6 +70,7 @@ fn ファイル単位の違反を集める(ファイル一覧: &[PathBuf]) -> Re
         if 拡張子 == "rs" || 拡張子 == "slang" {
             違反一覧.extend(line_count::検査する(パス, &内容));
             違反一覧.extend(forbidden_strings::検査する(パス, &内容));
+            違反一覧.extend(declaration_comment_line::検査する(パス, &内容));
         }
         if 拡張子 == "ts" && !line_count::生成ファイルか(パス) {
             違反一覧.extend(line_count::検査する(パス, &内容));

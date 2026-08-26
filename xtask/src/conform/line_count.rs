@@ -4,40 +4,14 @@
 
 use std::path::Path;
 
-use super::source_lexing::{字句の区分, 字句の断片, 字句へ分ける};
+use super::source_lexing::行ごとの内訳;
 use super::violation::違反;
 
 pub const 上限行数: usize = 100;
 
 /// コードを含む行の数を返す。行末に書いたコメントはコードの行として数える。
 pub fn 行数を数える(内容: &str) -> usize {
-    let 原文: Vec<char> = 内容.replace("\r\n", "\n").chars().collect();
-    let mut コードを含む行 = vec![false; 内容.lines().count()];
-    for 断片 in 字句へ分ける(内容) {
-        if matches!(断片.区分, 字句の区分::行コメント | 字句の区分::ブロックコメント) {
-            continue;
-        }
-        印を付ける(&原文, &断片, &mut コードを含む行);
-    }
-    コードを含む行.into_iter().filter(|印| *印).count()
-}
-
-/// 断片が占める区間を原文の上で辿り、空白以外の文字が在る行へ印を付ける。
-/// 中身でなく原文の区間を辿るのは、文字列リテラルの中身が逃がし記号を復号したものであり、
-/// `\n`の逃がし1つで以降の行番号がずれるためである。
-fn 印を付ける(原文: &[char], 断片: &字句の断片, コードを含む行: &mut [bool]) {
-    let mut 行番号 = 断片.開始行;
-    for 添字 in 断片.開始位置..断片.終了位置 {
-        match 原文.get(添字) {
-            Some('\n') => 行番号 += 1,
-            Some(文字) if !文字.is_whitespace() => {
-                if let Some(印) = コードを含む行.get_mut(行番号 - 1) {
-                    *印 = true;
-                }
-            }
-            _ => {}
-        }
-    }
+    行ごとの内訳(内容).into_iter().filter(|内訳| 内訳.コードを含む).count()
 }
 
 pub fn 行数超過か(行数: usize) -> bool {

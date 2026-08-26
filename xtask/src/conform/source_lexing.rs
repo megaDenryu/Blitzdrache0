@@ -13,6 +13,7 @@
 
 mod code_lines;
 mod fragment;
+mod line_breakdown;
 #[cfg(test)]
 mod position_tests;
 #[cfg(test)]
@@ -21,6 +22,7 @@ mod token_read;
 
 pub use code_lines::コードだけの行一覧;
 pub use fragment::{字句の区分, 字句の断片};
+pub use line_breakdown::{行ごとの内訳, 行の内訳};
 
 pub fn 字句へ分ける(内容: &str) -> Vec<字句の断片> {
     let 文字一覧: Vec<char> = 行末を揃える(内容).chars().collect();
