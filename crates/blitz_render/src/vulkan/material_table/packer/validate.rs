@@ -12,7 +12,7 @@ use crate::vulkan::material_table::texture_role::材質テクスチャ役割;
 
 use super::fallback_slots::正準フォールバック解決;
 
-pub(super) fn 検証する(
+pub(super) fn 梱包した材質レコードの整合を検証する(
     材質id: 大域材質ID,
     レコード: &世代内材質レコード,
     フォールバック: &正準フォールバック解決,

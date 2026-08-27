@@ -35,7 +35,7 @@ pub(in crate::vulkan::material_table) fn 資源表世代を構築する<供給�
     let 常駐枚数 = 世代の常駐枚数::確かめる(必要枚数, レイアウト容量)?;
 
     let mut 画像集合 = Vec::new();
-    let 結果 = residency::積む(供給元, &mut 画像集合, 常駐枚数, 材質一覧)
+    let 結果 = residency::材質一覧の画像を常駐させて台帳を組み立てる(供給元, &mut 画像集合, 常駐枚数, 材質一覧)
         .and_then(|常駐| packer::材質一覧を梱包する(材質一覧, &常駐.台帳, &常駐.フォールバック).map_err(レンダラーエラー::from))
         .and_then(|梱包| {
             let 付属資源 = 供給元.世代を仕上げる(&画像集合, &梱包.レコード列)?;
@@ -50,7 +50,7 @@ pub(in crate::vulkan::material_table) fn 資源表世代を構築する<供給�
     };
 
     let 世代 = 資源表世代::束ねる(世代id, 梱包.レコード列, 梱包.材質別解決, 画像集合, 付属資源);
-    if let Err(誤り) = completion_check::確かめる(&世代, 材質一覧) {
+    if let Err(誤り) = completion_check::世代の完成を確かめる(&世代, 材質一覧) {
         let (画像集合, 付属資源) = 世代.資源を取り出す();
         部分生成を退役させる(供給元, 画像集合, 付属資源);
         return Err(誤り.into());
