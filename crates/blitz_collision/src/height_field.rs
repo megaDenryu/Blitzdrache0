@@ -25,6 +25,8 @@ mod linear_in_parameter;
 mod real;
 mod scanned_range;
 mod segment;
+#[cfg(test)]
+mod segment_direction_tests;
 mod segment_error;
 mod segment_hit;
 mod segment_parameter;
