@@ -7,11 +7,12 @@
 use thiserror::Error;
 
 use super::error::升目の値の生成エラー;
+use super::position_error::高さ場の位置の生成エラー;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
 pub enum 線分の問い合わせエラー {
-    #[error("線分の端点の成分に有限でない値が含まれる")]
-    線分の端点が有限でない,
+    #[error("線分の端点の位置を作れない: {0}")]
+    線分の端点の位置を作れない(#[from] 高さ場の位置の生成エラー),
     #[error("線分の媒介変数が0以上1以下の有限値でない")]
     線分の媒介変数が範囲外,
     #[error("線分が通る升目の値を作れない: {0}")]

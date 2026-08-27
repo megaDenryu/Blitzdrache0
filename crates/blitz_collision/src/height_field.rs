@@ -1,5 +1,6 @@
 //! 高さ場の衝突数学。担当するのは、升目の四隅の高さと升目の中の比から、描画が実際に張る2つの三角形の
-//! 平面をそのまま読む区分線形の計算と、線分が地表に最初に当たる点を求める問い合わせである。
+//! 平面をそのまま読む区分線形の計算と、線分が地表に最初に当たる点を求める問い合わせと、
+//! カプセルを掃引して地表に最初に触れるまでを求める問い合わせである。
 //! 対角の張り方と三角形の選び方の正本がここにある。
 //!
 //! 単精度と倍精度の2系統を1つの式から出すのは、焼き込みが単精度(既に焼いた生成物のバイト列を変えないため)、
@@ -11,6 +12,8 @@
 mod axis_traversal;
 #[cfg(test)]
 mod canonical_end_tests;
+mod capsule_sweep;
+mod cell_corner;
 mod cell_corner_heights;
 mod cell_edge;
 mod cell_hit;
@@ -21,12 +24,15 @@ mod cell_segment_intersection;
 mod cell_traversal;
 mod corner_source;
 mod error;
+mod grid_origin_displacement;
 mod grid_origin_position;
 mod ground_plane;
 #[cfg(test)]
 mod ground_plane_tests;
 mod linear_in_parameter;
+mod position_error;
 mod real;
+mod real_cell_index;
 mod scanned_range;
 mod segment;
 #[cfg(test)]
@@ -53,14 +59,21 @@ mod slope_direction_tests;
 mod triangle;
 mod unit_direction;
 
+pub use capsule_sweep::{
+    カプセルが地表に最初に触れる点, カプセルの掃引と高さ場の接触の結果, カプセルの掃引の問い合わせエラー, 地表に触れた特徴,
+    掃引したカプセルの地表への接触, 掃引で動けた割合, 掃引の走査が調べた範囲, 高さ場のカプセルの掃引の問い合わせ, 高さ場を掃引するカプセル,
+};
+pub use cell_corner::升目の隅;
 pub use cell_corner_heights::{升目の四隅の高さ, 地表の高さの絶対値の上限メートル};
 pub use cell_edge::升目の一辺;
 pub use cell_index::升目の格子添字;
 pub use cell_ratio::升目の中の比;
 pub use corner_source::升目の四隅の高さの供給元;
 pub use error::升目の値の生成エラー;
+pub use grid_origin_displacement::高さ場の中の変位;
 pub use grid_origin_position::高さ場の格子原点からの位置;
 pub use ground_plane::升目の地表の面;
+pub use position_error::高さ場の位置の生成エラー;
 pub use real::地表の平面の実数;
 pub use scanned_range::線分の走査が調べた範囲;
 pub use segment::高さ場を貫く線分;
