@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import { 軌道カメラ制御器 } from './軌道カメラ制御器.ts'
+import { 軌道カメラ制御器 } from '../../../../../三次元の視点操作/軌道カメラ制御器.ts'
 import { 地形追従カメラ制御器 } from './地形追従カメラ制御器.ts'
 import { 高さ場 } from '../../../編集モデル/高さ場.ts'
 

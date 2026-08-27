@@ -1,8 +1,9 @@
-import type { 建物の格子 } from '../../生成/編集資源契約.ts'
+import type { 升目の座標, 建物の格子 } from '../../生成/編集資源契約.ts'
 import { 煙突の段数 } from './編集モデル/index.ts'
 import { 建物編集の操作履歴, type 升目への筆, type 面への筆 } from './操作コマンド/index.ts'
 
-// 建物1件を編集しているあいだの状態。操作履歴と、いま選んでいる筆と階と煙突の段数を持つ。
+// 建物1件を編集しているあいだの状態。操作履歴と、いま選んでいる筆と階と煙突の段数と升目、
+// そして識別色を重ねて見せるかどうかを持つ。
 // 画面から分けるのは、同じ状態を画面の作り直しをまたいで保つためである。
 export class 建物編集の状態 {
     private _履歴: 建物編集の操作履歴
@@ -10,6 +11,8 @@ export class 建物編集の状態 {
     private _選んだ面への筆: 面への筆 = '平壁'
     private _選んだ階 = 0
     private _選んだ煙突の段数: 煙突の段数 = 煙突の段数.既定を作る()
+    private _選んでいる升目: 升目の座標 | undefined = undefined
+    private _識別色を重ねるか = false
 
     public constructor(格子: 建物の格子) {
         this._履歴 = new 建物編集の操作履歴(格子)
@@ -24,6 +27,26 @@ export class 建物編集の状態 {
     public 読み直した格子で作り直す(格子: 建物の格子): void {
         this._履歴 = new 建物編集の操作履歴(格子)
         this._選んだ階 = 0
+        this._選んでいる升目 = undefined
+    }
+
+    public get 選んでいる升目(): 升目の座標 | undefined {
+        return this._選んでいる升目
+    }
+
+    // 升目を選ぶと、その升目の階を平面図へ出す。三次元で選んだものが平面図に出ていないと、
+    // 選んだ升目へ筆を当てられない。
+    public 升目を選ぶ(座標: 升目の座標): void {
+        this._選んでいる升目 = 座標
+        this._選んだ階 = 座標.階
+    }
+
+    public get 識別色を重ねるか(): boolean {
+        return this._識別色を重ねるか
+    }
+
+    public 識別色の重ねを切り替える(): void {
+        this._識別色を重ねるか = !this._識別色を重ねるか
     }
 
     public get 選んだ升目への筆(): 升目への筆 {

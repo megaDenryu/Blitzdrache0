@@ -13,6 +13,7 @@ export interface I升目の見取り {
     readonly 座標: 升目の座標
     readonly 宣言: 升目の宣言 | undefined
     readonly 根か: boolean
+    readonly 選ばれているか: boolean
     readonly 升目を置けない理由: 升目を置けない理由 | undefined
     readonly 隣に升目があるか: (側面: 升目の側面) => boolean
 }
@@ -38,6 +39,7 @@ export class 平面図の升目部品 extends LV2HtmlComponentBase {
             .setTooltip(中央の説明(見取り))
             .setAttribute('data-升目あり', String(見取り.宣言 !== undefined))
             .setAttribute('data-根', String(見取り.根か))
+            .setAttribute('data-選択', String(見取り.選ばれているか))
             .setAttribute('data-触れる', String(触れるか))
         if (触れるか) 中央.onClick(() => 配線.on升目を触る(見取り.座標))
         this._componentRoot = div({ class: 升目枠 }).childs([

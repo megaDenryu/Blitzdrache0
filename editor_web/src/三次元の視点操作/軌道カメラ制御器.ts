@@ -1,8 +1,10 @@
 import { Vector3 } from 'three'
 import type { 透視カメラ } from 'SengenThree'
-import type { 位置3次元 } from '../../../../../生成/編集資源契約.ts'
+import type { 位置3次元 } from '../生成/編集資源契約.ts'
 
 // 軌道カメラの姿勢・注視点・距離を保持し、透視カメラへ反映する制御器。
+// 三次元を持つエディターの視点はどれもこの形であるため、道具ごとに持たずこの共通の置き場が1つ持つ。
+// 参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断13」
 export class 軌道カメラ制御器 {
     private readonly _注視点: Vector3 = new Vector3(0, 0, 0)
     private readonly _カメラ位置キャッシュ: Vector3 = new Vector3(0, 0, 0)
@@ -79,6 +81,18 @@ export class 軌道カメラ制御器 {
     // (水平角・垂直角・距離は変えないため、カメラは注視点と同じ量だけ上下する)。
     public 注視点の高さを設定する(高さ: number): void {
         this._注視点.y = 高さ
+        this.更新する()
+    }
+
+    // 注視点を名指した地点へ移す。編集の対象ぜんたいが画面へ収まる置き場を呼び出し側が決めるときに使う。
+    public 注視点を設定する(x: number, y: number, z: number): void {
+        this._注視点.set(x, y, z)
+        this.更新する()
+    }
+
+    // 注視点からの距離を名指した値へ移す。最小と最大の間へ収めるのは拡大縮小と同じ規律である。
+    public 距離を設定する(距離: number): void {
+        this._距離 = Math.max(this._最小距離, Math.min(this._最大距離, 距離))
         this.更新する()
     }
 

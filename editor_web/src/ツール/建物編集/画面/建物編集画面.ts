@@ -9,8 +9,9 @@ import { 階の切替パネル } from './階の切替パネル.ts'
 import { コンテナ, セクション, セクション見出し, 名前入力, 断りの文言, 本文幅, 横並び, 触りの知らせ, 表題, 説明文, 選択ボタン } from './スタイル.css.ts'
 
 // 建物1件を編集する文書タブの画面全体。平面図・筆・階の切替・入口の向き・取り消しやり直し・保存と、
-// 役割ごとの識別色の三次元表示を1枚に並べる。三次元表示は部品の役割と占める場所を見せるだけであり、
-// 絵の確認はエンジンで実際に世界を歩いて行う(判断9)。
+// 建物の形を見せる三次元表示を1枚に並べる。三次元表示の視点はモードのボタンではなくポインタで直に操り、
+// 識別色は形の上へ重ねる補助として使う(判断13)。
+// 参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断13」
 export class 建物編集画面 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     public readonly 平面図: 平面図パネル = new 平面図パネル()
@@ -25,9 +26,9 @@ export class 建物編集画面 extends LV2HtmlComponentBase {
     private readonly _表題: DivC
     private readonly _触りの知らせ: DivC
 
-    public constructor(建物定義ID: 建物定義ID) {
+    public constructor(private readonly _建物定義ID: 建物定義ID) {
         super()
-        this._表題 = div({ class: 表題, text: 建物定義ID })
+        this._表題 = div({ class: 表題, text: _建物定義ID })
         this._触りの知らせ = div({ class: 触りの知らせ, text: '' })
         this.表示名入力 = textInput({ class: 名前入力, value: '', placeholder: '表示名' }).setTooltip('表示名')
         this.取り消しボタン = div({ class: 選択ボタン, text: '取り消し' }).setTooltip('取り消し')
@@ -53,6 +54,11 @@ export class 建物編集画面 extends LV2HtmlComponentBase {
                 this.永続化,
             ]),
         )
+    }
+
+    // 表示名を変えたことが画面の見えへ返るように、表題を建物定義IDと表示名の並びにする。
+    public 表題を更新する(表示名: string): void {
+        this._表題.setTextContent(表示名 === '' ? this._建物定義ID : `${表示名}(${this._建物定義ID})`)
     }
 
     // 筆が断られた事情を平面図の下へ出す。断りを黙って捨てると、触ったのに何も起きない理由が人に読めない。

@@ -44,6 +44,11 @@ export const 升目中央 = style({
             borderColor: エディターCSS変数('選択枠線'),
             borderWidth: '2px',
         },
+        // いま選んでいる升目。三次元で選んだものと平面図で触っているものが同じであることを目で結ぶ。
+        '&[data-選択="true"]': {
+            outline: '2px solid #fde047',
+            outlineOffset: '1px',
+        },
         // 真下に升目が無いため置けない座標。触っても何も起きないことを見た目で先に伝える。
         '&[data-触れる="false"]': {
             cursor: 'default',

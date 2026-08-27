@@ -13,7 +13,12 @@ const 余白の列数 = 1
 export class 平面図パネル extends LV2HtmlComponentBase {
     protected _componentRoot: DivC = div({ class: 平面図 })
 
-    public 再構築する(モデル: 建物の格子の編集モデル, 階: number, 配線: I升目の配線): void {
+    public 再構築する(
+        モデル: 建物の格子の編集モデル,
+        階: number,
+        選んでいる升目: 升目の座標 | undefined,
+        配線: I升目の配線,
+    ): void {
         this._componentRoot.clearChildren()
         const 範囲 = 描く範囲を求める(モデル, 階)
         this._componentRoot.setStyleCSS({
@@ -21,17 +26,23 @@ export class 平面図パネル extends LV2HtmlComponentBase {
         })
         for (let 奥 = 範囲.奥の最小; 奥 <= 範囲.奥の最大; 奥 += 1) {
             for (let 横 = 範囲.横の最小; 横 <= 範囲.横の最大; 横 += 1) {
-                this._componentRoot.child(this.升目を1つ作る(モデル, { 横, 奥, 階 }, 配線))
+                this._componentRoot.child(this.升目を1つ作る(モデル, { 横, 奥, 階 }, 選んでいる升目, 配線))
             }
         }
     }
 
-    private 升目を1つ作る(モデル: 建物の格子の編集モデル, 座標: 升目の座標, 配線: I升目の配線): 平面図の升目部品 {
+    private 升目を1つ作る(
+        モデル: 建物の格子の編集モデル,
+        座標: 升目の座標,
+        選んでいる升目: 升目の座標 | undefined,
+        配線: I升目の配線,
+    ): 平面図の升目部品 {
         return new 平面図の升目部品(
             {
                 座標,
                 宣言: モデル.宣言を引く(座標),
                 根か: 升目の座標が同じか(モデル.根の升目, 座標),
+                選ばれているか: 選んでいる升目 !== undefined && 升目の座標が同じか(選んでいる升目, 座標),
                 升目を置けない理由: モデル.升目を置けない理由を調べる(座標),
                 隣に升目があるか: (側面) => モデル.升目があるか(隣の座標(座標, 側面)),
             },
