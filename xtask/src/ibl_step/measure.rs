@@ -32,8 +32,8 @@ pub(super) fn 跨ぎを測る(
     for (領域, 集計) in 材料.領域一覧.iter().zip(集計一覧) {
         画素の並びが合うか(&下側, 領域)?;
         let mut 段差 = difference::領域の段差を求める(&下側, &上側, 領域);
-        let 明るさ = summary::分布を採る(&mut 段差.明るさのev一覧)?;
-        let 色 = summary::分布を採る(&mut 段差.色のev一覧)?;
+        let 明るさ = summary::分布を採る(&mut 段差.明るさの露出値一覧)?;
+        let 色 = summary::分布を採る(&mut 段差.色の露出値一覧)?;
         集計.取り込む(材料.跨ぎ番号, &明るさ, &色, 段差.測れなかった画素数);
         生値.push_str(&record::行にする(
             &record::生値の行 {

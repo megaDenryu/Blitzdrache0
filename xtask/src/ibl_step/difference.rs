@@ -15,23 +15,23 @@ use crate::sample_world_region::固定領域;
 
 /// 1つの領域の1つの境界での段差。
 pub(super) struct 領域の段差 {
-    pub(super) 明るさのev一覧: Vec<f64>,
-    pub(super) 色のev一覧: Vec<f64>,
+    pub(super) 明るさの露出値一覧: Vec<f64>,
+    pub(super) 色の露出値一覧: Vec<f64>,
     pub(super) 測れなかった画素数: u64, // 3成分のどれかが正でないか非有限だったために段差を定められなかった画素の数
 }
 
 pub(super) fn 領域の段差を求める(下側: &圧縮前のHDR画像, 上側: &圧縮前のHDR画像, 領域: &固定領域) -> 領域の段差 {
     let mut 段差 = 領域の段差 {
-        明るさのev一覧: Vec::with_capacity(領域.画素添字一覧.len()),
-        色のev一覧: Vec::with_capacity(領域.画素添字一覧.len()),
+        明るさの露出値一覧: Vec::with_capacity(領域.画素添字一覧.len()),
+        色の露出値一覧: Vec::with_capacity(領域.画素添字一覧.len()),
         測れなかった画素数: 0,
     };
     for 添字 in &領域.画素添字一覧 {
         let 番号 = 画素の番号::生成する(*添字);
         match 画素の段差を求める(&下側.番号の画素(番号), &上側.番号の画素(番号)) {
             Some((明るさ, 色)) => {
-                段差.明るさのev一覧.push(明るさ);
-                段差.色のev一覧.push(色);
+                段差.明るさの露出値一覧.push(明るさ);
+                段差.色の露出値一覧.push(色);
             }
             None => 段差.測れなかった画素数 += 1,
         }
