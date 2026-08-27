@@ -20,11 +20,11 @@ impl 下ろし済みの大気 {
         Self { 方針, 媒体 }
     }
 
-    pub(in crate::app::time_of_day::wiring) fn 方針を読む(&self) -> 大気媒体方針 {
+    pub(in crate::app::time_of_day::wiring) fn 方針(&self) -> 大気媒体方針 {
         self.方針
     }
 
-    pub(in crate::app::time_of_day::wiring) fn 媒体を読む(&self) -> 大気散乱媒体 {
+    pub(in crate::app::time_of_day::wiring) fn 媒体(&self) -> 大気散乱媒体 {
         self.媒体
     }
 
