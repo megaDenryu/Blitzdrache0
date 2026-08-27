@@ -26,6 +26,8 @@ mod real;
 mod scanned_range;
 mod segment;
 #[cfg(test)]
+mod segment_boundary_tests;
+#[cfg(test)]
 mod segment_direction_tests;
 mod segment_error;
 mod segment_hit;
@@ -45,7 +47,7 @@ mod slope_direction_tests;
 mod triangle;
 mod unit_direction;
 
-pub use cell_corner_heights::升目の四隅の高さ;
+pub use cell_corner_heights::{升目の四隅の高さ, 地表の高さの絶対値の上限メートル};
 pub use cell_edge::升目の一辺;
 pub use cell_index::升目の格子添字;
 pub use cell_ratio::升目の中の比;
