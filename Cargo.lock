@@ -212,6 +212,7 @@ name = "blitz_asset_compiler"
 version = "0.1.0"
 dependencies = [
  "blitz_assembly",
+ "blitz_collision",
  "blitz_engine",
  "blitz_math",
  "gltf",
@@ -223,9 +224,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "blitz_collision"
+version = "0.1.0"
+dependencies = [
+ "blitz_math",
+ "thiserror 2.0.19",
+]
+
+[[package]]
 name = "blitz_engine"
 version = "0.1.0"
 dependencies = [
+ "blitz_collision",
  "blitz_math",
  "blitz_render",
  "thiserror 2.0.19",

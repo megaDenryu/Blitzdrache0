@@ -3,9 +3,12 @@
 //! 検査の工程から分けているのは、クレートや依存を足すときに触るのがこの表だけであり、工程の側は触らないためである。
 //! 触れる対象と変わる理由が別であることが分ける根拠である。
 
-pub(super) const 白リスト: [(&str, &[&str]); 10] = [
+pub(super) const 白リスト: [(&str, &[&str]); 11] = [
     ("blitz_math", &["glam"]),
-    ("blitz_engine", &["blitz_math", "blitz_render", "thiserror"]),
+    // 衝突数学層。世界もチャンクもアセットもGPUも知らない純粋な数学であることを、文書でなくこの表で守る
+    // (参照: `_doc/設計/世界の形と衝突基盤.md`)
+    ("blitz_collision", &["blitz_math", "thiserror"]),
+    ("blitz_engine", &["blitz_collision", "blitz_math", "blitz_render", "thiserror"]),
     // 部品の接合と組み立ての層。glTFもファイルシステムも知らない純粋計算であることを、
     // 文書でなくこの表で守る(参照: `_doc/設計/部品カタログと接合点.md`「機械強制の手段」)
     ("blitz_assembly", &["blitz_engine", "blitz_math", "thiserror"]),
@@ -13,6 +16,7 @@ pub(super) const 白リスト: [(&str, &[&str]); 10] = [
         "blitz_asset_compiler",
         &[
             "blitz_assembly",
+            "blitz_collision",
             "blitz_engine",
             "blitz_math",
             "gltf",

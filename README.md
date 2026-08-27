@@ -21,13 +21,14 @@ glTF・画像 → blitz_asset_compiler → アセット実行時形式 → blitz
 ```
 
 層 = クレートとして分割し、依存方向を Cargo でコンパイル時に強制する。
-`blitz_render` 以外の全クレート（`blitz_app` / `blitz_assembly` / `blitz_asset_compiler` / `blitz_engine` / `blitz_game` / `blitz_math` / `blitz_sim`）は `#![forbid(unsafe_code)]` を宣言しており、unsafe が blitz_render の外に書かれることも機械的に禁止される。
+`blitz_render` 以外の全クレート（`blitz_app` / `blitz_assembly` / `blitz_asset_compiler` / `blitz_collision` / `blitz_engine` / `blitz_game` / `blitz_math` / `blitz_sim`）は `#![forbid(unsafe_code)]` を宣言しており、unsafe が blitz_render の外に書かれることも機械的に禁止される。
 
 | クレート | 役割 | 制約 |
 |---|---|---|
 | `crates/blitz_app` | 起動バイナリ 兼 コンポジションルート。ウィンドウ生成と依存の配線のみ | unsafe禁止。ロジックを書かない |
 | `crates/blitz_assembly` | 部品の接合点・カタログ・接合の計算・展開。glTFもファイルシステムも知らない純粋計算 | unsafe禁止。gltfとimageに依存しない |
 | `crates/blitz_asset_compiler` | glTFと画像を検証してアセット実行時形式へ変換する開発時層 | unsafe禁止。gltf/image型を公開APIへ露出しない |
+| `crates/blitz_collision` | 形状の表現・幾何問い合わせ・詳細衝突計算・形状内の空間探索の数学 | unsafe禁止。blitz_mathとthiserror以外に依存しない |
 | `crates/blitz_engine` | シーン・アセット・マテリアル。描画内容をレンダーグラフへ翻訳 | unsafe禁止。ash に依存しない |
 | `crates/blitz_game` | ゲームロジック層。クソゲー1本目「キツネの場所巡り」の状態・進行・操作の意味付け | unsafe禁止。blitz_math以外に依存しない |
 | `crates/blitz_math` | 座標系フレームと単位を区別する数学型 | unsafe禁止。glam型を公開APIへ露出しない |

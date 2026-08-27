@@ -2,6 +2,7 @@
 resolver = "3"
 members = [
     "crates/blitz_math",
+    "crates/blitz_collision",
     "crates/blitz_render",
     "crates/blitz_engine",
     "crates/blitz_assembly",
