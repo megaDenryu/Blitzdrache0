@@ -28,7 +28,7 @@ export class 独自進行行部品 extends LV2HtmlComponentBase implements I配�
                 span({ class: 進行名, text: 進行.名前 }),
                 span({ class: 和音要約, text: 和音の並び }),
                 span({ class: 利用中の札, text: 独自進行の利用中の要約を組み立てる(利用状況) }).setAttribute(
-                    'data-使用中',
+                    'data-inuse',
                     String(利用状況.利用パターン名一覧.length + 利用状況.利用トラック名一覧.length > 0),
                 ),
                 div({ class: 横並び行 }).childs([

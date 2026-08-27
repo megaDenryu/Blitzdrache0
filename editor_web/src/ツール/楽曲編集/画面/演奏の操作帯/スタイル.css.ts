@@ -59,3 +59,18 @@ export const 範囲の選択 = style({
     backgroundColor: エディターCSS変数('パネル背景'),
     color: エディターCSS変数('テキスト主'),
 })
+
+// 音を出せなかったことを伝える帯。伝えることが無い間は場所を取らない。
+export const 知らせの帯 = style({
+    fontSize: '12px',
+    padding: '4px 10px',
+    borderRadius: '4px',
+    backgroundColor: エディターCSS変数('危険ボタン背景'),
+    border: `1px solid ${エディターCSS変数('危険ボタン枠線')}`,
+    color: エディターCSS変数('危険ボタン文字'),
+    selectors: {
+        '&[data-notice="false"]': {
+            display: 'none',
+        },
+    },
+})

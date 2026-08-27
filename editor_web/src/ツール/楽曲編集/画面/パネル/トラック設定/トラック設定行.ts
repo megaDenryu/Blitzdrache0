@@ -8,7 +8,7 @@ import {
     type コード進行参照,
     type コード進行,
 } from '../../../../../生成/編集資源契約.ts'
-import { スライダー項目 } from '../共通/スライダー項目.ts'
+import { スライダー項目, 動かしている間は何も伝えない } from '../共通/スライダー項目.ts'
 import { 行コンテナ, 項目ラベル } from '../共通/スタイル.css.ts'
 import { トラックの楽器選択欄 } from './トラックの楽器選択欄.ts'
 import { トラックの進行選択欄 } from './トラックの進行選択欄.ts'
@@ -23,6 +23,7 @@ export interface Iトラック設定行配線 {
 }
 
 // トラック1本の楽器・音量・進行割り当ての入力コンポーネント。
+// 音量のつまみを動かしている間は数だけが動き、手を離したときに1つだけコマンドを積む(設計正本の判断13)。
 export class トラック設定行 extends LV2HtmlComponentBase implements I配線可能<Iトラック設定行配線> {
     protected _componentRoot: DivC
     private readonly _配線: 配線ポート<Iトラック設定行配線> = new 配線ポート<Iトラック設定行配線>('トラック設定行')
@@ -48,7 +49,8 @@ export class トラック設定行 extends LV2HtmlComponentBase implements I配�
         this._配線.配線する(配線)
         this._楽器選択.onSelectChange(() => this._楽器の選び直しを伝える())
         this._音量スライダー.配線する({
-            on値変更: (新音量) => {
+            on値変更: 動かしている間は何も伝えない,
+            on値が決まった: (新音量) => {
                 if (this._配線.配線済みか) this._配線.先.on音量変更(新音量)
             },
         })

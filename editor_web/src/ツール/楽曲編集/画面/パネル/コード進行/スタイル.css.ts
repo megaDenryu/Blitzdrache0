@@ -58,7 +58,7 @@ export const 利用中の札 = style({
     border: `1px solid ${エディターCSS変数('中立バッジ枠線')}`,
     color: エディターCSS変数('中立バッジ文字'),
     selectors: {
-        '&[data-使用中="true"]': {
+        '&[data-inuse="true"]': {
             backgroundColor: エディターCSS変数('アクセント背景'),
             borderColor: エディターCSS変数('アクセント背景'),
             color: エディターCSS変数('アクセント文字白'),

@@ -1,10 +1,20 @@
 import { div, span, input, DivC, InputC, SpanC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
+import { つまみの綴りを数値として読む } from './つまみの値.ts'
 import { 行コンテナ, ラベル行, 値ラベル, スライダー入力 } from './スタイル.css.ts'
 
 export interface Iスライダー配線 {
+    // つまみを動かしている最中に、値が変わるたびに呼ばれる。
+    // 取り消しの履歴へ積む操作をここへ繋いではならない。1回のドラッグが数十件の履歴になるためである。
     readonly on値変更: (新値: number) => void
+    // つまみから手を離して値が決まったときに1回だけ呼ばれる。
+    // 取り消しの単位を人の操作へ揃えるため、コマンドを積む操作はこちらへ繋ぐ(設計正本の判断13)。
+    readonly on値が決まった?: (決まった値: number) => void
 }
+
+// つまみを動かしている最中には何も伝えない、という意思をそのまま表す配線。
+// 空の関数をそれぞれの呼び出し側へ書くと「書き忘れ」と見分けが付かないため、名前を与えて1箇所に置く。
+export const 動かしている間は何も伝えない = (): void => {}
 
 class スライダー値ラベル extends SpanC {
     private readonly _接尾辞: string
@@ -62,14 +72,18 @@ export class スライダー項目 extends LV2HtmlComponentBase implements I配�
     }
 
     private _つまみが動いたときに値を伝える(): void {
-        const 数値 = parseFloat(this._入力欄.getValue())
-        if (!Number.isFinite(数値)) {
-            throw new Error(`スライダーの値を数値として読めません: ${this._入力欄.getValue()}`)
-        }
+        const 数値 = つまみの綴りを数値として読む(this._入力欄.getValue())
         this.値を更新する(数値)
         if (this._配線.配線済みか) {
             this._配線.先.on値変更(数値)
         }
+    }
+
+    private _つまみから手を離したときに値を伝える(): void {
+        if (!this._配線.配線済みか) return
+        const 決まった値を受ける側 = this._配線.先.on値が決まった
+        if (決まった値を受ける側 === undefined) return
+        決まった値を受ける側(つまみの綴りを数値として読む(this._入力欄.getValue()))
     }
 
     private _ルートを構築する(ラベル名: string): DivC {
@@ -78,7 +92,9 @@ export class スライダー項目 extends LV2HtmlComponentBase implements I配�
                 span({ text: ラベル名 }).setTooltip(ラベル名),
                 this._値表示,
             ]),
-            this._入力欄.onInput(() => this._つまみが動いたときに値を伝える()),
+            this._入力欄
+                .onInput(() => this._つまみが動いたときに値を伝える())
+                .onChange(() => this._つまみから手を離したときに値を伝える()),
         ])
     }
 }
