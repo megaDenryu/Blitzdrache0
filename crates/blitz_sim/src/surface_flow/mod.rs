@@ -13,4 +13,3 @@ pub use cell::表面セル;
 pub use error::表面流仕様エラー;
 pub use spec::表面流仕様;
 pub use state::表面流状態;
-pub use step::表面流を一ステップ進める;
