@@ -9,6 +9,8 @@
 //! 参照: `_doc/設計/世界の形と衝突基盤.md`
 
 mod axis_traversal;
+#[cfg(test)]
+mod canonical_end_tests;
 mod cell_corner_heights;
 mod cell_edge;
 mod cell_hit;
