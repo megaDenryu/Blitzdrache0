@@ -10,10 +10,8 @@ use crate::facing_azimuth::動く個体が向いている方位角;
 use crate::forward_azimuth::前へ進む向きの方位角;
 use crate::game_intent::ゲームインテント;
 use crate::ground_height::足元の地面の高さ;
-use crate::player_move::移動後のプレイヤーの位置と向きを求める;
 use crate::player_placement::プレイヤーの位置と向き;
 use crate::progress_stage::ゲームの進行段階;
-use crate::stage_transition::次の進行段階を決める;
 use crate::tour_progress::場所巡りの進行;
 use crate::tour_route::場所巡りの道順;
 
@@ -46,13 +44,13 @@ impl 場所巡りのゲームの状態 {
         刻み: 秒,
         前へ進む向き: 前へ進む向きの方位角,
     ) -> Self {
-        let 次の段階 = 次の進行段階を決める(self.進行段階, インテント);
+        let 次の段階 = self.進行段階.次の段階を決める(インテント);
         if 次の段階 != ゲームの進行段階::場所巡り中 {
             return Self {
                 進行段階: 次の段階, ..*self
             };
         }
-        let 移動後 = 移動後のプレイヤーの位置と向きを求める(self.プレイヤー, インテント, 刻み, 前へ進む向き);
+        let 移動後 = self.プレイヤー.移動後の位置と向きを返す(インテント, 刻み, 前へ進む向き);
         Self {
             進行段階: 次の段階,
             場所巡り: self.場所巡り.到達を判定して進めた進行を返す(道順, 移動後.大域位置()),

@@ -23,6 +23,7 @@ mod game_state_tests;
 mod ground_height;
 #[cfg(test)]
 mod ground_height_tests;
+mod horizontal_unit_vector;
 mod operation_axis;
 mod player_move;
 #[cfg(test)]
@@ -48,6 +49,7 @@ pub use fox_tour_route::キツネの場所巡りの道順を作る;
 pub use game_intent::ゲームインテント;
 pub use game_state::場所巡りのゲームの状態;
 pub use ground_height::足元の地面の高さ;
+pub use horizontal_unit_vector::水平面の単位ベクトル;
 pub use operation_axis::操作軸の倒し量;
 pub use player_placement::プレイヤーの位置と向き;
 pub use progress_stage::{ゲームの進行段階, 終了確認から戻る段階};
