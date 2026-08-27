@@ -11,7 +11,9 @@
 mod axis_traversal;
 mod cell_corner_heights;
 mod cell_edge;
+mod cell_hit;
 mod cell_index;
+mod cell_interval_end;
 mod cell_ratio;
 mod cell_segment_intersection;
 mod cell_traversal;
@@ -40,6 +42,8 @@ mod segment_query_result;
 mod segment_query_tests;
 #[cfg(test)]
 mod segment_traversal_tests;
+#[cfg(test)]
+mod shared_edge_tests;
 mod slope;
 mod slope_direction;
 #[cfg(test)]
