@@ -7,15 +7,14 @@ import { 建物編集ツール } from '../../ツール/建物編集/index.ts'
 import { 楽曲編集ツール } from '../../ツール/楽曲編集/index.ts'
 import { 大域編集ツール } from '../../ツール/大域編集/index.ts'
 import { マテリアル台帳ツール } from '../../ツール/マテリアル/index.ts'
-import type { エクスプローラーパネル } from '../エクスプローラー/index.ts'
 import { 使い方タブ } from '../ガイド/index.ts'
 import type { テーマ管理サービス } from '../テーマ/index.ts'
 import type { 実行可能ツール } from '../ツール定義.ts'
 import { タブ識別子 } from '../タブ識別子.ts'
 import { タブ管理サービス } from '../タブ管理サービス.ts'
-import { タブの選択表示を合わせる } from './タブの選択表示を合わせる.ts'
+import type { 編集領域登録簿 } from '../編集領域/index.ts'
 
-// エディター外殻が持つシェル・エクスプローラー・インスペクタースロットのうち、
+// エディター外殻が持つシェル・編集領域登録簿・インスペクタースロットのうち、
 // タブを開く/選択が変わったときの同期だけに触れる窓口。エディター外殻はこの型を保持して
 // 公開APIから委譲するだけにする。
 export class タブ開閉サービス {
@@ -23,7 +22,7 @@ export class タブ開閉サービス {
 
     public constructor(
         private readonly _シェル: 外殻レイアウト,
-        private readonly _エクスプローラー: エクスプローラーパネル,
+        private readonly _登録簿: 編集領域登録簿,
         private readonly _インスペクタースロット: DivC,
         private readonly _保管庫: プロジェクト保管庫接続 & 建物の格子接続 & 楽曲接続,
         private readonly _テーマ管理: テーマ管理サービス,
@@ -70,7 +69,7 @@ export class タブ開閉サービス {
         const ツール = this.タブ管理.タブを選択する(タブID)
         this._インスペクタースロット.clearChildren()
         if (ツール?.インスペクター !== undefined) this._インスペクタースロット.child(ツール.インスペクター)
-        タブの選択表示を合わせる(this._エクスプローラー, タブID)
+        this._登録簿.前面のタブに合わせて選択表示する(タブ識別子.綴りから復元する(タブID))
     }
 
     public タブを閉じたときの後処理(タブID: string): void {
