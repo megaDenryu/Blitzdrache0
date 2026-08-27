@@ -14,8 +14,8 @@ impl レンダラー {
         フレーム添字: フレームスロット添字,
         入力: &フレーム描画入力<'_>,
     ) -> Result<(), レンダラーエラー> {
-        match (&self.布一式, &入力.布) {
-            (Some(布), Some(布入力)) => 布.フレーム入力を書き込む(self.gpu環境.device(), フレーム添字, 布入力),
+        match (&self.布, &入力.布) {
+            (Some(布), Some(布入力)) => 布.フレーム入力を書き込む(self.環境.device(), フレーム添字, 布入力),
             (None, None) => Ok(()),
             (Some(_), None) => Err(布エラー::入力不一致("布付きレンダラーなのに布入力が未指定".to_string()).into()),
             (None, Some(_)) => Err(布エラー::入力不一致("布無しレンダラーに布入力が指定された".to_string()).into()),
@@ -31,7 +31,7 @@ impl レンダラー {
         介入件数: u32,
         相対の基準原点: crate::vulkan::relative_anchor::カメラ相対の基準原点,
     ) -> Result<Option<crate::vulkan::frame::布描画入力>, レンダラーエラー> {
-        let Some(一式) = self.布一式.as_ref() else {
+        let Some(一式) = self.布.as_ref() else {
             return Ok(None);
         };
         let Some(シャドウ) = self.描画段階資源.布シャドウ描画入力を作る() else {

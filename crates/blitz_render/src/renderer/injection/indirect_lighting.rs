@@ -17,8 +17,8 @@ impl レンダラー {
     /// 拡散照度・鏡面畳込み・反射率積分表の中身を解析入力で置き換え、以降のフレームで焼き上げを止める。
     /// 契約が定数近似の実行はそもそも3つの画像を持たないため、資源が無いことを型付きの失敗で返す。
     pub fn 遠方環境の解析入力を注入する(&mut self, 入力: &遠方環境の解析入力) -> Result<(), レンダラーエラー> {
-        let 確保係 = self.gpu環境.資源の確保係を貸す();
-        let _device = self.gpu環境.device();
+        let 確保係 = self.環境.資源の確保係を貸す();
+        let _device = self.環境.device();
         let Some(照明) = self.描画段階資源.遠方環境の照明を借りる() else {
             return Err(間接照明エラー::from(遠方環境の解析入力エラー::遠方環境の資源なし).into());
         };
@@ -31,8 +31,8 @@ impl レンダラー {
         &mut self,
         入力: &遠方環境の焼かせる解析入力,
     ) -> Result<(), レンダラーエラー> {
-        let 確保係 = self.gpu環境.資源の確保係を貸す();
-        let _device = self.gpu環境.device();
+        let 確保係 = self.環境.資源の確保係を貸す();
+        let _device = self.環境.device();
         let Some(照明) = self.描画段階資源.遠方環境の照明を借りる() else {
             return Err(間接照明エラー::from(遠方環境の解析入力エラー::遠方環境の資源なし).into());
         };

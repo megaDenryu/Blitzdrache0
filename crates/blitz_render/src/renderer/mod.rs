@@ -68,8 +68,8 @@ pub use pass_tally::{大気のベイク済み画像生成パス数の記録, 間
 /// `ui一式`の表示のオン/オフは入力側の有無で決まるため、常に生成する。
 /// `記録の計器`はセット番号ごとの束縛回数と、パスごとの描画・パイプライン切替・材質切替を持つ。
 pub struct レンダラー {
-    gpu環境: vulkan::gpu_environment::GPU環境, // 生成後に変わらないVulkanハンドルの束
-    提示: presentation::提示,                  // ウィンドウ寸法に連動して揃って作り直す資源の束
+    環境: vulkan::gpu_environment::GPU環境, // 生成後に変わらないVulkanハンドルの束
+    提示: presentation::提示,               // ウィンドウ寸法に連動して揃って作り直す資源の束
     影の資源: vulkan::shadow_resources::影の資源の組,
     転送環境: vulkan::transfer::転送実行環境,
     シーン描画資源: scene_draw_resources::シーン描画資源, // 描画対象数に連動する資源の束
@@ -83,7 +83,7 @@ pub struct レンダラー {
     描画段階資源: draw_stage_resources::描画段階資源, // 各描画段階が束縛するパイプラインとレイアウトの束
     パイプライン台帳: vulkan::pipeline_ledger::材質描画族パイプライン台帳, // 材質を読む描画族のパイプライン状態オブジェクトの台帳
     スキニング: Option<vulkan::skinning::スキニング一式>, // スキン付きシーンのときのみ`Some`(判断44)
-    布一式: Option<vulkan::cloth::布一式>,            // 布付き起動のときのみ`Some`(判断52〜54)
+    布: Option<vulkan::cloth::布一式>,                // 布付き起動のときのみ`Some`(判断52〜54)
     ポスト処理: Option<vulkan::post_process::ポスト処理一式>, // フレーム構成にポスト処理段階があるときのみ`Some`(判断38・39)
     局所可視性: vulkan::local_visibility::局所可視性一式,
     時間再構成: vulkan::temporal_reconstruction::時間再構成一式, // 時間再構成の方式と、画面寸法に連動する3枚の所有者

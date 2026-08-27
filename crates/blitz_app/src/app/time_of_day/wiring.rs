@@ -18,9 +18,9 @@ mod band_decision;
 mod clock_advance;
 mod create;
 mod exposure;
-mod lowered_atmosphere;
 mod scan_override;
 
+use super::atmosphere_input;
 use super::atmosphere_update::大気更新判定;
 use super::clock::時間帯;
 use super::distant_environment_update::遠方環境更新判定;
@@ -29,24 +29,25 @@ use super::step_scan::段差走査;
 use super::thinning::遠方環境の間引き;
 pub(in crate::app) use bake_input::焼き上げ入力の組;
 use blitz_engine::auto_exposure::露出方式;
+use blitz_engine::sky::atmosphere::大気媒体方針;
+use blitz_render::atmosphere::大気散乱媒体;
 use blitz_render::indirect_lighting::照明問い合わせ契約;
 use blitz_render::{ライティング入力, レンダラーエラー, 空入力};
 pub(in crate::app) use create::生成材料;
-use lowered_atmosphere::下ろし済みの大気;
 pub(in crate::app) struct 天空配線 {
     時間帯: Option<時間帯>,
-    空を描く: bool,                         // 空パスを積むかどうか
-    大気: Option<下ろし済みの大気>,         // 空を持つ世界だけ`Some`
-    大気更新判定: 大気更新判定,             // 大気のベイク済み画像を焼き直すかの判定。前回焼いた鍵だけを持つ
-    照明問い合わせ契約: 照明問い合わせ契約, // 世界の間接照明方針から起動時に1度決めた契約。以降変わらない
-    遠方環境更新判定: 遠方環境更新判定,     // 遠方環境を焼き直すかの判定。前回焼いた鍵だけを持つ
-    間引き: 遠方環境の間引き,               // 遠方環境の更新を間引く刻みと、区間の記録
-    段差走査: Option<段差走査>,             // `--ibl-step-scan`指定時だけ`Some`
-    露出方式: 露出方式,                     // 世界が起動時に決めた露出の決め方。以降変わらない
-    自動露出の経過秒源: 自動露出の経過秒源, // 自動露出の時間適応へ渡す経過秒の供給元
-    基準ライティング: ライティング入力,     // シーンが決めた基準のライティング
-    ライティング: ライティング入力,         // そのフレームのライティング
-    明示境界を使わない: bool,               // 距離区分の再配分を切って走るか
+    空を描く: bool,                             // 空パスを積むかどうか
+    大気: Option<(大気媒体方針, 大気散乱媒体)>, // ベイク済み画像生成の入力へ下ろし済みの大気と、その方針
+    大気更新判定: 大気更新判定,                 // 大気のベイク済み画像を焼き直すかの判定。前回焼いた鍵だけを持つ
+    照明問い合わせ契約: 照明問い合わせ契約,     // 世界の間接照明方針から起動時に1度決めた契約。以降変わらない
+    遠方環境更新判定: 遠方環境更新判定,         // 遠方環境を焼き直すかの判定。前回焼いた鍵だけを持つ
+    間引き: 遠方環境の間引き,                   // 遠方環境の更新を間引く刻みと、区間の記録
+    段差走査: Option<段差走査>,                 // `--ibl-step-scan`指定時だけ`Some`
+    露出方式: 露出方式,                         // 世界が起動時に決めた露出の決め方。以降変わらない
+    自動露出の経過秒源: 自動露出の経過秒源,     // 自動露出の時間適応へ渡す経過秒の供給元
+    基準ライティング: ライティング入力,         // シーンが決めた基準のライティング
+    ライティング: ライティング入力,             // そのフレームのライティング
+    明示境界を使わない: bool,                   // 距離区分の再配分を切って走るか
 }
 impl 天空配線 {
     /// 世界の間接照明方針が大気の媒体を要るのに世界が媒体を持たない場合は、ここで型付きの失敗になる。
@@ -72,8 +73,8 @@ impl 天空配線 {
         self.空を描く.then(|| self.時間帯.as_ref().map(時間帯::空入力)).flatten()
     }
     pub(in crate::app) fn 再現条件(&self) -> Option<super::空の再現条件> {
-        let 下ろし済み大気 = self.空を描く.then_some(self.大気).flatten()?;
-        Some(下ろし済み大気.再現条件を組む(self.時間帯.as_ref()?))
+        let (_, 媒体) = self.空を描く.then_some(self.大気).flatten()?;
+        Some(atmosphere_input::再現条件を組む(媒体, self.時間帯.as_ref()?))
     }
     /// そのフレームで使っている天空状態。空の方針を持たない世界では無い。
     pub(in crate::app) fn 天空状態(&self) -> Option<&blitz_engine::sky::天空状態> {

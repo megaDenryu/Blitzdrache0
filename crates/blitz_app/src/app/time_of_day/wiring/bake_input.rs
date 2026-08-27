@@ -60,7 +60,7 @@ impl 天空配線 {
         let 無し = 焼き上げ入力の組 {
             大気: None, 遠方環境: None
         };
-        let Some(下ろし済み大気) = self.大気を焼くか().then_some(self.大気).flatten() else {
+        let Some((方針, 媒体)) = self.大気を焼くか().then_some(self.大気).flatten() else {
             return 無し;
         };
         let Some(時間帯) = self.時間帯.as_ref() else {
@@ -68,17 +68,16 @@ impl 天空配線 {
         };
         let 空描画 = 時間帯.空描画方針();
         let 状態 = *時間帯.状態();
-        let 方針 = 下ろし済み大気.方針();
         let 材料 = atmosphere_input::大気入力の材料 {
             方針: &方針,
-            媒体: 下ろし済み大気.媒体(),
+            媒体,
             状態: &状態,
             空描画,
             視点,
         };
         let 大気入力 = atmosphere_input::組む(&材料, &mut self.大気更新判定);
         let 遠方環境の材料 = distant_environment_input::遠方環境入力の材料 {
-            大気の静的キー: 下ろし済み大気.静的キー(),
+            大気の静的キー: 方針.静的キー(),
             空描画,
             状態: &状態,
         };

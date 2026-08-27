@@ -14,8 +14,8 @@ pub(super) use write::{生値を書く, 窓の集約を書く};
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct 区間の分布 {
     pub(super) 平均ミリ秒: f64,
-    pub(super) 第50百分位ミリ秒: f64,
-    pub(super) 第95百分位ミリ秒: f64,
+    pub(super) p50ミリ秒: f64,
+    pub(super) p95ミリ秒: f64,
     pub(super) 標本数: u64,
 }
 

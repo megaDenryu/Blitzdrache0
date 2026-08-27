@@ -12,7 +12,6 @@ use super::super::exposure_elapsed::自動露出の経過秒源;
 use super::super::scene_policy;
 use super::super::sun_disk_override;
 use super::super::thinning::遠方環境の間引き;
-use super::lowered_atmosphere::下ろし済みの大気;
 use super::天空配線;
 use crate::atmosphere_medium::確定した大気散乱媒体へ写す;
 use crate::cli::{世界の種別, 時間帯起動設定, 起動モード};
@@ -35,10 +34,7 @@ pub(super) fn 生成する(材料: 生成材料<'_>) -> Result<天空配線, レ
         世界の空方針::空なし => (None, None),
         世界の空方針::空あり { 空と太陽, 既定時刻 } => (
             Some(時間帯::生成する(空と太陽, 設定.初期時刻を決める(既定時刻), 設定.時間倍率)),
-            Some(下ろし済みの大気::生成する(
-                空と太陽.大気媒体(),
-                確定した大気散乱媒体へ写す(&空と太陽.大気媒体()),
-            )),
+            Some((空と太陽.大気媒体(), 確定した大気散乱媒体へ写す(&空と太陽.大気媒体()))),
         ),
     };
     let mut 配線 = 天空配線 {

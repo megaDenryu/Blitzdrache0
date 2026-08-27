@@ -29,8 +29,8 @@ impl レンダラー {
         if 寸法.幅() != 画面.width || 寸法.高さ() != 画面.height {
             return Err(寸法不一致(寸法, 画面.width, 画面.height).into());
         }
-        self.gpu環境.gpuの全作業完了を待つ()?;
-        let 確保係 = self.gpu環境.資源の確保係を貸す();
+        self.環境.gpuの全作業完了を待つ()?;
+        let 確保係 = self.環境.資源の確保係を貸す();
         self.描画段階資源.合成深度の注入を据える(&確保係, 深度画像)
     }
 
