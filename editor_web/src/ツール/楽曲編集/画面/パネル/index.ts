@@ -3,4 +3,5 @@ export { トラック設定パネル, type Iトラック設定パネル配線 } 
 export { パターンパネル, type Iパターンパネル配線 } from './パターン/パターンパネル.ts'
 export { 曲構成パネル, type I曲構成パネル配線 } from './曲構成/曲構成パネル.ts'
 export { コード進行パネル, type Iコード進行パネル配線 } from './コード進行/コード進行パネル.ts'
+export { 編集パネル群 } from './編集パネル群.ts'
 export { スライダー項目, type Iスライダー配線 } from './共通/スライダー項目.ts'

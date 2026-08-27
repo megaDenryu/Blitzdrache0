@@ -25,6 +25,10 @@ export class トラックブロック部品 extends LV2HtmlComponentBase {
         this._componentRoot = div({ class: トラック枠 }).childs([this.見出し, this.格子])
     }
 
+    public 再生位置を示す(ステップ: number | null): void {
+        this.格子.再生位置を示す(ステップ)
+    }
+
     public 表示を更新する(
         トラック: トラック定義,
         トラック格子: トラックの格子,

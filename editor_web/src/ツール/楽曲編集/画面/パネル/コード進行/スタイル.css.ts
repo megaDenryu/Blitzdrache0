@@ -48,6 +48,24 @@ export const 独自進行の見出し行 = style({
     gap: '8px',
 })
 
+// いまその進行が使われているかを見せる小さな札。
+export const 利用中の札 = style({
+    fontSize: '10px',
+    padding: '2px 6px',
+    borderRadius: '3px',
+    whiteSpace: 'nowrap',
+    backgroundColor: エディターCSS変数('中立バッジ背景'),
+    border: `1px solid ${エディターCSS変数('中立バッジ枠線')}`,
+    color: エディターCSS変数('中立バッジ文字'),
+    selectors: {
+        '&[data-使用中="true"]': {
+            backgroundColor: エディターCSS変数('アクセント背景'),
+            borderColor: エディターCSS変数('アクセント背景'),
+            color: エディターCSS変数('アクセント文字白'),
+        },
+    },
+})
+
 export const 編集枠 = style({
     display: 'flex',
     flexDirection: 'column',

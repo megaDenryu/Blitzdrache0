@@ -34,6 +34,11 @@ export class 打ち込み升目部品 extends LV2HtmlComponentBase {
     }
 
 
+    // 再生位置の印。音を鳴らす時刻は音声の時計が決めており、この印はその時刻から導いた位置を映すだけである。
+    public 再生の印を示す(いま鳴っているか: boolean): void {
+        this._componentRoot.setAttribute('data-playhead', String(いま鳴っているか))
+    }
+
     public 表示を更新する(対象セル: セル, 許されるか: boolean): void {
         this._componentRoot.setAttribute('data-allowed', String(許されるか))
         switch (対象セル.種類) {

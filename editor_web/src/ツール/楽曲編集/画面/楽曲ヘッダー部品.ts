@@ -8,7 +8,7 @@ import {
     情報バッジ,
 } from './スタイル.css.ts'
 
-// 楽曲エディター上部のヘッダー行。タイトル・BPM・選択中パターン・進行制約バッジを表示する。
+// 楽曲エディター上部のヘッダー行。タイトル・拍毎分・選択中パターン・進行制約バッジを表示する。
 export class 楽曲ヘッダー部品 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     private readonly _タイトル要素: DivC
@@ -19,7 +19,7 @@ export class 楽曲ヘッダー部品 extends LV2HtmlComponentBase {
     public constructor(楽曲ID: 楽曲ID) {
         super()
         this._タイトル要素 = div({ class: タイトル, text: 楽曲ID })
-        this._拍毎分バッジ = div({ class: 情報バッジ, text: 'BPM: -' })
+        this._拍毎分バッジ = div({ class: 情報バッジ, text: '拍毎分: -' })
         this._パターンバッジ = div({ class: 情報バッジ, text: 'パターン: -' })
         this._進行外バッジ = div({ class: 情報バッジ, text: '進行制約: 追従' })
 
@@ -40,7 +40,7 @@ export class 楽曲ヘッダー部品 extends LV2HtmlComponentBase {
     ): void {
         const 表示名 = `${楽曲.表示名} (${楽曲.名乗り})`
         this._タイトル要素.clearChildren().child(span({ text: 表示名 })).setTooltip(表示名)
-        this._拍毎分バッジ.clearChildren().child(span({ text: `BPM: ${楽曲.拍毎分}` }))
+        this._拍毎分バッジ.clearChildren().child(span({ text: `拍毎分: ${楽曲.拍毎分}` }))
         this._進行外バッジ.clearChildren().child(
             span({ text: 進行の外モードか ? '進行制約: 進行の外' : '進行制約: 追従' }),
         )

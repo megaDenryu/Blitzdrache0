@@ -12,3 +12,5 @@ export { 見込みを反映したセルを計算する } from './見込みセル
 export { ドラッグ見込みを導出する } from './ドラッグ見込み導出.ts'
 export { 確定コマンドを生成する } from './打ち込み確定コマンド生成.ts'
 export * from './パネル/index.ts'
+export * from './演奏/index.ts'
+export * from './演奏の操作帯/index.ts'

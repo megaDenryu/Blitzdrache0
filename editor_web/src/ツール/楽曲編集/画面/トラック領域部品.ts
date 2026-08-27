@@ -62,6 +62,10 @@ export class トラック領域部品 extends LV2HtmlComponentBase {
         }
     }
 
+    public 再生位置を示す(ステップ: number | null): void {
+        for (const ブロック of this._トラックブロック一覧) ブロック.再生位置を示す(ステップ)
+    }
+
     private トラックブロック一覧を同期する(楽曲: 楽曲): void {
         if (this._トラックブロック一覧.length === 楽曲.トラック構成.length) return
         for (const ブロック of this._トラックブロック一覧) ブロック.delete()

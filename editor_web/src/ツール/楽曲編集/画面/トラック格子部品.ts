@@ -19,6 +19,7 @@ import { トラック行の表示名 } from './音名表示.ts'
 export class トラック格子部品 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     private readonly _行升目一覧: 打ち込み升目部品[][] = []
+    private _光っているステップ: number | null = null
 
     public constructor(
         トラック: トラック定義,
@@ -53,6 +54,20 @@ export class トラック格子部品 extends LV2HtmlComponentBase {
             const 升目列要素 = div({ class: 升目列 }).childs(升目一覧)
             const 行要素 = div({ class: 行枠 }).childs([行見出し要素, 升目列要素])
             this._componentRoot.child(行要素)
+        }
+    }
+
+    // 再生位置の印を、前に光っていた列から新しい列へ移す。毎コマ全部の升目へ触らないために差分だけを触る。
+    public 再生位置を示す(ステップ: number | null): void {
+        if (this._光っているステップ === ステップ) return
+        if (this._光っているステップ !== null) this._列の印を切り替える(this._光っているステップ, false)
+        if (ステップ !== null) this._列の印を切り替える(ステップ, true)
+        this._光っているステップ = ステップ
+    }
+
+    private _列の印を切り替える(ステップ: number, 光らせるか: boolean): void {
+        for (const 升目一覧 of this._行升目一覧) {
+            升目一覧[ステップ]?.再生の印を示す(光らせるか)
         }
     }
 

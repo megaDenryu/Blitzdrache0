@@ -77,5 +77,11 @@ export const 升目 = style({
             backgroundColor: エディターCSS変数('危険ボタンホバー'),
             opacity: 0.85,
         },
+        // 打点の枠線は data-kind の側が使うため、再生位置の印は外側の輪郭で描いて重ならないようにする。
+        '&[data-playhead="true"]': {
+            outline: `2px solid ${エディターCSS変数('アクセント文字')}`,
+            outlineOffset: '-1px',
+            zIndex: 1,
+        },
     },
 })

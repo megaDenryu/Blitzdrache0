@@ -4,8 +4,11 @@ import type { コード進行 } from '../../../../../生成/編集資源契約.t
 import { 和音の表示名を組み立てる } from '../../../編集モデル/index.ts'
 import { 副ボタン, 危険ボタン, 横並び行, 警告の帯 } from '../共通/スタイル.css.ts'
 import type { 進行利用状況 } from './進行利用状況計算.ts'
-import { 独自進行の削除影響文を組み立てる } from './進行利用状況計算.ts'
-import { 独自進行行枠, 独自進行の見出し行, 進行名, 和音要約 } from './スタイル.css.ts'
+import {
+    独自進行の削除影響文を組み立てる,
+    独自進行の利用中の要約を組み立てる,
+} from './進行利用状況計算.ts'
+import { 利用中の札, 独自進行行枠, 独自進行の見出し行, 進行名, 和音要約 } from './スタイル.css.ts'
 
 export interface I独自進行行配線 {
     readonly on編集欄へ読み込む: () => void
@@ -24,6 +27,10 @@ export class 独自進行行部品 extends LV2HtmlComponentBase implements I配�
             div({ class: 独自進行の見出し行 }).childs([
                 span({ class: 進行名, text: 進行.名前 }),
                 span({ class: 和音要約, text: 和音の並び }),
+                span({ class: 利用中の札, text: 独自進行の利用中の要約を組み立てる(利用状況) }).setAttribute(
+                    'data-使用中',
+                    String(利用状況.利用パターン名一覧.length + 利用状況.利用トラック名一覧.length > 0),
+                ),
                 div({ class: 横並び行 }).childs([
                     button({ class: 副ボタン, text: '編集' })
                         .setTooltip('この進行を編集欄へ読み込む')

@@ -1,60 +1,53 @@
 import { div, DivC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { 楽曲 } from '../../../生成/編集資源契約.ts'
 import type { 楽曲ID } from '../../../境界/index.ts'
-import { コード進行参照から和音一覧を解決する, 初期楽曲を生成する } from '../編集モデル/index.ts'
+import {
+    コード進行参照から和音一覧を解決する,
+    初期楽曲を生成する,
+    演奏の範囲の既定,
+    type 演奏の範囲,
+} from '../編集モデル/index.ts'
 import { 永続化パネル } from '../../チャンク編集/画面/パネル/永続化/index.ts'
 import type { I楽曲発音配線 } from './発音配線.ts'
+import type { 再生位置 } from './演奏/index.ts'
+import { 演奏の操作帯 } from './演奏の操作帯/index.ts'
 import type { 打ち込みドラッグ見込み, 升目の当たりの記録 } from './打ち込み見込み.ts'
 import { コンテナ, 本文幅 } from './スタイル.css.ts'
 import { 楽曲ヘッダー部品 } from './楽曲ヘッダー部品.ts'
 import { 進行の帯部品 } from './進行の帯部品.ts'
 import { トラック領域部品 } from './トラック領域部品.ts'
-import {
-    曲設定パネル,
-    パターンパネル,
-    曲構成パネル,
-    トラック設定パネル,
-    コード進行パネル,
-} from './パネル/index.ts'
+import { 編集パネル群 } from './パネル/index.ts'
 
-// 楽曲エディター文書タブの画面全体。ヘッダー・進行の帯・トラック領域・各種編集パネル・永続化パネルを束ねる。
+// 楽曲エディター文書タブの画面全体。ヘッダー・演奏の操作帯・進行の帯・トラック領域・編集パネル群・永続化パネルを束ねる。
 export class 楽曲編集画面 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     public readonly ヘッダー: 楽曲ヘッダー部品
+    public readonly 操作帯: 演奏の操作帯
     public readonly 進行の帯: 進行の帯部品 = new 進行の帯部品()
     public readonly トラック領域: トラック領域部品 = new トラック領域部品()
-    public readonly パターン: パターンパネル
-    public readonly 曲構成: 曲構成パネル
-    public readonly 曲設定: 曲設定パネル
-    public readonly トラック設定: トラック設定パネル
-    public readonly コード進行: コード進行パネル
+    public readonly パネル群: 編集パネル群
     public readonly 永続化: 永続化パネル = new 永続化パネル()
     public readonly 発音配線: 配線ポート<I楽曲発音配線> = new 配線ポート<I楽曲発音配線>('楽曲編集画面')
+    private _表示中のパターンの名乗り: string | null = null
+    private _表示中のパターンの表示名: string | null = null
 
     public constructor(楽曲ID: 楽曲ID, 初期楽曲?: 楽曲) {
         super()
         const 楽曲データ = 初期楽曲 !== undefined ? 初期楽曲 : 初期楽曲を生成する(楽曲ID, 楽曲ID)
-        const 初期選択名乗り = 楽曲データ.パターン一覧.length > 0 && 楽曲データ.パターン一覧[0] !== undefined
-            ? 楽曲データ.パターン一覧[0].名乗り
-            : null
+        const 先頭のパターン = 楽曲データ.パターン一覧[0]
+        const 初期選択の名乗り = 先頭のパターン === undefined ? null : 先頭のパターン.名乗り
 
         this.ヘッダー = new 楽曲ヘッダー部品(楽曲ID)
-        this.パターン = new パターンパネル(楽曲データ, 初期選択名乗り)
-        this.曲構成 = new 曲構成パネル(楽曲データ, 初期選択名乗り)
-        this.曲設定 = new 曲設定パネル(楽曲データ)
-        this.トラック設定 = new トラック設定パネル(楽曲データ)
-        this.コード進行 = new コード進行パネル(楽曲データ)
+        this.操作帯 = new 演奏の操作帯(楽曲データ, 演奏の範囲の既定)
+        this.パネル群 = new 編集パネル群(楽曲データ, 初期選択の名乗り)
 
         this._componentRoot = div({ class: コンテナ }).child(
             div({ class: 本文幅 }).childs([
                 this.ヘッダー,
+                this.操作帯,
                 this.進行の帯,
                 this.トラック領域,
-                this.パターン,
-                this.曲構成,
-                this.曲設定,
-                this.トラック設定,
-                this.コード進行,
+                this.パネル群,
                 this.永続化,
             ]),
         )
@@ -77,8 +70,10 @@ export class 楽曲編集画面 extends LV2HtmlComponentBase {
             ? 楽曲.パターン一覧[0]
             : 楽曲.パターン一覧.find((p) => p.名乗り === 選択中パターン名乗り)
 
-        const パターン表示名 = パターン !== undefined ? パターン.表示名 : null
-        this.ヘッダー.表示を更新する(楽曲, パターン表示名, 進行の外モードか)
+        this._表示中のパターンの名乗り = パターン !== undefined ? パターン.名乗り : null
+        this._表示中のパターンの表示名 = パターン !== undefined ? パターン.表示名 : null
+        this.ヘッダー.表示を更新する(楽曲, this._表示中のパターンの表示名, 進行の外モードか)
+        this.操作帯.楽曲を反映する(楽曲)
 
         if (パターン === undefined) {
             this.進行の帯.表示を更新する([])
@@ -89,22 +84,27 @@ export class 楽曲編集画面 extends LV2HtmlComponentBase {
             this.トラック領域.表示を更新する(楽曲, パターン, ドラッグ見込み)
         }
 
-        this.パターン.表示を更新する(楽曲, 選択中パターン名乗り)
-        this.曲構成.表示を更新する(楽曲, 選択中パターン名乗り)
-        this.曲設定.表示を更新する(楽曲)
-        this.トラック設定.表示を更新する(楽曲)
-        this.コード進行.表示を更新する(楽曲)
+        this.パネル群.表示を更新する(楽曲, 選択中パターン名乗り)
+    }
+
+    // 再生位置の印を格子と操作帯へ映す。開いているパターンと違うパターンが鳴っているときは格子を光らせない。
+    public 再生位置を示す(位置: 再生位置 | null, 再生中か: boolean, 範囲: 演奏の範囲): void {
+        const 同じパターンか = 位置 !== null && 位置.パターンの名乗り === this._表示中のパターンの名乗り
+        this.トラック領域.再生位置を示す(同じパターンか && 位置 !== null ? 位置.パターン内ステップ : null)
+        this.操作帯.演奏の様子を反映する(
+            再生中か,
+            範囲,
+            位置,
+            同じパターンか ? this._表示中のパターンの表示名 : null,
+        )
     }
 
     public override delete(): void {
         this.ヘッダー.delete()
+        this.操作帯.delete()
         this.進行の帯.delete()
         this.トラック領域.delete()
-        this.パターン.delete()
-        this.曲構成.delete()
-        this.曲設定.delete()
-        this.トラック設定.delete()
-        this.コード進行.delete()
+        this.パネル群.delete()
         this.永続化.delete()
         super.delete()
     }

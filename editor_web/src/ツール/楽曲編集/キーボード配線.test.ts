@@ -8,6 +8,8 @@ describe('楽曲編集キーボード配線', () => {
         const UI状態 = new 楽曲編集UI状態()
         let 取り消し回数 = 0
         let 同期回数 = 0
+        let 再生切り替え回数 = 0
+        const 演奏 = { 再生と停止を切り替える: () => { 再生切り替え回数++ } }
 
         const 操作 = {
             直前の操作を取り消す: () => {
@@ -33,7 +35,7 @@ describe('楽曲編集キーボード配線', () => {
         globalThis.window = mockWindow as unknown as Window & typeof globalThis
         globalThis.document = mockDocument
 
-        const 解除 = 楽曲編集キーボード入力を配線する(UI状態, 操作, () => { 同期回数++ })
+        const 解除 = 楽曲編集キーボード入力を配線する(UI状態, 操作, () => { 同期回数++ }, 演奏)
         assert.ok(keydownHandler !== null, 'リスナーが登録されること')
 
         // Ctrl+Z を送る
@@ -79,6 +81,22 @@ describe('楽曲編集キーボード配線', () => {
             preventDefault: () => {},
         } as unknown as KeyboardEvent)
         assert.strictEqual(UI状態.進行の外モードか, true, '入力欄フォーカス中はAltも無視されること')
+
+        // 鍵盤の空白は再生と停止を切り替える。押せる部品の上では「押す」の意味になるため切り替えない。
+        const 空白を送る = (届いた先: unknown): void => {
+            keydownHandler({
+                code: 'Space', key: ' ', ctrlKey: false, metaKey: false,
+                target: 届いた先, preventDefault: () => {},
+            } as unknown as KeyboardEvent)
+        }
+        globalThis.document = { activeElement: null } as unknown as Document
+        空白を送る(null)
+        assert.strictEqual(再生切り替え回数, 1, '空白で再生と停止が切り替わること')
+        空白を送る({ tagName: 'BUTTON' })
+        assert.strictEqual(再生切り替え回数, 1, 'ボタンの上の空白では切り替わらないこと')
+        globalThis.document = { activeElement: { tagName: 'INPUT' } } as unknown as Document
+        空白を送る(null)
+        assert.strictEqual(再生切り替え回数, 1, '入力欄フォーカス中の空白では切り替わらないこと')
 
         解除()
         assert.strictEqual(keydownHandler, null, 'リスナーが解除されること')

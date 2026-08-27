@@ -7,11 +7,10 @@ import { パネル外枠, パネル見出し } from '../共通/スタイル.css.
 
 export interface I曲設定パネル配線 {
     readonly on表示名変更: (新しい表示名: string) => void
-    readonly on拍毎分変更: (新しい拍毎分: number) => void
     readonly onミキサー設定変更: (新しいミキサー設定: ミキサー設定) => void
 }
 
-// 楽曲全体の基本情報（表示名・BPM）およびミキサー設定を編集するパネル。
+// 楽曲全体の基本情報（表示名）およびミキサー設定を編集するパネル。
 export class 曲設定パネル extends LV2HtmlComponentBase implements I配線可能<I曲設定パネル配線> {
     protected _componentRoot: DivC
     private readonly _配線: 配線ポート<I曲設定パネル配線> = new 配線ポート<I曲設定パネル配線>('曲設定パネル')
@@ -34,9 +33,6 @@ export class 曲設定パネル extends LV2HtmlComponentBase implements I配線�
         this._基本設定.配線する({
             on表示名変更: (名) => {
                 if (this._配線.配線済みか) this._配線.先.on表示名変更(名)
-            },
-            on拍毎分変更: (bpm) => {
-                if (this._配線.配線済みか) this._配線.先.on拍毎分変更(bpm)
             },
         })
         this._ミキサー設定.配線する({
