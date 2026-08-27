@@ -12,7 +12,27 @@ export class 打ち込み升目部品 extends LV2HtmlComponentBase {
         const 境界 = ステップ % 4 === 0 ? 'measure' : ステップ % 2 === 0 ? 'beat' : 'step'
         this._componentRoot.setAttribute('data-boundary', 境界)
         this._componentRoot.setAttribute('data-step', String(ステップ))
+
+        this._componentRoot.addTypedEventListener('contextmenu', (e) => {
+            e.preventDefault()
+        })
     }
+
+    public onポインタ押下(ハンドラ: (ボタン: number) => void): this {
+        this._componentRoot.addTypedEventListener('pointerdown', (e) => {
+            e.preventDefault()
+            ハンドラ(e.button)
+        })
+        return this
+    }
+
+    public onポインタ進入(ハンドラ: () => void): this {
+        this._componentRoot.addTypedEventListener('mouseenter', () => {
+            ハンドラ()
+        })
+        return this
+    }
+
 
     public 表示を更新する(対象セル: セル, 許されるか: boolean): void {
         this._componentRoot.setAttribute('data-allowed', String(許されるか))
@@ -32,3 +52,4 @@ export class 打ち込み升目部品 extends LV2HtmlComponentBase {
         }
     }
 }
+

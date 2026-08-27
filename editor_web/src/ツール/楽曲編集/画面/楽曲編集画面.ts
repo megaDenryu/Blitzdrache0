@@ -1,107 +1,72 @@
-import { div, span, DivC, LV2HtmlComponentBase } from 'sengen-ui'
+import { div, DivC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { 楽曲 } from '../../../生成/編集資源契約.ts'
 import type { 楽曲ID } from '../../../境界/index.ts'
-import {
-    コード進行参照から和音一覧を解決する,
-    トラックに適用される和音一覧を解決する,
-} from '../編集モデル/index.ts'
+import { コード進行参照から和音一覧を解決する } from '../編集モデル/index.ts'
 import { 永続化パネル } from '../../チャンク編集/画面/パネル/永続化/index.ts'
-import {
-    コンテナ,
-    本文幅,
-    ヘッダー行,
-    タイトル,
-    情報バッジ群,
-    情報バッジ,
-    エディター領域,
-} from './スタイル.css.ts'
+import type { I楽曲発音配線 } from './発音配線.ts'
+import type { 打ち込みドラッグ見込み, 升目の当たりの記録 } from './打ち込み見込み.ts'
+import { コンテナ, 本文幅 } from './スタイル.css.ts'
+import { 楽曲ヘッダー部品 } from './楽曲ヘッダー部品.ts'
 import { 進行の帯部品 } from './進行の帯部品.ts'
-import { トラックブロック部品 } from './トラックブロック部品.ts'
+import { トラック領域部品 } from './トラック領域部品.ts'
 
-// 楽曲エディター文書タブの画面全体。進行の帯・トラック格子群・永続化パネルを束ねる。
+// 楽曲エディター文書タブの画面全体。ヘッダー・進行の帯・トラック領域・永続化パネルを束ねる。
 export class 楽曲編集画面 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
+    public readonly ヘッダー: 楽曲ヘッダー部品
     public readonly 進行の帯: 進行の帯部品 = new 進行の帯部品()
+    public readonly トラック領域: トラック領域部品 = new トラック領域部品()
     public readonly 永続化: 永続化パネル = new 永続化パネル()
-    private readonly _タイトル要素: DivC
-    private readonly _拍毎分バッジ: DivC
-    private readonly _パターンバッジ: DivC
-    private readonly _トラック領域: DivC
-    private _トラックブロック一覧: トラックブロック部品[] = []
+    public readonly 発音配線: 配線ポート<I楽曲発音配線> = new 配線ポート<I楽曲発音配線>('楽曲編集画面')
 
     public constructor(楽曲ID: 楽曲ID) {
         super()
-        this._タイトル要素 = div({ class: タイトル, text: 楽曲ID })
-        this._拍毎分バッジ = div({ class: 情報バッジ, text: 'BPM: -' })
-        this._パターンバッジ = div({ class: 情報バッジ, text: 'パターン: -' })
-        this._トラック領域 = div({ class: エディター領域 })
-
+        this.ヘッダー = new 楽曲ヘッダー部品(楽曲ID)
         this._componentRoot = div({ class: コンテナ }).child(
             div({ class: 本文幅 }).childs([
-                div({ class: ヘッダー行 }).childs([
-                    this._タイトル要素,
-                    div({ class: 情報バッジ群 }).childs([
-                        this._拍毎分バッジ,
-                        this._パターンバッジ,
-                    ]),
-                ]),
+                this.ヘッダー,
                 this.進行の帯,
-                this._トラック領域,
+                this.トラック領域,
                 this.永続化,
             ]),
         )
     }
 
-    public 表示を更新する(楽曲: 楽曲, 選択中パターン名乗り: string | null): void {
-        const 表示名 = `${楽曲.表示名} (${楽曲.名乗り})`
-        this._タイトル要素.clearChildren().child(span({ text: 表示名 })).setTooltip(表示名)
-        this._拍毎分バッジ.clearChildren().child(span({ text: `BPM: ${楽曲.拍毎分}` }))
+    public 升目操作を配線する(
+        on升目押下: (当たり: 升目の当たりの記録, ボタン: number) => void,
+        on升目進入: (当たり: 升目の当たりの記録) => void,
+    ): void {
+        this.トラック領域.升目操作を配線する(on升目押下, on升目進入)
+    }
 
+    public 表示を更新する(
+        楽曲: 楽曲,
+        選択中パターン名乗り: string | null,
+        進行の外モードか: boolean = false,
+        ドラッグ見込み: 打ち込みドラッグ見込み | null = null,
+    ): void {
         const パターン = 選択中パターン名乗り === null
             ? 楽曲.パターン一覧[0]
             : 楽曲.パターン一覧.find((p) => p.名乗り === 選択中パターン名乗り)
 
+        this.ヘッダー.表示を更新する(楽曲, パターン?.表示名 ?? null, 進行の外モードか)
+
         if (パターン === undefined) {
-            this._パターンバッジ.clearChildren().child(span({ text: 'パターン: なし' }))
-            this._トラック領域.clearChildren()
+            this.進行の帯.表示を更新する([])
+            this.トラック領域.表示を更新する(楽曲, undefined, ドラッグ見込み)
             return
         }
 
-        this._パターンバッジ.clearChildren().child(span({ text: `パターン: ${パターン.表示名}` }))
         const パターン和音一覧 = コード進行参照から和音一覧を解決する(パターン.進行の参照, 楽曲.独自進行一覧)
         this.進行の帯.表示を更新する(パターン和音一覧)
-
-        this.トラックブロック一覧を同期する(楽曲)
-        for (let 位置 = 0; 位置 < 楽曲.トラック構成.length; 位置++) {
-            const トラック = 楽曲.トラック構成[位置]
-            const トラック格子 = パターン.格子[位置]
-            const ブロック = this._トラックブロック一覧[位置]
-            if (トラック === undefined || トラック格子 === undefined || ブロック === undefined) continue
-
-            const トラック和音一覧 = トラックに適用される和音一覧を解決する(
-                トラック,
-                パターン.進行の参照,
-                楽曲.独自進行一覧,
-            )
-            ブロック.表示を更新する(トラック, トラック格子, トラック和音一覧)
-        }
-    }
-
-    private トラックブロック一覧を同期する(楽曲: 楽曲): void {
-        if (this._トラックブロック一覧.length === 楽曲.トラック構成.length) return
-        for (const ブロック of this._トラックブロック一覧) ブロック.delete()
-        this._トラック領域.clearChildren()
-        this._トラックブロック一覧 = 楽曲.トラック構成.map((トラック) => {
-            const ブロック = new トラックブロック部品(トラック)
-            this._トラック領域.child(ブロック)
-            return ブロック
-        })
+        this.トラック領域.表示を更新する(楽曲, パターン, ドラッグ見込み)
     }
 
     public override delete(): void {
+        this.ヘッダー.delete()
         this.進行の帯.delete()
+        this.トラック領域.delete()
         this.永続化.delete()
-        for (const ブロック of this._トラックブロック一覧) ブロック.delete()
         super.delete()
     }
 }

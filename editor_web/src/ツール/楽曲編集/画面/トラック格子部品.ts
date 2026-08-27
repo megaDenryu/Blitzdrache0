@@ -9,6 +9,8 @@ import {
     数値からセルへ変換する,
     トラックの行の音はステップで許されるか,
 } from '../編集モデル/index.ts'
+import { 見込みを反映したセルを計算する } from './見込みセル計算.ts'
+import type { 打ち込みドラッグ見込み, 升目の当たりの記録 } from './打ち込み見込み.ts'
 import { 格子枠, 行枠, 行見出し, 升目列 } from './スタイル.css.ts'
 import { 打ち込み升目部品 } from './打ち込み升目部品.ts'
 import { トラック行の表示名 } from './音名表示.ts'
@@ -18,7 +20,13 @@ export class トラック格子部品 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     private readonly _行升目一覧: 打ち込み升目部品[][] = []
 
-    public constructor(トラック: トラック定義) {
+    public constructor(
+        トラック: トラック定義,
+        トラックの位置: number,
+        パターンの名乗り取得: () => string,
+        on升目押下: (当たり: 升目の当たりの記録, ボタン: number) => void,
+        on升目進入: (当たり: 升目の当たりの記録) => void,
+    ) {
         super()
         this._componentRoot = div({ class: 格子枠 })
         const 行数 = トラック.音の並び.値.length
@@ -29,7 +37,16 @@ export class トラック格子部品 extends LV2HtmlComponentBase {
             const 升目一覧: 打ち込み升目部品[] = []
 
             for (let ステップ = 0; ステップ < パターンのステップ数; ステップ++) {
-                升目一覧.push(new 打ち込み升目部品(ステップ))
+                const 升目 = new 打ち込み升目部品(ステップ)
+                const 当たりを作る = (): 升目の当たりの記録 => ({
+                    パターンの名乗り: パターンの名乗り取得(),
+                    トラックの位置,
+                    行の位置: 行位置,
+                    ステップ,
+                })
+                升目.onポインタ押下((ボタン) => on升目押下(当たりを作る(), ボタン))
+                升目.onポインタ進入(() => on升目進入(当たりを作る()))
+                升目一覧.push(升目)
             }
             this._行升目一覧.push(升目一覧)
 
@@ -43,6 +60,9 @@ export class トラック格子部品 extends LV2HtmlComponentBase {
         トラック: トラック定義,
         トラック格子: トラックの格子,
         和音一覧: readonly 和音[] | null,
+        パターンの名乗り: string,
+        トラックの位置: number,
+        ドラッグ見込み: 打ち込みドラッグ見込み | null,
     ): void {
         const 行数 = トラック.音の並び.値.length
         for (let 行位置 = 0; 行位置 < 行数; 行位置++) {
@@ -55,7 +75,14 @@ export class トラック格子部品 extends LV2HtmlComponentBase {
                 const 升目部品 = 升目一覧[ステップ]
                 if (生値 === undefined || 升目部品 === undefined) continue
 
-                const 対象セル = 数値からセルへ変換する(生値)
+                const 対象セル = 見込みを反映したセルを計算する(
+                    数値からセルへ変換する(生値),
+                    パターンの名乗り,
+                    トラックの位置,
+                    行位置,
+                    ステップ,
+                    ドラッグ見込み,
+                )
                 const 許されるか = トラックの行の音はステップで許されるか(
                     トラック,
                     行位置,
@@ -67,3 +94,5 @@ export class トラック格子部品 extends LV2HtmlComponentBase {
         }
     }
 }
+
+
