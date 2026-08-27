@@ -8,6 +8,7 @@ workspace = true
 
 [dependencies]
 blitz_assembly = { path = "../blitz_assembly" }
+blitz_collision = { path = "../blitz_collision" }
 blitz_engine = { path = "../blitz_engine" }
 blitz_math = { path = "../blitz_math" }
 thiserror = { workspace = true }

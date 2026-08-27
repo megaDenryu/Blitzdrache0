@@ -5,7 +5,6 @@
 
 pub(crate) mod ground_height;
 pub(crate) mod ground_object;
-pub(crate) mod ground_surface;
 pub(crate) mod lod_bake;
 mod lod_level;
 mod skirt;
