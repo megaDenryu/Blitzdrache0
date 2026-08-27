@@ -8,8 +8,11 @@ mod cell_position;
 mod distant_stable_id;
 mod error;
 mod field;
+mod field_corner_source;
 mod field_ground_surface;
+mod field_segment;
 mod grid_index;
+mod grid_origin_frame;
 mod ground_surface;
 mod ground_surface_query_result;
 #[cfg(test)]
@@ -19,11 +22,15 @@ pub(crate) mod height_field_tests;
 mod load_error;
 mod query_result;
 mod reader;
+mod segment_hit;
+mod segment_query_result;
+#[cfg(test)]
+mod segment_tests;
 mod specification;
 mod stable_id;
 mod triangle_location;
 
-pub use blitz_collision::height_field::升目の三角形;
+pub use blitz_collision::height_field::{升目の三角形, 線分の問い合わせエラー, 線分の媒介変数};
 pub use distant_stable_id::世界の遠景地形の安定IDの綴り;
 pub use error::高さ場エラー;
 pub use field::高さ場;
@@ -32,6 +39,8 @@ pub use ground_surface_query_result::地表の面の問い合わせ結果;
 pub use load_error::高さ場読込エラー;
 pub use query_result::地表高さの問い合わせ結果;
 pub use reader::高さ場の読み口;
+pub use segment_hit::{線分が最初に当たる地表, 線分と地表の当たり};
+pub use segment_query_result::線分が最初に当たる地表の問い合わせ結果;
 pub use specification::高さ場諸元;
 pub use stable_id::世界の高さ場の安定IDの綴り;
 pub use triangle_location::地表の三角形の所在;
