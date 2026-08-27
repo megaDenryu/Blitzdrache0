@@ -33,7 +33,7 @@ pub(super) struct フレームスロット資源 {
     pub(super) スロット: フレームスロット添字,
     pub(super) フェンス: vk::Fence,
     pub(super) 取得セマフォ: vk::Semaphore,
-    pub(super) command_buffer: vk::CommandBuffer,
+    pub(super) コマンドバッファ: vk::CommandBuffer,
 }
 
 impl フレーム進行 {
@@ -43,7 +43,7 @@ impl フレーム進行 {
             スロット,
             フェンス: self.フレーム同期.フェンス(スロット),
             取得セマフォ: self.フレーム同期.取得セマフォ(スロット),
-            command_buffer: self.コマンド一式.スロットのコマンドバッファ(スロット.配列添字()),
+            コマンドバッファ: self.コマンド一式.スロットのコマンドバッファ(スロット.配列添字()),
         }
     }
 
@@ -55,7 +55,7 @@ impl フレーム進行 {
         クエリプール: Option<vk::QueryPool>,
     ) -> Result<フレームのGPU命令を積むコマンドバッファ<'_>, レンダラーエラー> {
         self.記録の実行環境
-            .フレームのgpu命令を積み始める(スロット資源.command_buffer, クエリプール)
+            .フレームのgpu命令を積み始める(スロット資源.コマンドバッファ, クエリプール)
     }
 
     /// 直近に描き終えたスロット。巡回は提示したフレームの後に次のスロットへ進むため、1つ前が最後に書いたスロットである。

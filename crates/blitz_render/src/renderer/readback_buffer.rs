@@ -22,9 +22,9 @@ impl レンダラー {
             return Ok(());
         }
         if let Some(古い) = self.読み戻しバッファ.take() {
-            古い.破棄する(self.環境.device());
+            古い.破棄する(self.gpu環境.device());
         }
-        let 確保係 = self.環境.資源の確保係を貸す();
+        let 確保係 = self.gpu環境.資源の確保係を貸す();
         self.読み戻しバッファ = Some(vulkan::readback::読み戻しバッファ::生成する(&確保係, 必要バイト数)?);
         Ok(())
     }
@@ -40,6 +40,6 @@ impl レンダラー {
             .読み戻しバッファ
             .as_ref()
             .unwrap_or_else(|| panic!("提示成功時に読み戻しバッファが未確保だった"));
-        読み戻し画像の読み出し元::生成する(self.環境.device(), バッファ, self.提示.寸法())
+        読み戻し画像の読み出し元::生成する(self.gpu環境.device(), バッファ, self.提示.寸法())
     }
 }

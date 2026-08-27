@@ -11,7 +11,7 @@ use crate::vulkan::post_process::ポスト処理一式;
 impl レンダラー {
     pub(super) fn 提示先を組み立てる(&self, 取得済み: &取得済み提示, 提示id: Option<u64>) -> 提示先<'_> {
         提示先 {
-            loader: self.環境.swapchain_loader(),
+            loader: self.gpu環境.swapchain_loader(),
             swapchain: 取得済み.スワップチェーン(),
             画像添字: 取得済み.画像添字(),
             提示id,
