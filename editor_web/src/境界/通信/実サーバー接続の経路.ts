@@ -28,3 +28,11 @@ export function 建物一覧パスを組み立てる(基底URL: string): string 
 export function 建物の格子パスを組み立てる(基底URL: string, 建物定義ID: string): string {
     return `${基底URL}/api/建物/${encodeURIComponent(建物定義ID)}/格子`
 }
+
+export function 楽曲一覧パスを組み立てる(基底URL: string): string {
+    return `${基底URL}/api/楽曲一覧`
+}
+
+export function 楽曲パスを組み立てる(基底URL: string, 楽曲ID: string): string {
+    return `${基底URL}/api/楽曲/${encodeURIComponent(楽曲ID)}`
+}

@@ -4,6 +4,8 @@ export type { 建物外形カタログ接続 } from './建物外形カタログ�
 export { 建物外形カタログ接続か } from './建物外形カタログ接続.ts'
 export type { 建物の格子接続 } from './建物の格子接続.ts'
 export { 建物の格子接続か } from './建物の格子接続.ts'
+export type { 楽曲接続 } from './楽曲接続.ts'
+export { 楽曲接続か } from './楽曲接続.ts'
 export type { 読込結果, 保存結果, 書き出し結果, サーバーエラー } from './サーバー通信結果.ts'
 export { 読込成功, 読込無し, 読込失敗, 保存成功, 保存失敗, 書き出し成功, 書き出し失敗 } from './サーバー通信結果.ts'
 export { 実サーバー接続 } from './実サーバー接続.ts'
@@ -13,6 +15,8 @@ export { チャンク構造をJSON文字列へ直列化する, JSON文字列か�
 export { チャンク座標キーを生成する } from './チャンク座標キー.ts'
 export { 建物定義IDを生成する } from '../建物定義ID.ts'
 export type { 建物定義ID } from '../建物定義ID.ts'
+export { 楽曲IDを生成する } from '../楽曲ID.ts'
+export type { 楽曲ID } from '../楽曲ID.ts'
 export type {
     チャンク座標,
     大域世界構造,
@@ -30,4 +34,16 @@ export type {
     壁の外面の飾り,
     升目の床,
     升目の屋根,
+    楽曲,
+    トラック定義,
+    パターン,
+    曲の節,
+    和音,
+    コード進行,
+    ミキサー設定,
+    楽器,
+    打楽器の種類,
+    トラックの種類,
+    コード進行参照,
+    音の並び,
 } from '../../生成/編集資源契約.ts'

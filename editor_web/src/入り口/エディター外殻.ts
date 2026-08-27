@@ -8,14 +8,13 @@ import { 設定パネル } from './設定/index.ts'
 import { テーマ管理サービス } from './テーマ/index.ts'
 import { 起動時タブ計画を立てる } from './起動時タブ計画.ts'
 import { 建物の一覧サービス } from './エディター外殻/建物の一覧サービス.ts'
+import { 楽曲の一覧サービス } from './エディター外殻/楽曲の一覧サービス.ts'
 import { エクスプローラーとタブを結ぶ } from './エディター外殻/エクスプローラーとタブを結ぶ.ts'
 import { エクスプローラーアクティビティID, 設定アクティビティID, シェルを構築する } from './エディター外殻/シェルを構築する.ts'
 import { タブ開閉サービス } from './エディター外殻/タブ開閉サービス.ts'
 import { 外殻ルート } from './スタイル.css.ts'
 
-// エクスプローラーと文書タブ形式で大域世界およびチャンク編集ツールを統括する外殻。
-// 可変カラーテーマ機構を保持し、設定パネルからのテーマ切り替えおよびlocalStorage復元を管理する。
-// タブを開く/選択が変わったときの同期はエディター外殻/タブ開閉サービス.ts が持つ。
+// エクスプローラーと文書タブ形式で大域世界およびチャンク・建物・楽曲編集ツールを統括する外殻。
 export class エディター外殻 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     public readonly シェル: 外殻レイアウト
@@ -26,6 +25,7 @@ export class エディター外殻 extends LV2HtmlComponentBase {
     private readonly _インスペクタースロット: DivC = div().setStyleCSS({ width: '100%', height: '100%', overflowY: 'auto' })
     private readonly _タブ開閉: タブ開閉サービス
     private readonly _建物の一覧: 建物の一覧サービス
+    private readonly _楽曲の一覧: 楽曲の一覧サービス
     private readonly _テーマ購読解除: () => void
 
     public constructor(保管庫?: プロジェクト保管庫接続) {
@@ -41,11 +41,12 @@ export class エディター外殻 extends LV2HtmlComponentBase {
         )
 
         this._建物の一覧 = new 建物の一覧サービス(this.保管庫, this._エクスプローラー, this._タブ開閉)
+        this._楽曲の一覧 = new 楽曲の一覧サービス(this.保管庫, this._エクスプローラー, this._タブ開閉)
 
         this.シェル.左サイドバーへビューを登録する(エクスプローラーアクティビティID, this._エクスプローラー)
         this.シェル.左サイドバーへビューを登録する(設定アクティビティID, this._設定パネル)
 
-        エクスプローラーとタブを結ぶ(this.シェル, this._エクスプローラー, this._タブ開閉, this._建物の一覧)
+        エクスプローラーとタブを結ぶ(this.シェル, this._エクスプローラー, this._タブ開閉, this._建物の一覧, this._楽曲の一覧)
 
         // ルート要素へのCSS変数の初期一括適用
         this.テーマ管理.DOMへ適用する(初期テーマ)
@@ -56,9 +57,8 @@ export class エディター外殻 extends LV2HtmlComponentBase {
         })
 
         this._componentRoot = div({ class: 外殻ルート }).child(this.シェル)
-        // 起動時に開くタブの並びは、大域世界を開いた後の状態を見て後追いで判定するのではなく、
-        // 使い方ガイドの閲覧記録だけから先に決める(起動シーケンスの途中経過に依存させない)。
         void this._建物の一覧.読み直す()
+        void this._楽曲の一覧.読み直す()
         for (const タブ種別 of 起動時タブ計画を立てる(使い方を閲覧済みか())) {
             if (タブ種別 === '大域世界') {
                 this._タブ開閉.大域世界を開く()

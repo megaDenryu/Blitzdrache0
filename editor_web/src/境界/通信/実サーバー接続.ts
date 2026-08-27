@@ -1,7 +1,9 @@
-import type { 大域世界構造, チャンク座標, チャンク構造, マテリアル台帳, 建物の格子, 建物の格子の一覧項目, 建物外形カタログ } from '../../生成/編集資源契約.ts'
+import type { 大域世界構造, チャンク座標, チャンク構造, マテリアル台帳, 建物の格子, 建物の格子の一覧項目, 建物外形カタログ, 楽曲 } from '../../生成/編集資源契約.ts'
 import type { 建物外形カタログ接続 } from './建物外形カタログ接続.ts'
 import type { 建物の格子接続 } from './建物の格子接続.ts'
+import type { 楽曲接続 } from './楽曲接続.ts'
 import type { 建物定義ID } from '../建物定義ID.ts'
+import type { 楽曲ID } from '../楽曲ID.ts'
 import type { プロジェクト保管庫接続 } from './プロジェクト保管庫接続.ts'
 import type { ソースアセット書き出し接続 } from './ソースアセット書き出し接続.ts'
 import type { 読込結果, 保存結果, 書き出し結果 } from './サーバー通信結果.ts'
@@ -11,12 +13,13 @@ import * as 大域世界要求 from './大域世界要求.ts'
 import * as チャンク資源要求 from './チャンク資源要求.ts'
 import * as マテリアル台帳要求 from './マテリアル台帳要求.ts'
 import * as 建物の格子要求 from './建物の格子要求.ts'
+import * as 楽曲要求 from './楽曲要求.ts'
 import { 書き出しパスを組み立てる } from './実サーバー接続の経路.ts'
 
 // crates/editor_server（127.0.0.1:7901）への実通信を行う境界実装。
 // ブラウザではViteプロキシ越しの相対/api経路を用い、Nodeヘッドレスでは基底URLを受け取って接続する。
 // 資源ごとの経路と検証の組み合わせは`*要求.ts`の各束が持ち、この型は基底URLを保持して束ねるだけである。
-export class 実サーバー接続 implements プロジェクト保管庫接続, ソースアセット書き出し接続, 建物外形カタログ接続, 建物の格子接続 {
+export class 実サーバー接続 implements プロジェクト保管庫接続, ソースアセット書き出し接続, 建物外形カタログ接続, 建物の格子接続, 楽曲接続 {
     private readonly _基底URL: string
 
     public constructor(基底URL: string = '') {
@@ -85,6 +88,18 @@ export class 実サーバー接続 implements プロジェクト保管庫接続,
 
     public 建物外形カタログを読む(): Promise<読込結果<建物外形カタログ>> {
         return 建物外形カタログ要求.建物外形カタログを読む(this._基底URL)
+    }
+
+    public 楽曲一覧を読む(): Promise<読込結果<楽曲ID[]>> {
+        return 楽曲要求.楽曲一覧を読む(this._基底URL)
+    }
+
+    public 楽曲を読む(楽曲ID: 楽曲ID): Promise<読込結果<楽曲>> {
+        return 楽曲要求.楽曲を読む(this._基底URL, 楽曲ID)
+    }
+
+    public 楽曲を保存する(楽曲: 楽曲): Promise<保存結果> {
+        return 楽曲要求.楽曲を保存する(this._基底URL, 楽曲)
     }
 
     public ソースアセットへ書き出す(世界名?: string): Promise<書き出し結果> {

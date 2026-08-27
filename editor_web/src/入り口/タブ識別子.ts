@@ -1,5 +1,5 @@
 import type { チャンク座標 } from '../境界/通信/index.ts'
-import { 大域世界表示名, 建物定義IDを生成する, type 建物定義ID } from '../境界/index.ts'
+import { 大域世界表示名, 建物定義IDを生成する, type 建物定義ID, 楽曲IDを生成する, type 楽曲ID } from '../境界/index.ts'
 
 // エディタータブの一意識別子。JSのMapは参照等価のため、Mapのキーには`綴り()`が返す
 // stringを使う(生値へ剥がすのはMapを持つ側の境界1箇所に閉じる)。
@@ -20,6 +20,10 @@ export class タブ識別子 {
 
     public static 建物から生成する(建物定義ID: 建物定義ID): タブ識別子 {
         return new タブ識別子(`建物_${建物定義ID}`)
+    }
+
+    public static 楽曲から生成する(楽曲ID: 楽曲ID): タブ識別子 {
+        return new タブ識別子(`楽曲_${楽曲ID}`)
     }
 
     public static チャンクから生成する(座標: チャンク座標): タブ識別子 {
@@ -48,6 +52,13 @@ export class タブ識別子 {
         if (!this._綴り.startsWith('建物_')) return null
         const 綴り = this._綴り.slice('建物_'.length)
         return 綴り === '' ? null : 建物定義IDを生成する(綴り)
+    }
+
+    // タブ識別子が楽曲のものであれば楽曲IDを復元する。楽曲以外の識別子ならnull。
+    public 楽曲IDを復元する(): 楽曲ID | null {
+        if (!this._綴り.startsWith('楽曲_')) return null
+        const 綴り = this._綴り.slice('楽曲_'.length)
+        return 綴り === '' ? null : 楽曲IDを生成する(綴り)
     }
 
     public 綴り(): string {

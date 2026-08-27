@@ -1,9 +1,10 @@
 import type { DivC, HtmlComponentBase } from 'sengen-ui'
 import type { 外殻レイアウト } from 'VscodeShellLayout'
-import type { プロジェクト保管庫接続, チャンク座標, 建物の格子接続, 建物定義ID } from '../../境界/通信/index.ts'
+import type { プロジェクト保管庫接続, チャンク座標, 建物の格子接続, 建物定義ID, 楽曲接続, 楽曲ID } from '../../境界/通信/index.ts'
 import { 大域世界表示名, チャンク表示名を生成する } from '../../境界/index.ts'
 import { チャンク編集ツール } from '../../ツール/チャンク編集/index.ts'
 import { 建物編集ツール } from '../../ツール/建物編集/index.ts'
+import { 楽曲編集ツール } from '../../ツール/楽曲編集/index.ts'
 import { 大域編集ツール } from '../../ツール/大域編集/index.ts'
 import { マテリアル台帳ツール } from '../../ツール/マテリアル/index.ts'
 import type { エクスプローラーパネル } from '../エクスプローラー/index.ts'
@@ -24,7 +25,7 @@ export class タブ開閉サービス {
         private readonly _シェル: 外殻レイアウト,
         private readonly _エクスプローラー: エクスプローラーパネル,
         private readonly _インスペクタースロット: DivC,
-        private readonly _保管庫: プロジェクト保管庫接続 & 建物の格子接続,
+        private readonly _保管庫: プロジェクト保管庫接続 & 建物の格子接続 & 楽曲接続,
         private readonly _テーマ管理: テーマ管理サービス,
     ) {}
 
@@ -44,11 +45,16 @@ export class タブ開閉サービス {
         })
     }
 
-    // 建物1件の格子を編集するタブを開く。保管庫の接続が格子の口を持たないときは、
-    // ツールの内側で明示の失敗として画面へ出る(無言で編集できないタブにはしない)。
+    // 建物1件の格子を編集するタブを開く。
     public 建物を開く(建物定義ID: 建物定義ID, 表示名: string): void {
         const 綴り = タブ識別子.建物から生成する(建物定義ID).綴り()
         this.タブを開くか選ぶ(綴り, 表示名, () => new 建物編集ツール(建物定義ID, 表示名, this._保管庫))
+    }
+
+    // 楽曲1件の編集タブを開く。
+    public 楽曲を開く(楽曲ID: 楽曲ID, 表示名: string): void {
+        const 綴り = タブ識別子.楽曲から生成する(楽曲ID).綴り()
+        this.タブを開くか選ぶ(綴り, 表示名, () => new 楽曲編集ツール(楽曲ID, 表示名, this._保管庫))
     }
 
     public マテリアルを開く(): void {
