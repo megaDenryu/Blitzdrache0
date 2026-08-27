@@ -7,8 +7,9 @@ import type { 楽曲編集UI状態 } from './楽曲編集UI状態.ts'
 import { 楽曲編集ポインタ振り分け } from './楽曲編集ポインタ振り分け.ts'
 import type { 楽曲編集状態 } from './編集モデル/index.ts'
 import type { 楽曲編集画面 } from './画面/index.ts'
+import { 楽曲編集パネル群を配線する } from './パネル配線.ts'
 
-// 楽曲編集画面のイベント（ポインタ打ち込み・キーボード・永続化）を配線する。
+// 楽曲編集画面のイベント（ポインタ打ち込み・キーボード・パネル群・永続化）を配線する。
 export function 楽曲編集イベントを配線する(
     画面: 楽曲編集画面,
     状態: 楽曲編集状態,
@@ -50,6 +51,7 @@ export function 楽曲編集イベントを配線する(
     window.addEventListener('pointercancel', ポインタキャンセル処理)
 
     const キー解除 = 楽曲編集キーボード入力を配線する(UI状態, 操作, 表示を再構築する)
+    楽曲編集パネル群を配線する(画面, 状態, 操作, 表示を再構築する)
 
     const 保存する = async (): Promise<パネル操作結果> => {
         const 結果 = await 接続.楽曲を保存する(状態.楽曲を取得する())
