@@ -4,10 +4,15 @@
 //! 語彙が諸元・問い合わせ結果・読み口・3種類の失敗と多いため、クレート直下へ平坦に再エクスポートせずモジュールごと公開する。
 //! 参照: `_doc/計画/ユビキタス言語.md`「高さ場」、`_doc/設計/ゲーム制作アーキテクチャ.md`「判断7: 地図の正本を持ち、生成は2系統に分ける」
 
+mod capsule_contact;
+mod capsule_query_result;
+#[cfg(test)]
+mod capsule_tests;
 mod cell_position;
 mod distant_stable_id;
 mod error;
 mod field;
+mod field_capsule;
 mod field_corner_source;
 mod field_ground_surface;
 mod field_segment;
@@ -30,7 +35,11 @@ mod specification;
 mod stable_id;
 mod triangle_location;
 
-pub use blitz_collision::height_field::{升目の三角形, 線分の問い合わせエラー, 線分の媒介変数};
+pub use blitz_collision::height_field::{
+    カプセルの掃引の問い合わせエラー, 升目の三角形, 升目の隅, 地表に触れた特徴, 掃引で動けた割合, 線分の問い合わせエラー, 線分の媒介変数,
+};
+pub use capsule_contact::{カプセルと地表の接触, 掃引したカプセルが最初に触れる地表};
+pub use capsule_query_result::掃引したカプセルが最初に触れる地表の問い合わせ結果;
 pub use distant_stable_id::世界の遠景地形の安定IDの綴り;
 pub use error::高さ場エラー;
 pub use field::高さ場;
