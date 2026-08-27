@@ -10,7 +10,7 @@
 //! 大域材質IDだけを持つ(参照: `_doc/設計/GPU資源束縛の分離と索引化.md`「材質レコードとテクスチャ台帳」)。
 //! 確保の局面は`create`、そのフレームぶんのGPUへの書き込みの局面は`frame_write`、
 //! 個体レコードの置き場は`instance_record_storage`、可視ID列の置き場は`visible_id_source`、
-//! スロット別の材質IDは`slot_material_ids`、材質スロット番号の解決は`slot_binding`、
+//! スロット別の材質IDは`slot_material_ids`、材質スロット番号からの参照は`slot_binding`、
 //! 書き込む列の中身の検査は`visible_id_content`とその既出記録`seen_record`にある。
 //! `段別ジオメトリ`の段の選択は、詳細段の昇順に並んだ列から1本を選ぶだけであり、確保も解放も伴わない。
 //! `スロット別材質id`からは、プリミティブ描画発行が指すスロット番号で1件を選ぶ。
