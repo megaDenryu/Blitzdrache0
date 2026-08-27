@@ -17,6 +17,7 @@ mod rotation_error;
 mod rotation_from_axes;
 #[cfg(test)]
 mod rotation_from_axes_tests;
+mod signed_axis;
 mod space;
 mod transform;
 mod transform_construct;
@@ -34,5 +35,6 @@ pub use pixel_jitter::{画素内ずらし, 画素内ずらしエラー};
 pub use position::位置;
 pub use rotation::クォータニオン;
 pub use rotation_error::クォータニオンエラー;
+pub use signed_axis::符号付きの座標軸;
 pub use space::{クリップ, ビュー, ローカル, ワールド, 光源クリップ, 点光源の面クリップ, 空間, 部品ローカル};
 pub use transform::変換;
