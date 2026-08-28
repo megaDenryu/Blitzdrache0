@@ -36,6 +36,10 @@ mod segment_feature;
 #[cfg(test)]
 mod segment_feature_tests;
 mod segment_hit;
+mod segment_in_plane;
+#[cfg(test)]
+mod segment_in_plane_tests;
+mod segment_plane_relation;
 mod segment_query;
 #[cfg(test)]
 mod segment_tests;
