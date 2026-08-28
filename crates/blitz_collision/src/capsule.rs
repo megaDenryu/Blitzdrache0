@@ -38,6 +38,11 @@
 //! 隔たりの二乗の側だけが0へ潰れる入力は残るが、それが起こるのは真の隔たりが半径の和の10の140乗分の1を
 //! 下回るときであるから、触れていると判ずるその答えが正しい。下限とその算術は
 //! `crates/blitz_collision/src/shape/capsule_radius_lower_limit.rs` にある。
+//!
+//! 押し戻す向きは、軸の上の最近接点から掃引する軸へ向かう変位を長さ1へ正して作る。正す工程が成分の尺度を
+//! 最も大きい絶対値で揃えてから長さを求めるため、10のマイナス200乗メートル級の隔たりでも向きが定まる
+//! (`crates/blitz_collision/src/shape/local_displacement_direction.rs`)。向きが定まらないのは3つの成分が
+//! すべて0のとき、すなわち2つの軸がちょうど交わるときだけである。
 
 mod error;
 mod feature;
@@ -56,6 +61,8 @@ mod sweep_solver;
 mod sweep_start_tests;
 #[cfg(test)]
 mod sweep_tests;
+#[cfg(test)]
+mod sweep_tiny_scale_tests;
 
 pub use error::カプセルの問い合わせエラー;
 pub use feature::静止したカプセルで触れた特徴;
