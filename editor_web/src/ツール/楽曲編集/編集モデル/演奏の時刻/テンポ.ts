@@ -1,4 +1,4 @@
-import { 拍毎分の下限, 拍毎分の上限 } from '../../../../生成/編集資源契約.ts'
+import { テンポの下限, テンポの上限 } from '../../../../生成/編集資源契約.ts'
 import { ステップ } from './ステップ.ts'
 import { 秒数 } from './秒数.ts'
 
@@ -10,14 +10,14 @@ const 拍あたりのステップ数 = 4
 const 境目の丸めを吸収する幅 = 1e-9
 
 // 1分あたりの拍の数を表す値オブジェクト。ステップから秒への変換はこの型だけが持つ。
-export class 拍毎分 {
+export class テンポ {
     private constructor(private readonly _値: number) {}
 
-    public static 生成する(値: number): 拍毎分 {
-        if (!Number.isInteger(値) || 値 < 拍毎分の下限 || 値 > 拍毎分の上限) {
-            throw new Error(`拍毎分は${拍毎分の下限}以上${拍毎分の上限}以下の整数でなければなりません: ${値}`)
+    public static 生成する(値: number): テンポ {
+        if (!Number.isInteger(値) || 値 < テンポの下限 || 値 > テンポの上限) {
+            throw new Error(`テンポは${テンポの下限}以上${テンポの上限}以下の整数でなければなりません: ${値}`)
         }
-        return new 拍毎分(値)
+        return new テンポ(値)
     }
 
     // ステップ1つ分の長さ。60秒を拍の数で割り、さらに1拍のステップ数で割る。
@@ -34,7 +34,7 @@ export class 拍毎分 {
         return ステップ.生成する(Math.floor(経過.何回分か(this.ステップ1つ分の秒数()) + 境目の丸めを吸収する幅))
     }
 
-    public 同じか(他: 拍毎分): boolean {
+    public 同じか(他: テンポ): boolean {
         return this._値 === 他._値
     }
 

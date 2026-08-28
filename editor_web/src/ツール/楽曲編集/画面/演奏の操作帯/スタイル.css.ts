@@ -19,7 +19,7 @@ export const 操作帯の行 = style({
     gap: '10px',
 })
 
-export const 拍毎分の欄 = style({
+export const テンポの欄 = style({
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
@@ -27,7 +27,7 @@ export const 拍毎分の欄 = style({
     flex: 1,
 })
 
-export const 拍毎分のつまみ = style({
+export const テンポのつまみ = style({
     flex: 1,
     minWidth: '120px',
     accentColor: エディターCSS変数('アクセント背景'),

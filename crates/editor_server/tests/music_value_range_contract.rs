@@ -16,8 +16,8 @@ fn 定数の行(名前: &str, 値: impl std::fmt::Display) -> String {
 fn 出るはずの行一覧() -> Vec<String> {
     vec![
         定数の行("パターンのステップ数", editor_server::パターンのステップ数),
-        定数の行("拍毎分の下限", editor_server::拍毎分の下限),
-        定数の行("拍毎分の上限", editor_server::拍毎分の上限),
+        定数の行("テンポの下限", editor_server::テンポの下限),
+        定数の行("テンポの上限", editor_server::テンポの上限),
         定数の行("曲の節の繰り返し回数の下限", editor_server::曲の節の繰り返し回数の下限),
         定数の行("曲の節の繰り返し回数の上限", editor_server::曲の節の繰り返し回数の上限),
         定数の行("音高番号の下限", editor_server::音高番号の下限),
@@ -44,14 +44,14 @@ fn 値の範囲の定数は検証が引く値のまま書き出される() {
 /// 検証を通る値と通らない値の境目が、書き出した定数のとおりであることを楽曲1件で確かめる。
 /// 定数だけを直しても検証が付いてこない食い違いを、ここが落とす。
 #[test]
-fn 書き出した拍毎分の境目は検証の境目と一致する() {
-    let 通す = |拍毎分: u32| {
+fn 書き出したテンポの境目は検証の境目と一致する() {
+    let 通す = |テンポ: u32| {
         let mut 対象 = 楽曲の例();
-        対象.拍毎分 = 拍毎分;
+        対象.テンポ = テンポ;
         対象.検証する().is_ok()
     };
-    assert!(通す(editor_server::拍毎分の下限));
-    assert!(通す(editor_server::拍毎分の上限));
-    assert!(!通す(editor_server::拍毎分の下限 - 1));
-    assert!(!通す(editor_server::拍毎分の上限 + 1));
+    assert!(通す(editor_server::テンポの下限));
+    assert!(通す(editor_server::テンポの上限));
+    assert!(!通す(editor_server::テンポの下限 - 1));
+    assert!(!通す(editor_server::テンポの上限 + 1));
 }

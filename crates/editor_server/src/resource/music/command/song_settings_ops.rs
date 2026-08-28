@@ -5,17 +5,17 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::resource::music::value_range::{拍毎分の上限, 拍毎分の下限};
+use crate::resource::music::value_range::{テンポの上限, テンポの下限};
 use crate::resource::numeric_check::整数が範囲内であることを確かめる;
 use crate::resource::text_check::綴りが空でないことを確かめる;
 use crate::resource::validation_error::資源検証エラー;
 use crate::resource::ミキサー設定;
 
-/// 拍毎分を変えるとは、楽曲の速さを新しい値へ差し替える操作コマンドのことである。
+/// テンポを変えるとは、楽曲の速さ(1分あたりの拍の数)を新しい値へ差し替える操作コマンドのことである。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "typescript", derive(ts_rs::TS))]
-pub struct 拍毎分を変える {
-    pub 新しい拍毎分: u32,
+pub struct テンポを変える {
+    pub 新しいテンポ: u32,
 }
 
 /// ミキサー設定を変えるとは、曲全体へ掛かる音量と効果の量を丸ごと差し替える操作コマンドのことである。
@@ -33,13 +33,13 @@ pub struct 楽曲の表示名を変える {
     pub 新しい表示名: String,
 }
 
-impl 拍毎分を変える {
+impl テンポを変える {
     pub(super) fn 検証する(&self) -> Result<(), 資源検証エラー> {
         整数が範囲内であることを確かめる(
-            "楽曲編集コマンド.新しい拍毎分",
-            i64::from(self.新しい拍毎分),
-            i64::from(拍毎分の下限),
-            i64::from(拍毎分の上限),
+            "楽曲編集コマンド.新しいテンポ",
+            i64::from(self.新しいテンポ),
+            i64::from(テンポの下限),
+            i64::from(テンポの上限),
         )
     }
 }

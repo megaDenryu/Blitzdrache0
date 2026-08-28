@@ -71,7 +71,7 @@ async fn 経路と本文の名乗りが食い違うと422を返し正本を作�
 async fn 検証に落ちる楽曲は422を返し種別と説明を持つ() {
     let 一時 = common::一時プロジェクト::生成する("music_put_invalid");
     let mut 不正な楽曲 = 楽曲のjson();
-    不正な楽曲["拍毎分"] = serde_json::json!(10);
+    不正な楽曲["テンポ"] = serde_json::json!(10);
     let 応答 = common::ルーターを作る(&一時)
         .oneshot(
             Request::put("/api/楽曲/試験の楽曲")
@@ -84,7 +84,7 @@ async fn 検証に落ちる楽曲は422を返し種別と説明を持つ() {
     assert_eq!(応答.status(), StatusCode::UNPROCESSABLE_ENTITY);
     let 本文 = 本文を読む(応答).await;
     assert_eq!(本文["種別"], serde_json::json!("構造検証エラー"));
-    assert!(本文["説明"].as_str().unwrap().contains("拍毎分"));
+    assert!(本文["説明"].as_str().unwrap().contains("テンポ"));
 }
 
 #[tokio::test]

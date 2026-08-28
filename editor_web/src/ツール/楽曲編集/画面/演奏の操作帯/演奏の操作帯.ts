@@ -6,7 +6,7 @@ import type { 再生位置, 演奏の知らせ } from '../演奏/index.ts'
 import { 副ボタン, 危険ボタン } from '../パネル/共通/スタイル.css.ts'
 import { 再生と停止のボタン } from './再生と停止のボタン.ts'
 import { 再生位置の表示 } from './再生位置の表示.ts'
-import { 拍毎分の欄 } from './拍毎分の欄.ts'
+import { テンポの欄 } from './テンポの欄.ts'
 import { 演奏の範囲選択欄 } from './演奏の範囲選択欄.ts'
 import { 演奏の知らせの表示 } from './演奏の知らせの表示.ts'
 import { 操作帯の行, 操作帯枠 } from './スタイル.css.ts'
@@ -15,12 +15,12 @@ export interface I演奏の操作帯配線 {
     readonly on再生と停止: () => void
     readonly on先頭へ戻す: () => void
     readonly on演奏の範囲変更: (範囲: 演奏の範囲) => void
-    readonly on拍毎分変更: (新しい拍毎分: number) => void
+    readonly onテンポ変更: (新しいテンポ: number) => void
     readonly on全消去: () => void
     readonly on見本の曲: () => void
 }
 
-// 格子の上に常設する演奏の操作帯。再生と停止・先頭へ戻す・再生位置・演奏の範囲・拍毎分と、
+// 格子の上に常設する演奏の操作帯。再生と停止・先頭へ戻す・再生位置・演奏の範囲・テンポと、
 // 打ち込みをまとめて置き換える2つの操作(全消去・見本の曲)を持つ。
 export class 演奏の操作帯 extends LV2HtmlComponentBase implements I配線可能<I演奏の操作帯配線> {
     protected _componentRoot: DivC
@@ -29,24 +29,24 @@ export class 演奏の操作帯 extends LV2HtmlComponentBase implements I配線�
     private readonly _再生位置: 再生位置の表示 = new 再生位置の表示()
     private readonly _知らせ: 演奏の知らせの表示 = new 演奏の知らせの表示()
     private readonly _範囲選択: 演奏の範囲選択欄
-    private readonly _拍毎分: 拍毎分の欄
+    private readonly _テンポ: テンポの欄
 
     public constructor(初期楽曲: 楽曲, 初期の範囲: 演奏の範囲) {
         super()
         this._範囲選択 = new 演奏の範囲選択欄(初期の範囲)
-        this._拍毎分 = new 拍毎分の欄(初期楽曲.拍毎分)
+        this._テンポ = new テンポの欄(初期楽曲.テンポ)
         this._componentRoot = this._ルートを構築する()
     }
 
     public 配線する(配線: I演奏の操作帯配線): this {
         this._配線.配線する(配線)
-        this._拍毎分.配線する({ on拍毎分変更: (値) => 配線.on拍毎分変更(値) })
+        this._テンポ.配線する({ onテンポ変更: (値) => 配線.onテンポ変更(値) })
         this._範囲選択.onSelectChange(() => 配線.on演奏の範囲変更(this._範囲選択.選ばれた範囲()))
         return this
     }
 
     public 楽曲を反映する(楽曲: 楽曲): void {
-        this._拍毎分.値を設定する(楽曲.拍毎分)
+        this._テンポ.値を設定する(楽曲.テンポ)
     }
 
     public 演奏の様子を反映する(
@@ -70,7 +70,7 @@ export class 演奏の操作帯 extends LV2HtmlComponentBase implements I配線�
         this._再生と停止.delete()
         this._再生位置.delete()
         this._範囲選択.delete()
-        this._拍毎分.delete()
+        this._テンポ.delete()
         super.delete()
     }
 
@@ -86,7 +86,7 @@ export class 演奏の操作帯 extends LV2HtmlComponentBase implements I配線�
                 this._知らせ,
             ]),
             div({ class: 操作帯の行 }).childs([
-                this._拍毎分,
+                this._テンポ,
                 button({ class: 副ボタン, text: '見本の曲を入れる' })
                     .setTooltip('試作と同じ見本の打ち込みを、いま見ているパターンへ入れる')
                     .onClick(() => this._配線.先.on見本の曲()),

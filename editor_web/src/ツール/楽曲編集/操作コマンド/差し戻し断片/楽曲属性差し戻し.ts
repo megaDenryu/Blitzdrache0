@@ -4,9 +4,9 @@ import type {
     楽器,
 } from '../../../../生成/編集資源契約.ts'
 
-export type 拍毎分を変える差し戻し = {
-    readonly 種類: '拍毎分を変える'
-    readonly 変更前拍毎分: number
+export type テンポを変える差し戻し = {
+    readonly 種類: 'テンポを変える'
+    readonly 変更前テンポ: number
 }
 
 export type ミキサー設定を変える差し戻し = {
@@ -38,7 +38,7 @@ export type トラックの進行の割り当てを変える差し戻し = {
 }
 
 export type 楽曲属性差し戻し断片 =
-    | 拍毎分を変える差し戻し
+    | テンポを変える差し戻し
     | ミキサー設定を変える差し戻し
     | 楽曲の表示名を変える差し戻し
     | トラックの楽器を変える差し戻し

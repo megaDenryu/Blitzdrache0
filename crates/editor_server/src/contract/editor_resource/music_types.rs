@@ -26,7 +26,7 @@ pub(super) fn 楽曲の型宣言の並び(設定: &Config) -> [String; 38] {
         <crate::音を伸ばす as TS>::decl(設定),
         <crate::範囲の打点を消す as TS>::decl(設定),
         <crate::パターンの打点を全部消す as TS>::decl(設定),
-        <crate::拍毎分を変える as TS>::decl(設定),
+        <crate::テンポを変える as TS>::decl(設定),
         <crate::ミキサー設定を変える as TS>::decl(設定),
         <crate::楽曲の表示名を変える as TS>::decl(設定),
         <crate::トラックの楽器を変える as TS>::decl(設定),
