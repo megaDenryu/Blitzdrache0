@@ -37,6 +37,8 @@ mod solver_geometry;
 mod surface_triangle;
 mod surface_triangle_inside;
 #[cfg(test)]
+mod sweep_end_tests;
+#[cfg(test)]
 mod sweep_feature_tests;
 mod sweep_hit;
 mod sweep_query;
