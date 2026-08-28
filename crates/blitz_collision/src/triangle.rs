@@ -25,6 +25,7 @@
 //! 1.8かける10の308乗を大きく下回る。数え方の元は `crates/blitz_collision/src/height_field/length_limit.rs`
 //! にある。
 
+mod capsule;
 mod error;
 mod feature;
 #[cfg(test)]
@@ -37,9 +38,28 @@ mod segment_hit;
 mod segment_query;
 #[cfg(test)]
 mod segment_tests;
+mod sweep_candidate;
+mod sweep_contact;
+mod sweep_dispatch;
+#[cfg(test)]
+mod sweep_fixture;
+mod sweep_geometry;
+mod sweep_place;
+mod sweep_query;
+mod sweep_solve_edge;
+mod sweep_solve_edge_axis;
+mod sweep_solve_face;
+mod sweep_solve_vertex;
+mod sweep_solver;
+mod sweep_start_overlap;
+#[cfg(test)]
+mod sweep_tests;
 
+pub use capsule::三角形を掃引するカプセル;
 pub use error::三角形の問い合わせエラー;
 pub use feature::三角形で当たった特徴;
 pub use segment::三角形を貫く線分;
 pub use segment_hit::{三角形への最初の当たり, 線分が三角形に最初に当たる点};
 pub use segment_query::三角形の線分の問い合わせ;
+pub use sweep_contact::{カプセルが三角形に最初に触れる点, 掃引したカプセルの三角形への接触};
+pub use sweep_query::三角形のカプセルの掃引の問い合わせ;
