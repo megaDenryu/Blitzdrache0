@@ -23,6 +23,9 @@ mod box_axis;
 mod box_face_side;
 mod capsule;
 mod capsule_error;
+mod capsule_radius_lower_limit;
+#[cfg(test)]
+mod capsule_radius_lower_limit_tests;
 mod coordinate_limit;
 mod cover_rounding_margin;
 mod error;
@@ -70,6 +73,7 @@ pub use box_axis::直方体自身の座標軸;
 pub use box_face_side::直方体の面の向き;
 pub use capsule::カプセル;
 pub use capsule_error::カプセルの生成エラー;
+pub use capsule_radius_lower_limit::カプセルの半径の下限メートル;
 pub use coordinate_limit::形状の座標の絶対値の上限メートル;
 pub use error::直方体の生成エラー;
 pub use global_axis_aligned_box::大域の軸平行の直方体;

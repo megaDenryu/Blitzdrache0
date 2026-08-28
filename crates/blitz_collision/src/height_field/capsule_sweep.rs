@@ -25,6 +25,9 @@ mod error;
 mod feature;
 #[cfg(test)]
 mod length_limit_arithmetic_tests;
+mod radius_lower_limit;
+#[cfg(test)]
+mod radius_lower_limit_tests;
 mod scanned_range;
 mod solve_edge;
 mod solve_edge_axis;
@@ -54,6 +57,7 @@ pub use capsule::高さ場を掃引するカプセル;
 pub use contact::掃引したカプセルの地表への接触;
 pub use error::カプセルの掃引の問い合わせエラー;
 pub use feature::地表に触れた特徴;
+pub use radius_lower_limit::高さ場を掃引するカプセルの半径の下限メートル;
 pub use scanned_range::掃引の走査が調べた範囲;
 pub use sweep_hit::カプセルが地表に最初に触れる点;
 pub use sweep_query::高さ場のカプセルの掃引の問い合わせ;
