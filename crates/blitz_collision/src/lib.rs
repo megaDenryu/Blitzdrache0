@@ -13,6 +13,7 @@
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
 
+pub mod dynamic_index;
 pub mod height_field;
 pub mod oriented_box;
 pub mod shape;
