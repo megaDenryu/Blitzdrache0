@@ -14,6 +14,7 @@
 #![warn(missing_docs)]
 
 pub mod capsule;
+pub mod contact_set;
 pub mod continuous;
 pub mod dynamic_index;
 pub mod height_field;
