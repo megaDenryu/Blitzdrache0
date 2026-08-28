@@ -1,6 +1,6 @@
 import { div, DivC, LV2HtmlComponentBase } from 'sengen-ui'
-import { 全側面, type 升目の側面 } from '../編集モデル/index.ts'
-import { セクション, セクション見出し, 横並び, 選択ボタン } from './スタイル.css.ts'
+import { 全側面, type 升目の側面 } from '../../編集モデル/index.ts'
+import { セクション, セクション見出し, 横並び, 選択ボタン } from '../スタイル.css.ts'
 
 export interface I入口の向き配線 {
     readonly on入口の向く面を選ぶ: (側面: 升目の側面) => void

@@ -16,6 +16,12 @@ export class タブ管理サービス {
         }
     }
 
+    // 前面にする前のツールを覗く口。前面にすると寸法合わせまで走るため、外殻の区画(インスペクター・
+    // 下パネル)の入れ替えを先に済ませたい呼び出し側が、活性化を伴わずにツールを見るために使う。
+    public ツールを取得する(タブID: string): 実行可能ツール | undefined {
+        return this._ツールマップ.get(タブID)
+    }
+
     public タブを選択する(タブID: string, 幅?: number, 高さ?: number): 実行可能ツール | undefined {
         if (this._前面ツールID === タブID) {
             return this._ツールマップ.get(タブID)

@@ -3,9 +3,13 @@ import type { はめ口の値, 升目の宣言, 升目の座標 } from '../../..
 import { 側面のはめ口を読む, 全側面, type 升目の側面, type 升目を置けない理由 } from '../編集モデル/index.ts'
 import { 升目中央, 升目枠, 右面ボタン, 左面ボタン, 正面ボタン, 背面ボタン, 面ボタン } from './スタイル.css.ts'
 
+// 平面図の触りの割り当て。楽曲の打ち込みと揃えて、左が置く・右が消すである。
+// 参照: `~/.claude/skills/エディター制作` 第7条「操作の割り当ては、編集の種類ごとに1つに決める」
 export interface I升目の配線 {
     readonly on升目を触る: (座標: 升目の座標) => void
+    readonly on升目を消す: (座標: 升目の座標) => void
     readonly on面を触る: (座標: 升目の座標, 側面: 升目の側面) => void
+    readonly on面を消す: (座標: 升目の座標, 側面: 升目の側面) => void
 }
 
 // 1升目を描くのに要る、格子から読んだ事実の組。触ったときに何が起きるかは筆が決めるため、この部品は持たない。
@@ -26,8 +30,9 @@ const 側面ごとの位置: Record<升目の側面, string> = {
 }
 
 // 平面図の1升目。中央が升目そのもの、周囲の4つが面である。升目が無い座標も枠として描くが、
-// 置けない座標(真下に升目が無い上の階・格子から離れた座標)は不活性にして触れなくする。
+// 置けない座標(真下に升目が無い上の階・格子から離れた座標)は左クリックで置けなくする。
 // 置ける場所が画面から読めるようにするためである。
+// 左クリックが選んだ筆を置き、右クリックがその筆に対応するものを消す(楽曲の打ち込みと同じ割り当て)。
 export class 平面図の升目部品 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
 
@@ -41,11 +46,17 @@ export class 平面図の升目部品 extends LV2HtmlComponentBase {
             .setAttribute('data-根', String(見取り.根か))
             .setAttribute('data-選択', String(見取り.選ばれているか))
             .setAttribute('data-触れる', String(触れるか))
-        if (触れるか) 中央.onClick(() => 配線.on升目を触る(見取り.座標))
-        this._componentRoot = div({ class: 升目枠 }).childs([
-            中央,
-            ...全側面.map((側面) => this.面のボタンを作る(見取り, 側面, 配線)),
-        ])
+            .addTypedEventListener('pointerdown', (事象) => {
+                事象.preventDefault()
+                if (事象.button === 0 && 触れるか) 配線.on升目を触る(見取り.座標)
+                if (事象.button === 2) 配線.on升目を消す(見取り.座標)
+            })
+        this._componentRoot = div({ class: 升目枠 })
+            .addTypedEventListener('contextmenu', (事象) => { 事象.preventDefault() })
+            .childs([
+                中央,
+                ...全側面.map((側面) => this.面のボタンを作る(見取り, 側面, 配線)),
+            ])
     }
 
     private 面のボタンを作る(見取り: I升目の見取り, 側面: 升目の側面, 配線: I升目の配線): DivC {
@@ -55,7 +66,11 @@ export class 平面図の升目部品 extends LV2HtmlComponentBase {
         return div({ class: `${面ボタン} ${側面ごとの位置[側面]}` })
             .setTooltip(`${側面}: ${印}${飾りの説明(値)}`)
             .setAttribute('data-壁', 印)
-            .onClick(() => 配線.on面を触る(見取り.座標, 側面))
+            .addTypedEventListener('pointerdown', (事象) => {
+                事象.preventDefault()
+                if (事象.button === 0) 配線.on面を触る(見取り.座標, 側面)
+                if (事象.button === 2) 配線.on面を消す(見取り.座標, 側面)
+            })
     }
 }
 

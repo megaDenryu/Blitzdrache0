@@ -12,6 +12,7 @@ import { 楽曲の一覧サービス } from './エディター外殻/楽曲の�
 import { エクスプローラーの操作をタブへ結ぶ } from './エディター外殻/エクスプローラーの操作をタブへ結ぶ.ts'
 import { シェルの出来事をタブ開閉と領域切替へ結ぶ } from './エディター外殻/シェルの出来事をタブ開閉と領域切替へ結ぶ.ts'
 import { シェルを構築する } from './エディター外殻/シェルを構築する.ts'
+import { 下パネルの差し替え係 } from './エディター外殻/下パネルの差し替え係.ts'
 import { 左サイドバーへ領域と設定を登録する } from './エディター外殻/左サイドバーへ領域と設定を登録する.ts'
 import { タブ開閉サービス } from './エディター外殻/タブ開閉サービス.ts'
 import { 外殻ルート } from './スタイル.css.ts'
@@ -26,6 +27,7 @@ export class エディター外殻 extends LV2HtmlComponentBase {
     private readonly _登録簿: 編集領域登録簿 = new 編集領域登録簿()
     private readonly _設定パネル: 設定パネル
     private readonly _インスペクタースロット: DivC = div().setStyleCSS({ width: '100%', height: '100%', overflowY: 'auto' })
+    private readonly _下パネルスロット: DivC = div().setStyleCSS({ width: '100%', height: '100%' })
     private readonly _タブ開閉: タブ開閉サービス
     private readonly _建物の一覧: 建物の一覧サービス
     private readonly _楽曲の一覧: 楽曲の一覧サービス
@@ -38,9 +40,11 @@ export class エディター外殻 extends LV2HtmlComponentBase {
         this._設定パネル = new 設定パネル(this.テーマ管理)
 
         const 初期テーマ = this.テーマ管理.現在テーマを取得する()
-        this.シェル = シェルを構築する(初期テーマ.vsl配色, this._インスペクタースロット)
+        this.シェル = シェルを構築する(初期テーマ.vsl配色, this._インスペクタースロット, this._下パネルスロット)
         this._タブ開閉 = new タブ開閉サービス(
-            this.シェル, this._登録簿, this._インスペクタースロット, this.保管庫, this.テーマ管理,
+            this.シェル, this._登録簿, this._インスペクタースロット,
+            new 下パネルの差し替え係(this.シェル, this._下パネルスロット),
+            this.保管庫, this.テーマ管理,
         )
         this._建物の一覧 = new 建物の一覧サービス(this.保管庫, this._登録簿.建物のエクスプローラー, this._タブ開閉)
         this._楽曲の一覧 = new 楽曲の一覧サービス(this.保管庫, this._登録簿.楽曲のエクスプローラー, this._タブ開閉)

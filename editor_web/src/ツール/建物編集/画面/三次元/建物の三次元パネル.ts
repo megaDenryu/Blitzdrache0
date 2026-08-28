@@ -2,11 +2,9 @@ import { div, CanvasC, DivC, LV2HtmlComponentBase } from 'sengen-ui'
 import { レイキャスト入力, 描画ループ } from 'SengenThree'
 import type { 升目の座標 } from '../../../../生成/編集資源契約.ts'
 import { 立体の見取りを組み立てる, 見取りの外接箱を求める, type 表示する立体, type 建物の格子の編集モデル } from '../../編集モデル/index.ts'
-import { セクション, セクション見出し, 横並び, 説明文, 選択ボタン } from '../スタイル.css.ts'
 import { 建物のシーンを構築する, type 建物のシーン部品束 } from './建物のシーン構築.ts'
 import { 建物の三次元の入力係, type I三次元の触り } from './建物の三次元の入力係.ts'
-import { 役割の凡例を作る } from './役割の凡例.ts'
-import { 三次元のキャンバス, 三次元の枠, 選択の知らせ } from './三次元表示のスタイル.css.ts'
+import { 操作の案内, 三次元のキャンバス, 三次元の枠 } from './三次元表示のスタイル.css.ts'
 
 function HTMLキャンバスか(要素: HTMLElement): 要素 is HTMLCanvasElement {
     return 'getContext' in 要素
@@ -17,34 +15,24 @@ const 距離の余裕 = 1.3
 
 // 建物の格子を立体として見せるパネル。右ドラッグで回し、中ドラッグで平行移動し、ホイールで寄り引きし、
 // 左クリックで升目を選ぶ(判断13)。視点を動かすためのモードのボタンは持たない。
+// 表示の切替(識別色の重ね・建物ぜんたいを写す)のボタンをこのパネルが持たないのは、それらが
+// エディタ領域の上部の固定の行にある建物ぜんたいの操作帯の持ち物だからである(判断14)。
 // シーンの内訳は`建物のシーン構築`が、入力の配線は`建物の三次元の入力係`が持つ。
-// 参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断13」
+// 参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断13」「判断14」
 export class 建物の三次元パネル extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     private readonly _キャンバス = new CanvasC({ class: 三次元のキャンバス })
     private readonly _シーン: 建物のシーン部品束 = 建物のシーンを構築する()
     private readonly _レイキャスト = new レイキャスト入力()
     private readonly _描画ループ: 描画ループ
-    private readonly _選択の知らせ: DivC = div({ class: 選択の知らせ, text: '升目を選んでいない' })
-    private readonly _識別色の重ねボタン: DivC
     private _入力係: 建物の三次元の入力係 | undefined = undefined
     private _いまの見取り: readonly 表示する立体[] = []
 
     public constructor() {
         super()
-        this._識別色の重ねボタン = div({ class: 選択ボタン, text: '役割の識別色を重ねる' }).setTooltip('役割の識別色を重ねる')
-        this._componentRoot = div({ class: セクション }).childs([
-            div({ class: セクション見出し, text: '三次元表示' }),
-            div({ class: 説明文, text: '右ドラッグで回す。中ドラッグで平行移動。ホイールで寄り引き。左クリックで升目を選ぶ。' }),
-            div({ class: 三次元の枠 }).child(this._キャンバス),
-            this._選択の知らせ,
-            div({ class: 横並び }).childs([
-                div({ class: 選択ボタン, text: '建物ぜんたいを写す' })
-                    .setTooltip('建物ぜんたいを写す')
-                    .onClick(() => this.カメラを見取りへ合わせる()),
-                this._識別色の重ねボタン,
-            ]),
-            役割の凡例を作る(),
+        this._componentRoot = div({ class: 三次元の枠 }).childs([
+            this._キャンバス,
+            div({ class: 操作の案内, text: '右ドラッグで回す。中ドラッグで平行移動。ホイールで寄り引き。左クリックで升目を選ぶ。' }),
         ])
         // 描画ループはここでは回さない。回し始めるのはタブが前面になったときであり、止めるのは背面になったときである
         // (チャンク編集の三次元ビューと同じ運びである)。描画ループは二重開始を例外で拒む。
@@ -53,7 +41,7 @@ export class 建物の三次元パネル extends LV2HtmlComponentBase {
     }
 
     // 人が三次元へ行える触りを結ぶ。ポインタの購読を始めるのもここであり、結ぶのは道具の配線の1回だけである。
-    public 触りを結ぶ(触り: I三次元の触り, on識別色の重ねを切り替える: () => void): void {
+    public 触りを結ぶ(触り: I三次元の触り): void {
         if (this._入力係 !== undefined) throw new Error('建物の三次元パネルの触りは既に結ばれている')
         this._入力係 = new 建物の三次元の入力係(
             {
@@ -65,16 +53,19 @@ export class 建物の三次元パネル extends LV2HtmlComponentBase {
             },
             触り,
         )
-        this._識別色の重ねボタン.onClick(on識別色の重ねを切り替える)
     }
 
     public 再構築する(モデル: 建物の格子の編集モデル, 選んでいる升目: 升目の座標 | undefined, 識別色を重ねるか: boolean): void {
         this._いまの見取り = 立体の見取りを組み立てる(モデル)
         this._シーン.立体.見取りを描き直す(this._いまの見取り, 識別色を重ねるか)
         this._シーン.立体.選んだ升目を示す(選んでいる升目)
-        this._識別色の重ねボタン.setAttribute('data-selected', String(識別色を重ねるか))
-        this._選択の知らせ.setTextContent(選択の文言(選んでいる升目))
         if (this._入力係 === undefined || !this._入力係.視点を人が動かしたか) this.カメラを見取りへ合わせる()
+    }
+
+    // 視点を建物ぜんたいが収まる位置へ戻す。人が視点を動かしたあとに呼び戻す口であり、
+    // 押しボタンは建物ぜんたいの操作帯が持つ。
+    public 建物ぜんたいを写す(): void {
+        this.カメラを見取りへ合わせる()
     }
 
     // キャンバスが実際に占めている大きさを自分で測って描画の解像度を合わせる。枠の高さはCSSが決めるため、
@@ -115,9 +106,4 @@ export class 建物の三次元パネル extends LV2HtmlComponentBase {
         if (!HTMLキャンバスか(要素)) throw new Error('三次元表示のキャンバス要素がHTMLCanvasElementではない')
         return 要素
     }
-}
-
-function 選択の文言(選んでいる升目: 升目の座標 | undefined): string {
-    if (選んでいる升目 === undefined) return '升目を選んでいない'
-    return `選んでいる升目: 横${選んでいる升目.横}・奥${選んでいる升目.奥}・階${選んでいる升目.階}`
 }
