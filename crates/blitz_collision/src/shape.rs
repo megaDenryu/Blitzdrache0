@@ -35,6 +35,8 @@ mod global_box_cover;
 #[cfg(test)]
 mod global_box_rounding_margin_tests;
 mod half_extent;
+#[cfg(test)]
+mod half_extent_tests;
 mod local_axis;
 mod local_axis_aligned_box;
 #[cfg(test)]
