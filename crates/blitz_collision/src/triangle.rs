@@ -40,10 +40,13 @@ mod segment_hit;
 mod segment_in_plane;
 #[cfg(test)]
 mod segment_in_plane_tests;
+mod segment_plane_relation;
 mod segment_query;
 mod segment_shear_frame;
 #[cfg(test)]
 mod segment_tests;
+#[cfg(test)]
+mod segment_tilted_plane_tests;
 #[cfg(test)]
 mod segment_zero_length_tests;
 mod sheared_triangle;
