@@ -44,6 +44,7 @@ mod box_triangle_query;
 mod clip_feature_pair;
 mod clip_plane;
 mod clip_polygon;
+mod clip_reference_feature;
 mod contact_point;
 mod cross_axis_margin;
 mod deepest_axis;
