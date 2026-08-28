@@ -29,7 +29,7 @@ class 筆致選択ボタン extends ButtonC {
     }
 }
 
-// 地形造成ブラシの種類・半径・強度を設定するLV2素部品。
+// これから地形へ当てる筆の種類・半径・強さを選ぶLV2素部品。下パネルの棚へ置く。
 export class 造成パネル extends LV2HtmlComponentBase implements I配線可能<I造成パネル配線> {
     protected _componentRoot: DivC
     private readonly _配線: 配線ポート<I造成パネル配線> = new 配線ポート<I造成パネル配線>('造成パネル')
@@ -39,8 +39,8 @@ export class 造成パネル extends LV2HtmlComponentBase implements I配線可�
 
     public constructor(初期種別: 造成筆致種別, 初期半径: number, 初期強さ: number) {
         super()
-        this._半径スライダー = new スライダー項目('半径', 5, 60, 1, 初期半径, 'm')
-        this._強さスライダー = new スライダー項目('強度', 0.05, 2.0, 0.05, 初期強さ)
+        this._半径スライダー = new スライダー項目('筆の半径', 5, 60, 1, 初期半径, 'm')
+        this._強さスライダー = new スライダー項目('筆の強さ', 0.05, 2.0, 0.05, 初期強さ)
         this._componentRoot = this._ルートを構築する(初期種別)
     }
 
@@ -67,7 +67,7 @@ export class 造成パネル extends LV2HtmlComponentBase implements I配線可�
         return (
             div({ class: パネル }).childs([
                 div({ class: 見出し行 }).childs([
-                    span({ text: '地形ブラシ設定' }).setTooltip('地形ブラシ設定'),
+                    span({ text: '地形の筆' }).setTooltip('地形の筆'),
                     span({ class: 補助テキスト, text: '[シフト: 削り / 平滑化]' }).setTooltip('[シフト: 削り / 平滑化]')]),
                 div({ class: ボタングループ }).childs(
                     筆致種別一覧.map(({ 種別, ラベル }) => {

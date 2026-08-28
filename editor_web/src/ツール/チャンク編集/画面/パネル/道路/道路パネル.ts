@@ -68,7 +68,7 @@ export class 道路パネル extends LV2HtmlComponentBase implements I配線可�
     private _ルートを構築する(): DivC {
         return (
             div({ class: パネル }).childs([
-                span({ class: 見出し, text: '道路 & パラメータ' }).setTooltip('道路 & パラメータ'),
+                span({ class: 見出し, text: '選んでいる道の設定' }).setTooltip('選んでいる道の設定'),
                 this._全幅スライダー,
                 this._除外バッファスライダー,
                 this._細分割スライダー,

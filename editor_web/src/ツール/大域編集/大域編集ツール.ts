@@ -3,7 +3,7 @@ import type { プロジェクト保管庫接続, ソースアセット書き出�
 import { 実サーバー接続 } from '../../境界/通信/index.ts'
 import type { ワールド編集状態 } from '../チャンク編集/編集モデル/index.ts'
 import { 初期大域ワールド状態を生成する } from './初期大域ワールド生成.ts'
-import { 大域編集画面 } from './画面/index.ts'
+import { 大域編集画面, type 大域の筆と道の棚 } from './画面/index.ts'
 import { 色トークンから三次元の配色を作る, type 三次元の色トークン } from '../チャンク編集/画面/三次元/三次元の配色.ts'
 import type { 大域インスペクターパネル } from './画面/パネル/インスペクター/index.ts'
 import { 大域編集状態 } from './大域編集状態.ts'
@@ -62,6 +62,11 @@ export class 大域編集ツール extends LV2HtmlComponentBase {
         }
     }
 
+    // これから使う筆と道の棚を下パネルへ渡す。外殻はこの口が在るツールでだけ下パネルを開く。
+    public get 下パネル(): 大域の筆と道の棚 {
+        return this.画面.部品.棚
+    }
+
     public 前面になった(): void {
         this.画面.部品.三次元ビュー.描画ループ.開始する()
     }
@@ -70,8 +75,10 @@ export class 大域編集ツール extends LV2HtmlComponentBase {
         this.画面.部品.三次元ビュー.描画ループ.停止する()
     }
 
-    public 寸法を合わせる(幅: number, 高さ: number, ピクセル比: number = 1): void {
-        this.画面.寸法を合わせる(幅, 高さ, ピクセル比)
+    // 幅と高さを使わないのは、三次元がエディタ領域の中で高さの決まった箱を埋めるからである。
+    // 箱の大きさはCSSが決めるため、画面が自分のキャンバスを測る。ピクセル比だけを外殻から受け取る。
+    public 寸法を合わせる(_幅: number, _高さ: number, ピクセル比: number = 1): void {
+        this.画面.寸法を合わせる(ピクセル比)
     }
 
     public テーマを適用する(テーマ: 三次元の色トークン & { readonly 大域三次元背景色: number }): void {

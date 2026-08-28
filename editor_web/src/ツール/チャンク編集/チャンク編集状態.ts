@@ -2,16 +2,18 @@ import type { 造成筆致種別, 地表材質層, チャンク座標 } from '..
 import type { 道路点の在り処 } from './編集モデル/index.ts'
 import type { 差し戻し断片 } from './操作コマンド/index.ts'
 import type { 編集モード } from './画面/index.ts'
+import { 初期の編集モード } from './画面/パネル/モード切替/モード定義.ts'
+import { 地表の材質の筆の初期値, 造成の筆の初期値 } from './画面/下パネル/筆の初期値.ts'
 
 // エディターセッション中のUI選択・操作パラメータ・取り消し履歴スタックを保持する状態。
 export class チャンク編集状態 {
-    public モード: 編集モード = '選択'
-    public 造成筆致種別: 造成筆致種別 = '盛る'
-    public 造成半径: number = 20.0
-    public 造成強さ: number = 0.5
-    public 材質層: 地表材質層 = '草'
-    public ペイント半径: number = 15.0
-    public ペイント流量: number = 0.4
+    public モード: 編集モード = 初期の編集モード
+    public 造成筆致種別: 造成筆致種別 = 造成の筆の初期値.種別
+    public 造成半径: number = 造成の筆の初期値.半径メートル
+    public 造成強さ: number = 造成の筆の初期値.強さ
+    public 材質層: 地表材質層 = 地表の材質の筆の初期値.層
+    public ペイント半径: number = 地表の材質の筆の初期値.半径メートル
+    public ペイント流量: number = 地表の材質の筆の初期値.流量
     // 描き足す先の道。nullは「次に地形をクリックしたら新しい道を1本始める」ことを表す。
     public アクティブな道路の添字: number | null = 0
     public 選択中の道路点: 道路点の在り処 | null = null

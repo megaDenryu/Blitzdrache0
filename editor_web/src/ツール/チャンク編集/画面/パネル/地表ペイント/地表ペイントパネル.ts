@@ -1,18 +1,13 @@
-import { div, span, button, DivC, ButtonC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
+import { div, span, DivC, ButtonC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
 import type { 地表材質層 } from '../../../../../生成/編集資源契約.ts'
-import type { 道路の泥の追従方針 } from '../../../編集モデル/index.ts'
 import { スライダー項目 } from '../共通/スライダー項目.ts'
-import { 道路の泥の追従切替 } from '../共通/道路の泥の追従切替.ts'
-import { パネル, 見出し, 材質グリッド, 材質ボタン, ベイク区画, アクションボタン } from './スタイル.css.ts'
+import { パネル, 見出し, 材質グリッド, 材質ボタン } from './スタイル.css.ts'
 
 export interface I地表ペイントパネル配線 {
     readonly on材質層変更: (層: 地表材質層) => void
     readonly on半径変更: (半径: number) => void
     readonly on流量変更: (流量: number) => void
-    readonly on急勾配ベイク: () => void
-    readonly on道路下泥ベイク: () => void
-    readonly on道路の泥の追従方針変更: (方針: 道路の泥の追従方針) => void
 }
 
 const 材質層一覧: readonly { readonly 層: 地表材質層; readonly ラベル: string }[] = [
@@ -35,7 +30,9 @@ class 材質選択ボタン extends ButtonC {
     }
 }
 
-// 地表材質ペイントの材質選択・ブラシ半径・流量および自動ベイクを提供するLV2素部品。
+// これから塗る地表の材質と、その筆の半径・流量を選ぶLV2素部品。下パネルの棚へ置く。
+// 焼き直しの操作をここへ持たないのは、それがチャンク全体へ効く操作であり、
+// 右サイドバーの地表の焼き直しパネルの持ち物だからである(設計正本の判断14)。
 export class 地表ペイントパネル extends LV2HtmlComponentBase implements I配線可能<I地表ペイントパネル配線> {
     protected _componentRoot: DivC
     private readonly _配線: 配線ポート<I地表ペイントパネル配線> = new 配線ポート<I地表ペイントパネル配線>('地表ペイントパネル')
@@ -43,11 +40,11 @@ export class 地表ペイントパネル extends LV2HtmlComponentBase implements
     private readonly _半径スライダー: スライダー項目
     private readonly _流量スライダー: スライダー項目
 
-    public constructor(初期層: 地表材質層, 初期半径: number, 初期流量: number, 初期の泥の追従方針: 道路の泥の追従方針) {
+    public constructor(初期層: 地表材質層, 初期半径: number, 初期流量: number) {
         super()
-        this._半径スライダー = new スライダー項目('ペイント半径', 3, 50, 1, 初期半径, 'm')
-        this._流量スライダー = new スライダー項目('流量 (不透明度)', 0.05, 1.0, 0.05, 初期流量)
-        this._componentRoot = this._ルートを構築する(初期層, 初期の泥の追従方針)
+        this._半径スライダー = new スライダー項目('筆の半径', 3, 50, 1, 初期半径, 'm')
+        this._流量スライダー = new スライダー項目('筆の流量(濃さ)', 0.05, 1.0, 0.05, 初期流量)
+        this._componentRoot = this._ルートを構築する(初期層)
     }
 
     public 配線する(配線: I地表ペイントパネル配線): this {
@@ -69,10 +66,10 @@ export class 地表ペイントパネル extends LV2HtmlComponentBase implements
         super.delete()
     }
 
-    private _ルートを構築する(初期層: 地表材質層, 初期の泥の追従方針: 道路の泥の追従方針): DivC {
+    private _ルートを構築する(初期層: 地表材質層): DivC {
         return (
             div({ class: パネル }).childs([
-                span({ class: 見出し, text: '地表マテリアルペイント' }).setTooltip('地表マテリアルペイント'),
+                span({ class: 見出し, text: '地表の材質の筆' }).setTooltip('地表の材質の筆'),
                 div({ class: 材質グリッド }).childs(
                     材質層一覧.map(({ 層, ラベル }) => {
                         const btn = new 材質選択ボタン(ラベル, 層 === 初期層)
@@ -84,16 +81,7 @@ export class 地表ペイントパネル extends LV2HtmlComponentBase implements
                     }),
                 ),
                 this._半径スライダー,
-                this._流量スライダー,
-                div({ class: ベイク区画 }).childs([
-                    button({ class: アクションボタン, text: '急勾配(>30度)を自動で岩肌にベイク' })
-                        .setTooltip('急勾配(>30度)を自動で岩肌にベイク')
-                        .onClick(() => this._配線.先.on急勾配ベイク()),
-                    new 道路の泥の追従切替(初期の泥の追従方針)
-                        .切替時((方針) => this._配線.先.on道路の泥の追従方針変更(方針)),
-                    button({ class: アクションボタン, text: '道路下の泥を焼き直す' })
-                        .setTooltip('道路下の泥を焼き直す')
-                        .onClick(() => this._配線.先.on道路下泥ベイク())])])
+                this._流量スライダー])
         )
     }
 }

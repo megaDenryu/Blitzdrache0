@@ -1,11 +1,3 @@
-import { style } from '@vanilla-extract/css'
-import { エディターCSS変数 } from '../../../境界/index.ts'
-
-export const 画面ルート = style({
-    position: 'relative',
-    width: '100%',
-    height: '100%',
-    overflow: 'hidden',
-    userSelect: 'none',
-    backgroundColor: エディターCSS変数('ビューポート背景'),
-})
+// 大域編集のエディタ領域の骨組み。チャンク編集と同じ骨組みを使うため、実体は共通の
+// 三次元のエディタ領域.css.ts が持ち、ここは参照だけを束ねる(設計正本の判断14)。
+export * from '../../チャンク編集/画面/パネル/共通/三次元のエディタ領域.css.ts'

@@ -1,12 +1,10 @@
 import { div, ButtonC, DivC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
-import { 地形追従切替 } from '../../../../チャンク編集/画面/パネル/共通/地形追従切替.ts'
 import type { 大域編集モード } from './大域モード定義.ts'
-import { コンテナ, グリッド, モードボタン, キー操作説明 } from './スタイル.css.ts'
+import { モードの並び, モードボタン } from './スタイル.css.ts'
 
 export interface I大域モード切替配線 {
     readonly onモード変更: (モード: 大域編集モード) => void
-    readonly on地形追従変更: (有効: boolean) => void
 }
 
 const モード一覧: readonly { readonly モード: 大域編集モード; readonly ラベル: string }[] = [
@@ -29,7 +27,8 @@ class モード選択ボタン extends ButtonC {
     }
 }
 
-// 4つの大域編集モードを切り替えるLV2素部品。
+// 4つの大域編集モードを切り替えるボタンの並び。エディタ領域の上部の固定の行へ置くため横一列にする。
+// モードごとの操作の案内をここへ持たないのは、案内が下パネルの棚の持ち物だからである(判断14)。
 export class 大域モード切替パネル extends LV2HtmlComponentBase implements I配線可能<I大域モード切替配線> {
     protected _componentRoot: DivC
     private readonly _配線: 配線ポート<I大域モード切替配線> = new 配線ポート<I大域モード切替配線>('大域モード切替パネル')
@@ -53,20 +52,16 @@ export class 大域モード切替パネル extends LV2HtmlComponentBase impleme
 
     private _ルートを構築する(初期モード: 大域編集モード): DivC {
         return (
-            div({ class: コンテナ }).childs([
-                div({ class: グリッド }).childs(
-                    モード一覧.map(({ モード, ラベル }) => {
-                        const btn = new モード選択ボタン(ラベル, モード === 初期モード)
-                        this._ボタンマップ.set(モード, btn)
-                        return btn.onClick(() => {
-                            this.モードを更新する(モード)
-                            this._配線.先.onモード変更(モード)
-                        })
-                    }),
-                ),
-                div({ class: キー操作説明, text: 'Alt: 次のモード / Shift+Alt: 前のモード' }),
-                new 地形追従切替().切替時((有効) => this._配線.先.on地形追従変更(有効)),
-            ])
+            div({ class: モードの並び }).childs(
+                モード一覧.map(({ モード, ラベル }) => {
+                    const ボタン = new モード選択ボタン(ラベル, モード === 初期モード)
+                    this._ボタンマップ.set(モード, ボタン)
+                    return ボタン.onClick(() => {
+                        this.モードを更新する(モード)
+                        this._配線.先.onモード変更(モード)
+                    })
+                }),
+            )
         )
     }
 }

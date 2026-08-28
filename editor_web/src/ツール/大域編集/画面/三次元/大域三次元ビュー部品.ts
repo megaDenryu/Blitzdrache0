@@ -79,8 +79,12 @@ export class 大域三次元ビュー部品 extends LV2HtmlComponentBase {
         return this
     }
 
-    public 寸法を合わせる(幅: number, 高さ: number, ピクセル比: number = 1): void {
-        this.描画ループ.寸法を合わせる(幅, 高さ, ピクセル比)
+    // キャンバスが実際に占めている大きさを自分で測って描画の解像度を合わせる。枠の高さはCSSが
+    // 決めるため、呼び出し側が寸法を持参すると、CSSの値と食い違った解像度で描いても誰も気づかない。
+    public いまの枠の大きさへ合わせる(ピクセル比: number = 1): void {
+        const 枠 = this.キャンバス要素.dom.element.getBoundingClientRect()
+        if (枠.width <= 0 || 枠.height <= 0) return
+        this.描画ループ.寸法を合わせる(枠.width, 枠.height, ピクセル比)
     }
 
     public override delete(): void {

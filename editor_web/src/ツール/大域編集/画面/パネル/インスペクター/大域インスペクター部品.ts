@@ -1,26 +1,19 @@
-import { 大域モード切替パネル, type 大域編集モード } from '../モード切替/index.ts'
-import { 大域ヒントパネル } from '../ヒント/index.ts'
-import { 大域造成パネル } from '../造成/index.ts'
 import { 広域道路パネル } from '../道路/index.ts'
 import { スライス仕様パネル } from '../スライス/index.ts'
 import { 大域永続化パネル } from '../永続化/index.ts'
 
-// 大域インスペクターパネルが集約する各サブパネルの部品DTO。
+// 大域インスペクターパネルが集約するサブパネルの部品DTO。ここに並ぶのは「選んでいる道の設定」と
+// 「世界ぜんたいへ効く操作(切り出しての書き出し・保存)」だけであり、これから使う筆と道は
+// 下パネルの棚が持つ(設計正本の判断14)。
 export class 大域インスペクター部品 {
-    public constructor(
-        public readonly モード切替: 大域モード切替パネル,
-        public readonly ヒント: 大域ヒントパネル,
-        public readonly 造成: 大域造成パネル,
+    private constructor(
         public readonly 道路: 広域道路パネル,
         public readonly スライス: スライス仕様パネル,
         public readonly 永続化: 大域永続化パネル,
     ) {}
 
-    public static 作る(初期モード: 大域編集モード = '選択'): 大域インスペクター部品 {
+    public static 作る(): 大域インスペクター部品 {
         return new 大域インスペクター部品(
-            new 大域モード切替パネル(初期モード),
-            new 大域ヒントパネル(初期モード),
-            new 大域造成パネル('盛る', 80.0, 1.2),
             new 広域道路パネル(12.0, 120),
             new スライス仕様パネル(),
             new 大域永続化パネル(),
@@ -28,9 +21,6 @@ export class 大域インスペクター部品 {
     }
 
     public delete(): void {
-        this.モード切替.delete()
-        this.ヒント.delete()
-        this.造成.delete()
         this.道路.delete()
         this.スライス.delete()
         this.永続化.delete()

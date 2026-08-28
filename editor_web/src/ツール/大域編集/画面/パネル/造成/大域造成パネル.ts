@@ -29,7 +29,7 @@ class 筆致選択ボタン extends ButtonC {
     }
 }
 
-// 1024m大域造成用ブラシの種類・半径・強度を設定するLV2素部品。
+// これから1024mの大域地形へ当てる筆の種類・半径・強さを選ぶLV2素部品。下パネルの棚へ置く。
 export class 大域造成パネル extends LV2HtmlComponentBase implements I配線可能<I大域造成パネル配線> {
     protected _componentRoot: DivC
     private readonly _配線: 配線ポート<I大域造成パネル配線> = new 配線ポート<I大域造成パネル配線>('大域造成パネル')
@@ -39,8 +39,8 @@ export class 大域造成パネル extends LV2HtmlComponentBase implements I配�
 
     public constructor(初期種別: 造成筆致種別, 初期半径: number, 初期強さ: number) {
         super()
-        this._半径スライダー = new スライダー項目('大域ブラシ半径', 20, 250, 5, 初期半径, 'm')
-        this._強さスライダー = new スライダー項目('造成強度', 0.1, 5.0, 0.1, 初期強さ)
+        this._半径スライダー = new スライダー項目('筆の半径', 20, 250, 5, 初期半径, 'm')
+        this._強さスライダー = new スライダー項目('筆の強さ', 0.1, 5.0, 0.1, 初期強さ)
         this._componentRoot = this._ルートを構築する(初期種別)
     }
 
@@ -67,7 +67,7 @@ export class 大域造成パネル extends LV2HtmlComponentBase implements I配�
         return (
             div({ class: パネル }).childs([
                 div({ class: 見出し行 }).childs([
-                    span({ text: 'マクロ山脈・盆地造成ブラシ' }).setTooltip('マクロ山脈・盆地造成ブラシ'),
+                    span({ text: '大域の地形の筆(山脈と盆地)' }).setTooltip('大域の地形の筆(山脈と盆地)'),
                     span({ class: 補助テキスト, text: '[シフト: 削り / 平滑化]' }).setTooltip('[シフト: 削り / 平滑化]'),
                 ]),
                 div({ class: ボタングループ }).childs(
