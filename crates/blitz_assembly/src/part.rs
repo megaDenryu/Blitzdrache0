@@ -14,6 +14,8 @@ mod part_id;
 mod stored_part;
 
 #[cfg(test)]
+mod oriented_box_tests;
+#[cfg(test)]
 mod part_fixture;
 #[cfg(test)]
 mod part_tests;

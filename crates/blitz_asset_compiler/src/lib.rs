@@ -31,6 +31,7 @@ mod runtime_compilation;
 mod scatter_bake;
 mod scene_compiler;
 mod source_asset_paths;
+mod static_physics;
 mod surface_material;
 mod terrain;
 mod texture_storage;
@@ -83,6 +84,7 @@ pub use runtime_compilation::{
 pub use scatter_bake::散布の焼き方;
 pub use scene_compiler::ソースアセットのコンパイル係;
 pub use source_asset_paths::{ソースアセットのファイル名, ソースアセットの相対パス};
+pub use static_physics::静的物理形状のコンパイルエラー;
 pub use surface_material::layer_texture_set::{
     コンパイル済み地表層テクスチャ集, 地表層タイルの置き場, 地表層テクスチャ集の焼き方, 地表層テクスチャ集アセットをコンパイルする,
     地表層テクスチャ集コンパイルエラー, 地表材質の層割当,

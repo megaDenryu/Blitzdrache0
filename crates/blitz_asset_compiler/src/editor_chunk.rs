@@ -1,5 +1,6 @@
 //! エディターが書いた版付きチャンクソースから、地面と部品建物の群と散布の群を同じチャンクへ焼く。
 
+mod building_bake_result;
 mod building_definitions;
 mod building_groups;
 mod ground_material;
