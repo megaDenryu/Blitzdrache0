@@ -10,6 +10,8 @@ export const パターン操作行 = style({
 
 export const 編集グリッド = style({
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+    // 右サイドバーの幅は利用者が変えられるため、列の最小幅を枠の幅で頭打ちにする。
+    // min()を挟まないと、枠より広い最小幅が横のはみ出しになる。
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))',
     gap: '12px',
 })

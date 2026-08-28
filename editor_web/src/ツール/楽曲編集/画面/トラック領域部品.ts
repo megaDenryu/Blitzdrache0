@@ -2,10 +2,11 @@ import { div, DivC, LV2HtmlComponentBase } from 'sengen-ui'
 import type { 楽曲, パターン } from '../../../生成/編集資源契約.ts'
 import { トラックに適用される和音一覧を解決する } from '../編集モデル/index.ts'
 import type { 打ち込みドラッグ見込み, 升目の当たりの記録 } from './打ち込み見込み.ts'
-import { エディター領域 } from './スタイル.css.ts'
+import { トラックの並びの枠 } from './スタイル.css.ts'
 import { トラックブロック部品 } from './トラックブロック部品.ts'
 
 // 全トラックのブロック（見出し＋打ち込み格子）を縦に並べ、パターンの切り替えやトラック構成の変更に追従する部品。
+// 中央で数が増えうるのはトラックだけであり、縦にスクロールするのはこの部品の中だけである(設計正本の判断14)。
 export class トラック領域部品 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     private _トラックブロック一覧: トラックブロック部品[] = []
@@ -15,7 +16,7 @@ export class トラック領域部品 extends LV2HtmlComponentBase {
 
     public constructor() {
         super()
-        this._componentRoot = div({ class: エディター領域 })
+        this._componentRoot = div({ class: トラックの並びの枠 })
     }
 
     public 升目操作を配線する(

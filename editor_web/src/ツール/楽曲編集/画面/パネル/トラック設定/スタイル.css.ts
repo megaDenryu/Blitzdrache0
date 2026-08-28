@@ -41,7 +41,9 @@ export const 種類バッジ = style({
 
 export const トラック項目群 = style({
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    // 右サイドバーの幅は利用者が変えられるため、列の最小幅を枠の幅で頭打ちにする。
+    // min()を挟まないと、枠より広い最小幅が横のはみ出しになる。
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))',
     gap: '8px',
     alignItems: 'end',
 })

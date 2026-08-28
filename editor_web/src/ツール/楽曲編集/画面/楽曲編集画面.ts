@@ -7,26 +7,28 @@ import {
     演奏の範囲の既定,
     type 演奏の範囲,
 } from '../編集モデル/index.ts'
-import { 永続化パネル } from '../../チャンク編集/画面/パネル/永続化/index.ts'
 import type { I楽曲発音配線 } from './発音配線.ts'
 import type { 再生位置 } from './演奏/index.ts'
 import { 演奏の操作帯 } from './演奏の操作帯/index.ts'
 import type { 打ち込みドラッグ見込み, 升目の当たりの記録 } from './打ち込み見込み.ts'
-import { コンテナ, 本文幅 } from './スタイル.css.ts'
-import { 楽曲ヘッダー部品 } from './楽曲ヘッダー部品.ts'
+import { コンテナ, 固定の行, 進行の行 } from './スタイル.css.ts'
+import { 楽曲名の欄 } from './楽曲名の欄.ts'
+import { 進行制約の表示 } from './進行制約の表示.ts'
 import { 進行の帯部品 } from './進行の帯部品.ts'
 import { トラック領域部品 } from './トラック領域部品.ts'
-import { 編集パネル群 } from './パネル/index.ts'
+import { 楽曲インスペクターパネル } from './パネル/index.ts'
 
-// 楽曲エディター文書タブの画面全体。ヘッダー・演奏の操作帯・進行の帯・トラック領域・編集パネル群・永続化パネルを束ねる。
+// 楽曲エディター文書タブの画面。中央には楽曲名と演奏の操作の行・和音の帯・トラックの並びだけを置き、
+// 設定の一式はインスペクターへ渡して右サイドバーへ出す(設計正本の判断14)。
+// 中央のうち縦にスクロールするのはトラック領域だけで、上の2行は常に見えている。
 export class 楽曲編集画面 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
-    public readonly ヘッダー: 楽曲ヘッダー部品
+    public readonly 楽曲名: 楽曲名の欄
     public readonly 操作帯: 演奏の操作帯
+    public readonly 進行制約: 進行制約の表示 = new 進行制約の表示()
     public readonly 進行の帯: 進行の帯部品 = new 進行の帯部品()
     public readonly トラック領域: トラック領域部品 = new トラック領域部品()
-    public readonly パネル群: 編集パネル群
-    public readonly 永続化: 永続化パネル = new 永続化パネル()
+    public readonly インスペクター: 楽曲インスペクターパネル
     public readonly 発音配線: 配線ポート<I楽曲発音配線> = new 配線ポート<I楽曲発音配線>('楽曲編集画面')
     private _表示中のパターンの名乗り: string | null = null
     private _表示中のパターンの表示名: string | null = null
@@ -37,20 +39,15 @@ export class 楽曲編集画面 extends LV2HtmlComponentBase {
         const 先頭のパターン = 楽曲データ.パターン一覧[0]
         const 初期選択の名乗り = 先頭のパターン === undefined ? null : 先頭のパターン.名乗り
 
-        this.ヘッダー = new 楽曲ヘッダー部品(楽曲ID)
+        this.楽曲名 = new 楽曲名の欄(楽曲データ)
         this.操作帯 = new 演奏の操作帯(楽曲データ, 演奏の範囲の既定)
-        this.パネル群 = new 編集パネル群(楽曲データ, 初期選択の名乗り)
+        this.インスペクター = new 楽曲インスペクターパネル(楽曲データ, 初期選択の名乗り)
 
-        this._componentRoot = div({ class: コンテナ }).child(
-            div({ class: 本文幅 }).childs([
-                this.ヘッダー,
-                this.操作帯,
-                this.進行の帯,
-                this.トラック領域,
-                this.パネル群,
-                this.永続化,
-            ]),
-        )
+        this._componentRoot = div({ class: コンテナ }).childs([
+            div({ class: 固定の行 }).childs([this.楽曲名, this.操作帯]),
+            div({ class: 進行の行 }).childs([this.進行制約, this.進行の帯]),
+            this.トラック領域,
+        ])
     }
 
     public 升目操作を配線する(
@@ -72,7 +69,8 @@ export class 楽曲編集画面 extends LV2HtmlComponentBase {
 
         this._表示中のパターンの名乗り = パターン !== undefined ? パターン.名乗り : null
         this._表示中のパターンの表示名 = パターン !== undefined ? パターン.表示名 : null
-        this.ヘッダー.表示を更新する(楽曲, this._表示中のパターンの表示名, 進行の外モードか)
+        this.楽曲名.表示を更新する(楽曲)
+        this.進行制約.表示を更新する(進行の外モードか)
         this.操作帯.楽曲を反映する(楽曲)
 
         if (パターン === undefined) {
@@ -84,7 +82,7 @@ export class 楽曲編集画面 extends LV2HtmlComponentBase {
             this.トラック領域.表示を更新する(楽曲, パターン, ドラッグ見込み)
         }
 
-        this.パネル群.表示を更新する(楽曲, 選択中パターン名乗り)
+        this.インスペクター.表示を更新する(楽曲, 選択中パターン名乗り)
     }
 
     // 再生位置の印を格子と操作帯へ映す。開いているパターンと違うパターンが鳴っているときは格子を光らせない。
@@ -100,12 +98,12 @@ export class 楽曲編集画面 extends LV2HtmlComponentBase {
     }
 
     public override delete(): void {
-        this.ヘッダー.delete()
+        this.楽曲名.delete()
         this.操作帯.delete()
+        this.進行制約.delete()
         this.進行の帯.delete()
         this.トラック領域.delete()
-        this.パネル群.delete()
-        this.永続化.delete()
+        this.インスペクター.delete()
         super.delete()
     }
 }
