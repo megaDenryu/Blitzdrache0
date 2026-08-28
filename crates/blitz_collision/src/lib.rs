@@ -14,3 +14,4 @@
 #![warn(missing_docs)]
 
 pub mod height_field;
+pub mod shape;
