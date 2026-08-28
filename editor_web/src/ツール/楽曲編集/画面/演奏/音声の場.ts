@@ -6,7 +6,8 @@ import {
     秒,
 } from 'SengenAudio'
 import type { 楽曲 } from '../../../../生成/編集資源契約.ts'
-import { 秒数, type テンポ } from '../../編集モデル/index.ts'
+import { 秒数, type メトロノームの入切, type テンポ } from '../../編集モデル/index.ts'
+import { メトロノームの音 } from './メトロノームの音.ts'
 import { 楽器の音源棚 } from './楽器の音源棚.ts'
 import { 音の出口 } from './音の出口.ts'
 
@@ -23,9 +24,10 @@ export class 音声の場 {
         public readonly 出口: 音の出口,
         public readonly 音源棚: 楽器の音源棚,
         public readonly 予定表: 演奏予定表,
+        public readonly メトロノームの音: メトロノームの音,
     ) {}
 
-    public static async 人の操作を起点に開く(楽曲: 楽曲): Promise<音声の場> {
+    public static async 人の操作を起点に開く(楽曲: 楽曲, メトロノームの入切: メトロノームの入切): Promise<音声の場> {
         const 作業場 = ブラウザの音声の作業場.作成する()
         await 作業場.再開する()
         const 予定表 = new 演奏予定表({
@@ -35,7 +37,13 @@ export class 音声の場 {
             見張りの周期,
             予約補充のしきい値,
         })
-        return new 音声の場(作業場, new 音の出口(作業場, 楽曲), new 楽器の音源棚(作業場), 予定表)
+        return new 音声の場(
+            作業場,
+            new 音の出口(作業場, 楽曲),
+            new 楽器の音源棚(作業場),
+            予定表,
+            new メトロノームの音(作業場, 予定表, メトロノームの入切),
+        )
     }
 
     public 現在時刻(): 秒数 {
@@ -61,6 +69,7 @@ export class 音声の場 {
     public 破棄する(): void {
         if (this.予定表.動作中か) this.予定表.やめる()
         this.音源棚.破棄する()
+        this.メトロノームの音.破棄する()
         this.出口.破棄する()
         void this._作業場.破棄する()
     }

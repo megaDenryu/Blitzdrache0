@@ -1,4 +1,4 @@
-import { テンポ, 演奏の範囲の既定, type 演奏の範囲, type 楽曲編集状態 } from '../../編集モデル/index.ts'
+import { メトロノームの入切, テンポ, 演奏の範囲の既定, type 演奏の範囲, type 楽曲編集状態 } from '../../編集モデル/index.ts'
 import { 予約の補充を演奏へ委ねる, type I予約を補充できる側 } from './予約の補充を演奏へ委ねる.ts'
 import { 単発の発音 } from './単発の発音.ts'
 import { 再生位置の知らせ役, type I再生位置を答えられる側 } from './再生位置の知らせ役.ts'
@@ -12,13 +12,15 @@ import type { 再生位置 } from './再生位置.ts'
 export class 演奏サービス implements I予約を補充できる側, I再生位置を答えられる側 {
     public readonly 知らせ役: 再生位置の知らせ役 = new 再生位置の知らせ役(this)
     public readonly 知らせの口: 演奏の知らせの口 = new 演奏の知らせの口()
+    // 再生をまたいで残る道具の状態であるため、1回の再生ぶんしか生きない演奏の進行ではなくここが持つ。
+    public readonly メトロノームの入切: メトロノームの入切 = new メトロノームの入切()
     private readonly _場の口: 開かれる音声の場
     private readonly _単発の発音: 単発の発音
     private _進行: 演奏の進行 | null = null
     private _範囲: 演奏の範囲 = 演奏の範囲の既定
 
     public constructor(private readonly _状態: 楽曲編集状態) {
-        this._場の口 = new 開かれる音声の場(_状態, new 予約の補充を演奏へ委ねる(this))
+        this._場の口 = new 開かれる音声の場(_状態, new 予約の補充を演奏へ委ねる(this), this.メトロノームの入切)
         this._単発の発音 = new 単発の発音(_状態, this._場の口)
     }
 

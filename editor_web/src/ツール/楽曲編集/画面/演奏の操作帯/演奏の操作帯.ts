@@ -7,6 +7,7 @@ import { 副ボタン, 危険ボタン } from '../パネル/共通/スタイル.
 import { 再生と停止のボタン } from './再生と停止のボタン.ts'
 import { 再生位置の表示 } from './再生位置の表示.ts'
 import { テンポの欄 } from './テンポの欄.ts'
+import { メトロノームの切替ボタン } from './メトロノームの切替ボタン.ts'
 import { 演奏の範囲選択欄 } from './演奏の範囲選択欄.ts'
 import { 演奏の知らせの表示 } from './演奏の知らせの表示.ts'
 import { 操作帯の行, 操作帯枠 } from './スタイル.css.ts'
@@ -16,11 +17,12 @@ export interface I演奏の操作帯配線 {
     readonly on先頭へ戻す: () => void
     readonly on演奏の範囲変更: (範囲: 演奏の範囲) => void
     readonly onテンポ変更: (新しいテンポ: number) => void
+    readonly onメトロノーム切替: () => void
     readonly on全消去: () => void
     readonly on見本の曲: () => void
 }
 
-// 格子の上に常設する演奏の操作帯。再生と停止・先頭へ戻す・再生位置・演奏の範囲・テンポと、
+// 格子の上に常設する演奏の操作帯。再生と停止・先頭へ戻す・再生位置・演奏の範囲・テンポ・メトロノームと、
 // 打ち込みをまとめて置き換える2つの操作(全消去・見本の曲)を持つ。
 export class 演奏の操作帯 extends LV2HtmlComponentBase implements I配線可能<I演奏の操作帯配線> {
     protected _componentRoot: DivC
@@ -30,6 +32,7 @@ export class 演奏の操作帯 extends LV2HtmlComponentBase implements I配線�
     private readonly _知らせ: 演奏の知らせの表示 = new 演奏の知らせの表示()
     private readonly _範囲選択: 演奏の範囲選択欄
     private readonly _テンポ: テンポの欄
+    private readonly _メトロノーム: メトロノームの切替ボタン = new メトロノームの切替ボタン()
 
     public constructor(初期楽曲: 楽曲, 初期の範囲: 演奏の範囲) {
         super()
@@ -42,11 +45,16 @@ export class 演奏の操作帯 extends LV2HtmlComponentBase implements I配線�
         this._配線.配線する(配線)
         this._テンポ.配線する({ onテンポ変更: (値) => 配線.onテンポ変更(値) })
         this._範囲選択.onSelectChange(() => 配線.on演奏の範囲変更(this._範囲選択.選ばれた範囲()))
+        this._メトロノーム.onClick(() => 配線.onメトロノーム切替())
         return this
     }
 
     public 楽曲を反映する(楽曲: 楽曲): void {
         this._テンポ.値を設定する(楽曲.テンポ)
+    }
+
+    public メトロノームが入っているかを反映する(入っているか: boolean): void {
+        this._メトロノーム.入っているかを反映する(入っているか)
     }
 
     public 演奏の様子を反映する(
@@ -71,6 +79,7 @@ export class 演奏の操作帯 extends LV2HtmlComponentBase implements I配線�
         this._再生位置.delete()
         this._範囲選択.delete()
         this._テンポ.delete()
+        this._メトロノーム.delete()
         super.delete()
     }
 
@@ -83,6 +92,7 @@ export class 演奏の操作帯 extends LV2HtmlComponentBase implements I配線�
                     .onClick(() => this._配線.先.on先頭へ戻す()),
                 this._再生位置,
                 this._範囲選択,
+                this._メトロノーム,
                 this._知らせ,
             ]),
             div({ class: 操作帯の行 }).childs([

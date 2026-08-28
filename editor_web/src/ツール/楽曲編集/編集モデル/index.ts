@@ -39,7 +39,17 @@ export {
 export { 初期楽曲を生成する } from './初期楽曲生成.ts'
 export { 打ち込み先の行 } from './打ち込み先の行.ts'
 export { 楽曲編集状態 } from './楽曲編集状態.ts'
-export { 秒数, ステップ, テンポ, 演奏の時刻表, type 演奏の時刻表構築引数 } from './演奏の時刻/index.ts'
+export {
+    秒数,
+    ステップ,
+    テンポ,
+    通しステップの拍の位置づけを求める,
+    演奏の時刻表,
+    type 演奏の時刻表構築引数,
+    type 拍の位置づけ,
+    type 拍の頭の種類,
+} from './演奏の時刻/index.ts'
+export { メトロノームの入切 } from './メトロノームの入切.ts'
 export {
     演奏に使う曲構成,
     演奏が1周する長さ,

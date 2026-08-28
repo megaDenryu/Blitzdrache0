@@ -1,5 +1,5 @@
 import type { 予約補充コマンド } from 'SengenAudio'
-import type { 楽曲編集状態 } from '../../編集モデル/index.ts'
+import type { メトロノームの入切, 楽曲編集状態 } from '../../編集モデル/index.ts'
 import { 音声の場 } from './音声の場.ts'
 
 // 音声の場を開くまで持ち続け、開いた後は同じ場を貸し続ける口。
@@ -11,6 +11,7 @@ export class 開かれる音声の場 {
     public constructor(
         private readonly _状態: 楽曲編集状態,
         private readonly _予約の補充: 予約補充コマンド,
+        private readonly _メトロノームの入切: メトロノームの入切,
     ) {}
 
     // まだ開いていなければ開く。開いていて眠っていれば起こす。
@@ -19,7 +20,7 @@ export class 開かれる音声の場 {
             await this._場.眠っていたら起こす()
             return this._場
         }
-        const 場 = await 音声の場.人の操作を起点に開く(this._状態.楽曲)
+        const 場 = await 音声の場.人の操作を起点に開く(this._状態.楽曲, this._メトロノームの入切)
         場.予定表.配線する(this._予約の補充)
         this._場 = 場
         return 場

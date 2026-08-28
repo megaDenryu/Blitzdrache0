@@ -33,6 +33,16 @@ export const テンポのつまみ = style({
     accentColor: エディターCSS変数('アクセント背景'),
 })
 
+// 入っているときは押した状態が見えるよう、枠と文字をアクセント色にする。
+export const メトロノームの切替 = style({
+    selectors: {
+        '&[data-on="true"]': {
+            borderColor: エディターCSS変数('アクセント背景'),
+            color: エディターCSS変数('アクセント背景'),
+        },
+    },
+})
+
 export const 項目の名前 = style({
     fontSize: '12px',
     color: エディターCSS変数('テキスト副'),
