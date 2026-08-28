@@ -27,8 +27,8 @@ pub(in crate::vulkan) fn 最詳細段の複製を作る(
         Vec::new(),
         graph::パス種別::転送,
         move |文脈| {
-            let 元の画像 = 文脈.画像を解決する(元);
-            let 先の画像 = 文脈.画像を解決する(先);
+            let 元の画像 = 文脈.宣言済みの画像を参照する(元);
+            let 先の画像 = 文脈.宣言済みの画像を参照する(先);
             let 領域 = [vk::ImageCopy::default()
                 .src_subresource(層の部分範囲(0, 層数))
                 .dst_subresource(層の部分範囲(0, 層数))

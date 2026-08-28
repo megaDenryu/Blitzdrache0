@@ -70,7 +70,7 @@ fn 一枚を写す(
     面: vk::ImageAspectFlags,
     寸法: vk::Extent2D,
 ) {
-    let 画像 = 文脈.画像を解決する(ハンドル);
+    let 画像 = 文脈.宣言済みの画像を参照する(ハンドル);
     let 領域 = vk::BufferImageCopy::default()
         .image_subresource(
             vk::ImageSubresourceLayers::default()

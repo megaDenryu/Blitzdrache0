@@ -19,7 +19,7 @@ pub(super) fn 作る(
         Vec::new(),
         graph::パス種別::転送,
         move |文脈| {
-            let 画像ハンドル = 文脈.画像を解決する(画像);
+            let 画像ハンドル = 文脈.宣言済みの画像を参照する(画像);
             let 領域 = [vk::BufferImageCopy::default()
                 .image_subresource(
                     vk::ImageSubresourceLayers::default()

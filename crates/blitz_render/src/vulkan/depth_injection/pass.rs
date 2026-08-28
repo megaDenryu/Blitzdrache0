@@ -26,7 +26,7 @@ pub(crate) fn 合成深度の注入を作る<'a>(深度: 画像ハンドル, 入
 fn コピーを積む(
     文脈: &GPU命令の積み先と宣言済み資源の取り出し口, 深度: 画像ハンドル, 入力: 合成深度の注入入力
 ) {
-    let 画像 = 文脈.画像を解決する(深度);
+    let 画像 = 文脈.宣言済みの画像を参照する(深度);
     let 領域 = vk::BufferImageCopy::default()
         .image_subresource(
             vk::ImageSubresourceLayers::default()
