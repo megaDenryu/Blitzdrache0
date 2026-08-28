@@ -7,7 +7,10 @@ use crate::cascade::影の一辺解像度;
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 
-pub(super) fn 画像を作る(確保係: &GPU資源の確保係<'_>, 一辺: 影の一辺解像度) -> Result<vk::Image, レンダラーエラー> {
+pub(super) fn シャドウマップの画像を作る(
+    確保係: &GPU資源の確保係<'_>,
+    一辺: 影の一辺解像度,
+) -> Result<vk::Image, レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
         .format(シャドウマップ形式)
@@ -28,7 +31,7 @@ pub(super) fn 画像を作る(確保係: &GPU資源の確保係<'_>, 一辺: 影
 
 /// 全層を1つの2D配列として見るビュー。シーンの画素段が距離区分を添字で選ぶために使う。
 pub(super) fn 配列ビューを作る(確保係: &GPU資源の確保係<'_>, 画像: vk::Image) -> Result<vk::ImageView, レンダラーエラー> {
-    ビューを作る(確保係, 画像, vk::ImageViewType::TYPE_2D_ARRAY, 0, シャドウマップ層数())
+    シャドウマップの画像のビューを作る(確保係, 画像, vk::ImageViewType::TYPE_2D_ARRAY, 0, シャドウマップ層数())
 }
 
 /// 指定した層だけを見る2Dビュー。距離区分別のシャドウ記録が深度アタッチメントとして使う。
@@ -37,10 +40,10 @@ pub(super) fn 距離区分ビューを作る(
     画像: vk::Image,
     層: u32,
 ) -> Result<vk::ImageView, レンダラーエラー> {
-    ビューを作る(確保係, 画像, vk::ImageViewType::TYPE_2D, 層, 1)
+    シャドウマップの画像のビューを作る(確保係, 画像, vk::ImageViewType::TYPE_2D, 層, 1)
 }
 
-fn ビューを作る(
+fn シャドウマップの画像のビューを作る(
     確保係: &GPU資源の確保係<'_>,
     画像: vk::Image,
     種別: vk::ImageViewType,

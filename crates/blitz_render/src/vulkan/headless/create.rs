@@ -27,7 +27,7 @@ impl ウィンドウなし実行GPU環境 {
         // 安全性: このプロセスで他にVulkanローダーを読み込んでいないことは、検査が描画と同時に走らないことで保証する。
         let entry = unsafe { ash::Entry::load()? };
         let 検証カウンタ = 検証カウンタ::生成する();
-        let 検証 = validation::作る(&entry, &検証カウンタ)?;
+        let 検証 = validation::検証つきインスタンスを作る(&entry, &検証カウンタ)?;
         match デバイス一式を作る(&検証.instance) {
             Ok(一式) => Ok(Self {
                 entry,
@@ -48,7 +48,7 @@ impl ウィンドウなし実行GPU環境 {
 }
 
 fn デバイス一式を作る(instance: &ash::Instance) -> Result<デバイス一式, レンダラーエラー> {
-    let (physical_device, キューファミリ添字) = super::select::選定する(instance)?;
+    let (physical_device, キューファミリ添字) = super::select::物理デバイスとキューファミリを選定する(instance)?;
     let (device, queue) = 論理デバイスを作る(instance, physical_device, キューファミリ添字)?;
     let プール生成情報 = vk::CommandPoolCreateInfo::default()
         .flags(vk::CommandPoolCreateFlags::RESET_COMMAND_BUFFER)

@@ -9,7 +9,7 @@ use crate::vulkan::allocator::GPU資源の確保係;
 
 pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, 寸法: vk::Extent2D) -> Result<深度バッファ, レンダラーエラー> {
     let device = 確保係.論理デバイス();
-    let 画像 = 画像を作る(確保係, 寸法)?;
+    let 画像 = 深度画像を作る(確保係, 寸法)?;
     let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(画像, GPUメモリ用途::描画画像) {
         Ok(memory) => memory,
         Err(誤り) => {
@@ -32,7 +32,7 @@ pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, 寸法: vk::Ex
     })
 }
 
-fn 画像を作る(確保係: &GPU資源の確保係<'_>, 寸法: vk::Extent2D) -> Result<vk::Image, レンダラーエラー> {
+fn 深度画像を作る(確保係: &GPU資源の確保係<'_>, 寸法: vk::Extent2D) -> Result<vk::Image, レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
         .format(深度形式)

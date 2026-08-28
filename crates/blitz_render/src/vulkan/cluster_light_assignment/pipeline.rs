@@ -23,7 +23,7 @@ impl クラスタ選別のパイプライン {
         シェーダー: &コンピュートシェーダー,
     ) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
-        let レイアウト = レイアウトを作る(device, セットレイアウト)?;
+        let レイアウト = クラスタ選別のパイプラインレイアウトを作る(device, セットレイアウト)?;
         match 確保係.コンピュートパイプラインを生成する(レイアウト, シェーダー.コード(), c"computeMain") {
             Ok(パイプライン) => Ok(Self {
                 パイプライン, レイアウト
@@ -50,8 +50,9 @@ fn 即時定数として押し込むバイト数() -> u32 {
     u32::try_from(即時定数のバイト数).unwrap_or_else(|_| panic!("即時定数のバイト数がu32に収まらない"))
 }
 
-fn レイアウトを作る(
-    device: &ash::Device, セットレイアウト: vk::DescriptorSetLayout
+fn クラスタ選別のパイプラインレイアウトを作る(
+    device: &ash::Device,
+    セットレイアウト: vk::DescriptorSetLayout,
 ) -> Result<vk::PipelineLayout, レンダラーエラー> {
     let セット一覧 = [セットレイアウト];
     let 範囲一覧 = [vk::PushConstantRange::default()

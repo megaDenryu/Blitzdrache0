@@ -9,7 +9,7 @@ use crate::vulkan::allocator::GPU資源の確保係;
 
 /// 立方体互換の旗を立てるのは、同じ画像から立方体の配列のビューを作るためである。
 /// 立てずに作った画像へ立方体のビューを張ることはできない。
-pub(super) fn 画像を作る(確保係: &GPU資源の確保係<'_>) -> Result<vk::Image, レンダラーエラー> {
+pub(super) fn 点光源の影の画像を作る(確保係: &GPU資源の確保係<'_>) -> Result<vk::Image, レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
         .flags(vk::ImageCreateFlags::CUBE_COMPATIBLE)
         .image_type(vk::ImageType::TYPE_2D)
@@ -33,17 +33,17 @@ pub(super) fn 画像を作る(確保係: &GPU資源の確保係<'_>) -> Result<v
 pub(super) fn 立方体配列ビューを作る(
     確保係: &GPU資源の確保係<'_>, 画像: vk::Image
 ) -> Result<vk::ImageView, レンダラーエラー> {
-    ビューを作る(確保係, 画像, vk::ImageViewType::CUBE_ARRAY, 0, 点光源の影の層数())
+    点光源の影の画像のビューを作る(確保係, 画像, vk::ImageViewType::CUBE_ARRAY, 0, 点光源の影の層数())
 }
 
 /// 指定した層だけを見る2Dビュー。面ごとの影の記録が深度アタッチメントとして使う。
 pub(super) fn 層ビューを作る(
     確保係: &GPU資源の確保係<'_>, 画像: vk::Image, 層: u32
 ) -> Result<vk::ImageView, レンダラーエラー> {
-    ビューを作る(確保係, 画像, vk::ImageViewType::TYPE_2D, 層, 1)
+    点光源の影の画像のビューを作る(確保係, 画像, vk::ImageViewType::TYPE_2D, 層, 1)
 }
 
-fn ビューを作る(
+fn 点光源の影の画像のビューを作る(
     確保係: &GPU資源の確保係<'_>,
     画像: vk::Image,
     種別: vk::ImageViewType,

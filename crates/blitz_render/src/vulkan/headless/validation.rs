@@ -21,7 +21,10 @@ pub(super) struct 検証つきインスタンス {
     pub(super) 状況: 検証層の状況,
 }
 
-pub(super) fn 作る(entry: &ash::Entry, カウンタ: &検証カウンタ) -> Result<検証つきインスタンス, レンダラーエラー> {
+pub(super) fn 検証つきインスタンスを作る(
+    entry: &ash::Entry,
+    カウンタ: &検証カウンタ,
+) -> Result<検証つきインスタンス, レンダラーエラー> {
     let 状況 = 在否を調べる(entry)?;
     let instance = インスタンスを作る(entry, 状況)?;
     let メッセンジャー = match 状況 {

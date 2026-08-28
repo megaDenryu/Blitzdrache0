@@ -8,7 +8,9 @@ use ash::vk;
 
 use crate::error::{デバイス要件エラー, レンダラーエラー};
 
-pub(super) fn 選定する(instance: &ash::Instance) -> Result<(vk::PhysicalDevice, u32), レンダラーエラー> {
+pub(super) fn 物理デバイスとキューファミリを選定する(
+    instance: &ash::Instance,
+) -> Result<(vk::PhysicalDevice, u32), レンダラーエラー> {
     // 安全性: instanceは生成済みで有効。
     let 候補一覧 = unsafe { instance.enumerate_physical_devices()? };
     for 物理デバイス in 候補一覧 {
