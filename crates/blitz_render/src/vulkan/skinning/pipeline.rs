@@ -15,7 +15,7 @@ pub(super) struct スキニングパイプライン {
     pub(super) layout: vk::PipelineLayout,
 }
 
-pub(super) fn 生成する(
+pub(super) fn スキニングパイプラインを生成する(
     確保係: &GPU資源の確保係<'_>,
     ディスクリプタlayout: vk::DescriptorSetLayout,
     コンピュートspirv: &[u8],

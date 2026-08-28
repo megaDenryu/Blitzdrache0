@@ -30,7 +30,7 @@ pub(crate) struct 自動露出のディスクリプタ {
 
 impl 自動露出のディスクリプタ {
     pub(crate) fn 生成する(device: &ash::Device) -> Result<Self, レンダラーエラー> {
-        let レイアウト = レイアウトを作る(device)?;
+        let レイアウト = 自動露出のセットレイアウトを作る(device)?;
         match プールから割り当てる(device, &レイアウト) {
             Ok((pool, セット)) => Ok(Self {
                 レイアウト, pool, セット
@@ -59,7 +59,9 @@ impl 自動露出のディスクリプタ {
     }
 }
 
-fn レイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<4>, レンダラーエラー> {
+fn 自動露出のセットレイアウトを作る(
+    device: &ash::Device,
+) -> Result<宣言から作ったセットレイアウト<4>, レンダラーエラー> {
     束縛の宣言.セットレイアウトを確保する(device)
 }
 

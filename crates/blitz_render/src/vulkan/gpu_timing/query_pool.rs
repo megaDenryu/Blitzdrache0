@@ -7,7 +7,9 @@ use super::クエリ数上限;
 use crate::error::レンダラーエラー;
 use crate::vulkan::sync::進行中フレーム数;
 
-pub(super) fn 生成する(device: &ash::Device) -> Result<[vk::QueryPool; 進行中フレーム数], レンダラーエラー> {
+pub(super) fn 進行中フレーム別のタイムスタンプクエリプールを生成する(
+    device: &ash::Device,
+) -> Result<[vk::QueryPool; 進行中フレーム数], レンダラーエラー> {
     let mut プール一覧 = [vk::QueryPool::null(); 進行中フレーム数];
     for 添字 in 0..進行中フレーム数 {
         let create_info = vk::QueryPoolCreateInfo::default()

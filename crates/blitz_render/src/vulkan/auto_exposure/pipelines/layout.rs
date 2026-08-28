@@ -13,17 +13,17 @@ pub(super) fn 集計のレイアウトを作る(
     device: &ash::Device,
     セットレイアウト: vk::DescriptorSetLayout,
 ) -> Result<vk::PipelineLayout, レンダラーエラー> {
-    作る(device, セットレイアウト, 集計の即時定数バイト数)
+    自動露出のパイプラインレイアウトを作る(device, セットレイアウト, 集計の即時定数バイト数)
 }
 
 pub(super) fn 導出のレイアウトを作る(
     device: &ash::Device,
     セットレイアウト: vk::DescriptorSetLayout,
 ) -> Result<vk::PipelineLayout, レンダラーエラー> {
-    作る(device, セットレイアウト, 導出の即時定数バイト数)
+    自動露出のパイプラインレイアウトを作る(device, セットレイアウト, 導出の即時定数バイト数)
 }
 
-fn 作る(
+fn 自動露出のパイプラインレイアウトを作る(
     device: &ash::Device,
     セットレイアウト: vk::DescriptorSetLayout,
     即時定数バイト数: u32,

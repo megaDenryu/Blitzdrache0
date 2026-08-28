@@ -23,7 +23,7 @@ impl パス別GPU計測 {
         if !タイムスタンプ対応か {
             return Ok(None);
         }
-        let プール一覧 = query_pool::生成する(device)?;
+        let プール一覧 = query_pool::進行中フレーム別のタイムスタンプクエリプールを生成する(device)?;
         Ok(Some(Self {
             プール一覧,
             タイムスタンプ周期ns,

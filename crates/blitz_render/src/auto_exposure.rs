@@ -12,8 +12,8 @@
 /// `導出と適応`は128個のビンを単一の呼び出しで走査する。
 #[derive(Debug, Clone)]
 pub struct 自動露出のシェーダー一式 {
-    pub 集計: crate::compute_shader::コンピュートシェーダー, // 明るさの圧縮前のHDR中間画像をビンと2つの枠へ数え上げる
-    pub 導出と適応: crate::compute_shader::コンピュートシェーダー, // ビンを添字の昇順に走査し、目標を導いて時間適応まで進める
+    pub 集計シェーダー: crate::compute_shader::コンピュートシェーダー, // 明るさの圧縮前のHDR中間画像をビンと2つの枠へ数え上げる
+    pub 導出と適応: crate::compute_shader::コンピュートシェーダー,     // ビンを添字の昇順に走査し、目標を導いて時間適応まで進める
 }
 
 /// ヒストグラムのビンの本数。CPU正本の`blitz_engine::auto_exposure::ビン数`と同じ値でなければならず、
