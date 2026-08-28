@@ -54,6 +54,10 @@ mod number;
 mod query_fixture;
 #[cfg(test)]
 mod query_tests;
+#[cfg(test)]
+mod rotated_shared_edge_fixture;
+#[cfg(test)]
+mod rotated_shared_edge_tests;
 mod segment_query;
 mod sweep_query;
 mod traversal_stack;
