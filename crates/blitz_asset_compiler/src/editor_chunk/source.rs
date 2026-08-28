@@ -1,9 +1,12 @@
 //! 版付きエディターチャンクJSONの最新の形と、版の判別から最新への変換の入口。旧版・欠損・不正値を推測で補わない。
-//! 版の判別は`version_dispatch`が、版ごとの型と最新への変換は`version1`から`version4`が、格子の解決は`grid_resolution`が、素材のパスの解決は`manifest_file`が、建物配置の形と検証は`placement`が、散布の群と個体の形と検証は`scatter`が、地表材質の重みの由来は`weight_source`が持つ。
+//! 版の判別は`version_dispatch`が、版ごとの型と最新への変換は`version1`から`version4`が、格子の解決は`grid_resolution`が、素材のパスの解決は`manifest_file`が、建物配置の形と検証は`placement`が、配置識別子の正準化は`placement_identifier`が、散布の群と個体の形と検証は`scatter`が、地表材質の重みの由来は`weight_source`が持つ。
 
 mod grid_resolution;
 mod manifest_file;
 mod placement;
+mod placement_identifier;
+#[cfg(test)]
+mod placement_tests;
 mod scatter;
 #[cfg(test)]
 mod scatter_tests;
