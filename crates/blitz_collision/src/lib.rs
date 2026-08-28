@@ -17,3 +17,4 @@ pub mod height_field;
 pub mod oriented_box;
 pub mod shape;
 pub mod solver;
+pub mod triangle;
