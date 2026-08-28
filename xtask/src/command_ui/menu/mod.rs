@@ -4,7 +4,7 @@
 
 mod argument_form;
 mod argument_line;
-mod command_line_text;
+mod command_line;
 mod cursor;
 mod display_state;
 mod error;
@@ -20,6 +20,7 @@ use crate::dispatch;
 
 use super::command_catalog;
 use super::command_catalog::コマンド項目;
+use command_line::コマンド行;
 
 pub(crate) fn 対話メニューを起動する() -> ExitCode {
     let 項目一覧 = command_catalog::全件();
@@ -39,11 +40,10 @@ pub(crate) fn 対話メニューを起動する() -> ExitCode {
         return ExitCode::SUCCESS;
     };
     let 項目 = &項目一覧[位置];
-    let mut コマンド行 = vec![項目.ascii名().to_string()];
-    コマンド行.extend(引数を尋ねる(項目));
+    let コマンド行 = コマンド行::コマンド名と引数の語から生成する(項目.ascii名(), 引数を尋ねる(項目));
     println!();
-    println!("[xtask] 実行する: {}", command_line_text::打ち直せる行にする(&コマンド行));
-    dispatch::割り当てる(&コマンド行)
+    println!("[xtask] 実行する: {}", コマンド行.打ち直せる行にする());
+    dispatch::割り当てる(コマンド行.語の並び())
 }
 
 /// 引数の定義を持つコマンドだけ、定義を1件ずつ尋ねる。引数を1つも解釈しないコマンドは何も聞かずに実行する。
@@ -53,7 +53,7 @@ fn 引数を尋ねる(項目: &コマンド項目) -> Vec<String> {
         return Vec::new();
     }
     println!();
-    println!("使い方: cargo xtask {} {}", 項目.ascii名(), 項目.引数の構文());
+    println!("使い方: cargo xtask {} {}", 項目.ascii名(), 項目.引数の構文().綴り());
     println!("引数を1件ずつ聞く。空Enterで省ける引数は省いたまま次へ進む。");
     argument_form::引数フォーム::生成する(argument_form::標準入力の読み手::生成する()).語一覧を尋ねる(定義一覧)
 }
