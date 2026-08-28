@@ -42,6 +42,8 @@ mod segment_query;
 #[cfg(test)]
 mod segment_rotated_tests;
 mod segment_span;
+#[cfg(test)]
+mod segment_tangent_tests;
 mod segment_through_box;
 mod slab;
 mod start_inside;
