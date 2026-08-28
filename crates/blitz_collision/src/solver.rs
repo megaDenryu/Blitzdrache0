@@ -20,11 +20,11 @@ mod ratio;
 mod segment_parameter;
 mod smallest;
 
+pub use axis_end::軸の端;
 pub use error::無次元の媒介変数の生成エラー;
 pub use ratio::掃引で動けた割合;
 pub use segment_parameter::線分の媒介変数;
 
-pub(crate) use axis_end::軸の端;
 pub(crate) use displacement::求解が扱う変位;
 pub(crate) use line_pair::二つの直線の最近接の媒介変数;
 pub(crate) use quadratic::掃引の2次方程式;
