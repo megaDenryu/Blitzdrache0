@@ -8,7 +8,7 @@
 //! 読み込むのは東の座標がマイナス1と0の2チャンクであり、東の座標1のチャンクは読み込まない。線分と掃引のどちらも、
 //! 真の切り詰めた端が東64メートル(東の座標1の始まり)に達し、倍精度で組んだ端はその1刻み内側へ落ちる値を選んである。
 //! 端を外向きへ広げていなければ、矩形は東の座標0までで閉じて完全と答える。
-//! 参照: `crates/blitz_collision/src/shape/truncation_rounding_margin.rs`
+//! 参照: `crates/blitz_collision/src/shape/cover_rounding_margin.rs`
 
 #![allow(clippy::unwrap_used)]
 

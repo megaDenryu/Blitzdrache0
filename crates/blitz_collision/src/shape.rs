@@ -17,8 +17,12 @@ mod axis_aligned_box_tests;
 mod box_axis;
 mod box_face_side;
 mod coordinate_limit;
+mod cover_rounding_margin;
 mod error;
 mod global_axis_aligned_box;
+mod global_box_components;
+#[cfg(test)]
+mod global_box_rounding_margin_tests;
 mod half_extent;
 mod local_displacement;
 mod local_displacement_direction;
@@ -37,7 +41,6 @@ mod oriented_box_double;
 mod outward_narrowing;
 #[cfg(test)]
 mod outward_narrowing_tests;
-mod truncation_rounding_margin;
 
 pub use axis_aligned_box::軸平行の直方体;
 pub use box_axis::直方体自身の座標軸;
