@@ -6,7 +6,8 @@
 
 use blitz_math::メートル;
 
-use super::index_fixture::{大域の位置, 東へ進む変位, 東西に2棟を置いた保管, 選別を作る};
+use super::index_fixture::東西に2棟を置いた保管;
+use super::index_probe_fixture::{大域の位置, 東へ進む変位, 選別を作る};
 use super::{静的な子形状の候補, 静的世界の候補の選別, 静的世界の候補の選別エラー};
 
 fn 候補を1件積んだ受け皿を作る<'形状>(選別: &静的世界の候補の選別<'形状>) -> Vec<静的な子形状の候補<'形状>> {
