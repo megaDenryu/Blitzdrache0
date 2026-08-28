@@ -9,7 +9,9 @@ use thiserror::Error;
 use super::error::升目の値の生成エラー;
 use super::position_error::高さ場の位置の生成エラー;
 
+/// 高さ場を貫く線分の問い合わせで破れる条件。線分の端点の位置・線分の媒介変数・線分が通る升目の値のそれぞれが守る条件である。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
+#[allow(missing_docs)] // 枝の説明は型の`///`が持つ。枝ごとの`///`は宣言の間のコメント行になり規約に反する
 pub enum 線分の問い合わせエラー {
     #[error("線分の端点の位置を作れない: {0}")]
     線分の端点の位置を作れない(#[from] 高さ場の位置の生成エラー),

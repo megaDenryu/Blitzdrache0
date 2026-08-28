@@ -6,10 +6,12 @@
 use super::error::升目の値の生成エラー;
 use super::real::地表の平面の実数;
 
+/// 升目の一辺。高さの標本が並ぶ刻みのメートルである。
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 升目の一辺<数>(数);
 
 impl<数: 地表の平面の実数> 升目の一辺<数> {
+    /// 正の有限値だけを受け付ける。
     pub fn 生成する(メートル: 数) -> Result<Self, 升目の値の生成エラー> {
         if !メートル.有限か() || メートル <= 数::零() {
             return Err(升目の値の生成エラー::升目の一辺が正の有限値でない);

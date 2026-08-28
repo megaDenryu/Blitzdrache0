@@ -3,7 +3,9 @@
 //! 見えている地形と物理の地形が一致することの根拠である。
 //! 参照: `crates/blitz_asset_compiler/src/terrain/surface.rs`
 
+/// 升目を2つに割る三角形のどちらか。対角は升目の左手前の格子点から右奥の格子点へ張る一本である。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[allow(missing_docs)] // 枝の説明は型の`///`が持つ。枝ごとの`///`は宣言の間のコメント行になり規約に反する
 pub enum 升目の三角形 {
     奥側,   // 手前左・奥左・奥右を頂点に持つ
     手前側, // 手前左・手前右・奥右を頂点に持つ

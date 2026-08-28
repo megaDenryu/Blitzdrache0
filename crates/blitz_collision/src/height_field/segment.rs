@@ -9,6 +9,7 @@ use super::linear_in_parameter::媒介変数の1次式;
 use super::segment_error::線分の問い合わせエラー;
 use super::segment_parameter::線分の媒介変数;
 
+/// 高さ場の地表に当たるかを問い合わせる、始点と終点で決まる線分。
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 高さ場を貫く線分 {
     始点: 高さ場の格子原点からの位置,
@@ -16,14 +17,17 @@ pub struct 高さ場を貫く線分 {
 }
 
 impl 高さ場を貫く線分 {
+    /// 始点と終点から作る。端点の有限性と成分の絶対値の上限は位置の型が守るため、この生成に検査は無い。
     pub fn 生成する(始点: 高さ場の格子原点からの位置, 終点: 高さ場の格子原点からの位置) -> Self {
         Self { 始点, 終点 }
     }
 
+    /// 線分の媒介変数が0の端。
     pub fn 始点(&self) -> 高さ場の格子原点からの位置 {
         self.始点
     }
 
+    /// 線分の媒介変数が1の端。
     pub fn 終点(&self) -> 高さ場の格子原点からの位置 {
         self.終点
     }

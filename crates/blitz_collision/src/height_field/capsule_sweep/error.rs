@@ -9,7 +9,9 @@ use thiserror::Error;
 use super::super::error::升目の値の生成エラー;
 use super::super::position_error::高さ場の位置の生成エラー;
 
+/// カプセルの掃引の問い合わせで破れる条件。半径が正の有限でないこと、半径が上限を越えていること、掃引で動けた割合が範囲外になること、掃引が触れる位置を作れないこと、調べる升目の値を作れないことの5つである。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
+#[allow(missing_docs)] // 枝の説明は型の`///`が持つ。枝ごとの`///`は宣言の間のコメント行になり規約に反する
 pub enum カプセルの掃引の問い合わせエラー {
     #[error("カプセルの半径が正の有限値でない")]
     カプセルの半径が正の有限値でない,

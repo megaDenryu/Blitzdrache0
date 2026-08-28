@@ -4,8 +4,14 @@
 //!
 //! 注意: このクレートは世界もチャンクもアセットもGPUも知らない。依存はblitz_mathとthiserrorだけであり、
 //! それを機械で守るのは`cargo xtask conform`のクレート依存の白リストである。
+//!
+//! 公開面には説明の注釈を網羅し、`#![warn(missing_docs)]`と`clippy -D warnings`でそれを機械に守らせる。
+//! 内部だけの項目には説明の注釈を付けず、普通のコメントで書く。公開する列挙の枝は型の説明が枝ごとの意味を
+//! 持ち、枝の注釈は`#[allow(missing_docs)]`で免じる。枝ごとに注釈を書くと宣言の間のコメント行になり、
+//! CLAUDE.md「コメント」が禁じる形になるためである。
 //! 参照: `_doc/設計/世界の形と衝突基盤.md`
 
 #![forbid(unsafe_code)]
+#![warn(missing_docs)]
 
 pub mod height_field;

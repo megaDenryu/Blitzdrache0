@@ -11,14 +11,21 @@ use std::ops::{Add, Div, Mul, Neg, Sub};
 
 use blitz_math::{方向, 方向エラー, 空間};
 
+/// 区分線形の計算が使う実数の能力。実装するのは単精度と倍精度の2つだけである。
 pub trait 地表の平面の実数:
     Copy + PartialOrd + Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> + Div<Output = Self> + Neg<Output = Self>
 {
+    /// 加法の単位元。
     fn 零() -> Self;
+    /// 乗法の単位元。
     fn 一() -> Self;
+    /// 無限大でも非数でもないか。
     fn 有限か(self) -> bool;
+    /// 倍精度へ広げた値。単精度と倍精度のどちらの高さも同じ上限の綴り1つと比べるために使う。
     fn 倍精度へ広げる(self) -> f64;
+    /// 非負の平方根。
     fn 平方根(self) -> Self;
+    /// 3つの成分を`blitz_math`の単位方向へ写す。倍精度で導いた向きが単精度へ狭まる境界がここである。
     fn 成分を方向へ狭める<空間種: 空間>(x: Self, y: Self, z: Self) -> Result<方向<空間種>, 方向エラー>;
 }
 
