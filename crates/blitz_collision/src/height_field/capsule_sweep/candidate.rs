@@ -13,7 +13,7 @@
 //! 辺と頂点を指す並びの位置は、`升目の地表の三角形`が並べた3つの頂点の中の位置である。辺は、その位置の
 //! 頂点から次の位置の頂点へ張ったものを指す。
 
-use super::axis_end::軸の端;
+use crate::solver::軸の端;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum 接触の特徴の候補 {

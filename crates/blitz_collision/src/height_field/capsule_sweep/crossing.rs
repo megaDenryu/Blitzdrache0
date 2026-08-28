@@ -8,12 +8,12 @@
 //! 貫いた場合の接触の単位法線は、最も近い特徴から導けない。軸の両側に三角形があり、どちらへ押し戻すのが
 //! 近いかがこの層では決まらないためである。地表の上向きの単位法線を返し、その旨をここに記す。
 
-use super::axis_end::軸の端;
 use super::contact_candidate::軸と特徴の最近接;
 use super::contact_place::触れた場所;
 use super::contact_solver::カプセルと三角形の接触の求解;
 use super::error::カプセルの掃引の問い合わせエラー;
 use super::feature::地表に触れた特徴;
+use crate::solver::軸の端;
 
 impl カプセルと三角形の接触の求解<'_> {
     pub(super) fn 軸が三角形を貫く場所を求める(

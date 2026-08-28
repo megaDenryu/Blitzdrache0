@@ -11,9 +11,9 @@ use super::candidate::接触の特徴の候補;
 use super::capsule::高さ場を掃引するカプセル;
 use super::contact_candidate::{触れ始める候補, 軸と特徴の最近接};
 use super::error::カプセルの掃引の問い合わせエラー;
-use super::ratio::掃引で動けた割合;
-use super::smallest::最も小さい量の候補だけを覚える器;
 use super::surface_triangle::升目の地表の三角形;
+use crate::solver::掃引で動けた割合;
+use crate::solver::最も小さい量の候補だけを覚える器;
 
 pub(super) struct カプセルと三角形の接触の求解<'掃引> {
     カプセル: &'掃引 高さ場を掃引するカプセル,

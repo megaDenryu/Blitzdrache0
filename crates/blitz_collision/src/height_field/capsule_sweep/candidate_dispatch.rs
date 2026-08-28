@@ -8,7 +8,7 @@ use super::candidate::接触の特徴の候補;
 use super::contact_candidate::軸と特徴の最近接;
 use super::contact_solver::カプセルと三角形の接触の求解;
 use super::error::カプセルの掃引の問い合わせエラー;
-use super::quadratic::掃引の2次方程式;
+use crate::solver::掃引の2次方程式;
 
 impl カプセルと三角形の接触の求解<'_> {
     // 候補の接触の時刻が満たす方程式。その候補が成り立たない形(長さ0の軸・平行な2直線)では`None`を返す。

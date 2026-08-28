@@ -15,3 +15,4 @@
 
 pub mod height_field;
 pub mod shape;
+pub mod solver;

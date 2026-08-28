@@ -11,7 +11,7 @@ use super::super::triangle::升目の三角形;
 use super::super::unit_direction::地表の単位向き;
 use super::contact_place::触れた場所;
 use super::feature::地表に触れた特徴;
-use super::ratio::掃引で動けた割合;
+use crate::solver::掃引で動けた割合;
 
 /// 掃引したカプセルが地表へ触れた1つの事実。動けた割合・接触位置・接触の単位法線・どの升目のどちらの三角形のどの特徴かを持つ。
 #[derive(Debug, Clone, Copy, PartialEq)]

@@ -14,8 +14,8 @@ use super::corner_source::升目の四隅の高さの供給元;
 use super::segment::高さ場を貫く線分;
 use super::segment_error::線分の問い合わせエラー;
 use super::segment_hit::地表への最初の当たり;
-use super::segment_parameter::線分の媒介変数;
 use super::segment_query_result::線分と高さ場の当たりの結果;
+use crate::solver::線分の媒介変数;
 
 /// 高さ場の線分の問い合わせ。四隅の高さの供給元と升目の一辺を保持し、線分が最初に当たる点を答える操作サービスである。
 pub struct 高さ場の線分の問い合わせ<'供給元, 供給元> {

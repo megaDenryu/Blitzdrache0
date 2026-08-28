@@ -7,7 +7,7 @@
 use super::cell_index::升目の格子添字;
 use super::grid_origin_position::高さ場の格子原点からの位置;
 use super::ground_plane::升目の地表の面;
-use super::segment_parameter::線分の媒介変数;
+use crate::solver::線分の媒介変数;
 
 /// 線分が高さ場の地表に最初に当たった点。終点まで当たらなかった枝と、当たりを持つ枝の2つである。
 #[derive(Debug, Clone, Copy, PartialEq)]

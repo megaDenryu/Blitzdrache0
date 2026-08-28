@@ -6,13 +6,13 @@
 //! 収まらない接触は、辺の端すなわち三角形の頂点の候補が答える。
 
 use super::super::grid_origin_displacement::高さ場の中の変位;
-use super::axis_end::軸の端;
 use super::contact_candidate::軸と特徴の最近接;
 use super::contact_place::触れた場所;
 use super::contact_solver::カプセルと三角形の接触の求解;
 use super::error::カプセルの掃引の問い合わせエラー;
 use super::feature::地表に触れた特徴;
-use super::quadratic::掃引の2次方程式;
+use crate::solver::掃引の2次方程式;
+use crate::solver::軸の端;
 
 impl カプセルと三角形の接触の求解<'_> {
     pub(super) fn 辺と軸の端の方程式を組む(&self, 端: 軸の端, 辺の並びの位置: usize) -> Option<掃引の2次方程式> {
@@ -21,12 +21,12 @@ impl カプセルと三角形の接触の求解<'_> {
         if 辺の長さの二乗 <= 0.0 {
             return None;
         }
-        let 始まりの外積 = self.頂点から時刻の軸の端への変位(辺の並びの位置, 端, 0.0).外積(辺);
-        let 速度の外積 = self.掃引の変位().外積(辺);
-        Some(掃引の2次方程式::生成する(
-            速度の外積.長さの二乗(),
-            2.0 * 速度の外積.内積(始まりの外積),
-            始まりの外積.長さの二乗() - self.半径の二乗() * 辺の長さの二乗,
+        Some(掃引の2次方程式::直線と球の隔たりから組む(
+            self.頂点から時刻の軸の端への変位(辺の並びの位置, 端, 0.0),
+            self.掃引の変位(),
+            辺,
+            辺の長さの二乗,
+            self.半径の二乗(),
         ))
     }
 

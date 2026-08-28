@@ -7,7 +7,7 @@
 //! 途中で触れ始める答えより優先する。
 
 use super::contact::掃引したカプセルの地表への接触;
-use super::ratio::掃引で動けた割合;
+use crate::solver::掃引で動けた割合;
 
 pub(super) enum 三角形の中の接触 {
     掃引の始まりから触れている {

@@ -23,6 +23,7 @@ mod cell_ratio;
 mod cell_segment_intersection;
 mod cell_traversal;
 mod corner_source;
+mod displacement_solving;
 mod error;
 mod grid_origin_displacement;
 mod grid_origin_position;
@@ -44,7 +45,6 @@ mod segment_boundary_tests;
 mod segment_direction_tests;
 mod segment_error;
 mod segment_hit;
-mod segment_parameter;
 mod segment_query;
 #[cfg(test)]
 mod segment_query_fixture;
@@ -62,6 +62,7 @@ mod slope_direction_tests;
 mod triangle;
 mod unit_direction;
 
+pub use crate::solver::線分の媒介変数;
 pub use capsule_sweep::{
     カプセルが地表に最初に触れる点, カプセルの掃引と高さ場の接触の結果, カプセルの掃引の問い合わせエラー, 地表に触れた特徴,
     掃引したカプセルの地表への接触, 掃引で動けた割合, 掃引の走査が調べた範囲, 高さ場のカプセルの掃引の問い合わせ, 高さ場を掃引するカプセル,
@@ -83,7 +84,6 @@ pub use scanned_range::線分の走査が調べた範囲;
 pub use segment::高さ場を貫く線分;
 pub use segment_error::線分の問い合わせエラー;
 pub use segment_hit::{地表への最初の当たり, 線分が地表に最初に当たる点};
-pub use segment_parameter::線分の媒介変数;
 pub use segment_query::高さ場の線分の問い合わせ;
 pub use segment_query_result::線分と高さ場の当たりの結果;
 pub use slope::地表の傾き;

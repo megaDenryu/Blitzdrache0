@@ -6,8 +6,8 @@
 use super::super::grid_origin_displacement::高さ場の中の変位;
 use super::super::grid_origin_position::高さ場の格子原点からの位置;
 use super::super::unit_direction::地表の単位向き;
-use super::axis_end::軸の端;
 use super::contact_solver::カプセルと三角形の接触の求解;
+use crate::solver::軸の端;
 
 impl カプセルと三角形の接触の求解<'_> {
     pub(super) fn 半径の二乗(&self) -> f64 {

@@ -14,10 +14,10 @@ use super::capsule::高さ場を掃引するカプセル;
 use super::contact::掃引したカプセルの地表への接触;
 use super::contact_solver::カプセルと三角形の接触の求解;
 use super::error::カプセルの掃引の問い合わせエラー;
-use super::ratio::掃引で動けた割合;
 use super::surface_triangle::升目の地表の三角形;
 use super::sweep_query::高さ場のカプセルの掃引の問い合わせ;
 use super::triangle_answer::三角形の中の接触;
+use crate::solver::掃引で動けた割合;
 
 impl<供給元: 升目の四隅の高さの供給元> 高さ場のカプセルの掃引の問い合わせ<'_, 供給元> {
     pub(super) fn 三角形1つの接触を求める(

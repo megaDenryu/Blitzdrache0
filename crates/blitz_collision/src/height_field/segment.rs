@@ -7,7 +7,7 @@
 use super::grid_origin_position::高さ場の格子原点からの位置;
 use super::linear_in_parameter::媒介変数の1次式;
 use super::segment_error::線分の問い合わせエラー;
-use super::segment_parameter::線分の媒介変数;
+use crate::solver::線分の媒介変数;
 
 /// 高さ場の地表に当たるかを問い合わせる、始点と終点で決まる線分。
 #[derive(Debug, Clone, Copy, PartialEq)]

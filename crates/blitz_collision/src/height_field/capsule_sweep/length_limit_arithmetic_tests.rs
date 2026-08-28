@@ -16,10 +16,10 @@ use super::super::{
     升目の一辺, 升目の三角形, 升目の四隅の高さ, 升目の格子添字, 高さ場の中の変位, 高さ場の問い合わせが受け付ける長さの絶対値の上限メートル,
     高さ場の格子原点からの位置,
 };
-use super::axis_end::軸の端;
 use super::capsule::高さ場を掃引するカプセル;
 use super::contact_solver::カプセルと三角形の接触の求解;
 use super::surface_triangle::升目の地表の三角形;
+use crate::solver::軸の端;
 
 const 長さの上限メートル: f64 = 高さ場の問い合わせが受け付ける長さの絶対値の上限メートル;
 

@@ -8,23 +8,21 @@
 //! 捨てた接触は、面ではなく辺か頂点の候補が答える。
 
 use super::super::unit_direction::地表の単位向き;
-use super::axis_end::軸の端;
 use super::contact_candidate::軸と特徴の最近接;
 use super::contact_place::触れた場所;
 use super::contact_solver::カプセルと三角形の接触の求解;
 use super::error::カプセルの掃引の問い合わせエラー;
 use super::feature::地表に触れた特徴;
-use super::quadratic::掃引の2次方程式;
+use crate::solver::掃引の2次方程式;
+use crate::solver::軸の端;
 
 impl カプセルと三角形の接触の求解<'_> {
     pub(super) fn 面と軸の端の方程式を組む(&self, 端: 軸の端) -> 掃引の2次方程式 {
         let 法線 = self.上向きの法線の変位();
-        let 始まりの隔たり = self.頂点から時刻の軸の端への変位(0, 端, 0.0).内積(法線);
-        let 隔たりの速度 = self.掃引の変位().内積(法線);
-        掃引の2次方程式::生成する(
-            隔たりの速度 * 隔たりの速度,
-            2.0 * 始まりの隔たり * 隔たりの速度,
-            始まりの隔たり * 始まりの隔たり - self.半径の二乗(),
+        掃引の2次方程式::平面と球の隔たりから組む(
+            self.頂点から時刻の軸の端への変位(0, 端, 0.0).内積(法線),
+            self.掃引の変位().内積(法線),
+            self.半径の二乗(),
         )
     }
 

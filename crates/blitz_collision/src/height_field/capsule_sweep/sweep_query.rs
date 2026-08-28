@@ -15,9 +15,9 @@ use super::super::triangle::升目の三角形;
 use super::capsule::高さ場を掃引するカプセル;
 use super::covering::掃引の水平の覆い;
 use super::error::カプセルの掃引の問い合わせエラー;
-use super::smallest::最も小さい量の候補だけを覚える器;
 use super::sweep_result::カプセルの掃引と高さ場の接触の結果;
 use super::triangle_answer::三角形の中の接触;
+use crate::solver::最も小さい量の候補だけを覚える器;
 
 /// 高さ場のカプセルの掃引の問い合わせ。四隅の高さの供給元と升目の一辺を保持し、掃引の接触を答える操作サービスである。
 pub struct 高さ場のカプセルの掃引の問い合わせ<'供給元, 供給元> {

@@ -12,7 +12,6 @@
 //! 升目をすべて調べ、最小の時刻を選ぶ。隣り合う升目が共有する辺と頂点は複数回調べられるが、
 //! 同じ時刻を複数回求めるだけであり最小の選択で畳まれる。
 
-mod axis_end;
 mod candidate;
 mod candidate_dispatch;
 mod capsule;
@@ -26,11 +25,7 @@ mod error;
 mod feature;
 #[cfg(test)]
 mod length_limit_arithmetic_tests;
-mod line_pair;
-mod quadratic;
-mod ratio;
 mod scanned_range;
-mod smallest;
 mod solve_edge;
 mod solve_edge_axis;
 mod solve_face;
@@ -54,11 +49,11 @@ mod sweep_result;
 mod sweep_start_tests;
 mod triangle_answer;
 
+pub use crate::solver::掃引で動けた割合;
 pub use capsule::高さ場を掃引するカプセル;
 pub use contact::掃引したカプセルの地表への接触;
 pub use error::カプセルの掃引の問い合わせエラー;
 pub use feature::地表に触れた特徴;
-pub use ratio::掃引で動けた割合;
 pub use scanned_range::掃引の走査が調べた範囲;
 pub use sweep_hit::カプセルが地表に最初に触れる点;
 pub use sweep_query::高さ場のカプセルの掃引の問い合わせ;
