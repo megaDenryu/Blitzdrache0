@@ -6,7 +6,7 @@ use ash::vk;
 use crate::error::レンダラーエラー;
 use crate::vulkan::sync::進行中フレーム数;
 
-pub(super) fn 生成する(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
+pub(super) fn 粒子のディスクリプタプールを生成する(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
     let セット数 = u32::try_from(進行中フレーム数).unwrap_or_else(|_| panic!("進行中フレーム数がu32に収まらない: {進行中フレーム数}"));
     let プールサイズ一覧 = [
         vk::DescriptorPoolSize::default()

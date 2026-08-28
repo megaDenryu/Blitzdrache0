@@ -12,7 +12,7 @@ use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
 
-pub(super) fn 組み立てる(
+pub(super) fn 粒子描画パイプラインを組み立てる(
     device: &ash::Device,
     カラー形式: vk::Format,
     深度形式: vk::Format,

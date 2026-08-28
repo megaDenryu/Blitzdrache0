@@ -39,6 +39,6 @@ impl 材質の3軸 {
     /// 3軸を正規化済みの材質変種キーへ写す唯一の工程。特徴集合はこの正規化で必ず畳まれる軸であり、
     /// 8通りのどれも同じキーへ写る(理由は`capability_table`の冒頭にある)。
     pub(crate) fn 変種キーへ正規化する(self) -> Result<材質変種キー, 材質能力エラー> {
-        capability_table::引く(self.モデル, self.表面描画状態)
+        capability_table::モデルと表面描画状態から変種キーを参照する(self.モデル, self.表面描画状態)
     }
 }

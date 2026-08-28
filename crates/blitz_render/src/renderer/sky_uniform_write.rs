@@ -10,7 +10,7 @@ use crate::error::{レンダラーエラー, 空エラー};
 use crate::frame_input::フレーム描画入力;
 use crate::vulkan::frame::空描画入力;
 use crate::vulkan::sync::フレームスロット添字;
-use crate::vulkan::uniform::sky_write_order::{決める, 空パス定数の書込指示};
+use crate::vulkan::uniform::sky_write_order::{空パス定数の書込指示, 空パス定数の書込指示を決める};
 use crate::vulkan::uniform::空パス定数内容;
 
 impl レンダラー {
@@ -20,7 +20,7 @@ impl レンダラー {
         入力: &フレーム描画入力<'_>,
         ビュー射影: 変換<ワールド, クリップ>,
     ) -> Result<(), レンダラーエラー> {
-        match 決める(self.描画段階資源.空を描くか(), 入力.空.as_ref())? {
+        match 空パス定数の書込指示を決める(self.描画段階資源.空を描くか(), 入力.空.as_ref())? {
             空パス定数の書込指示::書き込む(空入力) => {
                 let 逆行列 = 逆ビュー射影を求める(ビュー射影)?;
                 let 内容 = 空パス定数内容::組み立てる(空入力, 逆行列);

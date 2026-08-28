@@ -26,7 +26,7 @@ impl 粒子ディスクリプタ一式 {
         シェーダー定数: &フレームシェーダー定数一式,
     ) -> Result<Self, レンダラーエラー> {
         let layout = layout::生成する(device)?;
-        let pool = match pool::生成する(device) {
+        let pool = match pool::粒子のディスクリプタプールを生成する(device) {
             Ok(pool) => pool,
             Err(誤り) => {
                 layout.破棄する(device);

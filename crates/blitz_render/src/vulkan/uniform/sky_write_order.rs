@@ -14,8 +14,9 @@ pub(crate) enum 空パス定数の書込指示<'a> {
     書き込まない,
 }
 
-pub(crate) fn 決める<'a>(
-    空を描くか: bool, 空入力: Option<&'a 空入力>
+pub(crate) fn 空パス定数の書込指示を決める<'a>(
+    空を描くか: bool,
+    空入力: Option<&'a 空入力>,
 ) -> Result<空パス定数の書込指示<'a>, レンダラーエラー> {
     match (空を描くか, 空入力) {
         (true, Some(入力)) => Ok(空パス定数の書込指示::書き込む(入力)),
