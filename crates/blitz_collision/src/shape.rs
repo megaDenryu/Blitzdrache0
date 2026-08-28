@@ -29,6 +29,7 @@ mod global_box_components;
 #[cfg(test)]
 mod global_box_rounding_margin_tests;
 mod half_extent;
+mod local_axis;
 mod local_axis_aligned_box;
 #[cfg(test)]
 mod local_axis_aligned_box_tests;
@@ -81,3 +82,5 @@ pub use triangle::局所座標の三角形;
 pub use triangle_face_orientation::三角形の面の向き;
 pub use triangle_vertex_number::三角形の頂点の番号;
 pub use triangle_with_orientation::面の向きを備えた三角形;
+
+pub(crate) use local_axis::形の局所座標の軸;

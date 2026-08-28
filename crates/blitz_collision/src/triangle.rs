@@ -9,8 +9,10 @@
 //! 位置と変位を格子原点を基準にした型で持つためである。こちらは頂点の位置しか持たず、形の局所座標系に住む。
 //! 求解の式そのものは`crate::solver`が両方へ与えるため、書き写してはいない。
 //!
-//! 数学の方式は2つである。線分は、3頂点が張る平面を横切る時刻を1次式で解き、その点が三角形の内側に在るかを
-//! 辺ごとの符号で見る。カプセルの掃引は、動く軸の線分と三角形の特徴(面1・辺3・頂点3)との隔たりが半径に
+//! 数学の方式は2つである。線分は、線分の向きから決まる座標枠へ三角形を剪断して写し、写した面で線分が三角形の
+//! 中を通るかを辺ごとの符号付き面積で見る。写しが三角形でなく線分から決まるため、隣り合う2枚が共有する辺の量が
+//! 符号の反転そのものになり、辺のちょうど上を狙った線分を2枚がともに取り逃す割れが起きない。カプセルの掃引は、
+//! 動く軸の線分と三角形の特徴(面1・辺3・頂点3)との隔たりが半径に
 //! 等しくなる最小の時刻を、特徴ごとの2次方程式として解析的に解く。どちらも刻み探索も二分法も反復法も使わない。
 //! 同じ入力が必ずビット単位で同じ答えを返すためである
 //! (`_doc/設計/世界の形と衝突基盤.md`「判断14: 決定性の維持」)。
@@ -30,6 +32,7 @@ mod error;
 mod feature;
 #[cfg(test)]
 mod query_fixture;
+mod segment_crossing_hit;
 mod segment_feature;
 #[cfg(test)]
 mod segment_feature_tests;
@@ -37,10 +40,12 @@ mod segment_hit;
 mod segment_in_plane;
 #[cfg(test)]
 mod segment_in_plane_tests;
-mod segment_plane_relation;
 mod segment_query;
+mod segment_shear_frame;
 #[cfg(test)]
 mod segment_tests;
+mod sheared_triangle;
+mod sheared_vertex;
 mod sweep_candidate;
 mod sweep_contact;
 mod sweep_dispatch;
