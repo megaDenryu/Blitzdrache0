@@ -35,6 +35,7 @@
 //! **ここに無いもの。** 実体どうしが本当に重なるかは答えない。答えるのは箱の重なりまでであり、そこから先は
 //! 形の種類ごとの詳細判定が受け持つ。世界のどこに属する形かも持たない。索引が持つのは利用者が与えた識別子だけである。
 
+mod box_edge_check;
 mod error;
 mod identifier;
 mod index;
@@ -61,6 +62,8 @@ mod containment_tests;
 mod degenerate_tests;
 #[cfg(test)]
 mod determinism_tests;
+#[cfg(test)]
+mod extreme_coordinate_tests;
 #[cfg(test)]
 mod invariant_fixture;
 #[cfg(test)]

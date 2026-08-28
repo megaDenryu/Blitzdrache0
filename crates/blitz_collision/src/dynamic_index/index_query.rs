@@ -16,6 +16,7 @@
 
 use crate::shape::大域の軸平行の直方体;
 
+use super::box_edge_check::箱の両端の6成分を軸の順に並べる;
 use super::error::動く形の空間索引の問い合わせエラー;
 use super::identifier::動く形の識別子;
 use super::index::動く形の空間索引;
@@ -48,10 +49,7 @@ impl 動く形の空間索引 {
 pub(super) fn 覆いの端が有限であることを確かめる(
     覆い: &大域の軸平行の直方体,
 ) -> Result<(), 動く形の空間索引の問い合わせエラー> {
-    let 最小 = 覆い.最小の端();
-    let 最大 = 覆い.最大の端();
-    let 端の成分 = [最小.x(), 最小.y(), 最小.z(), 最大.x(), 最大.y(), 最大.z()];
-    if 端の成分.into_iter().any(|成分| !成分.値().is_finite()) {
+    if 箱の両端の6成分を軸の順に並べる(覆い).into_iter().any(|成分| !成分.is_finite()) {
         return Err(動く形の空間索引の問い合わせエラー::覆いの端が有限でない);
     }
     Ok(())
