@@ -24,6 +24,8 @@ mod covering;
 mod crossing;
 mod error;
 mod feature;
+#[cfg(test)]
+mod length_limit_arithmetic_tests;
 mod line_pair;
 mod quadratic;
 mod ratio;
