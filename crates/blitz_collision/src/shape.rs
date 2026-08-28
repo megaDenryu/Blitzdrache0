@@ -26,6 +26,7 @@ mod cover_rounding_margin;
 mod error;
 mod global_axis_aligned_box;
 mod global_box_components;
+mod global_box_cover;
 #[cfg(test)]
 mod global_box_rounding_margin_tests;
 mod half_extent;
