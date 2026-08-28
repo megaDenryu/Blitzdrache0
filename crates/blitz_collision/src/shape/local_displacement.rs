@@ -71,6 +71,14 @@ impl 形の局所座標の変位 {
         )
     }
 
+    pub(crate) fn 引く(self, 相手: Self) -> Self {
+        Self::演算の結果から組む(
+            self.xのメートル - 相手.xのメートル,
+            self.yのメートル - 相手.yのメートル,
+            self.zのメートル - 相手.zのメートル,
+        )
+    }
+
     pub(crate) fn 実数倍する(self, 倍率: f64) -> Self {
         Self::演算の結果から組む(self.xのメートル * 倍率, self.yのメートル * 倍率, self.zのメートル * 倍率)
     }
