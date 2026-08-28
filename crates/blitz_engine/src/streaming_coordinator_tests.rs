@@ -1,3 +1,8 @@
+//! ストリーミング調停の試験。読込と解除の順、GPU受け渡しの段階、予算による縮退をここが見る。
+//! 静的物理形状の出入りは`static_shape_tests`が持つ。調停の同じ経路を別の観点で見るため、子の module へ分ける。
+
+mod static_shape_tests;
+
 use crate::streaming_chunk_world_fixture::{世界を作る, 後始末する};
 use crate::streaming_coordinator_fixture::{準備完了を待つ, 起動する, 進める};
 use crate::{ストリーミングメモリ量, チャンク座標, 予算判定};
