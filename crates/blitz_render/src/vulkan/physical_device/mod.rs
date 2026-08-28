@@ -20,7 +20,7 @@ use candidate::選定候補;
 /// 基礎要件(グラフィックス描画とサーフェス提示、dynamicRendering・synchronization2・shaderDrawParameters)と
 /// ディスクリプタ索引の最低機能要件とテクスチャのブロック圧縮と立方体の配列画像への対応をすべて満たす物理デバイスを選ぶ。
 /// 満たす候補の中ではdiscrete GPUを優先する。
-pub(in crate::vulkan) fn 選定する(
+pub(in crate::vulkan) fn 物理デバイスとキューファミリを選定する(
     instance: &ash::Instance,
     surface_loader: &ash::khr::surface::Instance,
     surface: vk::SurfaceKHR,

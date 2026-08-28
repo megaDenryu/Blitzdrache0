@@ -33,7 +33,8 @@ impl GPU環境 {
             .transpose()?;
 
         let (surface_loader, surface) = vulkan::surface::生成する(&entry, &instance, 表示ハンドル, ウィンドウハンドル)?;
-        let (physical_device, キューファミリ添字) = vulkan::physical_device::選定する(&instance, &surface_loader, surface)?;
+        let (physical_device, キューファミリ添字) =
+            vulkan::physical_device::物理デバイスとキューファミリを選定する(&instance, &surface_loader, surface)?;
         // 索引の機能は選定が候補を絞る条件として見ており、ここへ来た時点で選ばれた1台は満たしている。
         // ここで読むのは、その1台の表容量に効く上限だけである。
         let ディスクリプタ索引上限 = vulkan::descriptor_indexing::上限を採取する(&instance, physical_device);
