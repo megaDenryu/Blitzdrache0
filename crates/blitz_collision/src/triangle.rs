@@ -44,6 +44,8 @@ mod segment_query;
 mod segment_shear_frame;
 #[cfg(test)]
 mod segment_tests;
+#[cfg(test)]
+mod segment_zero_length_tests;
 mod sheared_triangle;
 mod sheared_vertex;
 mod sweep_candidate;
