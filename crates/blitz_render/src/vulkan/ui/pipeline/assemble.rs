@@ -13,7 +13,7 @@ const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
 /// `crate::vulkan::frame::record::ui_pass`が組み立てる`[u8; 8]`と一致させること。
 const 画面寸法プッシュ定数バイト数: u32 = 8;
 
-pub(super) fn 組み立てる(
+pub(super) fn uiパイプラインを組み立てる(
     device: &ash::Device,
     カラー形式: vk::Format,
     ディスクリプタlayout: vk::DescriptorSetLayout,
@@ -31,7 +31,7 @@ pub(super) fn 組み立てる(
             .name(画素段エントリ名),
     ];
 
-    let (バインド記述, 属性記述一覧) = super::vertex_input::記述する();
+    let (バインド記述, 属性記述一覧) = super::vertex_input::ui頂点のバインド記述と属性記述を組み立てる();
     let バインド記述一覧 = [バインド記述];
     let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default()
         .vertex_binding_descriptions(&バインド記述一覧)

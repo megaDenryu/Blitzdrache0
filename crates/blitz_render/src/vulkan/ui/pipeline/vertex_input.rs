@@ -4,7 +4,7 @@ use ash::vk;
 
 use crate::ui_vertex::UI頂点;
 
-pub(super) fn 記述する() -> (vk::VertexInputBindingDescription, [vk::VertexInputAttributeDescription; 3]) {
+pub(super) fn ui頂点のバインド記述と属性記述を組み立てる() -> (vk::VertexInputBindingDescription, [vk::VertexInputAttributeDescription; 3]) {
     let stride = u32::try_from(std::mem::size_of::<UI頂点>()).unwrap_or_else(|_| panic!("UI頂点のサイズがu32に収まらない"));
     let uv開始位置 = u32::try_from(std::mem::offset_of!(UI頂点, uv)).unwrap_or_else(|_| panic!("UI頂点のuv開始位置がu32に収まらない"));
     let 色開始位置 = u32::try_from(std::mem::offset_of!(UI頂点, 色rgba8)).unwrap_or_else(|_| panic!("UI頂点の色開始位置がu32に収まらない"));

@@ -35,7 +35,7 @@ pub(crate) struct UIテクスチャのディスクリプタ資源 {
 impl UIテクスチャのディスクリプタ資源 {
     pub(crate) fn 確保する(device: &ash::Device) -> Result<Self, レンダラーエラー> {
         let layout = 束縛の宣言.セットレイアウトを確保する(device)?;
-        match プールを作る(device) {
+        match uiテクスチャのディスクリプタプールを作る(device) {
             Ok(pool) => Ok(Self { layout, pool }),
             Err(誤り) => {
                 layout.破棄する(device);
@@ -68,7 +68,7 @@ impl UIテクスチャのディスクリプタ資源 {
     }
 }
 
-fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
+fn uiテクスチャのディスクリプタプールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
     let プールサイズ一覧 = 束縛の宣言.プールの内訳(最大テクスチャ数);
     let create_info = vk::DescriptorPoolCreateInfo::default()
         .flags(vk::DescriptorPoolCreateFlags::FREE_DESCRIPTOR_SET)

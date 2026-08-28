@@ -12,7 +12,7 @@ pub(crate) use pass::{合成入力の書き戻し先, 合成入力の注入を�
 
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::{GPU資源の確保係, 専用メモリ付きバッファ};
-use buffers::{片付ける, 配列にする};
+use buffers::{注入のバッファ一覧を片付ける, 配列にする};
 use byte_layout::{半精度のバイト列へ写す, 単精度のバイト列へ写す};
 
 use crate::temporal_reconstruction::時間再構成の合成入力;
@@ -62,7 +62,7 @@ impl 合成入力の注入一式 {
             match 結果 {
                 Ok(組) => 確保済み.push(組),
                 Err(誤り) => {
-                    片付ける(device, &確保済み);
+                    注入のバッファ一覧を片付ける(device, &確保済み);
                     return Err(誤り);
                 }
             }
@@ -87,6 +87,6 @@ impl 合成入力の注入一式 {
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {
-        片付ける(device, &self.バッファ一覧);
+        注入のバッファ一覧を片付ける(device, &self.バッファ一覧);
     }
 }

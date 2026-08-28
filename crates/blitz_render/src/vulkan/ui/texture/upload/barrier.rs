@@ -14,7 +14,7 @@ fn 部分範囲() -> vk::ImageSubresourceRange {
         .layer_count(1)
 }
 
-pub(super) fn 転送先へ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image) {
+pub(super) fn 画像を転送先レイアウトへ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image) {
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
     let バリア = vk::ImageMemoryBarrier2::default()
@@ -34,7 +34,7 @@ pub(super) fn 転送先へ遷移する(積み先: GPU命令の積み先<'_>, ima
     unsafe { device.cmd_pipeline_barrier2(command_buffer, &依存情報) };
 }
 
-pub(super) fn シェーダー読み取り専用へ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image) {
+pub(super) fn 画像をシェーダー読み取り専用レイアウトへ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image) {
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
     let バリア = vk::ImageMemoryBarrier2::default()

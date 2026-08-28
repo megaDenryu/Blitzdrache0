@@ -23,7 +23,7 @@ pub(super) fn 二枚書きを組み立てる(
     頂点モジュール: vk::ShaderModule,
     画素段モジュール: vk::ShaderModule,
 ) -> Result<全画面パスのパイプライン, レンダラーエラー> {
-    let layout = レイアウトを作る(device, セットレイアウト)?;
+    let layout = 時間再構成のパイプラインレイアウトを作る(device, セットレイアウト)?;
     let ステージ一覧 = [
         vk::PipelineShaderStageCreateInfo::default()
             .stage(vk::ShaderStageFlags::VERTEX)
@@ -65,8 +65,9 @@ pub(super) fn 二枚書きを組み立てる(
     全画面パスのパイプライン::生成結果から取り出す(device, layout, 生成結果)
 }
 
-fn レイアウトを作る(
-    device: &ash::Device, セットレイアウト: vk::DescriptorSetLayout
+fn 時間再構成のパイプラインレイアウトを作る(
+    device: &ash::Device,
+    セットレイアウト: vk::DescriptorSetLayout,
 ) -> Result<vk::PipelineLayout, レンダラーエラー> {
     let 範囲一覧 = [vk::PushConstantRange::default()
         .stage_flags(vk::ShaderStageFlags::FRAGMENT)

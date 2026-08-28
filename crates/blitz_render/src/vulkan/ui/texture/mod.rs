@@ -24,7 +24,7 @@ impl UIテクスチャ {
     ) -> Result<Self, レンダラーエラー> {
         let 確保係 = 転送係.確保係();
         let device = 確保係.論理デバイス();
-        let (image, memory) = image::生成する(確保係, 素材.幅(), 素材.高さ())?;
+        let (image, memory) = image::uiテクスチャの画像を生成する(確保係, 素材.幅(), 素材.高さ())?;
 
         if let Err(誤り) = upload::ホストの画素列を画像へ転送する(転送係, image, 素材.幅(), 素材.高さ(), 素材.rgba8()) {
             画像を破棄する(device, image, memory);

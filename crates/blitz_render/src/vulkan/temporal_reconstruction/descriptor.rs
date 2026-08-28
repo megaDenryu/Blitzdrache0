@@ -34,8 +34,8 @@ pub(super) struct 時間再構成のディスクリプタ {
 
 impl 時間再構成のディスクリプタ {
     pub(super) fn 生成する(device: &ash::Device) -> Result<Self, レンダラーエラー> {
-        let レイアウト = レイアウトを作る(device)?;
-        match プールから割り当てる(device, &レイアウト) {
+        let レイアウト = 時間再構成のセットレイアウトを作る(device)?;
+        match 時間再構成のプールを作ってセットを割り当てる(device, &レイアウト) {
             Ok((pool, セット一覧)) => Ok(Self {
                 レイアウト,
                 pool,
@@ -59,11 +59,13 @@ impl 時間再構成のディスクリプタ {
     }
 }
 
-fn レイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<4>, レンダラーエラー> {
+fn 時間再構成のセットレイアウトを作る(
+    device: &ash::Device,
+) -> Result<宣言から作ったセットレイアウト<4>, レンダラーエラー> {
     束縛の宣言.セットレイアウトを確保する(device)
 }
 
-fn プールから割り当てる(
+fn 時間再構成のプールを作ってセットを割り当てる(
     device: &ash::Device,
     レイアウト: &宣言から作ったセットレイアウト<4>,
 ) -> Result<(vk::DescriptorPool, [宣言から割り当てたセット<4>; 履歴の枚数]), レンダラーエラー> {

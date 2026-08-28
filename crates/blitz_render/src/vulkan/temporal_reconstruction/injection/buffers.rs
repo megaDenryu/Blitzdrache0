@@ -8,7 +8,7 @@ use crate::vulkan::allocator::専用メモリ付きバッファ;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 /// 前提: 呼び出し元が唯一の所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを保証する。
-pub(super) fn 片付ける(device: &GPUデバイス, 一覧: &[専用メモリ付きバッファ]) {
+pub(super) fn 注入のバッファ一覧を片付ける(device: &GPUデバイス, 一覧: &[専用メモリ付きバッファ]) {
     for バッファ in 一覧 {
         バッファ.破棄する(device);
     }
