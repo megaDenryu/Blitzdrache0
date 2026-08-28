@@ -11,3 +11,4 @@ assets/one_building_world/
 
 # 生成台帳。生成器の実行ファイルの内容ハッシュを持つため機械ごとに中身が違い、ソースではなく生成の途中状態である
 generation_ledger.txt
+target-agent*/
