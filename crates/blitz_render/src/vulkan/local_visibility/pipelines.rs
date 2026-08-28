@@ -25,7 +25,7 @@ impl 局所可視性のパイプライン一式 {
         シェーダー: &局所可視性のシェーダー一式,
     ) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
-        let レイアウト = レイアウトを作る(device, ディスクリプタ.レイアウトのハンドル())?;
+        let レイアウト = 局所可視性のパイプラインレイアウトを作る(device, ディスクリプタ.レイアウトのハンドル())?;
         match 両方を作る(確保係, レイアウト, シェーダー) {
             Ok((遮蔽の標本化, 両側ぼかし)) => Ok(Self {
                 遮蔽の標本化,
@@ -75,8 +75,9 @@ fn パイプラインを作る(
     確保係.コンピュートパイプラインを生成する(レイアウト, シェーダー.コード(), c"computeMain")
 }
 
-fn レイアウトを作る(
-    device: &ash::Device, セットレイアウト: vk::DescriptorSetLayout
+fn 局所可視性のパイプラインレイアウトを作る(
+    device: &ash::Device,
+    セットレイアウト: vk::DescriptorSetLayout,
 ) -> Result<vk::PipelineLayout, レンダラーエラー> {
     let セット一覧 = [セットレイアウト];
     let 範囲一覧 = [vk::PushConstantRange::default()

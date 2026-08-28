@@ -12,7 +12,7 @@ pub(super) fn 生成する(
     確保係: &GPU資源の確保係<'_>, 寸法: vk::Extent2D
 ) -> Result<局所可視度の画像, レンダラーエラー> {
     let device = 確保係.論理デバイス();
-    let 画像 = 画像を作る(確保係, 寸法)?;
+    let 画像 = 局所可視度の画像を作る(確保係, 寸法)?;
     let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(画像, GPUメモリ用途::描画画像) {
         Ok(memory) => memory,
         Err(誤り) => {
@@ -37,7 +37,7 @@ pub(super) fn 生成する(
 
 /// 転送先を常に付けるのは、局所可視性補正を積まない世界のために遮蔽なしの符号値で埋める工程があるためである。
 /// 転送元を常に付けるのは、検収の入口がぼかし後の画像を読み戻してCPU正本と突き合わせるためである。
-fn 画像を作る(確保係: &GPU資源の確保係<'_>, 寸法: vk::Extent2D) -> Result<vk::Image, レンダラーエラー> {
+fn 局所可視度の画像を作る(確保係: &GPU資源の確保係<'_>, 寸法: vk::Extent2D) -> Result<vk::Image, レンダラーエラー> {
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
         .format(局所可視度の形式)

@@ -22,14 +22,15 @@ impl 布一式 {
         let device = 転送係.論理デバイス();
         let 確保係 = 転送係.確保係();
         let バッファ = buffers::布バッファ::生成する(転送係, 素材)?;
-        let ディスクリプタ = match descriptor::生成する(device, &バッファ, スキン済み頂点buffer) {
+        let ディスクリプタ = match descriptor::布ディスクリプタを生成する(device, &バッファ, スキン済み頂点buffer) {
             Ok(一式) => 一式,
             Err(誤り) => {
                 バッファ.破棄する(device);
                 return Err(誤り);
             }
         };
-        let パイプライン群 = match pipelines::生成する(確保係, ディスクリプタ.レイアウトのハンドル(), シェーダー) {
+        let パイプライン群 = match pipelines::布パイプライン群を生成する(確保係, ディスクリプタ.レイアウトのハンドル(), シェーダー)
+        {
             Ok(群) => 群,
             Err(誤り) => {
                 ディスクリプタ.破棄する(device);

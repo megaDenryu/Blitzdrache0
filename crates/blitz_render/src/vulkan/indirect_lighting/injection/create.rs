@@ -9,7 +9,7 @@ use crate::indirect_lighting::間接照明エラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::derived_environment::派生表現一式;
 
-pub(super) fn 生成する(
+pub(super) fn 解析入力の注入資源を生成する(
     確保係: &GPU資源の確保係<'_>,
     派生表現: &派生表現一式,
     入力: &遠方環境の解析入力,

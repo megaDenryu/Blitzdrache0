@@ -7,7 +7,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::{専用メモリ付きバッファ, 巻き戻せる確保の台帳};
 use crate::vulkan::transfer::ステージング経由の転送係;
 
-pub(super) fn 生成する(
+pub(super) fn 布の描画インデックスとアタッチ対応のバッファを生成する(
     台帳: &mut 巻き戻せる確保の台帳<'_, '_>,
     転送係: ステージング経由の転送係<'_>,
     素材: &布素材,

@@ -29,7 +29,7 @@ pub(crate) struct 局所可視性のディスクリプタ {
 
 impl 局所可視性のディスクリプタ {
     pub(crate) fn 生成する(device: &ash::Device) -> Result<Self, レンダラーエラー> {
-        let レイアウト = レイアウトを作る(device)?;
+        let レイアウト = 局所可視性のセットレイアウトを作る(device)?;
         match プールから割り当てる(device, &レイアウト) {
             Ok((pool, セット)) => Ok(Self {
                 レイアウト, pool, セット
@@ -58,7 +58,9 @@ impl 局所可視性のディスクリプタ {
     }
 }
 
-fn レイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<3>, レンダラーエラー> {
+fn 局所可視性のセットレイアウトを作る(
+    device: &ash::Device,
+) -> Result<宣言から作ったセットレイアウト<3>, レンダラーエラー> {
     束縛の宣言.セットレイアウトを確保する(device)
 }
 

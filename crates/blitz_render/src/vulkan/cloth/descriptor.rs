@@ -53,7 +53,7 @@ impl 布ディスクリプタ {
     }
 }
 
-pub(super) fn 生成する(
+pub(super) fn 布ディスクリプタを生成する(
     device: &ash::Device,
     バッファ: &布バッファ,
     スキン済み頂点buffer: Option<vk::Buffer>,
@@ -92,7 +92,7 @@ pub(super) fn 生成する(
     let 一式 = 布ディスクリプタ { layout, pool, set一覧 };
     for フレーム添字 in フレームスロット添字::全スロット() {
         let set = &一式.set一覧[フレーム添字.配列添字()];
-        super::write::書く(device, set, バッファ, スキン済み頂点buffer, フレーム添字);
+        super::write::布の束縛先をディスクリプタセットへ書き込む(device, set, バッファ, スキン済み頂点buffer, フレーム添字);
     }
     Ok(一式)
 }

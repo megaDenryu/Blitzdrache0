@@ -20,7 +20,7 @@ pub(super) struct 布パイプライン群 {
     pub(super) 頂点生成: vk::Pipeline,
 }
 
-pub(super) fn 生成する(
+pub(super) fn 布パイプライン群を生成する(
     確保係: &GPU資源の確保係<'_>,
     ディスクリプタlayout: vk::DescriptorSetLayout,
     シェーダー: &布シェーダー一式,
