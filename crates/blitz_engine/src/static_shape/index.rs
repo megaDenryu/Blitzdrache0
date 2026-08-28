@@ -19,6 +19,8 @@ mod index_boundary_tests;
 #[cfg(test)]
 mod index_fixture;
 #[cfg(test)]
+mod index_receptacle_tests;
+#[cfg(test)]
 mod index_selection_tests;
 mod query;
 mod query_gather;
