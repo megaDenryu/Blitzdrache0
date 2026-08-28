@@ -54,10 +54,12 @@ mod shape_segment;
 mod sweep_capsule;
 mod sweep_capsule_error;
 mod triangle;
+mod triangle_face_orientation;
 mod triangle_inside;
 #[cfg(test)]
 mod triangle_tests;
 mod triangle_vertex_number;
+mod triangle_with_orientation;
 
 pub use axis_aligned_box::軸平行の直方体;
 pub use box_axis::直方体自身の座標軸;
@@ -76,4 +78,6 @@ pub use shape_segment::形を貫く線分;
 pub use sweep_capsule::形を掃引するカプセル;
 pub use sweep_capsule_error::掃引するカプセルの生成エラー;
 pub use triangle::局所座標の三角形;
+pub use triangle_face_orientation::三角形の面の向き;
 pub use triangle_vertex_number::三角形の頂点の番号;
+pub use triangle_with_orientation::面の向きを備えた三角形;

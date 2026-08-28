@@ -23,10 +23,14 @@
 //! のは呼び出し側である。(5)階層はこのモジュールの外へ出ない。公開するのは網と、問い合わせの答えだけである。
 
 #[cfg(test)]
+mod brute_force_agreement_tests;
+#[cfg(test)]
 mod brute_force_fixture;
 #[cfg(test)]
 mod build_determinism_tests;
 mod covering_scan;
+#[cfg(test)]
+mod covering_scan_tests;
 mod error;
 mod hierarchy;
 mod hierarchy_builder;
@@ -46,6 +50,8 @@ mod mesh_validation;
 mod mesh_validation_tests;
 mod node;
 mod number;
+#[cfg(test)]
+mod query_fixture;
 #[cfg(test)]
 mod query_tests;
 mod segment_query;
