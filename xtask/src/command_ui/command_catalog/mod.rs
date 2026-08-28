@@ -3,6 +3,7 @@
 //! 担当する分類に名前が付き、コマンドを1件足すときに触るのがその分類のファイルだけで済むためである
 //! (参照: CLAUDE.md「切り出しの根拠義務」の3号、触れるフィールドが限定された操作の分離)。
 
+mod argument;
 mod asset;
 mod benchmark;
 mod core;
@@ -14,6 +15,7 @@ mod play;
 mod render_check;
 mod sky_environment;
 
+pub(crate) use argument::{引数定義, 省略したときの扱い, 選択肢};
 pub(crate) use entry::コマンド項目;
 
 /// 全コマンドを分類の並び順で返す。分類の中の並び順は各分類ファイルの定義順のままである。
@@ -35,5 +37,7 @@ pub(crate) fn 全件() -> Vec<コマンド項目> {
     .collect()
 }
 
+#[cfg(test)]
+mod argument_tests;
 #[cfg(test)]
 mod tests;

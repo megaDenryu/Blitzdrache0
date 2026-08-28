@@ -2,8 +2,9 @@
 //! 番号入力だけの簡易一覧から選び、選ばれたコマンドをdispatchの対応表(`dispatch::割り当てる`)へ
 //! そのまま渡して実行する。名前→実装の対応をここへ二重に持たないのはこのためである。
 
+mod argument_form;
 mod argument_line;
-mod argument_prompt;
+mod command_line_text;
 mod cursor;
 mod display_state;
 mod error;
@@ -18,6 +19,7 @@ use std::process::ExitCode;
 use crate::dispatch;
 
 use super::command_catalog;
+use super::command_catalog::コマンド項目;
 
 pub(crate) fn 対話メニューを起動する() -> ExitCode {
     let 項目一覧 = command_catalog::全件();
@@ -37,10 +39,23 @@ pub(crate) fn 対話メニューを起動する() -> ExitCode {
         return ExitCode::SUCCESS;
     };
     let 項目 = &項目一覧[位置];
-    let 引数一覧 = argument_prompt::引数の行を読む(項目);
     let mut コマンド行 = vec![項目.ascii名().to_string()];
-    コマンド行.extend(引数一覧);
+    コマンド行.extend(引数を尋ねる(項目));
+    println!();
+    println!("[xtask] 実行する: {}", command_line_text::打ち直せる行にする(&コマンド行));
     dispatch::割り当てる(&コマンド行)
+}
+
+/// 引数の定義を持つコマンドだけ、定義を1件ずつ尋ねる。引数を1つも解釈しないコマンドは何も聞かずに実行する。
+fn 引数を尋ねる(項目: &コマンド項目) -> Vec<String> {
+    let 定義一覧 = 項目.引数定義一覧();
+    if 定義一覧.is_empty() {
+        return Vec::new();
+    }
+    println!();
+    println!("使い方: cargo xtask {} {}", 項目.ascii名(), 項目.引数の構文());
+    println!("引数を1件ずつ聞く。空Enterで省ける引数は省いたまま次へ進む。");
+    argument_form::引数フォーム::生成する(argument_form::標準入力の読み手::生成する()).語一覧を尋ねる(定義一覧)
 }
 
 /// 標準入力と標準出力の両方が端末につながっているときだけ矢印キーの対話モードへ入る。
