@@ -12,7 +12,9 @@ use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::image::大気のベイク済み画像形式;
 
 /// 立方体互換の旗を立てるのは、同じ画像から立方体ビューを作るためである。旗が無いと立方体ビューの生成が失敗する。
-pub(super) fn 画像を作る(確保係: &GPU資源の確保係<'_>, 面の一辺: u32) -> Result<vk::Image, レンダラーエラー> {
+pub(super) fn 遠方環境の立方体画像を作る(
+    確保係: &GPU資源の確保係<'_>, 面の一辺: u32
+) -> Result<vk::Image, レンダラーエラー> {
     let 範囲 = vk::Extent3D {
         width: 面の一辺,
         height: 面の一辺,
@@ -33,7 +35,7 @@ pub(super) fn 画像を作る(確保係: &GPU資源の確保係<'_>, 面の一�
     確保係.画像の作り方から画像を確保する(&create_info)
 }
 
-pub(super) fn ビューを作る(
+pub(super) fn 遠方環境の立方体画像のビューを作る(
     確保係: &GPU資源の確保係<'_>,
     画像: vk::Image,
     種別: vk::ImageViewType,

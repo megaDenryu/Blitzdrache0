@@ -9,8 +9,11 @@ use ash::vk;
 
 use crate::vulkan::graph;
 
-pub(super) fn 作る(
-    画像: graph::画像ハンドル, 一層の範囲: vk::Extent3D, 層数: u32, 受け: vk::Buffer
+pub(super) fn 遠方環境のコピーパスを作る(
+    画像: graph::画像ハンドル,
+    一層の範囲: vk::Extent3D,
+    層数: u32,
+    受け: vk::Buffer,
 ) -> graph::パス宣言<'static> {
     graph::パス宣言::生成する(
         "遠方環境読み戻し",

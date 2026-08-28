@@ -11,7 +11,7 @@ use super::大気のベイク済み画像の生成入力;
 use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::graph::{パス宣言, パス種別, 画像ハンドル, 画像用途};
 
-pub(crate) fn 作る<'a>(
+pub(crate) fn 大気のベイク済み画像の生成パスを作る<'a>(
     パス名: &'static str,
     書き込み先: 画像ハンドル,
     読み画像: Vec<(画像ハンドル, 画像用途)>,

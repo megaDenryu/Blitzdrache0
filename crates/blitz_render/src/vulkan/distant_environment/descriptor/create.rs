@@ -15,11 +15,11 @@ pub(super) fn 生成する(
 ) -> Result<遠方環境ディスクリプタ, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let sampler = 確保係.線形サンプラーを作る()?;
-    let layout = match binding::レイアウトを作る(device) {
+    let layout = match binding::遠方環境ディスクリプタのセットレイアウトを作る(device) {
         Ok(layout) => layout,
         Err(誤り) => return Err(サンプラーを片付けて返す(device, sampler, 誤り)),
     };
-    let pool = match binding::プールを作る(device) {
+    let pool = match binding::遠方環境ディスクリプタのプールを作る(device) {
         Ok(pool) => pool,
         Err(誤り) => {
             layout.破棄する(device);
@@ -36,7 +36,7 @@ pub(super) fn 生成する(
         }
     };
     for 添字 in フレームスロット添字::全スロット() {
-        binding::書き込む(device, &set一覧[添字.配列添字()], sampler, &束縛先, 添字);
+        binding::遠方環境の束縛先をディスクリプタセットへ書き込む(device, &set一覧[添字.配列添字()], sampler, &束縛先, 添字);
     }
     Ok(遠方環境ディスクリプタ {
         layout,

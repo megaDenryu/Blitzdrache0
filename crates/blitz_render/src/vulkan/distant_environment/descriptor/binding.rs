@@ -26,11 +26,13 @@ const 宣言: 宣言した束縛の並び<3> = 宣言した束縛の並び::生�
     (束縛番号::生成する(2), vk::DescriptorType::STORAGE_IMAGE, vk::ShaderStageFlags::COMPUTE),
 ]);
 
-pub(super) fn レイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<3>, レンダラーエラー> {
+pub(super) fn 遠方環境ディスクリプタのセットレイアウトを作る(
+    device: &ash::Device,
+) -> Result<宣言から作ったセットレイアウト<3>, レンダラーエラー> {
     宣言.セットレイアウトを確保する(device)
 }
 
-pub(super) fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
+pub(super) fn 遠方環境ディスクリプタのプールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レンダラーエラー> {
     let セット数 = descriptor_common::セット数();
     let プールサイズ一覧 = 宣言.プールの内訳(セット数);
     let create_info = vk::DescriptorPoolCreateInfo::default().max_sets(セット数).pool_sizes(&プールサイズ一覧);
@@ -38,7 +40,7 @@ pub(super) fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorP
     Ok(unsafe { device.create_descriptor_pool(&create_info, None)? })
 }
 
-pub(super) fn 書き込む(
+pub(super) fn 遠方環境の束縛先をディスクリプタセットへ書き込む(
     device: &ash::Device,
     セット: &宣言から割り当てたセット<3>,
     sampler: vk::Sampler,
