@@ -23,7 +23,7 @@ impl 透過率ディスクリプタ {
         シェーダー定数一覧: [vk::Buffer; 進行中フレーム数],
         書き込み先: vk::ImageView,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(device, シェーダー定数一覧, 書き込み先)
+        create::透過率ディスクリプタを生成する(device, シェーダー定数一覧, 書き込み先)
     }
 
     pub(super) fn set(&self, フレーム添字: フレームスロット添字) -> vk::DescriptorSet {

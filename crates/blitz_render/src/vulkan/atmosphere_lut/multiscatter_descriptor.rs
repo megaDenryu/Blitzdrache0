@@ -32,7 +32,7 @@ impl 多重散乱ディスクリプタ {
     pub(super) fn 生成する(
         確保係: &GPU資源の確保係<'_>, 束縛先: 多重散乱の束縛先<'_>
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(確保係, 束縛先)
+        create::多重散乱ディスクリプタを生成する(確保係, 束縛先)
     }
 
     pub(super) fn set(&self, フレーム添字: フレームスロット添字) -> vk::DescriptorSet {

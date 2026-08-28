@@ -24,7 +24,7 @@ pub(in crate::vulkan) struct 反射率積分表の画像 {
 
 impl 反射率積分表の画像 {
     pub(in crate::vulkan) fn 生成する(確保係: &GPU資源の確保係<'_>, 横: u32, 縦: u32) -> Result<Self, レンダラーエラー> {
-        create::生成する(確保係, 横, 縦)
+        create::反射率積分表の画像を生成する(確保係, 横, 縦)
     }
 
     pub(in crate::vulkan) fn 範囲(&self) -> vk::Extent3D {

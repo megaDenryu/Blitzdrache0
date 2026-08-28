@@ -12,7 +12,7 @@ use crate::vulkan::pipeline_ledger::照明束縛レイアウト;
 use crate::vulkan::shadow_resources::影の資源の組;
 use crate::vulkan::sync::進行中フレーム数;
 
-pub(super) fn 生成する(
+pub(super) fn 照明問い合わせ資源束を生成する(
     確保係: &GPU資源の確保係<'_>,
     レイアウト: &シーンセットレイアウト一式,
     影の資源: &影の資源の組,

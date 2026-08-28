@@ -34,15 +34,16 @@ pub(crate) fn 照明問い合わせのバイト列を組み立てる(
     let mut 方向光列 = [0u8; 方向光列のバイト長];
     for (添字, 内容) in 方向光一覧.iter().enumerate() {
         let 開始 = 添字 * directional_bytes::バイト長;
-        方向光列[開始..開始 + directional_bytes::バイト長].copy_from_slice(&directional_bytes::バイト列にする(内容));
+        方向光列[開始..開始 + directional_bytes::バイト長]
+            .copy_from_slice(&directional_bytes::方向光レコード内容をバイト列にする(内容));
     }
     let mut 局所光列 = [0u8; 局所光列のバイト長];
     for (添字, 内容) in 局所光一覧.局所光レコードを先頭から順に返す().enumerate() {
         let 開始 = 添字 * local_bytes::バイト長;
-        局所光列[開始..開始 + local_bytes::バイト長].copy_from_slice(&local_bytes::バイト列にする(内容));
+        局所光列[開始..開始 + local_bytes::バイト長].copy_from_slice(&local_bytes::局所光レコード内容をバイト列にする(内容));
     }
     Ok(照明問い合わせのバイト列 {
-        ヘッダ: header_bytes::バイト列にする(ヘッダ),
+        ヘッダ: header_bytes::照明問い合わせヘッダ内容をバイト列にする(ヘッダ),
         方向光列,
         局所光列,
     })

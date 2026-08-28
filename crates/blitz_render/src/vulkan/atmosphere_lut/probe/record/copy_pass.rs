@@ -8,8 +8,11 @@ use ash::vk;
 
 use crate::vulkan::graph;
 
-pub(super) fn 作る(
-    名前: &'static str, 画像: graph::画像ハンドル, 範囲: vk::Extent3D, 受け: vk::Buffer
+pub(super) fn コピーパスを作る(
+    名前: &'static str,
+    画像: graph::画像ハンドル,
+    範囲: vk::Extent3D,
+    受け: vk::Buffer,
 ) -> graph::パス宣言<'static> {
     graph::パス宣言::生成する(
         名前,

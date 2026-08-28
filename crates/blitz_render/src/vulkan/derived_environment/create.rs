@@ -22,7 +22,7 @@ pub(in crate::vulkan) struct 派生表現の解像度一式 {
     pub(in crate::vulkan) 反射率積分表: 反射率積分表の解像度,
 }
 
-pub(super) fn 生成する(
+pub(super) fn 派生表現一式を生成する(
     確保係: &GPU資源の確保係<'_>,
     解像度: 派生表現の解像度一式,
     遠方環境の配列ビュー: vk::ImageView,

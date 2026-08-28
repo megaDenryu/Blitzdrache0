@@ -38,7 +38,7 @@ impl 空中遠近合成ディスクリプタ {
     pub(crate) fn 生成する(
         確保係: &GPU資源の確保係<'_>, 束縛先: &空中遠近合成の束縛先
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(確保係, 束縛先)
+        create::空中遠近合成ディスクリプタを生成する(確保係, 束縛先)
     }
 
     pub(crate) fn set(&self, フレーム添字: フレームスロット添字) -> vk::DescriptorSet {

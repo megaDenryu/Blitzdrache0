@@ -9,7 +9,7 @@ use crate::error::レンダラーエラー;
 use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::allocator::GPU資源の確保係;
 
-pub(super) fn 生成する(
+pub(super) fn 派生の立方体画像を生成する(
     確保係: &GPU資源の確保係<'_>,
     最詳細段の一辺: u32,
     段数: u32,

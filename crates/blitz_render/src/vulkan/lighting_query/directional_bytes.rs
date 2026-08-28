@@ -15,7 +15,7 @@ const 影なしの種別: u32 = 0;
 /// 可視性の種別の生値。shaders/lighting_query.slangのdirectionalVisibilityCascadedShadowと同じ値である。
 const 多段影の種別: u32 = 1;
 
-pub(crate) fn バイト列にする(内容: &方向光レコード内容) -> [u8; バイト長] {
+pub(crate) fn 方向光レコード内容をバイト列にする(内容: &方向光レコード内容) -> [u8; バイト長] {
     let mut バイト列 = [0u8; バイト長];
     let mut 位置 = 0usize;
     vec4を書き込む(&mut バイト列, &mut 位置, ベクトル3をvec4化(内容.光へ向かう方向, 内容.強度));

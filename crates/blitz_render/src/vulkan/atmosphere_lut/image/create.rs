@@ -9,7 +9,7 @@ use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像の形;
 
-pub(super) fn 生成する(
+pub(super) fn 大気のベイク済み画像を生成する(
     確保係: &GPU資源の確保係<'_>,
     形: 大気のベイク済み画像の形,
 ) -> Result<大気のベイク済み画像, レンダラーエラー> {

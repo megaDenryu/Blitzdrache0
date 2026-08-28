@@ -11,7 +11,7 @@ use crate::shader_bundle::大気のベイク済み画像のシェーダー一式
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::base_resources::大気のベイク済み画像の基盤資源;
 
-pub(super) fn 生成する(
+pub(super) fn 大気のベイク済み画像の束縛一式を生成する(
     確保係: &GPU資源の確保係<'_>,
     基盤: &大気のベイク済み画像の基盤資源,
     シェーダー: &大気のベイク済み画像のシェーダー一式,

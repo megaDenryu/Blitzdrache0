@@ -30,7 +30,7 @@ impl 派生の立方体画像 {
     pub(in crate::vulkan) fn 生成する(
         確保係: &GPU資源の確保係<'_>, 最詳細段の一辺: u32, 段数: u32
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(確保係, 最詳細段の一辺, 段数)
+        create::派生の立方体画像を生成する(確保係, 最詳細段の一辺, 段数)
     }
 
     pub(in crate::vulkan) fn 段の一辺(&self, 段: u32) -> u32 {

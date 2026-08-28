@@ -10,7 +10,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::sync::フレームスロット添字;
 
-pub(super) fn 生成する(
+pub(super) fn 空中遠近合成ディスクリプタを生成する(
     確保係: &GPU資源の確保係<'_>,
     束縛先: &空中遠近合成の束縛先,
 ) -> Result<空中遠近合成ディスクリプタ, レンダラーエラー> {

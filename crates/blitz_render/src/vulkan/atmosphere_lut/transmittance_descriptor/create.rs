@@ -16,7 +16,7 @@ const 宣言: 宣言した束縛の並び<2> = 宣言した束縛の並び::生�
     (束縛番号::生成する(1), vk::DescriptorType::STORAGE_IMAGE, vk::ShaderStageFlags::COMPUTE),
 ]);
 
-pub(super) fn 生成する(
+pub(super) fn 透過率ディスクリプタを生成する(
     device: &ash::Device,
     シェーダー定数一覧: [vk::Buffer; 進行中フレーム数],
     書き込み先: vk::ImageView,

@@ -18,7 +18,7 @@ pub(crate) const 拡散照度生成のパス名: &str = "拡散照度生成";
 pub(crate) const 鏡面畳込み生成のパス名: &str = "鏡面畳込み生成";
 pub(crate) const 反射率積分表生成のパス名: &str = "反射率積分表生成";
 
-pub(in crate::vulkan) fn 作る<'a>(
+pub(in crate::vulkan) fn 派生表現の生成パスを作る<'a>(
     パス名: &'static str,
     書き込み先: 画像ハンドル,
     読み画像: Vec<(画像ハンドル, 画像用途)>,
