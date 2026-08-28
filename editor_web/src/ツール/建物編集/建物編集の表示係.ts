@@ -1,5 +1,5 @@
-import type { 配線ポート } from 'sengen-ui'
 import type { 升目の座標 } from '../../生成/編集資源契約.ts'
+import type { 表示名の編集をまとめる係 } from '../../文書の表示名の編集/index.ts'
 import { 入口方向が向く側面を読む, type 升目の側面, type 煙突の段数 } from './編集モデル/index.ts'
 import type { 建物編集画面 } from './画面/index.ts'
 import type { 升目への筆, 面への筆 } from './操作コマンド/index.ts'
@@ -17,7 +17,8 @@ export interface I建物編集の触り {
     升目を消す(座標: 升目の座標): void
     面を触る(座標: 升目の座標, 側面: 升目の側面): void
     面を消す(座標: 升目の座標, 側面: 升目の側面): void
-    表示名を変える(新しい表示名: string): void
+    表示名が入力された(入力中の表示名: string): void
+    表示名が決まった(新しい表示名: string): void
     取り消す(): void
     やり直す(): void
     識別色の重ねを切り替える(): void
@@ -37,12 +38,10 @@ export interface I建物の表示名の届け先 {
 // 変わった箇所だけを差し替えず全体を作り直すのは、1回の触りで隣と真下の升目の継ぎ目まで変わるためである
 // (格子1件の升目は数十の規模であり、作り直しの費用は人の操作1回に対して問題にならない)。
 export class 建物編集の表示係 {
-    private _直前に知らせた表示名: string | null = null
-
     public constructor(
         private readonly _画面: 建物編集画面,
         private readonly _状態: 建物編集の状態,
-        private readonly _表示名の届け先: 配線ポート<I建物の表示名の届け先>,
+        private readonly _表示名の編集: 表示名の編集をまとめる係,
     ) {}
 
     public 作り直す(触り: I建物編集の触り): void {
@@ -76,7 +75,7 @@ export class 建物編集の表示係 {
         this._画面.部品.インスペクター.選んでいる升目.表示を更新する(this._状態.選んでいる升目)
         this._画面.部品.建物名.表示を更新する(モデル.名乗り.表示名)
         this.取り消しとやり直しの活性を更新する()
-        this._表示名の変化を知らせる(モデル.名乗り.表示名)
+        this._表示名の編集.正本の表示名に合わせる(モデル.名乗り.表示名)
     }
 
     public 取り消しとやり直しの活性を更新する(): void {
@@ -85,12 +84,5 @@ export class 建物編集の表示係 {
             this._状態.履歴.やり直せるか,
             this._状態.識別色を重ねるか,
         )
-    }
-
-    // 升目を1つ触るたびに見出しを組み直させないため、前に知らせた名前と違うときだけ届ける。
-    private _表示名の変化を知らせる(表示名: string): void {
-        if (表示名 === this._直前に知らせた表示名) return
-        this._直前に知らせた表示名 = 表示名
-        if (this._表示名の届け先.配線済みか) this._表示名の届け先.先.表示名が変わった(表示名)
     }
 }

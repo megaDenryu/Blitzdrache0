@@ -1,4 +1,4 @@
-import type { 配線ポート } from 'sengen-ui'
+import type { 表示名の編集をまとめる係 } from '../../文書の表示名の編集/index.ts'
 import type { 楽曲編集UI状態 } from './楽曲編集UI状態.ts'
 import type { 楽曲編集状態 } from './編集モデル/index.ts'
 import type { 楽曲編集画面 } from './画面/index.ts'
@@ -14,13 +14,11 @@ export interface I楽曲の表示名の届け先 {
 // 操作コマンドの適用後・パターンの選び直し・再生でパターンが移ったときの、どこから来ても同じ1つの経路にする。
 // 楽曲の表示名は中央の欄だけでなく文書タブの見出しにも出ているため、ここが変化を外側へも知らせる。
 export class 楽曲編集の表示の同期 {
-    private _直前に知らせた表示名: string | null = null
-
     public constructor(
         private readonly _画面: 楽曲編集画面,
         private readonly _状態: 楽曲編集状態,
         private readonly _UI状態: 楽曲編集UI状態,
-        private readonly _表示名の届け先: 配線ポート<I楽曲の表示名の届け先>,
+        private readonly _表示名の編集: 表示名の編集をまとめる係,
     ) {}
 
     public 再構築する(): void {
@@ -31,13 +29,6 @@ export class 楽曲編集の表示の同期 {
             this._UI状態.進行の外モードか,
             this._UI状態.ドラッグ見込み,
         )
-        this._表示名の変化を知らせる(楽曲.表示名)
-    }
-
-    // 打点のたびに見出しを組み直させないため、前に知らせた名前と違うときだけ届ける。
-    private _表示名の変化を知らせる(表示名: string): void {
-        if (表示名 === this._直前に知らせた表示名) return
-        this._直前に知らせた表示名 = 表示名
-        if (this._表示名の届け先.配線済みか) this._表示名の届け先.先.表示名が変わった(表示名)
+        this._表示名の編集.正本の表示名に合わせる(楽曲.表示名)
     }
 }

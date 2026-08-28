@@ -17,6 +17,7 @@ import tseslint from 'typescript-eslint'
 const 生成 = '生成'
 const 境界 = '境界'
 const 三次元の視点操作 = '三次元の視点操作'
+const 文書の表示名の編集 = '文書の表示名の編集'
 const 編集モデル = '編集モデル'
 const 操作コマンド = '操作コマンド'
 const 画面 = '画面'
@@ -57,6 +58,10 @@ export default tseslint.config(
                 // 三次元を持つエディターが共有する視点の操作(右ドラッグ=回転・中ドラッグ=パン・ホイール=ズーム)。
                 // 参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断13」。
                 { type: 三次元の視点操作, mode: 'full', pattern: ['src/三次元の視点操作/**'] },
+                // 文書を編集するエディターが共有する、表示名の入力の規律(打っている間はコマンドを積まず、
+                // 入力が決まったときに1つ積む)。特定のツールに属さない。
+                // 参照: `_doc/設計/楽曲エディター.md`「判断13」。
+                { type: 文書の表示名の編集, mode: 'full', pattern: ['src/文書の表示名の編集/**'] },
                 { type: 編集モデル, mode: 'full', pattern: ['src/ツール/*/編集モデル/**'] },
                 { type: 操作コマンド, mode: 'full', pattern: ['src/ツール/*/操作コマンド/**'] },
                 { type: 画面, mode: 'full', pattern: ['src/ツール/*/画面/**'] },
@@ -85,6 +90,7 @@ export default tseslint.config(
                         { from: [生成], allow: [生成] },
                         { from: [境界], allow: [境界, 生成] },
                         { from: [三次元の視点操作], allow: [三次元の視点操作, 生成, SengenUI, SengenThree] },
+                        { from: [文書の表示名の編集], allow: [文書の表示名の編集] },
                         { from: [編集モデル], allow: [編集モデル, 生成] },
                         { from: [操作コマンド], allow: [操作コマンド, 編集モデル, 境界, 生成] },
                         {
@@ -111,6 +117,7 @@ export default tseslint.config(
                                 画面,
                                 生成,
                                 三次元の視点操作,
+                                文書の表示名の編集,
                                 SengenUI,
                                 SengenThree,
                                 SengenAudio,

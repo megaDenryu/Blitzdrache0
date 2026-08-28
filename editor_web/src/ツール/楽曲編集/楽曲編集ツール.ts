@@ -2,7 +2,9 @@ import { div, LV2HtmlComponentBase, 配線ポート, type DivC } from 'sengen-ui
 import type { 楽曲ID } from '../../境界/index.ts'
 import type { 楽曲接続 } from '../../境界/通信/index.ts'
 import { 実サーバー接続 } from '../../境界/通信/index.ts'
+import { 表示名の編集をまとめる係 } from '../../文書の表示名の編集/index.ts'
 import { 楽曲履歴適用サービス } from './操作コマンド/楽曲履歴適用サービス.ts'
+import { 楽曲名の変更の反映 } from './楽曲名の変更の反映.ts'
 import { 楽曲編集UI状態 } from './楽曲編集UI状態.ts'
 import { 升目の発音, 演奏サービス, 楽曲インスペクターパネル, 楽曲編集画面 } from './画面/index.ts'
 import { 楽曲編集状態, 初期楽曲を生成する } from './編集モデル/index.ts'
@@ -23,6 +25,7 @@ export class 楽曲編集ツール extends LV2HtmlComponentBase {
     public readonly 接続: 楽曲接続
     public readonly 演奏: 演奏サービス
     public readonly 表示名の知らせの口: 配線ポート<I楽曲の表示名の届け先> = new 配線ポート<I楽曲の表示名の届け先>('楽曲編集ツール')
+    public readonly 表示名の編集: 表示名の編集をまとめる係
     private readonly 同期: 楽曲編集の表示の同期
     private readonly _購読解除: () => void
 
@@ -32,8 +35,14 @@ export class 楽曲編集ツール extends LV2HtmlComponentBase {
         this.インスペクター = this.画面.インスペクター
         this.状態 = new 楽曲編集状態(初期楽曲を生成する(楽曲ID, 表示名))
         this.UI状態 = new 楽曲編集UI状態()
-        this.同期 = new 楽曲編集の表示の同期(this.画面, this.状態, this.UI状態, this.表示名の知らせの口)
+        // 操作を同期より先に作るのは、表示名の編集をまとめる係が操作を要り、同期がその係を要るためである。
+        // 操作が受け取る作り直しの呼び出しは、構築が終わったあとにしか走らない。
         this.操作 = new 楽曲履歴適用サービス(this.状態, () => { this.同期.再構築する() })
+        this.表示名の編集 = new 表示名の編集をまとめる係(
+            表示名,
+            new 楽曲名の変更の反映(this.表示名の知らせの口, this.操作),
+        )
+        this.同期 = new 楽曲編集の表示の同期(this.画面, this.状態, this.UI状態, this.表示名の編集)
         this.演奏 = new 演奏サービス(this.状態)
         this.接続 = 接続 === undefined ? new 実サーバー接続() : 接続
         this._componentRoot = div().setStyleCSS({ width: '100%', height: '100%' }).child(this.画面)
@@ -47,6 +56,7 @@ export class 楽曲編集ツール extends LV2HtmlComponentBase {
             接続: this.接続,
             演奏: this.演奏,
             同期: this.同期,
+            表示名の編集: this.表示名の編集,
             楽曲ID,
         })
         void 起動時に楽曲を読み込む(this.画面, this.状態, this.接続, 楽曲ID, this.同期)
