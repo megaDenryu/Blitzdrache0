@@ -10,7 +10,7 @@ use super::collision_object::静的な衝突対象;
 use super::error::静的物理形状エラー;
 use super::object_identifier::衝突対象の安定識別子;
 
-#[derive(Debug, Clone, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct チャンクの静的物理形状 {
     衝突対象一覧: Vec<静的な衝突対象>,
 }

@@ -10,7 +10,7 @@ use std::collections::HashMap;
 use super::chunk_shapes::チャンクの静的物理形状;
 use crate::チャンク座標;
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct チャンクごとの静的物理形状の保管 {
     座標ごとの形状: HashMap<チャンク座標, チャンクの静的物理形状>,
 }
