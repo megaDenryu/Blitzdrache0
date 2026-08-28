@@ -7,13 +7,13 @@ pub(super) fn アタッチ先を選ぶ(頂点一覧: &[blitz_render::頂点], �
         (最小.min(頂点.位置[2]), 最大.max(頂点.位置[2]))
     });
     let 帯数 = 上端行.len();
-    let 帯幅 = (z最大 - z最小) / super::帯数を実数へ(帯数);
+    let 帯幅 = (z最大 - z最小) / super::帯数を実数へ変換する(帯数);
     let mut 帯ごとの最高: Vec<Option<u32>> = vec![None; 帯数];
     for (頂点添字, 頂点) in 頂点一覧.iter().enumerate() {
         let 帯 = 帯を求める(頂点.位置[2], z最小, 帯幅, 帯数);
         let 更新するか = match 帯ごとの最高[帯] {
             None => true,
-            Some(既存) => 頂点.位置[1] > 頂点一覧[super::添字をusizeへ(既存)].位置[1],
+            Some(既存) => 頂点.位置[1] > 頂点一覧[super::添字をusizeへ変換する(既存)].位置[1],
         };
         if 更新するか {
             帯ごとの最高[帯] = u32::try_from(頂点添字).ok();
@@ -40,10 +40,10 @@ pub(super) fn 初期形状を整形する(
 ) {
     let 一辺 = アタッチ対応一覧.len();
     for (列, 対応) in アタッチ対応一覧.iter().enumerate() {
-        let 先 = 頂点一覧[super::添字をusizeへ(対応[1])].位置;
+        let 先 = 頂点一覧[super::添字をusizeへ変換する(対応[1])].位置;
         for 行 in 0..一辺 {
             let 粒子添字 = 行 * 一辺 + 列;
-            let 垂れ量 = 間隔 * super::帯数を実数へ(行);
+            let 垂れ量 = 間隔 * super::帯数を実数へ変換する(行);
             データ.粒子一覧[粒子添字].位置 = [先[0], 先[1] - 垂れ量, 先[2]];
         }
     }
@@ -55,7 +55,7 @@ fn 帯を求める(z: f32, z最小: f32, 帯幅: f32, 帯数: usize) -> usize {
         return 0;
     }
     for 帯 in 0..帯数 {
-        let 帯上限 = z最小 + 帯幅 * super::帯数を実数へ(帯 + 1);
+        let 帯上限 = z最小 + 帯幅 * super::帯数を実数へ変換する(帯 + 1);
         if z < 帯上限 {
             return 帯;
         }

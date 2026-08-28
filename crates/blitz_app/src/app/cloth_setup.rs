@@ -39,10 +39,10 @@ pub(super) struct 布プリセット {
 }
 
 /// 前提: 帯数は上端行の粒子数(高々数百)でu16に収まる。
-fn 帯数を実数へ(帯数: usize) -> f32 {
+fn 帯数を実数へ変換する(帯数: usize) -> f32 {
     f32::from(u16::try_from(帯数).unwrap_or_else(|_| panic!("帯数がu16に収まらない: {帯数}")))
 }
 
-fn 添字をusizeへ(値: u32) -> usize {
+fn 添字をusizeへ変換する(値: u32) -> usize {
     usize::try_from(値).unwrap_or_else(|_| panic!("頂点添字がusizeに収まらない: {値}"))
 }
