@@ -9,7 +9,11 @@
 //!
 //! 実装順7の時点で持つのは、任意姿勢の直方体と、それを包む軸平行の直方体と、直方体を倍精度で読み直した幾何と、
 //! 3つの頂点で表す三角形と、形の内側の空間索引が使う倍精度の軸平行の直方体である。判断5が挙げた残りの形状
-//! (球・カプセル・円柱・凸多面体)は実装順8以降でここへ足す。
+//! (球・円柱・凸多面体)は実装順8以降でここへ足す。
+//!
+//! 問い合わせの入力になる形(形を貫く線分・形を掃引するカプセル)もここに在る。これらは相手の形の種類に依らず
+//! 同じ局所座標系の同じ不変条件を持つため、三角形用と直方体用に写した2つの型を1つへ畳んだものである。
+//! 高さ場への入力は格子原点を基準にした別の座標系に住むため、この統合の対象ではない。
 //! 参照: `_doc/設計/世界の形と衝突基盤.md`「層の定義」「判断5: 形状の目録を先に確定する(物理形状と描画形状は別物)」
 
 mod axis_aligned_box;
@@ -46,6 +50,9 @@ mod oriented_box_double;
 mod outward_narrowing;
 #[cfg(test)]
 mod outward_narrowing_tests;
+mod shape_segment;
+mod sweep_capsule;
+mod sweep_capsule_error;
 mod triangle;
 mod triangle_inside;
 #[cfg(test)]
@@ -65,5 +72,8 @@ pub use local_error::形の局所座標の生成エラー;
 pub use local_position::形の局所座標の位置;
 pub use oriented_box::任意姿勢の直方体;
 pub use oriented_box_double::任意姿勢の直方体の倍精度の幾何;
+pub use shape_segment::形を貫く線分;
+pub use sweep_capsule::形を掃引するカプセル;
+pub use sweep_capsule_error::掃引するカプセルの生成エラー;
 pub use triangle::局所座標の三角形;
 pub use triangle_vertex_number::三角形の頂点の番号;

@@ -24,7 +24,6 @@
 //! 1.2かける10の103乗であり、倍精度の最大値1.8かける10の308乗を大きく下回る。
 //! 数え方の元は `crates/blitz_collision/src/height_field/length_limit.rs` にある。
 
-mod capsule;
 mod error;
 mod feature;
 mod feature_enumeration;
@@ -45,7 +44,6 @@ mod segment_rotated_tests;
 mod segment_span;
 #[cfg(test)]
 mod segment_tangent_tests;
-mod segment_through_box;
 mod slab;
 mod start_inside;
 mod sweep_candidate;
@@ -66,11 +64,9 @@ mod sweep_solver;
 #[cfg(test)]
 mod sweep_start_tests;
 
-pub use capsule::直方体を掃引するカプセル;
 pub use error::直方体の問い合わせエラー;
 pub use feature::{直方体で当たった特徴, 直方体の辺, 直方体の面, 直方体の頂点};
 pub use segment_hit::{直方体への最初の当たり, 線分が直方体に最初に当たる点};
 pub use segment_query::直方体の線分の問い合わせ;
-pub use segment_through_box::直方体を貫く線分;
 pub use sweep_contact::{カプセルが直方体に最初に触れる点, 掃引したカプセルの直方体への接触};
 pub use sweep_query::直方体のカプセルの掃引の問い合わせ;

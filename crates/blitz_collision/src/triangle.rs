@@ -26,12 +26,10 @@
 //! 直方体がこれより大きい上界を持つのは、あちらの角と面の代表点が中心と半分の長さから導いた点であり、成分が
 //! 上限の4倍まで出るためである。数え方の元は `crates/blitz_collision/src/height_field/length_limit.rs` にある。
 
-mod capsule;
 mod error;
 mod feature;
 #[cfg(test)]
 mod query_fixture;
-mod segment;
 mod segment_feature;
 #[cfg(test)]
 mod segment_feature_tests;
@@ -60,10 +58,8 @@ mod sweep_start_overlap;
 #[cfg(test)]
 mod sweep_tests;
 
-pub use capsule::三角形を掃引するカプセル;
 pub use error::三角形の問い合わせエラー;
 pub use feature::三角形で当たった特徴;
-pub use segment::三角形を貫く線分;
 pub use segment_hit::{三角形への最初の当たり, 線分が三角形に最初に当たる点};
 pub use segment_query::三角形の線分の問い合わせ;
 pub use sweep_contact::{カプセルが三角形に最初に触れる点, 掃引したカプセルの三角形への接触};
