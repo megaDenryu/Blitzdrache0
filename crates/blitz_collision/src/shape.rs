@@ -11,9 +11,9 @@
 //! 3つの頂点で表す三角形と、形の内側の空間索引が使う倍精度の軸平行の直方体である。判断5が挙げた残りの形状
 //! (球・円柱・凸多面体)は実装順8以降でここへ足す。
 //!
-//! 問い合わせの入力になる形(形を貫く線分・形を掃引するカプセル)もここに在る。これらは相手の形の種類に依らず
-//! 同じ局所座標系の同じ不変条件を持つため、三角形用と直方体用に写した2つの型を1つへ畳んだものである。
-//! 高さ場への入力は格子原点を基準にした別の座標系に住むため、この統合の対象ではない。
+//! 問い合わせの入力になる形(形を貫く線分・カプセル・形を掃引するカプセル)もここに在る。これらは相手の形の
+//! 種類に依らず同じ局所座標系の同じ不変条件を持つため、三角形用と直方体用に写した2つの型を1つへ畳んだもので
+//! ある。高さ場への入力は格子原点を基準にした別の座標系に住むため、この統合の対象ではない。
 //! 参照: `_doc/設計/世界の形と衝突基盤.md`「層の定義」「判断5: 形状の目録を先に確定する(物理形状と描画形状は別物)」
 
 mod axis_aligned_box;
@@ -21,6 +21,8 @@ mod axis_aligned_box;
 mod axis_aligned_box_tests;
 mod box_axis;
 mod box_face_side;
+mod capsule;
+mod capsule_error;
 mod coordinate_limit;
 mod cover_rounding_margin;
 mod error;
@@ -54,7 +56,6 @@ mod outward_narrowing;
 mod outward_narrowing_tests;
 mod shape_segment;
 mod sweep_capsule;
-mod sweep_capsule_error;
 mod triangle;
 mod triangle_face_orientation;
 mod triangle_inside;
@@ -66,6 +67,8 @@ mod triangle_with_orientation;
 pub use axis_aligned_box::軸平行の直方体;
 pub use box_axis::直方体自身の座標軸;
 pub use box_face_side::直方体の面の向き;
+pub use capsule::カプセル;
+pub use capsule_error::カプセルの生成エラー;
 pub use coordinate_limit::形状の座標の絶対値の上限メートル;
 pub use error::直方体の生成エラー;
 pub use global_axis_aligned_box::大域の軸平行の直方体;
@@ -78,7 +81,6 @@ pub use oriented_box::任意姿勢の直方体;
 pub use oriented_box_double::任意姿勢の直方体の倍精度の幾何;
 pub use shape_segment::形を貫く線分;
 pub use sweep_capsule::形を掃引するカプセル;
-pub use sweep_capsule_error::掃引するカプセルの生成エラー;
 pub use triangle::局所座標の三角形;
 pub use triangle_face_orientation::三角形の面の向き;
 pub use triangle_vertex_number::三角形の頂点の番号;
