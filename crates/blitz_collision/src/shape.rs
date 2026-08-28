@@ -37,6 +37,7 @@ mod oriented_box_double;
 mod outward_narrowing;
 #[cfg(test)]
 mod outward_narrowing_tests;
+mod truncation_rounding_margin;
 
 pub use axis_aligned_box::軸平行の直方体;
 pub use box_axis::直方体自身の座標軸;

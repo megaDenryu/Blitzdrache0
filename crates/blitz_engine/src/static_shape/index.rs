@@ -30,6 +30,8 @@ mod index_probe_fixture;
 mod index_receptacle_tests;
 #[cfg(test)]
 mod index_selection_tests;
+#[cfg(test)]
+mod index_truncation_rounding_tests;
 mod query;
 mod query_gather;
 mod truncated_cover;
