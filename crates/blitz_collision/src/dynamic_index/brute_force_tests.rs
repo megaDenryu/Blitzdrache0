@@ -11,8 +11,8 @@
 
 use super::index::動く形の空間索引;
 use super::margin::箱に持たせるゆとりの幅;
-use super::pseudo_random_fixture::決まった種から進む擬似乱数;
 use super::sample_fixture::{中心と半分の長さから箱を組む, 動く形の見本};
+use crate::pseudo_random_fixture::決まった種から進む擬似乱数;
 
 fn 既定の幅の索引() -> 動く形の空間索引 {
     動く形の空間索引::ゆとりの幅から生成する(箱に持たせるゆとりの幅::人型と家具の大きさに見合う既定の幅())

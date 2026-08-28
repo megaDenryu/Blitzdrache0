@@ -69,8 +69,6 @@ mod invariant_fixture;
 #[cfg(test)]
 mod margin_tests;
 #[cfg(test)]
-mod pseudo_random_fixture;
-#[cfg(test)]
 mod round_trip_tests;
 #[cfg(test)]
 mod sample_fixture;

@@ -12,7 +12,7 @@ use crate::shape::大域の軸平行の直方体;
 
 use super::identifier::動く形の識別子;
 use super::index::動く形の空間索引;
-use super::pseudo_random_fixture::決まった種から進む擬似乱数;
+use crate::pseudo_random_fixture::決まった種から進む擬似乱数;
 
 // 無作為な箱の中心が入る範囲であるメートル。
 const 中心の範囲メートル: f64 = 50.0;

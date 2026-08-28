@@ -14,9 +14,9 @@ use crate::shape::大域の軸平行の直方体;
 use super::identifier::動く形の識別子;
 use super::index::動く形の空間索引;
 use super::margin::箱に持たせるゆとりの幅;
-use super::pseudo_random_fixture::決まった種から進む擬似乱数;
 use super::sample_fixture::{中心と半分の長さから箱を組む, 端の成分から箱を組む};
 use super::update_result::箱の更新で木を組み替えたか;
+use crate::pseudo_random_fixture::決まった種から進む擬似乱数;
 
 // 遠い座標の反証が使う中心の距離であるメートル。倍精度の刻みがミリメートルより粗くなる桁を選ぶ。
 const 遠い座標のメートル: f64 = 1.0e7;
