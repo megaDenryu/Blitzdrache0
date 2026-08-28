@@ -32,6 +32,7 @@ mod index_receptacle_tests;
 mod index_selection_tests;
 mod query;
 mod query_gather;
+mod truncated_cover;
 
 pub use candidate::静的な子形状の候補;
 pub use error::静的世界の候補の選別エラー;
