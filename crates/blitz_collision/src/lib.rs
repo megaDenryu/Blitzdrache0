@@ -14,9 +14,12 @@
 #![warn(missing_docs)]
 
 pub mod capsule;
+pub mod continuous;
 pub mod dynamic_index;
 pub mod height_field;
 pub mod oriented_box;
+#[cfg(test)]
+mod pseudo_random_fixture;
 pub mod shape;
 pub mod solver;
 pub mod triangle;

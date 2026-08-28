@@ -42,6 +42,7 @@ mod local_displacement_direction;
 mod local_displacement_solving;
 mod local_error;
 mod local_position;
+mod moving_oriented_box;
 mod oriented_box;
 mod oriented_box_bounds;
 #[cfg(test)]
@@ -77,6 +78,7 @@ pub use local_axis_aligned_box::局所座標の軸平行の直方体;
 pub use local_displacement::形の局所座標の変位;
 pub use local_error::形の局所座標の生成エラー;
 pub use local_position::形の局所座標の位置;
+pub use moving_oriented_box::動く任意姿勢の直方体;
 pub use oriented_box::任意姿勢の直方体;
 pub use oriented_box_double::任意姿勢の直方体の倍精度の幾何;
 pub use shape_segment::形を貫く線分;
