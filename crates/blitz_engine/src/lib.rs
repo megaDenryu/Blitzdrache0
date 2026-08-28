@@ -69,6 +69,7 @@ mod visibility;
 #[cfg(test)]
 mod visibility_tests;
 mod world_query;
+pub mod world_shape_query;
 pub use asset::{
     texture_storage, アセットID, アセットIDエラー, アセットメタデータ, アセット実行時形式エラー, アセット形式版, アニメーションクリップ,
     インスタンス群, インスタンス群エラー, カタログ, カタログを実行時形式へ格納する, カタログ項目, シーンを実行時形式へ格納する, シーンデータ,
