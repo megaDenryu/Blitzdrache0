@@ -12,7 +12,7 @@
 use blitz_math::{クォータニオン, ローカル, 位置};
 
 use super::coordinate_limit::形状の座標の絶対値の上限メートル;
-use super::error::{軸名一覧, 直方体の生成エラー};
+use super::error::{直方体の生成エラー, 軸名一覧};
 use super::half_extent::直方体の軸ごとの半分の長さ;
 
 /// 中心・回転・軸ごとの半分の長さで表す、姿勢の自由な直方体。

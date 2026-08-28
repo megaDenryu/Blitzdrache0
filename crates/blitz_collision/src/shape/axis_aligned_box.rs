@@ -13,7 +13,7 @@ use std::fmt;
 
 use blitz_math::{メートル, 位置, 空間};
 
-use super::error::{軸名一覧, 直方体の生成エラー};
+use super::error::{直方体の生成エラー, 軸名一覧};
 
 /// 座標軸に平行な面だけを持つ直方体。
 pub struct 軸平行の直方体<空間種> {

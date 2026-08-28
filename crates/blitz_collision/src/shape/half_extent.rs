@@ -8,7 +8,7 @@
 use blitz_math::メートル;
 
 use super::coordinate_limit::形状の座標の絶対値の上限メートル;
-use super::error::{軸名一覧, 直方体の生成エラー};
+use super::error::{直方体の生成エラー, 軸名一覧};
 
 /// 直方体の中心から面までの、その直方体自身の3軸に沿った長さ。
 #[derive(Debug, Clone, Copy, PartialEq)]
