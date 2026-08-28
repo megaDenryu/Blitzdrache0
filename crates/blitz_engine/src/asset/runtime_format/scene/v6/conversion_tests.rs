@@ -10,7 +10,7 @@ use super::super::super::{アセット形式版, 実行時アセットを格納�
 use crate::asset::runtime_format::実行時形式からシーンを読む;
 use crate::asset::runtime_scene_tests::静的シーンを作る;
 use crate::asset::アセット実行時形式エラー;
-use crate::static_shape::shape_fixture::建物1棟の形状を作る;
+use crate::static_shape::shape_fixture::建物1棟の静的物理形状を作る;
 use crate::static_shape::静的物理形状エラー;
 
 fn 材料のシーン() -> crate::asset::シーンデータ {
@@ -41,7 +41,7 @@ fn 版6と最新版の違いは共通ヘッダーの形式版だけである() {
 
 #[test]
 fn 版6は静的物理形状を表せない() {
-    let シーン = 材料のシーン().静的物理形状を添える(建物1棟の形状を作る("酒場"));
+    let シーン = 材料のシーン().静的物理形状を添える(建物1棟の静的物理形状を作る("酒場"));
     assert_eq!(
         super::シーン内容を書く(&シーン),
         Err(アセット実行時形式エラー::静的物理形状不正(
