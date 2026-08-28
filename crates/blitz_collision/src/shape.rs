@@ -18,7 +18,14 @@ mod half_extent;
 mod oriented_box;
 mod oriented_box_bounds;
 #[cfg(test)]
+mod oriented_box_bounds_fixture;
+#[cfg(test)]
+mod oriented_box_bounds_margin_tests;
+#[cfg(test)]
 mod oriented_box_bounds_tests;
+mod outward_narrowing;
+#[cfg(test)]
+mod outward_narrowing_tests;
 
 pub use axis_aligned_box::軸平行の直方体;
 pub use coordinate_limit::形状の座標の絶対値の上限メートル;
