@@ -7,12 +7,14 @@
 
 use serde::{Deserialize, Deserializer};
 
+/// エディターがチャンクへ置いた建物1件へ付けた、正準化済みの綴り。
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct 配置識別子(String);
 
 /// 配置識別子の生成が拒む理由。
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub(crate) enum 配置識別子のエラー {
+    /// 綴りが空白だけであり、前後の空白を落とすと何も残らない。
     #[error("配置識別子が空白だけであり、前後の空白を落とすと空になる")]
     正準化すると空になる,
 }
@@ -27,6 +29,7 @@ impl 配置識別子 {
         Ok(Self(正準の綴り.to_string()))
     }
 
+    /// 包んでいる正準の綴りそのもの。重複の判定と、下流の種・描画・物理がこの値を読む。
     pub(crate) fn 綴り(&self) -> &str {
         &self.0
     }

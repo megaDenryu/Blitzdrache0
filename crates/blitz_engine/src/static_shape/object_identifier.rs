@@ -10,6 +10,7 @@ use std::fmt;
 
 use super::error::静的物理形状エラー;
 
+/// チャンクの中で1つの静的な衝突対象を指す、正準化済みの綴り。
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct 衝突対象の安定識別子 {
     綴り: String,
@@ -28,6 +29,7 @@ impl 衝突対象の安定識別子 {
         Ok(Self { 綴り: 綴り.to_string() })
     }
 
+    /// 包んでいる綴りそのもの。実行時形式へ書き出す境界と問い合わせの答えが読む。
     pub fn 綴り(&self) -> &str {
         &self.綴り
     }

@@ -10,6 +10,7 @@ use super::collision_object::静的な衝突対象;
 use super::error::静的物理形状エラー;
 use super::object_identifier::衝突対象の安定識別子;
 
+/// 1つのチャンクに属する静的な衝突対象をすべて束ねた集まり。
 #[derive(Debug, Clone, PartialEq)]
 pub struct チャンクの静的物理形状 {
     衝突対象一覧: Vec<静的な衝突対象>,
@@ -27,20 +28,24 @@ impl チャンクの静的物理形状 {
         Ok(Self { 衝突対象一覧 })
     }
 
+    /// 静的な衝突対象を1件も持たない集まり。建物を1棟も置かないチャンクがこれになる。
     pub fn 空を作る() -> Self {
         Self {
             衝突対象一覧: Vec::new()
         }
     }
 
+    /// 束ねている静的な衝突対象を、取り込んだ順に並べたもの。
     pub fn 衝突対象一覧(&self) -> &[静的な衝突対象] {
         &self.衝突対象一覧
     }
 
+    /// 束ねている静的な衝突対象の件数。
     pub fn 衝突対象数(&self) -> usize {
         self.衝突対象一覧.len()
     }
 
+    /// 全衝突対象の子形状を合わせた件数。
     pub fn 子形状の総数(&self) -> usize {
         self.衝突対象一覧.iter().map(|対象| 対象.子形状一覧().len()).sum()
     }
