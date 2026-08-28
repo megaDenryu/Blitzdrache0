@@ -29,6 +29,9 @@ mod grid_origin_position;
 mod ground_plane;
 #[cfg(test)]
 mod ground_plane_tests;
+mod length_limit;
+#[cfg(test)]
+mod length_limit_tests;
 mod linear_in_parameter;
 mod position_error;
 mod real;
@@ -73,6 +76,7 @@ pub use error::升目の値の生成エラー;
 pub use grid_origin_displacement::高さ場の中の変位;
 pub use grid_origin_position::高さ場の格子原点からの位置;
 pub use ground_plane::升目の地表の面;
+pub use length_limit::高さ場の問い合わせが受け付ける長さの絶対値の上限メートル;
 pub use position_error::高さ場の位置の生成エラー;
 pub use real::地表の平面の実数;
 pub use scanned_range::線分の走査が調べた範囲;
