@@ -17,6 +17,7 @@ pub mod local_visibility;
 mod lod_threshold;
 pub mod primitive_draw_item;
 pub mod sky;
+pub mod static_shape;
 mod streaming;
 #[cfg(test)]
 mod streaming_budget_overflow_tests;

@@ -3,7 +3,7 @@
 //! 参照: `_doc/設計/アセット実行時形式.md`「シーン内容の版5」
 
 use super::super::アセット実行時形式エラー;
-use crate::asset::texture_storage::テクスチャ格納形式;
+use crate::asset::texture_storage::{テクスチャ格納形式, 格納済みテクスチャエラー};
 
 const RGBA8の判別値: u8 = 0;
 const BC1の判別値: u8 = 1;
@@ -12,7 +12,7 @@ pub(super) fn 判別値から格納形式を読む(判別値: u8) -> Result<テ�
     match 判別値 {
         RGBA8の判別値 => Ok(テクスチャ格納形式::RGBA8),
         BC1の判別値 => Ok(テクスチャ格納形式::BC1),
-        不正 => Err(アセット実行時形式エラー::未知のテクスチャ格納形式(不正)),
+        不正 => Err(格納済みテクスチャエラー::未知の格納形式の判別値(不正).into()),
     }
 }
 

@@ -34,6 +34,7 @@ pub(in crate::asset::runtime_format::scene) fn マルチマテリアル本体を
     }
     write_element::スキンを書く(&mut 出力, シーン.スキン.as_ref())?;
     write_element::アニメーション一覧を書く(&mut 出力, &シーン.アニメーション一覧, ジョイント数)?;
+    (書き方.静的物理形状の節())(&mut 出力, シーン.静的物理形状())?;
     Ok(出力.完了する())
 }
 

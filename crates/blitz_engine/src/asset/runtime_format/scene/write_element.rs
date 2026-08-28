@@ -15,6 +15,7 @@ mod mesh_primitive;
 mod mesh_skin_vertex;
 mod pbr_material_body;
 mod skin;
+mod static_shape;
 mod surface_layer_body;
 mod texture;
 mod version_codec;
