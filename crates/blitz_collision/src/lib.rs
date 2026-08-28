@@ -18,3 +18,4 @@ pub mod oriented_box;
 pub mod shape;
 pub mod solver;
 pub mod triangle;
+pub mod triangle_mesh;
