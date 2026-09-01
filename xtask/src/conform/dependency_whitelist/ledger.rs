@@ -16,6 +16,7 @@
 //! 再利用し、editor_server 側では書式を写さないためである。blitz_engine はその関数(`高さ格子を切り出す`)の引数型
 //! (チャンク座標)を組み立てるために直接要る。blitz_asset_compiler が既に blitz_engine(→blitz_render→ash)を連鎖依存に
 //! 持つため、この2つの追加は依存木の到達範囲を広げない(参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断5」)。
+//! ctrlc は`cargo xtask editor`がCtrl+Cを捕らえて子プロセスの木を終わらせるためだけの依存である。
 
 pub(super) const 白リスト: [(&str, &[&str]); 11] = [
     ("blitz_math", &["glam"]),
@@ -58,7 +59,7 @@ pub(super) const 白リスト: [(&str, &[&str]); 11] = [
             "egui-winit",
         ],
     ),
-    ("xtask", &["blitz_asset_compiler", "crossterm"]), // 検収が綴りの写しを持たないための唯一の例外
+    ("xtask", &["blitz_asset_compiler", "crossterm", "ctrlc"]), // 検収が綴りの写しを持たないための唯一の例外
     (
         "editor_server",
         &[

@@ -11,7 +11,7 @@ pub(super) struct 機能台帳の項 {
 }
 
 /// 既定機能を切るのはimageとegui-winitの2件、機能を明示するのはimageとgltfとserde_jsonとserdeとtokioとtower-httpの6件である。残りは版だけを綴る。
-pub(super) const 機能台帳: [機能台帳の項; 19] = [
+pub(super) const 機能台帳: [機能台帳の項; 20] = [
     項を作る("ash", true, &[]),
     項を作る("ash-window", true, &[]),
     項を作る("winit", true, &[]),
@@ -25,6 +25,7 @@ pub(super) const 機能台帳: [機能台帳の項; 19] = [
     項を作る("egui", true, &[]),
     項を作る("egui-winit", false, &[]),
     項を作る("crossterm", true, &[]),
+    項を作る("ctrlc", true, &[]),
     // ゲーム開発用エディター段1で新設。editor_serverのみが依存する
     項を作る("serde", true, &["derive"]),
     項を作る("axum", true, &[]),

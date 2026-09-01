@@ -153,6 +153,16 @@ glTF・画像 → blitz_asset_compiler → アセット実行時形式 → blitz
 - 差し替えコスト: 低。使うのは`xtask/src/command_ui/menu`配下の端末制御を持つ1つの型（`端末セッション`）だけに閉じており、他のxtaskコマンドはcrosstermを知らない
 - 制約: `xtask`だけが依存する
 
+### ctrlc — Ctrl+Cの捕捉（`cargo xtask editor`で採用）
+
+- 何か: Ctrl+Cによる割り込みを捕らえ、指定した処理を走らせる小さなクロスプラットフォームライブラリ。WindowsではWin32の`SetConsoleCtrlHandler`を登録し、Unixでは`SIGINT`のハンドラを置く。どちらも受け取った合図を専用スレッドへ渡し、そのスレッドが利用側の処理を呼ぶ
+- メリット: `cargo xtask editor`がCtrl+Cで止められたとき、起動した編集サーバーと開発サーバーの木を終わらせてから終われる。これが無いとxtaskだけが消え、開発サーバー(vite)が待ち受け口を掴んだまま残って次の起動が番号の衝突で落ちる
+- デメリット: 割り込みの処理は別スレッドで走るため、終わらせる対象を`Child`でなくプロセス番号で共有する必要がある。またプロセスが強制終了(`TerminateProcess`)された場合はハンドラ自体が走らないため、この手段では守れない
+- 採用理由: 標準ライブラリに割り込みを捕らえる口が無い。自作すると`SetConsoleCtrlHandler`へのunsafeなFFIを書くことになり、xtaskを`#![forbid(unsafe_code)]`相当の単純さに保つ方針と衝突する。crosstermを採用したときと同じ理由であり、同じ判断を引き継ぐ
+- 再構築判定: (a/b) OSの割り込みAPIの薄い包み。書けるが超える余地は無く、Windows/Unix双方の合図の届き方の癖を再発見する費用だけがかかる
+- 差し替えコスト: 低。使うのは`xtask/src/editor/interrupt.rs`の1箇所だけで、他のxtaskコマンドはctrlcを知らない
+- 制約: `xtask`だけが依存する
+
 ### serde + serde_json — 編集資源と生成カタログの直列化（ゲーム開発用エディター段1・第3段階で採用）
 
 - 何か: Rustのデータ構造をJSON等へ直列化・逆直列化する事実上の標準ライブラリ一式
