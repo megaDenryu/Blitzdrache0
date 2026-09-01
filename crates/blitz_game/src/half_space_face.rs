@@ -10,7 +10,7 @@ use blitz_math::{大域メートル, 大域ワールド位置, 方向};
 use crate::moved_fraction::動けた割合;
 use crate::sweep_contact::掃引の接触;
 
-pub(super) const 平行とみなす余弦の幅: f64 = 1.0 / 1_048_576.0;
+pub(super) const 平行とみなす余弦の幅: f64 = 9.5367431640625e-7; // 2の20乗分の1。正本はblitz_collisionのsolver/approach.rsであり、conformが突き合わせる
 
 #[derive(Debug, Clone, Copy)]
 pub(super) enum 面の範囲 {
