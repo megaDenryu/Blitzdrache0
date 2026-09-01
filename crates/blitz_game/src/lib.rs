@@ -7,6 +7,7 @@
 
 #![forbid(unsafe_code)]
 
+mod body_capsule;
 mod confirmed_input;
 mod destination;
 mod facing_azimuth;
@@ -23,8 +24,15 @@ mod game_state_tests;
 mod ground_height;
 #[cfg(test)]
 mod ground_height_tests;
+#[cfg(test)]
+mod half_space_face;
 mod horizontal_unit_vector;
+mod moved_fraction;
 mod operation_axis;
+#[cfg(test)]
+mod planar_test_world;
+#[cfg(test)]
+mod planar_test_world_tests;
 mod player_move;
 #[cfg(test)]
 mod player_move_facing_tests;
@@ -35,12 +43,18 @@ mod progress_stage;
 mod stage_transition;
 #[cfg(test)]
 mod stage_transition_tests;
+mod sweep_answer;
+mod sweep_completeness;
+mod sweep_contact;
+mod sweep_hit;
 mod tour_progress;
 #[cfg(test)]
 mod tour_progress_tests;
 mod tour_route;
 mod walk_only_state;
+mod world_shape_port;
 
+pub use body_capsule::胴体カプセル;
 pub use confirmed_input::確定済みの操作入力;
 pub use destination::目的地;
 pub use facing_azimuth::動く個体が向いている方位角;
@@ -50,9 +64,15 @@ pub use game_intent::ゲームインテント;
 pub use game_state::場所巡りのゲームの状態;
 pub use ground_height::足元の地面の高さ;
 pub use horizontal_unit_vector::水平面の単位ベクトル;
+pub use moved_fraction::{動けた割合, 動けた割合エラー};
 pub use operation_axis::操作軸の倒し量;
 pub use player_placement::プレイヤーの位置と向き;
 pub use progress_stage::{ゲームの進行段階, 終了確認から戻る段階};
+pub use sweep_answer::掃引の答え;
+pub use sweep_completeness::掃引の完全性;
+pub use sweep_contact::掃引の接触;
+pub use sweep_hit::掃引が最初に触れる面;
 pub use tour_progress::場所巡りの進行;
 pub use tour_route::場所巡りの道順;
 pub use walk_only_state::歩くだけのゲームの状態;
+pub use world_shape_port::世界の形を尋ねる口;
