@@ -5,11 +5,13 @@
 
 use super::game_screen::ゲーム画面の表示内容;
 use super::stats::開発UI統計;
-use super::{game_screen, panel};
+use super::{game_instrument_panel, game_screen, panel};
+use crate::game::移動とカメラの計器;
 
 pub(crate) struct 画面へ重ねる内容 {
     pub(crate) 開発パネルの統計: 開発UI統計, // パネルを表示しないフレームでも作るのは、計器の取り出しがフレームの決まった位置にあり、表示の有無で読む時点を変えないため
     pub(crate) ゲーム画面: Option<ゲーム画面の表示内容>, // ゲームを遊ばない起動ではNoneであり、eguiはゲームの画面を1つも描かない
+    pub(crate) 移動とカメラの計器: Option<移動とカメラの計器>, // ゲームを遊ばない起動ではNoneであり、開発パネルと一緒に表示を切り替える
 }
 
 impl 画面へ重ねる内容 {
@@ -31,6 +33,9 @@ impl 画面へ重ねる内容 {
         }
         if 開発パネルを表示するか {
             panel::内容を描く(ctx, &self.開発パネルの統計, 露出, ブレンド);
+            if let Some(計器) = &self.移動とカメラの計器 {
+                game_instrument_panel::内容を描く(ctx, 計器);
+            }
         }
     }
 }

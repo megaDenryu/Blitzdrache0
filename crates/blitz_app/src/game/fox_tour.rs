@@ -19,6 +19,7 @@ use blitz_game::{
 };
 use blitz_math::{大域ワールド位置, 秒};
 
+use super::camera_wiring::プレイヤーカメラの配線;
 use super::entity_ledger::ゲーム状態の台帳;
 use super::scripted_operation::更新回数から台本の操作入力を決める;
 use super::summary::ゲーム進行の要約;
@@ -36,6 +37,7 @@ pub(crate) struct キツネの場所巡りの配線 {
     台帳: ゲーム状態の台帳,
     ゲーム更新の回数: u32,
     高さ場の読み口: 高さ場の読み口,
+    カメラ: プレイヤーカメラの配線,
 }
 
 impl キツネの場所巡りの配線 {
@@ -72,8 +74,21 @@ impl キツネの場所巡りの配線 {
         self.状態.プレイヤーの大域位置()
     }
 
-    pub(super) fn カメラが追従する混ぜた大域位置(&self, 割合: 描画補間の割合) -> 大域ワールド位置 {
-        self.台帳.エンティティの混ぜた大域位置を求める(self.プレイヤーのエンティティid(), 割合)
+    pub(super) fn カメラの注視点にする混ぜた大域位置(&self, 割合: 描画補間の割合) -> 大域ワールド位置 {
+        self.カメラ
+            .注視点を足元から求める(self.台帳.エンティティの混ぜた大域位置を求める(self.プレイヤーのエンティティid(), 割合))
+    }
+
+    pub(super) fn カメラ(&self) -> &プレイヤーカメラの配線 {
+        &self.カメラ
+    }
+
+    pub(super) fn カメラを借りる(&mut self) -> &mut プレイヤーカメラの配線 {
+        &mut self.カメラ
+    }
+
+    pub(super) fn カメラと高さ場の読み口を借りる(&mut self) -> (&mut プレイヤーカメラの配線, &高さ場の読み口) {
+        (&mut self.カメラ, &self.高さ場の読み口)
     }
 
     pub(super) fn 終了が決まったか(&self) -> bool {

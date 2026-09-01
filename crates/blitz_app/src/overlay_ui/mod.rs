@@ -5,6 +5,7 @@
 
 mod font_setup;
 mod frame_time;
+mod game_instrument_panel;
 mod game_screen;
 mod mesh_convert;
 mod overlay_content;

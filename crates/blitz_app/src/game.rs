@@ -6,23 +6,36 @@
 //! 遊ばない状態を`Option`でなく枝で持つのは、`--game`の指定が無い起動でゲーム更新も操作の確定も1つも走らないことを
 //! 型で保つためである。既存の入口(スモーク・ベンチ・段差走査・報告)はどれもこの枝へ落ちる。
 //! 参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「第1段階の定義」。
-//! ゲームの状態から描画側へ値を渡す面は`render_supply`にある。
+//! ゲームの状態から描画側へ値を渡す面は`render_supply`に、カメラへ渡す面(系統の切替・表示距離・計器)は`camera_supply`にある。
 
+mod camera_supply;
+mod camera_system;
+mod camera_wiring;
+#[cfg(test)]
+mod camera_wiring_tests;
 mod entity_id;
 mod entity_ledger;
 mod fox_player;
 mod fox_tour;
 mod ground_height;
 mod height_field_adoption;
+mod instrument;
 mod render_supply;
 mod scripted_operation;
 mod step_seconds;
 mod summary;
 mod walk_only;
+mod world_shape_port;
+#[cfg(test)]
+mod world_shape_port_tests;
 
+pub(crate) use camera_supply::表示距離の指示;
+pub(crate) use camera_wiring::この描画のカメラの入力;
 pub(crate) use height_field_adoption::ゲーム用高さ場;
+pub(crate) use instrument::{カメラの計器, 直前の描画のカメラ, 移動とカメラの計器};
 pub(crate) use step_seconds::ゲーム更新の一刻みの秒;
 pub(crate) use summary::ゲーム進行の要約;
+pub(crate) use world_shape_port::{世界の形を尋ねる口の実装エラー, 読込済みチャンクの形の出どころ};
 
 use blitz_game::{前へ進む向きの方位角, 確定済みの操作入力};
 use blitz_math::{ラジアン, 秒};
@@ -60,6 +73,9 @@ impl ゲーム配線 {
     /// 遊ばない起動で操作の確定すら行わないためであり、その枝は`None`を返す。確定を刻みごとに行わないのは、
     /// 入力の確定が描画の頻度で起きるためである。
     ///
+    /// カメラの系統の切替の操作は確定した直後にここで受け取る。刻みへ配らないのは、系統がゲームの状態でなく描画機会ごとの
+    /// カメラの関心であり、1描画に1度だけ効けばよいためである。刻み0本の描画では確定しないため旗は保持される。
+    ///
     /// 刻みを1本も進めない描画で入力を確定しないのは、確定が決定・取り消しの押し下げの旗を消費するためである。
     /// 毎秒120回書き換えるモニターでは刻み0本の描画が半分を占め、そこで確定すると、押して次の刻みより前に離した
     /// 操作がゲームへ一度も届かない。無期限実行の最初の描画は必ず0本のため、起動直後の押し下げにも同じ穴が開く。
@@ -71,12 +87,12 @@ impl ゲーム配線 {
         if 刻み数.一本も進めないか() {
             return None;
         }
-        match self {
-            Self::ゲームを遊ばない => None,
-            Self::キツネの場所巡り(_) | Self::歩くだけ(_) => Some(刻みごとの操作入力::一描画の確定から生成する(
-                入力状態.ゲームの操作入力を確定する(),
-            )),
-        }
+        let 入力 = match self {
+            Self::ゲームを遊ばない => return None,
+            Self::キツネの場所巡り(_) | Self::歩くだけ(_) => 入力状態.ゲームの操作入力を確定する(),
+        };
+        self.カメラの系統の切替の操作を受け取る(入力.カメラの系統を切り替える操作を押した瞬間か);
+        Some(刻みごとの操作入力::一描画の確定から生成する(入力))
     }
 
     /// ゲーム更新を1刻みだけ行う。刻みの長さを受け取るのは、時間の進め方をこの配線が持たないためである。
