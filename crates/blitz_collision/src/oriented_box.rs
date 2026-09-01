@@ -48,6 +48,7 @@ mod slab;
 mod start_inside;
 mod sweep_candidate;
 mod sweep_contact;
+mod sweep_direction;
 mod sweep_dispatch;
 #[cfg(test)]
 mod sweep_feature_tests;

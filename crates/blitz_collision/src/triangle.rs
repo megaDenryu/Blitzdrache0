@@ -53,6 +53,7 @@ mod sheared_triangle;
 mod sheared_vertex;
 mod sweep_candidate;
 mod sweep_contact;
+mod sweep_direction;
 mod sweep_dispatch;
 #[cfg(test)]
 mod sweep_fixture;
@@ -65,6 +66,8 @@ mod sweep_solve_face;
 mod sweep_solve_vertex;
 mod sweep_solver;
 mod sweep_start_overlap;
+#[cfg(test)]
+mod sweep_start_tests;
 #[cfg(test)]
 mod sweep_tests;
 

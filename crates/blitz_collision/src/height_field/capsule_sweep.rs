@@ -17,6 +17,7 @@ mod candidate_dispatch;
 mod capsule;
 mod contact;
 mod contact_candidate;
+mod contact_direction;
 mod contact_place;
 mod contact_solver;
 mod covering;
