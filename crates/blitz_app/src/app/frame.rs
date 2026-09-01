@@ -17,6 +17,7 @@ mod draw_input;
 mod draw_input_tests;
 mod finish;
 mod game_steps;
+mod shape_source;
 mod visible_selection;
 
 use winit::event_loop::ActiveEventLoop;
@@ -62,7 +63,7 @@ impl アプリ {
         let インテント = self.入力状態.インテントを確定する();
         // 刻み数と補間の割合はカメラ操作の確定と同じく1描画に1度だけ決める。無期限実行はここで実時間を読む。
         let 時間の進み = self.時間進行.この描画の時間の進みを決める();
-        if self.この描画の刻み数だけゲームを進める(時間の進み.刻み数()) == ゲームの終了要求::終了する {
+        if self.この描画の刻み数だけゲームを進める(時間の進み.刻み数())? == ゲームの終了要求::終了する {
             return Ok(ゲームの終了要求::終了する);
         }
         // 描画へ渡す供給値を混ぜるのはカメラの更新より前である。カメラの注視点が、描く個体と同じ混ぜた位置を追うためである。

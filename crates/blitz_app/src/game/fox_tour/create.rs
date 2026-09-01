@@ -9,6 +9,7 @@ use crate::cli::{ゲーム操作の出どころ, 起動モード};
 use crate::game::camera_wiring::プレイヤーカメラの配線;
 use crate::game::entity_id::エンティティID;
 use crate::game::fox_player::{プレイヤーのエンティティID, 原点のキツネを登録した台帳を作る};
+use crate::game::movement_record::移動の観測の記録;
 use crate::input::ゲーム操作の適用方針;
 
 impl キツネの場所巡りの配線 {
@@ -30,6 +31,7 @@ impl キツネの場所巡りの配線 {
             // ウィンドウとレンダラーの生成と同じ局面にあり、この組み立ての時点では読めない。据わるまでにフレームは1つも走らない。
             高さ場の読み口: blitz_engine::height_field::高さ場の読み口::高さ場を持たない世界,
             カメラ: プレイヤーカメラの配線::プレイヤー用で生成する(操作の適用方針),
+            移動の記録: 移動の観測の記録::まだ刻んでいない記録を作る(),
         }
     }
 

@@ -37,6 +37,7 @@ mod ground_height_tests;
 mod half_space_face;
 mod horizontal_unit_vector;
 mod moved_fraction;
+mod movement;
 mod occlusion_verdict;
 mod operation_axis;
 #[cfg(test)]
@@ -49,6 +50,7 @@ mod player_move_facing_tests;
 #[cfg(test)]
 mod player_move_tests;
 mod player_placement;
+mod player_state;
 mod previous_display_distance;
 mod progress_stage;
 mod stage_transition;
@@ -79,9 +81,14 @@ pub use game_state::場所巡りのゲームの状態;
 pub use ground_height::足元の地面の高さ;
 pub use horizontal_unit_vector::水平面の単位ベクトル;
 pub use moved_fraction::{動けた割合, 動けた割合エラー};
+pub use movement::{
+    一刻みの移動の入力, 一刻みの移動の結果, 世界の軸で見た倒し量, 問い合わせ件数, 接地の規則, 水平の速度, 移動の観測, 移動状態, 胴体の移動,
+    胴体の速度, 落下とジャンプの規則, 速さの規則,
+};
 pub use occlusion_verdict::遮蔽の判定;
 pub use operation_axis::操作軸の倒し量;
 pub use player_placement::プレイヤーの位置と向き;
+pub use player_state::プレイヤーの状態;
 pub use previous_display_distance::前の描画の表示距離;
 pub use progress_stage::{ゲームの進行段階, 終了確認から戻る段階};
 pub use sweep_answer::掃引の答え;

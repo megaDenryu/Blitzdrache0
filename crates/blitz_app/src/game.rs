@@ -6,7 +6,8 @@
 //! 遊ばない状態を`Option`でなく枝で持つのは、`--game`の指定が無い起動でゲーム更新も操作の確定も1つも走らないことを
 //! 型で保つためである。既存の入口(スモーク・ベンチ・段差走査・報告)はどれもこの枝へ落ちる。
 //! 参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「第1段階の定義」。
-//! ゲームの状態から描画側へ値を渡す面は`render_supply`に、カメラへ渡す面(系統の切替・表示距離・計器)は`camera_supply`にある。
+//! ゲームの状態から描画側へ値を渡す面は`render_supply`に、カメラへ渡す面(系統の切替・表示距離・計器)は`camera_supply`に、
+//! 固定刻み1本ぶんの更新は`tick`にある。
 
 mod camera_supply;
 mod camera_system;
@@ -22,10 +23,12 @@ mod fox_tour;
 mod ground_height;
 mod height_field_adoption;
 mod instrument;
+mod movement_record;
 mod render_supply;
 mod scripted_operation;
 mod step_seconds;
 mod summary;
+mod tick;
 mod walk_only;
 mod world_shape_port;
 #[cfg(test)]
@@ -34,13 +37,12 @@ mod world_shape_port_tests;
 pub(crate) use camera_supply::表示距離の指示;
 pub(crate) use camera_wiring::この描画のカメラの入力;
 pub(crate) use height_field_adoption::ゲーム用高さ場;
-pub(crate) use instrument::{カメラの計器, 直前の描画のカメラ, 移動とカメラの計器};
+pub(crate) use instrument::{
+    カメラの計器, 直前の刻みの移動, 直前の描画のカメラ, 移動とカメラの計器, 移動の計器
+};
 pub(crate) use step_seconds::ゲーム更新の一刻みの秒;
 pub(crate) use summary::ゲーム進行の要約;
 pub(crate) use world_shape_port::{世界の形を尋ねる口の実装エラー, 読込済みチャンクの形の出どころ};
-
-use blitz_game::{前へ進む向きの方位角, 確定済みの操作入力};
-use blitz_math::{ラジアン, 秒};
 
 use crate::app::進める刻み数;
 use crate::cli::{起動モード, 遊ぶゲームの指定};
@@ -95,26 +97,6 @@ impl ゲーム配線 {
         };
         self.カメラの系統の切替の操作を受け取る(入力.カメラの系統を切り替える操作を押した瞬間か);
         Some(刻みごとの操作入力::一描画の確定から生成する(入力))
-    }
-
-    /// ゲーム更新を1刻みだけ行う。刻みの長さを受け取るのは、時間の進め方をこの配線が持たないためである。
-    /// カメラのヨーを受け取るのは、移動をカメラの向き基準にするためである。ヨーをゲームの前へ進む向きへ写すのはこの配線であり、
-    /// ゲームロジック層はカメラの型を1つも知らない。
-    pub(crate) fn 一刻み進める(
-        &mut self, 操作入力: 確定済みの操作入力, カメラのヨー: ラジアン, 一刻みの秒: 秒
-    ) -> ゲームの終了要求 {
-        match self {
-            Self::ゲームを遊ばない => {}
-            Self::キツネの場所巡り(配線) => {
-                let 前へ進む向き = 前へ進む向きの方位角::生成する(カメラのヨー);
-                配線.一刻み進める(操作入力, 前へ進む向き, 一刻みの秒);
-                if 配線.終了が決まったか() {
-                    return ゲームの終了要求::終了する;
-                }
-            }
-            Self::歩くだけ(配線) => 配線.一刻み進める(操作入力, カメラのヨー, 一刻みの秒),
-        }
-        ゲームの終了要求::続ける
     }
 
     /// 終了時の報告へ渡す要約。遊ばない起動では報告する対象が無いため`None`を返す。
