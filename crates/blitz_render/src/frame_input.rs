@@ -10,6 +10,8 @@ use crate::distant_environment::遠方環境の入力;
 mod cloth_tick_count;
 mod moving_instance_supply;
 mod moving_instance_turn;
+#[cfg(test)]
+mod moving_instance_turn_tests;
 mod primitive_issue;
 mod primitive_issue_section;
 mod primitive_issue_tray;
