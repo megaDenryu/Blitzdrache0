@@ -15,6 +15,8 @@ mod game_input_tests;
 mod game_intent_policy;
 mod game_key_state;
 mod ingest;
+#[cfg(test)]
+mod tick_confirm_order_tests;
 mod tick_distribution;
 #[cfg(test)]
 mod tick_distribution_tests;

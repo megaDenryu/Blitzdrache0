@@ -36,6 +36,7 @@ use crate::{error::起動エラー, hot_reload::ホットリローダー, input:
 use blitz_render::{クリアカラー, レンダラー};
 pub(crate) use frame_timing::{フレーム時間統計, 集計する};
 pub(crate) use time_of_day::{太陽天頂区間の記録, 空の再現条件, 遠方環境の鍵の記録, 遠方環境更新判定};
+pub(crate) use time_step::進める刻み数;
 use winit::window::Window;
 pub(crate) use {draw_dispatch::時間再構成の突き合わせの要約, streaming::ストリーミング要約};
 

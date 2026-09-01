@@ -9,7 +9,7 @@
 /// その描画で進める固定刻みの本数。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
-pub(in crate::app) struct 進める刻み数(u16);
+pub(crate) struct 進める刻み数(u16);
 
 impl 進める刻み数 {
     pub(in crate::app) fn 生成する(本数: u16) -> Self {
@@ -17,13 +17,18 @@ impl 進める刻み数 {
     }
 
     /// 刻みを1本も進めない描画。蓄積が基本刻みに届かなかったときの答えである。
-    pub(in crate::app) fn 一つも進めない() -> Self {
+    pub(crate) fn 一つも進めない() -> Self {
         Self(0)
     }
 
     /// 必ず1本だけ進める描画。フレーム数の決まった実行が毎描画で答える値である。
-    pub(in crate::app) fn 一つだけ進める() -> Self {
+    pub(crate) fn 一つだけ進める() -> Self {
         Self(1)
+    }
+
+    /// この描画が刻みを1本も進めないか。押し下げの旗をこの描画で消費してよいかの判定に使う。
+    pub(crate) fn 一本も進めないか(self) -> bool {
+        self.0 == 0
     }
 
     /// 境界向けの生値取り出し。刻みを回す繰り返しの回数にだけ使う。

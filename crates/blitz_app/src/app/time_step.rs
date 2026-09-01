@@ -15,7 +15,7 @@ mod policy;
 mod tick_count;
 
 pub(in crate::app) use policy::時間進行方針;
-pub(in crate::app) use tick_count::進める刻み数;
+pub(crate) use tick_count::進める刻み数;
 
 use blitz_math::秒;
 
