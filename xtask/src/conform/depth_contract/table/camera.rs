@@ -2,7 +2,7 @@
 
 use super::{カメラ深度, 接点};
 
-pub(super) const 接点一覧: [接点; 9] = [
+pub(super) const 接点一覧: [接点; 10] = [
     接点 {
         契約: &カメラ深度,
         項目: "投影の近遠順",
@@ -44,6 +44,12 @@ pub(super) const 接点一覧: [接点; 9] = [
         項目: "空中遠近の視錐台の端点",
         パス: "crates/blitz_app/src/app/time_of_day/aerial_frustum.rs",
         期待する綴り: "const 遠面の深度: f32 = 0.0; const 近面の深度: f32 = 1.0;",
+    },
+    接点 {
+        契約: &カメラ深度,
+        項目: "空代表画素の視線の遠平面",
+        パス: "crates/blitz_app/src/reports/sky_pixel/view_ray.rs",
+        期待する綴り: "const 遠面の深度: f64 = 0.0;",
     },
     接点 {
         契約: &カメラ深度,
