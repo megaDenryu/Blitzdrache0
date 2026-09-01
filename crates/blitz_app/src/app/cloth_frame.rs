@@ -1,53 +1,56 @@
 //! 布の毎フレーム入力(判断53・54・56)。カプセルと掴み写像はシナリオごとの布プリセットから取る。
 //! 掴む介入: マウス右押下中、布の下端角の粒子をカーソル位置から写した目標へ毎フレーム固定し、
 //! 離した最初のフレームで解放する(掴み状態バッファを持たない設計)。
+//!
+//! その描画で進める刻み数を布へ渡すのは、布シミュレーションが固定刻みで必ず進む区分に属するためである。
+//! 描画ごとに1回進める形は、布の進む速さが画面の書き換え頻度に比例する欠陥を残す。
+//! 参照: `_doc/設計/時間の規律.md`「判断5」。
 
-use blitz_render::布フレーム入力;
-use blitz_sim::介入;
+mod grab_intervention;
+#[cfg(test)]
+mod grab_intervention_tests;
+
+use blitz_render::{布の進める刻み数, 布フレーム入力};
 
 use super::cloth_setup::布プリセット;
 use super::アプリ;
+use crate::app::進める刻み数;
+use crate::error::起動エラー;
+
+pub(super) use grab_intervention::掴み介入の発行;
 
 /// 掴み対象は布の下端行の左端(吊るし布・マントとも上端行は固定で掴めない)。
 const 掴み粒子添字: u32 = (super::cloth_setup::一辺粒子数 - 1) * super::cloth_setup::一辺粒子数;
 
 impl アプリ {
-    pub(super) fn 布フレーム入力を作る(&mut self) -> Option<布フレーム入力> {
+    pub(super) fn 布フレーム入力を作る(&mut self, 刻み数: 進める刻み数) -> Result<Option<布フレーム入力>, 起動エラー> {
         let Some(プリセット) = &self.布プリセット else {
-            return None;
+            return Ok(None);
         };
         let (カプセル端点a, カプセル端点b, カプセル半径) = プリセット.カプセル.unwrap_or(([0.0; 3], [0.0; 3], 0.0));
-        let 介入一覧 = 掴み介入(self.入力状態.掴み操作(), self.window.as_ref(), プリセット, &mut self.掴み中だった);
+        let 目標位置 = 掴みの目標位置を求める(self.入力状態.掴み操作(), self.window.as_ref(), プリセット);
+        let 介入一覧 = self.掴みの介入.この描画の介入一覧を作る(目標位置, 刻み数);
         let 介入件数 = u32::try_from(介入一覧.len()).unwrap_or_else(|_| panic!("介入件数がu32に収まらない"));
-        Some(布フレーム入力 {
+        let 進める刻み数 = 布の進める刻み数::生成する(u32::from(刻み数.本数())).map_err(blitz_render::レンダラーエラー::from)?;
+        Ok(Some(布フレーム入力 {
+            進める刻み数,
             カプセル端点a,
             カプセル端点b,
             カプセル半径,
             介入バイト列: blitz_sim::バイト列にする(&介入一覧),
             介入件数,
-        })
+        }))
     }
 }
 
-fn 掴み介入(
-    掴み: Option<(f32, f32)>, window: Option<&winit::window::Window>, プリセット: &布プリセット, 掴み中だった: &mut bool
-) -> Vec<介入> {
-    match 掴み.zip(window.map(|w| w.inner_size())) {
-        Some(((px, py), 寸法)) => {
-            *掴み中だった = true;
-            vec![介入::掴む {
-                粒子添字: 掴み粒子添字,
-                目標位置: 目標位置へ写す(プリセット, px, py, 寸法.width, 寸法.height),
-            }]
-        }
-        None if *掴み中だった => {
-            *掴み中だった = false;
-            vec![介入::離す {
-                粒子添字: 掴み粒子添字
-            }]
-        }
-        None => Vec::new(),
-    }
+/// 掴んでいる描画だけ、カーソル位置(物理px)をプリセットの写像でワールドの目標位置へ写す。
+fn 掴みの目標位置を求める(
+    掴み: Option<(f32, f32)>,
+    window: Option<&winit::window::Window>,
+    プリセット: &布プリセット,
+) -> Option<[f32; 3]> {
+    let ((px, py), 寸法) = 掴み.zip(window.map(winit::window::Window::inner_size))?;
+    Some(目標位置へ写す(プリセット, px, py, 寸法.width, 寸法.height))
 }
 
 /// カーソル位置(物理px)をプリセットの写像(中心+横基底*x_ndc+縦基底*y_ndc)でワールドへ写す。

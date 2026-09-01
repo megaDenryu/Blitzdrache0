@@ -1,9 +1,13 @@
 //! 布シミュレーションのコンピュートパス列(判断54): 介入→積分→アタッチ→拘束x4→
-//! ハッシュ消去→格納→分離→仕上げ→頂点生成。各パスはバインド+計算の発行のみで、
+//! ハッシュ消去→格納→分離→仕上げを刻み数ぶん繰り返し、最後に頂点生成を1本積む。各パスはバインド+計算の発行のみで、
 //! バリアはグラフのバッファ読み書き宣言から導出される。
 
 mod dispatch;
 mod sequence;
+#[cfg(test)]
+mod sequence_tests;
+
+pub(crate) use sequence::一刻みのパス数;
 
 use crate::vulkan::frame::布描画入力;
 use crate::vulkan::graph::{

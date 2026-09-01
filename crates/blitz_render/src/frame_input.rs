@@ -7,6 +7,7 @@
 use crate::atmosphere_lut_input::大気のベイク済み画像の入力;
 use crate::clear_color::クリアカラー;
 use crate::distant_environment::遠方環境の入力;
+mod cloth_tick_count;
 mod moving_instance_supply;
 mod moving_instance_turn;
 mod primitive_issue;
@@ -15,6 +16,7 @@ mod primitive_issue_tray;
 mod shadow_casters;
 mod sky_input;
 
+pub use cloth_tick_count::布の進める刻み数;
 pub use moving_instance_supply::動く個体の大域の位置と向きの指定;
 pub use moving_instance_turn::読込時の向きから天頂軸まわりに回す角;
 pub use primitive_issue::プリミティブ描画発行;
@@ -83,6 +85,7 @@ pub struct フレーム描画入力<'a> {
 /// 介入バイト列のレイアウトはshaders/cloth_step.slangの介入仕様(32バイト/件)と一致させる。
 #[derive(Debug, Clone)]
 pub struct 布フレーム入力 {
+    pub 進める刻み数: 布の進める刻み数, // その描画で布シミュレーションを進める固定刻みの本数(0本なら1工程も積まない)
     pub カプセル端点a: [f32; 3],
     pub カプセル端点b: [f32; 3],
     pub カプセル半径: f32,

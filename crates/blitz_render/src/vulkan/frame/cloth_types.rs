@@ -35,6 +35,7 @@ pub(crate) struct 布描画入力 {
     pub(crate) 粒子数: u32,
     pub(crate) アタッチ件数: u32,
     pub(crate) 介入件数: u32,
+    pub(crate) 進める刻み数: crate::frame_input::布の進める刻み数, // シミュレーションの工程をこの本数だけ繰り返す
     pub(crate) 粒子バッファ: vk::Buffer,
     pub(crate) 前位置バッファ: vk::Buffer,
     pub(crate) セルカウントバッファ: vk::Buffer,

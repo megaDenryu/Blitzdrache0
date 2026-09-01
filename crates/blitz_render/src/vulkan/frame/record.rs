@@ -30,6 +30,8 @@ mod temporal_reconstruction_pass;
 mod tonemap_pass;
 mod ui_pass;
 
+pub(crate) use cloth_passes::一刻みのパス数 as 布シミュレーションの一刻みのパス数;
+
 use ash::vk;
 
 use super::session::フレームのGPU命令を積むコマンドバッファ;
