@@ -12,6 +12,8 @@ mod camera_supply;
 mod camera_system;
 mod camera_wiring;
 #[cfg(test)]
+mod camera_wiring_test_ports;
+#[cfg(test)]
 mod camera_wiring_tests;
 mod entity_id;
 mod entity_ledger;
