@@ -15,7 +15,7 @@ use super::movement_input::一刻みの移動の入力;
 use super::movement_state::移動状態;
 use super::stick_vector::世界の軸で見た倒し量;
 
-/// この刻みに掃引する動き。
+// この刻みに掃引する動き。
 pub(crate) struct 望みの動き {
     pub(crate) 速度: 胴体の速度,
     pub(crate) 変位: 変位<ワールド>,
