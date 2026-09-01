@@ -17,7 +17,6 @@ mod draw_input;
 mod draw_input_tests;
 mod finish;
 mod game_steps;
-mod shape_source;
 mod visible_selection;
 
 use winit::event_loop::ActiveEventLoop;

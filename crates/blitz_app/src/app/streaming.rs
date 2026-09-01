@@ -14,6 +14,7 @@ mod integration_route;
 mod lod_override;
 mod lod_sync;
 mod measurement;
+mod presence;
 mod route;
 #[cfg(test)]
 mod route_tests;
@@ -21,6 +22,7 @@ mod route_tests;
 use blitz_engine::{ストリーミングメモリ量, ストリーミング調停, チャンク一辺};
 pub(in crate::app) use build::ストリーミング配線を構築する;
 pub(crate) use measurement::ストリーミング要約;
+pub(in crate::app) use presence::ストリーミングの有無;
 
 pub(super) struct ストリーミング配線 {
     調停: ストリーミング調停,

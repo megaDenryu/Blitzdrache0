@@ -91,8 +91,8 @@ pub(crate) struct アプリ {
     掴みの介入: cloth_frame::掴み介入の発行, // 掴み操作を布の介入へ写す発行元
     アニメ時刻: blitz_math::秒,              // アニメーション時刻(その描画で進めた刻み数×基本刻みで歩進する)
     スモーク基準画像: Option<blitz_render::読み戻し画像>,
-    ストリーミング: Option<streaming::ストリーミング配線>, // `--streaming`指定時だけ`Some`
-    可視判定: visibility::可視判定配線,                    // インスタンス群の可視判定と個体別LOD
+    ストリーミング: streaming::ストリーミングの有無, // `--streaming`指定時だけ配線を持つ
+    可視判定: visibility::可視判定配線,              // インスタンス群の可視判定と個体別LOD
     プリミティブ描画項目台帳: primitive_draw_item_registry::プリミティブ描画項目台帳, // 束ごとのプリミティブ描画項目と、それを詰め直す受け皿
     永続束: persistent_bundles::永続束の状態,
     可視個体の選別の計測: Option<section_timing::区間計測>, // 指定時だけ1フレーム分の走査時間を貯める。
