@@ -11,7 +11,11 @@ mod body_capsule;
 mod camera_occlusion;
 mod camera_occlusion_input;
 #[cfg(test)]
+mod camera_occlusion_test_fixture;
+#[cfg(test)]
 mod camera_occlusion_tests;
+#[cfg(test)]
+mod camera_recovery_tests;
 mod confirmed_input;
 mod destination;
 mod display_distance_decision;
