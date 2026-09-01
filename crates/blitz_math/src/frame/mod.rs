@@ -7,7 +7,9 @@ mod direction_error;
 #[cfg(test)]
 mod direction_tests;
 mod displacement;
+mod displacement_algebra;
 mod global_world_position;
+mod global_world_position_displacement;
 #[cfg(test)]
 mod global_world_position_tests;
 mod pixel_jitter;

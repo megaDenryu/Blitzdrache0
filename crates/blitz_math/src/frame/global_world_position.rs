@@ -62,6 +62,14 @@ impl 大域ワールド位置 {
         ))
     }
 
+    pub(crate) fn 倍精度の内部(self) -> DVec3 {
+        self.0
+    }
+
+    pub(crate) fn 倍精度の内部から生成する(内部: DVec3) -> Self {
+        Self(内部)
+    }
+
     fn f32へ狭めた差分を求める(self, 基準: Self) -> Result<glam::Vec3, 座標変換エラー> {
         let 差分 = self.0 - 基準.0;
         if !差分.is_finite() {
