@@ -11,9 +11,15 @@ mod accumulator_tests;
 mod advance;
 #[cfg(test)]
 mod advance_tests;
+mod draw_advance;
+mod interpolation_ratio;
+#[cfg(test)]
+mod interpolation_ratio_tests;
 mod policy;
 mod tick_count;
 
+pub(in crate::app) use draw_advance::この描画の時間の進み;
+pub(crate) use interpolation_ratio::描画補間の割合;
 pub(in crate::app) use policy::時間進行方針;
 pub(crate) use tick_count::進める刻み数;
 
@@ -35,8 +41,11 @@ impl 時間進行配線 {
     }
 
     /// 1描画に1度だけ呼ぶ。無期限実行の枝はここでだけ実時間を読む。
-    pub(in crate::app) fn この描画で進める刻み数を決める(&mut self) -> 進める刻み数 {
-        self.進め方.この描画で進める刻み数を決める(&self.方針)
+    /// 補間の割合を刻み数と同じ答えに含めるのは、割合が刻みを数え終えた後の余りから決まるためである。
+    /// 順序をこの1箇所で決め、呼び出し側が2つの口を正しい順で叩く形にしない。
+    pub(in crate::app) fn この描画の時間の進みを決める(&mut self) -> この描画の時間の進み {
+        let 刻み数 = self.進め方.この描画で進める刻み数を決める(&self.方針);
+        この描画の時間の進み::生成する(刻み数, self.進め方.この描画の補間の割合を求める(&self.方針))
     }
 
     /// ゲーム更新の1刻みが何秒ぶんか。刻みを回す側がゲーム配線へ渡す。

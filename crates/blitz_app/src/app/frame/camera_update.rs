@@ -7,12 +7,15 @@
 
 use blitz_engine::カメラインテント;
 
+use super::super::time_step::描画補間の割合;
 use super::super::アプリ;
 use super::camera_follow;
 
 impl アプリ {
-    pub(super) fn カメラをこの描画の視点へ更新する(&mut self, インテント: カメラインテント) {
-        camera_follow::ゲームが供給する位置へ注視点を移す(self);
+    pub(super) fn カメラをこの描画の視点へ更新する(
+        &mut self, インテント: カメラインテント, 補間の割合: 描画補間の割合
+    ) {
+        camera_follow::ゲームが供給する位置へ注視点を移す(self, 補間の割合);
         self.カメラ.更新する(インテント);
         if let Some(探査) = &mut self.個体詳細段探査 {
             探査.適用する(&mut self.カメラ, self.現在フレーム);
