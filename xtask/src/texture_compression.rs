@@ -42,7 +42,7 @@ pub fn テクスチャ圧縮を確認する() -> ExitCode {
 }
 
 fn ブロック圧縮の絵を撮って判定する() -> Result<String, ブロック圧縮の検収エラー> {
-    if !crate::gen_source_assets::生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() {
         return Err(ブロック圧縮の検収エラー::検証用ソースアセットを生成できなかった);
     }
     let 出力先 = PathBuf::from(出力ディレクトリ);

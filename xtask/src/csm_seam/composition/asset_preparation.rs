@@ -14,7 +14,8 @@ impl 継ぎ目を見る構図 {
         if self == Self::大規模世界 {
             return Ok(());
         }
-        if crate::gen_source_assets::生成する() && crate::compile_assets::地形世界を既定で生成する() {
+        if crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() && crate::compile_assets::地形世界を既定で生成する()
+        {
             return Ok(());
         }
         Err(距離区分の継ぎ目の検収エラー::検証用アセットを生成できなかった)

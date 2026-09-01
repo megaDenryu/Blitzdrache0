@@ -45,7 +45,7 @@ const 布の影が覆う画素: 判定の名前 =
     判定の名前::定数から生成する("布の影が覆う画素(下回るなら走査順の入替を比べる対象が無く検収が成立しない)");
 
 fn 検収する() -> Result<String, 布の影の走査順非依存の検収エラー> {
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::既定を生成する() {
         return Err(布の影の走査順非依存の検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;

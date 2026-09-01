@@ -73,7 +73,7 @@ impl 件数を変えた並びの対 {
     }
 
     fn 検収する(&self) -> Result<String, 部品で組んだ並びの検収エラー> {
-        if !crate::gen_source_assets::生成する() {
+        if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() {
             return Err(部品で組んだ並びの検収エラー::ソースアセットを生成できなかった);
         }
         let 少ないほうの実測 = self.並び1つを測る(&self.少ないほう)?;

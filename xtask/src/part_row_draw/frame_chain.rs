@@ -86,7 +86,7 @@ pub(super) fn 撮影してコードへ変換する() -> ExitCode {
 }
 
 fn 撮影する() -> Result<String, 部品で組んだ並びの検収エラー> {
-    if !crate::gen_source_assets::生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() {
         return Err(部品で組んだ並びの検収エラー::ソースアセットを生成できなかった);
     }
     let mut 要約一覧: Vec<String> = Vec::with_capacity(見本一覧.len());

@@ -38,7 +38,10 @@ pub fn 見本集落の描画を確認する() -> ExitCode {
 
 fn 検収する() -> Result<String, 見本の集落の撮影エラー> {
     検収世界
-        .焼き上がりを確かめる(crate::gen_source_assets::生成する() && crate::compile_assets::見本の集落世界を既定で生成する())
+        .焼き上がりを確かめる(
+            crate::gen_source_assets::検証用ソースアセットを生成して成否を返す()
+                && crate::compile_assets::見本の集落世界を既定で生成する(),
+        )
         .map_err(見本の集落の撮影エラー::検収世界を用意できなかった)?;
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
     let 実行 = 実行環境.描いて読み戻す(run::集落の実行名, &run::起動指定を組み立てる())?;

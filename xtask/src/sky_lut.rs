@@ -52,7 +52,8 @@ pub fn 大気のベイク済み画像の更新を確認する(引数一覧: &[St
 }
 
 fn 検収する(一日内秒: Option<&str>) -> Result<String, 空のベイク済み画像の生成の検収エラー> {
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::地形世界を既定で生成する()
+    {
         return Err(空のベイク済み画像の生成の検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;

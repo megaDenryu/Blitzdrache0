@@ -39,7 +39,8 @@ pub fn 植生の可視判定を確認する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, 植生個体の可視判定の検収エラー> {
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::植生世界を既定で生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::植生世界を既定で生成する()
+    {
         return Err(植生個体の可視判定の検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = vegetation_run::植生世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;

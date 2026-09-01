@@ -57,7 +57,7 @@ fn 測る(引数一覧: &[String]) -> Result<String, 影の欠落計器のエラ
 
 /// 描く前の支度。検証用アセットを焼き、出力先を作る。両方の様式が同じ支度をする。
 fn 描く支度をする(構図: scene_choice::構図) -> Result<PathBuf, 影の欠落計器のエラー> {
-    if !crate::gen_source_assets::生成する() || !アセットを焼く(構図) {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !アセットを焼く(構図) {
         return Err(影の欠落計器のエラー::検証用アセットを生成できなかった);
     }
     Ok(PathBuf::from(出力ディレクトリ))

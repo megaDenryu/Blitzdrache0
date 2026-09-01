@@ -6,10 +6,14 @@ use std::process::ExitCode;
 use crate::asset_generator::{アセット生成器の起動, 生成の指定, 生成器エラー};
 
 pub fn 検証用ソースアセットを生成する() -> ExitCode {
-    if 生成する() { ExitCode::SUCCESS } else { ExitCode::FAILURE }
+    if 検証用ソースアセットを生成して成否を返す() {
+        ExitCode::SUCCESS
+    } else {
+        ExitCode::FAILURE
+    }
 }
 
-pub fn 生成する() -> bool {
+pub fn 検証用ソースアセットを生成して成否を返す() -> bool {
     println!("[xtask] 検証用ソースアセットの生成器を実行");
     match 生成器を走らせる() {
         Ok(()) => {

@@ -66,7 +66,7 @@ pub fn 頂点量の診断を確認する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, 頂点量の診断の検収エラー> {
-    if !crate::gen_source_assets::生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() {
         return Err(頂点量の診断の検収エラー::検証用ソースアセットを生成できなかった);
     }
     let 出力先 = PathBuf::from(出力ディレクトリ);

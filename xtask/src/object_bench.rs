@@ -20,7 +20,7 @@ const 光と圧縮を外す選択肢: [&str; 2] = ["--unlit", "--no-post"];
 const 報告を出させる選択肢: [&str; 3] = ["--report-gpu-times", "--report-frame-times", "--report-memory"];
 
 pub fn 対象数別に性能を計測する() -> ExitCode {
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }
     let スモークの実行環境 = 実行環境を作る(アプリの起こし方::毎回cargoに構築させて起動する);

@@ -53,9 +53,14 @@ pub(crate) const 絵の枚数: 描画フレーム数 = 描画フレーム数::�
 pub(crate) const 計測の枚数: 描画フレーム数 = 描画フレーム数::生成する(90);
 
 pub(crate) fn 夜の世界を用意する() -> Result<(), 検収世界の用意の破れ> {
-    夜の用意.焼き上がりを確かめる(crate::gen_source_assets::生成する() && crate::compile_assets::夜の多光源世界を既定で生成する())
+    夜の用意.焼き上がりを確かめる(
+        crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() && crate::compile_assets::夜の多光源世界を既定で生成する(),
+    )
 }
 
 pub(crate) fn 屋内の世界を用意する() -> Result<(), 検収世界の用意の破れ> {
-    屋内の用意.焼き上がりを確かめる(crate::gen_source_assets::生成する() && crate::compile_assets::屋内の多光源世界を既定で生成する())
+    屋内の用意.焼き上がりを確かめる(
+        crate::gen_source_assets::検証用ソースアセットを生成して成否を返す()
+            && crate::compile_assets::屋内の多光源世界を既定で生成する(),
+    )
 }

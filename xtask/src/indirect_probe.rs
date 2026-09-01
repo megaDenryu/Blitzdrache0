@@ -56,7 +56,7 @@ pub fn 間接照明の解析値を突き合わせる() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, 間接照明の探りの検収エラー> {
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::既定を生成する() {
         return Err(間接照明の探りの検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;

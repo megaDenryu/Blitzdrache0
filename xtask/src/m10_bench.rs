@@ -16,7 +16,7 @@ const フレーム数: 描画フレーム数 = 描画フレーム数::生成す�
 const 試作の起動指定一覧: [&str; 4] = ["--surface-flow", "--sph-512", "--sph-1024", "--sph-2048"];
 
 pub fn 流体試作を計測する() -> ExitCode {
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }
     let 実行環境 = 世界を読ませて報告を採る実行環境::世界の置き場をアプリの既定に任せて作る(

@@ -11,7 +11,7 @@ use super::{condition, point, run, validation};
 use super::{シェーダーコピー先, 出力ディレクトリ, 反復回数};
 
 pub(super) fn 測る(物量点一覧: &[usize], 条件: &condition::計測条件) -> Result<Vec<point::物量点の結果>, 物量計測エラー> {
-    if !crate::gen_source_assets::生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() {
         return Err(物量計測エラー::検証用ソースアセットを生成できなかった);
     }
     crate::release_build::計測用に構築する("ow4-bench").map_err(物量計測エラー::計測用の構築が失敗した)?;

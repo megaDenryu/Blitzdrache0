@@ -37,7 +37,7 @@ pub fn 多材質小物の描画を確認する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, 小物の材質境界の検収エラー> {
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::既定を生成する() {
         return Err(小物の材質境界の検収エラー::検証用アセットを生成できなかった);
     }
     実行時形式の実在を確かめる()?;

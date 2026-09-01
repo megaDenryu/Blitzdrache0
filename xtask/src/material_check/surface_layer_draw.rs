@@ -59,7 +59,7 @@ fn 条件を描く(形: 塗り分けの形, 向き: 見る向き) -> Result<読�
     let 置き場 = PathBuf::from(出力ディレクトリ).join(形.呼び名());
     let ソース = 検収用の世界のソース::書き出す(置き場.join("source"), 形)?;
     let 実行時ルート = 置き場.join("runtime_assets");
-    if !crate::compile_assets::生成する(ソース.ソースルート(), &実行時ルート, crate::asset_generator::世界名::エディターの世界)
+    if !crate::compile_assets::実行時形式を生成する(ソース.ソースルート(), &実行時ルート, crate::asset_generator::世界名::エディターの世界)
     {
         return Err(地表の層の検収エラー::実行時アセットを焼けなかった);
     }

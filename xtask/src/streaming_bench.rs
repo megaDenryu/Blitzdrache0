@@ -20,7 +20,7 @@ pub fn ストリーミング経路の資源を計測する(引数一覧: &[Strin
             return ExitCode::FAILURE;
         }
     };
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }
     if !condition_a::固定経路を反復実行しながら資源を採取する(&フレーム数) {

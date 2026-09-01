@@ -53,7 +53,7 @@ fn 前回の焼き上がりを消す() -> std::io::Result<()> {
 }
 
 fn 検収する() -> Result<String, 木の並びの撮影エラー> {
-    if !crate::gen_source_assets::生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() {
         return Err(木の並びの撮影エラー::ソースアセットを生成できなかった);
     }
     前回の焼き上がりを消す().map_err(木の並びの撮影エラー::前回の焼き上がりを消せなかった)?;

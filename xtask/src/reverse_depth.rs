@@ -35,7 +35,8 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 逆Z検収エラー> 
     if 別 == 実行の別::計画を表示する {
         return Ok(plan::計画を表示する());
     }
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::地形世界を既定で生成する()
+    {
         return Err(逆Z検収エラー::検証用アセットを生成できなかった);
     }
     let 由来 = crate::release_build::計測用に構築する("reverse-depth")?;

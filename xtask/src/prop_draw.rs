@@ -41,7 +41,9 @@ pub fn 小物1体の描画を確認する() -> ExitCode {
 
 fn 検収する() -> Result<String, 小物の描画の検収エラー> {
     検収世界
-        .焼き上がりを確かめる(crate::gen_source_assets::生成する() && crate::compile_assets::既定を生成する())
+        .焼き上がりを確かめる(
+            crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() && crate::compile_assets::既定を生成する(),
+        )
         .map_err(小物の描画の検収エラー::検収世界を用意できなかった)?;
     let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
 

@@ -43,7 +43,7 @@ fn 焼いて開く(引数一覧: &[String]) -> Result<ExitCode, String> {
     println!("建物外形カタログ: {}", カタログ.display());
 
     source_export::編集サーバーのビンで書き出す(&リポジトリルート, 建物定義の識別子, 引数一覧)?;
-    let 焼けたか = compile_assets::生成する(
+    let 焼けたか = compile_assets::実行時形式を生成する(
         compile_assets::ソースルート(),
         Path::new(検証世界の出力ルート),
         世界名::建物一棟の検証世界,

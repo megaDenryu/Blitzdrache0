@@ -53,7 +53,8 @@ pub(crate) fn 間接照明費用を計測する(引数一覧: &[String]) -> Exit
 
 fn 計測する(引数一覧: &[String]) -> Result<String, 間接照明の費用計測エラー> {
     let 指定 = plan::引数を読む(引数一覧)?;
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::地形世界を既定で生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::地形世界を既定で生成する()
+    {
         return Err(間接照明の費用計測エラー::検証用アセットを生成できなかった);
     }
     let 由来 = crate::release_build::計測用に構築する("indirect-cost").map_err(間接照明の費用計測エラー::計測用の構築が失敗した)?;

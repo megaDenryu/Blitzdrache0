@@ -50,7 +50,7 @@ fn 走らせる(引数一覧: &[String]) -> Result<Vec<record::一標本>, 律�
     if 指定.指定された周回数.is_some_and(|指定値| 指定値 != 周回数) {
         println!("[xtask] shadow-probe: 周回数を条件数{}の倍数へ切り上げた({周回数}周回)", 条件一覧.len());
     }
-    if !crate::gen_source_assets::生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() {
         return Err(律速切り分けの計測エラー::検証用ソースアセットを生成できなかった);
     }
     crate::release_build::計測用に構築する("shadow-probe").map_err(律速切り分けの計測エラー::計測用の構築が失敗した)?;

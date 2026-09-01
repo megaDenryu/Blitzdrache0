@@ -10,7 +10,7 @@ mod stages;
 use std::process::ExitCode;
 
 pub fn スモークを実行する() -> ExitCode {
-    if !crate::gen_source_assets::生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() {
         return ExitCode::FAILURE;
     }
     let シェーダーコピー先 = match copy_setup::シェーダーを一時コピーする() {
@@ -29,7 +29,7 @@ pub fn スモークを実行する() -> ExitCode {
     };
     let 実行時アセットルート = std::path::Path::new("target/smoke_runtime_assets");
     if !crate::compile_assets::既定を生成する()
-        || !crate::compile_assets::生成する(&アセットルート, 実行時アセットルート, crate::asset_generator::世界名::板の世界)
+        || !crate::compile_assets::実行時形式を生成する(&アセットルート, 実行時アセットルート, crate::asset_generator::世界名::板の世界)
     {
         return ExitCode::FAILURE;
     }

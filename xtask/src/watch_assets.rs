@@ -18,7 +18,7 @@ pub fn アセットを監視して再生成する(引数一覧: &[String]) -> Ex
             return ExitCode::FAILURE;
         }
     };
-    if !crate::compile_assets::生成する(&ソース, &出力, crate::asset_generator::世界名::板の世界) {
+    if !crate::compile_assets::実行時形式を生成する(&ソース, &出力, crate::asset_generator::世界名::板の世界) {
         return ExitCode::FAILURE;
     }
     println!("[xtask] アセット監視を開始。終了はCtrl+C");

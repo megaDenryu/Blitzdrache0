@@ -27,7 +27,7 @@ fn 静止条件(大域ずらし量: [f64; 3]) -> 検査条件 {
 }
 
 pub fn 原点移動の不変性を確認する() -> ExitCode {
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::既定を生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }
     let 実行環境 = match run::実行環境を作る(PathBuf::from(出力ディレクトリ)) {

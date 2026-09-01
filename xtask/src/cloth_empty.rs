@@ -41,7 +41,8 @@ pub fn 視錐台外の布描画を確認する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, 描画入力が空のフレームの布の検収エラー> {
-    if !crate::gen_source_assets::生成する() || !crate::compile_assets::植生世界を既定で生成する() {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::植生世界を既定で生成する()
+    {
         return Err(描画入力が空のフレームの布の検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = vegetation_run::植生世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
