@@ -82,7 +82,7 @@ pub use asset::{
     描画対象データ, 描画形状, 材質スロットID, 材質スロット割当, 材質割当エラー, 材質特徴集合, 材質集合, 材質集合エラー, 群境界, 補間種別,
     軸平行包囲領域, 金属粗さPBRデータ, 静的TRS, 高さ場の標本数,
 };
-pub use camera::{カメラ, カメラインテント};
+pub use camera::{カメラ, カメラインテント, 表示距離エラー};
 pub use chunk::チャンク座標;
 pub use frame_composition::既定フレーム構成を作る;
 pub use instance_lod::{個体LODエラー, 個体LOD選択設定, 個体別段状態, 個体詳細段};
