@@ -5,6 +5,7 @@
 use blitz_engine::sky::世界の空方針;
 use blitz_render::{ライティング入力, レンダラーエラー};
 
+use super::super::aerial_distance_record::空中遠近の最遠距離の記録;
 use super::super::atmosphere_update::大気更新判定;
 use super::super::clock::時間帯;
 use super::super::distant_environment_update::遠方環境更新判定;
@@ -42,6 +43,7 @@ pub(super) fn 生成する(材料: 生成材料<'_>) -> Result<天空配線, レ
         空を描く: scene_policy::空を描くか(方針, 設定.空),
         大気,
         大気更新判定: 大気更新判定::新規(),
+        空中遠近の最遠距離の記録: 空中遠近の最遠距離の記録::新規(),
         照明問い合わせ契約: scene_policy::世界の間接照明方針を決める(種別).照明問い合わせ契約へ写す(大気.is_some())?,
         露出方式: scene_policy::世界の露出方式を決める(種別, 設定.自動露出),
         自動露出の経過秒源: 自動露出の経過秒源::起動モードから決める(材料.起動モード),

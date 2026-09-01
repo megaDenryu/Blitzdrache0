@@ -4,6 +4,7 @@
 //! 空を持つ世界だけが時刻を読む。空を持たない世界はこの配線を1度も通らず、絵は世界が決めた固定の光のままである。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「段階導入」
 
+mod aerial_distance_record;
 mod aerial_frustum;
 #[cfg(test)]
 mod aerial_frustum_tests;
@@ -37,6 +38,7 @@ mod thinning;
 mod thinning_commit_tests;
 mod wiring;
 
+pub(crate) use aerial_distance_record::空中遠近の最遠距離の記録;
 pub(crate) use distant_environment_key_record::遠方環境の鍵の記録;
 pub(crate) use distant_environment_update::遠方環境更新判定;
 pub(crate) use reproduction_condition::空の再現条件;

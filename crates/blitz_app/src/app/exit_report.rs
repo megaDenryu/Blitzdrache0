@@ -32,6 +32,7 @@ impl super::アプリ {
                 }
                 None => println!("間接照明生成パス数: レンダラーが生成されなかったため数えていない"),
             }
+            crate::reports::aerial_farthest_distance::空中遠近の最遠距離を表示する(self.空中遠近の最遠距離の記録を取得する());
             crate::reports::distant_environment_key::遠方環境の鍵を表示する(self.遠方環境の鍵の記録を取得する());
             crate::reports::distant_environment_key::太陽天頂区間を表示する(self.太陽天頂区間の記録を取得する());
         }

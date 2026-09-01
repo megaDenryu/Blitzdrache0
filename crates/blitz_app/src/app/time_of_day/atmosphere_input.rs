@@ -12,6 +12,7 @@ use blitz_math::メートル;
 use blitz_render::atmosphere::{スカイビュー観測条件, 大気散乱媒体, 天頂余弦};
 use blitz_render::atmosphere_lut_input::大気のベイク済み画像の入力;
 
+use super::aerial_distance_record::空中遠近の最遠距離の記録;
 use super::aerial_input;
 use super::atmosphere_update::大気更新判定;
 use super::clock::時間帯;
@@ -27,10 +28,15 @@ pub(super) struct 大気入力の材料<'a> {
     pub(super) 視点: &'a フレーム視点,
 }
 
-pub(super) fn 組む(材料: &大気入力の材料<'_>, 判定: &mut 大気更新判定) -> 大気のベイク済み画像の入力 {
+pub(super) fn 組む(
+    材料: &大気入力の材料<'_>,
+    判定: &mut 大気更新判定,
+    最遠距離の記録: &mut 空中遠近の最遠距離の記録,
+) -> 大気のベイク済み画像の入力 {
     let 観測高度 = 材料.空描画.観測高度();
     let スカイビュー鍵 = スカイビューキー::導く(材料.方針.静的キー(), 太陽天頂余弦を読む(材料.状態), 観測高度);
     let 空中遠近 = aerial_input::組む(材料.視点, 材料.状態, 観測高度, スカイビュー鍵);
+    最遠距離の記録.記録する(空中遠近.条件.最遠距離());
     大気のベイク済み画像の入力::生成する(
         材料.媒体,
         スカイビュー条件を組む(観測高度, 太陽天頂余弦を読む(材料.状態)),

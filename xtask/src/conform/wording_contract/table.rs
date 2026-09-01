@@ -1,6 +1,7 @@
 //! 契約する綴りの型と、領域ごとの台帳の束ね。担当するのは「どの領域の台帳が検査の対象か」だけである。
 //! 検査の手順は親モジュールが持ち、どの綴りがどのファイルに在るべきかは各領域の台帳が持つ。
 
+mod aerial_farthest_distance;
 mod atmosphere_readback;
 mod exit_report;
 mod instance_tally;
@@ -15,7 +16,8 @@ pub(super) struct 綴りの契約 {
 }
 
 /// 領域ごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域一覧: [&[綴りの契約]; 6] = [
+pub(super) const 領域一覧: [&[綴りの契約]; 7] = [
+    &aerial_farthest_distance::綴り一覧,
     &atmosphere_readback::綴り一覧,
     &exit_report::綴り一覧,
     &part_row_tally::綴り一覧,
