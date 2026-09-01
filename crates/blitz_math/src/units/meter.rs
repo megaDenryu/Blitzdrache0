@@ -7,7 +7,10 @@
 //! 大小の比較を導出でなく手で書いているのも同じ理由であり、導出された実装には埋め込みの指示を付けられない。
 
 use std::cmp::Ordering;
-use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, Div, Mul, Sub};
+
+use super::メートル毎秒;
+use super::秒;
 
 /// メートル単位の長さ。生値の取り出しは境界（GPU・外部API）専用と明示する。
 #[derive(Debug, Clone, Copy, Default)]
@@ -48,6 +51,24 @@ impl Mul<f32> for メートル {
     #[inline(always)]
     fn mul(self, 倍率: f32) -> Self {
         Self(self.0 * 倍率)
+    }
+}
+
+/// 同じ次元どうしの比。無次元量になる。
+impl Div for メートル {
+    type Output = f32;
+    #[inline(always)]
+    fn div(self, 分母: Self) -> f32 {
+        self.0 / 分母.0
+    }
+}
+
+/// 次元の合成: 距離 ÷ 時間 = 速度。
+impl Div<秒> for メートル {
+    type Output = メートル毎秒;
+    #[inline(always)]
+    fn div(self, 経過時間: 秒) -> メートル毎秒 {
+        メートル毎秒::生成する(self.0 / 経過時間.値())
     }
 }
 

@@ -4,7 +4,13 @@
 
 mod body_motion;
 #[cfg(test)]
+mod body_motion_crest_tests;
+#[cfg(test)]
 mod body_motion_jump_tests;
+#[cfg(test)]
+mod body_motion_margin_tests;
+#[cfg(test)]
+mod body_motion_rest_tests;
 #[cfg(test)]
 mod body_motion_slope_tests;
 #[cfg(test)]
@@ -12,6 +18,7 @@ mod body_motion_test_fixture;
 #[cfg(test)]
 mod body_motion_tests;
 mod body_velocity;
+mod contact_margin;
 mod desired_motion;
 mod fall_jump_rules;
 mod ground_probe;
@@ -27,6 +34,7 @@ mod sweep_and_slide;
 
 pub use body_motion::胴体の移動;
 pub use body_velocity::胴体の速度;
+pub use contact_margin::接触余白;
 pub use fall_jump_rules::落下とジャンプの規則;
 pub use ground_probe::接地の規則;
 pub use horizontal_velocity::水平の速度;

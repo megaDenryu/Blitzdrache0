@@ -17,6 +17,8 @@ mod camera_occlusion_tests;
 #[cfg(test)]
 mod camera_recovery_tests;
 mod confirmed_input;
+#[cfg(test)]
+mod crest_edge;
 mod destination;
 mod display_distance_decision;
 mod facing_azimuth;
@@ -82,7 +84,7 @@ pub use ground_height::足元の地面の高さ;
 pub use horizontal_unit_vector::水平面の単位ベクトル;
 pub use moved_fraction::{動けた割合, 動けた割合エラー};
 pub use movement::{
-    一刻みの移動の入力, 一刻みの移動の結果, 世界の軸で見た倒し量, 問い合わせ件数, 接地の規則, 水平の速度, 移動の観測, 移動状態, 胴体の移動,
+    一刻みの移動の入力, 一刻みの移動の結果, 世界の軸で見た倒し量, 問い合わせ件数, 接地の規則, 接触余白, 水平の速度, 移動の観測, 移動状態, 胴体の移動,
     胴体の速度, 落下とジャンプの規則, 速さの規則,
 };
 pub use occlusion_verdict::遮蔽の判定;
