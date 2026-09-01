@@ -4,6 +4,9 @@
 //! 空を持つ世界だけが時刻を読む。空を持たない世界はこの配線を1度も通らず、絵は世界が決めた固定の光のままである。
 //! 参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「段階導入」
 
+mod aerial_frustum;
+#[cfg(test)]
+mod aerial_frustum_tests;
 mod aerial_input;
 mod atmosphere_input;
 mod atmosphere_update;
