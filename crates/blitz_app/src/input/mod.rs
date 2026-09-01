@@ -15,9 +15,13 @@ mod game_input_tests;
 mod game_intent_policy;
 mod game_key_state;
 mod ingest;
+mod tick_distribution;
+#[cfg(test)]
+mod tick_distribution_tests;
 
 pub(crate) use camera_intent_policy::カメラ操作の適用方針;
 pub(crate) use game_intent_policy::ゲーム操作の適用方針;
+pub(crate) use tick_distribution::刻みごとの操作入力;
 
 use blitz_engine::カメラインテント;
 use blitz_game::確定済みの操作入力;

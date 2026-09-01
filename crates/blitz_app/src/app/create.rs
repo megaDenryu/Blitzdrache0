@@ -1,5 +1,7 @@
-//! CLI起動設定からアプリの初期状態を構築する。世界の描画の組み立て方の決定だけは`world_composition`が持つ。
+//! CLI起動設定からアプリの初期状態を構築する。世界の描画の組み立て方の決定は`world_composition`が持ち、
+//! 時間進行方針の組み立ては`time_advance_policy`が持つ。
 
+mod time_advance_policy;
 mod world_composition;
 
 pub(in crate::app) use world_composition::世界の描画構成;
@@ -52,6 +54,10 @@ impl アプリ {
             描画対象の並べ方: 起動設定.描画対象の並べ方,
             入力状態: 入力状態::生成する(カメラ操作の適用方針::起動モードから決める(起動設定.モード)),
             ゲーム配線: crate::game::ゲーム配線::起動設定から作る(起動設定.遊ぶゲーム, 起動設定.モード),
+            時間進行: super::time_step::時間進行配線::起動モードから作る(
+                起動設定.モード,
+                time_advance_policy::時間進行方針を組む(),
+            ),
             現在フレーム: 0,
             視点の履歴: super::frame::視点の履歴::記録なしで生成する(),
             時間再構成の観測: super::draw_dispatch::時間再構成の観測::記録なしで生成する(),
