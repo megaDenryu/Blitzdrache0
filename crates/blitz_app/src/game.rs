@@ -28,6 +28,7 @@ mod query_count_distribution;
 mod render_supply;
 mod scripted_operation;
 mod step_seconds;
+mod step_time_by_query_count;
 mod step_time_distribution;
 #[cfg(test)]
 mod step_time_distribution_tests;
@@ -46,6 +47,7 @@ pub(crate) use instrument::{
 };
 pub(crate) use query_count_distribution::問い合わせ件数の要約;
 pub(crate) use step_seconds::ゲーム更新の一刻みの秒;
+pub(crate) use step_time_by_query_count::件数別の刻みの所要時間の要約;
 pub(crate) use step_time_distribution::刻みの所要時間の要約;
 pub(crate) use summary::ゲーム進行の要約;
 pub(crate) use world_shape_port::{世界の形を尋ねる口の実装エラー, 読込済みチャンクの形の出どころ};
