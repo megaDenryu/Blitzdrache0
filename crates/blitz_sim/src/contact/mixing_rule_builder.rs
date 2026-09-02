@@ -4,6 +4,7 @@
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断15: 接触物性は両表面の物性から混合則で決め、既定則と材質対の上書き表を持つ」
 
 use std::collections::BTreeMap;
+use std::collections::btree_map::Entry;
 
 use super::contact_property::接触物性;
 use super::material_id::材質の識別子;
@@ -12,7 +13,7 @@ use super::mixing_rule::混合則;
 use super::property_error::接触物性エラー;
 use super::surface_property::表面物性;
 
-/// 混合則を作るための積み上げ。二重登録はその場で拒み、対の材質の実在は組み立てで拒む。
+/// 混合則を作るための積み上げ。二重登録はその場で拒み(先に登録した値は残す)、対の材質の実在は組み立てで拒む。
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct 混合則の組み立て {
     表面物性の表: BTreeMap<材質の識別子, 表面物性>,
@@ -26,12 +27,14 @@ impl 混合則の組み立て {
     }
 
     /// 材質の識別子へ表面物性を結び付ける。同じ識別子を2回登録すると、どちらが正しいかを決められないため拒む。
+    /// 空いているときだけ挿入するのは、拒む登録が先の値を置き換えたまま呼び出し側へエラーを返さないためである。
     pub fn 表面物性を登録する(&mut self, 材質: 材質の識別子, 表面物性: 表面物性) -> Result<(), 接触物性エラー> {
-        if self.表面物性の表.insert(材質, 表面物性).is_some() {
+        let Entry::Vacant(空き) = self.表面物性の表.entry(材質) else {
             return Err(接触物性エラー::表面物性の二重登録 {
                 材質の識別子: 材質.値()
             });
-        }
+        };
+        空き.insert(表面物性);
         Ok(())
     }
 
@@ -43,12 +46,13 @@ impl 混合則の組み立て {
         接触物性: 接触物性,
     ) -> Result<(), 接触物性エラー> {
         let 対 = 材質の対::生成する(第1の材質, 第2の材質);
-        if self.上書き表.insert(対, 接触物性).is_some() {
+        let Entry::Vacant(空き) = self.上書き表.entry(対) else {
             return Err(接触物性エラー::材質対の上書きの二重登録 {
                 小さい方: 対.小さい方().値(),
                 大きい方: 対.大きい方().値(),
             });
-        }
+        };
+        空き.insert(接触物性);
         Ok(())
     }
 
