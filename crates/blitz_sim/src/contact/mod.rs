@@ -30,6 +30,8 @@ mod mixing_rule_builder;
 mod mixing_rule_builder_tests;
 #[cfg(test)]
 mod mixing_rule_tests;
+#[cfg(test)]
+mod non_penetration_applied_separation_tests;
 mod non_penetration_coefficients;
 #[cfg(test)]
 mod non_penetration_correction_tests;
