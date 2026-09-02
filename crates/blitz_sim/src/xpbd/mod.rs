@@ -26,6 +26,8 @@ mod bending_surface_projection;
 mod bending_surface_projection_tests;
 #[cfg(test)]
 mod bending_test_fixtures;
+#[cfg(test)]
+mod bending_violation_wrap_tests;
 mod compliance;
 mod distance_canonical_projection;
 #[cfg(test)]

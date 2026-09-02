@@ -1,10 +1,11 @@
 // XPBDの面の曲げ拘束(隣接する2つの三角形の二面角)の正典式(判断11)のGPUの写し。CPUの参照計算
 // `crates/blitz_sim/src/xpbd/bending_surface_projection.rs` と同じ符号・同じ単位・同じ演算の順で書く。
 //   E = x_b − x_a、ê = E ÷ |E|、N1 = (x_a − x_c) × (x_b − x_c)、N2 = (x_b − x_d) × (x_a − x_d)、n = N ÷ |N|
-//   θ = atan2(ê · (n2 × n1), n1 · n2)、C = θ − 静止角(半周を越えれば最短の弧へ畳む)
+//   θ = atan2(ê · (n2 × n1), n1 · n2)、C = (θ − 静止角)を常に最短の弧へ畳んだ角(ちょうど半周は正のπに決める)
 //   g_c = |E| n1 ÷ |N1|、g_d = |E| n2 ÷ |N2|、g_a = ((x_c − x_b)·ê) n1 ÷ |N1| + ((x_d − x_b)·ê) n2 ÷ |N2|、g_b = −(((x_c − x_a)·ê) n1 ÷ |N1| + ((x_d − x_a)·ê) n2 ÷ |N2|)
 //   W = Σ w_i |g_i|²、Δλ = (−C − α̃λ) ÷ (W + α̃)、補正_i = w_i Δλ g_i
 // 退化(全て固定・辺が潰れている・三角形が潰れている)は補正0でΔλも0にし、呼び出し側が乗数を変えない。
+// 弧の畳みは条件分岐で挟まずに常に通し、CPUの`ラジアン::一周の中で最短の弧へ畳む`(rem_euclid)と同じ演算の順(余りを取り、負なら一周を足し、半周を越えれば一周を引く)で書く。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 // 共有する辺の長さの2乗の下限。CPU正本が長さに置く下限1e-6メートルの2乗であり、距離拘束と同じ値である。
@@ -23,11 +24,13 @@ struct BendingProjection
     bool corrected;
 };
 
-// 半周を越えた角を−πからπまでの最短の弧へ畳む。CPUの`ラジアン::一周の中で最短の弧へ畳む`(rem_euclid)と同じ演算である。
+// 角を−πからπまでの最短の弧へ畳む。CPUの`ラジアン::一周の中で最短の弧へ畳む`(rem_euclid)と同じ演算の順であり、余り(fmod。符号は被除数に従う)が負なら一周を足す。
+// ちょうど半周は正のπに決める(−π → 余り−π → 一周を足してπ → πは半周を越えない → π)。
 float wrapToShortestArc(float angle)
 {
     float tau = 2.0 * pi;
-    float wrapped = angle - tau * floor(angle / tau);
+    float remainder = fmod(angle, tau);
+    float wrapped = remainder < 0.0 ? remainder + tau : remainder;
     return wrapped > pi ? wrapped - tau : wrapped;
 }
 
@@ -77,11 +80,7 @@ BendingProjection projectDihedralBending(
     {
         return result;
     }
-    float violation = angle - restAngle;
-    if (abs(violation) > pi)
-    {
-        violation = wrapToShortestArc(violation);
-    }
+    float violation = wrapToShortestArc(angle - restAngle);
     float deltaLambda = (-violation - alphaTilde * lambda) / (effectiveInverseInertia + alphaTilde);
     result.deltaLambda = deltaLambda;
     result.correctionA = gradientA * (deltaLambda * invMassA);
