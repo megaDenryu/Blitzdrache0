@@ -21,7 +21,7 @@ pub struct グラフ彩色 {
 
 impl グラフ彩色 {
     pub fn 生成する(グラフ: &拘束グラフ) -> Self {
-        let 色一覧 = 色を割り当てる(グラフ);
+        let 色一覧 = グラフ.拘束へ貪欲に色を割り当てる();
         let 色の数 = 色一覧.iter().map(|色| 色 + 1).max().unwrap_or(0);
         let mut 並べ替えた = Vec::with_capacity(グラフ.拘束の数());
         let mut 色の区間一覧 = Vec::with_capacity(色の数);
@@ -53,20 +53,4 @@ impl グラフ彩色 {
     pub fn 色の数(&self) -> usize {
         self.色の区間一覧.len()
     }
-}
-
-/// 各拘束へ色(0始まり)を割り当てる。点ごとに使用済みの色を持ち、両端の和集合に無い最小の色を選ぶ。
-fn 色を割り当てる(グラフ: &拘束グラフ) -> Vec<usize> {
-    let mut 点が使った色: Vec<Vec<usize>> = vec![Vec::new(); グラフ.点の数()];
-    let mut 色一覧 = Vec::with_capacity(グラフ.拘束の数());
-    for 拘束 in グラフ.拘束一覧() {
-        let mut 色 = 0;
-        while 点が使った色[拘束.a.配列添字()].contains(&色) || 点が使った色[拘束.b.配列添字()].contains(&色) {
-            色 += 1;
-        }
-        点が使った色[拘束.a.配列添字()].push(色);
-        点が使った色[拘束.b.配列添字()].push(色);
-        色一覧.push(色);
-    }
-    色一覧
 }
