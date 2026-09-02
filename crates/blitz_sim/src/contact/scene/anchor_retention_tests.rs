@@ -6,7 +6,7 @@
 #![allow(clippy::unwrap_used)]
 
 use super::super::friction_coefficient::摩擦係数;
-use super::slope_fixture::{坂に沿った変位, 坂の場面を組む};
+use super::slope_fixture::坂の場面を組む;
 use super::slope_geometry::坂の場面の条件;
 
 const 滑らせる長さ: f32 = 1.0;
@@ -35,7 +35,7 @@ fn 床の上で一メートル滑らせても接触の対応付けが継続の�
             assert_eq!(観測.開始した接触点の数, 0, "細分{細分}で接触が新規として始まり錨が置き直された");
         }
         滑走を見た |= 観測.滑走中の接触点の数 > 0;
-        進んだ長さ = 坂に沿った変位(&場面, 初めの重心, &条件);
+        進んだ長さ = 場面.坂に沿った変位(初めの重心, &条件);
         if 進んだ長さ >= 滑らせる長さ {
             break;
         }
