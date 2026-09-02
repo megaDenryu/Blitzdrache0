@@ -19,6 +19,7 @@ mod embedded_local_visibility_shaders;
 mod embedded_shaders;
 mod embedded_sky_shaders;
 mod embedded_temporal_reconstruction_shaders;
+mod embedded_xpbd_shaders;
 mod error;
 mod game;
 mod hot_reload;
@@ -54,6 +55,7 @@ fn 実行する() -> Result<ExitCode, 起動エラー> {
         cli::起動要求::遠方環境報告 => Ok(reports::distant_environment::遠方環境表を出す()),
         cli::起動要求::派生表現報告 => Ok(reports::derived_environment::派生表現表を出す()),
         cli::起動要求::太陽天頂区間の跨ぎ報告 => Ok(reports::sun_zenith_crossing::太陽天頂区間の跨ぎ表を出す()),
+        cli::起動要求::XPBD並列方式計測(指定) => Ok(reports::xpbd_solver_bench::xpbd並列方式の計測表を出す(&指定)),
         cli::起動要求::描画実行(起動設定) => 描画する(*起動設定),
     }
 }

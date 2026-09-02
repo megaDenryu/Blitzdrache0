@@ -24,6 +24,7 @@ mod surface_flow_spirv_compile;
 mod temporal_reconstruction_spirv_compile;
 mod tonemap_spirv_compile;
 mod ui_spirv_compile;
+mod xpbd_spirv_compile;
 
 use std::env;
 use std::path::PathBuf;
@@ -90,5 +91,6 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     cluster_light_assignment_spirv_compile::コンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
     temporal_reconstruction_spirv_compile::頂点と画素段をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
 
-    cloth_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)
+    cloth_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
+    xpbd_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)
 }

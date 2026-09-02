@@ -57,6 +57,7 @@ mod view_input;
 mod visible_instance_selection;
 mod vulkan;
 mod vulkan_failure;
+pub mod xpbd_solver_bench_probe;
 pub use clear_color::{クリアカラー, クリアカラーエラー};
 pub use cloth_material::{布定数, 布素材, 布素材エラー};
 pub use cloth_shader_set::布シェーダー一式;

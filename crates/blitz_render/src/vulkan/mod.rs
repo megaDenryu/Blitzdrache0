@@ -69,3 +69,4 @@ pub(crate) mod ui;
 pub(crate) mod uniform;
 pub(crate) mod unsent_command_buffers;
 pub(crate) mod visible_id;
+pub(crate) mod xpbd_bench;

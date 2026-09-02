@@ -58,6 +58,8 @@ pub(crate) enum 起動引数エラー {
     チャンク読込設定不正(String),
     #[error("--indirect-probe引数が不正だった: {0}")]
     遠方環境の検収条件不正(String),
+    #[error("XPBDの並列方式の計測の引数が不正だった: {0}")]
+    XPBD並列方式計測の指定不正(String),
 
     #[error("--auto-exposure-probe引数が不正だった: {0}")]
     自動露出の探り色不正(String),

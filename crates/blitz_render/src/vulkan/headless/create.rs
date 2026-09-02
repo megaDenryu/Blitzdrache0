@@ -19,6 +19,7 @@ struct デバイス一式 {
     physical_device: vk::PhysicalDevice,
     device: GPUデバイス,
     queue: vk::Queue,
+    キューファミリ添字: u32,
     command_pool: vk::CommandPool,
 }
 
@@ -36,6 +37,7 @@ impl ウィンドウなし実行GPU環境 {
                 physical_device: 一式.physical_device,
                 device: 一式.device,
                 queue: 一式.queue,
+                キューファミリ添字: 一式.キューファミリ添字,
                 command_pool: 一式.command_pool,
                 未送信のコマンドバッファ数: 未送信のコマンドバッファ数::零から数え始める(),
             }),
@@ -66,6 +68,7 @@ fn デバイス一式を作る(instance: &ash::Instance) -> Result<デバイス�
         physical_device,
         device,
         queue,
+        キューファミリ添字,
         command_pool,
     })
 }

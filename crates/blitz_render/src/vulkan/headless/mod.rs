@@ -31,6 +31,7 @@ pub(crate) struct ウィンドウなし実行GPU環境 {
     physical_device: vk::PhysicalDevice,
     device: GPUデバイス,
     queue: vk::Queue,
+    キューファミリ添字: u32,
     command_pool: vk::CommandPool,
     未送信のコマンドバッファ数: 未送信のコマンドバッファ数,
 }
@@ -55,6 +56,26 @@ impl ウィンドウなし実行GPU環境 {
         // 安全性: instance・physical_deviceは生成済みで有効。
         let メモリプロパティ = unsafe { self.検証.instance.get_physical_device_memory_properties(self.physical_device) };
         crate::vulkan::allocator::GPU資源の確保係::生成する(&self.device, メモリプロパティ)
+    }
+
+    /// GPUタイムスタンプ計測の前提。戻り値は、選んだキューファミリでタイムスタンプが有効かと、1tickあたりのナノ秒である。
+    /// 提示側(`gpu_environment::physical_query`)と同じ問い合わせであり、ウィンドウの無い計測が同じ計器を立てるために要る。
+    pub(crate) fn タイムスタンプ計測条件を調べる(&self) -> (bool, f32) {
+        let instance = &self.検証.instance;
+        // 安全性: instance・physical_deviceは生成済み・選定済みで有効。
+        let ファミリ一覧 = unsafe { instance.get_physical_device_queue_family_properties(self.physical_device) };
+        let 添字 = usize::try_from(self.キューファミリ添字).unwrap_or_else(|_| panic!("キューファミリ添字がusizeに収まらない"));
+        let 対応か = ファミリ一覧.get(添字).is_some_and(|性質| 性質.timestamp_valid_bits > 0);
+        // 安全性: 同上。
+        let 性質 = unsafe { instance.get_physical_device_properties(self.physical_device) };
+        (対応か, 性質.limits.timestamp_period)
+    }
+
+    /// ステージング経由の転送に使う転送実行環境を、この環境のキューで作る。返る環境の破棄は呼び出し元が行う。
+    pub(crate) fn 転送実行環境を生成する(
+        &self,
+    ) -> Result<crate::vulkan::transfer::転送実行環境, crate::error::レンダラーエラー> {
+        crate::vulkan::transfer::転送実行環境::生成する(&self.device, self.queue, self.キューファミリ添字)
     }
 
     /// 一時コマンドバッファを1本確保して積み込みを開始する。

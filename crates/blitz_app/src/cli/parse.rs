@@ -4,12 +4,15 @@
 //! 組み合わせの検査を走査の後ろへ置くのは、どの検査も「後から来る引数が無いこと」を条件に含むためである。
 //! 指定の順序で結果が変わる検査は、利用者が並べ方を覚えていなければならない仕様になる。
 
-use super::{local_visibility_settings, report_only_request, setting_apply, types, 起動要求, 起動設定};
+use super::{local_visibility_settings, report_only_request, setting_apply, types, xpbd_solver_bench_request, 起動要求, 起動設定};
 use crate::error::起動エラー;
 
 /// CLI引数から起動要求を解析する。粒子系の検証対象は`--particles`または`--surface-flow`で選ぶ。
 /// `--shader-source`は監視・再コンパイル対象のエントリファイルを指す。`import`先の他ファイルは常にエントリと同じディレクトリから解決するため個別指定は不要。
 pub(crate) fn 引数を解析する(引数一覧: &[String]) -> Result<起動要求, 起動エラー> {
+    if let Some(指定) = xpbd_solver_bench_request::計測の要求を見分ける(引数一覧) {
+        return Ok(起動要求::XPBD並列方式計測(指定?));
+    }
     if let Some(要求) = report_only_request::報告だけの要求を見分ける(引数一覧) {
         return Ok(要求);
     }

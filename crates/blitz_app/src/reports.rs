@@ -29,6 +29,7 @@ pub(crate) mod streaming_summary;
 pub(crate) mod sun_angle;
 pub(crate) mod sun_zenith_crossing;
 pub(crate) mod temporal_reconstruction;
+pub(crate) mod xpbd_solver_bench;
 
 use crate::app::フレーム時間統計;
 

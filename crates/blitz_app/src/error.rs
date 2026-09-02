@@ -85,4 +85,14 @@ pub(crate) enum 起動エラー {
     世界の形を尋ねる口の失敗(#[from] crate::game::世界の形を尋ねる口の実装エラー),
     #[error("遮蔽で決めた表示距離をカメラへ据えられない: {0}")]
     カメラの表示距離不正(#[from] blitz_engine::表示距離エラー),
+    #[error("XPBDの計測の拘束グラフを作れない: {0}")]
+    XPBD計測の拘束グラフ不正(#[from] blitz_sim::constraint_graph::拘束グラフエラー),
+    #[error("XPBDの計測素材の生成に失敗した: {0}")]
+    XPBD計測素材不正(#[from] blitz_render::xpbd_solver_bench_probe::XPBD計測素材エラー),
+    #[error("XPBDの計測の刻み幅を作れない: {0}")]
+    XPBD計測の刻み幅不正(#[from] blitz_sim::刻み幅エラー),
+    #[error("XPBDの計測のコンプライアンスを作れない: {0}")]
+    XPBD計測のコンプライアンス不正(#[from] blitz_sim::コンプライアンスエラー),
+    #[error("XPBDの計測の逆質量を作れない: {0}")]
+    XPBD計測の逆質量不正(#[from] blitz_math::質量エラー),
 }

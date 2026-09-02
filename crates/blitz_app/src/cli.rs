@@ -61,6 +61,9 @@ mod time_of_day_settings;
 mod types;
 mod value_args;
 mod verification_plan;
+mod xpbd_solver_bench_request;
+#[cfg(test)]
+mod xpbd_solver_bench_request_tests;
 pub(crate) use animation_blend::アニメーションのブレンド係数;
 pub(crate) use argument_error::起動引数エラー;
 pub(crate) use draw_object_layout::描画対象の並べ方;
@@ -85,6 +88,7 @@ pub(crate) use time_of_day_settings::{
 };
 pub(crate) use types::{フレームダンプ指定, 読み戻し検収起動設定, 起動モード, 起動設定};
 pub(crate) use verification_plan::検証計画指定;
+pub(crate) use xpbd_solver_bench_request::{XPBD並列方式計測の指定, XPBD計測のグラフの種別};
 pub(crate) use {
     local_light_count_args::局所光の件数の起動指定, point_light_shadow_count_args::影を落とす灯の件数の起動指定
 };
