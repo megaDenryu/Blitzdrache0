@@ -31,12 +31,16 @@ mod mixing_rule_builder_tests;
 #[cfg(test)]
 mod mixing_rule_tests;
 #[cfg(test)]
+mod non_penetration_applied_separation_fixture;
+#[cfg(test)]
 mod non_penetration_applied_separation_tests;
 mod non_penetration_coefficients;
 #[cfg(test)]
 mod non_penetration_correction_tests;
 #[cfg(test)]
 mod non_penetration_fixture;
+#[cfg(test)]
+mod non_penetration_negative_increment_budget_tests;
 mod non_penetration_participant;
 mod non_penetration_projection;
 mod non_penetration_result;
