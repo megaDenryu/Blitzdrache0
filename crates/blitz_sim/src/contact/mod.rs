@@ -28,6 +28,7 @@ mod feature_identity;
 mod friction_coefficient;
 mod generation_error;
 mod history;
+mod manifold_range;
 mod material_id;
 mod material_pair;
 mod minimum_thickness;
@@ -74,6 +75,7 @@ pub use history::{
     剛体どうしの接触の履歴の項目, 剛体どうしの接触の継続の記録, 剛体どうしの接触の鍵, 接触の併走の結果, 接触の対応付け, 接触の履歴, 接触の履歴の項目,
     接触の履歴エラー, 接触の継続の記録,
 };
+pub use manifold_range::接触点集合の占める範囲;
 pub use material_id::材質の識別子;
 pub use material_pair::材質の対;
 pub use minimum_thickness::形の最小の厚み;
@@ -86,8 +88,8 @@ pub use penetration_depth::貫通量;
 pub use property_error::接触物性エラー;
 pub use restitution_coefficient::反発係数;
 pub use static_friction::{
-    剛体と静的世界の静止摩擦の錨, 剛体どうしの静止摩擦の錨, 接線のラグランジュ乗数, 静止摩擦の一回の射影の結果, 静止摩擦の一細分の解の状態,
-    静止摩擦の錨,
+    剛体と静的世界の静止摩擦の錨, 剛体どうしの静止摩擦の錨, 接線のラグランジュ乗数, 接触点集合の静止摩擦の仮の集計, 静止摩擦の一回の仮の射影の結果,
+    静止摩擦の一細分の解の状態, 静止摩擦の錨,
 };
 pub use static_world_partner::静的世界の接触相手;
 pub use static_world_partner_id::静的世界の接触相手の識別子;
