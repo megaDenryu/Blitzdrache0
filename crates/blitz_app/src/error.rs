@@ -93,6 +93,8 @@ pub(crate) enum 起動エラー {
     XPBD計測の刻み幅不正(#[from] blitz_sim::刻み幅エラー),
     #[error("XPBDの計測のコンプライアンスを作れない: {0}")]
     XPBD計測のコンプライアンス不正(#[from] blitz_sim::コンプライアンスエラー),
+    #[error("布の曲げのコンプライアンスを作れない: {0}")]
+    布の曲げのコンプライアンス不正(#[from] blitz_sim::曲げのコンプライアンスエラー),
     #[error("XPBDの計測の逆質量を作れない: {0}")]
     XPBD計測の逆質量不正(#[from] blitz_math::質量エラー),
 }

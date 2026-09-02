@@ -28,6 +28,7 @@ pub(crate) struct 布描画入力 {
     pub(crate) 目標の確定pipeline: vk::Pipeline,
     pub(crate) 乗数零化pipeline: vk::Pipeline,
     pub(crate) 拘束pipeline: vk::Pipeline,
+    pub(crate) 曲げ拘束pipeline: vk::Pipeline,
     pub(crate) 目標拘束pipeline: vk::Pipeline,
     pub(crate) ハッシュ消去pipeline: vk::Pipeline,
     pub(crate) ハッシュ格納pipeline: vk::Pipeline,
@@ -39,7 +40,9 @@ pub(crate) struct 布描画入力 {
     pub(crate) 粒子数: u32,
     pub(crate) 拘束の数: u32,
     pub(crate) 目標拘束の数: u32, // 固定・アタッチ・掴みの枠の目標拘束の本数。0なら目標拘束の工程を積まない
+    pub(crate) 曲げ拘束の数: u32, // 隣接する三角形の対の曲げ拘束の本数。0なら曲げ拘束の工程を積まない
     pub(crate) 色の区間一覧: Vec<布の彩色の区間>, // 拘束の工程を色ごとに1回ずつ積む区間。プッシュ定数で運ぶ
+    pub(crate) 曲げの色の区間一覧: Vec<布の彩色の区間>, // 曲げ拘束の工程を色ごとに1回ずつ積む区間。距離拘束の色の後ろに積む
     pub(crate) 自己衝突: 布の自己衝突, // 空間ハッシュと分離の工程を積むかどうか
     pub(crate) 目標の更新対応の件数: u32, // スキン済み頂点から目標位置へ写す対応の件数。0なら目標の確定を積まない
     pub(crate) 介入件数: u32,
@@ -51,6 +54,7 @@ pub(crate) struct 布描画入力 {
     pub(crate) 目標拘束の引数バッファ: vk::Buffer,
     pub(crate) 目標位置バッファ: vk::Buffer,
     pub(crate) 目標の更新対応バッファ: vk::Buffer,
+    pub(crate) 曲げ拘束の引数バッファ: vk::Buffer,
     pub(crate) セルカウントバッファ: vk::Buffer,
     pub(crate) セル格納バッファ: vk::Buffer,
     pub(crate) 布頂点バッファ: vk::Buffer,

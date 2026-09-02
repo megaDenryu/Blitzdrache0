@@ -1,4 +1,4 @@
-//! 布素材の検査が共有する材料: 一辺2(粒子4)の粒子バイト列、距離拘束と目標拘束と目標位置の1件のバイト列、材料の組み立て。
+//! 布素材の検査が共有する材料: 一辺2(粒子4)の粒子バイト列、距離拘束と目標拘束と目標位置と曲げ拘束の1件のバイト列、材料の組み立て。
 
 use blitz_math::秒;
 
@@ -26,6 +26,16 @@ pub(super) fn 目標位置(位置: [f32; 3], 有効: f32) -> Vec<u8> {
         バイト列.extend_from_slice(&成分.to_le_bytes());
     }
     バイト列.extend_from_slice(&有効.to_le_bytes());
+    バイト列
+}
+
+pub(super) fn 曲げ拘束(点一覧: [u32; 4], 静止角: f32, コンプライアンス: f32) -> Vec<u8> {
+    let mut バイト列 = Vec::with_capacity(24);
+    for 点 in 点一覧 {
+        バイト列.extend_from_slice(&点.to_le_bytes());
+    }
+    バイト列.extend_from_slice(&静止角.to_le_bytes());
+    バイト列.extend_from_slice(&コンプライアンス.to_le_bytes());
     バイト列
 }
 
@@ -70,6 +80,8 @@ pub(super) fn 目標拘束つきの材料(
         目標拘束の引数バイト列: 目標拘束一覧.concat(),
         目標位置の初期バイト列: 目標位置一覧.concat(),
         目標の更新対応一覧: Vec::new(),
+        曲げ拘束の引数バイト列: Vec::new(),
+        曲げの色の区間一覧: Vec::new(),
         インデックス一覧: Vec::new(),
         一辺粒子数: 2,
         定数: 布定数 {

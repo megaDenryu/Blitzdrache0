@@ -9,6 +9,7 @@ const 介入と積分: &str = "shaders/cloth_step.slang";
 const 拘束: &str = "shaders/cloth_constraint.slang";
 const 空間ハッシュ: &str = "shaders/cloth_hash.slang";
 const 目標拘束: &str = "shaders/cloth_target.slang";
+const 曲げ拘束: &str = "shaders/cloth_bending.slang";
 
 const fn 組(前置き: &'static str, 写しパス: &'static str, 写しの変数名: &'static str) -> 束縛番号の組 {
     束縛番号の組 {
@@ -20,7 +21,7 @@ const fn 組(前置き: &'static str, 写しパス: &'static str, 写しの変�
     }
 }
 
-pub(super) const 束縛番号の組の一覧: [束縛番号の組; 13] = [
+pub(super) const 束縛番号の組の一覧: [束縛番号の組; 14] = [
     組("pub(crate) const 定数の束縛番号: 束縛番号 = 束縛番号::生成する", 介入と積分, "params"),
     組("pub(crate) const 粒子の束縛番号: 束縛番号 = 束縛番号::生成する", 介入と積分, "particles"),
     組(
@@ -74,4 +75,9 @@ pub(super) const 束縛番号の組の一覧: [束縛番号の組; 13] = [
         "targetParams",
     ),
     組("pub(crate) const 目標位置の束縛番号: 束縛番号 = 束縛番号::生成する", 目標拘束, "targets"),
+    組(
+        "pub(crate) const 曲げ拘束の引数の束縛番号: 束縛番号 = 束縛番号::生成する",
+        曲げ拘束,
+        "bendingConstraints",
+    ),
 ];

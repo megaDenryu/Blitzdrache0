@@ -1,5 +1,5 @@
-//! 布シミュのコンピュートパイプライン12本(判断54)。全本が同じディスクリプタレイアウトと、彩色の区間の2語を運ぶ
-//! プッシュ定数の範囲を持つパイプラインレイアウトを共有する(プッシュ定数を読むのは拘束と目標拘束と目標の確定の工程である)。
+//! 布シミュのコンピュートパイプライン13本(判断54)。全本が同じディスクリプタレイアウトと、拘束の区間の3語(開始・本数・乗数の開始)を運ぶ
+//! プッシュ定数の範囲を持つパイプラインレイアウトを共有する(プッシュ定数を読むのは拘束と曲げ拘束と目標拘束と目標の確定の工程である)。
 //! ここは生成の局面であり、破棄の局面は`destroy`が持つ。
 
 mod destroy;
@@ -10,8 +10,8 @@ use crate::cloth_shader_set::布シェーダー一式;
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 
-/// 彩色の区間(開始と本数)をプッシュ定数で運ぶバイト数。
-pub(super) const プッシュ定数のバイト数: u32 = 8;
+/// 拘束の区間(開始・本数・乗数の開始)をプッシュ定数で運ぶバイト数。距離拘束と目標拘束のシェーダーは先頭の2語だけを読む。
+pub(super) const プッシュ定数のバイト数: u32 = 12;
 
 pub(super) struct 布パイプライン群 {
     pub(super) layout: vk::PipelineLayout,
@@ -20,6 +20,7 @@ pub(super) struct 布パイプライン群 {
     pub(super) 目標の確定: vk::Pipeline,
     pub(super) 乗数零化: vk::Pipeline,
     pub(super) 拘束: vk::Pipeline,
+    pub(super) 曲げ拘束: vk::Pipeline,
     pub(super) 目標拘束: vk::Pipeline,
     pub(super) ハッシュ消去: vk::Pipeline,
     pub(super) ハッシュ格納: vk::Pipeline,
@@ -46,12 +47,13 @@ pub(super) fn 布パイプライン群を生成する(
     // 安全性: deviceは生成済みで有効。layout_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_info, None)? };
 
-    let 仕様一覧: [(&[u8], &std::ffi::CStr); 12] = [
+    let 仕様一覧: [(&[u8], &std::ffi::CStr); 13] = [
         (シェーダー.介入.コード(), c"interventionMain"),
         (シェーダー.積分.コード(), c"integrateMain"),
         (シェーダー.目標の確定.コード(), c"targetUpdateMain"),
         (シェーダー.乗数零化.コード(), c"lambdaClearMain"),
         (シェーダー.拘束.コード(), c"constraintMain"),
+        (シェーダー.曲げ拘束.コード(), c"bendingConstraintMain"),
         (シェーダー.目標拘束.コード(), c"targetConstraintMain"),
         (シェーダー.ハッシュ消去.コード(), c"hashClearMain"),
         (シェーダー.ハッシュ格納.コード(), c"hashStoreMain"),
@@ -83,12 +85,13 @@ pub(super) fn 布パイプライン群を生成する(
         目標の確定: 生成済み[2],
         乗数零化: 生成済み[3],
         拘束: 生成済み[4],
-        目標拘束: 生成済み[5],
-        ハッシュ消去: 生成済み[6],
-        ハッシュ格納: 生成済み[7],
-        分離: 生成済み[8],
-        床とカプセルの押し出し: 生成済み[9],
-        仕上げ: 生成済み[10],
-        頂点生成: 生成済み[11],
+        曲げ拘束: 生成済み[5],
+        目標拘束: 生成済み[6],
+        ハッシュ消去: 生成済み[7],
+        ハッシュ格納: 生成済み[8],
+        分離: 生成済み[9],
+        床とカプセルの押し出し: 生成済み[10],
+        仕上げ: 生成済み[11],
+        頂点生成: 生成済み[12],
     })
 }

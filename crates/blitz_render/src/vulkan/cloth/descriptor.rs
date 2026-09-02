@@ -1,4 +1,4 @@
-//! 布シミュ用ディスクリプタ(判断54): b0=定数UBO、b1〜b12=ストレージ12本の統一レイアウトと、
+//! 布シミュ用ディスクリプタ(判断54): b0=定数UBO、b1〜b13=ストレージ13本の統一レイアウトと、
 //! UBO・介入だけが異なる進行中フレーム2セット。束縛番号の正本はこのファイルの定数であり、
 //! cloth_step.slang冒頭の表と各シェーダーの宣言を`cargo xtask conform`が突き合わせる。
 
@@ -24,8 +24,9 @@ pub(crate) const 目標の更新対応の束縛番号: 束縛番号 = 束縛番�
 pub(crate) const ラグランジュ乗数の束縛番号: 束縛番号 = 束縛番号::生成する(10);
 pub(crate) const 目標拘束の引数の束縛番号: 束縛番号 = 束縛番号::生成する(11);
 pub(crate) const 目標位置の束縛番号: 束縛番号 = 束縛番号::生成する(12);
+pub(crate) const 曲げ拘束の引数の束縛番号: 束縛番号 = 束縛番号::生成する(13);
 
-pub(super) const 束縛の本数: usize = 13;
+pub(super) const 束縛の本数: usize = 14;
 const 計算段: vk::ShaderStageFlags = vk::ShaderStageFlags::COMPUTE;
 const 記憶: vk::DescriptorType = vk::DescriptorType::STORAGE_BUFFER;
 
@@ -44,6 +45,7 @@ pub(super) const 束縛の宣言: 宣言した束縛の並び<束縛の本数> =
     (ラグランジュ乗数の束縛番号, 記憶, 計算段),
     (目標拘束の引数の束縛番号, 記憶, 計算段),
     (目標位置の束縛番号, 記憶, 計算段),
+    (曲げ拘束の引数の束縛番号, 記憶, 計算段),
 ]);
 
 pub(super) struct 布ディスクリプタ {

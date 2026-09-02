@@ -13,7 +13,9 @@ pub(super) struct 固定部 {
     pub(super) 粒子数: u32,
     pub(super) 拘束の数: u32,
     pub(super) 目標拘束の数: u32,
+    pub(super) 曲げ拘束の数: u32,
     pub(super) 色の区間一覧: Vec<布の彩色の区間>, // 彩色で並べ替えた拘束の並びの、色ごとの区間。生成後は変わらない
+    pub(super) 曲げの色の区間一覧: Vec<布の彩色の区間>, // 曲げ拘束の彩色の色ごとの区間。距離拘束の色の後ろに積む
     pub(super) 一辺粒子数: u32,
     pub(super) 目標の更新対応の件数: u32,
 }

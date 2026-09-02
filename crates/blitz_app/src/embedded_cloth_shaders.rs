@@ -13,6 +13,7 @@ const 目標の確定SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cl
 const 乗数零化SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_lambda_clear.spv"));
 const 拘束SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_constraint.spv"));
 const 目標拘束SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_target_constraint.spv"));
+const 曲げ拘束SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_bending_constraint.spv"));
 const ハッシュ消去SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_hash_clear.spv"));
 const ハッシュ格納SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_hash_store.spv"));
 const 分離SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_separate.spv"));
@@ -34,6 +35,7 @@ pub(crate) fn 埋め込み布シェーダーを生成する() -> Result<布シ�
         乗数零化: コンピュートシェーダー::生成する(乗数零化SPIRV.to_vec())?,
         拘束: コンピュートシェーダー::生成する(拘束SPIRV.to_vec())?,
         目標拘束: コンピュートシェーダー::生成する(目標拘束SPIRV.to_vec())?,
+        曲げ拘束: コンピュートシェーダー::生成する(曲げ拘束SPIRV.to_vec())?,
         ハッシュ消去: コンピュートシェーダー::生成する(ハッシュ消去SPIRV.to_vec())?,
         ハッシュ格納: コンピュートシェーダー::生成する(ハッシュ格納SPIRV.to_vec())?,
         分離: コンピュートシェーダー::生成する(分離SPIRV.to_vec())?,
