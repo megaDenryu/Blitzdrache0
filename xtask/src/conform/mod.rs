@@ -24,6 +24,7 @@ mod sample_bodies_consistency;
 mod section_reference;
 mod shader_binding;
 mod shader_constant;
+mod shader_form;
 mod shader_uniform_alias;
 mod single_lighting_slot_write;
 mod source_lexing;
