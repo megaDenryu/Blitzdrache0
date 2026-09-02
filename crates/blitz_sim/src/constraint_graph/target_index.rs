@@ -10,12 +10,8 @@ impl 目標拘束添字 {
         Self(値)
     }
 
-    /// GPUのバイト列へ書く境界向けの生値。
+    /// GPUのバイト列と介入のバイト列へ書く境界向けの生値。
     pub fn 値(&self) -> u32 {
         self.0
-    }
-
-    pub fn 配列添字(&self) -> usize {
-        usize::try_from(self.0).unwrap_or_else(|_| panic!("目標拘束添字がusizeに収まらない: {}", self.0))
     }
 }
