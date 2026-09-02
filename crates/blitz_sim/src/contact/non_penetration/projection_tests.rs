@@ -5,11 +5,11 @@
 
 #![allow(clippy::unwrap_used)]
 
-use super::body_body_contact::剛体と剛体の接触拘束;
-use super::body_body_contact_parameters::剛体と剛体の接触拘束の引数;
-use super::contact_test_fixtures::試験の刻み幅;
-use super::non_penetration_fixture::{剛体どうしの基本の引数, 動かせない参加者, 解き方を作る, 高さの参加者};
-use super::non_penetration_result::非貫通の一回の射影の結果;
+use super::super::body_body_contact::剛体と剛体の接触拘束;
+use super::super::body_body_contact_parameters::剛体と剛体の接触拘束の引数;
+use super::super::contact_test_fixtures::試験の刻み幅;
+use super::fixture::{剛体どうしの基本の引数, 動かせない参加者, 解き方を作る, 高さの参加者};
+use super::result::非貫通の一回の射影の結果;
 use crate::xpbd::ラグランジュ乗数;
 
 // 接触法線は下向きであり、隔たり d = (p_B − p_A)·n = y_A − y_B である。剛体aを剛体bより低く置くと貫通になる。

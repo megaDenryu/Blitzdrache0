@@ -12,18 +12,18 @@
 
 use blitz_math::{ワールド, 方向};
 
-use super::non_penetration_coefficients::非貫通の一刻みの係数;
-use super::non_penetration_participant::非貫通の参加点;
-use super::non_penetration_result::非貫通の一回の射影の結果;
-use super::non_penetration_substep_state::非貫通の一細分の解の状態;
+use super::super::contact_projection_participant::接触の射影に参加する点;
+use super::coefficients::非貫通の一刻みの係数;
+use super::result::非貫通の一回の射影の結果;
+use super::substep_state::非貫通の一細分の解の状態;
 use crate::xpbd::ラグランジュ乗数;
 
 impl 非貫通の一刻みの係数 {
     /// 正典式の1回の反復。接触法線は第1の参加者から第2の参加者へ向かう向きである。
     pub fn 一回射影する(
         &self,
-        a: 非貫通の参加点,
-        b: 非貫通の参加点,
+        a: 接触の射影に参加する点,
+        b: 接触の射影に参加する点,
         接触法線: 方向<ワールド>,
         解の状態: 非貫通の一細分の解の状態,
     ) -> 非貫通の一回の射影の結果 {

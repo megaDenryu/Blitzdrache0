@@ -11,11 +11,11 @@ use blitz_math::{
     キログラム, キログラム平方メートル, クォータニオン, メートル, ローカル, ワールド, 位置, 変位, 逆キログラム
 };
 
-use super::body_static_contact::剛体と静的世界の接触拘束;
-use super::body_static_contact_parameters::剛体と静的世界の接触拘束の引数;
-use super::contact_test_fixtures::{世界の位置を作る, 局所の変位を作る, 試験の刻み幅};
-use super::non_penetration_coefficients::非貫通の解き方;
-use super::non_penetration_fixture::{下向きの接触法線, 剛体と静的世界の基本の引数};
+use super::super::body_static_contact::剛体と静的世界の接触拘束;
+use super::super::body_static_contact_parameters::剛体と静的世界の接触拘束の引数;
+use super::super::contact_test_fixtures::{世界の位置を作る, 局所の変位を作る, 試験の刻み幅};
+use super::coefficients::非貫通の解き方;
+use super::fixture::{下向きの接触法線, 剛体と静的世界の基本の引数};
 use crate::rigid_body::{主慣性, 主慣性と主軸, 姿勢, 質量特性, 配置};
 use crate::rigid_xpbd::{姿勢自由度の参加者, 姿勢自由度の補正};
 

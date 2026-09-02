@@ -9,9 +9,9 @@
 
 use blitz_math::メートル;
 
-use super::non_penetration_applied_separation_fixture::{局所接触点と解き方を持つ拘束, 補正を配置へ適用して追う剛体};
-use super::non_penetration_fixture::{解き方を作る, 試験の形の最小の厚み};
-use super::non_penetration_result::非貫通の一回の射影の結果;
+use super::applied_separation_fixture::{局所接触点と解き方を持つ拘束, 補正を配置へ適用して追う剛体};
+use super::fixture::{解き方を作る, 試験の形の最小の厚み};
+use super::result::非貫通の一回の射影の結果;
 
 const 測る反復の回数: usize = 8;
 

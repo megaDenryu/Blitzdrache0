@@ -15,7 +15,7 @@ use super::body_static_contact_parameters::剛体と静的世界の接触拘束�
 use super::contacting_body::接触に参加する剛体;
 use super::feature_identity::接触の特徴の識別;
 use super::generation_error::接触拘束の生成エラー;
-use super::non_penetration_coefficients::非貫通の解き方;
+use super::non_penetration::非貫通の解き方;
 use super::shared_frame::{接触法線をワールドへ写す, 貫通量を単精度へ狭める};
 use super::static_world_partner::静的世界の接触相手;
 

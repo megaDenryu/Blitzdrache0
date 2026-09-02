@@ -8,32 +8,34 @@
 
 use blitz_math::{メートル, ワールド, 変位, 方向};
 
-use super::body_body_contact_parameters::剛体と剛体の接触拘束の引数;
-use super::body_static_contact_parameters::剛体と静的世界の接触拘束の引数;
-use super::contact_test_fixtures::{世界の位置を作る, 動的な参加者を作る, 単一の材質の混合則, 台帳へ登録する};
-use super::feature_identity::接触の特徴の識別;
-use super::minimum_thickness::形の最小の厚み;
-use super::non_penetration_coefficients::非貫通の解き方;
-use super::penetration_depth::貫通量;
-use super::stacked_box_fixture::上下の箱の接触点集合;
-use super::static_world_partner_id::静的世界の接触相手の識別子;
+use super::super::body_body_contact_parameters::剛体と剛体の接触拘束の引数;
+use super::super::body_static_contact_parameters::剛体と静的世界の接触拘束の引数;
+use super::super::contact_test_fixtures::{
+    世界の位置を作る, 動的な参加者を作る, 単一の材質の混合則, 台帳へ登録する
+};
+use super::super::feature_identity::接触の特徴の識別;
+use super::super::minimum_thickness::形の最小の厚み;
+use super::super::penetration_depth::貫通量;
+use super::super::stacked_box_fixture::上下の箱の接触点集合;
+use super::super::static_world_partner_id::静的世界の接触相手の識別子;
+use super::coefficients::非貫通の解き方;
 use crate::rigid_body::{剛体の台帳, 姿勢, 配置};
 use crate::rigid_xpbd::姿勢自由度の参加者;
 use crate::xpbd::コンプライアンス;
 
-pub(super) const 試験の形の最小の厚み: f32 = 1.0;
+pub(in crate::contact) const 試験の形の最小の厚み: f32 = 1.0;
 
-pub(super) fn 下向きの接触法線() -> 方向<ワールド> {
+pub(in crate::contact) fn 下向きの接触法線() -> 方向<ワールド> {
     方向::生成する(0.0, -1.0, 0.0).unwrap()
 }
 
-pub(super) fn 試験の特徴の識別() -> 接触の特徴の識別 {
+pub(in crate::contact) fn 試験の特徴の識別() -> 接触の特徴の識別 {
     let 接触点集合 = 上下の箱の接触点集合(姿勢::恒等());
     let 接触点 = 接触点集合.接触点を順に並べる().next().unwrap();
     (*接触点.特徴の識別()).into()
 }
 
-pub(super) fn 解き方を作る(コンプライアンスの値: f32) -> 非貫通の解き方 {
+pub(in crate::contact) fn 解き方を作る(コンプライアンスの値: f32) -> 非貫通の解き方 {
     非貫通の解き方::生成する(
         コンプライアンス::生成する(コンプライアンスの値).unwrap(),
         形の最小の厚み::生成する(メートル::生成する(試験の形の最小の厚み)).unwrap(),
@@ -41,7 +43,7 @@ pub(super) fn 解き方を作る(コンプライアンスの値: f32) -> 非貫�
 }
 
 // 剛体aと剛体bの識別子を台帳から発行し、下向きの法線と硬い接触を持つ引数を作る。局所点と貫通量は呼び出し側が差し替える。
-pub(super) fn 剛体どうしの基本の引数() -> 剛体と剛体の接触拘束の引数 {
+pub(in crate::contact) fn 剛体どうしの基本の引数() -> 剛体と剛体の接触拘束の引数 {
     let mut 台帳 = 剛体の台帳::空();
     let 上 = 台帳へ登録する(&mut 台帳, 高さの配置(0.0));
     let 下 = 台帳へ登録する(&mut 台帳, 高さの配置(-1.0));
@@ -55,8 +57,8 @@ pub(super) fn 剛体どうしの基本の引数() -> 剛体と剛体の接触拘
         特徴の識別: 試験の特徴の識別(),
         接触物性: 単一の材質の混合則()
             .接触物性を求める(
-                super::material_id::材質の識別子::生成する(super::contact_test_fixtures::試験の材質),
-                super::material_id::材質の識別子::生成する(super::contact_test_fixtures::試験の材質),
+                super::super::material_id::材質の識別子::生成する(super::super::contact_test_fixtures::試験の材質),
+                super::super::material_id::材質の識別子::生成する(super::super::contact_test_fixtures::試験の材質),
             )
             .unwrap(),
         解き方: 解き方を作る(0.0),
@@ -64,7 +66,7 @@ pub(super) fn 剛体どうしの基本の引数() -> 剛体と剛体の接触拘
 }
 
 // 静的世界の側は原点に固定した接触点を持つ。剛体の側の局所点と貫通量は呼び出し側が差し替える。
-pub(super) fn 剛体と静的世界の基本の引数() -> 剛体と静的世界の接触拘束の引数 {
+pub(in crate::contact) fn 剛体と静的世界の基本の引数() -> 剛体と静的世界の接触拘束の引数 {
     let 基本 = 剛体どうしの基本の引数();
     剛体と静的世界の接触拘束の引数 {
         剛体: 基本.剛体a,
@@ -79,23 +81,23 @@ pub(super) fn 剛体と静的世界の基本の引数() -> 剛体と静的世界
     }
 }
 
-pub(super) fn 高さの配置(高さ: f32) -> 配置 {
+pub(in crate::contact) fn 高さの配置(高さ: f32) -> 配置 {
     配置::生成する(世界の位置を作る(0.0, 高さ, 0.0), 姿勢::恒等())
 }
 
-pub(super) fn 高さの参加者(高さ: f32) -> 姿勢自由度の参加者 {
+pub(in crate::contact) fn 高さの参加者(高さ: f32) -> 姿勢自由度の参加者 {
     姿勢と高さを持つ参加者(姿勢::恒等(), 高さ)
 }
 
-pub(super) fn 姿勢と高さを持つ参加者(姿勢: 姿勢, 高さ: f32) -> 姿勢自由度の参加者 {
+pub(in crate::contact) fn 姿勢と高さを持つ参加者(姿勢: 姿勢, 高さ: f32) -> 姿勢自由度の参加者 {
     動的な参加者を作る(配置::生成する(世界の位置を作る(0.0, 高さ, 0.0), 姿勢), 1.0, 1.0)
 }
 
 // z軸まわりに四分の一回転した姿勢。重心局所のx軸に置いた接触点の腕を、下向きの接触法線と平行な向きへ移す。
-pub(super) fn z軸まわりの四分の一回転の姿勢() -> 姿勢 {
+pub(in crate::contact) fn z軸まわりの四分の一回転の姿勢() -> 姿勢 {
     姿勢::生成する(0.0, 0.0, std::f32::consts::FRAC_1_SQRT_2, std::f32::consts::FRAC_1_SQRT_2).unwrap()
 }
 
-pub(super) fn 動かせない参加者(高さ: f32) -> 姿勢自由度の参加者 {
+pub(in crate::contact) fn 動かせない参加者(高さ: f32) -> 姿勢自由度の参加者 {
     姿勢自由度の参加者::動かせない(高さの配置(高さ))
 }

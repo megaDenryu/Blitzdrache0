@@ -8,7 +8,7 @@ use blitz_math::{ローカル, ワールド, 変位, 方向};
 
 use super::contact_property::接触物性;
 use super::feature_identity::接触の特徴の識別;
-use super::non_penetration_coefficients::非貫通の解き方;
+use super::non_penetration::非貫通の解き方;
 use super::penetration_depth::貫通量;
 use crate::rigid_body::剛体の識別子;
 

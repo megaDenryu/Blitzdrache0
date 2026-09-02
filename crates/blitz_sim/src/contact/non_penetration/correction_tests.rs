@@ -8,16 +8,16 @@
 
 use blitz_math::{メートル, 変位};
 
-use super::body_body_contact::剛体と剛体の接触拘束;
-use super::body_body_contact_parameters::剛体と剛体の接触拘束の引数;
-use super::body_static_contact::剛体と静的世界の接触拘束;
-use super::contact_test_fixtures::{局所の変位を作る, 試験の刻み幅};
-use super::non_penetration_fixture::{
+use super::super::body_body_contact::剛体と剛体の接触拘束;
+use super::super::body_body_contact_parameters::剛体と剛体の接触拘束の引数;
+use super::super::body_static_contact::剛体と静的世界の接触拘束;
+use super::super::contact_test_fixtures::{局所の変位を作る, 試験の刻み幅};
+use super::super::penetration_depth::貫通量;
+use super::fixture::{
     z軸まわりの四分の一回転の姿勢, 下向きの接触法線, 剛体と静的世界の基本の引数, 剛体どうしの基本の引数, 動かせない参加者, 姿勢と高さを持つ参加者,
     試験の形の最小の厚み, 高さの参加者,
 };
-use super::non_penetration_result::非貫通の一回の射影の結果;
-use super::penetration_depth::貫通量;
+use super::result::非貫通の一回の射影の結果;
 use crate::rigid_body::姿勢;
 use crate::rigid_xpbd::{姿勢自由度の参加者, 姿勢自由度の補正};
 use crate::xpbd::ラグランジュ乗数;

@@ -12,9 +12,9 @@
 
 use blitz_math::メートル;
 
-use super::non_penetration_applied_separation_fixture::{局所接触点と解き方を持つ拘束, 補正を配置へ適用して追う剛体};
-use super::non_penetration_fixture::{解き方を作る, 試験の形の最小の厚み};
-use super::non_penetration_result::非貫通の一回の射影の結果;
+use super::applied_separation_fixture::{局所接触点と解き方を持つ拘束, 補正を配置へ適用して追う剛体};
+use super::fixture::{解き方を作る, 試験の形の最小の厚み};
+use super::result::非貫通の一回の射影の結果;
 use crate::xpbd::ラグランジュ乗数;
 
 const 柔らかい接触のコンプライアンス: f32 = 5.0e-4; // 刻み依存量 α̃ が有効逆質量の30倍ほどになり、乗数の増分が負へ振れる柔らかさ

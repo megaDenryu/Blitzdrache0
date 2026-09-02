@@ -5,7 +5,7 @@
 
 use blitz_math::逆キログラム;
 
-use super::minimum_thickness::形の最小の厚み;
+use super::super::minimum_thickness::形の最小の厚み;
 use crate::xpbd::{コンプライアンス, コンプライアンスエラー, 刻み幅};
 
 /// 接触1点の非貫通を解く条件。コンプライアンス0が硬い接触であり、正の値は柔らかい接触である。
