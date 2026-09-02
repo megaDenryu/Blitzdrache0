@@ -35,6 +35,8 @@ mod rotation_error;
 mod rotation_from_axes;
 #[cfg(test)]
 mod rotation_from_axes_tests;
+#[cfg(test)]
+mod rotation_tests;
 mod rotation_vector;
 mod signed_axis;
 mod space;

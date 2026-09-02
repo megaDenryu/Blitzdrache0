@@ -41,6 +41,7 @@ pub use ledger::剛体の台帳;
 pub use mass_properties::質量特性;
 pub use mass_properties_error::質量特性エラー;
 pub use motion_state::運動状態;
+pub(crate) use orientation::単位長の許容差;
 pub use orientation::{姿勢, 姿勢エラー};
 pub use placement::配置;
 pub use principal_inertia::{主慣性, 主慣性と主軸};
