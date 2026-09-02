@@ -20,6 +20,10 @@ mod material;
 mod particle;
 mod reference;
 #[cfg(test)]
+mod reference_floor_tests;
+#[cfg(test)]
+mod reference_test_fixtures;
+#[cfg(test)]
 mod reference_tests;
 mod spec;
 

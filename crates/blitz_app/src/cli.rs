@@ -74,7 +74,7 @@ pub(crate) use exposure_scale::{露出倍率, 露出倍率エラー};
 pub(crate) use game_operation_source::ゲーム操作の出どころ;
 pub(crate) use game_selection::遊ぶゲームの指定;
 pub(crate) use launch_request::起動要求;
-pub(crate) use modes::{布モード, 粒子表示モード};
+pub(crate) use modes::{参照比較の床の下の固定点, 布モード, 粒子表示モード};
 pub(crate) use object_count::描画対象数;
 pub(crate) use parse::引数を解析する;
 pub(crate) use placement_args::平行移動起動設定;

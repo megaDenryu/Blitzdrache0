@@ -38,6 +38,7 @@ pub(super) fn 目標拘束の数を据えた入力(刻み数: u32, 目標拘束�
         ハッシュ消去pipeline: vk::Pipeline::null(),
         ハッシュ格納pipeline: vk::Pipeline::null(),
         分離pipeline: vk::Pipeline::null(),
+        床とカプセルの押し出しpipeline: vk::Pipeline::null(),
         仕上げpipeline: vk::Pipeline::null(),
         頂点生成pipeline: vk::Pipeline::null(),
         ディスクリプタセット: vk::DescriptorSet::null(),

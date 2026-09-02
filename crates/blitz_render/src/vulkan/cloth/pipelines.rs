@@ -1,5 +1,8 @@
-//! 布シミュのコンピュートパイプライン11本(判断54)。全本が同じディスクリプタレイアウトと、彩色の区間の2語を運ぶ
+//! 布シミュのコンピュートパイプライン12本(判断54)。全本が同じディスクリプタレイアウトと、彩色の区間の2語を運ぶ
 //! プッシュ定数の範囲を持つパイプラインレイアウトを共有する(プッシュ定数を読むのは拘束と目標拘束と目標の確定の工程である)。
+//! ここは生成の局面であり、破棄の局面は`destroy`が持つ。
+
+mod destroy;
 
 use ash::vk;
 
@@ -21,6 +24,7 @@ pub(super) struct 布パイプライン群 {
     pub(super) ハッシュ消去: vk::Pipeline,
     pub(super) ハッシュ格納: vk::Pipeline,
     pub(super) 分離: vk::Pipeline,
+    pub(super) 床とカプセルの押し出し: vk::Pipeline,
     pub(super) 仕上げ: vk::Pipeline,
     pub(super) 頂点生成: vk::Pipeline,
 }
@@ -42,7 +46,7 @@ pub(super) fn 布パイプライン群を生成する(
     // 安全性: deviceは生成済みで有効。layout_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_info, None)? };
 
-    let 仕様一覧: [(&[u8], &std::ffi::CStr); 11] = [
+    let 仕様一覧: [(&[u8], &std::ffi::CStr); 12] = [
         (シェーダー.介入.コード(), c"interventionMain"),
         (シェーダー.積分.コード(), c"integrateMain"),
         (シェーダー.目標の確定.コード(), c"targetUpdateMain"),
@@ -52,6 +56,7 @@ pub(super) fn 布パイプライン群を生成する(
         (シェーダー.ハッシュ消去.コード(), c"hashClearMain"),
         (シェーダー.ハッシュ格納.コード(), c"hashStoreMain"),
         (シェーダー.分離.コード(), c"separateMain"),
+        (シェーダー.床とカプセルの押し出し.コード(), c"collisionPushOutMain"),
         (シェーダー.仕上げ.コード(), c"finishMain"),
         (シェーダー.頂点生成.コード(), c"vertexGenMain"),
     ];
@@ -82,31 +87,8 @@ pub(super) fn 布パイプライン群を生成する(
         ハッシュ消去: 生成済み[6],
         ハッシュ格納: 生成済み[7],
         分離: 生成済み[8],
-        仕上げ: 生成済み[9],
-        頂点生成: 生成済み[10],
+        床とカプセルの押し出し: 生成済み[9],
+        仕上げ: 生成済み[10],
+        頂点生成: 生成済み[11],
     })
-}
-
-impl 布パイプライン群 {
-    pub(super) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用がdevice_wait_idle済みであることを呼び出し元が保証する。
-        unsafe {
-            for handle in [
-                self.介入,
-                self.積分,
-                self.目標の確定,
-                self.乗数零化,
-                self.拘束,
-                self.目標拘束,
-                self.ハッシュ消去,
-                self.ハッシュ格納,
-                self.分離,
-                self.仕上げ,
-                self.頂点生成,
-            ] {
-                device.destroy_pipeline(handle, None);
-            }
-            device.destroy_pipeline_layout(self.layout, None);
-        }
-    }
 }

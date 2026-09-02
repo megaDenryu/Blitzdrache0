@@ -34,7 +34,13 @@ pub(super) const コンパイル表: [(&str, &[エントリ指定]); 10] = [
         ],
     ),
     ("cloth_separate.slang", &[コンピュート("separateMain", "cloth_separate.spv")]),
-    ("cloth_finish.slang", &[コンピュート("finishMain", "cloth_finish.spv")]),
+    (
+        "cloth_finish.slang",
+        &[
+            コンピュート("collisionPushOutMain", "cloth_collision_push_out.spv"),
+            コンピュート("finishMain", "cloth_finish.spv"),
+        ],
+    ),
     ("cloth_vertex.slang", &[コンピュート("vertexGenMain", "cloth_vertex_gen.spv")]),
     ("cloth_draw.slang", &[頂点("cloth_draw_vertex.spv"), 画素段("cloth_draw_fragment.spv")]),
     (

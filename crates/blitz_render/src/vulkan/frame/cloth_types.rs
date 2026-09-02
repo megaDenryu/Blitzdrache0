@@ -32,6 +32,7 @@ pub(crate) struct 布描画入力 {
     pub(crate) ハッシュ消去pipeline: vk::Pipeline,
     pub(crate) ハッシュ格納pipeline: vk::Pipeline,
     pub(crate) 分離pipeline: vk::Pipeline,
+    pub(crate) 床とカプセルの押し出しpipeline: vk::Pipeline,
     pub(crate) 仕上げpipeline: vk::Pipeline,
     pub(crate) 頂点生成pipeline: vk::Pipeline,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
