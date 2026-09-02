@@ -10,7 +10,7 @@ mod coefficients;
 #[cfg(test)]
 mod correction_tests;
 #[cfg(test)]
-pub(super) mod fixture;
+pub(in crate::contact) mod fixture;
 #[cfg(test)]
 mod negative_increment_budget_tests;
 mod projection;

@@ -11,7 +11,7 @@ use crate::constraint_graph::一様な加速度;
 use crate::rigid_body::配置;
 use crate::xpbd::刻み幅;
 
-/// 場面を組み立てる設定。欄が同じ型の値を多く持つため、位置でなく名前で渡す。
+// 場面を組み立てる設定。欄が同じ型の値を多く持つため、位置でなく名前で渡す。
 pub(super) struct 場面の設定 {
     pub 箱の半分の長さ: f32,
     pub 箱の質量: f32,
@@ -27,7 +27,7 @@ pub(super) struct 場面の設定 {
     pub 静止摩擦の位置拘束を外すか: bool,
 }
 
-/// 細分1本で観測した接触の数。滑走と履歴の対応付けを試験が読む。
+// 細分1本で観測した接触の数。滑走と履歴の対応付けを試験が読む。
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub(super) struct 細分の観測 {
     pub 接触点の数: usize,

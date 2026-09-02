@@ -15,6 +15,7 @@ use super::super::batch_builder::接触拘束のバッチの組み立て;
 use super::super::body_static_contact::剛体と静的世界の接触拘束;
 use super::super::contact_batches::接触拘束の二つのバッチ;
 use super::super::contacting_body::接触に参加する剛体;
+use super::super::material_id::材質の識別子;
 use super::super::minimum_thickness::形の最小の厚み;
 use super::scene_geometry::{場面の材質, 直方体を組む};
 use super::scene_settings::細分の観測;
@@ -58,7 +59,7 @@ impl 一つの箱と静的な直方体の場面 {
         let 剛体 = 接触に参加する剛体::生成する(
             self.箱の識別子,
             *予測.配置(),
-            super::super::material_id::材質の識別子::生成する(場面の材質),
+            材質の識別子::生成する(場面の材質),
             形の最小の厚み::生成する(メートル::生成する(2.0 * self.箱の半分の長さ)).unwrap(),
         );
         let mut 組み立て = 接触拘束のバッチの組み立て::生成する(&self.混合則, コンプライアンス::硬い(), self.刻み幅, 1);

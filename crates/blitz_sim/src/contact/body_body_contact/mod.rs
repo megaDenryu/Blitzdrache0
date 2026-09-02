@@ -7,6 +7,8 @@
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断11: 接触拘束は接触点集合から細分ごとに生成する一時のバッチであり、参加者の組ごとに別のバッチを持ち、座標系の写しは剛体の側が行う」
 
 mod history_and_friction;
+#[cfg(test)]
+mod history_and_friction_tests;
 mod velocity_stage;
 
 use super::body_body_contact_parameters::剛体と剛体の接触拘束の引数;
