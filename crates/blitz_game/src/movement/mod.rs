@@ -14,6 +14,8 @@ mod body_motion_rest_tests;
 #[cfg(test)]
 mod body_motion_slope_tests;
 #[cfg(test)]
+mod body_motion_step_advance_tests;
+#[cfg(test)]
 mod body_motion_step_reject_tests;
 #[cfg(test)]
 mod body_motion_step_tests;
@@ -36,6 +38,7 @@ mod query_count;
 mod slide_answer;
 mod speed_rules;
 mod step_lift;
+mod step_lift_advance;
 mod step_lift_session;
 mod stick_vector;
 mod sweep_and_slide;
