@@ -4,7 +4,7 @@
 
 #![cfg(test)]
 
-use blitz_math::{ワールド, 速度};
+use blitz_math::{キログラム, メートル, ワールド, 速度};
 
 use super::super::solver_quality::接触を解く品質の設定;
 use super::super::surface_property::表面物性;
@@ -14,12 +14,12 @@ use crate::xpbd::刻み幅;
 
 // 場面を組み立てる設定。欄が同じ型の値を多く持つため、位置でなく名前で渡す。
 pub(super) struct 場面の設定 {
-    pub 箱の半分の長さ: f32,
-    pub 箱の質量: f32,
+    pub 箱の半分の長さ: メートル,
+    pub 箱の質量: キログラム,
     pub 箱の配置: 配置,
     pub 箱の初速: 速度<ワールド>,
     pub 静的な直方体の配置: 配置,
-    pub 静的な直方体の半分の長さ: f32,
+    pub 静的な直方体の半分の長さ: メートル,
     pub 表面物性: 表面物性,
     pub 重力: 一様な加速度,
     pub 細分の刻み幅: 刻み幅,

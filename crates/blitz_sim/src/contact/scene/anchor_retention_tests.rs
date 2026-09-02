@@ -5,6 +5,7 @@
 
 #![allow(clippy::unwrap_used)]
 
+use super::super::friction_coefficient::摩擦係数;
 use super::slope_fixture::{坂に沿った変位, 坂の場面を組む};
 use super::slope_geometry::坂の場面の条件;
 
@@ -17,8 +18,8 @@ fn 床の上で一メートル滑らせても接触の対応付けが継続の�
     let 条件 = 坂の場面の条件 {
         傾きの正接: 0.0,
         鉛直軸まわりの回し: 0.0,
-        静止摩擦係数: 0.6,
-        動摩擦係数: 0.05,
+        静止摩擦係数: 摩擦係数::生成する(0.6).unwrap(),
+        動摩擦係数: 摩擦係数::生成する(0.05).unwrap(),
         下り向きの初速: 2.0,
         静止摩擦の位置拘束を外すか: false,
     };
