@@ -45,11 +45,6 @@ pub struct XPBD計測の読み戻し {
     pub 検証件数: u64,
 }
 
-/// 一刻みの合計を表す合成区間の名前。読む側(`blitz_app`の報告と`xtask`の計測)がこの語で区間を引く。
-pub fn 一刻みの合計の区間名() -> &'static str {
-    xpbd_bench::pass_names::一刻みの合計
-}
-
 pub fn xpbdの並列方式をgpuで走らせて読み戻す(
     素材: &XPBD計測素材,
     条件: &XPBD計測の条件,

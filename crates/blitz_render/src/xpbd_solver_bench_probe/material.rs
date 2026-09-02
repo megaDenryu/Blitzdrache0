@@ -74,14 +74,6 @@ impl XPBD計測素材 {
             拘束の数,
         })
     }
-
-    pub fn 点の数(&self) -> u32 {
-        self.点の数
-    }
-
-    pub fn 拘束の数(&self) -> u32 {
-        self.拘束の数
-    }
 }
 
 fn 長さを検証する(名前: &'static str, 実際: usize, 期待: usize) -> Result<(), XPBD計測素材エラー> {

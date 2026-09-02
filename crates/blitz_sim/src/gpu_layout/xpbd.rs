@@ -8,7 +8,6 @@ use crate::constraint_graph::{拘束グラフ, 点ごとの拘束の隣接表};
 
 pub const 点1件のバイト数: usize = 16;
 pub const 拘束1件のバイト数: usize = 16;
-pub const 隣接1語のバイト数: usize = 4;
 
 pub fn 点の状態バイト列にする(グラフ: &拘束グラフ) -> Vec<u8> {
     let mut バイト列 = Vec::with_capacity(グラフ.点の数() * 点1件のバイト数);
