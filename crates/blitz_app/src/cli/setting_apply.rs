@@ -29,6 +29,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--report-auto-exposure" => 設定.読み戻し検収.自動露出を報告するか = true,
         "--indirect-probe" => 設定.読み戻し検収.遠方環境の検収条件 = Some(indirect_probe_args::引数を処理する(残り)?),
         "--exposure" => 設定.露出 = value_args::exposure引数を処理する(残り)?,
+        "--cloth-xpbd-reference" => 設定.布モード = value_args::cloth_xpbd_reference引数を処理する(残り)?,
         "--global-offset" => 設定.平行移動.大域ずらし量 = placement_args::global_offset引数を処理する(残り)?,
         "--camera-nudge" => 設定.平行移動.カメラずれ = placement_args::camera_nudge引数を処理する(残り)?,
         "--camera-pitch" => 設定.平行移動.カメラ俯角差分 = placement_args::camera_pitch引数を処理する(残り)?,

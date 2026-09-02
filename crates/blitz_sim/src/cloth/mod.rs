@@ -18,6 +18,9 @@ mod grid_particles;
 mod index_convert;
 mod material;
 mod particle;
+mod reference;
+#[cfg(test)]
+mod reference_tests;
 mod spec;
 
 pub use colored_constraints::布の彩色済み拘束;
@@ -27,4 +30,5 @@ pub use error::布生成エラー;
 pub use generate::布を生成する;
 pub use material::布の物性;
 pub use particle::粒子;
+pub use reference::{布の参照計算, 布の参照計算の条件, 布の参照計算エラー};
 pub use spec::{布仕様, 既定一辺粒子数};

@@ -4,6 +4,7 @@ mod aerial_composite_input;
 mod atmosphere_lut_write;
 mod cascade_uniform_write;
 mod chunk_bundle;
+mod cloth_readback;
 mod cloth_write;
 mod cpu_timing;
 mod destroy;

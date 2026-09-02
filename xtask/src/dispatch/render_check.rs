@@ -1,12 +1,12 @@
 //! 描画検収系コマンドの割り当て。command_catalogの`render_check`分類と同じ範囲(小物・植生・布・光源など
-//! 実機描画した絵と計器値で正しさを確かめる20件)を担当する。材質の絵の検収は`material_check`が持つ。
+//! 実機描画した絵と計器値で正しさを確かめる21件)を担当する。材質の絵の検収は`material_check`が持つ。
 
 use std::process::ExitCode;
 
 use crate::{
-    auto_exposure, cloth_empty, cloth_night, cloth_shadow_order, cluster_lights, csm_seam, hdr_luminance, ibl_step, instance_cull, instance_draw,
-    instance_lod, instance_stream, point_light_shadow, prop_draw, shader_reload_draw, temporal_visual, terrain_visual, texture_compression,
-    vertex_diag, village_draw,
+    auto_exposure, cloth_empty, cloth_night, cloth_shadow_order, cloth_xpbd_reference, cluster_lights, csm_seam, hdr_luminance, ibl_step,
+    instance_cull, instance_draw, instance_lod, instance_stream, point_light_shadow, prop_draw, shader_reload_draw, temporal_visual, terrain_visual,
+    texture_compression, vertex_diag, village_draw,
 };
 
 pub(super) fn 描画検収コマンドを割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
@@ -29,6 +29,7 @@ pub(super) fn 描画検収コマンドを割り当てる(名前: &str, 引数一
         "cluster-lights" => Some(cluster_lights::多光源クラスタを確認する()),
         "point-light-shadow" => Some(point_light_shadow::点光源の影を確認する()),
         "cloth-shadow-order" => Some(cloth_shadow_order::布の影の走査順を確認する()),
+        "cloth-xpbd-reference" => Some(cloth_xpbd_reference::布のxpbd参照比較を確認する()),
         "csm-seam" => Some(csm_seam::距離区分影の境界を確認する(引数一覧)),
         "vertex-diag" => Some(vertex_diag::頂点量の診断を確認する()),
         _ => None,

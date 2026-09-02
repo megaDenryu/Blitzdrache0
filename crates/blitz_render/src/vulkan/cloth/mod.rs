@@ -8,6 +8,8 @@ mod descriptor;
 mod inputs;
 mod params;
 mod pipelines;
+mod readback;
+mod readback_receptacle;
 mod write;
 
 use crate::error::レンダラーエラー;

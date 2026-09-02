@@ -7,7 +7,7 @@
 use ash::vk;
 
 use super::{布ハンドル, 積む};
-use crate::cloth_material::布の彩色の区間;
+use crate::cloth_material::{布の彩色の区間, 布の自己衝突};
 use crate::frame_input::布の進める刻み数;
 use crate::vulkan::frame::{布シャドウ描画入力, 布描画の外部資源, 布描画入力};
 use crate::vulkan::graph::{グラフ, 前フレームコンピュート読み直後状態, 前フレーム頂点入力読み直後状態};
@@ -16,6 +16,10 @@ use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 pub(super) const 検査の色の数: usize = 3;
 
 pub(super) fn 刻み数を据えた入力(刻み数: u32) -> 布描画入力 {
+    自己衝突を選んで刻み数を据えた入力(刻み数, 布の自己衝突::行う)
+}
+
+pub(super) fn 自己衝突を選んで刻み数を据えた入力(刻み数: u32, 自己衝突: 布の自己衝突) -> 布描画入力 {
     布描画入力 {
         layout: vk::PipelineLayout::null(),
         介入pipeline: vk::Pipeline::null(),
@@ -36,6 +40,7 @@ pub(super) fn 刻み数を据えた入力(刻み数: u32) -> 布描画入力 {
             布の彩色の区間 { 開始: 10, 本数: 10 },
             布の彩色の区間 { 開始: 20, 本数: 10 },
         ],
+        自己衝突,
         アタッチ件数: 0,
         介入件数: 0,
         進める刻み数: 布の進める刻み数::生成する(刻み数).unwrap(),

@@ -9,6 +9,7 @@ mod check_glb;
 mod cloth_empty;
 mod cloth_night;
 mod cloth_shadow_order;
+mod cloth_xpbd_reference;
 mod cluster_lights;
 mod command_ui;
 mod compile_assets;

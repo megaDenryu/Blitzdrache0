@@ -2,6 +2,7 @@
 mod animation_state;
 mod aspect;
 mod cloth_frame;
+pub(crate) mod cloth_reference;
 mod cloth_setup;
 mod create;
 mod draw_dispatch;
@@ -88,8 +89,9 @@ pub(crate) struct アプリ {
     アニメーション: Option<animation_state::アニメーション再生>,
     布モード: 布モード,
     布プリセット: Option<cloth_setup::布プリセット>,
-    掴みの介入: cloth_frame::掴み介入の発行, // 掴み操作を布の介入へ写す発行元
-    アニメ時刻: blitz_math::秒,              // アニメーション時刻(その描画で進めた刻み数×基本刻みで歩進する)
+    布の参照比較: Option<cloth_reference::布の参照比較>, // XPBDの参照比較の方式だけが持つ。終了時にCPUの参照計算と突き合わせる
+    掴みの介入: cloth_frame::掴み介入の発行,             // 掴み操作を布の介入へ写す発行元
+    アニメ時刻: blitz_math::秒,                          // アニメーション時刻(その描画で進めた刻み数×基本刻みで歩進する)
     スモーク基準画像: Option<blitz_render::読み戻し画像>,
     ストリーミング: streaming::ストリーミングの有無, // `--streaming`指定時だけ配線を持つ
     可視判定: visibility::可視判定配線,              // インスタンス群の可視判定と個体別LOD

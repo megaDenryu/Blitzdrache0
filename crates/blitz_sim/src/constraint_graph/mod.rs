@@ -39,4 +39,6 @@ pub use indexed_constraint::添字付き距離拘束;
 pub use irregular::{不規則な拘束グラフを作る, 不規則グラフの仕様};
 pub use point_index::点添字;
 pub use point_state::点自由度の初期状態;
-pub use reference::{反復の更新の順序, 同時の緩和係数, 拘束グラフの参照計算, 拘束違反の二乗平均平方根};
+pub use reference::{
+    反復の更新の順序, 同時の緩和係数, 拘束グラフの参照計算, 拘束違反の二乗平均平方根, 拘束違反の平均
+};

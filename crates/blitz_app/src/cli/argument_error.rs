@@ -34,6 +34,8 @@ pub(crate) enum 起動引数エラー {
     影を落とす灯の件数不正(String),
     #[error("--blend引数が不正だった: {0}")]
     ブレンド不正(String),
+    #[error("--cloth-xpbd-reference引数が不正だった: {0}")]
+    布のコンプライアンス不正(String),
     #[error("ストリーミング上限の引数が不正だった: {0}")]
     ストリーミング上限不正(String),
     #[error("--global-offset引数が不正だった: {0}")]

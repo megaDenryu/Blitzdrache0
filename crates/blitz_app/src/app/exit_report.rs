@@ -95,5 +95,9 @@ impl super::アプリ {
         if self.実表示時間報告が必要か() {
             display_timing::実表示間隔を表示する(self.実表示計測状況を取得する(), self.実表示観測一覧を取得する());
         }
+        if let Some(比較) = &self.布の参照比較 {
+            let 読み戻し = self.レンダラー.as_ref().map(blitz_render::レンダラー::布の粒子と乗数を読み戻す);
+            crate::reports::cloth_xpbd_reference::参照比較を表示する(比較, 読み戻し);
+        }
     }
 }

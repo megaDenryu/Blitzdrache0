@@ -3,6 +3,7 @@
 
 mod aerial_farthest_distance;
 mod atmosphere_readback;
+mod cloth_xpbd_reference;
 mod exit_report;
 mod instance_tally;
 mod part_row_tally;
@@ -17,9 +18,10 @@ pub(super) struct 綴りの契約 {
 }
 
 /// 領域ごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域一覧: [&[綴りの契約]; 8] = [
+pub(super) const 領域一覧: [&[綴りの契約]; 9] = [
     &aerial_farthest_distance::綴り一覧,
     &atmosphere_readback::綴り一覧,
+    &cloth_xpbd_reference::綴り一覧,
     &exit_report::綴り一覧,
     &part_row_tally::綴り一覧,
     &instance_tally::綴り一覧,

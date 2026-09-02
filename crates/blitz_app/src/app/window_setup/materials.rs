@@ -8,6 +8,7 @@ use blitz_render::レンダラー;
 use winit::window::Window;
 
 use super::super::animation_state::アニメーション再生;
+use super::super::cloth_reference::布の参照比較;
 use super::super::cloth_setup::布プリセット;
 use super::super::scene_load;
 use crate::cli::{布モード, 描画対象の並べ方, 空中遠近合成指定, 粒子表示モード, 起動時シーン};
@@ -48,6 +49,7 @@ pub(in crate::app) struct 起動時に組み上げた一式 {
     pub(in crate::app) 画面へ重ねるui: 画面へ重ねるUI,
     pub(in crate::app) アニメーション: Option<アニメーション再生>,
     pub(in crate::app) 布プリセット: Option<布プリセット>,
+    pub(in crate::app) 布の参照比較: Option<布の参照比較>, // XPBDの参照比較の方式だけが持つ
     pub(in crate::app) 登録一式: scene_load::束の登録一式,
     pub(in crate::app) 遠景: Option<(blitz_engine::シーンデータ, scene_load::束の描画入力)>,
     pub(in crate::app) 地表の層のタイル: scene_load::地表の層のタイル一式, // カタログを読んで初めて決まる層ごとのタイル。呼び出し元がアプリのフィールドへそのまま移す

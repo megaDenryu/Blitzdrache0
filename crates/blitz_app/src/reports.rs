@@ -5,6 +5,7 @@ pub(crate) mod aerial_farthest_distance;
 pub(crate) mod atmosphere_lut;
 pub(crate) mod atmosphere_passes;
 pub(crate) mod auto_exposure;
+pub(crate) mod cloth_xpbd_reference;
 pub(crate) mod cluster_assignment;
 pub(crate) mod composition;
 pub(crate) mod cube_seam;
