@@ -9,6 +9,7 @@
 
 mod cloth;
 pub mod constraint_graph;
+mod contact;
 mod gpu_layout;
 mod intervention;
 mod rigid_body;
@@ -20,6 +21,9 @@ mod xpbd;
 pub use cloth::{
     布の参照計算, 布の参照計算の条件, 布の参照計算エラー, 布の彩色済み拘束, 布の敷き方, 布の物性, 布を生成する, 布データ, 布仕様, 布生成エラー,
     既定一辺粒子数, 曲げの違反の統計, 曲げ拘束, 粒子, 距離拘束, 距離拘束の種類,
+};
+pub use contact::{
+    反発係数, 接触物性, 接触物性エラー, 摩擦係数, 材質の対, 材質の識別子, 混合則, 混合則の組み立て, 表面物性
 };
 pub use gpu_layout::{rigid as rigid_gpu_layout, xpbd as xpbd_gpu_layout, 粒子バイト列にする, 表面流バイト列にする};
 pub use intervention::{バイト列にする, 介入};
