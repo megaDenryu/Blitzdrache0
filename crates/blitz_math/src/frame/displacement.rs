@@ -7,7 +7,7 @@
 
 use std::fmt;
 use std::marker::PhantomData;
-use std::ops::{Add, Sub};
+use std::ops::{Add, Neg, Sub};
 
 use glam::Vec3;
 
@@ -73,6 +73,14 @@ impl<空間種: 空間> Sub for 変位<空間種> {
 
     fn sub(self, 右辺: Self) -> Self {
         Self::内部から生成する(self.内部 - 右辺.内部)
+    }
+}
+
+impl<空間種: 空間> Neg for 変位<空間種> {
+    type Output = Self;
+
+    fn neg(self) -> Self {
+        Self::内部から生成する(-self.内部)
     }
 }
 

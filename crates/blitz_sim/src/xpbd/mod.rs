@@ -68,6 +68,7 @@ pub use bending_line_projection::線の折れ角の幾何;
 pub use bending_projection_result::{線の曲げ拘束の一回の射影の結果, 面の曲げ拘束の一回の射影の結果};
 pub use bending_surface_projection::二面角の幾何;
 pub use compliance::{コンプライアンス, コンプライアンスエラー};
+pub(crate) use distance_canonical_projection::向きが定まる最小の距離;
 pub use distance_canonical_projection::距離拘束の一刻みの係数;
 pub use distance_constraint_parameters::距離拘束の引数;
 pub use distance_constraint_participant::距離拘束の参加点;
