@@ -5,8 +5,9 @@
 // 3つの並列方式(原子加算・グラフ彩色・二段階)がこの1つの関数を読むため、方式の違いは式の違いにならない。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
-// 2点の距離の2乗の下限。CPU正本が長さに置く下限1e-6メートルの2乗であり、現在の布と同じ値である。
-static const float minimumSquaredDistance = 1e-12;
+// 2点の距離(メートル)の下限。CPU正本の`向きが定まる最小の距離のメートル`の写しであり、`cargo xtask conform`が突き合わせる。
+// 距離の2乗でなく距離で比べるのは、CPU正本と同じ演算の順にし、定数の綴りをそのまま突き合わせられるようにするためである。
+static const float minimumDistance = 1e-6;
 
 struct DistanceProjection
 {
@@ -30,12 +31,11 @@ DistanceProjection projectDistance(
         return result;
     }
     float3 difference = positionB - positionA;
-    float squaredLength = dot(difference, difference);
-    if (squaredLength < minimumSquaredDistance)
+    float currentLength = length(difference);
+    if (currentLength < minimumDistance)
     {
         return result;
     }
-    float currentLength = sqrt(squaredLength);
     float3 direction = difference / currentLength;
     float violation = currentLength - restLength;
     float deltaLambda = (-violation - alphaTilde * lambda) / (weightSum + alphaTilde);
