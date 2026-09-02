@@ -9,6 +9,8 @@
 mod batch_builder;
 mod batch_builder_push;
 #[cfg(test)]
+mod batch_generation_order_tests;
+#[cfg(test)]
 mod batch_generation_static_tests;
 #[cfg(test)]
 mod batch_generation_tests;
