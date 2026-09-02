@@ -4,7 +4,7 @@
 //! 面・辺・頂点のどれもこの向きを使う。面は1本の軸の向き、辺は2本の軸の向き、頂点は3本の軸の向きで決まる。
 
 /// 1本の軸に垂直な2つの面のうちのどちらか。
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum 直方体の面の向き {
     /// 軸の正の向きへ半分の長さだけ進んだ側の面。
     軸の正の側,

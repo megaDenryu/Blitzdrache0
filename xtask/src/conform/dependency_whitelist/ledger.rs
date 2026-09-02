@@ -17,6 +17,9 @@
 //! (チャンク座標)を組み立てるために直接要る。blitz_asset_compiler が既に blitz_engine(→blitz_render→ash)を連鎖依存に
 //! 持つため、この2つの追加は依存木の到達範囲を広げない(参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断5」)。
 //! ctrlc は`cargo xtask editor`がCtrl+Cを捕らえて子プロセスの木を終わらせるためだけの依存である。
+//! blitz_sim → blitz_collision は剛体の接触が接触点集合の型を直接読むための依存であり、剛体力学層を `blitz_sim` へ置く
+//! 判断1の機械強制である(参照: `_doc/設計/剛体の状態と接触.md`「判断1」)。blitz_sim は引き続き blitz_engine・
+//! blitz_render・blitz_app を知らず、この表がそれを課す。
 
 pub(super) const 白リスト: [(&str, &[&str]); 11] = [
     ("blitz_math", &["glam"]),
@@ -42,8 +45,8 @@ pub(super) const 白リスト: [(&str, &[&str]); 11] = [
         "blitz_render",
         &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"],
     ),
-    ("blitz_sim", &["blitz_math", "thiserror"]), // 判断51: シミュレーション基盤層。手法の数学のみでashもblitz_renderも知らない
-    ("blitz_game", &["blitz_math"]),             // ゲームロジック層。許すのは blitz_engine と blitz_math だけ
+    ("blitz_sim", &["blitz_collision", "blitz_math", "thiserror"]), // 判断51: 手法の数学のみ。接触点集合を読むためだけにblitz_collisionを許す
+    ("blitz_game", &["blitz_math"]),                                // ゲームロジック層。許すのは blitz_engine と blitz_math だけ
     (
         "blitz_app",
         &[

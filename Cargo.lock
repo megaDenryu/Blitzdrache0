@@ -271,6 +271,7 @@ dependencies = [
 name = "blitz_sim"
 version = "0.1.0"
 dependencies = [
+ "blitz_collision",
  "blitz_math",
  "thiserror 2.0.19",
 ]

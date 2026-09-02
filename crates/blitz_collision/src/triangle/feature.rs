@@ -12,7 +12,7 @@
 use crate::shape::三角形の頂点の番号;
 
 /// 線分またはカプセルが三角形のどの部分に当たったか。
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum 三角形で当たった特徴 {
     /// 面の内側に当たった。
     三角形の面,

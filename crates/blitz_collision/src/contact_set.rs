@@ -75,6 +75,8 @@ mod box_triangle_tests;
 #[cfg(test)]
 mod determinism_tests;
 #[cfg(test)]
+mod feature_order_tests;
+#[cfg(test)]
 mod penetration_depth_tests;
 #[cfg(test)]
 mod query_fixture;

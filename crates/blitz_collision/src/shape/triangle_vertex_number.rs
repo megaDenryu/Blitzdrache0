@@ -6,7 +6,7 @@
 //! 辺もこの番号1つで指す。番号の頂点から次の番号の頂点へ張ったものがその辺であり、3つの番号で3辺が尽きる。
 
 /// 1つの三角形が持つ3つの頂点のうちどれか。
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum 三角形の頂点の番号 {
     /// 三角形を生成したときに並べた3つの頂点のうち先頭のもの。
     第1の頂点,

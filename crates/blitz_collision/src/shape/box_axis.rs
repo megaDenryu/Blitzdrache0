@@ -7,7 +7,7 @@
 //! 場所が決まるため、「残る2本」を並びの順で言うための決まりが要る。
 
 /// 回転を掛ける前の直方体が持つ3本の軸のどれか。
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum 直方体自身の座標軸 {
     /// 軸ごとの半分の長さのx成分に対応する軸。
     X軸,

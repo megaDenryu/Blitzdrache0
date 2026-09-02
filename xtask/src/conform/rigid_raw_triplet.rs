@@ -1,6 +1,7 @@
 //! 剛体のモジュール群の中で単精度の3つ組を宣言していないかの検査(剛体の状態と接触の判断5の機械強制)。
-//! 力学の量は座標系と単位を持つ型で持ち、生の3つ組へ戻すのはGPUのバイト列化の1箇所だけである。剛体のモジュール群(`rigid_body/`・`rigid_xpbd/`)に
-//! 3つ組の宣言が現れたら、型を経ずに生値を運ぶ経路が入ったことになる。
+//! 力学の量は座標系と単位を持つ型で持ち、生の3つ組へ戻すのはGPUのバイト列化の1箇所だけである。剛体のモジュール群
+//! (`blitz_sim` の `rigid_body/`・`rigid_xpbd/`・`contact/`)に3つ組の宣言が現れたら、型を経ずに生値を運ぶ経路が入ったことになる。
+//! クレートの名前まで見るのは、`contact` という名前のディレクトリが他のクレートに現れても巻き添えにしないためである。
 //! 注意: 検出パターンの綴りをこのファイルに連続して書くと自分自身を違反として検出するため、分割リテラルの連結で回避する。
 
 use std::path::Path;
@@ -8,13 +9,13 @@ use std::path::Path;
 use super::source_lexing::コードだけの行一覧;
 use super::violation::違反;
 
-const 対象ディレクトリ一覧: [&str; 2] = ["rigid_body", "rigid_xpbd"];
+const 対象クレート: &str = "blitz_sim";
+const 対象ディレクトリ一覧: [&str; 3] = ["rigid_body", "rigid_xpbd", "contact"];
 const 三つ組の綴り: &str = concat!("[f32", "; 3]");
 
 fn 剛体のモジュール群か(パス: &Path) -> bool {
-    パス
-        .components()
-        .any(|部品| 対象ディレクトリ一覧.iter().any(|名前| 部品.as_os_str() == *名前))
+    let 部品一覧: Vec<&std::ffi::OsStr> = パス.components().map(|部品| 部品.as_os_str()).collect();
+    部品一覧.iter().any(|部品| *部品 == 対象クレート) && 部品一覧.iter().any(|部品| 対象ディレクトリ一覧.iter().any(|名前| *部品 == *名前))
 }
 
 pub fn 検査する(パス: &Path, 内容: &str) -> Vec<違反> {
@@ -43,7 +44,9 @@ mod tests {
     fn 剛体のモジュール群の3つ組だけを違反にする() {
         let 原文 = concat!("let 成分: [f32", "; 3] = [0.0; 3];\n");
         assert_eq!(検査する(Path::new("crates/blitz_sim/src/rigid_xpbd/predictor.rs"), 原文).len(), 1);
+        assert_eq!(検査する(Path::new("crates/blitz_sim/src/contact/non_penetration.rs"), 原文).len(), 1);
         assert!(検査する(Path::new("crates/blitz_sim/src/gpu_layout/rigid/mod.rs"), 原文).is_empty());
+        assert!(検査する(Path::new("crates/blitz_collision/src/height_field/contact/cell.rs"), 原文).is_empty());
         assert!(
             検査する(
                 Path::new("crates/blitz_sim/src/rigid_body/body.rs"),

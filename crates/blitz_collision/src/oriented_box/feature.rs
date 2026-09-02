@@ -9,7 +9,7 @@
 use crate::shape::{直方体の面の向き, 直方体自身の座標軸};
 
 /// 直方体の6つの面のうち1つ。1本の軸と、その軸のどちら側かで決まる。
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct 直方体の面 {
     軸: 直方体自身の座標軸,
     側: 直方体の面の向き,
@@ -33,7 +33,7 @@ impl 直方体の面 {
 }
 
 /// 直方体の12本の辺のうち1本。1本の軸に沿って伸び、残る2本の軸それぞれについてどちら側に在るかで決まる。
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct 直方体の辺 {
     沿う軸: 直方体自身の座標軸,
     次の軸の側: 直方体の面の向き,
@@ -78,7 +78,7 @@ impl 直方体の辺 {
 }
 
 /// 直方体の8つの頂点のうち1つ。3本の軸それぞれについてどちら側に在るかで決まる。
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct 直方体の頂点 {
     軸ごとの側: [直方体の面の向き; 3],
 }
@@ -96,7 +96,7 @@ impl 直方体の頂点 {
 }
 
 /// カプセルまたは線分が直方体のどの部分に当たったか。
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum 直方体で当たった特徴 {
     /// 面の内側に当たった。法線はその面の外向きの単位法線である。
     直方体の面(直方体の面),
