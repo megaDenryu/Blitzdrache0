@@ -2,6 +2,8 @@
 //! 参照: `_doc/計画/ユビキタス言語.md`「フレーム型」「幻影型」。
 
 mod angle_gradient;
+mod angular_impulse;
+mod angular_velocity;
 mod area_vector;
 mod camera_relative_position;
 mod direction;
@@ -11,39 +13,63 @@ mod direction_error;
 mod direction_tests;
 mod displacement;
 mod displacement_algebra;
+mod force;
 mod global_world_position;
 mod global_world_position_displacement;
 #[cfg(test)]
 mod global_world_position_tests;
+mod impulse;
+mod inertia_tensor;
+#[cfg(test)]
+mod inertia_tensor_tests;
+mod inverse_inertia_tensor;
 mod pixel_jitter;
 mod position;
 mod position_displacement;
 mod rotation;
 mod rotation_compose;
+mod rotation_dynamics;
+#[cfg(test)]
+mod rotation_dynamics_tests;
 mod rotation_error;
 mod rotation_from_axes;
 #[cfg(test)]
 mod rotation_from_axes_tests;
+mod rotation_vector;
 mod signed_axis;
 mod space;
+mod torque;
 mod transform;
 mod transform_construct;
 mod transform_construct_cube_face;
 mod trs;
 #[cfg(test)]
 mod trs_tests;
+mod vector_quantity;
+mod velocity;
 
 pub use angle_gradient::角の勾配;
+pub use angular_impulse::回転衝撃;
+pub use angular_velocity::角速度;
 pub use area_vector::面積ベクトル;
 pub use camera_relative_position::{カメラ相対位置, 座標変換エラー};
 pub use direction::方向;
 pub use direction_error::方向エラー;
 pub use displacement::変位;
+pub use force::力;
 pub use global_world_position::大域ワールド位置;
+pub use impulse::衝撃;
+pub use inertia_tensor::慣性テンソル;
+pub use inverse_inertia_tensor::逆慣性テンソル;
 pub use pixel_jitter::{画素内ずらし, 画素内ずらしエラー};
 pub use position::位置;
 pub use rotation::クォータニオン;
 pub use rotation_error::クォータニオンエラー;
+pub use rotation_vector::回転ベクトル;
 pub use signed_axis::符号付きの座標軸;
-pub use space::{クリップ, ビュー, ローカル, ワールド, 光源クリップ, 点光源の面クリップ, 空間, 部品ローカル};
+pub use space::{
+    クリップ, ビュー, ローカル, ワールド, 主軸, 光源クリップ, 点光源の面クリップ, 空間, 部品ローカル
+};
+pub use torque::回転力;
 pub use transform::変換;
+pub use velocity::速度;
