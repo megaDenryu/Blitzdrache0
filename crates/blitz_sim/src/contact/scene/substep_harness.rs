@@ -14,6 +14,7 @@ use super::super::history::剛体と静的世界の接触の履歴;
 use super::super::material_id::材質の識別子;
 use super::super::minimum_thickness::形の最小の厚み;
 use super::super::mixing_rule::混合則;
+use super::super::solver_quality::接触を解く品質の設定;
 use super::super::static_world_partner::静的世界の接触相手;
 use super::super::static_world_partner_id::静的世界の接触相手の識別子;
 use super::super::velocity_stage::接触の速度段階;
@@ -38,8 +39,7 @@ pub(super) struct 一つの箱と静的な直方体の場面 {
     pub(super) 予測器: 細分の予測器,
     pub(super) 速度段階: 接触の速度段階,
     pub(super) 刻み幅: 刻み幅,
-    pub(super) 反復回数: usize,
-    pub(super) 速度段階の巡回数: usize,
+    pub(super) 解く品質: 接触を解く品質の設定,
     pub(super) 履歴: 剛体と静的世界の接触の履歴,
     pub(super) 直前の細分の観測: 細分の観測,
     pub(super) 静止摩擦の位置拘束を外すか: bool, // 判断13の反証。真のとき静止摩擦の射影を飛ばし、押し戻した点を滑走中として速度段階へ渡す
@@ -72,8 +72,7 @@ impl 一つの箱と静的な直方体の場面 {
             予測器: 細分の予測器::生成する(設定.細分の刻み幅, 設定.重力, ジャイロ項の扱い::陰的に一段解く),
             速度段階: 接触の速度段階::生成する(設定.細分の刻み幅, 反発を抑制する法線相対速度の閾値(設定.重力, 設定.細分の刻み幅)),
             刻み幅: 設定.細分の刻み幅,
-            反復回数: 設定.反復回数,
-            速度段階の巡回数: 設定.速度段階の巡回数,
+            解く品質: 設定.解く品質,
             履歴: 剛体と静的世界の接触の履歴::見込みの接触点の数で生成する(見込みの接触点の数),
             直前の細分の観測: 細分の観測::default(),
             静止摩擦の位置拘束を外すか: 設定.静止摩擦の位置拘束を外すか,

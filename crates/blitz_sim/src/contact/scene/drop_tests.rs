@@ -10,6 +10,7 @@ use blitz_math::{メートル毎秒毎秒, 秒, 速度};
 
 use super::super::friction_coefficient::摩擦係数;
 use super::super::restitution_coefficient::反発係数;
+use super::super::solver_quality::接触を解く品質の設定;
 use super::super::surface_property::表面物性;
 use super::scene_geometry::世界の位置;
 use super::scene_settings::場面の設定;
@@ -24,6 +25,8 @@ const 静置の食い込み: f32 = 0.0001;
 const 落とす高さ: f32 = 1.0;
 const 試験の反発係数: f32 = 0.8;
 const 一刻みの細分数: usize = 8;
+const 位置の反復回数: u32 = 2; // 由来は正本の判断19の実装の細目
+const 速度段階の巡回数: u32 = 4;
 const 落下と跳ね返りを見る細分数: usize = 1200; // 1メートルの落下(0.45秒)と e²h までの上昇(0.36秒)を覆う長さ
 
 // 床の上面を高さ0に置き、箱の重心を指定の隙間だけ上へ置く。摩擦は跳ね返りに関わらないため零にする。
@@ -42,8 +45,7 @@ fn 落下の場面を組む(初めの隙間: f32) -> 一つの箱と静的な直
             メートル毎秒毎秒::生成する(0.0),
         ),
         細分の刻み幅: 刻み幅::生成する(秒::生成する(1.0 / 480.0)).unwrap(),
-        反復回数: 2,
-        速度段階の巡回数: 4,
+        解く品質: 接触を解く品質の設定::生成する(位置の反復回数, 速度段階の巡回数).unwrap(),
         静止摩擦の位置拘束を外すか: false,
     })
 }

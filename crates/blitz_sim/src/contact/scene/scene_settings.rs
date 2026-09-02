@@ -6,6 +6,7 @@
 
 use blitz_math::{ワールド, 速度};
 
+use super::super::solver_quality::接触を解く品質の設定;
 use super::super::surface_property::表面物性;
 use crate::constraint_graph::一様な加速度;
 use crate::rigid_body::配置;
@@ -22,8 +23,7 @@ pub(super) struct 場面の設定 {
     pub 表面物性: 表面物性,
     pub 重力: 一様な加速度,
     pub 細分の刻み幅: 刻み幅,
-    pub 反復回数: usize,
-    pub 速度段階の巡回数: usize,
+    pub 解く品質: 接触を解く品質の設定,
     pub 静止摩擦の位置拘束を外すか: bool,
 }
 

@@ -49,6 +49,10 @@ mod restitution_coefficient;
 #[cfg(test)]
 mod scene;
 mod shared_frame;
+mod solver_quality;
+mod solver_quality_error;
+#[cfg(test)]
+mod solver_quality_tests;
 #[cfg(test)]
 mod stacked_box_fixture;
 mod static_friction;
@@ -89,6 +93,8 @@ pub use non_penetration::{
 pub use penetration_depth::貫通量;
 pub use property_error::接触物性エラー;
 pub use restitution_coefficient::反発係数;
+pub use solver_quality::接触を解く品質の設定;
+pub use solver_quality_error::接触を解く品質の設定エラー;
 pub use static_friction::{
     剛体と静的世界の静止摩擦の錨, 剛体どうしの静止摩擦の錨, 接線のラグランジュ乗数, 接触点集合の静止摩擦の仮の集計, 静止摩擦の一回の仮の射影の結果,
     静止摩擦の一細分の解の状態, 静止摩擦の錨,

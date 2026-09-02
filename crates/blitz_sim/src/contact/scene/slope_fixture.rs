@@ -11,6 +11,7 @@ use blitz_math::{メートル, メートル毎秒, メートル毎秒毎秒, ワ
 
 use super::super::friction_coefficient::摩擦係数;
 use super::super::restitution_coefficient::反発係数;
+use super::super::solver_quality::接触を解く品質の設定;
 use super::super::surface_property::表面物性;
 use super::scene_geometry::世界の位置;
 use super::scene_settings::場面の設定;
@@ -25,6 +26,11 @@ const 箱の半分の長さ: f32 = 0.5;
 const 坂の半分の長さ: f32 = 20.0;
 const 初めの食い込み: f32 = 0.0001;
 const 細分の刻み幅の秒: f32 = 1.0 / 480.0;
+
+// 判断19の品質の設定。位置の反復回数2と速度段階の巡回数4の由来は正本の判断19の実装の細目にある。
+fn 試験の解く品質() -> 接触を解く品質の設定 {
+    接触を解く品質の設定::生成する(2, 4).unwrap()
+}
 
 pub(super) fn 坂の場面を組む(条件: &坂の場面の条件) -> 一つの箱と静的な直方体の場面 {
     let 姿勢 = 条件.坂の姿勢();
@@ -49,8 +55,7 @@ pub(super) fn 坂の場面を組む(条件: &坂の場面の条件) -> 一つの
             メートル毎秒毎秒::生成する(0.0),
         ),
         細分の刻み幅: 刻み幅::生成する(秒::生成する(細分の刻み幅の秒)).unwrap(),
-        反復回数: 2,
-        速度段階の巡回数: 4,
+        解く品質: 試験の解く品質(),
         静止摩擦の位置拘束を外すか: 条件.静止摩擦の位置拘束を外すか,
     })
 }
