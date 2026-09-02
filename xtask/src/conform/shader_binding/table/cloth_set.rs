@@ -8,7 +8,7 @@ const 正本: &str = "crates/blitz_render/src/vulkan/cloth/descriptor.rs";
 const 介入と積分: &str = "shaders/cloth_step.slang";
 const 拘束: &str = "shaders/cloth_constraint.slang";
 const 空間ハッシュ: &str = "shaders/cloth_hash.slang";
-const アタッチ: &str = "shaders/cloth_attach.slang";
+const 目標拘束: &str = "shaders/cloth_target.slang";
 
 const fn 組(前置き: &'static str, 写しパス: &'static str, 写しの変数名: &'static str) -> 束縛番号の組 {
     束縛番号の組 {
@@ -20,7 +20,7 @@ const fn 組(前置き: &'static str, 写しパス: &'static str, 写しの変�
     }
 }
 
-pub(super) const 束縛番号の組の一覧: [束縛番号の組; 11] = [
+pub(super) const 束縛番号の組の一覧: [束縛番号の組; 13] = [
     組("pub(crate) const 定数の束縛番号: 束縛番号 = 束縛番号::生成する", 介入と積分, "params"),
     組("pub(crate) const 粒子の束縛番号: 束縛番号 = 束縛番号::生成する", 介入と積分, "particles"),
     組(
@@ -55,17 +55,23 @@ pub(super) const 束縛番号の組の一覧: [束縛番号の組; 11] = [
     ),
     組(
         "pub(crate) const スキン済み頂点の束縛番号: 束縛番号 = 束縛番号::生成する",
-        アタッチ,
+        目標拘束,
         "skinnedVertices",
     ),
     組(
-        "pub(crate) const アタッチ対応の束縛番号: 束縛番号 = 束縛番号::生成する",
-        アタッチ,
-        "attachPairs",
+        "pub(crate) const 目標の更新対応の束縛番号: 束縛番号 = 束縛番号::生成する",
+        目標拘束,
+        "targetUpdatePairs",
     ),
     組(
         "pub(crate) const ラグランジュ乗数の束縛番号: 束縛番号 = 束縛番号::生成する",
         拘束,
         "lambdas",
     ),
+    組(
+        "pub(crate) const 目標拘束の引数の束縛番号: 束縛番号 = 束縛番号::生成する",
+        目標拘束,
+        "targetParams",
+    ),
+    組("pub(crate) const 目標位置の束縛番号: 束縛番号 = 束縛番号::生成する", 目標拘束, "targets"),
 ];

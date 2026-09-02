@@ -31,10 +31,6 @@ void separateMain(uint3 id: SV_DispatchThreadID)
         return;
     }
     float4 positionInvMass = particles[index * 2];
-    if (positionInvMass.w == 0.0)
-    {
-        return;
-    }
     float3 position = positionInvMass.xyz;
     float minDistance = params.misc.x * 2.0;
     float3 relative = (position - params.gridOrigin.xyz) / params.gridOrigin.w;

@@ -1,4 +1,4 @@
-//! 描画インデックスとスキン頂点へのアタッチ対応をGPUバッファへ転送する。
+//! 描画インデックスをGPUバッファへ転送する。
 
 use ash::vk;
 
@@ -7,27 +7,14 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::{専用メモリ付きバッファ, 巻き戻せる確保の台帳};
 use crate::vulkan::transfer::ステージング経由の転送係;
 
-pub(super) fn 布の描画インデックスとアタッチ対応のバッファを生成する(
+pub(super) fn 布の描画インデックスのバッファを生成する(
     台帳: &mut 巻き戻せる確保の台帳<'_, '_>,
     転送係: ステージング経由の転送係<'_>,
     素材: &布素材,
-    ストレージ: vk::BufferUsageFlags,
-) -> Result<(専用メモリ付きバッファ, 専用メモリ付きバッファ), レンダラーエラー> {
+) -> Result<専用メモリ付きバッファ, レンダラーエラー> {
     let mut インデックスバイト列 = Vec::with_capacity(素材.インデックス一覧.len() * 4);
     for 添字 in &素材.インデックス一覧 {
         インデックスバイト列.extend_from_slice(&添字.to_le_bytes());
     }
-    let インデックス = 台帳.積む(転送係.データからデバイスローカルバッファを確保する(&インデックスバイト列, vk::BufferUsageFlags::INDEX_BUFFER))?;
-
-    let mut アタッチバイト列 = Vec::with_capacity((素材.アタッチ対応一覧.len() * 8).max(8));
-    for 対応 in &素材.アタッチ対応一覧 {
-        アタッチバイト列.extend_from_slice(&対応[0].to_le_bytes());
-        アタッチバイト列.extend_from_slice(&対応[1].to_le_bytes());
-    }
-    // アタッチ0件でも0バイト確保はVulkanの契約違反のため、読まれない8バイトのダミーを置く。
-    if アタッチバイト列.is_empty() {
-        アタッチバイト列.extend_from_slice(&[0u8; 8]);
-    }
-    let アタッチ = 台帳.積む(転送係.データからデバイスローカルバッファを確保する(&アタッチバイト列, ストレージ))?;
-    Ok((インデックス, アタッチ))
+    台帳.積む(転送係.データからデバイスローカルバッファを確保する(&インデックスバイト列, vk::BufferUsageFlags::INDEX_BUFFER))
 }

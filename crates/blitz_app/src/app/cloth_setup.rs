@@ -1,11 +1,13 @@
 //! 布素材の構築(判断52)。blitz_simの布データをGPU境界のバイト列へ変換する。
-//! アタッチ先の選択は`attach`、素材の組み立ては`material`、XPBDの参照比較の題材は`reference_preset`にある。数値はFoxのスケール(1単位約1cm)前提。
+//! アタッチ先の選択は`attach`、目標拘束(上端行の固定と掴みの枠)の組み立ては`target_constraints`、素材の組み立ては`material`、
+//! XPBDの参照比較の題材は`reference_preset`にある。数値はFoxのスケール(1単位約1cm)前提。
 //! 布の刻み幅は時間の規律の基本刻みをここで1度だけ検証付きの型にし、GPUの定数と参照計算の条件の両方へ同じ値を渡す。
 
 mod attach;
 mod material;
 mod preset;
 mod reference_preset;
+mod target_constraints;
 
 use preset::{マントを構築する, 吊るし布を構築する};
 
@@ -48,6 +50,8 @@ pub(super) fn 布モードから構築する(
 }
 
 pub(super) const 一辺粒子数: u32 = 32;
+/// 掴み対象は布の下端行の左端(吊るし布・マントとも上端行は固定で掴めない)。
+const 掴み粒子添字: u32 = (一辺粒子数 - 1) * 一辺粒子数;
 const マント間隔: f32 = 3.2;
 const 吊るし間隔: f32 = 0.05;
 const 総質量: f32 = 4.0;
@@ -59,10 +63,11 @@ pub(super) struct 掴み写像 {
     pub(super) 縦基底: [f32; 3],
 }
 
-/// 布シナリオごとの実行時パラメータ(判断56)。カプセルNoneはキャラ衝突なし。
+/// 布シナリオごとの実行時パラメータ(判断56)。カプセルNoneはキャラ衝突なし。掴みの目標拘束添字は掴む介入が着脱する目標拘束の枠である。
 pub(super) struct 布プリセット {
     pub(super) カプセル: Option<([f32; 3], [f32; 3], f32)>,
     pub(super) 掴み: 掴み写像,
+    pub(super) 掴みの目標拘束添字: blitz_sim::constraint_graph::目標拘束添字,
 }
 
 /// 前提: 帯数は上端行の粒子数(高々数百)でu16に収まる。

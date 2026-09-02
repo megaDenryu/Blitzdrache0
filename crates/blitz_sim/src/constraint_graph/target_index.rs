@@ -6,7 +6,7 @@
 pub struct 目標拘束添字(u32);
 
 impl 目標拘束添字 {
-    pub fn 生成する(値: u32) -> Self {
+    pub const fn 生成する(値: u32) -> Self {
         Self(値)
     }
 

@@ -1,5 +1,5 @@
 // M9: 布の衝突解決と速度更新(判断52・54)。床(y=0)とキャラクター近似カプセル1本からの
-// 押し出しの後、XPBDの速度更新 v=(位置-前位置)/dt に減衰を掛ける。
+// 押し出しの後、XPBDの速度更新 v=(位置-前位置)/dt に減衰を掛ける。固定した粒子も目標拘束で縛られているだけであり、区別せず同じ規則を当てる。
 // バインディング表と定数レイアウトはcloth_step.slang冒頭の仕様に従う。
 
 struct ClothParams
@@ -44,10 +44,6 @@ void finishMain(uint3 id: SV_DispatchThreadID)
         return;
     }
     float4 positionInvMass = particles[index * 2];
-    if (positionInvMass.w == 0.0)
-    {
-        return;
-    }
     float3 position = pushOutOfCapsule(positionInvMass.xyz);
     if (position.y < 0.0)
     {

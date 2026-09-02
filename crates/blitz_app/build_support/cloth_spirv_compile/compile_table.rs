@@ -12,7 +12,13 @@ pub(super) const コンパイル表: [(&str, &[エントリ指定]); 10] = [
             コンピュート("integrateMain", "cloth_integrate.spv"),
         ],
     ),
-    ("cloth_attach.slang", &[コンピュート("attachMain", "cloth_attach.spv")]),
+    (
+        "cloth_target.slang",
+        &[
+            コンピュート("targetUpdateMain", "cloth_target_update.spv"),
+            コンピュート("targetConstraintMain", "cloth_target_constraint.spv"),
+        ],
+    ),
     (
         "cloth_constraint.slang",
         &[
