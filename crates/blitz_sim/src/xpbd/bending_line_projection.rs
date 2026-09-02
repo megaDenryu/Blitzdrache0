@@ -16,7 +16,7 @@ use super::bending_projection_result::線の曲げ拘束の一回の射影の結
 use super::distance_canonical_projection::向きが定まる最小の距離;
 use super::distance_constraint_participant::距離拘束の参加点;
 
-/// 2つの線分のなす角の正弦がこれより小さいと、曲げの面(補正の向き)を作らない。
+// 2つの線分のなす角の正弦がこれより小さいと、曲げの面(補正の向き)を作らない。
 const 曲げの面が定まる最小の正弦: f32 = 1.0e-6;
 
 /// 3点の折れ角とその勾配。角の測り方の正本であり、拘束の射影と、線の検査が読む曲率の分布の両方がこれを使う。
