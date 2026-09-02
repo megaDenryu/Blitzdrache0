@@ -1,0 +1,93 @@
+// XPBDの面の曲げ拘束(隣接する2つの三角形の二面角)の正典式(判断11)のGPUの写し。CPUの参照計算
+// `crates/blitz_sim/src/xpbd/bending_surface_projection.rs` と同じ符号・同じ単位・同じ演算の順で書く。
+//   E = x_b − x_a、ê = E ÷ |E|、N1 = (x_a − x_c) × (x_b − x_c)、N2 = (x_b − x_d) × (x_a − x_d)、n = N ÷ |N|
+//   θ = atan2(ê · (n2 × n1), n1 · n2)、C = θ − 静止角(半周を越えれば最短の弧へ畳む)
+//   g_c = |E| n1 ÷ |N1|、g_d = |E| n2 ÷ |N2|、g_a = ((x_c − x_b)·ê) n1 ÷ |N1| + ((x_d − x_b)·ê) n2 ÷ |N2|、g_b = −(((x_c − x_a)·ê) n1 ÷ |N1| + ((x_d − x_a)·ê) n2 ÷ |N2|)
+//   W = Σ w_i |g_i|²、Δλ = (−C − α̃λ) ÷ (W + α̃)、補正_i = w_i Δλ g_i
+// 退化(全て固定・辺が潰れている・三角形が潰れている)は補正0でΔλも0にし、呼び出し側が乗数を変えない。
+// 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
+
+// 共有する辺の長さの2乗の下限。CPU正本が長さに置く下限1e-6メートルの2乗であり、距離拘束と同じ値である。
+static const float minimumSquaredEdgeLength = 1e-12;
+// 三角形の面積ベクトルの長さ(面積の2倍。平方メートル)の下限。CPU正本の`面が定まる最小の面積`と同じ値である。
+static const float minimumAreaVectorLength = 1e-12;
+static const float pi = 3.14159265358979;
+
+struct BendingProjection
+{
+    float3 correctionA;
+    float3 correctionB;
+    float3 correctionC;
+    float3 correctionD;
+    float deltaLambda;
+    bool corrected;
+};
+
+// 半周を越えた角を−πからπまでの最短の弧へ畳む。CPUの`ラジアン::一周の中で最短の弧へ畳む`(rem_euclid)と同じ演算である。
+float wrapToShortestArc(float angle)
+{
+    float tau = 2.0 * pi;
+    float wrapped = angle - tau * floor(angle / tau);
+    return wrapped > pi ? wrapped - tau : wrapped;
+}
+
+BendingProjection projectDihedralBending(
+    float3 positionA, float invMassA, float3 positionB, float invMassB, float3 positionC, float invMassC, float3 positionD, float invMassD,
+    float restAngle, float alphaTilde, float lambda)
+{
+    BendingProjection result;
+    result.correctionA = float3(0.0, 0.0, 0.0);
+    result.correctionB = float3(0.0, 0.0, 0.0);
+    result.correctionC = float3(0.0, 0.0, 0.0);
+    result.correctionD = float3(0.0, 0.0, 0.0);
+    result.deltaLambda = 0.0;
+    result.corrected = false;
+    if (invMassA + invMassB + invMassC + invMassD == 0.0)
+    {
+        return result;
+    }
+    float3 edge = positionB - positionA;
+    float squaredEdgeLength = dot(edge, edge);
+    if (squaredEdgeLength < minimumSquaredEdgeLength)
+    {
+        return result;
+    }
+    float3 area1 = cross(positionA - positionC, positionB - positionC);
+    float3 area2 = cross(positionB - positionD, positionA - positionD);
+    float area1Length = length(area1);
+    float area2Length = length(area2);
+    if (area1Length < minimumAreaVectorLength || area2Length < minimumAreaVectorLength)
+    {
+        return result;
+    }
+    float edgeLength = sqrt(squaredEdgeLength);
+    float3 edgeDirection = edge / edgeLength;
+    float3 normal1 = area1 / area1Length;
+    float3 normal2 = area2 / area2Length;
+    float angle = atan2(dot(edgeDirection, cross(normal2, normal1)), dot(normal1, normal2));
+    float3 gradientC = normal1 * (edgeLength / area1Length);
+    float3 gradientD = normal2 * (edgeLength / area2Length);
+    float3 gradientA = normal1 * (dot(positionC - positionB, edgeDirection) / area1Length)
+        + normal2 * (dot(positionD - positionB, edgeDirection) / area2Length);
+    float3 gradientB = -(normal1 * (dot(positionC - positionA, edgeDirection) / area1Length)
+        + normal2 * (dot(positionD - positionA, edgeDirection) / area2Length));
+    float effectiveInverseInertia = invMassA * dot(gradientA, gradientA) + invMassB * dot(gradientB, gradientB)
+        + invMassC * dot(gradientC, gradientC) + invMassD * dot(gradientD, gradientD);
+    if (effectiveInverseInertia == 0.0)
+    {
+        return result;
+    }
+    float violation = angle - restAngle;
+    if (abs(violation) > pi)
+    {
+        violation = wrapToShortestArc(violation);
+    }
+    float deltaLambda = (-violation - alphaTilde * lambda) / (effectiveInverseInertia + alphaTilde);
+    result.deltaLambda = deltaLambda;
+    result.correctionA = gradientA * (deltaLambda * invMassA);
+    result.correctionB = gradientB * (deltaLambda * invMassB);
+    result.correctionC = gradientC * (deltaLambda * invMassC);
+    result.correctionD = gradientD * (deltaLambda * invMassD);
+    result.corrected = true;
+    return result;
+}

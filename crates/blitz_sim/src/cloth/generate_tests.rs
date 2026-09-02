@@ -2,6 +2,7 @@
 
 #![allow(clippy::unwrap_used)]
 
+use super::bending_constraint::曲げ拘束;
 use super::distance_constraint::距離拘束の種類;
 use super::generate::布を生成する;
 use super::spec::布仕様;
@@ -35,6 +36,28 @@ fn 構造は粒子間隔でせん断は斜めの長さを静止長に持つ() {
         };
         assert!((拘束.静止長 - 期待).abs() < 1.0e-6);
     }
+}
+
+/// 曲げ拘束は内側の辺(斜め(n-1)²・横と縦それぞれ(n-1)(n-2))ごとに1本であり、4粒子は互いに別で、描画用インデックスの巻き順に沿う。
+#[test]
+fn 曲げ拘束の本数が内側の辺の数と一致し一辺2では斜めの1本だけになる() {
+    let n: usize = 32;
+    let 布 = 布を生成する(&試験用仕様(u32::try_from(n).unwrap())).unwrap();
+    assert_eq!(布.曲げ拘束一覧.len(), (n - 1) * (n - 1) + 2 * (n - 1) * (n - 2));
+    for 拘束 in &布.曲げ拘束一覧 {
+        let 点 = [拘束.辺a添字, 拘束.辺b添字, 拘束.翼c添字, 拘束.翼d添字];
+        assert!((0..4).all(|先| !点[先 + 1..].contains(&点[先])));
+    }
+    let 最小 = 布を生成する(&試験用仕様(2)).unwrap();
+    assert_eq!(
+        最小.曲げ拘束一覧,
+        vec![曲げ拘束 {
+            辺a添字: 2,
+            辺b添字: 1,
+            翼c添字: 0,
+            翼d添字: 3
+        }]
+    );
 }
 
 #[test]

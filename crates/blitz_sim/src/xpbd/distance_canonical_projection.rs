@@ -21,7 +21,7 @@ use super::lagrange_multiplier::ラグランジュ乗数;
 use super::rest_length::静止長;
 
 /// 2点の距離がこれより短いと単位向きを作らない。GPUの布(`shaders/cloth_constraint.slang`)が距離の2乗に置く下限1e-12と同じ長さである。
-const 向きが定まる最小の距離: メートル = メートル::生成する(1.0e-6);
+pub(super) const 向きが定まる最小の距離: メートル = メートル::生成する(1.0e-6);
 
 /// 距離拘束を1つの刻み幅で解くときの係数。静止長と刻み依存量を持ち、その刻みの全反復で同じ値を使う。
 #[derive(Debug, Clone, Copy, PartialEq)]

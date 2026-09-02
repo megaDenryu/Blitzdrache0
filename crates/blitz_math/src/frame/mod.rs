@@ -1,8 +1,11 @@
 //! フレーム型: 座標系（空間）を幻影型で区別する位置・変換。
 //! 参照: `_doc/計画/ユビキタス言語.md`「フレーム型」「幻影型」。
 
+mod angle_gradient;
+mod area_vector;
 mod camera_relative_position;
 mod direction;
+mod direction_algebra;
 mod direction_error;
 #[cfg(test)]
 mod direction_tests;
@@ -30,6 +33,8 @@ mod trs;
 #[cfg(test)]
 mod trs_tests;
 
+pub use angle_gradient::角の勾配;
+pub use area_vector::面積ベクトル;
 pub use camera_relative_position::{カメラ相対位置, 座標変換エラー};
 pub use direction::方向;
 pub use direction_error::方向エラー;
