@@ -3,7 +3,11 @@
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断13: 静止摩擦は錨からの接線変位を零へ戻す位置拘束であり、クーロン円錐の内側でだけ効く」
 
 mod anchor;
+#[cfg(test)]
+mod isotropy_tests;
 mod projection;
+#[cfg(test)]
+mod projection_fixture;
 #[cfg(test)]
 mod projection_tests;
 mod result;

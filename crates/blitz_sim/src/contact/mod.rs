@@ -92,4 +92,6 @@ pub use static_friction::{
 pub use static_world_partner::静的世界の接触相手;
 pub use static_world_partner_id::静的世界の接触相手の識別子;
 pub use surface_property::表面物性;
-pub use velocity_stage::{接触の速度段階, 接触の速度段階の結果, 速度段階の参加点, 速度段階の接触点の条件};
+pub use velocity_stage::{
+    接触の速度段階, 接触の速度段階の結果, 接触点の法線の相対速度を求める, 速度段階の参加点, 速度段階の接触点の条件
+};
