@@ -37,7 +37,7 @@ impl 速度段階の接触点の条件 {
         }
     }
 
-    pub(super) fn 接触法線(&self) -> 方向<ワールド> {
+    pub(in crate::contact) fn 接触法線(&self) -> 方向<ワールド> {
         self.接触法線
     }
 
@@ -45,15 +45,15 @@ impl 速度段階の接触点の条件 {
         self.接触物性
     }
 
-    pub(super) fn 法線のラグランジュ乗数(&self) -> ラグランジュ乗数 {
+    pub(in crate::contact) fn 法線のラグランジュ乗数(&self) -> ラグランジュ乗数 {
         self.法線のラグランジュ乗数
     }
 
-    pub(super) fn 予測の前の法線相対速度(&self) -> メートル毎秒 {
+    pub(in crate::contact) fn 予測の前の法線相対速度(&self) -> メートル毎秒 {
         self.予測の前の法線相対速度
     }
 
-    pub(super) fn 滑走中か(&self) -> bool {
+    pub(in crate::contact) fn 滑走中か(&self) -> bool {
         self.滑走中か
     }
 }
