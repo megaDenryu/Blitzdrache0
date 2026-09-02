@@ -42,10 +42,19 @@ fn 値を読む(パス: &'static str, 前置き: &'static str) -> Result<f64, �
         .find(|行| 行.trim_start().starts_with(前置き))
         .ok_or(規約検査の破れ::定数の宣言が無い { パス, 前置き })?;
     let 数値 = 行.trim_start().trim_start_matches(前置き).split(';').next().unwrap_or("").trim();
-    数値.parse::<f64>().map_err(|誤り| 規約検査の破れ::定数の値を数として読めない {
+    数値を読む(数値).map_err(|誤り| 規約検査の破れ::定数の値を数として読めない {
         パス,
         前置き,
         綴り: 数値.to_string(),
         誤り,
     })
+}
+
+/// 数の綴りと、`1.0 / 60.0`のような2つの数の商を読む。商を許すのは、基本刻みのように分母で書くのが正本の自然な綴りである
+/// 定数を、写しと突き合わせるために小数へ書き直させないためである。
+fn 数値を読む(綴り: &str) -> Result<f64, std::num::ParseFloatError> {
+    match 綴り.split_once('/') {
+        Some((分子, 分母)) => Ok(分子.trim().parse::<f64>()? / 分母.trim().parse::<f64>()?),
+        None => 綴り.parse::<f64>(),
+    }
 }

@@ -2,7 +2,7 @@
 
 use thiserror::Error;
 
-#[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Error, Clone, Copy, PartialEq)]
 pub enum 布素材エラー {
     #[error("一辺粒子数{0}が2未満だった")]
     一辺粒子数不足(u32),
@@ -18,4 +18,6 @@ pub enum 布素材エラー {
     色の区間が拘束を覆わない { 合計: u32, 拘束の数: u32 },
     #[error("色の数{色の数}が上限{上限}を超えた(1刻みのパス数の上限がこの値から決まる)")]
     色の数が上限を超えた { 色の数: usize, 上限: u32 },
+    #[error("布の刻み幅{秒}秒が正の有限値でない(GPUは刻み幅とその2乗の逆数を積分と刻み依存量に使う)")]
+    刻み幅が正の有限値でない { 秒: f32 },
 }

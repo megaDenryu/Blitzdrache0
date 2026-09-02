@@ -23,6 +23,7 @@ pub(in crate::app) struct 読み込む世界の材料<'材料> {
     pub(in crate::app) 大域平行移動: blitz_math::大域ワールド位置, // --global-offsetが世界全体へ加える平行移動。描画の基準原点へ最後に合成する
     pub(in crate::app) チャンク一辺: Option<blitz_engine::チャンク一辺>,
     pub(in crate::app) 布モード: 布モード,
+    pub(in crate::app) 基本刻み: blitz_math::秒, // 時間の規律の正本から注入した固定刻み1本の長さ。布の刻み幅はこの値から作る
 }
 
 /// 起動時に決まり、以降は変わらない画面の作り方。世界の描画構成・天空配線・計測の要求が決めた値をここへ集める。

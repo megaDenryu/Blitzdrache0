@@ -16,6 +16,7 @@ mod point_light_shadow;
 mod scene;
 mod sweep_approach;
 mod temporal_reconstruction;
+mod time_step;
 mod workgroup_threads;
 mod xpbd_bench;
 
@@ -28,7 +29,7 @@ pub(super) struct 定数の組 {
 }
 
 /// 領域ごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域一覧: [&[定数の組]; 16] = [
+pub(super) const 領域一覧: [&[定数の組]; 17] = [
     &atmosphere::定数一覧,
     &auto_exposure::定数一覧,
     &bloom::定数一覧,
@@ -43,6 +44,7 @@ pub(super) const 領域一覧: [&[定数の組]; 16] = [
     &scene::定数一覧,
     &sweep_approach::定数一覧,
     &temporal_reconstruction::定数一覧,
+    &time_step::定数一覧,
     &workgroup_threads::定数一覧,
     &xpbd_bench::定数一覧,
 ];
