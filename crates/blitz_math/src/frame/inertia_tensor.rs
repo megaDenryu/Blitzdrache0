@@ -61,8 +61,8 @@ impl<空間種: 空間> 慣性テンソル<空間種> {
     }
 }
 
-/// a との外積を表す3×3行列 [a]×。[a]× v = a × v である。
-pub(super) fn 外積の行列(a: glam::Vec3) -> Mat3 {
+// a との外積を表す3×3行列 [a]×。[a]× v = a × v である。
+fn 外積の行列(a: glam::Vec3) -> Mat3 {
     Mat3::from_cols(
         glam::Vec3::new(0.0, a.z, -a.y),
         glam::Vec3::new(-a.z, 0.0, a.x),
