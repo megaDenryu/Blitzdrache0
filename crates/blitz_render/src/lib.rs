@@ -5,7 +5,7 @@ pub mod atmosphere_lut_probe;
 pub mod auto_exposure;
 pub mod cascade;
 mod clear_color;
-mod cloth_material;
+pub mod cloth_material;
 mod cloth_shader_set;
 pub mod clustered_lighting;
 mod compute_shader;

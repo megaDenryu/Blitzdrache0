@@ -1,5 +1,6 @@
-//! 布シミュ用ディスクリプタ(判断54): b0=定数UBO、b1〜b9=ストレージ9本の統一レイアウトと、
-//! UBO・介入だけが異なる進行中フレーム2セット。バインディング表はcloth_step.slang冒頭の仕様。
+//! 布シミュ用ディスクリプタ(判断54): b0=定数UBO、b1〜b10=ストレージ10本の統一レイアウトと、
+//! UBO・介入だけが異なる進行中フレーム2セット。束縛番号の正本はこのファイルの定数であり、
+//! cloth_step.slang冒頭の表と各シェーダーの宣言を`cargo xtask conform`が突き合わせる。
 
 use ash::vk;
 
@@ -10,29 +11,41 @@ use crate::vulkan::descriptor::{
 };
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
-const ストレージ本数: u32 = 9;
+pub(crate) const 定数の束縛番号: 束縛番号 = 束縛番号::生成する(0);
+pub(crate) const 粒子の束縛番号: 束縛番号 = 束縛番号::生成する(1);
+pub(crate) const 前位置の束縛番号: 束縛番号 = 束縛番号::生成する(2);
+pub(crate) const 介入の束縛番号: 束縛番号 = 束縛番号::生成する(3);
+pub(crate) const 拘束の引数の束縛番号: 束縛番号 = 束縛番号::生成する(4);
+pub(crate) const セルカウントの束縛番号: 束縛番号 = 束縛番号::生成する(5);
+pub(crate) const セル格納の束縛番号: 束縛番号 = 束縛番号::生成する(6);
+pub(crate) const 布頂点の束縛番号: 束縛番号 = 束縛番号::生成する(7);
+pub(crate) const スキン済み頂点の束縛番号: 束縛番号 = 束縛番号::生成する(8);
+pub(crate) const アタッチ対応の束縛番号: 束縛番号 = 束縛番号::生成する(9);
+pub(crate) const ラグランジュ乗数の束縛番号: 束縛番号 = 束縛番号::生成する(10);
+
+pub(super) const 束縛の本数: usize = 11;
 const 計算段: vk::ShaderStageFlags = vk::ShaderStageFlags::COMPUTE;
 const 記憶: vk::DescriptorType = vk::DescriptorType::STORAGE_BUFFER;
 
-/// 束縛の並び。cloth_step.slang冒頭の表(b0=UBO b1=粒子 b2=前位置 b3=介入 b4=隣接 b5=セルカウント
-/// b6=セル格納 b7=布頂点 b8=スキン済み頂点 b9=アタッチ対応)と同じ順である。
-pub(super) const 束縛の宣言: 宣言した束縛の並び<10> = 宣言した束縛の並び::生成する([
-    (束縛番号::生成する(0), vk::DescriptorType::UNIFORM_BUFFER, 計算段),
-    (束縛番号::生成する(1), 記憶, 計算段),
-    (束縛番号::生成する(2), 記憶, 計算段),
-    (束縛番号::生成する(3), 記憶, 計算段),
-    (束縛番号::生成する(4), 記憶, 計算段),
-    (束縛番号::生成する(5), 記憶, 計算段),
-    (束縛番号::生成する(6), 記憶, 計算段),
-    (束縛番号::生成する(7), 記憶, 計算段),
-    (束縛番号::生成する(8), 記憶, 計算段),
-    (束縛番号::生成する(9), 記憶, 計算段),
+/// 束縛の並び。`write`が結ぶ現物の並びはこの順である。
+pub(super) const 束縛の宣言: 宣言した束縛の並び<束縛の本数> = 宣言した束縛の並び::生成する([
+    (定数の束縛番号, vk::DescriptorType::UNIFORM_BUFFER, 計算段),
+    (粒子の束縛番号, 記憶, 計算段),
+    (前位置の束縛番号, 記憶, 計算段),
+    (介入の束縛番号, 記憶, 計算段),
+    (拘束の引数の束縛番号, 記憶, 計算段),
+    (セルカウントの束縛番号, 記憶, 計算段),
+    (セル格納の束縛番号, 記憶, 計算段),
+    (布頂点の束縛番号, 記憶, 計算段),
+    (スキン済み頂点の束縛番号, 記憶, 計算段),
+    (アタッチ対応の束縛番号, 記憶, 計算段),
+    (ラグランジュ乗数の束縛番号, 記憶, 計算段),
 ]);
 
 pub(super) struct 布ディスクリプタ {
-    layout: 宣言から作ったセットレイアウト<10>,
+    layout: 宣言から作ったセットレイアウト<束縛の本数>,
     pool: vk::DescriptorPool,
-    set一覧: [宣言から割り当てたセット<10>; 進行中フレーム数],
+    set一覧: [宣言から割り当てたセット<束縛の本数>; 進行中フレーム数],
 }
 
 impl 布ディスクリプタ {
@@ -59,17 +72,9 @@ pub(super) fn 布ディスクリプタを生成する(
     スキン済み頂点buffer: Option<vk::Buffer>,
 ) -> Result<布ディスクリプタ, レンダラーエラー> {
     let layout = 束縛の宣言.セットレイアウトを確保する(device)?;
-
     let セット数 = u32::try_from(進行中フレーム数).unwrap_or_else(|_| panic!("進行中フレーム数がu32に収まらない"));
-    let pool_size一覧 = [
-        vk::DescriptorPoolSize::default()
-            .ty(vk::DescriptorType::UNIFORM_BUFFER)
-            .descriptor_count(セット数),
-        vk::DescriptorPoolSize::default()
-            .ty(vk::DescriptorType::STORAGE_BUFFER)
-            .descriptor_count(ストレージ本数 * セット数),
-    ];
-    let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(セット数).pool_sizes(&pool_size一覧);
+    let 内訳 = 束縛の宣言.プールの内訳(セット数);
+    let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(セット数).pool_sizes(&内訳);
     // 安全性: deviceは生成済みで有効。失敗時はlayoutを片付ける。
     let pool = match unsafe { device.create_descriptor_pool(&pool_info, None) } {
         Ok(pool) => pool,

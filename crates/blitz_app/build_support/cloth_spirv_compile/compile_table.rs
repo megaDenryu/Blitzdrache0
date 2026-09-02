@@ -13,7 +13,13 @@ pub(super) const コンパイル表: [(&str, &[エントリ指定]); 10] = [
         ],
     ),
     ("cloth_attach.slang", &[コンピュート("attachMain", "cloth_attach.spv")]),
-    ("cloth_constraint.slang", &[コンピュート("constraintMain", "cloth_constraint.spv")]),
+    (
+        "cloth_constraint.slang",
+        &[
+            コンピュート("lambdaClearMain", "cloth_lambda_clear.spv"),
+            コンピュート("constraintMain", "cloth_constraint.spv"),
+        ],
+    ),
     (
         "cloth_hash.slang",
         &[

@@ -2,6 +2,7 @@
 
 use ash::vk;
 
+use crate::cloth_material::布の彩色の区間;
 use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 
 /// 布描画の外部資源とは、布の描画コマンドが束縛する資源のうち、布一式でなくレンダラーが所有するもののことである。
@@ -25,6 +26,7 @@ pub(crate) struct 布描画入力 {
     pub(crate) 介入pipeline: vk::Pipeline,
     pub(crate) 積分pipeline: vk::Pipeline,
     pub(crate) アタッチpipeline: vk::Pipeline,
+    pub(crate) 乗数零化pipeline: vk::Pipeline,
     pub(crate) 拘束pipeline: vk::Pipeline,
     pub(crate) ハッシュ消去pipeline: vk::Pipeline,
     pub(crate) ハッシュ格納pipeline: vk::Pipeline,
@@ -33,11 +35,15 @@ pub(crate) struct 布描画入力 {
     pub(crate) 頂点生成pipeline: vk::Pipeline,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
     pub(crate) 粒子数: u32,
+    pub(crate) 拘束の数: u32,
+    pub(crate) 色の区間一覧: Vec<布の彩色の区間>, // 拘束の工程を色ごとに1回ずつ積む区間。プッシュ定数で運ぶ
     pub(crate) アタッチ件数: u32,
     pub(crate) 介入件数: u32,
     pub(crate) 進める刻み数: crate::frame_input::布の進める刻み数, // シミュレーションの工程をこの本数だけ繰り返す
     pub(crate) 粒子バッファ: vk::Buffer,
     pub(crate) 前位置バッファ: vk::Buffer,
+    pub(crate) 拘束の引数バッファ: vk::Buffer,
+    pub(crate) ラグランジュ乗数バッファ: vk::Buffer,
     pub(crate) セルカウントバッファ: vk::Buffer,
     pub(crate) セル格納バッファ: vk::Buffer,
     pub(crate) 布頂点バッファ: vk::Buffer,

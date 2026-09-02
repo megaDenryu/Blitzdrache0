@@ -1,8 +1,10 @@
 // M9: 布シミュレーションの介入適用と積分(判断52〜54)。
 // 布シミュ全シェーダー共通のバインディング表(統一ディスクリプタセット。各ファイルは使う分だけ宣言する):
 //   b0=シミュ定数UBO(進行中フレーム2重) b1=粒子(vec4x2/粒子: pos.w=逆質量, vel.w=予備)
-//   b2=前位置(vec4/粒子) b3=介入キュー(32B/件、2重) b4=隣接拘束(u32+f32のペアx8/粒子)
+//   b2=前位置(vec4/粒子) b3=介入キュー(32B/件、2重) b4=拘束の引数(uint2+float2/拘束: a添字・b添字・静止長・コンプライアンス。彩色で色ごとに並べ替えた順)
 //   b5=セルカウント(u32/セル) b6=セル格納(u32x8/セル) b7=布頂点(float12個/頂点=48B)
+//   b8=スキン済み頂点 b9=アタッチ対応 b10=ラグランジュ乗数(float/拘束。刻みの開始で0へ戻す)
+// 束縛番号の正本は`crates/blitz_render/src/vulkan/cloth/descriptor.rs`、拘束と乗数のレイアウトの正本は`crates/blitz_sim/src/gpu_layout/xpbd.rs`である。
 // 介入レイアウト(blitz_sim::interventionの仕様と一致): 種別u32(0=掴む,1=離す,2=インパルス)+
 // 粒子添字u32+パディングu32x2+float4(掴む=目標位置xyz / インパルス=xyz力)。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
@@ -13,8 +15,8 @@ struct ClothParams
     float4 gridOrigin;   // xyz=空間グリッド原点, w=セル寸法
     float4 capsuleA;     // xyz=カプセル端点A, w=カプセル半径
     float4 capsuleB;     // xyz=カプセル端点B, w=既定逆質量(離す介入の復元値)
-    uint4 counts;        // x=粒子数, y=一辺粒子数, z=介入件数, w=予備
-    float4 misc;         // x=粒子衝突半径, y=過緩和係数, z=速度減衰, w=予備
+    uint4 counts;        // x=粒子数, y=一辺粒子数, z=介入件数, w=アタッチ対応の件数
+    float4 misc;         // x=粒子衝突半径, y=1÷刻み幅²(コンプライアンスから刻み依存量α̃を導く), z=速度減衰, w=予備
 };
 
 [[vk::binding(0, 0)]] ConstantBuffer<ClothParams> params;

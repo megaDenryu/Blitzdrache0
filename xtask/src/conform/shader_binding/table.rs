@@ -2,6 +2,7 @@
 //! 読み取りの規則は隣の工程が持ち、どの宣言とどの宣言が同じ番号でなければならないかは各セットの台帳が持つ。
 //! セットで分けるのは、束縛を1本足すときに触るのがそのセットの台帳1つになるようにするためである。
 
+mod cloth_set;
 mod geometry_set;
 mod lighting_set;
 mod material_set;
@@ -19,10 +20,11 @@ pub(super) struct 束縛番号の組 {
 }
 
 /// セットごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域ごとの台帳の一覧: [&[束縛番号の組]; 5] = [
+pub(super) const 領域ごとの台帳の一覧: [&[束縛番号の組]; 6] = [
     &view_pass_set::束縛番号の組の一覧,
     &geometry_set::束縛番号の組の一覧,
     &material_set::束縛番号の組の一覧,
     &lighting_set::束縛番号の組の一覧,
     &xpbd_bench_set::束縛番号の組の一覧,
+    &cloth_set::束縛番号の組の一覧,
 ];

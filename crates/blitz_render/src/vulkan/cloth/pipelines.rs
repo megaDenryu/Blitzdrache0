@@ -1,5 +1,5 @@
-//! 布シミュのコンピュートパイプライン9本(判断54)。全本が同じディスクリプタレイアウトを
-//! 共有し、プッシュ定数は無い(定数はb0のUBOで渡す)。
+//! 布シミュのコンピュートパイプライン10本(判断54)。全本が同じディスクリプタレイアウトと、彩色の区間の2語を運ぶ
+//! プッシュ定数の範囲を持つパイプラインレイアウトを共有する(プッシュ定数を読むのは拘束の工程だけである)。
 
 use ash::vk;
 
@@ -7,11 +7,15 @@ use crate::cloth_shader_set::布シェーダー一式;
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 
+/// 彩色の区間(開始と本数)をプッシュ定数で運ぶバイト数。
+pub(super) const プッシュ定数のバイト数: u32 = 8;
+
 pub(super) struct 布パイプライン群 {
     pub(super) layout: vk::PipelineLayout,
     pub(super) 介入: vk::Pipeline,
     pub(super) 積分: vk::Pipeline,
     pub(super) アタッチ: vk::Pipeline,
+    pub(super) 乗数零化: vk::Pipeline,
     pub(super) 拘束: vk::Pipeline,
     pub(super) ハッシュ消去: vk::Pipeline,
     pub(super) ハッシュ格納: vk::Pipeline,
@@ -27,14 +31,21 @@ pub(super) fn 布パイプライン群を生成する(
 ) -> Result<布パイプライン群, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let ディスクリプタlayout一覧 = [ディスクリプタlayout];
-    let layout_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&ディスクリプタlayout一覧);
+    let プッシュ定数 = [vk::PushConstantRange::default()
+        .stage_flags(vk::ShaderStageFlags::COMPUTE)
+        .offset(0)
+        .size(プッシュ定数のバイト数)];
+    let layout_info = vk::PipelineLayoutCreateInfo::default()
+        .set_layouts(&ディスクリプタlayout一覧)
+        .push_constant_ranges(&プッシュ定数);
     // 安全性: deviceは生成済みで有効。layout_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_info, None)? };
 
-    let 仕様一覧: [(&[u8], &std::ffi::CStr); 9] = [
+    let 仕様一覧: [(&[u8], &std::ffi::CStr); 10] = [
         (シェーダー.介入.コード(), c"interventionMain"),
         (シェーダー.積分.コード(), c"integrateMain"),
         (シェーダー.アタッチ.コード(), c"attachMain"),
+        (シェーダー.乗数零化.コード(), c"lambdaClearMain"),
         (シェーダー.拘束.コード(), c"constraintMain"),
         (シェーダー.ハッシュ消去.コード(), c"hashClearMain"),
         (シェーダー.ハッシュ格納.コード(), c"hashStoreMain"),
@@ -63,12 +74,13 @@ pub(super) fn 布パイプライン群を生成する(
         介入: 生成済み[0],
         積分: 生成済み[1],
         アタッチ: 生成済み[2],
-        拘束: 生成済み[3],
-        ハッシュ消去: 生成済み[4],
-        ハッシュ格納: 生成済み[5],
-        分離: 生成済み[6],
-        仕上げ: 生成済み[7],
-        頂点生成: 生成済み[8],
+        乗数零化: 生成済み[3],
+        拘束: 生成済み[4],
+        ハッシュ消去: 生成済み[5],
+        ハッシュ格納: 生成済み[6],
+        分離: 生成済み[7],
+        仕上げ: 生成済み[8],
+        頂点生成: 生成済み[9],
     })
 }
 
@@ -80,6 +92,7 @@ impl 布パイプライン群 {
                 self.介入,
                 self.積分,
                 self.アタッチ,
+                self.乗数零化,
                 self.拘束,
                 self.ハッシュ消去,
                 self.ハッシュ格納,

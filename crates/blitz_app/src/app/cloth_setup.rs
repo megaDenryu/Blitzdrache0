@@ -2,6 +2,7 @@
 //! アタッチ先の選択は`attach`にある。数値はFoxのスケール(1単位約1cm)前提。
 
 mod attach;
+mod material;
 mod preset;
 
 use preset::{マントを構築する, 吊るし布を構築する};

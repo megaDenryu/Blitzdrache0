@@ -1,9 +1,13 @@
-// M9: 距離拘束のgather反復(判断52・54)。粒子ごと1スレッドで自分に関わる拘束(最大8本)を読み、
-// 自分の位置だけを逆質量比で補正する(原子演算不要)。
-// 注意: 同一バッファを他スレッドが同時に補正するため、読む相手位置は同一反復内の新旧が混在する
-// (chaotic relaxation)。収束先は同じだがビット単位の決定性は無い。厳密な決定性が要る場合は
-// 位置のダブルバッファ化(分類3)で対応する。
-// バインディング表と定数レイアウトはcloth_step.slang冒頭の仕様に従う。
+// M9/Issue #36: 布の構造とせん断の距離拘束を本来のXPBD(コンプライアンスとラグランジュ乗数を持つ正典式)で解く工程。
+// 並列方式はグラフ彩色(判断7の採用規則1): 同じ粒子を触らない拘束の集合(色)ごとに1回のディスパッチを積み、
+// 1色の中では拘束1本につき1スレッドが乗数と両端の位置を直接書く。色の区間はプッシュ定数で受ける。
+// 色の中で粒子を共有しないことをCPUの彩色(`blitz_sim::布の彩色済み拘束`)が保証するため、原子演算も平均も要らず、
+// 逐次(ガウス・ザイデル型)の更新であるため緩和係数も掛けない。結果はビット単位で決定的である。
+// 正典式は`xpbd_projection.slang`の1つの写しを読み、式をここへ再び書かない。退化(両方が固定・向きが定まらない)は補正0で乗数を変えない。
+// 乗数は物理刻みの開始で`lambdaClearMain`が0へ戻し(判断5)、その刻みの反復の間だけ累積する。
+// バインディング表と定数レイアウトはcloth_step.slang冒頭の仕様に従う(b4=拘束の引数、b10=ラグランジュ乗数)。
+
+import xpbd_projection;
 
 struct ClothParams
 {
@@ -15,64 +19,62 @@ struct ClothParams
     float4 misc;
 };
 
+// 1拘束16バイト。並びは彩色で色ごとに並べ替えた順であり、`blitz_sim::gpu_layout::xpbd`の拘束の引数の契約と同じである。
+struct ConstraintParams
+{
+    uint a;
+    uint b;
+    float restLength;
+    float compliance;
+};
+
+// 1色の区間。並べ替えた拘束一覧の中で色が占める連続した範囲であり、CPUの`布の彩色の区間`と同じ2語である。
+struct ColorRange
+{
+    uint start;
+    uint count;
+};
+
 [[vk::binding(0, 0)]] ConstantBuffer<ClothParams> params;
 [[vk::binding(1, 0)]] RWStructuredBuffer<float4> particles;
-// 1粒子8スロット。スロット=相手添字u32(空きは0xFFFFFFFF)+静止長f32。
-struct NeighborSlot
+[[vk::binding(4, 0)]] StructuredBuffer<ConstraintParams> constraints;
+[[vk::binding(10, 0)]] RWStructuredBuffer<float> lambdas;
+[[vk::push_constant]] ColorRange colorRange;
+
+static const uint threadsPerGroup = 64;
+
+// 物理刻みの開始でラグランジュ乗数を0へ戻す(判断5)。拘束1本につき1スレッドであり、区間は全拘束(開始0・本数=拘束の数)を受ける。
+[shader("compute")]
+[numthreads(64, 1, 1)]
+void lambdaClearMain(uint3 id: SV_DispatchThreadID)
 {
-    uint otherIndex;
-    float restLength;
-};
-[[vk::binding(4, 0)]] StructuredBuffer<NeighborSlot> neighborConstraints;
+    if (id.x >= colorRange.count)
+    {
+        return;
+    }
+    lambdas[colorRange.start + id.x] = 0.0;
+}
 
-static const uint slotsPerParticle = 8;
-static const uint emptySlot = 0xFFFFFFFF;
-
-// XPBD剛距離拘束の自分側補正(blitz_simのCPU参照計算と同式):
-// C = |d| - 静止長、補正 = -(w_self / (w_self + w_other)) * C * d/|d| に過緩和係数を掛ける。
+// 1色の区間の拘束を正典式で1回射影し、乗数と両端の位置を直接書く。粒子は32バイト(位置と逆質量のfloat4 + 速度のfloat4)である。
 [shader("compute")]
 [numthreads(64, 1, 1)]
 void constraintMain(uint3 id: SV_DispatchThreadID)
 {
-    uint index = id.x;
-    if (index >= params.counts.x)
+    if (id.x >= colorRange.count)
     {
         return;
     }
-    float4 positionInvMass = particles[index * 2];
-    float selfInvMass = positionInvMass.w;
-    if (selfInvMass == 0.0)
+    uint index = colorRange.start + id.x;
+    ConstraintParams constraint = constraints[index];
+    float4 a = particles[constraint.a * 2];
+    float4 b = particles[constraint.b * 2];
+    float alphaTilde = constraint.compliance * params.misc.y;
+    DistanceProjection projection = projectDistance(a.xyz, a.w, b.xyz, b.w, constraint.restLength, alphaTilde, lambdas[index]);
+    if (!projection.corrected)
     {
         return;
     }
-    float3 position = positionInvMass.xyz;
-    float3 correction = float3(0.0, 0.0, 0.0);
-    float activeCount = 0.0;
-    for (uint slot = 0; slot < slotsPerParticle; slot++)
-    {
-        NeighborSlot neighbor = neighborConstraints[index * slotsPerParticle + slot];
-        if (neighbor.otherIndex == emptySlot)
-        {
-            continue;
-        }
-        float4 otherPositionInvMass = particles[neighbor.otherIndex * 2];
-        float3 difference = position - otherPositionInvMass.xyz;
-        float length2 = dot(difference, difference);
-        if (length2 < 1e-12)
-        {
-            continue;
-        }
-        float currentLength = sqrt(length2);
-        float violation = currentLength - neighbor.restLength;
-        float weightSum = selfInvMass + otherPositionInvMass.w;
-        correction += difference * (-(selfInvMass / weightSum) * violation / currentLength);
-        activeCount += 1.0;
-    }
-    if (activeCount == 0.0)
-    {
-        return;
-    }
-    // 注意: gather合算の補正は関与拘束数で平均する。平均しないと最大8本ぶんの補正が
-    // 重なって過剰補正になり、数フレームで発散する(実測で確認した)。
-    particles[index * 2].xyz = position + correction * (params.misc.y / activeCount);
+    lambdas[index] += projection.deltaLambda;
+    particles[constraint.a * 2] = float4(a.xyz + projection.correctionA, a.w);
+    particles[constraint.b * 2] = float4(b.xyz + projection.correctionB, b.w);
 }

@@ -10,6 +10,7 @@ use crate::error::起動エラー;
 const 介入SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_intervention.spv"));
 const 積分SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_integrate.spv"));
 const アタッチSPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_attach.spv"));
+const 乗数零化SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_lambda_clear.spv"));
 const 拘束SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_constraint.spv"));
 const ハッシュ消去SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_hash_clear.spv"));
 const ハッシュ格納SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/cloth_hash_store.spv"));
@@ -28,6 +29,7 @@ pub(crate) fn 埋め込み布シェーダーを生成する() -> Result<布シ�
         介入: コンピュートシェーダー::生成する(介入SPIRV.to_vec())?,
         積分: コンピュートシェーダー::生成する(積分SPIRV.to_vec())?,
         アタッチ: コンピュートシェーダー::生成する(アタッチSPIRV.to_vec())?,
+        乗数零化: コンピュートシェーダー::生成する(乗数零化SPIRV.to_vec())?,
         拘束: コンピュートシェーダー::生成する(拘束SPIRV.to_vec())?,
         ハッシュ消去: コンピュートシェーダー::生成する(ハッシュ消去SPIRV.to_vec())?,
         ハッシュ格納: コンピュートシェーダー::生成する(ハッシュ格納SPIRV.to_vec())?,
