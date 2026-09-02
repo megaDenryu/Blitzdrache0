@@ -85,12 +85,12 @@ impl 計測の題材 {
             xpbd_gpu_layout::隣接の区間バイト列にする(&self.隣接表),
             xpbd_gpu_layout::隣接の項目バイト列にする(&self.隣接表),
             self.色の区間一覧.clone(),
-            数へ(self.グラフ.点の数()),
-            数へ(self.グラフ.拘束の数()),
+            usizeの個数をu32の数へ変換する(self.グラフ.点の数()),
+            usizeの個数をu32の数へ変換する(self.グラフ.拘束の数()),
         )?)
     }
 }
 
-fn 数へ(値: usize) -> u32 {
+fn usizeの個数をu32の数へ変換する(値: usize) -> u32 {
     u32::try_from(値).unwrap_or_else(|_| panic!("数がu32に収まらない(拘束グラフの生成が保証する不変条件の破れ): {値}"))
 }

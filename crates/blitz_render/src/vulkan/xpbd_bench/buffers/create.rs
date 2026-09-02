@@ -25,8 +25,8 @@ impl XPBD計測バッファ {
         let mut 台帳 = 巻き戻せる確保の台帳::始める(確保係);
         let ストレージ = vk::BufferUsageFlags::STORAGE_BUFFER;
         let 読み戻せるストレージ = ストレージ | vk::BufferUsageFlags::TRANSFER_SRC;
-        let 点の数 = 数へ(素材.点の数);
-        let 拘束の数 = 数へ(素材.拘束の数);
+        let 点の数 = u32の件数をusizeへ変換する(素材.点の数);
+        let 拘束の数 = u32の件数をusizeへ変換する(素材.拘束の数);
 
         let 定数 = 台帳.積む(確保係.ホスト可視バッファを確保して書き込む(&[0u8; params::バイト長], vk::BufferUsageFlags::UNIFORM_BUFFER))?;
         let 点 = 台帳.積む(転送係.データからデバイスローカルバッファを確保する(&素材.点の状態バイト列, 読み戻せるストレージ))?;
@@ -53,6 +53,6 @@ impl XPBD計測バッファ {
     }
 }
 
-fn 数へ(値: u32) -> usize {
+fn u32の件数をusizeへ変換する(値: u32) -> usize {
     usize::try_from(値).unwrap_or_else(|_| panic!("数がusizeに収まらない: {値}"))
 }

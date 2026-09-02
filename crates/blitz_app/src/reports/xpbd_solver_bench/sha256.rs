@@ -7,11 +7,11 @@ mod constants;
 use constants::{丸め定数, 初期ハッシュ};
 
 /// バイト列のSHA-256を小文字の十六進64桁で返す。
-pub(super) fn 十六進の指紋(バイト列: &[u8]) -> String {
-    ハッシュ(バイト列).iter().map(|語| format!("{語:08x}")).collect()
+pub(super) fn 十六進の指紋を計算する(バイト列: &[u8]) -> String {
+    sha256の語の列を計算する(バイト列).iter().map(|語| format!("{語:08x}")).collect()
 }
 
-fn ハッシュ(バイト列: &[u8]) -> [u32; 8] {
+fn sha256の語の列を計算する(バイト列: &[u8]) -> [u32; 8] {
     let mut 詰めた = バイト列.to_vec();
     詰めた.push(0x80);
     詰め物を足す(&mut 詰めた);

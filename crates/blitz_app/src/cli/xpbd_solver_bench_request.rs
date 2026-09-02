@@ -63,8 +63,8 @@ fn 指定を読む(引数一覧: &[String]) -> Result<XPBD並列方式計測の�
         }
     }
     Ok(XPBD並列方式計測の指定 {
-        方式: 方式.ok_or_else(|| 不正(format!("{方式の引数名}が無い")))?,
-        グラフ: グラフ.ok_or_else(|| 不正(format!("{グラフの引数名}が無い")))?,
+        方式: 方式.ok_or_else(|| 指定不正のエラーを組む(format!("{方式の引数名}が無い")))?,
+        グラフ: グラフ.ok_or_else(|| 指定不正のエラーを組む(format!("{グラフの引数名}が無い")))?,
         反復回数,
         刻み数,
         点の数,
@@ -77,7 +77,9 @@ fn 方式を読む(語: &str) -> Result<XPBD並列方式, 起動引数エラー>
         "atomic" => Ok(XPBD並列方式::原子加算),
         "coloring" => Ok(XPBD並列方式::グラフ彩色),
         "two-stage" => Ok(XPBD並列方式::二段階),
-        _ => Err(不正(format!("{方式の引数名}はatomic・coloring・two-stageのどれかである({語})"))),
+        _ => Err(指定不正のエラーを組む(format!(
+            "{方式の引数名}はatomic・coloring・two-stageのどれかである({語})"
+        ))),
     }
 }
 
@@ -85,23 +87,28 @@ fn グラフを読む(語: &str) -> Result<XPBD計測のグラフの種別, 起�
     match 語 {
         "grid" => Ok(XPBD計測のグラフの種別::規則格子),
         "irregular" => Ok(XPBD計測のグラフの種別::不規則),
-        _ => Err(不正(format!("{グラフの引数名}はgrid・irregularのどちらかである({語})"))),
+        _ => Err(指定不正のエラーを組む(
+            format!("{グラフの引数名}はgrid・irregularのどちらかである({語})"),
+        )),
     }
 }
 
 fn 数を読む(引数名: &'static str, 語: Option<&String>) -> Result<u32, 起動引数エラー> {
     let 語 = 値を求める(引数名, 語)?;
-    let 値: u32 = 語.parse().map_err(|_| 不正(format!("{引数名}の値を数として読めない({語})")))?;
+    let 値: u32 = 語
+        .parse()
+        .map_err(|_| 指定不正のエラーを組む(format!("{引数名}の値を数として読めない({語})")))?;
     if 値 == 0 {
-        return Err(不正(format!("{引数名}は1以上である")));
+        return Err(指定不正のエラーを組む(format!("{引数名}は1以上である")));
     }
     Ok(値)
 }
 
 fn 値を求める<'語>(引数名: &'static str, 語: Option<&'語 String>) -> Result<&'語 str, 起動引数エラー> {
-    語.map(String::as_str).ok_or_else(|| 不正(format!("{引数名}の次に値が無い")))
+    語.map(String::as_str)
+        .ok_or_else(|| 指定不正のエラーを組む(format!("{引数名}の次に値が無い")))
 }
 
-fn 不正(理由: String) -> 起動引数エラー {
+fn 指定不正のエラーを組む(理由: String) -> 起動引数エラー {
     起動引数エラー::XPBD並列方式計測の指定不正(理由)
 }
