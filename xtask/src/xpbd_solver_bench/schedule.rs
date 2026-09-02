@@ -27,14 +27,6 @@ impl 方式 {
             Self::二段階 => "two-stage",
         }
     }
-
-    /// ビット単位の再現を約束する方式か。原子加算は原子演算の順で変わりうるため約束しない(実測は事実として残す)。
-    pub(super) const fn 決定的であるべきか(self) -> bool {
-        match self {
-            Self::原子加算 => false,
-            Self::グラフ彩色 | Self::二段階 => true,
-        }
-    }
 }
 
 /// 題材の拘束グラフ。値はblitz_appの`--xpbd-graph`へそのまま渡る語である。
