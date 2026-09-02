@@ -21,17 +21,22 @@ struct ClothParams
 [[vk::binding(1, 0)]] RWStructuredBuffer<float4> particles;
 [[vk::binding(2, 0)]] RWStructuredBuffer<float4> previousPositions;
 
+// カプセルの線分の長さの2乗の下限。線分が1点に潰れたときに最近傍の係数の割り算をせず、端点Aを最近傍にする。
+static const float minimumCapsuleSegmentLength2 = 1e-12;
+// 最近傍からの距離の2乗の下限。中心軸の上の粒子は押し出す向きが定まらないため動かさない。
+static const float minimumPushOutDistance2 = 1e-12;
+
 // カプセル(線分AB+半径)表面より内側の点を最近傍方向へ押し出す。
 float3 pushOutOfCapsule(float3 position)
 {
     float3 segment = params.capsuleB.xyz - params.capsuleA.xyz;
     float segmentLength2 = dot(segment, segment);
-    float t = segmentLength2 < 1e-12 ? 0.0 : clamp(dot(position - params.capsuleA.xyz, segment) / segmentLength2, 0.0, 1.0);
+    float t = segmentLength2 < minimumCapsuleSegmentLength2 ? 0.0 : clamp(dot(position - params.capsuleA.xyz, segment) / segmentLength2, 0.0, 1.0);
     float3 closest = params.capsuleA.xyz + segment * t;
     float3 offset = position - closest;
     float distance2 = dot(offset, offset);
     float radius = params.capsuleA.w;
-    if (distance2 >= radius * radius || distance2 < 1e-12)
+    if (distance2 >= radius * radius || distance2 < minimumPushOutDistance2)
     {
         return position;
     }

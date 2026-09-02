@@ -20,6 +20,8 @@ struct ClothParams
 
 static const uint gridSide = 32;
 static const uint cellCapacity = 8;
+// 相手の粒子との距離の2乗の下限。重なった粒子は押し出す向きが定まらないため分離の対象にしない。
+static const float minimumSeparationDistance2 = 1e-12;
 
 [shader("compute")]
 [numthreads(64, 1, 1)]
@@ -59,7 +61,7 @@ void separateMain(uint3 id: SV_DispatchThreadID)
                     }
                     float3 difference = position - particles[other * 2].xyz;
                     float distance2 = dot(difference, difference);
-                    if (distance2 < 1e-12 || distance2 >= minDistance * minDistance)
+                    if (distance2 < minimumSeparationDistance2 || distance2 >= minDistance * minDistance)
                     {
                         continue;
                     }

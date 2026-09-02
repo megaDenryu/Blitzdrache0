@@ -19,6 +19,10 @@ struct ClothParams
 [[vk::binding(7, 0)]] RWStructuredBuffer<float> clothVertices;
 
 static const uint floatsPerVertex = 12;
+// 行と列の接線の外積の長さの2乗の下限。近傍が一直線に並んだ粒子は法線が定まらないため上向きを使う。
+static const float minimumCrossVectorLength2 = 1e-12;
+// 行方向の接線の長さの2乗の下限。行の近傍が重なった粒子は接線が定まらないためx軸の向きを使う。
+static const float minimumRowTangentLength2 = 1e-12;
 
 float3 particlePosition(uint x, uint y, uint side)
 {
@@ -47,8 +51,8 @@ void vertexGenMain(uint3 id: SV_DispatchThreadID)
     float3 rowTangent = rowNeighborB - rowNeighborA;
     float3 columnTangent = columnNeighborB - columnNeighborA;
     float3 crossVector = cross(rowTangent, columnTangent);
-    float3 normal = dot(crossVector, crossVector) < 1e-12 ? float3(0.0, 1.0, 0.0) : normalize(crossVector);
-    float3 tangent = dot(rowTangent, rowTangent) < 1e-12 ? float3(1.0, 0.0, 0.0) : normalize(rowTangent);
+    float3 normal = dot(crossVector, crossVector) < minimumCrossVectorLength2 ? float3(0.0, 1.0, 0.0) : normalize(crossVector);
+    float3 tangent = dot(rowTangent, rowTangent) < minimumRowTangentLength2 ? float3(1.0, 0.0, 0.0) : normalize(rowTangent);
 
     uint base = index * floatsPerVertex;
     clothVertices[base] = position.x;
