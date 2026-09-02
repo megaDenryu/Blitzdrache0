@@ -2,7 +2,7 @@
 //! 逆質量(毎キログラム)を掛けると長さ(メートル)になり、それが自由度へ加える補正の長さである。
 //! 寿命は呼び出し側が持つ。物理刻みの開始時に`零()`から始め、反復ごとに更新後の値を次の反復へ渡す(判断5)。
 
-use std::ops::{Add, Mul};
+use std::ops::{Add, Mul, Sub};
 
 use blitz_math::{メートル, 逆キログラム};
 
@@ -23,6 +23,11 @@ impl ラグランジュ乗数 {
         Self(長さ.値() / 逆質量.値())
     }
 
+    /// 無次元の比で伸ばした乗数。同時に更新する方式が増分へ緩和係数を掛けるときに使う。
+    pub fn 比で伸ばす(self, 比: f32) -> Self {
+        Self(self.0 * 比)
+    }
+
     /// 境界向けの生値取り出し。ドメインAPI内部では使わない。
     pub fn 値(&self) -> f32 {
         self.0
@@ -33,6 +38,13 @@ impl Add for ラグランジュ乗数 {
     type Output = Self;
     fn add(self, 右辺: Self) -> Self {
         Self(self.0 + 右辺.0)
+    }
+}
+
+impl Sub for ラグランジュ乗数 {
+    type Output = Self;
+    fn sub(self, 右辺: Self) -> Self {
+        Self(self.0 - 右辺.0)
     }
 }
 

@@ -8,6 +8,7 @@
 #![forbid(unsafe_code)]
 
 mod cloth;
+pub mod constraint_graph;
 mod gpu_layout;
 mod intervention;
 mod sph;
@@ -17,7 +18,9 @@ mod xpbd;
 pub use cloth::{
     布を生成する, 布データ, 布仕様, 布生成エラー, 既定一辺粒子数, 空き添字, 粒子, 距離拘束, 隣接拘束エントリ
 };
-pub use gpu_layout::{拘束バイト列にする, 粒子バイト列にする, 表面流バイト列にする, 隣接拘束バイト列にする};
+pub use gpu_layout::{
+    xpbd as xpbd_gpu_layout, 拘束バイト列にする, 粒子バイト列にする, 表面流バイト列にする, 隣接拘束バイト列にする
+};
 pub use intervention::{バイト列にする, 介入};
 pub use sph::{Sph仕様, Sph仕様エラー, sphを一ステップ進める, sph密度を計算する, 流体粒子};
 pub use surface_flow::{表面セル, 表面流仕様, 表面流仕様エラー, 表面流状態};

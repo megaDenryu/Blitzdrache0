@@ -9,6 +9,7 @@ mod particle_bytes;
 mod surface_bytes;
 #[cfg(test)]
 mod surface_bytes_tests;
+pub mod xpbd;
 
 pub use adjacency_bytes::隣接拘束バイト列にする;
 pub use constraint_bytes::拘束バイト列にする;
