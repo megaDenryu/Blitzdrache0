@@ -7,7 +7,7 @@
 //! 積むはずの区間が欠けていたら失敗にする。積まないはずの区間が立っていても失敗にする。
 //! どちらも「測ろうとした条件と実際に走った条件が違う」ことを意味しており、値が採れないまま表だけが出る事態を避ける。
 
-mod frame_samples;
+pub(crate) mod frame_samples;
 #[cfg(test)]
 mod parse_tests;
 

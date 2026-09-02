@@ -12,15 +12,15 @@ mod write;
 pub(super) use write::{生値を書く, 窓の集約を書く};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct 区間の分布 {
-    pub(super) 平均ミリ秒: f64,
-    pub(super) p50ミリ秒: f64,
-    pub(super) p95ミリ秒: f64,
-    pub(super) 標本数: u64,
+pub(crate) struct 区間の分布 {
+    pub(crate) 平均ミリ秒: f64,
+    pub(crate) p50ミリ秒: f64,
+    pub(crate) p95ミリ秒: f64,
+    pub(crate) 標本数: u64,
 }
 
 impl 区間の分布 {
-    pub(super) fn 標本数を数へ(self) -> usize {
+    pub(crate) fn 標本数を数へ(self) -> usize {
         usize::try_from(self.標本数).unwrap_or(usize::MAX)
     }
 }
@@ -34,10 +34,10 @@ pub(super) enum 区間の観測 {
 
 /// フレーム1枚ぶんの1区間の値。窓へ入る前の生の値である。
 #[derive(Debug, Clone, PartialEq)]
-pub(super) struct フレーム別の生値 {
-    pub(super) 読み取り順: u64,
-    pub(super) 区間名: String,
-    pub(super) 経過ミリ秒: f64,
+pub(crate) struct フレーム別の生値 {
+    pub(crate) 読み取り順: u64,
+    pub(crate) 区間名: String,
+    pub(crate) 経過ミリ秒: f64,
 }
 
 /// `窓の標本数`は報告する側が分位を採った窓の長さであり、報告の見出しから読んだ値でこの型自身の台帳ではない。

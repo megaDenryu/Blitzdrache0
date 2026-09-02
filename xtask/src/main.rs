@@ -94,6 +94,7 @@ mod village_draw;
 mod visual_sample_world;
 mod watch_assets;
 mod world_setup;
+mod xpbd_solver_bench;
 fn main() -> std::process::ExitCode {
     dispatch::コマンド行の引数を割り当てる()
 }

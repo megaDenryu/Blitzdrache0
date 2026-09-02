@@ -6,6 +6,7 @@ mod geometry_set;
 mod lighting_set;
 mod material_set;
 mod view_pass_set;
+mod xpbd_bench_set;
 
 /// 突き合わせる束縛番号の組。正本の行は宣言の前置きで、写しの行は宣言されている変数の名前で見つける。
 /// セット番号はシェーダーの属性だけが書き、CPUはレイアウトの並びで表すため、台帳が正本を持つ。
@@ -18,9 +19,10 @@ pub(super) struct 束縛番号の組 {
 }
 
 /// セットごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域ごとの台帳の一覧: [&[束縛番号の組]; 4] = [
+pub(super) const 領域ごとの台帳の一覧: [&[束縛番号の組]; 5] = [
     &view_pass_set::束縛番号の組の一覧,
     &geometry_set::束縛番号の組の一覧,
     &material_set::束縛番号の組の一覧,
     &lighting_set::束縛番号の組の一覧,
+    &xpbd_bench_set::束縛番号の組の一覧,
 ];

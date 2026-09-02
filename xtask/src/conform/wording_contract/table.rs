@@ -8,6 +8,7 @@ mod instance_tally;
 mod part_row_tally;
 mod shader_reload;
 mod shadow_band_assignment;
+mod xpbd_solver_bench;
 
 /// 契約する綴り1件。出す側と読む側が同じ文字列を持つことを、綴りを台帳が1つ持つことで守る。
 pub(super) struct 綴りの契約 {
@@ -16,7 +17,7 @@ pub(super) struct 綴りの契約 {
 }
 
 /// 領域ごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域一覧: [&[綴りの契約]; 7] = [
+pub(super) const 領域一覧: [&[綴りの契約]; 8] = [
     &aerial_farthest_distance::綴り一覧,
     &atmosphere_readback::綴り一覧,
     &exit_report::綴り一覧,
@@ -24,4 +25,5 @@ pub(super) const 領域一覧: [&[綴りの契約]; 7] = [
     &instance_tally::綴り一覧,
     &shader_reload::綴り一覧,
     &shadow_band_assignment::綴り一覧,
+    &xpbd_solver_bench::綴り一覧,
 ];

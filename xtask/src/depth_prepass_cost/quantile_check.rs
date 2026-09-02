@@ -62,7 +62,7 @@ fn 窓の件数の判定名(前置き: &str) -> 判定の名前 {
 }
 
 /// 昇順に並んだ標本の百分位。最近傍順位法であり、標本が1件のときはその値そのものを返す。
-pub(super) fn 順位の値(昇順: &[f64], 百分位: usize) -> f64 {
+pub(crate) fn 順位の値(昇順: &[f64], 百分位: usize) -> f64 {
     let 上限 = 昇順.len().saturating_sub(1);
     let 添字 = (百分位 * 上限).div_ceil(100);
     昇順.get(添字.min(上限)).copied().unwrap_or(0.0)

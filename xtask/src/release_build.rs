@@ -20,7 +20,7 @@ use crate::acceptance::アプリの起こし方;
 
 pub use error::計測用の構築の破れ;
 pub use provenance::構築の由来;
-pub use raw_value_file::計測の生値のファイル;
+pub use raw_value_file::{計測の生値のファイル, 計測の窓の集約のファイル};
 pub use tsv_prefix::tsvの前置き;
 
 /// 計測を始める前の構築。成功したら構築したバイナリの由来を返す。
@@ -39,7 +39,7 @@ pub fn 計測用に構築する(コマンド名: &'static str) -> Result<構築�
             終了状態: 状態.to_string(),
         });
     }
-    let 由来 = 構築の由来::採る(アプリの起こし方::リリース実行ファイルのパス());
+    let 由来 = 構築の由来::採る(&アプリの起こし方::リリース実行ファイルのパス());
     for 注記 in 由来.注記一覧() {
         println!("[xtask] {コマンド名}: {注記}");
     }

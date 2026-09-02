@@ -7,11 +7,14 @@
 //! cargoへ渡す引数を枝ごとの表で持つのは、起こし方の違いが引数の並びの違いでしかないためである。
 //! 表を1つにすると、起こし方を足す変更が1行の追加になり、起動の組み立てと文面の綴りが同時に決まる。
 
-use std::path::Path;
+use std::path::PathBuf;
 use std::process::Command;
 
-/// リリースの実行ファイルの置き場。生の綴りが在るのはこの1行だけである。
-const リリース実行ファイルの綴り: &str = "target/release/blitz_app.exe";
+/// リリースの実行ファイルの、構築の置き場からの相対の綴り。生の綴りが在るのはこの1行だけである。
+/// 構築の置き場は`CARGO_TARGET_DIR`が据えられていればその値、無ければ`target`である。cargoが構築をその置き場へ書くため、
+/// 起こす側も同じ環境変数を読まないと、構築したものと別の版(または無いもの)を起こすことになる。
+const リリース実行ファイルの相対の綴り: &str = "release/blitz_app.exe";
+const 既定の構築の置き場: &str = "target";
 
 /// `毎回cargoに構築させ構築の知らせを伏せて起動する`は、アプリの報告だけを読みたい入口が、
 /// 標準エラーへ流れるcargoの進み具合の行を混ぜないために使う。
@@ -31,7 +34,7 @@ impl アプリの起こし方 {
     /// この起こし方でアプリを起こすコマンド。アプリ自身の引数は呼び出し側が続けて足す。
     pub fn コマンドを作る(self) -> Command {
         match self.cargoへ渡す引数() {
-            None => Command::new(リリース実行ファイルの綴り),
+            None => Command::new(Self::リリース実行ファイルのパス()),
             Some(引数一覧) => {
                 let mut コマンド = Command::new("cargo");
                 コマンド.args(引数一覧);
@@ -47,7 +50,7 @@ impl アプリの起こし方 {
             Self::毎回cargoに構築させ構築の知らせを伏せて起動する => "cargo run -q",
             Self::毎回cargoにリリース版を構築させて起動する => "cargo run --release",
             Self::毎回cargoにリリース版を構築させ構築の知らせを伏せて起動する => "cargo run --release -q",
-            Self::構築済みのリリース版を直に起動する => リリース実行ファイルの綴り,
+            Self::構築済みのリリース版を直に起動する => "構築の置き場(CARGO_TARGET_DIRまたはtarget)の下のrelease/blitz_app.exe",
         }
     }
 
@@ -66,8 +69,9 @@ impl アプリの起こし方 {
         }
     }
 
-    /// リリース実行ファイルの置き場。生のパスへ戻る唯一の境界であり、読むのは構築の由来を採る工程だけである。
-    pub(crate) fn リリース実行ファイルのパス() -> &'static Path {
-        Path::new(リリース実行ファイルの綴り)
+    /// リリース実行ファイルの置き場。生のパスへ戻る唯一の境界であり、読むのは起動と構築の由来を採る工程だけである。
+    pub(crate) fn リリース実行ファイルのパス() -> PathBuf {
+        let 置き場 = std::env::var_os("CARGO_TARGET_DIR").map_or_else(|| PathBuf::from(既定の構築の置き場), PathBuf::from);
+        置き場.join(リリース実行ファイルの相対の綴り)
     }
 }

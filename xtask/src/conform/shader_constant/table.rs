@@ -16,6 +16,7 @@ mod scene;
 mod sweep_approach;
 mod temporal_reconstruction;
 mod workgroup_threads;
+mod xpbd_bench;
 
 /// 突き合わせる定数の組。正本の行と写しの行を、それぞれ宣言の前置きで見つける。
 pub(super) struct 定数の組 {
@@ -26,7 +27,7 @@ pub(super) struct 定数の組 {
 }
 
 /// 領域ごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域一覧: [&[定数の組]; 14] = [
+pub(super) const 領域一覧: [&[定数の組]; 15] = [
     &atmosphere::定数一覧,
     &auto_exposure::定数一覧,
     &bloom::定数一覧,
@@ -41,4 +42,5 @@ pub(super) const 領域一覧: [&[定数の組]; 14] = [
     &sweep_approach::定数一覧,
     &temporal_reconstruction::定数一覧,
     &workgroup_threads::定数一覧,
+    &xpbd_bench::定数一覧,
 ];

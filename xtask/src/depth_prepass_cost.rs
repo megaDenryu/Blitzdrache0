@@ -16,10 +16,10 @@ mod equality;
 mod error;
 mod intervals;
 mod judgment;
-mod parse;
+pub(crate) mod parse;
 mod plan;
-mod quantile_check;
-mod record;
+pub(crate) mod quantile_check;
+pub(crate) mod record;
 mod run;
 mod schedule;
 mod summary;
@@ -31,11 +31,10 @@ use std::process::ExitCode;
 
 use error::深度プリパスの費用計測エラー;
 
-use crate::release_build::計測の生値のファイル;
+use crate::release_build::{計測の生値のファイル, 計測の窓の集約のファイル};
 
 const 出力ディレクトリ: &str = "target/depth_prepass_cost";
 const シェーダーコピー先: &str = "target/depth_prepass_cost_shaders";
-const 窓の集約ファイル名: &str = "window.tsv";
 
 pub(crate) fn 深度プリパス費用を計測する(引数一覧: &[String]) -> ExitCode {
     match 計測する(引数一覧) {
@@ -66,7 +65,7 @@ fn 計測する(引数一覧: &[String]) -> Result<String, 深度プリパスの
     judgment::値が有限であることを確かめる(&標本一覧)?;
     quantile_check::報告の分位が生標本から再現されることを確かめる(&標本一覧)?;
     record::生値を書く(&計測の生値のファイル::出力ディレクトリの中の場所(&出力先), &標本一覧, &由来)?;
-    record::窓の集約を書く(&出力先.join(窓の集約ファイル名), &標本一覧, &由来)?;
+    record::窓の集約を書く(&計測の窓の集約のファイル::出力ディレクトリの中の場所(&出力先), &標本一覧, &由来)?;
     let 観測一覧 = equality::検収する(出力先.clone(), &指定)?;
     table::表示する(&標本一覧, &観測一覧);
     Ok(summary::要約を組む(&観測一覧, &出力先, 指定.フレーム数, &由来))
