@@ -18,6 +18,7 @@ use blitz_math::{メートル, 逆キログラム};
 use super::distance_constraint_participant::距離拘束の参加点;
 use super::distance_projection_result::距離拘束の一回の射影の結果;
 use super::lagrange_multiplier::ラグランジュ乗数;
+use super::rest_length::静止長;
 
 /// 2点の距離がこれより短いと単位向きを作らない。GPUの布(`shaders/cloth_constraint.slang`)が距離の2乗に置く下限1e-12と同じ長さである。
 const 向きが定まる最小の距離: メートル = メートル::生成する(1.0e-6);
@@ -25,12 +26,12 @@ const 向きが定まる最小の距離: メートル = メートル::生成す�
 /// 距離拘束を1つの刻み幅で解くときの係数。静止長と刻み依存量を持ち、その刻みの全反復で同じ値を使う。
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 距離拘束の一刻みの係数 {
-    静止長: メートル,
+    静止長: 静止長,
     刻み依存量: 逆キログラム,
 }
 
 impl 距離拘束の一刻みの係数 {
-    pub(super) fn 生成する(静止長: メートル, 刻み依存量: 逆キログラム) -> Self {
+    pub(super) fn 生成する(静止長: 静止長, 刻み依存量: 逆キログラム) -> Self {
         Self { 静止長, 刻み依存量 }
     }
 
@@ -47,7 +48,7 @@ impl 距離拘束の一刻みの係数 {
         if 距離 < 向きが定まる最小の距離 {
             return 距離拘束の一回の射影の結果::向きが定まらない;
         }
-        let 拘束違反 = 距離 - self.静止長;
+        let 拘束違反 = 距離 - self.静止長.値();
         let 乗数の増分 = ラグランジュ乗数::長さを逆質量で割って生成する(
             (拘束違反 + 乗数 * self.刻み依存量) * -1.0,
             有効逆質量 + self.刻み依存量,

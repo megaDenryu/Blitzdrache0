@@ -13,6 +13,8 @@ mod distance_projection_result;
 #[cfg(test)]
 mod distance_projection_test_fixtures;
 #[cfg(test)]
+mod distance_rest_length_domain_tests;
+#[cfg(test)]
 mod distance_stiffness_invariance_tests;
 #[cfg(test)]
 mod hanging_mass_harness;
@@ -20,6 +22,7 @@ mod lagrange_multiplier;
 mod pbd_distance_distribution;
 #[cfg(test)]
 mod pbd_distance_distribution_tests;
+mod rest_length;
 mod time_step_width;
 
 pub use compliance::{コンプライアンス, コンプライアンスエラー};
@@ -29,4 +32,5 @@ pub use distance_constraint_participant::距離拘束の参加点;
 pub use distance_projection_result::距離拘束の一回の射影の結果;
 pub use lagrange_multiplier::ラグランジュ乗数;
 pub use pbd_distance_distribution::距離の誤差を逆質量の比で分配する;
+pub use rest_length::{静止長, 静止長エラー};
 pub use time_step_width::{刻み幅, 刻み幅エラー};
