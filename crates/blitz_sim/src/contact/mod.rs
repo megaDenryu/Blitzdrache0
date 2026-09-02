@@ -38,6 +38,7 @@ mod non_penetration_fixture;
 mod non_penetration_participant;
 mod non_penetration_projection;
 mod non_penetration_result;
+mod non_penetration_substep_state;
 #[cfg(test)]
 mod non_penetration_tests;
 mod penetration_depth;
@@ -71,6 +72,7 @@ pub use mixing_rule_builder::混合則の組み立て;
 pub use non_penetration_coefficients::{非貫通の一刻みの係数, 非貫通の解き方};
 pub use non_penetration_participant::非貫通の参加点;
 pub use non_penetration_result::非貫通の一回の射影の結果;
+pub use non_penetration_substep_state::非貫通の一細分の解の状態;
 pub use penetration_depth::貫通量;
 pub use property_error::接触物性エラー;
 pub use restitution_coefficient::反発係数;
