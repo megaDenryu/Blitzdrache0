@@ -9,7 +9,7 @@ use super::布素材エラー;
 /// blitz_simの検査が固定している。余裕を持たせるのは、一辺の変更で色が1つ2つ増えても素材の生成が落ちないようにするためである。
 pub const 布の彩色の色数上限: u32 = 12;
 
-const 拘束1件のバイト数: usize = 16;
+pub(super) const 拘束1件のバイト数: usize = 16;
 
 /// 彩色の1色が占める、拘束の並びの中の連続した区間。GPUのディスパッチ1回分であり、プッシュ定数で運ぶ。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
