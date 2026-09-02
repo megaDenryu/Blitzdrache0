@@ -8,9 +8,10 @@
 // 弧の畳みは条件分岐で挟まずに常に通し、CPUの`ラジアン::一周の中で最短の弧へ畳む`(rem_euclid)と同じ演算の順(余りを取り、負なら一周を足し、半周を越えれば一周を引く)で書く。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
-// 共有する辺の長さの2乗の下限。CPU正本が長さに置く下限1e-6メートルの2乗であり、距離拘束と同じ値である。
-static const float minimumSquaredEdgeLength = 1e-12;
-// 三角形の面積ベクトルの長さ(面積の2倍。平方メートル)の下限。CPU正本の`面が定まる最小の面積`と同じ値である。
+// 共有する辺の長さ(メートル)の下限。CPU正本の`向きが定まる最小の距離のメートル`(距離拘束と同じ)の写しであり、`cargo xtask conform`が突き合わせる。
+// 長さの2乗でなく長さで比べるのは、CPU正本と同じ演算の順にし、定数の綴りをそのまま突き合わせられるようにするためである。
+static const float minimumEdgeLength = 1e-6;
+// 三角形の面積ベクトルの長さ(面積の2倍。平方メートル)の下限。CPU正本の`面が定まる最小の面積の平方メートル`の写しであり、`cargo xtask conform`が突き合わせる。
 static const float minimumAreaVectorLength = 1e-12;
 static const float pi = 3.14159265358979;
 
@@ -50,8 +51,8 @@ BendingProjection projectDihedralBending(
         return result;
     }
     float3 edge = positionB - positionA;
-    float squaredEdgeLength = dot(edge, edge);
-    if (squaredEdgeLength < minimumSquaredEdgeLength)
+    float edgeLength = length(edge);
+    if (edgeLength < minimumEdgeLength)
     {
         return result;
     }
@@ -63,7 +64,6 @@ BendingProjection projectDihedralBending(
     {
         return result;
     }
-    float edgeLength = sqrt(squaredEdgeLength);
     float3 edgeDirection = edge / edgeLength;
     float3 normal1 = area1 / area1Length;
     float3 normal2 = area2 / area2Length;

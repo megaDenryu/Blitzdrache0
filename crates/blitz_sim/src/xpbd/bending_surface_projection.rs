@@ -20,8 +20,11 @@ use super::bending_projection_result::面の曲げ拘束の一回の射影の結
 use super::distance_canonical_projection::向きが定まる最小の距離;
 use super::distance_constraint_participant::距離拘束の参加点;
 
+/// 三角形の面積ベクトルの長さの下限の値(平方メートル)。裸の数で置くのは、GPUの写し(`shaders/xpbd_bending_projection.slang`)が同じ綴りの定数を持ち、`cargo xtask conform`が値を突き合わせるためである。
+const 面が定まる最小の面積の平方メートル: f32 = 1.0e-12;
+
 /// 三角形の面積ベクトルの長さ(面積の2倍)がこれより小さいと法線を作らない。辺の下限1e-6メートルの2乗である。
-const 面が定まる最小の面積: 平方メートル = 平方メートル::生成する(1.0e-12);
+const 面が定まる最小の面積: 平方メートル = 平方メートル::生成する(面が定まる最小の面積の平方メートル);
 
 /// 二面角とその勾配。角の測り方の正本であり、拘束の射影と、静止角の計測と、面の検査が読む曲率の分布がこれを使う。
 #[derive(Debug, Clone, Copy, PartialEq)]
