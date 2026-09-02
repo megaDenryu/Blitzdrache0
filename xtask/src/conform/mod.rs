@@ -20,6 +20,7 @@ mod reload_without_device_wait;
 mod removed_object_uniform;
 mod removed_slot_material_set;
 mod removed_view_pass_lighting;
+mod rigid_raw_triplet;
 mod sample_bodies_consistency;
 mod section_reference;
 mod shader_binding;
@@ -82,6 +83,7 @@ fn ファイル単位の違反を集める(ファイル一覧: &[PathBuf]) -> Re
         if 拡張子 == "rs" {
             違反一覧.extend(allow_lint::検査する(パス, &内容));
             違反一覧.extend(drop_impl::検査する(パス, &内容));
+            違反一覧.extend(rigid_raw_triplet::検査する(パス, &内容));
         }
         違反一覧.extend(doc_reference::検査する(パス, &内容));
     }

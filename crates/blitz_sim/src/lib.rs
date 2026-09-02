@@ -21,7 +21,7 @@ pub use cloth::{
     布の参照計算, 布の参照計算の条件, 布の参照計算エラー, 布の彩色済み拘束, 布の敷き方, 布の物性, 布を生成する, 布データ, 布仕様, 布生成エラー,
     既定一辺粒子数, 曲げの違反の統計, 曲げ拘束, 粒子, 距離拘束, 距離拘束の種類,
 };
-pub use gpu_layout::{xpbd as xpbd_gpu_layout, 粒子バイト列にする, 表面流バイト列にする};
+pub use gpu_layout::{rigid as rigid_gpu_layout, xpbd as xpbd_gpu_layout, 粒子バイト列にする, 表面流バイト列にする};
 pub use intervention::{バイト列にする, 介入};
 pub use rigid_body::{
     一刻みの作用の蓄積器, 一刻みの入力, 一度だけ適用する衝撃, 主慣性, 主慣性と主軸, 作用点, 剛体, 剛体の台帳, 剛体の識別子, 剛体エラー, 姿勢,

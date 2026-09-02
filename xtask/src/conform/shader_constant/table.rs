@@ -13,6 +13,7 @@ mod distant_environment;
 mod editor_chunk_source;
 mod instance_transform;
 mod point_light_shadow;
+mod rigid_body;
 mod scene;
 mod sweep_approach;
 mod temporal_reconstruction;
@@ -29,7 +30,7 @@ pub(super) struct 定数の組 {
 }
 
 /// 領域ごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域一覧: [&[定数の組]; 17] = [
+pub(super) const 領域一覧: [&[定数の組]; 18] = [
     &atmosphere::定数一覧,
     &auto_exposure::定数一覧,
     &bloom::定数一覧,
@@ -41,6 +42,7 @@ pub(super) const 領域一覧: [&[定数の組]; 17] = [
     &editor_chunk_source::定数一覧,
     &instance_transform::定数一覧,
     &point_light_shadow::定数一覧,
+    &rigid_body::定数一覧,
     &scene::定数一覧,
     &sweep_approach::定数一覧,
     &temporal_reconstruction::定数一覧,

@@ -20,6 +20,8 @@ mod point_body_distance_constraint;
 mod point_body_distance_result;
 mod predicted_state;
 #[cfg(test)]
+mod prediction_observation_tests;
+#[cfg(test)]
 mod prediction_tests;
 mod predictor;
 mod previous_state;
