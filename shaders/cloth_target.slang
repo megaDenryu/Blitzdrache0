@@ -55,6 +55,7 @@ struct TargetRange
 static const uint floatsPerVertex = 12;
 
 // 動く目標の確定: スキン済み頂点の位置をその刻みの目標位置にし、有効にする。
+// 前提: 対応の目標拘束添字は一意である(CPUの`布素材::生成する`が重複を拒む)。2件が同じ拘束を指すと2つのスレッドが同じ目標位置へ同時に書く。
 [shader("compute")]
 [numthreads(64, 1, 1)]
 void targetUpdateMain(uint3 id: SV_DispatchThreadID)
