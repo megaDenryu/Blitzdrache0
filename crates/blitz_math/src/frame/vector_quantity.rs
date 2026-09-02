@@ -48,10 +48,6 @@ macro_rules! 三成分の量を定義する {
                 <$成分>::生成する(self.内部.dot(方向.内部ベクトル()))
             }
 
-            pub fn 有限か(&self) -> bool {
-                self.内部.is_finite()
-            }
-
             pub(crate) fn 内部ベクトル(&self) -> glam::Vec3 {
                 self.内部
             }
