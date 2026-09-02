@@ -1,9 +1,12 @@
-//! 単位型: 長さ・時間・角度・速度を型で区別し、次元の合わない演算を防ぐ。
+//! 単位型: 長さ・時間・角度・速度・質量を型で区別し、次元の合わない演算を防ぐ。
 //! 参照: `_doc/計画/ユビキタス言語.md`「単位型」。
 
 mod global_meter;
 mod global_second;
+mod inverse_kilogram;
 mod inverse_meter;
+mod kilogram;
+mod mass_error;
 mod meter;
 mod meter_per_second;
 mod meter_per_second_squared;
@@ -15,7 +18,10 @@ mod unit_conversion_error;
 
 pub use global_meter::大域メートル;
 pub use global_second::大域秒;
+pub use inverse_kilogram::逆キログラム;
 pub use inverse_meter::逆メートル;
+pub use kilogram::キログラム;
+pub use mass_error::質量エラー;
 pub use meter::メートル;
 pub use meter_per_second::メートル毎秒;
 pub use meter_per_second_squared::メートル毎秒毎秒;

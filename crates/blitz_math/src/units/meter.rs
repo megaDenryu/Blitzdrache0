@@ -19,7 +19,7 @@ pub struct メートル(f32);
 
 impl メートル {
     #[inline(always)]
-    pub fn 生成する(値: f32) -> Self {
+    pub const fn 生成する(値: f32) -> Self {
         Self(値)
     }
 
