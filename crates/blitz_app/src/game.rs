@@ -24,9 +24,13 @@ mod ground_height;
 mod height_field_adoption;
 mod instrument;
 mod movement_record;
+mod query_count_distribution;
 mod render_supply;
 mod scripted_operation;
 mod step_seconds;
+mod step_time_distribution;
+#[cfg(test)]
+mod step_time_distribution_tests;
 mod summary;
 mod tick;
 mod walk_only;
@@ -40,7 +44,9 @@ pub(crate) use height_field_adoption::ゲーム用高さ場;
 pub(crate) use instrument::{
     カメラの計器, 直前の刻みの移動, 直前の描画のカメラ, 移動とカメラの計器, 移動の計器
 };
+pub(crate) use query_count_distribution::問い合わせ件数の要約;
 pub(crate) use step_seconds::ゲーム更新の一刻みの秒;
+pub(crate) use step_time_distribution::刻みの所要時間の要約;
 pub(crate) use summary::ゲーム進行の要約;
 pub(crate) use world_shape_port::{世界の形を尋ねる口の実装エラー, 読込済みチャンクの形の出どころ};
 
