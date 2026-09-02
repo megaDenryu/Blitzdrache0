@@ -45,7 +45,7 @@ use crate::runtime_assets::実行時アセットの置き場;
 /// - `ポスト処理有効`: `--no-post`指定でfalse。既定はtrue(HDR中間バッファ+明るさの圧縮パス、判断38・39)。falseならシーンが直接スワップチェーンへ描く構成に戻る(DoD「チェーンの追加・削除可能」の機械実証)。
 /// - `露出`: `--exposure <倍率>`指定で変更。既定は1.0(明るさの圧縮前にHDR輝度へ掛ける露出倍率、判断39)。
 /// - `ブレンド`: `--blend <0..1>`指定で変更。既定は0.0(アニメーションクリップ2本のブレンド係数、判断45)。
-/// - `布モード`: 布シミュレーションの方式(判断52・56)。`--cloth`=吊るし布(全シーン可)、`--cloth-cape`=マント(fox限定、キャラ追従)、`--cloth-xpbd-reference <コンプライアンス>`=CPUの参照計算と突き合わせる吊るし布(Issue #36の検証)、`--cloth-xpbd-reference-below-floor <コンプライアンス>`=同じ突き合わせで、目標が床の下にある世界固定点を1本持つ布(Issue #37の是正)。既定はなし。
+/// - `布モード`: 布シミュレーションの方式(判断52・56)。`--cloth`=吊るし布(全シーン可)、`--cloth-cape`=マント(fox限定、キャラ追従)、`--cloth-xpbd-reference <コンプライアンス>`=CPUの参照計算と突き合わせる吊るし布(Issue #36の検証)、`--cloth-xpbd-reference-below-floor <コンプライアンス>`=同じ突き合わせで、目標が床の下にある世界固定点を1本持つ布(Issue #37の是正)。参照比較の後ろに`--cloth-xpbd-reference-bending <曲げのコンプライアンス>`(既定10)と`--cloth-xpbd-reference-shape <vertical-top-row|horizontal-top-row|horizontal-two-edges|horizontal-one-point>`(既定vertical-top-row)を足せる(Issue #38)。既定はなし。
 /// - `実表示時間報告`: `--report-display-timing`指定でtrue。提示IDと提示待機で実表示間隔を測る。
 ///   注意: この計測は`vkWaitForPresentKHR`で表示まで描画ループを止める(2026-07-25の実測で毎フレーム約16ms)。フレームペーシングを変えうるため、既存の性能時系列と比較する値を採るときは指定しない。この指定の有無で条件が変わるので、両条件を比べるときは交互に実行して機材側の時間変動を打ち消すこと。
 /// - `検証計画`: 起動指定が直に選ぶ検証計画。`--window-rebuild`と`--shader-reload`がそれぞれの枝を選び、どちらもピクセル判定を持たない(合否は検収側のxtaskが決める)。
@@ -86,7 +86,7 @@ pub(crate) struct 起動設定 {
     pub(crate) ポスト処理有効: bool,                                     // --no-post でfalse。既定true
     pub(crate) 露出: super::露出倍率,                                    // --exposure <倍率>。既定1.0
     pub(crate) ブレンド: super::アニメーションのブレンド係数,            // --blend <0..1>。既定0.0
-    pub(crate) 布モード: 布モード, // --cloth / --cloth-cape / --cloth-xpbd-reference / --cloth-xpbd-reference-below-floor。既定なし
+    pub(crate) 布モード: 布モード, // --cloth / --cloth-cape / --cloth-xpbd-reference / --cloth-xpbd-reference-below-floor (+ -bending / -shape)。既定なし
     pub(crate) 実表示時間報告: bool, // --report-display-timing
     pub(crate) 検証計画: super::検証計画指定, // --window-rebuild / --shader-reload
     pub(crate) ストリーミング: ストリーミング起動設定, // チャンクストリーミングの有効化と容量上限。既定は無効

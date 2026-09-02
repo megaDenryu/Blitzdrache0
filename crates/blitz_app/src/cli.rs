@@ -6,6 +6,8 @@ mod adjustable_amount_tests;
 #[cfg(test)]
 mod cli_tests;
 #[cfg(test)]
+mod cloth_reference_args_tests;
+#[cfg(test)]
 mod distant_shadow_flag_tests;
 #[cfg(test)]
 mod frame_dump_args_tests;
@@ -25,7 +27,10 @@ mod time_args_tests;
 mod animation_blend;
 mod argument_error;
 mod auto_exposure_probe_args;
+mod cloth_bending_compliance;
 mod cloth_compliance;
+mod cloth_reference_args;
+mod cloth_reference_shape;
 mod depth_prepass_args;
 mod draw_object_layout;
 mod draw_object_order;
@@ -67,7 +72,9 @@ mod xpbd_solver_bench_request;
 mod xpbd_solver_bench_request_tests;
 pub(crate) use animation_blend::アニメーションのブレンド係数;
 pub(crate) use argument_error::起動引数エラー;
+pub(crate) use cloth_bending_compliance::布の曲げのコンプライアンス指定;
 pub(crate) use cloth_compliance::布のコンプライアンス指定;
+pub(crate) use cloth_reference_shape::参照比較の題材の形;
 pub(crate) use draw_object_layout::描画対象の並べ方;
 pub(crate) use draw_object_order::描画対象の走査順;
 pub(crate) use exposure_scale::{露出倍率, 露出倍率エラー};

@@ -7,7 +7,7 @@ const 出す側: &str = "crates/blitz_app/src/reports/cloth_xpbd_reference/lines
 const 読む側: &str = "xtask/src/cloth_xpbd_reference/parse.rs";
 const 両側: &[&str] = &[出す側, 読む側];
 
-pub(super) const 綴り一覧: [綴りの契約; 4] = [
+pub(super) const 綴り一覧: [綴りの契約; 5] = [
     綴りの契約 {
         綴り: "布XPBD参照比較",
         現れるファイル一覧: 両側,
@@ -22,6 +22,10 @@ pub(super) const 綴り一覧: [綴りの契約; 4] = [
     },
     綴りの契約 {
         綴り: "布XPBD参照の硬さ",
+        現れるファイル一覧: &[出す側],
+    },
+    綴りの契約 {
+        綴り: "布XPBD参照の曲げの硬さ",
         現れるファイル一覧: &[出す側],
     },
 ];

@@ -1,12 +1,13 @@
 //! 布素材の構築(判断52)。blitz_simの布データをGPU境界のバイト列へ変換する。
 //! アタッチ先の選択は`attach`、目標拘束(上端行の固定と掴みの枠)の組み立ては`target_constraints`、素材の組み立ては`material`、
-//! XPBDの参照比較の題材は`reference_preset`にある。数値はFoxのスケール(1単位約1cm)前提。
+//! XPBDの参照比較の題材は`reference_preset`(題材の形が決める仕様と固定は`reference_shape`)にある。数値はFoxのスケール(1単位約1cm)前提。
 //! 布の刻み幅は時間の規律の基本刻みをここで1度だけ検証付きの型にし、GPUの定数と参照計算の条件の両方へ同じ値を渡す。
 
 mod attach;
 mod material;
 mod preset;
 mod reference_preset;
+mod reference_shape;
 mod target_constraints;
 
 use preset::{マントを構築する, 吊るし布を構築する};
@@ -42,8 +43,16 @@ pub(super) fn 布モードから構築する(
         crate::cli::布モード::XPBD参照比較 {
             コンプライアンス,
             床の下の固定点,
+            曲げのコンプライアンス,
+            題材の形,
         } => {
-            let (素材, プリセット, 参照比較) = reference_preset::参照比較の布を構築する(コンプライアンス, 床の下の固定点, 刻み幅)?;
+            let 指定 = reference_preset::参照比較の指定 {
+                コンプライアンス,
+                床の下の固定点,
+                曲げのコンプライアンス,
+                題材の形,
+            };
+            let (素材, プリセット, 参照比較) = reference_preset::参照比較の布を構築する(指定, 刻み幅)?;
             (素材, プリセット, Some(参照比較))
         }
     };

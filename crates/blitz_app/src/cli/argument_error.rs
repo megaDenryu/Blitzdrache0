@@ -36,6 +36,10 @@ pub(crate) enum 起動引数エラー {
     ブレンド不正(String),
     #[error("--cloth-xpbd-reference系の引数(コンプライアンス)が不正だった: {0}")]
     布のコンプライアンス不正(String), // --cloth-xpbd-reference / --cloth-xpbd-reference-below-floor のどちらだったかは中身が名指しする
+    #[error("--cloth-xpbd-reference-bending引数が不正だった: {0}")]
+    布の曲げのコンプライアンス不正(String),
+    #[error("--cloth-xpbd-reference-shape引数が不正だった: {0}")]
+    参照比較の題材の形不正(String),
     #[error("ストリーミング上限の引数が不正だった: {0}")]
     ストリーミング上限不正(String),
     #[error("--global-offset引数が不正だった: {0}")]

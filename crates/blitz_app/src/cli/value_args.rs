@@ -4,9 +4,7 @@
 use std::path::PathBuf;
 use std::slice::Iter;
 
-use super::{
-    フレームダンプ指定, 参照比較の床の下の固定点, 布のコンプライアンス指定, 布モード, 描画対象数, 起動モード, 起動引数エラー
-};
+use super::{フレームダンプ指定, 描画対象数, 起動モード, 起動引数エラー};
 
 /// 値の欠落は引数ごとに違う型付きエラーになるため、エラーの作り方を引数で受け取る。
 pub(in crate::cli) fn 次の値を読む<'引数>(
@@ -27,20 +25,6 @@ pub(super) fn benchmark_frames引数を処理する(引数: &mut Iter<String>) -
     let 値 = 次の値を読む(引数, "--benchmark-frames", 起動引数エラー::フレーム数不正)?;
     let フレーム数 = 値.parse::<u32>().map_err(|_| 起動引数エラー::フレーム数不正(値.clone()))?;
     Ok(起動モード::ベンチ実行 { フレーム数 })
-}
-
-/// `--cloth-xpbd-reference <コンプライアンス>`と`--cloth-xpbd-reference-below-floor <コンプライアンス>`。布をXPBDの参照比較の方式で起こし、
-/// 構造とせん断へ同じコンプライアンスを与える。後者は目標が床の下にある世界固定点を1本持つ題材を選ぶ。
-pub(super) fn cloth_xpbd_reference引数を処理する(
-    引数: &mut Iter<String>,
-    引数名: &str,
-    床の下の固定点: 参照比較の床の下の固定点,
-) -> Result<布モード, 起動引数エラー> {
-    let 値 = 次の値を読む(引数, 引数名, 起動引数エラー::布のコンプライアンス不正)?;
-    Ok(布モード::XPBD参照比較 {
-        コンプライアンス: 布のコンプライアンス指定::綴りから解析する(値)?,
-        床の下の固定点,
-    })
 }
 
 pub(super) fn scene引数を処理する(引数: &mut Iter<String>) -> Result<super::起動時シーン, 起動引数エラー> {

@@ -5,9 +5,9 @@ mod flags;
 use std::slice::Iter;
 
 use super::{
-    auto_exposure_probe_args, depth_prepass_args, game_selection, ibl_step_scan_args, indirect_probe_args, instance_lod_args, local_light_count_args,
-    local_visibility_settings, lod_crack_args, path_args, placement_args, point_light_shadow_count_args, screen_pixel_args, shadow_args,
-    streaming_value_args, time_args, value_args, 参照比較の床の下の固定点, 起動設定,
+    auto_exposure_probe_args, cloth_reference_args, depth_prepass_args, game_selection, ibl_step_scan_args, indirect_probe_args, instance_lod_args,
+    local_light_count_args, local_visibility_settings, lod_crack_args, path_args, placement_args, point_light_shadow_count_args, screen_pixel_args,
+    shadow_args, streaming_value_args, time_args, value_args, 参照比較の床の下の固定点, 起動設定,
 };
 use crate::error::起動エラー;
 
@@ -30,11 +30,15 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--indirect-probe" => 設定.読み戻し検収.遠方環境の検収条件 = Some(indirect_probe_args::引数を処理する(残り)?),
         "--exposure" => 設定.露出 = value_args::exposure引数を処理する(残り)?,
         "--cloth-xpbd-reference" => {
-            設定.布モード = value_args::cloth_xpbd_reference引数を処理する(残り, 引数値, 参照比較の床の下の固定点::持たない)?
+            設定.布モード = cloth_reference_args::cloth_xpbd_reference引数を処理する(残り, 引数値, 参照比較の床の下の固定点::持たない)?
         }
         "--cloth-xpbd-reference-below-floor" => {
-            設定.布モード = value_args::cloth_xpbd_reference引数を処理する(残り, 引数値, 参照比較の床の下の固定点::持つ)?
+            設定.布モード = cloth_reference_args::cloth_xpbd_reference引数を処理する(残り, 引数値, 参照比較の床の下の固定点::持つ)?
         }
+        "--cloth-xpbd-reference-bending" => {
+            設定.布モード = cloth_reference_args::cloth_xpbd_reference_bending引数を処理する(残り, 設定.布モード)?
+        }
+        "--cloth-xpbd-reference-shape" => 設定.布モード = cloth_reference_args::cloth_xpbd_reference_shape引数を処理する(残り, 設定.布モード)?,
         "--global-offset" => 設定.平行移動.大域ずらし量 = placement_args::global_offset引数を処理する(残り)?,
         "--camera-nudge" => 設定.平行移動.カメラずれ = placement_args::camera_nudge引数を処理する(残り)?,
         "--camera-pitch" => 設定.平行移動.カメラ俯角差分 = placement_args::camera_pitch引数を処理する(残り)?,
