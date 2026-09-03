@@ -7,6 +7,7 @@
 //! 参照: CLAUDE.md「機械的強制」の型ごとの分量の台帳。
 
 mod amount;
+mod declaration_gap;
 mod ledger;
 mod limit;
 #[cfg(test)]
@@ -51,7 +52,10 @@ fn 計測1件を照合する(計測: &型計測) -> Vec<違反> {
 
 /// 違反を直す先は型の定義である。定義行を走査範囲に見つけられない型だけ、台帳そのものを指す。
 fn 報告するパス(計測: &型計測) -> PathBuf {
-    計測.定義ファイル.clone().unwrap_or_else(|| PathBuf::from(ledger::台帳のパス()))
+    match &計測.宣言 {
+        Some(宣言) => 宣言.ファイル.clone(),
+        None => PathBuf::from(ledger::台帳のパス()),
+    }
 }
 
 fn 消えた型の違反(型名: &'static str) -> 違反 {

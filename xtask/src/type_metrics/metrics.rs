@@ -4,12 +4,18 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
+use super::declaration_amount::宣言の分量;
 use super::observation::観測;
+
+/// 走査範囲に見つけた型の宣言。置き場所と分量は同じ1行から同時に得られ、片方だけ得られることはない。
+pub struct 型の宣言 {
+    pub ファイル: PathBuf,
+    pub 分量: 宣言の分量,
+}
 
 pub struct 型計測 {
     pub 型名: String,
-    pub 定義ファイル: Option<PathBuf>,
-    pub フィールド数: usize,
+    pub 宣言: Option<型の宣言>,
     pub 実装ファイル一覧: BTreeSet<PathBuf>,
     pub メソッド総数: usize,
 }
@@ -18,17 +24,21 @@ impl 型計測 {
     fn 新規(型名: &str) -> Self {
         Self {
             型名: 型名.to_string(),
-            定義ファイル: None,
-            フィールド数: 0,
+            宣言: None,
             実装ファイル一覧: BTreeSet::new(),
             メソッド総数: 0,
         }
     }
 
-    /// 降順に並べるための比較鍵。implの分散ファイル数を最優先し、次にフィールド数、最後にメソッド総数で比べる。
+    /// 宣言が持つ数。構造体ならフィールド数、列挙なら枝の数であり、宣言が走査に現れない型は0とする。
+    pub fn 宣言の件数(&self) -> usize {
+        self.宣言.as_ref().map_or(0, |宣言| 宣言.分量.件数())
+    }
+
+    /// 降順に並べるための比較鍵。implの分散ファイル数を最優先し、次に宣言の件数、最後にメソッド総数で比べる。
     /// 分散ファイル数を先頭に置くのは、privateフィールドへ触れるファイルの数がそのまま責務の広がりを表すためである。
     pub fn 比較鍵(&self) -> (usize, usize, usize) {
-        (self.実装ファイル一覧.len(), self.フィールド数, self.メソッド総数)
+        (self.実装ファイル一覧.len(), self.宣言の件数(), self.メソッド総数)
     }
 }
 
@@ -47,9 +57,11 @@ pub fn 集計する(ファイル別観測: &[(PathBuf, Vec<観測>)]) -> Vec<型
 
 fn 取り込む(計測: &mut 型計測, パス: &Path, 観測: &観測) {
     match 観測 {
-        観測::型定義 { フィールド数, .. } => {
-            計測.定義ファイル = Some(パス.to_path_buf());
-            計測.フィールド数 = *フィールド数;
+        観測::型定義 { 分量, .. } => {
+            計測.宣言 = Some(型の宣言 {
+                ファイル: パス.to_path_buf(),
+                分量: *分量,
+            });
         }
         観測::実装ブロック { メソッド数, .. } => {
             計測.実装ファイル一覧.insert(パス.to_path_buf());
@@ -63,9 +75,9 @@ fn 取り込む(計測: &mut 型計測, パス: &Path, 観測: &観測) {
 mod tests {
     use super::*;
 
-    fn 定義(型名: &str, フィールド数: usize) -> 観測 {
+    fn 定義(型名: &str, 分量: 宣言の分量) -> 観測 {
         let 型名 = 型名.to_string();
-        観測::型定義 { 型名, フィールド数 }
+        観測::型定義 { 型名, 分量 }
     }
 
     fn 実装(型名: &str, メソッド数: usize) -> 観測 {
@@ -76,14 +88,18 @@ mod tests {
     #[test]
     fn 複数ファイルのimplを合算して降順に並べる() {
         let 観測 = vec![
-            (PathBuf::from("a.rs"), vec![定義("大", 3), 実装("大", 2)]),
-            (PathBuf::from("b.rs"), vec![実装("大", 1), 定義("小", 1)]),
+            (
+                PathBuf::from("a.rs"),
+                vec![定義("大", 宣言の分量::構造体のフィールド数(3)), 実装("大", 2)],
+            ),
+            (PathBuf::from("b.rs"), vec![実装("大", 1), 定義("小", 宣言の分量::列挙の枝数(1))]),
         ];
         let 一覧 = 集計する(&観測);
         assert_eq!(一覧[0].型名, "大");
         assert_eq!(一覧[0].実装ファイル一覧.len(), 2);
         assert_eq!(一覧[0].メソッド総数, 3);
-        assert_eq!(一覧[0].定義ファイル, Some(PathBuf::from("a.rs")));
+        assert_eq!(一覧[0].宣言.as_ref().unwrap().ファイル, PathBuf::from("a.rs"));
         assert_eq!(一覧[1].型名, "小");
+        assert_eq!(一覧[1].宣言.as_ref().unwrap().分量.指標名(), "枝数");
     }
 }

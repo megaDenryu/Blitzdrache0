@@ -6,7 +6,7 @@ use super::index::型の定義の索引;
 use super::module_tree::モジュールの木;
 use super::parameter::{丸ごと受け取る型の名前, 引数へ分ける};
 use super::signature::自由関数の署名一覧;
-use crate::type_metrics::観測;
+use crate::type_metrics::{宣言の分量, 観測};
 
 fn 型名一覧(原文: &str) -> Vec<String> {
     自由関数の署名一覧(原文).into_iter().map(|署名| 署名.関数名).collect()
@@ -72,7 +72,7 @@ fn 索引() -> 型の定義の索引 {
         PathBuf::from("crates/blitz_app/src/app/mod.rs"),
         vec![観測::型定義 {
             型名: "アプリ".to_string(),
-            フィールド数: 46,
+            分量: 宣言の分量::構造体のフィールド数(46),
         }],
     )];
     型の定義の索引::観測から生成する(&観測一覧)

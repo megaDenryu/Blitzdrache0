@@ -236,7 +236,7 @@ cargo xtask bake-building <建物定義ID>  # 建物エディターが保存し�
 cargo xtask contract-export # editor_serverのRust側の型からeditor_web/src/生成配下のTypeScript契約ファイルを生成し直す
 cargo xtask verify      # 検証の標準列 (conform -> fmt --check -> check -> clippy -D warnings -> test)
 cargo xtask conform     # 規約適合の機械検査（行数・禁止文字列・依存白リスト・参照パス実在・文書内の節参照実在・vulkan配下のDrop実装禁止）
-cargo xtask type-metrics  # 型ごとのフィールド数・impl分散ファイル数・メソッド数を多い順に表示（違反判定はしない計測専用）
+cargo xtask type-metrics  # 型ごとの宣言の件数（構造体はフィールド数、列挙は枝数）・impl分散ファイル数・メソッド数を多い順に表示（違反判定はしない計測専用）
 cargo xtask smoke       # DoD自動検証: 8ステージの自己操作つき実行 + validation件数 + ピクセル読み戻し判定
 cargo xtask bench       # リリース版固定シーンのベンチマーク（GPU時間 + CPU側フレーム間隔 + GPUメモリ確保統計）
 cargo xtask bench-display-timing  # benchに実表示間隔の計測を追加（計測が描画ループを止めるためbenchの時系列とは比較不可）
