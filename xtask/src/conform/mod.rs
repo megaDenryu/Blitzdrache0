@@ -30,6 +30,7 @@ mod shader_uniform_alias;
 mod single_lighting_slot_write;
 mod source_lexing;
 mod split_debt;
+mod type_metrics_ledger;
 mod violation;
 mod whole_repository;
 mod wording_contract;

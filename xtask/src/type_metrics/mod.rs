@@ -3,9 +3,8 @@
 //! 単位で決まるため、同一モジュール木のすべてのファイルがその型の全privateフィールドへ触れる。
 //! 参照: CLAUDE.md「切り出しの根拠義務（パーシャル規約、2026-07-25制定）」
 //!
-//! 閾値による違反判定はここでは行わず、計測と可視化だけを行う。現状で最大の型が確実に閾値を
-//! 超えるため、denyにすると検証列全体が赤くなり他のすべての作業が止まる。閾値でのdenyは型の
-//! 分解が完了した後に別途入れる。
+//! ここは計測と可視化だけを行い、閾値の判定は持たない。現状の値を上限として台帳へ登録し増えたら落とす
+//! 検査は`conform/type_metrics_ledger`が持つ。計測の道具と、その値を規約として縛る台帳は別々に育つためである。
 //!
 //! 走査は構文解析器を持たない行単位の照合であり、次の精度限界がある。文字列リテラルとコメントの
 //! 中にある struct・impl・fn・波括弧を実コードと区別できないため、誤検出と深さのずれが起こりうる。
@@ -27,39 +26,38 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 use crate::file_scan;
-use error::型計測の破れ;
-use observation::観測;
+
+pub use error::型計測の破れ;
+pub use metrics::{型計測, 集計する};
+pub use observation::観測;
 
 const 走査対象ディレクトリ一覧: [&str; 2] = ["crates", "xtask/src"];
 const 表示件数: usize = 20;
 
 pub fn 型ごとの分量を計測する() -> ExitCode {
-    let ファイル一覧 = match file_scan::対象ファイル一覧を集める(&走査対象ディレクトリ一覧, &["rs"]) {
-        Ok(一覧) => 一覧,
-        Err(誤り) => {
-            eprintln!("[xtask] type-metricsのファイル走査に失敗した: {誤り}");
-            return ExitCode::FAILURE;
+    match ファイル別の観測を集める() {
+        Ok(ファイル別観測) => {
+            report::上位を表示する(&集計する(&ファイル別観測), 表示件数);
+            ExitCode::SUCCESS
         }
-    };
-    let ファイル別観測 = match 全ファイルを走査する(&ファイル一覧) {
-        Ok(観測) => 観測,
         Err(誤り) => {
-            eprintln!("[xtask] type-metricsのファイル読み取りに失敗した: {誤り}");
-            return ExitCode::FAILURE;
+            eprintln!("[xtask] type-metricsを実行できなかった: {誤り}");
+            ExitCode::FAILURE
         }
-    };
-    report::上位を表示する(&metrics::集計する(&ファイル別観測), 表示件数);
-    ExitCode::SUCCESS
+    }
 }
 
-fn 全ファイルを走査する(ファイル一覧: &[PathBuf]) -> Result<Vec<(PathBuf, Vec<観測>)>, 型計測の破れ> {
+/// 走査対象のRustファイルを1本ずつ読み、ファイルごとの観測へ写す。conformの台帳検査と自由関数の検査が
+/// 同じ走査を使うため、コマンドの表示から切り離してここを共通の入口にしている。
+pub fn ファイル別の観測を集める() -> Result<Vec<(PathBuf, Vec<観測>)>, 型計測の破れ> {
+    let ファイル一覧 = file_scan::対象ファイル一覧を集める(&走査対象ディレクトリ一覧, &["rs"])?;
     let mut 結果 = Vec::new();
     for パス in ファイル一覧 {
-        let 内容 = std::fs::read_to_string(パス)
+        let 内容 = std::fs::read_to_string(&パス)
             .map_err(|誤り| 型計測の破れ::計測対象のファイルを読めなかった {
                 パス: パス.clone(), 誤り
             })?;
-        結果.push((パス.clone(), scan::走査する(&内容)));
+        結果.push((パス, scan::走査する(&内容)));
     }
     Ok(結果)
 }
