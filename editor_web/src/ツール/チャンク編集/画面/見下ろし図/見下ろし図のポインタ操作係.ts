@@ -1,7 +1,7 @@
 import type { キャンバスのホイール事象, キャンバスのポインタ事象 } from './キャンバス部品.ts'
 import type { ワールドXZ, 見下ろし図の視点 } from './見下ろし図の視点.ts'
 
-// 左ボタンの出来事をワールド座標で受ける側。等高線と大升の操作がここへ配線される。
+// 左ボタンの出来事をワールド座標で受ける側。等高線と粗マスの操作がここへ配線される。
 export interface I見下ろし図の左ボタン配線 {
     readonly on左ボタン押下: (位置: ワールドXZ, 原初事象: PointerEvent) => void
     readonly on左ボタン移動: (位置: ワールドXZ, 押下中: boolean, 原初事象: PointerEvent) => void

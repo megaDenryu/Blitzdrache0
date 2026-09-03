@@ -8,7 +8,7 @@ import { 見下ろし図の視点 } from './見下ろし図の視点.ts'
 import type { 下地の配色 } from './下地の配色.ts'
 import { コンテナ } from './見下ろし図スタイル.css.ts'
 
-// 下地の上に重ねて描く手順。等高線・大升の重ね描きがここへ登録される。文脈の座標はCSS画素であり、
+// 下地の上に重ねて描く手順。等高線・粗マスの重ね描きがここへ登録される。文脈の座標はCSS画素であり、
 // ワールド座標からの変換に視点を使う。
 export type 見下ろし図の重ね描き = (文脈: CanvasRenderingContext2D, 視点: 見下ろし図の視点) => void
 
@@ -50,7 +50,7 @@ export class 見下ろし図部品 extends LV2HtmlComponentBase implements I配�
         return this
     }
 
-    // 等高線と大升の操作が当たりの半径を画素で決めるために倍率を読む。視点の書き換えはポインタ操作係だけが行う。
+    // 等高線と粗マスの操作が当たりの半径を画素で決めるために倍率を読む。視点の書き換えはポインタ操作係だけが行う。
     public get 視点(): 見下ろし図の視点 | null {
         return this._視点
     }

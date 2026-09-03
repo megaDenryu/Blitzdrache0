@@ -9,7 +9,7 @@ use self::legacy_building_placement::{旧版の建物一覧を最新の形へ変
 use super::building::建物の配置;
 use super::chunk_road::チャンクの道路;
 use super::chunk_structure::チャンク構造;
-use super::plan_view_draft::{既定の大升の一辺の升目数, 見下ろし図の下書き};
+use super::plan_view_draft::{既定の粗マスの一辺の升目数, 見下ろし図の下書き};
 use super::scatter_settings::散布の設定;
 use super::scattered_individual::散布の個体;
 
@@ -64,7 +64,7 @@ pub(crate) enum 読み込んだチャンク構造の版 {
 
 impl 読み込んだチャンク構造の版 {
     pub fn 最新の形へ変換する(self) -> Result<チャンク構造, チャンク構造移行エラー> {
-        let 空の下書き = 見下ろし図の下書き::空の下書きを作る(既定の大升の一辺の升目数);
+        let 空の下書き = 見下ろし図の下書き::空の下書きを作る(既定の粗マスの一辺の升目数);
         match self {
             Self::最新(構造) => Ok(構造),
             Self::下書きを持たない旧版(構造) => Ok(チャンク構造 {

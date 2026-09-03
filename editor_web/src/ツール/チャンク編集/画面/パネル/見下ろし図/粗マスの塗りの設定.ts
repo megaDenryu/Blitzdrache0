@@ -5,7 +5,7 @@ import { 数値入力項目 } from '../共通/数値入力項目.ts'
 import { チェック行, チェック入力 } from '../共通/スタイル.css.ts'
 import { 選択欄 } from './スタイル.css.ts'
 
-export interface I大升の塗りの設定配線 {
+export interface I粗マスの塗りの設定配線 {
     readonly on高さ確定: (高さメートル: number) => void
     readonly on高さを置くか変更: (置くか: boolean) => void
     readonly on層変更: (層: 地表材質層) => void
@@ -23,7 +23,7 @@ function 層へ戻す(値: string): 地表材質層 {
     return 層
 }
 
-export interface 大升の塗りの初期設定 {
+export interface 粗マスの塗りの初期設定 {
     readonly 高さメートル: number
     readonly 高さを置くか: boolean
     readonly 層: 地表材質層
@@ -31,18 +31,18 @@ export interface 大升の塗りの初期設定 {
     readonly 塗りを消すか: boolean
 }
 
-// 大升1つに置くもの(高さ・層・またはその両方、あるいは塗りを消す)の設定。大升パネルの中の1区画であり、
+// 粗マス1つに置くもの(高さ・層・またはその両方、あるいは塗りを消す)の設定。粗マスパネルの中の1区画であり、
 // 置く高さと層の有効・無効の切替を一緒に持つ。
-export class 大升の塗りの設定 extends LV2HtmlComponentBase implements I配線可能<I大升の塗りの設定配線> {
+export class 粗マスの塗りの設定 extends LV2HtmlComponentBase implements I配線可能<I粗マスの塗りの設定配線> {
     protected _componentRoot: DivC
-    private readonly _配線: 配線ポート<I大升の塗りの設定配線> = new 配線ポート<I大升の塗りの設定配線>('大升の塗りの設定')
+    private readonly _配線: 配線ポート<I粗マスの塗りの設定配線> = new 配線ポート<I粗マスの塗りの設定配線>('粗マスの塗りの設定')
     private readonly _高さ: 数値入力項目
     private readonly _高さを置くか: CheckboxInputC
     private readonly _層: SelectC
     private readonly _層を置くか: CheckboxInputC
     private readonly _塗りを消すか: CheckboxInputC
 
-    public constructor(初期: 大升の塗りの初期設定) {
+    public constructor(初期: 粗マスの塗りの初期設定) {
         super()
         this._高さ = new 数値入力項目('置く高さ', 初期.高さメートル, 0.5, 'm')
         this._高さを置くか = checkbox({ class: チェック入力, checked: 初期.高さを置くか })
@@ -55,7 +55,7 @@ export class 大升の塗りの設定 extends LV2HtmlComponentBase implements I�
         this._componentRoot = this._ルートを構築する()
     }
 
-    public 配線する(配線: I大升の塗りの設定配線): this {
+    public 配線する(配線: I粗マスの塗りの設定配線): this {
         this._配線.配線する(配線)
         this._高さ.配線する({ on確定: (v) => this._配線.先.on高さ確定(v) })
         this._高さを置くか.onCheckChange((置くか) => this._配線.先.on高さを置くか変更(置くか))
@@ -79,7 +79,7 @@ export class 大升の塗りの設定 extends LV2HtmlComponentBase implements I�
                 this._層,
                 div({ class: チェック行 }).childs([
                     this._塗りを消すか,
-                    span({ text: '塗りを消す(通った大升の高さと層を外す)' }).setTooltip('オンのとき、なぞった大升の塗りを消す。高さと層の設定は使わない。')])])
+                    span({ text: '塗りを消す(通った粗マスの高さと層を外す)' }).setTooltip('オンのとき、なぞった粗マスの塗りを消す。高さと層の設定は使わない。')])])
         )
     }
 }

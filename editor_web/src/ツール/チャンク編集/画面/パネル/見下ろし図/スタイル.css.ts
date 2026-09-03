@@ -67,7 +67,7 @@ export const 揃いの札 = style({
     whiteSpace: 'nowrap',
 })
 
-// 選択中の対象の欄(等高線・大升で共通)。詳細行の縦積みと、選んでいないときの案内文の見た目を持つ。
+// 選択中の対象の欄(等高線・粗マスで共通)。詳細行の縦積みと、選んでいないときの案内文の見た目を持つ。
 export const 選択の詳細区画 = style({
     display: 'flex',
     flexDirection: 'column',

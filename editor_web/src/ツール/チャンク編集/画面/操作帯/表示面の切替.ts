@@ -11,7 +11,7 @@ class 表示面ボタン extends ButtonC {
     public constructor(面: 表示面, 選択中: boolean) {
         super({ class: モードボタン, text: 面 })
         this.選択状態を設定する(選択中)
-        this.setTooltip(面 === '三次元' ? '地形を三次元で見て筆でなでる' : '真上から見て等高線と大升で地形を描く')
+        this.setTooltip(面 === '三次元' ? '地形を三次元で見て筆でなでる' : '真上から見て等高線と粗マスで地形を描く')
     }
 
     public 選択状態を設定する(選択中: boolean): this {

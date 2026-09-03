@@ -4,13 +4,13 @@ import type { 地表材質層 } from '../../../../../生成/編集資源契約.t
 import { ラベル行, 値ラベル, 数値入力 } from '../共通/スタイル.css.ts'
 import { 選択の詳細区画, 選択の案内文, 危険ボタン, 選択欄 } from './スタイル.css.ts'
 
-export interface I選択中の大升欄配線 {
+export interface I選択中の粗マス欄配線 {
     readonly on高さ確定: (高さメートル: number | null) => void
     readonly on層確定: (層: 地表材質層 | null) => void
     readonly on消す: () => void
 }
 
-export interface 選択中の大升情報 {
+export interface 選択中の粗マス情報 {
     readonly 列: number
     readonly 行: number
     readonly 塗った高さメートル: number | null
@@ -32,16 +32,16 @@ function 選択値を層にする(値: string): 地表材質層 | null {
     throw new Error(`選択欄の値が地表材質層でもなしでもない: ${値}`)
 }
 
-// 大升パネルの一番上に置く「選択中の大升」欄。見下ろし図で大升をクリックして選んだときだけ詳細を出す
-// (設計正本の判断7)。高さと層はnullを「なし」として扱い、確定するとその1升だけへ`大升を塗る`を積む。
-export class 選択中の大升欄 extends LV2HtmlComponentBase implements I配線可能<I選択中の大升欄配線> {
+// 粗マスパネルの一番上に置く「選択中の粗マス」欄。見下ろし図で粗マスをクリックして選んだときだけ詳細を出す
+// (設計正本の判断7)。高さと層はnullを「なし」として扱い、確定するとその1升だけへ`粗マスを塗る`を積む。
+export class 選択中の粗マス欄 extends LV2HtmlComponentBase implements I配線可能<I選択中の粗マス欄配線> {
     protected _componentRoot: DivC
-    private readonly _配線: 配線ポート<I選択中の大升欄配線> = new 配線ポート<I選択中の大升欄配線>('選択中の大升欄')
+    private readonly _配線: 配線ポート<I選択中の粗マス欄配線> = new 配線ポート<I選択中の粗マス欄配線>('選択中の粗マス欄')
     private readonly _列行値: SpanC = span({ class: 値ラベル })
     private readonly _高さ入力: InputC = input({ class: 数値入力, type: 'number', value: '' }).setRangeParam({ step: 0.5 })
     private readonly _層選択: SelectC = select({ class: 選択欄, options: 層の選択肢.map((値) => ({ value: 値, text: 値 })) })
     private readonly _現在の平均値: SpanC = span({ class: 値ラベル })
-    private readonly _消すボタン: ButtonC = button({ class: 危険ボタン, text: '塗りを消す' }).setTooltip('選んだ大升の高さと層を外す')
+    private readonly _消すボタン: ButtonC = button({ class: 危険ボタン, text: '塗りを消す' }).setTooltip('選んだ粗マスの高さと層を外す')
     private readonly _詳細区画: DivC
     private readonly _無選択の案内: SpanC = span({ class: 選択の案内文, text: '升をクリックして選ぶ' })
     private _直前の高さ: number | null = null
@@ -57,7 +57,7 @@ export class 選択中の大升欄 extends LV2HtmlComponentBase implements I配�
         this._componentRoot = div().childs([this._詳細区画, this._無選択の案内])
     }
 
-    public 配線する(配線: I選択中の大升欄配線): this {
+    public 配線する(配線: I選択中の粗マス欄配線): this {
         this._配線.配線する(配線)
         this._高さ入力.onChange(() => this._高さが決まった())
         this._層選択.onSelectChange(() => this._配線.先.on層確定(選択値を層にする(this._層選択.getValue())))
@@ -65,7 +65,7 @@ export class 選択中の大升欄 extends LV2HtmlComponentBase implements I配�
         return this
     }
 
-    public 表示を更新する(情報: 選択中の大升情報 | null): void {
+    public 表示を更新する(情報: 選択中の粗マス情報 | null): void {
         this._詳細区画.setStyleCSS({ display: 情報 === null ? 'none' : '' })
         this._無選択の案内.setStyleCSS({ display: 情報 === null ? '' : 'none' })
         if (情報 === null) return

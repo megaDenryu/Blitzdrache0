@@ -1,4 +1,4 @@
-import type { チャンク座標, 等高線, 大升の塗り } from '../../../../生成/編集資源契約.ts'
+import type { チャンク座標, 等高線, 粗マスの塗り } from '../../../../生成/編集資源契約.ts'
 import type { 下書きと正本の揃い } from '../../編集モデル/index.ts'
 
 // 見下ろし図の下書きの編集と、下書きからの生成・正本からの逆導出に対する操作の、変更前情報。
@@ -26,11 +26,11 @@ export type 等高線を削除する差し戻し = {
     readonly 削除した等高線: 等高線
     readonly 変更前の揃い: 下書きと正本の揃い
 }
-export type 大升を塗る差し戻し = {
-    readonly 種類: '大升を塗る'
+export type 粗マスを塗る差し戻し = {
+    readonly 種類: '粗マスを塗る'
     readonly チャンク座標: チャンク座標
-    readonly 変更前の大升の一辺の升目数: number
-    readonly 変更前の大升の塗り一覧: Array<大升の塗り>
+    readonly 変更前の粗マスの一辺の升目数: number
+    readonly 変更前の粗マスの塗り一覧: Array<粗マスの塗り>
     readonly 変更前の揃い: 下書きと正本の揃い
 }
 export type 等高線から高さ場を生成する差し戻し = {
@@ -39,8 +39,8 @@ export type 等高線から高さ場を生成する差し戻し = {
     readonly 変更前格子データ: Float32Array
     readonly 変更前の揃い: 下書きと正本の揃い
 }
-export type 大升から地形を生成する差し戻し = {
-    readonly 種類: '大升から地形を生成する'
+export type 粗マスから地形を生成する差し戻し = {
+    readonly 種類: '粗マスから地形を生成する'
     readonly チャンク座標: チャンク座標
     readonly 変更前格子データ: Float32Array
     readonly 変更前材質データ: Uint8Array
@@ -52,11 +52,11 @@ export type 高さ場から等高線を導く差し戻し = {
     readonly 変更前の等高線一覧: Array<等高線>
     readonly 変更前の揃い: 下書きと正本の揃い
 }
-export type 高さ場から大升を導く差し戻し = {
-    readonly 種類: '高さ場から大升を導く'
+export type 高さ場から粗マスを導く差し戻し = {
+    readonly 種類: '高さ場から粗マスを導く'
     readonly チャンク座標: チャンク座標
-    readonly 変更前の大升の一辺の升目数: number
-    readonly 変更前の大升の塗り一覧: Array<大升の塗り>
+    readonly 変更前の粗マスの一辺の升目数: number
+    readonly 変更前の粗マスの塗り一覧: Array<粗マスの塗り>
     readonly 変更前の揃い: 下書きと正本の揃い
 }
 
@@ -64,8 +64,8 @@ export type 見下ろし図の差し戻し断片 =
     | 等高線を追加する差し戻し
     | 等高線を変更する差し戻し
     | 等高線を削除する差し戻し
-    | 大升を塗る差し戻し
+    | 粗マスを塗る差し戻し
     | 等高線から高さ場を生成する差し戻し
-    | 大升から地形を生成する差し戻し
+    | 粗マスから地形を生成する差し戻し
     | 高さ場から等高線を導く差し戻し
-    | 高さ場から大升を導く差し戻し
+    | 高さ場から粗マスを導く差し戻し

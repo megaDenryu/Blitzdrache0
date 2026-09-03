@@ -19,8 +19,8 @@ describe('見下ろし図コマンドの適用と差し戻し', () => {
 
         const 断片一覧 = 見下ろし図の8枝を通るコマンド列().map((コマンド) => 編集コマンドを適用する(状態, コマンド))
         assert.ok(チャンク.下書き.等高線一覧を取得する().length > 0, '導いた等高線が下書きに入るべき')
-        assert.strictEqual(チャンク.下書き.大升の一辺の升目数を取得する(), 4)
-        assert.strictEqual(チャンク.下書き.大升の塗り一覧を取得する().length, 64)
+        assert.strictEqual(チャンク.下書き.粗マスの一辺の升目数を取得する(), 4)
+        assert.strictEqual(チャンク.下書き.粗マスの塗り一覧を取得する().length, 64)
         assert.strictEqual(チャンク.下書きと正本の揃い, '揃っている')
         assert.notDeepStrictEqual(new Float32Array(チャンク.高さ場.格子データ), 初期高さ)
 
