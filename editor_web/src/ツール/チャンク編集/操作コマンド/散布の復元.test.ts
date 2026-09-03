@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import type { 編集コマンド, 大域世界構造, チャンク構造 } from '../../../生成/編集資源契約.ts'
-import { ワールド編集状態, 散布 } from '../編集モデル/index.ts'
+import { ワールド編集状態, 散布, 空の見下ろし図の下書き } from '../編集モデル/index.ts'
 import { 編集コマンドを適用する, 差し戻しを適用する } from './index.ts'
 
 const チャンク座標 = { x: 1, z: 0 }
@@ -26,6 +26,8 @@ function 初期状態を作る(): ワールド編集状態 {
         }],
         建物一覧: [],
         散布: { 最小間隔メートル: 5.5, 乱数の種: 12345n },
+        散布の個体一覧: [],
+        見下ろし図の下書き: 空の見下ろし図の下書き(),
     }
     状態.チャンクを登録する(チャンク座標, 構造)
     状態.選択中チャンク座標 = チャンク座標

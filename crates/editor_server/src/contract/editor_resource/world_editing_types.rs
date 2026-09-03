@@ -3,7 +3,7 @@
 
 use ts_rs::{Config, TS};
 
-pub(super) fn 大域とチャンクの編集の型宣言の並び(設定: &Config) -> [String; 51] {
+pub(super) fn 大域とチャンクの編集の型宣言の並び(設定: &Config) -> [String; 63] {
     [
         <crate::プロジェクト情報応答 as TS>::decl(設定),
         <crate::建物定義の用途 as TS>::decl(設定),
@@ -35,10 +35,14 @@ pub(super) fn 大域とチャンクの編集の型宣言の並び(設定: &Confi
         <crate::層割当 as TS>::decl(設定),
         <crate::マテリアル台帳 as TS>::decl(設定),
         <crate::大域世界構造 as TS>::decl(設定),
+        <crate::地表材質層 as TS>::decl(設定),
+        <crate::平面の位置 as TS>::decl(設定),
+        <crate::等高線 as TS>::decl(設定),
+        <crate::大升の塗り as TS>::decl(設定),
+        <crate::見下ろし図の下書き as TS>::decl(設定),
         <crate::チャンク構造 as TS>::decl(設定),
         <crate::造成筆致種別 as TS>::decl(設定),
         <crate::造成筆致 as TS>::decl(設定),
-        <crate::地表材質層 as TS>::decl(設定),
         <crate::材質の筆致 as TS>::decl(設定),
         <crate::道路対象 as TS>::decl(設定),
         <crate::道路を追加する as TS>::decl(設定),
@@ -55,6 +59,14 @@ pub(super) fn 大域とチャンクの編集の型宣言の並び(設定: &Confi
         <crate::建物基礎を平坦化する as TS>::decl(設定),
         <crate::急勾配を岩肌へベイクする as TS>::decl(設定),
         <crate::道路下を泥へベイクする as TS>::decl(設定),
+        <crate::等高線を追加する as TS>::decl(設定),
+        <crate::等高線を変更する as TS>::decl(設定),
+        <crate::等高線を削除する as TS>::decl(設定),
+        <crate::大升を塗る as TS>::decl(設定),
+        <crate::等高線から高さ場を生成する as TS>::decl(設定),
+        <crate::大升から地形を生成する as TS>::decl(設定),
+        <crate::高さ場から等高線を導く as TS>::decl(設定),
+        <crate::高さ場から大升を導く as TS>::decl(設定),
         <crate::編集コマンド as TS>::decl(設定),
     ]
 }

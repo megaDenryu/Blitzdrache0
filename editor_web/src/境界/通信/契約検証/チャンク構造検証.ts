@@ -7,6 +7,7 @@ import type {
 } from '../../../生成/編集資源契約.ts'
 import { 配列か, 長整数か, 数値か, オブジェクトか, 文字列か } from './オブジェクト判定.ts'
 import { 位置3次元の形か } from './大域世界構造検証.ts'
+import { 見下ろし図の下書きの形か } from './見下ろし図の下書き検証.ts'
 
 // 受信したチャンク構造のJSONが型契約に適合しているかを実行時に検査する。
 export function チャンク構造の形か(値: unknown): 値 is チャンク構造 {
@@ -14,7 +15,8 @@ export function チャンク構造の形か(値: unknown): 値 is チャンク�
     if (!配列か(値['道路一覧'])) return false
     if (!値['道路一覧'].every(チャンクの道路の形か)) return false
     if (!建物一覧の形か(値['建物一覧']) || !散布の設定の形か(値['散布'])) return false
-    return 散布の個体一覧の形か(値['散布の個体一覧'])
+    if (!散布の個体一覧の形か(値['散布の個体一覧'])) return false
+    return 見下ろし図の下書きの形か(値['見下ろし図の下書き'])
 }
 
 export function チャンクの道路の形か(値: unknown): 値 is チャンクの道路 {

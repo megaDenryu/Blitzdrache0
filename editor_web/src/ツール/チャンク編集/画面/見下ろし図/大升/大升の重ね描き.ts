@@ -1,0 +1,67 @@
+import type { 大升の塗り } from '../../../../../生成/編集資源契約.ts'
+import type { 地表材質色 } from '../../三次元/地形/地表材質色.ts'
+import type { 見下ろし図の視点 } from '../見下ろし図の視点.ts'
+import { 重ね描きの寸法, 重ね描きの配色, 高さの文字を描く } from '../重ね描きの配色.ts'
+import { 一辺に並ぶ大升の数, 大升の一辺のメートル, 大升の北西の角, type 大升の格子 } from './大升の座標変換.ts'
+
+// 塗り一覧は下書きの一辺で、塗っている途中の番地は右サイドバーで選んでいる一辺で数えているため、格子を2つ受け取る。
+export interface 大升の重ね描きの入力 {
+    readonly 格子: 大升の格子
+    readonly 塗っている途中の格子: 大升の格子
+    readonly 塗り一覧: readonly 大升の塗り[]
+    readonly 材質色: 地表材質色
+    readonly 塗っている途中の番地一覧: ReadonlyArray<{ readonly 列: number; readonly 行: number }>
+    readonly 格子線を描くか: boolean
+}
+
+// 大升の格子線と、塗られている大升を層の識別色(マテリアル台帳由来)の半透明と高さの数字で描く。
+// 左ボタンを押してから離すまでに通った大升は、まだコマンドになっていないため縁だけで示す。
+// 格子線は大升モードのときだけ描く。等高線を描くときに格子線が重なると線の位置が読みにくいためである。
+export function 大升を重ね描きする(文脈: CanvasRenderingContext2D, 視点: 見下ろし図の視点, 入力: 大升の重ね描きの入力): void {
+    if (入力.格子線を描くか) 格子線を描く(文脈, 視点, 入力.塗っている途中の格子)
+    for (const 塗り of 入力.塗り一覧) {
+        const { 左上, 一辺 } = 大升の画素の矩形(視点, 入力.格子, 塗り)
+        if (塗り.層 !== null) {
+            文脈.globalAlpha = 重ね描きの寸法.大升の塗りの不透明度
+            文脈.fillStyle = 入力.材質色[塗り.層]
+            文脈.fillRect(左上.x, 左上.y, 一辺, 一辺)
+            文脈.globalAlpha = 1
+        }
+        文脈.strokeStyle = 重ね描きの配色.大升の塗りの縁
+        文脈.lineWidth = 重ね描きの寸法.大升の格子線の太さ画素
+        文脈.strokeRect(左上.x, 左上.y, 一辺, 一辺)
+        if (塗り.高さメートル !== null) 高さの文字を描く(文脈, `${塗り.高さメートル}`, 左上.x + 一辺 / 2, 左上.y + 一辺 / 2)
+    }
+    for (const 番地 of 入力.塗っている途中の番地一覧) {
+        const { 左上, 一辺 } = 大升の画素の矩形(視点, 入力.塗っている途中の格子, 番地)
+        文脈.strokeStyle = 重ね描きの配色.描いている途中の等高線
+        文脈.lineWidth = 重ね描きの寸法.等高線の太さ画素
+        文脈.strokeRect(左上.x, 左上.y, 一辺, 一辺)
+    }
+}
+
+function 大升の画素の矩形(視点: 見下ろし図の視点, 格子: 大升の格子, 番地: { readonly 列: number; readonly 行: number }): { 左上: { x: number; y: number }; 一辺: number } {
+    const 左上 = 視点.ワールドから画素へ(大升の北西の角(番地, 格子))
+    return { 左上, 一辺: 大升の一辺のメートル(格子) * 視点.画素毎メートル }
+}
+
+function 格子線を描く(文脈: CanvasRenderingContext2D, 視点: 見下ろし図の視点, 格子: 大升の格子): void {
+    const 数 = 一辺に並ぶ大升の数(格子)
+    const 半分 = 格子.一辺のメートル / 2
+    const 一辺 = 大升の一辺のメートル(格子)
+    文脈.strokeStyle = 重ね描きの配色.大升の格子線
+    文脈.lineWidth = 重ね描きの寸法.大升の格子線の太さ画素
+    文脈.beginPath()
+    for (let i = 1; i < 数; i++) {
+        const 位置 = -半分 + i * 一辺
+        const 縦の上 = 視点.ワールドから画素へ({ x: 位置, z: -半分 })
+        const 縦の下 = 視点.ワールドから画素へ({ x: 位置, z: 半分 })
+        const 横の左 = 視点.ワールドから画素へ({ x: -半分, z: 位置 })
+        const 横の右 = 視点.ワールドから画素へ({ x: 半分, z: 位置 })
+        文脈.moveTo(縦の上.x, 縦の上.y)
+        文脈.lineTo(縦の下.x, 縦の下.y)
+        文脈.moveTo(横の左.x, 横の左.y)
+        文脈.lineTo(横の右.x, 横の右.y)
+    }
+    文脈.stroke()
+}

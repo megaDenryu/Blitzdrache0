@@ -4,3 +4,4 @@ export { チャンクぜんたいの操作帯 } from './操作帯/チャンク�
 export { 筆と置くものの棚 } from './下パネル/筆と置くものの棚.ts'
 export { インスペクターパネル } from './パネル/インスペクター/インスペクターパネル.ts'
 export type { 編集モード } from './パネル/モード切替/モード定義.ts'
+export type { 表示面 } from './操作帯/表示面.ts'

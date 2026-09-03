@@ -1,5 +1,5 @@
 import type { 位置3次元 } from '../../生成/編集資源契約.ts'
-import type { ワールド編集状態 } from './編集モデル/index.ts'
+import type { ワールド編集状態, 下書きと正本の揃い } from './編集モデル/index.ts'
 import type { チャンク編集画面部品 } from './画面/index.ts'
 import type { チャンク編集状態 } from './チャンク編集状態.ts'
 import type { チャンク編集同期サービス } from './チャンク編集同期サービス.ts'
@@ -9,6 +9,7 @@ export class チャンク編集筆致ハンドラ {
     private _筆致通過点列: 位置3次元[] = []
     private _直前高さ退避: Float32Array | null = null
     private _直前材質退避: Uint8Array | null = null
+    private _直前の揃い退避: 下書きと正本の揃い | null = null
 
     public constructor(
         private readonly _モデル: ワールド編集状態,
@@ -21,6 +22,7 @@ export class チャンク編集筆致ハンドラ {
         if (ボタン === 0) {
             this._筆致通過点列 = []
             const チャンク = this._モデル.チャンクを取得する(this._状態.対象チャンク座標)
+            this._直前の揃い退避 = チャンク.下書きと正本の揃い
             if (this._状態.モード === '造成') this._直前高さ退避 = new Float32Array(チャンク.高さ場.格子データ)
             if (this._状態.モード === '地表ペイント') this._直前材質退避 = new Uint8Array(チャンク.地表材質.材質データ)
         }
@@ -60,24 +62,34 @@ export class チャンク編集筆致ハンドラ {
         }
     }
 
+    // 筆致は正本を直接書き換えるため、見下ろし図の下書きと正本の揃いを「正本が新しい」へ変え、差し戻しで変更前へ戻せるよう断片に持たせる。
     public 離し時(ボタン: number): void {
-        if (ボタン === 0) {
-            if (this._状態.モード === '造成' && this._直前高さ退避 !== null && this._筆致通過点列.length > 0) {
+        if (ボタン === 0 && this._直前の揃い退避 !== null && this._筆致通過点列.length > 0) {
+            const 変更前の揃い = this._直前の揃い退避
+            const チャンク = this._モデル.チャンクを取得する(this._状態.対象チャンク座標)
+            if (this._状態.モード === '造成' && this._直前高さ退避 !== null) {
+                チャンク.下書きと正本の揃い = '正本が新しい'
                 this._状態.取り消し断片を積む({
                     種類: '造成筆致',
                     対象チャンク: { ...this._状態.対象チャンク座標 },
                     変更前格子データ: this._直前高さ退避,
+                    変更前の揃い,
                 })
                 this._同期.散布を同期する()
-            } else if (this._状態.モード === '地表ペイント' && this._直前材質退避 !== null && this._筆致通過点列.length > 0) {
+            } else if (this._状態.モード === '地表ペイント' && this._直前材質退避 !== null) {
+                チャンク.下書きと正本の揃い = '正本が新しい'
                 this._状態.取り消し断片を積む({
                     種類: '材質の筆致',
                     対象チャンク: { ...this._状態.対象チャンク座標 },
                     変更前材質データ: this._直前材質退避,
+                    変更前の揃い,
                 })
             }
+        }
+        if (ボタン === 0) {
             this._直前高さ退避 = null
             this._直前材質退避 = null
+            this._直前の揃い退避 = null
         }
     }
 }

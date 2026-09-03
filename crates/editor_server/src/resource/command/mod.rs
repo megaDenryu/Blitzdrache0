@@ -4,6 +4,7 @@
 
 mod building_ops;
 mod material_stroke;
+mod plan_view_ops;
 mod road_collection_ops;
 mod road_point_ops;
 mod road_target;
@@ -15,6 +16,10 @@ use serde::{Deserialize, Serialize};
 
 pub use building_ops::{建物を削除する, 建物を移動する, 建物を配置する};
 pub use material_stroke::{地表材質層, 材質の筆致};
+pub use plan_view_ops::{
+    大升から地形を生成する, 大升を塗る, 等高線から高さ場を生成する, 等高線を削除する, 等高線を変更する, 等高線を追加する, 高さ場から大升を導く,
+    高さ場から等高線を導く,
+};
 pub use road_collection_ops::{道路を削除する, 道路を追加する};
 pub use road_point_ops::{道路点を削除する, 道路点を挿入する, 道路点を移動する, 道路点を追加する};
 pub use road_target::道路対象;
@@ -46,4 +51,12 @@ pub enum 編集コマンド {
     建物基礎を平坦化する(建物基礎を平坦化する),
     急勾配を岩肌へベイクする(急勾配を岩肌へベイクする),
     道路下を泥へベイクする(道路下を泥へベイクする),
+    等高線を追加する(等高線を追加する),
+    等高線を変更する(等高線を変更する),
+    等高線を削除する(等高線を削除する),
+    大升を塗る(大升を塗る),
+    等高線から高さ場を生成する(等高線から高さ場を生成する),
+    大升から地形を生成する(大升から地形を生成する),
+    高さ場から等高線を導く(高さ場から等高線を導く),
+    高さ場から大升を導く(高さ場から大升を導く),
 }

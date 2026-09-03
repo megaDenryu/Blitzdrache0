@@ -48,12 +48,13 @@ export class チャンク編集ツール extends LV2HtmlComponentBase {
         this.同期サービス = new チャンク編集同期サービス(this.編集状態, this.UI状態, this.画面.部品)
         this.操作サービス = new チャンク編集操作サービス(this.編集状態, this.UI状態, this.同期サービス)
 
-        パネルイベントを配線する(this.画面.部品, this.UI状態, this.操作サービス, this.同期サービス, this.編集状態)
+        const パネル解除 = パネルイベントを配線する(this.画面.部品, this.UI状態, this.操作サービス, this.同期サービス, this.編集状態)
         const 永続化解除 = 永続化イベントを配線する(this.インスペクター.部品.永続化, this.永続化, this.保管庫, this.編集状態, this.同期サービス, this.対象座標)
         const ポインタ解除 = ポインタとキー入力を配線する(this.画面.部品, this.UI状態, this.操作サービス, this.同期サービス, this.編集状態)
         this._購読解除 = (): void => {
             ポインタ解除()
             永続化解除()
+            パネル解除()
         }
 
         this.同期サービス.全体を同期する()
