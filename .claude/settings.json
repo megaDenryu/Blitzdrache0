@@ -2,7 +2,26 @@
   "permissions": {
     "allow": [
       "Bash(cargo:*)",
-      "PowerShell(cargo:*)"
+      "PowerShell(cargo:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(sed -n:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(wc:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git submodule:*)",
+      "Bash(npm run:*)",
+      "Bash(npm --prefix:*)",
+      "Bash(npm ci)",
+      "Bash(node --experimental-transform-types:*)",
+      "Bash(python:*)"
     ]
   }
 }
