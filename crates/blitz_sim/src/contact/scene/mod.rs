@@ -6,6 +6,7 @@
 
 mod anchor_retention_tests;
 mod drop_tests;
+mod released_normal_reaction_tests;
 mod scene_geometry;
 mod scene_settings;
 mod slope_fixture;

@@ -96,8 +96,8 @@ pub use restitution_coefficient::反発係数;
 pub use solver_quality::接触を解く品質の設定;
 pub use solver_quality_error::接触を解く品質の設定エラー;
 pub use static_friction::{
-    剛体と静的世界の静止摩擦の錨, 剛体どうしの静止摩擦の錨, 接線のラグランジュ乗数, 接触点集合の静止摩擦の仮の集計, 静止摩擦の一回の仮の射影の結果,
-    静止摩擦の一細分の解の状態, 静止摩擦の錨,
+    剛体と静的世界の静止摩擦の錨, 剛体どうしの静止摩擦の錨, 接線のラグランジュ乗数, 接触点の仮の接線の乗数, 接触点集合の静止摩擦の仮の集計,
+    静止摩擦の一回の仮の射影の結果, 静止摩擦の一細分の解の状態, 静止摩擦の錨,
 };
 pub use static_world_partner::静的世界の接触相手;
 pub use static_world_partner_id::静的世界の接触相手の識別子;

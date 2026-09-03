@@ -17,9 +17,11 @@ mod projection_tests;
 mod result;
 mod substep_state;
 mod tangential_multiplier;
+mod tentative_point_multiplier;
 
 pub use anchor::{剛体と静的世界の静止摩擦の錨, 剛体どうしの静止摩擦の錨, 静止摩擦の錨};
 pub use manifold_cone::接触点集合の静止摩擦の仮の集計;
 pub use result::静止摩擦の一回の仮の射影の結果;
 pub use substep_state::静止摩擦の一細分の解の状態;
 pub use tangential_multiplier::接線のラグランジュ乗数;
+pub use tentative_point_multiplier::接触点の仮の接線の乗数;
