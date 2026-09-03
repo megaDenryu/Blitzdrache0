@@ -84,6 +84,18 @@ impl 対称な連立の固有分解 {
         self.固有値の最大() * 丸めの比.max(次数の上界 * f32::EPSILON)
     }
 
+    // 第k番の固有値。固有値の散らばりと右辺の射影を測る計器が読む口であり、公開面には出さない。
+    #[cfg(test)]
+    pub(in crate::contact) fn 第k番の固有値(&self, k: usize) -> f32 {
+        self.固有値[k]
+    }
+
+    // 第k番の固有ベクトルの第i成分。同じ計器が右辺の射影を求めるために読む。
+    #[cfg(test)]
+    pub(in crate::contact) fn 第k番の固有ベクトルの成分(&self, k: usize, i: usize) -> f32 {
+        self.固有ベクトルの列[i][k]
+    }
+
     fn 固有値の最大(&self) -> f32 {
         (0..self.個数).map(|k| self.固有値[k]).fold(0.0, f32::max)
     }
