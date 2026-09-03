@@ -12,6 +12,7 @@ mod discard_reason;
 mod factorization;
 mod jacobi_decomposition;
 mod pseudo_inverse;
+mod pseudo_inverse_solution;
 
 use blitz_collision::contact_set::接触点の上限;
 
@@ -19,6 +20,7 @@ use blitz_collision::contact_set::接触点の上限;
 pub(in crate::contact) use discard_reason::擬似逆が固有の向きを捨てた理由;
 pub(in crate::contact) use factorization::対称な連立の分解;
 pub(in crate::contact) use jacobi_decomposition::対称な連立の固有分解;
+pub(in crate::contact) use pseudo_inverse_solution::擬似逆で解いた増分と捨てた右辺;
 
 /// 法線と接線を同じ連立へ入れたときの行の上限。接触点1つが法線の行と接線の行を1つずつ持つ。
 /// 固有分解の受け皿の大きさがこれであり、法線だけを解く LDLᵀ の側は接触点の上限のままである。
