@@ -19,6 +19,7 @@ mod slope_geometry;
 mod slope_tests;
 mod static_friction_method;
 mod substep_harness;
+mod substep_iteration_result;
 mod substep_non_penetration;
 mod substep_solve;
 mod substep_static_friction;

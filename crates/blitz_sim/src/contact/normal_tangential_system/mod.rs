@@ -19,6 +19,7 @@ mod single_point_fixture;
 #[cfg(test)]
 mod single_point_tests;
 mod solution;
+mod solve_outcome;
 mod system;
 #[cfg(test)]
 mod system_fixture;
@@ -26,8 +27,12 @@ mod system_solve;
 mod tangential_row;
 #[cfg(test)]
 mod translation_tests;
+mod visited_active_set;
+#[cfg(test)]
+mod visited_active_set_tests;
 
 pub use normal_row::法線の隔たりを動かさない一行;
+pub use solve_outcome::有効集合を組み替えて解いた結末;
 pub use system::接触点集合の法線と接線の連立;
 pub use tangential_row::錨の接線変位を零へ戻す一行;
 
