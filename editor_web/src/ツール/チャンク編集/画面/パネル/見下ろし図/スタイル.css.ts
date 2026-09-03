@@ -67,6 +67,33 @@ export const 揃いの札 = style({
     whiteSpace: 'nowrap',
 })
 
+// 選択中の対象の欄(等高線・大升で共通)。詳細行の縦積みと、選んでいないときの案内文の見た目を持つ。
+export const 選択の詳細区画 = style({
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+    paddingBottom: '8px',
+    borderBottom: `1px solid ${エディターCSS変数('境界線')}`,
+})
+
+export const 選択の案内文 = style({
+    fontSize: '11px',
+    color: エディターCSS変数('テキスト副'),
+    paddingBottom: '8px',
+    borderBottom: `1px solid ${エディターCSS変数('境界線')}`,
+})
+
+export const 危険ボタン = style({
+    padding: '6px 8px',
+    fontSize: '11px',
+    fontWeight: 500,
+    borderRadius: '4px',
+    border: `1px solid ${エディターCSS変数('危険ボタン枠線')}`,
+    backgroundColor: エディターCSS変数('危険ボタン背景'),
+    color: エディターCSS変数('危険ボタン文字'),
+    cursor: 'pointer',
+})
+
 export const 選択欄 = style({
     width: '100%',
     padding: '3px 6px',

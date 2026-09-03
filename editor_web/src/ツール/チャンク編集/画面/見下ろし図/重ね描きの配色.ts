@@ -10,6 +10,7 @@ export const 重ね描きの配色 = {
     高さの文字の縁: 'rgba(0, 0, 0, 0.8)',
     大升の格子線: 'rgba(255, 255, 255, 0.25)',
     大升の塗りの縁: 'rgba(255, 255, 255, 0.7)',
+    選択中の大升の枠: 'rgba(255, 200, 60, 1)',
 } as const
 
 export const 重ね描きの寸法 = {
@@ -19,13 +20,17 @@ export const 重ね描きの寸法 = {
     文字の大きさ画素: 11,
     大升の格子線の太さ画素: 1,
     大升の塗りの不透明度: 0.45,
+    高さの文字を描く升の幅の割合: 0.9,
+    選択中の大升の枠の太さ画素: 3,
 } as const
 
 // 頂点・線分をつかむときの当たりの半径(画素)。頂点の丸より少し広くして狙いやすくする。
 export const 当たりの半径画素 = 6
 
+const 高さの文字のフォント = `${重ね描きの寸法.文字の大きさ画素}px sans-serif`
+
 export function 高さの文字を描く(文脈: CanvasRenderingContext2D, 文: string, x: number, y: number): void {
-    文脈.font = `${重ね描きの寸法.文字の大きさ画素}px sans-serif`
+    文脈.font = 高さの文字のフォント
     文脈.textBaseline = 'middle'
     文脈.textAlign = 'center'
     文脈.lineWidth = 3
@@ -33,4 +38,11 @@ export function 高さの文字を描く(文脈: CanvasRenderingContext2D, 文: 
     文脈.strokeText(文, x, y)
     文脈.fillStyle = 重ね描きの配色.高さの文字
     文脈.fillText(文, x, y)
+}
+
+// 文が最大幅画素に収まるかを判定する。大升の高さの数字は、ズームが小さく大升の描画幅が狭いときに
+// 文字だけが升からはみ出して読みにくくなるため、描く前にここで確かめる。
+export function 高さの文字が収まるか(文脈: CanvasRenderingContext2D, 文: string, 最大幅画素: number): boolean {
+    文脈.font = 高さの文字のフォント
+    return 文脈.measureText(文).width <= 最大幅画素
 }
