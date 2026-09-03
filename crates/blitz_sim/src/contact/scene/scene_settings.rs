@@ -8,6 +8,7 @@ use blitz_math::{キログラム, メートル, ワールド, 速度};
 
 use super::super::solver_quality::接触を解く品質の設定;
 use super::super::surface_property::表面物性;
+use super::static_friction_method::場面の静止摩擦の解き方;
 use crate::constraint_graph::一様な加速度;
 use crate::rigid_body::配置;
 use crate::xpbd::{ラグランジュ乗数, 刻み幅};
@@ -24,17 +25,19 @@ pub(super) struct 場面の設定 {
     pub 重力: 一様な加速度,
     pub 細分の刻み幅: 刻み幅,
     pub 解く品質: 接触を解く品質の設定,
-    pub 静止摩擦の位置拘束を外すか: bool,
+    pub 静止摩擦の解き方: 場面の静止摩擦の解き方,
 }
 
-// 細分1本で観測した接触の数と、反復を終えた法線の乗数の合計。滑走と履歴の対応付けと、
-// 法線の乗数の合計が真の法線力積 m g cosθ h² からどれだけ離れるかを試験が読む。
+// 細分1本で観測した接触の数と、反復を終えた法線の乗数の合計と最大の食い込み。滑走と履歴の対応付けと、
+// 法線の乗数の合計が真の法線力積 m g cosθ h² からどれだけ離れるかと、位置の反復回数を増やしても
+// 食い込みが増えないことを試験が読む。
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct 細分の観測 {
     pub 接触点の数: usize,
     pub 開始した接触点の数: usize,
     pub 滑走中の接触点の数: usize,
     pub 法線の乗数の合計: ラグランジュ乗数,
+    pub 最大の食い込み: メートル, // 反復を終えた配置で最も深い −隔たり。食い込みが無ければ零
 }
 
 impl Default for 細分の観測 {
@@ -44,6 +47,7 @@ impl Default for 細分の観測 {
             開始した接触点の数: 0,
             滑走中の接触点の数: 0,
             法線の乗数の合計: ラグランジュ乗数::零(),
+            最大の食い込み: メートル::生成する(0.0),
         }
     }
 }

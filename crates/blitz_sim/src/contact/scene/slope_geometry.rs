@@ -11,6 +11,7 @@ use blitz_math::{ワールド, 方向};
 
 use super::super::friction_coefficient::摩擦係数;
 use super::scene_geometry::{世界の変位, 姿勢を軸の回転から作る};
+use super::static_friction_method::場面の静止摩擦の解き方;
 use crate::rigid_body::姿勢;
 
 pub(super) const 重力の大きさ: f32 = 9.81;
@@ -22,7 +23,7 @@ pub(super) struct 坂の場面の条件 {
     pub 静止摩擦係数: 摩擦係数,
     pub 動摩擦係数: 摩擦係数,
     pub 下り向きの初速: f32,
-    pub 静止摩擦の位置拘束を外すか: bool,
+    pub 静止摩擦の解き方: 場面の静止摩擦の解き方,
 }
 
 impl 坂の場面の条件 {

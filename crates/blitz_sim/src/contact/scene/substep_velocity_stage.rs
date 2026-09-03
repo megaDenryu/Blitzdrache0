@@ -10,6 +10,7 @@ use blitz_math::メートル毎秒;
 use super::super::body_static_contact::剛体と静的世界の接触拘束;
 use super::super::contact_batches::接触拘束の二つのバッチ;
 use super::super::velocity_stage::{接触の速度段階の結果, 速度段階の接触点の条件};
+use super::static_friction_method::場面の静止摩擦の解き方;
 use super::substep_harness::一つの箱と静的な直方体の場面;
 use crate::rigid_body::運動状態;
 use crate::rigid_xpbd::姿勢自由度の参加者;
@@ -54,7 +55,7 @@ impl 一つの箱と静的な直方体の場面 {
     fn 速度段階の条件を組む(
         &self, 拘束: &剛体と静的世界の接触拘束, 法線相対速度: メートル毎秒
     ) -> 速度段階の接触点の条件 {
-        if self.静止摩擦の位置拘束を外すか {
+        if self.静止摩擦の解き方 == 場面の静止摩擦の解き方::静止摩擦の位置拘束を外す {
             return 速度段階の接触点の条件::生成する(
                 拘束.引数().接触法線,
                 拘束.引数().接触物性,

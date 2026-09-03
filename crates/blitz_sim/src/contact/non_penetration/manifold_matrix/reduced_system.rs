@@ -7,8 +7,8 @@
 use blitz_collision::contact_set::接触点の上限;
 use blitz_math::{メートル, 逆キログラム};
 
+use super::super::super::symmetric_system::対称な連立の分解;
 use super::super::manifold_active_set::法線の有効集合;
-use super::factorization::対称な連立の分解;
 use super::接触点集合の法線の有効逆質量行列;
 use crate::xpbd::ラグランジュ乗数;
 

@@ -59,6 +59,7 @@ mod static_friction;
 mod static_world_partner;
 mod static_world_partner_id;
 mod surface_property;
+mod symmetric_system;
 mod velocity_stage;
 
 pub use batch_builder::接触拘束のバッチの組み立て;
@@ -97,7 +98,8 @@ pub use solver_quality::接触を解く品質の設定;
 pub use solver_quality_error::接触を解く品質の設定エラー;
 pub use static_friction::{
     剛体と静的世界の静止摩擦の錨, 剛体どうしの静止摩擦の錨, 接線のラグランジュ乗数, 接触点の仮の接線の乗数, 接触点集合の静止摩擦の仮の集計,
-    静止摩擦の一回の仮の射影の結果, 静止摩擦の一細分の解の状態, 静止摩擦の錨,
+    接触点集合の静止摩擦の同時解, 接触点集合の静止摩擦の連立, 静止摩擦の一回の仮の射影の結果, 静止摩擦の一細分の解の状態, 静止摩擦の接触点集合の一行,
+    静止摩擦の連立へ点を入れた結果, 静止摩擦の錨,
 };
 pub use static_world_partner::静的世界の接触相手;
 pub use static_world_partner_id::静的世界の接触相手の識別子;

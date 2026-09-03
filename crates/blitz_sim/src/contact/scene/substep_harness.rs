@@ -20,6 +20,7 @@ use super::super::static_world_partner_id::静的世界の接触相手の識別�
 use super::super::velocity_stage::接触の速度段階;
 use super::scene_geometry::{一様な立方体の質量特性, 単一の材質の混合則, 場面の材質, 直方体を組む};
 use super::scene_settings::{場面の設定, 細分の観測};
+use super::static_friction_method::場面の静止摩擦の解き方;
 use crate::rigid_body::{剛体の台帳, 剛体の識別子, 質量特性, 運動状態, 運動種別, 配置};
 use crate::rigid_xpbd::{ジャイロ項の扱い, 細分の予測器};
 use crate::xpbd::刻み幅;
@@ -42,7 +43,7 @@ pub(super) struct 一つの箱と静的な直方体の場面 {
     pub(super) 解く品質: 接触を解く品質の設定,
     pub(super) 履歴: 剛体と静的世界の接触の履歴,
     pub(super) 直前の細分の観測: 細分の観測,
-    pub(super) 静止摩擦の位置拘束を外すか: bool, // 判断13の反証。真のとき静止摩擦の射影を飛ばし、押し戻した点を滑走中として速度段階へ渡す
+    pub(super) 静止摩擦の解き方: 場面の静止摩擦の解き方,
 }
 
 impl 一つの箱と静的な直方体の場面 {
@@ -75,7 +76,7 @@ impl 一つの箱と静的な直方体の場面 {
             解く品質: 設定.解く品質,
             履歴: 剛体と静的世界の接触の履歴::見込みの接触点の数で生成する(見込みの接触点の数),
             直前の細分の観測: 細分の観測::default(),
-            静止摩擦の位置拘束を外すか: 設定.静止摩擦の位置拘束を外すか,
+            静止摩擦の解き方: 設定.静止摩擦の解き方,
         }
     }
 
