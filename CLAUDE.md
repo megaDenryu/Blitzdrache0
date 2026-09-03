@@ -8,7 +8,7 @@
 ## 作業のしかた（2026-09-04制定）
 
 - **絶対パスで実行する。Bash/PowerShellツールで `cd` をコマンド接頭に付けない**（`cd <path> && ...` の形を禁止）。作業ディレクトリは既にリポジトリルートである。`cd` を挟むと以後のツール呼び出しの作業ディレクトリ推定が食い違い、意図しないパスでコマンドが実行される事故につながる
-- **サブエージェント定義は `.claude/agents/` に置く。** 実装員（sonnet・effort high）・命名チェック員（haiku）・構造チェック員（sonnet・effort high）・リネーム員（sonnet）・文章チェック員（sonnet）・レビュー員（fable）の6体を収める。これはグローバル定義（`~/.claude/agents/`）の複製であり、リポジトリをどのPCでcloneしても同じ体制で委譲作業ができるようにするためである
+- **サブエージェント定義は `.claude/agents/` に置く。** 実装員（Opus 5・effort medium。既定）・実装員Fable版（Fable 5.1・effort low。難易度が高い作業に使う。fable lowはopus mediumより強いが高価）・命名チェック員（haiku）・構造チェック員（sonnet・effort high）・リネーム員（sonnet・effort medium）・文章チェック員（sonnet・effort medium）・レビュー員（Opus 5・effort medium。既定）・レビュー員Fable版（Fable 5.1・effort low。難易度が高い検収に使う）の8体を収める。これはグローバル定義（`~/.claude/agents/`）の複製であり、リポジトリをどのPCでcloneしても同じ体制で委譲作業ができるようにするためである
 - **`/rule` が読む全プロジェクト共通のルールも `.claude/` へ複製する（2026-09-04制定）。** `.claude/global-reference/全プロジェクト共通CLAUDE.md` にグローバルCLAUDE.md全文の複製を、`.claude/skills/` にグローバルCLAUDE.mdが「全文は`skills/XXX`にある」と指す4スキル（doc-writing・アーキテクチャ先行・layer-roles・エディター制作）の複製を置く。別のPCで`~/.claude/CLAUDE.md`が未整備でも、本ファイルが指す「グローバルCLAUDE.mdの「XXX」に従う」という各参照を、この複製から読めるようにするためである
 - **これらの複製の更新はユーザーの明示的な指示があったときだけ行う。** マシンごとに`~/.claude/`の内容は揃っているとは限らないため、セッションが自分のマシンのグローバル版とこの複製の食い違いに気づいても、それだけを理由に複製を書き換えない（PCを移るたびに上書き合戦になるのを防ぐため）。このリポジトリでの作業は常にこの複製の内容に従う
 
