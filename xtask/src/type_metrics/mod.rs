@@ -28,6 +28,7 @@ use std::process::ExitCode;
 use crate::file_scan;
 
 pub use error::型計測の破れ;
+pub use keyword::修飾子を取り除く;
 pub use metrics::{型計測, 集計する};
 pub use observation::観測;
 

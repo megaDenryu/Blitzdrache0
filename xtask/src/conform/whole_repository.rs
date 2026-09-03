@@ -7,9 +7,10 @@
 use super::error::規約検査の破れ;
 use super::violation::違反;
 use super::{
-    dependency_whitelist, depth_contract, doc_section, duplicate_file_literal, lighting_query_declaration, reload_without_device_wait,
-    removed_object_uniform, removed_slot_material_set, removed_view_pass_lighting, sample_bodies_consistency, shader_binding, shader_constant,
-    shader_form, shader_uniform_alias, single_lighting_slot_write, type_metrics_ledger, wording_contract, workspace_dependency_features,
+    dependency_whitelist, depth_contract, doc_section, duplicate_file_literal, free_function_whole_type, lighting_query_declaration,
+    reload_without_device_wait, removed_object_uniform, removed_slot_material_set, removed_view_pass_lighting, sample_bodies_consistency,
+    shader_binding, shader_constant, shader_form, shader_uniform_alias, single_lighting_slot_write, type_metrics_ledger, wording_contract,
+    workspace_dependency_features,
 };
 
 pub fn 集める() -> Result<Vec<違反>, 規約検査の破れ> {
@@ -32,5 +33,6 @@ pub fn 集める() -> Result<Vec<違反>, 規約検査の破れ> {
     違反一覧.extend(reload_without_device_wait::検査する()?);
     違反一覧.extend(single_lighting_slot_write::検査する()?);
     違反一覧.extend(type_metrics_ledger::全型の分量を台帳と照合する()?);
+    違反一覧.extend(free_function_whole_type::全ファイルの自由関数を検査する()?);
     Ok(違反一覧)
 }
