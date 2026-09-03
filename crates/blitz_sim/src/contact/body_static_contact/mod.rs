@@ -10,12 +10,12 @@ mod history_and_friction;
 mod velocity_stage;
 
 use super::body_static_contact_parameters::剛体と静的世界の接触拘束の引数;
-use super::contact_projection_participant::接触の射影に参加する点;
+use super::contact_projection_row::接触の射影に参加する点;
 use super::non_penetration::非貫通の一刻みの係数;
 use super::non_penetration::非貫通の一回の射影の結果;
 use super::non_penetration::非貫通の一細分の解の状態;
 use super::non_penetration::非貫通の接触点集合の一行;
-use super::normal_tangential_system::{接触点集合の法線と接線の連立, 法線の隔たりを動かさない一行};
+use super::normal_tangential_system::接触点集合の法線と接線の連立;
 use super::static_friction::静止摩擦の一細分の解の状態;
 use super::static_friction::{剛体と静的世界の静止摩擦の錨, 静止摩擦の錨};
 use crate::rigid_xpbd::姿勢自由度の参加者;
@@ -86,22 +86,15 @@ impl 剛体と静的世界の接触拘束 {
         self.非貫通の解の状態 = 一行.乗数の増分を足した解の状態(乗数の増分);
     }
 
-    /// 法線と接線の連立へこの点の法線の一行を積む。この行が求めるのは、接線の補正がこの隔たりを動かさないことである。
+    /// 法線と接線の連立へこの点の法線の一行を積む。行は非貫通だけの連立へ渡すものと同じであり、右辺も同じ
+    /// −C_n − α̃ λ_n である。粘着の候補は、この行と接線の行を1回の混合連立として同時に解いた解である。
     pub fn 法線と接線の連立へ法線の一行を積む(
         &self,
         点の番号: usize,
         連立: &mut 接触点集合の法線と接線の連立,
         剛体: &姿勢自由度の参加者,
     ) {
-        連立.法線の一行を積む(
-            点の番号,
-            法線の隔たりを動かさない一行::接触点と法線の乗数から生成する(
-                接触の射影に参加する点::剛体の局所点から生成する(*剛体, self.引数.剛体側の局所接触点),
-                接触の射影に参加する点::静的世界の固定点から生成する(self.引数.静的世界側の接触点),
-                self.引数.接触法線,
-                self.法線のラグランジュ乗数(),
-            ),
-        );
+        連立.法線の一行を積む(点の番号, self.同時解法の一行にする(剛体));
     }
 
     /// 法線と接線の連立が求めた法線の乗数の増分を取り込む。前提: 剛体はその連立を組んだときの参加者である。

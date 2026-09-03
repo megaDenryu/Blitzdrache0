@@ -8,8 +8,8 @@
 
 use blitz_math::{メートル, ワールド, 方向};
 
-use super::super::contact_projection_participant::接触の射影に参加する点;
-use super::row_gradient::一行の二つの符号付き勾配;
+use super::super::contact_projection_row::一行の二つの符号付き勾配;
+use super::super::contact_projection_row::接触の射影に参加する点;
 
 /// 接触点1つの、錨からの接線変位を零へ戻すことを求める行。
 #[derive(Debug, Clone, Copy, PartialEq)]
