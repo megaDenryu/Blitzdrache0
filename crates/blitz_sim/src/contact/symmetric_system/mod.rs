@@ -9,12 +9,17 @@
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断13: 静止摩擦は錨からの接線変位を零へ戻す位置拘束であり、クーロン円錐の内側でだけ効く」
 
 mod factorization;
+mod jacobi_decomposition;
 mod pseudo_inverse;
 
 use blitz_collision::contact_set::接触点の上限;
 
 pub(in crate::contact) use factorization::対称な連立の分解;
-pub(in crate::contact) use pseudo_inverse::対称な連立の固有分解;
+pub(in crate::contact) use jacobi_decomposition::対称な連立の固有分解;
+
+/// 法線と接線を同じ連立へ入れたときの行の上限。接触点1つが法線の行と接線の行を1つずつ持つ。
+/// 固有分解の受け皿の大きさがこれであり、法線だけを解く LDLᵀ の側は接触点の上限のままである。
+pub(in crate::contact) const 法線と接線の連立の行の上限: usize = 2 * 接触点の上限;
 
 // 特異な連立を避けるために対角へ足す正則化の、行列の規模に対する比。
 const 特異を避ける正則化の比: f32 = 1.0e-4;

@@ -13,6 +13,8 @@ mod mass_error;
 mod meter;
 mod meter_per_second;
 mod meter_per_second_squared;
+#[cfg(test)]
+mod meter_tests;
 mod narrowing;
 mod newton;
 mod newton_meter;

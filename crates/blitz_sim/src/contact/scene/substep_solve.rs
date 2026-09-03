@@ -16,12 +16,14 @@ use super::super::history::接触の対応付け;
 use super::super::velocity_stage::接触点の法線の相対速度を求める;
 use super::static_friction_method::場面の静止摩擦の解き方;
 use super::substep_harness::一つの箱と静的な直方体の場面;
-use crate::rigid_body::運動状態;
+use crate::rigid_body::{運動状態, 配置};
 use crate::rigid_xpbd::{予測の状態, 姿勢自由度の参加者};
 
 impl 一つの箱と静的な直方体の場面 {
     // 併走の対応付けを拘束へ配り、開始した接触点の数を返す。
-    pub(super) fn 履歴の記録を引き継ぐ(&mut self, バッチ: &mut 接触拘束の二つのバッチ) -> usize {
+    pub(super) fn 履歴の記録を引き継ぐ(
+        &mut self, バッチ: &mut 接触拘束の二つのバッチ, 予測の前の配置: &配置
+    ) -> usize {
         let 持ち込む項目: Vec<_> = バッチ
             .剛体と静的世界の接触拘束()
             .iter()
@@ -29,8 +31,9 @@ impl 一つの箱と静的な直方体の場面 {
             .collect();
         let 対応付け: Vec<_> = self.履歴.新しい細分の接触と併走する(&持ち込む項目).unwrap().対応付け一覧().to_vec();
         for (拘束, 対応) in バッチ.剛体と静的世界の接触拘束を反復のために借りる().iter_mut().zip(&対応付け) {
-            if let 接触の対応付け::継続 { 引き継いだ記録 } = 対応 {
-                拘束.継続の記録を引き継ぐ(*引き継いだ記録);
+            match 対応 {
+                接触の対応付け::継続 { 引き継いだ記録 } => 拘束.継続の記録を引き継ぐ(*引き継いだ記録),
+                接触の対応付け::開始 { .. } => 拘束.開始した接触の錨を予測の前の配置へ置く(予測の前の配置),
             }
         }
         対応付け.iter().filter(|対応| !対応.継続か()).count()
