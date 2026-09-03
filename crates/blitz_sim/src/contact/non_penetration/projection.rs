@@ -15,7 +15,7 @@
 
 use blitz_math::{ワールド, 方向};
 
-use super::super::contact_projection_participant::接触の射影に参加する点;
+use super::super::contact_projection_row::接触の射影に参加する点;
 use super::coefficients::非貫通の一刻みの係数;
 use super::result::非貫通の一回の射影の結果;
 use super::substep_state::非貫通の一細分の解の状態;

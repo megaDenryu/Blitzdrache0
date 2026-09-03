@@ -10,7 +10,7 @@
 
 use blitz_math::{ワールド, 方向};
 
-use super::super::contact_projection_participant::接触の射影に参加する点;
+use super::super::contact_projection_row::接触の射影に参加する点;
 use super::super::normal_tangential_system::{接触点集合の法線と接線の連立, 錨の接線変位を零へ戻す一行};
 use super::manifold_row_result::静止摩擦の連立へ点を入れた結果;
 use super::substep_state::静止摩擦の一細分の解の状態;

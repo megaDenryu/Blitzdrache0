@@ -12,7 +12,7 @@ mod history_and_friction_tests;
 mod velocity_stage;
 
 use super::body_body_contact_parameters::剛体と剛体の接触拘束の引数;
-use super::contact_projection_participant::接触の射影に参加する点;
+use super::contact_projection_row::接触の射影に参加する点;
 use super::non_penetration::非貫通の一刻みの係数;
 use super::non_penetration::非貫通の一回の射影の結果;
 use super::non_penetration::非貫通の一細分の解の状態;

@@ -3,7 +3,7 @@
 //! 2つのモジュールへ開くためである。細分の中で錨が変わるのは接触点集合が円錐を超えた反復だけであり、その置き直しもここが行う。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断13: 静止摩擦は錨からの接線変位を零へ戻す位置拘束であり、クーロン円錐の内側でだけ効く」
 
-use super::super::contact_projection_participant::接触の射影に参加する点;
+use super::super::contact_projection_row::接触の射影に参加する点;
 use super::super::history::剛体どうしの接触の鍵;
 use super::super::history::接触の継続の記録;
 use super::super::history::{剛体どうしの接触の履歴の項目, 剛体どうしの接触の継続の記録};

@@ -19,7 +19,7 @@ mod body_body_contact_parameters;
 mod body_static_contact;
 mod body_static_contact_parameters;
 mod contact_batches;
-mod contact_projection_participant;
+mod contact_projection_row;
 mod contact_property;
 mod contact_property_limits;
 #[cfg(test)]
@@ -69,7 +69,7 @@ pub use body_body_contact_parameters::剛体と剛体の接触拘束の引数;
 pub use body_static_contact::剛体と静的世界の接触拘束;
 pub use body_static_contact_parameters::剛体と静的世界の接触拘束の引数;
 pub use contact_batches::接触拘束の二つのバッチ;
-pub use contact_projection_participant::接触の射影に参加する点;
+pub use contact_projection_row::接触の射影に参加する点;
 pub use contact_property::接触物性;
 pub use contact_thresholds::{
     休止と判定する並進速度の閾値, 休止と判定する角速度の閾値, 休止と判定する連続細分数, 反発を抑制する法線相対速度の閾値

@@ -8,7 +8,7 @@
 use blitz_math::メートル;
 use blitz_math::位置;
 
-use super::super::contact_projection_participant::接触の射影に参加する点;
+use super::super::contact_projection_row::接触の射影に参加する点;
 use super::projection_fixture::{
     一回仮に射影する, 下向きの接触法線, 接平面で回した静的世界の錨, 接線変位の長さ, 重心を錨にした剛体
 };

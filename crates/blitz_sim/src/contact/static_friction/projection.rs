@@ -10,7 +10,7 @@
 
 use blitz_math::{ワールド, 方向};
 
-use super::super::contact_projection_participant::接触の射影に参加する点;
+use super::super::contact_projection_row::接触の射影に参加する点;
 use super::result::静止摩擦の一回の仮の射影の結果;
 use super::substep_state::静止摩擦の一細分の解の状態;
 use crate::xpbd::ラグランジュ乗数;

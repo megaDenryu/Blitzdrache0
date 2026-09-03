@@ -10,7 +10,7 @@ use blitz_math::{
     キログラム, キログラム平方メートル, クォータニオン, メートル, ワールド, 位置, 変位, 方向, 逆キログラム
 };
 
-use super::super::contact_projection_participant::接触の射影に参加する点;
+use super::super::contact_projection_row::接触の射影に参加する点;
 use super::super::contact_property::接触物性;
 use super::super::friction_coefficient::摩擦係数;
 use super::super::restitution_coefficient::反発係数;

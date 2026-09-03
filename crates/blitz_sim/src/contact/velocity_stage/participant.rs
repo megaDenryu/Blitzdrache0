@@ -7,7 +7,7 @@
 
 use blitz_math::{ローカル, ワールド, 位置, 変位, 方向, 衝撃, 逆キログラム, 速度};
 
-use super::super::contact_projection_participant::接触の射影に参加する点;
+use super::super::contact_projection_row::接触の射影に参加する点;
 use crate::rigid_body::運動状態;
 use crate::rigid_xpbd::姿勢自由度の参加者;
 
