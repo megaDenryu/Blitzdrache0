@@ -3,7 +3,7 @@ import type { 地表材質色 } from '../../三次元/地形/地表材質色.ts'
 import type { 見下ろし図の視点 } from '../見下ろし図の視点.ts'
 import { 重ね描きの寸法, 重ね描きの配色, 高さの文字が収まるか, 高さの文字を描く } from '../重ね描きの配色.ts'
 import { 高さを図の文字にする } from '../重ね描きの数値書式.ts'
-import { 一辺に並ぶ大升の数, 大升の一辺のメートル, 大升の北西の角, type 大升の格子 } from './大升の座標変換.ts'
+import type { 大升の格子 } from './大升の座標変換.ts'
 
 // 塗り一覧は下書きの一辺で、塗っている途中の番地は右サイドバーで選んでいる一辺で数えているため、格子を2つ受け取る。
 export interface 大升の重ね描きの入力 {
@@ -54,14 +54,14 @@ export function 大升を重ね描きする(文脈: CanvasRenderingContext2D, �
 }
 
 function 大升の画素の矩形(視点: 見下ろし図の視点, 格子: 大升の格子, 番地: { readonly 列: number; readonly 行: number }): { 左上: { x: number; y: number }; 一辺: number } {
-    const 左上 = 視点.ワールドから画素へ(大升の北西の角(番地, 格子))
-    return { 左上, 一辺: 大升の一辺のメートル(格子) * 視点.画素毎メートル }
+    const 左上 = 視点.ワールドから画素へ(格子.大升の北西の角(番地))
+    return { 左上, 一辺: 格子.大升の一辺のメートル() * 視点.画素毎メートル }
 }
 
 function 格子線を描く(文脈: CanvasRenderingContext2D, 視点: 見下ろし図の視点, 格子: 大升の格子): void {
-    const 数 = 一辺に並ぶ大升の数(格子)
+    const 数 = 格子.一辺に並ぶ大升の数()
     const 半分 = 格子.一辺のメートル / 2
-    const 一辺 = 大升の一辺のメートル(格子)
+    const 一辺 = 格子.大升の一辺のメートル()
     文脈.strokeStyle = 重ね描きの配色.大升の格子線
     文脈.lineWidth = 重ね描きの寸法.大升の格子線の太さ画素
     文脈.beginPath()

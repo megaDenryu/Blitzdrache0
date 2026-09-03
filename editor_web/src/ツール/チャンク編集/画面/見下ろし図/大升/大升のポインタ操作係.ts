@@ -1,7 +1,7 @@
 import type { 大升の塗り } from '../../../../../生成/編集資源契約.ts'
 import type { ワールドXZ } from '../見下ろし図の視点.ts'
 import type { 見下ろし図の編集状態 } from '../見下ろし図の編集状態.ts'
-import { ワールドから大升へ, 同じ大升か, type 大升の格子, type 大升の番地 } from './大升の座標変換.ts'
+import { 同じ大升か, type 大升の格子, type 大升の番地 } from './大升の座標変換.ts'
 
 export interface I大升の操作の相手 {
     readonly 格子を読む: () => 大升の格子 | null
@@ -67,7 +67,7 @@ export class 大升のポインタ操作係 {
     private _通る(位置: ワールドXZ): void {
         const 格子 = this._相手.格子を読む()
         if (格子 === null) return
-        const 番地 = ワールドから大升へ(位置, 格子)
+        const 番地 = 格子.ワールドから大升へ(位置)
         if (番地 === null || this._通った番地一覧.some((既) => 同じ大升か(既, 番地))) return
         this._通った番地一覧.push(番地)
         this._相手.再描画する()
