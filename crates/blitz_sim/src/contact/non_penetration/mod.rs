@@ -12,6 +12,12 @@ mod coefficients;
 mod correction_tests;
 #[cfg(test)]
 pub(in crate::contact) mod fixture;
+mod manifold_active_set;
+mod manifold_matrix;
+mod manifold_row;
+mod manifold_solution;
+#[cfg(test)]
+mod manifold_solve_tests;
 #[cfg(test)]
 mod negative_increment_budget_tests;
 mod projection;
@@ -21,5 +27,7 @@ mod result;
 mod substep_state;
 
 pub use coefficients::{非貫通の一刻みの係数, 非貫通の解き方};
+pub use manifold_row::非貫通の接触点集合の一行;
+pub use manifold_solution::接触点集合の法線の同時解;
 pub use result::非貫通の一回の射影の結果;
 pub use substep_state::非貫通の一細分の解の状態;

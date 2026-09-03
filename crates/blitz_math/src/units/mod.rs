@@ -21,6 +21,7 @@ mod newton_second;
 mod radian;
 mod radian_per_second;
 mod second;
+mod signed_inverse_kilogram;
 mod square_meter;
 mod unit_conversion_error;
 
@@ -44,5 +45,6 @@ pub use newton_second::ニュートン秒;
 pub use radian::ラジアン;
 pub use radian_per_second::ラジアン毎秒;
 pub use second::秒;
+pub use signed_inverse_kilogram::符号付き逆キログラム;
 pub use square_meter::平方メートル;
 pub use unit_conversion_error::単位変換エラー;

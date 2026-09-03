@@ -10,7 +10,7 @@ use super::super::solver_quality::接触を解く品質の設定;
 use super::super::surface_property::表面物性;
 use crate::constraint_graph::一様な加速度;
 use crate::rigid_body::配置;
-use crate::xpbd::刻み幅;
+use crate::xpbd::{ラグランジュ乗数, 刻み幅};
 
 // 場面を組み立てる設定。欄が同じ型の値を多く持つため、位置でなく名前で渡す。
 pub(super) struct 場面の設定 {
@@ -27,10 +27,23 @@ pub(super) struct 場面の設定 {
     pub 静止摩擦の位置拘束を外すか: bool,
 }
 
-// 細分1本で観測した接触の数。滑走と履歴の対応付けを試験が読む。
-#[derive(Debug, Clone, Copy, PartialEq, Default)]
+// 細分1本で観測した接触の数と、反復を終えた法線の乗数の合計。滑走と履歴の対応付けと、
+// 法線の乗数の合計が真の法線力積 m g cosθ h² からどれだけ離れるかを試験が読む。
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct 細分の観測 {
     pub 接触点の数: usize,
     pub 開始した接触点の数: usize,
     pub 滑走中の接触点の数: usize,
+    pub 法線の乗数の合計: ラグランジュ乗数,
+}
+
+impl Default for 細分の観測 {
+    fn default() -> Self {
+        Self {
+            接触点の数: 0,
+            開始した接触点の数: 0,
+            滑走中の接触点の数: 0,
+            法線の乗数の合計: ラグランジュ乗数::零(),
+        }
+    }
 }

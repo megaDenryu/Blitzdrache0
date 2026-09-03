@@ -6,6 +6,7 @@
 
 mod anchor_retention_tests;
 mod drop_tests;
+mod normal_multiplier_sum_tests;
 mod released_normal_reaction_tests;
 mod scene_geometry;
 mod scene_settings;
@@ -13,6 +14,7 @@ mod slope_fixture;
 mod slope_geometry;
 mod slope_tests;
 mod substep_harness;
+mod substep_non_penetration;
 mod substep_solve;
 mod substep_static_friction;
 mod substep_step;

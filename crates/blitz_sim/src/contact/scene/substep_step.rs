@@ -17,7 +17,7 @@ use super::scene_settings::細分の観測;
 use super::substep_harness::一つの箱と静的な直方体の場面;
 use crate::rigid_body::一刻みの入力;
 use crate::rigid_xpbd::予測の状態;
-use crate::xpbd::コンプライアンス;
+use crate::xpbd::{コンプライアンス, ラグランジュ乗数};
 use blitz_collision::contact_set::{
     二つの直方体の重なりの接触点集合, 接触点集合, 直方体どうしの接触の特徴の対, 直方体どうしの接触点集合の問い合わせ,
 };
@@ -44,6 +44,10 @@ impl 一つの箱と静的な直方体の場面 {
                 .iter()
                 .filter(|拘束| 拘束.静止摩擦の解の状態().滑走中か())
                 .count(),
+            法線の乗数の合計: バッチ
+                .剛体と静的世界の接触拘束()
+                .iter()
+                .fold(ラグランジュ乗数::零(), |合計, 拘束| 合計 + 拘束.法線のラグランジュ乗数()),
         };
         let 終わりの項目: Vec<_> = バッチ
             .剛体と静的世界の接触拘束()

@@ -88,7 +88,7 @@ pub use minimum_thickness::形の最小の厚み;
 pub use mixing_rule::混合則;
 pub use mixing_rule_builder::混合則の組み立て;
 pub use non_penetration::{
-    非貫通の一刻みの係数, 非貫通の一回の射影の結果, 非貫通の一細分の解の状態, 非貫通の解き方
+    接触点集合の法線の同時解, 非貫通の一刻みの係数, 非貫通の一回の射影の結果, 非貫通の一細分の解の状態, 非貫通の接触点集合の一行, 非貫通の解き方,
 };
 pub use penetration_depth::貫通量;
 pub use property_error::接触物性エラー;
