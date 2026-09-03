@@ -31,6 +31,8 @@ mod result;
 mod substep_state;
 mod tangential_multiplier;
 mod tentative_point_multiplier;
+#[cfg(test)]
+mod translation_tests;
 
 pub use anchor::{剛体と静的世界の静止摩擦の錨, 剛体どうしの静止摩擦の錨, 静止摩擦の錨};
 pub use manifold_cone::接触点集合の静止摩擦の仮の集計;
