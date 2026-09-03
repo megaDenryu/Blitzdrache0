@@ -54,18 +54,37 @@ export function 線分の列を作る(線: 等高線): ReadonlyArray<readonly [�
     return 列
 }
 
-// 位置に最も近い線分を持つ等高線の添字を探す。半径の外ならnullを返す。
-export function 線分の当たりを探す(一覧: readonly 等高線[], 位置: 平面の位置, 半径メートル: number): number | null {
-    let 最近: number | null = null
+// 等高線の辺(線分)への当たり。どの線の、頂点列の何番目と何番目を結ぶ辺かを指す。
+// 辺のドラッグはこの2つの頂点添字へ同じ差分を加える。
+export interface 辺の当たり {
+    readonly 線の添字: number
+    readonly 頂点の添字甲: number
+    readonly 頂点の添字乙: number
+}
+
+// 線の頂点添字の隣接対の列を作る。線分の列を作るの添字版で、辺のドラッグが動かす2頂点を特定するために使う。
+function 頂点添字の対の列を作る(線: 等高線): ReadonlyArray<readonly [number, number]> {
+    const 列: Array<readonly [number, number]> = []
+    for (let i = 0; i + 1 < 線.頂点列.length; i++) 列.push([i, i + 1])
+    if (線.閉じている && 線.頂点列.length >= 3) 列.push([線.頂点列.length - 1, 0])
+    return 列
+}
+
+// 位置に最も近い辺を全等高線から探す。半径の外ならnullを返す。
+export function 辺の当たりを探す(一覧: readonly 等高線[], 位置: 平面の位置, 半径メートル: number): 辺の当たり | null {
+    let 最近: 辺の当たり | null = null
     let 最近の距離 = 半径メートル
     一覧.forEach((線, 線の添字) => {
-        for (const [甲, 乙] of 線分の列を作る(線)) {
+        頂点添字の対の列を作る(線).forEach(([甲添字, 乙添字]) => {
+            const 甲 = 線.頂点列[甲添字]
+            const 乙 = 線.頂点列[乙添字]
+            if (甲 === undefined || 乙 === undefined) return
             const 距離 = 点と線分の距離(位置, 甲, 乙)
             if (距離 <= 最近の距離) {
                 最近の距離 = 距離
-                最近 = 線の添字
+                最近 = { 線の添字, 頂点の添字甲: 甲添字, 頂点の添字乙: 乙添字 }
             }
-        }
+        })
     })
     return 最近
 }
