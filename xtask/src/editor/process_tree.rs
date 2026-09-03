@@ -25,6 +25,15 @@ impl 子プロセスの木 {
         self.本体.try_wait().ok().flatten()
     }
 
+    /// 境界: 道連れの束へ加えるために、Windowsが子へ割り当てた取っ手(HANDLE)の番地を貸す。
+    /// 生の値へ戻るのはこの1箇所である。符号付きの範囲へ収まらない番地は`None`を返すが、
+    /// 取っ手の番地は小さな値であり、実際に起こることは無い。
+    #[cfg(windows)]
+    pub(crate) fn 子への取っ手の番地(&self) -> Option<isize> {
+        use std::os::windows::io::AsRawHandle;
+        isize::try_from(self.本体.as_raw_handle().addr()).ok()
+    }
+
     /// 子孫まで終わらせたうえで、子の終了を見送って後片付けを済ませる。
     /// 見送りを省くとWindowsでプロセスの記録が残り続けるため、終わらせたあとに必ず待つ。
     pub(crate) fn 木ごと終わらせて見送る(&mut self) {

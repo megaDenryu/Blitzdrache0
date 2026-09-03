@@ -17,6 +17,9 @@
 //! (チャンク座標)を組み立てるために直接要る。blitz_asset_compiler が既に blitz_engine(→blitz_render→ash)を連鎖依存に
 //! 持つため、この2つの追加は依存木の到達範囲を広げない(参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断5」)。
 //! ctrlc は`cargo xtask editor`がCtrl+Cを捕らえて子プロセスの木を終わらせるためだけの依存である。
+//! win32job は`cargo xtask editor`自身が強制終了されたときに、起動した子孫をWindowsの仕事の束(Job Object)で
+//! まとめて終わらせるためだけの依存であり、Windows向けのビルドでのみ引く。Ctrl+Cの捕捉が走らない止め方に対する
+//! 最後の網であり、ctrlcでは届かない範囲だけを埋める。
 //! blitz_sim → blitz_collision は剛体の接触が接触点集合の型を直接読むための依存であり、剛体力学層を `blitz_sim` へ置く
 //! 判断1の機械強制である(参照: `_doc/設計/剛体の状態と接触.md`「判断1」)。blitz_sim は引き続き blitz_engine・
 //! blitz_render・blitz_app を知らず、この表がそれを課す。
@@ -62,7 +65,7 @@ pub(super) const 白リスト: [(&str, &[&str]); 11] = [
             "egui-winit",
         ],
     ),
-    ("xtask", &["blitz_asset_compiler", "crossterm", "ctrlc"]), // 検収が綴りの写しを持たないための唯一の例外
+    ("xtask", &["blitz_asset_compiler", "crossterm", "ctrlc", "win32job"]), // 検収が綴りの写しを持たないための唯一の例外
     (
         "editor_server",
         &[

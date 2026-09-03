@@ -163,6 +163,16 @@ glTF・画像 → blitz_asset_compiler → アセット実行時形式 → blitz
 - 差し替えコスト: 低。使うのは`xtask/src/editor/interrupt.rs`の1箇所だけで、他のxtaskコマンドはctrlcを知らない
 - 制約: `xtask`だけが依存する
 
+### win32job — 親の強制終了で子孫を道連れにする（`cargo xtask editor`で採用）
+
+- 何か: Windowsの仕事の束（Job Object。複数のプロセスを1つの束にまとめ、束に制限をかけるOSの仕組み）を安全に扱う小さなライブラリ。束を作る・制限を設定する・プロセスを束へ入れる、の3つのWin32呼び出しだけを包む
+- メリット: 束に「取っ手が全て閉じたら中のプロセスを終わらせる」制限（`JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE`）をかけると、後始末の処理をOSが肩代わりする。`cargo xtask editor`が強制終了（`TerminateProcess`）されても、OSが取っ手を閉じた時点で編集サーバーと開発サーバーが終わる。Ctrl+Cの捕捉も通常の終了もこの止め方には届かず、実測で両方が残ることを確かめている
+- デメリット: 推移的依存が11パッケージ増える（`win32job`本体と`windows` 0.61系の10パッケージ。うち`windows-implement`と`windows-interface`は手続きマクロであり、コンパイル時間へ寄与する）。同じ役割の`process-wrap`も同じ`windows`系を引くうえに`tracing`・`nix`・`futures`まで引くため、依存の増加が最も小さい選択がこれである
+- 採用理由: 自作すると`CreateJobObjectW`・`SetInformationJobObject`・`AssignProcessToJobObject`へのunsafeなFFIを書くことになり、unsafeを`blitz_render`の実装内部だけに限る規約（CLAUDE.md「unsafe の規律」）を道具の側で破る。crosstermとctrlcを採用したときと同じ理由であり、同じ判断を引き継ぐ
+- 再構築判定: (a/c) OSのAPIの薄い包み。3つの呼び出しの直訳であり超える余地は無い
+- 差し替えコスト: 低。使うのは`xtask/src/editor/kill_with_parent.rs`の1つの型だけで、他のxtaskコマンドはwin32jobを知らない
+- 制約: `xtask`だけが、しかもWindows向けのビルドでだけ依存する（`[target.'cfg(windows)'.dependencies]`）
+
 ### serde + serde_json — 編集資源と生成カタログの直列化（ゲーム開発用エディター段1・第3段階で採用）
 
 - 何か: Rustのデータ構造をJSON等へ直列化・逆直列化する事実上の標準ライブラリ一式

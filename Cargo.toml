@@ -50,6 +50,9 @@ egui-winit = { version = "0.31", default-features = false }
 crossterm = "0.28"
 # 参照: README「利用ライブラリ」ctrlc の採用審査。`cargo xtask editor`のCtrl+C捕捉専用、xtaskのみが依存
 ctrlc = "3.5"
+# 参照: README「利用ライブラリ」win32job の採用審査。`cargo xtask editor`が強制終了されたときに子孫を道連れにする専用、
+# xtaskのみがWindows向けのビルドでのみ依存する
+win32job = "2"
 # 参照: README「利用ライブラリ」editor_server(ゲーム開発用エディター段1)の採用審査。
 # serdeはeditor_serverの編集契約とblitz_asset_compilerの建物外形カタログ生成が依存する。
 # axum/tokio/tower/tower-http/ts-rsはeditor_serverのみが依存する

@@ -1,6 +1,9 @@
 //! `editor` コマンド: 編集サーバー(`editor_server`)とeditor_webの開発サーバーを併せて起動する。
 //! 一方が終了したらもう一方を道連れに止め、Ctrl+Cで割り込まれた場合も同じ後始末を通す。
 //! 止め方は子孫まで含めた木ごとの終了であり、その理由と手段は`process_id.rs`が持つ。
+//! この3つはどれも`xtask`自身の処理が走ることを前提にするため、強制終了には届かない。その下に
+//! Windowsの仕事の束を敷き、`xtask`がどんな終わり方をしても子孫が残らないようにする
+//! (参照: `kill_with_parent.rs`)。
 //! `--project <ルート>`を受け取った場合はそのまま`editor_server`へ引き渡す
 //! (参照: `crates/editor_server/src/project_root.rs`)。検証用の使い捨てルートを渡すことで、
 //! E2Eや検証が本物の`editor_data`を汚さずに済む。
@@ -8,13 +11,14 @@
 use std::{path::Path, process::Command, sync::Arc, time::Duration};
 
 use self::{
-    dev_server_port::開発サーバーの待ち受け口, process_tree::子プロセスの木, project_root::プロジェクトルート, shutdown_registry::停止台帳,
-    web_root::エディター画面の置き場,
+    dev_server_port::開発サーバーの待ち受け口, kill_with_parent::親と道連れに終わる子孫の束, process_tree::子プロセスの木,
+    project_root::プロジェクトルート, shutdown_registry::停止台帳, web_root::エディター画面の置き場,
 };
 
 pub(crate) mod building_outline_catalog;
 mod dev_server_port;
 mod interrupt;
+mod kill_with_parent;
 mod process_id;
 mod process_tree;
 pub(crate) mod project_root;
@@ -34,11 +38,14 @@ pub fn エディターサーバーを起動する(追加引数: &[String]) -> Re
 
     let 台帳 = Arc::new(停止台帳::空で作る());
     interrupt::割り込みを捕らえて台帳の木を終わらせるようにする(Arc::clone(&台帳));
+    let 道連れの束 = 親と道連れに終わる子孫の束::親が消えたら道連れにする設定で作る();
 
     let mut サーバー = 編集サーバーを起動する(&リポジトリルート, 追加引数)?;
+    道連れの束.木を道連れに加える(&サーバー);
     台帳.木を登録する(サーバー.番号());
     let mut web開発サーバー = 画面の置き場.開発サーバーを起動する試み();
     if let Some(木) = web開発サーバー.as_ref() {
+        道連れの束.木を道連れに加える(木);
         台帳.木を登録する(木.番号());
     }
 
