@@ -42,6 +42,6 @@ pub use tangential_row::錨の接線変位を零へ戻す一行;
 #[cfg(test)]
 pub use row_gradient::一行の二つの符号付き勾配;
 #[cfg(test)]
-pub use solve_outcome::有効集合を組み替えて解いた結末;
-#[cfg(test)]
 pub use solution::接触点集合の法線と接線の同時解;
+#[cfg(test)]
+pub use solve_outcome::有効集合を組み替えて解いた結末;

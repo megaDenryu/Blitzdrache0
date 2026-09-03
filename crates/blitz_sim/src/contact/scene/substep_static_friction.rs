@@ -15,7 +15,7 @@ use blitz_collision::contact_set::接触点の上限;
 
 use super::super::body_static_contact::剛体と静的世界の接触拘束;
 use super::super::normal_tangential_system::{
-    接触点集合の法線と接線の同時解, 接触点集合の法線と接線の連立, 有効集合を組み替えて解いた結末,
+    接触点集合の法線と接線の同時解, 接触点集合の法線と接線の連立, 有効集合を組み替えて解いた結末
 };
 use super::super::static_friction::接触点の仮の接線の乗数;
 use super::super::static_friction::接触点集合の仮の乗数の集まり;
