@@ -89,7 +89,7 @@ pub use pipeline::{
     剛体の接触の一刻みの工程, 接触の品質と時間方針, 接触の工程エラー, 接触の空間と世界, 接触の解法ソルバー, 接触履歴の保持
 };
 pub use property_error::接触物性エラー;
-pub use rest::{剛体の運動が静穏か, 島が静穏か, 接触島の休止制御};
+pub use rest::剛体を起こす;
 pub use restitution_coefficient::反発係数;
 pub use solver_quality::接触を解く品質の設定;
 pub use solver_quality_error::接触を解く品質の設定エラー;

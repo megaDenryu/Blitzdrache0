@@ -7,7 +7,6 @@ use blitz_math::秒;
 use super::body::剛体;
 use super::body_id::剛体の識別子;
 use super::body_transition::剛体の状態の変更;
-use super::kinematic_velocity::運動学的剛体の速度を導出する;
 use super::motion_state::運動状態;
 use super::placement::配置;
 use super::transition_error::運動種別の遷移エラー;
@@ -73,7 +72,7 @@ impl 運動種別の遷移の予約 {
                     剛体.状態を変更する(剛体の状態の変更::動的に遷移する { 初速 });
                 }
                 運動種別の遷移の予約項目::運動学的にする { 次の配置, .. } => {
-                    let 導出速度 = 運動学的剛体の速度を導出する(剛体.配置(), &次の配置, 基本刻み)?;
+                    let 導出速度 = 剛体.配置().次の配置へ移る運動学的な速度を導く(&次の配置, 基本刻み)?;
                     剛体.状態を変更する(剛体の状態の変更::運動学的に遷移する { 次の配置, 導出速度 });
                 }
                 運動種別の遷移の予約項目::静的にする { .. } => {

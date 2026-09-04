@@ -47,7 +47,7 @@ pub use body_id::剛体の識別子;
 pub use body_kind::運動種別;
 pub use body_transition::剛体の状態の変更;
 pub use execution_state::実行状態;
-pub use kinematic_velocity::{運動学的剛体の速度を導出する, 運動学的回転量の上限};
+pub use kinematic_velocity::運動学的回転量の上限;
 pub use ledger::剛体の台帳;
 pub use mass_properties::質量特性;
 pub use mass_properties_error::質量特性エラー;
