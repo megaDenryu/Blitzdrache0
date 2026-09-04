@@ -12,7 +12,6 @@ use super::execution_state::実行状態;
 use super::mass_properties::質量特性;
 use super::motion_state::運動状態;
 use super::placement::配置;
-use super::wake_reason::休止から起きた理由;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 剛体 {
@@ -21,7 +20,6 @@ pub struct 剛体 {
     質量特性: 質量特性,
     運動種別: 運動種別,
     実行状態: 実行状態,
-    直近に休止から起きた理由: Option<休止から起きた理由>,
 }
 
 impl 剛体 {
@@ -34,8 +32,7 @@ impl 剛体 {
             配置,
             質量特性,
             運動種別,
-            実行状態: 実行状態::起きている,
-            直近に休止から起きた理由: None,
+            実行状態: 実行状態::休止したことがなく起きている(),
         }
     }
 
@@ -57,11 +54,6 @@ impl 剛体 {
 
     pub fn 実行状態(&self) -> 実行状態 {
         self.実行状態
-    }
-
-    /// この剛体が最後に休止から起きたときの契機(判断18)。休止したことが無ければ持たない。
-    pub fn 直近に休止から起きた理由(&self) -> Option<休止から起きた理由> {
-        self.直近に休止から起きた理由
     }
 
     /// 動的または運動学的の速度。静的な剛体からは型付きエラーで読めない。

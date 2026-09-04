@@ -4,7 +4,7 @@
 
 use blitz_collision::dynamic_index::重なりうる形の対;
 
-use crate::rigid_body::{剛体の台帳, 剛体の識別子, 剛体エラー, 実行状態, 運動種別};
+use crate::rigid_body::{剛体の台帳, 剛体の識別子, 剛体エラー, 運動種別};
 
 /// 粗い選別を通過した、剛体2つの昇順の候補対。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -50,8 +50,8 @@ pub fn 剛体どうしの候補対を絞り込む(
             continue;
         }
 
-        let aは休止 = matches!(剛体a.実行状態(), 実行状態::休止している);
-        let bは休止 = matches!(剛体b.実行状態(), 実行状態::休止している);
+        let aは休止 = 剛体a.実行状態().休止しているか();
+        let bは休止 = 剛体b.実行状態().休止しているか();
         if aは休止 && bは休止 {
             continue;
         }

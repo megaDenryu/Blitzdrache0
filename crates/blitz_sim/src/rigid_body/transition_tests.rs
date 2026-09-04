@@ -4,7 +4,6 @@
 use blitz_math::{キログラム, メートル, メートル毎秒, ラジアン毎秒, ワールド, 位置, 秒, 角速度, 速度};
 
 use super::body_kind::運動種別;
-use super::execution_state::実行状態;
 use super::ledger::剛体の台帳;
 use super::mass_properties::質量特性;
 use super::motion_state::運動状態;
@@ -58,7 +57,7 @@ fn 静的から動的への遷移で起きた状態と指定の初速を持つ()
     let Ok(剛体) = 台帳.参照する(識別子) else {
         panic!();
     };
-    assert_eq!(剛体.実行状態(), 実行状態::起きている);
+    assert!(剛体.実行状態().起きているか());
     let Ok(速度) = 剛体.速度() else {
         panic!();
     };
@@ -94,7 +93,7 @@ fn 動的から静的を経て動的への遷移で状態が初期化される()
     let Ok(剛体_動的) = 台帳.参照する(識別子) else {
         panic!();
     };
-    assert_eq!(剛体_動的.実行状態(), 実行状態::起きている);
+    assert!(剛体_動的.実行状態().起きているか());
     let Ok(速度) = 剛体_動的.速度() else {
         panic!();
     };
