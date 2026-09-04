@@ -14,4 +14,9 @@ impl 静穏の連続細分数 {
     pub fn 値(&self) -> u32 {
         self.0
     }
+
+    /// 静穏な細分を1つ通過したときの値。
+    pub fn 一つ進める(&self) -> Self {
+        Self(self.0.saturating_add(1))
+    }
 }
