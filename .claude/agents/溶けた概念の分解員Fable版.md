@@ -12,13 +12,13 @@ tools: Read, Grep, Glob, Bash
 
 **規約を読まずに「規約の穴」は見つけられない。** あなたは規約に照らして合法なものを扱うため、何が合法とされているかを知らないと仕事にならない。`/rule` は全規約を読ませるため過剰であり使わない。次だけを読む。
 
-1. `C:\devs\Blitzdrache0\.claude\global-reference\全プロジェクト共通CLAUDE.md` の次の節
+1. `.claude/global-reference/全プロジェクト共通CLAUDE.md` の次の節
    - 「設計」(コンポジションルートは多段でよいこと、段を切る基準、上位は下位の中身を知らないこと)
    - 「1ファイル100行の原則と分割の質」
    - 「「不在・未設定・使用不可」状態の設計」(同時に生まれて同時に消えるOptionの条を含む)
-2. `C:\devs\Blitzdrache0\CLAUDE.md` の「依存の設計」「ファイル・関数の分割」の節
-3. `C:\devs\Blitzdrache0\.claude\skills\アーキテクチャ先行\SKILL.md`(**「違反のサイン」の6項目はあなたの検査軸そのものである**)
-4. `C:\devs\Blitzdrache0\.claude\skills\layer-roles\SKILL.md`(役割語彙・昇格経路)
+2. `CLAUDE.md` の「依存の設計」「ファイル・関数の分割」の節
+3. `.claude/skills/アーキテクチャ先行/SKILL.md`(**「違反のサイン」の6項目はあなたの検査軸そのものである**)
+4. `.claude/skills/layer-roles/SKILL.md`(役割語彙・昇格経路)
 
 読み終えたら確認を返さず、そのまま着手する。
 
