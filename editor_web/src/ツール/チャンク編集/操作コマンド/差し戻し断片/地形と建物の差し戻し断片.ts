@@ -1,17 +1,20 @@
 import type { 位置3次元, チャンク座標, 建物の配置, 散布の設定 } from '../../../../生成/編集資源契約.ts'
-import type { 道路の泥の被覆の記録の写し } from '../../編集モデル/index.ts'
+import type { 下書きと正本の揃い, 道路の泥の被覆の記録の写し } from '../../編集モデル/index.ts'
 
 // 高さ場・地表材質・建物・散布に対する操作の、変更前情報。格子は丸ごとの複製で持つ。
+// 高さ場か地表材質を書き換える操作は見下ろし図の下書きと正本の揃いも「正本が新しい」へ変えるため、変更前の揃いを持って戻す。
 
 export type 造成筆致差し戻し = {
     readonly 種類: '造成筆致'
     readonly 対象チャンク: チャンク座標 | null
     readonly 変更前格子データ: Float32Array
+    readonly 変更前の揃い: 下書きと正本の揃い | null
 }
 export type 材質の筆致差し戻し = {
     readonly 種類: '材質の筆致'
     readonly 対象チャンク: チャンク座標
     readonly 変更前材質データ: Uint8Array
+    readonly 変更前の揃い: 下書きと正本の揃い
 }
 export type 建物を配置する差し戻し = {
     readonly 種類: '建物を配置する'
@@ -39,16 +42,19 @@ export type 道路に合わせて切土盛土する差し戻し = {
     readonly 種類: '道路に合わせて切土盛土する'
     readonly チャンク座標: チャンク座標
     readonly 変更前格子データ: Float32Array
+    readonly 変更前の揃い: 下書きと正本の揃い
 }
 export type 建物基礎を平坦化する差し戻し = {
     readonly 種類: '建物基礎を平坦化する'
     readonly チャンク座標: チャンク座標
     readonly 変更前格子データ: Float32Array
+    readonly 変更前の揃い: 下書きと正本の揃い
 }
 export type 急勾配を岩肌へベイクする差し戻し = {
     readonly 種類: '急勾配を岩肌へベイクする'
     readonly チャンク座標: チャンク座標
     readonly 変更前材質データ: Uint8Array
+    readonly 変更前の揃い: 下書きと正本の揃い
 }
 export type 道路下を泥へベイクする差し戻し = {
     readonly 種類: '道路下を泥へベイクする'
@@ -56,6 +62,7 @@ export type 道路下を泥へベイクする差し戻し = {
     readonly 変更前材質データ: Uint8Array
     // 焼き直しは被覆の記録も書き換えるため、材質データだけを戻しても次の焼き直しが噛み合わない。
     readonly 変更前の道路の泥の被覆の記録: 道路の泥の被覆の記録の写し
+    readonly 変更前の揃い: 下書きと正本の揃い
 }
 
 export type 地形と建物の差し戻し断片 =

@@ -1,28 +1,9 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import type { 大域世界構造, チャンク座標, チャンク構造, 編集コマンド } from '../生成/編集資源契約.ts'
-import type { プロジェクト保管庫接続, 読込結果, 保存結果 } from '../境界/通信/index.ts'
-import { 読込成功, 読込無し, 保存成功 } from '../境界/通信/index.ts'
+import type { 編集コマンド } from '../生成/編集資源契約.ts'
 import { 編集コマンド一括適用サービス } from '../ツール/チャンク編集/操作コマンド/index.ts'
-
-class 偽保管庫接続 implements プロジェクト保管庫接続 {
-    public 保存された大域構造: 大域世界構造 | null = null
-    public 保存された大域高さ格子: ArrayBufferLike | null = null
-    public readonly 保存されたチャンク構造マップ = new Map<string, チャンク構造>()
-    public readonly 保存されたチャンク高さマップ = new Map<string, ArrayBufferLike>()
-    public readonly 保存されたチャンク材質マップ = new Map<string, ArrayBufferLike>()
-
-    public async 大域世界の構造を読む(): Promise<読込結果<大域世界構造>> { return this.保存された大域構造 !== null ? 読込成功(this.保存された大域構造) : 読込無し() }
-    public async 大域世界の構造を保存する(構造: 大域世界構造): Promise<保存結果> { this.保存された大域構造 = 構造; return 保存成功() }
-    public async 大域世界の高さ格子を読む(): Promise<読込結果<ArrayBufferLike>> { return this.保存された大域高さ格子 !== null ? 読込成功(this.保存された大域高さ格子) : 読込無し() }
-    public async 大域世界の高さ格子を保存する(バイト列: ArrayBufferLike): Promise<保存結果> { this.保存された大域高さ格子 = バイト列; return 保存成功() }
-    public async チャンクの構造を読む(座標: チャンク座標): Promise<読込結果<チャンク構造>> { const 構造 = this.保存されたチャンク構造マップ.get(`${座標.x},${座標.z}`); return 構造 !== undefined ? 読込成功(構造) : 読込無し() }
-    public async チャンクの構造を保存する(座標: チャンク座標, 構造: チャンク構造): Promise<保存結果> { this.保存されたチャンク構造マップ.set(`${座標.x},${座標.z}`, 構造); return 保存成功() }
-    public async チャンクの高さ格子を読む(座標: チャンク座標): Promise<読込結果<ArrayBufferLike>> { const 格子 = this.保存されたチャンク高さマップ.get(`${座標.x},${座標.z}`); return 格子 !== undefined ? 読込成功(格子) : 読込無し() }
-    public async チャンクの高さ格子を保存する(座標: チャンク座標, バイト列: ArrayBufferLike): Promise<保存結果> { this.保存されたチャンク高さマップ.set(`${座標.x},${座標.z}`, バイト列); return 保存成功() }
-    public async チャンクの材質重みを読む(座標: チャンク座標): Promise<読込結果<ArrayBufferLike>> { const 材質 = this.保存されたチャンク材質マップ.get(`${座標.x},${座標.z}`); return 材質 !== undefined ? 読込成功(材質) : 読込無し() }
-    public async チャンクの材質重みを保存する(座標: チャンク座標, バイト列: ArrayBufferLike): Promise<保存結果> { this.保存されたチャンク材質マップ.set(`${座標.x},${座標.z}`, バイト列); return 保存成功() }
-}
+import { 偽保管庫接続 } from './偽保管庫接続の下ごしらえ.ts'
+import { コマンドJSON文字列を復元する } from './コマンドJSON解析.ts'
 
 describe('ヘッドレス編集コマンド一括適用のテスト', () => {
     it('偽保管庫接続へ初期状態から14枝のコマンドを適用し、大域高さ格子を書かずにチャンクが保存されること', async () => {
@@ -81,5 +62,36 @@ describe('ヘッドレス編集コマンド一括適用のテスト', () => {
         ])
         assert.deepStrictEqual(偽保管庫.保存された大域構造.広域道路一覧[0]?.制御点列, 既存道路, '既存広域道路が上書きされないこと')
         assert.strictEqual(偽保管庫.保存された大域高さ格子, null, '大域高さ格子は保存されないこと')
+    })
+
+    it('等高線3本から高さ場を生成し粗マスで岩を塗って地形を生成するコマンド列のJSONがヘッドレス経路で適用できること', async () => {
+        const 偽保管庫 = new 偽保管庫接続()
+        const 座標 = { チャンク座標: { x: 0, z: 0 } }
+        const 正方形 = (半辺: number, 高さ: number) => ({ 高さメートル: 高さ, 頂点列: [{ x: -半辺, z: -半辺 }, { x: 半辺, z: -半辺 }, { x: 半辺, z: 半辺 }, { x: -半辺, z: 半辺 }], 閉じている: true })
+        const コマンドJSON = JSON.stringify([
+            { 種類: '等高線を追加する', 値: { ...座標, 等高線: 正方形(100, 4) } },
+            { 種類: '等高線を追加する', 値: { ...座標, 等高線: 正方形(60, 10) } },
+            { 種類: '等高線を追加する', 値: { ...座標, 等高線: 正方形(20, 16) } },
+            { 種類: '等高線から高さ場を生成する', 値: 座標 },
+            { 種類: '粗マスを塗る', 値: { ...座標, 粗マスの一辺の升目数: 8, 塗り一覧: [{ 列: 8, 行: 8, 高さメートル: null, 層: '岩' }] } },
+            { 種類: '粗マスから地形を生成する', 値: 座標 },
+        ])
+        const コマンド列 = コマンドJSON文字列を復元する(コマンドJSON)
+        const 適用件数 = await new 編集コマンド一括適用サービス(偽保管庫).一括適用する(コマンド列)
+        assert.strictEqual(適用件数, 6)
+
+        const 保存チャンク = 偽保管庫.保存されたチャンク構造マップ.get('0,0')
+        assert.ok(保存チャンク !== undefined, 'チャンク(0,0)の構造が保存されること')
+        assert.strictEqual(保存チャンク.見下ろし図の下書き.等高線一覧.length, 3, '等高線3本が下書きとして保存されること')
+        assert.deepStrictEqual(保存チャンク.見下ろし図の下書き.粗マスの塗り一覧, [{ 列: 8, 行: 8, 高さメートル: null, 層: '岩' }])
+        const 保存高さ = 偽保管庫.保存されたチャンク高さマップ.get('0,0')
+        assert.ok(保存高さ !== undefined)
+        const 高さ = new Float32Array(保存高さ)
+        const 解像度 = 129
+        assert.ok(Math.abs((高さ[64 * 解像度 + 64] ?? 0) - 16) < 0.05, `中心は内側の等高線の高さ16で平坦になるべき: ${高さ[64 * 解像度 + 64]}`)
+        const 保存材質 = 偽保管庫.保存されたチャンク材質マップ.get('0,0')
+        assert.ok(保存材質 !== undefined)
+        const 材質 = new Uint8Array(保存材質)
+        assert.strictEqual(材質[((68 * 解像度) + 68) * 4 + 2], 255, '塗った粗マス(8,8)の中心は岩100%になるべき')
     })
 })

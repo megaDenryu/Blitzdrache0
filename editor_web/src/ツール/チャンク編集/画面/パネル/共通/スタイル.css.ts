@@ -52,3 +52,20 @@ export const チェック入力 = style({
     accentColor: エディターCSS変数('アクセントホバー'),
     cursor: 'pointer',
 })
+
+// 打った値が決まったときだけ知らせる数値の欄。スライダーと同じ行の姿にし、幅いっぱいに広げる。
+export const 数値入力 = style({
+    width: '100%',
+    boxSizing: 'border-box',
+    padding: '3px 6px',
+    fontSize: '11px',
+    fontFamily: 'monospace',
+    borderRadius: '4px',
+    border: `1px solid ${エディターCSS変数('ボタン枠線')}`,
+    backgroundColor: エディターCSS変数('ボタン背景'),
+    color: エディターCSS変数('テキストコード'),
+    ':disabled': {
+        opacity: 0.4,
+        cursor: 'not-allowed',
+    },
+})

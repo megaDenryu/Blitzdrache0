@@ -1,6 +1,6 @@
 import { describe, it } from "node:test"
 import assert from "node:assert/strict"
-import { ワールド編集状態 } from "../編集モデル/index.ts"
+import { ワールド編集状態, 空の見下ろし図の下書き } from "../編集モデル/index.ts"
 import { 編集コマンドを適用する } from "./index.ts"
 import type { 編集コマンド, 大域世界構造, チャンク構造 } from "../../../生成/編集資源契約.ts"
 
@@ -29,6 +29,8 @@ function 初期状態を作成する(): ワールド編集状態 {
         }],
         建物一覧: [],
         散布: { 最小間隔メートル: 5.0, 乱数の種: 12345n },
+        散布の個体一覧: [],
+        見下ろし図の下書き: 空の見下ろし図の下書き(),
     }
     状態.チャンクを登録する({ x: 0, z: 0 }, チャンク構造00)
     return 状態

@@ -20,7 +20,7 @@ class モード選択ボタン extends ButtonC {
     }
 }
 
-// 6種類の編集モードを切り替えるボタンの並び。エディタ領域の上部の固定の行へ置くため横一列にする。
+// 編集モードを切り替えるボタンの並び。エディタ領域の上部の固定の行へ置くため横一列にする。
 // モードごとの操作の案内をここへ持たないのは、案内が下パネルの棚の持ち物だからである(判断14)。
 export class モード切替パネル extends LV2HtmlComponentBase implements I配線可能<Iモード切替配線> {
     protected _componentRoot: DivC

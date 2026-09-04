@@ -50,9 +50,7 @@ fn 宣言の開始を判定する(行: &str, 行前の深さ: usize, 行後の�
     if 行前の深さ != 0 {
         return 走査状態::外側;
     }
-    let 宣言 = definition_line::型名を読み取る(行)
-        .map(|型名| (本体種別::構造体, 型名))
-        .or_else(|| impl_line::実装対象の型名(行).map(|型名| (本体種別::実装, 型名)));
+    let 宣言 = definition_line::宣言の種別と型名を読み取る(行).or_else(|| impl_line::実装対象の型名(行).map(|型名| (本体種別::実装, 型名)));
     let Some((種別, 型名)) = 宣言 else {
         return 走査状態::外側;
     };
@@ -67,15 +65,46 @@ fn 宣言の開始を判定する(行: &str, 行前の深さ: usize, 行後の�
 #[allow(clippy::unwrap_used)]
 mod tests {
     use super::*;
+    use crate::type_metrics::declaration_amount::宣言の分量;
 
     const 例: &str = "pub struct 台帳 {\n    件数: usize,\n}\nimpl 台帳 {\n    pub fn 新規() -> Self {\n        Self { 件数: 0 }\n    }\n    fn 数える(&self) -> usize {\n        self.件数\n    }\n}\n";
+
+    const 列挙の例: &str = "pub enum 破れ {
+    #[error(\"長さ{実際}が期待{期待}と一致しない\")]
+    長さ不一致 { 期待: usize, 実際: usize },
+    範囲外(u32),
+    位置ずれ {
+        番号: usize,
+        差: i32,
+    },
+}
+";
 
     #[test]
     fn 構造体のフィールドとimplのメソッドを数える() {
         let 観測一覧 = 走査する(例);
-        assert!(matches!(観測一覧[0], 観測::型定義 { フィールド数: 1, .. }));
+        assert!(matches!(
+            観測一覧[0],
+            観測::型定義 {
+                分量: 宣言の分量::構造体のフィールド数(1),
+                ..
+            }
+        ));
         assert!(matches!(観測一覧[1], 観測::実装ブロック { メソッド数: 2, .. }));
         assert_eq!(観測一覧[1].型名(), "台帳");
+    }
+
+    #[test]
+    fn 列挙は枝の数を数え枝の中のフィールドは数えない() {
+        let 観測一覧 = 走査する(列挙の例);
+        assert!(matches!(
+            観測一覧[0],
+            観測::型定義 {
+                分量: 宣言の分量::列挙の枝数(3),
+                ..
+            }
+        ));
+        assert_eq!(観測一覧[0].型名(), "破れ");
     }
 
     #[test]

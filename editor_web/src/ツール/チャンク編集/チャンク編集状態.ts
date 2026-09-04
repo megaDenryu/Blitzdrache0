@@ -1,13 +1,16 @@
 import type { 造成筆致種別, 地表材質層, チャンク座標 } from '../../生成/編集資源契約.ts'
 import type { 道路点の在り処 } from './編集モデル/index.ts'
 import type { 差し戻し断片 } from './操作コマンド/index.ts'
-import type { 編集モード } from './画面/index.ts'
+import type { 編集モード, 表示面 } from './画面/index.ts'
+import { 初期の表示面 } from './画面/操作帯/表示面.ts'
 import { 初期の編集モード } from './画面/パネル/モード切替/モード定義.ts'
 import { 地表の材質の筆の初期値, 造成の筆の初期値 } from './画面/下パネル/筆の初期値.ts'
+import { 見下ろし図の編集状態 } from './画面/見下ろし図/見下ろし図の編集状態.ts'
 
 // エディターセッション中のUI選択・操作パラメータ・取り消し履歴スタックを保持する状態。
 export class チャンク編集状態 {
     public モード: 編集モード = 初期の編集モード
+    public 表示面: 表示面 = 初期の表示面
     public 造成筆致種別: 造成筆致種別 = 造成の筆の初期値.種別
     public 造成半径: number = 造成の筆の初期値.半径メートル
     public 造成強さ: number = 造成の筆の初期値.強さ
@@ -19,6 +22,7 @@ export class チャンク編集状態 {
     public 選択中の道路点: 道路点の在り処 | null = null
     public つかんでいる道路点: 道路点の在り処 | null = null
     public 選択中建物識別子: string | null = null
+    public readonly 見下ろし図: 見下ろし図の編集状態 = new 見下ろし図の編集状態()
     public readonly 対象チャンク座標: チャンク座標
     public static readonly 履歴スタック上限: number = 50
     public readonly 取り消し履歴スタック: 差し戻し断片[] = []

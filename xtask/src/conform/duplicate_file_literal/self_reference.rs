@@ -17,7 +17,7 @@ use crate::conform::source_lexing;
 use crate::conform::violation::違反;
 
 /// 注意: 載せてよいのは、対象の綴りを列挙する検査の台帳だけである。
-const 対象の綴りを列挙する台帳一覧: [&str; 38] = [
+const 対象の綴りを列挙する台帳一覧: [&str; 45] = [
     "xtask/src/conform/depth_contract/table/camera.rs",
     "xtask/src/conform/depth_contract/table/camera_compare.rs",
     "xtask/src/conform/depth_contract/table/shadow.rs",
@@ -25,6 +25,13 @@ const 対象の綴りを列挙する台帳一覧: [&str; 38] = [
     "xtask/src/conform/duplicate_file_literal/allowance/table.rs",
     "xtask/src/conform/duplicate_file_literal/allowance/table/other_files.rs",
     "xtask/src/conform/duplicate_file_literal/allowance/table/shader_files.rs",
+    "xtask/src/conform/free_function_whole_type/ledger/table/blitz_app_app.rs",
+    "xtask/src/conform/free_function_whole_type/ledger/table/blitz_app_other.rs",
+    "xtask/src/conform/free_function_whole_type/ledger/table/blitz_render_other.rs",
+    "xtask/src/conform/free_function_whole_type/ledger/table/blitz_render_renderer.rs",
+    "xtask/src/conform/free_function_whole_type/ledger/table/blitz_render_vulkan.rs",
+    "xtask/src/conform/free_function_whole_type/ledger/table/other_crates.rs",
+    "xtask/src/conform/free_function_whole_type/ledger/table/xtask.rs",
     "xtask/src/conform/lighting_query_declaration/table.rs",
     "xtask/src/conform/module_import_boundary/table.rs",
     "xtask/src/conform/shader_binding/table/cloth_set.rs",

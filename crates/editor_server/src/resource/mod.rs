@@ -9,13 +9,17 @@ mod chunk_coordinate;
 mod chunk_road;
 mod chunk_structure;
 mod chunk_structure_version;
+mod coarse_cell_paint;
 mod command;
+mod contour_line;
 mod grid;
 mod material_board;
 mod material_definition;
 mod material_layer_assignment;
 mod music;
 mod numeric_check;
+mod plan_view_draft;
+mod plane_position;
 mod position;
 mod regional_road;
 mod scatter_settings;
@@ -41,11 +45,14 @@ pub use chunk_road::チャンクの道路;
 pub use chunk_structure::チャンク構造;
 pub use chunk_structure_version::チャンク構造移行エラー;
 pub(crate) use chunk_structure_version::読み込んだチャンク構造の版;
+pub use coarse_cell_paint::粗マスの塗り;
 pub use command::{
     地表材質層, 建物を削除する, 建物を移動する, 建物を配置する, 建物基礎を平坦化する, 急勾配を岩肌へベイクする, 散布設定を変更する, 材質の筆致,
-    編集コマンド, 造成筆致, 造成筆致種別, 道路に合わせて切土盛土する, 道路を削除する, 道路を追加する, 道路下を泥へベイクする, 道路対象,
-    道路点を削除する, 道路点を挿入する, 道路点を移動する, 道路点を追加する,
+    等高線から高さ場を生成する, 等高線を削除する, 等高線を変更する, 等高線を追加する, 粗マスから地形を生成する, 粗マスを塗る, 編集コマンド, 造成筆致,
+    造成筆致種別, 道路に合わせて切土盛土する, 道路を削除する, 道路を追加する, 道路下を泥へベイクする, 道路対象, 道路点を削除する, 道路点を挿入する,
+    道路点を移動する, 道路点を追加する, 高さ場から等高線を導く, 高さ場から粗マスを導く,
 };
+pub use contour_line::等高線;
 pub use grid::{チャンクの高さ編集, マザーハイトマップ, 地表材質の重み};
 pub use material_board::マテリアル台帳;
 pub use material_definition::マテリアル定義;
@@ -62,6 +69,8 @@ pub use music::{
     独自の進行を保存する, 独自の進行を削除する, 範囲の打点を消す, 遅延のステップ数の上限, 遅延のステップ数の下限, 音の並び, 音を伸ばす,
     音量と効果の比の上限, 音量と効果の比の下限, 音高番号の上限, 音高番号の下限,
 };
+pub use plan_view_draft::{既定の粗マスの一辺の升目数, 見下ろし図の下書き};
+pub use plane_position::平面の位置;
 pub use position::位置3次元;
 pub use regional_road::広域道路;
 pub use scatter_settings::散布の設定;
