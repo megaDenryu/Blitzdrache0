@@ -12,9 +12,9 @@
 
 use crate::contact_set::box_pair_feature::直方体どうしの接触の特徴の対;
 use crate::contact_set::box_pair_query::{二つの直方体の重なりの接触点集合, 直方体どうしの接触点集合の問い合わせ};
-use crate::contact_set::contact_point::接触点;
 use crate::contact_set::generation_margin::接触生成の余白メートル;
 use crate::contact_set::manifold::接触点集合;
+use crate::contact_set::solver_candidate_point::接触解法の候補点;
 use crate::shape::任意姿勢の直方体;
 
 use super::query_fixture::{回転なし, 直方体を作る};
@@ -42,5 +42,9 @@ pub(super) fn 重なりの集合を求める(
 }
 
 pub(super) fn 貫通量を並べる(集合: &接触点集合<直方体どうしの接触の特徴の対>) -> Vec<f64> {
-    集合.接触点を順に並べる().map(接触点::符号付き貫通量).map(|量| 量.値()).collect()
+    集合
+        .接触解法の候補点を順に並べる()
+        .map(接触解法の候補点::符号付き貫通量)
+        .map(|量| 量.値())
+        .collect()
 }

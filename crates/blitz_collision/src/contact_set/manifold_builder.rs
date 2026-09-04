@@ -9,13 +9,13 @@
 
 use blitz_math::{ローカル, 方向};
 
-use super::contact_point::接触点;
 use super::error::接触点集合の問い合わせエラー;
 use super::manifold::接触点集合;
 use super::manifold_capacity::接触点の上限;
+use super::solver_candidate_point::接触解法の候補点;
 
 pub(super) struct 接触点を積む器<特徴の識別: Copy> {
-    接触点: [Option<接触点<特徴の識別>>; 接触点の上限],
+    接触点: [Option<接触解法の候補点<特徴の識別>>; 接触点の上限],
     件数: usize,
 }
 
@@ -27,7 +27,10 @@ impl<特徴の識別: Copy> 接触点を積む器<特徴の識別> {
         }
     }
 
-    pub(super) fn 接触点を1つ積む(&mut self, 点: 接触点<特徴の識別>) -> Result<(), 接触点集合の問い合わせエラー> {
+    pub(super) fn 接触解法の候補点を1つ積む(
+        &mut self,
+        点: 接触解法の候補点<特徴の識別>,
+    ) -> Result<(), 接触点集合の問い合わせエラー> {
         let Some(置き場) = self.接触点.get_mut(self.件数) else {
             return Err(接触点集合の問い合わせエラー::受け皿の上限を越えた { 上限: 接触点の上限 });
         };

@@ -14,12 +14,12 @@ use crate::shape::{任意姿勢の直方体の倍精度の幾何, 形の局所�
 use crate::triangle::三角形で当たった特徴;
 
 use super::box_triangle_feature::直方体と三角形の接触の特徴の対;
-use super::contact_point::接触点;
 use super::error::接触点集合の問い合わせエラー;
 use super::generation_margin::接触生成の余白メートル;
 use super::manifold_builder::接触点を積む器;
 use super::reference_frame::参照の面の枠;
 use super::reference_role::参照にした側;
+use super::solver_candidate_point::接触解法の候補点;
 
 pub(super) struct 直方体と三角形の面の切り抜きの工程<'形の寿命> {
     直方体の幾何: &'形の寿命 任意姿勢の直方体の倍精度の幾何,
@@ -58,7 +58,7 @@ impl<'形の寿命> 直方体と三角形の面の切り抜きの工程<'形の�
             let Some(貫通量) = 枠.点の符号付き貫通量を求める(頂点.位置(), self.接触生成の余白) else {
                 continue;
             };
-            器.接触点を1つ積む(接触点::生成する(
+            器.接触解法の候補点を1つ積む(接触解法の候補点::生成する(
                 枠.参照面の上の点を求める(頂点.位置(), 貫通量)?,
                 頂点.位置(),
                 貫通量,
@@ -88,7 +88,7 @@ impl<'形の寿命> 直方体と三角形の面の切り抜きの工程<'形の�
             let Some(貫通量) = 枠.点の符号付き貫通量を求める(頂点.位置(), self.接触生成の余白) else {
                 continue;
             };
-            器.接触点を1つ積む(接触点::生成する(
+            器.接触解法の候補点を1つ積む(接触解法の候補点::生成する(
                 頂点.位置(),
                 枠.参照面の上の点を求める(頂点.位置(), 貫通量)?,
                 貫通量,

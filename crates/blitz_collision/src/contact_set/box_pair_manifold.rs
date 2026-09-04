@@ -15,13 +15,13 @@ use crate::shape::任意姿勢の直方体の倍精度の幾何;
 
 use super::box_pair_axis::直方体どうしの分離軸;
 use super::box_pair_feature::直方体どうしの接触の特徴の対;
-use super::contact_point::接触点;
 use super::deepest_axis::最小の貫通の軸;
 use super::edge_pair_contact::辺どうしの接触点を組む工程;
 use super::error::接触点集合の問い合わせエラー;
 use super::generation_margin::接触生成の余白メートル;
 use super::manifold_builder::接触点を積む器;
 use super::reference_role::参照にした側;
+use super::solver_candidate_point::接触解法の候補点;
 
 pub(super) struct 直方体どうしの接触点を組む工程<'幾何の寿命> {
     第1の幾何: &'幾何の寿命 任意姿勢の直方体の倍精度の幾何,
@@ -54,7 +54,7 @@ impl<'幾何の寿命> 直方体どうしの接触点を組む工程<'幾何の�
                 第2の直方体の軸,
             } => {
                 let mut 器 = 接触点を積む器::空から始める();
-                器.接触点を1つ積む(
+                器.接触解法の候補点を1つ積む(
                     辺どうしの接触点を組む工程::生成する(self.第1の幾何, self.第2の幾何, self.接触生成の余白).接触点を組む(
                         最小の軸,
                         第1の直方体の軸,
@@ -92,7 +92,7 @@ impl<'幾何の寿命> 直方体どうしの接触点を組む工程<'幾何の�
                 continue;
             };
             let 参照面の上の点 = 枠.参照面の上の点を求める(頂点.位置(), 貫通量)?;
-            器.接触点を1つ積む(接触点::生成する(
+            器.接触解法の候補点を1つ積む(接触解法の候補点::生成する(
                 参照にした側.第1の形の上の位置を選ぶ(頂点.位置(), 参照面の上の点),
                 参照にした側.第2の形の上の位置を選ぶ(頂点.位置(), 参照面の上の点),
                 貫通量,

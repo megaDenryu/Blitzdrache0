@@ -11,20 +11,20 @@
 
 use blitz_math::{ローカル, 方向};
 
-use super::contact_point::接触点;
 use super::manifold_capacity::接触点の上限;
+use super::solver_candidate_point::接触解法の候補点;
 
 /// 重なった2つの形が触れ合う点の集合。全部の点が共有する、第1の形から第2の形へ向かう単位法線を持つ。
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 接触点集合<特徴の識別: Copy> {
     共有の単位法線: 方向<ローカル>,
-    接触点: [Option<接触点<特徴の識別>>; 接触点の上限],
+    接触点: [Option<接触解法の候補点<特徴の識別>>; 接触点の上限],
     件数: usize,
 }
 
 impl<特徴の識別: Copy> 接触点集合<特徴の識別> {
     pub(super) fn 生成する(
-        共有の単位法線: 方向<ローカル>, 接触点: [Option<接触点<特徴の識別>>; 接触点の上限], 件数: usize
+        共有の単位法線: 方向<ローカル>, 接触点: [Option<接触解法の候補点<特徴の識別>>; 接触点の上限], 件数: usize
     ) -> Self {
         Self {
             共有の単位法線,
@@ -44,7 +44,7 @@ impl<特徴の識別: Copy> 接触点集合<特徴の識別> {
     }
 
     /// 接触点を、切り抜きが入射面の頂点を辿った順に並べる。並びは入力だけで決まる。
-    pub fn 接触点を順に並べる(&self) -> impl Iterator<Item = &接触点<特徴の識別>> {
+    pub fn 接触解法の候補点を順に並べる(&self) -> impl Iterator<Item = &接触解法の候補点<特徴の識別>> {
         self.接触点[..self.件数].iter().flatten()
     }
 }
