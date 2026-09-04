@@ -1,5 +1,6 @@
 //! 角度の単位型。度からの変換コンストラクタを持つ。
 
+use std::fmt::{Display, Formatter, Result as 書式の結果};
 use std::ops::{Add, Mul, Sub};
 
 /// ラジアン単位の角度。生値の取り出しは境界（GPU・外部API）専用と明示する。
@@ -54,5 +55,12 @@ impl Mul<f32> for ラジアン {
     type Output = Self;
     fn mul(self, 倍率: f32) -> Self {
         Self(self.0 * 倍率)
+    }
+}
+
+// 型付きエラーの文がオーナーの読む文として成立するために要る。単位を型で持った結果、読めない文しか出せなくなってはならない。
+impl Display for ラジアン {
+    fn fmt(&self, 書き出し先: &mut Formatter<'_>) -> 書式の結果 {
+        write!(書き出し先, "{}ラジアン", self.0)
     }
 }
