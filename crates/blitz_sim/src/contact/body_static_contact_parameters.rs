@@ -8,7 +8,7 @@ use blitz_math::{ローカル, ワールド, 位置, 変位, 方向};
 use super::contact_property::接触物性;
 use super::feature_identity::接触の特徴の識別;
 use super::non_penetration::非貫通の解き方;
-use super::penetration_depth::貫通量;
+use super::penetration_depth::符号付き貫通量;
 use super::static_world_partner_id::静的世界の接触相手の識別子;
 use crate::rigid_body::剛体の識別子;
 
@@ -20,7 +20,7 @@ pub struct 剛体と静的世界の接触拘束の引数 {
     pub 剛体側の局所接触点: 変位<ローカル>,
     pub 静的世界側の接触点: 位置<ワールド>,
     pub 接触法線: 方向<ワールド>,
-    pub 生成時の貫通量: 貫通量,
+    pub 生成時の符号付き貫通量: 符号付き貫通量,
     pub 特徴の識別: 接触の特徴の識別,
     pub 接触物性: 接触物性,
     pub 解き方: 非貫通の解き方,
