@@ -12,7 +12,7 @@ use crate::contact::broad_phase::剛体どうしの候補対;
 use crate::contact::contact_batches::接触拘束の二つのバッチ;
 use crate::contact::contacting_body::接触に参加する剛体;
 use crate::contact::rest::接触島の休止制御;
-use crate::rigid_body::{休止から起きた理由, 剛体, 実行状態};
+use crate::rigid_body::{休止から起きた理由, 剛体};
 
 pub fn 接触拘束の二つのバッチを構築する(
     方針: &接触の品質と時間方針,
@@ -55,10 +55,7 @@ fn 剛体どうしの接触を積む(
         return Ok(());
     };
     for &id in &[id_a, id_b] {
-        if 剛体一覧
-            .get(id.配列添字())
-            .is_some_and(|b| matches!(b.実行状態(), 実行状態::休止している))
-        {
+        if 剛体一覧.get(id.配列添字()).is_some_and(|剛体| 剛体.実行状態().休止しているか()) {
             接触島の休止制御::剛体を起こす(id, 剛体一覧, 休止から起きた理由::新しい接触);
         }
     }

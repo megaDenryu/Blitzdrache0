@@ -5,6 +5,7 @@ mod pipeline_body_rows;
 mod pipeline_contact_batch;
 mod pipeline_def;
 mod pipeline_error;
+mod pipeline_handover;
 mod pipeline_history;
 mod pipeline_policy;
 mod pipeline_solve_body;

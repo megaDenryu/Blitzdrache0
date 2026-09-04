@@ -3,7 +3,6 @@
 
 use super::tower_fixture::箱の塔の場面を作る;
 use crate::contact::contact_thresholds::休止と判定する接触余白;
-use crate::rigid_body::実行状態;
 
 #[test]
 fn 休止の有無で千刻み後の配置が接触余白以内で一致する() {
@@ -22,7 +21,7 @@ fn 休止の有無で千刻み後の配置が接触余白以内で一致する()
             let Ok(剛体) = 台帳_有効.参照する(id) else {
                 panic!();
             };
-            if 剛体.実行状態() == 実行状態::休止している {
+            if 剛体.実行状態().休止しているか() {
                 休止を通った = true;
             }
         }
