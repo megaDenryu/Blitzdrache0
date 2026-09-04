@@ -81,5 +81,5 @@ fn 構造体の上限へ列挙の計測を当てると種別の食い違いに�
 #[test]
 fn 台帳に載っているのに計測へ現れない型を違反にする() {
     assert!(!super::ledger::計測に現れない型名一覧(&[]).is_empty());
-    assert!(super::ledger::上限を引く("アプリ").is_some());
+    assert!(super::ledger::上限を参照する("アプリ").is_some());
 }
