@@ -20,6 +20,7 @@ mod pipeline_velocity_body;
 mod step_actions;
 mod substep_placement;
 mod substep_predict;
+mod tentative_multipliers;
 
 #[cfg(test)]
 mod pipeline_fixture;
@@ -35,6 +36,12 @@ mod tower_invariance_tests;
 mod tower_rest_tests;
 #[cfg(test)]
 mod tower_scene;
+#[cfg(test)]
+mod tower_standing_tests;
+#[cfg(test)]
+mod tower_substep_count_tests;
+#[cfg(test)]
+mod transition_discard_tests;
 
 pub use pipeline_def::剛体の接触の一刻みの工程;
 pub use pipeline_error::接触の工程エラー;
