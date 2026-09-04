@@ -9,6 +9,8 @@ mod continuation_record;
 mod correspondence;
 #[cfg(test)]
 mod correspondence_tests;
+#[cfg(test)]
+mod discard_tests;
 mod entry;
 mod error;
 mod kinds;
