@@ -6,8 +6,9 @@
 
 use super::pipeline_error::接触の工程エラー;
 use super::pipeline_solver::接触の解法ソルバー;
-use super::pipeline_static_rows::{仮の乗数の集まりを求める, 法線だけを同時に解く, 法線と接線の連立を組む};
+use super::pipeline_static_rows::{法線だけを同時に解く, 法線と接線の連立を組む};
 use super::substep_predict::細分の動的剛体;
+use super::tentative_multipliers::仮の乗数の集まりを求める;
 use crate::contact::body_static_contact::剛体と静的世界の接触拘束;
 use crate::contact::normal_tangential_system::相補条件を満たす有効集合を探した結末;
 use crate::contact::static_friction::接触点集合の仮の乗数の集まり;

@@ -4,12 +4,11 @@
 //! 法線だけの連立を解き直し、その法線の解だけを確定して集合を滑走中へ移す。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断12」「判断13」。
 
-use super::pipeline_body_rows::{
-    仮の乗数の集まりを求める, 接触の二つの参加者, 法線だけを同時に解く, 法線と接線の連立を組む
-};
+use super::pipeline_body_rows::{接触の二つの参加者, 法線だけを同時に解く, 法線と接線の連立を組む};
 use super::pipeline_error::接触の工程エラー;
 use super::pipeline_solver::接触の解法ソルバー;
 use super::substep_predict::細分の動的剛体;
+use super::tentative_multipliers::仮の乗数の集まりを求める;
 use crate::contact::body_body_contact::剛体と剛体の接触拘束;
 use crate::contact::normal_tangential_system::相補条件を満たす有効集合を探した結末;
 use crate::rigid_body::{剛体, 剛体の識別子, 剛体エラー};
