@@ -35,6 +35,8 @@ mod generation_error;
 mod history;
 mod island;
 mod manifold_range;
+#[cfg(test)]
+mod margin_point_reaction_tests;
 mod material_id;
 mod material_pair;
 mod minimum_thickness;

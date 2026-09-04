@@ -44,6 +44,8 @@ mod tower_fixture;
 #[cfg(test)]
 mod tower_invariance_tests;
 #[cfg(test)]
+mod tower_margin_point_record;
+#[cfg(test)]
 mod tower_rest_tests;
 #[cfg(test)]
 mod tower_standing_tests;
