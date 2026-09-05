@@ -4,18 +4,24 @@
 
 use std::collections::BTreeMap;
 
-use crate::rigid_body::剛体の識別子;
+use crate::rigid_body::{剛体, 剛体の識別子};
 
 use super::super::contact_batches::接触拘束の二つのバッチ;
 use super::contact_island::接触島;
 use super::island_reorder::{剛体どうしの接触を島順に並べ直す, 静的世界の接触を島順に並べ直す};
 use super::island_union_find::動的剛体の素集合;
+use super::previous_islands::直前の細分の接触島の一覧;
 
 /// 接触拘束のバッチと動的剛体の一覧から、接触島の一覧を構築し、バッチを島順へ並べ直す。
+/// 休止したままの剛体は接触点集合を作らないため、直前の細分の分割を読んで結び直す(判断18)。
 pub fn 接触島の一覧を構築する(
-    動的剛体一覧: &[剛体の識別子], バッチ: &mut 接触拘束の二つのバッチ
+    動的剛体一覧: &[剛体の識別子],
+    バッチ: &mut 接触拘束の二つのバッチ,
+    直前の島: &直前の細分の接触島の一覧,
+    剛体一覧: &[剛体],
 ) -> Vec<接触島> {
     let mut 素集合 = 動的剛体の素集合::動的剛体一覧から生成する(動的剛体一覧);
+    直前の島.休止したままの剛体を素集合へ結び直す(&mut 素集合, 剛体一覧);
     let ペア一覧: Vec<_> = バッチ
         .剛体どうしの接触拘束()
         .iter()

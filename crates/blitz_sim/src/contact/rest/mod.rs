@@ -5,8 +5,9 @@
 
 mod body_rest;
 mod island_rest;
+mod new_contact_wake;
 mod quiet_check;
 #[cfg(test)]
 mod rest_tests;
 
-pub use body_rest::剛体を起こす;
+pub(in crate::contact) use body_rest::剛体を起こす;

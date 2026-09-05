@@ -25,6 +25,8 @@ mod tentative_multipliers;
 #[cfg(test)]
 mod contact_test_pipeline_scene;
 #[cfg(test)]
+mod island_wake_tests;
+#[cfg(test)]
 mod pipeline_fixture;
 #[cfg(test)]
 mod pipeline_tests;

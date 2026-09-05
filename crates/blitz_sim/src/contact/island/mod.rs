@@ -9,7 +9,9 @@ mod island_reorder;
 #[cfg(test)]
 mod island_tests;
 mod island_union_find;
+mod previous_islands;
 
 pub use contact_island::接触島;
 pub use island_builder::接触島の一覧を構築する;
 pub use island_range::島の拘束の添字区間;
+pub use previous_islands::直前の細分の接触島の一覧;

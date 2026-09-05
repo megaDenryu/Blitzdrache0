@@ -80,7 +80,7 @@ pub use generation_error::接触拘束の生成エラー;
 pub use history::{
     剛体と静的世界の接触の履歴, 剛体どうしの接触の履歴, 接触の併走の結果, 接触の対応付け, 接触の履歴, 接触の履歴の項目
 };
-pub use island::{島の拘束の添字区間, 接触島, 接触島の一覧を構築する};
+pub use island::{島の拘束の添字区間, 接触島, 接触島の一覧を構築する, 直前の細分の接触島の一覧};
 pub use material_id::材質の識別子;
 pub use material_pair::材質の対;
 pub use mixing_rule::混合則;
@@ -89,7 +89,6 @@ pub use pipeline::{
     剛体の接触の一刻みの工程, 接触の品質と時間方針, 接触の工程エラー, 接触の空間と世界, 接触の解法ソルバー, 接触履歴の保持
 };
 pub use property_error::接触物性エラー;
-pub use rest::剛体を起こす;
 pub use restitution_coefficient::反発係数;
 pub use solver_quality::接触を解く品質の設定;
 pub use solver_quality_error::接触を解く品質の設定エラー;
