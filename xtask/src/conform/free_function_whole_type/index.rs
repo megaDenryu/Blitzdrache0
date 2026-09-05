@@ -7,10 +7,10 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use super::module_tree::モジュールの木;
 use super::parameter::丸ごと受け取る型の名前;
 use super::signature::自由関数の署名一覧;
-use crate::type_metrics::観測;
+use crate::rust_module::モジュールの位置;
+use crate::type_metrics::{ファイルの観測, 観測};
 
 pub struct 親の型を丸ごと受け取る自由関数 {
     pub パス: PathBuf,
@@ -20,19 +20,19 @@ pub struct 親の型を丸ごと受け取る自由関数 {
 }
 
 pub struct 型の定義の索引 {
-    木の表: BTreeMap<String, Vec<モジュールの木>>,
+    木の表: BTreeMap<String, Vec<モジュールの位置>>,
 }
 
 impl 型の定義の索引 {
-    pub fn 観測から生成する(ファイル別観測: &[(PathBuf, Vec<観測>)]) -> Self {
-        let mut 木の表: BTreeMap<String, Vec<モジュールの木>> = BTreeMap::new();
-        for (パス, 観測一覧) in ファイル別観測 {
-            for 観測 in 観測一覧 {
+    pub fn 観測から生成する(ファイル別観測: &[ファイルの観測]) -> Self {
+        let mut 木の表: BTreeMap<String, Vec<モジュールの位置>> = BTreeMap::new();
+        for ファイル in ファイル別観測 {
+            for 観測 in &ファイル.観測一覧 {
                 if let 観測::型定義 { 型名, .. } = 観測 {
                     木の表
                         .entry(型名.clone())
                         .or_default()
-                        .push(モジュールの木::定義ファイルから生成する(パス));
+                        .push(モジュールの位置::定義ファイルから生成する(&ファイル.パス));
                 }
             }
         }

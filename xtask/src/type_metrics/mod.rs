@@ -12,17 +12,25 @@
 //! 型は数えない。列挙の枝は本体の直下で識別子から始まる行として数えるため、枝のタプルを複数行へ折り返した中身の行も
 //! 1つの枝として数えてしまう。
 //!
-//! 型は定義ファイルと型名の組で識別する。implブロックはモジュールの木が最も近い定義へ引き当てるため、
+//! 型は定義ファイルと型名の組で識別する。同じ名前の定義が複数あるときのimplブロックの引き当ては、
+//! 綴られた経路と`use`宣言から定義を確定できたときだけ行い、確定できなければ違反として報告する(`definition_index`)。
 //! 定義が走査に現れない型(型別名・外部の型・マクロが作る型)のimplは、そのimplのファイルごとに分かれて数えられる。
 //! 同じファイルの中で`#[cfg]`により切り替わる同名の定義は、後から現れた側の分量が残る。
 
+mod attribution_input;
 mod body_kind;
 mod declaration_amount;
 mod definition_index;
+#[cfg(test)]
+mod definition_index_tests;
 mod definition_line;
 mod error;
+mod file_observation;
 mod impl_attribution;
 mod impl_line;
+mod import_index;
+mod import_line;
+mod import_tree;
 mod keyword;
 mod measurement_table;
 mod member_line;
@@ -31,15 +39,17 @@ mod observation;
 mod report;
 mod scan;
 mod type_location;
+mod type_path;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use crate::file_scan;
 
 pub use declaration_amount::宣言の分量;
 pub use error::型計測の破れ;
+pub use file_observation::ファイルの観測;
 pub use impl_attribution::定義の候補が複数ある実装ブロック;
+pub use import_index::取り込みの索引;
 pub use keyword::修飾子を取り除く;
 pub use metrics::{型計測, 走査範囲の型計測, 集計する};
 pub use observation::観測;
@@ -63,7 +73,7 @@ pub fn 型ごとの分量を計測する() -> ExitCode {
 
 /// 走査対象のRustファイルを1本ずつ読み、ファイルごとの観測へ写す。conformの台帳検査と自由関数の検査が
 /// 同じ走査を使うため、コマンドの表示から切り離してここを共通の入口にしている。
-pub fn ファイル別の観測を集める() -> Result<Vec<(PathBuf, Vec<観測>)>, 型計測の破れ> {
+pub fn ファイル別の観測を集める() -> Result<Vec<ファイルの観測>, 型計測の破れ> {
     let ファイル一覧 = file_scan::対象ファイル一覧を集める(&走査対象ディレクトリ一覧, &["rs"])?;
     let mut 結果 = Vec::new();
     for パス in ファイル一覧 {
@@ -71,7 +81,7 @@ pub fn ファイル別の観測を集める() -> Result<Vec<(PathBuf, Vec<観測
             .map_err(|誤り| 型計測の破れ::計測対象のファイルを読めなかった {
                 パス: パス.clone(), 誤り
             })?;
-        結果.push((パス, scan::走査する(&内容)));
+        結果.push(ファイルの観測::ファイルの内容から生成する(パス, &内容));
     }
     Ok(結果)
 }

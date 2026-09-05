@@ -12,7 +12,6 @@
 
 mod index;
 mod ledger;
-mod module_tree;
 mod parameter;
 mod signature;
 #[cfg(test)]
@@ -28,7 +27,11 @@ pub fn 全ファイルの自由関数を検査する() -> Result<Vec<違反>, �
     let ファイル別観測 = ファイル別の観測を集める()?;
     let 索引 = 型の定義の索引::観測から生成する(&ファイル別観測);
     let mut 検出一覧 = Vec::new();
-    for パス in ファイル別観測.iter().map(|(パス, _)| パス).filter(|パス| !試験のためのファイルか(パス)) {
+    for パス in ファイル別観測
+        .iter()
+        .map(|ファイル| &ファイル.パス)
+        .filter(|パス| !試験のためのファイルか(パス))
+    {
         let 内容 = std::fs::read_to_string(パス).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(パス, 誤り))?;
         検出一覧.extend(索引.親の型を丸ごと受け取る自由関数を探す(パス, &内容));
     }

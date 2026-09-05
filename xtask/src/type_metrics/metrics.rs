@@ -4,8 +4,10 @@
 use std::collections::BTreeSet;
 use std::path::PathBuf;
 
+use super::attribution_input::引き当ての材料;
 use super::declaration_amount::宣言の分量;
 use super::definition_index::定義の索引;
+use super::file_observation::ファイルの観測;
 use super::impl_attribution::定義の候補が複数ある実装ブロック;
 use super::measurement_table::所在ごとの計測表;
 use super::observation::観測;
@@ -47,17 +49,20 @@ pub struct 走査範囲の型計測 {
     pub 定義の候補を1つに絞れなかった実装ブロック一覧: Vec<定義の候補が複数ある実装ブロック>,
 }
 
-pub fn 集計する(ファイル別観測: &[(PathBuf, Vec<観測>)]) -> 走査範囲の型計測 {
+pub fn 集計する(ファイル別観測: &[ファイルの観測]) -> 走査範囲の型計測 {
     let 索引 = 定義の索引::ファイル別の観測から生成する(ファイル別観測);
     let mut 計測表 = 所在ごとの計測表::空で始める();
-    for (パス, 観測一覧) in ファイル別観測 {
-        for 観測 in 観測一覧 {
+    for ファイル in ファイル別観測 {
+        for 観測 in &ファイル.観測一覧 {
             match 観測 {
                 観測::型定義 { 型名, 分量 } => {
-                    計測表.型定義を取り込む(型の所在::走査したファイルから生成する(パス, 型名), *分量);
+                    計測表.型定義を取り込む(型の所在::走査したファイルから生成する(&ファイル.パス, 型名), *分量);
                 }
-                観測::実装ブロック { 型名, メソッド数 } => {
-                    計測表.実装ブロックを取り込む(索引.実装ブロックの所在を引き当てる(パス, 型名), パス, *メソッド数);
+                観測::実装ブロック {
+                    自己型の経路, メソッド数
+                } => {
+                    let 材料 = 引き当ての材料::生成する(&ファイル.パス, 自己型の経路, &ファイル.取り込みの索引);
+                    計測表.実装ブロックを取り込む(索引.実装ブロックの所在を引き当てる(&材料), &ファイル.パス, *メソッド数);
                 }
             }
         }
@@ -69,25 +74,34 @@ pub fn 集計する(ファイル別観測: &[(PathBuf, Vec<観測>)]) -> 走査�
 #[allow(clippy::unwrap_used)]
 mod tests {
     use super::*;
+    use crate::type_metrics::import_index::取り込みの索引;
+    use crate::type_metrics::type_path::自己型の経路;
 
     fn 定義(型名: &str, 分量: 宣言の分量) -> 観測 {
         let 型名 = 型名.to_string();
         観測::型定義 { 型名, 分量 }
     }
 
-    fn 実装(型名: &str, メソッド数: usize) -> 観測 {
-        let 型名 = 型名.to_string();
-        観測::実装ブロック { 型名, メソッド数 }
+    fn 実装(経路の綴り: &str, メソッド数: usize) -> 観測 {
+        観測::実装ブロック {
+            自己型の経路: 自己型の経路::綴りから生成する(経路の綴り),
+            メソッド数,
+        }
+    }
+
+    fn ファイル(パス: &str, 観測一覧: Vec<観測>, 取り込み: &str) -> ファイルの観測 {
+        ファイルの観測 {
+            パス: PathBuf::from(パス),
+            観測一覧,
+            取り込みの索引: 取り込みの索引::ファイルの内容から生成する(取り込み),
+        }
     }
 
     #[test]
     fn 複数ファイルのimplを合算して降順に並べる() {
         let 観測 = vec![
-            (
-                PathBuf::from("src/a.rs"),
-                vec![定義("大", 宣言の分量::構造体のフィールド数(3)), 実装("大", 2)],
-            ),
-            (PathBuf::from("src/b.rs"), vec![実装("大", 1), 定義("小", 宣言の分量::列挙の枝数(1))]),
+            ファイル("src/a.rs", vec![定義("大", 宣言の分量::構造体のフィールド数(3)), 実装("大", 2)], ""),
+            ファイル("src/b.rs", vec![実装("大", 1), 定義("小", 宣言の分量::列挙の枝数(1))], ""),
         ];
         let 一覧 = 集計する(&観測).型ごとの計測一覧;
         assert_eq!(一覧[0].所在.to_string(), "src/a.rs::大");
@@ -100,13 +114,15 @@ mod tests {
     #[test]
     fn 同じ名前の型が2つあれば別々の型として数える() {
         let 観測 = vec![
-            (
-                PathBuf::from("crates/blitz_app/src/cli/types.rs"),
+            ファイル(
+                "crates/blitz_app/src/cli/types.rs",
                 vec![定義("起動設定", 宣言の分量::構造体のフィールド数(40))],
+                "",
             ),
-            (
-                PathBuf::from("xtask/src/smoke/launch_setting.rs"),
+            ファイル(
+                "xtask/src/smoke/launch_setting.rs",
                 vec![定義("起動設定", 宣言の分量::構造体のフィールド数(10)), 実装("起動設定", 9)],
+                "",
             ),
         ];
         let 一覧 = 集計する(&観測).型ごとの計測一覧;
