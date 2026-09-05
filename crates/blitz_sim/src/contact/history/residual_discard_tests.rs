@@ -6,7 +6,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use blitz_math::{メートル, ワールド, 変位, 方向};
+use blitz_math::{メートル, 変位, 方向};
 
 use super::super::contact_test_fixtures::世界の位置を作る;
 use super::super::feature_identity::接触の特徴の識別;

@@ -16,7 +16,6 @@ use super::super::generation_margin::{
 use super::super::material_id::材質の識別子;
 use super::super::minimum_thickness::形の最小の厚み;
 use super::scene_geometry::{場面の材質, 直方体を組む};
-use super::scene_settings::細分の観測;
 use super::substep_harness::一つの箱と静的な直方体の場面;
 use crate::rigid_body::一刻みの入力;
 use crate::rigid_xpbd::{予測の状態, 姿勢自由度の参加者};
