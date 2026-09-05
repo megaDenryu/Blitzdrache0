@@ -7,7 +7,9 @@
 #![cfg(test)]
 
 use super::super::super::body_static_contact::剛体と静的世界の接触拘束;
-use super::super::super::normal_tangential_system::{倍精度の円錐の判定, 倍精度の参照の結末, 倍精度の解の内訳};
+use super::super::super::normal_tangential_system::{
+    倍精度の円錐の判定, 倍精度の参照の結末, 倍精度の解の内訳, 参照計算の許容差の由来
+};
 use super::super::substep_harness::一つの箱と静的な直方体の場面;
 use super::candidate_reading::粘着の候補の読み取り;
 use crate::rigid_body::配置;
@@ -21,8 +23,9 @@ impl 一つの箱と静的な直方体の場面 {
         &self,
         接触点集合: &[剛体と静的世界の接触拘束],
         配置: &配置,
+        許容差の由来: 参照計算の許容差の由来,
     ) -> (粘着の候補の読み取り, Option<倍精度の解の内訳>) {
-        let 結末 = 倍精度の参照の結末::単精度の接触点集合から求める(接触点集合, 配置, &self.箱の質量特性);
+        let 結末 = 倍精度の参照の結末::単精度の接触点集合から求める(接触点集合, 配置, &self.箱の質量特性, 許容差の由来);
         let 倍精度の参照の結末::解が定まった(参照の解) = &結末 else {
             return (粘着の候補の読み取り::解けなかった結末から組む(結末.結末の綴り()), None);
         };
