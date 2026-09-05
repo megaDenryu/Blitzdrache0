@@ -234,7 +234,7 @@ cargo xtask             # 開発ツールの一覧表示（ツールの唯一の
 cargo xtask editor      # ゲーム開発用エディター(ブラウザ)の編集サーバーとeditor_webの開発サーバーを併せて起動する(--project <ルート>で開くゲームプロジェクトを選ぶ。大域編集・チャンク編集・建物編集・マテリアル台帳の4ツール・保存・ソースアセット書き出し・ヘッドレス適用まで実装済み)
 cargo xtask bake-building <建物定義ID>  # 建物エディターが保存した格子1件を平らな1チャンクの中央へ据えた検証世界を焼き、歩行の器で開く(--bake-onlyで焼きまでで止める)
 cargo xtask contract-export # editor_serverのRust側の型からeditor_web/src/生成配下のTypeScript契約ファイルを生成し直す
-cargo xtask verify      # 検証の標準列 (conform -> fmt --check -> check -> clippy -D warnings -> test)。全段の出力を1文字も落とさず<出力の木>/verify-logs/<ブランチ>_<先端の短いハッシュ>_<時刻>.logへ書き、その絶対パスを端末の最初と最後に表示する。ログが一次の記録であり端末はその複製先であるため、端末へ書けなくなっても流れは最後までログへ残る(その場合は段が全部通っていても検証を失敗にする)
+cargo xtask verify      # 検証の標準列 (conform -> supply-source-assets -> fmt --check -> check -> clippy -D warnings -> test)。全段の出力を1文字も落とさず<出力の木>/verify-logs/<ブランチ>_<先端の短いハッシュ>_<時刻>.logへ書き、その絶対パスを端末の最初と最後に表示する。ログが一次の記録であり端末はその複製先であるため、端末へ書けなくなっても流れは最後までログへ残る(その場合は段が全部通っていても検証を失敗にする)
 cargo xtask conform     # 規約適合の機械検査（行数・禁止文字列・依存白リスト・参照パス実在・文書内の節参照実在・vulkan配下のDrop実装禁止）
 cargo xtask type-metrics  # 型ごとの宣言の件数（構造体はフィールド数、列挙は枝数）・impl分散ファイル数・メソッド数を多い順に表示（違反判定はしない計測専用）
 cargo xtask smoke       # DoD自動検証: 8ステージの自己操作つき実行 + validation件数 + ピクセル読み戻し判定
@@ -281,6 +281,7 @@ cargo xtask large-world-bench [--preload-radius <数> --ram-limit <bytes> --vram
 cargo xtask play-fox-tour # クソゲー1本目「キツネの場所巡り」を遊ぶ。起動の前に、これから遊ぶマップがどの乱数の種の生成物かを出す（Enterではじめる・矢印キーで歩く・Escで終了確認）
 cargo xtask game-fox-tour # クソゲー1本目の通しの検収。同じ種から同じマップが出ることと、決定的な台本がタイトルから終了まで1周することを機械で判定し、目視の材料の絵を4枚書き出す（検収の種でassets/fox_tour_world/を作り直す）
 cargo xtask gen-source-assets # 検証用ソースアセット（スモーク用quad・影検証シーン・板の世界25チャンク・地形世界25チャンクの高さ格子・植生世界の原型）の再生成
+cargo xtask supply-source-assets # glTFが指す共有バッファ（.bin）はGitの追跡に入っていない生成物であり、欠けていれば生成器を起こしてassets/へ揃える（揃っていれば何もしない）
 cargo xtask fetch-assets     # DamagedHelmet等の標準サンプル取得
 ```
 
@@ -295,6 +296,8 @@ cargo xtask fetch-assets     # DamagedHelmet等の標準サンプル取得
 ## 大容量資産の保管とclone
 
 このリポジトリは大容量のバイナリ資産を Git LFS（Git Large File Storage。実体の代わりに参照情報をGitへ記録する仕組み）で扱い、実体は共通の保管基盤 [git-lfs-rclone-storage](https://github.com/megaDenryu/git-lfs-rclone-storage) が置く。追跡対象は `.gitattributes` が持つ（`.heightgrid` / `.f32raw` / `.png`）。コミットに入るのは参照情報だけであり、リポジトリは保管先を知らない（`.large-assets.toml` が論理プロファイル名だけを持つ）。
+
+glTFの文書が `uri` で指す共有バッファ（`.bin`）は追跡しない。あれは `cargo xtask gen-source-assets` が書き出す生成物であり、生成物をGitへ入れると、生成の結果とコミットの中身が食い違ったときにどちらが正しいかを決められなくなるためである。文書の側（`.gltf`）は追跡する。あちらはJSONのテキストで差分が意味を持ち、大きさも小さい。cloneした直後の作業ツリーには共有バッファが1件も無いが、`cargo xtask verify` と `cargo xtask smoke` と `cargo xtask compile-assets` は読む前に `supply-source-assets` の工程を通り、欠けていれば生成器を起こして揃える。
 
 **初回のcloneは通常の `git clone` では完結しない。** cloneした時点では基盤が登録されておらず、追跡対象のファイルの展開が失敗する。次の手順を使う。PCの初期設定（基盤の実行ファイルの配置とPC設定ファイル）は `C:\devs\git-lfs-rclone-storage\_doc\利用\PC初期設定.md` が持つ。
 
