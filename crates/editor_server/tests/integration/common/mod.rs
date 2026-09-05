@@ -14,7 +14,9 @@ mod scatter_fixture;
 mod source_asset_export_fixture;
 mod world_layout;
 
+use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
+use std::sync::Mutex;
 
 use editor_server::{ファイル保管庫, プロジェクトルート, リポジトリルート};
 
@@ -46,7 +48,15 @@ pub struct 一時プロジェクト {
 }
 
 impl 一時プロジェクト {
+    /// 注意: 識別子は試験の実行ファイル全体で1つに定める。40個の試験ファイルが1本の実行ファイルへ束ねられているため、
+    /// 同じ識別子を2箇所が使うと、一方が使っている最中のディレクトリをもう一方が作り直し、保存が失敗する。
+    /// 綴りが1つであることを呼び出し側の規律へ任せず、ここで落とす。
     pub fn 生成する(識別子: &str) -> Self {
+        static 使った識別子: Mutex<BTreeSet<String>> = Mutex::new(BTreeSet::new());
+        assert!(
+            使った識別子.lock().unwrap().insert(識別子.to_string()),
+            "一時プロジェクトの識別子{識別子}を2箇所が使っている。試験の実行ファイルの中で1つに定める"
+        );
         let ルート = std::env::temp_dir().join(format!("editor_server_test_{識別子}_{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&ルート);
         std::fs::create_dir_all(ルート.join("editor_data")).unwrap();

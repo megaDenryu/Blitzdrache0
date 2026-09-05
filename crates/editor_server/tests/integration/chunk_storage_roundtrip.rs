@@ -81,7 +81,7 @@ fn 建物のなじみ半径が基礎半径未満なら保存を拒む() {
 
 #[test]
 fn チャンクの高さ格子と材質重みを保存して読み戻すとバイト一致する() {
-    let (_一時, 保管庫) = crate::common::保管庫を作る("chunk_grids_roundtrip");
+    let (_一時, 保管庫) = crate::common::保管庫を作る("chunk_grids_storage_roundtrip");
     let 座標 = チャンク座標::生成する(1, 1);
     let 頂点数 = 区画割り例().チャンク格子の頂点数().unwrap();
     let 頂点数usize = usize::try_from(頂点数).unwrap();

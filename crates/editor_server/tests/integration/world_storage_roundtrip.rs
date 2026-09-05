@@ -56,7 +56,7 @@ fn 大域世界構造の区画割りが不正なら保存を拒む() {
 
 #[test]
 fn マザーハイトマップを保存して読み戻すとバイト一致する() {
-    let (_一時, 保管庫) = crate::common::保管庫を作る("world_heightmap_roundtrip");
+    let (_一時, 保管庫) = crate::common::保管庫を作る("world_heightmap_storage_roundtrip");
     let 頂点数 = 区画割り例().マザーハイトマップの格子解像度().unwrap();
     let バイト長 = usize::try_from(頂点数).unwrap() * usize::try_from(頂点数).unwrap() * 4;
     let バイト列 = vec![7u8; バイト長];

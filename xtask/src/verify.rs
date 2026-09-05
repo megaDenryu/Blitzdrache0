@@ -16,7 +16,7 @@ pub fn 検証列を実行する() -> ExitCode {
         ("fmt", &["fmt", "--all", "--check"]),
         ("check", &["check", "--workspace"]),
         ("clippy", &["clippy", "--all-targets", "--", "-D", "warnings"]),
-        ("test", &["test", "--workspace"]),
+        ("test", &["test", "--workspace", "--features", "editor_server/typescript"]),
     ];
     for (名前, cargo引数) in 手順一覧 {
         println!("[xtask] cargo {名前} を実行");
