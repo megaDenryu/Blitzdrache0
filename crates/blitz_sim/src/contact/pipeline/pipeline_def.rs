@@ -11,8 +11,6 @@ use super::pipeline_solver::接触の解法ソルバー;
 use super::pipeline_space::接触の空間と世界;
 use crate::contact::island::直前の細分の接触島の一覧;
 use crate::contact::material_id::材質の識別子;
-#[cfg(test)]
-use crate::contact::normal_tangential_system::部分集合を解いた回数;
 use crate::contact::static_world_partner::静的世界の接触相手;
 use crate::rigid_body::{剛体の識別子, 配置};
 
