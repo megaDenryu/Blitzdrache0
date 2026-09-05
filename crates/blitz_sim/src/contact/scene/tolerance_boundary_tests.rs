@@ -13,7 +13,6 @@
 #![allow(clippy::unwrap_used)]
 
 use super::super::friction_coefficient::摩擦係数;
-use super::residual_separation::場面の残差の分離;
 use super::slope_fixture::{一刻みの細分数, 坂の場面を法線の向きへ動かして組む};
 use super::slope_geometry::坂の場面の条件;
 use super::static_friction_method::場面の静止摩擦の解き方;
@@ -34,7 +33,6 @@ fn 走査する条件(傾きの正接: f32) -> 坂の場面の条件 {
         動摩擦係数: 摩擦係数::生成する(0.2).unwrap(),
         下り向きの初速: 0.0,
         静止摩擦の解き方: 場面の静止摩擦の解き方::接触点集合の接線を同時に解く,
-        残差の分離: 場面の残差の分離::残差の変化を速度から除く,
     }
 }
 

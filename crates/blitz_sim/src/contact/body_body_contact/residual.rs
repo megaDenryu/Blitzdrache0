@@ -8,7 +8,7 @@
 use blitz_math::{ワールド, 変位};
 
 use super::super::contact_projection_row::接触の射影に参加する点;
-use super::super::residual_carryover::{持ち越す接線の残差, 残差の変化を打ち消す仮の補正の連立};
+use super::super::static_friction::{持ち越す接線の残差, 残差の変化を打ち消す仮の補正の連立};
 use super::剛体と剛体の接触拘束;
 use crate::rigid_xpbd::姿勢自由度の参加者;
 

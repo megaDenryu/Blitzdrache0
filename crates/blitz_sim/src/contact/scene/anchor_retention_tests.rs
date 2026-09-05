@@ -6,7 +6,6 @@
 #![allow(clippy::unwrap_used)]
 
 use super::super::friction_coefficient::摩擦係数;
-use super::residual_separation::場面の残差の分離;
 use super::slope_fixture::坂の場面を組む;
 use super::slope_geometry::坂の場面の条件;
 use super::static_friction_method::場面の静止摩擦の解き方;
@@ -24,7 +23,6 @@ fn 床の上で一メートル滑らせても接触の対応付けが継続の�
         動摩擦係数: 摩擦係数::生成する(0.05).unwrap(),
         下り向きの初速: 2.0,
         静止摩擦の解き方: 場面の静止摩擦の解き方::接触点集合の接線を同時に解く,
-        残差の分離: 場面の残差の分離::残差の変化を速度から除く,
     };
     let mut 場面 = 坂の場面を組む(&条件);
     let 初めの重心 = 場面.箱の配置.重心の位置();

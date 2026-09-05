@@ -7,7 +7,7 @@
 
 use blitz_math::{ワールド, 方向};
 
-use super::super::residual_carryover::持ち越す接線の残差;
+use super::super::static_friction::持ち越す接線の残差;
 
 /// 接触1点が刻みを跨いで保つ値。錨の型は参加者の組ごとに違う。
 #[derive(Debug, Clone, Copy, PartialEq)]

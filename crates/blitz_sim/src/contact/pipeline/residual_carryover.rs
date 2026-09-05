@@ -10,7 +10,7 @@ use super::pipeline_solver::接触の解法ソルバー;
 use super::substep_predict::細分の動的剛体;
 use crate::contact::contact_batches::接触拘束の二つのバッチ;
 use crate::contact::island::接触島;
-use crate::contact::residual_carryover::残差の変化を打ち消す仮の補正の連立;
+use crate::contact::static_friction::残差の変化を打ち消す仮の補正の連立;
 use crate::rigid_body::{剛体, 剛体の識別子, 剛体エラー};
 use crate::rigid_xpbd::{姿勢自由度の参加者, 姿勢自由度の補正};
 

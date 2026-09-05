@@ -15,6 +15,7 @@ use super::super::normal_tangential_system::解けたと見なす許容差の倍
 use super::super::restitution_coefficient::反発係数;
 use super::super::solver_quality::接触を解く品質の設定;
 use super::super::surface_property::表面物性;
+use super::residual_separation::場面の残差の分離;
 use super::scene_geometry::世界の位置;
 use super::scene_settings::場面の設定;
 use super::slope_geometry::{坂の場面の条件, 重力の大きさ};
@@ -101,7 +102,7 @@ fn 場面を組む(
         細分の刻み幅: 刻み幅::生成する(秒::生成する(細分の刻み幅の秒)).unwrap(),
         解く品質: 接触を解く品質の設定::生成する(位置の反復回数, 速度段階の巡回数).unwrap(),
         静止摩擦の解き方: 条件.静止摩擦の解き方,
-        残差の分離: 条件.残差の分離,
+        残差の分離: 場面の残差の分離::残差の変化を速度から除く,
         解けたと見なす許容差の倍率: 許容差の倍率,
     })
 }

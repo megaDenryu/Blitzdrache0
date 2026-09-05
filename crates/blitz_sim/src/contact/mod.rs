@@ -56,7 +56,6 @@ mod pipeline;
 mod property_error;
 #[cfg(test)]
 mod property_test_fixtures;
-mod residual_carryover;
 mod rest;
 mod restitution_coefficient;
 #[cfg(test)]

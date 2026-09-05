@@ -9,9 +9,9 @@
 use blitz_collision::contact_set::接触点の上限;
 use blitz_math::{ワールド, 変位};
 
-use super::super::contact_projection_row::一行の二つの符号付き勾配;
-use super::super::contact_projection_row::接触の射影に参加する点;
-use super::super::symmetric_system::{対称な連立の固有分解, 法線と接線の連立の行の上限};
+use crate::contact::contact_projection_row::一行の二つの符号付き勾配;
+use crate::contact::contact_projection_row::接触の射影に参加する点;
+use crate::contact::symmetric_system::{対称な連立の固有分解, 法線と接線の連立の行の上限};
 use crate::rigid_xpbd::姿勢自由度の補正;
 use crate::xpbd::ラグランジュ乗数;
 

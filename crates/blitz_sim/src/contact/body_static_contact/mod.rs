@@ -17,7 +17,7 @@ use super::non_penetration::非貫通の一回の射影の結果;
 use super::non_penetration::非貫通の一細分の解の状態;
 use super::non_penetration::非貫通の接触点集合の一行;
 use super::normal_tangential_system::接触点集合の法線と接線の連立;
-use super::residual_carryover::接線の残差の持ち越し;
+use super::static_friction::接線の残差の持ち越し;
 use super::static_friction::静止摩擦の一細分の解の状態;
 use super::static_friction::{剛体と静的世界の静止摩擦の錨, 静止摩擦の錨};
 use crate::rigid_xpbd::姿勢自由度の参加者;

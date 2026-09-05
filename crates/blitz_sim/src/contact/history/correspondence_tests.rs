@@ -14,9 +14,8 @@ use super::super::contact_test_fixtures::{
 };
 use super::super::feature_identity::接触の特徴の識別;
 use super::super::non_penetration::fixture::下向きの接触法線;
-use super::super::residual_carryover::持ち越す接線の残差;
 use super::super::stacked_box_fixture::{上の箱の配置, 上下の箱の接触点集合};
-use super::super::static_friction::静止摩擦の錨;
+use super::super::static_friction::{持ち越す接線の残差, 静止摩擦の錨};
 use super::super::static_world_partner_id::静的世界の接触相手の識別子;
 use super::body_static_key::剛体と静的世界の接触の鍵;
 use super::continuation_record::接触の継続の記録;
@@ -44,11 +43,8 @@ fn 鍵を作る(特徴の識別: 接触の特徴の識別) -> 剛体と静的世
 }
 
 fn 高さの錨の記録(高さ: f32) -> 剛体と静的世界の接触の継続の記録 {
-    接触の継続の記録::生成する(
-        静止摩擦の錨::生成する(変位::零(), 世界の位置を作る(0.0, 高さ, 0.0)),
-        下向きの接触法線(),
-        持ち越す接線の残差::無し,
-    )
+    let 錨 = 静止摩擦の錨::生成する(変位::零(), 世界の位置を作る(0.0, 高さ, 0.0));
+    接触の継続の記録::生成する(錨, 下向きの接触法線(), 持ち越す接線の残差::無し)
 }
 
 fn 項目を作る(特徴の識別: 接触の特徴の識別, 高さ: f32) -> 剛体と静的世界の接触の履歴の項目 {

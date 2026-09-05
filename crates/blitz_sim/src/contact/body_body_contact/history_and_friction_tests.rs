@@ -13,7 +13,7 @@ use super::super::contact_test_fixtures::試験の刻み幅;
 use super::super::history::接触の継続の記録;
 use super::super::non_penetration::fixture::{剛体どうしの基本の引数, 高さの参加者};
 use super::super::non_penetration::非貫通の一回の射影の結果;
-use super::super::residual_carryover::持ち越す接線の残差;
+use super::super::static_friction::持ち越す接線の残差;
 use super::super::static_friction::{静止摩擦の一回の仮の射影の結果, 静止摩擦の錨};
 use super::super::velocity_stage::接触点の法線の相対速度を求める;
 use super::剛体と剛体の接触拘束;

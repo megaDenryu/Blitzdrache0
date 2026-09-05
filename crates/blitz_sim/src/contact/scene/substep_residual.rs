@@ -8,7 +8,7 @@
 #![cfg(test)]
 
 use super::super::contact_batches::接触拘束の二つのバッチ;
-use super::super::residual_carryover::残差の変化を打ち消す仮の補正の連立;
+use super::super::static_friction::残差の変化を打ち消す仮の補正の連立;
 use super::residual_separation::場面の残差の分離;
 use super::substep_harness::一つの箱と静的な直方体の場面;
 use crate::rigid_xpbd::{予測の状態, 姿勢自由度の参加者, 姿勢自由度の補正};

@@ -23,6 +23,7 @@ mod projection;
 mod projection_fixture;
 #[cfg(test)]
 mod projection_tests;
+mod residual_carryover;
 mod result;
 mod substep_state;
 mod tangential_multiplier;
@@ -32,6 +33,7 @@ pub use anchor::{剛体と静的世界の静止摩擦の錨, 剛体どうしの�
 pub use manifold_cone::接触点集合の静止摩擦の仮の集計;
 pub use manifold_row_result::静止摩擦の連立へ点を入れた結果;
 pub use manifold_tentative::接触点集合の仮の乗数の集まり;
+pub use residual_carryover::{持ち越す接線の残差, 接線の残差の持ち越し, 残差の変化を打ち消す仮の補正の連立};
 pub use result::静止摩擦の一回の仮の射影の結果;
 pub use substep_state::静止摩擦の一細分の解の状態;
 pub use tangential_multiplier::接線のラグランジュ乗数;
