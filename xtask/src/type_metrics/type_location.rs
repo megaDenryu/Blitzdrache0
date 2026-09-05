@@ -28,10 +28,11 @@ impl 型の所在 {
         }
     }
 
-    /// 台帳の1行から組み立てる。台帳は区画の根と根からの相対パスへ分けて綴りを持つため、繋いだ結果を受け取る。
-    pub fn 台帳の綴りから生成する(定義ファイル: &str, 型名: &str) -> Self {
+    /// 台帳の1行から組み立てる。台帳は綴りを区画の根と根からの相対パスへ分けて持つため、繋ぐ規則をここへ閉じる。
+    /// 繋ぎを呼び出し側に書かせると、走査の側と台帳の側で区切りの綴りが割れる余地が残る。
+    pub fn 区画の根と相対パスから生成する(区画の根: &str, 根からのパス: &str, 型名: &str) -> Self {
         Self {
-            定義ファイル: 定義ファイル.to_string(),
+            定義ファイル: format!("{区画の根}/{根からのパス}"),
             型名: 型名.to_string(),
         }
     }
@@ -87,26 +88,29 @@ mod tests {
 
     #[test]
     fn 綴りはファイルと型名を二重コロンで分ける() {
-        let 所在 = 型の所在::台帳の綴りから生成する("crates/blitz_app/src/cli/types.rs", "起動設定");
+        let 所在 = 型の所在::区画の根と相対パスから生成する("crates/blitz_app/src", "cli/types.rs", "起動設定");
         assert_eq!(所在.to_string(), "crates/blitz_app/src/cli/types.rs::起動設定");
     }
 
     #[test]
     fn 逆斜線の区切りでも台帳の綴りと一致する() {
         let 走査 = 型の所在::走査したファイルから生成する(Path::new(r"xtask\src\smoke\launch_setting.rs"), "起動設定");
-        assert_eq!(走査, 型の所在::台帳の綴りから生成する("xtask/src/smoke/launch_setting.rs", "起動設定"));
+        assert_eq!(
+            走査,
+            型の所在::区画の根と相対パスから生成する("xtask/src", "smoke/launch_setting.rs", "起動設定")
+        );
     }
 
     #[test]
     fn 同じ名前でもファイルが違えば別の所在とみなす() {
-        let 片方 = 型の所在::台帳の綴りから生成する("crates/blitz_app/src/cli/types.rs", "起動設定");
-        let もう片方 = 型の所在::台帳の綴りから生成する("xtask/src/smoke/launch_setting.rs", "起動設定");
+        let 片方 = 型の所在::区画の根と相対パスから生成する("crates/blitz_app/src", "cli/types.rs", "起動設定");
+        let もう片方 = 型の所在::区画の根と相対パスから生成する("xtask/src", "smoke/launch_setting.rs", "起動設定");
         assert_ne!(片方, もう片方);
     }
 
     #[test]
     fn 近さは同じファイルとディレクトリの共有の深さで決まる() {
-        let 所在 = 型の所在::台帳の綴りから生成する("crates/blitz_collision/src/triangle/sweep_solver.rs", "求解");
+        let 所在 = 型の所在::区画の根と相対パスから生成する("crates/blitz_collision/src", "triangle/sweep_solver.rs", "求解");
         let 近さ = |ファイル: &str| 所在.実装ブロックのファイルへの近さ(Path::new(ファイル));
         let 同じファイル = 近さ("crates/blitz_collision/src/triangle/sweep_solver.rs");
         let 同じディレクトリ = 近さ("crates/blitz_collision/src/triangle/sweep_face.rs");
