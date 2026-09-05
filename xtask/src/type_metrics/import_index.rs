@@ -7,7 +7,7 @@
 use std::collections::BTreeMap;
 
 use super::import_line::取り込みの宣言一覧;
-use super::import_tree::経路へ展開する;
+use super::import_tree::取り込みの項を経路へ展開する;
 use super::type_path::自己型の経路;
 
 pub struct 取り込みの索引 {
@@ -17,7 +17,7 @@ pub struct 取り込みの索引 {
 impl 取り込みの索引 {
     pub fn ファイルの内容から生成する(内容: &str) -> Self {
         let mut 型名ごとの経路一覧: BTreeMap<String, Vec<自己型の経路>> = BTreeMap::new();
-        for 綴り in 取り込みの宣言一覧(内容).iter().flat_map(|宣言| 経路へ展開する("", 宣言)) {
+        for 綴り in 取り込みの宣言一覧(内容).iter().flat_map(|宣言| 取り込みの項を経路へ展開する("", 宣言)) {
             let 経路 = 自己型の経路::綴りから生成する(&綴り);
             型名ごとの経路一覧.entry(経路.型名().to_string()).or_default().push(経路);
         }

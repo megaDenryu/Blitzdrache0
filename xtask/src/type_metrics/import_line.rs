@@ -12,7 +12,7 @@ pub fn 取り込みの宣言一覧(内容: &str) -> Vec<String> {
         let 整形 = 行.trim();
         let 続き = match 組み立て中.take() {
             Some(途中) => format!("{途中} {整形}"),
-            None => match 宣言の本体を始める(整形) {
+            None => match 取り込みの宣言の本体を読み取る(整形) {
                 Some(本体) => 本体,
                 None => continue,
             },
@@ -26,7 +26,7 @@ pub fn 取り込みの宣言一覧(内容: &str) -> Vec<String> {
 }
 
 /// `use`から始まる行だけを宣言の始まりとみなし、可視性の修飾子は取り除く。行の途中に現れる`use`は対象にしない。
-fn 宣言の本体を始める(整形された行: &str) -> Option<String> {
+fn 取り込みの宣言の本体を読み取る(整形された行: &str) -> Option<String> {
     let 修飾子なし = super::keyword::修飾子を取り除く(整形された行);
     修飾子なし.strip_prefix(宣言の始まり).map(|本体| 本体.trim().to_string())
 }
