@@ -14,7 +14,7 @@ use blitz_math::{メートル, ワールド, 位置, 変位};
 use super::super::contact_projection_row::接触の射影に参加する点;
 use super::super::contact_test_fixtures::{世界の位置を作る, 動的な参加者を作る, 局所の変位を作る};
 use super::super::non_penetration::非貫通の接触点集合の一行;
-use super::super::pseudo_random_fixture::決まった種から進む擬似乱数;
+use super::pseudo_random_fixture::決まった種から進む擬似乱数;
 use super::system::接触点集合の法線と接線の連立;
 use super::system_fixture::{
     下向きの接触法線, 接線の一行を積む, 法線の乗数を積んだ解の状態, 試験の一刻みの係数

@@ -21,6 +21,8 @@ mod full_scan_reference;
 mod order_tests;
 mod participant_correction;
 #[cfg(test)]
+mod pseudo_random_fixture;
+#[cfg(test)]
 mod random_system_fixture;
 mod reduced_system;
 mod reduced_system_residual;

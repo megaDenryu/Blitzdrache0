@@ -70,6 +70,8 @@ mod triangle_projection;
 #[cfg(test)]
 mod box_pair_answer_fixture;
 #[cfg(test)]
+mod box_pair_axis_preference_tests;
+#[cfg(test)]
 mod box_pair_completeness_tests;
 #[cfg(test)]
 mod box_pair_edge_tests;
@@ -81,6 +83,8 @@ mod box_pair_invariant_tests;
 mod box_pair_stack_tests;
 #[cfg(test)]
 mod box_triangle_answer_fixture;
+#[cfg(test)]
+mod box_triangle_axis_preference_tests;
 #[cfg(test)]
 mod box_triangle_tests;
 #[cfg(test)]
