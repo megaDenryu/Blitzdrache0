@@ -16,6 +16,11 @@ use super::tee::端末とログの両方へ流す出力係;
 #[allow(clippy::unwrap_used)]
 mod closing_tests;
 
+/// xtask自身の命令として走らせる段の一覧。規約検査を先に置くのは、実行時間が最も短く、落ちる場合に最も早く落とせるためである。
+/// 生成物の取り揃えをそこへ続けるのは、cloneした直後の作業ツリーにglTFが指す共有バッファが1件も無く、
+/// 揃える前にtestの段まで進むとアセットを読む試験がまとめて落ちるためである。
+const 自分の実行ファイルで走らせる段の一覧: [&str; 2] = ["conform", "supply-source-assets"];
+
 /// cargoで走らせる段の一覧。実行時間の短い検査ほど前に置き、落ちる場合は早く落とす。fmtはコンパイルを伴わないためcheckより前に置く。
 const 検証列の手順一覧: [(&str, &[&str]); 4] = [
     ("fmt", &["fmt", "--all", "--check"]),
@@ -87,8 +92,10 @@ impl 検証列の実行係 {
     }
 
     fn 全段を走らせる(&self) -> Result<ExitCode, 検証列の破れ> {
-        if !self.conformの段を走らせる()? {
-            return Ok(ExitCode::FAILURE);
+        for 段の名前 in 自分の実行ファイルで走らせる段の一覧 {
+            if !self.自分の実行ファイルの段を走らせる(段の名前)? {
+                return Ok(ExitCode::FAILURE);
+            }
         }
         for (段の名前, cargo引数) in 検証列の手順一覧 {
             let mut 命令 = Command::new("cargo");
@@ -101,11 +108,11 @@ impl 検証列の実行係 {
         Ok(ExitCode::SUCCESS)
     }
 
-    fn conformの段を走らせる(&self) -> Result<bool, 検証列の破れ> {
+    fn 自分の実行ファイルの段を走らせる(&self, 段の名前: &str) -> Result<bool, 検証列の破れ> {
         let 自分の実行ファイル = std::env::current_exe().map_err(検証列の破れ::自分の実行ファイルの場所を読めなかった)?;
         let mut 命令 = Command::new(自分の実行ファイル);
-        命令.arg("conform");
-        self.段を走らせて結果を告げる("conform", "conform", &mut 命令)
+        命令.arg(段の名前);
+        self.段を走らせて結果を告げる(段の名前, 段の名前, &mut 命令)
     }
 
     fn 段を走らせて結果を告げる(

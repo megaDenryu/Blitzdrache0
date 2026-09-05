@@ -5,7 +5,7 @@ use std::ffi::OsString;
 
 use blitz_engine::チャンク座標;
 
-use super::{場所巡りの世界のソースディレクトリ, 目印のバイナリファイル名, 種を書き出すファイル名};
+use super::{場所巡りの世界のソースディレクトリ, 種を書き出すファイル名};
 use crate::generation_ledger::生成台帳エラー;
 use crate::source_asset_paths::ソースアセットのファイル名;
 
@@ -16,7 +16,7 @@ impl 場所巡りの世界のソースディレクトリ {
 
     pub fn 現行対象外を削除する(&self, 座標一覧: &[チャンク座標]) -> Result<(), 生成台帳エラー> {
         let mut 保持する名前 = HashSet::from([
-            OsString::from(目印のバイナリファイル名),
+            OsString::from(ソースアセットのファイル名::目印の柱の共有バッファ.綴りを見せる()),
             OsString::from(ソースアセットのファイル名::目印の柱.綴りを見せる()),
             OsString::from(種を書き出すファイル名),
         ]);
