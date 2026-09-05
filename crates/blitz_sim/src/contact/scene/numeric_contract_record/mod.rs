@@ -15,4 +15,5 @@ mod double_precision_reading;
 mod holding_class;
 mod single_precision_reading;
 mod slope_boundary_table;
+mod tolerance_table;
 mod translation_table;

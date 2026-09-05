@@ -10,6 +10,10 @@
 //! 診断が別に測る。この線引きにより、Issue #59が並べた連鎖のうち「擬似逆の階数落ちと許容差 → 残差」の環を
 //! 単独で見られる。
 //!
+//! 本番の型を精度で汎化して1つにする案は採らなかった。汎化すると`blitz_math`の単位と座標系の型(メートル・
+//! 位置・方向・逆慣性テンソル)まで精度の型引数を持つことになり、この診断1件のために `blitz_sim` と
+//! `blitz_math` の公開面が広く変わる。写しを置く費用はこのモジュールに閉じ、写し違いは単純な材料で単精度と
+//! 倍精度が丸めの範囲で一致することを固定する試験(`double_reference_tests`)が守る。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断13: 静止摩擦は錨からの接線変位を零へ戻す位置拘束であり、クーロン円錐の内側でだけ効く」
 
 #![cfg(test)]
@@ -24,6 +28,8 @@ mod inverse_inertia;
 mod jacobi;
 mod manifold_system;
 mod normal_row;
+mod orientation;
+mod participant;
 mod participant_point;
 mod placement;
 mod pseudo_inverse;

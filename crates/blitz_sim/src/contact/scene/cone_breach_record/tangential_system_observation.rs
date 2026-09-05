@@ -10,7 +10,7 @@
 
 use crate::contact::body_static_contact::剛体と静的世界の接触拘束;
 use crate::contact::contact_projection_row::一行の二つの符号付き勾配;
-use crate::contact::normal_tangential_system::接触点集合の法線と接線の連立;
+use crate::contact::normal_tangential_system::{接触点集合の法線と接線の連立, 解けたと見なす許容差の倍率};
 use crate::contact::static_friction::接線のラグランジュ乗数;
 use crate::contact::symmetric_system::{対称な連立の固有分解, 法線と接線の連立の行の上限};
 use crate::rigid_xpbd::姿勢自由度の参加者;
@@ -60,7 +60,7 @@ impl 接線の連立の観測 {
             if let Some(接線の行) = 連立.接線の一行を読む(番号) {
                 let 増分 = 同時解.一点の接線の乗数の増分(番号);
                 解[勾配の並び.len()] = 増分.値();
-                右辺[勾配の並び.len()] = 接線の行.連立の右辺().値();
+                右辺[勾配の並び.len()] = 接線の行.連立の右辺(解けたと見なす許容差の倍率::既定()).値();
                 行ごとの解けたと見なす許容差[勾配の並び.len()] = 接線の行.勾配().解けたと見なす許容差().値();
                 勾配の並び.push(*接線の行.勾配());
                 仮の合力 = 仮の合力 + 接線のラグランジュ乗数::零().向きへの増分を足す(接線の行.接線の向き(), 増分);
