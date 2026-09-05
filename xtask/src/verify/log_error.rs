@@ -10,11 +10,11 @@ use std::path::PathBuf;
 
 #[derive(Debug)]
 pub enum 検証列の破れ {
-    枝または先端を読めなかった {
+    ブランチまたは先端を読めなかった {
         問い合わせ: &'static str,
         誤り: std::io::Error,
     },
-    枝または先端の問い合わせが失敗した {
+    ブランチまたは先端の問い合わせが失敗した {
         問い合わせ: &'static str,
         標準エラー: String,
     },
@@ -42,10 +42,10 @@ impl std::error::Error for 検証列の破れ {}
 impl std::fmt::Display for 検証列の破れ {
     fn fmt(&self, 書き先: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::枝または先端を読めなかった { 問い合わせ, 誤り } => {
+            Self::ブランチまたは先端を読めなかった { 問い合わせ, 誤り } => {
                 write!(書き先, "gitへの問い合わせ({問い合わせ})を起動できなかった: {誤り}")
             }
-            Self::枝または先端の問い合わせが失敗した {
+            Self::ブランチまたは先端の問い合わせが失敗した {
                 問い合わせ, 標準エラー
             } => {
                 write!(書き先, "gitへの問い合わせ({問い合わせ})が失敗した: {標準エラー}")
