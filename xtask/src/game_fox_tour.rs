@@ -12,18 +12,18 @@ pub(crate) mod map_generation_check;
 mod run;
 mod shot_plan;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::場所巡りの通しの検収エラー;
 
 use crate::acceptance::{描画検収の実行環境, 検収の実行名, 検収エラー};
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
 use shot_plan::{
     タイトルの撮影, プレイ中の撮影, 台本なしの実行, 撮影の条件, 目的地付近の二度目の撮影, 目的地付近の撮影, 終了までの実行, 終了確認の撮影,
 };
 
-const 出力ディレクトリ: &str = "target/game_fox_tour";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("game_fox_tour");
 
 pub fn 決定的実行を確認する() -> ExitCode {
     match 検収する() {
@@ -41,7 +41,7 @@ pub fn 決定的実行を確認する() -> ExitCode {
 fn 検収する() -> Result<String, 場所巡りの通しの検収エラー> {
     let マップの要約 = map_generation_check::種からの生成を確かめる(crate::fox_tour_map_seed::決定性検収の乱数の種)?;
     let 実行環境 = crate::fox_tour_launch::場所巡りの世界の検収の実行環境を作る(
-        PathBuf::from(出力ディレクトリ),
+        検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ),
         map_generation_check::撮影用の実行時アセットルート(),
     )?;
 

@@ -4,6 +4,7 @@
 //! 実プレイで見える絵と同じでなければ、確認の意味が無いためである。世界のシーン名も同じであり、
 //! 違うのは開く実行時アセットの置き場だけである。
 
+use std::path::PathBuf;
 use std::process::ExitCode;
 
 use crate::acceptance::{
@@ -13,10 +14,10 @@ use crate::acceptance::{
 const 実行名: 検収の実行名 = 検収の実行名::定数から生成する("one_building_play");
 const シーン名: 検収シーン名 = 検収シーン名::生成する("terrain_editor_world");
 
-pub(super) fn 歩行の器で開く(出力ルート: &str) -> ExitCode {
+pub(super) fn 歩行の器で開く(出力ルート: PathBuf) -> ExitCode {
     let 環境 = 世界を読ませて報告を採る実行環境::作る(
         アプリの起こし方::毎回cargoにリリース版を構築させて起動する,
-        実行時アセットルート::綴りから生成する(出力ルート),
+        実行時アセットルート::パスから生成する(出力ルート),
     );
     let 指定 = アプリの起動指定::シーンを決めて人が終えるまで描かせる(シーン名).値を持つ選択肢を足す("--game", "walk_only");
     match 環境.画面へ流したまま走らせる(実行名, &指定) {

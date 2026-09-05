@@ -2,25 +2,26 @@
 //! 支度(ソースアセットの生成・リリースビルド・出力先の作成・シェーダーの一時コピー)を1度だけ済ませてから、
 //! 物量点ごとにアセットを焼いて反復回数だけ走らせる。何を表に出すかと折れ点の裁定は呼び出し元と人が持つ。
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use crate::asset_generator::同居植生の個体数;
 
 use super::error::物量計測エラー;
 use super::{condition, point, run, validation};
 use super::{シェーダーコピー先, 出力ディレクトリ, 反復回数};
+use crate::verify::検証の出力ルート;
 
 pub(super) fn 測る(物量点一覧: &[usize], 条件: &condition::計測条件) -> Result<Vec<point::物量点の結果>, 物量計測エラー> {
     if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() {
         return Err(物量計測エラー::検証用ソースアセットを生成できなかった);
     }
     crate::release_build::計測用に構築する("ow4-bench").map_err(物量計測エラー::計測用の構築が失敗した)?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| 物量計測エラー::出力先を作れなかった {
         パス: 出力先.clone(), 誤り
     })?;
-    let シェーダー入口 =
-        crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先)).map_err(物量計測エラー::シェーダーの一時コピーを作れなかった)?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先))
+        .map_err(物量計測エラー::シェーダーの一時コピーを作れなかった)?;
     物量点一覧
         .iter()
         .map(|個体数| 一物量点を測る(&出力先, &シェーダー入口, *個体数, 条件))

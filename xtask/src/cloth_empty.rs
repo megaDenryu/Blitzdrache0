@@ -6,16 +6,17 @@
 mod error;
 mod judgment;
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::ExitCode;
 
 use error::描画入力が空のフレームの布の検収エラー;
 
 use crate::acceptance::{描画フレーム数, 描画検収の実行環境, 検収の1回の実行, 検収の実行名, 検収シーン名};
 use crate::vegetation_run;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/cloth_empty";
-const シェーダーコピー先: &str = "target/cloth_empty_shaders";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("cloth_empty");
+const シェーダーコピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("cloth_empty_shaders");
 /// 群がどちらの視錐台にも入らないシーン。中身は`vegetation_4`と同じ4個体の群であり、名前だけが違う。
 /// 名前が`vegetation`で始まらないため、初期カメラは既定の「原点を+Z側3メートルから見る」姿勢になり、
 /// 影の範囲も既定の「世界原点を中心とした半幅4メートル」になる(`crates/blitz_app/src/app/scene_camera.rs`・
@@ -45,8 +46,8 @@ fn 検収する() -> Result<String, 描画入力が空のフレームの布の�
     {
         return Err(描画入力が空のフレームの布の検収エラー::検証用アセットを生成できなかった);
     }
-    let 実行環境 = vegetation_run::植生世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+    let 実行環境 = vegetation_run::植生世界の実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先))
         .map_err(描画入力が空のフレームの布の検収エラー::シェーダーの一時コピーを作れなかった)?;
 
     let 布あり = 描く(&実行環境, "cloth", &シェーダー入口, &布ありの引数)?;

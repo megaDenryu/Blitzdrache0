@@ -45,6 +45,8 @@ mod run_environment;
 mod run_name;
 mod runtime_asset_root;
 mod scene_name;
+#[cfg(test)]
+mod test_output_place;
 mod world_report_environment;
 
 pub use app_executable::アプリの起こし方;

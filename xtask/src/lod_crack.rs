@@ -4,19 +4,19 @@ mod cases;
 mod image_check;
 mod run;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use crate::acceptance::{描画検収の実行環境, 検収の実行名};
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/lod_crack";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("lod_crack");
 
 pub fn 地形段差の継ぎ目を確認する() -> ExitCode {
     if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::地形世界を既定で生成する()
     {
         return ExitCode::FAILURE;
     }
-    let 実行環境 = match run::実行環境を作る(PathBuf::from(出力ディレクトリ)) {
+    let 実行環境 = match run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ)) {
         Ok(実行環境) => 実行環境,
         Err(誤り) => {
             eprintln!("[xtask] LOD継ぎ目検査の出力先を作れなかった: {誤り}");

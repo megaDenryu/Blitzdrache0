@@ -15,7 +15,6 @@ mod run;
 mod statistics;
 mod table;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::圧縮前の輝度分布の計測エラー;
@@ -24,8 +23,9 @@ use crate::acceptance::検収の実行名;
 use crate::release_build::計測の生値のファイル;
 
 use crate::day_moment::代表時刻一覧;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/hdr_luminance";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("hdr_luminance");
 
 pub(crate) fn hdr輝度を実測する() -> ExitCode {
     match 計測する() {
@@ -42,7 +42,7 @@ pub(crate) fn hdr輝度を実測する() -> ExitCode {
 
 fn 計測する() -> Result<String, 圧縮前の輝度分布の計測エラー> {
     crate::visual_sample_world::用意する().map_err(圧縮前の輝度分布の計測エラー::目視見本世界を用意できなかった)?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     let 実行環境 = run::実行環境を作る(出力先.clone())?;
 
     let mut 標本一覧 = Vec::with_capacity(代表時刻一覧.len());

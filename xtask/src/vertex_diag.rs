@@ -25,14 +25,14 @@ mod pair;
 mod pixel_check;
 mod run;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::頂点量の診断の検収エラー;
 
 use crate::acceptance::{判定の名前, 検収エラー};
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/vertex_diag";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("vertex_diag");
 
 /// この検収が焼く同居植生の密度。影が画面の広い範囲を覆う一方で1実行が短く済む点として選ぶ。
 const チャンクあたり個体数: usize = 64;
@@ -69,7 +69,7 @@ fn 検収する() -> Result<String, 頂点量の診断の検収エラー> {
     if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() {
         return Err(頂点量の診断の検収エラー::検証用ソースアセットを生成できなかった);
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     let 対 = pair::診断の対::焼く(&出力先, チャンクあたり個体数)?;
 
     let (影なしの粗い, 影なしの細かい) = 対.描き比べる("no_group_shadow", &["--no-instance-shadow"])?;

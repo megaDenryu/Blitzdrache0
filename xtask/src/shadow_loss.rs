@@ -31,8 +31,9 @@ use std::process::ExitCode;
 use error::影の欠落計器のエラー;
 
 use crate::acceptance::検収エラー;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/shadow_loss";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("shadow_loss");
 
 pub fn 影の欠落を計測する(引数一覧: &[String]) -> ExitCode {
     match 測る(引数一覧) {
@@ -60,7 +61,7 @@ fn 描く支度をする(構図: scene_choice::構図) -> Result<PathBuf, 影の
     if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !アセットを焼く(構図) {
         return Err(影の欠落計器のエラー::検証用アセットを生成できなかった);
     }
-    Ok(PathBuf::from(出力ディレクトリ))
+    Ok(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))
 }
 
 fn 欠落と余分を数える(指定: &args::指定) -> Result<String, 影の欠落計器のエラー> {

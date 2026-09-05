@@ -36,7 +36,7 @@ impl 検証の出力の置き場名 {
 
     /// 人へ見せる綴りと、名前を綴りでしか受け取れない口へ渡す綴り。パスを組む口ではない。
     /// パスは`検証の出力ルート`が組む。
-    pub(crate) fn 綴りを見せる(self) -> &'static str {
+    pub(crate) const fn 綴りを見せる(self) -> &'static str {
         self.0
     }
 }

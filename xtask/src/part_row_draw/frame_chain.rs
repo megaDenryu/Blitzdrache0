@@ -17,16 +17,17 @@ use super::frame_bay_scene::{骨格方式のシーン名, 骨格方式の検収�
 use super::row_target::検収する並び1つ;
 use super::scale_pair::{並び1つを焼いて走らせて測る, 部品で組んだ並びの検収エラー};
 use crate::asset_generator::世界名;
+use crate::verify::検証の出力の置き場名;
 
 /// 見本を建てる件数。敷地が1件ごとに天頂軸まわりの4分の1回転を選ぶため、4件あれば境目を違う方位から同時に写せる。
 const 見本の件数: u64 = 4;
 
-const 出力ディレクトリ: &str = "target/part_frame_chain_draw";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("part_frame_chain_draw");
 
 const 二段に積んだ骨格: 検収する並び1つ = 骨格方式の検収する並び!(
     "2段に積んだ骨格の見本",
     世界名::二段に積んだ骨格の見本の世界,
-    "target/part_frame_two_story_assets",
+    "part_frame_two_story_assets",
     "two_story",
     見本の件数
 );
@@ -34,7 +35,7 @@ const 二段に積んだ骨格: 検収する並び1つ = 骨格方式の検収�
 const 横に二ベイ継いだ骨格: 検収する並び1つ = 骨格方式の検収する並び!(
     "横に2ベイ継いだ骨格の見本",
     世界名::横に二ベイ継いだ骨格の見本の世界,
-    "target/part_frame_row_two_assets",
+    "part_frame_row_two_assets",
     "row_two",
     見本の件数
 );
@@ -42,7 +43,7 @@ const 横に二ベイ継いだ骨格: 検収する並び1つ = 骨格方式の�
 const 屋根を載せた一間四方の家: 検収する並び1つ = 骨格方式の検収する並び!(
     "屋根を載せた1ベイの家の見本",
     世界名::屋根を載せた一間四方の家の見本の世界,
-    "target/part_frame_bay_house_assets",
+    "part_frame_bay_house_assets",
     "bay_house",
     見本の件数
 );
@@ -50,7 +51,7 @@ const 屋根を載せた一間四方の家: 検収する並び1つ = 骨格方�
 const 屋根を載せた二段の家: 検収する並び1つ = 骨格方式の検収する並び!(
     "屋根を載せた2段の家の見本",
     世界名::屋根を載せた二段の家の見本の世界,
-    "target/part_frame_two_story_house_assets",
+    "part_frame_two_story_house_assets",
     "two_story_house",
     見本の件数
 );
@@ -58,7 +59,7 @@ const 屋根を載せた二段の家: 検収する並び1つ = 骨格方式の�
 const 煙突を付けた一間四方の家: 検収する並び1つ = 骨格方式の検収する並び!(
     "煙突を付けた1ベイの家の見本",
     世界名::煙突を付けた一間四方の家の見本の世界,
-    "target/part_frame_bay_house_chimney_assets",
+    "part_frame_bay_house_chimney_assets",
     "bay_house_chimney",
     見本の件数
 );

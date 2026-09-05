@@ -7,17 +7,17 @@ mod centroid;
 mod compare;
 mod run;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use crate::acceptance::{描画検収の実行環境, 検収の実行名, 読み戻し画像};
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 use run::検査条件;
 /// km級の平行移動。設計のDoDが求める大座標での判定であり、f32へ直接持ち込めば桁が失われる大きさである。
 /// 3成分を別の値にするのは、軸を取り違えた実装が同じ値どうしの置換で見逃されないようにするためである。符号も揃えない。
 const 大移動メートル: [f64; 3] = [10_000_000.0, 20_000_000.0, -30_000_000.0];
 /// 負の対照でカメラだけをずらす量。シャドウ検証シーンのカメラ距離は6メートルであり、この量なら画素は確実に動く。
 const カメラずれメートル: f64 = 0.25;
-const 出力ディレクトリ: &str = "target/origin_invariance";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("origin_invariance");
 
 fn 静止条件(大域ずらし量: [f64; 3]) -> 検査条件 {
     検査条件 {
@@ -30,7 +30,7 @@ pub fn 原点移動の不変性を確認する() -> ExitCode {
     if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::既定を生成する() {
         return ExitCode::FAILURE;
     }
-    let 実行環境 = match run::実行環境を作る(PathBuf::from(出力ディレクトリ)) {
+    let 実行環境 = match run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ)) {
         Ok(実行環境) => 実行環境,
         Err(誤り) => {
             eprintln!("[xtask] 出力ディレクトリの作成に失敗した: {誤り}");

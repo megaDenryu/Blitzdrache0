@@ -4,10 +4,11 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use super::error::大気の期待値の焼き出しエラー;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
 /// cmd.exeへ渡す経路は区切りを実行環境の流儀へ揃える。斜線のままだと切替指定と見分けがつかない。
 const 構築手順の断片: [&str; 3] = ["xtask", "reference", "build_bruneton_dump.bat"];
-const 出力ディレクトリ: &str = "target/bruneton_reference";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("bruneton_reference");
 
 pub(super) fn 焼き出しを構築する(参照パス: &Path) -> Result<PathBuf, 大気の期待値の焼き出しエラー> {
     let 必要ファイル = [
@@ -20,7 +21,7 @@ pub(super) fn 焼き出しを構築する(参照パス: &Path) -> Result<PathBuf
             return Err(大気の期待値の焼き出しエラー::参照実装の必要ファイルが無い { パス });
         }
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     std::fs::create_dir_all(&出力先)
         .map_err(|誤り| 大気の期待値の焼き出しエラー::出力先を作れなかった {
             パス: 出力先.clone(), 誤り

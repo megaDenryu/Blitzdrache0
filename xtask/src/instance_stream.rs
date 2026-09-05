@@ -9,15 +9,15 @@ mod judgment;
 mod pixel_check;
 mod run;
 
-use std::path::{Path, PathBuf};
-
 use error::植生ストリーミング統合の検収エラー;
 
 use crate::acceptance::描画フレーム数;
 use std::process::ExitCode;
 
-const 出力ディレクトリ: &str = "target/instance_stream";
-const シェーダーコピー先: &str = "target/instance_stream_shaders";
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
+
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("instance_stream");
+const シェーダーコピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("instance_stream_shaders");
 
 /// 静止だけの実行のフレーム数。経路の静止先読み局面と同じ長さであり、この実行は一度も移動しない。
 const 静止フレーム数: 描画フレーム数 = 描画フレーム数::生成する(120);
@@ -52,8 +52,8 @@ fn 検収する() -> Result<String, 植生ストリーミング統合の検収�
     {
         return Err(植生ストリーミング統合の検収エラー::検証用アセットを生成できなかった);
     }
-    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+    let 実行環境 = run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先))
         .map_err(植生ストリーミング統合の検収エラー::シェーダーの一時コピーを作れなかった)?;
 
     let 静止 = run::走らせる(&実行環境, "preload", &シェーダー入口, 静止フレーム数, &[])?;

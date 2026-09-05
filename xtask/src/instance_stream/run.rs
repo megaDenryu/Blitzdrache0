@@ -12,9 +12,7 @@ use crate::acceptance::{
 };
 use crate::report_parse::計数報告;
 use crate::streaming_report::ストリーミング要約報告;
-
-/// 検証用地形世界の実行時アセットの置き場。`compile-assets`の地形世界の既定出力ルートと同じ値である。
-const アセットルート: &str = "target/terrain_assets";
+use crate::verify::検証の出力ルート;
 
 /// 起動時シーン。レンダラーはチャンクが1つも常駐しない期間にも描画対象を要求するため、束ID0を占めるこの対象が要る。
 const 起動時シーン: 検収シーン名 = 検収シーン名::生成する("terrain_origin");
@@ -47,7 +45,9 @@ pub(super) struct 実行 {
 pub(super) fn 実行環境を作る(出力ディレクトリ: PathBuf) -> Result<描画検収の実行環境, 検収エラー> {
     描画検収の実行環境::作る(
         アプリの起こし方::毎回cargoに構築させて起動する,
-        実行時アセットルート::綴りから生成する(アセットルート),
+        実行時アセットルート::パスから生成する(
+            検証の出力ルート::既定().名前が指す置き場(crate::compile_assets::地形の世界の実行時形式の置き場),
+        ),
         出力ディレクトリ,
     )
 }

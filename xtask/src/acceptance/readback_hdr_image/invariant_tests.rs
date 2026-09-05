@@ -10,15 +10,18 @@
 
 use super::load::単精度へ開く;
 use super::圧縮前のHDR画像;
-use std::path::Path;
+use std::path::PathBuf;
+
+use crate::acceptance::test_output_place::試験が書き出す置き場;
+use crate::verify::検証の出力ルート;
 
 /// 幅2・高さ1の絵ちょうどの成分列。RGBAの4成分であるため1画素あたり4つである。
 fn 二画素ぶんの成分列() -> Vec<f32> {
     vec![0.0; 8]
 }
 
-fn 検査のパス() -> &'static Path {
-    Path::new("target/test/hdr_boundary_check.hdr32")
+fn 検査のパス() -> PathBuf {
+    検証の出力ルート::既定().置き場の中のファイル(試験が書き出す置き場, "hdr_boundary_check.hdr32")
 }
 
 #[test]
@@ -57,7 +60,7 @@ fn 同じ寸法の2枚は寸法が同じと判定される() {
 
 #[test]
 fn 四の倍数のバイト列は成分へ開ける() {
-    let 成分列 = 単精度へ開く(&[0u8; 8], 検査のパス()).unwrap();
+    let 成分列 = 単精度へ開く(&[0u8; 8], &検査のパス()).unwrap();
     assert_eq!(成分列.len(), 2);
 }
 
@@ -65,7 +68,7 @@ fn 四の倍数のバイト列は成分へ開ける() {
 fn 端数のバイトが残るバイト列は拒まれる() {
     for 端数 in 1..成分あたりのバイト数() {
         let バイト長 = 8 + 端数;
-        let 結果 = 単精度へ開く(&vec![0u8; バイト長], 検査のパス());
+        let 結果 = 単精度へ開く(&vec![0u8; バイト長], &検査のパス());
         assert!(結果.is_err(), "{バイト長}バイト(端数{端数})が成分の境界で終わっているとして通った");
     }
 }

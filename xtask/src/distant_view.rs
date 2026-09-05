@@ -8,13 +8,13 @@ mod plan_tests;
 mod provenance;
 mod run;
 
-use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 use error::遠景構図の検収エラー;
 use plan::実行の別;
 
-const 出力ディレクトリ: &str = "target/distant_view";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("distant_view");
 
 pub(crate) fn 遠景を撮影して判定する(引数一覧: &[String]) -> ExitCode {
     match 検収する(引数一覧) {
@@ -35,13 +35,13 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 遠景構図の検収
         return Ok(plan::計画を表示する());
     }
     if 別 == 実行の別::判定する {
-        return judgment::判定する(Path::new(出力ディレクトリ));
+        return judgment::判定する(&検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ));
     }
     if 別 == 実行の別::影を判定する {
-        return judgment::影を判定する(Path::new(出力ディレクトリ));
+        return judgment::影を判定する(&検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ));
     }
     if 別 == 実行の別::散布を判定する {
-        return judgment::散布を判定する(Path::new(出力ディレクトリ));
+        return judgment::散布を判定する(&検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ));
     }
     if 別 == 実行の別::散布の対照を焼く {
         return crate::game_fox_tour::map_generation_check::散布なしの対照を焼く(
@@ -51,7 +51,7 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 遠景構図の検収
         .map_err(遠景構図の検収エラー::対照の焼き付けが失敗した);
     }
     let 由来 = crate::release_build::計測用に構築する("distant-view")?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     let 条件 = 別.採取条件().ok_or_else(|| 遠景構図の検収エラー::引数が不正(引数一覧.join(" ")))?;
     let 環境 = run::実行環境を作る(出力先.clone(), 条件.読むルート)?;
     let 結果 = run::固定構図を二回採る(&環境, &条件)?;

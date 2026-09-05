@@ -12,22 +12,25 @@ mod error;
 mod judgment;
 mod run;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::木の並びの撮影エラー;
 
 use super::tally_line::焼いた並びの勘定;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 use crate::world_setup::検収世界の用意;
 
-const 出力ディレクトリ: &str = "target/part_tree_row_draw";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("part_tree_row_draw");
 
 /// 木の並びの実行時形式。この世界だけの出力ルートへ焼かれる。
 ///
 /// 外部のアセットリポジトリが無い環境では、木の部品が1つも解決できずコンパイルが失敗する。失敗を見落として
 /// 起動へ進むと、カタログ未登録という遠い場所の失敗に化けるため、焼いた直後に実在を確かめる。
-const 検収世界: 検収世界の用意 =
-    検収世界の用意::生成する("部品で組んだ木の並び", "target/part_tree_row_assets/prop_part_tree_row.blitzasset");
+const 検収世界: 検収世界の用意 = 検収世界の用意::生成する(
+    "部品で組んだ木の並び",
+    crate::compile_assets::部品で組んだ木の並びの世界の実行時形式の置き場,
+    "prop_part_tree_row.blitzasset",
+);
 
 pub(super) fn 検収してコードへ変換する() -> ExitCode {
     match 検収する() {
@@ -58,7 +61,7 @@ fn 検収する() -> Result<String, 木の並びの撮影エラー> {
     }
     前回の焼き上がりを消す().map_err(木の並びの撮影エラー::前回の焼き上がりを消せなかった)?;
     let 標準出力 = crate::compile_assets::既定のソースから焼き標準出力を返す(
-        crate::compile_assets::部品で組んだ木の並びの出力ルート(),
+        &crate::compile_assets::部品で組んだ木の並びの出力ルート(),
         crate::asset_generator::世界名::部品で組んだ木の並びの世界,
     )?;
     print!("{標準出力}");
@@ -66,7 +69,7 @@ fn 検収する() -> Result<String, 木の並びの撮影エラー> {
     検収世界
         .焼き上がりを確かめる(true)
         .map_err(木の並びの撮影エラー::検収世界を用意できなかった)?;
-    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 実行環境 = run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
     let 実行 = 実行環境.描いて読み戻す(run::木の並びの実行名, &run::起動指定を組み立てる())?;
     let 計数 = crate::report_parse::取り出す(実行.報告())?;
     let 絵 = 実行.書き出し先().目視用の絵へ変換する()?;

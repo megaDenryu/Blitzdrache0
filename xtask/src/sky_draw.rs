@@ -12,14 +12,14 @@ mod gradient;
 mod judgment;
 mod run;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::空の描画の検収エラー;
 
 use crate::acceptance::判定の名前;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/sky_draw";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("sky_draw");
 /// 空パスの独立枠(ミリ秒)。予算はポスト処理の枠へ混ぜない。
 const 空パスの予算ミリ秒: f64 = 1.0;
 
@@ -41,7 +41,7 @@ fn 検収する() -> Result<String, 空の描画の検収エラー> {
     {
         return Err(空の描画の検収エラー::検証用アセットを生成できなかった);
     }
-    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 実行環境 = run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
 
     let 本番 = 実行環境.描いて読み戻す(run::空あり本番経路の実行名, &run::起動指定を組み立てる(run::条件::空あり本番経路))?;
     let 空パスms = gpu_time::空パスの平均msを読む(本番.報告())?;

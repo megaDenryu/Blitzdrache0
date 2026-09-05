@@ -19,15 +19,15 @@ mod run;
 mod schedule;
 mod table;
 
-use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use error::律速切り分けの計測エラー;
 
 use crate::release_build::計測の生値のファイル;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/shadow_probe";
-const シェーダーコピー先: &str = "target/shadow_probe_shaders";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("shadow_probe");
+const シェーダーコピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("shadow_probe_shaders");
 
 pub(crate) fn 影の律速切り分けを計測する(引数一覧: &[String]) -> ExitCode {
     match 走らせる(引数一覧) {
@@ -54,13 +54,13 @@ fn 走らせる(引数一覧: &[String]) -> Result<Vec<record::一標本>, 律�
         return Err(律速切り分けの計測エラー::検証用ソースアセットを生成できなかった);
     }
     crate::release_build::計測用に構築する("shadow-probe").map_err(律速切り分けの計測エラー::計測用の構築が失敗した)?;
-    let ルート = PathBuf::from(出力ディレクトリ);
+    let ルート = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     let 出力先 = ルート.join(指定.軸.綴り());
     std::fs::create_dir_all(&出力先)
         .map_err(|誤り| 律速切り分けの計測エラー::出力先を作れなかった {
             パス: 出力先.clone(), 誤り
         })?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先))
         .map_err(律速切り分けの計測エラー::シェーダーの一時コピーを作れなかった)?;
     let 置き場 = assets::アセットの置き場::焼く(&ルート, &条件一覧, 指定.チャンクあたり個体数)?;
     let 順序 = schedule::交互の順序(条件一覧.len(), 周回数);

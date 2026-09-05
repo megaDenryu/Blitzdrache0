@@ -8,13 +8,14 @@ mod plan;
 mod precision_counterexample;
 mod run;
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::ExitCode;
 
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 use error::逆Z検収エラー;
 use plan::実行の別;
 
-const 出力ディレクトリ: &str = "target/reverse_depth";
+pub(super) const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("reverse_depth");
 pub(super) const 対照の由来ファイル名: &str = "reference.txt";
 
 pub(crate) fn 反転深度を撮影して判定する(引数一覧: &[String]) -> ExitCode {
@@ -40,7 +41,7 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 逆Z検収エラー> 
         return Err(逆Z検収エラー::検証用アセットを生成できなかった);
     }
     let 由来 = crate::release_build::計測用に構築する("reverse-depth")?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     let 実行環境 = run::実行環境を作る(出力先.clone())?;
     match 別 {
         実行の別::対照を採る => {

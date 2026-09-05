@@ -4,22 +4,23 @@
 //! 方針ごとに出力ルートを分けるのは、1つの出力ルートが1つのカタログしか持てず、方針が生成物のバイト列を変えるためである。
 //! 既定の出力ルート(`target/runtime_assets`等)へ焼かないのは、そちらを読む既存の入口の判定値を1つも動かさないためである。
 
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use super::error::ブロック圧縮の検収エラー;
 use crate::asset_generator::世界名;
 use crate::compile_assets::texture_policy_name::方針の呼び名;
 use crate::compile_assets::方針を名指しして実行時形式を生成する;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 use blitz_asset_compiler::テクスチャ格納方針;
 
 /// 対照の板の世界を焼く先。3つ目は同じ方針で2度焼いた結果を突き合わせる決定性の検査のためだけに存在する。
-const 対照の非圧縮ルート: &str = "target/texture_compression_assets_rgba8";
-const 対照のブロック圧縮ルート: &str = "target/texture_compression_assets_bc1";
-const 対照のブロック圧縮の再現ルート: &str = "target/texture_compression_assets_bc1_repeat";
+const 対照の非圧縮ルート: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("texture_compression_assets_rgba8");
+const 対照のブロック圧縮ルート: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("texture_compression_assets_bc1");
+const 対照のブロック圧縮の再現ルート: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("texture_compression_assets_bc1_repeat");
 
 /// DamagedHelmetを焼く先。ヘルメットは板の世界の任意アセットであるため、対照の板とは別の世界を別の出力ルートへ焼く。
-const ヘルメットの非圧縮ルート: &str = "target/texture_compression_helmet_rgba8";
-const ヘルメットのブロック圧縮ルート: &str = "target/texture_compression_helmet_bc1";
+const ヘルメットの非圧縮ルート: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("texture_compression_helmet_rgba8");
+const ヘルメットのブロック圧縮ルート: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("texture_compression_helmet_bc1");
 
 pub(super) struct 焼いた出力ルート {
     pub(super) 非圧縮: PathBuf,
@@ -41,10 +42,10 @@ pub(super) fn 対照の板の世界を方針違いで焼く() -> Result<(焼い�
     )?;
     Ok((
         焼いた出力ルート {
-            非圧縮: PathBuf::from(対照の非圧縮ルート),
-            ブロック圧縮: PathBuf::from(対照のブロック圧縮ルート),
+            非圧縮: 検証の出力ルート::既定().名前が指す置き場(対照の非圧縮ルート),
+            ブロック圧縮: 検証の出力ルート::既定().名前が指す置き場(対照のブロック圧縮ルート),
         },
-        PathBuf::from(対照のブロック圧縮の再現ルート),
+        検証の出力ルート::既定().名前が指す置き場(対照のブロック圧縮の再現ルート),
     ))
 }
 
@@ -57,22 +58,23 @@ pub(super) fn ヘルメットの世界を方針違いで焼く() -> Result<焼�
         テクスチャ格納方針::ベースカラーのブロック圧縮,
     )?;
     Ok(焼いた出力ルート {
-        非圧縮: PathBuf::from(ヘルメットの非圧縮ルート),
-        ブロック圧縮: PathBuf::from(ヘルメットのブロック圧縮ルート),
+        非圧縮: 検証の出力ルート::既定().名前が指す置き場(ヘルメットの非圧縮ルート),
+        ブロック圧縮: 検証の出力ルート::既定().名前が指す置き場(ヘルメットのブロック圧縮ルート),
     })
 }
 
 fn 方針を指定して世界を焼く(
     世界: 世界名,
-    出力ルート: &'static str,
+    出力ルート: 検証の出力の置き場名,
     方針: テクスチャ格納方針,
 ) -> Result<(), ブロック圧縮の検収エラー> {
-    if 方針を名指しして実行時形式を生成する(Path::new(出力ルート), 世界, 方針) {
+    let 置き場 = 検証の出力ルート::既定().名前が指す置き場(出力ルート);
+    if 方針を名指しして実行時形式を生成する(&置き場, 世界, 方針) {
         return Ok(());
     }
     Err(ブロック圧縮の検収エラー::世界を方針違いで焼けなかった {
         世界,
         方針の名前: 方針の呼び名(方針),
-        出力ルート,
+        出力ルート: 置き場,
     })
 }

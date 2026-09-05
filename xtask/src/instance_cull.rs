@@ -8,16 +8,16 @@ mod judgment;
 mod pixel_check;
 mod run;
 
-use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use error::植生個体の可視判定の検収エラー;
 
 use crate::acceptance::検収シーン名;
 use crate::vegetation_run;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/instance_cull";
-const シェーダーコピー先: &str = "target/instance_cull_shaders";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("instance_cull");
+const シェーダーコピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("instance_cull_shaders");
 /// 全個体が画面に入る世界。可視判定を入れても絵が変わらないことをここで確かめる。
 const 正判定シーンの綴り: &str = "vegetation_4";
 const 正判定シーン: 検収シーン名 = 検収シーン名::生成する(正判定シーンの綴り);
@@ -43,8 +43,8 @@ fn 検収する() -> Result<String, 植生個体の可視判定の検収エラ�
     {
         return Err(植生個体の可視判定の検収エラー::検証用アセットを生成できなかった);
     }
-    let 実行環境 = vegetation_run::植生世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+    let 実行環境 = vegetation_run::植生世界の実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先))
         .map_err(植生個体の可視判定の検収エラー::シェーダーの一時コピーを作れなかった)?;
 
     let 正判定 = run::対で描く(&実行環境, 正判定シーン, 正判定シーンの綴り, &シェーダー入口)?;

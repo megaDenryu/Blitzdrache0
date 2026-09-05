@@ -10,7 +10,14 @@
 mod asset_preparation;
 mod judgment_policy;
 
+use std::path::PathBuf;
+
 use super::error::距離区分の継ぎ目の検収エラー;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
+
+/// 構図ごとの絵と由来の書き出し先。
+const 検証用地形世界の書き出し先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("csm_seam");
+const 大規模世界の書き出し先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("csm_seam_large_world");
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum 継ぎ目を見る構図 {
@@ -28,11 +35,11 @@ impl 継ぎ目を見る構図 {
     }
 
     /// 絵と由来の置き場。構図ごとに分けるのは、2つの構図の成果物が同じ名前で上書きし合わないためである。
-    pub(super) fn 出力ディレクトリ(self) -> &'static str {
-        match self {
-            Self::検証用地形世界 => "target/csm_seam",
-            Self::大規模世界 => "target/csm_seam_large_world",
-        }
+    pub(super) fn 出力ディレクトリ(self) -> PathBuf {
+        検証の出力ルート::既定().名前が指す置き場(match self {
+            Self::検証用地形世界 => 検証用地形世界の書き出し先,
+            Self::大規模世界 => 大規模世界の書き出し先,
+        })
     }
 
     /// 人が読む構図の名前。由来と要約が名指し、成果物のディレクトリを取り違えられないようにする。

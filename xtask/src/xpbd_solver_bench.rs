@@ -27,14 +27,14 @@ mod schedule;
 mod summary;
 mod table;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::XPBDの並列方式の計測エラー;
 
 use crate::release_build::{計測の生値のファイル, 計測の窓の集約のファイル};
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/xpbd_solver_bench";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("xpbd_solver_bench");
 
 pub(crate) fn xpbd並列方式を計測する(引数一覧: &[String]) -> ExitCode {
     match 計測する(引数一覧) {
@@ -52,7 +52,7 @@ pub(crate) fn xpbd並列方式を計測する(引数一覧: &[String]) -> ExitCo
 fn 計測する(引数一覧: &[String]) -> Result<String, XPBDの並列方式の計測エラー> {
     let 指定 = plan::引数を読む(引数一覧)?;
     let 由来 = crate::release_build::計測用に構築する("xpbd-solver-bench").map_err(XPBDの並列方式の計測エラー::計測用の構築が失敗した)?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| XPBDの並列方式の計測エラー::出力先を作れなかった { 誤り })?;
 
     let 実行環境 = run::計測の実行環境を作る();

@@ -11,8 +11,8 @@ use crate::acceptance::{
 };
 
 use super::cases::検査条件;
+use crate::verify::検証の出力ルート;
 
-const アセットルート: &str = "target/terrain_assets";
 const シーン名: 検収シーン名 = 検収シーン名::生成する("terrain_origin");
 const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(120);
 const 先読み半径: &str = "2";
@@ -22,7 +22,9 @@ const 背景と光を外す選択肢: [&str; 4] = ["--unlit", "--no-post", "--no
 pub(super) fn 実行環境を作る(出力ディレクトリ: PathBuf) -> Result<描画検収の実行環境, 検収エラー> {
     描画検収の実行環境::作る(
         アプリの起こし方::毎回cargoに構築させて起動する,
-        実行時アセットルート::綴りから生成する(アセットルート),
+        実行時アセットルート::パスから生成する(
+            検証の出力ルート::既定().名前が指す置き場(crate::compile_assets::地形の世界の実行時形式の置き場),
+        ),
         出力ディレクトリ,
     )
 }

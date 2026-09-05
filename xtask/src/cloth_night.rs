@@ -11,15 +11,16 @@
 mod error;
 mod judgment;
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::ExitCode;
 
 use error::布の明るさの時刻追従の検収エラー;
 
 use crate::acceptance::{描画フレーム数, 描画検収の実行環境, 検収の1回の実行, 検収の実行名, 検収シーン名};
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/cloth_night";
-const シェーダーコピー先: &str = "target/cloth_night_shaders";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("cloth_night");
+const シェーダーコピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("cloth_night_shaders");
 /// 群がどちらの視錐台にも入らない世界。布だけが画素に出るため、布の領域を切り出しやすい。
 const シーン: 検収シーン名 = 検収シーン名::生成する("instance_all_culled");
 /// 布が垂れて画素に出る最小の歩進。自己衝突の揺れを溜めないため短く取る。
@@ -46,8 +47,8 @@ fn 検収する() -> Result<String, 布の明るさの時刻追従の検収エ�
     {
         return Err(布の明るさの時刻追従の検収エラー::検証用アセットを生成できなかった);
     }
-    let 実行環境 = crate::vegetation_run::植生世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let 入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+    let 実行環境 = crate::vegetation_run::植生世界の実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
+    let 入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先))
         .map_err(布の明るさの時刻追従の検収エラー::シェーダーの一時コピーを作れなかった)?;
 
     let (夜, 夜png) = 布領域を測る(&実行環境, &入口, "night", 夜の一日内秒)?;

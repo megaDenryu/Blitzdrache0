@@ -10,11 +10,6 @@ use std::path::{Path, PathBuf};
 pub struct 実行時アセットルート(PathBuf);
 
 impl 実行時アセットルート {
-    /// 綴りから作る。世界ごとの既定出力ルートを定数で持つ入口がこの口を通る。
-    pub fn 綴りから生成する(綴り: &str) -> Self {
-        Self(PathBuf::from(綴り))
-    }
-
     /// 実行のたびに組み立てるパスから作る。焼き付け先を条件ごとに決める入口がこの口を通る。
     pub fn パスから生成する(パス: PathBuf) -> Self {
         Self(パス)

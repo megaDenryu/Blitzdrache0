@@ -4,6 +4,7 @@
 use std::time::Duration;
 
 use crate::memory_sampling::{実行しながら採取する, 採取条件};
+use crate::verify::検証の出力ルート;
 
 /// 検証用世界の全25チャンクが同時に載っても縮退しない上限。1チャンクの読込後実測は369バイト、見積は216バイトである。
 /// 縮退を起こさないことがこの条件の前提であり、上限が拘束すると「増えない」ことの確認が縮退による打ち切りと区別できなくなる。
@@ -18,7 +19,11 @@ pub(super) fn 固定経路を反復実行しながら資源を採取する(フ�
     if !crate::release_build::構築して合否を返す("streaming-bench条件A") {
         return false;
     }
-    let 引数一覧 = 引数を作る(フレーム数);
+    let アセットルート = 検証の出力ルート::既定()
+        .名前が指す置き場(crate::compile_assets::板の世界の実行時形式の置き場)
+        .to_string_lossy()
+        .into_owned();
+    let 引数一覧 = 引数を作る(フレーム数, &アセットルート);
     println!("[xtask] 条件A: 固定経路を{フレーム数}フレーム、RAM上限{RAM上限}・VRAM上限{VRAM上限}バイトで実行");
     let 条件 = 採取条件 {
         起こし方: crate::acceptance::アプリの起こし方::構築済みのリリース版を直に起動する,
@@ -30,12 +35,12 @@ pub(super) fn 固定経路を反復実行しながら資源を採取する(フ�
     実行しながら採取する(&条件).is_some()
 }
 
-fn 引数を作る(フレーム数: &str) -> Vec<&str> {
+fn 引数を作る<'語>(フレーム数: &'語 str, アセットルート: &'語 str) -> Vec<&'語 str> {
     vec![
         "--scene",
         "quad",
         "--asset-root",
-        "target/runtime_assets",
+        アセットルート,
         "--benchmark-frames",
         フレーム数,
         "--streaming",

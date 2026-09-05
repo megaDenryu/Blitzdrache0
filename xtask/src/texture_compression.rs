@@ -21,12 +21,12 @@ mod plate_area;
 mod summary;
 mod world_bake;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 use error::ブロック圧縮の検収エラー;
 
-const 出力ディレクトリ: &str = "target/texture_compression";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("texture_compression");
 
 pub fn テクスチャ圧縮を確認する() -> ExitCode {
     match ブロック圧縮の絵を撮って判定する() {
@@ -45,7 +45,7 @@ fn ブロック圧縮の絵を撮って判定する() -> Result<String, ブロ�
     if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() {
         return Err(ブロック圧縮の検収エラー::検証用ソースアセットを生成できなかった);
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     let mut 行一覧 = contrast_run::対照の板を検収する(&出力先)?;
     行一覧.extend(helmet_run::ヘルメットの目視材料を作る(&出力先)?);
     Ok(行一覧.join("、"))

@@ -11,15 +11,15 @@ mod band;
 mod error;
 mod run;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::目視見本の絵の撮影エラー;
 
 use crate::acceptance::検収の実行名;
 use crate::day_moment::代表時刻一覧;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/terrain_visual";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("terrain_visual");
 
 pub fn 地形庭を目視確認する() -> ExitCode {
     match 検収する() {
@@ -36,7 +36,7 @@ pub fn 地形庭を目視確認する() -> ExitCode {
 
 fn 検収する() -> Result<String, 目視見本の絵の撮影エラー> {
     crate::visual_sample_world::用意する().map_err(目視見本の絵の撮影エラー::目視見本世界を用意できなかった)?;
-    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 実行環境 = run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
 
     let マスクの実行 = 実行環境.描いて読み戻す(
         crate::sample_world_region::領域マスクの実行名,

@@ -20,14 +20,14 @@ mod interior_judgment;
 mod scale;
 mod summary;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::クラスタ多光源の検収エラー;
 
 use crate::multi_light_world::world;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/cluster_lights";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("cluster_lights");
 
 pub fn 多光源クラスタを確認する() -> ExitCode {
     match 検収する() {
@@ -46,8 +46,8 @@ fn 検収する() -> Result<String, クラスタ多光源の検収エラー> {
     world::夜の世界を用意する().map_err(クラスタ多光源の検収エラー::検収世界を用意できなかった)?;
     world::屋内の世界を用意する().map_err(クラスタ多光源の検収エラー::検収世界を用意できなかった)?;
     crate::release_build::計測用に構築する("cluster-lights").map_err(クラスタ多光源の検収エラー::計測用の構築が失敗した)?;
-    let 夜の実行環境 = world::夜の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let 屋内の実行環境 = world::屋内の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 夜の実行環境 = world::夜の世界の実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
+    let 屋内の実行環境 = world::屋内の世界の実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
 
     let 夜の絵 = determinism::確かめる(&夜の実行環境)?;
     let 結果一覧 = scale::測る(&夜の実行環境)?;

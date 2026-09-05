@@ -28,15 +28,15 @@ mod schedule;
 mod summary;
 mod table;
 
-use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use error::間接照明の費用計測エラー;
 
 use crate::release_build::計測の生値のファイル;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/indirect_cost";
-const シェーダーコピー先: &str = "target/indirect_cost_shaders";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("indirect_cost");
+const シェーダーコピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("indirect_cost_shaders");
 
 pub(crate) fn 間接照明費用を計測する(引数一覧: &[String]) -> ExitCode {
     match 計測する(引数一覧) {
@@ -58,9 +58,9 @@ fn 計測する(引数一覧: &[String]) -> Result<String, 間接照明の費用
         return Err(間接照明の費用計測エラー::検証用アセットを生成できなかった);
     }
     let 由来 = crate::release_build::計測用に構築する("indirect-cost").map_err(間接照明の費用計測エラー::計測用の構築が失敗した)?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| 間接照明の費用計測エラー::出力先を作れなかった { 誤り })?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先))
         .map_err(間接照明の費用計測エラー::シェーダーの一時コピーを作れなかった)?;
 
     let 実行環境 = run::実行環境を作る();

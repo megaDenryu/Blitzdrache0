@@ -9,12 +9,12 @@ mod judgment;
 mod run;
 mod switch_judgment;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 use error::板の材質境界の検収エラー;
 
-const 出力ディレクトリ: &str = "target/multi_material_draw";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("multi_material_draw");
 
 pub fn 多材質シーンの描画を確認する() -> ExitCode {
     match 検収する() {
@@ -33,7 +33,7 @@ fn 検収する() -> Result<String, 板の材質境界の検収エラー> {
     if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::既定を生成する() {
         return Err(板の材質境界の検収エラー::検証用アセットを生成できなかった);
     }
-    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 実行環境 = run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
 
     let 二材質 = 実行環境.描いて読み戻す(run::二材質の実行名, &run::起動指定を組み立てる(run::条件::二材質))?;
     二材質.報告().画面へ流す();
