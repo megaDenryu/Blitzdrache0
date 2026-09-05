@@ -6,12 +6,24 @@
 #![cfg(test)]
 #![allow(clippy::unwrap_used)]
 
+use super::super::batch_builder::接触拘束のバッチの組み立て;
 use super::super::body_static_contact::剛体と静的世界の接触拘束;
+use super::super::contact_batches::接触拘束の二つのバッチ;
+use super::super::contacting_body::接触に参加する剛体;
+use super::super::generation_margin::{
+    接触生成の余白を導く形の運動, 細分の運動から接触点集合の生成が読む長さを導く
+};
+use super::super::material_id::材質の識別子;
+use super::super::minimum_thickness::形の最小の厚み;
+use super::scene_geometry::{場面の材質, 直方体を組む};
 use super::scene_settings::細分の観測;
 use super::substep_harness::一つの箱と静的な直方体の場面;
 use crate::rigid_body::一刻みの入力;
 use crate::rigid_xpbd::{予測の状態, 姿勢自由度の参加者};
-use crate::xpbd::ラグランジュ乗数;
+use crate::xpbd::{コンプライアンス, ラグランジュ乗数};
+use blitz_collision::contact_set::{
+    二つの直方体の重なりの接触点集合, 接触点集合, 直方体どうしの接触の特徴の対, 直方体どうしの接触点集合の問い合わせ,
+};
 use blitz_math::メートル;
 
 impl 一つの箱と静的な直方体の場面 {
@@ -63,5 +75,38 @@ impl 一つの箱と静的な直方体の場面 {
             .map(|拘束| -拘束.同時解法の一行にする(&参加者).隔たり().値())
             .fold(0.0, f32::max);
         メートル::生成する(最も深い)
+    }
+
+    pub(super) fn 接触拘束のバッチを組む(&self, 予測: &予測の状態) -> 接触拘束の二つのバッチ {
+        let 剛体 = 接触に参加する剛体::生成する(
+            self.箱の識別子,
+            *予測.配置(),
+            材質の識別子::生成する(場面の材質),
+            形の最小の厚み::生成する(self.箱の半分の長さ * 2.0).unwrap(),
+        );
+        let mut 組み立て = 接触拘束のバッチの組み立て::生成する(&self.混合則, コンプライアンス::硬い(), self.刻み幅, 1);
+        if let Some(集合) = self.接触点集合を求める(予測) {
+            組み立て.剛体と静的世界の接触点集合を積む(&剛体, &self.静的世界の接触相手, &集合).unwrap();
+        }
+        let mut バッチ = 組み立て.二つのバッチを組み立てる();
+        バッチ.鍵の昇順へ並べ替える();
+        バッチ
+    }
+
+    fn 接触点集合を求める(&self, 予測: &予測の状態) -> Option<接触点集合<直方体どうしの接触の特徴の対>> {
+        let 箱 = 直方体を組む(予測.配置(), self.箱の半分の長さ);
+        let 箱の運動 = 接触生成の余白を導く形の運動::動く形から生成する(&箱, self.箱の運動状態);
+        let 静的な形の運動 = 接触生成の余白を導く形の運動::静止した形から生成する(&self.静的な直方体);
+        let 長さ = 細分の運動から接触点集合の生成が読む長さを導く(&箱の運動, &静的な形の運動, self.刻み幅).unwrap();
+        let 問い = 直方体どうしの接触点集合の問い合わせ::二つの直方体と余白と優位幅から生成する(
+            &箱,
+            &self.静的な直方体,
+            長さ.接触生成の余白(),
+            長さ.外積の軸へ切り替える優位幅(),
+        );
+        match 問い.二つの直方体の重なりの接触点集合を求める().unwrap() {
+            二つの直方体の重なりの接触点集合::二つの直方体が重なっている(集合) => Some(集合),
+            二つの直方体の重なりの接触点集合::二つの直方体は離れている => None,
+        }
     }
 }

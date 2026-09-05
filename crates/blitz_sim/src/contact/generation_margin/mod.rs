@@ -13,6 +13,7 @@ mod derivation_lower_limit_tests;
 mod derivation_motion_tests;
 #[cfg(test)]
 mod derivation_test_fixtures;
+mod generated_lengths;
 mod motion;
 
 pub(in crate::contact) use derivation::{
