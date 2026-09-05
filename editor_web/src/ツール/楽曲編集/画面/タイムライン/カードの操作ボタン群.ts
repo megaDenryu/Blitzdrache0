@@ -13,15 +13,13 @@ export interface Iカードの操作ボタン群配線 {
 export type カード操作の押せるか = { readonly [K in カード操作の種類]: boolean }
 
 const ボタンの並び: ReadonlyArray<{ readonly 種類: カード操作の種類; readonly 記号: string; readonly 説明: string }> = [
-    { 種類: '前へ移動', 記号: '←', 説明: '1つ前へ移動' },
     { 種類: '前へ挿入', 記号: '⊢', 説明: '同じパターンを前へ挿入' },
     { 種類: '複製', 記号: '⧉', 説明: '複製(繰り返し回数を1増やす)' },
     { 種類: '削除', 記号: '×', 説明: '削除' },
     { 種類: '後へ挿入', 記号: '⊣', 説明: '同じパターンを後へ挿入' },
-    { 種類: '後へ移動', 記号: '→', 説明: '1つ後へ移動' },
 ]
 
-// 選択中のカードにだけ出す、6つの操作の小さなボタンの列。
+// 選択中のカードにだけ出す、4つの操作の小さなボタンの列。前へ移動・後へ移動は節の枠へ移した(issue #88)。
 export class カードの操作ボタン群 extends LV2HtmlComponentBase implements I配線可能<Iカードの操作ボタン群配線> {
     protected _componentRoot: DivC
     private readonly _配線: 配線ポート<Iカードの操作ボタン群配線> =
