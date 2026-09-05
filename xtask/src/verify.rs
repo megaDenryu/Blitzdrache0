@@ -1,6 +1,14 @@
-//! 検証の標準列。参照: CLAUDE.md「機械的強制」
+//! 検証: 検証の標準列と、検証の出力が載る木、その木に溜まったビルドの中間データの掃除。
+//! 標準列そのものはこのファイルが持ち、出力の木と掃除の入口は子モジュールが持つ。
+//! 参照: CLAUDE.md「機械的強制」「ツールとドキュメントの配置」
+
+mod clean_build_cache;
+mod output;
 
 use std::process::{Command, ExitCode};
+
+pub(crate) use clean_build_cache::ビルドの中間データを掃除する;
+pub(crate) use output::{検証の出力の置き場名, 検証の出力ルート};
 
 use crate::conform;
 
