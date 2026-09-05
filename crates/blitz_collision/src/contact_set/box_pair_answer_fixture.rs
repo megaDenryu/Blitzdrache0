@@ -12,7 +12,6 @@
 
 use crate::contact_set::box_pair_feature::直方体どうしの接触の特徴の対;
 use crate::contact_set::box_pair_query::二つの直方体の重なりの接触点集合;
-use crate::contact_set::generation_margin::接触生成の余白メートル;
 use crate::contact_set::manifold::接触点集合;
 use crate::contact_set::solver_candidate_point::接触解法の候補点;
 use crate::shape::任意姿勢の直方体;
