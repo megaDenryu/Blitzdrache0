@@ -15,6 +15,7 @@ mod subject;
 
 use std::process::ExitCode;
 
+use crate::verify::検証の出力ルート;
 use error::掃除の破れ;
 use mode::実行モード;
 use occupied_size::占める容量;
@@ -42,8 +43,9 @@ pub(crate) fn ビルドの中間データを掃除する(引数一覧: &[String]
 }
 
 fn 掃除する(モード: 実行モード) -> Result<占める容量, 掃除の破れ> {
+    let いま使っている木 = 検証の出力ルート::いま使っている木();
     let mut 合計 = 占める容量::無し();
-    for 候補 in collect::掃除の候補を集める()? {
+    for 候補 in collect::掃除の候補を集める(&いま使っている木)? {
         合計 = 合計.足す(候補.報告して処理する(モード)?);
     }
     Ok(合計)
