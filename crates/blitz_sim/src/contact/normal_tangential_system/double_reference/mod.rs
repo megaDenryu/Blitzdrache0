@@ -47,4 +47,4 @@ mod vector;
 
 pub(in crate::contact) use cone_judgement::倍精度の円錐の判定;
 pub(in crate::contact) use reference_solution::倍精度の参照の結末;
-pub(in crate::contact) use solution_breakdown::{倍精度の固有の向きの内訳, 倍精度の解の内訳};
+pub(in crate::contact) use solution_breakdown::倍精度の解の内訳;
