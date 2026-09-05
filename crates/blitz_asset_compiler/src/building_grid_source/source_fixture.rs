@@ -3,7 +3,7 @@
 //!
 //! 初期の格子は3箇所に同じ形を手書きしている。ブラウザの生成
 //! (`editor_web/src/ツール/建物編集/編集モデル/初期の建物の格子を作る.ts`)、ここ(受入の検査の材料)、
-//! HTTPの往復の材料(`crates/editor_server/tests/common/building_grid_fixture.rs`)である。言語と境界が
+//! HTTPの往復の材料(`crates/editor_server/tests/integration/common/building_grid_fixture.rs`)である。言語と境界が
 //! 違うため綴りを1つに束ねられず、一致は目視と、ここの試験(道具が作る初期の格子が保存の検査を通ること)で保つ。
 //! 3箇所がずれると、道具が作った直後の建物が保存で拒まれる形の食い違いが起こる。
 //! 参照: `~/.claude/skills/エディター制作`「生成と検証の対称性」

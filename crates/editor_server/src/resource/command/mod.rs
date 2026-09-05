@@ -5,6 +5,8 @@
 mod building_ops;
 mod material_stroke;
 mod plan_view_ops;
+#[cfg(test)]
+mod plan_view_ops_tests;
 mod road_collection_ops;
 mod road_point_ops;
 mod road_target;

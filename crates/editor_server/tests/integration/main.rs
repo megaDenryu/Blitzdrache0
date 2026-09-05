@@ -1,0 +1,56 @@
+//! 編集サーバーの統合試験一式。担当するのは、`mod`の列でこのフォルダの試験を1本の実行ファイルへ束ねることだけである。
+//!
+//! `tests/`の直下へ.rsファイルを置くと、Cargoはその1ファイルごとに独立した実行ファイルを組み立て、
+//! 実行ファイル1本ごとに、その実行ファイルが使う依存クレートすべてぶんのデバッグ情報を付ける。実行ファイルの本数が増えれば
+//! デバッグ情報の総量も増える。ファイルを責務で分ける原則を保ったまま
+//! 実行ファイルを1本に保つため、分割の単位をこのフォルダにしている(参照: CLAUDE.md「ファイル・関数の分割」)。
+//!
+//! 試験の共通の段取り(一時プロジェクト・ルーターの組み立て・保管庫の組み立て・手本)は`common`が持つ。
+//!
+//! 束ねる前は試験のファイル1つ1つが実行ファイルの根であり、各ファイルの先頭に書いた`#![allow(non_snake_case)]`が
+//! その実行ファイル全体に効いていた。束ねた後はこのファイルが根になるため、同じ緩めをここへ置く。
+//! 日本語の識別子に大文字のASCIIが混じるとRustの命名規則の警告が出るためである。
+
+#![allow(non_snake_case)]
+
+mod building_grid_routes;
+mod building_grid_save_failure;
+mod building_outline_catalog_contract;
+mod building_outline_catalog_routes;
+mod chunk_grid_routes;
+mod chunk_heightmap_mother_cutout;
+mod chunk_heightmap_mother_cutout_export;
+mod chunk_storage_roundtrip;
+mod chunk_structure_building_routes;
+mod chunk_structure_routes;
+mod common;
+mod contract_freshness;
+mod editor_world_grid_building_bake;
+mod editor_world_scatter_bake;
+mod legacy_structure_conversion;
+mod legacy_structure_overwrite;
+mod legacy_structure_without_scatter;
+mod material_board_routes;
+mod material_board_storage_roundtrip;
+mod music_command_note;
+mod music_command_pattern;
+mod music_command_section;
+mod music_command_song_and_track;
+mod music_routes;
+mod music_storage_roundtrip;
+mod music_validation_basic;
+mod music_validation_pattern;
+mod music_validation_progression;
+mod music_validation_track;
+mod music_value_range_contract;
+mod plan_view_draft_structure;
+mod project_info_routes;
+mod source_asset_export_building_http;
+mod source_asset_export_error_http;
+mod source_asset_export_geometry;
+mod source_asset_export_http;
+mod source_asset_export_scatter_http;
+mod source_asset_export_surface_layers_http;
+mod world_heightmap_routes;
+mod world_storage_roundtrip;
+mod world_structure_routes;

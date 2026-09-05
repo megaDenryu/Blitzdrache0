@@ -25,6 +25,8 @@ mod radian_per_second;
 mod second;
 mod signed_inverse_kilogram;
 mod square_meter;
+#[cfg(test)]
+mod unit_arithmetic_tests;
 mod unit_conversion_error;
 
 pub use global_meter::大域メートル;
