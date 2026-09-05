@@ -36,6 +36,21 @@ globalStyle(`${固定の行} > *:last-child`, {
     minWidth: '460px',
 })
 
+// タイムラインの行。楽曲名・操作帯の行の直下、和音の帯の行の上に置く固定の行で、
+// 縦には伸びず、タイムライン部品の枠の中だけが横にスクロールする(設計正本の判断15)。
+export const タイムラインの行 = style({
+    display: 'flex',
+    flexShrink: 0,
+    minWidth: 0,
+})
+
+// flexの子はデフォルトでmin-width:autoのため、内容が幅を超えても縮まずoverflow-xが働かない。
+// タイムライン部品へ横幅いっぱいを割り当て、縮んでよいことを明示する。
+globalStyle(`${タイムラインの行} > *`, {
+    flex: '1',
+    minWidth: 0,
+})
+
 // 打ち込みの手が変わる進行制約の札を、和音の帯と同じ行の左端に置く。
 export const 進行の行 = style({
     display: 'flex',
