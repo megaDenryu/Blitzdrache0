@@ -104,3 +104,17 @@ fn 同じファイルに定義があればそのファイルの定義へ帰属�
         "a/src/near/def.rs::設定"
     );
 }
+
+#[test]
+fn 同じファイルに定義があっても経路が別の定義を指せばそちらへ帰属する() {
+    let 索引 = 索引(&["a/src/near/def.rs", "a/src/far/def.rs"]);
+    let 引き当て = 引き当てる(&索引, "a/src/near/def.rs", "crate::far::def::設定", "");
+    assert_eq!(決まった所在(引き当て), "a/src/far/def.rs::設定");
+}
+
+#[test]
+fn 解けない経路を綴った実装ブロックは同じファイルの定義を根拠にしない() {
+    let 索引 = 索引(&["a/src/near/def.rs", "a/src/far/def.rs"]);
+    let 引き当て = 引き当てる(&索引, "a/src/near/def.rs", "crate::far::設定", "");
+    assert!(matches!(引き当て, 実装ブロックの引き当て::定義の候補を1つに絞れない(_)));
+}
