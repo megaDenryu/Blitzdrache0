@@ -3,6 +3,8 @@
 #![allow(clippy::unwrap_used)]
 #![allow(non_snake_case)]
 
+use editor_server::プロジェクト保管庫;
+
 #[test]
 fn 形式版の欄を持たない旧版の正本は現在の形へ写して読める() {
     let (一時, 保管庫) = crate::common::保管庫を作る("music_legacy_version");
