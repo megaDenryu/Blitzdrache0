@@ -238,6 +238,7 @@ cargo xtask verify      # 検証の標準列 (conform -> fmt --check -> check ->
 cargo xtask conform     # 規約適合の機械検査（行数・禁止文字列・依存白リスト・参照パス実在・文書内の節参照実在・vulkan配下のDrop実装禁止）
 cargo xtask type-metrics  # 型ごとの宣言の件数（構造体はフィールド数、列挙は枝数）・impl分散ファイル数・メソッド数を多い順に表示（違反判定はしない計測専用）
 cargo xtask smoke       # DoD自動検証: 8ステージの自己操作つき実行 + validation件数 + ピクセル読み戻し判定
+cargo xtask clean-build-cache [--dry-run]  # 差分ビルドの中間データ・codexレビュー用のビルドの出力先・作業ツリーごとのビルドの出力先を、実在するものだけ消して解放した容量を1行ずつ表示（--dry-runで消さずに一覧だけ出す。いま使っている出力先は消さない。消して失うのは次の1回のビルドが差分でなくなることだけ）
 cargo xtask bench       # リリース版固定シーンのベンチマーク（GPU時間 + CPU側フレーム間隔 + GPUメモリ確保統計）
 cargo xtask bench-display-timing  # benchに実表示間隔の計測を追加（計測が描画ループを止めるためbenchの時系列とは比較不可）
 cargo xtask m10-bench   # M10流体GPU試作を固定条件で実行し、検証件数とGPU時間を採取
