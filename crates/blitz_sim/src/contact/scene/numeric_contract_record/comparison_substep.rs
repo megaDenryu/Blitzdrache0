@@ -9,6 +9,7 @@
 
 #![cfg(test)]
 
+use super::super::super::normal_tangential_system::倍精度の解の内訳;
 use super::super::substep_harness::一つの箱と静的な直方体の場面;
 use super::candidate_reading::粘着の候補の読み取り;
 use crate::rigid_body::一刻みの入力;
@@ -18,6 +19,7 @@ use crate::rigid_xpbd::姿勢自由度の参加者;
 pub(super) struct 二つの精度の読み取り {
     pub(super) 単精度: 粘着の候補の読み取り,
     pub(super) 倍精度: 粘着の候補の読み取り,
+    pub(super) 倍精度の内訳: Option<倍精度の解の内訳>,
 }
 
 impl 一つの箱と静的な直方体の場面 {
@@ -34,9 +36,11 @@ impl 一つの箱と静的な直方体の場面 {
         }
         let 接触点集合 = バッチ.剛体と静的世界の接触点集合を反復のために借りる(0).to_vec();
         let 参加者 = 姿勢自由度の参加者::動的(*予測.配置(), &self.箱の質量特性);
+        let (倍精度, 倍精度の内訳) = self.倍精度で粘着の候補を読む(&接触点集合, 予測.配置());
         Some(二つの精度の読み取り {
             単精度: self.単精度で粘着の候補を読む(&接触点集合, &参加者),
-            倍精度: self.倍精度で粘着の候補を読む(&接触点集合, 予測.配置()),
+            倍精度,
+            倍精度の内訳,
         })
     }
 }

@@ -7,6 +7,7 @@
 
 #![cfg(test)]
 
+mod breakdown_line;
 mod candidate_reading;
 mod comparison_line;
 mod comparison_substep;
