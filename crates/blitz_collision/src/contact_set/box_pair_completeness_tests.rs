@@ -17,7 +17,9 @@ use super::generation_margin::接触生成の余白メートル;
 use crate::contact_set::box_pair_query::{二つの直方体の重なりの接触点集合, 直方体どうしの接触点集合の問い合わせ};
 use crate::shape::任意姿勢の直方体;
 
-use super::query_fixture::{直方体を作る, 線分の交差だけで重なりを判定する, 軸まわりの回転};
+use super::query_fixture::{
+    余白も優位幅も持たない直方体どうしの問い合わせを組む, 直方体を作る, 線分の交差だけで重なりを判定する, 軸まわりの回転
+};
 use super::random_box_fixture::無作為の直方体の生成元;
 
 fn 分離軸が重なっていると答えるか(第1: &任意姿勢の直方体, 第2: &任意姿勢の直方体) -> bool {

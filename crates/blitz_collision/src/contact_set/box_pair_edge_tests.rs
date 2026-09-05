@@ -13,7 +13,9 @@ use crate::contact_set::manifold_capacity::接触点の上限;
 use crate::oriented_box::直方体で当たった特徴;
 
 use super::box_pair_answer_fixture::床を作る;
-use super::query_fixture::{位置の成分, 回転なし, 直方体を作る, 軸まわりの回転};
+use super::query_fixture::{
+    位置の成分, 余白も優位幅も持たない直方体どうしの問い合わせを組む, 回転なし, 直方体を作る, 軸まわりの回転
+};
 
 #[test]
 fn 直角に交わる2本の辺は1つの接触点を作る() {

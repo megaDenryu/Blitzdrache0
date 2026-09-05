@@ -18,7 +18,7 @@ use crate::contact_set::manifold::接触点集合;
 use crate::contact_set::solver_candidate_point::接触解法の候補点;
 use crate::shape::任意姿勢の直方体;
 
-use super::query_fixture::{回転なし, 直方体を作る};
+use super::query_fixture::{余白も優位幅も持たない直方体どうしの問い合わせを組む, 回転なし, 直方体を作る};
 
 // 床の役をする大きな直方体。上面が高さ0の平面に乗る。
 pub(super) fn 床を作る() -> 任意姿勢の直方体 {

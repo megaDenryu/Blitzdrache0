@@ -17,10 +17,7 @@ mod generated_lengths;
 mod motion;
 
 pub(in crate::contact) use derivation::細分の運動から接触点集合の生成が読む長さを導く;
-// 2つを別々に導く口は、片方だけを固定する反証の材料が読む。本番の経路は上の対で導く口だけを通る。
+// 余白だけを導く口は、余白を単独で固定する反証の材料が読む。本番の経路は上の対で導く口だけを通る。
 #[cfg(test)]
-pub(in crate::contact) use derivation::{
-    細分の運動から接触生成の余白を導く, 細分の静穏の運動から外積の軸へ切り替える優位幅を導く
-};
-pub(in crate::contact) use generated_lengths::接触点集合の生成が読む長さ;
+pub(in crate::contact) use derivation::細分の運動から接触生成の余白を導く;
 pub(in crate::contact) use motion::接触生成の余白を導く形の運動;

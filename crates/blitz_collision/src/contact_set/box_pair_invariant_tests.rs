@@ -12,6 +12,7 @@
 
 use super::cross_axis_preference::外積の軸へ切り替える優位幅メートル;
 use super::generation_margin::接触生成の余白メートル;
+use super::query_fixture::余白も優位幅も持たない直方体どうしの問い合わせを組む;
 use crate::contact_set::box_pair_query::{二つの直方体の重なりの接触点集合, 直方体どうしの接触点集合の問い合わせ};
 use crate::shape::形の局所座標の位置;
 
