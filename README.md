@@ -234,7 +234,7 @@ cargo xtask             # 開発ツールの一覧表示（ツールの唯一の
 cargo xtask editor      # ゲーム開発用エディター(ブラウザ)の編集サーバーとeditor_webの開発サーバーを併せて起動する(--project <ルート>で開くゲームプロジェクトを選ぶ。大域編集・チャンク編集・建物編集・マテリアル台帳の4ツール・保存・ソースアセット書き出し・ヘッドレス適用まで実装済み)
 cargo xtask bake-building <建物定義ID>  # 建物エディターが保存した格子1件を平らな1チャンクの中央へ据えた検証世界を焼き、歩行の器で開く(--bake-onlyで焼きまでで止める)
 cargo xtask contract-export # editor_serverのRust側の型からeditor_web/src/生成配下のTypeScript契約ファイルを生成し直す
-cargo xtask verify      # 検証の標準列 (conform -> fmt --check -> check -> clippy -D warnings -> test)
+cargo xtask verify      # 検証の標準列 (conform -> fmt --check -> check -> clippy -D warnings -> test)。全段の出力を1文字も落とさず<出力の木>/verify-logs/<枝>_<先端の短いハッシュ>_<時刻>.logへ書き、その絶対パスを端末の最初と最後に表示する
 cargo xtask conform     # 規約適合の機械検査（行数・禁止文字列・依存白リスト・参照パス実在・文書内の節参照実在・vulkan配下のDrop実装禁止）
 cargo xtask type-metrics  # 型ごとの宣言の件数（構造体はフィールド数、列挙は枝数）・impl分散ファイル数・メソッド数を多い順に表示（違反判定はしない計測専用）
 cargo xtask smoke       # DoD自動検証: 8ステージの自己操作つき実行 + validation件数 + ピクセル読み戻し判定
