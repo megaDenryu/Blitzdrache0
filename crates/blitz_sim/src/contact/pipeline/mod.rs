@@ -23,6 +23,8 @@ mod substep_predict;
 mod tentative_multipliers;
 
 #[cfg(test)]
+mod contact_test_pipeline_scene;
+#[cfg(test)]
 mod pipeline_fixture;
 #[cfg(test)]
 mod pipeline_tests;
@@ -34,8 +36,6 @@ mod tower_fixture;
 mod tower_invariance_tests;
 #[cfg(test)]
 mod tower_rest_tests;
-#[cfg(test)]
-mod tower_scene;
 #[cfg(test)]
 mod tower_standing_tests;
 #[cfg(test)]
