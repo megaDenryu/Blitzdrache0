@@ -31,6 +31,7 @@ mod shader_uniform_alias;
 mod single_lighting_slot_write;
 mod source_lexing;
 mod split_debt;
+mod test_directory_layout;
 mod test_file;
 mod type_metrics_ledger;
 mod violation;
@@ -76,6 +77,7 @@ fn ファイル単位の違反を集める(ファイル一覧: &[PathBuf]) -> Re
             違反一覧.extend(line_count::検査する(パス, &内容));
             違反一覧.extend(forbidden_strings::検査する(パス, &内容));
             違反一覧.extend(declaration_comment_line::検査する(パス, &内容));
+            違反一覧.extend(test_directory_layout::検査する(パス));
         }
         if 拡張子 == "ts" && !line_count::生成ファイルか(パス) {
             違反一覧.extend(line_count::検査する(パス, &内容));
