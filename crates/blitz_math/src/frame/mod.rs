@@ -5,6 +5,8 @@ mod angle_gradient;
 mod angular_impulse;
 mod angular_velocity;
 mod area_vector;
+#[cfg(test)]
+mod camera_relative_conversion_tests;
 mod camera_relative_position;
 mod direction;
 mod direction_algebra;
@@ -23,6 +25,8 @@ mod inertia_tensor;
 #[cfg(test)]
 mod inertia_tensor_tests;
 mod inverse_inertia_tensor;
+#[cfg(test)]
+mod light_clip_projection_tests;
 mod pixel_jitter;
 mod position;
 mod position_displacement;
@@ -44,6 +48,8 @@ mod torque;
 mod transform;
 mod transform_construct;
 mod transform_construct_cube_face;
+#[cfg(test)]
+mod transform_construct_tests;
 mod trs;
 #[cfg(test)]
 mod trs_tests;
