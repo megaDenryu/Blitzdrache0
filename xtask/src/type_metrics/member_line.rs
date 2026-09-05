@@ -8,12 +8,14 @@ pub fn メソッド定義か(行: &str) -> bool {
 }
 
 /// 名前と型をコロンで区切る宣言をフィールドとみなす。属性・コメント・空行は数えない。
+/// 名前部分が括弧を含む行を落とすのはタプル構造体とメソッドを外すためであり、`pub(super)`のように
+/// 可視性が経路を括弧で書く形はその対象でないため、メソッドの判定と同じく先に修飾子を剥がす。
 pub fn フィールド定義か(行: &str) -> bool {
     let 整形 = 行.trim();
     if 整形.is_empty() || 整形.starts_with("//") || 整形.starts_with("#[") {
         return false;
     }
-    match 整形.split_once(':') {
+    match 修飾子を取り除く(整形).split_once(':') {
         Some((名前部分, _)) => !名前部分.is_empty() && !名前部分.contains('('),
         None => false,
     }
@@ -41,6 +43,20 @@ mod tests {
     fn コロン区切りの宣言をフィールドとみなす() {
         assert!(フィールド定義か("    pub パス: PathBuf,"));
         assert!(フィールド定義か("    深さ: usize,"));
+    }
+
+    #[test]
+    fn 経路を括弧で書いた可視性のフィールドも数える() {
+        assert!(フィールド定義か("    pub(crate) 箱の識別子: 識別子,"));
+        assert!(フィールド定義か("    pub(super) 基本刻み幅: 刻み幅,"));
+        assert!(フィールド定義か("    pub(in crate::app) 描画の予定: 予定,"));
+    }
+
+    #[test]
+    fn 修飾子を剥がしてもタプル構造体とメソッドは数えない() {
+        assert!(!フィールド定義か("pub struct ラジアン(f32);"));
+        assert!(!フィールド定義か("    pub(crate) fn 描く(&self, 幅: u32) {"));
+        assert!(!フィールド定義か("    pub(super) fn 数える(&self) -> usize {"));
     }
 
     #[test]
