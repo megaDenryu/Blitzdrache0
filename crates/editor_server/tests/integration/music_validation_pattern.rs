@@ -1,0 +1,74 @@
+//! 楽曲の検証のうち、パターンと曲構成に掛かる項目(名乗りの重複・格子の寸法・セルの値・節の指す先と繰り返し回数)を確かめる。
+#![allow(clippy::unwrap_used)]
+#![allow(non_snake_case)]
+
+#[test]
+fn パターンの名乗りが重複していると拒む() {
+    let mut 対象 = crate::common::楽曲の例();
+    対象.パターン一覧.push(crate::common::最初のパターン());
+    assert!(対象.検証する().is_err());
+}
+
+#[test]
+fn 格子の本数がトラックの本数と違うと拒む() {
+    let mut 対象 = crate::common::楽曲の例();
+    対象.パターン一覧[0].格子.pop();
+    assert!(対象.検証する().is_err());
+}
+
+#[test]
+fn 格子の行数が音の並びの長さと違うと拒む() {
+    let mut 対象 = crate::common::楽曲の例();
+    対象.パターン一覧[0].格子[0] = crate::common::打点のない格子(2);
+    assert!(対象.検証する().is_err());
+}
+
+#[test]
+fn 行の長さが32でないと拒む() {
+    let mut 対象 = crate::common::楽曲の例();
+    対象.パターン一覧[0].格子[0].行一覧[0] = vec![0; 31];
+    assert!(対象.検証する().is_err());
+}
+
+#[test]
+fn セルの値は4まで受け入れ5を拒む() {
+    let mut 通る = crate::common::楽曲の例();
+    通る.パターン一覧[0].格子[0].行一覧[0][0] = 4;
+    通る.検証する().unwrap();
+
+    let mut 拒む = crate::common::楽曲の例();
+    拒む.パターン一覧[0].格子[0].行一覧[0][0] = 5;
+    assert!(拒む.検証する().is_err());
+}
+
+#[test]
+fn 曲構成が実在しないパターンを指すと拒む() {
+    let mut 対象 = crate::common::楽曲の例();
+    対象.曲構成[0].パターンの名乗り = crate::common::パターンの名乗り("存在しないパターン");
+    assert!(対象.検証する().is_err());
+}
+
+#[test]
+fn 繰り返し回数は1から8だけを受け入れる() {
+    for 値 in [1, 8] {
+        let mut 対象 = crate::common::楽曲の例();
+        対象.曲構成[0].繰り返し回数 = 値;
+        対象.検証する().unwrap();
+    }
+    for 値 in [0, 9] {
+        let mut 対象 = crate::common::楽曲の例();
+        対象.曲構成[0].繰り返し回数 = 値;
+        assert!(対象.検証する().is_err(), "繰り返し回数{値}を通してはならない");
+    }
+}
+
+#[test]
+fn パターンの表示名が空白だけなら拒む() {
+    let mut 拒む = crate::common::楽曲の例();
+    拒む.パターン一覧[0].表示名 = " ".to_string();
+    assert!(拒む.検証する().is_err());
+
+    let mut 通る = crate::common::楽曲の例();
+    通る.パターン一覧[0].表示名 = "第1のパターン".to_string();
+    通る.検証する().unwrap();
+}
