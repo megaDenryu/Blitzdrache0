@@ -5,8 +5,8 @@
 
 use super::pipeline_def::剛体の接触の一刻みの工程;
 use super::pipeline_error::接触の工程エラー;
-use super::pipeline_substep::休止の判定の実施;
 use super::step_actions::刻みの初めに取り出した作用;
+use super::substep_rest_judgment::休止の判定の実施;
 use crate::rigid_body::{休止から起きた理由, 剛体の台帳, 運動種別};
 
 impl 剛体の接触の一刻みの工程 {

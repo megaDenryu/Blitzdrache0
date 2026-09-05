@@ -7,11 +7,11 @@
 use blitz_math::{ニュートン秒, 衝撃};
 
 use super::pipeline_def::剛体の接触の一刻みの工程;
-use super::pipeline_substep::休止の判定の実施;
 use super::side_by_side_fixture::側面で接する箱の列の場面を作る;
+use super::substep_rest_judgment::休止の判定の実施;
 use crate::rigid_body::{休止から起きた理由, 剛体の台帳, 剛体の識別子};
 
-// 側面で接する2つの箱は2026-09-05の実測で735刻みで休止する。3つの列でもその桁に収まる見込みであり、上限を2倍強に置く。
+// 側面で接する2つの箱は、休止の判定が刻みごとだった2026-09-05の実測で735刻みで休止した。判定が細分ごとへ移った後はこれより早い。上限はその値の2倍強に置く。
 const 休止を待つ刻み数: usize = 1600;
 
 #[test]

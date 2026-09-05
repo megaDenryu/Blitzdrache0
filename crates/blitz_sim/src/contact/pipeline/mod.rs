@@ -20,6 +20,7 @@ mod pipeline_velocity_body;
 mod step_actions;
 mod substep_placement;
 mod substep_predict;
+mod substep_rest_judgment;
 mod tentative_multipliers;
 
 #[cfg(test)]
