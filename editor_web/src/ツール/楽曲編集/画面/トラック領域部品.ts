@@ -1,6 +1,6 @@
 import { div, DivC, LV2HtmlComponentBase } from 'sengen-ui'
 import type { 楽曲, パターン } from '../../../生成/編集資源契約.ts'
-import { トラックに適用される和音一覧を解決する } from '../編集モデル/index.ts'
+import { トラックに適用される和音一覧を解決する, パターンのステップ数を求める } from '../編集モデル/index.ts'
 import type { 打ち込みドラッグ見込み, 升目の当たりの記録 } from './打ち込み見込み.ts'
 import { トラックの並びの枠 } from './スタイル.css.ts'
 import { トラックブロック部品 } from './トラックブロック部品.ts'
@@ -31,6 +31,7 @@ export class トラック領域部品 extends LV2HtmlComponentBase {
         楽曲: 楽曲,
         パターン: パターン | undefined,
         ドラッグ見込み: 打ち込みドラッグ見込み | null,
+        強調する小節: number | null,
     ): void {
         if (パターン === undefined) {
             this._選択中パターン名乗り = null
@@ -38,8 +39,9 @@ export class トラック領域部品 extends LV2HtmlComponentBase {
             return
         }
 
+        const ステップ数 = パターンのステップ数を求める(パターン)
         this._選択中パターン名乗り = パターン.名乗り
-        this.トラックブロック一覧を同期する(楽曲)
+        this.トラックブロック一覧を同期する(楽曲, ステップ数)
 
         for (let 位置 = 0; 位置 < 楽曲.トラック構成.length; 位置++) {
             const トラック = 楽曲.トラック構成[位置]
@@ -59,7 +61,9 @@ export class トラック領域部品 extends LV2HtmlComponentBase {
                 パターン.名乗り,
                 位置,
                 ドラッグ見込み,
+                ステップ数,
             )
+            ブロック.強調する小節を示す(強調する小節)
         }
     }
 
@@ -67,7 +71,7 @@ export class トラック領域部品 extends LV2HtmlComponentBase {
         for (const ブロック of this._トラックブロック一覧) ブロック.再生位置を示す(ステップ)
     }
 
-    private トラックブロック一覧を同期する(楽曲: 楽曲): void {
+    private トラックブロック一覧を同期する(楽曲: 楽曲, 初期ステップ数: number): void {
         if (this._トラックブロック一覧.length === 楽曲.トラック構成.length) return
         for (const ブロック of this._トラックブロック一覧) ブロック.delete()
         this._componentRoot.clearChildren()
@@ -78,6 +82,7 @@ export class トラック領域部品 extends LV2HtmlComponentBase {
                 () => this._選択中パターン名乗り !== null ? this._選択中パターン名乗り : '',
                 this._on升目押下,
                 this._on升目進入,
+                初期ステップ数,
             )
             this._componentRoot.child(ブロック)
             return ブロック
