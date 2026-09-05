@@ -33,7 +33,7 @@ export class タイムライン部品 extends LV2HtmlComponentBase implements I�
     private readonly _配線: 配線ポート<Iタイムライン配線> = new 配線ポート<Iタイムライン配線>('タイムライン部品')
     private readonly _追加ボタン: 末尾へ追加ボタン = new 末尾へ追加ボタン()
     private _カード部品一覧: カード部品[] = []
-    private _節の枠一覧: 節の枠部品[] = []
+    private _節の枠一覧: readonly 節の枠部品[] = []
     private _カード列: readonly 曲構成のカード[] = []
     private readonly _再生印: タイムラインの再生印 = new タイムラインの再生印()
 
