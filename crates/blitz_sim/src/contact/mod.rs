@@ -56,6 +56,8 @@ mod pipeline;
 mod property_error;
 #[cfg(test)]
 mod property_test_fixtures;
+#[cfg(test)]
+mod pseudo_random_fixture;
 mod rest;
 mod restitution_coefficient;
 #[cfg(test)]
