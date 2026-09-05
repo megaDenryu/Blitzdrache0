@@ -69,7 +69,6 @@ mod report_heading;
 mod report_line_key;
 mod report_parse;
 mod reverse_depth;
-mod rust_module;
 mod sample_world_region;
 mod shader_copy;
 mod shader_reload_draw;

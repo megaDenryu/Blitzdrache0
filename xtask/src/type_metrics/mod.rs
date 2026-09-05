@@ -35,9 +35,14 @@ mod keyword;
 mod measurement_table;
 mod member_line;
 mod metrics;
+#[cfg(test)]
+mod metrics_tests;
 mod observation;
 mod report;
+mod rust_module;
 mod scan;
+#[cfg(test)]
+mod scan_tests;
 mod type_location;
 mod type_path;
 
@@ -49,10 +54,10 @@ pub use declaration_amount::宣言の分量;
 pub use error::型計測の破れ;
 pub use file_observation::ファイルの観測;
 pub use impl_attribution::定義の候補が複数ある実装ブロック;
-pub use import_index::取り込みの索引;
 pub use keyword::修飾子を取り除く;
 pub use metrics::{型計測, 走査範囲の型計測, 集計する};
 pub use observation::観測;
+pub use rust_module::モジュールの位置;
 pub use type_location::型の所在;
 
 const 走査対象ディレクトリ一覧: [&str; 2] = ["crates", "xtask/src"];

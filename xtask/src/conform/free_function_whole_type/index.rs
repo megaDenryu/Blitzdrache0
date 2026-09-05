@@ -9,8 +9,7 @@ use std::path::{Path, PathBuf};
 
 use super::parameter::丸ごと受け取る型の名前;
 use super::signature::自由関数の署名一覧;
-use crate::rust_module::モジュールの位置;
-use crate::type_metrics::{ファイルの観測, 観測};
+use crate::type_metrics::{ファイルの観測, モジュールの位置, 観測};
 
 pub struct 親の型を丸ごと受け取る自由関数 {
     pub パス: PathBuf,

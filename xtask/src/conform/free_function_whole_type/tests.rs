@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 use super::index::型の定義の索引;
 use super::parameter::{丸ごと受け取る型の名前, 引数へ分ける};
 use super::signature::自由関数の署名一覧;
-use crate::type_metrics::{ファイルの観測, 取り込みの索引, 宣言の分量, 観測};
+use crate::type_metrics::ファイルの観測;
 
 fn 型名一覧(原文: &str) -> Vec<String> {
     自由関数の署名一覧(原文).into_iter().map(|署名| 署名.関数名).collect()
@@ -57,14 +57,13 @@ fn 丸ごとでない受け取り方は読み取らない() {
 }
 
 fn 索引() -> 型の定義の索引 {
-    let 観測一覧 = vec![ファイルの観測 {
-        パス: PathBuf::from("crates/blitz_app/src/app/mod.rs"),
-        観測一覧: vec![観測::型定義 {
-            型名: "アプリ".to_string(),
-            分量: 宣言の分量::構造体のフィールド数(46),
-        }],
-        取り込みの索引: 取り込みの索引::ファイルの内容から生成する(""),
-    }];
+    let 観測一覧 = vec![ファイルの観測::ファイルの内容から生成する(
+        PathBuf::from("crates/blitz_app/src/app/mod.rs"),
+        "pub struct アプリ {
+    値: usize,
+}
+",
+    )];
     型の定義の索引::観測から生成する(&観測一覧)
 }
 

@@ -7,7 +7,7 @@
 
 use std::path::Path;
 
-use crate::rust_module::{モジュールのディレクトリ, モジュールの位置};
+use super::rust_module::{モジュールのディレクトリ, モジュールの位置};
 
 const 段の区切り: &str = "::";
 const クレートの根を指す段: &str = "crate";
