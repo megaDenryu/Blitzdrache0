@@ -20,6 +20,8 @@ mod body_static_contact;
 mod body_static_contact_parameters;
 mod broad_phase;
 mod contact_batches;
+#[cfg(test)]
+mod contact_manifold_fixture;
 mod contact_projection_row;
 mod contact_property;
 mod contact_property_limits;
@@ -32,6 +34,7 @@ mod contacting_body;
 mod feature_identity;
 mod friction_coefficient;
 mod generation_error;
+mod generation_margin;
 mod history;
 mod island;
 mod manifold_range;
@@ -78,7 +81,7 @@ pub use contact_batches::接触拘束の二つのバッチ;
 pub use contact_property::接触物性;
 pub use contact_thresholds::{
     休止と判定する並進速度の閾値, 休止と判定する接触余白, 休止と判定する細分の本数エラー, 休止と判定する角速度の閾値, 休止と判定する連続静穏の時間,
-    休止と判定する連続静穏の細分の本数, 反発を抑制する法線相対速度の閾値, 接触生成の余白,
+    休止と判定する連続静穏の細分の本数, 反発を抑制する法線相対速度の閾値,
 };
 pub use friction_coefficient::摩擦係数;
 pub use generation_error::接触拘束の生成エラー;

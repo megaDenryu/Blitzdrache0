@@ -9,8 +9,8 @@
 use super::super::batch_builder::接触拘束のバッチの組み立て;
 use super::super::body_static_contact::剛体と静的世界の接触拘束;
 use super::super::contact_batches::接触拘束の二つのバッチ;
-use super::super::contact_thresholds::接触生成の余白;
 use super::super::contacting_body::接触に参加する剛体;
+use super::super::generation_margin::{接触生成の余白を導く形の運動, 細分の運動から接触生成の余白を導く};
 use super::super::material_id::材質の識別子;
 use super::super::minimum_thickness::形の最小の厚み;
 use super::scene_geometry::{場面の材質, 直方体を組む};
@@ -93,11 +93,14 @@ impl 一つの箱と静的な直方体の場面 {
 
     fn 接触点集合を求める(&self, 予測: &予測の状態) -> Option<接触点集合<直方体どうしの接触の特徴の対>> {
         let 箱 = 直方体を組む(予測.配置(), self.箱の半分の長さ);
-        let 問い合わせ = 直方体どうしの接触点集合の問い合わせ::二つの直方体と余白から生成する(
-            &箱,
-            &self.静的な直方体,
-            接触生成の余白().unwrap(),
-        );
+        let 余白 = 細分の運動から接触生成の余白を導く(
+            &接触生成の余白を導く形の運動::動く形から生成する(&箱, self.箱の運動状態),
+            &接触生成の余白を導く形の運動::静止した形から生成する(&self.静的な直方体),
+            self.刻み幅,
+        )
+        .unwrap();
+        let 問い合わせ =
+            直方体どうしの接触点集合の問い合わせ::二つの直方体と余白から生成する(&箱, &self.静的な直方体, 余白);
         match 問い合わせ.二つの直方体の重なりの接触点集合を求める().unwrap() {
             二つの直方体の重なりの接触点集合::二つの直方体が重なっている(集合) => Some(集合),
             二つの直方体の重なりの接触点集合::二つの直方体は離れている => None,
