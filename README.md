@@ -291,6 +291,28 @@ cargo xtask fetch-assets     # DamagedHelmet等の標準サンプル取得
 
 シェーダーは `shaders/` に Slang で書き、実行中に保存するとホットリロード（mtimeポーリング → slangc 再コンパイル → パイプライン再生成）で即反映される。
 
+## 大容量資産の保管とclone
+
+このリポジトリは大容量のバイナリ資産を Git LFS（Git Large File Storage。実体の代わりに参照情報をGitへ記録する仕組み）で扱い、実体は共通の保管基盤 [git-lfs-rclone-storage](https://github.com/megaDenryu/git-lfs-rclone-storage) が置く。追跡対象は `.gitattributes` が持つ（`.heightgrid` / `.f32raw` / `.png`）。コミットに入るのは参照情報だけであり、リポジトリは保管先を知らない（`.large-assets.toml` が論理プロファイル名だけを持つ）。
+
+**初回のcloneは通常の `git clone` では完結しない。** cloneした時点では基盤が登録されておらず、追跡対象のファイルの展開が失敗する。次の手順を使う。PCの初期設定（基盤の実行ファイルの配置とPC設定ファイル）は `C:\devs\git-lfs-rclone-storage\_doc\利用\PC初期設定.md` が持つ。
+
+```powershell
+# 実行場所: cloneしたい親ディレクトリ
+$env:GIT_CLONE_PROTECTION_ACTIVE = "false"
+$env:GIT_LFS_SKIP_SMUDGE = "1"
+git clone git@github.com:megaDenryu/Blitzdrache0.git
+Remove-Item Env:\GIT_CLONE_PROTECTION_ACTIVE, Env:\GIT_LFS_SKIP_SMUDGE
+
+# 実行場所: cloneされたリポジトリのルート
+git lfs install --local
+git-lfs-rclone-storage install
+git lfs pull
+git-lfs-rclone-storage doctor   # 全項目が [OK] になれば導入は完了している
+```
+
+導入の日(2026-09-05)より前にコミットされたファイルは履歴の書き換えを避けるため移行しておらず、実体のままGitに入っている。導入後に追加・変更したものだけが参照情報になる。
+
 ## ドキュメント
 
 - [開発計画](_doc/計画/開発計画.md) — ゴール・長期フェーズ計画・マイルストーン（M0〜M11）・自律ループの運用規約と判断基準。開発の現在地と次のタスクはここから特定する
