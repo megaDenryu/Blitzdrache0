@@ -7,6 +7,7 @@
 use blitz_math::{ニュートン秒, 衝撃};
 
 use super::pipeline_def::剛体の接触の一刻みの工程;
+use super::pipeline_substep::休止の判定の実施;
 use super::side_by_side_fixture::側面で接する箱の列の場面を作る;
 use crate::rigid_body::{休止から起きた理由, 剛体の台帳, 剛体の識別子};
 
@@ -28,7 +29,7 @@ fn 端へ加えた衝撃が細分一本で三つの箱の島の全部を同じ�
     let Ok(mut 作用) = 工程.作用を取り出す(&mut 台帳) else {
         panic!("作用の取り出しに失敗した");
     };
-    let Ok(_) = 工程.一細分進める(&mut 台帳, &mut 作用) else {
+    let Ok(()) = 工程.一細分進める(&mut 台帳, &mut 作用, 休止の判定の実施::行う) else {
         panic!("細分1本に失敗した");
     };
 

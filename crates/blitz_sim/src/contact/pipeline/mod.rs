@@ -31,6 +31,8 @@ mod pipeline_fixture;
 #[cfg(test)]
 mod pipeline_tests;
 #[cfg(test)]
+mod rest_time_invariance_tests;
+#[cfg(test)]
 mod side_by_side_fixture;
 #[cfg(test)]
 mod side_by_side_rest_tests;
