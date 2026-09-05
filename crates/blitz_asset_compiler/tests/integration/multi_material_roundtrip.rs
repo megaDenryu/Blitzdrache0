@@ -2,11 +2,9 @@
 //! 試験材料は最小のGLBをコードから組み立てる。実アセットの受入はBlender段4の領分であり、ここでは形式の往復だけを見る。
 //! 参照: `_doc/設計/マルチマテリアルと材質境界.md`「段階導入」A段
 
-mod multi_material_fixture;
-
+use crate::multi_material_fixture as fixture;
 use blitz_asset_compiler::{ソースアセットのコンパイル係, テクスチャ格納方針, 種の由来, 配置の種};
 use blitz_engine::{アセットID, カタログ, チャンク座標, 実行時形式からシーンを読む, 描画形状};
-use multi_material_fixture as fixture;
 
 fn 試験用カタログ() -> (カタログ, アセットID) {
     let id = match アセットID::生成する("multi_material") {
