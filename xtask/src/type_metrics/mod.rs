@@ -22,6 +22,8 @@ mod body_kind;
 mod declaration_amount;
 mod definition_index;
 #[cfg(test)]
+mod definition_index_test_material;
+#[cfg(test)]
 mod definition_index_tests;
 mod definition_line;
 mod error;
