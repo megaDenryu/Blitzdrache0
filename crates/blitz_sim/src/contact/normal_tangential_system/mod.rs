@@ -49,6 +49,8 @@ mod tolerance_tests;
 #[cfg(test)]
 mod translation_tests;
 
+#[cfg(test)]
+pub(in crate::contact) use double_reference::{倍精度の円錐の判定, 倍精度の参照の結末, 倍精度の参照の解};
 pub use system::接触点集合の法線と接線の連立;
 pub use tangential_row::錨の接線変位を零へ戻す一行;
 
