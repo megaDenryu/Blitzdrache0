@@ -11,6 +11,8 @@ use super::pipeline_solver::接触の解法ソルバー;
 use super::pipeline_space::接触の空間と世界;
 use crate::contact::island::直前の細分の接触島の一覧;
 use crate::contact::material_id::材質の識別子;
+#[cfg(test)]
+use crate::contact::normal_tangential_system::部分集合を解いた回数;
 use crate::contact::static_world_partner::静的世界の接触相手;
 use crate::rigid_body::{剛体の識別子, 配置};
 
@@ -56,5 +58,12 @@ impl 剛体の接触の一刻みの工程 {
 
     pub fn 前の配置(&self, 識別子: 剛体の識別子) -> Option<&配置> {
         self.履歴.前の配置(識別子)
+    }
+
+    /// 前に読んでから今までに解法が解いた連立の回数。読むと零に戻る。
+    /// 注意: 有効集合の走査の費用を測る計器だけの口である。
+    #[cfg(test)]
+    pub(super) fn 解いた回数の累計を読んで零に戻す(&self) -> 部分集合を解いた回数 {
+        self.解法.解いた回数の累計を読んで零に戻す()
     }
 }

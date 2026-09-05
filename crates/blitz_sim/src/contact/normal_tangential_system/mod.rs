@@ -32,6 +32,7 @@ mod single_point_fixture;
 #[cfg(test)]
 mod single_point_tests;
 mod solution;
+mod solve_count;
 mod solve_outcome;
 mod solved_quality;
 mod subset_search;
@@ -51,4 +52,5 @@ pub use tangential_row::錨の接線変位を零へ戻す一行;
 
 // 解と結末を外へ出す口。本番の細分の工程(判断19)が接触点集合ごとの粘着の候補を解くために読む。
 pub use solution::接触点集合の法線と接線の同時解;
+pub use solve_count::部分集合を解いた回数;
 pub use solve_outcome::相補条件を満たす有効集合を探した結末;
