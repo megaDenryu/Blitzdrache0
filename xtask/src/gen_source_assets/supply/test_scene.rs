@@ -8,9 +8,12 @@ use std::cell::Cell;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU32, Ordering};
 
-use blitz_asset_compiler::{アセット配置エラー, ソースルート, 場所巡りの世界のソースディレクトリ};
+use blitz_asset_compiler::{
+    アセット配置エラー, ソースルート, マップ生成の乱数の種, 場所巡りの世界のソースディレクトリ
+};
 
 use super::counting_launch::起こされた回数を数える偽の起こし係;
+use super::fingerprint_ledger::生成の指紋の台帳;
 use super::生成物のソースアセットを揃える係;
 
 static 使い捨ての置き場の通し番号: AtomicU32 = AtomicU32::new(0);
@@ -98,6 +101,20 @@ impl 使い捨ての場面 {
 
     pub(super) fn 一式と場所巡りを起こした回数(&self) -> (u32, u32) {
         self.揃える係.生成器を起こす係.一式と場所巡りを起こした回数()
+    }
+
+    /// 生成の入力だけを変える。指紋の材料のうち種の側が効いているかを見る検査が呼ぶ。
+    pub(super) fn 場所巡りの世界の乱数の種を書き換える(
+        &self, 種: マップ生成の乱数の種
+    ) -> Result<(), アセット配置エラー> {
+        場所巡りの世界のソースディレクトリ::ソースルートの下を開く(&ソースルート::生成する(self.パス.clone()))?
+            .生成に使った乱数の種を書き出す(種)
+    }
+
+    /// 指紋の台帳を、在るが読めない綴りにする。読めない台帳を無い台帳と同じに扱うことを見る検査が呼ぶ。
+    pub(super) fn 指紋の台帳の綴りを壊す(&self, 壊れた綴り: &str) -> std::io::Result<()> {
+        let 台帳 = 生成の指紋の台帳::ソースルートの下を指す(&ソースルート::生成する(self.パス.clone()));
+        std::fs::write(台帳.書き込み先のパス(), 壊れた綴り)
     }
 
     pub(super) fn 片づける(self) -> std::io::Result<()> {
