@@ -10,6 +10,7 @@ mod drop_tests;
 mod hold_limit_record;
 mod normal_iteration_record;
 mod normal_multiplier_sum_tests;
+mod numeric_contract_record;
 mod released_normal_reaction_tests;
 mod scene_geometry;
 mod scene_settings;

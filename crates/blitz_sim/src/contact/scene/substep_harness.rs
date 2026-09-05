@@ -9,11 +9,13 @@
 use blitz_collision::shape::任意姿勢の直方体;
 use blitz_math::{メートル, 角速度};
 
+use super::super::contact_batches::接触拘束の二つのバッチ;
 use super::super::contact_thresholds::反発を抑制する法線相対速度の閾値;
 use super::super::history::剛体と静的世界の接触の履歴;
 use super::super::material_id::材質の識別子;
 use super::super::minimum_thickness::形の最小の厚み;
 use super::super::mixing_rule::混合則;
+use super::super::normal_tangential_system::解けたと見なす許容差の倍率;
 use super::super::solver_quality::接触を解く品質の設定;
 use super::super::static_world_partner::静的世界の接触相手;
 use super::super::static_world_partner_id::静的世界の接触相手の識別子;
@@ -44,7 +46,9 @@ pub(super) struct 一つの箱と静的な直方体の場面 {
     pub(super) 履歴: 剛体と静的世界の接触の履歴,
     pub(super) 直前の細分の観測: 細分の観測,
     pub(super) 静止摩擦の解き方: 場面の静止摩擦の解き方,
+    pub(super) 解けたと見なす許容差の倍率: 解けたと見なす許容差の倍率,
     pub(super) 粘着の候補が解けなかった接触点集合の延べ数: usize, // 場面を組んでからの累計。検査が零を固定する
+    pub(super) 錨を置き直した細分の延べ数: usize,                 // 場面を組んでからの累計。数値契約の診断が読む
 }
 
 impl 一つの箱と静的な直方体の場面 {
@@ -78,7 +82,9 @@ impl 一つの箱と静的な直方体の場面 {
             履歴: 剛体と静的世界の接触の履歴::見込みの接触点の数で生成する(見込みの接触点の数),
             直前の細分の観測: 細分の観測::default(),
             静止摩擦の解き方: 設定.静止摩擦の解き方,
+            解けたと見なす許容差の倍率: 設定.解けたと見なす許容差の倍率,
             粘着の候補が解けなかった接触点集合の延べ数: 0,
+            錨を置き直した細分の延べ数: 0,
         }
     }
 
@@ -87,6 +93,16 @@ impl 一つの箱と静的な直方体の場面 {
         for _ in 0..本数 {
             self.一細分進める();
         }
+    }
+
+    // この細分で錨を置き直した接触点が1つでもあれば、置き直した細分の延べ数を1つ進める。数値契約の診断が読む。
+    // 錨が置き直されるのは、接触が始まった細分と、接触点集合が円錐を超えて滑走中と印された細分の2つである。
+    pub(super) fn 錨を置き直した細分を数える(&mut self, バッチ: &接触拘束の二つのバッチ) {
+        let 置き直したか = バッチ
+            .剛体と静的世界の接触拘束()
+            .iter()
+            .any(|拘束| 拘束.静止摩擦の解の状態().錨を置き直したか());
+        self.錨を置き直した細分の延べ数 += usize::from(置き直したか);
     }
 
     // 箱の重心から見た指定の高さの向きの隙間。落下の試験が床からの隙間を測るために読む。
