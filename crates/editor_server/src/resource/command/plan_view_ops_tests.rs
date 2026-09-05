@@ -3,10 +3,16 @@
 #![allow(clippy::unwrap_used)]
 #![allow(non_snake_case)]
 
-use editor_server::{
-    チャンク座標, 地表材質層, 平面の位置, 等高線, 等高線から高さ場を生成する, 等高線を削除する, 等高線を変更する, 等高線を追加する,
-    粗マスから地形を生成する, 粗マスの塗り, 粗マスを塗る, 編集コマンド, 高さ場から等高線を導く, 高さ場から粗マスを導く,
+use super::material_stroke::地表材質層;
+use super::plan_view_ops::{
+    等高線から高さ場を生成する, 等高線を削除する, 等高線を変更する, 等高線を追加する, 粗マスから地形を生成する, 粗マスを塗る, 高さ場から等高線を導く,
+    高さ場から粗マスを導く,
 };
+use super::編集コマンド;
+use crate::resource::chunk_coordinate::チャンク座標;
+use crate::resource::coarse_cell_paint::粗マスの塗り;
+use crate::resource::contour_line::等高線;
+use crate::resource::plane_position::平面の位置;
 
 fn 等高線の例() -> 等高線 {
     等高線 {

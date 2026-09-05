@@ -1,9 +1,9 @@
 //! 備え付けのコード進行8件が、試作`_doc/ゲーム開発用エディター計画/シーケンサー.html`の`PROG_PRESETS`と
 //! 一致することを確かめる。期待値はこの試験が手で当てたものであり、実装の写しではない。
 #![allow(clippy::unwrap_used)]
-#![allow(non_snake_case)]
 
-use editor_server::{和音の種類, 既定のコード進行, 既定のコード進行一覧};
+use super::chord::和音の種類;
+use super::preset_progression::{既定のコード進行, 既定のコード進行一覧};
 
 /// 試作の`ch()`は全件で`steps`に4を渡している。
 const 試作の1和音のステップ数: u32 = 4;
