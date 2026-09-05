@@ -59,10 +59,7 @@ fn 丸ごとでない受け取り方は読み取らない() {
 fn 索引() -> 型の定義の索引 {
     let 観測一覧 = vec![ファイルの観測::ファイルの内容から生成する(
         PathBuf::from("crates/blitz_app/src/app/mod.rs"),
-        "pub struct アプリ {
-    値: usize,
-}
-",
+        "pub struct アプリ {\n    値: usize,\n}\n",
     )];
     型の定義の索引::観測から生成する(&観測一覧)
 }
