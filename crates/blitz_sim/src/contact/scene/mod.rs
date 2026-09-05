@@ -31,6 +31,8 @@ mod substep_iteration_result;
 mod substep_non_penetration;
 mod substep_observation;
 mod substep_residual;
+mod substep_residual_observation;
+mod substep_residual_observation;
 mod substep_sliding_fallback;
 mod substep_solve;
 mod substep_static_friction_sequential;
