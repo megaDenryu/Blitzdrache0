@@ -4,7 +4,7 @@
 //! 片方だけがルートを変えると、絵を撮る入口と数を採る入口が別の世界を見ることになり、並べて読む根拠が消える。
 
 use crate::acceptance::{実行時アセットルート, 検収シーン名};
-use crate::verify::検証の出力ルート;
+use crate::verify::{検証の出力のファイル名, 検証の出力ルート};
 use crate::world_setup::{検収世界の用意, 検収世界の用意の破れ};
 
 const シーン名の綴り: &str = "terrain_visual";
@@ -15,7 +15,7 @@ pub const 目視見本世界のシーン名: 検収シーン名 = 検収シー�
 const 用意: 検収世界の用意 = 検収世界の用意::生成する(
     "目視見本",
     crate::compile_assets::目視見本の世界の実行時形式の置き場,
-    "terrain_visual.blitzasset",
+    検証の出力のファイル名::生成する("terrain_visual.blitzasset"),
 );
 
 /// この世界を起動するときに渡す実行時アセットルート。

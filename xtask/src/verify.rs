@@ -7,8 +7,8 @@ mod output;
 
 use std::process::{Command, ExitCode};
 
-pub(crate) use clean_build_cache::ビルドの中間データを掃除する;
-pub(crate) use output::{検証の出力の置き場名, 検証の出力ルート};
+pub(crate) use clean_build_cache::{ビルドの中間データを掃除する, 消さずに一覧だけ出す旗};
+pub(crate) use output::{検証の出力のファイル名, 検証の出力の置き場名, 検証の出力ルート};
 
 use crate::conform;
 

@@ -16,12 +16,12 @@ use super::row_target::検収する並び1つ;
 use super::scale_pair::件数を変えた並びの対;
 use crate::acceptance::{検収の実行名, 検収シーン名};
 use crate::asset_generator::世界名;
-use crate::verify::検証の出力の置き場名;
+use crate::verify::{検証の出力のファイル名, 検証の出力の置き場名};
 
 /// 規模ごとの実行時形式の置き場と、どちらの規模でも同じ焼き上がりのファイル名。
 const 十軒の置き場: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("part_house_row_ten_assets");
 const 百軒の置き場: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("part_house_row_hundred_assets");
-const 焼き上がりのファイル名: &str = "prop_part_house_row.blitzasset";
+const 焼き上がりのファイル名: 検証の出力のファイル名 = 検証の出力のファイル名::生成する("prop_part_house_row.blitzasset");
 const 絵の書き出し先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("part_house_row_draw");
 
 const 十軒: 検収する並び1つ = 検収する並び1つ::生成する(

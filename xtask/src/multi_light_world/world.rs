@@ -12,21 +12,21 @@ use std::path::PathBuf;
 use crate::acceptance::{
     アプリの起こし方, 実行時アセットルート, 描画フレーム数, 描画検収の実行環境, 検収エラー, 検収シーン名
 };
-use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
+use crate::verify::{検証の出力のファイル名, 検証の出力の置き場名, 検証の出力ルート};
 use crate::world_setup::{検収世界の用意, 検収世界の用意の破れ};
 
 pub(crate) const 夜のシーン: 検収シーン名 = 検収シーン名::生成する("terrain_night_lights");
 const 夜の用意: 検収世界の用意 = 検収世界の用意::生成する(
     "夜の多光源",
     crate::compile_assets::夜の多光源の世界の実行時形式の置き場,
-    "terrain_night_lights.blitzasset",
+    検証の出力のファイル名::生成する("terrain_night_lights.blitzasset"),
 );
 
 pub(crate) const 屋内のシーン: 検収シーン名 = 検収シーン名::生成する("prop_stone_hut_interior");
 const 屋内の用意: 検収世界の用意 = 検収世界の用意::生成する(
     "屋内の多光源",
     crate::compile_assets::屋内の多光源の世界の実行時形式の置き場,
-    "prop_stone_hut_interior.blitzasset",
+    検証の出力のファイル名::生成する("prop_stone_hut_interior.blitzasset"),
 );
 
 /// 夜の多光源の世界を起こす実行環境。リリース版の実行ファイルを直に起こすのは、GPU時間を測る条件を

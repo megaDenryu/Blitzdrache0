@@ -14,12 +14,12 @@ mod run;
 
 use std::process::ExitCode;
 
-use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
+use crate::verify::{検証の出力のファイル名, 検証の出力の置き場名, 検証の出力ルート};
 use error::小物の材質境界の検収エラー;
 
 const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("prop_multi_material_draw");
 /// 小物の実行時形式。宣言はこの安定IDを板の世界へ載せるため、既定の出力ルートへ焼かれる。
-const 実行時形式のファイル名: &str = "prop_banded_chest.blitzasset";
+const 実行時形式のファイル名: 検証の出力のファイル名 = 検証の出力のファイル名::生成する("prop_banded_chest.blitzasset");
 /// アセットが宣言している材質の数。glbは材質スロットごとにプリミティブを分けるため、シーンパスの発行数もこの数になる。
 const 材質の数: usize = 3;
 

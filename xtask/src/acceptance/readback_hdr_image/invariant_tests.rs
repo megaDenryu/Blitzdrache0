@@ -13,7 +13,10 @@ use super::圧縮前のHDR画像;
 use std::path::PathBuf;
 
 use crate::acceptance::test_output_place::試験が書き出す置き場;
-use crate::verify::検証の出力ルート;
+use crate::verify::{検証の出力のファイル名, 検証の出力ルート};
+
+/// 境界の検査が書き出す絵のファイル名。
+const 検査のファイル名: 検証の出力のファイル名 = 検証の出力のファイル名::生成する("hdr_boundary_check.hdr32");
 
 /// 幅2・高さ1の絵ちょうどの成分列。RGBAの4成分であるため1画素あたり4つである。
 fn 二画素ぶんの成分列() -> Vec<f32> {
@@ -21,7 +24,7 @@ fn 二画素ぶんの成分列() -> Vec<f32> {
 }
 
 fn 検査のパス() -> PathBuf {
-    検証の出力ルート::既定().置き場の中のファイル(試験が書き出す置き場, "hdr_boundary_check.hdr32")
+    検証の出力ルート::既定().置き場の中のファイル(試験が書き出す置き場, 検査のファイル名)
 }
 
 #[test]

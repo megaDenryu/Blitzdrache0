@@ -14,7 +14,8 @@ use crate::acceptance::検収シーン名;
 pub(super) const 骨格方式のシーン名: 検収シーン名 = 検収シーン名::生成する("prop_part_frame_row");
 
 /// 骨格方式の世界が焼く実行時形式のファイル名。シーンの安定IDと同じ綴りから決まる。
-pub(super) const 骨格方式の焼き上がりのファイル名: &str = "prop_part_frame_row.blitzasset";
+pub(super) const 骨格方式の焼き上がりのファイル名: crate::verify::検証の出力のファイル名 =
+    crate::verify::検証の出力のファイル名::生成する("prop_part_frame_row.blitzasset");
 
 /// 出力ルートの置き場の名前から、検収する並び1つを定数のまま組む。
 macro_rules! 骨格方式の検収する並び {

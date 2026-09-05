@@ -17,7 +17,7 @@ use std::process::ExitCode;
 use error::木の並びの撮影エラー;
 
 use super::tally_line::焼いた並びの勘定;
-use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
+use crate::verify::{検証の出力のファイル名, 検証の出力の置き場名, 検証の出力ルート};
 use crate::world_setup::検収世界の用意;
 
 const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("part_tree_row_draw");
@@ -29,7 +29,7 @@ const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力
 const 検収世界: 検収世界の用意 = 検収世界の用意::生成する(
     "部品で組んだ木の並び",
     crate::compile_assets::部品で組んだ木の並びの世界の実行時形式の置き場,
-    "prop_part_tree_row.blitzasset",
+    検証の出力のファイル名::生成する("prop_part_tree_row.blitzasset"),
 );
 
 pub(super) fn 検収してコードへ変換する() -> ExitCode {

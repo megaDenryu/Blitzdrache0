@@ -12,7 +12,7 @@ use std::process::ExitCode;
 
 use error::見本の集落の撮影エラー;
 
-use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
+use crate::verify::{検証の出力のファイル名, 検証の出力の置き場名, 検証の出力ルート};
 use crate::world_setup::検収世界の用意;
 
 const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("village_draw");
@@ -24,7 +24,7 @@ const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力
 const 検収世界: 検収世界の用意 = 検収世界の用意::生成する(
     "見本の集落",
     crate::compile_assets::見本の集落の世界の実行時形式の置き場,
-    "prop_village.blitzasset",
+    検証の出力のファイル名::生成する("prop_village.blitzasset"),
 );
 
 pub fn 見本集落の描画を確認する() -> ExitCode {

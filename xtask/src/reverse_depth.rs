@@ -11,12 +11,13 @@ mod run;
 use std::path::Path;
 use std::process::ExitCode;
 
-use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
+use crate::verify::{検証の出力のファイル名, 検証の出力の置き場名, 検証の出力ルート};
 use error::逆Z検収エラー;
 use plan::実行の別;
 
 pub(super) const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("reverse_depth");
-pub(super) const 対照の由来ファイル名: &str = "reference.txt";
+pub(super) const 対照の由来ファイル名: 検証の出力のファイル名 = 検証の出力のファイル名::生成する("reference.txt");
+const 候補の由来ファイル名: 検証の出力のファイル名 = 検証の出力のファイル名::生成する("candidate.txt");
 
 pub(crate) fn 反転深度を撮影して判定する(引数一覧: &[String]) -> ExitCode {
     match 検収する(引数一覧) {
@@ -46,12 +47,20 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 逆Z検収エラー> 
     match 別 {
         実行の別::対照を採る => {
             run::対照を採る(&実行環境)?;
-            由来を書く(&出力先.join(対照の由来ファイル名), &由来, "standard-z far=10000")?;
+            由来を書く(
+                &検証の出力ルート::既定().置き場の中のファイル(出力ディレクトリ, 対照の由来ファイル名),
+                &由来,
+                "standard-z far=10000",
+            )?;
             Ok(format!("標準Zの対照を{}へ保存した", 出力先.display()))
         }
         実行の別::候補を比較する => {
             run::候補を採る(&実行環境)?;
-            由来を書く(&出力先.join("candidate.txt"), &由来, "reverse-z far=10000")?;
+            由来を書く(
+                &検証の出力ルート::既定().置き場の中のファイル(出力ディレクトリ, 候補の由来ファイル名),
+                &由来,
+                "reverse-z far=10000",
+            )?;
             let 実景 = compare::対照と候補を比べる(&実行環境)?;
             let 精度 = precision_counterexample::奥行き精度を反証する()?;
             let 重なり = overlap_counterexample::前面色の保持を反証する()?;
