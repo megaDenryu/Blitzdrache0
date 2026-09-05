@@ -19,6 +19,7 @@ use super::super::non_penetration::非貫通の接触点集合の一行;
 use super::active_set::法線と接線の連立の有効集合;
 use super::row_order::抜き出した行の持ち主;
 use super::tangential_row::錨の接線変位を零へ戻す一行;
+#[cfg(test)]
 use super::tolerance_scale::解けたと見なす許容差の倍率;
 use crate::xpbd::ラグランジュ乗数;
 
