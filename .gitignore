@@ -13,6 +13,10 @@ assets/one_building_world/
 # 欠けていればcargo xtask supply-source-assetsの工程が生成して揃える(参照: README「大容量資産の保管とclone」)
 assets/**/*.bin
 
+# 生成の指紋の台帳。最後に共有バッファを揃えたときの生成器と入力を1つの値で覚える。生成器の実行ファイルの内容ハッシュを
+# 材料に持つため機械ごとに中身が違い、ソースでも生成物そのものでもない
+assets/source_asset_fingerprint.txt
+
 # 生成台帳。生成器の実行ファイルの内容ハッシュを持つため機械ごとに中身が違い、ソースではなく生成の途中状態である
 generation_ledger.txt
 target-agent*/
