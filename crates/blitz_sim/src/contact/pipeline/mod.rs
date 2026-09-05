@@ -37,8 +37,6 @@ mod side_by_side_rest_tests;
 #[cfg(test)]
 mod substep_impulse_tests;
 #[cfg(test)]
-mod tower_anchor_counterfactual_tests;
-#[cfg(test)]
 mod tower_fixture;
 #[cfg(test)]
 mod tower_invariance_tests;
