@@ -13,7 +13,6 @@ use super::substep_placement::細分の予測の結果;
 use super::substep_predict::{始点と終点の直方体から大域の箱を求める, 直方体を組む, 細分の動的剛体};
 use super::substep_rest_judgment::休止の判定の実施;
 use crate::contact::broad_phase::剛体どうしの候補対を絞り込む;
-use crate::contact::contact_batches::接触拘束の二つのバッチ;
 use crate::contact::island::接触島の一覧を構築する;
 use crate::rigid_body::{休止から起きた理由, 剛体の台帳, 剛体の識別子, 運動種別};
 use crate::rigid_xpbd::姿勢自由度の参加者;

@@ -9,10 +9,12 @@ use crate::contact::contact_batches::接触拘束の二つのバッチ;
 use crate::contact::island::接触島;
 use crate::rigid_body::剛体の台帳;
 
-/// 細分の末で休止の判定を行うかどうか。休止が物理の結果を変えない最適化であること(判断18)を検査する反証の経路が`行わない`を選ぶ。
+/// 細分の末で休止の判定を行うかどうか。
+/// `行わない` を試験のときだけ持つのは、休止が物理の結果を変えない最適化であること(判断18)を検査する反証の経路が唯一の作り手だからである。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum 休止の判定の実施 {
     行う,
+    #[cfg(test)]
     行わない,
 }
 
