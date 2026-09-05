@@ -73,7 +73,8 @@ pub use broad_phase::{剛体どうしの候補対, 剛体どうしの候補対�
 pub use contact_batches::接触拘束の二つのバッチ;
 pub use contact_property::接触物性;
 pub use contact_thresholds::{
-    休止と判定する並進速度の閾値, 休止と判定する接触余白, 休止と判定する角速度の閾値, 休止と判定する連続静穏の時間, 反発を抑制する法線相対速度の閾値,
+    休止と判定する並進速度の閾値, 休止と判定する接触余白, 休止と判定する細分の本数エラー, 休止と判定する角速度の閾値, 休止と判定する連続静穏の時間,
+    休止と判定する連続静穏の細分の本数, 反発を抑制する法線相対速度の閾値,
 };
 pub use friction_coefficient::摩擦係数;
 pub use generation_error::接触拘束の生成エラー;

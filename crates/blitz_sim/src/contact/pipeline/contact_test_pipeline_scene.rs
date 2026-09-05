@@ -11,9 +11,13 @@ use super::pipeline_policy::接触の品質と時間方針;
 use super::pipeline_solver::接触の解法ソルバー;
 use super::pipeline_space::接触の空間と世界;
 use crate::constraint_graph::一様な加速度;
+use crate::contact::friction_coefficient::摩擦係数;
 use crate::contact::material_id::材質の識別子;
+use crate::contact::mixing_rule::混合則;
 use crate::contact::mixing_rule_builder::混合則の組み立て;
+use crate::contact::restitution_coefficient::反発係数;
 use crate::contact::solver_quality::接触を解く品質の設定;
+use crate::contact::surface_property::表面物性;
 use crate::contact::velocity_stage::接触の速度段階;
 use crate::rigid_xpbd::{ジャイロ項の扱い, 細分の予測器, 細分数};
 use crate::xpbd::刻み幅;
@@ -48,21 +52,7 @@ pub(super) fn 細分数を指定して試験の接触の一刻みの工程を組
     let Ok(品質) = 接触を解く品質の設定::生成する(2, 4) else {
         panic!();
     };
-    let mut 組み立て = 混合則の組み立て::生成する();
-    let mat = 試験の材質();
-    let Ok(摩擦) = crate::contact::friction_coefficient::摩擦係数::生成する(0.5) else {
-        panic!();
-    };
-    let 反発 = crate::contact::restitution_coefficient::反発係数::零();
-    let Ok(物性) = crate::contact::surface_property::表面物性::生成する(摩擦, 摩擦, 反発) else {
-        panic!();
-    };
-    let Ok(()) = 組み立て.表面物性を登録する(mat, 物性) else {
-        panic!();
-    };
-    let Ok(混合則) = 組み立て.組み立てる() else {
-        panic!();
-    };
+    let 混合則 = 試験の材質の混合則を組む();
     let 重力 = 一様な加速度::成分から生成する(
         メートル毎秒毎秒::生成する(0.0),
         メートル毎秒毎秒::生成する(-9.8),
@@ -71,10 +61,31 @@ pub(super) fn 細分数を指定して試験の接触の一刻みの工程を組
     let 予測器 = 細分の予測器::生成する(細分幅, 重力, ジャイロ項の扱い::陰的に一段解く);
     let 速度段階 = 接触の速度段階::生成する(細分幅, メートル毎秒::生成する(0.01));
     let 空間索引 = 動く形の空間索引::ゆとりの幅から生成する(箱に持たせるゆとりの幅::人型と家具の大きさに見合う既定の幅());
+    let Ok(方針) = 接触の品質と時間方針::生成する(基本幅, n, 細分幅, 品質, 混合則) else {
+        panic!("休止の閾値を細分の本数へ写せない刻み幅である");
+    };
     剛体の接触の一刻みの工程::生成する(
-        接触の品質と時間方針::生成する(基本幅, n, 細分幅, 品質, 混合則),
+        方針,
         接触の空間と世界::生成する(空間索引),
         接触履歴の保持::見込みの接触点の数で生成する(64),
         接触の解法ソルバー::生成する(予測器, 速度段階),
     )
+}
+
+// 試験の材質1つに摩擦0.5と反発0の表面物性を与えた混合則。工程の組み立てから分けているのは、こちらが材質と物性を決める工程だからである。
+fn 試験の材質の混合則を組む() -> 混合則 {
+    let mut 組み立て = 混合則の組み立て::生成する();
+    let Ok(摩擦) = 摩擦係数::生成する(0.5) else {
+        panic!("試験の摩擦係数を作れない");
+    };
+    let Ok(物性) = 表面物性::生成する(摩擦, 摩擦, 反発係数::零()) else {
+        panic!("試験の表面物性を作れない");
+    };
+    let Ok(()) = 組み立て.表面物性を登録する(試験の材質(), 物性) else {
+        panic!("試験の表面物性を登録できない");
+    };
+    let Ok(混合則) = 組み立て.組み立てる() else {
+        panic!("試験の混合則を組み立てられない");
+    };
+    混合則
 }
