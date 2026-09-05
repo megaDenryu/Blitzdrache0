@@ -15,9 +15,6 @@ use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 const スモークの実行時形式の置き場: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("smoke_runtime_assets");
 
 pub fn スモークを実行する() -> ExitCode {
-    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() {
-        return ExitCode::FAILURE;
-    }
     let シェーダーコピー先 = match copy_setup::シェーダーを一時コピーする() {
         Ok(パス) => パス,
         Err(誤り) => {

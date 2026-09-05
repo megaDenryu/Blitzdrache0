@@ -1,5 +1,5 @@
 //! 資産生成・検査系コマンドの割り当て。command_catalogの`asset`分類と同じ範囲(glTF入力契約の
-//! 検査・部品カタログ・検収描画・実行時アセット生成・検証用ソースアセット生成の13件)を担当する。
+//! 検査・部品カタログ・検収描画・実行時アセット生成・検証用ソースアセット生成・生成物のソースアセットの取り揃えの15件)を担当する。
 
 use std::process::ExitCode;
 
@@ -20,6 +20,7 @@ pub(super) fn アセットコマンドを割り当てる(名前: &str, 引数一
         "compile-assets" => Some(compile_assets::実行時アセットを生成する(引数一覧)),
         "watch-assets" => Some(watch_assets::アセットを監視して再生成する(引数一覧)),
         "gen-source-assets" => Some(gen_source_assets::検証用ソースアセットを生成する()),
+        "supply-source-assets" => Some(gen_source_assets::生成物のソースアセットを揃える()),
         "gen-atmosphere-reference" => Some(gen_atmosphere_reference::大気の期待値を生成する(引数一覧)),
         "gen-game-map" => Some(gen_game_map::クソゲー1本目の地図を生成する(引数一覧)),
         "large-world-assets" => Some(large_world_assets::大規模世界アセットを生成する(引数一覧)),
