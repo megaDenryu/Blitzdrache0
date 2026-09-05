@@ -28,6 +28,8 @@ mod pseudo_random_fixture;
 mod random_system_fixture;
 mod reduced_system;
 mod reduced_system_residual;
+#[cfg(test)]
+mod reduced_system_tolerance_scale;
 mod row_order;
 #[cfg(test)]
 mod single_point_fixture;

@@ -10,6 +10,7 @@
 
 mod breakdown_line;
 mod candidate_reading;
+mod case_construction;
 mod comparison_line;
 mod comparison_substep;
 mod diagnostic_case;
