@@ -3,6 +3,8 @@
 #![allow(clippy::unwrap_used)]
 #![allow(non_snake_case)]
 
+use editor_server::プロジェクト保管庫;
+
 #[test]
 fn 形式版の欄を持たない旧版の正本は現在の形へ写して読める() {
     let (一時, 保管庫) = crate::common::保管庫を作る("music_legacy_version");
@@ -12,7 +14,7 @@ fn 形式版の欄を持たない旧版の正本は現在の形へ写して読�
     std::fs::create_dir_all(&置き場).unwrap();
     std::fs::write(置き場.join("試験の楽曲.json"), serde_json::to_string_pretty(&旧版のjson).unwrap()).unwrap();
 
-    let 読んだ楽曲 = 保管庫.楽曲を読む(&crate::common::名乗り("試験の楽曲")).unwrap().unwrap();
+    let 読んだ楽曲 = 保管庫.楽曲を読む(&crate::common::名乗りを作る("試験の楽曲")).unwrap().unwrap();
     assert_eq!(読んだ楽曲.形式版, editor_server::楽曲の現在の形式版);
     assert_eq!(読んだ楽曲, crate::common::楽曲の例());
 }
@@ -29,7 +31,7 @@ fn 形式版1の正本はパターンへ既定の小節数を補って読める(
     std::fs::create_dir_all(&置き場).unwrap();
     std::fs::write(置き場.join("試験の楽曲.json"), serde_json::to_string_pretty(&形式版1のjson).unwrap()).unwrap();
 
-    let 読んだ楽曲 = 保管庫.楽曲を読む(&crate::common::名乗り("試験の楽曲")).unwrap().unwrap();
+    let 読んだ楽曲 = 保管庫.楽曲を読む(&crate::common::名乗りを作る("試験の楽曲")).unwrap().unwrap();
     assert_eq!(読んだ楽曲.形式版, editor_server::楽曲の現在の形式版);
     assert_eq!(読んだ楽曲.パターン一覧[0].小節数, editor_server::新しいパターンの既定の小節数);
     assert_eq!(読んだ楽曲, crate::common::楽曲の例());
@@ -39,7 +41,7 @@ fn 形式版1の正本はパターンへ既定の小節数を補って読める(
 fn 現在の形式版2の正本はそのまま読める() {
     let (_一時, 保管庫) = crate::common::保管庫を作る("music_format_version_2");
     保管庫.楽曲を検証して保存する(crate::common::楽曲の例()).unwrap();
-    let 読んだ楽曲 = 保管庫.楽曲を読む(&crate::common::名乗り("試験の楽曲")).unwrap().unwrap();
+    let 読んだ楽曲 = 保管庫.楽曲を読む(&crate::common::名乗りを作る("試験の楽曲")).unwrap().unwrap();
     assert_eq!(読んだ楽曲.形式版, 2);
     assert_eq!(読んだ楽曲, crate::common::楽曲の例());
 }
@@ -53,5 +55,5 @@ fn 現在より新しい形式版の正本は読みが拒む() {
     std::fs::create_dir_all(&置き場).unwrap();
     std::fs::write(置き場.join("試験の楽曲.json"), serde_json::to_string_pretty(&新しい版のjson).unwrap()).unwrap();
 
-    assert!(保管庫.楽曲を読む(&crate::common::名乗り("試験の楽曲")).is_err());
+    assert!(保管庫.楽曲を読む(&crate::common::名乗りを作る("試験の楽曲")).is_err());
 }
