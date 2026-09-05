@@ -1,56 +1,43 @@
-//! 検証: 検証の標準列と、検証の出力が載る木、その木に溜まったビルドの中間データの掃除。
-//! 標準列そのものはこのファイルが持ち、出力の木と掃除の入口は子モジュールが持つ。
-//! 参照: CLAUDE.md「機械的強制」「ツールとドキュメントの配置」
+//! 検証の標準列。参照: CLAUDE.md「機械的強制」
+//!
+//! 各段の標準出力と標準エラーは、端末とログのファイルの両方へ同じ流れが行く。ログを書くのは道具自身であり、
+//! 呼び出し側のシェルの転送ではない。読む側(実装員と親)がエージェントの要約でなくログの実物を読むためである。
+//! 参照: issue #82
 
 mod clean_build_cache;
+mod log_error;
+mod log_file_name;
+mod log_place;
 mod output;
+mod sequence;
+mod tee;
+mod utc_moment;
 
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
 
 pub(crate) use clean_build_cache::{ビルドの中間データを掃除する, 消さずに一覧だけ出す旗};
 pub(crate) use output::{検証の出力のファイル名, 検証の出力の置き場名, 検証の出力ルート};
 
-use crate::conform;
+use log_error::検証列の破れ;
+use log_file_name::検証のログのファイル名;
+use log_place::検証のログの置き場;
+use sequence::検証列の実行係;
 
 pub fn 検証列を実行する() -> ExitCode {
-    println!("[xtask] conform を実行");
-    if conform::規約を検査する() != ExitCode::SUCCESS {
-        eprintln!("[xtask] conform が失敗した。ここで中断する");
-        return ExitCode::FAILURE;
-    }
-
-    // 実行時間の短い検査ほど前に置き、落ちる場合は早く落とす。fmtはコンパイルを伴わないためcheckより前に置く。
-    let 手順一覧: [(&str, &[&str]); 4] = [
-        ("fmt", &["fmt", "--all", "--check"]),
-        ("check", &["check", "--workspace"]),
-        (
-            "clippy",
-            &[
-                "clippy",
-                "--all-targets",
-                "--features",
-                "editor_server/typescript",
-                "--",
-                "-D",
-                "warnings",
-            ],
-        ),
-        ("test", &["test", "--workspace", "--features", "editor_server/typescript"]),
-    ];
-    for (名前, cargo引数) in 手順一覧 {
-        println!("[xtask] cargo {名前} を実行");
-        match Command::new("cargo").args(cargo引数).status() {
-            Ok(終了状態) if 終了状態.success() => {}
-            Ok(_) => {
-                eprintln!("[xtask] {名前} が失敗した。ここで中断する");
-                return ExitCode::FAILURE;
-            }
-            Err(起動誤り) => {
-                eprintln!("[xtask] cargo の起動に失敗: {起動誤り}");
-                return ExitCode::FAILURE;
-            }
+    match ログを開いて検証列を走らせる() {
+        Ok(終了コード) => 終了コード,
+        Err(破れ) => {
+            eprintln!("[xtask] 検証列を走らせられなかった: {破れ}");
+            ExitCode::FAILURE
         }
     }
-    println!("[xtask] 検証列すべて成功");
-    ExitCode::SUCCESS
+}
+
+/// ここが返す破れは、ログをまだ開けていない段階のものだけである。開いた後の破れは実行係が自分のログへ入れて
+/// 終了コードへ畳むため、この関数の外の`eprintln!`はログの外を通る唯一の経路であり続ける。
+fn ログを開いて検証列を走らせる() -> Result<ExitCode, 検証列の破れ> {
+    let 置き場 = 検証のログの置き場::いま使っている木から決める();
+    let ファイル名 = 検証のログのファイル名::ブランチと先端と時刻から組み立てる()?;
+    let ログのパス = 置き場.ログのファイルの絶対パスを用意する(&ファイル名)?;
+    Ok(検証列の実行係::ログを開いて作る(ログのパス)?.ログの場所を告げて全段を走らせる())
 }
