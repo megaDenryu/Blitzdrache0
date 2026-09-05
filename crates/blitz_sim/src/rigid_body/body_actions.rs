@@ -8,19 +8,9 @@ use super::action_accumulator::一刻みの作用の蓄積器;
 use super::action_point::作用点;
 use super::body::剛体;
 use super::body_error::剛体エラー;
-use super::body_kind::運動種別;
 use super::step_input::{一刻みの入力, 一度だけ適用する衝撃};
 
 impl 剛体 {
-    fn 蓄積器を借りる(&mut self) -> Result<&mut 一刻みの作用の蓄積器, 剛体エラー> {
-        let 識別子 = self.識別子();
-        match self.運動種別を書き換える() {
-            運動種別::動的 { 作用の蓄積器, .. } => Ok(作用の蓄積器),
-            運動種別::運動学的 { .. } => Err(剛体エラー::運動学的な剛体へ作用を加えようとした { 識別子 }),
-            運動種別::静的 => Err(剛体エラー::静的な剛体へ作用を加えようとした { 識別子 }),
-        }
-    }
-
     pub fn 重心へ力を加える(&mut self, 力: 力<ワールド>) -> Result<(), 剛体エラー> {
         self.蓄積器を借りる().map(|蓄積器| 蓄積器.重心へ力を加える(力))
     }

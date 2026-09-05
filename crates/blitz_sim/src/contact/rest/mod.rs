@@ -1,0 +1,13 @@
+//! 接触島の休止と再開(判断18)。
+//! 物理の結果を変えない最適化として、静穏な細分が続いた島を休止させ、6つの条件で再開する。
+//! 休止の判定と再開は接触島のメソッドであり、剛体1つの側の述語と操作は`body_rest`が持つ。
+//! 参照: `_doc/設計/剛体の状態と接触.md`「判断18: 休止は島の単位で行い、物理の結果を変えない最適化として再開の条件を型で持つ」
+
+mod body_rest;
+mod island_rest;
+mod new_contact_wake;
+mod quiet_check;
+#[cfg(test)]
+mod rest_tests;
+
+pub(in crate::contact) use body_rest::剛体を起こす;

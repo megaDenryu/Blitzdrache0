@@ -11,7 +11,11 @@ mod body_actions;
 mod body_error;
 mod body_id;
 mod body_kind;
+mod body_transition;
 mod execution_state;
+mod kinematic_velocity;
+#[cfg(test)]
+mod kinematic_velocity_tests;
 mod ledger;
 mod ledger_actions;
 #[cfg(test)]
@@ -27,8 +31,13 @@ mod orientation;
 mod orientation_tests;
 mod placement;
 mod principal_inertia;
-mod quiet_substep_count;
+mod quiet_substep_run;
 mod step_input;
+mod transition_error;
+mod transition_reservation;
+#[cfg(test)]
+mod transition_tests;
+mod wake_reason;
 
 pub use action_accumulator::一刻みの作用の蓄積器;
 pub use action_point::作用点;
@@ -36,7 +45,9 @@ pub use body::剛体;
 pub use body_error::剛体エラー;
 pub use body_id::剛体の識別子;
 pub use body_kind::運動種別;
+pub use body_transition::剛体の状態の変更;
 pub use execution_state::実行状態;
+pub use kinematic_velocity::運動学的回転量の上限;
 pub use ledger::剛体の台帳;
 pub use mass_properties::質量特性;
 pub use mass_properties_error::質量特性エラー;
@@ -45,5 +56,8 @@ pub(crate) use orientation::単位長の許容差;
 pub use orientation::{姿勢, 姿勢エラー};
 pub use placement::配置;
 pub use principal_inertia::{主慣性, 主慣性と主軸};
-pub use quiet_substep_count::静穏の連続細分数;
+pub use quiet_substep_run::静穏が続いた細分の本数;
 pub use step_input::{一刻みの入力, 一度だけ適用する衝撃};
+pub use transition_error::運動種別の遷移エラー;
+pub use transition_reservation::運動種別の遷移の予約;
+pub use wake_reason::休止から起きた理由;

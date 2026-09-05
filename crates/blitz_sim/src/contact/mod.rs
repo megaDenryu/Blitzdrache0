@@ -2,10 +2,10 @@
 //! 非貫通の片側XPBD位置拘束(判断12の`non_penetration/`)・静止摩擦の位置拘束(判断13の`static_friction/`)・
 //! 速度段階の反発と動摩擦(判断14の`velocity_stage/`)・接触の履歴(判断16の`history/`)を持つ。
 //! `blitz_collision` の接触点集合を読むのはこのモジュールだけである。
-//! 接触島(判断17)・休止(判断18)・細分の工程(判断19)は後続の作業で足す。細分の工程が組み上がるまでの間、
+//! 公開面は`blitz_app`のコンポジションルートが組み立てと登録に使う型だけであり、拘束・履歴・錨・行の型は`contact`の中に留める(判断23)。
+//! 接触島(判断17の`island/`)・休止(判断18の`rest/`)・粗い選別(判断11の`broad_phase/`)・細分の工程(判断19の`pipeline/`)もここが持つ。
 //! 場面を進めて判断13と判断14の定量の基準を測るのは`scene/`の試験専用の材料である。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断11: 接触拘束は接触点集合から細分ごとに生成する一時のバッチであり、参加者の組ごとに別のバッチを持ち、座標系の写しは剛体の側が行う」
-
 mod batch_builder;
 mod batch_builder_push;
 #[cfg(test)]
@@ -18,6 +18,7 @@ mod body_body_contact;
 mod body_body_contact_parameters;
 mod body_static_contact;
 mod body_static_contact_parameters;
+mod broad_phase;
 mod contact_batches;
 mod contact_projection_row;
 mod contact_property;
@@ -25,11 +26,14 @@ mod contact_property_limits;
 #[cfg(test)]
 mod contact_test_fixtures;
 mod contact_thresholds;
+#[cfg(test)]
+mod contact_thresholds_tests;
 mod contacting_body;
 mod feature_identity;
 mod friction_coefficient;
 mod generation_error;
 mod history;
+mod island;
 mod manifold_range;
 mod material_id;
 mod material_pair;
@@ -43,9 +47,11 @@ mod mixing_rule_tests;
 mod non_penetration;
 mod normal_tangential_system;
 mod penetration_depth;
+mod pipeline;
 mod property_error;
 #[cfg(test)]
 mod property_test_fixtures;
+mod rest;
 mod restitution_coefficient;
 #[cfg(test)]
 mod scene;
@@ -63,44 +69,33 @@ mod surface_property;
 mod symmetric_system;
 mod velocity_stage;
 
-pub use batch_builder::接触拘束のバッチの組み立て;
 pub use body_body_contact::剛体と剛体の接触拘束;
-pub use body_body_contact_parameters::剛体と剛体の接触拘束の引数;
 pub use body_static_contact::剛体と静的世界の接触拘束;
-pub use body_static_contact_parameters::剛体と静的世界の接触拘束の引数;
+pub use broad_phase::{剛体どうしの候補対, 剛体どうしの候補対を絞り込む, 始点と終点を包む大域の箱を求める};
 pub use contact_batches::接触拘束の二つのバッチ;
-pub use contact_projection_row::接触の射影に参加する点;
 pub use contact_property::接触物性;
 pub use contact_thresholds::{
-    休止と判定する並進速度の閾値, 休止と判定する角速度の閾値, 休止と判定する連続細分数, 反発を抑制する法線相対速度の閾値
+    休止と判定する並進速度の閾値, 休止と判定する接触余白, 休止と判定する細分の本数エラー, 休止と判定する角速度の閾値, 休止と判定する連続静穏の時間,
+    休止と判定する連続静穏の細分の本数, 反発を抑制する法線相対速度の閾値,
 };
-pub use contacting_body::接触に参加する剛体;
-pub use feature_identity::接触の特徴の識別;
 pub use friction_coefficient::摩擦係数;
 pub use generation_error::接触拘束の生成エラー;
 pub use history::{
-    剛体と静的世界の接触の履歴, 剛体と静的世界の接触の履歴の項目, 剛体と静的世界の接触の継続の記録, 剛体と静的世界の接触の鍵, 剛体どうしの接触の履歴,
-    剛体どうしの接触の履歴の項目, 剛体どうしの接触の継続の記録, 剛体どうしの接触の鍵, 接触の併走の結果, 接触の対応付け, 接触の履歴, 接触の履歴の項目,
-    接触の履歴エラー, 接触の継続の記録,
+    剛体と静的世界の接触の履歴, 剛体どうしの接触の履歴, 接触の併走の結果, 接触の対応付け, 接触の履歴, 接触の履歴の項目
 };
-pub use manifold_range::接触点集合の占める範囲;
+pub use island::{島の拘束の添字区間, 接触島, 接触島の一覧を構築する, 直前の細分の接触島の一覧};
 pub use material_id::材質の識別子;
 pub use material_pair::材質の対;
-pub use minimum_thickness::形の最小の厚み;
 pub use mixing_rule::混合則;
 pub use mixing_rule_builder::混合則の組み立て;
-pub use non_penetration::{
-    接触点集合の法線の同時解, 非貫通の一刻みの係数, 非貫通の一回の射影の結果, 非貫通の一細分の解の状態, 非貫通の接触点集合の一行, 非貫通の解き方,
+pub use pipeline::{
+    剛体の接触の一刻みの工程, 接触の品質と時間方針, 接触の工程エラー, 接触の空間と世界, 接触の解法ソルバー, 接触履歴の保持
 };
-pub use penetration_depth::貫通量;
 pub use property_error::接触物性エラー;
 pub use restitution_coefficient::反発係数;
 pub use solver_quality::接触を解く品質の設定;
 pub use solver_quality_error::接触を解く品質の設定エラー;
-pub use static_friction::{
-    剛体と静的世界の静止摩擦の錨, 剛体どうしの静止摩擦の錨, 接線のラグランジュ乗数, 接触点の仮の接線の乗数, 接触点集合の仮の乗数の集まり,
-    接触点集合の静止摩擦の仮の集計, 静止摩擦の一回の仮の射影の結果, 静止摩擦の一細分の解の状態, 静止摩擦の連立へ点を入れた結果, 静止摩擦の錨,
-};
+pub use static_friction::接触点集合の静止摩擦の仮の集計;
 pub use static_world_partner::静的世界の接触相手;
 pub use static_world_partner_id::静的世界の接触相手の識別子;
 pub use surface_property::表面物性;

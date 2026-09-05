@@ -19,4 +19,17 @@ impl 剛体の識別子 {
     pub(crate) fn 配列添字(&self) -> usize {
         usize::try_from(self.0).unwrap_or_else(|_| panic!("剛体の識別子がusizeに収まらない: {}", self.0))
     }
+
+    /// 剛体の識別子を空間索引の識別子へ写す(判断23)。
+    pub fn 空間索引の識別子へ写す(self) -> blitz_collision::dynamic_index::動く形の識別子 {
+        blitz_collision::dynamic_index::動く形の識別子::番号から生成する(u64::from(self.0))
+    }
+
+    /// 空間索引の識別子を剛体の識別子へ写す(判断23)。
+    pub fn 空間索引の識別子から写す(
+        索引: blitz_collision::dynamic_index::動く形の識別子,
+    ) -> Result<Self, super::body_error::剛体エラー> {
+        let 番号 = u32::try_from(索引.番号()).map_err(|_| super::body_error::剛体エラー::剛体の数が過大)?;
+        Ok(Self(番号))
+    }
 }

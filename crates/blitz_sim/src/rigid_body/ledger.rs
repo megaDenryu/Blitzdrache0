@@ -8,17 +8,21 @@ use super::body_error::剛体エラー;
 use super::body_id::剛体の識別子;
 use super::body_kind::運動種別;
 use super::mass_properties::質量特性;
-use super::motion_state::運動状態;
 use super::placement::配置;
+use super::transition_reservation::運動種別の遷移の予約;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct 剛体の台帳 {
     剛体一覧: Vec<剛体>,
+    遷移の予約: 運動種別の遷移の予約,
 }
 
 impl 剛体の台帳 {
     pub fn 空() -> Self {
-        Self { 剛体一覧: Vec::new() }
+        Self {
+            剛体一覧: Vec::new(),
+            遷移の予約: 運動種別の遷移の予約::空(),
+        }
     }
 
     /// 剛体を登録し、発行した識別子を返す。生成された剛体は起きた状態で始める。
@@ -42,13 +46,6 @@ impl 剛体の台帳 {
             .ok_or(剛体エラー::剛体が登録されていない { 識別子 })
     }
 
-    // 物理の細分が確定した配置と再構成した速度を動的な剛体へ書き戻す。
-    pub(crate) fn 配置と速度を書き換える(
-        &mut self, 識別子: 剛体の識別子, 配置: 配置, 速度: 運動状態
-    ) -> Result<(), 剛体エラー> {
-        self.書き換える(識別子)?.配置と速度を書き換える(配置, 速度)
-    }
-
     pub fn 剛体一覧(&self) -> &[剛体] {
         &self.剛体一覧
     }
@@ -56,5 +53,14 @@ impl 剛体の台帳 {
     /// 登録の順に並んだ識別子。物理の細分が剛体を回す順であり、島の順序(判断17)もこの昇順を基準にする。
     pub fn 識別子一覧(&self) -> impl Iterator<Item = 剛体の識別子> + '_ {
         self.剛体一覧.iter().map(剛体::識別子)
+    }
+
+    /// 構造変更の待ち行列として運動種別の遷移予約を受け付ける(判断7)。
+    pub fn 遷移の予約(&mut self) -> &mut 運動種別の遷移の予約 {
+        &mut self.遷移の予約
+    }
+
+    pub fn 剛体一覧_mut(&mut self) -> &mut [剛体] {
+        &mut self.剛体一覧
     }
 }
