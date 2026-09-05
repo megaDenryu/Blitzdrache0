@@ -22,11 +22,13 @@
 mod active_set;
 mod complementarity;
 mod cone_judgement;
-mod double_reference_tests;
+mod constraint_violation_tests;
+mod double_reference_fixture;
 mod gradient;
 mod inverse_inertia;
 mod jacobi;
 mod manifold_system;
+mod multiplier_tests;
 mod normal_row;
 mod orientation;
 mod participant;
