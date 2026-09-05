@@ -51,10 +51,11 @@ mod tolerance_tests;
 mod translation_tests;
 
 #[cfg(test)]
-pub(in crate::contact) use double_reference::{倍精度の円錐の判定, 倍精度の参照の結末, 倍精度の参照の解};
+pub(in crate::contact) use double_reference::{倍精度の円錐の判定, 倍精度の参照の結末};
 pub use system::接触点集合の法線と接線の連立;
 pub use tangential_row::錨の接線変位を零へ戻す一行;
-pub use tolerance_scale::解けたと見なす許容差の倍率;
+#[cfg(test)]
+pub(in crate::contact) use tolerance_scale::解けたと見なす許容差の倍率;
 
 // 解と結末を外へ出す口。本番の細分の工程(判断19)が接触点集合ごとの粘着の候補を解くために読む。
 pub use solution::接触点集合の法線と接線の同時解;
