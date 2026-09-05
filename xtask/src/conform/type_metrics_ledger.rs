@@ -9,6 +9,8 @@
 
 mod amount;
 mod declaration_gap;
+#[cfg(test)]
+mod duplicate_definition_tests;
 mod ledger;
 #[cfg(test)]
 mod ledger_tests;
@@ -54,7 +56,11 @@ fn 照合する(計測: &走査範囲の型計測) -> Vec<違反> {
 fn 計測1件を照合する(台帳: &台帳, 計測: &型計測) -> Vec<違反> {
     let 分量 = 型の分量::計測から生成する(計測);
     let パス = 計測.所在.定義ファイルのパス();
-    let Some(上限) = 台帳.上限を参照する(&計測.所在) else {
+    let 台帳の上限 = 台帳.上限を参照する(&計測.所在);
+    if let Some(説明) = 分量.宣言が1つに決まらない違反の説明(&計測.所在, 台帳の上限.is_some()) {
+        return vec![違反::ファイル単位(パス, 説明)];
+    }
+    let Some(上限) = 台帳の上限 else {
         if !分量.閾値を超えているか() {
             return Vec::new();
         }

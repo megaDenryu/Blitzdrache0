@@ -5,17 +5,17 @@ use std::collections::BTreeSet;
 use std::path::PathBuf;
 
 use super::attribution_input::引き当ての材料;
-use super::declaration_amount::宣言の分量;
 use super::definition_index::定義の索引;
 use super::file_observation::ファイルの観測;
 use super::impl_attribution::定義の候補が複数ある実装ブロック;
+use super::location_declarations::所在に現れた宣言一覧;
 use super::measurement_table::所在ごとの計測表;
 use super::observation::観測;
 use super::type_location::型の所在;
 
 pub struct 型計測 {
     pub 所在: 型の所在,
-    pub 宣言: Option<宣言の分量>,
+    pub 宣言: 所在に現れた宣言一覧,
     pub 実装ファイル一覧: BTreeSet<PathBuf>,
     pub メソッド総数: usize,
 }
@@ -24,15 +24,16 @@ impl 型計測 {
     pub fn 所在だけで始める(所在: 型の所在) -> Self {
         Self {
             所在,
-            宣言: None,
+            宣言: 所在に現れた宣言一覧::空で始める(),
             実装ファイル一覧: BTreeSet::new(),
             メソッド総数: 0,
         }
     }
 
     /// 宣言が持つ数。構造体ならフィールド数、列挙なら枝の数であり、宣言が走査に現れない型は0とする。
+    /// 同じ所在に定義が複数あるときは最も大きい件数を採り、大きい定義を小さい定義で覆わない。
     pub fn 宣言の件数(&self) -> usize {
-        self.宣言.map_or(0, |分量| 分量.件数())
+        self.宣言.最も大きい件数()
     }
 
     /// 降順に並べるための比較鍵。implの分散ファイル数を最優先し、次に宣言の件数、最後にメソッド総数で比べる。

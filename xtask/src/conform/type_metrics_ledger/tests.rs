@@ -4,7 +4,7 @@
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
-use crate::type_metrics::{型の所在, 宣言の分量};
+use crate::type_metrics::{型の所在, 宣言の分量, 所在に現れた宣言一覧};
 
 use super::amount::{
     フィールド数の閾値, メソッド総数の閾値, 列挙の枝数の閾値, 型の分量, 実装ファイル数の閾値
@@ -20,7 +20,7 @@ pub(super) fn 計測(
 ) -> 型計測 {
     型計測 {
         所在: 型の所在::走査したファイルから生成する(Path::new(定義ファイル), 型名),
-        宣言: Some(分量),
+        宣言: 所在に現れた宣言一覧::ただ1つの定義から生成する(分量),
         実装ファイル一覧: (0..実装ファイル数)
             .map(|番号| PathBuf::from(format!("{番号}")))
             .collect::<BTreeSet<PathBuf>>(),

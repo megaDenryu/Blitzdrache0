@@ -15,7 +15,8 @@
 //! 型は定義ファイルと型名の組で識別する。同じ名前の定義が複数あるときのimplブロックの引き当ては、
 //! 綴られた経路と`use`宣言から定義を確定できたときだけ行い、確定できなければ違反として報告する(`definition_index`)。
 //! 定義が走査に現れない型(型別名・外部の型・マクロが作る型)のimplは、そのimplのファイルごとに分かれて数えられる。
-//! 同じファイルの中で`#[cfg]`により切り替わる同名の定義は、後から現れた側の分量が残る。
+//! 同じファイルの中で`#[cfg]`により切り替わる同名の定義は、どちらの構成で数えるかを走査が決められないため、
+//! どちらかへ寄せずに両方を保持する。隠れると困る場面での違反の報告は`conform/type_metrics_ledger`が行う。
 
 mod attribution_input;
 mod body_kind;
@@ -34,6 +35,7 @@ mod import_index;
 mod import_line;
 mod import_tree;
 mod keyword;
+mod location_declarations;
 mod measurement_table;
 mod member_line;
 mod metrics;
@@ -57,6 +59,7 @@ pub use error::型計測の破れ;
 pub use file_observation::ファイルの観測;
 pub use impl_attribution::定義の候補が複数ある実装ブロック;
 pub use keyword::修飾子を取り除く;
+pub use location_declarations::所在に現れた宣言一覧;
 pub use metrics::{型計測, 走査範囲の型計測, 集計する};
 pub use observation::観測;
 pub use rust_module::モジュールの位置;
