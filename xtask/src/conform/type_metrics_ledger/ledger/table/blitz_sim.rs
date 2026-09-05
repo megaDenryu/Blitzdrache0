@@ -10,7 +10,7 @@ const モジュールの根: &str = "crates/blitz_sim/src";
 
 const 行一覧: [台帳の行; 7] = [
     台帳の行::構造体("contact/body_body_contact/mod.rs", "剛体と剛体の接触拘束", 5, 6, 32),
-    台帳の行::構造体("contact/body_static_contact/mod.rs", "剛体と静的世界の接触拘束", 5, 6, 33),
+    台帳の行::構造体("contact/body_static_contact/mod.rs", "剛体と静的世界の接触拘束", 5, 6, 34),
     台帳の行::構造体("contact/normal_tangential_system/system.rs", "接触点集合の法線と接線の連立", 6, 4, 29),
     台帳の行::構造体("contact/pipeline/pipeline_solver.rs", "接触の解法ソルバー", 6, 3, 13),
     台帳の行::構造体("contact/scene/scene_settings.rs", "場面の設定", 0, 13, 0),
