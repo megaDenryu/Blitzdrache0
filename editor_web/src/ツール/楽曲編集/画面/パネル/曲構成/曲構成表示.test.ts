@@ -1,11 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import type { パターン, 曲の節 } from '../../../../../生成/編集資源契約.ts'
-import {
-    曲構成の概要表示文を組み立てる,
-    曲の節を上へ移動できるか,
-    曲の節を下へ移動できるか,
-} from './曲構成表示計算.ts'
+import { 曲構成の概要表示文を組み立てる } from './曲構成表示計算.ts'
 
 describe('曲構成表示計算のテスト', () => {
     const パターン一覧: パターン[] = [
@@ -42,14 +38,5 @@ describe('曲構成表示計算のテスト', () => {
             文言,
             '全 6 小節 (96 ステップ) / Aメロ × 2 → サビ × 1',
         )
-    })
-
-    it('節の上下移動の可否判定が正しいこと', () => {
-        assert.equal(曲の節を上へ移動できるか(0), false)
-        assert.equal(曲の節を上へ移動できるか(1), true)
-
-        assert.equal(曲の節を下へ移動できるか(0, 3), true)
-        assert.equal(曲の節を下へ移動できるか(1, 3), true)
-        assert.equal(曲の節を下へ移動できるか(2, 3), false)
     })
 })

@@ -24,13 +24,3 @@ export function 曲構成の概要表示文を組み立てる(
 
     return `全 ${全小節数} 小節 (${全ステップ数} ステップ) / ${節の並び}`
 }
-
-// 節を上（手前）へ移動できるかを判定する。
-export function 曲の節を上へ移動できるか(位置: number): boolean {
-    return 位置 > 0
-}
-
-// 節を下（後ろ）へ移動できるかを判定する。
-export function 曲の節を下へ移動できるか(位置: number, 全節数: number): boolean {
-    return 位置 >= 0 && 位置 < 全節数 - 1
-}
