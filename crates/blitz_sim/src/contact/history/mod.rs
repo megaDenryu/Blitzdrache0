@@ -12,6 +12,8 @@ mod correspondence_tests;
 mod entry;
 mod error;
 mod kinds;
+#[cfg(test)]
+mod residual_discard_tests;
 
 pub use body_body_key::剛体どうしの接触の鍵;
 pub use body_static_key::剛体と静的世界の接触の鍵;

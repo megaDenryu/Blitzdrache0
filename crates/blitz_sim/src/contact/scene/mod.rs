@@ -13,6 +13,8 @@ mod normal_multiplier_sum_tests;
 mod numeric_contract_record;
 mod released_normal_reaction_tests;
 mod residual_separation;
+#[cfg(test)]
+mod residual_separation_tests;
 mod scene_geometry;
 mod scene_settings;
 mod sliding_deceleration_tests;

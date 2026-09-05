@@ -42,6 +42,8 @@ mod twist_result;
 #[cfg(test)]
 mod twist_test_fixtures;
 mod velocity_only_correction;
+#[cfg(test)]
+mod velocity_only_correction_tests;
 
 pub use body_connection_constraint::{接続拘束の一刻みの係数, 接続拘束の引数};
 pub use body_connection_result::接続拘束の一回の射影の結果;

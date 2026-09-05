@@ -15,6 +15,7 @@ use super::super::generation_margin::{
 };
 use super::super::material_id::材質の識別子;
 use super::super::minimum_thickness::形の最小の厚み;
+use super::super::static_friction::接線のラグランジュ乗数;
 use super::scene_geometry::{場面の材質, 直方体を組む};
 use super::scene_settings::細分の観測;
 use super::substep_harness::一つの箱と静的な直方体の場面;
@@ -55,6 +56,13 @@ impl 一つの箱と静的な直方体の場面 {
                 .iter()
                 .fold(ラグランジュ乗数::零(), |合計, 拘束| 合計 + 拘束.法線のラグランジュ乗数()),
             最大の食い込み: self.反復を終えた最大の食い込み(&バッチ, &予測),
+            接線の乗数の合力の大きさ: バッチ
+                .剛体と静的世界の接触拘束()
+                .iter()
+                .fold(接線のラグランジュ乗数::零(), |合計, 拘束| {
+                    合計 + 拘束.静止摩擦の解の状態().接線のラグランジュ乗数()
+                })
+                .大きさ(),
         };
         let 終わりの項目: Vec<_> = バッチ
             .剛体と静的世界の接触拘束()
