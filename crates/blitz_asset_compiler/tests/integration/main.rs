@@ -6,6 +6,12 @@
 //!
 //! 高さ場の往復の共通の段取りは`height_field_roundtrip`が、複数材質の試験材料の組み立ては
 //! `multi_material_fixture`が持つ。
+//!
+//! 束ねる前は試験のファイル1つ1つが実行ファイルの根であり、各ファイルの先頭に書いた`#![allow(non_snake_case)]`が
+//! その実行ファイル全体に効いていた。束ねた後はこのファイルが根になるため、同じ緩めをここへ置く。
+//! 日本語の識別子に大文字のASCIIが混じるとRustの命名規則の警告が出るためである。
+
+#![allow(non_snake_case)]
 
 mod chunk_world_roundtrip;
 mod editor_world_directory_contract;
