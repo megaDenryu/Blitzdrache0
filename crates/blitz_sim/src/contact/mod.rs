@@ -26,6 +26,8 @@ mod contact_property_limits;
 #[cfg(test)]
 mod contact_test_fixtures;
 mod contact_thresholds;
+#[cfg(test)]
+mod contact_thresholds_tests;
 mod contacting_body;
 mod feature_identity;
 mod friction_coefficient;
