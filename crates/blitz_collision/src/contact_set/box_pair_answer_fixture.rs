@@ -10,9 +10,8 @@
 #![cfg(test)]
 #![allow(clippy::unwrap_used)]
 
-use super::cross_axis_preference::外積の軸へ切り替える優位幅メートル;
 use crate::contact_set::box_pair_feature::直方体どうしの接触の特徴の対;
-use crate::contact_set::box_pair_query::{二つの直方体の重なりの接触点集合, 直方体どうしの接触点集合の問い合わせ};
+use crate::contact_set::box_pair_query::二つの直方体の重なりの接触点集合;
 use crate::contact_set::generation_margin::接触生成の余白メートル;
 use crate::contact_set::manifold::接触点集合;
 use crate::contact_set::solver_candidate_point::接触解法の候補点;

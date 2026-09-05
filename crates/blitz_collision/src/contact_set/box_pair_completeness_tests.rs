@@ -12,9 +12,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use super::cross_axis_preference::外積の軸へ切り替える優位幅メートル;
-use super::generation_margin::接触生成の余白メートル;
-use crate::contact_set::box_pair_query::{二つの直方体の重なりの接触点集合, 直方体どうしの接触点集合の問い合わせ};
+use crate::contact_set::box_pair_query::二つの直方体の重なりの接触点集合;
 use crate::shape::任意姿勢の直方体;
 
 use super::query_fixture::{
