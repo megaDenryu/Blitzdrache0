@@ -1,8 +1,5 @@
 import { div, DivC, LV2HtmlComponentBase } from 'sengen-ui'
-import {
-    パターンのステップ数,
-    type 和音,
-} from '../../../生成/編集資源契約.ts'
+import { type 和音 } from '../../../生成/編集資源契約.ts'
 import {
     進行の帯の区切り一覧を計算する,
     和音の表示名を組み立てる,
@@ -28,7 +25,7 @@ export class 進行の帯部品 extends LV2HtmlComponentBase {
         ])
     }
 
-    public 表示を更新する(和音一覧: readonly 和音[]): void {
+    public 表示を更新する(和音一覧: readonly 和音[], パターンのステップ数: number): void {
         this._和音列コンテナ.clearChildren()
         const 区切り一覧 = 進行の帯の区切り一覧を計算する(和音一覧, パターンのステップ数)
 
