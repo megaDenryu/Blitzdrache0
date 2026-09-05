@@ -10,6 +10,7 @@
 #![allow(clippy::unwrap_used)]
 
 use super::super::friction_coefficient::摩擦係数;
+use super::residual_separation::場面の残差の分離;
 use super::slope_fixture::坂の場面を組む;
 use super::slope_geometry::坂の場面の条件;
 use super::static_friction_method::場面の静止摩擦の解き方;
@@ -29,6 +30,7 @@ fn 初めの食い込みが残る一細分目でも粘着の候補が滑走へ�
         動摩擦係数: 摩擦係数::生成する(0.2).unwrap(),
         下り向きの初速: 0.0,
         静止摩擦の解き方: 場面の静止摩擦の解き方::接触点集合の接線を同時に解く,
+        残差の分離: 場面の残差の分離::残差の変化を速度から除く,
     });
     場面.一細分進める();
     let 観測 = 場面.直前の細分の観測;

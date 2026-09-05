@@ -9,6 +9,7 @@ use blitz_math::{キログラム, メートル, ワールド, 速度};
 use super::super::normal_tangential_system::解けたと見なす許容差の倍率;
 use super::super::solver_quality::接触を解く品質の設定;
 use super::super::surface_property::表面物性;
+use super::residual_separation::場面の残差の分離;
 use super::static_friction_method::場面の静止摩擦の解き方;
 use crate::constraint_graph::一様な加速度;
 use crate::rigid_body::配置;
@@ -27,6 +28,7 @@ pub(super) struct 場面の設定 {
     pub 細分の刻み幅: 刻み幅,
     pub 解く品質: 接触を解く品質の設定,
     pub 静止摩擦の解き方: 場面の静止摩擦の解き方,
+    pub 残差の分離: 場面の残差の分離,
     pub 解けたと見なす許容差の倍率: 解けたと見なす許容差の倍率,
 }
 

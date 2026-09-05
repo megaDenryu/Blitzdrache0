@@ -6,7 +6,7 @@ use blitz_math::{クォータニオン, ローカル, 位置};
 use super::pipeline_error::接触の工程エラー;
 use crate::contact::broad_phase::始点と終点を包む大域の箱を求める;
 use crate::rigid_body::{剛体の識別子, 運動状態, 配置};
-use crate::rigid_xpbd::{予測の状態, 前の状態};
+use crate::rigid_xpbd::{予測の状態, 前の状態, 姿勢自由度の補正};
 
 /// 細分の中で予測した動的剛体の状態。
 pub(super) struct 細分の動的剛体 {
@@ -14,6 +14,7 @@ pub(super) struct 細分の動的剛体 {
     pub(super) 前の状態: 前の状態,
     pub(super) 予測: 予測の状態,
     pub(super) 予測の運動状態: 運動状態,
+    pub(super) 残差の変化を打ち消す仮の補正: 姿勢自由度の補正, // 判断24。速度の再構成だけが読み、配置として確定しない
 }
 
 pub(super) fn 直方体を組む(

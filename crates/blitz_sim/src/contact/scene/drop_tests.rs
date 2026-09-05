@@ -13,6 +13,7 @@ use super::super::normal_tangential_system::解けたと見なす許容差の倍
 use super::super::restitution_coefficient::反発係数;
 use super::super::solver_quality::接触を解く品質の設定;
 use super::super::surface_property::表面物性;
+use super::residual_separation::場面の残差の分離;
 use super::scene_geometry::世界の位置;
 use super::scene_settings::場面の設定;
 use super::static_friction_method::場面の静止摩擦の解き方;
@@ -49,6 +50,7 @@ fn 落下の場面を組む(初めの隙間: f32) -> 一つの箱と静的な直
         細分の刻み幅: 刻み幅::生成する(秒::生成する(1.0 / 480.0)).unwrap(),
         解く品質: 接触を解く品質の設定::生成する(位置の反復回数, 速度段階の巡回数).unwrap(),
         静止摩擦の解き方: 場面の静止摩擦の解き方::接触点集合の接線を同時に解く,
+        残差の分離: 場面の残差の分離::残差の変化を速度から除く,
         解けたと見なす許容差の倍率: 解けたと見なす許容差の倍率::既定で生成する(),
     })
 }

@@ -13,6 +13,7 @@ use super::super::contact_test_fixtures::試験の刻み幅;
 use super::super::history::接触の継続の記録;
 use super::super::non_penetration::fixture::{剛体どうしの基本の引数, 高さの参加者};
 use super::super::non_penetration::非貫通の一回の射影の結果;
+use super::super::residual_carryover::持ち越す接線の残差;
 use super::super::static_friction::{静止摩擦の一回の仮の射影の結果, 静止摩擦の錨};
 use super::super::velocity_stage::接触点の法線の相対速度を求める;
 use super::剛体と剛体の接触拘束;
@@ -63,7 +64,7 @@ fn 押し戻した接触点の静止摩擦は法線反力が無いを返さな�
 fn 継続の記録を引き継ぐと細分の終わりの項目にその錨が載る() {
     let mut 拘束 = 拘束を作る(剛体どうしの基本の引数());
     let 引き継ぐ錨 = 静止摩擦の錨::生成する(局所点(0.3), 局所点(-0.4));
-    let 記録 = 接触の継続の記録::生成する(引き継ぐ錨, 拘束.引数().接触法線);
+    let 記録 = 接触の継続の記録::生成する(引き継ぐ錨, 拘束.引数().接触法線, 持ち越す接線の残差::無し);
     拘束.継続の記録を引き継ぐ(記録);
     assert_eq!(拘束.細分の終わりの履歴の項目().記録().錨(), 引き継ぐ錨);
     assert_eq!(拘束.細分の終わりの履歴の項目().鍵(), 拘束.履歴の鍵());

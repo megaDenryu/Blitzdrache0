@@ -8,6 +8,7 @@
 #![allow(clippy::unwrap_used)]
 
 use super::super::friction_coefficient::摩擦係数;
+use super::residual_separation::場面の残差の分離;
 use super::slope_fixture::坂の場面を組む;
 use super::slope_geometry::{坂の場面の条件, 滑走の加速度};
 use super::static_friction_method::場面の静止摩擦の解き方;
@@ -29,6 +30,7 @@ fn 測った減速度の相対誤差(動摩擦係数の値: f32) -> f32 {
         動摩擦係数: 摩擦係数::生成する(動摩擦係数の値).unwrap(),
         下り向きの初速,
         静止摩擦の解き方: 場面の静止摩擦の解き方::接触点集合の接線を同時に解く,
+        残差の分離: 場面の残差の分離::残差の変化を速度から除く,
     };
     let mut 場面 = 坂の場面を組む(&条件);
     場面.細分を進める(測り始めるまでの細分数);
