@@ -8,9 +8,9 @@
 use blitz_math::{ワールド, 変位};
 
 use super::super::contact_projection_row::接触の射影に参加する点;
-use super::super::static_friction::{
-    持ち越す接線の残差, 接線の残差の持ち越し, 残差の変化を打ち消す仮の補正の連立
-};
+#[cfg(test)]
+use super::super::static_friction::接線の残差の持ち越し;
+use super::super::static_friction::{持ち越す接線の残差, 残差の変化を打ち消す仮の補正の連立};
 use super::剛体と静的世界の接触拘束;
 use crate::rigid_xpbd::姿勢自由度の参加者;
 
