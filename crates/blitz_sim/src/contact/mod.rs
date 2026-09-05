@@ -20,6 +20,8 @@ mod body_static_contact;
 mod body_static_contact_parameters;
 mod broad_phase;
 mod contact_batches;
+#[cfg(test)]
+mod contact_manifold_fixture;
 mod contact_projection_row;
 mod contact_property;
 mod contact_property_limits;
@@ -32,9 +34,12 @@ mod contacting_body;
 mod feature_identity;
 mod friction_coefficient;
 mod generation_error;
+mod generation_margin;
 mod history;
 mod island;
 mod manifold_range;
+#[cfg(test)]
+mod margin_point_reaction_tests;
 mod material_id;
 mod material_pair;
 mod minimum_thickness;

@@ -23,7 +23,11 @@
 //! 配列であり、上限の根拠は `crates/blitz_collision/src/contact_set/manifold_capacity.rs` にある。
 //!
 //! 精度。判定はすべて倍精度で行う。単精度へ狭めるのは共有の単位法線を返す1箇所だけであり、接触点の位置も
-//! 貫通量も倍精度のまま返る。
+//! 符号付き貫通量も倍精度のまま返る。
+//!
+//! 余白。2つの問い合わせは接触生成の余白を受け取り、参照面の平面よりその長さまで外側に居る切り抜きの角を、負の
+//! 符号付き貫通量を持つ接触点として残す。余白を持たない問い合わせは食い込んでいる角だけを残す。理由と、余白を
+//! 外した反証が塔の場面で何を落とすかは `crates/blitz_collision/src/contact_set/generation_margin.rs` にある。
 
 mod axis_interval;
 mod box_clip_parts;
@@ -40,16 +44,18 @@ mod box_triangle_edge_contact;
 mod box_triangle_face_manifold;
 mod box_triangle_feature;
 mod box_triangle_manifold;
+#[cfg(test)]
+mod box_triangle_margin_tests;
 mod box_triangle_query;
 mod clip_feature_pair;
 mod clip_plane;
 mod clip_polygon;
 mod clip_reference_feature;
-mod contact_point;
 mod cross_axis_margin;
 mod deepest_axis;
 mod edge_pair_contact;
 mod error;
+mod generation_margin;
 mod manifold;
 mod manifold_builder;
 mod manifold_capacity;
@@ -57,6 +63,7 @@ mod penetration_depth;
 mod reference_frame;
 mod reference_role;
 mod segment_pair_point;
+mod solver_candidate_point;
 mod triangle_clip_parts;
 mod triangle_projection;
 
@@ -70,6 +77,10 @@ mod box_pair_edge_tests;
 mod box_pair_face_tests;
 #[cfg(test)]
 mod box_pair_invariant_tests;
+#[cfg(test)]
+mod box_pair_stack_tests;
+#[cfg(test)]
+mod box_triangle_answer_fixture;
 #[cfg(test)]
 mod box_triangle_tests;
 #[cfg(test)]
@@ -87,8 +98,9 @@ pub use box_pair_feature::直方体どうしの接触の特徴の対;
 pub use box_pair_query::{二つの直方体の重なりの接触点集合, 直方体どうしの接触点集合の問い合わせ};
 pub use box_triangle_feature::直方体と三角形の接触の特徴の対;
 pub use box_triangle_query::{直方体と三角形の接触点集合の問い合わせ, 直方体と三角形の重なりの接触点集合};
-pub use contact_point::接触点;
 pub use error::接触点集合の問い合わせエラー;
+pub use generation_margin::接触生成の余白メートル;
 pub use manifold::接触点集合;
 pub use manifold_capacity::接触点の上限;
-pub use penetration_depth::貫通量メートル;
+pub use penetration_depth::符号付き貫通量メートル;
+pub use solver_candidate_point::接触解法の候補点;
