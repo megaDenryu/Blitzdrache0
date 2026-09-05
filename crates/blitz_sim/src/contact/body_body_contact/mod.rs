@@ -10,6 +10,8 @@ mod history_and_friction;
 #[cfg(test)]
 mod history_and_friction_tests;
 mod residual;
+#[cfg(test)]
+mod residual_tests;
 mod velocity_stage;
 
 use super::body_body_contact_parameters::剛体と剛体の接触拘束の引数;
