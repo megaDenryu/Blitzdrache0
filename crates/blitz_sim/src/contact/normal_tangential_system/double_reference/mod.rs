@@ -44,6 +44,7 @@ mod solution_breakdown;
 mod subset_search;
 mod tangential_row;
 mod vector;
+mod widened_normal_state;
 
 pub(in crate::contact) use cone_judgement::倍精度の円錐の判定;
 pub(in crate::contact) use reference_solution::倍精度の参照の結末;
