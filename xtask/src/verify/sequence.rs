@@ -12,8 +12,8 @@ use std::process::{Command, ExitCode};
 use super::log_error::検証列の破れ;
 use super::tee::端末とログの両方へ流す出力係;
 
-/// 実行時間の短い検査ほど前に置き、落ちる場合は早く落とす。fmtはコンパイルを伴わないためcheckより前に置く。
-const 検証列のcargoの手順一覧: [(&str, &[&str]); 4] = [
+/// cargoで走らせる段の一覧。実行時間の短い検査ほど前に置き、落ちる場合は早く落とす。fmtはコンパイルを伴わないためcheckより前に置く。
+const 検証列の手順一覧: [(&str, &[&str]); 4] = [
     ("fmt", &["fmt", "--all", "--check"]),
     ("check", &["check", "--workspace"]),
     (
@@ -58,7 +58,7 @@ impl 検証列の実行係 {
         if !self.conformの段を走らせる()? {
             return Ok(ExitCode::FAILURE);
         }
-        for (段の名前, cargo引数) in 検証列のcargoの手順一覧 {
+        for (段の名前, cargo引数) in 検証列の手順一覧 {
             let mut 命令 = Command::new("cargo");
             命令.args(cargo引数);
             if !self.段を走らせて結果を告げる(段の名前, &format!("cargo {段の名前}"), &mut 命令)? {
