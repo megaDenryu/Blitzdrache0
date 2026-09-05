@@ -28,6 +28,7 @@ mod sticking_candidate_tests;
 mod substep_harness;
 mod substep_iteration_result;
 mod substep_non_penetration;
+mod substep_observation;
 mod substep_residual;
 mod substep_sliding_fallback;
 mod substep_solve;
