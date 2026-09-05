@@ -22,14 +22,14 @@ mod region;
 mod shadow_count_scale;
 mod summary;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::点光源の影の検収エラー;
 
 use crate::multi_light_world::world;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/point_light_shadow";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("point_light_shadow");
 
 pub fn 点光源の影を確認する() -> ExitCode {
     match 検収する() {
@@ -48,8 +48,8 @@ fn 検収する() -> Result<String, 点光源の影の検収エラー> {
     world::屋内の世界を用意する().map_err(点光源の影の検収エラー::検収世界を用意できなかった)?;
     world::夜の世界を用意する().map_err(点光源の影の検収エラー::検収世界を用意できなかった)?;
     crate::release_build::計測用に構築する("point-light-shadow").map_err(点光源の影の検収エラー::計測用の構築が失敗した)?;
-    let 屋内の実行環境 = world::屋内の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let 夜の実行環境 = world::夜の世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 屋内の実行環境 = world::屋内の世界の実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
+    let 夜の実行環境 = world::夜の世界の実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
 
     let 屋内 = interior_measure::屋内を3条件で撮る(&屋内の実行環境)?;
     summary::屋内の領域の表を表示する(&屋内.領域一覧);

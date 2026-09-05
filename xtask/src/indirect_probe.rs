@@ -27,12 +27,12 @@ mod parse;
 mod run;
 mod summary;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 use error::間接照明の探りの検収エラー;
 
-const 出力ディレクトリ: &str = "target/indirect_probe";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("indirect_probe");
 
 /// 夜の一日内秒。太陽高度が地平線より十分下にあり、方向光の強度が0になる時刻である。間接光だけが板の画素に出る。
 const 夜の一日内秒: &str = "0";
@@ -59,7 +59,7 @@ fn 検収する() -> Result<String, 間接照明の探りの検収エラー> {
     if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::既定を生成する() {
         return Err(間接照明の探りの検収エラー::検証用アセットを生成できなかった);
     }
-    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 実行環境 = run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
 
     let 拡散 = conditions::条件を判定する(&実行環境, "diffuse", "diffuse", 夜の一日内秒)?;
     let 段別 = conditions::条件を判定する(&実行環境, "specular_level", "specular-level", 夜の一日内秒)?;

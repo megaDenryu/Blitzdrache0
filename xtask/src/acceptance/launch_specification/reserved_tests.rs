@@ -6,10 +6,10 @@
 
 #![allow(clippy::unwrap_used)]
 
-use std::path::Path;
-
 use super::アプリの起動指定;
+use crate::acceptance::test_output_place::試験が書き出す置き場;
 use crate::acceptance::{描画フレーム数, 検収シーン名};
+use crate::verify::検証の出力ルート;
 
 const 検査のシーン: 検収シーン名 = 検収シーン名::生成する("quad");
 const 検査の枚数: 描画フレーム数 = 描画フレーム数::生成する(1);
@@ -45,7 +45,7 @@ fn 枚数を汎用の口から積むと落ちる() {
 #[test]
 fn 世界の置き場と書き出し先を汎用の口から積むと落ちる() {
     for 綴り in ["--asset-root", "--dump-frame", "--dump-hdr-frame", "--dump-depth-frame"] {
-        let 指定 = 指定を始める().パスを値に持つ選択肢を足す(綴り, Path::new("target/test"));
+        let 指定 = 指定を始める().パスを値に持つ選択肢を足す(綴り, &検証の出力ルート::既定().名前が指す置き場(試験が書き出す置き場));
         assert!(並べてみる(&指定).is_err(), "型が組み立てる{綴り}を汎用の口から上書きできた");
     }
 }

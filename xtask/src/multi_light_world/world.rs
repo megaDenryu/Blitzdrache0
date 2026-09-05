@@ -12,30 +12,39 @@ use std::path::PathBuf;
 use crate::acceptance::{
     アプリの起こし方, 実行時アセットルート, 描画フレーム数, 描画検収の実行環境, 検収エラー, 検収シーン名
 };
+use crate::verify::{検証の出力のファイル名, 検証の出力の置き場名, 検証の出力ルート};
 use crate::world_setup::{検収世界の用意, 検収世界の用意の破れ};
 
 pub(crate) const 夜のシーン: 検収シーン名 = 検収シーン名::生成する("terrain_night_lights");
-const 夜のアセットルート: &str = "target/night_lights_assets";
-const 夜の用意: 検収世界の用意 = 検収世界の用意::生成する("夜の多光源", "target/night_lights_assets/terrain_night_lights.blitzasset");
+const 夜の用意: 検収世界の用意 = 検収世界の用意::生成する(
+    "夜の多光源",
+    crate::compile_assets::夜の多光源の世界の実行時形式の置き場,
+    検証の出力のファイル名::生成する("terrain_night_lights.blitzasset"),
+);
 
 pub(crate) const 屋内のシーン: 検収シーン名 = 検収シーン名::生成する("prop_stone_hut_interior");
-const 屋内のアセットルート: &str = "target/stone_hut_assets";
-const 屋内の用意: 検収世界の用意 = 検収世界の用意::生成する("屋内の多光源", "target/stone_hut_assets/prop_stone_hut_interior.blitzasset");
+const 屋内の用意: 検収世界の用意 = 検収世界の用意::生成する(
+    "屋内の多光源",
+    crate::compile_assets::屋内の多光源の世界の実行時形式の置き場,
+    検証の出力のファイル名::生成する("prop_stone_hut_interior.blitzasset"),
+);
 
 /// 夜の多光源の世界を起こす実行環境。リリース版の実行ファイルを直に起こすのは、GPU時間を測る条件を
 /// デバッグ版の実行と混ぜないためである。
 pub(crate) fn 夜の世界の実行環境を作る(出力ディレクトリ: PathBuf) -> Result<描画検収の実行環境, 検収エラー> {
-    実行環境を作る(夜のアセットルート, 出力ディレクトリ)
+    実行環境を作る(crate::compile_assets::夜の多光源の世界の実行時形式の置き場, 出力ディレクトリ)
 }
 
 pub(crate) fn 屋内の世界の実行環境を作る(出力ディレクトリ: PathBuf) -> Result<描画検収の実行環境, 検収エラー> {
-    実行環境を作る(屋内のアセットルート, 出力ディレクトリ)
+    実行環境を作る(crate::compile_assets::屋内の多光源の世界の実行時形式の置き場, 出力ディレクトリ)
 }
 
-fn 実行環境を作る(アセットルート: &str, 出力ディレクトリ: PathBuf) -> Result<描画検収の実行環境, 検収エラー> {
+fn 実行環境を作る(
+    アセットルート: 検証の出力の置き場名, 出力ディレクトリ: PathBuf
+) -> Result<描画検収の実行環境, 検収エラー> {
     描画検収の実行環境::作る(
         アプリの起こし方::構築済みのリリース版を直に起動する,
-        実行時アセットルート::綴りから生成する(アセットルート),
+        実行時アセットルート::パスから生成する(検証の出力ルート::既定().名前が指す置き場(アセットルート)),
         出力ディレクトリ,
     )
 }

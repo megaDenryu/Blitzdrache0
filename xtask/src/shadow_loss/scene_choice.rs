@@ -5,6 +5,7 @@
 
 use super::{argument_error::影の欠落計器の引数の破れ, candidate_axis::計測軸};
 use crate::acceptance::{実行時アセットルート, 検収シーン名};
+use crate::verify::検証の出力ルート;
 
 /// その構図の結果に定まった期待があるか。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -31,10 +32,10 @@ impl 構図 {
 
     /// その構図が読む実行時アセットの置き場。
     pub(super) fn アセットルートを作る(self) -> 実行時アセットルート {
-        実行時アセットルート::綴りから生成する(match self {
-            Self::地形 => "target/terrain_assets",
-            Self::影視距離の検収 => "target/vegetation_assets",
-        })
+        実行時アセットルート::パスから生成する(検証の出力ルート::既定().名前が指す置き場(match self {
+            Self::地形 => crate::compile_assets::地形の世界の実行時形式の置き場,
+            Self::影視距離の検収 => crate::compile_assets::植生の世界の実行時形式の置き場,
+        }))
     }
 
     pub(super) fn シーン名(self) -> 検収シーン名 {

@@ -8,20 +8,24 @@
 mod error;
 mod run;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::見本の集落の撮影エラー;
 
+use crate::verify::{検証の出力のファイル名, 検証の出力の置き場名, 検証の出力ルート};
 use crate::world_setup::検収世界の用意;
 
-const 出力ディレクトリ: &str = "target/village_draw";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("village_draw");
 
 /// 集落の実行時形式。この世界だけの出力ルートへ焼かれる。
 ///
 /// 外部のアセットリポジトリが無い環境では、小物の原型が1つも解決できずコンパイルが失敗する。
 /// 失敗を見落として起動へ進むと、カタログ未登録という遠い場所の失敗に化けるため、焼いた直後に実在を確かめる。
-const 検収世界: 検収世界の用意 = 検収世界の用意::生成する("見本の集落", "target/village_assets/prop_village.blitzasset");
+const 検収世界: 検収世界の用意 = 検収世界の用意::生成する(
+    "見本の集落",
+    crate::compile_assets::見本の集落の世界の実行時形式の置き場,
+    検証の出力のファイル名::生成する("prop_village.blitzasset"),
+);
 
 pub fn 見本集落の描画を確認する() -> ExitCode {
     match 検収する() {
@@ -43,7 +47,7 @@ fn 検収する() -> Result<String, 見本の集落の撮影エラー> {
                 && crate::compile_assets::見本の集落世界を既定で生成する(),
         )
         .map_err(見本の集落の撮影エラー::検収世界を用意できなかった)?;
-    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 実行環境 = run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
     let 実行 = 実行環境.描いて読み戻す(run::集落の実行名, &run::起動指定を組み立てる())?;
     let png = 実行.書き出し先().目視用の絵へ変換する()?;
     run::報告を書き出す(実行.報告());

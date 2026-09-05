@@ -15,11 +15,14 @@ use super::frame_bay_scene::{骨格方式のシーン名, 骨格方式の検収�
 use super::row_target::検収する並び1つ;
 use super::scale_pair::件数を変えた並びの対;
 use crate::asset_generator::世界名;
+use crate::verify::検証の出力の置き場名;
+
+const 絵の書き出し先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("part_frame_row_draw");
 
 const 十棟: 検収する並び1つ = 骨格方式の検収する並び!(
     "10棟の一間四方の骨格の並び",
     世界名::一間四方の骨格を十棟建てた世界,
-    "target/part_frame_row_ten_assets",
+    "part_frame_row_ten_assets",
     "ten",
     10
 );
@@ -27,7 +30,7 @@ const 十棟: 検収する並び1つ = 骨格方式の検収する並び!(
 const 百棟: 検収する並び1つ = 骨格方式の検収する並び!(
     "100棟の一間四方の骨格の並び",
     世界名::一間四方の骨格を百棟建てた世界,
-    "target/part_frame_row_hundred_assets",
+    "part_frame_row_hundred_assets",
     "hundred",
     100
 );
@@ -36,7 +39,7 @@ const 一間四方の骨格の並びの対: 件数を変えた並びの対 = 件
     "part-frame-row-draw",
     "10棟と100棟の突き合わせ",
     骨格方式のシーン名,
-    "target/part_frame_row_draw",
+    絵の書き出し先,
     十棟,
     百棟,
 );

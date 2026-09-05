@@ -12,19 +12,23 @@ mod judgment;
 mod object_pixels;
 mod run;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::小物の描画の検収エラー;
 
+use crate::verify::{検証の出力のファイル名, 検証の出力の置き場名, 検証の出力ルート};
 use crate::world_setup::検収世界の用意;
 
-const 出力ディレクトリ: &str = "target/prop_draw";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("prop_draw");
 /// 小物の実行時形式。宣言はこの安定IDを板の世界へ載せるため、既定の出力ルートへ焼かれる。
 ///
 /// 外部のアセットリポジトリが無い環境では、実行時アセット生成が小物の宣言を飛ばしたうえで成功する。
 /// その場合はシーンの読込がカタログ未登録で落ちるため、焼いた直後にこの実在を確かめて落とす。
-const 検収世界: 検収世界の用意 = 検収世界の用意::生成する("小物の描画", "target/runtime_assets/prop_wooden_crate.blitzasset");
+const 検収世界: 検収世界の用意 = 検収世界の用意::生成する(
+    "小物の描画",
+    crate::compile_assets::板の世界の実行時形式の置き場,
+    検証の出力のファイル名::生成する("prop_wooden_crate.blitzasset"),
+);
 
 pub fn 小物1体の描画を確認する() -> ExitCode {
     match 検収する() {
@@ -45,7 +49,7 @@ fn 検収する() -> Result<String, 小物の描画の検収エラー> {
             crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() && crate::compile_assets::既定を生成する(),
         )
         .map_err(小物の描画の検収エラー::検収世界を用意できなかった)?;
-    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 実行環境 = run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
 
     let ポストなし = 実行環境.描いて読み戻す(run::ポストなしの実行名, &run::起動指定を組み立てる(run::条件::ポストなし))?;
     let 判定 = judgment::画素を判定する(ポストなし.画像())?;

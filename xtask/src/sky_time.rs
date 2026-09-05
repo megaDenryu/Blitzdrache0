@@ -27,12 +27,12 @@ mod sun_disk_diff;
 mod sun_disk_invariance;
 mod terrain_band;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 use error::時刻帯ごとの空の検収エラー;
 
-const 出力ディレクトリ: &str = "target/sky_time";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("sky_time");
 
 pub fn 時刻別の空を確認する() -> ExitCode {
     match 検収する() {
@@ -52,7 +52,7 @@ fn 検収する() -> Result<String, 時刻帯ごとの空の検収エラー> {
     {
         return Err(時刻帯ごとの空の検収エラー::検証用アセットを生成できなかった);
     }
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     let 実行環境 = run::実行環境を作る(出力先.clone())?;
 
     let マスク = draw::領域マスクを撮る(&実行環境)?;

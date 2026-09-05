@@ -34,6 +34,7 @@ mod split_debt;
 mod test_directory_layout;
 mod test_file;
 mod type_metrics_ledger;
+mod verify_output_place;
 mod violation;
 mod whole_repository;
 mod wording_contract;

@@ -28,14 +28,14 @@ mod series_integrity;
 mod stop_point;
 mod time_of_day_argument;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::空のベイク済み画像の生成の検収エラー;
 
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 use time_of_day_argument::一日内秒を読む;
 
-const 出力ディレクトリ: &str = "target/sky_lut";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("sky_lut");
 
 pub fn 大気のベイク済み画像の更新を確認する(引数一覧: &[String]) -> ExitCode {
     let 時刻 = match 一日内秒を読む(引数一覧) {
@@ -62,7 +62,7 @@ fn 検収する(一日内秒: Option<&str>) -> Result<String, 空のベイク済
     {
         return Err(空のベイク済み画像の生成の検収エラー::検証用アセットを生成できなかった);
     }
-    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 実行環境 = run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
 
     let 停止 = run::描く(&実行環境, run::時計停止の実行名, run::条件::時計停止, 一日内秒)?;
     let 進行 = run::描く(&実行環境, run::時計進行の実行名, run::条件::時計進行, 一日内秒)?;

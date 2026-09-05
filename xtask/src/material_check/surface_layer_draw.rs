@@ -14,16 +14,16 @@ mod run;
 mod weight_pattern;
 mod world_source;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use crate::acceptance::{検収の実行名, 読み戻し画像};
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 use error::地表の層の検収エラー;
 use run::見る向き;
 use weight_pattern::塗り分けの形;
 use world_source::検収用の世界のソース;
 
-const 出力ディレクトリ: &str = "target/surface_layer_draw";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("surface_layer_draw");
 
 pub fn 地表の層の重ね合わせの描画を確認する() -> ExitCode {
     match 検収する() {
@@ -56,7 +56,7 @@ fn 検収する() -> Result<String, 地表の層の検収エラー> {
 /// 1条件ぶんの世界を書き出して焼き、1回描いて読み戻す。世界の書き出しと焼きを条件ごとに行うのは、
 /// 塗り分けの形が変わると重みの格子が変わり、焼き直さないと前の条件の絵が出るためである。
 fn 条件を描く(形: 塗り分けの形, 向き: 見る向き) -> Result<読み戻し画像, 地表の層の検収エラー> {
-    let 置き場 = PathBuf::from(出力ディレクトリ).join(形.呼び名());
+    let 置き場 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ).join(形.呼び名());
     let ソース = 検収用の世界のソース::書き出す(置き場.join("source"), 形)?;
     let 実行時ルート = 置き場.join("runtime_assets");
     if !crate::compile_assets::実行時形式を生成する(ソース.ソースルート(), &実行時ルート, crate::asset_generator::世界名::エディターの世界)

@@ -24,7 +24,7 @@ pub(super) enum ブロック圧縮の検収エラー {
     世界を方針違いで焼けなかった {
         世界: 世界名,
         方針の名前: &'static str,
-        出力ルート: &'static str,
+        出力ルート: PathBuf,
     },
     実行時形式の大きさを読めなかった {
         パス: PathBuf,

@@ -26,15 +26,16 @@ mod summary;
 mod table;
 mod world;
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::ExitCode;
 
 use error::深度プリパスの費用計測エラー;
 
 use crate::release_build::{計測の生値のファイル, 計測の窓の集約のファイル};
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/depth_prepass_cost";
-const シェーダーコピー先: &str = "target/depth_prepass_cost_shaders";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("depth_prepass_cost");
+const シェーダーコピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("depth_prepass_cost_shaders");
 
 pub(crate) fn 深度プリパス費用を計測する(引数一覧: &[String]) -> ExitCode {
     match 計測する(引数一覧) {
@@ -56,9 +57,9 @@ fn 計測する(引数一覧: &[String]) -> Result<String, 深度プリパスの
         return Err(深度プリパスの費用計測エラー::検証用アセットを生成できなかった);
     }
     let 由来 = crate::release_build::計測用に構築する("depth-prepass-cost").map_err(深度プリパスの費用計測エラー::計測用の構築が失敗した)?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| 深度プリパスの費用計測エラー::出力先を作れなかった { 誤り })?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先))
         .map_err(深度プリパスの費用計測エラー::シェーダーの一時コピーを作れなかった)?;
 
     let 標本一覧 = 周回する(&出力先, &シェーダー入口, &指定)?;

@@ -9,7 +9,9 @@
 #![allow(clippy::unwrap_used)]
 
 use super::世界を読まずに報告を採る実行環境;
+use crate::acceptance::test_output_place::試験が書き出す置き場;
 use crate::acceptance::{アプリの起こし方, 検収の実行名};
+use crate::verify::検証の出力ルート;
 
 const 検査の実行名: 検収の実行名 = 検収の実行名::定数から生成する("report_only_reserved");
 
@@ -29,8 +31,9 @@ fn 世界を読ませる選択肢は起こす前に拒まれる() {
 
 #[test]
 fn 書き出しを求める選択肢も起こす前に拒まれる() {
+    let 書き出し先 = 検証の出力ルート::既定().名前が指す置き場(試験が書き出す置き場);
     for 予約 in ["--dump-frame", "--dump-hdr-frame", "--dump-depth-frame"] {
-        let Err(誤り) = 実行環境を作る().報告を採る(検査の実行名, &[予約, "target/test"]) else {
+        let Err(誤り) = 実行環境を作る().報告を採る(検査の実行名, &[予約, &書き出し先.to_string_lossy()]) else {
             panic!("{予約}を渡したのにアプリが起きた");
         };
         assert!(誤り.to_string().contains(予約), "{予約}を名指ししていない: {誤り}");

@@ -20,12 +20,12 @@ mod run;
 mod step_tolerance;
 mod summary;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 use error::自動露出の検収エラー;
 
-const 出力ディレクトリ: &str = "target/auto_exposure";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("auto_exposure");
 /// 判定に使う時刻。正午は明部が上寄りで画面全体の分布が広く、集計と導出の食い違いが最も出やすい。
 const 正午の一日内秒: &str = "43200";
 
@@ -44,7 +44,7 @@ pub(crate) fn 自動露出を判定する() -> ExitCode {
 
 fn 検収する() -> Result<String, 自動露出の検収エラー> {
     crate::visual_sample_world::用意する().map_err(自動露出の検収エラー::目視見本世界を用意できなかった)?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     let 実行環境 = run::実行環境を作る(出力先.clone())?;
 
     let 一回目 = run::描画して報告を読む(&実行環境, "noon_first", 正午の一日内秒, &run::探り色の扱い::流さない)?;

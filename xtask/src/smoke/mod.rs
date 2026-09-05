@@ -9,6 +9,11 @@ mod stages;
 
 use std::process::ExitCode;
 
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
+
+/// スモークが読む実行時形式の置き場。一時コピーしたソースから焼く先であり、既定の置き場を汚さない。
+const スモークの実行時形式の置き場: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("smoke_runtime_assets");
+
 pub fn スモークを実行する() -> ExitCode {
     if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() {
         return ExitCode::FAILURE;
@@ -27,14 +32,14 @@ pub fn スモークを実行する() -> ExitCode {
             return ExitCode::FAILURE;
         }
     };
-    let 実行時アセットルート = std::path::Path::new("target/smoke_runtime_assets");
+    let 実行時アセットルート = 検証の出力ルート::既定().名前が指す置き場(スモークの実行時形式の置き場);
     if !crate::compile_assets::既定を生成する()
-        || !crate::compile_assets::実行時形式を生成する(&アセットルート, 実行時アセットルート, crate::asset_generator::世界名::板の世界)
+        || !crate::compile_assets::実行時形式を生成する(&アセットルート, &実行時アセットルート, crate::asset_generator::世界名::板の世界)
     {
         return ExitCode::FAILURE;
     }
 
-    if !stages::すべてを実行する(&シェーダーコピー先, 実行時アセットルート) {
+    if !stages::すべてを実行する(&シェーダーコピー先, &実行時アセットルート) {
         return ExitCode::FAILURE;
     }
 

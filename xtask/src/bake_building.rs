@@ -17,9 +17,10 @@ use crate::asset_generator::世界名;
 use crate::compile_assets;
 use crate::editor::building_outline_catalog;
 use crate::editor::project_root::プロジェクトルート;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
 /// 建物1棟だけの検証世界の実行時アセットの置き場。焼く側と開く側が同じ綴りを見る。
-const 検証世界の出力ルート: &str = "target/one_building_assets";
+const 検証世界の出力ルート: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("one_building_assets");
 
 /// 焼きまでで止めて窓を開かない選択肢。機械の検収がこれを付けて呼ぶ。
 const 焼きまでで止める選択肢: &str = "--bake-only";
@@ -43,19 +44,19 @@ fn 焼いて開く(引数一覧: &[String]) -> Result<ExitCode, String> {
     println!("建物外形カタログ: {}", カタログ.display());
 
     source_export::編集サーバーのビンで書き出す(&リポジトリルート, 建物定義の識別子, 引数一覧)?;
-    let 焼けたか = compile_assets::実行時形式を生成する(
-        compile_assets::ソースルート(),
-        Path::new(検証世界の出力ルート),
-        世界名::建物一棟の検証世界,
-    );
+    let 出力ルート = 検証の出力ルート::既定().名前が指す置き場(検証世界の出力ルート);
+    let 焼けたか = compile_assets::実行時形式を生成する(compile_assets::ソースルート(), &出力ルート, 世界名::建物一棟の検証世界);
     if !焼けたか {
         return Err(format!("建物{建物定義の識別子}の検証世界を焼けなかった"));
     }
     if 引数一覧.iter().any(|引数| 引数 == 焼きまでで止める選択肢) {
-        println!("[xtask] {焼きまでで止める選択肢}が付いているため、窓を開かずに終える: {検証世界の出力ルート}");
+        println!(
+            "[xtask] {焼きまでで止める選択肢}が付いているため、窓を開かずに終える: {}",
+            出力ルート.display()
+        );
         return Ok(ExitCode::SUCCESS);
     }
-    Ok(launch::歩行の器で開く(検証世界の出力ルート))
+    Ok(launch::歩行の器で開く(出力ルート))
 }
 
 /// 建物定義の識別子は先頭の引数だけから読む。選択肢でない引数を探し回らないのは、`--project <ルート>`の

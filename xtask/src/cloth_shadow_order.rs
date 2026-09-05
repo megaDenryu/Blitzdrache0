@@ -12,15 +12,17 @@ mod error;
 mod judgment;
 mod run;
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use error::布の影の走査順非依存の検収エラー;
 
 use crate::acceptance::{判定の名前, 描画検収の実行環境, 検収の1回の実行, 検収の実行名};
 use std::process::ExitCode;
 
-const 出力ディレクトリ: &str = "target/cloth_shadow_order";
-const シェーダーコピー先: &str = "target/cloth_shadow_order_shaders";
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
+
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("cloth_shadow_order");
+const シェーダーコピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("cloth_shadow_order_shaders");
 /// 布の影が絵に出ていると認めるための下限画素数。実測は3万画素の桁であり、構図が崩れたときだけ下回る。
 const 布影の下限画素数: usize = 1000;
 /// 影の領域が一致していると認める差のうち、布の影の画素数に比例する分の割合の逆数。
@@ -48,8 +50,8 @@ fn 検収する() -> Result<String, 布の影の走査順非依存の検収エ�
     if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::既定を生成する() {
         return Err(布の影の走査順非依存の検収エラー::検証用アセットを生成できなかった);
     }
-    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let 入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+    let 実行環境 = run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
+    let 入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先))
         .map_err(布の影の走査順非依存の検収エラー::シェーダーの一時コピーを作れなかった)?;
 
     let 読込順1回目 = 描く(&実行環境, "load_order_1", &入口, run::条件::布あり読込順)?;

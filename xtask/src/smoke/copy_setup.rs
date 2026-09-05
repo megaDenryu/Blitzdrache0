@@ -16,11 +16,14 @@ use std::path::{Path, PathBuf};
 use blitz_asset_compiler::ソースアセットのファイル名;
 
 use crate::shader_copy::シェーダーの一時コピーの破れ;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
 pub(in crate::smoke) use error::スモークのアセットの一時コピーの破れ;
 
 const チャンク世界ディレクトリ名: &str = "chunk_world";
-const シェーダーのコピー先: &str = "target/smoke_shaders";
+const シェーダーのコピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("smoke_shaders");
+/// スモークが書き換えるソースアセットの一時コピーの置き場。
+const アセットの一時コピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("smoke_assets");
 const アセットの元ディレクトリ: &str = "assets/smoke";
 /// 一時ソースへ複製するassets/smoke/のファイル。スモークが描くのはquadだけだが、実行時アセット生成器は板の世界の必須アセットが
 /// 1つでも欠けると失敗するため、同じディレクトリの宣言に並ぶものはすべて複製する。
@@ -42,11 +45,11 @@ const アセットファイル一覧: [ソースアセットのファイル名; 
 ];
 
 pub(super) fn シェーダーを一時コピーする() -> Result<PathBuf, シェーダーの一時コピーの破れ> {
-    crate::shader_copy::一時コピーを作る(Path::new(シェーダーのコピー先))
+    crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーのコピー先))
 }
 
 pub(super) fn アセットを一時コピーする() -> Result<PathBuf, スモークのアセットの一時コピーの破れ> {
-    let ルート = PathBuf::from("target/smoke_assets");
+    let ルート = 検証の出力ルート::既定().名前が指す置き場(アセットの一時コピー先);
     let コピー先ディレクトリ = ルート.join("smoke");
     ディレクトリを作る(&コピー先ディレクトリ)?;
 

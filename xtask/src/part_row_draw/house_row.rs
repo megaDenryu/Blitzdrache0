@@ -16,12 +16,19 @@ use super::row_target::検収する並び1つ;
 use super::scale_pair::件数を変えた並びの対;
 use crate::acceptance::{検収の実行名, 検収シーン名};
 use crate::asset_generator::世界名;
+use crate::verify::{検証の出力のファイル名, 検証の出力の置き場名};
+
+/// 規模ごとの実行時形式の置き場と、どちらの規模でも同じ焼き上がりのファイル名。
+const 十軒の置き場: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("part_house_row_ten_assets");
+const 百軒の置き場: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("part_house_row_hundred_assets");
+const 焼き上がりのファイル名: 検証の出力のファイル名 = 検証の出力のファイル名::生成する("prop_part_house_row.blitzasset");
+const 絵の書き出し先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("part_house_row_draw");
 
 const 十軒: 検収する並び1つ = 検収する並び1つ::生成する(
     "10軒の家並み",
     世界名::部品で建てた十軒の世界,
-    並びの実行時形式の置き場::定数から生成する("target/part_house_row_ten_assets"),
-    焼き上がりを確かめるファイル::定数から生成する("target/part_house_row_ten_assets/prop_part_house_row.blitzasset"),
+    並びの実行時形式の置き場::定数から生成する(十軒の置き場),
+    焼き上がりを確かめるファイル::定数から生成する(十軒の置き場, 焼き上がりのファイル名),
     検収の実行名::定数から生成する("ten"),
     10,
 );
@@ -29,8 +36,8 @@ const 十軒: 検収する並び1つ = 検収する並び1つ::生成する(
 const 百軒: 検収する並び1つ = 検収する並び1つ::生成する(
     "100軒の家並み",
     世界名::部品で建てた百軒の世界,
-    並びの実行時形式の置き場::定数から生成する("target/part_house_row_hundred_assets"),
-    焼き上がりを確かめるファイル::定数から生成する("target/part_house_row_hundred_assets/prop_part_house_row.blitzasset"),
+    並びの実行時形式の置き場::定数から生成する(百軒の置き場),
+    焼き上がりを確かめるファイル::定数から生成する(百軒の置き場, 焼き上がりのファイル名),
     検収の実行名::定数から生成する("hundred"),
     100,
 );
@@ -39,7 +46,7 @@ const 家の並びの対: 件数を変えた並びの対 = 件数を変えた並
     "part-house-row-draw",
     "10軒と100軒の突き合わせ",
     検収シーン名::生成する("prop_part_house_row"),
-    "target/part_house_row_draw",
+    絵の書き出し先,
     十軒,
     百軒,
 );

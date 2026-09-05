@@ -9,7 +9,7 @@ mod error;
 mod pixel_check;
 mod single_instance;
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::ExitCode;
 
 use error::植生インスタンス描画の検収エラー;
@@ -18,9 +18,10 @@ use crate::acceptance::{
     判定の名前, 描画フレーム数, 描画検収の実行環境, 検収の1回の実行, 検収の実行名, 検収シーン名
 };
 use crate::vegetation_run;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/instance_draw";
-const シェーダーコピー先: &str = "target/instance_draw_shaders";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("instance_draw");
+const シェーダーコピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("instance_draw_shaders");
 const 画素判定シーンの綴り: &str = "vegetation_4";
 const 計数判定シーンの綴り: &str = "vegetation_64";
 const 画素判定シーン: 検収シーン名 = 検収シーン名::生成する(画素判定シーンの綴り);
@@ -52,8 +53,8 @@ fn 検収する() -> Result<String, 植生インスタンス描画の検収エ�
     {
         return Err(植生インスタンス描画の検収エラー::検証用アセットを生成できなかった);
     }
-    let 実行環境 = vegetation_run::植生世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+    let 実行環境 = vegetation_run::植生世界の実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先))
         .map_err(植生インスタンス描画の検収エラー::シェーダーの一時コピーを作れなかった)?;
 
     let 少数 = 一条件を描く(&実行環境, 画素判定シーン, 画素判定シーンの綴り, &シェーダー入口)?;

@@ -7,16 +7,17 @@ mod error;
 mod judgment;
 mod pixel_check;
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::ExitCode;
 
 use error::植生個体別段選択の検収エラー;
 
 use crate::acceptance::{描画フレーム数, 描画検収の実行環境, 検収の実行名, 検収シーン名};
 use crate::vegetation_run;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/instance_lod";
-const シェーダーコピー先: &str = "target/instance_lod_shaders";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("instance_lod");
+const シェーダーコピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("instance_lod_shaders");
 /// 段を2つ持つ原型を等距離の弧へ並べた世界。
 const 検収シーン: 検収シーン名 = 検収シーン名::生成する("vegetation_lod");
 const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(12);
@@ -50,8 +51,8 @@ fn 検収する() -> Result<String, 植生個体別段選択の検収エラー> 
     {
         return Err(植生個体別段選択の検収エラー::検証用アセットを生成できなかった);
     }
-    let 実行環境 = vegetation_run::植生世界の実行環境を作る(PathBuf::from(出力ディレクトリ))?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先))
+    let 実行環境 = vegetation_run::植生世界の実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先))
         .map_err(植生個体別段選択の検収エラー::シェーダーの一時コピーを作れなかった)?;
 
     let 段あり = 描く(&実行環境, "on", &シェーダー入口, &[])?;

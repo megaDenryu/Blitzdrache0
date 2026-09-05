@@ -21,7 +21,6 @@ mod run;
 mod scan;
 mod summary;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::間引きの段差の計測エラー;
@@ -30,8 +29,9 @@ use crate::acceptance::{アプリの起こし方, 描画検収の実行環境};
 use crate::release_build::計測の生値のファイル;
 
 use crate::sample_world_region::固定領域一覧を作る;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/ibl_step";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("ibl_step");
 pub fn 遠方環境更新境界を実測する() -> ExitCode {
     match 計測する() {
         Ok(要約) => {
@@ -47,7 +47,7 @@ pub fn 遠方環境更新境界を実測する() -> ExitCode {
 
 fn 計測する() -> Result<String, 間引きの段差の計測エラー> {
     crate::visual_sample_world::用意する().map_err(間引きの段差の計測エラー::目視見本世界を用意できなかった)?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     let マスクの実行環境 = 描画検収の実行環境::作る(
         アプリの起こし方::毎回cargoに構築させて起動する,
         crate::visual_sample_world::目視見本世界のアセットルートを作る(),

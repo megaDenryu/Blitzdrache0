@@ -11,12 +11,12 @@ mod error;
 mod judgment;
 mod run;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 use error::資源表世代の差し替えの検収エラー;
 
-const 出力ディレクトリ: &str = "target/material_reload_draw";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("material_reload_draw");
 
 pub fn 材質差し替えの描画を確認する() -> ExitCode {
     match 検収する() {
@@ -35,7 +35,7 @@ fn 検収する() -> Result<String, 資源表世代の差し替えの検収エ�
     if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::既定を生成する() {
         return Err(資源表世代の差し替えの検収エラー::検証用アセットを生成できなかった);
     }
-    let 実行環境 = run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 実行環境 = run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
 
     let 差し替え後 = 実行環境.描いて読み戻す(run::差し替え後の実行名, &run::起動指定を組み立てる())?;
     差し替え後.報告().画面へ流す();

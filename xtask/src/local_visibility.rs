@@ -28,14 +28,14 @@ mod term_run;
 mod term_tally;
 mod tolerance;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use error::局所可視性補正の検収エラー;
 
 use crate::acceptance::{圧縮前のHDR画像, 描画検収の実行環境, 検収の実行名, 検収エラー};
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/local_visibility";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("local_visibility");
 
 /// 起動指定へ渡す形の語。並びは平面・段差・球・凹面であり、遮蔽が出ない形から出る形へ向かう。
 const 形の一覧: [&str; 4] = ["plane", "step", "sphere", "concave"];
@@ -64,7 +64,7 @@ fn 検収する() -> Result<String, 局所可視性補正の検収エラー> {
         return Err(局所可視性補正の検収エラー::間接照明の検収世界のアセットを生成できなかった);
     }
     let 形の実行環境 = run::実行環境を作る();
-    let 項別の実行環境 = term_run::実行環境を作る(PathBuf::from(出力ディレクトリ))?;
+    let 項別の実行環境 = term_run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;
 
     let mut 行一覧 = Vec::new();
     for 形 in 形の一覧 {

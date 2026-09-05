@@ -1,25 +1,26 @@
 //! OW4の1実行ぶんの解析と会計を、大規模世界の固定条件3回へ適用する。
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use crate::acceptance::{アプリの起動指定, 描画フレーム数, 検収の実行名};
 use crate::large_world_bench::大規模世界の計測指定;
 
 use super::error::物量計測エラー;
 use super::run::起動引数で走らせる;
+use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
-const 出力ディレクトリ: &str = "target/large_world_bench";
-const シェーダーコピー先: &str = "target/large_world_bench_shaders";
+const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("large_world_bench");
+const シェーダーコピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("large_world_bench_shaders");
 const 反復回数: usize = 3;
 const 検査名: 検収の実行名 = 検収の実行名::定数から生成する("large_world_validation");
 pub(super) fn 測る(指定: &大規模世界の計測指定) -> Result<(), 物量計測エラー> {
     crate::release_build::計測用に構築する("large-world-bench").map_err(物量計測エラー::計測用の構築が失敗した)?;
-    let 出力先 = PathBuf::from(出力ディレクトリ);
+    let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| 物量計測エラー::出力先を作れなかった {
         パス: 出力先.clone(), 誤り
     })?;
-    let シェーダー入口 =
-        crate::shader_copy::一時コピーを作る(Path::new(シェーダーコピー先)).map_err(物量計測エラー::シェーダーの一時コピーを作れなかった)?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先))
+        .map_err(物量計測エラー::シェーダーの一時コピーを作れなかった)?;
     let 検査候補数 = デバッグ実行で検査する(指定, &シェーダー入口)?;
     let 引数一覧 = crate::large_world_bench::launch::起動引数を作る(指定, &シェーダー入口);
     let 実行一覧 = (1..=反復回数)
