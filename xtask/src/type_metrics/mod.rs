@@ -9,21 +9,28 @@
 //! 走査は構文解析器を持たない行単位の照合であり、次の精度限界がある。文字列リテラルとコメントの
 //! 中にある struct・impl・fn・波括弧を実コードと区別できないため、誤検出と深さのずれが起こりうる。
 //! マクロが生成する型とメソッドは行に現れないため数えられない。関数やimplの内側で入れ子に定義した
-//! 型は数えない。型名はモジュールを跨いで素の名前で集計するため、同名の別型は合算される。
-//! 列挙の枝は本体の直下で識別子から始まる行として数えるため、枝のタプルを複数行へ折り返した中身の行も
+//! 型は数えない。列挙の枝は本体の直下で識別子から始まる行として数えるため、枝のタプルを複数行へ折り返した中身の行も
 //! 1つの枝として数えてしまう。
+//!
+//! 型は定義ファイルと型名の組で識別する。implブロックはモジュールの木が最も近い定義へ引き当てるため、
+//! 定義が走査に現れない型(型別名・外部の型・マクロが作る型)のimplは、そのimplのファイルごとに分かれて数えられる。
+//! 同じファイルの中で`#[cfg]`により切り替わる同名の定義は、後から現れた側の分量が残る。
 
 mod body_kind;
 mod declaration_amount;
+mod definition_index;
 mod definition_line;
 mod error;
+mod impl_attribution;
 mod impl_line;
 mod keyword;
+mod measurement_table;
 mod member_line;
 mod metrics;
 mod observation;
 mod report;
 mod scan;
+mod type_location;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -32,13 +39,11 @@ use crate::file_scan;
 
 pub use declaration_amount::宣言の分量;
 pub use error::型計測の破れ;
+pub use impl_attribution::定義の候補が複数ある実装ブロック;
 pub use keyword::修飾子を取り除く;
-/// 台帳の照合の試験が`型計測`を組み立てるために要る。実装は`型計測`のフィールドを通してしか触らないため、
-/// 試験のときだけ名前を出す。
-#[cfg(test)]
-pub use metrics::型の宣言;
-pub use metrics::{型計測, 集計する};
+pub use metrics::{型計測, 走査範囲の型計測, 集計する};
 pub use observation::観測;
+pub use type_location::型の所在;
 
 const 走査対象ディレクトリ一覧: [&str; 2] = ["crates", "xtask/src"];
 const 表示件数: usize = 20;

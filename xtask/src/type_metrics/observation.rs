@@ -6,11 +6,3 @@ pub enum 観測 {
     型定義 { 型名: String, 分量: 宣言の分量 },
     実装ブロック { 型名: String, メソッド数: usize },
 }
-
-impl 観測 {
-    pub fn 型名(&self) -> &str {
-        match self {
-            Self::型定義 { 型名, .. } | Self::実装ブロック { 型名, .. } => 型名,
-        }
-    }
-}
