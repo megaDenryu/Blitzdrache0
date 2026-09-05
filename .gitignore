@@ -9,6 +9,10 @@ opencode.json
 # 中身は名指した建物によって変わるためコミットしない
 assets/one_building_world/
 
+# glTFの文書がuriで指す共有バッファ。cargo xtask gen-source-assetsとcargo xtask gen-game-mapが書き出す生成物であり、
+# 欠けていればcargo xtask supply-source-assetsの工程が生成して揃える(参照: README「大容量資産の保管とclone」)
+assets/**/*.bin
+
 # 生成台帳。生成器の実行ファイルの内容ハッシュを持つため機械ごとに中身が違い、ソースではなく生成の途中状態である
 generation_ledger.txt
 target-agent*/
