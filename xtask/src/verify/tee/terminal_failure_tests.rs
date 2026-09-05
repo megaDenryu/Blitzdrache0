@@ -81,7 +81,9 @@ fn 端末が最初から壊れていても管は最後まで読まれる() {
     assert!(管を流した結末(&出力係, &読まれた塊数).is_ok(), "端末の破れで管を流す仕事まで失敗している");
     assert_eq!(読まれた塊数.load(Ordering::Relaxed), 流す塊の本数, "管を最後まで読んでいない");
     assert!(
-        String::from_utf8(ログの中身.lock().unwrap().clone()).unwrap().contains("塊4\n"),
+        String::from_utf8(ログの中身.lock().unwrap().clone())
+            .unwrap()
+            .contains(&format!("塊{}\n", 流す塊の本数 - 1)),
         "端末が最初から壊れているとログへ何も残らない"
     );
 }
