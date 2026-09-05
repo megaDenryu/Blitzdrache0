@@ -9,36 +9,61 @@
 //! 走査は構文解析器を持たない行単位の照合であり、次の精度限界がある。文字列リテラルとコメントの
 //! 中にある struct・impl・fn・波括弧を実コードと区別できないため、誤検出と深さのずれが起こりうる。
 //! マクロが生成する型とメソッドは行に現れないため数えられない。関数やimplの内側で入れ子に定義した
-//! 型は数えない。型名はモジュールを跨いで素の名前で集計するため、同名の別型は合算される。
-//! 列挙の枝は本体の直下で識別子から始まる行として数えるため、枝のタプルを複数行へ折り返した中身の行も
+//! 型は数えない。列挙の枝は本体の直下で識別子から始まる行として数えるため、枝のタプルを複数行へ折り返した中身の行も
 //! 1つの枝として数えてしまう。
+//!
+//! 型は定義ファイルと型名の組で識別する。同じ名前の定義が複数あるときのimplブロックの引き当ては、
+//! 綴られた経路と`use`宣言から定義を確定できたときだけ行い、確定できなければ違反として報告する(`definition_index`)。
+//! 定義が走査に現れない型(型別名・外部の型・マクロが作る型)のimplは、そのimplのファイルごとに分かれて数えられる。
+//! 同じファイルの中で`#[cfg]`により切り替わる同名の定義は、どちらの構成で数えるかを走査が決められないため、
+//! どちらかへ寄せずに両方を保持する。隠れると困る場面での違反の報告は`conform/type_metrics_ledger`が行う。
 
+mod attribution_input;
 mod body_kind;
 mod declaration_amount;
+mod definition_index;
+#[cfg(test)]
+mod definition_index_test_material;
+#[cfg(test)]
+mod definition_index_tests;
 mod definition_line;
 mod error;
+mod file_observation;
+mod impl_attribution;
 mod impl_line;
+mod import_index;
+mod import_line;
+mod import_tree;
 mod keyword;
+mod location_declarations;
+mod measurement_table;
 mod member_line;
 mod metrics;
+#[cfg(test)]
+mod metrics_tests;
 mod observation;
 mod report;
+mod rust_module;
 mod scan;
+#[cfg(test)]
+mod scan_tests;
+mod type_location;
+mod type_path;
 
-use std::path::PathBuf;
 use std::process::ExitCode;
 
 use crate::file_scan;
 
 pub use declaration_amount::宣言の分量;
 pub use error::型計測の破れ;
+pub use file_observation::ファイルの観測;
+pub use impl_attribution::定義の候補が複数ある実装ブロック;
 pub use keyword::修飾子を取り除く;
-/// 台帳の照合の試験が`型計測`を組み立てるために要る。実装は`型計測`のフィールドを通してしか触らないため、
-/// 試験のときだけ名前を出す。
-#[cfg(test)]
-pub use metrics::型の宣言;
-pub use metrics::{型計測, 集計する};
+pub use location_declarations::所在に現れた宣言一覧;
+pub use metrics::{型計測, 走査範囲の型計測, 集計する};
 pub use observation::観測;
+pub use rust_module::モジュールの位置;
+pub use type_location::型の所在;
 
 const 走査対象ディレクトリ一覧: [&str; 2] = ["crates", "xtask/src"];
 const 表示件数: usize = 20;
@@ -58,7 +83,7 @@ pub fn 型ごとの分量を計測する() -> ExitCode {
 
 /// 走査対象のRustファイルを1本ずつ読み、ファイルごとの観測へ写す。conformの台帳検査と自由関数の検査が
 /// 同じ走査を使うため、コマンドの表示から切り離してここを共通の入口にしている。
-pub fn ファイル別の観測を集める() -> Result<Vec<(PathBuf, Vec<観測>)>, 型計測の破れ> {
+pub fn ファイル別の観測を集める() -> Result<Vec<ファイルの観測>, 型計測の破れ> {
     let ファイル一覧 = file_scan::対象ファイル一覧を集める(&走査対象ディレクトリ一覧, &["rs"])?;
     let mut 結果 = Vec::new();
     for パス in ファイル一覧 {
@@ -66,7 +91,7 @@ pub fn ファイル別の観測を集める() -> Result<Vec<(PathBuf, Vec<観測
             .map_err(|誤り| 型計測の破れ::計測対象のファイルを読めなかった {
                 パス: パス.clone(), 誤り
             })?;
-        結果.push((パス, scan::走査する(&内容)));
+        結果.push(ファイルの観測::ファイルの内容から生成する(パス, &内容));
     }
     Ok(結果)
 }

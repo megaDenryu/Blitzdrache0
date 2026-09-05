@@ -1,12 +1,12 @@
-//! 署名の集め方・引数の型の読み取り・モジュールの木の範囲・索引での判定の試験。台帳の中身でなく規則だけを見る。
+//! 署名の集め方・引数の型の読み取り・索引での判定の試験。台帳の中身でなく規則だけを見る。
+//! モジュールの木がどこまでを含むかの試験は、木の規則を持つ`rust_module`が持つ。
 
 use std::path::{Path, PathBuf};
 
 use super::index::型の定義の索引;
-use super::module_tree::モジュールの木;
 use super::parameter::{丸ごと受け取る型の名前, 引数へ分ける};
 use super::signature::自由関数の署名一覧;
-use crate::type_metrics::{宣言の分量, 観測};
+use crate::type_metrics::ファイルの観測;
 
 fn 型名一覧(原文: &str) -> Vec<String> {
     自由関数の署名一覧(原文).into_iter().map(|署名| 署名.関数名).collect()
@@ -56,24 +56,10 @@ fn 丸ごとでない受け取り方は読み取らない() {
     assert_eq!(丸ごと受け取る型の名前("一覧: &Vec<台帳>"), Some("Vec".to_string()));
 }
 
-#[test]
-fn モジュールの木は定義ファイルの子孫だけを含む() {
-    let 木 = モジュールの木::定義ファイルから生成する(Path::new("crates/blitz_app/src/app/mod.rs"));
-    assert!(木.この木の中のファイルか(Path::new("crates/blitz_app/src/app/mod.rs")));
-    assert!(木.この木の中のファイルか(Path::new("crates/blitz_app/src/app/frame/draw_input.rs")));
-    assert!(!木.この木の中のファイルか(Path::new("crates/blitz_app/src/input/ingest.rs")));
-    let 枝の木 = モジュールの木::定義ファイルから生成する(Path::new("crates/blitz_app/src/app/frame.rs"));
-    assert!(枝の木.この木の中のファイルか(Path::new("crates/blitz_app/src/app/frame/action.rs")));
-    assert!(!枝の木.この木の中のファイルか(Path::new("crates/blitz_app/src/app/handler/resume.rs")));
-}
-
 fn 索引() -> 型の定義の索引 {
-    let 観測一覧 = vec![(
+    let 観測一覧 = vec![ファイルの観測::ファイルの内容から生成する(
         PathBuf::from("crates/blitz_app/src/app/mod.rs"),
-        vec![観測::型定義 {
-            型名: "アプリ".to_string(),
-            分量: 宣言の分量::構造体のフィールド数(46),
-        }],
+        "pub struct アプリ {\n    値: usize,\n}\n",
     )];
     型の定義の索引::観測から生成する(&観測一覧)
 }
