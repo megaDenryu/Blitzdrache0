@@ -1,38 +1,39 @@
 //! 型ごとの計測値と、ファイル別の観測からの集計。
-//! 型名はモジュールを跨いで素の名前で集計するため、同名の別型があれば合算される。
+//! 型は定義ファイルと型名の組(`型の所在`)で識別するため、同じ名前の型が別の場所にあれば別々に数える。
 
-use std::collections::{BTreeMap, BTreeSet};
-use std::path::{Path, PathBuf};
+use std::collections::BTreeSet;
+use std::path::PathBuf;
 
-use super::declaration_amount::宣言の分量;
+use super::attribution_input::引き当ての材料;
+use super::definition_index::定義の索引;
+use super::file_observation::ファイルの観測;
+use super::impl_attribution::定義の候補が複数ある実装ブロック;
+use super::location_declarations::所在に現れた宣言一覧;
+use super::measurement_table::所在ごとの計測表;
 use super::observation::観測;
-
-/// 走査範囲に見つけた型の宣言。置き場所と分量は同じ1行から同時に得られ、片方だけ得られることはない。
-pub struct 型の宣言 {
-    pub ファイル: PathBuf,
-    pub 分量: 宣言の分量,
-}
+use super::type_location::型の所在;
 
 pub struct 型計測 {
-    pub 型名: String,
-    pub 宣言: Option<型の宣言>,
+    pub 所在: 型の所在,
+    pub 宣言: 所在に現れた宣言一覧,
     pub 実装ファイル一覧: BTreeSet<PathBuf>,
     pub メソッド総数: usize,
 }
 
 impl 型計測 {
-    fn 新規(型名: &str) -> Self {
+    pub fn 所在だけで始める(所在: 型の所在) -> Self {
         Self {
-            型名: 型名.to_string(),
-            宣言: None,
+            所在,
+            宣言: 所在に現れた宣言一覧::空で始める(),
             実装ファイル一覧: BTreeSet::new(),
             メソッド総数: 0,
         }
     }
 
     /// 宣言が持つ数。構造体ならフィールド数、列挙なら枝の数であり、宣言が走査に現れない型は0とする。
+    /// 同じ所在に定義が複数あるときは最も大きい件数を採り、大きい定義を小さい定義で覆わない。
     pub fn 宣言の件数(&self) -> usize {
-        self.宣言.as_ref().map_or(0, |宣言| 宣言.分量.件数())
+        self.宣言.最も大きい件数()
     }
 
     /// 降順に並べるための比較鍵。implの分散ファイル数を最優先し、次に宣言の件数、最後にメソッド総数で比べる。
@@ -42,64 +43,30 @@ impl 型計測 {
     }
 }
 
-pub fn 集計する(ファイル別観測: &[(PathBuf, Vec<観測>)]) -> Vec<型計測> {
-    let mut 表: BTreeMap<String, 型計測> = BTreeMap::new();
-    for (パス, 観測一覧) in ファイル別観測 {
-        for 観測 in 観測一覧 {
-            let 計測 = 表.entry(観測.型名().to_string()).or_insert_with(|| 型計測::新規(観測.型名()));
-            取り込む(計測, パス, 観測);
-        }
-    }
-    let mut 一覧: Vec<型計測> = 表.into_values().collect();
-    一覧.sort_by(|左, 右| 右.比較鍵().cmp(&左.比較鍵()).then_with(|| 左.型名.cmp(&右.型名)));
-    一覧
+/// 走査範囲の全ファイルから得た計測の一式。引き当てられなかったimplブロックを一緒に返すのは、
+/// 解析できなかった入力を黙って対象から外さないためである。
+pub struct 走査範囲の型計測 {
+    pub 型ごとの計測一覧: Vec<型計測>,
+    pub 定義の候補を1つに絞れなかった実装ブロック一覧: Vec<定義の候補が複数ある実装ブロック>,
 }
 
-fn 取り込む(計測: &mut 型計測, パス: &Path, 観測: &観測) {
-    match 観測 {
-        観測::型定義 { 分量, .. } => {
-            計測.宣言 = Some(型の宣言 {
-                ファイル: パス.to_path_buf(),
-                分量: *分量,
-            });
+pub fn 集計する(ファイル別観測: &[ファイルの観測]) -> 走査範囲の型計測 {
+    let 索引 = 定義の索引::ファイル別の観測から生成する(ファイル別観測);
+    let mut 計測表 = 所在ごとの計測表::空で始める();
+    for ファイル in ファイル別観測 {
+        for 観測 in &ファイル.観測一覧 {
+            match 観測 {
+                観測::型定義 { 型名, 分量 } => {
+                    計測表.型定義を取り込む(型の所在::走査したファイルから生成する(&ファイル.パス, 型名), *分量);
+                }
+                観測::実装ブロック {
+                    自己型の経路, メソッド数
+                } => {
+                    let 材料 = 引き当ての材料::生成する(&ファイル.パス, 自己型の経路, &ファイル.取り込みの索引);
+                    計測表.実装ブロックを取り込む(索引.実装ブロックの所在を引き当てる(&材料), &ファイル.パス, *メソッド数);
+                }
+            }
         }
-        観測::実装ブロック { メソッド数, .. } => {
-            計測.実装ファイル一覧.insert(パス.to_path_buf());
-            計測.メソッド総数 += *メソッド数;
-        }
     }
-}
-
-#[cfg(test)]
-#[allow(clippy::unwrap_used)]
-mod tests {
-    use super::*;
-
-    fn 定義(型名: &str, 分量: 宣言の分量) -> 観測 {
-        let 型名 = 型名.to_string();
-        観測::型定義 { 型名, 分量 }
-    }
-
-    fn 実装(型名: &str, メソッド数: usize) -> 観測 {
-        let 型名 = 型名.to_string();
-        観測::実装ブロック { 型名, メソッド数 }
-    }
-
-    #[test]
-    fn 複数ファイルのimplを合算して降順に並べる() {
-        let 観測 = vec![
-            (
-                PathBuf::from("a.rs"),
-                vec![定義("大", 宣言の分量::構造体のフィールド数(3)), 実装("大", 2)],
-            ),
-            (PathBuf::from("b.rs"), vec![実装("大", 1), 定義("小", 宣言の分量::列挙の枝数(1))]),
-        ];
-        let 一覧 = 集計する(&観測);
-        assert_eq!(一覧[0].型名, "大");
-        assert_eq!(一覧[0].実装ファイル一覧.len(), 2);
-        assert_eq!(一覧[0].メソッド総数, 3);
-        assert_eq!(一覧[0].宣言.as_ref().unwrap().ファイル, PathBuf::from("a.rs"));
-        assert_eq!(一覧[1].型名, "小");
-        assert_eq!(一覧[1].宣言.as_ref().unwrap().分量.指標名(), "枝数");
-    }
+    計測表.分量の降順へ並べて閉じる()
 }

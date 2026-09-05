@@ -5,7 +5,7 @@
 
 use super::super::{区画の一覧, 未是正の自由関数};
 
-const 項目一覧: [未是正の自由関数; 54] = [
+const 項目一覧: [未是正の自由関数; 53] = [
     未是正の自由関数::生成する("auto_exposure/run.rs", "描画して報告を読む", "探り色の扱い"),
     未是正の自由関数::生成する("auto_exposure/run.rs", "起動指定を組み立てる", "探り色の扱い"),
     未是正の自由関数::生成する("cloth_night/judgment.rs", "明るさの時刻への追従を判定する", "布領域"),
@@ -59,7 +59,6 @@ const 項目一覧: [未是正の自由関数; 54] = [
     未是正の自由関数::生成する("temporal_reconstruction/observation.rs", "要約を組む", "観測"),
     未是正の自由関数::生成する("terrain_visual/band.rs", "破綻防止帯を判定する", "地面を照らす光"),
     未是正の自由関数::生成する("texture_compression/difference.rs", "画素1つを統計へ加える", "画素の成分差の統計"),
-    未是正の自由関数::生成する("type_metrics/metrics.rs", "取り込む", "型計測"),
 ];
 
 pub fn 一覧() -> 区画の一覧 {
