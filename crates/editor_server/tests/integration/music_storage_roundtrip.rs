@@ -68,4 +68,3 @@ fn 一覧はjson以外のファイルを飛ばす() {
     std::fs::write(置き場.join("覚え書き.txt"), "楽曲ではない").unwrap();
     assert_eq!(保管庫.楽曲の一覧を読む().unwrap(), vec![crate::common::名乗り("試験の楽曲")]);
 }
-
