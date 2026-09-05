@@ -16,10 +16,9 @@ mod velocity_stage;
 
 use super::body_body_contact_parameters::剛体と剛体の接触拘束の引数;
 use super::contact_projection_row::接触の射影に参加する点;
-use super::non_penetration::非貫通の一刻みの係数;
-use super::non_penetration::非貫通の一回の射影の結果;
-use super::non_penetration::非貫通の一細分の解の状態;
-use super::non_penetration::非貫通の接触点集合の一行;
+use super::non_penetration::{
+    非貫通の一刻みの係数, 非貫通の一回の射影の結果, 非貫通の一細分の解の状態, 非貫通の接触点集合の一行
+};
 use super::normal_tangential_system::接触点集合の法線と接線の連立;
 use super::static_friction::接線の残差の持ち越し;
 use super::static_friction::静止摩擦の一細分の解の状態;
