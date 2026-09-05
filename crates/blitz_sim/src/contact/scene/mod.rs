@@ -21,6 +21,7 @@ mod static_friction_method;
 mod sticking_candidate_fixture;
 mod sticking_candidate_record;
 mod sticking_candidate_tests;
+mod substep_batch;
 mod substep_harness;
 mod substep_iteration_result;
 mod substep_non_penetration;
