@@ -11,13 +11,12 @@
 #![allow(clippy::unwrap_used)]
 
 use crate::contact_set::box_pair_feature::直方体どうしの接触の特徴の対;
-use crate::contact_set::box_pair_query::{二つの直方体の重なりの接触点集合, 直方体どうしの接触点集合の問い合わせ};
-use crate::contact_set::generation_margin::接触生成の余白メートル;
+use crate::contact_set::box_pair_query::二つの直方体の重なりの接触点集合;
 use crate::contact_set::manifold::接触点集合;
 use crate::contact_set::solver_candidate_point::接触解法の候補点;
 use crate::shape::任意姿勢の直方体;
 
-use super::query_fixture::{回転なし, 直方体を作る};
+use super::query_fixture::{余白も優位幅も持たない直方体どうしの問い合わせを組む, 回転なし, 直方体を作る};
 
 // 床の役をする大きな直方体。上面が高さ0の平面に乗る。
 pub(super) fn 床を作る() -> 任意姿勢の直方体 {
@@ -28,11 +27,7 @@ pub(super) fn 重なりの集合を求める(
     第1: &任意姿勢の直方体,
     第2: &任意姿勢の直方体,
 ) -> 接触点集合<直方体どうしの接触の特徴の対> {
-    let 問い合わせ = 直方体どうしの接触点集合の問い合わせ::二つの直方体と余白から生成する(
-        第1,
-        第2,
-        接触生成の余白メートル::余白を持たない(),
-    );
+    let 問い合わせ = 余白も優位幅も持たない直方体どうしの問い合わせを組む(第1, 第2);
     match 問い合わせ.二つの直方体の重なりの接触点集合を求める().unwrap() {
         二つの直方体の重なりの接触点集合::二つの直方体が重なっている(集合) => 集合,
         二つの直方体の重なりの接触点集合::二つの直方体は離れている => {

@@ -52,6 +52,7 @@ mod clip_plane;
 mod clip_polygon;
 mod clip_reference_feature;
 mod cross_axis_margin;
+mod cross_axis_preference;
 mod deepest_axis;
 mod edge_pair_contact;
 mod error;
@@ -70,6 +71,8 @@ mod triangle_projection;
 #[cfg(test)]
 mod box_pair_answer_fixture;
 #[cfg(test)]
+mod box_pair_axis_preference_tests;
+#[cfg(test)]
 mod box_pair_completeness_tests;
 #[cfg(test)]
 mod box_pair_edge_tests;
@@ -81,6 +84,8 @@ mod box_pair_invariant_tests;
 mod box_pair_stack_tests;
 #[cfg(test)]
 mod box_triangle_answer_fixture;
+#[cfg(test)]
+mod box_triangle_axis_preference_tests;
 #[cfg(test)]
 mod box_triangle_tests;
 #[cfg(test)]
@@ -98,6 +103,7 @@ pub use box_pair_feature::直方体どうしの接触の特徴の対;
 pub use box_pair_query::{二つの直方体の重なりの接触点集合, 直方体どうしの接触点集合の問い合わせ};
 pub use box_triangle_feature::直方体と三角形の接触の特徴の対;
 pub use box_triangle_query::{直方体と三角形の接触点集合の問い合わせ, 直方体と三角形の重なりの接触点集合};
+pub use cross_axis_preference::外積の軸へ切り替える優位幅メートル;
 pub use error::接触点集合の問い合わせエラー;
 pub use generation_margin::接触生成の余白メートル;
 pub use manifold::接触点集合;

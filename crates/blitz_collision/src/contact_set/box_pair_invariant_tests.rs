@@ -10,8 +10,8 @@
 
 #![allow(clippy::unwrap_used)]
 
-use super::generation_margin::接触生成の余白メートル;
-use crate::contact_set::box_pair_query::{二つの直方体の重なりの接触点集合, 直方体どうしの接触点集合の問い合わせ};
+use super::query_fixture::余白も優位幅も持たない直方体どうしの問い合わせを組む;
+use crate::contact_set::box_pair_query::二つの直方体の重なりの接触点集合;
 use crate::shape::形の局所座標の位置;
 
 use super::random_box_fixture::無作為の直方体の生成元;
@@ -29,11 +29,7 @@ fn 無作為に散らした対の接触点は貫通量が0以上で2つの点が
     let mut 調べた接触点の件数 = 0;
     for 番号 in 0..1000 {
         let (第1, 第2) = (生成元.次の直方体を作る(), 生成元.次の直方体を作る());
-        let 問い合わせ = 直方体どうしの接触点集合の問い合わせ::二つの直方体と余白から生成する(
-            &第1,
-            &第2,
-            接触生成の余白メートル::余白を持たない(),
-        );
+        let 問い合わせ = 余白も優位幅も持たない直方体どうしの問い合わせを組む(&第1, &第2);
         let 二つの直方体の重なりの接触点集合::二つの直方体が重なっている(集合) = 問い合わせ.二つの直方体の重なりの接触点集合を求める().unwrap()
         else {
             continue;

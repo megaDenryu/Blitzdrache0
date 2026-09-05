@@ -6,6 +6,7 @@ use super::pipeline_error::接触の工程エラー;
 use super::substep_predict::細分の動的剛体;
 use crate::contact::contact_batches::接触拘束の二つのバッチ;
 use crate::contact::island::接触島;
+use crate::contact::normal_tangential_system::部分集合を解いた回数;
 use crate::contact::solver_quality::接触を解く品質の設定;
 use crate::contact::velocity_stage::接触の速度段階;
 use crate::rigid_body::{一刻みの入力, 剛体, 質量特性, 運動状態, 配置};
@@ -15,11 +16,32 @@ use crate::xpbd::刻み幅;
 pub struct 接触の解法ソルバー {
     pub(super) 予測器: 細分の予測器,
     pub(super) 速度段階: 接触の速度段階,
+    #[cfg(test)]
+    解いた回数の累計: std::cell::Cell<部分集合を解いた回数>, // 走査の費用の計器が読む累計。試験の構築だけが持つ
 }
 
 impl 接触の解法ソルバー {
     pub fn 生成する(予測器: 細分の予測器, 速度段階: 接触の速度段階) -> Self {
-        Self { 予測器, 速度段階 }
+        Self {
+            予測器,
+            速度段階,
+            #[cfg(test)]
+            解いた回数の累計: std::cell::Cell::new(部分集合を解いた回数::零()),
+        }
+    }
+
+    /// 1回の求解で解いた連立の回数を累計へ足す。本番の構築では何もしない。
+    pub(super) fn 解いた回数を累計へ足す(&self, 回数: 部分集合を解いた回数) {
+        #[cfg(test)]
+        self.解いた回数の累計.set(self.解いた回数の累計.get().足す(回数));
+        #[cfg(not(test))]
+        let _ = 回数;
+    }
+
+    /// 累計を読んで零に戻す。計器が細分の区切りごとに読む口である。
+    #[cfg(test)]
+    pub(super) fn 解いた回数の累計を読んで零に戻す(&self) -> 部分集合を解いた回数 {
+        self.解いた回数の累計.replace(部分集合を解いた回数::零())
     }
 
     pub fn 動的剛体を予測する(
