@@ -1,6 +1,6 @@
 //! Issue #59が求める数値契約の診断の計器。合否は判定せず、表を作るだけである。
-//! 走査は4つある。坂の境界(傾きの正接と鉛直軸まわりの回しの組)、世界内の平行移動、解法の許容差、
-//! および分類が1つの条件だけで分かれた対が分岐する細分の探索である。
+//! 走査は5つある。坂の境界(傾きの正接と鉛直軸まわりの回しの組)、世界内の平行移動、解法の許容差、
+//! 分類が1つの条件だけで分かれた対が分岐する細分の探索、および細分ごとの円錐の比と再構成された速さの振れである。
 //! どの走査も、単精度の本番の経路と倍精度の参照計算を同じ細分の同じ地点で並べて綴る。
 //! 判定する検査は`slope_tests`と`tolerance_boundary_tests`が持ち、この計器はそれらの閾値も場面も動かさない。
 //! 実行は `cargo test -p blitz_sim --release <試験名> -- --ignored --nocapture` である。
@@ -17,7 +17,9 @@ mod divergence_pair;
 mod divergence_scan;
 mod double_precision_reading;
 mod holding_class;
+mod oscillation_scan;
 mod single_precision_reading;
 mod slope_boundary_table;
+mod substep_oscillation;
 mod tolerance_table;
 mod translation_table;
