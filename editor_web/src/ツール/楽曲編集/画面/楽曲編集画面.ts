@@ -5,17 +5,19 @@ import {
     コード進行参照から和音一覧を解決する,
     初期楽曲を生成する,
     演奏の範囲の既定,
+    type カード位置,
     type 演奏の範囲,
 } from '../編集モデル/index.ts'
 import type { I楽曲発音配線 } from './発音配線.ts'
 import type { 再生位置 } from './演奏/index.ts'
 import { 演奏の操作帯 } from './演奏の操作帯/index.ts'
 import type { 打ち込みドラッグ見込み, 升目の当たりの記録 } from './打ち込み見込み.ts'
-import { コンテナ, 固定の行, 進行の行 } from './スタイル.css.ts'
+import { コンテナ, 固定の行, タイムラインの行, 進行の行 } from './スタイル.css.ts'
 import { 楽曲名の欄 } from './楽曲名の欄.ts'
 import { 進行制約の表示 } from './進行制約の表示.ts'
 import { 進行の帯部品 } from './進行の帯部品.ts'
 import { トラック領域部品 } from './トラック領域部品.ts'
+import { タイムライン部品 } from './タイムライン/index.ts'
 import { 楽曲インスペクターパネル } from './パネル/index.ts'
 
 // 楽曲エディター文書タブの画面。中央には楽曲名と演奏の操作の行・和音の帯・トラックの並びだけを置き、
@@ -28,6 +30,7 @@ export class 楽曲編集画面 extends LV2HtmlComponentBase {
     public readonly 進行制約: 進行制約の表示 = new 進行制約の表示()
     public readonly 進行の帯: 進行の帯部品 = new 進行の帯部品()
     public readonly トラック領域: トラック領域部品 = new トラック領域部品()
+    public readonly タイムライン: タイムライン部品 = new タイムライン部品()
     public readonly インスペクター: 楽曲インスペクターパネル
     public readonly 発音配線: 配線ポート<I楽曲発音配線> = new 配線ポート<I楽曲発音配線>('楽曲編集画面')
     private _表示中のパターンの名乗り: string | null = null
@@ -45,23 +48,21 @@ export class 楽曲編集画面 extends LV2HtmlComponentBase {
 
         this._componentRoot = div({ class: コンテナ }).childs([
             div({ class: 固定の行 }).childs([this.楽曲名, this.操作帯]),
+            div({ class: タイムラインの行 }).childs([this.タイムライン]),
             div({ class: 進行の行 }).childs([this.進行制約, this.進行の帯]),
             this.トラック領域,
         ])
     }
 
     public 升目操作を配線する(
-        on升目押下: (当たり: 升目の当たりの記録, ボタン: number) => void,
-        on升目進入: (当たり: 升目の当たりの記録) => void,
+        on升目押下: (当たり: 升目の当たりの記録, ボタン: number) => void, on升目進入: (当たり: 升目の当たりの記録) => void,
     ): void {
         this.トラック領域.升目操作を配線する(on升目押下, on升目進入)
     }
 
     public 表示を更新する(
-        楽曲: 楽曲,
-        選択中パターン名乗り: string | null,
-        進行の外モードか: boolean = false,
-        ドラッグ見込み: 打ち込みドラッグ見込み | null = null,
+        楽曲: 楽曲, 選択中パターン名乗り: string | null, 選択中のカード: カード位置 | null,
+        進行の外モードか: boolean = false, ドラッグ見込み: 打ち込みドラッグ見込み | null = null,
     ): void {
         const パターン = 選択中パターン名乗り === null
             ? 楽曲.パターン一覧[0]
@@ -72,6 +73,7 @@ export class 楽曲編集画面 extends LV2HtmlComponentBase {
         this.楽曲名.表示を更新する(楽曲)
         this.進行制約.表示を更新する(進行の外モードか)
         this.操作帯.楽曲を反映する(楽曲)
+        this.タイムライン.表示を更新する(楽曲, 選択中のカード, 選択中パターン名乗り)
 
         if (パターン === undefined) {
             this.進行の帯.表示を更新する([])
@@ -85,16 +87,13 @@ export class 楽曲編集画面 extends LV2HtmlComponentBase {
         this.インスペクター.表示を更新する(楽曲, 選択中パターン名乗り)
     }
 
-    // 再生位置の印を格子と操作帯へ映す。開いているパターンと違うパターンが鳴っているときは格子を光らせない。
+    // 再生位置の印を格子と操作帯とタイムラインへ映す。開いているパターンと違うパターンが鳴っているときは格子を光らせない。
+    // 曲構成のとおりに鳴らしているときはタイムラインのカードへ、パターンを繰り返しているときは選択中のカードへ印を出す(設計正本の判断15)。
     public 再生位置を示す(位置: 再生位置 | null, 再生中か: boolean, 範囲: 演奏の範囲): void {
         const 同じパターンか = 位置 !== null && 位置.パターンの名乗り === this._表示中のパターンの名乗り
         this.トラック領域.再生位置を示す(同じパターンか && 位置 !== null ? 位置.パターン内ステップ : null)
-        this.操作帯.演奏の様子を反映する(
-            再生中か,
-            範囲,
-            位置,
-            同じパターンか ? this._表示中のパターンの表示名 : null,
-        )
+        this.操作帯.演奏の様子を反映する(再生中か, 範囲, 位置, 同じパターンか ? this._表示中のパターンの表示名 : null)
+        this.タイムライン.再生位置を示す(this.タイムライン.再生中のカード位置を求める(位置, 範囲), 範囲 === 'パターンの繰り返し' && 再生中か)
     }
 
     public override delete(): void {
@@ -103,6 +102,7 @@ export class 楽曲編集画面 extends LV2HtmlComponentBase {
         this.進行制約.delete()
         this.進行の帯.delete()
         this.トラック領域.delete()
+        this.タイムライン.delete()
         this.インスペクター.delete()
         super.delete()
     }

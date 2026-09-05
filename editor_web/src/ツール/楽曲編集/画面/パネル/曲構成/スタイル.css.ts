@@ -29,13 +29,3 @@ export const 回数選択 = style({
     minWidth: '90px',
     width: 'auto',
 })
-
-export const 操作ボタン群 = style({
-    display: 'flex',
-    alignItems: 'center',
-    gap: '4px',
-})
-
-export const 追加ボタン = style({
-    alignSelf: 'flex-start',
-})
