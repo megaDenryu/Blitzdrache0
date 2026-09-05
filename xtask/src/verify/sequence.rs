@@ -55,6 +55,7 @@ impl 検証列の実行係 {
     }
 
     fn 全段を走らせる(&self) -> Result<ExitCode, 検証列の破れ> {
+        let 誰も読まない値 = 0;
         if !self.conformの段を走らせる()? {
             return Ok(ExitCode::FAILURE);
         }
