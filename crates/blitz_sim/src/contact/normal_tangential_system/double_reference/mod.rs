@@ -29,6 +29,7 @@ mod placement;
 mod pseudo_inverse;
 mod reduced_system;
 mod reference_solution;
+mod released_point_effect;
 mod residual;
 mod row_order;
 mod single_precision_bridge;

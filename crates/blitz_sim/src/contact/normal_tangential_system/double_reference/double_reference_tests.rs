@@ -8,11 +8,11 @@
 #![cfg(test)]
 #![allow(clippy::unwrap_used)]
 
-use super::super::body_static_contact::剛体と静的世界の接触拘束;
-use super::super::body_static_contact_parameters::剛体と静的世界の接触拘束の引数;
-use super::super::contact_test_fixtures::{世界の位置を作る, 局所の変位を作る, 試験の刻み幅, 質量特性を作る};
-use super::super::non_penetration::fixture::剛体と静的世界の基本の引数;
-use super::super::normal_tangential_system::接触点集合の法線と接線の連立;
+use super::super::super::body_static_contact::剛体と静的世界の接触拘束;
+use super::super::super::body_static_contact_parameters::剛体と静的世界の接触拘束の引数;
+use super::super::super::contact_test_fixtures::{世界の位置を作る, 局所の変位を作る, 試験の刻み幅, 質量特性を作る};
+use super::super::super::non_penetration::fixture::剛体と静的世界の基本の引数;
+use super::super::接触点集合の法線と接線の連立;
 use super::cone_judgement::倍精度の円錐の判定;
 use super::reference_solution::倍精度の参照の結末;
 use crate::rigid_body::{姿勢, 質量特性, 配置};

@@ -6,7 +6,7 @@
 
 #![cfg(test)]
 
-use super::super::symmetric_system::法線と接線の連立の行の上限;
+use super::super::super::symmetric_system::法線と接線の連立の行の上限;
 
 // 掃きの回数。単精度の側と同じである。
 const 掃きの回数: usize = 12;

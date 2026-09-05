@@ -10,12 +10,14 @@
 //! 正典(`full_scan_reference`)として残し、一致を反証が固定する。枢軸を順に動かす形は、外す条件と入れ直す条件が
 //! 同じ点について同時に成り立つ材料が坂の場面に実在するため終了しない。
 //! 行が2つの参加者への符号付きの勾配を持つのは、法線と接線の交差の項の符号が参加者ごとの勾配で決まるためである。
+//! この連立と同じ式を倍精度で持つ試験専用の参照計算を`double_reference`が持つ(Issue #59の数値契約の診断)。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断13: 静止摩擦は錨からの接線変位を零へ戻す位置拘束であり、クーロン円錐の内側でだけ効く」
 
 mod active_set;
 mod candidate;
 mod complementarity;
 #[cfg(test)]
+mod double_reference;
 mod full_scan_reference;
 #[cfg(test)]
 mod order_tests;

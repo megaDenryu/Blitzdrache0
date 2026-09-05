@@ -7,7 +7,7 @@
 
 #![cfg(test)]
 
-use super::super::symmetric_system::{擬似逆が固有の向きを捨てた理由, 法線と接線の連立の行の上限};
+use super::super::super::symmetric_system::{擬似逆が固有の向きを捨てた理由, 法線と接線の連立の行の上限};
 use super::jacobi::倍精度の対称な連立の固有分解;
 
 // 分解そのものの丸めが作る偽の固有値の比。次数 n の対称行列をヤコビ法で分解したときの固有値の誤差の桁が n ε である。

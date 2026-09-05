@@ -7,7 +7,7 @@
 
 #![cfg(test)]
 
-use super::super::body_static_contact::剛体と静的世界の接触拘束;
+use super::super::super::body_static_contact::剛体と静的世界の接触拘束;
 use super::active_set::倍精度の連立の有効集合;
 use super::manifold_system::倍精度の接触点集合の連立;
 use super::pseudo_inverse::倍精度の擬似逆で解いた増分と捨てた右辺;

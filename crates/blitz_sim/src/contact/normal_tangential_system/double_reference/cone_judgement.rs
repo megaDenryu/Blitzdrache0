@@ -8,7 +8,7 @@
 
 #![cfg(test)]
 
-use super::super::body_static_contact::剛体と静的世界の接触拘束;
+use super::super::super::body_static_contact::剛体と静的世界の接触拘束;
 use super::reference_solution::倍精度の参照の解;
 use super::vector::倍精度の三次元ベクトル;
 

@@ -7,7 +7,7 @@
 
 #![cfg(test)]
 
-use super::super::symmetric_system::法線と接線の連立の行の上限;
+use super::super::super::symmetric_system::法線と接線の連立の行の上限;
 use super::pseudo_inverse::倍精度の擬似逆で解いた増分と捨てた右辺;
 use super::reduced_system::倍精度の抜き出した連立;
 

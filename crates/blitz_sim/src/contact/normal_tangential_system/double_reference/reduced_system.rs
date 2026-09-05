@@ -6,12 +6,13 @@
 
 #![cfg(test)]
 
-use super::super::symmetric_system::法線と接線の連立の行の上限;
+use super::super::super::symmetric_system::法線と接線の連立の行の上限;
 use super::active_set::倍精度の連立の有効集合;
 use super::gradient::倍精度の一行の二つの符号付き勾配;
 use super::jacobi::倍精度の対称な連立の固有分解;
 use super::manifold_system::倍精度の接触点集合の連立;
 use super::pseudo_inverse::倍精度の擬似逆で解いた増分と捨てた右辺;
+use super::released_point_effect::外した点の解放が動かす長さ;
 use super::row_order::倍精度の抜き出した行の並び;
 use super::solution::倍精度の接触点集合の同時解;
 
@@ -86,7 +87,7 @@ impl 倍精度の抜き出した連立 {
     ) -> [Option<倍精度の一行の二つの符号付き勾配>; 法線と接線の連立の行の上限] {
         let mut 勾配 = [None; 法線と接線の連立の行の上限];
         for (k, 一つ) in 勾配.iter_mut().enumerate().take(self.並び.行の数()) {
-            *一つ = 連立.持ち主の行の勾配(self.並び.第k行の持ち主(k));
+            *一つ = self.並び.第k行の持ち主(k).行の勾配(連立);
         }
         勾配
     }
@@ -106,8 +107,8 @@ impl 倍精度の抜き出した連立 {
             }
         }
         let 持ち主 = self.並び.第k行の持ち主(k);
-        self.対称行列[k][k] += 連立.持ち主の行の対角へ足す刻み依存量(持ち主);
-        self.定数項[k] = 連立.持ち主の行の右辺(持ち主) - 連立.外した点の解放が動かす長さ(自分, 有効集合);
+        self.対称行列[k][k] += 持ち主.行の対角へ足す刻み依存量(連立);
+        self.定数項[k] = 持ち主.行の右辺(連立) - 外した点の解放が動かす長さ(連立, 自分, 有効集合);
         self.行ごとの解けたと見なす許容差[k] = 自分.解けたと見なす許容差();
     }
 }

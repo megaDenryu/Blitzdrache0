@@ -8,7 +8,7 @@
 
 #![cfg(test)]
 
-use super::super::body_static_contact::剛体と静的世界の接触拘束;
+use super::super::super::body_static_contact::剛体と静的世界の接触拘束;
 use super::manifold_system::倍精度の接触点集合の連立;
 use super::normal_row::倍精度の法線の一行;
 use super::participant_point::倍精度の接触の射影に参加する点;

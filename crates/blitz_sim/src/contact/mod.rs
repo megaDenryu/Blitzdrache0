@@ -31,8 +31,6 @@ mod contact_thresholds;
 #[cfg(test)]
 mod contact_thresholds_tests;
 mod contacting_body;
-#[cfg(test)]
-mod double_reference;
 mod feature_identity;
 mod friction_coefficient;
 mod generation_error;
