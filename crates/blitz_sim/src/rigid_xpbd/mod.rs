@@ -41,6 +41,7 @@ mod twist_invariance_tests;
 mod twist_result;
 #[cfg(test)]
 mod twist_test_fixtures;
+mod velocity_only_correction;
 
 pub use body_connection_constraint::{接続拘束の一刻みの係数, 接続拘束の引数};
 pub use body_connection_result::接続拘束の一回の射影の結果;
@@ -63,3 +64,4 @@ pub use rotational_lagrange_multiplier::回転のラグランジュ乗数;
 pub use substep_count::細分数;
 pub use twist_constraint::{ねじり拘束の一刻みの係数, ねじり拘束の引数};
 pub use twist_result::ねじり拘束の一回の射影の結果;
+pub use velocity_only_correction::速度の再構成だけが読む仮の補正;

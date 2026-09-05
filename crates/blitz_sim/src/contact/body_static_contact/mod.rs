@@ -8,6 +8,8 @@
 
 mod history_and_friction;
 mod residual;
+#[cfg(test)]
+mod residual_tests;
 mod velocity_stage;
 
 use super::body_static_contact_parameters::剛体と静的世界の接触拘束の引数;

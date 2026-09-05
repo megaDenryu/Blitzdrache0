@@ -12,7 +12,7 @@ use crate::contact::contact_batches::接触拘束の二つのバッチ;
 use crate::contact::island::接触島;
 use crate::contact::static_friction::残差の変化を打ち消す仮の補正の連立;
 use crate::rigid_body::{剛体, 剛体の識別子, 剛体エラー};
-use crate::rigid_xpbd::{姿勢自由度の参加者, 姿勢自由度の補正};
+use crate::rigid_xpbd::{姿勢自由度の参加者, 速度の再構成だけが読む仮の補正};
 
 impl 接触の解法ソルバー {
     /// 島の全部の接触点集合について残差を測り、剛体ごとの仮の補正を積み上げる。
@@ -102,7 +102,9 @@ fn 参加者を組む(
     })
 }
 
-fn 仮の補正を積む(動的剛体一覧: &mut [細分の動的剛体], 識別子: 剛体の識別子, 補正: &姿勢自由度の補正) {
+fn 仮の補正を積む(
+    動的剛体一覧: &mut [細分の動的剛体], 識別子: 剛体の識別子, 補正: &速度の再構成だけが読む仮の補正
+) {
     let Some(剛体) = 動的剛体一覧.iter_mut().find(|剛体| 剛体.識別子 == 識別子) else {
         return;
     };
