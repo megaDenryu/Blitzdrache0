@@ -10,7 +10,7 @@ const モジュールの根: &str = "crates/editor_server/src";
 
 const 行一覧: [台帳の行; 3] = [
     台帳の行::列挙("resource/command/mod.rs", "編集コマンド", 0, 24, 0),
-    台帳の行::列挙("resource/music/command/mod.rs", "楽曲編集コマンド", 1, 22, 1),
+    台帳の行::列挙("resource/music/command/mod.rs", "楽曲編集コマンド", 1, 23, 1),
     台帳の行::構造体("storage/file_repository/mod.rs", "ファイル保管庫", 1, 1, 16),
 ];
 

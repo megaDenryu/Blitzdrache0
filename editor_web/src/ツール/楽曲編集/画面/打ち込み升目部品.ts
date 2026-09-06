@@ -39,6 +39,11 @@ export class 打ち込み升目部品 extends LV2HtmlComponentBase {
         this._componentRoot.setAttribute('data-playhead', String(いま鳴っているか))
     }
 
+    // タイムラインで選択中のカードが指す小節の印。強調は選択の結果であり保存にもコマンドにも入らない。
+    public 小節の強調を示す(強調するか: boolean): void {
+        this._componentRoot.setAttribute('data-強調小節', String(強調するか))
+    }
+
     public 表示を更新する(対象セル: セル, 許されるか: boolean): void {
         this._componentRoot.setAttribute('data-allowed', String(許されるか))
         switch (対象セル.種類) {

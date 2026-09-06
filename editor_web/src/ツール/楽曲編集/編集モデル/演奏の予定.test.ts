@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import { パターンのステップ数 } from '../../../生成/編集資源契約.ts'
 import { 初期楽曲を生成する } from './初期楽曲生成.ts'
+import { パターンのステップ数を求める } from './パターンの長さ.ts'
 import { パターンのステップで鳴り始める音一覧を求める, 升目の音を組み立てる } from './演奏の予定.ts'
 
 function 空の見本の楽曲() {
@@ -12,7 +12,7 @@ describe('演奏の予定', () => {
     it('打点の無いステップでは1つも鳴り始めないこと', () => {
         const 楽曲 = 空の見本の楽曲()
         const パターン = 楽曲.パターン一覧[0]
-        for (let ステップ = 0; ステップ < パターンのステップ数; ステップ++) {
+        for (let ステップ = 0; ステップ < パターンのステップ数を求める(パターン); ステップ++) {
             assert.strictEqual(パターンのステップで鳴り始める音一覧を求める(楽曲, パターン, ステップ).length, 0)
         }
     })
