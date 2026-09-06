@@ -1,4 +1,4 @@
-import { div, DivC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
+import { div, span, DivC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
 import type { 楽曲 } from '../../../../生成/編集資源契約.ts'
 import {
@@ -15,7 +15,7 @@ import { 節の枠一覧を組み立てる, 節の枠一覧を配線する } fro
 import type { 節の操作の種類 } from './節の操作の種類.ts'
 import { タイムラインの再生印 } from './タイムラインの再生印.ts'
 import { 末尾へ追加ボタン } from './末尾へ追加ボタン.ts'
-import { タイムライン枠, 案内文 } from './スタイル.css.ts'
+import { タイムライン内側行, タイムライン見出し, タイムラインのカード列域, 案内文 } from './スタイル.css.ts'
 
 export interface Iタイムライン配線 {
     readonly onカード選択: (位置: カード位置) => void
@@ -29,6 +29,7 @@ export class タイムライン部品 extends LV2HtmlComponentBase implements I�
     protected _componentRoot: DivC
     private readonly _配線: 配線ポート<Iタイムライン配線> = new 配線ポート<Iタイムライン配線>('タイムライン部品')
     private readonly _追加ボタン: 末尾へ追加ボタン = new 末尾へ追加ボタン()
+    private readonly _カード列域: DivC
     private _カード部品一覧: カード部品[] = []
     private _節の枠一覧: readonly 節の枠部品[] = []
     private _カード列: readonly 曲構成のカード[] = []
@@ -36,7 +37,11 @@ export class タイムライン部品 extends LV2HtmlComponentBase implements I�
 
     public constructor() {
         super()
-        this._componentRoot = div({ class: タイムライン枠 })
+        this._カード列域 = div({ class: タイムラインのカード列域 })
+        this._componentRoot = div({ class: タイムライン内側行 }).childs([
+            span({ class: タイムライン見出し, text: '曲構成(タイムライン)' }),
+            this._カード列域,
+        ])
         this._追加ボタン.onClick(() => { if (this._配線.配線済みか) this._配線.先.on末尾へ追加() })
     }
 
@@ -49,14 +54,14 @@ export class タイムライン部品 extends LV2HtmlComponentBase implements I�
     public 表示を更新する(楽曲: 楽曲, 選択中のカード: カード位置 | null, 選択中パターンの名乗り: string | null): void {
         for (const カード of this._カード部品一覧) カード.delete()
         for (const 枠 of this._節の枠一覧) 枠.delete()
-        this._componentRoot.clearChildren()
+        this._カード列域.clearChildren()
         this._カード部品一覧 = []
         this._節の枠一覧 = []
 
         let 選択中の添字: number | null = null
         this._カード列 = 曲構成をカードの列へ展開する(楽曲.曲構成, 楽曲.パターン一覧)
         if (this._カード列.length === 0) {
-            this._componentRoot.child(div({ class: 案内文, text: '曲構成が空。いまのパターンを繰り返して鳴らす' }))
+            this._カード列域.child(div({ class: 案内文, text: '曲構成が空。「+」でいま選んでいるパターンを末尾へ足す' }))
         } else {
             this._カード部品一覧 = this._カード列.map((カード, 添字) => {
                 const 選択中か = 選択中のカード !== null && カード位置は同じか(カード.位置, 選択中のカード)
@@ -64,10 +69,10 @@ export class タイムライン部品 extends LV2HtmlComponentBase implements I�
                 return new カード部品(カード, 楽曲.パターン一覧, 選択中か)
             })
             this._節の枠一覧 = 節の枠一覧を組み立てる(楽曲, this._カード列, this._カード部品一覧, 選択中のカード)
-            this._componentRoot.childs(this._節の枠一覧)
+            this._カード列域.childs(this._節の枠一覧)
         }
         this._再生印.リセットする(選択中の添字)
-        this._componentRoot.child(this._追加ボタン.選択中パターンを反映する(選択中パターンの名乗り))
+        this._カード列域.child(this._追加ボタン.選択中パターンを反映する(選択中パターンの名乗り))
         this._カード列を配線する()
         if (this._配線.配線済みか) {
             節の枠一覧を配線する(this._節の枠一覧, this._カード列, (位置, 種類) => this._配線.先.on枠操作(位置, 種類))
