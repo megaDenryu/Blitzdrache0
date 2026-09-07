@@ -36,3 +36,12 @@ export const 名乗りの添え = style({
     whiteSpace: 'nowrap',
     flexShrink: 0,
 })
+
+// 永続化の操作列(保存・読込ボタンと状態文言をひとまとめにした型)を行の右端へ
+// 寄せて詰める。ボタンと状態文言そのものの見た目は永続化の操作列が持つ。
+export const 永続化操作の並び = style({
+    display: 'flex',
+    alignItems: 'center',
+    marginLeft: 'auto',
+    flexShrink: 0,
+})
