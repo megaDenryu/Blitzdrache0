@@ -38,6 +38,8 @@ mod rest_time_invariance_tests;
 #[cfg(test)]
 mod side_by_side_fixture;
 #[cfg(test)]
+mod side_by_side_rest_record;
+#[cfg(test)]
 mod side_by_side_rest_tests;
 #[cfg(test)]
 mod substep_impulse_tests;

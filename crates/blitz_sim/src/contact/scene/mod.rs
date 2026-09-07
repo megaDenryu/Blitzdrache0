@@ -18,6 +18,7 @@ mod residual_separation_record;
 mod residual_separation_tests;
 mod scene_geometry;
 mod scene_settings;
+mod sequential_projection_record;
 mod sliding_deceleration_tests;
 mod slope_fixture;
 mod slope_geometry;
