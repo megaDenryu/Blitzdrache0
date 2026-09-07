@@ -107,7 +107,7 @@ export const 節の枠見出し操作 = style({
 })
 
 // 6つの操作ボタンが記号ボタンの既定11pxのままだと読みにくいため、この行の中だけ引き上げる。
-globalStyle(`${節の枠見出し操作} > button`, {
+globalStyle(`${節の枠見出し操作} button`, {
     fontSize: '13px',
 })
 
