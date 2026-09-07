@@ -1,4 +1,4 @@
-// 参照: 正本はRustの`楽器::音の種類`(crates/editor_server/src/resource/music/instrument.rs)であり、この switch は網羅検査で追随を強制する。
+// 参照: 正本はRustの`楽器::音の種類を得る`(crates/editor_server/src/resource/music/instrument.rs)であり、この switch は網羅検査で追随を強制する。
 import type { トラックの種類, 楽器, 音の並び } from '../../../../../生成/編集資源契約.ts'
 
 type 音の並びの種類 = 音の並び['種類']
