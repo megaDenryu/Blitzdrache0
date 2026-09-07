@@ -36,3 +36,27 @@ export const 名乗りの添え = style({
     whiteSpace: 'nowrap',
     flexShrink: 0,
 })
+
+// 保存・読み込みの押しどころが増えても他の子を押し出さないよう、行の右端へ寄せて詰める。
+export const 永続化操作の並び = style({
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    marginLeft: 'auto',
+    flexShrink: 0,
+})
+
+// 保存・読み込み結果やエラーを表示する1行物のため、末尾を省略記号で収める。
+// 全文は呼び出し側がtitle属性で提供する(楽曲名の欄.ts の 状態文言を更新する 参照)。
+export const 永続化の状態文言 = style({
+    fontSize: '11px',
+    color: エディターCSS変数('テキスト副'),
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    maxWidth: '140px',
+})
+
+export const 永続化のエラー状態文言 = style([永続化の状態文言, {
+    color: エディターCSS変数('危険ボタン文字'),
+}])

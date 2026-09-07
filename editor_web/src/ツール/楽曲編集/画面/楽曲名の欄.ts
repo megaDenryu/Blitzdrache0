@@ -1,7 +1,15 @@
-import { div, textInput, DivC, TextInputC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
+import { button, div, span, textInput, ButtonC, DivC, SpanC, TextInputC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
 import type { 楽曲 } from '../../../生成/編集資源契約.ts'
-import { 名乗りの添え, 楽曲名の入力, 楽曲名の枠 } from './スタイル.css.ts'
+import { 副ボタン } from './パネル/共通/スタイル/ボタン.css.ts'
+import {
+    名乗りの添え,
+    永続化の状態文言,
+    永続化のエラー状態文言,
+    永続化操作の並び,
+    楽曲名の入力,
+    楽曲名の枠,
+} from './スタイル.css.ts'
 
 // 入力の途中と入力の確定を別の口にする。途中はコマンドを積まず見えだけを追随させ、
 // 確定したときに取り消し1回ぶんのコマンドを積むためである(設計正本の判断13)。
@@ -13,11 +21,16 @@ export interface I楽曲名の欄配線 {
 // いま編集している楽曲の表示名を出し、その場で書き換える欄。
 // 演奏の操作帯と同じ行へ置いて名前のためだけの行を無くすため、格子の上の固定の行が持つ(設計正本の判断14)。
 // 同じ値を2箇所で変えられる形にしないため、右サイドバーの設定側にはこの欄を置かない。
+// 保存・読み込みの押しどころと状態文言もこの行が持つ。文書ぜんたいに効く操作であり、
+// スクロールしても消えてはならない文脈のため右サイドバーへは置かない(エディター制作スキル「固定とスクロールの規律」)。
 export class 楽曲名の欄 extends LV2HtmlComponentBase implements I配線可能<I楽曲名の欄配線> {
     protected _componentRoot: DivC
     private readonly _配線: 配線ポート<I楽曲名の欄配線> = new 配線ポート<I楽曲名の欄配線>('楽曲名の欄')
     private readonly _表示名入力: TextInputC
     private readonly _名乗り表示: DivC
+    private readonly _保存ボタン: ButtonC
+    private readonly _読込ボタン: ButtonC
+    private readonly _状態表示: SpanC
     private _打っている最中か = false
 
     public constructor(初期楽曲: 楽曲) {
@@ -27,7 +40,14 @@ export class 楽曲名の欄 extends LV2HtmlComponentBase implements I配線可�
             .addTypedEventListener('focus', () => { this._打っている最中か = true })
             .addTypedEventListener('blur', () => { this._打っている最中か = false })
         this._名乗り表示 = div({ class: 名乗りの添え, text: 初期楽曲.名乗り }).setTooltip('保存先を決める名乗り。変えられない')
-        this._componentRoot = div({ class: 楽曲名の枠 }).childs([this._表示名入力, this._名乗り表示])
+        this._保存ボタン = button({ class: 副ボタン, text: '保存' }).setTooltip('保存')
+        this._読込ボタン = button({ class: 副ボタン, text: '読み込み' }).setTooltip('読み込み')
+        this._状態表示 = span({ class: 永続化の状態文言, text: '未保存' }).setTooltip('未保存')
+        this._componentRoot = div({ class: 楽曲名の枠 }).childs([
+            this._表示名入力,
+            this._名乗り表示,
+            div({ class: 永続化操作の並び }).childs([this._保存ボタン, this._読込ボタン, this._状態表示]),
+        ])
     }
 
     public 配線する(配線: I楽曲名の欄配線): this {
@@ -35,6 +55,27 @@ export class 楽曲名の欄 extends LV2HtmlComponentBase implements I配線可�
         this._表示名入力.onInput(() => this._入力された())
         this._表示名入力.onChange(() => this._入力が決まった())
         return this
+    }
+
+    public on保存クリック(コールバック: () => void): void {
+        this._保存ボタン.onClick(() => コールバック())
+    }
+
+    public on読込クリック(コールバック: () => void): void {
+        this._読込ボタン.onClick(() => コールバック())
+    }
+
+    public ボタン活性状態を更新する(活性: boolean): void {
+        this._保存ボタン.setStyleCSS({ opacity: 活性 ? '1' : '0.5', pointerEvents: 活性 ? 'auto' : 'none' })
+        this._読込ボタン.setStyleCSS({ opacity: 活性 ? '1' : '0.5', pointerEvents: 活性 ? 'auto' : 'none' })
+    }
+
+    public 状態文言を更新する(文言: string, エラーか: boolean = false): void {
+        this._状態表示
+            .setTooltip(文言)
+            .removeClass([永続化の状態文言, 永続化のエラー状態文言])
+            .addClass(エラーか ? 永続化のエラー状態文言 : 永続化の状態文言)
+            .setTextContent(文言)
     }
 
     // 打っている最中は正本の値で上書きしない。打っている間はコマンドを積まないため正本が古く、
@@ -49,6 +90,9 @@ export class 楽曲名の欄 extends LV2HtmlComponentBase implements I配線可�
     public override delete(): void {
         this._表示名入力.delete()
         this._名乗り表示.delete()
+        this._保存ボタン.delete()
+        this._読込ボタン.delete()
+        this._状態表示.delete()
         super.delete()
     }
 
