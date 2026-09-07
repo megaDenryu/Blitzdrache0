@@ -21,6 +21,7 @@ import { 情報バッジ } from '../スタイル.css.ts'
 export interface Iタイムライン配線 {
     readonly onカード選択: (位置: カード位置) => void
     readonly on枠操作: (先頭カードの位置: カード位置, 種類: 節の操作の種類) => void
+    readonly on節の繰り返し回数変更: (節の位置: number, 新しい繰り返し回数: number) => void
     readonly on末尾へ追加: () => void
 }
 
@@ -72,7 +73,12 @@ export class タイムライン部品 extends LV2HtmlComponentBase implements I�
         this._componentRoot.child(this._追加ボタン.選択中パターンを反映する(選択中パターンの名乗り))
         this._カード列を配線する()
         if (this._配線.配線済みか) {
-            節の枠一覧を配線する(this._節の枠一覧, this._カード列, (位置, 種類) => this._配線.先.on枠操作(位置, 種類))
+            節の枠一覧を配線する(
+                this._節の枠一覧,
+                this._カード列,
+                (位置, 種類) => this._配線.先.on枠操作(位置, 種類),
+                (節の位置, 新しい繰り返し回数) => this._配線.先.on節の繰り返し回数変更(節の位置, 新しい繰り返し回数),
+            )
         }
     }
 
