@@ -30,6 +30,8 @@ mod orientation;
 #[cfg(test)]
 mod orientation_tests;
 mod placement;
+#[cfg(test)]
+mod placement_collision_tests;
 mod principal_inertia;
 mod quiet_substep_run;
 mod step_input;

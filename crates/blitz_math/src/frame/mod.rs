@@ -53,6 +53,13 @@ mod transform_construct_tests;
 mod trs;
 #[cfg(test)]
 mod trs_tests;
+mod two_tier_position;
+#[cfg(test)]
+mod two_tier_position_accumulation_tests;
+mod two_tier_position_algebra;
+mod two_tier_position_error;
+#[cfg(test)]
+mod two_tier_position_tests;
 mod vector_quantity;
 mod velocity;
 
@@ -80,4 +87,6 @@ pub use space::{
 };
 pub use torque::回転力;
 pub use transform::変換;
+pub use two_tier_position::二段の位置;
+pub use two_tier_position_error::二段の位置エラー;
 pub use velocity::速度;

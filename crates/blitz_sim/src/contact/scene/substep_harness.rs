@@ -7,7 +7,7 @@
 #![allow(clippy::unwrap_used)]
 
 use blitz_collision::shape::任意姿勢の直方体;
-use blitz_math::{メートル, 角速度};
+use blitz_math::{メートル, 大域メートル, 角速度};
 
 use super::super::contact_batches::接触拘束の二つのバッチ;
 use super::super::contact_thresholds::反発を抑制する法線相対速度の閾値;
@@ -108,8 +108,8 @@ impl 一つの箱と静的な直方体の場面 {
         self.錨を置き直した細分の延べ数 += usize::from(置き直したか);
     }
 
-    // 箱の重心から見た指定の高さの向きの隙間。落下の試験が床からの隙間を測るために読む。
-    pub(super) fn 箱の重心の高さ(&self) -> メートル {
-        self.箱の配置.重心の位置().y()
+    // 箱の重心の高さ(倍精度で評価した和)。落下の試験が床からの隙間を測るために読む。
+    pub(super) fn 箱の重心の高さ(&self) -> 大域メートル {
+        self.箱の配置.重心の位置().倍精度で評価した位置().y()
     }
 }

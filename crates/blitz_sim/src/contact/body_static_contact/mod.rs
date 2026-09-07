@@ -12,6 +12,8 @@ mod residual;
 mod residual_tests;
 mod velocity_stage;
 
+use blitz_math::二段の位置;
+
 use super::body_static_contact_parameters::剛体と静的世界の接触拘束の引数;
 use super::contact_projection_row::接触の射影に参加する点;
 use super::non_penetration::非貫通の一刻みの係数;
@@ -45,7 +47,7 @@ impl 剛体と静的世界の接触拘束 {
     ) -> Result<Self, コンプライアンスエラー> {
         Ok(Self {
             一刻みの係数: 引数.解き方.刻み幅で解く係数を導く(刻み幅)?,
-            錨: 静止摩擦の錨::生成する(引数.剛体側の局所接触点, 引数.静的世界側の接触点),
+            錨: 静止摩擦の錨::生成する(引数.剛体側の局所接触点, 二段の位置::位置から生成する(引数.静的世界側の接触点)),
             引数,
             非貫通の解の状態: 非貫通の一細分の解の状態::細分の開始の状態(),
             静止摩擦の解の状態: 静止摩擦の一細分の解の状態::細分の開始の状態(),
