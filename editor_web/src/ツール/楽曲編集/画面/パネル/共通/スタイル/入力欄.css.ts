@@ -61,3 +61,9 @@ export const 幅を伸ばすセレクト = style({
     minWidth: '160px',
     width: 'auto',
 })
+
+// 曲の節の繰り返し回数の欄。曲構成パネルとタイムラインの節の枠が同じ欄を使う。
+export const 回数選択 = style({
+    minWidth: '90px',
+    width: 'auto',
+})

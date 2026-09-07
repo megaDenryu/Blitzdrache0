@@ -1,7 +1,7 @@
 import { div, span, DivC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
 import type { 曲の節 } from '../../../../生成/編集資源契約.ts'
-import { 節の繰り返し回数選択欄 } from '../パネル/曲構成/節の繰り返し回数選択欄.ts'
+import { 節の繰り返し回数選択欄 } from '../パネル/共通/節の繰り返し回数選択欄.ts'
 import type { カード部品 } from './カード部品.ts'
 import { 節の操作ボタン群 } from './節の操作ボタン群.ts'
 import type { 節の操作の押せるか } from './節の操作の押せるかを計算する.ts'
