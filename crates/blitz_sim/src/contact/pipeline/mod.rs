@@ -46,6 +46,8 @@ mod substep_impulse_tests;
 #[cfg(test)]
 mod tower_fixture;
 #[cfg(test)]
+mod tower_gap_record;
+#[cfg(test)]
 mod tower_invariance_tests;
 #[cfg(test)]
 mod tower_manifold_size_record;
