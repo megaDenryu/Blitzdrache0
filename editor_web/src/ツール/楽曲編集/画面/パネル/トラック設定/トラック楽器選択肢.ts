@@ -1,3 +1,4 @@
+// 参照: 正本はRustの`楽器::音の種類`(crates/editor_server/src/resource/music/instrument.rs)であり、この switch は網羅検査で追随を強制する。
 import type { トラックの種類, 楽器, 音の並び } from '../../../../../生成/編集資源契約.ts'
 
 type 音の並びの種類 = 音の並び['種類']
@@ -9,8 +10,20 @@ function 楽器の音の種類を判定する(対象: 楽器): 楽器の音の�
         case '生ドラム':
         case '矩形波と雑音のドラム':
             return '打楽器の楽器'
-        default:
+        case 'グランドピアノ':
+        case '弦楽合奏':
+        case 'フルート':
+        case '矩形波の主旋律':
+        case 'アコースティックギター':
+        case 'エレクトリックピアノ':
+        case 'ウッドベース':
+        case 'エレキベース':
+        case '三角波のベース':
             return '音高の楽器'
+        default: {
+            const 漏れ: never = 対象
+            return 漏れ
+        }
     }
 }
 
