@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { style, globalStyle } from '@vanilla-extract/css'
 import { エディターCSS変数 } from '../../../../境界/index.ts'
 
 // タイムラインの行自体。人が編集中ずっと見る対象であるため縦には伸ばさず、
@@ -104,6 +104,11 @@ export const 節の枠見出し文言 = style({
 export const 節の枠見出し操作 = style({
     display: 'flex',
     gap: '2px',
+})
+
+// 6つの操作ボタンが記号ボタンの既定11pxのままだと読みにくいため、この行の中だけ引き上げる。
+globalStyle(`${節の枠見出し操作} > button`, {
+    fontSize: '13px',
 })
 
 export const 節の枠カード列 = style({
