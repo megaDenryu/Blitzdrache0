@@ -14,6 +14,8 @@
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断3」「判断11」
 
 #[cfg(test)]
+mod carry_tests;
+#[cfg(test)]
 mod mapping_tests;
 #[cfg(test)]
 mod pair_tests;
