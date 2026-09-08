@@ -12,11 +12,11 @@ use blitz_collision::contact_set::{
 use blitz_collision::shape::{任意姿勢の直方体, 直方体の軸ごとの半分の長さ};
 use blitz_math::{メートル, ローカル, ワールド, 二段の位置, 位置, 倍精度の無次元量を単精度へ狭める, 変位};
 
-use super::contact_test_fixtures::{台帳へ登録する, 試験の材質};
-use super::contacting_body::接触に参加する剛体;
-use super::material_id::材質の識別子;
-use super::minimum_thickness::形の最小の厚み;
-use super::query_origin::衝突の問い合わせの基準原点;
+use super::super::contact_test_fixtures::{台帳へ登録する, 試験の材質};
+use super::super::contacting_body::接触に参加する剛体;
+use super::super::material_id::材質の識別子;
+use super::super::minimum_thickness::形の最小の厚み;
+use super::衝突の問い合わせの基準原点;
 use crate::rigid_body::{剛体の台帳, 姿勢, 配置};
 
 pub(super) const 立方体の半分の長さ: f32 = 0.5;

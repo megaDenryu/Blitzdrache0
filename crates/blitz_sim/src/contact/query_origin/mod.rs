@@ -9,14 +9,29 @@
 //! 返った点はこの原点からの相対座標である。世界へ戻すときは、原点を粗い位置・相対の変位を細かい位置にした二段の位置へ繰り上げる。
 //! 注意: 形の中心が単精度である限り、原点から形の中心までの距離の表現の刻み幅の半分が、その形の配置の丸めの上限になる。
 //! 剛体の側は零であり、半分の長さ20メートルの静的な直方体では9.5e-7メートルの偏りが基準原点が変わるまで一定に残る。
+//! このモジュールは、共有する座標系の境界を成す3つを持つ。原点(この型)・原点に相対な直方体を大域へ写す `relative_box`・
+//! 相対座標の点と法線と貫通量を単精度へ狭める `shared_frame` である。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断3」「判断11」
+
+#[cfg(test)]
+mod mapping_tests;
+mod relative_box;
+pub(super) mod shared_frame;
+#[cfg(test)]
+mod static_tests;
+#[cfg(test)]
+mod test_fixtures;
+#[cfg(test)]
+mod tests;
+
+pub use relative_box::大域原点に相対な直方体;
 
 use blitz_collision::shape::{任意姿勢の直方体, 形の局所座標の位置, 直方体の軸ごとの半分の長さ};
 use blitz_math::{クォータニオン, メートル, ローカル, ワールド, 二段の位置, 位置, 大域ワールド位置};
 
 use super::generation_error::接触拘束の生成エラー;
-use super::shared_frame::接触点を基準原点からの変位へ写す;
 use crate::rigid_body::配置;
+use shared_frame::接触点を基準原点からの変位へ写す;
 
 /// 1回の接触点集合の問い合わせで2つの形が共有する局所座標系の原点。
 #[derive(Debug, Clone, Copy, PartialEq)]

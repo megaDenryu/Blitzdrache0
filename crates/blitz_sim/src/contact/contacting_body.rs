@@ -11,8 +11,8 @@ use blitz_math::{ローカル, 位置, 変位};
 use super::generation_error::接触拘束の生成エラー;
 use super::material_id::材質の識別子;
 use super::minimum_thickness::形の最小の厚み;
+use super::query_origin::shared_frame::接触点を渡した相対の中心からの変位へ写す;
 use super::query_origin::衝突の問い合わせの基準原点;
-use super::shared_frame::接触点を渡した相対の中心からの変位へ写す;
 use crate::rigid_body::{剛体の識別子, 配置};
 
 /// 接触拘束の生成に参加する1つの剛体。配置は細分の予測が作った配置である。

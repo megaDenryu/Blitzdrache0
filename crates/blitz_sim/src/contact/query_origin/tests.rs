@@ -7,7 +7,7 @@
 
 use blitz_collision::contact_set::二つの直方体の重なりの接触点集合;
 
-use super::query_origin_test_fixtures::{
+use super::test_fixtures::{
     二十メートルの帯の刻み, 先頭の点の貫通量, 半分の長さ, 新形で問い合わせる, 旧形で問い合わせる, 立方体の半分の長さ, 細かい位置を持つ配置,
 };
 

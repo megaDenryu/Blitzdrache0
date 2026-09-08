@@ -21,7 +21,7 @@ use super::contacting_body::接触に参加する剛体;
 use super::feature_identity::接触の特徴の識別;
 use super::generation_error::接触拘束の生成エラー;
 use super::non_penetration::非貫通の解き方;
-use super::shared_frame::{接触法線をワールドへ写す, 符号付き貫通量を単精度へ狭める};
+use super::query_origin::shared_frame::{接触法線をワールドへ写す, 符号付き貫通量を単精度へ狭める};
 use super::static_world_partner::静的世界の接触相手;
 
 impl 接触拘束のバッチの組み立て<'_> {

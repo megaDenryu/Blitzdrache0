@@ -69,7 +69,7 @@ mod tests {
     #[test]
     fn 基準原点を選ぶための粗い位置の読み口は畳む口として数えない() {
         let 原文 = "let 原点 = 配置.重心の位置().基準原点を選ぶための粗い位置();\n";
-        assert!(検査する(Path::new("crates/blitz_sim/src/contact/query_origin.rs"), 原文).is_empty());
+        assert!(検査する(Path::new("crates/blitz_sim/src/contact/query_origin/mod.rs"), 原文).is_empty());
     }
 
     #[test]

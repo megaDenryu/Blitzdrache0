@@ -9,11 +9,11 @@
 use blitz_collision::contact_set::二つの直方体の重なりの接触点集合;
 use blitz_collision::shape::任意姿勢の直方体;
 
-use super::query_origin::衝突の問い合わせの基準原点;
-use super::query_origin_test_fixtures::{
+use super::test_fixtures::{
     二十メートルの帯の刻み, 個別に畳んだ直方体, 先頭の点の貫通量, 半分の長さ, 床の半分の長さ, 接触点集合を問い合わせる, 立方体の半分の長さ,
     細かい位置を持つ配置,
 };
+use super::衝突の問い合わせの基準原点;
 use crate::rigid_body::配置;
 
 const 食い込み: f32 = 1.0e-4;

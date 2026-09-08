@@ -10,14 +10,14 @@ use blitz_collision::contact_set::{二つの直方体の重なりの接触点集
 use blitz_collision::shape::形の局所座標の位置;
 use blitz_math::メートル;
 
-use super::batch_builder::接触拘束のバッチの組み立て;
-use super::contact_test_fixtures::{単一の材質の混合則, 局所の変位を作る, 試験の刻み幅};
-use super::generation_error::接触拘束の生成エラー;
-use super::mixing_rule::混合則;
-use super::query_origin::衝突の問い合わせの基準原点;
-use super::query_origin_test_fixtures::{
-    二十メートルの帯の刻み, 半分の長さ, 参加者を作る, 新形で問い合わせる, 立方体の半分の長さ, 細かい位置を持つ配置,
+use super::super::batch_builder::接触拘束のバッチの組み立て;
+use super::super::contact_test_fixtures::{単一の材質の混合則, 局所の変位を作る, 試験の刻み幅};
+use super::super::generation_error::接触拘束の生成エラー;
+use super::super::mixing_rule::混合則;
+use super::test_fixtures::{
+    二十メートルの帯の刻み, 半分の長さ, 参加者を作る, 新形で問い合わせる, 立方体の半分の長さ, 細かい位置を持つ配置
 };
+use super::衝突の問い合わせの基準原点;
 use crate::rigid_body::{剛体の台帳, 配置};
 use crate::xpbd::コンプライアンス;
 
