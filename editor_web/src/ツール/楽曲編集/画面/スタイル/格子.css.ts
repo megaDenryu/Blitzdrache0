@@ -83,5 +83,9 @@ export const 升目 = style({
             outlineOffset: '-1px',
             zIndex: 1,
         },
+        // タイムラインで選択中のカードが指す小節の16列を、背景を明るくして示す。
+        '&[data-強調小節="true"]': {
+            backgroundColor: エディターCSS変数('選択背景'),
+        },
     },
 })

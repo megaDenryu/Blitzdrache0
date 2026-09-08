@@ -59,7 +59,7 @@ export class 楽曲編集ツール extends LV2HtmlComponentBase {
             表示名の編集: this.表示名の編集,
             楽曲ID,
         })
-        void 起動時に楽曲を読み込む(this.画面, this.状態, this.接続, 楽曲ID, this.同期)
+        void 起動時に楽曲を読み込む(this.画面, this.状態, this.接続, 楽曲ID, this.同期, this.演奏)
     }
 
     public 寸法を合わせる(): void {}

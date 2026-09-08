@@ -5,7 +5,7 @@ import { 末尾へ追加ボタンの配置 } from './スタイル.css.ts'
 // 選択中のパターンをタイムラインの末尾へ追加するボタン。パターンが選ばれていないときは押せない状態で出す。
 export class 末尾へ追加ボタン extends ButtonC {
     public constructor() {
-        super({ class: `${主ボタン} ${末尾へ追加ボタンの配置}`, text: '+' })
+        super({ class: `${主ボタン} ${末尾へ追加ボタンの配置}`, text: '+ 末尾へ追加' })
         this.setTooltip('選択中のパターンをタイムラインの末尾へ追加')
     }
 

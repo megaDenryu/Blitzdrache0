@@ -35,8 +35,21 @@ export type パターンの表示名を変える差し戻し = {
     readonly 変更前表示名: string
 }
 
+// 小節数を変えたときに末尾へ切り落とされたセルの記録。増やしたときは行ごとに空になる。
+export type 切り落とされたトラック格子 = {
+    readonly 行一覧: readonly (readonly number[])[]
+}
+
+export type パターンの小節数を変える差し戻し = {
+    readonly 種類: 'パターンの小節数を変える'
+    readonly 名乗り: string
+    readonly 変更前の小節数: number
+    readonly 切り落とした末尾のセル: readonly 切り落とされたトラック格子[]
+}
+
 export type パターン差し戻し断片 =
     | パターンを追加する差し戻し
     | パターンを削除する差し戻し
     | パターンの進行を変える差し戻し
     | パターンの表示名を変える差し戻し
+    | パターンの小節数を変える差し戻し

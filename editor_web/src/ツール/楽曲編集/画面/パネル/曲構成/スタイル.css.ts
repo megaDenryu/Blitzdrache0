@@ -24,8 +24,3 @@ export const 節番号 = style({
     color: エディターCSS変数('テキスト薄'),
     minWidth: '24px',
 })
-
-export const 回数選択 = style({
-    minWidth: '90px',
-    width: 'auto',
-})
