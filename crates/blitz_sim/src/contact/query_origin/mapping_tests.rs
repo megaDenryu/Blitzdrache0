@@ -8,7 +8,6 @@
 
 use blitz_collision::contact_set::{二つの直方体の重なりの接触点集合, 接触点集合, 直方体どうしの接触の特徴の対};
 use blitz_collision::shape::形の局所座標の位置;
-use blitz_math::メートル;
 
 use super::super::batch_builder::接触拘束のバッチの組み立て;
 use super::super::contact_test_fixtures::{単一の材質の混合則, 局所の変位を作る, 試験の刻み幅};
