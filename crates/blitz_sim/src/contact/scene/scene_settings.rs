@@ -9,9 +9,7 @@ use blitz_math::{キログラム, ニュートン秒, メートル, ワールド
 use super::super::normal_tangential_system::解けたと見なす許容差の倍率;
 use super::super::solver_quality::接触を解く品質の設定;
 use super::super::surface_property::表面物性;
-use super::residual_separation::場面の残差の分離;
 use super::static_friction_method::場面の静止摩擦の解き方;
-use super::substep_residual_observation::細分の残差の観測;
 use crate::constraint_graph::一様な加速度;
 use crate::rigid_body::配置;
 use crate::xpbd::{ラグランジュ乗数, 刻み幅};
@@ -29,7 +27,6 @@ pub(super) struct 場面の設定 {
     pub 細分の刻み幅: 刻み幅,
     pub 解く品質: 接触を解く品質の設定,
     pub 静止摩擦の解き方: 場面の静止摩擦の解き方,
-    pub 残差の分離: 場面の残差の分離,
     pub 解けたと見なす許容差の倍率: 解けたと見なす許容差の倍率,
 }
 
@@ -44,7 +41,6 @@ pub(super) struct 細分の観測 {
     pub 法線の乗数の合計: ラグランジュ乗数,
     pub 最大の食い込み: メートル,                   // 反復を終えた配置で最も深い −隔たり。食い込みが無ければ零
     pub 接線の乗数の合力の大きさ: ラグランジュ乗数, // 細分の末の ‖Σλ_t‖。円錐の比の分子である
-    pub 残差の観測: 細分の残差の観測,               // 判断24の契約がこの細分で何をしたか
     pub 速度段階の法線の衝撃の合計: ニュートン秒,   // 反発の口が与えた法線の衝撃の符号付きの合計。Σλ_n に含まれない法線の力積
     pub 速度段階の動摩擦の衝撃の合計: ニュートン秒,
     pub 法線反力の無い点の数: usize, // 法線のラグランジュ乗数が零で速度段階が飛ばした点の数
@@ -59,7 +55,6 @@ impl Default for 細分の観測 {
             法線の乗数の合計: ラグランジュ乗数::零(),
             最大の食い込み: メートル::生成する(0.0),
             接線の乗数の合力の大きさ: ラグランジュ乗数::零(),
-            残差の観測: 細分の残差の観測::default(),
             速度段階の法線の衝撃の合計: ニュートン秒::生成する(0.0),
             速度段階の動摩擦の衝撃の合計: ニュートン秒::生成する(0.0),
             法線反力の無い点の数: 0,

@@ -7,7 +7,7 @@ use blitz_collision::shape::{大域の軸平行の直方体, 直方体の軸ご�
 use super::pipeline_error::接触の工程エラー;
 use crate::contact::query_origin::{大域原点に相対な直方体, 衝突の問い合わせの基準原点};
 use crate::rigid_body::{剛体の識別子, 運動状態, 配置};
-use crate::rigid_xpbd::{予測の状態, 前の状態, 速度の再構成だけが読む仮の補正};
+use crate::rigid_xpbd::{予測の状態, 前の状態};
 
 /// 細分の中で予測した動的剛体の状態。
 pub(super) struct 細分の動的剛体 {
@@ -15,7 +15,6 @@ pub(super) struct 細分の動的剛体 {
     pub(super) 前の状態: 前の状態,
     pub(super) 予測: 予測の状態,
     pub(super) 予測の運動状態: 運動状態,
-    pub(super) 残差の変化を打ち消す仮の補正: 速度の再構成だけが読む仮の補正, // 判断24。速度の再構成だけが読み、配置として確定しない
 }
 
 // 配置の粗い位置を基準原点にした相対の直方体と、その原点を大域へ写したもの。

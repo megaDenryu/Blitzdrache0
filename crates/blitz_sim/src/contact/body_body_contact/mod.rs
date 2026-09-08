@@ -9,9 +9,6 @@
 mod history_and_friction;
 #[cfg(test)]
 mod history_and_friction_tests;
-mod residual;
-#[cfg(test)]
-mod residual_tests;
 mod velocity_stage;
 
 use super::body_body_contact_parameters::剛体と剛体の接触拘束の引数;
@@ -20,7 +17,6 @@ use super::non_penetration::{
     非貫通の一刻みの係数, 非貫通の一回の射影の結果, 非貫通の一細分の解の状態, 非貫通の接触点集合の一行
 };
 use super::normal_tangential_system::接触点集合の法線と接線の連立;
-use super::static_friction::接線の残差の持ち越し;
 use super::static_friction::静止摩擦の一細分の解の状態;
 use super::static_friction::{剛体どうしの静止摩擦の錨, 静止摩擦の錨};
 use crate::rigid_xpbd::姿勢自由度の参加者;
@@ -34,7 +30,6 @@ pub struct 剛体と剛体の接触拘束 {
     非貫通の解の状態: 非貫通の一細分の解の状態,
     錨: 剛体どうしの静止摩擦の錨,
     静止摩擦の解の状態: 静止摩擦の一細分の解の状態,
-    接線の残差の持ち越し: 接線の残差の持ち越し,
 }
 
 impl 剛体と剛体の接触拘束 {
@@ -49,7 +44,6 @@ impl 剛体と剛体の接触拘束 {
             引数,
             非貫通の解の状態: 非貫通の一細分の解の状態::細分の開始の状態(),
             静止摩擦の解の状態: 静止摩擦の一細分の解の状態::細分の開始の状態(),
-            接線の残差の持ち越し: 接線の残差の持ち越し::持ち込みが無い状態(),
         })
     }
 

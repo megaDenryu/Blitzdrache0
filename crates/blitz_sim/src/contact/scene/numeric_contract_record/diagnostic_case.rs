@@ -1,6 +1,6 @@
 //! 数値契約の診断が測る1つの場合(Issue #59)。坂の傾きの正接・鉛直軸まわりの回し・坂の面の法線の向きへ場面ごと
 //! 動かす長さの3つで決まる。動かす長さを持つのは、同じ相対配置を世界内で平行移動して接触点の座標の表現の刻みを
-//! 変える診断が要るためである。判断24の候補D(残差の変化を速度から除く)のあり/なしも持ち、既定はありである。
+//! 変える診断が要るためである。
 //! 表の見出しに使う単位(度・倍率・メートル)から場合を組む3つの口は`case_construction`が持つ。
 //! `cone_breach_record/recorded_case`と重なるのは、回しと正接から坂の場面の条件を組む2行だけである。あちらは
 //! 円錐を初めて超える細分を探す走査を持ち、こちらは保持と滑走の分類と2つの精度の比較を持つ。測る対象が違うため
@@ -14,7 +14,6 @@ use blitz_math::メートル;
 
 use super::super::super::friction_coefficient::摩擦係数;
 use super::super::super::normal_tangential_system::解けたと見なす許容差の倍率;
-use super::super::residual_separation::場面の残差の分離;
 use super::super::slope_fixture::{一刻みの細分数, 坂の場面を移動と許容差の倍率で組む};
 use super::super::slope_geometry::坂の場面の条件;
 use super::super::static_friction_method::場面の静止摩擦の解き方;
@@ -31,19 +30,11 @@ pub(super) struct 数値契約の診断の一つの場合 {
     pub(super) 傾きの正接: f32,
     pub(super) 法線の向きへ動かす長さ: メートル,
     pub(super) 解けたと見なす許容差の倍率: 解けたと見なす許容差の倍率,
-    pub(super) 残差の分離: 場面の残差の分離,
 }
 
 impl 数値契約の診断の一つの場合 {
     pub(super) fn 場面を組む(&self, 条件: &坂の場面の条件) -> 一つの箱と静的な直方体の場面 {
-        let mut 場面 = 坂の場面を移動と許容差の倍率で組む(条件, self.法線の向きへ動かす長さ, self.解けたと見なす許容差の倍率);
-        場面.残差の分離 = self.残差の分離;
-        場面
-    }
-
-    /// 判断24の候補Dのあり/なしを変えた場合。候補Bの導入後にDあり/なしで診断を比較する計器が読む。
-    pub(super) fn 残差の分離を変える(self, 残差の分離: 場面の残差の分離) -> Self {
-        Self { 残差の分離, ..self }
+        坂の場面を移動と許容差の倍率で組む(条件, self.法線の向きへ動かす長さ, self.解けたと見なす許容差の倍率)
     }
 
     pub(super) fn 坂の場面の条件を組む(&self) -> 坂の場面の条件 {
