@@ -8,6 +8,7 @@
 #![cfg(test)]
 
 use super::super::symmetric_system::{対称な連立の固有分解, 擬似逆が固有の向きを捨てた理由};
+use super::active_set::法線と接線の連立の有効集合;
 use super::reduced_system::有効な行だけを抜き出した連立;
 use super::system::接触点集合の法線と接線の連立;
 
@@ -21,7 +22,7 @@ pub(in crate::contact) struct 単精度の固有の向きの内訳 {
 
 /// 単精度の本番の連立が定めた解の、数値解法の内側の内訳。
 pub(in crate::contact) struct 単精度の解の内訳 {
-    pub(in crate::contact) 有効集合のビット並び: u8,
+    pub(in crate::contact) 有効集合: 法線と接線の連立の有効集合,
     pub(in crate::contact) 行ごとの残差: Vec<f32>,
     pub(in crate::contact) 行ごとの許容差の内側として捨てた右辺: Vec<f32>,
     pub(in crate::contact) 行ごとの解けたと見なす許容差: Vec<f32>,
@@ -47,7 +48,7 @@ impl 接触点集合の法線と接線の連立 {
             })
             .collect();
         Some(単精度の解の内訳 {
-            有効集合のビット並び: 有効集合.ビット並び(),
+            有効集合,
             行ごとの残差: (0..行の数).map(|k| 抜き出した.第k行の残差(&解, k)).collect(),
             行ごとの許容差の内側として捨てた右辺: (0..行の数).map(|k| 解.第k行の許容差の内側として捨てた右辺(k)).collect(),
             行ごとの解けたと見なす許容差: 抜き出した.行ごとの解けたと見なす許容差[..行の数].to_vec(),
@@ -60,6 +61,11 @@ impl 単精度の解の内訳 {
     /// 指定の理由で扱われた固有の向きの数。
     pub(in crate::contact) fn 捨てた向きの数(&self, 理由: 擬似逆が固有の向きを捨てた理由) -> usize {
         self.固有の向きごと.iter().filter(|向き| 向き.捨てた理由 == 理由).count()
+    }
+
+    /// 勝った有効集合を第k番のビットが第k番の接触点として綴った文字列。ビット並びを生の数へ剥がすのはこの表示だけである。
+    pub(in crate::contact) fn 有効集合の綴り(&self) -> String {
+        format!("{:#010b}", self.有効集合.ビット並び())
     }
 
     /// 行ごとの残差の絶対値の最大。
