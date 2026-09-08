@@ -11,6 +11,8 @@ mod hold_limit_record;
 mod normal_iteration_record;
 mod normal_multiplier_sum_tests;
 mod numeric_contract_record;
+#[cfg(test)]
+mod quantization_period_tests;
 mod released_normal_reaction_tests;
 mod scene_geometry;
 mod scene_settings;
