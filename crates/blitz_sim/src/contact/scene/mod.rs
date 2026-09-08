@@ -20,6 +20,7 @@ mod scene_geometry;
 mod scene_settings;
 mod sequential_projection_record;
 mod sliding_deceleration_tests;
+mod sliding_normal_impulse_record;
 mod slope_fixture;
 mod slope_geometry;
 mod slope_tests;
