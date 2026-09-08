@@ -12,6 +12,8 @@
 mod amplifier_formula;
 mod doubled_ulp_translation;
 mod rhs_tolerance_zero;
+mod rhs_zero_across_axes;
+mod rhs_zero_failure_locator;
 mod rotated_acceptance;
 mod sixteen_substeps;
 mod tilt_after_rest;
@@ -20,12 +22,14 @@ mod upper_tangent_scan;
 use super::case::許容差依存の診断の場合;
 use super::scene_variation::段階A1の場面からの一つの変更;
 use super::substep_record::許容差依存の細分の記録;
+use crate::contact::normal_tangential_system::接線の行の右辺の許容差の扱い;
 
 const 静止摩擦係数の値: f32 = 0.6;
 const 分類を見る刻み数: usize = 600;
 // 細分2以降の残る接線変位を代表として綴る細分の番号。段階A1の表1と同じ並びである。
 const 残る接線変位を綴る細分: [usize; 5] = [2, 3, 7, 19, 63];
 
+/// 静止摩擦係数0.6・右辺の δ を残す、段階A1と同じ解法の場合。
 fn 場合を組む(
     傾きの正接: f32,
     鉛直軸まわりの回しの度: f32,
@@ -37,6 +41,7 @@ fn 場合を組む(
         傾きの正接,
         鉛直軸まわりの回しの度,
         許容差の比,
+        右辺の許容差の扱い: 接線の行の右辺の許容差の扱い::受理の倍率を掛けて残す,
         変更,
     }
 }
