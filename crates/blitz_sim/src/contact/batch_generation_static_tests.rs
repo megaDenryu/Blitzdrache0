@@ -7,7 +7,7 @@
 #![allow(clippy::unwrap_used)]
 
 use blitz_collision::shape::形の局所座標の位置;
-use blitz_math::{ワールド, 位置};
+use blitz_math::{ワールド, 二段の位置};
 
 use super::batch_builder::接触拘束のバッチの組み立て;
 use super::contact_test_fixtures::{
@@ -19,11 +19,12 @@ use crate::xpbd::{コンプライアンス, ラグランジュ乗数};
 
 const 静的世界の番号: u32 = 7;
 
-fn 世界の点が接触点と一致するか(戻した: 位置<ワールド>, 点: 形の局所座標の位置) -> bool {
+fn 世界の点が接触点と一致するか(戻した: 二段の位置<ワールド>, 点: 形の局所座標の位置) -> bool {
+    let 和 = 戻した.倍精度で評価した位置();
     [
-        f64::from(戻した.x().値()) - 点.xのメートル(),
-        f64::from(戻した.y().値()) - 点.yのメートル(),
-        f64::from(戻した.z().値()) - 点.zのメートル(),
+        和.x().値() - 点.xのメートル(),
+        和.y().値() - 点.yのメートル(),
+        和.z().値() - 点.zのメートル(),
     ]
     .iter()
     .all(|差| 差.abs() < 1.0e-6)

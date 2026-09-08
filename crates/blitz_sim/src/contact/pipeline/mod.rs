@@ -33,15 +33,21 @@ mod pipeline_fixture;
 #[cfg(test)]
 mod pipeline_tests;
 #[cfg(test)]
+mod query_origin_selection_tests;
+#[cfg(test)]
 mod rest_time_invariance_tests;
 #[cfg(test)]
 mod side_by_side_fixture;
+#[cfg(test)]
+mod side_by_side_rest_record;
 #[cfg(test)]
 mod side_by_side_rest_tests;
 #[cfg(test)]
 mod substep_impulse_tests;
 #[cfg(test)]
 mod tower_fixture;
+#[cfg(test)]
+mod tower_gap_record;
 #[cfg(test)]
 mod tower_invariance_tests;
 #[cfg(test)]

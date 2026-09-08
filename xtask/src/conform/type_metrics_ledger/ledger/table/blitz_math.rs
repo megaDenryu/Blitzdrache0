@@ -8,11 +8,12 @@ use super::super::{区画の一覧, 台帳の行};
 
 const モジュールの根: &str = "crates/blitz_math/src";
 
-const 行一覧: [台帳の行; 5] = [
+const 行一覧: [台帳の行; 6] = [
     台帳の行::構造体("frame/direction.rs", "方向", 3, 2, 17),
     台帳の行::構造体("frame/displacement.rs", "変位", 5, 2, 26),
     台帳の行::構造体("frame/rotation.rs", "クォータニオン", 4, 3, 29),
     台帳の行::構造体("frame/transform.rs", "変換", 4, 3, 18),
+    台帳の行::構造体("frame/two_tier_position.rs", "二段の位置", 2, 2, 16),
     台帳の行::構造体("units/meter.rs", "メートル", 2, 0, 16),
 ];
 

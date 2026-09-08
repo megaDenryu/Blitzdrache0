@@ -8,7 +8,7 @@ use blitz_collision::dynamic_index::{動く形の空間索引, 重なりうる�
 use blitz_collision::shape::{任意姿勢の直方体, 大域の軸平行の直方体, 直方体の軸ごとの半分の長さ};
 
 use super::pipeline_error::接触の工程エラー;
-use super::substep_predict::始点と終点の直方体から大域の箱を求める;
+use super::substep_predict::始点と終点の配置から大域の箱を求める;
 use crate::contact::material_id::材質の識別子;
 use crate::contact::minimum_thickness::形の最小の厚み;
 use crate::contact::static_world_partner::静的世界の接触相手;
@@ -38,7 +38,7 @@ impl 接触の空間と世界 {
         半分の長さ: 直方体の軸ごとの半分の長さ,
         材質: 材質の識別子,
     ) -> Result<(), 接触の工程エラー> {
-        let 大域箱 = 始点と終点の直方体から大域の箱を求める(初期配置, 初期配置, 半分の長さ)?;
+        let 大域箱 = 始点と終点の配置から大域の箱を求める(初期配置, 初期配置, 半分の長さ)?;
         let 索引id = 識別子.空間索引の識別子へ写す();
         self.空間索引.形を1つ登録する(索引id, &大域箱)?;
         self.剛体の形状一覧.insert(識別子, 半分の長さ);

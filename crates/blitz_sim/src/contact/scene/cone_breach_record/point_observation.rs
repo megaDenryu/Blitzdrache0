@@ -5,7 +5,7 @@
 
 #![cfg(test)]
 
-use blitz_math::{メートル, ワールド, 位置, 変位};
+use blitz_math::{メートル, ワールド, 二段の位置, 変位};
 
 use crate::contact::body_static_contact::剛体と静的世界の接触拘束;
 use crate::contact::feature_identity::接触の特徴の識別;
@@ -21,7 +21,7 @@ pub(super) struct 接触点の観測 {
     pub(super) 錨からの接線変位: 変位<ワールド>,
     pub(super) 法線の乗数: ラグランジュ乗数,
     pub(super) 接線の乗数: 接線のラグランジュ乗数,
-    pub(super) 接触点の世界位置: 位置<ワールド>,
+    pub(super) 接触点の世界位置: 二段の位置<ワールド>,
 }
 
 impl 接触点の観測 {

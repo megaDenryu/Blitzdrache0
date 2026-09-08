@@ -33,6 +33,7 @@ mod source_lexing;
 mod split_debt;
 mod test_directory_layout;
 mod test_file;
+mod two_tier_fold_boundary;
 mod type_metrics_ledger;
 mod verify_output_place;
 mod violation;
@@ -90,6 +91,7 @@ fn ファイル単位の違反を集める(ファイル一覧: &[PathBuf]) -> Re
             違反一覧.extend(allow_lint::検査する(パス, &内容));
             違反一覧.extend(drop_impl::検査する(パス, &内容));
             違反一覧.extend(rigid_raw_triplet::検査する(パス, &内容));
+            違反一覧.extend(two_tier_fold_boundary::検査する(パス, &内容));
         }
         違反一覧.extend(doc_reference::検査する(パス, &内容));
     }

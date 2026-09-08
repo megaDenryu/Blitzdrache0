@@ -56,11 +56,11 @@ mod pipeline;
 mod property_error;
 #[cfg(test)]
 mod property_test_fixtures;
+mod query_origin;
 mod rest;
 mod restitution_coefficient;
 #[cfg(test)]
 mod scene;
-mod shared_frame;
 mod solver_quality;
 mod solver_quality_error;
 #[cfg(test)]
@@ -76,7 +76,7 @@ mod velocity_stage;
 
 pub use body_body_contact::剛体と剛体の接触拘束;
 pub use body_static_contact::剛体と静的世界の接触拘束;
-pub use broad_phase::{剛体どうしの候補対, 剛体どうしの候補対を絞り込む, 始点と終点を包む大域の箱を求める};
+pub use broad_phase::{剛体どうしの候補対, 剛体どうしの候補対を絞り込む};
 pub use contact_batches::接触拘束の二つのバッチ;
 pub use contact_property::接触物性;
 pub use contact_thresholds::{

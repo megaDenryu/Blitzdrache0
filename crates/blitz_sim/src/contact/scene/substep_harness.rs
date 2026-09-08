@@ -7,7 +7,7 @@
 #![allow(clippy::unwrap_used)]
 
 use blitz_collision::shape::任意姿勢の直方体;
-use blitz_math::{メートル, 角速度};
+use blitz_math::{メートル, 大域メートル, 角速度};
 
 use super::super::contact_batches::接触拘束の二つのバッチ;
 use super::super::contact_thresholds::反発を抑制する法線相対速度の閾値;
@@ -20,7 +20,7 @@ use super::super::solver_quality::接触を解く品質の設定;
 use super::super::static_world_partner::静的世界の接触相手;
 use super::super::static_world_partner_id::静的世界の接触相手の識別子;
 use super::super::velocity_stage::接触の速度段階;
-use super::scene_geometry::{一様な立方体の質量特性, 単一の材質の混合則, 場面の材質, 直方体を組む};
+use super::scene_geometry::{一様な立方体の質量特性, 世界に置いた直方体を組む, 単一の材質の混合則, 場面の材質};
 use super::scene_settings::{場面の設定, 細分の観測};
 use super::static_friction_method::場面の静止摩擦の解き方;
 use crate::rigid_body::{剛体の台帳, 剛体の識別子, 質量特性, 運動状態, 運動種別, 配置};
@@ -68,7 +68,7 @@ impl 一つの箱と静的な直方体の場面 {
             箱の運動状態: 運動状態::生成する(設定.箱の初速, 角速度::零()),
             箱の質量特性: 質量特性,
             箱の半分の長さ: 設定.箱の半分の長さ,
-            静的な直方体: 直方体を組む(&設定.静的な直方体の配置, 設定.静的な直方体の半分の長さ),
+            静的な直方体: 世界に置いた直方体を組む(&設定.静的な直方体の配置, 設定.静的な直方体の半分の長さ),
             静的世界の接触相手: 静的世界の接触相手::生成する(
                 静的世界の接触相手の識別子::生成する(静的世界の番号),
                 材質の識別子::生成する(場面の材質),
@@ -105,8 +105,8 @@ impl 一つの箱と静的な直方体の場面 {
         self.錨を置き直した細分の延べ数 += usize::from(置き直したか);
     }
 
-    // 箱の重心から見た指定の高さの向きの隙間。落下の試験が床からの隙間を測るために読む。
-    pub(super) fn 箱の重心の高さ(&self) -> メートル {
-        self.箱の配置.重心の位置().y()
+    // 箱の重心の高さ(倍精度で評価した和)。落下の試験が床からの隙間を測るために読む。
+    pub(super) fn 箱の重心の高さ(&self) -> 大域メートル {
+        self.箱の配置.重心の位置().倍精度で評価した位置().y()
     }
 }
