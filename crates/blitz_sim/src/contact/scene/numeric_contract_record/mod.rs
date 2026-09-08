@@ -21,6 +21,8 @@ mod holding_class;
 mod oscillation_scan;
 mod residual_separation_comparison_table;
 mod single_precision_reading;
+mod sliding_normal_budget_record;
+mod sliding_normal_budget_sample;
 mod slope_boundary_table;
 mod substep_oscillation;
 mod tolerance_table;

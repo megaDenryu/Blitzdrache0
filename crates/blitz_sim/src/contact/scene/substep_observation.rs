@@ -15,6 +15,7 @@ use super::super::static_friction::接線のラグランジュ乗数;
 use super::scene_settings::細分の観測;
 use super::substep_harness::一つの箱と静的な直方体の場面;
 use super::substep_residual_observation::細分の残差の観測;
+use super::substep_velocity_stage::速度段階の結果と衝撃の集計;
 use crate::rigid_xpbd::予測の状態;
 use crate::xpbd::ラグランジュ乗数;
 
@@ -25,6 +26,7 @@ impl 一つの箱と静的な直方体の場面 {
         予測: &予測の状態,
         開始した接触点の数: usize,
         仮の補正を引く前の並進速度: 速度<ワールド>,
+        速度段階: &速度段階の結果と衝撃の集計,
     ) -> 細分の観測 {
         let 拘束一覧 = バッチ.剛体と静的世界の接触拘束();
         細分の観測 {
@@ -42,6 +44,9 @@ impl 一つの箱と静的な直方体の場面 {
                     合計 + 拘束.静止摩擦の解の状態().接線のラグランジュ乗数()
                 })
                 .大きさ(),
+            速度段階の法線の衝撃の合計: 速度段階.法線の衝撃の合計,
+            速度段階の動摩擦の衝撃の合計: 速度段階.動摩擦の衝撃の合計,
+            法線反力の無い点の数: 拘束一覧.iter().filter(|拘束| !拘束.法線反力が在るか()).count(),
         }
     }
 }
