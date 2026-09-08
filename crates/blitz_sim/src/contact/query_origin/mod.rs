@@ -15,14 +15,14 @@
 
 #[cfg(test)]
 mod mapping_tests;
+#[cfg(test)]
+mod pair_tests;
 mod relative_box;
 pub(super) mod shared_frame;
 #[cfg(test)]
 mod static_tests;
 #[cfg(test)]
 mod test_fixtures;
-#[cfg(test)]
-mod tests;
 
 pub use relative_box::大域原点に相対な直方体;
 
