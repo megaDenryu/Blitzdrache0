@@ -21,6 +21,7 @@ mod sliding_deceleration_tests;
 mod sliding_normal_impulse_record;
 mod slope_fixture;
 mod slope_geometry;
+mod slope_scene_spec;
 mod slope_tests;
 mod static_friction_method;
 mod sticking_candidate_fixture;

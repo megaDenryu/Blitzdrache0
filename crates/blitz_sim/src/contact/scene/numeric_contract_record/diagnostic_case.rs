@@ -13,8 +13,8 @@
 use blitz_math::メートル;
 
 use super::super::super::friction_coefficient::摩擦係数;
-use super::super::super::normal_tangential_system::解けたと見なす許容差の倍率;
-use super::super::slope_fixture::{一刻みの細分数, 坂の場面を移動と許容差の倍率で組む};
+use super::super::super::normal_tangential_system::試験の許容差の当て方;
+use super::super::slope_fixture::{一刻みの細分数, 坂の場面を移動と許容差の当て方で組む};
 use super::super::slope_geometry::坂の場面の条件;
 use super::super::static_friction_method::場面の静止摩擦の解き方;
 use super::super::substep_harness::一つの箱と静的な直方体の場面;
@@ -29,12 +29,12 @@ pub(super) struct 数値契約の診断の一つの場合 {
     pub(super) 鉛直軸まわりの回し: f32,
     pub(super) 傾きの正接: f32,
     pub(super) 法線の向きへ動かす長さ: メートル,
-    pub(super) 解けたと見なす許容差の倍率: 解けたと見なす許容差の倍率,
+    pub(super) 試験の許容差の当て方: 試験の許容差の当て方,
 }
 
 impl 数値契約の診断の一つの場合 {
     pub(super) fn 場面を組む(&self, 条件: &坂の場面の条件) -> 一つの箱と静的な直方体の場面 {
-        坂の場面を移動と許容差の倍率で組む(条件, self.法線の向きへ動かす長さ, self.解けたと見なす許容差の倍率)
+        坂の場面を移動と許容差の当て方で組む(条件, self.法線の向きへ動かす長さ, self.試験の許容差の当て方)
     }
 
     pub(super) fn 坂の場面の条件を組む(&self) -> 坂の場面の条件 {

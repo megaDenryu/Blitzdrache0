@@ -48,6 +48,8 @@ mod system;
 #[cfg(test)]
 mod system_fixture;
 mod tangential_row;
+#[cfg(test)]
+mod tolerance_application;
 mod tolerance_scale;
 #[cfg(test)]
 mod tolerance_tests;
@@ -62,6 +64,8 @@ pub(in crate::contact) use double_reference::{
 pub(in crate::contact) use solution_breakdown::単精度の解の内訳;
 pub use system::接触点集合の法線と接線の連立;
 pub use tangential_row::錨の接線変位を零へ戻す一行;
+#[cfg(test)]
+pub(in crate::contact) use tolerance_application::試験の許容差の当て方;
 #[cfg(test)]
 pub(in crate::contact) use tolerance_scale::解けたと見なす許容差の倍率;
 
