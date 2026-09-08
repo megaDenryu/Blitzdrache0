@@ -56,6 +56,15 @@ mod pipeline;
 mod property_error;
 #[cfg(test)]
 mod property_test_fixtures;
+mod query_origin;
+#[cfg(test)]
+mod query_origin_mapping_tests;
+#[cfg(test)]
+mod query_origin_static_tests;
+#[cfg(test)]
+mod query_origin_test_fixtures;
+#[cfg(test)]
+mod query_origin_tests;
 mod rest;
 mod restitution_coefficient;
 #[cfg(test)]
@@ -76,7 +85,9 @@ mod velocity_stage;
 
 pub use body_body_contact::剛体と剛体の接触拘束;
 pub use body_static_contact::剛体と静的世界の接触拘束;
-pub use broad_phase::{剛体どうしの候補対, 剛体どうしの候補対を絞り込む, 始点と終点を包む大域の箱を求める};
+pub use broad_phase::{
+    剛体どうしの候補対, 剛体どうしの候補対を絞り込む, 大域原点に相対な直方体, 始点と終点を包む大域の箱を求める
+};
 pub use contact_batches::接触拘束の二つのバッチ;
 pub use contact_property::接触物性;
 pub use contact_thresholds::{
@@ -97,6 +108,7 @@ pub use pipeline::{
     剛体の接触の一刻みの工程, 接触の品質と時間方針, 接触の工程エラー, 接触の空間と世界, 接触の解法ソルバー, 接触履歴の保持
 };
 pub use property_error::接触物性エラー;
+pub use query_origin::衝突の問い合わせの基準原点;
 pub use restitution_coefficient::反発係数;
 pub use solver_quality::接触を解く品質の設定;
 pub use solver_quality_error::接触を解く品質の設定エラー;

@@ -8,4 +8,4 @@ mod moving_box;
 mod broad_phase_tests;
 
 pub use candidate_filter::{剛体どうしの候補対, 剛体どうしの候補対を絞り込む};
-pub use moving_box::始点と終点を包む大域の箱を求める;
+pub use moving_box::{大域原点に相対な直方体, 始点と終点を包む大域の箱を求める};

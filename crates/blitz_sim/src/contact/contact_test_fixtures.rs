@@ -17,6 +17,7 @@ use super::material_id::材質の識別子;
 use super::minimum_thickness::形の最小の厚み;
 use super::mixing_rule::混合則;
 use super::mixing_rule_builder::混合則の組み立て;
+use super::query_origin::衝突の問い合わせの基準原点;
 use super::restitution_coefficient::反発係数;
 use super::static_world_partner::静的世界の接触相手;
 use super::static_world_partner_id::静的世界の接触相手の識別子;
@@ -71,12 +72,14 @@ pub(super) fn 台帳へ登録する(台帳: &mut 剛体の台帳, 配置: 配置
         .unwrap()
 }
 
+// 試験の材料は形を世界座標そのもので組むため、基準原点は世界の原点である。
 pub(super) fn 接触に参加する剛体を作る(識別子: 剛体の識別子, 配置: 配置) -> 接触に参加する剛体 {
     接触に参加する剛体::生成する(
         識別子,
         配置,
         材質の識別子::生成する(試験の材質),
         形の最小の厚み::生成する(メートル::生成する(1.0)).unwrap(),
+        衝突の問い合わせの基準原点::世界の原点(),
     )
 }
 
