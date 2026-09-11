@@ -21,6 +21,7 @@ mod iteration_reading;
 mod record_line;
 mod row_admission;
 mod scene_variation;
+mod stage_c;
 mod substep_record;
 mod summary;
 mod unexplained_axes;

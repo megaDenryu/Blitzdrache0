@@ -60,7 +60,7 @@ mod translation_tests;
 
 #[cfg(test)]
 pub(in crate::contact) use acceptance::受理の契約を破った理由;
-pub use acceptance::{残差と受理の許容差, 混合連立の受理の結果};
+pub use acceptance::混合連立の受理の結果;
 #[cfg(test)]
 pub(in crate::contact) use double_reference::{
     倍精度の円錐の判定, 倍精度の参照の結末, 倍精度の解の内訳, 参照計算の許容差の由来

@@ -20,4 +20,6 @@ mod result;
 
 pub use material::混合連立の受理の材料;
 pub use residual_bound::残差と受理の許容差;
-pub use result::{受理の契約を破った理由, 混合連立の受理の結果};
+#[cfg(test)]
+pub use result::受理の契約を破った理由;
+pub use result::混合連立の受理の結果;

@@ -14,7 +14,7 @@ const 行一覧: [台帳の行; 7] = [
     台帳の行::構造体("contact/normal_tangential_system/system.rs", "接触点集合の法線と接線の連立", 9, 5, 34),
     台帳の行::構造体("contact/pipeline/pipeline_solver.rs", "接触の解法ソルバー", 5, 3, 10),
     台帳の行::構造体("contact/scene/scene_settings.rs", "場面の設定", 0, 12, 0),
-    台帳の行::構造体("contact/scene/substep_harness.rs", "一つの箱と静的な直方体の場面", 21, 18, 41),
+    台帳の行::構造体("contact/scene/substep_harness.rs", "一つの箱と静的な直方体の場面", 22, 18, 42),
     台帳の行::構造体("rigid_body/body/mod.rs", "剛体", 4, 5, 19),
 ];
 
