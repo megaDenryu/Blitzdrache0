@@ -11,10 +11,10 @@
 #[cfg(test)]
 use std::cell::Cell;
 
-use crate::contact::normal_tangential_system::接触点集合の法線と接線の連立;
 #[cfg(test)]
+use crate::contact::normal_tangential_system::試験の許容差の当て方;
 use crate::contact::normal_tangential_system::{
-    相補条件を満たす有効集合を探した結末, 試験の許容差の当て方, 部分集合を解いた回数
+    接触点集合の法線と接線の連立, 相補条件を満たす有効集合を探した結末, 部分集合を解いた回数
 };
 
 /// 解法が持つ計器。
