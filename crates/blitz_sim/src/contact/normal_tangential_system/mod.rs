@@ -52,6 +52,8 @@ mod tangential_row;
 #[cfg(test)]
 mod tolerance_application;
 #[cfg(test)]
+mod tolerance_reach;
+#[cfg(test)]
 mod tolerance_scale;
 #[cfg(test)]
 mod tolerance_tests;
@@ -71,6 +73,8 @@ pub use system::接触点集合の法線と接線の連立;
 pub use tangential_row::錨の接線変位を零へ戻す一行;
 #[cfg(test)]
 pub(in crate::contact) use tolerance_application::{接線の行への許容差の当て方, 試験の許容差の当て方};
+#[cfg(test)]
+pub(in crate::contact) use tolerance_reach::{受理の倍率の届く先, 行を積む閾値の倍率};
 #[cfg(test)]
 pub(in crate::contact) use tolerance_scale::解けたと見なす許容差の倍率;
 

@@ -2,6 +2,8 @@
 //! 基本刻みを整数nで細分し、細分1本の中で予測・接触・反復・速度再構成・速度段階・休止判定・刻み境界確定を回す。
 
 #[cfg(test)]
+mod acceptance_breach_reading;
+#[cfg(test)]
 mod acceptance_tally;
 mod pipeline_body_rows;
 mod pipeline_contact_batch;
