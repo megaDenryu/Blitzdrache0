@@ -10,6 +10,7 @@
 #![cfg(test)]
 #![allow(clippy::unwrap_used)]
 
+mod active_set_agreement;
 mod anchor_displacement;
 mod case;
 mod direction_line;
@@ -18,6 +19,7 @@ mod fidelity_tests;
 mod instrumented_substep;
 mod iteration_reading;
 mod record_line;
+mod row_admission;
 mod scene_variation;
 mod substep_record;
 mod summary;
