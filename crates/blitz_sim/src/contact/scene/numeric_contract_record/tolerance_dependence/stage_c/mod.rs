@@ -10,4 +10,5 @@
 #![cfg(test)]
 
 mod classification;
+mod failure_probe;
 mod matrix;

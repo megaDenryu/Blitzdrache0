@@ -48,6 +48,8 @@ mod side_by_side_rest_tests;
 #[cfg(test)]
 mod stacked_slope_fixture;
 #[cfg(test)]
+mod stacked_slope_probe;
+#[cfg(test)]
 mod stacked_slope_record;
 #[cfg(test)]
 mod stacked_slope_spec;
@@ -79,6 +81,8 @@ mod tower_standing_tests;
 mod tower_substep_count_tests;
 #[cfg(test)]
 mod transition_discard_tests;
+#[cfg(test)]
+mod transition_history_probe;
 
 pub use pipeline_def::剛体の接触の一刻みの工程;
 pub use pipeline_error::接触の工程エラー;
