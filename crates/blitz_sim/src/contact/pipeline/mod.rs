@@ -62,6 +62,8 @@ mod tower_rest_tests;
 #[cfg(test)]
 mod tower_row_admission_record;
 #[cfg(test)]
+mod tower_run_tally;
+#[cfg(test)]
 mod tower_standing_tests;
 #[cfg(test)]
 mod tower_substep_count_tests;

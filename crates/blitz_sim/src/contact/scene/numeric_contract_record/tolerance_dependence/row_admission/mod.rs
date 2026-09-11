@@ -13,6 +13,7 @@
 mod acceptance_scale;
 mod six_axes;
 mod stacked_counterexample;
+mod unresolved_locator;
 
 use super::case::許容差依存の診断の場合;
 use super::substep_record::許容差依存の細分の記録;
