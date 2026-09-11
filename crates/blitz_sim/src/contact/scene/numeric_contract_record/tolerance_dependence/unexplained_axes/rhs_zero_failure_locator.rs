@@ -12,7 +12,7 @@ use super::super::case::許容差依存の診断の場合;
 use super::super::scene_variation::段階A1の場面からの一つの変更;
 use super::super::substep_record::許容差依存の細分の記録;
 use super::{分類を見る刻み数, 静止摩擦係数の値};
-use crate::contact::normal_tangential_system::接線の行の右辺の許容差の扱い;
+use crate::contact::normal_tangential_system::接線の行への許容差の当て方;
 
 const 傾きの正接: f32 = 0.55;
 const 受理の倍率: f32 = 0.5;
@@ -35,7 +35,7 @@ fn 五つの軸_右辺零で受理零点五倍の解けなかった細分を突�
         傾きの正接,
         鉛直軸まわりの回しの度: 0.0,
         許容差の比: 受理の倍率,
-        右辺の許容差の扱い: 接線の行の右辺の許容差の扱い::零にする,
+        行への許容差の当て方: 接線の行への許容差の当て方::右辺を零にする,
         変更: 段階A1の場面からの一つの変更::無し,
     };
     let 条件 = 場合.坂の場面の条件を組む();

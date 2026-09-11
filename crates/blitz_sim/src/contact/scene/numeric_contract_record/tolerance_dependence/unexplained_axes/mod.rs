@@ -22,7 +22,7 @@ mod upper_tangent_scan;
 use super::case::許容差依存の診断の場合;
 use super::scene_variation::段階A1の場面からの一つの変更;
 use super::substep_record::許容差依存の細分の記録;
-use crate::contact::normal_tangential_system::接線の行の右辺の許容差の扱い;
+use crate::contact::normal_tangential_system::接線の行への許容差の当て方;
 
 const 静止摩擦係数の値: f32 = 0.6;
 const 分類を見る刻み数: usize = 600;
@@ -41,7 +41,7 @@ fn 場合を組む(
         傾きの正接,
         鉛直軸まわりの回しの度,
         許容差の比,
-        右辺の許容差の扱い: 接線の行の右辺の許容差の扱い::受理の倍率を掛けて残す,
+        行への許容差の当て方: 接線の行への許容差の当て方::右辺へ受理の倍率を掛けて残す,
         変更,
     }
 }

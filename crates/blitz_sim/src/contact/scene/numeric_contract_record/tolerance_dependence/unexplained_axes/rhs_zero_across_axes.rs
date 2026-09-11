@@ -12,7 +12,7 @@ use blitz_math::メートル;
 use super::super::case::許容差依存の診断の場合;
 use super::super::scene_variation::段階A1の場面からの一つの変更;
 use super::amplifier_formula::増幅器の式;
-use crate::contact::normal_tangential_system::接線の行の右辺の許容差の扱い;
+use crate::contact::normal_tangential_system::接線の行への許容差の当て方;
 
 const 十六本の細分の刻み幅の秒: f32 = 1.0 / 960.0;
 // 倍精度でも連立の階数で満たせずに残る行の残差の代表値(段階A1の表2の勝った有効集合の残差の最大の上端)。
@@ -47,7 +47,7 @@ impl 候補一の一本 {
             傾きの正接: self.傾きの正接,
             鉛直軸まわりの回しの度: self.鉛直軸まわりの回しの度,
             許容差の比: 1.0,
-            右辺の許容差の扱い: 接線の行の右辺の許容差の扱い::零にする,
+            行への許容差の当て方: 接線の行への許容差の当て方::右辺を零にする,
             変更: self.変更,
         }
     }

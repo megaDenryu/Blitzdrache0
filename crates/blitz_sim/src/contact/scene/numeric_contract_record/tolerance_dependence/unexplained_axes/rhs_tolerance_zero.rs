@@ -10,7 +10,7 @@ use super::super::case::許容差依存の診断の場合;
 use super::super::scene_variation::段階A1の場面からの一つの変更;
 use super::amplifier_formula::増幅器の式;
 use super::静止摩擦係数の値;
-use crate::contact::normal_tangential_system::接線の行の右辺の許容差の扱い;
+use crate::contact::normal_tangential_system::接線の行への許容差の当て方;
 
 const 傾きの正接: f32 = 0.55;
 const 振る受理の倍率: &[f32] = &[0.5, 1.0, 2.0];
@@ -32,7 +32,7 @@ fn 五つの軸_右辺の許容差を零にして受理だけを振った一組�
             傾きの正接,
             鉛直軸まわりの回しの度: 0.0,
             許容差の比: 受理の倍率,
-            右辺の許容差の扱い: 接線の行の右辺の許容差の扱い::零にする,
+            行への許容差の当て方: 接線の行への許容差の当て方::右辺を零にする,
             変更: 段階A1の場面からの一つの変更::無し,
         };
         super::一組を綴る(&場合);
