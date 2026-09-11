@@ -10,7 +10,11 @@
 
 #[cfg(test)]
 mod acceptance_tests;
+#[cfg(test)]
+mod contract_breach_tests;
 mod material;
+#[cfg(test)]
+mod material_fixture;
 mod residual_bound;
 mod result;
 
