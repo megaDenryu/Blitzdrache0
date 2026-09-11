@@ -44,6 +44,10 @@ mod side_by_side_rest_record;
 #[cfg(test)]
 mod side_by_side_rest_tests;
 #[cfg(test)]
+mod stacked_slope_fixture;
+#[cfg(test)]
+mod stacked_slope_tests;
+#[cfg(test)]
 mod substep_impulse_tests;
 #[cfg(test)]
 mod tower_fixture;

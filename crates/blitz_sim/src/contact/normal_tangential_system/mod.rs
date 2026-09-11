@@ -13,6 +13,7 @@
 //! この連立と同じ式を倍精度で持つ試験専用の参照計算を`double_reference`が持つ(Issue #59の数値契約の診断)。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断13: 静止摩擦は錨からの接線変位を零へ戻す位置拘束であり、クーロン円錐の内側でだけ効く」
 
+mod acceptance;
 mod active_set;
 mod candidate;
 mod complementarity;
@@ -56,6 +57,9 @@ mod tolerance_tests;
 #[cfg(test)]
 mod translation_tests;
 
+pub use acceptance::{
+    受理の契約を破った理由, 残差と受理の許容差, 混合連立の受理の材料, 混合連立の受理の結果
+};
 #[cfg(test)]
 pub(in crate::contact) use double_reference::{
     倍精度の円錐の判定, 倍精度の参照の結末, 倍精度の解の内訳, 参照計算の許容差の由来
