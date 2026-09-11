@@ -23,7 +23,7 @@ pub(super) struct 許容差依存の細分の記録 {
     pub(super) 入口: Option<第一反復の入口の読み取り>,
     pub(super) 解いた回数: 部分集合を解いた回数,
     pub(super) 候補一と勝った有効集合が違うか: Option<bool>,
-    pub(super) 解けなかった連立: Vec<(usize, 解けなかった連立の読み取り)>,
+    pub(super) 解けなかった連立: Vec<(u32, 解けなかった連立の読み取り)>,
 }
 
 impl 許容差依存の細分の記録 {
