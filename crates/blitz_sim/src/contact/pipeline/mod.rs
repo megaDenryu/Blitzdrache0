@@ -17,6 +17,7 @@ mod pipeline_step;
 mod pipeline_substep;
 mod pipeline_velocity;
 mod pipeline_velocity_body;
+mod solver_gauge;
 mod step_actions;
 mod substep_first_impulse;
 mod substep_placement;
@@ -58,6 +59,8 @@ mod tower_margin_point_record;
 mod tower_rest_condition_record;
 #[cfg(test)]
 mod tower_rest_tests;
+#[cfg(test)]
+mod tower_row_admission_record;
 #[cfg(test)]
 mod tower_standing_tests;
 #[cfg(test)]
