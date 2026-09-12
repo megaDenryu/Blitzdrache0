@@ -13,8 +13,8 @@
 
 use std::collections::BTreeMap;
 
-use super::super::tower_fixture::箱の塔の場面を作る;
-use crate::contact::normal_tangential_system::単精度の解の内訳;
+use super::body_scene_run::剛体どうしの場面の走行;
+use crate::contact::normal_tangential_system::{単精度の解の内訳, 試験の許容差の当て方};
 
 const 塔の段数: u16 = 10;
 const 綴る刻みの数: usize = 1;
@@ -72,19 +72,18 @@ fn 数えた一覧を綴る(数え: &BTreeMap<(bool, u32), 一つの許容差の
 #[test]
 #[ignore = "計器であり合否を判定しない。実行は --ignored --nocapture を付ける"]
 fn 行ごとの許容差の由来_塔の求解を二つの由来で対にして綴る() {
-    let (mut 工程, mut 台帳, 箱の識別子一覧, _) = 箱の塔の場面を作る(塔の段数, false);
-    工程.解法.計器.定まった解の内訳を数え始めて溜まった分を読む();
+    let mut 走行 = 剛体どうしの場面の走行::箱の塔から始める(塔の段数, 試験の許容差の当て方::本番と同じ当て方());
+    走行.定まった解の内訳を読む();
     let mut 数え = BTreeMap::new();
     let mut 求解の数 = 0;
-    for 刻み in 0..綴る刻みの数 {
-        let Ok(_) = 工程.一刻み進めて細分ごとのバッチを返す(&mut 台帳) else {
-            panic!("刻み {刻み} で一刻み進めるエラー");
-        };
-        for 内訳 in 工程.解法.計器.定まった解の内訳を数え始めて溜まった分を読む() {
+    for _ in 0..綴る刻みの数 {
+        走行.一刻み進める();
+        for 内訳 in 走行.定まった解の内訳を読む() {
             求解の数 += 1;
             一つの求解を数える(&内訳, &mut 数え);
         }
     }
+    let (台帳, 箱の識別子一覧) = 走行.台帳と箱の識別子();
     for (段, &id) in 箱の識別子一覧.iter().enumerate() {
         let Ok(剛体) = 台帳.参照する(id) else {
             panic!("箱 {段} を台帳から読めない");

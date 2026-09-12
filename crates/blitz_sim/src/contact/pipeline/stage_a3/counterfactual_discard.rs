@@ -12,9 +12,9 @@
 
 #![cfg(test)]
 
-use super::super::tower_fixture::箱の塔の場面を作る;
+use super::body_scene_run::剛体どうしの場面の走行;
 use super::counterfactual_tally::判定ごとの捨てた本数の数え;
-use crate::contact::normal_tangential_system::単精度の解の内訳;
+use crate::contact::normal_tangential_system::{単精度の解の内訳, 試験の許容差の当て方};
 
 const 塔の段数: u16 = 10;
 const 綴る刻みの数: usize = 120;
@@ -32,14 +32,13 @@ fn 一回の求解の向きを綴る(
 #[test]
 #[ignore = "計器であり合否を判定しない。実行は --ignored --nocapture を付ける"]
 fn 同じ軌道の上で判定を比べる_箱十段の塔を本番の軌道で綴る() {
-    let (mut 工程, mut 台帳, _, _) = 箱の塔の場面を作る(塔の段数, false);
-    工程.解法.計器.定まった解の内訳を数え始めて溜まった分を読む();
+    let mut 走行 = 剛体どうしの場面の走行::箱の塔から始める(塔の段数, 試験の許容差の当て方::本番と同じ当て方());
+    走行.定まった解の内訳を読む();
     let mut 数え = 判定ごとの捨てた本数の数え::出発点から始める();
-    for 刻み in 0..綴る刻みの数 {
-        let Ok(_) = 工程.一刻み進めて細分ごとのバッチを返す(&mut 台帳) else {
-            panic!("刻み {刻み} で一刻み進めるエラー");
-        };
-        for (求解, 内訳) in 工程.解法.計器.定まった解の内訳を数え始めて溜まった分を読む().iter().enumerate() {
+    for _ in 0..綴る刻みの数 {
+        let 刻み = 走行.終えた刻みの数();
+        走行.一刻み進める();
+        for (求解, 内訳) in 走行.定まった解の内訳を読む().iter().enumerate() {
             数え.一回の求解を数える(内訳);
             if 刻み == 向きごとを綴る刻み {
                 一回の求解の向きを綴る(刻み, 求解, 内訳, &数え);
