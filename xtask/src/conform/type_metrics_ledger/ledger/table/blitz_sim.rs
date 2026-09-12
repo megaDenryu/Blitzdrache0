@@ -15,9 +15,9 @@ const 行一覧: [台帳の行; 8] = [
     台帳の行::構造体(
         "contact/normal_tangential_system/tolerance_application.rs",
         "試験の許容差の当て方",
-        3,
-        6,
-        18,
+        4,
+        7,
+        20,
     ),
     台帳の行::構造体("contact/pipeline/pipeline_solver.rs", "接触の解法ソルバー", 5, 3, 10),
     台帳の行::構造体("contact/scene/scene_settings.rs", "場面の設定", 0, 12, 0),

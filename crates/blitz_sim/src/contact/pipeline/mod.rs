@@ -5,8 +5,6 @@
 mod acceptance_breach_reading;
 #[cfg(test)]
 mod acceptance_tally;
-#[cfg(test)]
-mod eigen_distribution_tally;
 mod pipeline_body_rows;
 mod pipeline_contact_batch;
 mod pipeline_def;
@@ -24,6 +22,8 @@ mod pipeline_substep;
 mod pipeline_velocity;
 mod pipeline_velocity_body;
 mod solver_gauge;
+#[cfg(test)]
+mod stage_a3;
 mod step_actions;
 mod substep_first_impulse;
 mod substep_placement;
