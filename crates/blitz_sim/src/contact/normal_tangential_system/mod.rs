@@ -18,12 +18,16 @@ mod active_set;
 mod candidate;
 mod complementarity;
 #[cfg(test)]
+mod decade_histogram;
+#[cfg(test)]
 mod double_reference;
 #[cfg(test)]
 mod eigen_distribution;
 #[cfg(test)]
 mod eigen_relative_spread;
 mod full_scan_reference;
+#[cfg(test)]
+mod increment_uncertainty_spread;
 #[cfg(test)]
 mod order_tests;
 mod participant_correction;
@@ -79,6 +83,8 @@ pub(in crate::contact) use double_reference::{
 pub(in crate::contact) use eigen_distribution::偽の固有値の下限に対する固有の向きの分布;
 #[cfg(test)]
 pub(in crate::contact) use eigen_relative_spread::固有値を最大で割った相対値の広がり;
+#[cfg(test)]
+pub(in crate::contact) use increment_uncertainty_spread::増分と不確かさの率の広がり;
 #[cfg(test)]
 pub(in crate::contact) use solution_breakdown::単精度の解の内訳;
 pub use system::接触点集合の法線と接線の連立;

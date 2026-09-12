@@ -10,6 +10,7 @@ use super::anchor_displacement::合計を求める;
 use super::contact_point_ending::接触点一つの細分の終わりの読み取り;
 use super::entry_reading::第一反復の入口の読み取り;
 use super::iteration_reading::反復の後の読み取り;
+use super::tangential_row_admission_reading::接線の行の入り方の読み取り;
 use crate::contact::normal_tangential_system::部分集合を解いた回数;
 use crate::contact::scene::unsolved_system_reading::解けなかった連立の読み取り;
 
@@ -20,6 +21,7 @@ pub(super) struct 許容差依存の細分の記録 {
     pub(super) 反復ごと: Vec<反復の後の読み取り>,
     pub(super) 終わりの接線変位: Vec<f64>,
     pub(super) 終わりの接触点ごと: Vec<接触点一つの細分の終わりの読み取り>,
+    pub(super) 入口の接線の行の入り方: Vec<接線の行の入り方の読み取り>,
     pub(super) 下り向きの速さ: f64,
     pub(super) 接線の行の許容差: f64,
     pub(super) 入口: Option<第一反復の入口の読み取り>,

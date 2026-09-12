@@ -26,6 +26,7 @@ mod scene_variation;
 mod stage_c;
 mod substep_record;
 mod summary;
+mod tangential_row_admission_reading;
 mod unexplained_axes;
 
 use crate::contact::normal_tangential_system::接線の行への許容差の当て方;
