@@ -6,6 +6,7 @@
 
 use blitz_collision::contact_set::接触点の上限;
 
+use super::solver_gauge::解法の計器;
 use crate::contact::body_body_contact::剛体と剛体の接触拘束;
 use crate::contact::non_penetration::接触点集合の法線の同時解;
 use crate::contact::normal_tangential_system::接触点集合の法線と接線の連立;
@@ -72,12 +73,13 @@ pub(super) fn 法線だけを同時に解く(
 
 /// 接触点集合の全部の点から法線の行と接線の行を積んだ連立と、点ごとの接線の行の結果。
 pub(super) fn 法線と接線の連立を組む(
+    計器: &解法の計器,
     集合: &[剛体と剛体の接触拘束],
     参加者a: &姿勢自由度の参加者,
     参加者b: &姿勢自由度の参加者,
 ) -> (接触点集合の法線と接線の連立, [静止摩擦の連立へ点を入れた結果; 接触点の上限]) {
     let mut 点を入れた結果 = [静止摩擦の連立へ点を入れた結果::両方が動かせない; 接触点の上限];
-    let mut 連立 = 接触点集合の法線と接線の連立::点の数から空で始める(集合.len());
+    let mut 連立 = 計器.空の連立を組む(集合.len());
     for (添字, 拘束) in 集合.iter().enumerate() {
         拘束.法線と接線の連立へ法線の一行を積む(添字, &mut 連立, 参加者a, 参加者b);
         点を入れた結果[添字] = 拘束.法線と接線の連立へ接線の一行を積む(添字, &mut 連立, 参加者a, 参加者b);

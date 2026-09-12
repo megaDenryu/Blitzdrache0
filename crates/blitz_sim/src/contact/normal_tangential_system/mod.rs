@@ -1,6 +1,6 @@
 //! 接触点集合1つの法線と接線を同じ対称行列へ入れて1回で解く連立(判断12・判断13)。粘着の候補はこの連立の解である。
 //! 法線の行は非貫通(判断12)がその反復に解くべき右辺 −C_n − α̃ λ_n を持ち、接線の行は錨の接線変位を零へ戻す
-//! 右辺 −(C_t − δ) を持つ。求まるのは、貫通の解消と接線の補正と、接線の力が作る回転を打ち消す法線の荷重の
+//! 右辺 −C_t を持つ(C_t が解けたと見なす許容差の内側の点の行は積まない。判断13の2026-09-12の改訂)。求まるのは、貫通の解消と接線の補正と、接線の力が作る回転を打ち消す法線の荷重の
 //! 移し替えの3つが同時に釣り合った1つの解である。
 //! 法線を先に確定してから右辺が零の混合連立を足す2段の形にすると、前段の非貫通が作った接線変位を後段がもう一度
 //! 払うことになる。前段の有限回転を後段の線形化が完全には取り消せず、錨の接線変位が反復のたびに作り直されて
@@ -13,6 +13,7 @@
 //! この連立と同じ式を倍精度で持つ試験専用の参照計算を`double_reference`が持つ(Issue #59の数値契約の診断)。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断13: 静止摩擦は錨からの接線変位を零へ戻す位置拘束であり、クーロン円錐の内側でだけ効く」
 
+mod acceptance;
 mod active_set;
 mod candidate;
 mod complementarity;
@@ -36,6 +37,8 @@ mod single_point_fixture;
 #[cfg(test)]
 mod single_point_tests;
 mod solution;
+#[cfg(test)]
+mod solution_breakdown;
 mod solve_count;
 mod solve_outcome;
 mod solved_quality;
@@ -46,6 +49,11 @@ mod system;
 #[cfg(test)]
 mod system_fixture;
 mod tangential_row;
+#[cfg(test)]
+mod tolerance_application;
+#[cfg(test)]
+mod tolerance_reach;
+#[cfg(test)]
 mod tolerance_scale;
 #[cfg(test)]
 mod tolerance_tests;
@@ -53,11 +61,20 @@ mod tolerance_tests;
 mod translation_tests;
 
 #[cfg(test)]
+pub(in crate::contact) use acceptance::受理の契約を破った理由;
+pub use acceptance::混合連立の受理の結果;
+#[cfg(test)]
 pub(in crate::contact) use double_reference::{
     倍精度の円錐の判定, 倍精度の参照の結末, 倍精度の解の内訳, 参照計算の許容差の由来
 };
+#[cfg(test)]
+pub(in crate::contact) use solution_breakdown::単精度の解の内訳;
 pub use system::接触点集合の法線と接線の連立;
 pub use tangential_row::錨の接線変位を零へ戻す一行;
+#[cfg(test)]
+pub(in crate::contact) use tolerance_application::{接線の行への許容差の当て方, 試験の許容差の当て方};
+#[cfg(test)]
+pub(in crate::contact) use tolerance_reach::{受理の倍率の届く先, 行を積む閾値の倍率};
 #[cfg(test)]
 pub(in crate::contact) use tolerance_scale::解けたと見なす許容差の倍率;
 

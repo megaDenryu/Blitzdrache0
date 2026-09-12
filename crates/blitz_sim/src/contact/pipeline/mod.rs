@@ -1,6 +1,10 @@
 //! 剛体の接触の一刻みの工程(判断19)。
 //! 基本刻みを整数nで細分し、細分1本の中で予測・接触・反復・速度再構成・速度段階・休止判定・刻み境界確定を回す。
 
+#[cfg(test)]
+mod acceptance_breach_reading;
+#[cfg(test)]
+mod acceptance_tally;
 mod pipeline_body_rows;
 mod pipeline_contact_batch;
 mod pipeline_def;
@@ -17,6 +21,7 @@ mod pipeline_step;
 mod pipeline_substep;
 mod pipeline_velocity;
 mod pipeline_velocity_body;
+mod solver_gauge;
 mod step_actions;
 mod substep_first_impulse;
 mod substep_placement;
@@ -43,6 +48,20 @@ mod side_by_side_rest_record;
 #[cfg(test)]
 mod side_by_side_rest_tests;
 #[cfg(test)]
+mod stacked_slope_cone_record;
+#[cfg(test)]
+mod stacked_slope_cone_tally;
+#[cfg(test)]
+mod stacked_slope_fixture;
+#[cfg(test)]
+mod stacked_slope_probe;
+#[cfg(test)]
+mod stacked_slope_record;
+#[cfg(test)]
+mod stacked_slope_spec;
+#[cfg(test)]
+mod stacked_slope_tests;
+#[cfg(test)]
 mod substep_impulse_tests;
 #[cfg(test)]
 mod tower_fixture;
@@ -57,13 +76,21 @@ mod tower_margin_point_record;
 #[cfg(test)]
 mod tower_rest_condition_record;
 #[cfg(test)]
+mod tower_rest_probe;
+#[cfg(test)]
 mod tower_rest_tests;
+#[cfg(test)]
+mod tower_row_admission_record;
+#[cfg(test)]
+mod tower_run_tally;
 #[cfg(test)]
 mod tower_standing_tests;
 #[cfg(test)]
 mod tower_substep_count_tests;
 #[cfg(test)]
 mod transition_discard_tests;
+#[cfg(test)]
+mod transition_history_probe;
 
 pub use pipeline_def::剛体の接触の一刻みの工程;
 pub use pipeline_error::接触の工程エラー;
