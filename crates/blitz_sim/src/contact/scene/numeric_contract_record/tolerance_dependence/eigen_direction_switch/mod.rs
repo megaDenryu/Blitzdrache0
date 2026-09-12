@@ -4,7 +4,8 @@
 //! 反復ごとの円錐の量・倍精度の参照の3つの由来を綴る。受理の倍率を受理の判定だけへ届かせた0.5倍の軌道も同じ窓で綴り、
 //! 0.5倍の滑走(段階Cの表29)が同じ機構かを分ける。合否は判定しない。本番の判定と閾値と既定は1つも変えていない。
 //! 段階A2の計器(`candidate_axes`と`eigen_floor_band`)と段階A3の計器(`noise_floor_discard`・`eigen_floor_ratio`・
-//! `eigen_relative_spread_record`・`double_precision_rank`)も同じ場面と同じ窓を読むため、この木に置く。
+//! `eigen_relative_spread_record`・`double_precision_rank`)と段階A4の計器(`relative_origin_discard`・
+//! `relative_origin_direction_detail`・`relative_origin_slope_tolerance`)も同じ場面と同じ窓を読むため、この木に置く。
 //! 実行は `cargo test -p blitz_sim --release 固有の向きの採否 -- --ignored --nocapture` である。
 //! 参照: `_doc/計測/剛体の接触の静止摩擦の許容差依存の診断_2026-09-09.md`
 
@@ -20,6 +21,9 @@ mod eigen_floor_ratio;
 mod eigen_relative_spread_record;
 mod noise_floor_discard;
 mod noise_floor_regression;
+mod relative_origin_direction_detail;
+mod relative_origin_discard;
+mod relative_origin_slope_tolerance;
 mod row_line;
 mod tangential_noise_floor;
 mod trajectory;
