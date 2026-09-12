@@ -5,6 +5,8 @@
 mod acceptance_breach_reading;
 #[cfg(test)]
 mod acceptance_tally;
+#[cfg(test)]
+mod eigen_distribution_tally;
 mod pipeline_body_rows;
 mod pipeline_contact_batch;
 mod pipeline_def;
@@ -63,6 +65,8 @@ mod stacked_slope_spec;
 mod stacked_slope_tests;
 #[cfg(test)]
 mod substep_impulse_tests;
+#[cfg(test)]
+mod tower_eigen_distribution_record;
 #[cfg(test)]
 mod tower_fixture;
 #[cfg(test)]
