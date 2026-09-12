@@ -76,6 +76,8 @@ mod translation_tests;
 pub(in crate::contact) use acceptance::受理の契約を破った理由;
 pub use acceptance::混合連立の受理の結果;
 #[cfg(test)]
+pub(in crate::contact) use decade_histogram::桁ごとの度数;
+#[cfg(test)]
 pub(in crate::contact) use double_reference::{
     倍精度の円錐の判定, 倍精度の参照の結末, 倍精度の解の内訳, 参照計算の許容差の由来
 };
@@ -86,7 +88,7 @@ pub(in crate::contact) use eigen_relative_spread::固有値を最大で割った
 #[cfg(test)]
 pub(in crate::contact) use increment_uncertainty_spread::増分と不確かさの率の広がり;
 #[cfg(test)]
-pub(in crate::contact) use solution_breakdown::単精度の解の内訳;
+pub(in crate::contact) use solution_breakdown::{単精度の固有の向きの内訳, 単精度の解の内訳};
 pub use system::接触点集合の法線と接線の連立;
 pub use tangential_row::錨の接線変位を零へ戻す一行;
 #[cfg(test)]
