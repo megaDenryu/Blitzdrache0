@@ -9,7 +9,7 @@
 
 #![cfg(test)]
 
-use super::super::substep_record::許容差依存の細分の記録;
+use super::super::super::substep_record::許容差依存の細分の記録;
 use crate::contact::scene::slope_geometry::坂の場面の条件;
 use crate::contact::scene::substep_harness::一つの箱と静的な直方体の場面;
 

@@ -7,10 +7,8 @@
 //! `eigen_relative_spread_record`・`double_precision_rank`)と段階A4の計器(`relative_origin_discard`・
 //! `relative_origin_direction_detail`・`relative_origin_slope_tolerance`)と段階A5の計器(`noise_floor_by_box_arm`・`contact_identity_by_posture`・`increment_uncertainty_record`・`discarded_component_on_rows`・`alternative_discard_record`・`relative_eigenvalue_margin`)と段階A6の計器(`alternative_discard_regression`・`first_cone_crossing`・`cone_ratio_before_sliding`)も
 //! 段階Bの計器(`branch_divergence_window`・`branch_direction_line`・`branch_substep_quantities`)も
-//! 段階Cの計器(`perturbation_control_window`・`paired_run`・`posture_perturbation`・`discarded_direction_census_run`・
-//! `discarded_direction_census`・`ill_conditioned_direction_tally`・`ill_conditioned_direction_reading`・
-//! `carried_state_window`・`carried_state`・`bit_comparison`・`reconstruction_window`・`reconstruction_reading`・`reconstruction_pair_line`・`reconstruction_floor`)も
-//! 同じ場面と同じ窓を読むため、この木に置く。
+//! 段階Cの計器も同じ場面と同じ窓を読むため、この木の下の`stage_c_probes`に置く(4本で14ファイルになり、
+//! このファイルのモジュールの宣言が100行を超えたため1つの木へ分けた)。
 //! 実行は `cargo test -p blitz_sim --release 固有の向きの採否 -- --ignored --nocapture` である。
 //! 参照: `_doc/計測/剛体の接触の静止摩擦の許容差依存の診断_2026-09-09.md`
 
@@ -19,44 +17,31 @@
 
 mod alternative_discard_record;
 mod alternative_discard_regression;
-mod bit_comparison;
 mod branch_direction_line;
 mod branch_divergence_window;
 mod branch_substep_quantities;
 mod candidate_axes;
-mod carried_state;
-mod carried_state_window;
 mod cone_line;
 mod cone_ratio_before_sliding;
 mod cone_ratio_spread;
 mod contact_identity_by_posture;
 mod discarded_component_on_rows;
-mod discarded_direction_census;
-mod discarded_direction_census_run;
 mod discarded_direction_detail;
 mod double_precision_rank;
 mod eigen_floor_band;
 mod eigen_floor_ratio;
 mod eigen_relative_spread_record;
 mod first_cone_crossing;
-mod ill_conditioned_direction_reading;
-mod ill_conditioned_direction_tally;
 mod increment_uncertainty_record;
 mod noise_floor_by_box_arm;
 mod noise_floor_discard;
 mod noise_floor_regression;
-mod paired_run;
-mod perturbation_control_window;
-mod posture_perturbation;
-mod reconstruction_floor;
-mod reconstruction_pair_line;
-mod reconstruction_reading;
-mod reconstruction_window;
 mod relative_eigenvalue_margin;
 mod relative_origin_direction_detail;
 mod relative_origin_discard;
 mod relative_origin_slope_tolerance;
 mod row_line;
+mod stage_c_probes;
 mod tangential_noise_floor;
 mod trajectory;
 mod trajectory_tally;

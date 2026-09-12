@@ -11,8 +11,8 @@
 
 #![cfg(test)]
 
-use super::alternative_discard_record::{代表の代わりの捨て方, 捨て方を当てた適用規則};
-use super::first_cone_crossing::{傾きの正接, 振る回しの度, 細分十六本の場合};
+use super::super::alternative_discard_record::{代表の代わりの捨て方, 捨て方を当てた適用規則};
+use super::super::first_cone_crossing::{傾きの正接, 振る回しの度, 細分十六本の場合};
 use super::reconstruction_reading::一細分の再構成の読み取り;
 use crate::contact::normal_tangential_system::試験の許容差の当て方;
 

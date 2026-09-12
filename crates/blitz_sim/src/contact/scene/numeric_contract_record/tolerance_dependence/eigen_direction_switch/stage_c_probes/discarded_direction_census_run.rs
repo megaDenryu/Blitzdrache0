@@ -10,8 +10,8 @@
 
 #![cfg(test)]
 
+use super::super::first_cone_crossing::{傾きの正接, 振る回しの度, 細分十六本の場合, 走らせる刻みの数};
 use super::discarded_direction_census::本番が右辺の判定で捨てた向きの集まり;
-use super::first_cone_crossing::{傾きの正接, 振る回しの度, 細分十六本の場合, 走らせる刻みの数};
 use crate::contact::normal_tangential_system::試験の許容差の当て方;
 
 fn 一つの回しの捨てた向きを数える(鉛直軸まわりの回しの度: f32) {

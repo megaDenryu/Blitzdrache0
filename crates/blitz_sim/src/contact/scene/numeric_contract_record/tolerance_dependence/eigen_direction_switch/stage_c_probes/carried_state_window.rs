@@ -14,10 +14,10 @@
 
 #![cfg(test)]
 
-use super::super::substep_record::許容差依存の細分の記録;
-use super::alternative_discard_record::{代表の代わりの捨て方, 捨て方を当てた適用規則};
+use super::super::super::substep_record::許容差依存の細分の記録;
+use super::super::alternative_discard_record::{代表の代わりの捨て方, 捨て方を当てた適用規則};
+use super::super::first_cone_crossing::{傾きの正接, 細分十六本の場合};
 use super::carried_state::細分の終わりに持ち越される状態;
-use super::first_cone_crossing::{傾きの正接, 細分十六本の場合};
 use crate::contact::normal_tangential_system::試験の許容差の当て方;
 
 // 突き合わせる2方向。回し30度は細分0の円錐の比の差が厳密に零であり、細分0で分かれていないため外す。

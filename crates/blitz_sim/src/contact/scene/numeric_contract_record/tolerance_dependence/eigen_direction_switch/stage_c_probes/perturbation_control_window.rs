@@ -11,8 +11,8 @@
 
 #![cfg(test)]
 
-use super::alternative_discard_record::{代表の代わりの捨て方, 捨て方を当てた適用規則};
-use super::first_cone_crossing::{傾きの正接, 振る回しの度, 最初に滑走した細分を探す, 細分十六本の場合};
+use super::super::alternative_discard_record::{代表の代わりの捨て方, 捨て方を当てた適用規則};
+use super::super::first_cone_crossing::{傾きの正接, 振る回しの度, 最初に滑走した細分を探す, 細分十六本の場合};
 use super::paired_run::対にした二つの走行;
 use super::posture_perturbation::{摂動の角のラジアン, 摂動を回す軸の綴り, 箱の姿勢を摂動で回す};
 use crate::contact::normal_tangential_system::試験の許容差の当て方;
