@@ -14,6 +14,7 @@ mod active_set_agreement;
 mod anchor_displacement;
 mod case;
 mod direction_line;
+mod eigen_direction_switch;
 mod entry_reading;
 mod fidelity_tests;
 mod instrumented_substep;
