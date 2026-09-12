@@ -5,7 +5,6 @@
 //! 参照: `_doc/計測/剛体の接触の静止摩擦の許容差依存の診断_2026-09-09.md`
 
 #![cfg(test)]
-#![allow(clippy::unwrap_used)]
 
 mod eigen_relative_spread;
 mod tangential_noise_floor;
