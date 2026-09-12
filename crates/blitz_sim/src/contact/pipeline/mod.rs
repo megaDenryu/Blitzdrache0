@@ -22,6 +22,8 @@ mod pipeline_substep;
 mod pipeline_velocity;
 mod pipeline_velocity_body;
 mod solver_gauge;
+#[cfg(test)]
+mod stage_a3;
 mod step_actions;
 mod substep_first_impulse;
 mod substep_placement;
@@ -63,6 +65,8 @@ mod stacked_slope_spec;
 mod stacked_slope_tests;
 #[cfg(test)]
 mod substep_impulse_tests;
+#[cfg(test)]
+mod tower_eigen_distribution_record;
 #[cfg(test)]
 mod tower_fixture;
 #[cfg(test)]

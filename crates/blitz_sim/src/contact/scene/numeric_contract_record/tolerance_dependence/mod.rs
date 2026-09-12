@@ -13,9 +13,12 @@
 mod active_set_agreement;
 mod anchor_displacement;
 mod case;
+mod contact_point_ending;
 mod direction_line;
+mod eigen_direction_switch;
 mod entry_reading;
 mod fidelity_tests;
+mod first_iteration_correction_trace;
 mod instrumented_substep;
 mod iteration_reading;
 mod record_line;
@@ -24,6 +27,7 @@ mod scene_variation;
 mod stage_c;
 mod substep_record;
 mod summary;
+mod tangential_row_admission_reading;
 mod unexplained_axes;
 
 use crate::contact::normal_tangential_system::接線の行への許容差の当て方;

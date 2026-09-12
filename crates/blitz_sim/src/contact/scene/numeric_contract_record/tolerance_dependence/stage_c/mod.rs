@@ -4,12 +4,14 @@
 //! 錨の置き直しを綴る。合否は判定しない(判定は `slope_tests`・`slope_tolerance_scale_tests`・`slope_substep16_tests`・
 //! `slope_far_translation_tests`・`tolerance_boundary_tests` が持つ)。
 //! 退避の理由は、粘着の候補が解けなかった連立の読み取りの結末の綴りで数える。受理の判定の破れは契約の名前で綴られる。
+//! 1組を600刻み走らせて分類と退避を1行へ綴る工程(`classification`)は、段階A3の退行の計器も同じ形で読むため、
+//! 親のモジュールへ公開する。
 //! 実行は `cargo test -p blitz_sim --release 本実装の検収 -- --ignored --nocapture` である。
 //! 参照: `_doc/計測/剛体の接触の静止摩擦の許容差依存の診断_2026-09-09.md`
 
 #![cfg(test)]
 
-mod classification;
+pub(super) mod classification;
 mod failure_probe;
 mod matrix;
 mod variants;

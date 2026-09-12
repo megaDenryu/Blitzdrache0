@@ -7,9 +7,13 @@
 #![cfg(test)]
 
 use super::anchor_displacement::合計を求める;
+use super::contact_point_ending::接触点一つの細分の終わりの読み取り;
 use super::entry_reading::第一反復の入口の読み取り;
+use super::first_iteration_correction_trace::第一反復の補正の追跡;
 use super::iteration_reading::反復の後の読み取り;
+use super::tangential_row_admission_reading::接線の行の入り方の読み取り;
 use crate::contact::normal_tangential_system::部分集合を解いた回数;
+use crate::contact::scene::cone_breach_reading::円錐を超えた接触点集合の読み取り;
 use crate::contact::scene::unsolved_system_reading::解けなかった連立の読み取り;
 
 /// 細分1本の記録。
@@ -18,12 +22,16 @@ pub(super) struct 許容差依存の細分の記録 {
     pub(super) 入口の接線変位の合計: f64,
     pub(super) 反復ごと: Vec<反復の後の読み取り>,
     pub(super) 終わりの接線変位: Vec<f64>,
+    pub(super) 終わりの接触点ごと: Vec<接触点一つの細分の終わりの読み取り>,
+    pub(super) 入口の接線の行の入り方: Vec<接線の行の入り方の読み取り>,
+    pub(super) 第一反復の補正: Option<第一反復の補正の追跡>,
     pub(super) 下り向きの速さ: f64,
     pub(super) 接線の行の許容差: f64,
     pub(super) 入口: Option<第一反復の入口の読み取り>,
     pub(super) 解いた回数: 部分集合を解いた回数,
     pub(super) 候補一と勝った有効集合が違うか: Option<bool>,
     pub(super) 解けなかった連立: Vec<(u32, 解けなかった連立の読み取り)>,
+    pub(super) 円錐を超えた集合: Vec<(u32, 円錐を超えた接触点集合の読み取り)>,
 }
 
 impl 許容差依存の細分の記録 {
@@ -52,6 +60,16 @@ impl 許容差依存の細分の記録 {
         } else {
             0.0
         }
+    }
+
+    /// 細分の終わりに錨を置き直した接触点の数。細分をまたいだ入れ替わりを綴る計器が読む。
+    pub(super) fn 置き直した点の数(&self) -> usize {
+        self.終わりの接触点ごと.iter().filter(|点| 点.錨を置き直したか()).count()
+    }
+
+    /// 細分の終わりに滑走中と印された接触点の数。
+    pub(super) fn 滑走中の点の数(&self) -> usize {
+        self.終わりの接触点ごと.iter().filter(|点| 点.滑走中か()).count()
     }
 
     /// 最後の反復を終えた時点で滑走中の点があるか。

@@ -8,6 +8,10 @@
 //! 実測で確かめたためである。正則化で解くとその成分が正則化で割られて乗数だけが桁で膨れ、クーロン円錐の判定が壊れる。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断13: 静止摩擦は錨からの接線変位を零へ戻す位置拘束であり、クーロン円錐の内側でだけ効く」
 
+#[cfg(test)]
+mod alternative_discard_rule;
+#[cfg(test)]
+mod alternative_discard_spelling;
 mod discard_reason;
 mod factorization;
 mod jacobi_decomposition;
@@ -16,6 +20,8 @@ mod pseudo_inverse_solution;
 
 use blitz_collision::contact_set::接触点の上限;
 
+#[cfg(test)]
+pub(in crate::contact) use alternative_discard_rule::本番の代わりに置く右辺の向きの捨て方;
 #[cfg(test)]
 pub(in crate::contact) use discard_reason::擬似逆が固有の向きを捨てた理由;
 pub(in crate::contact) use factorization::対称な連立の分解;

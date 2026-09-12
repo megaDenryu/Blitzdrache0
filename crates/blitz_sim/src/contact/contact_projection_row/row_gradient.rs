@@ -9,6 +9,9 @@
 //! 連立(`normal_tangential_system`)の両方がこの型で行を組むためである。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断13: 静止摩擦は錨からの接線変位を零へ戻す位置拘束であり、クーロン円錐の内側でだけ効く」
 
+#[cfg(test)]
+mod query_origin_tolerance;
+
 use blitz_math::{メートル, ワールド, 方向, 符号付き逆キログラム, 逆キログラム};
 
 use super::participant::接触の射影に参加する点;
