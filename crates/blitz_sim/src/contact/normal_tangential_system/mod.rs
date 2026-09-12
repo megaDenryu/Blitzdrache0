@@ -20,6 +20,8 @@ mod complementarity;
 #[cfg(test)]
 mod decade_histogram;
 #[cfg(test)]
+mod direction_generalized_correction;
+#[cfg(test)]
 mod double_reference;
 #[cfg(test)]
 mod eigen_distribution;
@@ -77,6 +79,8 @@ pub(in crate::contact) use acceptance::受理の契約を破った理由;
 pub use acceptance::混合連立の受理の結果;
 #[cfg(test)]
 pub(in crate::contact) use decade_histogram::桁ごとの度数;
+#[cfg(test)]
+pub(in crate::contact) use direction_generalized_correction::剛体の一般化自由度へ入る補正の大きさ;
 #[cfg(test)]
 pub(in crate::contact) use double_reference::{
     倍精度の円錐の判定, 倍精度の参照の結末, 倍精度の解の内訳, 参照計算の許容差の由来

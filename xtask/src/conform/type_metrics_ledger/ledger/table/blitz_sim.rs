@@ -14,9 +14,9 @@ const 行一覧: [台帳の行; 12] = [
     台帳の行::構造体(
         "contact/normal_tangential_system/reduced_system.rs",
         "有効な行だけを抜き出した連立",
-        5,
+        6,
         8,
-        17,
+        20,
     ),
     台帳の行::構造体("contact/normal_tangential_system/solution_breakdown.rs", "単精度の解の内訳", 1, 11, 6),
     台帳の行::構造体("contact/normal_tangential_system/system.rs", "接触点集合の法線と接線の連立", 9, 5, 37),
