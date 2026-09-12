@@ -15,7 +15,9 @@
 
 use super::super::substep_record::許容差依存の細分の記録;
 use super::alternative_discard_record::捨て方を当てた適用規則;
-use super::branch_direction_line::{反復ごとを綴る, 向きごとを綴る, 接触点ごとを綴る, 行ごとを綴る};
+use super::branch_direction_line::{
+    判定が退けた集合を綴る, 反復ごとを綴る, 向きごとを綴る, 接触点ごとを綴る, 行ごとを綴る
+};
 use super::branch_substep_quantities::細分一本から読んだ名前つきの量の並び;
 use super::first_cone_crossing::{傾きの正接, 振る回しの度, 最初に滑走した細分を探す, 細分十六本の場合};
 use crate::contact::normal_tangential_system::試験の許容差の当て方;
@@ -53,6 +55,7 @@ fn 一細分を綴る(見出し: &str, 記録: &許容差依存の細分の記�
         None => println!("  X 細分{番号} [{見出し}] 接触点={接触点の数}個 粘着の候補が定まらず内訳が無い"),
     }
     反復ごとを綴る(見出し, 記録);
+    判定が退けた集合を綴る(見出し, 記録);
     接触点ごとを綴る(見出し, 記録);
 }
 
