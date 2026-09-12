@@ -8,6 +8,7 @@
 #![cfg(test)]
 
 mod alternative_discard_tower;
+mod counterfactual_direction;
 mod counterfactual_discard;
 mod counterfactual_tally;
 mod eigen_relative_spread;
