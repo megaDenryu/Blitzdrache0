@@ -8,7 +8,8 @@
 //! `relative_origin_direction_detail`・`relative_origin_slope_tolerance`)と段階A5の計器(`noise_floor_by_box_arm`・`contact_identity_by_posture`・`increment_uncertainty_record`・`discarded_component_on_rows`・`alternative_discard_record`・`relative_eigenvalue_margin`)と段階A6の計器(`alternative_discard_regression`・`first_cone_crossing`・`cone_ratio_before_sliding`)も
 //! 段階Bの計器(`branch_divergence_window`・`branch_direction_line`・`branch_substep_quantities`)も
 //! 段階Cの計器(`perturbation_control_window`・`paired_run`・`posture_perturbation`・`discarded_direction_census_run`・
-//! `discarded_direction_census`・`ill_conditioned_direction_tally`・`ill_conditioned_direction_reading`)も
+//! `discarded_direction_census`・`ill_conditioned_direction_tally`・`ill_conditioned_direction_reading`・
+//! `carried_state_window`・`carried_state`・`bit_comparison`)も
 //! 同じ場面と同じ窓を読むため、この木に置く。
 //! 実行は `cargo test -p blitz_sim --release 固有の向きの採否 -- --ignored --nocapture` である。
 //! 参照: `_doc/計測/剛体の接触の静止摩擦の許容差依存の診断_2026-09-09.md`
@@ -18,10 +19,13 @@
 
 mod alternative_discard_record;
 mod alternative_discard_regression;
+mod bit_comparison;
 mod branch_direction_line;
 mod branch_divergence_window;
 mod branch_substep_quantities;
 mod candidate_axes;
+mod carried_state;
+mod carried_state_window;
 mod cone_line;
 mod cone_ratio_before_sliding;
 mod cone_ratio_spread;
