@@ -18,6 +18,7 @@ mod direction_line;
 mod eigen_direction_switch;
 mod entry_reading;
 mod fidelity_tests;
+mod first_iteration_correction_trace;
 mod instrumented_substep;
 mod iteration_reading;
 mod record_line;
