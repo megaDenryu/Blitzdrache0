@@ -8,17 +8,17 @@ use super::super::acceptance_breach_reading::受理の破れの読み取り;
 use super::super::stacked_slope_fixture::坂の上の二段の箱の場面;
 use super::super::stacked_slope_spec::原点;
 use crate::contact::friction_coefficient::摩擦係数;
-use crate::contact::normal_tangential_system::{混合連立の受理の結果, 試験の許容差の適用規則};
+use crate::contact::normal_tangential_system::{混合連立方程式の受理の結果, 試験の許容差の適用規則};
 
 const 綴る刻みの数: usize = 600;
 const 内訳を綴る刻みの数: usize = 3;
 const 群ごとに綴る例の数: usize = 6;
 
-fn 結末の鍵(結果: &混合連立の受理の結果) -> &'static str {
+fn 結末の鍵(結果: &混合連立方程式の受理の結果) -> &'static str {
     match 結果 {
-        混合連立の受理の結果::受理した => "受理",
-        混合連立の受理の結果::円錐を超えた => "円錐",
-        混合連立の受理の結果::数値の契約を破った(理由) => 理由.契約の名前(),
+        混合連立方程式の受理の結果::受理した => "受理",
+        混合連立方程式の受理の結果::円錐を超えた => "円錐",
+        混合連立方程式の受理の結果::数値の契約を破った(理由) => 理由.契約の名前(),
     }
 }
 
