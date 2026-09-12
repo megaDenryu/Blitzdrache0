@@ -1,166 +1,168 @@
 区画	名前	全数	直読	違反	疑い	報告
-003	crates/blitz_app/src/app/cloth_setup	34	34	0	2	命名_区画003_2026-09-12.md
 001	crates/blitz_app(build_support)	25	25	18	8	命名_区画001_2026-09-12.md
-008	crates/blitz_app/src/cli 第1区画	40	40	14	3	命名_区画008_2026-09-12.md
 002	crates/blitz_app/src/app	36	36	4	1	命名_区画002_2026-09-12.md
+003	crates/blitz_app/src/app/cloth_setup	34	34	0	2	命名_区画003_2026-09-12.md
+004	crates/blitz_app/src/app/frame_dump	39	39	15	3	命名_区画004_2026-09-12.md
+005	crates/blitz_app/src/app/scene_load	37	37	11	3	命名_区画005_2026-09-12.md
 006	crates/blitz_app/src/app/time_of_day	37	37	8	2	命名_区画006_2026-09-12.md
 007	crates/blitz_app/src/app/time_step	35	34	2	4	命名_区画007_2026-09-12.md(一覧は34件と報告)
-011	crates/blitz_app/src/game	39	39	4	0	命名_区画011_2026-09-12.md
-005	crates/blitz_app/src/app/scene_load	37	37	11	3	命名_区画005_2026-09-12.md
-004	crates/blitz_app/src/app/frame_dump	39	39	15	3	命名_区画004_2026-09-12.md
-012	crates/blitz_app/src/hot_reload	39	39	9	1	命名_区画012_2026-09-12.md
+008	crates/blitz_app/src/cli 第1区画	40	40	14	3	命名_区画008_2026-09-12.md
 009	crates/blitz_app/src/cli 第2区画	15	15	17	3	命名_区画009_2026-09-12.md
-014	crates/blitz_app/src/reports/cloth_xpbd_reference ほか	37	37	4	1	命名_区画014_2026-09-12.md
-013	crates/blitz_app/src/reports	38	38	8	4	命名_区画013_2026-09-12.md
-017	crates/blitz_assembly/src/expansion	40	40	0	2	命名_区画017_2026-09-12.md
 010	crates/blitz_app/src/cli/local_light_count_args ほか	24	24	3	5	命名_区画010_2026-09-12.md
+011	crates/blitz_app/src/game	39	39	4	0	命名_区画011_2026-09-12.md
+012	crates/blitz_app/src/hot_reload	39	39	9	1	命名_区画012_2026-09-12.md
+013	crates/blitz_app/src/reports	38	38	8	4	命名_区画013_2026-09-12.md
+014	crates/blitz_app/src/reports/cloth_xpbd_reference ほか	37	37	4	1	命名_区画014_2026-09-12.md
 015	crates/blitz_app/src/reports/sky_pixel ほか	40	40	2	3	命名_区画015_2026-09-12.md
 016	crates/blitz_assembly/src	34	34	1	2	命名_区画016_2026-09-12.md
+017	crates/blitz_assembly/src/expansion	40	40	0	2	命名_区画017_2026-09-12.md
 018	crates/blitz_assembly/src/expansion/frame_tests	34	34	2	0	命名_区画018_2026-09-12.md
 019	crates/blitz_assembly/src/mating	31	31	1	2	命名_区画019_2026-09-12.md
-023	crates/blitz_asset_compiler/src	38	38	0	0	命名_区画023_2026-09-12.md
-021	crates/blitz_asset_compiler/examples/generate_source_assets/fox_tour_world/source_writing	26	26	7	0	命名_区画021_2026-09-12.md
 020	crates/blitz_asset_compiler/examples/check_glb ほか	40	40	23	4	命名_区画020_2026-09-12.md
-025	crates/blitz_asset_compiler/src/compile	30	30	5	3	命名_区画025_2026-09-12.md
+021	crates/blitz_asset_compiler/examples/generate_source_assets/fox_tour_world/source_writing	26	26	7	0	命名_区画021_2026-09-12.md
 022	crates/blitz_asset_compiler/examples/part_assembly	22	22	10	1	命名_区画022_2026-09-12.md
+023	crates/blitz_asset_compiler/src	38	38	0	0	命名_区画023_2026-09-12.md
 024	crates/blitz_asset_compiler/src/assembly_reference	40	40	1	0	命名_区画024_2026-09-12.md
+025	crates/blitz_asset_compiler/src/compile	30	30	5	3	命名_区画025_2026-09-12.md
 026	crates/blitz_asset_compiler/src/editor_chunk/source	38	38	0	2	命名_区画026_2026-09-12.md
 027	crates/blitz_asset_compiler/src/height_field ほか	37	37	0	3	命名_区画027_2026-09-12.md
-030	crates/blitz_asset_compiler/src/placement	40	40	0	3	命名_区画030_2026-09-12.md
-029	crates/blitz_asset_compiler/src/loader/joint	31	31	0	2	命名_区画029_2026-09-12.md
-035	crates/blitz_asset_compiler/src/visual_sample	22	22	1	2	命名_区画035_2026-09-12.md
-031	crates/blitz_asset_compiler/src/runtime_compilation/building_outline_catalog	27	27	0	2	命名_区画031_2026-09-12.md
-033	crates/blitz_asset_compiler/src/source_asset_paths	39	39	1	1	命名_区画033_2026-09-12.md
-036	crates/blitz_collision/src	27	27	0	0	命名_区画036_2026-09-12.md
 028	crates/blitz_asset_compiler/src/loader/contract	40	40	3	2	命名_区画028_2026-09-12.md
-038	crates/blitz_collision/src/contact_set 第2区画	12	12	0	1	命名_区画038_2026-09-12.md
+029	crates/blitz_asset_compiler/src/loader/joint	31	31	0	2	命名_区画029_2026-09-12.md
+030	crates/blitz_asset_compiler/src/placement	40	40	0	3	命名_区画030_2026-09-12.md
+031	crates/blitz_asset_compiler/src/runtime_compilation/building_outline_catalog	27	27	0	2	命名_区画031_2026-09-12.md
 032	crates/blitz_asset_compiler/src/runtime_compilation/world	37	37	17	2	命名_区画032_2026-09-12.md
-039	crates/blitz_collision/src/continuous	38	38	0	0	命名_区画039_2026-09-12.md
+033	crates/blitz_asset_compiler/src/source_asset_paths	39	39	1	1	命名_区画033_2026-09-12.md
 034	crates/blitz_asset_compiler/src/texture_storage	40	40	4	2	命名_区画034_2026-09-12.md
+035	crates/blitz_asset_compiler/src/visual_sample	22	22	1	2	命名_区画035_2026-09-12.md
+036	crates/blitz_collision/src	27	27	0	0	命名_区画036_2026-09-12.md
 037	crates/blitz_collision/src/contact_set 第1区画	40	40	2	2	命名_区画037_2026-09-12.md
+038	crates/blitz_collision/src/contact_set 第2区画	12	12	0	1	命名_区画038_2026-09-12.md
+039	crates/blitz_collision/src/continuous	38	38	0	0	命名_区画039_2026-09-12.md
+040	crates/blitz_collision/src/height_field 第1区画	40	40	0	2	命名_区画040_2026-09-12.md
 041	crates/blitz_collision/src/height_field 第2区画	2	2	0	2	命名_区画041_2026-09-12.md
 042	crates/blitz_collision/src/height_field/capsule_sweep	33	33	2	0	命名_区画042_2026-09-12.md
-046	crates/blitz_collision/src/solver	10	10	0	2	命名_区画046_2026-09-12.md
-040	crates/blitz_collision/src/height_field 第1区画	40	40	0	2	命名_区画040_2026-09-12.md
-045	crates/blitz_collision/src/shape 第2区画	3	3	0	2	命名_区画045_2026-09-12.md
-047	crates/blitz_collision/src/triangle	33	33	0	2	命名_区画047_2026-09-12.md
 043	crates/blitz_collision/src/oriented_box	32	32	2	0	命名_区画043_2026-09-12.md
-048	crates/blitz_collision/src/triangle_mesh	27	27	0	2	命名_区画048_2026-09-12.md
 044	crates/blitz_collision/src/shape 第1区画	40	40	1	1	命名_区画044_2026-09-12.md
+045	crates/blitz_collision/src/shape 第2区画	3	3	0	2	命名_区画045_2026-09-12.md
+046	crates/blitz_collision/src/solver	10	10	0	2	命名_区画046_2026-09-12.md
+047	crates/blitz_collision/src/triangle	33	33	0	2	命名_区画047_2026-09-12.md
+048	crates/blitz_collision/src/triangle_mesh	27	27	0	2	命名_区画048_2026-09-12.md
+049	crates/blitz_engine/src/animation	14	14	4	2	命名_区画049_2026-09-12.md
+050	crates/blitz_engine/src/asset 第1区画	40	40	1	2	命名_区画050_2026-09-12.md
 051	crates/blitz_engine/src/asset 第2区画	8	8	3	3	命名_区画051_2026-09-12.md
 052	crates/blitz_engine/src/asset/instance	40	40	0	0	命名_区画052_2026-09-12.md
-049	crates/blitz_engine/src/animation	14	14	4	2	命名_区画049_2026-09-12.md
-056	crates/blitz_engine/src/auto_exposure	39	39	0	0	命名_区画056_2026-09-12.md
 053	crates/blitz_engine/src/asset/runtime_format/chunk_directory_v2	25	25	8	1	命名_区画053_2026-09-12.md
-055	crates/blitz_engine/src/asset/runtime_format/scene/write_element	40	40	2	1	命名_区画055_2026-09-12.md
-050	crates/blitz_engine/src/asset 第1区画	40	40	1	2	命名_区画050_2026-09-12.md
-058	crates/blitz_engine/src/chunk	40	40	2	1	命名_区画058_2026-09-12.md
-057	crates/blitz_engine/src	39	39	0	2	命名_区画057_2026-09-12.md
-059	crates/blitz_engine/src/lod_threshold	12	12	4	2	命名_区画059_2026-09-12.md
-062	crates/blitz_engine/src/static_shape/index	13	13	0	0	命名_区画062_2026-09-12.md
 054	crates/blitz_engine/src/asset/runtime_format/scene/read_element	32	32	16	2	命名_区画054_2026-09-12.md
-061	crates/blitz_engine/src/sky/atmosphere	29	29	0	2	命名_区画061_2026-09-12.md
-063	crates/blitz_engine/src/streaming	37	37	0	0	命名_区画063_2026-09-12.md
-065	crates/blitz_engine/src/temporal_reconstruction	37	37	3	1	命名_区画065_2026-09-12.md
-064	crates/blitz_engine/src/streaming/coordinator	28	28	0	1	命名_区画064_2026-09-12.md
-070	crates/blitz_game/src/movement	34	34	0	0	命名_区画070_2026-09-12.md
-069	crates/blitz_game/src 第2区画	6	6	0	0	命名_区画069_2026-09-12.md
+055	crates/blitz_engine/src/asset/runtime_format/scene/write_element	40	40	2	1	命名_区画055_2026-09-12.md
+056	crates/blitz_engine/src/auto_exposure	39	39	0	0	命名_区画056_2026-09-12.md
+057	crates/blitz_engine/src	39	39	0	2	命名_区画057_2026-09-12.md
+058	crates/blitz_engine/src/chunk	40	40	2	1	命名_区画058_2026-09-12.md
+059	crates/blitz_engine/src/lod_threshold	12	12	4	2	命名_区画059_2026-09-12.md
 060	crates/blitz_engine/src/sky	38	38	13	2	命名_区画060_2026-09-12.md
-068	crates/blitz_game/src 第1区画	40	40	2	0	命名_区画068_2026-09-12.md(「インテント」は区画056がユビキタス言語登録済みと判定。親が裁定)
-067	crates/blitz_engine/src/visibility_tests	30	30	1	1	命名_区画067_2026-09-12.md
+061	crates/blitz_engine/src/sky/atmosphere	29	29	0	2	命名_区画061_2026-09-12.md
+062	crates/blitz_engine/src/static_shape/index	13	13	0	0	命名_区画062_2026-09-12.md
+063	crates/blitz_engine/src/streaming	37	37	0	0	命名_区画063_2026-09-12.md
+064	crates/blitz_engine/src/streaming/coordinator	28	28	0	1	命名_区画064_2026-09-12.md
+065	crates/blitz_engine/src/temporal_reconstruction	37	37	3	1	命名_区画065_2026-09-12.md
 066	crates/blitz_engine/src/time	38	38	3	1	命名_区画066_2026-09-12.md
+067	crates/blitz_engine/src/visibility_tests	30	30	1	1	命名_区画067_2026-09-12.md
+068	crates/blitz_game/src 第1区画	40	40	2	0	命名_区画068_2026-09-12.md(「インテント」は区画056がユビキタス言語登録済みと判定。親が裁定)
+069	crates/blitz_game/src 第2区画	6	6	0	0	命名_区画069_2026-09-12.md
+070	crates/blitz_game/src/movement	34	34	0	0	命名_区画070_2026-09-12.md
 071	crates/blitz_math/src	4	4	2	2	命名_区画071_2026-09-12.md
+072	crates/blitz_math/src/frame 第1区画	40	40	10	2	命名_区画072_2026-09-12.md
+073	crates/blitz_math/src/frame 第2区画	10	10	3	3	命名_区画073_2026-09-12.md
 074	crates/blitz_math/src/units	26	26	1	2	命名_区画074_2026-09-12.md
 075	crates/blitz_render/src 第1区画	40	40	0	0	命名_区画075_2026-09-12.md
-073	crates/blitz_math/src/frame 第2区画	10	10	3	3	命名_区画073_2026-09-12.md
-072	crates/blitz_math/src/frame 第1区画	40	40	10	2	命名_区画072_2026-09-12.md
 076	crates/blitz_render/src 第2区画	13	13	2	2	命名_区画076_2026-09-12.md
-078	crates/blitz_render/src/atmosphere/bake	40	40	0	1	命名_区画078_2026-09-12.md
 077	crates/blitz_render/src/atmosphere	37	37	10	1	命名_区画077_2026-09-12.md
-084	crates/blitz_render/src/cube_image	38	38	0	1	命名_区画084_2026-09-12.md
-081	crates/blitz_render/src/cloth_material	19	19	1	2	命名_区画081_2026-09-12.md
+078	crates/blitz_render/src/atmosphere/bake	40	40	0	1	命名_区画078_2026-09-12.md
 079	crates/blitz_render/src/atmosphere/quantity	22	22	9	3	命名_区画079_2026-09-12.md
 080	crates/blitz_render/src/cascade	23	23	7	4	命名_区画080_2026-09-12.md
-083	crates/blitz_render/src/clustered_lighting 第2区画	4	4	4	3	命名_区画083_2026-09-12.md
-085	crates/blitz_render/src/distant_environment/derived/derived_tests	40	40	5	1	命名_区画085_2026-09-12.md
+081	crates/blitz_render/src/cloth_material	19	19	1	2	命名_区画081_2026-09-12.md
 082	crates/blitz_render/src/clustered_lighting 第1区画	40	40	0	5	命名_区画082_2026-09-12.md
-091	crates/blitz_render/src/renderer/draw_dispatch	33	33	0	1	命名_区画091_2026-09-12.md
-089	crates/blitz_render/src/readback_image	9	9	0	2	命名_区画089_2026-09-12.md
+083	crates/blitz_render/src/clustered_lighting 第2区画	4	4	4	3	命名_区画083_2026-09-12.md
+084	crates/blitz_render/src/cube_image	38	38	0	1	命名_区画084_2026-09-12.md
+085	crates/blitz_render/src/distant_environment/derived/derived_tests	40	40	5	1	命名_区画085_2026-09-12.md
 086	crates/blitz_render/src/gpu_pass_timing	23	23	2	2	命名_区画086_2026-09-12.md
 087	crates/blitz_render/src/local_visibility	36	36	0	1	命名_区画087_2026-09-12.md
 088	crates/blitz_render/src/local_visibility/local_visibility_tests	39	39	0	1	命名_区画088_2026-09-12.md
+089	crates/blitz_render/src/readback_image	9	9	0	2	命名_区画089_2026-09-12.md
 090	crates/blitz_render/src/renderer	38	38	0	2	命名_区画090_2026-09-12.md
+091	crates/blitz_render/src/renderer/draw_dispatch	33	33	0	1	命名_区画091_2026-09-12.md
 092	crates/blitz_render/src/renderer/generate/generate_resources	36	36	8	4	命名_区画092_2026-09-12.md
-094	crates/blitz_render/src/view_input	25	25	1	1	命名_区画094_2026-09-12.md
 093	crates/blitz_render/src/renderer/scene_draw_resources/render_object_resources	40	40	10	4	命名_区画093_2026-09-12.md
+094	crates/blitz_render/src/view_input	25	25	1	1	命名_区画094_2026-09-12.md
 095	crates/blitz_render/src/vulkan/atmosphere_lut	39	39	4	8	命名_区画095_2026-09-12.md
 096	crates/blitz_render/src/vulkan/atmosphere_lut/readback_buffer	37	37	0	2	命名_区画096_2026-09-12.md
-100	crates/blitz_render/src/vulkan/distant_environment	40	40	0	1	命名_区画100_2026-09-12.md
 097	crates/blitz_render/src/vulkan/auto_exposure	38	38	22	3	命名_区画097_2026-09-12.md
-101	crates/blitz_render/src/vulkan/frame/record	38	38	1	0	命名_区画101_2026-09-12.md
 098	crates/blitz_render/src/vulkan/derived_environment	28	28	6	2	命名_区画098_2026-09-12.md
-102	crates/blitz_render/src/vulkan/frame/record/graph_build/stages	31	31	4	1	命名_区画102_2026-09-12.md
 099	crates/blitz_render/src/vulkan/descriptor	36	36	22	3	命名_区画099_2026-09-12.md
-106	crates/blitz_render/src/vulkan/material_table	38	38	0	2	命名_区画106_2026-09-12.md
-105	crates/blitz_render/src/vulkan/lighting_query	39	39	2	2	命名_区画105_2026-09-12.md
-104	crates/blitz_render/src/vulkan/headless	23	23	2	3	命名_区画104_2026-09-12.md
-107	crates/blitz_render/src/vulkan/material_table/registration	40	40	0	3	命名_区画107_2026-09-12.md
+100	crates/blitz_render/src/vulkan/distant_environment	40	40	0	1	命名_区画100_2026-09-12.md
+101	crates/blitz_render/src/vulkan/frame/record	38	38	1	0	命名_区画101_2026-09-12.md
+102	crates/blitz_render/src/vulkan/frame/record/graph_build/stages	31	31	4	1	命名_区画102_2026-09-12.md
 103	crates/blitz_render/src/vulkan/graph	37	37	8	4	命名_区画103_2026-09-12.md
+104	crates/blitz_render/src/vulkan/headless	23	23	2	3	命名_区画104_2026-09-12.md
+105	crates/blitz_render/src/vulkan/lighting_query	39	39	2	2	命名_区画105_2026-09-12.md
+106	crates/blitz_render/src/vulkan/material_table	38	38	0	2	命名_区画106_2026-09-12.md
+107	crates/blitz_render/src/vulkan/material_table/registration	40	40	0	3	命名_区画107_2026-09-12.md
 108	crates/blitz_render/src/vulkan/particles/draw_pipeline	34	34	8	2	命名_区画108_2026-09-12.md
-111	crates/blitz_render/src/vulkan/temporal_reconstruction/pipeline	38	38	3	2	命名_区画111_2026-09-12.md
 109	crates/blitz_render/src/vulkan/pipeline_ledger	39	39	9	4	命名_区画109_2026-09-12.md
 110	crates/blitz_render/src/vulkan/shadow_map	40	40	8	2	命名_区画110_2026-09-12.md
+111	crates/blitz_render/src/vulkan/temporal_reconstruction/pipeline	38	38	3	2	命名_区画111_2026-09-12.md
 112	crates/blitz_render/src/vulkan/uniform	35	35	15	3	命名_区画112_2026-09-12.md
+113	crates/blitz_sim/src/cloth	29	29	8	2	命名_区画113_2026-09-12.md
 114	crates/blitz_sim/src/constraint_graph	32	32	0	6	命名_区画114_2026-09-12.md
 115	crates/blitz_sim/src/contact	39	39	3	0	命名_区画115_2026-09-12.md
-117	crates/blitz_sim/src/contact/non_penetration	25	25	0	1	命名_区画117_2026-09-12.md
-113	crates/blitz_sim/src/cloth	29	29	8	2	命名_区画113_2026-09-12.md
-118	crates/blitz_sim/src/contact/normal_tangential_system	30	30	3	3	命名_区画118_2026-09-12.md(3件はリネーム分岐で是正済み)
 116	crates/blitz_sim/src/contact/body_body_contact	38	38	8	1	命名_区画116_2026-09-12.md
+117	crates/blitz_sim/src/contact/non_penetration	25	25	0	1	命名_区画117_2026-09-12.md
+118	crates/blitz_sim/src/contact/normal_tangential_system	30	30	3	3	命名_区画118_2026-09-12.md(3件はリネーム分岐で是正済み)
 119	crates/blitz_sim/src/contact/normal_tangential_system/double_reference	35	35	2	0	命名_区画119_2026-09-12.md(2件はリネーム分岐で是正済み)
-123	crates/blitz_sim/src/contact/scene	40	40	2	1	命名_区画123_2026-09-12.md
 120	crates/blitz_sim/src/contact/pipeline 第1区画	40	40	3	1	命名_区画120_2026-09-12.md(当て方はリネーム分岐で是正済み)
 121	crates/blitz_sim/src/contact/pipeline 第2区画	17	17	2	2	命名_区画121_2026-09-12.md(2件はリネーム分岐で是正済み)
-126	crates/blitz_sim/src/contact/symmetric_system	39	39	0	1	命名_区画126_2026-09-12.md
 122	crates/blitz_sim/src/contact/query_origin	14	14	6	2	命名_区画122_2026-09-12.md
-127	crates/blitz_sim/src/rigid_body	32	32	3	1	命名_区画127_2026-09-12.md
-128	crates/blitz_sim/src/rigid_xpbd	38	38	0	3	命名_区画128_2026-09-12.md
+123	crates/blitz_sim/src/contact/scene	40	40	2	1	命名_区画123_2026-09-12.md
 124	crates/blitz_sim/src/contact/scene/cone_breach_record	40	40	3	1	命名_区画124_2026-09-12.md(当て方・右辺を零にするはリネーム分岐で是正済み)
 125	crates/blitz_sim/src/contact/scene/numeric_contract_record/tolerance_dependence/row_admission	35	35	5	2	命名_区画125_2026-09-12.md(3件はリネーム分岐で是正済み)
-130	crates/blitz_sim/src/xpbd	39	39	0	0	命名_区画130_2026-09-12.md
+126	crates/blitz_sim/src/contact/symmetric_system	39	39	0	1	命名_区画126_2026-09-12.md
+127	crates/blitz_sim/src/rigid_body	32	32	3	1	命名_区画127_2026-09-12.md
+128	crates/blitz_sim/src/rigid_xpbd	38	38	0	3	命名_区画128_2026-09-12.md
 129	crates/blitz_sim/src/sph	16	16	10	2	命名_区画129_2026-09-12.md
-134	crates/editor_server/src/resource/music	30	30	0	2	命名_区画134_2026-09-12.md
+130	crates/blitz_sim/src/xpbd	39	39	0	0	命名_区画130_2026-09-12.md
+131	crates/editor_server/src	39	39	8	3	命名_区画131_2026-09-12.md
 132	crates/editor_server/src/export/one_building	37	37	0	2	命名_区画132_2026-09-12.md
 133	crates/editor_server/src/resource/building_grid	26	26	0	2	命名_区画133_2026-09-12.md
-137	crates/editor_server/tests/integration 第2区画	1	1	0	3	命名_区画137_2026-09-12.md
-131	crates/editor_server/src	39	39	8	3	命名_区画131_2026-09-12.md
-138	crates/editor_server/tests/integration/common	9	9	2	4	命名_区画138_2026-09-12.md
+134	crates/editor_server/src/resource/music	30	30	0	2	命名_区画134_2026-09-12.md
 135	crates/editor_server/src/routes	35	35	8	2	命名_区画135_2026-09-12.md
-140	xtask/src 第2区画	40	40	4	1	命名_区画140_2026-09-12.md
-139	xtask/src 第1区画	40	40	0	2	命名_区画139_2026-09-12.md
 136	crates/editor_server/tests/integration 第1区画	40	40	11	2	命名_区画136_2026-09-12.md
+137	crates/editor_server/tests/integration 第2区画	1	1	0	3	命名_区画137_2026-09-12.md
+138	crates/editor_server/tests/integration/common	9	9	2	4	命名_区画138_2026-09-12.md
+139	xtask/src 第1区画	40	40	0	2	命名_区画139_2026-09-12.md
+140	xtask/src 第2区画	40	40	4	1	命名_区画140_2026-09-12.md
 141	xtask/src 第3区画	13	13	8	2	命名_区画141_2026-09-12.md
-143	xtask/src/acceptance/judgment_value	39	39	0	3	命名_区画143_2026-09-12.md
 142	xtask/src/acceptance	40	40	1	2	命名_区画142_2026-09-12.md
+143	xtask/src/acceptance/judgment_value	39	39	0	3	命名_区画143_2026-09-12.md
 144	xtask/src/atmosphere_lut	39	39	2	2	命名_区画144_2026-09-12.md
 145	xtask/src/cluster_lights	38	38	5	2	命名_区画145_2026-09-12.md
-148	xtask/src/conform/declaration_comment_line	40	40	3	4	命名_区画148_2026-09-12.md
 146	xtask/src/command_ui/menu	24	24	8	2	命名_区画146_2026-09-12.md
 147	xtask/src/conform	40	40	16	8	命名_区画147_2026-09-12.md
+148	xtask/src/conform/declaration_comment_line	40	40	3	4	命名_区画148_2026-09-12.md
 149	xtask/src/conform/shader_binding	37	37	1	1	命名_区画149_2026-09-12.md
 150	xtask/src/conform/source_lexing/token_read	39	39	1	2	命名_区画150_2026-09-12.md(連立はリネーム分岐で是正済み)
 151	xtask/src/csm_seam	39	39	4	2	命名_区画151_2026-09-12.md
 152	xtask/src/derived_environment	34	34	8	2	命名_区画152_2026-09-12.md
-154	xtask/src/editor	40	40	2	2	命名_区画154_2026-09-12.md
-156	xtask/src/indirect_cost	40	40	1	2	命名_区画156_2026-09-12.md
-158	xtask/src/material_check/multi_material_draw	38	38	5	3	命名_区画158_2026-09-12.md
-157	xtask/src/instance_lod/judgment	39	39	6	3	命名_区画157_2026-09-12.md
 153	xtask/src/distant_view/judgment	36	36	8	4	命名_区画153_2026-09-12.md
+154	xtask/src/editor	40	40	2	2	命名_区画154_2026-09-12.md
 155	xtask/src/gen_game_map	40	40	9	1	命名_区画155_2026-09-12.md
+156	xtask/src/indirect_cost	40	40	1	2	命名_区画156_2026-09-12.md
+157	xtask/src/instance_lod/judgment	39	39	6	3	命名_区画157_2026-09-12.md
+158	xtask/src/material_check/multi_material_draw	38	38	5	3	命名_区画158_2026-09-12.md
 159	xtask/src/ow4_bench	39	39	4	1	命名_区画159_2026-09-12.md
-165	xtask/src/texture_compression	40	40	0	0	命名_区画165_2026-09-12.md
-164	xtask/src/smoke	30	30	3	2	命名_区画164_2026-09-12.md
-162	xtask/src/shadow_loss/error	39	39	1	2	命名_区画162_2026-09-12.md
 160	xtask/src/part_row_draw/tree_row	38	38	3	2	命名_区画160_2026-09-12.md
 161	xtask/src/reverse_depth	40	40	12	6	命名_区画161_2026-09-12.md
+162	xtask/src/shadow_loss/error	39	39	1	2	命名_区画162_2026-09-12.md
+163	xtask/src/sky_lut/indirect_pass_count	37	37	16	3	命名_区画163_2026-09-12.md
+164	xtask/src/smoke	30	30	3	2	命名_区画164_2026-09-12.md
+165	xtask/src/texture_compression	40	40	0	0	命名_区画165_2026-09-12.md
+166	xtask/src/type_metrics/rust_module	36	36	0	1	命名_区画166_2026-09-12.md
 167	xtask/src/xpbd_solver_bench	13	13	1	2	命名_区画167_2026-09-12.md
