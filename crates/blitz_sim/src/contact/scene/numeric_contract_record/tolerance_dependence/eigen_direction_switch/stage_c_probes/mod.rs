@@ -16,6 +16,8 @@
 //! 最初に食い違う細分を探し、細分0で2つの走行が捨てた向きの本数を綴る。
 //! 第7手(`first_substep_only_window`)は、代わりの捨て方を細分0でだけ適用した変種を9600細分進め、円錐を超えるかを
 //! 綴る。くり返しが効いているのかを分ける。
+//! 第8手(`rule_switch_trace`)は、素の本番と変種と本命の3本を細分0から細分5まで並べ、その細分で当てた判定と、
+//! 捨てた向きの本数の内訳(この求解の答えと、同じ配置へ本番の規則を当てた答えの両方)と、反復零の比を12桁で綴る。
 //! どれも合否を判定しない。本番の判定と閾値と既定は1つも変えていない。
 //! 参照: `_doc/計測/剛体の接触の静止摩擦の許容差依存の診断_2026-09-09.md`
 
@@ -39,4 +41,5 @@ mod reconstruction_floor;
 mod reconstruction_pair_line;
 mod reconstruction_reading;
 mod reconstruction_window;
+mod rule_switch_trace;
 mod ulp_perturbation;
