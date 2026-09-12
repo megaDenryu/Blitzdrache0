@@ -8,6 +8,9 @@
 //! 場面ごとに変える値ではない。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断13: 静止摩擦は錨からの接線変位を零へ戻す位置拘束であり、クーロン円錐の内側でだけ効く」
 
+#[cfg(not(test))]
+mod production;
+
 #[cfg(test)]
 use std::cell::{Cell, RefCell};
 
@@ -17,9 +20,12 @@ use super::acceptance_breach_reading::受理の破れの読み取り;
 use super::acceptance_tally::受理の破れの数え;
 #[cfg(test)]
 use crate::contact::normal_tangential_system::試験の許容差の適用規則;
+#[cfg(test)]
 use crate::contact::normal_tangential_system::{
     接触点集合の法線と接線の連立方程式, 混合連立方程式の受理の結果, 相補条件を満たす有効集合を探した結末, 部分集合を解いた回数,
 };
+#[cfg(not(test))]
+pub(super) use production::解法の計器;
 
 /// 解法が持つ計器。
 #[cfg(test)]
@@ -31,10 +37,6 @@ pub(super) struct 解法の計器 {
     受理の破れ: Cell<受理の破れの数え>,
     受理の判定の履歴: RefCell<Vec<(混合連立方程式の受理の結果, Option<受理の破れの読み取り>)>>, // 数えた順に全部の結末を積む。診断の計器が刻みごとに読んで空にする
 }
-
-/// 本番の構成の解法の計器。何も持たず、何も数えない。
-#[cfg(not(test))]
-pub(super) struct 解法の計器;
 
 #[cfg(test)]
 impl 解法の計器 {
@@ -117,29 +119,5 @@ impl 解法の計器 {
 
     pub(super) fn 表現の精度が不足した延べ数(&self) -> usize {
         self.表現の精度が不足した延べ数.get()
-    }
-}
-
-#[cfg(not(test))]
-impl 解法の計器 {
-    pub(super) fn 零から始める() -> Self {
-        Self
-    }
-
-    /// 1行も積んでいない連立方程式。本番の構成は適用規則を持たないため、本番と同じ適用規則の連立方程式である。
-    pub(super) fn 空の連立方程式を組む(&self, 点の数: usize) -> 接触点集合の法線と接線の連立方程式 {
-        接触点集合の法線と接線の連立方程式::点の数から空で始める(点の数)
-    }
-
-    /// 本番の構成は何も数えない。
-    pub(super) fn 粘着の候補の求解を数える(
-        &self, _結末: &相補条件を満たす有効集合を探した結末, _回数: 部分集合を解いた回数
-    ) {
-    }
-
-    /// 本番の構成は何も数えない。
-    pub(super) fn 受理の判定を数える(
-        &self, _結果: &混合連立方程式の受理の結果, _連立方程式: &接触点集合の法線と接線の連立方程式
-    ) {
     }
 }

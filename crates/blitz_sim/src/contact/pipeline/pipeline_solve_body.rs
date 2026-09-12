@@ -5,6 +5,10 @@
 //! 解き直すだけで滑走中にはしない。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断12」「判断13」。
 
+mod participant_lookup;
+
+use participant_lookup::{予測を探す, 予測を書き戻す, 台帳から引く};
+
 use super::pipeline_body_rows::{接触の二つの参加者, 法線だけを同時に解く, 法線と接線の連立方程式を組む};
 use super::pipeline_error::接触の工程エラー;
 use super::pipeline_solver::接触の解法ソルバー;
@@ -13,7 +17,7 @@ use super::tentative_multipliers::仮の乗数の集まりを求める;
 use crate::contact::body_body_contact::剛体と剛体の接触拘束;
 use crate::contact::normal_tangential_system::{混合連立方程式の受理の結果, 相補条件を満たす有効集合を探した結末};
 use crate::contact::static_friction::接触点集合の仮の乗数の集まり;
-use crate::rigid_body::{剛体, 剛体の識別子, 剛体エラー};
+use crate::rigid_body::剛体;
 
 impl 接触の解法ソルバー {
     pub(super) fn 剛体どうしの接触点集合を一回反復する(
@@ -96,22 +100,4 @@ fn 粘着の候補を捨てて滑走中にする(
         }
     }
     法線を解いた後
-}
-
-fn 台帳から引く(剛体一覧: &[剛体], 識別子: 剛体の識別子) -> Result<&剛体, 接触の工程エラー> {
-    Ok(剛体一覧.get(識別子.配列添字()).ok_or(剛体エラー::剛体が登録されていない { 識別子 })?)
-}
-
-// 起きている動的剛体だけがこの細分の予測を持つ。
-fn 予測を探す(動的剛体一覧: &[細分の動的剛体], 識別子: 剛体の識別子) -> Option<crate::rigid_xpbd::予測の状態> {
-    動的剛体一覧.iter().find(|剛体| 剛体.識別子 == 識別子).map(|剛体| 剛体.予測)
-}
-
-fn 予測を書き戻す(
-    動的剛体一覧: &mut [細分の動的剛体], 識別子: 剛体の識別子, 予測: Option<crate::rigid_xpbd::予測の状態>
-) {
-    let (Some(予測), Some(対象)) = (予測, 動的剛体一覧.iter_mut().find(|剛体| 剛体.識別子 == 識別子)) else {
-        return;
-    };
-    対象.予測 = 予測;
 }
