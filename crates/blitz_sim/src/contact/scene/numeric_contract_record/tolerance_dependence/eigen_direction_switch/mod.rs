@@ -5,7 +5,7 @@
 //! 0.5倍の滑走(段階Cの表29)が同じ機構かを分ける。合否は判定しない。本番の判定と閾値と既定は1つも変えていない。
 //! 段階A2の計器(`candidate_axes`と`eigen_floor_band`)と段階A3の計器(`noise_floor_discard`・`eigen_floor_ratio`・
 //! `eigen_relative_spread_record`・`double_precision_rank`)と段階A4の計器(`relative_origin_discard`・
-//! `relative_origin_direction_detail`・`relative_origin_slope_tolerance`)と段階A5の計器(`noise_floor_by_box_arm`・`contact_identity_by_posture`・`increment_uncertainty_record`・`discarded_component_on_rows`)も
+//! `relative_origin_direction_detail`・`relative_origin_slope_tolerance`)と段階A5の計器(`noise_floor_by_box_arm`・`contact_identity_by_posture`・`increment_uncertainty_record`・`discarded_component_on_rows`・`coordinate_free_discard`)も
 //! 同じ場面と同じ窓を読むため、この木に置く。
 //! 実行は `cargo test -p blitz_sim --release 固有の向きの採否 -- --ignored --nocapture` である。
 //! 参照: `_doc/計測/剛体の接触の静止摩擦の許容差依存の診断_2026-09-09.md`
@@ -16,6 +16,7 @@
 mod candidate_axes;
 mod cone_line;
 mod contact_identity_by_posture;
+mod coordinate_free_discard;
 mod discarded_component_on_rows;
 mod discarded_direction_detail;
 mod double_precision_rank;
@@ -52,7 +53,7 @@ const 分類が分岐する細分: usize = 3341;
 const 窓が分岐より前に覆う細分の本数: usize = 21;
 const 窓が分岐より後に覆う細分の本数: usize = 4;
 
-fn 遠方の正接零点五八の場合() -> 許容差依存の診断の場合 {
+pub(super) fn 遠方の正接零点五八の場合() -> 許容差依存の診断の場合 {
     許容差依存の診断の場合 {
         静止摩擦係数の値: 0.6,
         傾きの正接: 敵対の傾きの正接,

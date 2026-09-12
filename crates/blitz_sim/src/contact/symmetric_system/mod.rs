@@ -10,6 +10,8 @@
 
 mod discard_reason;
 mod factorization;
+#[cfg(test)]
+mod increment_bound_discard;
 mod jacobi_decomposition;
 mod pseudo_inverse;
 mod pseudo_inverse_solution;
@@ -19,6 +21,8 @@ use blitz_collision::contact_set::接触点の上限;
 #[cfg(test)]
 pub(in crate::contact) use discard_reason::擬似逆が固有の向きを捨てた理由;
 pub(in crate::contact) use factorization::対称な連立の分解;
+#[cfg(test)]
+pub(in crate::contact) use increment_bound_discard::座標を読まない右辺の向きの捨て方;
 pub(in crate::contact) use jacobi_decomposition::対称な連立の固有分解;
 pub(in crate::contact) use pseudo_inverse_solution::擬似逆で解いた増分と捨てた右辺;
 
