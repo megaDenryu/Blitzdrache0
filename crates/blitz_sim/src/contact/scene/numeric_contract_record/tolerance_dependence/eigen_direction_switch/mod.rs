@@ -12,8 +12,10 @@
 
 mod candidate_axes;
 mod cone_line;
+mod discarded_direction_detail;
 mod eigen_floor_band;
 mod row_line;
+mod tangential_noise_floor;
 mod trajectory;
 mod trajectory_tally;
 mod window;
