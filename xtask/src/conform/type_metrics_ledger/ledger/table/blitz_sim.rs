@@ -8,11 +8,18 @@ use super::super::{区画の一覧, 台帳の行};
 
 const モジュールの根: &str = "crates/blitz_sim/src";
 
-const 行一覧: [台帳の行; 10] = [
+const 行一覧: [台帳の行; 11] = [
     台帳の行::構造体("contact/body_body_contact/mod.rs", "剛体と剛体の接触拘束", 4, 5, 26),
     台帳の行::構造体("contact/body_static_contact/mod.rs", "剛体と静的世界の接触拘束", 4, 5, 27),
-    台帳の行::構造体("contact/normal_tangential_system/system.rs", "接触点集合の法線と接線の連立", 9, 5, 37),
+    台帳の行::構造体(
+        "contact/normal_tangential_system/reduced_system.rs",
+        "有効な行だけを抜き出した連立",
+        5,
+        8,
+        17,
+    ),
     台帳の行::構造体("contact/normal_tangential_system/solution_breakdown.rs", "単精度の解の内訳", 1, 11, 6),
+    台帳の行::構造体("contact/normal_tangential_system/system.rs", "接触点集合の法線と接線の連立", 9, 5, 37),
     台帳の行::構造体(
         "contact/normal_tangential_system/tolerance_application.rs",
         "試験の許容差の当て方",
