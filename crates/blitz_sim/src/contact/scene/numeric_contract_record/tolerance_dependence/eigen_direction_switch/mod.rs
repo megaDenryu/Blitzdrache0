@@ -5,7 +5,7 @@
 //! 0.5倍の滑走(段階Cの表29)が同じ機構かを分ける。合否は判定しない。本番の判定と閾値と既定は1つも変えていない。
 //! 段階A2の計器(`candidate_axes`と`eigen_floor_band`)と段階A3の計器(`noise_floor_discard`・`eigen_floor_ratio`・
 //! `eigen_relative_spread_record`・`double_precision_rank`)と段階A4の計器(`relative_origin_discard`・
-//! `relative_origin_direction_detail`・`relative_origin_slope_tolerance`)と段階A5の計器(`noise_floor_by_box_arm`・`contact_identity_by_posture`・`increment_uncertainty_record`)も
+//! `relative_origin_direction_detail`・`relative_origin_slope_tolerance`)と段階A5の計器(`noise_floor_by_box_arm`・`contact_identity_by_posture`・`increment_uncertainty_record`・`discarded_component_on_rows`)も
 //! 同じ場面と同じ窓を読むため、この木に置く。
 //! 実行は `cargo test -p blitz_sim --release 固有の向きの採否 -- --ignored --nocapture` である。
 //! 参照: `_doc/計測/剛体の接触の静止摩擦の許容差依存の診断_2026-09-09.md`
@@ -16,6 +16,7 @@
 mod candidate_axes;
 mod cone_line;
 mod contact_identity_by_posture;
+mod discarded_component_on_rows;
 mod discarded_direction_detail;
 mod double_precision_rank;
 mod eigen_floor_band;
