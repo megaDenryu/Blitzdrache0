@@ -8,6 +8,7 @@
 
 use super::super::acceptance_breach_reading::受理の破れの読み取り;
 use super::super::acceptance_tally::受理の破れの数え;
+use super::unsolved_tally::解けなかった結末の数え;
 use super::解法の計器;
 use crate::contact::normal_tangential_system::{単精度の解の内訳, 混合連立の受理の結果, 部分集合を解いた回数};
 
@@ -29,12 +30,9 @@ impl 解法の計器 {
         self.解いた回数の累計.replace(部分集合を解いた回数::零())
     }
 
-    pub(in crate::contact::pipeline) fn 粘着の候補が解けなかった延べ数(&self) -> usize {
-        self.粘着の候補が解けなかった延べ数.get()
-    }
-
-    pub(in crate::contact::pipeline) fn 表現の精度が不足した延べ数(&self) -> usize {
-        self.表現の精度が不足した延べ数.get()
+    /// 粘着の候補が解けずに退避した延べ数と、そのうち表現の精度が不足した延べ数。
+    pub(in crate::contact::pipeline) fn 解けなかった結末(&self) -> 解けなかった結末の数え {
+        self.解けなかった結末.get()
     }
 
     /// 定まった解の内訳を数える印を立て、それまでに溜まった内訳を取り出して空にする。段階A2の計測3と段階A3の計測1の計器が読む。
