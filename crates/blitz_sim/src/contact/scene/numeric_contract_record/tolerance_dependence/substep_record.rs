@@ -13,6 +13,7 @@ use super::first_iteration_correction_trace::第一反復の補正の追跡;
 use super::iteration_reading::反復の後の読み取り;
 use super::tangential_row_admission_reading::接線の行の入り方の読み取り;
 use crate::contact::normal_tangential_system::部分集合を解いた回数;
+use crate::contact::scene::cone_breach_reading::円錐を超えた接触点集合の読み取り;
 use crate::contact::scene::unsolved_system_reading::解けなかった連立の読み取り;
 
 /// 細分1本の記録。
@@ -30,6 +31,7 @@ pub(super) struct 許容差依存の細分の記録 {
     pub(super) 解いた回数: 部分集合を解いた回数,
     pub(super) 候補一と勝った有効集合が違うか: Option<bool>,
     pub(super) 解けなかった連立: Vec<(u32, 解けなかった連立の読み取り)>,
+    pub(super) 円錐を超えた集合: Vec<(u32, 円錐を超えた接触点集合の読み取り)>,
 }
 
 impl 許容差依存の細分の記録 {

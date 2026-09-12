@@ -32,7 +32,7 @@ const 行一覧: [台帳の行; 12] = [
         "contact/scene/numeric_contract_record/tolerance_dependence/substep_record.rs",
         "許容差依存の細分の記録",
         3,
-        13,
+        14,
         9,
     ),
     台帳の行::構造体("contact/scene/scene_settings.rs", "場面の設定", 0, 12, 0),
