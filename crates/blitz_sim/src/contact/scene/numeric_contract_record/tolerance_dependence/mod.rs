@@ -13,6 +13,7 @@
 mod active_set_agreement;
 mod anchor_displacement;
 mod case;
+mod contact_point_ending;
 mod direction_line;
 mod eigen_direction_switch;
 mod entry_reading;
