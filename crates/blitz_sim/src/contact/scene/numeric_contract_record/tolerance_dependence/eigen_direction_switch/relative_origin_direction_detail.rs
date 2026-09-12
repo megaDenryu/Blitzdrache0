@@ -38,13 +38,9 @@ fn 一細分の向きを綴る(番号: usize, 記録: &許容差依存の細分�
         内訳
             .行ごとの基準原点に相対な座標から導く許容差
             .iter()
-            .map(|許容差| format!("{許容差:.3e}"))
+            .map(|δ| format!("{δ:.3e}"))
             .collect::<Vec<_>>(),
-        内訳
-            .行ごとの解けたと見なす許容差
-            .iter()
-            .map(|許容差| format!("{許容差:.3e}"))
-            .collect::<Vec<_>>()
+        内訳.行ごとの解けたと見なす許容差.iter().map(|δ| format!("{δ:.3e}")).collect::<Vec<_>>()
     );
     for (k, 向き) in 内訳.固有の向きごと.iter().enumerate() {
         let 増分 = if 向き.固有値 > 0.0 {
