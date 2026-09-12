@@ -10,6 +10,8 @@
 
 #[cfg(test)]
 mod alternative_discard_rule;
+#[cfg(test)]
+mod alternative_discard_spelling;
 mod discard_reason;
 mod factorization;
 mod jacobi_decomposition;
