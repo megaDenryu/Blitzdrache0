@@ -9,7 +9,7 @@
 //! 段階Bの計器(`branch_divergence_window`・`branch_direction_line`・`branch_substep_quantities`)も
 //! 段階Cの計器(`perturbation_control_window`・`paired_run`・`posture_perturbation`・`discarded_direction_census_run`・
 //! `discarded_direction_census`・`ill_conditioned_direction_tally`・`ill_conditioned_direction_reading`・
-//! `carried_state_window`・`carried_state`・`bit_comparison`)も
+//! `carried_state_window`・`carried_state`・`bit_comparison`・`reconstruction_window`・`reconstruction_floor`)も
 //! 同じ場面と同じ窓を読むため、この木に置く。
 //! 実行は `cargo test -p blitz_sim --release 固有の向きの採否 -- --ignored --nocapture` である。
 //! 参照: `_doc/計測/剛体の接触の静止摩擦の許容差依存の診断_2026-09-09.md`
@@ -48,6 +48,8 @@ mod noise_floor_regression;
 mod paired_run;
 mod perturbation_control_window;
 mod posture_perturbation;
+mod reconstruction_floor;
+mod reconstruction_window;
 mod relative_eigenvalue_margin;
 mod relative_origin_direction_detail;
 mod relative_origin_discard;
