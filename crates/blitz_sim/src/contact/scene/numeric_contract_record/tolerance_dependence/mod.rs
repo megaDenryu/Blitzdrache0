@@ -26,7 +26,7 @@ mod substep_record;
 mod summary;
 mod unexplained_axes;
 
-use crate::contact::normal_tangential_system::接線の行への許容差の当て方;
+use crate::contact::normal_tangential_system::接線の行への許容差の適用規則;
 use case::許容差依存の診断の場合;
 use scene_variation::段階A1の場面からの一つの変更;
 use substep_record::許容差依存の細分の記録;
@@ -47,7 +47,8 @@ fn 場合を組む(静止摩擦係数の値: f32, 許容差の比: f32) -> 許�
         傾きの正接,
         鉛直軸まわりの回しの度,
         許容差の比,
-        行への許容差の当て方: 接線の行への許容差の当て方::右辺へ受理の倍率を掛けて残す,
+        行への適用規則:
+            接線の行への許容差の適用規則::全部の拘束行を追加し右辺に受理の倍率を掛けた許容差を残す,
         変更: 段階A1の場面からの一つの変更::無し,
     }
 }

@@ -15,7 +15,7 @@ use super::super::history::剛体と静的世界の接触の履歴;
 use super::super::material_id::材質の識別子;
 use super::super::minimum_thickness::形の最小の厚み;
 use super::super::mixing_rule::混合則;
-use super::super::normal_tangential_system::試験の許容差の当て方;
+use super::super::normal_tangential_system::試験の許容差の適用規則;
 use super::super::solver_quality::接触を解く品質の設定;
 use super::super::static_world_partner::静的世界の接触相手;
 use super::super::static_world_partner_id::静的世界の接触相手の識別子;
@@ -46,7 +46,7 @@ pub(super) struct 一つの箱と静的な直方体の場面 {
     pub(super) 履歴: 剛体と静的世界の接触の履歴,
     pub(super) 直前の細分の観測: 細分の観測,
     pub(super) 静止摩擦の解き方: 場面の静止摩擦の解き方,
-    pub(super) 試験の許容差の当て方: 試験の許容差の当て方,
+    pub(super) 試験の許容差の適用規則: 試験の許容差の適用規則,
     pub(super) 粘着の候補が解けなかった接触点集合の延べ数: usize, // 場面を組んでからの累計。検査が零を固定する
     pub(super) 錨を置き直した細分の延べ数: usize,                 // 場面を組んでからの累計。数値契約の診断が読む
 }
@@ -82,7 +82,7 @@ impl 一つの箱と静的な直方体の場面 {
             履歴: 剛体と静的世界の接触の履歴::見込みの接触点の数で生成する(見込みの接触点の数),
             直前の細分の観測: 細分の観測::default(),
             静止摩擦の解き方: 設定.静止摩擦の解き方,
-            試験の許容差の当て方: 設定.試験の許容差の当て方,
+            試験の許容差の適用規則: 設定.試験の許容差の適用規則,
             粘着の候補が解けなかった接触点集合の延べ数: 0,
             錨を置き直した細分の延べ数: 0,
         }

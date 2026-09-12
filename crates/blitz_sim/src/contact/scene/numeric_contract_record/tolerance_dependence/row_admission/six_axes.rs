@@ -12,7 +12,7 @@ use blitz_math::メートル;
 use super::super::case::許容差依存の診断の場合;
 use super::super::scene_variation::段階A1の場面からの一つの変更;
 use super::刻みを二倍にする長さ;
-use crate::contact::normal_tangential_system::接線の行への許容差の当て方;
+use crate::contact::normal_tangential_system::接線の行への許容差の適用規則;
 
 // 候補(i')で測る1本。静止摩擦係数・正接・回しの度・場面の変更の4つで決まる。
 struct 候補一ダッシュの一本 {
@@ -41,7 +41,7 @@ impl 候補一ダッシュの一本 {
             傾きの正接: self.傾きの正接,
             鉛直軸まわりの回しの度: self.鉛直軸まわりの回しの度,
             許容差の比: 1.0,
-            行への許容差の当て方: 接線の行への許容差の当て方::許容差の内側の点の行を積まず右辺を零にする,
+            行への適用規則: 接線の行への許容差の適用規則::許容差以下の接線変位の拘束行を追加しない,
             変更: self.変更,
         }
     }
