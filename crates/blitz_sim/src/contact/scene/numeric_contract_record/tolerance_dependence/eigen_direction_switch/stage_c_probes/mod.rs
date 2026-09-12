@@ -13,7 +13,9 @@
 //! 第5手(`long_run_window`)は、本番だけを2本、片方の初期の姿勢へ単精度の1刻みの摂動を入れて9600細分進め、
 //! 円錐の比の差が過去の最大を更新した細分と、どちらかが円錐を超えた細分を綴る。
 //! 第6手(`discrete_mark_divergence`)は、段階Bの窓で離散の印(特徴の識別・錨の置き直し・滑走中・履歴の項目)が
-//! 最初に食い違う細分を探す。
+//! 最初に食い違う細分を探し、細分0で2つの走行が捨てた向きの本数を綴る。
+//! 第7手(`first_substep_only_window`)は、代わりの捨て方を細分0でだけ適用した変種を9600細分進め、円錐を超えるかを
+//! 綴る。くり返しが効いているのかを分ける。
 //! どれも合否を判定しない。本番の判定と閾値と既定は1つも変えていない。
 //! 参照: `_doc/計測/剛体の接触の静止摩擦の許容差依存の診断_2026-09-09.md`
 
@@ -25,6 +27,7 @@ mod carried_state_window;
 mod discarded_direction_census;
 mod discarded_direction_census_run;
 mod discrete_mark_divergence;
+mod first_substep_only_window;
 mod ill_conditioned_direction_reading;
 mod ill_conditioned_direction_tally;
 mod long_run_tally;
