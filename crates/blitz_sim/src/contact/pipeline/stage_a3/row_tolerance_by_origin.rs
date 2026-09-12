@@ -72,7 +72,7 @@ fn 数えた一覧を綴る(数え: &BTreeMap<(bool, u32), 一つの許容差の
 #[test]
 #[ignore = "計器であり合否を判定しない。実行は --ignored --nocapture を付ける"]
 fn 行ごとの許容差の由来_塔の求解を二つの由来で対にして綴る() {
-    let (mut 工程, mut 台帳, 箱id一覧, _) = 箱の塔の場面を作る(塔の段数, false);
+    let (mut 工程, mut 台帳, 箱の識別子一覧, _) = 箱の塔の場面を作る(塔の段数, false);
     工程.解法.計器.定まった解の内訳を数え始めて溜まった分を読む();
     let mut 数え = BTreeMap::new();
     let mut 求解の数 = 0;
@@ -85,7 +85,7 @@ fn 行ごとの許容差の由来_塔の求解を二つの由来で対にして�
             一つの求解を数える(&内訳, &mut 数え);
         }
     }
-    for (段, &id) in 箱id一覧.iter().enumerate() {
+    for (段, &id) in 箱の識別子一覧.iter().enumerate() {
         let Ok(剛体) = 台帳.参照する(id) else {
             panic!("箱 {段} を台帳から読めない");
         };
