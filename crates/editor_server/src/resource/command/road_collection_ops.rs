@@ -10,7 +10,7 @@ use crate::resource::regional_road::広域道路;
 
 /// 道路を追加するとは、対象の道路一覧の末尾へ道路を1本足す操作コマンドのことである。
 /// 大域世界の広域道路とチャンクの道路は持つ値が違う(散布除外バッファを持つのは
-/// チャンクの道路だけである)ため、足す道路の中身を所属ごとの枝で持つ。
+/// チャンクの道路だけである)ため、足す道路の中身を所属ごとの選択肢で持つ。
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "typescript", derive(ts_rs::TS))]
 #[serde(tag = "種類", content = "値")]

@@ -8,7 +8,7 @@ use super::validation_error::資源検証エラー;
 use super::world_layout::世界の区画割り;
 
 /// 大域世界構造とは、大域世界の区画割りと広域道路一覧をまとめた、`大域世界/構造`の
-/// JSON1本ぶんの内容のことである。幹線は分岐して枝分かれするため、広域道路は
+/// JSON1本ぶんの内容のことである。幹線は分岐するため、広域道路は
 /// 何本でも置ける一覧で持つ(1本も無い状態は空の列で表す)。
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "typescript", derive(ts_rs::TS))]

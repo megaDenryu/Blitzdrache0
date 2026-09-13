@@ -11,7 +11,7 @@ use super::super::catalog::{アセット定義, ソース種別};
 use super::assembly_rule_choice::部品の組み立て規則の種類;
 use super::part_row_declaration::{部品で組んだ並びの宣言, 部品のアセット定義一覧を作る};
 
-/// 家の並びの規模。同じ地面と同じ規則で件数だけが違う2つの世界を、この枝が分ける。
+/// 家の並びの規模。同じ地面と同じ規則で件数だけが違う2つの世界を、この選択肢が分ける。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum 家の並びの規模 {
     十軒,

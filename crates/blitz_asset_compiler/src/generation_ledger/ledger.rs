@@ -16,7 +16,7 @@ use super::ledger_text::生成台帳の本文;
 use super::output_root::生成の出力ルート;
 use super::read_result::生成台帳の読み込み結果;
 
-/// チャンク1つを焼き直すか据え置くかの判定。据え置く枝が内容ハッシュを持つのは、
+/// チャンク1つを焼き直すか据え置くかの判定。据え置く選択肢が内容ハッシュを持つのは、
 /// 次の台帳へそのまま記録し直すためである。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum チャンクの焼き直し判定 {
