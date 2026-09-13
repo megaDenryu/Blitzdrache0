@@ -11,7 +11,7 @@ use super::super::case::許容差依存の診断の場合;
 use super::super::scene_variation::段階A1の場面からの一つの変更;
 use super::super::substep_record::許容差依存の細分の記録;
 use super::静止摩擦係数の値;
-use crate::contact::normal_tangential_system::接線の行への許容差の当て方;
+use crate::contact::normal_tangential_system::接線の行への許容差の適用規則;
 
 const 傾きの正接: f32 = 0.55;
 const 振る受理の倍率: &[f32] = &[0.5, 1.0, 2.0];
@@ -22,7 +22,7 @@ fn 場合を組む(受理の倍率: f32) -> 許容差依存の診断の場合 {
         傾きの正接,
         鉛直軸まわりの回しの度: 0.0,
         許容差の比: 受理の倍率,
-        行への許容差の当て方: 接線の行への許容差の当て方::許容差の内側の点の行を積まず右辺を零にする,
+        行への適用規則: 接線の行への許容差の適用規則::許容差以下の接線変位の拘束行を追加しない,
         変更: 段階A1の場面からの一つの変更::無し,
     }
 }

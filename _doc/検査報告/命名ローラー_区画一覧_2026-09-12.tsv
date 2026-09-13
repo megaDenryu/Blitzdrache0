@@ -1,0 +1,167 @@
+001	crates/blitz_app	25
+002	crates/blitz_app/src/app	36
+003	crates/blitz_app/src/app/cloth_setup	34
+004	crates/blitz_app/src/app/frame_dump	39
+005	crates/blitz_app/src/app/scene_load	37
+006	crates/blitz_app/src/app/time_of_day	37
+007	crates/blitz_app/src/app/time_step	35
+008	crates/blitz_app/src/cli 第1区画	40
+009	crates/blitz_app/src/cli 第2区画	15
+010	crates/blitz_app/src/cli/local_light_count_args	24
+011	crates/blitz_app/src/game	39
+012	crates/blitz_app/src/hot_reload	39
+013	crates/blitz_app/src/reports	38
+014	crates/blitz_app/src/reports/cloth_xpbd_reference	37
+015	crates/blitz_app/src/reports/sky_pixel	40
+016	crates/blitz_assembly/src	34
+017	crates/blitz_assembly/src/expansion	40
+018	crates/blitz_assembly/src/expansion/frame_tests	34
+019	crates/blitz_assembly/src/mating	31
+020	crates/blitz_asset_compiler/examples/check_glb	40
+021	crates/blitz_asset_compiler/examples/generate_source_assets/fox_tour_world/source_writing	26
+022	crates/blitz_asset_compiler/examples/part_assembly	22
+023	crates/blitz_asset_compiler/src	38
+024	crates/blitz_asset_compiler/src/assembly_reference	40
+025	crates/blitz_asset_compiler/src/compile	30
+026	crates/blitz_asset_compiler/src/editor_chunk/source	38
+027	crates/blitz_asset_compiler/src/height_field	37
+028	crates/blitz_asset_compiler/src/loader/contract	40
+029	crates/blitz_asset_compiler/src/loader/joint	31
+030	crates/blitz_asset_compiler/src/placement	40
+031	crates/blitz_asset_compiler/src/runtime_compilation/building_outline_catalog	27
+032	crates/blitz_asset_compiler/src/runtime_compilation/world	37
+033	crates/blitz_asset_compiler/src/source_asset_paths	39
+034	crates/blitz_asset_compiler/src/texture_storage	40
+035	crates/blitz_asset_compiler/src/visual_sample	22
+036	crates/blitz_collision/src	27
+037	crates/blitz_collision/src/contact_set 第1区画	40
+038	crates/blitz_collision/src/contact_set 第2区画	12
+039	crates/blitz_collision/src/continuous	38
+040	crates/blitz_collision/src/height_field 第1区画	40
+041	crates/blitz_collision/src/height_field 第2区画	2
+042	crates/blitz_collision/src/height_field/capsule_sweep	33
+043	crates/blitz_collision/src/oriented_box	32
+044	crates/blitz_collision/src/shape 第1区画	40
+045	crates/blitz_collision/src/shape 第2区画	3
+046	crates/blitz_collision/src/solver	10
+047	crates/blitz_collision/src/triangle	33
+048	crates/blitz_collision/src/triangle_mesh	27
+049	crates/blitz_engine/src/animation	14
+050	crates/blitz_engine/src/asset 第1区画	40
+051	crates/blitz_engine/src/asset 第2区画	8
+052	crates/blitz_engine/src/asset/instance	40
+053	crates/blitz_engine/src/asset/runtime_format/chunk_directory_v2	25
+054	crates/blitz_engine/src/asset/runtime_format/scene/read_element	32
+055	crates/blitz_engine/src/asset/runtime_format/scene/write_element	40
+056	crates/blitz_engine/src/auto_exposure	39
+057	crates/blitz_engine/src	39
+058	crates/blitz_engine/src/chunk	40
+059	crates/blitz_engine/src/lod_threshold	12
+060	crates/blitz_engine/src/sky	38
+061	crates/blitz_engine/src/sky/atmosphere	29
+062	crates/blitz_engine/src/static_shape/index	13
+063	crates/blitz_engine/src/streaming	37
+064	crates/blitz_engine/src/streaming/coordinator	28
+065	crates/blitz_engine/src/temporal_reconstruction	37
+066	crates/blitz_engine/src/time	38
+067	crates/blitz_engine/src/visibility_tests	30
+068	crates/blitz_game/src 第1区画	40
+069	crates/blitz_game/src 第2区画	6
+070	crates/blitz_game/src/movement	34
+071	crates/blitz_math/src	4
+072	crates/blitz_math/src/frame 第1区画	40
+073	crates/blitz_math/src/frame 第2区画	10
+074	crates/blitz_math/src/units	26
+075	crates/blitz_render/src 第1区画	40
+076	crates/blitz_render/src 第2区画	13
+077	crates/blitz_render/src/atmosphere	37
+078	crates/blitz_render/src/atmosphere/bake	40
+079	crates/blitz_render/src/atmosphere/quantity	22
+080	crates/blitz_render/src/cascade	23
+081	crates/blitz_render/src/cloth_material	19
+082	crates/blitz_render/src/clustered_lighting 第1区画	40
+083	crates/blitz_render/src/clustered_lighting 第2区画	4
+084	crates/blitz_render/src/cube_image	38
+085	crates/blitz_render/src/distant_environment/derived/derived_tests	40
+086	crates/blitz_render/src/gpu_pass_timing	23
+087	crates/blitz_render/src/local_visibility	36
+088	crates/blitz_render/src/local_visibility/local_visibility_tests	39
+089	crates/blitz_render/src/readback_image	9
+090	crates/blitz_render/src/renderer	38
+091	crates/blitz_render/src/renderer/draw_dispatch	33
+092	crates/blitz_render/src/renderer/generate/generate_resources	36
+093	crates/blitz_render/src/renderer/scene_draw_resources/render_object_resources	40
+094	crates/blitz_render/src/view_input	25
+095	crates/blitz_render/src/vulkan/atmosphere_lut	39
+096	crates/blitz_render/src/vulkan/atmosphere_lut/readback_buffer	37
+097	crates/blitz_render/src/vulkan/auto_exposure	38
+098	crates/blitz_render/src/vulkan/derived_environment	28
+099	crates/blitz_render/src/vulkan/descriptor	36
+100	crates/blitz_render/src/vulkan/distant_environment	40
+101	crates/blitz_render/src/vulkan/frame/record	38
+102	crates/blitz_render/src/vulkan/frame/record/graph_build/stages	31
+103	crates/blitz_render/src/vulkan/graph	37
+104	crates/blitz_render/src/vulkan/headless	23
+105	crates/blitz_render/src/vulkan/lighting_query	39
+106	crates/blitz_render/src/vulkan/material_table	38
+107	crates/blitz_render/src/vulkan/material_table/registration	40
+108	crates/blitz_render/src/vulkan/particles/draw_pipeline	34
+109	crates/blitz_render/src/vulkan/pipeline_ledger	39
+110	crates/blitz_render/src/vulkan/shadow_map	40
+111	crates/blitz_render/src/vulkan/temporal_reconstruction/pipeline	38
+112	crates/blitz_render/src/vulkan/uniform	35
+113	crates/blitz_sim/src/cloth	29
+114	crates/blitz_sim/src/constraint_graph	32
+115	crates/blitz_sim/src/contact	39
+116	crates/blitz_sim/src/contact/body_body_contact	38
+117	crates/blitz_sim/src/contact/non_penetration	25
+118	crates/blitz_sim/src/contact/normal_tangential_system	30
+119	crates/blitz_sim/src/contact/normal_tangential_system/double_reference	35
+120	crates/blitz_sim/src/contact/pipeline 第1区画	40
+121	crates/blitz_sim/src/contact/pipeline 第2区画	17
+122	crates/blitz_sim/src/contact/query_origin	14
+123	crates/blitz_sim/src/contact/scene	40
+124	crates/blitz_sim/src/contact/scene/cone_breach_record	40
+125	crates/blitz_sim/src/contact/scene/numeric_contract_record/tolerance_dependence/row_admission	35
+126	crates/blitz_sim/src/contact/symmetric_system	39
+127	crates/blitz_sim/src/rigid_body	32
+128	crates/blitz_sim/src/rigid_xpbd	38
+129	crates/blitz_sim/src/sph	16
+130	crates/blitz_sim/src/xpbd	39
+131	crates/editor_server/src	39
+132	crates/editor_server/src/export/one_building	37
+133	crates/editor_server/src/resource/building_grid	26
+134	crates/editor_server/src/resource/music	30
+135	crates/editor_server/src/routes	35
+136	crates/editor_server/tests/integration 第1区画	40
+137	crates/editor_server/tests/integration 第2区画	1
+138	crates/editor_server/tests/integration/common	9
+139	xtask/src 第1区画	40
+140	xtask/src 第2区画	40
+141	xtask/src 第3区画	13
+142	xtask/src/acceptance	40
+143	xtask/src/acceptance/judgment_value	39
+144	xtask/src/atmosphere_lut	39
+145	xtask/src/cluster_lights	38
+146	xtask/src/command_ui/menu	24
+147	xtask/src/conform	40
+148	xtask/src/conform/declaration_comment_line	40
+149	xtask/src/conform/shader_binding	37
+150	xtask/src/conform/source_lexing/token_read	39
+151	xtask/src/csm_seam	39
+152	xtask/src/derived_environment	34
+153	xtask/src/distant_view/judgment	36
+154	xtask/src/editor	40
+155	xtask/src/gen_game_map	40
+156	xtask/src/indirect_cost	40
+157	xtask/src/instance_lod/judgment	39
+158	xtask/src/material_check/multi_material_draw	38
+159	xtask/src/ow4_bench	39
+160	xtask/src/part_row_draw/tree_row	38
+161	xtask/src/reverse_depth	40
+162	xtask/src/shadow_loss/error	39
+163	xtask/src/sky_lut/indirect_pass_count	37
+164	xtask/src/smoke	30
+165	xtask/src/texture_compression	40
+166	xtask/src/type_metrics/rust_module	36
+167	xtask/src/xpbd_solver_bench	13
