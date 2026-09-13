@@ -9,7 +9,7 @@ use axum::{
 use tower::ServiceExt;
 
 #[tokio::test]
-async fn 区画割り未保存での高さ格子putは400を返す() {
+async fn 区画割り未保存での高さ格子のPUT要求は400を返す() {
     let 一時 = crate::common::一時プロジェクト::生成する("world_heightmap_no_layout");
     let 応答 = crate::common::ルーターを作る(&一時)
         .oneshot(
