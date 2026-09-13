@@ -4,7 +4,10 @@
 use super::scissor_convert;
 use super::texture_id_map;
 
-pub(super) fn 図形一覧をUI描画データへ変換する(一覧: &[egui::ClippedPrimitive], pixels_per_point: f32) -> blitz_render::UI描画データ {
+pub(super) fn 図形一覧をUI描画データへ変換する(
+    一覧: &[egui::ClippedPrimitive],
+    pixels_per_point: f32,
+) -> blitz_render::UI描画データ {
     let メッシュ一覧 = 一覧.iter().filter_map(|項目| メッシュへ変換する(項目, pixels_per_point)).collect();
     blitz_render::UI描画データ { メッシュ一覧 }
 }

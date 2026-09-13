@@ -9,7 +9,9 @@ use std::time::Duration;
 
 use blitz_engine::{ストリーミングメモリ量, ストリーミング転送量, ストリーミング進行, 予算判定};
 
-use crate::app::frame_timing::{ウォームアップフレーム数, フレーム時間統計, 標本容量, フレーム間隔から統計を集計する};
+use crate::app::frame_timing::{
+    ウォームアップフレーム数, フレーム時間統計, フレーム間隔から統計を集計する, 標本容量
+};
 use crate::cli::起動モード;
 
 mod ledger_count;

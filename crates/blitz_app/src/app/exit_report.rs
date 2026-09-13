@@ -16,7 +16,9 @@ impl super::アプリ {
             crate::reports::gpu_time_table::パス別gpu時間の表を表示する(&self.パス別gpu時間を取得する());
         }
         if self.gpu時間のフレーム別生値報告が必要か() {
-            crate::reports::gpu_frame_samples::パス別gpu時間のフレーム別生値を表示する(self.パス別gpu時間のフレーム別標本を取得する());
+            crate::reports::gpu_frame_samples::パス別gpu時間のフレーム別生値を表示する(
+                self.パス別gpu時間のフレーム別標本を取得する(),
+            );
         }
         if self.大気のベイク済み画像パス数報告が必要か() {
             match self.大気のベイク済み画像生成パス数の記録を取得する() {

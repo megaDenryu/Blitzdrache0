@@ -3,7 +3,10 @@
 //! 注意: f32→u32の安全な標準変換が無いため、0〜65535へクランプしてから文字列往復で
 //! 整数化する(asキャスト・unsafe回避。ウィンドウ物理ピクセルはこの範囲に収まる前提)。
 
-pub(super) fn クリップ矩形をUIシザー矩形pxへ変換する(clip_rect: egui::Rect, pixels_per_point: f32) -> blitz_render::UIシザー矩形px {
+pub(super) fn クリップ矩形をUIシザー矩形pxへ変換する(
+    clip_rect: egui::Rect,
+    pixels_per_point: f32,
+) -> blitz_render::UIシザー矩形px {
     let min_x = f32を非負u32へ丸める(clip_rect.min.x * pixels_per_point);
     let min_y = f32を非負u32へ丸める(clip_rect.min.y * pixels_per_point);
     let max_x = f32を非負u32へ丸める(clip_rect.max.x * pixels_per_point);
