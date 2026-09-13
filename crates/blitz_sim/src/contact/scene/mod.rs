@@ -5,6 +5,7 @@
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断19: 剛体は基本刻みを整数nで細分し、細分1本の中で予測・接触・反復・速度再構成・速度段階を回す」
 
 mod anchor_retention_tests;
+mod cone_breach_reading;
 mod cone_breach_record;
 mod drop_tests;
 mod hold_limit_record;

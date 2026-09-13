@@ -1,6 +1,6 @@
 //! Issue #59の第4段階(許容差依存の解消)の段階A1の計器。1組(坂・正接0.55・回し0度・静止摩擦係数0.6)を、解けたと
 //! 見なす許容差の倍率1倍と2倍の2本の軌道で細分0〜63まで本番と同じ順に進めながら、計測点0(細分の終わりの錨からの
-//! 接線変位と再構成した速さ)・計測点1と2(擬似逆が捨てた固有の向きの採否と行空間の残差)・計測点3(倍精度の参照の
+//! 接線変位と再構成した速さ)・計測点1と2(擬似逆行列を構成するときに捨てた固有の向きの採否と行空間の残差)・計測点3(倍精度の参照の
 //! 3つの由来と解析の期待)・計測点5(反復ごとの円錐の比と作り直しの割合)を綴る。反例として静止摩擦係数0.8の同じ組も綴る。
 //! 合否は判定しない。判定する検査は`slope_tests`と`tolerance_boundary_tests`が持つ。本番の解法は1ビットも変えない。
 //! 実行は `cargo test -p blitz_sim --release 許容差依存 -- --ignored --nocapture` である。
@@ -13,9 +13,12 @@
 mod active_set_agreement;
 mod anchor_displacement;
 mod case;
+mod contact_point_ending;
 mod direction_line;
+mod eigen_direction_switch;
 mod entry_reading;
 mod fidelity_tests;
+mod first_iteration_correction_trace;
 mod instrumented_substep;
 mod iteration_reading;
 mod record_line;
@@ -24,6 +27,7 @@ mod scene_variation;
 mod stage_c;
 mod substep_record;
 mod summary;
+mod tangential_row_admission_reading;
 mod unexplained_axes;
 
 use crate::contact::normal_tangential_system::接線の行への許容差の適用規則;
