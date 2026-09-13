@@ -12,7 +12,7 @@ use crate::vulkan::skinning::スキニング一式;
 use crate::vulkan::transfer::ステージング経由の転送係;
 
 #[allow(clippy::too_many_arguments)]
-pub(super) fn 組み立てる(
+pub(super) fn 布一式を組み立てる(
     転送係: ステージング経由の転送係<'_>,
     シーンカラー形式: vk::Format,
     セットレイアウト: &シーンセットレイアウト一式,

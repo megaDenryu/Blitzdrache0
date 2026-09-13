@@ -43,4 +43,4 @@ pub use settings::多段設定;
 pub use split_policy::距離区分の分け方;
 pub use texel_density::影の解像度密度;
 
-pub(crate) use build::組み立てる;
+pub(crate) use build::多段一式を組み立てる;

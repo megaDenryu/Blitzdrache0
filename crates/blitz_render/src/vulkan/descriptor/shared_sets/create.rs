@@ -10,7 +10,7 @@ use crate::vulkan::descriptor::{alloc, シーンセットレイアウト一式};
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 use crate::vulkan::uniform::フレームシェーダー定数一式;
 
-pub(super) fn 生成する(
+pub(super) fn 共有ディスクリプタセットを生成する(
     device: &ash::Device,
     レイアウト: &シーンセットレイアウト一式,
     シェーダー定数: &フレームシェーダー定数一式,
@@ -34,7 +34,7 @@ fn 割り当てて結ぶ(
     レイアウト: &シーンセットレイアウト一式,
     シェーダー定数: &フレームシェーダー定数一式,
 ) -> Result<[vk::DescriptorSet; 進行中フレーム数], レンダラーエラー> {
-    let ビューとパス一覧 = alloc::割り当てる(device, pool, レイアウト.ビューとパス(), 進行中フレーム数)?;
+    let ビューとパス一覧 = alloc::ディスクリプタセットを割り当てる(device, pool, レイアウト.ビューとパス(), 進行中フレーム数)?;
     let ビューとパス一覧 = match <[vk::DescriptorSet; 進行中フレーム数]>::try_from(ビューとパス一覧) {
         Ok(値) => 値,
         Err(_) => panic!("ビューとパスのセット数が進行中フレーム数と一致しない"),

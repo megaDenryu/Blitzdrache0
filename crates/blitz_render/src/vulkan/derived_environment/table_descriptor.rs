@@ -41,7 +41,7 @@ impl 反射率積分表ディスクリプタ {
         let Some(set) = set一覧.into_iter().next() else {
             panic!("反射率積分表のディスクリプタセットが1つも割り当てられなかった");
         };
-        書き込む(device, &set, 書き込み先);
+        画像を束縛へ書き込む(device, &set, 書き込み先);
         Ok(Self { layout, pool, set })
     }
 
@@ -72,7 +72,7 @@ fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レン
     Ok(unsafe { device.create_descriptor_pool(&create_info, None)? })
 }
 
-fn 書き込む(device: &ash::Device, セット: &宣言から割り当てたセット<1>, 書き込み先: vk::ImageView) {
+fn 画像を束縛へ書き込む(device: &ash::Device, セット: &宣言から割り当てたセット<1>, 書き込み先: vk::ImageView) {
     セット.書き込み先(device).並びの位置ごとに結ぶ([結ぶ現物::サンプラー無しの画像 {
         ビュー: 書き込み先,
         レイアウト: vk::ImageLayout::GENERAL,

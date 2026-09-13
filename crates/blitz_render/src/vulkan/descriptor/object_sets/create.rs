@@ -19,7 +19,7 @@ impl 描画対象ディスクリプタプール {
     ) -> Result<Self, レンダラーエラー> {
         let 描画対象数 = ジオメトリ参照一覧.len();
         let pool = プールを生成する(device, セット数を数える(描画対象数))?;
-        match 割り当てて書き込む(device, pool, レイアウト, ジオメトリ参照一覧) {
+        match ジオメトリのセットを割り当てて書き込む(device, pool, レイアウト, ジオメトリ参照一覧) {
             Ok(ジオメトリset一覧) => Ok(Self::束ねる(pool, ジオメトリset一覧, 描画対象数)),
             Err(誤り) => {
                 // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
@@ -47,14 +47,14 @@ fn プールを生成する(device: &ash::Device, セット数: u32) -> Result<v
     Ok(unsafe { device.create_descriptor_pool(&create_info, None)? })
 }
 
-fn 割り当てて書き込む(
+fn ジオメトリのセットを割り当てて書き込む(
     device: &ash::Device,
     pool: vk::DescriptorPool,
     レイアウト: &シーンセットレイアウト一式,
     ジオメトリ参照一覧: &[ジオメトリセット参照],
 ) -> Result<Vec<vk::DescriptorSet>, レンダラーエラー> {
     let セット数 = ジオメトリ参照一覧.len() * 進行中フレーム数;
-    let set一覧 = alloc::割り当てる(device, pool, レイアウト.ジオメトリ(), セット数)?;
+    let set一覧 = alloc::ディスクリプタセットを割り当てる(device, pool, レイアウト.ジオメトリ(), セット数)?;
     for (描画対象添字, 参照) in ジオメトリ参照一覧.iter().enumerate() {
         for フレーム添字 in フレームスロット添字::全スロット() {
             let Some(set) = set一覧.get(位置を求める(描画対象添字, フレーム添字)).copied() else {

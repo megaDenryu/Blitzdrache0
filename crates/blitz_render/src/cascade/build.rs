@@ -13,7 +13,7 @@ use super::texel_density::影の解像度密度;
 use super::{bounding, ortho, snap, split, 距離区分数};
 use crate::lighting_input::{ライティング入力エラー, 影入力, 方向光入力};
 
-pub(crate) fn 組み立てる(
+pub(crate) fn 多段一式を組み立てる(
     方向光: 方向光入力,
     格子の基準点: 大域ワールド位置,
     カメラ大域原点: 大域ワールド位置,
@@ -31,7 +31,7 @@ pub(crate) fn 組み立てる(
     if 遠深度.値() <= 軸.近深度.値() {
         return Err(ライティング入力エラー::多段視錐台不正);
     }
-    let 分割 = split::分割する(軸.近深度, 遠深度, 設定);
+    let 分割 = split::視錐台の深度区間を距離区分へ分割する(軸.近深度, 遠深度, 設定);
     let 解像度 = 設定.解像度();
 
     let mut 距離区分一覧: Vec<影入力> = Vec::with_capacity(距離区分数);
