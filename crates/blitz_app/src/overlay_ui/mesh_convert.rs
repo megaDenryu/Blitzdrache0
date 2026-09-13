@@ -28,7 +28,7 @@ fn メッシュへ変換する(項目: &egui::ClippedPrimitive, pixels_per_point
     Some(blitz_render::UIメッシュ {
         頂点一覧,
         インデックス一覧: mesh.indices.clone(),
-        テクスチャid: texture_id_map::変換する(mesh.texture_id),
+        テクスチャID: texture_id_map::変換する(mesh.texture_id),
         シザー矩形px: scissor_convert::変換する(項目.clip_rect, pixels_per_point),
     })
 }
