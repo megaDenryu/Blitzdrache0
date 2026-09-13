@@ -10,6 +10,6 @@ use crate::ui_vertex::UI頂点;
 pub struct UIメッシュ {
     pub 頂点一覧: Vec<UI頂点>,
     pub インデックス一覧: Vec<u32>,
-    pub テクスチャID: UIテクスチャID,
+    pub テクスチャ識別子: UIテクスチャID,
     pub シザー矩形px: UIシザー矩形px,
 }
