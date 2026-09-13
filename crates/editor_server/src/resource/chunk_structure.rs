@@ -18,7 +18,7 @@ use super::scattered_individual::散布の個体;
 use super::validation_error::資源検証エラー;
 
 /// チャンク構造とは、1チャンクの道路一覧・建物一覧・散布の設定・散布の個体一覧・見下ろし図の下書きをまとめた、
-/// `チャンク/{x}/{z}/構造`のJSON1本ぶんの内容のことである。道路は分岐して枝分かれするため、
+/// `チャンク/{x}/{z}/構造`のJSON1本ぶんの内容のことである。道路は分岐するため、
 /// 1チャンクに何本でも置ける一覧で持つ(1本も無い状態は空の列で表す)。
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "typescript", derive(ts_rs::TS))]

@@ -27,7 +27,7 @@ use super::manifold::接触点集合;
 
 /// 直方体と三角形が重なっているかと、重なっているならその接触点集合。
 ///
-/// 枝の大きさが釣り合わない理由は直方体どうしの答えと同じである
+/// 選択肢の大きさが釣り合わない理由は直方体どうしの答えと同じである
 /// (`crates/blitz_collision/src/contact_set/box_pair_query.rs`)。
 #[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, Copy, PartialEq)]
