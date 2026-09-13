@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { style, globalStyle } from '@vanilla-extract/css'
 import { エディターCSS変数 } from '../../../../境界/index.ts'
 
 // タイムラインの行自体。人が編集中ずっと見る対象であるため縦には伸ばさず、
@@ -75,4 +75,43 @@ export const 操作ボタン行 = style({
     flexWrap: 'wrap',
     gap: '2px',
     marginTop: '2px',
+})
+
+// 同じ節に属するカードを括る節の枠(判断15の是正、issue #88)。
+export const 節の枠 = style({
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+    flexShrink: 0,
+    padding: '4px',
+    borderRadius: '4px',
+    border: `1px dashed ${エディターCSS変数('カード枠線')}`,
+})
+
+export const 節の枠見出し = style({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '4px',
+    fontSize: '11px',
+    color: エディターCSS変数('テキスト薄'),
+})
+
+export const 節の枠見出し文言 = style({
+    whiteSpace: 'nowrap',
+})
+
+export const 節の枠見出し操作 = style({
+    display: 'flex',
+    gap: '2px',
+})
+
+// 6つの操作ボタンが記号ボタンの既定11pxのままだと読みにくいため、この行の中だけ引き上げる。
+globalStyle(`${節の枠見出し操作} button`, {
+    fontSize: '13px',
+})
+
+export const 節の枠カード列 = style({
+    display: 'flex',
+    gap: '8px',
 })

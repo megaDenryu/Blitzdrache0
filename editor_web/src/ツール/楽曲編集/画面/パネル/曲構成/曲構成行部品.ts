@@ -2,7 +2,7 @@ import { div, span, DivC, LV2HtmlComponentBase, 配線ポート } from 'sengen-u
 import type { I配線可能 } from 'sengen-ui'
 import type { 曲の節, パターン } from '../../../../../生成/編集資源契約.ts'
 import { 節のパターン選択欄 } from './節のパターン選択欄.ts'
-import { 節の繰り返し回数選択欄 } from './節の繰り返し回数選択欄.ts'
+import { 節の繰り返し回数選択欄 } from '../共通/節の繰り返し回数選択欄.ts'
 import { 節行枠, 節番号 } from './スタイル.css.ts'
 
 export interface I曲構成行配線 {

@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import {
-    パターンのステップ数,
     type トラックの格子,
     type トラック定義,
     type 和音,
 } from '../../../生成/編集資源契約.ts'
 import { トラック格子を掃除する } from './格子の掃除.ts'
+import { 小節あたりのステップ数 } from './演奏の時刻/index.ts'
 
 describe('格子の掃除のテスト', () => {
     const 旋律トラック: トラック定義 = {
@@ -28,7 +28,7 @@ describe('格子の掃除のテスト', () => {
         // 1: 71(B4) -> 合わない
         // 2: 69(A4) -> 合わない
         // 5: 64(E4) -> 合う
-        const C和音進行: 和音[] = [{ 根音: 0, 種類: '長三和音', 続くステップ数: パターンのステップ数 }]
+        const C和音進行: 和音[] = [{ 根音: 0, 種類: '長三和音', 続くステップ数: 小節あたりのステップ数 }]
 
         const 元格子: トラックの格子 = {
             行一覧: [

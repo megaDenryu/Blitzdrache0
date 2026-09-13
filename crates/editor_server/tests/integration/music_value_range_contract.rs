@@ -13,7 +13,9 @@ fn 定数の行(名前: &str, 値: impl std::fmt::Display) -> String {
 
 fn 出るはずの行一覧() -> Vec<String> {
     vec![
-        定数の行("パターンのステップ数", editor_server::パターンのステップ数),
+        定数の行("小節あたりのステップ数", editor_server::小節あたりのステップ数),
+        定数の行("新しいパターンの既定の小節数", editor_server::新しいパターンの既定の小節数),
+        定数の行("パターンの小節数の上限", editor_server::パターンの小節数の上限),
         定数の行("テンポの下限", editor_server::テンポの下限),
         定数の行("テンポの上限", editor_server::テンポの上限),
         定数の行("曲の節の繰り返し回数の下限", editor_server::曲の節の繰り返し回数の下限),
