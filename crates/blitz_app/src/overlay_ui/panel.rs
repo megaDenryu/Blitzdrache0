@@ -17,7 +17,7 @@ pub(super) fn 内容を描く(
         ));
         let gpu合計: f64 = 統計.パス別gpu時間.iter().map(|&(_, 分布)| 分布.平均ミリ秒()).sum();
         ui.label(format!("GPU合計: {gpu合計:.4} ms"));
-        ui.label(format!("validation issues: {}", 統計.validation件数));
+        ui.label(format!("validation issues: {}", 統計.検証件数));
         ui.separator();
         // 露出は倍率のため対数スケールで動かす。動かせる範囲は値オブジェクトが持つ。
         let 露出の範囲 = 露出倍率::スライダーの範囲();

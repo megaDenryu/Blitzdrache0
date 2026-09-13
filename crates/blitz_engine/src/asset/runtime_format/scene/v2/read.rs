@@ -8,7 +8,7 @@ use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::読取位置;
 use super::super::read_element;
 use super::super::shape_tag::{地形LODメッシュ群の判別値, 通常メッシュの判別値};
-use super::{シーンV2, 形状V2, 描画対象V2};
+use super::{シーンV2, 形状版2, 描画対象V2};
 use crate::asset::render_object_id::描画対象ID;
 use crate::asset::terrain_lod_meshes::地形LODメッシュ群;
 use crate::チャンク座標;
@@ -61,9 +61,9 @@ fn 描画対象を読む(入力: &mut 読取位置<'_>) -> Result<描画対象V2
     })
 }
 
-fn 形状を読む(入力: &mut 読取位置<'_>) -> Result<形状V2, アセット実行時形式エラー> {
+fn 形状を読む(入力: &mut 読取位置<'_>) -> Result<形状版2, アセット実行時形式エラー> {
     match 入力.u8()? {
-        通常メッシュの判別値 => Ok(形状V2::通常メッシュ(read_element::旧版のメッシュを読む(入力)?)),
+        通常メッシュの判別値 => Ok(形状版2::通常メッシュ(read_element::旧版のメッシュを読む(入力)?)),
         地形LODメッシュ群の判別値 => {
             let (最詳細段, より粗い段一覧) = read_element::メッシュ列を読む(
                 入力,
@@ -71,7 +71,7 @@ fn 形状を読む(入力: &mut 読取位置<'_>) -> Result<形状V2, アセッ�
                 アセット実行時形式エラー::地形LOD段なし,
                 read_element::旧版のメッシュを読む,
             )?;
-            Ok(形状V2::地形LODメッシュ群(地形LODメッシュ群::生成する(
+            Ok(形状版2::地形LODメッシュ群(地形LODメッシュ群::生成する(
                 最詳細段,
                 より粗い段一覧,
             )?))

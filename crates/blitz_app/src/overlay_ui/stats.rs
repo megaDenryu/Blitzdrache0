@@ -3,5 +3,5 @@
 pub(crate) struct 開発UI統計 {
     pub(crate) パス別gpu時間: Vec<(&'static str, blitz_render::gpu_pass_timing::パス時間の分布)>, // パス名ごとの移動平均GPU時間(ミリ秒、判断30)。計測非対応なら空
     pub(crate) フレーム時間ms: f64,                                                               // 直近フレームのCPU側フレーム時間の移動平均(ミリ秒)
-    pub(crate) validation件数: u64,                                                               // これまでのvalidationエラー・警告合計件数
+    pub(crate) 検証件数: u64,                                                               // これまでのvalidationエラー・警告合計件数
 }

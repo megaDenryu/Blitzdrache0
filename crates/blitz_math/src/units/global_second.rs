@@ -29,7 +29,7 @@ impl 大域秒 {
         }
         let 狭めた = DVec3::splat(self.0).as_vec3().x;
         if !狭めた.is_finite() {
-            return Err(単位変換エラー::F32範囲外);
+            return Err(単位変換エラー::単精度範囲外);
         }
         Ok(秒::生成する(狭めた))
     }
@@ -72,7 +72,7 @@ mod tests {
     #[test]
     fn f32の表現範囲を超えたら型付きエラーになる() {
         let 狭めた = 大域秒::生成する(f64::from(f32::MAX) * 2.0).秒へ狭める();
-        assert_eq!(狭めた.map(|値| 値.値()), Err(単位変換エラー::F32範囲外));
+        assert_eq!(狭めた.map(|値| 値.値()), Err(単位変換エラー::単精度範囲外));
     }
 
     #[test]

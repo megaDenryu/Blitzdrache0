@@ -6,7 +6,7 @@
 //! 前提: 仕様は装飾を添字そのものでなく、その添字で作ったポインタ(アクセス連鎖の結果)へ付けると定める。
 
 use super::spirv_error::シェーダー中間表現の読み解きエラー;
-use super::spirv_module::{名前からidを引く, 命令へ読み解く, 装飾の付いたidを集める};
+use super::spirv_module::{名前からidを参照する, 命令へ読み解く, 装飾の付いたidを集める};
 
 pub(super) struct 非一様装飾の集計 {
     pub(super) 参照件数: usize,             // その変数を基点とするアクセス連鎖の件数
@@ -18,7 +18,7 @@ const 装飾_NON_UNIFORM: u32 = 5300;
 
 pub(super) fn 集計する(spirv: &[u8], 変数名: &str) -> Result<非一様装飾の集計, シェーダー中間表現の読み解きエラー> {
     let 命令一覧 = 命令へ読み解く(spirv)?;
-    let 対象id = 名前からidを引く(&命令一覧, 変数名)?;
+    let 対象id = 名前からidを参照する(&命令一覧, 変数名)?;
     let 非一様id一覧 = 装飾の付いたidを集める(&命令一覧, 装飾_NON_UNIFORM);
     let mut 集計 = 非一様装飾の集計 {
         参照件数: 0,

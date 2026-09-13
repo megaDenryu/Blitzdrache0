@@ -19,7 +19,7 @@ use compare::比較する;
 use expected_color::{
     アセット反映後中央色線形値, クリアカラー線形値, 初期中央色線形値, 書き換え後中央色線形値, 許容誤差, 隅座標
 };
-use srgb_convert::linearをsrgb8bit相当のf32へ変換する;
+use srgb_convert::線形をsrgb8bit相当のf32へ変換する;
 
 pub(crate) fn ピクセルを判定する(画像: &読み戻し画像, アクション: スモークアクション) -> Result<(), 起動エラー> {
     match アクション {
@@ -70,7 +70,7 @@ fn クリア色でないことを判定する(画像: &読み戻し画像) -> Re
         return Err(起動エラー::ピクセル判定失敗("中央: 画像範囲外だった".to_string()));
     };
     let 差分あり = クリアカラー線形値.into_iter().enumerate().any(|(添字, 線形値)| {
-        let 期待値 = linearをsrgb8bit相当のf32へ変換する(線形値);
+        let 期待値 = 線形をsrgb8bit相当のf32へ変換する(線形値);
         let 実測値 = f32::from(実測[添字]);
         (実測値 - 期待値).abs() > 許容誤差
     });

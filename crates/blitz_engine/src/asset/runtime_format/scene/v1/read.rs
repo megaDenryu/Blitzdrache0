@@ -7,14 +7,14 @@ use blitz_math::{ローカル, ワールド, 変換};
 use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::読取位置;
 use super::super::read_element;
-use super::{シーンV1, 描画対象V1};
+use super::{シーン版1, 描画対象V1};
 use crate::asset::render_object_id::描画対象ID;
 use crate::チャンク座標;
 
 /// 版1の描画対象1件の最小バイト数。形状の判別値を持たないため、形状以外の長さとメッシュ1つ分の合計になる。
 const 描画対象最小長: usize = read_element::形状以外の描画対象長 + read_element::メッシュ最小長;
 
-pub(in crate::asset::runtime_format::scene) fn シーン内容を読む(内容: &[u8]) -> Result<シーンV1, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn シーン内容を読む(内容: &[u8]) -> Result<シーン版1, アセット実行時形式エラー> {
     let mut 入力 = 読取位置::新規(内容);
     let 対象数 = 入力.件数(描画対象最小長)?;
     if 対象数 == 0 {
@@ -41,7 +41,7 @@ pub(in crate::asset::runtime_format::scene) fn シーン内容を読む(内容: 
     )?;
     let アニメーション一覧 = read_element::アニメーション一覧を読む(&mut 入力, スキン.as_ref())?;
     入力.完了を検査する()?;
-    Ok(シーンV1 {
+    Ok(シーン版1 {
         先頭の描画対象,
         残りの描画対象一覧,
         スキン,

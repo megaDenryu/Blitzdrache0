@@ -5,11 +5,11 @@
 use blitz_math::秒;
 
 use crate::forward_azimuth::前へ進む向きの方位角;
-use crate::game_intent::ゲームインテント;
+use crate::game_intent::ゲームの操作意図;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 一刻みの移動の入力 {
-    pub インテント: ゲームインテント,
+    pub インテント: ゲームの操作意図,
     pub 刻み: 秒,
     pub 前へ進む向き: 前へ進む向きの方位角,
 }

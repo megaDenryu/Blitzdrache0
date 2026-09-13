@@ -6,7 +6,7 @@ use blitz_math::大域メートル;
 
 use super::body_motion_test_fixture::{入力, 刻む, 前へ倒す, 床の上で接地した状態};
 use super::movement_state::移動状態;
-use crate::game_intent::ゲームインテント;
+use crate::game_intent::ゲームの操作意図;
 use crate::planar_test_world::平面と段と壁の世界;
 
 const 段の東端: f64 = 5.0;
@@ -31,7 +31,7 @@ fn 上限以下の段は歩いて接地中のまま越える() {
 fn 上限以下の段は走って接地中のまま越える() {
     let mut 世界 = 段のある世界(0.2);
     let (足元, 状態) = 床の上で接地した状態(&mut 世界, 3.0, 0.0, 0.0);
-    let 走る = ゲームインテント {
+    let 走る = ゲームの操作意図 {
         走りたいか: true,
         ..前へ倒す()
     };
