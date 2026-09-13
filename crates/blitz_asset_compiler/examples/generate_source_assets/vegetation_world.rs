@@ -39,7 +39,7 @@ const 目録ソースファイル名: &str = "chunk_directory.txt";
 /// この世界のチャンクは原点1つだけである。
 const チャンクのアセット識別子: &str = "vegetation_chunk";
 
-pub(crate) fn 書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
+pub(crate) fn 植生検証世界のソース一式を書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
     let 最詳細段 = 直方体諸元 {
         半辺: 原型の半辺,
         高さ: 原型の高さ,

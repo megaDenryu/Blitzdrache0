@@ -19,52 +19,52 @@ pub(crate) fn 一式を書き出す() -> Result<(), String> {
 
     let チャンク世界出力先 = Path::new("assets/chunk_world");
     ディレクトリを作る(チャンク世界出力先)?;
-    chunk_world::書き出す(チャンク世界出力先)?;
+    chunk_world::チャンク世界のソース一式を書き出す(チャンク世界出力先)?;
     println!("[generate_source_assets] {}へ生成完了", チャンク世界出力先.display());
 
     let 地形世界出力先 = Path::new("assets/terrain_world");
     ディレクトリを作る(地形世界出力先)?;
-    terrain_world::書き出す(地形世界出力先)?;
+    terrain_world::地形検証用世界のソース一式を書き出す(地形世界出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 地形世界出力先.display());
 
     let 植生世界出力先 = Path::new("assets/vegetation_world");
     ディレクトリを作る(植生世界出力先)?;
-    vegetation_world::書き出す(植生世界出力先)?;
+    vegetation_world::植生検証世界のソース一式を書き出す(植生世界出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 植生世界出力先.display());
 
     let 見本の集落出力先 = Path::new("assets/village_world");
     ディレクトリを作る(見本の集落出力先)?;
-    village_world::書き出す(見本の集落出力先)?;
+    village_world::見本の集落の地面のソース一式を書き出す(見本の集落出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 見本の集落出力先.display());
 
     let 家の並び出力先 = Path::new("assets/part_house_row_world");
     ディレクトリを作る(家の並び出力先)?;
-    part_house_row_world::書き出す(家の並び出力先)?;
+    part_house_row_world::家の並びの地面のソース一式を書き出す(家の並び出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 家の並び出力先.display());
 
     let 木の並び出力先 = Path::new("assets/part_tree_row_world");
     ディレクトリを作る(木の並び出力先)?;
-    part_tree_row_world::書き出す(木の並び出力先)?;
+    part_tree_row_world::木の並びの地面のソース一式を書き出す(木の並び出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 木の並び出力先.display());
 
     let 一間四方の骨格の並び出力先 = Path::new("assets/part_frame_row_world");
     ディレクトリを作る(一間四方の骨格の並び出力先)?;
-    part_frame_row_world::書き出す(一間四方の骨格の並び出力先)?;
+    part_frame_row_world::骨格の並びの地面のソース一式を書き出す(一間四方の骨格の並び出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 一間四方の骨格の並び出力先.display());
 
     let 目視見本出力先 = Path::new("assets/terrain_visual_world");
     ディレクトリを作る(目視見本出力先)?;
-    terrain_visual_world::書き出す(目視見本出力先)?;
+    terrain_visual_world::目視見本世界のソース一式を書き出す(目視見本出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 目視見本出力先.display());
 
     let 夜の多光源出力先 = Path::new("assets/night_lights_world");
     ディレクトリを作る(夜の多光源出力先)?;
-    night_lights_world::書き出す(夜の多光源出力先)?;
+    night_lights_world::夜の多光源世界のソース一式を書き出す(夜の多光源出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 夜の多光源出力先.display());
 
     let 屋内の多光源出力先 = Path::new("assets/stone_hut_world");
     ディレクトリを作る(屋内の多光源出力先)?;
-    stone_hut_world::書き出す(屋内の多光源出力先)?;
+    stone_hut_world::屋内検収世界のソース一式を書き出す(屋内の多光源出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 屋内の多光源出力先.display());
 
     let ブロック圧縮の対照出力先 = Path::new("assets/texture_compression_world");
@@ -74,7 +74,7 @@ pub(crate) fn 一式を書き出す() -> Result<(), String> {
 
     let 地表層タイル出力先 = Path::new("assets/surface_layer_textures");
     ディレクトリを作る(地表層タイル出力先)?;
-    surface_layer_tiles::書き出す(地表層タイル出力先)?;
+    surface_layer_tiles::地表材質のタイル画像一式を書き出す(地表層タイル出力先)?;
     println!("[generate_source_assets] {}へ生成完了", 地表層タイル出力先.display());
     Ok(())
 }

@@ -19,7 +19,7 @@ const 材質ごとの純色: [(&str, [u8; 4]); 4] = [
     ("sand_a", [200, 180, 110, 255]),
 ];
 
-pub(crate) fn 書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
+pub(crate) fn 地表材質のタイル画像一式を書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
     for (材質名, 純色) in 材質ごとの純色 {
         let パス = 出力先ディレクトリ.join(format!("{材質名}.png"));
         let 画像 = image::RgbaImage::from_pixel(一辺の画素数, 一辺の画素数, image::Rgba(純色));

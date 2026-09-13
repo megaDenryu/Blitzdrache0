@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 const 一辺のピクセル数: u32 = 4;
 
 /// quad_base_color.png(純青)とquad_alt_color.png(純緑)を出力先へ書き出す。
-pub(super) fn 保存する(出力先ディレクトリ: &Path) -> Result<(), String> {
+pub(super) fn quad用の単色画像2枚を保存する(出力先ディレクトリ: &Path) -> Result<(), String> {
     単色画像を保存する(出力先ディレクトリ.join("quad_base_color.png"), image::Rgba([0, 0, 255, 255]))?;
     単色画像を保存する(出力先ディレクトリ.join("quad_alt_color.png"), image::Rgba([0, 255, 0, 255]))?;
     Ok(())

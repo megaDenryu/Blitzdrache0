@@ -22,7 +22,7 @@ const 板の局所中心: f32 = 50.0;
 const 共有バッファファイル名: &str = "chunk_world.bin";
 const 目録ソースファイル名: &str = "chunk_directory.txt";
 
-pub(crate) fn 書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
+pub(crate) fn チャンク世界のソース一式を書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
     let 座標一覧 = 座標一覧を作る();
     let 共有バッファ = geometry::共有バッファバイト列を作る(座標一覧.len());
     書き込む(&出力先ディレクトリ.join(共有バッファファイル名), &共有バッファ)?;

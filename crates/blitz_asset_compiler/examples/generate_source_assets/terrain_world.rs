@@ -25,7 +25,7 @@ const 重なり幅: u8 = 1;
 
 const 目録ソースファイル名: &str = "chunk_directory.txt";
 
-pub(crate) fn 書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
+pub(crate) fn 地形検証用世界のソース一式を書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
     let 諸元 = 高さ格子諸元::生成する(辺分割数, 重なり幅, 一辺メートル).map_err(|誤り| 誤り.to_string())?;
     let mut 項目一覧 = Vec::new();
     for z in 座標最小..=座標最大 {

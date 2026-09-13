@@ -37,7 +37,7 @@ const シーン名: &str = "terrain_night_lights";
 const 格子ファイル名: &str = "terrain_night_lights.heightgrid";
 const 目録ソースファイル名: &str = "chunk_directory.txt";
 
-pub(crate) fn 書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
+pub(crate) fn 夜の多光源世界のソース一式を書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
     地面を書き出す(出力先ディレクトリ)?;
     obstacle::遮蔽物2件を書き出す(出力先ディレクトリ)
 }

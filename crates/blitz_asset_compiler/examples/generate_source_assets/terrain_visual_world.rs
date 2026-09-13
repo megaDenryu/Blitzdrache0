@@ -43,7 +43,7 @@ const 立体の文書ファイル名: &str = "material_sample_bodies.gltf";
 const 遠景地面のバイナリファイル名: &str = "distant_ground.bin";
 const 遠景地面の文書ファイル名: &str = "distant_ground.gltf";
 
-pub(crate) fn 書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
+pub(crate) fn 目視見本世界のソース一式を書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
     地面を書き出す(出力先ディレクトリ)?;
     材質見本の立体を書き出す(出力先ディレクトリ)?;
     遠景地面を書き出す(出力先ディレクトリ)
@@ -66,7 +66,7 @@ fn 地面を書き出す(出力先ディレクトリ: &Path) -> Result<(), Strin
 }
 
 fn 材質見本の立体を書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
-    let 連結 = geometry::組み立てる();
+    let 連結 = geometry::材質見本の立体を組み立てる();
     書き込む(&出力先ディレクトリ.join(立体のバイナリファイル名), &連結.バッファバイト列を作る())?;
     書き込む(
         &出力先ディレクトリ.join(立体の文書ファイル名),

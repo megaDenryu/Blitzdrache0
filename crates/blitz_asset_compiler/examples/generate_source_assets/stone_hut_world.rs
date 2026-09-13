@@ -31,7 +31,7 @@ const シーン名: &str = "prop_stone_hut_interior";
 const 格子ファイル名: &str = "prop_stone_hut_interior.heightgrid";
 const 目録ソースファイル名: &str = "chunk_directory.txt";
 
-pub(crate) fn 書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
+pub(crate) fn 屋内検収世界のソース一式を書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
     let 諸元 = 高さ格子諸元::生成する(辺分割数, 重なり幅, 一辺メートル).map_err(|誤り| 誤り.to_string())?;
     let 座標 = チャンク座標::生成する(チャンクのX, チャンクのZ);
     let 格子 = 高さ格子を切り出す(諸元, 座標, 平らな地面の高さを求める).map_err(|誤り| 誤り.to_string())?;
