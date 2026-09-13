@@ -6,13 +6,13 @@ use crate::streaming_report::ストリーミング要約報告;
 
 pub(super) struct 計測値 {
     pub(super) 要約: ストリーミング要約報告,
-    pub(super) validation件数: u64,
+    pub(super) 検証層の指摘件数: u64,
 }
 
 pub(super) fn 読み取る(報告: &終了時報告) -> Result<計測値, 検収エラー> {
     Ok(計測値 {
         要約: crate::streaming_report::取り出す(報告)?,
-        validation件数: 報告.検証層の指摘件数()?,
+        検証層の指摘件数: 報告.検証層の指摘件数()?,
     })
 }
 
@@ -28,7 +28,7 @@ impl 計測値 {
             self.要約.最終段種類数,
             self.要約.最大ramバイト数,
             self.要約.最大vramバイト数,
-            self.validation件数
+            self.検証層の指摘件数
         )
     }
 }

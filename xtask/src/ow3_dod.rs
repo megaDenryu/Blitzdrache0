@@ -33,7 +33,7 @@ pub fn 原点移動と地形段を一括計測する() -> ExitCode {
         && 計測.要約.最終段種類数 >= 2
         && 計測.要約.最大ramバイト数 <= 上限バイト数
         && 計測.要約.最大vramバイト数 <= 上限バイト数
-        && 計測.validation件数 == 0;
+        && 計測.検証層の指摘件数 == 0;
     if !合格 {
         eprintln!("[xtask] ow3-dod失敗: {}", 計測.要約文());
         return ExitCode::FAILURE;

@@ -26,7 +26,7 @@ pub fn 地形段差の継ぎ目を確認する() -> ExitCode {
     let 条件一覧 = cases::全条件();
     let 総条件数 = 条件一覧.len();
     let mut 失敗数 = 0;
-    let mut 総roi画素数 = 0_u64;
+    let mut 総着目領域画素数 = 0_u64;
     for 条件 in 条件一覧 {
         let Some(画像) = 描いて報せる(&実行環境, &条件) else {
             失敗数 += 1;
@@ -34,8 +34,8 @@ pub fn 地形段差の継ぎ目を確認する() -> ExitCode {
         };
         match image_check::継ぎ目を検査する(&画像, 条件.継ぎ目方向) {
             Ok(結果) => {
-                総roi画素数 += 結果.roi画素数;
-                println!("[xtask] LOD継ぎ目合格 {}: ROI {}画素、番兵背景0画素", 条件.名前, 結果.roi画素数);
+                総着目領域画素数 += 結果.着目領域画素数;
+                println!("[xtask] LOD継ぎ目合格 {}: ROI {}画素、番兵背景0画素", 条件.名前, 結果.着目領域画素数);
             }
             Err(理由) => {
                 eprintln!("[xtask] LOD継ぎ目不合格 {}: {理由}", 条件.名前);
@@ -44,7 +44,7 @@ pub fn 地形段差の継ぎ目を確認する() -> ExitCode {
         }
     }
     if 失敗数 == 0 {
-        println!("[xtask] lod-crack成功: {総条件数}組合せ、ROI合計{総roi画素数}画素、番兵背景0画素");
+        println!("[xtask] lod-crack成功: {総条件数}組合せ、ROI合計{総着目領域画素数}画素、番兵背景0画素");
         ExitCode::SUCCESS
     } else {
         eprintln!("[xtask] lod-crack失敗: {失敗数}組合せ");

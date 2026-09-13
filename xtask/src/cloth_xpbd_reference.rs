@@ -34,7 +34,7 @@ const 比較のフレーム数: 描画フレーム数 = 描画フレーム数::�
 /// GPU時間の窓(60フレーム)が満ちる枚数。
 const 計測のフレーム数: 描画フレーム数 = 描画フレーム数::生成する(120);
 const 共通の引数: [&str; 1] = ["--no-post"];
-pub fn 布のxpbd参照比較を確認する() -> ExitCode {
+pub fn 布のXPBD参照比較を確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] cloth-xpbd-reference成功: {要約}");

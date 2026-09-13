@@ -7,8 +7,8 @@ mod shadow;
 pub(super) struct 深度契約 {
     pub(super) 領域名: &'static str,
     pub(super) 消去値: f32,
-    pub(super) 近面ndc: f32,
-    pub(super) 遠面ndc: f32,
+    pub(super) 近面の正規化デバイス座標: f32,
+    pub(super) 遠面の正規化デバイス座標: f32,
     pub(super) 書込比較: &'static str,
     pub(super) 標本比較: &'static str,
 }
@@ -23,8 +23,8 @@ pub(super) struct 接点 {
 pub(super) const カメラ深度: 深度契約 = 深度契約 {
     領域名: "カメラ逆向き深度",
     消去値: 0.0,
-    近面ndc: 1.0,
-    遠面ndc: 0.0,
+    近面の正規化デバイス座標: 1.0,
+    遠面の正規化デバイス座標: 0.0,
     書込比較: "GREATER / GREATER_OR_EQUAL / EQUAL",
     標本比較: "比較標本器なし",
 };
@@ -32,8 +32,8 @@ pub(super) const カメラ深度: 深度契約 = 深度契約 {
 pub(super) const 光源影深度: 深度契約 = 深度契約 {
     領域名: "光源影標準深度",
     消去値: 1.0,
-    近面ndc: 0.0,
-    遠面ndc: 1.0,
+    近面の正規化デバイス座標: 0.0,
+    遠面の正規化デバイス座標: 1.0,
     書込比較: "LESS",
     標本比較: "LESS_OR_EQUAL",
 };
