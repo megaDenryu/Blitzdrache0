@@ -19,8 +19,8 @@ const 既定VRAM上限バイト数: u64 = 4096;
 pub(crate) enum プレイヤー位置源 {
     カメラ視点,                 // 既定。経路を明示しない指定であり、中心にする位置は遊ぶゲームで決まる(`app/streaming/route.rs`)
     固定経路,                   // --streaming-route指定。フレーム番号から決まる固定経路を使い、実行のたびに同じ位置列を得る
-    Ow3Dod経路,                 // cargo xtask ow3-dod専用。中心から始めて半径2を全件先読みし、静止後に境界とLOD閾値を横切る
-    インスタンスストリーム経路, // cargo xtask instance-stream専用。Ow3Dod経路と同じ先読みと横断のあと、始点まで戻って静止し整定する
+    大規模世界定点巡回経路,     // 参照: cargo xtask ow3-dod専用。中心から始めて半径2を全件先読みし、静止後に境界とLOD閾値を横切る
+    インスタンスストリーム経路, // 参照: cargo xtask instance-stream専用。大規模世界定点巡回経路と同じ先読みと横断のあと、始点まで戻って静止し整定する
 }
 
 #[derive(Debug, Clone, Copy)]
