@@ -41,7 +41,7 @@ pub(super) struct 発行の指定 {
 
 pub(super) fn 積む<'a>(グラフ: &mut グラフ<'a>, 入力: &'a 布描画入力, 指定: 発行の指定) {
     let セット一覧 = [入力.ディスクリプタセット];
-    let layout = 入力.layout;
+    let layout = 入力.レイアウト;
     let pipeline = 指定.pipeline;
     let スレッド数 = 指定.スレッド数;
     let 色の区間 = 指定.色の区間;

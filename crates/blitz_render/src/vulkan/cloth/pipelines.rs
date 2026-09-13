@@ -14,7 +14,7 @@ use crate::vulkan::allocator::GPU資源の確保係;
 pub(super) const プッシュ定数のバイト数: u32 = 12;
 
 pub(super) struct 布パイプライン群 {
-    pub(super) layout: vk::PipelineLayout,
+    pub(super) レイアウト: vk::PipelineLayout,
     pub(super) 介入: vk::Pipeline,
     pub(super) 積分: vk::Pipeline,
     pub(super) 目標の確定: vk::Pipeline,
@@ -32,20 +32,20 @@ pub(super) struct 布パイプライン群 {
 
 pub(super) fn 布パイプライン群を生成する(
     確保係: &GPU資源の確保係<'_>,
-    ディスクリプタlayout: vk::DescriptorSetLayout,
+    ディスクリプタレイアウト: vk::DescriptorSetLayout,
     シェーダー: &布シェーダー一式,
 ) -> Result<布パイプライン群, レンダラーエラー> {
     let device = 確保係.論理デバイス();
-    let ディスクリプタlayout一覧 = [ディスクリプタlayout];
+    let ディスクリプタレイアウト一覧 = [ディスクリプタレイアウト];
     let プッシュ定数 = [vk::PushConstantRange::default()
         .stage_flags(vk::ShaderStageFlags::COMPUTE)
         .offset(0)
         .size(プッシュ定数のバイト数)];
-    let layout_info = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(&ディスクリプタlayout一覧)
+    let レイアウト情報 = vk::PipelineLayoutCreateInfo::default()
+        .set_layouts(&ディスクリプタレイアウト一覧)
         .push_constant_ranges(&プッシュ定数);
     // 安全性: deviceは生成済みで有効。layout_infoは本関数内で構築した値のみを参照する。
-    let layout = unsafe { device.create_pipeline_layout(&layout_info, None)? };
+    let layout = unsafe { device.create_pipeline_layout(&レイアウト情報, None)? };
 
     let 仕様一覧: [(&[u8], &std::ffi::CStr); 13] = [
         (シェーダー.介入.コード(), c"interventionMain"),
@@ -79,7 +79,7 @@ pub(super) fn 布パイプライン群を生成する(
         }
     }
     Ok(布パイプライン群 {
-        layout,
+        レイアウト: layout,
         介入: 生成済み[0],
         積分: 生成済み[1],
         目標の確定: 生成済み[2],

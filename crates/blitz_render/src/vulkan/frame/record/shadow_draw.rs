@@ -85,11 +85,11 @@ fn 布を記録する(積み先: GPU命令の積み先<'_>, 番号: 距離区分
     let シャドウ = &布.入力.外部資源.シャドウ;
     // 安全性: command_bufferは記録中で、布のパイプラインは生成済みであり、シャドウのlayoutは頂点ステージの20バイト範囲(シャドウ描画定数)を宣言済みである。
     unsafe {
-        device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, シャドウ.pipeline);
-        シャドウ描画定数::生成する(布.入力.相対の基準原点, 番号).プッシュ定数として積む(積み先, シャドウ.layout);
+        device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, シャドウ.パイプライン);
+        シャドウ描画定数::生成する(布.入力.相対の基準原点, 番号).プッシュ定数として積む(積み先, シャドウ.レイアウト);
     }
     共有.計器.描画切替().パイプライン束縛を数える(可視パス::影の距離区分(番号));
-    shared_set_bind::ビューとパスのセットを束縛する(積み先, シャドウ.layout, 共有);
+    shared_set_bind::ビューとパスのセットを束縛する(積み先, シャドウ.レイアウト, 共有);
     // 安全性: command_bufferは記録中で、布の頂点・インデックスバッファは生成済み。
     unsafe {
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[布.入力.布頂点バッファ], &[0]);

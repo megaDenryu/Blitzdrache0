@@ -28,7 +28,7 @@ pub(super) fn 遮蔽の標本化パスを宣言する<'a>(
         Vec::new(),
         Vec::new(),
         パス種別::コンピュート,
-        move |文脈| コンピュートを積む(文脈, 入力, 入力.遮蔽の標本化pipeline, 班数(寸法)),
+        move |文脈| コンピュートを積む(文脈, 入力, 入力.遮蔽の標本化パイプライン, 班数(寸法)),
     )
 }
 
@@ -46,7 +46,7 @@ pub(super) fn 両側ぼかしパスを宣言する<'a>(
         Vec::new(),
         Vec::new(),
         パス種別::コンピュート,
-        move |文脈| コンピュートを積む(文脈, 入力, 入力.両側ぼかしpipeline, 班数(寸法)),
+        move |文脈| コンピュートを積む(文脈, 入力, 入力.両側ぼかしパイプライン, 班数(寸法)),
     )
 }
 
@@ -64,8 +64,8 @@ fn コンピュートを積む(
     // 安全性: command_bufferは記録中で、pipeline・layout・セットは生成済み。定数の長さはレイアウトが宣言した範囲と一致する。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::COMPUTE, pipeline);
-        device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::COMPUTE, 入力.layout, 0, &セット一覧, &[]);
-        device.cmd_push_constants(command_buffer, 入力.layout, vk::ShaderStageFlags::COMPUTE, 0, &入力.即時定数);
+        device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::COMPUTE, 入力.レイアウト, 0, &セット一覧, &[]);
+        device.cmd_push_constants(command_buffer, 入力.レイアウト, vk::ShaderStageFlags::COMPUTE, 0, &入力.即時定数);
         device.cmd_dispatch(command_buffer, 班数[0], 班数[1], 班数[2]);
     }
 }
