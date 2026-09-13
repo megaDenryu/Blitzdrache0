@@ -16,7 +16,7 @@ use std::collections::BTreeMap;
 
 use super::super::substep_record::許容差依存の細分の記録;
 use crate::contact::normal_tangential_system::単精度の解の内訳;
-use crate::contact::symmetric_system::擬似逆が固有の向きを捨てた理由;
+use crate::contact::symmetric_system::擬似逆行列が固有の向きを捨てた理由;
 
 // 固有の向きを「物理的に意味のある向き」と読む、最大の固有値に対する相対値の下限。
 const 真の向きと読む相対値: f32 = 1.0e-3;
@@ -75,7 +75,7 @@ impl 一本の軌道の集計 {
     // 右辺の判定 |β_k| ≤ δ_k で捨てられた向きを、λ_k ÷ λ_max が 1e-3 以上の群とそれ未満の群に分けて数える。
     fn 右辺の判定が捨てた向きを群ごとに数える(&mut self, 内訳: &単精度の解の内訳) {
         for 向き in &内訳.固有の向きごと {
-            if 向き.捨てた理由 != 擬似逆が固有の向きを捨てた理由::右辺が許容差の内側 {
+            if 向き.捨てた理由 != 擬似逆行列が固有の向きを捨てた理由::右辺が許容差の内側 {
                 continue;
             }
             let 相対値 = if 内訳.最大の固有値 > 0.0 {

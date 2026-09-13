@@ -19,7 +19,7 @@ use super::super::case::許容差依存の診断の場合;
 use super::super::scene_variation::段階A1の場面からの一つの変更;
 use super::tangential_noise_floor::回しを付けた緩い坂の場合;
 use crate::contact::normal_tangential_system::{単精度の解の内訳, 試験の許容差の適用規則};
-use crate::contact::symmetric_system::擬似逆が固有の向きを捨てた理由;
+use crate::contact::symmetric_system::擬似逆行列が固有の向きを捨てた理由;
 
 const 綴る細分の本数: usize = 64;
 
@@ -47,7 +47,7 @@ fn 一つの場面の余裕を綴る(場合: &許容差依存の診断の場合)
         let 比 = 相対固有値 / 下限の相対値;
         比の最小 = 比の最小.min(比);
         比の最大 = 比の最大.max(比);
-        捨てられた細分 += usize::from(内訳.固有の向きごと[k].捨てた理由 == 擬似逆が固有の向きを捨てた理由::右辺が許容差の内側);
+        捨てられた細分 += usize::from(内訳.固有の向きごと[k].捨てた理由 == 擬似逆行列が固有の向きを捨てた理由::右辺が許容差の内側);
     }
     println!(
         "  M [{}] 下限のすぐ上の向きの相対固有値 ÷ 下限の相対値: 最小={比の最小:.4e} 最大={比の最大:.4e} その向きが右辺の判定で捨てられた細分={捨てられた細分}本 / {綴る細分の本数}本",

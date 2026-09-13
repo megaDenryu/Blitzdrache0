@@ -8,7 +8,7 @@
 #![cfg(test)]
 
 use super::super::super::symmetric_system::法線と接線の連立方程式の行の上限;
-use super::pseudo_inverse::倍精度の擬似逆で解いた増分と捨てた右辺;
+use super::pseudo_inverse::倍精度の擬似逆行列で解いた増分と捨てた右辺;
 use super::reduced_system::倍精度の抜き出した連立方程式;
 
 /// 倍精度の、1つの有効集合で解いた結果の質。
@@ -42,7 +42,7 @@ impl 倍精度の抜き出した連立方程式 {
     /// 解いた増分の残差 (A Δλ)_k − b_k と、補正の質量の計量のノルム √(Δλᵀ A Δλ) を測る。
     pub(in crate::contact) fn 解いた行の残差と補正の大きさを測る(
         &self,
-        解: &倍精度の擬似逆で解いた増分と捨てた右辺,
+        解: &倍精度の擬似逆行列で解いた増分と捨てた右辺,
     ) -> 倍精度の解いた行の残差と補正の大きさ {
         let 増分 = 解.増分();
         let mut 残差の二乗和 = 0.0;
@@ -63,7 +63,7 @@ impl 倍精度の抜き出した連立方程式 {
     }
 
     /// 第k行の残差 (A Δλ)_k − b_k。診断の表が行ごとに綴る量である。
-    pub(in crate::contact) fn 第k行の残差(&self, 解: &倍精度の擬似逆で解いた増分と捨てた右辺, k: usize) -> f64 {
+    pub(in crate::contact) fn 第k行の残差(&self, 解: &倍精度の擬似逆行列で解いた増分と捨てた右辺, k: usize) -> f64 {
         self.第k行と解の積(解.増分(), k) - self.定数項[k]
     }
 
