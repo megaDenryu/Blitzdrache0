@@ -38,8 +38,8 @@ pub(super) fn 明るさの圧縮パスを宣言する<'a>(
             露出バイト列[8..12].copy_from_slice(&入力.自動か.to_le_bytes());
             fullscreen_draw::コマンドを積む(
                 文脈.積み先(),
-                入力.pipeline,
-                入力.layout,
+                入力.パイプライン,
+                入力.レイアウト,
                 入力.ディスクリプタセット,
                 寸法,
                 Some(&露出バイト列),
