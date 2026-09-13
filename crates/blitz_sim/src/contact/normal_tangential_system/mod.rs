@@ -97,7 +97,7 @@ pub use tangential_row::錨の接線変位を零へ戻す一行;
 pub(in crate::contact) use tolerance_application::{接線の行への許容差の当て方, 試験の許容差の当て方};
 #[cfg(test)]
 pub(in crate::contact) use tolerance_candidate::{
-    偽の固有値の下限を導く取り決め, 擬似逆が右辺の向きを捨てる判定の当て方, 解けたと見なす許容差を導く座標の由来,
+    偽の固有値の下限を導く取り決め, 擬似逆行列を構成するときに右辺の向きを捨てる判定の当て方, 解けたと見なす許容差を導く座標の由来,
 };
 #[cfg(test)]
 pub(in crate::contact) use tolerance_reach::{受理の倍率の届く先, 行を積む閾値の倍率};
