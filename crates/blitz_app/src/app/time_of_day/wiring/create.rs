@@ -26,7 +26,7 @@ pub(in crate::app) struct 生成材料<'材料> {
     pub(in crate::app) 明示境界を使わない: bool, // --no-explicit-shadow-bandsで真になる。大規模世界でも距離区分を再配分せず実用分割のまま走る
 }
 
-pub(super) fn 生成する(材料: 生成材料<'_>) -> Result<天空配線, レンダラーエラー> {
+pub(super) fn 天空配線を生成する(材料: 生成材料<'_>) -> Result<天空配線, レンダラーエラー> {
     let (種別, 設定, 基準) = (材料.種別, 材料.時間帯, 材料.基準ライティング);
     let 明示境界を使わない = 材料.明示境界を使わない;
     let 方針 = scene_policy::世界の空方針を決める(種別, 設定.空);

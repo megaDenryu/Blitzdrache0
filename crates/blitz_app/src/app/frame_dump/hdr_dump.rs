@@ -14,7 +14,7 @@ use super::super::アプリ;
 use super::寸法を書く;
 use crate::error::起動エラー;
 
-pub(super) fn 読み戻して書き出す(
+pub(super) fn 明るさ圧縮前画像を読み戻して書き出す(
     アプリ: &mut アプリ,
     描画入力: blitz_render::フレーム描画入力<'_>,
     ダンプ先: &Path,
@@ -46,7 +46,7 @@ fn 自動露出を報告する(
     探り色: Option<[f32; 3]>,
 ) -> Result<(), 起動エラー> {
     match レンダラー.自動露出の観測を読み戻す()? {
-        Some(観測) => crate::reports::auto_exposure::報告する(画像, &観測, 探り色),
+        Some(観測) => crate::reports::auto_exposure::自動露出の照合行を出す(画像, &観測, 探り色),
         None => println!("自動露出行 観測できなかった 理由=このフレーム構成にポスト処理が無い"),
     }
     Ok(())

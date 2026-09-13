@@ -5,7 +5,7 @@ use blitz_math::{クォータニオン, メートル, ワールド, 位置, 変�
 const 配置幅メートル: f32 = 2.4;
 const セル占有率: f32 = 0.8;
 
-pub(super) fn 配置する(添字: usize, 件数: usize) -> 変換<ワールド, ワールド> {
+pub(super) fn 格子内の配置変換を求める(添字: usize, 件数: usize) -> 変換<ワールド, ワールド> {
     let 列数 = 正方格子の列数(件数);
     let 行数 = 件数.div_ceil(列数);
     let 列 = 添字 % 列数;

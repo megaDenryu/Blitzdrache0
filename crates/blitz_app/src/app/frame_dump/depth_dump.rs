@@ -15,7 +15,7 @@ use super::super::アプリ;
 use super::寸法を書く;
 use crate::error::起動エラー;
 
-pub(super) fn 読み戻して書き出す(
+pub(super) fn 最終深度を読み戻して書き出す(
     アプリ: &mut アプリ,
     描画入力: blitz_render::フレーム描画入力<'_>,
     ダンプ先: &Path,

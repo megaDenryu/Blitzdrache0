@@ -9,7 +9,7 @@
 
 use blitz_render::gpu_pass_timing::{フレーム別の標本, 窓の標本数};
 
-pub(crate) fn 表示する(標本一覧: &[フレーム別の標本]) {
+pub(crate) fn パス別gpu時間のフレーム別生値を表示する(標本一覧: &[フレーム別の標本]) {
     if 標本一覧.is_empty() {
         println!("パス別GPU時間のフレーム別生値: 記録できなかった(タイムスタンプ非対応、または1フレームも計測が完了していない)");
         return;

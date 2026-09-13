@@ -8,7 +8,7 @@ use blitz_math::大域ワールド位置;
 
 use super::error::描画入力エラー;
 
-pub(super) fn 導出する(
+pub(super) fn 基準原点を導出する(
     シーン: &シーンデータ,
     束座標: チャンク座標,
     大域平行移動: 大域ワールド位置,

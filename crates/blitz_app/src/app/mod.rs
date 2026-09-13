@@ -35,7 +35,7 @@ mod window_setup;
 use crate::cli::{布モード, 描画対象の並べ方, 空中遠近合成指定, 粒子表示モード, 起動モード};
 use crate::{error::起動エラー, hot_reload::ホットリローダー, input::入力状態, overlay_ui::画面へ重ねるUI};
 use blitz_render::{クリアカラー, レンダラー};
-pub(crate) use frame_timing::{フレーム時間統計, 集計する};
+pub(crate) use frame_timing::{フレーム時間統計, フレーム間隔から統計を集計する};
 pub(crate) use time_of_day::{太陽天頂区間の記録, 空の再現条件, 遠方環境の鍵の記録, 遠方環境更新判定};
 pub(crate) use time_step::{描画補間の割合, 進める刻み数};
 use winit::window::Window;

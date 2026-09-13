@@ -16,7 +16,7 @@ pub(super) fn 最新更新時刻を取得する(ディレクトリ: &Path) -> Op
         .filter_map(|エントリ結果| エントリ結果.ok())
         .map(|エントリ| エントリ.path())
         .filter(|パス| パス.extension().and_then(|拡張子| 拡張子.to_str()) == Some("slang"))
-        .filter_map(|パス| mtime::取得する(&パス).ok())
+        .filter_map(|パス| mtime::最終更新時刻を取得する(&パス).ok())
         .collect();
     最大値を求める(&時刻一覧)
 }

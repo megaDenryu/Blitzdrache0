@@ -46,7 +46,7 @@ fn 停止時間の一覧を集める(観測一覧: &[実表示観測]) -> Vec<f6
 }
 
 fn 分布を表示する(名前: &str, 一覧ms: Vec<f64>) {
-    let Some(統計) = crate::app::集計する(&一覧ms) else {
+    let Some(統計) = crate::app::フレーム間隔から統計を集計する(&一覧ms) else {
         println!("  {名前}: 該当する観測が無かった");
         return;
     };

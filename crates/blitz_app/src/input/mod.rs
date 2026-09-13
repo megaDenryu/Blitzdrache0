@@ -79,7 +79,7 @@ impl 入力状態 {
     }
 
     pub(crate) fn winitイベントを取り込む(&mut self, event: &WindowEvent) {
-        ingest::取り込む(self, event);
+        ingest::winit事象を入力状態へ反映する(self, event);
     }
 
     /// このフレームぶんの意図を確定する。ドラッグ・ホイールの蓄積は消費して
@@ -87,7 +87,7 @@ impl 入力状態 {
     ///
     /// 蓄積の消費を方針より先に済ませるのは、固定姿勢の実行でも届いた入力を溜め込まないためである。
     pub(crate) fn 意図を確定する(&mut self) -> カメラの操作意図 {
-        let 蓄積から作った意図 = confirm::確定する(self);
+        let 蓄積から作った意図 = confirm::蓄積からカメラの操作意図を確定する(self);
         self.カメラ操作の方針.通す(蓄積から作った意図)
     }
 

@@ -29,7 +29,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     ホットリローダー: &mut ホットリローダー,
     ゲーム配線: &mut crate::game::ゲーム配線,
 ) -> Result<起動時に組み上げた一式, 起動エラー> {
-    let window = window_create::生成する(event_loop)?;
+    let window = window_create::ウィンドウを生成する(event_loop)?;
     let 表示ハンドル = window.display_handle()?.as_raw();
     let ウィンドウハンドル = window.window_handle()?.as_raw();
     let 物理寸法 = window.inner_size();

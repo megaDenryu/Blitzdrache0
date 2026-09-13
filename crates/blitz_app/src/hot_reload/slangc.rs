@@ -21,7 +21,7 @@ impl スランガー位置 {
 
 use super::compile_error::シェーダー再コンパイルエラー;
 
-pub(super) fn 発見する() -> Result<スランガー位置, シェーダー再コンパイルエラー> {
+pub(super) fn スランガーの実行位置を発見する() -> Result<スランガー位置, シェーダー再コンパイルエラー> {
     if let Ok(sdk) = env::var("VULKAN_SDK") {
         let 候補 = PathBuf::from(sdk).join("Bin").join("slangc.exe");
         if 候補.is_file() {

@@ -54,7 +54,7 @@ pub(in crate::app) struct 天空配線 {
 impl 天空配線 {
     /// 世界の間接照明方針が大気の媒体を要るのに世界が媒体を持たない場合は、ここで型付きの失敗になる。
     pub(in crate::app) fn 生成する(材料: create::生成材料<'_>) -> Result<Self, レンダラーエラー> {
-        create::生成する(材料)
+        create::天空配線を生成する(材料)
     }
     pub(in crate::app) fn 空を描くか(&self) -> bool {
         self.空を描く

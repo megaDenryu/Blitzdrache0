@@ -47,7 +47,7 @@ impl フレーム間隔計測 {
     }
 
     pub(crate) fn 集計する(&self) -> Option<フレーム時間統計> {
-        集計する(&self.間隔一覧ms)
+        フレーム間隔から統計を集計する(&self.間隔一覧ms)
     }
 }
 
@@ -62,7 +62,7 @@ pub(crate) fn 標本容量(モード: 起動モード) -> usize {
     usize::try_from(容量).unwrap_or_else(|_| panic!("フレーム数がusizeに収まらない"))
 }
 
-pub(crate) fn 集計する(間隔一覧ms: &[f64]) -> Option<フレーム時間統計> {
+pub(crate) fn フレーム間隔から統計を集計する(間隔一覧ms: &[f64]) -> Option<フレーム時間統計> {
     if 間隔一覧ms.is_empty() {
         return None;
     }

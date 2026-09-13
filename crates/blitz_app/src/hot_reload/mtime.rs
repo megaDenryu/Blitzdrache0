@@ -3,6 +3,6 @@
 use std::path::Path;
 use std::time::SystemTime;
 
-pub(super) fn 取得する(パス: &Path) -> std::io::Result<SystemTime> {
+pub(super) fn 最終更新時刻を取得する(パス: &Path) -> std::io::Result<SystemTime> {
     パス.metadata()?.modified()
 }
