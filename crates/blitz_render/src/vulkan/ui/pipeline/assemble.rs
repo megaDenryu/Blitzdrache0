@@ -43,7 +43,7 @@ pub(super) fn uiパイプラインを組み立てる(
         .cull_mode(vk::CullModeFlags::NONE)
         .line_width(1.0);
     let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
-    let カラーブレンドアタッチメント一覧 = [premultiplied_alphaブレンド状態()];
+    let カラーブレンドアタッチメント一覧 = [事前乗算アルファのブレンド状態()];
     let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default().attachments(&カラーブレンドアタッチメント一覧);
     let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
         .depth_test_enable(false)
@@ -83,7 +83,7 @@ pub(super) fn uiパイプラインを組み立てる(
     finish::パイプラインを取り出す(device, layout, 生成結果)
 }
 
-fn premultiplied_alphaブレンド状態() -> vk::PipelineColorBlendAttachmentState {
+fn 事前乗算アルファのブレンド状態() -> vk::PipelineColorBlendAttachmentState {
     vk::PipelineColorBlendAttachmentState::default()
         .blend_enable(true)
         .src_color_blend_factor(vk::BlendFactor::ONE)

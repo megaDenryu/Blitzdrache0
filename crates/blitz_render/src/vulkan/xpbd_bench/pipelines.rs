@@ -19,7 +19,7 @@ pub(super) enum 方式の工程 {
 }
 
 pub(super) struct XPBD計測パイプライン群 {
-    pub(super) layout: vk::PipelineLayout,
+    pub(super) レイアウト: vk::PipelineLayout,
     pub(super) 積分: vk::Pipeline,
     pub(super) 乗数零化: vk::Pipeline,
     pub(super) 工程: 方式の工程,
@@ -28,12 +28,12 @@ pub(super) struct XPBD計測パイプライン群 {
 impl XPBD計測パイプライン群 {
     pub(super) fn 生成する(
         確保係: &GPU資源の確保係<'_>,
-        ディスクリプタlayout: vk::DescriptorSetLayout,
+        ディスクリプタレイアウト: vk::DescriptorSetLayout,
         シェーダー: &XPBDシェーダー一式,
         方式: XPBD並列方式,
     ) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
-        let レイアウト一覧 = [ディスクリプタlayout];
+        let レイアウト一覧 = [ディスクリプタレイアウト];
         let プッシュ定数 = [vk::PushConstantRange::default()
             .stage_flags(vk::ShaderStageFlags::COMPUTE)
             .offset(0)
@@ -66,7 +66,7 @@ impl XPBD計測パイプライン群 {
             },
         };
         Ok(Self {
-            layout,
+            レイアウト: layout,
             積分: 生成済み[0],
             乗数零化: 生成済み[1],
             工程,
@@ -79,7 +79,7 @@ impl XPBD計測パイプライン群 {
             方式の工程::原子加算 { 拘束, 適用 } | 方式の工程::二段階 { 拘束, 集約: 適用 } => 一覧.extend([拘束, 適用]),
             方式の工程::グラフ彩色 { 拘束 } => 一覧.push(拘束),
         }
-        破棄する(device, self.layout, &一覧);
+        破棄する(device, self.レイアウト, &一覧);
     }
 }
 
