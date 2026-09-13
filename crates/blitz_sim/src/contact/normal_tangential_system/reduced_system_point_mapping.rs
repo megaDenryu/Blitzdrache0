@@ -6,7 +6,7 @@
 
 use blitz_collision::contact_set::接触点の上限;
 
-use super::super::symmetric_system::擬似逆で解いた増分と捨てた右辺;
+use super::super::symmetric_system::擬似逆行列で解いた増分と捨てた右辺;
 use super::active_set::法線と接線の連立方程式の有効集合;
 use super::reduced_system::有効な行だけを抜き出した連立方程式;
 use super::solution::接触点集合の法線と接線の同時解;
@@ -17,7 +17,7 @@ impl 有効な行だけを抜き出した連立方程式 {
     /// 解いた増分を点ごとの増分へ戻す。外した点の法線の乗数は零へ解放する増分になる。
     pub(super) fn もとの点へ戻す(
         &self,
-        解: &擬似逆で解いた増分と捨てた右辺,
+        解: &擬似逆行列で解いた増分と捨てた右辺,
         連立方程式: &接触点集合の法線と接線の連立方程式,
         有効集合: &法線と接線の連立方程式の有効集合,
     ) -> 接触点集合の法線と接線の同時解 {

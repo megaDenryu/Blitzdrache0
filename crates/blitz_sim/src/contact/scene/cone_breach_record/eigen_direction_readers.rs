@@ -7,7 +7,7 @@
 #![cfg(test)]
 
 use super::tangential_system_observation::接線の連立方程式の観測;
-use crate::contact::symmetric_system::擬似逆が固有の向きを捨てた理由;
+use crate::contact::symmetric_system::擬似逆行列が固有の向きを捨てた理由;
 
 impl 接線の連立方程式の観測 {
     /// 第k番の固有値と、固有値の最大に対する比。
@@ -34,7 +34,7 @@ impl 接線の連立方程式の観測 {
     }
 
     /// 擬似逆行列が第k番の固有の向きを捨てたかと、捨てたならその理由。本番の求解と同じ判定を、本番の偽の固有値の下限で呼ぶ。
-    pub(super) fn 第k番の向きを捨てた理由(&self, k: usize) -> 擬似逆が固有の向きを捨てた理由 {
+    pub(super) fn 第k番の向きを捨てた理由(&self, k: usize) -> 擬似逆行列が固有の向きを捨てた理由 {
         self.分解
             .第k番の向きを捨てた理由(k, &self.右辺, &self.行ごとの解けたと見なす許容差, self.分解.偽の固有値の下限())
     }

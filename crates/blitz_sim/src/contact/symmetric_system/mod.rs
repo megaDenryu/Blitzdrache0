@@ -3,7 +3,7 @@
 //! 回転2つの3つしかなく、4点の行はそのうち3つしか張らない。接線の側も同じ形で階数が足りない。
 //! 階数の足りなさへの対処は法線と接線で違うため、道具を2つ持つ。法線は正則化を足して正則にした連立方程式を LDLᵀ で
 //! 解く(`factorization`)。荷重を集合の全部の点へ配らないと、判断14の速度段階が乗数0の点を接触していない点として
-//! 外すためである。接線は固有分解の小さい向きを捨てた擬似逆で解く(`pseudo_inverse`)。接線の右辺は点ごとの錨の
+//! 外すためである。接線は固有分解の小さい向きを捨てた擬似逆行列で解く(`pseudo_inverse`)。接線の右辺は点ごとの錨の
 //! 変位の長さであり、同じ剛体へ複数の点ごとの錨の拘束を課したこの材料では剛体の運動で実現できない成分を含むことを
 //! 実測で確かめたためである。正則化で解くとその成分が正則化で割られて乗数だけが桁で膨れ、クーロン円錐の判定が壊れる。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断13: 静止摩擦は錨からの接線変位を零へ戻す位置拘束であり、クーロン円錐の内側でだけ効く」
@@ -23,10 +23,10 @@ use blitz_collision::contact_set::接触点の上限;
 #[cfg(test)]
 pub(in crate::contact) use alternative_discard_rule::本番の代わりに置く右辺の向きの捨て方;
 #[cfg(test)]
-pub(in crate::contact) use discard_reason::擬似逆が固有の向きを捨てた理由;
+pub(in crate::contact) use discard_reason::擬似逆行列が固有の向きを捨てた理由;
 pub(in crate::contact) use factorization::対称な連立方程式の分解;
 pub(in crate::contact) use jacobi_decomposition::対称な連立方程式の固有分解;
-pub(in crate::contact) use pseudo_inverse_solution::擬似逆で解いた増分と捨てた右辺;
+pub(in crate::contact) use pseudo_inverse_solution::擬似逆行列で解いた増分と捨てた右辺;
 
 /// 法線と接線を同じ連立方程式へ入れたときの行の上限。接触点1つが法線の行と接線の行を1つずつ持つ。
 /// 固有分解の受け皿の大きさがこれであり、法線だけを解く LDLᵀ の側は接触点の上限のままである。

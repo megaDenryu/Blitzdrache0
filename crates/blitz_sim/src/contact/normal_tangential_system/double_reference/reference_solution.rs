@@ -10,7 +10,7 @@
 use super::super::super::body_static_contact::剛体と静的世界の接触拘束;
 use super::active_set::倍精度の連立方程式の有効集合;
 use super::manifold_system::倍精度の接触点集合の連立方程式;
-use super::pseudo_inverse::倍精度の擬似逆で解いた増分と捨てた右辺;
+use super::pseudo_inverse::倍精度の擬似逆行列で解いた増分と捨てた右辺;
 use super::reduced_system::倍精度の抜き出した連立方程式;
 use super::solution::倍精度の接触点集合の同時解;
 use super::subset_search::倍精度の有効集合を探した結末;
@@ -22,7 +22,7 @@ use crate::rigid_body::{質量特性, 配置};
 pub(in crate::contact) struct 倍精度の参照の解 {
     pub(in crate::contact) 連立方程式: 倍精度の接触点集合の連立方程式,
     pub(in crate::contact) 抜き出した: 倍精度の抜き出した連立方程式,
-    pub(in crate::contact) 擬似逆の解: 倍精度の擬似逆で解いた増分と捨てた右辺,
+    pub(in crate::contact) 擬似逆行列の解: 倍精度の擬似逆行列で解いた増分と捨てた右辺,
     pub(in crate::contact) 同時解: 倍精度の接触点集合の同時解,
     pub(in crate::contact) 有効集合: 倍精度の連立方程式の有効集合,
 }
@@ -55,11 +55,11 @@ impl 倍精度の参照の結末 {
             倍精度の有効集合を探した結末::表現の精度が不足した => Self::表現の精度が不足した,
             倍精度の有効集合を探した結末::有効集合が定まった(同時解, 有効集合) => {
                 let 抜き出した = 倍精度の抜き出した連立方程式::抜き出す(&連立方程式, &有効集合);
-                let 擬似逆の解 = 抜き出した.解く();
+                let 擬似逆行列の解 = 抜き出した.解く();
                 Self::解が定まった(Box::new(倍精度の参照の解 {
                     連立方程式,
                     抜き出した,
-                    擬似逆の解,
+                    擬似逆行列の解,
                     同時解,
                     有効集合,
                 }))

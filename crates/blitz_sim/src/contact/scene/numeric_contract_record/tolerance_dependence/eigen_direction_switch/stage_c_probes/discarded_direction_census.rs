@@ -12,7 +12,7 @@
 use super::ill_conditioned_direction_reading::条件の悪い向き一本の読み取り;
 use super::ill_conditioned_direction_tally::条件の悪い向きの集まり;
 use crate::contact::normal_tangential_system::{単精度の解の内訳, 桁ごとの度数};
-use crate::contact::symmetric_system::擬似逆が固有の向きを捨てた理由;
+use crate::contact::symmetric_system::擬似逆行列が固有の向きを捨てた理由;
 
 // 桁ごとの度数の範囲。`固有値を最大で割った相対値の広がり`と同じ刻みである。
 const いちばん低い桁の下端の十の冪: i32 = -8;
@@ -46,7 +46,7 @@ impl 本番が右辺の判定で捨てた向きの集まり {
         self.数えた細分の数 += 1;
         let 最も強い向きの並進 = 最も強い向きの並進を読む(内訳);
         for (向きの番号, 向き) in 内訳.固有の向きごと.iter().enumerate() {
-            if 向き.捨てた理由 != 擬似逆が固有の向きを捨てた理由::右辺が許容差の内側 {
+            if 向き.捨てた理由 != 擬似逆行列が固有の向きを捨てた理由::右辺が許容差の内側 {
                 continue;
             }
             self.捨てた向きの延べ本数 += 1;
