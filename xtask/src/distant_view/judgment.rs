@@ -39,12 +39,12 @@ use super::provenance::採取の旗;
 
 /// 影の距離区分の再配分の検査点。遠景の検査点と分けて呼ぶのは、空中遠近・遠景・影の変化を同じ比較へ混ぜないためである。
 pub(super) fn 影を判定する(置き場: &Path) -> Result<String, 遠景構図の検収エラー> {
-    shadow_stage::判定する(置き場)
+    shadow_stage::影の構図を判定する(置き場)
 }
 
 /// 散布の検査点。遠景と影の検査点と分けて呼ぶのは、空中遠近・遠景・影・散布の変化を同じ比較へ混ぜないためである。
 pub(super) fn 散布を判定する(置き場: &Path) -> Result<String, 遠景構図の検収エラー> {
-    scatter_stage::判定する(置き場)
+    scatter_stage::散布の構図を判定する(置き場)
 }
 
 pub(super) fn 判定する(置き場: &Path) -> Result<String, 遠景構図の検収エラー> {

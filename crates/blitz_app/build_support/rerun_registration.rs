@@ -9,7 +9,7 @@ use std::path::Path;
 /// shaders/ディレクトリ自体と、直下の全.slangファイルをrerun-if-changed対象にする。
 /// ディレクトリ自体も登録することで、ファイルの追加・削除にも追従する
 /// (Cargoはディレクトリのmtimeでもこのトリガーを検知できる)。
-pub(super) fn シェーダーの変更監視をCargoへ登録する(ディレクトリ: &Path) -> Result<(), String> {
+pub(super) fn シェーダーの変更監視をcargoへ登録する(ディレクトリ: &Path) -> Result<(), String> {
     println!("cargo:rerun-if-changed={}", ディレクトリ.display());
     let 読み取り結果 = std::fs::read_dir(ディレクトリ).map_err(|誤り| format!("shaders/ディレクトリの読み取りに失敗した: {誤り}"))?;
     for エントリ結果 in 読み取り結果 {

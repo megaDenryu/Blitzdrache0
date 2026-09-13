@@ -41,7 +41,7 @@ use crate::distant_view::error::遠景構図の検収エラー;
 /// 帰属を求める色差の下限。これ未満の差は診断の符号化が表せない可視度の変化で説明がつく。
 const 帰属を求める階調差: u16 = 2;
 
-pub(in crate::distant_view) fn 判定する(置き場: &Path) -> Result<String, 遠景構図の検収エラー> {
+pub(in crate::distant_view) fn 影の構図を判定する(置き場: &Path) -> Result<String, 遠景構図の検収エラー> {
     let (対照, 候補) = capture_pair::色の対を読む(置き場)?;
     capture_pair::深度が全画素で一致することを課す(&対照, &候補)?;
     let 可視度 = 影可視度の対::読む(置き場)?;

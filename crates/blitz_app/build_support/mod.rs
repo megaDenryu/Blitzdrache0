@@ -45,7 +45,7 @@ const スキニングエントリファイル名: &str = "skinning.slang";
 pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     let manifest_dir = env::var("CARGO_MANIFEST_DIR").map_err(|誤り| format!("CARGO_MANIFEST_DIR環境変数が取得できない: {誤り}"))?;
     let シェーダーディレクトリ絶対パス = PathBuf::from(&manifest_dir).join(シェーダーディレクトリ相対パス);
-    rerun_registration::シェーダーの変更監視をCargoへ登録する(&シェーダーディレクトリ絶対パス)?;
+    rerun_registration::シェーダーの変更監視をcargoへ登録する(&シェーダーディレクトリ絶対パス)?;
 
     let out_dir = env::var("OUT_DIR").map_err(|誤り| format!("OUT_DIR環境変数が取得できない: {誤り}"))?;
     let 出力先ディレクトリ = PathBuf::from(out_dir);

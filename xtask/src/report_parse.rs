@@ -67,4 +67,4 @@ pub fn 全パスを並べる(計数: &計数報告) -> Vec<(String, &パス別�
     一覧
 }
 
-pub use extract::取り出す;
+pub use extract::終了時報告から計数報告を取り出す;

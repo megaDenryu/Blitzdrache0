@@ -25,7 +25,9 @@ pub(super) fn 前の実行が残した画像を消す(書き先: &Path) -> Resul
     Ok(())
 }
 
-pub(super) fn 書き出す(書き先: &Path, 幅: usize, 高さ: usize, 比較: &比較結果) -> Result<(), 影の欠落計器のエラー> {
+pub(super) fn 差分画像を書き出す(
+    書き先: &Path, 幅: usize, 高さ: usize, 比較: &比較結果
+) -> Result<(), 影の欠落計器のエラー> {
     let mut rgba8 = vec![0u8; 幅 * 高さ * 4];
     for 添字 in 0..幅 * 高さ {
         let 色 = if 比較.欠落の印.get(添字).copied().unwrap_or(false) {

@@ -7,7 +7,7 @@
 
 use super::background_color;
 use super::bounding_box_judgment;
-use super::object_pixels::{物体画素の要約, 要約する};
+use super::object_pixels::{物体画素の要約, 背景でない画素を要約する};
 use crate::acceptance::{判定の名前, 検収エラー, 画素の占める割合, 読み戻し画像};
 
 /// 物体が占める画素の割合の許容範囲。下限は物体が写っていることの下支え、上限は背景が残っていることの下支えである。
@@ -21,13 +21,13 @@ const 物体が占める割合: 判定の名前 = 判定の名前::定数から�
 const 面ごとの明るさの差: 判定の名前 = 判定の名前::定数から生成する("面ごとの明るさの差");
 
 pub(super) fn 画素を判定する(画像: &読み戻し画像) -> Result<String, 検収エラー> {
-    let 背景色 = background_color::決める(画像)?;
+    let 背景色 = background_color::背景色を決める(画像)?;
     let 物体画素の要約::物体あり {
         件数,
         矩形,
         明度最小,
         明度最大,
-    } = 要約する(画像, 背景色)
+    } = 背景でない画素を要約する(画像, 背景色)
     else {
         return Err(背景色でない画素.あるはずのものが無い破れ().into());
     };
