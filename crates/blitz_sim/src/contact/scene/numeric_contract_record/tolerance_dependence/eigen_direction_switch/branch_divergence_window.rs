@@ -20,7 +20,7 @@ use super::branch_direction_line::{
 };
 use super::branch_substep_quantities::細分一本から読んだ名前つきの量の並び;
 use super::first_cone_crossing::{傾きの正接, 振る回しの度, 最初に滑走した細分を探す, 細分十六本の場合};
-use crate::contact::normal_tangential_system::試験の許容差の当て方;
+use crate::contact::normal_tangential_system::試験の許容差の適用規則;
 use crate::contact::symmetric_system::本番の代わりに置く右辺の向きの捨て方;
 
 // 段階A5の計測10が出発点に選んだ相対比。この枝は細分16本の正接0.55を、回し0度で細分4、回し30度で細分4、
@@ -84,8 +84,8 @@ fn 一つの回しの窓を対で綴る(鉛直軸まわりの回しの度: f32) 
     };
     println!("  D 枝が最初に滑走した細分={滑走した細分}。窓は細分0から細分{滑走した細分}である");
     let 条件 = 場合.坂の場面の条件を組む();
-    let mut 本番の場面 = 場合.場面を当て方で組む(試験の許容差の当て方::本番と同じ当て方());
-    let mut 枝の場面 = 場合.場面を当て方で組む(捨て方を当てた適用規則(枝の捨て方()));
+    let mut 本番の場面 = 場合.場面を適用規則で組む(試験の許容差の適用規則::本番と同じ適用規則());
+    let mut 枝の場面 = 場合.場面を適用規則で組む(捨て方を当てた適用規則(枝の捨て方()));
     let mut 差が最初に出た細分 = Vec::new();
     for 番号 in 0..=滑走した細分 {
         let 本番の記録 = 本番の場面.記録しながら一細分進める(番号, &条件, true);

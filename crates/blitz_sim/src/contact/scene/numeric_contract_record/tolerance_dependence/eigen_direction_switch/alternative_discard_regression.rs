@@ -11,7 +11,7 @@
 
 use super::alternative_discard_record::{三つの捨て方, 捨て方を当てた適用規則};
 use super::noise_floor_regression::一つの適用規則の退行を綴る;
-use crate::contact::normal_tangential_system::試験の許容差の当て方;
+use crate::contact::normal_tangential_system::試験の許容差の適用規則;
 
 #[test]
 #[ignore = "計器であり合否を判定しない。実行は --ignored --nocapture を付ける"]
@@ -21,5 +21,5 @@ fn 代わりの捨て方の退行_三つの規則を二十七組と細分十六�
         一つの適用規則の退行を綴る(捨て方を当てた適用規則(捨て方));
     }
     println!("[本番の適用規則] 二十七組と細分十六本の正接零点五五の三方向");
-    一つの適用規則の退行を綴る(試験の許容差の当て方::本番と同じ当て方());
+    一つの適用規則の退行を綴る(試験の許容差の適用規則::本番と同じ適用規則());
 }

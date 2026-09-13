@@ -14,7 +14,7 @@
 use std::collections::BTreeMap;
 
 use super::body_scene_run::剛体どうしの場面の走行;
-use crate::contact::normal_tangential_system::{単精度の解の内訳, 試験の許容差の当て方};
+use crate::contact::normal_tangential_system::{単精度の解の内訳, 試験の許容差の適用規則};
 
 const 塔の段数: u16 = 10;
 const 綴る刻みの数: usize = 1;
@@ -72,7 +72,7 @@ fn 数えた一覧を綴る(数え: &BTreeMap<(bool, u32), 一つの許容差の
 #[test]
 #[ignore = "計器であり合否を判定しない。実行は --ignored --nocapture を付ける"]
 fn 行ごとの許容差の由来_塔の求解を二つの由来で対にして綴る() {
-    let mut 走行 = 剛体どうしの場面の走行::箱の塔から始める(塔の段数, 試験の許容差の当て方::本番と同じ当て方());
+    let mut 走行 = 剛体どうしの場面の走行::箱の塔から始める(塔の段数, 試験の許容差の適用規則::本番と同じ適用規則());
     走行.定まった解の内訳を読む();
     let mut 数え = BTreeMap::new();
     let mut 求解の数 = 0;

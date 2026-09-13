@@ -23,7 +23,7 @@ use super::super::scene_variation::段階A1の場面からの一つの変更;
 use super::super::substep_record::許容差依存の細分の記録;
 use super::tangential_noise_floor::回しを付けた緩い坂の場合;
 use crate::contact::feature_identity::接触の特徴の識別;
-use crate::contact::normal_tangential_system::試験の許容差の当て方;
+use crate::contact::normal_tangential_system::試験の許容差の適用規則;
 
 const 綴る細分の本数: usize = 64;
 
@@ -52,7 +52,7 @@ fn 一細分を三段で綴る(記録: &許容差依存の細分の記録, 有�
 // 1つの場面を細分ごとに進め、3段の綴りと、識別の並びが前の細分から変わった件数を数える。
 fn 一つの場面の接触の識別を綴る(場合: &許容差依存の診断の場合) {
     let 条件 = 場合.坂の場面の条件を組む();
-    let mut 場面 = 場合.場面を当て方で組む(試験の許容差の当て方::本番と同じ当て方());
+    let mut 場面 = 場合.場面を適用規則で組む(試験の許容差の適用規則::本番と同じ適用規則());
     let 初めの重心 = 場面.箱の配置.重心の位置();
     let (mut 直前の置き直しの延べ数, mut 開始の延べ数, mut 置き直した細分の数) = (0, 0, 0);
     let (mut 直前の識別, mut 識別が変わった細分の数) = (Vec::new(), 0);

@@ -17,7 +17,7 @@
 use super::super::scene_variation::段階A1の場面からの一つの変更;
 use super::super::substep_record::許容差依存の細分の記録;
 use super::tangential_noise_floor::回しを付けた緩い坂の場合;
-use crate::contact::normal_tangential_system::{単精度の解の内訳, 試験の許容差の当て方};
+use crate::contact::normal_tangential_system::{単精度の解の内訳, 試験の許容差の適用規則};
 
 // 定常へ達した後の窓。段階A5の計測1は、回し45度が細分21で定常へ達することを測った。
 const 綴る窓: (usize, usize) = (60, 63);
@@ -79,7 +79,7 @@ fn 一細分を綴る(記録: &許容差依存の細分の記録) {
 fn 一つの回しの窓を綴る(鉛直軸まわりの回しの度: f32) {
     let 場合 = 回しを付けた緩い坂の場合(段階A1の場面からの一つの変更::無し, 鉛直軸まわりの回しの度);
     let 条件 = 場合.坂の場面の条件を組む();
-    let mut 場面 = 場合.場面を当て方で組む(試験の許容差の当て方::本番と同じ当て方());
+    let mut 場面 = 場合.場面を適用規則で組む(試験の許容差の適用規則::本番と同じ適用規則());
     println!("[{}] 細分{}〜{} の捨てた成分と行の残差", 場合.見出し(), 綴る窓.0, 綴る窓.1);
     for 番号 in 0..=綴る窓.1 {
         let 窓の中か = 番号 >= 綴る窓.0;

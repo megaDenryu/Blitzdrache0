@@ -16,7 +16,7 @@ use super::super::super::substep_record::許容差依存の細分の記録;
 use super::super::first_cone_crossing::{傾きの正接, 振る回しの度, 細分十六本の場合, 走らせる刻みの数};
 use super::long_run_tally::長い走行の溜まり;
 use super::ulp_perturbation::箱の姿勢へ一刻みの摂動を入れる;
-use crate::contact::normal_tangential_system::試験の許容差の当て方;
+use crate::contact::normal_tangential_system::試験の許容差の適用規則;
 
 fn 反復零の後の円錐の比(記録: &許容差依存の細分の記録) -> f64 {
     記録.反復ごと.first().map_or(0.0, |反復| 反復.円錐の比())
@@ -33,9 +33,9 @@ fn 一つの回しの長い走行を綴る(鉛直軸まわりの回しの度: f3
     let 条件 = 場合.坂の場面の条件を組む();
     let 見出し = format!("回し{鉛直軸まわりの回しの度}度");
     let 本数 = 走らせる刻みの数 * 場合.変更.一刻みの細分数();
-    let 本番 = 試験の許容差の当て方::本番と同じ当て方();
-    let mut 素の場面 = 場合.場面を当て方で組む(本番);
-    let mut 摂動した場面 = 場合.場面を当て方で組む(本番);
+    let 本番 = 試験の許容差の適用規則::本番と同じ適用規則();
+    let mut 素の場面 = 場合.場面を適用規則で組む(本番);
+    let mut 摂動した場面 = 場合.場面を適用規則で組む(本番);
     let 入り方 = 箱の姿勢へ一刻みの摂動を入れる(&mut 摂動した場面);
     println!("[{見出し}] 細分16本の正接{傾きの正接} を本番だけで2本、{本数}細分進める");
     println!("  L [{見出し}] {}", 入り方.綴り());

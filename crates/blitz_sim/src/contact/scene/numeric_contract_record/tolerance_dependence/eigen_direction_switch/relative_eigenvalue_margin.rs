@@ -18,7 +18,7 @@ use blitz_math::メートル;
 use super::super::case::許容差依存の診断の場合;
 use super::super::scene_variation::段階A1の場面からの一つの変更;
 use super::tangential_noise_floor::回しを付けた緩い坂の場合;
-use crate::contact::normal_tangential_system::{単精度の解の内訳, 試験の許容差の当て方};
+use crate::contact::normal_tangential_system::{単精度の解の内訳, 試験の許容差の適用規則};
 use crate::contact::symmetric_system::擬似逆が固有の向きを捨てた理由;
 
 const 綴る細分の本数: usize = 64;
@@ -32,7 +32,7 @@ fn 下限のすぐ上の向きの番号(内訳: &単精度の解の内訳) -> Op
 
 fn 一つの場面の余裕を綴る(場合: &許容差依存の診断の場合) {
     let 条件 = 場合.坂の場面の条件を組む();
-    let mut 場面 = 場合.場面を当て方で組む(試験の許容差の当て方::本番と同じ当て方());
+    let mut 場面 = 場合.場面を適用規則で組む(試験の許容差の適用規則::本番と同じ適用規則());
     let (mut 比の最小, mut 比の最大, mut 捨てられた細分) = (f32::INFINITY, 0.0f32, 0);
     for 番号 in 0..綴る細分の本数 {
         let 記録 = 場面.記録しながら一細分進める(番号, &条件, true);

@@ -12,7 +12,7 @@ use super::super::stacked_slope_fixture::坂の上の二段の箱の場面;
 use super::super::tower_fixture::箱の塔の場面を作る;
 use crate::contact::contact_batches::接触拘束の二つのバッチ;
 use crate::contact::friction_coefficient::摩擦係数;
-use crate::contact::normal_tangential_system::{単精度の解の内訳, 試験の許容差の当て方};
+use crate::contact::normal_tangential_system::{単精度の解の内訳, 試験の許容差の適用規則};
 use crate::rigid_body::{剛体の台帳, 剛体の識別子};
 
 /// 剛体どうしの接触の場面の走行。始める口が場面を組み、`一刻み進める`が刻みを1つ進める。
@@ -24,10 +24,10 @@ pub(super) struct 剛体どうしの場面の走行 {
 }
 
 impl 剛体どうしの場面の走行 {
-    /// 段数を指定した箱の塔を、指定の許容差の当て方で始める。床は静的である。
-    pub(super) fn 箱の塔から始める(段数: u16, 適用規則: 試験の許容差の当て方) -> Self {
+    /// 段数を指定した箱の塔を、指定の許容差の適用規則で始める。床は静的である。
+    pub(super) fn 箱の塔から始める(段数: u16, 適用規則: 試験の許容差の適用規則) -> Self {
         let (mut 工程, 台帳, 箱id一覧, _) = 箱の塔の場面を作る(段数, false);
-        工程.解法.計器.許容差の当て方を差し替える(適用規則);
+        工程.解法.計器.許容差の適用規則を差し替える(適用規則);
         Self {
             工程,
             台帳,
@@ -36,7 +36,7 @@ impl 剛体どうしの場面の走行 {
         }
     }
 
-    /// 坂の上の2段の箱を、本番と同じ当て方で始める。休止を見る箱は下の箱と上の箱の2つである。
+    /// 坂の上の2段の箱を、本番と同じ適用規則で始める。休止を見る箱は下の箱と上の箱の2つである。
     pub(super) fn 坂の上の二段の箱から始める(傾きの正接: f32, 摩擦: 摩擦係数) -> Self {
         let 場面 = 坂の上の二段の箱の場面::生成する(傾きの正接, 摩擦);
         Self {

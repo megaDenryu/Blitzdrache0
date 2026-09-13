@@ -11,7 +11,7 @@
 
 use super::body_scene_run::剛体どうしの場面の走行;
 use crate::contact::friction_coefficient::摩擦係数;
-use crate::contact::normal_tangential_system::{固有値を最大で割った相対値の広がり, 試験の許容差の当て方};
+use crate::contact::normal_tangential_system::{固有値を最大で割った相対値の広がり, 試験の許容差の適用規則};
 
 const 塔の段数: u16 = 10;
 const 二段の箱の傾きの正接: f32 = 0.55;
@@ -40,7 +40,7 @@ fn 一つの走行の相対分布を綴る(見出し: &str, mut 走行: 剛体�
 fn 塔の相対分布を綴る() {
     一つの走行の相対分布を綴る(
         &format!("箱{塔の段数}段の塔_本番の適用規則"),
-        剛体どうしの場面の走行::箱の塔から始める(塔の段数, 試験の許容差の当て方::本番と同じ当て方()),
+        剛体どうしの場面の走行::箱の塔から始める(塔の段数, 試験の許容差の適用規則::本番と同じ適用規則()),
     );
 }
 

@@ -14,7 +14,7 @@
 
 use super::body_scene_run::剛体どうしの場面の走行;
 use super::counterfactual_tally::判定ごとの捨てた本数の数え;
-use crate::contact::normal_tangential_system::{単精度の解の内訳, 試験の許容差の当て方};
+use crate::contact::normal_tangential_system::{単精度の解の内訳, 試験の許容差の適用規則};
 
 const 塔の段数: u16 = 10;
 const 綴る刻みの数: usize = 120;
@@ -32,7 +32,7 @@ fn 一回の求解の向きを綴る(
 #[test]
 #[ignore = "計器であり合否を判定しない。実行は --ignored --nocapture を付ける"]
 fn 同じ軌道の上で判定を比べる_箱十段の塔を本番の軌道で綴る() {
-    let mut 走行 = 剛体どうしの場面の走行::箱の塔から始める(塔の段数, 試験の許容差の当て方::本番と同じ当て方());
+    let mut 走行 = 剛体どうしの場面の走行::箱の塔から始める(塔の段数, 試験の許容差の適用規則::本番と同じ適用規則());
     走行.定まった解の内訳を読む();
     let mut 数え = 判定ごとの捨てた本数の数え::出発点から始める();
     for _ in 0..綴る刻みの数 {

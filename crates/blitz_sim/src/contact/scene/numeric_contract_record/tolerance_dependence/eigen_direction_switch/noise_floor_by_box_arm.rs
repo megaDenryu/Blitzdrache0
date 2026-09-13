@@ -15,7 +15,7 @@ use blitz_math::メートル;
 
 use super::super::scene_variation::段階A1の場面からの一つの変更;
 use super::tangential_noise_floor::{一つの場面の雑音の床を綴る, 回しを付けた緩い坂の場合};
-use crate::contact::normal_tangential_system::試験の許容差の当て方;
+use crate::contact::normal_tangential_system::試験の許容差の適用規則;
 
 fn 一つの回しで腕を振る(鉛直軸まわりの回しの度: f32) {
     // 既定の 0.5 を挟んで半分と2倍を取る。床が腕に比例するなら、両端で4倍の開きが出る。
@@ -27,7 +27,7 @@ fn 一つの回しで腕を振る(鉛直軸まわりの回しの度: f32) {
                 },
                 鉛直軸まわりの回しの度,
             ),
-            試験の許容差の当て方::本番と同じ当て方(),
+            試験の許容差の適用規則::本番と同じ適用規則(),
         );
     }
 }

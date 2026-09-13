@@ -10,9 +10,9 @@ use blitz_math::メートル;
 use super::super::super::contact_projection_row::一行の二つの符号付き勾配;
 use super::super::tolerance_candidate::解けたと見なす許容差を導く座標の由来;
 use super::super::tolerance_reach::受理の倍率の届く先;
-use super::試験の許容差の当て方;
+use super::試験の許容差の適用規則;
 
-impl 試験の許容差の当て方 {
+impl 試験の許容差の適用規則 {
     /// この適用規則での、その行の解けたと見なす許容差 δ_i(候補(ζ)の軸で導く座標が変わる)。受理の倍率は掛けない。
     pub fn 行の解けたと見なす許容差(&self, 勾配: &一行の二つの符号付き勾配) -> メートル {
         match self.許容差の座標の由来 {
