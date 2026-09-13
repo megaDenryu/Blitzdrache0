@@ -31,7 +31,7 @@ pub(crate) struct パス宣言<'a> {
     pub(crate) 読みバッファ: Vec<(バッファハンドル, バッファ用途)>,
     pub(crate) 書きバッファ: Vec<(バッファハンドル, バッファ用途)>,
     pub(crate) 種別: パス種別,
-    pub(crate) GPU命令をコマンドバッファへ積む: Box<dyn FnOnce(&GPU命令の積み先と宣言済み資源の取り出し口) + 'a>,
+    pub(crate) gpu命令をコマンドバッファへ積む: Box<dyn FnOnce(&GPU命令の積み先と宣言済み資源の取り出し口) + 'a>,
 }
 
 impl<'a> パス宣言<'a> {
@@ -55,7 +55,7 @@ impl<'a> パス宣言<'a> {
             読みバッファ,
             書きバッファ,
             種別,
-            GPU命令をコマンドバッファへ積む: Box::new(gpu命令をコマンドバッファへ積む),
+            gpu命令をコマンドバッファへ積む: Box::new(gpu命令をコマンドバッファへ積む),
         }
     }
 

@@ -36,7 +36,7 @@ use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
 const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("xpbd_solver_bench");
 
-pub(crate) fn XPBD並列方式を計測する(引数一覧: &[String]) -> ExitCode {
+pub(crate) fn xpbd並列方式を計測する(引数一覧: &[String]) -> ExitCode {
     match 計測する(引数一覧) {
         Ok(要約) => {
             println!("[xtask] xpbd-solver-bench成功: {要約}");

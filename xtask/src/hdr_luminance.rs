@@ -27,7 +27,7 @@ use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
 const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("hdr_luminance");
 
-pub(crate) fn HDR輝度を実測する() -> ExitCode {
+pub(crate) fn hdr輝度を実測する() -> ExitCode {
     match 計測する() {
         Ok(要約) => {
             println!("[xtask] hdr-luminance成功: {要約}");

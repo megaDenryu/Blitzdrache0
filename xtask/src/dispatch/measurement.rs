@@ -14,7 +14,7 @@ pub(super) fn 律速切り分け計測コマンドを割り当てる(名前: &st
         "reverse-depth" => Some(reverse_depth::反転深度を撮影して判定する(引数一覧)),
         "shadow-loss" => Some(shadow_loss::影の欠落を計測する(引数一覧)),
         "streaming-bench" => Some(streaming_bench::ストリーミング経路の資源を計測する(引数一覧)),
-        "xpbd-solver-bench" => Some(xpbd_solver_bench::XPBD並列方式を計測する(引数一覧)),
+        "xpbd-solver-bench" => Some(xpbd_solver_bench::xpbd並列方式を計測する(引数一覧)),
         _ => None,
     }
 }

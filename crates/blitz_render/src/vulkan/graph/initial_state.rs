@@ -60,7 +60,7 @@ pub(crate) fn 前フレームシャドウマップ読み直後状態() -> 画像
 /// この画像を使うパスは常に明るさの圧縮(画素段読み)のため、次フレーム冒頭の
 /// シーン描画(カラー書き)との間のWARハザードをこの値で表現する。layoutはUNDEFINEDにして
 /// 内容を保持しない(本フレームでCLEARし直すため)。
-pub(crate) fn 前フレームHDR中間画像読み直後状態() -> 画像状態 {
+pub(crate) fn 前フレームhdr中間画像読み直後状態() -> 画像状態 {
     画像状態::生成する(
         vk::PipelineStageFlags2::FRAGMENT_SHADER,
         vk::AccessFlags2::SHADER_SAMPLED_READ,

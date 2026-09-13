@@ -31,7 +31,7 @@ pub(super) struct 方式の観測 {
     pub(super) 乗数の最大差: f64,
     pub(super) 乗数の平均差: f64,
     pub(super) バッファ合計バイト数: u64,
-    pub(super) 一刻みのディスパッチ数: u64,
+    pub(super) 一刻みの計算の発行数: u64,
     pub(super) 原子演算を使うか: bool,
 }
 

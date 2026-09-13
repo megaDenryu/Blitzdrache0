@@ -9,10 +9,10 @@ use blitz_render::cube_image::立方体の面;
 
 use super::expected_color::板の期待;
 use super::projection::板の投影;
-use crate::reports::sky_pixel::線形色をsRGBの8ビット相当へ変換する;
+use crate::reports::sky_pixel::線形色をsrgbの8ビット相当へ変換する;
 
 pub(super) fn 行を出す(板番号: usize, 投影: &板の投影, 期待: &板の期待, 実測: [u8; 3]) {
-    let 期待srgb = 期待.放射輝度.map(線形色をsRGBの8ビット相当へ変換する);
+    let 期待srgb = 期待.放射輝度.map(線形色をsrgbの8ビット相当へ変換する);
     println!(
         "間接照明代表板 番号={} 画素={},{} 期待={:.3},{:.3},{:.3} 実測={},{},{} 面={} 段={:.4} 面余裕={:.4}",
         板番号,
