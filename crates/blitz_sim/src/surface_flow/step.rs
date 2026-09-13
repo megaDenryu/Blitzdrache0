@@ -9,14 +9,14 @@ use super::state::{usizeへ, 表面流状態};
 
 impl 表面流状態 {
     pub fn 一ステップ進める(&self, 仕様: &表面流仕様) -> Result<Self, 表面流仕様エラー> {
-        let [列数u32, 行数u32] = 仕様.格子寸法();
+        let [列数指定値, 行数指定値] = 仕様.格子寸法();
         if self.格子寸法() != 仕様.格子寸法() {
             return Err(表面流仕様エラー::格子寸法が不一致 {
                 状態: self.格子寸法(),
                 仕様: 仕様.格子寸法(),
             });
         }
-        let (列数, 行数) = (usizeへ(列数u32), usizeへ(行数u32));
+        let (列数, 行数) = (usizeへ(列数指定値), usizeへ(行数指定値));
         let mut 厚さ一覧: Vec<f32> = self.セル一覧().iter().map(表面セル::液膜厚さ).collect();
         let mut 速度一覧 = Vec::with_capacity(self.セル一覧().len());
         for セル in self.セル一覧() {
@@ -38,7 +38,7 @@ impl 表面流状態 {
             .zip(速度一覧)
             .map(|(厚さ, 速度)| 表面セル::生成する(厚さ.max(0.0), 速度))
             .collect();
-        Ok(Self::構築する([列数u32, 行数u32], セル一覧))
+        Ok(Self::構築する([列数指定値, 行数指定値], セル一覧))
     }
 }
 

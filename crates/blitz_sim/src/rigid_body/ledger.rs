@@ -56,11 +56,11 @@ impl 剛体の台帳 {
     }
 
     /// 構造変更の待ち行列として運動種別の遷移予約を受け付ける(判断7)。
-    pub fn 遷移の予約(&mut self) -> &mut 運動種別の遷移の予約 {
+    pub fn 静的な剛体(&mut self) -> &mut 運動種別の遷移の予約 {
         &mut self.遷移の予約
     }
 
-    pub fn 剛体一覧_mut(&mut self) -> &mut [剛体] {
+    pub fn 剛体一覧を可変で参照する(&mut self) -> &mut [剛体] {
         &mut self.剛体一覧
     }
 }

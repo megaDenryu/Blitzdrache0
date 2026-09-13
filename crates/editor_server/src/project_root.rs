@@ -63,7 +63,7 @@ mod tests {
     }
 
     #[test]
-    fn projectフラグの次の引数を使う() {
+    fn プロジェクトフラグの次の引数を使う() {
         let 既定ルート = リポジトリルート::生成する(PathBuf::from("/repo"));
         let 引数一覧 = vec!["--project".to_string(), "/game".to_string()];
         let 解決結果 = プロジェクトルートを解決する(&引数一覧, &既定ルート);

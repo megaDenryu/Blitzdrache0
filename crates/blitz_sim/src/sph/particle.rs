@@ -1,6 +1,6 @@
 //! SPHの1流体粒子。
 
-use super::error::Sph仕様エラー;
+use super::error::粒子法流体仕様エラー;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 流体粒子 {
@@ -10,15 +10,15 @@ pub struct 流体粒子 {
 }
 
 impl 流体粒子 {
-    pub fn 生成する(位置: [f32; 3], 速度: [f32; 3], 質量: f32) -> Result<Self, Sph仕様エラー> {
+    pub fn 生成する(位置: [f32; 3], 速度: [f32; 3], 質量: f32) -> Result<Self, 粒子法流体仕様エラー> {
         if 位置.iter().any(|成分| !成分.is_finite()) {
-            return Err(Sph仕様エラー::粒子ベクトルが不正 { 項目: "位置" });
+            return Err(粒子法流体仕様エラー::粒子ベクトルが不正 { 項目: "位置" });
         }
         if 速度.iter().any(|成分| !成分.is_finite()) {
-            return Err(Sph仕様エラー::粒子ベクトルが不正 { 項目: "速度" });
+            return Err(粒子法流体仕様エラー::粒子ベクトルが不正 { 項目: "速度" });
         }
         if !質量.is_finite() || 質量 <= 0.0 {
-            return Err(Sph仕様エラー::粒子質量が不正 { 指定値: 質量 });
+            return Err(粒子法流体仕様エラー::粒子質量が不正 { 指定値: 質量 });
         }
         Ok(Self { 位置, 速度, 質量 })
     }
