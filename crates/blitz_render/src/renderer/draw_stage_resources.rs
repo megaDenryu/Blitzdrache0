@@ -33,7 +33,7 @@ use crate::vulkan::tracked_device::GPUデバイス;
 pub(super) struct 描画段階資源 {
     空: Option<vulkan::sky_stage::空段階資源>, // フレーム構成に空段階があるときだけ`Some`
     大気のベイク済み画像: Option<vulkan::atmosphere_lut::大気のベイク済み画像一式>, // フレーム構成に空段階があるときだけ`Some`
-    遠方環境の照明: Option<vulkan::indirect_lighting::遠方環境の照明資源>, // 照明問い合わせ契約が遠方環境の枝のときだけ`Some`
+    遠方環境の照明: Option<vulkan::indirect_lighting::遠方環境の照明資源>, // 照明問い合わせ契約が遠方環境の選択肢のときだけ`Some`
     布シャドウ: Option<vulkan::cloth_shadow::布シャドウ資源>, // フレーム構成に布シミュレーション段階があるときだけ`Some`
     合成深度の注入: Option<vulkan::depth_injection::合成深度の注入一式>, // 検収が合成深度を据えた実行だけ`Some`
     クラスタ選別: vulkan::cluster_light_assignment::クラスタ選別一式, // クラスタの選別のコンピュートと、その生成側のセット
