@@ -72,7 +72,7 @@ fn 点光源の影のパイプラインを生成する(
             return Err(誤り);
         }
     };
-    let 結果 = assemble::組み立てる(device, 点光源の影の形式, super::描画の標本数, layout, 頂点モジュール, 画素段モジュール);
+    let 結果 = assemble::点光源の影の固定機能を組み立てる(device, 点光源の影の形式, super::描画の標本数, layout, 頂点モジュール, 画素段モジュール);
     // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
     unsafe {
         device.destroy_shader_module(頂点モジュール, None);

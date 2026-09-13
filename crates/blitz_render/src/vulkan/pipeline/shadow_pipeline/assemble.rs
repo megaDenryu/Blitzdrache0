@@ -15,7 +15,7 @@ const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
 const 深度バイアス定数項: f32 = 1.25;
 const 深度バイアス傾き項: f32 = 1.75;
 
-pub(super) fn 組み立てる(
+pub(super) fn シャドウの固定機能を組み立てる(
     device: &ash::Device,
     深度形式: vk::Format,
     標本数: vk::SampleCountFlags,

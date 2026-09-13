@@ -15,7 +15,7 @@ use crate::error::レンダラーエラー;
 
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 
-pub(super) fn 組み立てる(
+pub(super) fn 深度プリパスの固定機能を組み立てる(
     device: &ash::Device,
     深度形式: vk::Format,
     標本数: vk::SampleCountFlags,

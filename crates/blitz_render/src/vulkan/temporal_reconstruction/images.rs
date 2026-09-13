@@ -61,7 +61,7 @@ impl 時間再構成の画像組 {
         let device = 確保係.論理デバイス();
         let mut 確保済み = Vec::with_capacity(形式の並び.len());
         for 形式 in 形式の並び {
-            match create::生成する(確保係, 形式, 寸法) {
+            match create::時間再構成の画像を確保する(確保係, 形式, 寸法) {
                 Ok(画像) => 確保済み.push(画像),
                 Err(誤り) => {
                     for 画像 in &確保済み {

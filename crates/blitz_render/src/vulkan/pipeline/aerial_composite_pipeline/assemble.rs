@@ -16,7 +16,7 @@ use crate::vulkan::fullscreen_pipeline::全画面パスのパイプライン;
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
 
-pub(super) fn 組み立てる(
+pub(super) fn 空中遠近合成の固定機能を組み立てる(
     device: &ash::Device,
     カラー形式: vk::Format,
     ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],

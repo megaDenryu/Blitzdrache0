@@ -26,7 +26,7 @@ pub(in crate::vulkan::pipeline) fn シャドウパイプラインを生成する
         }
     };
 
-    let 結果 = assemble::組み立てる(device, 深度形式, 標本数, layout, 頂点モジュール, 画素段モジュール);
+    let 結果 = assemble::シャドウの固定機能を組み立てる(device, 深度形式, 標本数, layout, 頂点モジュール, 画素段モジュール);
 
     // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
     unsafe {

@@ -7,7 +7,7 @@ use crate::error::レンダラーエラー;
 use crate::extent::ウィンドウ寸法;
 
 #[allow(clippy::too_many_arguments)]
-pub(super) fn 生成する(
+pub(super) fn スワップチェーンを確保する(
     物理デバイス: vk::PhysicalDevice,
     device: &ash::Device,
     surface_loader: &ash::khr::surface::Instance,

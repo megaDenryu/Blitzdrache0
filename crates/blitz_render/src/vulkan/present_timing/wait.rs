@@ -31,7 +31,7 @@ pub(super) fn 表示を待って記録する(
     };
     let 開始 = Instant::now();
     // 安全性: swapchainは現行のもので、待機ローダーはその生成元デバイスから作られている。
-    let 即時判定 = 判定する(unsafe { 待機.wait_for_present(swapchain, 対象id, 0) })?;
+    let 即時判定 = 提示結果を待機判定へ判定する(unsafe { 待機.wait_for_present(swapchain, 対象id, 0) })?;
     match 即時判定 {
         待機判定::表示された => {
             記録.観測を加える(
@@ -58,7 +58,7 @@ fn 待ち直して観測する(
     開始: Instant,
 ) -> Result<(), レンダラーエラー> {
     // 安全性: 即時判定と同じ引数であり、swapchainとローダーの対応は呼び出し元が保証する。
-    let 判定 = 判定する(unsafe { 待機.wait_for_present(swapchain, 対象id, 待機上限NS) })?;
+    let 判定 = 提示結果を待機判定へ判定する(unsafe { 待機.wait_for_present(swapchain, 対象id, 待機上限NS) })?;
     let 完了 = Instant::now();
     let 停止時間ms = 完了.duration_since(開始).as_secs_f64() * 1000.0;
     match 判定 {
@@ -73,7 +73,7 @@ fn 経過ms(開始: Instant) -> f64 {
     Instant::now().duration_since(開始).as_secs_f64() * 1000.0
 }
 
-fn 判定する(結果: ash::prelude::VkResult<()>) -> Result<待機判定, レンダラーエラー> {
+fn 提示結果を待機判定へ判定する(結果: ash::prelude::VkResult<()>) -> Result<待機判定, レンダラーエラー> {
     match 結果 {
         // 劣化(SUBOPTIMAL)は表示自体には成功しているため、表示された側へ畳む。
         Ok(()) | Err(vk::Result::SUBOPTIMAL_KHR) => Ok(待機判定::表示された),

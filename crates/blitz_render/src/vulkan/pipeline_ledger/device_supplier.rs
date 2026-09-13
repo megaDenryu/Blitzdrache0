@@ -80,7 +80,7 @@ impl パイプライン供給元 for デバイスパイプライン供給元<'_>
     type 実体 = vk::Pipeline;
 
     fn 生成する(&mut self, キー: パイプラインキー) -> Result<vk::Pipeline, レンダラーエラー> {
-        family_dispatch::生成する(self, キー)
+        family_dispatch::族とキーからパイプラインを生成する(self, キー)
     }
 
     fn 破棄する(&mut self, 実体: vk::Pipeline) {

@@ -22,7 +22,7 @@ pub(crate) enum 頂点属性選択 {
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(super) fn 組み立てる(
+pub(super) fn 色パスの固定機能を組み立てる(
     device: &ash::Device,
     カラー形式: vk::Format,
     深度形式: vk::Format,

@@ -37,7 +37,7 @@ pub(crate) struct シャドウマップ {
 
 impl シャドウマップ {
     pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, 一辺: 影の一辺解像度) -> Result<Self, レンダラーエラー> {
-        create::生成する(確保係, 一辺)
+        create::シャドウマップの一式を確保する(確保係, 一辺)
     }
 
     pub(crate) fn 一辺(&self) -> 影の一辺解像度 {
