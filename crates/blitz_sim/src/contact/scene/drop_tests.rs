@@ -9,7 +9,7 @@
 use blitz_math::{キログラム, メートル, メートル毎秒毎秒, 倍精度の無次元量を単精度へ狭める, 秒, 速度};
 
 use super::super::friction_coefficient::摩擦係数;
-use super::super::normal_tangential_system::試験の許容差の当て方;
+use super::super::normal_tangential_system::試験の許容差の適用規則;
 use super::super::restitution_coefficient::反発係数;
 use super::super::solver_quality::接触を解く品質の設定;
 use super::super::surface_property::表面物性;
@@ -49,7 +49,7 @@ fn 落下の場面を組む(初めの隙間: f32) -> 一つの箱と静的な直
         細分の刻み幅: 刻み幅::生成する(秒::生成する(1.0 / 480.0)).unwrap(),
         解く品質: 接触を解く品質の設定::生成する(位置の反復回数, 速度段階の巡回数).unwrap(),
         静止摩擦の解き方: 場面の静止摩擦の解き方::接触点集合の接線を同時に解く,
-        試験の許容差の当て方: 試験の許容差の当て方::本番と同じ当て方(),
+        試験の許容差の適用規則: 試験の許容差の適用規則::本番と同じ適用規則(),
     })
 }
 

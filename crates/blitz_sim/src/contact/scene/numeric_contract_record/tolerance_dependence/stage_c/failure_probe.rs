@@ -11,7 +11,7 @@ use blitz_math::メートル;
 use super::super::case::許容差依存の診断の場合;
 use super::super::row_admission::刻みを二倍にする長さ;
 use super::super::scene_variation::段階A1の場面からの一つの変更;
-use crate::contact::normal_tangential_system::接線の行への許容差の当て方;
+use crate::contact::normal_tangential_system::接線の行への許容差の適用規則;
 
 const 分類を見る刻み数: usize = 600;
 const 細分ごとに綴る本数: usize = 64;
@@ -25,7 +25,7 @@ fn 本番の場合(
         傾きの正接,
         鉛直軸まわりの回しの度: 0.0,
         許容差の比,
-        行への許容差の当て方: 接線の行への許容差の当て方::許容差の内側の点の行を積まず右辺を零にする,
+        行への適用規則: 接線の行への許容差の適用規則::許容差以下の接線変位の拘束行を追加しない,
         変更,
     }
 }
@@ -51,7 +51,7 @@ fn 細分ごとに退避を綴る(場合: &許容差依存の診断の場合) {
                 記録.反復ごと.iter().map(|反復| 反復.円錐の比()).collect::<Vec<_>>()
             );
         }
-        for (反復, 読み取り) in &記録.解けなかった連立 {
+        for (反復, 読み取り) in &記録.解けなかった連立方程式 {
             *結末ごと.entry(読み取り.結末の綴り).or_insert(0) += 1;
             if 番号 < 細分ごとに綴る本数 || 綴った件数 < 綴る件数の上限 {
                 綴った件数 += usize::from(番号 >= 細分ごとに綴る本数);

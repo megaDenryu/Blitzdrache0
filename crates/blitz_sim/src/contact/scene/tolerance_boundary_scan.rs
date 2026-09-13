@@ -11,8 +11,8 @@
 use blitz_math::メートル;
 
 use super::super::friction_coefficient::摩擦係数;
-use super::super::normal_tangential_system::{解けたと見なす許容差の倍率, 試験の許容差の当て方};
-use super::slope_fixture::{一刻みの細分数, 坂の場面を移動と許容差の当て方で組む};
+use super::super::normal_tangential_system::{解けたと見なす許容差の倍率, 試験の許容差の適用規則};
+use super::slope_fixture::{一刻みの細分数, 坂の場面を移動と許容差の適用規則で組む};
 use super::slope_geometry::坂の場面の条件;
 use super::slope_holding::坂の箱の保持と滑走;
 use super::static_friction_method::場面の静止摩擦の解き方;
@@ -36,8 +36,8 @@ impl 許容差の境界の走査 {
     /// 傾きの正接を1つ与えて600刻み走らせ、保持と滑走の分類と坂に沿った変位を返す。
     pub(super) fn 分類と坂に沿った変位(&self, 傾きの正接: f32) -> (坂の箱の保持と滑走, f32) {
         let 条件 = self.走らせる条件(傾きの正接);
-        let 当て方 = 試験の許容差の当て方::本番と同じ当て方().受理の倍率を差し替える(self.受理の倍率);
-        let mut 場面 = 坂の場面を移動と許容差の当て方で組む(&条件, self.法線の向きへ動かす長さ, 当て方);
+        let 適用規則 = 試験の許容差の適用規則::本番と同じ適用規則().受理の倍率を差し替える(self.受理の倍率);
+        let mut 場面 = 坂の場面を移動と許容差の適用規則で組む(&条件, self.法線の向きへ動かす長さ, 適用規則);
         let 初めの重心 = 場面.箱の配置.重心の位置();
         場面.細分を進める(保持を見る刻み数 * 一刻みの細分数);
         (場面.保持と滑走を分類する(初めの重心, &条件), 場面.坂に沿った変位(初めの重心, &条件))
