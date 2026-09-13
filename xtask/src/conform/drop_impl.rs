@@ -31,7 +31,7 @@ pub fn 行がドロップ実装か(行: &str) -> bool {
     整形.starts_with("impl") && 整形.contains("Drop for")
 }
 
-pub fn Drop実装の配置を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
+pub fn drop実装の配置を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
     if !検査対象パスか(パス) {
         return Vec::new();
     }
@@ -82,13 +82,13 @@ mod tests {
     #[test]
     fn 例外ファイルのドロップ実装は違反にしない() {
         let 内容 = "impl Drop for レンダラー {\n}\n";
-        assert!(Drop実装の配置を検査する(Path::new("crates/blitz_render/src/renderer/mod.rs"), 内容).is_empty());
+        assert!(drop実装の配置を検査する(Path::new("crates/blitz_render/src/renderer/mod.rs"), 内容).is_empty());
         assert_eq!(
-            Drop実装の配置を検査する(Path::new("crates/blitz_render/src/renderer/frame_progress.rs"), 内容).len(),
+            drop実装の配置を検査する(Path::new("crates/blitz_render/src/renderer/frame_progress.rs"), 内容).len(),
             1
         );
         assert_eq!(
-            Drop実装の配置を検査する(Path::new("crates/blitz_render/src/vulkan/swapchain.rs"), 内容).len(),
+            drop実装の配置を検査する(Path::new("crates/blitz_render/src/vulkan/swapchain.rs"), 内容).len(),
             1
         );
     }
