@@ -30,13 +30,13 @@ impl 台帳の行 {
     }
 
     pub const fn 列挙(
-        根からのパス: &'static str, 型名: &'static str, 実装ファイル数: usize, 枝数: usize, メソッド総数: usize
+        根からのパス: &'static str, 型名: &'static str, 実装ファイル数: usize, 選択肢数: usize, メソッド総数: usize
     ) -> Self {
         Self {
             根からのパス,
             型名,
             実装ファイル数,
-            宣言の上限: 宣言の分量::列挙の枝数(枝数),
+            宣言の上限: 宣言の分量::列挙の選択肢数(選択肢数),
             メソッド総数,
         }
     }
