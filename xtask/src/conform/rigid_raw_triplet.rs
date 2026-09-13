@@ -18,7 +18,7 @@ fn 剛体のモジュール群か(パス: &Path) -> bool {
     部品一覧.iter().any(|部品| *部品 == 対象クレート) && 部品一覧.iter().any(|部品| 対象ディレクトリ一覧.iter().any(|名前| *部品 == *名前))
 }
 
-pub fn 剛体モジュール群の単精度3つ組宣言を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
+pub fn 剛体の単精度3つ組宣言を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
     if !剛体のモジュール群か(パス) {
         return Vec::new();
     }
@@ -44,23 +44,17 @@ mod tests {
     fn 剛体のモジュール群の3つ組だけを違反にする() {
         let 原文 = concat!("let 成分: [f32", "; 3] = [0.0; 3];\n");
         assert_eq!(
-            剛体モジュール群の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/rigid_xpbd/predictor.rs"), 原文).len(),
+            剛体の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/rigid_xpbd/predictor.rs"), 原文).len(),
             1
         );
         assert_eq!(
-            剛体モジュール群の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/contact/non_penetration.rs"), 原文).len(),
+            剛体の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/contact/non_penetration.rs"), 原文).len(),
             1
         );
-        assert!(剛体モジュール群の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/gpu_layout/rigid/mod.rs"), 原文).is_empty());
+        assert!(剛体の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/gpu_layout/rigid/mod.rs"), 原文).is_empty());
+        assert!(剛体の単精度3つ組宣言を検査する(Path::new("crates/blitz_collision/src/height_field/contact/cell.rs"), 原文).is_empty());
         assert!(
-            剛体モジュール群の単精度3つ組宣言を検査する(
-                Path::new("crates/blitz_collision/src/height_field/contact/cell.rs"),
-                原文
-            )
-            .is_empty()
-        );
-        assert!(
-            剛体モジュール群の単精度3つ組宣言を検査する(
+            剛体の単精度3つ組宣言を検査する(
                 Path::new("crates/blitz_sim/src/rigid_body/body.rs"),
                 "let 位置 = 位置::生成する(x, y, z);\n"
             )
@@ -71,6 +65,6 @@ mod tests {
     #[test]
     fn コメントの中の綴りは数えない() {
         let 原文 = concat!("// [f32", "; 3] は使わない\nlet a = 1;\n");
-        assert!(剛体モジュール群の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/rigid_body/body.rs"), 原文).is_empty());
+        assert!(剛体の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/rigid_body/body.rs"), 原文).is_empty());
     }
 }

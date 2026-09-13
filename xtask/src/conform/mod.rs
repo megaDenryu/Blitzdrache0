@@ -90,9 +90,7 @@ fn ファイル単位の違反を集める(ファイル一覧: &[PathBuf]) -> Re
         if 拡張子 == "rs" {
             違反一覧.extend(allow_lint::不正なallowの緩和を検査する(パス, &内容));
             違反一覧.extend(drop_impl::Drop実装の配置を検査する(パス, &内容));
-            違反一覧.extend(rigid_raw_triplet::剛体モジュール群の単精度3つ組宣言を検査する(
-                パス, &内容,
-            ));
+            違反一覧.extend(rigid_raw_triplet::剛体の単精度3つ組宣言を検査する(パス, &内容));
             違反一覧.extend(two_tier_fold_boundary::二段の位置の口を検査する(パス, &内容));
         }
         違反一覧.extend(doc_reference::参照パスの実在を検査する(パス, &内容));
