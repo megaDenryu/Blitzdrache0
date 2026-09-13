@@ -55,18 +55,18 @@ fn 繋がりで分ける(該当か: &[bool], 幅: usize, 高さ: usize) -> Vec<V
 }
 
 fn 四近傍(添字: usize, 幅: usize, 高さ: usize) -> Vec<usize> {
-    let (x, y) = (添字 % 幅, 添字 / 幅);
+    let (横, 縦) = (添字 % 幅, 添字 / 幅);
     let mut 一覧 = Vec::with_capacity(4);
-    if x > 0 {
+    if 横 > 0 {
         一覧.push(添字 - 1);
     }
-    if x + 1 < 幅 {
+    if 横 + 1 < 幅 {
         一覧.push(添字 + 1);
     }
-    if y > 0 {
+    if 縦 > 0 {
         一覧.push(添字 - 幅);
     }
-    if y + 1 < 高さ {
+    if 縦 + 1 < 高さ {
         一覧.push(添字 + 幅);
     }
     一覧

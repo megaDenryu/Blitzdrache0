@@ -5,28 +5,28 @@
 use crate::acceptance::{判定の名前, 判定の破れ, 画像の幅, 画像の高さ, 画素の横位置, 画素の縦位置, 読み戻し画像};
 
 pub struct 画面領域 {
-    pub x開始: usize,
-    pub x終端: usize,
-    pub y開始: usize,
-    pub y終端: usize,
+    pub 横開始: usize,
+    pub 横終端: usize,
+    pub 縦開始: usize,
+    pub 縦終端: usize,
 }
 
 impl 画面領域 {
     pub fn 画素数(&self) -> u64 {
-        let 幅 = self.x終端 - self.x開始;
-        let 高さ = self.y終端 - self.y開始;
+        let 幅 = self.横終端 - self.横開始;
+        let 高さ = self.縦終端 - self.縦開始;
         u64::try_from(幅 * 高さ).unwrap_or(u64::MAX)
     }
 
     /// この領域が画像の内側に収まるか。幅と高さを別の型で受けるため、縦横を取り違えた比較はコンパイルが拒む。
     pub fn 画像に収まるか(&self, 幅: 画像の幅, 高さ: 画像の高さ) -> bool {
-        self.x終端 <= 幅.画素数() && self.y終端 <= 高さ.画素数()
+        self.横終端 <= 幅.画素数() && self.縦終端 <= 高さ.画素数()
     }
 
     /// 領域の中の画素の位置を、上の行から順に並べる。走査する側が添字を組み立てないための口である。
     pub fn 位置一覧(&self) -> impl Iterator<Item = (画素の横位置, 画素の縦位置)> {
-        let (x開始, x終端) = (self.x開始, self.x終端);
-        (self.y開始..self.y終端).flat_map(move |縦| (x開始..x終端).map(move |横| (画素の横位置::生成する(横), 画素の縦位置::生成する(縦))))
+        let (x開始, x終端) = (self.横開始, self.横終端);
+        (self.縦開始..self.縦終端).flat_map(move |縦| (x開始..x終端).map(move |横| (画素の横位置::生成する(横), 画素の縦位置::生成する(縦))))
     }
 }
 
