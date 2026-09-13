@@ -32,7 +32,7 @@ impl 部品ごとの箱 {
         self.据えた順の綴り.get(番号).cloned().unwrap_or_else(|| "(据わっていない)".to_string())
     }
 
-    pub fn 番号で写した箱を引く(&self, 番号: usize) -> Option<群ローカルの箱> {
+    pub fn 番号に対応する箱を参照する(&self, 番号: usize) -> Option<群ローカルの箱> {
         self.据えた順の箱.get(番号).copied().flatten()
     }
 }

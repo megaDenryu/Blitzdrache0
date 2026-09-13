@@ -2,7 +2,7 @@
 //! の書き出し順(位置48B→法線48B→接線64B→UV32B→インデックス12B、計204B)へ
 //! 手動で一致させている。
 
-pub(super) const 文書JSON: &str = r#"{
+pub(super) const 文書のJSON文字列: &str = r#"{
   "asset": { "version": "2.0" },
   "buffers": [
     { "uri": "quad.bin", "byteLength": 204 }

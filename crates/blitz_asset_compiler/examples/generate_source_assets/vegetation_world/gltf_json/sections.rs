@@ -10,8 +10,8 @@ use super::super::stage_amount::段の中身の量;
 const 段あたりの区間数: usize = 5;
 
 pub(super) struct 段の区間 {
-    pub(super) bufferview宣言: String,
-    pub(super) accessor宣言: String,
+    pub(super) バッファビュー宣言: String,
+    pub(super) アクセサ宣言: String,
 }
 
 pub(super) fn 段の区間を作る(段番号: usize, 諸元: 直方体諸元, 量: 段の中身の量) -> 段の区間 {
@@ -21,20 +21,20 @@ pub(super) fn 段の区間を作る(段番号: usize, 諸元: 直方体諸元, �
     let 基点 = 量.バイト長() * 段番号;
     let 法線区間 = 基点 + 位置区間長;
     let 接線区間 = 法線区間 + 法線区間長;
-    let uv区間 = 接線区間 + 接線区間長;
-    let インデックス区間 = uv区間 + テクスチャ座標区間長;
+    let テクスチャ座標区間の開始 = 接線区間 + 接線区間長;
+    let インデックス区間 = テクスチャ座標区間の開始 + テクスチャ座標区間長;
     let 最小 = format!("[{}, 0.0, {}]", -諸元.半辺, -諸元.半辺);
     let 最大 = format!("[{}, {}, {}]", 諸元.半辺, 諸元.高さ, 諸元.半辺);
     let 番号 = 段番号 * 段あたりの区間数;
     段の区間 {
-        bufferview宣言: format!(
+        バッファビュー宣言: format!(
             "    {{ \"buffer\": 0, \"byteOffset\": {基点}, \"byteLength\": {位置区間長}, \"target\": 34962 }},\n\
              \x20   {{ \"buffer\": 0, \"byteOffset\": {法線区間}, \"byteLength\": {法線区間長}, \"target\": 34962 }},\n\
              \x20   {{ \"buffer\": 0, \"byteOffset\": {接線区間}, \"byteLength\": {接線区間長}, \"target\": 34962 }},\n\
-             \x20   {{ \"buffer\": 0, \"byteOffset\": {uv区間}, \"byteLength\": {テクスチャ座標区間長}, \"target\": 34962 }},\n\
+             \x20   {{ \"buffer\": 0, \"byteOffset\": {テクスチャ座標区間の開始}, \"byteLength\": {テクスチャ座標区間長}, \"target\": 34962 }},\n\
              \x20   {{ \"buffer\": 0, \"byteOffset\": {インデックス区間}, \"byteLength\": {インデックス区間長}, \"target\": 34963 }}"
         ),
-        accessor宣言: format!(
+        アクセサ宣言: format!(
             "    {{ \"bufferView\": {}, \"componentType\": 5126, \"count\": {頂点数}, \"type\": \"VEC3\", \"min\": {最小}, \"max\": {最大} }},\n\
              \x20   {{ \"bufferView\": {}, \"componentType\": 5126, \"count\": {頂点数}, \"type\": \"VEC3\" }},\n\
              \x20   {{ \"bufferView\": {}, \"componentType\": 5126, \"count\": {頂点数}, \"type\": \"VEC4\" }},\n\
@@ -49,7 +49,7 @@ pub(super) fn 段の区間を作る(段番号: usize, 諸元: 直方体諸元, �
     }
 }
 
-pub(super) fn mesh宣言を作る(段番号: usize) -> String {
+pub(super) fn メッシュ宣言を作る(段番号: usize) -> String {
     let 番号 = 段番号 * 段あたりの区間数;
     format!(
         "    {{\n\

@@ -9,18 +9,18 @@ use super::stage_amount::段の中身の量;
 
 pub(super) fn 文書を作る(諸元一覧: &[直方体諸元], バッファファイル名: &str, 量: 段の中身の量) -> String {
     let バッファ長 = 量.バイト長() * 諸元一覧.len();
-    let mut bufferview一覧 = Vec::new();
-    let mut accessor一覧 = Vec::new();
-    let mut mesh一覧 = Vec::new();
-    let mut node一覧 = Vec::new();
-    let mut node番号一覧 = Vec::new();
+    let mut バッファビュー宣言一覧 = Vec::new();
+    let mut アクセサ宣言一覧 = Vec::new();
+    let mut メッシュ宣言一覧 = Vec::new();
+    let mut ノード一覧 = Vec::new();
+    let mut ノード番号一覧 = Vec::new();
     for (段番号, 諸元) in 諸元一覧.iter().enumerate() {
         let 区間 = sections::段の区間を作る(段番号, *諸元, 量);
-        bufferview一覧.push(区間.bufferview宣言);
-        accessor一覧.push(区間.accessor宣言);
-        mesh一覧.push(sections::mesh宣言を作る(段番号));
-        node一覧.push(format!("{{ \"mesh\": {段番号} }}"));
-        node番号一覧.push(段番号.to_string());
+        バッファビュー宣言一覧.push(区間.バッファビュー宣言);
+        アクセサ宣言一覧.push(区間.アクセサ宣言);
+        メッシュ宣言一覧.push(sections::メッシュ宣言を作る(段番号));
+        ノード一覧.push(format!("{{ \"mesh\": {段番号} }}"));
+        ノード番号一覧.push(段番号.to_string());
     }
     format!(
         r#"{{
@@ -42,10 +42,10 @@ pub(super) fn 文書を作る(諸元一覧: &[直方体諸元], バッファフ�
   "scene": 0
 }}
 "#,
-        bufferview一覧.join(",\n"),
-        accessor一覧.join(",\n"),
-        mesh一覧.join(",\n"),
-        node一覧.join(", "),
-        node番号一覧.join(", ")
+        バッファビュー宣言一覧.join(",\n"),
+        アクセサ宣言一覧.join(",\n"),
+        メッシュ宣言一覧.join(",\n"),
+        ノード一覧.join(", "),
+        ノード番号一覧.join(", ")
     )
 }
