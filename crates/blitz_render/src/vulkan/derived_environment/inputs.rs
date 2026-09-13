@@ -18,7 +18,7 @@ pub(in crate::vulkan) enum 派生表現の即時定数 {
 pub(in crate::vulkan) const 粗さの即時定数のバイト数: u32 = 4;
 
 impl 派生表現の即時定数 {
-    /// 計算の発行前に書くバイト列。押し込むものが無い枝は空の列を返し、押し込みそのものを起こさない。
+    /// 計算の発行前に書くバイト列。押し込むものが無い選択肢は空の列を返し、押し込みそのものを起こさない。
     pub(in crate::vulkan) fn バイト列(self) -> Vec<u8> {
         match self {
             Self::無し => Vec::new(),

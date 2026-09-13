@@ -12,7 +12,7 @@ use super::input::遠方環境の生成指示;
 use super::sun_direction::ワールドの太陽方向;
 use crate::atmosphere::{スカイビュー観測条件, 天空放射輝度の尺度};
 
-/// 照明問い合わせ契約が遠方環境の枝である世界のフレームが毎フレーム渡す入力。
+/// 照明問い合わせ契約が遠方環境の選択肢である世界のフレームが毎フレーム渡す入力。
 #[derive(Debug, Clone, Copy)]
 pub struct 遠方環境の入力 {
     尺度: 天空放射輝度の尺度,
