@@ -18,7 +18,7 @@ pub(super) struct 刻みの所要時間の分布 {
     最大: Duration,
 }
 
-// 分布の要約。1度も刻んでいない状態をそのまま枝で持つ。
+// 分布の要約。1度も刻んでいない状態をそのまま選択肢で持つ。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum 刻みの所要時間の要約 {
     まだ刻んでいない,
