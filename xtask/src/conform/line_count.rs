@@ -24,7 +24,7 @@ pub fn 生成ファイルか(パス: &Path) -> bool {
     パス.components().any(|部分| 部分.as_os_str() == "生成")
 }
 
-pub fn 検査する(パス: &Path, 内容: &str) -> Vec<違反> {
+pub fn 行数の上限超過を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
     let 行数 = 行数を数える(内容);
     if 行数超過か(行数) {
         vec![違反::ファイル単位(パス.to_path_buf(), format!("コードの行が{行数}行"))]

@@ -16,7 +16,7 @@ use std::path::{Path, PathBuf};
 use super::violation::違反;
 use table::{取り込みの境界, 境界一覧};
 
-pub fn 検査する(パス: &Path, 内容: &str) -> Vec<違反> {
+pub fn 取り込みの境界を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
     let 正規化したパス = スラッシュ区切りにする(パス);
     let mut 違反一覧 = Vec::new();
     for (行番号, 行) in 内容.lines().enumerate() {

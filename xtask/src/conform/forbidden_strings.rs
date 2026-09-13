@@ -29,7 +29,7 @@ pub fn 行に絵文字を含むか(行: &str) -> bool {
     行.chars().any(|文字| コードポイントが絵文字か(u32::from(文字)))
 }
 
-pub fn 検査する(パス: &Path, 内容: &str) -> Vec<違反> {
+pub fn 禁止語と絵文字の混入を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
     let mut 違反一覧 = Vec::new();
     let 未是正既知 = split_debt::既知の未是正ファイルか(パス);
     let mut 経緯語を見つけた = false;
@@ -80,7 +80,7 @@ mod tests {
 
     #[test]
     fn 台帳にないファイルの経緯語は違反になる() {
-        let 違反一覧 = 検査する(
+        let 違反一覧 = 禁止語と絵文字の混入を検査する(
             Path::new("crates/blitz_render/src/新規.rs"),
             concat!("//! ", "行数", "分割のための切り出し\n"),
         );

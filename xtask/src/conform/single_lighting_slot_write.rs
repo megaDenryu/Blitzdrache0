@@ -21,7 +21,7 @@ const 定義ファイル: &str = "lighting_query/mod.rs";
 /// 唯一の呼び出し元。フェンス待ちの後に呼ばれることをこのファイルの冒頭が述べる。
 const 唯一の呼び出し元: &str = "renderer/uniform_write.rs";
 
-pub fn 検査する() -> Result<Vec<違反>, 規約検査の破れ> {
+pub fn 照明問い合わせスロットへの書き込み元を検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let ファイル一覧 = file_scan::対象ファイル一覧を集める(&走査対象ディレクトリ一覧, &走査対象拡張子一覧)?;
     let mut 違反一覧 = Vec::new();
     let mut 呼び出し元を見たか = false;
