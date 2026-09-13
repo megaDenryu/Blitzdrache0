@@ -18,12 +18,12 @@ pub(super) struct フレーム間隔計測 {
 
 pub(crate) struct フレーム時間統計 {
     pub(crate) 標本数: usize,
-    pub(crate) 平均ms: f64,
-    pub(crate) p50ms: f64,
+    pub(crate) 平均ミリ秒: f64,
+    pub(crate) 五十パーセンタイル値ミリ秒: f64,
     pub(crate) p95ms: f64,
     pub(crate) p99ms: f64,
-    pub(crate) 最大ms: f64,
-    pub(crate) 二十五ms超過数: usize,
+    pub(crate) 最大ミリ秒: f64,
+    pub(crate) 二十五ミリ秒超過数: usize,
 }
 
 impl フレーム間隔計測 {
@@ -71,12 +71,12 @@ pub(crate) fn 集計する(間隔一覧ms: &[f64]) -> Option<フレーム時間�
     let (合計, 件数) = 昇順.iter().fold((0.0, 0.0), |(合計, 件数), &値| (合計 + 値, 件数 + 1.0));
     Some(フレーム時間統計 {
         標本数: 昇順.len(),
-        平均ms: 合計 / 件数,
-        p50ms: 百分位値(&昇順, 50),
+        平均ミリ秒: 合計 / 件数,
+        五十パーセンタイル値ミリ秒: 百分位値(&昇順, 50),
         p95ms: 百分位値(&昇順, 95),
         p99ms: 百分位値(&昇順, 99),
-        最大ms: 昇順[昇順.len() - 1],
-        二十五ms超過数: 昇順.iter().filter(|&&値| 値 > 突発遅延境界MS).count(),
+        最大ミリ秒: 昇順[昇順.len() - 1],
+        二十五ミリ秒超過数: 昇順.iter().filter(|&&値| 値 > 突発遅延境界MS).count(),
     })
 }
 

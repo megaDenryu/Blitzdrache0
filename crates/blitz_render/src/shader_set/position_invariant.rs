@@ -19,13 +19,13 @@ mod word_stream;
 pub use error::位置の不変装飾エラー;
 
 /// SPIR-VのOpDecorateの命令コード。
-const 命令_OP_DECORATE: u16 = 71;
+const 命令コード_装飾指定: u16 = 71;
 /// SPIR-Vの装飾BuiltInの値。
-const 装飾_BUILT_IN: u32 = 11;
+const 装飾種別_組み込み変数: u32 = 11;
 /// SPIR-Vの装飾Invariantの値。
-const 装飾_INVARIANT: u32 = 18;
+const 装飾種別_揺らし禁止: u32 = 18;
 /// SPIR-Vの組み込みPositionの値。
-const 組み込み_POSITION: u32 = 0;
+const 組み込み変数種別_位置: u32 = 0;
 /// OpDecorateへ装飾1つを足すときの語数(命令の先頭語・対象id・装飾)。
 const 装飾命令の語数: u32 = 3;
 
@@ -42,10 +42,10 @@ pub fn 位置の不変装飾を付ける(spirv: &[u8]) -> Result<Vec<u8>, 位置
 /// 位置の組み込み出力の宣言の直後へ不変装飾を挿し込む。装飾の並びの中へ入れるのは、SPIR-Vが装飾を型と変数の宣言より前の
 /// 1つの区画へまとめることを要求するためである。
 fn 装飾を挿し込む(語一覧: &[u32], 宣言: decoration_scan::位置の宣言) -> Vec<u32> {
-    let 命令の先頭語 = (装飾命令の語数 << 16) | u32::from(命令_OP_DECORATE);
+    let 命令の先頭語 = (装飾命令の語数 << 16) | u32::from(命令コード_装飾指定);
     let mut 結果 = Vec::with_capacity(語一覧.len() + 3);
     結果.extend_from_slice(&語一覧[..宣言.直後の語位置]);
-    結果.extend_from_slice(&[命令の先頭語, 宣言.変数id, 装飾_INVARIANT]);
+    結果.extend_from_slice(&[命令の先頭語, 宣言.変数id, 装飾種別_揺らし禁止]);
     結果.extend_from_slice(&語一覧[宣言.直後の語位置..]);
     結果
 }

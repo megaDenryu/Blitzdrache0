@@ -9,7 +9,7 @@ use axum::{
 };
 use tower::ServiceExt;
 
-fn 塔を持つ旧版のチャンク構造Json() -> serde_json::Value {
+fn 塔を持つ旧版のチャンク構造のjson() -> serde_json::Value {
     serde_json::json!({
         "道路一覧": [],
         "建物一覧": [{
@@ -24,7 +24,7 @@ fn 塔を持つ旧版のチャンク構造Json() -> serde_json::Value {
     })
 }
 
-fn 建物を持たない最新のチャンク構造Json() -> serde_json::Value {
+fn 建物を持たない最新のチャンク構造のjson() -> serde_json::Value {
     serde_json::json!({
         "道路一覧": [],
         "建物一覧": [],
@@ -39,14 +39,14 @@ async fn 移行できない旧版が残るチャンクへの保存は拒まれ�
     let 一時 = crate::common::一時プロジェクト::生成する("legacy_overwrite_guard");
     let 構造パス = 一時.ルート().join("editor_data/チャンク/0_0/構造.json");
     std::fs::create_dir_all(構造パス.parent().unwrap()).unwrap();
-    let 旧版のバイト列 = serde_json::to_vec_pretty(&塔を持つ旧版のチャンク構造Json()).unwrap();
+    let 旧版のバイト列 = serde_json::to_vec_pretty(&塔を持つ旧版のチャンク構造のjson()).unwrap();
     std::fs::write(&構造パス, &旧版のバイト列).unwrap();
 
     let 応答 = crate::common::ルーターを作る(&一時)
         .oneshot(
             Request::put("/api/チャンク/0/0/構造")
                 .header("content-type", "application/json")
-                .body(Body::from(serde_json::to_vec(&建物を持たない最新のチャンク構造Json()).unwrap()))
+                .body(Body::from(serde_json::to_vec(&建物を持たない最新のチャンク構造のjson()).unwrap()))
                 .unwrap(),
         )
         .await

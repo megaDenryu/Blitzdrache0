@@ -17,7 +17,7 @@ fn 候補が無ければ落ちる() {
 }
 
 #[test]
-fn rangeの構図は最大影距離の候補を受けない() {
+fn 影視距離の検収構図は最大影距離の候補を受けない() {
     assert!(読む(&["--layout", "range", "--max-shadow-distance", "200"]).is_err());
 }
 
@@ -59,7 +59,7 @@ fn 構図を省くと地形になり候補の綴りがそのまま渡る() {
 }
 
 #[test]
-fn rangeの構図は影の視距離の候補を受ける() {
+fn 影視距離の検収構図は影の視距離の候補を受ける() {
     let 指定 = 読む(&["--layout", "range", "--shadow-caster-range", "80"]).unwrap_or_else(|誤り| panic!("正例が落ちた: {誤り}"));
     assert_eq!(指定.構図, 構図::影視距離の検収);
     assert_eq!(指定.候補.軸(), 計測軸::影の視距離);

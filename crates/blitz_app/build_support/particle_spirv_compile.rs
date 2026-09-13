@@ -5,7 +5,7 @@
 use std::path::Path;
 
 use super::slangc_entry_compile::{エントリ一覧をコンパイルする, エントリ指定};
-use super::slangc_locate::スランガー位置;
+use super::slangc_locate::スラングコンパイラの所在;
 
 const エントリ一覧: [エントリ指定; 3] = [
     エントリ指定 {
@@ -26,7 +26,7 @@ const エントリ一覧: [エントリ指定; 3] = [
 ];
 
 pub(super) fn 三エントリをコンパイルする(
-    slangc: &スランガー位置,
+    slangc: &スラングコンパイラの所在,
     ソース絶対パス: &Path,
     出力先ディレクトリ: &Path,
 ) -> Result<(), String> {

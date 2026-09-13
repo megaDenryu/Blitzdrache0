@@ -10,7 +10,7 @@ const 班のスレッド数: u32 = 64;
 /// 1回のディスパッチの束縛。パイプラインごとに変わるのはパイプラインとスレッド数だけである。
 #[derive(Clone, Copy)]
 pub(super) struct 発行の束縛 {
-    pub(super) layout: vk::PipelineLayout,
+    pub(super) レイアウト: vk::PipelineLayout,
     pub(super) セット: vk::DescriptorSet,
 }
 
@@ -19,14 +19,14 @@ pub(super) struct 発行の指定 {
     pub(super) 名前: &'static str,
     pub(super) 読み: Vec<(バッファハンドル, バッファ用途)>,
     pub(super) 書き: Vec<(バッファハンドル, バッファ用途)>,
-    pub(super) pipeline: vk::Pipeline,
+    pub(super) パイプライン: vk::Pipeline,
     pub(super) スレッド数: u32,
     pub(super) 色の区間: Option<[u32; 2]>, // 彩色の方式だけがプッシュ定数で運ぶ(開始, 本数)
 }
 
 pub(super) fn 積む<'a>(グラフ: &mut グラフ<'a>, 束縛: 発行の束縛, 指定: 発行の指定) {
     let セット一覧 = [束縛.セット];
-    let pipeline = 指定.pipeline;
+    let pipeline = 指定.パイプライン;
     let スレッド数 = 指定.スレッド数;
     let 色の区間 = 指定.色の区間;
     グラフ.パスを積む(パス宣言::生成する(
@@ -43,12 +43,12 @@ pub(super) fn 積む<'a>(グラフ: &mut グラフ<'a>, 束縛: 発行の束縛,
             // プッシュ定数の8バイトはパイプラインレイアウトが宣言した範囲そのものである。
             unsafe {
                 device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::COMPUTE, pipeline);
-                device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::COMPUTE, 束縛.layout, 0, &セット一覧, &[]);
+                device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::COMPUTE, 束縛.レイアウト, 0, &セット一覧, &[]);
                 if let Some([開始, 本数]) = 色の区間 {
                     let mut バイト列 = [0u8; 8];
                     バイト列[..4].copy_from_slice(&開始.to_le_bytes());
                     バイト列[4..].copy_from_slice(&本数.to_le_bytes());
-                    device.cmd_push_constants(command_buffer, 束縛.layout, vk::ShaderStageFlags::COMPUTE, 0, &バイト列);
+                    device.cmd_push_constants(command_buffer, 束縛.レイアウト, vk::ShaderStageFlags::COMPUTE, 0, &バイト列);
                 }
                 device.cmd_dispatch(command_buffer, スレッド数.div_ceil(班のスレッド数), 1, 1);
             }

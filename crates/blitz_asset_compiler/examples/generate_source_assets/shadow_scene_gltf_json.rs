@@ -3,7 +3,7 @@
 //! (床: 位置48B→法線48B→接線64B→UV32B→インデックス12B、遮蔽: 同順)へ
 //! 手動で一致させている(判断37)。
 
-pub(super) const 文書JSON: &str = r#"{
+pub(super) const 文書のJSON文字列: &str = r#"{
   "asset": { "version": "2.0" },
   "buffers": [
     { "uri": "shadow_scene.bin", "byteLength": 408 }

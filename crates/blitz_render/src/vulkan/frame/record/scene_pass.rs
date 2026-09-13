@@ -83,11 +83,11 @@ fn 布を記録する(積み先: GPU命令の積み先<'_>, 布: &布ドロー<'
     // 安全性: command_bufferは記録中で、布のパイプライン・バッファは生成済み。
     // 布の描画layoutは頂点ステージの16バイト範囲(カメラ相対の基準原点)を宣言済みである。
     unsafe {
-        device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.描画pipeline);
-        入力.相対の基準原点.プッシュ定数として積む(積み先, 入力.描画layout);
+        device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.描画パイプライン);
+        入力.相対の基準原点.プッシュ定数として積む(積み先, 入力.描画レイアウト);
     }
     共有.計器.描画切替().パイプライン束縛を数える(可視パス::シーン);
-    shared_set_bind::布の共有セットを束縛する(積み先, 入力.描画layout, 共有);
+    shared_set_bind::布の共有セットを束縛する(積み先, 入力.描画レイアウト, 共有);
     // 安全性: command_bufferは記録中で、布の頂点・インデックスバッファは生成済み。
     unsafe {
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.布頂点バッファ], &[0]);

@@ -41,8 +41,8 @@ impl 実行の別 {
         Some(match self {
             Self::対照を採る => 始める("reference"),
             Self::候補を採る => 始める("candidate"),
-            Self::Ssaoなし対照を採る => 始める("reference_no_ssao").ssaoを切る(),
-            Self::Ssaoなし候補を採る => 始める("candidate_no_ssao").ssaoを切る(),
+            Self::Ssaoなし対照を採る => 始める("reference_no_ssao").局所可視性を切る(),
+            Self::Ssaoなし候補を採る => 始める("candidate_no_ssao").局所可視性を切る(),
             Self::遠景影なし候補を採る => 始める("candidate_no_distant_shadow").遠景影を切る(),
             Self::後処理なし対照を採る => 始める("reference_no_post").後処理を切る(),
             Self::後処理なし候補を採る => 始める("candidate_no_post").後処理を切る(),
@@ -59,10 +59,10 @@ impl 実行の別 {
             Self::後処理なし散布の候補を採る => 始める("scatter_candidate_no_post").後処理を切る(),
             Self::素の散布の対照を採る => 始める("scatter_reference_bare")
                 .後処理を切る()
-                .ssaoを切る()
+                .局所可視性を切る()
                 .影のキャスターを切る()
                 .散布を焼かない対照から読む(),
-            Self::素の散布の候補を採る => 始める("scatter_candidate_bare").後処理を切る().ssaoを切る().影のキャスターを切る(),
+            Self::素の散布の候補を採る => 始める("scatter_candidate_bare").後処理を切る().局所可視性を切る().影のキャスターを切る(),
             Self::散布の対照を焼く | Self::計画を表示する | Self::判定する | Self::影を判定する | Self::散布を判定する =>
             {
                 return None;

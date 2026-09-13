@@ -5,12 +5,12 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 /// slangcの起動に使うプログラム指定。
-pub(super) enum スランガー位置 {
+pub(super) enum スラングコンパイラの所在 {
     絶対パス(PathBuf), // VULKAN_SDK配下で発見した絶対パス
     パス経由,          // PATH解決に委ねる（"slangc"をそのままプログラム名として渡す）
 }
 
-impl スランガー位置 {
+impl スラングコンパイラの所在 {
     pub(super) fn プログラム名(&self) -> &Path {
         match self {
             Self::絶対パス(パス) => パス.as_path(),
@@ -19,16 +19,16 @@ impl スランガー位置 {
     }
 }
 
-pub(super) fn 発見する() -> Result<スランガー位置, String> {
+pub(super) fn 発見する() -> Result<スラングコンパイラの所在, String> {
     if let Ok(sdk) = env::var("VULKAN_SDK") {
         let 候補 = PathBuf::from(sdk).join("Bin").join("slangc.exe");
         if 候補.is_file() {
-            return Ok(スランガー位置::絶対パス(候補));
+            return Ok(スラングコンパイラの所在::絶対パス(候補));
         }
     }
 
     if slangcがpathで動くか() {
-        return Ok(スランガー位置::パス経由);
+        return Ok(スラングコンパイラの所在::パス経由);
     }
 
     Err("slangcが見つからない。VULKAN_SDK環境変数を確認するか、PATHにslangcを追加すること".to_string())

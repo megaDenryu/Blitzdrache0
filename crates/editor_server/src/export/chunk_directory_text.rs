@@ -12,7 +12,7 @@ pub(super) const ファイル名: &str = "chunk_directory.txt";
 pub(super) struct 目録項目 {
     pub(super) x: i32,
     pub(super) z: i32,
-    pub(super) アセットid: String,
+    pub(super) アセット識別子: String,
     pub(super) 相対ファイル名: String,
 }
 
@@ -20,7 +20,7 @@ pub(super) fn 本文を組み立てる(チャンク一辺メートル: f32, 項�
     let mut 本文 = format!("blitz_chunk_directory 2 {チャンク一辺メートル}");
     本文.push('\n');
     for 項目 in 項目一覧 {
-        本文.push_str(&format!("{} {} {} {}\n", 項目.x, 項目.z, 項目.アセットid, 項目.相対ファイル名));
+        本文.push_str(&format!("{} {} {} {}\n", 項目.x, 項目.z, 項目.アセット識別子, 項目.相対ファイル名));
     }
     本文
 }

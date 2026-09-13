@@ -9,8 +9,8 @@ use super::{multi_material_geometry, multi_material_gltf_json};
 use super::{shadow_scene_geometry, shadow_scene_gltf_json, shadow_scene_texture, textures};
 
 pub(super) fn 書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
-    書き込む(&出力先ディレクトリ.join("quad.gltf"), gltf_json::文書JSON.as_bytes())?;
-    let 代替文書 = gltf_json::文書JSON.replace("quad_base_color.png", "quad_alt_color.png");
+    書き込む(&出力先ディレクトリ.join("quad.gltf"), gltf_json::文書のJSON文字列.as_bytes())?;
+    let 代替文書 = gltf_json::文書のJSON文字列.replace("quad_base_color.png", "quad_alt_color.png");
     書き込む(&出力先ディレクトリ.join("quad_alt.gltf"), 代替文書.as_bytes())?;
     書き込む(&出力先ディレクトリ.join("quad.bin"), &geometry::バッファバイト列を作る())?;
     textures::保存する(出力先ディレクトリ)?;
@@ -55,7 +55,10 @@ fn 遠方環境の検収アセットを書き出す(出力先ディレクトリ:
 }
 
 fn シャドウ検証アセットを書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
-    書き込む(&出力先ディレクトリ.join("shadow_scene.gltf"), shadow_scene_gltf_json::文書JSON.as_bytes())?;
+    書き込む(
+        &出力先ディレクトリ.join("shadow_scene.gltf"),
+        shadow_scene_gltf_json::文書のJSON文字列.as_bytes(),
+    )?;
     書き込む(
         &出力先ディレクトリ.join("shadow_scene.bin"),
         &shadow_scene_geometry::バッファバイト列を作る(),

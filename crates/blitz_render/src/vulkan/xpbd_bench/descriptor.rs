@@ -37,8 +37,8 @@ const 束縛の宣言: 宣言した束縛の並び<束縛の本数> = 宣言し�
 ]);
 
 pub(super) struct XPBD計測ディスクリプタ {
-    layout: 宣言から作ったセットレイアウト<束縛の本数>,
-    pool: vk::DescriptorPool,
+    レイアウト: 宣言から作ったセットレイアウト<束縛の本数>,
+    プール: vk::DescriptorPool,
     セット: 宣言から割り当てたセット<束縛の本数>,
 }
 
@@ -46,9 +46,9 @@ impl XPBD計測ディスクリプタ {
     pub(super) fn 生成する(device: &ash::Device, バッファ: &XPBD計測バッファ) -> Result<Self, レンダラーエラー> {
         let layout = 束縛の宣言.セットレイアウトを確保する(device)?;
         let 内訳 = 束縛の宣言.プールの内訳(1);
-        let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(1).pool_sizes(&内訳);
+        let プールの生成情報 = vk::DescriptorPoolCreateInfo::default().max_sets(1).pool_sizes(&内訳);
         // 安全性: deviceは生成済みで有効。失敗時はlayoutを片付ける。
-        let pool = match unsafe { device.create_descriptor_pool(&pool_info, None) } {
+        let pool = match unsafe { device.create_descriptor_pool(&プールの生成情報, None) } {
             Ok(pool) => pool,
             Err(誤り) => {
                 layout.破棄する(device);
@@ -76,11 +76,15 @@ impl XPBD計測ディスクリプタ {
             結ぶ現物::バッファ全体(バッファ.隣接の区間.バッファのハンドル()),
             結ぶ現物::バッファ全体(バッファ.隣接の項目.バッファのハンドル()),
         ]);
-        Ok(Self { layout, pool, セット })
+        Ok(Self {
+            レイアウト: layout,
+            プール: pool,
+            セット,
+        })
     }
 
     pub(super) fn レイアウトのハンドル(&self) -> vk::DescriptorSetLayout {
-        self.layout.レイアウトのハンドル()
+        self.レイアウト.レイアウトのハンドル()
     }
 
     pub(super) fn セットのハンドル(&self) -> vk::DescriptorSet {
@@ -89,7 +93,7 @@ impl XPBD計測ディスクリプタ {
 
     pub(super) fn 破棄する(&self, device: &ash::Device) {
         // 安全性: poolはこの構造体が唯一の所有者であり、その破棄がセットの解放を暗黙に行う。
-        unsafe { device.destroy_descriptor_pool(self.pool, None) };
-        self.layout.破棄する(device);
+        unsafe { device.destroy_descriptor_pool(self.プール, None) };
+        self.レイアウト.破棄する(device);
     }
 }

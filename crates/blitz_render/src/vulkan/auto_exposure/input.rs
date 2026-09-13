@@ -10,10 +10,10 @@ use super::自動露出一式;
 pub(crate) struct 自動露出描画入力 {
     pub(crate) ヒストグラムバッファ: vk::Buffer,
     pub(crate) 露出状態バッファ: vk::Buffer,
-    pub(crate) 集計pipeline: vk::Pipeline,
-    pub(crate) 集計layout: vk::PipelineLayout,
-    pub(crate) 導出pipeline: vk::Pipeline,
-    pub(crate) 導出layout: vk::PipelineLayout,
+    pub(crate) 集計パイプライン: vk::Pipeline,
+    pub(crate) 集計レイアウト: vk::PipelineLayout,
+    pub(crate) 導出パイプライン: vk::Pipeline,
+    pub(crate) 導出レイアウト: vk::PipelineLayout,
     pub(crate) セット: vk::DescriptorSet, // 集計と導出が共有する1つのセット。どちらがどの束縛を触るかはレンダーグラフのパス宣言が持つ。
     pub(crate) 導出の即時定数: [f32; 6],  // 順は`shaders/auto_exposure_resolve.slang`の`ResolveSetting`と一致させる。
 }
@@ -23,10 +23,10 @@ impl 自動露出一式 {
         自動露出描画入力 {
             ヒストグラムバッファ: self.バッファ.ヒストグラム.バッファのハンドル(),
             露出状態バッファ: self.バッファ.露出状態.バッファのハンドル(),
-            集計pipeline: self.パイプライン.集計,
-            集計layout: self.パイプライン.集計レイアウト,
-            導出pipeline: self.パイプライン.導出,
-            導出layout: self.パイプライン.導出レイアウト,
+            集計パイプライン: self.パイプライン.集計,
+            集計レイアウト: self.パイプライン.集計レイアウト,
+            導出パイプライン: self.パイプライン.導出,
+            導出レイアウト: self.パイプライン.導出レイアウト,
             セット: self.ディスクリプタ.セットのハンドル(),
             導出の即時定数: [
                 self.設定.目標中間灰の対数輝度,

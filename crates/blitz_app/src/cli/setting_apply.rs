@@ -16,10 +16,10 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--frames" => 設定.モード = value_args::frames引数を処理する(残り)?,
         "--benchmark-frames" => 設定.モード = value_args::benchmark_frames引数を処理する(残り)?,
         "--ibl-step-scan" | "--ibl-step-control" => 設定.モード = ibl_step_scan_args::引数を処理する(残り, 引数値)?,
-        "--shader-source" => 設定.シェーダーの入口ファイル = path_args::shader_source引数を処理する(残り)?,
+        "--shader-source" => 設定.シェーダーの入口ファイル = path_args::シェーダー入口の指定の引数を処理する(残り)?,
         "--scene" => 設定.シーン = value_args::scene引数を処理する(残り)?,
         "--game" => 設定.遊ぶゲーム = game_selection::遊ぶゲームの指定の引数を処理する(残り)?,
-        "--asset-root" => 設定.アセットの置き場 = path_args::asset_root引数を処理する(残り)?,
+        "--asset-root" => 設定.アセットの置き場 = path_args::アセットルートの指定の引数を処理する(残り)?,
         "--object-count" => 設定.描画対象の並べ方.件数 = Some(value_args::object_count引数を処理する(残り)?),
         "--dump-frame" | "--dump-hdr-frame" | "--dump-depth-frame" => {
             value_args::フレームダンプ引数を反映する(&mut 設定.フレームダンプ先, 残り, 引数値)?
@@ -30,19 +30,21 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--indirect-probe" => 設定.読み戻し検収.遠方環境の検収条件 = Some(indirect_probe_args::引数を処理する(残り)?),
         "--exposure" => 設定.露出 = value_args::exposure引数を処理する(残り)?,
         "--cloth-xpbd-reference" => {
-            設定.布モード = cloth_reference_args::cloth_xpbd_reference引数を処理する(残り, 引数値, 参照比較の床の下の固定点::持たない)?
+            設定.布モード = cloth_reference_args::布のxpbd参照比較の引数を処理する(残り, 引数値, 参照比較の床の下の固定点::持たない)?
         }
         "--cloth-xpbd-reference-below-floor" => {
-            設定.布モード = cloth_reference_args::cloth_xpbd_reference引数を処理する(残り, 引数値, 参照比較の床の下の固定点::持つ)?
+            設定.布モード = cloth_reference_args::布のxpbd参照比較の引数を処理する(残り, 引数値, 参照比較の床の下の固定点::持つ)?
         }
         "--cloth-xpbd-reference-bending" => {
-            設定.布モード = cloth_reference_args::cloth_xpbd_reference_bending引数を処理する(残り, 設定.布モード)?
+            設定.布モード = cloth_reference_args::布の曲げのコンプライアンスの引数を処理する(残り, 設定.布モード)?
         }
-        "--cloth-xpbd-reference-shape" => 設定.布モード = cloth_reference_args::cloth_xpbd_reference_shape引数を処理する(残り, 設定.布モード)?,
-        "--global-offset" => 設定.平行移動.大域ずらし量 = placement_args::global_offset引数を処理する(残り)?,
-        "--camera-nudge" => 設定.平行移動.カメラずれ = placement_args::camera_nudge引数を処理する(残り)?,
-        "--camera-pitch" => 設定.平行移動.カメラ俯角差分 = placement_args::camera_pitch引数を処理する(残り)?,
-        "--camera-yaw" => 設定.平行移動.カメラ方位差分 = placement_args::camera_yaw引数を処理する(残り)?,
+        "--cloth-xpbd-reference-shape" => {
+            設定.布モード = cloth_reference_args::参照比較の題材の形の引数を処理する(残り, 設定.布モード)?
+        }
+        "--global-offset" => 設定.平行移動.大域ずらし量 = placement_args::大域ずらし量の引数を処理する(残り)?,
+        "--camera-nudge" => 設定.平行移動.カメラずれ = placement_args::カメラずれの引数を処理する(残り)?,
+        "--camera-pitch" => 設定.平行移動.カメラ俯角差分 = placement_args::カメラ俯角の引数を処理する(残り)?,
+        "--camera-yaw" => 設定.平行移動.カメラ方位差分 = placement_args::カメラ方位の引数を処理する(残り)?,
         "--shadow-resolution" => 設定.シャドウ計測.一辺解像度 = shadow_args::shadow_resolution引数を処理する(残り)?,
         "--caster-margin" => 設定.シャドウ計測.キャスター余白 = Some(shadow_args::caster_margin引数を処理する(残り)?),
         "--max-shadow-distance" => 設定.シャドウ計測.最大影距離 = Some(shadow_args::max_shadow_distance引数を処理する(残り)?),
@@ -60,7 +62,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--local-light-count" => 設定.ライティング.局所光の件数 = local_light_count_args::引数を処理する(残り)?,
         "--point-light-shadow-count" => 設定.ライティング.影を落とす灯の件数 = point_light_shadow_count_args::引数を処理する(残り)?,
         "--blend" => 設定.ブレンド = value_args::blend引数を処理する(残り)?,
-        "--lod-probe-step" => 設定.個体詳細段探査刻み = Some(instance_lod_args::lod_probe_step引数を処理する(残り)?),
+        "--lod-probe-step" => 設定.個体詳細段探査刻み = Some(instance_lod_args::個体別lod探査刻みの引数を処理する(残り)?),
         "--streaming-ram-limit" => {
             設定.ストリーミング.上限.ramバイト数 = value_args::ストリーミング上限引数を処理する(残り, 引数値)?;
         }

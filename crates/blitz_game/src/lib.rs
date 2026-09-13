@@ -78,7 +78,7 @@ pub use display_distance_decision::表示距離の決定;
 pub use facing_azimuth::動く個体が向いている方位角;
 pub use forward_azimuth::前へ進む向きの方位角;
 pub use fox_tour_route::キツネの場所巡りの道順を作る;
-pub use game_intent::ゲームインテント;
+pub use game_intent::ゲームの操作意図;
 pub use game_state::場所巡りのゲームの状態;
 pub use ground_height::足元の地面の高さ;
 pub use horizontal_unit_vector::水平面の単位ベクトル;

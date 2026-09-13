@@ -84,14 +84,14 @@ fn チャンクの高さ格子と材質重みを保存して読み戻すとバ�
     let (_一時, 保管庫) = crate::common::保管庫を作る("chunk_grids_storage_roundtrip");
     let 座標 = チャンク座標::生成する(1, 1);
     let 頂点数 = 区画割り例().チャンク格子の頂点数().unwrap();
-    let 頂点数usize = usize::try_from(頂点数).unwrap();
+    let 頂点数のusize値 = usize::try_from(頂点数).unwrap();
 
-    let 高さバイト列 = vec![3u8; 頂点数usize * 頂点数usize * 4];
+    let 高さバイト列 = vec![3u8; 頂点数のusize値 * 頂点数のusize値 * 4];
     let 高さ格子 = チャンクの高さ編集::生成する(頂点数, 高さバイト列.clone()).unwrap();
     保管庫.チャンクの高さ格子を検証して保存する(座標, 高さ格子).unwrap();
     assert_eq!(保管庫.チャンクの高さ格子を読む(座標).unwrap(), Some(高さバイト列));
 
-    let 重みバイト列 = [255u8, 0, 0, 0].repeat(頂点数usize * 頂点数usize);
+    let 重みバイト列 = [255u8, 0, 0, 0].repeat(頂点数のusize値 * 頂点数のusize値);
     let 重み = 地表材質の重み::生成する(頂点数, 重みバイト列.clone()).unwrap();
     保管庫.チャンクの材質重みを検証して保存する(座標, 重み).unwrap();
     assert_eq!(保管庫.チャンクの材質重みを読む(座標).unwrap(), Some(重みバイト列));

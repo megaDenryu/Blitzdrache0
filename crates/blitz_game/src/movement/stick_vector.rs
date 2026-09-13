@@ -8,7 +8,7 @@ use blitz_math::メートル毎秒;
 
 use super::horizontal_velocity::水平の速度;
 use crate::forward_azimuth::前へ進む向きの方位角;
-use crate::game_intent::ゲームインテント;
+use crate::game_intent::ゲームの操作意図;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 世界の軸で見た倒し量 {
@@ -17,9 +17,9 @@ pub struct 世界の軸で見た倒し量 {
 }
 
 impl 世界の軸で見た倒し量 {
-    pub fn 生成する(インテント: ゲームインテント, 前へ進む向き: 前へ進む向きの方位角) -> Self {
-        let 右への倒し量 = インテント.左右の倒し量.値();
-        let 前への倒し量 = インテント.前後の倒し量.値();
+    pub fn 生成する(意図: ゲームの操作意図, 前へ進む向き: 前へ進む向きの方位角) -> Self {
+        let 右への倒し量 = 意図.左右の倒し量.値();
+        let 前への倒し量 = 意図.前後の倒し量.値();
         let 倒し量の長さ = (右への倒し量 * 右への倒し量 + 前への倒し量 * 前への倒し量).sqrt();
         let 縮める倍率 = if 倒し量の長さ > 1.0 { 1.0 / 倒し量の長さ } else { 1.0 };
         let 前の向き = 前へ進む向き.前へ進む向きの東と南の成分();

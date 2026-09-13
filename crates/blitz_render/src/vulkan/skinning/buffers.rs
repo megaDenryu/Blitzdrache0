@@ -19,15 +19,15 @@ pub(super) struct スキニングバッファ {
 }
 
 impl スキニングバッファ {
-    pub(super) fn レスト頂点buffer(&self) -> vk::Buffer {
+    pub(super) fn レスト頂点のバッファ(&self) -> vk::Buffer {
         self.レスト頂点.バッファのハンドル()
     }
 
-    pub(super) fn 属性buffer(&self) -> vk::Buffer {
+    pub(super) fn 属性のバッファ(&self) -> vk::Buffer {
         self.属性.バッファのハンドル()
     }
 
-    pub(super) fn 行列buffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
+    pub(super) fn 行列のバッファ(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
         self.行列一覧.スロットのバッファ(フレーム添字)
     }
 

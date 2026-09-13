@@ -22,9 +22,9 @@ pub trait ソースアセットの生成器を起こす係 {
 }
 
 /// 生成器のexampleをcargoから起こす、実物の起こし方。
-pub struct 生成器のexampleをcargoから起こす係;
+pub struct 生成器の実行例をcargoから起こす係;
 
-impl ソースアセットの生成器を起こす係 for 生成器のexampleをcargoから起こす係 {
+impl ソースアセットの生成器を起こす係 for 生成器の実行例をcargoから起こす係 {
     fn 生成器を組み立てて実行ファイルの内容ハッシュを求める(
         &self,
     ) -> Result<内容ハッシュ, 生成物のソースアセットの取り揃えの破れ> {

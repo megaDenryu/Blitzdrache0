@@ -9,11 +9,11 @@ use super::value_args::次の値を読む;
 use super::{LOD継ぎ目検査設定, 起動引数エラー};
 
 pub(super) fn 引数を処理する(引数: &mut Iter<String>) -> Result<LOD継ぎ目検査設定, 起動引数エラー> {
-    let x1 = i32を読む(引数, "--lod-crack-pair", "一方X")?;
-    let z1 = i32を読む(引数, "--lod-crack-pair", "一方Z")?;
+    let x1 = 成分を読む(引数, "--lod-crack-pair", "一方X")?;
+    let z1 = 成分を読む(引数, "--lod-crack-pair", "一方Z")?;
     let 段1 = u8を読む(引数, "一方段")?;
-    let x2 = i32を読む(引数, "--lod-crack-pair", "他方X")?;
-    let z2 = i32を読む(引数, "--lod-crack-pair", "他方Z")?;
+    let x2 = 成分を読む(引数, "--lod-crack-pair", "他方X")?;
+    let z2 = 成分を読む(引数, "--lod-crack-pair", "他方Z")?;
     let 段2 = u8を読む(引数, "他方段")?;
     Ok(LOD継ぎ目検査設定 {
         一方座標: チャンク座標::生成する(x1, z1),
@@ -25,12 +25,12 @@ pub(super) fn 引数を処理する(引数: &mut Iter<String>) -> Result<LOD継�
 }
 
 pub(super) fn 欠落引数を処理する(引数: &mut Iter<String>) -> Result<チャンク座標, 起動引数エラー> {
-    let x = i32を読む(引数, "--lod-crack-missing", "欠落X")?;
-    let z = i32を読む(引数, "--lod-crack-missing", "欠落Z")?;
+    let x = 成分を読む(引数, "--lod-crack-missing", "欠落X")?;
+    let z = 成分を読む(引数, "--lod-crack-missing", "欠落Z")?;
     Ok(チャンク座標::生成する(x, z))
 }
 
-fn i32を読む(引数: &mut Iter<String>, 引数名: &str, 名前: &str) -> Result<i32, 起動引数エラー> {
+fn 成分を読む(引数: &mut Iter<String>, 引数名: &str, 名前: &str) -> Result<i32, 起動引数エラー> {
     let 値 = 次の値を読む(引数, 引数名, 起動引数エラー::Lod継ぎ目検査不正)?;
     値.parse().map_err(|_| 起動引数エラー::Lod継ぎ目検査不正(format!("{名前}: {値}")))
 }

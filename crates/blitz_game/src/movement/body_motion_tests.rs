@@ -5,7 +5,7 @@ use blitz_math::{メートル毎秒, 大域メートル};
 
 use super::body_motion_test_fixture::{入力, 刻む, 前へ倒す, 大域位置, 床の上で接地した状態};
 use super::movement_state::移動状態;
-use crate::game_intent::ゲームインテント;
+use crate::game_intent::ゲームの操作意図;
 use crate::planar_test_world::平面と段と壁の世界;
 
 #[test]
@@ -29,7 +29,7 @@ fn 平地を北へ歩くと接地中のまま北へ進む() {
 fn 走ると歩くの倍の速さで進む() {
     let mut 世界 = 平面と段と壁の世界::床だけの世界(大域メートル::生成する(0.0));
     let (足元, 状態) = 床の上で接地した状態(&mut 世界, 0.0, 0.0, 0.0);
-    let 走る = ゲームインテント {
+    let 走る = ゲームの操作意図 {
         走りたいか: true,
         ..前へ倒す()
     };

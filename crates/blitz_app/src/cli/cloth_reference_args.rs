@@ -11,7 +11,7 @@ use super::{
 
 /// `--cloth-xpbd-reference <コンプライアンス>`と`--cloth-xpbd-reference-below-floor <コンプライアンス>`。布をXPBDの参照比較の方式で起こし、
 /// 構造とせん断へ同じコンプライアンスを与える。後者は目標が床の下にある世界固定点を1本持つ題材を選ぶ。
-pub(super) fn cloth_xpbd_reference引数を処理する(
+pub(super) fn 布のxpbd参照比較の引数を処理する(
     引数: &mut Iter<String>,
     引数名: &str,
     床の下の固定点: 参照比較の床の下の固定点,
@@ -27,7 +27,7 @@ pub(super) fn cloth_xpbd_reference引数を処理する(
 
 /// `--cloth-xpbd-reference-bending <曲げのコンプライアンス>`。既に参照比較の方式になっている布モードへ曲げのコンプライアンスを与える。
 /// `--cloth-xpbd-reference`より前に置かれた指定は、どの題材へ与えるかが無いため型付きの失敗にする(黙って読み捨てない)。
-pub(super) fn cloth_xpbd_reference_bending引数を処理する(
+pub(super) fn 布の曲げのコンプライアンスの引数を処理する(
     引数: &mut Iter<String>,
     布モード: 布モード,
 ) -> Result<布モード, 起動引数エラー> {
@@ -52,7 +52,7 @@ pub(super) fn cloth_xpbd_reference_bending引数を処理する(
 }
 
 /// `--cloth-xpbd-reference-shape <綴り>`。既に参照比較の方式になっている布モードへ題材の形(敷き方と固定)を与える。
-pub(super) fn cloth_xpbd_reference_shape引数を処理する(
+pub(super) fn 参照比較の題材の形の引数を処理する(
     引数: &mut Iter<String>,
     布モード: 布モード,
 ) -> Result<布モード, 起動引数エラー> {

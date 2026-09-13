@@ -15,7 +15,7 @@ mod row;
 mod srgb_encode;
 mod view_ray;
 
-pub(crate) use srgb_encode::線形をsrgb8bit相当へ変換する;
+pub(crate) use srgb_encode::線形色をsrgbの8ビット相当へ変換する;
 
 use blitz_render::atmosphere::{
     スカイビュー表, スカイビュー観測条件, 多重散乱表, 大気のベイク済み画像の解像度, 天頂余弦, 透過率表

@@ -1,6 +1,6 @@
 //! リニア色成分をsRGB8bit相当のf32値へ変換する(0〜255)。
 
-pub(super) fn linearをsrgb8bit相当のf32へ変換する(線形値: f32) -> f32 {
+pub(super) fn 線形をsrgb8bit相当のf32へ変換する(線形値: f32) -> f32 {
     let srgb値 = if 線形値 <= 0.0031308 {
         12.92 * 線形値
     } else {

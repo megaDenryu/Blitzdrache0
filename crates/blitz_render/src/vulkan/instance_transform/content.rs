@@ -17,7 +17,7 @@ pub(crate) struct 個体変換内容 {
 impl 個体変換内容 {
     /// 法線行列は変換の線形部の逆転置である。行列式が0に近い変換は法線を求められないため、無言で単位行列へ落とさず型付きエラーにする。
     pub(crate) fn 変換から作る(ローカルからワールド: 変換<ローカル, ワールド>) -> Result<Self, レンダラーエラー> {
-        let 生行列 = ローカルからワールド.gpu境界用列優先配列();
+        let 生行列 = ローカルからワールド.gpu境界用の列優先配列();
         let 法線基底 = Mat3::from_mat4(Mat4::from_cols_array_2d(&生行列));
         let 行列式 = 法線基底.determinant();
         if !行列式.is_finite() || 行列式.abs() <= f32::EPSILON {

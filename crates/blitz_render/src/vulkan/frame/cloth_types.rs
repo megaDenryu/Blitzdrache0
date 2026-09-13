@@ -17,25 +17,25 @@ pub(crate) struct 布描画の外部資源 {
 /// これにより布の影は描画対象の登録数にも走査順にも依存しない
 /// (参照: `_doc/設計/空と時間帯と遠距離シャドウ.md`「描画段階資源の器と布専用シャドウ経路」)。
 pub(crate) struct 布シャドウ描画入力 {
-    pub(crate) pipeline: vk::Pipeline,
-    pub(crate) layout: vk::PipelineLayout,
+    pub(crate) パイプライン: vk::Pipeline,
+    pub(crate) レイアウト: vk::PipelineLayout,
 }
 
 pub(crate) struct 布描画入力 {
-    pub(crate) layout: vk::PipelineLayout,
-    pub(crate) 介入pipeline: vk::Pipeline,
-    pub(crate) 積分pipeline: vk::Pipeline,
-    pub(crate) 目標の確定pipeline: vk::Pipeline,
-    pub(crate) 乗数零化pipeline: vk::Pipeline,
-    pub(crate) 拘束pipeline: vk::Pipeline,
-    pub(crate) 曲げ拘束pipeline: vk::Pipeline,
-    pub(crate) 目標拘束pipeline: vk::Pipeline,
-    pub(crate) ハッシュ消去pipeline: vk::Pipeline,
-    pub(crate) ハッシュ格納pipeline: vk::Pipeline,
-    pub(crate) 分離pipeline: vk::Pipeline,
-    pub(crate) 床とカプセルの押し出しpipeline: vk::Pipeline,
-    pub(crate) 仕上げpipeline: vk::Pipeline,
-    pub(crate) 頂点生成pipeline: vk::Pipeline,
+    pub(crate) レイアウト: vk::PipelineLayout,
+    pub(crate) 介入パイプライン: vk::Pipeline,
+    pub(crate) 積分パイプライン: vk::Pipeline,
+    pub(crate) 目標の確定パイプライン: vk::Pipeline,
+    pub(crate) 乗数零化パイプライン: vk::Pipeline,
+    pub(crate) 拘束パイプライン: vk::Pipeline,
+    pub(crate) 曲げ拘束パイプライン: vk::Pipeline,
+    pub(crate) 目標拘束パイプライン: vk::Pipeline,
+    pub(crate) ハッシュ消去パイプライン: vk::Pipeline,
+    pub(crate) ハッシュ格納パイプライン: vk::Pipeline,
+    pub(crate) 分離パイプライン: vk::Pipeline,
+    pub(crate) 床とカプセルの押し出しパイプライン: vk::Pipeline,
+    pub(crate) 仕上げパイプライン: vk::Pipeline,
+    pub(crate) 頂点生成パイプライン: vk::Pipeline,
     pub(crate) ディスクリプタセット: vk::DescriptorSet,
     pub(crate) 粒子数: u32,
     pub(crate) 拘束の数: u32,
@@ -60,8 +60,8 @@ pub(crate) struct 布描画入力 {
     pub(crate) 布頂点バッファ: vk::Buffer,
     pub(crate) インデックスバッファ: vk::Buffer,
     pub(crate) インデックス数: u32,
-    pub(crate) 描画pipeline: vk::Pipeline,
-    pub(crate) 描画layout: vk::PipelineLayout, // シーンパスで`描画pipeline`を束縛したまま、プッシュ定数とディスクリプタセットを送る先
+    pub(crate) 描画パイプライン: vk::Pipeline,
+    pub(crate) 描画レイアウト: vk::PipelineLayout, // シーンパスで`描画pipeline`を束縛したまま、プッシュ定数とディスクリプタセットを送る先
     pub(crate) 相対の基準原点: カメラ相対の基準原点, // 布の粒子位置は世界原点基準のため、基準原点は世界原点のカメラ相対値になる
     pub(crate) 外部資源: 布描画の外部資源,
 }

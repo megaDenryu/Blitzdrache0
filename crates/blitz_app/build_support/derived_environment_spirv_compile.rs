@@ -5,7 +5,7 @@
 use std::path::Path;
 
 use super::slangc_entry_compile::{エントリ一覧をコンパイルする, エントリ指定};
-use super::slangc_locate::スランガー位置;
+use super::slangc_locate::スラングコンパイラの所在;
 
 /// 派生表現の3本。遠方環境の上に立ち同じ空段階でだけ使うため、同じ場所でコンパイルする。
 const 拡散照度エントリ: [エントリ指定; 1] = [エントリ指定 {
@@ -27,7 +27,7 @@ const 反射率積分表エントリ: [エントリ指定; 1] = [エントリ指
 }];
 
 pub(super) fn 全部をコンパイルする(
-    slangc: &スランガー位置,
+    slangc: &スラングコンパイラの所在,
     シェーダーディレクトリ: &Path,
     出力先ディレクトリ: &Path,
 ) -> Result<(), String> {

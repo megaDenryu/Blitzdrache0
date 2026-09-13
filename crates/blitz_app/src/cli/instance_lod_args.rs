@@ -10,7 +10,7 @@ use super::value_args::次の値を読む;
 use super::起動引数エラー;
 
 /// 個体別LODの検収でカメラを1フレームおきに前後させる刻み。0以上の有限値だけを受け取り、帯の内側かどうかは検収側が決める。
-pub(super) fn lod_probe_step引数を処理する(引数: &mut Iter<String>) -> Result<メートル, 起動引数エラー> {
+pub(super) fn 個体別lod探査刻みの引数を処理する(引数: &mut Iter<String>) -> Result<メートル, 起動引数エラー> {
     let 値 = 次の値を読む(引数, "--lod-probe-step", 起動引数エラー::LOD探査刻み不正)?;
     let 刻み = 値.parse::<f32>().map_err(|_| 起動引数エラー::LOD探査刻み不正(値.clone()))?;
     if !刻み.is_finite() || 刻み < 0.0 {

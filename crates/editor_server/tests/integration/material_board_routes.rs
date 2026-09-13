@@ -8,7 +8,7 @@ use axum::{
 };
 use tower::ServiceExt;
 
-fn 台帳Json() -> serde_json::Value {
+fn 台帳のjson() -> serde_json::Value {
     serde_json::json!({
         "マテリアル一覧": [
             { "エンジン材質名": "grass_a", "識別色": "#2d5a27" },
@@ -40,7 +40,7 @@ async fn マテリアル台帳を保存して取得できる() {
         .oneshot(
             Request::put("/api/マテリアル台帳")
                 .header("content-type", "application/json")
-                .body(Body::from(serde_json::to_vec(&台帳Json()).unwrap()))
+                .body(Body::from(serde_json::to_vec(&台帳のjson()).unwrap()))
                 .unwrap(),
         )
         .await
@@ -54,13 +54,13 @@ async fn マテリアル台帳を保存して取得できる() {
     assert_eq!(応答.status(), StatusCode::OK);
     let 本体 = axum::body::to_bytes(応答.into_body(), usize::MAX).await.unwrap();
     let 取得データ: serde_json::Value = serde_json::from_slice(&本体).unwrap();
-    assert_eq!(取得データ, 台帳Json());
+    assert_eq!(取得データ, 台帳のjson());
 }
 
 #[tokio::test]
 async fn 参照先が存在しない層割当は422を返し正本を変えない() {
     let 一時 = crate::common::一時プロジェクト::生成する("material_board_reject");
-    let mut 不正データ = 台帳Json();
+    let mut 不正データ = 台帳のjson();
     不正データ["層割当"]["草"] = serde_json::json!("存在しない材質");
     let 応答 = crate::common::ルーターを作る(&一時)
         .oneshot(

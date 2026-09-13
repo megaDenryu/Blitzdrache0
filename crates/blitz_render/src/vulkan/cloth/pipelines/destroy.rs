@@ -24,7 +24,7 @@ impl 布パイプライン群 {
             ] {
                 device.destroy_pipeline(handle, None);
             }
-            device.destroy_pipeline_layout(self.layout, None);
+            device.destroy_pipeline_layout(self.レイアウト, None);
         }
     }
 }

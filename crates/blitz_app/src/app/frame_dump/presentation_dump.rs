@@ -47,9 +47,10 @@ fn 書き出す(画像: &読み戻し画像, ベース名: &Path) -> Result<(), 
         }
     }
 
-    let rawパス = ベース名.with_extension("raw");
-    std::fs::write(&rawパス, バイト列).map_err(|誤り| 起動エラー::フレームダンプ失敗(format!("{}: {誤り}", rawパス.display())))?;
+    let 提示画像のパス = ベース名.with_extension("raw");
+    std::fs::write(&提示画像のパス, バイト列)
+        .map_err(|誤り| 起動エラー::フレームダンプ失敗(format!("{}: {誤り}", 提示画像のパス.display())))?;
     寸法を書く(幅, 高さ, ベース名)?;
-    println!("[dump-frame] 書き出した: {}", rawパス.display());
+    println!("[dump-frame] 書き出した: {}", 提示画像のパス.display());
     Ok(())
 }

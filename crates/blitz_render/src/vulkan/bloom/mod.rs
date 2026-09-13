@@ -22,9 +22,9 @@ pub(crate) struct 光のにじみ一式 {
     pub(crate) 前処理: 全画面パスのパイプライン,
     pub(crate) 縮小: 全画面パスのパイプライン,
     pub(crate) 拡大: 全画面パスのパイプライン,
-    sampler: vk::Sampler,
-    単一読みlayout: 宣言から作ったセットレイアウト<1>,
-    二読みlayout: 宣言から作ったセットレイアウト<2>,
+    サンプラー: vk::Sampler,
+    単一読みレイアウト: 宣言から作ったセットレイアウト<1>,
+    二読みレイアウト: 宣言から作ったセットレイアウト<2>,
     セット群: Option<descriptor::光のにじみセット群>, // ピラミッドを作り直すたびに丸ごと入れ替える
 }
 
@@ -61,8 +61,8 @@ impl 光のにじみ一式 {
         }
         self.セット群 = Some(descriptor::生成する(
             device,
-            &self.単一読みlayout,
-            &self.二読みlayout,
+            &self.単一読みレイアウト,
+            &self.二読みレイアウト,
             ピラミッド.縮小一覧.len(),
         )?);
         self.ビューを書く(device, hdrビュー, ピラミッド);
@@ -86,8 +86,8 @@ impl 光のにじみ一式 {
             セット群.破棄する(device);
         }
         // 安全性: samplerはSelfが唯一の所有者である。
-        unsafe { device.destroy_sampler(self.sampler, None) };
-        self.二読みlayout.破棄する(device);
-        self.単一読みlayout.破棄する(device);
+        unsafe { device.destroy_sampler(self.サンプラー, None) };
+        self.二読みレイアウト.破棄する(device);
+        self.単一読みレイアウト.破棄する(device);
     }
 }

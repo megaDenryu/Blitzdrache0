@@ -5,7 +5,7 @@
 use std::path::Path;
 
 use super::slangc_entry_compile::{エントリ一覧をコンパイルする, エントリ指定};
-use super::slangc_locate::スランガー位置;
+use super::slangc_locate::スラングコンパイラの所在;
 
 const 共通頂点エントリ: [エントリ指定; 1] = [エントリ指定 {
     エントリ名: "vertexMain",
@@ -26,7 +26,7 @@ const 空中遠近合成画素段エントリ: [エントリ指定; 1] = [エン
 }];
 
 pub(super) fn 全部をコンパイルする(
-    slangc: &スランガー位置,
+    slangc: &スラングコンパイラの所在,
     シェーダーディレクトリ: &Path,
     出力先ディレクトリ: &Path,
 ) -> Result<(), String> {

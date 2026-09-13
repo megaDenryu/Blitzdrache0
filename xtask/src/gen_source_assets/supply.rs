@@ -42,19 +42,19 @@ use document_snapshot::生成の直前の文書の写し;
 pub use error::生成物のソースアセットの取り揃えの破れ;
 use fingerprint::生成の指紋;
 use fingerprint_ledger::生成の指紋の台帳;
-use generator_launch::{ソースアセットの生成器を起こす係, 生成器のexampleをcargoから起こす係};
+use generator_launch::{ソースアセットの生成器を起こす係, 生成器の実行例をcargoから起こす係};
 
 pub struct 生成物のソースアセットを揃える係<起こし方> {
     ソースルート: ソースルート,
     生成器を起こす係: 起こし方,
 }
 
-impl 生成物のソースアセットを揃える係<生成器のexampleをcargoから起こす係> {
+impl 生成物のソースアセットを揃える係<生成器の実行例をcargoから起こす係> {
     /// リポジトリの既定のソースルートと、実物の生成器の起こし方を対にする。入口はこの口だけを通る。
     pub fn 既定のソースルートで作る() -> Self {
         Self::ソースルートと起こし方を対にする(
             ソースルート::生成する(crate::compile_assets::ソースルート().to_path_buf()),
-            生成器のexampleをcargoから起こす係,
+            生成器の実行例をcargoから起こす係,
         )
     }
 }

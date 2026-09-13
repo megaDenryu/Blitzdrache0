@@ -10,7 +10,7 @@
 use blitz_render::位置の不変装飾を付ける;
 
 use super::super::scene_shaders::頂点SPIRV;
-use super::spirv_module::{位置の組み込み出力のidを引く, 命令へ読み解く, 装飾の付いたidを集める};
+use super::spirv_module::{位置の組み込み出力のidを参照する, 命令へ読み解く, 装飾の付いたidを集める};
 
 /// SPIR-Vの装飾Invariantの値。
 const 装飾_INVARIANT: u32 = 18;
@@ -21,7 +21,7 @@ fn 埋め込みの頂点段は加工前に不変装飾を持たない() {
         Ok(一覧) => 一覧,
         Err(誤り) => panic!("埋め込みの頂点段のSPIR-Vを読めない: {誤り}"),
     };
-    let 位置のid = match 位置の組み込み出力のidを引く(&命令一覧) {
+    let 位置のid = match 位置の組み込み出力のidを参照する(&命令一覧) {
         Ok(id) => id,
         Err(誤り) => panic!("{誤り}"),
     };
@@ -41,7 +41,7 @@ fn 描画へ渡す頂点段の位置の変数へ不変装飾が付いている()
         Ok(一覧) => 一覧,
         Err(誤り) => panic!("加工済みの頂点段のSPIR-Vを読めない: {誤り}"),
     };
-    let 位置のid = match 位置の組み込み出力のidを引く(&命令一覧) {
+    let 位置のid = match 位置の組み込み出力のidを参照する(&命令一覧) {
         Ok(id) => id,
         Err(誤り) => panic!("{誤り}"),
     };

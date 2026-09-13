@@ -17,19 +17,19 @@ pub(super) struct スキニングパイプライン {
 
 pub(super) fn スキニングパイプラインを生成する(
     確保係: &GPU資源の確保係<'_>,
-    ディスクリプタlayout: vk::DescriptorSetLayout,
-    コンピュートspirv: &[u8],
+    ディスクリプタのレイアウト: vk::DescriptorSetLayout,
+    コンピュートの中間表現: &[u8],
 ) -> Result<スキニングパイプライン, レンダラーエラー> {
     let device = 確保係.論理デバイス();
-    let モジュール = 確保係.シェーダーモジュールを生成する(コンピュートspirv)?;
+    let モジュール = 確保係.シェーダーモジュールを生成する(コンピュートの中間表現)?;
 
     let プッシュ定数範囲一覧 = [vk::PushConstantRange::default()
         .stage_flags(vk::ShaderStageFlags::COMPUTE)
         .offset(0)
         .size(頂点数プッシュ定数バイト数)];
-    let ディスクリプタlayout一覧 = [ディスクリプタlayout];
+    let ディスクリプタのレイアウト一覧 = [ディスクリプタのレイアウト];
     let layout_info = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(&ディスクリプタlayout一覧)
+        .set_layouts(&ディスクリプタのレイアウト一覧)
         .push_constant_ranges(&プッシュ定数範囲一覧);
     // 安全性: deviceは生成済みで有効。layout_infoは本関数内で構築した値のみを参照する。
     let layout = match unsafe { device.create_pipeline_layout(&layout_info, None) } {

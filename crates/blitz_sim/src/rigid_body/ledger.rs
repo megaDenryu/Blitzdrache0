@@ -60,7 +60,7 @@ impl 剛体の台帳 {
         &mut self.遷移の予約
     }
 
-    pub fn 剛体一覧_mut(&mut self) -> &mut [剛体] {
+    pub fn 剛体一覧を可変で参照する(&mut self) -> &mut [剛体] {
         &mut self.剛体一覧
     }
 }

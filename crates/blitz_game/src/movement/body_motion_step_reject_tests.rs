@@ -7,7 +7,7 @@ use blitz_math::{ラジアン, 大域メートル};
 
 use super::body_motion_test_fixture::{入力, 刻む, 前へ倒す, 床の上で接地した状態, 水平の距離};
 use super::movement_state::移動状態;
-use crate::game_intent::ゲームインテント;
+use crate::game_intent::ゲームの操作意図;
 use crate::planar_test_world::平面と段と壁の世界;
 
 const 段の東端: f64 = 5.0;
@@ -88,7 +88,7 @@ fn 持ち上げの掃引だけが評価できない刻みは位置も移動状�
 fn ジャンプの刻みは蹴上げに触れても持ち上げを試みず水平移動は水平の入力を越えない() {
     let mut 世界 = 段のある世界(0.2);
     let (足元, 状態) = 床の上で接地した状態(&mut 世界, 4.76, 0.0, 0.0);
-    let 前へ跳ぶ = ゲームインテント {
+    let 前へ跳ぶ = ゲームの操作意図 {
         ジャンプしたいか: true,
         ..前へ倒す()
     };

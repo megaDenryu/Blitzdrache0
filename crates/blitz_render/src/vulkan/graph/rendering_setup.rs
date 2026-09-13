@@ -26,8 +26,8 @@ pub(super) fn 動的レンダリングを開始する(
         .or(深度.map(|深度| 深度.ハンドル))
         .unwrap_or_else(|| panic!("グラフィックスパスにカラーも深度も無い(パス宣言の誤り)"));
     let 寸法 = レジストリ.寸法を取得する(基準ハンドル);
-    let (カラーload_op, 深度load_op, カラークリア値) = ロードオペレーションとカラークリア値(クリア指定);
-    let カラーアタッチメント一覧 = カラー.記述を並べる(レジストリ, カラーload_op, カラークリア値);
+    let (カラーのロード操作, 深度のロード操作, カラークリア値) = クリア指定からロード操作とクリア値を導出する(クリア指定);
+    let カラーアタッチメント一覧 = カラー.記述を並べる(レジストリ, カラーのロード操作, カラークリア値);
 
     // 注意: 深度のstore_opは常にSTOREにする。DONT_CAREにするとパス終了時に内容が未定義になり、
     // 後段が深度をLOADするパス(粒子)やサンプリングするパス(シャドウマップを読むシーン)が
@@ -43,7 +43,7 @@ pub(super) fn 動的レンダリングを開始する(
         vk::RenderingAttachmentInfo::default()
             .image_view(深度.描画先ビュー(レジストリ.ビューを取得する(深度.ハンドル)))
             .image_layout(vk::ImageLayout::DEPTH_ATTACHMENT_OPTIMAL)
-            .load_op(深度load_op)
+            .load_op(深度のロード操作)
             .store_op(vk::AttachmentStoreOp::STORE)
             .clear_value(深度クリア値)
     });
@@ -65,8 +65,8 @@ pub(super) fn 動的レンダリングを開始する(
 }
 
 /// 返すのはカラーのloadOp・深度のloadOp・カラーのクリア値の3つである。
-fn ロードオペレーションとカラークリア値(
-    クリア指定: &クリア指定
+fn クリア指定からロード操作とクリア値を導出する(
+    クリア指定: &クリア指定,
 ) -> (vk::AttachmentLoadOp, vk::AttachmentLoadOp, vk::ClearValue) {
     let 色の値 = |カラー: &crate::clear_color::クリアカラー| vk::ClearValue {
         color: vk::ClearColorValue {

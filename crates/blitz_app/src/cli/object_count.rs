@@ -21,7 +21,7 @@ impl 描画対象数 {
         }
     }
 
-    pub(crate) fn usize値(self) -> usize {
+    pub(crate) fn 件数として取り出す(self) -> usize {
         usize::try_from(self.0).unwrap_or_else(|_| panic!("描画対象数がusizeに収まらない: {}", self.0))
     }
 }

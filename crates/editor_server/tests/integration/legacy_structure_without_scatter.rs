@@ -5,7 +5,7 @@
 
 use editor_server::{チャンク座標, プロジェクト保管庫};
 
-fn 散布の個体一覧を持たない旧版のチャンク構造Json() -> serde_json::Value {
+fn 散布の個体一覧を持たない旧版のチャンク構造のjson() -> serde_json::Value {
     serde_json::json!({
         "道路一覧": [{ "制御点列": [], "全幅メートル": 8.0, "散布除外バッファメートル": 14.0, "細分割数": 80 }],
         "建物一覧": [{
@@ -28,7 +28,7 @@ fn 散布の個体一覧を持たない旧版は個体0件として読める() {
     std::fs::create_dir_all(構造パス.parent().unwrap()).unwrap();
     std::fs::write(
         &構造パス,
-        serde_json::to_vec_pretty(&散布の個体一覧を持たない旧版のチャンク構造Json()).unwrap(),
+        serde_json::to_vec_pretty(&散布の個体一覧を持たない旧版のチャンク構造のjson()).unwrap(),
     )
     .unwrap();
 

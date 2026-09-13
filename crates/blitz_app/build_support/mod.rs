@@ -33,7 +33,7 @@ const シェーダーディレクトリ相対パス: &str = "../../shaders";
 const エントリファイル名: &str = "scene.slang";
 const 粒子エントリファイル名: &str = "particle.slang";
 const 表面流エントリファイル名: &str = "surface_flow.slang";
-const SPHエントリファイル名: &str = "sph.slang";
+const 粒子法流体エントリファイル名: &str = "sph.slang";
 const UIエントリファイル名: &str = "ui.slang";
 const シャドウエントリファイル名: &str = "shadow.slang";
 const 点光源の影のエントリファイル名: &str = "point_light_shadow.slang";
@@ -59,8 +59,8 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     particle_spirv_compile::三エントリをコンパイルする(&slangc, &粒子ソース絶対パス, &出力先ディレクトリ)?;
     let 表面流ソース絶対パス = シェーダーディレクトリ絶対パス.join(表面流エントリファイル名);
     surface_flow_spirv_compile::三エントリをコンパイルする(&slangc, &表面流ソース絶対パス, &出力先ディレクトリ)?;
-    let sphソース絶対パス = シェーダーディレクトリ絶対パス.join(SPHエントリファイル名);
-    sph_spirv_compile::三エントリをコンパイルする(&slangc, &sphソース絶対パス, &出力先ディレクトリ)?;
+    let 粒子法流体ソース絶対パス = シェーダーディレクトリ絶対パス.join(粒子法流体エントリファイル名);
+    sph_spirv_compile::三エントリをコンパイルする(&slangc, &粒子法流体ソース絶対パス, &出力先ディレクトリ)?;
 
     let uiソース絶対パス = シェーダーディレクトリ絶対パス.join(UIエントリファイル名);
     ui_spirv_compile::頂点と画素段をコンパイルする(&slangc, &uiソース絶対パス, &出力先ディレクトリ)?;

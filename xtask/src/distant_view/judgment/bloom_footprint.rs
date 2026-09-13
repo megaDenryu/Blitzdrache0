@@ -30,7 +30,7 @@ mod footprint_tests;
 mod source_distance;
 
 const 段数上限: usize = 5;
-const 最小辺PX: usize = 16;
+const 最小辺画素数: usize = 16;
 const 縮小の半画素: usize = 5;
 const 拡大の半画素: usize = 3;
 
@@ -62,7 +62,7 @@ pub(super) fn 段の寸法列(幅: usize, 高さ: usize) -> Vec<(usize, usize)> 
     let (mut 段の幅, mut 段の高さ) = ((幅 / 2).max(1), (高さ / 2).max(1));
     loop {
         一覧.push((段の幅, 段の高さ));
-        if 一覧.len() >= 段数上限 || 段の幅 / 2 < 最小辺PX || 段の高さ / 2 < 最小辺PX {
+        if 一覧.len() >= 段数上限 || 段の幅 / 2 < 最小辺画素数 || 段の高さ / 2 < 最小辺画素数 {
             return 一覧;
         }
         段の幅 /= 2;

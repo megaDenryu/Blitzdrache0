@@ -49,26 +49,26 @@ pub(super) const 束縛の宣言: 宣言した束縛の並び<束縛の本数> =
 ]);
 
 pub(super) struct 布ディスクリプタ {
-    layout: 宣言から作ったセットレイアウト<束縛の本数>,
-    pool: vk::DescriptorPool,
-    set一覧: [宣言から割り当てたセット<束縛の本数>; 進行中フレーム数],
+    レイアウト: 宣言から作ったセットレイアウト<束縛の本数>,
+    プール: vk::DescriptorPool,
+    セット一覧: [宣言から割り当てたセット<束縛の本数>; 進行中フレーム数],
 }
 
 impl 布ディスクリプタ {
     /// パイプラインレイアウトの宣言へ渡す境界。
     pub(super) fn レイアウトのハンドル(&self) -> vk::DescriptorSetLayout {
-        self.layout.レイアウトのハンドル()
+        self.レイアウト.レイアウトのハンドル()
     }
 
     /// パイプラインへの束縛へ渡す境界。
     pub(super) fn セットのハンドル(&self, フレーム添字: フレームスロット添字) -> vk::DescriptorSet {
-        self.set一覧[フレーム添字.配列添字()].セットのハンドル()
+        self.セット一覧[フレーム添字.配列添字()].セットのハンドル()
     }
 
     pub(super) fn 破棄する(&self, device: &ash::Device) {
         // 安全性: poolはこの構造体が唯一の所有者であり、その破棄がsetの解放を暗黙に行う。
-        unsafe { device.destroy_descriptor_pool(self.pool, None) };
-        self.layout.破棄する(device);
+        unsafe { device.destroy_descriptor_pool(self.プール, None) };
+        self.レイアウト.破棄する(device);
     }
 }
 
@@ -100,9 +100,13 @@ pub(super) fn 布ディスクリプタを生成する(
         }
     };
 
-    let 一式 = 布ディスクリプタ { layout, pool, set一覧 };
+    let 一式 = 布ディスクリプタ {
+        レイアウト: layout,
+        プール: pool,
+        セット一覧: set一覧,
+    };
     for フレーム添字 in フレームスロット添字::全スロット() {
-        let set = &一式.set一覧[フレーム添字.配列添字()];
+        let set = &一式.セット一覧[フレーム添字.配列添字()];
         super::write::布の束縛先をディスクリプタセットへ書き込む(device, set, バッファ, スキン済み頂点buffer, フレーム添字);
     }
     Ok(一式)

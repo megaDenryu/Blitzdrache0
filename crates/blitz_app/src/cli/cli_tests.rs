@@ -78,7 +78,7 @@ fn スモーク用フレーム数をベンチ実行と区別する() {
 fn 描画対象数は1以上だけを受理する() {
     let 有効 = ["--object-count".to_string(), "100".to_string()];
     let 設定 = 描画設定を解析する(&有効);
-    assert_eq!(設定.描画対象の並べ方.件数.map(super::描画対象数::usize値), Some(100));
+    assert_eq!(設定.描画対象の並べ方.件数.map(super::描画対象数::件数として取り出す), Some(100));
 
     let 無効 = ["--object-count".to_string(), "0".to_string()];
     assert!(引数を解析する(&無効).is_err());

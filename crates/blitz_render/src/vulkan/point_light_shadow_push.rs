@@ -34,7 +34,7 @@ impl 点光源の影の描画定数 {
     fn バイト列(self) -> [u8; 80] {
         let mut バイト列 = [0u8; 80];
         バイト列[..16].copy_from_slice(&self.基準原点.バイト列());
-        let 列優先 = self.面のライトビュー射影.gpu境界用列優先配列();
+        let 列優先 = self.面のライトビュー射影.gpu境界用の列優先配列();
         for (列添字, 列) in 列優先.iter().enumerate() {
             for (行添字, 成分) in 列.iter().enumerate() {
                 let 先頭 = 16 + (列添字 * 4 + 行添字) * 4;

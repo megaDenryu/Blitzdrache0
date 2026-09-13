@@ -9,7 +9,7 @@ pub(in crate::asset::runtime_format::scene) fn 行列を書く<元, 先>(
     出力: &mut 書込先,
     変換: 変換<元, 先>,
 ) -> Result<(), アセット実行時形式エラー> {
-    for 列 in 変換.gpu境界用列優先配列() {
+    for 列 in 変換.gpu境界用の列優先配列() {
         for 値 in 列 {
             出力.f32(値)?;
         }

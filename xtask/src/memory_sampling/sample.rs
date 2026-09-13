@@ -6,13 +6,13 @@ mod sample_tests;
 use std::process::Command;
 use std::time::Duration;
 
-const バイト毎MIB: f64 = 1024.0 * 1024.0;
+const バイト毎メビバイト: f64 = 1024.0 * 1024.0;
 
 pub(super) struct メモリ標本 {
     経過秒: f64,
-    ワーキングセットmib: f64,
-    プライベートmib: f64,
-    専用vrammib: Option<f64>,
+    ワーキングセットのメビバイト数: f64,
+    プライベートメモリのメビバイト数: f64,
+    専用vramのメビバイト数: Option<f64>,
 }
 
 pub(super) fn 取得する(pid: u32, 経過: Duration) -> Option<メモリ標本> {
@@ -28,32 +28,37 @@ pub(super) fn 取得する(pid: u32, 経過: Duration) -> Option<メモリ標本
 
 fn 解析する(経過秒: f64, 行: &str) -> Option<メモリ標本> {
     let mut 列 = 行.split(',');
-    let ワーキングセットmib = 列.next()?.parse::<f64>().ok()? / バイト毎MIB;
-    let プライベートmib = 列.next()?.parse::<f64>().ok()? / バイト毎MIB;
+    let ワーキングセットのメビバイト数 = 列.next()?.parse::<f64>().ok()? / バイト毎メビバイト;
+    let プライベートメモリのメビバイト数 = 列.next()?.parse::<f64>().ok()? / バイト毎メビバイト;
     let 専用vramバイト = 列.next()?.parse::<f64>().ok()?;
-    let gpu標本数 = 列.next()?.parse::<u32>().ok()?;
-    let 専用vrammib = (gpu標本数 > 0).then_some(専用vramバイト / バイト毎MIB);
+    let gpu標本の件数 = 列.next()?.parse::<u32>().ok()?;
+    let 専用vramのメビバイト数 = (gpu標本の件数 > 0).then_some(専用vramバイト / バイト毎メビバイト);
     Some(メモリ標本 {
         経過秒,
-        ワーキングセットmib,
-        プライベートmib,
-        専用vrammib,
+        ワーキングセットのメビバイト数,
+        プライベートメモリのメビバイト数,
+        専用vramのメビバイト数,
     })
 }
 
 impl メモリ標本 {
     pub(super) fn 表示する(&self) {
-        let vram = self.専用vrammib.map_or_else(|| "取得不可".to_string(), |値| format!("{値:.2}"));
-        println!("{:.2},{:.2},{:.2},{vram}", self.経過秒, self.ワーキングセットmib, self.プライベートmib);
+        let vram = self
+            .専用vramのメビバイト数
+            .map_or_else(|| "取得不可".to_string(), |値| format!("{値:.2}"));
+        println!(
+            "{:.2},{:.2},{:.2},{vram}",
+            self.経過秒, self.ワーキングセットのメビバイト数, self.プライベートメモリのメビバイト数
+        );
     }
 }
 
 /// 実行中に観測した最大値。呼出し側が表へ載せるのはこの3つだけであり、標本の列そのものは渡さない。
 #[derive(Clone, Copy)]
 pub(crate) struct メモリ最大 {
-    pub(crate) ワーキングセットmib: f64,
-    pub(crate) プライベートmib: f64,
-    pub(crate) 専用vrammib: Option<f64>, // GPUカウンターを1標本も引けなかった実行では`None`。0と区別するため真偽でなく不在で表す
+    pub(crate) ワーキングセットのメビバイト数: f64,
+    pub(crate) プライベートメモリのメビバイト数: f64,
+    pub(crate) 専用vramのメビバイト数: Option<f64>, // GPUカウンターを1標本も引けなかった実行では`None`。0と区別するため真偽でなく不在で表す
 }
 
 pub(super) fn 要約を表示して最大を返す(一覧: &[メモリ標本]) -> Option<メモリ最大> {
@@ -64,30 +69,32 @@ pub(super) fn 要約を表示して最大を返す(一覧: &[メモリ標本]) -
     println!("メモリ推移(先頭→末尾):");
     println!(
         "  ワーキングセット: {:.2} → {:.2} MiB (差 {:+.2} MiB)",
-        先頭.ワーキングセットmib,
-        末尾.ワーキングセットmib,
-        末尾.ワーキングセットmib - 先頭.ワーキングセットmib
+        先頭.ワーキングセットのメビバイト数,
+        末尾.ワーキングセットのメビバイト数,
+        末尾.ワーキングセットのメビバイト数 - 先頭.ワーキングセットのメビバイト数
     );
     println!(
         "  プライベート: {:.2} → {:.2} MiB (差 {:+.2} MiB)",
-        先頭.プライベートmib,
-        末尾.プライベートmib,
-        末尾.プライベートmib - 先頭.プライベートmib
+        先頭.プライベートメモリのメビバイト数,
+        末尾.プライベートメモリのメビバイト数,
+        末尾.プライベートメモリのメビバイト数 - 先頭.プライベートメモリのメビバイト数
     );
-    match (先頭.専用vrammib, 末尾.専用vrammib) {
+    match (先頭.専用vramのメビバイト数, 末尾.専用vramのメビバイト数) {
         (Some(開始), Some(終了)) => println!("  専用VRAM: {開始:.2} → {終了:.2} MiB (差 {:+.2} MiB)", 終了 - 開始),
         _ => println!("  専用VRAM: 取得不可"),
     }
     let 最大 = メモリ最大 {
-        ワーキングセットmib: 最大を取る(一覧, |標本| Some(標本.ワーキングセットmib))?,
-        プライベートmib: 最大を取る(一覧, |標本| Some(標本.プライベートmib))?,
-        専用vrammib: 最大を取る(一覧, |標本| 標本.専用vrammib),
+        ワーキングセットのメビバイト数: 最大を取る(一覧, |標本| Some(標本.ワーキングセットのメビバイト数))?,
+        プライベートメモリのメビバイト数: 最大を取る(一覧, |標本| Some(標本.プライベートメモリのメビバイト数))?,
+        専用vramのメビバイト数: 最大を取る(一覧, |標本| 標本.専用vramのメビバイト数),
     };
     println!(
         "  最大: ワーキングセット {:.2} MiB / プライベート {:.2} MiB / 専用VRAM {}",
-        最大.ワーキングセットmib,
-        最大.プライベートmib,
-        最大.専用vrammib.map_or_else(|| "取得不可".to_string(), |値| format!("{値:.2} MiB"))
+        最大.ワーキングセットのメビバイト数,
+        最大.プライベートメモリのメビバイト数,
+        最大
+            .専用vramのメビバイト数
+            .map_or_else(|| "取得不可".to_string(), |値| format!("{値:.2} MiB"))
     );
     Some(最大)
 }

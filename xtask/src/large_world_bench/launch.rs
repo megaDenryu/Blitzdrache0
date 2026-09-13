@@ -24,8 +24,8 @@ pub(crate) fn ストリーミング計測の起動引数を作る(
 ) -> Vec<String> {
     let mut 引数 = vec!["--streaming".to_string(), "--streaming-route".to_string()];
     値を足す(&mut 引数, "--streaming-preload-radius", 指定.先読み半径);
-    値を足す(&mut 引数, "--streaming-ram-limit", 指定.ram上限);
-    値を足す(&mut 引数, "--streaming-vram-limit", 指定.vram上限);
+    値を足す(&mut 引数, "--streaming-ram-limit", 指定.ramの上限バイト数);
+    値を足す(&mut 引数, "--streaming-vram-limit", 指定.vramの上限バイト数);
     値を足す(&mut 引数, "--streaming-loader-workers", 指定.ワーカー本数);
     値を足す(&mut 引数, "--streaming-request-capacity", 指定.要求容量);
     値を足す(&mut 引数, "--streaming-completion-capacity", 指定.完了容量);
