@@ -59,7 +59,7 @@ pub fn 局所可視度を突き合わせる() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, 局所可視性補正の検収エラー> {
-    crate::visual_sample_world::用意する().map_err(局所可視性補正の検収エラー::目視見本世界を用意できなかった)?;
+    crate::visual_sample_world::目視見本世界を用意する().map_err(局所可視性補正の検収エラー::目視見本世界を用意できなかった)?;
     if !crate::compile_assets::既定を生成する() {
         return Err(局所可視性補正の検収エラー::間接照明の検収世界のアセットを生成できなかった);
     }

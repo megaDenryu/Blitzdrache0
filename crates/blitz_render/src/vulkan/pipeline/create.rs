@@ -31,7 +31,7 @@ pub(super) fn グラフィックスパイプラインを生成する(
         }
     };
 
-    let 結果 = graphics_pipeline::組み立てる(
+    let 結果 = graphics_pipeline::色パスの固定機能を組み立てる(
         device,
         カラー形式,
         深度形式,

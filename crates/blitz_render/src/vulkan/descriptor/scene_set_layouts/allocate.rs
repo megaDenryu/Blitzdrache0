@@ -18,7 +18,7 @@ impl シーンセットレイアウト一式 {
         pool: vk::DescriptorPool,
         セット数: usize,
     ) -> Result<Vec<照明問い合わせの割り当て済みセット>, レンダラーエラー> {
-        let 一覧 = crate::vulkan::descriptor::alloc::割り当てる(device, pool, self.照明問い合わせ, セット数)?;
+        let 一覧 = crate::vulkan::descriptor::alloc::ディスクリプタセットを割り当てる(device, pool, self.照明問い合わせ, セット数)?;
         Ok(一覧.into_iter().map(照明問い合わせの割り当て済みセット::刻む).collect())
     }
 
@@ -28,7 +28,7 @@ impl シーンセットレイアウト一式 {
         device: &ash::Device,
         pool: vk::DescriptorPool,
     ) -> Result<材質の割り当て済みセット, レンダラーエラー> {
-        let 一覧 = crate::vulkan::descriptor::alloc::割り当てる(device, pool, self.材質, 1)?;
+        let 一覧 = crate::vulkan::descriptor::alloc::ディスクリプタセットを割り当てる(device, pool, self.材質, 1)?;
         match 一覧.first().copied() {
             Some(セット) => Ok(材質の割り当て済みセット::刻む(セット)),
             None => panic!("材質のセットを1つ要求したのに1つも返らなかった"),

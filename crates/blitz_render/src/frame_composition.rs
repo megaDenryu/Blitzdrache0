@@ -12,7 +12,7 @@ mod validation;
 
 pub use depth_prepass::深度プリパス方式;
 pub use stage::フレーム段階;
-use validation::検証する;
+use validation::段階列を検証する;
 
 const 段階数上限: usize = 9;
 
@@ -24,7 +24,7 @@ pub struct フレーム構成 {
 
 impl フレーム構成 {
     pub fn 生成する(段階一覧: &[フレーム段階]) -> Result<Self, フレーム構成エラー> {
-        検証する(段階一覧)?;
+        段階列を検証する(段階一覧)?;
         let mut 格納先 = [None; 段階数上限];
         for (添字, 段階) in 段階一覧.iter().copied().enumerate() {
             格納先[添字] = Some(段階);

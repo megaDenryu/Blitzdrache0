@@ -5,7 +5,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 
-pub(super) fn 割り当てる(
+pub(super) fn ディスクリプタセットを割り当てる(
     device: &ash::Device,
     pool: vk::DescriptorPool,
     layout: vk::DescriptorSetLayout,

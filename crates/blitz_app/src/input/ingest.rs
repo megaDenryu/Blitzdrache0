@@ -10,7 +10,7 @@ use super::入力状態;
 /// PixelDelta(トラックパッド等)を1行相当のホイール量へ換算する係数。
 const ピクセルあたりの行相当: f32 = 20.0;
 
-pub(super) fn 取り込む(状態: &mut 入力状態, event: &WindowEvent) {
+pub(super) fn winit事象を入力状態へ反映する(状態: &mut 入力状態, event: &WindowEvent) {
     match event {
         WindowEvent::MouseInput {
             state,

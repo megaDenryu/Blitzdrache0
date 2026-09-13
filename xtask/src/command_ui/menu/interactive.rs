@@ -11,7 +11,7 @@ use super::error::メニューの破れ;
 use super::terminal_session::端末セッション;
 
 /// 対話モードで1件を選ぶ。選ばずに終了したときは`Ok(None)`を返す。
-pub(crate) fn 選択する(項目一覧: &[コマンド項目]) -> Result<Option<usize>, メニューの破れ> {
+pub(crate) fn 項目一覧から1件を選ぶ(項目一覧: &[コマンド項目]) -> Result<Option<usize>, メニューの破れ> {
     if 項目一覧.is_empty() {
         return Ok(None);
     }

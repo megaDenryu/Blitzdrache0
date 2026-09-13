@@ -59,18 +59,18 @@ use std::path::Path;
 use generation_arguments::書き出す対象;
 
 fn main() {
-    if let Err(誤り) = 実行する() {
+    if let Err(誤り) = 起動引数から書き出しを実行する() {
         eprintln!("[generate_source_assets] {誤り}");
         std::process::exit(1);
     }
 }
 
-fn 実行する() -> Result<(), String> {
+fn 起動引数から書き出しを実行する() -> Result<(), String> {
     let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
     match generation_arguments::引数一覧から書き出す対象を読む(&引数一覧)? {
         書き出す対象::場所巡りの世界 {
             種, ソースルート, 広がり
-        } => fox_tour_world::書き出す(&ソースルート, 種, 広がり).map(|_| ()),
+        } => fox_tour_world::場所巡りの世界のソース一式を書き出す(&ソースルート, 種, 広がり).map(|_| ()),
         書き出す対象::検証用の世界一式 => verification_worlds::一式を書き出す(),
     }
 }

@@ -13,8 +13,9 @@ use crate::error::{パイプライン台帳エラー, レンダラーエラー};
 use crate::vulkan::pipeline::材質描画族のパイプラインの生成係;
 use crate::vulkan::pipeline_ledger::key::パイプラインキー;
 
-pub(super) fn 生成する(
-    供給元: &デバイスパイプライン供給元<'_>, キー: パイプラインキー
+pub(super) fn 族とキーからパイプラインを生成する(
+    供給元: &デバイスパイプライン供給元<'_>,
+    キー: パイプラインキー,
 ) -> Result<vk::Pipeline, レンダラーエラー> {
     match (供給元.族(), キー) {
         (

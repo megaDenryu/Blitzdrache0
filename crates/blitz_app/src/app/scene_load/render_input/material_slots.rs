@@ -11,8 +11,9 @@ use super::super::surface_layer_tiles::地表の層のタイル一式;
 use super::convert;
 use crate::error::起動エラー;
 
-pub(super) fn 変換する(
-    材質集合: &材質集合, 地表の層のタイル: &地表の層のタイル一式
+pub(super) fn 材質集合を材質スロット素材一覧へ変換する(
+    材質集合: &材質集合,
+    地表の層のタイル: &地表の層のタイル一式,
 ) -> Result<材質スロット素材一覧, 起動エラー> {
     let mut 素材一覧 = Vec::with_capacity(材質集合.件数());
     for 割当 in 材質集合.割当一覧() {

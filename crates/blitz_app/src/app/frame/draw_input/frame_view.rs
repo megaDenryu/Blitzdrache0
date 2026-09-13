@@ -27,7 +27,7 @@ pub(crate) struct フレーム視点 {
 
 pub(in crate::app) fn 視点を求める(アプリ: &アプリ) -> フレーム視点 {
     let 物理寸法 = アプリ.window.as_ref().map(|window| window.inner_size());
-    let アスペクト比 = 物理寸法.map_or(1.0, crate::app::aspect::計算する);
+    let アスペクト比 = 物理寸法.map_or(1.0, crate::app::aspect::アスペクト比を計算する);
     let ずらし = 画素内ずらしを決める(アプリ, 物理寸法);
     let ずらし無し = アプリ.カメラ.カメラ相対ビュー射影変換を作る(アスペクト比);
     let ずらし付き = ずらし無し.合成する(変換::<クリップ, クリップ>::画素内ずらし(ずらし));

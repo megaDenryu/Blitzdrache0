@@ -13,10 +13,12 @@ impl super::アプリ {
             crate::reports::game::ゲームの進行を表示する(&要約, カメラ大域位置);
         }
         if self.gpu時間報告が必要か() {
-            crate::reports::gpu_time_table::表示する(&self.パス別gpu時間を取得する());
+            crate::reports::gpu_time_table::パス別gpu時間の表を表示する(&self.パス別gpu時間を取得する());
         }
         if self.gpu時間のフレーム別生値報告が必要か() {
-            crate::reports::gpu_frame_samples::表示する(self.パス別gpu時間のフレーム別標本を取得する());
+            crate::reports::gpu_frame_samples::パス別gpu時間のフレーム別生値を表示する(
+                self.パス別gpu時間のフレーム別標本を取得する(),
+            );
         }
         if self.大気のベイク済み画像パス数報告が必要か() {
             match self.大気のベイク済み画像生成パス数の記録を取得する() {
@@ -88,7 +90,7 @@ impl super::アプリ {
         }
         if self.ストリーミング要約報告が必要か() {
             match self.ストリーミング要約を取得する() {
-                Some(要約) => streaming_summary::表示する(&要約),
+                Some(要約) => streaming_summary::ストリーミング要約を表示する(&要約),
                 None => println!("ストリーミング要約: --streamingが指定されていないため計測していない"),
             }
         }

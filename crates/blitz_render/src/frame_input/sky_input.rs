@@ -47,10 +47,10 @@ pub enum 空入力エラー {
 
 impl 空入力 {
     pub fn 生成する(材料: 空入力の材料) -> Result<Self, 空入力エラー> {
-        validation::確かめる(&材料)?;
+        validation::空入力の材料を確かめる(&材料)?;
         Ok(Self {
             材料: 空入力の材料 {
-                太陽方向: validation::単位化する(材料.太陽方向)?,
+                太陽方向: validation::太陽方向を単位化する(材料.太陽方向)?,
                 ..材料
             },
         })

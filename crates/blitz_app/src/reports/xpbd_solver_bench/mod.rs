@@ -62,7 +62,7 @@ fn 報告する(指定: &XPBD並列方式計測の指定) -> Result<(), 起動�
     lines::収束を出す(&突き合わせ, &参照);
     lines::参照との差を出す(指定.比較の刻み数, &短い突き合わせ);
     lines::資源を出す(指定.方式, &一回目);
-    crate::reports::gpu_time_table::表示する(&一回目.gpu時間の分布一覧);
-    crate::reports::gpu_frame_samples::表示する(&一回目.刻み別のgpu時間);
+    crate::reports::gpu_time_table::パス別gpu時間の表を表示する(&一回目.gpu時間の分布一覧);
+    crate::reports::gpu_frame_samples::パス別gpu時間のフレーム別生値を表示する(&一回目.刻み別のgpu時間);
     Ok(())
 }

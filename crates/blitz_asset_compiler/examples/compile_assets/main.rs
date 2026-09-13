@@ -8,13 +8,13 @@ mod texture_policy_argument;
 use blitz_asset_compiler::実行時アセットのコンパイル;
 
 fn main() {
-    if let Err(誤り) = 実行する() {
+    if let Err(誤り) = 起動引数からコンパイルを実行する() {
         eprintln!("[compile_assets] {誤り}");
         std::process::exit(1);
     }
 }
 
-fn 実行する() -> Result<(), String> {
+fn 起動引数からコンパイルを実行する() -> Result<(), String> {
     let 全引数一覧: Vec<String> = std::env::args().skip(1).collect();
     let 指定 = arguments::引数一覧から焼く世界の指定を読む(&全引数一覧)?;
     実行時アセットのコンパイル::始める(指定)

@@ -31,7 +31,7 @@ impl スワップチェーン {
         要求寸法: ウィンドウ寸法,
         旧スワップチェーン: vk::SwapchainKHR,
     ) -> Result<Self, レンダラーエラー> {
-        create::生成する(
+        create::スワップチェーンを確保する(
             物理デバイス,
             device,
             surface_loader,

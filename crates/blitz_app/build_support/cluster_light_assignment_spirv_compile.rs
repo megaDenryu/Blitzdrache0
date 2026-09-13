@@ -12,7 +12,7 @@ const 選別エントリ: [エントリ指定; 1] = [エントリ指定 {
     出力ファイル名: "cluster_light_assignment.spv",
 }];
 
-pub(super) fn コンパイルする(
+pub(super) fn クラスタ選別のエントリをコンパイルする(
     slangc: &スラングコンパイラの所在,
     シェーダーディレクトリ: &Path,
     出力先ディレクトリ: &Path,

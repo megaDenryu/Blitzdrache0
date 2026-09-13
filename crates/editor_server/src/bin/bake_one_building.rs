@@ -12,7 +12,7 @@ use editor_server::{
 };
 
 fn main() -> std::process::ExitCode {
-    match 書き出す() {
+    match 一棟検証の世界ソースを書き出す() {
         Ok(綴り) => {
             println!("一棟検証の世界のソース: {綴り}");
             std::process::ExitCode::SUCCESS
@@ -24,7 +24,7 @@ fn main() -> std::process::ExitCode {
     }
 }
 
-fn 書き出す() -> Result<String, String> {
+fn 一棟検証の世界ソースを書き出す() -> Result<String, String> {
     let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
     let 建物定義の識別子 = 建物定義の識別子を引数から取り出す(&引数一覧)?;
     let リポジトリルート = リポジトリルート::解決する();

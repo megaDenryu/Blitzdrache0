@@ -11,7 +11,7 @@ const 項目一覧: [未是正の自由関数; 7] = [
     未是正の自由関数::生成する("atmosphere/integration/multiscatter_step.rs", "区間を積む", "区間の条件"),
     未是正の自由関数::生成する("atmosphere/integration/skyview_step.rs", "区間を積む", "視線の幾何"),
     未是正の自由関数::生成する("distant_environment/analytic_input.rs", "鏡面畳込みが妥当か", "鏡面畳込みの解析入力"),
-    未是正の自由関数::生成する("frame_input/sky_input/validation.rs", "確かめる", "空入力の材料"),
+    未是正の自由関数::生成する("frame_input/sky_input/validation.rs", "空入力の材料を確かめる", "空入力の材料"),
     未是正の自由関数::生成する(
         "xpbd_solver_bench_probe/mod.rs",
         "xpbdの並列方式をgpuで走らせて読み戻す",

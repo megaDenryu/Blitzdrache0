@@ -20,7 +20,7 @@ pub fn バッククォート内パスを抽出する(行: &str) -> Vec<String> {
     結果
 }
 
-pub fn 検査する(パス: &Path, 内容: &str) -> Vec<違反> {
+pub fn 参照パスの実在を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
     let mut 違反一覧 = Vec::new();
     for (行番号, 行) in 内容.lines().enumerate() {
         for 参照パス in バッククォート内パスを抽出する(行) {

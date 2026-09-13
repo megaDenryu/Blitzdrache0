@@ -4,7 +4,7 @@
 
 use winit::dpi::PhysicalSize;
 
-pub(super) fn 計算する(寸法: PhysicalSize<u32>) -> f32 {
+pub(super) fn アスペクト比を計算する(寸法: PhysicalSize<u32>) -> f32 {
     f32::from(u32を丸めずu16へ変換する(寸法.width).max(1)) / f32::from(u32を丸めずu16へ変換する(寸法.height).max(1))
 }
 

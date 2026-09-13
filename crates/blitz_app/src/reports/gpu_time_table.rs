@@ -6,7 +6,7 @@ use super::shadow_gpu_time;
 
 /// `--report-gpu-times`指定時の終了時コンソール出力(判断30)。計測無効(空配列)なら
 /// その旨を明示し、無言で何も出さないことを避ける。
-pub(crate) fn 表示する(表: &[(&'static str, blitz_render::gpu_pass_timing::パス時間の分布)]) {
+pub(crate) fn パス別gpu時間の表を表示する(表: &[(&'static str, blitz_render::gpu_pass_timing::パス時間の分布)]) {
     if 表.is_empty() {
         println!("パス別GPU時間: 計測できなかった(タイムスタンプ非対応、または1フレームも計測が完了していない)");
         return;

@@ -31,7 +31,7 @@ pub(super) fn プールを作る(device: &ash::Device, セット数: u32) -> Res
     Ok(unsafe { device.create_descriptor_pool(&create_info, None)? })
 }
 
-pub(super) fn 書き込む(
+pub(super) fn 束縛を書き込む(
     device: &ash::Device,
     セット: &宣言から割り当てたセット<2>,
     遠方環境の配列ビュー: vk::ImageView,

@@ -17,13 +17,13 @@ pub(super) fn 半精度のバイト列へ詰める(内容: &遠方環境の内�
     let mut バイト列 = Vec::with_capacity(内容.テクセル一覧().len() * テクセルのバイト数);
     for テクセル in 内容.テクセル一覧() {
         for 成分 in テクセル {
-            バイト列.extend_from_slice(&単精度を半精度へ(狭める(*成分)).to_le_bytes());
+            バイト列.extend_from_slice(&単精度を半精度へ(倍精度を単精度へ狭める(*成分)).to_le_bytes());
         }
         バイト列.extend_from_slice(&単精度を半精度へ(0.0).to_le_bytes());
     }
     バイト列
 }
 
-fn 狭める(値: f64) -> f32 {
+fn 倍精度を単精度へ狭める(値: f64) -> f32 {
     glam::DVec3::splat(値).as_vec3().x
 }

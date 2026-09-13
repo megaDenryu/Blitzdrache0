@@ -66,7 +66,7 @@ pub fn 規約を検査する() -> ExitCode {
 fn 全違反を集める() -> Result<Vec<違反>, 規約検査の破れ> {
     let ファイル一覧 = file_scan::対象ファイル一覧を集める(&検査対象ディレクトリ一覧, &検査対象拡張子一覧)?;
     let mut 違反一覧 = ファイル単位の違反を集める(&ファイル一覧)?;
-    違反一覧.extend(whole_repository::集める()?);
+    違反一覧.extend(whole_repository::複数ファイルを横断する検査の違反一覧を集める()?);
     Ok(違反一覧)
 }
 
@@ -76,24 +76,24 @@ fn ファイル単位の違反を集める(ファイル一覧: &[PathBuf]) -> Re
         let 内容 = std::fs::read_to_string(パス).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(パス, 誤り))?;
         let 拡張子 = パス.extension().and_then(|拡張子| 拡張子.to_str()).unwrap_or("");
         if 拡張子 == "rs" || 拡張子 == "slang" {
-            違反一覧.extend(line_count::検査する(パス, &内容));
-            違反一覧.extend(forbidden_strings::検査する(パス, &内容));
-            違反一覧.extend(declaration_comment_line::検査する(パス, &内容));
-            違反一覧.extend(test_directory_layout::検査する(パス));
+            違反一覧.extend(line_count::行数の上限超過を検査する(パス, &内容));
+            違反一覧.extend(forbidden_strings::禁止語と絵文字の混入を検査する(パス, &内容));
+            違反一覧.extend(declaration_comment_line::宣言の間のコメント行を検査する(パス, &内容));
+            違反一覧.extend(test_directory_layout::試験ファイルの直置きを検査する(パス));
         }
         if 拡張子 == "ts" && !line_count::生成ファイルか(パス) {
-            違反一覧.extend(line_count::検査する(パス, &内容));
+            違反一覧.extend(line_count::行数の上限超過を検査する(パス, &内容));
         }
         if 拡張子 == "slang" {
-            違反一覧.extend(module_import_boundary::検査する(パス, &内容));
+            違反一覧.extend(module_import_boundary::取り込みの境界を検査する(パス, &内容));
         }
         if 拡張子 == "rs" {
-            違反一覧.extend(allow_lint::検査する(パス, &内容));
-            違反一覧.extend(drop_impl::検査する(パス, &内容));
-            違反一覧.extend(rigid_raw_triplet::検査する(パス, &内容));
-            違反一覧.extend(two_tier_fold_boundary::検査する(パス, &内容));
+            違反一覧.extend(allow_lint::不正なallowの緩和を検査する(パス, &内容));
+            違反一覧.extend(drop_impl::drop実装の配置を検査する(パス, &内容));
+            違反一覧.extend(rigid_raw_triplet::剛体の単精度3つ組宣言を検査する(パス, &内容));
+            違反一覧.extend(two_tier_fold_boundary::二段の位置の口を検査する(パス, &内容));
         }
-        違反一覧.extend(doc_reference::検査する(パス, &内容));
+        違反一覧.extend(doc_reference::参照パスの実在を検査する(パス, &内容));
     }
     Ok(違反一覧)
 }

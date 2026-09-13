@@ -8,11 +8,11 @@ use super::super::{区画の一覧, 未是正の自由関数};
 const 項目一覧: [未是正の自由関数; 18] = [
     未是正の自由関数::生成する("build_support/slangc_entry_compile.rs", "エントリを1つコンパイルする", "エントリ指定"),
     未是正の自由関数::生成する("src/cli/types/frame_dump_setting.rs", "走査の書き出し先を確かめる", "フレームダンプ指定"),
-    未是正の自由関数::生成する("src/input/confirm.rs", "確定する", "入力状態"),
+    未是正の自由関数::生成する("src/input/confirm.rs", "蓄積からカメラの操作意図を確定する", "入力状態"),
     未是正の自由関数::生成する("src/input/ingest.rs", "カーソル移動を反映する", "入力状態"),
     未是正の自由関数::生成する("src/input/ingest.rs", "キー入力を反映する", "入力状態"),
     未是正の自由関数::生成する("src/input/ingest.rs", "ホイールを反映する", "入力状態"),
-    未是正の自由関数::生成する("src/input/ingest.rs", "取り込む", "入力状態"),
+    未是正の自由関数::生成する("src/input/ingest.rs", "winit事象を入力状態へ反映する", "入力状態"),
     未是正の自由関数::生成する("src/input/ingest.rs", "左ボタンを反映する", "入力状態"),
     未是正の自由関数::生成する("src/reports/cloth_xpbd_reference/lines.rs", "曲げの硬さを出す", "曲げの硬さの観測"),
     未是正の自由関数::生成する("src/reports/cloth_xpbd_reference/lines.rs", "硬さを出す", "硬さの観測"),

@@ -26,7 +26,7 @@ pub(super) struct 屋内の測り {
     pub(super) 絵: PathBuf,
 }
 
-pub(super) fn 測る(実行環境: &描画検収の実行環境) -> Result<屋内の測り, 検収エラー> {
+pub(super) fn 屋内の明るさを測る(実行環境: &描画検収の実行環境) -> Result<屋内の測り, 検収エラー> {
     let 灯あり = 一条件を撮る(実行環境, "hut_lit", &[])?;
     let 灯なし = 一条件を撮る(実行環境, "hut_unlit", &["--local-light-count", "0"])?;
     Ok(屋内の測り {

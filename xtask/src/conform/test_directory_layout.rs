@@ -19,7 +19,7 @@ pub fn 試験の直置きか(パス: &Path) -> bool {
     部分一覧.len() == 起点 + 4 && 部分一覧[起点 + 2] == "tests" && パス.extension().and_then(|拡張子| 拡張子.to_str()) == Some("rs")
 }
 
-pub fn 検査する(パス: &Path) -> Vec<違反> {
+pub fn 試験ファイルの直置きを検査する(パス: &Path) -> Vec<違反> {
     if 試験の直置きか(パス) {
         vec![違反::ファイル単位(
             パス.to_path_buf(),
@@ -37,7 +37,10 @@ mod tests {
     #[test]
     fn 直下のファイルを違反と判定する() {
         assert!(試験の直置きか(Path::new("crates/editor_server/tests/music_routes.rs")));
-        assert_eq!(検査する(Path::new("crates/editor_server/tests/music_routes.rs")).len(), 1);
+        assert_eq!(
+            試験ファイルの直置きを検査する(Path::new("crates/editor_server/tests/music_routes.rs")).len(),
+            1
+        );
     }
 
     #[test]
@@ -46,7 +49,7 @@ mod tests {
         assert!(!試験の直置きか(Path::new(
             "crates/blitz_asset_compiler/tests/integration/height_field_roundtrip/mod.rs"
         )));
-        assert!(検査する(Path::new("crates/editor_server/tests/integration/main.rs")).is_empty());
+        assert!(試験ファイルの直置きを検査する(Path::new("crates/editor_server/tests/integration/main.rs")).is_empty());
     }
 
     #[test]

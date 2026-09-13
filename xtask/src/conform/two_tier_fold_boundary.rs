@@ -64,7 +64,7 @@ impl 限定する口 {
     }
 }
 
-pub fn 検査する(パス: &Path, 内容: &str) -> Vec<違反> {
+pub fn 二段の位置の口を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
     let mut 違反一覧 = 畳む口.検査する(パス, 内容);
     違反一覧.extend(読み口.検査する(パス, 内容));
     違反一覧
@@ -82,31 +82,37 @@ mod tests {
     fn 畳む口は境界の外の呼び出しだけを違反にする() {
         let 原文 = 呼び出しの原文(&畳む口);
         assert_eq!(
-            検査する(Path::new("crates/blitz_sim/src/contact/pipeline/substep_predict.rs"), &原文).len(),
+            二段の位置の口を検査する(Path::new("crates/blitz_sim/src/contact/pipeline/substep_predict.rs"), &原文).len(),
             1
         );
-        assert_eq!(検査する(Path::new("crates/blitz_sim/src/rigid_xpbd/previous_state.rs"), &原文).len(), 1);
-        assert!(検査する(Path::new("crates/blitz_sim/src/rigid_body/placement.rs"), &原文).is_empty());
-        assert!(検査する(Path::new("crates/blitz_sim/src/gpu_layout/rigid/motion_state_bytes.rs"), &原文).is_empty());
-        assert!(検査する(Path::new("crates\\blitz_math\\src\\frame\\two_tier_position.rs"), &原文).is_empty());
+        assert_eq!(
+            二段の位置の口を検査する(Path::new("crates/blitz_sim/src/rigid_xpbd/previous_state.rs"), &原文).len(),
+            1
+        );
+        assert!(二段の位置の口を検査する(Path::new("crates/blitz_sim/src/rigid_body/placement.rs"), &原文).is_empty());
+        assert!(二段の位置の口を検査する(Path::new("crates/blitz_sim/src/gpu_layout/rigid/motion_state_bytes.rs"), &原文).is_empty());
+        assert!(二段の位置の口を検査する(Path::new("crates\\blitz_math\\src\\frame\\two_tier_position.rs"), &原文).is_empty());
     }
 
     #[test]
     fn 読み口は基準原点のモジュールと型の定義の外の呼び出しだけを違反にする() {
         let 原文 = 呼び出しの原文(&読み口);
         assert_eq!(
-            検査する(Path::new("crates/blitz_sim/src/contact/pipeline/substep_predict.rs"), &原文).len(),
+            二段の位置の口を検査する(Path::new("crates/blitz_sim/src/contact/pipeline/substep_predict.rs"), &原文).len(),
             1
         );
-        assert_eq!(検査する(Path::new("crates/blitz_sim/src/rigid_body/placement.rs"), &原文).len(), 1);
-        assert!(検査する(Path::new("crates/blitz_sim/src/contact/query_origin/mod.rs"), &原文).is_empty());
-        assert!(検査する(Path::new("crates\\blitz_sim\\src\\contact\\query_origin\\pair_tests.rs"), &原文).is_empty());
-        assert!(検査する(Path::new("crates/blitz_math/src/frame/two_tier_position_algebra.rs"), &原文).is_empty());
+        assert_eq!(
+            二段の位置の口を検査する(Path::new("crates/blitz_sim/src/rigid_body/placement.rs"), &原文).len(),
+            1
+        );
+        assert!(二段の位置の口を検査する(Path::new("crates/blitz_sim/src/contact/query_origin/mod.rs"), &原文).is_empty());
+        assert!(二段の位置の口を検査する(Path::new("crates\\blitz_sim\\src\\contact\\query_origin\\pair_tests.rs"), &原文).is_empty());
+        assert!(二段の位置の口を検査する(Path::new("crates/blitz_math/src/frame/two_tier_position_algebra.rs"), &原文).is_empty());
     }
 
     #[test]
     fn コメントの中の綴りは数えない() {
         let 原文 = format!("// {} と {} は境界だけが読む\nlet a = 1;\n", 畳む口.綴り, 読み口.綴り);
-        assert!(検査する(Path::new("crates/blitz_sim/src/contact/pipeline/substep_predict.rs"), &原文).is_empty());
+        assert!(二段の位置の口を検査する(Path::new("crates/blitz_sim/src/contact/pipeline/substep_predict.rs"), &原文).is_empty());
     }
 }

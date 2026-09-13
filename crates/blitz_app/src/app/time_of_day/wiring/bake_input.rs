@@ -80,7 +80,7 @@ impl 天空配線 {
             空描画,
             視点,
         };
-        let 大気入力 = atmosphere_input::組む(&材料, &mut self.大気更新判定, &mut self.空中遠近の最遠距離の記録);
+        let 大気入力 = atmosphere_input::大気入力を組む(&材料, &mut self.大気更新判定, &mut self.空中遠近の最遠距離の記録);
         let 遠方環境の材料 = distant_environment_input::遠方環境入力の材料 {
             大気の静的キー: 方針.静的キー(),
             空描画,
@@ -90,7 +90,7 @@ impl 天空配線 {
             大気: Some(大気入力),
             遠方環境: self
                 .遠方環境を焼くか()
-                .then(|| distant_environment_input::組む(&遠方環境の材料, &mut self.遠方環境更新判定, &mut self.間引き)),
+                .then(|| distant_environment_input::遠方環境入力を組む(&遠方環境の材料, &mut self.遠方環境更新判定, &mut self.間引き)),
         }
     }
 }

@@ -18,7 +18,7 @@ pub(super) struct 画面連動資源 {
     pub(super) 時間再構成: vulkan::temporal_reconstruction::時間再構成一式,
 }
 
-pub(super) fn 組み立てる(
+pub(super) fn 画面連動資源を組み立てる(
     要求: &生成要求<'_>,
     確保係: &GPU資源の確保係<'_>,
     基礎: &基礎資源,

@@ -7,7 +7,7 @@
 use super::super::frame::フレーム視点;
 use super::super::アプリ;
 
-pub(super) fn 報告する(アプリ: &アプリ, 視点情報: &フレーム視点) {
+pub(super) fn クラスタ選別の割り当て統計を報告する(アプリ: &アプリ, 視点情報: &フレーム視点) {
     if !アプリ.読み戻し検収.クラスタ選別の割り当てを報告するか {
         return;
     }
@@ -18,7 +18,7 @@ pub(super) fn 報告する(アプリ: &アプリ, 視点情報: &フレーム視
     let 視点 = 描画視点へ写す(視点情報);
     let ライティング = アプリ.天空.ライティング();
     match レンダラー.クラスタ選別の割り当て統計を読み戻す(&視点, &ライティング.局所光源列()) {
-        Ok(統計) => crate::reports::cluster_assignment::報告する(統計),
+        Ok(統計) => crate::reports::cluster_assignment::クラスタ割り当て統計を出す(統計),
         Err(誤り) => crate::reports::cluster_assignment::読み戻せなかったことを告げる(&誤り.to_string()),
     }
 }

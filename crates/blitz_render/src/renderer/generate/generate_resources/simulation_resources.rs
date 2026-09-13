@@ -15,7 +15,7 @@ use crate::vulkan::transfer::ステージング経由の転送係;
 type シミュレーション資源 = (Option<vulkan::skinning::スキニング一式>, Option<vulkan::cloth::布一式>);
 
 #[allow(clippy::too_many_arguments)]
-pub(super) fn 組み立てる(
+pub(super) fn スキニングと布の資源を組み立てる(
     転送係: ステージング経由の転送係<'_>,
     シーンカラー形式: vk::Format,
     セットレイアウト: &シーンセットレイアウト一式,
@@ -29,6 +29,6 @@ pub(super) fn 組み立てる(
     let スキニング = スキン
         .map(|素材| vulkan::skinning::スキニング一式::生成する(転送係, 頂点一覧, 素材, &シェーダー.スキニング))
         .transpose()?;
-    let 布一式 = cloth_resources::組み立てる(転送係, シーンカラー形式, セットレイアウト, 布, &シェーダー.布, スキニング.as_ref())?;
+    let 布一式 = cloth_resources::布一式を組み立てる(転送係, シーンカラー形式, セットレイアウト, 布, &シェーダー.布, スキニング.as_ref())?;
     Ok((スキニング, 布一式))
 }

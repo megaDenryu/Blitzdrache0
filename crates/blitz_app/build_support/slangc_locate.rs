@@ -19,7 +19,7 @@ impl スラングコンパイラの所在 {
     }
 }
 
-pub(super) fn 発見する() -> Result<スラングコンパイラの所在, String> {
+pub(super) fn slangc実行ファイルを探す() -> Result<スラングコンパイラの所在, String> {
     if let Ok(sdk) = env::var("VULKAN_SDK") {
         let 候補 = PathBuf::from(sdk).join("Bin").join("slangc.exe");
         if 候補.is_file() {

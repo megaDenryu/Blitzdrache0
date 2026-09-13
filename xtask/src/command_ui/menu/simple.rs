@@ -5,7 +5,7 @@ use std::io::Write;
 
 use crate::command_ui::command_catalog::コマンド項目;
 
-pub(crate) fn 選択する(項目一覧: &[コマンド項目]) -> Option<usize> {
+pub(crate) fn 番号入力で1件を選ぶ(項目一覧: &[コマンド項目]) -> Option<usize> {
     for (添字, 項目) in 項目一覧.iter().enumerate() {
         println!(
             "{番号:>3}. {日本語名} ({ascii名}) — {要約}",

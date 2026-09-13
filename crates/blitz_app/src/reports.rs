@@ -74,7 +74,7 @@ pub(crate) fn 可視個体の選別の区間を表示する(統計: Option<&フ�
 }
 
 fn 区間を表示する(名前: &str, 時間一覧: Vec<f64>) {
-    let Some(統計) = crate::app::集計する(&時間一覧) else {
+    let Some(統計) = crate::app::フレーム間隔から統計を集計する(&時間一覧) else {
         return;
     };
     println!(

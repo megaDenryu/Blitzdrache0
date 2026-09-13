@@ -16,7 +16,7 @@ use crate::vulkan::pipeline::shadow_pipeline::{finish::パイプラインを取�
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
 
-pub(super) fn 組み立てる(
+pub(super) fn 点光源の影の固定機能を組み立てる(
     device: &ash::Device,
     深度形式: vk::Format,
     標本数: vk::SampleCountFlags,

@@ -13,8 +13,9 @@ use crate::error::レンダラーエラー;
 use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::allocator::GPU資源の確保係;
 
-pub(super) fn 生成する(
-    確保係: &GPU資源の確保係<'_>, 一辺: 影の一辺解像度
+pub(super) fn シャドウマップの一式を確保する(
+    確保係: &GPU資源の確保係<'_>,
+    一辺: 影の一辺解像度,
 ) -> Result<シャドウマップ, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let 画像 = シャドウマップの画像を作る(確保係, 一辺)?;

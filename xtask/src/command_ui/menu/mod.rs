@@ -25,7 +25,7 @@ use command_line::コマンド行;
 pub(crate) fn 対話メニューを起動する() -> ExitCode {
     let 項目一覧 = command_catalog::全件();
     let 選択位置 = if 対話端末か() {
-        match interactive::選択する(&項目一覧) {
+        match interactive::項目一覧から1件を選ぶ(&項目一覧) {
             Ok(選択位置) => 選択位置,
             Err(破れ) => {
                 eprintln!("[xtask] メニューの端末制御に失敗した: {破れ}");
@@ -33,7 +33,7 @@ pub(crate) fn 対話メニューを起動する() -> ExitCode {
             }
         }
     } else {
-        simple::選択する(&項目一覧)
+        simple::番号入力で1件を選ぶ(&項目一覧)
     };
     let Some(位置) = 選択位置 else {
         println!("[xtask] 何も選ばずに終了した");

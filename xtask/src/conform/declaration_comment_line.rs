@@ -12,7 +12,7 @@ use std::path::Path;
 use super::source_lexing::{コードだけの行一覧, 行ごとの内訳, 行の内訳};
 use super::violation::違反;
 
-pub fn 検査する(パス: &Path, 内容: &str) -> Vec<違反> {
+pub fn 宣言の間のコメント行を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
     let 内訳一覧 = 行ごとの内訳(内容);
     let コード行一覧 = コードだけの行一覧(内容);
     let mut 違反一覧 = Vec::new();

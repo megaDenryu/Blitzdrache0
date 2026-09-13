@@ -8,7 +8,7 @@ use crate::error::レンダラーエラー;
 use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::allocator::GPU資源の確保係;
 
-pub(super) fn 生成する(
+pub(super) fn 時間再構成の画像を確保する(
     確保係: &GPU資源の確保係<'_>,
     形式: vk::Format,
     寸法: vk::Extent2D,

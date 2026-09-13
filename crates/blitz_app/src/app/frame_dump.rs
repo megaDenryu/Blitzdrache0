@@ -51,16 +51,16 @@ impl アプリ {
         match self.フレームダンプ先.clone() {
             フレームダンプ指定::指定なし => Ok(描画の到達::届かなかった),
             フレームダンプ指定::提示画像を書き出す { 基準名 } => {
-                let 先 = dump_destination::決める(self, &基準名, アクション);
-                presentation_dump::読み戻して書き出す(self, 描画入力, 視点情報, &先)
+                let 先 = dump_destination::ダンプ先のパスを決める(self, &基準名, アクション);
+                presentation_dump::提示画像を読み戻して書き出す(self, 描画入力, 視点情報, &先)
             }
             フレームダンプ指定::圧縮前のHDRを書き出す { 基準名 } => {
-                let 先 = dump_destination::決める(self, &基準名, アクション);
-                hdr_dump::読み戻して書き出す(self, 描画入力, &先)
+                let 先 = dump_destination::ダンプ先のパスを決める(self, &基準名, アクション);
+                hdr_dump::明るさ圧縮前画像を読み戻して書き出す(self, 描画入力, &先)
             }
             フレームダンプ指定::最終深度を書き出す { 基準名 } => {
-                let 先 = dump_destination::決める(self, &基準名, アクション);
-                depth_dump::読み戻して書き出す(self, 描画入力, &先)
+                let 先 = dump_destination::ダンプ先のパスを決める(self, &基準名, アクション);
+                depth_dump::最終深度を読み戻して書き出す(self, 描画入力, &先)
             }
         }
     }

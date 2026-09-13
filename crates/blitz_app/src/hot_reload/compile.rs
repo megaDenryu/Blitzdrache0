@@ -18,7 +18,7 @@ use fragment_contract::画素段の組;
 pub(super) fn シーン描画シェーダーをコンパイルする(
     監視先: &Path,
 ) -> Result<契約別のシーン描画シェーダー, シェーダー再コンパイルエラー> {
-    let slangc = slangc::発見する()?;
+    let slangc = slangc::スランガーの実行位置を発見する()?;
     let 頂点の説明 = format!("共有頂点段({})", 監視先.display());
     let 頂点spirv = エントリを1つコンパイルする(&slangc, 監視先, "vertexMain", "vertex", "vertex.spv", &頂点の説明)?;
     let mut 組ごとのバイト列 = Vec::with_capacity(画素段の組::全ての組.len());

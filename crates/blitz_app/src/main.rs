@@ -38,7 +38,7 @@ use app::アプリ;
 use error::起動エラー;
 
 fn main() -> ExitCode {
-    match 実行する() {
+    match 起動要求を解析して実行する() {
         Ok(終了コード) => 終了コード,
         Err(誤り) => {
             eprintln!("起動に失敗した: {誤り}");
@@ -47,7 +47,7 @@ fn main() -> ExitCode {
     }
 }
 
-fn 実行する() -> Result<ExitCode, 起動エラー> {
+fn 起動要求を解析して実行する() -> Result<ExitCode, 起動エラー> {
     let 引数一覧: Vec<String> = std::env::args().skip(1).collect();
     match cli::引数を解析する(&引数一覧)? {
         cli::起動要求::天空状態報告 => Ok(reports::sky_state::天空状態表を出す()),

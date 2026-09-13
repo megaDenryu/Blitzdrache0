@@ -22,7 +22,7 @@ pub(super) fn 深度プリパスのパイプラインを生成する(
 ) -> Result<vk::Pipeline, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let 頂点モジュール = 確保係.シェーダーモジュールを生成する(シェーダー.頂点コード())?;
-    let 結果 = assemble::組み立てる(device, 深度形式, 標本数, layout, 頂点モジュール);
+    let 結果 = assemble::深度プリパスの固定機能を組み立てる(device, 深度形式, 標本数, layout, 頂点モジュール);
     // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
     unsafe { device.destroy_shader_module(頂点モジュール, None) };
     結果

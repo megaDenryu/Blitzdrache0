@@ -64,7 +64,7 @@ const 項目一覧: [未是正の自由関数; 37] = [
     未是正の自由関数::生成する("headless/session.rs", "一時コマンドバッファを1本確保する", "ウィンドウなし実行GPU環境"),
     未是正の自由関数::生成する(
         "pipeline_ledger/device_supplier/family_dispatch.rs",
-        "生成する",
+        "族とキーからパイプラインを生成する",
         "デバイスパイプライン供給元",
     ),
     未是正の自由関数::生成する("post_process/create.rs", "束を生成する", "生成材料"),

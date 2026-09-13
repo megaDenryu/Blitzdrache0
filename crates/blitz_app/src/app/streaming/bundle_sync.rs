@@ -39,7 +39,7 @@ fn 束idから座標を復元する(束id: 描画束ID) -> チャンク座標 {
 
 /// レンダラーの描画束・可視判定の材料・プリミティブ描画項目は同じ束IDで対になるため、追加も解除も同じ走査で3つへ反映する。
 #[allow(clippy::too_many_arguments)]
-pub(super) fn 適用する(
+pub(super) fn フレームの進行を束へ適用する(
     調停: &mut ストリーミング調停,
     レンダラー: &mut レンダラー,
     可視判定: &mut crate::app::visibility::可視判定配線,

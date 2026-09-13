@@ -40,7 +40,7 @@ impl 派生表現ディスクリプタ {
             }
         };
         for (set, 書き込み先) in set一覧.iter().zip(書き込み先一覧) {
-            binding::書き込む(device, set, 遠方環境の配列ビュー, *書き込み先);
+            binding::束縛を書き込む(device, set, 遠方環境の配列ビュー, *書き込み先);
         }
         Ok(Self { layout, pool, set一覧 })
     }

@@ -85,10 +85,13 @@ impl 画面へ重ねるUI {
             .run(raw_input, |ctx| 内容.順に描く(ctx, 開発パネルを表示するか, 露出, ブレンド));
         self.winit統合.handle_platform_output(window, full_output.platform_output);
 
-        texture_sync::反映する(レンダラー, &full_output.textures_delta, &mut self.ミラー)?;
+        texture_sync::テクスチャ差分をレンダラーへ反映する(レンダラー, &full_output.textures_delta, &mut self.ミラー)?;
 
         let 図形一覧 = self.コンテキスト.tessellate(full_output.shapes, full_output.pixels_per_point);
-        Ok(Some(mesh_convert::変換する(&図形一覧, full_output.pixels_per_point)))
+        Ok(Some(mesh_convert::図形一覧をui描画データへ変換する(
+            &図形一覧,
+            full_output.pixels_per_point,
+        )))
     }
 
     /// このフレームのCPU側経過時間を記録し、更新後の移動平均(ミリ秒)を返す。

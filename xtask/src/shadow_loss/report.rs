@@ -4,7 +4,7 @@
 use super::compare::比較結果;
 use crate::shadow_diagnostic_image::{帯の幅メートル, 帯数};
 
-pub(super) fn 表示する(比較: &比較結果) {
+pub(super) fn 比較結果を表にして表示する(比較: &比較結果) {
     println!();
     println!("受光距離帯 / 基準の影画素数 / 候補の影画素数 / 欠落 / 余分 / 影の弱まり量 / 影の強まり量");
     let mut 帯の下限 = 0.0;

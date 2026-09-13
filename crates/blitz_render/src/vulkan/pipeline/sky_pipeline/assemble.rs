@@ -15,7 +15,7 @@ use crate::vulkan::temporal_reconstruction::動きベクトルの形式;
 const 頂点エントリ名: &std::ffi::CStr = c"vertexMain";
 const 画素段エントリ名: &std::ffi::CStr = c"fragmentMain";
 
-pub(super) fn 組み立てる(
+pub(super) fn 空パイプラインの固定機能を組み立てる(
     device: &ash::Device,
     カラー形式: vk::Format,
     深度形式: vk::Format,

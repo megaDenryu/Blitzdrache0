@@ -23,7 +23,7 @@ use super::color_difference::{色の動く向き, 許可域外の色差};
 use super::scatter_geometry::散布の幾何の実測;
 use crate::distant_view::error::遠景構図の検収エラー;
 
-pub(super) fn 判定する(置き場: &Path) -> Result<String, 遠景構図の検収エラー> {
+pub(super) fn 散布の構図を判定する(置き場: &Path) -> Result<String, 遠景構図の検収エラー> {
     let 主判定 = 主判定を課す(置き場)?;
     let 陰影 = 陰影の有界検査を課す(置き場)?;
     let にじみ = にじみの有界検査を課す(置き場)?;

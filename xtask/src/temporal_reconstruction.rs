@@ -37,11 +37,11 @@ pub fn 時間再構成を確認する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, 時間再構成の検収エラー> {
-    crate::visual_sample_world::用意する().map_err(時間再構成の検収エラー::目視見本世界を用意できなかった)?;
+    crate::visual_sample_world::目視見本世界を用意する().map_err(時間再構成の検収エラー::目視見本世界を用意できなかった)?;
     let 実行環境 = run::実行環境を作る();
     let 注入 = injection::取り出して判定する(&run::合成入力の観測を採る(&実行環境)?)?;
     let 一回目 = observation::取り出す(&run::観測を採る(&実行環境, run::一回目の実行名, "1回目")?)?;
     let 二回目 = observation::取り出す(&run::観測を採る(&実行環境, run::二回目の実行名, "2回目")?)?;
-    judgment::判定する(&一回目, &二回目)?;
+    judgment::一回目と二回目の観測が一致することを判定する(&一回目, &二回目)?;
     Ok(format!("{}、{}", injection::要約を組む(&注入), observation::要約を組む(&一回目)))
 }

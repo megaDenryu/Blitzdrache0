@@ -13,7 +13,7 @@ use super::{
     wording_contract, workspace_dependency_features,
 };
 
-pub fn 集める() -> Result<Vec<違反>, 規約検査の破れ> {
+pub fn 複数ファイルを横断する検査の違反一覧を集める() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
     違反一覧.extend(dependency_whitelist::全クレートを検査する()?);
     違反一覧.extend(workspace_dependency_features::全依存を検査する()?);
@@ -30,8 +30,8 @@ pub fn 集める() -> Result<Vec<違反>, 規約検査の破れ> {
     違反一覧.extend(removed_object_uniform::全ファイルを検査する()?);
     違反一覧.extend(removed_view_pass_lighting::全ファイルを検査する()?);
     違反一覧.extend(removed_slot_material_set::全ファイルを検査する()?);
-    違反一覧.extend(reload_without_device_wait::検査する()?);
-    違反一覧.extend(single_lighting_slot_write::検査する()?);
+    違反一覧.extend(reload_without_device_wait::シーン差し替えのgpu全作業完了待ちを検査する()?);
+    違反一覧.extend(single_lighting_slot_write::照明問い合わせスロットへの書き込み元を検査する()?);
     違反一覧.extend(type_metrics_ledger::全型の分量を台帳と照合する()?);
     違反一覧.extend(free_function_whole_type::全ファイルの自由関数を検査する()?);
     違反一覧.extend(verify_output_place::全ファイルを検査する()?);

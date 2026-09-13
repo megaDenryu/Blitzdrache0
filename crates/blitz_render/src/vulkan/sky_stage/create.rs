@@ -9,8 +9,9 @@ use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像標本ディスクリプタ;
 use crate::vulkan::pipeline::空パイプライン;
 
-pub(super) fn 生成する(
-    確保係: &GPU資源の確保係<'_>, 要求: 空段階の生成要求<'_>
+pub(super) fn 空段階資源を確保する(
+    確保係: &GPU資源の確保係<'_>,
+    要求: 空段階の生成要求<'_>,
 ) -> Result<空段階資源, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let 標本 = 大気のベイク済み画像標本ディスクリプタ::生成する(確保係, &要求.大気のベイク済み画像.標本の束縛先())?;

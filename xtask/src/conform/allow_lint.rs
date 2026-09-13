@@ -27,7 +27,7 @@ pub fn パスがテストまたは例か(パス: &Path) -> bool {
     ディレクトリで許容 || ファイル名で許容
 }
 
-pub fn 検査する(パス: &Path, 内容: &str) -> Vec<違反> {
+pub fn 不正なallowの緩和を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
     let パス許容 = パスがテストまたは例か(パス);
     let mut cfg_testを見た = false;
     let mut 違反一覧 = Vec::new();
@@ -51,24 +51,24 @@ mod tests {
     #[test]
     fn 前にcfg_testがあれば許容する() {
         let 内容 = "#[cfg(test)]\n#[allow(clippy::unwrap_used)]\nfn f() {}";
-        assert!(検査する(Path::new("src/x.rs"), 内容).is_empty());
+        assert!(不正なallowの緩和を検査する(Path::new("src/x.rs"), 内容).is_empty());
     }
 
     #[test]
     fn cfg_testが無ければ違反() {
         let 内容 = "#![allow(clippy::unwrap_used)]";
-        assert_eq!(検査する(Path::new("src/x.rs"), 内容).len(), 1);
+        assert_eq!(不正なallowの緩和を検査する(Path::new("src/x.rs"), 内容).len(), 1);
     }
 
     #[test]
     fn testsディレクトリなら許容する() {
         let 内容 = "#![allow(clippy::expect_used)]";
-        assert!(検査する(Path::new("crates/foo/tests/x.rs"), 内容).is_empty());
+        assert!(不正なallowの緩和を検査する(Path::new("crates/foo/tests/x.rs"), 内容).is_empty());
     }
 
     #[test]
     fn _testsで終わるファイル名なら許容する() {
         let 内容 = "#![allow(clippy::expect_used)]";
-        assert!(検査する(Path::new("crates/foo/barrier_derivation/barrier_derivation_tests.rs"), 内容).is_empty());
+        assert!(不正なallowの緩和を検査する(Path::new("crates/foo/barrier_derivation/barrier_derivation_tests.rs"), 内容).is_empty());
     }
 }

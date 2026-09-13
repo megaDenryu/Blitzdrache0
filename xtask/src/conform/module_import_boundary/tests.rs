@@ -3,10 +3,10 @@
 
 use std::path::Path;
 
-use super::検査する;
+use super::取り込みの境界を検査する;
 
 fn 違反の数(パス: &str, 内容: &str) -> usize {
-    検査する(Path::new(パス), 内容).len()
+    取り込みの境界を検査する(Path::new(パス), 内容).len()
 }
 
 #[test]

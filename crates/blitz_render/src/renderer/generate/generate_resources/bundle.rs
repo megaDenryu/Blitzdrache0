@@ -22,7 +22,7 @@ pub(super) struct 段別資源 {
     pub(super) 時間再構成: vulkan::temporal_reconstruction::時間再構成一式,
 }
 
-pub(super) fn 束ねる(段別: 段別資源) -> フレーム資源 {
+pub(super) fn 段別資源をフレーム資源へ束ねる(段別: 段別資源) -> フレーム資源 {
     フレーム資源 {
         影の資源: 段別.基礎.影の資源,
         転送環境: 段別.基礎.転送環境,

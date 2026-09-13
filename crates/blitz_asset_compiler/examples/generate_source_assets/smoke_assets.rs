@@ -13,7 +13,7 @@ pub(super) fn 書き出す(出力先ディレクトリ: &Path) -> Result<(), Str
     let 代替文書 = gltf_json::文書のJSON文字列.replace("quad_base_color.png", "quad_alt_color.png");
     書き込む(&出力先ディレクトリ.join("quad_alt.gltf"), 代替文書.as_bytes())?;
     書き込む(&出力先ディレクトリ.join("quad.bin"), &geometry::バッファバイト列を作る())?;
-    textures::保存する(出力先ディレクトリ)?;
+    textures::quad用の単色画像2枚を保存する(出力先ディレクトリ)?;
     材質境界アセットを書き出す(出力先ディレクトリ)?;
     遠方環境の検収アセットを書き出す(出力先ディレクトリ)?;
     シャドウ検証アセットを書き出す(出力先ディレクトリ)
@@ -63,7 +63,7 @@ fn シャドウ検証アセットを書き出す(出力先ディレクトリ: &P
         &出力先ディレクトリ.join("shadow_scene.bin"),
         &shadow_scene_geometry::バッファバイト列を作る(),
     )?;
-    shadow_scene_texture::保存する(出力先ディレクトリ)
+    shadow_scene_texture::シャドウ検証用の白画像を保存する(出力先ディレクトリ)
 }
 
 fn 書き込む(パス: &Path, バイト列: &[u8]) -> Result<(), String> {

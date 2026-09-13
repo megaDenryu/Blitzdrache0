@@ -42,9 +42,9 @@ impl 変換の受け皿 {
             .map_err(super::描画入力エラー::from)?;
         self.素材一覧.push(描画対象素材::生成する(
             大域の基準原点,
-            instance_transforms::組み立てる(元.形状(), ローカルからワールド),
+            instance_transforms::個体変換列を組み立てる(元.形状(), ローカルからワールド),
             convert::形状を変換する(元.形状()),
-            material_slots::変換する(元.材質集合(), 地表の層のタイル)?,
+            material_slots::材質集合を材質スロット素材一覧へ変換する(元.材質集合(), 地表の層のタイル)?,
         ));
         if let Some(登録) = visibility_material::群可視材料の登録を作る(元.形状(), 位置, 大域の基準原点, ローカルからワールド)?
         {

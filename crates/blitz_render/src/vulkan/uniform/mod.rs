@@ -43,7 +43,7 @@ pub(crate) struct フレームシェーダー定数一式 {
 
 impl フレームシェーダー定数一式 {
     pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>) -> Result<Self, レンダラーエラー> {
-        create::生成する(確保係)
+        create::フレームシェーダー定数一式を生成する(確保係)
     }
 
     pub(crate) fn ビュー定数のバッファ(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {

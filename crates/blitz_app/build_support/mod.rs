@@ -45,11 +45,11 @@ const スキニングエントリファイル名: &str = "skinning.slang";
 pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     let manifest_dir = env::var("CARGO_MANIFEST_DIR").map_err(|誤り| format!("CARGO_MANIFEST_DIR環境変数が取得できない: {誤り}"))?;
     let シェーダーディレクトリ絶対パス = PathBuf::from(&manifest_dir).join(シェーダーディレクトリ相対パス);
-    rerun_registration::登録する(&シェーダーディレクトリ絶対パス)?;
+    rerun_registration::シェーダーの変更監視をcargoへ登録する(&シェーダーディレクトリ絶対パス)?;
 
     let out_dir = env::var("OUT_DIR").map_err(|誤り| format!("OUT_DIR環境変数が取得できない: {誤り}"))?;
     let 出力先ディレクトリ = PathBuf::from(out_dir);
-    let slangc = slangc_locate::発見する()?;
+    let slangc = slangc_locate::slangc実行ファイルを探す()?;
 
     let ソース絶対パス = シェーダーディレクトリ絶対パス.join(エントリファイル名);
     spirv_compile::頂点と画素段をコンパイルする(&slangc, &ソース絶対パス, &出力先ディレクトリ)?;
@@ -88,7 +88,11 @@ pub(crate) fn シェーダーをビルドする() -> Result<(), String> {
     atmosphere_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
     auto_exposure_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
     local_visibility_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
-    cluster_light_assignment_spirv_compile::コンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
+    cluster_light_assignment_spirv_compile::クラスタ選別のエントリをコンパイルする(
+        &slangc,
+        &シェーダーディレクトリ絶対パス,
+        &出力先ディレクトリ,
+    )?;
     temporal_reconstruction_spirv_compile::頂点と画素段をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
 
     cloth_spirv_compile::全部をコンパイルする(&slangc, &シェーダーディレクトリ絶対パス, &出力先ディレクトリ)?;
