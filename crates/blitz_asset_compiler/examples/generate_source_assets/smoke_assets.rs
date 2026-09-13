@@ -23,46 +23,22 @@ pub(super) fn 書き出す(出力先ディレクトリ: &Path) -> Result<(), Str
 /// 材質の係数だけを差し替えた3つ目の文書も同じバッファを読む。差し替えの前後で形が変わらないことが、
 /// 画素の違いを材質の違いだけに帰属させる根拠になる。
 fn 材質境界アセットを書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
-    書き込む(
-        &出力先ディレクトリ.join("multi_material.bin"),
-        &multi_material_geometry::バッファバイト列を作る(),
-    )?;
-    書き込む(
-        &出力先ディレクトリ.join("multi_material_two.gltf"),
-        multi_material_gltf_json::二材質の文書().as_bytes(),
-    )?;
-    書き込む(
-        &出力先ディレクトリ.join("multi_material_two_alt.gltf"),
-        multi_material_gltf_json::代替の二材質の文書().as_bytes(),
-    )?;
-    書き込む(
-        &出力先ディレクトリ.join("multi_material_one.gltf"),
-        multi_material_gltf_json::単一材質の文書().as_bytes(),
-    )
+    書き込む(&出力先ディレクトリ.join("multi_material.bin"), &multi_material_geometry::バッファバイト列を作る())?;
+    書き込む(&出力先ディレクトリ.join("multi_material_two.gltf"), multi_material_gltf_json::二材質の文書().as_bytes())?;
+    書き込む(&出力先ディレクトリ.join("multi_material_two_alt.gltf"), multi_material_gltf_json::代替の二材質の文書().as_bytes())?;
+    書き込む(&出力先ディレクトリ.join("multi_material_one.gltf"), multi_material_gltf_json::単一材質の文書().as_bytes())
 }
 
 /// 遠方環境の消費の検収アセット。金属と誘電体の板を粗さの水準ごとに並べた1つの世界であり、
 /// 板ごとに材質とプリミティブが分かれる。
 fn 遠方環境の検収アセットを書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
-    書き込む(
-        &出力先ディレクトリ.join("indirect_probe.bin"),
-        &indirect_probe_geometry::バッファバイト列を作る(),
-    )?;
-    書き込む(
-        &出力先ディレクトリ.join("indirect_probe.gltf"),
-        indirect_probe_gltf_json::文書().as_bytes(),
-    )
+    書き込む(&出力先ディレクトリ.join("indirect_probe.bin"), &indirect_probe_geometry::バッファバイト列を作る())?;
+    書き込む(&出力先ディレクトリ.join("indirect_probe.gltf"), indirect_probe_gltf_json::文書().as_bytes())
 }
 
 fn シャドウ検証アセットを書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
-    書き込む(
-        &出力先ディレクトリ.join("shadow_scene.gltf"),
-        shadow_scene_gltf_json::文書のJSON文字列.as_bytes(),
-    )?;
-    書き込む(
-        &出力先ディレクトリ.join("shadow_scene.bin"),
-        &shadow_scene_geometry::バッファバイト列を作る(),
-    )?;
+    書き込む(&出力先ディレクトリ.join("shadow_scene.gltf"), shadow_scene_gltf_json::文書のJSON文字列.as_bytes())?;
+    書き込む(&出力先ディレクトリ.join("shadow_scene.bin"), &shadow_scene_geometry::バッファバイト列を作る())?;
     shadow_scene_texture::シャドウ検証用の白画像を保存する(出力先ディレクトリ)
 }
 

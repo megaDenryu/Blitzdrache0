@@ -32,10 +32,7 @@ impl ディスクリプタ索引機能 {
 
     /// 最低要件のうち欠けている機能。満たしていれば空になる。
     pub(crate) fn 不足一覧(self) -> Vec<ディスクリプタ索引機能項目> {
-        ディスクリプタ索引機能項目::全項目
-            .into_iter()
-            .filter(|項目| !self.対応しているか(*項目))
-            .collect()
+        ディスクリプタ索引機能項目::全項目.into_iter().filter(|項目| !self.対応しているか(*項目)).collect()
     }
 
     pub(crate) fn 最低要件を満たすか(self) -> bool {

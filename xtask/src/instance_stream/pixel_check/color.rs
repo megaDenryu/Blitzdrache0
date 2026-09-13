@@ -32,7 +32,5 @@ pub(super) fn 地形か(色: [u8; 3]) -> bool {
 }
 
 pub(super) fn 背景か(色: [u8; 3]) -> bool {
-    色.iter()
-        .zip(番兵背景RGB)
-        .all(|(成分, 期待)| (i32::from(*成分) - i32::from(期待)).abs() <= 背景の許容差)
+    色.iter().zip(番兵背景RGB).all(|(成分, 期待)| (i32::from(*成分) - i32::from(期待)).abs() <= 背景の許容差)
 }

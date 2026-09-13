@@ -10,10 +10,7 @@ use crate::error::レンダラーエラー;
 /// 前提: `表示ハンドル` と `ウィンドウハンドル` の指すウィンドウは、戻り値の
 /// サーフェスより長生きすることを呼び出し元が保証する。
 pub(in crate::vulkan) fn 生成する(
-    entry: &ash::Entry,
-    instance: &ash::Instance,
-    表示ハンドル: RawDisplayHandle,
-    ウィンドウハンドル: RawWindowHandle,
+    entry: &ash::Entry, instance: &ash::Instance, 表示ハンドル: RawDisplayHandle, ウィンドウハンドル: RawWindowHandle
 ) -> Result<(ash::khr::surface::Instance, vk::SurfaceKHR), レンダラーエラー> {
     let loader = ash::khr::surface::Instance::new(entry, instance);
 

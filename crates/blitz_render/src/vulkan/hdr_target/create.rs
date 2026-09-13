@@ -27,9 +27,7 @@ pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, 寸法: vk::Ex
             return Err(誤り);
         }
     };
-    Ok(HDRターゲット {
-        画像, 画像ビュー, memory
-    })
+    Ok(HDRターゲット { 画像, 画像ビュー, memory })
 }
 
 fn hdr中間画像を作る(確保係: &GPU資源の確保係<'_>, 寸法: vk::Extent2D) -> Result<vk::Image, レンダラーエラー> {
@@ -53,16 +51,7 @@ fn hdr中間画像を作る(確保係: &GPU資源の確保係<'_>, 寸法: vk::E
 }
 
 fn 画像ビューを作る(確保係: &GPU資源の確保係<'_>, 画像: vk::Image) -> Result<vk::ImageView, レンダラーエラー> {
-    let 部分範囲 = vk::ImageSubresourceRange::default()
-        .aspect_mask(vk::ImageAspectFlags::COLOR)
-        .base_mip_level(0)
-        .level_count(1)
-        .base_array_layer(0)
-        .layer_count(1);
-    let create_info = vk::ImageViewCreateInfo::default()
-        .image(画像)
-        .view_type(vk::ImageViewType::TYPE_2D)
-        .format(HDR形式)
-        .subresource_range(部分範囲);
+    let 部分範囲 = vk::ImageSubresourceRange::default().aspect_mask(vk::ImageAspectFlags::COLOR).base_mip_level(0).level_count(1).base_array_layer(0).layer_count(1);
+    let create_info = vk::ImageViewCreateInfo::default().image(画像).view_type(vk::ImageViewType::TYPE_2D).format(HDR形式).subresource_range(部分範囲);
     確保係.画像の見え方から画像ビューを確保する(&create_info)
 }

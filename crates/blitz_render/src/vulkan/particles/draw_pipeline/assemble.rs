@@ -21,48 +21,32 @@ pub(super) fn 粒子描画パイプラインを組み立てる(
     画素段モジュール: vk::ShaderModule,
 ) -> Result<粒子描画パイプライン, レンダラーエラー> {
     let ステージ一覧 = [
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::VERTEX)
-            .module(頂点モジュール)
-            .name(頂点エントリ名),
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::FRAGMENT)
-            .module(画素段モジュール)
-            .name(画素段エントリ名),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::VERTEX).module(頂点モジュール).name(頂点エントリ名),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::FRAGMENT).module(画素段モジュール).name(画素段エントリ名),
     ];
 
     // 頂点入力なし(SV_VertexIDでストレージバッファから読むため頂点バインドは不要)。
     let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default();
     let 入力アセンブリstate = vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::POINT_LIST);
     let ビューポートstate = vk::PipelineViewportStateCreateInfo::default().viewport_count(1).scissor_count(1);
-    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default()
-        .polygon_mode(vk::PolygonMode::FILL)
-        .cull_mode(vk::CullModeFlags::NONE)
-        .line_width(1.0);
+    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default().polygon_mode(vk::PolygonMode::FILL).cull_mode(vk::CullModeFlags::NONE).line_width(1.0);
     let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
     let カラーブレンドアタッチメント一覧 = [vk::PipelineColorBlendAttachmentState::default().color_write_mask(vk::ColorComponentFlags::RGBA)];
     let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default().attachments(&カラーブレンドアタッチメント一覧);
     // 深度は読み取りのみ: シーンの深度に隠れる粒子は描かないが、粒子どうしの重なりで
     // 深度バッファを書き換えない(追記描画パスのため他の描画への副作用を避ける)。
-    let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
-        .depth_test_enable(true)
-        .depth_write_enable(false)
-        .depth_compare_op(vk::CompareOp::GREATER_OR_EQUAL);
+    let 深度state = vk::PipelineDepthStencilStateCreateInfo::default().depth_test_enable(true).depth_write_enable(false).depth_compare_op(vk::CompareOp::GREATER_OR_EQUAL);
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
     let ディスクリプタlayout一覧 = [ディスクリプタlayout];
     let プッシュ定数範囲一覧 = [カメラ相対の基準原点::プッシュ定数範囲()];
-    let layout_create_info = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(&ディスクリプタlayout一覧)
-        .push_constant_ranges(&プッシュ定数範囲一覧);
+    let layout_create_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&ディスクリプタlayout一覧).push_constant_ranges(&プッシュ定数範囲一覧);
     // 安全性: deviceは生成済みで有効。layout_create_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };
 
     let カラー形式一覧 = [カラー形式];
-    let mut rendering情報 = vk::PipelineRenderingCreateInfo::default()
-        .color_attachment_formats(&カラー形式一覧)
-        .depth_attachment_format(深度形式);
+    let mut rendering情報 = vk::PipelineRenderingCreateInfo::default().color_attachment_formats(&カラー形式一覧).depth_attachment_format(深度形式);
 
     let create_info = vk::GraphicsPipelineCreateInfo::default()
         .stages(&ステージ一覧)

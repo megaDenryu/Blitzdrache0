@@ -22,9 +22,6 @@ fn 拡張子が始まるか(中身: &str, 点の位置: usize) -> bool {
     let 続き: String = 中身[点の位置 + 1..].chars().take_while(char::is_ascii_alphanumeric).collect();
     let 長さが拡張子の範囲 = (2..=10).contains(&続き.chars().count());
     let 英字始まり = 続き.chars().next().is_some_and(|文字| 文字.is_ascii_alphabetic());
-    let 後ろが英数字でない = 中身[点の位置 + 1 + 続き.len()..]
-        .chars()
-        .next()
-        .is_none_or(|文字| !文字.is_ascii_alphanumeric());
+    let 後ろが英数字でない = 中身[点の位置 + 1 + 続き.len()..].chars().next().is_none_or(|文字| !文字.is_ascii_alphanumeric());
     長さが拡張子の範囲 && 英字始まり && 後ろが英数字でない
 }

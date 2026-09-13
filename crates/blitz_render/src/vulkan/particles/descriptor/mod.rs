@@ -20,11 +20,7 @@ pub(crate) struct 粒子ディスクリプタ一式 {
 }
 
 impl 粒子ディスクリプタ一式 {
-    pub(crate) fn 生成する(
-        device: &ash::Device,
-        粒子バッファ: vk::Buffer,
-        シェーダー定数: &フレームシェーダー定数一式,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(device: &ash::Device, 粒子バッファ: vk::Buffer, シェーダー定数: &フレームシェーダー定数一式) -> Result<Self, レンダラーエラー> {
         let layout = layout::生成する(device)?;
         let pool = match pool::粒子のディスクリプタプールを生成する(device) {
             Ok(pool) => pool,
@@ -44,12 +40,7 @@ impl 粒子ディスクリプタ一式 {
         };
 
         for フレーム添字 in フレームスロット添字::全スロット() {
-            set::書き込む(
-                device,
-                &set一覧[フレーム添字.配列添字()],
-                粒子バッファ,
-                シェーダー定数.ビュー定数のバッファ(フレーム添字),
-            );
+            set::書き込む(device, &set一覧[フレーム添字.配列添字()], 粒子バッファ, シェーダー定数.ビュー定数のバッファ(フレーム添字));
         }
 
         Ok(Self { layout, pool, set一覧 })

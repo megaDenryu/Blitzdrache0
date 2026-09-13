@@ -19,9 +19,7 @@ impl 太陽方向 {
             return Err(天空状態エラー::太陽方向が単位ベクトルでない);
         }
         let 逆長さ = 長さ二乗.sqrt().recip();
-        Ok(Self {
-            成分: 成分.map(|値| 値 * 逆長さ),
-        })
+        Ok(Self { 成分: 成分.map(|値| 値 * 逆長さ) })
     }
 
     pub fn 成分(&self) -> [f32; 3] {

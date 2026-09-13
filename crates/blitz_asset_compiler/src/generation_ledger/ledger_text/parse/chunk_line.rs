@@ -12,9 +12,7 @@ use super::super::チャンクの欄;
 /// 形式宣言と見出しが占める行数。チャンクの行の行番号はこの次から始まる。
 const 見出しが占める行数: usize = 5;
 
-pub(super) fn チャンクの行一覧を読む(
-    行一覧: &[&str]
-) -> Result<BTreeMap<チャンク座標, 内容ハッシュ>, 生成台帳エラー> {
+pub(super) fn チャンクの行一覧を読む(行一覧: &[&str]) -> Result<BTreeMap<チャンク座標, 内容ハッシュ>, 生成台帳エラー> {
     let mut 記録 = BTreeMap::new();
     for (添字, 行) in 行一覧.iter().enumerate() {
         if 行.trim().is_empty() {
@@ -28,10 +26,7 @@ pub(super) fn チャンクの行一覧を読む(
 
 fn 一行を読む(行番号: usize, 行: &str) -> Result<(チャンク座標, 内容ハッシュ), 生成台帳エラー> {
     let 欄一覧: Vec<&str> = 行.split_whitespace().collect();
-    let 行不正 = || 生成台帳エラー::行を読めない {
-        行番号,
-        内容: 行.to_string(),
-    };
+    let 行不正 = || 生成台帳エラー::行を読めない { 行番号, 内容: 行.to_string() };
     let [名前, 東の綴り, 南の綴り, ハッシュの綴り] = 欄一覧.as_slice() else {
         return Err(行不正());
     };

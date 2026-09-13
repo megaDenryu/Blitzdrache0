@@ -37,8 +37,7 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 逆Z検収エラー> 
     if 別 == 実行の別::計画を表示する {
         return Ok(plan::計画を表示する());
     }
-    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::地形世界を既定で生成する()
-    {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::地形世界を既定で生成する() {
         return Err(逆Z検収エラー::検証用アセットを生成できなかった);
     }
     let 由来 = crate::release_build::計測用に構築する("reverse-depth")?;
@@ -47,20 +46,12 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 逆Z検収エラー> 
     match 別 {
         実行の別::対照を採る => {
             run::対照を採る(&実行環境)?;
-            由来を書く(
-                &検証の出力ルート::既定().置き場の中のファイル(出力ディレクトリ, 対照の由来ファイル名),
-                &由来,
-                "standard-z far=10000",
-            )?;
+            由来を書く(&検証の出力ルート::既定().置き場の中のファイル(出力ディレクトリ, 対照の由来ファイル名), &由来, "standard-z far=10000")?;
             Ok(format!("標準Zの対照を{}へ保存した", 出力先.display()))
         }
         実行の別::候補を比較する => {
             run::候補を採る(&実行環境)?;
-            由来を書く(
-                &検証の出力ルート::既定().置き場の中のファイル(出力ディレクトリ, 候補の由来ファイル名),
-                &由来,
-                "reverse-z far=10000",
-            )?;
+            由来を書く(&検証の出力ルート::既定().置き場の中のファイル(出力ディレクトリ, 候補の由来ファイル名), &由来, "reverse-z far=10000")?;
             let 実景 = compare::対照と候補を比べる(&実行環境)?;
             let 精度 = precision_counterexample::奥行き精度を反証する()?;
             let 重なり = overlap_counterexample::前面色の保持を反証する()?;
@@ -73,8 +64,5 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 逆Z検収エラー> 
 fn 由来を書く(パス: &Path, 由来: &crate::release_build::構築の由来, 規約: &str) -> Result<(), 逆Z検収エラー> {
     let mut 行一覧 = vec![format!("depth-contract={規約}")];
     行一覧.extend(由来.注記一覧());
-    std::fs::write(パス, 行一覧.join("\n")).map_err(|誤り| 逆Z検収エラー::由来を書けなかった {
-        パス: パス.to_path_buf(),
-        誤り,
-    })
+    std::fs::write(パス, 行一覧.join("\n")).map_err(|誤り| 逆Z検収エラー::由来を書けなかった { パス: パス.to_path_buf(), 誤り })
 }

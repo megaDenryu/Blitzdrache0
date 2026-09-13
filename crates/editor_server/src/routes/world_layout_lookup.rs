@@ -4,9 +4,7 @@
 
 use axum::{http::StatusCode, response::IntoResponse, response::Response};
 
-use crate::{
-    failure_response::失敗応答を組み立てる, resource::世界の区画割り, server_state::サーバー状態, storage::プロジェクト保管庫
-};
+use crate::{failure_response::失敗応答を組み立てる, resource::世界の区画割り, server_state::サーバー状態, storage::プロジェクト保管庫};
 
 /// 応答は`Response`本体を直接返すと`Result`全体が大きくなる(clippyの
 /// `result_large_err`が検出する)ため、拒否応答だけ`Box`で包む。
@@ -16,9 +14,5 @@ pub(super) fn 保存済み区画割りを読む(状態: &サーバー状態) -> 
 }
 
 fn 区画割り未設定応答() -> Response {
-    失敗応答を組み立てる(
-        StatusCode::BAD_REQUEST,
-        "前提条件エラー",
-        "大域世界の構造(区画割り)がまだ保存されていない。先に大域世界の構造を保存する".to_string(),
-    )
+    失敗応答を組み立てる(StatusCode::BAD_REQUEST, "前提条件エラー", "大域世界の構造(区画割り)がまだ保存されていない。先に大域世界の構造を保存する".to_string())
 }

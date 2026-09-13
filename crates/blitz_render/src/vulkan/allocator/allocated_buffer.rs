@@ -21,11 +21,7 @@ pub(crate) struct 専用メモリ付きバッファ {
 
 impl 専用メモリ付きバッファ {
     pub(super) fn 組にする(buffer: vk::Buffer, memory: vk::DeviceMemory, 確保バイト数: u64) -> Self {
-        Self {
-            buffer,
-            memory,
-            確保バイト数,
-        }
+        Self { buffer, memory, 確保バイト数 }
     }
 
     pub(crate) fn バッファのハンドル(&self) -> vk::Buffer {

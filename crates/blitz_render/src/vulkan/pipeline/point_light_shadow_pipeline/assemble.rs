@@ -25,20 +25,12 @@ pub(super) fn 点光源の影の固定機能を組み立てる(
     画素段モジュール: vk::ShaderModule,
 ) -> Result<vk::Pipeline, レンダラーエラー> {
     let ステージ一覧 = [
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::VERTEX)
-            .module(頂点モジュール)
-            .name(頂点エントリ名),
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::FRAGMENT)
-            .module(画素段モジュール)
-            .name(画素段エントリ名),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::VERTEX).module(頂点モジュール).name(頂点エントリ名),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::FRAGMENT).module(画素段モジュール).name(画素段エントリ名),
     ];
     let (バインド記述, 属性記述一覧) = vertex_input::記述する();
     let バインド記述一覧 = [バインド記述];
-    let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default()
-        .vertex_binding_descriptions(&バインド記述一覧)
-        .vertex_attribute_descriptions(&属性記述一覧);
+    let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default().vertex_binding_descriptions(&バインド記述一覧).vertex_attribute_descriptions(&属性記述一覧);
     let 入力アセンブリstate = vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::TRIANGLE_LIST);
     let ビューポートstate = vk::PipelineViewportStateCreateInfo::default().viewport_count(1).scissor_count(1);
     let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default()
@@ -48,10 +40,7 @@ pub(super) fn 点光源の影の固定機能を組み立てる(
         .depth_bias_enable(false);
     let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(標本数);
     let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default();
-    let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
-        .depth_test_enable(true)
-        .depth_write_enable(true)
-        .depth_compare_op(vk::CompareOp::LESS);
+    let 深度state = vk::PipelineDepthStencilStateCreateInfo::default().depth_test_enable(true).depth_write_enable(true).depth_compare_op(vk::CompareOp::LESS);
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
     let mut rendering情報 = vk::PipelineRenderingCreateInfo::default().depth_attachment_format(深度形式);

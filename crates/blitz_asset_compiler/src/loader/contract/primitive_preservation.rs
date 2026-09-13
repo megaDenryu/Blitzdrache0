@@ -15,11 +15,7 @@ use super::inspection::開いた文書の契約検査;
 use super::target::対象位置;
 
 impl 開いた文書の契約検査<'_> {
-    pub(super) fn 焼いた結果にプリミティブが残ったことを検査する(
-        &mut self,
-        入力プリミティブ数: usize,
-        データ: &メッシュデータ,
-    ) {
+    pub(super) fn 焼いた結果にプリミティブが残ったことを検査する(&mut self, 入力プリミティブ数: usize, データ: &メッシュデータ) {
         let 焼いた件数 = データ.プリミティブ列.len();
         if 焼いた件数 == 入力プリミティブ数 {
             return;

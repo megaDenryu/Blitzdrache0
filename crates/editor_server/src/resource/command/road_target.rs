@@ -11,11 +11,6 @@ use crate::resource::chunk_coordinate::チャンク座標;
 #[cfg_attr(feature = "typescript", derive(ts_rs::TS))]
 #[serde(tag = "種類", content = "値")]
 pub enum 道路対象 {
-    広域 {
-        道路添字: u32,
-    },
-    チャンク {
-        チャンク座標: チャンク座標,
-        道路添字: u32,
-    },
+    広域 { 道路添字: u32 },
+    チャンク { チャンク座標: チャンク座標, 道路添字: u32 },
 }

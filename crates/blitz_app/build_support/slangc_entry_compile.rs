@@ -13,24 +13,14 @@ pub(super) struct エントリ指定 {
     pub(super) 出力ファイル名: &'static str,
 }
 
-pub(super) fn エントリ一覧をコンパイルする(
-    slangc: &スラングコンパイラの所在,
-    ソース絶対パス: &Path,
-    出力先ディレクトリ: &Path,
-    エントリ一覧: &[エントリ指定],
-) -> Result<(), String> {
+pub(super) fn エントリ一覧をコンパイルする(slangc: &スラングコンパイラの所在, ソース絶対パス: &Path, 出力先ディレクトリ: &Path, エントリ一覧: &[エントリ指定]) -> Result<(), String> {
     for エントリ in エントリ一覧 {
         エントリを1つコンパイルする(slangc, ソース絶対パス, 出力先ディレクトリ, エントリ)?;
     }
     Ok(())
 }
 
-fn エントリを1つコンパイルする(
-    slangc: &スラングコンパイラの所在,
-    ソース絶対パス: &Path,
-    出力先ディレクトリ: &Path,
-    エントリ: &エントリ指定,
-) -> Result<(), String> {
+fn エントリを1つコンパイルする(slangc: &スラングコンパイラの所在, ソース絶対パス: &Path, 出力先ディレクトリ: &Path, エントリ: &エントリ指定) -> Result<(), String> {
     let 出力パス: PathBuf = 出力先ディレクトリ.join(エントリ.出力ファイル名);
     let 実行結果 = Command::new(slangc.プログラム名())
         .arg(ソース絶対パス)

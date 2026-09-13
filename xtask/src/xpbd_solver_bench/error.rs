@@ -39,10 +39,7 @@ impl fmt::Display for XPBDの並列方式の計測エラー {
         match self {
             Self::検収の器が破れた(破れ) => write!(書き手, "{破れ}"),
             Self::判定が破れた(破れ) => write!(書き手, "{破れ}"),
-            Self::知らない引数を渡された { 語 } => write!(
-                書き手,
-                "知らない引数({語})。使えるのは--method・--graph・--iterations・--steps・--points・--compare-stepsである"
-            ),
+            Self::知らない引数を渡された { 語 } => write!(書き手, "知らない引数({語})。使えるのは--method・--graph・--iterations・--steps・--points・--compare-stepsである"),
             Self::引数の次に値が無い { 引数名 } => write!(書き手, "{引数名}の次に値が無い"),
             Self::引数の値を読めない { 引数名, 語 } => write!(書き手, "{引数名}の値を読めない({語})"),
             Self::数が零である { 引数名 } => write!(書き手, "{引数名}は1以上である必要がある"),

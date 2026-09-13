@@ -67,25 +67,12 @@ pub(super) fn スワップチェーンを確保する(
 /// 画像ビューの確保がGPU資源の確保係を通らない唯一の箇所である。スワップチェーンの画像はローダーから借りる画像であり、
 /// 確保係が作る所有画像ではない。ビューの生成はスワップチェーンのハンドルと形式と画像一覧を一体で組む局面であるため、
 /// 3つを組む同じ型がビューも作る。論理デバイスは`GPU環境::スワップチェーンを作る`の内側に閉じており、呼び出し側は運ばない。
-fn 画像ビュー一覧を作る(
-    device: &ash::Device,
-    画像一覧: &[vk::Image],
-    形式: vk::Format,
-) -> Result<Vec<vk::ImageView>, レンダラーエラー> {
-    let 部分範囲 = vk::ImageSubresourceRange::default()
-        .aspect_mask(vk::ImageAspectFlags::COLOR)
-        .base_mip_level(0)
-        .level_count(1)
-        .base_array_layer(0)
-        .layer_count(1);
+fn 画像ビュー一覧を作る(device: &ash::Device, 画像一覧: &[vk::Image], 形式: vk::Format) -> Result<Vec<vk::ImageView>, レンダラーエラー> {
+    let 部分範囲 = vk::ImageSubresourceRange::default().aspect_mask(vk::ImageAspectFlags::COLOR).base_mip_level(0).level_count(1).base_array_layer(0).layer_count(1);
 
     let mut 結果 = Vec::with_capacity(画像一覧.len());
     for &画像 in 画像一覧 {
-        let create_info = vk::ImageViewCreateInfo::default()
-            .image(画像)
-            .view_type(vk::ImageViewType::TYPE_2D)
-            .format(形式)
-            .subresource_range(部分範囲);
+        let create_info = vk::ImageViewCreateInfo::default().image(画像).view_type(vk::ImageViewType::TYPE_2D).format(形式).subresource_range(部分範囲);
         // 安全性: 画像はこのスワップチェーンから取得済みで、deviceはその生成元と一致する。
         結果.push(unsafe { device.create_image_view(&create_info, None)? });
     }

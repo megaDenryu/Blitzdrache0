@@ -7,26 +7,10 @@ use super::super::{区画の一覧, 未是正の自由関数};
 
 const 項目一覧: [未是正の自由関数; 27] = [
     未是正の自由関数::生成する("draw_dispatch/rewrite_action.rs", "適用する", "アプリ"),
-    未是正の自由関数::生成する(
-        "draw_dispatch/temporal_reconstruction_check/readback.rs",
-        "今のフレームの色を読み戻す",
-        "アプリ",
-    ),
-    未是正の自由関数::生成する(
-        "draw_dispatch/temporal_reconstruction_check/readback.rs",
-        "圧縮前のhdrを読み戻す",
-        "アプリ",
-    ),
-    未是正の自由関数::生成する(
-        "draw_dispatch/temporal_reconstruction_injection/canon.rs",
-        "差を取り込む",
-        "突き合わせの要約",
-    ),
-    未是正の自由関数::生成する(
-        "draw_dispatch/temporal_reconstruction_injection/synthesis.rs",
-        "一画素を積む",
-        "合成入力の材料",
-    ),
+    未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_check/readback.rs", "今のフレームの色を読み戻す", "アプリ"),
+    未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_check/readback.rs", "圧縮前のhdrを読み戻す", "アプリ"),
+    未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_injection/canon.rs", "差を取り込む", "突き合わせの要約"),
+    未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_injection/synthesis.rs", "一画素を積む", "合成入力の材料"),
     未是正の自由関数::生成する("frame/action.rs", "選ぶ", "アプリ"),
     未是正の自由関数::生成する("frame/borrowed_draw.rs", "受け皿を預けて描画する", "アプリ"),
     未是正の自由関数::生成する("frame/draw_input.rs", "組み立てる", "アプリ"),

@@ -34,10 +34,7 @@ pub(super) fn 引数を処理する(引数: &mut Iter<String>) -> Result<影を�
     let 値 = value_args::次の値を読む(引数, "--point-light-shadow-count", 起動引数エラー::影を落とす灯の件数不正)?;
     let 件数 = 値.parse::<usize>().map_err(|_| 起動引数エラー::影を落とす灯の件数不正(値.clone()))?;
     if 件数 > blitz_render::point_light_shadow::影を持てる灯の上限件数 {
-        return Err(起動引数エラー::影を落とす灯の件数不正(format!(
-            "上限{}を超える: {件数}",
-            blitz_render::point_light_shadow::影を持てる灯の上限件数
-        )));
+        return Err(起動引数エラー::影を落とす灯の件数不正(format!("上限{}を超える: {件数}", blitz_render::point_light_shadow::影を持てる灯の上限件数)));
     }
     Ok(影を落とす灯の件数の起動指定::件数を上書きする(件数))
 }

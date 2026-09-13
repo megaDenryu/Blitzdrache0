@@ -1,4 +1,4 @@
 # 前提: cargo fmt --all --check は検証列(cargo xtask verify)の一段目として実行される。
 # この設定は、整形が既存スタイル(コメントを文の途中で改行しない方針)を破壊しないための
 # 制約である。行長制限は採用しない(参照: CLAUDE.md「コメント」)。
-max_width = 150
+max_width = 250

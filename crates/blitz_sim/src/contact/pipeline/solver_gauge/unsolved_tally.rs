@@ -18,8 +18,7 @@ pub(in crate::contact::pipeline) struct 解けなかった結末の数え {
 impl 解けなかった結末の数え {
     pub(super) fn 零から始める() -> Self {
         Self {
-            延べ数: 0,
-            表現の精度が不足した延べ数: 0,
+            延べ数: 0, 表現の精度が不足した延べ数: 0
         }
     }
 

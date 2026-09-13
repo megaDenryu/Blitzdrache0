@@ -6,9 +6,7 @@ use tower_http::services::ServeDir;
 
 use crate::server_state::サーバー状態;
 
-pub fn 静的配信を組み込む(
-    ルーター: Router<サーバー状態>, 静的配信ディレクトリ: &std::path::Path
-) -> Router<サーバー状態> {
+pub fn 静的配信を組み込む(ルーター: Router<サーバー状態>, 静的配信ディレクトリ: &std::path::Path) -> Router<サーバー状態> {
     if 静的配信ディレクトリ.is_dir() {
         ルーター.fallback_service(ServeDir::new(静的配信ディレクトリ))
     } else {

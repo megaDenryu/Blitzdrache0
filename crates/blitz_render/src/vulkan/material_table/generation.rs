@@ -26,11 +26,7 @@ pub(crate) struct 資源表世代<画像, 付属> {
 
 impl<画像, 付属> 資源表世代<画像, 付属> {
     pub(in crate::vulkan::material_table) fn 束ねる(
-        世代id: 資源表世代ID,
-        材質レコード列: Vec<世代内材質レコード>,
-        材質別解決: HashMap<大域材質ID, 世代内材質解決>,
-        画像集合: Vec<画像>,
-        付属資源: 付属,
+        世代id: 資源表世代ID, 材質レコード列: Vec<世代内材質レコード>, 材質別解決: HashMap<大域材質ID, 世代内材質解決>, 画像集合: Vec<画像>, 付属資源: 付属
     ) -> Self {
         Self {
             世代id,

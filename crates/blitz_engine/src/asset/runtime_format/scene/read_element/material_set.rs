@@ -14,10 +14,7 @@ use crate::asset::material_slot_id::材質スロットID;
 /// 地表の層の重ね合わせの1件はこれより長いため、確保前の下限としてはこの値で足りる。
 pub(super) const 材質最小長: usize = 39;
 
-pub(in crate::asset::runtime_format::scene) fn 読む(
-    入力: &mut 読取位置<'_>,
-    読み方: 版ごとの要素の読み方,
-) -> Result<材質集合, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 読む(入力: &mut 読取位置<'_>, 読み方: 版ごとの要素の読み方) -> Result<材質集合, アセット実行時形式エラー> {
     let 件数 = 入力.件数(材質最小長)?;
     let mut 割当一覧 = Vec::with_capacity(件数);
     for _ in 0..件数 {

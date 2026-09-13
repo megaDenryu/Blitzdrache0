@@ -20,9 +20,7 @@ pub(super) struct 升目の表 {
 
 impl 升目の表 {
     pub(super) fn 空から始める() -> Self {
-        Self {
-            座標ごとの宣言: BTreeMap::new(),
-        }
+        Self { 座標ごとの宣言: BTreeMap::new() }
     }
 
     /// 同じ座標へ2度置くのを拒む。1つの座標に据わる骨格は1件であり、後から置いたもので黙って上書きすると

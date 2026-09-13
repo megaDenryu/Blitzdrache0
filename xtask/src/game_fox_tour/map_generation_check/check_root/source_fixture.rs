@@ -11,30 +11,15 @@ impl 検収用のルート {
         self.ディレクトリを複写する(元, &self.0, true)
     }
 
-    fn ディレクトリを複写する(
-        &self,
-        元: &Path,
-        先: &Path,
-        場所巡りの世界を除く: bool,
-    ) -> Result<(), 場所巡りの通しの検収エラー> {
+    fn ディレクトリを複写する(&self, 元: &Path, 先: &Path, 場所巡りの世界を除く: bool) -> Result<(), 場所巡りの通しの検収エラー> {
         std::fs::create_dir_all(先).map_err(|誤り| 場所巡りの通しの検収エラー::ファイルを複写できなかった {
             元: 元.to_path_buf(),
             先: 先.to_path_buf(),
             誤り,
         })?;
-        for 項目 in std::fs::read_dir(元).map_err(|誤り| 場所巡りの通しの検収エラー::ディレクトリを開けなかった {
-            パス: 元.to_path_buf(),
-            誤り,
-        })? {
-            let 項目 = 項目.map_err(|誤り| 場所巡りの通しの検収エラー::ディレクトリの走査に失敗した {
-                パス: 元.to_path_buf(),
-                誤り,
-            })?;
-            if 場所巡りの世界を除く
-                && blitz_asset_compiler::場所巡りの世界のソースディレクトリ::この世界のディレクトリ名か(
-                    &項目.file_name(),
-                )
-            {
+        for 項目 in std::fs::read_dir(元).map_err(|誤り| 場所巡りの通しの検収エラー::ディレクトリを開けなかった { パス: 元.to_path_buf(), 誤り })? {
+            let 項目 = 項目.map_err(|誤り| 場所巡りの通しの検収エラー::ディレクトリの走査に失敗した { パス: 元.to_path_buf(), 誤り })?;
+            if 場所巡りの世界を除く && blitz_asset_compiler::場所巡りの世界のソースディレクトリ::この世界のディレクトリ名か(&項目.file_name()) {
                 continue;
             }
             let 先の項目 = 先.join(項目.file_name());
@@ -48,12 +33,10 @@ impl 検収用のルート {
     }
 
     fn ファイルを複写する(&self, 元: &Path, 先: &Path) -> Result<(), 場所巡りの通しの検収エラー> {
-        std::fs::copy(元, 先)
-            .map(|_| ())
-            .map_err(|誤り| 場所巡りの通しの検収エラー::ファイルを複写できなかった {
-                元: 元.to_path_buf(),
-                先: 先.to_path_buf(),
-                誤り,
-            })
+        std::fs::copy(元, 先).map(|_| ()).map_err(|誤り| 場所巡りの通しの検収エラー::ファイルを複写できなかった {
+            元: 元.to_path_buf(),
+            先: 先.to_path_buf(),
+            誤り,
+        })
     }
 }

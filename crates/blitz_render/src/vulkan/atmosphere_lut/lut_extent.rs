@@ -30,16 +30,8 @@ impl 大気のベイク済み画像の形 {
 
     pub(crate) fn 範囲(self) -> vk::Extent3D {
         match self {
-            Self::平面 { 幅, 高さ } => vk::Extent3D {
-                width: 幅,
-                height: 高さ,
-                depth: 1,
-            },
-            Self::立体 { 幅, 高さ, 奥行き } => vk::Extent3D {
-                width: 幅,
-                height: 高さ,
-                depth: 奥行き,
-            },
+            Self::平面 { 幅, 高さ } => vk::Extent3D { width: 幅, height: 高さ, depth: 1 },
+            Self::立体 { 幅, 高さ, 奥行き } => vk::Extent3D { width: 幅, height: 高さ, depth: 奥行き },
         }
     }
 
@@ -47,9 +39,6 @@ impl 大気のベイク済み画像の形 {
     /// コンピュートとコピーだけが触れるベイク済み画像では読まれない。立体の画像は横と縦を渡す。
     pub(crate) fn グラフへ渡す寸法(self) -> vk::Extent2D {
         let 範囲 = self.範囲();
-        vk::Extent2D {
-            width: 範囲.width,
-            height: 範囲.height,
-        }
+        vk::Extent2D { width: 範囲.width, height: 範囲.height }
     }
 }

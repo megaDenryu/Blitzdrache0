@@ -7,9 +7,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{
-    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号
-};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号};
 
 const 画素段: vk::ShaderStageFlags = vk::ShaderStageFlags::FRAGMENT;
 
@@ -38,12 +36,8 @@ pub(super) fn 生成する(device: &ash::Device) -> Result<明るさの圧縮デ
     let layout = 束縛の宣言.セットレイアウトを確保する(device)?;
 
     let pool_size一覧 = [
-        vk::DescriptorPoolSize::default()
-            .ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)
-            .descriptor_count(2),
-        vk::DescriptorPoolSize::default()
-            .ty(vk::DescriptorType::STORAGE_BUFFER)
-            .descriptor_count(1),
+        vk::DescriptorPoolSize::default().ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER).descriptor_count(2),
+        vk::DescriptorPoolSize::default().ty(vk::DescriptorType::STORAGE_BUFFER).descriptor_count(1),
     ];
     let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(1).pool_sizes(&pool_size一覧);
     // 安全性: deviceは生成済みで有効。失敗時はlayoutを片付ける。

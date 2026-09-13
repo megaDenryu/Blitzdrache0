@@ -45,8 +45,7 @@ impl 地形段諸元 {
     /// この段の1辺の格子点数。
     pub(super) fn 格子点数(self) -> Result<i32, 高さ格子エラー> {
         self.辺分割数().checked_add(1).ok_or(高さ格子エラー::格子添字範囲外 {
-            x: self.辺分割数(),
-            z: self.辺分割数(),
+            x: self.辺分割数(), z: self.辺分割数()
         })
     }
 }

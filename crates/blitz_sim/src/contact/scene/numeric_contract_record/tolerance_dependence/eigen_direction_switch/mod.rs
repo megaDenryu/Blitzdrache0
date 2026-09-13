@@ -52,9 +52,7 @@ use blitz_math::メートル;
 use super::case::許容差依存の診断の場合;
 use super::row_admission::刻みを二倍にする長さ;
 use super::scene_variation::段階A1の場面からの一つの変更;
-use crate::contact::normal_tangential_system::{
-    受理の倍率の届く先, 接線の行への許容差の適用規則, 解けたと見なす許容差の倍率, 試験の許容差の適用規則,
-};
+use crate::contact::normal_tangential_system::{受理の倍率の届く先, 接線の行への許容差の適用規則, 解けたと見なす許容差の倍率, 試験の許容差の適用規則};
 use trajectory::一本の軌道を窓つきで綴る;
 use window::細分を綴る窓;
 

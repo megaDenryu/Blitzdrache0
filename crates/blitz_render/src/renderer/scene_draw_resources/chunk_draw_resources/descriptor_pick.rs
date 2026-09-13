@@ -18,13 +18,9 @@ pub(in crate::renderer::scene_draw_resources) struct 対象のディスクリプ
 }
 
 impl<'a> 対象のディスクリプタ選択<'a> {
-    pub(super) fn 生成する(
-        プール: &'a 描画対象ディスクリプタプール, 描画対象添字: usize, フレーム添字: フレームスロット添字
-    ) -> Self {
+    pub(super) fn 生成する(プール: &'a 描画対象ディスクリプタプール, 描画対象添字: usize, フレーム添字: フレームスロット添字) -> Self {
         Self {
-            プール,
-            描画対象添字,
-            フレーム添字,
+            プール, 描画対象添字, フレーム添字
         }
     }
 

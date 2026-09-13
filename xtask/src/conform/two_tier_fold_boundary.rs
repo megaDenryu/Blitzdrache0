@@ -42,13 +42,7 @@ const 読み口: 限定する口 = 限定する口 {
 impl 限定する口 {
     fn 許可するファイルか(&self, パス: &Path) -> bool {
         let 綴り = パス.to_string_lossy().replace('\\', "/");
-        self.許可するファイル一覧.iter().any(|許可| {
-            if 許可.ends_with('/') {
-                綴り.contains(許可)
-            } else {
-                綴り.ends_with(許可)
-            }
-        })
+        self.許可するファイル一覧.iter().any(|許可| if 許可.ends_with('/') { 綴り.contains(許可) } else { 綴り.ends_with(許可) })
     }
 
     fn 検査する(&self, パス: &Path, 内容: &str) -> Vec<違反> {
@@ -81,14 +75,8 @@ mod tests {
     #[test]
     fn 畳む口は境界の外の呼び出しだけを違反にする() {
         let 原文 = 呼び出しの原文(&畳む口);
-        assert_eq!(
-            二段の位置の口を検査する(Path::new("crates/blitz_sim/src/contact/pipeline/substep_predict.rs"), &原文).len(),
-            1
-        );
-        assert_eq!(
-            二段の位置の口を検査する(Path::new("crates/blitz_sim/src/rigid_xpbd/previous_state.rs"), &原文).len(),
-            1
-        );
+        assert_eq!(二段の位置の口を検査する(Path::new("crates/blitz_sim/src/contact/pipeline/substep_predict.rs"), &原文).len(), 1);
+        assert_eq!(二段の位置の口を検査する(Path::new("crates/blitz_sim/src/rigid_xpbd/previous_state.rs"), &原文).len(), 1);
         assert!(二段の位置の口を検査する(Path::new("crates/blitz_sim/src/rigid_body/placement.rs"), &原文).is_empty());
         assert!(二段の位置の口を検査する(Path::new("crates/blitz_sim/src/gpu_layout/rigid/motion_state_bytes.rs"), &原文).is_empty());
         assert!(二段の位置の口を検査する(Path::new("crates\\blitz_math\\src\\frame\\two_tier_position.rs"), &原文).is_empty());
@@ -97,14 +85,8 @@ mod tests {
     #[test]
     fn 読み口は基準原点のモジュールと型の定義の外の呼び出しだけを違反にする() {
         let 原文 = 呼び出しの原文(&読み口);
-        assert_eq!(
-            二段の位置の口を検査する(Path::new("crates/blitz_sim/src/contact/pipeline/substep_predict.rs"), &原文).len(),
-            1
-        );
-        assert_eq!(
-            二段の位置の口を検査する(Path::new("crates/blitz_sim/src/rigid_body/placement.rs"), &原文).len(),
-            1
-        );
+        assert_eq!(二段の位置の口を検査する(Path::new("crates/blitz_sim/src/contact/pipeline/substep_predict.rs"), &原文).len(), 1);
+        assert_eq!(二段の位置の口を検査する(Path::new("crates/blitz_sim/src/rigid_body/placement.rs"), &原文).len(), 1);
         assert!(二段の位置の口を検査する(Path::new("crates/blitz_sim/src/contact/query_origin/mod.rs"), &原文).is_empty());
         assert!(二段の位置の口を検査する(Path::new("crates\\blitz_sim\\src\\contact\\query_origin\\pair_tests.rs"), &原文).is_empty());
         assert!(二段の位置の口を検査する(Path::new("crates/blitz_math/src/frame/two_tier_position_algebra.rs"), &原文).is_empty());

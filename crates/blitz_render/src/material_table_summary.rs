@@ -16,9 +16,7 @@ pub struct 材質資源表の要約 {
 impl 材質資源表の要約 {
     pub(crate) const fn 生成する(世代番号: u32, 材質件数: usize, 常駐画像枚数: usize) -> Self {
         Self {
-            世代番号,
-            材質件数,
-            常駐画像枚数,
+            世代番号, 材質件数, 常駐画像枚数
         }
     }
 

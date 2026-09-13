@@ -10,15 +10,9 @@ use super::{value_args::次の値を読む, 起動引数エラー};
 #[cfg(test)]
 mod tests;
 
-pub(super) fn 固定経路引数を反映する(
-    設定: &mut 固定経路起動設定,
-    引数: &mut Iter<String>,
-    引数名: &str,
-) -> Result<(), 起動引数エラー> {
+pub(super) fn 固定経路引数を反映する(設定: &mut 固定経路起動設定, 引数: &mut Iter<String>, 引数名: &str) -> Result<(), 起動引数エラー> {
     let 値 = 次の値を読む(引数, 引数名, 起動引数エラー::固定経路不正)?;
-    let メートル = 値
-        .parse::<f64>()
-        .map_err(|誤り| 起動引数エラー::固定経路不正(format!("{引数名}: {誤り}")))?;
+    let メートル = 値.parse::<f64>().map_err(|誤り| 起動引数エラー::固定経路不正(format!("{引数名}: {誤り}")))?;
     if !メートル.is_finite() {
         return Err(起動引数エラー::固定経路不正(format!("{引数名}は有限値でなければならない")));
     }
@@ -36,23 +30,15 @@ pub(super) fn 固定経路引数を反映する(
     Ok(())
 }
 
-pub(super) fn 読込引数を反映する(
-    現在: チャンク読込設定,
-    引数: &mut Iter<String>,
-    引数名: &str,
-) -> Result<チャンク読込設定, 起動引数エラー> {
+pub(super) fn 読込引数を反映する(現在: チャンク読込設定, 引数: &mut Iter<String>, 引数名: &str) -> Result<チャンク読込設定, 起動引数エラー> {
     let 値 = 次の値を読む(引数, 引数名, 起動引数エラー::チャンク読込設定不正)?;
-    let 数 = 値
-        .parse::<usize>()
-        .map_err(|誤り| 起動引数エラー::チャンク読込設定不正(format!("{引数名}: {誤り}")))?;
+    let 数 = 値.parse::<usize>().map_err(|誤り| 起動引数エラー::チャンク読込設定不正(format!("{引数名}: {誤り}")))?;
     let (ワーカー, 要求, 完了) = match 引数名 {
         "--streaming-loader-workers" => (数, 現在.要求キュー容量(), 現在.完了キュー容量()),
         "--streaming-request-capacity" => (現在.ワーカー本数(), 数, 現在.完了キュー容量()),
         "--streaming-completion-capacity" => (現在.ワーカー本数(), 現在.要求キュー容量(), 数),
         _ => {
-            return Err(起動引数エラー::チャンク読込設定不正(
-                format!("知らない引数である: {引数名}"),
-            ));
+            return Err(起動引数エラー::チャンク読込設定不正(format!("知らない引数である: {引数名}")));
         }
     };
     チャンク読込設定::生成する(ワーカー, 要求, 完了).map_err(|誤り| 起動引数エラー::チャンク読込設定不正(誤り.to_string()))

@@ -8,12 +8,7 @@ use crate::asset::mesh_data::メッシュデータ;
 
 type 段の書き出し = fn(&mut 書込先, &メッシュデータ, Option<usize>) -> Result<(), アセット実行時形式エラー>;
 
-pub(in crate::asset::runtime_format::scene) fn 書く(
-    出力: &mut 書込先,
-    段一覧: &[メッシュデータ],
-    ジョイント数: Option<usize>,
-    段を書く: 段の書き出し,
-) -> Result<(), アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 書く(出力: &mut 書込先, 段一覧: &[メッシュデータ], ジョイント数: Option<usize>, 段を書く: 段の書き出し) -> Result<(), アセット実行時形式エラー> {
     出力.件数(段一覧.len())?;
     for メッシュ in 段一覧 {
         段を書く(出力, メッシュ, ジョイント数)?;

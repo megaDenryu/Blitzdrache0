@@ -10,10 +10,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::sync::フレームスロット添字;
 
-pub(super) fn 空中遠近合成ディスクリプタを生成する(
-    確保係: &GPU資源の確保係<'_>,
-    束縛先: &空中遠近合成の束縛先,
-) -> Result<空中遠近合成ディスクリプタ, レンダラーエラー> {
+pub(super) fn 空中遠近合成ディスクリプタを生成する(確保係: &GPU資源の確保係<'_>, 束縛先: &空中遠近合成の束縛先) -> Result<空中遠近合成ディスクリプタ, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let 深度サンプラー = 確保係.最近傍サンプラーを作る()?;
     let ボリュームサンプラー = match 確保係.線形サンプラーを作る() {
@@ -54,9 +51,7 @@ pub(super) fn 空中遠近合成ディスクリプタを生成する(
 }
 
 /// そこまでに作ったサンプラーを生成の逆順で片付ける。渡す一覧は作った順である。
-fn 作ったサンプラーを片付けて返す(
-    device: &ash::Device, 一覧: &[vk::Sampler], 誤り: レンダラーエラー
-) -> レンダラーエラー {
+fn 作ったサンプラーを片付けて返す(device: &ash::Device, 一覧: &[vk::Sampler], 誤り: レンダラーエラー) -> レンダラーエラー {
     for sampler in 一覧.iter().rev() {
         // 安全性: samplerはこのスコープの唯一の所有者で、以降使用しない。
         unsafe { device.destroy_sampler(*sampler, None) };

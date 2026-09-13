@@ -11,9 +11,7 @@ use super::feature::{直方体の辺, 直方体の面, 直方体の頂点};
 impl 直方体の面 {
     /// 6つの面を、求解が候補を数える順に並べる。
     pub fn 並べる() -> impl Iterator<Item = Self> {
-        直方体自身の座標軸::並べる()
-            .into_iter()
-            .flat_map(|軸| 直方体の面の向き::並べる().into_iter().map(move |側| Self::生成する(軸, 側)))
+        直方体自身の座標軸::並べる().into_iter().flat_map(|軸| 直方体の面の向き::並べる().into_iter().map(move |側| Self::生成する(軸, 側)))
     }
 }
 
@@ -21,11 +19,9 @@ impl 直方体の辺 {
     /// 12本の辺を、求解が候補を数える順に並べる。
     pub fn 並べる() -> impl Iterator<Item = Self> {
         直方体自身の座標軸::並べる().into_iter().flat_map(|沿う軸| {
-            直方体の面の向き::並べる().into_iter().flat_map(move |次の軸の側| {
-                直方体の面の向き::並べる()
-                    .into_iter()
-                    .map(move |次の次の軸の側| Self::生成する(沿う軸, 次の軸の側, 次の次の軸の側))
-            })
+            直方体の面の向き::並べる()
+                .into_iter()
+                .flat_map(move |次の軸の側| 直方体の面の向き::並べる().into_iter().map(move |次の次の軸の側| Self::生成する(沿う軸, 次の軸の側, 次の次の軸の側)))
         })
     }
 }
@@ -34,11 +30,9 @@ impl 直方体の頂点 {
     /// 8つの頂点を、求解が候補を数える順に並べる。
     pub fn 並べる() -> impl Iterator<Item = Self> {
         直方体の面の向き::並べる().into_iter().flat_map(|x軸の側| {
-            直方体の面の向き::並べる().into_iter().flat_map(move |y軸の側| {
-                直方体の面の向き::並べる()
-                    .into_iter()
-                    .map(move |z軸の側| Self::軸の並びの順の側から生成する([x軸の側, y軸の側, z軸の側]))
-            })
+            直方体の面の向き::並べる()
+                .into_iter()
+                .flat_map(move |y軸の側| 直方体の面の向き::並べる().into_iter().map(move |z軸の側| Self::軸の並びの順の側から生成する([x軸の側, y軸の側, z軸の側])))
         })
     }
 }

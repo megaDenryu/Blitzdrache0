@@ -13,9 +13,7 @@ use crate::report_heading::報告の見出し;
 const 項が無いことの綴り: &str = "なし";
 
 impl 報告の行 {
-    pub fn 見出しに続く添字順の数一覧<数: std::str::FromStr>(
-        &self, 見出し: &報告の見出し
-    ) -> Result<Vec<数>, 検収エラー> {
+    pub fn 見出しに続く添字順の数一覧<数: std::str::FromStr>(&self, 見出し: &報告の見出し) -> Result<Vec<数>, 検収エラー> {
         let 本文 = 見出し.見出しに続く本文(self.原文());
         if 本文 == 項が無いことの綴り {
             return Ok(Vec::new());
@@ -34,13 +32,10 @@ impl 報告の行 {
         Ok(一覧)
     }
 
-    fn 項を添字と値へ切る<数: std::str::FromStr>(
-        &self, 見出し: &報告の見出し, 項: &str
-    ) -> Result<(usize, 数), 検収エラー> {
+    fn 項を添字と値へ切る<数: std::str::FromStr>(&self, 見出し: &報告の見出し, 項: &str) -> Result<(usize, 数), 検収エラー> {
         let 対でない = || {
             self.破れを包む(報告の読み取りの破れ::見出しに続く項が添字と値の対でない {
-                見出し: 見出し.clone(),
-                項: 項.to_string(),
+                見出し: 見出し.clone(), 項: 項.to_string()
             })
         };
         let (添字, 値) = 項.split_once('=').ok_or_else(対でない)?;

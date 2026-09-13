@@ -32,8 +32,6 @@ pub(super) fn ダンプ先のパスを決める(アプリ: &アプリ, 基準名
 
 /// 拡張子の付け方は最終フレームと同じにする。同じ実行の複数枚を検収側が同じ読み手で読めるようにするためである。
 fn 後置きを足す(基準: &Path, 後置き: &str) -> PathBuf {
-    let 名前 = 基準
-        .file_name()
-        .map_or_else(|| "frame".to_string(), |名前| 名前.to_string_lossy().into_owned());
+    let 名前 = 基準.file_name().map_or_else(|| "frame".to_string(), |名前| 名前.to_string_lossy().into_owned());
     基準.with_file_name(format!("{名前}{後置き}"))
 }

@@ -9,10 +9,7 @@ const 書き手が非公開: &str = "blitz_asset_compilerのworld_source_directo
 pub(super) const 一覧: [寄せられない綴り; 2] = [
     寄せられない綴り {
         綴り: "slangc.exe",
-        現れてよい場所一覧: &[
-            "crates/blitz_app/build_support/slangc_locate.rs",
-            "crates/blitz_app/src/hot_reload/slangc.rs",
-        ],
+        現れてよい場所一覧: &["crates/blitz_app/build_support/slangc_locate.rs", "crates/blitz_app/src/hot_reload/slangc.rs"],
         寄せられない理由: ビルドスクリプトとの契約,
     },
     寄せられない綴り {

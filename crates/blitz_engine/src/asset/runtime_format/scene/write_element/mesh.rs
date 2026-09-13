@@ -8,11 +8,7 @@ use crate::asset::{mesh_data::メッシュデータ, vertex_attribute::メッシ
 
 /// 版1から版3のメッシュを書く。旧版で書き出す経路は検査だけが持つ。
 #[cfg(test)]
-pub(in crate::asset::runtime_format::scene) fn 旧版を書く(
-    出力: &mut 書込先,
-    メッシュ: &メッシュデータ,
-    ジョイント数: Option<usize>,
-) -> Result<(), アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 旧版を書く(出力: &mut 書込先, メッシュ: &メッシュデータ, ジョイント数: Option<usize>) -> Result<(), アセット実行時形式エラー> {
     基本内容を検査する(メッシュ)?;
     mesh_primitive::旧版が表せるかを検査する(メッシュ)?;
     頂点とインデックスを書く(出力, メッシュ)?;
@@ -20,20 +16,14 @@ pub(in crate::asset::runtime_format::scene) fn 旧版を書く(
 }
 
 /// 版4のメッシュを書く。プリミティブ列はインデックス一覧の後、スキン頂点属性の前に並ぶ。
-pub(in crate::asset::runtime_format::scene) fn 書く(
-    出力: &mut 書込先,
-    メッシュ: &メッシュデータ,
-    ジョイント数: Option<usize>,
-) -> Result<(), アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 書く(出力: &mut 書込先, メッシュ: &メッシュデータ, ジョイント数: Option<usize>) -> Result<(), アセット実行時形式エラー> {
     基本内容を検査する(メッシュ)?;
     頂点とインデックスを書く(出力, メッシュ)?;
     mesh_primitive::書く(出力, メッシュ)?;
     mesh_skin_vertex::書く(出力, メッシュ, ジョイント数)
 }
 
-fn 頂点とインデックスを書く(
-    出力: &mut 書込先, メッシュ: &メッシュデータ
-) -> Result<(), アセット実行時形式エラー> {
+fn 頂点とインデックスを書く(出力: &mut 書込先, メッシュ: &メッシュデータ) -> Result<(), アセット実行時形式エラー> {
     出力.件数(メッシュ.頂点一覧.len())?;
     for 頂点 in &メッシュ.頂点一覧 {
         頂点を書く(出力, 頂点)?;
@@ -55,8 +45,7 @@ fn 基本内容を検査する(メッシュ: &メッシュデータ) -> Result<(
     for &インデックス in &メッシュ.インデックス一覧 {
         if usize::try_from(インデックス).map_or(true, |値| 値 >= メッシュ.頂点一覧.len()) {
             return Err(アセット実行時形式エラー::インデックス範囲外 {
-                インデックス,
-                頂点数: メッシュ.頂点一覧.len(),
+                インデックス, 頂点数: メッシュ.頂点一覧.len()
             });
         }
     }

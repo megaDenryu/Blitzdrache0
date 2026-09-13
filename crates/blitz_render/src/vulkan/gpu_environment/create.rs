@@ -16,25 +16,17 @@ use crate::vulkan::swapchain::スワップチェーン;
 
 impl GPU環境 {
     /// 前提: `表示ハンドル`と`ウィンドウハンドル`の指すウィンドウは、この環境より長生きすることを呼び出し元が保証する。
-    pub(crate) fn 生成する(
-        表示ハンドル: RawDisplayHandle,
-        ウィンドウハンドル: RawWindowHandle,
-        検証カウンタ: &検証カウンタ,
-        実表示計測要求: 実表示計測要求,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(表示ハンドル: RawDisplayHandle, ウィンドウハンドル: RawWindowHandle, 検証カウンタ: &検証カウンタ, 実表示計測要求: 実表示計測要求) -> Result<Self, レンダラーエラー> {
         let デバッグ有効か = cfg!(debug_assertions);
         // 安全性: プロセス内で他にVulkanローダーを読み込んでいないことは
         // blitz_appがコンポジションルートとして唯一のレンダラーのみ生成することで保証する。
         let entry = unsafe { ash::Entry::load()? };
 
         let instance = vulkan::instance::生成する(&entry, 表示ハンドル, デバッグ有効か)?;
-        let デバッグメッセンジャー = デバッグ有効か
-            .then(|| vulkan::debug_messenger::デバッグメッセンジャー::生成する(&entry, &instance, 検証カウンタ))
-            .transpose()?;
+        let デバッグメッセンジャー = デバッグ有効か.then(|| vulkan::debug_messenger::デバッグメッセンジャー::生成する(&entry, &instance, 検証カウンタ)).transpose()?;
 
         let (surface_loader, surface) = vulkan::surface::生成する(&entry, &instance, 表示ハンドル, ウィンドウハンドル)?;
-        let (physical_device, キューファミリ添字) =
-            vulkan::physical_device::物理デバイスとキューファミリを選定する(&instance, &surface_loader, surface)?;
+        let (physical_device, キューファミリ添字) = vulkan::physical_device::物理デバイスとキューファミリを選定する(&instance, &surface_loader, surface)?;
         // 索引の機能は選定が候補を絞る条件として見ており、ここへ来た時点で選ばれた1台は満たしている。
         // ここで読むのは、その1台の表容量に効く上限だけである。
         let ディスクリプタ索引上限 = vulkan::descriptor_indexing::上限を採取する(&instance, physical_device);
@@ -66,11 +58,7 @@ impl GPU環境 {
 
     /// 物理デバイス・サーフェス・両ローダーをスワップチェーン生成へ貸す。呼び出し側は寸法と旧スワップチェーンだけを決める。
     /// 旧スワップチェーンを渡すとVulkanのoldSwapchain経路で作り直す。破棄を先に済ませる呼び出し元は`None`を渡す。
-    pub(crate) fn スワップチェーンを作る(
-        &self,
-        要求寸法: ウィンドウ寸法,
-        旧スワップチェーン: Option<&スワップチェーン>,
-    ) -> Result<スワップチェーン, レンダラーエラー> {
+    pub(crate) fn スワップチェーンを作る(&self, 要求寸法: ウィンドウ寸法, 旧スワップチェーン: Option<&スワップチェーン>) -> Result<スワップチェーン, レンダラーエラー> {
         スワップチェーン::生成する(
             self.physical_device,
             &self.device,

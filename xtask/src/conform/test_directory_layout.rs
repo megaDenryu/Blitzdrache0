@@ -37,18 +37,13 @@ mod tests {
     #[test]
     fn 直下のファイルを違反と判定する() {
         assert!(試験の直置きか(Path::new("crates/editor_server/tests/music_routes.rs")));
-        assert_eq!(
-            試験ファイルの直置きを検査する(Path::new("crates/editor_server/tests/music_routes.rs")).len(),
-            1
-        );
+        assert_eq!(試験ファイルの直置きを検査する(Path::new("crates/editor_server/tests/music_routes.rs")).len(), 1);
     }
 
     #[test]
     fn フォルダの下の試験は違反にしない() {
         assert!(!試験の直置きか(Path::new("crates/editor_server/tests/integration/main.rs")));
-        assert!(!試験の直置きか(Path::new(
-            "crates/blitz_asset_compiler/tests/integration/height_field_roundtrip/mod.rs"
-        )));
+        assert!(!試験の直置きか(Path::new("crates/blitz_asset_compiler/tests/integration/height_field_roundtrip/mod.rs")));
         assert!(試験ファイルの直置きを検査する(Path::new("crates/editor_server/tests/integration/main.rs")).is_empty());
     }
 

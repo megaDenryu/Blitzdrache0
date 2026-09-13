@@ -23,13 +23,7 @@ pub(super) use run::起動指定で検査する;
 const 検査フレーム数: 描画フレーム数 = 描画フレーム数::生成する(180);
 /// この実行を指す名前。絵を1枚も書き出さないが、失敗の文面がどの実行かを名指すために要る。
 const 検査の実行名: 検収の実行名 = 検収の実行名::定数から生成する("validation_check");
-const 報告を出させる選択肢: [&str; 5] = [
-    "--instance-stream-route",
-    "--report-streaming-summary",
-    "--report-memory",
-    "--report-draw-issue",
-    "--no-taa",
-];
+const 報告を出させる選択肢: [&str; 5] = ["--instance-stream-route", "--report-streaming-summary", "--report-memory", "--report-draw-issue", "--no-taa"];
 
 pub(super) fn 検査する(アセットルート: &Path, シェーダー入口: &Path, 条件: &計測条件) -> Result<u64, 物量計測エラー> {
     起動指定で検査する(アセットルート, 検査の実行名, 検査フレーム数, &起動指定を組み立てる(シェーダー入口, 条件))

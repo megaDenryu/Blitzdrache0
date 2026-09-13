@@ -14,9 +14,7 @@ pub struct 可視個体選択 {
 }
 
 impl 可視個体選択 {
-    pub fn 生成する(
-        束id: 描画束ID, 描画対象添字: usize, id列開始: usize, id列長: usize, 段範囲開始: usize, 段数: usize
-    ) -> Self {
+    pub fn 生成する(束id: 描画束ID, 描画対象添字: usize, id列開始: usize, id列長: usize, 段範囲開始: usize, 段数: usize) -> Self {
         Self {
             束id,
             描画対象添字,

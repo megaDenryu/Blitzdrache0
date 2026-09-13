@@ -16,20 +16,15 @@ use crate::game_fox_tour::map_generation_check::file_digest::ディレクトリ�
 impl 検収用のルート {
     /// 突き合わせに使う畳んだ値。生成台帳は取り除く。台帳かどうかの判定はアセットコンパイラの側が持つため、
     /// ここは台帳のファイル名の綴りを1文字も持たない。
-    pub(in crate::game_fox_tour::map_generation_check) fn 全ファイルを畳む(
-        &self,
-    ) -> Result<BTreeMap<PathBuf, u64>, 場所巡りの通しの検収エラー> {
+    pub(in crate::game_fox_tour::map_generation_check) fn 全ファイルを畳む(&self) -> Result<BTreeMap<PathBuf, u64>, 場所巡りの通しの検収エラー> {
         let mut 対応表 = ディレクトリの全ファイルを畳む(&self.0)?;
         対応表.retain(|相対パス, _| !生成の出力ルート::生成台帳を指すパスか(相対パス));
         Ok(対応表)
     }
 
-    pub(in crate::game_fox_tour::map_generation_check) fn 場所巡りの生成物を畳む(
-        &self,
-    ) -> Result<BTreeMap<PathBuf, u64>, 場所巡りの通しの検収エラー> {
+    pub(in crate::game_fox_tour::map_generation_check) fn 場所巡りの生成物を畳む(&self) -> Result<BTreeMap<PathBuf, u64>, 場所巡りの通しの検収エラー> {
         let ソースルート = self.ソースルートとして読む();
-        let 世界 = 場所巡りの世界のソースディレクトリ::ソースルートの下を開く(&ソースルート)
-            .map_err(|誤り| 場所巡りの通しの検収エラー::ソースの置き場を作れなかった(誤り.to_string()))?;
+        let 世界 = 場所巡りの世界のソースディレクトリ::ソースルートの下を開く(&ソースルート).map_err(|誤り| 場所巡りの通しの検収エラー::ソースの置き場を作れなかった(誤り.to_string()))?;
         let mut 対応表 = ディレクトリの全ファイルを畳む(世界.ファイル走査へ貸すディレクトリ())?;
         対応表.retain(|相対パス, _| !生成の出力ルート::生成台帳を指すパスか(相対パス));
         Ok(対応表)

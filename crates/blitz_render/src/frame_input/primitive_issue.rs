@@ -17,13 +17,7 @@ pub struct プリミティブ描画発行 {
 }
 
 impl プリミティブ描画発行 {
-    pub fn 生成する(
-        詳細段番号: usize,
-        インデックス開始: usize,
-        インデックス数: usize,
-        頂点基準: u32,
-        材質スロット番号: u32,
-    ) -> Result<Self, レンダラーエラー> {
+    pub fn 生成する(詳細段番号: usize, インデックス開始: usize, インデックス数: usize, 頂点基準: u32, 材質スロット番号: u32) -> Result<Self, レンダラーエラー> {
         let 頂点基準 = i32::try_from(頂点基準).map_err(|_| レンダラーエラー::プリミティブ区間過大(u64::from(頂点基準)))?;
         Ok(Self {
             詳細段番号,

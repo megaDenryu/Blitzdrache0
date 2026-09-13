@@ -27,9 +27,7 @@ pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, 寸法: vk::Ex
             return Err(誤り);
         }
     };
-    Ok(深度バッファ {
-        画像, 画像ビュー, memory
-    })
+    Ok(深度バッファ { 画像, 画像ビュー, memory })
 }
 
 fn 深度画像を作る(確保係: &GPU資源の確保係<'_>, 寸法: vk::Extent2D) -> Result<vk::Image, レンダラーエラー> {
@@ -48,28 +46,14 @@ fn 深度画像を作る(確保係: &GPU資源の確保係<'_>, 寸法: vk::Exte
         // SAMPLEDを足すのは空中遠近合成が深度を画素段で参照するためである(参照: `vulkan/frame/record/aerial_composite_pass.rs`)。
         // TRANSFER_SRCを足すのは、深度プリパスの三条件で最終深度をホストへ読み戻して突き合わせるためである(参照: `vulkan::readback::読み戻し対象`)。
         // TRANSFER_DSTを足すのは、局所可視性補正の検収がCPU正本の焼いた合成深度をこの画像へ書き戻すためである(参照: `vulkan::depth_injection`)。
-        .usage(
-            vk::ImageUsageFlags::DEPTH_STENCIL_ATTACHMENT
-                | vk::ImageUsageFlags::SAMPLED
-                | vk::ImageUsageFlags::TRANSFER_SRC
-                | vk::ImageUsageFlags::TRANSFER_DST,
-        )
+        .usage(vk::ImageUsageFlags::DEPTH_STENCIL_ATTACHMENT | vk::ImageUsageFlags::SAMPLED | vk::ImageUsageFlags::TRANSFER_SRC | vk::ImageUsageFlags::TRANSFER_DST)
         .sharing_mode(vk::SharingMode::EXCLUSIVE)
         .initial_layout(vk::ImageLayout::UNDEFINED);
     確保係.画像の作り方から画像を確保する(&create_info)
 }
 
 fn 画像ビューを作る(確保係: &GPU資源の確保係<'_>, 画像: vk::Image) -> Result<vk::ImageView, レンダラーエラー> {
-    let 部分範囲 = vk::ImageSubresourceRange::default()
-        .aspect_mask(vk::ImageAspectFlags::DEPTH)
-        .base_mip_level(0)
-        .level_count(1)
-        .base_array_layer(0)
-        .layer_count(1);
-    let create_info = vk::ImageViewCreateInfo::default()
-        .image(画像)
-        .view_type(vk::ImageViewType::TYPE_2D)
-        .format(深度形式)
-        .subresource_range(部分範囲);
+    let 部分範囲 = vk::ImageSubresourceRange::default().aspect_mask(vk::ImageAspectFlags::DEPTH).base_mip_level(0).level_count(1).base_array_layer(0).layer_count(1);
+    let create_info = vk::ImageViewCreateInfo::default().image(画像).view_type(vk::ImageViewType::TYPE_2D).format(深度形式).subresource_range(部分範囲);
     確保係.画像の見え方から画像ビューを確保する(&create_info)
 }

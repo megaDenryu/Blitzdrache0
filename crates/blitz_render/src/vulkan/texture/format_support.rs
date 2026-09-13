@@ -14,24 +14,17 @@ use crate::vulkan::gpu_environment::物理デバイス問い合わせ;
 /// RGBA版は端点の順序が`色0 <= 色1`のブロックの索引3を透明として復号するため、運んでいない第4成分が絵へ現れる。
 /// 線形データをブロック圧縮で運ぶ組は初版に存在しないため、無言で非圧縮へ落とさず型付きエラーで拒む
 /// (参照: `_doc/設計/テクスチャのブロック圧縮と縮小段生成.md`「初版スコープの縮小」)。
-pub(super) fn vulkan形式を選ぶ(
-    用途: テクスチャ用途, 格納形式: テクスチャ格納形式
-) -> Result<vk::Format, レンダラーエラー> {
+pub(super) fn vulkan形式を選ぶ(用途: テクスチャ用途, 格納形式: テクスチャ格納形式) -> Result<vk::Format, レンダラーエラー> {
     match (格納形式, 用途) {
         (テクスチャ格納形式::RGBA8, テクスチャ用途::色) => Ok(vk::Format::R8G8B8A8_SRGB),
         (テクスチャ格納形式::RGBA8, テクスチャ用途::線形データ) => Ok(vk::Format::R8G8B8A8_UNORM),
         (テクスチャ格納形式::BC1, テクスチャ用途::色) => Ok(vk::Format::BC1_RGB_SRGB_BLOCK),
-        (テクスチャ格納形式::BC1, テクスチャ用途::線形データ) => {
-            Err(テクスチャ形式エラー::格納形式と用途の組が未対応 { 格納形式, 用途 }.into())
-        }
+        (テクスチャ格納形式::BC1, テクスチャ用途::線形データ) => Err(テクスチャ形式エラー::格納形式と用途の組が未対応 { 格納形式, 用途 }.into()),
     }
 }
 
 /// 縮小段をGPUのblitで作る経路が要る対応。blitの元と先の両方になり、線形フィルタで縮小するため3つを同時に要求する。
-pub(super) fn blitフィルタ対応を確認する(
-    問い合わせ: 物理デバイス問い合わせ<'_>,
-    形式: vk::Format,
-) -> Result<(), レンダラーエラー> {
+pub(super) fn blitフィルタ対応を確認する(問い合わせ: 物理デバイス問い合わせ<'_>, 形式: vk::Format) -> Result<(), レンダラーエラー> {
     let 必須機能 = vk::FormatFeatureFlags::SAMPLED_IMAGE_FILTER_LINEAR | vk::FormatFeatureFlags::BLIT_SRC | vk::FormatFeatureFlags::BLIT_DST;
     if 対応しているか(問い合わせ, 形式, 必須機能) {
         Ok(())
@@ -42,10 +35,7 @@ pub(super) fn blitフィルタ対応を確認する(
 
 /// 全段をファイルから転送する経路が要る対応。この経路はblitを1度も通らないため、blitの機能を要求してはならない。
 /// 要るのは、転送先になれること・標本化できること・縮小段の間を線形に混ぜられることの3つである。
-pub(super) fn ブロック圧縮の標本化と転送先の対応を確認する(
-    問い合わせ: 物理デバイス問い合わせ<'_>,
-    形式: vk::Format,
-) -> Result<(), レンダラーエラー> {
+pub(super) fn ブロック圧縮の標本化と転送先の対応を確認する(問い合わせ: 物理デバイス問い合わせ<'_>, 形式: vk::Format) -> Result<(), レンダラーエラー> {
     let 必須機能 = vk::FormatFeatureFlags::TRANSFER_DST | vk::FormatFeatureFlags::SAMPLED_IMAGE | vk::FormatFeatureFlags::SAMPLED_IMAGE_FILTER_LINEAR;
     if 対応しているか(問い合わせ, 形式, 必須機能) {
         Ok(())

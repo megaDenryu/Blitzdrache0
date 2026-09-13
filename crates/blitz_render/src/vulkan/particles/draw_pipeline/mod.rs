@@ -18,12 +18,7 @@ pub(crate) struct 粒子描画パイプライン {
 
 impl 粒子描画パイプライン {
     pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        カラー形式: vk::Format,
-        深度形式: vk::Format,
-        ディスクリプタlayout: vk::DescriptorSetLayout,
-        頂点spirv: &[u8],
-        画素段spirv: &[u8],
+        確保係: &GPU資源の確保係<'_>, カラー形式: vk::Format, 深度形式: vk::Format, ディスクリプタlayout: vk::DescriptorSetLayout, 頂点spirv: &[u8], 画素段spirv: &[u8]
     ) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
         let 頂点モジュール = 確保係.シェーダーモジュールを生成する(頂点spirv)?;
@@ -36,14 +31,7 @@ impl 粒子描画パイプライン {
             }
         };
 
-        let 結果 = assemble::粒子描画パイプラインを組み立てる(
-            device,
-            カラー形式,
-            深度形式,
-            ディスクリプタlayout,
-            頂点モジュール,
-            画素段モジュール,
-        );
+        let 結果 = assemble::粒子描画パイプラインを組み立てる(device, カラー形式, 深度形式, ディスクリプタlayout, 頂点モジュール, 画素段モジュール);
 
         // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
         unsafe {

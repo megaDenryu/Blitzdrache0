@@ -5,9 +5,5 @@ use super::validation_error::資源検証エラー;
 
 /// 空白だけの綴りも空として拒む。人の目には名前が入っているように見えず、一覧に並べても区別が付かないためである。
 pub(super) fn 綴りが空でないことを確かめる(フィールド名: &'static str, 綴り: &str) -> Result<(), 資源検証エラー> {
-    if 綴り.trim().is_empty() {
-        Err(資源検証エラー::綴りが空 { フィールド名 })
-    } else {
-        Ok(())
-    }
+    if 綴り.trim().is_empty() { Err(資源検証エラー::綴りが空 { フィールド名 }) } else { Ok(()) }
 }

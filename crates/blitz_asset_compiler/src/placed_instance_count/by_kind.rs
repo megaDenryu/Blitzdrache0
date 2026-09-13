@@ -37,9 +37,7 @@ impl 種類ごとの置いた個体の数 {
         Self { 一覧: BTreeMap::new() }
     }
 
-    pub fn 一種類ぶんを積む(
-        &mut self, 名前: 散らした種類の名前, 数: 置いた個体の数
-    ) -> Result<(), アセットコンパイルエラー> {
+    pub fn 一種類ぶんを積む(&mut self, 名前: 散らした種類の名前, 数: 置いた個体の数) -> Result<(), アセットコンパイルエラー> {
         let 既存 = self.一覧.get(&名前).copied().unwrap_or_else(置いた個体の数::零);
         self.一覧.insert(名前, 既存.足す(数)?);
         Ok(())

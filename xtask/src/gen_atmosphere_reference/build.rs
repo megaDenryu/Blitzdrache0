@@ -22,12 +22,8 @@ pub(super) fn 焼き出しを構築する(参照パス: &Path) -> Result<PathBuf
         }
     }
     let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
-    std::fs::create_dir_all(&出力先)
-        .map_err(|誤り| 大気の期待値の焼き出しエラー::出力先を作れなかった {
-            パス: 出力先.clone(), 誤り
-        })?;
-    let リポジトリルート = std::env::current_dir()
-        .map_err(|誤り| 大気の期待値の焼き出しエラー::現在のディレクトリを読めなかった { 誤り })?;
+    std::fs::create_dir_all(&出力先).map_err(|誤り| 大気の期待値の焼き出しエラー::出力先を作れなかった { パス: 出力先.clone(), 誤り })?;
+    let リポジトリルート = std::env::current_dir().map_err(|誤り| 大気の期待値の焼き出しエラー::現在のディレクトリを読めなかった { 誤り })?;
     let 実行ファイル = 出力先.join("bruneton_dump.exe");
     let 構築手順: PathBuf = 構築手順の断片.iter().collect();
     let 状態 = Command::new("cmd")
@@ -37,10 +33,7 @@ pub(super) fn 焼き出しを構築する(参照パス: &Path) -> Result<PathBuf
         .arg(&リポジトリルート)
         .arg(&実行ファイル)
         .status()
-        .map_err(|誤り| 大気の期待値の焼き出しエラー::構築手順を起こせなかった {
-            構築手順: 構築手順.clone(),
-            誤り,
-        })?;
+        .map_err(|誤り| 大気の期待値の焼き出しエラー::構築手順を起こせなかった { 構築手順: 構築手順.clone(), 誤り })?;
     if !状態.success() {
         return Err(大気の期待値の焼き出しエラー::構築手順が失敗して終わった { 構築手順 });
     }
@@ -48,16 +41,13 @@ pub(super) fn 焼き出しを構築する(参照パス: &Path) -> Result<PathBuf
 }
 
 pub(super) fn 焼き出しを実行する(実行ファイル: &Path) -> Result<String, 大気の期待値の焼き出しエラー> {
-    let 出力 =
-        Command::new(実行ファイル)
-            .output()
-            .map_err(|誤り| 大気の期待値の焼き出しエラー::焼き出しを起こせなかった {
-                実行ファイル: 実行ファイル.to_path_buf(),
-                誤り,
-            })?;
+    let 出力 = Command::new(実行ファイル).output().map_err(|誤り| 大気の期待値の焼き出しエラー::焼き出しを起こせなかった {
+        実行ファイル: 実行ファイル.to_path_buf(),
+        誤り,
+    })?;
     if !出力.status.success() {
         return Err(大気の期待値の焼き出しエラー::焼き出しが異常終了した {
-            実行ファイル: 実行ファイル.to_path_buf(),
+            実行ファイル: 実行ファイル.to_path_buf()
         });
     }
     String::from_utf8(出力.stdout).map_err(|誤り| 大気の期待値の焼き出しエラー::焼き出しの出力がUTF8でない { 誤り })

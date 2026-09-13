@@ -5,9 +5,7 @@ use super::frame_resources::フレーム資源;
 use crate::frame_composition::フレーム構成;
 use crate::renderer::レンダラー;
 
-pub(super) fn レンダラーを組み立てる(
-    コア: コア資源, 資源: フレーム資源, フレーム構成: フレーム構成
-) -> レンダラー {
+pub(super) fn レンダラーを組み立てる(コア: コア資源, 資源: フレーム資源, フレーム構成: フレーム構成) -> レンダラー {
     レンダラー {
         環境: コア.環境,
         提示: コア.提示,

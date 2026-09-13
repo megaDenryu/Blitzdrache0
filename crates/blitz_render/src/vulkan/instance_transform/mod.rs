@@ -30,9 +30,7 @@ pub(crate) struct 個体変換バッファ {
 }
 
 impl 個体変換バッファ {
-    pub(crate) fn 生成する(
-        転送係: ステージング経由の転送係<'_>, 内容一覧: &[個体変換内容]
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(転送係: ステージング経由の転送係<'_>, 内容一覧: &[個体変換内容]) -> Result<Self, レンダラーエラー> {
         let mut バイト列 = Vec::with_capacity(内容一覧.len() * bytes::バイト長);
         for 内容 in 内容一覧 {
             バイト列.extend_from_slice(&bytes::バイト列にする(内容));

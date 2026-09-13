@@ -48,14 +48,9 @@ fn 方式を読む(語: &str) -> Result<Vec<方式>, XPBDの並列方式の計�
     if 語 == "all" {
         return Ok(方式::全部().to_vec());
     }
-    方式::全部()
-        .iter()
-        .find(|方式| 方式.起動指定の語() == 語)
-        .map(|方式| vec![*方式])
-        .ok_or_else(|| XPBDの並列方式の計測エラー::引数の値を読めない {
-            引数名: 方式の引数名,
-            語: 語.to_string(),
-        })
+    方式::全部().iter().find(|方式| 方式.起動指定の語() == 語).map(|方式| vec![*方式]).ok_or_else(|| XPBDの並列方式の計測エラー::引数の値を読めない {
+        引数名: 方式の引数名, 語: 語.to_string()
+    })
 }
 
 fn グラフを読む(語: &str) -> Result<Vec<グラフ>, XPBDの並列方式の計測エラー> {
@@ -67,16 +62,13 @@ fn グラフを読む(語: &str) -> Result<Vec<グラフ>, XPBDの並列方式�
         .find(|グラフ| グラフ.起動指定の語() == 語)
         .map(|グラフ| vec![*グラフ])
         .ok_or_else(|| XPBDの並列方式の計測エラー::引数の値を読めない {
-            引数名: グラフの引数名,
-            語: 語.to_string(),
+            引数名: グラフの引数名, 語: 語.to_string()
         })
 }
 
 fn 数を読む(引数名: &'static str, 語: Option<&String>) -> Result<u32, XPBDの並列方式の計測エラー> {
     let 語 = 値の語を求める(引数名, 語)?;
-    let 値: u32 = 語
-        .parse()
-        .map_err(|_| XPBDの並列方式の計測エラー::引数の値を読めない { 引数名, 語: 語.clone() })?;
+    let 値: u32 = 語.parse().map_err(|_| XPBDの並列方式の計測エラー::引数の値を読めない { 引数名, 語: 語.clone() })?;
     if 値 == 0 {
         return Err(XPBDの並列方式の計測エラー::数が零である { 引数名 });
     }

@@ -26,10 +26,7 @@ use crate::vulkan::frame::record::{cloth_passes, particle_draw_pass, particle_up
 use crate::vulkan::frame::{スキニング描画入力, 布描画入力, 粒子描画入力};
 use crate::vulkan::graph;
 
-pub(super) fn スキニングを積む<'a>(
-    グラフ: &mut graph::グラフ<'a>,
-    入力: Option<&'a スキニング描画入力>,
-) -> Option<graph::バッファハンドル> {
+pub(super) fn スキニングを積む<'a>(グラフ: &mut graph::グラフ<'a>, 入力: Option<&'a スキニング描画入力>) -> Option<graph::バッファハンドル> {
     入力.map(|入力| {
         let ハンドル = グラフ.バッファを登録する(入力.出力バッファ, graph::前フレーム頂点入力読み直後状態());
         グラフ.パスを積む(skinning_pass::スキニング処理パスを宣言する(ハンドル, 入力));
@@ -37,37 +34,20 @@ pub(super) fn スキニングを積む<'a>(
     })
 }
 
-pub(super) fn 布を積む<'a>(
-    グラフ: &mut graph::グラフ<'a>,
-    入力: Option<&'a 布描画入力>,
-    スキン済み: Option<graph::バッファハンドル>,
-) -> Option<scene_pass::布ドロー<'a>> {
+pub(super) fn 布を積む<'a>(グラフ: &mut graph::グラフ<'a>, 入力: Option<&'a 布描画入力>, スキン済み: Option<graph::バッファハンドル>) -> Option<scene_pass::布ドロー<'a>> {
     入力.map(|入力| {
         let ハンドル = cloth_passes::登録する(グラフ, 入力);
         cloth_passes::積む(グラフ, 入力, &ハンドル, スキン済み);
         scene_pass::布ドロー {
-            入力,
-            頂点ハンドル: ハンドル.布頂点,
+            入力, 頂点ハンドル: ハンドル.布頂点
         }
     })
 }
 
-pub(super) fn 粒子を積む<'a>(
-    グラフ: &mut graph::グラフ<'a>,
-    基本: &基本画像ハンドル,
-    カラー: graph::画像ハンドル,
-    入力: Option<&'a 粒子描画入力>,
-    寸法: vk::Extent2D,
-) {
+pub(super) fn 粒子を積む<'a>(グラフ: &mut graph::グラフ<'a>, 基本: &基本画像ハンドル, カラー: graph::画像ハンドル, 入力: Option<&'a 粒子描画入力>, 寸法: vk::Extent2D) {
     if let Some(入力) = 入力 {
         let ハンドル = グラフ.バッファを登録する(入力.バッファ, graph::前フレーム粒子読み直後状態());
         グラフ.パスを積む(particle_update_pass::粒子更新パスを宣言する(ハンドル, 入力));
-        グラフ.パスを積む(particle_draw_pass::粒子描画パスを宣言する(
-            カラー,
-            基本.深度,
-            ハンドル,
-            入力,
-            寸法,
-        ));
+        グラフ.パスを積む(particle_draw_pass::粒子描画パスを宣言する(カラー, 基本.深度, ハンドル, 入力, 寸法));
     }
 }

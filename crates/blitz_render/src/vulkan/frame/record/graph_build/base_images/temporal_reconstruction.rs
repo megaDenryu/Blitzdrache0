@@ -16,9 +16,7 @@ pub(in crate::vulkan::frame::record::graph_build) struct 時間再構成の登�
     pub(in crate::vulkan::frame::record::graph_build) 履歴書き: graph::画像ハンドル,
 }
 
-pub(super) fn 登録する(
-    グラフ: &mut graph::グラフ<'_>, 入力: &時間再構成描画入力, 寸法: vk::Extent2D
-) -> 時間再構成の登録 {
+pub(super) fn 登録する(グラフ: &mut graph::グラフ<'_>, 入力: &時間再構成描画入力, 寸法: vk::Extent2D) -> 時間再構成の登録 {
     let 色 = graph::前フレーム今のフレームの色読み直後状態();
     let 履歴 = graph::履歴画像の前フレーム直後状態();
     時間再構成の登録 {
@@ -28,12 +26,6 @@ pub(super) fn 登録する(
     }
 }
 
-fn 登録(
-    グラフ: &mut graph::グラフ<'_>,
-    画像: vk::Image,
-    ビュー: vk::ImageView,
-    初期状態: graph::画像状態,
-    寸法: vk::Extent2D,
-) -> graph::画像ハンドル {
+fn 登録(グラフ: &mut graph::グラフ<'_>, 画像: vk::Image, ビュー: vk::ImageView, 初期状態: graph::画像状態, 寸法: vk::Extent2D) -> graph::画像ハンドル {
     グラフ.画像を登録する(画像, ビュー, graph::画像アスペクト::カラー, 初期状態, 寸法)
 }

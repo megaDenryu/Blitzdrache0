@@ -27,8 +27,7 @@ pub(super) struct 引数フォーム<読み手> {
 impl<読み手: 行の読み手> 引数フォーム<読み手> {
     pub(super) fn 生成する(読み手: 読み手) -> Self {
         Self {
-            読み手,
-            位置の引数を省いたか: false,
+            読み手, 位置の引数を省いたか: false
         }
     }
 

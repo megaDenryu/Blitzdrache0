@@ -16,33 +16,16 @@ use crate::vulkan::local_visibility::局所可視性描画入力;
 /// 積んだときだけ、シーン描画が画素段で読むぼかし後の画像のハンドルを返す。読み宣言を呼び出し元が
 /// シーン描画へ渡すことで、ぼかしの書き込みと画素段の読みの間にバリアが立つ。
 pub(in crate::vulkan::frame::record::graph_build) fn 局所可視性を積む<'a>(
-    グラフ: &mut graph::グラフ<'a>,
-    深度: graph::画像ハンドル,
-    入力: Option<&'a 局所可視性描画入力>,
-    寸法: vk::Extent2D,
+    グラフ: &mut graph::グラフ<'a>, 深度: graph::画像ハンドル, 入力: Option<&'a 局所可視性描画入力>, 寸法: vk::Extent2D
 ) -> Option<graph::画像ハンドル> {
     let 入力 = 入力?;
     let 生 = 登録する(グラフ, 入力.生の画像, 入力.生のビュー, 寸法);
     let ぼかし後 = 登録する(グラフ, 入力.ぼかし後の画像, 入力.ぼかし後の画像ビュー, 寸法);
     グラフ.パスを積む(local_visibility_passes::遮蔽の標本化パスを宣言する(深度, 生, 入力, 寸法));
-    グラフ.パスを積む(local_visibility_passes::両側ぼかしパスを宣言する(
-        深度,
-        生,
-        ぼかし後,
-        入力,
-        寸法,
-    ));
+    グラフ.パスを積む(local_visibility_passes::両側ぼかしパスを宣言する(深度, 生, ぼかし後, 入力, 寸法));
     Some(ぼかし後)
 }
 
-fn 登録する(
-    グラフ: &mut graph::グラフ<'_>, 画像: vk::Image, ビュー: vk::ImageView, 寸法: vk::Extent2D
-) -> graph::画像ハンドル {
-    グラフ.画像を登録する(
-        画像,
-        ビュー,
-        graph::画像アスペクト::カラー,
-        graph::局所可視度の画像の前フレーム直後状態(),
-        寸法,
-    )
+fn 登録する(グラフ: &mut graph::グラフ<'_>, 画像: vk::Image, ビュー: vk::ImageView, 寸法: vk::Extent2D) -> graph::画像ハンドル {
+    グラフ.画像を登録する(画像, ビュー, graph::画像アスペクト::カラー, graph::局所可視度の画像の前フレーム直後状態(), 寸法)
 }

@@ -52,8 +52,7 @@ impl 点ごとの拘束の隣接表 {
         区間の開始一覧.push(累積);
         let mut 書き込み位置: Vec<usize> = 区間の開始一覧.iter().map(|開始| usize::try_from(*開始).unwrap_or(0)).collect();
         let 空 = 隣接の項目 {
-            拘束: 拘束添字::生成する(0),
-            側: 隣接の側::A,
+            拘束: 拘束添字::生成する(0), 側: 隣接の側::A
         };
         let mut 項目一覧 = vec![空; usize::try_from(累積).unwrap_or(0)];
         for (配列添字, 拘束) in グラフ.拘束一覧().iter().enumerate() {
@@ -64,9 +63,7 @@ impl 点ごとの拘束の隣接表 {
                 *位置 += 1;
             }
         }
-        Self {
-            区間の開始一覧, 項目一覧
-        }
+        Self { 区間の開始一覧, 項目一覧 }
     }
 
     pub fn 区間の開始一覧(&self) -> &[u32] {

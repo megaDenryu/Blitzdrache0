@@ -3,12 +3,8 @@
 //! 解像度をここが決めるのは、CPU正本の期待値を求める側と焼く側が必ず同じ解像度を使うためである。
 //! 2箇所で別々に既定値を読むと、片方だけ解像度を変えたときに検査が一致しない理由を説明できなくなる。
 
-use blitz_render::distant_environment::derived::{
-    反射率積分表の解像度, 拡散照度の解像度, 遠方環境の内容, 鏡面畳込みの解像度
-};
-use blitz_render::distant_environment::derived_probe::{
-    派生表現の焼き上げ条件, 派生表現の読み戻し, 派生表現をgpuで焼いて読み戻す
-};
+use blitz_render::distant_environment::derived::{反射率積分表の解像度, 拡散照度の解像度, 遠方環境の内容, 鏡面畳込みの解像度};
+use blitz_render::distant_environment::derived_probe::{派生表現の焼き上げ条件, 派生表現の読み戻し, 派生表現をgpuで焼いて読み戻す};
 
 use super::report_error::派生表現報告エラー;
 
@@ -30,9 +26,7 @@ impl 検査する解像度 {
     }
 }
 
-pub(super) fn 焼く(
-    環境: &遠方環境の内容, 解像度: 検査する解像度
-) -> Result<派生表現の読み戻し, 派生表現報告エラー> {
+pub(super) fn 焼く(環境: &遠方環境の内容, 解像度: 検査する解像度) -> Result<派生表現の読み戻し, 派生表現報告エラー> {
     let シェーダー = crate::embedded_derived_environment_shaders::埋め込み派生表現シェーダーを生成する()?;
     Ok(派生表現をgpuで焼いて読み戻す(派生表現の焼き上げ条件 {
         遠方環境: 環境,

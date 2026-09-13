@@ -16,18 +16,11 @@ use crate::vulkan::command_sink::積み込みを開始したコマンドバッ�
 use crate::vulkan::transfer::転送実行環境;
 
 fn 部分範囲() -> vk::ImageSubresourceRange {
-    vk::ImageSubresourceRange::default()
-        .aspect_mask(vk::ImageAspectFlags::COLOR)
-        .base_mip_level(0)
-        .level_count(1)
-        .base_array_layer(0)
-        .layer_count(1)
+    vk::ImageSubresourceRange::default().aspect_mask(vk::ImageAspectFlags::COLOR).base_mip_level(0).level_count(1).base_array_layer(0).layer_count(1)
 }
 
 /// 前提: 2枚とも確保直後でレイアウトはUNDEFINEDであり、GPUはまだどちらも使っていない。
-pub(super) fn 履歴を零で埋める(
-    転送環境: &転送実行環境, 画像組: &時間再構成の画像組
-) -> Result<(), レンダラーエラー> {
+pub(super) fn 履歴を零で埋める(転送環境: &転送実行環境, 画像組: &時間再構成の画像組) -> Result<(), レンダラーエラー> {
     let 色 = vk::ClearColorValue { float32: [0.0; 4] };
     let 画像一覧: Vec<vk::Image> = 画像組.履歴.iter().map(|履歴| 履歴.画像).collect();
     let 一時 = 転送環境.転送コマンドを積み始める()?;

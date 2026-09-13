@@ -11,25 +11,15 @@ use ash::vk;
 use super::空中遠近合成の束縛先;
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::descriptor_common;
-use crate::vulkan::descriptor::{
-    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物
-};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物};
 
 /// 並びの位置。深度は毎フレーム結び直し、ボリュームは生成時に1度だけ結ぶ。
 const 深度の位置: usize = 0;
 const ボリュームの位置: usize = 1;
 
 const 宣言: 宣言した束縛の並び<2> = 宣言した束縛の並び::生成する([
-    (
-        束縛番号::生成する(0),
-        vk::DescriptorType::COMBINED_IMAGE_SAMPLER,
-        vk::ShaderStageFlags::FRAGMENT,
-    ),
-    (
-        束縛番号::生成する(1),
-        vk::DescriptorType::COMBINED_IMAGE_SAMPLER,
-        vk::ShaderStageFlags::FRAGMENT,
-    ),
+    (束縛番号::生成する(0), vk::DescriptorType::COMBINED_IMAGE_SAMPLER, vk::ShaderStageFlags::FRAGMENT),
+    (束縛番号::生成する(1), vk::DescriptorType::COMBINED_IMAGE_SAMPLER, vk::ShaderStageFlags::FRAGMENT),
 ]);
 
 pub(super) fn レイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<2>, レンダラーエラー> {
@@ -45,36 +35,20 @@ pub(super) fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorP
 }
 
 /// ボリュームを結ぶ。生成時に1度だけ書けば足りるのは、ボリュームが起動時に1度確保して使い回す画像だからである。
-pub(super) fn ボリュームを書き込む(
-    device: &ash::Device,
-    セット: &宣言から割り当てたセット<2>,
-    sampler: vk::Sampler,
-    束縛先: &空中遠近合成の束縛先,
-) {
+pub(super) fn ボリュームを書き込む(device: &ash::Device, セット: &宣言から割り当てたセット<2>, sampler: vk::Sampler, 束縛先: &空中遠近合成の束縛先) {
     書き込む(device, セット, ボリュームの位置, sampler, 束縛先.空中遠近ビュー, vk::ImageLayout::GENERAL);
 }
 
 /// 深度を結ぶ。毎フレーム呼ぶ理由は`composite_descriptor`の冒頭にある。
-pub(super) fn 深度を書き込む(
-    device: &ash::Device, セット: &宣言から割り当てたセット<2>, sampler: vk::Sampler, 深度ビュー: vk::ImageView
-) {
+pub(super) fn 深度を書き込む(device: &ash::Device, セット: &宣言から割り当てたセット<2>, sampler: vk::Sampler, 深度ビュー: vk::ImageView) {
     書き込む(device, セット, 深度の位置, sampler, 深度ビュー, vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL);
 }
 
-fn 書き込む(
-    device: &ash::Device,
-    セット: &宣言から割り当てたセット<2>,
-    位置: usize,
-    sampler: vk::Sampler,
-    ビュー: vk::ImageView,
-    レイアウト: vk::ImageLayout,
-) {
+fn 書き込む(device: &ash::Device, セット: &宣言から割り当てたセット<2>, 位置: usize, sampler: vk::Sampler, ビュー: vk::ImageView, レイアウト: vk::ImageLayout) {
     セット.書き込み先(device).並びの位置へ結ぶ(
         位置,
         結ぶ現物::サンプラー付きの画像 {
-            ビュー,
-            サンプラー: sampler,
-            レイアウト,
+            ビュー, サンプラー: sampler, レイアウト
         },
     );
 }

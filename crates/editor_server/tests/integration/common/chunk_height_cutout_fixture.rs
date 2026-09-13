@@ -17,20 +17,14 @@ pub const マザー一辺頂点数: usize = 5;
 pub const チャンク一辺頂点数: usize = 3;
 
 pub async fn 高さ格子を取得する(一時: &一時プロジェクト, x: i32, z: i32) -> (StatusCode, Vec<u8>) {
-    let 応答 = super::ルーターを作る(一時)
-        .oneshot(Request::get(format!("/api/チャンク/{x}/{z}/高さ格子")).body(Body::empty()).unwrap())
-        .await
-        .unwrap();
+    let 応答 = super::ルーターを作る(一時).oneshot(Request::get(format!("/api/チャンク/{x}/{z}/高さ格子")).body(Body::empty()).unwrap()).await.unwrap();
     let 状態 = 応答.status();
     let 本体 = axum::body::to_bytes(応答.into_body(), usize::MAX).await.unwrap();
     (状態, 本体.to_vec())
 }
 
 pub fn 高さ一覧へ解く(バイト列: &[u8]) -> Vec<f32> {
-    バイト列
-        .chunks_exact(4)
-        .map(|区切り| f32::from_le_bytes(<[u8; 4]>::try_from(区切り).unwrap()))
-        .collect()
+    バイト列.chunks_exact(4).map(|区切り| f32::from_le_bytes(<[u8; 4]>::try_from(区切り).unwrap())).collect()
 }
 
 /// `マザーを一意な値で保存する`が埋める`高さ(x, z) = z*一辺頂点数 + x`の値。

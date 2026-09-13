@@ -63,9 +63,7 @@ impl アプリの起こし方 {
             Self::毎回cargoに構築させて起動する => Some(&["run", "-p", "blitz_app", "--"]),
             Self::毎回cargoに構築させ構築の知らせを伏せて起動する => Some(&["run", "-q", "-p", "blitz_app", "--"]),
             Self::毎回cargoにリリース版を構築させて起動する => Some(&["run", "--release", "-p", "blitz_app", "--"]),
-            Self::毎回cargoにリリース版を構築させ構築の知らせを伏せて起動する => {
-                Some(&["run", "--release", "-q", "-p", "blitz_app", "--"])
-            }
+            Self::毎回cargoにリリース版を構築させ構築の知らせを伏せて起動する => Some(&["run", "--release", "-q", "-p", "blitz_app", "--"]),
             Self::構築済みのリリース版を直に起動する => None,
         }
     }

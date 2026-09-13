@@ -72,17 +72,13 @@ impl ウィンドウなし実行GPU環境 {
     }
 
     /// ステージング経由の転送に使う転送実行環境を、この環境のキューで作る。返る環境の破棄は呼び出し元が行う。
-    pub(crate) fn 転送実行環境を生成する(
-        &self,
-    ) -> Result<crate::vulkan::transfer::転送実行環境, crate::error::レンダラーエラー> {
+    pub(crate) fn 転送実行環境を生成する(&self) -> Result<crate::vulkan::transfer::転送実行環境, crate::error::レンダラーエラー> {
         crate::vulkan::transfer::転送実行環境::生成する(&self.device, self.queue, self.キューファミリ添字)
     }
 
     /// 一時コマンドバッファを1本確保して積み込みを開始する。
     /// 返る値は`送信して完了を待つ`で必ず閉じる。閉じないまま捨てると`破棄する`が止める。
-    pub(crate) fn gpu命令を積み始める(
-        &self,
-    ) -> Result<GPU命令を積む一時コマンドバッファ<'_>, crate::error::レンダラーエラー> {
+    pub(crate) fn gpu命令を積み始める(&self) -> Result<GPU命令を積む一時コマンドバッファ<'_>, crate::error::レンダラーエラー> {
         GPU命令を積む一時コマンドバッファ::積み始める(self)
     }
 

@@ -52,9 +52,5 @@ async fn 移行できない旧版が残るチャンクへの保存は拒まれ�
         .await
         .unwrap();
     assert_eq!(応答.status(), StatusCode::CONFLICT);
-    assert_eq!(
-        std::fs::read(&構造パス).unwrap(),
-        旧版のバイト列,
-        "拒んだ保存が旧版の正本を書き換えている"
-    );
+    assert_eq!(std::fs::read(&構造パス).unwrap(), 旧版のバイト列, "拒んだ保存が旧版の正本を書き換えている");
 }

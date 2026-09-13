@@ -17,9 +17,7 @@
 use blitz_assembly::{据えた部品の番号, 接合の指示, 組み立て手順};
 
 use super::frame_bay_face::ベイの面::{右面, 左面, 正面, 背面};
-use super::frame_bay_instruction::{
-    壁をはめる指示を作る, 屋根を載せる指示を作る, 床を張る指示を作る, 隣のベイを横へ継ぐ指示を作る
-};
+use super::frame_bay_instruction::{壁をはめる指示を作る, 屋根を載せる指示を作る, 床を張る指示を作る, 隣のベイを横へ継ぐ指示を作る};
 use super::frame_bay_spelling::はめる壁の種類::{平壁, 扉枠付きの壁, 窓壁};
 use super::frame_bay_spelling::骨格の部品id;
 use super::frame_chimney_instruction::{煙突を上へ積む指示を作る, 煙突を壁の外面へ差し込む指示を作る};

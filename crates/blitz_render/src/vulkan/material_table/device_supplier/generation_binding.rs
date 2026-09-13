@@ -23,11 +23,7 @@ pub(in crate::vulkan::material_table) struct 世代束縛資源 {
 }
 
 impl 世代束縛資源 {
-    pub(in crate::vulkan::material_table) fn 生成する(
-        環境: 材質資源の作業環境<'_>,
-        画像集合: &[テクスチャ],
-        レコード列: &[世代内材質レコード],
-    ) -> Result<Self, レンダラーエラー> {
+    pub(in crate::vulkan::material_table) fn 生成する(環境: 材質資源の作業環境<'_>, 画像集合: &[テクスチャ], レコード列: &[世代内材質レコード]) -> Result<Self, レンダラーエラー> {
         let レコードバッファ = 材質レコードバッファ::生成する(環境.転送係, レコード列)?;
         let pool = match プールを生成する(環境) {
             Ok(値) => 値,
@@ -38,9 +34,7 @@ impl 世代束縛資源 {
         };
         match セットを割り当てて結ぶ(環境, pool, &レコードバッファ, 画像集合) {
             Ok(材質のセット) => Ok(Self {
-                レコードバッファ,
-                pool,
-                材質のセット,
+                レコードバッファ, pool, 材質のセット
             }),
             Err(誤り) => {
                 // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
@@ -67,12 +61,8 @@ impl 世代束縛資源 {
 fn プールを生成する(環境: 材質資源の作業環境<'_>) -> Result<vk::DescriptorPool, レンダラーエラー> {
     // 固定サンプラーのbindingも割り当ての対象であるため、書き込まなくてもプールに枠が要る。
     let プールサイズ一覧 = [
-        vk::DescriptorPoolSize::default()
-            .ty(vk::DescriptorType::STORAGE_BUFFER)
-            .descriptor_count(1),
-        vk::DescriptorPoolSize::default()
-            .ty(vk::DescriptorType::SAMPLED_IMAGE)
-            .descriptor_count(環境.セットレイアウト.材質テクスチャ表容量().枚数()),
+        vk::DescriptorPoolSize::default().ty(vk::DescriptorType::STORAGE_BUFFER).descriptor_count(1),
+        vk::DescriptorPoolSize::default().ty(vk::DescriptorType::SAMPLED_IMAGE).descriptor_count(環境.セットレイアウト.材質テクスチャ表容量().枚数()),
         vk::DescriptorPoolSize::default().ty(vk::DescriptorType::SAMPLER).descriptor_count(1),
     ];
     let create_info = vk::DescriptorPoolCreateInfo::default().max_sets(1).pool_sizes(&プールサイズ一覧);
@@ -81,10 +71,7 @@ fn プールを生成する(環境: 材質資源の作業環境<'_>) -> Result<v
 }
 
 fn セットを割り当てて結ぶ(
-    環境: 材質資源の作業環境<'_>,
-    pool: vk::DescriptorPool,
-    レコードバッファ: &材質レコードバッファ,
-    画像集合: &[テクスチャ],
+    環境: 材質資源の作業環境<'_>, pool: vk::DescriptorPool, レコードバッファ: &材質レコードバッファ, 画像集合: &[テクスチャ]
 ) -> Result<材質の割り当て済みセット, レンダラーエラー> {
     let セット = 環境.セットレイアウト.材質のセットを1つ割り当てる(環境.論理デバイス(), pool)?;
     セット.書き込み先(環境.論理デバイス()).世代の資源を結ぶ(レコードバッファ, 画像集合);

@@ -10,9 +10,7 @@ use ash::vk;
 
 use super::images::履歴の枚数;
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{
-    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号
-};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号};
 
 const 標本: vk::DescriptorType = vk::DescriptorType::SAMPLED_IMAGE;
 const 標本器つき: vk::DescriptorType = vk::DescriptorType::COMBINED_IMAGE_SAMPLER;
@@ -36,11 +34,7 @@ impl 時間再構成のディスクリプタ {
     pub(super) fn 生成する(device: &ash::Device) -> Result<Self, レンダラーエラー> {
         let レイアウト = 時間再構成のセットレイアウトを作る(device)?;
         match 時間再構成のプールを作ってセットを割り当てる(device, &レイアウト) {
-            Ok((pool, セット一覧)) => Ok(Self {
-                レイアウト,
-                pool,
-                セット一覧,
-            }),
+            Ok((pool, セット一覧)) => Ok(Self { レイアウト, pool, セット一覧 }),
             Err(誤り) => {
                 レイアウト.破棄する(device);
                 Err(誤り)
@@ -59,9 +53,7 @@ impl 時間再構成のディスクリプタ {
     }
 }
 
-fn 時間再構成のセットレイアウトを作る(
-    device: &ash::Device,
-) -> Result<宣言から作ったセットレイアウト<4>, レンダラーエラー> {
+fn 時間再構成のセットレイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<4>, レンダラーエラー> {
     束縛の宣言.セットレイアウトを確保する(device)
 }
 
@@ -70,10 +62,7 @@ fn 時間再構成のプールを作ってセットを割り当てる(
     レイアウト: &宣言から作ったセットレイアウト<4>,
 ) -> Result<(vk::DescriptorPool, [宣言から割り当てたセット<4>; 履歴の枚数]), レンダラーエラー> {
     let 枚数 = u32::try_from(履歴の枚数).unwrap_or_else(|_| panic!("履歴の枚数がu32に収まらない: {履歴の枚数}"));
-    let 大きさ一覧 = [
-        vk::DescriptorPoolSize::default().ty(標本).descriptor_count(3 * 枚数),
-        vk::DescriptorPoolSize::default().ty(標本器つき).descriptor_count(枚数),
-    ];
+    let 大きさ一覧 = [vk::DescriptorPoolSize::default().ty(標本).descriptor_count(3 * 枚数), vk::DescriptorPoolSize::default().ty(標本器つき).descriptor_count(枚数)];
     let プール情報 = vk::DescriptorPoolCreateInfo::default().max_sets(枚数).pool_sizes(&大きさ一覧);
     // 安全性: deviceは生成済みで有効。
     let pool = unsafe { device.create_descriptor_pool(&プール情報, None)? };

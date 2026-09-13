@@ -16,9 +16,7 @@ pub(crate) struct テクスチャ指定<'素材> {
 
 impl<'素材> テクスチャ指定<'素材> {
     pub(crate) fn 生成する(テクスチャid: テクスチャID, 画像id: 画像ID, 素材: &'素材 テクスチャ素材) -> Self {
-        Self {
-            テクスチャid, 画像id, 素材
-        }
+        Self { テクスチャid, 画像id, 素材 }
     }
 
     pub(crate) fn テクスチャid(&self) -> テクスチャID {

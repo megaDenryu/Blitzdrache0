@@ -9,11 +9,7 @@ use super::material_element::係数を書く;
 use super::texture::テクスチャを書く工程;
 use crate::asset::pbr_material_data::金属粗さPBRデータ;
 
-pub(super) fn 書く(
-    出力: &mut 書込先,
-    値: &金属粗さPBRデータ,
-    テクスチャを書く: テクスチャを書く工程,
-) -> Result<(), アセット実行時形式エラー> {
+pub(super) fn 書く(出力: &mut 書込先, 値: &金属粗さPBRデータ, テクスチャを書く: テクスチャを書く工程) -> Result<(), アセット実行時形式エラー> {
     出力.u32(値.特徴集合().生値());
     テクスチャを書く(出力, 値.ベースカラー.as_ref())?;
     テクスチャを書く(出力, 値.金属粗さ.as_ref())?;

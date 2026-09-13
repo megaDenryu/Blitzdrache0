@@ -15,11 +15,7 @@ pub(super) fn 機能一覧を読む(右辺: &str) -> Vec<String> {
     let Some(閉じ括弧) = 残り.find(']') else {
         return Vec::new();
     };
-    残り[..閉じ括弧]
-        .split(',')
-        .map(|語| 語.trim().trim_matches('"').to_string())
-        .filter(|名前| !名前.is_empty())
-        .collect()
+    残り[..閉じ括弧].split(',').map(|語| 語.trim().trim_matches('"').to_string()).filter(|名前| !名前.is_empty()).collect()
 }
 
 /// `default-features = [` のように別のキーの一部として現れた前置きを飛ばす。

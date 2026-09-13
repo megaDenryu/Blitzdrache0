@@ -19,12 +19,7 @@ pub(crate) struct 選定候補 {
 
 impl 選定候補 {
     pub(crate) fn 生成する(
-        添字: usize,
-        機材名: String,
-        discreteか: bool,
-        索引機能: ディスクリプタ索引機能,
-        テクスチャのブロック圧縮に対応するか: bool,
-        立方体の配列画像に対応するか: bool,
+        添字: usize, 機材名: String, discreteか: bool, 索引機能: ディスクリプタ索引機能, テクスチャのブロック圧縮に対応するか: bool, 立方体の配列画像に対応するか: bool
     ) -> Self {
         Self {
             添字,

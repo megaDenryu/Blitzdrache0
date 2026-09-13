@@ -35,9 +35,7 @@ pub(super) struct 木に張った升目 {
 
 impl 木に張った升目 {
     pub(super) fn 根として張る(座標: 升目の座標) -> Self {
-        Self {
-            座標, 親への繋がり: None
-        }
+        Self { 座標, 親への繋がり: None }
     }
 
     pub(super) fn 親から継いで張る(座標: 升目の座標, 親の座標: 升目の座標, 継ぎ方: 親からの継ぎ方) -> Self {

@@ -14,9 +14,7 @@ use crate::temporal_reconstruction::時間再構成の描画設定;
 pub(crate) const 即時定数バイト数: u32 = 28;
 
 /// 即時定数の並びを組み立てる。
-pub(crate) fn 即時定数を組み立てる(
-    射影: 射影の復元, 寸法: vk::Extent2D, 設定: 時間再構成の描画設定, 履歴を混ぜるか: bool
-) -> Vec<u8> {
+pub(crate) fn 即時定数を組み立てる(射影: 射影の復元, 寸法: vk::Extent2D, 設定: 時間再構成の描画設定, 履歴を混ぜるか: bool) -> Vec<u8> {
     let mut バイト列 = Vec::with_capacity(usize::try_from(即時定数バイト数).unwrap_or(0));
     単精度を足す(&mut バイト列, 射影.近クリップ().値());
     単精度を足す(&mut バイト列, 射影.遠クリップ().値());

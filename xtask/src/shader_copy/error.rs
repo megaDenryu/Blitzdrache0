@@ -10,18 +10,9 @@ use std::path::PathBuf;
 
 #[derive(Debug)]
 pub enum シェーダーの一時コピーの破れ {
-    コピー先を作れなかった {
-        コピー先: PathBuf,
-        誤り: std::io::Error,
-    },
-    元のディレクトリを読めなかった {
-        元のディレクトリ: PathBuf,
-        誤り: std::io::Error,
-    },
-    シェーダーの1枚を写せなかった {
-        元パス: PathBuf,
-        誤り: std::io::Error,
-    },
+    コピー先を作れなかった { コピー先: PathBuf, 誤り: std::io::Error },
+    元のディレクトリを読めなかった { 元のディレクトリ: PathBuf, 誤り: std::io::Error },
+    シェーダーの1枚を写せなかった { 元パス: PathBuf, 誤り: std::io::Error },
 }
 
 impl std::error::Error for シェーダーの一時コピーの破れ {}
@@ -32,9 +23,7 @@ impl std::fmt::Display for シェーダーの一時コピーの破れ {
             Self::コピー先を作れなかった { コピー先, 誤り } => {
                 write!(書き手, "シェーダーのコピー先({})を作れなかった: {誤り}", コピー先.display())
             }
-            Self::元のディレクトリを読めなかった {
-                元のディレクトリ, 誤り
-            } => {
+            Self::元のディレクトリを読めなかった { 元のディレクトリ, 誤り } => {
                 write!(書き手, "{}の読み取りに失敗した: {誤り}", 元のディレクトリ.display())
             }
             Self::シェーダーの1枚を写せなかった { 元パス, 誤り } => {

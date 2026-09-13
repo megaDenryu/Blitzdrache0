@@ -10,9 +10,7 @@ use crate::asset::draw_shape::描画形状;
 use crate::asset::render_object_data::描画対象データ;
 use crate::asset::scene_data::シーンデータ;
 
-pub(in crate::asset::runtime_format::scene) fn シーン内容を書く(
-    シーン: &シーンデータ,
-) -> Result<Vec<u8>, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn シーン内容を書く(シーン: &シーンデータ) -> Result<Vec<u8>, アセット実行時形式エラー> {
     let ジョイント数 = シーン.スキン.as_ref().map(|値| 値.ジョイント一覧.len());
     if ジョイント数.is_none() && !シーン.アニメーション一覧.is_empty() {
         return Err(アセット実行時形式エラー::スキンなしアニメーション);
@@ -32,9 +30,7 @@ pub(in crate::asset::runtime_format::scene) fn シーン内容を書く(
     Ok(出力.完了する())
 }
 
-fn 描画対象を書く(
-    出力: &mut 書込先, 対象: &描画対象データ, ジョイント数: Option<usize>
-) -> Result<(), アセット実行時形式エラー> {
+fn 描画対象を書く(出力: &mut 書込先, 対象: &描画対象データ, ジョイント数: Option<usize>) -> Result<(), アセット実行時形式エラー> {
     let 描画形状::通常メッシュ(メッシュ) = 対象.形状() else {
         panic!("版1は通常メッシュ以外の形状を表せないという不変条件に違反した");
     };

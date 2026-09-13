@@ -3,9 +3,7 @@
 use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::読取位置;
 
-pub(in crate::asset::runtime_format::scene) fn 行列を読む(
-    入力: &mut 読取位置<'_>,
-) -> Result<[[f32; 4]; 4], アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 行列を読む(入力: &mut 読取位置<'_>) -> Result<[[f32; 4]; 4], アセット実行時形式エラー> {
     Ok([
         [入力.f32()?, 入力.f32()?, 入力.f32()?, 入力.f32()?],
         [入力.f32()?, 入力.f32()?, 入力.f32()?, 入力.f32()?],

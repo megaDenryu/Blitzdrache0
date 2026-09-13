@@ -66,9 +66,7 @@ impl 検収用のルート {
         match std::fs::remove_dir_all(&self.0) {
             Ok(()) => Ok(()),
             Err(誤り) if 誤り.kind() == std::io::ErrorKind::NotFound => Ok(()),
-            Err(誤り) => Err(場所巡りの通しの検収エラー::検収用のルートを消せなかった {
-                パス: self.0.clone(), 誤り
-            }),
+            Err(誤り) => Err(場所巡りの通しの検収エラー::検収用のルートを消せなかった { パス: self.0.clone(), 誤り }),
         }
     }
 

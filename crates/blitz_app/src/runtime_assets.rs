@@ -9,9 +9,7 @@ mod replacement;
 
 use std::path::PathBuf;
 
-use blitz_engine::{
-    アセットID, 実行時アセットの公開完了印, 実行時カタログのファイル, 実行時チャンク目録のファイル
-};
+use blitz_engine::{アセットID, 実行時アセットの公開完了印, 実行時カタログのファイル, 実行時チャンク目録のファイル};
 
 pub(crate) use publication_marker_content::生成台帳の公開内容;
 
@@ -30,9 +28,7 @@ pub(crate) struct 実行時アセットの置き場 {
 
 impl 実行時アセットの置き場 {
     pub(crate) fn 綴りから生成する(綴り: &str) -> Self {
-        Self {
-            ディレクトリ: PathBuf::from(綴り),
-        }
+        Self { ディレクトリ: PathBuf::from(綴り) }
     }
 
     /// 配下の版付きカタログ。読み込みはこの型が持つ。

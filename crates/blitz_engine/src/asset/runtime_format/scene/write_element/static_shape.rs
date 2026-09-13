@@ -10,24 +10,17 @@ use super::super::bytes::書込先;
 use crate::static_shape::静的物理形状エラー;
 use crate::static_shape::{チャンクの静的物理形状, 衝突対象の子形状, 静的な衝突対象};
 
-pub(in crate::asset::runtime_format::scene) type 静的物理形状の節を書く工程 =
-    fn(&mut 書込先, &チャンクの静的物理形状) -> Result<(), アセット実行時形式エラー>;
+pub(in crate::asset::runtime_format::scene) type 静的物理形状の節を書く工程 = fn(&mut 書込先, &チャンクの静的物理形状) -> Result<(), アセット実行時形式エラー>;
 
 #[cfg(test)]
-pub(in crate::asset::runtime_format::scene) fn 版6までの静的物理形状を書く(
-    _出力: &mut 書込先,
-    形状: &チャンクの静的物理形状,
-) -> Result<(), アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 版6までの静的物理形状を書く(_出力: &mut 書込先, 形状: &チャンクの静的物理形状) -> Result<(), アセット実行時形式エラー> {
     if 形状.衝突対象数() == 0 {
         return Ok(());
     }
     Err(静的物理形状エラー::節を持たない旧版で焼こうとした.into())
 }
 
-pub(in crate::asset::runtime_format::scene) fn 版7の静的物理形状を書く(
-    出力: &mut 書込先,
-    形状: &チャンクの静的物理形状,
-) -> Result<(), アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 版7の静的物理形状を書く(出力: &mut 書込先, 形状: &チャンクの静的物理形状) -> Result<(), アセット実行時形式エラー> {
     出力.件数(形状.衝突対象数())?;
     for 対象 in 形状.衝突対象一覧() {
         衝突対象を書く(出力, 対象)?;

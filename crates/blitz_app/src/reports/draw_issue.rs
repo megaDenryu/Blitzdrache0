@@ -34,12 +34,7 @@ fn パス別発行を表示する(パス名: &str, 発行: &blitz_render::パス
 
 /// 段番号と個体数の対を段番号の昇順で並べた1行。段を1つしか使わない世界でも同じ形で出る。
 fn 段別個体数を並べる(段別: &blitz_render::段別個体数) -> String {
-    let 並び: Vec<String> = 段別
-        .段ごと()
-        .iter()
-        .enumerate()
-        .map(|(段番号, 個体数)| format!("{段番号}={個体数}"))
-        .collect();
+    let 並び: Vec<String> = 段別.段ごと().iter().enumerate().map(|(段番号, 個体数)| format!("{段番号}={個体数}")).collect();
     if 並び.is_empty() {
         return "なし".to_string();
     }
@@ -81,11 +76,7 @@ pub(crate) fn 距離区分の世界メートル毎テクセルを表示する(�
     match 密度 {
         Some(解像度密度) => {
             let 長さ一覧 = 解像度密度.距離区分ごとの世界メートル毎テクセル();
-            let 並び: Vec<String> = 長さ一覧
-                .iter()
-                .enumerate()
-                .map(|(番号, 長さ)| format!("{番号}={:.6}", 長さ.値()))
-                .collect();
+            let 並び: Vec<String> = 長さ一覧.iter().enumerate().map(|(番号, 長さ)| format!("{番号}={:.6}", 長さ.値())).collect();
             println!("  距離区分の世界メートル毎テクセル: {}", 並び.join(" "));
         }
         None => println!("  距離区分の世界メートル毎テクセル: 1フレームも可視判定を行っていないため測っていない"),

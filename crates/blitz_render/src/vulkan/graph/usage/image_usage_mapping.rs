@@ -26,19 +26,11 @@ pub(crate) fn 状態へ写像する(用途: 画像用途) -> 画像状態 {
         ),
         画像用途::シェーダー読み画素段 => 画素段の標本読み(vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL),
         画像用途::深度シェーダー読み => 画素段の標本読み(vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL),
-        画像用途::コンピュート書き => 画像状態::生成する(
-            vk::PipelineStageFlags2::COMPUTE_SHADER,
-            vk::AccessFlags2::SHADER_STORAGE_WRITE,
-            vk::ImageLayout::GENERAL,
-        ),
+        画像用途::コンピュート書き => 画像状態::生成する(vk::PipelineStageFlags2::COMPUTE_SHADER, vk::AccessFlags2::SHADER_STORAGE_WRITE, vk::ImageLayout::GENERAL),
         画像用途::シェーダー読みコンピュート段 => コンピュート段の標本読み(vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL),
         画像用途::コンピュート読み => コンピュート段の標本読み(vk::ImageLayout::GENERAL),
         画像用途::深度コンピュート読み => コンピュート段の標本読み(vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL),
-        画像用途::コンピュート記憶読み => 画像状態::生成する(
-            vk::PipelineStageFlags2::COMPUTE_SHADER,
-            vk::AccessFlags2::SHADER_STORAGE_READ,
-            vk::ImageLayout::GENERAL,
-        ),
+        画像用途::コンピュート記憶読み => 画像状態::生成する(vk::PipelineStageFlags2::COMPUTE_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ, vk::ImageLayout::GENERAL),
         画像用途::焼いた画像の画素段参照 => 画素段の標本読み(vk::ImageLayout::GENERAL),
         画像用途::履歴のカラー出力 => 画像状態::生成する(
             vk::PipelineStageFlags2::COLOR_ATTACHMENT_OUTPUT,
@@ -46,31 +38,15 @@ pub(crate) fn 状態へ写像する(用途: 画像用途) -> 画像状態 {
             vk::ImageLayout::GENERAL,
         ),
         画像用途::履歴の画素段参照 => 画素段の標本読み(vk::ImageLayout::GENERAL),
-        画像用途::転送元 => 画像状態::生成する(
-            vk::PipelineStageFlags2::COPY,
-            vk::AccessFlags2::TRANSFER_READ,
-            vk::ImageLayout::TRANSFER_SRC_OPTIMAL,
-        ),
-        画像用途::転送先 => 画像状態::生成する(
-            vk::PipelineStageFlags2::COPY,
-            vk::AccessFlags2::TRANSFER_WRITE,
-            vk::ImageLayout::TRANSFER_DST_OPTIMAL,
-        ),
-        画像用途::提示 => 画像状態::生成する(
-            vk::PipelineStageFlags2::BOTTOM_OF_PIPE,
-            vk::AccessFlags2::empty(),
-            vk::ImageLayout::PRESENT_SRC_KHR,
-        ),
+        画像用途::転送元 => 画像状態::生成する(vk::PipelineStageFlags2::COPY, vk::AccessFlags2::TRANSFER_READ, vk::ImageLayout::TRANSFER_SRC_OPTIMAL),
+        画像用途::転送先 => 画像状態::生成する(vk::PipelineStageFlags2::COPY, vk::AccessFlags2::TRANSFER_WRITE, vk::ImageLayout::TRANSFER_DST_OPTIMAL),
+        画像用途::提示 => 画像状態::生成する(vk::PipelineStageFlags2::BOTTOM_OF_PIPE, vk::AccessFlags2::empty(), vk::ImageLayout::PRESENT_SRC_KHR),
     }
 }
 
 /// 画素段シェーダーが標本器で読む状態。休むレイアウトだけが用途ごとに違う。
 fn 画素段の標本読み(レイアウト: vk::ImageLayout) -> 画像状態 {
-    画像状態::生成する(
-        vk::PipelineStageFlags2::FRAGMENT_SHADER,
-        vk::AccessFlags2::SHADER_SAMPLED_READ,
-        レイアウト,
-    )
+    画像状態::生成する(vk::PipelineStageFlags2::FRAGMENT_SHADER, vk::AccessFlags2::SHADER_SAMPLED_READ, レイアウト)
 }
 
 /// コンピュート段が標本器で読む状態。休むレイアウトだけが用途ごとに違う。

@@ -19,8 +19,6 @@ pub(super) fn シーン内容を読む(内容: &[u8]) -> Result<シーンデー�
 }
 
 #[cfg(test)]
-pub(in crate::asset::runtime_format::scene) fn シーン内容を書く(
-    シーン: &シーンデータ,
-) -> Result<Vec<u8>, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn シーン内容を書く(シーン: &シーンデータ) -> Result<Vec<u8>, アセット実行時形式エラー> {
     multi_material_body::マルチマテリアル本体を書く(シーン, 版ごとの要素の書き方::版5())
 }

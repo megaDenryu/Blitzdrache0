@@ -7,11 +7,7 @@ use super::super::bytes::書込先;
 use super::version_codec::版ごとの要素の書き方;
 use crate::asset::material_set::材質集合;
 
-pub(in crate::asset::runtime_format::scene) fn 書く(
-    出力: &mut 書込先,
-    材質集合: &材質集合,
-    書き方: 版ごとの要素の書き方,
-) -> Result<(), アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 書く(出力: &mut 書込先, 材質集合: &材質集合, 書き方: 版ごとの要素の書き方) -> Result<(), アセット実行時形式エラー> {
     出力.件数(材質集合.件数())?;
     for 割当 in 材質集合.割当一覧() {
         出力.u32(割当.スロット.番号を返す());

@@ -41,9 +41,7 @@ impl<空間種> 軸平行の直方体<空間種> {
 
 impl<空間種: 空間> 軸平行の直方体<空間種> {
     /// 端が有限であり、成分ごとに最小の端が最大の端以下であることを確かめて作る。
-    pub fn 二つの端から生成する(
-        最小の端: 位置<空間種>, 最大の端: 位置<空間種>
-    ) -> Result<Self, 直方体の生成エラー> {
+    pub fn 二つの端から生成する(最小の端: 位置<空間種>, 最大の端: 位置<空間種>) -> Result<Self, 直方体の生成エラー> {
         let 最小 = 成分を並べる(最小の端);
         let 最大 = 成分を並べる(最大の端);
         for (軸, (小, 大)) in 軸名一覧.into_iter().zip(最小.into_iter().zip(最大)) {
@@ -88,11 +86,7 @@ impl<空間種> PartialEq for 軸平行の直方体<空間種> {
 
 impl<空間種> fmt::Debug for 軸平行の直方体<空間種> {
     fn fmt(&self, 出力: &mut fmt::Formatter<'_>) -> fmt::Result {
-        出力
-            .debug_struct("軸平行の直方体")
-            .field("最小の端", &self.最小の端)
-            .field("最大の端", &self.最大の端)
-            .finish()
+        出力.debug_struct("軸平行の直方体").field("最小の端", &self.最小の端).field("最大の端", &self.最大の端).finish()
     }
 }
 

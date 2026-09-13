@@ -8,9 +8,7 @@ mod static_shape_world;
 use std::path::PathBuf;
 
 use crate::asset::runtime_scene_tests::静的シーンを作る;
-use crate::{
-    アセットID, アセットメタデータ, カタログ, シーンを実行時形式へ格納する, シーンデータ, チャンク座標, チャンク目録
-};
+use crate::{アセットID, アセットメタデータ, カタログ, シーンを実行時形式へ格納する, シーンデータ, チャンク座標, チャンク目録};
 
 pub(super) use edge_length::チャンク一辺を作る;
 use pixels::既定画素;
@@ -62,12 +60,7 @@ pub(super) fn 存在しない生成物のカタログを作る(名前: &str, 座
         let Ok(id) = アセットID::生成する(&名称) else {
             panic!("試験用アセットIDを作れなかった");
         };
-        カタログ.詳細を登録する(
-            id,
-            PathBuf::from("target").join(format!("{名称}_missing.blitzasset")),
-            Vec::new(),
-            試験メタデータ(),
-        );
+        カタログ.詳細を登録する(id, PathBuf::from("target").join(format!("{名称}_missing.blitzasset")), Vec::new(), 試験メタデータ());
     }
     カタログ
 }
@@ -79,9 +72,7 @@ fn 名称を作る(名前: &str, x: i32, z: i32) -> String {
 
 /// 渡した実行時シーンを座標ごとに書き、同じアセットIDで参照できるカタログを組み立てる。
 /// `版名`が分けるのはファイル名だけであり、アセットIDは変えない。目録を組み直さずに内容だけを差し替えられるようにするためである。
-fn 生成物とカタログを作る(
-    名前: &str, 版名: &str, 座標一覧: &[(i32, i32)], シーン: &シーンデータ
-) -> (Vec<PathBuf>, カタログ) {
+fn 生成物とカタログを作る(名前: &str, 版名: &str, 座標一覧: &[(i32, i32)], シーン: &シーンデータ) -> (Vec<PathBuf>, カタログ) {
     let Ok(バイト列) = シーンを実行時形式へ格納する(シーン) else {
         panic!("試験用チャンクシーンを格納できなかった");
     };

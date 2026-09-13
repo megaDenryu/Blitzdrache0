@@ -40,12 +40,7 @@ impl ホットリローダー {
 
     /// 初回シーン読込成功後に呼び、アセットの監視対象を設定する
     /// (カタログ・シーン読込はウィンドウ・レンダラー生成後にしか確定しないため)。
-    pub(crate) fn アセット監視を設定する(
-        &mut self,
-        置き場: crate::runtime_assets::実行時アセットの置き場,
-        カタログ: カタログ,
-        id: アセットID,
-    ) {
+    pub(crate) fn アセット監視を設定する(&mut self, 置き場: crate::runtime_assets::実行時アセットの置き場, カタログ: カタログ, id: アセットID) {
         self.アセット監視 = Some(asset_watch::アセット監視状態を構築する(置き場, カタログ, id));
     }
 
@@ -56,12 +51,7 @@ impl ホットリローダー {
         self.アセット監視.as_ref().map(asset_watch::アセット監視状態::カタログ)
     }
 
-    pub(crate) fn 実行時アセット一式を採用する(
-        &mut self,
-        カタログ: カタログ,
-        起動時シーン: blitz_engine::実行時シーンの内容,
-        公開完了印: crate::runtime_assets::生成台帳の公開内容,
-    ) {
+    pub(crate) fn 実行時アセット一式を採用する(&mut self, カタログ: カタログ, 起動時シーン: blitz_engine::実行時シーンの内容, 公開完了印: crate::runtime_assets::生成台帳の公開内容) {
         if let Some(監視) = &mut self.アセット監視 {
             監視.実行時アセット一式を採用する(カタログ, 起動時シーン, 公開完了印);
         }

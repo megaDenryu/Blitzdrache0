@@ -57,9 +57,7 @@ mod tests {
     #[test]
     fn vulkan配下とrenderer配下を検査対象にする() {
         assert!(検査対象パスか(Path::new(r"crates\blitz_render\src\vulkan\swapchain.rs")));
-        assert!(検査対象パスか(
-            Path::new("crates/blitz_render/src/renderer/scene_draw_resources.rs")
-        ));
+        assert!(検査対象パスか(Path::new("crates/blitz_render/src/renderer/scene_draw_resources.rs")));
         assert!(検査対象パスか(Path::new(r"crates\blitz_render\src\renderer\frame_progress.rs")));
         assert!(!検査対象パスか(Path::new("crates/blitz_engine/src/streaming/loader.rs")));
     }
@@ -83,13 +81,7 @@ mod tests {
     fn 例外ファイルのドロップ実装は違反にしない() {
         let 内容 = "impl Drop for レンダラー {\n}\n";
         assert!(drop実装の配置を検査する(Path::new("crates/blitz_render/src/renderer/mod.rs"), 内容).is_empty());
-        assert_eq!(
-            drop実装の配置を検査する(Path::new("crates/blitz_render/src/renderer/frame_progress.rs"), 内容).len(),
-            1
-        );
-        assert_eq!(
-            drop実装の配置を検査する(Path::new("crates/blitz_render/src/vulkan/swapchain.rs"), 内容).len(),
-            1
-        );
+        assert_eq!(drop実装の配置を検査する(Path::new("crates/blitz_render/src/renderer/frame_progress.rs"), 内容).len(), 1);
+        assert_eq!(drop実装の配置を検査する(Path::new("crates/blitz_render/src/vulkan/swapchain.rs"), 内容).len(), 1);
     }
 }

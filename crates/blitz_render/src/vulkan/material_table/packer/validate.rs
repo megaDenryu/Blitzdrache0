@@ -12,16 +12,10 @@ use crate::vulkan::material_table::texture_role::材質テクスチャ役割;
 
 use super::fallback_slots::正準フォールバック解決;
 
-pub(super) fn 梱包した材質レコードの整合を検証する(
-    材質id: 大域材質ID,
-    レコード: &世代内材質レコード,
-    フォールバック: &正準フォールバック解決,
-) -> Result<(), 材質資源表エラー> {
+pub(super) fn 梱包した材質レコードの整合を検証する(材質id: 大域材質ID, レコード: &世代内材質レコード, フォールバック: &正準フォールバック解決) -> Result<(), 材質資源表エラー> {
     for 係数 in レコード.全係数() {
         if !係数.is_finite() || !(0.0..=1.0).contains(&係数) {
-            return Err(材質資源表エラー::係数の範囲外 {
-                材質id: 材質id.値(), 係数
-            });
+            return Err(材質資源表エラー::係数の範囲外 { 材質id: 材質id.値(), 係数 });
         }
     }
     for 役割 in 材質テクスチャ役割::全役割 {

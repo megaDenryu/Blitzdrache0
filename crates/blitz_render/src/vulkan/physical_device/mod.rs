@@ -20,11 +20,7 @@ use candidate::選定候補;
 /// 基礎要件(グラフィックス描画とサーフェス提示、dynamicRendering・synchronization2・shaderDrawParameters)と
 /// ディスクリプタ索引の最低機能要件とテクスチャのブロック圧縮と立方体の配列画像への対応をすべて満たす物理デバイスを選ぶ。
 /// 満たす候補の中ではdiscrete GPUを優先する。
-pub(in crate::vulkan) fn 物理デバイスとキューファミリを選定する(
-    instance: &ash::Instance,
-    surface_loader: &ash::khr::surface::Instance,
-    surface: vk::SurfaceKHR,
-) -> Result<(vk::PhysicalDevice, u32), レンダラーエラー> {
+pub(in crate::vulkan) fn 物理デバイスとキューファミリを選定する(instance: &ash::Instance, surface_loader: &ash::khr::surface::Instance, surface: vk::SurfaceKHR) -> Result<(vk::PhysicalDevice, u32), レンダラーエラー> {
     // 安全性: instanceは生成済みで、この呼び出しの間有効であることを呼び出し元が保証する。
     let 一覧 = unsafe { instance.enumerate_physical_devices()? };
 
@@ -49,9 +45,7 @@ pub(in crate::vulkan) fn 物理デバイスとキューファミリを選定す�
 fn 候補を作る(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice, 添字: usize) -> 選定候補 {
     // 安全性: instance・物理デバイスは生成・列挙済みで有効。
     let 性質 = unsafe { instance.get_physical_device_properties(物理デバイス) };
-    let 機材名 = 性質
-        .device_name_as_c_str()
-        .map_or_else(|_| "(機材名を読めなかった)".to_string(), |名前| 名前.to_string_lossy().into_owned());
+    let 機材名 = 性質.device_name_as_c_str().map_or_else(|_| "(機材名を読めなかった)".to_string(), |名前| 名前.to_string_lossy().into_owned());
     let discreteか = 性質.device_type == vk::PhysicalDeviceType::DISCRETE_GPU;
     選定候補::生成する(
         添字,
@@ -69,9 +63,7 @@ fn 候補を作る(instance: &ash::Instance, 物理デバイス: vk::PhysicalDev
 ///
 /// 注意: 採取と有効化は別の場所にある。同じ機能を`crates/blitz_render/src/vulkan/device.rs`が論理デバイスの生成で立てる。
 /// 片方だけを増減させると、選定を通った機材で有効化していない形式の画像を作ることになる。
-fn 物理デバイスがテクスチャのブロック圧縮に対応するか(
-    instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice
-) -> bool {
+fn 物理デバイスがテクスチャのブロック圧縮に対応するか(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> bool {
     // 安全性: instance・物理デバイスは列挙済みで有効。
     let 機能 = unsafe { instance.get_physical_device_features(物理デバイス) };
     機能.texture_compression_bc == vk::TRUE

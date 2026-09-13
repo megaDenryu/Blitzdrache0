@@ -13,13 +13,7 @@ use crate::render_object_material::描画対象素材;
 use crate::vulkan::allocator::GPU資源の確保係;
 
 impl シーン描画資源 {
-    pub(in crate::renderer) fn 束を差し替える(
-        &mut self,
-        確保係: &GPU資源の確保係<'_>,
-        材料: 束追加材料<'_>,
-        id: 描画束ID,
-        描画対象一覧: &[描画対象素材],
-    ) -> Result<(), レンダラーエラー> {
+    pub(in crate::renderer) fn 束を差し替える(&mut self, 確保係: &GPU資源の確保係<'_>, 材料: 束追加材料<'_>, id: 描画束ID, 描画対象一覧: &[描画対象素材]) -> Result<(), レンダラーエラー> {
         let 新しい束 = チャンク描画資源::生成する(確保係, 材料, id, 描画対象一覧)?;
         self.束を解除予約する(id);
         self.チャンク一覧.push(新しい束);

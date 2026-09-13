@@ -47,9 +47,7 @@ use crate::vulkan::{pipeline_ledger::照明束縛レイアウト, shadow_resourc
 use {pack::照明問い合わせのバイト列, slot_resources::スロット資源};
 
 pub(crate) use header_content::{ヘッダの間接照明, 照明問い合わせヘッダ内容};
-pub(crate) use {
-    directional_content::方向光レコード内容, local_content::局所光レコード内容, local_sequence::局所光レコードの並び
-};
+pub(crate) use {directional_content::方向光レコード内容, local_content::局所光レコード内容, local_sequence::局所光レコードの並び};
 
 pub(crate) struct 照明問い合わせ資源束 {
     pool: 照明問い合わせのディスクリプタプール,
@@ -59,11 +57,7 @@ pub(crate) struct 照明問い合わせ資源束 {
 }
 
 impl 照明問い合わせ資源束 {
-    pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        レイアウト: &シーンセットレイアウト一式,
-        影の資源: &影の資源の組,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, レイアウト: &シーンセットレイアウト一式, 影の資源: &影の資源の組) -> Result<Self, レンダラーエラー> {
         create::照明問い合わせ資源束を生成する(確保係, レイアウト, 影の資源)
     }
 

@@ -6,9 +6,7 @@
 //! 補間の規則(テクセル中心を標本点とし、外側は端のテクセルへ張り付ける)は`bilinear`が持つ。
 
 use super::bilinear;
-use crate::atmosphere::{
-    大気のベイク済み画像の解像度, 大気数学エラー, 消散媒体, 透過率RGB, 透過率のベイク済み画像を焼く
-};
+use crate::atmosphere::{大気のベイク済み画像の解像度, 大気数学エラー, 消散媒体, 透過率RGB, 透過率のベイク済み画像を焼く};
 
 pub struct 透過率表 {
     解像度: 大気のベイク済み画像の解像度,
@@ -31,14 +29,7 @@ impl 透過率表 {
     pub(in crate::atmosphere) fn 標本を参照する(&self, 横uv: f64, 縦uv: f64) -> [f64; 3] {
         let (左, 右, 横比) = bilinear::添字と比(横uv, self.解像度.透過率の幅());
         let (上, 下, 縦比) = bilinear::添字と比(縦uv, self.解像度.透過率の高さ());
-        bilinear::混ぜる(
-            self.テクセル(左, 上),
-            self.テクセル(右, 上),
-            self.テクセル(左, 下),
-            self.テクセル(右, 下),
-            横比,
-            縦比,
-        )
+        bilinear::混ぜる(self.テクセル(左, 上), self.テクセル(右, 上), self.テクセル(左, 下), self.テクセル(右, 下), 横比, 縦比)
     }
 
     fn テクセル(&self, 横: u32, 縦: u32) -> [f64; 3] {

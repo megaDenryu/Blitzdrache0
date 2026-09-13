@@ -27,8 +27,7 @@ pub(crate) struct 合成深度の注入一式 {
 impl 合成深度の注入一式 {
     /// 前提: 深度画像の寸法がスワップチェーンの寸法と一致することは呼び出し元が確かめている。
     pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, 深度画像: &深度画像) -> Result<Self, レンダラーエラー> {
-        let バッファ =
-            確保係.ホスト可視バッファを確保して書き込む(&バイト列へ写す(深度画像), vk::BufferUsageFlags::TRANSFER_SRC)?;
+        let バッファ = 確保係.ホスト可視バッファを確保して書き込む(&バイト列へ写す(深度画像), vk::BufferUsageFlags::TRANSFER_SRC)?;
         Ok(Self {
             バッファ,
             寸法: vk::Extent2D {

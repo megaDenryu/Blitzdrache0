@@ -13,13 +13,7 @@ pub(crate) struct 目録項目 {
 pub(crate) fn 目録ソースを作る(一辺メートル: f32, 項目一覧: &[目録項目]) -> String {
     let mut 本文 = format!("blitz_chunk_directory 2 {一辺メートル}\n");
     for 項目 in 項目一覧 {
-        本文.push_str(&format!(
-            "{} {} {} {}\n",
-            項目.座標.x(),
-            項目.座標.z(),
-            項目.アセット識別子,
-            項目.ソース相対パス
-        ));
+        本文.push_str(&format!("{} {} {} {}\n", 項目.座標.x(), 項目.座標.z(), 項目.アセット識別子, 項目.ソース相対パス));
     }
     本文
 }

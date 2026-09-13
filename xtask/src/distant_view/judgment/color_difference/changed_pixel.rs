@@ -17,12 +17,7 @@ pub(super) struct 変化した画素 {
 
 impl 変化した画素 {
     pub(super) fn 求める(対照: &検収画像, 候補: &検収画像, 添字: usize) -> Option<Self> {
-        let 差一覧: Vec<i16> = 対照
-            .色画素(添字)
-            .iter()
-            .zip(候補.色画素(添字))
-            .map(|(元, 先)| i16::from(*先) - i16::from(*元))
-            .collect();
+        let 差一覧: Vec<i16> = 対照.色画素(添字).iter().zip(候補.色画素(添字)).map(|(元, 先)| i16::from(*先) - i16::from(*元)).collect();
         let 最大階調差 = 差一覧.iter().map(|差| 差.unsigned_abs()).max().unwrap_or(0);
         (最大階調差 != 0).then(|| Self {
             添字,

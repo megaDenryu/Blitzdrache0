@@ -18,21 +18,7 @@ const 導出と適応エントリ: [エントリ指定; 1] = [エントリ指定
     出力ファイル名: "auto_exposure_resolve.spv",
 }];
 
-pub(super) fn 全部をコンパイルする(
-    slangc: &スラングコンパイラの所在,
-    シェーダーディレクトリ: &Path,
-    出力先ディレクトリ: &Path,
-) -> Result<(), String> {
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("auto_exposure_histogram.slang"),
-        出力先ディレクトリ,
-        &集計エントリ,
-    )?;
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("auto_exposure_resolve.slang"),
-        出力先ディレクトリ,
-        &導出と適応エントリ,
-    )
+pub(super) fn 全部をコンパイルする(slangc: &スラングコンパイラの所在, シェーダーディレクトリ: &Path, 出力先ディレクトリ: &Path) -> Result<(), String> {
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("auto_exposure_histogram.slang"), 出力先ディレクトリ, &集計エントリ)?;
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("auto_exposure_resolve.slang"), 出力先ディレクトリ, &導出と適応エントリ)
 }

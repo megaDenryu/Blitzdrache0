@@ -4,11 +4,7 @@ use super::super::super::super::アセット実行時形式エラー;
 use super::super::super::bytes::書込先;
 use crate::asset::{interpolation_kind::補間種別, keyframe_channel::チャンネル};
 
-pub(super) fn 書く<const 成分数: usize>(
-    出力: &mut 書込先,
-    チャンネル: Option<&チャンネル<[f32; 成分数]>>,
-    継続秒: f32,
-) -> Result<(), アセット実行時形式エラー> {
+pub(super) fn 書く<const 成分数: usize>(出力: &mut 書込先, チャンネル: Option<&チャンネル<[f32; 成分数]>>, 継続秒: f32) -> Result<(), アセット実行時形式エラー> {
     let Some(チャンネル) = チャンネル else {
         出力.u8(0);
         return Ok(());
@@ -31,9 +27,7 @@ pub(super) fn 書く<const 成分数: usize>(
     Ok(())
 }
 
-fn 検査する<const 成分数: usize>(
-    チャンネル: &チャンネル<[f32; 成分数]>, 継続秒: f32
-) -> Result<(), アセット実行時形式エラー> {
+fn 検査する<const 成分数: usize>(チャンネル: &チャンネル<[f32; 成分数]>, 継続秒: f32) -> Result<(), アセット実行時形式エラー> {
     if チャンネル.時刻列.is_empty() {
         return Err(アセット実行時形式エラー::キーフレームなし);
     }

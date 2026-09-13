@@ -35,11 +35,7 @@ impl アプリの起動 {
             起こし方: self.起こし方.表示の綴り(),
             誤り,
         })?;
-        let 報告 = 終了時報告::取り込む(
-            &self.実行名,
-            String::from_utf8_lossy(&出力.stdout).into_owned(),
-            String::from_utf8_lossy(&出力.stderr).into_owned(),
-        );
+        let 報告 = 終了時報告::取り込む(&self.実行名, String::from_utf8_lossy(&出力.stdout).into_owned(), String::from_utf8_lossy(&出力.stderr).into_owned());
         if 出力.status.success() {
             return Ok(報告);
         }

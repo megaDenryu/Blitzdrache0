@@ -9,9 +9,7 @@ use crate::vulkan::command_sink::GPU命令の積み先;
 use crate::vulkan::frame::UI描画入力;
 use crate::vulkan::graph::{カラー添付列, クリア指定, パス宣言, パス種別, 画像ハンドル, 画像用途};
 
-pub(super) fn ui描画パスを宣言する<'a>(
-    カラー: 画像ハンドル, ui入力: &'a UI描画入力, 寸法: vk::Extent2D
-) -> パス宣言<'a> {
+pub(super) fn ui描画パスを宣言する<'a>(カラー: 画像ハンドル, ui入力: &'a UI描画入力, 寸法: vk::Extent2D) -> パス宣言<'a> {
     パス宣言::生成する(
         "UI描画",
         Vec::new(),
@@ -62,22 +60,8 @@ fn 記録する(積み先: GPU命令の積み先<'_>, ui入力: &UI描画入力,
         // 今フレームぶん生成済み。
         unsafe {
             device.cmd_set_scissor(command_buffer, 0, &シザー一覧);
-            device.cmd_bind_descriptor_sets(
-                command_buffer,
-                vk::PipelineBindPoint::GRAPHICS,
-                ui入力.layout,
-                0,
-                &ディスクリプタセット一覧,
-                &[],
-            );
-            device.cmd_draw_indexed(
-                command_buffer,
-                項目.インデックス数,
-                1,
-                項目.インデックス要素ずらし量,
-                項目.頂点要素ずらし量,
-                0,
-            );
+            device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::GRAPHICS, ui入力.layout, 0, &ディスクリプタセット一覧, &[]);
+            device.cmd_draw_indexed(command_buffer, 項目.インデックス数, 1, 項目.インデックス要素ずらし量, 項目.頂点要素ずらし量, 0);
         }
     }
 }

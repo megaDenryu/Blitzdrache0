@@ -12,10 +12,7 @@ use crate::verify::検証の出力ルート;
 
 pub fn アセットを監視して再生成する(引数一覧: &[String]) -> ExitCode {
     let (ソース, 出力) = match 引数一覧 {
-        [] => (
-            crate::compile_assets::ソースルート().to_path_buf(),
-            検証の出力ルート::既定().名前が指す置き場(crate::compile_assets::板の世界の実行時形式の置き場),
-        ),
+        [] => (crate::compile_assets::ソースルート().to_path_buf(), 検証の出力ルート::既定().名前が指す置き場(crate::compile_assets::板の世界の実行時形式の置き場)),
         [ソース, 出力] => (PathBuf::from(ソース), PathBuf::from(出力)),
         _ => {
             eprintln!("使い方: cargo xtask watch-assets [ソースルート 出力ルート]");

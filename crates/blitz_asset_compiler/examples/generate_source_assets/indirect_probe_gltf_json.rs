@@ -3,9 +3,7 @@
 //! 板ごとにプリミティブと材質を分けるのは、判定が板ごとに違う金属度と粗さを要るためである。頂点属性のアクセサは
 //! 8つのプリミティブが共有し、インデックスのアクセサだけを板ごとに分ける(材質境界の検収アセットと同じ作り)。
 
-use super::indirect_probe_geometry::{
-    インデックスのバイト長, テクスチャ座標のバイト長, 位置のバイト長, 位置の値域, 接線のバイト長, 板の枚数, 法線のバイト長,
-};
+use super::indirect_probe_geometry::{インデックスのバイト長, テクスチャ座標のバイト長, 位置のバイト長, 位置の値域, 接線のバイト長, 板の枚数, 法線のバイト長};
 use super::indirect_probe_plates::一覧;
 
 pub(super) fn 文書() -> String {
@@ -55,12 +53,7 @@ pub(super) fn 文書() -> String {
 
 fn インデックスアクセサ一覧() -> String {
     (0..板の枚数)
-        .map(|板番号| {
-            format!(
-                r#"{{ "bufferView": 4, "byteOffset": {}, "componentType": 5123, "count": 6, "type": "SCALAR" }}"#,
-                板番号 * 12
-            )
-        })
+        .map(|板番号| format!(r#"{{ "bufferView": 4, "byteOffset": {}, "componentType": 5123, "count": 6, "type": "SCALAR" }}"#, 板番号 * 12))
         .collect::<Vec<_>>()
         .join(",\n    ")
 }
@@ -80,12 +73,7 @@ fn 材質一覧() -> String {
 
 fn プリミティブ一覧() -> String {
     (0..板の枚数)
-        .map(|板番号| {
-            format!(
-                r#"{{ "attributes": {{ "POSITION": 0, "NORMAL": 1, "TANGENT": 2, "TEXCOORD_0": 3 }}, "indices": {}, "material": {板番号} }}"#,
-                板番号 + 4
-            )
-        })
+        .map(|板番号| format!(r#"{{ "attributes": {{ "POSITION": 0, "NORMAL": 1, "TANGENT": 2, "TEXCOORD_0": 3 }}, "indices": {}, "material": {板番号} }}"#, 板番号 + 4))
         .collect::<Vec<_>>()
         .join(",\n    ")
 }

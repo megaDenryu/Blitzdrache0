@@ -38,19 +38,14 @@ impl シャドウ描画定数 {
 
     /// パイプラインレイアウト生成時に宣言する範囲。頂点ステージだけが読む。
     pub(crate) fn プッシュ定数範囲() -> vk::PushConstantRange {
-        vk::PushConstantRange::default()
-            .stage_flags(vk::ShaderStageFlags::VERTEX)
-            .offset(0)
-            .size(バイト長)
+        vk::PushConstantRange::default().stage_flags(vk::ShaderStageFlags::VERTEX).offset(0).size(バイト長)
     }
 
     /// 注意: 呼び出し元がコマンド記録中であることと、layoutがこの範囲を宣言済みであることを保証する。
     pub(crate) unsafe fn プッシュ定数として積む(self, 積み先: GPU命令の積み先<'_>, layout: vk::PipelineLayout) {
         // 安全性: 呼び出し元がコマンド記録中と、layoutが頂点ステージの20バイト範囲を宣言済みであることを保証する。
         unsafe {
-            積み先
-                .論理デバイス()
-                .cmd_push_constants(積み先.コマンドバッファ(), layout, vk::ShaderStageFlags::VERTEX, 0, &self.バイト列());
+            積み先.論理デバイス().cmd_push_constants(積み先.コマンドバッファ(), layout, vk::ShaderStageFlags::VERTEX, 0, &self.バイト列());
         }
     }
 }

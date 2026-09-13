@@ -90,8 +90,7 @@ pub(super) fn 台帳のファイルか(パス: &Path) -> bool {
 pub(super) fn 一覧の陳腐化を検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
     for 台帳 in 対象の綴りを列挙する台帳一覧 {
-        let 内容 = std::fs::read_to_string(Path::new(台帳))
-            .map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(台帳), 誤り))?;
+        let 内容 = std::fs::read_to_string(Path::new(台帳)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(台帳), 誤り))?;
         if !対象の綴りを列挙しているか(&内容) {
             違反一覧.push(違反::ファイル単位(
                 PathBuf::from(台帳),
@@ -103,7 +102,5 @@ pub(super) fn 一覧の陳腐化を検査する() -> Result<Vec<違反>, 規約�
 }
 
 fn 対象の綴りを列挙しているか(内容: &str) -> bool {
-    source_lexing::文字列リテラル一覧(内容)
-        .iter()
-        .any(|断片| extract::拡張子を含むか(&断片.中身))
+    source_lexing::文字列リテラル一覧(内容).iter().any(|断片| extract::拡張子を含むか(&断片.中身))
 }

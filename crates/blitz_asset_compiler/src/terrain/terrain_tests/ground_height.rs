@@ -19,12 +19,7 @@ fn 格子点の上では標本そのものを返す() {
     for 格子添字z in 0..=4 {
         for 格子添字x in 0..=4 {
             let 期待 = 格子.高さ(格子添字x, 格子添字z).unwrap();
-            let 実際 = 地表高さを求める(
-                &格子,
-                f32::from(i16::try_from(格子添字x).unwrap()) * 刻み,
-                f32::from(i16::try_from(格子添字z).unwrap()) * 刻み,
-            )
-            .unwrap();
+            let 実際 = 地表高さを求める(&格子, f32::from(i16::try_from(格子添字x).unwrap()) * 刻み, f32::from(i16::try_from(格子添字z).unwrap()) * 刻み).unwrap();
             assert!((実際 - 期待).abs() < 1.0e-3, "格子点({格子添字x},{格子添字z})で{実際}が標本{期待}と違う");
         }
     }
@@ -34,10 +29,7 @@ fn 格子点の上では標本そのものを返す() {
 fn 升目の中では四隅の最小と最大の間に収まる() {
     let 格子 = 格子を切り出す(チャンク座標::生成する(0, 0));
     let 刻み = 刻みメートル();
-    let 四隅: Vec<f32> = [(3, 5), (4, 5), (3, 6), (4, 6)]
-        .into_iter()
-        .map(|(x, z)| 格子.高さ(x, z).unwrap())
-        .collect();
+    let 四隅: Vec<f32> = [(3, 5), (4, 5), (3, 6), (4, 6)].into_iter().map(|(x, z)| 格子.高さ(x, z).unwrap()).collect();
     let 最小 = 四隅.iter().copied().fold(f32::INFINITY, f32::min);
     let 最大 = 四隅.iter().copied().fold(f32::NEG_INFINITY, f32::max);
     let 実際 = 地表高さを求める(&格子, 3.5 * 刻み, 5.25 * 刻み).unwrap();

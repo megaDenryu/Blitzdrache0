@@ -39,8 +39,5 @@ pub(super) const 光源影深度: 深度契約 = 深度契約 {
 };
 
 pub(super) fn 全接点() -> impl Iterator<Item = &'static 接点> {
-    camera::接点一覧
-        .iter()
-        .chain(camera_compare::接点一覧.iter())
-        .chain(shadow::接点一覧.iter())
+    camera::接点一覧.iter().chain(camera_compare::接点一覧.iter()).chain(shadow::接点一覧.iter())
 }

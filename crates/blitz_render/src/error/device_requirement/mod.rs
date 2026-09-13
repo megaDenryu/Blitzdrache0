@@ -35,9 +35,7 @@ use thiserror::Error;
 /// 1つしかないため、機材名だけを並べる。
 #[derive(Debug, Error)]
 pub enum デバイス要件エラー {
-    #[error(
-        "グラフィックス表示・提示、および必須機能(dynamicRendering/synchronization2/shaderDrawParameters)に対応する物理デバイスが見つからなかった"
-    )]
+    #[error("グラフィックス表示・提示、および必須機能(dynamicRendering/synchronization2/shaderDrawParameters)に対応する物理デバイスが見つからなかった")]
     適合物理デバイスなし,
     #[error("ディスクリプタ索引の最低機能要件を満たす物理デバイスが無い: {}", 機材別に並べる(.0))]
     ディスクリプタ索引機能不足(Vec<機材別のディスクリプタ索引機能不足>),

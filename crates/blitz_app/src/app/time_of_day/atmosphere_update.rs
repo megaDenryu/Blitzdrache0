@@ -26,8 +26,7 @@ pub(in crate::app) struct 大気更新判定 {
 impl 大気更新判定 {
     pub(in crate::app) fn 新規() -> Self {
         Self {
-            前回焼いた鍵: None,
-            保留中の鍵: None,
+            前回焼いた鍵: None, 保留中の鍵: None
         }
     }
 

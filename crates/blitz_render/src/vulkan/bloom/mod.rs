@@ -49,22 +49,12 @@ impl 光のにじみ一式 {
     /// ピラミッドを作り直した後(生成直後・リサイズ後)に呼び、プールとセットを段数に合わせて
     /// 作り直してビューを束縛する。
     /// 前提: 呼び出し時点でGPUがこれらのディスクリプタセットを使用していないこと(device_wait_idle後)。
-    pub(crate) fn ディスクリプタを作り直す(
-        &mut self,
-        device: &ash::Device,
-        hdrビュー: vk::ImageView,
-        ピラミッド: &光のにじみピラミッド,
-    ) -> Result<(), レンダラーエラー> {
+    pub(crate) fn ディスクリプタを作り直す(&mut self, device: &ash::Device, hdrビュー: vk::ImageView, ピラミッド: &光のにじみピラミッド) -> Result<(), レンダラーエラー> {
         // 注意: 旧いセット群を先に外してから破棄する。以降の生成が失敗して抜けたとき、破棄済みのプールが残っていると`破棄する`が二重破棄する。
         if let Some(旧い) = self.セット群.take() {
             旧い.破棄する(device);
         }
-        self.セット群 = Some(descriptor::生成する(
-            device,
-            &self.単一読みレイアウト,
-            &self.二読みレイアウト,
-            ピラミッド.縮小一覧.len(),
-        )?);
+        self.セット群 = Some(descriptor::生成する(device, &self.単一読みレイアウト, &self.二読みレイアウト, ピラミッド.縮小一覧.len())?);
         self.ビューを書く(device, hdrビュー, ピラミッド);
         Ok(())
     }
@@ -72,9 +62,7 @@ impl 光のにじみ一式 {
     /// フレームの記録とビューの束縛へ渡す境界。
     /// 前提: 生成の直後にセット群が入っており、`None`は呼び出し規律の破れである。
     pub(crate) fn 確保済みのセット群(&self) -> &descriptor::光のにじみセット群 {
-        self.セット群
-            .as_ref()
-            .unwrap_or_else(|| panic!("光のにじみのセット群が未確保のまま参照された"))
+        self.セット群.as_ref().unwrap_or_else(|| panic!("光のにじみのセット群が未確保のまま参照された"))
     }
 
     pub(crate) fn 破棄する(&self, device: &ash::Device) {

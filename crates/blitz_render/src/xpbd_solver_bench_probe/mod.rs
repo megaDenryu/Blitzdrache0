@@ -45,11 +45,7 @@ pub struct XPBD計測の読み戻し {
     pub 検証件数: u64,
 }
 
-pub fn xpbdの並列方式をgpuで走らせて読み戻す(
-    素材: &XPBD計測素材,
-    条件: &XPBD計測の条件,
-    シェーダー: &XPBDシェーダー一式,
-) -> Result<XPBD計測の読み戻し, レンダラーエラー> {
+pub fn xpbdの並列方式をgpuで走らせて読み戻す(素材: &XPBD計測素材, 条件: &XPBD計測の条件, シェーダー: &XPBDシェーダー一式) -> Result<XPBD計測の読み戻し, レンダラーエラー> {
     let (結果, 観測) = xpbd_bench::走らせて読み戻す(素材, 条件, シェーダー)?;
     Ok(XPBD計測の読み戻し {
         位置: 結果.位置,

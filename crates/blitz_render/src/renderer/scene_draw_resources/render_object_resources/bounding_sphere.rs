@@ -29,19 +29,11 @@ pub(in crate::renderer::scene_draw_resources) enum 描画対象の境界球 {
 
 impl 描画対象の境界球 {
     /// 全詳細段の頂点と全個体の変換から求める。動く個体を1件でも宣言した対象は定まらない側にする。
-    pub(in crate::renderer::scene_draw_resources) fn 段と個体から求める(
-        段別の頂点一覧: &[&[頂点]],
-        個体変換一覧: &[変換<ローカル, ワールド>],
-        動く個体添字一覧: &[u32],
-    ) -> Self {
+    pub(in crate::renderer::scene_draw_resources) fn 段と個体から求める(段別の頂点一覧: &[&[頂点]], 個体変換一覧: &[変換<ローカル, ワールド>], 動く個体添字一覧: &[u32]) -> Self {
         if !動く個体添字一覧.is_empty() {
             return Self::毎フレーム変わるため定まらない;
         }
-        let 原型の半径 = 段別の頂点一覧
-            .iter()
-            .flat_map(|段| 段.iter())
-            .map(|頂点| combine::長さ(頂点.位置))
-            .fold(0.0_f32, f32::max);
+        let 原型の半径 = 段別の頂点一覧.iter().flat_map(|段| 段.iter()).map(|頂点| combine::長さ(頂点.位置)).fold(0.0_f32, f32::max);
         let 個体の球一覧: Vec<([f32; 3], f32)> = 個体変換一覧.iter().map(|変換| combine::個体の球を求める(*変換, 原型の半径)).collect();
         let (中心, 半径) = combine::個体の球をまとめる(&個体の球一覧);
         Self::定まった球 { 中心, 半径 }

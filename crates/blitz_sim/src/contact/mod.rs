@@ -80,22 +80,17 @@ pub use broad_phase::{剛体どうしの候補対, 剛体どうしの候補対�
 pub use contact_batches::接触拘束の二つのバッチ;
 pub use contact_property::接触物性;
 pub use contact_thresholds::{
-    休止と判定する並進速度の閾値, 休止と判定する接触余白, 休止と判定する細分の本数エラー, 休止と判定する角速度の閾値, 休止と判定する連続静穏の時間,
-    休止と判定する連続静穏の細分の本数, 反発を抑制する法線相対速度の閾値,
+    休止と判定する並進速度の閾値, 休止と判定する接触余白, 休止と判定する細分の本数エラー, 休止と判定する角速度の閾値, 休止と判定する連続静穏の時間, 休止と判定する連続静穏の細分の本数, 反発を抑制する法線相対速度の閾値
 };
 pub use friction_coefficient::摩擦係数;
 pub use generation_error::接触拘束の生成エラー;
-pub use history::{
-    剛体と静的世界の接触の履歴, 剛体どうしの接触の履歴, 接触の併走の結果, 接触の対応付け, 接触の履歴, 接触の履歴の項目
-};
+pub use history::{剛体と静的世界の接触の履歴, 剛体どうしの接触の履歴, 接触の併走の結果, 接触の対応付け, 接触の履歴, 接触の履歴の項目};
 pub use island::{島の拘束の添字区間, 接触島, 接触島の一覧を構築する, 直前の細分の接触島の一覧};
 pub use material_id::材質の識別子;
 pub use material_pair::材質の対;
 pub use mixing_rule::混合則;
 pub use mixing_rule_builder::混合則の組み立て;
-pub use pipeline::{
-    剛体の接触の一刻みの工程, 接触の品質と時間方針, 接触の工程エラー, 接触の空間と世界, 接触の解法ソルバー, 接触履歴の保持
-};
+pub use pipeline::{剛体の接触の一刻みの工程, 接触の品質と時間方針, 接触の工程エラー, 接触の空間と世界, 接触の解法ソルバー, 接触履歴の保持};
 pub use property_error::接触物性エラー;
 pub use restitution_coefficient::反発係数;
 pub use solver_quality::接触を解く品質の設定;
@@ -104,6 +99,4 @@ pub use static_friction::接触点集合の静止摩擦の仮の集計;
 pub use static_world_partner::静的世界の接触相手;
 pub use static_world_partner_id::静的世界の接触相手の識別子;
 pub use surface_property::表面物性;
-pub use velocity_stage::{
-    接触の速度段階, 接触の速度段階の結果, 接触点の法線の相対速度を求める, 速度段階の参加点, 速度段階の接触点の条件
-};
+pub use velocity_stage::{接触の速度段階, 接触の速度段階の結果, 接触点の法線の相対速度を求める, 速度段階の参加点, 速度段階の接触点の条件};

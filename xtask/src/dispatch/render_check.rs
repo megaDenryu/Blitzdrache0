@@ -4,9 +4,8 @@
 use std::process::ExitCode;
 
 use crate::{
-    auto_exposure, cloth_empty, cloth_night, cloth_shadow_order, cloth_xpbd_reference, cluster_lights, csm_seam, hdr_luminance, ibl_step,
-    instance_cull, instance_draw, instance_lod, instance_stream, point_light_shadow, prop_draw, shader_reload_draw, temporal_visual, terrain_visual,
-    texture_compression, vertex_diag, village_draw,
+    auto_exposure, cloth_empty, cloth_night, cloth_shadow_order, cloth_xpbd_reference, cluster_lights, csm_seam, hdr_luminance, ibl_step, instance_cull, instance_draw, instance_lod, instance_stream, point_light_shadow, prop_draw, shader_reload_draw,
+    temporal_visual, terrain_visual, texture_compression, vertex_diag, village_draw,
 };
 
 pub(super) fn 描画検収コマンドを割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {

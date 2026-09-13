@@ -17,8 +17,7 @@ pub(crate) struct 最も小さい量の候補だけを覚える器<値> {
 impl<値> 最も小さい量の候補だけを覚える器<値> {
     pub(crate) fn まだ何も無い状態から始める() -> Self {
         Self {
-            現在の最小: None,
-            現在の量: f64::INFINITY,
+            現在の最小: None, 現在の量: f64::INFINITY
         }
     }
 

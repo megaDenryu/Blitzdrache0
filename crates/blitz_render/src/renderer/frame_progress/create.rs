@@ -11,11 +11,7 @@ use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::frame::フレームの記録の実行環境;
 
 impl フレーム進行 {
-    pub(in crate::renderer) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        キューファミリ添字: u32,
-        queue: vk::Queue,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(in crate::renderer) fn 生成する(確保係: &GPU資源の確保係<'_>, キューファミリ添字: u32, queue: vk::Queue) -> Result<Self, レンダラーエラー> {
         let コマンド一式 = 確保係.フレーム記録のコマンド一式を確保する(キューファミリ添字)?;
         let フレーム同期 = match vulkan::sync::フレーム同期::生成する(確保係.論理デバイス()) {
             Ok(値) => 値,

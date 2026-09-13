@@ -6,12 +6,7 @@ use ash::vk;
 use crate::vulkan::command_sink::GPU命令の積み先;
 
 fn 部分範囲() -> vk::ImageSubresourceRange {
-    vk::ImageSubresourceRange::default()
-        .aspect_mask(vk::ImageAspectFlags::COLOR)
-        .base_mip_level(0)
-        .level_count(1)
-        .base_array_layer(0)
-        .layer_count(1)
+    vk::ImageSubresourceRange::default().aspect_mask(vk::ImageAspectFlags::COLOR).base_mip_level(0).level_count(1).base_array_layer(0).layer_count(1)
 }
 
 pub(super) fn 画像を転送先レイアウトへ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image) {

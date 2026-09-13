@@ -15,22 +15,14 @@ use crate::common::チャンク一辺頂点数;
 
 async fn 高さ格子を保存する(一時: &crate::common::一時プロジェクト, バイト列: Vec<u8>) {
     let 応答 = crate::common::ルーターを作る(一時)
-        .oneshot(
-            Request::put("/api/チャンク/0/0/高さ格子")
-                .header("content-type", "application/octet-stream")
-                .body(Body::from(バイト列))
-                .unwrap(),
-        )
+        .oneshot(Request::put("/api/チャンク/0/0/高さ格子").header("content-type", "application/octet-stream").body(Body::from(バイト列)).unwrap())
         .await
         .unwrap();
     assert_eq!(応答.status(), StatusCode::NO_CONTENT);
 }
 
 async fn 書き出して焼く(一時: &crate::common::一時プロジェクト) -> (StatusCode, String) {
-    let 応答 = crate::common::ルーターを作る(一時)
-        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
+    let 応答 = crate::common::ルーターを作る(一時).oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap()).await.unwrap();
     let 状態 = 応答.status();
     let 本体 = axum::body::to_bytes(応答.into_body(), usize::MAX).await.unwrap();
     (状態, String::from_utf8_lossy(&本体).to_string())
@@ -68,8 +60,5 @@ async fn 大域と食い違う高さを保存した書き出しは縁の一致�
 
     let (状態, 説明) = 書き出して焼く(&一時).await;
     assert_eq!(状態, StatusCode::UNPROCESSABLE_ENTITY, "縁の食い違いが検出されていない");
-    assert!(
-        説明.contains("重なる帯の格子点") && 説明.contains("高さが食い違う"),
-        "落ちた理由が縁の一致検査でない: {説明}"
-    );
+    assert!(説明.contains("重なる帯の格子点") && 説明.contains("高さが食い違う"), "落ちた理由が縁の一致検査でない: {説明}");
 }

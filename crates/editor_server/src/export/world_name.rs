@@ -16,9 +16,7 @@ pub struct 出力世界名(String);
 impl 出力世界名 {
     /// `要求本文の世界名`が`None`または空文字なら既定の"editor_world"を使う。
     pub fn 生成する(要求本文の世界名: Option<String>) -> Result<Self, 書き出しエラー> {
-        let 候補 = 要求本文の世界名
-            .filter(|名前| !名前.is_empty())
-            .unwrap_or_else(|| blitz_asset_compiler::対象世界::エディターの世界名().to_string());
+        let 候補 = 要求本文の世界名.filter(|名前| !名前.is_empty()).unwrap_or_else(|| blitz_asset_compiler::対象世界::エディターの世界名().to_string());
         世界名の綴りを検証する(&候補)?;
         Ok(Self(候補))
     }

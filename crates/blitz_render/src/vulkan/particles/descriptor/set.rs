@@ -6,10 +6,6 @@ use ash::vk;
 
 use crate::vulkan::descriptor::{宣言から割り当てたセット, 結ぶ現物};
 
-pub(super) fn 書き込む(
-    device: &ash::Device, セット: &宣言から割り当てたセット<2>, 粒子バッファ: vk::Buffer, uniform: vk::Buffer
-) {
-    セット
-        .書き込み先(device)
-        .並びの位置ごとに結ぶ([結ぶ現物::バッファ全体(uniform), 結ぶ現物::バッファ全体(粒子バッファ)]);
+pub(super) fn 書き込む(device: &ash::Device, セット: &宣言から割り当てたセット<2>, 粒子バッファ: vk::Buffer, uniform: vk::Buffer) {
+    セット.書き込み先(device).並びの位置ごとに結ぶ([結ぶ現物::バッファ全体(uniform), 結ぶ現物::バッファ全体(粒子バッファ)]);
 }

@@ -10,9 +10,5 @@ const 初期幅: u32 = 1280;
 const 初期高さ: u32 = 720;
 
 pub(super) fn ウィンドウを生成する(event_loop: &ActiveEventLoop) -> Result<Window, 起動エラー> {
-    Ok(event_loop.create_window(
-        WindowAttributes::default()
-            .with_title("Blitzdrache0")
-            .with_inner_size(PhysicalSize::new(初期幅, 初期高さ)),
-    )?)
+    Ok(event_loop.create_window(WindowAttributes::default().with_title("Blitzdrache0").with_inner_size(PhysicalSize::new(初期幅, 初期高さ)))?)
 }

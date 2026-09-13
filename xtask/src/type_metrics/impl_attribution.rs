@@ -21,9 +21,7 @@ pub struct 定義の候補が複数ある実装ブロック {
 
 impl 定義の候補が複数ある実装ブロック {
     pub fn 生成する(ファイル: PathBuf, 型名: String, 候補一覧: Vec<型の所在>) -> Self {
-        Self {
-            ファイル, 型名, 候補一覧
-        }
+        Self { ファイル, 型名, 候補一覧 }
     }
 
     pub fn 候補の綴り(&self) -> String {

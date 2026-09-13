@@ -56,40 +56,40 @@ use crate::runtime_assets::実行時アセットの置き場;
 /// - `遊ぶゲーム`: `--game`で選ぶ遊ぶゲーム。指定が無ければ「ゲームを遊ばない」であり、ゲーム更新が1つも走らない。
 pub(crate) struct 起動設定 {
     pub(crate) モード: 起動モード,
-    pub(crate) シェーダーの入口ファイル: 監視するシェーダーの入口ファイル, // ホットリロード監視対象の入口ファイル。既定はshaders/scene.slang
-    pub(crate) シーン: super::起動時シーン,                                // 表示するシーン。既定は平面板の世界
-    pub(crate) アセットの置き場: 実行時アセットの置き場,                   // 既定はtarget/runtime_assets
-    pub(crate) 描画対象の並べ方: 描画対象の並べ方,                         // --object-count / --reverse-draw-order が決める
+    pub(crate) シェーダーの入口ファイル: 監視するシェーダーの入口ファイル,   // ホットリロード監視対象の入口ファイル。既定はshaders/scene.slang
+    pub(crate) シーン: super::起動時シーン,                                  // 表示するシーン。既定は平面板の世界
+    pub(crate) アセットの置き場: 実行時アセットの置き場,                     // 既定はtarget/runtime_assets
+    pub(crate) 描画対象の並べ方: 描画対象の並べ方,                           // --object-count / --reverse-draw-order が決める
     pub(crate) ライティング: super::lighting_settings::ライティング起動設定, // --unlit / --local-light-count の上書き
-    pub(crate) 粒子表示: 粒子表示モード,                                   // 粒子系GPUパスで表示する検証対象。既定はなし
-    pub(crate) gpu時間報告: bool,                                          // --report-gpu-times。既定false
-    pub(crate) gpu時間のフレーム別生値報告: bool,                          // --report-gpu-frame-times。既定false
-    pub(crate) 大気のベイク済み画像パス数報告: bool,                       // --report-atmosphere-passes。既定false
-    pub(crate) フレーム時間報告: bool,                                     // --report-frame-times。既定false
-    pub(crate) gpuメモリ報告: bool,                                        // --report-memory。既定false
-    pub(crate) 描画発行報告: bool,                                         // --report-draw-issue。既定false
-    pub(crate) 太陽角度報告: bool,                                         // --report-sun-angle。既定false
-    pub(crate) キャスター距離分布報告: bool,                               // --report-caster-distance。既定false
-    pub(crate) インスタンス区間報告: bool,                                 // --report-instance-sections。既定false
-    pub(crate) インスタンス可視判定有効: bool,                             // --no-instance-cull でfalse。既定true
-    pub(crate) インスタンス段選択有効: bool,                               // --no-instance-lod でfalse。既定true
-    pub(crate) インスタンス影キャスター有効: bool,                         // --no-instance-shadow でfalse。既定true
-    pub(crate) 影キャスター全体有効: bool,                                 // --no-shadow-casters でfalse。既定true
-    pub(crate) 遠景影キャスター有効: bool,                                 // --no-distant-shadow でfalse
-    pub(crate) 個体詳細段探査刻み: Option<blitz_math::メートル>,           // --lod-probe-step <メートル>
-    pub(crate) 開発ui初期有効: bool,                                       // --dev-ui。既定false
-    pub(crate) 画素診断: blitz_render::cascade::画素診断,                  // --debug-cascade-bands / --debug-shadow-loss。既定は出さない
-    pub(crate) フレームダンプ先: フレームダンプ指定,                       // --dump-frame / --dump-hdr-frame。既定は指定なし
+    pub(crate) 粒子表示: 粒子表示モード,                                     // 粒子系GPUパスで表示する検証対象。既定はなし
+    pub(crate) gpu時間報告: bool,                                            // --report-gpu-times。既定false
+    pub(crate) gpu時間のフレーム別生値報告: bool,                            // --report-gpu-frame-times。既定false
+    pub(crate) 大気のベイク済み画像パス数報告: bool,                         // --report-atmosphere-passes。既定false
+    pub(crate) フレーム時間報告: bool,                                       // --report-frame-times。既定false
+    pub(crate) gpuメモリ報告: bool,                                          // --report-memory。既定false
+    pub(crate) 描画発行報告: bool,                                           // --report-draw-issue。既定false
+    pub(crate) 太陽角度報告: bool,                                           // --report-sun-angle。既定false
+    pub(crate) キャスター距離分布報告: bool,                                 // --report-caster-distance。既定false
+    pub(crate) インスタンス区間報告: bool,                                   // --report-instance-sections。既定false
+    pub(crate) インスタンス可視判定有効: bool,                               // --no-instance-cull でfalse。既定true
+    pub(crate) インスタンス段選択有効: bool,                                 // --no-instance-lod でfalse。既定true
+    pub(crate) インスタンス影キャスター有効: bool,                           // --no-instance-shadow でfalse。既定true
+    pub(crate) 影キャスター全体有効: bool,                                   // --no-shadow-casters でfalse。既定true
+    pub(crate) 遠景影キャスター有効: bool,                                   // --no-distant-shadow でfalse
+    pub(crate) 個体詳細段探査刻み: Option<blitz_math::メートル>,             // --lod-probe-step <メートル>
+    pub(crate) 開発ui初期有効: bool,                                         // --dev-ui。既定false
+    pub(crate) 画素診断: blitz_render::cascade::画素診断,                    // --debug-cascade-bands / --debug-shadow-loss。既定は出さない
+    pub(crate) フレームダンプ先: フレームダンプ指定,                         // --dump-frame / --dump-hdr-frame。既定は指定なし
     pub(crate) 読み戻し検収: 読み戻し検収起動設定,
     pub(crate) 時間帯: 時間帯起動設定,                                   // 空を描くかどうかの世界方針への上書き
     pub(crate) シャドウ計測: シャドウ計測起動設定,                       // 多段シャドウの費用計測用の起動指定
     pub(crate) ポスト処理有効: bool,                                     // --no-post でfalse。既定true
     pub(crate) 露出: super::露出倍率,                                    // --exposure <倍率>。既定1.0
     pub(crate) ブレンド: super::アニメーションのブレンド係数,            // --blend <0..1>。既定0.0
-    pub(crate) 布モード: 布モード, // --cloth / --cloth-cape / --cloth-xpbd-reference / --cloth-xpbd-reference-below-floor (+ -bending / -shape)。既定なし
-    pub(crate) 実表示時間報告: bool, // --report-display-timing
-    pub(crate) 検証計画: super::検証計画指定, // --window-rebuild / --shader-reload
-    pub(crate) ストリーミング: ストリーミング起動設定, // チャンクストリーミングの有効化と容量上限。既定は無効
+    pub(crate) 布モード: 布モード,                                       // --cloth / --cloth-cape / --cloth-xpbd-reference / --cloth-xpbd-reference-below-floor (+ -bending / -shape)。既定なし
+    pub(crate) 実表示時間報告: bool,                                     // --report-display-timing
+    pub(crate) 検証計画: super::検証計画指定,                            // --window-rebuild / --shader-reload
+    pub(crate) ストリーミング: ストリーミング起動設定,                   // チャンクストリーミングの有効化と容量上限。既定は無効
     pub(crate) 深度プリパス方式: Option<blitz_render::深度プリパス方式>, // --depth-prepass
     pub(crate) 局所可視性: super::local_visibility_settings::局所可視性の起動指定,
     pub(crate) 時間再構成: super::temporal_reconstruction_settings::時間再構成方式の起動上書き, // --no-taa

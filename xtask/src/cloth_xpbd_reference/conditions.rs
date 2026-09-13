@@ -10,34 +10,8 @@ pub(super) const 参照比較の条件一覧: [(&str, &[&str]); 7] = [
     ("hard", &["--cloth-xpbd-reference", "0"]),
     ("soft", &["--cloth-xpbd-reference", 有限のコンプライアンス]),
     ("floor", &["--cloth-xpbd-reference-below-floor", "0"]),
-    (
-        "bend_stiff",
-        &[
-            "--cloth-xpbd-reference",
-            "0",
-            "--cloth-xpbd-reference-shape",
-            "horizontal-top-row",
-            "--cloth-xpbd-reference-bending",
-            硬い曲げ,
-        ],
-    ),
-    (
-        "bend_soft",
-        &[
-            "--cloth-xpbd-reference",
-            "0",
-            "--cloth-xpbd-reference-shape",
-            "horizontal-top-row",
-            "--cloth-xpbd-reference-bending",
-            柔らかい曲げ,
-        ],
-    ),
-    (
-        "two_edges",
-        &["--cloth-xpbd-reference", "0", "--cloth-xpbd-reference-shape", "horizontal-two-edges"],
-    ),
-    (
-        "one_point",
-        &["--cloth-xpbd-reference", "0", "--cloth-xpbd-reference-shape", "horizontal-one-point"],
-    ),
+    ("bend_stiff", &["--cloth-xpbd-reference", "0", "--cloth-xpbd-reference-shape", "horizontal-top-row", "--cloth-xpbd-reference-bending", 硬い曲げ]),
+    ("bend_soft", &["--cloth-xpbd-reference", "0", "--cloth-xpbd-reference-shape", "horizontal-top-row", "--cloth-xpbd-reference-bending", 柔らかい曲げ]),
+    ("two_edges", &["--cloth-xpbd-reference", "0", "--cloth-xpbd-reference-shape", "horizontal-two-edges"]),
+    ("one_point", &["--cloth-xpbd-reference", "0", "--cloth-xpbd-reference-shape", "horizontal-one-point"]),
 ];

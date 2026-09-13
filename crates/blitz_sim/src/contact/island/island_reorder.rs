@@ -12,12 +12,7 @@ pub(super) fn 静的世界の接触を島順に並べ直す(
     範囲一覧: &[接触点集合の占める範囲],
     集合ごとの島番号: &[Option<usize>],
     島の数: usize,
-) -> (
-    Vec<剛体と静的世界の接触拘束>,
-    Vec<接触点集合の占める範囲>,
-    Vec<島の拘束の添字区間>,
-    Vec<島の拘束の添字区間>,
-) {
+) -> (Vec<剛体と静的世界の接触拘束>, Vec<接触点集合の占める範囲>, Vec<島の拘束の添字区間>, Vec<島の拘束の添字区間>) {
     let mut 順序: Vec<usize> = (0..範囲一覧.len()).collect();
     順序.sort_unstable_by_key(|&添字| {
         let 島 = 集合ごとの島番号.get(添字).copied().flatten().unwrap_or(usize::MAX);
@@ -55,12 +50,7 @@ pub(super) fn 剛体どうしの接触を島順に並べ直す(
     範囲一覧: &[接触点集合の占める範囲],
     集合ごとの島番号: &[Option<usize>],
     島の数: usize,
-) -> (
-    Vec<剛体と剛体の接触拘束>,
-    Vec<接触点集合の占める範囲>,
-    Vec<島の拘束の添字区間>,
-    Vec<島の拘束の添字区間>,
-) {
+) -> (Vec<剛体と剛体の接触拘束>, Vec<接触点集合の占める範囲>, Vec<島の拘束の添字区間>, Vec<島の拘束の添字区間>) {
     let mut 順序: Vec<usize> = (0..範囲一覧.len()).collect();
     順序.sort_unstable_by_key(|&添字| {
         let 島 = 集合ごとの島番号.get(添字).copied().flatten().unwrap_or(usize::MAX);

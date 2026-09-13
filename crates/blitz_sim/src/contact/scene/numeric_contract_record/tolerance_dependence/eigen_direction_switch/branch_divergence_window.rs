@@ -15,9 +15,7 @@
 
 use super::super::substep_record::許容差依存の細分の記録;
 use super::alternative_discard_record::捨て方を当てた適用規則;
-use super::branch_direction_line::{
-    判定が退けた集合を綴る, 反復ごとを綴る, 向きごとを綴る, 接触点ごとを綴る, 行ごとを綴る
-};
+use super::branch_direction_line::{判定が退けた集合を綴る, 反復ごとを綴る, 向きごとを綴る, 接触点ごとを綴る, 行ごとを綴る};
 use super::branch_substep_quantities::細分一本から読んだ名前つきの量の並び;
 use super::first_cone_crossing::{傾きの正接, 振る回しの度, 最初に滑走した細分を探す, 細分十六本の場合};
 use crate::contact::normal_tangential_system::試験の許容差の適用規則;
@@ -60,12 +58,7 @@ fn 一細分を綴る(見出し: &str, 記録: &許容差依存の細分の記�
 }
 
 // 本番と候補で綴りが違う量のうち、まだ記していないものをこの細分の番号で記す。
-fn 差が最初に出た細分を記す(
-    一覧: &mut Vec<(&'static str, usize)>,
-    番号: usize,
-    本番: &許容差依存の細分の記録,
-    候補: &許容差依存の細分の記録,
-) {
+fn 差が最初に出た細分を記す(一覧: &mut Vec<(&'static str, usize)>, 番号: usize, 本番: &許容差依存の細分の記録, 候補: &許容差依存の細分の記録) {
     let 本番の量 = 細分一本から読んだ名前つきの量の並び::細分の記録から読む(本番);
     let 候補の量 = 細分一本から読んだ名前つきの量の並び::細分の記録から読む(候補);
     for 名前 in 本番の量.相手と違う量の名前(&候補の量) {

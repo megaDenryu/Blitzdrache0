@@ -15,10 +15,7 @@ fn 保存前は無しを返し一覧も空である() {
 fn 保存して読み戻すと同じ値になる() {
     let (_一時, 保管庫) = crate::common::保管庫を作る("music_roundtrip");
     保管庫.楽曲を検証して保存する(crate::common::楽曲の例()).unwrap();
-    assert_eq!(
-        保管庫.楽曲を読む(&crate::common::名乗り("試験の楽曲")).unwrap(),
-        Some(crate::common::楽曲の例())
-    );
+    assert_eq!(保管庫.楽曲を読む(&crate::common::名乗り("試験の楽曲")).unwrap(), Some(crate::common::楽曲の例()));
 }
 
 #[test]
@@ -30,14 +27,7 @@ fn 一覧は保存済みの名乗りを昇順で返す() {
         保管庫.楽曲を検証して保存する(楽曲).unwrap();
     }
     let 一覧 = 保管庫.楽曲の一覧を読む().unwrap();
-    assert_eq!(
-        一覧,
-        vec![
-            crate::common::名乗り("あ の曲"),
-            crate::common::名乗り("た の曲"),
-            crate::common::名乗り("ぬ の曲")
-        ]
-    );
+    assert_eq!(一覧, vec![crate::common::名乗り("あ の曲"), crate::common::名乗り("た の曲"), crate::common::名乗り("ぬ の曲")]);
 }
 
 #[test]

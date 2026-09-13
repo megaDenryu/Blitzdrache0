@@ -25,10 +25,7 @@ pub(super) fn 引数を処理する(引数: &mut Iter<String>) -> Result<局所�
     let 値 = value_args::次の値を読む(引数, "--local-light-count", 起動引数エラー::局所光の件数不正)?;
     let 件数 = 値.parse::<usize>().map_err(|_| 起動引数エラー::局所光の件数不正(値.clone()))?;
     if 件数 > blitz_render::局所光源列::上限件数 {
-        return Err(起動引数エラー::局所光の件数不正(format!(
-            "上限{}を超える: {件数}",
-            blitz_render::局所光源列::上限件数
-        )));
+        return Err(起動引数エラー::局所光の件数不正(format!("上限{}を超える: {件数}", blitz_render::局所光源列::上限件数)));
     }
     Ok(局所光の件数の起動指定::件数を上書きする(件数))
 }

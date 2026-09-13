@@ -11,24 +11,16 @@ use ash::vk;
 use super::遠方環境の束縛先;
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::descriptor_common;
-use crate::vulkan::descriptor::{
-    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物
-};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物};
 use crate::vulkan::sync::フレームスロット添字;
 
 const 宣言: 宣言した束縛の並び<3> = 宣言した束縛の並び::生成する([
     (束縛番号::生成する(0), vk::DescriptorType::UNIFORM_BUFFER, vk::ShaderStageFlags::COMPUTE),
-    (
-        束縛番号::生成する(1),
-        vk::DescriptorType::COMBINED_IMAGE_SAMPLER,
-        vk::ShaderStageFlags::COMPUTE,
-    ),
+    (束縛番号::生成する(1), vk::DescriptorType::COMBINED_IMAGE_SAMPLER, vk::ShaderStageFlags::COMPUTE),
     (束縛番号::生成する(2), vk::DescriptorType::STORAGE_IMAGE, vk::ShaderStageFlags::COMPUTE),
 ]);
 
-pub(super) fn 遠方環境ディスクリプタのセットレイアウトを作る(
-    device: &ash::Device,
-) -> Result<宣言から作ったセットレイアウト<3>, レンダラーエラー> {
+pub(super) fn 遠方環境ディスクリプタのセットレイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<3>, レンダラーエラー> {
     宣言.セットレイアウトを確保する(device)
 }
 
@@ -41,11 +33,7 @@ pub(super) fn 遠方環境ディスクリプタのプールを作る(device: &as
 }
 
 pub(super) fn 遠方環境の束縛先をディスクリプタセットへ書き込む(
-    device: &ash::Device,
-    セット: &宣言から割り当てたセット<3>,
-    sampler: vk::Sampler,
-    束縛先: &遠方環境の束縛先<'_>,
-    添字: フレームスロット添字,
+    device: &ash::Device, セット: &宣言から割り当てたセット<3>, sampler: vk::Sampler, 束縛先: &遠方環境の束縛先<'_>, 添字: フレームスロット添字
 ) {
     セット.書き込み先(device).並びの位置ごとに結ぶ([
         結ぶ現物::バッファ全体(束縛先.シェーダー定数一覧[添字.配列添字()]),

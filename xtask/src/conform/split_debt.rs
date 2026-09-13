@@ -25,10 +25,7 @@ pub fn 既知の未是正ファイルか(パス: &Path) -> bool {
 /// これがないと是正済みの項目が残り続け、次に同じ違反を書いたときに見逃す穴になる。
 pub fn 台帳の陳腐化を検査する(パス: &Path, 未是正既知: bool, 経緯語を見つけた: bool) -> Vec<違反> {
     if 未是正既知 && !経緯語を見つけた {
-        return vec![違反::ファイル単位(
-            パス.to_path_buf(),
-            "切り出し未是正の台帳に載っているが経緯語が無い(台帳から削除する)".to_string(),
-        )];
+        return vec![違反::ファイル単位(パス.to_path_buf(), "切り出し未是正の台帳に載っているが経緯語が無い(台帳から削除する)".to_string())];
     }
     Vec::new()
 }
@@ -46,10 +43,7 @@ mod tests {
 
     #[test]
     fn 区切り文字が逆斜線でも斜線表記へ揃う() {
-        assert_eq!(
-            台帳の表記へ揃える(Path::new(r"crates\blitz_render\src\renderer\draw.rs")),
-            "crates/blitz_render/src/renderer/draw.rs"
-        );
+        assert_eq!(台帳の表記へ揃える(Path::new(r"crates\blitz_render\src\renderer\draw.rs")), "crates/blitz_render/src/renderer/draw.rs");
     }
 
     #[test]

@@ -21,10 +21,7 @@ pub(super) struct 検証つきインスタンス {
     pub(super) 状況: 検証層の状況,
 }
 
-pub(super) fn 検証つきインスタンスを作る(
-    entry: &ash::Entry,
-    カウンタ: &検証カウンタ,
-) -> Result<検証つきインスタンス, レンダラーエラー> {
+pub(super) fn 検証つきインスタンスを作る(entry: &ash::Entry, カウンタ: &検証カウンタ) -> Result<検証つきインスタンス, レンダラーエラー> {
     let 状況 = 在否を調べる(entry)?;
     let instance = インスタンスを作る(entry, 状況)?;
     let メッセンジャー = match 状況 {
@@ -38,11 +35,7 @@ pub(super) fn 検証つきインスタンスを作る(
             }
         },
     };
-    Ok(検証つきインスタンス {
-        instance,
-        メッセンジャー,
-        状況,
-    })
+    Ok(検証つきインスタンス { instance, メッセンジャー, 状況 })
 }
 
 impl 検証つきインスタンス {
@@ -74,9 +67,7 @@ fn 在否を調べる(entry: &ash::Entry) -> Result<検証層の状況, レン�
 fn 拡張がある(entry: &ash::Entry, 層名: Option<&std::ffi::CStr>) -> Result<bool, レンダラーエラー> {
     // 安全性: entryは読み込み済みで有効。層名はこのスコープの静的文字列を指す。
     let 一覧 = unsafe { entry.enumerate_instance_extension_properties(層名)? };
-    Ok(一覧
-        .iter()
-        .any(|拡張| 拡張.extension_name_as_c_str().is_ok_and(|名前| 名前 == ash::ext::debug_utils::NAME)))
+    Ok(一覧.iter().any(|拡張| 拡張.extension_name_as_c_str().is_ok_and(|名前| 名前 == ash::ext::debug_utils::NAME)))
 }
 
 /// 層を有効にできるときだけ、層名とdebug utils拡張と同期検証を要求する。
@@ -89,10 +80,7 @@ fn インスタンスを作る(entry: &ash::Entry, 状況: 検証層の状況) -
     let mut 検証機能情報 = vk::ValidationFeaturesEXT::default().enabled_validation_features(&有効化する検証機能);
     let mut 生成情報 = vk::InstanceCreateInfo::default().application_info(&アプリ情報);
     if 状況 == 検証層の状況::有効 {
-        生成情報 = 生成情報
-            .enabled_layer_names(&層一覧)
-            .enabled_extension_names(&拡張一覧)
-            .push_next(&mut 検証機能情報);
+        生成情報 = 生成情報.enabled_layer_names(&層一覧).enabled_extension_names(&拡張一覧).push_next(&mut 検証機能情報);
     }
     // 安全性: 生成情報はこのスコープの値と静的文字列だけを参照する。
     Ok(unsafe { entry.create_instance(&生成情報, None)? })

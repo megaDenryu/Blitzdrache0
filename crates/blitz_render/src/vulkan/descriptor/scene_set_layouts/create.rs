@@ -16,9 +16,7 @@ use crate::vulkan::texture::table_sampler::材質テクスチャ表のサンプ�
 const レイアウト数: usize = 5;
 
 pub(super) fn シーンセットレイアウト一式を組み立てる(
-    確保係: &GPU資源の確保係<'_>,
-    表容量: テクスチャ表レイアウト容量,
-    照明束縛: 照明束縛レイアウト,
+    確保係: &GPU資源の確保係<'_>, 表容量: テクスチャ表レイアウト容量, 照明束縛: 照明束縛レイアウト
 ) -> Result<シーンセットレイアウト一式, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let 材質サンプラー = 材質テクスチャ表のサンプラー::確保する(確保係)?;
@@ -42,10 +40,7 @@ pub(super) fn シーンセットレイアウト一式を組み立てる(
 }
 
 fn 順に生成する(
-    device: &ash::Device,
-    表容量: テクスチャ表レイアウト容量,
-    材質サンプラー: vk::Sampler,
-    照明束縛: 照明束縛レイアウト,
+    device: &ash::Device, 表容量: テクスチャ表レイアウト容量, 材質サンプラー: vk::Sampler, 照明束縛: 照明束縛レイアウト
 ) -> Result<[vk::DescriptorSetLayout; レイアウト数], レンダラーエラー> {
     let mut 一覧 = [vk::DescriptorSetLayout::null(); レイアウト数];
     for 添字 in 0..レイアウト数 {
@@ -64,11 +59,7 @@ fn 順に生成する(
 }
 
 fn 番号で生成する(
-    device: &ash::Device,
-    添字: usize,
-    表容量: テクスチャ表レイアウト容量,
-    材質サンプラー: vk::Sampler,
-    照明束縛: 照明束縛レイアウト,
+    device: &ash::Device, 添字: usize, 表容量: テクスチャ表レイアウト容量, 材質サンプラー: vk::Sampler, 照明束縛: 照明束縛レイアウト
 ) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
     match 添字 {
         0 => view_pass_set::レイアウトを生成する(device),

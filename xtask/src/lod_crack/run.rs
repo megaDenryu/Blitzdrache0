@@ -6,9 +6,7 @@
 
 use std::path::PathBuf;
 
-use crate::acceptance::{
-    アプリの起こし方, アプリの起動指定, 実行時アセットルート, 描画フレーム数, 描画検収の実行環境, 検収エラー, 検収シーン名
-};
+use crate::acceptance::{アプリの起こし方, アプリの起動指定, 実行時アセットルート, 描画フレーム数, 描画検収の実行環境, 検収エラー, 検収シーン名};
 
 use super::cases::検査条件;
 use crate::verify::検証の出力ルート;
@@ -22,9 +20,7 @@ const 背景と光を外す選択肢: [&str; 4] = ["--unlit", "--no-post", "--no
 pub(super) fn 実行環境を作る(出力ディレクトリ: PathBuf) -> Result<描画検収の実行環境, 検収エラー> {
     描画検収の実行環境::作る(
         アプリの起こし方::毎回cargoに構築させて起動する,
-        実行時アセットルート::パスから生成する(
-            検証の出力ルート::既定().名前が指す置き場(crate::compile_assets::地形の世界の実行時形式の置き場),
-        ),
+        実行時アセットルート::パスから生成する(検証の出力ルート::既定().名前が指す置き場(crate::compile_assets::地形の世界の実行時形式の置き場)),
         出力ディレクトリ,
     )
 }
@@ -32,14 +28,7 @@ pub(super) fn 実行環境を作る(出力ディレクトリ: PathBuf) -> Result
 pub(super) fn 起動指定を組み立てる(条件: &検査条件) -> アプリの起動指定 {
     let (x1, z1) = 条件.一方;
     let (x2, z2) = 条件.他方;
-    let 組の綴り = [
-        x1.to_string(),
-        z1.to_string(),
-        条件.一方段.to_string(),
-        x2.to_string(),
-        z2.to_string(),
-        条件.他方段.to_string(),
-    ];
+    let 組の綴り = [x1.to_string(), z1.to_string(), 条件.一方段.to_string(), x2.to_string(), z2.to_string(), 条件.他方段.to_string()];
     let 指定 = アプリの起動指定::シーンと枚数を決める(シーン名, フレーム数)
         .選択肢を足す("--streaming")
         .値を持つ選択肢を足す("--streaming-preload-radius", 先読み半径)
@@ -51,7 +40,5 @@ pub(super) fn 起動指定を組み立てる(条件: &検査条件) -> アプリ
     let Some((欠落x, 欠落z)) = 条件.欠落 else {
         return 指定;
     };
-    指定
-        .選択肢を足す("--lod-crack-missing")
-        .選択肢をまとめて足す(&[欠落x.to_string().as_str(), 欠落z.to_string().as_str()])
+    指定.選択肢を足す("--lod-crack-missing").選択肢をまとめて足す(&[欠落x.to_string().as_str(), 欠落z.to_string().as_str()])
 }

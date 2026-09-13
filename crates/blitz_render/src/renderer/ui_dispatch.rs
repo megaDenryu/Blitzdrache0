@@ -14,11 +14,7 @@ use crate::vulkan::sync::フレームスロット添字;
 impl レンダラー {
     /// `データ`が`None`、または有効なメッシュ(頂点・インデックスとも非空)が
     /// 1つも無ければ`None`を返し、UIパス自体をグラフへ積ませない。
-    pub(super) fn ui描画入力を組み立てる(
-        &mut self,
-        フレーム添字: フレームスロット添字,
-        データ: Option<&UI描画データ>,
-    ) -> Result<Option<vulkan::frame::UI描画入力>, レンダラーエラー> {
+    pub(super) fn ui描画入力を組み立てる(&mut self, フレーム添字: フレームスロット添字, データ: Option<&UI描画データ>) -> Result<Option<vulkan::frame::UI描画入力>, レンダラーエラー> {
         let Some(データ) = データ else { return Ok(None) };
         let 有効一覧: Vec<&UIメッシュ> = データ.メッシュ一覧.iter().filter(|メッシュ| merge::有効なメッシュか(メッシュ)).collect();
         if 有効一覧.is_empty() {
@@ -29,9 +25,7 @@ impl レンダラー {
         let (頂点一覧結合, インデックス一覧結合, 項目一覧) = self.メッシュ列を結合する(&有効一覧, 寸法);
 
         let 確保係 = self.環境.資源の確保係を貸す();
-        let (頂点バッファ, インデックスバッファ) =
-            self.ui一式
-                .ジオメトリを書き込む(&確保係, フレーム添字, &頂点一覧結合, &インデックス一覧結合)?;
+        let (頂点バッファ, インデックスバッファ) = self.ui一式.ジオメトリを書き込む(&確保係, フレーム添字, &頂点一覧結合, &インデックス一覧結合)?;
 
         Ok(Some(vulkan::frame::UI描画入力 {
             pipeline: self.ui一式.pipeline_handle(),

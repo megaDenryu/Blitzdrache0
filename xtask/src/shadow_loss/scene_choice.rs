@@ -70,17 +70,7 @@ impl 構図 {
     /// 検収世界はチャンクを1つしか持たず、シーン既定のカメラがそのまま群と床を見下ろす。
     pub(super) fn 追加の起動指定(self) -> &'static [&'static str] {
         match self {
-            Self::地形 => &[
-                "--streaming",
-                "--streaming-preload-radius",
-                "2",
-                "--streaming-ram-limit",
-                "16777216",
-                "--streaming-vram-limit",
-                "16777216",
-                "--camera-pitch",
-                "-25",
-            ],
+            Self::地形 => &["--streaming", "--streaming-preload-radius", "2", "--streaming-ram-limit", "16777216", "--streaming-vram-limit", "16777216", "--camera-pitch", "-25"],
             Self::影視距離の検収 => &[],
         }
     }

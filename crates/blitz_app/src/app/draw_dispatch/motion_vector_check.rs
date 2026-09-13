@@ -29,9 +29,7 @@ impl アプリ {
         self.現在フレーム + 1 == フレーム数 && アクション != スモークアクション::差し替え前ダンプ
     }
 
-    pub(in crate::app) fn 動きベクトルを報告する(
-        &mut self, 描画入力: フレーム描画入力<'_>
-    ) -> Result<描画の到達, 起動エラー> {
+    pub(in crate::app) fn 動きベクトルを報告する(&mut self, 描画入力: フレーム描画入力<'_>) -> Result<描画の到達, 起動エラー> {
         let Some(レンダラー) = &mut self.レンダラー else {
             return Ok(描画の到達::届かなかった);
         };

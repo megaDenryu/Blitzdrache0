@@ -53,9 +53,7 @@ impl テクスチャミラー {
     }
 }
 
-fn 部分書き込みする(
-    全体rgba8: &mut [u8], 全体幅: usize, x: usize, y: usize, パッチ幅: usize, パッチ高さ: usize, パッチrgba8: &[u8]
-) {
+fn 部分書き込みする(全体rgba8: &mut [u8], 全体幅: usize, x: usize, y: usize, パッチ幅: usize, パッチ高さ: usize, パッチrgba8: &[u8]) {
     for 行 in 0..パッチ高さ {
         let 全体開始位置 = ((y + 行) * 全体幅 + x) * 4;
         let パッチ開始位置 = 行 * パッチ幅 * 4;

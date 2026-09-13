@@ -33,19 +33,12 @@ impl<const 本数: usize> 宣言から作ったセットレイアウト<本数> 
 
     /// このレイアウトのセットを、呼び出し元が用意したプールから要求の数だけ取り出す。
     /// 前提: プールはこの宣言の`プールの内訳`で数えた容量を持つ。足りなければ割り当てが型付きの失敗として返る。
-    pub(crate) fn プールからセットを割り当てる(
-        &self,
-        device: &ash::Device,
-        pool: vk::DescriptorPool,
-        セット数: usize,
-    ) -> Result<Vec<宣言から割り当てたセット<本数>>, レンダラーエラー> {
+    pub(crate) fn プールからセットを割り当てる(&self, device: &ash::Device, pool: vk::DescriptorPool, セット数: usize) -> Result<Vec<宣言から割り当てたセット<本数>>, レンダラーエラー> {
         if セット数 == 0 {
             return Ok(Vec::new());
         }
         let レイアウト一覧 = vec![self.レイアウト; セット数];
-        let 割当情報 = vk::DescriptorSetAllocateInfo::default()
-            .descriptor_pool(pool)
-            .set_layouts(&レイアウト一覧);
+        let 割当情報 = vk::DescriptorSetAllocateInfo::default().descriptor_pool(pool).set_layouts(&レイアウト一覧);
         // 安全性: poolとレイアウトはどちらも生成済みで有効である。
         let 一覧 = unsafe { device.allocate_descriptor_sets(&割当情報)? };
         if 一覧.len() != セット数 {

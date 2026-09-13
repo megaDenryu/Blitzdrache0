@@ -27,8 +27,7 @@ impl シェーダーの入口のファイル {
 
 pub fn 一時コピーを作る(コピー先: &Path) -> Result<PathBuf, シェーダーの一時コピーの破れ> {
     std::fs::create_dir_all(コピー先).map_err(|誤り| シェーダーの一時コピーの破れ::コピー先を作れなかった {
-        コピー先: コピー先.to_path_buf(),
-        誤り,
+        コピー先: コピー先.to_path_buf(), 誤り
     })?;
     let 元 = Path::new(元のディレクトリ);
     let 読み取り結果 = std::fs::read_dir(元).map_err(|誤り| 読めなかった破れ(元, 誤り))?;
@@ -38,16 +37,14 @@ pub fn 一時コピーを作る(コピー先: &Path) -> Result<PathBuf, シェ�
         if !元パス.is_file() || 元パス.extension().and_then(std::ffi::OsStr::to_str) != Some("slang") {
             continue;
         }
-        std::fs::copy(&元パス, コピー先.join(エントリ.file_name()))
-            .map_err(|誤り| シェーダーの一時コピーの破れ::シェーダーの1枚を写せなかった { 元パス, 誤り })?;
+        std::fs::copy(&元パス, コピー先.join(エントリ.file_name())).map_err(|誤り| シェーダーの一時コピーの破れ::シェーダーの1枚を写せなかった { 元パス, 誤り })?;
     }
     Ok(シェーダーの入口のファイル::コピー先の中の場所(コピー先))
 }
 
 fn 読めなかった破れ(元: &Path, 誤り: std::io::Error) -> シェーダーの一時コピーの破れ {
     シェーダーの一時コピーの破れ::元のディレクトリを読めなかった {
-        元のディレクトリ: 元.to_path_buf(),
-        誤り,
+        元のディレクトリ: 元.to_path_buf(), 誤り
     }
 }
 
@@ -60,9 +57,7 @@ mod tests {
     /// その名前が実在のファイルを指していることを、リポジトリのshaders/へ組み立てて確かめる。
     #[test]
     fn 入口の名前がリポジトリのシェーダーの実在のファイルを指す() {
-        let リポジトリの根 = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .expect("xtaskの親ディレクトリがリポジトリの根である");
+        let リポジトリの根 = Path::new(env!("CARGO_MANIFEST_DIR")).parent().expect("xtaskの親ディレクトリがリポジトリの根である");
         let 場所 = シェーダーの入口のファイル::コピー先の中の場所(&リポジトリの根.join(元のディレクトリ));
         assert!(場所.is_file(), "入口のファイルが無い: {}", 場所.display());
     }

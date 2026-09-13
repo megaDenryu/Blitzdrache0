@@ -14,17 +14,13 @@ use super::super::case::許容差依存の診断の場合;
 use super::super::scene_variation::段階A1の場面からの一つの変更;
 use super::super::stage_c::classification::分類と退避を適用規則で綴る;
 use super::noise_floor_discard::候補シータの適用規則;
-use crate::contact::normal_tangential_system::{
-    接線の行への許容差の適用規則, 解けたと見なす許容差の倍率, 試験の許容差の適用規則
-};
+use crate::contact::normal_tangential_system::{接線の行への許容差の適用規則, 解けたと見なす許容差の倍率, 試験の許容差の適用規則};
 
 const 行列の正接: &[f32] = &[0.50, 0.55, 0.61];
 const 行列の回しの度: &[f32] = &[0.0, 30.0, 45.0];
 const 振る受理の倍率: &[f32] = &[0.5, 1.0, 2.0];
 
-fn 本番の場合(
-    傾きの正接: f32, 鉛直軸まわりの回しの度: f32, 変更: 段階A1の場面からの一つの変更
-) -> 許容差依存の診断の場合 {
+fn 本番の場合(傾きの正接: f32, 鉛直軸まわりの回しの度: f32, 変更: 段階A1の場面からの一つの変更) -> 許容差依存の診断の場合 {
     許容差依存の診断の場合 {
         静止摩擦係数の値: 0.6,
         傾きの正接,

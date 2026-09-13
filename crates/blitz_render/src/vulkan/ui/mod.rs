@@ -27,15 +27,10 @@ pub(crate) struct UIリソース一式 {
 }
 
 impl UIリソース一式 {
-    pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        カラー形式: vk::Format,
-        シェーダー: &シェーダー一式,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, カラー形式: vk::Format, シェーダー: &シェーダー一式) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
         let テクスチャ台帳 = registry::UIテクスチャレジストリ::生成する(device)?;
-        let pipeline = match pipeline::UIパイプライン::生成する(確保係, カラー形式, テクスチャ台帳.layout(), シェーダー)
-        {
+        let pipeline = match pipeline::UIパイプライン::生成する(確保係, カラー形式, テクスチャ台帳.layout(), シェーダー) {
             Ok(pipeline) => pipeline,
             Err(誤り) => {
                 テクスチャ台帳.破棄する(device);
@@ -49,12 +44,7 @@ impl UIリソース一式 {
         })
     }
 
-    pub(crate) fn テクスチャを反映する(
-        &mut self,
-        転送係: ステージング経由の転送係<'_>,
-        id: UIテクスチャID,
-        素材: &UIテクスチャ素材,
-    ) -> Result<(), レンダラーエラー> {
+    pub(crate) fn テクスチャを反映する(&mut self, 転送係: ステージング経由の転送係<'_>, id: UIテクスチャID, 素材: &UIテクスチャ素材) -> Result<(), レンダラーエラー> {
         self.テクスチャ台帳.反映する(転送係, id, 素材)
     }
 
@@ -68,11 +58,7 @@ impl UIリソース一式 {
 
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn ジオメトリを書き込む(
-        &mut self,
-        確保係: &GPU資源の確保係<'_>,
-        フレーム添字: フレームスロット添字,
-        頂点一覧: &[UI頂点],
-        インデックス一覧: &[u32],
+        &mut self, 確保係: &GPU資源の確保係<'_>, フレーム添字: フレームスロット添字, 頂点一覧: &[UI頂点], インデックス一覧: &[u32]
     ) -> Result<(vk::Buffer, vk::Buffer), レンダラーエラー> {
         self.ジオメトリ.書き込む(確保係, フレーム添字, 頂点一覧, インデックス一覧)
     }

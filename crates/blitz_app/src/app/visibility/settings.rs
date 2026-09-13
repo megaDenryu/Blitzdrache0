@@ -27,19 +27,15 @@ pub(super) fn 段の閾値設定を作る() -> 個体LOD選択設定 {
 /// - `キャスター距離分布を数える`: `--report-caster-distance`でtrue。選別と同じ判定でキャスター候補のカメラ距離分布を数える走査を1本足すだけであり、どの個体を描くかは1つも変えない。
 #[derive(Clone, Copy)]
 pub(in crate::app) struct 選別のつまみ {
-    pub(in crate::app) 可視判定有効: bool,     // --no-instance-cullでfalse。falseは視錐台で絞らず全個体を可視とする
-    pub(in crate::app) 段選択有効: bool,       // --no-instance-lodでfalse。falseは全個体を最詳細段で描く
-    pub(in crate::app) 影キャスター有効: bool, // --no-instance-shadowでfalse。falseはどの距離区分も個体を1体も影の候補にしない
+    pub(in crate::app) 可視判定有効: bool,               // --no-instance-cullでfalse。falseは視錐台で絞らず全個体を可視とする
+    pub(in crate::app) 段選択有効: bool,                 // --no-instance-lodでfalse。falseは全個体を最詳細段で描く
+    pub(in crate::app) 影キャスター有効: bool,           // --no-instance-shadowでfalse。falseはどの距離区分も個体を1体も影の候補にしない
     pub(in crate::app) キャスター距離分布を数える: bool, // --report-caster-distanceでtrue
-    pub(in crate::app) 影の視距離: Option<影の視距離>, // --shadow-caster-rangeで与える。Noneが本番であり切断を1回も評価しない
+    pub(in crate::app) 影の視距離: Option<影の視距離>,   // --shadow-caster-rangeで与える。Noneが本番であり切断を1回も評価しない
 }
 
 /// そのフレームの段選択の方式。段の選択を止めた実行では全個体を最詳細段で描く。
 /// 起動指定の真偽から方式へ写すのをここへ置くのは、この判断が距離の刻みと同じ「段をどう選ぶか」の設定であるためである。
 pub(super) fn 段選択方式を選ぶ(段選択有効: bool, 設定: 個体LOD選択設定) -> 段選択方式 {
-    if 段選択有効 {
-        段選択方式::距離とヒステリシス(設定)
-    } else {
-        段選択方式::最詳細に固定
-    }
+    if 段選択有効 { 段選択方式::距離とヒステリシス(設定) } else { 段選択方式::最詳細に固定 }
 }

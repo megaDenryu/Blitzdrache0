@@ -23,15 +23,13 @@ impl 生成の出力ルート {
             Err(誤り) if 誤り.kind() == std::io::ErrorKind::NotFound => return Ok(()),
             Err(誤り) => {
                 return Err(生成台帳エラー::出力の削除に失敗した {
-                    パス: self.0.clone(),
-                    事由: 誤り.to_string(),
+                    パス: self.0.clone(), 事由: 誤り.to_string()
                 });
             }
         };
         for 項目 in 一覧 {
             let 項目 = 項目.map_err(|誤り| 生成台帳エラー::出力の削除に失敗した {
-                パス: self.0.clone(),
-                事由: 誤り.to_string(),
+                パス: self.0.clone(), 事由: 誤り.to_string()
             })?;
             if 削除するか(&項目.file_name()) {
                 Self::削除する(項目.path())?;
@@ -41,14 +39,7 @@ impl 生成の出力ルート {
     }
 
     fn 削除する(パス: PathBuf) -> Result<(), 生成台帳エラー> {
-        let 結果 = if パス.is_dir() {
-            std::fs::remove_dir_all(&パス)
-        } else {
-            std::fs::remove_file(&パス)
-        };
-        結果.map_err(|誤り| 生成台帳エラー::出力の削除に失敗した {
-            パス,
-            事由: 誤り.to_string(),
-        })
+        let 結果 = if パス.is_dir() { std::fs::remove_dir_all(&パス) } else { std::fs::remove_file(&パス) };
+        結果.map_err(|誤り| 生成台帳エラー::出力の削除に失敗した { パス, 事由: 誤り.to_string() })
     }
 }

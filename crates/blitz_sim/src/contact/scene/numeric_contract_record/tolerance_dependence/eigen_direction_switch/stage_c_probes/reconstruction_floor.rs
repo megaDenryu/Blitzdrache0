@@ -26,10 +26,5 @@ pub(super) fn 位置の変化の一刻みが速度へ写る量(位置の変化�
 
 /// 成分ごとの量を、成分の番号を添えて綴る。
 pub(super) fn 成分ごとの量を綴る(並び: &[f32]) -> String {
-    並び
-        .iter()
-        .enumerate()
-        .map(|(番号, 値)| format!("成分{番号}={値:.6e}"))
-        .collect::<Vec<_>>()
-        .join(" ")
+    並び.iter().enumerate().map(|(番号, 値)| format!("成分{番号}={値:.6e}")).collect::<Vec<_>>().join(" ")
 }

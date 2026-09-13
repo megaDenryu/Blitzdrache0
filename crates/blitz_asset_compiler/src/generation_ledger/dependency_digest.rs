@@ -14,10 +14,7 @@ use std::path::{Path, PathBuf};
 use super::content_hash::内容ハッシュ;
 use super::error::生成台帳エラー;
 
-pub fn 今回の宣言と依存一式の内容ハッシュを求める(
-    宣言が指すソース: &Path,
-    ソース依存一覧: &[PathBuf],
-) -> Result<内容ハッシュ, 生成台帳エラー> {
+pub fn 今回の宣言と依存一式の内容ハッシュを求める(宣言が指すソース: &Path, ソース依存一覧: &[PathBuf]) -> Result<内容ハッシュ, 生成台帳エラー> {
     let mut 一覧の綴り = 一件の綴りを作る("宣言", 宣言が指すソース)?;
     for パス in ソース依存一覧 {
         一覧の綴り.push_str(&一件の綴りを作る("依存", パス)?);

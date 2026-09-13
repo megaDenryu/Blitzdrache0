@@ -20,53 +20,34 @@ fn 引用符を含むブロックコメントは文字列リテラルでない()
 
 #[test]
 fn 入れ子のブロックコメントを最後まで飛ばす() {
-    assert_eq!(
-        リテラルの中身一覧("/* 外 /* 内 \"x.png\" */ まだ中 */ let 名 = \"y.png\";"),
-        vec!["y.png"]
-    );
+    assert_eq!(リテラルの中身一覧("/* 外 /* 内 \"x.png\" */ まだ中 */ let 名 = \"y.png\";"), vec!["y.png"]);
 }
 
 #[test]
 fn 逃がし記号の引用符で区間がずれない() {
-    assert_eq!(
-        リテラルの中身一覧(r#"let 語 = "彼は\"a.png\"と書いた"; let 次 = "b.png";"#),
-        vec![r#"彼は"a.png"と書いた"#, "b.png"]
-    );
+    assert_eq!(リテラルの中身一覧(r#"let 語 = "彼は\"a.png\"と書いた"; let 次 = "b.png";"#), vec![r#"彼は"a.png"と書いた"#, "b.png"]);
 }
 
 #[test]
 fn 逃がしで書いた綴りと素の綴りが同じ中身になる() {
-    assert_eq!(
-        リテラルの中身一覧(r#"let 語 = "shaders/scene\x2eslang";"#),
-        リテラルの中身一覧(r#"let 語 = "shaders/scene.slang";"#)
-    );
+    assert_eq!(リテラルの中身一覧(r#"let 語 = "shaders/scene\x2eslang";"#), リテラルの中身一覧(r#"let 語 = "shaders/scene.slang";"#));
 }
 
 #[test]
 fn 波括弧の文字リテラルはコードの区分でない() {
     let 原文 = "fn t() { let c = '{'; }";
-    assert!(
-        字句へ分ける(原文)
-            .iter()
-            .any(|断片| 断片.区分 == 字句の区分::文字リテラル && 断片.中身 == "{")
-    );
+    assert!(字句へ分ける(原文).iter().any(|断片| 断片.区分 == 字句の区分::文字リテラル && 断片.中身 == "{"));
     assert!(!コードだけの行一覧(原文)[0].contains('\''));
 }
 
 #[test]
 fn 生文字列の中の引用符と逃がし記号を中身として読む() {
-    assert_eq!(
-        リテラルの中身一覧(r###"let 語 = r#"引用"と\の混じり"#; let 次 = "c.png";"###),
-        vec![r#"引用"と\の混じり"#, "c.png"]
-    );
+    assert_eq!(リテラルの中身一覧(r###"let 語 = r#"引用"と\の混じり"#; let 次 = "c.png";"###), vec![r#"引用"と\の混じり"#, "c.png"]);
 }
 
 #[test]
 fn 生文字列と通常文字列が同じ綴りを同じ中身にする() {
-    assert_eq!(
-        リテラルの中身一覧(r##"let a = "x/y.png"; let b = r#"x/y.png"#;"##),
-        vec!["x/y.png", "x/y.png"]
-    );
+    assert_eq!(リテラルの中身一覧(r##"let a = "x/y.png"; let b = r#"x/y.png"#;"##), vec!["x/y.png", "x/y.png"]);
 }
 
 #[test]

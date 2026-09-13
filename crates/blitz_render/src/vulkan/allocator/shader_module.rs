@@ -13,9 +13,7 @@ use super::GPU資源の確保係;
 use crate::error::レンダラーエラー;
 
 impl GPU資源の確保係<'_> {
-    pub(crate) fn シェーダーモジュールを生成する(
-        &self, spirvバイト列: &[u8]
-    ) -> Result<vk::ShaderModule, レンダラーエラー> {
+    pub(crate) fn シェーダーモジュールを生成する(&self, spirvバイト列: &[u8]) -> Result<vk::ShaderModule, レンダラーエラー> {
         let 語列 = read_spv(&mut Cursor::new(spirvバイト列)).map_err(|誤り| レンダラーエラー::SPIRV読み込み失敗(誤り.to_string()))?;
         let create_info = vk::ShaderModuleCreateInfo::default().code(&語列);
         // 安全性: create_infoのcodeは直前に構築したVec<u32>を参照し、deviceは生成済みで有効。

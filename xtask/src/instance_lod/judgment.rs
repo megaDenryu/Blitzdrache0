@@ -7,9 +7,7 @@ mod resource;
 mod tier;
 
 pub(super) use resource::確保と読込が動かないことを検査する;
-pub(super) use tier::{
-    段が同時に立つことを検査する, 段が振動しないことを検査する, 段の違いが絵に出ることを検査する
-};
+pub(super) use tier::{段が同時に立つことを検査する, 段が振動しないことを検査する, 段の違いが絵に出ることを検査する};
 
 use crate::acceptance::読み戻し画像;
 use crate::report_parse::計数報告;

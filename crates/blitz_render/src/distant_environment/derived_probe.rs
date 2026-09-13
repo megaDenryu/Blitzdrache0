@@ -7,9 +7,7 @@
 //! 参照: `_doc/設計/放射輝度問い合わせ階層.md`「検収(機械判定)」
 
 use crate::compute_shader::コンピュートシェーダー;
-use crate::distant_environment::derived::{
-    反射率積分表の解像度, 拡散照度の解像度, 遠方環境の内容, 鏡面畳込みの解像度
-};
+use crate::distant_environment::derived::{反射率積分表の解像度, 拡散照度の解像度, 遠方環境の内容, 鏡面畳込みの解像度};
 use crate::error::レンダラーエラー;
 use crate::validation_counter::検証層の状況;
 use crate::vulkan::derived_environment;
@@ -68,9 +66,7 @@ impl 派生表現の読み戻し {
 
 /// ウィンドウもスワップチェーンも作らずにGPUを初期化し、本番と同じパス宣言で3つの派生表現を焼いて読み戻す。
 /// 送信は1回で、戻った時点でGPUの作業は完了している。
-pub fn 派生表現をgpuで焼いて読み戻す(
-    条件: 派生表現の焼き上げ条件<'_>
-) -> Result<派生表現の読み戻し, レンダラーエラー> {
+pub fn 派生表現をgpuで焼いて読み戻す(条件: 派生表現の焼き上げ条件<'_>) -> Result<派生表現の読み戻し, レンダラーエラー> {
     let (読み戻し, 検証) = derived_environment::派生表現をgpuで焼いて読み戻す(derived_environment::派生表現を焼く条件 {
         遠方環境: 条件.遠方環境,
         拡散照度の解像度: 条件.拡散照度の解像度,

@@ -11,19 +11,14 @@ use crate::vulkan;
 
 impl レンダラー {
     #[allow(clippy::type_complexity)]
-    pub(super) fn メッシュ列を結合する(
-        &self,
-        メッシュ一覧: &[&UIメッシュ],
-        寸法: vk::Extent2D,
-    ) -> (Vec<UI頂点>, Vec<u32>, Vec<vulkan::frame::UI描画項目>) {
+    pub(super) fn メッシュ列を結合する(&self, メッシュ一覧: &[&UIメッシュ], 寸法: vk::Extent2D) -> (Vec<UI頂点>, Vec<u32>, Vec<vulkan::frame::UI描画項目>) {
         let mut 頂点一覧結合 = Vec::new();
         let mut インデックス一覧結合 = Vec::new();
         let mut 項目一覧 = Vec::new();
 
         for メッシュ in メッシュ一覧 {
             let 頂点要素ずらし量 = i32::try_from(頂点一覧結合.len()).unwrap_or_else(|_| panic!("UI頂点ずらし量がi32に収まらない"));
-            let インデックス要素ずらし量 =
-                u32::try_from(インデックス一覧結合.len()).unwrap_or_else(|_| panic!("UIインデックスずらし量がu32に収まらない"));
+            let インデックス要素ずらし量 = u32::try_from(インデックス一覧結合.len()).unwrap_or_else(|_| panic!("UIインデックスずらし量がu32に収まらない"));
             let インデックス数 = u32::try_from(メッシュ.インデックス一覧.len()).unwrap_or_else(|_| panic!("UIインデックス数がu32に収まらない"));
             項目一覧.push(vulkan::frame::UI描画項目 {
                 頂点要素ずらし量,
@@ -52,8 +47,7 @@ fn シザーを組み立てる(矩形: UIシザー矩形px, 寸法: vk::Extent2D
     let 下端 = 矩形.y().saturating_add(矩形.高さ()).min(寸法.height);
     vk::Rect2D {
         offset: vk::Offset2D {
-            x: 非負変換する(x),
-            y: 非負変換する(y),
+            x: 非負変換する(x), y: 非負変換する(y)
         },
         extent: vk::Extent2D {
             width: 右端.saturating_sub(x),

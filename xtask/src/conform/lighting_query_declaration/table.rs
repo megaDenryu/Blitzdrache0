@@ -31,9 +31,4 @@ pub(super) const 正本一覧: [宣言の正本; 4] = [
     },
 ];
 
-pub(super) const 取り込む側一覧: [&str; 4] = [
-    "shaders/scene.slang",
-    "shaders/scene_distant_environment.slang",
-    "shaders/cloth_draw.slang",
-    "shaders/cloth_draw_distant_environment.slang",
-];
+pub(super) const 取り込む側一覧: [&str; 4] = ["shaders/scene.slang", "shaders/scene_distant_environment.slang", "shaders/cloth_draw.slang", "shaders/cloth_draw_distant_environment.slang"];

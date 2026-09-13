@@ -31,54 +31,15 @@ pub(super) const 白リスト: [(&str, &[&str]); 11] = [
     ("blitz_assembly", &["blitz_engine", "blitz_math", "thiserror"]), // 部品の接合と組み立ての層。glTFもファイルシステムも知らない
     (
         "blitz_asset_compiler",
-        &[
-            "blitz_assembly",
-            "blitz_collision",
-            "blitz_engine",
-            "blitz_math",
-            "gltf",
-            "image",
-            "rayon",
-            "serde",
-            "serde_json",
-            "thiserror",
-        ],
+        &["blitz_assembly", "blitz_collision", "blitz_engine", "blitz_math", "gltf", "image", "rayon", "serde", "serde_json", "thiserror"],
     ),
-    (
-        "blitz_render",
-        &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"],
-    ),
+    ("blitz_render", &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"]),
     ("blitz_sim", &["blitz_collision", "blitz_math", "thiserror"]), // 判断51: 手法の数学のみ。接触点集合を読むためだけにblitz_collisionを許す
     ("blitz_game", &["blitz_math"]),                                // ゲームロジック層。許すのは blitz_engine と blitz_math だけ
     (
         "blitz_app",
-        &[
-            "blitz_engine",
-            "blitz_game",
-            "blitz_math",
-            "blitz_render",
-            "blitz_sim",
-            "winit",
-            "raw-window-handle",
-            "thiserror",
-            "egui",
-            "egui-winit",
-        ],
+        &["blitz_engine", "blitz_game", "blitz_math", "blitz_render", "blitz_sim", "winit", "raw-window-handle", "thiserror", "egui", "egui-winit"],
     ),
     ("xtask", &["blitz_asset_compiler", "crossterm", "ctrlc", "win32job"]), // 検収が綴りの写しを持たないための唯一の例外
-    (
-        "editor_server",
-        &[
-            "serde",
-            "serde_json",
-            "thiserror",
-            "axum",
-            "tokio",
-            "tower",
-            "tower-http",
-            "ts-rs",
-            "blitz_asset_compiler",
-            "blitz_engine",
-        ],
-    ),
+    ("editor_server", &["serde", "serde_json", "thiserror", "axum", "tokio", "tower", "tower-http", "ts-rs", "blitz_asset_compiler", "blitz_engine"]),
 ];

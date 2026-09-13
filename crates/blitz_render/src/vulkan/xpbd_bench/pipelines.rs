@@ -26,21 +26,11 @@ pub(super) struct XPBD計測パイプライン群 {
 }
 
 impl XPBD計測パイプライン群 {
-    pub(super) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        ディスクリプタレイアウト: vk::DescriptorSetLayout,
-        シェーダー: &XPBDシェーダー一式,
-        方式: XPBD並列方式,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, ディスクリプタレイアウト: vk::DescriptorSetLayout, シェーダー: &XPBDシェーダー一式, 方式: XPBD並列方式) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
         let レイアウト一覧 = [ディスクリプタレイアウト];
-        let プッシュ定数 = [vk::PushConstantRange::default()
-            .stage_flags(vk::ShaderStageFlags::COMPUTE)
-            .offset(0)
-            .size(プッシュ定数のバイト数)];
-        let layout_info = vk::PipelineLayoutCreateInfo::default()
-            .set_layouts(&レイアウト一覧)
-            .push_constant_ranges(&プッシュ定数);
+        let プッシュ定数 = [vk::PushConstantRange::default().stage_flags(vk::ShaderStageFlags::COMPUTE).offset(0).size(プッシュ定数のバイト数)];
+        let layout_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&レイアウト一覧).push_constant_ranges(&プッシュ定数);
         // 安全性: deviceは生成済みで有効。layout_infoは本関数内で構築した値のみを参照する。
         let layout = unsafe { device.create_pipeline_layout(&layout_info, None)? };
         let 仕様一覧: Vec<(&[u8], &std::ffi::CStr)> = 方式の仕様一覧(シェーダー, 方式);
@@ -56,13 +46,11 @@ impl XPBD計測パイプライン群 {
         }
         let 工程 = match 方式 {
             XPBD並列方式::原子加算 => 方式の工程::原子加算 {
-                拘束: 生成済み[2],
-                適用: 生成済み[3],
+                拘束: 生成済み[2], 適用: 生成済み[3]
             },
             XPBD並列方式::グラフ彩色 => 方式の工程::グラフ彩色 { 拘束: 生成済み[2] },
             XPBD並列方式::二段階 => 方式の工程::二段階 {
-                拘束: 生成済み[2],
-                集約: 生成済み[3],
+                拘束: 生成済み[2], 集約: 生成済み[3]
             },
         };
         Ok(Self {
@@ -85,10 +73,7 @@ impl XPBD計測パイプライン群 {
 
 /// 共通の2本を先頭に、方式の工程を積む順に並べる。
 fn 方式の仕様一覧(シェーダー: &XPBDシェーダー一式, 方式: XPBD並列方式) -> Vec<(&[u8], &'static std::ffi::CStr)> {
-    let mut 一覧 = vec![
-        (シェーダー.積分.コード(), c"integrateMain"),
-        (シェーダー.乗数零化.コード(), c"lambdaClearMain"),
-    ];
+    let mut 一覧 = vec![(シェーダー.積分.コード(), c"integrateMain"), (シェーダー.乗数零化.コード(), c"lambdaClearMain")];
     match 方式 {
         XPBD並列方式::原子加算 => {
             一覧.push((シェーダー.原子加算の拘束.コード(), c"constraintAtomicMain"));

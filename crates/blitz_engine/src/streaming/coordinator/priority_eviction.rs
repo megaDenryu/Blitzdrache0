@@ -4,8 +4,7 @@
 //! 参照: `_doc/設計/チャンクストリーミング.md`「近い未収容チャンクのための退避」
 
 use crate::streaming::{
-    chunk_ledger::チャンク台帳, coordinator_error::ストリーミング調停エラー, eviction_hysteresis::退避優位計数,
-    memory_amount::ストリーミングメモリ量, memory_candidate::チャンク予算候補,
+    chunk_ledger::チャンク台帳, coordinator_error::ストリーミング調停エラー, eviction_hysteresis::退避優位計数, memory_amount::ストリーミングメモリ量, memory_candidate::チャンク予算候補
 };
 use crate::チャンク座標;
 

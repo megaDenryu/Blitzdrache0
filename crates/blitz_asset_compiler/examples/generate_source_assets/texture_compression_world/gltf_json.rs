@@ -9,14 +9,10 @@ use super::geometry;
 /// 金属度0・粗さ1にするのは、鏡面反射がベースカラーの誤差の上へ光源の像を重ねるのを避けるためである。
 /// 拡散反射だけが残ると、画素の差はベースカラーの差にほぼ比例する。
 fn ベースカラーテクスチャを持つ材質のjsonを作る(テクスチャ番号: u32) -> String {
-    format!(
-        r#"{{ "pbrMetallicRoughness": {{ "baseColorTexture": {{ "index": {テクスチャ番号} }}, "metallicFactor": 0.0, "roughnessFactor": 1.0 }} }}"#
-    )
+    format!(r#"{{ "pbrMetallicRoughness": {{ "baseColorTexture": {{ "index": {テクスチャ番号} }}, "metallicFactor": 0.0, "roughnessFactor": 1.0 }} }}"#)
 }
 
-pub(super) fn 対照の板のgltf文書を作る(
-    バッファファイル名: &str, グラデーション画像ファイル名: &str, 雑音画像ファイル名: &str
-) -> String {
+pub(super) fn 対照の板のgltf文書を作る(バッファファイル名: &str, グラデーション画像ファイル名: &str, 雑音画像ファイル名: &str) -> String {
     let (最小, 最大) = geometry::位置の範囲を返す();
     format!(
         r#"{{

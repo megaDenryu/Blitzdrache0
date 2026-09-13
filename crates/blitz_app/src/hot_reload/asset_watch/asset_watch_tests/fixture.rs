@@ -7,13 +7,10 @@
 use std::path::{Path, PathBuf};
 
 use blitz_engine::surface_layer_textures::{
-    エンジン材質名, 世界の地表層テクスチャ集の安定IDの綴り, 地表層ごとの材質索引, 地表層のタイル, 地表層の数, 地表層テクスチャ集,
-    地表層テクスチャ集を実行時形式へ格納する,
+    エンジン材質名, 世界の地表層テクスチャ集の安定IDの綴り, 地表層ごとの材質索引, 地表層のタイル, 地表層の数, 地表層テクスチャ集, 地表層テクスチャ集を実行時形式へ格納する
 };
 use blitz_engine::texture_storage::{テクスチャ格納形式, 格納済みテクスチャ};
-use blitz_engine::{
-    アセットID, カタログ, カタログを実行時形式へ格納する, チャンク一辺, チャンク目録, チャンク目録を実行時形式へ格納する, 実行時アセットの公開完了印,
-};
+use blitz_engine::{アセットID, カタログ, カタログを実行時形式へ格納する, チャンク一辺, チャンク目録, チャンク目録を実行時形式へ格納する, 実行時アセットの公開完了印};
 
 pub(super) const 起動時シーンの安定IDの綴り: &str = "startup_scene";
 
@@ -45,11 +42,7 @@ pub(super) fn 一式を書き出す(置き場: &Path, 世代の綴り: &str, 種
     }
     std::fs::write(置き場.join("catalog.blitzcatalog"), カタログを実行時形式へ格納する(&カタログ).unwrap()).unwrap();
     let 目録 = チャンク目録::空を作る(チャンク一辺::生成する(64.0).unwrap());
-    std::fs::write(
-        置き場.join("chunk_directory.blitzchunks"),
-        チャンク目録を実行時形式へ格納する(&目録).unwrap(),
-    )
-    .unwrap();
+    std::fs::write(置き場.join("chunk_directory.blitzchunks"), チャンク目録を実行時形式へ格納する(&目録).unwrap()).unwrap();
     std::fs::write(置き場.join(実行時アセットの公開完了印::ファイル名()), 世代の綴り).unwrap();
 }
 

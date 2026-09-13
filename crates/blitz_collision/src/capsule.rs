@@ -66,7 +66,5 @@ mod sweep_tiny_scale_tests;
 
 pub use error::カプセルの問い合わせエラー;
 pub use feature::静止したカプセルで触れた特徴;
-pub use sweep_contact::{
-    カプセルが静止したカプセルに最初に触れる点, 掃引したカプセルの静止したカプセルへの接触
-};
+pub use sweep_contact::{カプセルが静止したカプセルに最初に触れる点, 掃引したカプセルの静止したカプセルへの接触};
 pub use sweep_query::静止したカプセルへのカプセルの掃引の問い合わせ;

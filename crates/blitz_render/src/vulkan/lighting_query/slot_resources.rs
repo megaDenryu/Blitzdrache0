@@ -27,9 +27,7 @@ pub(super) struct スロット資源 {
 
 impl スロット資源 {
     /// 3本のバッファを順に確保する。途中で失敗したら、そこまでに確保したぶんをその場で逆順に破棄する。
-    pub(super) fn 生成する(
-        確保係: &GPU資源の確保係<'_>, セット: 照明問い合わせの割り当て済みセット
-    ) -> Result<Self, レンダラーエラー> {
+    pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, セット: 照明問い合わせの割り当て済みセット) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
         let 定数用途 = vk::BufferUsageFlags::UNIFORM_BUFFER;
         let 列用途 = vk::BufferUsageFlags::STORAGE_BUFFER;
@@ -78,9 +76,7 @@ impl スロット資源 {
         }
     }
 
-    pub(super) fn 書き込む(
-        &self, device: &ash::Device, バイト列: &照明問い合わせのバイト列
-    ) -> Result<(), レンダラーエラー> {
+    pub(super) fn 書き込む(&self, device: &ash::Device, バイト列: &照明問い合わせのバイト列) -> Result<(), レンダラーエラー> {
         self.ヘッダ.書き込む(device, &バイト列.ヘッダ)?;
         self.方向光列.書き込む(device, &バイト列.方向光列)?;
         self.局所光列.書き込む(device, &バイト列.局所光列)

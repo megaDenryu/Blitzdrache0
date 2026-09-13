@@ -18,13 +18,7 @@ const 走査対象ディレクトリ一覧: [&str; 2] = ["crates", "shaders"];
 const 走査対象拡張子一覧: [&str; 2] = ["rs", "slang"];
 
 /// 書き戻しを禁じる語。GPU側の構造体名と変数名、CPU側の資源名とモジュール名、単一個体の別名経路が持っていた型名である。
-const 廃止語一覧: [&str; 5] = [
-    "ObjectUniform",
-    "objectUniform",
-    "object_uniform",
-    "描画対象シェーダー定数",
-    "個体変換の出どころ",
-];
+const 廃止語一覧: [&str; 5] = ["ObjectUniform", "objectUniform", "object_uniform", "描画対象シェーダー定数", "個体変換の出どころ"];
 
 pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let ファイル一覧 = file_scan::対象ファイル一覧を集める(&走査対象ディレクトリ一覧, &走査対象拡張子一覧)?;
@@ -41,11 +35,7 @@ fn ファイル1つを検査する(パス: &Path, 内容: &str) -> Vec<違反> {
     for (行番号, 行) in 内容.lines().enumerate() {
         for 語 in 廃止語一覧 {
             if 行.contains(語) {
-                違反一覧.push(違反::行単位(
-                    PathBuf::from(パス),
-                    行番号 + 1,
-                    format!("段3で廃止した描画対象ごとのシェーダー定数の語({語})を書き戻している"),
-                ));
+                違反一覧.push(違反::行単位(PathBuf::from(パス), 行番号 + 1, format!("段3で廃止した描画対象ごとのシェーダー定数の語({語})を書き戻している")));
             }
         }
     }

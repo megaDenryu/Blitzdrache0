@@ -24,18 +24,11 @@ pub struct 大きさの範囲 {
 
 impl 出現割合の範囲 {
     pub(super) fn 検証する(self) -> Result<(), 散布コンパイルエラー> {
-        let 受け取れる = self.下限.is_finite()
-            && self.上限.is_finite()
-            && (0.0..=1.0).contains(&self.下限)
-            && (0.0..=1.0).contains(&self.上限)
-            && self.下限 <= self.上限;
+        let 受け取れる = self.下限.is_finite() && self.上限.is_finite() && (0.0..=1.0).contains(&self.下限) && (0.0..=1.0).contains(&self.上限) && self.下限 <= self.上限;
         if 受け取れる {
             return Ok(());
         }
-        Err(散布コンパイルエラー::出現割合不正 {
-            下限: self.下限,
-            上限: self.上限,
-        })
+        Err(散布コンパイルエラー::出現割合不正 { 下限: self.下限, 上限: self.上限 })
     }
 
     /// -1以上1以下の密度場の値を出現の割合へ写す。
@@ -49,10 +42,7 @@ impl 大きさの範囲 {
         if self.下限.is_finite() && self.上限.is_finite() && self.下限 > 0.0 && self.下限 <= self.上限 {
             return Ok(());
         }
-        Err(散布コンパイルエラー::大きさの範囲不正 {
-            下限: self.下限,
-            上限: self.上限,
-        })
+        Err(散布コンパイルエラー::大きさの範囲不正 { 下限: self.下限, 上限: self.上限 })
     }
 
     pub(crate) fn 零以上一未満の値から求める(self, 比: f32) -> f32 {

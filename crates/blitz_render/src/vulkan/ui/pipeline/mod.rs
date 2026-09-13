@@ -18,12 +18,7 @@ pub(crate) struct UIパイプライン {
 }
 
 impl UIパイプライン {
-    pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        カラー形式: vk::Format,
-        ディスクリプタlayout: vk::DescriptorSetLayout,
-        シェーダー: &シェーダー一式,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, カラー形式: vk::Format, ディスクリプタlayout: vk::DescriptorSetLayout, シェーダー: &シェーダー一式) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
         let 頂点モジュール = 確保係.シェーダーモジュールを生成する(シェーダー.頂点コード())?;
         let 画素段モジュール = match 確保係.シェーダーモジュールを生成する(シェーダー.画素段コード()) {

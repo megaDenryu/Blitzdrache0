@@ -88,8 +88,6 @@ pub use synthetic_depth::合成深度を焼く;
 pub use synthetic_scene::合成深度の場面;
 pub use view_direction::{ビュー空間の向き, 外積の向き};
 pub use view_displacement::ビュー空間の変位;
-pub use view_position::{
-    カメラからの奥行き, 位置が落ちる画素を求める, 画素が覆う幅を求める, 画素中心の位置を復元する
-};
+pub use view_position::{カメラからの奥行き, 位置が落ちる画素を求める, 画素が覆う幅を求める, 画素中心の位置を復元する};
 pub use visibility::局所可視度;
 pub use visibility_image::局所可視度画像;

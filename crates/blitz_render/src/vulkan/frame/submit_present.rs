@@ -17,52 +17,29 @@ use crate::vulkan::command_sink::積み込みを開始したコマンドバッ�
 
 impl フレームのGPU命令を積むコマンドバッファ<'_> {
     /// `Err`は送信へ到達しなかったことだけを表す。呼び出し元はこの区別で、そのフレームが資源表世代を保持したかどうかを決める。
-    pub(crate) fn 記録を閉じて送信し提示する(
-        self,
-        提示先: 提示先<'_>,
-        同期: &同期入力,
-        読み戻しの待機: 読み戻しの待機,
-    ) -> Result<送信後の結末, レンダラーエラー> {
+    pub(crate) fn 記録を閉じて送信し提示する(self, 提示先: 提示先<'_>, 同期: &同期入力, 読み戻しの待機: 読み戻しの待機) -> Result<送信後の結末, レンダラーエラー> {
         let 結果 = self.閉じて送信し提示する(提示先, 同期, 読み戻しの待機);
         self.環境().送信し終えた1本を数える();
         結果
     }
 
-    fn 閉じて送信し提示する(
-        &self,
-        提示先: 提示先<'_>,
-        同期: &同期入力,
-        読み戻しの待機: 読み戻しの待機,
-    ) -> Result<送信後の結末, レンダラーエラー> {
+    fn 閉じて送信し提示する(&self, 提示先: 提示先<'_>, 同期: &同期入力, 読み戻しの待機: 読み戻しの待機) -> Result<送信後の結末, レンダラーエラー> {
         let 積み先 = self.積み先();
         // 安全性: command_bufferは積み込み開始済みで、これが対応するend呼び出しである。
         unsafe { 積み先.論理デバイス().end_command_buffer(積み先.コマンドバッファ())? };
         self.送信する(同期)?;
-        Ok(present::待って提示する(
-            積み先.論理デバイス(),
-            self.環境().送信先のキュー(),
-            提示先,
-            同期,
-            読み戻しの待機,
-        ))
+        Ok(present::待って提示する(積み先.論理デバイス(), self.環境().送信先のキュー(), 提示先, 同期, 読み戻しの待機))
     }
 
     /// 注意: フェンスの無信号化からqueue_submit2までの間で失敗すると、そのフェンスは誰もシグナルしないまま残る。
     /// 次に同じフレームスロットを待つ側は永久に返らないため、この区間の失敗は回復できない。呼び出し元はフレームループを畳んで終える。
     fn 送信する(&self, 同期: &同期入力) -> Result<(), レンダラーエラー> {
         let 積み先 = self.積み先();
-        let 待機セマフォ情報 = [vk::SemaphoreSubmitInfo::default()
-            .semaphore(同期.取得セマフォ)
-            .stage_mask(vk::PipelineStageFlags2::COLOR_ATTACHMENT_OUTPUT)];
+        let 待機セマフォ情報 = [vk::SemaphoreSubmitInfo::default().semaphore(同期.取得セマフォ).stage_mask(vk::PipelineStageFlags2::COLOR_ATTACHMENT_OUTPUT)];
         let コマンド情報 = [vk::CommandBufferSubmitInfo::default().command_buffer(積み先.コマンドバッファ())];
-        let 通知セマフォ情報 = [vk::SemaphoreSubmitInfo::default()
-            .semaphore(同期.提示セマフォ)
-            .stage_mask(vk::PipelineStageFlags2::ALL_COMMANDS)];
+        let 通知セマフォ情報 = [vk::SemaphoreSubmitInfo::default().semaphore(同期.提示セマフォ).stage_mask(vk::PipelineStageFlags2::ALL_COMMANDS)];
 
-        let submit_info = vk::SubmitInfo2::default()
-            .wait_semaphore_infos(&待機セマフォ情報)
-            .command_buffer_infos(&コマンド情報)
-            .signal_semaphore_infos(&通知セマフォ情報);
+        let submit_info = vk::SubmitInfo2::default().wait_semaphore_infos(&待機セマフォ情報).command_buffer_infos(&コマンド情報).signal_semaphore_infos(&通知セマフォ情報);
 
         let device = 積み先.論理デバイス();
         // 注意: フェンスの無信号化を送信の直前に置く。フレームの準備の途中で失敗すると送信へ到達せず、

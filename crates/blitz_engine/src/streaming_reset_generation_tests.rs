@@ -1,9 +1,7 @@
 //! リセット世代が古い読込完了を退けることを、アセットの内容が入れ替わる状況で確かめる。
 //! 座標はリセットの前後で同じ値になるため、世代が無いと古い内容の完了が新しい読込の完了として受理される。
 
-use crate::streaming_chunk_world_fixture::{
-    世界を作る, 内容を変えたカタログを作る, 存在しない生成物のカタログを作る, 後始末する
-};
+use crate::streaming_chunk_world_fixture::{世界を作る, 内容を変えたカタログを作る, 存在しない生成物のカタログを作る, 後始末する};
 use crate::streaming_coordinator_fixture::{準備完了を待つ, 起動する, 進める};
 use crate::texture_storage::格納済みテクスチャ;
 use crate::{シーンデータ, ストリーミングメモリ量, チャンク座標, マテリアルデータ};

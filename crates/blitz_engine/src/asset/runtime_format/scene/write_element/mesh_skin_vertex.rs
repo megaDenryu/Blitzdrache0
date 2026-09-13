@@ -5,9 +5,7 @@ use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::書込先;
 use crate::asset::{mesh_data::メッシュデータ, skin_vertex_attribute::スキン頂点属性};
 
-pub(super) fn 書く(
-    出力: &mut 書込先, メッシュ: &メッシュデータ, ジョイント数: Option<usize>
-) -> Result<(), アセット実行時形式エラー> {
+pub(super) fn 書く(出力: &mut 書込先, メッシュ: &メッシュデータ, ジョイント数: Option<usize>) -> Result<(), アセット実行時形式エラー> {
     let Some(属性一覧) = &メッシュ.スキン頂点属性一覧 else {
         出力.u8(0);
         return Ok(());
@@ -29,14 +27,11 @@ pub(super) fn 書く(
     Ok(())
 }
 
-fn 属性を書く(
-    出力: &mut 書込先, 属性: &スキン頂点属性, ジョイント数: usize
-) -> Result<(), アセット実行時形式エラー> {
+fn 属性を書く(出力: &mut 書込先, 属性: &スキン頂点属性, ジョイント数: usize) -> Result<(), アセット実行時形式エラー> {
     for &添字 in &属性.ジョイント {
         if usize::from(添字) >= ジョイント数 {
             return Err(アセット実行時形式エラー::スキンジョイント範囲外 {
-                ジョイント添字: 添字,
-                ジョイント数,
+                ジョイント添字: 添字, ジョイント数
             });
         }
         出力.u16(添字);

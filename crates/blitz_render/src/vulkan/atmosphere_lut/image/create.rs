@@ -9,10 +9,7 @@ use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像の形;
 
-pub(super) fn 大気のベイク済み画像を生成する(
-    確保係: &GPU資源の確保係<'_>,
-    形: 大気のベイク済み画像の形,
-) -> Result<大気のベイク済み画像, レンダラーエラー> {
+pub(super) fn 大気のベイク済み画像を生成する(確保係: &GPU資源の確保係<'_>, 形: 大気のベイク済み画像の形) -> Result<大気のベイク済み画像, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let 画像 = 画像を作る(確保係, 形)?;
     let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(画像, GPUメモリ用途::描画画像) {
@@ -24,12 +21,7 @@ pub(super) fn 大気のベイク済み画像を生成する(
         }
     };
     match 画像ビューを作る(確保係, 画像, 形) {
-        Ok(画像ビュー) => Ok(大気のベイク済み画像 {
-            画像,
-            画像ビュー,
-            形,
-            memory,
-        }),
+        Ok(画像ビュー) => Ok(大気のベイク済み画像 { 画像, 画像ビュー, 形, memory }),
         Err(誤り) => {
             // 安全性: 画像はこのスコープの唯一の所有者で、以降使用しない。
             unsafe { device.destroy_image(画像, None) };
@@ -54,21 +46,8 @@ fn 画像を作る(確保係: &GPU資源の確保係<'_>, 形: 大気のベイ�
     確保係.画像の作り方から画像を確保する(&create_info)
 }
 
-fn 画像ビューを作る(
-    確保係: &GPU資源の確保係<'_>,
-    画像: vk::Image,
-    形: 大気のベイク済み画像の形,
-) -> Result<vk::ImageView, レンダラーエラー> {
-    let 部分範囲 = vk::ImageSubresourceRange::default()
-        .aspect_mask(vk::ImageAspectFlags::COLOR)
-        .base_mip_level(0)
-        .level_count(1)
-        .base_array_layer(0)
-        .layer_count(1);
-    let create_info = vk::ImageViewCreateInfo::default()
-        .image(画像)
-        .view_type(形.ビュー種別())
-        .format(大気のベイク済み画像形式)
-        .subresource_range(部分範囲);
+fn 画像ビューを作る(確保係: &GPU資源の確保係<'_>, 画像: vk::Image, 形: 大気のベイク済み画像の形) -> Result<vk::ImageView, レンダラーエラー> {
+    let 部分範囲 = vk::ImageSubresourceRange::default().aspect_mask(vk::ImageAspectFlags::COLOR).base_mip_level(0).level_count(1).base_array_layer(0).layer_count(1);
+    let create_info = vk::ImageViewCreateInfo::default().image(画像).view_type(形.ビュー種別()).format(大気のベイク済み画像形式).subresource_range(部分範囲);
     確保係.画像の見え方から画像ビューを確保する(&create_info)
 }

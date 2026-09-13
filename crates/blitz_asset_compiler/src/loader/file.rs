@@ -10,11 +10,8 @@ use crate::error::アセットコンパイルエラー;
 ///
 /// 前提: `uri`は`data:`スキームでないことを呼び出し側が確認済み
 /// (data URIは未対応として個別の型付きエラーで扱う)。
-pub(super) fn 外部ファイルを読む(
-    基準ディレクトリ: &Path, uri: &str
-) -> Result<(Vec<u8>, PathBuf), アセットコンパイルエラー> {
+pub(super) fn 外部ファイルを読む(基準ディレクトリ: &Path, uri: &str) -> Result<(Vec<u8>, PathBuf), アセットコンパイルエラー> {
     let パス = 基準ディレクトリ.join(uri);
-    let バイト列 =
-        std::fs::read(&パス).map_err(|誤り| アセットコンパイルエラー::ファイル読込失敗(format!("{}: {誤り}", パス.display())))?;
+    let バイト列 = std::fs::read(&パス).map_err(|誤り| アセットコンパイルエラー::ファイル読込失敗(format!("{}: {誤り}", パス.display())))?;
     Ok((バイト列, パス))
 }

@@ -20,13 +20,8 @@ use crate::error::起動エラー;
 use crate::game::ゲームの終了要求;
 
 impl アプリ {
-    pub(in crate::app) fn この描画の刻み数だけゲームを進める(
-        &mut self,
-        刻み数: 進める刻み数,
-    ) -> Result<ゲームの終了要求, 起動エラー> {
-        let Some(mut 刻みごとの操作入力) =
-            self.ゲーム配線.この描画で進める刻みへ配る操作入力を確定する(&mut self.入力状態, 刻み数)
-        else {
+    pub(in crate::app) fn この描画の刻み数だけゲームを進める(&mut self, 刻み数: 進める刻み数) -> Result<ゲームの終了要求, 起動エラー> {
+        let Some(mut 刻みごとの操作入力) = self.ゲーム配線.この描画で進める刻みへ配る操作入力を確定する(&mut self.入力状態, 刻み数) else {
             return Ok(ゲームの終了要求::続ける);
         };
         let カメラのヨー = self.カメラ.ヨー();

@@ -55,10 +55,7 @@ fn 種を持たない台帳の綴りが固定の書式と一致する() {
         内容ハッシュ::バイト列から求める(b"bake options"),
     );
     let 綴り = 生成台帳の本文::組み立てる(見出し, &BTreeMap::new());
-    assert_eq!(
-        綴り.綴り(),
-        "blitz_generation_ledger 1\nseed none\ngenerator_version 1\ngenerator_image dd041024dfeb38eb\nbake_options 4fb560225adbe2fe\n"
-    );
+    assert_eq!(綴り.綴り(), "blitz_generation_ledger 1\nseed none\ngenerator_version 1\ngenerator_image dd041024dfeb38eb\nbake_options 4fb560225adbe2fe\n");
 }
 
 /// 固定した綴りが今の解析でそのまま読めることも確かめる。書式だけを変えて解析を直し忘れる退行を止める。

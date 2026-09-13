@@ -9,9 +9,7 @@ use std::process::Command;
 
 const ビン名: &str = "bake_one_building";
 
-pub(super) fn 編集サーバーのビンで書き出す(
-    リポジトリルート: &Path, 建物定義の識別子: &str, 引数一覧: &[String]
-) -> Result<(), String> {
+pub(super) fn 編集サーバーのビンで書き出す(リポジトリルート: &Path, 建物定義の識別子: &str, 引数一覧: &[String]) -> Result<(), String> {
     let 終了状態 = Command::new("cargo")
         .args(["run", "-p", "editor_server", "--bin", ビン名, "--"])
         .arg(建物定義の識別子)

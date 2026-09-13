@@ -8,9 +8,7 @@ pub struct ストリーミングメモリ量 {
 
 impl ストリーミングメモリ量 {
     pub fn 生成する(ramバイト数: u64, vramバイト数: u64) -> Self {
-        Self {
-            ramバイト数, vramバイト数
-        }
+        Self { ramバイト数, vramバイト数 }
     }
 
     pub(super) fn 加算する(self, 追加: Self) -> Option<Self> {

@@ -8,13 +8,6 @@ use ash::vk;
 #[derive(Clone, Copy)]
 pub(crate) enum 結ぶ現物 {
     バッファ全体(vk::Buffer),
-    サンプラー付きの画像 {
-        ビュー: vk::ImageView,
-        サンプラー: vk::Sampler,
-        レイアウト: vk::ImageLayout,
-    },
-    サンプラー無しの画像 {
-        ビュー: vk::ImageView,
-        レイアウト: vk::ImageLayout,
-    },
+    サンプラー付きの画像 { ビュー: vk::ImageView, サンプラー: vk::Sampler, レイアウト: vk::ImageLayout },
+    サンプラー無しの画像 { ビュー: vk::ImageView, レイアウト: vk::ImageLayout },
 }

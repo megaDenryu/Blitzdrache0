@@ -19,8 +19,7 @@ use super::violation::違反;
 pub fn 全シェーダーの原文の形を検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
     for 契約 in &table::契約一覧 {
-        let 内容 = std::fs::read_to_string(Path::new(契約.パス))
-            .map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(契約.パス), 誤り))?;
+        let 内容 = std::fs::read_to_string(Path::new(契約.パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(契約.パス), 誤り))?;
         違反一覧.extend(ファイル1つを検査する(契約, &内容));
     }
     Ok(違反一覧)
@@ -31,20 +30,13 @@ fn ファイル1つを検査する(契約: &table::原文の形の契約, 内容
     let mut 違反一覧 = Vec::new();
     for 綴り in 契約.在るべき綴り一覧 {
         if !コード行一覧.iter().any(|行| 行.contains(綴り)) {
-            違反一覧.push(違反::ファイル単位(
-                PathBuf::from(契約.パス),
-                format!("在るべき綴り「{綴り}」がコードの行に無い({})", 契約.守るもの),
-            ));
+            違反一覧.push(違反::ファイル単位(PathBuf::from(契約.パス), format!("在るべき綴り「{綴り}」がコードの行に無い({})", 契約.守るもの)));
         }
     }
     for (添字, コード行) in コード行一覧.iter().enumerate() {
         for 綴り in 契約.在ってはならない綴り一覧 {
             if コード行.contains(綴り) {
-                違反一覧.push(違反::行単位(
-                    PathBuf::from(契約.パス),
-                    添字 + 1,
-                    format!("在ってはならない綴り「{綴り}」を書き戻している({})", 契約.守るもの),
-                ));
+                違反一覧.push(違反::行単位(PathBuf::from(契約.パス), 添字 + 1, format!("在ってはならない綴り「{綴り}」を書き戻している({})", 契約.守るもの)));
             }
         }
     }

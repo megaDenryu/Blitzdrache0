@@ -53,9 +53,7 @@ impl 構築の由来 {
         let 未追跡の出力 = capture::gitの出力("ls-files", &["--others", "--exclude-standard"]);
         Self {
             基準コミット: capture::gitの出力("rev-parse", &["--short", "HEAD"]).unwrap_or_else(|| "読めない".to_string()),
-            追跡済みの変更: 差分の有無::gitの出力から決める(
-                capture::gitの出力("status", &["--porcelain", "--untracked-files=no"]),
-            ),
+            追跡済みの変更: 差分の有無::gitの出力から決める(capture::gitの出力("status", &["--porcelain", "--untracked-files=no"])),
             未追跡のファイル: 差分の有無::gitの出力から決める(未追跡の出力.clone()),
             未追跡のパス一覧: capture::行ごとのパス(未追跡の出力.as_ref()),
             実行ファイルの更新時刻: 更新時刻,

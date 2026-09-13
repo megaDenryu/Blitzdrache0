@@ -16,12 +16,5 @@ struct 失敗応答本文 {
 }
 
 pub fn 失敗応答を組み立てる(状態: StatusCode, 種別: &str, 説明: String) -> Response {
-    (
-        状態,
-        Json(失敗応答本文 {
-            種別: 種別.to_string(),
-            説明,
-        }),
-    )
-        .into_response()
+    (状態, Json(失敗応答本文 { 種別: 種別.to_string(), 説明 })).into_response()
 }

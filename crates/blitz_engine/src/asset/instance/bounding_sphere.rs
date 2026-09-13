@@ -13,9 +13,7 @@ pub struct 境界球 {
 impl 境界球 {
     pub fn 生成する(中心: [f32; 3], 半径: f32) -> Result<Self, インスタンス群エラー> {
         if !中心.iter().all(|値| 値.is_finite()) {
-            return Err(インスタンス群エラー::非有限成分 {
-                成分: "境界球の中心"
-            });
+            return Err(インスタンス群エラー::非有限成分 { 成分: "境界球の中心" });
         }
         if !半径.is_finite() || 半径 <= 0.0 {
             return Err(インスタンス群エラー::境界球半径不正);

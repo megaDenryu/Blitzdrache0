@@ -45,8 +45,7 @@ impl 遠方環境の立方体画像 {
     /// この画像では読まれない。
     pub(in crate::vulkan) fn グラフへ渡す寸法(&self) -> vk::Extent2D {
         vk::Extent2D {
-            width: self.面の一辺,
-            height: self.面の一辺,
+            width: self.面の一辺, height: self.面の一辺
         }
     }
 

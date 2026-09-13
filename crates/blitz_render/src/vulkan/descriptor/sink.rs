@@ -29,52 +29,25 @@ impl<'書き込み> ディスクリプタの書き込み先<'書き込み> {
         self.バッファの先頭からの範囲を結ぶ(番号, 種別, buffer, vk::WHOLE_SIZE);
     }
 
-    pub(super) fn バッファの先頭からの範囲を結ぶ(
-        &self,
-        番号: 束縛番号,
-        種別: vk::DescriptorType,
-        buffer: vk::Buffer,
-        範囲: vk::DeviceSize,
-    ) {
+    pub(super) fn バッファの先頭からの範囲を結ぶ(&self, 番号: 束縛番号, 種別: vk::DescriptorType, buffer: vk::Buffer, 範囲: vk::DeviceSize) {
         let 情報一覧 = [vk::DescriptorBufferInfo::default().buffer(buffer).offset(0).range(範囲)];
-        let 書き込み一覧 = [vk::WriteDescriptorSet::default()
-            .dst_set(self.セット)
-            .dst_binding(番号.gpu境界値())
-            .dst_array_element(0)
-            .descriptor_type(種別)
-            .buffer_info(&情報一覧)];
+        let 書き込み一覧 = [vk::WriteDescriptorSet::default().dst_set(self.セット).dst_binding(番号.gpu境界値()).dst_array_element(0).descriptor_type(種別).buffer_info(&情報一覧)];
         self.書き込みを送る(&書き込み一覧);
     }
 
-    pub(super) fn サンプラー付きの画像を結ぶ(
-        &self,
-        番号: 束縛番号,
-        ビュー: vk::ImageView,
-        サンプラー: vk::Sampler,
-        レイアウト: vk::ImageLayout,
-    ) {
-        let 情報一覧 = [vk::DescriptorImageInfo::default()
-            .sampler(サンプラー)
-            .image_view(ビュー)
-            .image_layout(レイアウト)];
+    pub(super) fn サンプラー付きの画像を結ぶ(&self, 番号: 束縛番号, ビュー: vk::ImageView, サンプラー: vk::Sampler, レイアウト: vk::ImageLayout) {
+        let 情報一覧 = [vk::DescriptorImageInfo::default().sampler(サンプラー).image_view(ビュー).image_layout(レイアウト)];
         self.画像の並びを結ぶ(番号, vk::DescriptorType::COMBINED_IMAGE_SAMPLER, &情報一覧);
     }
 
     /// 配列の束縛先へ先頭から順に結ぶ。並びが空なら1件も書かず、要素を部分束縛のまま未書込で残す。
-    pub(super) fn サンプラー無しの画像の並びを結ぶ(
-        &self, 番号: 束縛番号, ビュー一覧: &[vk::ImageView], レイアウト: vk::ImageLayout
-    ) {
-        let 情報一覧: Vec<vk::DescriptorImageInfo> = ビュー一覧
-            .iter()
-            .map(|ビュー| vk::DescriptorImageInfo::default().image_view(*ビュー).image_layout(レイアウト))
-            .collect();
+    pub(super) fn サンプラー無しの画像の並びを結ぶ(&self, 番号: 束縛番号, ビュー一覧: &[vk::ImageView], レイアウト: vk::ImageLayout) {
+        let 情報一覧: Vec<vk::DescriptorImageInfo> = ビュー一覧.iter().map(|ビュー| vk::DescriptorImageInfo::default().image_view(*ビュー).image_layout(レイアウト)).collect();
         self.画像の並びを結ぶ(番号, vk::DescriptorType::SAMPLED_IMAGE, &情報一覧);
     }
 
     /// サンプラーを伴わない1枚の画像を、指定された種別のまま結ぶ。
-    pub(super) fn 画像1枚を結ぶ(
-        &self, 番号: 束縛番号, 種別: vk::DescriptorType, ビュー: vk::ImageView, レイアウト: vk::ImageLayout
-    ) {
+    pub(super) fn 画像1枚を結ぶ(&self, 番号: 束縛番号, 種別: vk::DescriptorType, ビュー: vk::ImageView, レイアウト: vk::ImageLayout) {
         let 情報一覧 = [vk::DescriptorImageInfo::default().image_view(ビュー).image_layout(レイアウト)];
         self.画像の並びを結ぶ(番号, 種別, &情報一覧);
     }
@@ -83,12 +56,7 @@ impl<'書き込み> ディスクリプタの書き込み先<'書き込み> {
         if 情報一覧.is_empty() {
             return;
         }
-        let 書き込み一覧 = [vk::WriteDescriptorSet::default()
-            .dst_set(self.セット)
-            .dst_binding(番号.gpu境界値())
-            .dst_array_element(0)
-            .descriptor_type(種別)
-            .image_info(情報一覧)];
+        let 書き込み一覧 = [vk::WriteDescriptorSet::default().dst_set(self.セット).dst_binding(番号.gpu境界値()).dst_array_element(0).descriptor_type(種別).image_info(情報一覧)];
         self.書き込みを送る(&書き込み一覧);
     }
 

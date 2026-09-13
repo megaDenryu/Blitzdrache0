@@ -26,11 +26,7 @@ pub fn 引数へ分ける(綴り: &str) -> Vec<String> {
         直前 = 文字;
     }
     引数一覧.push(現在);
-    引数一覧
-        .into_iter()
-        .map(|引数| 引数.trim().to_string())
-        .filter(|引数| !引数.is_empty())
-        .collect()
+    引数一覧.into_iter().map(|引数| 引数.trim().to_string()).filter(|引数| !引数.is_empty()).collect()
 }
 
 pub fn 丸ごと受け取る型の名前(引数: &str) -> Option<String> {
@@ -50,10 +46,7 @@ fn 寿命注釈を飛ばす(綴り: &str) -> &str {
 
 /// 経路の末尾の区切りだけを型名として読む。名前の後ろに山括弧以外が続く綴りは、丸ごと受け取る形でないため落とす。
 fn 経路の末尾の型名(綴り: &str) -> Option<String> {
-    let 先頭: String = 綴り
-        .chars()
-        .take_while(|文字| 文字.is_alphanumeric() || *文字 == '_' || *文字 == ':')
-        .collect();
+    let 先頭: String = 綴り.chars().take_while(|文字| 文字.is_alphanumeric() || *文字 == '_' || *文字 == ':').collect();
     let 残り = 綴り.get(先頭.len()..)?.trim();
     if !残り.is_empty() && !残り.starts_with('<') {
         return None;

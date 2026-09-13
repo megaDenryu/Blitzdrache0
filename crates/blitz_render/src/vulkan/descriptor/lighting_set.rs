@@ -34,10 +34,7 @@ pub(crate) const 方向光列の束縛番号: 束縛番号 = 束縛番号::生�
 pub(crate) const 局所光列の束縛番号: 束縛番号 = 束縛番号::生成する(3);
 
 /// 束縛レイアウトの選択肢ごとに宣言するバインドの並びを変える。定数近似の選択肢へ未使用のダミー束縛を強制しない。
-pub(super) fn レイアウトを生成する(
-    device: &ash::Device,
-    束縛レイアウト: 照明束縛レイアウト,
-) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
+pub(super) fn レイアウトを生成する(device: &ash::Device, 束縛レイアウト: 照明束縛レイアウト) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
     let mut バインド一覧 = vec![
         画素段のバインド(シャドウマップの束縛番号, vk::DescriptorType::COMBINED_IMAGE_SAMPLER),
         画素段のバインド(ヘッダの束縛番号, vk::DescriptorType::UNIFORM_BUFFER),

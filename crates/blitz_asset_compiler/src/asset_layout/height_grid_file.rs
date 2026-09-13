@@ -38,8 +38,7 @@ impl 高さ格子のファイル {
 
     pub fn 書き出す(&self, バイト列: &[u8]) -> Result<(), アセット配置エラー> {
         std::fs::write(&self.0, バイト列).map_err(|誤り| アセット配置エラー::ファイルへ書き出せなかった {
-            パス: self.0.clone(),
-            事由: 誤り.to_string(),
+            パス: self.0.clone(), 事由: 誤り.to_string()
         })
     }
 }

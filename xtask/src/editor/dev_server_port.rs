@@ -22,13 +22,7 @@ impl 開発サーバーの待ち受け口 {
     pub(crate) fn vite設定から読み取る(置き場: &エディター画面の置き場) -> Option<Self> {
         let 設定 = std::fs::read_to_string(置き場.vite設定のパス()).ok()?;
         let 行 = 設定.lines().find(|行| 行.trim_start().starts_with("port:"))?;
-        let 数字の並び: String = 行
-            .trim_start()
-            .trim_start_matches("port:")
-            .trim_start()
-            .chars()
-            .take_while(char::is_ascii_digit)
-            .collect();
+        let 数字の並び: String = 行.trim_start().trim_start_matches("port:").trim_start().chars().take_while(char::is_ascii_digit).collect();
         数字の並び.parse().ok().map(|番号| Self { 番号 })
     }
 

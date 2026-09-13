@@ -10,37 +10,17 @@ use crate::vulkan::graph::buffer_state::バッファ状態;
 /// バッファ用途から、その用途でバッファを使うときのVulkan同期状態を導く。
 pub(crate) fn 状態へ写像する(用途: バッファ用途) -> バッファ状態 {
     match 用途 {
-        バッファ用途::頂点読み => {
-            バッファ状態::生成する(vk::PipelineStageFlags2::VERTEX_INPUT, vk::AccessFlags2::VERTEX_ATTRIBUTE_READ)
-        }
-        バッファ用途::インデックス読み => {
-            バッファ状態::生成する(vk::PipelineStageFlags2::INDEX_INPUT, vk::AccessFlags2::INDEX_READ)
-        }
-        バッファ用途::シェーダー定数読み => バッファ状態::生成する(
-            vk::PipelineStageFlags2::VERTEX_SHADER | vk::PipelineStageFlags2::FRAGMENT_SHADER,
-            vk::AccessFlags2::UNIFORM_READ,
-        ),
-        バッファ用途::コンピュート読み => {
-            バッファ状態::生成する(vk::PipelineStageFlags2::COMPUTE_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ)
-        }
-        バッファ用途::コンピュート書き => {
-            バッファ状態::生成する(vk::PipelineStageFlags2::COMPUTE_SHADER, vk::AccessFlags2::SHADER_STORAGE_WRITE)
-        }
-        バッファ用途::コンピュート読み書き => バッファ状態::生成する(
-            vk::PipelineStageFlags2::COMPUTE_SHADER,
-            vk::AccessFlags2::SHADER_STORAGE_READ | vk::AccessFlags2::SHADER_STORAGE_WRITE,
-        ),
-        バッファ用途::画素段シェーダー読み => {
-            バッファ状態::生成する(vk::PipelineStageFlags2::FRAGMENT_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ)
-        }
-        バッファ用途::頂点段シェーダー読み => {
-            バッファ状態::生成する(vk::PipelineStageFlags2::VERTEX_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ)
-        }
+        バッファ用途::頂点読み => バッファ状態::生成する(vk::PipelineStageFlags2::VERTEX_INPUT, vk::AccessFlags2::VERTEX_ATTRIBUTE_READ),
+        バッファ用途::インデックス読み => バッファ状態::生成する(vk::PipelineStageFlags2::INDEX_INPUT, vk::AccessFlags2::INDEX_READ),
+        バッファ用途::シェーダー定数読み => バッファ状態::生成する(vk::PipelineStageFlags2::VERTEX_SHADER | vk::PipelineStageFlags2::FRAGMENT_SHADER, vk::AccessFlags2::UNIFORM_READ),
+        バッファ用途::コンピュート読み => バッファ状態::生成する(vk::PipelineStageFlags2::COMPUTE_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ),
+        バッファ用途::コンピュート書き => バッファ状態::生成する(vk::PipelineStageFlags2::COMPUTE_SHADER, vk::AccessFlags2::SHADER_STORAGE_WRITE),
+        バッファ用途::コンピュート読み書き => バッファ状態::生成する(vk::PipelineStageFlags2::COMPUTE_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ | vk::AccessFlags2::SHADER_STORAGE_WRITE),
+        バッファ用途::画素段シェーダー読み => バッファ状態::生成する(vk::PipelineStageFlags2::FRAGMENT_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ),
+        バッファ用途::頂点段シェーダー読み => バッファ状態::生成する(vk::PipelineStageFlags2::VERTEX_SHADER, vk::AccessFlags2::SHADER_STORAGE_READ),
         バッファ用途::転送元 => バッファ状態::生成する(vk::PipelineStageFlags2::COPY, vk::AccessFlags2::TRANSFER_READ),
         バッファ用途::転送先 => バッファ状態::生成する(vk::PipelineStageFlags2::COPY, vk::AccessFlags2::TRANSFER_WRITE),
-        バッファ用途::消去の書き込み => {
-            バッファ状態::生成する(vk::PipelineStageFlags2::CLEAR, vk::AccessFlags2::TRANSFER_WRITE)
-        }
+        バッファ用途::消去の書き込み => バッファ状態::生成する(vk::PipelineStageFlags2::CLEAR, vk::AccessFlags2::TRANSFER_WRITE),
     }
 }
 

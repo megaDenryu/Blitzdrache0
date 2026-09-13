@@ -6,10 +6,7 @@ use std::path::Path;
 use super::宣言の間のコメント行を検査する;
 
 fn 違反の行番号(内容: &str) -> Vec<usize> {
-    宣言の間のコメント行を検査する(Path::new("試験.rs"), 内容)
-        .into_iter()
-        .filter_map(|違反| 違反.行番号)
-        .collect()
+    宣言の間のコメント行を検査する(Path::new("試験.rs"), 内容).into_iter().filter_map(|違反| 違反.行番号).collect()
 }
 
 #[test]

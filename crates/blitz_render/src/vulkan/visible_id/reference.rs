@@ -13,9 +13,7 @@ pub(crate) struct 可視ID列参照 {
 
 impl 可視ID列参照 {
     pub(super) fn 生成する(スロット別バッファ: [vk::Buffer; 進行中フレーム数], 範囲: vk::DeviceSize) -> Self {
-        Self {
-            スロット別バッファ, 範囲
-        }
+        Self { スロット別バッファ, 範囲 }
     }
 
     pub(crate) fn buffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {

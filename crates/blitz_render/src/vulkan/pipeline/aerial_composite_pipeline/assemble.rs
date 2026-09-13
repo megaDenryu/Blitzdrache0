@@ -24,22 +24,13 @@ pub(super) fn 空中遠近合成の固定機能を組み立てる(
     画素段モジュール: vk::ShaderModule,
 ) -> Result<空中遠近合成パイプライン, レンダラーエラー> {
     let ステージ一覧 = [
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::VERTEX)
-            .module(頂点モジュール)
-            .name(頂点エントリ名),
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::FRAGMENT)
-            .module(画素段モジュール)
-            .name(画素段エントリ名),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::VERTEX).module(頂点モジュール).name(頂点エントリ名),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::FRAGMENT).module(画素段モジュール).name(画素段エントリ名),
     ];
     let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default();
     let 入力アセンブリstate = vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::TRIANGLE_LIST);
     let ビューポートstate = vk::PipelineViewportStateCreateInfo::default().viewport_count(1).scissor_count(1);
-    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default()
-        .polygon_mode(vk::PolygonMode::FILL)
-        .cull_mode(vk::CullModeFlags::NONE)
-        .line_width(1.0);
+    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default().polygon_mode(vk::PolygonMode::FILL).cull_mode(vk::CullModeFlags::NONE).line_width(1.0);
     let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
     let カラーブレンドアタッチメント一覧 = [vk::PipelineColorBlendAttachmentState::default()
         .color_write_mask(vk::ColorComponentFlags::R | vk::ColorComponentFlags::G | vk::ColorComponentFlags::B)
@@ -54,13 +45,8 @@ pub(super) fn 空中遠近合成の固定機能を組み立てる(
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
-    let プッシュ定数範囲一覧 = [vk::PushConstantRange::default()
-        .stage_flags(vk::ShaderStageFlags::FRAGMENT)
-        .offset(0)
-        .size(super::即時定数バイト数)];
-    let layout_create_info = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(ディスクリプタlayout一覧)
-        .push_constant_ranges(&プッシュ定数範囲一覧);
+    let プッシュ定数範囲一覧 = [vk::PushConstantRange::default().stage_flags(vk::ShaderStageFlags::FRAGMENT).offset(0).size(super::即時定数バイト数)];
+    let layout_create_info = vk::PipelineLayoutCreateInfo::default().set_layouts(ディスクリプタlayout一覧).push_constant_ranges(&プッシュ定数範囲一覧);
     // 安全性: deviceは生成済みで有効。layout_create_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };
 

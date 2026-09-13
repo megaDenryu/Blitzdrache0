@@ -16,9 +16,7 @@ use super::buffer::読み戻しバッファ;
 use super::target::読み戻し対象;
 use crate::error::レンダラーエラー;
 use crate::numeric::half_precision::半精度を単精度へ;
-use crate::readback_image::{
-    HDR読み戻し画像, 動きベクトル読み戻し画像, 局所可視度読み戻し画像, 深度読み戻し画像, 読み戻し画像
-};
+use crate::readback_image::{HDR読み戻し画像, 動きベクトル読み戻し画像, 局所可視度読み戻し画像, 深度読み戻し画像, 読み戻し画像};
 
 #[derive(Clone, Copy)]
 pub(crate) struct 読み戻し画像の読み出し元<'読み出し> {
@@ -29,30 +27,20 @@ pub(crate) struct 読み戻し画像の読み出し元<'読み出し> {
 
 impl<'読み出し> 読み戻し画像の読み出し元<'読み出し> {
     /// 前提: バッファの容量は寸法と対象のぶんを満たしており、そこへのコピーはフェンス待機で完了済みである。
-    pub(crate) const fn 生成する(
-        device: &'読み出し ash::Device, バッファ: &'読み出し 読み戻しバッファ, 寸法: vk::Extent2D
-    ) -> Self {
-        Self {
-            device, バッファ, 寸法
-        }
+    pub(crate) const fn 生成する(device: &'読み出し ash::Device, バッファ: &'読み出し 読み戻しバッファ, 寸法: vk::Extent2D) -> Self {
+        Self { device, バッファ, 寸法 }
     }
 
     /// 提示画像を8ビット4成分のRGBA並びへ開く。スワップチェーンの形式がBGRA並びのときだけ成分を入れ替える。
     pub(crate) fn 提示画像として開く(&self, 形式: vk::Format) -> Result<読み戻し画像, レンダラーエラー> {
         let 生データ = self.バイト列を写し取る(読み戻し対象::提示画像)?;
-        let rgba = if pixel_order::bgra形式か(形式) {
-            pixel_order::赤と青を入れ替える(&生データ)
-        } else {
-            生データ
-        };
+        let rgba = if pixel_order::bgra形式か(形式) { pixel_order::赤と青を入れ替える(&生データ) } else { 生データ };
         Ok(読み戻し画像::生成する(self.寸法.width, self.寸法.height, rgba))
     }
 
     /// 半精度4成分のバイト列を単精度の成分列へ開く。半精度の意味づけ(非正規化数・無限大・非数)を知るのはGPU境界のこの層だけであり、読み手がもう1つ復号を持つと丸めの食い違いが検収の差に化けるため、開いた形で外へ渡す。
     /// 対象を引数で受けるのは、圧縮前のHDRと今のフレームの色が同じ形式・同じ並びであり、開き方を2つ持つ理由が無いためである。
-    pub(crate) fn 半精度四成分の画像として開く(
-        &self, 対象: 読み戻し対象
-    ) -> Result<HDR読み戻し画像, レンダラーエラー> {
+    pub(crate) fn 半精度四成分の画像として開く(&self, 対象: 読み戻し対象) -> Result<HDR読み戻し画像, レンダラーエラー> {
         let 成分 = self.半精度の成分列へ開く(対象)?;
         Ok(HDR読み戻し画像::生成する(self.寸法.width, self.寸法.height, 成分))
     }
@@ -60,10 +48,7 @@ impl<'読み出し> 読み戻し画像の読み出し元<'読み出し> {
     /// 単精度1成分のバイト列を深度の列へ開く。D32_SFLOATのビット列をそのまま単精度として読むだけであり、値を丸め直さない。
     pub(crate) fn 深度画像として開く(&self) -> Result<深度読み戻し画像, レンダラーエラー> {
         let 生データ = self.バイト列を写し取る(読み戻し対象::最終深度)?;
-        let 深度 = 生データ
-            .chunks_exact(4)
-            .map(|四つ| f32::from_le_bytes([四つ[0], 四つ[1], 四つ[2], 四つ[3]]))
-            .collect();
+        let 深度 = 生データ.chunks_exact(4).map(|四つ| f32::from_le_bytes([四つ[0], 四つ[1], 四つ[2], 四つ[3]])).collect();
         Ok(深度読み戻し画像::生成する(self.寸法.width, self.寸法.height, 深度))
     }
 
@@ -77,19 +62,12 @@ impl<'読み出し> 読み戻し画像の読み出し元<'読み出し> {
     /// 半精度2成分のバイト列を単精度の成分列へ開く。並びは画素ごとに横・縦の2つであり、正規化装置座標の差分そのものである。
     pub(crate) fn 動きベクトルの画像として開く(&self) -> Result<動きベクトル読み戻し画像, レンダラーエラー> {
         let 成分 = self.半精度の成分列へ開く(読み戻し対象::動きベクトル)?;
-        Ok(動きベクトル読み戻し画像::生成する(
-            self.寸法.width,
-            self.寸法.height,
-            成分,
-        ))
+        Ok(動きベクトル読み戻し画像::生成する(self.寸法.width, self.寸法.height, 成分))
     }
 
     fn 半精度の成分列へ開く(&self, 対象: 読み戻し対象) -> Result<Vec<f32>, レンダラーエラー> {
         let 生データ = self.バイト列を写し取る(対象)?;
-        Ok(生データ
-            .chunks_exact(2)
-            .map(|対| 半精度を単精度へ(u16::from_le_bytes([対[0], 対[1]])))
-            .collect())
+        Ok(生データ.chunks_exact(2).map(|対| 半精度を単精度へ(u16::from_le_bytes([対[0], 対[1]]))).collect())
     }
 
     fn バイト列を写し取る(&self, 対象: 読み戻し対象) -> Result<Vec<u8>, レンダラーエラー> {

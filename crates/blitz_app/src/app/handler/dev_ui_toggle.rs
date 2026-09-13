@@ -10,13 +10,12 @@ impl アプリ {
     /// F3キー押下(リピートでない立ち上がりのみ)で開発用UIをトグルする。
     pub(super) fn f3押下を確認する(&mut self, event: &WindowEvent) {
         let WindowEvent::KeyboardInput {
-            event:
-                KeyEvent {
-                    physical_key: PhysicalKey::Code(KeyCode::F3),
-                    state: ElementState::Pressed,
-                    repeat: false,
-                    ..
-                },
+            event: KeyEvent {
+                physical_key: PhysicalKey::Code(KeyCode::F3),
+                state: ElementState::Pressed,
+                repeat: false,
+                ..
+            },
             ..
         } = event
         else {

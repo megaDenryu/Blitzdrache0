@@ -8,9 +8,7 @@ use crate::texture_material::{テクスチャ用途, テクスチャ素材};
 use crate::vulkan::material_table::capacity::テクスチャ表レイアウト容量;
 use crate::vulkan::material_table::fallback_usage::正準フォールバック用途;
 use crate::vulkan::material_table::stage_reserve::画素段の予約枠;
-use crate::vulkan::material_table::{
-    image_id::画像ID, material_id::大域材質ID, pack_input::梱包対象材質, texture_id::テクスチャID, texture_spec::テクスチャ指定,
-};
+use crate::vulkan::material_table::{image_id::画像ID, material_id::大域材質ID, pack_input::梱包対象材質, texture_id::テクスチャID, texture_spec::テクスチャ指定};
 use crate::vulkan::material_variant::シェーディングモデル種別;
 
 pub(super) fn 検査用素材(用途: テクスチャ用途) -> テクスチャ素材 {
@@ -45,12 +43,7 @@ pub(super) fn 材質を作る<'素材>(番号: u64, ベースカラー: Option<&
 }
 
 /// テクスチャIDと画像IDを別々に選べるベースカラー付きの材質。重複除去と衝突の検査が使う。
-pub(super) fn 画像を選んだ材質<'素材>(
-    材質番号: u64,
-    テクスチャ番号: u64,
-    画像番号: u64,
-    素材: &'素材 テクスチャ素材,
-) -> 梱包対象材質<'素材> {
+pub(super) fn 画像を選んだ材質<'素材>(材質番号: u64, テクスチャ番号: u64, 画像番号: u64, 素材: &'素材 テクスチャ素材) -> 梱包対象材質<'素材> {
     let 指定 = テクスチャ指定::生成する(テクスチャID::生成する(テクスチャ番号), 画像ID::生成する(画像番号), 素材);
     梱包対象材質::生成する(
         大域材質ID::生成する(材質番号),

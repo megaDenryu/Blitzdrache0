@@ -21,10 +21,7 @@ pub(crate) enum 実表示計測 {
     要求していない,
     拡張が無い,
     機能が無効,
-    使用可能 {
-        待機: ash::khr::present_wait::Device,
-        記録: Option<表示時刻記録>,
-    },
+    使用可能 { 待機: ash::khr::present_wait::Device, 記録: Option<表示時刻記録> },
 }
 
 impl 実表示計測 {
@@ -66,10 +63,7 @@ impl 実表示計測 {
     }
 
     pub(crate) fn 表示を待って記録する(&mut self, swapchain: vk::SwapchainKHR) -> Result<(), レンダラーエラー> {
-        let Self::使用可能 {
-            待機, 記録: Some(記録)
-        } = self
-        else {
+        let Self::使用可能 { 待機, 記録: Some(記録) } = self else {
             return Ok(());
         };
         wait::表示を待って記録する(待機, 記録, swapchain)

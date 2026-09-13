@@ -30,10 +30,7 @@ impl<'パス> エディターチャンクソースのファイル<'パス> {
     }
 
     /// 本文を版の型として解析する。失敗の綴りをこの1箇所へ集めるため、版ごとに書き分けない。
-    pub(super) fn 版の型として解析する<版の型: for<'本文> Deserialize<'本文>>(
-        &self,
-        本文: &str,
-    ) -> Result<版の型, アセットコンパイルエラー> {
+    pub(super) fn 版の型として解析する<版の型: for<'本文> Deserialize<'本文>>(&self, 本文: &str) -> Result<版の型, アセットコンパイルエラー> {
         serde_json::from_str(本文).map_err(|原因| self.読み込み失敗のエラーを作る(format!("JSONが不正である: {原因}")))
     }
 
@@ -50,17 +47,13 @@ impl<'パス> エディターチャンクソースのファイル<'パス> {
         if 相対パス.is_absolute() || 相対パス.components().any(|成分| !matches!(成分, Component::Normal(_))) {
             return Err(self.読み込み失敗のエラーを作る(format!("素材の相対パスが不正である: {相対}")));
         }
-        let 親 = self
-            .パス
-            .parent()
-            .ok_or_else(|| self.読み込み失敗のエラーを作る("親ディレクトリが無い".to_string()))?;
+        let 親 = self.パス.parent().ok_or_else(|| self.読み込み失敗のエラーを作る("親ディレクトリが無い".to_string()))?;
         Ok(親.join(相対パス))
     }
 
     pub(super) fn 読み込み失敗のエラーを作る(&self, 原因: String) -> アセットコンパイルエラー {
         アセットコンパイルエラー::エディターチャンクソース不正 {
-            パス: self.パス.display().to_string(),
-            原因,
+            パス: self.パス.display().to_string(), 原因
         }
     }
 }

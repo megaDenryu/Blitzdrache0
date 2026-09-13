@@ -33,16 +33,12 @@ pub(crate) struct 描画対象ディスクリプタプール {
 impl 描画対象ディスクリプタプール {
     fn 束ねる(pool: vk::DescriptorPool, ジオメトリset一覧: Vec<vk::DescriptorSet>, 描画対象数: usize) -> Self {
         Self {
-            pool,
-            ジオメトリset一覧,
-            描画対象数,
+            pool, ジオメトリset一覧, 描画対象数
         }
     }
 
     /// 注意: フレームスロット添字を別型にすることで、描画対象添字との入れ替えをコンパイルエラーにする。
-    pub(crate) fn ジオメトリセット(
-        &self, 描画対象添字: usize, フレーム添字: フレームスロット添字
-    ) -> vk::DescriptorSet {
+    pub(crate) fn ジオメトリセット(&self, 描画対象添字: usize, フレーム添字: フレームスロット添字) -> vk::DescriptorSet {
         assert!(描画対象添字 < self.描画対象数, "ジオメトリのセットの描画対象添字が束の配置の外だった");
         match self.ジオメトリset一覧.get(位置を求める(描画対象添字, フレーム添字)) {
             Some(set) => *set,

@@ -26,21 +26,9 @@ pub(in crate::vulkan::frame::record::graph_build) fn 点光源の影を積む<'a
         for 面 in 立方体の全面 {
             let 層番号 = 灯.影資源添字.面の層番号を求める(面);
             let 添字 = usize::try_from(層番号).unwrap_or_else(|_| panic!("点光源の影の層番号がusizeに収まらない: {層番号}"));
-            let 層ビュー = *層別のビュー一覧
-                .get(添字)
-                .unwrap_or_else(|| panic!("点光源の影の層番号{層番号}に対応するビューが無い(層の割り当ての規約が破れている)"));
-            let 描き先 = point_light_shadow_pass::点光源の影の描き先 {
-                画像: 基本.点光源の影,
-                層ビュー,
-            };
-            グラフ.パスを積む(point_light_shadow_pass::点光源の影パスを宣言する(
-                灯,
-                面,
-                描き先,
-                束縛,
-                発行一覧,
-                共有,
-            ));
+            let 層ビュー = *層別のビュー一覧.get(添字).unwrap_or_else(|| panic!("点光源の影の層番号{層番号}に対応するビューが無い(層の割り当ての規約が破れている)"));
+            let 描き先 = point_light_shadow_pass::点光源の影の描き先 { 画像: 基本.点光源の影, 層ビュー };
+            グラフ.パスを積む(point_light_shadow_pass::点光源の影パスを宣言する(灯, 面, 描き先, 束縛, 発行一覧, 共有));
         }
     }
 }

@@ -12,15 +12,6 @@ const 選別エントリ: [エントリ指定; 1] = [エントリ指定 {
     出力ファイル名: "cluster_light_assignment.spv",
 }];
 
-pub(super) fn クラスタ選別のエントリをコンパイルする(
-    slangc: &スラングコンパイラの所在,
-    シェーダーディレクトリ: &Path,
-    出力先ディレクトリ: &Path,
-) -> Result<(), String> {
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("cluster_light_assignment.slang"),
-        出力先ディレクトリ,
-        &選別エントリ,
-    )
+pub(super) fn クラスタ選別のエントリをコンパイルする(slangc: &スラングコンパイラの所在, シェーダーディレクトリ: &Path, 出力先ディレクトリ: &Path) -> Result<(), String> {
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("cluster_light_assignment.slang"), 出力先ディレクトリ, &選別エントリ)
 }

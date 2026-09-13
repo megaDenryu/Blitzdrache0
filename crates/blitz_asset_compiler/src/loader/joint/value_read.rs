@@ -54,9 +54,5 @@ fn 数として解く(値: &Value, キー名: &'static str) -> Result<f32, 接�
     let Value::Number(数) = 値 else {
         return Err(接合点読み取りエラー::値が数でない { キー名 });
     };
-    数.to_string()
-        .parse::<f32>()
-        .ok()
-        .filter(|解いた値| 解いた値.is_finite())
-        .ok_or(接合点読み取りエラー::値が数でない { キー名 })
+    数.to_string().parse::<f32>().ok().filter(|解いた値| 解いた値.is_finite()).ok_or(接合点読み取りエラー::値が数でない { キー名 })
 }

@@ -26,11 +26,7 @@ impl 遠景地形の焼き方 {
     /// 引数の並びからこの指定を取り除き、指定と残りの引数を返す。
     pub fn 引数一覧から取り出す(引数一覧: &[String]) -> (Self, Vec<String>) {
         let 残り: Vec<String> = 引数一覧.iter().filter(|引数| 引数.as_str() != 選択肢の綴り).cloned().collect();
-        if 残り.len() == 引数一覧.len() {
-            (Self::焼かない, 残り)
-        } else {
-            (Self::焼く, 残り)
-        }
+        if 残り.len() == 引数一覧.len() { (Self::焼かない, 残り) } else { (Self::焼く, 残り) }
     }
 
     /// 焼かせる側が引数の並びへ足す綴り。焼かないときは1語も足さない。

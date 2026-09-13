@@ -44,24 +44,16 @@ impl テクスチャ台帳 {
     }
 
     /// アセットのIDを持たない正準フォールバックのためのスロット。IDから解決できないため、用途からの解決は梱包工程だけが持つ。
-    pub(in crate::vulkan::material_table) fn 台帳外のスロットを発番する(
-        &mut self,
-        常駐枚数: 世代の常駐枚数,
-    ) -> Result<テクスチャスロット, 材質資源表エラー> {
+    pub(in crate::vulkan::material_table) fn 台帳外のスロットを発番する(&mut self, 常駐枚数: 世代の常駐枚数) -> Result<テクスチャスロット, 材質資源表エラー> {
         self.発番する(常駐枚数)
     }
 
-    pub(in crate::vulkan::material_table) fn 引き当てる(
-        &mut self,
-        指定: &テクスチャ指定<'_>,
-        役割: 材質テクスチャ役割,
-        常駐枚数: 世代の常駐枚数,
-    ) -> Result<スロットの引き当て, 材質資源表エラー> {
+    pub(in crate::vulkan::material_table) fn 引き当てる(&mut self, 指定: &テクスチャ指定<'_>, 役割: 材質テクスチャ役割, 常駐枚数: 世代の常駐枚数) -> Result<スロットの引き当て, 材質資源表エラー> {
         let 同一性 = 画像同一性::生成する(指定.画像id(), 役割.ビュー契約());
         if let Some((既知の同一性, _)) = self.id別.get(&指定.テクスチャid()) {
             if *既知の同一性 != 同一性 {
                 return Err(材質資源表エラー::テクスチャIDの衝突 {
-                    テクスチャid: 指定.テクスチャid().値(),
+                    テクスチャid: 指定.テクスチャid().値()
                 });
             }
             return Ok(スロットの引き当て::既に常駐している);

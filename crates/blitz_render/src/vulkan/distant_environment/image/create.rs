@@ -8,9 +8,7 @@ use crate::error::レンダラーエラー;
 use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::allocator::GPU資源の確保係;
 
-pub(super) fn 生成する(
-    確保係: &GPU資源の確保係<'_>, 面の一辺: u32
-) -> Result<遠方環境の立方体画像, レンダラーエラー> {
+pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, 面の一辺: u32) -> Result<遠方環境の立方体画像, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let 画像 = 遠方環境の立方体画像を作る(確保係, 面の一辺)?;
     let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(画像, GPUメモリ用途::描画画像) {
@@ -39,10 +37,7 @@ pub(super) fn 生成する(
 }
 
 /// 書く側の2次元配列ビューと読む側の立方体ビューを順に作る。後者で失敗したら前者をその場で片付ける。
-fn 遠方環境の立方体画像の配列ビューと立方体ビューを作る(
-    確保係: &GPU資源の確保係<'_>,
-    画像: vk::Image,
-) -> Result<[vk::ImageView; 2], レンダラーエラー> {
+fn 遠方環境の立方体画像の配列ビューと立方体ビューを作る(確保係: &GPU資源の確保係<'_>, 画像: vk::Image) -> Result<[vk::ImageView; 2], レンダラーエラー> {
     let 配列ビュー = 遠方環境の立方体画像のビューを作る(確保係, 画像, vk::ImageViewType::TYPE_2D_ARRAY)?;
     match 遠方環境の立方体画像のビューを作る(確保係, 画像, vk::ImageViewType::CUBE) {
         Ok(立方体ビュー) => Ok([配列ビュー, 立方体ビュー]),

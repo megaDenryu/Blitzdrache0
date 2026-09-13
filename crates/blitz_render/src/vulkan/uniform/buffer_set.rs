@@ -17,25 +17,15 @@ pub(super) struct 定数バッファ一式 {
 
 impl 定数バッファ一式 {
     pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, バイト長: usize) -> Result<Self, レンダラーエラー> {
-        let スロットごとのバッファ = 確保係.フレームスロットごとのホスト可視バッファを確保して書き込む(
-            &vec![0u8; バイト長],
-            vk::BufferUsageFlags::UNIFORM_BUFFER,
-        )?;
-        Ok(Self {
-            スロットごとのバッファ
-        })
+        let スロットごとのバッファ = 確保係.フレームスロットごとのホスト可視バッファを確保して書き込む(&vec![0u8; バイト長], vk::BufferUsageFlags::UNIFORM_BUFFER)?;
+        Ok(Self { スロットごとのバッファ })
     }
 
     pub(super) fn フレームスロットのバッファ(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
         self.スロットごとのバッファ.スロットのバッファ(フレーム添字)
     }
 
-    pub(super) fn 書き込む(
-        &self,
-        device: &ash::Device,
-        フレーム添字: フレームスロット添字,
-        バイト列: &[u8],
-    ) -> Result<(), レンダラーエラー> {
+    pub(super) fn 書き込む(&self, device: &ash::Device, フレーム添字: フレームスロット添字, バイト列: &[u8]) -> Result<(), レンダラーエラー> {
         self.スロットごとのバッファ.スロットの中身を書き換える(device, フレーム添字, バイト列)
     }
 

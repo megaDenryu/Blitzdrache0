@@ -22,13 +22,9 @@ use crate::resource::validation_error::資源検証エラー;
 use reference_resolution::コマンドの指し先の解決係;
 
 pub use note_ops::{パターンの打点を全部消す, 打点を消す, 打点を置く, 範囲の打点を消す, 音を伸ばす};
-pub use pattern_ops::{
-    パターンの表示名を変える, パターンの進行を変える, パターンを削除する, パターンを追加する
-};
+pub use pattern_ops::{パターンの表示名を変える, パターンの進行を変える, パターンを削除する, パターンを追加する};
 pub use progression_ops::{独自の進行を保存する, 独自の進行を削除する};
-pub use section_ops::{
-    曲の節を並べ替える, 曲の節を削除する, 曲の節を変える, 曲の節を挿入する, 曲の節を追加する
-};
+pub use section_ops::{曲の節を並べ替える, 曲の節を削除する, 曲の節を変える, 曲の節を挿入する, 曲の節を追加する};
 pub use song_settings_ops::{テンポを変える, ミキサー設定を変える, 楽曲の表示名を変える};
 pub use target::打ち込みの対象;
 pub use track_ops::{トラックの楽器を変える, トラックの進行の割り当てを変える, トラックの音量を変える};

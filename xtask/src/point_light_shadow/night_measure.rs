@@ -42,16 +42,11 @@ pub(super) fn 夜の世界を影付きの件数3つで撮る(実行環境: &描�
         })
         .collect();
     Ok(夜の測り {
-        領域一覧,
-        影付き2件の計器: 二件の計器,
-        絵,
+        領域一覧, 影付き2件の計器: 二件の計器, 絵
     })
 }
 
-fn 夜を一条件で撮る(
-    実行環境: &描画検収の実行環境,
-    影付きの件数: u64,
-) -> Result<(Vec<f64>, 点光源の影の計器, PathBuf), 検収エラー> {
+fn 夜を一条件で撮る(実行環境: &描画検収の実行環境, 影付きの件数: u64) -> Result<(Vec<f64>, 点光源の影の計器, PathBuf), 検収エラー> {
     let 件数文字列 = 影付きの件数.to_string();
     let 実行名の綴り = format!("night_shadow_x{影付きの件数}");
     let 結果 = 実行環境.描いて読み戻す(
@@ -59,21 +54,10 @@ fn 夜を一条件で撮る(
         &run::起動指定を組み立てる(
             world::夜のシーン,
             world::絵の枚数,
-            &[
-                "--sky",
-                "--time-of-day",
-                world::夜の一日内秒,
-                "--point-light-shadow-count",
-                &件数文字列,
-                "--report-draw-issue",
-                "--report-memory",
-            ],
+            &["--sky", "--time-of-day", world::夜の一日内秒, "--point-light-shadow-count", &件数文字列, "--report-draw-issue", "--report-memory"],
         ),
     )?;
-    let 平均輝度一覧 = 夜の判定領域の一覧
-        .iter()
-        .map(|領域| 矩形の平均輝度を採る(結果.画像(), &領域.矩形))
-        .collect::<Result<Vec<f64>, 判定の破れ>>()?;
+    let 平均輝度一覧 = 夜の判定領域の一覧.iter().map(|領域| 矩形の平均輝度を採る(結果.画像(), &領域.矩形)).collect::<Result<Vec<f64>, 判定の破れ>>()?;
     let 計器 = 点光源の影の計器を取り出す(結果.報告(), 影付きの件数)?;
     Ok((平均輝度一覧, 計器, 結果.書き出し先().目視用の絵へ変換する()?))
 }

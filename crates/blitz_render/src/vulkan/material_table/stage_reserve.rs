@@ -29,14 +29,8 @@ impl 画素段の予約枠 {
     }
 
     /// 3つの上限それぞれから予約枠を引き、最も厳しい値を材質テクスチャ表の予算とする。
-    pub(in crate::vulkan::material_table) fn 予算を求める(
-        self, 上限: ディスクリプタ索引上限
-    ) -> Result<u32, 材質資源表エラー> {
-        let 資源合計の予約 = self
-            .表以外の画像ディスクリプタ数
-            .saturating_add(self.バッファのディスクリプタ数)
-            .saturating_add(self.サンプラー数)
-            .saturating_add(self.色添付数);
+    pub(in crate::vulkan::material_table) fn 予算を求める(self, 上限: ディスクリプタ索引上限) -> Result<u32, 材質資源表エラー> {
+        let 資源合計の予約 = self.表以外の画像ディスクリプタ数.saturating_add(self.バッファのディスクリプタ数).saturating_add(self.サンプラー数).saturating_add(self.色添付数);
         let 候補 = [
             (上限.シェーダー段あたりの画像ディスクリプタ数(), self.表以外の画像ディスクリプタ数),
             (上限.セットあたりの画像ディスクリプタ数(), self.表以外の画像ディスクリプタ数),
@@ -45,10 +39,7 @@ impl 画素段の予約枠 {
         let mut 予算 = u32::MAX;
         for (上限値, 予約) in 候補 {
             let Some(残り) = 上限値.checked_sub(予約).filter(|残り| *残り > 0) else {
-                return Err(材質資源表エラー::予算不足 {
-                    予約枚数: 予約,
-                    上限: 上限値,
-                });
+                return Err(材質資源表エラー::予算不足 { 予約枚数: 予約, 上限: 上限値 });
             };
             予算 = 予算.min(残り);
         }

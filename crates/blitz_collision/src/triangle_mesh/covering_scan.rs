@@ -55,9 +55,7 @@ impl<'網> 覆いに触れる三角形の走査<'網> {
     }
 
     // 次の候補の三角形。覆いに触れる葉をすべて出し切ったら値なしを返す。
-    pub(super) fn 次の三角形の番号を取り出す(
-        &mut self,
-    ) -> Result<Option<三角形網の三角形の番号>, 三角形網の問い合わせエラー> {
+    pub(super) fn 次の三角形の番号を取り出す(&mut self) -> Result<Option<三角形網の三角形の番号>, 三角形網の問い合わせエラー> {
         loop {
             if let Some(位置) = self.今の葉の残り.next() {
                 return Ok(Some(self.木.並べ替えの位置が指す三角形(位置)));

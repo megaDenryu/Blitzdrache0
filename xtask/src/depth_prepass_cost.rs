@@ -52,15 +52,13 @@ pub(crate) fn 深度プリパス費用を計測する(引数一覧: &[String]) -
 
 fn 計測する(引数一覧: &[String]) -> Result<String, 深度プリパスの費用計測エラー> {
     let 指定 = plan::引数を読む(引数一覧)?;
-    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::地形世界を既定で生成する()
-    {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::地形世界を既定で生成する() {
         return Err(深度プリパスの費用計測エラー::検証用アセットを生成できなかった);
     }
     let 由来 = crate::release_build::計測用に構築する("depth-prepass-cost").map_err(深度プリパスの費用計測エラー::計測用の構築が失敗した)?;
     let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);
     std::fs::create_dir_all(&出力先).map_err(|誤り| 深度プリパスの費用計測エラー::出力先を作れなかった { 誤り })?;
-    let シェーダー入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先))
-        .map_err(深度プリパスの費用計測エラー::シェーダーの一時コピーを作れなかった)?;
+    let シェーダー入口 = crate::shader_copy::一時コピーを作る(&検証の出力ルート::既定().名前が指す置き場(シェーダーコピー先)).map_err(深度プリパスの費用計測エラー::シェーダーの一時コピーを作れなかった)?;
 
     let 標本一覧 = 周回する(&出力先, &シェーダー入口, &指定)?;
     judgment::値が有限であることを確かめる(&標本一覧)?;
@@ -72,11 +70,7 @@ fn 計測する(引数一覧: &[String]) -> Result<String, 深度プリパスの
     Ok(summary::要約を組む(&観測一覧, &出力先, 指定.フレーム数, &由来))
 }
 
-fn 周回する(
-    出力先: &Path,
-    シェーダー入口: &Path,
-    指定: &plan::実行の指定,
-) -> Result<Vec<record::一標本>, 深度プリパスの費用計測エラー> {
+fn 周回する(出力先: &Path, シェーダー入口: &Path, 指定: &plan::実行の指定) -> Result<Vec<record::一標本>, 深度プリパスの費用計測エラー> {
     let 実行環境 = world::計測の実行環境を作る();
     let 並び = schedule::起動の並び();
     let mut 標本一覧 = Vec::with_capacity(並び.len());

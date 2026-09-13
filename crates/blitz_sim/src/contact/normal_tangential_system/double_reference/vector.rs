@@ -71,11 +71,7 @@ impl 倍精度の三次元ベクトル {
     }
 
     pub(in crate::contact) fn 外積(&self, 相手: &Self) -> Self {
-        Self::成分から生成する(
-            self.y * 相手.z - self.z * 相手.y,
-            self.z * 相手.x - self.x * 相手.z,
-            self.x * 相手.y - self.y * 相手.x,
-        )
+        Self::成分から生成する(self.y * 相手.z - self.z * 相手.y, self.z * 相手.x - self.x * 相手.z, self.x * 相手.y - self.y * 相手.x)
     }
 
     pub(in crate::contact) fn 長さ(&self) -> f64 {

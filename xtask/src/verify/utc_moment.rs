@@ -20,9 +20,7 @@ pub struct 協定世界時の時刻 {
 
 impl 協定世界時の時刻 {
     pub fn いまを読む() -> Result<Self, 検証列の破れ> {
-        let 経過 = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map_err(|_| 検証列の破れ::時計が1970年より前を指している)?;
+        let 経過 = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_err(|_| 検証列の破れ::時計が1970年より前を指している)?;
         Ok(Self::経過秒から組み立てる(経過.as_secs()))
     }
 
@@ -41,9 +39,7 @@ impl 協定世界時の時刻 {
     }
 
     pub fn 綴り(&self) -> String {
-        let Self {
-            年, 月, 日, 時, 分, 秒
-        } = self;
+        let Self { 年, 月, 日, 時, 分, 秒 } = self;
         format!("{年:04}{月:02}{日:02}-{時:02}{分:02}{秒:02}")
     }
 }
@@ -59,11 +55,7 @@ fn 通日を年月日へ写す(通日: u64) -> (u64, u64, u64) {
     let 年内の日 = 四百年紀内の日 - (365 * 四百年紀内の年 + 四百年紀内の年 / 4 - 四百年紀内の年 / 100);
     let 三月起点の月番号 = (5 * 年内の日 + 2) / 153;
     let 日 = 年内の日 - (153 * 三月起点の月番号 + 2) / 5 + 1;
-    let 月 = if 三月起点の月番号 < 10 {
-        三月起点の月番号 + 3
-    } else {
-        三月起点の月番号 - 9
-    };
+    let 月 = if 三月起点の月番号 < 10 { 三月起点の月番号 + 3 } else { 三月起点の月番号 - 9 };
     let 年 = if 月 <= 2 { 三月起点の年 + 1 } else { 三月起点の年 };
     (年, 月, 日)
 }

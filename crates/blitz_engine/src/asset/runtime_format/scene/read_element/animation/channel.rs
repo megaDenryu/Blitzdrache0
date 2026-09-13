@@ -9,10 +9,7 @@ use crate::asset::{interpolation_kind::補間種別, keyframe_channel::チャン
 const 時刻長: usize = 4;
 
 pub(super) fn 読む<値>(
-    入力: &mut 読取位置<'_>,
-    値バイト長: usize,
-    継続秒: f32,
-    mut 値を読む: impl FnMut(&mut 読取位置<'_>) -> Result<値, アセット実行時形式エラー>,
+    入力: &mut 読取位置<'_>, 値バイト長: usize, 継続秒: f32, mut 値を読む: impl FnMut(&mut 読取位置<'_>) -> Result<値, アセット実行時形式エラー>
 ) -> Result<Option<チャンネル<値>>, アセット実行時形式エラー> {
     match 入力.u8()? {
         0 => Ok(None),

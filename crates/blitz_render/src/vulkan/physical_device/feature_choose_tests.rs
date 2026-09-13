@@ -12,10 +12,7 @@ use crate::error::デバイス要件エラー;
 
 #[test]
 fn ブロック圧縮を欠く候補を飛ばして対応する候補を選ぶ() {
-    let 候補一覧 = [
-        ブロック圧縮を選べる候補(0, "discrete GPU", true, true, false),
-        候補(1, "統合GPU", false, true),
-    ];
+    let 候補一覧 = [ブロック圧縮を選べる候補(0, "discrete GPU", true, true, false), 候補(1, "統合GPU", false, true)];
     assert_eq!(選ぶ(&候補一覧).ok(), Some(1));
 }
 
@@ -31,13 +28,9 @@ fn 索引に対応する候補が全てブロック圧縮を欠くと機材名�
 /// 立方体の配列画像を欠く候補を飛ばし、1台も残らないなら機材名を並べて報告する。
 #[test]
 fn 立方体の配列画像を欠く候補を飛ばして対応する候補を選ぶ() {
-    let 候補一覧 = [
-        機能を選べる候補(0, "discrete GPU", true, true, true, false),
-        候補(1, "統合GPU", false, true),
-    ];
+    let 候補一覧 = [機能を選べる候補(0, "discrete GPU", true, true, true, false), 候補(1, "統合GPU", false, true)];
     assert_eq!(選ぶ(&候補一覧).ok(), Some(1));
-    let Err(デバイス要件エラー::立方体の配列画像非対応(機材名一覧)) = 選ぶ(&[機能を選べる候補(0, "discrete GPU", true, true, true, false)])
-    else {
+    let Err(デバイス要件エラー::立方体の配列画像非対応(機材名一覧)) = 選ぶ(&[機能を選べる候補(0, "discrete GPU", true, true, true, false)]) else {
         panic!("立方体の配列画像の非対応以外の結果が返った");
     };
     assert_eq!(機材名一覧, vec!["discrete GPU".to_string()]);

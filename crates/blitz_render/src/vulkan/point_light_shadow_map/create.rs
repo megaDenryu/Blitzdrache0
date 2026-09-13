@@ -15,8 +15,7 @@ use crate::vulkan::allocator::GPU資源の確保係;
 pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>) -> Result<点光源の影の立方体配列, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let 画像 = 点光源の影の画像を作る(確保係)?;
-    let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(画像, GPUメモリ用途::点光源の影の立方体配列)
-    {
+    let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(画像, GPUメモリ用途::点光源の影の立方体配列) {
         Ok(memory) => memory,
         Err(誤り) => {
             // 安全性: 画像はこのスコープの唯一の所有者で、以降使用しない。
@@ -42,10 +41,7 @@ pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>) -> Result<点�
 }
 
 /// ビュー群とサンプラーを作る。1つでも失敗したら、この関数が作ったハンドルだけを逆順に破棄して失敗を返す。
-fn 続きを生成する(
-    確保係: &GPU資源の確保係<'_>,
-    画像: vk::Image,
-) -> Result<(vk::ImageView, Vec<vk::ImageView>, vk::Sampler), レンダラーエラー> {
+fn 続きを生成する(確保係: &GPU資源の確保係<'_>, 画像: vk::Image) -> Result<(vk::ImageView, Vec<vk::ImageView>, vk::Sampler), レンダラーエラー> {
     let 層数 = 点光源の影の層数();
     let 個数 = usize::try_from(層数).unwrap_or_else(|_| panic!("点光源の影の層数がusizeに収まらない: {層数}"));
     let mut 作成済みビュー: Vec<vk::ImageView> = Vec::with_capacity(個数 + 1);
@@ -60,11 +56,7 @@ fn 続きを生成する(
     結果
 }
 
-fn ビュー群とサンプラーを作る(
-    確保係: &GPU資源の確保係<'_>,
-    画像: vk::Image,
-    作成済みビュー: &mut Vec<vk::ImageView>,
-) -> Result<(vk::ImageView, Vec<vk::ImageView>, vk::Sampler), レンダラーエラー> {
+fn ビュー群とサンプラーを作る(確保係: &GPU資源の確保係<'_>, 画像: vk::Image, 作成済みビュー: &mut Vec<vk::ImageView>) -> Result<(vk::ImageView, Vec<vk::ImageView>, vk::Sampler), レンダラーエラー> {
     let 立方体配列ビュー = 立方体配列ビューを作る(確保係, 画像)?;
     作成済みビュー.push(立方体配列ビュー);
     let mut 層別のビュー一覧 = Vec::with_capacity(作成済みビュー.capacity());

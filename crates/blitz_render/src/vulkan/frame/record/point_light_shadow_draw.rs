@@ -15,14 +15,7 @@ use crate::vulkan::point_light_shadow_cull::面ごとの絞り;
 use crate::vulkan::point_light_shadow_plan::影を落とす灯;
 use crate::vulkan::point_light_shadow_push::点光源の影の描画定数;
 
-pub(super) fn 記録する(
-    積み先: GPU命令の積み先<'_>,
-    灯: 影を落とす灯,
-    面: 立方体の面,
-    束縛: 点光源の影の束縛,
-    発行一覧: &[点光源の影の描画発行],
-    共有: 共有セット束縛<'_>,
-) {
+pub(super) fn 記録する(積み先: GPU命令の積み先<'_>, 灯: 影を落とす灯, 面: 立方体の面, 束縛: 点光源の影の束縛, 発行一覧: &[点光源の影の描画発行], 共有: 共有セット束縛<'_>) {
     let 絞り = 面ごとの絞り::生成する(灯.カメラ相対位置, 灯.影響半径, 面);
     let ライトビュー射影 = 灯.投影の契約.面のライトビュー射影を組み立てる(面, 灯.カメラ相対位置);
     共有.計器.点光源の影().面の判定した発行を数える(発行一覧.len());
@@ -58,24 +51,14 @@ fn 面の状態を束縛する(積み先: GPU命令の積み先<'_>, 束縛: 点
 }
 
 fn 一件を記録する(
-    積み先: GPU命令の積み先<'_>,
-    束縛: 点光源の影の束縛,
-    発行: &点光源の影の描画発行,
-    ライトビュー射影: blitz_math::変換<blitz_math::ワールド, blitz_math::点光源の面クリップ>,
+    積み先: GPU命令の積み先<'_>, 束縛: 点光源の影の束縛, 発行: &点光源の影の描画発行, ライトビュー射影: blitz_math::変換<blitz_math::ワールド, blitz_math::点光源の面クリップ>
 ) {
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
     // 安全性: command_bufferは記録中で、発行のバッファとディスクリプタセットは生成済み。layoutは80バイトの範囲を宣言済み。
     unsafe {
         点光源の影の描画定数::生成する(発行.相対の基準原点, ライトビュー射影).プッシュ定数として積む(積み先, 束縛.layout);
-        device.cmd_bind_descriptor_sets(
-            command_buffer,
-            vk::PipelineBindPoint::GRAPHICS,
-            束縛.layout,
-            shared_set_bind::ジオメトリのセット番号,
-            &[発行.ジオメトリセット],
-            &[],
-        );
+        device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::GRAPHICS, 束縛.layout, shared_set_bind::ジオメトリのセット番号, &[発行.ジオメトリセット], &[]);
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[発行.頂点バッファ], &[0]);
         device.cmd_bind_index_buffer(command_buffer, 発行.インデックスバッファ, 0, vk::IndexType::UINT32);
         device.cmd_draw_indexed(command_buffer, 発行.インデックス数, 発行.個体数, 発行.先頭インデックス, 発行.頂点基準, 0);

@@ -7,10 +7,8 @@
 use super::error::規約検査の破れ;
 use super::violation::違反;
 use super::{
-    dependency_whitelist, depth_contract, doc_section, duplicate_file_literal, free_function_whole_type, lighting_query_declaration,
-    reload_without_device_wait, removed_object_uniform, removed_slot_material_set, removed_view_pass_lighting, sample_bodies_consistency,
-    shader_binding, shader_constant, shader_form, shader_uniform_alias, single_lighting_slot_write, type_metrics_ledger, verify_output_place,
-    wording_contract, workspace_dependency_features,
+    dependency_whitelist, depth_contract, doc_section, duplicate_file_literal, free_function_whole_type, lighting_query_declaration, reload_without_device_wait, removed_object_uniform, removed_slot_material_set, removed_view_pass_lighting,
+    sample_bodies_consistency, shader_binding, shader_constant, shader_form, shader_uniform_alias, single_lighting_slot_write, type_metrics_ledger, verify_output_place, wording_contract, workspace_dependency_features,
 };
 
 pub fn 複数ファイルを横断する検査の違反一覧を集める() -> Result<Vec<違反>, 規約検査の破れ> {

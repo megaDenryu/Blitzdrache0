@@ -6,8 +6,7 @@
 use super::priority_eviction;
 
 use crate::streaming::{
-    chunk_diff::チャンク集合差分, chunk_ledger::チャンク台帳, coordinator_error::ストリーミング調停エラー, eviction_hysteresis::退避優位計数,
-    memory_budget::ストリーミング予算, memory_candidate::チャンク予算候補, memory_result::予算判定,
+    chunk_diff::チャンク集合差分, chunk_ledger::チャンク台帳, coordinator_error::ストリーミング調停エラー, eviction_hysteresis::退避優位計数, memory_budget::ストリーミング予算, memory_candidate::チャンク予算候補, memory_result::予算判定,
 };
 use crate::チャンク座標;
 
@@ -19,14 +18,8 @@ pub(super) fn 退避へ倒す(
     解決済み一覧: Vec<チャンク予算候補>,
 ) -> Result<(予算判定, チャンク集合差分), ストリーミング調停エラー> {
     // このフレームは新規収容をしないため、台帳に無い候補はすべて未収容である。中心優先順の先頭が最も近い未収容チャンクになる。
-    let 未収容の先頭 = 解決済み一覧
-        .iter()
-        .copied()
-        .find(|候補| 台帳.状態を参照する(候補.要求().座標()).is_none());
-    let 反映集合: Vec<_> = 解決済み一覧
-        .into_iter()
-        .filter(|候補| 台帳.状態を参照する(候補.要求().座標()).is_some())
-        .collect();
+    let 未収容の先頭 = 解決済み一覧.iter().copied().find(|候補| 台帳.状態を参照する(候補.要求().座標()).is_none());
+    let 反映集合: Vec<_> = 解決済み一覧.into_iter().filter(|候補| 台帳.状態を参照する(候補.要求().座標()).is_some()).collect();
     let mut 差分 = 台帳.必要集合を反映する(&反映集合)?;
     let 上限超過 = 台帳.上限超過の退避を計画する(中心, 予算.上限())?;
     // 上限超過を解く分を先に計画し、収容余地の分はその結果が残す集合へ適用する。同じ座標が二度計画へ入らないよう、先の計画を渡して除く。

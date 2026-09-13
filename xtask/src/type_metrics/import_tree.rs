@@ -19,10 +19,7 @@ pub fn 取り込みの項を経路へ展開する(前置き: &str, 項: &str) ->
         return Vec::new();
     };
     let 新しい前置き = 前置きと続きを繋いで経路にする(前置き, 頭.trim().trim_end_matches(段の区切り));
-    深さ0の読点で項へ分ける(中身)
-        .iter()
-        .flat_map(|子| 取り込みの項を経路へ展開する(&新しい前置き, 子))
-        .collect()
+    深さ0の読点で項へ分ける(中身).iter().flat_map(|子| 取り込みの項を経路へ展開する(&新しい前置き, 子)).collect()
 }
 
 fn 単独の項を経路にする(前置き: &str, 項: &str) -> Vec<String> {
@@ -86,9 +83,6 @@ mod tests {
     fn 改名と全部の持ち込みは経路にしない() {
         assert!(取り込みの項を経路へ展開する("", "crate::far::設定 as 遠い設定").is_empty());
         assert!(取り込みの項を経路へ展開する("", "crate::far::*").is_empty());
-        assert_eq!(
-            取り込みの項を経路へ展開する("", "crate::{far::*, near::設定}"),
-            vec!["crate::near::設定".to_string()]
-        );
+        assert_eq!(取り込みの項を経路へ展開する("", "crate::{far::*, near::設定}"), vec!["crate::near::設定".to_string()]);
     }
 }

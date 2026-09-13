@@ -21,9 +21,5 @@ pub(super) fn タイムスタンプを書く(積み先: GPU命令の積み先<'_
     // 安全性: command_bufferは記録中で、poolはフレーム記録の積み始めでリセット済み
     // (`frame::session::積み始める`)。ALL_COMMANDS基準はTOP_OF_PIPE相当を
     // 避けるため(参照: `_doc/設計/レンダーグラフ.md`「GPU計測」)。
-    unsafe {
-        積み先
-            .論理デバイス()
-            .cmd_write_timestamp2(積み先.コマンドバッファ(), vk::PipelineStageFlags2::ALL_COMMANDS, pool, クエリ添字)
-    };
+    unsafe { 積み先.論理デバイス().cmd_write_timestamp2(積み先.コマンドバッファ(), vk::PipelineStageFlags2::ALL_COMMANDS, pool, クエリ添字) };
 }

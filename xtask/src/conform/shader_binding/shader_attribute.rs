@@ -24,8 +24,7 @@ pub(super) struct 束縛の属性 {
 }
 
 pub(super) fn 写しの束縛の属性を読む(パス: &'static str, 変数名: &'static str) -> Result<束縛の属性, 規約検査の破れ> {
-    let 内容 =
-        std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
+    let 内容 = std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
     属性を探す(&内容, 変数名).ok_or(規約検査の破れ::束縛の属性が無い { パス, 変数名 })
 }
 

@@ -7,13 +7,7 @@ use crate::command_ui::command_catalog::コマンド項目;
 
 pub(crate) fn 番号入力で1件を選ぶ(項目一覧: &[コマンド項目]) -> Option<usize> {
     for (添字, 項目) in 項目一覧.iter().enumerate() {
-        println!(
-            "{番号:>3}. {日本語名} ({ascii名}) — {要約}",
-            番号 = 添字 + 1,
-            日本語名 = 項目.日本語名(),
-            ascii名 = 項目.ascii名(),
-            要約 = 項目.要約(60)
-        );
+        println!("{番号:>3}. {日本語名} ({ascii名}) — {要約}", 番号 = 添字 + 1, 日本語名 = 項目.日本語名(), ascii名 = 項目.ascii名(), 要約 = 項目.要約(60));
     }
     print!("番号を入力してEnter (空Enterなら終了): ");
     let _ = std::io::stdout().flush();

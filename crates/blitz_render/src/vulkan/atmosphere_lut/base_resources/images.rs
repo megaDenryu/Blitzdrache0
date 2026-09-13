@@ -9,10 +9,7 @@ use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::image::大気のベイク済み画像;
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像の形;
 
-pub(super) fn 順に作る<const 枚数: usize>(
-    確保係: &GPU資源の確保係<'_>,
-    形一覧: [大気のベイク済み画像の形; 枚数],
-) -> Result<[大気のベイク済み画像; 枚数], レンダラーエラー> {
+pub(super) fn 順に作る<const 枚数: usize>(確保係: &GPU資源の確保係<'_>, 形一覧: [大気のベイク済み画像の形; 枚数]) -> Result<[大気のベイク済み画像; 枚数], レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let mut 作った: Vec<大気のベイク済み画像> = Vec::with_capacity(形一覧.len());
     for 形 in 形一覧 {
@@ -27,7 +24,5 @@ pub(super) fn 順に作る<const 枚数: usize>(
         }
     }
     let 件数 = 作った.len();
-    Ok(作った
-        .try_into()
-        .unwrap_or_else(|_| panic!("大気のベイク済み画像を{}枚要求したのに{件数}枚できた", 形一覧.len())))
+    Ok(作った.try_into().unwrap_or_else(|_| panic!("大気のベイク済み画像を{}枚要求したのに{件数}枚できた", 形一覧.len())))
 }

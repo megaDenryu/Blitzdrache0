@@ -9,10 +9,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::sync::フレームスロット添字;
 
-pub(super) fn 経路生成ディスクリプタを生成する(
-    確保係: &GPU資源の確保係<'_>,
-    束縛先: 経路生成の束縛先<'_>,
-) -> Result<経路生成ディスクリプタ, レンダラーエラー> {
+pub(super) fn 経路生成ディスクリプタを生成する(確保係: &GPU資源の確保係<'_>, 束縛先: 経路生成の束縛先<'_>) -> Result<経路生成ディスクリプタ, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let sampler = 確保係.線形サンプラーを作る()?;
     let layout = match binding::レイアウトを作る(device) {
@@ -38,12 +35,7 @@ pub(super) fn 経路生成ディスクリプタを生成する(
     for 添字 in フレームスロット添字::全スロット() {
         binding::書き込む(device, &set一覧[添字.配列添字()], sampler, &束縛先, 添字);
     }
-    Ok(経路生成ディスクリプタ {
-        layout,
-        pool,
-        sampler,
-        set一覧,
-    })
+    Ok(経路生成ディスクリプタ { layout, pool, sampler, set一覧 })
 }
 
 fn サンプラーを片付けて返す(device: &ash::Device, sampler: vk::Sampler, 誤り: レンダラーエラー) -> レンダラーエラー {

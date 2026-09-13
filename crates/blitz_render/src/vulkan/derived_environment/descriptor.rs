@@ -20,11 +20,7 @@ pub(super) struct 派生表現ディスクリプタ {
 
 impl 派生表現ディスクリプタ {
     /// 書き込み先の一覧を受け取り、その並びのままセットを割り当てる。返るセットの並びは書き込み先の並びと一致する。
-    pub(super) fn 生成する(
-        device: &ash::Device,
-        遠方環境の配列ビュー: vk::ImageView,
-        書き込み先一覧: &[vk::ImageView],
-    ) -> Result<Self, レンダラーエラー> {
+    pub(super) fn 生成する(device: &ash::Device, 遠方環境の配列ビュー: vk::ImageView, 書き込み先一覧: &[vk::ImageView]) -> Result<Self, レンダラーエラー> {
         let セット数 = u32::try_from(書き込み先一覧.len()).unwrap_or_else(|_| panic!("派生表現の書き込み先の数がu32に収まらない"));
         let layout = binding::レイアウトを作る(device)?;
         let pool = match binding::プールを作る(device, セット数) {
@@ -64,11 +60,7 @@ impl 派生表現ディスクリプタ {
     }
 }
 
-fn レイアウトを片付けて返す(
-    device: &ash::Device,
-    layout: &宣言から作ったセットレイアウト<2>,
-    誤り: レンダラーエラー,
-) -> レンダラーエラー {
+fn レイアウトを片付けて返す(device: &ash::Device, layout: &宣言から作ったセットレイアウト<2>, 誤り: レンダラーエラー) -> レンダラーエラー {
     layout.破棄する(device);
     誤り
 }

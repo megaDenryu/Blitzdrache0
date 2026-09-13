@@ -24,19 +24,11 @@ pub(super) fn 親ノード添字表を作る(文書: &gltf::Document) -> HashMap
 
 /// `旧グローバル一覧[旧添字]`が各ジョイントのグローバルノード添字。
 pub(super) fn トポロジカル順を求める(旧グローバル一覧: &[usize], 親ノード添字表: &HashMap<usize, usize>) -> 並べ替え {
-    let グローバルから旧添字: HashMap<usize, usize> = 旧グローバル一覧
-        .iter()
-        .enumerate()
-        .map(|(旧添字, &グローバル)| (グローバル, 旧添字))
-        .collect();
+    let グローバルから旧添字: HashMap<usize, usize> = 旧グローバル一覧.iter().enumerate().map(|(旧添字, &グローバル)| (グローバル, 旧添字)).collect();
 
     let 旧親添字一覧: Vec<Option<usize>> = 旧グローバル一覧
         .iter()
-        .map(|グローバル| {
-            親ノード添字表
-                .get(グローバル)
-                .and_then(|親グローバル| グローバルから旧添字.get(親グローバル).copied())
-        })
+        .map(|グローバル| 親ノード添字表.get(グローバル).and_then(|親グローバル| グローバルから旧添字.get(親グローバル).copied()))
         .collect();
 
     let ジョイント数 = 旧グローバル一覧.len();
@@ -47,9 +39,7 @@ pub(super) fn トポロジカル順を求める(旧グローバル一覧: &[usiz
     }
 
     並べ替え {
-        旧から新,
-        新から旧,
-        旧親添字一覧,
+        旧から新, 新から旧, 旧親添字一覧
     }
 }
 

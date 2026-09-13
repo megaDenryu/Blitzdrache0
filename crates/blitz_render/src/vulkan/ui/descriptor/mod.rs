@@ -18,11 +18,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言した束縛の並び, 束縛番号};
 
 /// 束縛の並び。UIテクスチャ1枚を読むcombined image samplerが1本だけである。
-pub(super) const 束縛の宣言: 宣言した束縛の並び<1> = 宣言した束縛の並び::生成する([(
-    束縛番号::生成する(0),
-    vk::DescriptorType::COMBINED_IMAGE_SAMPLER,
-    vk::ShaderStageFlags::FRAGMENT,
-)]);
+pub(super) const 束縛の宣言: 宣言した束縛の並び<1> = 宣言した束縛の並び::生成する([(束縛番号::生成する(0), vk::DescriptorType::COMBINED_IMAGE_SAMPLER, vk::ShaderStageFlags::FRAGMENT)]);
 
 /// 同時に保持できるUIテクスチャ数の上限。
 pub(crate) const 最大テクスチャ数: u32 = 32;

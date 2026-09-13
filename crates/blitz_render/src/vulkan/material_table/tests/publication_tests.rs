@@ -12,13 +12,9 @@ use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::ledger::資源表世代台帳;
 
 use super::fixture::検査用供給元;
-use super::material_fixture::{
-    フォールバックと1枚だけの容量, 余裕のあるレイアウト容量, 検査用素材, 画像を選んだ材質
-};
+use super::material_fixture::{フォールバックと1枚だけの容量, 余裕のあるレイアウト容量, 検査用素材, 画像を選んだ材質};
 
-fn 世代を作る(
-    供給元: &mut 検査用供給元, 世代id: 資源表世代ID
-) -> crate::vulkan::material_table::generation::資源表世代<u32, ()> {
+fn 世代を作る(供給元: &mut 検査用供給元, 世代id: 資源表世代ID) -> crate::vulkan::material_table::generation::資源表世代<u32, ()> {
     資源表世代を構築する(供給元, 世代id, 余裕のあるレイアウト容量(), &[]).unwrap()
 }
 
@@ -77,9 +73,5 @@ fn 容量超過で登録が拒まれた後も次の世代を作り直して公�
     let 発行id = 台帳.次の世代idを発行する().unwrap();
     台帳.公開する(資源表世代を構築する(&mut 供給元, 発行id, 容量, &[画像を選んだ材質(1, 1, 1, &素材)]).unwrap());
     assert_eq!(台帳.公開中().材質件数(), 1);
-    assert_eq!(
-        台帳.公開中().画像枚数(),
-        5,
-        "正準フォールバック3枚と材質テクスチャ1枚で容量ちょうどになる"
-    );
+    assert_eq!(台帳.公開中().画像枚数(), 5, "正準フォールバック3枚と材質テクスチャ1枚で容量ちょうどになる");
 }

@@ -36,10 +36,7 @@ pub(super) const 一覧: &[コマンド項目] = &[
         "骨格を連ねた見本の撮影",
         "  part-frame-chain-draw  骨格を連ねた見本4つ(2段積み・2ベイ・屋根つきの1ベイの家・屋根つきの2段の家)を焼いて実機描画し、境目の意匠と深度の競合と継いだ面に壁が無いことと屋根の載り方を目視するための絵をPNGへ書き出す",
     ),
-    コマンド項目::引数なしで生成する(
-        "木の並びの検収描画",
-        "  part-tree-row-draw   部品で組んだ樫の木を平らな地面へ数本並べて実機描画し、木の姿を目視するための絵をPNGへ書き出す",
-    ),
+    コマンド項目::引数なしで生成する("木の並びの検収描画", "  part-tree-row-draw   部品で組んだ樫の木を平らな地面へ数本並べて実機描画し、木の姿を目視するための絵をPNGへ書き出す"),
     コマンド項目::引数定義を添えて生成する(
         "実行時アセットの生成",
         "  compile-assets [ソースルート 出力ルート [世界名 [同居植生個体数]]]  ソースを検証して実行時形式を生成する(引数なしでchunk_worldをtarget/runtime_assetsへ、terrain_worldをtarget/terrain_assetsへ)",
@@ -68,10 +65,7 @@ pub(super) const 一覧: &[コマンド項目] = &[
         "  large-world-assets [--east-chunks <数> --south-chunks <数>]  target配下へ大規模世界を生成し、クリーンな2生成のバイト一致と同一条件の再実行が焼き直し0件であることを検収する(省略時80×100)",
         generation_arguments::大規模世界アセットの生成の引数定義,
     ),
-    コマンド項目::引数なしで生成する(
-        "標準サンプルの取得",
-        "  fetch-assets     標準サンプル(DamagedHelmet・Fox)をassets/samples/へ取得する(curl.exe使用)",
-    ),
+    コマンド項目::引数なしで生成する("標準サンプルの取得", "  fetch-assets     標準サンプル(DamagedHelmet・Fox)をassets/samples/へ取得する(curl.exe使用)"),
     コマンド項目::引数定義を添えて生成する(
         "大気の期待値の生成",
         "  gen-atmosphere-reference <precomputed_atmospheric_scatteringの作業コピー>  Bruneton 2017実装のCPU参照から大気の物理量の期待値を焼く(出典・手順・要るツールはgen_atmosphere_reference.rsの冒頭。Windows専用)",

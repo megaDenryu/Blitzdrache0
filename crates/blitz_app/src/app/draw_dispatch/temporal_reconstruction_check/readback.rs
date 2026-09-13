@@ -10,22 +10,14 @@ use crate::app::アプリ;
 use crate::error::起動エラー;
 use crate::reports::temporal_reconstruction;
 
-pub(super) fn 圧縮前のhdrを読み戻す(
-    アプリ: &mut アプリ,
-    描画入力: フレーム描画入力<'_>,
-    局面: &str,
-) -> Result<Option<HDR読み戻し画像>, 起動エラー> {
+pub(super) fn 圧縮前のhdrを読み戻す(アプリ: &mut アプリ, 描画入力: フレーム描画入力<'_>, 局面: &str) -> Result<Option<HDR読み戻し画像>, 起動エラー> {
     let Some(レンダラー) = &mut アプリ.レンダラー else {
         return Ok(None);
     };
     結果を開く(レンダラー.一フレーム描画して圧縮前のhdrを読み戻す(描画入力)?, 局面)
 }
 
-pub(super) fn 今のフレームの色を読み戻す(
-    アプリ: &mut アプリ,
-    描画入力: フレーム描画入力<'_>,
-    局面: &str,
-) -> Result<Option<HDR読み戻し画像>, 起動エラー> {
+pub(super) fn 今のフレームの色を読み戻す(アプリ: &mut アプリ, 描画入力: フレーム描画入力<'_>, 局面: &str) -> Result<Option<HDR読み戻し画像>, 起動エラー> {
     let Some(レンダラー) = &mut アプリ.レンダラー else {
         return Ok(None);
     };

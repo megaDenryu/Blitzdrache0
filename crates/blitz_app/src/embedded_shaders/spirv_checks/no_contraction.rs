@@ -35,11 +35,7 @@ fn 装飾が全演算へ付くことを確かめる(spirv: &[u8], エントリ�
     };
     let 装飾済み = 装飾の付いたidを集める(&命令一覧, 装飾_NO_CONTRACTION);
     // OpFAdd等の語は[結果の型, 結果のid, 被演算子...]の順に並ぶ。
-    let 演算のid一覧: Vec<u32> = 命令一覧
-        .iter()
-        .filter(|命令| 融合しうる命令コード一覧.contains(&命令.命令コード) && 命令.語一覧.len() >= 2)
-        .map(|命令| 命令.語一覧[1])
-        .collect();
+    let 演算のid一覧: Vec<u32> = 命令一覧.iter().filter(|命令| 融合しうる命令コード一覧.contains(&命令.命令コード) && 命令.語一覧.len() >= 2).map(|命令| 命令.語一覧[1]).collect();
     assert!(!演算のid一覧.is_empty(), "{エントリ名}に単精度の四則が1つも無い(写しが消えている)");
     let 付いていない: Vec<u32> = 演算のid一覧.iter().copied().filter(|id| !装飾済み.contains(id)).collect();
     assert!(

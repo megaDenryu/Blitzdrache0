@@ -17,17 +17,11 @@ pub(super) struct クラスタ選別のパイプライン {
 }
 
 impl クラスタ選別のパイプライン {
-    pub(super) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        セットレイアウト: vk::DescriptorSetLayout,
-        シェーダー: &コンピュートシェーダー,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, セットレイアウト: vk::DescriptorSetLayout, シェーダー: &コンピュートシェーダー) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
         let レイアウト = クラスタ選別のパイプラインレイアウトを作る(device, セットレイアウト)?;
         match 確保係.コンピュートパイプラインを生成する(レイアウト, シェーダー.コード(), c"computeMain") {
-            Ok(パイプライン) => Ok(Self {
-                パイプライン, レイアウト
-            }),
+            Ok(パイプライン) => Ok(Self { パイプライン, レイアウト }),
             Err(誤り) => {
                 // 安全性: レイアウトはこのスコープの唯一の所有者で、以降使用しない。
                 unsafe { device.destroy_pipeline_layout(レイアウト, None) };
@@ -50,18 +44,10 @@ fn 即時定数として押し込むバイト数() -> u32 {
     u32::try_from(即時定数のバイト数).unwrap_or_else(|_| panic!("即時定数のバイト数がu32に収まらない"))
 }
 
-fn クラスタ選別のパイプラインレイアウトを作る(
-    device: &ash::Device,
-    セットレイアウト: vk::DescriptorSetLayout,
-) -> Result<vk::PipelineLayout, レンダラーエラー> {
+fn クラスタ選別のパイプラインレイアウトを作る(device: &ash::Device, セットレイアウト: vk::DescriptorSetLayout) -> Result<vk::PipelineLayout, レンダラーエラー> {
     let セット一覧 = [セットレイアウト];
-    let 範囲一覧 = [vk::PushConstantRange::default()
-        .stage_flags(vk::ShaderStageFlags::COMPUTE)
-        .offset(0)
-        .size(即時定数として押し込むバイト数())];
-    let 生成情報 = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(&セット一覧)
-        .push_constant_ranges(&範囲一覧);
+    let 範囲一覧 = [vk::PushConstantRange::default().stage_flags(vk::ShaderStageFlags::COMPUTE).offset(0).size(即時定数として押し込むバイト数())];
+    let 生成情報 = vk::PipelineLayoutCreateInfo::default().set_layouts(&セット一覧).push_constant_ranges(&範囲一覧);
     // 安全性: deviceは生成済みで有効。
     Ok(unsafe { device.create_pipeline_layout(&生成情報, None)? })
 }

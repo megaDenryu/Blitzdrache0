@@ -19,12 +19,7 @@ fn 提示画像を先に指定してから圧縮前hdrを重ねると失敗す�
     let 単独 = ["--dump-frame".to_string(), "target/a".to_string()];
     assert!(描画設定を解析する(&単独).フレームダンプ先.書き出すか());
 
-    let 正順 = [
-        "--dump-frame".to_string(),
-        "target/a".to_string(),
-        "--dump-hdr-frame".to_string(),
-        "target/b".to_string(),
-    ];
+    let 正順 = ["--dump-frame".to_string(), "target/a".to_string(), "--dump-hdr-frame".to_string(), "target/b".to_string()];
     assert!(引数を解析する(&正順).is_err());
 }
 
@@ -33,11 +28,6 @@ fn 圧縮前hdrを先に指定してから提示画像を重ねると失敗す�
     let 単独 = ["--dump-hdr-frame".to_string(), "target/b".to_string()];
     assert!(描画設定を解析する(&単独).フレームダンプ先.書き出すか());
 
-    let 逆順 = [
-        "--dump-hdr-frame".to_string(),
-        "target/b".to_string(),
-        "--dump-frame".to_string(),
-        "target/a".to_string(),
-    ];
+    let 逆順 = ["--dump-hdr-frame".to_string(), "target/b".to_string(), "--dump-frame".to_string(), "target/a".to_string()];
     assert!(引数を解析する(&逆順).is_err());
 }

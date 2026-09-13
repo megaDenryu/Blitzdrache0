@@ -29,11 +29,7 @@ impl ラジアン {
     pub fn 一周の中で最短の弧へ畳む(self) -> Self {
         let 一周 = std::f32::consts::TAU;
         let 畳んだ角 = self.0.rem_euclid(一周);
-        Self(if 畳んだ角 > 一周 / 2.0 {
-            畳んだ角 - 一周
-        } else {
-            畳んだ角
-        })
+        Self(if 畳んだ角 > 一周 / 2.0 { 畳んだ角 - 一周 } else { 畳んだ角 })
     }
 }
 

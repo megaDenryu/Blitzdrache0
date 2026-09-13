@@ -12,10 +12,7 @@ use std::io::Write;
 use crossterm::cursor::{Hide, MoveTo, Show};
 use crossterm::event::{Event, KeyEvent, KeyEventKind, read};
 use crossterm::queue;
-use crossterm::terminal::{
-    BeginSynchronizedUpdate, Clear, ClearType, EndSynchronizedUpdate, EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode,
-    size,
-};
+use crossterm::terminal::{BeginSynchronizedUpdate, Clear, ClearType, EndSynchronizedUpdate, EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode, size};
 
 use crate::command_ui::command_catalog::コマンド項目;
 
@@ -35,18 +32,14 @@ impl 端末セッション {
     pub(crate) fn 開始する() -> Result<Self, メニューの破れ> {
         enable_raw_mode()?;
         // 制御列を流す前に`Self`を構築しておく。以降で失敗しても`Drop`が生モードと画面を戻す。
-        let mut セッション = Self {
-            出力先: std::io::stdout()
-        };
+        let mut セッション = Self { 出力先: std::io::stdout() };
         queue!(セッション.出力先, EnterAlternateScreen, Hide)?;
         セッション.出力先.flush()?;
         Ok(セッション)
     }
 
     pub(crate) fn 可視行数(&self) -> usize {
-        size()
-            .map(|(_列数, 行数)| usize::from(行数).saturating_sub(見出しと入力欄の行数).max(1))
-            .unwrap_or(既定の可視行数)
+        size().map(|(_列数, 行数)| usize::from(行数).saturating_sub(見出しと入力欄の行数).max(1)).unwrap_or(既定の可視行数)
     }
 
     /// キー入力を1件待つ。crosstermはWindowsで押下と離しの両方の事象を送るため、
@@ -63,12 +56,7 @@ impl 端末セッション {
 
     /// 全画面消去を挟まず、左上から各行を上書きして描く。全画面消去はWindowsのコンソールで遅く、
     /// 消去から描画完了までの空白がちらつきとして見えるため使わない。
-    pub(crate) fn 画面を描く(
-        &mut self,
-        項目一覧: &[コマンド項目],
-        状態: &メニュー表示状態,
-        可視行数: usize,
-    ) -> Result<(), メニューの破れ> {
+    pub(crate) fn 画面を描く(&mut self, 項目一覧: &[コマンド項目], 状態: &メニュー表示状態, 可視行数: usize) -> Result<(), メニューの破れ> {
         queue!(self.出力先, BeginSynchronizedUpdate, MoveTo(0, 0))?;
         write!(self.出力先, "cargo xtask menu -- 番号+Enter または矢印キー+Enterで選ぶ(Esc/qで終了)")?;
         self.行末の残りを消して改行する()?;

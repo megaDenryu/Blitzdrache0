@@ -30,23 +30,14 @@ pub(in crate::vulkan::material_table) struct 材質登録簿 {
 impl 材質登録簿 {
     pub(in crate::vulkan::material_table) fn 新規() -> Self {
         Self {
-            束別: Vec::new(),
-            発番: 安定IDの発番::新規(),
+            束別: Vec::new(), 発番: 安定IDの発番::新規()
         }
     }
 
     /// 束1つぶんの材質を保持し、描画対象ごと材質スロットごとに発番した大域材質IDを返す。
     /// 注意: 同じ束IDを解除せずに登録するのは呼び出し元のバグである。通すと解除で片方だけが消える。
-    pub(in crate::vulkan::material_table) fn 束を登録する(
-        &mut self,
-        束id: 描画束ID,
-        描画対象一覧: &[描画対象素材],
-    ) -> Vec<描画対象別の材質ID> {
-        assert!(
-            !self.束別.iter().any(|(既存, _)| *既存 == 束id),
-            "同じ描画束{}の材質を解除せずに二重登録した",
-            束id.番号を返す()
-        );
+    pub(in crate::vulkan::material_table) fn 束を登録する(&mut self, 束id: 描画束ID, 描画対象一覧: &[描画対象素材]) -> Vec<描画対象別の材質ID> {
+        assert!(!self.束別.iter().any(|(既存, _)| *既存 == 束id), "同じ描画束{}の材質を解除せずに二重登録した", 束id.番号を返す());
         let 保持 = 束の保持材質::取り込む(&mut self.発番, 描画対象一覧);
         let 材質id一覧 = 保持.描画対象別の材質id一覧();
         self.束別.push((束id, 保持));
@@ -67,11 +58,7 @@ impl 材質登録簿 {
 
     /// 取り外した保持材質を元の位置へ戻す。注意: 同じ束IDが既にあるところへ戻すのは呼び出し元のバグである。
     pub(in crate::vulkan::material_table) fn 束を位置へ戻す(&mut self, 位置: usize, 束id: 描画束ID, 保持: 束の保持材質) {
-        assert!(
-            !self.束別.iter().any(|(既存, _)| *既存 == 束id),
-            "取り外していない描画束{}へ保持材質を戻そうとした",
-            束id.番号を返す()
-        );
+        assert!(!self.束別.iter().any(|(既存, _)| *既存 == 束id), "取り外していない描画束{}へ保持材質を戻そうとした", 束id.番号を返す());
         assert!(位置 <= self.束別.len(), "取り外したときの位置が現在の並びの外だった");
         self.束別.insert(位置, (束id, 保持));
     }

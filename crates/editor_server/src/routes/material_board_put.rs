@@ -4,9 +4,7 @@
 
 use axum::{body::Bytes, extract::State, http::StatusCode, response::IntoResponse, response::Response};
 
-use crate::{
-    resource::マテリアル台帳, server_state::サーバー状態, storage::プロジェクト保管庫, storage::保存要求エラー
-};
+use crate::{resource::マテリアル台帳, server_state::サーバー状態, storage::プロジェクト保管庫, storage::保存要求エラー};
 
 pub async fn マテリアル台帳を保存する(State(状態): State<サーバー状態>, 本文: Bytes) -> Response {
     match データを検証して保存する(&状態, &本文) {

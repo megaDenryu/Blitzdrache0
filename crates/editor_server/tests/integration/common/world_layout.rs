@@ -19,12 +19,7 @@ pub fn 区画割りJson() -> serde_json::Value {
 
 pub async fn 区画割りを保存する(一時: &一時プロジェクト) {
     let 応答 = super::ルーターを作る(一時)
-        .oneshot(
-            Request::put("/api/大域世界/構造")
-                .header("content-type", "application/json")
-                .body(Body::from(serde_json::to_vec(&区画割りJson()).unwrap()))
-                .unwrap(),
-        )
+        .oneshot(Request::put("/api/大域世界/構造").header("content-type", "application/json").body(Body::from(serde_json::to_vec(&区画割りJson()).unwrap())).unwrap())
         .await
         .unwrap();
     assert_eq!(応答.status(), StatusCode::NO_CONTENT);

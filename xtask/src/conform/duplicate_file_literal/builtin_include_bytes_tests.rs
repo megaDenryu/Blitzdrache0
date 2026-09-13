@@ -23,11 +23,7 @@ fn 同じ名前の取り込みを違反にする() {
 
 #[test]
 fn コメントや文字列での言及は違反にしない() {
-    let 原文 = concat!(
-        "//! macro_rules! include_",
-        "bytes を定義してはならない\nlet 語 = \"use 別の場所::include_",
-        "bytes;\";"
-    );
+    let 原文 = concat!("//! macro_rules! include_", "bytes を定義してはならない\nlet 語 = \"use 別の場所::include_", "bytes;\";");
     assert_eq!(違反の数(原文), 0);
 }
 

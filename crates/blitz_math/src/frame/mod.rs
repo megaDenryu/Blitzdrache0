@@ -82,9 +82,7 @@ pub use rotation::クォータニオン;
 pub use rotation_error::クォータニオンエラー;
 pub use rotation_vector::回転ベクトル;
 pub use signed_axis::符号付きの座標軸;
-pub use space::{
-    クリップ, ビュー, ローカル, ワールド, 主軸, 光源クリップ, 点光源の面クリップ, 空間, 部品ローカル
-};
+pub use space::{クリップ, ビュー, ローカル, ワールド, 主軸, 光源クリップ, 点光源の面クリップ, 空間, 部品ローカル};
 pub use torque::回転力;
 pub use transform::変換;
 pub use two_tier_position::二段の位置;

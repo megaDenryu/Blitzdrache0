@@ -36,8 +36,7 @@ pub(crate) struct 可視ID列バッファ {
 impl 可視ID列バッファ {
     pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, 個体数: u32) -> Result<Self, レンダラーエラー> {
         let 初期列 = capacity::初期バイト列を作る(個体数);
-        let スロットごとのバッファ = 確保係
-            .フレームスロットごとのホスト可視バッファを確保して書き込む(&初期列, vk::BufferUsageFlags::STORAGE_BUFFER)?;
+        let スロットごとのバッファ = 確保係.フレームスロットごとのホスト可視バッファを確保して書き込む(&初期列, vk::BufferUsageFlags::STORAGE_BUFFER)?;
         let 範囲 = u64::try_from(初期列.len()).unwrap_or_else(|_| panic!("可視ID列のバイト長がu64に収まらない"));
         Ok(Self {
             スロットごとのバッファ,

@@ -3,10 +3,7 @@
 
 use std::process::ExitCode;
 
-use crate::{
-    check_glb, compile_assets, fetch_assets, gen_atmosphere_reference, gen_game_map, gen_source_assets, large_world_assets, part_row_draw,
-    part_tools, watch_assets,
-};
+use crate::{check_glb, compile_assets, fetch_assets, gen_atmosphere_reference, gen_game_map, gen_source_assets, large_world_assets, part_row_draw, part_tools, watch_assets};
 
 pub(super) fn アセットコマンドを割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {

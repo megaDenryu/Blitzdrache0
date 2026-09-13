@@ -16,15 +16,11 @@ const ベースカラーのブロック圧縮の綴り: &str = "block_compressed
 const 有効な綴り: [&str; 2] = [全てRGBA8の綴り, ベースカラーのブロック圧縮の綴り];
 
 /// 引数一覧から方針の指定を取り除き、指定があればその方針と残りの引数を返す。
-pub(super) fn 引数一覧から方針の指定を取り出す(
-    引数一覧: &[String],
-) -> Result<(Option<テクスチャ格納方針>, Vec<String>), String> {
+pub(super) fn 引数一覧から方針の指定を取り出す(引数一覧: &[String]) -> Result<(Option<テクスチャ格納方針>, Vec<String>), String> {
     let Some(選択肢の位置) = 引数一覧.iter().position(|引数| 引数 == 選択肢の綴り) else {
         return Ok((None, 引数一覧.to_vec()));
     };
-    let 名前 = 引数一覧
-        .get(選択肢の位置 + 1)
-        .ok_or_else(|| format!("{選択肢の綴り}の直後に方針の名前が無い(有効な値は{})", 有効な綴り.join("と")))?;
+    let 名前 = 引数一覧.get(選択肢の位置 + 1).ok_or_else(|| format!("{選択肢の綴り}の直後に方針の名前が無い(有効な値は{})", 有効な綴り.join("と")))?;
     let 方針 = 名前からテクスチャ格納方針を解析する(名前)?;
     let mut 残り = 引数一覧[..選択肢の位置].to_vec();
     残り.extend_from_slice(&引数一覧[選択肢の位置 + 2..]);

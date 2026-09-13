@@ -24,9 +24,8 @@ use std::collections::HashMap;
 use blitz_math::大域ワールド位置;
 
 use super::{
-    chunk_directory::チャンク目録, chunk_grid::チャンク格子, chunk_ledger::チャンク台帳, coordinator_error::ストリーミング調停エラー,
-    coordinator_progress::ストリーミング進行, coordinator_settings::ストリーミング調停設定, eviction_hysteresis::退避優位計数,
-    loader::チャンク読込器, memory_budget::ストリーミング予算, observed_read_size::観測済み読込量, transfer_total::ストリーミング転送量,
+    chunk_directory::チャンク目録, chunk_grid::チャンク格子, chunk_ledger::チャンク台帳, coordinator_error::ストリーミング調停エラー, coordinator_progress::ストリーミング進行, coordinator_settings::ストリーミング調停設定,
+    eviction_hysteresis::退避優位計数, loader::チャンク読込器, memory_budget::ストリーミング予算, observed_read_size::観測済み読込量, transfer_total::ストリーミング転送量,
 };
 use crate::static_shape::チャンクごとの静的物理形状の保管;
 use crate::{カタログ, シーンデータ, チャンク座標};
@@ -78,11 +77,7 @@ impl ストリーミング調停 {
     }
 
     /// プレイヤーの大域位置を受け取り、そのフレームで実際に起きた読込・準備完了・解除と予算判定を返す。
-    pub fn 一フレーム進める(
-        &mut self,
-        プレイヤー位置: 大域ワールド位置,
-        カタログ: &カタログ,
-    ) -> Result<ストリーミング進行, ストリーミング調停エラー> {
+    pub fn 一フレーム進める(&mut self, プレイヤー位置: 大域ワールド位置, カタログ: &カタログ) -> Result<ストリーミング進行, ストリーミング調停エラー> {
         let 世代 = self.世代.現在()?;
         let 中心 = self.格子.所属座標を求める(プレイヤー位置)?;
         let 要求一覧 = self.格子.必要集合を計算する(プレイヤー位置, self.先読み半径)?;

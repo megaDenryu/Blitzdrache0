@@ -25,9 +25,7 @@ impl 検収画像 {
         let (幅, 高さ) = size_file::幅と高さを読む(&寸法のパス)?;
         let 色 = size_file::バイト列を読む(&置き場.join(format!("{名前}_color.raw")))?;
         let 深度バイト = size_file::バイト列を読む(&置き場.join(format!("{名前}_depth.depth32")))?;
-        let 画素数 = 幅.checked_mul(高さ).ok_or(採取の読み取りの破れ::画素数が桁あふれした {
-            パス: 寸法のパス, 幅, 高さ
-        })?;
+        let 画素数 = 幅.checked_mul(高さ).ok_or(採取の読み取りの破れ::画素数が桁あふれした { パス: 寸法のパス, 幅, 高さ })?;
         if 色.len() != 画素数 * 4 || 深度バイト.len() != 画素数 * 4 {
             return Err(採取の読み取りの破れ::寸法とバイト長が食い違う {
                 名前: 名前.to_string(),
@@ -36,10 +34,7 @@ impl 検収画像 {
                 深度のバイト長: 深度バイト.len(),
             });
         }
-        let 深度 = 深度バイト
-            .chunks_exact(4)
-            .map(|値| f32::from_le_bytes([値[0], 値[1], 値[2], 値[3]]))
-            .collect();
+        let 深度 = 深度バイト.chunks_exact(4).map(|値| f32::from_le_bytes([値[0], 値[1], 値[2], 値[3]])).collect();
         Ok(Self { 幅, 高さ, 色, 深度 })
     }
 

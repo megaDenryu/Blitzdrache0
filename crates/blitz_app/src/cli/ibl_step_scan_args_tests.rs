@@ -7,12 +7,7 @@
 use super::{起動モード, 起動要求};
 
 fn 解析する(値: &str) -> Result<起動要求, crate::error::起動エラー> {
-    let 引数: Vec<String> = vec![
-        "--ibl-step-scan".to_string(),
-        値.to_string(),
-        "--dump-hdr-frame".to_string(),
-        "target/ibl_step/shot".to_string(),
-    ];
+    let 引数: Vec<String> = vec!["--ibl-step-scan".to_string(), 値.to_string(), "--dump-hdr-frame".to_string(), "target/ibl_step/shot".to_string()];
     super::引数を解析する(&引数)
 }
 
@@ -50,12 +45,7 @@ fn 範囲を段差走査実行の選択肢へ入れる() {
 /// 対照は1つの跨ぎを下側・上側・下側の3枚撮る。
 #[test]
 fn 対照は一つの跨ぎを三枚撮る() {
-    let 引数: Vec<String> = vec![
-        "--ibl-step-control".to_string(),
-        "97".to_string(),
-        "--dump-hdr-frame".to_string(),
-        "target/ibl_step/control".to_string(),
-    ];
+    let 引数: Vec<String> = vec!["--ibl-step-control".to_string(), "97".to_string(), "--dump-hdr-frame".to_string(), "target/ibl_step/control".to_string()];
     let 指定 = 走査指定を取り出す(&引数);
     assert_eq!(指定.最初の跨ぎ番号(), 97);
     assert_eq!(指定.跨ぎの件数(), 1);

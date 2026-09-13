@@ -45,11 +45,7 @@ impl アプリ {
 }
 
 /// 掴んでいる描画だけ、カーソル位置(物理px)をプリセットの写像でワールドの目標位置へ写す。
-fn 掴みの目標位置を求める(
-    掴み: Option<(f32, f32)>,
-    window: Option<&winit::window::Window>,
-    プリセット: &布プリセット,
-) -> Option<位置<ワールド>> {
+fn 掴みの目標位置を求める(掴み: Option<(f32, f32)>, window: Option<&winit::window::Window>, プリセット: &布プリセット) -> Option<位置<ワールド>> {
     let ((px, py), 寸法) = 掴み.zip(window.map(winit::window::Window::inner_size))?;
     Some(目標位置へ写す(プリセット, px, py, 寸法.width, 寸法.height))
 }

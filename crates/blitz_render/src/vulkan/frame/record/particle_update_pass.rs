@@ -6,9 +6,7 @@ use ash::vk;
 use crate::vulkan::frame::粒子描画入力;
 use crate::vulkan::graph::{バッファハンドル, バッファ用途, パス宣言, パス種別};
 
-pub(super) fn 粒子更新パスを宣言する<'a>(
-    粒子ハンドル: バッファハンドル, 粒子入力: &'a 粒子描画入力
-) -> パス宣言<'a> {
+pub(super) fn 粒子更新パスを宣言する<'a>(粒子ハンドル: バッファハンドル, 粒子入力: &'a 粒子描画入力) -> パス宣言<'a> {
     パス宣言::生成する(
         "粒子更新",
         Vec::new(),
@@ -30,14 +28,7 @@ pub(super) fn 粒子更新パスを宣言する<'a>(
             // 安全性: command_bufferは記録中で、pipeline・ディスクリプタセットは生成済み。
             unsafe {
                 device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::COMPUTE, 粒子入力.コンピュートパイプライン);
-                device.cmd_bind_descriptor_sets(
-                    command_buffer,
-                    vk::PipelineBindPoint::COMPUTE,
-                    粒子入力.コンピュートlayout,
-                    0,
-                    &set一覧,
-                    &[],
-                );
+                device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::COMPUTE, 粒子入力.コンピュートlayout, 0, &set一覧, &[]);
                 device.cmd_dispatch(command_buffer, 計算の班数, 1, 1);
             }
         },

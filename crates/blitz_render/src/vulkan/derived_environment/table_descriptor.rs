@@ -10,12 +10,9 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{
-    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物
-};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物};
 
-const 宣言: 宣言した束縛の並び<1> =
-    宣言した束縛の並び::生成する([(束縛番号::生成する(0), vk::DescriptorType::STORAGE_IMAGE, vk::ShaderStageFlags::COMPUTE)]);
+const 宣言: 宣言した束縛の並び<1> = 宣言した束縛の並び::生成する([(束縛番号::生成する(0), vk::DescriptorType::STORAGE_IMAGE, vk::ShaderStageFlags::COMPUTE)]);
 
 pub(super) struct 反射率積分表ディスクリプタ {
     layout: 宣言から作ったセットレイアウト<1>,
@@ -79,11 +76,7 @@ fn 画像を束縛へ書き込む(device: &ash::Device, セット: &宣言から
     }]);
 }
 
-fn レイアウトを片付けて返す(
-    device: &ash::Device,
-    layout: &宣言から作ったセットレイアウト<1>,
-    誤り: レンダラーエラー,
-) -> レンダラーエラー {
+fn レイアウトを片付けて返す(device: &ash::Device, layout: &宣言から作ったセットレイアウト<1>, 誤り: レンダラーエラー) -> レンダラーエラー {
     layout.破棄する(device);
     誤り
 }

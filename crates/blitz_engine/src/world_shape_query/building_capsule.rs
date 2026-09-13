@@ -10,9 +10,7 @@ use blitz_math::{メートル, ワールド, 変位, 大域ワールド位置};
 use super::building_contact::カプセルと建物の接触;
 use super::building_place::建物の子形状の所在;
 use super::error::世界の形への問い合わせエラー;
-use super::local_frame::{
-    世界の変位を局所座標の変位へ写す, 大域位置をチャンクの局所座標へ写す, 局所座標の位置を大域へ写す, 局所座標の方向を世界へ写す,
-};
+use super::local_frame::{世界の変位を局所座標の変位へ写す, 大域位置をチャンクの局所座標へ写す, 局所座標の位置を大域へ写す, 局所座標の方向を世界へ写す};
 use super::query::世界の形への問い合わせ;
 use crate::static_shape::index::静的な子形状の候補;
 
@@ -27,8 +25,7 @@ impl<'世界> 世界の形への問い合わせ<'世界> {
     ) -> Result<Option<カプセルと建物の接触<'世界>>, 世界の形への問い合わせエラー> {
         let mut 最も早い接触: Option<カプセルと建物の接触<'世界>> = None;
         for 候補 in 候補一覧 {
-            let Some(接触) = self.子形状1件への掃引の接触を求める(軸の始点, 軸の終点, 半径, 掃引の変位, 候補)?
-            else {
+            let Some(接触) = self.子形状1件への掃引の接触を求める(軸の始点, 軸の終点, 半径, 掃引の変位, 候補)? else {
                 continue;
             };
             if 最も早い接触.is_none_or(|これまで| 接触.動けた割合() < これまで.動けた割合()) {

@@ -12,9 +12,7 @@ mod target;
 mod target_tests;
 
 pub use bending::{曲げ拘束1件のバイト数, 曲げ拘束の引数バイト列にする};
-pub use target::{
-    目標位置1件のバイト数, 目標位置の初期バイト列にする, 目標拘束1件のバイト数, 目標拘束の引数バイト列にする
-};
+pub use target::{目標位置1件のバイト数, 目標位置の初期バイト列にする, 目標拘束1件のバイト数, 目標拘束の引数バイト列にする};
 
 use crate::constraint_graph::{拘束グラフ, 点ごとの拘束の隣接表};
 

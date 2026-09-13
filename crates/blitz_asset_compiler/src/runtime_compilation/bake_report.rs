@@ -12,14 +12,9 @@ use super::instance_tally::個体数の勘定;
 use super::placed_instance_tally::置いた個体の勘定;
 use crate::焼き直しの勘定;
 
-pub(super) fn 焼き上がりの4行を出す(
-    焼き直しの勘定: &焼き直しの勘定, 置いた個体の勘定: &置いた個体の勘定, 実行時カタログ: &カタログ
-) {
+pub(super) fn 焼き上がりの4行を出す(焼き直しの勘定: &焼き直しの勘定, 置いた個体の勘定: &置いた個体の勘定, 実行時カタログ: &カタログ) {
     println!("[compile_assets] {}", 焼き直しの勘定.報告の行を作る());
     println!("[compile_assets] {}", 置いた個体の勘定.報告の行を作る());
     println!("[compile_assets] {}", 置いた個体の勘定.内訳の行を作る());
-    println!(
-        "[compile_assets] {}",
-        個体数の勘定::実行時カタログから数える(実行時カタログ).報告の行を作る()
-    );
+    println!("[compile_assets] {}", 個体数の勘定::実行時カタログから数える(実行時カタログ).報告の行を作る());
 }

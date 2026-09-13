@@ -19,10 +19,7 @@ pub(super) fn 固定経路を反復実行しながら資源を採取する(フ�
     if !crate::release_build::構築して合否を返す("streaming-bench条件A") {
         return false;
     }
-    let アセットルート = 検証の出力ルート::既定()
-        .名前が指す置き場(crate::compile_assets::板の世界の実行時形式の置き場)
-        .to_string_lossy()
-        .into_owned();
+    let アセットルート = 検証の出力ルート::既定().名前が指す置き場(crate::compile_assets::板の世界の実行時形式の置き場).to_string_lossy().into_owned();
     let 引数一覧 = 引数を作る(フレーム数, &アセットルート);
     println!("[xtask] 条件A: 固定経路を{フレーム数}フレーム、RAM上限{RAM上限}・VRAM上限{VRAM上限}バイトで実行");
     let 条件 = 採取条件 {

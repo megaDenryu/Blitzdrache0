@@ -46,7 +46,7 @@ impl 判定の名前 {
     pub fn 材料を数として読む<数: std::str::FromStr>(&self, 材料: &str) -> Result<数, 判定の破れ> {
         材料.parse().map_err(|_| {
             self.破れを組む(判定の破れの種類::材料を数として読めない {
-                材料: 判定が比べる値::綴り(材料.to_string()),
+                材料: 判定が比べる値::綴り(材料.to_string())
             })
         })
     }

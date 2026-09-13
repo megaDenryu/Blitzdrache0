@@ -7,9 +7,7 @@ use super::texture::版4までのテクスチャを読む as テクスチャを�
 use crate::asset::material_data::マテリアルデータ;
 use crate::asset::pbr_material_data::金属粗さPBRデータ;
 
-pub(in crate::asset::runtime_format::scene) fn 読む(
-    入力: &mut 読取位置<'_>,
-) -> Result<マテリアルデータ, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 読む(入力: &mut 読取位置<'_>) -> Result<マテリアルデータ, アセット実行時形式エラー> {
     let 種別 = 入力.u32()?;
     if 種別 != 金属粗さPBRの種別番号 {
         return Err(アセット実行時形式エラー::未知のマテリアル種別(種別));

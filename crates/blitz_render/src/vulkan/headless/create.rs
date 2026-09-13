@@ -52,9 +52,7 @@ impl ウィンドウなし実行GPU環境 {
 fn デバイス一式を作る(instance: &ash::Instance) -> Result<デバイス一式, レンダラーエラー> {
     let (physical_device, キューファミリ添字) = super::select::物理デバイスとキューファミリを選定する(instance)?;
     let (device, queue) = 論理デバイスを作る(instance, physical_device, キューファミリ添字)?;
-    let プール生成情報 = vk::CommandPoolCreateInfo::default()
-        .flags(vk::CommandPoolCreateFlags::RESET_COMMAND_BUFFER)
-        .queue_family_index(キューファミリ添字);
+    let プール生成情報 = vk::CommandPoolCreateInfo::default().flags(vk::CommandPoolCreateFlags::RESET_COMMAND_BUFFER).queue_family_index(キューファミリ添字);
     // 安全性: deviceは直前に生成済みで、キューファミリ添字は選定済みの正当な値。
     let command_pool = match unsafe { device.create_command_pool(&プール生成情報, None) } {
         Ok(pool) => pool,
@@ -73,26 +71,16 @@ fn デバイス一式を作る(instance: &ash::Instance) -> Result<デバイス�
     })
 }
 
-fn 論理デバイスを作る(
-    instance: &ash::Instance,
-    physical_device: vk::PhysicalDevice,
-    キューファミリ添字: u32,
-) -> Result<(GPUデバイス, vk::Queue), レンダラーエラー> {
+fn 論理デバイスを作る(instance: &ash::Instance, physical_device: vk::PhysicalDevice, キューファミリ添字: u32) -> Result<(GPUデバイス, vk::Queue), レンダラーエラー> {
     let キュー優先度 = [1.0_f32];
-    let キュー生成情報 = [vk::DeviceQueueCreateInfo::default()
-        .queue_family_index(キューファミリ添字)
-        .queue_priorities(&キュー優先度)];
+    let キュー生成情報 = [vk::DeviceQueueCreateInfo::default().queue_family_index(キューファミリ添字).queue_priorities(&キュー優先度)];
     let mut vulkan13機能 = vk::PhysicalDeviceVulkan13Features::default().synchronization2(true);
-    let create_info = vk::DeviceCreateInfo::default()
-        .queue_create_infos(&キュー生成情報)
-        .push_next(&mut vulkan13機能);
+    let create_info = vk::DeviceCreateInfo::default().queue_create_infos(&キュー生成情報).push_next(&mut vulkan13機能);
     // 安全性: physical_deviceは選定済みで、生成情報はこのスコープの値だけを参照する。
     let device = unsafe { instance.create_device(physical_device, &create_info, None)? };
     // 安全性: deviceは直前に生成済みで、キューファミリ添字は選定済み、添字0は必ず存在する。
     let queue = unsafe { device.get_device_queue(キューファミリ添字, 0) };
     // 安全性: physical_deviceは選定済みで有効。
-    let メモリ確保上限 = unsafe { instance.get_physical_device_properties(physical_device) }
-        .limits
-        .max_memory_allocation_count;
+    let メモリ確保上限 = unsafe { instance.get_physical_device_properties(physical_device) }.limits.max_memory_allocation_count;
     Ok((GPUデバイス::生成する(device, メモリ確保上限), queue))
 }

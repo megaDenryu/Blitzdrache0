@@ -34,11 +34,7 @@ impl 計測軸 {
     }
 
     pub(super) fn 綴りを並べる(軸一覧: &[Self]) -> String {
-        軸一覧
-            .iter()
-            .map(|軸| format!("{} メートル", 軸.綴り()))
-            .collect::<Vec<String>>()
-            .join(" または ")
+        軸一覧.iter().map(|軸| format!("{} メートル", 軸.綴り())).collect::<Vec<String>>().join(" または ")
     }
 
     pub(super) fn 値を添える(self, 綴り: &str) -> Result<候補の計測指定, 影の欠落計器の引数の破れ> {

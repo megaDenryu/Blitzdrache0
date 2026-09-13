@@ -21,19 +21,17 @@ pub struct 部品のglTFのファイル {
 
 impl 部品のglTFのファイル {
     pub fn 生成する(パス: &Path) -> Self {
-        Self {
-            パス: パス.to_path_buf()
-        }
+        Self { パス: パス.to_path_buf() }
     }
 
     /// 拡張子を落としたファイル名を部品IDにする。宣言表を持たずにカタログを組めるようにするためであり、
     /// 名前がそのまま識別子になることは`part-catalog`の報告の読み手にも分かる。
     pub fn 部品idを作る(&self) -> Result<部品ID, 部品の読み取りエラー> {
-        let 幹 = self.パス.file_stem().and_then(|幹| 幹.to_str()).ok_or_else(|| {
-            部品の読み取りエラー::ファイル名から部品IDを作れない {
-                パス: self.パス.display().to_string(),
-            }
-        })?;
+        let 幹 = self
+            .パス
+            .file_stem()
+            .and_then(|幹| 幹.to_str())
+            .ok_or_else(|| 部品の読み取りエラー::ファイル名から部品IDを作れない { パス: self.パス.display().to_string() })?;
         Ok(部品ID::生成する(幹)?)
     }
 
@@ -50,8 +48,7 @@ impl 部品のglTFのファイル {
     pub fn 境界箱を読み取る(&self) -> Result<部品の境界箱, 部品の読み取りエラー> {
         let 文書 = document::文書を開く(&self.パス).map_err(|誤り| 部品の読み取りエラー::ファイルを開けない(誤り.to_string()))?;
         let メッシュ = 文書.document.meshes().next().ok_or(部品の読み取りエラー::メッシュが1つも無い)?;
-        let 箱 = メッシュの境界箱::メッシュのアクセサの宣言から読む(&メッシュ)
-            .map_err(|_理由| 部品の読み取りエラー::境界箱を読めない)?;
+        let 箱 = メッシュの境界箱::メッシュのアクセサの宣言から読む(&メッシュ).map_err(|_理由| 部品の読み取りエラー::境界箱を読めない)?;
         Ok(部品の境界箱::最小と最大から生成する(箱.最小の成分(), 箱.最大の成分())?)
     }
 }

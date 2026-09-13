@@ -11,8 +11,7 @@ pub use error::目視用の絵への変換の破れ;
 
 pub fn 変換する(ダンプ先: &Path) -> Result<PathBuf, 目視用の絵への変換の破れ> {
     let 寸法のパス = ダンプ先.with_extension("size");
-    let 寸法 = std::fs::read_to_string(&寸法のパス)
-        .map_err(|誤り| 目視用の絵への変換の破れ::読み戻し寸法を読めなかった { 寸法のパス, 誤り })?;
+    let 寸法 = std::fs::read_to_string(&寸法のパス).map_err(|誤り| 目視用の絵への変換の破れ::読み戻し寸法を読めなかった { 寸法のパス, 誤り })?;
     let 大きさ = 寸法.split_whitespace().collect::<Vec<_>>().join("x");
     let raw = ダンプ先.with_extension("raw");
     let png = ダンプ先.with_extension("png");
@@ -23,10 +22,7 @@ pub fn 変換する(ダンプ先: &Path) -> Result<PathBuf, 目視用の絵へ�
         .status()
         .map_err(|誤り| 目視用の絵への変換の破れ::変換ツールを起こせなかった { 誤り })?;
     if !状態.success() {
-        return Err(目視用の絵への変換の破れ::変換ツールが失敗して終わった {
-            終了状態: 状態.to_string()
-        });
+        return Err(目視用の絵への変換の破れ::変換ツールが失敗して終わった { 終了状態: 状態.to_string() });
     }
-    std::fs::canonicalize(&png)
-        .map_err(|誤り| 目視用の絵への変換の破れ::絵の絶対パスを取れなかった { 絵のパス: png, 誤り })
+    std::fs::canonicalize(&png).map_err(|誤り| 目視用の絵への変換の破れ::絵の絶対パスを取れなかった { 絵のパス: png, 誤り })
 }

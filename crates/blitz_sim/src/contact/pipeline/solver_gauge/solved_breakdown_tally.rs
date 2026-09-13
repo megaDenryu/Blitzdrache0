@@ -19,8 +19,7 @@ pub(super) struct 定まった解の内訳の数え {
 impl 定まった解の内訳の数え {
     pub(super) fn 零から始める() -> Self {
         Self {
-            数えるか: false,
-            溜まった内訳: Vec::new(),
+            数えるか: false, 溜まった内訳: Vec::new()
         }
     }
 

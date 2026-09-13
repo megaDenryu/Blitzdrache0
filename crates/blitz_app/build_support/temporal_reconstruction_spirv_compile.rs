@@ -19,15 +19,6 @@ const エントリ一覧: [エントリ指定; 2] = [
     },
 ];
 
-pub(super) fn 頂点と画素段をコンパイルする(
-    slangc: &スラングコンパイラの所在,
-    シェーダーディレクトリ: &Path,
-    出力先ディレクトリ: &Path,
-) -> Result<(), String> {
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("temporal_reconstruction.slang"),
-        出力先ディレクトリ,
-        &エントリ一覧,
-    )
+pub(super) fn 頂点と画素段をコンパイルする(slangc: &スラングコンパイラの所在, シェーダーディレクトリ: &Path, 出力先ディレクトリ: &Path) -> Result<(), String> {
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("temporal_reconstruction.slang"), 出力先ディレクトリ, &エントリ一覧)
 }

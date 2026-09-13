@@ -9,11 +9,7 @@ use crate::vulkan::descriptor::結ぶ現物;
 use crate::vulkan::ui::texture::UIテクスチャ;
 
 impl UIテクスチャのディスクリプタ資源 {
-    pub(crate) fn テクスチャのセットを割り当てて書き込む(
-        &self,
-        device: &ash::Device,
-        テクスチャ: &UIテクスチャ,
-    ) -> Result<vk::DescriptorSet, レンダラーエラー> {
+    pub(crate) fn テクスチャのセットを割り当てて書き込む(&self, device: &ash::Device, テクスチャ: &UIテクスチャ) -> Result<vk::DescriptorSet, レンダラーエラー> {
         let 一覧 = self.セットレイアウト().プールからセットを割り当てる(device, self.プールのハンドル(), 1)?;
         let Some(セット) = 一覧.into_iter().next() else {
             panic!("要求した1つのUIテクスチャのセットが返らなかった");

@@ -15,9 +15,7 @@ mod run_rows;
 mod statistics;
 use blitz_engine::sky::atmosphere::大気媒体方針;
 use blitz_engine::sky::空描画方針;
-use blitz_render::atmosphere::{
-    スカイビュー観測条件, 多重散乱表, 大気のベイク済み画像の解像度, 天頂余弦, 空中遠近ボリュームの材料, 透過率表
-};
+use blitz_render::atmosphere::{スカイビュー観測条件, 多重散乱表, 大気のベイク済み画像の解像度, 天頂余弦, 空中遠近ボリュームの材料, 透過率表};
 use report_error::大気のベイク済み画像報告エラー;
 use std::process::ExitCode;
 /// 検査に使う太陽の天頂余弦。60度の高度に相当し、太陽が地平線より十分上で全テクセルに散乱の寄与がある条件である。
@@ -53,15 +51,7 @@ fn 報告する() -> Result<(), 大気のベイク済み画像報告エラー> {
         観測条件.太陽天頂余弦().値(),
         空中遠近条件.最遠距離().値()
     );
-    let 焼く = || {
-        blitz_render::atmosphere_lut_probe::大気のベイク済み画像をgpuで焼いて読み戻す(
-            &媒体,
-            解像度,
-            観測条件,
-            空中遠近条件,
-            &シェーダー,
-        )
-    };
+    let 焼く = || blitz_render::atmosphere_lut_probe::大気のベイク済み画像をgpuで焼いて読み戻す(&媒体, 解像度, 観測条件, 空中遠近条件, &シェーダー);
     let 一回目 = 焼く()?;
     let 二回目 = 焼く()?;
     run_rows::検証を出す(&一回目, &二回目);

@@ -13,11 +13,7 @@ use crate::vulkan::depth_injection::{合成深度の注入一式, 合成深度�
 impl 描画段階資源 {
     /// 前提: 呼び出し元がGPUの全作業完了を待ってから呼ぶ(古い資源を破棄するため)。
     /// 深度画像の寸法が画面と一致することも呼び出し元が確かめている。
-    pub(in crate::renderer) fn 合成深度の注入を据える(
-        &mut self,
-        確保係: &GPU資源の確保係<'_>,
-        深度画像: &深度画像,
-    ) -> Result<(), レンダラーエラー> {
+    pub(in crate::renderer) fn 合成深度の注入を据える(&mut self, 確保係: &GPU資源の確保係<'_>, 深度画像: &深度画像) -> Result<(), レンダラーエラー> {
         let device = 確保係.論理デバイス();
         if let Some(古い) = self.合成深度の注入.take() {
             古い.破棄する(device);

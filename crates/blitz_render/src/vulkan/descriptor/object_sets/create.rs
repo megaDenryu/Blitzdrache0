@@ -12,11 +12,7 @@ use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム�
 
 impl 描画対象ディスクリプタプール {
     /// `ジオメトリ参照一覧`の並びが束の中での描画対象添字である。
-    pub(crate) fn 生成する(
-        device: &ash::Device,
-        レイアウト: &シーンセットレイアウト一式,
-        ジオメトリ参照一覧: &[ジオメトリセット参照],
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(device: &ash::Device, レイアウト: &シーンセットレイアウト一式, ジオメトリ参照一覧: &[ジオメトリセット参照]) -> Result<Self, レンダラーエラー> {
         let 描画対象数 = ジオメトリ参照一覧.len();
         let pool = プールを生成する(device, セット数を数える(描画対象数))?;
         match ジオメトリのセットを割り当てて書き込む(device, pool, レイアウト, ジオメトリ参照一覧) {
@@ -31,17 +27,13 @@ impl 描画対象ディスクリプタプール {
 }
 
 fn セット数を数える(描画対象数: usize) -> u32 {
-    let 件数 = 描画対象数
-        .checked_mul(進行中フレーム数)
-        .unwrap_or_else(|| panic!("ジオメトリのセット数がusizeを超えた"));
+    let 件数 = 描画対象数.checked_mul(進行中フレーム数).unwrap_or_else(|| panic!("ジオメトリのセット数がusizeを超えた"));
     u32::try_from(件数).unwrap_or_else(|_| panic!("ジオメトリのセット数がu32に収まらない: {件数}"))
 }
 
 /// 束の描画対象がフレームスロットごとに1つずつ使うジオメトリのセットを確保する。1セットが2本のストレージバッファを結ぶ。
 fn プールを生成する(device: &ash::Device, セット数: u32) -> Result<vk::DescriptorPool, レンダラーエラー> {
-    let プールサイズ一覧 = [vk::DescriptorPoolSize::default()
-        .ty(vk::DescriptorType::STORAGE_BUFFER)
-        .descriptor_count(2 * セット数)];
+    let プールサイズ一覧 = [vk::DescriptorPoolSize::default().ty(vk::DescriptorType::STORAGE_BUFFER).descriptor_count(2 * セット数)];
     let create_info = vk::DescriptorPoolCreateInfo::default().max_sets(セット数).pool_sizes(&プールサイズ一覧);
     // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
     Ok(unsafe { device.create_descriptor_pool(&create_info, None)? })
@@ -60,11 +52,7 @@ fn ジオメトリのセットを割り当てて書き込む(
             let Some(set) = set一覧.get(位置を求める(描画対象添字, フレーム添字)).copied() else {
                 panic!("ジオメトリのセット一覧が走査中の位置を持たない");
             };
-            ジオメトリと可視のセットの書き込み先::生成する(device, set).個体レコードと可視id列を結ぶ(
-                &参照.個体レコード,
-                &参照.可視id列,
-                フレーム添字,
-            );
+            ジオメトリと可視のセットの書き込み先::生成する(device, set).個体レコードと可視id列を結ぶ(&参照.個体レコード, &参照.可視id列, フレーム添字);
         }
     }
     Ok(set一覧)

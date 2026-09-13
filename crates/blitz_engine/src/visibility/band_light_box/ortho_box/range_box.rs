@@ -27,11 +27,7 @@ impl 範囲内直方体 {
     pub(in crate::visibility::band_light_box) fn 生成する(軸一覧: [[f32; 3]; 3], 区間: 光空間区間) -> Option<Self> {
         let 候補 = Self { 軸一覧, 区間 };
         let 有限か = |成分列: [f32; 3]| 成分列.into_iter().all(f32::is_finite);
-        if 有限か(候補.中心()) && 有限か(候補.半幅()) {
-            Some(候補)
-        } else {
-            None
-        }
+        if 有限か(候補.中心()) && 有限か(候補.半幅()) { Some(候補) } else { None }
     }
 
     pub(in crate::visibility::band_light_box) fn 軸(&self, 番号: usize) -> [f32; 3] {

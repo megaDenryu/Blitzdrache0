@@ -7,9 +7,7 @@ use axum::{
     http::{Request, StatusCode},
 };
 use blitz_engine::{実行時形式からシーンを読む, 描画形状};
-use editor_server::{
-    チャンク座標, チャンク構造, プロジェクト保管庫, 位置3次元, 建物の配置, 散布の設定, 既定の粗マスの一辺の升目数, 見下ろし図の下書き,
-};
+use editor_server::{チャンク座標, チャンク構造, プロジェクト保管庫, 位置3次元, 建物の配置, 散布の設定, 既定の粗マスの一辺の升目数, 見下ろし図の下書き};
 use tower::ServiceExt;
 
 #[tokio::test]
@@ -35,18 +33,14 @@ async fn 保存した家屋は中心基準座標を変換して高さ格子上�
                     なじみ半径メートル: 8.0,
                 }],
                 散布: 散布の設定 {
-                    最小間隔メートル: 5.5,
-                    乱数の種: 1,
+                    最小間隔メートル: 5.5, 乱数の種: 1
                 },
                 散布の個体一覧: Vec::new(),
                 見下ろし図の下書き: 見下ろし図の下書き::空の下書きを作る(既定の粗マスの一辺の升目数),
             },
         )
         .unwrap();
-    let 応答 = crate::common::ルーターを作る(&一時)
-        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
+    let 応答 = crate::common::ルーターを作る(&一時).oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap()).await.unwrap();
     assert_eq!(応答.status(), StatusCode::OK);
     焼いた建物を確かめる(&一時);
 }

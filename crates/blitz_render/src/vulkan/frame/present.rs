@@ -9,13 +9,7 @@ use super::submit_outcome::送信後の結末;
 use super::types::読み戻しの待機;
 use super::{同期入力, 提示先};
 
-pub(super) fn 待って提示する(
-    device: &ash::Device,
-    queue: vk::Queue,
-    提示先: 提示先<'_>,
-    同期: &同期入力,
-    読み戻しの待機: 読み戻しの待機,
-) -> 送信後の結末 {
+pub(super) fn 待って提示する(device: &ash::Device, queue: vk::Queue, 提示先: 提示先<'_>, 同期: &同期入力, 読み戻しの待機: 読み戻しの待機) -> 送信後の結末 {
     if let 読み戻しの待機::待つ = 読み戻しの待機 {
         // 安全性: 直前に送信した同じフェンスを待つ。読み戻しバッファへのコピー完了をホストが読む前に保証するため、
         // 通常経路と異なりここで同期的に待機する(判断9: GPU同期を伴うためスモーク用途)。
@@ -27,14 +21,7 @@ pub(super) fn 待って提示する(
     let スワップチェーン一覧 = [提示先.swapchain];
     let 画像添字一覧 = [提示先.画像添字.gpu境界用u32()];
     let 提示待機セマフォ一覧 = [同期.提示セマフォ];
-    let 提示結果 = 提示する(
-        提示先.loader,
-        queue,
-        &提示待機セマフォ一覧,
-        &スワップチェーン一覧,
-        &画像添字一覧,
-        提示先.提示id,
-    );
+    let 提示結果 = 提示する(提示先.loader, queue, &提示待機セマフォ一覧, &スワップチェーン一覧, &画像添字一覧, 提示先.提示id);
     match 提示結果 {
         Ok(提示劣化) => 送信後の結末::提示まで成功 { 提示劣化 },
         Err(vk::Result::ERROR_OUT_OF_DATE_KHR) => 送信後の結末::提示まで成功 { 提示劣化: true },
@@ -44,17 +31,9 @@ pub(super) fn 待って提示する(
 
 /// 実表示時刻を計測するときだけ`VkPresentIdKHR`を連結する。IDを付けない経路では連結自体を行わない。
 fn 提示する(
-    swapchain_loader: &ash::khr::swapchain::Device,
-    queue: vk::Queue,
-    提示待機セマフォ一覧: &[vk::Semaphore],
-    スワップチェーン一覧: &[vk::SwapchainKHR],
-    画像添字一覧: &[u32],
-    提示id: Option<u64>,
+    swapchain_loader: &ash::khr::swapchain::Device, queue: vk::Queue, 提示待機セマフォ一覧: &[vk::Semaphore], スワップチェーン一覧: &[vk::SwapchainKHR], 画像添字一覧: &[u32], 提示id: Option<u64>
 ) -> ash::prelude::VkResult<bool> {
-    let 基本情報 = vk::PresentInfoKHR::default()
-        .wait_semaphores(提示待機セマフォ一覧)
-        .swapchains(スワップチェーン一覧)
-        .image_indices(画像添字一覧);
+    let 基本情報 = vk::PresentInfoKHR::default().wait_semaphores(提示待機セマフォ一覧).swapchains(スワップチェーン一覧).image_indices(画像添字一覧);
     let Some(識別子) = 提示id else {
         // 安全性: 提示セマフォはこの送信のsignal対象で、GPU側の描画完了後にシグナルされる。
         return unsafe { swapchain_loader.queue_present(queue, &基本情報) };

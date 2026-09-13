@@ -44,19 +44,14 @@ fn 宣言の前のコメントの違反の文言を求める(内訳一覧: &[行
     if !内訳一覧.get(添字).is_some_and(行の内訳::説明の注釈だけの行か) {
         return Some("宣言の間にコメントだけの行が在る。説明は宣言と同じ行の末尾へ書く".to_string());
     }
-    let 直前も説明の注釈 = 添字
-        .checked_sub(1)
-        .and_then(|前の添字| 内訳一覧.get(前の添字))
-        .is_some_and(行の内訳::説明の注釈だけの行か);
+    let 直前も説明の注釈 = 添字.checked_sub(1).and_then(|前の添字| 内訳一覧.get(前の添字)).is_some_and(行の内訳::説明の注釈だけの行か);
     直前も説明の注釈.then(|| "1つの宣言へ説明の注釈が2行以上積まれている。1行へ収めるか、説明を型自身の注釈へ移す".to_string())
 }
 
 /// 構造体・列挙の宣言が波括弧を開く行かを判定する。タプル構造体と型別名は波括弧を持たないため掛からない。
 fn 宣言ブロックの開きか(コード行: &str) -> bool {
     let 綴り = コード行.trim_start();
-    let 綴り = 綴り
-        .strip_prefix("pub")
-        .map_or(綴り, |残り| 残り.trim_start_matches(|文字| 文字 != ' ').trim_start());
+    let 綴り = 綴り.strip_prefix("pub").map_or(綴り, |残り| 残り.trim_start_matches(|文字| 文字 != ' ').trim_start());
     (綴り.starts_with("struct ") || 綴り.starts_with("enum ")) && コード行.trim_end().ends_with('{')
 }
 

@@ -30,11 +30,7 @@ pub(super) const 一覧: [寄せられない綴り; 9] = [
     },
     寄せられない綴り {
         綴り: "scene.slang",
-        現れてよい場所一覧: &[
-            "crates/blitz_app/build_support/mod.rs",
-            "xtask/src/shader_copy.rs",
-            "crates/blitz_app/src/cli/types/default.rs",
-        ],
+        現れてよい場所一覧: &["crates/blitz_app/build_support/mod.rs", "xtask/src/shader_copy.rs", "crates/blitz_app/src/cli/types/default.rs"],
         寄せられない理由: "blitz_appのビルドスクリプトとxtaskが別のクレートに在り、xtaskからビルドスクリプトへ依存を張れない",
     },
     寄せられない綴り {

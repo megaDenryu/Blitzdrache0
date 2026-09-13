@@ -7,9 +7,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{
-    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号
-};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号};
 
 const 記憶: vk::DescriptorType = vk::DescriptorType::STORAGE_BUFFER;
 const 計算段: vk::ShaderStageFlags = vk::ShaderStageFlags::COMPUTE;
@@ -32,9 +30,7 @@ impl 自動露出のディスクリプタ {
     pub(crate) fn 生成する(device: &ash::Device) -> Result<Self, レンダラーエラー> {
         let レイアウト = 自動露出のセットレイアウトを作る(device)?;
         match プールから割り当てる(device, &レイアウト) {
-            Ok((pool, セット)) => Ok(Self {
-                レイアウト, pool, セット
-            }),
+            Ok((pool, セット)) => Ok(Self { レイアウト, pool, セット }),
             Err(誤り) => {
                 レイアウト.破棄する(device);
                 Err(誤り)
@@ -59,16 +55,11 @@ impl 自動露出のディスクリプタ {
     }
 }
 
-fn 自動露出のセットレイアウトを作る(
-    device: &ash::Device,
-) -> Result<宣言から作ったセットレイアウト<4>, レンダラーエラー> {
+fn 自動露出のセットレイアウトを作る(device: &ash::Device) -> Result<宣言から作ったセットレイアウト<4>, レンダラーエラー> {
     束縛の宣言.セットレイアウトを確保する(device)
 }
 
-fn プールから割り当てる(
-    device: &ash::Device,
-    レイアウト: &宣言から作ったセットレイアウト<4>,
-) -> Result<(vk::DescriptorPool, 宣言から割り当てたセット<4>), レンダラーエラー> {
+fn プールから割り当てる(device: &ash::Device, レイアウト: &宣言から作ったセットレイアウト<4>) -> Result<(vk::DescriptorPool, 宣言から割り当てたセット<4>), レンダラーエラー> {
     let 大きさ一覧 = 束縛の宣言.プールの内訳(1);
     let プール情報 = vk::DescriptorPoolCreateInfo::default().max_sets(1).pool_sizes(&大きさ一覧);
     // 安全性: deviceは生成済みで有効。

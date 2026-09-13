@@ -13,19 +13,13 @@ use crate::vulkan::visible_id::可視ID列バッファ;
 
 impl 描画対象資源 {
     /// そのスロット番号の材質のIDを返す。持たなければ`None`。
-    pub(in crate::renderer::scene_draw_resources) fn 材質スロット番号から大域材質idを参照する(
-        &self,
-        スロット番号: u32,
-    ) -> Option<大域材質ID> {
+    pub(in crate::renderer::scene_draw_resources) fn 材質スロット番号から大域材質idを参照する(&self, スロット番号: u32) -> Option<大域材質ID> {
         self.スロット別材質id.スロット番号で参照する(スロット番号)
     }
 
     /// ジオメトリのセットへ結ぶ資源の参照。材質スロットによらず対象に1組である。
     /// 単一個体の可視ID列だけは束が共有するため、束から借りて受け取る。
-    pub(in crate::renderer::scene_draw_resources) fn ジオメトリセット参照を作る(
-        &self,
-        束の単一個体列: &可視ID列バッファ,
-    ) -> ジオメトリセット参照 {
+    pub(in crate::renderer::scene_draw_resources) fn ジオメトリセット参照を作る(&self, 束の単一個体列: &可視ID列バッファ) -> ジオメトリセット参照 {
         ジオメトリセット参照 {
             個体レコード: self.個体変換.参照(),
             可視id列: self.可視id列.参照(束の単一個体列),

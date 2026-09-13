@@ -14,8 +14,7 @@ fn 型名一覧(原文: &str) -> Vec<String> {
 
 #[test]
 fn 深さ0の関数だけを集める() {
-    let 原文 =
-        "pub fn 外側(値: &台帳) {\n    fn 内側(値: &台帳) {}\n}\nimpl 台帳 {\n    fn 方法(&self) {}\n}\nmod 中 {\n    fn 中の関数(値: &台帳) {}\n}\n";
+    let 原文 = "pub fn 外側(値: &台帳) {\n    fn 内側(値: &台帳) {}\n}\nimpl 台帳 {\n    fn 方法(&self) {}\n}\nmod 中 {\n    fn 中の関数(値: &台帳) {}\n}\n";
     assert_eq!(型名一覧(原文), vec!["外側".to_string()]);
 }
 
@@ -76,9 +75,5 @@ fn 木の中の自由関数だけを検出する() {
 #[test]
 fn 木の外の自由関数は検出しない() {
     let 原文 = "fn 選ぶ(アプリ: &mut アプリ) {}\n";
-    assert!(
-        索引()
-            .親の型を丸ごと受け取る自由関数を探す(Path::new("crates/blitz_app/src/input/ingest.rs"), 原文)
-            .is_empty()
-    );
+    assert!(索引().親の型を丸ごと受け取る自由関数を探す(Path::new("crates/blitz_app/src/input/ingest.rs"), 原文).is_empty());
 }

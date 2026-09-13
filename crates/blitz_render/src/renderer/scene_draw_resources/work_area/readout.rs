@@ -7,9 +7,7 @@ use crate::frame_composition::深度プリパス方式;
 use crate::renderer::draw_issue_breakdown::描画発行内訳;
 use crate::visible_instance_selection::可視パス;
 use crate::vulkan::cluster_light_assignment::クラスタ選別の描画入力;
-use crate::vulkan::frame::{
-    共有セット束縛, 描画対象入力, 点光源の影の束縛, 記録側切替計数, 距離区分別のシャドウ入力
-};
+use crate::vulkan::frame::{共有セット束縛, 描画対象入力, 点光源の影の束縛, 記録側切替計数, 距離区分別のシャドウ入力};
 use crate::vulkan::point_light_shadow_plan::点光源の影の描画計画;
 
 impl シーン描画資源 {

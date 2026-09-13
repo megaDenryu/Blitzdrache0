@@ -55,15 +55,10 @@ pub fn 字句へ分ける(内容: &str) -> Vec<字句の断片> {
 }
 
 pub fn 文字列リテラル一覧(内容: &str) -> Vec<字句の断片> {
-    字句へ分ける(内容)
-        .into_iter()
-        .filter(|断片| 断片.区分 == 字句の区分::文字列リテラル)
-        .collect()
+    字句へ分ける(内容).into_iter().filter(|断片| 断片.区分 == 字句の区分::文字列リテラル).collect()
 }
 
-fn 溜めたコードを吐き出す(
-    断片一覧: &mut Vec<字句の断片>, 文字一覧: &[char], 始まり: Option<(usize, usize)>, 終了位置: usize
-) {
+fn 溜めたコードを吐き出す(断片一覧: &mut Vec<字句の断片>, 文字一覧: &[char], 始まり: Option<(usize, usize)>, 終了位置: usize) {
     let Some((開始位置, 開始行)) = 始まり else {
         return;
     };
@@ -84,8 +79,5 @@ fn 行末を揃える(内容: &str) -> String {
 }
 
 fn 区間の改行数(文字一覧: &[char], 開始位置: usize, 終了位置: usize) -> usize {
-    文字一覧[開始位置..終了位置.min(文字一覧.len())]
-        .iter()
-        .filter(|文字| **文字 == '\n')
-        .count()
+    文字一覧[開始位置..終了位置.min(文字一覧.len())].iter().filter(|文字| **文字 == '\n').count()
 }

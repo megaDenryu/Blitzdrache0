@@ -54,9 +54,7 @@ pub use indexed_target_constraint::添字付き目標拘束;
 pub use irregular::{不規則な拘束グラフを作る, 不規則グラフの仕様};
 pub use point_index::点添字;
 pub use point_state::点自由度の初期状態;
-pub use reference::{
-    反復の更新の順序, 同時の緩和係数, 拘束グラフの参照計算, 拘束違反の二乗平均平方根, 拘束違反の平均
-};
+pub use reference::{反復の更新の順序, 同時の緩和係数, 拘束グラフの参照計算, 拘束違反の二乗平均平方根, 拘束違反の平均};
 pub use target_batch::目標拘束のバッチ;
 pub use target_index::目標拘束添字;
 pub use target_state::{目標拘束の有効, 目標拘束の目標};

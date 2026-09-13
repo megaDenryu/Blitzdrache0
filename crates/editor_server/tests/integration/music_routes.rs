@@ -31,10 +31,7 @@ async fn 保存を要求する(一時: &crate::common::一時プロジェクト,
 }
 
 async fn 取得を要求する(一時: &crate::common::一時プロジェクト, 経路: &str) -> axum::response::Response {
-    crate::common::ルーターを作る(一時)
-        .oneshot(Request::get(経路).body(Body::empty()).unwrap())
-        .await
-        .unwrap()
+    crate::common::ルーターを作る(一時).oneshot(Request::get(経路).body(Body::empty()).unwrap()).await.unwrap()
 }
 
 #[tokio::test]
@@ -71,12 +68,7 @@ async fn 検証に落ちる楽曲は422を返し種別と説明を持つ() {
     let mut 不正な楽曲 = 楽曲のjson();
     不正な楽曲["テンポ"] = serde_json::json!(10);
     let 応答 = crate::common::ルーターを作る(&一時)
-        .oneshot(
-            Request::put("/api/楽曲/試験の楽曲")
-                .header("content-type", "application/json")
-                .body(Body::from(serde_json::to_vec(&不正な楽曲).unwrap()))
-                .unwrap(),
-        )
+        .oneshot(Request::put("/api/楽曲/試験の楽曲").header("content-type", "application/json").body(Body::from(serde_json::to_vec(&不正な楽曲).unwrap())).unwrap())
         .await
         .unwrap();
     assert_eq!(応答.status(), StatusCode::UNPROCESSABLE_ENTITY);

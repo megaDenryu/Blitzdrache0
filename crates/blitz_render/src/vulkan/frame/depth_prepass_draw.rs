@@ -13,19 +13,10 @@ use super::draw_commands::u32を丸めずf32へ変換する;
 use super::{shared_set_bind, ジオメトリ入力, 共有セット束縛};
 use crate::vulkan::command_sink::GPU命令の積み先;
 
-pub(super) fn 描画コマンドを積む(
-    積み先: GPU命令の積み先<'_>,
-    寸法: vk::Extent2D,
-    ジオメトリ一覧: &[ジオメトリ入力],
-    共有: 共有セット束縛<'_>,
-) {
+pub(super) fn 描画コマンドを積む(積み先: GPU命令の積み先<'_>, 寸法: vk::Extent2D, ジオメトリ一覧: &[ジオメトリ入力], 共有: 共有セット束縛<'_>) {
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
-    let viewport = vk::Viewport::default()
-        .width(u32を丸めずf32へ変換する(寸法.width))
-        .height(u32を丸めずf32へ変換する(寸法.height))
-        .min_depth(0.0)
-        .max_depth(1.0);
+    let viewport = vk::Viewport::default().width(u32を丸めずf32へ変換する(寸法.width)).height(u32を丸めずf32へ変換する(寸法.height)).min_depth(0.0).max_depth(1.0);
     let シザー = vk::Rect2D::default().extent(寸法);
     // 安全性: command_bufferは記録中で、pipelineと全対象のバッファ・ディスクリプタセットは生成済み。
     unsafe {
@@ -55,23 +46,9 @@ fn 一件を記録する(積み先: GPU命令の積み先<'_>, 入力: &ジオ�
     // layoutは頂点ステージと画素段ステージの16バイト範囲(シーン描画定数)を宣言済みである。
     unsafe {
         入力.描画定数.プッシュ定数として積む(積み先, 入力.layout);
-        device.cmd_bind_descriptor_sets(
-            command_buffer,
-            vk::PipelineBindPoint::GRAPHICS,
-            入力.layout,
-            shared_set_bind::ジオメトリのセット番号,
-            &[入力.ジオメトリセット],
-            &[],
-        );
+        device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.layout, shared_set_bind::ジオメトリのセット番号, &[入力.ジオメトリセット], &[]);
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &[0]);
         device.cmd_bind_index_buffer(command_buffer, 入力.インデックスバッファ, 0, vk::IndexType::UINT32);
-        device.cmd_draw_indexed(
-            command_buffer,
-            入力.インデックス数,
-            入力.インスタンス数,
-            入力.先頭インデックス,
-            入力.頂点基準,
-            入力.先頭インスタンス,
-        );
+        device.cmd_draw_indexed(command_buffer, 入力.インデックス数, 入力.インスタンス数, 入力.先頭インデックス, 入力.頂点基準, 入力.先頭インスタンス);
     }
 }

@@ -12,16 +12,8 @@ const ピクセルあたりの行相当: f32 = 20.0;
 
 pub(super) fn winit事象を入力状態へ反映する(状態: &mut 入力状態, event: &WindowEvent) {
     match event {
-        WindowEvent::MouseInput {
-            state,
-            button: MouseButton::Left,
-            ..
-        } => 左ボタンを反映する(状態, *state),
-        WindowEvent::MouseInput {
-            state,
-            button: MouseButton::Right,
-            ..
-        } => 状態.右ボタン押下中 = *state == ElementState::Pressed,
+        WindowEvent::MouseInput { state, button: MouseButton::Left, .. } => 左ボタンを反映する(状態, *state),
+        WindowEvent::MouseInput { state, button: MouseButton::Right, .. } => 状態.右ボタン押下中 = *state == ElementState::Pressed,
         WindowEvent::CursorMoved { position, .. } => カーソル移動を反映する(状態, *position),
         WindowEvent::MouseWheel { delta, .. } => ホイールを反映する(状態, delta),
         WindowEvent::KeyboardInput { event, .. } => キー入力を反映する(状態, event),

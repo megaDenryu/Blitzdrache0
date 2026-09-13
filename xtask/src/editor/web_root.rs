@@ -14,7 +14,7 @@ pub(crate) struct エディター画面の置き場 {
 impl エディター画面の置き場 {
     pub(crate) fn リポジトリルートから求める(リポジトリルート: &Path) -> Self {
         Self {
-            パス: リポジトリルート.join("editor_web"),
+            パス: リポジトリルート.join("editor_web")
         }
     }
 

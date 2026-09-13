@@ -41,16 +41,7 @@ impl 全画面パスのパイプライン {
             }
         };
 
-        let 結果 = fixed_function::組み立てる(
-            device,
-            カラー形式,
-            ディスクリプタlayout,
-            頂点モジュール,
-            頂点エントリ名,
-            画素段モジュール,
-            画素段エントリ名,
-            プッシュ定数バイト数,
-        );
+        let 結果 = fixed_function::組み立てる(device, カラー形式, ディスクリプタlayout, 頂点モジュール, 頂点エントリ名, 画素段モジュール, 画素段エントリ名, プッシュ定数バイト数);
 
         // 安全性: モジュールはパイプライン生成呼び出しの間だけ必要で、生成後は破棄してよい。
         unsafe {
@@ -61,11 +52,7 @@ impl 全画面パスのパイプライン {
     }
 
     /// `create_graphics_pipelines`の生成結果から組を作り、失敗していたらレイアウトをその場で片付ける。ブレンドや深度の要否が違う全画面パス(空中遠近合成・時間再構成)も、失敗時の後始末は同じであるためこの口を通る。
-    pub(crate) fn 生成結果から取り出す(
-        device: &ash::Device,
-        layout: vk::PipelineLayout,
-        生成結果: Result<Vec<vk::Pipeline>, (Vec<vk::Pipeline>, vk::Result)>,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成結果から取り出す(device: &ash::Device, layout: vk::PipelineLayout, 生成結果: Result<Vec<vk::Pipeline>, (Vec<vk::Pipeline>, vk::Result)>) -> Result<Self, レンダラーエラー> {
         match 生成結果 {
             Ok(一覧) => {
                 let Some(&handle) = 一覧.first() else {

@@ -8,41 +8,19 @@ use ash::vk;
 
 use crate::vulkan::graph;
 
-pub(super) fn コピーパスを作る(
-    名前: &'static str,
-    画像: graph::画像ハンドル,
-    範囲: vk::Extent3D,
-    受け: vk::Buffer,
-) -> graph::パス宣言<'static> {
-    graph::パス宣言::生成する(
-        名前,
-        vec![(画像, graph::画像用途::転送元)],
-        Vec::new(),
-        Vec::new(),
-        Vec::new(),
-        graph::パス種別::転送,
-        move |文脈| {
-            let 画像ハンドル = 文脈.宣言済みの画像を参照する(画像);
-            let 領域 = [vk::BufferImageCopy::default()
-                .image_subresource(
-                    vk::ImageSubresourceLayers::default()
-                        .aspect_mask(vk::ImageAspectFlags::COLOR)
-                        .mip_level(0)
-                        .base_array_layer(0)
-                        .layer_count(1),
-                )
-                .image_extent(範囲)];
-            // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ遷移済み(用途宣言からグラフが導く)、
-            // 受けバッファはテクセル数ぶんの容量で確保済みである。
-            unsafe {
-                文脈.積み先().論理デバイス().cmd_copy_image_to_buffer(
-                    文脈.積み先().コマンドバッファ(),
-                    画像ハンドル,
-                    vk::ImageLayout::TRANSFER_SRC_OPTIMAL,
-                    受け,
-                    &領域,
-                );
-            }
-        },
-    )
+pub(super) fn コピーパスを作る(名前: &'static str, 画像: graph::画像ハンドル, 範囲: vk::Extent3D, 受け: vk::Buffer) -> graph::パス宣言<'static> {
+    graph::パス宣言::生成する(名前, vec![(画像, graph::画像用途::転送元)], Vec::new(), Vec::new(), Vec::new(), graph::パス種別::転送, move |文脈| {
+        let 画像ハンドル = 文脈.宣言済みの画像を参照する(画像);
+        let 領域 = [vk::BufferImageCopy::default()
+            .image_subresource(vk::ImageSubresourceLayers::default().aspect_mask(vk::ImageAspectFlags::COLOR).mip_level(0).base_array_layer(0).layer_count(1))
+            .image_extent(範囲)];
+        // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ遷移済み(用途宣言からグラフが導く)、
+        // 受けバッファはテクセル数ぶんの容量で確保済みである。
+        unsafe {
+            文脈
+                .積み先()
+                .論理デバイス()
+                .cmd_copy_image_to_buffer(文脈.積み先().コマンドバッファ(), 画像ハンドル, vk::ImageLayout::TRANSFER_SRC_OPTIMAL, 受け, &領域);
+        }
+    })
 }

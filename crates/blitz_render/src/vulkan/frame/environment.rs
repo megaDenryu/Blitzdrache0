@@ -28,11 +28,7 @@ impl フレームの記録の実行環境 {
 
     /// そのフレームのスロットのコマンドバッファへ積み込みを開始する。計測が有効なフレームは同時にクエリプールをリセットする。
     /// 返る値は`記録を閉じて送信し提示する`で必ず閉じる。閉じないまま捨てると`未送信が1本も残っていないことを確かめる`が止める。
-    pub(crate) fn フレームのgpu命令を積み始める(
-        &self,
-        command_buffer: vk::CommandBuffer,
-        クエリプール: Option<vk::QueryPool>,
-    ) -> Result<フレームのGPU命令を積むコマンドバッファ<'_>, レンダラーエラー> {
+    pub(crate) fn フレームのgpu命令を積み始める(&self, command_buffer: vk::CommandBuffer, クエリプール: Option<vk::QueryPool>) -> Result<フレームのGPU命令を積むコマンドバッファ<'_>, レンダラーエラー> {
         フレームのGPU命令を積むコマンドバッファ::積み始める(self, command_buffer, クエリプール)
     }
 

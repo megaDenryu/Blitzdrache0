@@ -26,10 +26,7 @@ impl GPU資源の確保係<'_> {
 
     /// 読む側が組んだ標本の取り方でサンプラーを確保する。比較サンプラーや材質テクスチャ表のサンプラーのように、
     /// 取り方の理由を読む側の階層が持つものがこの口を通る。
-    pub(crate) fn 標本の取り方からサンプラーを確保する(
-        &self,
-        取り方: &vk::SamplerCreateInfo<'_>,
-    ) -> Result<vk::Sampler, レンダラーエラー> {
+    pub(crate) fn 標本の取り方からサンプラーを確保する(&self, 取り方: &vk::SamplerCreateInfo<'_>) -> Result<vk::Sampler, レンダラーエラー> {
         // 安全性: deviceは生成済みで有効。取り方は呼び出し元がこの呼び出しの間だけ生存する値として組み立てる。
         Ok(unsafe { self.device.create_sampler(取り方, None)? })
     }

@@ -22,28 +22,17 @@ pub(super) fn 深度プリパスの固定機能を組み立てる(
     layout: vk::PipelineLayout,
     頂点モジュール: vk::ShaderModule,
 ) -> Result<vk::Pipeline, レンダラーエラー> {
-    let ステージ一覧 = [vk::PipelineShaderStageCreateInfo::default()
-        .stage(vk::ShaderStageFlags::VERTEX)
-        .module(頂点モジュール)
-        .name(頂点エントリ名)];
+    let ステージ一覧 = [vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::VERTEX).module(頂点モジュール).name(頂点エントリ名)];
 
     let (バインド記述, 属性記述一覧) = vertex_input::選択して記述する(頂点属性選択::全属性);
     let バインド記述一覧 = [バインド記述];
-    let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default()
-        .vertex_binding_descriptions(&バインド記述一覧)
-        .vertex_attribute_descriptions(&属性記述一覧);
+    let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default().vertex_binding_descriptions(&バインド記述一覧).vertex_attribute_descriptions(&属性記述一覧);
     let 入力アセンブリstate = vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::TRIANGLE_LIST);
     let ビューポートstate = vk::PipelineViewportStateCreateInfo::default().viewport_count(1).scissor_count(1);
-    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default()
-        .polygon_mode(vk::PolygonMode::FILL)
-        .cull_mode(vk::CullModeFlags::NONE)
-        .line_width(1.0);
+    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default().polygon_mode(vk::PolygonMode::FILL).cull_mode(vk::CullModeFlags::NONE).line_width(1.0);
     let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(標本数);
     let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default();
-    let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
-        .depth_test_enable(true)
-        .depth_write_enable(true)
-        .depth_compare_op(vk::CompareOp::GREATER);
+    let 深度state = vk::PipelineDepthStencilStateCreateInfo::default().depth_test_enable(true).depth_write_enable(true).depth_compare_op(vk::CompareOp::GREATER);
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 

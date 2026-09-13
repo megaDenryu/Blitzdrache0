@@ -28,18 +28,11 @@ impl 反射率積分表の画像 {
     }
 
     pub(in crate::vulkan) fn 範囲(&self) -> vk::Extent3D {
-        vk::Extent3D {
-            width: self.横,
-            height: self.縦,
-            depth: 1,
-        }
+        vk::Extent3D { width: self.横, height: self.縦, depth: 1 }
     }
 
     pub(in crate::vulkan) fn グラフへ渡す寸法(&self) -> vk::Extent2D {
-        vk::Extent2D {
-            width: self.横,
-            height: self.縦,
-        }
+        vk::Extent2D { width: self.横, height: self.縦 }
     }
 
     /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この画像は派生表現一式の1段として呼ばれる(GPU待機済み)。

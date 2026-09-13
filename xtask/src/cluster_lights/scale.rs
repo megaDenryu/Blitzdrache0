@@ -46,15 +46,7 @@ fn 一件数を測る(実行環境: &描画検収の実行環境, 光の件数: 
             &run::起動指定を組み立てる(
                 world::夜のシーン,
                 world::計測の枚数,
-                &[
-                    "--sky",
-                    "--time-of-day",
-                    world::夜の一日内秒,
-                    "--local-light-count",
-                    &件数文字列,
-                    "--report-gpu-times",
-                    "--report-cluster-assignment",
-                ],
+                &["--sky", "--time-of-day", world::夜の一日内秒, "--local-light-count", &件数文字列, "--report-gpu-times", "--report-cluster-assignment"],
             ),
         )?;
         let 区間の中央値 { 選別ms, シーン描画ms } = gpu_time::区間の中央値を取り出す(結果.報告())?;

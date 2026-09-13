@@ -12,30 +12,19 @@ use crate::vulkan::command_sink::GPU命令の積み先;
 
 /// 画像・バッファのバリア一覧を1回の`cmd_pipeline_barrier2`で発行する。両方空なら何もしない。
 pub(super) fn バリアを発行する(
-    積み先: GPU命令の積み先<'_>,
-    画像レジストリ: &画像レジストリ,
-    バッファレジストリ: &バッファレジストリ,
-    画像バリア一覧: &[画像バリア記述],
-    バッファバリア一覧: &[バッファバリア記述],
+    積み先: GPU命令の積み先<'_>, 画像レジストリ: &画像レジストリ, バッファレジストリ: &バッファレジストリ, 画像バリア一覧: &[画像バリア記述], バッファバリア一覧: &[バッファバリア記述]
 ) {
     if 画像バリア一覧.is_empty() && バッファバリア一覧.is_empty() {
         return;
     }
     let vk画像バリア一覧: Vec<vk::ImageMemoryBarrier2> = 画像バリア一覧.iter().map(|バリア| 画像バリアへ変換する(画像レジストリ, バリア)).collect();
-    let vkバッファバリア一覧: Vec<vk::BufferMemoryBarrier2> = バッファバリア一覧
-        .iter()
-        .map(|バリア| バッファバリアへ変換する(バッファレジストリ, バリア))
-        .collect();
-    let 依存情報 = vk::DependencyInfo::default()
-        .image_memory_barriers(&vk画像バリア一覧)
-        .buffer_memory_barriers(&vkバッファバリア一覧);
+    let vkバッファバリア一覧: Vec<vk::BufferMemoryBarrier2> = バッファバリア一覧.iter().map(|バリア| バッファバリアへ変換する(バッファレジストリ, バリア)).collect();
+    let 依存情報 = vk::DependencyInfo::default().image_memory_barriers(&vk画像バリア一覧).buffer_memory_barriers(&vkバッファバリア一覧);
     // 安全性: command_bufferは記録中で、各画像・バッファはレジストリに登録済みのVulkanリソース。
     unsafe { 積み先.論理デバイス().cmd_pipeline_barrier2(積み先.コマンドバッファ(), &依存情報) };
 }
 
-fn 画像バリアへ変換する<'a>(
-    レジストリ: &'a 画像レジストリ, バリア: &'a 画像バリア記述
-) -> vk::ImageMemoryBarrier2<'a> {
+fn 画像バリアへ変換する<'a>(レジストリ: &'a 画像レジストリ, バリア: &'a 画像バリア記述) -> vk::ImageMemoryBarrier2<'a> {
     let 部分範囲 = レジストリ.アスペクトを取得する(バリア.ハンドル).部分範囲();
     vk::ImageMemoryBarrier2::default()
         .src_stage_mask(バリア.前.stage)
@@ -50,9 +39,7 @@ fn 画像バリアへ変換する<'a>(
         .subresource_range(部分範囲)
 }
 
-fn バッファバリアへ変換する<'a>(
-    レジストリ: &'a バッファレジストリ, バリア: &'a バッファバリア記述
-) -> vk::BufferMemoryBarrier2<'a> {
+fn バッファバリアへ変換する<'a>(レジストリ: &'a バッファレジストリ, バリア: &'a バッファバリア記述) -> vk::BufferMemoryBarrier2<'a> {
     vk::BufferMemoryBarrier2::default()
         .src_stage_mask(バリア.前.stage)
         .src_access_mask(バリア.前.access)

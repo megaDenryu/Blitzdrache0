@@ -22,20 +22,14 @@ impl 読み戻しの受け皿 {
         let 拘束の数 = u32の件数をusizeへ変換する(拘束の数);
         let 用途 = vk::BufferUsageFlags::TRANSFER_DST;
         let 位置 = 確保係.読み戻し先のホスト可視バッファを確保する(usizeの長さをバイト数u64へ変換する(点の数 * 16), 用途)?;
-        let 乗数 = match 確保係.読み戻し先のホスト可視バッファを確保する(usizeの長さをバイト数u64へ変換する(拘束の数 * 4), 用途)
-        {
+        let 乗数 = match 確保係.読み戻し先のホスト可視バッファを確保する(usizeの長さをバイト数u64へ変換する(拘束の数 * 4), 用途) {
             Ok(乗数) => 乗数,
             Err(誤り) => {
                 位置.破棄する(確保係.論理デバイス());
                 return Err(誤り);
             }
         };
-        Ok(Self {
-            位置,
-            乗数,
-            点の数,
-            拘束の数,
-        })
+        Ok(Self { 位置, 乗数, 点の数, 拘束の数 })
     }
 
     /// 点と乗数をこの受け皿へ写す転送パスを積む。
@@ -56,18 +50,8 @@ impl 読み戻しの受け皿 {
                 let command_buffer = 文脈.積み先().コマンドバッファ();
                 // 安全性: command_bufferは記録中、転送元は用途の宣言からグラフがバリアを導き、受け皿は同じ長さで確保済みである。
                 unsafe {
-                    device.cmd_copy_buffer(
-                        command_buffer,
-                        文脈.宣言済みのバッファを参照する(点),
-                        位置の受け,
-                        &[vk::BufferCopy::default().size(点のバイト数)],
-                    );
-                    device.cmd_copy_buffer(
-                        command_buffer,
-                        文脈.宣言済みのバッファを参照する(乗数),
-                        乗数の受け,
-                        &[vk::BufferCopy::default().size(乗数のバイト数)],
-                    );
+                    device.cmd_copy_buffer(command_buffer, 文脈.宣言済みのバッファを参照する(点), 位置の受け, &[vk::BufferCopy::default().size(点のバイト数)]);
+                    device.cmd_copy_buffer(command_buffer, 文脈.宣言済みのバッファを参照する(乗数), 乗数の受け, &[vk::BufferCopy::default().size(乗数のバイト数)]);
                 }
             },
         ));
@@ -77,10 +61,7 @@ impl 読み戻しの受け皿 {
     pub(super) fn 読む(&self, device: &ash::Device) -> Result<(Vec<[f32; 4]>, Vec<f32>), レンダラーエラー> {
         let 位置のバイト列 = self.位置.ホスト可視のバイト列を写し取る(device, self.点の数 * 16)?;
         let 乗数のバイト列 = self.乗数.ホスト可視のバイト列を写し取る(device, self.拘束の数 * 4)?;
-        let 位置 = 位置のバイト列
-            .chunks_exact(16)
-            .map(|塊| [単精度(塊, 0), 単精度(塊, 4), 単精度(塊, 8), 単精度(塊, 12)])
-            .collect();
+        let 位置 = 位置のバイト列.chunks_exact(16).map(|塊| [単精度(塊, 0), 単精度(塊, 4), 単精度(塊, 8), 単精度(塊, 12)]).collect();
         let 乗数 = 乗数のバイト列.chunks_exact(4).map(|塊| 単精度(塊, 0)).collect();
         Ok((位置, 乗数))
     }
@@ -92,10 +73,7 @@ impl 読み戻しの受け皿 {
 }
 
 impl XPBD計測一式 {
-    pub(super) fn 読み戻しの受け皿を確保する(
-        &self,
-        確保係: &GPU資源の確保係<'_>,
-    ) -> Result<読み戻しの受け皿, レンダラーエラー> {
+    pub(super) fn 読み戻しの受け皿を確保する(&self, 確保係: &GPU資源の確保係<'_>) -> Result<読み戻しの受け皿, レンダラーエラー> {
         読み戻しの受け皿::確保する(確保係, self.点の数, self.拘束の数)
     }
 }

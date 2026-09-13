@@ -38,10 +38,7 @@ impl 建物の格子のファイル {
     }
 
     pub fn 読んで最新の形にする(&self) -> Result<建物の格子ソース, 建物の格子のソースエラー> {
-        let 本文 = std::fs::read_to_string(&self.パス).map_err(|原因| 建物の格子のソースエラー::ファイルを読めない {
-            パス: self.パスの綴り(),
-            原因,
-        })?;
+        let 本文 = std::fs::read_to_string(&self.パス).map_err(|原因| 建物の格子のソースエラー::ファイルを読めない { パス: self.パスの綴り(), 原因 })?;
         let 名乗り: 形式版の名乗り = serde_json::from_str(&本文).map_err(|原因| self.解釈できないエラーを作る(原因))?;
         match 名乗り.形式版 {
             1 => serde_json::from_str(&本文).map_err(|原因| self.解釈できないエラーを作る(原因)),
@@ -56,17 +53,12 @@ impl 建物の格子のファイル {
     /// 一時ファイル経由で書き込む。整形して改行で終える形は建物外形カタログと同じである。
     pub fn 書き出す(&self, ソース: &建物の格子ソース) -> Result<(), 建物の格子のソースエラー> {
         let 建物定義 = ソース.建物定義ID.綴り().to_string();
-        let mut バイト列 =
-            serde_json::to_vec_pretty(ソース).map_err(|原因| 建物の格子のソースエラー::Jsonを組み立てられない {
-                建物定義: 建物定義.clone(),
-                原因,
-            })?;
+        let mut バイト列 = serde_json::to_vec_pretty(ソース).map_err(|原因| 建物の格子のソースエラー::Jsonを組み立てられない { 建物定義: 建物定義.clone(), 原因 })?;
         バイト列.push(b'\n');
         if let Some(親) = self.パス.parent() {
             std::fs::create_dir_all(親).map_err(|原因| self.書き出せないエラーを作る(&建物定義, 原因))?;
         }
-        crate::atomic_file_write::一時ファイル経由で書き込む(&self.パス, &バイト列)
-            .map_err(|原因| self.書き出せないエラーを作る(&建物定義, 原因))
+        crate::atomic_file_write::一時ファイル経由で書き込む(&self.パス, &バイト列).map_err(|原因| self.書き出せないエラーを作る(&建物定義, 原因))
     }
 
     fn パスの綴り(&self) -> String {
@@ -74,16 +66,12 @@ impl 建物の格子のファイル {
     }
 
     fn 解釈できないエラーを作る(&self, 原因: serde_json::Error) -> 建物の格子のソースエラー {
-        建物の格子のソースエラー::Jsonを解釈できない {
-            パス: self.パスの綴り(),
-            原因,
-        }
+        建物の格子のソースエラー::Jsonを解釈できない { パス: self.パスの綴り(), 原因 }
     }
 
     fn 書き出せないエラーを作る(&self, 建物定義: &str, 原因: std::io::Error) -> 建物の格子のソースエラー {
         建物の格子のソースエラー::書き出せない {
-            建物定義: 建物定義.to_string(),
-            原因,
+            建物定義: 建物定義.to_string(), 原因
         }
     }
 }

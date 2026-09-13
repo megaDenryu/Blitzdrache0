@@ -29,9 +29,9 @@ pub(in crate::distant_view) struct 採取条件 {
     pub(in crate::distant_view) 名前: &'static str,
     pub(in crate::distant_view) 局所可視性を使わない: bool,
     pub(in crate::distant_view) 遠景影を使わない: bool,
-    pub(in crate::distant_view) 後処理を使わない: bool, // 光のにじみと明るさの圧縮を組まない構成で採る指定
-    pub(in crate::distant_view) 影可視度を可視化する: bool, // 影の欠落計器の診断色を出す指定
-    pub(in crate::distant_view) 明示境界を使わない: bool, // 距離区分を再配分せず実用分割のまま採る指定
+    pub(in crate::distant_view) 後処理を使わない: bool,         // 光のにじみと明るさの圧縮を組まない構成で採る指定
+    pub(in crate::distant_view) 影可視度を可視化する: bool,     // 影の欠落計器の診断色を出す指定
+    pub(in crate::distant_view) 明示境界を使わない: bool,       // 距離区分を再配分せず実用分割のまま採る指定
     pub(in crate::distant_view) 影のキャスターを使わない: bool, // 影の距離区分のパスへ何も積まない指定
     pub(in crate::distant_view) 読むルート: 読むアセットルート,
 }

@@ -13,9 +13,7 @@ pub(in crate::vulkan::material_table) struct 正準フォールバック解決 {
 }
 
 impl 正準フォールバック解決 {
-    pub(in crate::vulkan::material_table) const fn 生成する(
-        用途別スロット: [テクスチャスロット; 正準フォールバック用途::全用途.len()]
-    ) -> Self {
+    pub(in crate::vulkan::material_table) const fn 生成する(用途別スロット: [テクスチャスロット; 正準フォールバック用途::全用途.len()]) -> Self {
         Self { 用途別スロット }
     }
 

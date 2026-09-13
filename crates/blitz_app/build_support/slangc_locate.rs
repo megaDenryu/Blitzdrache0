@@ -35,9 +35,5 @@ pub(super) fn slangc実行ファイルを探す() -> Result<スラングコン�
 }
 
 fn slangcがpathで動くか() -> bool {
-    Command::new("slangc")
-        .arg("-v")
-        .output()
-        .map(|出力| 出力.status.success())
-        .unwrap_or(false)
+    Command::new("slangc").arg("-v").output().map(|出力| 出力.status.success()).unwrap_or(false)
 }

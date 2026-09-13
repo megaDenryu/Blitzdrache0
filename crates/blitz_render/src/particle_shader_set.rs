@@ -23,9 +23,7 @@ pub struct 粒子シェーダー一式 {
 
 impl 粒子シェーダー一式 {
     /// 各バイト列が空でなく4の倍数長であることを検証して生成する。
-    pub fn 生成する(
-        コンピュートspirv: Vec<u8>, 頂点spirv: Vec<u8>, 画素段spirv: Vec<u8>
-    ) -> Result<Self, 粒子シェーダー一式エラー> {
+    pub fn 生成する(コンピュートspirv: Vec<u8>, 頂点spirv: Vec<u8>, 画素段spirv: Vec<u8>) -> Result<Self, 粒子シェーダー一式エラー> {
         for バイト列 in [&コンピュートspirv, &頂点spirv, &画素段spirv] {
             if バイト列.is_empty() {
                 return Err(粒子シェーダー一式エラー::空のバイト列);
@@ -35,9 +33,7 @@ impl 粒子シェーダー一式 {
             }
         }
         Ok(Self {
-            コンピュートspirv,
-            頂点spirv,
-            画素段spirv,
+            コンピュートspirv, 頂点spirv, 画素段spirv
         })
     }
 

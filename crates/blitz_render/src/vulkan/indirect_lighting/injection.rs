@@ -45,11 +45,7 @@ pub(crate) struct 解析入力の注入資源 {
 }
 
 impl 解析入力の注入資源 {
-    pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        派生表現: &派生表現一式,
-        入力: &crate::distant_environment::遠方環境の解析入力,
-    ) -> Result<Self, crate::error::レンダラーエラー> {
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, 派生表現: &派生表現一式, 入力: &crate::distant_environment::遠方環境の解析入力) -> Result<Self, crate::error::レンダラーエラー> {
         create::解析入力の注入資源を生成する(確保係, 派生表現, 入力)
     }
 

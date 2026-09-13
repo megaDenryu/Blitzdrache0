@@ -10,36 +10,18 @@ use blitz_engine::texture_storage::格納済みテクスチャ;
 use blitz_engine::金属粗さPBRデータ;
 
 use crate::error::アセットコンパイルエラー;
-use crate::texture_storage::{
-    テクスチャ格納方針, 方針と役割に従って原寸を格納済みテクスチャへ焼く, 材質テクスチャ役割
-};
+use crate::texture_storage::{テクスチャ格納方針, 方針と役割に従って原寸を格納済みテクスチャへ焼く, 材質テクスチャ役割};
 
 use super::document::開いた文書;
 use super::texture_decode;
 
-pub(super) fn マテリアルを取り出す(
-    文書: &開いた文書,
-    プリミティブ: &gltf::Primitive<'_>,
-    方針: テクスチャ格納方針,
-) -> Result<(金属粗さPBRデータ, Vec<PathBuf>), アセットコンパイルエラー> {
+pub(super) fn マテリアルを取り出す(文書: &開いた文書, プリミティブ: &gltf::Primitive<'_>, 方針: テクスチャ格納方針) -> Result<(金属粗さPBRデータ, Vec<PathBuf>), アセットコンパイルエラー> {
     let マテリアル = プリミティブ.material();
     let pbr = マテリアル.pbr_metallic_roughness();
     let mut 参照ファイル一覧 = Vec::new();
 
-    let ベースカラー = 情報から取り出す(
-        文書,
-        pbr.base_color_texture(),
-        &mut 参照ファイル一覧,
-        方針,
-        材質テクスチャ役割::ベースカラー,
-    )?;
-    let 金属粗さ = 情報から取り出す(
-        文書,
-        pbr.metallic_roughness_texture(),
-        &mut 参照ファイル一覧,
-        方針,
-        材質テクスチャ役割::金属粗さ,
-    )?;
+    let ベースカラー = 情報から取り出す(文書, pbr.base_color_texture(), &mut 参照ファイル一覧, 方針, 材質テクスチャ役割::ベースカラー)?;
+    let 金属粗さ = 情報から取り出す(文書, pbr.metallic_roughness_texture(), &mut 参照ファイル一覧, 方針, 材質テクスチャ役割::金属粗さ)?;
     let 法線マップ = 法線情報から取り出す(文書, マテリアル.normal_texture(), &mut 参照ファイル一覧, 方針)?;
 
     Ok((
@@ -81,11 +63,7 @@ fn 法線情報から取り出す(
 }
 
 fn 焼いて参照を足す(
-    文書: &開いた文書,
-    テクスチャ: &gltf::Texture<'_>,
-    参照ファイル一覧: &mut Vec<PathBuf>,
-    方針: テクスチャ格納方針,
-    役割: 材質テクスチャ役割,
+    文書: &開いた文書, テクスチャ: &gltf::Texture<'_>, 参照ファイル一覧: &mut Vec<PathBuf>, 方針: テクスチャ格納方針, 役割: 材質テクスチャ役割
 ) -> Result<格納済みテクスチャ, アセットコンパイルエラー> {
     let (原寸, パス) = texture_decode::デコードする(文書, テクスチャ)?;
     if let Some(パス) = パス {

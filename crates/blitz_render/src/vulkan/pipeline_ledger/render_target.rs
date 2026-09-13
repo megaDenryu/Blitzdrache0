@@ -25,9 +25,7 @@ impl 描画先の一意化 {
 
     pub(crate) const fn 深度だけへ描く(深度形式: vk::Format, 標本数: vk::SampleCountFlags) -> Self {
         Self {
-            カラー形式: None,
-            深度形式,
-            標本数,
+            カラー形式: None, 深度形式, 標本数
         }
     }
 

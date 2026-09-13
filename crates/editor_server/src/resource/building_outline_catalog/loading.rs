@@ -28,14 +28,8 @@ pub enum 建物外形カタログ読み込みエラー {
 
 impl 建物外形カタログ {
     pub fn ファイルから読み取る(パス: &Path) -> Result<Self, 建物外形カタログ読み込みエラー> {
-        let バイト列 = std::fs::read(パス).map_err(|原因| 建物外形カタログ読み込みエラー::ファイルを読めない {
-            パス: パス.display().to_string(),
-            原因,
-        })?;
-        let カタログ: Self = serde_json::from_slice(&バイト列).map_err(|原因| 建物外形カタログ読み込みエラー::JSONが不正 {
-            パス: パス.display().to_string(),
-            原因,
-        })?;
+        let バイト列 = std::fs::read(パス).map_err(|原因| 建物外形カタログ読み込みエラー::ファイルを読めない { パス: パス.display().to_string(), 原因 })?;
+        let カタログ: Self = serde_json::from_slice(&バイト列).map_err(|原因| 建物外形カタログ読み込みエラー::JSONが不正 { パス: パス.display().to_string(), 原因 })?;
         カタログ.検証する()?;
         Ok(カタログ)
     }

@@ -11,18 +11,12 @@ use ash::vk;
 use super::多重散乱の束縛先;
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::descriptor_common;
-use crate::vulkan::descriptor::{
-    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物
-};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物};
 use crate::vulkan::sync::フレームスロット添字;
 
 const 宣言: 宣言した束縛の並び<3> = 宣言した束縛の並び::生成する([
     (束縛番号::生成する(0), vk::DescriptorType::UNIFORM_BUFFER, vk::ShaderStageFlags::COMPUTE),
-    (
-        束縛番号::生成する(1),
-        vk::DescriptorType::COMBINED_IMAGE_SAMPLER,
-        vk::ShaderStageFlags::COMPUTE,
-    ),
+    (束縛番号::生成する(1), vk::DescriptorType::COMBINED_IMAGE_SAMPLER, vk::ShaderStageFlags::COMPUTE),
     (束縛番号::生成する(2), vk::DescriptorType::STORAGE_IMAGE, vk::ShaderStageFlags::COMPUTE),
 ]);
 
@@ -38,13 +32,7 @@ pub(super) fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorP
     Ok(unsafe { device.create_descriptor_pool(&create_info, None)? })
 }
 
-pub(super) fn 書き込む(
-    device: &ash::Device,
-    セット: &宣言から割り当てたセット<3>,
-    sampler: vk::Sampler,
-    束縛先: &多重散乱の束縛先<'_>,
-    添字: フレームスロット添字,
-) {
+pub(super) fn 書き込む(device: &ash::Device, セット: &宣言から割り当てたセット<3>, sampler: vk::Sampler, 束縛先: &多重散乱の束縛先<'_>, 添字: フレームスロット添字) {
     セット.書き込み先(device).並びの位置ごとに結ぶ([
         結ぶ現物::バッファ全体(束縛先.シェーダー定数一覧[添字.配列添字()]),
         結ぶ現物::サンプラー付きの画像 {

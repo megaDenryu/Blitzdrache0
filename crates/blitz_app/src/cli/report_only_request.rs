@@ -12,20 +12,11 @@ use super::launch_request::起動要求;
 
 /// 報告だけを求める引数を、選ぶ順に並べた一覧。天空状態と太陽天頂区間の跨ぎはGPUを1度も使わず、
 /// 残りはウィンドウを作らずにウィンドウなし実行のGPUだけを使う。
-const 選ぶ順の引数一覧: [&str; 5] = [
-    "--report-sky-state",
-    "--report-atmosphere-lut",
-    "--report-distant-environment",
-    "--report-derived-environment",
-    "--report-sun-zenith-crossings",
-];
+const 選ぶ順の引数一覧: [&str; 5] = ["--report-sky-state", "--report-atmosphere-lut", "--report-distant-environment", "--report-derived-environment", "--report-sun-zenith-crossings"];
 
 /// 一覧の先頭から順に、その引数が並びのどこかに在るかを見る。最初に見つかった引数の要求を返す。
 pub(super) fn 報告だけの要求を見分ける(引数一覧: &[String]) -> Option<起動要求> {
-    選ぶ順の引数一覧
-        .iter()
-        .find(|引数名| 引数一覧.iter().any(|引数値| 引数値 == *引数名))
-        .and_then(|引数名| 引数から要求を作る(引数名))
+    選ぶ順の引数一覧.iter().find(|引数名| 引数一覧.iter().any(|引数値| 引数値 == *引数名)).and_then(|引数名| 引数から要求を作る(引数名))
 }
 
 /// 引数1つが表す報告だけの要求。

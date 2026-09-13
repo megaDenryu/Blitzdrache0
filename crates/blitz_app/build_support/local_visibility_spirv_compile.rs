@@ -18,21 +18,7 @@ const 両側ぼかしエントリ: [エントリ指定; 1] = [エントリ指定
     出力ファイル名: "local_visibility_blur.spv",
 }];
 
-pub(super) fn 全部をコンパイルする(
-    slangc: &スラングコンパイラの所在,
-    シェーダーディレクトリ: &Path,
-    出力先ディレクトリ: &Path,
-) -> Result<(), String> {
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("local_visibility_occlusion.slang"),
-        出力先ディレクトリ,
-        &遮蔽の標本化エントリ,
-    )?;
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("local_visibility_blur.slang"),
-        出力先ディレクトリ,
-        &両側ぼかしエントリ,
-    )
+pub(super) fn 全部をコンパイルする(slangc: &スラングコンパイラの所在, シェーダーディレクトリ: &Path, 出力先ディレクトリ: &Path) -> Result<(), String> {
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("local_visibility_occlusion.slang"), 出力先ディレクトリ, &遮蔽の標本化エントリ)?;
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("local_visibility_blur.slang"), 出力先ディレクトリ, &両側ぼかしエントリ)
 }
