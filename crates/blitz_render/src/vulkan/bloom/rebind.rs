@@ -13,12 +13,12 @@ impl 光のにじみ一式 {
     /// (`ディスクリプタを作り直す`経由でのみ呼ばれ、その前提を引き継ぐ)。
     pub(super) fn ビューを書く(&self, device: &ash::Device, hdrビュー: vk::ImageView, ピラミッド: &光のにじみピラミッド) {
         let セット群 = self.確保済みのセット群();
-        self.読み元1枚を書く(device, &セット群.前処理set, hdrビュー);
-        for (添字, set) in セット群.縮小set一覧.iter().enumerate() {
+        self.読み元1枚を書く(device, &セット群.前処理セット, hdrビュー);
+        for (添字, set) in セット群.縮小セット一覧.iter().enumerate() {
             self.読み元1枚を書く(device, set, ピラミッド.縮小一覧[添字].画像ビュー);
         }
-        for (添字, set) in セット群.拡大set一覧.iter().enumerate() {
-            let 小さい方 = if 添字 + 1 < セット群.拡大set一覧.len() {
+        for (添字, set) in セット群.拡大セット一覧.iter().enumerate() {
+            let 小さい方 = if 添字 + 1 < セット群.拡大セット一覧.len() {
                 ピラミッド.拡大一覧[添字 + 1].画像ビュー
             } else {
                 ピラミッド.縮小一覧[添字 + 1].画像ビュー
@@ -35,7 +35,7 @@ impl 光のにじみ一式 {
     fn 読み元(&self, ビュー: vk::ImageView) -> 結ぶ現物 {
         結ぶ現物::サンプラー付きの画像 {
             ビュー,
-            サンプラー: self.sampler,
+            サンプラー: self.サンプラー,
             レイアウト: vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL,
         }
     }

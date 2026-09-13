@@ -17,21 +17,21 @@ pub(super) fn パイプライン部を生成する(
     拡大シェーダー: &シェーダー一式,
 ) -> Result<光のにじみ一式, レンダラーエラー> {
     let device = 確保係.論理デバイス();
-    let sampler = 確保係.線形サンプラーを作る()?;
-    let (単一読みlayout, 二読みlayout) = match descriptor::レイアウト2種を作る(device) {
+    let サンプラー = 確保係.線形サンプラーを作る()?;
+    let (単一読みレイアウト, 二読みレイアウト) = match descriptor::レイアウト2種を作る(device) {
         Ok(組) => 組,
         Err(誤り) => {
             // 安全性: samplerはこのスコープの唯一の所有者で、以降使用しない。
-            unsafe { device.destroy_sampler(sampler, None) };
+            unsafe { device.destroy_sampler(サンプラー, None) };
             return Err(誤り);
         }
     };
 
     // 描画先はすべてHDR形式のピラミッド画像(判断41)。プッシュ定数は使わない。
     let 仕様一覧: [(&シェーダー一式, &std::ffi::CStr, vk::DescriptorSetLayout); 3] = [
-        (前処理シェーダー, c"prefilterMain", 単一読みlayout.レイアウトのハンドル()),
-        (縮小シェーダー, c"downsampleMain", 単一読みlayout.レイアウトのハンドル()),
-        (拡大シェーダー, c"upsampleMain", 二読みlayout.レイアウトのハンドル()),
+        (前処理シェーダー, c"prefilterMain", 単一読みレイアウト.レイアウトのハンドル()),
+        (縮小シェーダー, c"downsampleMain", 単一読みレイアウト.レイアウトのハンドル()),
+        (拡大シェーダー, c"upsampleMain", 二読みレイアウト.レイアウトのハンドル()),
     ];
     let mut 一覧: Vec<全画面パスのパイプライン> = Vec::new();
     for (シェーダー, エントリ名, layout) in 仕様一覧 {
@@ -41,10 +41,10 @@ pub(super) fn パイプライン部を生成する(
                 for 生成済み in &一覧 {
                     生成済み.破棄する(device);
                 }
-                二読みlayout.破棄する(device);
-                単一読みlayout.破棄する(device);
+                二読みレイアウト.破棄する(device);
+                単一読みレイアウト.破棄する(device);
                 // 安全性: samplerはこのスコープの唯一の所有者で、以降使用しない。
-                unsafe { device.destroy_sampler(sampler, None) };
+                unsafe { device.destroy_sampler(サンプラー, None) };
                 return Err(誤り);
             }
         }
@@ -57,9 +57,9 @@ pub(super) fn パイプライン部を生成する(
         前処理,
         縮小,
         拡大,
-        sampler,
-        単一読みlayout,
-        二読みlayout,
+        サンプラー,
+        単一読みレイアウト,
+        二読みレイアウト,
         セット群: None,
     })
 }

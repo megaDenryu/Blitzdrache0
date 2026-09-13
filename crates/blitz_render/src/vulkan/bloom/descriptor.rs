@@ -25,40 +25,40 @@ pub(super) const 二読みの宣言: 宣言した束縛の並び<2> =
 pub(in crate::vulkan::bloom) use allocate::生成する;
 
 pub(crate) struct 光のにじみセット群 {
-    pool: vk::DescriptorPool,
-    pub(super) 前処理set: 宣言から割り当てたセット<1>,
-    pub(super) 縮小set一覧: Vec<宣言から割り当てたセット<1>>,
-    pub(super) 拡大set一覧: Vec<宣言から割り当てたセット<2>>,
+    プール: vk::DescriptorPool,
+    pub(super) 前処理セット: 宣言から割り当てたセット<1>,
+    pub(super) 縮小セット一覧: Vec<宣言から割り当てたセット<1>>,
+    pub(super) 拡大セット一覧: Vec<宣言から割り当てたセット<2>>,
 }
 
 impl 光のにじみセット群 {
     pub(super) fn 束ねる(
-        pool: vk::DescriptorPool,
-        前処理set: 宣言から割り当てたセット<1>,
-        縮小set一覧: Vec<宣言から割り当てたセット<1>>,
-        拡大set一覧: Vec<宣言から割り当てたセット<2>>,
+        プール: vk::DescriptorPool,
+        前処理セット: 宣言から割り当てたセット<1>,
+        縮小セット一覧: Vec<宣言から割り当てたセット<1>>,
+        拡大セット一覧: Vec<宣言から割り当てたセット<2>>,
     ) -> Self {
         Self {
-            pool,
-            前処理set,
-            縮小set一覧,
-            拡大set一覧,
+            プール,
+            前処理セット,
+            縮小セット一覧,
+            拡大セット一覧,
         }
     }
 
     /// フレームの記録が束縛するセットのハンドル。前処理・縮小の並び・拡大の並びの順で返る。
     pub(crate) fn 束縛するセットのハンドル(&self) -> (vk::DescriptorSet, Vec<vk::DescriptorSet>, Vec<vk::DescriptorSet>) {
         (
-            self.前処理set.セットのハンドル(),
-            self.縮小set一覧.iter().map(宣言から割り当てたセット::セットのハンドル).collect(),
-            self.拡大set一覧.iter().map(宣言から割り当てたセット::セットのハンドル).collect(),
+            self.前処理セット.セットのハンドル(),
+            self.縮小セット一覧.iter().map(宣言から割り当てたセット::セットのハンドル).collect(),
+            self.拡大セット一覧.iter().map(宣言から割り当てたセット::セットのハンドル).collect(),
         )
     }
 
     /// 前提: 呼び出し元はGPU側の使用完了を保証する。プールの破棄がセットの解放を暗黙に行う。
     pub(crate) fn 破棄する(&self, device: &ash::Device) {
         // 安全性: プールはSelfが唯一の所有者である。
-        unsafe { device.destroy_descriptor_pool(self.pool, None) };
+        unsafe { device.destroy_descriptor_pool(self.プール, None) };
     }
 }
 

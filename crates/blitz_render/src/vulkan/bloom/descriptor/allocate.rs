@@ -11,8 +11,8 @@ use crate::vulkan::descriptor::宣言から作ったセットレイアウト;
 
 pub(in crate::vulkan::bloom) fn 生成する(
     device: &ash::Device,
-    単一読みlayout: &宣言から作ったセットレイアウト<1>,
-    二読みlayout: &宣言から作ったセットレイアウト<2>,
+    単一読みレイアウト: &宣言から作ったセットレイアウト<1>,
+    二読みレイアウト: &宣言から作ったセットレイアウト<2>,
     段数: usize,
 ) -> Result<光のにじみセット群, レンダラーエラー> {
     let 拡大段数 = 段数.saturating_sub(1);
@@ -28,7 +28,7 @@ pub(in crate::vulkan::bloom) fn 生成する(
     // 安全性: deviceは生成済みで有効。
     let pool = unsafe { device.create_descriptor_pool(&pool_info, None)? };
 
-    match 段ごとのセットを取り出す(device, pool, 単一読みlayout, 二読みlayout, 拡大段数) {
+    match 段ごとのセットを取り出す(device, pool, 単一読みレイアウト, 二読みレイアウト, 拡大段数) {
         Ok(群) => Ok(群),
         Err(誤り) => {
             // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
