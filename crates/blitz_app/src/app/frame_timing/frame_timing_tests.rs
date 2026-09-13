@@ -8,12 +8,12 @@ fn 四標本の統計を集計する() {
         panic!("標本があるため統計を返すはず");
     };
     assert_eq!(統計.標本数, 4);
-    assert_eq!(統計.平均ms, 25.0);
-    assert_eq!(統計.p50ms, 20.0);
+    assert_eq!(統計.平均ミリ秒, 25.0);
+    assert_eq!(統計.五十パーセンタイル値ミリ秒, 20.0);
     assert_eq!(統計.p95ms, 40.0);
     assert_eq!(統計.p99ms, 40.0);
-    assert_eq!(統計.最大ms, 40.0);
-    assert_eq!(統計.二十五ms超過数, 2);
+    assert_eq!(統計.最大ミリ秒, 40.0);
+    assert_eq!(統計.二十五ミリ秒超過数, 2);
 }
 
 #[test]

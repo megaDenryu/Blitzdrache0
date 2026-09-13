@@ -4,7 +4,7 @@
 use std::path::Path;
 
 use super::slangc_entry_compile::{エントリ一覧をコンパイルする, エントリ指定};
-use super::slangc_locate::スランガー位置;
+use super::slangc_locate::スラングコンパイラの所在;
 
 const 遮蔽の標本化エントリ: [エントリ指定; 1] = [エントリ指定 {
     エントリ名: "computeMain",
@@ -19,7 +19,7 @@ const 両側ぼかしエントリ: [エントリ指定; 1] = [エントリ指定
 }];
 
 pub(super) fn 全部をコンパイルする(
-    slangc: &スランガー位置,
+    slangc: &スラングコンパイラの所在,
     シェーダーディレクトリ: &Path,
     出力先ディレクトリ: &Path,
 ) -> Result<(), String> {

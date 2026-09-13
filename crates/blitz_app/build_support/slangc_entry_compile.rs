@@ -5,7 +5,7 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use super::slangc_locate::スランガー位置;
+use super::slangc_locate::スラングコンパイラの所在;
 
 pub(super) struct エントリ指定 {
     pub(super) エントリ名: &'static str,
@@ -14,7 +14,7 @@ pub(super) struct エントリ指定 {
 }
 
 pub(super) fn エントリ一覧をコンパイルする(
-    slangc: &スランガー位置,
+    slangc: &スラングコンパイラの所在,
     ソース絶対パス: &Path,
     出力先ディレクトリ: &Path,
     エントリ一覧: &[エントリ指定],
@@ -26,7 +26,7 @@ pub(super) fn エントリ一覧をコンパイルする(
 }
 
 fn エントリを1つコンパイルする(
-    slangc: &スランガー位置,
+    slangc: &スラングコンパイラの所在,
     ソース絶対パス: &Path,
     出力先ディレクトリ: &Path,
     エントリ: &エントリ指定,

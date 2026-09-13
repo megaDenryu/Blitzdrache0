@@ -7,10 +7,10 @@ use std::path::Path;
 
 use self::compile_table::コンパイル表;
 use super::slangc_entry_compile::エントリ一覧をコンパイルする;
-use super::slangc_locate::スランガー位置;
+use super::slangc_locate::スラングコンパイラの所在;
 
 pub(super) fn 全部をコンパイルする(
-    slangc: &スランガー位置,
+    slangc: &スラングコンパイラの所在,
     シェーダーディレクトリ: &Path,
     出力先ディレクトリ: &Path,
 ) -> Result<(), String> {

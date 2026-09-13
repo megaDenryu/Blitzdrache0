@@ -33,7 +33,7 @@ impl 平行移動起動設定 {
 }
 
 /// `--global-offset <x> <y> <z>`の3成分を読む。軸ごとに違う値を与えられるため、軸の取り違えが同値の置換に化けない。
-pub(super) fn global_offset引数を処理する(引数: &mut Iter<String>) -> Result<大域ワールド位置, 起動引数エラー> {
+pub(super) fn 大域ずらし量の引数を処理する(引数: &mut Iter<String>) -> Result<大域ワールド位置, 起動引数エラー> {
     let mut 成分 = [0.0_f64; 3];
     for 保存先 in &mut 成分 {
         let 値 = 次の値を読む(引数, "--global-offset", 起動引数エラー::大域ずらし量不正)?;
@@ -48,7 +48,7 @@ pub(super) fn global_offset引数を処理する(引数: &mut Iter<String>) -> R
 }
 
 /// `--camera-pitch <度>`の値を読む。シーンごとの初期姿勢へ加える俯角であり、空を画面へ入れるために使う。
-pub(super) fn camera_pitch引数を処理する(引数: &mut Iter<String>) -> Result<ラジアン, 起動引数エラー> {
+pub(super) fn カメラ俯角の引数を処理する(引数: &mut Iter<String>) -> Result<ラジアン, 起動引数エラー> {
     let 値 = 次の値を読む(引数, "--camera-pitch", 起動引数エラー::カメラ俯角不正)?;
     let 度 = 値.parse::<f32>().map_err(|_| 起動引数エラー::カメラ俯角不正(値.clone()))?;
     if !度.is_finite() || 度.abs() > 90.0 {
@@ -60,7 +60,7 @@ pub(super) fn camera_pitch引数を処理する(引数: &mut Iter<String>) -> Re
 }
 
 /// `--camera-yaw <度>`の値を読む。シーンごとの初期姿勢へ加える方位角であり、太陽を画面へ入れるために使う。
-pub(super) fn camera_yaw引数を処理する(引数: &mut Iter<String>) -> Result<ラジアン, 起動引数エラー> {
+pub(super) fn カメラ方位の引数を処理する(引数: &mut Iter<String>) -> Result<ラジアン, 起動引数エラー> {
     let 値 = 次の値を読む(引数, "--camera-yaw", 起動引数エラー::カメラ方位不正)?;
     let 度 = 値.parse::<f32>().map_err(|_| 起動引数エラー::カメラ方位不正(値.clone()))?;
     if !度.is_finite() || 度.abs() > 360.0 {
@@ -72,7 +72,7 @@ pub(super) fn camera_yaw引数を処理する(引数: &mut Iter<String>) -> Resu
 }
 
 /// `--camera-nudge <メートル>`の値を読む。カメラだけを既知量ずらし、描画が実際に変わることを測るための平行移動である。
-pub(super) fn camera_nudge引数を処理する(引数: &mut Iter<String>) -> Result<メートル, 起動引数エラー> {
+pub(super) fn カメラずれの引数を処理する(引数: &mut Iter<String>) -> Result<メートル, 起動引数エラー> {
     let 値 = 次の値を読む(引数, "--camera-nudge", 起動引数エラー::カメラずれ不正)?;
     let ずれ = 値.parse::<f32>().map_err(|_| 起動引数エラー::カメラずれ不正(値.clone()))?;
     if !ずれ.is_finite() {

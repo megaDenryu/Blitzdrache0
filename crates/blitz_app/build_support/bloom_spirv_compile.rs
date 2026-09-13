@@ -5,7 +5,7 @@
 use std::path::Path;
 
 use super::slangc_entry_compile::{エントリ一覧をコンパイルする, エントリ指定};
-use super::slangc_locate::スランガー位置;
+use super::slangc_locate::スラングコンパイラの所在;
 
 const 縮小側エントリ一覧: [エントリ指定; 3] = [
     エントリ指定 {
@@ -39,13 +39,13 @@ const 拡大側エントリ一覧: [エントリ指定; 2] = [
 ];
 
 pub(super) fn 縮小側をコンパイルする(
-    slangc: &スランガー位置, ソース絶対パス: &Path, 出力先ディレクトリ: &Path
+    slangc: &スラングコンパイラの所在, ソース絶対パス: &Path, 出力先ディレクトリ: &Path
 ) -> Result<(), String> {
     エントリ一覧をコンパイルする(slangc, ソース絶対パス, 出力先ディレクトリ, &縮小側エントリ一覧)
 }
 
 pub(super) fn 拡大側をコンパイルする(
-    slangc: &スランガー位置, ソース絶対パス: &Path, 出力先ディレクトリ: &Path
+    slangc: &スラングコンパイラの所在, ソース絶対パス: &Path, 出力先ディレクトリ: &Path
 ) -> Result<(), String> {
     エントリ一覧をコンパイルする(slangc, ソース絶対パス, 出力先ディレクトリ, &拡大側エントリ一覧)
 }

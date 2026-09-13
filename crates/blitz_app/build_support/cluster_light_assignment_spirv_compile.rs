@@ -4,7 +4,7 @@
 use std::path::Path;
 
 use super::slangc_entry_compile::{エントリ一覧をコンパイルする, エントリ指定};
-use super::slangc_locate::スランガー位置;
+use super::slangc_locate::スラングコンパイラの所在;
 
 const 選別エントリ: [エントリ指定; 1] = [エントリ指定 {
     エントリ名: "computeMain",
@@ -13,7 +13,7 @@ const 選別エントリ: [エントリ指定; 1] = [エントリ指定 {
 }];
 
 pub(super) fn コンパイルする(
-    slangc: &スランガー位置, シェーダーディレクトリ: &Path, 出力先ディレクトリ: &Path
+    slangc: &スラングコンパイラの所在, シェーダーディレクトリ: &Path, 出力先ディレクトリ: &Path
 ) -> Result<(), String> {
     エントリ一覧をコンパイルする(
         slangc,

@@ -14,9 +14,9 @@ pub(super) fn 素材を作る(表示: 粒子表示モード) -> Result<Option<�
         粒子表示モード::なし => Ok(None),
         粒子表示モード::粒子トイ => Ok(Some(粒子トイ素材を作る()?)),
         粒子表示モード::表面流 => Ok(Some(表面流素材を作る()?)),
-        粒子表示モード::Sph512 => Ok(Some(super::sph_setup::素材を作る(512)?)),
-        粒子表示モード::Sph1024 => Ok(Some(super::sph_setup::素材を作る(1024)?)),
-        粒子表示モード::Sph2048 => Ok(Some(super::sph_setup::素材を作る(2048)?)),
+        粒子表示モード::SPH粒子512個 => Ok(Some(super::sph_setup::素材を作る(512)?)),
+        粒子表示モード::SPH粒子1024個 => Ok(Some(super::sph_setup::素材を作る(1024)?)),
+        粒子表示モード::SPH粒子2048個 => Ok(Some(super::sph_setup::素材を作る(2048)?)),
     }
 }
 

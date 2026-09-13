@@ -31,7 +31,7 @@ pub(super) fn 表示モードから選ぶ(表示: 粒子表示モード) -> Resu
             表面流頂点SPIRV.to_vec(),
             表面流画素段SPIRV.to_vec(),
         )?),
-        粒子表示モード::Sph512 | 粒子表示モード::Sph1024 | 粒子表示モード::Sph2048 => Some(
+        粒子表示モード::SPH粒子512個 | 粒子表示モード::SPH粒子1024個 | 粒子表示モード::SPH粒子2048個 => Some(
             粒子シェーダー一式::生成する(SPHコンピュートSPIRV.to_vec(), SPH頂点SPIRV.to_vec(), SPH画素段SPIRV.to_vec())?,
         ),
     };

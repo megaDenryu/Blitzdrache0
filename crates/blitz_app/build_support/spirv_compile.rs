@@ -7,7 +7,7 @@
 use std::path::Path;
 
 use super::slangc_entry_compile::{エントリ一覧をコンパイルする, エントリ指定};
-use super::slangc_locate::スランガー位置;
+use super::slangc_locate::スラングコンパイラの所在;
 
 const エントリ一覧: [エントリ指定; 2] = [
     エントリ指定 {
@@ -43,7 +43,7 @@ const fn 画素段のエントリ(出力ファイル名: &'static str) -> [エ�
 }
 
 pub(super) fn 頂点と画素段をコンパイルする(
-    slangc: &スランガー位置,
+    slangc: &スラングコンパイラの所在,
     ソース絶対パス: &Path,
     出力先ディレクトリ: &Path,
 ) -> Result<(), String> {
@@ -51,7 +51,7 @@ pub(super) fn 頂点と画素段をコンパイルする(
 }
 
 pub(super) fn 残りのシーンの画素段をコンパイルする(
-    slangc: &スランガー位置,
+    slangc: &スラングコンパイラの所在,
     シェーダーディレクトリ絶対パス: &Path,
     出力先ディレクトリ: &Path,
 ) -> Result<(), String> {
