@@ -14,8 +14,5 @@ pub(super) fn 赤と青を入れ替える(データ: &[u8]) -> Vec<u8> {
 }
 
 pub(super) fn bgra形式か(形式: vk::Format) -> bool {
-    matches!(
-        形式,
-        vk::Format::B8G8R8A8_UNORM | vk::Format::B8G8R8A8_SRGB | vk::Format::B8G8R8A8_SNORM | vk::Format::B8G8R8A8_UINT | vk::Format::B8G8R8A8_SINT
-    )
+    matches!(形式, vk::Format::B8G8R8A8_UNORM | vk::Format::B8G8R8A8_SRGB | vk::Format::B8G8R8A8_SNORM | vk::Format::B8G8R8A8_UINT | vk::Format::B8G8R8A8_SINT)
 }

@@ -43,8 +43,7 @@ impl 掃除の対象 {
         match std::fs::remove_dir_all(&self.パス) {
             Err(誤り) if 誤り.kind() == std::io::ErrorKind::NotFound => Ok(()),
             Err(誤り) => Err(掃除の破れ::ディレクトリを消せなかった {
-                ディレクトリ: self.パス.clone(),
-                誤り,
+                ディレクトリ: self.パス.clone(), 誤り
             }),
             Ok(()) => Ok(()),
         }

@@ -58,30 +58,15 @@ impl フレームシェーダー定数一式 {
         self.空パス.フレームスロットのバッファ(フレーム添字)
     }
 
-    pub(crate) fn ビュー定数を書き込む(
-        &self,
-        device: &ash::Device,
-        フレーム添字: フレームスロット添字,
-        内容: &ビュー定数内容,
-    ) -> Result<(), レンダラーエラー> {
+    pub(crate) fn ビュー定数を書き込む(&self, device: &ash::Device, フレーム添字: フレームスロット添字, 内容: &ビュー定数内容) -> Result<(), レンダラーエラー> {
         self.ビュー.書き込む(device, フレーム添字, &view_bytes::バイト列にする(内容))
     }
 
-    pub(crate) fn 多段影の定数を書き込む(
-        &self,
-        device: &ash::Device,
-        フレーム添字: フレームスロット添字,
-        内容: &多段影定数内容,
-    ) -> Result<(), レンダラーエラー> {
+    pub(crate) fn 多段影の定数を書き込む(&self, device: &ash::Device, フレーム添字: フレームスロット添字, 内容: &多段影定数内容) -> Result<(), レンダラーエラー> {
         self.多段影.書き込む(device, フレーム添字, &cascade_bytes::バイト列にする(内容))
     }
 
-    pub(crate) fn 空パスの定数を書き込む(
-        &self,
-        device: &ash::Device,
-        フレーム添字: フレームスロット添字,
-        内容: &空パス定数内容,
-    ) -> Result<(), レンダラーエラー> {
+    pub(crate) fn 空パスの定数を書き込む(&self, device: &ash::Device, フレーム添字: フレームスロット添字, 内容: &空パス定数内容) -> Result<(), レンダラーエラー> {
         self.空パス.書き込む(device, フレーム添字, &sky_bytes::バイト列にする(内容))
     }
 

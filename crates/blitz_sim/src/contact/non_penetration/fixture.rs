@@ -10,9 +10,7 @@ use blitz_math::{メートル, ワールド, 二段の位置, 変位, 方向};
 
 use super::super::body_body_contact_parameters::剛体と剛体の接触拘束の引数;
 use super::super::body_static_contact_parameters::剛体と静的世界の接触拘束の引数;
-use super::super::contact_test_fixtures::{
-    世界の位置を作る, 動的な参加者を作る, 単一の材質の混合則, 台帳へ登録する
-};
+use super::super::contact_test_fixtures::{世界の位置を作る, 動的な参加者を作る, 単一の材質の混合則, 台帳へ登録する};
 use super::super::feature_identity::接触の特徴の識別;
 use super::super::minimum_thickness::形の最小の厚み;
 use super::super::penetration_depth::符号付き貫通量;
@@ -36,10 +34,7 @@ pub(in crate::contact) fn 試験の特徴の識別() -> 接触の特徴の識別
 }
 
 pub(in crate::contact) fn 解き方を作る(コンプライアンスの値: f32) -> 非貫通の解き方 {
-    非貫通の解き方::生成する(
-        コンプライアンス::生成する(コンプライアンスの値).unwrap(),
-        形の最小の厚み::生成する(メートル::生成する(試験の形の最小の厚み)).unwrap(),
-    )
+    非貫通の解き方::生成する(コンプライアンス::生成する(コンプライアンスの値).unwrap(), 形の最小の厚み::生成する(メートル::生成する(試験の形の最小の厚み)).unwrap())
 }
 
 // 剛体aと剛体bの識別子を台帳から発行し、下向きの法線と硬い接触を持つ引数を作る。局所点と符号付き貫通量は呼び出し側が差し替える。

@@ -13,13 +13,7 @@ impl 許容差依存の細分の記録 {
     /// 反復ごとの Σλ_n・‖Σλ_t‖・円錐の比・滑走中の点の数を1行に綴る。
     pub(super) fn 円錐の量を反復ごとに綴る(&self) {
         let 反復ごと: Vec<String> = self.反復ごと.iter().enumerate().map(反復1つを綴る).collect();
-        println!(
-            "  E 細分{} 入口Σ|Δt|={:.4e} δ_t={:.4e} | {}",
-            self.番号,
-            self.入口の接線変位の合計,
-            self.接線の行の許容差,
-            反復ごと.join(" | ")
-        );
+        println!("  E 細分{} 入口Σ|Δt|={:.4e} δ_t={:.4e} | {}", self.番号, self.入口の接線変位の合計, self.接線の行の許容差, 反復ごと.join(" | "));
     }
 }
 

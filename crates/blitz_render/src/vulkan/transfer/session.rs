@@ -70,10 +70,7 @@ impl<'環境> 転送コマンドを積む一時コマンドバッファ<'環境>
 }
 
 fn 一時コマンドバッファを1本確保する(環境: &転送実行環境) -> Result<vk::CommandBuffer, レンダラーエラー> {
-    let 割当情報 = vk::CommandBufferAllocateInfo::default()
-        .command_pool(環境.command_pool)
-        .level(vk::CommandBufferLevel::PRIMARY)
-        .command_buffer_count(1);
+    let 割当情報 = vk::CommandBufferAllocateInfo::default().command_pool(環境.command_pool).level(vk::CommandBufferLevel::PRIMARY).command_buffer_count(1);
     // 安全性: command_poolは生成済みで有効。
     let 一覧 = unsafe { 環境.device.allocate_command_buffers(&割当情報)? };
     let Some(&command_buffer) = 一覧.first() else {

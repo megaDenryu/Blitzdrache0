@@ -47,11 +47,7 @@ fn ファイル1つを検査する(パス: &Path, 内容: &str) -> Vec<違反> {
     for (行番号, 行) in 内容.lines().enumerate() {
         for 語 in 廃止語一覧 {
             if 行.contains(語) {
-                違反一覧.push(違反::行単位(
-                    PathBuf::from(パス),
-                    行番号 + 1,
-                    format!("段5で廃止したビュー定数への照明の仮置きの語({語})を書き戻している"),
-                ));
+                違反一覧.push(違反::行単位(PathBuf::from(パス), 行番号 + 1, format!("段5で廃止したビュー定数への照明の仮置きの語({語})を書き戻している")));
             }
         }
     }
@@ -64,10 +60,7 @@ mod tests {
 
     #[test]
     fn 廃止した構造体名を書き戻した行を違反にする() {
-        assert_eq!(
-            ファイル1つを検査する(Path::new("shaders/scene.slang"), "struct ViewPassUniform\n").len(),
-            1
-        );
+        assert_eq!(ファイル1つを検査する(Path::new("shaders/scene.slang"), "struct ViewPassUniform\n").len(), 1);
     }
 
     #[test]

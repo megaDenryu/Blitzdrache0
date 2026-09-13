@@ -53,9 +53,6 @@ fn 単一クレートを検査する(パス: &Path, 内容: &str) -> Vec<違反>
             .filter(|依存名| !許可一覧.contains(&依存名.as_str()))
             .map(|依存名| 違反::ファイル単位(パス.to_path_buf(), format!("白リスト外の依存: {依存名}")))
             .collect(),
-        None => 依存名一覧
-            .into_iter()
-            .map(|依存名| 違反::ファイル単位(パス.to_path_buf(), format!("白リスト未登録クレート({クレート名})の依存: {依存名}")))
-            .collect(),
+        None => 依存名一覧.into_iter().map(|依存名| 違反::ファイル単位(パス.to_path_buf(), format!("白リスト未登録クレート({クレート名})の依存: {依存名}"))).collect(),
     }
 }

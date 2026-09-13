@@ -10,9 +10,7 @@ use crate::asset::{catalog_entry::カタログ項目, id::アセットID};
 /// 容量メタデータを除いた項目1件の最小バイト数。ID長4 + パス長4 + 依存数4に、最短のIDとパスを足した値である。
 pub(super) const メタデータ以外の項目最小長: usize = 14;
 
-pub(super) fn 項目本体を読む(
-    入力: &mut 読取位置<'_>,
-) -> Result<(String, アセットID, PathBuf, Vec<PathBuf>), アセット実行時形式エラー> {
+pub(super) fn 項目本体を読む(入力: &mut 読取位置<'_>) -> Result<(String, アセットID, PathBuf, Vec<PathBuf>), アセット実行時形式エラー> {
     let id文字列 = 文字列を読む(入力)?.to_string();
     let id = アセットID::生成する(&id文字列).map_err(|_| アセット実行時形式エラー::不正な文字列)?;
     let 実行時パス = PathBuf::from(文字列を読む(入力)?);
@@ -24,9 +22,7 @@ pub(super) fn 項目本体を読む(
     Ok((id文字列, id, 実行時パス, 依存一覧))
 }
 
-pub(super) fn 項目本体を書く(
-    出力: &mut 書込先, id: &アセットID, 項目: &カタログ項目
-) -> Result<(), アセット実行時形式エラー> {
+pub(super) fn 項目本体を書く(出力: &mut 書込先, id: &アセットID, 項目: &カタログ項目) -> Result<(), アセット実行時形式エラー> {
     文字列を書く(出力, id.文字列を返す())?;
     パスを書く(出力, 項目.実行時パス())?;
     出力.件数(項目.ソース依存一覧().len())?;

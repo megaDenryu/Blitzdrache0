@@ -8,20 +8,13 @@ use super::大規模世界の計測指定;
 mod tests;
 
 pub(crate) fn 起動引数を作る(指定: &大規模世界の計測指定, シェーダー入口: &Path) -> Vec<String> {
-    let mut 引数 = vec![
-        "--scene".to_string(),
-        指定.シーン.綴り().to_string(),
-        "--benchmark-frames".to_string(),
-        指定.フレーム数.to_string(),
-    ];
+    let mut 引数 = vec!["--scene".to_string(), 指定.シーン.綴り().to_string(), "--benchmark-frames".to_string(), 指定.フレーム数.to_string()];
     引数.extend(ストリーミング計測の起動引数を作る(指定, シェーダー入口));
     引数.extend(["--asset-root".to_string(), 指定.アセットルート.display().to_string()]);
     引数
 }
 
-pub(crate) fn ストリーミング計測の起動引数を作る(
-    指定: &大規模世界の計測指定, シェーダー入口: &Path
-) -> Vec<String> {
+pub(crate) fn ストリーミング計測の起動引数を作る(指定: &大規模世界の計測指定, シェーダー入口: &Path) -> Vec<String> {
     let mut 引数 = vec!["--streaming".to_string(), "--streaming-route".to_string()];
     値を足す(&mut 引数, "--streaming-preload-radius", 指定.先読み半径);
     値を足す(&mut 引数, "--streaming-ram-limit", 指定.ramの上限バイト数);

@@ -51,21 +51,12 @@ fn シーン描画から読み戻しコピー提示までの3パス列で期待�
     let シーン描画前 = &結果[0];
     assert_eq!(シーン描画前.地点, 遷移地点::パスの前 { 名前: "シーン描画" });
     assert_eq!(シーン描画前.バリア一覧.len(), 2, "カラー・深度の両方が初回遷移するはず");
-    let カラー遷移 = シーン描画前
-        .バリア一覧
-        .iter()
-        .find(|バリア| バリア.ハンドル == カラー)
-        .expect("カラーの遷移が見つからない");
+    let カラー遷移 = シーン描画前.バリア一覧.iter().find(|バリア| バリア.ハンドル == カラー).expect("カラーの遷移が見つからない");
     assert_eq!(カラー遷移.前.layout, ash::vk::ImageLayout::UNDEFINED, "初回はUNDEFINEDから開始する");
     assert_eq!(カラー遷移.今.layout, ash::vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL);
 
     let コピー前 = &結果[1];
-    assert_eq!(
-        コピー前.地点,
-        遷移地点::パスの前 {
-            名前: "読み戻しコピー"
-        }
-    );
+    assert_eq!(コピー前.地点, 遷移地点::パスの前 { 名前: "読み戻しコピー" });
     assert_eq!(コピー前.バリア一覧.len(), 1, "コピー前はカラーのみ書き→読みで遷移する");
     assert_eq!(コピー前.バリア一覧[0].ハンドル, カラー);
     assert_eq!(コピー前.バリア一覧[0].今.layout, ash::vk::ImageLayout::TRANSFER_SRC_OPTIMAL);

@@ -40,10 +40,7 @@ pub async fn 散布を載せて書き出す(識別子: &str) -> super::一時プ
     super::フォックスのソースを配置する(&一時);
     super::地表層のタイルを配置する(&一時);
     super::散布を載せたチャンク構造を保存する(&保管庫, editor_server::チャンク座標::生成する(0, 0));
-    let 応答 = super::ルーターを作る(&一時)
-        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
+    let 応答 = super::ルーターを作る(&一時).oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap()).await.unwrap();
     assert_eq!(応答.status(), StatusCode::OK);
     一時
 }

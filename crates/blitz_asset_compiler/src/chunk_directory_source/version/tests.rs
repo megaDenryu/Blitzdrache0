@@ -21,56 +21,35 @@ fn 版二の正常な一辺を読む() {
 
 #[test]
 fn 版二の一辺欄欠落を拒む() {
-    assert!(matches!(
-        宣言行を最新の一辺へ変換する("blitz_chunk_directory 2"),
-        Err(チャンク目録コンパイルエラー::形式宣言不正(_))
-    ));
+    assert!(matches!(宣言行を最新の一辺へ変換する("blitz_chunk_directory 2"), Err(チャンク目録コンパイルエラー::形式宣言不正(_))));
 }
 
 #[test]
 fn 版二の非数値を拒む() {
-    assert!(matches!(
-        宣言行を最新の一辺へ変換する("blitz_chunk_directory 2 abc"),
-        Err(チャンク目録コンパイルエラー::形式宣言不正(_))
-    ));
+    assert!(matches!(宣言行を最新の一辺へ変換する("blitz_chunk_directory 2 abc"), Err(チャンク目録コンパイルエラー::形式宣言不正(_))));
 }
 
 #[test]
 fn 版二の負値を拒む() {
-    assert!(matches!(
-        宣言行を最新の一辺へ変換する("blitz_chunk_directory 2 -1"),
-        Err(チャンク目録コンパイルエラー::チャンク一辺不正(_))
-    ));
+    assert!(matches!(宣言行を最新の一辺へ変換する("blitz_chunk_directory 2 -1"), Err(チャンク目録コンパイルエラー::チャンク一辺不正(_))));
 }
 
 #[test]
 fn 版二の無限大を拒む() {
-    assert!(matches!(
-        宣言行を最新の一辺へ変換する("blitz_chunk_directory 2 inf"),
-        Err(チャンク目録コンパイルエラー::チャンク一辺不正(_))
-    ));
+    assert!(matches!(宣言行を最新の一辺へ変換する("blitz_chunk_directory 2 inf"), Err(チャンク目録コンパイルエラー::チャンク一辺不正(_))));
 }
 
 #[test]
 fn 未対応の版三を拒む() {
-    assert!(matches!(
-        宣言行を最新の一辺へ変換する("blitz_chunk_directory 3"),
-        Err(チャンク目録コンパイルエラー::未対応版(_))
-    ));
+    assert!(matches!(宣言行を最新の一辺へ変換する("blitz_chunk_directory 3"), Err(チャンク目録コンパイルエラー::未対応版(_))));
 }
 
 #[test]
 fn 形式名違いを拒む() {
-    assert!(matches!(
-        宣言行を最新の一辺へ変換する("other 2 256"),
-        Err(チャンク目録コンパイルエラー::形式宣言不正(_))
-    ));
+    assert!(matches!(宣言行を最新の一辺へ変換する("other 2 256"), Err(チャンク目録コンパイルエラー::形式宣言不正(_))));
 }
 
 #[test]
 fn 空行を拒む() {
-    assert!(matches!(
-        宣言行を最新の一辺へ変換する(""),
-        Err(チャンク目録コンパイルエラー::形式宣言不正(_))
-    ));
+    assert!(matches!(宣言行を最新の一辺へ変換する(""), Err(チャンク目録コンパイルエラー::形式宣言不正(_))));
 }

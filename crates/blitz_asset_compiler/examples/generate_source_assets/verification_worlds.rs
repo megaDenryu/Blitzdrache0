@@ -7,8 +7,8 @@
 use std::path::Path;
 
 use crate::{
-    chunk_world, night_lights_world, part_frame_row_world, part_house_row_world, part_tree_row_world, smoke_assets, stone_hut_world,
-    surface_layer_tiles, terrain_visual_world, terrain_world, texture_compression_world, vegetation_world, village_world, ディレクトリを作る,
+    chunk_world, night_lights_world, part_frame_row_world, part_house_row_world, part_tree_row_world, smoke_assets, stone_hut_world, surface_layer_tiles, terrain_visual_world, terrain_world, texture_compression_world, vegetation_world,
+    village_world, ディレクトリを作る,
 };
 
 pub(crate) fn 一式を書き出す() -> Result<(), String> {

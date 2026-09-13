@@ -18,19 +18,13 @@ use super::super::violation::違反;
 /// 鍵と見なす綴りの終わりの字。
 const 鍵の終わりの字: char = '=';
 
-pub(super) fn 登録の無い鍵を探す(
-    登録済みの綴り一覧: &[&str], 対象ファイル一覧: &[&str]
-) -> Result<Vec<違反>, 規約検査の破れ> {
+pub(super) fn 登録の無い鍵を探す(登録済みの綴り一覧: &[&str], 対象ファイル一覧: &[&str]) -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
     for パス in 対象ファイル一覧 {
-        let 内容 = std::fs::read_to_string(Path::new(パス))
-            .map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
+        let 内容 = std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
         for 鍵 in 鍵らしい綴りを集める(&内容) {
             if !登録済みの綴り一覧.contains(&鍵.as_str()) {
-                違反一覧.push(違反::ファイル単位(
-                    PathBuf::from(*パス),
-                    format!("鍵の綴り「{鍵}」が綴りの契約の台帳に無い(鍵を台帳へ登録するか、出す側の綴りと揃える)"),
-                ));
+                違反一覧.push(違反::ファイル単位(PathBuf::from(*パス), format!("鍵の綴り「{鍵}」が綴りの契約の台帳に無い(鍵を台帳へ登録するか、出す側の綴りと揃える)")));
             }
         }
     }
@@ -38,9 +32,5 @@ pub(super) fn 登録の無い鍵を探す(
 }
 
 fn 鍵らしい綴りを集める(内容: &str) -> Vec<String> {
-    source_lexing::文字列リテラル一覧(内容)
-        .iter()
-        .map(|断片| 断片.中身.clone())
-        .filter(|中身| 中身.ends_with(鍵の終わりの字))
-        .collect()
+    source_lexing::文字列リテラル一覧(内容).iter().map(|断片| 断片.中身.clone()).filter(|中身| 中身.ends_with(鍵の終わりの字)).collect()
 }

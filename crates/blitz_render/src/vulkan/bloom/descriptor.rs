@@ -8,9 +8,7 @@ mod allocate;
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{
-    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号
-};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号};
 
 const 標本器つき: vk::DescriptorType = vk::DescriptorType::COMBINED_IMAGE_SAMPLER;
 const 画素段: vk::ShaderStageFlags = vk::ShaderStageFlags::FRAGMENT;
@@ -19,8 +17,7 @@ const 画素段: vk::ShaderStageFlags = vk::ShaderStageFlags::FRAGMENT;
 pub(super) const 単一読みの宣言: 宣言した束縛の並び<1> = 宣言した束縛の並び::生成する([(束縛番号::生成する(0), 標本器つき, 画素段)]);
 
 /// 読み元2枚のセットの宣言。拡大が1段小さい結果と同じ段の縮小結果を混ぜるために使う。
-pub(super) const 二読みの宣言: 宣言した束縛の並び<2> =
-    宣言した束縛の並び::生成する([(束縛番号::生成する(0), 標本器つき, 画素段), (束縛番号::生成する(1), 標本器つき, 画素段)]);
+pub(super) const 二読みの宣言: 宣言した束縛の並び<2> = 宣言した束縛の並び::生成する([(束縛番号::生成する(0), 標本器つき, 画素段), (束縛番号::生成する(1), 標本器つき, 画素段)]);
 
 pub(in crate::vulkan::bloom) use allocate::生成する;
 
@@ -33,10 +30,7 @@ pub(crate) struct 光のにじみセット群 {
 
 impl 光のにじみセット群 {
     pub(super) fn 束ねる(
-        プール: vk::DescriptorPool,
-        前処理セット: 宣言から割り当てたセット<1>,
-        縮小セット一覧: Vec<宣言から割り当てたセット<1>>,
-        拡大セット一覧: Vec<宣言から割り当てたセット<2>>,
+        プール: vk::DescriptorPool, 前処理セット: 宣言から割り当てたセット<1>, 縮小セット一覧: Vec<宣言から割り当てたセット<1>>, 拡大セット一覧: Vec<宣言から割り当てたセット<2>>
     ) -> Self {
         Self {
             プール,
@@ -63,9 +57,7 @@ impl 光のにじみセット群 {
 }
 
 /// 単一読み(前処理・縮小用)と二読み(拡大用)のレイアウトを作る。失敗時は前者を片付ける。
-pub(super) fn レイアウト2種を作る(
-    device: &ash::Device,
-) -> Result<(宣言から作ったセットレイアウト<1>, 宣言から作ったセットレイアウト<2>), レンダラーエラー> {
+pub(super) fn レイアウト2種を作る(device: &ash::Device) -> Result<(宣言から作ったセットレイアウト<1>, 宣言から作ったセットレイアウト<2>), レンダラーエラー> {
     let 単一読み = 単一読みの宣言.セットレイアウトを確保する(device)?;
     match 二読みの宣言.セットレイアウトを確保する(device) {
         Ok(二読み) => Ok((単一読み, 二読み)),

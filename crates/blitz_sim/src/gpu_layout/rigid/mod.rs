@@ -20,15 +20,9 @@ mod rigid_tests;
 mod word_reader;
 
 pub use error::剛体レイアウトエラー;
-pub use execution_state_bytes::{
-    剛体実行状態の読み取り, 剛体実行状態をバイト列から読む, 剛体実行状態バイト列にする, 運動種別の符号
-};
-pub use mass_properties_bytes::{
-    剛体質量特性の読み取り, 剛体質量特性をバイト列から読む, 剛体質量特性バイト列にする
-};
-pub use motion_state_bytes::{
-    剛体運動状態の読み取り, 剛体運動状態をバイト列から読む, 剛体運動状態バイト列にする
-};
+pub use execution_state_bytes::{剛体実行状態の読み取り, 剛体実行状態をバイト列から読む, 剛体実行状態バイト列にする, 運動種別の符号};
+pub use mass_properties_bytes::{剛体質量特性の読み取り, 剛体質量特性をバイト列から読む, 剛体質量特性バイト列にする};
+pub use motion_state_bytes::{剛体運動状態の読み取り, 剛体運動状態をバイト列から読む, 剛体運動状態バイト列にする};
 pub use previous_state_bytes::{剛体前状態をバイト列から読む, 剛体前状態バイト列にする};
 
 pub const 剛体運動状態1件のバイト数: usize = 64;

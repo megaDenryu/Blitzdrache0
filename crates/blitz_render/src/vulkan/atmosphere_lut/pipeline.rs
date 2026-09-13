@@ -21,12 +21,7 @@ pub(in crate::vulkan) struct 生成パイプライン {
 }
 
 impl 生成パイプライン {
-    pub(in crate::vulkan) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        ディスクリプタlayout: vk::DescriptorSetLayout,
-        押し込み: 即時定数の枠,
-        spirv: &[u8],
-    ) -> Result<Self, レンダラーエラー> {
+    pub(in crate::vulkan) fn 生成する(確保係: &GPU資源の確保係<'_>, ディスクリプタlayout: vk::DescriptorSetLayout, 押し込み: 即時定数の枠, spirv: &[u8]) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
         let layout = レイアウトを作る(device, ディスクリプタlayout, 押し込み)?;
         match 確保係.コンピュートパイプラインを生成する(layout, spirv, c"computeMain") {
@@ -49,24 +44,13 @@ impl 生成パイプライン {
     }
 }
 
-fn レイアウトを作る(
-    device: &ash::Device,
-    ディスクリプタlayout: vk::DescriptorSetLayout,
-    押し込み: 即時定数の枠,
-) -> Result<vk::PipelineLayout, レンダラーエラー> {
+fn レイアウトを作る(device: &ash::Device, ディスクリプタlayout: vk::DescriptorSetLayout, 押し込み: 即時定数の枠) -> Result<vk::PipelineLayout, レンダラーエラー> {
     let set_layouts = [ディスクリプタlayout];
     let 範囲一覧 = match 押し込み {
         即時定数の枠::無し => Vec::new(),
-        即時定数の枠::バイト数(バイト数) => vec![
-            vk::PushConstantRange::default()
-                .stage_flags(vk::ShaderStageFlags::COMPUTE)
-                .offset(0)
-                .size(バイト数),
-        ],
+        即時定数の枠::バイト数(バイト数) => vec![vk::PushConstantRange::default().stage_flags(vk::ShaderStageFlags::COMPUTE).offset(0).size(バイト数)],
     };
-    let create_info = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(&set_layouts)
-        .push_constant_ranges(&範囲一覧);
+    let create_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&set_layouts).push_constant_ranges(&範囲一覧);
     // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
     Ok(unsafe { device.create_pipeline_layout(&create_info, None)? })
 }

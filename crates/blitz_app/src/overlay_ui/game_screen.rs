@@ -61,18 +61,16 @@ fn 終了確認を描く(ctx: &egui::Context) {
 /// 到達済みの目的地の数を画面の左上へ出す。進行が絵から読み取れないと、巡ったかどうかを確かめるのに
 /// 終了時の報告を待つことになる。
 fn 進行を描く(ctx: &egui::Context, 表示内容: ゲーム画面の表示内容) {
-    egui::Area::new(egui::Id::new("キツネの場所巡りの進行"))
-        .anchor(egui::Align2::LEFT_TOP, egui::vec2(24.0, 24.0))
-        .show(ctx, |ui| {
-            敷く板を作る().show(ui, |ui| {
-                ui.label(
-                    egui::RichText::new(format!("巡った場所 {} / {}", 表示内容.到達済みの目的地数, 表示内容.目的地の総数))
-                        .size(進行の文字の大きさ)
-                        .color(文字の色)
-                        .strong(),
-                );
-            });
+    egui::Area::new(egui::Id::new("キツネの場所巡りの進行")).anchor(egui::Align2::LEFT_TOP, egui::vec2(24.0, 24.0)).show(ctx, |ui| {
+        敷く板を作る().show(ui, |ui| {
+            ui.label(
+                egui::RichText::new(format!("巡った場所 {} / {}", 表示内容.到達済みの目的地数, 表示内容.目的地の総数))
+                    .size(進行の文字の大きさ)
+                    .color(文字の色)
+                    .strong(),
+            );
         });
+    });
 }
 
 fn 見出しの文字(文: &str) -> egui::RichText {
@@ -89,11 +87,9 @@ fn 敷く板を作る() -> egui::Frame {
 }
 
 fn 画面の中央へ重ねる(ctx: &egui::Context, 名前: &str, 中身: impl FnOnce(&mut egui::Ui)) {
-    egui::Area::new(egui::Id::new(名前))
-        .anchor(egui::Align2::CENTER_CENTER, egui::vec2(0.0, 0.0))
-        .show(ctx, |ui| {
-            敷く板を作る().show(ui, |ui| {
-                ui.vertical_centered(中身);
-            });
+    egui::Area::new(egui::Id::new(名前)).anchor(egui::Align2::CENTER_CENTER, egui::vec2(0.0, 0.0)).show(ctx, |ui| {
+        敷く板を作る().show(ui, |ui| {
+            ui.vertical_centered(中身);
         });
+    });
 }

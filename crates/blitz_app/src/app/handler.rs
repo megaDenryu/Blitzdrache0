@@ -21,11 +21,7 @@ impl ApplicationHandler for アプリ {
     }
 
     fn window_event(&mut self, event_loop: &ActiveEventLoop, _window_id: WindowId, event: WindowEvent) {
-        let egui消費済みか = self
-            .window
-            .as_ref()
-            .zip(self.画面へ重ねるui.as_mut())
-            .is_some_and(|(window, 画面へ重ねるui)| 画面へ重ねるui.winitイベントを取り込む(window, &event));
+        let egui消費済みか = self.window.as_ref().zip(self.画面へ重ねるui.as_mut()).is_some_and(|(window, 画面へ重ねるui)| 画面へ重ねるui.winitイベントを取り込む(window, &event));
         self.f3押下を確認する(&event);
 
         // 入力層はwinitイベントを蓄積するだけで、以降のmatchが既存の責務を続ける（カメラの操作意図への写像は`入力状態`内部で完結し、blitz_engineはwinitを知らない）。eguiが消費したイベント(ポインタ/キーボードがUI操作中)はカメラ入力へ流さない。

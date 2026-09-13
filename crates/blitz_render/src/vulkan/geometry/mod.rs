@@ -19,20 +19,13 @@ pub(crate) struct ジオメトリバッファ {
 }
 
 impl ジオメトリバッファ {
-    pub(crate) fn 生成する(
-        転送係: ステージング経由の転送係<'_>,
-        頂点一覧: &[頂点],
-        インデックス一覧: &[u32],
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(転送係: ステージング経由の転送係<'_>, 頂点一覧: &[頂点], インデックス一覧: &[u32]) -> Result<Self, レンダラーエラー> {
         let device = 転送係.論理デバイス();
         let 頂点バイト列 = bytes::頂点をバイト列にする(頂点一覧);
-        let 頂点バッファ =
-            転送係.データからデバイスローカルバッファを確保する(&頂点バイト列, vk::BufferUsageFlags::VERTEX_BUFFER)?;
+        let 頂点バッファ = 転送係.データからデバイスローカルバッファを確保する(&頂点バイト列, vk::BufferUsageFlags::VERTEX_BUFFER)?;
 
         let インデックスバイト列 = bytes::インデックスをバイト列にする(インデックス一覧);
-        let インデックスバッファ = match 転送係
-            .データからデバイスローカルバッファを確保する(&インデックスバイト列, vk::BufferUsageFlags::INDEX_BUFFER)
-        {
+        let インデックスバッファ = match 転送係.データからデバイスローカルバッファを確保する(&インデックスバイト列, vk::BufferUsageFlags::INDEX_BUFFER) {
             Ok(結果) => 結果,
             Err(誤り) => {
                 頂点バッファ.破棄する(device);

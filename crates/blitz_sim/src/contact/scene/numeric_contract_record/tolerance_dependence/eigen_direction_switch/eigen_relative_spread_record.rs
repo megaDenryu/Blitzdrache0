@@ -14,9 +14,7 @@ use blitz_math::メートル;
 use super::super::case::許容差依存の診断の場合;
 use super::super::row_admission::刻みを二倍にする長さ;
 use super::super::scene_variation::段階A1の場面からの一つの変更;
-use crate::contact::normal_tangential_system::{
-    固有値を最大で割った相対値の広がり, 接線の行への許容差の適用規則, 試験の許容差の適用規則
-};
+use crate::contact::normal_tangential_system::{固有値を最大で割った相対値の広がり, 接線の行への許容差の適用規則, 試験の許容差の適用規則};
 
 const 綴る細分の本数: usize = 16;
 
@@ -44,17 +42,8 @@ fn 一つの場面の相対分布を綴る(場合: &許容差依存の診断の�
             continue;
         };
         広がり.一回の求解を数える(内訳);
-        let 相対値: Vec<String> = 内訳
-            .固有の向きごと
-            .iter()
-            .map(|向き| format!("{:.3e}", 向き.固有値 / 内訳.最大の固有値))
-            .collect();
-        println!(
-            "  K 細分{番号} 行数={} λ_max={:.4e} 相対値={}",
-            内訳.固有の向きごと.len(),
-            内訳.最大の固有値,
-            相対値.join(",")
-        );
+        let 相対値: Vec<String> = 内訳.固有の向きごと.iter().map(|向き| format!("{:.3e}", 向き.固有値 / 内訳.最大の固有値)).collect();
+        println!("  K 細分{番号} 行数={} λ_max={:.4e} 相対値={}", 内訳.固有の向きごと.len(), 内訳.最大の固有値, 相対値.join(","));
     }
     println!("  要約 [{}] {}", 場合.見出し(), 広がり.綴り());
 }

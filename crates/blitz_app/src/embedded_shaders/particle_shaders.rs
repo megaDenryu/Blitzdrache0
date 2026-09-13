@@ -21,19 +21,11 @@ const SPH画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/sph_f
 pub(super) fn 表示モードから選ぶ(表示: 粒子表示モード) -> Result<Option<粒子シェーダー一式>, 起動エラー> {
     let 一式 = match 表示 {
         粒子表示モード::なし => None,
-        粒子表示モード::粒子トイ => Some(粒子シェーダー一式::生成する(
-            粒子コンピュートSPIRV.to_vec(),
-            粒子頂点SPIRV.to_vec(),
-            粒子画素段SPIRV.to_vec(),
-        )?),
-        粒子表示モード::表面流 => Some(粒子シェーダー一式::生成する(
-            表面流コンピュートSPIRV.to_vec(),
-            表面流頂点SPIRV.to_vec(),
-            表面流画素段SPIRV.to_vec(),
-        )?),
-        粒子表示モード::SPH粒子512個 | 粒子表示モード::SPH粒子1024個 | 粒子表示モード::SPH粒子2048個 => Some(
-            粒子シェーダー一式::生成する(SPHコンピュートSPIRV.to_vec(), SPH頂点SPIRV.to_vec(), SPH画素段SPIRV.to_vec())?,
-        ),
+        粒子表示モード::粒子トイ => Some(粒子シェーダー一式::生成する(粒子コンピュートSPIRV.to_vec(), 粒子頂点SPIRV.to_vec(), 粒子画素段SPIRV.to_vec())?),
+        粒子表示モード::表面流 => Some(粒子シェーダー一式::生成する(表面流コンピュートSPIRV.to_vec(), 表面流頂点SPIRV.to_vec(), 表面流画素段SPIRV.to_vec())?),
+        粒子表示モード::SPH粒子512個 | 粒子表示モード::SPH粒子1024個 | 粒子表示モード::SPH粒子2048個 => {
+            Some(粒子シェーダー一式::生成する(SPHコンピュートSPIRV.to_vec(), SPH頂点SPIRV.to_vec(), SPH画素段SPIRV.to_vec())?)
+        }
     };
     Ok(一式)
 }

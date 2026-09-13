@@ -18,14 +18,7 @@ pub enum GPUメモリ用途 {
 }
 
 impl GPUメモリ用途 {
-    pub(crate) const 一覧: [Self; 6] = [
-        Self::デバイスバッファ,
-        Self::ホストバッファ,
-        Self::描画画像,
-        Self::テクスチャ画像,
-        Self::読み戻しバッファ,
-        Self::点光源の影の立方体配列,
-    ];
+    pub(crate) const 一覧: [Self; 6] = [Self::デバイスバッファ, Self::ホストバッファ, Self::描画画像, Self::テクスチャ画像, Self::読み戻しバッファ, Self::点光源の影の立方体配列];
 
     pub fn 名称(self) -> &'static str {
         match self {

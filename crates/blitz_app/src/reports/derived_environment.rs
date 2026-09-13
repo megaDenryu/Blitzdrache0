@@ -16,9 +16,7 @@ mod representative_rows;
 mod slices;
 mod statistics;
 
-use blitz_render::distant_environment::derived::{
-    定数の遠方環境, 方向性の強い遠方環境, 立方体画像の一辺, 遠方環境の内容
-};
+use blitz_render::distant_environment::derived::{定数の遠方環境, 方向性の強い遠方環境, 立方体画像の一辺, 遠方環境の内容};
 use report_error::派生表現報告エラー;
 use std::process::ExitCode;
 

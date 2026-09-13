@@ -41,11 +41,7 @@ impl パイプライン {
     /// 布描画用の変種(判断54): 接線を宣言しない3属性の頂点入力で生成する。
     /// `ディスクリプタlayout一覧`のset1とset2は、布が読まない役割を表す空のレイアウトである。
     pub(crate) fn 布用に生成する(
-        確保係: &GPU資源の確保係<'_>,
-        カラー形式: vk::Format,
-        深度形式: vk::Format,
-        ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
-        シェーダー: &シェーダー一式,
+        確保係: &GPU資源の確保係<'_>, カラー形式: vk::Format, 深度形式: vk::Format, ディスクリプタlayout一覧: &[vk::DescriptorSetLayout], シェーダー: &シェーダー一式
     ) -> Result<Self, レンダラーエラー> {
         let layout = パイプラインレイアウト::確保する(確保係, ディスクリプタlayout一覧, カメラ相対の基準原点::プッシュ定数範囲())?;
         let 結果 = create::グラフィックスパイプラインを生成する(

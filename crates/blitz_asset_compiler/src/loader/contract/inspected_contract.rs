@@ -33,11 +33,7 @@ impl 検査する契約 {
         } else {
             Self::静的シーン
         };
-        let 残り = 引数一覧
-            .iter()
-            .filter(|引数| 引数.as_str() != 群の原型の綴り && 引数.as_str() != 部品の綴り)
-            .cloned()
-            .collect();
+        let 残り = 引数一覧.iter().filter(|引数| 引数.as_str() != 群の原型の綴り && 引数.as_str() != 部品の綴り).cloned().collect();
         (選択, 残り)
     }
 

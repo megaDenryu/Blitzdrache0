@@ -17,9 +17,7 @@ use blitz_math::メートル;
 use super::super::case::許容差依存の診断の場合;
 use super::super::row_admission::刻みを二倍にする長さ;
 use super::super::scene_variation::段階A1の場面からの一つの変更;
-use crate::contact::normal_tangential_system::{
-    単精度の解の内訳, 増分と不確かさの率の広がり, 接線の行への許容差の適用規則, 試験の許容差の適用規則
-};
+use crate::contact::normal_tangential_system::{単精度の解の内訳, 増分と不確かさの率の広がり, 接線の行への許容差の適用規則, 試験の許容差の適用規則};
 
 const 綴る細分の本数: usize = 16;
 
@@ -52,11 +50,7 @@ fn 一細分の二つの分母を綴る(番号: usize, 内訳: &単精度の解�
     println!(
         "  S 細分{番号} Σλ_n={反復零の法線の乗数の合計:.4e} ‖b‖={:.4e} ‖b‖/λ_max={硬い向きの増分:.4e} 最大の増分={最大の増分:.4e} 最大の増分/Σλ_n={法線の合計で割る:.4e} 最大の増分/(‖b‖/λ_max)={:.4e} その向きの不確かさの率={率:.4e}",
         内訳.右辺の大きさ,
-        if 硬い向きの増分 > 0.0 {
-            最大の増分 / 硬い向きの増分
-        } else {
-            0.0
-        }
+        if 硬い向きの増分 > 0.0 { 最大の増分 / 硬い向きの増分 } else { 0.0 }
     );
 }
 

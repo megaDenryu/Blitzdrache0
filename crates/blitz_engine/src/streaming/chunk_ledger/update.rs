@@ -5,15 +5,10 @@ use std::collections::HashSet;
 use super::{チャンク台帳, チャンク記録};
 use crate::チャンク座標;
 
-use crate::streaming::{
-    chunk_diff::チャンク集合差分, chunk_request::チャンク要求, chunk_state::チャンク状態, ledger_error::チャンク台帳エラー,
-    memory_candidate::チャンク予算候補,
-};
+use crate::streaming::{chunk_diff::チャンク集合差分, chunk_request::チャンク要求, chunk_state::チャンク状態, ledger_error::チャンク台帳エラー, memory_candidate::チャンク予算候補};
 
 impl チャンク台帳 {
-    pub fn 必要集合を反映する(
-        &mut self, 必要集合: &[チャンク予算候補]
-    ) -> Result<チャンク集合差分, チャンク台帳エラー> {
+    pub fn 必要集合を反映する(&mut self, 必要集合: &[チャンク予算候補]) -> Result<チャンク集合差分, チャンク台帳エラー> {
         重複を検査する(必要集合)?;
         for 記録 in self.登録一覧.values_mut() {
             記録.必要 = false;

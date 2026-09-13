@@ -13,12 +13,7 @@ use super::super::アプリ;
 use super::{cluster_assignment_check, indirect_probe_check, sky_pixel_check, 寸法を書く};
 use crate::error::起動エラー;
 
-pub(super) fn 提示画像を読み戻して書き出す(
-    アプリ: &mut アプリ,
-    描画入力: blitz_render::フレーム描画入力<'_>,
-    視点情報: &フレーム視点,
-    ダンプ先: &Path,
-) -> Result<描画の到達, 起動エラー> {
+pub(super) fn 提示画像を読み戻して書き出す(アプリ: &mut アプリ, 描画入力: blitz_render::フレーム描画入力<'_>, 視点情報: &フレーム視点, ダンプ先: &Path) -> Result<描画の到達, 起動エラー> {
     let Some(レンダラー) = &mut アプリ.レンダラー else {
         return Ok(描画の到達::届かなかった);
     };
@@ -30,9 +25,7 @@ pub(super) fn 提示画像を読み戻して書き出す(
             cluster_assignment_check::クラスタ選別の割り当て統計を報告する(アプリ, 視点情報);
             Ok(描画の到達::提示した)
         }
-        blitz_render::読み戻し結果::見送った(理由) => Err(起動エラー::フレームダンプ失敗(format!(
-            "ダンプ対象フレームで描画が見送られた: {理由:?}"
-        ))),
+        blitz_render::読み戻し結果::見送った(理由) => Err(起動エラー::フレームダンプ失敗(format!("ダンプ対象フレームで描画が見送られた: {理由:?}"))),
     }
 }
 
@@ -48,8 +41,7 @@ fn 書き出す(画像: &読み戻し画像, ベース名: &Path) -> Result<(), 
     }
 
     let 提示画像のパス = ベース名.with_extension("raw");
-    std::fs::write(&提示画像のパス, バイト列)
-        .map_err(|誤り| 起動エラー::フレームダンプ失敗(format!("{}: {誤り}", 提示画像のパス.display())))?;
+    std::fs::write(&提示画像のパス, バイト列).map_err(|誤り| 起動エラー::フレームダンプ失敗(format!("{}: {誤り}", 提示画像のパス.display())))?;
     寸法を書く(幅, 高さ, ベース名)?;
     println!("[dump-frame] 書き出した: {}", 提示画像のパス.display());
     Ok(())

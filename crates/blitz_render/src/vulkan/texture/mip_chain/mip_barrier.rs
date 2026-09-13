@@ -5,12 +5,7 @@ use ash::vk;
 use crate::vulkan::command_sink::GPU命令の積み先;
 
 pub(super) fn 部分範囲(レベル: u32) -> vk::ImageSubresourceRange {
-    vk::ImageSubresourceRange::default()
-        .aspect_mask(vk::ImageAspectFlags::COLOR)
-        .base_mip_level(レベル)
-        .level_count(1)
-        .base_array_layer(0)
-        .layer_count(1)
+    vk::ImageSubresourceRange::default().aspect_mask(vk::ImageAspectFlags::COLOR).base_mip_level(レベル).level_count(1).base_array_layer(0).layer_count(1)
 }
 
 fn 積む(積み先: GPU命令の積み先<'_>, バリア: vk::ImageMemoryBarrier2) {

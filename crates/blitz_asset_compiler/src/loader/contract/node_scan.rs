@@ -10,11 +10,7 @@ use super::target::対象位置;
 impl 開いた文書の契約検査<'_> {
     pub(super) fn ノード階層を検査する(&mut self) {
         let 索引 = ノードの親子関係の索引::文書から作る(self.文書の全体());
-        let 参照ノード一覧: Vec<gltf::Node<'_>> = self
-            .文書の全体()
-            .nodes()
-            .filter(|ノード| ノード.mesh().is_some_and(|メッシュ| メッシュ.index() == 0))
-            .collect();
+        let 参照ノード一覧: Vec<gltf::Node<'_>> = self.文書の全体().nodes().filter(|ノード| ノード.mesh().is_some_and(|メッシュ| メッシュ.index() == 0)).collect();
 
         self.先頭メッシュを参照するノードの個数を検査する(参照ノード一覧.len());
         for ノード in 参照ノード一覧.iter().filter(|ノード| ノード.skin().is_none()) {

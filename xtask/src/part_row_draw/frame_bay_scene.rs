@@ -14,8 +14,7 @@ use crate::acceptance::検収シーン名;
 pub(super) const 骨格方式のシーン名: 検収シーン名 = 検収シーン名::生成する("prop_part_frame_row");
 
 /// 骨格方式の世界が焼く実行時形式のファイル名。シーンの安定IDと同じ綴りから決まる。
-pub(super) const 骨格方式の焼き上がりのファイル名: crate::verify::検証の出力のファイル名 =
-    crate::verify::検証の出力のファイル名::生成する("prop_part_frame_row.blitzasset");
+pub(super) const 骨格方式の焼き上がりのファイル名: crate::verify::検証の出力のファイル名 = crate::verify::検証の出力のファイル名::生成する("prop_part_frame_row.blitzasset");
 
 /// 出力ルートの置き場の名前から、検収する並び1つを定数のまま組む。
 macro_rules! 骨格方式の検収する並び {
@@ -23,9 +22,7 @@ macro_rules! 骨格方式の検収する並び {
         crate::part_row_draw::row_target::検収する並び1つ::生成する(
             $呼び名,
             $世界,
-            crate::part_row_draw::bake_root::並びの実行時形式の置き場::定数から生成する(
-                crate::verify::検証の出力の置き場名::生成する($出力ルート),
-            ),
+            crate::part_row_draw::bake_root::並びの実行時形式の置き場::定数から生成する(crate::verify::検証の出力の置き場名::生成する($出力ルート)),
             crate::part_row_draw::baked_asset_file::焼き上がりを確かめるファイル::定数から生成する(
                 crate::verify::検証の出力の置き場名::生成する($出力ルート),
                 crate::part_row_draw::frame_bay_scene::骨格方式の焼き上がりのファイル名,

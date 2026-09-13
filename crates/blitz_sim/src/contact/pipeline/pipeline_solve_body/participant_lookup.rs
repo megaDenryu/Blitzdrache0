@@ -11,15 +11,11 @@ pub(super) fn 台帳から引く(剛体一覧: &[剛体], 識別子: 剛体の�
 }
 
 // 起きている動的剛体だけがこの細分の予測を持つ。
-pub(super) fn 予測を探す(
-    動的剛体一覧: &[細分の動的剛体], 識別子: 剛体の識別子
-) -> Option<crate::rigid_xpbd::予測の状態> {
+pub(super) fn 予測を探す(動的剛体一覧: &[細分の動的剛体], 識別子: 剛体の識別子) -> Option<crate::rigid_xpbd::予測の状態> {
     動的剛体一覧.iter().find(|剛体| 剛体.識別子 == 識別子).map(|剛体| 剛体.予測)
 }
 
-pub(super) fn 予測を書き戻す(
-    動的剛体一覧: &mut [細分の動的剛体], 識別子: 剛体の識別子, 予測: Option<crate::rigid_xpbd::予測の状態>
-) {
+pub(super) fn 予測を書き戻す(動的剛体一覧: &mut [細分の動的剛体], 識別子: 剛体の識別子, 予測: Option<crate::rigid_xpbd::予測の状態>) {
     let (Some(予測), Some(対象)) = (予測, 動的剛体一覧.iter_mut().find(|剛体| 剛体.識別子 == 識別子)) else {
         return;
     };

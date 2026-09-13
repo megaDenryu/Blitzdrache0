@@ -11,9 +11,7 @@ use blitz_math::ラジアン;
 use super::super::holding_class::保持と滑走の分類;
 use super::scene_variation::段階A1の場面からの一つの変更;
 use crate::contact::friction_coefficient::摩擦係数;
-use crate::contact::normal_tangential_system::{
-    接線の行への許容差の適用規則, 解けたと見なす許容差の倍率, 試験の許容差の適用規則
-};
+use crate::contact::normal_tangential_system::{接線の行への許容差の適用規則, 解けたと見なす許容差の倍率, 試験の許容差の適用規則};
 use crate::contact::scene::slope_fixture::坂の場面を指定で組む;
 use crate::contact::scene::slope_geometry::坂の場面の条件;
 use crate::contact::scene::static_friction_method::場面の静止摩擦の解き方;
@@ -49,9 +47,7 @@ impl 許容差依存の診断の場合 {
     }
 
     /// この場合の場面を、指定の許容差の適用規則で組む。届く先や閾値の倍率を振る計器が読む。
-    pub(super) fn 場面を適用規則で組む(
-        &self, 適用規則: 試験の許容差の適用規則
-    ) -> 一つの箱と静的な直方体の場面 {
+    pub(super) fn 場面を適用規則で組む(&self, 適用規則: 試験の許容差の適用規則) -> 一つの箱と静的な直方体の場面 {
         let 条件 = self.坂の場面の条件を組む();
         let 指定 = self.変更.組み立ての指定を作る(&条件, 適用規則);
         let mut 場面 = 坂の場面を指定で組む(&条件, &指定);
@@ -61,10 +57,7 @@ impl 許容差依存の診断の場合 {
 
     /// この場合の許容差の適用規則(受理の倍率と右辺の δ の扱い)。
     pub(super) fn 許容差の適用規則(&self) -> 試験の許容差の適用規則 {
-        試験の許容差の適用規則::倍率と行への適用規則から生成する(
-            解けたと見なす許容差の倍率::比から生成する(self.許容差の比),
-            self.行への適用規則,
-        )
+        試験の許容差の適用規則::倍率と行への適用規則から生成する(解けたと見なす許容差の倍率::比から生成する(self.許容差の比), self.行への適用規則)
     }
 
     /// 表の見出し。本番と違う行への適用規則だけその印を添え、段階A1と同じ場合の見出しは段階A1と同じ綴りにする。

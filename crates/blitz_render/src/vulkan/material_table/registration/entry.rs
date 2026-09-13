@@ -21,23 +21,13 @@ impl 束の保持材質 {
     pub(super) fn 取り込む(発番: &mut 安定IDの発番, 描画対象一覧: &[描画対象素材]) -> Self {
         let 描画対象別 = 描画対象一覧
             .iter()
-            .map(|描画対象| {
-                描画対象
-                    .材質スロット素材一覧()
-                    .一覧()
-                    .iter()
-                    .map(|スロット素材| 保持材質::素材から取り込む(発番, スロット素材.マテリアル()))
-                    .collect()
-            })
+            .map(|描画対象| 描画対象.材質スロット素材一覧().一覧().iter().map(|スロット素材| 保持材質::素材から取り込む(発番, スロット素材.マテリアル())).collect())
             .collect();
         Self { 描画対象別 }
     }
 
     pub(super) fn 描画対象別の材質id一覧(&self) -> Vec<描画対象別の材質ID> {
-        self.描画対象別
-            .iter()
-            .map(|材質一覧| 材質一覧.iter().map(保持材質::材質id).collect())
-            .collect()
+        self.描画対象別.iter().map(|材質一覧| 材質一覧.iter().map(保持材質::材質id).collect()).collect()
     }
 
     pub(super) fn 梱包対象を並べる(&self) -> Vec<梱包対象材質<'_>> {

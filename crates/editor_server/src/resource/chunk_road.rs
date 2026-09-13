@@ -3,9 +3,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::numeric_check::{
-    最小件数以上であることを確かめる, 正の有限数であることを確かめる, 非負の有限数であることを確かめる
-};
+use super::numeric_check::{最小件数以上であることを確かめる, 正の有限数であることを確かめる, 非負の有限数であることを確かめる};
 use super::position::位置3次元;
 use super::validation_error::資源検証エラー;
 

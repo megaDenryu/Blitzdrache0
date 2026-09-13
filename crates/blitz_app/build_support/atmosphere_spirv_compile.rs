@@ -37,40 +37,11 @@ const 遠方環境エントリ: [エントリ指定; 1] = [エントリ指定 {
     出力ファイル名: "distant_environment.spv",
 }];
 
-pub(super) fn 全部をコンパイルする(
-    slangc: &スラングコンパイラの所在,
-    シェーダーディレクトリ: &Path,
-    出力先ディレクトリ: &Path,
-) -> Result<(), String> {
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("atmosphere_transmittance.slang"),
-        出力先ディレクトリ,
-        &透過率エントリ,
-    )?;
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("atmosphere_multiscatter.slang"),
-        出力先ディレクトリ,
-        &多重散乱エントリ,
-    )?;
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("atmosphere_skyview.slang"),
-        出力先ディレクトリ,
-        &スカイビューエントリ,
-    )?;
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("atmosphere_aerial.slang"),
-        出力先ディレクトリ,
-        &空中遠近エントリ,
-    )?;
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("distant_environment.slang"),
-        出力先ディレクトリ,
-        &遠方環境エントリ,
-    )?;
+pub(super) fn 全部をコンパイルする(slangc: &スラングコンパイラの所在, シェーダーディレクトリ: &Path, 出力先ディレクトリ: &Path) -> Result<(), String> {
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("atmosphere_transmittance.slang"), 出力先ディレクトリ, &透過率エントリ)?;
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("atmosphere_multiscatter.slang"), 出力先ディレクトリ, &多重散乱エントリ)?;
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("atmosphere_skyview.slang"), 出力先ディレクトリ, &スカイビューエントリ)?;
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("atmosphere_aerial.slang"), 出力先ディレクトリ, &空中遠近エントリ)?;
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("distant_environment.slang"), 出力先ディレクトリ, &遠方環境エントリ)?;
     super::derived_environment_spirv_compile::全部をコンパイルする(slangc, シェーダーディレクトリ, 出力先ディレクトリ)
 }

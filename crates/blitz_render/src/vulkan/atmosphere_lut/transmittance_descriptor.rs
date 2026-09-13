@@ -18,11 +18,7 @@ pub(super) struct 透過率ディスクリプタ {
 }
 
 impl 透過率ディスクリプタ {
-    pub(super) fn 生成する(
-        device: &ash::Device,
-        シェーダー定数一覧: [vk::Buffer; 進行中フレーム数],
-        書き込み先: vk::ImageView,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(super) fn 生成する(device: &ash::Device, シェーダー定数一覧: [vk::Buffer; 進行中フレーム数], 書き込み先: vk::ImageView) -> Result<Self, レンダラーエラー> {
         create::透過率ディスクリプタを生成する(device, シェーダー定数一覧, 書き込み先)
     }
 

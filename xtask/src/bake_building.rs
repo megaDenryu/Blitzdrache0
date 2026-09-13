@@ -50,10 +50,7 @@ fn 焼いて開く(引数一覧: &[String]) -> Result<ExitCode, String> {
         return Err(format!("建物{建物定義の識別子}の検証世界を焼けなかった"));
     }
     if 引数一覧.iter().any(|引数| 引数 == 焼きまでで止める選択肢) {
-        println!(
-            "[xtask] {焼きまでで止める選択肢}が付いているため、窓を開かずに終える: {}",
-            出力ルート.display()
-        );
+        println!("[xtask] {焼きまでで止める選択肢}が付いているため、窓を開かずに終える: {}", 出力ルート.display());
         return Ok(ExitCode::SUCCESS);
     }
     Ok(launch::歩行の器で開く(出力ルート))

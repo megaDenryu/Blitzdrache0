@@ -21,11 +21,7 @@ fn 相対値の並び<T: Copy + Into<f64>>(固有値: &[T]) -> String {
     if 最大 <= 0.0 {
         return "λ_maxが正でない".to_owned();
     }
-    固有値
-        .iter()
-        .map(|値| format!("{:.3e}", (*値).into() / 最大))
-        .collect::<Vec<_>>()
-        .join(",")
+    固有値.iter().map(|値| format!("{:.3e}", (*値).into() / 最大)).collect::<Vec<_>>().join(",")
 }
 
 // 細分1本の単精度と倍精度の相対値を並べる。

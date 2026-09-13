@@ -9,12 +9,7 @@ use crate::visible_instance_selection::可視ID列エラー;
 use crate::vulkan::sync::フレームスロット添字;
 
 impl 可視ID列バッファ {
-    pub(crate) fn 書き込む(
-        &self,
-        device: &ash::Device,
-        フレーム添字: フレームスロット添字,
-        可視id列: &[u32],
-    ) -> Result<(), レンダラーエラー> {
+    pub(crate) fn 書き込む(&self, device: &ash::Device, フレーム添字: フレームスロット添字, 可視id列: &[u32]) -> Result<(), レンダラーエラー> {
         if 可視id列.len() > self.容量件数 {
             return Err(可視ID列エラー::容量超過 {
                 列の長さ: 可視id列.len(),
@@ -25,7 +20,6 @@ impl 可視ID列バッファ {
         if 可視id列.is_empty() {
             return Ok(());
         }
-        self.スロットごとのバッファ
-            .スロットのバッファへ32ビット整数列を書き込む(device, フレーム添字, 可視id列)
+        self.スロットごとのバッファ.スロットのバッファへ32ビット整数列を書き込む(device, フレーム添字, 可視id列)
     }
 }

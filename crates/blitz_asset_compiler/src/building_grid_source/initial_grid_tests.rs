@@ -33,8 +33,5 @@ fn 形式版が未対応の格子はファイルの読みが拒む() {
     std::fs::write(&一時ファイル, 本文).unwrap();
     let 結果 = super::grid_file::建物の格子のファイル::生成する(一時ファイル.clone()).読んで解く();
     std::fs::remove_file(&一時ファイル).unwrap();
-    assert!(matches!(
-        結果,
-        Err(super::error::建物の格子のソースエラー::形式版に対応していない { 版: 99, .. })
-    ));
+    assert!(matches!(結果, Err(super::error::建物の格子のソースエラー::形式版に対応していない { 版: 99, .. })));
 }

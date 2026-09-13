@@ -37,9 +37,7 @@ impl カタログ {
         self.詳細を登録する(id, パス, Vec::new(), アセットメタデータ::default());
     }
 
-    pub fn 詳細を登録する(
-        &mut self, id: アセットID, 実行時パス: PathBuf, ソース依存一覧: Vec<PathBuf>, メタデータ: アセットメタデータ
-    ) {
+    pub fn 詳細を登録する(&mut self, id: アセットID, 実行時パス: PathBuf, ソース依存一覧: Vec<PathBuf>, メタデータ: アセットメタデータ) {
         self.登録一覧.insert(id, カタログ項目::生成する(実行時パス, ソース依存一覧, メタデータ));
     }
 

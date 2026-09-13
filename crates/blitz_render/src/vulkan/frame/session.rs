@@ -21,11 +21,7 @@ pub(crate) struct フレームのGPU命令を積むコマンドバッファ<'環
 }
 
 impl<'環境> フレームのGPU命令を積むコマンドバッファ<'環境> {
-    pub(super) fn 積み始める(
-        環境: &'環境 フレームの記録の実行環境,
-        command_buffer: vk::CommandBuffer,
-        クエリプール: Option<vk::QueryPool>,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(super) fn 積み始める(環境: &'環境 フレームの記録の実行環境, command_buffer: vk::CommandBuffer, クエリプール: Option<vk::QueryPool>) -> Result<Self, レンダラーエラー> {
         let begin_info = vk::CommandBufferBeginInfo::default().flags(vk::CommandBufferUsageFlags::ONE_TIME_SUBMIT);
         // 安全性: command_bufferはRESET_COMMAND_BUFFERフラグ付きプール由来で、
         // ここでの開始が暗黙的に前回の記録をリセットする。
@@ -34,18 +30,10 @@ impl<'環境> フレームのGPU命令を積むコマンドバッファ<'環境>
             // 安全性: command_bufferは記録開始済みで、poolはこのスロット専用に生成済み。
             // このフレームで書くクエリより前に必ずリセットする(未リセットのクエリへの
             // 書き込みはVulkanの契約違反になる)。
-            unsafe {
-                環境
-                    .論理デバイス()
-                    .cmd_reset_query_pool(command_buffer, pool, 0, gpu_timing::パス数上限 * 2)
-            };
+            unsafe { 環境.論理デバイス().cmd_reset_query_pool(command_buffer, pool, 0, gpu_timing::パス数上限 * 2) };
         }
         環境.積み始めた1本を数える();
-        Ok(Self {
-            環境,
-            command_buffer,
-            クエリプール,
-        })
+        Ok(Self { 環境, command_buffer, クエリプール })
     }
 
     /// 積み先を組む材料。`command_sink`が積み先を作るためだけに開ける口であり、返る参照はこの値を借りる。

@@ -22,7 +22,5 @@ pub const セル1つが指せる局所光の上限件数: usize = 局所光源�
 /// 前提: 分割数の生成がセルの総数の収まりを確かめており、掛け算の相手は64である。
 pub fn クラスタ光添字列の要素数(分割数: クラスタ格子の分割数) -> usize {
     let セルの総数 = usize::try_from(分割数.セルの総数()).unwrap_or_else(|_| panic!("セルの総数がusizeに収まらない"));
-    セルの総数
-        .checked_mul(セル1つが指せる局所光の上限件数)
-        .unwrap_or_else(|| panic!("クラスタ光添字列の要素数がusizeに収まらない"))
+    セルの総数.checked_mul(セル1つが指せる局所光の上限件数).unwrap_or_else(|| panic!("クラスタ光添字列の要素数がusizeに収まらない"))
 }

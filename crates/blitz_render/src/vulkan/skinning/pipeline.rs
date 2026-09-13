@@ -16,21 +16,14 @@ pub(super) struct スキニングパイプライン {
 }
 
 pub(super) fn スキニングパイプラインを生成する(
-    確保係: &GPU資源の確保係<'_>,
-    ディスクリプタのレイアウト: vk::DescriptorSetLayout,
-    コンピュートの中間表現: &[u8],
+    確保係: &GPU資源の確保係<'_>, ディスクリプタのレイアウト: vk::DescriptorSetLayout, コンピュートの中間表現: &[u8]
 ) -> Result<スキニングパイプライン, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let モジュール = 確保係.シェーダーモジュールを生成する(コンピュートの中間表現)?;
 
-    let プッシュ定数範囲一覧 = [vk::PushConstantRange::default()
-        .stage_flags(vk::ShaderStageFlags::COMPUTE)
-        .offset(0)
-        .size(頂点数プッシュ定数バイト数)];
+    let プッシュ定数範囲一覧 = [vk::PushConstantRange::default().stage_flags(vk::ShaderStageFlags::COMPUTE).offset(0).size(頂点数プッシュ定数バイト数)];
     let ディスクリプタのレイアウト一覧 = [ディスクリプタのレイアウト];
-    let layout_info = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(&ディスクリプタのレイアウト一覧)
-        .push_constant_ranges(&プッシュ定数範囲一覧);
+    let layout_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&ディスクリプタのレイアウト一覧).push_constant_ranges(&プッシュ定数範囲一覧);
     // 安全性: deviceは生成済みで有効。layout_infoは本関数内で構築した値のみを参照する。
     let layout = match unsafe { device.create_pipeline_layout(&layout_info, None) } {
         Ok(layout) => layout,
@@ -41,10 +34,7 @@ pub(super) fn スキニングパイプラインを生成する(
         }
     };
 
-    let stage = vk::PipelineShaderStageCreateInfo::default()
-        .stage(vk::ShaderStageFlags::COMPUTE)
-        .module(モジュール)
-        .name(エントリ名);
+    let stage = vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::COMPUTE).module(モジュール).name(エントリ名);
     let create_info = vk::ComputePipelineCreateInfo::default().stage(stage).layout(layout);
     // 安全性: stage・layoutは本関数内で構築・生成済みの値のみを参照し、deviceは生成済みで有効。
     let 生成結果 = unsafe { device.create_compute_pipelines(vk::PipelineCache::null(), &[create_info], None) };

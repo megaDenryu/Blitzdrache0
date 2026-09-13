@@ -18,12 +18,8 @@ mod tests {
 
     #[test]
     fn 試験のためのファイルを見分ける() {
-        assert!(試験のためのファイルか(
-            Path::new("xtask/src/conform/free_function_whole_type/tests.rs")
-        ));
-        assert!(試験のためのファイルか(
-            Path::new("crates/blitz_render/src/renderer/origin_tests.rs")
-        ));
+        assert!(試験のためのファイルか(Path::new("xtask/src/conform/free_function_whole_type/tests.rs")));
+        assert!(試験のためのファイルか(Path::new("crates/blitz_render/src/renderer/origin_tests.rs")));
         assert!(試験のためのファイルか(Path::new("crates/editor_server/tests/common/mod.rs")));
         assert!(!試験のためのファイルか(Path::new("crates/blitz_app/src/app/mod.rs")));
     }

@@ -32,12 +32,7 @@ impl スキニングバッファ {
     }
 
     /// 前提: 呼び出しはフェンス待ち後(このスロットの前回GPU使用の完了後。判断24と同じ規律)。
-    pub(super) fn 行列を書き込む(
-        &self,
-        device: &ash::Device,
-        フレーム添字: フレームスロット添字,
-        行列一覧: &[[f32; 16]],
-    ) -> Result<(), レンダラーエラー> {
+    pub(super) fn 行列を書き込む(&self, device: &ash::Device, フレーム添字: フレームスロット添字, 行列一覧: &[[f32; 16]]) -> Result<(), レンダラーエラー> {
         let mut バイト列 = Vec::with_capacity(行列一覧.len() * 64);
         for 行列 in 行列一覧 {
             for 成分 in 行列 {

@@ -26,16 +26,16 @@ use crate::reports::local_visibility::合成深度の形;
 /// - `クラスタ選別の割り当てを報告するか`: `--report-cluster-assignment`指定で、クラスタの選別が書いた区間表と添字列を読み戻し、セルごとの割り当て件数の統計と、厳密な交差判定で数えた偽陽性の件数を1行で出す。
 /// - `先行フレームも書き出すか`: `--dump-preceding-frame`指定で、最終フレームの1つ前も`<ベース名>_preceding`へ書き出す。同一起動の中で撮った2枚を突き合わせると、読み戻しがその起動の中で決定的であることを起動をまたがずに言える。
 pub(crate) struct 読み戻し検収起動設定 {
-    pub(crate) 空の代表画素: Vec<画面画素位置>, // --report-sky-pixel <横,縦;...>。既定は空(報告しない)
+    pub(crate) 空の代表画素: Vec<画面画素位置>,                // --report-sky-pixel <横,縦;...>。既定は空(報告しない)
     pub(crate) 遠方環境の検収条件: Option<遠方環境の検収条件>, // --indirect-probe <条件>。既定はなし
-    pub(crate) 自動露出を報告するか: bool,      // --report-auto-exposure。--dump-hdr-frameと併用
-    pub(crate) 自動露出の探り色: Option<[f32; 3]>, // --auto-exposure-probe <赤,緑,青>
-    pub(crate) 局所可視性の検収の形: Option<合成深度の形>, // --local-visibility-shape <形>
-    pub(crate) 動きベクトルを報告するか: bool,  // --report-motion-vector
-    pub(crate) 時間再構成を報告するか: bool,    // --report-temporal-reconstruction
-    pub(crate) 時間再構成の合成入力を突き合わせるか: bool, // --report-temporal-reconstruction-injection
-    pub(crate) クラスタ選別の割り当てを報告するか: bool, // --report-cluster-assignment
-    pub(crate) 先行フレームも書き出すか: bool,  // --dump-preceding-frame
+    pub(crate) 自動露出を報告するか: bool,                     // --report-auto-exposure。--dump-hdr-frameと併用
+    pub(crate) 自動露出の探り色: Option<[f32; 3]>,             // --auto-exposure-probe <赤,緑,青>
+    pub(crate) 局所可視性の検収の形: Option<合成深度の形>,     // --local-visibility-shape <形>
+    pub(crate) 動きベクトルを報告するか: bool,                 // --report-motion-vector
+    pub(crate) 時間再構成を報告するか: bool,                   // --report-temporal-reconstruction
+    pub(crate) 時間再構成の合成入力を突き合わせるか: bool,     // --report-temporal-reconstruction-injection
+    pub(crate) クラスタ選別の割り当てを報告するか: bool,       // --report-cluster-assignment
+    pub(crate) 先行フレームも書き出すか: bool,                 // --dump-preceding-frame
 }
 
 impl 読み戻し検収起動設定 {

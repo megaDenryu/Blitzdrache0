@@ -7,9 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use super::super::numeric_check::整数が範囲内であることを確かめる;
 use super::super::validation_error::資源検証エラー;
-use super::value_range::{
-    和音の根音の上限, 和音の根音の下限, 和音の続くステップ数の上限, 和音の続くステップ数の下限
-};
+use super::value_range::{和音の根音の上限, 和音の根音の下限, 和音の続くステップ数の上限, 和音の続くステップ数の下限};
 
 /// 和音の種類とは、根音の上へ積む音程の組み合わせの名前のことである。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -36,17 +34,7 @@ pub struct 和音 {
 
 impl 和音 {
     pub(super) fn 検証する(&self) -> Result<(), 資源検証エラー> {
-        整数が範囲内であることを確かめる(
-            "和音.根音",
-            i64::from(self.根音),
-            i64::from(和音の根音の下限),
-            i64::from(和音の根音の上限),
-        )?;
-        整数が範囲内であることを確かめる(
-            "和音.続くステップ数",
-            i64::from(self.続くステップ数),
-            i64::from(和音の続くステップ数の下限),
-            i64::from(和音の続くステップ数の上限),
-        )
+        整数が範囲内であることを確かめる("和音.根音", i64::from(self.根音), i64::from(和音の根音の下限), i64::from(和音の根音の上限))?;
+        整数が範囲内であることを確かめる("和音.続くステップ数", i64::from(self.続くステップ数), i64::from(和音の続くステップ数の下限), i64::from(和音の続くステップ数の上限))
     }
 }

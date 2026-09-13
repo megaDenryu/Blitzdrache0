@@ -8,20 +8,12 @@ use crate::vulkan::allocator::GPU資源の確保係;
 
 pub(super) const 形式: vk::Format = vk::Format::R8G8B8A8_UNORM;
 
-pub(super) fn uiテクスチャの画像を生成する(
-    確保係: &GPU資源の確保係<'_>,
-    幅: u32,
-    高さ: u32,
-) -> Result<(vk::Image, vk::DeviceMemory), レンダラーエラー> {
+pub(super) fn uiテクスチャの画像を生成する(確保係: &GPU資源の確保係<'_>, 幅: u32, 高さ: u32) -> Result<(vk::Image, vk::DeviceMemory), レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let create_info = vk::ImageCreateInfo::default()
         .image_type(vk::ImageType::TYPE_2D)
         .format(形式)
-        .extent(vk::Extent3D {
-            width: 幅,
-            height: 高さ,
-            depth: 1,
-        })
+        .extent(vk::Extent3D { width: 幅, height: 高さ, depth: 1 })
         .mip_levels(1)
         .array_layers(1)
         .samples(vk::SampleCountFlags::TYPE_1)

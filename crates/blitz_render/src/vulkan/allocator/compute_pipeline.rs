@@ -10,17 +10,9 @@ use super::GPU資源の確保係;
 use crate::error::レンダラーエラー;
 
 impl GPU資源の確保係<'_> {
-    pub(crate) fn コンピュートパイプラインを生成する(
-        &self,
-        layout: vk::PipelineLayout,
-        spirv: &[u8],
-        エントリ名: &std::ffi::CStr,
-    ) -> Result<vk::Pipeline, レンダラーエラー> {
+    pub(crate) fn コンピュートパイプラインを生成する(&self, layout: vk::PipelineLayout, spirv: &[u8], エントリ名: &std::ffi::CStr) -> Result<vk::Pipeline, レンダラーエラー> {
         let モジュール = self.シェーダーモジュールを生成する(spirv)?;
-        let stage = vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::COMPUTE)
-            .module(モジュール)
-            .name(エントリ名);
+        let stage = vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::COMPUTE).module(モジュール).name(エントリ名);
         let create_info = vk::ComputePipelineCreateInfo::default().stage(stage).layout(layout);
         // 安全性: stage・layoutは構築済み・生成済みの値のみを参照し、deviceは生成済みで有効。
         let 生成結果 = unsafe { self.device.create_compute_pipelines(vk::PipelineCache::null(), &[create_info], None) };

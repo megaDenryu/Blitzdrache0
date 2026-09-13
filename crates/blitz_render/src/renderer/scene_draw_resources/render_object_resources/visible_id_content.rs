@@ -26,8 +26,7 @@ impl 可視ID列の内容検査 {
     /// 束の読込時に1回だけ呼ぶ。以後この型は確保を行わない。
     pub(super) fn 生成する(個体数: u32) -> Self {
         Self {
-            個体数,
-            記録: 既出記録::生成する(個体数),
+            個体数, 記録: 既出記録::生成する(個体数)
         }
     }
 
@@ -46,9 +45,7 @@ impl 可視ID列の内容検査 {
                         Some(true) => {}
                         Some(false) => return Err(可視ID列エラー::パス内で重複する可視ID { パス, 可視id }),
                         None => {
-                            return Err(可視ID列エラー::個体数外の可視ID {
-                                可視id, 個体数: self.個体数
-                            });
+                            return Err(可視ID列エラー::個体数外の可視ID { 可視id, 個体数: self.個体数 });
                         }
                     }
                 }
@@ -60,17 +57,11 @@ impl 可視ID列の内容検査 {
     /// 段はその対象の全個体を分割したものであるから、合計は常に個体数に等しい。
     /// 加算が溢れた組み合わせはu32の上限として扱い、個体数と一致しない値として拒む。
     fn 段別個体数の合計を検査する(&self, 段範囲一覧: &[段別描画範囲]) -> Result<(), 可視ID列エラー> {
-        let 合計 = 段範囲一覧
-            .iter()
-            .map(|段| 段.個体数())
-            .try_fold(0u32, |累計, 個体数| 累計.checked_add(個体数))
-            .unwrap_or(u32::MAX);
+        let 合計 = 段範囲一覧.iter().map(|段| 段.個体数()).try_fold(0u32, |累計, 個体数| 累計.checked_add(個体数)).unwrap_or(u32::MAX);
         if 合計 == self.個体数 {
             return Ok(());
         }
-        Err(可視ID列エラー::段別個体数の合計不一致 {
-            合計, 個体数: self.個体数
-        })
+        Err(可視ID列エラー::段別個体数の合計不一致 { 合計, 個体数: self.個体数 })
     }
 }
 
@@ -79,11 +70,5 @@ impl 可視ID列の内容検査 {
 fn 区間を切り出す(可視id列: &[u32], 区間: パス別描画範囲) -> Result<&[u32], 可視ID列エラー> {
     let 開始 = usize::try_from(区間.開始()).unwrap_or(usize::MAX);
     let 件数 = usize::try_from(区間.描画数()).unwrap_or(usize::MAX);
-    開始
-        .checked_add(件数)
-        .and_then(|終端| 可視id列.get(開始..終端))
-        .ok_or(可視ID列エラー::区間が範囲外 {
-            開始,
-            列の長さ: 可視id列.len(),
-        })
+    開始.checked_add(件数).and_then(|終端| 可視id列.get(開始..終端)).ok_or(可視ID列エラー::区間が範囲外 { 開始, 列の長さ: 可視id列.len() })
 }

@@ -26,11 +26,7 @@ pub(super) struct セット1つの件数 {
 
 /// 束縛レイアウトの選択肢ごとの件数。宣言するバインドと件数を1つの判定から導き、プールだけが古くなることを防ぐ。
 pub(super) fn セットあたりの件数(束縛レイアウト: 照明束縛レイアウト) -> セット1つの件数 {
-    let 遠方環境の画像 = if 束縛レイアウト.遠方環境の画像を結ぶか() {
-        3
-    } else {
-        0
-    };
+    let 遠方環境の画像 = if 束縛レイアウト.遠方環境の画像を結ぶか() { 3 } else { 0 };
     セット1つの件数 {
         サンプラー付き画像: 2 + 遠方環境の画像,
         サンプラー無し画像: 1,
@@ -49,11 +45,7 @@ pub(super) fn スロット数をu32にする(スロット数: usize) -> u32 {
 pub(crate) struct 照明問い合わせのディスクリプタプール(vk::DescriptorPool);
 
 impl 照明問い合わせのディスクリプタプール {
-    pub(crate) fn 確保する(
-        確保係: &GPU資源の確保係<'_>,
-        スロット数: usize,
-        束縛レイアウト: 照明束縛レイアウト,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 確保する(確保係: &GPU資源の確保係<'_>, スロット数: usize, 束縛レイアウト: 照明束縛レイアウト) -> Result<Self, レンダラーエラー> {
         let スロット数 = スロット数をu32にする(スロット数);
         let 件数一式 = セットあたりの件数(束縛レイアウト);
         let プールサイズ一覧 = [
@@ -64,9 +56,7 @@ impl 照明問い合わせのディスクリプタプール {
         ];
         let create_info = vk::DescriptorPoolCreateInfo::default().max_sets(スロット数).pool_sizes(&プールサイズ一覧);
         // 安全性: 論理デバイスは生成済みで有効。create_infoは本メソッド内で構築した値のみを参照する。
-        Ok(Self(unsafe {
-            確保係.論理デバイス().create_descriptor_pool(&create_info, None)?
-        }))
+        Ok(Self(unsafe { 確保係.論理デバイス().create_descriptor_pool(&create_info, None)? }))
     }
 
     /// セットの割り当てへ渡す境界。

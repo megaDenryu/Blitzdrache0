@@ -21,8 +21,7 @@ impl 粒子バッファ {
     }
 
     pub(crate) fn 生成する(転送係: ステージング経由の転送係<'_>, 素材: &粒子素材) -> Result<Self, レンダラーエラー> {
-        let バッファ =
-            転送係.データからデバイスローカルバッファを確保する(&素材.初期バイト列, vk::BufferUsageFlags::STORAGE_BUFFER)?;
+        let バッファ = 転送係.データからデバイスローカルバッファを確保する(&素材.初期バイト列, vk::BufferUsageFlags::STORAGE_BUFFER)?;
         Ok(Self { バッファ })
     }
 

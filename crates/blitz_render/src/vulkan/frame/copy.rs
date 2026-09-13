@@ -4,23 +4,11 @@ use ash::vk;
 
 use crate::vulkan::command_sink::GPU命令の積み先;
 
-pub(super) fn コピーを記録する(
-    積み先: GPU命令の積み先<'_>,
-    画像: vk::Image,
-    バッファ: vk::Buffer,
-    寸法: vk::Extent2D,
-    面: vk::ImageAspectFlags,
-) {
+pub(super) fn コピーを記録する(積み先: GPU命令の積み先<'_>, 画像: vk::Image, バッファ: vk::Buffer, 寸法: vk::Extent2D, 面: vk::ImageAspectFlags) {
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
     let 領域 = vk::BufferImageCopy::default()
-        .image_subresource(
-            vk::ImageSubresourceLayers::default()
-                .aspect_mask(面)
-                .mip_level(0)
-                .base_array_layer(0)
-                .layer_count(1),
-        )
+        .image_subresource(vk::ImageSubresourceLayers::default().aspect_mask(面).mip_level(0).base_array_layer(0).layer_count(1))
         .image_extent(vk::Extent3D {
             width: 寸法.width,
             height: 寸法.height,

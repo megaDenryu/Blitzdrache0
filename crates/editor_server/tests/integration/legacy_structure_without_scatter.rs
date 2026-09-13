@@ -26,11 +26,7 @@ fn 散布の個体一覧を持たない旧版は個体0件として読める() {
     let 座標 = チャンク座標::生成する(0, 0);
     let 構造パス = 一時.ルート().join("editor_data/チャンク/0_0/構造.json");
     std::fs::create_dir_all(構造パス.parent().unwrap()).unwrap();
-    std::fs::write(
-        &構造パス,
-        serde_json::to_vec_pretty(&散布の個体一覧を持たない旧版のチャンク構造のjson()).unwrap(),
-    )
-    .unwrap();
+    std::fs::write(&構造パス, serde_json::to_vec_pretty(&散布の個体一覧を持たない旧版のチャンク構造のjson()).unwrap()).unwrap();
 
     let 読み込み結果 = 保管庫.チャンクの構造を読む(座標).unwrap().unwrap();
     assert!(読み込み結果.散布の個体一覧.is_empty());

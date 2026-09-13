@@ -7,20 +7,15 @@
 use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::読取位置;
 use super::super::texture_format_tag::判別値から格納形式を読む;
-use crate::asset::texture_storage::{
-    テクスチャ格納形式, 格納済みテクスチャ, 格納済みテクスチャエラー, 縮小段の寸法
-};
+use crate::asset::texture_storage::{テクスチャ格納形式, 格納済みテクスチャ, 格納済みテクスチャエラー, 縮小段の寸法};
 
 /// 縮小段1本ぶんの最小バイト数。宣言長のu64と、最も小さい段であるRGBA8の1x1の4バイトの合計である。
 const 縮小段最小長: usize = 12;
 
 /// テクスチャ1件を読む工程の署名。版ごとの組み立てが、自分の版の並びを読む工程をこの形で受け取る。
-pub(in crate::asset::runtime_format::scene) type テクスチャを読む工程 =
-    fn(&mut 読取位置<'_>) -> Result<Option<格納済みテクスチャ>, アセット実行時形式エラー>;
+pub(in crate::asset::runtime_format::scene) type テクスチャを読む工程 = fn(&mut 読取位置<'_>) -> Result<Option<格納済みテクスチャ>, アセット実行時形式エラー>;
 
-pub(in crate::asset::runtime_format::scene) fn 版4までのテクスチャを読む(
-    入力: &mut 読取位置<'_>,
-) -> Result<Option<格納済みテクスチャ>, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 版4までのテクスチャを読む(入力: &mut 読取位置<'_>) -> Result<Option<格納済みテクスチャ>, アセット実行時形式エラー> {
     let Some((幅, 高さ)) = 有無と寸法を読む(入力)? else {
         return Ok(None);
     };
@@ -29,23 +24,13 @@ pub(in crate::asset::runtime_format::scene) fn 版4までのテクスチャを�
         .and_then(|寸法| テクスチャ格納形式::RGBA8.縮小段の格納バイト数を求める(寸法))
         .map_err(格納済みテクスチャエラー::from)?;
     if 期待長 != 宣言長 {
-        return Err(格納済みテクスチャエラー::宣言長と実長が一致しない {
-            期待長, 実長: 宣言長
-        }
-        .into());
+        return Err(格納済みテクスチャエラー::宣言長と実長が一致しない { 期待長, 実長: 宣言長 }.into());
     }
     let 画素列 = 段のバイト列を読む(入力, 宣言長)?;
-    Ok(Some(格納済みテクスチャ::生成する(
-        幅,
-        高さ,
-        テクスチャ格納形式::RGBA8,
-        vec![画素列],
-    )?))
+    Ok(Some(格納済みテクスチャ::生成する(幅, 高さ, テクスチャ格納形式::RGBA8, vec![画素列])?))
 }
 
-pub(in crate::asset::runtime_format) fn 版5のテクスチャを読む(
-    入力: &mut 読取位置<'_>,
-) -> Result<Option<格納済みテクスチャ>, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format) fn 版5のテクスチャを読む(入力: &mut 読取位置<'_>) -> Result<Option<格納済みテクスチャ>, アセット実行時形式エラー> {
     let Some((幅, 高さ)) = 有無と寸法を読む(入力)? else {
         return Ok(None);
     };

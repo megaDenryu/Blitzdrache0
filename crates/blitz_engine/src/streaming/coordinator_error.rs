@@ -2,10 +2,7 @@
 
 use crate::{アセットID, チャンク座標, 実行時シーン読込エラー};
 
-use super::{
-    error::チャンク格子エラー, ledger_error::チャンク台帳エラー, loader::チャンク読込エラー, memory_budget::ストリーミング予算エラー,
-    memory_estimate::ストリーミング見積エラー,
-};
+use super::{error::チャンク格子エラー, ledger_error::チャンク台帳エラー, loader::チャンク読込エラー, memory_budget::ストリーミング予算エラー, memory_estimate::ストリーミング見積エラー};
 
 #[derive(Debug, thiserror::Error)]
 pub enum ストリーミング調停エラー {

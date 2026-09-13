@@ -11,10 +11,7 @@ use crate::error::レンダラーエラー;
 use crate::vulkan;
 use crate::vulkan::distant_environment::遠方環境が借りる束縛先;
 
-pub(super) fn 生成する(
-    要求: &生成要求<'_>,
-    大気: Option<&vulkan::atmosphere_lut::大気のベイク済み画像一式>,
-) -> Result<Option<vulkan::indirect_lighting::遠方環境の照明資源>, レンダラーエラー> {
+pub(super) fn 生成する(要求: &生成要求<'_>, 大気: Option<&vulkan::atmosphere_lut::大気のベイク済み画像一式>) -> Result<Option<vulkan::indirect_lighting::遠方環境の照明資源>, レンダラーエラー> {
     if !要求.照明問い合わせ契約.遠方環境の資源を作るか() {
         return Ok(None);
     }

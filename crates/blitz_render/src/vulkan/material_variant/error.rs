@@ -10,9 +10,6 @@ use thiserror::Error;
 pub enum 材質能力エラー {
     #[error("シェーディングモデル{モデル}は表面描画状態(アルファ{アルファ}・{面}・深度書込{深度})を描けない")]
     未対応の表面描画状態 {
-        モデル: &'static str,
-        アルファ: &'static str,
-        面: &'static str,
-        深度: &'static str,
+        モデル: &'static str, アルファ: &'static str, 面: &'static str, 深度: &'static str
     },
 }

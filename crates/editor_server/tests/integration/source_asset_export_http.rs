@@ -20,10 +20,7 @@ async fn 正常な書き出しはファイル数と出力先を返しチャン�
     crate::common::フォックスのソースを配置する(&一時);
     crate::common::地表層のタイルを配置する(&一時);
 
-    let 応答 = crate::common::ルーターを作る(&一時)
-        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
+    let 応答 = crate::common::ルーターを作る(&一時).oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap()).await.unwrap();
     assert_eq!(応答.status(), StatusCode::OK);
     let 本体 = axum::body::to_bytes(応答.into_body(), usize::MAX).await.unwrap();
     let 本体: serde_json::Value = serde_json::from_slice(&本体).unwrap();
@@ -52,10 +49,7 @@ async fn 正常な書き出しはファイル数と出力先を返しチャン�
     assert!(一時.ルート().join("target/editor_world_assets/catalog.blitzcatalog").is_file());
     assert!(一時.ルート().join("target/editor_world_assets/chunk_directory.blitzchunks").is_file());
     assert!(一時.ルート().join("target/editor_world_assets/generation_ledger.txt").is_file());
-    let 再書き出し = crate::common::ルーターを作る(&一時)
-        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
+    let 再書き出し = crate::common::ルーターを作る(&一時).oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap()).await.unwrap();
     assert_eq!(再書き出し.status(), StatusCode::OK);
 }
 
@@ -68,10 +62,7 @@ async fn 次回書き出す目録は既存のエディター世界の更新済�
     crate::common::零のマザーを保存する(&保管庫, 区画割り);
     crate::common::フォックスのソースを配置する(&一時);
     crate::common::地表層のタイルを配置する(&一時);
-    let 応答 = crate::common::ルーターを作る(&一時)
-        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
+    let 応答 = crate::common::ルーターを作る(&一時).oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap()).await.unwrap();
     assert_eq!(応答.status(), StatusCode::OK);
 
     let 目録パス = 一時.ルート().join("assets/editor_world/chunk_directory.txt");

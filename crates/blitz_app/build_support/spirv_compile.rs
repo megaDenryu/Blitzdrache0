@@ -27,10 +27,7 @@ const エントリ一覧: [エントリ指定; 2] = [
 const 残りのシーンの画素段: [(&str, &str); 3] = [
     ("scene_distant_environment.slang", "scene_distant_environment_fragment.spv"),
     ("scene_surface_layer.slang", "scene_surface_layer_fragment.spv"),
-    (
-        "scene_surface_layer_distant_environment.slang",
-        "scene_surface_layer_distant_environment_fragment.spv",
-    ),
+    ("scene_surface_layer_distant_environment.slang", "scene_surface_layer_distant_environment_fragment.spv"),
 ];
 
 /// 画素段1本ぶんのエントリ指定を作る。入口名とステージは4本とも同じであり、違うのは出力ファイル名だけである。
@@ -42,19 +39,11 @@ const fn 画素段のエントリ(出力ファイル名: &'static str) -> [エ�
     }]
 }
 
-pub(super) fn 頂点と画素段をコンパイルする(
-    slangc: &スラングコンパイラの所在,
-    ソース絶対パス: &Path,
-    出力先ディレクトリ: &Path,
-) -> Result<(), String> {
+pub(super) fn 頂点と画素段をコンパイルする(slangc: &スラングコンパイラの所在, ソース絶対パス: &Path, 出力先ディレクトリ: &Path) -> Result<(), String> {
     エントリ一覧をコンパイルする(slangc, ソース絶対パス, 出力先ディレクトリ, &エントリ一覧)
 }
 
-pub(super) fn 残りのシーンの画素段をコンパイルする(
-    slangc: &スラングコンパイラの所在,
-    シェーダーディレクトリ絶対パス: &Path,
-    出力先ディレクトリ: &Path,
-) -> Result<(), String> {
+pub(super) fn 残りのシーンの画素段をコンパイルする(slangc: &スラングコンパイラの所在, シェーダーディレクトリ絶対パス: &Path, 出力先ディレクトリ: &Path) -> Result<(), String> {
     for (ソースファイル名, 出力ファイル名) in 残りのシーンの画素段 {
         let ソース絶対パス = シェーダーディレクトリ絶対パス.join(ソースファイル名);
         エントリ一覧をコンパイルする(slangc, &ソース絶対パス, 出力先ディレクトリ, &画素段のエントリ(出力ファイル名))?;

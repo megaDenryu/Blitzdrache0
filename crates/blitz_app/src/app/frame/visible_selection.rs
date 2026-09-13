@@ -13,9 +13,7 @@ use crate::error::起動エラー;
 impl アプリ {
     pub(super) fn この描画の可視個体を選別する(&mut self, 視点情報: &フレーム視点) -> Result<(), 起動エラー> {
         let 開始 = self.可視個体の選別の計測.as_ref().map(|_| std::time::Instant::now());
-        let 結果 = self
-            .可視判定
-            .判定する(視点情報.ビュー射影の組.ずらし無し(), self.天空.ライティング(), 視点情報.カメラ大域位置);
+        let 結果 = self.可視判定.判定する(視点情報.ビュー射影の組.ずらし無し(), self.天空.ライティング(), 視点情報.カメラ大域位置);
         if let (Some(開始), Some(計測)) = (開始, &mut self.可視個体の選別の計測) {
             計測.記録する(開始.elapsed());
         }

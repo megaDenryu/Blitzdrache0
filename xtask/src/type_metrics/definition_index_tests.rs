@@ -6,9 +6,7 @@
 //! 実装ブロック自身のファイルに同名の定義がある形も同じ理由で並べる。同じファイルの定義を経路より先に
 //! 確定根拠にする実装は、`impl crate::far::def::設定`をそのファイルの`設定`へ誤って加算するためである。
 
-use super::definition_index_test_material::{
-    実装ブロック1件を引き当てる, 決まった所在の綴り, 設定を定義したファイル一覧から索引を組む
-};
+use super::definition_index_test_material::{実装ブロック1件を引き当てる, 決まった所在の綴り, 設定を定義したファイル一覧から索引を組む};
 use super::impl_attribution::実装ブロックの引き当て;
 
 #[test]

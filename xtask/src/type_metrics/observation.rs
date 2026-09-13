@@ -7,12 +7,6 @@ use super::declaration_amount::宣言の分量;
 use super::type_path::自己型の経路;
 
 pub enum 観測 {
-    型定義 {
-        型名: String,
-        分量: 宣言の分量,
-    },
-    実装ブロック {
-        自己型の経路: 自己型の経路,
-        メソッド数: usize,
-    },
+    型定義 { 型名: String, 分量: 宣言の分量 },
+    実装ブロック { 自己型の経路: 自己型の経路, メソッド数: usize },
 }

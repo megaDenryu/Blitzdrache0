@@ -19,9 +19,7 @@ impl 解法の計器 {
     }
 
     /// 数えた順の受理の結末を全部読んで空にする。診断の計器が刻みごとに読む口である。
-    pub(in crate::contact::pipeline) fn 受理の判定の履歴を読んで空にする(
-        &self,
-    ) -> Vec<(混合連立方程式の受理の結果, Option<受理の破れの読み取り>)> {
+    pub(in crate::contact::pipeline) fn 受理の判定の履歴を読んで空にする(&self) -> Vec<(混合連立方程式の受理の結果, Option<受理の破れの読み取り>)> {
         std::mem::take(&mut *self.受理の判定の履歴.borrow_mut())
     }
 

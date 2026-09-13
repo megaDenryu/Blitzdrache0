@@ -46,8 +46,5 @@ pub(super) fn 有限な成分の最大値を求める(テクセル一覧: &[[f32
 }
 
 fn 有限な三成分(テクセル一覧: &[[f32; 4]]) -> impl Iterator<Item = f32> + '_ {
-    テクセル一覧
-        .iter()
-        .flat_map(|テクセル| テクセル[0..3].iter().copied())
-        .filter(|値| 値.is_finite())
+    テクセル一覧.iter().flat_map(|テクセル| テクセル[0..3].iter().copied()).filter(|値| 値.is_finite())
 }

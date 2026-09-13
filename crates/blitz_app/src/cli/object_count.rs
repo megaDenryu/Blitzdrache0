@@ -14,11 +14,7 @@ pub(crate) struct 描画対象数(u32);
 
 impl 描画対象数 {
     pub(crate) fn 生成する(値: u32) -> Result<Self, 描画対象数エラー> {
-        if 値 == 0 {
-            Err(描画対象数エラー::零件は受けない)
-        } else {
-            Ok(Self(値))
-        }
+        if 値 == 0 { Err(描画対象数エラー::零件は受けない) } else { Ok(Self(値)) }
     }
 
     pub(crate) fn 件数として取り出す(self) -> usize {

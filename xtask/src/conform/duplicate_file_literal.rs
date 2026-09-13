@@ -74,12 +74,6 @@ fn ファイル内の出現を集める(内容: &str) -> Vec<(String, usize, boo
         .iter()
         .filter(|断片| 断片.区分 == source_lexing::字句の区分::文字列リテラル)
         .filter(|断片| !test_item_skip::範囲の中の行か(&試験の範囲一覧, 断片.開始行) && extract::拡張子を含むか(&断片.中身))
-        .map(|断片| {
-            (
-                extract::ファイル名の部分(&断片.中身),
-                断片.開始行,
-                include_bytes_argument::区間の中か(&取り込みの区間一覧, 断片.開始位置),
-            )
-        })
+        .map(|断片| (extract::ファイル名の部分(&断片.中身), 断片.開始行, include_bytes_argument::区間の中か(&取り込みの区間一覧, 断片.開始位置)))
         .collect()
 }

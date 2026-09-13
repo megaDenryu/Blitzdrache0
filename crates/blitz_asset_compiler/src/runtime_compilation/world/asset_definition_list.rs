@@ -7,9 +7,8 @@
 
 use super::super::catalog::アセット定義;
 use super::{
-    asset_declaration, fox_declaration, fox_tour_declaration, night_lights_declaration, part_frame_row_declaration, part_house_row_declaration,
-    part_tree_row_declaration, stone_hut_declaration, vegetation_declaration, vertex_diagnostic_declaration, village_declaration,
-    visual_sample_declaration, 対象世界,
+    asset_declaration, fox_declaration, fox_tour_declaration, night_lights_declaration, part_frame_row_declaration, part_house_row_declaration, part_tree_row_declaration, stone_hut_declaration, vegetation_declaration, vertex_diagnostic_declaration,
+    village_declaration, visual_sample_declaration, 対象世界,
 };
 
 pub(super) fn アセット定義一覧を選ぶ(世界: 対象世界) -> Vec<アセット定義> {

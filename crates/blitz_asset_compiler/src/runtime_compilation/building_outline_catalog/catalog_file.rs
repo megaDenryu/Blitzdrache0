@@ -34,8 +34,7 @@ impl 建物外形カタログのファイル {
 
     fn 書き込みエラー(&self, 原因: std::io::Error) -> 建物外形カタログエラー {
         建物外形カタログエラー::ファイルを書き込めない {
-            パス: self.パス.display().to_string(),
-            原因,
+            パス: self.パス.display().to_string(), 原因
         }
     }
 }

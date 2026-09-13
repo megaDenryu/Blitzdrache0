@@ -36,10 +36,7 @@ mod tests {
 
     #[test]
     fn 質量0の逆数は拒む() {
-        assert_eq!(
-            キログラム::生成する(0.0).and_then(|質量| 質量.逆質量()),
-            Err(質量エラー::非有限値 { 値: f32::INFINITY })
-        );
+        assert_eq!(キログラム::生成する(0.0).and_then(|質量| 質量.逆質量()), Err(質量エラー::非有限値 { 値: f32::INFINITY }));
     }
 
     #[test]

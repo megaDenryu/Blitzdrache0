@@ -15,9 +15,7 @@ pub(crate) struct 監視するシェーダーの入口ファイル {
 
 impl 監視するシェーダーの入口ファイル {
     pub(crate) fn 綴りから生成する(綴り: &str) -> Self {
-        Self {
-            パス: PathBuf::from(綴り)
-        }
+        Self { パス: PathBuf::from(綴り) }
     }
 
     /// 入口ファイルの本文を読む。ファイルが無い起動(監視無効)もあるため、失敗は呼び出し側が扱う。

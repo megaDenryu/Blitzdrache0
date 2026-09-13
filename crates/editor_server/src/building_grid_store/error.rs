@@ -20,9 +20,7 @@ pub enum 建物の格子の保存エラー {
     検証に失敗(#[from] 資源検証エラー),
 
     #[error("経路が指す建物定義ID{経路の識別子}と、本文が名乗る{本文の識別子}が食い違う")]
-    経路と本文の識別子が食い違う {
-        経路の識別子: String, 本文の識別子: String
-    },
+    経路と本文の識別子が食い違う { 経路の識別子: String, 本文の識別子: String },
 
     #[error("建物の格子を型契約からソースの形へ写せない: {0}")]
     ソースの形へ写せない(String),
@@ -60,10 +58,9 @@ fn 状態と種別を決める(エラー: &建物の格子の保存エラー) ->
 fn 格子の破れの状態と種別(原因: &blitz_asset_compiler::建物の格子のソースエラー) -> (StatusCode, &'static str) {
     use blitz_asset_compiler::建物の格子のソースエラー as 格子の破れ;
     match 原因 {
-        格子の破れ::置き場を読めない { .. }
-        | 格子の破れ::ファイルを読めない { .. }
-        | 格子の破れ::書き出せない { .. }
-        | 格子の破れ::Jsonを組み立てられない { .. } => (StatusCode::INTERNAL_SERVER_ERROR, "格子保存エラー"),
+        格子の破れ::置き場を読めない { .. } | 格子の破れ::ファイルを読めない { .. } | 格子の破れ::書き出せない { .. } | 格子の破れ::Jsonを組み立てられない { .. } => {
+            (StatusCode::INTERNAL_SERVER_ERROR, "格子保存エラー")
+        }
         _ => (StatusCode::UNPROCESSABLE_ENTITY, "格子検証エラー"),
     }
 }
@@ -71,8 +68,7 @@ fn 格子の破れの状態と種別(原因: &blitz_asset_compiler::建物の格
 /// 外部アセットの置き場が無い環境では、どんな格子を送っても組み立てが通らない。送り手の破れではない。
 fn カタログの破れの状態と種別(原因: &blitz_asset_compiler::建物外形カタログエラー) -> (StatusCode, &'static str) {
     match 原因 {
-        blitz_asset_compiler::建物外形カタログエラー::外部ソースルート不在(_)
-        | blitz_asset_compiler::建物外形カタログエラー::ファイルを書き込めない { .. } => {
+        blitz_asset_compiler::建物外形カタログエラー::外部ソースルート不在(_) | blitz_asset_compiler::建物外形カタログエラー::ファイルを書き込めない { .. } => {
             (StatusCode::INTERNAL_SERVER_ERROR, "部品の置き場エラー")
         }
         _ => (StatusCode::UNPROCESSABLE_ENTITY, "カタログ組み立てエラー"),

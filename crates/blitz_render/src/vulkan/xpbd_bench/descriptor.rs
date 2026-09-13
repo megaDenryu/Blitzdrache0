@@ -6,9 +6,7 @@ use ash::vk;
 
 use super::buffers::XPBD計測バッファ;
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{
-    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物
-};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物};
 
 pub(crate) const 定数の束縛番号: 束縛番号 = 束縛番号::生成する(0);
 pub(crate) const 点の束縛番号: 束縛番号 = 束縛番号::生成する(1);
@@ -77,9 +75,7 @@ impl XPBD計測ディスクリプタ {
             結ぶ現物::バッファ全体(バッファ.隣接の項目.バッファのハンドル()),
         ]);
         Ok(Self {
-            レイアウト: layout,
-            プール: pool,
-            セット,
+            レイアウト: layout, プール: pool, セット
         })
     }
 

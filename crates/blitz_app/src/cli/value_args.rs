@@ -7,11 +7,7 @@ use std::slice::Iter;
 use super::{フレームダンプ指定, 描画対象数, 起動モード, 起動引数エラー};
 
 /// 値の欠落は引数ごとに違う型付きエラーになるため、エラーの作り方を引数で受け取る。
-pub(in crate::cli) fn 次の値を読む<'引数>(
-    引数: &mut Iter<'引数, String>,
-    引数名: &str,
-    欠落エラー: fn(String) -> 起動引数エラー,
-) -> Result<&'引数 String, 起動引数エラー> {
+pub(in crate::cli) fn 次の値を読む<'引数>(引数: &mut Iter<'引数, String>, 引数名: &str, 欠落エラー: fn(String) -> 起動引数エラー) -> Result<&'引数 String, 起動引数エラー> {
     引数.next().ok_or_else(|| 欠落エラー(format!("{引数名}に値が指定されていない")))
 }
 
@@ -39,11 +35,7 @@ pub(super) fn object_count引数を処理する(引数: &mut Iter<String>) -> Re
 
 /// `--dump-frame`と`--dump-hdr-frame`と`--dump-depth-frame`は値の読み方が同じであるため、どれもこの1つが受ける。
 /// どの画像を選ぶかと、既に選ばれていたときに失敗させるかは指定の型が決める。
-pub(super) fn フレームダンプ引数を反映する(
-    指定: &mut フレームダンプ指定,
-    引数: &mut Iter<String>,
-    引数名: &str,
-) -> Result<(), 起動引数エラー> {
+pub(super) fn フレームダンプ引数を反映する(指定: &mut フレームダンプ指定, 引数: &mut Iter<String>, 引数名: &str) -> Result<(), 起動引数エラー> {
     let 基準名 = PathBuf::from(次の値を読む(引数, 引数名, 起動引数エラー::フレームダンプ不正)?);
     指定.引数から設定する(引数名, 基準名)
 }
@@ -51,13 +43,9 @@ pub(super) fn フレームダンプ引数を反映する(
 /// `--streaming-ram-limit` `--streaming-vram-limit`のバイト数を読む。予算は1バイト以上でなければ生成できないため0を拒否する。
 pub(super) fn ストリーミング上限引数を処理する(引数: &mut Iter<String>, 引数名: &str) -> Result<u64, 起動引数エラー> {
     let 値 = 次の値を読む(引数, 引数名, 起動引数エラー::ストリーミング上限不正)?;
-    let バイト数 = 値
-        .parse::<u64>()
-        .map_err(|_| 起動引数エラー::ストリーミング上限不正(format!("{引数名}: {値}")))?;
+    let バイト数 = 値.parse::<u64>().map_err(|_| 起動引数エラー::ストリーミング上限不正(format!("{引数名}: {値}")))?;
     if バイト数 == 0 {
-        return Err(起動引数エラー::ストリーミング上限不正(
-            format!("{引数名}は1以上でなければならない"),
-        ));
+        return Err(起動引数エラー::ストリーミング上限不正(format!("{引数名}は1以上でなければならない")));
     }
     Ok(バイト数)
 }
@@ -77,9 +65,7 @@ pub(super) fn exposure引数を処理する(引数: &mut Iter<String>) -> Result
     super::露出倍率::生成する(実数).map_err(|誤り| 起動引数エラー::露出不正(誤り.to_string()))
 }
 
-pub(super) fn blend引数を処理する(
-    引数: &mut Iter<String>,
-) -> Result<super::アニメーションのブレンド係数, 起動引数エラー> {
+pub(super) fn blend引数を処理する(引数: &mut Iter<String>) -> Result<super::アニメーションのブレンド係数, 起動引数エラー> {
     let 値 = 次の値を読む(引数, "--blend", 起動引数エラー::ブレンド不正)?;
     let 実数 = 値.parse::<f32>().map_err(|_| 起動引数エラー::ブレンド不正(値.clone()))?;
     super::アニメーションのブレンド係数::生成する(実数).map_err(|誤り| 起動引数エラー::ブレンド不正(誤り.to_string()))

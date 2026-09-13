@@ -33,10 +33,7 @@ fn 再帰的に集める(ディレクトリ: &Path, 拡張子一覧: &[&str], �
             再帰的に集める(&パス, 拡張子一覧, 結果)?;
             continue;
         }
-        let 拡張子が対象か = パス
-            .extension()
-            .and_then(|拡張子| 拡張子.to_str())
-            .is_some_and(|拡張子| 拡張子一覧.contains(&拡張子));
+        let 拡張子が対象か = パス.extension().and_then(|拡張子| 拡張子.to_str()).is_some_and(|拡張子| 拡張子一覧.contains(&拡張子));
         if 拡張子が対象か {
             結果.push(パス);
         }

@@ -62,9 +62,7 @@ impl 天空配線 {
     /// 空中遠近の条件はカメラに依るため視点を受け取る。大気のベイク済み画像資源は「空段階がある、または契約が
     /// 遠方環境の選択肢である」ときに作られるため、空パスを積まない指定(`--no-sky`)でも遠方環境の契約なら媒体を渡す。
     pub(in crate::app) fn 焼き上げ入力(&mut self, 視点: &フレーム視点) -> 焼き上げ入力の組 {
-        let 無し = 焼き上げ入力の組 {
-            大気: None, 遠方環境: None
-        };
+        let 無し = 焼き上げ入力の組 { 大気: None, 遠方環境: None };
         let Some((方針, 媒体)) = self.大気を焼くか().then_some(self.大気).flatten() else {
             return 無し;
         };
@@ -74,11 +72,7 @@ impl 天空配線 {
         let 空描画 = 時間帯.空描画方針();
         let 状態 = *時間帯.状態();
         let 材料 = atmosphere_input::大気入力の材料 {
-            方針: &方針,
-            媒体,
-            状態: &状態,
-            空描画,
-            視点,
+            方針: &方針, 媒体, 状態: &状態, 空描画, 視点
         };
         let 大気入力 = atmosphere_input::大気入力を組む(&材料, &mut self.大気更新判定, &mut self.空中遠近の最遠距離の記録);
         let 遠方環境の材料 = distant_environment_input::遠方環境入力の材料 {
@@ -88,9 +82,7 @@ impl 天空配線 {
         };
         焼き上げ入力の組 {
             大気: Some(大気入力),
-            遠方環境: self
-                .遠方環境を焼くか()
-                .then(|| distant_environment_input::遠方環境入力を組む(&遠方環境の材料, &mut self.遠方環境更新判定, &mut self.間引き)),
+            遠方環境: self.遠方環境を焼くか().then(|| distant_environment_input::遠方環境入力を組む(&遠方環境の材料, &mut self.遠方環境更新判定, &mut self.間引き)),
         }
     }
 }

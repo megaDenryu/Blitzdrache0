@@ -19,9 +19,7 @@ pub(crate) struct 空中遠近の最遠距離の記録 {
 impl 空中遠近の最遠距離の記録 {
     pub(in crate::app) fn 新規() -> Self {
         Self {
-            組んだフレーム数: 0,
-            最小: None,
-            最大: None,
+            組んだフレーム数: 0, 最小: None, 最大: None
         }
     }
 

@@ -9,9 +9,7 @@ use crate::vulkan::sync::フレームスロット添字;
 
 impl 空段階資源 {
     /// 空パスが束縛する資源。`ディスクリプタセット`は走査順で最初の描画対象のもの(set0)である。
-    pub(crate) fn 描画入力を作る(
-        &self, ディスクリプタセット: vk::DescriptorSet, フレーム添字: フレームスロット添字
-    ) -> 空描画入力 {
+    pub(crate) fn 描画入力を作る(&self, ディスクリプタセット: vk::DescriptorSet, フレーム添字: フレームスロット添字) -> 空描画入力 {
         空描画入力 {
             pipeline: self.パイプライン.handle,
             layout: self.パイプライン.layout,
@@ -21,20 +19,13 @@ impl 空段階資源 {
     }
 
     /// 空中遠近合成パスが束縛する資源。合成を持たない構成では`None`を返し、呼び出し元が合成パスを1本も積まない。
-    pub(crate) fn 空中遠近合成描画入力を作る(
-        &self,
-        ディスクリプタセット: vk::DescriptorSet,
-        フレーム添字: フレームスロット添字,
-        最遠距離: f32,
-    ) -> Option<空中遠近合成描画入力> {
+    pub(crate) fn 空中遠近合成描画入力を作る(&self, ディスクリプタセット: vk::DescriptorSet, フレーム添字: フレームスロット添字, 最遠距離: f32) -> Option<空中遠近合成描画入力> {
         self.合成().map(|合成| 合成.描画入力を作る(ディスクリプタセット, フレーム添字, 最遠距離))
     }
 
     /// このフレームの深度画像を合成のディスクリプタへ結び直す。合成を持たない構成では何もしない。
     /// 前提: 呼び出し元はこのスロットのフェンス待機を済ませている(`draw_execute/prepare.rs`)。
-    pub(crate) fn 合成の深度を結び直す(
-        &self, device: &ash::Device, フレーム添字: フレームスロット添字, 深度ビュー: vk::ImageView
-    ) {
+    pub(crate) fn 合成の深度を結び直す(&self, device: &ash::Device, フレーム添字: フレームスロット添字, 深度ビュー: vk::ImageView) {
         if let Some(合成) = self.合成() {
             合成.深度を結び直す(device, フレーム添字, 深度ビュー);
         }

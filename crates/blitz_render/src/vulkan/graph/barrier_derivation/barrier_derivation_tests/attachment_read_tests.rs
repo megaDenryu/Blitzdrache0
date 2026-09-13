@@ -41,18 +41,9 @@ fn 続けて書く2パスの2つめの前のバリア(初期状態の値: 画像
 #[test]
 fn カラー出力はロードとブレンドの読みを可視化する() {
     let バリア = 続けて書く2パスの2つめの前のバリア(取得直後の色画像状態(), 画像用途::カラー出力);
-    assert!(
-        バリア.前.access.contains(vk::AccessFlags2::COLOR_ATTACHMENT_WRITE),
-        "依存の元は直前のカラー書き込みである"
-    );
-    assert!(
-        バリア.今.access.contains(vk::AccessFlags2::COLOR_ATTACHMENT_READ),
-        "LOADとブレンドの読みが依存の先に入っていない"
-    );
-    assert!(
-        バリア.今.access.contains(vk::AccessFlags2::COLOR_ATTACHMENT_WRITE),
-        "書き込みも依然として依存の先に入る"
-    );
+    assert!(バリア.前.access.contains(vk::AccessFlags2::COLOR_ATTACHMENT_WRITE), "依存の元は直前のカラー書き込みである");
+    assert!(バリア.今.access.contains(vk::AccessFlags2::COLOR_ATTACHMENT_READ), "LOADとブレンドの読みが依存の先に入っていない");
+    assert!(バリア.今.access.contains(vk::AccessFlags2::COLOR_ATTACHMENT_WRITE), "書き込みも依然として依存の先に入る");
 }
 
 /// 深度も同じ理由で読みを持つ。深度テストが既存の値を比べ、LOADするパスはレンダリング開始そのものが読みである。

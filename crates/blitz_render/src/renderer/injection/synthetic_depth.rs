@@ -35,16 +35,13 @@ impl レンダラー {
     }
 
     /// そのフレームの転送パスへ渡す入力。据えていなければ`None`であり、パスを1本も積まない。
-    pub(in crate::renderer) fn 合成深度の注入入力を組み立てる(
-        &self,
-    ) -> Result<Option<合成深度の注入入力>, レンダラーエラー> {
+    pub(in crate::renderer) fn 合成深度の注入入力を組み立てる(&self) -> Result<Option<合成深度の注入入力>, レンダラーエラー> {
         let Some(入力) = self.描画段階資源.合成深度の注入入力() else {
             return Ok(None);
         };
         let 画面 = self.提示.寸法();
         if 入力.寸法 != 画面 {
-            let 寸法 = 画像の寸法::生成する(入力.寸法.width, 入力.寸法.height)
-                .unwrap_or_else(|誤り| panic!("据えた合成深度の寸法が値域を外れている: {誤り}"));
+            let 寸法 = 画像の寸法::生成する(入力.寸法.width, 入力.寸法.height).unwrap_or_else(|誤り| panic!("据えた合成深度の寸法が値域を外れている: {誤り}"));
             return Err(寸法不一致(寸法, 画面.width, 画面.height).into());
         }
         Ok(Some(入力))

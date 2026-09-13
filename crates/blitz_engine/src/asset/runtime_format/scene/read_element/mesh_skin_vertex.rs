@@ -6,9 +6,7 @@ use super::super::bytes::読取位置;
 use super::super::mesh_layout::スキン頂点属性長;
 use crate::asset::skin_vertex_attribute::スキン頂点属性;
 
-pub(super) fn 読む(
-    入力: &mut 読取位置<'_>, 頂点数: usize
-) -> Result<Option<Vec<スキン頂点属性>>, アセット実行時形式エラー> {
+pub(super) fn 読む(入力: &mut 読取位置<'_>, 頂点数: usize) -> Result<Option<Vec<スキン頂点属性>>, アセット実行時形式エラー> {
     match 入力.u8()? {
         0 => Ok(None),
         1 => {

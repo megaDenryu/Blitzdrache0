@@ -12,13 +12,9 @@ use crate::vulkan::material_table::材質の登録状態;
 use crate::vulkan::transfer::ステージング経由の転送係;
 
 pub(super) fn 起動シーンの束を作る(
-    確保係: &crate::vulkan::allocator::GPU資源の確保係<'_>,
-    共有: &shared::共有資源,
-    登録状態: &mut 材質の登録状態,
-    描画シーン: &描画シーン素材,
+    確保係: &crate::vulkan::allocator::GPU資源の確保係<'_>, 共有: &shared::共有資源, 登録状態: &mut 材質の登録状態, 描画シーン: &描画シーン素材
 ) -> Result<シーン描画資源, レンダラーエラー> {
-    let (材質id一覧, 下書き) =
-        登録状態.束の材質を下書きする(crate::renderer::scene_draw_resources::起動シーンの束ID, 描画シーン.描画対象一覧())?;
+    let (材質id一覧, 下書き) = 登録状態.束の材質を下書きする(crate::renderer::scene_draw_resources::起動シーンの束ID, 描画シーン.描画対象一覧())?;
     let 結果 = シーン描画資源::生成する(
         確保係,
         シーン描画資源生成要求 {

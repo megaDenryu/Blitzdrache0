@@ -35,9 +35,7 @@ mod specification;
 mod stable_id;
 mod triangle_location;
 
-pub use blitz_collision::height_field::{
-    カプセルの掃引の問い合わせエラー, 升目の三角形, 升目の隅, 地表に触れた特徴, 掃引で動けた割合, 線分の問い合わせエラー, 線分の媒介変数,
-};
+pub use blitz_collision::height_field::{カプセルの掃引の問い合わせエラー, 升目の三角形, 升目の隅, 地表に触れた特徴, 掃引で動けた割合, 線分の問い合わせエラー, 線分の媒介変数};
 pub use capsule_contact::{カプセルと地表の接触, 掃引したカプセルが最初に触れる地表};
 pub use capsule_query_result::掃引したカプセルが最初に触れる地表の問い合わせ結果;
 pub use distant_stable_id::世界の遠景地形の安定IDの綴り;

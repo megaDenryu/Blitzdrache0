@@ -37,29 +37,21 @@ pub struct 組み立ての正解表のファイル {
 
 impl 組み立ての正解表のファイル {
     pub fn 生成する(パス: &Path) -> Self {
-        Self {
-            パス: パス.to_path_buf()
-        }
+        Self { パス: パス.to_path_buf() }
     }
 
     pub fn 正解表を読み取る(&self) -> Result<正解表, 正解表の読み込みエラー> {
         let 綴り = std::fs::read_to_string(&self.パス).map_err(|誤り| 正解表の読み込みエラー::ファイルを読めない {
-            パス: self.パス.display().to_string(),
-            誤り,
+            パス: self.パス.display().to_string(), 誤り
         })?;
-        let 本体: Value =
-            serde_json::from_str(&綴り).map_err(|誤り| 正解表の読み込みエラー::正解表のJSONを解けない(誤り.to_string()))?;
+        let 本体: Value = serde_json::from_str(&綴り).map_err(|誤り| 正解表の読み込みエラー::正解表のJSONを解けない(誤り.to_string()))?;
         座標系を確かめる(&本体)?;
         let 組み立て = 組み立ての識別子を読む(&本体)?;
         let 姿勢の配列 = 本体
             .get(姿勢一覧のキー)
-            .ok_or(正解表の読み込みエラー::キーが無い {
-                キー名: 姿勢一覧のキー
-            })?
+            .ok_or(正解表の読み込みエラー::キーが無い { キー名: 姿勢一覧のキー })?
             .as_array()
-            .ok_or(正解表の読み込みエラー::値の形が違う {
-                キー名: 姿勢一覧のキー
-            })?;
+            .ok_or(正解表の読み込みエラー::値の形が違う { キー名: 姿勢一覧のキー })?;
         let mut 姿勢一覧 = Vec::with_capacity(姿勢の配列.len());
         for 項目 in 姿勢の配列 {
             姿勢一覧.push(姿勢1件を読む(項目)?);

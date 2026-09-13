@@ -6,9 +6,7 @@ use ash::vk;
 use super::透過率ディスクリプタ;
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::descriptor_common;
-use crate::vulkan::descriptor::{
-    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物
-};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物};
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 const 宣言: 宣言した束縛の並び<2> = 宣言した束縛の並び::生成する([
@@ -17,9 +15,7 @@ const 宣言: 宣言した束縛の並び<2> = 宣言した束縛の並び::生�
 ]);
 
 pub(super) fn 透過率ディスクリプタを生成する(
-    device: &ash::Device,
-    シェーダー定数一覧: [vk::Buffer; 進行中フレーム数],
-    書き込み先: vk::ImageView,
+    device: &ash::Device, シェーダー定数一覧: [vk::Buffer; 進行中フレーム数], 書き込み先: vk::ImageView
 ) -> Result<透過率ディスクリプタ, レンダラーエラー> {
     let layout = レイアウトを作る(device)?;
     let pool = match プールを作る(device) {
@@ -58,9 +54,7 @@ fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レン
 
 /// 注意: ストレージ画像のレイアウトはGENERALである。レンダーグラフの画像用途「コンピュート書き」が同じレイアウトへ遷移させており、
 /// ここの値とバリアの導出先が食い違うとvalidationがレイアウト不一致を報告する。
-fn 書き込む(
-    device: &ash::Device, セット: &宣言から割り当てたセット<2>, シェーダー定数: vk::Buffer, 書き込み先: vk::ImageView
-) {
+fn 書き込む(device: &ash::Device, セット: &宣言から割り当てたセット<2>, シェーダー定数: vk::Buffer, 書き込み先: vk::ImageView) {
     セット.書き込み先(device).並びの位置ごとに結ぶ([
         結ぶ現物::バッファ全体(シェーダー定数),
         結ぶ現物::サンプラー無しの画像 {

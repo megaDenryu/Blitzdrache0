@@ -10,31 +10,12 @@ pub(super) fn 記述する() -> (vk::VertexInputBindingDescription, [vk::VertexI
     let 接線開始位置 = u32::try_from(std::mem::offset_of!(頂点, 接線)).unwrap_or_else(|_| panic!("頂点の接線開始位置がu32に収まらない"));
     let uv開始位置 = u32::try_from(std::mem::offset_of!(頂点, uv)).unwrap_or_else(|_| panic!("頂点のuv開始位置がu32に収まらない"));
 
-    let バインド記述 = vk::VertexInputBindingDescription::default()
-        .binding(0)
-        .stride(stride)
-        .input_rate(vk::VertexInputRate::VERTEX);
+    let バインド記述 = vk::VertexInputBindingDescription::default().binding(0).stride(stride).input_rate(vk::VertexInputRate::VERTEX);
     let 属性記述一覧 = [
-        vk::VertexInputAttributeDescription::default()
-            .location(0)
-            .binding(0)
-            .format(vk::Format::R32G32B32_SFLOAT)
-            .offset(0),
-        vk::VertexInputAttributeDescription::default()
-            .location(1)
-            .binding(0)
-            .format(vk::Format::R32G32B32_SFLOAT)
-            .offset(法線開始位置),
-        vk::VertexInputAttributeDescription::default()
-            .location(2)
-            .binding(0)
-            .format(vk::Format::R32G32B32A32_SFLOAT)
-            .offset(接線開始位置),
-        vk::VertexInputAttributeDescription::default()
-            .location(3)
-            .binding(0)
-            .format(vk::Format::R32G32_SFLOAT)
-            .offset(uv開始位置),
+        vk::VertexInputAttributeDescription::default().location(0).binding(0).format(vk::Format::R32G32B32_SFLOAT).offset(0),
+        vk::VertexInputAttributeDescription::default().location(1).binding(0).format(vk::Format::R32G32B32_SFLOAT).offset(法線開始位置),
+        vk::VertexInputAttributeDescription::default().location(2).binding(0).format(vk::Format::R32G32B32A32_SFLOAT).offset(接線開始位置),
+        vk::VertexInputAttributeDescription::default().location(3).binding(0).format(vk::Format::R32G32_SFLOAT).offset(uv開始位置),
     ];
     (バインド記述, 属性記述一覧)
 }
@@ -48,9 +29,7 @@ pub(super) fn 布用記述する() -> (vk::VertexInputBindingDescription, Vec<vk
 }
 
 /// 属性選択に応じたバインド・属性記述を返す。
-pub(in crate::vulkan::pipeline) fn 選択して記述する(
-    選択: super::頂点属性選択,
-) -> (vk::VertexInputBindingDescription, Vec<vk::VertexInputAttributeDescription>) {
+pub(in crate::vulkan::pipeline) fn 選択して記述する(選択: super::頂点属性選択) -> (vk::VertexInputBindingDescription, Vec<vk::VertexInputAttributeDescription>) {
     match 選択 {
         super::頂点属性選択::全属性 => {
             let (バインド, 属性) = 記述する();

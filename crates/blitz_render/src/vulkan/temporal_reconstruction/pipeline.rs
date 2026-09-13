@@ -16,11 +16,7 @@ use crate::vulkan::fullscreen_pipeline::全画面パスのパイプライン;
 pub(super) struct 時間再構成のパイプライン(全画面パスのパイプライン);
 
 impl 時間再構成のパイプライン {
-    pub(super) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        セットレイアウト: vk::DescriptorSetLayout,
-        シェーダー: &シェーダー一式,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, セットレイアウト: vk::DescriptorSetLayout, シェーダー: &シェーダー一式) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
         let 頂点モジュール = 確保係.シェーダーモジュールを生成する(シェーダー.頂点コード())?;
         let 画素段モジュール = match 確保係.シェーダーモジュールを生成する(シェーダー.画素段コード()) {

@@ -32,10 +32,7 @@ impl From<crate::acceptance::検収エラー> for 逆Z検収エラー {
 impl std::fmt::Display for 逆Z検収エラー {
     fn fmt(&self, 書き手: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::引数が不正(引数) => write!(
-                書き手,
-                "引数は--capture-reference、--compare-candidate、--print-planのいずれか1つである: {引数}"
-            ),
+            Self::引数が不正(引数) => write!(書き手, "引数は--capture-reference、--compare-candidate、--print-planのいずれか1つである: {引数}"),
             Self::検証用アセットを生成できなかった => write!(書き手, "検証用アセットを生成できなかった"),
             Self::構築が失敗した(理由) => write!(書き手, "{理由}"),
             Self::描画検収が失敗した(理由) => write!(書き手, "{理由}"),

@@ -21,44 +21,26 @@ pub(super) fn uiパイプラインを組み立てる(
     画素段モジュール: vk::ShaderModule,
 ) -> Result<UIパイプライン, レンダラーエラー> {
     let ステージ一覧 = [
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::VERTEX)
-            .module(頂点モジュール)
-            .name(頂点エントリ名),
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::FRAGMENT)
-            .module(画素段モジュール)
-            .name(画素段エントリ名),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::VERTEX).module(頂点モジュール).name(頂点エントリ名),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::FRAGMENT).module(画素段モジュール).name(画素段エントリ名),
     ];
 
     let (バインド記述, 属性記述一覧) = super::vertex_input::ui頂点のバインド記述と属性記述を組み立てる();
     let バインド記述一覧 = [バインド記述];
-    let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default()
-        .vertex_binding_descriptions(&バインド記述一覧)
-        .vertex_attribute_descriptions(&属性記述一覧);
+    let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default().vertex_binding_descriptions(&バインド記述一覧).vertex_attribute_descriptions(&属性記述一覧);
     let 入力アセンブリstate = vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::TRIANGLE_LIST);
     let ビューポートstate = vk::PipelineViewportStateCreateInfo::default().viewport_count(1).scissor_count(1);
-    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default()
-        .polygon_mode(vk::PolygonMode::FILL)
-        .cull_mode(vk::CullModeFlags::NONE)
-        .line_width(1.0);
+    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default().polygon_mode(vk::PolygonMode::FILL).cull_mode(vk::CullModeFlags::NONE).line_width(1.0);
     let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
     let カラーブレンドアタッチメント一覧 = [事前乗算アルファのブレンド状態()];
     let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default().attachments(&カラーブレンドアタッチメント一覧);
-    let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
-        .depth_test_enable(false)
-        .depth_write_enable(false);
+    let 深度state = vk::PipelineDepthStencilStateCreateInfo::default().depth_test_enable(false).depth_write_enable(false);
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
     let ディスクリプタlayout一覧 = [ディスクリプタlayout];
-    let プッシュ定数範囲一覧 = [vk::PushConstantRange::default()
-        .stage_flags(vk::ShaderStageFlags::VERTEX)
-        .offset(0)
-        .size(画面寸法プッシュ定数バイト数)];
-    let layout_create_info = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(&ディスクリプタlayout一覧)
-        .push_constant_ranges(&プッシュ定数範囲一覧);
+    let プッシュ定数範囲一覧 = [vk::PushConstantRange::default().stage_flags(vk::ShaderStageFlags::VERTEX).offset(0).size(画面寸法プッシュ定数バイト数)];
+    let layout_create_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&ディスクリプタlayout一覧).push_constant_ranges(&プッシュ定数範囲一覧);
     // 安全性: deviceは生成済みで有効。layout_create_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };
 

@@ -7,12 +7,7 @@ use std::path::Path;
 use super::{equality, schedule};
 use crate::acceptance::描画フレーム数;
 
-pub(super) fn 要約を組む(
-    観測一覧: &[equality::観測],
-    出力先: &Path,
-    フレーム数: 描画フレーム数,
-    由来: &crate::release_build::構築の由来,
-) -> String {
+pub(super) fn 要約を組む(観測一覧: &[equality::観測], 出力先: &Path, フレーム数: 描画フレーム数, 由来: &crate::release_build::構築の由来) -> String {
     let 一致した数 = 観測一覧.iter().filter(|観測| 観測.一致するか).count();
     format!(
         "1実行{}フレームのA・B・Cを回転順で{}周した。報告した分位はフレーム別の生標本から再現された。同値性の突き合わせ{}件のうち{}件がバイト一致した。区間別の表とフレーム別の生値と撮った画像は{}にある。計測に使ったバイナリの由来は{}",

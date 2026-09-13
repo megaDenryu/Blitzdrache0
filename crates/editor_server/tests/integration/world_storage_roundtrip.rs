@@ -2,9 +2,7 @@
 #![allow(clippy::unwrap_used)]
 #![allow(non_snake_case)]
 
-use editor_server::{
-    プロジェクト保管庫, マザーハイトマップ, 世界の区画割り, 位置3次元, 大域世界構造, 広域道路
-};
+use editor_server::{プロジェクト保管庫, マザーハイトマップ, 世界の区画割り, 位置3次元, 大域世界構造, 広域道路};
 
 fn 区画割り例() -> 世界の区画割り {
     世界の区画割り {

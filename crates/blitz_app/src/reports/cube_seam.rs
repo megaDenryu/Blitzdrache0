@@ -49,13 +49,7 @@ pub(crate) fn 面境界を突き合わせる(読み戻し: &[[f32; 4]], 一辺: 
     面境界の観測 { 稜線数, 最大相対差 }
 }
 
-fn 稜線1本の最大相対差(
-    読み戻し: &[[f32; 4]],
-    一辺: u32,
-    面: blitz_render::cube_image::立方体の面,
-    辺: edge_pairs::面の辺,
-    隣: blitz_render::cube_image::立方体の面,
-) -> f64 {
+fn 稜線1本の最大相対差(読み戻し: &[[f32; 4]], 一辺: u32, 面: blitz_render::cube_image::立方体の面, 辺: edge_pairs::面の辺, 隣: blitz_render::cube_image::立方体の面) -> f64 {
     let 隣の辺 = 相手側の辺(隣, 面);
     let mut 最大 = 0.0_f64;
     for 番号 in 0..一辺 {

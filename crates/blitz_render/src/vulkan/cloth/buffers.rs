@@ -28,22 +28,12 @@ pub(super) struct 布バッファ {
 
 impl 布バッファ {
     /// 前提: 呼び出しはフェンス待ち後(このスロットの前回GPU使用の完了後。判断24と同じ規律)。
-    pub(super) fn 介入を書き込む(
-        &self,
-        device: &ash::Device,
-        フレーム添字: フレームスロット添字,
-        バイト列: &[u8],
-    ) -> Result<(), レンダラーエラー> {
+    pub(super) fn 介入を書き込む(&self, device: &ash::Device, フレーム添字: フレームスロット添字, バイト列: &[u8]) -> Result<(), レンダラーエラー> {
         self.介入一覧.スロットの中身を書き換える(device, フレーム添字, バイト列)
     }
 
     /// 前提: 同上。
-    pub(super) fn 定数を書き込む(
-        &self,
-        device: &ash::Device,
-        フレーム添字: フレームスロット添字,
-        バイト列: &[u8],
-    ) -> Result<(), レンダラーエラー> {
+    pub(super) fn 定数を書き込む(&self, device: &ash::Device, フレーム添字: フレームスロット添字, バイト列: &[u8]) -> Result<(), レンダラーエラー> {
         self.定数一覧.スロットの中身を書き換える(device, フレーム添字, バイト列)
     }
 

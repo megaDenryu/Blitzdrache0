@@ -21,9 +21,5 @@ pub(super) const 四成分テクセルのバイト数: u64 = 8;
 pub(in crate::vulkan) const 二成分テクセルのバイト数: u64 = 4;
 
 pub(super) fn 層の部分範囲(段: u32, 層数: u32) -> vk::ImageSubresourceLayers {
-    vk::ImageSubresourceLayers::default()
-        .aspect_mask(vk::ImageAspectFlags::COLOR)
-        .mip_level(段)
-        .base_array_layer(0)
-        .layer_count(層数)
+    vk::ImageSubresourceLayers::default().aspect_mask(vk::ImageAspectFlags::COLOR).mip_level(段).base_array_layer(0).layer_count(層数)
 }

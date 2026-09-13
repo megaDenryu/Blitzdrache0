@@ -44,11 +44,7 @@ fn 一時プロジェクトを整える(識別子: &str) -> (crate::common::一�
 }
 
 async fn 書き出しの応答の状態を得る(一時: &crate::common::一時プロジェクト) -> StatusCode {
-    crate::common::ルーターを作る(一時)
-        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
-        .await
-        .unwrap()
-        .status()
+    crate::common::ルーターを作る(一時).oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap()).await.unwrap().status()
 }
 
 async fn 書き出して地表層テクスチャ集を読む(一時: &crate::common::一時プロジェクト) -> 地表層テクスチャ集 {

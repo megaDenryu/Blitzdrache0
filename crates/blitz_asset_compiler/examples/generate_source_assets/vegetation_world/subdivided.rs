@@ -17,12 +17,6 @@ const 共有バッファファイル名: &str = "archetype_lod_subdivided.bin";
 const 文書ファイル名: &str = "archetype_lod_subdivided.gltf";
 
 pub(super) fn 書き出す(出力先ディレクトリ: &Path, 諸元一覧: &[直方体諸元]) -> Result<(), String> {
-    super::書き込む(
-        &出力先ディレクトリ.join(共有バッファファイル名),
-        &geometry::バッファバイト列を作る(諸元一覧),
-    )?;
-    super::書き込む(
-        &出力先ディレクトリ.join(文書ファイル名),
-        gltf_json::文書を作る(諸元一覧, 共有バッファファイル名, geometry::直方体の量).as_bytes(),
-    )
+    super::書き込む(&出力先ディレクトリ.join(共有バッファファイル名), &geometry::バッファバイト列を作る(諸元一覧))?;
+    super::書き込む(&出力先ディレクトリ.join(文書ファイル名), gltf_json::文書を作る(諸元一覧, 共有バッファファイル名, geometry::直方体の量).as_bytes())
 }

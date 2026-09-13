@@ -14,11 +14,7 @@ pub(crate) struct 粒子コンピュートパイプライン {
 }
 
 impl 粒子コンピュートパイプライン {
-    pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        ディスクリプタlayout: vk::DescriptorSetLayout,
-        コンピュートspirv: &[u8],
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, ディスクリプタlayout: vk::DescriptorSetLayout, コンピュートspirv: &[u8]) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
         let モジュール = 確保係.シェーダーモジュールを生成する(コンピュートspirv)?;
 
@@ -34,10 +30,7 @@ impl 粒子コンピュートパイプライン {
             }
         };
 
-        let stage = vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::COMPUTE)
-            .module(モジュール)
-            .name(エントリ名);
+        let stage = vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::COMPUTE).module(モジュール).name(エントリ名);
         let create_info = vk::ComputePipelineCreateInfo::default().stage(stage).layout(layout);
 
         // 安全性: stage・layoutは本関数内で構築・生成済みの値のみを参照し、deviceは生成済みで有効。

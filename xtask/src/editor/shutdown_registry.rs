@@ -13,9 +13,7 @@ pub(crate) struct 停止台帳 {
 
 impl 停止台帳 {
     pub(crate) fn 空で作る() -> Self {
-        Self {
-            番号一覧: Mutex::new(Vec::new()),
-        }
+        Self { 番号一覧: Mutex::new(Vec::new()) }
     }
 
     pub(crate) fn 木を登録する(&self, 番号: プロセス番号) {

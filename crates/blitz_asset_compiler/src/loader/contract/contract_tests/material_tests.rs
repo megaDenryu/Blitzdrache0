@@ -2,9 +2,7 @@
 //! 見るのは3つである。複数材質を受け入れること、材質の割り当て忘れを拒むこと、そして先頭以外の材質の宣言も先頭と同じ厳しさで見ることである。
 //! 3つめが要るのは、先頭の材質だけを見る実装だと2番目以降の材質の破れが黙って通り、作者の宣言と絵が食い違うためである。
 
-use super::super::fixture_json::{
-    マテリアルなしの三角形, 三角形のプリミティブ, 不透明の茶色, 二材質の指定, 合格の指定
-};
+use super::super::fixture_json::{マテリアルなしの三角形, 三角形のプリミティブ, 不透明の茶色, 二材質の指定, 合格の指定};
 use super::検査する;
 
 #[test]
@@ -39,9 +37,7 @@ fn 全プリミティブがマテリアルを宣言していなければ警告�
 #[test]
 fn 二番目の材質の係数が範囲外なら違反になる() {
     let mut 指定 = 二材質の指定();
-    let マテリアル列 = format!(
-        r#"{不透明の茶色}, {{ "doubleSided": true, "pbrMetallicRoughness": {{ "baseColorFactor": [0.1, 0.2, 0.9, 1.0], "metallicFactor": 2.0, "roughnessFactor": 0.3 }} }}"#
-    );
+    let マテリアル列 = format!(r#"{不透明の茶色}, {{ "doubleSided": true, "pbrMetallicRoughness": {{ "baseColorFactor": [0.1, 0.2, 0.9, 1.0], "metallicFactor": 2.0, "roughnessFactor": 0.3 }} }}"#);
     指定.マテリアル列 = &マテリアル列;
     let 結果 = 検査する("二番目の係数が範囲外", &指定);
     assert!(!結果.合格か(), "指摘: {結果}");
@@ -51,9 +47,7 @@ fn 二番目の材質の係数が範囲外なら違反になる() {
 #[test]
 fn 二番目の材質の発光は警告になる() {
     let mut 指定 = 二材質の指定();
-    let マテリアル列 = format!(
-        r#"{不透明の茶色}, {{ "doubleSided": true, "emissiveFactor": [1.0, 0.5, 0.0], "pbrMetallicRoughness": {{ "baseColorFactor": [0.1, 0.2, 0.9, 1.0], "metallicFactor": 1.0, "roughnessFactor": 0.3 }} }}"#
-    );
+    let マテリアル列 = format!(r#"{不透明の茶色}, {{ "doubleSided": true, "emissiveFactor": [1.0, 0.5, 0.0], "pbrMetallicRoughness": {{ "baseColorFactor": [0.1, 0.2, 0.9, 1.0], "metallicFactor": 1.0, "roughnessFactor": 0.3 }} }}"#);
     指定.マテリアル列 = &マテリアル列;
     let 結果 = 検査する("二番目の材質が発光", &指定);
     assert!(結果.合格か(), "指摘: {結果}");
@@ -74,9 +68,7 @@ fn 同じ材質を参照するプリミティブが2つでも指摘は畳まれ�
 #[test]
 fn 二番目の材質だけが片面表示でも警告になる() {
     let mut 指定 = 二材質の指定();
-    let マテリアル列 = format!(
-        r#"{不透明の茶色}, {{ "pbrMetallicRoughness": {{ "baseColorFactor": [0.1, 0.2, 0.9, 1.0], "metallicFactor": 1.0, "roughnessFactor": 0.3 }} }}"#
-    );
+    let マテリアル列 = format!(r#"{不透明の茶色}, {{ "pbrMetallicRoughness": {{ "baseColorFactor": [0.1, 0.2, 0.9, 1.0], "metallicFactor": 1.0, "roughnessFactor": 0.3 }} }}"#);
     指定.マテリアル列 = &マテリアル列;
     let 結果 = 検査する("二番目の材質が片面表示", &指定);
     assert_eq!(結果.警告件数(), 1, "指摘: {結果}");

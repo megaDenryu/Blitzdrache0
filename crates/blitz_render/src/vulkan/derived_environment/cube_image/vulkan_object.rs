@@ -12,9 +12,7 @@ use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::atmosphere_lut::image::大気のベイク済み画像形式;
 
 /// 立方体互換の旗を立てるのは、同じ画像から立方体ビューを作るためである。旗が無いと立方体ビューの生成が失敗する。
-pub(super) fn 画像を作る(
-    確保係: &GPU資源の確保係<'_>, 最詳細段の一辺: u32, 段数: u32
-) -> Result<vk::Image, レンダラーエラー> {
+pub(super) fn 画像を作る(確保係: &GPU資源の確保係<'_>, 最詳細段の一辺: u32, 段数: u32) -> Result<vk::Image, レンダラーエラー> {
     let 範囲 = vk::Extent3D {
         width: 最詳細段の一辺,
         height: 最詳細段の一辺,
@@ -36,40 +34,22 @@ pub(super) fn 画像を作る(
 }
 
 /// 1つの縮小段だけを指す2次元配列ビュー。コンピュートが書き込み先に取る。
-pub(super) fn 段の配列ビューを作る(
-    確保係: &GPU資源の確保係<'_>,
-    画像: vk::Image,
-    段: u32,
-) -> Result<vk::ImageView, レンダラーエラー> {
+pub(super) fn 段の配列ビューを作る(確保係: &GPU資源の確保係<'_>, 画像: vk::Image, 段: u32) -> Result<vk::ImageView, レンダラーエラー> {
     ビューを作る(確保係, 画像, vk::ImageViewType::TYPE_2D_ARRAY, 段, 1)
 }
 
 /// 全段を含む立方体ビュー。消費側が向きと粗さで参照する。
-pub(super) fn 立方体ビューを作る(
-    確保係: &GPU資源の確保係<'_>,
-    画像: vk::Image,
-    段数: u32,
-) -> Result<vk::ImageView, レンダラーエラー> {
+pub(super) fn 立方体ビューを作る(確保係: &GPU資源の確保係<'_>, 画像: vk::Image, 段数: u32) -> Result<vk::ImageView, レンダラーエラー> {
     ビューを作る(確保係, 画像, vk::ImageViewType::CUBE, 0, 段数)
 }
 
-fn ビューを作る(
-    確保係: &GPU資源の確保係<'_>,
-    画像: vk::Image,
-    種別: vk::ImageViewType,
-    先頭段: u32,
-    段数: u32,
-) -> Result<vk::ImageView, レンダラーエラー> {
+fn ビューを作る(確保係: &GPU資源の確保係<'_>, 画像: vk::Image, 種別: vk::ImageViewType, 先頭段: u32, 段数: u32) -> Result<vk::ImageView, レンダラーエラー> {
     let 部分範囲 = vk::ImageSubresourceRange::default()
         .aspect_mask(vk::ImageAspectFlags::COLOR)
         .base_mip_level(先頭段)
         .level_count(段数)
         .base_array_layer(0)
         .layer_count(立方体の面数);
-    let create_info = vk::ImageViewCreateInfo::default()
-        .image(画像)
-        .view_type(種別)
-        .format(大気のベイク済み画像形式)
-        .subresource_range(部分範囲);
+    let create_info = vk::ImageViewCreateInfo::default().image(画像).view_type(種別).format(大気のベイク済み画像形式).subresource_range(部分範囲);
     確保係.画像の見え方から画像ビューを確保する(&create_info)
 }

@@ -11,9 +11,7 @@
 use ash::vk;
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{
-    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物
-};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号, 結ぶ現物};
 
 const 宣言: 宣言した束縛の並び<2> = 宣言した束縛の並び::生成する([
     (束縛番号::生成する(0), vk::DescriptorType::SAMPLED_IMAGE, vk::ShaderStageFlags::COMPUTE),
@@ -31,12 +29,7 @@ pub(super) fn プールを作る(device: &ash::Device, セット数: u32) -> Res
     Ok(unsafe { device.create_descriptor_pool(&create_info, None)? })
 }
 
-pub(super) fn 束縛を書き込む(
-    device: &ash::Device,
-    セット: &宣言から割り当てたセット<2>,
-    遠方環境の配列ビュー: vk::ImageView,
-    書き込み先: vk::ImageView,
-) {
+pub(super) fn 束縛を書き込む(device: &ash::Device, セット: &宣言から割り当てたセット<2>, 遠方環境の配列ビュー: vk::ImageView, 書き込み先: vk::ImageView) {
     セット.書き込み先(device).並びの位置ごとに結ぶ([
         結ぶ現物::サンプラー無しの画像 {
             ビュー: 遠方環境の配列ビュー,

@@ -31,9 +31,7 @@ use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(crate) use generation_interval::合成区間を宣言する;
 pub(crate) use injection::{焼かせる注入, 解析入力の注入};
-pub(crate) use inputs::{
-    描画入力の材料, 登録する画像, 遠方環境用スカイビューの焼き上げ, 間接照明の描画入力, 間接照明の焼く組
-};
+pub(crate) use inputs::{描画入力の材料, 登録する画像, 遠方環境用スカイビューの焼き上げ, 間接照明の描画入力, 間接照明の焼く組};
 
 pub(crate) struct 遠方環境の照明資源 {
     遠方環境: 遠方環境一式,
@@ -43,11 +41,7 @@ pub(crate) struct 遠方環境の照明資源 {
 }
 
 impl 遠方環境の照明資源 {
-    pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        借りる束縛先: 遠方環境が借りる束縛先<'_>,
-        シェーダー: &遠方環境のシェーダー一式,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, 借りる束縛先: 遠方環境が借りる束縛先<'_>, シェーダー: &遠方環境のシェーダー一式) -> Result<Self, レンダラーエラー> {
         create::生成する(確保係, 借りる束縛先, シェーダー)
     }
 

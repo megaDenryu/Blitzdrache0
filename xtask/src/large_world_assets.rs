@@ -12,8 +12,7 @@ pub(crate) fn 大規模世界アセットを生成する(引数一覧: &[String]
             return ExitCode::FAILURE;
         }
     };
-    match crate::game_fox_tour::map_generation_check::大規模世界を確かめる(crate::fox_tour_map_seed::決定性検収の乱数の種, 広がり)
-    {
+    match crate::game_fox_tour::map_generation_check::大規模世界を確かめる(crate::fox_tour_map_seed::決定性検収の乱数の種, 広がり) {
         Ok(要約) => {
             let 東西 = 広がり.東西チャンク数();
             let 南北 = 広がり.南北チャンク数();

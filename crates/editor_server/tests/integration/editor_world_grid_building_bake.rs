@@ -49,14 +49,8 @@ async fn 格子から作った建物は配置されて実行時の部品群ま�
         .unwrap();
     assert_eq!(保存.status(), StatusCode::NO_CONTENT);
 
-    保管庫
-        .チャンクの構造を検証して保存する(チャンク座標::生成する(0, 0), crate::common::格子の建物を1件置いた構造())
-        .unwrap();
-    let 書き出し = ルーター
-        .clone()
-        .oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
+    保管庫.チャンクの構造を検証して保存する(チャンク座標::生成する(0, 0), crate::common::格子の建物を1件置いた構造()).unwrap();
+    let 書き出し = ルーター.clone().oneshot(Request::post("/api/書き出し/ソースアセット").body(Body::empty()).unwrap()).await.unwrap();
     assert_eq!(書き出し.status(), StatusCode::OK);
 
     書き出したチャンクソースを確かめる(&一時);

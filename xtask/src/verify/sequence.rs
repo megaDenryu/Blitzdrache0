@@ -25,18 +25,7 @@ const 自分の実行ファイルで走らせる段の一覧: [&str; 2] = ["conf
 const 検証列の手順一覧: [(&str, &[&str]); 4] = [
     ("fmt", &["fmt", "--all", "--check"]),
     ("check", &["check", "--workspace"]),
-    (
-        "clippy",
-        &[
-            "clippy",
-            "--all-targets",
-            "--features",
-            "editor_server/typescript",
-            "--",
-            "-D",
-            "warnings",
-        ],
-    ),
+    ("clippy", &["clippy", "--all-targets", "--features", "editor_server/typescript", "--", "-D", "warnings"]),
     ("test", &["test", "--workspace", "--features", "editor_server/typescript"]),
 ];
 
@@ -76,9 +65,7 @@ impl 検証列の実行係 {
         }
         let 端末の破れ = self.出力係.端末への複製の破れ();
         if let Some(説明) = &端末の破れ {
-            let _ = self
-                .出力係
-                .標準エラーへ行を流す(&format!("[xtask] 端末への複製が破れたまま終わった: {説明}"));
+            let _ = self.出力係.標準エラーへ行を流す(&format!("[xtask] 端末への複製が破れたまま終わった: {説明}"));
         }
         let _ = self.ログの場所を告げる();
         if 端末の破れ.is_some() {
@@ -115,15 +102,12 @@ impl 検証列の実行係 {
         self.段を走らせて結果を告げる(段の名前, 段の名前, &mut 命令)
     }
 
-    fn 段を走らせて結果を告げる(
-        &self, 段の名前: &str, 実行の表示: &str, 命令: &mut Command
-    ) -> Result<bool, 検証列の破れ> {
+    fn 段を走らせて結果を告げる(&self, 段の名前: &str, 実行の表示: &str, 命令: &mut Command) -> Result<bool, 検証列の破れ> {
         self.出力係.標準出力へ行を流す(&format!("[xtask] {実行の表示} を実行"))?;
         if self.出力係.子プロセスの出力を流す(命令)? {
             return Ok(true);
         }
-        self.出力係
-            .標準エラーへ行を流す(&format!("[xtask] {段の名前} が失敗した。ここで中断する"))?;
+        self.出力係.標準エラーへ行を流す(&format!("[xtask] {段の名前} が失敗した。ここで中断する"))?;
         Ok(false)
     }
 }

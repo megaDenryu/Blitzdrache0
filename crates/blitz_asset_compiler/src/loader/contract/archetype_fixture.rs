@@ -25,26 +25,20 @@ pub(super) const 接地した三角形2つの段: &str = r#"{ "name": "三角形
 pub(super) const 接地した三角形1つの段: &str = r#"{ "name": "三角形1つの段", "primitives": [ { "attributes": { "POSITION": 0, "NORMAL": 2, "TEXCOORD_0": 3 }, "indices": 5, "material": 0 } ] }"#;
 
 /// 位置ごと真上へ持ち上げた、三角形1つの段。底面が接地面から離れている。
-pub(super) const 浮いた三角形1つの段: &str =
-    r#"{ "name": "浮いた段", "primitives": [ { "attributes": { "POSITION": 1, "NORMAL": 2, "TEXCOORD_0": 3 }, "indices": 5, "material": 0 } ] }"#;
+pub(super) const 浮いた三角形1つの段: &str = r#"{ "name": "浮いた段", "primitives": [ { "attributes": { "POSITION": 1, "NORMAL": 2, "TEXCOORD_0": 3 }, "indices": 5, "material": 0 } ] }"#;
 
 /// UV座標(TEXCOORD_0)を宣言しない、三角形1つの段。UV座標を持つ段と並べると、段の間で描画条件が揃わなくなる。
-pub(super) const UV座標を持たない三角形1つの段: &str =
-    r#"{ "name": "UVなしの段", "primitives": [ { "attributes": { "POSITION": 0, "NORMAL": 2 }, "indices": 5, "material": 0 } ] }"#;
+pub(super) const UV座標を持たない三角形1つの段: &str = r#"{ "name": "UVなしの段", "primitives": [ { "attributes": { "POSITION": 0, "NORMAL": 2 }, "indices": 5, "material": 0 } ] }"#;
 
 pub(super) const 変換を持たない1ノード: &str = r#"{ "mesh": 0 }"#;
 
 pub(super) const 変換を持たない2ノード: &str = r#"{ "mesh": 0 }, { "mesh": 1 }"#;
 
 /// 底面が高さ0にあり、水平の中心が原点にある四角錐の6頂点。x・y・zの順に並べた成分である。
-const 接地した位置の成分: [f32; 18] = [
-    -1.0, 0.0, -1.0, 1.0, 0.0, -1.0, 1.0, 0.0, 1.0, -1.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 1.0, 0.0,
-];
+const 接地した位置の成分: [f32; 18] = [-1.0, 0.0, -1.0, 1.0, 0.0, -1.0, 1.0, 0.0, 1.0, -1.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 1.0, 0.0];
 
 pub(super) fn 原型の文書jsonを作る(指定: &原型の文書の指定<'_>) -> String {
-    let 原型の文書の指定 {
-        メッシュ列, ノード列
-    } = 指定;
+    let 原型の文書の指定 { メッシュ列, ノード列 } = 指定;
     format!(
         r#"{{
   "asset": {{ "version": "2.0" }},

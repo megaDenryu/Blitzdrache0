@@ -25,22 +25,13 @@ pub(super) fn 二枚書きを組み立てる(
 ) -> Result<全画面パスのパイプライン, レンダラーエラー> {
     let layout = 時間再構成のパイプラインレイアウトを作る(device, セットレイアウト)?;
     let ステージ一覧 = [
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::VERTEX)
-            .module(頂点モジュール)
-            .name(c"vertexMain"),
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::FRAGMENT)
-            .module(画素段モジュール)
-            .name(c"fragmentMain"),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::VERTEX).module(頂点モジュール).name(c"vertexMain"),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::FRAGMENT).module(画素段モジュール).name(c"fragmentMain"),
     ];
     let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default();
     let 入力アセンブリstate = vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::TRIANGLE_LIST);
     let ビューポートstate = vk::PipelineViewportStateCreateInfo::default().viewport_count(1).scissor_count(1);
-    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default()
-        .polygon_mode(vk::PolygonMode::FILL)
-        .cull_mode(vk::CullModeFlags::NONE)
-        .line_width(1.0);
+    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default().polygon_mode(vk::PolygonMode::FILL).cull_mode(vk::CullModeFlags::NONE).line_width(1.0);
     let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
     let 添付の混合 = vk::PipelineColorBlendAttachmentState::default().color_write_mask(vk::ColorComponentFlags::RGBA);
     let 混合の並び = [添付の混合, 添付の混合];
@@ -65,18 +56,10 @@ pub(super) fn 二枚書きを組み立てる(
     全画面パスのパイプライン::生成結果から取り出す(device, layout, 生成結果)
 }
 
-fn 時間再構成のパイプラインレイアウトを作る(
-    device: &ash::Device,
-    セットレイアウト: vk::DescriptorSetLayout,
-) -> Result<vk::PipelineLayout, レンダラーエラー> {
-    let 範囲一覧 = [vk::PushConstantRange::default()
-        .stage_flags(vk::ShaderStageFlags::FRAGMENT)
-        .offset(0)
-        .size(即時定数バイト数)];
+fn 時間再構成のパイプラインレイアウトを作る(device: &ash::Device, セットレイアウト: vk::DescriptorSetLayout) -> Result<vk::PipelineLayout, レンダラーエラー> {
+    let 範囲一覧 = [vk::PushConstantRange::default().stage_flags(vk::ShaderStageFlags::FRAGMENT).offset(0).size(即時定数バイト数)];
     let セット一覧 = [セットレイアウト];
-    let 生成情報 = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(&セット一覧)
-        .push_constant_ranges(&範囲一覧);
+    let 生成情報 = vk::PipelineLayoutCreateInfo::default().set_layouts(&セット一覧).push_constant_ranges(&範囲一覧);
     // 安全性: deviceは生成済みで有効。生成情報は本関数内で構築した値のみを参照する。
     Ok(unsafe { device.create_pipeline_layout(&生成情報, None)? })
 }

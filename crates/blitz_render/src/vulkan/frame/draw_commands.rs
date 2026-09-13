@@ -15,12 +15,7 @@ use super::{ジオメトリ入力, 共有セット束縛};
 use crate::visible_instance_selection::可視パス;
 use crate::vulkan::command_sink::GPU命令の積み先;
 
-pub(super) fn 描画コマンドを積む(
-    積み先: GPU命令の積み先<'_>,
-    寸法: vk::Extent2D,
-    ジオメトリ一覧: &[ジオメトリ入力],
-    共有: 共有セット束縛<'_>,
-) {
+pub(super) fn 描画コマンドを積む(積み先: GPU命令の積み先<'_>, 寸法: vk::Extent2D, ジオメトリ一覧: &[ジオメトリ入力], 共有: 共有セット束縛<'_>) {
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
     let viewport = vk::Viewport::default()
@@ -56,24 +51,10 @@ pub(super) fn 描画コマンドを積む(
             共有.計器.描画切替().材質を見る(可視パス::シーン, 入力.大域材質id);
             入力.描画定数.プッシュ定数として積む(積み先, 入力.layout);
             共有.計器.セット別束縛().数える(shared_set_bind::ジオメトリのセット番号);
-            device.cmd_bind_descriptor_sets(
-                command_buffer,
-                vk::PipelineBindPoint::GRAPHICS,
-                入力.layout,
-                shared_set_bind::ジオメトリのセット番号,
-                &[入力.ジオメトリセット],
-                &[],
-            );
+            device.cmd_bind_descriptor_sets(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.layout, shared_set_bind::ジオメトリのセット番号, &[入力.ジオメトリセット], &[]);
             device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &開始位置一覧);
             device.cmd_bind_index_buffer(command_buffer, 入力.インデックスバッファ, 0, vk::IndexType::UINT32);
-            device.cmd_draw_indexed(
-                command_buffer,
-                入力.インデックス数,
-                入力.インスタンス数,
-                入力.先頭インデックス,
-                入力.頂点基準,
-                入力.先頭インスタンス,
-            );
+            device.cmd_draw_indexed(command_buffer, 入力.インデックス数, 入力.インスタンス数, 入力.先頭インデックス, 入力.頂点基準, 入力.先頭インスタンス);
             共有.計器.描画切替().描画を数える(可視パス::シーン);
         }
     }

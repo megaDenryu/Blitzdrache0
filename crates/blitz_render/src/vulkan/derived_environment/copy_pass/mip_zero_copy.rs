@@ -13,12 +13,7 @@ use crate::vulkan::graph;
 pub(crate) const 最詳細段の複製のパス名: &str = "鏡面畳込み最詳細段の複製";
 
 /// 前提: 2つの画像は同じ画素形式と同じ一辺を持つ(呼び出し元が解像度の一致を型付きの失敗で確かめる)。
-pub(in crate::vulkan) fn 最詳細段の複製を作る(
-    元: graph::画像ハンドル,
-    先: graph::画像ハンドル,
-    範囲: vk::Extent3D,
-    層数: u32,
-) -> graph::パス宣言<'static> {
+pub(in crate::vulkan) fn 最詳細段の複製を作る(元: graph::画像ハンドル, 先: graph::画像ハンドル, 範囲: vk::Extent3D, 層数: u32) -> graph::パス宣言<'static> {
     graph::パス宣言::生成する(
         最詳細段の複製のパス名,
         vec![(元, graph::画像用途::転送元)],
@@ -29,20 +24,13 @@ pub(in crate::vulkan) fn 最詳細段の複製を作る(
         move |文脈| {
             let 元の画像 = 文脈.宣言済みの画像を参照する(元);
             let 先の画像 = 文脈.宣言済みの画像を参照する(先);
-            let 領域 = [vk::ImageCopy::default()
-                .src_subresource(層の部分範囲(0, 層数))
-                .dst_subresource(層の部分範囲(0, 層数))
-                .extent(範囲)];
+            let 領域 = [vk::ImageCopy::default().src_subresource(層の部分範囲(0, 層数)).dst_subresource(層の部分範囲(0, 層数)).extent(範囲)];
             // 安全性: command_bufferは記録中、2つの画像は用途宣言からグラフが導いた転送元・転送先のレイアウトへ遷移済みである。
             unsafe {
-                文脈.積み先().論理デバイス().cmd_copy_image(
-                    文脈.積み先().コマンドバッファ(),
-                    元の画像,
-                    vk::ImageLayout::TRANSFER_SRC_OPTIMAL,
-                    先の画像,
-                    vk::ImageLayout::TRANSFER_DST_OPTIMAL,
-                    &領域,
-                );
+                文脈
+                    .積み先()
+                    .論理デバイス()
+                    .cmd_copy_image(文脈.積み先().コマンドバッファ(), 元の画像, vk::ImageLayout::TRANSFER_SRC_OPTIMAL, 先の画像, vk::ImageLayout::TRANSFER_DST_OPTIMAL, &領域);
             }
         },
     )

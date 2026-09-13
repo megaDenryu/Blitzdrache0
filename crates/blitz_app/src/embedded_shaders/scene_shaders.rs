@@ -14,8 +14,7 @@ pub(super) const 頂点SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/
 pub(super) const 画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/fragment.spv"));
 pub(super) const 遠方環境の画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/scene_distant_environment_fragment.spv"));
 pub(super) const 地表の層の画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/scene_surface_layer_fragment.spv"));
-pub(super) const 地表の層の遠方環境の画素段SPIRV: &[u8] =
-    include_bytes!(concat!(env!("OUT_DIR"), "/scene_surface_layer_distant_environment_fragment.spv"));
+pub(super) const 地表の層の遠方環境の画素段SPIRV: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/scene_surface_layer_distant_environment_fragment.spv"));
 
 pub(super) fn 組む() -> Result<契約別のシーン描画シェーダー, 起動エラー> {
     Ok(契約別のシーン描画シェーダー::生成する(

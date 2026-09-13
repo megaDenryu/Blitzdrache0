@@ -31,9 +31,7 @@ impl<空間種: 空間> 面積ベクトル<空間種> {
     }
 
     pub(crate) fn 内部から生成する(内部: Vec3) -> Self {
-        Self {
-            内部, _空間: PhantomData
-        }
+        Self { 内部, _空間: PhantomData }
     }
 }
 

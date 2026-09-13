@@ -61,15 +61,7 @@ fn まとめて足す口も予約された選択肢を拒む() {
 fn 失敗の文面は予約の一覧を並べる() {
     let 指定 = 指定を始める().選択肢を足す("--scene");
     let 文面 = 並べてみる(&指定).unwrap_err().to_string();
-    for 綴り in [
-        "--scene",
-        "--frames",
-        "--benchmark-frames",
-        "--asset-root",
-        "--dump-frame",
-        "--dump-hdr-frame",
-        "--dump-depth-frame",
-    ] {
+    for 綴り in ["--scene", "--frames", "--benchmark-frames", "--asset-root", "--dump-frame", "--dump-hdr-frame", "--dump-depth-frame"] {
         assert!(文面.contains(綴り), "失敗の文面に{綴り}が無い: {文面}");
     }
 }

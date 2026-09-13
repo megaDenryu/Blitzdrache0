@@ -14,8 +14,6 @@ pub struct プロジェクト情報応答 {
 
 impl プロジェクト情報応答 {
     pub fn 生成する(ルートパス: String, プロジェクト名: String) -> Self {
-        Self {
-            ルートパス, プロジェクト名
-        }
+        Self { ルートパス, プロジェクト名 }
     }
 }

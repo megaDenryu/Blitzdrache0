@@ -26,9 +26,7 @@ pub(crate) struct シーン描画定数 {
 
 impl シーン描画定数 {
     pub(crate) fn 生成する(基準原点: カメラ相対の基準原点, 材質レコード添字: u32) -> Self {
-        Self {
-            基準原点, 材質レコード添字
-        }
+        Self { 基準原点, 材質レコード添字 }
     }
 
     fn バイト列(self) -> [u8; 16] {
@@ -39,23 +37,16 @@ impl シーン描画定数 {
 
     /// パイプラインレイアウト生成時に宣言する範囲。頂点ステージが基準原点を、画素段ステージが材質レコード添字を読む。
     pub(crate) fn プッシュ定数範囲() -> vk::PushConstantRange {
-        vk::PushConstantRange::default()
-            .stage_flags(vk::ShaderStageFlags::VERTEX | vk::ShaderStageFlags::FRAGMENT)
-            .offset(0)
-            .size(バイト長)
+        vk::PushConstantRange::default().stage_flags(vk::ShaderStageFlags::VERTEX | vk::ShaderStageFlags::FRAGMENT).offset(0).size(バイト長)
     }
 
     /// 注意: 呼び出し元がコマンド記録中であることと、layoutがこの範囲を宣言済みであることを保証する。
     pub(crate) unsafe fn プッシュ定数として積む(self, 積み先: GPU命令の積み先<'_>, レイアウト: vk::PipelineLayout) {
         // 安全性: 呼び出し元がコマンド記録中と、layoutが両ステージの16バイト範囲を宣言済みであることを保証する。
         unsafe {
-            積み先.論理デバイス().cmd_push_constants(
-                積み先.コマンドバッファ(),
-                レイアウト,
-                vk::ShaderStageFlags::VERTEX | vk::ShaderStageFlags::FRAGMENT,
-                0,
-                &self.バイト列(),
-            );
+            積み先
+                .論理デバイス()
+                .cmd_push_constants(積み先.コマンドバッファ(), レイアウト, vk::ShaderStageFlags::VERTEX | vk::ShaderStageFlags::FRAGMENT, 0, &self.バイト列());
         }
     }
 }

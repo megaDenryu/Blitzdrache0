@@ -20,9 +20,7 @@ impl 接合点名 {
         if 整えた綴り.is_empty() {
             return Err(接合点エラー::名前が空);
         }
-        Ok(Self {
-            綴り: 整えた綴り.to_string(),
-        })
+        Ok(Self { 綴り: 整えた綴り.to_string() })
     }
 
     pub fn 綴り(&self) -> &str {

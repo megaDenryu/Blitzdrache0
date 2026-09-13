@@ -28,13 +28,7 @@ pub(super) fn 曲げ拘束一覧を作る(一辺粒子数: usize) -> Vec<曲げ�
     拘束一覧
 }
 
-fn 拘束を作る(
-    一辺粒子数: usize,
-    (行a, 列a): (usize, usize),
-    (行b, 列b): (usize, usize),
-    (行c, 列c): (usize, usize),
-    (行d, 列d): (usize, usize),
-) -> 曲げ拘束 {
+fn 拘束を作る(一辺粒子数: usize, (行a, 列a): (usize, usize), (行b, 列b): (usize, usize), (行c, 列c): (usize, usize), (行d, 列d): (usize, usize)) -> 曲げ拘束 {
     曲げ拘束 {
         辺a添字: u32へ(線形添字(一辺粒子数, 行a, 列a)),
         辺b添字: u32へ(線形添字(一辺粒子数, 行b, 列b)),

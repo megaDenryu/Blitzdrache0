@@ -18,20 +18,11 @@ use crate::vulkan::command_sink::積み込みを開始したコマンドバッ�
 use crate::vulkan::transfer::転送実行環境;
 
 fn 部分範囲() -> vk::ImageSubresourceRange {
-    vk::ImageSubresourceRange::default()
-        .aspect_mask(vk::ImageAspectFlags::COLOR)
-        .base_mip_level(0)
-        .level_count(1)
-        .base_array_layer(0)
-        .layer_count(1)
+    vk::ImageSubresourceRange::default().aspect_mask(vk::ImageAspectFlags::COLOR).base_mip_level(0).level_count(1).base_array_layer(0).layer_count(1)
 }
 
 /// 前提: 2枚とも確保直後でレイアウトはUNDEFINEDであり、GPUはまだどちらも使っていない。
-pub(super) fn 一定の符号値で埋める(
-    転送環境: &転送実行環境,
-    画像組: &局所可視度の画像組,
-    符号値: 局所可視度の符号値,
-) -> Result<(), レンダラーエラー> {
+pub(super) fn 一定の符号値で埋める(転送環境: &転送実行環境, 画像組: &局所可視度の画像組, 符号値: 局所可視度の符号値) -> Result<(), レンダラーエラー> {
     let 色 = 消去色へ写す(符号値);
     let 画像一覧 = [画像組.生.画像, 画像組.ぼかし後.画像];
     let 一時 = 転送環境.転送コマンドを積み始める()?;
@@ -73,7 +64,5 @@ fn 汎用へ遷移する(積み先: GPU命令の積み先<'_>, 画像: vk::Image
 /// 符号値が表す8ビット無符号正規化の消去色。4成分すべてへ同じ値を置くのは、意味を持つ第1成分だけを他と違う値にする理由が無いためである。
 fn 消去色へ写す(符号値: 局所可視度の符号値) -> vk::ClearColorValue {
     let 値 = f32::from(符号値.値()) / f32::from(u8::MAX);
-    vk::ClearColorValue {
-        float32: [値, 値, 値, 値]
-    }
+    vk::ClearColorValue { float32: [値, 値, 値, 値] }
 }

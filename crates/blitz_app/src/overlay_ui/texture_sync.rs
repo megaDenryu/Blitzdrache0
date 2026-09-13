@@ -4,11 +4,7 @@ use super::texture_id_map;
 use super::texture_mirror::テクスチャミラー;
 use crate::error::起動エラー;
 
-pub(super) fn テクスチャ差分をレンダラーへ反映する(
-    レンダラー: &mut blitz_render::レンダラー,
-    デルタ: &egui::TexturesDelta,
-    ミラー: &mut テクスチャミラー,
-) -> Result<(), 起動エラー> {
+pub(super) fn テクスチャ差分をレンダラーへ反映する(レンダラー: &mut blitz_render::レンダラー, デルタ: &egui::TexturesDelta, ミラー: &mut テクスチャミラー) -> Result<(), 起動エラー> {
     for (id, パッチ) in &デルタ.set {
         let (幅, 高さ, rgba8) = ミラー.反映して全体を得る(*id, パッチ);
         let 幅u32 = usize要素をu32へ変換する(幅);

@@ -5,56 +5,20 @@ use super::super::slangc_entry_compile::エントリ指定;
 
 /// 出力ファイル名は`embedded_cloth_shaders`と一致させる。
 pub(super) const コンパイル表: [(&str, &[エントリ指定]); 11] = [
-    (
-        "cloth_step.slang",
-        &[
-            コンピュート("interventionMain", "cloth_intervention.spv"),
-            コンピュート("integrateMain", "cloth_integrate.spv"),
-        ],
-    ),
+    ("cloth_step.slang", &[コンピュート("interventionMain", "cloth_intervention.spv"), コンピュート("integrateMain", "cloth_integrate.spv")]),
     (
         "cloth_target.slang",
-        &[
-            コンピュート("targetUpdateMain", "cloth_target_update.spv"),
-            コンピュート("targetConstraintMain", "cloth_target_constraint.spv"),
-        ],
+        &[コンピュート("targetUpdateMain", "cloth_target_update.spv"), コンピュート("targetConstraintMain", "cloth_target_constraint.spv")],
     ),
-    (
-        "cloth_constraint.slang",
-        &[
-            コンピュート("lambdaClearMain", "cloth_lambda_clear.spv"),
-            コンピュート("constraintMain", "cloth_constraint.spv"),
-        ],
-    ),
-    (
-        "cloth_bending.slang",
-        &[コンピュート("bendingConstraintMain", "cloth_bending_constraint.spv")],
-    ),
-    (
-        "cloth_hash.slang",
-        &[
-            コンピュート("hashClearMain", "cloth_hash_clear.spv"),
-            コンピュート("hashStoreMain", "cloth_hash_store.spv"),
-        ],
-    ),
+    ("cloth_constraint.slang", &[コンピュート("lambdaClearMain", "cloth_lambda_clear.spv"), コンピュート("constraintMain", "cloth_constraint.spv")]),
+    ("cloth_bending.slang", &[コンピュート("bendingConstraintMain", "cloth_bending_constraint.spv")]),
+    ("cloth_hash.slang", &[コンピュート("hashClearMain", "cloth_hash_clear.spv"), コンピュート("hashStoreMain", "cloth_hash_store.spv")]),
     ("cloth_separate.slang", &[コンピュート("separateMain", "cloth_separate.spv")]),
-    (
-        "cloth_finish.slang",
-        &[
-            コンピュート("collisionPushOutMain", "cloth_collision_push_out.spv"),
-            コンピュート("finishMain", "cloth_finish.spv"),
-        ],
-    ),
+    ("cloth_finish.slang", &[コンピュート("collisionPushOutMain", "cloth_collision_push_out.spv"), コンピュート("finishMain", "cloth_finish.spv")]),
     ("cloth_vertex.slang", &[コンピュート("vertexGenMain", "cloth_vertex_gen.spv")]),
     ("cloth_draw.slang", &[頂点("cloth_draw_vertex.spv"), 画素段("cloth_draw_fragment.spv")]),
-    (
-        "cloth_draw_distant_environment.slang",
-        &[画素段("cloth_draw_distant_environment_fragment.spv")],
-    ),
-    (
-        "cloth_shadow.slang",
-        &[頂点("cloth_shadow_vertex.spv"), 画素段("cloth_shadow_fragment.spv")],
-    ),
+    ("cloth_draw_distant_environment.slang", &[画素段("cloth_draw_distant_environment_fragment.spv")]),
+    ("cloth_shadow.slang", &[頂点("cloth_shadow_vertex.spv"), 画素段("cloth_shadow_fragment.spv")]),
 ];
 
 const fn コンピュート(エントリ名: &'static str, 出力ファイル名: &'static str) -> エントリ指定 {

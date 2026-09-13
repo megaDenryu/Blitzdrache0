@@ -8,9 +8,7 @@ use std::cell::Cell;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU32, Ordering};
 
-use blitz_asset_compiler::{
-    アセット配置エラー, ソースルート, マップ生成の乱数の種, 場所巡りの世界のソースディレクトリ
-};
+use blitz_asset_compiler::{アセット配置エラー, ソースルート, マップ生成の乱数の種, 場所巡りの世界のソースディレクトリ};
 
 use super::counting_launch::起こされた回数を数える偽の起こし係;
 use super::fingerprint_ledger::生成の指紋の台帳;
@@ -45,9 +43,7 @@ impl 偽の生成器の振る舞い {
         Self::組む(最初の生成器の中身, true, Some(中身))
     }
 
-    fn 組む(
-        実行ファイルの中身: &'static str, 共有バッファを書くか: bool, 板の文書へ書く中身: Option<&'static str>
-    ) -> Self {
+    fn 組む(実行ファイルの中身: &'static str, 共有バッファを書くか: bool, 板の文書へ書く中身: Option<&'static str>) -> Self {
         Self {
             実行ファイルの中身,
             共有バッファを書くか,
@@ -66,8 +62,7 @@ impl 使い捨ての場面 {
     pub(super) fn 組み立てる(振る舞い: 偽の生成器の振る舞い) -> Result<Self, アセット配置エラー> {
         let 番号 = 使い捨ての置き場の通し番号.fetch_add(1, Ordering::Relaxed);
         let パス = std::env::temp_dir().join(format!("blitzdrache0-取り揃えの検査-{}-{番号}", std::process::id()));
-        場所巡りの世界のソースディレクトリ::ソースルートの下に作る(&ソースルート::生成する(パス.clone()))?
-            .生成に使った乱数の種を書き出す(crate::fox_tour_map_seed::決定性検収の乱数の種)?;
+        場所巡りの世界のソースディレクトリ::ソースルートの下に作る(&ソースルート::生成する(パス.clone()))?.生成に使った乱数の種を書き出す(crate::fox_tour_map_seed::決定性検収の乱数の種)?;
         Ok(Self::置き場を決めて組む(パス, 振る舞い))
     }
 
@@ -104,11 +99,8 @@ impl 使い捨ての場面 {
     }
 
     /// 生成の入力だけを変える。指紋の材料のうち種の側が効いているかを見る検査が呼ぶ。
-    pub(super) fn 場所巡りの世界の乱数の種を書き換える(
-        &self, 種: マップ生成の乱数の種
-    ) -> Result<(), アセット配置エラー> {
-        場所巡りの世界のソースディレクトリ::ソースルートの下を開く(&ソースルート::生成する(self.パス.clone()))?
-            .生成に使った乱数の種を書き出す(種)
+    pub(super) fn 場所巡りの世界の乱数の種を書き換える(&self, 種: マップ生成の乱数の種) -> Result<(), アセット配置エラー> {
+        場所巡りの世界のソースディレクトリ::ソースルートの下を開く(&ソースルート::生成する(self.パス.clone()))?.生成に使った乱数の種を書き出す(種)
     }
 
     /// 指紋の台帳を、在るが読めない綴りにする。読めない台帳を無い台帳と同じに扱うことを見る検査が呼ぶ。

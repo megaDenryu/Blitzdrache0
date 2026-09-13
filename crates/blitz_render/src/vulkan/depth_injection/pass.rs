@@ -7,34 +7,18 @@
 use ash::vk;
 
 use super::合成深度の注入入力;
-use crate::vulkan::graph::{
-    GPU命令の積み先と宣言済み資源の取り出し口, パス宣言, パス種別, 画像ハンドル, 画像用途
-};
+use crate::vulkan::graph::{GPU命令の積み先と宣言済み資源の取り出し口, パス宣言, パス種別, 画像ハンドル, 画像用途};
 
 pub(crate) fn 合成深度の注入を作る<'a>(深度: 画像ハンドル, 入力: 合成深度の注入入力) -> パス宣言<'a> {
-    パス宣言::生成する(
-        "合成深度の注入",
-        Vec::new(),
-        vec![(深度, 画像用途::転送先)],
-        Vec::new(),
-        Vec::new(),
-        パス種別::転送,
-        move |文脈| コピーを積む(文脈, 深度, 入力),
-    )
+    パス宣言::生成する("合成深度の注入", Vec::new(), vec![(深度, 画像用途::転送先)], Vec::new(), Vec::new(), パス種別::転送, move |文脈| {
+        コピーを積む(文脈, 深度, 入力)
+    })
 }
 
-fn コピーを積む(
-    文脈: &GPU命令の積み先と宣言済み資源の取り出し口, 深度: 画像ハンドル, 入力: 合成深度の注入入力
-) {
+fn コピーを積む(文脈: &GPU命令の積み先と宣言済み資源の取り出し口, 深度: 画像ハンドル, 入力: 合成深度の注入入力) {
     let 画像 = 文脈.宣言済みの画像を参照する(深度);
     let 領域 = vk::BufferImageCopy::default()
-        .image_subresource(
-            vk::ImageSubresourceLayers::default()
-                .aspect_mask(vk::ImageAspectFlags::DEPTH)
-                .mip_level(0)
-                .base_array_layer(0)
-                .layer_count(1),
-        )
+        .image_subresource(vk::ImageSubresourceLayers::default().aspect_mask(vk::ImageAspectFlags::DEPTH).mip_level(0).base_array_layer(0).layer_count(1))
         .image_extent(vk::Extent3D {
             width: 入力.寸法.width,
             height: 入力.寸法.height,
@@ -44,12 +28,9 @@ fn コピーを積む(
     // 安全性: command_bufferは記録中、深度画像はグラフの導いたバリアでTRANSFER_DST_OPTIMALへ遷移済み、
     // バッファは寸法ぶんの単精度の列で確保済みである(`合成深度の注入一式::生成する`が同じ寸法から作る)。
     unsafe {
-        文脈.積み先().論理デバイス().cmd_copy_buffer_to_image(
-            文脈.積み先().コマンドバッファ(),
-            入力.バッファ,
-            画像,
-            vk::ImageLayout::TRANSFER_DST_OPTIMAL,
-            &領域一覧,
-        );
+        文脈
+            .積み先()
+            .論理デバイス()
+            .cmd_copy_buffer_to_image(文脈.積み先().コマンドバッファ(), 入力.バッファ, 画像, vk::ImageLayout::TRANSFER_DST_OPTIMAL, &領域一覧);
     }
 }

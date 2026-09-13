@@ -9,9 +9,7 @@
 
 use std::path::PathBuf;
 
-use blitz_asset_compiler::{
-    ソースルート, テクスチャ格納方針, 地表層タイルの置き場, 地表層テクスチャ集アセットをコンパイルする, 地表材質の層割当
-};
+use blitz_asset_compiler::{ソースルート, テクスチャ格納方針, 地表層タイルの置き場, 地表層テクスチャ集アセットをコンパイルする, 地表材質の層割当};
 use blitz_engine::surface_layer_textures::実行時形式から地表層テクスチャ集を読む;
 
 /// 生成器が書き出す4層の純色。`examples/generate_source_assets/surface_layer_tiles.rs`の写しであり、

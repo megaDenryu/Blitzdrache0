@@ -5,9 +5,8 @@ mod flags;
 use std::slice::Iter;
 
 use super::{
-    auto_exposure_probe_args, cloth_reference_args, depth_prepass_args, game_selection, ibl_step_scan_args, indirect_probe_args, instance_lod_args,
-    local_light_count_args, local_visibility_settings, lod_crack_args, path_args, placement_args, point_light_shadow_count_args, screen_pixel_args,
-    shadow_args, streaming_value_args, time_args, value_args, 参照比較の床の下の固定点, 起動設定,
+    auto_exposure_probe_args, cloth_reference_args, depth_prepass_args, game_selection, ibl_step_scan_args, indirect_probe_args, instance_lod_args, local_light_count_args, local_visibility_settings, lod_crack_args, path_args, placement_args,
+    point_light_shadow_count_args, screen_pixel_args, shadow_args, streaming_value_args, time_args, value_args, 参照比較の床の下の固定点, 起動設定,
 };
 use crate::error::起動エラー;
 
@@ -21,26 +20,16 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--game" => 設定.遊ぶゲーム = game_selection::遊ぶゲームの指定の引数を処理する(残り)?,
         "--asset-root" => 設定.アセットの置き場 = path_args::アセットルートの指定の引数を処理する(残り)?,
         "--object-count" => 設定.描画対象の並べ方.件数 = Some(value_args::object_count引数を処理する(残り)?),
-        "--dump-frame" | "--dump-hdr-frame" | "--dump-depth-frame" => {
-            value_args::フレームダンプ引数を反映する(&mut 設定.フレームダンプ先, 残り, 引数値)?
-        }
+        "--dump-frame" | "--dump-hdr-frame" | "--dump-depth-frame" => value_args::フレームダンプ引数を反映する(&mut 設定.フレームダンプ先, 残り, 引数値)?,
         "--report-sky-pixel" => 設定.読み戻し検収.空の代表画素 = screen_pixel_args::report_sky_pixel引数を処理する(残り)?,
         "--auto-exposure-probe" => 設定.読み戻し検収.自動露出の探り色 = Some(auto_exposure_probe_args::引数を処理する(残り)?),
         "--report-auto-exposure" => 設定.読み戻し検収.自動露出を報告するか = true,
         "--indirect-probe" => 設定.読み戻し検収.遠方環境の検収条件 = Some(indirect_probe_args::引数を処理する(残り)?),
         "--exposure" => 設定.露出 = value_args::exposure引数を処理する(残り)?,
-        "--cloth-xpbd-reference" => {
-            設定.布モード = cloth_reference_args::布のxpbd参照比較の引数を処理する(残り, 引数値, 参照比較の床の下の固定点::持たない)?
-        }
-        "--cloth-xpbd-reference-below-floor" => {
-            設定.布モード = cloth_reference_args::布のxpbd参照比較の引数を処理する(残り, 引数値, 参照比較の床の下の固定点::持つ)?
-        }
-        "--cloth-xpbd-reference-bending" => {
-            設定.布モード = cloth_reference_args::布の曲げのコンプライアンスの引数を処理する(残り, 設定.布モード)?
-        }
-        "--cloth-xpbd-reference-shape" => {
-            設定.布モード = cloth_reference_args::参照比較の題材の形の引数を処理する(残り, 設定.布モード)?
-        }
+        "--cloth-xpbd-reference" => 設定.布モード = cloth_reference_args::布のxpbd参照比較の引数を処理する(残り, 引数値, 参照比較の床の下の固定点::持たない)?,
+        "--cloth-xpbd-reference-below-floor" => 設定.布モード = cloth_reference_args::布のxpbd参照比較の引数を処理する(残り, 引数値, 参照比較の床の下の固定点::持つ)?,
+        "--cloth-xpbd-reference-bending" => 設定.布モード = cloth_reference_args::布の曲げのコンプライアンスの引数を処理する(残り, 設定.布モード)?,
+        "--cloth-xpbd-reference-shape" => 設定.布モード = cloth_reference_args::参照比較の題材の形の引数を処理する(残り, 設定.布モード)?,
         "--global-offset" => 設定.平行移動.大域ずらし量 = placement_args::大域ずらし量の引数を処理する(残り)?,
         "--camera-nudge" => 設定.平行移動.カメラずれ = placement_args::カメラずれの引数を処理する(残り)?,
         "--camera-pitch" => 設定.平行移動.カメラ俯角差分 = placement_args::カメラ俯角の引数を処理する(残り)?,
@@ -72,11 +61,7 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--streaming-preload-radius" => {
             設定.ストリーミング.先読み半径 = value_args::先読み半径引数を処理する(残り)?;
         }
-        "--streaming-route-start-east-meters"
-        | "--streaming-route-start-south-meters"
-        | "--streaming-route-end-east-meters"
-        | "--streaming-route-end-south-meters"
-        | "--streaming-route-meters-per-frame" => {
+        "--streaming-route-start-east-meters" | "--streaming-route-start-south-meters" | "--streaming-route-end-east-meters" | "--streaming-route-end-south-meters" | "--streaming-route-meters-per-frame" => {
             streaming_value_args::固定経路引数を反映する(&mut 設定.ストリーミング.固定経路, 残り, 引数値)?;
         }
         "--streaming-loader-workers" | "--streaming-request-capacity" | "--streaming-completion-capacity" => {

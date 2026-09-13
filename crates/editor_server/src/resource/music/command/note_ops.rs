@@ -8,9 +8,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::reference_resolution::コマンドの指し先の解決係;
-use super::target::{
-    ステップの位置が格子の内側であることを確かめる, 打ち込みの対象, 範囲の向きが正しいことを確かめる
-};
+use super::target::{ステップの位置が格子の内側であることを確かめる, 打ち込みの対象, 範囲の向きが正しいことを確かめる};
 use crate::resource::validation_error::資源検証エラー;
 use crate::resource::パターンID;
 

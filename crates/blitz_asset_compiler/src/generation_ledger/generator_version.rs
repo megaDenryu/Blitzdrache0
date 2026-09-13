@@ -20,17 +20,12 @@ impl 生成器の版 {
         self.0
     }
 
-    pub const fn 世界の生成器の版へ写す(
-        self,
-    ) -> Result<blitz_engine::世界の生成器の版, blitz_engine::アセット実行時形式エラー> {
+    pub const fn 世界の生成器の版へ写す(self) -> Result<blitz_engine::世界の生成器の版, blitz_engine::アセット実行時形式エラー> {
         blitz_engine::世界の生成器の版::生成する(self.0)
     }
 
     pub(super) fn 十進の綴りから復元する(綴り: &str) -> Result<Self, 生成台帳エラー> {
-        綴り
-            .parse::<u32>()
-            .map(Self)
-            .map_err(|_| 生成台帳エラー::未対応の版である(綴り.to_string()))
+        綴り.parse::<u32>().map(Self).map_err(|_| 生成台帳エラー::未対応の版である(綴り.to_string()))
     }
 }
 

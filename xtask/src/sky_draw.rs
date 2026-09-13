@@ -37,8 +37,7 @@ pub fn 空の描画を確認する() -> ExitCode {
 }
 
 fn 検収する() -> Result<String, 空の描画の検収エラー> {
-    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::地形世界を既定で生成する()
-    {
+    if !crate::gen_source_assets::検証用ソースアセットを生成して成否を返す() || !crate::compile_assets::地形世界を既定で生成する() {
         return Err(空の描画の検収エラー::検証用アセットを生成できなかった);
     }
     let 実行環境 = run::実行環境を作る(検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ))?;

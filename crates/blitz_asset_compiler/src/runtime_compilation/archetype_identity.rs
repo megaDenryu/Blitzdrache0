@@ -20,9 +20,7 @@ pub(crate) struct 原型の識別 {
 impl 原型の識別 {
     /// 宣言の表が`const`のまま1行で書けるように`const fn`にする。
     pub(crate) const fn 生成する(安定id: &'static str, ソース相対パス: ソースアセットの相対パス) -> Self {
-        Self {
-            安定id, ソース相対パス
-        }
+        Self { 安定id, ソース相対パス }
     }
 
     pub(crate) const fn 安定id(self) -> &'static str {

@@ -7,9 +7,7 @@ use super::{cascade_bytes, sky_bytes, view_bytes, フレームシェーダー定
 use crate::error::レンダラーエラー;
 use crate::vulkan::allocator::GPU資源の確保係;
 
-pub(super) fn フレームシェーダー定数一式を生成する(
-    確保係: &GPU資源の確保係<'_>,
-) -> Result<フレームシェーダー定数一式, レンダラーエラー> {
+pub(super) fn フレームシェーダー定数一式を生成する(確保係: &GPU資源の確保係<'_>) -> Result<フレームシェーダー定数一式, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let ビュー = 定数バッファ一式::生成する(確保係, view_bytes::バイト長)?;
     let 多段影 = match 定数バッファ一式::生成する(確保係, cascade_bytes::バイト長) {
@@ -27,7 +25,5 @@ pub(super) fn フレームシェーダー定数一式を生成する(
             return Err(誤り);
         }
     };
-    Ok(フレームシェーダー定数一式 {
-        ビュー, 多段影, 空パス
-    })
+    Ok(フレームシェーダー定数一式 { ビュー, 多段影, 空パス })
 }

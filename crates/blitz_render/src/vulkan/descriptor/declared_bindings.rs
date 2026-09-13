@@ -40,28 +40,19 @@ impl<const 本数: usize> 宣言した束縛の並び<本数> {
     }
 
     /// この宣言そのものをセットレイアウトとして確保する。以降の割り当ても書き込みも、返るレイアウトから始まる。
-    pub(crate) fn セットレイアウトを確保する(
-        &self,
-        device: &ash::Device,
-    ) -> Result<宣言から作ったセットレイアウト<本数>, レンダラーエラー> {
+    pub(crate) fn セットレイアウトを確保する(&self, device: &ash::Device) -> Result<宣言から作ったセットレイアウト<本数>, レンダラーエラー> {
         宣言から作ったセットレイアウト::確保する(device, *self)
     }
 
     /// セットレイアウトの生成へ渡すバインドの並び。要素数はどれも1であり、配列の束縛はこの器を通らない。
     pub(super) fn セットレイアウトの宣言(&self) -> [vk::DescriptorSetLayoutBinding<'static>; 本数] {
-        self.並び.map(|(番号, 種別, 段)| {
-            vk::DescriptorSetLayoutBinding::default()
-                .binding(番号.gpu境界値())
-                .descriptor_type(種別)
-                .descriptor_count(1)
-                .stage_flags(段)
-        })
+        self.並び
+            .map(|(番号, 種別, 段)| vk::DescriptorSetLayoutBinding::default().binding(番号.gpu境界値()).descriptor_type(種別).descriptor_count(1).stage_flags(段))
     }
 
     /// プールの生成へ渡す内訳。同じ宣言のセットを`セット数`枚配れるだけの数を種別ごとに数える。
     pub(crate) fn プールの内訳(&self, セット数: u32) -> [vk::DescriptorPoolSize; 本数] {
-        self.並び
-            .map(|(_, 種別, _)| vk::DescriptorPoolSize::default().ty(種別).descriptor_count(セット数))
+        self.並び.map(|(_, 種別, _)| vk::DescriptorPoolSize::default().ty(種別).descriptor_count(セット数))
     }
 
     pub(super) const fn 位置の束縛(&self, 位置: usize) -> 束縛1本の宣言 {

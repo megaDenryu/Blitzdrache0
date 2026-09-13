@@ -6,13 +6,9 @@
 
 use axum::{body::Bytes, extract::Path, extract::State, http::StatusCode, response::IntoResponse, response::Response};
 
-use crate::{
-    building_grid_store::建物の格子の保存エラー, failure_response::失敗応答を組み立てる, resource::建物の格子, server_state::サーバー状態
-};
+use crate::{building_grid_store::建物の格子の保存エラー, failure_response::失敗応答を組み立てる, resource::建物の格子, server_state::サーバー状態};
 
-pub async fn 建物の格子を保存する(
-    State(状態): State<サーバー状態>, Path(識別子の綴り): Path<String>, 本文: Bytes
-) -> Response {
+pub async fn 建物の格子を保存する(State(状態): State<サーバー状態>, Path(識別子の綴り): Path<String>, 本文: Bytes) -> Response {
     match tokio::task::spawn_blocking(move || 検査して保存する(&状態, &識別子の綴り, &本文)).await {
         Ok(Ok(())) => StatusCode::NO_CONTENT.into_response(),
         Ok(Err(応答)) => *応答,
@@ -25,12 +21,10 @@ pub async fn 建物の格子を保存する(
 fn 検査して保存する(状態: &サーバー状態, 識別子の綴り: &str, 本文: &[u8]) -> Result<(), Box<Response>> {
     let 格子: 建物の格子 = serde_json::from_slice(本文).map_err(拒否応答へ写す)?;
     if 格子.建物定義ID.綴り() != 識別子の綴り {
-        return Err(拒否応答へ写す(
-            建物の格子の保存エラー::経路と本文の識別子が食い違う {
-                経路の識別子: 識別子の綴り.to_string(),
-                本文の識別子: 格子.建物定義ID.綴り().to_string(),
-            },
-        ));
+        return Err(拒否応答へ写す(建物の格子の保存エラー::経路と本文の識別子が食い違う {
+            経路の識別子: 識別子の綴り.to_string(),
+            本文の識別子: 格子.建物定義ID.綴り().to_string(),
+        }));
     }
     let mut 保存係 = 状態.建物の格子の保存係を借りる()?;
     保存係.検査して保存する(&格子).map_err(拒否応答へ写す)

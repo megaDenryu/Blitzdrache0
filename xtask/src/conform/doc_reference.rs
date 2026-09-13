@@ -25,11 +25,7 @@ pub fn 参照パスの実在を検査する(パス: &Path, 内容: &str) -> Vec<
     for (行番号, 行) in 内容.lines().enumerate() {
         for 参照パス in バッククォート内パスを抽出する(行) {
             if !Path::new(&参照パス).exists() {
-                違反一覧.push(違反::行単位(
-                    パス.to_path_buf(),
-                    行番号 + 1,
-                    format!("参照パスが存在しない: {参照パス}"),
-                ));
+                違反一覧.push(違反::行単位(パス.to_path_buf(), 行番号 + 1, format!("参照パスが存在しない: {参照パス}")));
             }
         }
     }
@@ -52,11 +48,7 @@ mod tests {
         let 行 = "既定は`shaders/scene.slang`。実装は`crates/blitz_engine/src/lib.rs`と`xtask/src/main.rs`。";
         assert_eq!(
             バッククォート内パスを抽出する(行),
-            vec![
-                "shaders/scene.slang".to_string(),
-                "crates/blitz_engine/src/lib.rs".to_string(),
-                "xtask/src/main.rs".to_string()
-            ]
+            vec!["shaders/scene.slang".to_string(), "crates/blitz_engine/src/lib.rs".to_string(), "xtask/src/main.rs".to_string()]
         );
     }
 

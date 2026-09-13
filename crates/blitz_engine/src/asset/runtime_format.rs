@@ -27,9 +27,7 @@ pub use material_assignment_error::材質割当エラー;
 pub(crate) use scene::mesh_layout;
 pub use scene::{シーンを実行時形式へ格納する, 実行時形式からシーンを読む};
 pub use surface_layer_texture_set_error::地表層テクスチャ集実行時形式エラー;
-pub use surface_layer_texture_set_v1::{
-    地表層テクスチャ集を実行時形式へ格納する, 実行時形式から地表層テクスチャ集を読む
-};
+pub use surface_layer_texture_set_v1::{地表層テクスチャ集を実行時形式へ格納する, 実行時形式から地表層テクスチャ集を読む};
 
 pub(super) const ヘッダー長: usize = 24;
 pub(super) const 固定識別値: [u8; 8] = *b"BLITZAST";

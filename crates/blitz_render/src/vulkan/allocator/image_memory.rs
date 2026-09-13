@@ -11,11 +11,7 @@ use crate::gpu_memory_stats::GPUメモリ用途;
 impl GPU資源の確保係<'_> {
     /// 前提: 画像は生成済みで、まだどのメモリにも結び付いていない。
     /// 失敗したときは確保したメモリをこの中で解放するため、呼び出し側は画像だけを片付ければよい。
-    pub(crate) fn 画像へデバイスローカルメモリを結び付ける(
-        &self,
-        画像: vk::Image,
-        メモリ用途: GPUメモリ用途,
-    ) -> Result<vk::DeviceMemory, レンダラーエラー> {
+    pub(crate) fn 画像へデバイスローカルメモリを結び付ける(&self, 画像: vk::Image, メモリ用途: GPUメモリ用途) -> Result<vk::DeviceMemory, レンダラーエラー> {
         // 安全性: 画像は呼び出し元が直前に生成済み。
         let 要件 = unsafe { self.device.get_image_memory_requirements(画像) };
         let memory = self.要件に合う専用メモリを確保する(要件, メモリの置き場::デバイスローカル, メモリ用途)?;

@@ -55,9 +55,7 @@ pub use point_body_distance_result::点と剛体の距離拘束の一回の射�
 pub use predicted_state::予測の状態;
 pub use predictor::細分の予測器;
 pub use previous_state::前の状態;
-pub use reference::{
-    剛体の参照計算, 剛体の拘束の一覧, 添字付きねじり拘束, 添字付き剛体の目標拘束, 添字付き接続拘束, 添字付き点と剛体の距離拘束
-};
+pub use reference::{剛体の参照計算, 剛体の拘束の一覧, 添字付きねじり拘束, 添字付き剛体の目標拘束, 添字付き接続拘束, 添字付き点と剛体の距離拘束};
 pub use rotational_compliance::{回転のコンプライアンス, 回転のコンプライアンスエラー};
 pub use rotational_lagrange_multiplier::回転のラグランジュ乗数;
 pub use substep_count::細分数;

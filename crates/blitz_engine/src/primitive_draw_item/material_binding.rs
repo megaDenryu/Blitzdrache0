@@ -17,9 +17,7 @@ pub struct 材質束縛参照 {
 
 impl 材質束縛参照 {
     pub fn 生成する(描画対象添字: usize, 材質スロット: 材質スロットID) -> Self {
-        Self {
-            描画対象添字, 材質スロット
-        }
+        Self { 描画対象添字, 材質スロット }
     }
 
     pub fn 描画対象添字(self) -> usize {

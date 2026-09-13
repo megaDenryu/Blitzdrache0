@@ -34,27 +34,16 @@ pub(super) fn 色パスの固定機能を組み立てる(
     深度状態: 色パスの深度状態,
 ) -> Result<vk::Pipeline, レンダラーエラー> {
     let ステージ一覧 = [
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::VERTEX)
-            .module(頂点モジュール)
-            .name(頂点エントリ名),
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::FRAGMENT)
-            .module(画素段モジュール)
-            .name(画素段エントリ名),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::VERTEX).module(頂点モジュール).name(頂点エントリ名),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::FRAGMENT).module(画素段モジュール).name(画素段エントリ名),
     ];
 
     let (バインド記述, 属性記述一覧) = vertex_input::選択して記述する(属性選択);
     let バインド記述一覧 = [バインド記述];
-    let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default()
-        .vertex_binding_descriptions(&バインド記述一覧)
-        .vertex_attribute_descriptions(&属性記述一覧);
+    let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default().vertex_binding_descriptions(&バインド記述一覧).vertex_attribute_descriptions(&属性記述一覧);
     let 入力アセンブリstate = vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::TRIANGLE_LIST);
     let ビューポートstate = vk::PipelineViewportStateCreateInfo::default().viewport_count(1).scissor_count(1);
-    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default()
-        .polygon_mode(vk::PolygonMode::FILL)
-        .cull_mode(vk::CullModeFlags::NONE)
-        .line_width(1.0);
+    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default().polygon_mode(vk::PolygonMode::FILL).cull_mode(vk::CullModeFlags::NONE).line_width(1.0);
     let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(標本数);
     // 第2の添付は動きベクトルである。時間再構成方式に依らず常に2枚を宣言するのは、方式でパイプラインの形を変えないためである(判断e)。
     // 注意: 2枚の混合状態は同一でなければならない。independentBlend機能を有効にしていないためである。動きベクトルは2成分の形式であり、
@@ -62,17 +51,12 @@ pub(super) fn 色パスの固定機能を組み立てる(
     // 半透明がこのパスへ入るときはindependentBlendの有効化か書き込みマスクの分離が必須になる(動きベクトルへのブレンドは規約違反)。
     let カラーブレンドアタッチメント一覧 = [vk::PipelineColorBlendAttachmentState::default().color_write_mask(vk::ColorComponentFlags::RGBA); 2];
     let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default().attachments(&カラーブレンドアタッチメント一覧);
-    let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
-        .depth_test_enable(true)
-        .depth_write_enable(深度状態.書き込むか())
-        .depth_compare_op(深度状態.比較());
+    let 深度state = vk::PipelineDepthStencilStateCreateInfo::default().depth_test_enable(true).depth_write_enable(深度状態.書き込むか()).depth_compare_op(深度状態.比較());
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
     let カラー形式一覧 = [カラー形式, 動きベクトルの形式];
-    let mut rendering情報 = vk::PipelineRenderingCreateInfo::default()
-        .color_attachment_formats(&カラー形式一覧)
-        .depth_attachment_format(深度形式);
+    let mut rendering情報 = vk::PipelineRenderingCreateInfo::default().color_attachment_formats(&カラー形式一覧).depth_attachment_format(深度形式);
 
     let create_info = vk::GraphicsPipelineCreateInfo::default()
         .stages(&ステージ一覧)

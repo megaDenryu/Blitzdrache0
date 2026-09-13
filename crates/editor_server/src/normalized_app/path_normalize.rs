@@ -29,9 +29,7 @@ pub(super) fn 符号を解いた経路を組み立てる(元の経路: &Uri) -> 
         Some(問い合わせ) => format!("{解いた経路}?{問い合わせ}"),
         None => 解いた経路,
     };
-    let 新しいパスと問い合わせ: PathAndQuery = 新しい経路と問い合わせ文字列
-        .parse()
-        .map_err(|_| 経路再構成エラー応答を組み立てる(&新しい経路と問い合わせ文字列))?;
+    let 新しいパスと問い合わせ: PathAndQuery = 新しい経路と問い合わせ文字列.parse().map_err(|_| 経路再構成エラー応答を組み立てる(&新しい経路と問い合わせ文字列))?;
 
     let mut 部品 = 元の経路.clone().into_parts();
     部品.path_and_query = Some(新しいパスと問い合わせ);

@@ -48,23 +48,15 @@ impl 実行の別 {
             Self::後処理なし候補を採る => 始める("candidate_no_post").後処理を切る(),
             Self::影の対照を採る => 始める("shadow_reference").後処理を切る().明示境界を切る(),
             Self::影の候補を採る => 始める("shadow_candidate").後処理を切る(),
-            Self::影の対照の可視度を採る => 始める("shadow_reference_visibility")
-                .後処理を切る()
-                .影可視度の可視化を立てる()
-                .明示境界を切る(),
+            Self::影の対照の可視度を採る => 始める("shadow_reference_visibility").後処理を切る().影可視度の可視化を立てる().明示境界を切る(),
             Self::影の候補の可視度を採る => 始める("shadow_candidate_visibility").後処理を切る().影可視度の可視化を立てる(),
             Self::散布の対照を採る => 始める("scatter_reference").散布を焼かない対照から読む(),
             Self::散布の候補を採る => 始める("scatter_candidate"),
             Self::後処理なし散布の対照を採る => 始める("scatter_reference_no_post").後処理を切る().散布を焼かない対照から読む(),
             Self::後処理なし散布の候補を採る => 始める("scatter_candidate_no_post").後処理を切る(),
-            Self::素の散布の対照を採る => 始める("scatter_reference_bare")
-                .後処理を切る()
-                .局所可視性を切る()
-                .影のキャスターを切る()
-                .散布を焼かない対照から読む(),
+            Self::素の散布の対照を採る => 始める("scatter_reference_bare").後処理を切る().局所可視性を切る().影のキャスターを切る().散布を焼かない対照から読む(),
             Self::素の散布の候補を採る => 始める("scatter_candidate_bare").後処理を切る().局所可視性を切る().影のキャスターを切る(),
-            Self::散布の対照を焼く | Self::計画を表示する | Self::判定する | Self::影を判定する | Self::散布を判定する =>
-            {
+            Self::散布の対照を焼く | Self::計画を表示する | Self::判定する | Self::影を判定する | Self::散布を判定する => {
                 return None;
             }
         })

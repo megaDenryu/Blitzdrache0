@@ -16,10 +16,7 @@ pub(crate) struct 世代の常駐枚数 {
 }
 
 impl 世代の常駐枚数 {
-    pub(in crate::vulkan::material_table) fn 確かめる(
-        必要枚数: u32,
-        レイアウト容量: テクスチャ表レイアウト容量,
-    ) -> Result<Self, 材質資源表エラー> {
+    pub(in crate::vulkan::material_table) fn 確かめる(必要枚数: u32, レイアウト容量: テクスチャ表レイアウト容量) -> Result<Self, 材質資源表エラー> {
         if 必要枚数 > レイアウト容量.枚数() {
             return Err(材質資源表エラー::レイアウト容量超過 {
                 常駐枚数: 必要枚数,

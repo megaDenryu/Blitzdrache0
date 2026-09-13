@@ -27,26 +27,13 @@ fn 起動できない段の破れの本文と最後のログのパスがログ�
     let ログのパス = 使い捨てのログのパスを作る();
     let 実行係 = 検証列の実行係::ログを開いて作る(ログのパス.clone()).unwrap();
     let mut 命令 = Command::new(存在しない段の実行ファイル);
-    let 結果 = 実行係
-        .段を走らせて結果を告げる("存在しない段", "存在しない段", &mut 命令)
-        .map(|_| ExitCode::SUCCESS);
+    let 結果 = 実行係.段を走らせて結果を告げる("存在しない段", "存在しない段", &mut 命令).map(|_| ExitCode::SUCCESS);
     let 終了コード = 実行係.結末を締めて終了コードへ写す(結果);
     let ログの中身 = std::fs::read_to_string(&ログのパス).unwrap();
     drop(実行係);
     std::fs::remove_file(&ログのパス).unwrap();
     // ExitCodeは値どうしの比較を持たないため、デバッグの綴りで突き合わせる。
-    assert_eq!(
-        format!("{終了コード:?}"),
-        format!("{:?}", ExitCode::FAILURE),
-        "内部の破れを失敗として返していない"
-    );
-    assert!(
-        ログの中身.contains("段の子プロセスを起動できなかった"),
-        "ログを開いた後の破れの本文がログの外へ逃げている: {ログの中身}"
-    );
-    assert_eq!(
-        ログの中身.lines().last().unwrap(),
-        format!("[xtask] ログ: {}", ログのパス.display()),
-        "最後の行がログのパスになっていない: {ログの中身}"
-    );
+    assert_eq!(format!("{終了コード:?}"), format!("{:?}", ExitCode::FAILURE), "内部の破れを失敗として返していない");
+    assert!(ログの中身.contains("段の子プロセスを起動できなかった"), "ログを開いた後の破れの本文がログの外へ逃げている: {ログの中身}");
+    assert_eq!(ログの中身.lines().last().unwrap(), format!("[xtask] ログ: {}", ログのパス.display()), "最後の行がログのパスになっていない: {ログの中身}");
 }

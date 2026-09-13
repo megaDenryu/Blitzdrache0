@@ -9,16 +9,10 @@ use crate::vulkan::present_timing;
 use crate::vulkan::tracked_device::GPUデバイス;
 
 pub(in crate::vulkan) fn 生成する(
-    instance: &ash::Instance,
-    物理デバイス: vk::PhysicalDevice,
-    キューファミリ添字: u32,
-    大点描画対応: bool,
-    実表示計測状況: 実表示計測状況,
+    instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice, キューファミリ添字: u32, 大点描画対応: bool, 実表示計測状況: 実表示計測状況
 ) -> Result<(GPUデバイス, vk::Queue), レンダラーエラー> {
     let キュー優先度 = [1.0_f32];
-    let キュー生成情報 = [vk::DeviceQueueCreateInfo::default()
-        .queue_family_index(キューファミリ添字)
-        .queue_priorities(&キュー優先度)];
+    let キュー生成情報 = [vk::DeviceQueueCreateInfo::default().queue_family_index(キューファミリ添字).queue_priorities(&キュー優先度)];
 
     // 実表示時刻の計測に使う2拡張は、対応している環境でのみ有効化する。
     // 注意: 機能構造体の連結も拡張を有効化したときだけ行う。非対応環境で連結するとデバイス生成が失敗する。
@@ -38,12 +32,8 @@ pub(in crate::vulkan) fn 生成する(
     // (参照: `crates/blitz_render/src/vulkan/descriptor_indexing/mod.rs`)。
     // 注意: 表をシェーダーで要素数固定の配列として宣言するため`runtimeDescriptorArray`は要らない。要らない機能を
     // 必須にすると、固定長の表を読めるのに動かせない機材が出る。
-    let mut vulkan12機能 = vk::PhysicalDeviceVulkan12Features::default()
-        .shader_sampled_image_array_non_uniform_indexing(true)
-        .descriptor_binding_partially_bound(true);
-    let mut vulkan13機能 = vk::PhysicalDeviceVulkan13Features::default()
-        .dynamic_rendering(true)
-        .synchronization2(true);
+    let mut vulkan12機能 = vk::PhysicalDeviceVulkan12Features::default().shader_sampled_image_array_non_uniform_indexing(true).descriptor_binding_partially_bound(true);
+    let mut vulkan13機能 = vk::PhysicalDeviceVulkan13Features::default().dynamic_rendering(true).synchronization2(true);
     // 対応デバイスでのみ有効化する(粒子描画のPointSize指定、判断29)。未対応でも
     // 描画自体は続行できるため物理デバイス選定は左右しない(`大きな点描画に対応するか`)。
     //
@@ -52,10 +42,7 @@ pub(in crate::vulkan) fn 生成する(
     // image_cube_array: 点光源の影の立方体配列のビューを作るのに要る。同じく有効化まで行う
     // (参照: `_doc/設計/クラスタ多光源と点光源の影.md`「判断l」)。
     // 2つとも常にtrueで立てるのは、同じ機能を`physical_device`が選定の条件として掛けており、ここで有効化に失敗する候補が選ばれていないためである。
-    let 基本機能 = vk::PhysicalDeviceFeatures::default()
-        .large_points(大点描画対応)
-        .texture_compression_bc(true)
-        .image_cube_array(true);
+    let 基本機能 = vk::PhysicalDeviceFeatures::default().large_points(大点描画対応).texture_compression_bc(true).image_cube_array(true);
 
     let mut create_info = vk::DeviceCreateInfo::default()
         .queue_create_infos(&キュー生成情報)
@@ -75,9 +62,7 @@ pub(in crate::vulkan) fn 生成する(
     // グラフィックス対応が確認済みのインデックス。
     let queue = unsafe { device.get_device_queue(キューファミリ添字, 0) };
     // 安全性: 物理デバイスは選定済みで、instanceの生存中に問い合わせる。
-    let メモリ確保上限 = unsafe { instance.get_physical_device_properties(物理デバイス) }
-        .limits
-        .max_memory_allocation_count;
+    let メモリ確保上限 = unsafe { instance.get_physical_device_properties(物理デバイス) }.limits.max_memory_allocation_count;
 
     Ok((GPUデバイス::生成する(device, メモリ確保上限), queue))
 }

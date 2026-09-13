@@ -11,9 +11,7 @@ const 既定法線: [f32; 3] = [0.0, 1.0, 0.0];
 
 /// `法線一覧`は`位置一覧`と同じ長さ・同じ添字対応。`None`の要素だけ計算充填し、
 /// `Some`(authored)の要素はそのまま返す。
-pub(super) fn 法線を確定する(
-    位置一覧: &[[f32; 3]], インデックス一覧: &[u32], 法線一覧: Vec<Option<[f32; 3]>>
-) -> Vec<[f32; 3]> {
+pub(super) fn 法線を確定する(位置一覧: &[[f32; 3]], インデックス一覧: &[u32], 法線一覧: Vec<Option<[f32; 3]>>) -> Vec<[f32; 3]> {
     let 計算が必要 = 法線一覧.iter().any(Option::is_none);
 
     let mut 集計 = vec![[0.0f32; 3]; 位置一覧.len()];
@@ -23,11 +21,7 @@ pub(super) fn 法線を確定する(
         }
     }
 
-    法線一覧
-        .into_iter()
-        .enumerate()
-        .map(|(添字, 法線)| 法線.unwrap_or_else(|| 正規化する(集計[添字], 既定法線)))
-        .collect()
+    法線一覧.into_iter().enumerate().map(|(添字, 法線)| 法線.unwrap_or_else(|| 正規化する(集計[添字], 既定法線))).collect()
 }
 
 fn 面法線を加算する(位置一覧: &[[f32; 3]], 三角形添字: &[u32], 集計: &mut [[f32; 3]]) {

@@ -23,10 +23,7 @@ impl 自己型の経路 {
     pub fn 綴りから生成する(綴り: &str) -> Self {
         let mut 段一覧: Vec<String> = 綴り.split(段の区切り).map(str::to_string).collect();
         let 型名 = 段一覧.pop().unwrap_or_default();
-        Self {
-            前置きの段一覧: 段一覧,
-            型名,
-        }
+        Self { 前置きの段一覧: 段一覧, 型名 }
     }
 
     pub fn 型名(&self) -> &str {
@@ -63,15 +60,8 @@ impl 自己型の経路 {
         if 先頭.as_str() != 上位のモジュールを指す段 {
             return None;
         }
-        let 上位の段数 = self
-            .前置きの段一覧
-            .iter()
-            .take_while(|段| 段.as_str() == 上位のモジュールを指す段)
-            .count();
-        Some((
-            位置.自分のモジュールのディレクトリ().上位のモジュールへ戻る(上位の段数)?,
-            self.前置きの段一覧.get(上位の段数..)?,
-        ))
+        let 上位の段数 = self.前置きの段一覧.iter().take_while(|段| 段.as_str() == 上位のモジュールを指す段).count();
+        Some((位置.自分のモジュールのディレクトリ().上位のモジュールへ戻る(上位の段数)?, self.前置きの段一覧.get(上位の段数..)?))
     }
 }
 

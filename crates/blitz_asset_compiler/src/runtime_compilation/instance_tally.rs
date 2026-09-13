@@ -32,9 +32,7 @@ impl 個体数の勘定 {
                 合計 = 合計.saturating_add(個体数);
             }
         }
-        Self {
-            合計, 個体を持つ対象数
-        }
+        Self { 合計, 個体を持つ対象数 }
     }
 
     pub(super) fn 報告の行を作る(&self) -> String {

@@ -12,12 +12,7 @@ use super::super::buffer::読み戻しバッファ;
 use super::super::target::読み戻し対象;
 use crate::error::レンダラーエラー;
 
-pub(super) fn 読む(
-    device: &ash::Device,
-    バッファ: &読み戻しバッファ,
-    寸法: vk::Extent2D,
-    対象: 読み戻し対象,
-) -> Result<Vec<u8>, レンダラーエラー> {
+pub(super) fn 読む(device: &ash::Device, バッファ: &読み戻しバッファ, 寸法: vk::Extent2D, 対象: 読み戻し対象) -> Result<Vec<u8>, レンダラーエラー> {
     let 必要バイト数 = u64::from(寸法.width) * u64::from(寸法.height) * 対象.画素あたりバイト数();
     let 要素数 = usize::try_from(必要バイト数).unwrap_or_else(|_| panic!("読み戻しバイト数がusizeに収まらない: {必要バイト数}"));
     バッファ.バイト列を写し取る(device, 要素数)

@@ -15,9 +15,7 @@ pub(super) struct 書き換えバッファ {
 }
 
 impl 書き換えバッファ {
-    pub(super) fn 生成する(
-        確保係: &GPU資源の確保係<'_>, バイト長: usize, 用途: vk::BufferUsageFlags
-    ) -> Result<Self, レンダラーエラー> {
+    pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, バイト長: usize, 用途: vk::BufferUsageFlags) -> Result<Self, レンダラーエラー> {
         let バッファ = 確保係.ホスト可視バッファを確保して書き込む(&vec![0u8; バイト長], 用途)?;
         Ok(Self { バッファ })
     }

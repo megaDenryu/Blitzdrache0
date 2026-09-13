@@ -7,9 +7,7 @@ use crate::error::レンダラーエラー;
 use crate::frame_input::フレーム描画入力;
 use crate::vulkan::atmosphere_lut::大気のベイク済み画像の描画入力;
 use crate::vulkan::depth_injection::合成深度の注入入力;
-use crate::vulkan::frame::{
-    UI描画入力, スキニング描画入力, 任意描画入力, 布描画入力, 空中遠近合成描画入力, 空描画入力, 粒子描画入力
-};
+use crate::vulkan::frame::{UI描画入力, スキニング描画入力, 任意描画入力, 布描画入力, 空中遠近合成描画入力, 空描画入力, 粒子描画入力};
 use crate::vulkan::indirect_lighting::間接照明の描画入力;
 use crate::vulkan::local_visibility::局所可視性描画入力;
 use crate::vulkan::post_process::ポスト描画入力;
@@ -34,11 +32,7 @@ pub(super) struct 任意入力の材料 {
 
 impl レンダラー {
     pub(super) fn 任意入力の材料を集める(
-        &mut self,
-        フレーム添字: フレームスロット添字,
-        入力: &フレーム描画入力<'_>,
-        露出: f32,
-        原点由来の基準原点: カメラ相対の基準原点,
+        &mut self, フレーム添字: フレームスロット添字, 入力: &フレーム描画入力<'_>, 露出: f32, 原点由来の基準原点: カメラ相対の基準原点
     ) -> Result<任意入力の材料, レンダラーエラー> {
         Ok(任意入力の材料 {
             大気のベイク済み画像: self.大気のベイク済み画像の描画入力を組み立てる(フレーム添字, 入力),

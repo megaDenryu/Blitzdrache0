@@ -6,9 +6,7 @@ use super::super::bytes::読取位置;
 use super::super::mesh_layout::個体配置長;
 use crate::asset::instance::{個体配置, 境界球, 群境界, 軸平行包囲領域};
 
-pub(in crate::asset::runtime_format::scene) fn 配置列を読む(
-    入力: &mut 読取位置<'_>,
-) -> Result<Vec<個体配置>, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 配置列を読む(入力: &mut 読取位置<'_>) -> Result<Vec<個体配置>, アセット実行時形式エラー> {
     let 個体数 = 入力.件数(個体配置長)?;
     let mut 配置一覧 = Vec::with_capacity(個体数);
     for _ in 0..個体数 {
@@ -20,9 +18,7 @@ pub(in crate::asset::runtime_format::scene) fn 配置列を読む(
     Ok(配置一覧)
 }
 
-pub(in crate::asset::runtime_format::scene) fn 境界を読む(
-    入力: &mut 読取位置<'_>
-) -> Result<群境界, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 境界を読む(入力: &mut 読取位置<'_>) -> Result<群境界, アセット実行時形式エラー> {
     let 最小 = [入力.f32()?, 入力.f32()?, 入力.f32()?];
     let 最大 = [入力.f32()?, 入力.f32()?, 入力.f32()?];
     let 包囲領域 = 軸平行包囲領域::生成する(最小, 最大)?;

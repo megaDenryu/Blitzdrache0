@@ -11,10 +11,7 @@ impl 世界のソースディレクトリ {
         self.0.直下をすべて削除する()
     }
 
-    pub(in crate::asset_layout) fn 指定外の直下を削除する(
-        &self,
-        追加で保持する名前: HashSet<OsString>,
-    ) -> Result<(), 生成台帳エラー> {
+    pub(in crate::asset_layout) fn 指定外の直下を削除する(&self, 追加で保持する名前: HashSet<OsString>) -> Result<(), 生成台帳エラー> {
         let mut 保持する名前 = 追加で保持する名前;
         保持する名前.insert(OsString::from(チャンク目録ソースのファイル名));
         self.0.指定外の直下を削除する(&保持する名前)

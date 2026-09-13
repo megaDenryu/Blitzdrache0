@@ -35,9 +35,7 @@ impl 読み戻し対象 {
     /// 転送元の画像から写す面。深度画像は色の面を持たない。
     pub(crate) const fn 画像の面(self) -> vk::ImageAspectFlags {
         match self {
-            Self::提示画像 | Self::圧縮前のHDR | Self::局所可視度 | Self::動きベクトル | Self::今のフレームの色 => {
-                vk::ImageAspectFlags::COLOR
-            }
+            Self::提示画像 | Self::圧縮前のHDR | Self::局所可視度 | Self::動きベクトル | Self::今のフレームの色 => vk::ImageAspectFlags::COLOR,
             Self::最終深度 => vk::ImageAspectFlags::DEPTH,
         }
     }

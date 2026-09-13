@@ -20,13 +20,8 @@ pub(super) struct 媒体シェーダー定数一式 {
 impl 媒体シェーダー定数一式 {
     pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>) -> Result<Self, レンダラーエラー> {
         let 初期バイト列 = [0u8; medium_bytes::バイト長];
-        let スロットごとのバッファ = 確保係.フレームスロットごとのホスト可視バッファを確保して書き込む(
-            &初期バイト列,
-            vk::BufferUsageFlags::UNIFORM_BUFFER,
-        )?;
-        Ok(Self {
-            スロットごとのバッファ
-        })
+        let スロットごとのバッファ = 確保係.フレームスロットごとのホスト可視バッファを確保して書き込む(&初期バイト列, vk::BufferUsageFlags::UNIFORM_BUFFER)?;
+        Ok(Self { スロットごとのバッファ })
     }
 
     pub(super) fn フレームスロットのバッファ(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
@@ -34,14 +29,8 @@ impl 媒体シェーダー定数一式 {
     }
 
     /// 前提: 呼び出し元はこのスロットのフェンス待機を済ませている(`draw_execute/prepare.rs`)。
-    pub(super) fn 書き込む(
-        &self,
-        device: &ash::Device,
-        フレーム添字: フレームスロット添字,
-        媒体: &大気散乱媒体,
-    ) -> Result<(), レンダラーエラー> {
-        self.スロットごとのバッファ
-            .スロットの中身を書き換える(device, フレーム添字, &medium_bytes::バイト列にする(媒体))
+    pub(super) fn 書き込む(&self, device: &ash::Device, フレーム添字: フレームスロット添字, 媒体: &大気散乱媒体) -> Result<(), レンダラーエラー> {
+        self.スロットごとのバッファ.スロットの中身を書き換える(device, フレーム添字, &medium_bytes::バイト列にする(媒体))
     }
 
     /// 前提: 破棄時点でGPU側の使用が完了していることを呼び出し元が保証する。

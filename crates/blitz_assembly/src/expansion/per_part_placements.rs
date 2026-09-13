@@ -19,10 +19,7 @@ pub struct 部品ごとの配置 {
 
 impl 部品ごとの配置 {
     pub(super) fn 識別子から空で始める(識別子: 部品ID) -> Self {
-        Self {
-            識別子,
-            配置一覧: Vec::new(),
-        }
+        Self { 識別子, 配置一覧: Vec::new() }
     }
 
     pub(super) fn 配置を1件足す(&mut self, 配置: 個体配置) {

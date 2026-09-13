@@ -27,12 +27,7 @@ fn 検収を先に指定してからフレームダンプを重ねると失敗�
     assert!(描画設定を解析する(&検収だけの引数()).読み戻し検収.局所可視性の検収の形.is_some());
 
     for ダンプ引数 in ["--dump-frame", "--dump-hdr-frame", "--dump-depth-frame"] {
-        let 正順 = [
-            "--local-visibility-shape".to_string(),
-            "concave".to_string(),
-            ダンプ引数.to_string(),
-            "target/a".to_string(),
-        ];
+        let 正順 = ["--local-visibility-shape".to_string(), "concave".to_string(), ダンプ引数.to_string(), "target/a".to_string()];
         assert!(引数を解析する(&正順).is_err(), "{ダンプ引数}を後に重ねた起動が通った");
     }
 }
@@ -43,12 +38,7 @@ fn フレームダンプを先に指定してから検収を重ねると失敗�
     assert!(描画設定を解析する(&ダンプだけ).フレームダンプ先.書き出すか());
 
     for ダンプ引数 in ["--dump-frame", "--dump-hdr-frame", "--dump-depth-frame"] {
-        let 逆順 = [
-            ダンプ引数.to_string(),
-            "target/a".to_string(),
-            "--local-visibility-shape".to_string(),
-            "concave".to_string(),
-        ];
+        let 逆順 = [ダンプ引数.to_string(), "target/a".to_string(), "--local-visibility-shape".to_string(), "concave".to_string()];
         assert!(引数を解析する(&逆順).is_err(), "{ダンプ引数}を先に置いた起動が通った");
     }
 }

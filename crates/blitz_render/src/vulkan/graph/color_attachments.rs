@@ -20,16 +20,10 @@ use super::registry::画像レジストリ;
 /// 一致させる。食い違うとvalidationがdynamic renderingの添付のレイアウト不一致を報告する。
 #[derive(Clone, Copy)]
 pub(crate) enum カラー添付列 {
-    無し,                 // 深度だけを書くパス(シャドウ・深度プリパス)。
-    色だけ(画像ハンドル), // 色を1枚だけ書くパス。
-    色と動きベクトル {
-        色: 画像ハンドル,
-        動きベクトル: 画像ハンドル,
-    }, // 色と動きベクトルを書くパス(シーン描画と空)。
-    色と履歴 {
-        色: 画像ハンドル,
-        履歴: 画像ハンドル,
-    }, // 再構成後の色と、その色に今の奥行きを添えた履歴を書くパス(時間再構成)。
+    無し,                                                              // 深度だけを書くパス(シャドウ・深度プリパス)。
+    色だけ(画像ハンドル),                                              // 色を1枚だけ書くパス。
+    色と動きベクトル { 色: 画像ハンドル, 動きベクトル: 画像ハンドル }, // 色と動きベクトルを書くパス(シーン描画と空)。
+    色と履歴 { 色: 画像ハンドル, 履歴: 画像ハンドル },                 // 再構成後の色と、その色に今の奥行きを添えた履歴を書くパス(時間再構成)。
 }
 
 impl カラー添付列 {
@@ -52,12 +46,7 @@ impl カラー添付列 {
     /// 注意: 添付のレイアウトは選択肢ごとに違う。動きベクトルは毎フレーム消去して書く画像であるためカラー添付の
     /// 最適レイアウトを取り、履歴はフレームをまたいで中身を保つためGENERALに固定してある
     /// (`画像用途::履歴のカラー出力`が導くレイアウトと同じ値でなければならない)。
-    pub(super) fn 記述を並べる(
-        self,
-        レジストリ: &画像レジストリ,
-        ロード操作: vk::AttachmentLoadOp,
-        色のクリア値: vk::ClearValue,
-    ) -> Vec<vk::RenderingAttachmentInfo<'static>> {
+    pub(super) fn 記述を並べる(self, レジストリ: &画像レジストリ, ロード操作: vk::AttachmentLoadOp, 色のクリア値: vk::ClearValue) -> Vec<vk::RenderingAttachmentInfo<'static>> {
         let 添付の最適 = vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL;
         let 動いていない値 = vk::ClearValue {
             color: vk::ClearColorValue { float32: [0.0; 4] },
@@ -69,21 +58,12 @@ impl カラー添付列 {
             Self::色と動きベクトル { 色, 動きベクトル } => {
                 vec![色の記述(色), 記述を作る(レジストリ, 動きベクトル, ロード操作, 動いていない値, 添付の最適)]
             }
-            Self::色と履歴 { 色, 履歴 } => vec![
-                色の記述(色),
-                記述を作る(レジストリ, 履歴, ロード操作, 色のクリア値, vk::ImageLayout::GENERAL),
-            ],
+            Self::色と履歴 { 色, 履歴 } => vec![色の記述(色), 記述を作る(レジストリ, 履歴, ロード操作, 色のクリア値, vk::ImageLayout::GENERAL)],
         }
     }
 }
 
-fn 記述を作る(
-    レジストリ: &画像レジストリ,
-    ハンドル: 画像ハンドル,
-    ロード操作: vk::AttachmentLoadOp,
-    クリア値: vk::ClearValue,
-    レイアウト: vk::ImageLayout,
-) -> vk::RenderingAttachmentInfo<'static> {
+fn 記述を作る(レジストリ: &画像レジストリ, ハンドル: 画像ハンドル, ロード操作: vk::AttachmentLoadOp, クリア値: vk::ClearValue, レイアウト: vk::ImageLayout) -> vk::RenderingAttachmentInfo<'static> {
     vk::RenderingAttachmentInfo::default()
         .image_view(レジストリ.ビューを取得する(ハンドル))
         .image_layout(レイアウト)

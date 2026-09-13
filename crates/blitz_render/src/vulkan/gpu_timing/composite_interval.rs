@@ -17,9 +17,7 @@ pub(crate) struct 合成区間の宣言 {
 
 impl 合成区間の宣言 {
     pub(crate) fn 生成する(合成名: &'static str, 構成する区間名: Vec<&'static str>) -> Self {
-        Self {
-            合成名, 構成する区間名
-        }
+        Self { 合成名, 構成する区間名 }
     }
 }
 

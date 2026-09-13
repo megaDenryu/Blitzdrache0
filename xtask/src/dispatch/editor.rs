@@ -10,9 +10,7 @@ use crate::editor::{self, building_outline_catalog};
 pub(super) fn エディターコマンドを割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
         "editor" => Some(実行結果をコードへ変換する(editor::エディターサーバーを起動する(引数一覧))),
-        "building-outline-catalog" => Some(実行結果をコードへ変換する(
-            building_outline_catalog::建物外形カタログを書き出す(引数一覧),
-        )),
+        "building-outline-catalog" => Some(実行結果をコードへ変換する(building_outline_catalog::建物外形カタログを書き出す(引数一覧))),
         "bake-building" => Some(bake_building::建物1棟を焼いて起動する(引数一覧)),
         "contract-export" => Some(実行結果をコードへ変換する(contract_export::型契約を書き出す())),
         _ => None,

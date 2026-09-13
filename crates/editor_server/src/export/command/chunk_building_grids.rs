@@ -13,10 +13,7 @@ use super::super::error::書き出しエラー;
 use crate::resource::建物の配置;
 
 impl super::ソースアセット書き出しコマンド {
-    pub(super) fn チャンクが使う建物の格子を集める(
-        &self,
-        建物一覧: &[建物の配置],
-    ) -> Result<Vec<建物の格子ソース>, 書き出しエラー> {
+    pub(super) fn チャンクが使う建物の格子を集める(&self, 建物一覧: &[建物の配置]) -> Result<Vec<建物の格子ソース>, 書き出しエラー> {
         let mut 一覧: Vec<建物の格子ソース> = Vec::new();
         for 建物 in 建物一覧 {
             if 一覧.iter().any(|格子| 格子.建物定義ID.綴り() == 建物.建物定義ID.綴り()) {

@@ -11,8 +11,7 @@
 use std::{path::Path, process::Command, sync::Arc, time::Duration};
 
 use self::{
-    dev_server_port::開発サーバーの待ち受け口, kill_with_parent::親と道連れに終わる子孫の束, process_tree::子プロセスの木,
-    project_root::プロジェクトルート, shutdown_registry::停止台帳, web_root::エディター画面の置き場,
+    dev_server_port::開発サーバーの待ち受け口, kill_with_parent::親と道連れに終わる子孫の束, process_tree::子プロセスの木, project_root::プロジェクトルート, shutdown_registry::停止台帳, web_root::エディター画面の置き場
 };
 
 pub(crate) mod building_outline_catalog;

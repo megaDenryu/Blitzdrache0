@@ -30,9 +30,7 @@ mod shape_tests;
 #[cfg(test)]
 mod storage_tests;
 
-pub use blitz_collision::shape::{
-    任意姿勢の直方体, 大域の軸平行の直方体, 形状の座標の絶対値の上限メートル, 直方体の生成エラー, 直方体の軸ごとの半分の長さ, 軸平行の直方体,
-};
+pub use blitz_collision::shape::{任意姿勢の直方体, 大域の軸平行の直方体, 形状の座標の絶対値の上限メートル, 直方体の生成エラー, 直方体の軸ごとの半分の長さ, 軸平行の直方体};
 pub use child_shape::衝突対象の子形状;
 pub use child_shape_identifier::子形状識別子;
 pub use chunk_shapes::チャンクの静的物理形状;

@@ -32,9 +32,7 @@ impl 遠方環境の内容 {
                 }
             }
         }
-        Ok(Self {
-            面の一辺, テクセル一覧
-        })
+        Ok(Self { 面の一辺, テクセル一覧 })
     }
 
     pub fn 面の一辺(&self) -> 立方体画像の一辺 {
@@ -57,11 +55,7 @@ impl 遠方環境の内容 {
     /// GPUへ載る時点で丸められる。畳み込みの正本にこの丸めた内容を入れることで、CPUとGPUの差から
     /// 入力の丸めが消え、残る差が写しの誤りだけになる。
     pub fn 半精度へ丸める(&self) -> Result<Self, 派生表現エラー> {
-        let 丸めた = self
-            .テクセル一覧
-            .iter()
-            .map(|テクセル| テクセル.map(crate::numeric::half_precision::倍精度を半精度へ丸める))
-            .collect();
+        let 丸めた = self.テクセル一覧.iter().map(|テクセル| テクセル.map(crate::numeric::half_precision::倍精度を半精度へ丸める)).collect();
         Self::生成する(self.面の一辺, 丸めた)
     }
 

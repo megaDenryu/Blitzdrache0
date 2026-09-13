@@ -4,10 +4,7 @@ use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::書込先;
 use crate::asset::{joint::ジョイント, skin_data::スキンデータ, static_trs::静的TRS};
 
-pub(in crate::asset::runtime_format::scene) fn 書く(
-    出力: &mut 書込先,
-    スキン: Option<&スキンデータ>,
-) -> Result<(), アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 書く(出力: &mut 書込先, スキン: Option<&スキンデータ>) -> Result<(), アセット実行時形式エラー> {
     let Some(スキン) = スキン else {
         出力.u8(0);
         return Ok(());
@@ -23,9 +20,7 @@ pub(in crate::asset::runtime_format::scene) fn 書く(
     Ok(())
 }
 
-fn ジョイントを書く(
-    出力: &mut 書込先, ジョイント: &ジョイント, ジョイント添字: usize
-) -> Result<(), アセット実行時形式エラー> {
+fn ジョイントを書く(出力: &mut 書込先, ジョイント: &ジョイント, ジョイント添字: usize) -> Result<(), アセット実行時形式エラー> {
     match ジョイント.親添字 {
         None => 出力.u8(0),
         Some(親添字) if 親添字 < ジョイント添字 => {
@@ -33,9 +28,7 @@ fn ジョイントを書く(
             出力.件数(親添字)?;
         }
         Some(親添字) => {
-            return Err(アセット実行時形式エラー::親添字順序違反 {
-                ジョイント添字, 親添字
-            });
+            return Err(アセット実行時形式エラー::親添字順序違反 { ジョイント添字, 親添字 });
         }
     }
     super::matrix::行列を書く(出力, ジョイント.逆バインド行列)?;

@@ -12,9 +12,7 @@ use crate::visible_instance_selection::可視ID列を読むパス数;
 /// 個体数とパス数の積。どちらも実機の個体数から来る値であり、積がusizeを超えるのは呼び出し側が壊れた個体数を渡したときだけである。
 pub(super) fn 容量件数を求める(個体数: u32) -> usize {
     let 件数 = usize::try_from(個体数).unwrap_or_else(|_| panic!("個体数がusizeに収まらない: {個体数}"));
-    件数
-        .checked_mul(可視ID列を読むパス数)
-        .unwrap_or_else(|| panic!("可視ID列の容量件数がusizeに収まらない: 個体数{個体数}"))
+    件数.checked_mul(可視ID列を読むパス数).unwrap_or_else(|| panic!("可視ID列の容量件数がusizeに収まらない: 個体数{個体数}"))
 }
 
 pub(super) fn 初期バイト列を作る(個体数: u32) -> Vec<u8> {

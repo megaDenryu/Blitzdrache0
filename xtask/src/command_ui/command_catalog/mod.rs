@@ -20,21 +20,11 @@ pub(crate) use entry::コマンド項目;
 
 /// 全コマンドを分類の並び順で返す。分類の中の並び順は各分類ファイルの定義順のままである。
 pub(crate) fn 全件() -> Vec<コマンド項目> {
-    [
-        core::一覧,
-        asset::一覧,
-        benchmark::一覧,
-        measurement::一覧,
-        play::一覧,
-        render_check::一覧,
-        material_check::一覧,
-        sky_environment::一覧,
-        editor::一覧,
-    ]
-    .into_iter()
-    .flatten()
-    .copied()
-    .collect()
+    [core::一覧, asset::一覧, benchmark::一覧, measurement::一覧, play::一覧, render_check::一覧, material_check::一覧, sky_environment::一覧, editor::一覧]
+        .into_iter()
+        .flatten()
+        .copied()
+        .collect()
 }
 
 #[cfg(test)]

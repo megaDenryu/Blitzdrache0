@@ -20,10 +20,7 @@ fn 検査する定数() -> 遠方環境の即時定数 {
 }
 
 fn 実数の一覧(バイト列: &[u8]) -> Vec<f32> {
-    バイト列
-        .chunks_exact(4)
-        .map(|語| f32::from_le_bytes([語[0], 語[1], 語[2], 語[3]]))
-        .collect()
+    バイト列.chunks_exact(4).map(|語| f32::from_le_bytes([語[0], 語[1], 語[2], 語[3]])).collect()
 }
 
 #[test]

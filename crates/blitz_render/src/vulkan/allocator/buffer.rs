@@ -10,32 +10,14 @@ use crate::gpu_memory_stats::GPUメモリ用途;
 
 impl GPU資源の確保係<'_> {
     /// GPUの中だけで読み書きするバッファを確保する。中身は呼び出し側が転送で書くまで未定義である。
-    pub(crate) fn デバイスローカルバッファを確保する(
-        &self,
-        バイト数: u64,
-        用途: vk::BufferUsageFlags,
-    ) -> Result<専用メモリ付きバッファ, レンダラーエラー> {
-        self.バッファを作って専用メモリを結び付ける(
-            バイト数,
-            用途,
-            メモリの置き場::デバイスローカル,
-            GPUメモリ用途::デバイスバッファ,
-        )
+    pub(crate) fn デバイスローカルバッファを確保する(&self, バイト数: u64, 用途: vk::BufferUsageFlags) -> Result<専用メモリ付きバッファ, レンダラーエラー> {
+        self.バッファを作って専用メモリを結び付ける(バイト数, 用途, メモリの置き場::デバイスローカル, GPUメモリ用途::デバイスバッファ)
     }
 
     /// ホストから書けるバッファを確保し、渡したバイト列で初期化する。ステージングとシェーダー定数が使う。
-    pub(crate) fn ホスト可視バッファを確保して書き込む(
-        &self,
-        データ: &[u8],
-        用途: vk::BufferUsageFlags,
-    ) -> Result<専用メモリ付きバッファ, レンダラーエラー> {
+    pub(crate) fn ホスト可視バッファを確保して書き込む(&self, データ: &[u8], 用途: vk::BufferUsageFlags) -> Result<専用メモリ付きバッファ, レンダラーエラー> {
         let バイト数 = u64::try_from(データ.len()).unwrap_or_else(|_| panic!("バッファサイズがu64に収まらない"));
-        let 確保済み = self.バッファを作って専用メモリを結び付ける(
-            バイト数,
-            用途,
-            メモリの置き場::ホスト可視,
-            GPUメモリ用途::ホストバッファ,
-        )?;
+        let 確保済み = self.バッファを作って専用メモリを結び付ける(バイト数, 用途, メモリの置き場::ホスト可視, GPUメモリ用途::ホストバッファ)?;
         if let Err(誤り) = 確保済み.ホスト可視の中身を書き換える(self.device, データ) {
             確保済み.破棄する(self.device);
             return Err(誤り);
@@ -44,25 +26,14 @@ impl GPU資源の確保係<'_> {
     }
 
     /// GPUが書いた結果をホストへ持ち帰るためのバッファを確保する。中身は転送で埋まるため初期化しない。
-    pub(crate) fn 読み戻し先のホスト可視バッファを確保する(
-        &self,
-        バイト数: u64,
-        用途: vk::BufferUsageFlags,
-    ) -> Result<専用メモリ付きバッファ, レンダラーエラー> {
+    pub(crate) fn 読み戻し先のホスト可視バッファを確保する(&self, バイト数: u64, 用途: vk::BufferUsageFlags) -> Result<専用メモリ付きバッファ, レンダラーエラー> {
         self.バッファを作って専用メモリを結び付ける(バイト数, 用途, メモリの置き場::ホスト可視, GPUメモリ用途::読み戻しバッファ)
     }
 
     fn バッファを作って専用メモリを結び付ける(
-        &self,
-        バイト数: u64,
-        用途: vk::BufferUsageFlags,
-        置き場: メモリの置き場,
-        メモリ用途: GPUメモリ用途,
+        &self, バイト数: u64, 用途: vk::BufferUsageFlags, 置き場: メモリの置き場, メモリ用途: GPUメモリ用途
     ) -> Result<専用メモリ付きバッファ, レンダラーエラー> {
-        let create_info = vk::BufferCreateInfo::default()
-            .size(バイト数)
-            .usage(用途)
-            .sharing_mode(vk::SharingMode::EXCLUSIVE);
+        let create_info = vk::BufferCreateInfo::default().size(バイト数).usage(用途).sharing_mode(vk::SharingMode::EXCLUSIVE);
         // 安全性: deviceは生成済みで有効。
         let buffer = unsafe { self.device.create_buffer(&create_info, None)? };
         // 安全性: bufferは直前に生成済み。

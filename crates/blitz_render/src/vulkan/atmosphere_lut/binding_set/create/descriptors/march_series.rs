@@ -38,7 +38,5 @@ pub(super) fn 経路生成を順に作る<const 個数: usize>(
         }
     }
     let 件数 = 作った.len();
-    Ok(作った
-        .try_into()
-        .unwrap_or_else(|_| panic!("経路生成ディスクリプタを{}つ要求したのに{件数}つできた", 書き込み先一覧.len())))
+    Ok(作った.try_into().unwrap_or_else(|_| panic!("経路生成ディスクリプタを{}つ要求したのに{件数}つできた", 書き込み先一覧.len())))
 }

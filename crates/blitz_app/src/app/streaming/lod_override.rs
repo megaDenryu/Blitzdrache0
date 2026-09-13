@@ -5,9 +5,7 @@ use blitz_render::地形詳細段;
 
 use crate::cli::LOD継ぎ目検査設定;
 
-pub(super) fn 検査段を適用する(
-    座標: チャンク座標, 通常段: 地形詳細段, 検査: Option<LOD継ぎ目検査設定>
-) -> 地形詳細段 {
+pub(super) fn 検査段を適用する(座標: チャンク座標, 通常段: 地形詳細段, 検査: Option<LOD継ぎ目検査設定>) -> 地形詳細段 {
     let Some(検査) = 検査 else {
         return 通常段;
     };

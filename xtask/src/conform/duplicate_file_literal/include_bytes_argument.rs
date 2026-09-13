@@ -20,11 +20,7 @@ use crate::conform::source_lexing::字句の断片;
 
 pub(super) fn 取り込みの引数の区間一覧(断片一覧: &[字句の断片]) -> Vec<(usize, usize)> {
     let 並び = コードの並び::組む(断片一覧);
-    並び
-        .組み込みの呼び出しの添字一覧()
-        .into_iter()
-        .filter_map(|添字| 並び.引数の区間を求める(添字))
-        .collect()
+    並び.組み込みの呼び出しの添字一覧().into_iter().filter_map(|添字| 並び.引数の区間を求める(添字)).collect()
 }
 
 pub(super) fn 区間の中か(区間一覧: &[(usize, usize)], 位置: usize) -> bool {

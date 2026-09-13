@@ -9,14 +9,11 @@ use crate::散布の焼き方;
 
 use super::super::catalog::ソース種別;
 use super::{
-    asset_declaration, fox_tour_declaration, night_lights_declaration, part_frame_row_declaration, part_house_row_declaration,
-    part_tree_row_declaration, stone_hut_declaration, vegetation_declaration, vertex_diagnostic_declaration, village_declaration,
-    visual_sample_declaration, 対象世界,
+    asset_declaration, fox_tour_declaration, night_lights_declaration, part_frame_row_declaration, part_house_row_declaration, part_tree_row_declaration, stone_hut_declaration, vegetation_declaration, vertex_diagnostic_declaration,
+    village_declaration, visual_sample_declaration, 対象世界,
 };
 
-pub(super) fn チャンクのソース種別を選ぶ(
-    世界: 対象世界, 同居植生個体数: usize, 散布: 散布の焼き方
-) -> ソース種別 {
+pub(super) fn チャンクのソース種別を選ぶ(世界: 対象世界, 同居植生個体数: usize, 散布: 散布の焼き方) -> ソース種別 {
     match 世界 {
         対象世界::板の世界 | 対象世界::ブロック圧縮の対照世界 => ソース種別::Gltfシーン,
         対象世界::地形の世界 => ソース種別::高さ格子 {
@@ -25,13 +22,11 @@ pub(super) fn チャンクのソース種別を選ぶ(
         対象世界::エディターの世界 | 対象世界::建物一棟の検証世界 => ソース種別::エディターチャンク,
         対象世界::植生の世界 => vegetation_declaration::植生種別(vegetation_declaration::計数判定の個体数),
         対象世界::見本の集落の世界 => ソース種別::見本の集落 {
-            群一覧: village_declaration::集落の小物一覧,
+            群一覧: village_declaration::集落の小物一覧
         },
         対象世界::部品で組んだ家の並びの世界(規模) => part_house_row_declaration::チャンクのソース種別(規模),
         対象世界::部品で組んだ木の並びの世界 => part_tree_row_declaration::チャンクのソース種別(),
-        対象世界::部品で組んだ一間四方の骨格の並びの世界(種類) => {
-            part_frame_row_declaration::チャンクのソース種別(種類)
-        }
+        対象世界::部品で組んだ一間四方の骨格の並びの世界(種類) => part_frame_row_declaration::チャンクのソース種別(種類),
         対象世界::目視見本の世界 => ソース種別::目視見本 {
             材質見本の立体の安定id: visual_sample_declaration::材質見本の立体,
             遠景地面の安定id: visual_sample_declaration::遠景地面,

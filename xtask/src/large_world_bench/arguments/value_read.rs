@@ -2,9 +2,7 @@
 
 pub(super) fn 正の数を読む<T: std::str::FromStr + Default + PartialOrd>(名前: &str, 値: &str) -> Result<T, String> {
     let 数 = 値.parse::<T>().map_err(|_| 数が読めない誤り文を組み立てる(名前, 値))?;
-    (数 > T::default())
-        .then_some(数)
-        .ok_or_else(|| format!("{名前}は1以上でなければならない"))
+    (数 > T::default()).then_some(数).ok_or_else(|| format!("{名前}は1以上でなければならない"))
 }
 
 pub(super) fn 有限値を読む(名前: &str, 値: &str) -> Result<f64, String> {

@@ -12,10 +12,7 @@ use crate::vulkan::bloom_targets::光のにじみピラミッド;
 use crate::vulkan::hdr_target::HDRターゲット;
 
 /// ピラミッドの生成に失敗したらHDR中間画像を片付ける。
-pub(super) fn 生成する(
-    確保係: &GPU資源の確保係<'_>,
-    寸法: vk::Extent2D,
-) -> Result<(HDRターゲット, 光のにじみピラミッド), レンダラーエラー> {
+pub(super) fn 生成する(確保係: &GPU資源の確保係<'_>, 寸法: vk::Extent2D) -> Result<(HDRターゲット, 光のにじみピラミッド), レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let hdr = HDRターゲット::生成する(確保係, 寸法)?;
     match 光のにじみピラミッド::生成する(確保係, 寸法) {

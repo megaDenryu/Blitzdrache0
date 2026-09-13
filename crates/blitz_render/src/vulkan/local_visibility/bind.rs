@@ -29,7 +29,6 @@ impl 局所可視性一式 {
 
 fn 記憶画像(ビュー: vk::ImageView) -> 結ぶ現物 {
     結ぶ現物::サンプラー無しの画像 {
-        ビュー,
-        レイアウト: vk::ImageLayout::GENERAL,
+        ビュー, レイアウト: vk::ImageLayout::GENERAL
     }
 }

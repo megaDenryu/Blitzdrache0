@@ -8,9 +8,7 @@ use ash::vk;
 
 use super::buffers::スキニングバッファ;
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{
-    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号
-};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号};
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 const バインディング数: u32 = 4;
@@ -49,16 +47,11 @@ impl スキニングディスクリプタ {
     }
 }
 
-pub(super) fn スキニングディスクリプタを確保する(
-    device: &ash::Device,
-    バッファ: &スキニングバッファ,
-) -> Result<スキニングディスクリプタ, レンダラーエラー> {
+pub(super) fn スキニングディスクリプタを確保する(device: &ash::Device, バッファ: &スキニングバッファ) -> Result<スキニングディスクリプタ, レンダラーエラー> {
     let layout = 束縛の宣言.セットレイアウトを確保する(device)?;
 
     let セット数 = u32::try_from(進行中フレーム数).unwrap_or_else(|_| panic!("進行中フレーム数がu32に収まらない"));
-    let pool_size = vk::DescriptorPoolSize::default()
-        .ty(vk::DescriptorType::STORAGE_BUFFER)
-        .descriptor_count(バインディング数 * セット数);
+    let pool_size = vk::DescriptorPoolSize::default().ty(vk::DescriptorType::STORAGE_BUFFER).descriptor_count(バインディング数 * セット数);
     let pool_size一覧 = [pool_size];
     let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(セット数).pool_sizes(&pool_size一覧);
     // 安全性: deviceは生成済みで有効。失敗時はlayoutを片付ける。

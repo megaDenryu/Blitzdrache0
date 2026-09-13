@@ -31,23 +31,17 @@ impl IntoResponse for チャンク高さ格子の取り出しエラー {
     fn into_response(self) -> Response {
         match self {
             Self::読み込みに失敗(エラー) => エラー.into_response(),
-            Self::切り出しに失敗(エラー) => {
-                失敗応答を組み立てる(StatusCode::INTERNAL_SERVER_ERROR, "高さ切り出しエラー", エラー.to_string())
-            }
+            Self::切り出しに失敗(エラー) => 失敗応答を組み立てる(StatusCode::INTERNAL_SERVER_ERROR, "高さ切り出しエラー", エラー.to_string()),
         }
     }
 }
 
 impl サーバー状態 {
-    pub(crate) fn チャンクの高さ格子を読み未保存ならマザーから切り出す(
-        &self,
-        座標: チャンク座標,
-    ) -> Result<Option<Vec<u8>>, チャンク高さ格子の取り出しエラー> {
+    pub(crate) fn チャンクの高さ格子を読み未保存ならマザーから切り出す(&self, 座標: チャンク座標) -> Result<Option<Vec<u8>>, チャンク高さ格子の取り出しエラー> {
         if let Some(バイト列) = self.保管庫().チャンクの高さ格子を読む(座標)? {
             return Ok(Some(バイト列));
         }
-        let (Some(構造), Some(マザーバイト列)) = (self.保管庫().大域世界の構造を読む()?, self.保管庫().大域世界の高さ格子を読む()?)
-        else {
+        let (Some(構造), Some(マザーバイト列)) = (self.保管庫().大域世界の構造を読む()?, self.保管庫().大域世界の高さ格子を読む()?) else {
             return Ok(None);
         };
         let 高さ編集 = マザーからチャンクの高さ編集を切り出す(構造.区画割り, &マザーバイト列, 座標)?;

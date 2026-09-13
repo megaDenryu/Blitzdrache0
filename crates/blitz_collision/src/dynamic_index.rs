@@ -75,9 +75,7 @@ mod sample_fixture;
 #[cfg(test)]
 mod shape_dump_fixture;
 
-pub use error::{
-    動く形の空間索引の問い合わせエラー, 動く形の空間索引の操作エラー, 箱に持たせるゆとりの幅の生成エラー
-};
+pub use error::{動く形の空間索引の問い合わせエラー, 動く形の空間索引の操作エラー, 箱に持たせるゆとりの幅の生成エラー};
 pub use identifier::動く形の識別子;
 pub use index::動く形の空間索引;
 pub use margin::箱に持たせるゆとりの幅;

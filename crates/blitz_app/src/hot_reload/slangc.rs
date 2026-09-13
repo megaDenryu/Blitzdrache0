@@ -29,11 +29,7 @@ pub(super) fn スランガーの実行位置を発見する() -> Result<スラ�
         }
     }
 
-    let path経由で動くか = Command::new("slangc")
-        .arg("-v")
-        .output()
-        .map(|出力| 出力.status.success())
-        .unwrap_or(false);
+    let path経由で動くか = Command::new("slangc").arg("-v").output().map(|出力| 出力.status.success()).unwrap_or(false);
     if path経由で動くか {
         return Ok(スランガー位置::パス経由);
     }

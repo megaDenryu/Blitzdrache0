@@ -5,20 +5,13 @@
 
 use super::ストリーミング調停;
 
-use crate::streaming::{
-    chunk_diff::準備完了結果, chunk_state::チャンク状態, coordinator_error::ストリーミング調停エラー, reset_generation::リセット世代,
-};
+use crate::streaming::{chunk_diff::準備完了結果, chunk_state::チャンク状態, coordinator_error::ストリーミング調停エラー, reset_generation::リセット世代};
 use crate::チャンク座標;
 
 impl ストリーミング調停 {
     /// 台帳が準備済みから外した記録の保管を同じフレームのうちに捨てる。走査順が不定なため座標順へ整列し、報告の順序を再現可能にする。
     pub(super) fn 不要なcpuデータを捨てる(&mut self) -> Vec<チャンク座標> {
-        let mut 破棄一覧: Vec<_> = self
-            .準備済みシーン
-            .keys()
-            .copied()
-            .filter(|座標| self.台帳.状態を参照する(*座標) != Some(チャンク状態::準備済み))
-            .collect();
+        let mut 破棄一覧: Vec<_> = self.準備済みシーン.keys().copied().filter(|座標| self.台帳.状態を参照する(*座標) != Some(チャンク状態::準備済み)).collect();
         破棄一覧.sort_by_key(|座標| 座標.番号を返す());
         for 座標 in &破棄一覧 {
             self.準備済みシーン.remove(座標);
@@ -29,11 +22,7 @@ impl ストリーミング調停 {
 
     /// ここで準備済みへ進めた記録と`準備済みシーン`の保管が、`gpu_handoff`の`gpu転送のためにシーンデータを取り出す`の入力になる。
     /// `現世代`と一致する完了だけを反映する。座標はリセットの前後で同じ値になるため、座標だけでは古い内容の完了を区別できない。
-    pub(super) fn 完了を回収する(
-        &mut self,
-        破棄一覧: &mut Vec<チャンク座標>,
-        現世代: リセット世代,
-    ) -> Result<Vec<チャンク座標>, ストリーミング調停エラー> {
+    pub(super) fn 完了を回収する(&mut self, 破棄一覧: &mut Vec<チャンク座標>, 現世代: リセット世代) -> Result<Vec<チャンク座標>, ストリーミング調停エラー> {
         let mut 準備完了一覧 = Vec::new();
         while let Some(完了) = self.読込器.完了を取り出す()? {
             let 座標 = 完了.チャンク();
@@ -43,8 +32,7 @@ impl ストリーミング調停 {
             // 旧世代の読込失敗もエラーへ伝播させない。差し替え中のファイルを旧ジョブが読み損ねるのはリセットの正常な後始末であり、同じ座標の新世代の読込とは独立である。
             if 世代 != 現世代 {
                 if let Ok(成果) = 完了.結果() {
-                    let 読込バイト数 =
-                        u64::try_from(成果.読込バイト数).map_err(|_| ストリーミング調停エラー::読込バイト数超過(座標))?;
+                    let 読込バイト数 = u64::try_from(成果.読込バイト数).map_err(|_| ストリーミング調停エラー::読込バイト数超過(座標))?;
                     self.ディスク読込を記録する(読込バイト数)?;
                     破棄一覧.push(座標);
                 }

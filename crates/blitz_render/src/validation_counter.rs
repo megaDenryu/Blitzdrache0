@@ -43,9 +43,7 @@ pub struct 検証カウンタ {
 impl 検証カウンタ {
     /// ゼロで初期化したカウンタを生成する。
     pub(crate) fn 生成する() -> Self {
-        Self {
-            件数: Arc::new(AtomicU64::new(0)),
-        }
+        Self { 件数: Arc::new(AtomicU64::new(0)) }
     }
 
     /// debug utilsメッセンジャーのuser_dataに渡すため、内部Arcを複製して返す。

@@ -80,9 +80,7 @@ pub use acceptance::混合連立方程式の受理の結果;
 #[cfg(test)]
 pub(in crate::contact) use decade_histogram::桁ごとの度数;
 #[cfg(test)]
-pub(in crate::contact) use double_reference::{
-    倍精度の円錐の判定, 倍精度の参照の結末, 倍精度の解の内訳, 参照計算の許容差の由来
-};
+pub(in crate::contact) use double_reference::{倍精度の円錐の判定, 倍精度の参照の結末, 倍精度の解の内訳, 参照計算の許容差の由来};
 #[cfg(test)]
 pub(in crate::contact) use eigen_distribution::偽の固有値の下限に対する固有の向きの分布;
 #[cfg(test)]
@@ -96,9 +94,7 @@ pub use tangential_row::錨の接線変位を零へ戻す一行;
 #[cfg(test)]
 pub(in crate::contact) use tolerance_application::{接線の行への許容差の適用規則, 試験の許容差の適用規則};
 #[cfg(test)]
-pub(in crate::contact) use tolerance_candidate::{
-    偽の固有値の下限を導く取り決め, 擬似逆行列を構成するときに右辺の向きを捨てる判定の適用規則, 解けたと見なす許容差を導く座標の由来,
-};
+pub(in crate::contact) use tolerance_candidate::{偽の固有値の下限を導く取り決め, 擬似逆行列を構成するときに右辺の向きを捨てる判定の適用規則, 解けたと見なす許容差を導く座標の由来};
 #[cfg(test)]
 pub(in crate::contact) use tolerance_reach::{受理の倍率の届く先, 行を積む閾値の倍率};
 #[cfg(test)]

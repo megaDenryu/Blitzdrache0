@@ -17,8 +17,7 @@ const 対象ファイル: &str = "crates/blitz_render/src/renderer/replace_scene
 const 待ちの語一覧: [&str; 2] = ["gpuの全作業完了を待つ()", "device_wait_idle"];
 
 pub fn シーン差し替えのgpu全作業完了待ちを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
-    let 内容 = std::fs::read_to_string(対象ファイル)
-        .map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(対象ファイル), 誤り))?;
+    let 内容 = std::fs::read_to_string(対象ファイル).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(対象ファイル), 誤り))?;
     Ok(ファイル1つを検査する(Path::new(対象ファイル), &内容))
 }
 
@@ -31,11 +30,7 @@ fn ファイル1つを検査する(パス: &Path, 内容: &str) -> Vec<違反> {
         }
         for 語 in 待ちの語一覧 {
             if 行.contains(語) {
-                違反一覧.push(違反::行単位(
-                    PathBuf::from(パス),
-                    行番号 + 1,
-                    format!("シーンの差し替えがGPUの全作業完了待ち({語})を呼んでいる"),
-                ));
+                違反一覧.push(違反::行単位(PathBuf::from(パス), 行番号 + 1, format!("シーンの差し替えがGPUの全作業完了待ち({語})を呼んでいる")));
             }
         }
     }

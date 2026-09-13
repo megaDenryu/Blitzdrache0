@@ -27,11 +27,7 @@ pub fn クソゲー1本目の地図を生成する(引数一覧: &[String]) -> E
             return ExitCode::FAILURE;
         }
     };
-    if 種からマップを生成する(種) {
-        ExitCode::SUCCESS
-    } else {
-        ExitCode::FAILURE
-    }
+    if 種からマップを生成する(種) { ExitCode::SUCCESS } else { ExitCode::FAILURE }
 }
 
 /// ソースアセットを種から書き出し、続けて実行時形式へ焼く。焼く工程は既存のコンパイル入口をそのまま呼ぶ。
@@ -52,7 +48,5 @@ fn 引数一覧から種を読む(引数一覧: &[String]) -> Result<マップ�
     if 綴り != 種の選択肢の綴り {
         return Err(種の引数の破れ::知らない引数を渡された { 綴り: 綴り.clone() });
     }
-    値.parse::<u32>()
-        .map(マップ生成の乱数の種::生成する)
-        .map_err(|誤り| 種の引数の破れ::種を32ビットの非負整数として読めない { 綴り: 値.clone(), 誤り })
+    値.parse::<u32>().map(マップ生成の乱数の種::生成する).map_err(|誤り| 種の引数の破れ::種を32ビットの非負整数として読めない { 綴り: 値.clone(), 誤り })
 }

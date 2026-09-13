@@ -31,11 +31,7 @@ impl 提示資源 {
                 return Err(誤り);
             }
         };
-        Ok(Self {
-            swapchain,
-            深度バッファ,
-            提示同期,
-        })
+        Ok(Self { swapchain, 深度バッファ, 提示同期 })
     }
 
     /// 旧資源を破棄してから作り直す。Vulkanのold_swapchain経路は使わない(破棄済みハンドルを渡せない)。

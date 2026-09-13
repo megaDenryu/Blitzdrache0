@@ -15,11 +15,7 @@ use crate::asset_generator::{アセット生成器の起動, 生成の指定, �
 use supply::生成物のソースアセットを揃える係;
 
 pub fn 検証用ソースアセットを生成する() -> ExitCode {
-    if 検証用ソースアセットを生成して成否を返す() {
-        ExitCode::SUCCESS
-    } else {
-        ExitCode::FAILURE
-    }
+    if 検証用ソースアセットを生成して成否を返す() { ExitCode::SUCCESS } else { ExitCode::FAILURE }
 }
 
 pub fn 検証用ソースアセットを生成して成否を返す() -> bool {
@@ -47,11 +43,7 @@ fn 生成器を走らせる() -> Result<(), 生成器エラー> {
 
 /// 生成物のソースアセットを揃える入口。破れを1行の報せと終了コードへ写すことだけを担当する。
 pub fn 生成物のソースアセットを揃える() -> ExitCode {
-    if 生成物のソースアセットを揃えて成否を返す() {
-        ExitCode::SUCCESS
-    } else {
-        ExitCode::FAILURE
-    }
+    if 生成物のソースアセットを揃えて成否を返す() { ExitCode::SUCCESS } else { ExitCode::FAILURE }
 }
 
 pub fn 生成物のソースアセットを揃えて成否を返す() -> bool {

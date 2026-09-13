@@ -15,19 +15,11 @@ use crate::vulkan::allocator::GPU資源の確保係;
 pub(crate) struct パイプラインレイアウト(vk::PipelineLayout);
 
 impl パイプラインレイアウト {
-    pub(crate) fn 確保する(
-        確保係: &GPU資源の確保係<'_>,
-        ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
-        プッシュ定数範囲: vk::PushConstantRange,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 確保する(確保係: &GPU資源の確保係<'_>, ディスクリプタlayout一覧: &[vk::DescriptorSetLayout], プッシュ定数範囲: vk::PushConstantRange) -> Result<Self, レンダラーエラー> {
         let プッシュ定数範囲一覧 = [プッシュ定数範囲];
-        let create_info = vk::PipelineLayoutCreateInfo::default()
-            .set_layouts(ディスクリプタlayout一覧)
-            .push_constant_ranges(&プッシュ定数範囲一覧);
+        let create_info = vk::PipelineLayoutCreateInfo::default().set_layouts(ディスクリプタlayout一覧).push_constant_ranges(&プッシュ定数範囲一覧);
         // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
-        Ok(Self(unsafe {
-            確保係.論理デバイス().create_pipeline_layout(&create_info, None)?
-        }))
+        Ok(Self(unsafe { 確保係.論理デバイス().create_pipeline_layout(&create_info, None)? }))
     }
 
     /// パイプライン生成・ディスクリプタセットの束縛・プッシュ定数の積み込みへ渡す境界。

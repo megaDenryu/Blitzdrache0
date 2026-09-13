@@ -17,10 +17,7 @@ pub(super) fn 予約された選択肢か(綴り: &str) -> bool {
 
 /// 予約された選択肢の綴りの全部。失敗の文面が「何が予約されているか」を並べるためにも読む。
 pub(super) fn 予約された選択肢の綴り一覧() -> Vec<&'static str> {
-    let mut 一覧 = vec![
-        super::launch_specification::シーンの選択肢の綴り,
-        super::app_launch::読む世界の置き場の選択肢の綴り,
-    ];
+    let mut 一覧 = vec![super::launch_specification::シーンの選択肢の綴り, super::app_launch::読む世界の置き場の選択肢の綴り];
     一覧.extend(描き終わりの決め方::選択肢の綴り一覧());
     一覧.extend(書き出しの形式::選択肢の綴り一覧());
     一覧

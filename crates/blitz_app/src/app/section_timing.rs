@@ -3,9 +3,7 @@
 
 use std::time::Duration;
 
-use super::frame_timing::{
-    ウォームアップフレーム数, フレーム時間統計, フレーム間隔から統計を集計する, 標本容量
-};
+use super::frame_timing::{ウォームアップフレーム数, フレーム時間統計, フレーム間隔から統計を集計する, 標本容量};
 use crate::cli::起動モード;
 
 pub(crate) struct 区間計測 {

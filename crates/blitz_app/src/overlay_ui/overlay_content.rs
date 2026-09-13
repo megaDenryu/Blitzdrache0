@@ -9,8 +9,8 @@ use super::{game_instrument_panel, game_screen, panel};
 use crate::game::移動とカメラの計器;
 
 pub(crate) struct 画面へ重ねる内容 {
-    pub(crate) 開発パネルの統計: 開発UI統計, // パネルを表示しないフレームでも作るのは、計器の取り出しがフレームの決まった位置にあり、表示の有無で読む時点を変えないため
-    pub(crate) ゲーム画面: Option<ゲーム画面の表示内容>, // ゲームを遊ばない起動ではNoneであり、eguiはゲームの画面を1つも描かない
+    pub(crate) 開発パネルの統計: 開発UI統計,                   // パネルを表示しないフレームでも作るのは、計器の取り出しがフレームの決まった位置にあり、表示の有無で読む時点を変えないため
+    pub(crate) ゲーム画面: Option<ゲーム画面の表示内容>,       // ゲームを遊ばない起動ではNoneであり、eguiはゲームの画面を1つも描かない
     pub(crate) 移動とカメラの計器: Option<移動とカメラの計器>, // ゲームを遊ばない起動ではNoneであり、開発パネルと一緒に表示を切り替える
 }
 
@@ -21,13 +21,7 @@ impl 画面へ重ねる内容 {
     }
 
     /// そのフレームに重ねるものを順に描く。開発パネルを後に描くのは、ゲームの画面と重なる位置でも計器が読めるようにするためである。
-    pub(super) fn 順に描く(
-        &self,
-        ctx: &egui::Context,
-        開発パネルを表示するか: bool,
-        露出: &mut crate::cli::露出倍率,
-        ブレンド: &mut crate::cli::アニメーションのブレンド係数,
-    ) {
+    pub(super) fn 順に描く(&self, ctx: &egui::Context, 開発パネルを表示するか: bool, 露出: &mut crate::cli::露出倍率, ブレンド: &mut crate::cli::アニメーションのブレンド係数) {
         if let Some(表示内容) = self.ゲーム画面 {
             game_screen::内容を描く(ctx, 表示内容);
         }

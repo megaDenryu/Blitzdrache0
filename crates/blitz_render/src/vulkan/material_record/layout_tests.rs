@@ -8,14 +8,7 @@ use crate::vulkan::shader_struct::{シェーダー構造体の並び, 読み取�
 const 材質レコードの原文: &str = include_str!("../../../../../shaders/material_record.slang");
 
 fn 検査用のレコード() -> 世代内材質レコード {
-    世代内材質レコード::試験用に組み立てる(
-        [10.0, 11.0, 12.0, 13.0],
-        20.0,
-        21.0,
-        [true, false, true, true, false, false, false, false],
-        [5, 6, 7, 8, 9, 10, 11, 12],
-        [30.0, 31.0, 32.0, 33.0],
-    )
+    世代内材質レコード::試験用に組み立てる([10.0, 11.0, 12.0, 13.0], 20.0, 21.0, [true, false, true, true, false, false, false, false], [5, 6, 7, 8, 9, 10, 11, 12], [30.0, 31.0, 32.0, 33.0])
 }
 
 #[test]

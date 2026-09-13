@@ -31,19 +31,12 @@ pub(super) struct 布パイプライン群 {
 }
 
 pub(super) fn 布パイプライン群を生成する(
-    確保係: &GPU資源の確保係<'_>,
-    ディスクリプタレイアウト: vk::DescriptorSetLayout,
-    シェーダー: &布シェーダー一式,
+    確保係: &GPU資源の確保係<'_>, ディスクリプタレイアウト: vk::DescriptorSetLayout, シェーダー: &布シェーダー一式
 ) -> Result<布パイプライン群, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let ディスクリプタレイアウト一覧 = [ディスクリプタレイアウト];
-    let プッシュ定数 = [vk::PushConstantRange::default()
-        .stage_flags(vk::ShaderStageFlags::COMPUTE)
-        .offset(0)
-        .size(プッシュ定数のバイト数)];
-    let レイアウト情報 = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(&ディスクリプタレイアウト一覧)
-        .push_constant_ranges(&プッシュ定数);
+    let プッシュ定数 = [vk::PushConstantRange::default().stage_flags(vk::ShaderStageFlags::COMPUTE).offset(0).size(プッシュ定数のバイト数)];
+    let レイアウト情報 = vk::PipelineLayoutCreateInfo::default().set_layouts(&ディスクリプタレイアウト一覧).push_constant_ranges(&プッシュ定数);
     // 安全性: deviceは生成済みで有効。layout_infoは本関数内で構築した値のみを参照する。
     let layout = unsafe { device.create_pipeline_layout(&レイアウト情報, None)? };
 

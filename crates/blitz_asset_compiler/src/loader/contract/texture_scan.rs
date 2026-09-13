@@ -23,10 +23,7 @@ impl 開いた文書の契約検査<'_> {
         let pbr = 材質.pbr_metallic_roughness();
         let 用途一覧 = [
             ("ベースカラー", pbr.base_color_texture().map(|情報| (情報.texture(), 情報.tex_coord()))),
-            (
-                "金属粗さ",
-                pbr.metallic_roughness_texture().map(|情報| (情報.texture(), 情報.tex_coord())),
-            ),
+            ("金属粗さ", pbr.metallic_roughness_texture().map(|情報| (情報.texture(), 情報.tex_coord()))),
             ("法線マップ", 材質.normal_texture().map(|情報| (情報.texture(), 情報.tex_coord()))),
         ];
         for (用途, 参照) in 用途一覧 {
@@ -83,10 +80,6 @@ impl 開いた文書の契約検査<'_> {
     }
 
     fn 未対応形式の違反を記す(&mut self, 添字: usize, 内容: &str) {
-        self.違反を記す(
-            対象位置::画像 { 添字 },
-            format!("{内容}。デコーダはpngとjpegだけを持つ"),
-            "画像をpng形式かjpeg形式で書き出す",
-        );
+        self.違反を記す(対象位置::画像 { 添字 }, format!("{内容}。デコーダはpngとjpegだけを持つ"), "画像をpng形式かjpeg形式で書き出す");
     }
 }

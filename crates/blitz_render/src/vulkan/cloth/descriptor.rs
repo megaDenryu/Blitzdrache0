@@ -6,9 +6,7 @@ use ash::vk;
 
 use super::buffers::布バッファ;
 use crate::error::レンダラーエラー;
-use crate::vulkan::descriptor::{
-    宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号
-};
+use crate::vulkan::descriptor::{宣言から作ったセットレイアウト, 宣言から割り当てたセット, 宣言した束縛の並び, 束縛番号};
 use crate::vulkan::sync::{フレームスロット添字, 進行中フレーム数};
 
 pub(crate) const 定数の束縛番号: 束縛番号 = 束縛番号::生成する(0);
@@ -72,11 +70,7 @@ impl 布ディスクリプタ {
     }
 }
 
-pub(super) fn 布ディスクリプタを生成する(
-    device: &ash::Device,
-    バッファ: &布バッファ,
-    スキン済み頂点buffer: Option<vk::Buffer>,
-) -> Result<布ディスクリプタ, レンダラーエラー> {
+pub(super) fn 布ディスクリプタを生成する(device: &ash::Device, バッファ: &布バッファ, スキン済み頂点buffer: Option<vk::Buffer>) -> Result<布ディスクリプタ, レンダラーエラー> {
     let layout = 束縛の宣言.セットレイアウトを確保する(device)?;
     let セット数 = u32::try_from(進行中フレーム数).unwrap_or_else(|_| panic!("進行中フレーム数がu32に収まらない"));
     let 内訳 = 束縛の宣言.プールの内訳(セット数);

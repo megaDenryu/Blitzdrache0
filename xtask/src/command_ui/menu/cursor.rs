@@ -9,9 +9,7 @@ pub(crate) struct カーソル位置 {
 
 impl カーソル位置 {
     pub(crate) fn 生成する(件数: usize) -> Self {
-        Self {
-            位置: 0, 件数: 件数.max(1)
-        }
+        Self { 位置: 0, 件数: 件数.max(1) }
     }
 
     pub(crate) fn 位置(&self) -> usize {
@@ -19,10 +17,7 @@ impl カーソル位置 {
     }
 
     pub(crate) fn 上へ移動する(self) -> Self {
-        Self {
-            位置: self.位置.saturating_sub(1),
-            ..self
-        }
+        Self { 位置: self.位置.saturating_sub(1), ..self }
     }
 
     pub(crate) fn 下へ移動する(self) -> Self {
@@ -34,8 +29,7 @@ impl カーソル位置 {
 
     pub(crate) fn 指定数だけ上へ移動する(self, 個数: usize) -> Self {
         Self {
-            位置: self.位置.saturating_sub(個数),
-            ..self
+            位置: self.位置.saturating_sub(個数), ..self
         }
     }
 

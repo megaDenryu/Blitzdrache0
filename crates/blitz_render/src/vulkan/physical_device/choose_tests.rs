@@ -13,10 +13,7 @@ use crate::vulkan::descriptor_indexing::ディスクリプタ索引機能;
 fn 不足内訳を取り出す(候補一覧: &[選定候補]) -> Vec<(String, Vec<ディスクリプタ索引機能項目>)> {
     match 選ぶ(候補一覧) {
         Ok(添字) => panic!("失敗するはずの候補一覧で添字{添字}が選ばれた"),
-        Err(デバイス要件エラー::ディスクリプタ索引機能不足(内訳一覧)) => 内訳一覧
-            .iter()
-            .map(|内訳| (内訳.機材名().to_string(), 内訳.不足一覧().to_vec()))
-            .collect(),
+        Err(デバイス要件エラー::ディスクリプタ索引機能不足(内訳一覧)) => 内訳一覧.iter().map(|内訳| (内訳.機材名().to_string(), 内訳.不足一覧().to_vec())).collect(),
         Err(誤り) => panic!("候補別の不足以外のエラーが返った: {誤り}"),
     }
 }
@@ -65,10 +62,7 @@ fn 基礎要件を満たす候補が無ければ適合物理デバイスなし�
 
 #[test]
 fn 全候補が欠けたときのメッセージに機材名と機能名が並ぶ() {
-    let 文言 = 選ぶ(&[候補(0, "discrete GPU", true, false)])
-        .err()
-        .map(|誤り| 誤り.to_string())
-        .unwrap_or_default();
+    let 文言 = 選ぶ(&[候補(0, "discrete GPU", true, false)]).err().map(|誤り| 誤り.to_string()).unwrap_or_default();
     assert!(文言.contains("discrete GPU"), "実際のメッセージ: {文言}");
     assert!(文言.contains("shaderSampledImageArrayNonUniformIndexing"), "実際のメッセージ: {文言}");
 }

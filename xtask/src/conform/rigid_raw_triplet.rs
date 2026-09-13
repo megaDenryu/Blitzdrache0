@@ -26,13 +26,7 @@ pub fn 剛体の単精度3つ組宣言を検査する(パス: &Path, 内容: &st
         .iter()
         .enumerate()
         .filter(|(_, 行)| 行.contains(三つ組の綴り))
-        .map(|(添字, _)| {
-            違反::行単位(
-                パス.to_path_buf(),
-                添字 + 1,
-                "剛体のモジュール群で単精度の3つ組を宣言している(座標系と単位を持つ型で持つ)".to_string(),
-            )
-        })
+        .map(|(添字, _)| 違反::行単位(パス.to_path_buf(), 添字 + 1, "剛体のモジュール群で単精度の3つ組を宣言している(座標系と単位を持つ型で持つ)".to_string()))
         .collect()
 }
 
@@ -43,23 +37,11 @@ mod tests {
     #[test]
     fn 剛体のモジュール群の3つ組だけを違反にする() {
         let 原文 = concat!("let 成分: [f32", "; 3] = [0.0; 3];\n");
-        assert_eq!(
-            剛体の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/rigid_xpbd/predictor.rs"), 原文).len(),
-            1
-        );
-        assert_eq!(
-            剛体の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/contact/non_penetration.rs"), 原文).len(),
-            1
-        );
+        assert_eq!(剛体の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/rigid_xpbd/predictor.rs"), 原文).len(), 1);
+        assert_eq!(剛体の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/contact/non_penetration.rs"), 原文).len(), 1);
         assert!(剛体の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/gpu_layout/rigid/mod.rs"), 原文).is_empty());
         assert!(剛体の単精度3つ組宣言を検査する(Path::new("crates/blitz_collision/src/height_field/contact/cell.rs"), 原文).is_empty());
-        assert!(
-            剛体の単精度3つ組宣言を検査する(
-                Path::new("crates/blitz_sim/src/rigid_body/body.rs"),
-                "let 位置 = 位置::生成する(x, y, z);\n"
-            )
-            .is_empty()
-        );
+        assert!(剛体の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/rigid_body/body.rs"), "let 位置 = 位置::生成する(x, y, z);\n").is_empty());
     }
 
     #[test]

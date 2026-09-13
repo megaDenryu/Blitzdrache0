@@ -13,10 +13,7 @@ use crate::error::レンダラーエラー;
 
 impl GPU資源の確保係<'_> {
     /// 持ち主が組んだ作り方で画像を確保する。メモリはまだ結び付いていない。
-    pub(crate) fn 画像の作り方から画像を確保する(
-        &self,
-        作り方: &vk::ImageCreateInfo<'_>,
-    ) -> Result<vk::Image, レンダラーエラー> {
+    pub(crate) fn 画像の作り方から画像を確保する(&self, 作り方: &vk::ImageCreateInfo<'_>) -> Result<vk::Image, レンダラーエラー> {
         // 安全性: deviceは生成済みで有効。作り方は呼び出し元がこの呼び出しの間だけ生存する値として組み立てる。
         Ok(unsafe { self.device.create_image(作り方, None)? })
     }
@@ -24,10 +21,7 @@ impl GPU資源の確保係<'_> {
     /// 持ち主が組んだ見え方で画像ビューを確保する。
     ///
     /// 前提: 見え方が指す画像はメモリを結び付け済みである。
-    pub(crate) fn 画像の見え方から画像ビューを確保する(
-        &self,
-        見え方: &vk::ImageViewCreateInfo<'_>,
-    ) -> Result<vk::ImageView, レンダラーエラー> {
+    pub(crate) fn 画像の見え方から画像ビューを確保する(&self, 見え方: &vk::ImageViewCreateInfo<'_>) -> Result<vk::ImageView, レンダラーエラー> {
         // 安全性: deviceは生成済みで有効。見え方は呼び出し元がこの呼び出しの間だけ生存する値として組み立てる。
         Ok(unsafe { self.device.create_image_view(見え方, None)? })
     }

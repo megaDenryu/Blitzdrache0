@@ -29,16 +29,12 @@ impl 端末とログの両方へ流す出力係 {
     /// 書き足す形で開き、切り詰めないのは、このパスを`検証のログの置き場`が空のファイルを作って既に押さえているためである。
     /// 切り詰める形で開くと、押さえた側が一意にした意味が失われ、押さえの後に何かが書いた中身を消す経路が残る。
     pub fn ログのファイルを開く(パス: &Path) -> Result<Self, 検証列の破れ> {
-        let ファイル = std::fs::OpenOptions::new().create(true).append(true).open(パス).map_err(|誤り| {
-            検証列の破れ::ログのファイルを開けなかった {
-                パス: パス.to_path_buf(),
-                誤り,
-            }
-        })?;
-        Ok(Self::書き込み先を指定して作る(
-            Box::new(ファイル),
-            端末への複製係::本物の端末へ複製する(),
-        ))
+        let ファイル = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(パス)
+            .map_err(|誤り| 検証列の破れ::ログのファイルを開けなかった { パス: パス.to_path_buf(), 誤り })?;
+        Ok(Self::書き込み先を指定して作る(Box::new(ファイル), 端末への複製係::本物の端末へ複製する()))
     }
 
     pub fn 書き込み先を指定して作る(ログの書き込み先: Box<dyn Write + Send>, 端末への複製: 端末への複製係) -> Self {
@@ -63,11 +59,7 @@ impl 端末とログの両方へ流す出力係 {
 
     /// 子プロセスを起動し、その標準出力と標準エラーを1バイトも落とさず流す。返すのは段が成功したかである。
     pub fn 子プロセスの出力を流す(&self, 命令: &mut Command) -> Result<bool, 検証列の破れ> {
-        let mut 子 = 命令
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .map_err(検証列の破れ::段の子プロセスを起動できなかった)?;
+        let mut 子 = 命令.stdout(Stdio::piped()).stderr(Stdio::piped()).spawn().map_err(検証列の破れ::段の子プロセスを起動できなかった)?;
         let 標準出力 = 子.stdout.take().ok_or(検証列の破れ::段の子プロセスの出力の管が開かなかった)?;
         let 標準エラー = 子.stderr.take().ok_or(検証列の破れ::段の子プロセスの出力の管が開かなかった)?;
         let 流し切った結果 = std::thread::scope(|範囲| {

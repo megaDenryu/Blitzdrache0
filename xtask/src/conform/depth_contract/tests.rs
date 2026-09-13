@@ -14,8 +14,5 @@ fn 消去値の片側変更を拒む() {
 
 #[test]
 fn 比較演算の片側変更を拒む() {
-    assert!(!指定の綴りがあるか(
-        "depth_compare_op(vk::CompareOp::LESS)",
-        "depth_compare_op(vk::CompareOp::GREATER)",
-    ));
+    assert!(!指定の綴りがあるか("depth_compare_op(vk::CompareOp::LESS)", "depth_compare_op(vk::CompareOp::GREATER)",));
 }

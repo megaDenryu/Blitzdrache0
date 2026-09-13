@@ -6,24 +6,15 @@ use std::path::{Component, Path};
 
 use super::violation::違反;
 
-const 検出パターン一覧: [&str; 3] = [
-    concat!("allow(clippy::unwrap_us", "ed"),
-    concat!("allow(clippy::expect_us", "ed"),
-    concat!("allow(clippy::as_conversio", "ns"),
-];
+const 検出パターン一覧: [&str; 3] = [concat!("allow(clippy::unwrap_us", "ed"), concat!("allow(clippy::expect_us", "ed"), concat!("allow(clippy::as_conversio", "ns")];
 
 pub fn 不正allowを含むか(行: &str) -> Option<&'static str> {
     検出パターン一覧.iter().find(|パターン| 行.contains(*パターン)).copied()
 }
 
 pub fn パスがテストまたは例か(パス: &Path) -> bool {
-    let ディレクトリで許容 = パス
-        .components()
-        .any(|部品| matches!(部品, Component::Normal(名前) if 名前 == "tests" || 名前 == "examples"));
-    let ファイル名で許容 = パス
-        .file_name()
-        .and_then(|名前| 名前.to_str())
-        .is_some_and(|名前| 名前.ends_with("_tests.rs"));
+    let ディレクトリで許容 = パス.components().any(|部品| matches!(部品, Component::Normal(名前) if 名前 == "tests" || 名前 == "examples"));
+    let ファイル名で許容 = パス.file_name().and_then(|名前| 名前.to_str()).is_some_and(|名前| 名前.ends_with("_tests.rs"));
     ディレクトリで許容 || ファイル名で許容
 }
 

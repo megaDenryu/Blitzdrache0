@@ -20,9 +20,7 @@ pub struct 変換<入力空間, 出力空間> {
 impl<入力空間, 出力空間> 変換<入力空間, 出力空間> {
     pub(crate) fn 内部から生成する(内部: Mat4) -> Self {
         Self {
-            内部,
-            _入力: PhantomData,
-            _出力: PhantomData,
+            内部, _入力: PhantomData, _出力: PhantomData
         }
     }
 

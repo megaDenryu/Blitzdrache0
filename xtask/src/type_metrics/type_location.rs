@@ -73,10 +73,7 @@ mod tests {
     #[test]
     fn 逆斜線の区切りでも台帳の綴りと一致する() {
         let 走査 = 型の所在::走査したファイルから生成する(Path::new(r"xtask\src\smoke\launch_setting.rs"), "起動設定");
-        assert_eq!(
-            走査,
-            型の所在::区画の根と相対パスから生成する("xtask/src", "smoke/launch_setting.rs", "起動設定")
-        );
+        assert_eq!(走査, 型の所在::区画の根と相対パスから生成する("xtask/src", "smoke/launch_setting.rs", "起動設定"));
     }
 
     #[test]

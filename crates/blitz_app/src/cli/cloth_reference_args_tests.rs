@@ -1,9 +1,7 @@
 //! `--cloth-xpbd-reference`の後ろに置く曲げのコンプライアンスと題材の形の指定の解析を検証する(Issue #38)。
 //! 参照比較の方式より前に置いた指定は、どの題材へ与えるかが無いため型付きの失敗になる(黙って読み捨てない)ことを固定する。
 
-use super::{
-    参照比較の床の下の固定点, 参照比較の題材の形, 布モード, 引数を解析する, 起動引数エラー, 起動要求
-};
+use super::{参照比較の床の下の固定点, 参照比較の題材の形, 布モード, 引数を解析する, 起動引数エラー, 起動要求};
 use crate::error::起動エラー;
 
 fn 布モードを解析する(引数一覧: &[&str]) -> Result<布モード, 起動引数エラー> {
@@ -35,18 +33,10 @@ fn 参照比較の既定は垂直に吊るした上端の行の固定で曲げ�
 
 #[test]
 fn 参照比較の後ろの曲げと題材の形の指定はその方式へ入る() {
-    match 布モードを解析する(&[
-        "--cloth-xpbd-reference",
-        "0",
-        "--cloth-xpbd-reference-shape",
-        "horizontal-one-point",
-        "--cloth-xpbd-reference-bending",
-        "1000",
-    ]) {
+    match 布モードを解析する(&["--cloth-xpbd-reference", "0", "--cloth-xpbd-reference-shape", "horizontal-one-point", "--cloth-xpbd-reference-bending", "1000"]) {
         Ok(布モード::XPBD参照比較 {
-            曲げのコンプライアンス,
-            題材の形,
-            ..
+            曲げのコンプライアンス, 題材の形,
+        ..
         }) => {
             assert_eq!(曲げのコンプライアンス.値(), 1000.0);
             assert_eq!(題材の形, 参照比較の題材の形::水平に敷いて上端の左の一点を固定);
@@ -62,10 +52,7 @@ fn 参照比較より前の指定と読めない綴りは型付きの失敗に�
         布モードを解析する(&["--cloth-xpbd-reference-bending", "1", "--cloth-xpbd-reference", "0"]),
         Err(起動引数エラー::布の曲げのコンプライアンス不正(_))
     ));
-    assert!(matches!(
-        布モードを解析する(&["--cloth-xpbd-reference-shape", "horizontal-top-row"]),
-        Err(起動引数エラー::参照比較の題材の形不正(_))
-    ));
+    assert!(matches!(布モードを解析する(&["--cloth-xpbd-reference-shape", "horizontal-top-row"]), Err(起動引数エラー::参照比較の題材の形不正(_))));
     assert!(matches!(
         布モードを解析する(&["--cloth-xpbd-reference", "0", "--cloth-xpbd-reference-shape", "diagonal"]),
         Err(起動引数エラー::参照比較の題材の形不正(_))

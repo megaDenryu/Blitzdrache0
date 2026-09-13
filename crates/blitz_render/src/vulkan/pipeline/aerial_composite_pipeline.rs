@@ -25,12 +25,7 @@ pub(crate) struct 空中遠近合成パイプライン {
 impl 空中遠近合成パイプライン {
     /// `カラー形式`はシーンと同じ色アタッチメント(ポスト処理があればHDR中間画像)の形式である。
     /// `ディスクリプタlayout一覧`はset0から順に並べたレイアウトである。
-    pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        カラー形式: vk::Format,
-        ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
-        シェーダー: &シェーダー一式,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, カラー形式: vk::Format, ディスクリプタlayout一覧: &[vk::DescriptorSetLayout], シェーダー: &シェーダー一式) -> Result<Self, レンダラーエラー> {
         create::空中遠近合成パイプラインを生成する(確保係, カラー形式, ディスクリプタlayout一覧, シェーダー)
     }
 

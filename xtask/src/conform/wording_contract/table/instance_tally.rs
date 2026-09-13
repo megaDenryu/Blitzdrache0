@@ -16,30 +16,18 @@ use super::綴りの契約;
 pub(super) const 綴り一覧: [綴りの契約; 4] = [
     綴りの契約 {
         綴り: "個体数の合計=",
-        現れるファイル一覧: &[
-            "crates/blitz_asset_compiler/src/runtime_compilation/instance_tally.rs",
-            "xtask/src/game_fox_tour/map_generation_check/compile_report.rs",
-        ],
+        現れるファイル一覧: &["crates/blitz_asset_compiler/src/runtime_compilation/instance_tally.rs", "xtask/src/game_fox_tour/map_generation_check/compile_report.rs"],
     },
     綴りの契約 {
         綴り: "種類ごとの置いた個体:",
-        現れるファイル一覧: &[
-            "crates/blitz_asset_compiler/src/runtime_compilation/placed_instance_tally.rs",
-            "xtask/src/game_fox_tour/map_generation_check/tally_agreement.rs",
-        ],
+        現れるファイル一覧: &["crates/blitz_asset_compiler/src/runtime_compilation/placed_instance_tally.rs", "xtask/src/game_fox_tour/map_generation_check/tally_agreement.rs"],
     },
     綴りの契約 {
         綴り: "置いた個体の合計=",
-        現れるファイル一覧: &[
-            "crates/blitz_asset_compiler/src/runtime_compilation/placed_instance_tally.rs",
-            "xtask/src/game_fox_tour/map_generation_check/compile_report.rs",
-        ],
+        現れるファイル一覧: &["crates/blitz_asset_compiler/src/runtime_compilation/placed_instance_tally.rs", "xtask/src/game_fox_tour/map_generation_check/compile_report.rs"],
     },
     綴りの契約 {
         綴り: "据え置いたチャンク数=",
-        現れるファイル一覧: &[
-            "crates/blitz_asset_compiler/src/generation_ledger/rebake_tally.rs",
-            "xtask/src/game_fox_tour/map_generation_check/compile_report.rs",
-        ],
+        現れるファイル一覧: &["crates/blitz_asset_compiler/src/generation_ledger/rebake_tally.rs", "xtask/src/game_fox_tour/map_generation_check/compile_report.rs"],
     },
 ];

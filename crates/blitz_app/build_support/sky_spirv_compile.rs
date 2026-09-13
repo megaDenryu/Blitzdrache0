@@ -25,27 +25,8 @@ const 空中遠近合成画素段エントリ: [エントリ指定; 1] = [エン
     出力ファイル名: "aerial_composite_fragment.spv",
 }];
 
-pub(super) fn 全部をコンパイルする(
-    slangc: &スラングコンパイラの所在,
-    シェーダーディレクトリ: &Path,
-    出力先ディレクトリ: &Path,
-) -> Result<(), String> {
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("sky_frame.slang"),
-        出力先ディレクトリ,
-        &共通頂点エントリ,
-    )?;
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("sky_atmosphere.slang"),
-        出力先ディレクトリ,
-        &放射輝度画素段エントリ,
-    )?;
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("aerial_composite.slang"),
-        出力先ディレクトリ,
-        &空中遠近合成画素段エントリ,
-    )
+pub(super) fn 全部をコンパイルする(slangc: &スラングコンパイラの所在, シェーダーディレクトリ: &Path, 出力先ディレクトリ: &Path) -> Result<(), String> {
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("sky_frame.slang"), 出力先ディレクトリ, &共通頂点エントリ)?;
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("sky_atmosphere.slang"), 出力先ディレクトリ, &放射輝度画素段エントリ)?;
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("aerial_composite.slang"), 出力先ディレクトリ, &空中遠近合成画素段エントリ)
 }

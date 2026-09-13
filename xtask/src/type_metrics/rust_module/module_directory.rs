@@ -57,24 +57,14 @@ mod tests {
     #[test]
     fn 段を進むと子のモジュールのディレクトリになる() {
         let 根 = モジュールのディレクトリ::パスから生成する(Path::new(r"crates\blitz_collision\src"));
-        assert_eq!(
-            根.子のモジュールへ進む("triangle"),
-            モジュールのディレクトリ::パスから生成する(Path::new("crates/blitz_collision/src/triangle"))
-        );
+        assert_eq!(根.子のモジュールへ進む("triangle"), モジュールのディレクトリ::パスから生成する(Path::new("crates/blitz_collision/src/triangle")));
     }
 
     #[test]
     fn 上位へ戻る段数だけディレクトリを遡る() {
         let 位置 = モジュールのディレクトリ::パスから生成する(Path::new("a/src/near/deep"));
-        assert_eq!(
-            位置.上位のモジュールへ戻る(2).unwrap(),
-            モジュールのディレクトリ::パスから生成する(Path::new("a/src"))
-        );
-        assert!(
-            モジュールのディレクトリ::パスから生成する(Path::new("a"))
-                .上位のモジュールへ戻る(1)
-                .is_none()
-        );
+        assert_eq!(位置.上位のモジュールへ戻る(2).unwrap(), モジュールのディレクトリ::パスから生成する(Path::new("a/src")));
+        assert!(モジュールのディレクトリ::パスから生成する(Path::new("a")).上位のモジュールへ戻る(1).is_none());
     }
 
     #[test]

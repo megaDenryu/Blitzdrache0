@@ -13,14 +13,7 @@ use crate::vulkan::frame::shared_set_bind;
 use crate::vulkan::frame::{シャドウ描画入力, 共有セット束縛};
 use crate::vulkan::shadow_push::シャドウ描画定数;
 
-pub(super) fn 記録する(
-    積み先: GPU命令の積み先<'_>,
-    番号: 距離区分番号,
-    一辺: 影の一辺解像度,
-    入力一覧: &[シャドウ描画入力],
-    布ドロー: Option<布ドロー<'_>>,
-    共有: 共有セット束縛<'_>,
-) {
+pub(super) fn 記録する(積み先: GPU命令の積み先<'_>, 番号: 距離区分番号, 一辺: 影の一辺解像度, 入力一覧: &[シャドウ描画入力], 布ドロー: Option<布ドロー<'_>>, 共有: 共有セット束縛<'_>) {
     if 入力一覧.is_empty() && 布ドロー.is_none() {
         // その距離区分へ影を落とす対象も布も無いフレーム。全個体がその距離区分のライト視錐台の外にある状態で実際に起こる。
         // パスそのものは通してシャドウマップを消去する。消去しないと前フレームの深度が影として残る。
@@ -66,14 +59,7 @@ fn 対象を記録する(積み先: GPU命令の積み先<'_>, 番号: 距離区
         device.cmd_bind_descriptor_sets(command_buffer, 束縛先, 入力.layout, ジオメトリのセット番号, &セット一覧, &[]);
         device.cmd_bind_vertex_buffers(command_buffer, 0, &[入力.頂点バッファ], &[0]);
         device.cmd_bind_index_buffer(command_buffer, 入力.インデックスバッファ, 0, vk::IndexType::UINT32);
-        device.cmd_draw_indexed(
-            command_buffer,
-            入力.インデックス数,
-            入力.インスタンス数,
-            入力.先頭インデックス,
-            入力.頂点基準,
-            入力.先頭インスタンス,
-        );
+        device.cmd_draw_indexed(command_buffer, 入力.インデックス数, 入力.インスタンス数, 入力.先頭インデックス, 入力.頂点基準, 入力.先頭インスタンス);
     }
 }
 

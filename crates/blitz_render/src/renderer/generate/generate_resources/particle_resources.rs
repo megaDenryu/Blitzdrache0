@@ -13,10 +13,7 @@ use crate::vulkan::depth::深度形式;
 use crate::vulkan::transfer::ステージング経由の転送係;
 
 pub(super) fn 粒子リソース一式を組み立てる(
-    要求: &生成要求<'_>,
-    確保係: &GPU資源の確保係<'_>,
-    基礎: &基礎資源,
-    シーンカラー形式: vk::Format,
+    要求: &生成要求<'_>, 確保係: &GPU資源の確保係<'_>, 基礎: &基礎資源, シーンカラー形式: vk::Format
 ) -> Result<Option<vulkan::particles::粒子リソース一式>, レンダラーエラー> {
     match (要求.シェーダー.粒子.as_ref(), 要求.粒子素材) {
         (Some(シェーダー), Some(素材)) => Ok(Some(vulkan::particles::粒子リソース一式::生成する(

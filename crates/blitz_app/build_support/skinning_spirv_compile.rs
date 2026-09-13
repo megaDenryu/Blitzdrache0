@@ -12,10 +12,6 @@ const エントリ一覧: [エントリ指定; 1] = [エントリ指定 {
     出力ファイル名: "skinning_compute.spv",
 }];
 
-pub(super) fn コンピュートをコンパイルする(
-    slangc: &スラングコンパイラの所在,
-    ソース絶対パス: &Path,
-    出力先ディレクトリ: &Path,
-) -> Result<(), String> {
+pub(super) fn コンピュートをコンパイルする(slangc: &スラングコンパイラの所在, ソース絶対パス: &Path, 出力先ディレクトリ: &Path) -> Result<(), String> {
     エントリ一覧をコンパイルする(slangc, ソース絶対パス, 出力先ディレクトリ, &エントリ一覧)
 }

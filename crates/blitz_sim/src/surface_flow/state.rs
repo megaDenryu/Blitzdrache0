@@ -31,9 +31,7 @@ impl 表面流状態 {
         Ok(次)
     }
 
-    pub fn 液膜分布で生成する(
-        仕様: &表面流仕様, 液膜厚さを得る: impl Fn([u32; 2]) -> f32
-    ) -> Result<Self, 表面流仕様エラー> {
+    pub fn 液膜分布で生成する(仕様: &表面流仕様, 液膜厚さを得る: impl Fn([u32; 2]) -> f32) -> Result<Self, 表面流仕様エラー> {
         let [列数, 行数] = 仕様.格子寸法();
         let mut セル一覧 = Vec::with_capacity(usizeへ(列数) * usizeへ(行数));
         for 行 in 0..行数 {

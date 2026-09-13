@@ -9,11 +9,7 @@ use crate::error::レンダラーエラー;
 use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::allocator::GPU資源の確保係;
 
-pub(super) fn 派生の立方体画像を生成する(
-    確保係: &GPU資源の確保係<'_>,
-    最詳細段の一辺: u32,
-    段数: u32,
-) -> Result<派生の立方体画像, レンダラーエラー> {
+pub(super) fn 派生の立方体画像を生成する(確保係: &GPU資源の確保係<'_>, 最詳細段の一辺: u32, 段数: u32) -> Result<派生の立方体画像, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let 画像 = 画像を作る(確保係, 最詳細段の一辺, 段数)?;
     let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(画像, GPUメモリ用途::描画画像) {
@@ -43,11 +39,7 @@ pub(super) fn 派生の立方体画像を生成する(
 }
 
 /// 段ごとの配列ビューと全段の立方体ビューを順に作る。途中で失敗したら、それまでに作ったビューを片付ける。
-fn 全ビューを作る(
-    確保係: &GPU資源の確保係<'_>,
-    画像: vk::Image,
-    段数: u32,
-) -> Result<(Vec<vk::ImageView>, vk::ImageView), レンダラーエラー> {
+fn 全ビューを作る(確保係: &GPU資源の確保係<'_>, 画像: vk::Image, 段数: u32) -> Result<(Vec<vk::ImageView>, vk::ImageView), レンダラーエラー> {
     let 段数の容量 = usize::try_from(段数).unwrap_or_else(|_| panic!("縮小段の数{段数}がusizeに収まらない"));
     let mut 段ごと = Vec::with_capacity(段数の容量);
     for 段 in 0..段数 {
@@ -62,9 +54,7 @@ fn 全ビューを作る(
     }
 }
 
-fn ビュー一覧を片付けて返す(
-    device: &ash::Device, 一覧: &[vk::ImageView], 誤り: レンダラーエラー
-) -> レンダラーエラー {
+fn ビュー一覧を片付けて返す(device: &ash::Device, 一覧: &[vk::ImageView], 誤り: レンダラーエラー) -> レンダラーエラー {
     for ビュー in 一覧 {
         // 安全性: ビューはこのスコープの唯一の所有者で、以降使用しない。
         unsafe { device.destroy_image_view(*ビュー, None) };

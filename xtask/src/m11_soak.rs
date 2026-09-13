@@ -29,9 +29,5 @@ pub fn 連続実行のメモリ推移を計測する() -> ExitCode {
         制限時間,
         標準出力先: None,
     };
-    if 実行しながら採取する(&条件).is_some() {
-        ExitCode::SUCCESS
-    } else {
-        ExitCode::FAILURE
-    }
+    if 実行しながら採取する(&条件).is_some() { ExitCode::SUCCESS } else { ExitCode::FAILURE }
 }

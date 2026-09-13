@@ -6,9 +6,7 @@ use crate::acceptance::検収シーン名;
 
 mod value_read;
 
-use value_read::{
-    シーンを読む, 数が読めない誤り文を組み立てる, 有限値を読む, 正の数を読む, 正の有限値を読む
-};
+use value_read::{シーンを読む, 数が読めない誤り文を組み立てる, 有限値を読む, 正の数を読む, 正の有限値を読む};
 
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct 大規模世界の計測指定 {

@@ -18,19 +18,13 @@ pub(crate) struct デバッグメッセンジャー {
 }
 
 impl デバッグメッセンジャー {
-    pub(crate) fn 生成する(
-        entry: &ash::Entry, instance: &ash::Instance, カウンタ: &検証カウンタ
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(entry: &ash::Entry, instance: &ash::Instance, カウンタ: &検証カウンタ) -> Result<Self, レンダラーエラー> {
         let loader = ash::ext::debug_utils::Instance::new(entry, instance);
         let カウンタ保持 = カウンタ.内部参照を複製する();
 
         let create_info = vk::DebugUtilsMessengerCreateInfoEXT::default()
             .message_severity(vk::DebugUtilsMessageSeverityFlagsEXT::ERROR | vk::DebugUtilsMessageSeverityFlagsEXT::WARNING)
-            .message_type(
-                vk::DebugUtilsMessageTypeFlagsEXT::GENERAL
-                    | vk::DebugUtilsMessageTypeFlagsEXT::VALIDATION
-                    | vk::DebugUtilsMessageTypeFlagsEXT::PERFORMANCE,
-            )
+            .message_type(vk::DebugUtilsMessageTypeFlagsEXT::GENERAL | vk::DebugUtilsMessageTypeFlagsEXT::VALIDATION | vk::DebugUtilsMessageTypeFlagsEXT::PERFORMANCE)
             .pfn_user_callback(Some(コールバック))
             .user_data(Arc::as_ptr(&カウンタ保持).cast_mut().cast::<c_void>());
 
@@ -40,9 +34,7 @@ impl デバッグメッセンジャー {
         let handle = unsafe { loader.create_debug_utils_messenger(&create_info, None)? };
 
         Ok(Self {
-            loader,
-            handle,
-            _カウンタ保持: カウンタ保持,
+            loader, handle, _カウンタ保持: カウンタ保持
         })
     }
 
@@ -53,12 +45,7 @@ impl デバッグメッセンジャー {
     }
 }
 
-unsafe extern "system" fn コールバック(
-    _severity: vk::DebugUtilsMessageSeverityFlagsEXT,
-    _types: vk::DebugUtilsMessageTypeFlagsEXT,
-    data: *const vk::DebugUtilsMessengerCallbackDataEXT<'_>,
-    user_data: *mut c_void,
-) -> vk::Bool32 {
+unsafe extern "system" fn コールバック(_severity: vk::DebugUtilsMessageSeverityFlagsEXT, _types: vk::DebugUtilsMessageTypeFlagsEXT, data: *const vk::DebugUtilsMessengerCallbackDataEXT<'_>, user_data: *mut c_void) -> vk::Bool32 {
     // 安全性: dataとuser_dataはVulkanローダーが本コールバックの契約どおりに渡す。
     // user_dataは生成時にArc<AtomicU64>の生ポインタを渡しており、
     // メッセンジャー破棄まで指す先が生存することは呼び出し元が保証する。

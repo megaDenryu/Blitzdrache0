@@ -27,9 +27,7 @@ fn 可視性を剥がす(残り: &str) -> Option<&str> {
 }
 
 fn 実行様式を剥がす(残り: &str) -> Option<&str> {
-    実行様式の修飾子一覧
-        .iter()
-        .find_map(|修飾子| 残り.strip_prefix(*修飾子).and_then(空白が続くか))
+    実行様式の修飾子一覧.iter().find_map(|修飾子| 残り.strip_prefix(*修飾子).and_then(空白が続くか))
 }
 
 /// 修飾子の綴りで始まるだけの識別子(`publish`・`constant`等)を剥がさないための境界判定。
@@ -52,10 +50,7 @@ mod tests {
     #[test]
     fn 経路を書いた可視性も剥がす() {
         assert_eq!(修飾子を取り除く("    pub(in crate::app) fn 描画する(&self) {"), "fn 描画する(&self) {");
-        assert_eq!(
-            修飾子を取り除く("    pub(in crate::app::frame) fn 次の一枚を組み立てる(&mut self) {"),
-            "fn 次の一枚を組み立てる(&mut self) {"
-        );
+        assert_eq!(修飾子を取り除く("    pub(in crate::app::frame) fn 次の一枚を組み立てる(&mut self) {"), "fn 次の一枚を組み立てる(&mut self) {");
         assert_eq!(修飾子を取り除く("pub(in crate::app) struct 描画の予定 {"), "struct 描画の予定 {");
     }
 

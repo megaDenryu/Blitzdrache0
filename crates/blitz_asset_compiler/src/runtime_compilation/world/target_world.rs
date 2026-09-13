@@ -65,9 +65,7 @@ impl 対象世界 {
     }
 
     /// その世界のチャンクがどのソース形式で書かれているか。台帳は`chunk_source_kind`が持つ。
-    pub(in crate::runtime_compilation) fn チャンクのソース種別(
-        self, 同居植生個体数: usize, 散布: 散布の焼き方
-    ) -> ソース種別 {
+    pub(in crate::runtime_compilation) fn チャンクのソース種別(self, 同居植生個体数: usize, 散布: 散布の焼き方) -> ソース種別 {
         super::chunk_source_kind::チャンクのソース種別を選ぶ(self, 同居植生個体数, 散布)
     }
 

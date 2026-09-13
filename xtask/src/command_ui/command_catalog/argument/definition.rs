@@ -46,37 +46,21 @@ impl 引数定義 {
         Self::有無だけの旗 { 綴り, 説明 }
     }
 
-    pub(crate) const fn 名前に続けて渡す値を定義する(
-        綴り: &'static str, 説明: &'static str, 扱い: 省略したときの扱い
-    ) -> Self {
+    pub(crate) const fn 名前に続けて渡す値を定義する(綴り: &'static str, 説明: &'static str, 扱い: 省略したときの扱い) -> Self {
         Self::名前に続けて渡す値 { 綴り, 説明, 扱い }
     }
 
-    pub(crate) const fn 綴りから1つ選ぶ値を定義する(
-        名前: Option<&'static str>,
-        見出し: &'static str,
-        説明: &'static str,
-        扱い: 省略したときの扱い,
-        選択肢一覧: &'static [選択肢],
-    ) -> Self {
+    pub(crate) const fn 綴りから1つ選ぶ値を定義する(名前: Option<&'static str>, 見出し: &'static str, 説明: &'static str, 扱い: 省略したときの扱い, 選択肢一覧: &'static [選択肢]) -> Self {
         Self::綴りから1つ選ぶ値 {
-            名前,
-            見出し,
-            説明,
-            扱い,
-            選択肢一覧,
+            名前, 見出し, 説明, 扱い, 選択肢一覧
         }
     }
 
-    pub(crate) const fn 位置で渡す値を定義する(
-        見出し: &'static str, 説明: &'static str, 扱い: 省略したときの扱い
-    ) -> Self {
+    pub(crate) const fn 位置で渡す値を定義する(見出し: &'static str, 説明: &'static str, 扱い: 省略したときの扱い) -> Self {
         Self::位置で渡す値 { 見出し, 説明, 扱い }
     }
 
-    pub(crate) const fn 位置で何個でも渡す値を定義する(
-        見出し: &'static str, 説明: &'static str, 扱い: 省略したときの扱い
-    ) -> Self {
+    pub(crate) const fn 位置で何個でも渡す値を定義する(見出し: &'static str, 説明: &'static str, 扱い: 省略したときの扱い) -> Self {
         Self::位置で何個でも渡す値 { 見出し, 説明, 扱い }
     }
 
@@ -88,10 +72,7 @@ impl 引数定義 {
     pub(crate) fn 見出し(self) -> &'static str {
         match self {
             Self::有無だけの旗 { 綴り, .. } | Self::名前に続けて渡す値 { 綴り, .. } => 綴り,
-            Self::綴りから1つ選ぶ値 { 見出し, .. }
-            | Self::位置で渡す値 { 見出し, .. }
-            | Self::位置で何個でも渡す値 { 見出し, .. }
-            | Self::そのまま子へ渡す残りの語 { 見出し, .. } => 見出し,
+            Self::綴りから1つ選ぶ値 { 見出し, .. } | Self::位置で渡す値 { 見出し, .. } | Self::位置で何個でも渡す値 { 見出し, .. } | Self::そのまま子へ渡す残りの語 { 見出し, .. } => 見出し,
         }
     }
 

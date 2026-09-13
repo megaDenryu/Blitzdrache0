@@ -16,10 +16,7 @@ pub(crate) struct プロジェクトルート(PathBuf);
 impl プロジェクトルート {
     /// `--project <ルート>`の次の引数を開くルートにする。指定が無ければ既定ルート(リポジトリルート)を使う。
     pub(crate) fn 引数から解く(引数一覧: &[String], 既定ルート: &Path) -> Self {
-        let 指定パス = 引数一覧
-            .iter()
-            .position(|引数| 引数 == "--project")
-            .and_then(|添字| 引数一覧.get(添字 + 1));
+        let 指定パス = 引数一覧.iter().position(|引数| 引数 == "--project").and_then(|添字| 引数一覧.get(添字 + 1));
         Self(指定パス.map_or_else(|| 既定ルート.to_path_buf(), PathBuf::from))
     }
 

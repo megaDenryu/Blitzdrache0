@@ -44,11 +44,7 @@ fn 検収する(引数一覧: &[String]) -> Result<String, 遠景構図の検収
         return judgment::散布を判定する(&検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ));
     }
     if 別 == 実行の別::散布の対照を焼く {
-        return crate::game_fox_tour::map_generation_check::散布なしの対照を焼く(
-            crate::fox_tour_map_seed::決定性検収の乱数の種,
-            blitz_asset_compiler::世界の広がり::大規模世界の既定値(),
-        )
-        .map_err(遠景構図の検収エラー::対照の焼き付けが失敗した);
+        return crate::game_fox_tour::map_generation_check::散布なしの対照を焼く(crate::fox_tour_map_seed::決定性検収の乱数の種, blitz_asset_compiler::世界の広がり::大規模世界の既定値()).map_err(遠景構図の検収エラー::対照の焼き付けが失敗した);
     }
     let 由来 = crate::release_build::計測用に構築する("distant-view")?;
     let 出力先 = 検証の出力ルート::既定().名前が指す置き場(出力ディレクトリ);

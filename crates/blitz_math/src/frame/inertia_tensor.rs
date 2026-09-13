@@ -21,10 +21,7 @@ pub struct 慣性テンソル<空間種> {
 
 impl<空間種: 空間> 慣性テンソル<空間種> {
     /// 主軸(主軸座標からこの空間への回転)と主慣性の3値から I = P diag(J) Pᵀ を組む。
-    pub fn 主軸と主慣性から生成する<軸空間: 空間>(
-        主軸: &クォータニオン<軸空間, 空間種>,
-        主慣性: [キログラム平方メートル; 3],
-    ) -> Self {
+    pub fn 主軸と主慣性から生成する<軸空間: 空間>(主軸: &クォータニオン<軸空間, 空間種>, 主慣性: [キログラム平方メートル; 3]) -> Self {
         let 回転 = Mat3::from_quat(主軸.内部クォータニオン());
         let 対角 = Mat3::from_diagonal(glam::Vec3::new(主慣性[0].値(), 主慣性[1].値(), 主慣性[2].値()));
         Self::内部から生成する(回転 * 対角 * 回転.transpose())
@@ -55,19 +52,13 @@ impl<空間種: 空間> 慣性テンソル<空間種> {
     }
 
     pub(crate) fn 内部から生成する(内部: Mat3) -> Self {
-        Self {
-            内部, _空間: PhantomData
-        }
+        Self { 内部, _空間: PhantomData }
     }
 }
 
 // a との外積を表す3×3行列 [a]×。[a]× v = a × v である。
 fn 外積の行列(a: glam::Vec3) -> Mat3 {
-    Mat3::from_cols(
-        glam::Vec3::new(0.0, a.z, -a.y),
-        glam::Vec3::new(-a.z, 0.0, a.x),
-        glam::Vec3::new(a.y, -a.x, 0.0),
-    )
+    Mat3::from_cols(glam::Vec3::new(0.0, a.z, -a.y), glam::Vec3::new(-a.z, 0.0, a.x), glam::Vec3::new(a.y, -a.x, 0.0))
 }
 
 // 手動実装: deriveは幻影型パラメータ自身にも境界を要求するが、空間種は実行時表現を持たない。

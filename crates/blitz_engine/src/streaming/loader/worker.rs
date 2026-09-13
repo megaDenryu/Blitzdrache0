@@ -27,12 +27,7 @@ pub(super) fn 起動する(設定: チャンク読込設定) -> Result<チャン
     let 共有要求受信 = Arc::new(Mutex::new(要求受信));
     let mut スレッド一覧 = Vec::with_capacity(設定.ワーカー本数());
     for 番号 in 0..設定.ワーカー本数() {
-        スレッド一覧.push(ワーカーを起動する(
-            番号,
-            Arc::clone(&共有要求受信),
-            完了送信.clone(),
-            Arc::clone(&停止),
-        )?);
+        スレッド一覧.push(ワーカーを起動する(番号, Arc::clone(&共有要求受信), 完了送信.clone(), Arc::clone(&停止))?);
     }
     Ok(チャンク読込器 {
         要求送信,
@@ -43,10 +38,7 @@ pub(super) fn 起動する(設定: チャンク読込設定) -> Result<チャン
 }
 
 fn ワーカーを起動する(
-    番号: usize,
-    要求受信: Arc<Mutex<mpsc::Receiver<読込ジョブ>>>,
-    完了送信: mpsc::SyncSender<チャンク読込完了>,
-    停止: Arc<AtomicBool>,
+    番号: usize, 要求受信: Arc<Mutex<mpsc::Receiver<読込ジョブ>>>, 完了送信: mpsc::SyncSender<チャンク読込完了>, 停止: Arc<AtomicBool>
 ) -> Result<std::thread::JoinHandle<()>, チャンク読込エラー> {
     std::thread::Builder::new()
         .name(format!("blitz-chunk-loader-{番号}"))
@@ -54,9 +46,7 @@ fn ワーカーを起動する(
         .map_err(|誤り| チャンク読込エラー::ワーカー起動失敗(誤り.to_string()))
 }
 
-fn ワーカーを走らせる(
-    要求受信: &Mutex<mpsc::Receiver<読込ジョブ>>, 完了送信: &mpsc::SyncSender<チャンク読込完了>, 停止: &AtomicBool
-) {
+fn ワーカーを走らせる(要求受信: &Mutex<mpsc::Receiver<読込ジョブ>>, 完了送信: &mpsc::SyncSender<チャンク読込完了>, 停止: &AtomicBool) {
     while !停止.load(Ordering::Acquire) {
         // mpscの受信側は共有できないため、ジョブを1件受け取るまでだけMutexを保持し、読込中は次のワーカーへ受信権を渡す。
         let Ok(受信) = 要求受信.lock() else { break };
@@ -76,13 +66,10 @@ fn ワーカーを走らせる(
 
 fn 読み込む(ジョブ: 読込ジョブ) -> チャンク読込完了 {
     let 開始 = Instant::now();
-    let 結果 = ジョブ
-        .ファイル
-        .読み込んで読み込んだバイト数も返す()
-        .map(|(シーン, 読込バイト数)| チャンク読込成果 {
-            シーン,
-            読込バイト数,
-            所要時間: 開始.elapsed(),
-        });
+    let 結果 = ジョブ.ファイル.読み込んで読み込んだバイト数も返す().map(|(シーン, 読込バイト数)| チャンク読込成果 {
+        シーン,
+        読込バイト数,
+        所要時間: 開始.elapsed(),
+    });
     チャンク読込完了::生成する(ジョブ.チャンク, ジョブ.世代, 結果)
 }

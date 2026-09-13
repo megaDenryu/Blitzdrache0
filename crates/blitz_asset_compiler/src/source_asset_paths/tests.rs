@@ -22,10 +22,7 @@ fn 区切りを持たない相対パスの末尾のファイル名は綴りそ�
 #[test]
 fn ルートの下のファイルを組める() {
     let 相対パス = ソースアセットの相対パス::生成する("samples/Fox/Fox.glb");
-    assert_eq!(
-        相対パス.ルートの下のファイル(Path::new("assets")),
-        PathBuf::from("assets/samples/Fox/Fox.glb")
-    );
+    assert_eq!(相対パス.ルートの下のファイル(Path::new("assets")), PathBuf::from("assets/samples/Fox/Fox.glb"));
 }
 
 #[test]
@@ -43,10 +40,7 @@ fn 区切りを持たない相対パスを収める場所はルートそのも�
 #[test]
 fn ファイル名からディレクトリの直下のファイルを組める() {
     let ファイル名 = ソースアセットのファイル名::生成する("quad.bin");
-    assert_eq!(
-        ファイル名.ディレクトリの直下のファイル(Path::new("target/smoke")),
-        PathBuf::from("target/smoke/quad.bin")
-    );
+    assert_eq!(ファイル名.ディレクトリの直下のファイル(Path::new("target/smoke")), PathBuf::from("target/smoke/quad.bin"));
 }
 
 #[test]

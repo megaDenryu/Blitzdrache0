@@ -38,9 +38,7 @@ impl 地面マスク {
         if 地面画素数 == 0 {
             return Err(地面の画素.あるはずのものが無い破れ());
         }
-        Ok(Self {
-            地面か一覧, 地面画素数
-        })
+        Ok(Self { 地面か一覧, 地面画素数 })
     }
 
     pub fn 地面か(&self, 添字: usize) -> bool {

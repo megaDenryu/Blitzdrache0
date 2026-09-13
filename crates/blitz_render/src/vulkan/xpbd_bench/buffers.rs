@@ -41,17 +41,7 @@ impl XPBD計測バッファ {
 
     /// 前提: 破棄時点でGPU側の使用が完了していることを呼び出し元が保証する。
     pub(super) fn 破棄する(&self, device: &GPUデバイス) {
-        for バッファ in [
-            &self.定数,
-            &self.点,
-            &self.前の位置,
-            &self.拘束の引数,
-            &self.ラグランジュ乗数,
-            &self.補正の累積,
-            &self.補正の候補,
-            &self.隣接の区間,
-            &self.隣接の項目,
-        ] {
+        for バッファ in [&self.定数, &self.点, &self.前の位置, &self.拘束の引数, &self.ラグランジュ乗数, &self.補正の累積, &self.補正の候補, &self.隣接の区間, &self.隣接の項目] {
             バッファ.破棄する(device);
         }
     }

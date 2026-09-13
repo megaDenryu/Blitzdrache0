@@ -12,16 +12,10 @@ use tower::ServiceExt;
 #[tokio::test]
 async fn カタログに実在する建物定義IDを持つ構造は保存できる() {
     let 一時 = crate::common::一時プロジェクト::生成する("chunk_structure_known_building");
-    let 応答 = crate::common::ルーターを作る(&一時)
-        .oneshot(建物1件を持つ構造の保存要求(crate::common::一間四方の家の識別子))
-        .await
-        .unwrap();
+    let 応答 = crate::common::ルーターを作る(&一時).oneshot(建物1件を持つ構造の保存要求(crate::common::一間四方の家の識別子)).await.unwrap();
     assert_eq!(応答.status(), StatusCode::NO_CONTENT);
 
-    let 応答 = crate::common::ルーターを作る(&一時)
-        .oneshot(Request::get("/api/チャンク/0/0/構造").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
+    let 応答 = crate::common::ルーターを作る(&一時).oneshot(Request::get("/api/チャンク/0/0/構造").body(Body::empty()).unwrap()).await.unwrap();
     let 本体 = axum::body::to_bytes(応答.into_body(), usize::MAX).await.unwrap();
     let 取得データ: serde_json::Value = serde_json::from_slice(&本体).unwrap();
     assert_eq!(取得データ["建物一覧"][0]["建物定義ID"], crate::common::一間四方の家の識別子);
@@ -30,16 +24,10 @@ async fn カタログに実在する建物定義IDを持つ構造は保存でき
 #[tokio::test]
 async fn カタログに無い建物定義IDを持つ構造の保存は422を返す() {
     let 一時 = crate::common::一時プロジェクト::生成する("chunk_structure_unknown_building");
-    let 応答 = crate::common::ルーターを作る(&一時)
-        .oneshot(建物1件を持つ構造の保存要求(crate::common::カタログに無い識別子))
-        .await
-        .unwrap();
+    let 応答 = crate::common::ルーターを作る(&一時).oneshot(建物1件を持つ構造の保存要求(crate::common::カタログに無い識別子)).await.unwrap();
     assert_eq!(応答.status(), StatusCode::UNPROCESSABLE_ENTITY);
 
-    let 応答 = crate::common::ルーターを作る(&一時)
-        .oneshot(Request::get("/api/チャンク/0/0/構造").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
+    let 応答 = crate::common::ルーターを作る(&一時).oneshot(Request::get("/api/チャンク/0/0/構造").body(Body::empty()).unwrap()).await.unwrap();
     let 本体 = axum::body::to_bytes(応答.into_body(), usize::MAX).await.unwrap();
     let 本文: serde_json::Value = serde_json::from_slice(&本体).unwrap();
     assert!(本文.is_null(), "拒んだ保存が正本を書き換えている");
@@ -60,8 +48,5 @@ fn 建物1件を持つ構造の保存要求(建物定義ID: &str) -> Request<Bod
         "散布の個体一覧": [],
         "見下ろし図の下書き": { "等高線一覧": [], "粗マスの一辺の升目数": 8, "粗マスの塗り一覧": [] }
     });
-    Request::put("/api/チャンク/0/0/構造")
-        .header("content-type", "application/json")
-        .body(Body::from(serde_json::to_vec(&送信データ).unwrap()))
-        .unwrap()
+    Request::put("/api/チャンク/0/0/構造").header("content-type", "application/json").body(Body::from(serde_json::to_vec(&送信データ).unwrap())).unwrap()
 }

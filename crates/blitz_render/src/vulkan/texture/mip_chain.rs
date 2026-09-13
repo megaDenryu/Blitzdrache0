@@ -27,48 +27,14 @@ fn blitを積む(積み先: GPU命令の積み先<'_>, image: vk::Image, 幅: u3
     let 元寸法 = 寸法を求める(幅, 高さ, mip - 1);
     let 先寸法 = 寸法を求める(幅, 高さ, mip);
     let blit = vk::ImageBlit::default()
-        .src_subresource(
-            vk::ImageSubresourceLayers::default()
-                .aspect_mask(vk::ImageAspectFlags::COLOR)
-                .mip_level(mip - 1)
-                .base_array_layer(0)
-                .layer_count(1),
-        )
-        .src_offsets([
-            vk::Offset3D::default(),
-            vk::Offset3D {
-                x: 元寸法.0,
-                y: 元寸法.1,
-                z: 1,
-            },
-        ])
-        .dst_subresource(
-            vk::ImageSubresourceLayers::default()
-                .aspect_mask(vk::ImageAspectFlags::COLOR)
-                .mip_level(mip)
-                .base_array_layer(0)
-                .layer_count(1),
-        )
-        .dst_offsets([
-            vk::Offset3D::default(),
-            vk::Offset3D {
-                x: 先寸法.0,
-                y: 先寸法.1,
-                z: 1,
-            },
-        ]);
+        .src_subresource(vk::ImageSubresourceLayers::default().aspect_mask(vk::ImageAspectFlags::COLOR).mip_level(mip - 1).base_array_layer(0).layer_count(1))
+        .src_offsets([vk::Offset3D::default(), vk::Offset3D { x: 元寸法.0, y: 元寸法.1, z: 1 }])
+        .dst_subresource(vk::ImageSubresourceLayers::default().aspect_mask(vk::ImageAspectFlags::COLOR).mip_level(mip).base_array_layer(0).layer_count(1))
+        .dst_offsets([vk::Offset3D::default(), vk::Offset3D { x: 先寸法.0, y: 先寸法.1, z: 1 }]);
     // 安全性: command_bufferは記録中で、imageはこの直前のバリアでsrc/dstとも
     // 適切なレイアウトへ遷移済み。
     unsafe {
-        device.cmd_blit_image(
-            command_buffer,
-            image,
-            vk::ImageLayout::TRANSFER_SRC_OPTIMAL,
-            image,
-            vk::ImageLayout::TRANSFER_DST_OPTIMAL,
-            &[blit],
-            vk::Filter::LINEAR,
-        );
+        device.cmd_blit_image(command_buffer, image, vk::ImageLayout::TRANSFER_SRC_OPTIMAL, image, vk::ImageLayout::TRANSFER_DST_OPTIMAL, &[blit], vk::Filter::LINEAR);
     }
 }
 

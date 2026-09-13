@@ -7,9 +7,7 @@ mod temporal_reconstruction;
 
 pub(crate) use baked_image::{焼いた画像を参照するだけのときの初期状態, 焼いた画像を焼き直すときの初期状態};
 pub(crate) use local_visibility::局所可視度の画像の前フレーム直後状態;
-pub(crate) use temporal_reconstruction::{
-    前フレーム今のフレームの色読み直後状態, 前フレーム動きベクトル書き込み直後状態, 履歴画像の前フレーム直後状態,
-};
+pub(crate) use temporal_reconstruction::{前フレーム今のフレームの色読み直後状態, 前フレーム動きベクトル書き込み直後状態, 履歴画像の前フレーム直後状態};
 
 use ash::vk;
 
@@ -22,22 +20,14 @@ use super::usage::image_usage_mapping::深度書き込み段;
 /// 注意: srcStageMaskはTOP_OF_PIPEではなくCOLOR_ATTACHMENT_OUTPUTにする。取得セマフォの待機はCOLOR_ATTACHMENT_OUTPUT段で行うため、最初のバリアがそれより早い段だと待機のスコープ外になり、vkAcquireNextImageKHRの読み出しに対してWRITE_AFTER_READ検証エラーになる。
 /// layoutはUNDEFINEDのままでよい（このエンジンは常に全面クリアするため前回内容を保持する必要がない）。
 pub(crate) fn 取得直後の色画像状態() -> 画像状態 {
-    画像状態::生成する(
-        vk::PipelineStageFlags2::COLOR_ATTACHMENT_OUTPUT,
-        vk::AccessFlags2::empty(),
-        vk::ImageLayout::UNDEFINED,
-    )
+    画像状態::生成する(vk::PipelineStageFlags2::COLOR_ATTACHMENT_OUTPUT, vk::AccessFlags2::empty(), vk::ImageLayout::UNDEFINED)
 }
 
 /// 深度画像の、前フレーム書き込み直後を想定した状態。
 ///
 /// 注意: 進行中フレーム2枚で単一の深度画像を共有するため、前フレームの深度書き込みとのWAWハザードを安全化するstage/accessを保つ。layoutはUNDEFINEDにして内容を保持しない(本フレームでCLEARし直すため)。
 pub(crate) fn 前フレーム深度書き込み直後状態() -> 画像状態 {
-    画像状態::生成する(
-        深度書き込み段(),
-        vk::AccessFlags2::DEPTH_STENCIL_ATTACHMENT_WRITE,
-        vk::ImageLayout::UNDEFINED,
-    )
+    画像状態::生成する(深度書き込み段(), vk::AccessFlags2::DEPTH_STENCIL_ATTACHMENT_WRITE, vk::ImageLayout::UNDEFINED)
 }
 
 /// シャドウマップの、前フレーム「画素段シェーダー読み」直後を想定した状態。
@@ -47,11 +37,7 @@ pub(crate) fn 前フレーム深度書き込み直後状態() -> 画像状態 {
 /// シャドウ読み)のため、次フレーム冒頭のシャドウパス(深度書き)との間のWARハザードを
 /// この値で表現する。layoutはUNDEFINEDにして内容を保持しない(本フレームでCLEARし直すため)。
 pub(crate) fn 前フレームシャドウマップ読み直後状態() -> 画像状態 {
-    画像状態::生成する(
-        vk::PipelineStageFlags2::FRAGMENT_SHADER,
-        vk::AccessFlags2::SHADER_SAMPLED_READ,
-        vk::ImageLayout::UNDEFINED,
-    )
+    画像状態::生成する(vk::PipelineStageFlags2::FRAGMENT_SHADER, vk::AccessFlags2::SHADER_SAMPLED_READ, vk::ImageLayout::UNDEFINED)
 }
 
 /// HDR中間画像の、前フレーム「明るさの圧縮パスの画素段読み」直後を想定した状態(判断38)。
@@ -61,11 +47,7 @@ pub(crate) fn 前フレームシャドウマップ読み直後状態() -> 画像
 /// シーン描画(カラー書き)との間のWARハザードをこの値で表現する。layoutはUNDEFINEDにして
 /// 内容を保持しない(本フレームでCLEARし直すため)。
 pub(crate) fn 前フレームhdr中間画像読み直後状態() -> 画像状態 {
-    画像状態::生成する(
-        vk::PipelineStageFlags2::FRAGMENT_SHADER,
-        vk::AccessFlags2::SHADER_SAMPLED_READ,
-        vk::ImageLayout::UNDEFINED,
-    )
+    画像状態::生成する(vk::PipelineStageFlags2::FRAGMENT_SHADER, vk::AccessFlags2::SHADER_SAMPLED_READ, vk::ImageLayout::UNDEFINED)
 }
 
 /// 粒子ストレージバッファの、前フレーム「頂点段シェーダー読み」直後を想定した状態。

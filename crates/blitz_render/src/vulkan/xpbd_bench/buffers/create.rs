@@ -17,10 +17,7 @@ const 累積1点のバイト数: usize = 12;
 const 候補1拘束のバイト数: usize = 32;
 
 impl XPBD計測バッファ {
-    pub(in crate::vulkan::xpbd_bench) fn 生成する(
-        転送係: ステージング経由の転送係<'_>,
-        素材: &XPBD計測素材,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(in crate::vulkan::xpbd_bench) fn 生成する(転送係: ステージング経由の転送係<'_>, 素材: &XPBD計測素材) -> Result<Self, レンダラーエラー> {
         let 確保係 = 転送係.確保係();
         let mut 台帳 = 巻き戻せる確保の台帳::始める(確保係);
         let ストレージ = vk::BufferUsageFlags::STORAGE_BUFFER;

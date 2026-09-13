@@ -22,10 +22,7 @@ pub(in crate::atmosphere) const 公比の上限: f64 = 0.999;
 pub(in crate::atmosphere) fn 等比級数を閉じる(一次散乱: f64, 公比: f64) -> Result<f32, 大気数学エラー> {
     // NaNもここで捕まえる(比較が偽になるため`公比 < 公比の上限`が成り立たない)。
     if 公比.is_nan() || 公比 >= 公比の上限 {
-        return Err(大気数学エラー::値域外(
-            "多重散乱の等比級数の公比",
-            narrowing::実数へ狭める(公比),
-        ));
+        return Err(大気数学エラー::値域外("多重散乱の等比級数の公比", narrowing::実数へ狭める(公比)));
     }
     Ok(narrowing::実数へ狭める(一次散乱 / (1.0 - 公比)))
 }

@@ -19,9 +19,7 @@ use crate::vulkan::command_sink::積み込みを開始したコマンドバッ�
 use crate::vulkan::transfer::転送実行環境;
 
 impl 点光源の影の立方体配列 {
-    pub(crate) fn 初期レイアウトを深度読み取りへ整える(
-        &self, 転送環境: &転送実行環境
-    ) -> Result<(), レンダラーエラー> {
+    pub(crate) fn 初期レイアウトを深度読み取りへ整える(&self, 転送環境: &転送実行環境) -> Result<(), レンダラーエラー> {
         let セッション = 転送環境.転送コマンドを積み始める()?;
         let 部分範囲 = vk::ImageSubresourceRange::default()
             .aspect_mask(vk::ImageAspectFlags::DEPTH)

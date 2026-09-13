@@ -15,10 +15,7 @@ pub(in crate::vulkan::indirect_lighting) struct 注入元バッファ {
 }
 
 impl 注入元バッファ {
-    pub(in crate::vulkan::indirect_lighting) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        バイト列: &[u8],
-    ) -> Result<Self, レンダラーエラー> {
+    pub(in crate::vulkan::indirect_lighting) fn 生成する(確保係: &GPU資源の確保係<'_>, バイト列: &[u8]) -> Result<Self, レンダラーエラー> {
         let バッファ = 確保係.ホスト可視バッファを確保して書き込む(バイト列, vk::BufferUsageFlags::TRANSFER_SRC)?;
         Ok(Self { バッファ })
     }

@@ -19,10 +19,7 @@ pub(super) struct 最大の記録 {
 
 impl 最大の記録 {
     fn 新規() -> Self {
-        Self {
-            値: f64::NEG_INFINITY,
-            跨ぎ番号: 0,
-        }
+        Self { 値: f64::NEG_INFINITY, 跨ぎ番号: 0 }
     }
 
     fn 更新する(&mut self, 値: f64, 跨ぎ番号: usize) {

@@ -24,12 +24,7 @@ impl 照明問い合わせのセットの書き込み先<'_> {
     /// 束縛するのは層ごとのビューでなく配列全体の立方体のビューであり、灯の選択はシェーダーが立方体の添字で行う。
     /// この資源はスワップチェーン再構築と独立の固定資源のため、生成時に一度だけ結べばよい。
     pub(super) fn 点光源の影の立方体配列を結ぶ(&self, ビュー: vk::ImageView, sampler: vk::Sampler) {
-        self.ディスクリプタの書き込み先().サンプラー付きの画像を結ぶ(
-            点光源の影の束縛番号,
-            ビュー,
-            sampler,
-            vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL,
-        );
+        self.ディスクリプタの書き込み先().サンプラー付きの画像を結ぶ(点光源の影の束縛番号, ビュー, sampler, vk::ImageLayout::DEPTH_READ_ONLY_OPTIMAL);
     }
 }
 

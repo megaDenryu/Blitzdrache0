@@ -59,10 +59,7 @@ impl 接触点集合の法線と接線の連立方程式 {
     }
 
     /// 行を積まなかった点の残差 C_t と閾値 δ。積んだ点と、接線変位が零の点は無しである。
-    pub(in crate::contact::normal_tangential_system) fn 積まなかった点の残差を読む(
-        &self,
-        点の番号: usize,
-    ) -> Option<残差と受理の許容差> {
+    pub(in crate::contact::normal_tangential_system) fn 積まなかった点の残差を読む(&self, 点の番号: usize) -> Option<残差と受理の許容差> {
         self.点ごとの積まなかった接線の残差[点の番号]
     }
 }

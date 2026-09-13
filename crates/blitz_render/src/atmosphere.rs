@@ -30,9 +30,7 @@ mod table;
 mod atmosphere_tests;
 
 pub use bake::aerial_condition::空中遠近観測条件;
-pub use bake::aerial_lut::{
-    空中遠近ボリュームのボクセル値, 空中遠近ボリュームの材料, 空中遠近ボリュームを焼く
-};
+pub use bake::aerial_lut::{空中遠近ボリュームのボクセル値, 空中遠近ボリュームの材料, 空中遠近ボリュームを焼く};
 pub use bake::distant_environment_lut::{遠方環境のテクセル値, 遠方環境を焼く};
 pub use bake::multiscatter_lut::{多重散乱のベイク済み画像のテクセル値, 多重散乱のベイク済み画像を焼く};
 pub use bake::skyview_condition::スカイビュー観測条件;
@@ -46,22 +44,15 @@ pub use integration::phase::{ミー位相関数, レイリー位相関数};
 pub use integration::sun_visibility;
 pub use integration::transmittance::上端までの透過率;
 pub use mapping::aerial_mapping::{
-    空中遠近ボリュームの奥行き位置を求める, 空中遠近ボリュームの奥行き添字の位置, 空中遠近ボリュームの標本座標を求める,
-    空中遠近ボリュームの画面位置を求める, 空中遠近ボリュームの距離を求める,
+    空中遠近ボリュームの奥行き位置を求める, 空中遠近ボリュームの奥行き添字の位置, 空中遠近ボリュームの標本座標を求める, 空中遠近ボリュームの画面位置を求める, 空中遠近ボリュームの距離を求める
 };
 pub use mapping::distant_environment_resolution::{立方体の面数, 遠方環境の解像度};
 pub use mapping::lut_resolution::大気のベイク済み画像の解像度;
-pub use mapping::multiscatter_mapping::{
-    多重散乱のベイク済み画像の単位位置を求める, 多重散乱のベイク済み画像の条件, 多重散乱のベイク済み画像の条件を求める,
-};
+pub use mapping::multiscatter_mapping::{多重散乱のベイク済み画像の単位位置を求める, 多重散乱のベイク済み画像の条件, 多重散乱のベイク済み画像の条件を求める};
 pub use mapping::skyview_lookup::ワールドの視線からスカイビューのベイク済み画像の視線を求める;
-pub use mapping::skyview_mapping::{
-    スカイビューのベイク済み画像の単位位置を求める, スカイビューのベイク済み画像の視線, スカイビューのベイク済み画像の視線を求める,
-};
+pub use mapping::skyview_mapping::{スカイビューのベイク済み画像の単位位置を求める, スカイビューのベイク済み画像の視線, スカイビューのベイク済み画像の視線を求める};
 pub use mapping::sun_relative_frame::{太陽相対フレーム, 太陽相対座標の太陽方向};
-pub use mapping::transmittance_mapping::{
-    テクセル中心のuv, 透過率のベイク済み画像のuvを求める, 透過率のベイク済み画像の視線, 透過率のベイク済み画像の視線を求める,
-};
+pub use mapping::transmittance_mapping::{テクセル中心のuv, 透過率のベイク済み画像のuvを求める, 透過率のベイク済み画像の視線, 透過率のベイク済み画像の視線を求める};
 pub use mapping::unit_texel::{単位位置からテクセル中心のuv, 端から端への単位位置};
 pub use medium::density::規格化密度を求める;
 pub use medium::density_layer::密度分布層;

@@ -36,9 +36,7 @@ pub(crate) struct GPU資源の確保係<'デバイス> {
 
 impl<'デバイス> GPU資源の確保係<'デバイス> {
     pub(crate) fn 生成する(device: &'デバイス GPUデバイス, メモリプロパティ: vk::PhysicalDeviceMemoryProperties) -> Self {
-        Self {
-            device, メモリプロパティ
-        }
+        Self { device, メモリプロパティ }
     }
 
     /// 確保以外のGPU操作(画像の生成・ディスクリプタの更新・破棄)に使う論理デバイスを貸す。

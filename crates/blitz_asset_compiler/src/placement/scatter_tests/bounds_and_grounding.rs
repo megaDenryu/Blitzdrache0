@@ -5,9 +5,7 @@ use blitz_engine::チャンク座標;
 
 use super::super::ground_preference::{傾きの好み, 地表への据え方};
 use super::super::配置列を作る;
-use super::fixture::{
-    一定の傾きの格子, 必ず置く, 指定, 散らす, 検査用の通し番号, 検査用一辺メートル, 種から作る
-};
+use super::fixture::{一定の傾きの格子, 必ず置く, 指定, 散らす, 検査用の通し番号, 検査用一辺メートル, 種から作る};
 use crate::terrain::ground_height;
 
 #[test]

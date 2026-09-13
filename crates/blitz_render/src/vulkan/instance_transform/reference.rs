@@ -21,12 +21,8 @@ impl 個体レコード参照 {
         }
     }
 
-    pub(crate) fn スロット別バッファから生成する(
-        スロット別バッファ: [vk::Buffer; 進行中フレーム数], 範囲: vk::DeviceSize
-    ) -> Self {
-        Self {
-            スロット別バッファ, 範囲
-        }
+    pub(crate) fn スロット別バッファから生成する(スロット別バッファ: [vk::Buffer; 進行中フレーム数], 範囲: vk::DeviceSize) -> Self {
+        Self { スロット別バッファ, 範囲 }
     }
 
     pub(crate) fn buffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {

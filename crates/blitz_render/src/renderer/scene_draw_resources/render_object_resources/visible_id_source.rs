@@ -36,12 +36,7 @@ impl 可視ID列の出どころ {
 
     /// 個体が1体だけの対象は共有列を読むため、書き込みは行わない。共有列の内容と矛盾しない選択(唯一の個体を並べた
     /// 値0だけの列)だけを書き込み省略で受理し、それ以外は型付きエラーにする。判定は`shared_single_column`が持つ。
-    pub(super) fn 書き込む(
-        &self,
-        device: &ash::Device,
-        フレーム添字: フレームスロット添字,
-        可視id列: &[u32],
-    ) -> Result<(), レンダラーエラー> {
+    pub(super) fn 書き込む(&self, device: &ash::Device, フレーム添字: フレームスロット添字, 可視id列: &[u32]) -> Result<(), レンダラーエラー> {
         match self {
             Self::束の単一個体列 => shared_single_column::書き込み要求を受理する(可視id列).map_err(Into::into),
             Self::専用バッファ(バッファ) => バッファ.書き込む(device, フレーム添字, 可視id列),

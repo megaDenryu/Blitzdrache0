@@ -2,8 +2,8 @@ use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
 use crate::{
-    asset::runtime_scene_tests::静的シーンを作る, streaming_ledger_tests::候補集合を作る, アセットID, カタログ, シーンを実行時形式へ格納する,
-    チャンク台帳, チャンク読込エラー, チャンク読込器, チャンク読込完了, チャンク読込設定, リセット世代, 実行時シーン読込エラー, 準備完了結果,
+    asset::runtime_scene_tests::静的シーンを作る, streaming_ledger_tests::候補集合を作る, アセットID, カタログ, シーンを実行時形式へ格納する, チャンク台帳, チャンク読込エラー, チャンク読込器, チャンク読込完了, チャンク読込設定, リセット世代,
+    実行時シーン読込エラー, 準備完了結果,
 };
 
 mod setting_tests;
@@ -49,10 +49,7 @@ fn 壊れた生成物と未登録idを型付きエラーにする() {
     let Ok(未登録) = アセットID::生成する("missing") else {
         panic!("未登録試験IDを作れなかった");
     };
-    assert!(matches!(
-        読込器.読込を要求する(crate::チャンク座標::生成する(8, 0), &未登録, &カタログ, 世代),
-        Err(チャンク読込エラー::カタログ未登録(_))
-    ));
+    assert!(matches!(読込器.読込を要求する(crate::チャンク座標::生成する(8, 0), &未登録, &カタログ, 世代), Err(チャンク読込エラー::カタログ未登録(_))));
     assert!(std::fs::remove_file(パス).is_ok());
 }
 

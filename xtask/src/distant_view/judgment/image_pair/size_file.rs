@@ -8,25 +8,18 @@ use std::path::Path;
 use crate::distant_view::error::採取の読み取りの破れ;
 
 pub(super) fn 幅と高さを読む(パス: &Path) -> Result<(usize, usize), 採取の読み取りの破れ> {
-    let 本文 = std::fs::read_to_string(パス).map_err(|誤り| 採取の読み取りの破れ::ファイルを読めなかった {
-        パス: パス.to_path_buf(),
-        誤り,
-    })?;
+    let 本文 = std::fs::read_to_string(パス).map_err(|誤り| 採取の読み取りの破れ::ファイルを読めなかった { パス: パス.to_path_buf(), 誤り })?;
     let mut 語一覧 = 本文.split_whitespace();
     let (Some(幅の綴り), Some(高さの綴り)) = (語一覧.next(), 語一覧.next()) else {
         return Err(採取の読み取りの破れ::寸法の行に幅と高さが並んでいない {
-            パス: パス.to_path_buf(),
-            本文: 本文.clone(),
+            パス: パス.to_path_buf(), 本文: 本文.clone()
         });
     };
     Ok((数として読む(パス, 幅の綴り)?, 数として読む(パス, 高さの綴り)?))
 }
 
 pub(super) fn バイト列を読む(パス: &Path) -> Result<Vec<u8>, 採取の読み取りの破れ> {
-    std::fs::read(パス).map_err(|誤り| 採取の読み取りの破れ::ファイルを読めなかった {
-        パス: パス.to_path_buf(),
-        誤り,
-    })
+    std::fs::read(パス).map_err(|誤り| 採取の読み取りの破れ::ファイルを読めなかった { パス: パス.to_path_buf(), 誤り })
 }
 
 fn 数として読む(パス: &Path, 綴り: &str) -> Result<usize, 採取の読み取りの破れ> {

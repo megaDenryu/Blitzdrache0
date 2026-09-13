@@ -84,9 +84,7 @@ impl<空間種: 空間> 方向<空間種> {
     }
 
     fn 検査済みの内部から生成する(内部: Vec3) -> Self {
-        Self {
-            内部, _空間: PhantomData
-        }
+        Self { 内部, _空間: PhantomData }
     }
 }
 

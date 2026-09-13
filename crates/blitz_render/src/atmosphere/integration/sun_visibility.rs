@@ -10,9 +10,7 @@
 
 use crate::atmosphere::geometry::intersect::{最近の球交差距離, 視線が惑星と交差するか};
 use crate::atmosphere::geometry::vector3::{内積, 単位化, 長さ};
-use crate::atmosphere::mapping::transmittance_mapping::{
-    透過率のベイク済み画像のuvの生値, 透過率のベイク済み画像のuvを求める
-};
+use crate::atmosphere::mapping::transmittance_mapping::{透過率のベイク済み画像のuvの生値, 透過率のベイク済み画像のuvを求める};
 use crate::atmosphere::narrowing;
 use crate::atmosphere::table::transmittance_table::透過率表;
 use crate::atmosphere::{大気内観測点, 大気散乱媒体, 天頂余弦, 透過率RGB};
@@ -26,12 +24,7 @@ use crate::atmosphere::{大気内観測点, 大気散乱媒体, 天頂余弦, �
 pub(in crate::atmosphere) const 遮蔽球を縮める半径メートル: f64 = 10.0;
 
 /// その位置から太陽へ向かう向きの透過率。表を参照するだけであり、惑星による遮蔽はここでは見ない。
-pub(in crate::atmosphere) fn 太陽への透過率を参照する(
-    媒体: &大気散乱媒体,
-    透過率表: &透過率表,
-    位置: [f64; 3],
-    太陽: [f64; 3],
-) -> [f64; 3] {
+pub(in crate::atmosphere) fn 太陽への透過率を参照する(媒体: &大気散乱媒体, 透過率表: &透過率表, 位置: [f64; 3], 太陽: [f64; 3]) -> [f64; 3] {
     let Some(上向き) = 単位化(位置) else {
         return [0.0; 3];
     };
@@ -62,9 +55,7 @@ pub(in crate::atmosphere) fn 太陽が地表に遮られるか(媒体: &大気�
 /// 滑らかにする被覆率が受け持ち、この工程は受け持たない。
 ///
 /// 注意: この工程は`shaders/sky_atmosphere.slang`の円盤項の写しを持つ。ここが正本である。
-pub fn 太陽円盤の画素に掛かる透過率を求める(
-    観測点: 大気内観測点<'_>, 視線天頂余弦: 天頂余弦, 透過率表: &透過率表
-) -> 透過率RGB {
+pub fn 太陽円盤の画素に掛かる透過率を求める(観測点: 大気内観測点<'_>, 視線天頂余弦: 天頂余弦, 透過率表: &透過率表) -> 透過率RGB {
     if 視線が惑星と交差するか(観測点, 視線天頂余弦) {
         return 透過率RGB::検証済みの成分から([0.0; 3]);
     }

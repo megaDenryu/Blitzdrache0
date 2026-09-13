@@ -5,19 +5,12 @@
 
 use super::ストリーミング調停;
 
-use crate::streaming::{
-    chunk_request::チャンク要求, coordinator_error::ストリーミング調停エラー, loader::チャンク読込エラー, reset_generation::リセット世代,
-};
+use crate::streaming::{chunk_request::チャンク要求, coordinator_error::ストリーミング調停エラー, loader::チャンク読込エラー, reset_generation::リセット世代};
 use crate::{カタログ, チャンク座標};
 
 impl ストリーミング調停 {
     /// `世代`は投入する読込に刻むリセット世代であり、完了の回収が同じ値かどうかで古い完了を退ける。
-    pub(super) fn 読込を投入する(
-        &mut self,
-        読込要求一覧: &[チャンク要求],
-        カタログ: &カタログ,
-        世代: リセット世代,
-    ) -> Result<Vec<チャンク座標>, ストリーミング調停エラー> {
+    pub(super) fn 読込を投入する(&mut self, 読込要求一覧: &[チャンク要求], カタログ: &カタログ, 世代: リセット世代) -> Result<Vec<チャンク座標>, ストリーミング調停エラー> {
         let mut 開始一覧 = Vec::new();
         for 要求 in 読込要求一覧 {
             let 座標 = 要求.座標();

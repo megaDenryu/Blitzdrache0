@@ -6,9 +6,7 @@
 
 use ash::vk;
 
-use crate::vulkan::graph::{
-    GPU命令の積み先と宣言済み資源の取り出し口, パス宣言, パス種別, 画像ハンドル, 画像用途
-};
+use crate::vulkan::graph::{GPU命令の積み先と宣言済み資源の取り出し口, パス宣言, パス種別, 画像ハンドル, 画像用途};
 
 /// 転送パスが要る4本のハンドルと寸法。
 #[derive(Clone, Copy)]
@@ -29,9 +27,7 @@ pub(crate) struct 合成入力の書き戻し先 {
     pub(crate) 深度: 画像ハンドル,
 }
 
-pub(crate) fn 合成入力の注入を作る<'a>(
-    書き戻し先: 合成入力の書き戻し先, 入力: 合成入力の注入入力
-) -> パス宣言<'a> {
+pub(crate) fn 合成入力の注入を作る<'a>(書き戻し先: 合成入力の書き戻し先, 入力: 合成入力の注入入力) -> パス宣言<'a> {
     パス宣言::生成する(
         "時間再構成の合成入力の注入",
         Vec::new(),
@@ -48,11 +44,7 @@ pub(crate) fn 合成入力の注入を作る<'a>(
     )
 }
 
-fn 合成入力の画像のコピーを積む(
-    文脈: &GPU命令の積み先と宣言済み資源の取り出し口,
-    書き戻し先: 合成入力の書き戻し先,
-    入力: 合成入力の注入入力,
-) {
+fn 合成入力の画像のコピーを積む(文脈: &GPU命令の積み先と宣言済み資源の取り出し口, 書き戻し先: 合成入力の書き戻し先, 入力: 合成入力の注入入力) {
     let 色の面 = vk::ImageAspectFlags::COLOR;
     let 組一覧 = [
         (書き戻し先.今のフレームの色, 入力.今のフレームの色, 色の面),
@@ -65,22 +57,10 @@ fn 合成入力の画像のコピーを積む(
     }
 }
 
-fn バッファから画像へ一枚をコピーする(
-    文脈: &GPU命令の積み先と宣言済み資源の取り出し口,
-    ハンドル: 画像ハンドル,
-    バッファ: vk::Buffer,
-    面: vk::ImageAspectFlags,
-    寸法: vk::Extent2D,
-) {
+fn バッファから画像へ一枚をコピーする(文脈: &GPU命令の積み先と宣言済み資源の取り出し口, ハンドル: 画像ハンドル, バッファ: vk::Buffer, 面: vk::ImageAspectFlags, 寸法: vk::Extent2D) {
     let 画像 = 文脈.宣言済みの画像を参照する(ハンドル);
     let 領域 = vk::BufferImageCopy::default()
-        .image_subresource(
-            vk::ImageSubresourceLayers::default()
-                .aspect_mask(面)
-                .mip_level(0)
-                .base_array_layer(0)
-                .layer_count(1),
-        )
+        .image_subresource(vk::ImageSubresourceLayers::default().aspect_mask(面).mip_level(0).base_array_layer(0).layer_count(1))
         .image_extent(vk::Extent3D {
             width: 寸法.width,
             height: 寸法.height,
@@ -90,12 +70,9 @@ fn バッファから画像へ一枚をコピーする(
     // 安全性: command_bufferは記録中、対象の画像はグラフの導いたバリアでTRANSFER_DST_OPTIMALへ遷移済み、
     // バッファは同じ寸法の成分列で確保済みである(`合成入力の注入一式::生成する`が同じ寸法から作る)。
     unsafe {
-        文脈.積み先().論理デバイス().cmd_copy_buffer_to_image(
-            文脈.積み先().コマンドバッファ(),
-            バッファ,
-            画像,
-            vk::ImageLayout::TRANSFER_DST_OPTIMAL,
-            &領域一覧,
-        );
+        文脈
+            .積み先()
+            .論理デバイス()
+            .cmd_copy_buffer_to_image(文脈.積み先().コマンドバッファ(), バッファ, 画像, vk::ImageLayout::TRANSFER_DST_OPTIMAL, &領域一覧);
     }
 }

@@ -21,11 +21,7 @@ enum 待機判定 {
 /// timeout=0での判定を先に置き、描画ループを止める必要があるときだけ止める設計だが、
 /// 実測ではNVIDIAドライバー(596.21)がtimeout=0でも表示まで停止した。停止した長さは観測ごとの停止時間msに残るため、
 /// 観測時刻が実表示時刻かどうかは停止時間msの分布で判定すること。
-pub(super) fn 表示を待って記録する(
-    待機: &ash::khr::present_wait::Device,
-    記録: &mut 表示時刻記録,
-    swapchain: vk::SwapchainKHR,
-) -> Result<(), レンダラーエラー> {
+pub(super) fn 表示を待って記録する(待機: &ash::khr::present_wait::Device, 記録: &mut 表示時刻記録, swapchain: vk::SwapchainKHR) -> Result<(), レンダラーエラー> {
     let Some(対象id) = 記録.待機対象id() else {
         return Ok(());
     };
@@ -34,12 +30,7 @@ pub(super) fn 表示を待って記録する(
     let 即時判定 = 提示結果を待機判定へ判定する(unsafe { 待機.wait_for_present(swapchain, 対象id, 0) })?;
     match 即時判定 {
         待機判定::表示された => {
-            記録.観測を加える(
-                待機結末::表示された {
-                    停止時間ms: 経過ms(開始)
-                },
-                Instant::now(),
-            );
+            記録.観測を加える(待機結末::表示された { 停止時間ms: 経過ms(開始) }, Instant::now());
             Ok(())
         }
         待機判定::まだ表示されていない => 待ち直して観測する(待機, 記録, swapchain, 対象id, 開始),
@@ -50,13 +41,7 @@ pub(super) fn 表示を待って記録する(
     }
 }
 
-fn 待ち直して観測する(
-    待機: &ash::khr::present_wait::Device,
-    記録: &mut 表示時刻記録,
-    swapchain: vk::SwapchainKHR,
-    対象id: u64,
-    開始: Instant,
-) -> Result<(), レンダラーエラー> {
+fn 待ち直して観測する(待機: &ash::khr::present_wait::Device, 記録: &mut 表示時刻記録, swapchain: vk::SwapchainKHR, 対象id: u64, 開始: Instant) -> Result<(), レンダラーエラー> {
     // 安全性: 即時判定と同じ引数であり、swapchainとローダーの対応は呼び出し元が保証する。
     let 判定 = 提示結果を待機判定へ判定する(unsafe { 待機.wait_for_present(swapchain, 対象id, 待機上限NS) })?;
     let 完了 = Instant::now();

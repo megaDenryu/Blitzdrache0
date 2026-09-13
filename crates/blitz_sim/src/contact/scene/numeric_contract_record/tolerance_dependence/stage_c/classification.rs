@@ -17,9 +17,7 @@ pub(super) struct 退避の理由の内訳 {
 
 impl 退避の理由の内訳 {
     fn 零から始める() -> Self {
-        Self {
-            理由ごとの延べ数: BTreeMap::new(),
-        }
+        Self { 理由ごとの延べ数: BTreeMap::new() }
     }
 
     fn 一件を数える(&mut self, 結末の綴り: &'static str) {
@@ -42,10 +40,7 @@ pub(super) fn 分類と退避を綴る(場合: &許容差依存の診断の場�
 }
 
 /// 同じ組を、指定の許容差の適用規則(届く先や閾値の倍率を振ったもの)で走らせて綴る。見出しは適用規則の綴りを使う。
-pub(in crate::contact::scene::numeric_contract_record::tolerance_dependence) fn 分類と退避を適用規則で綴る(
-    場合: &許容差依存の診断の場合,
-    適用規則: 試験の許容差の適用規則,
-) {
+pub(in crate::contact::scene::numeric_contract_record::tolerance_dependence) fn 分類と退避を適用規則で綴る(場合: &許容差依存の診断の場合, 適用規則: 試験の許容差の適用規則) {
     let 条件 = 場合.坂の場面の条件を組む();
     let 本数 = 分類を見る刻み数 * 場合.変更.一刻みの細分数();
     let mut 場面 = 場合.場面を適用規則で組む(適用規則);

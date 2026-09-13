@@ -7,9 +7,5 @@ const 比べる2枚のバイト数: 判定の名前 = 判定の名前::定数か
 
 pub(super) fn 食い違う画素を数える(左: &[u8], 右: &[u8]) -> Result<usize, 判定の破れ> {
     比べる2枚のバイト数.一致を課す(左.len(), 右.len())?;
-    Ok(左
-        .chunks_exact(4)
-        .zip(右.chunks_exact(4))
-        .filter(|(左画素, 右画素)| 左画素 != 右画素)
-        .count())
+    Ok(左.chunks_exact(4).zip(右.chunks_exact(4)).filter(|(左画素, 右画素)| 左画素 != 右画素).count())
 }

@@ -19,9 +19,7 @@ pub(crate) struct UIテクスチャ {
 }
 
 impl UIテクスチャ {
-    pub(crate) fn 生成する(
-        転送係: ステージング経由の転送係<'_>, 素材: &UIテクスチャ素材
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(転送係: ステージング経由の転送係<'_>, 素材: &UIテクスチャ素材) -> Result<Self, レンダラーエラー> {
         let 確保係 = 転送係.確保係();
         let device = 確保係.論理デバイス();
         let (image, memory) = image::uiテクスチャの画像を生成する(確保係, 素材.幅(), 素材.高さ())?;
@@ -48,12 +46,7 @@ impl UIテクスチャ {
             }
         };
 
-        Ok(Self {
-            image,
-            memory,
-            image_view,
-            sampler,
-        })
+        Ok(Self { image, memory, image_view, sampler })
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {

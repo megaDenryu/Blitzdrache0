@@ -40,24 +40,15 @@ pub async fn ソースアセットを書き出す(State(状態): State<サーバ
 }
 
 /// 応答は`Response`本体を直接返すと`Result`全体が大きくなる(clippyの`result_large_err`が検出する)ため、拒否応答だけ`Box`で包む。
-fn ソースアセットの書き出しとベイクを実行する(
-    状態: &サーバー状態, 本文: &[u8]
-) -> Result<応答本体, Box<Response>> {
-    let _排他権 = 状態.ソースアセット書き出しの排他権().lock().map_err(|誤り| {
-        Box::new(失敗応答を組み立てる(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            "内部エラー",
-            誤り.to_string(),
-        ))
-    })?;
+fn ソースアセットの書き出しとベイクを実行する(状態: &サーバー状態, 本文: &[u8]) -> Result<応答本体, Box<Response>> {
+    let _排他権 = 状態
+        .ソースアセット書き出しの排他権()
+        .lock()
+        .map_err(|誤り| Box::new(失敗応答を組み立てる(StatusCode::INTERNAL_SERVER_ERROR, "内部エラー", 誤り.to_string())))?;
     let 要求 = 要求本体を解く(本文)?;
     let 世界名 = 出力世界名::生成する(要求.出力先の世界名).map_err(|エラー| Box::new(エラー.into_response()))?;
     if !世界名.エディターの世界か() {
-        return Err(Box::new(失敗応答を組み立てる(
-            StatusCode::BAD_REQUEST,
-            "世界名エラー",
-            "同期ベイクの対象はeditor_worldだけである".to_string(),
-        )));
+        return Err(Box::new(失敗応答を組み立てる(StatusCode::BAD_REQUEST, "世界名エラー", "同期ベイクの対象はeditor_worldだけである".to_string())));
     }
     let 出力先 = 世界ソース出力先::生成する(状態.リポジトリルート(), &世界名);
     // カタログと格子を同じ錠の中で写し取るのは、書き出しの最中に保存が走っても、この1回が同じ世代のカタログと格子だけを見るようにするためである。
@@ -79,22 +70,12 @@ fn ベイク失敗の応答(誤り: 実行時アセットのコンパイルエ�
         実行時アセットのコンパイルエラー::ソース不正(_) => StatusCode::UNPROCESSABLE_ENTITY,
         実行時アセットのコンパイルエラー::入出力(_) => StatusCode::INTERNAL_SERVER_ERROR,
     };
-    Box::new(失敗応答を組み立てる(
-        状態,
-        "ベイクエラー",
-        format!("ソースアセットは書き出したが、ベイクに失敗した: {誤り}"),
-    ))
+    Box::new(失敗応答を組み立てる(状態, "ベイクエラー", format!("ソースアセットは書き出したが、ベイクに失敗した: {誤り}")))
 }
 
 fn 要求本体を解く(本文: &[u8]) -> Result<要求本体, Box<Response>> {
     if 本文.is_empty() {
         return Ok(要求本体::default());
     }
-    serde_json::from_slice(本文).map_err(|誤り| {
-        Box::new(失敗応答を組み立てる(
-            StatusCode::BAD_REQUEST,
-            "JSON解析エラー",
-            誤り.to_string(),
-        ))
-    })
+    serde_json::from_slice(本文).map_err(|誤り| Box::new(失敗応答を組み立てる(StatusCode::BAD_REQUEST, "JSON解析エラー", 誤り.to_string())))
 }

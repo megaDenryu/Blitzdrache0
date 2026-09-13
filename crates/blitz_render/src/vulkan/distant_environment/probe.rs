@@ -11,9 +11,7 @@ mod copy_pass;
 mod graph_build;
 mod record;
 
-use crate::atmosphere::{
-    スカイビュー観測条件, 大気のベイク済み画像の解像度, 大気散乱媒体, 空中遠近観測条件, 遠方環境の解像度
-};
+use crate::atmosphere::{スカイビュー観測条件, 大気のベイク済み画像の解像度, 大気散乱媒体, 空中遠近観測条件, 遠方環境の解像度};
 use crate::compute_shader::コンピュートシェーダー;
 use crate::error::レンダラーエラー;
 use crate::shader_bundle::大気のベイク済み画像のシェーダー一式;
@@ -40,9 +38,7 @@ pub(crate) struct 遠方環境の読み戻し {
     pub(crate) テクセル一覧: Vec<[f32; 4]>,
 }
 
-pub(crate) fn 遠方環境をgpuで焼いて読み戻す(
-    条件: 遠方環境を焼く条件<'_>,
-) -> Result<(遠方環境の読み戻し, 検証観測), レンダラーエラー> {
+pub(crate) fn 遠方環境をgpuで焼いて読み戻す(条件: 遠方環境を焼く条件<'_>) -> Result<(遠方環境の読み戻し, 検証観測), レンダラーエラー> {
     let 環境 = ウィンドウなし実行GPU環境::生成する()?;
     let 結果 = record::環境で焼く(&環境, &条件);
     let 観測 = 検証観測::環境を破棄して観測する(&環境);

@@ -9,14 +9,7 @@ use crate::vulkan::graph::クリア指定;
 
 /// 前提: command_bufferは記録中で、pipeline・layout・ディスクリプタセットは互換の組として
 /// 生成済み。プッシュ定数を渡す場合、そのバイト数はlayoutのFRAGMENT範囲宣言と一致すること。
-pub(super) fn コマンドを積む(
-    積み先: GPU命令の積み先<'_>,
-    pipeline: vk::Pipeline,
-    layout: vk::PipelineLayout,
-    ディスクリプタセット: vk::DescriptorSet,
-    寸法: vk::Extent2D,
-    プッシュ定数: Option<&[u8]>,
-) {
+pub(super) fn コマンドを積む(積み先: GPU命令の積み先<'_>, pipeline: vk::Pipeline, layout: vk::PipelineLayout, ディスクリプタセット: vk::DescriptorSet, 寸法: vk::Extent2D, プッシュ定数: Option<&[u8]>) {
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
     let viewport = vk::Viewport::default()
@@ -49,7 +42,6 @@ pub(super) fn コマンドを積む(
 /// 全画面三角形が全ピクセルを上書きするパス用のクリア指定。クリア値は表示に影響しないが、
 /// クリア指定enumがロード(内容未定義の画像では不可)とクリアの2択のため黒でクリアする。
 pub(super) fn 黒クリア() -> クリア指定 {
-    let 黒 = crate::clear_color::クリアカラー::生成する(0.0, 0.0, 0.0, 1.0)
-        .unwrap_or_else(|誤り| panic!("全画面パスのクリア色生成が失敗した(実装のバグ): {誤り}"));
+    let 黒 = crate::clear_color::クリアカラー::生成する(0.0, 0.0, 0.0, 1.0).unwrap_or_else(|誤り| panic!("全画面パスのクリア色生成が失敗した(実装のバグ): {誤り}"));
     クリア指定::クリアする { カラー: 黒 }
 }

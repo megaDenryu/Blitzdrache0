@@ -8,11 +8,7 @@ use crate::error::アセットコンパイルエラー;
 
 use super::file::外部ファイルを読む;
 
-pub(super) fn バッファ一覧を解決する(
-    文書: &gltf::Document,
-    基準ディレクトリ: &Path,
-    埋め込みバイナリ: Option<Vec<u8>>,
-) -> Result<(Vec<Vec<u8>>, Vec<PathBuf>), アセットコンパイルエラー> {
+pub(super) fn バッファ一覧を解決する(文書: &gltf::Document, 基準ディレクトリ: &Path, 埋め込みバイナリ: Option<Vec<u8>>) -> Result<(Vec<Vec<u8>>, Vec<PathBuf>), アセットコンパイルエラー> {
     let mut 結果 = Vec::with_capacity(文書.buffers().len());
     let mut 参照パス一覧 = Vec::new();
     for バッファ in 文書.buffers() {

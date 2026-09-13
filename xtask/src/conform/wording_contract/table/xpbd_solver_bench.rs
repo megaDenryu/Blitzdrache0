@@ -14,30 +14,23 @@ pub(super) const 綴り一覧: [綴りの契約; 7] = [
         現れるファイル一覧: 両側,
     },
     綴りの契約 {
-        綴り: "XPBD検証",
-        現れるファイル一覧: 両側,
+        綴り: "XPBD検証", 現れるファイル一覧: 両側
     },
     綴りの契約 {
-        綴り: "XPBD再現性",
-        現れるファイル一覧: 両側,
+        綴り: "XPBD再現性", 現れるファイル一覧: 両側
     },
     綴りの契約 {
-        綴り: "XPBD収束",
-        現れるファイル一覧: 両側,
+        綴り: "XPBD収束", 現れるファイル一覧: 両側
     },
     綴りの契約 {
         綴り: "XPBDのCPU参照との差",
         現れるファイル一覧: 両側,
     },
     綴りの契約 {
-        綴り: "XPBD資源",
-        現れるファイル一覧: 両側,
+        綴り: "XPBD資源", 現れるファイル一覧: 両側
     },
     綴りの契約 {
         綴り: "XPBDの一刻みの合計",
-        現れるファイル一覧: &[
-            "crates/blitz_render/src/vulkan/xpbd_bench/pass_names.rs",
-            "xtask/src/xpbd_solver_bench/intervals.rs",
-        ],
+        現れるファイル一覧: &["crates/blitz_render/src/vulkan/xpbd_bench/pass_names.rs", "xtask/src/xpbd_solver_bench/intervals.rs"],
     },
 ];

@@ -23,10 +23,7 @@ fn 台帳のjson() -> serde_json::Value {
 #[tokio::test]
 async fn マテリアル台帳の初期状態はnullを返す() {
     let 一時 = crate::common::一時プロジェクト::生成する("material_board_get_null");
-    let 応答 = crate::common::ルーターを作る(&一時)
-        .oneshot(Request::get("/api/マテリアル台帳").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
+    let 応答 = crate::common::ルーターを作る(&一時).oneshot(Request::get("/api/マテリアル台帳").body(Body::empty()).unwrap()).await.unwrap();
     assert_eq!(応答.status(), StatusCode::OK);
     let 本体 = axum::body::to_bytes(応答.into_body(), usize::MAX).await.unwrap();
     let 本文: serde_json::Value = serde_json::from_slice(&本体).unwrap();
@@ -37,20 +34,12 @@ async fn マテリアル台帳の初期状態はnullを返す() {
 async fn マテリアル台帳を保存して取得できる() {
     let 一時 = crate::common::一時プロジェクト::生成する("material_board_put_get");
     let 応答 = crate::common::ルーターを作る(&一時)
-        .oneshot(
-            Request::put("/api/マテリアル台帳")
-                .header("content-type", "application/json")
-                .body(Body::from(serde_json::to_vec(&台帳のjson()).unwrap()))
-                .unwrap(),
-        )
+        .oneshot(Request::put("/api/マテリアル台帳").header("content-type", "application/json").body(Body::from(serde_json::to_vec(&台帳のjson()).unwrap())).unwrap())
         .await
         .unwrap();
     assert_eq!(応答.status(), StatusCode::NO_CONTENT);
 
-    let 応答 = crate::common::ルーターを作る(&一時)
-        .oneshot(Request::get("/api/マテリアル台帳").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
+    let 応答 = crate::common::ルーターを作る(&一時).oneshot(Request::get("/api/マテリアル台帳").body(Body::empty()).unwrap()).await.unwrap();
     assert_eq!(応答.status(), StatusCode::OK);
     let 本体 = axum::body::to_bytes(応答.into_body(), usize::MAX).await.unwrap();
     let 取得データ: serde_json::Value = serde_json::from_slice(&本体).unwrap();
@@ -63,20 +52,12 @@ async fn 参照先が存在しない層割当は422を返し正本を変えな�
     let mut 不正データ = 台帳のjson();
     不正データ["層割当"]["草"] = serde_json::json!("存在しない材質");
     let 応答 = crate::common::ルーターを作る(&一時)
-        .oneshot(
-            Request::put("/api/マテリアル台帳")
-                .header("content-type", "application/json")
-                .body(Body::from(serde_json::to_vec(&不正データ).unwrap()))
-                .unwrap(),
-        )
+        .oneshot(Request::put("/api/マテリアル台帳").header("content-type", "application/json").body(Body::from(serde_json::to_vec(&不正データ).unwrap())).unwrap())
         .await
         .unwrap();
     assert_eq!(応答.status(), StatusCode::UNPROCESSABLE_ENTITY);
 
-    let 応答 = crate::common::ルーターを作る(&一時)
-        .oneshot(Request::get("/api/マテリアル台帳").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
+    let 応答 = crate::common::ルーターを作る(&一時).oneshot(Request::get("/api/マテリアル台帳").body(Body::empty()).unwrap()).await.unwrap();
     let 本体 = axum::body::to_bytes(応答.into_body(), usize::MAX).await.unwrap();
     let 本文: serde_json::Value = serde_json::from_slice(&本体).unwrap();
     assert!(本文.is_null());

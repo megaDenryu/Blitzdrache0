@@ -77,12 +77,8 @@ impl メッシュの境界箱 {
         Self { 最小, 最大 }
     }
 
-    fn プリミティブのアクセサの宣言から読む(
-        プリミティブ: &gltf::Primitive<'_>
-    ) -> Result<Self, 境界箱を読めない理由> {
-        let 位置アクセサ = プリミティブ
-            .get(&gltf::Semantic::Positions)
-            .ok_or(境界箱を読めない理由::頂点位置の属性が無い)?;
+    fn プリミティブのアクセサの宣言から読む(プリミティブ: &gltf::Primitive<'_>) -> Result<Self, 境界箱を読めない理由> {
+        let 位置アクセサ = プリミティブ.get(&gltf::Semantic::Positions).ok_or(境界箱を読めない理由::頂点位置の属性が無い)?;
         Ok(Self {
             最小: 宣言を3つの小数として読む(位置アクセサ.min())?,
             最大: 宣言を3つの小数として読む(位置アクセサ.max())?,
@@ -92,6 +88,5 @@ impl メッシュの境界箱 {
 
 fn 宣言を3つの小数として読む(宣言: Option<gltf::json::Value>) -> Result<[f32; 3], 境界箱を読めない理由> {
     let 値 = 宣言.ok_or(境界箱を読めない理由::頂点位置の最小か最大の宣言が無い)?;
-    gltf::json::deserialize::from_value(値)
-        .map_err(|_誤り| 境界箱を読めない理由::頂点位置の最小か最大を3つの小数として読めない)
+    gltf::json::deserialize::from_value(値).map_err(|_誤り| 境界箱を読めない理由::頂点位置の最小か最大を3つの小数として読めない)
 }

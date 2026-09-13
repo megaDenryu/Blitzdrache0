@@ -21,16 +21,7 @@ pub(in crate::shadow_probe) enum 振る軸 {
 
 impl 振る軸 {
     /// 引数で選べる軸の一覧。使い方の表示もこの並びで出す。
-    pub(in crate::shadow_probe) const 全軸: [Self; 8] = [
-        Self::解像度,
-        Self::キャスター,
-        Self::余白,
-        Self::視点,
-        Self::頂点,
-        Self::太陽高度,
-        Self::最大影距離,
-        Self::影の視距離,
-    ];
+    pub(in crate::shadow_probe) const 全軸: [Self; 8] = [Self::解像度, Self::キャスター, Self::余白, Self::視点, Self::頂点, Self::太陽高度, Self::最大影距離, Self::影の視距離];
 
     /// 軸を選ぶ引数の綴り。生値と実行ログの置き場になる軸ごとのディレクトリ名にも同じ綴りを使う。
     /// 軸を続けて回しても前の軸の証拠を上書きせず、実行したコマンドと残った証拠の場所を読み手が1対1で結べる。
@@ -49,13 +40,9 @@ impl 振る軸 {
 }
 
 pub(in crate::shadow_probe) fn 綴りから読む(語: &str) -> Result<振る軸, 律速切り分けの計測エラー> {
-    振る軸::全軸
-        .into_iter()
-        .find(|軸| 軸.綴り() == 語)
-        .ok_or_else(|| 律速切り分けの計測エラー::知らない軸を渡された {
-            語: 語.to_string(),
-            選べる軸: 綴りを並べる(),
-        })
+    振る軸::全軸.into_iter().find(|軸| 軸.綴り() == 語).ok_or_else(|| 律速切り分けの計測エラー::知らない軸を渡された {
+        語: 語.to_string(), 選べる軸: 綴りを並べる()
+    })
 }
 
 pub(in crate::shadow_probe) fn 綴りを並べる() -> String {

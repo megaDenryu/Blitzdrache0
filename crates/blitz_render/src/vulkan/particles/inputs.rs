@@ -7,9 +7,7 @@ use crate::vulkan::relative_anchor::カメラ相対の基準原点;
 use crate::vulkan::sync::フレームスロット添字;
 
 impl 粒子リソース一式 {
-    pub(crate) fn 描画入力を作る(
-        &self, フレーム添字: フレームスロット添字, 相対の基準原点: カメラ相対の基準原点
-    ) -> 粒子描画入力 {
+    pub(crate) fn 描画入力を作る(&self, フレーム添字: フレームスロット添字, 相対の基準原点: カメラ相対の基準原点) -> 粒子描画入力 {
         粒子描画入力 {
             コンピュートパイプライン: self.コンピュートパイプライン.handle,
             コンピュートlayout: self.コンピュートパイプライン.layout,

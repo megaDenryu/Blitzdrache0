@@ -19,20 +19,14 @@ fn 材質のシェーダーが束縛先を取り込むと違反になる() {
 #[test]
 fn 台帳が許した1箇所からの取り込みは違反にしない() {
     assert_eq!(違反の数("shaders/local_light_shading.slang", "import local_light_binding;\n"), 0);
-    assert_eq!(
-        違反の数("shaders/local_light_binding.slang", "__exported import local_light_records;\n"),
-        0
-    );
+    assert_eq!(違反の数("shaders/local_light_binding.slang", "__exported import local_light_records;\n"), 0);
     assert_eq!(違反の数("shaders/cluster_light_assignment.slang", "import local_light_records;\n"), 0);
 }
 
 /// 再輸出は取り込みの並びを変えずに境界だけを消す。許した1箇所からでも落とす。
 #[test]
 fn 許した1箇所からでも束縛先の再輸出は違反になる() {
-    assert_eq!(
-        違反の数("shaders/local_light_shading.slang", "__exported import local_light_binding;\n"),
-        1
-    );
+    assert_eq!(違反の数("shaders/local_light_shading.slang", "__exported import local_light_binding;\n"), 1);
 }
 
 #[test]

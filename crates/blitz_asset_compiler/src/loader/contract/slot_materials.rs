@@ -18,10 +18,7 @@ pub(super) struct 材質スロットの参照<'文書> {
 impl<'文書> 材質スロットの参照<'文書> {
     /// その契約でローダーが実際に読むメッシュから数え上げる。静的シーンは先頭メッシュだけを読むため、
     /// 2つ目以降のメッシュの材質を数えると、焼かれないものへ指摘が出る。段の列を読む2つの契約は全段が焼かれる。
-    pub(super) fn ローダーが読むメッシュの材質スロットを数え上げる(
-        契約: 検査する契約,
-        文書: &'文書 gltf::Document,
-    ) -> Vec<Self> {
+    pub(super) fn ローダーが読むメッシュの材質スロットを数え上げる(契約: 検査する契約, 文書: &'文書 gltf::Document) -> Vec<Self> {
         let メッシュ一覧: Vec<gltf::Mesh<'文書>> = match 契約 {
             検査する契約::静的シーン => 文書.meshes().take(1).collect(),
             検査する契約::群の原型 | 検査する契約::部品 => 文書.meshes().collect(),
@@ -29,8 +26,7 @@ impl<'文書> 材質スロットの参照<'文書> {
         let 語彙 = 材質スロット語彙::メッシュ列から作る(&メッシュ一覧);
         let mut 一覧: Vec<Self> = Vec::new();
         for プリミティブ in メッシュ一覧.iter().flat_map(gltf::Mesh::primitives) {
-            let Some(番号) = 語彙.スロットを参照する(&プリミティブ).map(blitz_engine::材質スロットID::番号を返す)
-            else {
+            let Some(番号) = 語彙.スロットを参照する(&プリミティブ).map(blitz_engine::材質スロットID::番号を返す) else {
                 continue;
             };
             if 一覧.iter().any(|登録済み| 登録済み.番号 == 番号) {

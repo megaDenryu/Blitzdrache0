@@ -55,17 +55,11 @@ impl 升目の座標 {
 
     /// 真下の升目の座標。最も下の階には真下が無い。
     pub(super) fn 真下の升目(self) -> Option<Self> {
-        Some(Self {
-            階: self.階.checked_sub(1)?,
-            ..self
-        })
+        Some(Self { 階: self.階.checked_sub(1)?, ..self })
     }
 
     pub(super) fn 真上の升目(self) -> Option<Self> {
-        Some(Self {
-            階: self.階.checked_add(1)?,
-            ..self
-        })
+        Some(Self { 階: self.階.checked_add(1)?, ..self })
     }
 }
 

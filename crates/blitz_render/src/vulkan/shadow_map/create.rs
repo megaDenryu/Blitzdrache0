@@ -13,10 +13,7 @@ use crate::error::レンダラーエラー;
 use crate::gpu_memory_stats::GPUメモリ用途;
 use crate::vulkan::allocator::GPU資源の確保係;
 
-pub(super) fn シャドウマップの一式を確保する(
-    確保係: &GPU資源の確保係<'_>,
-    一辺: 影の一辺解像度,
-) -> Result<シャドウマップ, レンダラーエラー> {
+pub(super) fn シャドウマップの一式を確保する(確保係: &GPU資源の確保係<'_>, 一辺: 影の一辺解像度) -> Result<シャドウマップ, レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let 画像 = シャドウマップの画像を作る(確保係, 一辺)?;
     let memory = match 確保係.画像へデバイスローカルメモリを結び付ける(画像, GPUメモリ用途::描画画像) {
@@ -46,10 +43,7 @@ pub(super) fn シャドウマップの一式を確保する(
 }
 
 /// ビュー群とサンプラーを作る。1つでも失敗したら、この関数が作ったハンドルだけを逆順に破棄して失敗を返す。
-fn 続きを生成する(
-    確保係: &GPU資源の確保係<'_>,
-    画像: vk::Image,
-) -> Result<(vk::ImageView, [vk::ImageView; 距離区分数], vk::Sampler), レンダラーエラー> {
+fn 続きを生成する(確保係: &GPU資源の確保係<'_>, 画像: vk::Image) -> Result<(vk::ImageView, [vk::ImageView; 距離区分数], vk::Sampler), レンダラーエラー> {
     let mut 作成済みビュー: Vec<vk::ImageView> = Vec::with_capacity(距離区分数 + 1);
     let device = 確保係.論理デバイス();
     let 結果 = ビュー群とサンプラーを作る(確保係, 画像, &mut 作成済みビュー);
@@ -62,11 +56,7 @@ fn 続きを生成する(
     結果
 }
 
-fn ビュー群とサンプラーを作る(
-    確保係: &GPU資源の確保係<'_>,
-    画像: vk::Image,
-    作成済みビュー: &mut Vec<vk::ImageView>,
-) -> Result<(vk::ImageView, [vk::ImageView; 距離区分数], vk::Sampler), レンダラーエラー> {
+fn ビュー群とサンプラーを作る(確保係: &GPU資源の確保係<'_>, 画像: vk::Image, 作成済みビュー: &mut Vec<vk::ImageView>) -> Result<(vk::ImageView, [vk::ImageView; 距離区分数], vk::Sampler), レンダラーエラー> {
     let 配列ビュー = 配列ビューを作る(確保係, 画像)?;
     作成済みビュー.push(配列ビュー);
     let mut 距離区分別のビュー一覧 = [vk::ImageView::null(); 距離区分数];

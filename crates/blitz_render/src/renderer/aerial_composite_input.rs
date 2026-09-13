@@ -14,11 +14,7 @@ use crate::vulkan::frame::空中遠近合成描画入力;
 use crate::vulkan::sync::フレームスロット添字;
 
 impl レンダラー {
-    pub(super) fn 空中遠近合成入力を組み立てる(
-        &self,
-        フレーム添字: フレームスロット添字,
-        入力: &フレーム描画入力<'_>,
-    ) -> Result<Option<空中遠近合成描画入力>, レンダラーエラー> {
+    pub(super) fn 空中遠近合成入力を組み立てる(&self, フレーム添字: フレームスロット添字, 入力: &フレーム描画入力<'_>) -> Result<Option<空中遠近合成描画入力>, レンダラーエラー> {
         let Some(大気) = 入力.大気.as_ref() else {
             return Ok(None);
         };

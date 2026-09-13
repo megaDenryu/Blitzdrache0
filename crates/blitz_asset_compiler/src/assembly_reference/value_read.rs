@@ -10,11 +10,7 @@ use serde_json::Value;
 use super::error::正解表の読み込みエラー;
 
 pub(super) fn 文字列を読む<'値>(本体: &'値 Value, キー名: &'static str) -> Result<&'値 str, 正解表の読み込みエラー> {
-    本体
-        .get(キー名)
-        .ok_or(正解表の読み込みエラー::キーが無い { キー名 })?
-        .as_str()
-        .ok_or(正解表の読み込みエラー::値の形が違う { キー名 })
+    本体.get(キー名).ok_or(正解表の読み込みエラー::キーが無い { キー名 })?.as_str().ok_or(正解表の読み込みエラー::値の形が違う { キー名 })
 }
 
 pub(super) fn 三成分を読む(本体: &Value, キー名: &'static str) -> Result<[f32; 3], 正解表の読み込みエラー> {
@@ -28,11 +24,7 @@ pub(super) fn 四成分を読む(本体: &Value, キー名: &'static str) -> Res
 }
 
 fn 成分列を読む(本体: &Value, キー名: &'static str, 期待する件数: usize) -> Result<Vec<f32>, 正解表の読み込みエラー> {
-    let 配列 = 本体
-        .get(キー名)
-        .ok_or(正解表の読み込みエラー::キーが無い { キー名 })?
-        .as_array()
-        .ok_or(正解表の読み込みエラー::値の形が違う { キー名 })?;
+    let 配列 = 本体.get(キー名).ok_or(正解表の読み込みエラー::キーが無い { キー名 })?.as_array().ok_or(正解表の読み込みエラー::値の形が違う { キー名 })?;
     if 配列.len() != 期待する件数 {
         return Err(正解表の読み込みエラー::値の形が違う { キー名 });
     }
@@ -43,9 +35,5 @@ fn 数として解く(値: &Value, キー名: &'static str) -> Result<f32, 正�
     let Value::Number(数) = 値 else {
         return Err(正解表の読み込みエラー::値の形が違う { キー名 });
     };
-    数.to_string()
-        .parse::<f32>()
-        .ok()
-        .filter(|解いた| 解いた.is_finite())
-        .ok_or(正解表の読み込みエラー::値の形が違う { キー名 })
+    数.to_string().parse::<f32>().ok().filter(|解いた| 解いた.is_finite()).ok_or(正解表の読み込みエラー::値の形が違う { キー名 })
 }

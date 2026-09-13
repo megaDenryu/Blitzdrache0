@@ -11,9 +11,7 @@
 //! 参照: `shaders/sky_atmosphere.slang`
 
 use blitz_engine::sky::空描画方針;
-use blitz_render::atmosphere::{
-    スカイビュー表, スカイビュー観測条件, 大気散乱媒体, 天空放射輝度の尺度, 天空放射輝度供給
-};
+use blitz_render::atmosphere::{スカイビュー表, スカイビュー観測条件, 大気散乱媒体, 天空放射輝度の尺度, 天空放射輝度供給};
 
 use super::report_error::空代表画素の照合エラー;
 use super::srgb_encode::線形色をsrgbの8ビット相当へ変換する;

@@ -19,9 +19,7 @@ mod resources;
 mod upload;
 
 use crate::compute_shader::コンピュートシェーダー;
-use crate::distant_environment::derived::{
-    反射率積分表の解像度, 拡散照度の解像度, 遠方環境の内容, 鏡面畳込みの解像度
-};
+use crate::distant_environment::derived::{反射率積分表の解像度, 拡散照度の解像度, 遠方環境の内容, 鏡面畳込みの解像度};
 use crate::error::レンダラーエラー;
 use crate::vulkan::atmosphere_lut::probe::検証観測;
 use crate::vulkan::headless::ウィンドウなし実行GPU環境;
@@ -46,9 +44,7 @@ pub(crate) struct 派生表現の読み戻し {
     pub(crate) 反射率積分表: Vec<[f32; 2]>,
 }
 
-pub(crate) fn 派生表現をgpuで焼いて読み戻す(
-    条件: 派生表現を焼く条件<'_>,
-) -> Result<(派生表現の読み戻し, 検証観測), レンダラーエラー> {
+pub(crate) fn 派生表現をgpuで焼いて読み戻す(条件: 派生表現を焼く条件<'_>) -> Result<(派生表現の読み戻し, 検証観測), レンダラーエラー> {
     let 環境 = ウィンドウなし実行GPU環境::生成する()?;
     let 結果 = record::環境で焼く(&環境, &条件);
     let 観測 = 検証観測::環境を破棄して観測する(&環境);

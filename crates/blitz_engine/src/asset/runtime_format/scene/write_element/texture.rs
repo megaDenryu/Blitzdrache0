@@ -11,15 +11,11 @@ use super::super::texture_format_tag::格納形式の判別値を返す;
 use crate::asset::texture_storage::格納済みテクスチャ;
 
 /// テクスチャ1件を書く工程の署名。版ごとの組み立てが、自分の版の並びを書く工程をこの形で受け取る。
-pub(in crate::asset::runtime_format::scene) type テクスチャを書く工程 =
-    fn(&mut 書込先, Option<&格納済みテクスチャ>) -> Result<(), アセット実行時形式エラー>;
+pub(in crate::asset::runtime_format::scene) type テクスチャを書く工程 = fn(&mut 書込先, Option<&格納済みテクスチャ>) -> Result<(), アセット実行時形式エラー>;
 
 /// 版4までの並びで書き出す経路は検査だけが持つ。実行時形式の書き出しは常に最新版で行うためである。
 #[cfg(test)]
-pub(in crate::asset::runtime_format::scene) fn 版4までのテクスチャを書く(
-    出力: &mut 書込先,
-    テクスチャ: Option<&格納済みテクスチャ>,
-) -> Result<(), アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 版4までのテクスチャを書く(出力: &mut 書込先, テクスチャ: Option<&格納済みテクスチャ>) -> Result<(), アセット実行時形式エラー> {
     let Some(値) = テクスチャ else {
         出力.u8(0);
         return Ok(());
@@ -34,10 +30,7 @@ pub(in crate::asset::runtime_format::scene) fn 版4までのテクスチャを�
     Ok(())
 }
 
-pub(in crate::asset::runtime_format) fn 版5のテクスチャを書く(
-    出力: &mut 書込先,
-    テクスチャ: Option<&格納済みテクスチャ>,
-) -> Result<(), アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format) fn 版5のテクスチャを書く(出力: &mut 書込先, テクスチャ: Option<&格納済みテクスチャ>) -> Result<(), アセット実行時形式エラー> {
     let Some(値) = テクスチャ else {
         出力.u8(0);
         return Ok(());

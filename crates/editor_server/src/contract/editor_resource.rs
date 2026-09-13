@@ -14,19 +14,10 @@ pub fn 編集資源契約の本文を組み立てる() -> String {
     let mut 型宣言一覧 = world_editing_types::大域とチャンクの編集の型宣言の並び(&設定).to_vec();
     型宣言一覧.extend(music_types::楽曲の型宣言の並び(&設定));
     let mut 本文 = super::本文を組み立てる(&型宣言一覧);
-    本文.push_str(&format!(
-        "export const 建物外形カタログ形式版 = {} as const;\n",
-        crate::建物外形カタログの現在の形式版
-    ));
-    本文.push_str(&format!(
-        "export const 建物の格子の形式版 = {} as const;\n",
-        crate::建物の格子の現在の形式版
-    ));
+    本文.push_str(&format!("export const 建物外形カタログ形式版 = {} as const;\n", crate::建物外形カタログの現在の形式版));
+    本文.push_str(&format!("export const 建物の格子の形式版 = {} as const;\n", crate::建物の格子の現在の形式版));
     本文.push_str(&format!("export const 楽曲の形式版 = {} as const;\n", crate::楽曲の現在の形式版));
-    本文.push_str(&format!(
-        "export const 既定のコード進行一覧: 既定のコード進行[] = {};\n",
-        既定のコード進行一覧のjson()
-    ));
+    本文.push_str(&format!("export const 既定のコード進行一覧: 既定のコード進行[] = {};\n", 既定のコード進行一覧のjson()));
     本文.push_str(&値の範囲の定数());
     本文
 }
@@ -66,6 +57,5 @@ fn 既定のコード進行一覧のjson() -> String {
 
 /// 直列化できない欄を1つも持たない型のため、失敗したら型契約の組み立ての不変条件が破れている。
 fn 進行1件のjson(進行: &crate::既定のコード進行) -> String {
-    serde_json::to_string(進行)
-        .unwrap_or_else(|誤り| panic!("既定のコード進行を値として書き出せない。全ての欄がJSONへ写せるという不変条件に違反した: {誤り}"))
+    serde_json::to_string(進行).unwrap_or_else(|誤り| panic!("既定のコード進行を値として書き出せない。全ての欄がJSONへ写せるという不変条件に違反した: {誤り}"))
 }

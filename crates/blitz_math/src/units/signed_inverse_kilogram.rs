@@ -15,11 +15,7 @@ pub struct 符号付き逆キログラム(f32);
 impl 符号付き逆キログラム {
     /// 非有限を型付きエラーで拒む。負は許す。
     pub fn 生成する(値: f32) -> Result<Self, 質量エラー> {
-        if 値.is_finite() {
-            Ok(Self(値))
-        } else {
-            Err(質量エラー::非有限値 { 値 })
-        }
+        if 値.is_finite() { Ok(Self(値)) } else { Err(質量エラー::非有限値 { 値 }) }
     }
 
     pub fn 零() -> Self {

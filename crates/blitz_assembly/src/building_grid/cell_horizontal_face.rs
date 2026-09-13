@@ -10,9 +10,7 @@
 use crate::expansion::{据えた部品の番号, 接合の指示};
 use crate::joint::{接合面上の位置, 法線方向のずらし};
 
-use super::joint_spelling::{
-    屋根の下面の接合点名, 床のはめ口の接合点名, 床の外枠の接合点名, 骨格の上面の接合点名
-};
+use super::joint_spelling::{屋根の下面の接合点名, 床のはめ口の接合点名, 床の外枠の接合点名, 骨格の上面の接合点名};
 use super::part_role::骨格方式の部品の役割;
 use super::part_spelling::骨格方式の部品の綴り;
 

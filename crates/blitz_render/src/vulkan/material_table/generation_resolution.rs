@@ -17,12 +17,8 @@ pub(crate) struct 世代内材質解決 {
 }
 
 impl 世代内材質解決 {
-    pub(in crate::vulkan::material_table) const fn 生成する(
-        レコード添字: 材質レコード添字, 変種キー: 材質変種キー
-    ) -> Self {
-        Self {
-            レコード添字, 変種キー
-        }
+    pub(in crate::vulkan::material_table) const fn 生成する(レコード添字: 材質レコード添字, 変種キー: 材質変種キー) -> Self {
+        Self { レコード添字, 変種キー }
     }
 
     pub(crate) const fn レコード添字(self) -> 材質レコード添字 {

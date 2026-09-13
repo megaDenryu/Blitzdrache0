@@ -40,11 +40,7 @@ mod tests {
         let 索引 = 取り込みの索引::ファイルの内容から生成する("use super::sweep_solver::求解;\nuse std::path::Path;\n");
         let 経路一覧 = 索引.型名から経路一覧を引く("求解");
         assert_eq!(経路一覧.len(), 1);
-        assert!(
-            経路一覧[0]
-                .定義ファイルの候補一覧(Path::new("a/src/triangle/dispatch.rs"))
-                .contains(&"a/src/triangle/sweep_solver.rs".to_string())
-        );
+        assert!(経路一覧[0].定義ファイルの候補一覧(Path::new("a/src/triangle/dispatch.rs")).contains(&"a/src/triangle/sweep_solver.rs".to_string()));
     }
 
     #[test]

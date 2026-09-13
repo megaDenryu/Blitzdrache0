@@ -17,9 +17,7 @@ pub struct 台帳の行 {
 }
 
 impl 台帳の行 {
-    pub const fn 構造体(
-        根からのパス: &'static str, 型名: &'static str, 実装ファイル数: usize, フィールド数: usize, メソッド総数: usize
-    ) -> Self {
+    pub const fn 構造体(根からのパス: &'static str, 型名: &'static str, 実装ファイル数: usize, フィールド数: usize, メソッド総数: usize) -> Self {
         Self {
             根からのパス,
             型名,
@@ -29,9 +27,7 @@ impl 台帳の行 {
         }
     }
 
-    pub const fn 列挙(
-        根からのパス: &'static str, 型名: &'static str, 実装ファイル数: usize, 選択肢数: usize, メソッド総数: usize
-    ) -> Self {
+    pub const fn 列挙(根からのパス: &'static str, 型名: &'static str, 実装ファイル数: usize, 選択肢数: usize, メソッド総数: usize) -> Self {
         Self {
             根からのパス,
             型名,
@@ -51,9 +47,7 @@ pub struct 区画の一覧 {
 impl 区画の一覧 {
     pub const fn 生成する(モジュールの根: &'static str, 行一覧: &'static [台帳の行], 自分のファイル: &'static str) -> Self {
         Self {
-            モジュールの根,
-            行一覧,
-            自分のファイル,
+            モジュールの根, 行一覧, 自分のファイル
         }
     }
 

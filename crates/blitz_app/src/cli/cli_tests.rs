@@ -56,12 +56,7 @@ fn 両方の報告を同時に指定できる() {
 
 #[test]
 fn フレーム時間報告と固定フレーム数を解析する() {
-    let 引数一覧 = [
-        "--benchmark-frames".to_string(),
-        "600".to_string(),
-        "--report-frame-times".to_string(),
-        "--report-memory".to_string(),
-    ];
+    let 引数一覧 = ["--benchmark-frames".to_string(), "600".to_string(), "--report-frame-times".to_string(), "--report-memory".to_string()];
     let 設定 = 描画設定を解析する(&引数一覧);
     assert!(matches!(設定.モード, 起動モード::ベンチ実行 { フレーム数: 600 }));
     assert!(設定.フレーム時間報告);

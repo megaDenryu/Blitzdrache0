@@ -8,9 +8,7 @@ use std::time::Instant;
 
 use blitz_math::{メートル, 逆キログラム};
 use blitz_render::xpbd_solver_bench_probe::{XPBD並列方式, XPBD彩色の区間, XPBD計測素材};
-use blitz_sim::constraint_graph::{
-    グラフ彩色, 不規則な拘束グラフを作る, 不規則グラフの仕様, 拘束グラフ, 点ごとの拘束の隣接表, 規則格子の仕様, 規則格子の拘束グラフを作る,
-};
+use blitz_sim::constraint_graph::{グラフ彩色, 不規則な拘束グラフを作る, 不規則グラフの仕様, 拘束グラフ, 点ごとの拘束の隣接表, 規則格子の仕様, 規則格子の拘束グラフを作る};
 use blitz_sim::xpbd_gpu_layout;
 use blitz_sim::コンプライアンス;
 
@@ -59,8 +57,7 @@ pub(super) fn 題材を作る(指定: &XPBD並列方式計測の指定) -> Resul
                 .色の区間一覧()
                 .iter()
                 .map(|区間| XPBD彩色の区間 {
-                    開始: 区間.開始.値(),
-                    本数: 区間.本数,
+                    開始: 区間.開始.値(), 本数: 区間.本数
                 })
                 .collect();
             (彩色.並べ替えたグラフ().clone(), 区間一覧)

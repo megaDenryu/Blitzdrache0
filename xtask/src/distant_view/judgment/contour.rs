@@ -51,7 +51,5 @@ fn 隣接位置(幅: usize, 高さ: usize, x: usize, y: usize) -> impl Iterator<
     let 右 = (x + 1).min(幅 - 1);
     let 上 = y.saturating_sub(1);
     let 下 = (y + 1).min(高さ - 1);
-    (上..=下)
-        .flat_map(move |周辺y| (左..=右).map(move |周辺x| 周辺y * 幅 + 周辺x))
-        .filter(move |添字| *添字 != y * 幅 + x)
+    (上..=下).flat_map(move |周辺y| (左..=右).map(move |周辺x| 周辺y * 幅 + 周辺x)).filter(move |添字| *添字 != y * 幅 + x)
 }

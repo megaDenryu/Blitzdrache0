@@ -17,15 +17,10 @@ impl 単位方向 {
         let 成分 = [f64::from(東), f64::from(天頂), f64::from(南)];
         let 長さ二乗: f64 = 成分.iter().map(|値| 値 * 値).sum();
         if !長さ二乗.is_finite() || 長さ二乗 <= 0.0 {
-            return Err(大気数学エラー::値域外(
-                "単位方向の長さ",
-                crate::atmosphere::narrowing::実数へ狭める(長さ二乗),
-            ));
+            return Err(大気数学エラー::値域外("単位方向の長さ", crate::atmosphere::narrowing::実数へ狭める(長さ二乗)));
         }
         let 逆長さ = 長さ二乗.sqrt().recip();
-        Ok(Self {
-            成分: 成分.map(|値| 値 * 逆長さ),
-        })
+        Ok(Self { 成分: 成分.map(|値| 値 * 逆長さ) })
     }
 
     pub fn 成分(&self) -> [f32; 3] {

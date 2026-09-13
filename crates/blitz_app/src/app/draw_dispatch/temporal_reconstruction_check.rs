@@ -31,9 +31,7 @@ pub(in crate::app) struct 時間再構成の観測 {
 
 impl 時間再構成の観測 {
     pub(in crate::app) fn 記録なしで生成する() -> Self {
-        Self {
-            前フレームの結果: None
-        }
+        Self { 前フレームの結果: None }
     }
 }
 
@@ -53,9 +51,7 @@ impl アプリ {
         self.現在フレーム + 観測フレーム数.min(フレーム数) >= フレーム数
     }
 
-    pub(in crate::app) fn 時間再構成を観測する(
-        &mut self, 描画入力: フレーム描画入力<'_>
-    ) -> Result<描画の到達, 起動エラー> {
+    pub(in crate::app) fn 時間再構成を観測する(&mut self, 描画入力: フレーム描画入力<'_>) -> Result<描画の到達, 起動エラー> {
         let 起動モード::スモーク実行 { フレーム数 } = self.起動モード else {
             return Ok(描画の到達::届かなかった);
         };

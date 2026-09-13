@@ -10,21 +10,12 @@ use super::depth_attachment::深度アタッチメント;
 use super::registry::画像レジストリ;
 use crate::vulkan::command_sink::GPU命令の積み先;
 
-pub(super) fn 動的レンダリングを開始する(
-    積み先: GPU命令の積み先<'_>,
-    レジストリ: &画像レジストリ,
-    カラー: カラー添付列,
-    深度: Option<深度アタッチメント>,
-    クリア指定: &クリア指定,
-) {
+pub(super) fn 動的レンダリングを開始する(積み先: GPU命令の積み先<'_>, レジストリ: &画像レジストリ, カラー: カラー添付列, 深度: Option<深度アタッチメント>, クリア指定: &クリア指定) {
     // 注意: render_areaはこのパスのアタッチメント自身の寸法から導出する。スワップチェーン寸法を
     // 使い回すと、寸法の異なるアタッチメント(2048x2048のシャドウマップ等)への描画がその範囲へ
     // クリップされ、範囲外がクリアもされない未定義領域になる(M6で全面影バグとして実際に踏んだ。
     // validationはrender_areaの縮小を検出しない)。
-    let 基準ハンドル = カラー
-        .先頭()
-        .or(深度.map(|深度| 深度.ハンドル))
-        .unwrap_or_else(|| panic!("グラフィックスパスにカラーも深度も無い(パス宣言の誤り)"));
+    let 基準ハンドル = カラー.先頭().or(深度.map(|深度| 深度.ハンドル)).unwrap_or_else(|| panic!("グラフィックスパスにカラーも深度も無い(パス宣言の誤り)"));
     let 寸法 = レジストリ.寸法を取得する(基準ハンドル);
     let (カラーのロード操作, 深度のロード操作, カラークリア値) = クリア指定からロード操作とクリア値を導出する(クリア指定);
     let カラーアタッチメント一覧 = カラー.記述を並べる(レジストリ, カラーのロード操作, カラークリア値);
@@ -35,10 +26,7 @@ pub(super) fn 動的レンダリングを開始する(
     // 誰も後で読まない深度のDONT_CARE化は、グラフの後続用途から導出できるようになった時点で行う。
     let 深度アタッチメント = 深度.map(|深度| {
         let 深度クリア値 = vk::ClearValue {
-            depth_stencil: vk::ClearDepthStencilValue {
-                depth: 深度.消去値(),
-                stencil: 0,
-            },
+            depth_stencil: vk::ClearDepthStencilValue { depth: 深度.消去値(), stencil: 0 },
         };
         vk::RenderingAttachmentInfo::default()
             .image_view(深度.描画先ビュー(レジストリ.ビューを取得する(深度.ハンドル)))
@@ -65,19 +53,13 @@ pub(super) fn 動的レンダリングを開始する(
 }
 
 /// 返すのはカラーのloadOp・深度のloadOp・カラーのクリア値の3つである。
-fn クリア指定からロード操作とクリア値を導出する(
-    クリア指定: &クリア指定,
-) -> (vk::AttachmentLoadOp, vk::AttachmentLoadOp, vk::ClearValue) {
+fn クリア指定からロード操作とクリア値を導出する(クリア指定: &クリア指定) -> (vk::AttachmentLoadOp, vk::AttachmentLoadOp, vk::ClearValue) {
     let 色の値 = |カラー: &crate::clear_color::クリアカラー| vk::ClearValue {
-        color: vk::ClearColorValue {
-            float32: カラー.rgba配列()
-        },
+        color: vk::ClearColorValue { float32: カラー.rgba配列() },
     };
     match クリア指定 {
         クリア指定::クリアする { カラー } => (vk::AttachmentLoadOp::CLEAR, vk::AttachmentLoadOp::CLEAR, 色の値(カラー)),
-        クリア指定::カラーだけを消去して深度は読み込む { カラー } => {
-            (vk::AttachmentLoadOp::CLEAR, vk::AttachmentLoadOp::LOAD, 色の値(カラー))
-        }
+        クリア指定::カラーだけを消去して深度は読み込む { カラー } => (vk::AttachmentLoadOp::CLEAR, vk::AttachmentLoadOp::LOAD, 色の値(カラー)),
         クリア指定::ロードする => (vk::AttachmentLoadOp::LOAD, vk::AttachmentLoadOp::LOAD, vk::ClearValue::default()),
     }
 }

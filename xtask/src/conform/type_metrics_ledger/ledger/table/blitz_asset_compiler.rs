@@ -9,13 +9,7 @@ use super::super::{区画の一覧, 台帳の行};
 const モジュールの根: &str = "crates/blitz_asset_compiler/src";
 
 const 行一覧: [台帳の行; 6] = [
-    台帳の行::構造体(
-        "asset_layout/fox_tour_source_directory.rs",
-        "場所巡りの世界のソースディレクトリ",
-        3,
-        0,
-        17,
-    ),
+    台帳の行::構造体("asset_layout/fox_tour_source_directory.rs", "場所巡りの世界のソースディレクトリ", 3, 0, 17),
     台帳の行::構造体("asset_layout/runtime_output_root.rs", "実行時形式の出力ルート", 3, 0, 16),
     台帳の行::列挙("error.rs", "アセットコンパイルエラー", 0, 44, 0),
     台帳の行::構造体("loader/contract/inspection.rs", "開いた文書の契約検査", 22, 3, 73),

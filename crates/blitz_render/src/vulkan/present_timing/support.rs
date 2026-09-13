@@ -41,9 +41,7 @@ fn 含むか(一覧: &[vk::ExtensionProperties], 名前: &CStr) -> bool {
 fn 両機能が使えるか(instance: &ash::Instance, 物理デバイス: vk::PhysicalDevice) -> bool {
     let mut 提示id機能 = vk::PhysicalDevicePresentIdFeaturesKHR::default();
     let mut 提示待機機能 = vk::PhysicalDevicePresentWaitFeaturesKHR::default();
-    let mut 機能 = vk::PhysicalDeviceFeatures2::default()
-        .push_next(&mut 提示id機能)
-        .push_next(&mut 提示待機機能);
+    let mut 機能 = vk::PhysicalDeviceFeatures2::default().push_next(&mut 提示id機能).push_next(&mut 提示待機機能);
     // 安全性: instance・物理デバイスは選定済みで有効。連結した2つの機能構造体はこの関数内で生存する。
     unsafe { instance.get_physical_device_features2(物理デバイス, &mut 機能) };
     提示id機能.present_id == vk::TRUE && 提示待機機能.present_wait == vk::TRUE

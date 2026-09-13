@@ -16,9 +16,7 @@ pub(crate) struct 宣言どおりに結ぶ書き込み先<'書き込み, const �
 }
 
 impl<'書き込み, const 本数: usize> 宣言どおりに結ぶ書き込み先<'書き込み, 本数> {
-    pub(super) fn 生成する(
-        device: &'書き込み ash::Device, セット: vk::DescriptorSet, 宣言: 宣言した束縛の並び<本数>
-    ) -> Self {
+    pub(super) fn 生成する(device: &'書き込み ash::Device, セット: vk::DescriptorSet, 宣言: 宣言した束縛の並び<本数>) -> Self {
         Self {
             書き込み先: ディスクリプタの書き込み先::生成する(device, セット),
             宣言,
@@ -42,11 +40,7 @@ impl<'書き込み, const 本数: usize> 宣言どおりに結ぶ書き込み先
                     バッファの種別であることを確かめる(位置, 種別);
                     self.書き込み先.バッファ全体を結ぶ(番号, 種別, buffer);
                 }
-                結ぶ現物::サンプラー付きの画像 {
-                    ビュー,
-                    サンプラー,
-                    レイアウト,
-                } => {
+                結ぶ現物::サンプラー付きの画像 { ビュー, サンプラー, レイアウト } => {
                     if 種別 != vk::DescriptorType::COMBINED_IMAGE_SAMPLER {
                         panic!("並びの{位置}番目はサンプラー付きの画像で結ばれたが、宣言の種別は{種別:?}である");
                     }

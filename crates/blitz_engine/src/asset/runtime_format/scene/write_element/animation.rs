@@ -6,11 +6,7 @@ use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::書込先;
 use crate::asset::animation_clip::アニメーションクリップ;
 
-pub(in crate::asset::runtime_format::scene) fn 一覧を書く(
-    出力: &mut 書込先,
-    一覧: &[アニメーションクリップ],
-    ジョイント数: Option<usize>,
-) -> Result<(), アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 一覧を書く(出力: &mut 書込先, 一覧: &[アニメーションクリップ], ジョイント数: Option<usize>) -> Result<(), アセット実行時形式エラー> {
     出力.件数(一覧.len())?;
     for クリップ in 一覧 {
         クリップを書く(出力, クリップ, ジョイント数)?;
@@ -18,11 +14,7 @@ pub(in crate::asset::runtime_format::scene) fn 一覧を書く(
     Ok(())
 }
 
-fn クリップを書く(
-    出力: &mut 書込先,
-    クリップ: &アニメーションクリップ,
-    ジョイント数: Option<usize>,
-) -> Result<(), アセット実行時形式エラー> {
+fn クリップを書く(出力: &mut 書込先, クリップ: &アニメーションクリップ, ジョイント数: Option<usize>) -> Result<(), アセット実行時形式エラー> {
     let Some(ジョイント数) = ジョイント数 else {
         return Err(アセット実行時形式エラー::スキンなしアニメーション);
     };

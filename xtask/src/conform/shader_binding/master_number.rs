@@ -9,8 +9,7 @@ use std::path::Path;
 use crate::conform::error::規約検査の破れ;
 
 pub(super) fn 正本の束縛番号を読む(パス: &'static str, 前置き: &'static str) -> Result<u32, 規約検査の破れ> {
-    let 内容 =
-        std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
+    let 内容 = std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
     番号を取り出す(&内容, 前置き).ok_or(規約検査の破れ::束縛番号を読めない { パス, 前置き })
 }
 

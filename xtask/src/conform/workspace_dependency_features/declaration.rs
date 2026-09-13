@@ -82,10 +82,7 @@ impl ワークスペース依存の宣言 {
             ));
         }
         if !self.明示した機能一覧.iter().map(String::as_str).eq(項.機能一覧.iter().copied()) {
-            食い違い一覧.push(format!(
-                "{}の機能一覧が台帳と違う(台帳: {:?}、Cargo.toml: {:?})",
-                self.名前, 項.機能一覧, self.明示した機能一覧
-            ));
+            食い違い一覧.push(format!("{}の機能一覧が台帳と違う(台帳: {:?}、Cargo.toml: {:?})", self.名前, 項.機能一覧, self.明示した機能一覧));
         }
         食い違い一覧
     }

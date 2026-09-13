@@ -2,9 +2,7 @@
 //! 主目的は、全画面の合計では区別できない退行(近距離対照の影が消えて遠方キャスターの影が残る)が落ちることの固定である。
 
 use super::{前提を確かめる, 負の対照を判定する};
-use crate::shadow_loss::comparison_fixture::{
-    候補に残す画素を先頭から作る, 固定の幅, 固定の高さ, 影の無い比較結果, 影を塗る, 負の対照が成り立つ比較結果, 領域の画素数,
-};
+use crate::shadow_loss::comparison_fixture::{候補に残す画素を先頭から作る, 固定の幅, 固定の高さ, 影の無い比較結果, 影を塗る, 負の対照が成り立つ比較結果, 領域の画素数};
 use crate::shadow_loss::range_world::{近距離対照の影の領域, 遠方キャスターの影の領域};
 use crate::shadow_loss::scene_choice::構図;
 

@@ -2,9 +2,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use super::test_fixtures::{
-    刻み数を据えた入力, 検査の曲げの色の数, 検査の色の数, 目標拘束の数を据えた入力, 積んだパス名一覧, 自己衝突を選んで刻み数を据えた入力,
-};
+use super::test_fixtures::{刻み数を据えた入力, 検査の曲げの色の数, 検査の色の数, 目標拘束の数を据えた入力, 積んだパス名一覧, 自己衝突を選んで刻み数を据えた入力};
 use crate::cloth_material::{布の拘束の反復回数, 布の自己衝突};
 
 /// 反証: 零化を反復の中で積むと、反復ごとに乗数が零へ戻って正典式の累積が消える。零化は1刻みに1本だけ、拘束の前に積む。
@@ -16,10 +14,7 @@ fn 拘束の工程は零化一本の後に色の数かける反復回数だけ�
     let 最初の拘束の位置 = 名前一覧.iter().position(|名前| *名前 == "布拘束").unwrap();
     assert!(零化の位置 < 最初の拘束の位置);
     assert_eq!(名前一覧.iter().filter(|名前| **名前 == "布乗数零化").count(), 1);
-    assert_eq!(
-        名前一覧.iter().filter(|名前| **名前 == "布拘束").count(),
-        検査の色の数 * usize::try_from(布の拘束の反復回数).unwrap()
-    );
+    assert_eq!(名前一覧.iter().filter(|名前| **名前 == "布拘束").count(), 検査の色の数 * usize::try_from(布の拘束の反復回数).unwrap());
     assert!(名前一覧.len() <= usize::try_from(super::一刻みのパス数).unwrap() + 1);
 }
 
@@ -27,16 +22,8 @@ fn 拘束の工程は零化一本の後に色の数かける反復回数だけ�
 #[test]
 fn 目標拘束は各反復の距離拘束の後ろに一本ずつ積まれ零本なら積まれない() {
     let 名前一覧 = 積んだパス名一覧(&刻み数を据えた入力(1));
-    assert_eq!(
-        名前一覧.iter().filter(|名前| **名前 == "布目標拘束").count(),
-        usize::try_from(布の拘束の反復回数).unwrap()
-    );
-    let 位置一覧: Vec<usize> = 名前一覧
-        .iter()
-        .enumerate()
-        .filter(|(_, 名前)| **名前 == "布目標拘束")
-        .map(|(位置, _)| 位置)
-        .collect();
+    assert_eq!(名前一覧.iter().filter(|名前| **名前 == "布目標拘束").count(), usize::try_from(布の拘束の反復回数).unwrap());
+    let 位置一覧: Vec<usize> = 名前一覧.iter().enumerate().filter(|(_, 名前)| **名前 == "布目標拘束").map(|(位置, _)| 位置).collect();
     for 窓 in 位置一覧.windows(2) {
         assert_eq!(窓[1] - 窓[0], 検査の色の数 + 検査の曲げの色の数 + 1);
     }
@@ -50,10 +37,7 @@ fn 目標拘束は各反復の距離拘束の後ろに一本ずつ積まれ零�
 #[test]
 fn 曲げ拘束は各反復の距離拘束の後ろ目標拘束の前に曲げの色の数だけ積まれ零本なら積まれない() {
     let 名前一覧 = 積んだパス名一覧(&刻み数を据えた入力(1));
-    assert_eq!(
-        名前一覧.iter().filter(|名前| **名前 == "布曲げ拘束").count(),
-        検査の曲げの色の数 * usize::try_from(布の拘束の反復回数).unwrap()
-    );
+    assert_eq!(名前一覧.iter().filter(|名前| **名前 == "布曲げ拘束").count(), 検査の曲げの色の数 * usize::try_from(布の拘束の反復回数).unwrap());
     let 最初の曲げ = 名前一覧.iter().position(|名前| *名前 == "布曲げ拘束").unwrap();
     assert_eq!(名前一覧[最初の曲げ - 1], "布拘束");
     assert_eq!(名前一覧[最初の曲げ + 検査の曲げの色の数], "布目標拘束");
@@ -77,10 +61,7 @@ fn 目標拘束の最終の成立は分離と押し出しの後で仕上げの�
     assert!(名前一覧.iter().rposition(|名前| *名前 == "布目標拘束").unwrap() < 位置("布分離"));
     let 零本 = 積んだパス名一覧(&目標拘束の数を据えた入力(1, 0));
     assert!(!零本.contains(&"布目標拘束の最終の成立"));
-    assert_eq!(
-        零本.iter().position(|名前| *名前 == "布床とカプセルの押し出し").unwrap() + 1,
-        零本.iter().position(|名前| *名前 == "布仕上げ").unwrap()
-    );
+    assert_eq!(零本.iter().position(|名前| *名前 == "布床とカプセルの押し出し").unwrap() + 1, 零本.iter().position(|名前| *名前 == "布仕上げ").unwrap());
 }
 
 /// 反証: 自己衝突を行わない布にも分離を積むと、CPUの参照計算が再現できない工程がGPUの結果へ混ざる。押し出しと仕上げは両方が積む。

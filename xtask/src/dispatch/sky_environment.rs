@@ -3,10 +3,7 @@
 
 use std::process::ExitCode;
 
-use crate::{
-    atmosphere_lut, derived_environment, distant_environment, indirect_probe, local_visibility, motion_vector, sky_draw, sky_lut, sky_state,
-    sky_time, temporal_reconstruction,
-};
+use crate::{atmosphere_lut, derived_environment, distant_environment, indirect_probe, local_visibility, motion_vector, sky_draw, sky_lut, sky_state, sky_time, temporal_reconstruction};
 
 pub(super) fn 空環境コマンドを割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {

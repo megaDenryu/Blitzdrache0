@@ -7,9 +7,7 @@
 
 use super::material_id::材質の識別子;
 use super::property_error::接触物性エラー;
-use super::property_test_fixtures::{
-    接触物性を作る, 見本の混合則を組み立てる, 見本を登録した組み立てを作る, 見本一覧
-};
+use super::property_test_fixtures::{接触物性を作る, 見本の混合則を組み立てる, 見本を登録した組み立てを作る, 見本一覧};
 
 #[test]
 fn 既定則は摩擦の相乗平均と反発の最大値であり可換である() {

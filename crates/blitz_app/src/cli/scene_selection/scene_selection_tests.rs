@@ -29,32 +29,16 @@ fn 群の中の名前つきの世界が群の既定より先に選ばれる() {
     assert_eq!(種別を解く("terrain_editor_world"), 世界の種別::地形世界(地形世界の種別::エディター));
     assert_eq!(種別を解く("terrain_night_lights"), 世界の種別::地形世界(地形世界の種別::夜灯り));
     assert_eq!(種別を解く("prop_village"), 世界の種別::小物世界(小物世界の種別::集落));
-    assert_eq!(
-        種別を解く("prop_stone_hut_interior"),
-        世界の種別::小物世界(小物世界の種別::石の小屋の屋内)
-    );
-    assert_eq!(
-        種別を解く("prop_part_house_row"),
-        世界の種別::小物世界(小物世界の種別::部品で組んだ家の並び)
-    );
-    assert_eq!(
-        種別を解く("prop_part_tree_row"),
-        世界の種別::小物世界(小物世界の種別::部品で組んだ木の並び)
-    );
-    assert_eq!(
-        種別を解く("prop_part_frame_row"),
-        世界の種別::小物世界(小物世界の種別::部品で組んだ一間四方の骨格の並び)
-    );
+    assert_eq!(種別を解く("prop_stone_hut_interior"), 世界の種別::小物世界(小物世界の種別::石の小屋の屋内));
+    assert_eq!(種別を解く("prop_part_house_row"), 世界の種別::小物世界(小物世界の種別::部品で組んだ家の並び));
+    assert_eq!(種別を解く("prop_part_tree_row"), 世界の種別::小物世界(小物世界の種別::部品で組んだ木の並び));
+    assert_eq!(種別を解く("prop_part_frame_row"), 世界の種別::小物世界(小物世界の種別::部品で組んだ一間四方の骨格の並び));
 }
 
 #[test]
 fn 床を同居させた植生の検収世界が3つとも名前で選ばれる() {
     for 綴り in ["vegetation_cull", "vegetation_shadow_range", "vegetation_single"] {
-        assert_eq!(
-            種別を解く(綴り),
-            世界の種別::植生の検収世界(植生の検収世界の種別::床を同居させた),
-            "{綴り}"
-        );
+        assert_eq!(種別を解く(綴り), 世界の種別::植生の検収世界(植生の検収世界の種別::床を同居させた), "{綴り}");
     }
 }
 

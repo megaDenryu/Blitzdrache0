@@ -6,9 +6,7 @@
 #![allow(clippy::unwrap_used)]
 #![allow(non_snake_case)]
 
-use crate::common::{
-    初期の格子のjson, 升目を空にした格子のjson, 外部アセットの置き場があるか, 試験の建物定義の識別子
-};
+use crate::common::{初期の格子のjson, 升目を空にした格子のjson, 外部アセットの置き場があるか, 試験の建物定義の識別子};
 use axum::{
     body::Body,
     http::{Request, StatusCode},
@@ -23,19 +21,11 @@ async fn 要求を送る(ルーター: &editor_server::経路正規化アプリ,
 }
 
 fn 格子を保存する要求(識別子: &str, 本文: String) -> Request<Body> {
-    Request::put(format!("/api/建物/{識別子}/格子"))
-        .header("content-type", "application/json")
-        .body(Body::from(本文))
-        .unwrap()
+    Request::put(format!("/api/建物/{識別子}/格子")).header("content-type", "application/json").body(Body::from(本文)).unwrap()
 }
 
 fn 格子のパス(一時: &crate::common::一時プロジェクト) -> std::path::PathBuf {
-    一時
-        .ルート()
-        .join("editor_data")
-        .join("建物")
-        .join(試験の建物定義の識別子)
-        .join("格子.json")
+    一時.ルート().join("editor_data").join("建物").join(試験の建物定義の識別子).join("格子.json")
 }
 
 #[tokio::test]

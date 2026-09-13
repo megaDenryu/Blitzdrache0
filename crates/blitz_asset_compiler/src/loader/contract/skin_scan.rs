@@ -22,15 +22,8 @@ impl 開いた文書の契約検査<'_> {
     }
 
     fn 先頭メッシュのスキンの有無を調べる(&self) -> 先頭メッシュのスキン {
-        let ある = self
-            .文書の全体()
-            .nodes()
-            .any(|ノード| ノード.mesh().is_some_and(|メッシュ| メッシュ.index() == 0) && ノード.skin().is_some());
-        if ある {
-            先頭メッシュのスキン::ある
-        } else {
-            先頭メッシュのスキン::ない
-        }
+        let ある = self.文書の全体().nodes().any(|ノード| ノード.mesh().is_some_and(|メッシュ| メッシュ.index() == 0) && ノード.skin().is_some());
+        if ある { 先頭メッシュのスキン::ある } else { 先頭メッシュのスキン::ない }
     }
 
     fn スキン付きプリミティブの頂点属性を検査する(&mut self) {
@@ -44,9 +37,7 @@ impl 開いた文書の契約検査<'_> {
                 continue;
             }
             self.違反を記す(
-                対象位置::プリミティブ {
-                    メッシュ添字: 0, 添字
-                },
+                対象位置::プリミティブ { メッシュ添字: 0, 添字 },
                 "スキン付きのメッシュにJOINTS_0とWEIGHTS_0が揃っていない。ローダーは両方を要求する",
                 "Blenderで全頂点をボーンへ重み付けしてから、書き出し設定でスキンを含める",
             );
@@ -56,8 +47,7 @@ impl 開いた文書の契約検査<'_> {
     fn アニメーションの宣言を検査する(&mut self, スキン: 先頭メッシュのスキン) {
         for (添字, アニメーション) in self.文書の全体().animations().enumerate() {
             let 位置 = || 対象位置::アニメーション {
-                添字,
-                名前: 名前を写す(アニメーション.name()),
+                添字, 名前: 名前を写す(アニメーション.name())
             };
             if スキン == 先頭メッシュのスキン::ない {
                 self.違反を記す(
@@ -67,15 +57,8 @@ impl 開いた文書の契約検査<'_> {
                 );
                 continue;
             }
-            if アニメーション
-                .channels()
-                .any(|チャンネル| チャンネル.sampler().interpolation() == gltf::animation::Interpolation::CubicSpline)
-            {
-                self.違反を記す(
-                    位置(),
-                    "CUBICSPLINE補間のチャンネルを含む。ローダーはCUBICSPLINEを未対応として拒む",
-                    "Blenderでキーフレームの補間を線形かステップにしてから書き出す",
-                );
+            if アニメーション.channels().any(|チャンネル| チャンネル.sampler().interpolation() == gltf::animation::Interpolation::CubicSpline) {
+                self.違反を記す(位置(), "CUBICSPLINE補間のチャンネルを含む。ローダーはCUBICSPLINEを未対応として拒む", "Blenderでキーフレームの補間を線形かステップにしてから書き出す");
             }
         }
     }

@@ -35,37 +35,16 @@ pub fn ルーターを組み立てる(状態: サーバー状態) -> 経路正�
         .route("/api/生存確認", get(health_get::生存確認を返す))
         .route("/api/建物外形カタログ", get(building_outline_catalog_get::建物外形カタログを返す))
         .route("/api/建物一覧", get(building_list_get::建物一覧を返す))
-        .route(
-            "/api/建物/{建物定義ID}/格子",
-            get(building_grid_get::建物の格子を返す).put(building_grid_put::建物の格子を保存する),
-        )
+        .route("/api/建物/{建物定義ID}/格子", get(building_grid_get::建物の格子を返す).put(building_grid_put::建物の格子を保存する))
         .route("/api/楽曲一覧", get(music_list_get::楽曲一覧を返す))
         .route("/api/楽曲/{楽曲ID}", get(music_get::楽曲を返す).put(music_put::楽曲を保存する))
         .route("/api/プロジェクト情報", get(project_info_get::プロジェクト情報を返す))
-        .route(
-            "/api/大域世界/構造",
-            get(world_structure_get::大域世界構造を返す).put(world_structure_put::大域世界構造を保存する),
-        )
-        .route(
-            "/api/大域世界/高さ格子",
-            get(world_heightmap_get::大域世界高さ格子を返す).put(world_heightmap_put::大域世界高さ格子を保存する),
-        )
-        .route(
-            "/api/マテリアル台帳",
-            get(material_board_get::マテリアル台帳を返す).put(material_board_put::マテリアル台帳を保存する),
-        )
-        .route(
-            "/api/チャンク/{x}/{z}/構造",
-            get(chunk_structure_get::チャンク構造を返す).put(chunk_structure_put::チャンク構造を保存する),
-        )
-        .route(
-            "/api/チャンク/{x}/{z}/高さ格子",
-            get(chunk_heightmap_get::チャンク高さ格子を返す).put(chunk_heightmap_put::チャンク高さ格子を保存する),
-        )
-        .route(
-            "/api/チャンク/{x}/{z}/材質重み",
-            get(chunk_splat_weights_get::チャンク材質重みを返す).put(chunk_splat_weights_put::チャンク材質重みを保存する),
-        )
+        .route("/api/大域世界/構造", get(world_structure_get::大域世界構造を返す).put(world_structure_put::大域世界構造を保存する))
+        .route("/api/大域世界/高さ格子", get(world_heightmap_get::大域世界高さ格子を返す).put(world_heightmap_put::大域世界高さ格子を保存する))
+        .route("/api/マテリアル台帳", get(material_board_get::マテリアル台帳を返す).put(material_board_put::マテリアル台帳を保存する))
+        .route("/api/チャンク/{x}/{z}/構造", get(chunk_structure_get::チャンク構造を返す).put(chunk_structure_put::チャンク構造を保存する))
+        .route("/api/チャンク/{x}/{z}/高さ格子", get(chunk_heightmap_get::チャンク高さ格子を返す).put(chunk_heightmap_put::チャンク高さ格子を保存する))
+        .route("/api/チャンク/{x}/{z}/材質重み", get(chunk_splat_weights_get::チャンク材質重みを返す).put(chunk_splat_weights_put::チャンク材質重みを保存する))
         .route("/api/書き出し/ソースアセット", post(source_asset_export_post::ソースアセットを書き出す));
     let ルーター = static_serve::静的配信を組み込む(ルーター, &静的配信ディレクトリ).with_state(状態);
     経路正規化アプリ::組み立てる(ルーター)

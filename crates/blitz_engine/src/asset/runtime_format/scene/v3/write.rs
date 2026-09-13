@@ -11,9 +11,7 @@ use crate::asset::draw_shape::描画形状;
 use crate::asset::render_object_data::描画対象データ;
 use crate::asset::scene_data::シーンデータ;
 
-pub(in crate::asset::runtime_format::scene) fn シーン内容を書く(
-    シーン: &シーンデータ,
-) -> Result<Vec<u8>, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn シーン内容を書く(シーン: &シーンデータ) -> Result<Vec<u8>, アセット実行時形式エラー> {
     let ジョイント数 = シーン.スキン.as_ref().map(|値| 値.ジョイント一覧.len());
     if ジョイント数.is_none() && !シーン.アニメーション一覧.is_empty() {
         return Err(アセット実行時形式エラー::スキンなしアニメーション);
@@ -33,9 +31,7 @@ pub(in crate::asset::runtime_format::scene) fn シーン内容を書く(
     Ok(出力.完了する())
 }
 
-fn 描画対象を書く(
-    出力: &mut 書込先, 対象: &描画対象データ, ジョイント数: Option<usize>
-) -> Result<(), アセット実行時形式エラー> {
+fn 描画対象を書く(出力: &mut 書込先, 対象: &描画対象データ, ジョイント数: Option<usize>) -> Result<(), アセット実行時形式エラー> {
     出力.u64(対象.識別子().番号を返す());
     出力.u64(対象.所有チャンク().番号を返す());
     write_element::行列を書く(出力, 対象.ローカルからワールド())?;
@@ -43,9 +39,7 @@ fn 描画対象を書く(
     write_element::マテリアルを書く(出力, 対象.材質集合())
 }
 
-fn 形状を書く(
-    出力: &mut 書込先, 形状: &描画形状, ジョイント数: Option<usize>
-) -> Result<(), アセット実行時形式エラー> {
+fn 形状を書く(出力: &mut 書込先, 形状: &描画形状, ジョイント数: Option<usize>) -> Result<(), アセット実行時形式エラー> {
     match 形状 {
         描画形状::通常メッシュ(メッシュ) => {
             出力.u8(通常メッシュの判別値);

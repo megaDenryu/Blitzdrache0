@@ -9,16 +9,10 @@ use super::綴りの契約;
 pub(super) const 綴り一覧: [綴りの契約; 2] = [
     綴りの契約 {
         綴り: "影の距離区分の分け方:",
-        現れるファイル一覧: &[
-            "crates/blitz_app/src/reports/shadow_band_assignment.rs",
-            "xtask/src/csm_seam/band_assignment_line.rs",
-        ],
+        現れるファイル一覧: &["crates/blitz_app/src/reports/shadow_band_assignment.rs", "xtask/src/csm_seam/band_assignment_line.rs"],
     },
     綴りの契約 {
         綴り: "明示境界",
-        現れるファイル一覧: &[
-            "crates/blitz_app/src/reports/shadow_band_assignment.rs",
-            "xtask/src/csm_seam/band_assignment_line.rs",
-        ],
+        現れるファイル一覧: &["crates/blitz_app/src/reports/shadow_band_assignment.rs", "xtask/src/csm_seam/band_assignment_line.rs"],
     },
 ];

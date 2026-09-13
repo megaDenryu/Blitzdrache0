@@ -1,9 +1,7 @@
 //! 接触島の検査(判断17)。
 //! 離れた塔が別の島になること、静的な床を挟んだ箱が別の島になること、構築順序の決定性を検証する。
 
-use super::super::contact_test_fixtures::{
-    単一の材質の混合則, 台帳へ登録する, 接触に参加する剛体を作る, 試験の刻み幅, 静的世界の接触相手を作る
-};
+use super::super::contact_test_fixtures::{単一の材質の混合則, 台帳へ登録する, 接触に参加する剛体を作る, 試験の刻み幅, 静的世界の接触相手を作る};
 use super::super::stacked_box_fixture::上下の箱の接触点集合;
 use super::island_builder::接触島の一覧を構築する;
 use super::previous_islands::直前の細分の接触島の一覧;

@@ -40,16 +40,7 @@ impl 遠方環境の即時定数 {
     /// 計算の発行前に書くバイト列。並びはシェーダー側の即時定数の宣言と同じである。
     pub(crate) fn バイト列(self) -> Vec<u8> {
         let 埋め草 = 0.0_f32;
-        let 値一覧 = [
-            self.観測半径,
-            self.太陽天頂余弦,
-            self.太陽放射照度,
-            埋め草,
-            self.夜空放射輝度[0],
-            self.夜空放射輝度[1],
-            self.夜空放射輝度[2],
-            埋め草,
-        ];
+        let 値一覧 = [self.観測半径, self.太陽天頂余弦, self.太陽放射照度, 埋め草, self.夜空放射輝度[0], self.夜空放射輝度[1], self.夜空放射輝度[2], 埋め草];
         let mut バイト列 = Vec::with_capacity(値一覧.len() * 4);
         for 値 in 値一覧 {
             バイト列.extend_from_slice(&値.to_le_bytes());

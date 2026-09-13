@@ -23,12 +23,7 @@ pub(super) fn ジョイントチャンネル一覧を取り出す(
         };
 
         let 読み取り器 = チャンネル.reader(|バッファ| 文書.バッファ一覧.get(バッファ.index()).map(Vec::as_slice));
-        property::プロパティを反映する(
-            読み取り器,
-            チャンネル.target().property(),
-            チャンネル.sampler().interpolation(),
-            &mut 一覧[ジョイント添字],
-        )?;
+        property::プロパティを反映する(読み取り器, チャンネル.target().property(), チャンネル.sampler().interpolation(), &mut 一覧[ジョイント添字])?;
     }
 
     Ok(一覧)

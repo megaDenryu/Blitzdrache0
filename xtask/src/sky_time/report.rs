@@ -22,10 +22,7 @@ pub(super) fn 表を出す(名前一覧: &[&str], 実測一覧: &[領域別実�
 }
 
 pub(super) fn 絵を書き出す(出力先: &Path) -> Result<String, 検収エラー> {
-    let ファイル名一覧 = moment::代表時刻一覧
-        .iter()
-        .map(|時刻| 時刻.ファイル名)
-        .chain([moment::太陽円盤のファイル名, moment::太陽円盤対照のファイル名]);
+    let ファイル名一覧 = moment::代表時刻一覧.iter().map(|時刻| 時刻.ファイル名).chain([moment::太陽円盤のファイル名, moment::太陽円盤対照のファイル名]);
     let mut 置き場 = Vec::new();
     for ファイル名 in ファイル名一覧 {
         置き場.push(一枚を目視用の絵へ変換する(&出力先.join(ファイル名))?.display().to_string());
@@ -37,7 +34,6 @@ pub(super) fn 絵を書き出す(出力先: &Path) -> Result<String, 検収エ�
 /// 読み戻しの置き場の型を通らず、変換の破れを自分で包む。
 fn 一枚を目視用の絵へ変換する(書き出し先: &Path) -> Result<std::path::PathBuf, 検収エラー> {
     crate::raw_png::変換する(書き出し先).map_err(|破れ| 検収エラー::目視用の絵へ変換できなかった {
-        書き出し先: 書き出し先.to_path_buf(),
-        破れ,
+        書き出し先: 書き出し先.to_path_buf(), 破れ
     })
 }

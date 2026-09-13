@@ -69,28 +69,15 @@ mod tests {
     #[test]
     fn 自分のディレクトリは語幹が本体かで変わる() {
         let 近接ファイル = モジュールの位置::定義ファイルから生成する(Path::new("a/src/near/impl.rs"));
-        assert_eq!(
-            近接ファイル.自分のモジュールのディレクトリ(),
-            モジュールのディレクトリ::パスから生成する(Path::new("a/src/near/impl"))
-        );
+        assert_eq!(近接ファイル.自分のモジュールのディレクトリ(), モジュールのディレクトリ::パスから生成する(Path::new("a/src/near/impl")));
         let 本体 = モジュールの位置::定義ファイルから生成する(Path::new("a/src/near/mod.rs"));
-        assert_eq!(
-            本体.自分のモジュールのディレクトリ(),
-            モジュールのディレクトリ::パスから生成する(Path::new("a/src/near"))
-        );
+        assert_eq!(本体.自分のモジュールのディレクトリ(), モジュールのディレクトリ::パスから生成する(Path::new("a/src/near")));
     }
 
     #[test]
     fn クレートの根は最も近いsrcの祖先になる() {
         let 位置 = モジュールの位置::定義ファイルから生成する(Path::new("crates/blitz_collision/src/triangle/sweep.rs"));
-        assert_eq!(
-            位置.クレートの根のディレクトリ().unwrap(),
-            モジュールのディレクトリ::パスから生成する(Path::new("crates/blitz_collision/src"))
-        );
-        assert!(
-            モジュールの位置::定義ファイルから生成する(Path::new("build.rs"))
-                .クレートの根のディレクトリ()
-                .is_none()
-        );
+        assert_eq!(位置.クレートの根のディレクトリ().unwrap(), モジュールのディレクトリ::パスから生成する(Path::new("crates/blitz_collision/src")));
+        assert!(モジュールの位置::定義ファイルから生成する(Path::new("build.rs")).クレートの根のディレクトリ().is_none());
     }
 }

@@ -7,10 +7,8 @@ const 左の材質: &str = r#"{ "pbrMetallicRoughness": { "baseColorFactor": [0.
 const 右の材質: &str = r#"{ "pbrMetallicRoughness": { "baseColorFactor": [0.1, 0.2, 0.9, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.8 } }"#;
 
 /// 差し替え後の材質。左右とも元の色と3成分すべてで大きく離れた色を選び、差し替えの前後の画素を取り違えないようにしてある。
-const 代替の左の材質: &str =
-    r#"{ "pbrMetallicRoughness": { "baseColorFactor": [0.1, 0.75, 0.2, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.8 } }"#;
-const 代替の右の材質: &str =
-    r#"{ "pbrMetallicRoughness": { "baseColorFactor": [0.85, 0.7, 0.1, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.8 } }"#;
+const 代替の左の材質: &str = r#"{ "pbrMetallicRoughness": { "baseColorFactor": [0.1, 0.75, 0.2, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.8 } }"#;
+const 代替の右の材質: &str = r#"{ "pbrMetallicRoughness": { "baseColorFactor": [0.85, 0.7, 0.1, 1.0], "metallicFactor": 0.0, "roughnessFactor": 0.8 } }"#;
 
 /// 2材質2プリミティブの文書。左の板が材質0、右の板が材質1である。
 pub(super) fn 二材質の文書() -> String {

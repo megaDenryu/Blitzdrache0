@@ -42,19 +42,10 @@ impl<'借用> ステージング経由の転送係<'借用> {
 
     /// ホスト側のバイト列と同じ長さのデバイスローカルバッファを確保し、ステージングを経由して中身を書き込む
     /// (判断20: 頂点/インデックス共通の転送基盤)。
-    pub(crate) fn データからデバイスローカルバッファを確保する(
-        &self,
-        データ: &[u8],
-        用途: vk::BufferUsageFlags,
-    ) -> Result<専用メモリ付きバッファ, レンダラーエラー> {
-        let ステージング = self
-            .確保係
-            .ホスト可視バッファを確保して書き込む(データ, vk::BufferUsageFlags::TRANSFER_SRC)?;
+    pub(crate) fn データからデバイスローカルバッファを確保する(&self, データ: &[u8], 用途: vk::BufferUsageFlags) -> Result<専用メモリ付きバッファ, レンダラーエラー> {
+        let ステージング = self.確保係.ホスト可視バッファを確保して書き込む(データ, vk::BufferUsageFlags::TRANSFER_SRC)?;
         let バイト数 = u64::try_from(データ.len()).unwrap_or_else(|_| panic!("転送データ長がu64に収まらない"));
-        let 転送先 = match self
-            .確保係
-            .デバイスローカルバッファを確保する(バイト数, 用途 | vk::BufferUsageFlags::TRANSFER_DST)
-        {
+        let 転送先 = match self.確保係.デバイスローカルバッファを確保する(バイト数, 用途 | vk::BufferUsageFlags::TRANSFER_DST) {
             Ok(転送先) => 転送先,
             Err(誤り) => {
                 ステージング.破棄する(self.論理デバイス());

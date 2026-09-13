@@ -38,10 +38,7 @@ mod tests {
 
     #[test]
     fn 折り返さない宣言を取り出す() {
-        assert_eq!(
-            取り込みの宣言一覧("use super::sweep_solver::求解;\n"),
-            vec!["super::sweep_solver::求解".to_string()]
-        );
+        assert_eq!(取り込みの宣言一覧("use super::sweep_solver::求解;\n"), vec!["super::sweep_solver::求解".to_string()]);
     }
 
     #[test]
@@ -52,10 +49,7 @@ mod tests {
 
     #[test]
     fn 可視性の修飾子を取り除いて取り出す() {
-        assert_eq!(
-            取り込みの宣言一覧("pub(crate) use crate::far::設定;\n"),
-            vec!["crate::far::設定".to_string()]
-        );
+        assert_eq!(取り込みの宣言一覧("pub(crate) use crate::far::設定;\n"), vec!["crate::far::設定".to_string()]);
     }
 
     #[test]

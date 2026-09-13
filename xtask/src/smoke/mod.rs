@@ -30,9 +30,7 @@ pub fn スモークを実行する() -> ExitCode {
         }
     };
     let 実行時アセットルート = 検証の出力ルート::既定().名前が指す置き場(スモークの実行時形式の置き場);
-    if !crate::compile_assets::既定を生成する()
-        || !crate::compile_assets::実行時形式を生成する(&アセットルート, &実行時アセットルート, crate::asset_generator::世界名::板の世界)
-    {
+    if !crate::compile_assets::既定を生成する() || !crate::compile_assets::実行時形式を生成する(&アセットルート, &実行時アセットルート, crate::asset_generator::世界名::板の世界) {
         return ExitCode::FAILURE;
     }
 

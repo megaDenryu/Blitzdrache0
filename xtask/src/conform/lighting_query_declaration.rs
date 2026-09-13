@@ -23,8 +23,7 @@ pub fn 全シェーダーを検査する() -> Result<Vec<違反>, 規約検査�
         違反一覧.extend(正本の宣言を確かめる(正本)?);
     }
     for パス in 取り込む側一覧 {
-        let 内容 = std::fs::read_to_string(Path::new(パス))
-            .map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
+        let 内容 = std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
         違反一覧.extend(自前の宣言を探す(パス, &内容));
     }
     Ok(違反一覧)
@@ -33,15 +32,11 @@ pub fn 全シェーダーを検査する() -> Result<Vec<違反>, 規約検査�
 /// 宣言の消失を「一致した」と読み替えないため、正本に受け持つ番号が揃っていることを先に確かめる。
 fn 正本の宣言を確かめる(正本: &宣言の正本) -> Result<Vec<違反>, 規約検査の破れ> {
     let パス = 正本.パス;
-    let 内容 =
-        std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
+    let 内容 = std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
     let mut 違反一覧 = Vec::new();
     for 番号 in 正本.束縛番号一覧 {
         if !内容.contains(&宣言の書き出し(*番号)) {
-            違反一覧.push(違反::ファイル単位(
-                PathBuf::from(パス),
-                format!("照明問い合わせのセットのbinding{番号}の宣言が正本から消えている"),
-            ));
+            違反一覧.push(違反::ファイル単位(PathBuf::from(パス), format!("照明問い合わせのセットのbinding{番号}の宣言が正本から消えている")));
         }
     }
     Ok(違反一覧)
@@ -54,11 +49,7 @@ fn 自前の宣言を探す(パス: &str, 内容: &str) -> Vec<違反> {
             let 宣言 = 宣言の書き出し(*番号);
             let 正本パス = 正本.パス;
             for (行番号, _) in 内容.lines().enumerate().filter(|(_, 行)| 行.trim_start().starts_with(&宣言)) {
-                違反一覧.push(違反::行単位(
-                    PathBuf::from(パス),
-                    行番号 + 1,
-                    format!("照明問い合わせのセット(binding{番号})を自前で宣言している。{正本パス}をimportする"),
-                ));
+                違反一覧.push(違反::行単位(PathBuf::from(パス), 行番号 + 1, format!("照明問い合わせのセット(binding{番号})を自前で宣言している。{正本パス}をimportする")));
             }
         }
     }

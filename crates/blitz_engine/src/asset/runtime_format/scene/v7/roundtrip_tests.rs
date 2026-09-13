@@ -4,9 +4,7 @@
 #![allow(clippy::unwrap_used)]
 
 use crate::asset::runtime_scene_tests::静的シーンを作る;
-use crate::asset::{
-    アセット実行時形式エラー, シーンを実行時形式へ格納する, シーンデータ, 実行時形式からシーンを読む
-};
+use crate::asset::{アセット実行時形式エラー, シーンを実行時形式へ格納する, シーンデータ, 実行時形式からシーンを読む};
 use crate::static_shape::shape_fixture::{建物1棟の静的物理形状を作る, 綴り一覧から静的物理形状を作る};
 use crate::static_shape::静的物理形状エラー;
 
@@ -39,10 +37,5 @@ fn 安定識別子が重複したバイト列を読み取りが拒む() {
     let mut 焼いた = シーンを実行時形式へ格納する(&形状を持つシーン(&["酒場A", "酒場B"])).unwrap();
     let 位置 = 焼いた.windows(7).position(|窓| 窓 == "酒場B".as_bytes()).unwrap();
     焼いた[位置..位置 + 7].copy_from_slice("酒場A".as_bytes());
-    assert_eq!(
-        実行時形式からシーンを読む(&焼いた),
-        Err(アセット実行時形式エラー::静的物理形状不正(
-            静的物理形状エラー::安定識別子が重複する
-        ))
-    );
+    assert_eq!(実行時形式からシーンを読む(&焼いた), Err(アセット実行時形式エラー::静的物理形状不正(静的物理形状エラー::安定識別子が重複する)));
 }

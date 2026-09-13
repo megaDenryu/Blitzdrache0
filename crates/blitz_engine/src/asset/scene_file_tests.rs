@@ -1,8 +1,6 @@
 use std::path::PathBuf;
 
-use super::{
-    runtime_scene_tests::静的シーンを作る, アセットID, カタログ, シーンを実行時形式へ格納する, 実行時シーンのファイル
-};
+use super::{runtime_scene_tests::静的シーンを作る, アセットID, カタログ, シーンを実行時形式へ格納する, 実行時シーンのファイル};
 
 #[test]
 fn カタログの実行時形式を読み生成物だけを監視対象にする() {

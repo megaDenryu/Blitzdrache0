@@ -13,17 +13,10 @@ use crate::vulkan::graph;
 
 /// 画素段が読む2本のハンドル。呼び出し元がこの2本をシーン描画の読み宣言へ渡すことで、選別の書き込みと
 /// 画素段の読みの間にバリアが立つ。返さずに済ませると、同じフレームの中で書きながら読む競合になる。
-pub(in crate::vulkan::frame::record::graph_build) fn クラスタの選別を積む<'a>(
-    グラフ: &mut graph::グラフ<'a>,
-    入力: クラスタ選別の描画入力,
-) -> [graph::バッファハンドル; 2] {
+pub(in crate::vulkan::frame::record::graph_build) fn クラスタの選別を積む<'a>(グラフ: &mut graph::グラフ<'a>, 入力: クラスタ選別の描画入力) -> [graph::バッファハンドル; 2] {
     let 格子 = 登録する(グラフ, 入力.格子);
     let 光添字列 = 登録する(グラフ, 入力.光添字列);
-    グラフ.パスを積む(cluster_light_assignment_pass::クラスタ選別パスを宣言する(
-        格子,
-        光添字列,
-        入力,
-    ));
+    グラフ.パスを積む(cluster_light_assignment_pass::クラスタ選別パスを宣言する(格子, 光添字列, 入力));
     [格子, 光添字列]
 }
 

@@ -23,11 +23,7 @@ impl 空パイプライン {
     /// `ディスクリプタlayout一覧`はset0から順に並べたレイアウトであり、set0はビューとパスのセット、
     /// set1は大気のベイク済み画像を参照するレイアウトである。
     pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        カラー形式: vk::Format,
-        深度形式: vk::Format,
-        ディスクリプタlayout一覧: &[vk::DescriptorSetLayout],
-        シェーダー: &シェーダー一式,
+        確保係: &GPU資源の確保係<'_>, カラー形式: vk::Format, 深度形式: vk::Format, ディスクリプタlayout一覧: &[vk::DescriptorSetLayout], シェーダー: &シェーダー一式
     ) -> Result<Self, レンダラーエラー> {
         create::空パイプラインを生成する(確保係, カラー形式, 深度形式, ディスクリプタlayout一覧, シェーダー)
     }

@@ -34,8 +34,6 @@ impl 流体粒子 {
     }
 
     pub(crate) fn 更新する(&self, 位置: [f32; 3], 速度: [f32; 3]) -> Self {
-        Self {
-            位置, 速度, 質量: self.質量
-        }
+        Self { 位置, 速度, 質量: self.質量 }
     }
 }

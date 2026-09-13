@@ -55,13 +55,7 @@ fn インデックスアクセサ一覧(連結: &連結した立体) -> String {
     連結
         .区間一覧
         .iter()
-        .map(|区間| {
-            format!(
-                r#"{{ "bufferView": 2, "byteOffset": {}, "componentType": 5123, "count": {}, "type": "SCALAR" }}"#,
-                区間.添字ずらし量 * 2,
-                区間.添字数
-            )
-        })
+        .map(|区間| format!(r#"{{ "bufferView": 2, "byteOffset": {}, "componentType": 5123, "count": {}, "type": "SCALAR" }}"#, 区間.添字ずらし量 * 2, 区間.添字数))
         .collect::<Vec<_>>()
         .join(",\n    ")
 }
@@ -81,12 +75,7 @@ fn 材質を書く(ベースカラー: [f32; 3], 金属度: f32, 粗さ: f32) ->
 
 fn プリミティブ一覧(連結: &連結した立体) -> String {
     (0..連結.区間一覧.len())
-        .map(|立体番号| {
-            format!(
-                r#"{{ "attributes": {{ "POSITION": 0, "NORMAL": 1 }}, "indices": {}, "material": {立体番号} }}"#,
-                立体番号 + インデックスアクセサの起点
-            )
-        })
+        .map(|立体番号| format!(r#"{{ "attributes": {{ "POSITION": 0, "NORMAL": 1 }}, "indices": {}, "material": {立体番号} }}"#, 立体番号 + インデックスアクセサの起点))
         .collect::<Vec<_>>()
         .join(",\n    ")
 }

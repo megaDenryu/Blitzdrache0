@@ -14,12 +14,7 @@ use crate::error::レンダラーエラー;
 impl パス別GPU計測 {
     /// `タイムスタンプ対応か`が`false`(timestamp_valid_bits == 0)の物理デバイスでは
     /// `None`を返す(判断30: 計測無効は型で表し、無言の0ミリ秒を返さない)。
-    pub(crate) fn 生成する(
-        device: &ash::Device,
-        タイムスタンプ対応か: bool,
-        タイムスタンプ周期ns: f32,
-        合成区間一覧: Vec<合成区間の宣言>,
-    ) -> Result<Option<Self>, レンダラーエラー> {
+    pub(crate) fn 生成する(device: &ash::Device, タイムスタンプ対応か: bool, タイムスタンプ周期ns: f32, 合成区間一覧: Vec<合成区間の宣言>) -> Result<Option<Self>, レンダラーエラー> {
         if !タイムスタンプ対応か {
             return Ok(None);
         }

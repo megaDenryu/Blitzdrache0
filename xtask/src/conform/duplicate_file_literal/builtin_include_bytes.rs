@@ -37,7 +37,5 @@ pub(super) fn ファイル1つを検査する(パス: &Path, 内容: &str) -> Ve
 }
 
 fn 名前を奪う宣言か(行: &str) -> bool {
-    [定義の綴り, 取り込みの綴り]
-        .iter()
-        .any(|綴り一覧| 綴り一覧.iter().all(|綴り| 行.contains(綴り)))
+    [定義の綴り, 取り込みの綴り].iter().any(|綴り一覧| 綴り一覧.iter().all(|綴り| 行.contains(綴り)))
 }

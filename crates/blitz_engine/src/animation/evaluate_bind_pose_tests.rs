@@ -4,9 +4,7 @@
 
 use blitz_math::秒;
 
-use crate::asset::{
-    アニメーションクリップ, ジョイントアニメーションチャンネル, チャンネル, 補間種別, 静的TRS
-};
+use crate::asset::{アニメーションクリップ, ジョイントアニメーションチャンネル, チャンネル, 補間種別, 静的TRS};
 
 use super::evaluate::姿勢を評価する;
 use super::test_support::バインド時指定スキンを作る;

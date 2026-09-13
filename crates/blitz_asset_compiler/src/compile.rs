@@ -8,9 +8,7 @@ mod source_scene;
 use std::path::PathBuf;
 
 use blitz_engine::texture_storage::格納済みテクスチャ;
-use blitz_engine::{
-    アセットメタデータ, シーンを実行時形式へ格納する, シーンデータ, マテリアルデータ, 描画形状
-};
+use blitz_engine::{アセットメタデータ, シーンを実行時形式へ格納する, シーンデータ, マテリアルデータ, 描画形状};
 
 use crate::assembled_scene::組み立てたシーン;
 use crate::placed_instance_count::{種類ごとの置いた個体の数, 置いた個体の数};

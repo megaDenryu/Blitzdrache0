@@ -36,9 +36,7 @@ pub(super) struct 台帳のテキストが表す中身 {
 pub(super) struct 生成台帳の本文(String);
 
 impl 生成台帳の本文 {
-    pub(super) fn 組み立てる(
-        見出し: 生成台帳の見出し, チャンクごとの内容ハッシュ: &BTreeMap<チャンク座標, 内容ハッシュ>
-    ) -> Self {
+    pub(super) fn 組み立てる(見出し: 生成台帳の見出し, チャンクごとの内容ハッシュ: &BTreeMap<チャンク座標, 内容ハッシュ>) -> Self {
         Self(build::台帳のテキストを組み立てる(見出し, チャンクごとの内容ハッシュ))
     }
 

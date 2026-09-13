@@ -30,21 +30,13 @@ impl フレーム記録のコマンド一式 {
 }
 
 impl GPU資源の確保係<'_> {
-    pub(crate) fn フレーム記録のコマンド一式を確保する(
-        &self,
-        キューファミリ添字: u32,
-    ) -> Result<フレーム記録のコマンド一式, レンダラーエラー> {
-        let プール生成情報 = vk::CommandPoolCreateInfo::default()
-            .flags(vk::CommandPoolCreateFlags::RESET_COMMAND_BUFFER)
-            .queue_family_index(キューファミリ添字);
+    pub(crate) fn フレーム記録のコマンド一式を確保する(&self, キューファミリ添字: u32) -> Result<フレーム記録のコマンド一式, レンダラーエラー> {
+        let プール生成情報 = vk::CommandPoolCreateInfo::default().flags(vk::CommandPoolCreateFlags::RESET_COMMAND_BUFFER).queue_family_index(キューファミリ添字);
         // 安全性: deviceは生成済みで有効。キューファミリ添字は選定済みの正当な値。
         let command_pool = unsafe { self.device.create_command_pool(&プール生成情報, None)? };
 
         match self.進行中フレーム数ぶんのコマンドバッファを割り当てる(command_pool) {
-            Ok(command_buffer一覧) => Ok(フレーム記録のコマンド一式 {
-                command_pool,
-                command_buffer一覧,
-            }),
+            Ok(command_buffer一覧) => Ok(フレーム記録のコマンド一式 { command_pool, command_buffer一覧 }),
             Err(誤り) => {
                 // 安全性: command_poolは直前に生成したばかりで、まだどこにも渡していないためGPUは使用していない。
                 unsafe { self.device.destroy_command_pool(command_pool, None) };
@@ -53,15 +45,9 @@ impl GPU資源の確保係<'_> {
         }
     }
 
-    fn 進行中フレーム数ぶんのコマンドバッファを割り当てる(
-        &self,
-        command_pool: vk::CommandPool,
-    ) -> Result<[vk::CommandBuffer; 進行中フレーム数], レンダラーエラー> {
+    fn 進行中フレーム数ぶんのコマンドバッファを割り当てる(&self, command_pool: vk::CommandPool) -> Result<[vk::CommandBuffer; 進行中フレーム数], レンダラーエラー> {
         let 割当数 = u32::try_from(進行中フレーム数).unwrap_or_else(|_| panic!("進行中フレーム数がu32に収まらない"));
-        let 割当情報 = vk::CommandBufferAllocateInfo::default()
-            .command_pool(command_pool)
-            .level(vk::CommandBufferLevel::PRIMARY)
-            .command_buffer_count(割当数);
+        let 割当情報 = vk::CommandBufferAllocateInfo::default().command_pool(command_pool).level(vk::CommandBufferLevel::PRIMARY).command_buffer_count(割当数);
         // 安全性: command_poolは直前に生成済みで、このスコープの唯一の所有者はこの確保係である。
         let command_buffer一覧 = unsafe { self.device.allocate_command_buffers(&割当情報)? };
         let Ok(command_buffer一覧): Result<[vk::CommandBuffer; 進行中フレーム数], _> = command_buffer一覧.try_into() else {

@@ -9,22 +9,14 @@ use crate::asset::mesh_data::メッシュデータ;
 use crate::asset::vertex_attribute::メッシュ頂点属性;
 
 /// 版1から版3のメッシュを読み、単一プリミティブのメッシュへ変換する。
-pub(in crate::asset::runtime_format::scene) fn 旧版を読む(
-    入力: &mut 読取位置<'_>,
-) -> Result<メッシュデータ, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 旧版を読む(入力: &mut 読取位置<'_>) -> Result<メッシュデータ, アセット実行時形式エラー> {
     let (頂点一覧, インデックス一覧) = 頂点とインデックスを読む(入力)?;
     let スキン頂点属性一覧 = mesh_skin_vertex::読む(入力, 頂点一覧.len())?;
-    Ok(メッシュデータ::単一プリミティブで生成する(
-        頂点一覧,
-        インデックス一覧,
-        スキン頂点属性一覧,
-    ))
+    Ok(メッシュデータ::単一プリミティブで生成する(頂点一覧, インデックス一覧, スキン頂点属性一覧))
 }
 
 /// 版4のメッシュを読む。プリミティブ列はインデックス一覧の後、スキン頂点属性の前に並ぶ。
-pub(in crate::asset::runtime_format::scene) fn 読む(
-    入力: &mut 読取位置<'_>,
-) -> Result<メッシュデータ, アセット実行時形式エラー> {
+pub(in crate::asset::runtime_format::scene) fn 読む(入力: &mut 読取位置<'_>) -> Result<メッシュデータ, アセット実行時形式エラー> {
     let (頂点一覧, インデックス一覧) = 頂点とインデックスを読む(入力)?;
     let プリミティブ列 = mesh_primitive::読む(入力, &インデックス一覧, 頂点一覧.len())?;
     let スキン頂点属性一覧 = mesh_skin_vertex::読む(入力, 頂点一覧.len())?;
@@ -36,9 +28,7 @@ pub(in crate::asset::runtime_format::scene) fn 読む(
     })
 }
 
-fn 頂点とインデックスを読む(
-    入力: &mut 読取位置<'_>,
-) -> Result<(Vec<メッシュ頂点属性>, Vec<u32>), アセット実行時形式エラー> {
+fn 頂点とインデックスを読む(入力: &mut 読取位置<'_>) -> Result<(Vec<メッシュ頂点属性>, Vec<u32>), アセット実行時形式エラー> {
     let 頂点数 = 入力.件数(頂点長)?;
     if 頂点数 == 0 {
         return Err(アセット実行時形式エラー::頂点なし);
@@ -55,9 +45,7 @@ fn 頂点とインデックスを読む(
     for _ in 0..添字数 {
         let インデックス = 入力.u32()?;
         if usize::try_from(インデックス).map_or(true, |値| 値 >= 頂点数) {
-            return Err(アセット実行時形式エラー::インデックス範囲外 {
-                インデックス, 頂点数
-            });
+            return Err(アセット実行時形式エラー::インデックス範囲外 { インデックス, 頂点数 });
         }
         インデックス一覧.push(インデックス);
     }

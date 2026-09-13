@@ -8,9 +8,7 @@ use super::super::scene::write_element::版5のテクスチャを書く;
 use super::super::アセット実行時形式エラー;
 use crate::surface_layer_textures::地表層テクスチャ集;
 
-pub(super) fn 地表層テクスチャ集内容を書く(
-    テクスチャ集: &地表層テクスチャ集
-) -> Result<Vec<u8>, アセット実行時形式エラー> {
+pub(super) fn 地表層テクスチャ集内容を書く(テクスチャ集: &地表層テクスチャ集) -> Result<Vec<u8>, アセット実行時形式エラー> {
     let mut 出力 = 書込先::新規();
     出力.件数(テクスチャ集.材質ごとのタイル().len())?;
     for タイル in テクスチャ集.材質ごとのタイル() {

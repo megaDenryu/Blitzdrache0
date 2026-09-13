@@ -35,9 +35,7 @@ pub(super) fn 命令へ読み解く(spirv: &[u8]) -> Result<Vec<命令>, シェ�
 }
 
 /// OpNameの語は[対象id, 文字列...]の順に並ぶ。文字列はナル終端のUTF-8を語へ詰めたものである。
-pub(super) fn 名前からidを参照する(
-    命令一覧: &[命令], 名前: &str
-) -> Result<u32, シェーダー中間表現の読み解きエラー> {
+pub(super) fn 名前からidを参照する(命令一覧: &[命令], 名前: &str) -> Result<u32, シェーダー中間表現の読み解きエラー> {
     for 命令 in 命令一覧 {
         if 命令.命令コード != 命令_OP_NAME || 命令.語一覧.is_empty() {
             continue;
@@ -54,9 +52,7 @@ const 装飾_BUILT_IN: u32 = 11;
 const 組み込み_POSITION: u32 = 0;
 
 /// 位置の組み込み出力として装飾された変数のid。頂点段のSPIR-Vには必ず1つある。
-pub(super) fn 位置の組み込み出力のidを参照する(
-    命令一覧: &[命令]
-) -> Result<u32, シェーダー中間表現の読み解きエラー> {
+pub(super) fn 位置の組み込み出力のidを参照する(命令一覧: &[命令]) -> Result<u32, シェーダー中間表現の読み解きエラー> {
     命令一覧
         .iter()
         .filter(|命令| 命令.命令コード == 命令_OP_DECORATE && 命令.語一覧.len() >= 3)

@@ -16,8 +16,7 @@ pub struct チャンク目録 {
 impl チャンク目録 {
     pub fn 空を作る(チャンク一辺: チャンク一辺) -> Self {
         Self {
-            チャンク一辺,
-            登録一覧: HashMap::new(),
+            チャンク一辺, 登録一覧: HashMap::new()
         }
     }
 

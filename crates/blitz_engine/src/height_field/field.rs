@@ -21,9 +21,7 @@ impl 高さ場 {
     pub fn 生成する(諸元: 高さ場諸元, 高さ一覧: Vec<メートル>) -> Result<Self, 高さ場エラー> {
         let 期待 = 諸元.標本数をusizeへ変換する()?;
         if 高さ一覧.len() != 期待 {
-            return Err(高さ場エラー::標本数不一致 {
-                期待, 実際: 高さ一覧.len()
-            });
+            return Err(高さ場エラー::標本数不一致 { 期待, 実際: 高さ一覧.len() });
         }
         for 高さ in &高さ一覧 {
             let 高さのメートル = f64::from(高さ.値());
@@ -51,10 +49,7 @@ impl 高さ場 {
         if 東添字 >= self.諸元.東方向の格子点数() || 南添字 >= self.諸元.南方向の格子点数() {
             return Err(範囲外);
         }
-        let 位置 = 南添字
-            .checked_mul(self.諸元.東方向の格子点数())
-            .and_then(|行の先頭| 行の先頭.checked_add(東添字))
-            .ok_or(範囲外)?;
+        let 位置 = 南添字.checked_mul(self.諸元.東方向の格子点数()).and_then(|行の先頭| 行の先頭.checked_add(東添字)).ok_or(範囲外)?;
         let 位置 = usize::try_from(位置).map_err(|_| 範囲外)?;
         self.高さ一覧.get(位置).copied().ok_or(範囲外)
     }
@@ -64,10 +59,7 @@ impl 高さ場 {
     ///
     /// 地表の面の問い合わせと同じ工程を通すのは、高さを求めた三角形と法線を求めた三角形を食い違わせないためである。
     /// 参照: `crates/blitz_engine/src/height_field/field_ground_surface.rs`
-    pub fn 大域の水平位置から地表高さを求める(
-        &self,
-        位置: 大域ワールド位置,
-    ) -> Result<大域メートル, 高さ場の広がりの外エラー> {
+    pub fn 大域の水平位置から地表高さを求める(&self, 位置: 大域ワールド位置) -> Result<大域メートル, 高さ場の広がりの外エラー> {
         Ok(self.大域の水平位置から地表の面を求める(位置)?.地表の大域位置().y())
     }
 }

@@ -45,11 +45,7 @@ fn 塊を圧縮する(状態: &mut [u32; 8], 塊: &[u8]) {
     for 添字 in 0..64 {
         let 大1 = e.rotate_right(6) ^ e.rotate_right(11) ^ e.rotate_right(25);
         let 選択 = (e & f) ^ (!e & g);
-        let 一時1 = h
-            .wrapping_add(大1)
-            .wrapping_add(選択)
-            .wrapping_add(丸め定数[添字])
-            .wrapping_add(予定[添字]);
+        let 一時1 = h.wrapping_add(大1).wrapping_add(選択).wrapping_add(丸め定数[添字]).wrapping_add(予定[添字]);
         let 大0 = a.rotate_right(2) ^ a.rotate_right(13) ^ a.rotate_right(22);
         let 多数決 = (a & b) ^ (a & c) ^ (b & c);
         let 一時2 = 大0.wrapping_add(多数決);

@@ -31,11 +31,7 @@ impl 刻みごとのGPU計測 {
     pub(super) fn 積み始める(&self, 積み先: GPU命令の積み先<'_>) -> Option<vk::QueryPool> {
         let プール = self.計測.as_ref()?.クエリプール(フレームスロット添字::先頭());
         // 安全性: command_bufferは積み込み開始済みで、この刻みで書くクエリより前にリセットする。
-        unsafe {
-            積み先
-                .論理デバイス()
-                .cmd_reset_query_pool(積み先.コマンドバッファ(), プール, 0, パス数上限 * 2)
-        };
+        unsafe { 積み先.論理デバイス().cmd_reset_query_pool(積み先.コマンドバッファ(), プール, 0, パス数上限 * 2) };
         Some(プール)
     }
 

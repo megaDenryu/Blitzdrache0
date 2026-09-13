@@ -10,16 +10,12 @@ use super::{value_args, 起動引数エラー};
 use crate::hot_reload::監視するシェーダーの入口ファイル;
 use crate::runtime_assets::実行時アセットの置き場;
 
-pub(super) fn シェーダー入口の指定の引数を処理する(
-    引数: &mut Iter<String>,
-) -> Result<監視するシェーダーの入口ファイル, 起動引数エラー> {
+pub(super) fn シェーダー入口の指定の引数を処理する(引数: &mut Iter<String>) -> Result<監視するシェーダーの入口ファイル, 起動引数エラー> {
     let 値 = value_args::次の値を読む(引数, "--shader-source", 起動引数エラー::シェーダーソース不正)?;
     Ok(監視するシェーダーの入口ファイル::綴りから生成する(値))
 }
 
-pub(super) fn アセットルートの指定の引数を処理する(
-    引数: &mut Iter<String>,
-) -> Result<実行時アセットの置き場, 起動引数エラー> {
+pub(super) fn アセットルートの指定の引数を処理する(引数: &mut Iter<String>) -> Result<実行時アセットの置き場, 起動引数エラー> {
     let 値 = value_args::次の値を読む(引数, "--asset-root", 起動引数エラー::アセットルート不正)?;
     Ok(実行時アセットの置き場::綴りから生成する(値))
 }

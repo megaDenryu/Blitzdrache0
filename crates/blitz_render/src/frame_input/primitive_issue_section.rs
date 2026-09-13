@@ -15,12 +15,7 @@ pub(super) struct プリミティブ発行区間 {
 impl プリミティブ発行区間 {
     /// 開いた直後の区間は、その位置の1件だけを含む。
     pub(super) fn 生成する(束id: 描画束ID, 描画対象添字: usize, 開始: usize) -> Self {
-        Self {
-            束id,
-            描画対象添字,
-            開始,
-            件数: 1,
-        }
+        Self { 束id, 描画対象添字, 開始, 件数: 1 }
     }
 
     pub(super) fn 件数を1つ足す(&mut self) {

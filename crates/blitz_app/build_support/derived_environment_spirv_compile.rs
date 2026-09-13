@@ -26,27 +26,8 @@ const 反射率積分表エントリ: [エントリ指定; 1] = [エントリ指
     出力ファイル名: "brdf_integration.spv",
 }];
 
-pub(super) fn 全部をコンパイルする(
-    slangc: &スラングコンパイラの所在,
-    シェーダーディレクトリ: &Path,
-    出力先ディレクトリ: &Path,
-) -> Result<(), String> {
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("diffuse_irradiance.slang"),
-        出力先ディレクトリ,
-        &拡散照度エントリ,
-    )?;
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("specular_prefilter.slang"),
-        出力先ディレクトリ,
-        &鏡面畳込みエントリ,
-    )?;
-    エントリ一覧をコンパイルする(
-        slangc,
-        &シェーダーディレクトリ.join("brdf_integration.slang"),
-        出力先ディレクトリ,
-        &反射率積分表エントリ,
-    )
+pub(super) fn 全部をコンパイルする(slangc: &スラングコンパイラの所在, シェーダーディレクトリ: &Path, 出力先ディレクトリ: &Path) -> Result<(), String> {
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("diffuse_irradiance.slang"), 出力先ディレクトリ, &拡散照度エントリ)?;
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("specular_prefilter.slang"), 出力先ディレクトリ, &鏡面畳込みエントリ)?;
+    エントリ一覧をコンパイルする(slangc, &シェーダーディレクトリ.join("brdf_integration.slang"), 出力先ディレクトリ, &反射率積分表エントリ)
 }

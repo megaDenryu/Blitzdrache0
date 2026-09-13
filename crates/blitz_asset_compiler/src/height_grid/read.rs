@@ -26,10 +26,7 @@ fn バイト列から復元する(バイト列: &[u8]) -> Result<高さ格子, �
     let 期待本体長 = 標本数をusizeへ変換する(諸元)?.saturating_mul(4);
     let 本体 = バイト列.get(ヘッダー長..).unwrap_or_default();
     if 本体.len() != 期待本体長 {
-        return Err(高さ格子エラー::本体長不一致 {
-            期待: 期待本体長,
-            実際: 本体.len(),
-        });
+        return Err(高さ格子エラー::本体長不一致 { 期待: 期待本体長, 実際: 本体.len() });
     }
     高さ格子::生成する(諸元, 高さ一覧を読む(本体)?)
 }
@@ -44,9 +41,7 @@ fn 諸元を読む(ヘッダー: &[u8]) -> Result<高さ格子諸元, 高さ格�
 fn 高さ一覧を読む(本体: &[u8]) -> Result<Vec<f32>, 高さ格子エラー> {
     let mut 結果 = Vec::with_capacity(本体.len() / 4);
     for 塊 in 本体.chunks_exact(4) {
-        let 値 = <[u8; 4]>::try_from(塊).map_err(|_| 高さ格子エラー::本体長不一致 {
-            期待: 4, 実際: 塊.len()
-        })?;
+        let 値 = <[u8; 4]>::try_from(塊).map_err(|_| 高さ格子エラー::本体長不一致 { 期待: 4, 実際: 塊.len() })?;
         結果.push(f32::from_le_bytes(値));
     }
     Ok(結果)
@@ -57,8 +52,6 @@ fn ヘッダーの一バイト(ヘッダー: &[u8], 位置: usize) -> Result<u8,
 }
 
 fn ヘッダーの四バイト(ヘッダー: &[u8], 位置: usize) -> Result<[u8; 4], 高さ格子エラー> {
-    let 範囲 = ヘッダー
-        .get(位置..位置.saturating_add(4))
-        .ok_or(高さ格子エラー::ヘッダー不足 { 実長: ヘッダー.len() })?;
+    let 範囲 = ヘッダー.get(位置..位置.saturating_add(4)).ok_or(高さ格子エラー::ヘッダー不足 { 実長: ヘッダー.len() })?;
     <[u8; 4]>::try_from(範囲).map_err(|_| 高さ格子エラー::ヘッダー不足 { 実長: ヘッダー.len() })
 }

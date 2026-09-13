@@ -11,9 +11,7 @@ impl アセット生成器の起動 {
     /// 標準出力も標準エラーもそのまま画面へ流したまま終わりを待つ。生成の進み具合を人が見る入口がこれを通る。
     pub fn 画面へ流したまま走らせて終わりを待つ(mut self) -> Result<(), 生成器エラー> {
         self.終了済みか = true;
-        let 終了状態 = self.コマンド.status().map_err(|誤り| 生成器エラー::生成器を起こせなかった {
-            生成器: self.生成器, 誤り
-        })?;
+        let 終了状態 = self.コマンド.status().map_err(|誤り| 生成器エラー::生成器を起こせなかった { 生成器: self.生成器, 誤り })?;
         if 終了状態.success() {
             return Ok(());
         }
@@ -27,9 +25,7 @@ impl アセット生成器の起動 {
     /// 取り込んだ内容はそのまま画面へ出すため、人が見るものは流したときと変わらない。
     pub fn 走らせて標準出力を取り込む(mut self) -> Result<String, 生成器エラー> {
         self.終了済みか = true;
-        let 出力 = self.コマンド.output().map_err(|誤り| 生成器エラー::生成器を起こせなかった {
-            生成器: self.生成器, 誤り
-        })?;
+        let 出力 = self.コマンド.output().map_err(|誤り| 生成器エラー::生成器を起こせなかった { 生成器: self.生成器, 誤り })?;
         let 標準出力 = String::from_utf8_lossy(&出力.stdout).into_owned();
         print!("{標準出力}");
         eprint!("{}", String::from_utf8_lossy(&出力.stderr));

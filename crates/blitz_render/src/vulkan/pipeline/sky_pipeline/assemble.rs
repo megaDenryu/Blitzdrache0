@@ -24,31 +24,19 @@ pub(super) fn 空パイプラインの固定機能を組み立てる(
     画素段モジュール: vk::ShaderModule,
 ) -> Result<空パイプライン, レンダラーエラー> {
     let ステージ一覧 = [
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::VERTEX)
-            .module(頂点モジュール)
-            .name(頂点エントリ名),
-        vk::PipelineShaderStageCreateInfo::default()
-            .stage(vk::ShaderStageFlags::FRAGMENT)
-            .module(画素段モジュール)
-            .name(画素段エントリ名),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::VERTEX).module(頂点モジュール).name(頂点エントリ名),
+        vk::PipelineShaderStageCreateInfo::default().stage(vk::ShaderStageFlags::FRAGMENT).module(画素段モジュール).name(画素段エントリ名),
     ];
     let 頂点入力state = vk::PipelineVertexInputStateCreateInfo::default();
     let 入力アセンブリstate = vk::PipelineInputAssemblyStateCreateInfo::default().topology(vk::PrimitiveTopology::TRIANGLE_LIST);
     let ビューポートstate = vk::PipelineViewportStateCreateInfo::default().viewport_count(1).scissor_count(1);
-    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default()
-        .polygon_mode(vk::PolygonMode::FILL)
-        .cull_mode(vk::CullModeFlags::NONE)
-        .line_width(1.0);
+    let ラスタライズstate = vk::PipelineRasterizationStateCreateInfo::default().polygon_mode(vk::PolygonMode::FILL).cull_mode(vk::CullModeFlags::NONE).line_width(1.0);
     let マルチサンプルstate = vk::PipelineMultisampleStateCreateInfo::default().rasterization_samples(vk::SampleCountFlags::TYPE_1);
     // 第2の添付は動きベクトルである。空パスもシーン描画と同じ2枚の添付へ書くため、宣言する形をシーンと揃える。
     // 注意: 2枚の混合状態は同一でなければならない。independentBlend機能を有効にしていないためである。
     let カラーブレンドアタッチメント一覧 = [vk::PipelineColorBlendAttachmentState::default().color_write_mask(vk::ColorComponentFlags::RGBA); 2];
     let カラーブレンドstate = vk::PipelineColorBlendStateCreateInfo::default().attachments(&カラーブレンドアタッチメント一覧);
-    let 深度state = vk::PipelineDepthStencilStateCreateInfo::default()
-        .depth_test_enable(true)
-        .depth_write_enable(false)
-        .depth_compare_op(vk::CompareOp::EQUAL);
+    let 深度state = vk::PipelineDepthStencilStateCreateInfo::default().depth_test_enable(true).depth_write_enable(false).depth_compare_op(vk::CompareOp::EQUAL);
     let 動的state一覧 = [vk::DynamicState::VIEWPORT, vk::DynamicState::SCISSOR];
     let 動的state = vk::PipelineDynamicStateCreateInfo::default().dynamic_states(&動的state一覧);
 
@@ -57,9 +45,7 @@ pub(super) fn 空パイプラインの固定機能を組み立てる(
     let layout = unsafe { device.create_pipeline_layout(&layout_create_info, None)? };
 
     let カラー形式一覧 = [カラー形式, 動きベクトルの形式];
-    let mut rendering情報 = vk::PipelineRenderingCreateInfo::default()
-        .color_attachment_formats(&カラー形式一覧)
-        .depth_attachment_format(深度形式);
+    let mut rendering情報 = vk::PipelineRenderingCreateInfo::default().color_attachment_formats(&カラー形式一覧).depth_attachment_format(深度形式);
     let create_info = vk::GraphicsPipelineCreateInfo::default()
         .stages(&ステージ一覧)
         .vertex_input_state(&頂点入力state)

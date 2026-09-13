@@ -36,12 +36,8 @@ pub(super) const 機能台帳: [機能台帳の項; 21] = [
     項を作る("ts-rs", true, &[]),
 ];
 
-pub(super) const fn 項を作る(
-    依存名: &'static str, 既定機能を使うか: bool, 機能一覧: &'static [&'static str]
-) -> 機能台帳の項 {
+pub(super) const fn 項を作る(依存名: &'static str, 既定機能を使うか: bool, 機能一覧: &'static [&'static str]) -> 機能台帳の項 {
     機能台帳の項 {
-        依存名,
-        既定機能を使うか,
-        機能一覧,
+        依存名, 既定機能を使うか, 機能一覧
     }
 }

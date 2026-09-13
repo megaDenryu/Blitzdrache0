@@ -18,18 +18,9 @@ use super::frame_samples::フレーム別の記録;
 use super::pass_time_window::パス時間の窓;
 
 pub(super) fn 読み取る(
-    device: &ash::Device,
-    pool: vk::QueryPool,
-    マッピング: &[(&'static str, u32)],
-    タイムスタンプ周期ns: f32,
-    合成区間一覧: &[合成区間の宣言],
-    窓表: &mut HashMap<&'static str, パス時間の窓>,
-    フレーム別: &mut フレーム別の記録,
+    device: &ash::Device, pool: vk::QueryPool, マッピング: &[(&'static str, u32)], タイムスタンプ周期ns: f32, 合成区間一覧: &[合成区間の宣言], 窓表: &mut HashMap<&'static str, パス時間の窓>, フレーム別: &mut フレーム別の記録
 ) {
-    let 読み値一覧: Vec<(&'static str, Option<f64>)> = マッピング
-        .iter()
-        .map(|&(名前, 開始添字)| (名前, 一組を読み取る(device, pool, 開始添字, タイムスタンプ周期ns)))
-        .collect();
+    let 読み値一覧: Vec<(&'static str, Option<f64>)> = マッピング.iter().map(|&(名前, 開始添字)| (名前, 一組を読み取る(device, pool, 開始添字, タイムスタンプ周期ns))).collect();
     let フレーム内の合計 = フレーム内で合算する(&読み値一覧);
     let 合成 = composite_interval::適用する(合成区間一覧, &フレーム内の合計);
     let 区間別の値: Vec<(&'static str, f64)> = フレーム内の合計.into_iter().chain(合成).collect();
@@ -61,14 +52,7 @@ pub(super) fn フレーム内で合算する(読み値一覧: &[(&'static str, O
 fn 一組を読み取る(device: &ash::Device, pool: vk::QueryPool, 開始添字: u32, タイムスタンプ周期ns: f32) -> Option<f64> {
     let mut 結果: [[u64; 2]; 2] = [[0; 2]; 2];
     // 安全性: poolは生成済みで、開始添字・開始添字+1はプール容量内(呼び出し元が保証)。
-    let 読み取り結果 = unsafe {
-        device.get_query_pool_results(
-            pool,
-            開始添字,
-            &mut 結果,
-            vk::QueryResultFlags::TYPE_64 | vk::QueryResultFlags::WITH_AVAILABILITY,
-        )
-    };
+    let 読み取り結果 = unsafe { device.get_query_pool_results(pool, 開始添字, &mut 結果, vk::QueryResultFlags::TYPE_64 | vk::QueryResultFlags::WITH_AVAILABILITY) };
     if 読み取り結果.is_err() {
         return None;
     }

@@ -19,18 +19,12 @@ pub(crate) struct 局所可視性のパイプライン一式 {
 }
 
 impl 局所可視性のパイプライン一式 {
-    pub(crate) fn 生成する(
-        確保係: &GPU資源の確保係<'_>,
-        ディスクリプタ: &局所可視性のディスクリプタ,
-        シェーダー: &局所可視性のシェーダー一式,
-    ) -> Result<Self, レンダラーエラー> {
+    pub(crate) fn 生成する(確保係: &GPU資源の確保係<'_>, ディスクリプタ: &局所可視性のディスクリプタ, シェーダー: &局所可視性のシェーダー一式) -> Result<Self, レンダラーエラー> {
         let device = 確保係.論理デバイス();
         let レイアウト = 局所可視性のパイプラインレイアウトを作る(device, ディスクリプタ.レイアウトのハンドル())?;
         match 両方を作る(確保係, レイアウト, シェーダー) {
             Ok((遮蔽の標本化, 両側ぼかし)) => Ok(Self {
-                遮蔽の標本化,
-                両側ぼかし,
-                レイアウト,
+                遮蔽の標本化, 両側ぼかし, レイアウト
             }),
             Err(誤り) => {
                 // 安全性: レイアウトはこのスコープの唯一の所有者で、以降使用しない。
@@ -50,11 +44,7 @@ impl 局所可視性のパイプライン一式 {
     }
 }
 
-fn 両方を作る(
-    確保係: &GPU資源の確保係<'_>,
-    レイアウト: vk::PipelineLayout,
-    シェーダー: &局所可視性のシェーダー一式,
-) -> Result<(vk::Pipeline, vk::Pipeline), レンダラーエラー> {
+fn 両方を作る(確保係: &GPU資源の確保係<'_>, レイアウト: vk::PipelineLayout, シェーダー: &局所可視性のシェーダー一式) -> Result<(vk::Pipeline, vk::Pipeline), レンダラーエラー> {
     let device = 確保係.論理デバイス();
     let 遮蔽の標本化 = パイプラインを作る(確保係, レイアウト, &シェーダー.遮蔽の標本化)?;
     match パイプラインを作る(確保係, レイアウト, &シェーダー.両側ぼかし) {
@@ -67,26 +57,14 @@ fn 両方を作る(
     }
 }
 
-fn パイプラインを作る(
-    確保係: &GPU資源の確保係<'_>,
-    レイアウト: vk::PipelineLayout,
-    シェーダー: &コンピュートシェーダー,
-) -> Result<vk::Pipeline, レンダラーエラー> {
+fn パイプラインを作る(確保係: &GPU資源の確保係<'_>, レイアウト: vk::PipelineLayout, シェーダー: &コンピュートシェーダー) -> Result<vk::Pipeline, レンダラーエラー> {
     確保係.コンピュートパイプラインを生成する(レイアウト, シェーダー.コード(), c"computeMain")
 }
 
-fn 局所可視性のパイプラインレイアウトを作る(
-    device: &ash::Device,
-    セットレイアウト: vk::DescriptorSetLayout,
-) -> Result<vk::PipelineLayout, レンダラーエラー> {
+fn 局所可視性のパイプラインレイアウトを作る(device: &ash::Device, セットレイアウト: vk::DescriptorSetLayout) -> Result<vk::PipelineLayout, レンダラーエラー> {
     let セット一覧 = [セットレイアウト];
-    let 範囲一覧 = [vk::PushConstantRange::default()
-        .stage_flags(vk::ShaderStageFlags::COMPUTE)
-        .offset(0)
-        .size(即時定数バイト数)];
-    let 生成情報 = vk::PipelineLayoutCreateInfo::default()
-        .set_layouts(&セット一覧)
-        .push_constant_ranges(&範囲一覧);
+    let 範囲一覧 = [vk::PushConstantRange::default().stage_flags(vk::ShaderStageFlags::COMPUTE).offset(0).size(即時定数バイト数)];
+    let 生成情報 = vk::PipelineLayoutCreateInfo::default().set_layouts(&セット一覧).push_constant_ranges(&範囲一覧);
     // 安全性: deviceは生成済みで有効。
     Ok(unsafe { device.create_pipeline_layout(&生成情報, None)? })
 }

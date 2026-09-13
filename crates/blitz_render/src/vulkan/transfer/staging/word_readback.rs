@@ -11,25 +11,14 @@ use crate::vulkan::allocator::専用メモリ付きバッファ;
 
 impl ステージング経由の転送係<'_> {
     /// 前提: 呼び出し時点でGPUが読み戻し元のバッファを使用していないこと(device_wait_idle後)。
-    pub(crate) fn バッファの語列をホストへ読み戻す(
-        &self,
-        元: vk::Buffer,
-        バイト数: u64,
-    ) -> Result<Vec<u32>, レンダラーエラー> {
-        let 受け皿 = self
-            .確保係()
-            .読み戻し先のホスト可視バッファを確保する(バイト数, vk::BufferUsageFlags::TRANSFER_DST)?;
+    pub(crate) fn バッファの語列をホストへ読み戻す(&self, 元: vk::Buffer, バイト数: u64) -> Result<Vec<u32>, レンダラーエラー> {
+        let 受け皿 = self.確保係().読み戻し先のホスト可視バッファを確保する(バイト数, vk::BufferUsageFlags::TRANSFER_DST)?;
         let 結果 = self.受け皿へ写して語列を開く(&受け皿, 元, バイト数);
         受け皿.破棄する(self.論理デバイス());
         結果
     }
 
-    fn 受け皿へ写して語列を開く(
-        &self,
-        受け皿: &専用メモリ付きバッファ,
-        元: vk::Buffer,
-        バイト数: u64,
-    ) -> Result<Vec<u32>, レンダラーエラー> {
+    fn 受け皿へ写して語列を開く(&self, 受け皿: &専用メモリ付きバッファ, 元: vk::Buffer, バイト数: u64) -> Result<Vec<u32>, レンダラーエラー> {
         self.バッファ間をコピーする(元, 受け皿.バッファのハンドル(), バイト数)?;
         let 語数 = usize::try_from(バイト数 / 4).unwrap_or_else(|_| panic!("読み戻す語数がusizeに収まらない: {バイト数}"));
         受け皿.ホスト可視の32ビット語列を写し取る(self.論理デバイス(), 語数)

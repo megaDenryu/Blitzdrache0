@@ -30,9 +30,7 @@ impl 受け皿一式 {
         }
         let 件数 = 作った.len();
         Ok(Self {
-            バッファ一覧: 作った
-                .try_into()
-                .unwrap_or_else(|_| panic!("読み戻しバッファを4本要求したのに{件数}本できた")),
+            バッファ一覧: 作った.try_into().unwrap_or_else(|_| panic!("読み戻しバッファを4本要求したのに{件数}本できた")),
         })
     }
 

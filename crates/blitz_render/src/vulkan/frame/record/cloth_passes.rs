@@ -16,9 +16,7 @@ mod test_fixtures;
 pub(crate) use sequence::一刻みのパス数;
 
 use crate::vulkan::frame::布描画入力;
-use crate::vulkan::graph::{
-    グラフ, バッファハンドル, 前フレームコンピュート読み直後状態, 前フレーム頂点入力読み直後状態
-};
+use crate::vulkan::graph::{グラフ, バッファハンドル, 前フレームコンピュート読み直後状態, 前フレーム頂点入力読み直後状態};
 
 pub(super) use sequence::積む;
 

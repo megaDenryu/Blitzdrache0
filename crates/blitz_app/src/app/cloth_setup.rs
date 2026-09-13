@@ -24,11 +24,7 @@ pub(super) struct 布の構築物 {
 /// 起動指定の布モードから布の一式を作る。受け取るのはモードと描画シーン、
 /// 返すのは布を持たない起動では`None`である。モードごとにどの原型へ布を張るかを決めるのはこの工程だけであり、
 /// 呼び出し元はモードの種類を1つも知らずに一式を受け取る。
-pub(super) fn 布モードから構築する(
-    布モード: crate::cli::布モード,
-    描画シーン: &blitz_render::描画シーン素材,
-    基本刻み: blitz_math::秒,
-) -> Result<Option<布の構築物>, crate::error::起動エラー> {
+pub(super) fn 布モードから構築する(布モード: crate::cli::布モード, 描画シーン: &blitz_render::描画シーン素材, 基本刻み: blitz_math::秒) -> Result<Option<布の構築物>, crate::error::起動エラー> {
     let 刻み幅 = blitz_render::布の刻み幅::生成する(基本刻み)?;
     let (素材, プリセット, 参照比較) = match 布モード {
         crate::cli::布モード::なし => return Ok(None),
@@ -56,9 +52,7 @@ pub(super) fn 布モードから構築する(
             (素材, プリセット, Some(参照比較))
         }
     };
-    Ok(Some(布の構築物 {
-        素材, プリセット, 参照比較
-    }))
+    Ok(Some(布の構築物 { 素材, プリセット, 参照比較 }))
 }
 
 pub(super) const 一辺粒子数: u32 = 32;

@@ -9,11 +9,7 @@ use self::compile_table::コンパイル表;
 use super::slangc_entry_compile::エントリ一覧をコンパイルする;
 use super::slangc_locate::スラングコンパイラの所在;
 
-pub(super) fn 全部をコンパイルする(
-    slangc: &スラングコンパイラの所在,
-    シェーダーディレクトリ: &Path,
-    出力先ディレクトリ: &Path,
-) -> Result<(), String> {
+pub(super) fn 全部をコンパイルする(slangc: &スラングコンパイラの所在, シェーダーディレクトリ: &Path, 出力先ディレクトリ: &Path) -> Result<(), String> {
     for (ファイル名, エントリ一覧) in コンパイル表 {
         let ソース = シェーダーディレクトリ.join(ファイル名);
         エントリ一覧をコンパイルする(slangc, &ソース, 出力先ディレクトリ, エントリ一覧)?;

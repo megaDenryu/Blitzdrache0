@@ -31,10 +31,7 @@ impl 桁ごとの度数 {
 
     /// 表へ綴る形。「1e-8未満:9 1e-8台:13 ...」のように桁の見出しと度数を並べる。
     pub(in crate::contact) fn 綴り(&self) -> String {
-        (0..self.度数.len())
-            .map(|番号| format!("{}:{}", self.桁の見出し(番号), self.度数[番号]))
-            .collect::<Vec<_>>()
-            .join(" ")
+        (0..self.度数.len()).map(|番号| format!("{}:{}", self.桁の見出し(番号), self.度数[番号])).collect::<Vec<_>>().join(" ")
     }
 
     fn 桁の番号(&self, 量: f32) -> usize {
@@ -49,19 +46,11 @@ impl 桁ごとの度数 {
 
     fn 桁の見出し(&self, 番号: usize) -> String {
         let 冪 = self.いちばん低い桁の下端の十の冪 + i32::try_from(番号).unwrap_or(0) - 1;
-        if 番号 == 0 {
-            format!("1e{}未満", self.いちばん低い桁の下端の十の冪)
-        } else {
-            format!("1e{冪}台")
-        }
+        if 番号 == 0 { format!("1e{}未満", self.いちばん低い桁の下端の十の冪) } else { format!("1e{冪}台") }
     }
 }
 
 /// 小さい順に並んだ正の量の列で、隣どうしの比が最も大きい組。並びが2つ未満なら無しである。
 pub(in crate::contact) fn 最も広い隙間を探す(小さい順の並び: &[f32]) -> Option<(f32, f32)> {
-    小さい順の並び
-        .windows(2)
-        .filter(|組| 組[0] > 0.0)
-        .max_by(|左, 右| (左[1] / 左[0]).total_cmp(&(右[1] / 右[0])))
-        .map(|組| (組[0], 組[1]))
+    小さい順の並び.windows(2).filter(|組| 組[0] > 0.0).max_by(|左, 右| (左[1] / 左[0]).total_cmp(&(右[1] / 右[0]))).map(|組| (組[0], 組[1]))
 }

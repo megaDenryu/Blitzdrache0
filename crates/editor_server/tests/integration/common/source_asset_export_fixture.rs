@@ -4,9 +4,7 @@
 use std::path::{Path, PathBuf};
 
 use blitz_asset_compiler::{ソースアセットの相対パス, ソースルート};
-use editor_server::{
-    ファイル保管庫, プロジェクト保管庫, マザーハイトマップ, 世界の区画割り, 位置3次元, 大域世界構造, 広域道路
-};
+use editor_server::{ファイル保管庫, プロジェクト保管庫, マザーハイトマップ, 世界の区画割り, 位置3次元, 大域世界構造, 広域道路};
 
 pub fn 小さな区画割り() -> 世界の区画割り {
     世界の区画割り {
@@ -75,8 +73,7 @@ pub fn 地表層のタイルを配置する(一時: &super::一時プロジェ�
     let 元ディレクトリ = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets").join(ディレクトリ名);
     let 先ディレクトリ = 一時.ルート().join("assets").join(ディレクトリ名);
     std::fs::create_dir_all(&先ディレクトリ).unwrap();
-    let 一覧 = std::fs::read_dir(&元ディレクトリ)
-        .unwrap_or_else(|誤り| panic!("地表層のタイルを読めない。`cargo xtask gen-source-assets`で生成し直す: {誤り}"));
+    let 一覧 = std::fs::read_dir(&元ディレクトリ).unwrap_or_else(|誤り| panic!("地表層のタイルを読めない。`cargo xtask gen-source-assets`で生成し直す: {誤り}"));
     for 項目 in 一覧 {
         let 元 = 項目.unwrap().path();
         let 名前 = 元.file_name().unwrap_or_else(|| panic!("タイルのファイル名が無い: {}", 元.display()));

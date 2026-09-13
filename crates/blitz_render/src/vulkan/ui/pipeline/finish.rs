@@ -6,11 +6,7 @@ use ash::vk;
 use super::UIパイプライン;
 use crate::error::レンダラーエラー;
 
-pub(super) fn パイプラインを取り出す(
-    device: &ash::Device,
-    layout: vk::PipelineLayout,
-    生成結果: Result<Vec<vk::Pipeline>, (Vec<vk::Pipeline>, vk::Result)>,
-) -> Result<UIパイプライン, レンダラーエラー> {
+pub(super) fn パイプラインを取り出す(device: &ash::Device, layout: vk::PipelineLayout, 生成結果: Result<Vec<vk::Pipeline>, (Vec<vk::Pipeline>, vk::Result)>) -> Result<UIパイプライン, レンダラーエラー> {
     match 生成結果 {
         Ok(一覧) => {
             let Some(&handle) = 一覧.first() else {

@@ -5,12 +5,7 @@ use ash::vk;
 
 use crate::error::レンダラーエラー;
 
-pub(super) fn ディスクリプタセットを割り当てる(
-    device: &ash::Device,
-    pool: vk::DescriptorPool,
-    layout: vk::DescriptorSetLayout,
-    セット数: usize,
-) -> Result<Vec<vk::DescriptorSet>, レンダラーエラー> {
+pub(super) fn ディスクリプタセットを割り当てる(device: &ash::Device, pool: vk::DescriptorPool, layout: vk::DescriptorSetLayout, セット数: usize) -> Result<Vec<vk::DescriptorSet>, レンダラーエラー> {
     if セット数 == 0 {
         return Ok(Vec::new());
     }

@@ -27,12 +27,7 @@ impl UIテクスチャレジストリ {
     }
 
     /// テクスチャを新規登録、または既存IDを新しい内容で置き換える。
-    pub(crate) fn 反映する(
-        &mut self,
-        転送係: ステージング経由の転送係<'_>,
-        id: UIテクスチャID,
-        素材: &UIテクスチャ素材,
-    ) -> Result<(), レンダラーエラー> {
+    pub(crate) fn 反映する(&mut self, 転送係: ステージング経由の転送係<'_>, id: UIテクスチャID, 素材: &UIテクスチャ素材) -> Result<(), レンダラーエラー> {
         let device = 転送係.論理デバイス();
         let 新テクスチャ = UIテクスチャ::生成する(転送係, 素材)?;
         let 新set = match self.ディスクリプタ資源.テクスチャのセットを割り当てて書き込む(device, &新テクスチャ) {
@@ -67,10 +62,7 @@ impl UIテクスチャレジストリ {
     /// (blitz_app)がテクスチャデルタを描画データより先に反映する契約に反しており、
     /// プログラムのバグとしてpanicする。
     pub(crate) fn ディスクリプタセットを取得する(&self, id: UIテクスチャID) -> vk::DescriptorSet {
-        self.表
-            .get(&id)
-            .map(|(_, set)| *set)
-            .unwrap_or_else(|| panic!("UIメッシュが未登録のUIテクスチャIDを参照した(テクスチャデルタの反映漏れ)"))
+        self.表.get(&id).map(|(_, set)| *set).unwrap_or_else(|| panic!("UIメッシュが未登録のUIテクスチャIDを参照した(テクスチャデルタの反映漏れ)"))
     }
 
     pub(crate) fn 破棄する(&self, device: &GPUデバイス) {

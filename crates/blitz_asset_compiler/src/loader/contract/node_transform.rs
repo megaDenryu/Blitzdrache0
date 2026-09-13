@@ -27,9 +27,7 @@ impl ノードの親子関係の索引 {
 
     /// 与えたノード自身と祖先のうち、単位行列でない変換を持つものを根の側へ向かう順で集める。
     /// 注意: 遡る回数をノード数で抑える。glTFの階層が閉路を持つ壊れた文書でも遡りが止まらなくなることを防ぐためである。
-    pub(super) fn 根まで遡って変換を持つノードを集める(
-        &self, 文書: &gltf::Document, ノード: &gltf::Node<'_>
-    ) -> Vec<対象位置> {
+    pub(super) fn 根まで遡って変換を持つノードを集める(&self, 文書: &gltf::Document, ノード: &gltf::Node<'_>) -> Vec<対象位置> {
         let mut 集めた位置 = Vec::new();
         let mut 現在 = Some(ノード.index());
         for _ in 0..self.親添字一覧.len() {
@@ -37,8 +35,7 @@ impl ノードの親子関係の索引 {
             let 単位行列でない対象 = 文書.nodes().nth(添字).filter(|対象| 対象.transform().matrix() != 単位行列);
             if let Some(対象) = 単位行列でない対象 {
                 集めた位置.push(対象位置::ノード {
-                    添字,
-                    名前: 名前を写す(対象.name()),
+                    添字, 名前: 名前を写す(対象.name())
                 });
             }
             現在 = self.親添字一覧.get(添字).copied().flatten();

@@ -45,11 +45,7 @@ fn match式のコマンド名を取り出す(ソース: &'static str) -> BTreeSe
 #[test]
 fn 正本とdispatchのコマンド名が一致する() {
     let 正本名一覧: BTreeSet<&str> = 全件().iter().map(|項目| 項目.ascii名()).collect();
-    assert_eq!(
-        正本名一覧,
-        dispatchのコマンド名一覧(),
-        "command_catalogとdispatchのコマンド名が食い違っている"
-    );
+    assert_eq!(正本名一覧, dispatchのコマンド名一覧(), "command_catalogとdispatchのコマンド名が食い違っている");
 }
 
 /// `コマンド項目::ascii名`と`要約`が前提とする説明文の書式(2つの半角空白で始まり、
@@ -59,11 +55,7 @@ fn 正本とdispatchのコマンド名が一致する() {
 fn 全件が書式の不変条件を満たす() {
     for 項目 in 全件() {
         assert!(項目.全文().starts_with("  "), "{}の説明文が半角空白2つで始まっていない", 項目.ascii名());
-        assert!(
-            !項目.ascii名().is_empty(),
-            "説明文からASCIIコマンド名を取り出せない項目がある: {}",
-            項目.全文()
-        );
+        assert!(!項目.ascii名().is_empty(), "説明文からASCIIコマンド名を取り出せない項目がある: {}", 項目.全文());
         assert!(!項目.日本語名().is_empty(), "日本語名が空の項目がある(ascii名: {})", 項目.ascii名());
     }
 }

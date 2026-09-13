@@ -19,9 +19,7 @@ impl 部品ID {
         if 整えた綴り.is_empty() {
             return Err(カタログエラー::部品IDが空);
         }
-        Ok(Self {
-            綴り: 整えた綴り.to_string(),
-        })
+        Ok(Self { 綴り: 整えた綴り.to_string() })
     }
 
     pub fn 綴り(&self) -> &str {

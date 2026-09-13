@@ -16,11 +16,7 @@ impl 高さ関数材料<'_> {
     pub(crate) fn 高さを求める(&self, 添字x: i16, 添字z: i16) -> f32 {
         let ローカルx = ローカル添字を求める(添字x, self.チャンクx, self.解像度);
         let ローカルz = ローカル添字を求める(添字z, self.チャンクz, self.解像度);
-        if let (Some(チャンク別), Some(行), Some(列)) = (
-            self.チャンク別バイト列,
-            コア範囲内(ローカルz, self.解像度),
-            コア範囲内(ローカルx, self.解像度),
-        ) {
+        if let (Some(チャンク別), Some(行), Some(列)) = (self.チャンク別バイト列, コア範囲内(ローカルz, self.解像度), コア範囲内(ローカルx, self.解像度)) {
             let 一辺頂点数 = u32::from(self.解像度).saturating_add(1);
             return 格子から高さを読む(チャンク別, 一辺頂点数, 行, 列);
         }
@@ -57,9 +53,5 @@ fn 添字を大域列へ丸める(添字: i16, 上限頂点数: u32) -> u32 {
 fn 格子から高さを読む(バイト列: &[u8], 一辺頂点数: u32, 行: u32, 列: u32) -> f32 {
     let 位置 = u64::from(行).saturating_mul(u64::from(一辺頂点数)).saturating_add(u64::from(列));
     let バイト開始 = usize::try_from(位置.saturating_mul(4)).unwrap_or(usize::MAX);
-    バイト列
-        .get(バイト開始..バイト開始.saturating_add(4))
-        .and_then(|範囲| <[u8; 4]>::try_from(範囲).ok())
-        .map(f32::from_le_bytes)
-        .unwrap_or(0.0)
+    バイト列.get(バイト開始..バイト開始.saturating_add(4)).and_then(|範囲| <[u8; 4]>::try_from(範囲).ok()).map(f32::from_le_bytes).unwrap_or(0.0)
 }

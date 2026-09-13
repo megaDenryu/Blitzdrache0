@@ -38,12 +38,7 @@ pub(super) fn 大気のベイク済み画像標本ディスクリプタを生成
     for 添字 in フレームスロット添字::全スロット() {
         binding::書き込む(device, &set一覧[添字.配列添字()], sampler, 束縛先, 添字);
     }
-    Ok(大気のベイク済み画像標本ディスクリプタ {
-        layout,
-        pool,
-        sampler,
-        set一覧,
-    })
+    Ok(大気のベイク済み画像標本ディスクリプタ { layout, pool, sampler, set一覧 })
 }
 
 fn サンプラーを片付けて返す(device: &ash::Device, sampler: vk::Sampler, 誤り: レンダラーエラー) -> レンダラーエラー {

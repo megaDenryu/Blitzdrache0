@@ -22,10 +22,7 @@ use super::violation::違反;
 
 pub fn 全綴りを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = 登録した綴りが両側に在るかを検査する()?;
-    違反一覧.extend(unregistered_key::登録の無い鍵を探す(
-        &登録済みの綴り一覧(),
-        &台帳に載る全ファイル(),
-    )?);
+    違反一覧.extend(unregistered_key::登録の無い鍵を探す(&登録済みの綴り一覧(), &台帳に載る全ファイル())?);
     Ok(違反一覧)
 }
 
@@ -34,16 +31,11 @@ fn 登録した綴りが両側に在るかを検査する() -> Result<Vec<違反
     let mut 違反一覧 = Vec::new();
     for 契約 in table::領域一覧.iter().copied().flatten() {
         for パス in 契約.現れるファイル一覧 {
-            let 内容 = std::fs::read_to_string(Path::new(パス))
-                .map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
+            let 内容 = std::fs::read_to_string(Path::new(パス)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(パス), 誤り))?;
             if !文字列リテラルの中に現れるか(&内容, 契約.綴り) {
                 違反一覧.push(違反::ファイル単位(
                     PathBuf::from(*パス),
-                    format!(
-                        "契約した綴り「{}」が文字列リテラルとして無い(この綴りを変えるなら{}の全部とconformの台帳を同時に直す)",
-                        契約.綴り,
-                        契約.現れるファイル一覧.join("・")
-                    ),
+                    format!("契約した綴り「{}」が文字列リテラルとして無い(この綴りを変えるなら{}の全部とconformの台帳を同時に直す)", 契約.綴り, 契約.現れるファイル一覧.join("・")),
                 ));
             }
         }
@@ -58,12 +50,7 @@ fn 登録済みの綴り一覧() -> Vec<&'static str> {
 
 /// 台帳に載るファイルの全部。同じファイルが複数の契約に並ぶため、重複を畳んでから返す。
 fn 台帳に載る全ファイル() -> Vec<&'static str> {
-    let mut 一覧: Vec<&'static str> = table::領域一覧
-        .iter()
-        .copied()
-        .flatten()
-        .flat_map(|契約| 契約.現れるファイル一覧.iter().copied())
-        .collect();
+    let mut 一覧: Vec<&'static str> = table::領域一覧.iter().copied().flatten().flat_map(|契約| 契約.現れるファイル一覧.iter().copied()).collect();
     一覧.sort_unstable();
     一覧.dedup();
     一覧
