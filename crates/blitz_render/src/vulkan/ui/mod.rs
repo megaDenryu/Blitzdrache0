@@ -62,8 +62,8 @@ impl UIリソース一式 {
         self.テクスチャ台帳.削除する(device, id);
     }
 
-    pub(crate) fn setを取得する(&self, id: UIテクスチャID) -> vk::DescriptorSet {
-        self.テクスチャ台帳.setを取得する(id)
+    pub(crate) fn ディスクリプタセットを取得する(&self, id: UIテクスチャID) -> vk::DescriptorSet {
+        self.テクスチャ台帳.ディスクリプタセットを取得する(id)
     }
 
     #[allow(clippy::too_many_arguments)]

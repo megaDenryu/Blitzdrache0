@@ -66,7 +66,7 @@ impl UIテクスチャレジストリ {
     /// `id`に対応するディスクリプタセットを返す。未登録IDの解決は呼び出し側
     /// (blitz_app)がテクスチャデルタを描画データより先に反映する契約に反しており、
     /// プログラムのバグとしてpanicする。
-    pub(crate) fn setを取得する(&self, id: UIテクスチャID) -> vk::DescriptorSet {
+    pub(crate) fn ディスクリプタセットを取得する(&self, id: UIテクスチャID) -> vk::DescriptorSet {
         self.表
             .get(&id)
             .map(|(_, set)| *set)
