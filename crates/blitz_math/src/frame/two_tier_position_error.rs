@@ -1,4 +1,4 @@
-//! 二段の位置の生成の失敗。どちらの段が非有限であったかを枝で言う。
+//! 二段の位置の生成の失敗。どちらの段が非有限であったかを選択肢で言う。
 //! blitz_mathはglamのみに依存する方針のためthiserrorを使わず`std::error::Error`を手動実装する(様式は`direction_error.rs`に倣う)。
 
 use std::fmt;
