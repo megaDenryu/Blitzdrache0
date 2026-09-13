@@ -43,8 +43,13 @@ fn 解析する(経過秒: f64, 行: &str) -> Option<メモリ標本> {
 
 impl メモリ標本 {
     pub(super) fn 表示する(&self) {
-        let vram = self.専用vramのメビバイト数.map_or_else(|| "取得不可".to_string(), |値| format!("{値:.2}"));
-        println!("{:.2},{:.2},{:.2},{vram}", self.経過秒, self.ワーキングセットのメビバイト数, self.プライベートメモリのメビバイト数);
+        let vram = self
+            .専用vramのメビバイト数
+            .map_or_else(|| "取得不可".to_string(), |値| format!("{値:.2}"));
+        println!(
+            "{:.2},{:.2},{:.2},{vram}",
+            self.経過秒, self.ワーキングセットのメビバイト数, self.プライベートメモリのメビバイト数
+        );
     }
 }
 
@@ -87,7 +92,9 @@ pub(super) fn 要約を表示して最大を返す(一覧: &[メモリ標本]) -
         "  最大: ワーキングセット {:.2} MiB / プライベート {:.2} MiB / 専用VRAM {}",
         最大.ワーキングセットのメビバイト数,
         最大.プライベートメモリのメビバイト数,
-        最大.専用vramのメビバイト数.map_or_else(|| "取得不可".to_string(), |値| format!("{値:.2} MiB"))
+        最大
+            .専用vramのメビバイト数
+            .map_or_else(|| "取得不可".to_string(), |値| format!("{値:.2} MiB"))
     );
     Some(最大)
 }

@@ -38,7 +38,9 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--cloth-xpbd-reference-bending" => {
             設定.布モード = cloth_reference_args::布の曲げのコンプライアンスの引数を処理する(残り, 設定.布モード)?
         }
-        "--cloth-xpbd-reference-shape" => 設定.布モード = cloth_reference_args::参照比較の題材の形の引数を処理する(残り, 設定.布モード)?,
+        "--cloth-xpbd-reference-shape" => {
+            設定.布モード = cloth_reference_args::参照比較の題材の形の引数を処理する(残り, 設定.布モード)?
+        }
         "--global-offset" => 設定.平行移動.大域ずらし量 = placement_args::大域ずらし量の引数を処理する(残り)?,
         "--camera-nudge" => 設定.平行移動.カメラずれ = placement_args::カメラずれの引数を処理する(残り)?,
         "--camera-pitch" => 設定.平行移動.カメラ俯角差分 = placement_args::カメラ俯角の引数を処理する(残り)?,

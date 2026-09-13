@@ -72,7 +72,11 @@ fn 対応定義の無い旧版の塔は明示的に拒否する() {
     let 座標 = チャンク座標::生成する(0, 0);
     let 構造パス = 一時.ルート().join("editor_data/チャンク/0_0/構造.json");
     std::fs::create_dir_all(構造パス.parent().unwrap()).unwrap();
-    std::fs::write(&構造パス, serde_json::to_vec_pretty(&建物種別を持つ旧版のチャンク構造のjson("塔")).unwrap()).unwrap();
+    std::fs::write(
+        &構造パス,
+        serde_json::to_vec_pretty(&建物種別を持つ旧版のチャンク構造のjson("塔")).unwrap(),
+    )
+    .unwrap();
 
     let エラー = 保管庫.チャンクの構造を読む(座標).unwrap_err().to_string();
     assert!(エラー.contains("対応する建物定義が無い"));

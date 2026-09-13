@@ -55,7 +55,10 @@ fn 遠方環境の検収アセットを書き出す(出力先ディレクトリ:
 }
 
 fn シャドウ検証アセットを書き出す(出力先ディレクトリ: &Path) -> Result<(), String> {
-    書き込む(&出力先ディレクトリ.join("shadow_scene.gltf"), shadow_scene_gltf_json::文書のJSON文字列.as_bytes())?;
+    書き込む(
+        &出力先ディレクトリ.join("shadow_scene.gltf"),
+        shadow_scene_gltf_json::文書のJSON文字列.as_bytes(),
+    )?;
     書き込む(
         &出力先ディレクトリ.join("shadow_scene.bin"),
         &shadow_scene_geometry::バッファバイト列を作る(),

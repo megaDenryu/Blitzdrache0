@@ -66,7 +66,7 @@ pub(super) fn 動的レンダリングを開始する(
 
 /// 返すのはカラーのloadOp・深度のloadOp・カラーのクリア値の3つである。
 fn クリア指定からロード操作とクリア値を導出する(
-    クリア指定: &クリア指定
+    クリア指定: &クリア指定,
 ) -> (vk::AttachmentLoadOp, vk::AttachmentLoadOp, vk::ClearValue) {
     let 色の値 = |カラー: &crate::clear_color::クリアカラー| vk::ClearValue {
         color: vk::ClearColorValue {

@@ -76,7 +76,11 @@ impl XPBD計測ディスクリプタ {
             結ぶ現物::バッファ全体(バッファ.隣接の区間.バッファのハンドル()),
             結ぶ現物::バッファ全体(バッファ.隣接の項目.バッファのハンドル()),
         ]);
-        Ok(Self { レイアウト: layout, プール: pool, セット })
+        Ok(Self {
+            レイアウト: layout,
+            プール: pool,
+            セット,
+        })
     }
 
     pub(super) fn レイアウトのハンドル(&self) -> vk::DescriptorSetLayout {
