@@ -14,11 +14,11 @@ pub(super) fn テクスチャ差分をレンダラーへ反映する(
         let 幅u32 = usize要素をu32へ変換する(幅);
         let 高さu32 = usize要素をu32へ変換する(高さ);
         let 素材 = blitz_render::UIテクスチャ素材::生成する(幅u32, 高さu32, rgba8)?;
-        レンダラー.uiテクスチャを登録する(texture_id_map::eguiのテクスチャIDをUIテクスチャIDへ変換する(*id), 素材)?;
+        レンダラー.uiテクスチャを登録する(texture_id_map::eguiのテクスチャidをuiテクスチャidへ変換する(*id), 素材)?;
     }
     for id in &デルタ.free {
         ミラー.削除する(*id);
-        レンダラー.uiテクスチャを削除する(texture_id_map::eguiのテクスチャIDをUIテクスチャIDへ変換する(*id));
+        レンダラー.uiテクスチャを削除する(texture_id_map::eguiのテクスチャidをuiテクスチャidへ変換する(*id));
     }
     Ok(())
 }

@@ -4,7 +4,7 @@
 use super::scissor_convert;
 use super::texture_id_map;
 
-pub(super) fn 図形一覧をUI描画データへ変換する(
+pub(super) fn 図形一覧をui描画データへ変換する(
     一覧: &[egui::ClippedPrimitive],
     pixels_per_point: f32,
 ) -> blitz_render::UI描画データ {
@@ -31,7 +31,7 @@ fn メッシュへ変換する(項目: &egui::ClippedPrimitive, pixels_per_point
     Some(blitz_render::UIメッシュ {
         頂点一覧,
         インデックス一覧: mesh.indices.clone(),
-        テクスチャ識別子: texture_id_map::eguiのテクスチャIDをUIテクスチャIDへ変換する(mesh.texture_id),
-        シザー矩形px: scissor_convert::クリップ矩形をUIシザー矩形pxへ変換する(項目.clip_rect, pixels_per_point),
+        テクスチャ識別子: texture_id_map::eguiのテクスチャidをuiテクスチャidへ変換する(mesh.texture_id),
+        シザー矩形px: scissor_convert::クリップ矩形をuiシザー矩形pxへ変換する(項目.clip_rect, pixels_per_point),
     })
 }

@@ -88,7 +88,7 @@ impl 画面へ重ねるUI {
         texture_sync::テクスチャ差分をレンダラーへ反映する(レンダラー, &full_output.textures_delta, &mut self.ミラー)?;
 
         let 図形一覧 = self.コンテキスト.tessellate(full_output.shapes, full_output.pixels_per_point);
-        Ok(Some(mesh_convert::図形一覧をUI描画データへ変換する(
+        Ok(Some(mesh_convert::図形一覧をui描画データへ変換する(
             &図形一覧,
             full_output.pixels_per_point,
         )))
