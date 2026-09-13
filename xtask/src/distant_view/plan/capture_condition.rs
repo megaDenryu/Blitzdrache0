@@ -27,7 +27,7 @@ pub(in crate::distant_view) enum 読むアセットルート {
 /// 参照: `_doc/設計/大規模世界の生成と遠景.md`「第6段階」
 pub(in crate::distant_view) struct 採取条件 {
     pub(in crate::distant_view) 名前: &'static str,
-    pub(in crate::distant_view) ssaoを使わない: bool,
+    pub(in crate::distant_view) 局所可視性を使わない: bool,
     pub(in crate::distant_view) 遠景影を使わない: bool,
     pub(in crate::distant_view) 後処理を使わない: bool, // 光のにじみと明るさの圧縮を組まない構成で採る指定
     pub(in crate::distant_view) 影可視度を可視化する: bool, // 影の欠落計器の診断色を出す指定
@@ -40,7 +40,7 @@ impl 採取条件 {
     pub(super) fn 名前から始める(名前: &'static str) -> Self {
         Self {
             名前,
-            ssaoを使わない: false,
+            局所可視性を使わない: false,
             遠景影を使わない: false,
             後処理を使わない: false,
             影可視度を可視化する: false,
@@ -50,8 +50,8 @@ impl 採取条件 {
         }
     }
 
-    pub(super) fn ssaoを切る(mut self) -> Self {
-        self.ssaoを使わない = true;
+    pub(super) fn 局所可視性を切る(mut self) -> Self {
+        self.局所可視性を使わない = true;
         self
     }
 
