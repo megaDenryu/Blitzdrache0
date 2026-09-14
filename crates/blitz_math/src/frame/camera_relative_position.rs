@@ -31,14 +31,14 @@ impl カメラ相対位置 {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum 座標変換エラー {
     非有限値,
-    F32範囲外,
+    単精度範囲外,
 }
 
 impl fmt::Display for 座標変換エラー {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::非有限値 => write!(formatter, "大域ワールド位置の差分が有限値でない"),
-            Self::F32範囲外 => write!(formatter, "カメラ相対位置がf32の表現範囲を超えた"),
+            Self::単精度範囲外 => write!(formatter, "カメラ相対位置がf32の表現範囲を超えた"),
         }
     }
 }

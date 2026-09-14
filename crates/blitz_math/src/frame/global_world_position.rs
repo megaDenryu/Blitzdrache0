@@ -72,7 +72,7 @@ impl 大域ワールド位置 {
             return Err(座標変換エラー::非有限値);
         }
         if 差分.abs().max_element() > f64::from(f32::MAX) {
-            return Err(座標変換エラー::F32範囲外);
+            return Err(座標変換エラー::単精度範囲外);
         }
         Ok(差分.as_vec3())
     }
