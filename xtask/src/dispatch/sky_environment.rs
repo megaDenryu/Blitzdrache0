@@ -12,7 +12,7 @@ pub(super) fn 空環境コマンドを割り当てる(名前: &str, 引数一覧
         "sky-lut" => Some(sky_lut::大気のベイク済み画像の更新を確認する(引数一覧)),
         "atmosphere-lut" => Some(atmosphere_lut::大気のベイク済み画像の生成を確認する()),
         "distant-environment" => Some(distant_environment::遠方環境画像の生成を確認する()),
-        "derived-environment" => Some(derived_environment::派生環境画像の生成を確認する()),
+        "derived-environment" => Some(derived_environment::派生表現の生成を確認する()),
         "indirect-probe" => Some(indirect_probe::間接照明の解析値を突き合わせる()),
         "local-visibility" => Some(local_visibility::局所可視度を突き合わせる()),
         "motion-vector" => Some(motion_vector::動きベクトルを確認する()),
