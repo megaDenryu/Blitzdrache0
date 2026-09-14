@@ -19,11 +19,11 @@ pub fn パスがテストまたは例か(パス: &Path) -> bool {
 }
 
 pub fn 不正なallowの緩和を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
-    let パス許容 = パスがテストまたは例か(パス);
+    let パスが許容されるか = パスがテストまたは例か(パス);
     let mut cfg_testを見た = false;
     let mut 違反一覧 = Vec::new();
     for (行番号, 行) in 内容.lines().enumerate() {
-        let 許容されるか = パス許容 || cfg_testを見た;
+        let 許容されるか = パスが許容されるか || cfg_testを見た;
         if let Some(パターン) = 不正allowを含むか(行).filter(|_| !許容されるか) {
             違反一覧.push(違反::行単位(パス.to_path_buf(), 行番号 + 1, format!("不正なallow({パターン})")));
         }
