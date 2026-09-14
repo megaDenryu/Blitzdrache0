@@ -7,16 +7,31 @@ use super::slangc_entry_compile::{エントリ一覧をコンパイルする, �
 use super::slangc_locate::スラングコンパイラの所在;
 
 const コンパイル表: [(&str, &[エントリ指定]); 4] = [
-    ("xpbd_step.slang", &[コンピュート("integrateMain", "xpbd_integrate.spv"), コンピュート("lambdaClearMain", "xpbd_lambda_clear.spv")]),
-    ("xpbd_atomic.slang", &[コンピュート("constraintAtomicMain", "xpbd_atomic_constraint.spv"), コンピュート("applyAtomicMain", "xpbd_atomic_apply.spv")]),
-    ("xpbd_coloring.slang", &[コンピュート("constraintColoredMain", "xpbd_coloring_constraint.spv")]),
+    (
+        "xpbd_step.slang",
+        &[
+            コンピュートのエントリを組み立てる("integrateMain", "xpbd_integrate.spv"),
+            コンピュートのエントリを組み立てる("lambdaClearMain", "xpbd_lambda_clear.spv"),
+        ],
+    ),
+    (
+        "xpbd_atomic.slang",
+        &[
+            コンピュートのエントリを組み立てる("constraintAtomicMain", "xpbd_atomic_constraint.spv"),
+            コンピュートのエントリを組み立てる("applyAtomicMain", "xpbd_atomic_apply.spv"),
+        ],
+    ),
+    ("xpbd_coloring.slang", &[コンピュートのエントリを組み立てる("constraintColoredMain", "xpbd_coloring_constraint.spv")]),
     (
         "xpbd_two_stage.slang",
-        &[コンピュート("constraintCandidateMain", "xpbd_two_stage_constraint.spv"), コンピュート("gatherMain", "xpbd_two_stage_gather.spv")],
+        &[
+            コンピュートのエントリを組み立てる("constraintCandidateMain", "xpbd_two_stage_constraint.spv"),
+            コンピュートのエントリを組み立てる("gatherMain", "xpbd_two_stage_gather.spv"),
+        ],
     ),
 ];
 
-const fn コンピュート(エントリ名: &'static str, 出力ファイル名: &'static str) -> エントリ指定 {
+const fn コンピュートのエントリを組み立てる(エントリ名: &'static str, 出力ファイル名: &'static str) -> エントリ指定 {
     エントリ指定 {
         エントリ名,
         ステージ: "compute",
