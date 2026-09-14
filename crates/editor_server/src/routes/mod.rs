@@ -43,7 +43,7 @@ pub fn ルーターを組み立てる(状態: サーバー状態) -> 経路正�
         .route("/api/大域世界/高さ格子", get(world_heightmap_get::大域世界高さ格子を返す).put(world_heightmap_put::大域世界高さ格子を保存する))
         .route("/api/マテリアル台帳", get(material_board_get::マテリアル台帳を返す).put(material_board_put::マテリアル台帳を保存する))
         .route("/api/チャンク/{x}/{z}/構造", get(chunk_structure_get::チャンク構造を返す).put(chunk_structure_put::チャンク構造を保存する))
-        .route("/api/チャンク/{x}/{z}/高さ格子", get(chunk_heightmap_get::チャンク高さ格子を返す).put(chunk_heightmap_put::チャンク高さ格子を保存する))
+        .route("/api/チャンク/{x}/{z}/高さ格子", get(chunk_heightmap_get::チャンクの高さ格子を返す).put(chunk_heightmap_put::チャンクの高さ格子を保存する))
         .route("/api/チャンク/{x}/{z}/材質重み", get(chunk_splat_weights_get::チャンク材質重みを返す).put(chunk_splat_weights_put::チャンク材質重みを保存する))
         .route("/api/書き出し/ソースアセット", post(source_asset_export_post::ソースアセットを書き出す));
     let ルーター = static_serve::静的配信を組み込む(ルーター, &静的配信ディレクトリ).with_state(状態);

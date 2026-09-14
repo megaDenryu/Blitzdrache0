@@ -12,7 +12,7 @@ pub(super) fn 描画検収コマンドを割り当てる(名前: &str, 引数一
     match 名前 {
         "prop-draw" => Some(prop_draw::小物1体の描画を確認する()),
         "village-draw" => Some(village_draw::見本集落の描画を確認する()),
-        "terrain-visual" => Some(terrain_visual::地形庭を目視確認する()),
+        "terrain-visual" => Some(terrain_visual::目視見本の世界を目視確認する()),
         "temporal-visual" => Some(temporal_visual::時間再構成を目視確認する()),
         "texture-compression" => Some(texture_compression::テクスチャ圧縮を確認する()),
         "hdr-luminance" => Some(hdr_luminance::hdr輝度を実測する()),
