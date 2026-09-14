@@ -24,11 +24,11 @@ pub(super) struct 地形LOD配線 {
     常駐受け皿: Vec<チャンク座標>,
     段受け皿: Vec<(チャンク座標, 地形詳細段)>,
     束別選択: Vec<地形詳細段選択>,
-    継ぎ目検査: Option<crate::cli::LOD継ぎ目検査設定>,
+    継ぎ目検査: Option<crate::cli::詳細段継ぎ目検査設定>,
 }
 
 impl 地形LOD配線 {
-    pub(super) fn 生成する(チャンク一辺: チャンク一辺, 継ぎ目検査: Option<crate::cli::LOD継ぎ目検査設定>) -> Self {
+    pub(super) fn 生成する(チャンク一辺: チャンク一辺, 継ぎ目検査: Option<crate::cli::詳細段継ぎ目検査設定>) -> Self {
         Self {
             選択器: 選択器を作る(チャンク一辺),
             常駐受け皿: Vec::new(),

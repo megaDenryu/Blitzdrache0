@@ -55,7 +55,7 @@ pub(crate) enum 起動引数エラー {
     #[error("--time-scale引数が不正だった: {0}")]
     時間倍率不正(String),
     #[error("--lod-crack-pair引数が不正だった: {0}")]
-    Lod継ぎ目検査不正(String),
+    詳細段継ぎ目検査不正(String),
     #[error("--streaming-preload-radius引数が不正だった: {0}")]
     先読み半径不正(String),
     #[error("固定経路の引数が不正だった: {0}")]

@@ -24,7 +24,7 @@ pub(crate) enum プレイヤー位置源 {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub(crate) struct LOD継ぎ目検査設定 {
+pub(crate) struct 詳細段継ぎ目検査設定 {
     pub(crate) 一方座標: チャンク座標,
     pub(crate) 一方段: 地形詳細段,
     pub(crate) 他方座標: チャンク座標,
@@ -41,7 +41,7 @@ pub(crate) struct ストリーミング起動設定 {
     pub(crate) 報告する: bool,       // --report-streaming指定でtrue。読込・解除の順を標準出力へ出す
     pub(crate) 要約を報告する: bool, // --report-streaming-summary指定でtrue。終了時に転送量・処理時間分布・最大使用量を出す
     pub(crate) 位置源: プレイヤー位置源,
-    pub(crate) lod継ぎ目検査: Option<LOD継ぎ目検査設定>,
+    pub(crate) 詳細段継ぎ目検査: Option<詳細段継ぎ目検査設定>,
     pub(crate) 先読み半径: u8,
     pub(crate) 固定経路: 固定経路起動設定,
     pub(crate) 読込: チャンク読込設定,
@@ -55,7 +55,7 @@ impl ストリーミング起動設定 {
             報告する: false,
             要約を報告する: false,
             位置源: プレイヤー位置源::カメラ視点,
-            lod継ぎ目検査: None,
+            詳細段継ぎ目検査: None,
             先読み半径: 1,
             固定経路: 固定経路起動設定::既定値(),
             読込: チャンク読込設定::既定値(),
