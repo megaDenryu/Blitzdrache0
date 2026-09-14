@@ -54,17 +54,17 @@ impl 検証つきインスタンス {
 fn 在否を調べる(entry: &ash::Entry) -> Result<検証層の状況, レンダラーエラー> {
     // 安全性: entryは読み込み済みで有効。
     let 層一覧 = unsafe { entry.enumerate_instance_layer_properties()? };
-    let 層がある = 層一覧.iter().any(|層| 層.layer_name_as_c_str().is_ok_and(|名前| 名前 == 検証層名));
-    if !層がある {
+    let 層があるか = 層一覧.iter().any(|層| 層.layer_name_as_c_str().is_ok_and(|名前| 名前 == 検証層名));
+    if !層があるか {
         return Ok(検証層の状況::環境に無い);
     }
-    if !拡張がある(entry, None)? && !拡張がある(entry, Some(検証層名))? {
+    if !拡張があるか(entry, None)? && !拡張があるか(entry, Some(検証層名))? {
         return Ok(検証層の状況::環境に無い);
     }
     Ok(検証層の状況::有効)
 }
 
-fn 拡張がある(entry: &ash::Entry, 層名: Option<&std::ffi::CStr>) -> Result<bool, レンダラーエラー> {
+fn 拡張があるか(entry: &ash::Entry, 層名: Option<&std::ffi::CStr>) -> Result<bool, レンダラーエラー> {
     // 安全性: entryは読み込み済みで有効。層名はこのスコープの静的文字列を指す。
     let 一覧 = unsafe { entry.enumerate_instance_extension_properties(層名)? };
     Ok(一覧.iter().any(|拡張| 拡張.extension_name_as_c_str().is_ok_and(|名前| 名前 == ash::ext::debug_utils::NAME)))

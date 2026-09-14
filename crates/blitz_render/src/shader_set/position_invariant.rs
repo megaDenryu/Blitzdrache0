@@ -31,7 +31,7 @@ const 装飾命令の語数: u32 = 3;
 
 pub fn 位置の不変装飾を付ける(spirv: &[u8]) -> Result<Vec<u8>, 位置の不変装飾エラー> {
     let 語一覧 = word_stream::語へ分解する(spirv)?;
-    let 命令一覧 = word_stream::命令一覧を数える(&語一覧);
+    let 命令一覧 = word_stream::命令一覧を列挙する(&語一覧);
     let 宣言 = decoration_scan::位置の宣言を探す(&語一覧, &命令一覧).ok_or(位置の不変装飾エラー::位置の組み込み出力が無い)?;
     if decoration_scan::不変装飾が付いているか(&語一覧, &命令一覧, 宣言.変数id) {
         return Ok(word_stream::バイト列へ戻す(&語一覧));

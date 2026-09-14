@@ -17,7 +17,7 @@ impl 位相関数値 {
     }
 
     /// 前提: 値は有限かつ0以上である。位相関数の評価だけがこの入口を使う。
-    pub(in crate::atmosphere) fn 検証済みの値から(値: f32) -> Self {
+    pub(in crate::atmosphere) fn 検証済みの値から生成する(値: f32) -> Self {
         Self(値)
     }
 

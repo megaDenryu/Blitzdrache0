@@ -18,9 +18,9 @@ pub(in crate::vulkan::bloom) fn 生成する(
     let 拡大段数 = 段数.saturating_sub(1);
     let セット数 = 1 + 拡大段数 * 2;
     let ディスクリプタ数 = 1 + 拡大段数 + 拡大段数 * 2;
-    let pool_size = vk::DescriptorPoolSize::default().ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER).descriptor_count(usizeをu32へ(ディスクリプタ数));
+    let pool_size = vk::DescriptorPoolSize::default().ty(vk::DescriptorType::COMBINED_IMAGE_SAMPLER).descriptor_count(usizeをu32へ変換する(ディスクリプタ数));
     let pool_size一覧 = [pool_size];
-    let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(usizeをu32へ(セット数)).pool_sizes(&pool_size一覧);
+    let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(usizeをu32へ変換する(セット数)).pool_sizes(&pool_size一覧);
     // 安全性: deviceは生成済みで有効。
     let pool = unsafe { device.create_descriptor_pool(&pool_info, None)? };
 
@@ -51,6 +51,6 @@ fn 段ごとのセットを取り出す(
     Ok(光のにじみセット群::束ねる(pool, 前処理set, 縮小set一覧, 拡大set一覧))
 }
 
-fn usizeをu32へ(値: usize) -> u32 {
+fn usizeをu32へ変換する(値: usize) -> u32 {
     u32::try_from(値).unwrap_or_else(|_| panic!("ディスクリプタ数がu32に収まらない: {値}"))
 }

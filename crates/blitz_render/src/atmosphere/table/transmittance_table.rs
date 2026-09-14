@@ -27,12 +27,12 @@ impl 透過率表 {
 
     /// UVの位置の透過率を双一次補間で求める。計算はf64で行い、多重散乱とスカイビューの積分がそのまま使う。
     pub(in crate::atmosphere) fn 標本を参照する(&self, 横uv: f64, 縦uv: f64) -> [f64; 3] {
-        let (左, 右, 横比) = bilinear::添字と比(横uv, self.解像度.透過率の幅());
-        let (上, 下, 縦比) = bilinear::添字と比(縦uv, self.解像度.透過率の高さ());
-        bilinear::混ぜる(self.テクセル(左, 上), self.テクセル(右, 上), self.テクセル(左, 下), self.テクセル(右, 下), 横比, 縦比)
+        let (左, 右, 横比) = bilinear::添字と比を求める(横uv, self.解像度.透過率の幅());
+        let (上, 下, 縦比) = bilinear::添字と比を求める(縦uv, self.解像度.透過率の高さ());
+        bilinear::混ぜる(self.テクセルを参照する(左, 上), self.テクセルを参照する(右, 上), self.テクセルを参照する(左, 下), self.テクセルを参照する(右, 下), 横比, 縦比)
     }
 
-    fn テクセル(&self, 横: u32, 縦: u32) -> [f64; 3] {
+    fn テクセルを参照する(&self, 横: u32, 縦: u32) -> [f64; 3] {
         let 幅 = usize::try_from(self.解像度.透過率の幅()).unwrap_or(0);
         let 横 = usize::try_from(横).unwrap_or(0);
         let 縦 = usize::try_from(縦).unwrap_or(0);

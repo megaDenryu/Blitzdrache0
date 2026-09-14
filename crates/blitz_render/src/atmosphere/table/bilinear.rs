@@ -8,7 +8,7 @@
 use crate::numeric::floor_index::実数位置の床の添字;
 
 /// UVから両隣の添字と混ぜ具合を求める。返す比は0以上1以下である。
-pub(in crate::atmosphere) fn 添字と比(uv: f64, 辺の長さ: u32) -> (u32, u32, f64) {
+pub(in crate::atmosphere) fn 添字と比を求める(uv: f64, 辺の長さ: u32) -> (u32, u32, f64) {
     let 位置 = uv * f64::from(辺の長さ) - 0.5;
     let 最大添字 = 辺の長さ - 1;
     let 手前 = 実数位置の床の添字(位置, 最大添字);

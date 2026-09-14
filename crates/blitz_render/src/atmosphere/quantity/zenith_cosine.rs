@@ -17,7 +17,7 @@ impl 天頂余弦 {
     }
 
     /// 前提: 値は有限かつ-1以上1以下である。地平線の余弦のように、定義から値域が保証される導出だけがこの入口を使う。
-    pub(in crate::atmosphere) fn 検証済みの値から(値: f32) -> Self {
+    pub(in crate::atmosphere) fn 検証済みの値から生成する(値: f32) -> Self {
         Self(値)
     }
 
