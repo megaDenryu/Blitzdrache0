@@ -26,7 +26,7 @@ const 影視距離検収シーン: &str = "vegetation_shadow_range";
 /// 名前を`vegetation`で始めないことが、既定カメラと既定の影範囲を選ばせて群を両方の視錐台から外す(理由は`xtask/src/cloth_empty.rs`)。
 const 両視錐台外の群シーン: &str = "instance_all_culled";
 
-pub(super) fn 一覧() -> Vec<アセット定義> {
+pub(super) fn 植生の世界のアセット定義一覧を組む() -> Vec<アセット定義> {
     vec![
         必須定義("vegetation_4", 植生原型ソース, 植生種別(画素判定の個体数)),
         必須定義("vegetation_64", 植生原型ソース, 植生種別(計数判定の個体数)),
