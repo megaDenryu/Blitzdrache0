@@ -10,9 +10,9 @@ use crate::{failure_response::失敗応答を組み立てる, resource::世界�
 /// `result_large_err`が検出する)ため、拒否応答だけ`Box`で包む。
 pub(super) fn 保存済み区画割りを読む(状態: &サーバー状態) -> Result<世界の区画割り, Box<Response>> {
     let 構造 = 状態.保管庫().大域世界の構造を読む().map_err(|エラー| Box::new(エラー.into_response()))?;
-    構造.map(|構造| 構造.区画割り).ok_or_else(|| Box::new(区画割り未設定応答()))
+    構造.map(|構造| 構造.区画割り).ok_or_else(|| Box::new(区画割り未設定の応答を組み立てる()))
 }
 
-fn 区画割り未設定応答() -> Response {
+fn 区画割り未設定の応答を組み立てる() -> Response {
     失敗応答を組み立てる(StatusCode::BAD_REQUEST, "前提条件エラー", "大域世界の構造(区画割り)がまだ保存されていない。先に大域世界の構造を保存する".to_string())
 }

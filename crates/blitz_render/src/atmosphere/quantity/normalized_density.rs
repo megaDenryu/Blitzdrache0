@@ -18,7 +18,7 @@ impl 規格化密度 {
     }
 
     /// 前提: 値は0以上1以下へ切り詰め済みである。層の式を評価した直後の切り詰めだけがこの入口を使う。
-    pub(in crate::atmosphere) fn 検証済みの値から(値: f32) -> Self {
+    pub(in crate::atmosphere) fn 検証済みの値から生成する(値: f32) -> Self {
         Self(値)
     }
 

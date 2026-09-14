@@ -53,7 +53,7 @@ impl フレーム構成 {
         self.段階一覧.iter().flatten().copied()
     }
 
-    pub fn 含む(&self, 対象: フレーム段階) -> bool {
+    pub fn 含むか(&self, 対象: フレーム段階) -> bool {
         self.段階一覧().any(|段階| 段階 == 対象)
     }
 }

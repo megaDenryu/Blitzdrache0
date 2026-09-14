@@ -24,7 +24,7 @@ pub(crate) struct 大規模世界の計測指定 {
     pub(crate) 終点東: f64,
     pub(crate) 終点南: f64,
     pub(crate) 一フレーム移動量: f64,
-    pub(crate) 計画だけ: bool,
+    pub(crate) 計画だけを表示するか: bool,
 }
 
 impl Default for 大規模世界の計測指定 {
@@ -44,7 +44,7 @@ impl Default for 大規模世界の計測指定 {
             終点東: 0.0,
             終点南: 4_000.0,
             一フレーム移動量: 20.0,
-            計画だけ: false,
+            計画だけを表示するか: false,
         }
     }
 }
@@ -54,7 +54,7 @@ pub(crate) fn 引数を読む(引数一覧: &[String]) -> Result<大規模世界
     let mut 残り = 引数一覧.iter();
     while let Some(名前) = 残り.next() {
         if 名前 == "--print-plan" {
-            指定.計画だけ = true;
+            指定.計画だけを表示するか = true;
             continue;
         }
         let 値 = 残り.next().ok_or_else(|| format!("{名前}の次に値が無い"))?;

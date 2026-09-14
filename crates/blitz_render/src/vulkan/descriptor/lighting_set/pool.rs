@@ -49,10 +49,10 @@ impl 照明問い合わせのディスクリプタプール {
         let スロット数 = スロット数をu32にする(スロット数);
         let 件数一式 = セットあたりの件数(束縛レイアウト);
         let プールサイズ一覧 = [
-            件数(vk::DescriptorType::COMBINED_IMAGE_SAMPLER, 件数一式.サンプラー付き画像 * スロット数),
-            件数(vk::DescriptorType::SAMPLED_IMAGE, 件数一式.サンプラー無し画像 * スロット数),
-            件数(vk::DescriptorType::UNIFORM_BUFFER, 件数一式.定数バッファ * スロット数),
-            件数(vk::DescriptorType::STORAGE_BUFFER, 件数一式.ストレージバッファ * スロット数),
+            種別ごとのプールサイズ(vk::DescriptorType::COMBINED_IMAGE_SAMPLER, 件数一式.サンプラー付き画像 * スロット数),
+            種別ごとのプールサイズ(vk::DescriptorType::SAMPLED_IMAGE, 件数一式.サンプラー無し画像 * スロット数),
+            種別ごとのプールサイズ(vk::DescriptorType::UNIFORM_BUFFER, 件数一式.定数バッファ * スロット数),
+            種別ごとのプールサイズ(vk::DescriptorType::STORAGE_BUFFER, 件数一式.ストレージバッファ * スロット数),
         ];
         let create_info = vk::DescriptorPoolCreateInfo::default().max_sets(スロット数).pool_sizes(&プールサイズ一覧);
         // 安全性: 論理デバイスは生成済みで有効。create_infoは本メソッド内で構築した値のみを参照する。
@@ -71,6 +71,6 @@ impl 照明問い合わせのディスクリプタプール {
     }
 }
 
-fn 件数(種別: vk::DescriptorType, 数: u32) -> vk::DescriptorPoolSize {
+fn 種別ごとのプールサイズ(種別: vk::DescriptorType, 数: u32) -> vk::DescriptorPoolSize {
     vk::DescriptorPoolSize::default().ty(種別).descriptor_count(数)
 }

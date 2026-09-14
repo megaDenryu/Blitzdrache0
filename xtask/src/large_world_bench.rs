@@ -16,7 +16,7 @@ pub(crate) fn 大規模世界の固定経路を計測する(引数一覧: &[Stri
             return ExitCode::FAILURE;
         }
     };
-    if 指定.計画だけ {
+    if 指定.計画だけを表示するか {
         let シェーダー = crate::shader_copy::シェーダーの入口のファイル::コピー先の中の場所(Path::new("shaders"));
         let 引数 = launch::起動引数を作る(&指定, &シェーダー);
         println!("[xtask] large-world-bench計画: {}", 引数.join(" "));

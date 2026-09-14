@@ -18,13 +18,13 @@ impl チャンク目録ソース項目 {
     pub(super) fn 行から解析する(行番号: usize, 行: &str) -> Result<Self, アセットコンパイルエラー> {
         let 欄一覧: Vec<&str> = 行.split_whitespace().collect();
         let [x文字列, z文字列, id文字列, パス文字列] = 欄一覧.as_slice() else {
-            return Err(行不正(行番号, 行));
+            return Err(行不正のエラーを作る(行番号, 行));
         };
         let (Ok(x), Ok(z)) = (x文字列.parse::<i32>(), z文字列.parse::<i32>()) else {
-            return Err(行不正(行番号, 行));
+            return Err(行不正のエラーを作る(行番号, 行));
         };
         let Ok(アセット) = アセットID::生成する(id文字列) else {
-            return Err(行不正(行番号, 行));
+            return Err(行不正のエラーを作る(行番号, 行));
         };
         Ok(Self {
             チャンク: チャンク座標::生成する(x, z),
@@ -46,6 +46,6 @@ impl チャンク目録ソース項目 {
     }
 }
 
-fn 行不正(行番号: usize, 行: &str) -> アセットコンパイルエラー {
+fn 行不正のエラーを作る(行番号: usize, 行: &str) -> アセットコンパイルエラー {
     アセットコンパイルエラー::チャンク目録ソース行不正 { 行番号, 内容: 行.to_string() }
 }

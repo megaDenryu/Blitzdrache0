@@ -22,7 +22,7 @@ impl 透過率RGB {
     }
 
     /// 前提: 3成分とも0以上1以下である。光学的深さの指数からの導出だけがこの入口を使う。
-    pub(in crate::atmosphere) fn 検証済みの成分から(成分: [f32; 3]) -> Self {
+    pub(in crate::atmosphere) fn 検証済みの成分から生成する(成分: [f32; 3]) -> Self {
         Self { 成分 }
     }
 

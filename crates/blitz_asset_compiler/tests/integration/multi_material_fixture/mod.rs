@@ -37,19 +37,19 @@ fn glbバイト列を組み立てる(文書json: &str, バイナリ: &[u8]) -> V
     let mut バイト列 = Vec::new();
     バイト列.extend_from_slice(b"glTF");
     バイト列.extend_from_slice(&2u32.to_le_bytes());
-    バイト列.extend_from_slice(&長さをu32へ(28 + json部.len() + bin部.len()).to_le_bytes());
+    バイト列.extend_from_slice(&長さをu32へ変換する(28 + json部.len() + bin部.len()).to_le_bytes());
     チャンクを足す(&mut バイト列, JSONチャンク種別, &json部);
     チャンクを足す(&mut バイト列, BINチャンク種別, &bin部);
     バイト列
 }
 
 fn チャンクを足す(出力: &mut Vec<u8>, 種別: u32, 中身: &[u8]) {
-    出力.extend_from_slice(&長さをu32へ(中身.len()).to_le_bytes());
+    出力.extend_from_slice(&長さをu32へ変換する(中身.len()).to_le_bytes());
     出力.extend_from_slice(&種別.to_le_bytes());
     出力.extend_from_slice(中身);
 }
 
-fn 長さをu32へ(長さ: usize) -> u32 {
+fn 長さをu32へ変換する(長さ: usize) -> u32 {
     match u32::try_from(長さ) {
         Ok(値) => 値,
         Err(誤り) => panic!("試験材料の長さがu32を超えた: {誤り}"),

@@ -39,8 +39,8 @@ impl カメラ視錐台 {
         if 近隅一覧.iter().chain(遠隅一覧.iter()).any(|隅| !隅.is_finite()) {
             return None;
         }
-        let 近深度 = 中心(&近隅一覧).length();
-        let 遠深度 = 中心(&遠隅一覧).length();
+        let 近深度 = 中心を求める(&近隅一覧).length();
+        let 遠深度 = 中心を求める(&遠隅一覧).length();
         if !(近深度.is_finite() && 遠深度.is_finite()) || 近深度 <= 0.0 || 遠深度 <= 近深度 {
             return None;
         }
@@ -50,9 +50,9 @@ impl カメラ視錐台 {
     }
 
     pub(super) fn 軸(&self) -> 視錐台の軸 {
-        let 近中心 = 中心(&self.近隅一覧);
+        let 近中心 = 中心を求める(&self.近隅一覧);
         視錐台の軸 {
-            前方: (中心(&self.遠隅一覧) - 近中心).normalize_or_zero(),
+            前方: (中心を求める(&self.遠隅一覧) - 近中心).normalize_or_zero(),
             近深度: メートル::生成する(self.近深度),
             遠深度: メートル::生成する(self.遠深度),
             半径比: (self.近隅一覧[0] - 近中心).length() / self.近深度,
@@ -74,6 +74,6 @@ impl カメラ視錐台 {
     }
 }
 
-fn 中心(隅一覧: &[Vec3; 4]) -> Vec3 {
+fn 中心を求める(隅一覧: &[Vec3; 4]) -> Vec3 {
     (隅一覧[0] + 隅一覧[1] + 隅一覧[2] + 隅一覧[3]) * 0.25
 }

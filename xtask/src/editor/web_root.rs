@@ -28,7 +28,7 @@ impl エディター画面の置き場 {
         self.パス.join("node_modules").is_dir()
     }
 
-    pub(crate) fn 開発サーバーを起動する試み(&self) -> Option<子プロセスの木> {
+    pub(crate) fn 開発サーバーの起動を試みる(&self) -> Option<子プロセスの木> {
         if !self.依存の導入が済んでいるか() {
             println!("editor_web/node_modules が無い。次を実行してから改めて `cargo xtask editor` を起動する: (cd editor_web && npm install)");
             println!("編集サーバーだけを起動して続ける。");

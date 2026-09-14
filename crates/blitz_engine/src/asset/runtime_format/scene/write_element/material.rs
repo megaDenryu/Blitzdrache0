@@ -13,8 +13,8 @@ use crate::asset::material_slot_id::材質スロットID;
 const 単一材質のスロット番号: u32 = 0;
 
 pub(in crate::asset::runtime_format::scene) fn 書く(出力: &mut 書込先, 材質集合: &材質集合) -> Result<(), アセット実行時形式エラー> {
-    let スロット0を指す = 材質集合.材質を参照する(材質スロットID::生成する(単一材質のスロット番号)).is_some();
-    let Some(マテリアル) = 材質集合.唯一の材質().filter(|_| スロット0を指す) else {
+    let スロット0を指すか = 材質集合.材質を参照する(材質スロットID::生成する(単一材質のスロット番号)).is_some();
+    let Some(マテリアル) = 材質集合.唯一の材質().filter(|_| スロット0を指すか) else {
         return Err(材質割当エラー::旧版が表せない材質集合 { 材質数: 材質集合.件数() }.into());
     };
     let マテリアルデータ::金属粗さPBR(値) = マテリアル else {

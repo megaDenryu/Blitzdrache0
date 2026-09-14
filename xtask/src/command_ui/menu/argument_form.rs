@@ -36,7 +36,7 @@ impl<読み手: 行の読み手> 引数フォーム<読み手> {
         let mut 語一覧 = Vec::new();
         for 定義 in 定義一覧.iter().copied() {
             if self.位置の引数を省いたか && 定義.位置で意味が決まるか() {
-                println!("{}", prompt_text::飛ばしたことの案内(定義));
+                println!("{}", prompt_text::飛ばしたことを案内する文を組み立てる(定義));
                 continue;
             }
             let Some(語) = self.引数1件を尋ねる(定義) else {
