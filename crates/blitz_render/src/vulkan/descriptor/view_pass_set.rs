@@ -37,14 +37,14 @@ impl<'書き込み> ビューとパスのセットの書き込み先<'書き込�
 }
 
 pub(super) fn レイアウトを生成する(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let バインド一覧 = [定数バインド(ビュー定数の束縛番号), 定数バインド(多段影の定数の束縛番号), 定数バインド(空パスの定数の束縛番号)];
-    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
+    let 束縛一覧 = [定数の束縛(ビュー定数の束縛番号), 定数の束縛(多段影の定数の束縛番号), 定数の束縛(空パスの定数の束縛番号)];
+    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&束縛一覧);
     // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
     Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
 }
 
 /// ビュー射影行列を頂点段が、影の判定と空の視線復元を画素段が読むため、3本とも両ステージへ宣言する。
-fn 定数バインド(番号: 束縛番号) -> vk::DescriptorSetLayoutBinding<'static> {
+fn 定数の束縛(番号: 束縛番号) -> vk::DescriptorSetLayoutBinding<'static> {
     vk::DescriptorSetLayoutBinding::default()
         .binding(番号.gpu境界値())
         .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)

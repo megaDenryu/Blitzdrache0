@@ -19,8 +19,8 @@ pub(crate) struct 宣言から作ったセットレイアウト<const 本数: us
 
 impl<const 本数: usize> 宣言から作ったセットレイアウト<本数> {
     pub(super) fn 確保する(device: &ash::Device, 宣言: 宣言した束縛の並び<本数>) -> Result<Self, レンダラーエラー> {
-        let バインド一覧 = 宣言.セットレイアウトの宣言();
-        let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
+        let 束縛一覧 = 宣言.セットレイアウトの宣言();
+        let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&束縛一覧);
         // 安全性: deviceは生成済みで有効。create_infoは本メソッド内で構築した値のみを参照する。
         let レイアウト = unsafe { device.create_descriptor_set_layout(&create_info, None)? };
         Ok(Self { 宣言, レイアウト })

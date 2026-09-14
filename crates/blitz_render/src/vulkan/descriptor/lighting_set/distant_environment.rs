@@ -41,11 +41,11 @@ impl 照明問い合わせのセットの書き込み先<'_> {
     }
 }
 
-pub(super) fn バインド一覧() -> [vk::DescriptorSetLayoutBinding<'static>; 3] {
-    [画素段の画像バインド(拡散照度の束縛番号), 画素段の画像バインド(鏡面畳込みの束縛番号), 画素段の画像バインド(反射率積分表の束縛番号)]
+pub(super) fn 束縛一覧() -> [vk::DescriptorSetLayoutBinding<'static>; 3] {
+    [画素段の画像束縛(拡散照度の束縛番号), 画素段の画像束縛(鏡面畳込みの束縛番号), 画素段の画像束縛(反射率積分表の束縛番号)]
 }
 
-fn 画素段の画像バインド(番号: 束縛番号) -> vk::DescriptorSetLayoutBinding<'static> {
+fn 画素段の画像束縛(番号: 束縛番号) -> vk::DescriptorSetLayoutBinding<'static> {
     vk::DescriptorSetLayoutBinding::default()
         .binding(番号.gpu境界値())
         .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)

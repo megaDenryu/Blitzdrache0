@@ -23,8 +23,8 @@ use crate::vulkan::sync::フレームスロット添字;
 pub(crate) struct クラスタ選別の描画入力 {
     pub(crate) 格子: vk::Buffer,
     pub(crate) 光添字列: vk::Buffer,
-    pub(crate) pipeline: vk::Pipeline,
-    pub(crate) layout: vk::PipelineLayout,
+    pub(crate) パイプライン: vk::Pipeline,
+    pub(crate) レイアウト: vk::PipelineLayout,
     pub(crate) セット: vk::DescriptorSet,
     pub(crate) 即時定数: [u8; 即時定数のバイト数],
     pub(crate) 班数: u32, // 積む班の数。セルの総数を1班のスレッド数で割った切り上げ
@@ -36,8 +36,8 @@ impl クラスタ選別一式 {
         クラスタ選別の描画入力 {
             格子: スロット.格子,
             光添字列: スロット.光添字列,
-            pipeline: self.パイプライン.パイプライン,
-            layout: self.パイプライン.レイアウト,
+            パイプライン: self.パイプライン.パイプライン,
+            レイアウト: self.パイプライン.レイアウト,
             セット: スロット.セット,
             即時定数: 即時定数にする(カメラ相対ビュー変換),
             班数: super::積む班の数を求める(),

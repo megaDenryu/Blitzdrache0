@@ -44,7 +44,7 @@ impl<const 本数: usize> 宣言した束縛の並び<本数> {
         宣言から作ったセットレイアウト::確保する(device, *self)
     }
 
-    /// セットレイアウトの生成へ渡すバインドの並び。要素数はどれも1であり、配列の束縛はこの器を通らない。
+    /// セットレイアウトの生成へ渡す束縛の並び。要素数はどれも1であり、配列の束縛はこの器を通らない。
     pub(super) fn セットレイアウトの宣言(&self) -> [vk::DescriptorSetLayoutBinding<'static>; 本数] {
         self.並び
             .map(|(番号, 種別, 段)| vk::DescriptorSetLayoutBinding::default().binding(番号.gpu境界値()).descriptor_type(種別).descriptor_count(1).stage_flags(段))

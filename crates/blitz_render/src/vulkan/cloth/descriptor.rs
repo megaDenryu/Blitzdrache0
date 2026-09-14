@@ -64,44 +64,40 @@ impl 布ディスクリプタ {
     }
 
     pub(super) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: poolはこの構造体が唯一の所有者であり、その破棄がsetの解放を暗黙に行う。
+        // 安全性: プールはこの構造体が唯一の所有者であり、その破棄がセットの解放を暗黙に行う。
         unsafe { device.destroy_descriptor_pool(self.プール, None) };
         self.レイアウト.破棄する(device);
     }
 }
 
 pub(super) fn 布ディスクリプタを生成する(device: &ash::Device, バッファ: &布バッファ, スキン済み頂点buffer: Option<vk::Buffer>) -> Result<布ディスクリプタ, レンダラーエラー> {
-    let layout = 束縛の宣言.セットレイアウトを確保する(device)?;
+    let レイアウト = 束縛の宣言.セットレイアウトを確保する(device)?;
     let セット数 = u32::try_from(進行中フレーム数).unwrap_or_else(|_| panic!("進行中フレーム数がu32に収まらない"));
     let 内訳 = 束縛の宣言.プールの内訳(セット数);
     let pool_info = vk::DescriptorPoolCreateInfo::default().max_sets(セット数).pool_sizes(&内訳);
-    // 安全性: deviceは生成済みで有効。失敗時はlayoutを片付ける。
-    let pool = match unsafe { device.create_descriptor_pool(&pool_info, None) } {
-        Ok(pool) => pool,
+    // 安全性: deviceは生成済みで有効。失敗時はレイアウトを片付ける。
+    let プール = match unsafe { device.create_descriptor_pool(&pool_info, None) } {
+        Ok(プール) => プール,
         Err(誤り) => {
-            layout.破棄する(device);
+            レイアウト.破棄する(device);
             return Err(誤り.into());
         }
     };
 
-    let set一覧 = match layout.進行中フレームスロットごとのセットを割り当てる(device, pool) {
-        Ok(set一覧) => set一覧,
+    let セット一覧 = match レイアウト.進行中フレームスロットごとのセットを割り当てる(device, プール) {
+        Ok(セット一覧) => セット一覧,
         Err(誤り) => {
-            // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
-            unsafe { device.destroy_descriptor_pool(pool, None) };
-            layout.破棄する(device);
+            // 安全性: プールはこのスコープの唯一の所有者で、以降使用しない。
+            unsafe { device.destroy_descriptor_pool(プール, None) };
+            レイアウト.破棄する(device);
             return Err(誤り);
         }
     };
 
-    let 一式 = 布ディスクリプタ {
-        レイアウト: layout,
-        プール: pool,
-        セット一覧: set一覧,
-    };
+    let 一式 = 布ディスクリプタ { レイアウト, プール, セット一覧 };
     for フレーム添字 in フレームスロット添字::全スロット() {
-        let set = &一式.セット一覧[フレーム添字.配列添字()];
-        super::write::布の束縛先をディスクリプタセットへ書き込む(device, set, バッファ, スキン済み頂点buffer, フレーム添字);
+        let セット = &一式.セット一覧[フレーム添字.配列添字()];
+        super::write::布の束縛先をディスクリプタセットへ書き込む(device, セット, バッファ, スキン済み頂点buffer, フレーム添字);
     }
     Ok(一式)
 }

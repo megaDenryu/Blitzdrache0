@@ -27,7 +27,7 @@ pub(crate) struct シーンセットレイアウト一式 {
     ジオメトリ: vk::DescriptorSetLayout,
     材質: vk::DescriptorSetLayout,
     照明問い合わせ: vk::DescriptorSetLayout,
-    空: vk::DescriptorSetLayout,
+    空きレイアウト: vk::DescriptorSetLayout,
 }
 
 impl シーンセットレイアウト一式 {
@@ -64,12 +64,12 @@ impl シーンセットレイアウト一式 {
 
     /// 布の描画が宣言する並び。読むのはビューとパス・照明問い合わせの2つだけであり、間の2つは空のレイアウトで埋める。
     pub(crate) fn 布描画の並び(&self) -> [vk::DescriptorSetLayout; 4] {
-        [self.ビューとパス, self.空, self.空, self.照明問い合わせ]
+        [self.ビューとパス, self.空きレイアウト, self.空きレイアウト, self.照明問い合わせ]
     }
 
     /// 注意: このレイアウトから割り当てたセットを持つディスクリプタプールをすべて破棄した後に呼ぶ。
     pub(crate) fn 破棄する(&self, device: &ash::Device) {
-        for handle in [self.空, self.照明問い合わせ, self.材質, self.ジオメトリ, self.ビューとパス] {
+        for handle in [self.空きレイアウト, self.照明問い合わせ, self.材質, self.ジオメトリ, self.ビューとパス] {
             // 安全性: 各ハンドルはSelfが唯一の所有者であり、破棄時点でGPU側の使用完了を呼び出し元が保証する。
             unsafe { device.destroy_descriptor_set_layout(handle, None) };
         }

@@ -31,9 +31,9 @@ fn クラスタ選別のgpu命令を積む(文脈: &GPU命令の積み先と宣�
     let セット一覧 = [入力.セット];
     // 安全性: command_bufferは記録中で、pipeline・layout・セットは生成済み。即時定数の長さはレイアウトが宣言した範囲と一致する。
     unsafe {
-        device.cmd_bind_pipeline(command_buffer, ash::vk::PipelineBindPoint::COMPUTE, 入力.pipeline);
-        device.cmd_bind_descriptor_sets(command_buffer, ash::vk::PipelineBindPoint::COMPUTE, 入力.layout, 0, &セット一覧, &[]);
-        device.cmd_push_constants(command_buffer, 入力.layout, ash::vk::ShaderStageFlags::COMPUTE, 0, &入力.即時定数);
+        device.cmd_bind_pipeline(command_buffer, ash::vk::PipelineBindPoint::COMPUTE, 入力.パイプライン);
+        device.cmd_bind_descriptor_sets(command_buffer, ash::vk::PipelineBindPoint::COMPUTE, 入力.レイアウト, 0, &セット一覧, &[]);
+        device.cmd_push_constants(command_buffer, 入力.レイアウト, ash::vk::ShaderStageFlags::COMPUTE, 0, &入力.即時定数);
         device.cmd_dispatch(command_buffer, 入力.班数, 1, 1);
     }
 }

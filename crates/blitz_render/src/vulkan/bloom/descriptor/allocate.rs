@@ -38,17 +38,17 @@ pub(in crate::vulkan::bloom) fn 生成する(
 fn 段ごとのセットを取り出す(
     device: &ash::Device,
     pool: vk::DescriptorPool,
-    単一読みlayout: &宣言から作ったセットレイアウト<1>,
-    二読みlayout: &宣言から作ったセットレイアウト<2>,
+    単一読みレイアウト: &宣言から作ったセットレイアウト<1>,
+    二読みレイアウト: &宣言から作ったセットレイアウト<2>,
     拡大段数: usize,
 ) -> Result<光のにじみセット群, レンダラーエラー> {
-    let mut 単一読み一覧 = 単一読みlayout.プールからセットを割り当てる(device, pool, 1 + 拡大段数)?;
-    let 拡大set一覧 = 二読みlayout.プールからセットを割り当てる(device, pool, 拡大段数)?;
-    let 縮小set一覧 = 単一読み一覧.split_off(1);
-    let Some(前処理set) = 単一読み一覧.into_iter().next() else {
+    let mut 単一読み一覧 = 単一読みレイアウト.プールからセットを割り当てる(device, pool, 1 + 拡大段数)?;
+    let 拡大セット一覧 = 二読みレイアウト.プールからセットを割り当てる(device, pool, 拡大段数)?;
+    let 縮小セット一覧 = 単一読み一覧.split_off(1);
+    let Some(前処理セット) = 単一読み一覧.into_iter().next() else {
         panic!("前処理のセットが1つも割り当てられなかった");
     };
-    Ok(光のにじみセット群::束ねる(pool, 前処理set, 縮小set一覧, 拡大set一覧))
+    Ok(光のにじみセット群::束ねる(pool, 前処理セット, 縮小セット一覧, 拡大セット一覧))
 }
 
 fn usizeをu32へ変換する(値: usize) -> u32 {

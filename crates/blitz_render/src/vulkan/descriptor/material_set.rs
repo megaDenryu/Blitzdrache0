@@ -29,7 +29,7 @@ pub(crate) const 材質サンプラーの束縛番号: 束縛番号 = 束縛番�
 
 pub(super) fn レイアウトを生成する(device: &ash::Device, 容量: テクスチャ表レイアウト容量, サンプラー: vk::Sampler) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
     let 固定サンプラー一覧 = [サンプラー];
-    let バインド一覧 = [
+    let 束縛一覧 = [
         vk::DescriptorSetLayoutBinding::default()
             .binding(材質レコードの束縛番号.gpu境界値())
             .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
@@ -47,9 +47,9 @@ pub(super) fn レイアウトを生成する(device: &ash::Device, 容量: テ�
             .stage_flags(vk::ShaderStageFlags::FRAGMENT)
             .immutable_samplers(&固定サンプラー一覧),
     ];
-    let バインドフラグ一覧 = [vk::DescriptorBindingFlags::empty(), vk::DescriptorBindingFlags::PARTIALLY_BOUND, vk::DescriptorBindingFlags::empty()];
-    let mut フラグ情報 = vk::DescriptorSetLayoutBindingFlagsCreateInfo::default().binding_flags(&バインドフラグ一覧);
-    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧).push_next(&mut フラグ情報);
+    let 束縛フラグ一覧 = [vk::DescriptorBindingFlags::empty(), vk::DescriptorBindingFlags::PARTIALLY_BOUND, vk::DescriptorBindingFlags::empty()];
+    let mut フラグ情報 = vk::DescriptorSetLayoutBindingFlagsCreateInfo::default().binding_flags(&束縛フラグ一覧);
+    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&束縛一覧).push_next(&mut フラグ情報);
     // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
     Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
 }

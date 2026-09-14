@@ -30,16 +30,16 @@ impl XPBD計測パイプライン群 {
         let device = 確保係.論理デバイス();
         let レイアウト一覧 = [ディスクリプタレイアウト];
         let プッシュ定数 = [vk::PushConstantRange::default().stage_flags(vk::ShaderStageFlags::COMPUTE).offset(0).size(プッシュ定数のバイト数)];
-        let layout_info = vk::PipelineLayoutCreateInfo::default().set_layouts(&レイアウト一覧).push_constant_ranges(&プッシュ定数);
-        // 安全性: deviceは生成済みで有効。layout_infoは本関数内で構築した値のみを参照する。
-        let layout = unsafe { device.create_pipeline_layout(&layout_info, None)? };
+        let レイアウト情報 = vk::PipelineLayoutCreateInfo::default().set_layouts(&レイアウト一覧).push_constant_ranges(&プッシュ定数);
+        // 安全性: deviceは生成済みで有効。レイアウト情報は本関数内で構築した値のみを参照する。
+        let レイアウト = unsafe { device.create_pipeline_layout(&レイアウト情報, None)? };
         let 仕様一覧: Vec<(&[u8], &std::ffi::CStr)> = 方式の仕様一覧(シェーダー, 方式);
         let mut 生成済み: Vec<vk::Pipeline> = Vec::with_capacity(仕様一覧.len());
         for (spirv, エントリ名) in 仕様一覧 {
-            match 確保係.コンピュートパイプラインを生成する(layout, spirv, エントリ名) {
+            match 確保係.コンピュートパイプラインを生成する(レイアウト, spirv, エントリ名) {
                 Ok(handle) => 生成済み.push(handle),
                 Err(誤り) => {
-                    破棄する(device, layout, &生成済み);
+                    破棄する(device, レイアウト, &生成済み);
                     return Err(誤り);
                 }
             }
@@ -54,7 +54,7 @@ impl XPBD計測パイプライン群 {
             },
         };
         Ok(Self {
-            レイアウト: layout,
+            レイアウト,
             積分: 生成済み[0],
             乗数零化: 生成済み[1],
             工程,
@@ -88,12 +88,12 @@ fn 方式の仕様一覧(シェーダー: &XPBDシェーダー一式, 方式: XP
     一覧
 }
 
-fn 破棄する(device: &ash::Device, layout: vk::PipelineLayout, 一覧: &[vk::Pipeline]) {
+fn 破棄する(device: &ash::Device, レイアウト: vk::PipelineLayout, 一覧: &[vk::Pipeline]) {
     // 安全性: 各ハンドルは呼び出し元が唯一の所有者であり、破棄時点でGPU側の使用が完了している(刻みごとにフェンスで待つ)。
     unsafe {
         for &handle in 一覧 {
             device.destroy_pipeline(handle, None);
         }
-        device.destroy_pipeline_layout(layout, None);
+        device.destroy_pipeline_layout(レイアウト, None);
     }
 }
