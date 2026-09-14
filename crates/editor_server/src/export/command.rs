@@ -13,7 +13,7 @@ mod chunk_write;
 use blitz_asset_compiler::建物の格子の台帳;
 
 use self::chunk_write::書き出したチャンク;
-use super::chunk_directory_text::{ファイル名 as 目録ファイル名, 本文を組み立てる};
+use super::chunk_directory_text::{ファイル名 as 目録ファイル名, 目録本文を組み立てる};
 use super::destination::世界ソース出力先;
 use super::error::書き出しエラー;
 use super::result::書き出し結果;
@@ -61,7 +61,7 @@ impl ソースアセット書き出しコマンド {
             }
         }
 
-        let 目録本文 = 本文を組み立てる(諸元.一辺メートル(), &項目一覧);
+        let 目録本文 = 目録本文を組み立てる(諸元.一辺メートル(), &項目一覧);
         self.出力先.直下へ書き込む(目録ファイル名, 目録本文.as_bytes())?;
         書いたファイル数 = 書いたファイル数.saturating_add(1);
 

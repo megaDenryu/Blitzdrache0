@@ -12,19 +12,19 @@ mod tests;
 
 pub(super) fn 固定経路引数を反映する(設定: &mut 固定経路起動設定, 引数: &mut Iter<String>, 引数名: &str) -> Result<(), 起動引数エラー> {
     let 値 = 次の値を読む(引数, 引数名, 起動引数エラー::固定経路不正)?;
-    let メートル = 値.parse::<f64>().map_err(|誤り| 起動引数エラー::固定経路不正(format!("{引数名}: {誤り}")))?;
-    if !メートル.is_finite() {
+    let メートル値 = 値.parse::<f64>().map_err(|誤り| 起動引数エラー::固定経路不正(format!("{引数名}: {誤り}")))?;
+    if !メートル値.is_finite() {
         return Err(起動引数エラー::固定経路不正(format!("{引数名}は有限値でなければならない")));
     }
-    if 引数名 == "--streaming-route-meters-per-frame" && メートル <= 0.0 {
+    if 引数名 == "--streaming-route-meters-per-frame" && メートル値 <= 0.0 {
         return Err(起動引数エラー::固定経路不正(format!("{引数名}は正でなければならない")));
     }
     match 引数名 {
-        "--streaming-route-start-east-meters" => 設定.始点東メートル = メートル,
-        "--streaming-route-start-south-meters" => 設定.始点南メートル = メートル,
-        "--streaming-route-end-east-meters" => 設定.終点東メートル = メートル,
-        "--streaming-route-end-south-meters" => 設定.終点南メートル = メートル,
-        "--streaming-route-meters-per-frame" => 設定.一フレーム移動量メートル = メートル,
+        "--streaming-route-start-east-meters" => 設定.始点東メートル = メートル値,
+        "--streaming-route-start-south-meters" => 設定.始点南メートル = メートル値,
+        "--streaming-route-end-east-meters" => 設定.終点東メートル = メートル値,
+        "--streaming-route-end-south-meters" => 設定.終点南メートル = メートル値,
+        "--streaming-route-meters-per-frame" => 設定.一フレーム移動量メートル = メートル値,
         _ => return Err(起動引数エラー::固定経路不正(format!("知らない引数である: {引数名}"))),
     }
     Ok(())

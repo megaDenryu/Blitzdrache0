@@ -25,7 +25,10 @@ impl<'書き込み> ジオメトリと可視のセットの書き込み先<'書�
 
     /// 個体が1体だけの対象も1要素ぶんの範囲を持つ専用のバッファを結び、可視ID列はそのフレームスロットのバッファを結ぶ。
     pub(super) fn 個体レコードと可視id列を結ぶ(&self, 個体レコード: &個体レコード参照, 可視id列: &可視ID列参照, フレーム添字: フレームスロット添字) {
-        let 対応 = [(個体レコードの束縛番号, 個体レコード.buffer(フレーム添字), 個体レコード.範囲()), (可視ID列の束縛番号, 可視id列.buffer(フレーム添字), 可視id列.範囲())];
+        let 対応 = [
+            (個体レコードの束縛番号, 個体レコード.buffer(フレーム添字), 個体レコード.範囲()),
+            (可視ID列の束縛番号, 可視id列.バッファ(フレーム添字), 可視id列.範囲()),
+        ];
         for (番号, buffer, 範囲) in 対応 {
             self.0.バッファの先頭からの範囲を結ぶ(番号, vk::DescriptorType::STORAGE_BUFFER, buffer, 範囲);
         }
@@ -33,13 +36,13 @@ impl<'書き込み> ジオメトリと可視のセットの書き込み先<'書�
 }
 
 pub(super) fn レイアウトを生成する(device: &ash::Device) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let バインド一覧 = [頂点段のストレージバッファバインド(個体レコードの束縛番号), 頂点段のストレージバッファバインド(可視ID列の束縛番号)];
-    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
+    let 束縛一覧 = [頂点段のストレージバッファ束縛(個体レコードの束縛番号), 頂点段のストレージバッファ束縛(可視ID列の束縛番号)];
+    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&束縛一覧);
     // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
     Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
 }
 
-fn 頂点段のストレージバッファバインド(番号: 束縛番号) -> vk::DescriptorSetLayoutBinding<'static> {
+fn 頂点段のストレージバッファ束縛(番号: 束縛番号) -> vk::DescriptorSetLayoutBinding<'static> {
     vk::DescriptorSetLayoutBinding::default()
         .binding(番号.gpu境界値())
         .descriptor_type(vk::DescriptorType::STORAGE_BUFFER)

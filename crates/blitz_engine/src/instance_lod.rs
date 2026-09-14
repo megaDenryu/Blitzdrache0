@@ -9,7 +9,7 @@ mod level;
 mod settings;
 mod state;
 
-pub use error::個体LODエラー;
+pub use error::個体詳細段エラー;
 pub use level::個体詳細段;
-pub use settings::個体LOD選択設定;
+pub use settings::個体詳細段選択設定;
 pub use state::個体別段状態;

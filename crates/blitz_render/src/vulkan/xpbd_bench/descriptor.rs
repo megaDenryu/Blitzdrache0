@@ -42,24 +42,24 @@ pub(super) struct XPBD計測ディスクリプタ {
 
 impl XPBD計測ディスクリプタ {
     pub(super) fn 生成する(device: &ash::Device, バッファ: &XPBD計測バッファ) -> Result<Self, レンダラーエラー> {
-        let layout = 束縛の宣言.セットレイアウトを確保する(device)?;
+        let レイアウト = 束縛の宣言.セットレイアウトを確保する(device)?;
         let 内訳 = 束縛の宣言.プールの内訳(1);
         let プールの生成情報 = vk::DescriptorPoolCreateInfo::default().max_sets(1).pool_sizes(&内訳);
-        // 安全性: deviceは生成済みで有効。失敗時はlayoutを片付ける。
-        let pool = match unsafe { device.create_descriptor_pool(&プールの生成情報, None) } {
-            Ok(pool) => pool,
+        // 安全性: deviceは生成済みで有効。失敗時はレイアウトを片付ける。
+        let プール = match unsafe { device.create_descriptor_pool(&プールの生成情報, None) } {
+            Ok(プール) => プール,
             Err(誤り) => {
-                layout.破棄する(device);
+                レイアウト.破棄する(device);
                 return Err(誤り.into());
             }
         };
-        let セット = match layout.プールからセットを割り当てる(device, pool, 1).map(|mut 一覧| 一覧.pop()) {
+        let セット = match レイアウト.プールからセットを割り当てる(device, プール, 1).map(|mut 一覧| 一覧.pop()) {
             Ok(Some(セット)) => セット,
             Ok(None) => panic!("1枚要求したセットの割り当てが0枚で成功した(Vulkan実装の契約違反)"),
             Err(誤り) => {
-                // 安全性: poolはこのスコープの唯一の所有者で、以降使用しない。
-                unsafe { device.destroy_descriptor_pool(pool, None) };
-                layout.破棄する(device);
+                // 安全性: プールはこのスコープの唯一の所有者で、以降使用しない。
+                unsafe { device.destroy_descriptor_pool(プール, None) };
+                レイアウト.破棄する(device);
                 return Err(誤り);
             }
         };
@@ -74,9 +74,7 @@ impl XPBD計測ディスクリプタ {
             結ぶ現物::バッファ全体(バッファ.隣接の区間.バッファのハンドル()),
             結ぶ現物::バッファ全体(バッファ.隣接の項目.バッファのハンドル()),
         ]);
-        Ok(Self {
-            レイアウト: layout, プール: pool, セット
-        })
+        Ok(Self { レイアウト, プール, セット })
     }
 
     pub(super) fn レイアウトのハンドル(&self) -> vk::DescriptorSetLayout {
@@ -88,7 +86,7 @@ impl XPBD計測ディスクリプタ {
     }
 
     pub(super) fn 破棄する(&self, device: &ash::Device) {
-        // 安全性: poolはこの構造体が唯一の所有者であり、その破棄がセットの解放を暗黙に行う。
+        // 安全性: プールはこの構造体が唯一の所有者であり、その破棄がセットの解放を暗黙に行う。
         unsafe { device.destroy_descriptor_pool(self.プール, None) };
         self.レイアウト.破棄する(device);
     }

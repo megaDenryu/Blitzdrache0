@@ -37,8 +37,8 @@ pub(super) fn 布パイプライン群を生成する(
     let ディスクリプタレイアウト一覧 = [ディスクリプタレイアウト];
     let プッシュ定数 = [vk::PushConstantRange::default().stage_flags(vk::ShaderStageFlags::COMPUTE).offset(0).size(プッシュ定数のバイト数)];
     let レイアウト情報 = vk::PipelineLayoutCreateInfo::default().set_layouts(&ディスクリプタレイアウト一覧).push_constant_ranges(&プッシュ定数);
-    // 安全性: deviceは生成済みで有効。layout_infoは本関数内で構築した値のみを参照する。
-    let layout = unsafe { device.create_pipeline_layout(&レイアウト情報, None)? };
+    // 安全性: deviceは生成済みで有効。レイアウト情報は本関数内で構築した値のみを参照する。
+    let レイアウト = unsafe { device.create_pipeline_layout(&レイアウト情報, None)? };
 
     let 仕様一覧: [(&[u8], &std::ffi::CStr); 13] = [
         (シェーダー.介入.コード(), c"interventionMain"),
@@ -57,22 +57,22 @@ pub(super) fn 布パイプライン群を生成する(
     ];
     let mut 生成済み: Vec<vk::Pipeline> = Vec::with_capacity(仕様一覧.len());
     for (spirv, エントリ名) in 仕様一覧 {
-        match 確保係.コンピュートパイプラインを生成する(layout, spirv, エントリ名) {
+        match 確保係.コンピュートパイプラインを生成する(レイアウト, spirv, エントリ名) {
             Ok(handle) => 生成済み.push(handle),
             Err(誤り) => {
-                // 安全性: 生成済みパイプラインとlayoutはこのスコープの唯一の所有者で、以降使用しない。
+                // 安全性: 生成済みパイプラインとレイアウトはこのスコープの唯一の所有者で、以降使用しない。
                 unsafe {
                     for &handle in &生成済み {
                         device.destroy_pipeline(handle, None);
                     }
-                    device.destroy_pipeline_layout(layout, None);
+                    device.destroy_pipeline_layout(レイアウト, None);
                 }
                 return Err(誤り);
             }
         }
     }
     Ok(布パイプライン群 {
-        レイアウト: layout,
+        レイアウト,
         介入: 生成済み[0],
         積分: 生成済み[1],
         目標の確定: 生成済み[2],

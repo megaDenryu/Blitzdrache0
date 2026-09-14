@@ -10,7 +10,7 @@ mod registry;
 mod settings;
 mod tray;
 
-use blitz_engine::個体LOD選択設定;
+use blitz_engine::個体詳細段選択設定;
 use blitz_math::{クリップ, ワールド, 変換, 大域ワールド位置};
 use blitz_render::{ライティング入力, 描画束ID};
 
@@ -22,7 +22,7 @@ pub(crate) use tray::選別の計器;
 
 pub(super) struct 可視判定配線 {
     つまみ: 選別のつまみ, // 起動指定で切るつまみ。互いに独立に働く(`settings`が意味を持つ)
-    設定: 個体LOD選択設定,
+    設定: 個体詳細段選択設定,
     台帳: registry::群可視材料台帳,
     受け皿: 可視選択受け皿,
 }

@@ -20,7 +20,7 @@ pub(crate) const 個体配置長: usize = 40;
 /// 区間の正典順と隙間なしの検査は`crates/blitz_render/src/visible_instance_selection/interval_layout.rs`が持つ)。
 /// 実確保はレンダラーの内側にあり見積からは観測できないため、要素1件ぶんの長さを安全側の定数としてここが持つ。
 /// これを数えないと、個体数の多いチャンクほど系統的に過小な見積で収容を決めることになる。
-pub(crate) const 個体別置換検査記録長: usize = 4;
+pub(crate) const 個体別既出検査記録長: usize = 4;
 
 /// 個体1件がGPUで占める変換のバイト数。列優先4x4のf32と、列がf32の4成分に整列した3x3の法線行列で112バイトになる。
 /// 注意: この値はblitz_renderの個体変換の配置(`vulkan/instance_transform/bytes.rs`の`バイト長`)と一致していなければならず、

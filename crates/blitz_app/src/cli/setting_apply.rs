@@ -40,11 +40,11 @@ pub(super) fn 反映する(設定: &mut 起動設定, 引数値: &str, 残り: &
         "--shadow-caster-range" => 設定.シャドウ計測.影の視距離 = Some(shadow_args::shadow_caster_range引数を処理する(残り)?),
         "--time-of-day" => 設定.時間帯.一日内時刻の秒 = Some(time_args::time_of_day引数を処理する(残り)?),
         "--time-scale" => 設定.時間帯.時間倍率 = Some(time_args::time_scale引数を処理する(残り)?),
-        "--lod-crack-pair" => 設定.ストリーミング.lod継ぎ目検査 = Some(lod_crack_args::引数を処理する(残り)?),
+        "--lod-crack-pair" => 設定.ストリーミング.詳細段継ぎ目検査 = Some(lod_crack_args::引数を処理する(残り)?),
         "--lod-crack-missing" => {
             let 欠落座標 = lod_crack_args::欠落引数を処理する(残り)?;
-            let Some(検査) = &mut 設定.ストリーミング.lod継ぎ目検査 else {
-                return Err(super::起動引数エラー::Lod継ぎ目検査不正("--lod-crack-pairより先に欠落指定がある".to_string()).into());
+            let Some(検査) = &mut 設定.ストリーミング.詳細段継ぎ目検査 else {
+                return Err(super::起動引数エラー::詳細段継ぎ目検査不正("--lod-crack-pairより先に欠落指定がある".to_string()).into());
             };
             検査.欠落座標 = Some(欠落座標);
         }

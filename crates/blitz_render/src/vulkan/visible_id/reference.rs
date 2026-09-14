@@ -16,7 +16,7 @@ impl 可視ID列参照 {
         Self { スロット別バッファ, 範囲 }
     }
 
-    pub(crate) fn buffer(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
+    pub(crate) fn バッファ(&self, フレーム添字: フレームスロット添字) -> vk::Buffer {
         self.スロット別バッファ[フレーム添字.配列添字()]
     }
 

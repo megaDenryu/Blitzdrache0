@@ -33,26 +33,26 @@ pub(crate) const ヘッダの束縛番号: 束縛番号 = 束縛番号::生成�
 pub(crate) const 方向光列の束縛番号: 束縛番号 = 束縛番号::生成する(2);
 pub(crate) const 局所光列の束縛番号: 束縛番号 = 束縛番号::生成する(3);
 
-/// 束縛レイアウトの選択肢ごとに宣言するバインドの並びを変える。定数近似の選択肢へ未使用のダミー束縛を強制しない。
+/// 束縛レイアウトの選択肢ごとに宣言する束縛の並びを変える。定数近似の選択肢へ未使用のダミー束縛を強制しない。
 pub(super) fn レイアウトを生成する(device: &ash::Device, 束縛レイアウト: 照明束縛レイアウト) -> Result<vk::DescriptorSetLayout, レンダラーエラー> {
-    let mut バインド一覧 = vec![
-        画素段のバインド(シャドウマップの束縛番号, vk::DescriptorType::COMBINED_IMAGE_SAMPLER),
-        画素段のバインド(ヘッダの束縛番号, vk::DescriptorType::UNIFORM_BUFFER),
-        画素段のバインド(方向光列の束縛番号, vk::DescriptorType::STORAGE_BUFFER),
-        画素段のバインド(局所光列の束縛番号, vk::DescriptorType::STORAGE_BUFFER),
+    let mut 束縛一覧 = vec![
+        画素段の束縛(シャドウマップの束縛番号, vk::DescriptorType::COMBINED_IMAGE_SAMPLER),
+        画素段の束縛(ヘッダの束縛番号, vk::DescriptorType::UNIFORM_BUFFER),
+        画素段の束縛(方向光列の束縛番号, vk::DescriptorType::STORAGE_BUFFER),
+        画素段の束縛(局所光列の束縛番号, vk::DescriptorType::STORAGE_BUFFER),
     ];
     if 束縛レイアウト.遠方環境の画像を結ぶか() {
-        バインド一覧.extend(distant_environment::バインド一覧());
+        束縛一覧.extend(distant_environment::束縛一覧());
     }
-    バインド一覧.push(local_visibility::バインド());
-    バインド一覧.extend(cluster_grid::バインド一覧());
-    バインド一覧.push(point_light_shadow_map::バインド());
-    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&バインド一覧);
+    束縛一覧.push(local_visibility::局所可視度の束縛());
+    束縛一覧.extend(cluster_grid::束縛一覧());
+    束縛一覧.push(point_light_shadow_map::点光源の影の束縛());
+    let create_info = vk::DescriptorSetLayoutCreateInfo::default().bindings(&束縛一覧);
     // 安全性: deviceは生成済みで有効。create_infoは本関数内で構築した値のみを参照する。
     Ok(unsafe { device.create_descriptor_set_layout(&create_info, None)? })
 }
 
-fn 画素段のバインド(番号: 束縛番号, 種別: vk::DescriptorType) -> vk::DescriptorSetLayoutBinding<'static> {
+fn 画素段の束縛(番号: 束縛番号, 種別: vk::DescriptorType) -> vk::DescriptorSetLayoutBinding<'static> {
     vk::DescriptorSetLayoutBinding::default()
         .binding(番号.gpu境界値())
         .descriptor_type(種別)

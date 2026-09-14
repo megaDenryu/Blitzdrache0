@@ -28,7 +28,7 @@ impl 照明問い合わせのセットの書き込み先<'_> {
     }
 }
 
-pub(super) fn バインド() -> vk::DescriptorSetLayoutBinding<'static> {
+pub(super) fn 点光源の影の束縛() -> vk::DescriptorSetLayoutBinding<'static> {
     vk::DescriptorSetLayoutBinding::default()
         .binding(点光源の影の束縛番号.gpu境界値())
         .descriptor_type(vk::DescriptorType::COMBINED_IMAGE_SAMPLER)

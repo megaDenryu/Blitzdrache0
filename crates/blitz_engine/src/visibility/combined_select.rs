@@ -21,12 +21,12 @@ use super::group_material::群可視材料;
 use super::pass_test::{パス判定, 可視判定方式, 平行移動する};
 use super::selector::可視個体と段の選別係;
 use super::visible_pass_set::可視パス集合;
-use crate::{個体LOD選択設定, 個体別段状態};
+use crate::{個体別段状態, 個体詳細段選択設定};
 
 /// そのフレームに個体の段をどう決めるか。
 #[derive(Clone, Copy)]
 pub enum 段選択方式 {
-    距離とヒステリシス(個体LOD選択設定),
+    距離とヒステリシス(個体詳細段選択設定),
     最詳細に固定, // 個体別LODを止めた実行。全個体を最詳細段で描く
 }
 

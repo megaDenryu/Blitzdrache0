@@ -3,7 +3,7 @@
 use thiserror::Error;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
-pub enum 個体LODエラー {
+pub enum 個体詳細段エラー {
     #[error("基準距離が正の有限メートルでない")]
     基準距離不正,
     #[error("ヒステリシス幅が0以上の有限メートルでない")]
