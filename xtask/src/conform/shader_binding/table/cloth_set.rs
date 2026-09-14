@@ -11,7 +11,7 @@ const 空間ハッシュ: &str = "shaders/cloth_hash.slang";
 const 目標拘束: &str = "shaders/cloth_target.slang";
 const 曲げ拘束: &str = "shaders/cloth_bending.slang";
 
-const fn 組(前置き: &'static str, 写しパス: &'static str, 写しの変数名: &'static str) -> 束縛番号の組 {
+const fn 束縛番号の組を組み立てる(前置き: &'static str, 写しパス: &'static str, 写しの変数名: &'static str) -> 束縛番号の組 {
     束縛番号の組 {
         正本パス: 正本,
         正本の前置き: 前置き,
@@ -22,18 +22,18 @@ const fn 組(前置き: &'static str, 写しパス: &'static str, 写しの変�
 }
 
 pub(super) const 束縛番号の組の一覧: [束縛番号の組; 14] = [
-    組("pub(crate) const 定数の束縛番号: 束縛番号 = 束縛番号::生成する", 介入と積分, "params"),
-    組("pub(crate) const 粒子の束縛番号: 束縛番号 = 束縛番号::生成する", 介入と積分, "particles"),
-    組("pub(crate) const 前位置の束縛番号: 束縛番号 = 束縛番号::生成する", 介入と積分, "previousPositions"),
-    組("pub(crate) const 介入の束縛番号: 束縛番号 = 束縛番号::生成する", 介入と積分, "interventions"),
-    組("pub(crate) const 拘束の引数の束縛番号: 束縛番号 = 束縛番号::生成する", 拘束, "constraints"),
-    組("pub(crate) const セルカウントの束縛番号: 束縛番号 = 束縛番号::生成する", 空間ハッシュ, "cellCounts"),
-    組("pub(crate) const セル格納の束縛番号: 束縛番号 = 束縛番号::生成する", 空間ハッシュ, "cellSlots"),
-    組("pub(crate) const 布頂点の束縛番号: 束縛番号 = 束縛番号::生成する", "shaders/cloth_vertex.slang", "clothVertices"),
-    組("pub(crate) const スキン済み頂点の束縛番号: 束縛番号 = 束縛番号::生成する", 目標拘束, "skinnedVertices"),
-    組("pub(crate) const 目標の更新対応の束縛番号: 束縛番号 = 束縛番号::生成する", 目標拘束, "targetUpdatePairs"),
-    組("pub(crate) const ラグランジュ乗数の束縛番号: 束縛番号 = 束縛番号::生成する", 拘束, "lambdas"),
-    組("pub(crate) const 目標拘束の引数の束縛番号: 束縛番号 = 束縛番号::生成する", 目標拘束, "targetParams"),
-    組("pub(crate) const 目標位置の束縛番号: 束縛番号 = 束縛番号::生成する", 目標拘束, "targets"),
-    組("pub(crate) const 曲げ拘束の引数の束縛番号: 束縛番号 = 束縛番号::生成する", 曲げ拘束, "bendingConstraints"),
+    束縛番号の組を組み立てる("pub(crate) const 定数の束縛番号: 束縛番号 = 束縛番号::生成する", 介入と積分, "params"),
+    束縛番号の組を組み立てる("pub(crate) const 粒子の束縛番号: 束縛番号 = 束縛番号::生成する", 介入と積分, "particles"),
+    束縛番号の組を組み立てる("pub(crate) const 前位置の束縛番号: 束縛番号 = 束縛番号::生成する", 介入と積分, "previousPositions"),
+    束縛番号の組を組み立てる("pub(crate) const 介入の束縛番号: 束縛番号 = 束縛番号::生成する", 介入と積分, "interventions"),
+    束縛番号の組を組み立てる("pub(crate) const 拘束の引数の束縛番号: 束縛番号 = 束縛番号::生成する", 拘束, "constraints"),
+    束縛番号の組を組み立てる("pub(crate) const セルカウントの束縛番号: 束縛番号 = 束縛番号::生成する", 空間ハッシュ, "cellCounts"),
+    束縛番号の組を組み立てる("pub(crate) const セル格納の束縛番号: 束縛番号 = 束縛番号::生成する", 空間ハッシュ, "cellSlots"),
+    束縛番号の組を組み立てる("pub(crate) const 布頂点の束縛番号: 束縛番号 = 束縛番号::生成する", "shaders/cloth_vertex.slang", "clothVertices"),
+    束縛番号の組を組み立てる("pub(crate) const スキン済み頂点の束縛番号: 束縛番号 = 束縛番号::生成する", 目標拘束, "skinnedVertices"),
+    束縛番号の組を組み立てる("pub(crate) const 目標の更新対応の束縛番号: 束縛番号 = 束縛番号::生成する", 目標拘束, "targetUpdatePairs"),
+    束縛番号の組を組み立てる("pub(crate) const ラグランジュ乗数の束縛番号: 束縛番号 = 束縛番号::生成する", 拘束, "lambdas"),
+    束縛番号の組を組み立てる("pub(crate) const 目標拘束の引数の束縛番号: 束縛番号 = 束縛番号::生成する", 目標拘束, "targetParams"),
+    束縛番号の組を組み立てる("pub(crate) const 目標位置の束縛番号: 束縛番号 = 束縛番号::生成する", 目標拘束, "targets"),
+    束縛番号の組を組み立てる("pub(crate) const 曲げ拘束の引数の束縛番号: 束縛番号 = 束縛番号::生成する", 曲げ拘束, "bendingConstraints"),
 ];

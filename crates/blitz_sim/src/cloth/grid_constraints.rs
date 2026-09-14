@@ -2,7 +2,7 @@
 //! 本数の理論値: 構造=2*n*(n-1)、せん断=2*(n-1)*(n-1)(nは一辺粒子数)。
 
 use super::distance_constraint::{距離拘束, 距離拘束の種類};
-use super::grid_index::線形添字;
+use super::grid_index::線形添字を求める;
 use super::index_convert::u32へ;
 use super::spec::布仕様;
 
@@ -40,8 +40,8 @@ fn せん断を作る(一辺粒子数: usize, a: (usize, usize), b: (usize, usiz
 
 fn 拘束を作る(一辺粒子数: usize, (行a, 列a): (usize, usize), (行b, 列b): (usize, usize), 静止長: f32, 種類: 距離拘束の種類) -> 距離拘束 {
     距離拘束 {
-        粒子a添字: u32へ(線形添字(一辺粒子数, 行a, 列a)),
-        粒子b添字: u32へ(線形添字(一辺粒子数, 行b, 列b)),
+        粒子a添字: u32へ(線形添字を求める(一辺粒子数, 行a, 列a)),
+        粒子b添字: u32へ(線形添字を求める(一辺粒子数, 行b, 列b)),
         静止長,
         種類,
     }

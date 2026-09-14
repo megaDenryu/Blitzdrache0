@@ -4,7 +4,7 @@
 //! 三角形(辺a, 辺b, 翼c)と三角形(辺b, 辺a, 翼d)がどちらも巻き順の巡回になるように置く。平らな格子では2つの法線が一致して二面角が0である。
 
 use super::bending_constraint::曲げ拘束;
-use super::grid_index::線形添字;
+use super::grid_index::線形添字を求める;
 use super::index_convert::u32へ;
 
 pub(super) fn 曲げ拘束一覧を作る(一辺粒子数: usize) -> Vec<曲げ拘束> {
@@ -30,9 +30,9 @@ pub(super) fn 曲げ拘束一覧を作る(一辺粒子数: usize) -> Vec<曲げ�
 
 fn 拘束を作る(一辺粒子数: usize, (行a, 列a): (usize, usize), (行b, 列b): (usize, usize), (行c, 列c): (usize, usize), (行d, 列d): (usize, usize)) -> 曲げ拘束 {
     曲げ拘束 {
-        辺a添字: u32へ(線形添字(一辺粒子数, 行a, 列a)),
-        辺b添字: u32へ(線形添字(一辺粒子数, 行b, 列b)),
-        翼c添字: u32へ(線形添字(一辺粒子数, 行c, 列c)),
-        翼d添字: u32へ(線形添字(一辺粒子数, 行d, 列d)),
+        辺a添字: u32へ(線形添字を求める(一辺粒子数, 行a, 列a)),
+        辺b添字: u32へ(線形添字を求める(一辺粒子数, 行b, 列b)),
+        翼c添字: u32へ(線形添字を求める(一辺粒子数, 行c, 列c)),
+        翼d添字: u32へ(線形添字を求める(一辺粒子数, 行d, 列d)),
     }
 }

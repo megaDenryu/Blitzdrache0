@@ -1,5 +1,5 @@
 //! グリッド座標(行・列)⇔線形添字。行0が上端、列0が左端(判断52)。
 
-pub(super) fn 線形添字(一辺粒子数: usize, 行: usize, 列: usize) -> usize {
+pub(super) fn 線形添字を求める(一辺粒子数: usize, 行: usize, 列: usize) -> usize {
     行 * 一辺粒子数 + 列
 }
