@@ -17,19 +17,19 @@ pub(crate) struct 画面画素位置 {
 }
 
 pub(super) fn report_sky_pixel引数を処理する(引数: &mut Iter<String>) -> Result<Vec<画面画素位置>, 起動引数エラー> {
-    let 値 = 次の値を読む(引数, "--report-sky-pixel", 起動引数エラー::空代表画素不正)?;
+    let 値 = 次の値を読む(引数, "--report-sky-pixel", 起動引数エラー::空の代表画素不正)?;
     let mut 一覧 = Vec::new();
     for 組 in 値.split(';').filter(|語| !語.is_empty()) {
         一覧.push(一組を読む(組)?);
     }
     if 一覧.is_empty() {
-        return Err(起動引数エラー::空代表画素不正(format!("画素が1つも指定されていない: {値}")));
+        return Err(起動引数エラー::空の代表画素不正(format!("画素が1つも指定されていない: {値}")));
     }
     Ok(一覧)
 }
 
 fn 一組を読む(組: &str) -> Result<画面画素位置, 起動引数エラー> {
-    let 誤り = || 起動引数エラー::空代表画素不正(format!("横,縦の形でない: {組}"));
+    let 誤り = || 起動引数エラー::空の代表画素不正(format!("横,縦の形でない: {組}"));
     let (横, 縦) = 組.split_once(',').ok_or_else(誤り)?;
     Ok(画面画素位置 {
         横: 横.trim().parse::<u32>().map_err(|_| 誤り())?,

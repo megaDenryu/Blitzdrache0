@@ -22,7 +22,7 @@ pub(super) struct 検証つきインスタンス {
 }
 
 pub(super) fn 検証つきインスタンスを作る(entry: &ash::Entry, カウンタ: &検証カウンタ) -> Result<検証つきインスタンス, レンダラーエラー> {
-    let 状況 = 在否を調べる(entry)?;
+    let 状況 = 層と拡張の有無を調べる(entry)?;
     let instance = インスタンスを作る(entry, 状況)?;
     let メッセンジャー = match 状況 {
         検証層の状況::環境に無い => None,
@@ -51,7 +51,7 @@ impl 検証つきインスタンス {
 
 /// 層そのものと、層が提供するdebug utils拡張の両方がそろっているかを調べる。
 /// 拡張を層一覧とは別に調べるのは、層があっても拡張を出さない構成では`vkCreateInstance`が失敗するためである。
-fn 在否を調べる(entry: &ash::Entry) -> Result<検証層の状況, レンダラーエラー> {
+fn 層と拡張の有無を調べる(entry: &ash::Entry) -> Result<検証層の状況, レンダラーエラー> {
     // 安全性: entryは読み込み済みで有効。
     let 層一覧 = unsafe { entry.enumerate_instance_layer_properties()? };
     let 層があるか = 層一覧.iter().any(|層| 層.layer_name_as_c_str().is_ok_and(|名前| 名前 == 検証層名));

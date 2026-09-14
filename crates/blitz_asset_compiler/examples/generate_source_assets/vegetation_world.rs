@@ -32,8 +32,8 @@ const 粗い段の高さ: f32 = 1.0;
 
 const 共有バッファファイル名: &str = "archetype.bin";
 const 原型文書ファイル名: &str = "archetype.gltf";
-const LOD共有バッファファイル名: &str = "archetype_lod.bin";
-const LOD原型文書ファイル名: &str = "archetype_lod.gltf";
+const LOD原型用の共有バッファのファイル名: &str = "archetype_lod.bin";
+const LOD原型の文書のファイル名: &str = "archetype_lod.gltf";
 const 目録ソースファイル名: &str = "chunk_directory.txt";
 
 /// この世界のチャンクは原点1つだけである。
@@ -47,7 +47,7 @@ pub(crate) fn 植生検証世界のソース一式を書き出す(出力先デ�
         半辺: 粗い段の半辺, 高さ: 粗い段の高さ
     };
     原型を書き出す(出力先ディレクトリ, &[最詳細段], 共有バッファファイル名, 原型文書ファイル名)?;
-    原型を書き出す(出力先ディレクトリ, &[最詳細段, 粗い段], LOD共有バッファファイル名, LOD原型文書ファイル名)?;
+    原型を書き出す(出力先ディレクトリ, &[最詳細段, 粗い段], LOD原型用の共有バッファのファイル名, LOD原型の文書のファイル名)?;
     subdivided::書き出す(出力先ディレクトリ, &[最詳細段, 粗い段])?;
 
     let 項目一覧 = vec![目録項目 {

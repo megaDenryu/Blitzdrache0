@@ -70,7 +70,7 @@ pub(crate) enum 起動引数エラー {
     #[error("--auto-exposure-probe引数が不正だった: {0}")]
     自動露出の探り色不正(String),
     #[error("--report-sky-pixel引数が不正だった: {0}")]
-    空代表画素不正(String),
+    空の代表画素不正(String),
     #[error("--shadow-resolution引数が不正だった: {0}")]
     影の一辺解像度不正(String),
     #[error("--caster-margin引数が不正だった: {0}")]

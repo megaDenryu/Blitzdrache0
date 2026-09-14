@@ -17,7 +17,7 @@ use crate::{
     storage::保存要求エラー,
 };
 
-pub async fn チャンク高さ格子を保存する(State(状態): State<サーバー状態>, Path((x, z)): Path<(i32, i32)>, 本文: Bytes) -> Response {
+pub async fn チャンクの高さ格子を保存する(State(状態): State<サーバー状態>, Path((x, z)): Path<(i32, i32)>, 本文: Bytes) -> Response {
     match 検証して保存する(&状態, チャンク座標::生成する(x, z), 本文.to_vec()) {
         Ok(()) => StatusCode::NO_CONTENT.into_response(),
         Err(応答) => *応答,

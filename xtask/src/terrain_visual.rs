@@ -21,7 +21,7 @@ use crate::verify::{検証の出力の置き場名, 検証の出力ルート};
 
 const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("terrain_visual");
 
-pub fn 地形庭を目視確認する() -> ExitCode {
+pub fn 目視見本の世界を目視確認する() -> ExitCode {
     match 検収する() {
         Ok(要約) => {
             println!("[xtask] terrain-visual成功: {要約}");
