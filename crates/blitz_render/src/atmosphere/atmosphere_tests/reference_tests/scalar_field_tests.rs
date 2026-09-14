@@ -2,7 +2,7 @@
 
 use super::super::super::{ミー位相関数, レイリー位相関数, 位相非対称係数, 散乱角余弦, 規格化密度を求める};
 use super::super::reference_record::参照レコード;
-use super::super::{m, 地球標準の媒体};
+use super::super::{メートルに包む, 地球標準の媒体};
 use super::{一致するか, 参照レコード一覧, 相対誤差};
 use crate::atmosphere::narrowing::実数へ狭める;
 
@@ -16,7 +16,7 @@ fn 密度が参照と一致する() {
             continue;
         };
         件数 += 1;
-        let 高さ = m(実数へ狭める(高度));
+        let 高さ = メートルに包む(実数へ狭める(高度));
         for (添字, 期待) in [レイリー, ミー, 吸収].into_iter().enumerate() {
             let 実測 = 規格化密度を求める(&分布一覧[添字], 高さ).値();
             let 誤差 = 相対誤差(実測, 期待);
