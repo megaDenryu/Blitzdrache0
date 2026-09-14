@@ -9,7 +9,7 @@ use blitz_asset_compiler::建物の格子ソース;
 use blitz_engine::アセットID;
 
 use super::super::chunk_asset_file_names::チャンクの素材のファイル名;
-use super::super::chunk_directory_text::{ファイル名 as 目録ファイル名, 本文を組み立てる, 目録項目};
+use super::super::chunk_directory_text::{ファイル名 as 目録ファイル名, 目録本文を組み立てる, 目録項目};
 use super::super::editor_chunk_source::エディターチャンクソース;
 use super::super::error::書き出しエラー;
 use super::command::一棟だけの検証世界を書き出すコマンド;
@@ -59,5 +59,5 @@ fn 目録の本文を組み立てる(地面: &平らな地面, 素材のファ�
         アセット識別子: アセットID::生成する(&素材のファイル名.目録が指すアセットの名前())?.文字列を返す().to_string(),
         相対ファイル名: 素材のファイル名.版付きチャンクソース(),
     };
-    Ok(本文を組み立てる(地面.チャンク一辺メートル(), std::slice::from_ref(&項目)))
+    Ok(目録本文を組み立てる(地面.チャンク一辺メートル(), std::slice::from_ref(&項目)))
 }

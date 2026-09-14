@@ -12,7 +12,7 @@ use crate::server_state::サーバー状態;
 use crate::storage::プロジェクト保管庫;
 
 impl サーバー状態 {
-    pub(crate) fn エディターの世界をベイクする(&self) -> Result<(), 実行時アセットのコンパイルエラー> {
+    pub(crate) fn エディターの世界を焼く(&self) -> Result<(), 実行時アセットのコンパイルエラー> {
         let 層割当 = self.地表材質の層割当を読む()?;
         let 指定 = blitz_asset_compiler::焼く世界の指定::エディターの世界を焼く(self.リポジトリルート().ソースルート(), self.リポジトリルート().エディター実行時形式の出力先(), 層割当);
         blitz_asset_compiler::実行時アセットのコンパイル::始める(指定)?.世界を焼く()
