@@ -7,7 +7,7 @@ use blitz_math::{ローカル, ワールド, 変換};
 use super::super::super::アセット実行時形式エラー;
 use super::super::bytes::読取位置;
 use super::super::read_element;
-use super::{シーン版1, 描画対象V1};
+use super::{シーン版1, 描画対象版1};
 use crate::asset::render_object_id::描画対象ID;
 use crate::チャンク座標;
 
@@ -44,8 +44,8 @@ pub(in crate::asset::runtime_format::scene) fn シーン内容を読む(内容: 
     })
 }
 
-fn 描画対象を読む(入力: &mut 読取位置<'_>) -> Result<描画対象V1, アセット実行時形式エラー> {
-    Ok(描画対象V1 {
+fn 描画対象を読む(入力: &mut 読取位置<'_>) -> Result<描画対象版1, アセット実行時形式エラー> {
+    Ok(描画対象版1 {
         識別子: 描画対象ID::生成する(入力.u64()?),
         所有チャンク: チャンク座標::番号から復元する(入力.u64()?),
         ローカルからワールド: 変換::<ローカル, ワールド>::列優先配列から生成する(read_element::行列を読む(入力)?),
