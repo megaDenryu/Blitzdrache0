@@ -13,19 +13,19 @@ pub(super) struct 非一様装飾の集計 {
     pub(super) 非一様装飾付きの件数: usize, // そのうち、アクセス連鎖の結果にNonUniformの装飾が付いていた件数
 }
 
-const 命令_OP_ACCESS_CHAIN: u16 = 65;
-const 装飾_NON_UNIFORM: u32 = 5300;
+const 命令コード_添字連鎖: u16 = 65;
+const 装飾種別_非一様: u32 = 5300;
 
 pub(super) fn 集計する(spirv: &[u8], 変数名: &str) -> Result<非一様装飾の集計, シェーダー中間表現の読み解きエラー> {
     let 命令一覧 = 命令へ読み解く(spirv)?;
     let 対象id = 名前からidを参照する(&命令一覧, 変数名)?;
-    let 非一様id一覧 = 装飾の付いたidを集める(&命令一覧, 装飾_NON_UNIFORM);
+    let 非一様id一覧 = 装飾の付いたidを集める(&命令一覧, 装飾種別_非一様);
     let mut 集計 = 非一様装飾の集計 {
         参照件数: 0, 非一様装飾付きの件数: 0
     };
     for 命令 in &命令一覧 {
         // OpAccessChainの語は[結果の型, 結果id, 基点id, 添字...]の順に並ぶ。
-        if 命令.命令コード != 命令_OP_ACCESS_CHAIN || 命令.語一覧.len() < 4 || 命令.語一覧[2] != 対象id {
+        if 命令.命令コード != 命令コード_添字連鎖 || 命令.語一覧.len() < 4 || 命令.語一覧[2] != 対象id {
             continue;
         }
         集計.参照件数 += 1;
