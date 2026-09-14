@@ -6,7 +6,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use crate::tree_catalog_fixture::{樫の木のカタログ, 識別子};
+use crate::tree_catalog_fixture::{樫の木のカタログ, 綴りから識別子を生成する};
 
 use super::expander::展開器;
 use super::generation_seed::生成の種;
@@ -14,7 +14,7 @@ use super::placement_table::部品ごとの配置表;
 use super::tree_rule_fixture::{枝を出さない候補, 根の配置, 樫の木の規則, 樫の木を展開する, 種を決めて樫の木を展開する};
 
 fn 件数を数える(配置表: &部品ごとの配置表, 綴り: &str) -> usize {
-    配置表.据えた順().iter().filter(|据えた| 据えた.識別子() == &識別子(綴り)).count()
+    配置表.据えた順().iter().filter(|据えた| 据えた.識別子() == &綴りから識別子を生成する(綴り)).count()
 }
 
 /// 幹3節・節ごとの枝3本・その先の葉房3つ・幹の頂を塞ぐ冠1つで10部品になる。
