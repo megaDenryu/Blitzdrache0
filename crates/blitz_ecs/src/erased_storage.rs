@@ -13,8 +13,8 @@ use crate::runtime_entity_id::ゲーム世界の実行時個体ID;
 /// 型を消したまま個体の値を取り除いたときの、取り除けたかどうか。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum 型を消した取り除きの結果 {
-    取り除いた,
-    持っていなかった,
+    取り除き済み,
+    不在,
 }
 
 pub(crate) trait 型を消した置き場: Send + Sync {
@@ -29,8 +29,8 @@ pub(crate) trait 型を消した置き場: Send + Sync {
 impl<T: 個体構成要素> 型を消した置き場 for 個体構成要素の置き場<T> {
     fn 個体の値を取り除く(&mut self, 個体: ゲーム世界の実行時個体ID) -> 型を消した取り除きの結果 {
         match self.取り除く(個体) {
-            Some(_取り除いた値) => 型を消した取り除きの結果::取り除いた,
-            None => 型を消した取り除きの結果::持っていなかった,
+            Some(_取り除いた値) => 型を消した取り除きの結果::取り除き済み,
+            None => 型を消した取り除きの結果::不在,
         }
     }
 
