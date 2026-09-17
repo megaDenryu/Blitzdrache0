@@ -2,15 +2,9 @@
 //! 返すのはレンダラーへ渡す1フレーム分の入力である。
 //! 視点・ライティング・スキン行列という出どころの違う値を1つの入力へ集める場所であり、呼び出し元は中身の集め方を知らない。
 //! 4つの借用だけを引数で受けるのは、返す入力がこれらを借用し、借用元をアプリの外へ出しておく必要があるためである。
-//! そのフレームの視点そのものを求める工程は`frame_view`が持つ。
+//! そのフレームの視点そのものを求める工程は視点の配線が持つ。
 
-pub(in crate::app) mod frame_view;
-pub(in crate::app) mod view_history;
-
-pub(crate) use frame_view::フレーム視点;
-pub(in crate::app) use frame_view::視点を求める;
-pub(in crate::app) use view_history::視点の履歴;
-
+use super::super::view_wiring::フレーム視点;
 use super::super::アプリ;
 use blitz_render::frame_input::影のキャスター指定;
 

@@ -11,7 +11,7 @@ use blitz_render::布フレーム入力;
 
 use super::super::draw_dispatch::フレーム材料;
 use super::super::アプリ;
-use super::draw_input::フレーム視点;
+use super::フレーム視点;
 use crate::error::起動エラー;
 use crate::smoke::スモークアクション;
 

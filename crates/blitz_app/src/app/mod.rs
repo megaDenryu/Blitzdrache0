@@ -31,6 +31,7 @@ pub(crate) mod time_of_day;
 mod time_step;
 mod verification_launch_settings;
 mod verification_observation;
+mod view_wiring;
 mod visibility;
 mod window_setup;
 use crate::cli::{描画対象の並べ方, 起動モード};
@@ -47,11 +48,13 @@ pub(crate) use time_of_day::{太陽天頂区間の記録, 空の再現条件, �
 pub(crate) use time_step::{フレーム番号, 描画補間の割合, 進める刻み数};
 use verification_launch_settings::検収の起動設定;
 use verification_observation::検収の観測;
+use view_wiring::視点の配線;
 pub(crate) use {draw_dispatch::時間再構成の突き合わせの要約, streaming::ストリーミング要約};
 
 /// `据え付け`は、レンダラー・画面へ重ねるUI・ウィンドウが同じ地点で揃って据わり揃って消えることを1つで持つ。破棄順の不変条件はその型が持つ。
 ///
 /// `大域ずらし量`は、カメラ・照明の大域位置と、チャンク座標から導出した描画の基準原点の全部に同じ値を足す。
+/// `視点`は、カメラと前フレームの視点の履歴を1つで持ち、1描画の視点を決める。
 /// `天空`は世界の空方針・ゲーム時計・シーンの基準ライティング・そのフレームのライティングと空入力を1つで持つ。
 /// `露出`(判断39)と`ブレンド`(判断45)は、CLIの初期値を開発用UIのスライダーが実行中に書き換える。
 /// `時間進行`は基本刻みと一描画で進める刻み数の上限、実行の種類で選んだ進め方、および今から描く描画機会のフレーム番号を1つで持つ。刻みと描画機会を数える状態だけを束ね、固定刻みで確定するゲーム状態も描画機会ごとの一時状態も混ぜない。
@@ -66,11 +69,10 @@ pub(crate) struct アプリ {
     一度だけ使う設定: Option<起動時に一度だけ使う設定>, // 起動の途中で`resume`が消費し、以後は`None`
     大域ずらし量: blitz_math::大域ワールド位置,         // `--global-offset`で世界全体へ加える平行移動
     描画対象の並べ方: 描画対象の並べ方,
-    カメラ: blitz_engine::カメラ,
+    視点: 視点の配線,
     入力状態: 入力状態,
     ゲーム配線: crate::game::ゲーム配線,
     時間進行: time_step::時間進行配線, // その描画で固定刻みを何本進めるかと、この描画のフレーム番号を決める配線
-    視点の履歴: frame::視点の履歴,
     クリア色: クリアカラー,
     天空: time_of_day::天空配線, // 空と時刻の配線
     世界の描画構成: create::世界の描画構成,

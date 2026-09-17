@@ -7,7 +7,6 @@
 //! 参照: `_doc/設計/時間の規律.md`「判断9」。
 
 mod borrowed_draw;
-mod camera_follow;
 mod camera_occlusion;
 mod camera_update;
 mod clock_advance;
@@ -26,9 +25,8 @@ use crate::error::起動エラー;
 use crate::game::ゲームの終了要求;
 use crate::smoke::スモークアクション;
 
-pub(super) use draw_input::frame_view::カメラ大域位置を組み立てる;
-pub(crate) use draw_input::フレーム視点;
-pub(super) use draw_input::{描画の計測つまみ, 組み立てる as 描画入力を組み立てる, 視点の履歴};
+pub(crate) use super::view_wiring::フレーム視点;
+pub(super) use draw_input::{描画の計測つまみ, 組み立てる as 描画入力を組み立てる};
 
 impl アプリ {
     /// RedrawRequestedのたびに1フレーム分の描画を実行する。
@@ -79,7 +77,8 @@ impl アプリ {
         let 布入力 = self.この描画の布入力を作る(時間の進み.刻み数())?;
         let ui描画 = self.ui描画データを組み立てる()?;
         // 視点は可視判定と描画入力の両方が使うため、1フレームに1度だけ作って配る。フレーム番号もここから下流へ載せて配る。
-        let 視点情報 = draw_input::視点を求める(self, 時間の進み.フレーム番号());
+        let 物理寸法 = 画面の据え付け::描画の最中に見る(&self.据え付け).ウィンドウの物理寸法();
+        let 視点情報 = self.視点.この描画の視点を求める(物理寸法, self.大域ずらし量, self.世界の描画構成.時間再構成の描画設定.方式, 時間の進み.フレーム番号());
         self.この描画の可視個体を選別する(&視点情報)?;
         self.受け皿を預けて描画する(アクション, &視点情報, 布入力, ui描画)?;
         Ok(ゲームの終了要求::続ける)
