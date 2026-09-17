@@ -39,9 +39,9 @@ impl アプリ {
         self.描画束の台帳.直近の選別の計器()
     }
 
-    /// ディスクから実行時シーンを読んだ回数と、そのうち1フレーム目以降に起きた回数。
-    pub(crate) fn シーン読込回数を取得する(&self) -> (u64, u64) {
-        (self.シーン読込計数.総数(), self.シーン読込計数.起動後())
+    /// 実行を通して積み上がった検収の観測の統計。フレーム時間・選別の区間・シーン読込回数を1つで返す。
+    pub(crate) fn 検収の観測の統計を作る(&self) -> super::verification_observation::検収の観測の統計 {
+        self.検収の観測.終了時の統計を作る()
     }
 
     /// パス別の移動平均GPU時間(ミリ秒)。レンダラー破棄前に呼ぶこと(判断30)。
@@ -52,16 +52,6 @@ impl アプリ {
     /// パス別GPU時間の窓へ入る前の生の値。記録を始めていなければ空である。レンダラー破棄前に呼ぶこと。
     pub(crate) fn パス別gpu時間のフレーム別標本を取得する(&self) -> &[blitz_render::gpu_pass_timing::フレーム別の標本] {
         self.据え付け済みのレンダラーを見る().map_or(&[], レンダラー::パス別gpu時間のフレーム別標本を取得する)
-    }
-
-    /// `--report-frame-times`で収集した、ウォームアップ後のCPU側フレーム間隔分布を返す。
-    pub(crate) fn フレーム時間統計を取得する(&self) -> Option<super::frame_timing::フレーム時間統計> {
-        self.フレーム間隔計測.as_ref().and_then(super::frame_timing::フレーム間隔計測::集計する)
-    }
-
-    /// `--report-instance-sections`で収集した、可視個体の選別の走査がメインスレッドを占めた時間の分布。
-    pub(crate) fn 可視個体の選別の区間統計を取得する(&self) -> Option<super::frame_timing::フレーム時間統計> {
-        self.可視個体の選別の計測.as_ref().and_then(super::section_timing::区間計測::集計する)
     }
 
     pub(crate) fn レンダラーcpu区間時間を取得する(&self) -> &[CPU区間時間] {

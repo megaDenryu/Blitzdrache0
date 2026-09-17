@@ -5,15 +5,13 @@
 
 use super::super::{区画の一覧, 未是正の自由関数};
 
-const 項目一覧: [未是正の自由関数; 12] = [
+const 項目一覧: [未是正の自由関数; 10] = [
     未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_injection/canon.rs", "差を取り込む", "突き合わせの要約"),
     未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_injection/synthesis.rs", "一画素を積む", "合成入力の材料"),
     未是正の自由関数::生成する("frame/draw_input.rs", "組み立てる", "アプリ"),
     未是正の自由関数::生成する("frame/draw_input/frame_view.rs", "画素内ずらしを決める", "アプリ"),
     未是正の自由関数::生成する("frame/draw_input/frame_view.rs", "視点を求める", "アプリ"),
     未是正の自由関数::生成する("handler/resume.rs", "生成してアプリへ格納する", "アプリ"),
-    未是正の自由関数::生成する("measurement_setup.rs", "レンダラーの計測を有効にする", "アプリ"),
-    未是正の自由関数::生成する("measurement_setup.rs", "実表示計測要求を決める", "アプリ"),
     未是正の自由関数::生成する("primitive_draw_item_registry/refill.rs", "詰め直す", "プリミティブ描画項目台帳"),
     未是正の自由関数::生成する("time_of_day/atmosphere_input.rs", "大気入力を組む", "大気入力の材料"),
     未是正の自由関数::生成する("time_of_day/distant_environment_input.rs", "遠方環境入力を組む", "遠方環境入力の材料"),

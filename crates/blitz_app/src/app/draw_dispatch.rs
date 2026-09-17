@@ -12,7 +12,6 @@ pub(crate) mod temporal_reconstruction_injection;
 
 use blitz_render::frame_input::プリミティブ発行受け皿;
 pub(super) use frame_reach::描画の到達;
-pub(super) use temporal_reconstruction_check::時間再構成の観測;
 pub(crate) use temporal_reconstruction_injection::canon::突き合わせの要約 as 時間再構成の突き合わせの要約;
 
 use blitz_render::{UI描画データ, 布フレーム入力};

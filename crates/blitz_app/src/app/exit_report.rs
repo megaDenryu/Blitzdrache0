@@ -58,8 +58,8 @@ impl super::アプリ {
             }
             crate::reports::draw_issue::段切替回数を表示する(self.個体詳細段切替回数を取得する());
             crate::reports::draw_issue::可視材料登録数を表示する(self.可視材料登録数を取得する());
-            let (読込総数, 起動後読込) = self.シーン読込回数を取得する();
-            crate::reports::draw_issue::シーン読込回数を表示する(読込総数, 起動後読込);
+            let 読込回数 = self.検収の観測の統計を作る().シーン読込回数;
+            crate::reports::draw_issue::シーン読込回数を表示する(読込回数.総数, 読込回数.起動後);
             match self.点光源の影の記録内訳を取得する() {
                 Some(内訳) => crate::reports::point_light_shadow::点光源の影の記録内訳を表示する(&内訳),
                 None => println!("点光源の影の記録内訳: レンダラーが生成されなかったため取得できない"),
@@ -71,9 +71,10 @@ impl super::アプリ {
         if self.太陽角度報告が必要か() {
             crate::reports::sun_angle::太陽の角度を表示する(self.天空状態を取得する());
         }
+        let 観測の統計 = self.検収の観測の統計を作る();
         if self.フレーム時間報告が必要か() {
-            match self.フレーム時間統計を取得する() {
-                Some(統計) => crate::reports::フレーム時間統計を表示する(&統計),
+            match &観測の統計.フレーム時間統計 {
+                Some(統計) => crate::reports::フレーム時間統計を表示する(統計),
                 None => println!("CPU側フレーム間隔: 計測できなかった(ウォームアップ後のフレームがない)"),
             }
             crate::reports::レンダラーcpu区間を表示する(self.レンダラーcpu区間時間を取得する());
@@ -82,7 +83,7 @@ impl super::アプリ {
             if !self.フレーム時間報告が必要か() {
                 crate::reports::レンダラーcpu区間を表示する(self.レンダラーcpu区間時間を取得する());
             }
-            crate::reports::可視個体の選別の区間を表示する(self.可視個体の選別の区間統計を取得する().as_ref());
+            crate::reports::可視個体の選別の区間を表示する(観測の統計.選別の区間統計.as_ref());
         }
         if self.ストリーミング要約報告が必要か() {
             match self.ストリーミング要約を取得する() {

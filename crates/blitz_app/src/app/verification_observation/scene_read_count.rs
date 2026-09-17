@@ -5,7 +5,7 @@
 //! 全段は束の読込時にGPUへ載っており、段の選択はファイルにもGPU確保にも触れない
 //! (参照: `_doc/設計/植生インスタンスと物量計測.md`「ストリーミング統合」)。
 
-use super::time_step::フレーム番号;
+use crate::app::time_step::フレーム番号;
 
 #[derive(Default)]
 pub(super) struct シーン読込計数 {

@@ -20,7 +20,7 @@ impl アプリ {
     }
 
     pub(crate) fn フレーム時間報告が必要か(&self) -> bool {
-        self.フレーム間隔計測.is_some()
+        self.検収の観測.フレーム間隔を測るか()
     }
 
     pub(crate) fn gpuメモリ報告が必要か(&self) -> bool {
@@ -44,7 +44,7 @@ impl アプリ {
 
     /// `--report-instance-sections`が指定されたか。
     pub(crate) fn インスタンス区間報告が必要か(&self) -> bool {
-        self.可視個体の選別の計測.is_some()
+        self.検収の観測.選別の時間を測るか()
     }
 
     /// `--report-display-timing`が指定されたか。

@@ -9,7 +9,7 @@
 mod readback;
 
 use blitz_engine::temporal_reconstruction::ずらしの列の添字;
-use blitz_render::{HDR読み戻し画像, フレーム描画入力};
+use blitz_render::フレーム描画入力;
 
 use super::frame_reach::描画の到達;
 use crate::app::screen_installation::画面の据え付け;
@@ -19,17 +19,6 @@ use crate::app::アプリ;
 use crate::error::起動エラー;
 use crate::reports::temporal_reconstruction;
 use readback::{今のフレームの色を読み戻す, 圧縮前のhdrを読み戻す};
-
-/// フレームをまたいで持つ観測の材料。前のフレームの結果だけであり、判定も閾値も持たない。
-pub(in crate::app) struct 時間再構成の観測 {
-    前フレームの結果: Option<HDR読み戻し画像>,
-}
-
-impl 時間再構成の観測 {
-    pub(in crate::app) fn 記録なしで生成する() -> Self {
-        Self { 前フレームの結果: None }
-    }
-}
 
 impl アプリ {
     pub(in crate::app) fn 時間再構成を観測する(&mut self, 描画入力: フレーム描画入力<'_>, 局面: 時間再構成の観測の局面, フレーム番号: フレーム番号) -> Result<描画の到達, 起動エラー> {
@@ -45,10 +34,10 @@ impl アプリ {
         let Some(今の結果) = 圧縮前のhdrを読み戻す(レンダラー, 描画入力, "フレーム間差分")? else {
             return Ok(描画の到達::届かなかった);
         };
-        if let Some(前) = &self.時間再構成の観測.前フレームの結果 {
+        if let Some(前) = self.検収の観測.時間再構成の前フレームの結果を見る() {
             temporal_reconstruction::フレーム間差分を報告する(フレーム番号, 前, &今の結果);
         }
-        self.時間再構成の観測.前フレームの結果 = Some(今の結果);
+        self.検収の観測.時間再構成の一枚を据える(今の結果);
         Ok(描画の到達::提示した)
     }
 

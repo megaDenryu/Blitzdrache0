@@ -7,7 +7,7 @@ mod world_composition;
 pub(in crate::app) use world_composition::世界の描画構成;
 
 use super::scene_camera::シーン初期カメラを作る;
-use super::{frame_timing, streaming, アプリ};
+use super::{streaming, アプリ};
 use crate::cli::起動設定;
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
@@ -18,7 +18,6 @@ impl アプリ {
     /// チャンク目録の読込と読込ワーカーの起動を伴い失敗しうるため、結果を返す。
     pub(crate) fn 生成する(起動設定: 起動設定, クリア色: クリアカラー) -> Result<Self, 起動エラー> {
         let 大域ずらし量 = 起動設定.平行移動.大域ずらし量;
-        let フレーム間隔計測 = 起動設定.フレーム時間報告.then(|| frame_timing::フレーム間隔計測::生成する(起動設定.モード));
         let シーン基準ライティング = super::scene_lighting::シーン初期ライティングを作る(
             &起動設定.シーン,
             起動設定.ライティング.有効,
@@ -39,6 +38,7 @@ impl アプリ {
         let ストリーミング = streaming::ストリーミング配線を構築する(&起動設定)?;
         let 自己操作 = super::self_operation_wiring::自己操作の配線::起動設定から作る(&起動設定);
         let 報告要求 = super::report_requests::報告要求::起動設定から作る(&起動設定);
+        let 検収の観測 = super::verification_observation::検収の観測::起動設定から作る(&起動設定);
         // 読み戻し検収とフレームダンプ先は起動設定から動かす。これより後で起動設定を丸ごと借りる工程は無い。
         let 検収の起動設定 = super::verification_launch_settings::検収の起動設定::生成する(起動設定.読み戻し検収, 起動設定.フレームダンプ先, 報告要求);
         Ok(Self {
@@ -59,19 +59,17 @@ impl アプリ {
             ゲーム配線: crate::game::ゲーム配線::起動設定から作る(起動設定.遊ぶゲーム, 起動設定.モード),
             時間進行: super::time_step::時間進行配線::起動モードから作る(起動設定.モード, time_advance_policy::時間進行方針を組む()),
             視点の履歴: super::frame::視点の履歴::記録なしで生成する(),
-            時間再構成の観測: super::draw_dispatch::時間再構成の観測::記録なしで生成する(),
             クリア色,
             天空,
             世界の描画構成,
             検収の起動設定,
-            フレーム間隔計測,
+            検収の観測,
             計測つまみ: super::frame::描画の計測つまみ::起動設定から作る(起動設定.画素診断, 起動設定.影キャスター全体有効),
             露出: 起動設定.露出,
             ブレンド: 起動設定.ブレンド,
             布の配線: super::cloth_wiring::布の配線::布を持たない状態から始める(),
             アニメーション: None,
             アニメ時刻: blitz_math::秒::生成する(0.0),
-            スモーク基準画像: None,
             資源の配線: super::resource_wiring::資源の配線::生成する(ホットリローダー::生成する(&起動設定.シェーダーの入口ファイル), ストリーミング),
             描画束の台帳: super::draw_bundle_ledger::描画束の台帳::生成する(
                 super::visibility::選別のつまみ {
@@ -83,8 +81,6 @@ impl アプリ {
                 },
                 起動設定.遠景影キャスター有効,
             ),
-            可視個体の選別の計測: 起動設定.インスタンス区間報告.then(|| super::section_timing::区間計測::生成する(起動設定.モード)),
-            シーン読込計数: super::scene_read_count::シーン読込計数::default(),
             自己操作,
             起動時エラー: None,
         })
