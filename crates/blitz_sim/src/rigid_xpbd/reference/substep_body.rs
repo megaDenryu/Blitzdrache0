@@ -5,11 +5,18 @@ use super::super::correction::姿勢自由度の補正;
 use super::super::participant::姿勢自由度の参加者;
 use super::super::predicted_state::予測の状態;
 use super::super::previous_state::前の状態;
+use crate::ontology::{M時間局所状態, M状態, 物理小刻み};
 use crate::rigid_body::{質量特性, 配置};
 
 pub(super) enum 細分の中の剛体 {
     動かせない { 配置: 配置 },
     動的 { 前の状態: 前の状態, 予測: 予測の状態, 質量特性: 質量特性 },
+}
+
+impl M状態 for 細分の中の剛体 {}
+
+impl M時間局所状態 for 細分の中の剛体 {
+    type 生存範囲 = 物理小刻み;
 }
 
 impl 細分の中の剛体 {
