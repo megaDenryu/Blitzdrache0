@@ -26,4 +26,12 @@ impl ゲーム世界の実行時個体ID {
     pub(crate) fn 世代(&self) -> u32 {
         self.世代
     }
+
+    /// スロットの添字を、スロットごとの配列を引くための添字として読む。
+    pub(crate) fn 配列の添字として読む(self) -> usize {
+        let Ok(添字) = usize::try_from(self.添字) else {
+            panic!("u32のスロットの添字がusizeへ収まらない(32ビット以上の環境だけを対象にする)")
+        };
+        添字
+    }
 }
