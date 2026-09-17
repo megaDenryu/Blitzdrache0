@@ -11,13 +11,13 @@ use super::violation::違反;
 const 対象クレート: &str = "blitz_ecs";
 const 抽象名一覧: [&str; 4] = [concat!("Wor", "ld"), concat!("Que", "ry"), concat!("Compo", "nent"), concat!("Enti", "ty")];
 
-fn 個体群の基盤の原文か(パス: &Path) -> bool {
+fn 個体群の基盤のクレートの中のファイルか(パス: &Path) -> bool {
     let 部品一覧: Vec<&std::ffi::OsStr> = パス.components().map(|部品| 部品.as_os_str()).collect();
     部品一覧.iter().any(|部品| *部品 == 対象クレート) && 部品一覧.iter().any(|部品| *部品 == "src")
 }
 
 pub fn 個体群の基盤の抽象名を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
-    if !個体群の基盤の原文か(パス) {
+    if !個体群の基盤のクレートの中のファイルか(パス) {
         return Vec::new();
     }
     内容
