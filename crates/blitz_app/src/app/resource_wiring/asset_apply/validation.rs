@@ -1,10 +1,10 @@
 //! 公開済み一式のうち、状態を変えずに確定できるチャンク一辺・高さ場・地表の層のタイルを先に作る工程。
 //! 受け取るのはストリーミングの有無とゲーム配線と公開済み一式だけであり、アプリの他の状態には触れない。
 
-use super::公開済みの実行時アセット一式;
 use crate::app::scene_load::地表の層のタイル一式;
 use crate::app::streaming::{ストリーミングの有無, ストリーミング配線};
 use crate::game::ゲーム配線;
+use crate::hot_reload::公開済みの実行時アセット一式;
 
 pub(super) struct 反映準備 {
     pub(super) 高さ場: crate::game::ゲーム用高さ場,

@@ -19,6 +19,7 @@ mod route;
 #[cfg(test)]
 mod route_tests;
 
+pub(in crate::app) use advance::ストリーミング進行の材料;
 use blitz_engine::{ストリーミングメモリ量, ストリーミング調停, チャンク一辺};
 pub(in crate::app) use build::ストリーミング配線を構築する;
 pub(crate) use measurement::ストリーミング要約;

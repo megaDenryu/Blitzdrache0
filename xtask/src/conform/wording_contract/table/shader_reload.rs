@@ -6,5 +6,5 @@ use super::綴りの契約;
 
 pub(super) const 綴り一覧: [綴りの契約; 1] = [綴りの契約 {
     綴り: "[hot-reload] 契約別のシェーダー束でシーンのパイプラインを差し替えた",
-    現れるファイル一覧: &["crates/blitz_app/src/app/hot_reload_apply.rs", "xtask/src/shader_reload_draw/judgment.rs"],
+    現れるファイル一覧: &["crates/blitz_app/src/app/resource_wiring/hot_reload_check.rs", "xtask/src/shader_reload_draw/judgment.rs"],
 }];
