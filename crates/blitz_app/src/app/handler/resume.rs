@@ -68,7 +68,7 @@ impl アプリ {
         if let Some(状況) = crate::app::measurement_setup::レンダラーの計測を有効にする(&mut レンダラー, self) {
             println!("実表示時刻計測: {}", 状況.名称());
         }
-        let 注入 = self.読み戻し検収.遠方環境の検収条件.map(|条件| 条件.レンダラーへ注入する(&mut レンダラー));
+        let 注入 = self.検収の起動設定.読み戻し検収().遠方環境の検収条件.map(|条件| 条件.レンダラーへ注入する(&mut レンダラー));
         if let Some(Err(誤り)) = 注入 {
             self.起動時エラー = Some(crate::error::起動エラー::from(誤り));
             event_loop.exit();

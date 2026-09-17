@@ -6,7 +6,7 @@ mod launch_mode;
 mod readback_verification;
 pub(in crate::cli) use frame_dump_setting::走査の書き出し先を確かめる;
 pub(crate) use readback_verification::読み戻し検収起動設定;
-pub(crate) use {frame_dump_setting::フレームダンプ指定, launch_mode::起動モード};
+pub(crate) use {frame_dump_setting::フレームダンプ指定, frame_dump_setting::書き出す画像, launch_mode::起動モード};
 
 use super::{シャドウ計測起動設定, ストリーミング起動設定, 布モード, 平行移動起動設定, 遊ぶゲームの指定};
 use super::{描画対象の並べ方, 時間帯起動設定, 画面画素位置, 粒子表示モード};

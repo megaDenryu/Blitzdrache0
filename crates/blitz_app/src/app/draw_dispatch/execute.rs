@@ -7,7 +7,7 @@
 use blitz_render::{フレーム描画入力, 描画結果, 読み戻し結果};
 
 use super::frame_reach::描画の到達;
-use super::{pixel_readback, rewrite_action};
+use super::pixel_readback;
 use crate::app::screen_installation::画面の据え付け;
 use crate::app::アプリ;
 use crate::error::起動エラー;
@@ -15,7 +15,7 @@ use crate::smoke::{self, スモークアクション};
 
 impl アプリ {
     pub(in crate::app) fn 実行して判定する(&mut self, アクション: スモークアクション, 描画入力: フレーム描画入力<'_>) -> Result<描画の到達, 起動エラー> {
-        rewrite_action::適用する(self, アクション)?;
+        self.自己操作.書き換えを適用する(アクション)?;
 
         let レンダラー = 画面の据え付け::描画の最中に借りる(&mut self.据え付け).レンダラーを借りる();
 

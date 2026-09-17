@@ -10,7 +10,7 @@
 use blitz_engine::カメラ;
 use blitz_math::メートル;
 
-use super::time_step::フレーム番号;
+use crate::app::time_step::フレーム番号;
 
 pub(super) struct 個体詳細段探査 {
     刻み: メートル,

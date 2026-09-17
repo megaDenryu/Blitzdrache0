@@ -6,17 +6,17 @@ use crate::app::アプリ;
 impl アプリ {
     /// `--report-gpu-times`が指定されたか。
     pub(crate) fn gpu時間報告が必要か(&self) -> bool {
-        self.報告要求.gpu時間
+        self.検収の起動設定.報告要求().gpu時間
     }
 
     /// `--report-gpu-frame-times`が指定されたか。
     pub(crate) fn gpu時間のフレーム別生値報告が必要か(&self) -> bool {
-        self.報告要求.gpu時間のフレーム別生値
+        self.検収の起動設定.報告要求().gpu時間のフレーム別生値
     }
 
     /// `--report-atmosphere-passes`が指定されたか。
     pub(crate) fn 大気のベイク済み画像パス数報告が必要か(&self) -> bool {
-        self.報告要求.大気のベイク済み画像生成パス数
+        self.検収の起動設定.報告要求().大気のベイク済み画像生成パス数
     }
 
     pub(crate) fn フレーム時間報告が必要か(&self) -> bool {
@@ -24,22 +24,22 @@ impl アプリ {
     }
 
     pub(crate) fn gpuメモリ報告が必要か(&self) -> bool {
-        self.報告要求.gpuメモリ
+        self.検収の起動設定.報告要求().gpuメモリ
     }
 
     /// `--report-draw-issue`が指定されたか。
     pub(crate) fn 描画発行報告が必要か(&self) -> bool {
-        self.報告要求.描画発行
+        self.検収の起動設定.報告要求().描画発行
     }
 
     /// `--report-sun-angle`が指定されたか。
     pub(crate) fn 太陽角度報告が必要か(&self) -> bool {
-        self.報告要求.太陽角度
+        self.検収の起動設定.報告要求().太陽角度
     }
 
     /// `--report-caster-distance`が指定されたか。
     pub(crate) fn キャスター距離分布報告が必要か(&self) -> bool {
-        self.報告要求.キャスター距離分布
+        self.検収の起動設定.報告要求().キャスター距離分布
     }
 
     /// `--report-instance-sections`が指定されたか。
@@ -49,11 +49,11 @@ impl アプリ {
 
     /// `--report-display-timing`が指定されたか。
     pub(crate) fn 実表示時間報告が必要か(&self) -> bool {
-        self.報告要求.実表示時間
+        self.検収の起動設定.報告要求().実表示時間
     }
 
     /// `--report-streaming-summary`が指定されたか。
     pub(crate) fn ストリーミング要約報告が必要か(&self) -> bool {
-        self.報告要求.ストリーミング要約
+        self.検収の起動設定.報告要求().ストリーミング要約
     }
 }
