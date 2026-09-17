@@ -5,12 +5,11 @@
 
 use super::super::{区画の一覧, 未是正の自由関数};
 
-const 項目一覧: [未是正の自由関数; 22] = [
+const 項目一覧: [未是正の自由関数; 19] = [
     未是正の自由関数::生成する("draw_dispatch/rewrite_action.rs", "適用する", "アプリ"),
     未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_injection/canon.rs", "差を取り込む", "突き合わせの要約"),
     未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_injection/synthesis.rs", "一画素を積む", "合成入力の材料"),
     未是正の自由関数::生成する("frame/action.rs", "選ぶ", "アプリ"),
-    未是正の自由関数::生成する("frame/borrowed_draw.rs", "受け皿を預けて描画する", "アプリ"),
     未是正の自由関数::生成する("frame/draw_input.rs", "組み立てる", "アプリ"),
     未是正の自由関数::生成する("frame/draw_input/frame_view.rs", "画素内ずらしを決める", "アプリ"),
     未是正の自由関数::生成する("frame/draw_input/frame_view.rs", "視点を求める", "アプリ"),
@@ -19,9 +18,7 @@ const 項目一覧: [未是正の自由関数; 22] = [
     未是正の自由関数::生成する("frame_dump/dump_destination.rs", "ダンプ先のパスを決める", "アプリ"),
     未是正の自由関数::生成する("frame_dump/indirect_probe_check.rs", "間接照明代表板を照合する", "アプリ"),
     未是正の自由関数::生成する("frame_dump/sky_pixel_check.rs", "空代表画素を照合する", "アプリ"),
-    未是正の自由関数::生成する("handler/resume.rs", "格納する", "アプリ"),
     未是正の自由関数::生成する("handler/resume.rs", "生成してアプリへ格納する", "アプリ"),
-    未是正の自由関数::生成する("hot_reload_asset_apply/validation.rs", "反映前の検査を通す", "アプリ"),
     未是正の自由関数::生成する("measurement_setup.rs", "レンダラーの計測を有効にする", "アプリ"),
     未是正の自由関数::生成する("measurement_setup.rs", "実表示計測要求を決める", "アプリ"),
     未是正の自由関数::生成する("primitive_draw_item_registry/refill.rs", "詰め直す", "プリミティブ描画項目台帳"),
