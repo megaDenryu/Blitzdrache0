@@ -18,6 +18,7 @@ pub(crate) use range::段差走査の指定;
 use shot::撮影の側;
 pub(in crate::app) use shot::撮影指定;
 
+use crate::app::time_step::フレーム番号;
 use crate::cli::起動引数エラー;
 
 pub(in crate::app) struct 段差走査 {
@@ -42,14 +43,14 @@ impl 段差走査 {
     }
 
     /// そのフレームで撮っている撮影。撮り終えた後のフレームでは無い。
-    pub(in crate::app) fn このフレームの撮影(&self, 現在フレーム: u32) -> Option<撮影指定> {
-        let 番号 = usize::try_from(現在フレーム / 一撮影のフレーム数).unwrap_or(usize::MAX);
+    pub(in crate::app) fn このフレームの撮影(&self, フレーム番号: フレーム番号) -> Option<撮影指定> {
+        let 番号 = usize::try_from(フレーム番号.区切りの何番目か(一撮影のフレーム数)).unwrap_or(usize::MAX);
         self.撮影一覧.get(番号).copied()
     }
 
     /// そのフレームが撮影の最後のフレームか。ここでだけ読み戻して書き出す。
-    pub(in crate::app) fn このフレームで読み戻すか(&self, 現在フレーム: u32) -> bool {
-        現在フレーム % 一撮影のフレーム数 == 一撮影のフレーム数 - 1 && self.このフレームの撮影(現在フレーム).is_some()
+    pub(in crate::app) fn このフレームで読み戻すか(&self, フレーム番号: フレーム番号) -> bool {
+        フレーム番号.区切りの最後のフレームか(一撮影のフレーム数) && self.このフレームの撮影(フレーム番号).is_some()
     }
 }
 

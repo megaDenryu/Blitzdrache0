@@ -63,7 +63,7 @@ impl アプリ {
             地表の層のタイル,
         } = 一式;
         // 起動時シーンをディスクから読んだのはこの1回である。
-        self.シーン読込計数.読み込んだ(self.現在フレーム);
+        self.シーン読込計数.読み込んだ(crate::app::time_step::フレーム番号::起動時の最初());
         crate::reports::composition::ディスクリプタ索引上限を表示する(レンダラー.ディスクリプタ索引上限を取得する());
         if let Some(状況) = crate::app::measurement_setup::レンダラーの計測を有効にする(&mut レンダラー, self) {
             println!("実表示時刻計測: {}", 状況.名称());

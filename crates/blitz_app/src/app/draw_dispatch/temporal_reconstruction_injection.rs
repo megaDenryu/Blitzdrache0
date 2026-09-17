@@ -19,6 +19,7 @@ use blitz_render::{フレーム描画入力, 読み戻し結果};
 use super::frame_reach::描画の到達;
 use crate::app::frame::フレーム視点;
 use crate::app::screen_installation::画面の据え付け;
+use crate::app::time_step::フレーム番号;
 use crate::app::アプリ;
 use crate::cli::起動モード;
 use crate::error::起動エラー;
@@ -28,14 +29,14 @@ use crate::smoke::スモークアクション;
 impl アプリ {
     /// このフレームで合成入力の突き合わせを行うか。`--report-temporal-reconstruction-injection`を与えた
     /// `--frames`の最終フレームだけが対象である。
-    pub(in crate::app) fn 時間再構成の合成入力を突き合わせるフレームか(&self, アクション: スモークアクション) -> bool {
+    pub(in crate::app) fn 時間再構成の合成入力を突き合わせるフレームか(&self, フレーム番号: フレーム番号, アクション: スモークアクション) -> bool {
         if !self.読み戻し検収.時間再構成の合成入力を突き合わせるか {
             return false;
         }
         let 起動モード::スモーク実行 { フレーム数 } = self.起動モード else {
             return false;
         };
-        self.現在フレーム + 1 == フレーム数 && アクション != スモークアクション::差し替え前ダンプ
+        フレーム番号.最後のフレームか(フレーム数) && アクション != スモークアクション::差し替え前ダンプ
     }
 
     pub(in crate::app) fn 時間再構成の合成入力を突き合わせる(&mut self, 描画入力: フレーム描画入力<'_>, 視点情報: &フレーム視点) -> Result<描画の到達, 起動エラー> {

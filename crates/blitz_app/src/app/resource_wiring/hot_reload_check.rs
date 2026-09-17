@@ -7,6 +7,7 @@ use blitz_render::レンダラー;
 use super::資源の配線;
 use crate::app::draw_bundle_ledger::描画束の台帳;
 use crate::app::screen_installation::画面の据え付け;
+use crate::app::time_step::フレーム番号;
 use crate::app::アプリ;
 use crate::hot_reload::ホットリロード結果;
 
@@ -67,7 +68,7 @@ impl 資源の配線 {
 
 impl アプリ {
     /// 資源の配線へ書き込み先を渡して確認を頼み、ディスクを読んだ回数だけ自分が数える。
-    pub(in crate::app) fn ホットリロードを確認する(&mut self) {
+    pub(in crate::app) fn ホットリロードを確認する(&mut self, フレーム番号: フレーム番号) {
         let 反映先 = ホットリロードの反映先 {
             レンダラー: 画面の据え付け::描画の最中に借りる(&mut self.据え付け).レンダラーを借りる(),
             描画束の台帳: &mut self.描画束の台帳,
@@ -76,7 +77,7 @@ impl アプリ {
             大域ずらし量: self.大域ずらし量,
         };
         if self.資源の配線.ホットリロードを確認する(反映先) == 実行時シーンをディスクから読んだか::読んだ {
-            self.シーン読込計数.読み込んだ(self.現在フレーム);
+            self.シーン読込計数.読み込んだ(フレーム番号);
         }
     }
 }

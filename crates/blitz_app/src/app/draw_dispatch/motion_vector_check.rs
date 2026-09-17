@@ -12,6 +12,7 @@ use blitz_render::{フレーム描画入力, 読み戻し結果};
 
 use super::frame_reach::描画の到達;
 use crate::app::screen_installation::画面の据え付け;
+use crate::app::time_step::フレーム番号;
 use crate::app::アプリ;
 use crate::cli::起動モード;
 use crate::error::起動エラー;
@@ -20,14 +21,14 @@ use crate::smoke::スモークアクション;
 
 impl アプリ {
     /// このフレームで動きベクトルを読み戻すか。`--report-motion-vector`を与えた`--frames`の最終フレームだけが対象である。
-    pub(in crate::app) fn 動きベクトルを報告するフレームか(&self, アクション: スモークアクション) -> bool {
+    pub(in crate::app) fn 動きベクトルを報告するフレームか(&self, フレーム番号: フレーム番号, アクション: スモークアクション) -> bool {
         if !self.読み戻し検収.動きベクトルを報告するか {
             return false;
         }
         let 起動モード::スモーク実行 { フレーム数 } = self.起動モード else {
             return false;
         };
-        self.現在フレーム + 1 == フレーム数 && アクション != スモークアクション::差し替え前ダンプ
+        フレーム番号.最後のフレームか(フレーム数) && アクション != スモークアクション::差し替え前ダンプ
     }
 
     pub(in crate::app) fn 動きベクトルを報告する(&mut self, 描画入力: フレーム描画入力<'_>) -> Result<描画の到達, 起動エラー> {

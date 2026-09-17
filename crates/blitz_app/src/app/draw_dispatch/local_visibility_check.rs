@@ -14,6 +14,7 @@ use blitz_render::{フレーム描画入力, 読み戻し結果};
 use super::frame_reach::描画の到達;
 use crate::app::frame::フレーム視点;
 use crate::app::screen_installation::画面の据え付け;
+use crate::app::time_step::フレーム番号;
 use crate::app::アプリ;
 use crate::cli::起動モード;
 use crate::error::起動エラー;
@@ -27,12 +28,12 @@ impl アプリ {
     /// 前提: フレームダンプとの同時指定は起動引数の解析が型付きの失敗で拒む
     /// (`crate::cli::local_visibility_settings::検収とフレームダンプの排他を確かめる`)。この判定が
     /// ダンプより先に立つことをここで気にしなくてよいのは、両方が立つ起動設定が作られないためである。
-    pub(in crate::app) fn 局所可視性を検収する形(&self, アクション: スモークアクション) -> Option<合成深度の形> {
+    pub(in crate::app) fn 局所可視性を検収する形(&self, フレーム番号: フレーム番号, アクション: スモークアクション) -> Option<合成深度の形> {
         let 形 = self.読み戻し検収.局所可視性の検収の形?;
         let 起動モード::スモーク実行 { フレーム数 } = self.起動モード else {
             return None;
         };
-        let 最終フレームか = self.現在フレーム + 1 == フレーム数 && アクション != スモークアクション::差し替え前ダンプ;
+        let 最終フレームか = フレーム番号.最後のフレームか(フレーム数) && アクション != スモークアクション::差し替え前ダンプ;
         最終フレームか.then_some(形)
     }
 

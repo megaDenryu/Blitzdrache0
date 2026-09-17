@@ -15,6 +15,7 @@ use blitz_render::{HDR読み戻し画像, フレーム描画入力};
 
 use super::frame_reach::描画の到達;
 use crate::app::screen_installation::画面の据え付け;
+use crate::app::time_step::フレーム番号;
 use crate::app::アプリ;
 use crate::cli::起動モード;
 use crate::error::起動エラー;
@@ -39,7 +40,7 @@ impl 時間再構成の観測 {
 impl アプリ {
     /// このフレームで時間再構成の観測を採るか。`--report-temporal-reconstruction`を与えた`--frames`の
     /// 最後の何フレームかだけが対象である。
-    pub(in crate::app) fn 時間再構成を観測するフレームか(&self, アクション: スモークアクション) -> bool {
+    pub(in crate::app) fn 時間再構成を観測するフレームか(&self, フレーム番号: フレーム番号, アクション: スモークアクション) -> bool {
         if !self.読み戻し検収.時間再構成を報告するか {
             return false;
         }
@@ -49,28 +50,27 @@ impl アプリ {
         if アクション == スモークアクション::差し替え前ダンプ {
             return false;
         }
-        self.現在フレーム + 観測フレーム数.min(フレーム数) >= フレーム数
+        フレーム番号.最後の何フレームかに入るか(フレーム数, 観測フレーム数)
     }
 
-    pub(in crate::app) fn 時間再構成を観測する(&mut self, 描画入力: フレーム描画入力<'_>) -> Result<描画の到達, 起動エラー> {
+    pub(in crate::app) fn 時間再構成を観測する(&mut self, 描画入力: フレーム描画入力<'_>, フレーム番号: フレーム番号) -> Result<描画の到達, 起動エラー> {
         let 起動モード::スモーク実行 { フレーム数 } = self.起動モード else {
             return Ok(描画の到達::届かなかった);
         };
-        if self.現在フレーム + 1 == フレーム数 {
+        if フレーム番号.最後のフレームか(フレーム数) {
             return self.無効化直後を突き合わせる(描画入力);
         }
-        self.フレーム間差分を採る(描画入力)
+        self.フレーム間差分を採る(描画入力, フレーム番号)
     }
 
     /// 1フレーム描いて再構成後の結果を読み戻し、前のフレームの結果との差を並べる。
-    fn フレーム間差分を採る(&mut self, 描画入力: フレーム描画入力<'_>) -> Result<描画の到達, 起動エラー> {
-        let 現在フレーム = self.現在フレーム;
+    fn フレーム間差分を採る(&mut self, 描画入力: フレーム描画入力<'_>, フレーム番号: フレーム番号) -> Result<描画の到達, 起動エラー> {
         let レンダラー = 画面の据え付け::描画の最中に借りる(&mut self.据え付け).レンダラーを借りる();
         let Some(今の結果) = 圧縮前のhdrを読み戻す(レンダラー, 描画入力, "フレーム間差分")? else {
             return Ok(描画の到達::届かなかった);
         };
         if let Some(前) = &self.時間再構成の観測.前フレームの結果 {
-            temporal_reconstruction::フレーム間差分を報告する(現在フレーム, 前, &今の結果);
+            temporal_reconstruction::フレーム間差分を報告する(フレーム番号, 前, &今の結果);
         }
         self.時間再構成の観測.前フレームの結果 = Some(今の結果);
         Ok(描画の到達::提示した)

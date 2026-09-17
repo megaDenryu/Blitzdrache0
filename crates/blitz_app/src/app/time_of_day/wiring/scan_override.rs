@@ -14,6 +14,7 @@ use blitz_math::大域秒;
 
 use super::super::step_scan::{撮影指定, 段差走査};
 use super::天空配線;
+use crate::app::time_step::フレーム番号;
 use crate::cli::{起動モード, 起動引数エラー};
 
 impl 天空配線 {
@@ -32,19 +33,19 @@ impl 天空配線 {
     }
 
     /// そのフレームで撮っている撮影。段差の走査でない実行では無い。
-    pub(in crate::app) fn このフレームの撮影(&self, 現在フレーム: u32) -> Option<撮影指定> {
-        self.段差走査.as_ref()?.このフレームの撮影(現在フレーム)
+    pub(in crate::app) fn このフレームの撮影(&self, フレーム番号: フレーム番号) -> Option<撮影指定> {
+        self.段差走査.as_ref()?.このフレームの撮影(フレーム番号)
     }
 
     /// そのフレームで圧縮前のHDRを読み戻すか。段差の走査でない実行では常に偽である。
-    pub(in crate::app) fn 段差走査で読み戻すフレームか(&self, 現在フレーム: u32) -> bool {
-        self.段差走査.as_ref().is_some_and(|走査| 走査.このフレームで読み戻すか(現在フレーム))
+    pub(in crate::app) fn 段差走査で読み戻すフレームか(&self, フレーム番号: フレーム番号) -> bool {
+        self.段差走査.as_ref().is_some_and(|走査| 走査.このフレームで読み戻すか(フレーム番号))
     }
 
     /// そのフレームの撮影の条件を据える。時刻は一日の始まりからの秒であり、紀元が一日の始まりであるため
     /// そのまま世界時刻になる。区間の上書きは遠方環境の焼く入力だけを動かし、空背景と直接光は時刻のまま残る。
-    pub(in crate::app) fn 撮影の条件を据える(&mut self, 現在フレーム: u32) {
-        let Some(撮影) = self.このフレームの撮影(現在フレーム) else {
+    pub(in crate::app) fn 撮影の条件を据える(&mut self, フレーム番号: フレーム番号) {
+        let Some(撮影) = self.このフレームの撮影(フレーム番号) else {
             return;
         };
         let 時刻 = 世界時刻::生成する(大域秒::生成する(撮影.一日内秒)).unwrap_or_else(|誤り| panic!("段差の走査が据える一日内秒から世界時刻を作れなかった: {誤り}"));

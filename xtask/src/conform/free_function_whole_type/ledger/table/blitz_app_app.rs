@@ -5,7 +5,7 @@
 
 use super::super::{区画の一覧, 未是正の自由関数};
 
-const 項目一覧: [未是正の自由関数; 19] = [
+const 項目一覧: [未是正の自由関数; 18] = [
     未是正の自由関数::生成する("draw_dispatch/rewrite_action.rs", "適用する", "アプリ"),
     未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_injection/canon.rs", "差を取り込む", "突き合わせの要約"),
     未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_injection/synthesis.rs", "一画素を積む", "合成入力の材料"),
@@ -13,7 +13,6 @@ const 項目一覧: [未是正の自由関数; 19] = [
     未是正の自由関数::生成する("frame/draw_input.rs", "組み立てる", "アプリ"),
     未是正の自由関数::生成する("frame/draw_input/frame_view.rs", "画素内ずらしを決める", "アプリ"),
     未是正の自由関数::生成する("frame/draw_input/frame_view.rs", "視点を求める", "アプリ"),
-    未是正の自由関数::生成する("frame/finish.rs", "進めて必要なら終了する", "アプリ"),
     未是正の自由関数::生成する("frame_dump/cluster_assignment_check.rs", "クラスタ選別の割り当て統計を報告する", "アプリ"),
     未是正の自由関数::生成する("frame_dump/dump_destination.rs", "ダンプ先のパスを決める", "アプリ"),
     未是正の自由関数::生成する("frame_dump/indirect_probe_check.rs", "間接照明代表板を照合する", "アプリ"),
