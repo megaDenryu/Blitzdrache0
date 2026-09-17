@@ -10,6 +10,7 @@ members = [
     "crates/blitz_sim",
     "crates/blitz_ecs",
     "crates/blitz_game",
+    "crates/blitz_esca",
     "crates/blitz_app",
     "crates/editor_server",
     "xtask",

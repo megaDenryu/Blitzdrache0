@@ -249,6 +249,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "blitz_esca"
+version = "0.1.0"
+dependencies = [
+ "blitz_math",
+]
+
+[[package]]
 name = "blitz_game"
 version = "0.1.0"
 dependencies = [
