@@ -14,9 +14,7 @@ use winit::window::WindowId;
 
 impl ApplicationHandler for アプリ {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        if self.据え付け.is_some() {
-            return;
-        }
+        // 2度目以降の`resumed`で何もしないことは、`resume`が起動時に一度だけ使う設定を消費したかどうかが決める。
         resume::生成してアプリへ格納する(self, event_loop);
     }
 
