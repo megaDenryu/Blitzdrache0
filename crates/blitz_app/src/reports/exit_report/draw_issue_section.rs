@@ -7,7 +7,7 @@ use blitz_render::レンダラー;
 use crate::app::終了時の観測一式;
 use crate::reports::{draw_issue, point_light_shadow};
 
-pub(super) fn 出す(観測: &終了時の観測一式<'_>) {
+pub(super) fn 描画発行の内訳の節を出す(観測: &終了時の観測一式<'_>) {
     match 観測.レンダラー {
         Some(レンダラー) => draw_issue::描画発行内訳を表示する(&レンダラー.描画発行内訳を取得する()),
         None => println!("描画発行内訳: レンダラーが生成されなかったため取得できない"),

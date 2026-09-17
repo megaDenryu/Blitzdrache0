@@ -7,7 +7,7 @@ use blitz_render::レンダラー;
 use crate::app::終了時の観測一式;
 use crate::reports::{aerial_farthest_distance, atmosphere_passes, distant_environment_key};
 
-pub(super) fn 出す(観測: &終了時の観測一式<'_>) {
+pub(super) fn 大気のベイク済み画像の生成パス数の節を出す(観測: &終了時の観測一式<'_>) {
     match 観測.レンダラー.map(レンダラー::大気のベイク済み画像生成パス数の記録を取得する) {
         Some(記録) => atmosphere_passes::大気のベイク済み画像生成パス数を表示する(記録),
         None => println!("大気のベイク済み画像生成パス数: レンダラーが生成されなかったため数えていない"),
