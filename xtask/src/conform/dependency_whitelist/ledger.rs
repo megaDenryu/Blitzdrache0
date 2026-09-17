@@ -20,11 +20,14 @@
 //! win32job は`cargo xtask editor`自身が強制終了されたときに、起動した子孫をWindowsの仕事の束(Job Object)で
 //! まとめて終わらせるためだけの依存であり、Windows向けのビルドでのみ引く。Ctrl+Cの捕捉が走らない止め方に対する
 //! 最後の網であり、ctrlcでは届かない範囲だけを埋める。
+//! blitz_ecs はゲーム世界の個体群の基盤であり、thiserror 以外の何も知らない。具体ゲームの型も、物理・描画・アセットの型も
+//! 知らないことをこの表が課す。逆向きに blitz_sim・blitz_engine・blitz_render の行へ blitz_ecs を書かないことが、
+//! それらが個体群を知らないことの強制である(参照: `_doc/設計/ゲーム世界の個体群の基盤.md`「層の定義」)。
 //! blitz_sim → blitz_collision は剛体の接触が接触点集合の型を直接読むための依存であり、剛体力学層を `blitz_sim` へ置く
 //! 判断1の機械強制である(参照: `_doc/設計/剛体の状態と接触.md`「判断1」)。blitz_sim は引き続き blitz_engine・
 //! blitz_render・blitz_app を知らず、この表がそれを課す。
 
-pub(super) const 白リスト: [(&str, &[&str]); 11] = [
+pub(super) const 白リスト: [(&str, &[&str]); 12] = [
     ("blitz_math", &["glam"]),
     ("blitz_collision", &["blitz_math", "thiserror"]), // 衝突数学層。世界もチャンクもアセットもGPUも知らない
     ("blitz_engine", &["blitz_collision", "blitz_math", "blitz_render", "thiserror"]),
@@ -35,6 +38,7 @@ pub(super) const 白リスト: [(&str, &[&str]); 11] = [
     ),
     ("blitz_render", &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"]),
     ("blitz_sim", &["blitz_collision", "blitz_math", "thiserror"]), // 判断51: 手法の数学のみ。接触点集合を読むためだけにblitz_collisionを許す
+    ("blitz_ecs", &["thiserror"]),                                  // 個体群の基盤。具体ゲームも物理も描画も知らない
     ("blitz_game", &["blitz_math"]),                                // ゲームロジック層。許すのは blitz_engine と blitz_math だけ
     (
         "blitz_app",
