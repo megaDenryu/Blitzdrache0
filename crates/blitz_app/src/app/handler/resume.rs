@@ -4,6 +4,7 @@
 
 use winit::event_loop::ActiveEventLoop;
 
+use crate::app::screen_installation::画面の据え付け;
 use crate::app::window_setup::{画面の作り方, 読み込む世界の材料, 起動時に組み上げた一式};
 use crate::app::アプリ;
 
@@ -70,9 +71,7 @@ fn 格納する(アプリ: &mut アプリ, event_loop: &ActiveEventLoop, 一式:
         event_loop.exit();
         return;
     }
-    アプリ.window = Some(window);
-    アプリ.レンダラー = Some(レンダラー);
-    アプリ.画面へ重ねるui = Some(画面へ重ねるui);
+    アプリ.据え付け = Some(画面の据え付け::据える(レンダラー, 画面へ重ねるui, window));
     アプリ.アニメーション = アニメーション;
     アプリ.布プリセット = 布プリセット;
     アプリ.布の参照比較 = 布の参照比較;

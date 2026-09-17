@@ -14,6 +14,7 @@ use blitz_math::{メートル, ワールド, 位置};
 use blitz_render::{布の進める刻み数, 布フレーム入力};
 
 use super::cloth_setup::布プリセット;
+use super::screen_installation::画面の据え付け;
 use super::アプリ;
 use crate::app::進める刻み数;
 use crate::error::起動エラー;
@@ -26,7 +27,8 @@ impl アプリ {
             return Ok(None);
         };
         let (カプセル端点a, カプセル端点b, カプセル半径) = プリセット.カプセル.unwrap_or(([0.0; 3], [0.0; 3], 0.0));
-        let 目標位置 = 掴みの目標位置を求める(self.入力状態.掴み操作(), self.window.as_ref(), プリセット);
+        let 物理寸法 = 画面の据え付け::描画の最中に見る(&self.据え付け).ウィンドウの物理寸法();
+        let 目標位置 = 掴みの目標位置を求める(self.入力状態.掴み操作(), 物理寸法, プリセット);
         let 介入一覧 = self.掴みの介入.この描画の介入一覧を作る(目標位置, プリセット.掴みの目標拘束添字, 刻み数);
         if let Some(比較) = &mut self.布の参照比較 {
             比較.刻みを数える(刻み数);
@@ -45,9 +47,9 @@ impl アプリ {
 }
 
 /// 掴んでいる描画だけ、カーソル位置(物理px)をプリセットの写像でワールドの目標位置へ写す。
-fn 掴みの目標位置を求める(掴み: Option<(f32, f32)>, window: Option<&winit::window::Window>, プリセット: &布プリセット) -> Option<位置<ワールド>> {
-    let ((px, py), 寸法) = 掴み.zip(window.map(winit::window::Window::inner_size))?;
-    Some(目標位置へ写す(プリセット, px, py, 寸法.width, 寸法.height))
+fn 掴みの目標位置を求める(掴み: Option<(f32, f32)>, 物理寸法: winit::dpi::PhysicalSize<u32>, プリセット: &布プリセット) -> Option<位置<ワールド>> {
+    let (px, py) = 掴み?;
+    Some(目標位置へ写す(プリセット, px, py, 物理寸法.width, 物理寸法.height))
 }
 
 /// カーソル位置(物理px)をプリセットの写像(中心+横基底*x正規化座標+縦基底*y正規化座標)でワールドへ写す。

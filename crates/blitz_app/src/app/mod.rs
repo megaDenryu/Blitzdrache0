@@ -25,6 +25,7 @@ mod scene_camera;
 mod scene_lighting;
 pub(crate) mod scene_load;
 mod scene_read_count;
+mod screen_installation;
 mod section_timing;
 mod sph_setup;
 mod streaming;
@@ -33,15 +34,15 @@ mod time_step;
 mod visibility;
 mod window_setup;
 use crate::cli::{布モード, 描画対象の並べ方, 空中遠近合成指定, 粒子表示モード, 起動モード};
-use crate::{error::起動エラー, hot_reload::ホットリローダー, input::入力状態, overlay_ui::画面へ重ねるUI};
-use blitz_render::{クリアカラー, レンダラー};
+use crate::{error::起動エラー, hot_reload::ホットリローダー, input::入力状態};
+use blitz_render::クリアカラー;
 pub(crate) use frame_timing::{フレーム時間統計, フレーム間隔から統計を集計する};
+use screen_installation::画面の据え付け;
 pub(crate) use time_of_day::{太陽天頂区間の記録, 空の再現条件, 遠方環境の鍵の記録, 遠方環境更新判定};
 pub(crate) use time_step::{描画補間の割合, 進める刻み数};
-use winit::window::Window;
 pub(crate) use {draw_dispatch::時間再構成の突き合わせの要約, streaming::ストリーミング要約};
 
-/// 前提: `レンダラー`フィールドは`window`より前に宣言する。Rustは構造体フィールドを宣言順にDropするため、この順序がレンダラー破棄(surface等)をウィンドウ破棄より必ず先に行うことを保証する(レンダラーの生成前提を満たす)。
+/// `据え付け`は、レンダラー・画面へ重ねるUI・ウィンドウが同じ地点で揃って据わり揃って消えることを1つで持つ。破棄順の不変条件はその型が持つ。
 ///
 /// `大域ずらし量`は、カメラ・照明の大域位置と、チャンク座標から導出した描画の基準原点の全部に同じ値を足す。
 /// `時間再構成の観測`は、前のフレームの再構成結果を1枚だけ持つ。
@@ -57,8 +58,7 @@ pub(crate) use {draw_dispatch::時間再構成の突き合わせの要約, strea
 /// `シーン読込計数`は、段の選択や可視判定がディスクI/Oを起こさないことを示す。
 /// `スモーク実行`は、自己操作の計画と書き換えの依存を1つで持つ。
 pub(crate) struct アプリ {
-    レンダラー: Option<レンダラー>,
-    window: Option<Window>,
+    据え付け: Option<画面の据え付け>,
     起動モード: 起動モード,
     シーン: crate::cli::起動時シーン,
     アセットの置き場: crate::runtime_assets::実行時アセットの置き場,
@@ -79,7 +79,6 @@ pub(crate) struct アプリ {
     粒子表示: 粒子表示モード,
     報告要求: report_requests::報告要求, // 終了時に出す報告の要求。
     フレーム間隔計測: Option<frame_timing::フレーム間隔計測>,
-    画面へ重ねるui: Option<画面へ重ねるUI>,
     開発ui初期有効: bool,
     計測つまみ: frame::描画の計測つまみ,
     フレームダンプ先: crate::cli::フレームダンプ指定,

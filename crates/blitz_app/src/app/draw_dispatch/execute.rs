@@ -8,6 +8,7 @@ use blitz_render::{フレーム描画入力, 描画結果, 読み戻し結果};
 
 use super::frame_reach::描画の到達;
 use super::{pixel_readback, rewrite_action};
+use crate::app::screen_installation::画面の据え付け;
 use crate::app::アプリ;
 use crate::error::起動エラー;
 use crate::smoke::{self, スモークアクション};
@@ -16,9 +17,7 @@ impl アプリ {
     pub(in crate::app) fn 実行して判定する(&mut self, アクション: スモークアクション, 描画入力: フレーム描画入力<'_>) -> Result<描画の到達, 起動エラー> {
         rewrite_action::適用する(self, アクション)?;
 
-        let Some(レンダラー) = &mut self.レンダラー else {
-            return Ok(描画の到達::届かなかった);
-        };
+        let レンダラー = 画面の据え付け::描画の最中に借りる(&mut self.据え付け).レンダラーを借りる();
 
         match アクション {
             スモークアクション::初期色判定
@@ -46,9 +45,7 @@ impl アプリ {
     }
 
     fn フォックス差分を判定する(&mut self, 描画入力: フレーム描画入力<'_>) -> Result<描画の到達, 起動エラー> {
-        let Some(レンダラー) = &mut self.レンダラー else {
-            return Ok(描画の到達::届かなかった);
-        };
+        let レンダラー = 画面の据え付け::描画の最中に借りる(&mut self.据え付け).レンダラーを借りる();
         let 読み戻し = レンダラー.一フレーム描画して読み戻す(描画入力)?;
         let Some(基準) = &self.スモーク基準画像 else {
             return Err(起動エラー::ピクセル判定失敗("差分判定前に基準画像が保存されていない".to_string()));

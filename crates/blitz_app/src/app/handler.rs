@@ -1,5 +1,5 @@
 //! `ApplicationHandler` 実装。winit所有ループ(パターンA)の受け口。参照: `_doc/設計/イベントループとフレームペーシング.md`
-//! 開発用UIの表示切替だけは触れるフィールドが`画面へ重ねるui`に閉じるため`dev_ui_toggle`にある。
+//! 開発用UIの表示切替だけは触れるフィールドが`据え付け`に閉じるため`dev_ui_toggle`にある。
 //! 起動時に1回だけ走る生成と格納は`resume`にある。
 
 mod dev_ui_toggle;
@@ -14,14 +14,14 @@ use winit::window::WindowId;
 
 impl ApplicationHandler for アプリ {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        if self.レンダラー.is_some() {
+        if self.据え付け.is_some() {
             return;
         }
         resume::生成してアプリへ格納する(self, event_loop);
     }
 
     fn window_event(&mut self, event_loop: &ActiveEventLoop, _window_id: WindowId, event: WindowEvent) {
-        let egui消費済みか = self.window.as_ref().zip(self.画面へ重ねるui.as_mut()).is_some_and(|(window, 画面へ重ねるui)| 画面へ重ねるui.winitイベントを取り込む(window, &event));
+        let egui消費済みか = self.据え付け.as_mut().is_some_and(|据え付け| 据え付け.uiがwinitイベントを消費したか(&event));
         self.f3押下を確認する(&event);
 
         // 入力層はwinitイベントを蓄積するだけで、以降のmatchが既存の責務を続ける（カメラの操作意図への写像は`入力状態`内部で完結し、blitz_engineはwinitを知らない）。eguiが消費したイベント(ポインタ/キーボードがUI操作中)はカメラ入力へ流さない。
@@ -32,8 +32,8 @@ impl ApplicationHandler for アプリ {
         match event {
             WindowEvent::RedrawRequested => self.一フレーム実行する(event_loop),
             WindowEvent::Resized(寸法) => {
-                if let Some(レンダラー) = &mut self.レンダラー {
-                    レンダラー.サイズ変更を通知する(ウィンドウ寸法::生成する(寸法.width, 寸法.height));
+                if let Some(据え付け) = &mut self.据え付け {
+                    据え付け.画面の寸法の変化をレンダラーへ通知する(ウィンドウ寸法::生成する(寸法.width, 寸法.height));
                 }
             }
             WindowEvent::CloseRequested => event_loop.exit(),
@@ -42,8 +42,8 @@ impl ApplicationHandler for アプリ {
     }
 
     fn about_to_wait(&mut self, _event_loop: &ActiveEventLoop) {
-        if let Some(window) = &self.window {
-            window.request_redraw();
+        if let Some(据え付け) = &self.据え付け {
+            据え付け.次の描画を要求する();
         }
     }
 }

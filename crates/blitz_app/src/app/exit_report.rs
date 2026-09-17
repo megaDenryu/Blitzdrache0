@@ -2,7 +2,7 @@
 //! 描画とは呼び出し頻度も触れるフィールドも違う。行の整形は`reports`配下の各報告が持ち、ここは順序だけを決める。
 //!
 //! 注意: レンダラー内部を読む報告(GPU時間・GPUメモリ・描画発行)は破棄より前に呼ぶ必要があるため、この局面は
-//! `レンダラーを破棄する`より前に1回だけ呼ぶ。
+//! `据え付けを破棄する`より前に1回だけ呼ぶ。
 
 use crate::reports::{display_timing, streaming_summary};
 
@@ -94,7 +94,7 @@ impl super::アプリ {
             display_timing::実表示間隔を表示する(self.実表示計測状況を取得する(), self.実表示観測一覧を取得する());
         }
         if let Some(比較) = &self.布の参照比較 {
-            let 読み戻し = self.レンダラー.as_ref().map(blitz_render::レンダラー::布の粒子と乗数を読み戻す);
+            let 読み戻し = self.据え付け済みのレンダラーを見る().map(blitz_render::レンダラー::布の粒子と乗数を読み戻す);
             crate::reports::cloth_xpbd_reference::参照比較を表示する(比較, 読み戻し);
         }
     }

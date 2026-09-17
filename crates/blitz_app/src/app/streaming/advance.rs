@@ -4,6 +4,7 @@
 use std::time::Instant;
 
 use super::bundle_sync;
+use crate::app::screen_installation::画面の据え付け;
 use crate::app::アプリ;
 use crate::error::起動エラー;
 
@@ -18,10 +19,7 @@ impl アプリ {
         let Some(配線) = self.ストリーミング.配線を可変で借りる() else {
             return Ok(());
         };
-        // レンダラーが揃う前は進めない。準備完了したCPUデータを載せる相手が居らず、調停の保管だけが増えるためである。
-        let Some(レンダラー) = &mut self.レンダラー else {
-            return Ok(());
-        };
+        let レンダラー = 画面の据え付け::描画の最中に借りる(&mut self.据え付け).レンダラーを借りる();
         let Some(カタログ) = self.ホットリローダー.カタログを参照する() else {
             return Err(起動エラー::ストリーミングカタログ未構築);
         };

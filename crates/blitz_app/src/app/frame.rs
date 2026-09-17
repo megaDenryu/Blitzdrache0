@@ -21,6 +21,7 @@ mod visible_selection;
 
 use winit::event_loop::ActiveEventLoop;
 
+use super::screen_installation::画面の据え付け;
 use super::アプリ;
 use crate::error::起動エラー;
 use crate::game::ゲームの終了要求;
@@ -33,7 +34,8 @@ pub(super) use draw_input::{描画の計測つまみ, 組み立てる as 描画�
 impl アプリ {
     /// RedrawRequestedのたびに1フレーム分の描画を実行する。
     pub(super) fn 一フレーム実行する(&mut self, event_loop: &ActiveEventLoop) {
-        if self.レンダラー.is_none() {
+        // 据え付けが揃う前の描画機会はここで弾く。この1箇所の判定が、下流の工程が据え付けを無条件に借りてよい根拠である。
+        if self.据え付け.is_none() {
             return;
         }
         if let Some(計測) = &mut self.フレーム間隔計測 {
@@ -82,8 +84,8 @@ impl アプリ {
     /// そのフレームの自己操作を決め、スモーク実行を持つ起動ならウィンドウへ適用する。
     fn この描画の自己操作をウィンドウへ適用する(&mut self) -> スモークアクション {
         let アクション = action::選ぶ(self);
-        if let (Some(スモーク実行), Some(window)) = (&self.スモーク実行, &self.window) {
-            スモーク実行.ウィンドウへ自己操作を適用する(window, アクション);
+        if let Some(スモーク実行) = &self.スモーク実行 {
+            スモーク実行.ウィンドウへ自己操作を適用する(画面の据え付け::描画の最中に見る(&self.据え付け).ウィンドウを見る(), アクション);
         }
         アクション
     }
