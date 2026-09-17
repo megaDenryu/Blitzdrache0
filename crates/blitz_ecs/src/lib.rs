@@ -4,6 +4,8 @@
 //! クレート名にだけ現れる。一般的なECSの抽象名をこのクレートの中の識別子として使うことは
 //! `cargo xtask conform` が機械で禁じる。
 //!
+//! `#[cfg(test)]` の下にある素朴な置き場(`naive_baseline`)は、疎な集合の数字と並べる比較対象として測るためだけの実装であり、本番の置き場ではない。
+//!
 //! 注意: このクレートは thiserror 以外の何も知らない。具体ゲームの型も、物理・描画・アセットの型も知らない。
 //! 依存の向きは `xtask/src/conform/dependency_whitelist/ledger.rs` の白リストが機械で強制する。
 //!
@@ -19,6 +21,14 @@ mod liveness_ledger;
 mod liveness_ledger_tests;
 mod liveness_slot;
 mod liveness_state;
+#[cfg(test)]
+mod naive_baseline;
+#[cfg(test)]
+mod naive_baseline_measurement;
+#[cfg(test)]
+mod naive_baseline_samples;
+#[cfg(test)]
+mod naive_baseline_tests;
 mod runtime_entity_id;
 
 pub use liveness_error::生存台帳エラー;
