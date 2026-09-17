@@ -1,9 +1,9 @@
 //! コンポジションルートが所有する `アプリ`(ApplicationHandler実装)。ウィンドウ生成・レンダラー生成・1フレーム実行の配線だけを行い、ロジックは書かない。
 mod animation_state;
 mod aspect;
-mod cloth_frame;
 pub(crate) mod cloth_reference;
 mod cloth_setup;
+mod cloth_wiring;
 mod create;
 mod draw_dispatch;
 mod exit_report;
@@ -37,6 +37,7 @@ mod window_setup;
 use crate::cli::{描画対象の並べ方, 起動モード};
 use crate::{error::起動エラー, hot_reload::ホットリローダー, input::入力状態};
 use blitz_render::クリアカラー;
+use cloth_wiring::布の配線;
 pub(crate) use frame_timing::{フレーム時間統計, フレーム間隔から統計を集計する};
 use one_time_launch_settings::起動時に一度だけ使う設定;
 use screen_installation::画面の据え付け;
@@ -51,7 +52,6 @@ pub(crate) use {draw_dispatch::時間再構成の突き合わせの要約, strea
 /// `天空`は世界の空方針・ゲーム時計・シーンの基準ライティング・そのフレームのライティングと空入力を1つで持つ。
 /// `露出`(判断39)と`ブレンド`(判断45)は、CLIの初期値を開発用UIのスライダーが実行中に書き換える。
 /// `時間進行`は基本刻みと一描画で進める刻み数の上限、および実行の種類で選んだ進め方を1つで持つ。刻みの本数を決める状態だけを束ね、固定刻みで確定するゲーム状態も描画機会ごとの一時状態も混ぜない。
-/// `掴みの介入`は掴み操作のエッジ検出を持ち、離した最初の実刻みで「離す」介入を1回だけ発行する。
 /// `ストリーミング`の中に、チャンク格子・目録・予算・台帳・読込器はすべて入っている。
 /// `可視判定`は束の可視材料・個体別の段の記憶・毎フレームの可視ID列を持つ。ストリーミングを使わない起動時シーンでも要るため、ストリーミング配線の中ではなくアプリが直に持つ。
 /// `プリミティブ描画項目台帳`は可視判定の台帳と同じ束IDで対になり、束の追加と解除で一緒に出入りする。
@@ -83,10 +83,8 @@ pub(crate) struct アプリ {
     露出: crate::cli::露出倍率,
     ブレンド: crate::cli::アニメーションのブレンド係数,
     アニメーション: Option<animation_state::アニメーション再生>,
-    布プリセット: Option<cloth_setup::布プリセット>,
-    布の参照比較: Option<cloth_reference::布の参照比較>, // XPBDの参照比較の方式だけが持つ。終了時にCPUの参照計算と突き合わせる
-    掴みの介入: cloth_frame::掴み介入の発行,             // 掴み操作を布の介入へ写す発行元
-    アニメ時刻: blitz_math::秒,                          // アニメーション時刻(その描画で進めた刻み数×基本刻みで歩進する)
+    布の配線: 布の配線,
+    アニメ時刻: blitz_math::秒, // アニメーション時刻(その描画で進めた刻み数×基本刻みで歩進する)
     スモーク基準画像: Option<blitz_render::読み戻し画像>,
     ストリーミング: streaming::ストリーミングの有無,                                  // `--streaming`指定時だけ配線を持つ
     可視判定: visibility::可視判定配線,                                               // インスタンス群の可視判定と個体別LOD
