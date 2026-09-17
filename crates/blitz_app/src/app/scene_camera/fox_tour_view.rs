@@ -9,7 +9,7 @@
 //! 目的地の柱と、その間の地面の起伏が同時に入る構図である。
 //!
 //! 注視点をずらさないのは、ゲームがプレイヤーの位置を毎フレーム供給し、カメラの注視点をそこへ据えるためである
-//! (参照: `crates/blitz_app/src/app/frame/camera_follow.rs`)。ここで与えるのは向きと距離だけである。
+//! (参照: `crates/blitz_app/src/app/view_wiring.rs`の`注視点へ追従する`)。ここで与えるのは向きと距離だけである。
 
 use blitz_engine::{カメラ, カメラの操作意図};
 use blitz_math::ラジアン;

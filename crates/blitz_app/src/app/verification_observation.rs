@@ -10,7 +10,7 @@ mod scene_read_count;
 mod section_timing;
 mod summary;
 
-pub(in crate::app) use summary::検収の観測の統計;
+pub(crate) use summary::検収の観測の統計;
 
 use std::time::Duration;
 
@@ -49,7 +49,7 @@ impl 検収の観測 {
     }
 
     /// フレーム間隔を測る実行か。`--report-frame-times`が指定されたときだけ真である。
-    pub(in crate::app) fn フレーム間隔を測るか(&self) -> bool {
+    fn フレーム間隔を測るか(&self) -> bool {
         self.フレーム間隔計測.is_some()
     }
 

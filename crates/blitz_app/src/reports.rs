@@ -14,6 +14,7 @@ pub(crate) mod display_timing;
 pub(crate) mod distant_environment;
 pub(crate) mod distant_environment_key;
 pub(crate) mod draw_issue;
+pub(crate) mod exit_report;
 pub(crate) mod game;
 pub(crate) mod gpu_frame_samples;
 pub(crate) mod gpu_time_table;

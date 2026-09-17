@@ -1,4 +1,5 @@
 //! コンポジションルートが所有する `アプリ`(ApplicationHandler実装)。ウィンドウ生成・レンダラー生成・1フレーム実行の配線だけを行い、ロジックは書かない。
+//! `main.rs`が呼ぶ口は、生成する・起動時エラーを取り出す・検証カウンタを取得する・終了時報告を出す・据え付けを破棄する、の5つだけである。
 mod animation_state;
 mod aspect;
 pub(crate) mod cloth_reference;
@@ -7,6 +8,7 @@ mod cloth_wiring;
 mod create;
 mod draw_bundle_ledger;
 mod draw_dispatch;
+mod exit_observations;
 mod exit_report;
 pub(crate) mod frame;
 mod frame_dump;
@@ -17,7 +19,6 @@ mod one_time_launch_settings;
 mod particle_setup;
 mod persistent_bundles;
 mod primitive_draw_item_registry;
-mod queries;
 mod report_requests;
 mod resource_wiring;
 mod scene_camera;
@@ -25,6 +26,7 @@ mod scene_lighting;
 pub(crate) mod scene_load;
 mod screen_installation;
 mod self_operation_wiring;
+mod shutdown;
 mod sph_setup;
 mod streaming;
 pub(crate) mod time_of_day;
@@ -39,6 +41,7 @@ use crate::{error::起動エラー, input::入力状態};
 use blitz_render::クリアカラー;
 use cloth_wiring::布の配線;
 use draw_bundle_ledger::描画束の台帳;
+pub(crate) use exit_observations::終了時の観測一式;
 pub(crate) use frame_timing::{フレーム時間統計, フレーム間隔から統計を集計する};
 use one_time_launch_settings::起動時に一度だけ使う設定;
 use resource_wiring::資源の配線;

@@ -17,6 +17,7 @@ mod bake_input;
 mod band_decision;
 mod clock_advance;
 mod create;
+mod exit_observation;
 mod exposure;
 mod scan_override;
 
@@ -35,6 +36,7 @@ use blitz_render::atmosphere::大気散乱媒体;
 use blitz_render::indirect_lighting::照明問い合わせ契約;
 use blitz_render::{ライティング入力, レンダラーエラー, 空入力};
 pub(in crate::app) use create::生成材料;
+pub(crate) use exit_observation::天空の終了時の観測;
 pub(in crate::app) struct 天空配線 {
     時間帯: Option<時間帯>,
     空を描くか: bool,                                   // 空パスを積むかどうか
