@@ -1,4 +1,5 @@
-//! ゲーム世界の個体群の基盤。いま持っているのは実行時個体IDと生存台帳であり、個体構成要素の置き場・問い合わせ・構造変更の予約と反映は Issue #49 が足す。
+//! ゲーム世界の個体群の基盤。実行時個体IDと生存台帳・個体構成要素の標識となる`trait`と疎な集合の置き場・型を消した置き場の集まりを持つ個体群・
+//! 問い合わせが返す5つの借りの型・構造変更の予約とセッション型の反映、から成る。
 //!
 //! このクレートが公開する型名・メソッド名・フィールド名はすべて日本語であり、設計方式の略称である ECS は
 //! クレート名にだけ現れる。一般的なECSの抽象名をこのクレートの中の識別子として使うことは
@@ -36,6 +37,8 @@ mod naive_baseline_samples;
 mod naive_baseline_tests;
 mod population;
 mod runtime_entity_id;
+#[cfg(test)]
+mod sparse_set_measurement;
 mod storage_collection;
 
 pub use borrow::{一型を可変に借りる借り, 一型を読みもう一型を可変に借りる借り, 一型を読む借り, 二型を可変に借りる借り, 二型を読む借り};
@@ -45,5 +48,6 @@ pub use component_storage::{個体構成要素の置き場, 個体構成要素�
 pub use liveness_error::生存台帳エラー;
 pub use liveness_ledger::生存台帳;
 pub use liveness_state::個体の生存状態;
+pub use population::structural_change::{構造変更の予約, 構造変更の予約エラー, 構造変更の反映, 構造変更の反映の結果};
 pub use population::ゲーム世界の個体群;
 pub use runtime_entity_id::ゲーム世界の実行時個体ID;
