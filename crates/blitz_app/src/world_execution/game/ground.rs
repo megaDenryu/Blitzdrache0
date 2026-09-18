@@ -7,7 +7,7 @@ use super::ゲーム配線;
 use crate::world_execution::entity_ledger::ゲーム状態の台帳;
 
 impl ゲーム配線 {
-    pub(super) fn 高さ場の地表へ足元と目的地を置き直す(&mut self, 読み口: &高さ場の読み口, 台帳: &mut ゲーム状態の台帳) {
+    pub(in crate::world_execution) fn 高さ場の地表へ足元と目的地を置き直す(&mut self, 読み口: &高さ場の読み口, 台帳: &mut ゲーム状態の台帳) {
         match self {
             Self::ゲームを遊ばない => {}
             Self::キツネの場所巡り(配線) => 配線.高さ場の地表へ足元と目的地を置き直す(読み口, 台帳),

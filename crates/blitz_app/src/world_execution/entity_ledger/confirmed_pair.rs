@@ -8,7 +8,7 @@
 use super::supply_value::動く個体の大域の位置と向き;
 use crate::app::描画補間の割合;
 
-pub(crate) struct 前と現在の確定値 {
+pub(super) struct 前と現在の確定値 {
     前: 動く個体の大域の位置と向き,
     現在: 動く個体の大域の位置と向き,
 }

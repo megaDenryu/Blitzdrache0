@@ -24,12 +24,12 @@ use blitz_math::大域ワールド位置;
 use blitz_render::frame_input::{動く個体の大域の位置と向きの指定, 読込時の向きから天頂軸まわりに回す角};
 
 use confirmed_pair::前と現在の確定値;
-pub(crate) use registration::動く個体の描画先;
+pub(super) use registration::動く個体の描画先;
 use supply_value::動く個体の大域の位置と向き;
 
 use super::entity_id::エンティティID;
 
-pub(crate) struct ゲーム状態の台帳 {
+pub(super) struct ゲーム状態の台帳 {
     エンティティid一覧: Vec<エンティティID>,         // 登録した順のエンティティID
     確定値一覧: Vec<前と現在の確定値>,               // 刻みごとに繰り上がる前と現在の2枚
     指定一覧: Vec<動く個体の大域の位置と向きの指定>, // その描画で混ぜた値をレンダラーへそのまま渡す列

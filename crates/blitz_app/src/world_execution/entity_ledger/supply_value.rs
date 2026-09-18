@@ -10,7 +10,7 @@ use blitz_math::大域ワールド位置;
 use blitz_render::frame_input::読込時の向きから天頂軸まわりに回す角;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub(crate) struct 動く個体の大域の位置と向き {
+pub(super) struct 動く個体の大域の位置と向き {
     大域位置: 大域ワールド位置,
     読込時の向きから回す角: 読込時の向きから天頂軸まわりに回す角,
 }

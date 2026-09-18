@@ -15,7 +15,7 @@ use crate::world_execution::entity_id::エンティティID;
 
 /// 1体の動く個体が、どの束のどの描画対象のどの個体として描かれるか。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) struct 動く個体の描画先 {
+pub(in crate::world_execution) struct 動く個体の描画先 {
     pub(crate) 束id: 描画束ID,
     pub(crate) 描画対象添字: usize,
     pub(crate) 個体添字: u32,

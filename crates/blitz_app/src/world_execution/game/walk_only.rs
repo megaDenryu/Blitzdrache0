@@ -12,7 +12,7 @@ use super::一刻みが借りる共有の状態;
 use crate::world_execution::contract::{世界の形を尋ねる口の実装エラー, 刻み入力};
 use crate::world_execution::world_shape_port::エンジンの問い合わせを包んだ世界の形を尋ねる口;
 
-pub(super) struct 歩くだけの配線 {
+pub(in crate::world_execution) struct 歩くだけの配線 {
     状態: 歩くだけのゲームの状態,
 }
 

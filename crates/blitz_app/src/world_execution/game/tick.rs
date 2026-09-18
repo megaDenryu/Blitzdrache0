@@ -8,7 +8,7 @@ use super::{ゲーム配線, 一刻みが借りる共有の状態};
 use crate::world_execution::contract::{世界の形を尋ねる口の実装エラー, 刻み入力, 刻み結果};
 
 impl ゲーム配線 {
-    pub(super) fn 一刻み進める(&mut self, 入力: 刻み入力<'_>, 一刻みの秒: 秒, 共有: 一刻みが借りる共有の状態<'_>) -> Result<刻み結果, 世界の形を尋ねる口の実装エラー> {
+    pub(in crate::world_execution) fn 一刻み進める(&mut self, 入力: 刻み入力<'_>, 一刻みの秒: 秒, 共有: 一刻みが借りる共有の状態<'_>) -> Result<刻み結果, 世界の形を尋ねる口の実装エラー> {
         match self {
             Self::ゲームを遊ばない => {}
             Self::キツネの場所巡り(配線) => {

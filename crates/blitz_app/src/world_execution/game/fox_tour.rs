@@ -23,7 +23,7 @@ use crate::cli::ゲーム操作の出どころ;
 use crate::world_execution::contract::{世界の形を尋ねる口の実装エラー, 刻み入力};
 use crate::world_execution::world_shape_port::エンジンの問い合わせを包んだ世界の形を尋ねる口;
 
-pub(super) struct キツネの場所巡りの配線 {
+pub(in crate::world_execution) struct キツネの場所巡りの配線 {
     道順: 場所巡りの道順,
     状態: 場所巡りのゲームの状態,
     操作の出どころ: ゲーム操作の出どころ,

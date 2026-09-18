@@ -4,10 +4,10 @@
 //! 参照: `_doc/計画/ユビキタス言語.md`「エンティティID」。
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) struct エンティティID(u32);
+pub(in crate::world_execution) struct エンティティID(u32);
 
 impl エンティティID {
-    pub(crate) const fn 生成する(番号: u32) -> Self {
+    pub(in crate::world_execution) const fn 生成する(番号: u32) -> Self {
         Self(番号)
     }
 }
