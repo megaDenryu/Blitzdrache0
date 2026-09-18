@@ -12,6 +12,8 @@ pub mod traveler_input;
 pub mod traveler_movement;
 
 #[cfg(test)]
+mod syntax_assertion;
+#[cfg(test)]
 mod syntax_checker;
 #[cfg(test)]
 mod syntax_patterns;

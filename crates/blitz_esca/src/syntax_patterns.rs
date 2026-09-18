@@ -8,15 +8,15 @@ use crate::ontology::{オントロジー関数型, オントロジートレイ�
 /// ソースコード上のデータ型宣言の種別。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Rust型種別 {
-    Struct,
-    Enum,
+    構造体,
+    列挙型,
 }
 
 impl Rust型種別 {
     pub const fn キーワード(self) -> &'static str {
         match self {
-            Self::Struct => "struct",
-            Self::Enum => "enum",
+            Self::構造体 => "struct",
+            Self::列挙型 => "enum",
         }
     }
 }
