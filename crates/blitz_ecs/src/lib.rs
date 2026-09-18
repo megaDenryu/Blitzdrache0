@@ -49,5 +49,5 @@ pub use liveness_error::生存台帳エラー;
 pub use liveness_ledger::生存台帳;
 pub use liveness_state::個体の生存状態;
 pub use population::structural_change::{構造変更の予約, 構造変更の予約エラー, 構造変更の反映, 構造変更の反映の結果};
-pub use population::ゲーム世界の個体群;
+pub use population::{ゲーム世界の個体群, 実行時個体IDの発行口, 読みながら構造変更を予約する借り};
 pub use runtime_entity_id::ゲーム世界の実行時個体ID;

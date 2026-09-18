@@ -1,5 +1,6 @@
 //! ゲーム世界の個体群: 実行時個体IDと個体構成要素の組み合わせを保持する部分。生存台帳と、型ごとの置き場の集まりを持つ。
 //! 個体群への問い合わせは借りの型(`borrowing.rs`)を返し、構造変更は予約の列と反映のセッション(`structural_change`)を通る。
+//! 走査しながら予約する使い方には、発行口(`id_issuer.rs`)と置き場の共有参照を分割借用で同時に貸す借り(`reserving_reader.rs`)がある。
 //! この本体が持つのは、生存状態と型ごとの量を答える読みの口と、未閉の反映のセッションの勘定だけである。
 //!
 //! 構造変更を子モジュールへ置いているのは、Rustの私有の可視性が定義モジュールとその子孫へ及ぶため、下の3つのフィールドを
@@ -12,7 +13,11 @@
 mod borrowing;
 #[cfg(test)]
 mod borrowing_tests;
+mod id_issuer;
 mod reflection;
+mod reserving_reader;
+#[cfg(test)]
+mod reserving_reader_tests;
 pub(crate) mod structural_change;
 #[cfg(test)]
 mod tests;
@@ -25,6 +30,9 @@ use crate::liveness_state::個体の生存状態;
 use crate::runtime_entity_id::ゲーム世界の実行時個体ID;
 use crate::storage_collection::個体構成要素の置き場の集まり;
 use unclosed_reflection_count::未閉の反映のセッションの件数;
+
+pub use id_issuer::実行時個体IDの発行口;
+pub use reserving_reader::読みながら構造変更を予約する借り;
 
 /// 実行時個体IDと個体構成要素の組み合わせを保持する、ゲーム世界の個体の集まり。
 pub struct ゲーム世界の個体群 {
