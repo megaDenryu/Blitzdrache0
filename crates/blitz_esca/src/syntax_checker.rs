@@ -9,7 +9,7 @@ pub struct クレート構文検査<'a> {
 
 impl<'a> クレート構文検査<'a> {
     pub fn トレイト実装型一覧(&self, トレイト: オントロジートレイト) -> Vec<&'a str> {
-        let パターン = format!("impl {} for ", トレイト.トレイト名());
+        let パターン = format!("impl {} for ", トレイト.名前());
         let mut 型一覧 = Vec::new();
         for ソース in self.ソース一覧 {
             for 行 in ソース.lines() {

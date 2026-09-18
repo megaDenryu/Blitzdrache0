@@ -61,7 +61,7 @@ pub enum オントロジートレイト {
 
 impl オントロジートレイト {
     /// ソースコード構文解析で照合するためのトレイト識別子文字列を返す。
-    pub const fn トレイト名(self) -> &'static str {
+    pub const fn 名前(self) -> &'static str {
         match self {
             Self::MDTO => "MDTO",
             Self::M状態 => "M状態",
