@@ -14,6 +14,7 @@ use blitz_engine::temporal_reconstruction::ずらしの列の添字;
 use blitz_render::{HDR読み戻し画像, フレーム描画入力};
 
 use super::frame_reach::描画の到達;
+use crate::app::screen_installation::画面の据え付け;
 use crate::app::アプリ;
 use crate::cli::起動モード;
 use crate::error::起動エラー;
@@ -64,7 +65,8 @@ impl アプリ {
     /// 1フレーム描いて再構成後の結果を読み戻し、前のフレームの結果との差を並べる。
     fn フレーム間差分を採る(&mut self, 描画入力: フレーム描画入力<'_>) -> Result<描画の到達, 起動エラー> {
         let 現在フレーム = self.現在フレーム;
-        let Some(今の結果) = 圧縮前のhdrを読み戻す(self, 描画入力, "フレーム間差分")? else {
+        let レンダラー = 画面の据え付け::描画の最中に借りる(&mut self.据え付け).レンダラーを借りる();
+        let Some(今の結果) = 圧縮前のhdrを読み戻す(レンダラー, 描画入力, "フレーム間差分")? else {
             return Ok(描画の到達::届かなかった);
         };
         if let Some(前) = &self.時間再構成の観測.前フレームの結果 {
@@ -76,17 +78,16 @@ impl アプリ {
 
     /// 履歴を無効にしてから3回描き、無効化直後の結果と今の色の一致、および決定性の要約値を出す。
     fn 無効化直後を突き合わせる(&mut self, 描画入力: フレーム描画入力<'_>) -> Result<描画の到達, 起動エラー> {
-        if let Some(レンダラー) = &mut self.レンダラー {
-            レンダラー.時間再構成の履歴を無効にする();
-        }
-        let Some(無効化直後) = 圧縮前のhdrを読み戻す(self, 描画入力.clone(), "無効化直後")? else {
+        let 据え付け = 画面の据え付け::描画の最中に借りる(&mut self.据え付け);
+        据え付け.レンダラーを借りる().時間再構成の履歴を無効にする();
+        let Some(無効化直後) = 圧縮前のhdrを読み戻す(据え付け.レンダラーを借りる(), 描画入力.clone(), "無効化直後")? else {
             return Ok(描画の到達::届かなかった);
         };
-        let Some(今の色) = 今のフレームの色を読み戻す(self, 描画入力.clone(), "今のフレームの色")? else {
+        let Some(今の色) = 今のフレームの色を読み戻す(据え付け.レンダラーを借りる(), 描画入力.clone(), "今のフレームの色")? else {
             return Ok(描画の到達::届かなかった);
         };
         temporal_reconstruction::無効化直後を報告する(&無効化直後, &今の色);
-        let Some(履歴を混ぜた結果) = 圧縮前のhdrを読み戻す(self, 描画入力, "要約")? else {
+        let Some(履歴を混ぜた結果) = 圧縮前のhdrを読み戻す(据え付け.レンダラーを借りる(), 描画入力, "要約")? else {
             return Ok(描画の到達::届かなかった);
         };
         temporal_reconstruction::要約を報告する(&履歴を混ぜた結果);

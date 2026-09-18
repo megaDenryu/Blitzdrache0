@@ -18,6 +18,7 @@ use blitz_render::{フレーム描画入力, 読み戻し結果};
 
 use super::frame_reach::描画の到達;
 use crate::app::frame::フレーム視点;
+use crate::app::screen_installation::画面の据え付け;
 use crate::app::アプリ;
 use crate::cli::起動モード;
 use crate::error::起動エラー;
@@ -39,9 +40,7 @@ impl アプリ {
 
     pub(in crate::app) fn 時間再構成の合成入力を突き合わせる(&mut self, 描画入力: フレーム描画入力<'_>, 視点情報: &フレーム視点) -> Result<描画の到達, 起動エラー> {
         let 射影 = 視点情報.射影の復元;
-        let Some(レンダラー) = &mut self.レンダラー else {
-            return Ok(描画の到達::届かなかった);
-        };
+        let レンダラー = 画面の据え付け::描画の最中に借りる(&mut self.据え付け).レンダラーを借りる();
         let 寸法 = レンダラー.画面の寸法().map_err(描画側の失敗へ写す)?;
         let 材料 = synthesis::焼く(寸法, 射影);
         let 合成入力 = 時間再構成の合成入力::生成する(寸法, 材料.今のフレームの色.clone(), 材料.履歴.clone(), 材料.動きベクトル.clone(), 材料.深度.clone()).map_err(|誤り| 起動エラー::from(blitz_render::レンダラーエラー::from(誤り)))?;

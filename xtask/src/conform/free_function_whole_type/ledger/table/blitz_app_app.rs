@@ -5,10 +5,8 @@
 
 use super::super::{区画の一覧, 未是正の自由関数};
 
-const 項目一覧: [未是正の自由関数; 27] = [
+const 項目一覧: [未是正の自由関数; 22] = [
     未是正の自由関数::生成する("draw_dispatch/rewrite_action.rs", "適用する", "アプリ"),
-    未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_check/readback.rs", "今のフレームの色を読み戻す", "アプリ"),
-    未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_check/readback.rs", "圧縮前のhdrを読み戻す", "アプリ"),
     未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_injection/canon.rs", "差を取り込む", "突き合わせの要約"),
     未是正の自由関数::生成する("draw_dispatch/temporal_reconstruction_injection/synthesis.rs", "一画素を積む", "合成入力の材料"),
     未是正の自由関数::生成する("frame/action.rs", "選ぶ", "アプリ"),
@@ -18,11 +16,8 @@ const 項目一覧: [未是正の自由関数; 27] = [
     未是正の自由関数::生成する("frame/draw_input/frame_view.rs", "視点を求める", "アプリ"),
     未是正の自由関数::生成する("frame/finish.rs", "進めて必要なら終了する", "アプリ"),
     未是正の自由関数::生成する("frame_dump/cluster_assignment_check.rs", "クラスタ選別の割り当て統計を報告する", "アプリ"),
-    未是正の自由関数::生成する("frame_dump/depth_dump.rs", "最終深度を読み戻して書き出す", "アプリ"),
     未是正の自由関数::生成する("frame_dump/dump_destination.rs", "ダンプ先のパスを決める", "アプリ"),
-    未是正の自由関数::生成する("frame_dump/hdr_dump.rs", "明るさ圧縮前画像を読み戻して書き出す", "アプリ"),
     未是正の自由関数::生成する("frame_dump/indirect_probe_check.rs", "間接照明代表板を照合する", "アプリ"),
-    未是正の自由関数::生成する("frame_dump/presentation_dump.rs", "提示画像を読み戻して書き出す", "アプリ"),
     未是正の自由関数::生成する("frame_dump/sky_pixel_check.rs", "空代表画素を照合する", "アプリ"),
     未是正の自由関数::生成する("handler/resume.rs", "格納する", "アプリ"),
     未是正の自由関数::生成する("handler/resume.rs", "生成してアプリへ格納する", "アプリ"),

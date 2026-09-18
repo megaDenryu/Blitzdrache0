@@ -11,6 +11,7 @@
 use blitz_render::{フレーム描画入力, 読み戻し結果};
 
 use super::frame_reach::描画の到達;
+use crate::app::screen_installation::画面の据え付け;
 use crate::app::アプリ;
 use crate::cli::起動モード;
 use crate::error::起動エラー;
@@ -30,9 +31,7 @@ impl アプリ {
     }
 
     pub(in crate::app) fn 動きベクトルを報告する(&mut self, 描画入力: フレーム描画入力<'_>) -> Result<描画の到達, 起動エラー> {
-        let Some(レンダラー) = &mut self.レンダラー else {
-            return Ok(描画の到達::届かなかった);
-        };
+        let レンダラー = 画面の据え付け::描画の最中に借りる(&mut self.据え付け).レンダラーを借りる();
         match レンダラー.一フレーム描画して動きベクトルを読み戻す(描画入力)? {
             読み戻し結果::読み戻した(画像) => {
                 motion_vector::報告する(&画像);
