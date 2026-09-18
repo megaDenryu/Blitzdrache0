@@ -5,7 +5,7 @@ use super::movement_record::移動の観測の要約;
 /// そのプロセスがゲームをどこまで回したかの要約。
 pub(crate) struct ゲーム進行の要約 {
     pub(crate) ゲームの表示名: &'static str,
-    pub(crate) ゲーム更新の回数: u32, // 1刻みは描画フレーム1回ぶんであるため、ゲームを回した描画フレーム数と一致する
+    pub(crate) ゲーム更新の回数: u64, // 起動から進めた固定刻みの本数。このゲームは起動から全ての刻みで走るため、ゲームを回した刻みの本数と一致する
     pub(crate) 最後の進行段階の呼び名: &'static str,
     pub(crate) 到達済みの目的地数: usize,
     pub(crate) 目的地の総数: usize,
