@@ -5,6 +5,7 @@
 use blitz_math::メートル;
 
 use crate::ontology::{MDTO, Mイベント, Mコマンド, M入力, M状態, M規則};
+use crate::traveler_boundary::移動可能範囲;
 
 /// デバイスから届く移動の生入力シグナル(生シグナル is a DTO)。
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -54,6 +55,7 @@ impl 旅行者の現在地 {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 歩行の規則 {
     一秒あたりの速さ: メートル,
+    移動可能範囲: 移動可能範囲,
 }
 
 impl M規則 for 歩行の規則 {}
@@ -61,12 +63,21 @@ impl M規則 for 歩行の規則 {}
 impl 歩行の規則 {
     pub fn 標準() -> Self {
         Self {
-            一秒あたりの速さ: メートル::生成する(3.0)
+            一秒あたりの速さ: メートル::生成する(3.0),
+            移動可能範囲: 移動可能範囲::無制限(),
         }
+    }
+
+    pub fn 境界付き(一秒あたりの速さ: メートル, 移動可能範囲: 移動可能範囲) -> Self {
+        Self { 一秒あたりの速さ, 移動可能範囲 }
     }
 
     pub fn 速さ(&self) -> メートル {
         self.一秒あたりの速さ
+    }
+
+    pub fn 移動可能範囲(&self) -> &移動可能範囲 {
+        &self.移動可能範囲
     }
 }
 
@@ -76,6 +87,8 @@ pub enum 旅行者の出来事 {
     歩行を開始した,
     立ち止まった,
     周囲を観察した,
+    障害物に遮られた,
 }
 
 impl Mイベント for 旅行者の出来事 {}
+

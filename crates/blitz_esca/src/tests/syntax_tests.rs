@@ -7,6 +7,7 @@ use super::syntax_checker::クレート構文検査;
 
 const 全ソースコード: &[&str] = &[
     include_str!("../traveler.rs"),
+    include_str!("../traveler_boundary.rs"),
     include_str!("../traveler_input.rs"),
     include_str!("../traveler_movement.rs"),
 ];
