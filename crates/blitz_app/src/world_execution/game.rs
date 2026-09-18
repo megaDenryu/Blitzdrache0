@@ -12,6 +12,8 @@ mod fox_player;
 mod fox_tour;
 mod ground;
 mod scripted_operation;
+#[cfg(test)]
+mod scripted_operation_tests;
 mod supply;
 mod tick;
 mod walk_only;
