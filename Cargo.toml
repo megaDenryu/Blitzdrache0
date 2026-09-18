@@ -8,6 +8,7 @@ members = [
     "crates/blitz_assembly",
     "crates/blitz_asset_compiler",
     "crates/blitz_sim",
+    "crates/blitz_ecs",
     "crates/blitz_game",
     "crates/blitz_app",
     "crates/editor_server",
