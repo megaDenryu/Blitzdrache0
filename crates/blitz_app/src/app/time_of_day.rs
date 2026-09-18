@@ -42,6 +42,8 @@ pub(crate) use aerial_distance_record::空中遠近の最遠距離の記録;
 pub(crate) use distant_environment_key_record::遠方環境の鍵の記録;
 pub(crate) use distant_environment_update::遠方環境更新判定;
 pub(crate) use reproduction_condition::空の再現条件;
+pub(in crate::app) use step_scan::撮影の有無;
 pub(crate) use step_scan::段差走査の指定;
 pub(crate) use sun_zenith_interval_record::太陽天頂区間の記録;
+pub(crate) use wiring::天空の終了時の観測;
 pub(in crate::app) use wiring::{天空配線, 焼き上げ入力の組, 生成材料};

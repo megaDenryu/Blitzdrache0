@@ -14,7 +14,7 @@ mod world_plan;
 pub(crate) use execution::スモーク実行;
 pub(crate) use pixel_judgment::{アニメーション差分を判定する, ピクセルを判定する};
 
-/// フレーム番号に応じて、このフレームで行う自己操作・検証を表す。
+/// 描画機会の番号に応じて、このフレームで行う自己操作・検証を表す。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum スモークアクション {
     通常描画,

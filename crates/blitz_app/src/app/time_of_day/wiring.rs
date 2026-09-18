@@ -7,7 +7,7 @@
 //! `空を描く`は世界の方針と起動指定から生成時に決まり、以降変わらない。
 //! `大気`は空を持つ世界だけが持ち、時刻に依存しないため生成時に1度だけ写す。方針を残すのは、焼き直しの判定に使う大気静的キーがそこから決まるためである。
 //! `間引き`が数えるのは、生成パスがGPUへ届いたフレームの区間である。
-//! `段差走査`は撮影の列を持ち、フレーム番号から今の撮影を答える。
+//! `段差走査`は撮影の列を持ち、描画機会の番号から今の撮影を答える。
 //! `自動露出の経過秒源`は、実行の種類が起動時に選択肢を決め、以降は選択肢が変わらない。
 //! `基準ライティング`を時刻が置き換えるのは方向光・環境光・影の落ち方だけであり、点光源と影の正射影範囲はこの基準のまま残す。
 //! `ライティング`は、空を持つ世界では時刻から導き直し、持たない世界では基準のまま動かない。
@@ -17,6 +17,7 @@ mod bake_input;
 mod band_decision;
 mod clock_advance;
 mod create;
+mod exit_observation;
 mod exposure;
 mod scan_override;
 
@@ -35,6 +36,7 @@ use blitz_render::atmosphere::大気散乱媒体;
 use blitz_render::indirect_lighting::照明問い合わせ契約;
 use blitz_render::{ライティング入力, レンダラーエラー, 空入力};
 pub(in crate::app) use create::生成材料;
+pub(crate) use exit_observation::天空の終了時の観測;
 pub(in crate::app) struct 天空配線 {
     時間帯: Option<時間帯>,
     空を描くか: bool,                                   // 空パスを積むかどうか

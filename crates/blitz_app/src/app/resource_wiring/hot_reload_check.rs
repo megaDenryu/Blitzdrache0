@@ -7,6 +7,7 @@ use blitz_render::レンダラー;
 use super::資源の配線;
 use crate::app::draw_bundle_ledger::描画束の台帳;
 use crate::app::screen_installation::画面の据え付け;
+use crate::app::verification_observation::シーン読込の契機;
 use crate::app::アプリ;
 use crate::hot_reload::ホットリロード結果;
 
@@ -76,7 +77,7 @@ impl アプリ {
             大域ずらし量: self.大域ずらし量,
         };
         if self.資源の配線.ホットリロードを確認する(反映先) == 実行時シーンをディスクから読んだか::読んだ {
-            self.シーン読込計数.読み込んだ(self.現在フレーム);
+            self.検収の観測.ディスクから読んだことを数える(シーン読込の契機::起動後の描画機会);
         }
     }
 }

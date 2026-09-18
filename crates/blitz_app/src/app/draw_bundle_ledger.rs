@@ -7,6 +7,7 @@
 //! 起動時に決まる写せる定数であり、私有にすると取り出す口が生えるためである。どちらも引数で受ける。
 //! 起動時とホットリロードの据え付けは`installation`、描画入力が借りる受け皿は`tray`が持つ。
 
+mod exit_observation;
 mod installation;
 mod tray;
 
@@ -16,8 +17,10 @@ use blitz_render::{ライティング入力, 描画束ID};
 use super::persistent_bundles::永続束の状態;
 use super::primitive_draw_item_registry::プリミティブ描画項目台帳;
 use super::scene_load::{シーンを描画入力へ写す材料, 地表の層のタイル一式, 束の登録一式};
-use super::visibility::{可視判定配線, 選別のつまみ, 選別の計器};
+use super::visibility::{可視判定配線, 選別のつまみ};
 use crate::error::起動エラー;
+
+pub(crate) use exit_observation::描画束の終了時の観測;
 
 pub(in crate::app) struct 描画束の台帳 {
     可視判定: 可視判定配線,
@@ -63,20 +66,5 @@ impl 描画束の台帳 {
         &mut self, ビュー射影: 変換<ワールド, クリップ>, ライティング: ライティング入力, カメラ大域位置: 大域ワールド位置
     ) -> Result<(), 起動エラー> {
         self.可視判定.判定する(ビュー射影, ライティング, カメラ大域位置)
-    }
-
-    /// 起動から現在までに個体の段が入れ替わった延べ回数。
-    pub(in crate::app) fn 個体詳細段切替回数(&self) -> u64 {
-        self.可視判定.段切替回数()
-    }
-
-    /// 可視判定と段選択へ登録されている群の件数。束の解除で材料と段の記憶が漏れなく消えたことをこの数で見る。
-    pub(in crate::app) fn 可視材料登録数(&self) -> usize {
-        self.可視判定.登録数()
-    }
-
-    /// 直近のフレームの選別の計器。計数・解像度密度・距離分布を一組で返す。
-    pub(in crate::app) fn 直近の選別の計器(&self) -> 選別の計器 {
-        self.可視判定.直近の計器()
     }
 }

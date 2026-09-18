@@ -7,7 +7,7 @@
 use blitz_render::{フレーム描画入力, 描画結果, 読み戻し結果};
 
 use super::frame_reach::描画の到達;
-use super::{pixel_readback, rewrite_action};
+use super::pixel_readback;
 use crate::app::screen_installation::画面の据え付け;
 use crate::app::アプリ;
 use crate::error::起動エラー;
@@ -15,7 +15,7 @@ use crate::smoke::{self, スモークアクション};
 
 impl アプリ {
     pub(in crate::app) fn 実行して判定する(&mut self, アクション: スモークアクション, 描画入力: フレーム描画入力<'_>) -> Result<描画の到達, 起動エラー> {
-        rewrite_action::適用する(self, アクション)?;
+        self.自己操作.書き換えを適用する(アクション)?;
 
         let レンダラー = 画面の据え付け::描画の最中に借りる(&mut self.据え付け).レンダラーを借りる();
 
@@ -34,7 +34,7 @@ impl アプリ {
             // foxステージ(判断45): 基準フレームを保存し、後続フレームとの差分でアニメーションの動きを判定する。
             スモークアクション::フォックス基準保存 => match レンダラー.一フレーム描画して読み戻す(描画入力)? {
                 読み戻し結果::読み戻した(画像) => {
-                    self.スモーク基準画像 = Some(画像);
+                    self.検収の観測.基準画像を据える(画像);
                     Ok(描画の到達::提示した)
                 }
                 読み戻し結果::見送った(理由) => Err(起動エラー::ピクセル判定失敗(format!("基準フレームで描画が見送られた: {理由:?}"))),
@@ -47,7 +47,7 @@ impl アプリ {
     fn フォックス差分を判定する(&mut self, 描画入力: フレーム描画入力<'_>) -> Result<描画の到達, 起動エラー> {
         let レンダラー = 画面の据え付け::描画の最中に借りる(&mut self.据え付け).レンダラーを借りる();
         let 読み戻し = レンダラー.一フレーム描画して読み戻す(描画入力)?;
-        let Some(基準) = &self.スモーク基準画像 else {
+        let Some(基準) = self.検収の観測.基準画像を見る() else {
             return Err(起動エラー::ピクセル判定失敗("差分判定前に基準画像が保存されていない".to_string()));
         };
         match 読み戻し {
