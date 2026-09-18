@@ -8,15 +8,13 @@ use super::super::{区画の一覧, 台帳の行};
 
 const モジュールの根: &str = "crates/blitz_app/src";
 
-const 行一覧: [台帳の行; 10] = [
+const 行一覧: [台帳の行; 8] = [
     台帳の行::構造体("app/mod.rs", "アプリ", 26, 24, 36),
     台帳の行::構造体("app/streaming/measurement.rs", "ストリーミング要約", 0, 11, 0),
     台帳の行::構造体("app/time_of_day/wiring.rs", "天空配線", 6, 14, 24),
     台帳の行::列挙("cli/argument_error.rs", "起動引数エラー", 0, 39, 0),
     台帳の行::構造体("cli/types.rs", "起動設定", 1, 40, 1),
     台帳の行::列挙("error.rs", "起動エラー", 0, 46, 0),
-    台帳の行::列挙("world_execution/game.rs", "ゲーム配線", 5, 3, 17),
-    台帳の行::構造体("world_execution/game/fox_tour.rs", "キツネの場所巡りの配線", 4, 9, 19),
     台帳の行::構造体("input/game_key_state.rs", "ゲーム操作のキー状態", 1, 13, 2),
     台帳の行::構造体("input/mod.rs", "入力状態", 1, 14, 5),
 ];

@@ -6,8 +6,9 @@ use blitz_game::世界の形を尋ねる口;
 use blitz_math::{メートル, 大域メートル, 大域ワールド位置, 秒};
 
 use super::camera_system::カメラの系統;
-use super::camera_wiring::{この描画のカメラの入力, プレイヤーカメラの配線};
+use super::camera_wiring::プレイヤーカメラの配線;
 use super::camera_wiring_test_ports::{常に半分で触れる口, 常に評価できない口};
+use super::contract::この描画のカメラの入力;
 use super::instrument::直前の描画のカメラ;
 use crate::cli::起動モード;
 use crate::input::ゲーム操作の適用方針;

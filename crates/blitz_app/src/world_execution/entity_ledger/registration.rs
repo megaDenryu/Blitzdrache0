@@ -11,7 +11,7 @@ use blitz_render::{動く個体の宣言, 描画束ID};
 use super::confirmed_pair::前と現在の確定値;
 use super::supply_value::動く個体の大域の位置と向き;
 use super::ゲーム状態の台帳;
-use crate::world_execution::game::entity_id::エンティティID;
+use crate::world_execution::entity_id::エンティティID;
 
 /// 1体の動く個体が、どの束のどの描画対象のどの個体として描かれるか。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -24,7 +24,7 @@ pub(crate) struct 動く個体の描画先 {
 impl ゲーム状態の台帳 {
     /// 注意: 同じエンティティIDを二重に登録するのは配線の誤りである。2件目の位置の書き込みが1件目にしか届かず、
     /// 2体目が初期位置から動かない絵になる。到達したらバグであるためpanicで止める。
-    pub(in crate::world_execution::game) fn 動く個体を登録する(
+    pub(in crate::world_execution) fn 動く個体を登録する(
         &mut self, エンティティid: エンティティID, 描画先: 動く個体の描画先, 初期の位置: 大域ワールド位置, 初期の回す角: 読込時の向きから天頂軸まわりに回す角
     ) {
         assert!(!self.エンティティid一覧.contains(&エンティティid), "同じエンティティID({エンティティid:?})を二重に登録した");
@@ -41,7 +41,7 @@ impl ゲーム状態の台帳 {
     }
 
     /// 束の読込より前にレンダラーへ渡す、その束の動く個体の宣言。読込の1度だけ呼ぶため、ここでの確保は毎フレームに乗らない。
-    pub(in crate::world_execution::game) fn 束の動く個体の宣言一覧を作る(&self, 束id: 描画束ID) -> Vec<動く個体の宣言> {
+    pub(in crate::world_execution) fn 束の動く個体の宣言一覧を作る(&self, 束id: 描画束ID) -> Vec<動く個体の宣言> {
         self.指定一覧
             .iter()
             .filter(|指定| 指定.束id == 束id)

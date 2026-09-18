@@ -10,13 +10,13 @@ use blitz_render::frame_input::動く個体の大域の位置と向きの指定;
 
 use super::ゲーム状態の台帳;
 use crate::app::描画補間の割合;
-use crate::world_execution::game::entity_id::エンティティID;
+use crate::world_execution::entity_id::エンティティID;
 
 impl ゲーム状態の台帳 {
     /// 描画へ渡す指定の列を、前と現在の確定値をこの描画の割合で混ぜた値へ作り直す。
     ///
     /// 注意: 指定の列を描画へ預けている間に呼ぶと混ぜる先が無い。件数の食い違いとしてpanicで止める。
-    pub(in crate::world_execution::game) fn 描画へ渡す指定一覧をこの描画の割合で混ぜ直す(&mut self, 割合: 描画補間の割合) {
+    pub(in crate::world_execution) fn 描画へ渡す指定一覧をこの描画の割合で混ぜ直す(&mut self, 割合: 描画補間の割合) {
         assert_eq!(self.指定一覧.len(), self.確定値一覧.len(), "指定一覧を描画へ預けている間に混ぜ直そうとした");
         for (確定値, 指定) in self.確定値一覧.iter().zip(self.指定一覧.iter_mut()) {
             let 混ぜた値 = 確定値.割合で混ぜる(割合);
@@ -27,7 +27,7 @@ impl ゲーム状態の台帳 {
 
     /// カメラの注視点が追う、この描画の割合で混ぜた大域位置。描くその個体と同じ値になる。
     /// 登録していないエンティティを指すのは配線の誤りであるためpanicで止める。
-    pub(in crate::world_execution::game) fn エンティティの混ぜた大域位置を求める(&self, エンティティid: エンティティID, 割合: 描画補間の割合) -> 大域ワールド位置 {
+    pub(in crate::world_execution) fn エンティティの混ぜた大域位置を求める(&self, エンティティid: エンティティID, 割合: 描画補間の割合) -> 大域ワールド位置 {
         for (登録済み, 確定値) in self.エンティティid一覧.iter().zip(self.確定値一覧.iter()) {
             if *登録済み == エンティティid {
                 return 確定値.割合で混ぜる(割合).大域位置();
@@ -37,11 +37,11 @@ impl ゲーム状態の台帳 {
     }
 
     /// 描画入力が借用する指定の列をアプリの外へ預ける。確保した容量を次のフレームへ持ち越すため、描画の成否によらず戻す。
-    pub(in crate::world_execution::game) fn 指定一覧を預ける(&mut self) -> Vec<動く個体の大域の位置と向きの指定> {
+    pub(in crate::world_execution) fn 指定一覧を預ける(&mut self) -> Vec<動く個体の大域の位置と向きの指定> {
         std::mem::take(&mut self.指定一覧)
     }
 
-    pub(in crate::world_execution::game) fn 指定一覧を戻す(&mut self, 受け皿: Vec<動く個体の大域の位置と向きの指定>) {
+    pub(in crate::world_execution) fn 指定一覧を戻す(&mut self, 受け皿: Vec<動く個体の大域の位置と向きの指定>) {
         self.指定一覧 = 受け皿;
     }
 }

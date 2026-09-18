@@ -1,112 +1,64 @@
-//! コンポジションルートがゲームロジック層を配線する場所。ロジックは書かず、どのゲームを回すかの選択と、
-//! 1刻みだけ進める呼び出しの配線だけを持つ。1回の描画で何本の刻みを進めるかはこの配線の関心ではなく、
-//! 時間進行の配線(`app/time_step.rs`)が決めて呼び出し側が回数を回す。この配線が刻み数を受け取るのは、
-//! 刻みを1本も進めない描画で操作入力を確定しないという1点のためだけである。
+//! ゲーム配線: 世界実行が保持する、どのゲームを回すかの振り分けとゲーム固有の状態。ロジックは書かず、
+//! 1刻みだけ進める呼び出しの振り分けと、ゲーム固有の状態(進行段階・道順・移動状態)を読む口だけを持つ。
+//! 2つのゲームが共有する状態(台帳・高さ場の読み口・カメラ・移動の記録・操作の適用方針)は世界実行が所有し、
+//! 1刻みの更新へは`一刻みが借りる共有の状態`として借りて渡される。
+//! 参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「判断12」。
 //!
 //! 遊ばない状態を`Option`でなく選択肢で持つのは、`--game`の指定が無い起動でゲーム更新も操作の確定も1つも走らないことを
 //! 型で保つためである。既存の入口(スモーク・ベンチ・段差走査・報告)はどれもこの選択肢へ落ちる。
-//! 参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「第1段階の定義」。
-//! ゲームの状態から描画側へ値を渡す面は`render_supply`に、カメラへ渡す面(系統の切替・表示距離・計器)は`camera_supply`に、
-//! 固定刻み1本ぶんの更新は`tick`にある。
+//! 固定刻み1本ぶんの更新は`tick`に、ゲーム固有の状態を読む口は`supply`に、高さ場の地表への置き直しは`ground`にある。
 
-mod camera_supply;
-mod camera_system;
-mod camera_wiring;
-#[cfg(test)]
-mod camera_wiring_test_ports;
-#[cfg(test)]
-mod camera_wiring_tests;
-mod entity_id;
-mod entity_ledger;
 mod fox_player;
 mod fox_tour;
-mod ground_height;
-mod height_field_adoption;
-mod instrument;
-mod movement_record;
-mod query_count_distribution;
-mod render_supply;
+mod ground;
 mod scripted_operation;
-mod shape_version_record;
-mod step_seconds;
-mod step_time_by_query_count;
-mod step_time_distribution;
-#[cfg(test)]
-mod step_time_distribution_tests;
-mod summary;
+mod supply;
 mod tick;
 mod walk_only;
-mod world_shape_port;
-#[cfg(test)]
-mod world_shape_port_tests;
 
-pub(crate) use camera_supply::表示距離の指示;
-pub(crate) use camera_wiring::この描画のカメラの入力;
-pub(crate) use height_field_adoption::ゲーム用高さ場;
-pub(crate) use instrument::{カメラの計器, 直前の刻みの移動, 直前の描画のカメラ, 移動とカメラの計器, 移動の計器};
-pub(crate) use query_count_distribution::問い合わせ件数の要約;
-pub(crate) use shape_version_record::刻みが見た世界の形の版の要約;
-pub(crate) use step_seconds::ゲーム更新の一刻みの秒;
-pub(crate) use step_time_by_query_count::件数別の刻みの所要時間の要約;
-pub(crate) use step_time_distribution::刻みの所要時間の要約;
-pub(crate) use summary::ゲーム進行の要約;
-pub(crate) use world_shape_port::{世界の形を尋ねる口の実装エラー, 読込済みチャンクの形の出どころ};
+use blitz_engine::height_field::高さ場の読み口;
 
-use crate::app::進める刻み数;
-use crate::cli::{起動モード, 遊ぶゲームの指定};
-use crate::input::{入力状態, 刻みごとの操作入力};
+use super::entity_ledger::ゲーム状態の台帳;
+use super::movement_record::移動の観測の記録;
+use crate::cli::遊ぶゲームの指定;
+use crate::input::ゲーム操作の適用方針;
 
-/// 1刻み進めた結果、イベントループを閉じるべきかどうか。
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum ゲームの終了要求 {
-    続ける,
-    終了する,
+/// 世界実行が所有する共有の状態のうち、1刻みの更新が触るものだけを名前の付いた借用で束ねた値。
+pub(super) struct 一刻みが借りる共有の状態<'共有> {
+    pub(super) 台帳: &'共有 mut ゲーム状態の台帳,
+    pub(super) 高さ場の読み口: &'共有 高さ場の読み口,
+    pub(super) 移動の記録: &'共有 mut 移動の観測の記録,
+    pub(super) 操作の適用方針: ゲーム操作の適用方針,
 }
 
-/// コンポジションルートが保持するゲームの配線。
-pub(crate) enum ゲーム配線 {
+pub(super) enum ゲーム配線 {
     ゲームを遊ばない,                                   // --gameの指定が無い起動
     キツネの場所巡り(fox_tour::キツネの場所巡りの配線), // クソゲー1本目を回す起動
     歩くだけ(walk_only::歩くだけの配線),
 }
 
 impl ゲーム配線 {
-    pub(crate) fn 起動設定から作る(遊ぶゲーム: 遊ぶゲームの指定, モード: 起動モード) -> Self {
+    pub(super) fn 起動設定から作る(遊ぶゲーム: 遊ぶゲームの指定) -> Self {
         match 遊ぶゲーム {
             遊ぶゲームの指定::ゲームを遊ばない => Self::ゲームを遊ばない,
-            遊ぶゲームの指定::キツネの場所巡り(操作の出どころ) => Self::キツネの場所巡り(fox_tour::キツネの場所巡りの配線::生成する(モード, 操作の出どころ)),
-            遊ぶゲームの指定::歩くだけ => Self::歩くだけ(walk_only::歩くだけの配線::生成する(モード)),
+            遊ぶゲームの指定::キツネの場所巡り(操作の出どころ) => Self::キツネの場所巡り(fox_tour::キツネの場所巡りの配線::生成する(操作の出どころ)),
+            遊ぶゲームの指定::歩くだけ => Self::歩くだけ(walk_only::歩くだけの配線::生成する()),
         }
     }
 
-    /// 1描画に1度だけ操作入力を確定し、その描画で進める刻みへ配る器を作る。入力状態を受け取るのは、
-    /// 遊ばない起動で操作の確定すら行わないためであり、その選択肢は`None`を返す。確定を刻みごとに行わないのは、
-    /// 入力の確定が描画の頻度で起きるためである。
-    ///
-    /// カメラの系統の切替の操作は確定した直後にここで受け取る。刻みへ配らないのは、系統がゲームの状態でなく描画機会ごとの
-    /// カメラの関心であり、1描画に1度だけ効けばよいためである。刻み0本の描画では確定しないため旗は保持される。
-    ///
-    /// 刻みを1本も進めない描画で入力を確定しないのは、確定が決定・取り消しの押し下げの旗を消費するためである。
-    /// 毎秒120回書き換えるモニターでは刻み0本の描画が半分を占め、そこで確定すると、押して次の刻みより前に離した
-    /// 操作がゲームへ一度も届かない。無期限実行の最初の描画は必ず0本のため、起動直後の押し下げにも同じ穴が開く。
-    pub(crate) fn この描画で進める刻みへ配る操作入力を確定する(&mut self, 入力状態: &mut 入力状態, 刻み数: 進める刻み数) -> Option<刻みごとの操作入力> {
-        if 刻み数.一本も進めないか() {
-            return None;
-        }
-        let 入力 = match self {
-            Self::ゲームを遊ばない => return None,
-            Self::キツネの場所巡り(_) | Self::歩くだけ(_) => 入力状態.ゲームの操作入力を確定する(),
-        };
-        self.カメラの系統の切替の操作を受け取る(入力.カメラの系統を切り替える操作を押した瞬間か);
-        Some(刻みごとの操作入力::一描画の確定から生成する(入力))
-    }
-
-    /// 終了時の報告へ渡す要約。遊ばない起動では報告する対象が無いため`None`を返す。
-    pub(crate) fn 進行の要約を作る(&self) -> Option<ゲーム進行の要約> {
+    /// 遊ばない起動は刻みも操作の確定もカメラの操作も高さ場の読込も1つも行わない。各入口がこの判定で先頭で分ける。
+    pub(super) fn ゲームを遊ぶか(&self) -> bool {
         match self {
-            Self::ゲームを遊ばない => None,
-            Self::キツネの場所巡り(配線) => Some(配線.進行の要約を作る()),
-            Self::歩くだけ(_) => None,
+            Self::ゲームを遊ばない => false,
+            Self::キツネの場所巡り(_) | Self::歩くだけ(_) => true,
+        }
+    }
+
+    /// 起動時に世界実行へ渡す台帳。どの動く個体を載せるかはゲームが決め、遊ばない起動は1体も載せない。
+    pub(super) fn 開始時の台帳を作る(&self) -> ゲーム状態の台帳 {
+        match self {
+            Self::ゲームを遊ばない => ゲーム状態の台帳::動く個体を1体も持たない台帳を作る(),
+            Self::キツネの場所巡り(_) | Self::歩くだけ(_) => fox_player::原点のキツネを登録した台帳を作る(),
         }
     }
 }

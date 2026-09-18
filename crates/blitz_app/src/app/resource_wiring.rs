@@ -16,7 +16,7 @@ use blitz_render::地形詳細段選択;
 
 use super::streaming::{ストリーミングの有無, ストリーミング要約, ストリーミング配線};
 use crate::hot_reload::ホットリローダー;
-use crate::world_execution::読込済みチャンクの形の出どころ;
+use crate::world_execution::contract::読込済みチャンクの形の出どころ;
 
 pub(in crate::app) struct 資源の配線 {
     ホットリローダー: ホットリローダー,

@@ -36,7 +36,7 @@ mod tests {
     fn 個体群の基盤の抽象名だけを違反にする() {
         let 原文 = concat!("pub struct Wor", "ld;\n");
         assert_eq!(個体群の基盤の抽象名を検査する(Path::new("crates/blitz_ecs/src/lib.rs"), 原文).len(), 1);
-        assert!(個体群の基盤の抽象名を検査する(Path::new("crates/blitz_app/src/world_execution/game/entity_id.rs"), 原文).is_empty());
+        assert!(個体群の基盤の抽象名を検査する(Path::new("crates/blitz_app/src/world_execution/entity_id.rs"), 原文).is_empty());
     }
 
     #[test]

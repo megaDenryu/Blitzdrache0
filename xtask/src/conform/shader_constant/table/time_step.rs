@@ -4,7 +4,7 @@
 use super::定数の組;
 
 pub(super) const 定数一覧: [定数の組; 1] = [定数の組 {
-    正本パス: "crates/blitz_app/src/world_execution/game/step_seconds.rs",
+    正本パス: "crates/blitz_app/src/world_execution/step_seconds.rs",
     正本の前置き: "const 一刻みの秒数: f32 = ",
     写しパス: "xtask/src/cloth_xpbd_reference/judgment.rs",
     写しの前置き: "const 正本の基本刻みの秒: f64 = ",

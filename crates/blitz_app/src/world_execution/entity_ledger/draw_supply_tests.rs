@@ -7,7 +7,7 @@ use blitz_render::frame_input::読込時の向きから天頂軸まわりに回�
 use super::{ゲーム状態の台帳, 動く個体の描画先};
 use crate::app::scene_load::起動時シーンの束ID;
 use crate::app::描画補間の割合;
-use crate::world_execution::game::entity_id::エンティティID;
+use crate::world_execution::entity_id::エンティティID;
 
 const 検証のエンティティID: エンティティID = エンティティID::生成する(0);
 

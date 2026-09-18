@@ -16,23 +16,23 @@ pub(crate) struct 動く個体の大域の位置と向き {
 }
 
 impl 動く個体の大域の位置と向き {
-    pub(in crate::world_execution::game) fn 生成する(大域位置: 大域ワールド位置, 読込時の向きから回す角: 読込時の向きから天頂軸まわりに回す角) -> Self {
+    pub(in crate::world_execution) fn 生成する(大域位置: 大域ワールド位置, 読込時の向きから回す角: 読込時の向きから天頂軸まわりに回す角) -> Self {
         Self {
             大域位置, 読込時の向きから回す角
         }
     }
 
-    pub(in crate::world_execution::game) fn 大域位置(self) -> 大域ワールド位置 {
+    pub(in crate::world_execution) fn 大域位置(self) -> 大域ワールド位置 {
         self.大域位置
     }
 
-    pub(in crate::world_execution::game) fn 読込時の向きから回す角(self) -> 読込時の向きから天頂軸まわりに回す角 {
+    pub(in crate::world_execution) fn 読込時の向きから回す角(self) -> 読込時の向きから天頂軸まわりに回す角 {
         self.読込時の向きから回す角
     }
 
     /// 相手の値の側へ係数ぶん寄せた値。位置は線形に、向きは最短の弧で寄せる。
     /// 係数0ではこの値を1ビットも変えずに返すため、混ぜない描画の絵が補間の導入前と一致する。
-    pub(in crate::world_execution::game) fn 相手の側へ係数ぶん寄せる(self, 相手: Self, 係数: f32) -> Self {
+    pub(in crate::world_execution) fn 相手の側へ係数ぶん寄せる(self, 相手: Self, 係数: f32) -> Self {
         Self {
             大域位置: self.大域位置.相手の側へ係数ぶん寄せる(相手.大域位置, 係数),
             読込時の向きから回す角: self.読込時の向きから回す角.最短の弧で相手の側へ係数ぶん寄せる(相手.読込時の向きから回す角, 係数),

@@ -9,20 +9,12 @@
 //! 参照: `_doc/設計/キャラクターの移動とカメラ.md`「判断9」「判断10」
 
 use blitz_game::{カメラの遮蔽と復帰, 世界の形を尋ねる口, 前の描画の表示距離, 遮蔽の判定, 遮蔽の判定の入力};
-use blitz_math::{メートル, 大域ワールド位置, 秒};
+use blitz_math::{メートル, 大域ワールド位置};
 
 use super::camera_system::カメラの系統;
+use super::contract::この描画のカメラの入力;
 use super::instrument::{カメラの計器, 直前の描画のカメラ};
 use crate::input::ゲーム操作の適用方針;
-
-/// その描画のカメラの姿勢と、その描画で進めた時間。フレームの工程がエンジンのカメラと時間進行から組む。
-pub(crate) struct この描画のカメラの入力 {
-    pub(crate) 注視点: 大域ワールド位置,
-    pub(crate) 理想視点: 大域ワールド位置,
-    pub(crate) 理想距離: メートル,
-    pub(crate) 表示距離の下限: メートル,
-    pub(crate) 進めた時間: 秒,
-}
 
 pub(super) struct プレイヤーカメラの配線 {
     系統: カメラの系統,
