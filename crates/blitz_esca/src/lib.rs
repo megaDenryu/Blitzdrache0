@@ -8,6 +8,7 @@
 
 pub mod ontology;
 pub mod traveler;
+pub mod traveler_input;
 pub mod traveler_movement;
 
 #[cfg(test)]
@@ -15,10 +16,13 @@ mod syntax_checker;
 #[cfg(test)]
 mod syntax_tests;
 #[cfg(test)]
+mod traveler_input_tests;
+#[cfg(test)]
 mod traveler_tests;
 
 pub use ontology::{
-    MDTO, Mイベント, Mコマンド, M入力, M射影関数, M状態, M遷移関数, M規則,
+    MDTO, Mイベント, Mコマンド, M入力, M射影関数, M解釈関数, M状態, M遷移関数, M規則,
 };
 pub use traveler::{移動の生入力, 旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則};
+pub use traveler_input::{キーボード歩行入力, 歩行入力を解釈する};
 pub use traveler_movement::{描画位置を射影する, 歩行を遷移する, 旅行者の描画位置};
