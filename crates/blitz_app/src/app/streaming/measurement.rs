@@ -50,8 +50,8 @@ impl ストリーミング計測 {
         }
     }
 
-    pub(super) fn 記録する(&mut self, フレーム番号: u32, 所要時間: Duration, 進行: &ストリーミング進行, 段選択: &[(blitz_engine::チャンク座標, blitz_render::地形詳細段)]) {
-        if フレーム番号 >= ウォームアップフレーム数 {
+    pub(super) fn 記録する(&mut self, フレーム番号: u64, 所要時間: Duration, 進行: &ストリーミング進行, 段選択: &[(blitz_engine::チャンク座標, blitz_render::地形詳細段)]) {
+        if フレーム番号 >= u64::from(ウォームアップフレーム数) {
             self.処理時間一覧ms.push(所要時間.as_secs_f64() * 1000.0);
         }
         self.観測フレーム数 = self.観測フレーム数.saturating_add(1);
