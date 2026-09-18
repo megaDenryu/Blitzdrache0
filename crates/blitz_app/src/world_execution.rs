@@ -29,6 +29,8 @@ mod ground_height;
 mod height_field;
 mod instrument;
 mod movement_record;
+#[cfg(test)]
+mod no_game_launch_tests;
 mod query_count_distribution;
 mod shape_version_record;
 mod step_seconds;
