@@ -7,6 +7,7 @@
 mod tests {
     use crate::ontology::{オントロジー関数型, オントロジートレイト};
     use crate::syntax_checker::クレート構文検査;
+    use crate::syntax_patterns::Rust型種別;
 
     const 全ソースコード: &[&str] = &[
         include_str!("traveler.rs"),
@@ -18,10 +19,10 @@ mod tests {
     fn 構文解析_mコマンドとm規則の型定義を検証する() {
         let 検査 = クレート構文検査 { ソース一覧: 全ソースコード };
         for 型名 in 検査.トレイト実装型一覧(オントロジートレイト::Mコマンド) {
-            assert!(検査.型種別を満たしているか("enum", 型名), "Mコマンド `{型名}` はenumでなければなりません");
+            assert!(検査.型種別を満たしているか(Rust型種別::列挙型, 型名), "Mコマンド `{型名}` はenumでなければなりません");
         }
         for 型名 in 検査.トレイト実装型一覧(オントロジートレイト::M規則) {
-            assert!(検査.型種別を満たしているか("struct", 型名), "M規則 `{型名}` はstructでなければなりません");
+            assert!(検査.型種別を満たしているか(Rust型種別::構造体, 型名), "M規則 `{型名}` はstructでなければなりません");
         }
     }
 
