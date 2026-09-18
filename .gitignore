@@ -20,3 +20,6 @@ assets/source_asset_fingerprint.txt
 # 生成台帳。生成器の実行ファイルの内容ハッシュを持つため機械ごとに中身が違い、ソースではなく生成の途中状態である
 generation_ledger.txt
 target-agent*/
+
+# MCP設定はワークツリー(作業コピー)ごとにポート番号が異なるローカル環境設定であり、コミットしない
+.mcp.json
