@@ -4,7 +4,17 @@
 
 use blitz_math::メートル;
 
-use crate::ontology::{MDTO, Mコマンド, M状態, M規則};
+use crate::ontology::{MDTO, Mイベント, Mコマンド, M入力, M状態, M規則};
+
+/// デバイスから届く移動の生入力シグナル(生シグナル is a DTO)。
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct 移動の生入力 {
+    pub 東西方向: f32,
+    pub 南北方向: f32,
+}
+
+impl M入力 for 移動の生入力 {}
+impl MDTO for 移動の生入力 {}
 
 /// 旅行者が行おうとするアクション(命令・意図)。
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -59,3 +69,13 @@ impl 歩行の規則 {
         self.一秒あたりの速さ
     }
 }
+
+/// 旅行者の行動によって世界に発生した出来事(過去の事実)。
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum 旅行者の出来事 {
+    歩行を開始した,
+    立ち止まった,
+    周囲を観察した,
+}
+
+impl Mイベント for 旅行者の出来事 {}

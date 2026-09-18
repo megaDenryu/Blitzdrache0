@@ -8,33 +8,17 @@
 
 pub mod ontology;
 pub mod traveler;
-
-pub use ontology::{MDTO, Mイベント, Mコマンド, M状態, M規則};
-pub use traveler::{旅行者の意図, 旅行者の現在地, 歩行の規則};
+pub mod traveler_movement;
 
 #[cfg(test)]
-mod tests {
-    use blitz_math::メートル;
+mod syntax_checker;
+#[cfg(test)]
+mod syntax_tests;
+#[cfg(test)]
+mod traveler_tests;
 
-    use super::*;
-
-    #[test]
-    fn プログラミング設計上の役割が静的に検証できる() {
-        // 型レベルでそれぞれの設計概念を満たしていることを検証する
-        fn コマンドであることを検証する<T: Mコマンド>(_値: &T) {}
-        fn 状態であり自動的にdtoであることを検証する<T: M状態>(_値: &T) {
-            // M状態 satisfies MDTO via supertrait
-            fn dtoであることを検証する<D: MDTO>(_dto: &D) {}
-            dtoであることを検証する(_値);
-        }
-        fn 規則であることを検証する<T: M規則>(_値: &T) {}
-
-        let 意図 = 旅行者の意図::歩く { 東の比率: 1.0, 北の比率: 0.0 };
-        let 現在地 = 旅行者の現在地::生成する(メートル::生成する(10.0), メートル::生成する(5.0));
-        let 規則 = 歩行の規則::標準();
-
-        コマンドであることを検証する(&意図);
-        状態であり自動的にdtoであることを検証する(&現在地);
-        規則であることを検証する(&規則);
-    }
-}
+pub use ontology::{
+    MDTO, Mイベント, Mコマンド, M入力, M射影関数, M状態, M遷移関数, M規則,
+};
+pub use traveler::{移動の生入力, 旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則};
+pub use traveler_movement::{描画位置を射影する, 歩行を遷移する, 旅行者の描画位置};
