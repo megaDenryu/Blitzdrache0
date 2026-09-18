@@ -20,6 +20,7 @@ mod chunk_shapes;
 mod collision_object;
 mod error;
 pub mod index;
+mod loaded_chunk_shape_version;
 mod object_identifier;
 mod storage;
 
@@ -36,5 +37,6 @@ pub use child_shape_identifier::子形状識別子;
 pub use chunk_shapes::チャンクの静的物理形状;
 pub use collision_object::静的な衝突対象;
 pub use error::静的物理形状エラー;
+pub use loaded_chunk_shape_version::読込済みチャンクの形の版;
 pub use object_identifier::衝突対象の安定識別子;
 pub use storage::チャンクごとの静的物理形状の保管;

@@ -13,7 +13,7 @@ const 行一覧: [台帳の行; 6] = [
     台帳の行::構造体("camera/mod.rs", "カメラ", 3, 5, 17),
     台帳の行::構造体("height_field/field.rs", "高さ場", 6, 2, 16),
     台帳の行::構造体("streaming/chunk_ledger.rs", "チャンク台帳", 5, 1, 20),
-    台帳の行::構造体("streaming/coordinator.rs", "ストリーミング調停", 8, 12, 21),
+    台帳の行::構造体("streaming/coordinator.rs", "ストリーミング調停", 8, 12, 22),
     台帳の行::構造体("world_shape_query/query.rs", "世界の形への問い合わせ", 6, 2, 13),
 ];
 

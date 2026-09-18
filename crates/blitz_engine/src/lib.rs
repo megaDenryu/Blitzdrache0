@@ -54,6 +54,8 @@ mod streaming_reset_generation_tests;
 #[cfg(test)]
 mod streaming_reset_tests;
 #[cfg(test)]
+mod streaming_shape_version_tests;
+#[cfg(test)]
 mod streaming_tests;
 #[cfg(test)]
 mod streaming_transfer_tests;
@@ -83,6 +85,7 @@ pub use chunk::チャンク座標;
 pub use frame_composition::既定フレーム構成を作る;
 pub use instance_lod::{個体別段状態, 個体詳細段, 個体詳細段エラー, 個体詳細段選択設定};
 pub use lighting::{天空状態をライティングへ写す, 既定の影響半径を作る, 既定ライティングを作る};
+pub use static_shape::読込済みチャンクの形の版;
 pub use streaming::{
     GPU転送完了結果, ストリーミングメモリ量, ストリーミング予算, ストリーミング予算エラー, ストリーミング予算結果, ストリーミング見積エラー, ストリーミング調停, ストリーミング調停エラー, ストリーミング調停設定, ストリーミング転送量,
     ストリーミング進行, チャンクメモリ量を見積もる, チャンク一辺, チャンク一辺エラー, チャンク予算候補, チャンク台帳, チャンク台帳エラー, チャンク格子, チャンク格子エラー, チャンク状態, チャンク目録, チャンク目録エラー, チャンク目録差し替えエラー,
