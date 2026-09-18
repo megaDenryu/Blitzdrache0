@@ -19,6 +19,8 @@ pub use ontology::{
     MDTO, Mイベント, Mコマンド, M入力, M射影関数, M解釈関数, M状態, M遷移関数, M規則,
 };
 pub use traveler::{移動の生入力, 旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則};
-pub use traveler_boundary::移動可能範囲;
+pub use traveler_boundary::{境界制限結果, 移動可能範囲};
 pub use traveler_input::{キーボード歩行入力, 歩行入力を解釈する};
-pub use traveler_movement::{描画位置を射影する, 歩行を遷移する, 旅行者の描画位置};
+pub use traveler_movement::{
+    描画位置を射影する, 歩行を遷移する, 旅行者の描画位置, 歩行遷移の規則,
+};
