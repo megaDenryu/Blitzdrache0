@@ -5,19 +5,21 @@ use std::path::{Path, PathBuf};
 use super::super::source_lexing::コードだけの行一覧;
 use super::syntax_checker::クレート構文検査;
 
-fn ソース(名前: &str, 内容: &str) -> (PathBuf, Vec<String>) {
+pub(super) fn ソース(名前: &str, 内容: &str) -> (PathBuf, Vec<String>) {
     (Path::new(名前).to_path_buf(), コードだけの行一覧(内容))
 }
 
-fn 全部の説明関数を連ねた違反の説明一覧(ソース一覧: Vec<(PathBuf, Vec<String>)>) -> Vec<String> {
+pub(super) fn 全部の説明関数を連ねた違反の説明一覧(ソース一覧: Vec<(PathBuf, Vec<String>)>) -> Vec<String> {
     クレート構文検査::生成する(ソース一覧)
         .すべてのコマンドが列挙型であること()
         .すべての規則が構造体であること()
         .すべてのmdtoが純粋データ規約を満たすこと()
         .すべてのイベントが純粋データ規約を満たすこと()
+        .すべての規則が純粋データ規約を満たすこと()
         .すべてのコマンドが可変参照メソッドを持たないこと()
         .すべてのイベントが可変参照メソッドを持たないこと()
         .すべての規則が可変参照メソッドを持たないこと()
+        .すべての関数役割の宣言が確認関数を通ること()
         .違反一覧()
         .into_iter()
         .map(|違反| 違反.説明)
@@ -81,20 +83,4 @@ fn 構文解析_コメントと文字列の中の綴りは数えない() {
         "/// &mut self は持たない\npub struct 位置; // RefCell は使わない\nimpl MDTO for 位置 {}\nimpl Mイベント for 位置 {}\nimpl 位置 {\n    pub fn 名前(&self) -> &'static str {\n        \"&mut self\"\n    }\n}\n",
     )];
     assert!(全部の説明関数を連ねた違反の説明一覧(ソース一覧).is_empty());
-}
-
-#[test]
-fn 構文解析_別クレートに同名の型があるときは実装と同じファイルの定義を採る() {
-    let 甲 = ソース("crates/a/src/x.rs", "pub struct 位置 {\n    pub 東: f32,\n}\nimpl MDTO for 位置 {}\n");
-    let 乙 = ソース("crates/b/src/y.rs", "pub struct 位置<'a> {\n    値: &'a f32,\n}\n");
-    assert!(全部の説明関数を連ねた違反の説明一覧(vec![甲, 乙]).is_empty());
-}
-
-#[test]
-fn 構文解析_同じファイルに定義が無く別のファイルに同名の定義が2つあれば違反にする() {
-    let 甲 = ソース("crates/a/src/x.rs", "pub struct 位置 {\n    pub 東: f32,\n}\n");
-    let 乙 = ソース("crates/b/src/y.rs", "pub struct 位置 {\n    pub 北: f32,\n}\n");
-    let 丙 = ソース("crates/c/src/z.rs", "impl MDTO for 位置 {}\n");
-    let 期待 = "設計オントロジー: MDTO `位置` の同名の定義が複数のファイルにあり一意に決まらない(実装と同じファイルに定義を置く)".to_string();
-    assert_eq!(全部の説明関数を連ねた違反の説明一覧(vec![甲, 乙, 丙]), vec![期待]);
 }

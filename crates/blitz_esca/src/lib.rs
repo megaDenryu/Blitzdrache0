@@ -7,6 +7,7 @@
 
 #![forbid(unsafe_code)]
 
+pub mod elapsed_time;
 pub mod ontology;
 pub mod traveler;
 pub mod traveler_boundary;
@@ -19,6 +20,7 @@ pub mod walking_direction;
 #[cfg(test)]
 mod tests;
 
+pub use elapsed_time::{経過時間, 経過時間の生成の失敗};
 pub use ontology::{M遷移関数, 遷移結果, 遷移関数として確認する};
 pub use traveler::{旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則};
 pub use traveler_boundary::{境界制限結果, 移動可能範囲, 移動可能範囲の指定};
