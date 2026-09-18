@@ -1,11 +1,13 @@
 //! 細分の中の剛体: 参照計算が細分1本の間だけ持つ剛体の作業域。動かせない剛体は配置だけを、動的剛体は前の状態と予測の状態と質量特性を持つ。
 //! 拘束の反復はここから参加者を作り、補正を予測の状態へ適用する(判断8の「補正は予測の型だけに掛かる」)。
 
+use blitz_design::{MDTO, M状態};
+
 use super::super::correction::姿勢自由度の補正;
 use super::super::participant::姿勢自由度の参加者;
 use super::super::predicted_state::予測の状態;
 use super::super::previous_state::前の状態;
-use crate::ontology::{MDTO, M時間局所状態, M状態, 物理小刻み};
+use crate::ontology::{M時間局所状態, 物理小刻み};
 use crate::rigid_body::{質量特性, 配置};
 
 #[derive(Clone)]

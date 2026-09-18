@@ -13,10 +13,11 @@
 //! 測った分離の増分の累計も上限を超えない。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断12: 非貫通は法線方向の片側のXPBD位置拘束であり、貫通しているときだけ効く」
 
+use blitz_design::{MDTO, M状態};
 use blitz_math::{メートル, 逆キログラム};
 
 use super::super::minimum_thickness::形の最小の厚み;
-use crate::ontology::{MDTO, M時間局所状態, M状態, 物理小刻み};
+use crate::ontology::{M時間局所状態, 物理小刻み};
 use crate::xpbd::ラグランジュ乗数;
 
 /// 接触1点が1細分の反復のあいだ持ち越す非貫通の解の状態。

@@ -9,6 +9,7 @@
 //! 注意: このクレートは何にも依存しない最下層である。依存の向きは `xtask/src/conform/dependency_whitelist/ledger.rs` の
 //! 白リストが機械で強制する。マーカーが課す法則のうち、`MDTO` と `Mイベント` の `Clone` と、`M状態` と `M入力` の
 //! `MDTO` 実装と、関数型の型引数の境界はコンパイラが強制し、残りの法則は `cargo xtask conform` の設計オントロジーの検査が見る。
+//! 参照: `_doc/設計/設計オントロジー.md`。
 
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
