@@ -9,6 +9,8 @@ pub struct クレート構文検査<'a> {
 }
 
 impl<'a> クレート構文検査<'a> {
+    pub const fn 生成する(ソース一覧: &'a [&'a str]) -> Self { Self { ソース一覧 } }
+
     pub fn トレイト実装型一覧(&self, トレイト: オントロジートレイト) -> Vec<&'a str> {
         let パターン = 構文パターン::トレイト実装宣言(トレイト);
         let mut 型一覧 = Vec::new();
