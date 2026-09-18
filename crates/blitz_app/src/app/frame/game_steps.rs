@@ -17,12 +17,12 @@ use std::time::Instant;
 use super::super::time_step::進める刻み数;
 use super::super::アプリ;
 use crate::error::起動エラー;
-use crate::game::ゲームの終了要求;
+use crate::world_execution::contract::{刻み入力, 刻み結果};
 
 impl アプリ {
-    pub(in crate::app) fn この描画の刻み数だけゲームを進める(&mut self, 刻み数: 進める刻み数) -> Result<ゲームの終了要求, 起動エラー> {
-        let Some(mut 刻みごとの操作入力) = self.ゲーム配線.この描画で進める刻みへ配る操作入力を確定する(&mut self.入力状態, 刻み数) else {
-            return Ok(ゲームの終了要求::続ける);
+    pub(in crate::app) fn この描画の刻み数だけゲームを進める(&mut self, 刻み数: 進める刻み数) -> Result<刻み結果, 起動エラー> {
+        let Some(mut 刻みごとの操作入力) = self.世界実行.この描画で進める刻みへ配る操作入力を確定する(&mut self.入力状態, 刻み数) else {
+            return Ok(刻み結果::続ける);
         };
         let カメラのヨー = self.視点.ヨー();
         let 一刻みの秒 = self.時間進行.基本刻み();
@@ -30,12 +30,12 @@ impl アプリ {
         for _ in 0..刻み数.本数() {
             let この刻みの操作入力 = 刻みごとの操作入力.次の刻みぶんを取り出す();
             let 始まり = Instant::now();
-            let 終了要求 = self.ゲーム配線.一刻み進める(出どころ, この刻みの操作入力, カメラのヨー, 一刻みの秒)?;
-            self.ゲーム配線.刻みの所要時間を記録する(始まり.elapsed());
-            if 終了要求 == ゲームの終了要求::終了する {
-                return Ok(ゲームの終了要求::終了する);
+            let 結果 = self.世界実行.一刻み進める(刻み入力::カメラのヨーから生成する(この刻みの操作入力, カメラのヨー, 出どころ), 一刻みの秒)?;
+            self.世界実行.刻みの所要時間を記録する(始まり.elapsed());
+            if 結果 == 刻み結果::終了する {
+                return Ok(刻み結果::終了する);
             }
         }
-        Ok(ゲームの終了要求::続ける)
+        Ok(刻み結果::続ける)
     }
 }

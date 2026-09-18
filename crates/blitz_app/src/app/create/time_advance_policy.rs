@@ -7,7 +7,7 @@
 //! 参照: `_doc/設計/時間の規律.md`「判断1」「判断3」。
 
 use super::super::time_step::{時間進行方針, 進める刻み数};
-use crate::game::ゲーム更新の一刻みの秒;
+use crate::world_execution::ゲーム更新の一刻みの秒;
 
 /// 一描画で進める固定刻みの本数の上限の初期値。
 const 一描画で進める刻み数の上限: u16 = 4;

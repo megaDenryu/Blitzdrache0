@@ -21,13 +21,13 @@ mod embedded_sky_shaders;
 mod embedded_temporal_reconstruction_shaders;
 mod embedded_xpbd_shaders;
 mod error;
-mod game;
 mod hot_reload;
 mod input;
 mod overlay_ui;
 mod reports;
 mod runtime_assets;
 mod smoke;
+mod world_execution;
 
 use std::process::ExitCode;
 

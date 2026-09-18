@@ -18,7 +18,7 @@ const 差し替え成功の行: &str = "[hot-reload] 契約別のシェーダー
 pub(super) struct ホットリロードの反映先<'借用> {
     pub(super) レンダラー: &'借用 mut レンダラー,
     pub(super) 描画束の台帳: &'借用 mut 描画束の台帳,
-    pub(super) ゲーム配線: &'借用 mut crate::game::ゲーム配線,
+    pub(super) 世界実行: &'借用 mut crate::world_execution::世界実行,
     pub(super) 描画対象の並べ方: crate::cli::描画対象の並べ方,
     pub(super) 大域ずらし量: blitz_math::大域ワールド位置,
 }
@@ -72,7 +72,7 @@ impl アプリ {
         let 反映先 = ホットリロードの反映先 {
             レンダラー: 画面の据え付け::描画の最中に借りる(&mut self.据え付け).レンダラーを借りる(),
             描画束の台帳: &mut self.描画束の台帳,
-            ゲーム配線: &mut self.ゲーム配線,
+            世界実行: &mut self.世界実行,
             描画対象の並べ方: self.描画対象の並べ方,
             大域ずらし量: self.大域ずらし量,
         };
