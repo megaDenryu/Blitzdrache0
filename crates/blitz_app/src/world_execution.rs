@@ -44,7 +44,11 @@ mod tick;
 mod tick_confirmation_tests;
 #[cfg(test)]
 mod tick_input_tests;
+#[cfg(test)]
+mod tick_result_tests;
 mod tick_stage;
+#[cfg(test)]
+mod tick_stage_tests;
 mod world_shape_port;
 #[cfg(test)]
 mod world_shape_port_tests;
