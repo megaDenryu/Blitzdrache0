@@ -1,5 +1,4 @@
-//! Escaオントロジーの構文規則を機械検証するための構文解析器(Issue #137)。
-use crate::ontology::オントロジートレイト;
+use crate::ontology::{オントロジー関数型, オントロジートレイト};
 
 /// クレート内の全ソースコードを横断して構文検査を行う操作DTO。
 #[derive(Clone, Copy)]
@@ -56,8 +55,8 @@ impl<'a> クレート構文検査<'a> {
         self.ソース一覧.iter().any(|s| s.lines().map(str::trim).any(|l| l.starts_with(&公開) || l.starts_with(&非公開)))
     }
 
-    pub fn 宣言の型引数一覧(&self, 宣言名: &str) -> Vec<Vec<String>> {
-        let 接頭辞 = format!("const _: {宣言名}<");
+    pub fn 宣言の型引数一覧(&self, 関数: オントロジー関数型) -> Vec<Vec<String>> {
+        let 接頭辞 = format!("const _: {}<", 関数.名前());
         let mut 結果 = Vec::new();
         for ソース in self.ソース一覧 {
             for 行 in ソース.lines() {

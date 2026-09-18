@@ -5,7 +5,7 @@
 
 #[allow(clippy::unwrap_used)]
 mod tests {
-    use crate::ontology::オントロジートレイト;
+    use crate::ontology::{オントロジー関数型, オントロジートレイト};
     use crate::syntax_checker::クレート構文検査;
 
     const 全ソースコード: &[&str] = &[
@@ -72,18 +72,18 @@ mod tests {
             検査.トレイト実装型一覧(オントロジートレイト::M入力),
             検査.トレイト実装型一覧(オントロジートレイト::MDTO),
         );
-        let 遷移 = 検査.宣言の型引数一覧("M遷移関数");
+        let 遷移 = 検査.宣言の型引数一覧(オントロジー関数型::M遷移関数);
         assert!(!遷移.is_empty(), "M遷移関数の静的宣言が必要です");
         for 引 in &遷移 {
             assert!(状態.contains(&引[0].as_str()) && コマンド.contains(&引[1].as_str()));
             assert!(規則.contains(&引[2].as_str()) && イベント.contains(&引[3].as_str()));
         }
-        let 射影 = 検査.宣言の型引数一覧("M射影関数");
+        let 射影 = 検査.宣言の型引数一覧(オントロジー関数型::M射影関数);
         assert!(!射影.is_empty(), "M射影関数の静的宣言が必要です");
         for 引 in &射影 {
             assert!(状態.contains(&引[0].as_str()) && dto.contains(&引[1].as_str()));
         }
-        let 解釈 = 検査.宣言の型引数一覧("M解釈関数");
+        let 解釈 = 検査.宣言の型引数一覧(オントロジー関数型::M解釈関数);
         assert!(!解釈.is_empty(), "M解釈関数の静的宣言が必要です");
         for 引 in &解釈 {
             assert!(入力.contains(&引[0].as_str()) && コマンド.contains(&引[1].as_str()));
