@@ -10,6 +10,7 @@ mod scene_read_count;
 mod section_timing;
 mod summary;
 
+pub(in crate::app) use scene_read_count::シーン読込の契機;
 pub(crate) use summary::検収の観測の統計;
 
 use std::time::Duration;
@@ -17,7 +18,6 @@ use std::time::Duration;
 use blitz_render::{HDR読み戻し画像, 読み戻し画像};
 
 use super::frame_timing::フレーム間隔計測;
-use super::time_step::フレーム番号;
 use crate::cli::起動設定;
 use scene_read_count::シーン読込計数;
 use section_timing::区間計測;
@@ -65,8 +65,8 @@ impl 検収の観測 {
     }
 
     /// 実行時シーンをディスクから読んだ直後に呼ぶ。
-    pub(in crate::app) fn ディスクから読んだことを数える(&mut self, フレーム番号: フレーム番号) {
-        self.シーン読込計数.読み込んだ(フレーム番号);
+    pub(in crate::app) fn ディスクから読んだことを数える(&mut self, 契機: シーン読込の契機) {
+        self.シーン読込計数.読み込んだ(契機);
     }
 
     pub(in crate::app) fn 時間再構成の前フレームの結果を見る(&self) -> Option<&HDR読み戻し画像> {
