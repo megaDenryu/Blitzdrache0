@@ -20,6 +20,7 @@ mod double_precision_reading;
 mod holding_class;
 mod oscillation_scan;
 mod single_precision_reading;
+mod sliding_arm_length_record;
 mod sliding_normal_budget_record;
 mod sliding_normal_budget_sample;
 mod slope_boundary_table;
