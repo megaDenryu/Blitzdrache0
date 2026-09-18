@@ -23,3 +23,6 @@ target-agent*/
 
 # MCP設定はワークツリー(作業コピー)ごとにポート番号が異なるローカル環境設定であり、コミットしない
 .mcp.json
+
+# vscode-lsp-mcpのポート番号もワークツリーごとに異なるローカル環境設定であり、コミットしない
+.vscode/settings.json
