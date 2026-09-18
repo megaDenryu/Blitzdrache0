@@ -1,7 +1,7 @@
 //! キツネの場所巡りの配線が、ゲーム固有の状態(位置・移動状態・画面の表示内容・終了時の要約)を外へ渡す口。
 //! 触れるのは読むだけであり、状態を進めるのは親モジュールの1刻みの更新だけである。
 
-use blitz_game::移動状態;
+use blitz_game::{プレイヤーの位置と向き, 移動状態};
 use blitz_math::大域ワールド位置;
 
 use super::キツネの場所巡りの配線;
@@ -14,6 +14,10 @@ use crate::world_execution::movement_record::移動の観測の記録;
 impl キツネの場所巡りの配線 {
     pub(in crate::world_execution::game) fn プレイヤーの大域位置(&self) -> 大域ワールド位置 {
         self.状態.プレイヤーの大域位置()
+    }
+
+    pub(in crate::world_execution::game) fn プレイヤーの位置と向き(&self) -> プレイヤーの位置と向き {
+        プレイヤーの位置と向き::生成する(self.状態.プレイヤーの大域位置(), self.状態.プレイヤーの向き())
     }
 
     pub(in crate::world_execution::game) fn プレイヤーの移動状態(&self) -> 移動状態 {
