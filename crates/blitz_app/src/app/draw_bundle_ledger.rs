@@ -19,8 +19,6 @@ use super::scene_load::{シーンを描画入力へ写す材料, 地表の層の
 use super::visibility::{可視判定配線, 選別のつまみ, 選別の計器};
 use crate::error::起動エラー;
 
-pub(in crate::app) use installation::起動時シーンの差し替え材料;
-
 pub(in crate::app) struct 描画束の台帳 {
     可視判定: 可視判定配線,
     プリミティブ描画項目: プリミティブ描画項目台帳,
