@@ -4,8 +4,8 @@
 //! 設計規則の意図を明示したメソッドチェーン可能な高水準アサーションを提供する。
 
 use crate::ontology::{オントロジー関数型, オントロジートレイト};
-use crate::syntax_checker::クレート構文検査;
-use crate::syntax_patterns::Rust型種別;
+use super::syntax_checker::クレート構文検査;
+use super::syntax_patterns::Rust型種別;
 
 impl<'a> クレート構文検査<'a> {
     pub fn すべてのコマンドが列挙型であること(self) -> Self {

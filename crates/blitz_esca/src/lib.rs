@@ -12,17 +12,7 @@ pub mod traveler_input;
 pub mod traveler_movement;
 
 #[cfg(test)]
-mod syntax_assertion;
-#[cfg(test)]
-mod syntax_checker;
-#[cfg(test)]
-mod syntax_patterns;
-#[cfg(test)]
-mod syntax_tests;
-#[cfg(test)]
-mod traveler_input_tests;
-#[cfg(test)]
-mod traveler_tests;
+mod tests;
 
 pub use ontology::{
     MDTO, Mイベント, Mコマンド, M入力, M射影関数, M解釈関数, M状態, M遷移関数, M規則,

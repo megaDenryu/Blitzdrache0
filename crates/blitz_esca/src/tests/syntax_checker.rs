@@ -1,6 +1,5 @@
-//! Escaオントロジーの構文規則を機械検証するための構文解析器(Issue #137)。
 use crate::ontology::{オントロジー関数型, オントロジートレイト};
-use crate::syntax_patterns::{構文パターン, Rust型種別};
+use super::syntax_patterns::{構文パターン, Rust型種別};
 
 /// クレート内の全ソースコードを横断して構文検査を行う操作DTO。
 #[derive(Clone, Copy)]
