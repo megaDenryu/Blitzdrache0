@@ -1,7 +1,7 @@
 //! 検収がどの段階をどのフレーム数で撮るかの台帳。担当するのは条件の一覧を1箇所へ持つことだけであり、
 //! 起動も判定もここは行わない。
 //!
-//! フレーム数は台本の区切り(`crates/blitz_app/src/game/scripted_operation.rs`)に合わせてある。
+//! フレーム数は台本の区切り(`crates/blitz_app/src/world_execution/game/scripted_operation.rs`)に合わせてある。
 //! 撮る条件を段階ごとに分けるのは、フレームの書き出しが`--frames`の最終フレームでだけ起きるためである。
 
 use crate::acceptance::描画フレーム数;

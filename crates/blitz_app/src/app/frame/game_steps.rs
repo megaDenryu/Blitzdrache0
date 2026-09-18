@@ -17,7 +17,7 @@ use std::time::Instant;
 use super::super::time_step::進める刻み数;
 use super::super::アプリ;
 use crate::error::起動エラー;
-use crate::game::ゲームの終了要求;
+use crate::world_execution::ゲームの終了要求;
 
 impl アプリ {
     pub(in crate::app) fn この描画の刻み数だけゲームを進める(&mut self, 刻み数: 進める刻み数) -> Result<ゲームの終了要求, 起動エラー> {

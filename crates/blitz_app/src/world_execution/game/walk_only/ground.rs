@@ -8,15 +8,15 @@ use blitz_engine::height_field::高さ場の読み口;
 use blitz_game::{歩くだけのゲームの状態, 足元の地面の高さ};
 
 use super::歩くだけの配線;
-use crate::game::fox_player::プレイヤーのエンティティID;
-use crate::game::fox_tour::facing::世界での向きを読込時からの回転角へ写す;
+use crate::world_execution::game::fox_player::プレイヤーのエンティティID;
+use crate::world_execution::game::fox_tour::facing::世界での向きを読込時からの回転角へ写す;
 
 impl 歩くだけの配線 {
     // 世界の中心へ置き直すのは刻みを1つも進めない跳びであるため、台帳の2枚を前後とも据え直す。
     // 繰り上げで据えると、原点と世界の中心の間を混ぜた位置が1描画だけ描かれる。
     // 中心を持たない読み口でも据え直しを条件なしで通す。中心が無いのは高さ場を持たない世界だけであり、
     // その世界では足元の高さの反映も位置を動かさないため、据え直しは現在の確定値を2枚へ書き直すだけで終わる。
-    pub(in crate::game) fn 高さ場を据える(&mut self, 読み口: 高さ場の読み口) {
+    pub(in crate::world_execution::game) fn 高さ場を据える(&mut self, 読み口: 高さ場の読み口) {
         if let Some(中心) = 読み口.世界の中心の水平位置() {
             let 向き = self.状態.プレイヤーの位置と向き().向き();
             self.状態 = 歩くだけのゲームの状態::開始時の状態を作る(中心, 向き);
@@ -30,6 +30,6 @@ impl 歩くだけの配線 {
 
     fn 足元の地面の高さを求める(&self) -> 足元の地面の高さ {
         let 位置 = self.状態.プレイヤーの位置と向き().大域位置();
-        crate::game::ground_height::足元の地面の高さへ写す(self.高さ場の読み口.大域の水平位置から地表高さを求める(位置))
+        crate::world_execution::game::ground_height::足元の地面の高さへ写す(self.高さ場の読み口.大域の水平位置から地表高さを求める(位置))
     }
 }

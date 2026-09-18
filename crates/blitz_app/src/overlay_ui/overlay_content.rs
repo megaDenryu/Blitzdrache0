@@ -6,7 +6,7 @@
 use super::game_screen::ゲーム画面の表示内容;
 use super::stats::開発UI統計;
 use super::{game_instrument_panel, game_screen, panel};
-use crate::game::移動とカメラの計器;
+use crate::world_execution::移動とカメラの計器;
 
 pub(crate) struct 画面へ重ねる内容 {
     pub(crate) 開発パネルの統計: 開発UI統計,                   // パネルを表示しないフレームでも作るのは、計器の取り出しがフレームの決まった位置にあり、表示の有無で読む時点を変えないため

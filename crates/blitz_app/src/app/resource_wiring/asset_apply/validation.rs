@@ -4,11 +4,11 @@
 use super::error::実行時アセット一式の反映エラー;
 use crate::app::scene_load::地表の層のタイル一式;
 use crate::app::streaming::{ストリーミングの有無, ストリーミング配線};
-use crate::game::ゲーム配線;
 use crate::hot_reload::公開済みの実行時アセット一式;
+use crate::world_execution::ゲーム配線;
 
 pub(super) struct 検査を通った材料 {
-    pub(super) 高さ場: crate::game::ゲーム用高さ場,
+    pub(super) 高さ場: crate::world_execution::ゲーム用高さ場,
     pub(super) 一辺: Option<blitz_engine::チャンク一辺>,
     pub(super) 地表の層のタイル: 地表の層のタイル一式,
 }

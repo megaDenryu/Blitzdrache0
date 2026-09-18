@@ -8,8 +8,8 @@ use blitz_render::描画シーン素材;
 use super::error::実行時アセット一式の反映エラー;
 use crate::app::draw_bundle_ledger::描画束の台帳;
 use crate::app::scene_load::{シーンをレンダラー入力に変換する, シーンを描画入力へ写す材料, 束の描画入力, 束の登録一式, 起動時シーンの所有チャンク, 起動時シーンの束ID};
-use crate::game::ゲーム配線;
 use crate::hot_reload::起動時シーンの更新;
+use crate::world_execution::ゲーム配線;
 
 pub(super) enum 起動時シーンの反映準備 {
     同じ内容 {

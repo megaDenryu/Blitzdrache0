@@ -6,16 +6,16 @@ use blitz_math::大域ワールド位置;
 use super::facing::キツネが読込時に向いている方位角;
 use super::キツネの場所巡りの配線;
 use crate::cli::{ゲーム操作の出どころ, 起動モード};
-use crate::game::camera_wiring::プレイヤーカメラの配線;
-use crate::game::entity_id::エンティティID;
-use crate::game::fox_player::{プレイヤーのエンティティID, 原点のキツネを登録した台帳を作る};
-use crate::game::movement_record::移動の観測の記録;
 use crate::input::ゲーム操作の適用方針;
+use crate::world_execution::game::camera_wiring::プレイヤーカメラの配線;
+use crate::world_execution::game::entity_id::エンティティID;
+use crate::world_execution::game::fox_player::{プレイヤーのエンティティID, 原点のキツネを登録した台帳を作る};
+use crate::world_execution::game::movement_record::移動の観測の記録;
 
 impl キツネの場所巡りの配線 {
     /// 出発地点は世界の原点である。高さ場を持たない世界では天頂成分が動かないため、初期の高さは0に置く。
     /// 出発時の向きを読込時の向きに合わせるのは、遊び始める前のキツネを焼かれた姿勢のまま立たせるためである。
-    pub(in crate::game) fn 生成する(モード: 起動モード, 操作の出どころ: ゲーム操作の出どころ) -> Self {
+    pub(in crate::world_execution::game) fn 生成する(モード: 起動モード, 操作の出どころ: ゲーム操作の出どころ) -> Self {
         let 出発地点 = 大域ワールド位置::原点();
         let 出発時の向き = キツネが読込時に向いている方位角();
         let 台帳 = 原点のキツネを登録した台帳を作る();

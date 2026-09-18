@@ -27,7 +27,7 @@ pub(super) fn ウィンドウとレンダラーを作る(
     世界: &読み込む世界の材料<'_>,
     作り方: &画面の作り方,
     ホットリローダー: &mut ホットリローダー,
-    ゲーム配線: &mut crate::game::ゲーム配線,
+    ゲーム配線: &mut crate::world_execution::ゲーム配線,
 ) -> Result<起動時に組み上げた一式, 起動エラー> {
     let window = window_create::ウィンドウを生成する(event_loop)?;
     let 表示ハンドル = window.display_handle()?.as_raw();

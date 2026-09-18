@@ -18,7 +18,7 @@ use super::streaming::ストリーミング要約;
 use super::time_of_day::天空の終了時の観測;
 use super::verification_observation::検収の観測の統計;
 use super::アプリ;
-use crate::game::ゲーム進行の要約;
+use crate::world_execution::ゲーム進行の要約;
 
 pub(crate) struct 終了時の観測一式<'a> {
     pub(crate) 報告要求: &'a 報告要求,

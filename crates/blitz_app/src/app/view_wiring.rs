@@ -17,7 +17,7 @@ use blitz_engine::{カメラ, カメラの操作意図};
 use blitz_math::{ラジアン, ワールド, 位置, 大域ワールド位置, 秒};
 
 use crate::error::起動エラー;
-use crate::game::{この描画のカメラの入力, 表示距離の指示};
+use crate::world_execution::{この描画のカメラの入力, 表示距離の指示};
 use view_history::視点の履歴;
 
 pub(in crate::app) struct 視点の配線 {

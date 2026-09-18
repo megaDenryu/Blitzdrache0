@@ -22,8 +22,8 @@ use super::screen_installation::画面の据え付け;
 use super::time_step::{描画機会の番号, 描画機会の続き};
 use super::アプリ;
 use crate::error::起動エラー;
-use crate::game::ゲームの終了要求;
 use crate::smoke::スモークアクション;
+use crate::world_execution::ゲームの終了要求;
 
 pub(crate) use super::view_wiring::フレーム視点;
 pub(super) use draw_input::描画の計測つまみ;

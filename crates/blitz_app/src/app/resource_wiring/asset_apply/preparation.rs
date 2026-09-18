@@ -14,7 +14,7 @@ use crate::app::streaming::ストリーミングの有無;
 use crate::hot_reload::公開済みの実行時アセット一式;
 
 pub(super) struct 反映準備 {
-    pub(super) 高さ場: crate::game::ゲーム用高さ場,
+    pub(super) 高さ場: crate::world_execution::ゲーム用高さ場,
     pub(super) 地表の層のタイル: 地表の層のタイル一式,
     pub(super) 起動時シーン: 起動時シーンの反映準備,
     pub(super) チャンク目録: blitz_engine::チャンク目録,
