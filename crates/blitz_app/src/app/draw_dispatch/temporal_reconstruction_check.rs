@@ -13,7 +13,7 @@ use blitz_render::フレーム描画入力;
 
 use super::frame_reach::描画の到達;
 use crate::app::screen_installation::画面の据え付け;
-use crate::app::time_step::フレーム番号;
+use crate::app::time_step::描画機会の番号;
 use crate::app::verification_launch_settings::時間再構成の観測の局面;
 use crate::app::アプリ;
 use crate::error::起動エラー;
@@ -21,21 +21,21 @@ use crate::reports::temporal_reconstruction;
 use readback::{今のフレームの色を読み戻す, 圧縮前のhdrを読み戻す};
 
 impl アプリ {
-    pub(in crate::app) fn 時間再構成を観測する(&mut self, 描画入力: フレーム描画入力<'_>, 局面: 時間再構成の観測の局面, フレーム番号: フレーム番号) -> Result<描画の到達, 起動エラー> {
+    pub(in crate::app) fn 時間再構成を観測する(&mut self, 描画入力: フレーム描画入力<'_>, 局面: 時間再構成の観測の局面, 描画機会の番号: 描画機会の番号) -> Result<描画の到達, 起動エラー> {
         match 局面 {
             時間再構成の観測の局面::無効化直後 => self.無効化直後を突き合わせる(描画入力),
-            時間再構成の観測の局面::フレーム間差分 => self.フレーム間差分を採る(描画入力, フレーム番号),
+            時間再構成の観測の局面::フレーム間差分 => self.フレーム間差分を採る(描画入力, 描画機会の番号),
         }
     }
 
     /// 1フレーム描いて再構成後の結果を読み戻し、前のフレームの結果との差を並べる。
-    fn フレーム間差分を採る(&mut self, 描画入力: フレーム描画入力<'_>, フレーム番号: フレーム番号) -> Result<描画の到達, 起動エラー> {
+    fn フレーム間差分を採る(&mut self, 描画入力: フレーム描画入力<'_>, 描画機会の番号: 描画機会の番号) -> Result<描画の到達, 起動エラー> {
         let レンダラー = 画面の据え付け::描画の最中に借りる(&mut self.据え付け).レンダラーを借りる();
         let Some(今の結果) = 圧縮前のhdrを読み戻す(レンダラー, 描画入力, "フレーム間差分")? else {
             return Ok(描画の到達::届かなかった);
         };
         if let Some(前) = self.検収の観測.時間再構成の前フレームの結果を見る() {
-            temporal_reconstruction::フレーム間差分を報告する(フレーム番号, 前, &今の結果);
+            temporal_reconstruction::フレーム間差分を報告する(描画機会の番号, 前, &今の結果);
         }
         self.検収の観測.時間再構成の一枚を据える(今の結果);
         Ok(描画の到達::提示した)

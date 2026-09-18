@@ -13,14 +13,14 @@ pub(in crate::cli) fn 次の値を読む<'引数>(引数: &mut Iter<'引数, Str
 
 pub(super) fn frames引数を処理する(引数: &mut Iter<String>) -> Result<起動モード, 起動引数エラー> {
     let 値 = 次の値を読む(引数, "--frames", 起動引数エラー::フレーム数不正)?;
-    let フレーム数 = 値.parse::<u32>().map_err(|_| 起動引数エラー::フレーム数不正(値.clone()))?;
-    Ok(起動モード::スモーク実行 { フレーム数 })
+    let 描画機会の数 = 値.parse::<u32>().map_err(|_| 起動引数エラー::フレーム数不正(値.clone()))?;
+    Ok(起動モード::スモーク実行 { 描画機会の数 })
 }
 
 pub(super) fn benchmark_frames引数を処理する(引数: &mut Iter<String>) -> Result<起動モード, 起動引数エラー> {
     let 値 = 次の値を読む(引数, "--benchmark-frames", 起動引数エラー::フレーム数不正)?;
-    let フレーム数 = 値.parse::<u32>().map_err(|_| 起動引数エラー::フレーム数不正(値.clone()))?;
-    Ok(起動モード::ベンチ実行 { フレーム数 })
+    let 描画機会の数 = 値.parse::<u32>().map_err(|_| 起動引数エラー::フレーム数不正(値.clone()))?;
+    Ok(起動モード::ベンチ実行 { 描画機会の数 })
 }
 
 pub(super) fn scene引数を処理する(引数: &mut Iter<String>) -> Result<super::起動時シーン, 起動引数エラー> {
