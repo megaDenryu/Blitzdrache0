@@ -41,7 +41,10 @@ mod step_time_distribution_tests;
 mod summary;
 mod tick;
 #[cfg(test)]
+mod tick_confirmation_tests;
+#[cfg(test)]
 mod tick_input_tests;
+mod tick_stage;
 mod world_shape_port;
 #[cfg(test)]
 mod world_shape_port_tests;
