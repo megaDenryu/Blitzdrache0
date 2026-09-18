@@ -2,12 +2,15 @@
 //! 参照: `_doc/設計/ゲーム世界の個体群の基盤.md`「判断7」。
 
 mod apply;
+#[cfg(test)]
+mod cancel_tests;
 mod command;
 mod erased_value;
 mod error;
 #[cfg(test)]
 mod removal_tests;
 mod reservation;
+mod reservation_drop;
 mod result;
 mod session;
 #[cfg(test)]
