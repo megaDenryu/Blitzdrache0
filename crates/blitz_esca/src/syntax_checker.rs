@@ -1,4 +1,5 @@
 //! Escaオントロジーの構文規則を機械検証するための構文解析器(Issue #137)。
+use crate::ontology::オントロジートレイト;
 
 /// クレート内の全ソースコードを横断して構文検査を行う操作DTO。
 #[derive(Clone, Copy)]
@@ -7,8 +8,8 @@ pub struct クレート構文検査<'a> {
 }
 
 impl<'a> クレート構文検査<'a> {
-    pub fn トレイト実装型一覧(&self, トレイト名: &str) -> Vec<&'a str> {
-        let パターン = format!("impl {トレイト名} for ");
+    pub fn トレイト実装型一覧(&self, トレイト: オントロジートレイト) -> Vec<&'a str> {
+        let パターン = format!("impl {} for ", トレイト.トレイト名());
         let mut 型一覧 = Vec::new();
         for ソース in self.ソース一覧 {
             for 行 in ソース.lines() {
@@ -51,11 +52,8 @@ impl<'a> クレート構文検査<'a> {
     }
 
     pub fn 型種別を満たしているか(&self, 種別: &str, 型名: &str) -> bool {
-        self.ソース一覧.iter().any(|ソース| {
-            ソース.lines().map(str::trim).any(|行| {
-                行.starts_with(&format!("pub {種別} {型名}")) || 行.starts_with(&format!("{種別} {型名}"))
-            })
-        })
+        let (公開, 非公開) = (format!("pub {種別} {型名}"), format!("{種別} {型名}"));
+        self.ソース一覧.iter().any(|s| s.lines().map(str::trim).any(|l| l.starts_with(&公開) || l.starts_with(&非公開)))
     }
 
     pub fn 宣言の型引数一覧(&self, 宣言名: &str) -> Vec<Vec<String>> {
