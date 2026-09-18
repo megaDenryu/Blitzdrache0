@@ -5,6 +5,7 @@ version.workspace = true
 
 [dependencies]
 blitz_collision = { path = "../blitz_collision" }
+blitz_design = { path = "../blitz_design" }
 blitz_math = { path = "../blitz_math" }
 thiserror = { workspace = true }
 

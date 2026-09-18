@@ -1,6 +1,7 @@
 [workspace]
 resolver = "3"
 members = [
+    "crates/blitz_design",
     "crates/blitz_math",
     "crates/blitz_collision",
     "crates/blitz_render",

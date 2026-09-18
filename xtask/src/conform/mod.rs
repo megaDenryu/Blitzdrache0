@@ -6,6 +6,7 @@ mod cargo_toml_parse;
 mod declaration_comment_line;
 mod dependency_whitelist;
 mod depth_contract;
+mod design_ontology;
 mod doc_reference;
 mod doc_section;
 mod drop_impl;

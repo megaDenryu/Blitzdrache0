@@ -16,7 +16,7 @@
 use blitz_math::{メートル, 逆キログラム};
 
 use super::super::minimum_thickness::形の最小の厚み;
-use crate::ontology::{M時間局所状態, M状態, 物理小刻み};
+use crate::ontology::{MDTO, M時間局所状態, M状態, 物理小刻み};
 use crate::xpbd::ラグランジュ乗数;
 
 /// 接触1点が1細分の反復のあいだ持ち越す非貫通の解の状態。
@@ -26,6 +26,7 @@ pub struct 非貫通の一細分の解の状態 {
     詰めた相対補正の長さの上界の累計: メートル, // その細分の各反復の正の増分の上界だけを足した値であり、減る反復は無い
 }
 
+impl MDTO for 非貫通の一細分の解の状態 {}
 impl M状態 for 非貫通の一細分の解の状態 {}
 
 impl M時間局所状態 for 非貫通の一細分の解の状態 {

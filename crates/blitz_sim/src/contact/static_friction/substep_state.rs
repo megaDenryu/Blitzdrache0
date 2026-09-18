@@ -7,7 +7,7 @@
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断13: 静止摩擦は錨からの接線変位を零へ戻す位置拘束であり、クーロン円錐の内側でだけ効く」
 
 use super::tangential_multiplier::接線のラグランジュ乗数;
-use crate::ontology::{M時間局所状態, M状態, 物理小刻み};
+use crate::ontology::{MDTO, M時間局所状態, M状態, 物理小刻み};
 
 /// 接触1点が1細分の反復のあいだ持ち越す静止摩擦の解の状態。
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -17,6 +17,7 @@ pub struct 静止摩擦の一細分の解の状態 {
     錨を置き直したか: bool,
 }
 
+impl MDTO for 静止摩擦の一細分の解の状態 {}
 impl M状態 for 静止摩擦の一細分の解の状態 {}
 
 impl M時間局所状態 for 静止摩擦の一細分の解の状態 {

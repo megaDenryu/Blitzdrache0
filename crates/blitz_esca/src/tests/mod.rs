@@ -1,8 +1,6 @@
-//! Escaクレートのテストおよび構文検証モジュール群(Issue #137)。
+//! Escaクレートの試験(Issue #137)。設計オントロジーの構文の法則は `cargo xtask conform` が検査する。
 
-mod syntax_assertion;
-mod syntax_checker;
-mod syntax_patterns;
-mod syntax_tests;
+mod traveler_boundary_tests;
 mod traveler_input_tests;
 mod traveler_tests;
+mod walking_direction_tests;
