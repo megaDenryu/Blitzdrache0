@@ -7,6 +7,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use super::allowance;
+use super::extract::予約された分割ファイル名か;
 use super::self_reference;
 use super::出現箇所;
 use crate::conform::violation::違反;
@@ -25,6 +26,9 @@ impl 検査の集計 {
     }
 
     pub(super) fn 綴り1つを見る(&mut self, 綴り: &str, 出現箇所一覧: &[出現箇所]) {
+        if 予約された分割ファイル名か(綴り) {
+            return;
+        }
         let 台帳でない出現: Vec<&出現箇所> = 出現箇所一覧.iter().filter(|出現箇所| !self_reference::台帳のファイルか(&出現箇所.パス)).collect();
         let ファイルごとの初出 = ファイルごとの初出を採る(&台帳でない出現);
         self.綴りごとの出現場所.insert(綴り.to_string(), ファイルごとの初出.keys().cloned().collect());

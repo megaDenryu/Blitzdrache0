@@ -6,6 +6,8 @@ const ビルドスクリプトとの契約: &str = "blitz_appのビルドスク�
 const 書き手が非公開: &str = "blitz_asset_compilerのworld_source_directoryが持つ正本の定数はpub(super)で非公開であり、editor_serverクレートとxtaskから届かない。blitz_*クレート本体の変更はゲーム開発用エディター段の対象外(参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断5」)であるため、書き手の側に同じ綴りを独立に持つ";
 
 /// 注意: この一覧への追加は、正本を1箇所へ寄せられないと示せたときだけ許す。減らす方向にのみ動かす。
+/// Rust言語自身が固定する分割ファイル名(`mod.rs`・`lib.rs`・`main.rs`・`build.rs`)は、この台帳ではなく
+/// `extract::予約された分割ファイル名か`が検査そのものから除外する。参照: `duplicate_file_literal/extract.rs`
 pub(super) const 一覧: [寄せられない綴り; 2] = [
     寄せられない綴り {
         綴り: "slangc.exe",

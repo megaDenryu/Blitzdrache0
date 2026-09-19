@@ -1,7 +1,7 @@
 //! ファイル名らしい綴りの選び方と、試験の項目の除かれ方と、取り込みの引数の見分け方の検査。
 //! 走査と集計でなく規則だけを見る。
 
-use super::extract::拡張子を含むか;
+use super::extract::{予約された分割ファイル名か, 拡張子を含むか};
 use super::test_item_skip::{範囲の中の行か, 試験の項目の行範囲一覧};
 use super::ファイル内の出現を集める;
 
@@ -18,6 +18,15 @@ fn 拡張子つきの綴りを選ぶ() {
     assert!(拡張子を含むか("shaders/scene.slang"));
     assert!(!拡張子を含むか("0.05"));
     assert!(!拡張子を含むか("終わり.abcdefghijk"));
+}
+
+#[test]
+fn 予約された分割ファイル名を見分ける() {
+    assert!(予約された分割ファイル名か("mod.rs"));
+    assert!(予約された分割ファイル名か("lib.rs"));
+    assert!(予約された分割ファイル名か("main.rs"));
+    assert!(予約された分割ファイル名か("build.rs"));
+    assert!(!予約された分割ファイル名か("scene.slang"));
 }
 
 #[test]
