@@ -1,0 +1,79 @@
+//! 許容差依存の診断が細分1本について綴る記録(Issue #59の第4段階)。入口の錨からの接線変位の合計、反復ごとの
+//! 読み取り(計測点5)、細分の終わりの錨からの接線変位(計測点0)、速度段階の後の下り向きの速さ、第一反復の入口の
+//! 読み取り(計測点1・2・3。1倍の軌道だけが持つ)と、この細分の反復のあいだに有効集合の探索が解いた連立方程式の回数を
+//! 1つに束ねる。粘着の候補が解けなかった連立方程式の読み取りは、反復の番号を添えて持つ。段階A3のために、同じ入口の配置で設計候補(i)と勝った有効集合が違うかも持つ。
+//! 参照: `_doc/計測/剛体の接触の静止摩擦の数値契約の診断_2026-09-06.md`
+
+#![cfg(test)]
+
+use super::anchor_displacement::合計を求める;
+use super::contact_point_ending::接触点一つの細分の終わりの読み取り;
+use super::entry_reading::第一反復の入口の読み取り;
+use super::first_iteration_correction_trace::第一反復の補正の追跡;
+use super::iteration_reading::反復の後の読み取り;
+use super::tangential_row_admission_reading::接線の行の入り方の読み取り;
+use crate::接触::normal_tangential_system::部分集合を解いた回数;
+use crate::接触::シーン::cone_breach_reading::円錐を超えた接触点集合の読み取り;
+use crate::接触::シーン::unsolved_system_reading::解けなかった連立方程式の読み取り;
+
+/// 細分1本の記録。
+pub(super) struct 許容差依存の細分の記録 {
+    pub(super) 番号: usize,
+    pub(super) 入口の接線変位の合計: f64,
+    pub(super) 反復ごと: Vec<反復の後の読み取り>,
+    pub(super) 終わりの接線変位: Vec<f64>,
+    pub(super) 終わりの接触点ごと: Vec<接触点一つの細分の終わりの読み取り>,
+    pub(super) 入口の接線の行の入り方: Vec<接線の行の入り方の読み取り>,
+    pub(super) 第一反復の補正: Option<第一反復の補正の追跡>,
+    pub(super) 下り向きの速さ: f64,
+    pub(super) 接線の行の許容差: f64,
+    pub(super) 入口: Option<第一反復の入口の読み取り>,
+    pub(super) 解いた回数: 部分集合を解いた回数,
+    pub(super) 候補一と勝った有効集合が違うか: Option<bool>,
+    pub(super) 解けなかった連立方程式: Vec<(u32, 解けなかった連立方程式の読み取り)>,
+    pub(super) 円錐を超えた集合: Vec<(u32, 円錐を超えた接触点集合の読み取り)>,
+}
+
+impl 許容差依存の細分の記録 {
+    /// 細分の終わりの錨からの接線変位の合計 Σ|Δ_t,i|。計測点0の量である。
+    pub(super) fn 終わりの接線変位の合計(&self) -> f64 {
+        合計を求める(&self.終わりの接線変位)
+    }
+
+    /// 最後の反復を終えた直後の円錐の比。反復が1つも無ければ零である。
+    pub(super) fn 最後の反復の後の円錐の比(&self) -> f64 {
+        self.反復ごと.last().map_or(0.0, 反復の後の読み取り::円錐の比)
+    }
+
+    /// 反復0の解の後に錨からの接線変位が作り直された割合(反復1の入口の合計 ÷ 反復0の入口の合計)。
+    pub(super) fn 反復零の後に接線変位が作り直された割合(&self) -> f64 {
+        match self.反復ごと.first() {
+            Some(反復零) if self.入口の接線変位の合計 > 0.0 => 反復零.錨からの接線変位の合計 / self.入口の接線変位の合計,
+            _ => 0.0,
+        }
+    }
+
+    /// 下り向きの速さに細分の刻み幅を掛けた1細分の変位と、接線の行の許容差 δ_t の比。第1段階の観測2の再測である。
+    pub(super) fn 速さの一細分の変位と許容差の比(&self, 刻み幅の秒: f64) -> f64 {
+        if self.接線の行の許容差 > 0.0 {
+            self.下り向きの速さ.abs() * 刻み幅の秒 / self.接線の行の許容差
+        } else {
+            0.0
+        }
+    }
+
+    /// 細分の終わりに錨を置き直した接触点の数。細分をまたいだ入れ替わりを綴る計器が読む。
+    pub(super) fn 置き直した点の数(&self) -> usize {
+        self.終わりの接触点ごと.iter().filter(|点| 点.錨を置き直したか()).count()
+    }
+
+    /// 細分の終わりに滑走中と印された接触点の数。
+    pub(super) fn 滑走中の点の数(&self) -> usize {
+        self.終わりの接触点ごと.iter().filter(|点| 点.滑走中か()).count()
+    }
+
+    /// 最後の反復を終えた時点で滑走中の点があるか。
+    pub(super) fn 滑走中か(&self) -> bool {
+        self.反復ごと.last().is_some_and(|反復| 反復.滑走中の点の数 > 0)
+    }
+}
