@@ -2,7 +2,7 @@
 
 use super::super::frame_resources::フレーム資源;
 use super::base_resources::基礎資源;
-use crate::renderer::draw_stage_resources::描画段階資源;
+use crate::renderer::draw_stage_resources::描画の処理位置の資源;
 use crate::renderer::frame_progress::フレーム進行;
 use crate::vulkan;
 
@@ -10,7 +10,7 @@ use crate::vulkan;
 pub(super) struct 段別資源 {
     pub(super) 基礎: 基礎資源,
     pub(super) フレーム進行: フレーム進行,
-    pub(super) 描画段階: 描画段階資源,
+    pub(super) 描画の処理位置: 描画の処理位置の資源,
     pub(super) パイプライン台帳: vulkan::pipeline_ledger::材質描画族パイプライン台帳,
     pub(super) 粒子: Option<vulkan::particles::粒子リソース一式>,
     pub(super) gpu計測: Option<vulkan::gpu_timing::パス別GPU計測>,
@@ -33,7 +33,7 @@ pub(super) fn 段別資源をフレーム資源へ束ねる(段別: 段別資源
         共有ディスクリプタ: 段別.基礎.共有ディスクリプタ,
         照明問い合わせ: 段別.基礎.照明問い合わせ,
         フレーム進行: 段別.フレーム進行,
-        描画段階資源: 段別.描画段階,
+        描画の処理位置の資源: 段別.描画の処理位置,
         パイプライン台帳: 段別.パイプライン台帳,
         粒子: 段別.粒子,
         gpu計測: 段別.gpu計測,

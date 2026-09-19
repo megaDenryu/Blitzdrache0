@@ -1,7 +1,7 @@
 //! 提示側の資源の生成後に組み立てる残り資源の束。組み立て手順は
 //! `generate_resources::組み立てる` が担う。
 
-use crate::renderer::draw_stage_resources::描画段階資源;
+use crate::renderer::draw_stage_resources::描画の処理位置の資源;
 use crate::renderer::frame_progress::フレーム進行;
 use crate::renderer::scene_draw_resources::シーン描画資源;
 use crate::vulkan;
@@ -16,7 +16,7 @@ pub(super) struct フレーム資源 {
     pub(super) 共有ディスクリプタ: vulkan::descriptor::共有ディスクリプタセット,
     pub(super) 照明問い合わせ: vulkan::lighting_query::照明問い合わせ資源束,
     pub(super) フレーム進行: フレーム進行,
-    pub(super) 描画段階資源: 描画段階資源,
+    pub(super) 描画の処理位置の資源: 描画の処理位置の資源,
     pub(super) パイプライン台帳: vulkan::pipeline_ledger::材質描画族パイプライン台帳,
     pub(super) 粒子: Option<vulkan::particles::粒子リソース一式>,
     pub(super) gpu計測: Option<vulkan::gpu_timing::パス別GPU計測>,

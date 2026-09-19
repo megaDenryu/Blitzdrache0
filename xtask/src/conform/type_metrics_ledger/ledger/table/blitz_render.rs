@@ -15,7 +15,7 @@ const 行一覧: [台帳の行; 27] = [
     台帳の行::構造体("cloth_shader_set.rs", "布シェーダー一式", 0, 15, 0),
     台帳の行::列挙("error/renderer_error.rs", "レンダラーエラー", 1, 26, 6),
     台帳の行::構造体("frame_input.rs", "フレーム描画入力", 0, 17, 0),
-    台帳の行::構造体("renderer/draw_stage_resources.rs", "描画段階資源", 7, 7, 20),
+    台帳の行::構造体("renderer/draw_stage_resources.rs", "描画の処理位置の資源", 7, 7, 20),
     台帳の行::構造体("renderer/generate/frame_resources.rs", "フレーム資源", 0, 19, 0),
     台帳の行::構造体("renderer/generate/generate_resources/bundle.rs", "段別資源", 0, 12, 0),
     台帳の行::構造体("renderer/generate/generate_resources/request.rs", "生成要求", 0, 15, 0),
