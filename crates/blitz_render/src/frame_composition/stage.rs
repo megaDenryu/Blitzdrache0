@@ -3,7 +3,7 @@
 //! 順位を段階自身が持つのは、段階列の妥当性(重複が無く順位が単調に増える)を検査する側が、段階の並びの正本をもう1つ持たないためである。
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum フレーム段階 {
+pub enum フレームの処理位置 {
     スキニング,
     布シミュレーション,
     影,
@@ -15,7 +15,7 @@ pub enum フレーム段階 {
     読み戻し,
 }
 
-impl フレーム段階 {
+impl フレームの処理位置 {
     pub fn 名称(self) -> &'static str {
         match self {
             Self::スキニング => "スキニング",

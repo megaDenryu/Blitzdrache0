@@ -11,19 +11,19 @@ mod stage;
 mod validation;
 
 pub use depth_prepass::深度プリパス方式;
-pub use stage::フレーム段階;
+pub use stage::フレームの処理位置;
 use validation::段階列を検証する;
 
 const 段階数上限: usize = 9;
 
 #[derive(Debug, Clone, Copy)]
 pub struct フレーム構成 {
-    段階一覧: [Option<フレーム段階>; 段階数上限],
+    段階一覧: [Option<フレームの処理位置>; 段階数上限],
     深度プリパス方式: 深度プリパス方式,
 }
 
 impl フレーム構成 {
-    pub fn 生成する(段階一覧: &[フレーム段階]) -> Result<Self, フレーム構成エラー> {
+    pub fn 生成する(段階一覧: &[フレームの処理位置]) -> Result<Self, フレーム構成エラー> {
         段階列を検証する(段階一覧)?;
         let mut 格納先 = [None; 段階数上限];
         for (添字, 段階) in 段階一覧.iter().copied().enumerate() {
@@ -49,11 +49,11 @@ impl フレーム構成 {
         self.深度プリパス方式
     }
 
-    pub fn 段階一覧(&self) -> impl Iterator<Item = フレーム段階> + '_ {
+    pub fn 段階一覧(&self) -> impl Iterator<Item = フレームの処理位置> + '_ {
         self.段階一覧.iter().flatten().copied()
     }
 
-    pub fn 含むか(&self, 対象: フレーム段階) -> bool {
+    pub fn 含むか(&self, 対象: フレームの処理位置) -> bool {
         self.段階一覧().any(|段階| 段階 == 対象)
     }
 }
@@ -64,7 +64,7 @@ pub enum フレーム構成エラー {
     空,
     #[error("フレーム構成は9段階以下でなければならない")]
     段階数超過,
-    #[error("フレーム段階が重複しているか依存順序に反している")]
+    #[error("フレームの処理位置が重複しているか依存順序に反している")]
     重複または順序不正,
     #[error("現在のシーン描画には影段階が必要である")]
     影なし,

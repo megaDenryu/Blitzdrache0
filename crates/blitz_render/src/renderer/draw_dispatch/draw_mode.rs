@@ -4,7 +4,7 @@
 
 use super::super::レンダラー;
 use crate::error::{フレーム入力不一致エラー, レンダラーエラー};
-use crate::frame_composition::フレーム段階;
+use crate::frame_composition::フレームの処理位置;
 use crate::vulkan::frame::描画方式;
 use crate::vulkan::readback::読み戻し対象;
 
@@ -13,11 +13,11 @@ impl レンダラー {
         let Some(対象) = 読み戻し要求 else {
             return Ok(描画方式::通常);
         };
-        if !self.フレーム構成.含むか(フレーム段階::読み戻し) {
+        if !self.フレーム構成.含むか(フレームの処理位置::読み戻し) {
             return Err(フレーム入力不一致エラー::読み戻し段階なし.into());
         }
         // ポスト処理が無い構成ではシーンが直接スワップチェーンへ描くため、圧縮前のHDR中間画像そのものが存在しない。
-        if 対象 == 読み戻し対象::圧縮前のHDR && !self.フレーム構成.含むか(フレーム段階::光のにじみと明るさの圧縮) {
+        if 対象 == 読み戻し対象::圧縮前のHDR && !self.フレーム構成.含むか(フレームの処理位置::光のにじみと明るさの圧縮) {
             return Err(フレーム入力不一致エラー::圧縮前のHDRの読み戻しにポスト処理が要る.into());
         }
         let バッファ = self.読み戻しバッファ.as_ref().unwrap_or_else(|| panic!("読み戻し要求時に読み戻しバッファが未確保だった"));

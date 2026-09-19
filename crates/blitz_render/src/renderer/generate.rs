@@ -12,7 +12,7 @@ use crate::cascade::影の一辺解像度;
 use crate::cloth_material::布素材;
 use crate::error::{レンダラーエラー, 生成要求不一致エラー};
 use crate::extent::ウィンドウ寸法;
-use crate::frame_composition::{フレーム構成, フレーム段階};
+use crate::frame_composition::{フレームの処理位置, フレーム構成};
 use crate::indirect_lighting::照明問い合わせ契約;
 use crate::local_visibility::局所可視性の描画設定;
 use crate::particle_material::粒子素材;
@@ -68,7 +68,7 @@ impl レンダラー {
 }
 
 fn 構成と素材を検査する(構成: &フレーム構成, スキンあり: bool, 布あり: bool, 粒子あり: bool) -> Result<(), レンダラーエラー> {
-    let 対応 = [(スキンあり, フレーム段階::スキニング), (布あり, フレーム段階::布シミュレーション), (粒子あり, フレーム段階::粒子)];
+    let 対応 = [(スキンあり, フレームの処理位置::スキニング), (布あり, フレームの処理位置::布シミュレーション), (粒子あり, フレームの処理位置::粒子)];
     for (素材あり, 段階) in 対応 {
         if 素材あり && !構成.含むか(段階) {
             return Err(生成要求不一致エラー::フレーム構成素材不一致(段階).into());
