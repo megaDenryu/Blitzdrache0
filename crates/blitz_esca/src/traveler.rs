@@ -5,7 +5,7 @@
 use blitz_design::{MDTO, Mイベント, Mコマンド, M状態, M規則};
 use blitz_math::{メートル, メートル毎秒};
 
-use crate::traveler_error::歩行の規則の生成の失敗;
+use crate::traveler_error::{旅行者の現在地の生成の失敗, 歩行の規則の生成の失敗};
 use crate::walking_direction::歩行方向;
 
 /// 旅行者が行おうとするアクション(命令・意図)。
@@ -16,21 +16,27 @@ pub enum 旅行者の意図 {
     見回す,
 }
 
+impl MDTO for 旅行者の意図 {}
 impl Mコマンド for 旅行者の意図 {}
 
-/// 旅行者のワールド内の現在地(状態スナップショット)。
+/// 旅行者のワールド内の現在地(状態スナップショット)。東と北が有限な数値であることを不変条件に持つ。
+/// フィールドをクレート内へ開くのは、遷移の局面(`traveler_movement.rs`)が有限な入力から導いた座標を `Result` を経ずに直接置くためである。
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 旅行者の現在地 {
-    東: メートル,
-    北: メートル,
+    pub(crate) 東: メートル,
+    pub(crate) 北: メートル,
 }
 
 impl MDTO for 旅行者の現在地 {}
 impl M状態 for 旅行者の現在地 {}
 
 impl 旅行者の現在地 {
-    pub fn 生成する(東: メートル, 北: メートル) -> Self {
-        Self { 東, 北 }
+    /// 東と北が有限な数値であることを確かめて現在地を作る。NaN は比較がすべて偽になり移動可能範囲の制限で捕まらないため、生成の口で閉じる。
+    pub fn 生成する(東: メートル, 北: メートル) -> Result<Self, 旅行者の現在地の生成の失敗> {
+        if !東.値().is_finite() || !北.値().is_finite() {
+            return Err(旅行者の現在地の生成の失敗::座標が有限な数値でない { 東, 北 });
+        }
+        Ok(Self { 東, 北 })
     }
 
     pub fn 東(&self) -> メートル {
@@ -48,6 +54,7 @@ pub struct 歩行の規則 {
     一秒あたりの速さ: メートル毎秒,
 }
 
+impl MDTO for 歩行の規則 {}
 impl M規則 for 歩行の規則 {}
 
 impl 歩行の規則 {
@@ -80,4 +87,5 @@ pub enum 旅行者の出来事 {
     障害物に遮られた,
 }
 
+impl MDTO for 旅行者の出来事 {}
 impl Mイベント for 旅行者の出来事 {}

@@ -3,5 +3,6 @@
 mod elapsed_time_tests;
 mod traveler_boundary_tests;
 mod traveler_input_tests;
+mod traveler_invariant_tests;
 mod traveler_tests;
 mod walking_direction_tests;

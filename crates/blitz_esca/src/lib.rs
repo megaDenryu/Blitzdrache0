@@ -21,11 +21,11 @@ pub mod walking_direction;
 mod tests;
 
 pub use elapsed_time::{経過時間, 経過時間の生成の失敗};
-pub use ontology::{M遷移関数, 遷移結果, 遷移関数として確認する};
+pub use ontology::{M遷移関数, 遷移結果};
 pub use traveler::{旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則};
 pub use traveler_boundary::{境界制限結果, 移動可能範囲, 移動可能範囲の指定};
 pub use traveler_boundary_error::{移動可能範囲の生成の失敗, 移動可能範囲の軸};
-pub use traveler_error::歩行の規則の生成の失敗;
+pub use traveler_error::{旅行者の現在地の生成の失敗, 歩行の規則の生成の失敗};
 pub use traveler_input::キーボード歩行入力;
 pub use traveler_movement::{旅行者の描画位置, 歩行遷移の規則};
 pub use walking_direction::歩行方向;

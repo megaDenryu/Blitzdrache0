@@ -1,19 +1,18 @@
-//! 旅行者の歩行遷移計算と描画射影の機能テスト(Issue #137)。
+//! 旅行者の歩行遷移計算と描画射影の機能テスト(Issue #137)。生成の口の不変条件は `traveler_invariant_tests.rs` が固定する。
 
 #![allow(clippy::expect_used)]
 
-use blitz_math::{メートル, メートル毎秒, 秒};
+use blitz_math::{メートル, 秒};
 
 use crate::elapsed_time::経過時間;
 use crate::ontology::遷移結果;
 use crate::traveler::{旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則};
 use crate::traveler_boundary::移動可能範囲の指定;
-use crate::traveler_error::歩行の規則の生成の失敗;
 use crate::traveler_movement::歩行遷移の規則;
 use crate::walking_direction::歩行方向;
 
 fn 現在地(東: f32, 北: f32) -> 旅行者の現在地 {
-    旅行者の現在地::生成する(メートル::生成する(東), メートル::生成する(北))
+    旅行者の現在地::生成する(メートル::生成する(東), メートル::生成する(北)).expect("有限な座標は現在地になるべきである")
 }
 
 fn 経過(秒数: f32) -> 経過時間 {
@@ -87,16 +86,6 @@ fn 歩行遷移計算_境界の内側に収まる歩行では出来事は無い(
             出来事一覧: vec![]
         }
     );
-}
-
-#[test]
-fn 歩行の規則_速さは有限な0以上の数値だけを受け入れる() {
-    let 零 = 歩行の規則::生成する(メートル毎秒::生成する(0.0)).expect("速さ0は静止と矛盾しないため受け入れるべきである");
-    assert_eq!(零.速さ(), メートル毎秒::生成する(0.0));
-    for 値 in [-1.0, f32::NAN, f32::INFINITY, f32::NEG_INFINITY] {
-        let 失敗 = 歩行の規則::生成する(メートル毎秒::生成する(値)).expect_err("負・NaN・無限大の速さは拒まれるべきである");
-        assert!(matches!(失敗, 歩行の規則の生成の失敗::速さが有限な0以上の数値でない { .. }));
-    }
 }
 
 #[test]
