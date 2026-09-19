@@ -17,7 +17,7 @@ const 行一覧: [台帳の行; 27] = [
     台帳の行::構造体("frame_input.rs", "フレーム描画入力", 0, 17, 0),
     台帳の行::構造体("renderer/draw_stage_resources.rs", "描画の処理位置の資源", 7, 7, 20),
     台帳の行::構造体("renderer/generate/frame_resources.rs", "フレーム資源", 0, 19, 0),
-    台帳の行::構造体("renderer/generate/generate_resources/bundle.rs", "段別資源", 0, 12, 0),
+    台帳の行::構造体("renderer/generate/generate_resources/bundle.rs", "処理位置別資源", 0, 12, 0),
     台帳の行::構造体("renderer/generate/generate_resources/request.rs", "生成要求", 0, 15, 0),
     台帳の行::構造体("renderer/mod.rs", "レンダラー", 39, 29, 89),
     台帳の行::構造体("renderer/optional_frame_inputs.rs", "任意入力の材料", 1, 12, 1),
