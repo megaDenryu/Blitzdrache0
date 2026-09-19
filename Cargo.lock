@@ -232,6 +232,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "blitz_design"
+version = "0.1.0"
+
+[[package]]
 name = "blitz_ecs"
 version = "0.1.0"
 dependencies = [
@@ -245,6 +249,15 @@ dependencies = [
  "blitz_collision",
  "blitz_math",
  "blitz_render",
+ "thiserror 2.0.19",
+]
+
+[[package]]
+name = "blitz_esca"
+version = "0.1.0"
+dependencies = [
+ "blitz_design",
+ "blitz_math",
  "thiserror 2.0.19",
 ]
 
@@ -279,6 +292,7 @@ name = "blitz_sim"
 version = "0.1.0"
 dependencies = [
  "blitz_collision",
+ "blitz_design",
  "blitz_math",
  "thiserror 2.0.19",
 ]

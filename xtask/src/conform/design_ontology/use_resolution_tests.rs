@@ -1,0 +1,95 @@
+//! 同じクレートの別のモジュールに同名の型があるときの、`use` の解決による定義と固有の `impl` の採り方の試験。
+//! 型の同一性は定義のモジュールパス + 型名であり、`crate::`・`super::`・波括弧の群を解決し、`as` の別名は解決できない違反にする。
+
+use super::tests::{ソース, 全部の説明関数を連ねた違反の説明一覧};
+#[test]
+fn 構文解析_同じクレートの別モジュールの同名の型は別の型として扱う() {
+    let 甲 = ソース(
+        "crates/a/src/x.rs",
+        "pub struct 規則;
+impl MDTO for 規則 {}
+impl M規則 for 規則 {}
+",
+    );
+    let 乙 = ソース(
+        "crates/a/src/y.rs",
+        "pub struct 規則;
+impl 規則 {
+    pub fn 変える(&mut self) {}
+}
+",
+    );
+    assert!(全部の説明関数を連ねた違反の説明一覧(vec![甲, 乙]).is_empty());
+}
+
+#[test]
+fn 構文解析_useで定義のモジュールパスを取り込んだ別ファイルの固有のimplは定義に属する() {
+    let 甲 = ソース(
+        "crates/a/src/x.rs",
+        "pub struct 規則;
+impl MDTO for 規則 {}
+impl M規則 for 規則 {}
+",
+    );
+    let 乙 = ソース(
+        "crates/a/src/y.rs",
+        "pub struct 規則;
+",
+    );
+    let 丙 = ソース(
+        "crates/a/src/z/w.rs",
+        "use crate::x::規則;
+impl 規則 {
+    pub fn 変える(&mut self) {}
+}
+",
+    );
+    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(vec![甲, 乙, 丙]);
+    assert_eq!(説明一覧.len(), 1);
+    assert!(説明一覧[0].contains("M規則 `規則` は &mut self メソッドを持てません"));
+}
+
+#[test]
+fn 構文解析_useの波括弧の群とsuperの修飾で取り込んだ定義を採る() {
+    let 甲 = ソース(
+        "crates/a/src/x.rs",
+        "pub struct 規則 {
+    速さ: std::cell::Cell<f32>,
+}
+",
+    );
+    let 乙 = ソース(
+        "crates/b/src/x.rs",
+        "pub struct 規則;
+",
+    );
+    let 丙 = ソース(
+        "crates/a/src/z/w.rs",
+        "use super::super::x::{他, 規則};
+impl MDTO for 規則 {}
+impl M規則 for 規則 {}
+",
+    );
+    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(vec![甲, 乙, 丙]);
+    assert_eq!(説明一覧.len(), 1);
+    assert!(説明一覧[0].contains("MDTO `規則` の定義は内部可変性 `Cell` を持てません"));
+}
+
+#[test]
+fn 構文解析_useの別名は解決できない違反として報告する() {
+    let 甲 = ソース(
+        "crates/a/src/x.rs",
+        "pub struct 規則;
+",
+    );
+    let 乙 = ソース(
+        "crates/a/src/y.rs",
+        "use crate::x::規則 as 法則;
+impl MDTO for 法則 {}
+impl M規則 for 法則 {}
+",
+    );
+    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(vec![甲, 乙]);
+    assert!(!説明一覧.is_empty());
+    assert!(説明一覧.iter().all(|説明| 説明.contains("`法則` の use の別名(as)は解決できない(別名を付けずに取り込む)")));
+}

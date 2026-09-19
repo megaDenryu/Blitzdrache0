@@ -1,6 +1,7 @@
 [workspace]
 resolver = "3"
 members = [
+    "crates/blitz_design",
     "crates/blitz_math",
     "crates/blitz_collision",
     "crates/blitz_render",
@@ -10,6 +11,7 @@ members = [
     "crates/blitz_sim",
     "crates/blitz_ecs",
     "crates/blitz_game",
+    "crates/blitz_esca",
     "crates/blitz_app",
     "crates/editor_server",
     "xtask",
