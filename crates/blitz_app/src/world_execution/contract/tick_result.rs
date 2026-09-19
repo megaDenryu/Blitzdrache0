@@ -7,3 +7,10 @@ pub(crate) enum 刻み結果 {
     続ける,
     終了する,
 }
+
+impl 刻み結果 {
+    /// 刻みの確定の段が、この刻みまでに終了が決まったかから組む。
+    pub(in crate::world_execution) fn 終了が決まったかから組む(終了が決まったか: bool) -> Self {
+        if 終了が決まったか { Self::終了する } else { Self::続ける }
+    }
+}

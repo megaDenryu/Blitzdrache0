@@ -14,6 +14,8 @@ mod draw_input;
 #[cfg(test)]
 mod draw_input_tests;
 mod game_steps;
+#[cfg(test)]
+mod game_steps_tests;
 mod visible_selection;
 
 use winit::event_loop::ActiveEventLoop;
