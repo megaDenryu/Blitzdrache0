@@ -50,7 +50,7 @@ fn 構文解析_mコマンドとm規則の型定義を検証する() {
 }
 
 #[test]
-fn 構文解析_mdtoを実装する型は純粋データ規約を満たすこと() {
+fn 構文解析_m不変データを実装する型は純粋データ規約を満たすこと() {
     let ソース一覧 = vec![ソース(
         "crates/a/src/x.rs",
         "pub struct 借り<'a> {\n    値: &'a f32,\n}\nimpl M不変データ for 借り<'_> {}\npub enum 事 {\n    起きた(std::sync::Mutex<u8>),\n}\nimpl M不変データ for 事 {}\nimpl Mイベント for 事 {}\n",
