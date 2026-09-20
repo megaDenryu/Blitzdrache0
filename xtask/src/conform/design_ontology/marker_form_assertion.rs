@@ -79,7 +79,7 @@ fn blitz_designの別名の行一覧(行一覧: &[String]) -> Vec<usize> {
 
 // トレイトを書く位置に設計マーカーの名前が識別子として現れるのに、その位置が `マーカー名` でも `blitz_design::マーカー名` でもない行の番号(1始まり)。`::` の周りの空白は正規形でない。
 fn 正規形でないマーカー実装の行一覧(行一覧: &[String]) -> Vec<usize> {
-    let 名前一覧: Vec<&str> = [オントロジートレイト::M不変データ].into_iter().chain(オントロジートレイト::データの役割一覧()).map(オントロジートレイト::名前).collect();
+    let 名前一覧: Vec<&str> = オントロジートレイト::全部の一覧().into_iter().map(オントロジートレイト::名前).collect();
     let 正規形か = |位置: &str| 名前一覧.iter().any(|名前| 位置 == *名前 || 位置.strip_prefix("blitz_design::") == Some(*名前));
     let マーカーを含むか = |位置: &str| {
         let 区切りを空白にした位置 = 位置.replace("::", " ");
@@ -113,7 +113,7 @@ fn blitz_designの再公開の行一覧(行一覧: &[String]) -> Vec<usize> {
 
 // ファイルの中の `mod 名 {` のブロックの範囲にある、設計マーカーの実装の行の番号(1始まり)。
 fn 波括弧付きのモジュールの中のマーカー実装の行一覧(行一覧: &[String]) -> Vec<usize> {
-    let パターン一覧: Vec<String> = [オントロジートレイト::M不変データ].into_iter().chain(オントロジートレイト::データの役割一覧()).flat_map(syntax_patterns::トレイト実装宣言).collect();
+    let パターン一覧: Vec<String> = オントロジートレイト::全部の一覧().into_iter().flat_map(syntax_patterns::トレイト実装宣言).collect();
     let mut 該当 = Vec::new();
     for (開始, 行) in 行一覧.iter().enumerate() {
         let 行 = 行.trim();

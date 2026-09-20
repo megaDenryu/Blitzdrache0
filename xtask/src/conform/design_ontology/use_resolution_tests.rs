@@ -46,7 +46,7 @@ impl 規則 {
     );
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(vec![甲, 乙, 丙]);
     assert_eq!(説明一覧.len(), 1);
-    assert!(説明一覧[0].contains("M規則 `規則` は &mut self メソッドを持てません"));
+    assert!(説明一覧[0].contains("M不変データ `規則` は &mut self メソッドを持てません"));
 }
 
 #[test]

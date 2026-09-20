@@ -15,10 +15,7 @@ pub(super) fn 全部の説明関数を連ねた違反の説明一覧(ソース�
         .すべての規則が構造体であること()
         .すべての純粋データが参照と内部可変性を持たないこと()
         .オントロジーの対象の原文にpath属性が無いこと()
-        .すべてのコマンドが可変参照メソッドを持たないこと()
-        .すべてのイベントが可変参照メソッドを持たないこと()
-        .すべての規則が可変参照メソッドを持たないこと()
-        .すべての設定が可変参照メソッドを持たないこと()
+        .すべての不変データが可変参照メソッドを持たないこと()
         .設計マーカーを別名で取り込んでいないこと()
         .設計マーカーの実装が正規形であること()
         .設計マーカーを再公開していないこと()
@@ -33,7 +30,7 @@ pub(super) fn 全部の説明関数を連ねた違反の説明一覧(ソース�
 fn 構文解析_規則を満たす型は違反にならない() {
     let ソース一覧 = vec![ソース(
         "crates/a/src/x.rs",
-        "#[derive(Debug, Clone)]\npub struct 位置 {\n    pub 東: f32,\n}\nimpl M不変データ for 位置 {}\nimpl M状態 for 位置 {}\npub(crate) enum 意図 {\n    静止,\n}\nimpl M不変データ for 意図 {}\nimpl blitz_design::Mコマンド for 意図 {}\npub struct 規則;\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\nimpl 位置 {\n    pub fn 動かす(&mut self) {}\n}\n",
+        "#[derive(Debug, Clone)]\npub struct 位置 {\n    pub 東: f32,\n}\nimpl M不変データ for 位置 {}\nimpl M状態 for 位置 {}\npub(crate) enum 意図 {\n    静止,\n}\nimpl M不変データ for 意図 {}\nimpl blitz_design::Mコマンド for 意図 {}\npub struct 規則;\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\nimpl 位置 {\n    pub fn 東へ動かした位置(&self) -> Self {\n        self.clone()\n    }\n}\n",
     )];
     assert!(全部の説明関数を連ねた違反の説明一覧(ソース一覧).is_empty());
 }
@@ -63,34 +60,12 @@ fn 構文解析_mdtoを実装する型は純粋データ規約を満たすこと
 }
 
 #[test]
-fn 構文解析_可変参照メソッドはその型の固有のimplだけを見る() {
-    let ソース一覧 = vec![
-        ソース("crates/a/src/x.rs", "pub struct 規則;\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\npub struct 規則の台帳;\n"),
-        ソース("crates/a/src/y.rs", "impl 規則 {\n    pub fn 変える(&mut self) {}\n}\nimpl 規則の台帳 {\n    pub fn 足す(&mut self) {}\n}\n"),
-    ];
-    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
-    assert_eq!(説明一覧.len(), 1);
-    assert!(説明一覧[0].contains("M規則 `規則` は &mut self メソッドを持てません"));
-}
-
-#[test]
 fn 構文解析_定義が見つからない型を違反にする() {
     let ソース一覧 = vec![ソース("crates/a/src/x.rs", "impl M不変データ for 幻 {}\nimpl Mコマンド for 幻 {}\n")];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 2);
     assert!(説明一覧[0].contains("Mコマンド `幻` の定義(struct/enum)が見つかりません"));
     assert!(説明一覧[1].contains("M不変データ `幻` の定義(struct/enum)が見つかりません"));
-}
-
-#[test]
-fn 構文解析_設定の固有のimplの可変参照メソッドは違反になる() {
-    let ソース一覧 = vec![ソース(
-        "crates/a/src/x.rs",
-        "pub struct 設定;\nimpl M不変データ for 設定 {}\nimpl M設定 for 設定 {}\nimpl 設定 {\n    pub fn 変える(&mut self) {}\n}\n",
-    )];
-    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
-    assert_eq!(説明一覧.len(), 1);
-    assert!(説明一覧[0].contains("M設定 `設定` は &mut self メソッドを持てません"));
 }
 
 #[test]
