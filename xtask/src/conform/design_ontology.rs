@@ -6,7 +6,7 @@
 //! `M不変データ` を実装する型(データの役割を実装する型をすべて含む)の固有の `impl` とトレイトの実装は `&mut self` メソッドを持たない。`MParameter` を実装する型の定義は `Option<` のフィールドを持たない(引数オブジェクトの分類。型の別名を通した `Option` と別の構造体に埋めた `Option` は見ない)。定義が見つからない実装は違反にする。`crates` 配下の `src` に `#[path` の属性が無い。
 //! 設計解釈マーカーの実装は `impl マーカー名 for 型` または `impl blitz_design::マーカー名 for 型` の形に固定する。マーカーの名前を含む正規形でない実装の行(再公開したパスの経由・`::blitz_design::` の絶対パス・`blitz_design :: M不変データ` のようなパスの中の空白)と、
 //! `blitz_design` を別名で取り込むこと(`use ... as`)と、`blitz_design` の外で `blitz_design` を公開の `use` で再公開することと、ファイルの中の `mod 名 { ... }` の中にマーカーの実装を置くこと(型の定義をファイル単位で探すため)は違反にする。
-//! 同じファイルに同名の定義が複数あるときは一意に決まらないとして違反にする。
+//! 同じファイルに同名の定義が複数あるときは一意に決まらないとして違反にする。同じ型が同じ軸の排他の分類(`M不変エンティティ` と `M可変エンティティ`、`MParameter` と `MOptions`)を同時に名乗ることは違反にする。
 //! 検査しない規則(コンパイラが強制する): `Mコマンド: M不変データ` 等の上位トレイトの関係、`M不変データ` の `Clone`、関数の役割(境界付きの newtype)の型引数の境界、`遷移成功結果` の型引数の境界。
 //! 保証範囲: 検査は Rust の型意味論でなく構文パターン(`impl トレイト for 型` の行と `struct`/`enum` の定義ブロック)に対して行う。型の同一性は
 //! 「標準的なファイル配置(`src/a/b.rs` → `a::b`、`mod.rs`・`lib.rs`)から推定したモジュールパス + 型名」であり、実装のファイルと同じファイルの定義、無ければそのファイルの `use` 行(`crate::`・`super::`・`self::` と1段の波括弧の群)から取り込み元のモジュールパスを求めて、
@@ -14,6 +14,9 @@
 //! 固有の `impl` の探索も同じ規則で定義に属するファイルだけを見る。入れ子の波括弧の `use`、glob の取り込み、ジェネリックな `impl`、フィールドの型の中に間接的に含まれる内部可変性、
 //! `#[path = "..."] mod` によるファイルとモジュールの不一致(こちらは属性の存在自体を違反にする)は保証範囲の外である。
 
+mod exclusive_classification_assertion;
+#[cfg(test)]
+mod exclusive_classification_tests;
 #[cfg(test)]
 mod existence_marker_form_tests;
 mod line_matching;
@@ -30,6 +33,8 @@ mod mutable_self_law_tests;
 mod parameter_assertion;
 #[cfg(test)]
 mod parameter_assertion_tests;
+#[cfg(test)]
+mod process_marker_form_tests;
 mod syntax_assertion;
 mod syntax_checker;
 mod syntax_patterns;
@@ -63,6 +68,7 @@ pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の�
         .オントロジーの対象の原文にpath属性が無いこと()
         .すべての不変データが可変参照メソッドを持たないこと()
         .すべての引数オブジェクトが任意の値を持たないこと()
+        .排他の分類を同時に名乗っていないこと()
         .設計解釈マーカーを別名で取り込んでいないこと()
         .設計解釈マーカーの実装が正規形であること()
         .設計解釈マーカーを再公開していないこと()
