@@ -31,6 +31,8 @@ pub enum オントロジートレイト {
     Mエンティティ識別子,
     M不変エンティティ,
     M可変エンティティ,
+    MParameter,
+    MOptions,
 }
 
 impl オントロジートレイト {
@@ -45,9 +47,15 @@ impl オントロジートレイト {
         [Self::M値オブジェクト, Self::Mエンティティ, Self::Mエンティティ識別子, Self::M不変エンティティ, Self::M可変エンティティ]
     }
 
+    /// 引数オブジェクトの分類のマーカー。どちらも `M不変データ` を上位トレイトに持つため、純粋データ規約と `&mut self` の禁止は `impl M不変データ for` の行を通して掛かる。
+    /// `MParameter` には加えて `Option<` のフィールドを持たないことを課す(`parameter_assertion.rs`)。
+    pub const fn 引数オブジェクトの分類一覧() -> [Self; 2] {
+        [Self::MParameter, Self::MOptions]
+    }
+
     /// 実装の正規形と再公開の禁止の対象になる全部のマーカー。
     pub fn 全部の一覧() -> Vec<Self> {
-        [Self::M不変データ].into_iter().chain(Self::データの役割一覧()).chain(Self::存在の分類一覧()).collect()
+        [Self::M不変データ].into_iter().chain(Self::データの役割一覧()).chain(Self::存在の分類一覧()).chain(Self::引数オブジェクトの分類一覧()).collect()
     }
 
     pub const fn 名前(self) -> &'static str {
@@ -64,6 +72,8 @@ impl オントロジートレイト {
             Self::Mエンティティ識別子 => "Mエンティティ識別子",
             Self::M不変エンティティ => "M不変エンティティ",
             Self::M可変エンティティ => "M可変エンティティ",
+            Self::MParameter => "MParameter",
+            Self::MOptions => "MOptions",
         }
     }
 }

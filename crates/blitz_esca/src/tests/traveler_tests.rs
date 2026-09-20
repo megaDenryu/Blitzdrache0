@@ -6,6 +6,7 @@ use blitz_math::{メートル, 秒};
 
 use crate::elapsed_time::経過時間;
 use crate::ontology::遷移成功結果;
+use crate::transition_parameter::遷移パラメータ;
 use crate::traveler::{旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則};
 use crate::traveler_boundary::移動可能範囲の指定;
 use crate::traveler_movement::歩行遷移の規則;
@@ -15,8 +16,10 @@ fn 現在地(東: f32, 北: f32) -> 旅行者の現在地 {
     旅行者の現在地::生成する(メートル::生成する(東), メートル::生成する(北)).expect("有限な座標は現在地になるべきである")
 }
 
-fn 経過(秒数: f32) -> 経過時間 {
-    経過時間::生成する(秒::生成する(秒数)).expect("有限な0以上の秒数は経過時間になるべきである")
+fn 経過(秒数: f32) -> 遷移パラメータ {
+    遷移パラメータ {
+        経過時間: 経過時間::生成する(秒::生成する(秒数)).expect("有限な0以上の秒数は経過時間になるべきである"),
+    }
 }
 
 #[test]
