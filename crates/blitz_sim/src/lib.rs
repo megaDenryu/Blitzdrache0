@@ -12,6 +12,7 @@ pub mod constraint_graph;
 mod contact;
 mod gpu_layout;
 mod intervention;
+pub mod ontology;
 mod rigid_body;
 mod rigid_xpbd;
 mod sph;

@@ -29,8 +29,12 @@
 //! blitz_sim → blitz_collision は剛体の接触が接触点集合の型を直接読むための依存であり、剛体力学層を `blitz_sim` へ置く
 //! 判断1の機械強制である(参照: `_doc/設計/剛体の状態と接触.md`「判断1」)。blitz_sim は引き続き blitz_engine・
 //! blitz_render・blitz_app を知らず、この表がそれを課す。
+//! blitz_design は「Rust上の型が設計上何として解釈されるか」を宣言する共通の設計語彙であり、依存ゼロの最下層である。
+//! シミュレーションもEsca世界も知らないことをこの表が課し、逆向きに blitz_sim と blitz_esca の行へ書くことがその利用を許す。
+//! blitz_esca はゲーム『Esca』のロジック層であり、blitz_design・blitz_math・thiserror 以外を知らない(参照: `_doc/設計/Esca/設計正本.md`)。
 
-pub(super) const 白リスト: [(&str, &[&str]); 12] = [
+pub(super) const 白リスト: [(&str, &[&str]); 14] = [
+    ("blitz_design", &[]), // 共通の設計語彙。依存ゼロの最下層
     ("blitz_math", &["glam"]),
     ("blitz_collision", &["blitz_math", "thiserror"]), // 衝突数学層。世界もチャンクもアセットもGPUも知らない
     ("blitz_engine", &["blitz_collision", "blitz_math", "blitz_render", "thiserror"]),
@@ -40,9 +44,10 @@ pub(super) const 白リスト: [(&str, &[&str]); 12] = [
         &["blitz_assembly", "blitz_collision", "blitz_engine", "blitz_math", "gltf", "image", "rayon", "serde", "serde_json", "thiserror"],
     ),
     ("blitz_render", &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"]),
-    ("blitz_sim", &["blitz_collision", "blitz_math", "thiserror"]), // 判断51: 手法の数学のみ。接触点集合を読むためだけにblitz_collisionを許す
-    ("blitz_ecs", &["thiserror"]),                                  // 個体群の基盤。具体ゲームも物理も描画も知らない
-    ("blitz_game", &["blitz_math"]),                                // ゲームロジック層。許すのは blitz_engine と blitz_math だけ
+    ("blitz_sim", &["blitz_collision", "blitz_design", "blitz_math", "thiserror"]), // 判断51: 手法の数学のみ。接触点集合を読むためだけにblitz_collisionを許す
+    ("blitz_ecs", &["thiserror"]),                                                  // 個体群の基盤。具体ゲームも物理も描画も知らない
+    ("blitz_game", &["blitz_math"]),                                                // ゲームロジック層。許すのは blitz_engine と blitz_math だけ
+    ("blitz_esca", &["blitz_design", "blitz_math", "thiserror"]),                   // ゲーム『Esca』のロジック層
     (
         "blitz_app",
         &["blitz_engine", "blitz_game", "blitz_math", "blitz_render", "blitz_sim", "winit", "raw-window-handle", "thiserror", "egui", "egui-winit"],
