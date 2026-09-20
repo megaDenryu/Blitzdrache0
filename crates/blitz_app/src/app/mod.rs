@@ -48,7 +48,7 @@ use resource_wiring::資源の配線;
 use screen_installation::画面の据え付け;
 use self_operation_wiring::自己操作の配線;
 pub(crate) use time_of_day::{太陽天頂区間の記録, 空の再現条件, 遠方環境の鍵の記録, 遠方環境更新判定};
-pub(crate) use time_step::{描画機会の番号, 描画補間の割合, 進める刻み数};
+pub(crate) use time_step::{固定刻みの番号, 描画機会の番号, 描画補間の割合, 進める刻み数};
 use verification_launch_settings::検収の起動設定;
 use verification_observation::検収の観測;
 use view_wiring::視点の配線;
@@ -74,8 +74,8 @@ pub(crate) struct アプリ {
     描画対象の並べ方: 描画対象の並べ方,
     視点: 視点の配線,
     入力状態: 入力状態,
-    ゲーム配線: crate::game::ゲーム配線,
-    時間進行: time_step::時間進行配線, // その描画で固定刻みを何本進めるかと、この描画機会の番号を決める配線
+    世界実行: crate::world_execution::世界実行, // ゲーム世界を進める時間意味ごとの入口と、2つのゲームが共有する状態
+    時間進行: time_step::時間進行配線,          // その描画で固定刻みを何本進めるかと、この描画機会の番号と今から進める固定刻みの番号を持つ配線
     クリア色: クリアカラー,
     天空: time_of_day::天空配線, // 空と時刻の配線
     世界の描画構成: create::世界の描画構成,

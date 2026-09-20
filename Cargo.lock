@@ -2949,6 +2949,7 @@ name = "xtask"
 version = "0.1.0"
 dependencies = [
  "blitz_asset_compiler",
+ "blitz_math",
  "crossterm",
  "ctrlc",
  "win32job",

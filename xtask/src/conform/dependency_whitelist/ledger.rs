@@ -10,7 +10,10 @@
 //! blitz_game はゲームロジック層であり、設計正本が許すのは blitz_engine と blitz_math の2つで、白リストへは
 //! 実依存になった時点で足す(参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「第1段階の定義」)。winit・egui・ashへは依存させない。
 //! xtask の blitz_asset_compiler は置き場とファイル名の綴りの正本を読むためだけの依存であり、検収が写しを
-//! 持たないための唯一の例外である。crossterm は`cargo xtask menu`の端末の生モード制御専用である。
+//! 持たないための例外である。xtask の blitz_math はパーセンタイル値の求め方の正本を読むための同じ形の例外であり、
+//! 検収が測る値と計器が報告する値を同じ式で求めるために足した。写しを持つと、同じ「95パーセンタイル値」という
+//! 名前の数が検収と計器で別の標本を指す(この2つの入口は実際に別の式を持っていた)。
+//! crossterm は`cargo xtask menu`の端末の生モード制御専用である。
 //! editor_server はゲーム開発用エディター段1で新設した、ブラウザからの静的配信と生存確認の口を持つ独立サーバーである。
 //! 判断5(ソースアセットの書き出し)で blitz_asset_compiler への依存を追加したのは、高さ格子のバイト書式の正本(書き手)を
 //! 再利用し、editor_server 側では書式を写さないためである。blitz_engine はその関数(`高さ格子を切り出す`)の引数型
@@ -49,6 +52,6 @@ pub(super) const 白リスト: [(&str, &[&str]); 14] = [
         "blitz_app",
         &["blitz_engine", "blitz_game", "blitz_math", "blitz_render", "blitz_sim", "winit", "raw-window-handle", "thiserror", "egui", "egui-winit"],
     ),
-    ("xtask", &["blitz_asset_compiler", "crossterm", "ctrlc", "win32job"]), // 検収が綴りの写しを持たないための唯一の例外
+    ("xtask", &["blitz_asset_compiler", "blitz_math", "crossterm", "ctrlc", "win32job"]), // 検収が綴りと求め方の写しを持たないための例外
     ("editor_server", &["serde", "serde_json", "thiserror", "axum", "tokio", "tower", "tower-http", "ts-rs", "blitz_asset_compiler", "blitz_engine"]),
 ];

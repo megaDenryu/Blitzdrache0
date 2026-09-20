@@ -39,7 +39,7 @@ impl アプリ {
             局所可視性の描画設定: self.世界の描画構成.局所可視性の描画設定,
             時間再構成の描画設定: self.世界の描画構成.時間再構成の描画設定,
         };
-        let 組み上げ = crate::app::window_setup::ウィンドウとレンダラーを作る(event_loop, &世界, &作り方, self.資源の配線.ホットリローダーを可変で借りる(), &mut self.ゲーム配線);
+        let 組み上げ = crate::app::window_setup::ウィンドウとレンダラーを作る(event_loop, &世界, &作り方, self.資源の配線.ホットリローダーを可変で借りる(), &mut self.世界実行);
         match 組み上げ {
             Ok(一式) => self.組み上げた一式を据える(event_loop, 一式),
             Err(誤り) => {
