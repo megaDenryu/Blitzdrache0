@@ -34,6 +34,8 @@ pub struct 移動の変位 {
     pub 北: メートル,
 }
 
+impl MDTO for 移動の変位 {}
+
 impl MDTO for 旅行者の現在地 {}
 impl M状態 for 旅行者の現在地 {}
 
