@@ -1,15 +1,17 @@
-//! 設計マーカーの実装の形を正規形へ固定する検査の試験。`blitz_design` の別名の取り込みと、ファイルの中の `mod` の中のマーカーの実装と、同じファイルの同名の定義の重複を確かめる。
+//! 設計マーカーの実装の形を正規形へ固定する検査の試験のうち、`blitz_design` の別名の取り込みと、ファイルの中の `mod` の中のマーカーの実装と、同じファイルの同名の定義の重複を確かめるもの。正規形を別名なしで迂回する書き方の試験は `marker_canonical_form_tests.rs` にある。
 
 use super::tests::{ソース, 全部の説明関数を連ねた違反の説明一覧};
 
 const 別名の違反: &str = "設計マーカーは `impl MDTO for 型` または `impl blitz_design::MDTO for 型` の形だけで実装する。別名で取り込むと conform が実装を認識できない";
+pub(super) const 正規形でない実装の違反: &str = "設計マーカーの実装は `impl マーカー名 for 型` または `impl blitz_design::マーカー名 for 型` の形だけで書く。再公開・絶対パス・パスの中の空白のどれも、構文検査が実装として認識できない";
 
 #[test]
 fn 構文解析_クレートの別名の取り込みは違反になる() {
     let ソース一覧 = vec![ソース("crates/a/src/x.rs", "use blitz_design as design;\npub struct 位置;\nimpl design::MDTO for 位置 {}\n")];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
-    assert_eq!(説明一覧.len(), 1);
+    assert_eq!(説明一覧.len(), 2);
     assert!(説明一覧[0].contains(別名の違反));
+    assert!(説明一覧[1].contains(正規形でない実装の違反));
 }
 
 #[test]
@@ -36,8 +38,9 @@ fn 構文解析_別名でない取り込みは違反にならない() {
 fn 構文解析_modの中のマーカーの実装は違反になる() {
     let ソース一覧 = vec![ソース("crates/a/src/x.rs", "pub struct 位置;\nmod 内側 {\n    impl super::MDTO for super::位置 {}\n    impl MDTO for 位置 {}\n}\n")];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
-    assert_eq!(説明一覧.len(), 1);
-    assert!(説明一覧[0].contains("設計マーカーの実装をファイルの中の `mod` の中へ置かない"));
+    assert_eq!(説明一覧.len(), 2);
+    assert!(説明一覧[0].contains(正規形でない実装の違反));
+    assert!(説明一覧[1].contains("設計マーカーの実装をファイルの中の `mod` の中へ置かない"));
 }
 
 #[test]
