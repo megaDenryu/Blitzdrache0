@@ -33,7 +33,7 @@ pub(super) fn 全部の説明関数を連ねた違反の説明一覧(ソース�
 fn 構文解析_規則を満たす型は違反にならない() {
     let ソース一覧 = vec![ソース(
         "crates/a/src/x.rs",
-        "#[derive(Debug, Clone)]\npub struct 位置 {\n    pub 東: f32,\n}\nimpl MDTO for 位置 {}\nimpl M状態 for 位置 {}\npub(crate) enum 意図 {\n    静止,\n}\nimpl MDTO for 意図 {}\nimpl blitz_design::Mコマンド for 意図 {}\npub struct 規則;\nimpl MDTO for 規則 {}\nimpl M規則 for 規則 {}\nimpl 位置 {\n    pub fn 動かす(&mut self) {}\n}\n",
+        "#[derive(Debug, Clone)]\npub struct 位置 {\n    pub 東: f32,\n}\nimpl M不変データ for 位置 {}\nimpl M状態 for 位置 {}\npub(crate) enum 意図 {\n    静止,\n}\nimpl M不変データ for 意図 {}\nimpl blitz_design::Mコマンド for 意図 {}\npub struct 規則;\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\nimpl 位置 {\n    pub fn 動かす(&mut self) {}\n}\n",
     )];
     assert!(全部の説明関数を連ねた違反の説明一覧(ソース一覧).is_empty());
 }
@@ -42,7 +42,7 @@ fn 構文解析_規則を満たす型は違反にならない() {
 fn 構文解析_mコマンドとm規則の型定義を検証する() {
     let ソース一覧 = vec![ソース(
         "crates/a/src/x.rs",
-        "pub struct 意図;\nimpl MDTO for 意図 {}\nimpl Mコマンド for 意図 {}\npub enum 規則 {\n    甲,\n}\nimpl MDTO for 規則 {}\nimpl M規則 for 規則 {}\n",
+        "pub struct 意図;\nimpl M不変データ for 意図 {}\nimpl Mコマンド for 意図 {}\npub enum 規則 {\n    甲,\n}\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\n",
     )];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 2);
@@ -54,18 +54,18 @@ fn 構文解析_mコマンドとm規則の型定義を検証する() {
 fn 構文解析_mdtoを実装する型は純粋データ規約を満たすこと() {
     let ソース一覧 = vec![ソース(
         "crates/a/src/x.rs",
-        "pub struct 借り<'a> {\n    値: &'a f32,\n}\nimpl MDTO for 借り<'_> {}\npub enum 事 {\n    起きた(std::sync::Mutex<u8>),\n}\nimpl MDTO for 事 {}\nimpl Mイベント for 事 {}\n",
+        "pub struct 借り<'a> {\n    値: &'a f32,\n}\nimpl M不変データ for 借り<'_> {}\npub enum 事 {\n    起きた(std::sync::Mutex<u8>),\n}\nimpl M不変データ for 事 {}\nimpl Mイベント for 事 {}\n",
     )];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 2);
-    assert!(説明一覧[0].contains("MDTO `借り` の定義は参照(&)を持てません"));
-    assert!(説明一覧[1].contains("MDTO `事` の定義は内部可変性 `Mutex` を持てません"));
+    assert!(説明一覧[0].contains("M不変データ `借り` の定義は参照(&)を持てません"));
+    assert!(説明一覧[1].contains("M不変データ `事` の定義は内部可変性 `Mutex` を持てません"));
 }
 
 #[test]
 fn 構文解析_可変参照メソッドはその型の固有のimplだけを見る() {
     let ソース一覧 = vec![
-        ソース("crates/a/src/x.rs", "pub struct 規則;\nimpl MDTO for 規則 {}\nimpl M規則 for 規則 {}\npub struct 規則の台帳;\n"),
+        ソース("crates/a/src/x.rs", "pub struct 規則;\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\npub struct 規則の台帳;\n"),
         ソース("crates/a/src/y.rs", "impl 規則 {\n    pub fn 変える(&mut self) {}\n}\nimpl 規則の台帳 {\n    pub fn 足す(&mut self) {}\n}\n"),
     ];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
@@ -75,16 +75,19 @@ fn 構文解析_可変参照メソッドはその型の固有のimplだけを見
 
 #[test]
 fn 構文解析_定義が見つからない型を違反にする() {
-    let ソース一覧 = vec![ソース("crates/a/src/x.rs", "impl MDTO for 幻 {}\nimpl Mコマンド for 幻 {}\n")];
+    let ソース一覧 = vec![ソース("crates/a/src/x.rs", "impl M不変データ for 幻 {}\nimpl Mコマンド for 幻 {}\n")];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 2);
     assert!(説明一覧[0].contains("Mコマンド `幻` の定義(struct/enum)が見つかりません"));
-    assert!(説明一覧[1].contains("MDTO `幻` の定義(struct/enum)が見つかりません"));
+    assert!(説明一覧[1].contains("M不変データ `幻` の定義(struct/enum)が見つかりません"));
 }
 
 #[test]
 fn 構文解析_設定の固有のimplの可変参照メソッドは違反になる() {
-    let ソース一覧 = vec![ソース("crates/a/src/x.rs", "pub struct 設定;\nimpl MDTO for 設定 {}\nimpl M設定 for 設定 {}\nimpl 設定 {\n    pub fn 変える(&mut self) {}\n}\n")];
+    let ソース一覧 = vec![ソース(
+        "crates/a/src/x.rs",
+        "pub struct 設定;\nimpl M不変データ for 設定 {}\nimpl M設定 for 設定 {}\nimpl 設定 {\n    pub fn 変える(&mut self) {}\n}\n",
+    )];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 1);
     assert!(説明一覧[0].contains("M設定 `設定` は &mut self メソッドを持てません"));
@@ -94,7 +97,7 @@ fn 構文解析_設定の固有のimplの可変参照メソッドは違反にな
 fn 構文解析_コメントと文字列の中に書かれた同じ文字列は数えない() {
     let ソース一覧 = vec![ソース(
         "crates/a/src/x.rs",
-        "/// &mut self は持たない\npub struct 位置; // RefCell は使わない\nimpl MDTO for 位置 {}\nimpl Mイベント for 位置 {}\nimpl 位置 {\n    pub fn 名前(&self) -> &'static str {\n        \"&mut self\"\n    }\n}\n",
+        "/// &mut self は持たない\npub struct 位置; // RefCell は使わない\nimpl M不変データ for 位置 {}\nimpl Mイベント for 位置 {}\nimpl 位置 {\n    pub fn 名前(&self) -> &'static str {\n        \"&mut self\"\n    }\n}\n",
     )];
     assert!(全部の説明関数を連ねた違反の説明一覧(ソース一覧).is_empty());
 }

@@ -7,7 +7,7 @@ fn 構文解析_同じクレートの別モジュールの同名の型は別の�
     let 甲 = ソース(
         "crates/a/src/x.rs",
         "pub struct 規則;
-impl MDTO for 規則 {}
+impl M不変データ for 規則 {}
 impl M規則 for 規則 {}
 ",
     );
@@ -27,7 +27,7 @@ fn 構文解析_useで定義のモジュールパスを取り込んだ別ファ�
     let 甲 = ソース(
         "crates/a/src/x.rs",
         "pub struct 規則;
-impl MDTO for 規則 {}
+impl M不変データ for 規則 {}
 impl M規則 for 規則 {}
 ",
     );
@@ -66,13 +66,13 @@ fn 構文解析_useの波括弧の群とsuperの修飾で取り込んだ定義�
     let 丙 = ソース(
         "crates/a/src/z/w.rs",
         "use super::super::x::{他, 規則};
-impl MDTO for 規則 {}
+impl M不変データ for 規則 {}
 impl M規則 for 規則 {}
 ",
     );
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(vec![甲, 乙, 丙]);
     assert_eq!(説明一覧.len(), 1);
-    assert!(説明一覧[0].contains("MDTO `規則` の定義は内部可変性 `Cell` を持てません"));
+    assert!(説明一覧[0].contains("M不変データ `規則` の定義は内部可変性 `Cell` を持てません"));
 }
 
 #[test]
@@ -85,7 +85,7 @@ fn 構文解析_useの別名は取り込み元を求められない違反とし�
     let 乙 = ソース(
         "crates/a/src/y.rs",
         "use crate::x::規則 as 法則;
-impl MDTO for 法則 {}
+impl M不変データ for 法則 {}
 impl M規則 for 法則 {}
 ",
     );

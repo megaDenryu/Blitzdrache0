@@ -2,7 +2,7 @@
 //!
 //! プログラミング設計上の役割(コマンド、状態+DTO、規則、イベント)に従って定義する。
 
-use blitz_design::{MDTO, Mイベント, Mコマンド, M状態, M規則};
+use blitz_design::{Mイベント, Mコマンド, M不変データ, M状態, M規則};
 use blitz_math::{メートル, メートル毎秒};
 
 use crate::traveler_error::{旅行者の現在地の生成の失敗, 歩行の規則の生成の失敗};
@@ -16,7 +16,7 @@ pub enum 旅行者の意図 {
     見回す,
 }
 
-impl MDTO for 旅行者の意図 {}
+impl M不変データ for 旅行者の意図 {}
 impl Mコマンド for 旅行者の意図 {}
 
 /// 旅行者のワールド内の現在地(状態スナップショット)。東と北が有限な数値であることを不変条件に持つ。
@@ -34,9 +34,9 @@ pub struct 移動の変位 {
     pub 北: メートル,
 }
 
-impl MDTO for 移動の変位 {}
+impl M不変データ for 移動の変位 {}
 
-impl MDTO for 旅行者の現在地 {}
+impl M不変データ for 旅行者の現在地 {}
 impl M状態 for 旅行者の現在地 {}
 
 impl 旅行者の現在地 {
@@ -68,7 +68,7 @@ pub struct 歩行の規則 {
     一秒あたりの速さ: メートル毎秒,
 }
 
-impl MDTO for 歩行の規則 {}
+impl M不変データ for 歩行の規則 {}
 impl M規則 for 歩行の規則 {}
 
 impl 歩行の規則 {
@@ -101,5 +101,5 @@ pub enum 旅行者の出来事 {
     障害物に遮られた,
 }
 
-impl MDTO for 旅行者の出来事 {}
+impl M不変データ for 旅行者の出来事 {}
 impl Mイベント for 旅行者の出来事 {}

@@ -17,10 +17,9 @@ impl Rust型種別 {
 }
 
 /// 検査が照合する `blitz_design` のトレイト。選択肢の名前はトレイトの名前をそのまま写す。
-#[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum オントロジートレイト {
-    MDTO,
+    M不変データ,
     Mコマンド,
     Mイベント,
     M規則,
@@ -30,14 +29,14 @@ pub enum オントロジートレイト {
 }
 
 impl オントロジートレイト {
-    /// `MDTO` を上位トレイトに持つデータの役割。これらを実装する型の定義にも純粋データ規約を当てる(`impl MDTO for` の置き場所は問わない)。
+    /// `M不変データ` を上位トレイトに持つデータの役割。これらを実装する型の定義にも純粋データ規約を当てる(`impl M不変データ for` の置き場所は問わない)。
     pub const fn データの役割一覧() -> [Self; 6] {
         [Self::Mコマンド, Self::Mイベント, Self::M規則, Self::M状態, Self::M入力, Self::M設定]
     }
 
     pub const fn 名前(self) -> &'static str {
         match self {
-            Self::MDTO => "MDTO",
+            Self::M不変データ => "M不変データ",
             Self::Mコマンド => "Mコマンド",
             Self::Mイベント => "Mイベント",
             Self::M規則 => "M規則",
