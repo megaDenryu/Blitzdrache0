@@ -14,7 +14,7 @@ use super::source_group::{型の在り処の問い, 抽出対象のソース群}
 use super::type_notation::先頭の型名を採る;
 use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
 use crate::design_model::concept::{設計概念, 設計概念の種類, 設計概念の識別子};
-use crate::design_model::relation::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
+use crate::design_model::relation::{抽出の出どころ, 抽出元の構文, 設計関係};
 
 pub fn 関数の役割の型引数から抽出する(ソース群: &抽出対象のソース群) -> 抽出の成果 {
     let mut 成果 = 抽出の成果::default();
