@@ -5,6 +5,9 @@
 //! この型はその集合そのものを表す。
 //! 参照: `_doc/設計/設計オントロジー.md` 第8節。
 
+#[cfg(test)]
+mod specification_tests;
+
 use super::evidence::反例;
 use super::proposition::命題;
 use super::verifier::命題の検証器;

@@ -16,6 +16,8 @@ use blitz_design_verification::{検証の集計, 構造の検証器};
 use crate::design_model::設計関係グラフを抽出する;
 
 mod extraction_report;
+#[cfg(test)]
+mod outcome_count_tests;
 mod structural_law;
 
 /// 結末ごとの件数。検証した命題を数え、終了コードを答える。
@@ -24,6 +26,16 @@ struct 結末の件数 {
     証明済み: usize,
     反証済み: usize,
     未決定: usize,
+}
+
+/// 検証の入口が答える合否。反証済みが1件でもあれば不合格であり、未決定は不合格にしない(Issue #173 の設計判断)。
+/// 判断を選択肢として持つのは、`ExitCode` が `PartialEq` を持たず、終了コードのままでは判断を試験で固定できないためである。
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum 設計の検証の合否 {
+    /// 検証した命題のどれも反証されなかった。未決定が在ってもこちらである。
+    反証済みが1件も無い,
+    /// 反証された命題が1件以上在る。
+    反証済みが在る,
 }
 
 pub fn 設計の命題を検証する() -> ExitCode {
@@ -56,12 +68,27 @@ impl 結末の件数 {
         self.未決定 += 集計.未決定の件数;
     }
 
-    /// 結末ごとの件数を表示し、反証済みが1件でもあれば失敗の終了コードを答える。
+    /// 反証済みの件数から合否を答える。未決定の件数はこの判断へ効かない。
+    fn 合否を答える(&self) -> 設計の検証の合否 {
+        if self.反証済み > 0 {
+            return 設計の検証の合否::反証済みが在る;
+        }
+        設計の検証の合否::反証済みが1件も無い
+    }
+
+    /// 結末ごとの件数を表示し、合否を写した終了コードを答える。
     fn 結末を表示して終了コードを答える(&self) -> ExitCode {
         println!("[xtask] design-verify: 証明済み{}件・反証済み{}件・未決定{}件", self.証明済み, self.反証済み, self.未決定);
-        if self.反証済み > 0 {
-            return ExitCode::FAILURE;
+        self.合否を答える().終了コードへ写す()
+    }
+}
+
+impl 設計の検証の合否 {
+    /// 合否をプロセスの終了コードへ写す。写すのはこの1箇所だけである。
+    fn 終了コードへ写す(self) -> ExitCode {
+        match self {
+            Self::反証済みが1件も無い => ExitCode::SUCCESS,
+            Self::反証済みが在る => ExitCode::FAILURE,
         }
-        ExitCode::SUCCESS
     }
 }
