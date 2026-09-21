@@ -3,7 +3,7 @@
 
 use std::path::Path;
 
-use super::module_declaration::{モジュール宣言, 本体の形, 置き場の指定};
+use super::module_declaration::{モジュール宣言, 宣言を囲む波括弧, 本体の形, 置き場の指定};
 use super::module_declaration_extract::モジュール宣言の抽出;
 use super::module_path::モジュールパス;
 
@@ -45,6 +45,15 @@ fn 抽出_波括弧の中の宣言を本体の形として抽出する() {
     assert_eq!(宣言一覧.len(), 1);
     assert_eq!(宣言一覧[0].本体の形, 本体の形::波括弧の中);
     assert_eq!(宣言一覧[0].対象の物理ファイル(), None);
+}
+
+#[test]
+fn 抽出_宣言を囲む波括弧を閉じ括弧の後まで数え直す() {
+    let 宣言一覧 = 抽出("crates/a/src/x.rs", "mod 外 {\n    mod 子;\n}\nmod 兄弟;\n").宣言一覧();
+    assert_eq!(宣言一覧.len(), 3);
+    assert_eq!(宣言一覧[0].宣言を囲む波括弧, 宣言を囲む波括弧::最上位にある);
+    assert_eq!(宣言一覧[1].宣言を囲む波括弧, 宣言を囲む波括弧::波括弧の中にある);
+    assert_eq!(宣言一覧[2].宣言を囲む波括弧, 宣言を囲む波括弧::最上位にある);
 }
 
 #[test]
