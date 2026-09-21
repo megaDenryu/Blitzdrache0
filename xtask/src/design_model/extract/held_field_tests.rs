@@ -1,0 +1,62 @@
+//! 抽出の規則3(構造体のフィールド)の回帰試験。「このRustの構文からこの関係が出る」を固定し、
+//! 型引数を節点にしないこと・適用範囲の外を走査しないこと・定義をたどれない型を落とさないことも固定する。
+
+use super::test_support::{原文から結末を組む, 抽出できなかった理由の説明一覧, 概念の表記一覧, 関係の表記一覧};
+
+const 旅行者のパス: &str = "crates/blitz_esca/src/traveler.rs";
+
+#[test]
+fn 構造体のフィールドから保持する関係が出てプリミティブは出ない() {
+    let 原文 = "pub struct 旅行者ID {\n    値: u64,\n}\n\npub struct 旅行者の現在地 {\n    東: f32,\n}\n\npub struct 旅行者 {\n    識別子: 旅行者ID,\n    現在地: 旅行者の現在地,\n    歩数: u32,\n}\n";
+    let 表記一覧 = 関係の表記一覧(&原文から結末を組む(&[(旅行者のパス, 原文)]));
+    assert!(表記一覧.contains(&"blitz_esca::traveler::旅行者 保持する blitz_esca::traveler::旅行者ID".to_string()), "{表記一覧:?}");
+    assert!(表記一覧.contains(&"blitz_esca::traveler::旅行者 保持する blitz_esca::traveler::旅行者の現在地".to_string()), "{表記一覧:?}");
+    assert!(!表記一覧.iter().any(|表記| 表記.contains("u32") || 表記.contains("u64") || 表記.contains("f32")), "{表記一覧:?}");
+}
+
+#[test]
+fn 外側の包みを剥がして中身へ保持する関係が出る() {
+    let 原文 = "pub enum 旅行者の出来事 {\n    周囲を観察した,\n}\n\npub struct 旅程 {\n    通った道: Vec<旅行者の出来事>,\n}\n";
+    let 表記一覧 = 関係の表記一覧(&原文から結末を組む(&[(旅行者のパス, 原文)]));
+    assert!(表記一覧.contains(&"blitz_esca::traveler::旅程 保持する blitz_esca::traveler::旅行者の出来事".to_string()), "{表記一覧:?}");
+}
+
+#[test]
+fn 列挙の選択肢の名前付きの本体からも保持する関係が出る() {
+    let 原文 = "pub struct 歩行方向 {\n    東: f32,\n}\n\npub enum 旅行者の意図 {\n    静止,\n    歩く { 方向: 歩行方向 },\n}\n";
+    let 表記一覧 = 関係の表記一覧(&原文から結末を組む(&[(旅行者のパス, 原文)]));
+    assert!(表記一覧.contains(&"blitz_esca::traveler::旅行者の意図 保持する blitz_esca::traveler::歩行方向".to_string()), "{表記一覧:?}");
+}
+
+#[test]
+fn 宣言の型引数と一致するフィールドの型からは関係を出さず抽出できなかった行として数える() {
+    let 原文 = "pub struct 遷移成功結果<状態: M状態, イベント: Mイベント> {\n    pub 次の状態: 状態,\n    pub 出来事一覧: Vec<イベント>,\n}\n";
+    let 結末 = 原文から結末を組む(&[("crates/blitz_esca/src/ontology.rs", 原文)]);
+    let 表記一覧 = 関係の表記一覧(&結末);
+    assert!(!表記一覧.iter().any(|表記| 表記.contains("保持する")), "{表記一覧:?}");
+    assert!(!概念の表記一覧(&結末).iter().any(|表記| 表記.ends_with("::状態") || 表記.ends_with("::イベント")), "{:?}", 概念の表記一覧(&結末));
+    let 説明一覧 = 抽出できなかった理由の説明一覧(&結末);
+    assert_eq!(説明一覧.len(), 2, "{説明一覧:?}");
+    assert!(説明一覧.iter().all(|説明| 説明.contains("型引数")), "{説明一覧:?}");
+}
+
+#[test]
+fn マーカーを1つも実装しない型も適用範囲のクレートなら節点になる() {
+    let 表記一覧 = 概念の表記一覧(&原文から結末を組む(&[("crates/blitz_esca/src/walking_direction.rs", "pub struct 歩行方向 {\n    東: f32,\n}\n")]));
+    assert!(表記一覧.contains(&"blitz_esca::walking_direction::歩行方向".to_string()), "{表記一覧:?}");
+}
+
+#[test]
+fn 適用範囲の外のクレートの型は節点にならない() {
+    let 表記一覧 = 概念の表記一覧(&原文から結末を組む(&[("crates/blitz_render/src/draw_bundle.rs", "pub struct 描画束 {\n    数: u32,\n}\n")]));
+    assert!(!表記一覧.iter().any(|表記| 表記.contains("描画束")), "{表記一覧:?}");
+}
+
+#[test]
+fn 定義をたどれない型は節点として残り抽出できなかった行として数える() {
+    let 結末 = 原文から結末を組む(&[(旅行者のパス, "pub struct 旅行者 {\n    現在地: 未知の型,\n}\n")]);
+    assert!(関係の表記一覧(&結末).contains(&"blitz_esca::traveler::旅行者 保持する 未知の型".to_string()), "{:?}", 関係の表記一覧(&結末));
+    assert!(概念の表記一覧(&結末).contains(&"未知の型".to_string()), "{:?}", 概念の表記一覧(&結末));
+    let 説明一覧 = 抽出できなかった理由の説明一覧(&結末);
+    assert_eq!(説明一覧, vec!["`未知の型` の定義をたどれずモジュールパスを空にした".to_string()]);
+}

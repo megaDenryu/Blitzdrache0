@@ -19,13 +19,13 @@ mod exclusive_classification_assertion;
 mod exclusive_classification_tests;
 #[cfg(test)]
 mod existence_marker_form_tests;
-mod line_matching;
+pub(crate) mod line_matching;
 #[cfg(test)]
 mod marker_canonical_form_tests;
 mod marker_form_assertion;
 #[cfg(test)]
 mod marker_form_tests;
-mod module_path;
+pub(crate) mod module_path;
 #[cfg(test)]
 mod module_path_tests;
 #[cfg(test)]
@@ -38,12 +38,12 @@ mod process_marker_form_tests;
 #[cfg(test)]
 mod result_marker_form_tests;
 mod syntax_assertion;
-mod syntax_checker;
-mod syntax_patterns;
+pub(crate) mod syntax_checker;
+pub(crate) mod syntax_patterns;
 #[cfg(test)]
 mod tests;
-mod trait_implementation;
-mod type_definition;
+pub(crate) mod trait_implementation;
+pub(crate) mod type_definition;
 #[cfg(test)]
 mod type_identity_tests;
 mod use_resolution;

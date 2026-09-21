@@ -21,6 +21,8 @@ mod damage_band;
 mod day_moment;
 mod depth_prepass_cost;
 mod derived_environment;
+mod design_model;
+mod design_proposition;
 mod dispatch;
 mod distant_environment;
 mod distant_view;

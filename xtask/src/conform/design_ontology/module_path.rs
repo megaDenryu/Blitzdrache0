@@ -37,6 +37,11 @@ impl モジュールパス {
         Self(区切り一覧.join("::"))
     }
 
+    /// `クレート名::a::b` の1行の表記。設計関係グラフの節点の識別子がこの表記を持つ。
+    pub fn 表記(&self) -> &str {
+        &self.0
+    }
+
     /// 親のモジュールパス。最上位(クレート)の親はそのクレート自身である。
     pub fn 親(&self) -> Self {
         Self(self.0.rsplit_once("::").map_or(self.0.clone(), |(親, _)| 親.to_string()))
