@@ -15,4 +15,3 @@ mod transition_model;
 
 pub use exhaustive_verifier::有限全数の検証器;
 pub use representative_case::対戦進行の題材;
-pub use transition_model::{遷移, 遷移の材料, 遷移の識別子, 遷移モデル};

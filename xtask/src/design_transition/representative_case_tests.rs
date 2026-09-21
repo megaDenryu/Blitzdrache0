@@ -5,8 +5,9 @@
 #![allow(clippy::unwrap_used)]
 
 use super::representative_case::{対戦の結果, 対戦相手の名前, 対戦進行, 対戦進行の事象, 対戦進行の規則, 専用の事象が起きる対戦回数};
+use super::transition_model::{遷移, 遷移の材料, 遷移の識別子, 遷移モデル};
 use crate::design_proposition::{原子命題, 命題, 命題の検証器, 検証結果, 項};
-use crate::design_transition::{対戦進行の題材, 有限全数の検証器, 遷移, 遷移の材料, 遷移の識別子, 遷移モデル};
+use crate::design_transition::{対戦進行の題材, 有限全数の検証器};
 
 #[test]
 fn 代表ケースの正の命題は証明済みになり証拠の見た対象の件数が列挙した遷移の件数と一致する() {

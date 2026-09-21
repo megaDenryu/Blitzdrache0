@@ -10,7 +10,7 @@ mod solver;
 
 use super::transition_model::{遷移, 遷移モデル};
 use crate::design_model::設計概念の識別子;
-use crate::design_proposition::{反例, 束縛の割り当て, 検証の方式, 検証結果, 証拠, 項};
+use crate::design_proposition::{反例, 束縛の割り当て, 検証の方式, 検証結果, 証拠};
 
 /// 列挙してよい対象の件数の上限。1件ごとに命題の本体を解き直すため、これを超えると1回の検証が人が待てる時間を超える。
 /// 上限で切ったときは未決定で答えるため、超えたことが黙って通り過ぎることは無い。
