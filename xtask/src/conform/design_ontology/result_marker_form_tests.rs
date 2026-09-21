@@ -1,4 +1,4 @@
-//! `M結果` の構文の法則(結果は判別型である)を固定する試験。標準の `Result` は定義をたどらない特例であり、独自の `enum` は許し、独自の `struct` は違反にする。
+//! `M結果` の構文の法則(結果は判別型である)を固定する試験。正本 `blitz_design` の `marker.rs` が持つ標準の `Result` への包括の実装だけが定義をたどらない特例であり、独自の `enum` は許し、独自の `struct` は名前が `Result` でも違反にする。
 //! `M結果` は上位トレイトを持たないため、純粋データ規約と `&mut self` の禁止は課さない。正規形の検査の対象には入る。
 
 use super::marker_form_tests::正規形でない実装の違反;
@@ -12,9 +12,6 @@ fn 構文解析_標準のresultへのm結果の実装は定義をたどらず違
         "crates/blitz_design/src/marker.rs",
         "pub trait M結果 {}
 impl<T, E> M結果 for Result<T, E> {}
-pub struct 成功;
-pub struct 失敗;
-impl M結果 for Result<成功, 失敗> {}
 ",
     )];
     assert!(全部の説明関数を連ねた違反の説明一覧(ソース一覧).is_empty());
@@ -61,7 +58,6 @@ fn 構文解析_結果の値を束ねた構造体へのm結果の実装は列挙
     pub 次の状態: 状態,
     pub 出来事一覧: Vec<イベント>,
 }
-impl<状態, イベント> M不変データ for 何かの結果<状態, イベント> {}
 impl<状態, イベント> M結果 for 何かの結果<状態, イベント> {}
 impl M結果 for 何かの結果<u8, u8> {}
 ",
@@ -69,6 +65,30 @@ impl M結果 for 何かの結果<u8, u8> {}
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 1);
     assert!(説明一覧[0].contains(列挙型が必要の違反));
+}
+
+#[test]
+fn 構文解析_正本の外のresultという名前の構造体へのm結果の実装は特例にならず列挙型が必要の違反になる() {
+    let ソース一覧 = vec![ソース(
+        "crates/a/src/x.rs",
+        "pub struct Result;
+impl M結果 for Result {}
+",
+    )];
+    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
+    assert_eq!(説明一覧.len(), 1);
+    assert!(説明一覧[0].contains("M結果 `Result` は enum 定義が必要です"));
+}
+
+#[test]
+fn 構文解析_正本の外のresultという名前の独自の列挙型へのm結果の実装は成立する() {
+    let ソース一覧 = vec![ソース(
+        "crates/a/src/x.rs",
+        "pub enum Result { A, B }
+impl M結果 for Result {}
+",
+    )];
+    assert!(全部の説明関数を連ねた違反の説明一覧(ソース一覧).is_empty());
 }
 
 #[test]

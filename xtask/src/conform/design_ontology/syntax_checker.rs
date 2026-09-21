@@ -10,12 +10,7 @@ use super::module_path::モジュールパス;
 use super::syntax_patterns::{self, Rust型種別, オントロジートレイト};
 use super::type_definition::{固有implのファイル, 型の定義を探す, 定義ブロックの結果};
 
-/// `impl トレイト for 型名` の1件。行番号は1始まりであり、違反の報告がこの行を指す。
-pub struct トレイト実装型 {
-    pub 型名: String,
-    pub パス: PathBuf,
-    pub 行番号: usize,
-}
+use super::trait_implementation::トレイト実装型;
 
 pub struct クレート構文検査 {
     pub(super) ソース一覧: Vec<(PathBuf, Vec<String>)>,

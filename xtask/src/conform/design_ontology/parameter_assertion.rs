@@ -3,8 +3,9 @@
 //! 検査は採った定義ブロックのコードだけの行に `Option<` の文字列があるかを見る。型の別名を通した `Option`(`type 任意の値 = Option<u8>` を経由する形)と、
 //! 入れ子の型の中の `Option`(`Vec<Option<u8>>` は見つかるが、別の構造体のフィールドに埋めた `Option` は見ない)は保証範囲の外である。`MOptions` には課さない。
 
-use super::syntax_checker::{クレート構文検査, トレイト実装型};
+use super::syntax_checker::クレート構文検査;
 use super::syntax_patterns::オントロジートレイト;
+use super::trait_implementation::トレイト実装型;
 use super::type_definition::定義ブロックの結果;
 
 const 任意の値を持つ違反: &str =

@@ -5,8 +5,9 @@
 use std::collections::HashMap;
 
 use super::module_path::モジュールパス;
-use super::syntax_checker::{クレート構文検査, トレイト実装型};
+use super::syntax_checker::クレート構文検査;
 use super::syntax_patterns::オントロジートレイト;
+use super::trait_implementation::トレイト実装型;
 
 impl クレート構文検査 {
     /// 同じ型が排他の分類の組の両方を名乗っていないこと。不変と可変は意味として同時に成り立たず、必須の束と任意の束は引数オブジェクトの軸の排他の分類である。

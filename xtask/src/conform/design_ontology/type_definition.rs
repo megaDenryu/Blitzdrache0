@@ -8,8 +8,8 @@ use std::path::{Path, PathBuf};
 
 use super::line_matching::{クレート名, 波括弧が閉じる行, 語として現れるか};
 use super::module_path::モジュールパス;
-use super::syntax_checker::トレイト実装型;
 use super::syntax_patterns;
+use super::trait_implementation::トレイト実装型;
 use super::use_resolution::{取り込み元の問い, 取り込み元を求めた結果};
 
 /// 型の定義の探索の結果。
