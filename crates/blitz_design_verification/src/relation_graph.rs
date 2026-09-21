@@ -49,17 +49,17 @@ impl 設計関係グラフ {
         let mut 畳んだ概念一覧 = Vec::new();
         let mut 同一性の衝突一覧 = Vec::new();
         for 概念 in 概念一覧 {
-            if !済みの組.insert((概念.識別子.clone(), 概念.種類)) {
+            if !済みの組.insert((概念.識別子().clone(), 概念.種類())) {
                 continue;
             }
-            match 先に現れた種類.entry(概念.識別子.clone()) {
+            match 先に現れた種類.entry(概念.識別子().clone()) {
                 Entry::Vacant(空き) => {
-                    空き.insert(概念.種類);
+                    空き.insert(概念.種類());
                 }
                 Entry::Occupied(先の種類) => 同一性の衝突一覧.push(同一性の衝突 {
-                    識別子: 概念.識別子.clone(),
+                    識別子: 概念.識別子().clone(),
                     先に現れた種類: *先の種類.get(),
-                    後から現れた種類: 概念.種類,
+                    後から現れた種類: 概念.種類(),
                 }),
             }
             畳んだ概念一覧.push(概念);
@@ -84,7 +84,7 @@ impl 設計関係グラフ {
 
     /// その種類の概念だけを集める。
     pub fn 種類で絞った概念一覧(&self, 種類: 設計概念の種類) -> Vec<&設計概念> {
-        self.概念一覧.iter().filter(|概念| 概念.種類 == 種類).collect()
+        self.概念一覧.iter().filter(|概念| 概念.種類() == 種類).collect()
     }
 
     /// その関係が1件でも在るか。命題の原子がこの問いに落ちる。

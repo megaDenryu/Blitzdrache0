@@ -12,18 +12,15 @@ use super::outcome::抽出の成果;
 use super::source_group::抽出対象のソース群;
 use crate::conform::design_ontology::syntax_patterns::オントロジートレイト;
 use crate::conform::design_ontology::trait_implementation::トレイト実装型;
+use crate::design_model::{Rustの項目の種類, 設計概念, 設計概念の識別子};
 use crate::design_model::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
-use crate::design_model::{設計概念, 設計概念の種類, 設計概念の識別子};
 
 pub fn 設計解釈マーカーの実装から抽出する(ソース群: &抽出対象のソース群) -> 抽出の成果 {
     let mut 成果 = 抽出の成果::default();
     for マーカー in オントロジートレイト::全部の一覧() {
         for 実装 in ソース群.構文検査().トレイト実装型一覧(マーカー) {
             let 主語 = 実装の対象の識別子(ソース群, &実装);
-            成果.概念一覧.push(設計概念 {
-                識別子: 主語.clone(),
-                種類: 設計概念の種類::型,
-            });
+            成果.概念一覧.push(設計概念::Rustの項目として生成する(主語.clone(), Rustの項目の種類::型));
             成果.関係一覧.push(設計関係 {
                 主語,
                 種類: 設計関係の種類::下位型である,

@@ -13,8 +13,8 @@ use super::type_notation::先頭の型名を採る;
 use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
 use crate::conform::design_ontology::line_matching::波括弧が閉じる行;
 use crate::conform::design_ontology::syntax_patterns::オントロジートレイト;
+use crate::design_model::{Rustの項目の種類, 設計概念, 設計概念の識別子};
 use crate::design_model::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
-use crate::design_model::{設計概念, 設計概念の種類, 設計概念の識別子};
 
 /// 関連型の宣言の前置き。`type 識別子 = 旅行者ID;` の左辺である。
 const 識別子の関連型の前置き: &str = "type 識別子";
@@ -40,14 +40,8 @@ pub fn エンティティの識別子の関連型から抽出する(ソース群
         };
         let (主語, 解決できなかった行) = ソース群.型の識別子を求める(問い);
         成果.抽出できなかった行一覧.extend(解決できなかった行);
-        成果.概念一覧.push(設計概念 {
-            識別子: 主語.clone(),
-            種類: 設計概念の種類::型,
-        });
-        成果.概念一覧.push(設計概念 {
-            識別子: 目的語.clone(),
-            種類: 設計概念の種類::型,
-        });
+        成果.概念一覧.push(設計概念::Rustの項目として生成する(主語.clone(), Rustの項目の種類::型));
+        成果.概念一覧.push(設計概念::Rustの項目として生成する(目的語.clone(), Rustの項目の種類::型));
         成果.関係一覧.push(設計関係 {
             主語,
             種類: 設計関係の種類::識別する,
