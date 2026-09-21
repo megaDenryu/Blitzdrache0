@@ -6,7 +6,7 @@
 use crate::設計概念の識別子;
 
 use super::super::atom::{原子命題, 項};
-use super::super::proposition::命題;
+use super::super::proposition::{命題, 非空の命題一覧};
 use super::推論規則;
 
 /// 排他な2つのイベント。
@@ -52,6 +52,7 @@ impl 排他の推論規則 {
     /// 形が合わなければ値なしを返す。
     pub fn 推論規則へ写す(&self, 成立した命題: &命題) -> Option<推論規則> {
         let 結論 = self.発生の否定へ置き換えた命題を導く(成立した命題)?;
-        Some(推論規則::生成する(&format!("{}と{}は排他である", self.一方.表記(), self.他方.表記()), vec![成立した命題.clone()], 結論))
+        let 前提一覧 = 非空の命題一覧::先頭と残りから生成する(成立した命題.clone(), Vec::new());
+        Some(推論規則::生成する(&format!("{}と{}は排他である", self.一方.表記(), self.他方.表記()), 前提一覧, 結論))
     }
 }
