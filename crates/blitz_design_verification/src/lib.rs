@@ -42,7 +42,7 @@ pub use evidence::{反例, 未決定の理由, 検証の方式, 検証結果, �
 pub use exhaustive::有限全数の検証器;
 pub use law::{排他の推論規則, 推論規則, 普遍命題としての法則};
 pub use proposition::命題;
-pub use quantification::{対象集合, 束縛の割り当て, 束縛変数};
+pub use quantification::{マーカーの名乗り方, 対象集合, 束縛の割り当て, 束縛変数};
 pub use relation::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
 pub use relation_graph::{グラフの組み立ての結末, 同一性の衝突, 設計関係グラフ};
 pub use specification::{名前付きの命題, 命題の集合, 検証の集計};

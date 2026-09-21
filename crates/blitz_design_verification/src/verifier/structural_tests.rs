@@ -7,6 +7,7 @@
 
 mod path_tests;
 mod relation_tests;
+mod target_set_tests;
 mod undecided_tests;
 
 use std::path::PathBuf;
