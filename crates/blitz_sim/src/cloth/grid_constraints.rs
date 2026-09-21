@@ -4,9 +4,9 @@
 use super::distance_constraint::{距離拘束, 距離拘束の種類};
 use super::grid_index::線形添字を求める;
 use super::index_convert::u32へ;
-use super::spec::布仕様;
+use super::spec::布の生成条件;
 
-pub(super) fn 距離拘束一覧を作る(仕様: &布仕様, 一辺粒子数: usize) -> Vec<距離拘束> {
+pub(super) fn 距離拘束一覧を作る(仕様: &布の生成条件, 一辺粒子数: usize) -> Vec<距離拘束> {
     let 間隔 = 仕様.粒子間隔();
     let 斜め静止長 = (間隔 * 間隔 * 2.0).sqrt();
     let mut 拘束一覧 = Vec::new();

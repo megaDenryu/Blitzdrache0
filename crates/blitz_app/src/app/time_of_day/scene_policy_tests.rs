@@ -8,7 +8,7 @@
 
 mod supply_tests;
 
-use blitz_engine::sky::世界の空方針;
+use blitz_engine::sky::世界の空の宣言;
 
 use super::scene_policy;
 use crate::cli::{世界の種別, 空の起動指定, 起動時シーン};
@@ -17,12 +17,12 @@ fn 種別を解く(綴り: &str) -> 世界の種別 {
     起動時シーン::綴りから解析する(綴り).unwrap().種別()
 }
 
-fn 空方針(綴り: &str, 指定: 空の起動指定) -> 世界の空方針 {
-    scene_policy::世界の空方針を決める(種別を解く(綴り), 指定)
+fn 空方針(綴り: &str, 指定: 空の起動指定) -> 世界の空の宣言 {
+    scene_policy::世界の空の宣言を決める(種別を解く(綴り), 指定)
 }
 
-fn 空ありか(方針: 世界の空方針) -> bool {
-    matches!(方針, 世界の空方針::空あり { .. })
+fn 空ありか(方針: 世界の空の宣言) -> bool {
+    matches!(方針, 世界の空の宣言::空あり { .. })
 }
 
 #[test]

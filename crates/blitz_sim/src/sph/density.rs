@@ -2,9 +2,9 @@
 
 use super::kernel::密度核を計算する;
 use super::particle::流体粒子;
-use super::spec::粒子法流体仕様;
+use super::spec::粒子法流体の計算条件;
 
-pub fn 粒子法流体の密度を計算する(粒子一覧: &[流体粒子], 仕様: &粒子法流体仕様) -> Vec<f32> {
+pub fn 粒子法流体の密度を計算する(粒子一覧: &[流体粒子], 仕様: &粒子法流体の計算条件) -> Vec<f32> {
     粒子一覧
         .iter()
         .map(|対象| {

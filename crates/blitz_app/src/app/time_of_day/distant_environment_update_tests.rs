@@ -8,7 +8,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use blitz_engine::sky::atmosphere::大気媒体方針;
+use blitz_engine::sky::atmosphere::大気媒体の物理定数;
 use blitz_engine::sky::{スカイビューキー, 放射輝度色, 遠方環境キー};
 use blitz_math::メートル;
 use blitz_render::distant_environment::input::遠方環境の生成指示;
@@ -24,7 +24,7 @@ fn 夜空() -> 放射輝度色 {
 }
 
 fn 鍵(太陽天頂余弦: f32, 太陽放射照度: f32, 夜空放射輝度: 放射輝度色) -> 遠方環境キー {
-    let スカイビュー = スカイビューキー::導く(大気媒体方針::地球標準().静的キー(), 太陽天頂余弦, メートル::生成する(観測高度));
+    let スカイビュー = スカイビューキー::導く(大気媒体の物理定数::地球標準().静的キー(), 太陽天頂余弦, メートル::生成する(観測高度));
     遠方環境キー::導く(スカイビュー, 太陽放射照度, 夜空放射輝度)
 }
 

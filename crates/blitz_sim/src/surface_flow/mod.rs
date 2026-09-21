@@ -10,6 +10,6 @@ mod step;
 mod step_tests;
 
 pub use cell::表面セル;
-pub use error::表面流仕様エラー;
-pub use spec::表面流仕様;
+pub use error::表面流の計算条件エラー;
+pub use spec::表面流の計算条件;
 pub use state::表面流状態;

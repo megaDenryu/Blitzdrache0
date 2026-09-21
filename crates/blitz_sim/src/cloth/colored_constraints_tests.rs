@@ -8,11 +8,11 @@ use std::collections::BTreeSet;
 use super::colored_constraints::布の彩色済み拘束;
 use super::generate::布を生成する;
 use super::material::布の物性;
-use super::spec::布仕様;
+use super::spec::布の生成条件;
 use crate::xpbd::{コンプライアンス, 曲げのコンプライアンス};
 
 fn 彩色済み(一辺粒子数: u32, 物性: &布の物性) -> 布の彩色済み拘束 {
-    let 布 = 布を生成する(&布仕様::生成する(一辺粒子数, 0.05, 4.0, [0.0, 1.0, 0.0]).unwrap()).unwrap();
+    let 布 = 布を生成する(&布の生成条件::生成する(一辺粒子数, 0.05, 4.0, [0.0, 1.0, 0.0]).unwrap()).unwrap();
     布の彩色済み拘束::生成する(&布, 物性).unwrap()
 }
 

@@ -7,7 +7,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use blitz_engine::sky::atmosphere::大気媒体方針;
+use blitz_engine::sky::atmosphere::大気媒体の物理定数;
 use blitz_engine::sky::{スカイビューキー, 太陽方向, 放射輝度色, 空中遠近キー, 遠方環境キー};
 use blitz_math::メートル;
 use blitz_render::atmosphere_lut_input::大気のベイク済み画像の生成指示;
@@ -19,7 +19,7 @@ use super::distant_environment_update::遠方環境更新判定;
 const 観測高度: f32 = 1.5;
 
 fn スカイビュー鍵(太陽天頂余弦: f32) -> スカイビューキー {
-    スカイビューキー::導く(大気媒体方針::地球標準().静的キー(), 太陽天頂余弦, メートル::生成する(観測高度))
+    スカイビューキー::導く(大気媒体の物理定数::地球標準().静的キー(), 太陽天頂余弦, メートル::生成する(観測高度))
 }
 
 fn 遠方環境の鍵(太陽天頂余弦: f32) -> 遠方環境キー {

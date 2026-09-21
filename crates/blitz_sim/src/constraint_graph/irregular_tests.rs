@@ -8,11 +8,11 @@ use std::collections::BTreeSet;
 use blitz_math::{メートル, 逆キログラム};
 
 use super::error::拘束グラフエラー;
-use super::irregular::{不規則な拘束グラフを作る, 不規則グラフの仕様};
+use super::irregular::{不規則な拘束グラフを作る, 不規則グラフの生成条件};
 use crate::xpbd::コンプライアンス;
 
-pub(super) fn 検査の不規則の仕様(点の数: u32) -> 不規則グラフの仕様 {
-    不規則グラフの仕様 {
+pub(super) fn 検査の不規則の仕様(点の数: u32) -> 不規則グラフの生成条件 {
+    不規則グラフの生成条件 {
         点の数,
         種: 7,
         立方体の一辺: メートル::生成する(2.0),

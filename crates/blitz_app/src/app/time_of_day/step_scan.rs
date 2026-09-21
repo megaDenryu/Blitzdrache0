@@ -13,7 +13,7 @@ mod presence;
 mod range;
 mod shot;
 
-use blitz_engine::sky::{一日の区間の跨ぎを列挙する, 太陽天頂区間の跨ぎ, 空と太陽の方針, 間引きの刻みの設定};
+use blitz_engine::sky::{一日の区間の跨ぎを列挙する, 太陽天頂区間の跨ぎ, 空と太陽の設定一式, 間引きの刻みの設定};
 pub(in crate::app) use presence::撮影の有無;
 use range::一撮影のフレーム数;
 pub(crate) use range::段差走査の指定;
@@ -29,7 +29,7 @@ pub(in crate::app) struct 段差走査 {
 
 impl 段差走査 {
     /// 起動指定を撮影の列へ開く。指定が一日の跨ぎの外にあれば、番号と一日の件数を示して落とす。
-    pub(in crate::app) fn 組む(指定: 段差走査の指定, 方針: &空と太陽の方針, 刻み: 間引きの刻みの設定) -> Result<Self, 起動引数エラー> {
+    pub(in crate::app) fn 組む(指定: 段差走査の指定, 方針: &空と太陽の設定一式, 刻み: 間引きの刻みの設定) -> Result<Self, 起動引数エラー> {
         let 跨ぎ一覧 = 一日の区間の跨ぎを列挙する(方針, 刻み).map_err(|誤り| 起動引数エラー::段差走査範囲不正(format!("跨ぎを列挙できなかった: {誤り}")))?;
         let 開始 = usize::from(指定.最初の跨ぎ番号());
         let 終端 = 開始 + usize::from(指定.跨ぎの件数());

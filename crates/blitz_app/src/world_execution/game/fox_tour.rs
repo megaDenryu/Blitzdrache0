@@ -25,7 +25,7 @@ use blitz_game::{ゲームの操作意図, 一刻みの移動の入力, 場所�
 use super::scripted_operation::更新回数から台本の操作入力を決める;
 use super::この刻みで規則が行うこと;
 use crate::cli::ゲーム操作の出どころ;
-use crate::input::ゲーム操作の適用方針;
+use crate::input::ゲーム操作の適用の方式;
 use crate::world_execution::contract::{世界の形を尋ねる口の実装エラー, 刻み入力, 読込済みチャンクの形の出どころ};
 use crate::world_execution::movement_record::移動の観測の記録;
 use crate::world_execution::world_shape_port::エンジンの問い合わせを包んだ世界の形を尋ねる口;
@@ -38,7 +38,7 @@ pub(in crate::world_execution) struct キツネの場所巡りの配線 {
 
 impl キツネの場所巡りの配線 {
     // 台本の操作は適用方針を通らない。方針が止めるのは実ウィンドウから届く操作であり、台本は検収が自ら与える決定的な操作である。
-    pub(super) fn 操作入力を適用して進行段階を遷移させる(&mut self, 入力: &刻み入力<'_>, 操作の適用方針: ゲーム操作の適用方針) -> ゲームの操作意図 {
+    pub(super) fn 操作入力を適用して進行段階を遷移させる(&mut self, 入力: &刻み入力<'_>, 操作の適用方針: ゲーム操作の適用の方式) -> ゲームの操作意図 {
         let 意図 = match 更新回数から台本の操作入力を決める(self.操作の出どころ, 入力.固定刻みの番号()) {
             Some(台本の操作入力) => ゲームの操作意図::確定済みの操作入力から写す(台本の操作入力),
             None => 操作の適用方針.通す(ゲームの操作意図::確定済みの操作入力から写す(入力.操作入力())),

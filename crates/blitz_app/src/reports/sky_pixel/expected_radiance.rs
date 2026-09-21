@@ -10,7 +10,7 @@
 //! 円盤そのものの画素検収は読み戻し画像の明るさから別に数える。
 //! 参照: `shaders/sky_atmosphere.slang`
 
-use blitz_engine::sky::空描画方針;
+use blitz_engine::sky::空の描画設定;
 use blitz_render::atmosphere::{スカイビュー表, スカイビュー観測条件, 大気散乱媒体, 天空放射輝度の尺度, 天空放射輝度供給};
 
 use super::report_error::空代表画素の照合エラー;
@@ -21,7 +21,7 @@ pub(super) struct 期待の材料<'a> {
     pub(super) 媒体: &'a 大気散乱媒体,
     pub(super) スカイビュー表: &'a スカイビュー表,
     pub(super) 観測条件: スカイビュー観測条件,
-    pub(super) 空描画: 空描画方針,
+    pub(super) 空描画: 空の描画設定,
     pub(super) 太陽方向: [f32; 3],
 }
 

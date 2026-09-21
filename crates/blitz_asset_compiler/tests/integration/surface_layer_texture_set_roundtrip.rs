@@ -9,7 +9,7 @@
 
 use std::path::PathBuf;
 
-use blitz_asset_compiler::{ソースルート, テクスチャ格納方針, 地表層タイルの置き場, 地表層テクスチャ集アセットをコンパイルする, 地表材質の層割当};
+use blitz_asset_compiler::{ソースルート, テクスチャ格納の方式, 地表層タイルの置き場, 地表層テクスチャ集アセットをコンパイルする, 地表材質の層割当};
 use blitz_engine::surface_layer_textures::実行時形式から地表層テクスチャ集を読む;
 
 /// 生成器が書き出す4層の純色。`examples/generate_source_assets/surface_layer_tiles.rs`の写しであり、
@@ -22,7 +22,7 @@ fn タイルの置き場を作る() -> 地表層タイルの置き場 {
 }
 
 fn 焼く(層割当: &地表材質の層割当) -> Result<Vec<u8>, String> {
-    地表層テクスチャ集アセットをコンパイルする(&タイルの置き場を作る(), 層割当, テクスチャ格納方針::全てRGBA8)
+    地表層テクスチャ集アセットをコンパイルする(&タイルの置き場を作る(), 層割当, テクスチャ格納の方式::全てRGBA8)
         .map(|結果| 結果.実行時バイト列)
         .map_err(|誤り| 誤り.to_string())
 }

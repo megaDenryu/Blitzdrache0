@@ -99,6 +99,6 @@ mod transition_history_probe;
 pub use pipeline_def::剛体の接触の一刻みの工程;
 pub use pipeline_error::接触の工程エラー;
 pub use pipeline_history::接触履歴の保持;
-pub use pipeline_policy::接触の品質と時間方針;
+pub use pipeline_policy::接触の品質と時間の構成値;
 pub use pipeline_solver::接触の解法ソルバー;
 pub use pipeline_space::接触の空間と世界;

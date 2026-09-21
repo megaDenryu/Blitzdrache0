@@ -41,4 +41,4 @@ pub use generate::布を生成する;
 pub use material::布の物性;
 pub use particle::粒子;
 pub use reference::{布の参照計算, 布の参照計算の条件, 布の参照計算エラー, 曲げの違反の統計};
-pub use spec::{布の敷き方, 布仕様, 既定一辺粒子数};
+pub use spec::{布の敷き方, 布の生成条件, 既定一辺粒子数};

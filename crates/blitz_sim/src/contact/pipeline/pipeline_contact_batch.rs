@@ -6,7 +6,7 @@ use blitz_collision::contact_set::二つの直方体の重なりの接触点集�
 use blitz_collision::shape::任意姿勢の直方体;
 
 use super::pipeline_error::接触の工程エラー;
-use super::pipeline_policy::接触の品質と時間方針;
+use super::pipeline_policy::接触の品質と時間の構成値;
 use super::pipeline_space::接触の空間と世界;
 use super::substep_placement::接触点集合を作る配置;
 use crate::contact::batch_builder::接触拘束のバッチの組み立て;
@@ -16,7 +16,7 @@ use crate::contact::contacting_body::接触に参加する剛体;
 use crate::contact::generation_margin::{接触生成の余白を導く形の運動, 細分の運動から接触点集合の生成が読む長さを導く};
 
 pub fn 接触拘束の二つのバッチを構築する(
-    方針: &接触の品質と時間方針,
+    方針: &接触の品質と時間の構成値,
     空間: &接触の空間と世界,
     候補対一覧: &[剛体どうしの候補対],
     配置一覧: &[接触点集合を作る配置],
@@ -52,7 +52,7 @@ pub(super) fn 候補対の参加者を組む(
 }
 
 fn 剛体どうしの接触を積む(
-    方針: &接触の品質と時間方針, 対: &剛体どうしの候補対, 空間: &接触の空間と世界, 配置一覧: &[接触点集合を作る配置], 組み立て: &mut 接触拘束のバッチの組み立て
+    方針: &接触の品質と時間の構成値, 対: &剛体どうしの候補対, 空間: &接触の空間と世界, 配置一覧: &[接触点集合を作る配置], 組み立て: &mut 接触拘束のバッチの組み立て
 ) -> Result<(), 接触の工程エラー> {
     let Some((aの配置, bの配置)) = 候補対の配置を探す(対, 配置一覧) else {
         return Ok(());
@@ -69,7 +69,7 @@ fn 剛体どうしの接触を積む(
 }
 
 fn 剛体と静的世界の接触を積む(
-    方針: &接触の品質と時間方針,
+    方針: &接触の品質と時間の構成値,
     置いた配置: &接触点集合を作る配置,
     空間: &接触の空間と世界,
     相手: &crate::contact::static_world_partner::静的世界の接触相手,

@@ -12,7 +12,7 @@ use super::document::開いた文書;
 use super::{archetype_material, document, material_slots, mesh};
 use crate::error::アセットコンパイルエラー;
 use crate::scene_compiler::ソースアセットのコンパイル係;
-use crate::texture_storage::テクスチャ格納方針;
+use crate::texture_storage::テクスチャ格納の方式;
 
 /// 原型1件ぶんの読取結果。段一覧が空になることはこの工程が拒むため、受け取った側は非空として扱ってよい。
 pub struct 原型ソース {
@@ -37,7 +37,7 @@ impl ソースアセットのコンパイル係<'_> {
 /// 段一覧と材質集合を1回の走査で取り出す。材質集合が要素1件になるのは、群の全個体が1つのマテリアルを共有することを
 /// `archetype_material`が先に検査するためであり、スロットの語彙は全段のプリミティブから作る。
 /// 原型はスキニングの対象にしないため、スキンは読まない(スキン頂点属性を持つ段は`原型::生成する`が拒む)。
-fn 文書から取り出す(文書: &開いた文書, 方針: テクスチャ格納方針) -> Result<(Vec<メッシュデータ>, 材質集合, Vec<PathBuf>), アセットコンパイルエラー> {
+fn 文書から取り出す(文書: &開いた文書, 方針: テクスチャ格納の方式) -> Result<(Vec<メッシュデータ>, 材質集合, Vec<PathBuf>), アセットコンパイルエラー> {
     archetype_material::全段が同じ描画条件かを検査する(&文書.document)?;
     if 文書.document.meshes().next().is_none() {
         return Err(アセットコンパイルエラー::メッシュなし);

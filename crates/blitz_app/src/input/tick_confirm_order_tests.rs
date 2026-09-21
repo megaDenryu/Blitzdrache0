@@ -8,13 +8,13 @@
 use blitz_math::ラジアン;
 use winit::keyboard::KeyCode;
 
-use super::{カメラ操作の適用方針, 入力状態};
+use super::{カメラ操作の適用の方式, 入力状態};
 use crate::app::進める刻み数;
 use crate::cli::{起動モード, 遊ぶゲームの指定};
 use crate::world_execution::世界実行;
 
 fn 決定を押した入力状態() -> 入力状態 {
-    let mut 状態 = 入力状態::生成する(カメラ操作の適用方針::起動モードから決める(起動モード::無期限実行));
+    let mut 状態 = 入力状態::生成する(カメラ操作の適用の方式::起動モードから決める(起動モード::無期限実行));
     状態.ゲーム操作のキー.キーコードを反映する(KeyCode::Enter, true);
     状態
 }

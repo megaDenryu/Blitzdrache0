@@ -12,7 +12,7 @@
 
 mod placement;
 
-use blitz_render::{レンダラー, 描画束ID, 描画束の影方針};
+use blitz_render::{レンダラー, 描画束ID, 描画束の影の出し方};
 
 use super::primitive_draw_item_registry::プリミティブ描画項目台帳;
 use super::scene_load::{束の描画入力, 束の登録一式};
@@ -25,12 +25,16 @@ pub(super) const 遠景の束ID: 描画束ID = 描画束ID::生成する(1);
 pub(super) struct 永続束の状態 {
     遠景シーン: Option<blitz_engine::シーンデータ>,
     遠景をレンダラーへ登録済み: bool,
-    遠景の影方針: 描画束の影方針,
+    遠景の影方針: 描画束の影の出し方,
 }
 
 impl 永続束の状態 {
     pub(super) fn 生成する(影キャスター有効: bool) -> Self {
-        let 遠景の影方針 = if 影キャスター有効 { 描画束の影方針::最遠距離区分だけ } else { 描画束の影方針::描かない };
+        let 遠景の影方針 = if 影キャスター有効 {
+            描画束の影の出し方::最遠距離区分だけ
+        } else {
+            描画束の影の出し方::描かない
+        };
         Self {
             遠景シーン: None,
             遠景をレンダラーへ登録済み: false,

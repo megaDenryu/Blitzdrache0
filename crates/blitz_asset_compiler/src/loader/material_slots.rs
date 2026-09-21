@@ -10,7 +10,7 @@ use blitz_engine::{マテリアルデータ, 材質スロットID, 材質スロ�
 use super::document::開いた文書;
 use super::material;
 use crate::error::アセットコンパイルエラー;
-use crate::texture_storage::テクスチャ格納方針;
+use crate::texture_storage::テクスチャ格納の方式;
 
 /// スロット番号順に並んだglTFのmaterial index。宣言なし(既定マテリアル)は`None`として区別する。
 pub(super) struct 材質スロット語彙 {
@@ -47,7 +47,7 @@ impl 材質スロット語彙 {
 }
 
 /// スロットごとに材質を1回だけ読む。同じマテリアルを参照するプリミティブが何件あってもテクスチャの復号は1回である。
-pub(super) fn 解決する<'文書>(文書: &開いた文書, メッシュ列: impl Iterator<Item = gltf::Mesh<'文書>>, 方針: テクスチャ格納方針) -> Result<材質スロットの解決結果, アセットコンパイルエラー> {
+pub(super) fn 解決する<'文書>(文書: &開いた文書, メッシュ列: impl Iterator<Item = gltf::Mesh<'文書>>, 方針: テクスチャ格納の方式) -> Result<材質スロットの解決結果, アセットコンパイルエラー> {
     let メッシュ一覧: Vec<gltf::Mesh<'文書>> = メッシュ列.collect();
     let 語彙 = 材質スロット語彙::メッシュ列から作る(&メッシュ一覧);
     let mut 割当一覧: Vec<材質スロット割当> = Vec::new();

@@ -6,7 +6,7 @@ use blitz_collision::shape::{任意姿勢の直方体, 直方体の軸ごとの�
 
 use super::pipeline_error::接触の工程エラー;
 use super::pipeline_history::接触履歴の保持;
-use super::pipeline_policy::接触の品質と時間方針;
+use super::pipeline_policy::接触の品質と時間の構成値;
 use super::pipeline_solver::接触の解法ソルバー;
 use super::pipeline_space::接触の空間と世界;
 use crate::contact::island::直前の細分の接触島の一覧;
@@ -15,7 +15,7 @@ use crate::contact::static_world_partner::静的世界の接触相手;
 use crate::rigid_body::{剛体の識別子, 配置};
 
 pub struct 剛体の接触の一刻みの工程 {
-    pub(super) 時間方針: 接触の品質と時間方針,
+    pub(super) 時間方針: 接触の品質と時間の構成値,
     pub(super) 空間: 接触の空間と世界,
     pub(super) 履歴: 接触履歴の保持,
     pub(super) 解法: 接触の解法ソルバー,
@@ -26,7 +26,7 @@ impl 剛体の接触の一刻みの工程 {
     /// 4つの自律型を受け取って組む。それぞれを別々に作るのは、寿命と生成の条件が違うためである(起動時に決まる時間方針、
     /// 剛体の登録で育つ空間と世界、刻みを跨いで持ち越す履歴、解くための道具である解法)。
     /// 接触島の分割だけは外から受け取らない。まだ1本も細分を回していない工程では空と決まっており、外に選ぶ余地が無いためである。
-    pub fn 生成する(時間方針: 接触の品質と時間方針, 空間: 接触の空間と世界, 履歴: 接触履歴の保持, 解法: 接触の解法ソルバー) -> Self {
+    pub fn 生成する(時間方針: 接触の品質と時間の構成値, 空間: 接触の空間と世界, 履歴: 接触履歴の保持, 解法: 接触の解法ソルバー) -> Self {
         Self {
             時間方針,
             空間,

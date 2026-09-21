@@ -21,7 +21,7 @@ use super::fox_tour_assembled_scatter_declaration::散らす部品で組んだ�
 use super::fox_tour_scatter_declaration::散らす原型の一覧;
 use super::part_row_declaration::部品のアセット定義一覧を作る;
 
-/// 起動時に読むキツネのシーンの安定ID。名前が`terrain`で始まることが、この世界の空方針・間接照明方針・露出方式を
+/// 起動時に読むキツネのシーンの安定ID。名前が`terrain`で始まることが、この世界の空の宣言・間接照明方針・露出方式を
 /// 地形の本番世界と同じものにする。参照: `crates/blitz_app/src/app/time_of_day/scene_policy.rs`
 pub(super) const キツネのシーン: 原型の識別 = 原型の識別::生成する("terrain_fox_tour", crate::ソースアセットの相対パス::フォックス);
 

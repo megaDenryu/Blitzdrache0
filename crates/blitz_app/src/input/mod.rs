@@ -21,8 +21,8 @@ mod tick_distribution;
 #[cfg(test)]
 mod tick_distribution_tests;
 
-pub(crate) use camera_intent_policy::カメラ操作の適用方針;
-pub(crate) use game_intent_policy::ゲーム操作の適用方針;
+pub(crate) use camera_intent_policy::カメラ操作の適用の方式;
+pub(crate) use game_intent_policy::ゲーム操作の適用の方式;
 pub(crate) use tick_distribution::刻みごとの操作入力;
 
 use blitz_engine::カメラの操作意図;
@@ -46,14 +46,14 @@ pub(crate) struct 入力状態 {
     s押下中: bool,
     q押下中: bool,
     e押下中: bool,
-    カメラ操作の方針: カメラ操作の適用方針,                 // カメラ操作を適用するかどうか
+    カメラ操作の方針: カメラ操作の適用の方式,               // カメラ操作を適用するかどうか
     ゲーム操作のキー: game_key_state::ゲーム操作のキー状態, // ゲーム操作に割り当てたキーの押下状態
 }
 
 impl 入力状態 {
     /// 方針を既定値で埋めずに必ず受け取るのは、どちらの選択肢も「たまたまその値だった」では済まないためである。
     /// 無期限実行で固定姿勢になれば操作が効かず、フレーム数の決まった実行で対話入力が入れば絵が揺れる。
-    pub(crate) fn 生成する(カメラ操作の方針: カメラ操作の適用方針) -> Self {
+    pub(crate) fn 生成する(カメラ操作の方針: カメラ操作の適用の方式) -> Self {
         Self {
             左ボタン押下中: false,
             右ボタン押下中: false,

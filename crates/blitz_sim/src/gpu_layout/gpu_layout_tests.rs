@@ -2,12 +2,12 @@
 
 #![allow(clippy::unwrap_used)]
 
-use crate::cloth::{布を生成する, 布データ, 布仕様};
+use crate::cloth::{布の生成条件, 布を生成する, 布データ};
 
 use super::particle_bytes::粒子バイト列にする;
 
 fn 試験用布() -> 布データ {
-    let 仕様 = 布仕様::生成する(4, 1.0, 10.0, [0.0, 0.0, 0.0]).unwrap();
+    let 仕様 = 布の生成条件::生成する(4, 1.0, 10.0, [0.0, 0.0, 0.0]).unwrap();
     布を生成する(&仕様).unwrap()
 }
 

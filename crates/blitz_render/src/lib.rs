@@ -63,7 +63,7 @@ pub use cloth_material::{布の刻み幅, 布の自己衝突, 布定数, 布素�
 pub use cloth_shader_set::布シェーダー一式;
 pub use compute_shader::コンピュートシェーダー;
 pub use descriptor_indexing_limits::ディスクリプタ索引上限;
-pub use draw_bundle_id::{描画束ID, 描画束の影方針};
+pub use draw_bundle_id::{描画束ID, 描画束の影の出し方};
 pub use draw_result::{描画結果, 見送り理由};
 pub use error::{レンダラーエラー, 布エラー};
 pub use extent::ウィンドウ寸法;

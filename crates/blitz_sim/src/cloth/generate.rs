@@ -7,10 +7,10 @@ use super::grid_constraints::距離拘束一覧を作る;
 use super::grid_indices::{インデックス一覧を作る, 上端行を作る};
 use super::grid_particles::粒子一覧を作る;
 use super::index_convert::usizeへ;
-use super::spec::布仕様;
+use super::spec::布の生成条件;
 
-/// 布仕様から布データ一式を組み立てる(判断52)。
-pub fn 布を生成する(仕様: &布仕様) -> Result<布データ, 布生成エラー> {
+/// 布の生成条件から布データ一式を組み立てる(判断52)。
+pub fn 布を生成する(仕様: &布の生成条件) -> Result<布データ, 布生成エラー> {
     let 一辺粒子数 = usizeへ(仕様.一辺粒子数());
     Ok(布データ {
         粒子一覧: 粒子一覧を作る(仕様, 一辺粒子数),

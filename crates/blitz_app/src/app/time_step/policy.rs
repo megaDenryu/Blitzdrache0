@@ -12,12 +12,12 @@ use super::tick_count::進める刻み数;
 
 /// 基本刻み・一描画で進める刻み数の上限・蓄積の上限・超過分の扱いをまとめた設定。
 #[derive(Debug, Clone, Copy)]
-pub(in crate::app) struct 時間進行方針 {
+pub(in crate::app) struct 時間進行の構成値 {
     基本刻み: 秒,
     一描画で進める刻み数の上限: 進める刻み数,
 }
 
-impl 時間進行方針 {
+impl 時間進行の構成値 {
     pub(in crate::app) fn 生成する(基本刻み: 秒, 一描画で進める刻み数の上限: 進める刻み数) -> Self {
         Self {
             基本刻み, 一描画で進める刻み数の上限

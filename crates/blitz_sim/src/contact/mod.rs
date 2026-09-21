@@ -90,7 +90,7 @@ pub use material_id::材質の識別子;
 pub use material_pair::材質の対;
 pub use mixing_rule::混合則;
 pub use mixing_rule_builder::混合則の組み立て;
-pub use pipeline::{剛体の接触の一刻みの工程, 接触の品質と時間方針, 接触の工程エラー, 接触の空間と世界, 接触の解法ソルバー, 接触履歴の保持};
+pub use pipeline::{剛体の接触の一刻みの工程, 接触の品質と時間の構成値, 接触の工程エラー, 接触の空間と世界, 接触の解法ソルバー, 接触履歴の保持};
 pub use property_error::接触物性エラー;
 pub use restitution_coefficient::反発係数;
 pub use solver_quality::接触を解く品質の設定;

@@ -3,7 +3,7 @@
 use thiserror::Error;
 
 #[derive(Debug, Clone, Copy, PartialEq, Error)]
-pub enum 粒子法流体仕様エラー {
+pub enum 粒子法流体の計算条件エラー {
     #[error("{項目}は正の有限値でなければならない(指定値: {指定値})")]
     正値が必要 { 項目: &'static str, 指定値: f32 },
     #[error("粘性係数は0以上の有限値でなければならない(指定値: {指定値})")]
