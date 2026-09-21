@@ -41,7 +41,7 @@ pub fn フィールドの記述一覧(行: &str, 宣言の行か: bool) -> Vec<S
         return Vec::new();
     }
     let 記述 = 行.trim().trim_end_matches(',').trim();
-    (!記述.is_empty()).then(|| vec![記述.to_string()]).unwrap_or_default()
+    if 記述.is_empty() { Vec::new() } else { vec![記述.to_string()] }
 }
 
 /// フィールドの記述から名前と型の表記を読む。`名前: 型` の形でなければ無しである。
