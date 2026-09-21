@@ -3,7 +3,7 @@
 //! 3つの原子命題が同じ形の証拠と反例を返すことをこの1箇所が守る。呼び出し側で綴ると、原子命題を1つ足したときに
 //! そこだけ方式も再現の材料も無い答えになる。
 
-use crate::design_model::設計概念の識別子;
+use crate::設計概念の識別子;
 
 use super::super::super::super::evidence::{反例, 検証の方式, 検証結果, 証拠};
 use super::super::構造の検証器;

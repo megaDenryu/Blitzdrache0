@@ -10,7 +10,7 @@ mod undecided_tests;
 
 use std::path::PathBuf;
 
-use crate::design_model::{抽出の出どころ, 抽出元の構文, 設計概念, 設計概念の識別子, 設計関係, 設計関係の種類, 設計関係グラフ};
+use crate::{抽出の出どころ, 抽出元の構文, 設計概念, 設計概念の識別子, 設計関係, 設計関係の種類, 設計関係グラフ};
 
 use super::super::atom::{原子命題, 項};
 use super::super::proposition::命題;

@@ -1,12 +1,12 @@
 //! 構造の原子命題をグラフへ問う工程。触れるのは借りているグラフだけであり、結合の規則を1つも持たない。
 //!
 //! 振る舞いの原子命題(発生する・遷移する・到達可能である)をこの検証器は解かず未決定で答える。解くのは
-//! `crate::design_transition` の有限全数の検証器である。偽で答えないのは、解けないことと成立しないことが別だからである。
+//! `crate::有限全数の検証器`である。偽で答えないのは、解けないことと成立しないことが別だからである。
 
 mod evidence_building;
 mod node_lookup;
 
-use crate::design_model::設計関係の種類;
+use crate::設計関係の種類;
 
 use super::super::super::atom::{原子命題, 項};
 use super::super::super::evidence::{未決定の理由, 検証結果};

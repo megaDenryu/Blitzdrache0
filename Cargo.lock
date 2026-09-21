@@ -236,6 +236,13 @@ name = "blitz_design"
 version = "0.1.0"
 
 [[package]]
+name = "blitz_design_verification"
+version = "0.1.0"
+dependencies = [
+ "blitz_design",
+]
+
+[[package]]
 name = "blitz_ecs"
 version = "0.1.0"
 dependencies = [
@@ -257,6 +264,7 @@ name = "blitz_esca"
 version = "0.1.0"
 dependencies = [
  "blitz_design",
+ "blitz_design_verification",
  "blitz_math",
  "thiserror 2.0.19",
 ]
@@ -2949,6 +2957,7 @@ name = "xtask"
 version = "0.1.0"
 dependencies = [
  "blitz_asset_compiler",
+ "blitz_design_verification",
  "blitz_math",
  "crossterm",
  "ctrlc",

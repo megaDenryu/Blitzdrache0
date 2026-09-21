@@ -8,23 +8,30 @@
 /// 設計関係グラフの節点1つ。
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct 設計概念 {
+    /// 定義のモジュールパスと名前の対。
     pub 識別子: 設計概念の識別子,
+    /// 型・トレイト・処理のどれであるか。
     pub 種類: 設計概念の種類,
 }
 
 /// 設計概念が型・トレイト・処理のどれであるか。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum 設計概念の種類 {
+    /// 構造体・列挙・newtype のように、値の形を定める定義。
     型,
+    /// トレイトの定義。設計解釈マーカーもこれである。
     トレイト,
+    /// 関数の役割の型引数が付いた処理の定義。
     処理,
 }
 
 /// 設計概念の同一性。定義のモジュールパスと名前の対である。
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct 設計概念の識別子 {
-    pub モジュールパス: String, // `blitz_esca::traveler` の形。`crates` の下に無いものは空である
-    pub 名前: String,           // 型引数を落とした先頭の識別子。`遷移成功結果<状態, イベント>` なら `遷移成功結果`
+    /// `blitz_esca::traveler` の形。`crates` の下に無いものと、定義をたどれなかったものは空である。
+    pub モジュールパス: String,
+    /// 型引数を落とした先頭の識別子。`遷移成功結果<状態, イベント>` なら `遷移成功結果` である。
+    pub 名前: String,
 }
 
 impl 設計概念の識別子 {

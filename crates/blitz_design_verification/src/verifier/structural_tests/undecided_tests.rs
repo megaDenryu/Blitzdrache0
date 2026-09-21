@@ -5,7 +5,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use crate::design_model::{設計概念の識別子, 設計関係の種類};
+use crate::{設計概念の識別子, 設計関係の種類};
 
 use super::super::super::atom::{原子命題, 項};
 use super::super::super::evidence::{未決定の理由, 検証結果};

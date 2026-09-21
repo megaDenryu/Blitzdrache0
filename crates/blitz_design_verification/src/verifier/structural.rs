@@ -10,7 +10,7 @@
 mod atom;
 mod target_set;
 
-use crate::design_model::設計関係グラフ;
+use crate::設計関係グラフ;
 
 use super::super::atom::原子命題;
 use super::super::evidence::{未決定の理由, 検証の方式, 検証結果};

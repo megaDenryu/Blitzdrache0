@@ -2,7 +2,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use crate::design_model::設計関係の種類;
+use crate::設計関係の種類;
 
 use super::super::super::atom::{原子命題, 項};
 use super::super::super::evidence::検証結果;

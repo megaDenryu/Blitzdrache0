@@ -4,7 +4,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use crate::design_model::設計概念の識別子;
+use crate::設計概念の識別子;
 
 use super::atom::{原子命題, 項};
 use super::evidence::{未決定の理由, 検証の方式, 検証結果, 証拠};

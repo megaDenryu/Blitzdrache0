@@ -7,7 +7,7 @@
 use std::collections::{HashSet, VecDeque};
 
 use super::transition::遷移;
-use crate::design_model::設計概念の識別子;
+use crate::設計概念の識別子;
 
 /// 初期状態から辿り着ける状態を、辿った順に持つ一覧。
 #[derive(Debug, Clone, Default, PartialEq, Eq)]

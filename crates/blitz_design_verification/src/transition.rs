@@ -10,7 +10,7 @@ mod transition;
 pub use reachable_states::到達可能な状態一覧;
 pub use transition::{遷移, 遷移の材料, 遷移の識別子};
 
-use crate::design_model::設計概念の識別子;
+use crate::設計概念の識別子;
 
 /// 初期状態と遷移の全体。
 #[derive(Debug, Clone, Default)]

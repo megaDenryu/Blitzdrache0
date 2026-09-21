@@ -4,7 +4,7 @@
 //! モジュールパスが未解決である・その概念がグラフに無い、のどれかなら未決定の理由を返す。
 //! 未解決のモジュールパスを普通の節点として扱うと、抽出器がたどれなかった型についての命題が全部反証される。
 
-use crate::design_model::{設計概念の種類, 設計概念の識別子};
+use crate::{設計概念の種類, 設計概念の識別子};
 
 use super::super::super::super::atom::項;
 use super::super::super::super::evidence::未決定の理由;
