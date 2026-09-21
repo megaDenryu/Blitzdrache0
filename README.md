@@ -29,7 +29,7 @@ glTF・画像 → blitz_asset_compiler → アセット実行時形式 → blitz
 | `crates/blitz_assembly` | 部品の接合点・カタログ・接合の計算・展開。glTFもファイルシステムも知らない純粋計算 | unsafe禁止。gltfとimageに依存しない |
 | `crates/blitz_asset_compiler` | glTFと画像を検証してアセット実行時形式へ変換する開発時層 | unsafe禁止。gltf/image型を公開APIへ露出しない |
 | `crates/blitz_collision` | 形状の表現・幾何問い合わせ・詳細衝突計算・形状内の空間探索の数学 | unsafe禁止。blitz_mathとthiserror以外に依存しない |
-| `crates/blitz_design` | 共通設計語彙。Rust上の型が設計上何として解釈されるか(データの役割: 状態・コマンド・イベント・規則・入力・設定・工程。存在の分類: 値オブジェクト・エンティティ・エンティティ識別子。変更可能性: 不変エンティティ・可変エンティティ。引数オブジェクトの分類: 必須入力の束と任意の設定の束)を宣言する設計解釈マーカーと射影・解釈の関数型 | unsafe禁止。依存ゼロ |
+| `crates/blitz_design` | 共通設計語彙。Rust上の型が設計上何として解釈されるか(データの役割: 状態・コマンド・イベント・規則・入力・工程。存在の分類: 値オブジェクト・エンティティ・エンティティ識別子。変更可能性: 不変エンティティ・可変エンティティ。引数オブジェクトの分類: 必須入力の束と任意の設定の束)を宣言する設計解釈マーカーと射影・解釈の関数型 | unsafe禁止。依存ゼロ |
 | `crates/blitz_ecs` | ゲーム世界の個体群の基盤。実行時個体IDと生存台帳、個体構成要素の置き場と問い合わせ | unsafe禁止。thiserror以外に依存しない |
 | `crates/blitz_engine` | シーン・アセット・マテリアル。描画内容をレンダーグラフへ翻訳 | unsafe禁止。ash に依存しない |
 | `crates/blitz_esca` | ゲーム『Esca』のロジック層。旅行者の現在地・意図・出来事・歩行の規則・移動可能範囲 | unsafe禁止。blitz_design と blitz_math と thiserror 以外に依存しない |

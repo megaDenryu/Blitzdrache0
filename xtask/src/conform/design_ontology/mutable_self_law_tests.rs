@@ -15,14 +15,14 @@ fn 構文解析_可変参照メソッドはその型の固有のimplだけを見
 }
 
 #[test]
-fn 構文解析_設定の固有のimplの可変参照メソッドは違反になる() {
+fn 構文解析_イベントを実装する型の固有のimplの可変参照メソッドは違反になる() {
     let ソース一覧 = vec![ソース(
         "crates/a/src/x.rs",
-        "pub struct 設定;\nimpl M不変データ for 設定 {}\nimpl M設定 for 設定 {}\nimpl 設定 {\n    pub fn 変える(&mut self) {}\n}\n",
+        "pub struct 出来事;\nimpl M不変データ for 出来事 {}\nimpl Mイベント for 出来事 {}\nimpl 出来事 {\n    pub fn 変える(&mut self) {}\n}\n",
     )];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 1);
-    assert!(説明一覧[0].contains("M不変データ `設定` は &mut self メソッドを持てません"));
+    assert!(説明一覧[0].contains("M不変データ `出来事` は &mut self メソッドを持てません"));
 }
 
 #[test]
