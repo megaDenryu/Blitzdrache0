@@ -32,9 +32,15 @@
 //! blitz_design は「Rust上の型が設計上何として解釈されるか」を宣言する共通の設計語彙であり、依存ゼロの最下層である。
 //! シミュレーションもEsca世界も知らないことをこの表が課し、逆向きに blitz_sim と blitz_esca の行へ書くことがその利用を許す。
 //! blitz_esca はゲーム『Esca』のロジック層であり、blitz_design・blitz_math・thiserror 以外を知らない(参照: `_doc/設計/Esca/設計正本.md`)。
+//! blitz_design_verification は設計の命題と検証の共通語彙の正本であり、通常依存は blitz_design だけである。ドメインのクレートも xtask も知らない
+//! (参照: `_doc/設計/設計オントロジー.md` 第7節から第10節)。**xtask のこのクレートへの依存は、命題と証拠の正本を二重化しないための例外である。**
+//! 構造の検証は xtask が抽出したグラフの上で走り、振る舞いの有限全数の検証はドメイン側の試験が実物の遷移関数を呼んで走る。
+//! 2つが同じ `命題` の型を語らなければ、構造の原子と振る舞いの原子を1つの連言へ結べない。写しを置くと、この表が別の箇所で禁じている
+//! 「正本と写しで同じ値を持つべき定数の一致」の精神に反する二重の台帳になる(2026-09-22。Issue #174 のオーナー裁定)。
 
-pub(super) const 白リスト: [(&str, &[&str]); 14] = [
+pub(super) const 白リスト: [(&str, &[&str]); 15] = [
     ("blitz_design", &[]), // 共通の設計語彙。依存ゼロの最下層
+    ("blitz_design_verification", &["blitz_design"]), // 命題と検証の共通語彙の正本。ドメインもxtaskも知らない
     ("blitz_math", &["glam"]),
     ("blitz_collision", &["blitz_math", "thiserror"]), // 衝突数学層。世界もチャンクもアセットもGPUも知らない
     ("blitz_engine", &["blitz_collision", "blitz_math", "blitz_render", "thiserror"]),
@@ -52,6 +58,6 @@ pub(super) const 白リスト: [(&str, &[&str]); 14] = [
         "blitz_app",
         &["blitz_engine", "blitz_game", "blitz_math", "blitz_render", "blitz_sim", "winit", "raw-window-handle", "thiserror", "egui", "egui-winit"],
     ),
-    ("xtask", &["blitz_asset_compiler", "blitz_math", "crossterm", "ctrlc", "win32job"]), // 検収が綴りと求め方の写しを持たないための例外
+    ("xtask", &["blitz_asset_compiler", "blitz_design_verification", "blitz_math", "crossterm", "ctrlc", "win32job"]), // 検収が写しを持たないための例外
     ("editor_server", &["serde", "serde_json", "thiserror", "axum", "tokio", "tower", "tower-http", "ts-rs", "blitz_asset_compiler", "blitz_engine"]),
 ];

@@ -3,7 +3,10 @@ name = "xtask"
 edition.workspace = true
 version.workspace = true
 
-# 開発ツールの唯一の入口。ワークスペース内から依存するのはblitz_asset_compilerとblitz_mathの2つである。
+# 開発ツールの唯一の入口。ワークスペース内から依存するのはblitz_asset_compilerとblitz_mathとblitz_design_verificationの3つである。
+# blitz_design_verificationは設計の命題と検証の共通語彙の正本がそこにあり、写しを持つと、構造の検証(xtaskが抽出した
+# グラフの上で走る)と振る舞いの検証(ドメイン側の試験が実物の遷移関数を呼んで走る)が別の`命題`の型を語ることになり、
+# 構造の原子と振る舞いの原子を1つの連言へ結べなくなるためである(参照: Issue #174 のオーナー裁定)。
 # blitz_asset_compilerは生成物の置き場とファイル名の綴りの正本がそこにあり、写しを持つと検収と生成で綴りが
 # 食い違ったときに「ファイルが無い」という遠い場所の失敗になるためである。
 # blitz_mathはパーセンタイル値の求め方の正本がそこにあり、検収が測る値と計器が報告する値を同じ式で求めるためである。
@@ -13,6 +16,7 @@ version.workspace = true
 # ときの子孫の道連れにのみ使う(参照: README「利用ライブラリ」crossterm・ctrlc・win32job の採用審査)。
 [dependencies]
 blitz_asset_compiler = { path = "../crates/blitz_asset_compiler" }
+blitz_design_verification = { path = "../crates/blitz_design_verification" }
 blitz_math = { path = "../crates/blitz_math" }
 crossterm = { workspace = true }
 ctrlc = { workspace = true }
