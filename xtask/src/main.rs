@@ -23,6 +23,8 @@ mod depth_prepass_cost;
 mod derived_environment;
 mod design_model;
 mod design_proposition;
+mod design_transition;
+mod design_verify;
 mod dispatch;
 mod distant_environment;
 mod distant_view;
