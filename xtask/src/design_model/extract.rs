@@ -22,6 +22,7 @@ mod supertrait;
 mod trait_declaration;
 mod type_notation;
 mod unextracted_line;
+mod wrapped_function_path;
 
 #[cfg(test)]
 mod entity_identifier_tests;
