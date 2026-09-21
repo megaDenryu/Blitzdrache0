@@ -8,9 +8,9 @@
 //! 規則1から順に併せて、先に現れた種類を残す。
 
 use super::unextracted_line::抽出できなかった行;
-use crate::design_model::設計関係グラフ;
 use crate::design_model::設計概念;
 use crate::design_model::設計関係;
+use crate::design_model::設計関係グラフ;
 
 /// 抽出の規則1つぶんの成果。
 #[derive(Debug, Clone, Default)]

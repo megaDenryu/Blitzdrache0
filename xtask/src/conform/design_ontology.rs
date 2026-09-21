@@ -20,6 +20,7 @@ mod exclusive_classification_tests;
 #[cfg(test)]
 mod existence_marker_form_tests;
 pub(crate) mod line_matching;
+pub(crate) mod marker_canonical_file;
 #[cfg(test)]
 mod marker_canonical_form_tests;
 mod marker_form_assertion;

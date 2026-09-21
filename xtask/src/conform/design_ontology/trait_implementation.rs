@@ -2,7 +2,7 @@
 
 use std::path::PathBuf;
 
-use super::line_matching::クレート名;
+use super::marker_canonical_file::設計解釈マーカーの正本のファイルか;
 
 /// `impl トレイト for 型` の1件。行番号は1始まりであり、違反の報告がこの行を指す。
 pub struct トレイト実装型 {
@@ -16,7 +16,6 @@ impl トレイト実装型 {
     /// 正本 `blitz_design` の `marker.rs` が持つ、完全に修飾した標準の `std::result::Result<T, E>` への `M結果` の包括の実装か。標準の `Result` は `crates` 配下に定義を持たないため、この1箇所だけを定義をたどらない特例にする。
     /// 対象の型の表記が `std::result::Result` で始まることで判定するのは、型名が `Result` であることや正本のファイルにあることでは、同名の独自の型(正本のファイルに置いたものを含む)が特例を偽装できるためである。
     pub fn 正本の標準resultへの包括の実装か(&self) -> bool {
-        let 正本のファイルか = クレート名(&self.パス) == "blitz_design" && self.パス.file_name().is_some_and(|名前| 名前 == "marker.rs");
-        正本のファイルか && (self.対象の型の表記 == "std::result::Result" || self.対象の型の表記.starts_with("std::result::Result<"))
+        設計解釈マーカーの正本のファイルか(&self.パス) && (self.対象の型の表記 == "std::result::Result" || self.対象の型の表記.starts_with("std::result::Result<"))
     }
 }

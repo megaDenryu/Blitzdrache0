@@ -11,13 +11,14 @@ use super::marker_concept::{設計解釈マーカーの名前か, 設計解釈�
 use super::outcome::抽出の成果;
 use super::source_group::抽出対象のソース群;
 use super::trait_declaration::トレイトの宣言を読む;
+use crate::conform::design_ontology::marker_canonical_file::設計解釈マーカーの正本のファイルか;
 use crate::design_model::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
 use crate::design_model::{設計概念, 設計概念の種類, 設計概念の識別子};
 
 pub fn 上位トレイトの宣言から抽出する(ソース群: &抽出対象のソース群) -> 抽出の成果 {
     let mut 成果 = 抽出の成果::default();
     for (パス, 行一覧) in ソース群.ファイル一覧() {
-        let 正本のファイルか = パス.ends_with("blitz_design/src/marker.rs");
+        let 正本のファイルか = 設計解釈マーカーの正本のファイルか(パス);
         let モジュールパス = ソース群.ファイルのモジュールパス(パス);
         for (添字, 行) in 行一覧.iter().enumerate() {
             let Some(宣言) = トレイトの宣言を読む(行) else {
