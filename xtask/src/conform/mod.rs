@@ -17,6 +17,7 @@ mod forbidden_strings;
 mod free_function_whole_type;
 mod lighting_query_declaration;
 mod line_count;
+mod line_count_allowance;
 mod module_import_boundary;
 mod particle_reference;
 mod reload_without_device_wait;

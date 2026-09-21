@@ -7,6 +7,7 @@ use std::path::PathBuf;
 use super::super::violation::違反;
 use super::line_matching::{トレイト実装の行のトレイトの位置, トレイト実装の行の対象の型の表記, 先頭の識別子, 型に属するimplの宣言か, 波括弧が閉じる行, 語として現れるか};
 use super::module_path::モジュールパス;
+use super::pure_data_definition_law::定義が破った純粋データの規約の説明一覧;
 use super::syntax_patterns::{self, Rust型種別, オントロジートレイト};
 use super::type_definition::{固有implのファイル, 型の定義を探す, 定義ブロックの結果};
 
@@ -95,23 +96,12 @@ impl クレート構文検査 {
         }
     }
 
-    /// 採った定義が参照・生ポインタ・内部可変性を持つときの説明。定義が一意に決まらないときは空である。
+    /// 採った定義が参照・生ポインタ・内部可変性を持つときの説明。定義が一意に決まらないときは空である。規約そのものは `pure_data_definition_law` が持つ。
     pub fn 純粋データの規約の違反一覧(&self, 型: &トレイト実装型) -> Vec<String> {
-        let 定義 = match self.型の定義ブロック(型) {
-            定義ブロックの結果::見つかった { 定義, .. } => 定義,
-            定義ブロックの結果::見つからない | 定義ブロックの結果::複数ある | 定義ブロックの結果::別名のため取り込み元を求められない => return Vec::new(),
-        };
-        let mut 違反 = Vec::new();
-        if 定義.contains('&') {
-            違反.push("の定義は参照(&)を持てません".to_string());
+        match self.型の定義ブロック(型) {
+            定義ブロックの結果::見つかった { 定義, .. } => 定義が破った純粋データの規約の説明一覧(&定義),
+            定義ブロックの結果::見つからない | 定義ブロックの結果::複数ある | 定義ブロックの結果::別名のため取り込み元を求められない => Vec::new(),
         }
-        if 定義.contains("*const") || 定義.contains("*mut") {
-            違反.push("の定義は生ポインタを持てません".to_string());
-        }
-        if let Some(型) = ["RefCell", "Mutex", "RwLock", "Cell", "Atomic"].iter().find(|型| 定義.contains(*型)) {
-            違反.push(format!("の定義は内部可変性 `{型}` を持てません"));
-        }
-        違反
     }
 
     /// その型に属する `impl` ブロック(固有の `impl 型名 {` と、その型を対象にするトレイトの実装 `impl トレイト for 型名 {`)に `&mut self` があるか。

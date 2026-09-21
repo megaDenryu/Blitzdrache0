@@ -36,6 +36,7 @@ mod parameter_assertion;
 mod parameter_assertion_tests;
 #[cfg(test)]
 mod process_marker_form_tests;
+mod pure_data_definition_law;
 #[cfg(test)]
 mod result_marker_form_tests;
 mod syntax_assertion;
