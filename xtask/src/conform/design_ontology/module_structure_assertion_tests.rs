@@ -69,3 +69,32 @@ fn 不一致_表記を読めないpath属性を違反にする() {
     assert_eq!(説明一覧.len(), 1);
     assert!(説明一覧[0].contains("属性の行に文字列がありません"));
 }
+
+#[test]
+fn 不一致_波括弧の中に書いた別のファイルを指す宣言を違反にする() {
+    let 説明一覧 = 説明一覧("crates/a/src/x.rs", "mod 外 {\n    mod 子;\n}\n");
+    assert_eq!(説明一覧.len(), 1);
+    assert!(説明一覧[0].contains("波括弧の内側に置かれたまま別のファイルを指しています"));
+}
+
+#[test]
+fn 不一致_関数の中に書いた別のファイルを指す宣言を違反にする() {
+    let 説明一覧 = 説明一覧("crates/a/src/x.rs", "fn 組み立てる() {\n    mod 子;\n}\n");
+    assert_eq!(説明一覧.len(), 1);
+    assert!(説明一覧[0].contains("波括弧の内側に置かれたまま別のファイルを指しています"));
+}
+
+#[test]
+fn 一致_波括弧の中に書いた波括弧付きの宣言を受理する() {
+    assert!(説明一覧("crates/a/src/x.rs", "mod 外 {\n    mod 内 {\n        pub struct 位置;\n    }\n}\n").is_empty());
+}
+
+#[test]
+fn 一致_見出しコメントの中の波括弧を深さに数えない() {
+    assert!(説明一覧("crates/a/src/x.rs", "//! 正規形は `mod 名前 {\nmod y;\n").is_empty());
+}
+
+#[test]
+fn 一致_文字列リテラルの中のmodの宣言を読まない() {
+    assert!(説明一覧("crates/a/src/x.rs", "mod 外 {\n    const 見本: &str = \"mod 子;\";\n}\n").is_empty());
+}
