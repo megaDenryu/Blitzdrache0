@@ -8,8 +8,11 @@
 
 use std::process::ExitCode;
 
-use crate::design_proposition::{命題の検証器, 検証結果};
+use crate::design_model::設計関係グラフを抽出する;
+use crate::design_proposition::{構造の検証器, 命題の検証器, 検証結果};
 use crate::design_transition::{対戦進行の題材, 有限全数の検証器};
+
+mod structural_law;
 
 /// 結末ごとの件数。検証した命題を数え、終了コードを答える。
 #[derive(Debug, Clone, Copy, Default)]
