@@ -7,7 +7,7 @@ use super::tests::{ソース, 全部の説明関数を連ねた違反の説明�
 const 列挙型が必要の違反: &str = "M結果 `何かの結果` は enum 定義が必要です";
 
 #[test]
-fn 構文解析_標準のresultへのm結果の実装は定義の解決を要求せず違反にならない() {
+fn 構文解析_標準のresultへのm結果の実装は定義をたどらず違反にならない() {
     let ソース一覧 = vec![ソース(
         "crates/blitz_design/src/marker.rs",
         "pub trait M結果 {}
