@@ -62,6 +62,18 @@ fn 構文解析_m不変データを実装する型は純粋データ規約を満
 }
 
 #[test]
+fn 構文解析_観測を実装する型にも純粋データ規約と可変参照メソッドの禁止を当てる() {
+    let ソース一覧 = vec![ソース(
+        "crates/a/src/x.rs",
+        "pub struct 移動の観測<'a> {\n    件数: &'a u32,\n}\nimpl M観測 for 移動の観測<'_> {}\npub struct 露出の観測;\nimpl M不変データ for 露出の観測 {}\nimpl M観測 for 露出の観測 {}\nimpl 露出の観測 {\n    pub fn 更新する(&mut self) {}\n}\n",
+    )];
+    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
+    assert_eq!(説明一覧.len(), 2);
+    assert!(説明一覧[0].contains("M観測 `移動の観測` の定義は参照(&)を持てません"));
+    assert!(説明一覧[1].contains("M不変データ `露出の観測` は &mut self メソッドを持てません"));
+}
+
+#[test]
 fn 構文解析_定義が見つからない型を違反にする() {
     let ソース一覧 = vec![ソース("crates/a/src/x.rs", "impl M不変データ for 幻 {}\nimpl Mコマンド for 幻 {}\n")];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
