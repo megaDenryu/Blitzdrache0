@@ -4,7 +4,7 @@
 //! 読み取りの側は1行のRustの構文を所有する。役割を1つ足すときに直すのはこのファイルだけである。
 //! 参照: `crates/blitz_design/src/function_role.rs`・`crates/blitz_esca/src/ontology.rs`。
 
-use crate::design_model::relation::設計関係の種類;
+use crate::design_model::設計関係の種類;
 
 /// 関数の設計上の役割。`M射影関数`・`M解釈関数` は `blitz_design::function_role`、`M遷移関数` は `blitz_esca::ontology` に在る。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

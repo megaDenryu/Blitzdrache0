@@ -39,7 +39,7 @@
 //! 「正本と写しで同じ値を持つべき定数の一致」の精神に反する二重の台帳になる(2026-09-22。Issue #174 のオーナー裁定)。
 
 pub(super) const 白リスト: [(&str, &[&str]); 15] = [
-    ("blitz_design", &[]), // 共通の設計語彙。依存ゼロの最下層
+    ("blitz_design", &[]),                            // 共通の設計語彙。依存ゼロの最下層
     ("blitz_design_verification", &["blitz_design"]), // 命題と検証の共通語彙の正本。ドメインもxtaskも知らない
     ("blitz_math", &["glam"]),
     ("blitz_collision", &["blitz_math", "thiserror"]), // 衝突数学層。世界もチャンクもアセットもGPUも知らない

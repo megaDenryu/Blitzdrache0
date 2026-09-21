@@ -11,8 +11,8 @@ use super::marker_concept::{設計解釈マーカーの名前か, 設計解釈�
 use super::outcome::抽出の成果;
 use super::source_group::抽出対象のソース群;
 use super::trait_declaration::トレイトの宣言を読む;
-use crate::design_model::concept::{設計概念, 設計概念の種類, 設計概念の識別子};
-use crate::design_model::relation::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
+use crate::design_model::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
+use crate::design_model::{設計概念, 設計概念の種類, 設計概念の識別子};
 
 pub fn 上位トレイトの宣言から抽出する(ソース群: &抽出対象のソース群) -> 抽出の成果 {
     let mut 成果 = 抽出の成果::default();

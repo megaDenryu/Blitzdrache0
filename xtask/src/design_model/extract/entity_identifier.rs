@@ -13,8 +13,8 @@ use super::type_notation::先頭の型名を採る;
 use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
 use crate::conform::design_ontology::line_matching::波括弧が閉じる行;
 use crate::conform::design_ontology::syntax_patterns::オントロジートレイト;
-use crate::design_model::concept::{設計概念, 設計概念の種類, 設計概念の識別子};
-use crate::design_model::relation::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
+use crate::design_model::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
+use crate::design_model::{設計概念, 設計概念の種類, 設計概念の識別子};
 
 /// 関連型の宣言の前置き。`type 識別子 = 旅行者ID;` の左辺である。
 const 識別子の関連型の前置き: &str = "type 識別子";

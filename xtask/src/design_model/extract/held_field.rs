@@ -15,8 +15,8 @@ use super::struct_declaration::{フィールドの名前と型, フィールド�
 use super::type_notation::設計概念の名前を採る;
 use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
 use crate::conform::design_ontology::line_matching::波括弧が閉じる行;
-use crate::design_model::concept::{設計概念, 設計概念の種類, 設計概念の識別子};
-use crate::design_model::relation::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
+use crate::design_model::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
+use crate::design_model::{設計概念, 設計概念の種類, 設計概念の識別子};
 
 pub fn 構造体のフィールドから抽出する(ソース群: &抽出対象のソース群) -> 抽出の成果 {
     let mut 成果 = 抽出の成果::default();

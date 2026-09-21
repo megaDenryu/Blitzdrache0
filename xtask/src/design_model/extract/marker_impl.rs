@@ -12,8 +12,8 @@ use super::outcome::抽出の成果;
 use super::source_group::抽出対象のソース群;
 use crate::conform::design_ontology::syntax_patterns::オントロジートレイト;
 use crate::conform::design_ontology::trait_implementation::トレイト実装型;
-use crate::design_model::concept::{設計概念, 設計概念の種類, 設計概念の識別子};
-use crate::design_model::relation::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
+use crate::design_model::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
+use crate::design_model::{設計概念, 設計概念の種類, 設計概念の識別子};
 
 /// 標準の `Result` への包括の実装だけが持つ、実装の対象の識別子。`crates` 配下に定義が無いため定義をたどらない特例である。
 const 標準resultのモジュールパス: &str = "std::result";

@@ -15,7 +15,7 @@ use crate::conform::design_ontology::trait_implementation::トレイト実装型
 use crate::conform::design_ontology::type_definition::{型の定義を探す, 定義ブロックの結果};
 use crate::conform::error::規約検査の破れ;
 use crate::conform::source_lexing::コードだけの行一覧;
-use crate::design_model::concept::設計概念の識別子;
+use crate::design_model::設計概念の識別子;
 use crate::file_scan;
 
 /// 抽出が読むソースの集まり。構文解析器を保持し、行の一覧と型の同一性をメソッドで答える。

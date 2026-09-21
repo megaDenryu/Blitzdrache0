@@ -4,7 +4,7 @@
 //! どの法則を問うかは別の関心事であるためである。法則を足すのはこのファイルだけで済む。
 
 use crate::design_model::{設計概念の識別子, 設計関係の種類};
-use crate::design_proposition::{原子命題, 名前付きの命題, 命題, 命題の集合, 対象集合, 束縛変数, 項};
+use blitz_design_verification::{原子命題, 名前付きの命題, 命題, 命題の集合, 対象集合, 束縛変数, 項};
 
 /// 設計解釈マーカーの正本のモジュールパス。参照: `crates/blitz_design/src/marker.rs`。
 const マーカーの正本のモジュールパス: &str = "blitz_design::marker";

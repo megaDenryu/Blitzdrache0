@@ -4,7 +4,7 @@
 //! 別々に組むと、修飾を書いた実装から出た節点と、無修飾の宣言から出た節点が別の節点になり、`M状態 下位型である M不変データ` の経路が繋がらない。
 
 use crate::conform::design_ontology::syntax_patterns::オントロジートレイト;
-use crate::design_model::concept::{設計概念, 設計概念の識別子};
+use crate::design_model::{設計概念, 設計概念の識別子};
 
 /// 設計解釈マーカーの正本のモジュールパス。
 const マーカーの正本のモジュールパス: &str = "blitz_design::marker";
