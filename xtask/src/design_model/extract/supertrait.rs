@@ -12,8 +12,8 @@ use super::outcome::抽出の成果;
 use super::source_group::抽出対象のソース群;
 use super::trait_declaration::トレイトの宣言を読む;
 use crate::conform::design_ontology::marker_canonical_file::設計解釈マーカーの正本のファイルか;
+use crate::design_model::{Rustの項目の種類, 設計概念, 設計概念の識別子};
 use crate::design_model::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
-use crate::design_model::{設計概念, 設計概念の種類, 設計概念の識別子};
 
 pub fn 上位トレイトの宣言から抽出する(ソース群: &抽出対象のソース群) -> 抽出の成果 {
     let mut 成果 = 抽出の成果::default();
@@ -50,9 +50,7 @@ pub fn 上位トレイトの宣言から抽出する(ソース群: &抽出対象
 }
 
 fn トレイトの節点(識別子: 設計概念の識別子) -> 設計概念 {
-    設計概念 {
-        識別子, 種類: 設計概念の種類::トレイト
-    }
+    設計概念::Rustの項目として生成する(識別子, Rustの項目の種類::トレイト)
 }
 
 // 上位トレイトの表記の末尾の名前(`std::error::Error` なら `Error`)。

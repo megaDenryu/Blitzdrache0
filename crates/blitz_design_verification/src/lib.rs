@@ -35,7 +35,7 @@ mod transition_model;
 mod verifier;
 
 pub use atom::{原子命題, 項};
-pub use concept::{設計概念, 設計概念の名前空間, 設計概念の種類, 設計概念の識別子};
+pub use concept::{Rustの項目の種類, 設計概念, 設計概念の名前空間, 設計概念の種類, 設計概念の識別子};
 pub use coverage::数え上げの網羅性;
 pub use domain::{探索の上限, 探索の結末, 数え上げ, 有限に数え上げられる領域, 遷移の帰結, 領域から遷移モデルを組む};
 pub use evidence::{反例, 未決定の理由, 検証の方式, 検証結果, 証拠};

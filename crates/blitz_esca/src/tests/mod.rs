@@ -2,6 +2,7 @@
 
 mod behavior_coverage_tests;
 mod behavior_domain;
+mod behavior_identity;
 mod behavior_inference_tests;
 mod behavior_landmark;
 mod behavior_naming;

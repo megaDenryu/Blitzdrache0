@@ -15,8 +15,8 @@ use super::struct_declaration::{フィールドの名前と型, フィールド�
 use super::type_notation::設計概念の名前を採る;
 use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
 use crate::conform::design_ontology::line_matching::波括弧が閉じる行;
+use crate::design_model::{Rustの項目の種類, 設計概念, 設計概念の識別子};
 use crate::design_model::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
-use crate::design_model::{設計概念, 設計概念の種類, 設計概念の識別子};
 
 pub fn 構造体のフィールドから抽出する(ソース群: &抽出対象のソース群) -> 抽出の成果 {
     let mut 成果 = 抽出の成果::default();
@@ -27,10 +27,7 @@ pub fn 構造体のフィールドから抽出する(ソース群: &抽出対象
                 continue;
             };
             let 主語 = 設計概念の識別子::Rustの項目として生成する(&モジュールパス, &宣言.名前);
-            成果.概念一覧.push(設計概念 {
-                識別子: 主語.clone(),
-                種類: 設計概念の種類::型,
-            });
+            成果.概念一覧.push(設計概念::Rustの項目として生成する(主語.clone(), Rustの項目の種類::型));
             let 終了 = 波括弧が閉じる行(行一覧, 宣言の位置);
             for (位置, 本体の行) in 行一覧.iter().enumerate().take(終了 + 1).skip(宣言の位置) {
                 for 記述 in フィールドの記述一覧(本体の行, 位置 == 宣言の位置) {
@@ -78,10 +75,7 @@ impl フィールド1件の工程<'_> {
         };
         let (目的語, 解決できなかった行) = self.ソース群.型の識別子を求める(問い);
         成果.抽出できなかった行一覧.extend(解決できなかった行);
-        成果.概念一覧.push(設計概念 {
-            識別子: 目的語.clone(),
-            種類: 設計概念の種類::型,
-        });
+        成果.概念一覧.push(設計概念::Rustの項目として生成する(目的語.clone(), Rustの項目の種類::型));
         成果.関係一覧.push(設計関係 {
             主語: self.主語.clone(),
             種類: 設計関係の種類::保持する,
