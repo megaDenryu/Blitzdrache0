@@ -17,5 +17,5 @@ mod relation_graph;
 
 pub use concept::{設計概念, 設計概念の種類, 設計概念の識別子};
 pub use extract::{抽出できなかった理由, 抽出できなかった行, 抽出の結末, 設計関係グラフを抽出する};
-pub use relation::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
+pub use relation::{抽出元の構文, 設計関係, 設計関係の種類};
 pub use relation_graph::設計関係グラフ;

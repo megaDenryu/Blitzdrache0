@@ -12,6 +12,7 @@ use crate::design_model::設計関係グラフを抽出する;
 use crate::design_proposition::{命題の検証器, 検証の集計, 検証結果, 構造の検証器};
 use crate::design_transition::{対戦進行の題材, 有限全数の検証器};
 
+mod extraction_report;
 mod structural_law;
 
 /// 結末ごとの件数。検証した命題を数え、終了コードを答える。
@@ -27,12 +28,8 @@ pub fn 設計の命題を検証する() -> ExitCode {
     let mut 件数 = 結末の件数::default();
     match 設計関係グラフを抽出する() {
         Ok(結末) => {
-            println!(
-                "[xtask] design-verify: 設計関係グラフは概念{}件・関係{}件であり、抽出できなかった行は{}件である",
-                結末.グラフ.概念一覧().len(),
-                結末.グラフ.関係一覧().len(),
-                結末.抽出できなかった行一覧.len()
-            );
+            println!("[xtask] design-verify: 設計関係グラフの内訳");
+            extraction_report::抽出の内訳を表示する(&結末);
             let グラフの検証器 = 構造の検証器::生成する(&結末.グラフ);
             let 集計 = structural_law::構造の法則の命題の集合を組む().全件を検証する(&グラフの検証器);
             println!("  構造の法則: {}", 集計.表記());
