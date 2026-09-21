@@ -8,7 +8,7 @@
 #[cfg(test)]
 mod specification_tests;
 
-use super::evidence::反例;
+use super::evidence::{反例, 未決定の理由};
 use super::proposition::命題;
 use super::verifier::命題の検証器;
 
@@ -34,6 +34,8 @@ pub struct 検証の集計 {
     pub 未決定の件数: usize,
     /// 反証済みの命題の名前と反例の対。どの命題が破れたかを名前で指すために持つ。
     pub 反証済みの一覧: Vec<(String, 反例)>,
+    /// 未決定の命題の名前と理由の対。件数だけでは読み手が何を解けなかったのかを追えないため、反証済みと対称に持つ。
+    pub 未決定の一覧: Vec<(String, 未決定の理由)>,
 }
 
 impl 名前付きの命題 {
@@ -76,6 +78,7 @@ impl 命題の集合 {
             反証済みの件数: 0,
             未決定の件数: 0,
             反証済みの一覧: Vec::new(),
+            未決定の一覧: Vec::new(),
         };
         for 名前付き in &self.命題一覧 {
             集計.結末を数える(名前付き.名前(), 検証器.検証する(名前付き.命題()));
@@ -92,7 +95,10 @@ impl 検証の集計 {
                 self.反証済みの件数 += 1;
                 self.反証済みの一覧.push((名前.to_string(), 反例));
             }
-            super::evidence::検証結果::未決定(_) => self.未決定の件数 += 1,
+            super::evidence::検証結果::未決定(理由) => {
+                self.未決定の件数 += 1;
+                self.未決定の一覧.push((名前.to_string(), 理由));
+            }
         }
     }
 
