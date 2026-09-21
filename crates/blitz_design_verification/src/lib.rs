@@ -37,7 +37,7 @@ pub use domain::{探索の上限, 探索の結末, 数え上げ, 有限に数え
 pub use evidence::{反例, 未決定の理由, 検証の方式, 検証結果, 証拠};
 pub use exhaustive::有限全数の検証器;
 pub use law::{排他の推論規則, 推論規則, 普遍命題としての法則};
-pub use proposition::命題;
+pub use proposition::{命題, 非空の命題一覧, 非空の命題一覧の生成の失敗};
 pub use quantification::{対象集合, 束縛の割り当て, 束縛変数};
 pub use relation::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
 pub use relation_graph::設計関係グラフ;
