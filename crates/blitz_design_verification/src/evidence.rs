@@ -98,6 +98,15 @@ impl 検証結果 {
         matches!(self, Self::反証済み(_))
     }
 
+    /// 反証済みであるときの再現の材料。証明済みと未決定では空である。
+    /// 量化の畳み込みが、内側の反例の材料を外側の反例へ束ねるために読む。片方だけでは人がその破れへ戻れない。
+    pub fn 反証済みの再現の材料(&self) -> Vec<(String, String)> {
+        match self {
+            Self::反証済み(反例) => 反例.再現の材料.clone(),
+            Self::証明済み(_) | Self::未決定(_) => Vec::new(),
+        }
+    }
+
     /// 人が読む1行の表記。
     pub fn 表記(&self) -> String {
         match self {
