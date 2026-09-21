@@ -5,7 +5,7 @@ use std::collections::HashSet;
 use std::path::PathBuf;
 
 use super::super::violation::違反;
-use super::line_matching::{先頭の識別子, 型に属するimplの宣言か, 波括弧が閉じる行, 語として現れるか};
+use super::line_matching::{トレイト実装の行のトレイトの位置, トレイト実装の行の対象の型の表記, 先頭の識別子, 型に属するimplの宣言か, 波括弧が閉じる行, 語として現れるか};
 use super::module_path::モジュールパス;
 use super::syntax_patterns::{self, Rust型種別, オントロジートレイト};
 use super::type_definition::{固有implのファイル, 型の定義を探す, 定義ブロックの結果};
@@ -26,18 +26,25 @@ impl クレート構文検査 {
         self.違反一覧
     }
 
+    /// `impl トレイト for 型` と `impl<T> トレイト for 型<T>` の行を集める(トレイトを書く位置が正規形の `マーカー名` か `blitz_design::マーカー名` のもの)。
     pub fn トレイト実装型一覧(&self, トレイト: オントロジートレイト) -> Vec<トレイト実装型> {
-        let パターン一覧 = syntax_patterns::トレイト実装宣言(トレイト);
+        let 修飾した名前 = format!("blitz_design::{}", トレイト.名前());
         let mut 型一覧 = Vec::new();
         for (パス, 行一覧) in &self.ソース一覧 {
             for (添字, 行) in 行一覧.iter().enumerate() {
-                let Some(残り) = パターン一覧.iter().find_map(|パターン| 行.trim().strip_prefix(パターン.as_str())) else {
+                if !トレイト実装の行のトレイトの位置(行).is_some_and(|位置| 位置 == トレイト.名前() || 位置 == 修飾した名前) {
+                    continue;
+                }
+                let Some(対象の型の表記) = トレイト実装の行の対象の型の表記(行) else {
                     continue;
                 };
-                let 型名 = 先頭の識別子(残り);
+                let 型名 = 先頭の識別子(対象の型の表記);
                 if !型名.is_empty() {
                     型一覧.push(トレイト実装型 {
-                        型名, パス: パス.clone(), 行番号: 添字 + 1
+                        型名,
+                        対象の型の表記: 対象の型の表記.to_string(),
+                        パス: パス.clone(),
+                        行番号: 添字 + 1,
                     });
                 }
             }
