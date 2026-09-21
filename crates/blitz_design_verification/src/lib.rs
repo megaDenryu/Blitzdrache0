@@ -27,7 +27,7 @@ mod quantification;
 mod relation;
 mod relation_graph;
 mod specification;
-mod transition;
+mod transition_model;
 mod verifier;
 
 pub use atom::{原子命題, 項};
@@ -42,5 +42,5 @@ pub use quantification::{対象集合, 束縛の割り当て, 束縛変数};
 pub use relation::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
 pub use relation_graph::設計関係グラフ;
 pub use specification::{名前付きの命題, 命題の集合, 検証の集計};
-pub use transition::{到達可能な状態一覧, 遷移, 遷移の材料, 遷移の識別子, 遷移モデル};
+pub use transition_model::{到達可能な状態一覧, 遷移, 遷移の材料, 遷移の識別子, 遷移モデル};
 pub use verifier::{列挙した対象, 原子と対象集合の解き手, 命題の検証器, 構造の検証器, 結合を解く工程};

@@ -8,7 +8,7 @@
 //! 無ければ網羅しているときだけ反証済みで答える。理由は親のファイルの冒頭に書いた。
 
 use super::有限全数の検証器;
-use crate::transition::遷移;
+use crate::transition_model::遷移;
 use crate::{反例, 未決定の理由, 検証の方式, 検証結果, 設計概念の識別子, 証拠};
 
 impl 有限全数の検証器 {

@@ -14,7 +14,7 @@ mod proposition;
 pub use concepts::{対戦の結果, 対戦相手の名前, 対戦進行, 対戦進行の事象, 対戦進行の規則, 専用の事象が起きる対戦回数};
 pub use countable_domain::目盛りを進める領域;
 
-use crate::transition::{遷移, 遷移の材料, 遷移の識別子, 遷移モデル};
+use crate::transition_model::{遷移, 遷移の材料, 遷移の識別子, 遷移モデル};
 use crate::設計概念の識別子;
 use crate::{命題, 排他の推論規則};
 use proposition::専用の事象が起きる命題の材料;

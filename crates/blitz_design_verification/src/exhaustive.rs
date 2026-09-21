@@ -25,7 +25,7 @@ mod atom_answer;
 mod exhaustive_tests;
 mod solver;
 
-use crate::transition::{遷移, 遷移モデル};
+use crate::transition_model::{遷移, 遷移モデル};
 use crate::{探索の結末, 数え上げの網羅性, 束縛の割り当て};
 
 /// 列挙してよい対象の件数の上限。1件ごとに命題の本体を解き直すため、これを超えると1回の検証が人が待てる時間を超える。
