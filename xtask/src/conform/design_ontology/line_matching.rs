@@ -57,3 +57,25 @@ pub fn トレイト実装の行のトレイトの位置(行: &str) -> Option<&st
     let 終わり = 残り.find(" for ")?;
     Some(残り[..終わり].trim())
 }
+
+/// トレイトの実装の行が対象にする型の名前(` for ` の後ろの識別子。`impl 表示 for 位置<T> {` なら `位置`)。トレイトの実装の行でなければ無い。
+pub fn トレイト実装の行の対象の型名(行: &str) -> Option<String> {
+    トレイト実装の行のトレイトの位置(行)?;
+    let 位置 = 行.find(" for ")?;
+    let 型名 = 先頭の識別子(行[位置 + " for ".len()..].trim_start());
+    (!型名.is_empty()).then_some(型名)
+}
+
+/// トレイトの実装の行が対象にする型の表記そのもの(` for ` の後ろから本体の `{` または `where` の前まで。`impl<T, E> M結果 for std::result::Result<T, E> {` なら `std::result::Result<T, E>`)。トレイトの実装の行でなければ無い。
+pub fn トレイト実装の行の対象の型の表記(行: &str) -> Option<&str> {
+    トレイト実装の行のトレイトの位置(行)?;
+    let 位置 = 行.find(" for ")?;
+    let 残り = &行[位置 + " for ".len()..];
+    let 終わり = 残り.find('{').or_else(|| 残り.find(" where ")).unwrap_or(残り.len());
+    Some(残り[..終わり].trim())
+}
+
+/// その型に属する `impl` の宣言の行か。固有の `impl 型名 {` と、その型を対象にするトレイトの実装 `impl トレイト for 型名 {` の両方を数える。
+pub fn 型に属するimplの宣言か(行: &str, 型名: &str) -> bool {
+    固有のimplの宣言か(行, 型名) || トレイト実装の行の対象の型名(行).is_some_and(|対象| 対象 == 型名)
+}

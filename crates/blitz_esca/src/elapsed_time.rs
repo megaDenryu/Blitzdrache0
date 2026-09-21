@@ -1,13 +1,13 @@
 //! 遷移に与える経過時間。有限かつ0以上を不変条件に持つ値オブジェクトであり、負の値や NaN・無限大で現在地を汚さないために置く。
 
-use blitz_design::MDTO;
+use blitz_design::M不変データ;
 use blitz_math::秒;
 
 /// 遷移関数へ渡す、有限かつ0以上の経過時間。`生成する` を通らずには作れない。
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 経過時間(秒);
 
-impl MDTO for 経過時間 {}
+impl M不変データ for 経過時間 {}
 
 impl 経過時間 {
     /// 値が有限かつ0以上であることを確かめて経過時間を作る。

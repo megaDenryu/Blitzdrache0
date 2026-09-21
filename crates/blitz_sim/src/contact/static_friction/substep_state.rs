@@ -6,7 +6,7 @@
 //! (同じ細分で位置の静止摩擦と速度の動摩擦が二重に効くことを避ける)。
 //! 参照: `_doc/設計/剛体の状態と接触.md`「判断13: 静止摩擦は錨からの接線変位を零へ戻す位置拘束であり、クーロン円錐の内側でだけ効く」
 
-use blitz_design::{MDTO, M状態};
+use blitz_design::{M不変データ, M状態};
 
 use super::tangential_multiplier::接線のラグランジュ乗数;
 use crate::ontology::{M時間局所状態, 物理小刻み};
@@ -19,7 +19,7 @@ pub struct 静止摩擦の一細分の解の状態 {
     錨を置き直したか: bool,
 }
 
-impl MDTO for 静止摩擦の一細分の解の状態 {}
+impl M不変データ for 静止摩擦の一細分の解の状態 {}
 impl M状態 for 静止摩擦の一細分の解の状態 {}
 
 impl M時間局所状態 for 静止摩擦の一細分の解の状態 {

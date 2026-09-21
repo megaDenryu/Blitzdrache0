@@ -3,7 +3,7 @@
 //! デバイス境界の生入力(M入力: キーボード歩行入力)から、ゲーム内のコマンド(Mコマンド: 旅行者の意図)を
 //! 導出する純粋計算(M解釈関数)を、入力自身のメソッドとして持つ。
 
-use blitz_design::{MDTO, M入力, M解釈関数};
+use blitz_design::{M不変データ, M入力, M解釈関数};
 
 use crate::traveler::旅行者の意図;
 use crate::walking_direction::歩行方向;
@@ -17,7 +17,7 @@ pub struct キーボード歩行入力 {
     pub 右: bool,
 }
 
-impl MDTO for キーボード歩行入力 {}
+impl M不変データ for キーボード歩行入力 {}
 impl M入力 for キーボード歩行入力 {}
 
 impl キーボード歩行入力 {
