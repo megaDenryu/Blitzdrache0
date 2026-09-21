@@ -39,7 +39,7 @@ mod supertrait_tests;
 mod test_support;
 
 pub use outcome::抽出の結末;
-pub use unextracted_line::{抽出できなかった理由, 抽出できなかった行};
+pub use unextracted_line::{抽出できなかった理由, 抽出できなかった理由の区分, 抽出できなかった行};
 
 use crate::conform::error::規約検査の破れ;
 use outcome::抽出の成果;

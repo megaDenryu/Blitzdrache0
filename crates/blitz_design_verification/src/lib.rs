@@ -21,6 +21,7 @@ mod coverage;
 mod domain;
 mod evidence;
 mod exhaustive;
+mod extraction_loss;
 mod law;
 #[cfg(test)]
 mod law_tests;
@@ -40,6 +41,7 @@ pub use coverage::数え上げの網羅性;
 pub use domain::{探索の上限, 探索の結末, 数え上げ, 有限に数え上げられる領域, 遷移の帰結, 領域から遷移モデルを組む};
 pub use evidence::{反例, 未決定の理由, 検証の方式, 検証結果, 証拠};
 pub use exhaustive::有限全数の検証器;
+pub use extraction_loss::{落とした理由ごとの件数, 関係を落とした抽出の欠落};
 pub use law::{排他の推論規則, 推論規則, 普遍命題としての法則};
 pub use proposition::{命題, 非空の命題一覧, 非空の命題一覧の生成の失敗};
 pub use quantification::{マーカーの名乗り方, 対象集合, 束縛の割り当て, 束縛変数};
