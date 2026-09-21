@@ -15,6 +15,8 @@
 
 mod atom;
 mod concept;
+#[cfg(test)]
+mod concept_tests;
 mod coverage;
 mod domain;
 mod evidence;
@@ -26,6 +28,8 @@ mod proposition;
 mod quantification;
 mod relation;
 mod relation_graph;
+#[cfg(test)]
+mod relation_graph_tests;
 mod specification;
 mod transition_model;
 mod verifier;
