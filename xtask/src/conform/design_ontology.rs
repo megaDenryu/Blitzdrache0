@@ -39,6 +39,7 @@ mod module_path_tests;
 mod module_structure_assertion;
 #[cfg(test)]
 mod module_structure_assertion_tests;
+mod mutable_impl_scan;
 #[cfg(test)]
 mod mutable_self_law_tests;
 mod parameter_assertion;

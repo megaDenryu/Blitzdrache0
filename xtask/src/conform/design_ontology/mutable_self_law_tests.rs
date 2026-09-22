@@ -4,6 +4,39 @@
 use super::tests::{ソース, 全部の説明関数を連ねた違反の説明一覧};
 
 #[test]
+fn 構文解析_複数行の固有のimplの可変参照メソッドは違反になる() {
+    let ソース一覧 = vec![ソース(
+        "crates/a/src/x.rs",
+        "pub struct 規則<T>(T);\nimpl<T> M不変データ for 規則<T> {}\nimpl<T> M規則 for 規則<T> {}\nimpl<T> 規則<T>\nwhere\n    T: Clone,\n{\n    pub fn 変える(&mut self) {}\n}\n",
+    )];
+    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
+    assert_eq!(説明一覧.len(), 1, "{説明一覧:?}");
+    assert!(説明一覧[0].contains("M不変データ `規則` は &mut self メソッドを持てません"));
+}
+
+#[test]
+fn 構文解析_複数行のマーカー実装も可変参照の法則を有効にする() {
+    let ソース一覧 = vec![ソース(
+        "crates/a/src/x.rs",
+        "pub struct 規則<T>(T);\nimpl<T> M不変データ for 規則<T>\nwhere\n    T: Clone,\n{}\nimpl<T> 規則<T> {\n    pub fn 変える(&mut self) {}\n}\n",
+    )];
+    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
+    assert_eq!(説明一覧.len(), 1, "{説明一覧:?}");
+    assert!(説明一覧[0].contains("M不変データ `規則` は &mut self メソッドを持てません"));
+}
+
+#[test]
+fn 構文解析_複数行のトレイト実装の可変参照メソッドも違反になる() {
+    let ソース一覧 = vec![ソース(
+        "crates/a/src/x.rs",
+        "pub struct 規則<T>(T);\nimpl<T> M不変データ for 規則<T> {}\nimpl<T> M規則 for 規則<T> {}\nimpl<T> 変更可能 for 規則<T>\nwhere\n    T: Clone,\n{\n    fn 変える(&mut self) {}\n}\n",
+    )];
+    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
+    assert_eq!(説明一覧.len(), 1, "{説明一覧:?}");
+    assert!(説明一覧[0].contains("M不変データ `規則` は &mut self メソッドを持てません"));
+}
+
+#[test]
 fn 構文解析_可変参照メソッドはその型の固有のimplだけを見る() {
     let ソース一覧 = vec![
         ソース("crates/a/src/x.rs", "pub struct 規則;\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\npub struct 規則の台帳;\n"),

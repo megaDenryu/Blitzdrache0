@@ -13,6 +13,8 @@ mod target_set_tests;
 mod undecided_tests;
 #[path = "structural_tests/量化の同一性.rs"]
 mod 量化の同一性;
+#[path = "structural_tests/関係の欠落と量化.rs"]
+mod 関係の欠落と量化;
 
 use std::path::PathBuf;
 

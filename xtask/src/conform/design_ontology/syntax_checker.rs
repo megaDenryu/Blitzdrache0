@@ -5,11 +5,11 @@ use std::collections::HashSet;
 use std::path::PathBuf;
 
 use super::super::violation::違反;
-use super::line_matching::{トレイト実装の行のトレイトの位置, トレイト実装の行の対象の型の表記, 先頭の識別子, 型に属するimplの宣言か, 波括弧が閉じる行, 語として現れるか};
+use super::line_matching::{implの見出しを読む, トレイト実装の行のトレイトの位置, トレイト実装の行の対象の型の表記, 先頭の識別子, 語として現れるか};
 use super::module_path::モジュールパス;
 use super::pure_data_definition_law::定義が破った純粋データの規約の説明一覧;
 use super::syntax_patterns::{self, Rust型種別, オントロジートレイト};
-use super::type_definition::{固有implのファイル, 型の定義を探す, 定義ブロックの結果};
+use super::type_definition::{型の定義を探す, 定義ブロックの結果};
 
 use super::trait_implementation::トレイト実装型;
 
@@ -37,11 +37,14 @@ impl クレート構文検査 {
         let 修飾した名前 = format!("blitz_design::{}", トレイト.名前());
         let mut 型一覧 = Vec::new();
         for (パス, 行一覧) in &self.ソース一覧 {
-            for (添字, 行) in 行一覧.iter().enumerate() {
-                if !トレイト実装の行のトレイトの位置(行).is_some_and(|位置| 位置 == トレイト.名前() || 位置 == 修飾した名前) {
+            for (添字, _) in 行一覧.iter().enumerate() {
+                let Some((見出し, _)) = implの見出しを読む(行一覧, 添字) else {
+                    continue;
+                };
+                if !トレイト実装の行のトレイトの位置(&見出し).is_some_and(|位置| 位置 == トレイト.名前() || 位置 == 修飾した名前) {
                     continue;
                 }
-                let Some(対象の型の表記) = トレイト実装の行の対象の型の表記(行) else {
+                let Some(対象の型の表記) = トレイト実装の行の対象の型の表記(&見出し) else {
                     continue;
                 };
                 let 型名 = 先頭の識別子(対象の型の表記);
@@ -102,19 +105,5 @@ impl クレート構文検査 {
             定義ブロックの結果::見つかった { 定義, .. } => 定義が破った純粋データの規約の説明一覧(&定義),
             定義ブロックの結果::見つからない | 定義ブロックの結果::複数ある | 定義ブロックの結果::別名のため取り込み元を求められない => Vec::new(),
         }
-    }
-
-    /// その型に属する `impl` ブロック(固有の `impl 型名 {` と、その型を対象にするトレイトの実装 `impl トレイト for 型名 {`)に `&mut self` があるか。
-    /// トレイトの実装も見るのは、法則が `&mut self` そのものを禁じており、固有の `impl` だけを見るとトレイトを1つ挟むだけで法則を迂回できるためである。
-    /// 見るのは採った定義に属するファイル(同じファイルか、`use` でその定義のモジュールパスを取り込んだファイル)だけであり、別のモジュールの同名の型の `impl` は数えない。定義が一意に決まらないときは偽である(定義の違反は別に出る)。
-    pub fn 可変参照メソッドを含むか(&self, 型: &トレイト実装型) -> bool {
-        let 定義ブロックの結果::見つかった { パス: 定義のパス, .. } = self.型の定義ブロック(型) else {
-            return false;
-        };
-        let 属するか = |パス: &PathBuf, 行一覧: &[String]| (固有implのファイル { パス, 行一覧 }).定義を指すか(&型.型名, &定義のパス);
-        self.ソース一覧.iter().filter(|(パス, 行一覧)| 属するか(パス, 行一覧)).any(|(_, 行一覧)| {
-            let 属するimplの開始一覧 = 行一覧.iter().enumerate().filter(|(_, 行)| 型に属するimplの宣言か(行, &型.型名));
-            属するimplの開始一覧.into_iter().any(|(開始, _)| 行一覧[開始..=波括弧が閉じる行(行一覧, 開始)].iter().any(|行| 行.contains("&mut self")))
-        })
     }
 }
