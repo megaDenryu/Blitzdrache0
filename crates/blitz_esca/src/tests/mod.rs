@@ -1,11 +1,14 @@
 //! Escaクレートの試験(Issue #137)。設計オントロジーの構文の法則は `cargo xtask conform` が検査する。
 
+mod behavior_bits;
 mod behavior_coverage_tests;
+mod behavior_display;
 mod behavior_domain;
 mod behavior_identity;
 mod behavior_inference_tests;
 mod behavior_landmark;
 mod behavior_naming;
+mod behavior_naming_tests;
 mod behavior_proposition;
 mod elapsed_time_tests;
 mod traveler_boundary_tests;
