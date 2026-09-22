@@ -10,6 +10,7 @@ mod behavior_landmark;
 mod behavior_naming;
 mod behavior_naming_tests;
 mod behavior_proposition;
+mod behavior_reachable_tests;
 mod elapsed_time_tests;
 mod traveler_boundary_tests;
 mod traveler_input_tests;
