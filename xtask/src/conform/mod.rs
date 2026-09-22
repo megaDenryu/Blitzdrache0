@@ -13,6 +13,7 @@ mod drop_impl;
 mod duplicate_file_literal;
 mod ecs_abstract_name;
 pub(crate) mod error;
+mod extractable_normal_form;
 mod forbidden_strings;
 mod free_function_whole_type;
 mod lighting_query_declaration;
