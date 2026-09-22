@@ -6,9 +6,11 @@
 
 mod reachable_states;
 mod transition;
+mod transition_identifier;
 
 pub use reachable_states::到達可能な状態一覧;
-pub use transition::{遷移, 遷移の材料, 遷移の識別子};
+pub use transition::{遷移, 遷移の材料};
+pub use transition_identifier::遷移の識別子;
 
 use crate::設計概念への参照;
 
