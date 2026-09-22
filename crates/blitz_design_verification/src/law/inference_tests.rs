@@ -5,7 +5,7 @@
 
 #![allow(clippy::unwrap_used)]
 
-use crate::設計概念の識別子;
+use crate::設計概念への参照;
 
 use super::super::atom::{原子命題, 項};
 use super::super::evidence::{反例, 未決定の理由, 検証の方式, 検証結果, 証拠};
@@ -51,7 +51,7 @@ impl 命題の検証器 for 常に未決定で答える検証器 {
 
 fn マーカーを持つ原子() -> 命題 {
     命題::原子から組む(原子命題::マーカーを持つ {
-        概念: 項::名指した概念(設計概念の識別子::Rustの項目として生成する("blitz_esca::traveler", "旅行者")),
+        概念: 項::名指した概念(設計概念への参照::型として生成する("blitz_esca::traveler", "旅行者")),
         マーカー名: "Mエンティティ".to_string(),
     })
 }
