@@ -5,6 +5,7 @@
 
 #![allow(clippy::unwrap_used)]
 
+mod collision_kind_tests;
 mod extraction_loss_tests;
 mod path_tests;
 mod relation_tests;
