@@ -1,6 +1,6 @@
 ---
 name: 実装員Fable版
-description: 実装・リファクタ・検証を委譲する標準サブエージェント（Fable 5.1・effort low）。コード規約（100行分割・型安全）を守り、検証まで完走して構造化報告する。Fableは強いが高価なため、既定の`実装員`（Opus 5・effort medium）で足りない難易度が高い作業にだけ使う。fable low はopus mediumより強い
+description: 実装・リファクタ・検証を委譲する標準サブエージェント（Fable 5.1・effort low）。コード規約（100行分割・型安全）を守り、検証まで完走して構造化報告する。Fableは強いが高価なため、既定の`実装員`（Opus 5.5・effort medium）で足りない難易度が高い作業にだけ使う。fable low はopus mediumより強い
 model: claude-fable-5-1
 effort: low
 ---
