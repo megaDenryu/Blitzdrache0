@@ -111,7 +111,7 @@ impl クレート構文検査 {
         let 定義ブロックの結果::見つかった { パス: 定義のパス, .. } = self.型の定義ブロック(型) else {
             return false;
         };
-        let 属するか = |パス: &PathBuf, 行一覧: &[String]| (固有implのファイル { パス, 行一覧 }).定義を指すか(&self.ソース一覧, &型.型名, &定義のパス);
+        let 属するか = |パス: &PathBuf, 行一覧: &[String]| (固有implのファイル { パス, 行一覧 }).定義を指すか(&型.型名, &定義のパス);
         self.ソース一覧.iter().filter(|(パス, 行一覧)| 属するか(パス, 行一覧)).any(|(_, 行一覧)| {
             let 属するimplの開始一覧 = 行一覧.iter().enumerate().filter(|(_, 行)| 型に属するimplの宣言か(行, &型.型名));
             属するimplの開始一覧.into_iter().any(|(開始, _)| 行一覧[開始..=波括弧が閉じる行(行一覧, 開始)].iter().any(|行| 行.contains("&mut self")))

@@ -7,7 +7,10 @@ use super::tests::{ソース, 全部の説明関数を連ねた違反の説明�
 fn 構文解析_可変参照メソッドはその型の固有のimplだけを見る() {
     let ソース一覧 = vec![
         ソース("crates/a/src/x.rs", "pub struct 規則;\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\npub struct 規則の台帳;\n"),
-        ソース("crates/a/src/y.rs", "impl 規則 {\n    pub fn 変える(&mut self) {}\n}\nimpl 規則の台帳 {\n    pub fn 足す(&mut self) {}\n}\n"),
+        ソース(
+            "crates/a/src/y.rs",
+            "use crate::x::{規則, 規則の台帳};\nimpl 規則 {\n    pub fn 変える(&mut self) {}\n}\nimpl 規則の台帳 {\n    pub fn 足す(&mut self) {}\n}\n",
+        ),
     ];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 1);

@@ -11,6 +11,8 @@ mod path_tests;
 mod relation_tests;
 mod target_set_tests;
 mod undecided_tests;
+#[path = "structural_tests/量化の同一性.rs"]
+mod 量化の同一性;
 
 use std::path::PathBuf;
 
