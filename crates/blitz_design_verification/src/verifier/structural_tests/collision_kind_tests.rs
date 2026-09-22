@@ -10,7 +10,6 @@
 use crate::{設計概念, 設計関係の種類, 設計関係グラフ, 関係を落とした抽出の欠落};
 
 use super::super::super::evidence::{未決定の理由, 検証結果};
-use super::super::super::proposition::命題;
 use super::super::{命題の検証器, 構造の検証器};
 use super::{トレイトの参照, 型の参照, 関係, 関係の原子};
 
