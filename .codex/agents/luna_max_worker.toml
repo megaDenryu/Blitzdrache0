@@ -1,3 +1,5 @@
+name = "luna_max_worker"
+description = "利用者が明示したLuna Max親のオーケストレーション専用。限定範囲の調査・実装を担当する。Astra・Solからは利用しない。"
 model = "gpt-5.6-luna"
 model_reasoning_effort = "max"
 developer_instructions = """
@@ -9,5 +11,5 @@ developer_instructions = """
 あなたは明示された場合だけコミットし、外部へ投稿・送信しない。あなたは変更ファイル、変更の根拠、自己確認した内容、未実行の検証、残件を親へ報告する。
 """
 
-[features]
-multi_agent = false
+[agents]
+enabled = false

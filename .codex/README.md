@@ -44,13 +44,13 @@ Codexはコード読解と静的検査を先に行い、変更に必要な単体
 
 親は委譲先へ、利用者の運用指定、親のモデルと推論設定、目的、設計正本、編集可能な範囲、禁止する変更、完了条件を渡す。親は独立した仕事だけを分け、同じファイルを複数の子へ編集させない。子はさらに別の子を起動しない。親はビルドと最終検収を自分で行い、子の完了報告だけで合格にしない。
 
-[config.toml](config.toml) は通常のサブエージェント機能を無効にし、Luna用の役割を登録する。設定は親のモデルを変更しない。利用者がLuna Maxの運用を選ぶ場合、利用者は `C:/devs/Blitzdrache0` を作業ディレクトリとして次のコマンドで新しいCLIセッションを開始し、そのセッションへ具体的な作業を依頼する。
+[config.toml](config.toml) は通常のサブエージェント機能を無効にする。Codexは `.codex/agents/` の独立した定義ファイルからLuna用の役割を読み込む。設定は親のモデルを変更しない。利用者がLuna Maxの運用を選ぶ場合、利用者は `C:/devs/Blitzdrache0` を作業ディレクトリとして次のコマンドで新しいCLIセッションを開始し、そのセッションへ具体的な作業を依頼する。
 
 ```powershell
-codex -C C:/devs/Blitzdrache0 -m gpt-5.6-luna -c 'model_reasoning_effort="max"' --enable multi_agent 'Luna Maxによるオーケストレーションを使用する。AGENTS.mdと.codex/README.mdに従う。'
+codex -C C:/devs/Blitzdrache0 -m gpt-5.6-luna -c 'model_reasoning_effort="max"' -c 'agents.enabled=true' 'Luna Maxによるオーケストレーションを使用する。AGENTS.mdと.codex/README.mdに従う。'
 ```
 
-このリポジトリは、2026-09-22に確認した `codex-cli 0.144.4` が受理する `features.multi_agent` と `agents.<役割>.config_file` の形式を使う。公開資料の新しい `agents.enabled` は、このCLIでは読み込みエラーになるため使わない。利用者はCLIを更新した際に設定形式を再確認する。
+このリポジトリは、2026-09-22に確認した `codex-cli 0.155.1` と現行の公式仕様に合わせ、`agents.enabled` と、`name`・`description`・`developer_instructions` を持つ独立したエージェント定義を使う。Codexは旧形式への切り替えや互換用の二重定義を行わない。設定を受理できない環境では、Codexは不一致を報告し、設定が適用されたものとして作業を進めない。
 
 設定ファイル自体は親のモデルに応じた条件分岐を強制しない。通常の機能無効化と、入口・役割の利用条件を組み合わせて運用する。利用者による設定の上書きや、別の実行環境が機能無効化を適用しない場合でも、Codexは上記の利用条件に従う。既存セッションへの設定の自動反映は前提にしない。
 

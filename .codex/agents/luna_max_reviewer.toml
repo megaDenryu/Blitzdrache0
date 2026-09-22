@@ -1,3 +1,5 @@
+name = "luna_max_reviewer"
+description = "利用者が明示したLuna Max親のオーケストレーション専用。読み取りだけで差分と根拠を検査する。Astra・Solからは利用しない。"
 model = "gpt-5.6-luna"
 model_reasoning_effort = "max"
 sandbox_mode = "read-only"
@@ -10,5 +12,5 @@ developer_instructions = """
 あなたは指摘ごとにファイルの位置、問題が起こる条件、根拠、修正案を返す。あなたは推測を確定した欠陥と混同せず、問題がない場合も確認範囲と未確認事項を報告する。親が採否と最終検収を決める。
 """
 
-[features]
-multi_agent = false
+[agents]
+enabled = false

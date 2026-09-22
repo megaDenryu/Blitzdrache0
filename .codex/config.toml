@@ -1,10 +1,2 @@
-[features]
-multi_agent = false
-
-[agents.luna_max_worker]
-description = "利用者が明示したLuna Max親のオーケストレーション専用。限定範囲の調査・実装を担当する。Astra・Solからは利用しない。"
-config_file = "agents/luna_max_worker.toml"
-
-[agents.luna_max_reviewer]
-description = "利用者が明示したLuna Max親のオーケストレーション専用。読み取りだけで差分と根拠を検査する。Astra・Solからは利用しない。"
-config_file = "agents/luna_max_reviewer.toml"
+[agents]
+enabled = false
