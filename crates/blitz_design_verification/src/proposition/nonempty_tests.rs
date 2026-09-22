@@ -6,14 +6,14 @@
 
 #![allow(clippy::unwrap_used)]
 
-use crate::設計概念の識別子;
+use crate::設計概念への参照;
 
 use super::super::atom::{原子命題, 項};
 use super::{命題, 非空の命題一覧, 非空の命題一覧の生成の失敗};
 
 fn 原子1件() -> 命題 {
     命題::原子から組む(原子命題::マーカーを持つ {
-        概念: 項::名指した概念(設計概念の識別子::Rustの項目として生成する("blitz_esca::traveler", "旅行者")),
+        概念: 項::名指した概念(設計概念への参照::型として生成する("blitz_esca::traveler", "旅行者")),
         マーカー名: "Mエンティティ".to_string(),
     })
 }
