@@ -7,6 +7,14 @@ use super::test_support::{原文から結末を組む, 役割の使用箇所の�
 
 const 移動のパス: &str = "crates/blitz_esca/src/traveler_movement.rs";
 
+#[test]
+fn トレイト実装は役割の所有型の固有の実装ではない() {
+    let 原文 = 解釈の使用箇所("M解釈関数::生成する(所有者Trait::解釈する)") + "impl 所有者Trait for キーボード歩行入力 {}\n";
+    let 結末 = 原文から結末を組む(&[(移動のパス, &原文)]);
+    assert!(!関係の表記一覧(&結末).iter().any(|表記| 表記.contains("所有者Trait::解釈する")));
+    assert!(結末.関係を落とした抽出の欠落へ写す().在るか());
+}
+
 fn 解釈の使用箇所(右辺: &str) -> String {
     役割の使用箇所の試験が使う型の定義() + "const _: M解釈関数<キーボード歩行入力, 旅行者の意図> = " + 右辺 + ";\n"
 }

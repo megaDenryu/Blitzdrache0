@@ -3,24 +3,24 @@
 //! 構文の読み取りと型の定義の探索は `conform::design_ontology` の構文解析器を借り、複製を作らない。同じ構文を2箇所で読むと、
 //! 検査が見る型の同一性と抽出が作る節点の同一性が食い違い、検査を通ったコードについて抽出が別の型を指す事故が起きる。
 //!
-//! 走査は `crates` 配下の `src` の下の全 `.rs` であり、規則1・2・4はこの全体を見る。規則3だけが `ontology_scope` の
-//! 適用範囲のクレートに絞る。ソースを2度読まないため、範囲の絞りは走査ではなく規則の側が行う。
+//! 全規則は適用範囲のクレートの入口から辿れる本番のソースだけを見る。
 
 use std::path::{Component, Path, PathBuf};
 
 use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
+use super::本番のソース::本番のソース;
 use crate::conform::design_ontology::module_path::モジュールパス;
 use crate::conform::design_ontology::syntax_checker::クレート構文検査;
 use crate::conform::design_ontology::trait_implementation::トレイト実装型;
 use crate::conform::design_ontology::type_definition::{型の定義を探す, 定義ブロックの結果};
 use crate::conform::error::規約検査の破れ;
-use crate::conform::source_lexing::コードだけの行一覧;
 use crate::design_model::設計概念の識別子;
 use crate::file_scan;
 
 /// 抽出が読むソースの集まり。構文解析器を保持し、行の一覧と型の同一性をメソッドで答える。
 pub struct 抽出対象のソース群 {
     構文検査: クレート構文検査,
+    本番の選別の欠落: Vec<抽出できなかった行>,
 }
 
 impl 抽出対象のソース群 {
@@ -37,10 +37,25 @@ impl 抽出対象のソース群 {
 
     /// パスと原文の対の一覧から組む。回帰試験が、リポジトリの実物に依存せず構文を組んで与えるための口である。
     pub fn 原文一覧から生成する(原文一覧: Vec<(PathBuf, String)>) -> Self {
-        let ソース一覧 = 原文一覧.into_iter().map(|(パス, 内容)| (パス, コードだけの行一覧(&内容))).collect();
+        let 入口一覧 = 原文一覧
+            .iter()
+            .filter(|(パス, _)| パス.parent().and_then(Path::file_name).is_some_and(|名前| 名前 == "src"))
+            .filter(|(パス, _)| matches!(パス.file_stem().and_then(|名前| 名前.to_str()), Some("lib" | "main")))
+            .map(|(パス, _)| パス.clone())
+            .collect();
+        Self::入口を指定して生成する(原文一覧, 入口一覧)
+    }
+
+    pub(super) fn 入口を指定して生成する(原文一覧: Vec<(PathBuf, String)>, 入口一覧: Vec<PathBuf>) -> Self {
+        let 本番 = 本番のソース::入口から集める(原文一覧, 入口一覧);
         Self {
-            構文検査: クレート構文検査::生成する(ソース一覧),
+            構文検査: クレート構文検査::生成する(本番.行一覧),
+            本番の選別の欠落: 本番.欠落一覧,
         }
+    }
+
+    pub fn 本番の選別の欠落一覧(&self) -> &[抽出できなかった行] {
+        &self.本番の選別の欠落
     }
 
     /// 借りている構文解析器。トレイトの実装の行の集めと型の定義ブロックの探索がここを通る。

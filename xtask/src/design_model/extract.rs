@@ -27,6 +27,10 @@ mod trait_declaration;
 mod type_notation;
 mod unextracted_line;
 mod wrapped_function_path;
+#[path = "extract/本番のソース.rs"]
+mod 本番のソース;
+#[path = "extract/本番の行.rs"]
+mod 本番の行;
 
 #[cfg(test)]
 mod entity_identifier_tests;
@@ -48,6 +52,9 @@ mod test_support;
 mod type_notation_tests;
 #[cfg(test)]
 mod wrapped_function_path_tests;
+#[cfg(test)]
+#[path = "extract/本番の範囲の試験.rs"]
+mod 本番の範囲の試験;
 
 pub use out_of_range_syntax::保証範囲の外の構文;
 pub use outcome::抽出の結末;
@@ -65,6 +72,7 @@ pub fn 設計関係グラフを抽出する() -> Result<抽出の結末, 規約�
 /// 走査済みのソース群から抽出する。回帰試験が、リポジトリの実物に依存せず組んだソースを与えるための口である。
 fn ソース群から抽出する(ソース群: &抽出対象のソース群) -> 抽出の結末 {
     let mut 成果 = 抽出の成果::default();
+    成果.抽出できなかった行一覧.extend_from_slice(ソース群.本番の選別の欠落一覧());
     成果.概念一覧.extend(marker_concept::設計解釈マーカーの概念一覧());
     成果.併せる(supertrait::上位トレイトの宣言から抽出する(ソース群));
     成果.併せる(marker_impl::設計解釈マーカーの実装から抽出する(ソース群));

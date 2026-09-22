@@ -11,3 +11,5 @@ mod asymmetry_tests;
 mod exploration_tests;
 mod fixture;
 mod representative_tests;
+#[path = "exhaustive_tests/遷移の同一性.rs"]
+mod 遷移の同一性;

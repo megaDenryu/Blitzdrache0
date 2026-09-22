@@ -42,9 +42,14 @@ pub fn クレート名(パス: &Path) -> &OsStr {
 
 /// `impl 型名 {`・`impl<T> 型名<T> {` の行か。` for ` を含む行はトレイト実装であり、含めない。
 pub fn 固有のimplの宣言か(行: &str, 型名: &str) -> bool {
-    let 残り = 行.trim_start().strip_prefix("impl").unwrap_or_default();
+    let Some(残り) = 行.trim_start().strip_prefix("impl") else {
+        return false;
+    };
+    if !残り.starts_with(char::is_whitespace) && !残り.starts_with('<') {
+        return false;
+    }
     let 残り = if 残り.starts_with('<') { 残り.find('>').map_or("", |位置| &残り[位置 + 1..]) } else { 残り };
-    !行.contains(" for ") && 先頭の識別子(残り.trim_start()) == 型名
+    行.contains('{') && !行.split_whitespace().any(|語| 語 == "for") && 先頭の識別子(残り.trim_start()) == 型名
 }
 
 /// トレイトの実装の行(`impl トレイト for 型`・`impl<T> トレイト for 型<T>`)の、トレイトを書く位置(前後の空白を除いたもの)。トレイトの実装の行でなければ無い。

@@ -63,9 +63,8 @@ fn 実物の3件の役割の使用箇所は受理の条件を満たし処理の�
 fn 実物のタプル構造体が包む型へ保持する関係が出る() {
     let 結末 = 実物のcratesから結末を組む();
     let 表記一覧: Vec<String> = 結末.グラフ.関係一覧().iter().map(|関係| 関係.表記()).collect();
-    for 期待 in ["blitz_esca::elapsed_time::経過時間 保持する 秒", "blitz_esca::tests::behavior_display::現在地の粗い表記のマスの一辺 保持する メートル"] {
-        assert!(表記一覧.contains(&期待.to_string()), "{期待} が無い");
-    }
+    assert!(表記一覧.contains(&"blitz_esca::elapsed_time::経過時間 保持する 秒".to_string()));
+    assert!(!結末.グラフ.概念一覧().iter().any(|概念| 概念.識別子().モジュールパス.contains("::tests")));
 }
 
 #[test]
