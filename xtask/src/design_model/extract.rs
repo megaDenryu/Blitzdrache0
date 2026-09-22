@@ -38,6 +38,8 @@ mod real_crates_tests;
 mod supertrait_tests;
 #[cfg(test)]
 mod test_support;
+#[cfg(test)]
+mod wrapped_function_path_tests;
 
 pub use outcome::抽出の結末;
 pub use unextracted_line::{抽出できなかった理由, 抽出できなかった行};
