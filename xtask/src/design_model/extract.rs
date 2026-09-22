@@ -7,13 +7,17 @@
 //!
 //! 入口が走査を1度だけ行うのは、規則ごとに走査すると同じファイルの読み取りが5回走り、規則の間で読み取りの結果が食い違いうるためである。
 
+mod declaration_body_line;
 mod entity_identifier;
 mod function_role;
+mod held_declaration;
 mod held_field;
 mod marker_concept;
 mod marker_impl;
 mod ontology_scope;
+mod out_of_range_syntax;
 mod outcome;
+mod positional_types;
 mod role;
 mod role_usage;
 mod source_group;
@@ -35,12 +39,17 @@ mod marker_impl_tests;
 #[cfg(test)]
 mod real_crates_tests;
 #[cfg(test)]
+mod struct_declaration_tests;
+#[cfg(test)]
 mod supertrait_tests;
 #[cfg(test)]
 mod test_support;
 #[cfg(test)]
+mod type_notation_tests;
+#[cfg(test)]
 mod wrapped_function_path_tests;
 
+pub use out_of_range_syntax::保証範囲の外の構文;
 pub use outcome::抽出の結末;
 pub use unextracted_line::{抽出できなかった理由, 抽出できなかった行};
 

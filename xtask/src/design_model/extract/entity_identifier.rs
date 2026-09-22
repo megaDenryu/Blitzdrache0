@@ -9,7 +9,7 @@
 
 use super::outcome::抽出の成果;
 use super::source_group::{型の在り処の問い, 抽出対象のソース群};
-use super::type_notation::先頭の型名を採る;
+use super::type_notation::{型の表記の読み取り, 型の表記を読む};
 use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
 use crate::conform::design_ontology::line_matching::波括弧が閉じる行;
 use crate::conform::design_ontology::syntax_patterns::オントロジートレイト;
@@ -64,7 +64,9 @@ fn 識別子の関連型を探す(行一覧: &[String], 開始: usize) -> Option
     let 終了 = 波括弧が閉じる行(行一覧, 開始);
     (開始..=終了).find_map(|位置| {
         let 右辺 = 行一覧[位置].trim().strip_prefix(識別子の関連型の前置き)?.trim_start().strip_prefix('=')?;
-        let 型名 = 先頭の型名を採る(右辺.trim().trim_end_matches(';'));
-        (!型名.is_empty()).then_some((位置, 型名))
+        match 型の表記を読む(右辺.trim().trim_end_matches(';')) {
+            型の表記の読み取り::設計概念である(型名) => Some((位置, 型名)),
+            型の表記の読み取り::プリミティブである | 型の表記の読み取り::保証範囲の外(_) => None,
+        }
     })
 }
