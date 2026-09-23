@@ -57,6 +57,9 @@ ctrlc = "3.5"
 # 参照: README「利用ライブラリ」win32job の採用審査。`cargo xtask editor`が強制終了されたときに子孫を道連れにする専用、
 # xtaskのみがWindows向けのビルドでのみ依存する
 win32job = "2"
+# 参照: README「利用ライブラリ」proc-macro2 の採用審査。`cargo xtask conform` の設計オントロジーの検査が原文を字句の木へ変えるためだけに使い、
+# xtaskのみが依存する。既定機能の`proc-macro`を切ると常に代替の実装で動き、`span-locations`が字句の行番号を与える
+proc-macro2 = { version = "1.0.107", default-features = false, features = ["span-locations"] }
 # 参照: README「利用ライブラリ」editor_server(ゲーム開発用エディター段1)の採用審査。
 # serdeはeditor_serverの編集契約とblitz_asset_compilerの建物外形カタログ生成が依存する。
 # axum/tokio/tower/tower-http/ts-rsはeditor_serverのみが依存する

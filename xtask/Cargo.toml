@@ -11,15 +11,17 @@ version.workspace = true
 # 食い違ったときに「ファイルが無い」という遠い場所の失敗になるためである。
 # blitz_mathはパーセンタイル値の求め方の正本がそこにあり、検収が測る値と計器が報告する値を同じ式で求めるためである。
 # 写しを持つと、同じ「95パーセンタイル値」という名前の数が検収と計器で別の標本を指す。
-# 外部依存はcrosstermとctrlcとwin32jobの3つだけである。crosstermは`cargo xtask menu`の端末の生モード制御と
+# 外部依存はcrosstermとctrlcとwin32jobとproc-macro2の4つだけである。crosstermは`cargo xtask menu`の端末の生モード制御と
 # キー入力読み取りに、ctrlcは`cargo xtask editor`のCtrl+C捕捉に、win32jobは`cargo xtask editor`が強制終了された
-# ときの子孫の道連れにのみ使う(参照: README「利用ライブラリ」crossterm・ctrlc・win32job の採用審査)。
+# ときの子孫の道連れに、proc-macro2は`cargo xtask conform`の設計オントロジーの検査が原文を字句の木へ変えることにのみ使う
+# (参照: README「利用ライブラリ」crossterm・ctrlc・win32job・proc-macro2 の採用審査)。
 [dependencies]
 blitz_asset_compiler = { path = "../crates/blitz_asset_compiler" }
 blitz_design_verification = { path = "../crates/blitz_design_verification" }
 blitz_math = { path = "../crates/blitz_math" }
 crossterm = { workspace = true }
 ctrlc = { workspace = true }
+proc-macro2 = { workspace = true }
 
 # 仕事の束(Job Object)はWindowsの仕組みであり、他のOSには対応する道具が無いため、Windows向けのビルドでだけ依存する。
 [target.'cfg(windows)'.dependencies]

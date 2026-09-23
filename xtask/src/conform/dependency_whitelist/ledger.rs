@@ -23,6 +23,9 @@
 //! win32job は`cargo xtask editor`自身が強制終了されたときに、起動した子孫をWindowsの仕事の束(Job Object)で
 //! まとめて終わらせるためだけの依存であり、Windows向けのビルドでのみ引く。Ctrl+Cの捕捉が走らない止め方に対する
 //! 最後の網であり、ctrlcでは届かない範囲だけを埋める。
+//! xtask の proc-macro2 は`cargo xtask conform`の設計オントロジーの検査が原文を字句の木へ変えるためだけの依存である。自前の字句の走査が
+//! 識別子の文字・コメントを挟んだ綴り・括弧の対応で読み落としを繰り返し出したため、rustc と同じ字句の規則を持つ実装へ移した。
+//! 既に依存の木にあり(手続き型マクロの依存として)、新しいクレートを1つも足さない。既定機能の`proc-macro`を切るため、手続き型マクロの側の組み立ては変わらない。
 //! blitz_ecs はゲーム世界の個体群の基盤であり、thiserror 以外の何も知らない。具体ゲームの型も、物理・描画・アセットの型も
 //! 知らないことをこの表が課す。逆向きに blitz_sim・blitz_engine・blitz_render の行へ blitz_ecs を書かないことが、
 //! それらが個体群を知らないことの強制である(参照: `_doc/設計/ゲーム世界の個体群の基盤.md`「層の定義」)。
@@ -58,6 +61,6 @@ pub(super) const 白リスト: [(&str, &[&str]); 15] = [
         "blitz_app",
         &["blitz_engine", "blitz_game", "blitz_math", "blitz_render", "blitz_sim", "winit", "raw-window-handle", "thiserror", "egui", "egui-winit"],
     ),
-    ("xtask", &["blitz_asset_compiler", "blitz_design_verification", "blitz_math", "crossterm", "ctrlc", "win32job"]), // 検収が写しを持たないための例外
+    ("xtask", &["blitz_asset_compiler", "blitz_design_verification", "blitz_math", "crossterm", "ctrlc", "proc-macro2", "win32job"]), // 検収が写しを持たないための例外
     ("editor_server", &["serde", "serde_json", "thiserror", "axum", "tokio", "tower", "tower-http", "ts-rs", "blitz_asset_compiler", "blitz_engine"]),
 ];
