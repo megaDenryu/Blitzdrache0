@@ -1,4 +1,5 @@
 //! 設計オントロジーの構文検査の入口。走査範囲のソースを1度だけ読み、モジュール構造の一致検査と `クレート構文検査` の説明関数の並びへ通す。
+//! 原文からは、コードだけの行の一覧と字句の木の一覧(`token_tree_gate/token_tree_index.rs`)の2つを作る。原文そのものは検査へ渡さない。
 //! 受け取るのは無し、返すのは違反一覧か、ソースを読めなかった理由である。検査する規則の全体と保証範囲は親のモジュール `design_ontology.rs` の冒頭が書く。
 
 use std::path::{Component, Path};
@@ -10,15 +11,18 @@ use super::external_trait_ledger::走査範囲の外のトレイトの台帳;
 use super::module_structure_assertion::モジュール構造の一致検査;
 use super::name_match_exclusion_ledger::名前が当たった別の型の実装の台帳;
 use super::syntax_checker::クレート構文検査;
+use super::token_tree_gate::字句の木の一覧;
 use super::unbound_implementation_ledger::対象の型を決められない実装の台帳;
 use crate::file_scan;
 
 pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut ソース一覧 = Vec::new();
     let mut モジュール構造の違反一覧 = Vec::new();
+    let mut 字句の木 = 字句の木の一覧::default();
     for パス in file_scan::対象ファイル一覧を集める(&["crates"], &["rs"])?.into_iter().filter(|パス| srcの下か(パス)) {
         let 内容 = std::fs::read_to_string(&パス).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(&パス, 誤り))?;
         モジュール構造の違反一覧.extend(モジュール構造の一致検査::生成する(パス.clone(), &内容).違反一覧());
+        字句の木.原文を数えて足す(パス.clone(), &内容);
         ソース一覧.push((パス, コードだけの行一覧(&内容)));
     }
     let mut 違反一覧 = クレート構文検査::生成する(ソース一覧)
@@ -38,7 +42,7 @@ pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の�
         .型の表記が名前で追える形であること()
         .includeを呼んでいないこと()
         .取り込みの別名が宣言の名前を名乗っていないこと()
-        .読み切れない宣言が無いこと()
+        .読み切れない宣言が無いこと(&字句の木)
         .違反一覧();
     違反一覧.extend(モジュール構造の違反一覧);
     Ok(違反一覧)

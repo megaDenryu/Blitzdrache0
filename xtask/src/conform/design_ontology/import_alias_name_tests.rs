@@ -2,17 +2,17 @@
 //! 違反にする理由は、自己変更の禁止の検査が実装の対象の型もトレイトも名前で引くため、別名がそれらの名前を名乗ると、別の宣言の実装が名前の上ではその宣言の実装として読めることである。
 //! 同じ名前の宣言が走査範囲に2つ以上あること自体は違反にしない(区切られたドメインが違えば同じ表記が別の語でありうる)ため、その試験はここに無い。
 
-use super::tests::{ソース, 正規形の説明関数を連ねた違反の説明一覧};
+use super::normal_form_test_entry::{原文, 正規形の説明関数を連ねた違反の説明一覧};
 
 #[test]
 fn 名乗られていない名前の別名は違反にならない() {
-    let ソース一覧 = vec![ソース("crates/a/src/x.rs", "use crate::b::規則 as 短い名前;\npub struct 規則;\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\n")];
+    let ソース一覧 = vec![原文("crates/a/src/x.rs", "use crate::b::規則 as 短い名前;\npub struct 規則;\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\n")];
     assert!(正規形の説明関数を連ねた違反の説明一覧(ソース一覧).is_empty());
 }
 
 #[test]
 fn 走査範囲のトレイトの宣言の名前を名乗る別名を違反にする() {
-    let ソース一覧 = vec![ソース("crates/a/src/x.rs", "pub trait 変更 {\n    fn 変える(&mut self);\n}\nuse crate::b::何か as 変更;\n")];
+    let ソース一覧 = vec![原文("crates/a/src/x.rs", "pub trait 変更 {\n    fn 変える(&mut self);\n}\nuse crate::b::何か as 変更;\n")];
     let 説明一覧 = 正規形の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 1);
     assert!(説明一覧[0].contains("`use … as 変更` の別名が走査範囲のトレイトの宣言の名前と同じ名前である"), "{}", 説明一覧[0]);
@@ -20,7 +20,7 @@ fn 走査範囲のトレイトの宣言の名前を名乗る別名を違反に�
 
 #[test]
 fn 取り込まずに書けるトレイトの名前を名乗る別名を違反にする() {
-    let ソース一覧 = vec![ソース("crates/a/src/x.rs", "use crate::b::可変化 as Default;\n")];
+    let ソース一覧 = vec![原文("crates/a/src/x.rs", "use crate::b::可変化 as Default;\n")];
     let 説明一覧 = 正規形の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 1);
     assert!(説明一覧[0].contains("`use … as Default` の別名が取り込まずに書けるトレイトの名前と同じ名前である"), "{}", 説明一覧[0]);
@@ -29,8 +29,8 @@ fn 取り込まずに書けるトレイトの名前を名乗る別名を違反�
 #[test]
 fn マーカーを名乗る型の名前を名乗る別名を違反にする() {
     let ソース一覧 = vec![
-        ソース("crates/a/src/x.rs", "pub struct 規則;\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\n"),
-        ソース("crates/a/src/y.rs", "use crate::b::別物 as 規則;\n"),
+        原文("crates/a/src/x.rs", "pub struct 規則;\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\n"),
+        原文("crates/a/src/y.rs", "use crate::b::別物 as 規則;\n"),
     ];
     let 説明一覧 = 正規形の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 1);

@@ -1,11 +1,11 @@
 //! 実装の対象の型を名前で追える形へ固定する正規形の試験。実装の見出しの対象の型と型の別名の右辺の先頭が、裸のパスか・関連型の射影か・マクロの呼び出しかで、違反になる形とならない形を固定する。
 //! 違反にする理由は、自己変更の禁止の検査が対象の型を名前で追うため、名前が字面に現れない表記の実装を集められないことである。
 
-use super::tests::{ソース, 正規形の説明関数を連ねた違反の説明一覧};
+use super::normal_form_test_entry::{原文, 正規形の説明関数を連ねた違反の説明一覧};
 
 #[test]
 fn 対象の型と別名の右辺の先頭が裸のパスなら違反にならない() {
-    let ソース一覧 = vec![ソース(
+    let ソース一覧 = vec![原文(
         "crates/a/src/x.rs",
         "pub struct 規則;\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\ntype 別名 = crate::a::x::規則;\ntype 包み = Vec<規則>;\ntype 射影を型引数に持つ = Result<<甲 as 乙>::丙, u8>;\nimpl 規則 {\n    pub fn 東(&self) -> u8 {\n        0\n    }\n}\n",
     )];
@@ -14,7 +14,7 @@ fn 対象の型と別名の右辺の先頭が裸のパスなら違反になら�
 
 #[test]
 fn 対象の型の先頭が関連型の射影の実装を違反にする() {
-    let ソース一覧 = vec![ソース("crates/a/src/x.rs", "impl 変更 for <甲 as 乙>::丙 {\n    fn 変える(&mut self) {}\n}\n")];
+    let ソース一覧 = vec![原文("crates/a/src/x.rs", "impl 変更 for <甲 as 乙>::丙 {\n    fn 変える(&mut self) {}\n}\n")];
     let 説明一覧 = 正規形の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 1);
     assert!(説明一覧[0].contains("実装の対象の型 `<甲 as 乙>::丙` の先頭が関連型の射影である"), "{}", 説明一覧[0]);
@@ -22,7 +22,7 @@ fn 対象の型の先頭が関連型の射影の実装を違反にする() {
 
 #[test]
 fn 対象の型の先頭がマクロの呼び出しの実装を違反にする() {
-    let ソース一覧 = vec![ソース("crates/a/src/x.rs", "impl 変更 for 型を作る!() {\n    fn 変える(&mut self) {}\n}\n")];
+    let ソース一覧 = vec![原文("crates/a/src/x.rs", "impl 変更 for 型を作る!() {\n    fn 変える(&mut self) {}\n}\n")];
     let 説明一覧 = 正規形の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 1);
     assert!(説明一覧[0].contains("先頭がマクロの呼び出しである"), "{}", 説明一覧[0]);
@@ -30,7 +30,7 @@ fn 対象の型の先頭がマクロの呼び出しの実装を違反にする()
 
 #[test]
 fn 型の別名の右辺の先頭が射影かマクロなら違反にする() {
-    let ソース一覧 = vec![ソース("crates/a/src/x.rs", "pub type 射影の別名 = <甲 as 乙>::丙;\ntype マクロの別名 = 型を作る!();\n")];
+    let ソース一覧 = vec![原文("crates/a/src/x.rs", "pub type 射影の別名 = <甲 as 乙>::丙;\ntype マクロの別名 = 型を作る!();\n")];
     let 説明一覧 = 正規形の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 2);
     assert!(説明一覧[0].contains("型の別名 `射影の別名` の右辺 `<甲 as 乙>::丙` の先頭が関連型の射影である"), "{}", 説明一覧[0]);
@@ -39,7 +39,7 @@ fn 型の別名の右辺の先頭が射影かマクロなら違反にする() {
 
 #[test]
 fn includeの呼び出しを違反にし別の名前のマクロは違反にしない() {
-    let ソース一覧 = vec![ソース("crates/a/src/x.rs", "include!(\"生えた項目.rs\");\nconst 説明: &str = include_str!(\"説明.txt\");\n")];
+    let ソース一覧 = vec![原文("crates/a/src/x.rs", "include!(\"生えた項目.rs\");\nconst 説明: &str = include_str!(\"説明.txt\");\n")];
     let 説明一覧 = 正規形の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 1);
     assert!(説明一覧[0].contains("`include!` を呼ばない"), "{}", 説明一覧[0]);

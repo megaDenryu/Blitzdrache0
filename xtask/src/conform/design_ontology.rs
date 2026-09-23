@@ -12,8 +12,8 @@
 //! 実装の位置のモジュールの直下に同名の定義が複数あるときと、同じファイルの局所か別の `mod` の定義しか無く `use` も無いときは、一意に決まらないとして違反にする。同じ型が同じ軸の排他の分類(`M不変エンティティ` と `M可変エンティティ`、`MParameter` と `MOptions`)を同時に名乗ることは違反にする。
 //! 自己変更の禁止の検査が対象の型を名前で追えるように、次の正規形を課す。実装の見出しの対象の型と型の別名(`type`)の右辺の先頭が裸のパスであること(関連型の射影 `<A as B>::C` とマクロの呼び出し `名前!(..)` を禁じる)と、
 //! `include!` を呼ばないこと(`name_traceable_form_assertion.rs`)。検査器が名前で引く宣言を別名が横から名乗らないように、`use … as` の別名が走査範囲のトレイトの宣言の名前・取り込まずに書けるトレイトの名前・マーカーを名乗る型の名前のどれも名乗らないことを課す(`import_alias_name_assertion.rs`)。
-//! `use`・`type`・`impl` の3つの読み口が読むのは行の頭の宣言だけであるため、項目の予約語を行の頭でない位置に書くこと(トークン木の外では直前の字句が項目を始めうる字句の閉じた集合に入るものだけ、トークン木の中ではすべて。`item_keyword_position.rs`)を違反にし、
-//! 行の頭から読み始めて読み切れなかった綴りも黙って飛ばさず違反にする(`declaration_reading_outcome.rs`・`readable_form_assertion.rs`)。
+//! `use`・`type`・`impl`・`macro_rules!` の4つの読み口が読むのは行の頭の宣言だけであるため、原文を proc-macro2 で字句の木へ変えて項目を始めうる予約語を数え(トークン木の外では直前の字句が項目を始めうる字句の閉じた集合に入るものだけ、トークン木の中ではすべて。`token_tree_gate/token_tree_scan.rs`)、
+//! 行と種類ごとの数が読み口の答えの数を超えた分を違反にし(`token_tree_gate/item_keyword_reconciliation.rs`)、行の頭から読み始めて読み切れなかった宣言も黙って飛ばさず違反にする(`declaration_reading_outcome.rs`・`token_tree_gate/readable_form_assertion.rs`)。
 //! 検査しない規則(コンパイラが強制する): `Mコマンド: M不変データ` 等の上位トレイトの関係、`M不変データ` の `Clone`、関数の役割(境界付きの newtype)の型引数の境界、`遷移成功結果` の型引数の境界。
 //! 保証範囲: 検査は Rust の型意味論でなく構文パターン(`impl トレイト for 型` の行と `struct`/`enum` の定義ブロック)に対して行う。型の定義の探索(純粋データ規約・型種別・`MParameter` が使う)の型の同一性は
 //! 「標準的なファイル配置(`src/a/b.rs` → `a::b`、`mod.rs`・`lib.rs`)から推定したモジュールパスの下へ、定義の行を囲む `mod 名 { … }` の並びを繋いだ定義の位置のモジュール + 型名」であり、実装の位置のモジュールの直下の定義、無ければその位置の `use` 行(`crate::`・`super::`・`self::` と、入れ子を含む波括弧の群)から取り込み元のモジュールパスを求めて、
@@ -46,10 +46,6 @@ mod implemented_trait;
 mod import_alias_name_assertion;
 #[cfg(test)]
 mod import_alias_name_tests;
-mod item_keyword_lexer;
-mod item_keyword_position;
-#[cfg(test)]
-mod item_keyword_position_tests;
 #[cfg(test)]
 mod japanese_module_hierarchy_tests;
 pub(crate) mod line_matching;
@@ -81,6 +77,8 @@ mod name_matched_implementation;
 mod name_traceable_form_assertion;
 #[cfg(test)]
 mod name_traceable_form_tests;
+#[cfg(test)]
+mod normal_form_test_entry;
 mod parameter_assertion;
 #[cfg(test)]
 mod parameter_assertion_tests;
@@ -90,7 +88,6 @@ mod prelude_trait_names;
 mod process_marker_form_tests;
 mod pure_data_definition_law;
 mod read_implementation;
-mod readable_form_assertion;
 #[cfg(test)]
 mod readable_form_tests;
 #[cfg(test)]
@@ -105,7 +102,7 @@ pub(crate) mod syntax_checker;
 pub(crate) mod syntax_patterns;
 #[cfg(test)]
 mod tests;
-mod token_tree_nesting;
+mod token_tree_gate;
 mod trait_declaration_index;
 pub(crate) mod trait_implementation;
 mod trait_name_index;

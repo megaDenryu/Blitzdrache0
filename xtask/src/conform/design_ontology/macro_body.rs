@@ -30,6 +30,11 @@ impl マクロの本体 {
             .collect()
     }
 
+    /// `macro_rules!` を書き出した行の0始まりの添字。
+    pub fn 書き出しの行(&self) -> usize {
+        *self.範囲.start()
+    }
+
     pub fn 行を含むか(&self, 行: usize) -> bool {
         self.範囲.contains(&行)
     }
