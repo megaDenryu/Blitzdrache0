@@ -6,6 +6,8 @@
 //! `#[path = "..."] mod` については、`module_structure_assertion.rs` が宣言された論理のモジュールパスとこの推定の一致を確かめるため、この推定はそのままで成り立つ。
 
 pub mod enclosing_module;
+#[cfg(test)]
+mod enclosing_module_tests;
 
 use std::path::{Component, Path};
 
