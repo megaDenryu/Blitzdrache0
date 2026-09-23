@@ -13,5 +13,6 @@ mod parameter_type_tests;
 mod receiver_form_tests;
 mod trait_body_macro_tests;
 mod trait_default_method_tests;
+mod two_stage_closure_tests;
 mod unbound_implementation_tests;
 mod wrapping_implementation_tests;
