@@ -5,20 +5,22 @@
 //! 索引へ入れる `use` の項目と型の定義と型の別名は、モジュールの直下(`module_path/enclosing_module.rs`。開いている波括弧がすべてモジュールの本体である行)に書いたものだけである。
 //! `use` と型の定義は、その行の位置のモジュール(ファイルから推定したモジュールパス + 囲む `mod 名 { … }` の並び)へ振り分けて持つ。Rust の波括弧付きのモジュールは親の `use` を引き継がないため、名前を解く側は実装の位置のモジュールの `use` だけを使う。
 //! 関数・実装・トレイトの本体などの局所の位置に書いた `use` と項目は、どのモジュールの取り込みにも宣言にも数えず、ファイルごとの字句位置(`module_index/file_lexical_position.rs`)へ分けて持つ。
+//! モジュールの直下の宣言と `use` のうち条件付きの属性(`#[cfg(..)]`)を持つものは、その名前をモジュールごとの条件付きの名前として控える。名前の在り処の探索が、条件付きの宣言か明示の取り込みが glob を隠さない場合があることを知るためである。
 //! クレートごとの別名だけは、局所の `use … as` も数える。別名として付けられた名前を広く見るほど、名前を通す判定が違反の側へ倒れるためである。
 
 mod file_lexical_position;
+pub mod name_location;
 pub mod name_location_search;
 mod type_alias_table;
 
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
-use super::declaration_prefix::属性と可視性を読み飛ばす;
+use super::declaration_prefix::{属性と可視性を読み飛ばす, 条件付きの属性を持つか};
 use super::line_matching::先頭の識別子;
 use super::module_path::モジュールパス;
 use super::use_resolution::{取り込みの項目, 書き出しの行付きの取り込みの項目一覧};
-use file_lexical_position::ファイルの字句位置;
+use file_lexical_position::{ファイルの字句位置, 項目の宣言の名前};
 use type_alias_table::型の別名の表;
 
 #[derive(Default)]
@@ -26,6 +28,7 @@ pub struct モジュールの索引 {
     モジュール一覧: HashSet<モジュールパス>,                                      // ファイルのモジュールと、モジュールの直下に書いた波括弧付きのモジュール
     モジュールごとの型の名前: HashMap<モジュールパス, HashSet<String>>,           // モジュールの直下の `struct`・`enum` の名前
     モジュールごとの取り込みの項目: HashMap<モジュールパス, Vec<取り込みの項目>>, // 鍵は `use` 文を書いた位置のモジュール
+    モジュールごとの条件付きの名前: HashMap<モジュールパス, HashSet<String>>,     // 条件付きの属性を持つモジュールの直下の宣言と `use` が束縛する名前
     ファイルごとの字句位置: HashMap<PathBuf, ファイルの字句位置>,
     クレートごとの別名: HashMap<モジュールパス, HashSet<String>>, // クレートごとの、`use … as 名前` が名乗らせた名前の集まり
     型の別名の表: 型の別名の表,
@@ -45,8 +48,11 @@ impl モジュールの索引 {
         let モジュール = モジュールパス::ファイルのパスから求める(パス);
         let 行ごとの字句位置 = モジュール.行ごとの字句位置一覧(行一覧);
         self.モジュール一覧.insert(モジュール.clone());
-        for (行, 位置) in 行一覧.iter().zip(&行ごとの字句位置).filter(|(_, 位置)| 位置.モジュールの直下か) {
+        for (添字, (行, 位置)) in 行一覧.iter().zip(&行ごとの字句位置).enumerate().filter(|(_, (_, 位置))| 位置.モジュールの直下か) {
             self.モジュール一覧.insert(位置.モジュール.clone());
+            if let Some(名前) = 項目の宣言の名前(行).filter(|_| 条件付きの属性を持つか(行一覧, 添字)) {
+                self.モジュールごとの条件付きの名前.entry(位置.モジュール.clone()).or_default().insert(名前);
+            }
             if let Some(型名) = 型の定義の名前(行) {
                 self.モジュールごとの型の名前.entry(位置.モジュール.clone()).or_default().insert(型名);
             }
@@ -56,7 +62,12 @@ impl モジュールの索引 {
         for (書き出しの行, 項目) in 書き出しの行付きの取り込みの項目一覧(行一覧) {
             self.クレートごとの別名.entry(モジュール.クレート()).or_default().extend(項目.別名.clone());
             match 字句位置.行の字句位置(書き出しの行).filter(|位置| 位置.モジュールの直下か).map(|位置| 位置.モジュール.clone()) {
-                Some(位置のモジュール) => self.モジュールごとの取り込みの項目.entry(位置のモジュール).or_default().push(項目),
+                Some(位置のモジュール) => {
+                    if 条件付きの属性を持つか(行一覧, 書き出しの行) {
+                        self.モジュールごとの条件付きの名前.entry(位置のモジュール.clone()).or_default().insert(項目.名乗る名前().to_string());
+                    }
+                    self.モジュールごとの取り込みの項目.entry(位置のモジュール).or_default().push(項目);
+                }
                 None => 字句位置.局所の取り込みを足す(項目),
             }
         }
@@ -92,9 +103,14 @@ impl モジュールの索引 {
         self.モジュールごとの取り込みの項目.get(モジュール).map_or(&[][..], Vec::as_slice)
     }
 
-    /// そのモジュールが `use 元 as 別名` で別名を名乗らせているなら、元のパスの最後の名前。
-    pub fn 別名の元の名前(&self, モジュール: &モジュールパス, 別名: &str) -> Option<&str> {
-        self.取り込みの項目一覧(モジュール).iter().find(|項目| 項目.別名.as_deref() == Some(別名)).map(取り込みの項目::元の名前)
+    /// そのモジュールが `use 元 as 別名` で別名を名乗らせている、元のパスの最後の名前の全部(cfg で切り替わる別名は複数ありうる)。
+    pub fn 別名の元の名前一覧(&self, モジュール: &モジュールパス, 別名: &str) -> Vec<&str> {
+        self.取り込みの項目一覧(モジュール).iter().filter(|項目| 項目.別名.as_deref() == Some(別名)).map(取り込みの項目::元の名前).collect()
+    }
+
+    /// そのモジュールの直下で、その名前を束縛する宣言か `use` のどれかが条件付きの属性を持つか。
+    pub fn 条件付きで束縛しているか(&self, モジュール: &モジュールパス, 名前: &str) -> bool {
+        self.モジュールごとの条件付きの名前.get(モジュール).is_some_and(|名前一覧| 名前一覧.contains(名前))
     }
 
     /// そのクレートのどこかの `use … as 名前` が、その名前を別名として名乗らせているか。

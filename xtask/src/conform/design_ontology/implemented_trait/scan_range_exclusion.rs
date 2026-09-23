@@ -15,6 +15,7 @@ use super::super::line_matching::{クレート名, パスの最後の名前};
 use super::super::module_index::モジュールの索引;
 use super::super::module_path::モジュールパス;
 use super::super::syntax_patterns::オントロジートレイト;
+use super::super::use_resolution::取り込みの項目;
 use super::実装したトレイト;
 
 /// 注意: 取り込まずに書ける std のトレイトの名前を空白で区切って並べた一覧である。Rust 2021 の std の prelude にあるトレイトと、derive で実装を生やす std のトレイト(`Debug`・`Hash`)を置く。
@@ -27,25 +28,30 @@ const 標準のクレート名一覧: [&str; 3] = ["std", "core", "alloc"];
 
 impl 実装したトレイト<'_> {
     // 索引に宣言が無くても検査しなくてよいトレイトか(冒頭の4つ)。明示の取り込みが無く、別名として付けられた名前は、どれとしても扱わない。
+    // 起点を名乗る明示の取り込みが複数(cfg で切り替わる取り込み)あれば、全部の取り込み元が走査範囲の外のクレートであるときに限る。
     pub(super) fn 走査範囲の外か(&self, モジュールの索引: &モジュールの索引) -> bool {
         let 名前 = パスの最後の名前(self.表記);
         let パス = self.パス();
         let 起点 = self.起点();
         let 自分 = self.実装.位置のモジュール(モジュールの索引);
         let 項目一覧 = モジュールの索引.取り込みの項目一覧(&自分);
-        let 明示の取り込み = 項目一覧.iter().find(|項目| 項目.名乗る名前() == 起点);
-        if 明示の取り込み.is_none() && self.別名として付けられているか(モジュールの索引, &自分, 起点) {
+        let 明示の取り込み一覧: Vec<&取り込みの項目> = 項目一覧.iter().filter(|項目| 項目.名乗る名前() == 起点).collect();
+        if 明示の取り込み一覧.is_empty() && self.別名として付けられているか(モジュールの索引, &自分, 起点) {
             return false;
         }
         if オントロジートレイト::全部の一覧().iter().any(|マーカー| マーカー.名前() == 名前) {
             return true;
         }
-        if 起点 == パス && 明示の取り込み.is_none() && (取り込まずに書けるトレイトの名前か(名前) || globの取り込み元がすべて走査範囲の外のクレートか(モジュールの索引, &自分, self.実装.パス))
+        if 起点 == パス && 明示の取り込み一覧.is_empty() && (取り込まずに書けるトレイトの名前か(名前) || globの取り込み元がすべて走査範囲の外のクレートか(モジュールの索引, &自分, self.実装.パス))
         {
             return true;
         }
-        let 起点のクレート = 明示の取り込み.map_or(起点, |項目| 項目.パス.trim_start_matches("::").split("::").next().unwrap_or_default().trim());
-        走査範囲の外のクレートか(self.実装.パス, 起点のクレート)
+        if 明示の取り込み一覧.is_empty() {
+            return 走査範囲の外のクレートか(self.実装.パス, 起点);
+        }
+        明示の取り込み一覧
+            .iter()
+            .all(|項目| 走査範囲の外のクレートか(self.実装.パス, 項目.パス.trim_start_matches("::").split("::").next().unwrap_or_default().trim()))
     }
 
     // 名前が、実装のクレートか、このファイルの `use` の取り込み元のクレートのどこかで、`use … as 名前` の別名として付けられているか。

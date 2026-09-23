@@ -63,8 +63,8 @@ impl ファイルの字句位置 {
     }
 }
 
-// 名前を持ち込む項目の宣言の行なら、その名前。同じ行の属性と可視性と `unsafe` を読み飛ばす。
-fn 項目の宣言の名前(行: &str) -> Option<String> {
+/// 名前を持ち込む項目の宣言の行なら、その名前。同じ行の属性と可視性と `unsafe` を読み飛ばす。モジュールの索引も、条件付きの宣言の名前を控えるために使う。
+pub(super) fn 項目の宣言の名前(行: &str) -> Option<String> {
     let 残り = 属性と可視性を読み飛ばす(行);
     let 残り = 残り.strip_prefix("unsafe ").map_or(残り, str::trim_start);
     let 後ろ = 名前を持ち込む項目の予約語一覧.iter().find_map(|予約語| 残り.strip_prefix(予約語).filter(|後ろ| 後ろ.starts_with(char::is_whitespace)))?;
