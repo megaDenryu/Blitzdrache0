@@ -20,8 +20,8 @@ impl 名前の言い換えの辺一覧 {
     pub fn 全ソースから組む(ソース一覧: &[(PathBuf, Vec<String>)]) -> Self {
         let mut 辺一覧 = Self::default();
         for (_, 行一覧) in ソース一覧 {
-            for 行 in 行一覧 {
-                if let Some(宣言) = 型の別名の宣言を読む(行.as_str()).読めた値() {
+            for 添字 in 0..行一覧.len() {
+                if let Some(宣言) = 型の別名の宣言を読む(行一覧, 添字).読めた値() {
                     辺一覧.双方向へ足す(&宣言.別名, パスの最後の名前(&宣言.右辺));
                 }
             }

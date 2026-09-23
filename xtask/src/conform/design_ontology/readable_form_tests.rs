@@ -1,5 +1,5 @@
-//! 3つの読み口(`use`・`type`・`impl`)の全域性の試験。読み切れない綴りが違反になることと、読み口の誤読で落ちていた形が自己変更の検査へ届くことを固定する。
-//! 誤読で落ちていた形は3つである。入れ子の波括弧の `use` の別名、型引数の既定値を持つ `type` の右辺、行の途中から書き始めた `impl` の見出しである。
+//! 3つの読み口(`use`・`type`・`impl`)の全域性の試験。読み切れない綴りと行の頭でない項目の予約語が違反になることと、読み口の誤読で落ちていた形が自己変更の検査へ届くことを固定する。
+//! 誤読で落ちていた形は4つである。入れ子の波括弧の `use` の別名、型引数の既定値を持つ `type` の右辺、行の途中に書いた `impl`・`type`・`use`(マクロの腕の中を含む)、rustfmt が `=` の後ろで折った長い `type` である。
 
 use super::tests::{ソース, 全部の説明関数を連ねた違反の説明一覧, 正規形の説明関数を連ねた違反の説明一覧};
 
@@ -26,7 +26,39 @@ fn 行の途中から書き始めたimplの見出しを読み切れない宣言�
     let ソース一覧 = vec![ソース("crates/a/src/x.rs", "pub struct 規則; impl 規則 {\n    pub fn 変える(&mut self) {}\n}\n")];
     let 説明一覧 = 正規形の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 1, "{説明一覧:?}");
-    assert!(説明一覧[0].contains("`impl` の見出しを行の途中から書き始めている"), "{}", 説明一覧[0]);
+    assert!(説明一覧[0].contains("`impl` を行の頭でない位置に書いている"), "{}", 説明一覧[0]);
+}
+
+#[test]
+fn マクロの腕に書いたimplとtypeとuseを行の頭でない予約語として違反にする() {
+    let ソース一覧 = vec![ソース(
+        "crates/a/src/x.rs",
+        "macro_rules! 生やす {\n    ($($名:ident),*) => { $( impl M不変データ for $名 {} )* };\n    ($名:ident) => { impl M不変データ for $名 {} };\n    () => { pub type 法則 = crate::x::規則; };\n    (別名) => { use crate::x::規則 as 法則; };\n}\n",
+    )];
+    let 説明一覧 = 正規形の説明関数を連ねた違反の説明一覧(ソース一覧);
+    assert_eq!(説明一覧.len(), 4, "{説明一覧:?}");
+    for (説明, 予約語) in 説明一覧.iter().zip(["impl", "impl", "type", "use"]) {
+        assert!(説明.contains(&format!("`{予約語}` を行の頭でない位置に書いている")), "{説明}");
+    }
+}
+
+#[test]
+fn 型の位置のimplと精密な捕捉のuseは違反にならない() {
+    let ソース一覧 = vec![ソース(
+        "crates/a/src/x.rs",
+        "pub fn 走査する(相手: impl Fn(), 借り: &impl Fn(), 可変: &mut impl Fn(), 包み: Vec<impl Fn()>) -> impl Iterator<Item = u8> {\n    [].into_iter()\n}\npub fn 捕える<'a>(値: &'a u8) -> impl Sized + use<'a> {\n    値\n}\n",
+    )];
+    assert!(正規形の説明関数を連ねた違反の説明一覧(ソース一覧).is_empty());
+}
+
+#[test]
+fn rustfmtが等号の後ろで折った長い型の別名は違反にならず名前の閉包へ入る() {
+    let 別名 = "規則を言い換えた長い別名".repeat(12);
+    let 原文 = format!("pub struct 規則;\nimpl M不変データ for 規則 {{}}\nimpl M規則 for 規則 {{}}\npub type {別名} =\n    crate::a::x::規則;\nimpl {別名} {{\n    pub fn 変える(&mut self) {{}}\n}}\n");
+    assert!(原文.lines().any(|行| 行.chars().map(|文字| if 文字.is_ascii() { 1 } else { 2 }).sum::<usize>() > 250));
+    assert!(正規形の説明関数を連ねた違反の説明一覧(vec![ソース("crates/a/src/x.rs", &原文)]).is_empty());
+    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(vec![ソース("crates/a/src/x.rs", &原文)]);
+    assert!(説明一覧.iter().any(|説明| 説明.contains("M不変データ `規則` は自分の型への可変参照を受け手か引数に持つ関数を持てません")), "{説明一覧:?}");
 }
 
 #[test]
@@ -35,7 +67,7 @@ fn 閉じない群のuseと読み切れないtypeを違反にする() {
     let 説明一覧 = 正規形の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 2, "{説明一覧:?}");
     assert!(説明一覧[0].contains("波括弧の群が同じ文の中で閉じていない"), "{}", 説明一覧[0]);
-    assert!(説明一覧[1].contains("`type` の宣言が同じ行の中で `;` に届かない"), "{}", 説明一覧[1]);
+    assert!(説明一覧[1].contains("`type` の宣言がファイルの最後まで `;` に届かない"), "{}", 説明一覧[1]);
 }
 
 #[test]

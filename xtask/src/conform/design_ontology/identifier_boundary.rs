@@ -5,14 +5,23 @@
 
 /// 表記の中に名前が識別子の境界で現れるか。名前が空なら偽である。
 pub fn 識別子として現れるか(表記: &str, 名前: &str) -> bool {
+    !識別子として現れる位置一覧(表記, 名前).is_empty()
+}
+
+/// 表記の中で名前が識別子の境界で現れるバイト位置の一覧。並びは表記の中の位置の順であり、名前が空なら空である。
+pub fn 識別子として現れる位置一覧(表記: &str, 名前: &str) -> Vec<usize> {
     if 名前.is_empty() {
-        return false;
+        return Vec::new();
     }
-    表記.match_indices(名前).any(|(位置, _)| {
-        let 前が境界か = 表記[..位置].chars().next_back().is_none_or(|文字| !識別子の文字か(文字));
-        let 後ろが境界か = 表記[位置 + 名前.len()..].chars().next().is_none_or(|文字| !識別子の文字か(文字));
-        前が境界か && 後ろが境界か
-    })
+    表記
+        .match_indices(名前)
+        .filter(|(位置, _)| {
+            let 前が境界か = 表記[..*位置].chars().next_back().is_none_or(|文字| !識別子の文字か(文字));
+            let 後ろが境界か = 表記[*位置 + 名前.len()..].chars().next().is_none_or(|文字| !識別子の文字か(文字));
+            前が境界か && 後ろが境界か
+        })
+        .map(|(位置, _)| 位置)
+        .collect()
 }
 
 fn 識別子の文字か(文字: char) -> bool {
@@ -21,7 +30,13 @@ fn 識別子の文字か(文字: char) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::識別子として現れるか;
+    use super::{識別子として現れるか, 識別子として現れる位置一覧};
+
+    #[test]
+    fn 境界で現れた位置だけを位置の順に答える() {
+        assert_eq!(識別子として現れる位置一覧("impl 甲 { implicit impl }", "impl"), vec![0, "impl 甲 { implicit ".len()]);
+        assert!(識別子として現れる位置一覧("甲", "").is_empty());
+    }
 
     #[test]
     fn 区切りの無い日本語の識別子の途中では当たらない() {
