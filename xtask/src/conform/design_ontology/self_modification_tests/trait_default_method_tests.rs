@@ -40,7 +40,7 @@ fn 上位トレイトを辿らなくても明示の実装の収集で違反に�
             "crates/a/src/x.rs",
             "pub struct 規則;\nimpl M不変データ for 規則 {}\ntrait 初期化: 変更 {}\ntrait 変更 {\n    fn 変える(&mut self) {}\n}\nimpl 変更 for 規則 {}\nimpl 初期化 for 規則 {}\n",
         )],
-        "実装したトレイト `変更` の宣言の関数 `変える`",
+        "トレイト `変更` の宣言の関数 `変える`",
     );
 }
 

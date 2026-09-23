@@ -22,7 +22,7 @@ fn 同じ行の属性を付けた実装とトレイトとマクロは違反に�
     違反が1件だけあり説明が含む(&format!("{定義}#[allow(dead_code)] impl 規則 {{\n    fn 変える(&mut self) {{}}\n}}\n"), 自己変更の違反);
     違反が1件だけあり説明が含む(
         &format!("{定義}#[allow(dead_code)] pub trait 変更 {{\n    fn 変える(&mut self) {{}}\n}}\nimpl 変更 for 規則 {{}}\n"),
-        "実装したトレイト `変更` の宣言の関数 `変える`",
+        "トレイト `変更` の宣言の関数 `変える`",
     );
     違反が1件だけあり説明が含む("#[macro_export] macro_rules! 生やす {\n    () => {\n        fn 変える(&mut self) {}\n    };\n}\n", "macro_rules! 生やす の fn 変える");
 }

@@ -7,7 +7,6 @@
 use std::path::PathBuf;
 
 use super::super::violation::違反;
-use super::declaration_prefix::先頭の属性を読み飛ばす;
 use super::function_signature::自己変更を問う対象;
 use super::impl_header::implの見出しを読む;
 use super::macro_body::マクロの本体;
@@ -58,7 +57,7 @@ impl 自己変更の検査<'_> {
                 型名: 構文.対象.名前(),
                 可変参照を対象にするか: 構文.対象.可変参照か,
             };
-            let 揃えた見出し = 見出しの空白を揃える(&見出し.表記);
+            let 揃えた見出し = 見出し.台帳の鍵の表記();
             let 実装 = 読んだ実装 {
                 パス: ファイル.パス,
                 行一覧: ファイル.行一覧,
@@ -97,15 +96,10 @@ impl 読んだファイル<'_> {
                 根拠: 自己変更の根拠::実装の関数 {
                     パス: self.パス.clone(),
                     行番号: 行 + 1,
+                    対象の名前: "Self".to_string(),
                     関数名: 関数.名前,
                 },
             })
             .collect()
     }
-}
-
-// 見出しの表記から、前に同じ行で書いた属性と本体を開く `{` を除き、空白の並びを1つに揃える。
-fn 見出しの空白を揃える(表記: &str) -> String {
-    let 表記 = 先頭の属性を読み飛ばす(表記).trim_end();
-    表記.strip_suffix('{').unwrap_or(表記).split_whitespace().collect::<Vec<_>>().join(" ")
 }

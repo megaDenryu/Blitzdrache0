@@ -1,6 +1,7 @@
 //! `impl` と `trait` の見出しから、型引数内の式ブロックと区別して本体の範囲を読む。本体の直下の関数の署名を読む工程へ渡す本体の文字列もここが組む。
 
 use super::declaration_brackets::{最上位で開いた括弧, 見出しの括弧の深さ};
+use super::declaration_prefix::先頭の属性を読み飛ばす;
 use super::impl_syntax::実装の見出しの構文;
 use super::line_matching::implの予約語より後ろ;
 
@@ -16,6 +17,12 @@ impl 実装の見出し {
     /// 見出しの表記を、実装の種類と対象の型と型引数の名前へ分けて読む。`impl` の見出しでなければ無い(`trait` の見出しから読んだときも無い)。
     pub fn 構文を読む(&self) -> Option<実装の見出しの構文> {
         実装の見出しの構文::読む(&self.表記)
+    }
+
+    /// 台帳の行と照らす鍵になる表記。見出しの表記から、前に同じ行で書いた属性と本体を開く `{` を除き、空白の並びを1つに揃えたものである。
+    pub fn 台帳の鍵の表記(&self) -> String {
+        let 表記 = 先頭の属性を読み飛ばす(&self.表記).trim_end();
+        表記.strip_suffix('{').unwrap_or(表記).split_whitespace().collect::<Vec<_>>().join(" ")
     }
 
     /// 本体を開く `{` から閉じる `}` までを改行で繋いだ文字列。本体の直下の関数の署名を読む工程が受け取る。

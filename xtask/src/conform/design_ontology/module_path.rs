@@ -2,7 +2,7 @@
 //! `crates` の直下のクレート `名前` について、`src` の直下の `lib.rs`・`main.rs` は `名前`、`src` の下の `a/b.rs` は `名前::a::b`、`a/mod.rs` は `名前::a` である。
 //! 試験のファイル(`tests.rs`・`*_tests.rs`)も同じ規則で自分のモジュールになる。
 //! この推定は同じファイルの中の波括弧付きのモジュール(`mod a { ... }`)を区別しない。行ごとに囲む `mod a { ... }` の並びまで繋いだ位置のモジュールは `module_path/enclosing_module.rs` が求め、
-//! 型の同一性(`type_definition.rs`)・トレイトの同一性(`trait_declaration_index.rs`)・`use` の振り分け(`module_index.rs`)はファイルの推定でなくその位置のモジュールで数える。
+//! 型の定義の探索(`type_definition.rs`)は、ファイルの推定でなくその位置のモジュールで型の同一性を数える。
 //! `#[path = "..."] mod` については、`module_structure_assertion.rs` が宣言された論理のモジュールパスとこの推定の一致を確かめるため、この推定はそのままで成り立つ。
 
 pub mod enclosing_module;
