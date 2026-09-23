@@ -13,7 +13,7 @@ use super::super::module_index::モジュールの索引;
 use super::super::module_path::モジュールパス;
 use super::super::read_implementation::読んだ実装;
 use super::super::trait_declaration_index::{トレイトの宣言の索引, 見るトレイトの宣言};
-use super::{globの取り込み元がすべて走査範囲の外のクレートか, preludeの名前か};
+use super::{globの取り込み元がすべて走査範囲の外のクレートか, 取り込まずに書けるトレイトの名前か};
 
 /// 実装が書いたトレイトの宣言の在り処。
 pub enum トレイトの宣言の在り処 {
@@ -64,7 +64,7 @@ impl トレイトの宣言の在り処の問い<'_> {
         if (探索.宣言しているか)(自分) {
             return トレイトの宣言の在り処::名前の在り処から作る(名前の在り処::見つかった(vec![自分.clone()]), Vec::new());
         }
-        let 退避のクレート一覧 = if preludeの名前か(探索.名前) || globの取り込み元がすべて走査範囲の外のクレートか(探索.索引, 自分, self.実装.パス) {
+        let 退避のクレート一覧 = if 取り込まずに書けるトレイトの名前か(探索.名前) || globの取り込み元がすべて走査範囲の外のクレートか(探索.索引, 自分, self.実装.パス) {
             Vec::new()
         } else {
             let globのクレート一覧 = 探索.索引.取り込みの項目一覧(自分).iter().filter(|項目| 項目.全部を取り込むか()).map(|項目| 探索.索引.書かれたパスのクレート(自分, &項目.パス));
