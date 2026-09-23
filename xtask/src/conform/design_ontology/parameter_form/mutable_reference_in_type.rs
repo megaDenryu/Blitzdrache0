@@ -4,6 +4,7 @@
 //! 関数の型とトレイト境界の中(`fn(&mut Self)`・`FnOnce(&mut Self)`・`impl FnMut(&mut Self)`・`Box<dyn Fn(&mut Self)>`)は数えない。その引数が可変参照を受け取る処理であって、可変参照そのものではないためである。
 //! 除く範囲は、`fn`・`Fn`・`FnMut`・`FnOnce`・`impl`・`dyn` の語から、その語を囲む括弧の中の要素の終わり(同じ深さのカンマか、囲みを閉じる括弧)までである。
 
+use super::super::identifier_boundary::識別子の文字か;
 use super::super::line_matching::可変参照の参照先;
 
 const 除く範囲を始める語一覧: [&str; 6] = ["fn", "Fn", "FnMut", "FnOnce", "impl", "dyn"];
@@ -69,5 +70,5 @@ fn 要素の終わり(表記: &str) -> usize {
 // 表記の中の識別子(英数字・下線・非ASCIIの文字の並び。マクロのメタ変数の頭の `$` を含む)を順に返す。
 // `$` を区切りとして落とすと、マクロの中の実装 `impl $型` の引数 `&mut $型` の参照先が `型` になり、対象の型名 `$型` に照らせない。
 fn 識別子の一覧(表記: &str) -> impl Iterator<Item = &str> {
-    表記.split(|文字: char| !(文字.is_alphanumeric() || 文字 == '_' || 文字 == '$')).filter(|名前| !名前.is_empty())
+    表記.split(|文字: char| !(識別子の文字か(文字) || 文字 == '$')).filter(|名前| !名前.is_empty())
 }

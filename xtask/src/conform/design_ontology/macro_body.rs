@@ -8,6 +8,7 @@ use std::ops::RangeInclusive;
 
 use super::declaration_prefix::先頭の属性を読み飛ばす;
 use super::function_signature::{自己変更を問う対象, 関数の署名, 関数の署名を読む};
+use super::identifier_boundary::識別子の文字か;
 use super::impl_header::implの見出しを読む;
 use super::line_matching::先頭の識別子;
 
@@ -76,11 +77,7 @@ fn 自己変更を与える相手(問う名前一覧: &[String], 署名: &関数
 
 // 表記の中で、前が識別子の文字でない位置に現れる語の開始位置の一覧。
 fn 語の始まり一覧(表記: &str, 語: &str) -> Vec<usize> {
-    表記
-        .match_indices(語)
-        .map(|(位置, _)| 位置)
-        .filter(|位置| 表記[..*位置].chars().next_back().is_none_or(|前| !(前.is_alphanumeric() || 前 == '_')))
-        .collect()
+    表記.match_indices(語).map(|(位置, _)| 位置).filter(|位置| 表記[..*位置].chars().next_back().is_none_or(|前| !識別子の文字か(前))).collect()
 }
 
 // `macro_rules!` の行から、その後ろで最初に開いた括弧の種類の対応を数え、本体を閉じる行を求める。閉じなければ最後の行である。

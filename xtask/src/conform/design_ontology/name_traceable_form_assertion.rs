@@ -8,6 +8,7 @@
 use std::path::{Path, PathBuf};
 
 use super::super::violation::違反;
+use super::identifier_boundary::識別子の文字か;
 use super::impl_header::implの見出しを読む;
 use super::syntax_checker::クレート構文検査;
 use super::type_alias_scan::型の別名の宣言を読む;
@@ -70,7 +71,7 @@ fn 設計オントロジーの説明(場所: &str, 表記: &str, 追えない形
 // 行に `include!` の呼び出しがあるか。`include_str!`・`include_bytes!` は名前が違うため含めない。
 fn includeの呼び出しを含むか(行: &str) -> bool {
     行.match_indices("include!").any(|(位置, _)| {
-        let 前 = 行[..位置].chars().next_back().is_none_or(|文字| !(文字.is_alphanumeric() || 文字 == '_'));
+        let 前 = 行[..位置].chars().next_back().is_none_or(|文字| !識別子の文字か(文字));
         前 && 行[位置 + "include!".len()..].trim_start().starts_with(['(', '[', '{'])
     })
 }

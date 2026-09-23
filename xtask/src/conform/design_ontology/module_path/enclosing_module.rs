@@ -8,6 +8,7 @@
 //! 数えるのはコードだけの行の波括弧であり、`mod 名 {` の行と `名前! {` の行の最初の `{` だけをそのモジュールの本体とマクロの呼び出しの本体とする。
 
 use super::super::declaration_prefix::{先頭の属性を読み飛ばす, 属性と可視性を読み飛ばす};
+use super::super::identifier_boundary::識別子の文字か;
 use super::super::line_matching::先頭の識別子;
 use super::モジュールパス;
 
@@ -106,7 +107,7 @@ fn 波括弧付きのモジュールの見出しの名前(行: &str) -> Option<S
 // 項目の位置で波括弧を使ってマクロを呼ぶ見出しの行(`名前! {`・`a::名前! {`。前に同じ行の属性があってもよい)か。`macro_rules!` はマクロの定義であり呼び出しの本体を展開しないため含めない。
 fn 波括弧で呼ぶマクロの見出しか(行: &str) -> bool {
     let 残り = 先頭の属性を読み飛ばす(行);
-    let パスの長さ = 残り.char_indices().find(|(_, 文字)| !(文字.is_alphanumeric() || *文字 == '_' || *文字 == ':')).map_or(残り.len(), |(位置, _)| 位置);
+    let パスの長さ = 残り.char_indices().find(|(_, 文字)| !(識別子の文字か(*文字) || *文字 == ':')).map_or(残り.len(), |(位置, _)| 位置);
     let パス = 残り.get(..パスの長さ).unwrap_or_default();
     let 名前の後ろ = 残り.get(パスの長さ..).unwrap_or_default();
     let 名前 = パス.rsplit("::").next().unwrap_or_default();

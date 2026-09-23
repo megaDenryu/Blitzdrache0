@@ -5,6 +5,7 @@
 //! 関数の本体の中のマクロ(`println!` 等)は深さが2以上であるため拾わない。`!=` と否定の `!(...)` は、`!` の直前が識別子でないか直後が括弧でないため拾わない。
 
 use super::declaration_prefix::先頭の属性を読み飛ばす;
+use super::identifier_boundary::識別子の文字か;
 use super::line_matching::先頭の識別子;
 
 /// 本体(開く `{` から始まる文字列)の直下の項目の位置で最初に呼んだマクロの名前(パスで書いたならパスごと)。無ければ無い。
@@ -44,7 +45,7 @@ pub fn 本体の直下のマクロの呼び出し(本体: &str) -> Option<String
 
 // 表記の末尾に続く、識別子と `::` の並び(`a::b` の形のパス)。
 fn 直前のパス(前: &str) -> &str {
-    let 始まり = 前.char_indices().rev().take_while(|&(_, 文字)| 文字.is_alphanumeric() || 文字 == '_' || 文字 == ':').last().map_or(前.len(), |(位置, _)| 位置);
+    let 始まり = 前.char_indices().rev().take_while(|&(_, 文字)| 識別子の文字か(文字) || 文字 == ':').last().map_or(前.len(), |(位置, _)| 位置);
     let パス = &前[始まり..];
     if 先頭の識別子(パス.trim_start_matches(':')).is_empty() { "" } else { パス }
 }

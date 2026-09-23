@@ -4,10 +4,11 @@ use std::ffi::OsStr;
 use std::path::{Component, Path};
 
 use super::declaration_prefix::先頭の属性を読み飛ばす;
+use super::identifier_boundary::識別子の文字か;
 
 /// 先頭から識別子の文字(英数字・下線・非ASCIIの文字)が続く限りを返す。
 pub fn 先頭の識別子(残り: &str) -> String {
-    残り.chars().take_while(|文字| 文字.is_alphanumeric() || *文字 == '_').collect()
+    残り.chars().take_while(|文字| 識別子の文字か(*文字)).collect()
 }
 
 /// `語` が行の中に、前が行頭・空白・`)` で、後ろが識別子の続きでない形で現れるか。
@@ -119,7 +120,7 @@ pub fn 参照の参照先(表記: &str) -> Option<&str> {
 fn 寿命より後ろ(表記: &str) -> Option<&str> {
     let 残り = 表記.trim_start().strip_prefix('&')?.trim_start();
     Some(match 残り.strip_prefix('\'') {
-        Some(寿命) => 寿命.trim_start_matches(|文字: char| 文字.is_alphanumeric() || 文字 == '_').trim_start(),
+        Some(寿命) => 寿命.trim_start_matches(識別子の文字か).trim_start(),
         None => 残り,
     })
 }

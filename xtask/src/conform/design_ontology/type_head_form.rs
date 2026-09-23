@@ -4,6 +4,8 @@
 //! 先頭を読む前に、参照と寿命と `mut` と、包む丸括弧・角括弧を剥がす。`&mut <A as B>::C` と `[m!()]` も先頭は裸のパスでないためである。
 //! 型引数の中の射影(`Result<<A as B>::C, E>`)は剥がした先頭に現れないため、この関数は裸のパスと答える。型引数の中は名前で追う対象でないためである。
 
+use super::identifier_boundary::識別子の文字か;
+
 /// 型の表記の先頭の形。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum 型の表記の先頭 {
@@ -19,7 +21,7 @@ impl 型の表記の先頭 {
         if 先頭.starts_with('<') {
             return Self::関連型の射影;
         }
-        let パスの長さ = 先頭.char_indices().find(|(_, 文字)| !(文字.is_alphanumeric() || *文字 == '_' || *文字 == ':')).map_or(先頭.len(), |(位置, _)| 位置);
+        let パスの長さ = 先頭.char_indices().find(|(_, 文字)| !(識別子の文字か(*文字) || *文字 == ':')).map_or(先頭.len(), |(位置, _)| 位置);
         let パスの後ろ = 先頭.get(パスの長さ..).unwrap_or_default().trim_start();
         if パスの長さ > 0 && パスの後ろ.starts_with('!') {
             return Self::マクロの呼び出し;
@@ -44,7 +46,7 @@ fn 包みを剥がす(表記: &str) -> &str {
         let 剥がした = 残り
             .strip_prefix(['&', '(', '['])
             .map(str::trim_start)
-            .map(|後ろ| 後ろ.strip_prefix('\'').map_or(後ろ, |寿命| 寿命.trim_start_matches(|文字: char| 文字.is_alphanumeric() || 文字 == '_').trim_start()))
+            .map(|後ろ| 後ろ.strip_prefix('\'').map_or(後ろ, |寿命| 寿命.trim_start_matches(識別子の文字か).trim_start()))
             .map(|後ろ| 後ろ.strip_prefix("mut").filter(|後ろ| 後ろ.starts_with(char::is_whitespace)).map_or(後ろ, str::trim_start));
         match 剥がした {
             Some(後ろ) if 後ろ != 残り => 残り = 後ろ,

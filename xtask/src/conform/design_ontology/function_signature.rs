@@ -4,6 +4,7 @@
 //! 引数1つが自分の型への可変参照かの規則は `parameter_form.rs` が持つ。
 
 use super::declaration_brackets::{最上位で開いた括弧, 最上位のカンマで分ける, 見出しの括弧の深さ};
+use super::identifier_boundary::識別子の文字か;
 use super::line_matching::先頭の識別子;
 use super::parameter_form::関数の引数;
 
@@ -47,7 +48,7 @@ pub fn 本体の直下の関数の署名一覧(本体: &str) -> Vec<関数の署
                     break;
                 }
             }
-            'f' if 深さ == 1 && 直前.is_none_or(|前| !(前.is_alphanumeric() || 前 == '_')) => 署名一覧.extend(関数の署名を読む(&本体[位置..])),
+            'f' if 深さ == 1 && 直前.is_none_or(|前| !識別子の文字か(前)) => 署名一覧.extend(関数の署名を読む(&本体[位置..])),
             _ => {}
         }
         直前 = Some(文字);
