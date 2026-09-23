@@ -68,6 +68,9 @@ pub(crate) mod syntax_checker;
 pub(crate) mod syntax_patterns;
 #[cfg(test)]
 mod tests;
+mod trait_declaration_index;
+#[cfg(test)]
+mod trait_default_method_tests;
 pub(crate) mod trait_implementation;
 pub(crate) mod type_definition;
 #[cfg(test)]
