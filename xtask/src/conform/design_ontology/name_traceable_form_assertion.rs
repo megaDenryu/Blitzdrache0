@@ -1,0 +1,67 @@
+//! `クレート構文検査` の説明関数のうち、実装の対象の型を名前で追える形へ固定するもの。触るのは `ソース一覧` と `違反一覧` だけである。
+//! 自己変更の禁止の検査(`mutable_impl_scan.rs`)は、`M不変データ` を名乗る型の名前が実装の対象の表記に現れるかで実装を集める。
+//! 対象の型の表記か型の別名の右辺の先頭が関連型の射影(`<A as B>::C`)かマクロの呼び出し(`名前!(..)`)だと、その表記が指す型の名前が字面に現れず、検査器は実装を集められない。
+//! `include!` も同じ理由で禁じる。展開した先の実装と宣言は走査したソースの行に現れず、検査器はそれを1件も読めない。
+//! 3つとも走査範囲に現状0件であり、この規約は0件を保つためのものである。
+
+use std::path::{Path, PathBuf};
+
+use super::super::violation::違反;
+use super::impl_header::implの見出しを読む;
+use super::syntax_checker::クレート構文検査;
+use super::type_alias_scan::型の別名の宣言を読む;
+use super::type_head_form::型の表記の先頭;
+
+impl クレート構文検査 {
+    /// 実装の見出しの対象の型の位置と、型の別名の右辺の先頭が、裸のパスであること。
+    pub fn 型の表記が名前で追える形であること(mut self) -> Self {
+        let 該当一覧: Vec<(PathBuf, usize, String)> = self.ソース一覧.iter().flat_map(|(パス, 行一覧)| 名前で追えない表記一覧(パス, 行一覧)).collect();
+        for (パス, 行番号, 説明) in 該当一覧 {
+            self.違反一覧.push(違反::行単位(パス, 行番号, 説明));
+        }
+        self
+    }
+
+    /// `include!` を呼ばないこと。展開した先の項目を検査器が1件も読めないため、位置を問わず禁じる。
+    pub fn includeを呼んでいないこと(mut self) -> Self {
+        let 該当一覧: Vec<(PathBuf, usize)> = self
+            .ソース一覧
+            .iter()
+            .flat_map(|(パス, 行一覧)| 行一覧.iter().enumerate().filter(|(_, 行)| includeの呼び出しを含むか(行.as_str())).map(move |(添字, _)| (パス.clone(), 添字 + 1)))
+            .collect();
+        for (パス, 行番号) in 該当一覧 {
+            self.違反一覧.push(違反::行単位(
+                パス,
+                行番号,
+                "設計オントロジー: `include!` を呼ばない(展開した先の実装と宣言は走査したソースの行に現れず、自己変更の禁止の検査が1件も読めない)".to_string(),
+            ));
+        }
+        self
+    }
+}
+
+// 1つのファイルの中で、実装の対象の型か型の別名の右辺の先頭が裸のパスでない行の、行番号(1始まり)と説明。
+fn 名前で追えない表記一覧(パス: &Path, 行一覧: &[String]) -> Vec<(PathBuf, usize, String)> {
+    let mut 該当 = Vec::new();
+    for (添字, 行) in 行一覧.iter().enumerate() {
+        let 対象 = implの見出しを読む(行一覧, 添字).and_then(|見出し| 見出し.構文を読む()).map(|構文| ("実装の対象の型".to_string(), 構文.対象.表記().to_string()));
+        let 別名 = 型の別名の宣言を読む(行.as_str()).map(|宣言| (format!("型の別名 `{}` の右辺", 宣言.別名), 宣言.右辺));
+        該当.extend([対象, 別名].into_iter().flatten().filter_map(|(場所, 表記)| {
+            let 追えない形 = 型の表記の先頭::読む(&表記).名前で追えない形()?;
+            Some((パス.to_path_buf(), 添字 + 1, 設計オントロジーの説明(&場所, &表記, 追えない形)))
+        }));
+    }
+    該当
+}
+
+fn 設計オントロジーの説明(場所: &str, 表記: &str, 追えない形: &str) -> String {
+    format!("設計オントロジー: {場所} `{表記}` の先頭が{追えない形}である。自己変更の禁止の検査は対象の型を名前で追うため、先頭は裸のパス(識別子と `::` と型引数)で書く")
+}
+
+// 行に `include!` の呼び出しがあるか。`include_str!`・`include_bytes!` は名前が違うため含めない。
+fn includeの呼び出しを含むか(行: &str) -> bool {
+    行.match_indices("include!").any(|(位置, _)| {
+        let 前 = 行[..位置].chars().next_back().is_none_or(|文字| !(文字.is_alphanumeric() || 文字 == '_'));
+        前 && 行[位置 + "include!".len()..].trim_start().starts_with(['(', '[', '{'])
+    })
+}

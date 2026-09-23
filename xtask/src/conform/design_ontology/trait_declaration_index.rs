@@ -4,7 +4,7 @@
 //! 引くのは、実装側がトレイトの表記から求めた見るトレイトの宣言(`implemented_trait/declaring_module.rs`)であり、宣言したモジュールが決まったものはそのモジュールの宣言だけを、決められないものは指定のクレートの同名の宣言を全部見る。
 //! 見た宣言が複数あるときは、1つでも自己変更を与える関数があれば与えると答え、無くても1つでも本体の直下でマクロを呼ぶ宣言があれば完全に読めないと答える(一意に決まらない宣言と読めない宣言を違反の側へ倒す)。
 //! 本体の直下のマクロの呼び出し(`body_macro_invocation.rs`)を持つのは、マクロがトレイトの既定の関数を生やせるのに、検査器がマクロを展開できず、生えた関数の署名を読めないためである。
-//! 読む見出しは `trait`・`pub trait`・`pub(crate) trait`・`unsafe trait`・`pub unsafe trait` と、型引数・`where`・上位トレイトを持つものであり、前に同じ行で属性(`#[..] trait`)を書いてもよい。既定の関数の `where Self: Sized` も除外しない。
+//! 見出しの行からトレイトの名前を読むのは `trait_name_index.rs` である。読む見出しは `trait`・`pub trait`・`pub(crate) trait`・`unsafe trait`・`pub unsafe trait` と、型引数・`where`・上位トレイトを持つものであり、前に同じ行で属性(`#[..] trait`)を書いてもよい。既定の関数の `where Self: Sized` も除外しない。
 //! 上位トレイトは辿らない。`impl 下位 for 型` が成り立つには `型: 上位` が要り、それは明示の `impl 上位 for 型`(型に属する実装として別に読む)か全称の実装(対象の型を決められない実装として別に読む)でしか満たせないためである。
 //! 走査範囲の外のトレイト(std と依存クレート)は索引に無い。索引に無いトレイトを検査しなくてよいかは、呼び出し側が `implemented_trait.rs` で判定する。
 
@@ -12,11 +12,10 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 
 use super::body_macro_invocation::本体の直下のマクロの呼び出し;
-use super::declaration_prefix::属性と可視性を読み飛ばす;
 use super::function_signature::{本体の直下の関数の署名一覧, 自己変更を問う対象, 関数の署名};
 use super::impl_header::宣言の見出しを読む;
-use super::line_matching::先頭の識別子;
 use super::module_path::モジュールパス;
+use super::trait_name_index::トレイトの宣言の名前;
 
 /// 実装が書いたトレイトについて、索引のどの宣言を見るか。宣言したモジュールが決まったものと、決められないため同名の宣言を全部見るクレートの2つを持つ。どちらも空なら、走査範囲に宣言が無い。
 pub struct 見るトレイトの宣言 {
@@ -93,18 +92,4 @@ pub enum トレイトの宣言を参照した結果 {
     自己変更を与えない,
     自己変更を与える { 関数名: String },
     宣言を完全に読めない { マクロ名: String }, // 宣言の本体の直下で呼んだマクロが生やす関数を読めない
-}
-
-// トレイトの宣言の見出しの行なら、そのトレイトの名前。同じ行の属性と可視性(`pub`・`pub(...)`)と `unsafe` を読み飛ばす。
-fn トレイトの宣言の名前(行: &str) -> Option<String> {
-    let mut 残り = 属性と可視性を読み飛ばす(行);
-    if let Some(後ろ) = 残り.strip_prefix("unsafe").filter(|後ろ| 後ろ.starts_with(char::is_whitespace)) {
-        残り = 後ろ.trim_start();
-    }
-    let 後ろ = 残り.strip_prefix("trait")?;
-    if !後ろ.starts_with(char::is_whitespace) {
-        return None;
-    }
-    let 名前 = 先頭の識別子(後ろ.trim_start());
-    (!名前.is_empty()).then_some(名前)
 }

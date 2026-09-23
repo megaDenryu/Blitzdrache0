@@ -12,9 +12,10 @@ use super::super::module_index::name_location::名前の在り処;
 use super::super::module_index::name_location_search::名前の在り処の探索;
 use super::super::module_index::モジュールの索引;
 use super::super::module_path::モジュールパス;
+use super::super::prelude_trait_names::取り込まずに書けるトレイトの名前か;
 use super::super::read_implementation::読んだ実装;
 use super::super::trait_declaration_index::{トレイトの宣言の索引, 見るトレイトの宣言};
-use super::scan_range_exclusion::{globの取り込み元がすべて走査範囲の外のクレートか, 取り込まずに書けるトレイトの名前か};
+use super::scan_range_exclusion::globの取り込み元がすべて走査範囲の外のクレートか;
 
 /// 実装が書いたトレイトの宣言の在り処。
 pub enum トレイトの宣言の在り処 {

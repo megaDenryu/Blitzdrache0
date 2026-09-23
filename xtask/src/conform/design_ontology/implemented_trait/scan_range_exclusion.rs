@@ -1,7 +1,7 @@
 //! 実装が書いたトレイトのうち、トレイトの宣言の索引に宣言が無いものを検査しなくてよいかの判定。受け取るのはモジュールの索引、返すのは検査しなくてよいかである。
 //! 索引に宣言が無いトレイトは、次の4つのどれかなら検査しない。(1) `std`・`core`・`alloc` か、実装のクレートの外部の依存クレート(依存の白リストのうち、ワークスペースのクレートでないもの)で始まるパス。
 //! (2) それらのクレートから明示の `use` で取り込んだ名前(`use std::fmt::Display;`)と、それらのクレートのモジュールを取り込んで書いたパス(`use std::fmt;` の後の `fmt::Display`)。
-//! (3) std の prelude と derive で使う名前の固定の一覧(明示の `use` で取り込んでいない名前に限る)。(4) 設計解釈マーカーの名前。(1) から (3) は宣言を読めないが、実在を言語と Cargo が保証する。
+//! (3) 取り込まずに書けるトレイトの名前の一覧(`prelude_trait_names.rs`。明示の `use` で取り込んでいない名前に限る)。(4) 設計解釈マーカーの名前。(1) から (3) は宣言を読めないが、実在を言語と Cargo が保証する。
 //! 明示の `use` で取り込んでいない修飾の無い名前で、実装の位置のモジュールの glob の取り込み元(`use std::fmt::*;`)がすべて (1) のクレートであるものも、(2) と同じく検査しない。
 //! (4) はマーカーの宣言が自己変更を与える関数を持たないことを正本 `blitz_design` が定め、その宣言が走査範囲にあるときは索引が先に参照する。
 //! 明示の `use` で取り込んでいない名前(パスの起点を含む)は、実装のクレートかこのファイルの `use` の取り込み元のクレートのどこかで `use … as 名前` の別名として付けられていれば、4つのどれとしても扱わない。
@@ -14,14 +14,10 @@ use super::super::super::dependency_whitelist::外部の依存クレートのパ
 use super::super::line_matching::{クレート名, パスの最後の名前};
 use super::super::module_index::モジュールの索引;
 use super::super::module_path::モジュールパス;
+use super::super::prelude_trait_names::取り込まずに書けるトレイトの名前か;
 use super::super::syntax_patterns::オントロジートレイト;
 use super::super::use_resolution::取り込みの項目;
 use super::実装したトレイト;
-
-/// 注意: 取り込まずに書ける std のトレイトの名前を空白で区切って並べた一覧である。Rust 2021 の std の prelude にあるトレイトと、derive で実装を生やす std のトレイト(`Debug`・`Hash`)を置く。
-/// prelude に無い名前をここへ足すと、同名の別のトレイトの実装を宣言を読まずに通すことになる。
-const 取り込まずに書けるトレイトの名前の並び: &str =
-    "Clone Copy Debug Default PartialEq Eq PartialOrd Ord Hash Drop From Into TryFrom TryInto AsRef AsMut Iterator IntoIterator DoubleEndedIterator ExactSizeIterator Extend FromIterator ToString ToOwned Send Sync Sized Unpin Fn FnMut FnOnce";
 
 /// 宣言が走査範囲の外にある標準のクレートの名前。
 const 標準のクレート名一覧: [&str; 3] = ["std", "core", "alloc"];
@@ -61,11 +57,6 @@ impl 実装したトレイト<'_> {
             .chain(取り込み元のクレート一覧)
             .any(|クレート| モジュールの索引.クレートで別名として付けられているか(&クレート, 名前))
     }
-}
-
-// 取り込まずに書ける std のトレイトの名前か。
-pub(super) fn 取り込まずに書けるトレイトの名前か(名前: &str) -> bool {
-    取り込まずに書けるトレイトの名前の並び.split_whitespace().any(|書ける名前| 書ける名前 == 名前)
 }
 
 // そのクレートの名前が、宣言を走査範囲の外に持つクレート(std・core・alloc か、実装のクレートの外部の依存クレート)か。

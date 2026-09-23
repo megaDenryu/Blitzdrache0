@@ -3,6 +3,7 @@
 
 use std::path::PathBuf;
 
+use super::line_matching::パスの最後の名前;
 use super::marker_canonical_file::設計解釈マーカーの正本のファイルか;
 use super::module_path::モジュールパス;
 
@@ -19,6 +20,11 @@ impl トレイト実装型 {
     /// 対象の型の表記が `std::result::Result` で始まることで判定するのは、型名が `Result` であることや正本のファイルにあることでは、同名の独自の型(正本のファイルに置いたものを含む)が特例を偽装できるためである。
     pub fn 正本の標準resultへの包括の実装か(&self) -> bool {
         設計解釈マーカーの正本のファイルか(&self.パス) && (self.対象の型の表記 == "std::result::Result" || self.対象の型の表記.starts_with("std::result::Result<"))
+    }
+
+    /// 対象の型の表記のパスの最後の名前(`crate::a::規則<T>` なら `規則`)。名前で実装を集める検査が、この名前を種にする。
+    pub fn 対象の型のパスの最後の名前(&self) -> &str {
+        パスの最後の名前(&self.対象の型の表記)
     }
 
     /// 実装の見出しの行の位置のモジュール(ファイルから推定したモジュールパス + 見出しの行を囲む `mod 名 { … }` の並び)。定義が一意に決まらない実装の型の同一性をこのモジュールで数える。

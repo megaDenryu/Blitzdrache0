@@ -9,6 +9,8 @@
 //! 設計解釈マーカーの実装は `impl マーカー名 for 型` または `impl blitz_design::マーカー名 for 型` の形に固定する。マーカーの名前を含む正規形でない実装の行(再公開したパスの経由・`::blitz_design::` の絶対パス・`blitz_design :: M不変データ` のようなパスの中の空白)と、
 //! `blitz_design` を別名で取り込むこと(`use ... as`)と、`blitz_design` の外で `blitz_design` を公開の `use` で再公開することと、ファイルの中の `mod 名 { ... }` の中にマーカーの実装を置くこと(マーカーの実装の置き場をファイルのモジュールの直下へ固定するため)は違反にする。
 //! 実装の位置のモジュールの直下に同名の定義が複数あるときと、同じファイルの局所か別の `mod` の定義しか無く `use` も無いときは、一意に決まらないとして違反にする。同じ型が同じ軸の排他の分類(`M不変エンティティ` と `M可変エンティティ`、`MParameter` と `MOptions`)を同時に名乗ることは違反にする。
+//! 自己変更の禁止の検査が対象の型を名前で追えるように、次の正規形を課す。実装の見出しの対象の型と型の別名(`type`)の右辺の先頭が裸のパスであること(関連型の射影 `<A as B>::C` とマクロの呼び出し `名前!(..)` を禁じる)と、
+//! `include!` を呼ばないこと(`name_traceable_form_assertion.rs`)。検査器が名前で引く宣言を別名が横から名乗らないように、`use … as` の別名が走査範囲のトレイトの宣言の名前・取り込まずに書けるトレイトの名前・マーカーを名乗る型の名前のどれも名乗らないことを課す(`name_uniqueness_assertion.rs`)。
 //! 検査しない規則(コンパイラが強制する): `Mコマンド: M不変データ` 等の上位トレイトの関係、`M不変データ` の `Clone`、関数の役割(境界付きの newtype)の型引数の境界、`遷移成功結果` の型引数の境界。
 //! 保証範囲: 検査は Rust の型意味論でなく構文パターン(`impl トレイト for 型` の行と `struct`/`enum` の定義ブロック)に対して行う。型の同一性は
 //! 「標準的なファイル配置(`src/a/b.rs` → `a::b`、`mod.rs`・`lib.rs`)から推定したモジュールパスの下へ、定義の行を囲む `mod 名 { … }` の並びを繋いだ定義の位置のモジュール + 型名」であり、実装の位置のモジュールの直下の定義、無ければその位置の `use` 行(`crate::`・`super::`・`self::` と1段の波括弧の群)から取り込み元のモジュールパスを求めて、
@@ -55,16 +57,24 @@ mod module_structure_assertion;
 #[cfg(test)]
 mod module_structure_assertion_tests;
 mod mutable_impl_scan;
+mod name_traceable_form_assertion;
+#[cfg(test)]
+mod name_traceable_form_tests;
+mod name_uniqueness_assertion;
+#[cfg(test)]
+mod name_uniqueness_tests;
 mod parameter_assertion;
 #[cfg(test)]
 mod parameter_assertion_tests;
 mod parameter_form;
+mod prelude_trait_names;
 #[cfg(test)]
 mod process_marker_form_tests;
 mod pure_data_definition_law;
 mod read_implementation;
 #[cfg(test)]
 mod result_marker_form_tests;
+mod scan_entry;
 mod self_modification_evidence;
 #[cfg(test)]
 mod self_modification_tests;
@@ -75,7 +85,10 @@ pub(crate) mod syntax_patterns;
 mod tests;
 mod trait_declaration_index;
 pub(crate) mod trait_implementation;
+mod trait_name_index;
+mod type_alias_scan;
 pub(crate) mod type_definition;
+mod type_head_form;
 #[cfg(test)]
 mod type_identity_tests;
 mod unbound_implementation;
@@ -84,42 +97,4 @@ mod use_resolution;
 #[cfg(test)]
 mod use_resolution_tests;
 
-use std::path::{Component, Path};
-
-use super::error::規約検査の破れ;
-use super::source_lexing::コードだけの行一覧;
-use super::violation::違反;
-use crate::file_scan;
-use module_structure_assertion::モジュール構造の一致検査;
-use syntax_checker::クレート構文検査;
-use unbound_implementation_ledger::対象の型を決められない実装の台帳;
-
-pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
-    let mut ソース一覧 = Vec::new();
-    let mut モジュール構造の違反一覧 = Vec::new();
-    for パス in file_scan::対象ファイル一覧を集める(&["crates"], &["rs"])?.into_iter().filter(|パス| srcの下か(パス)) {
-        let 内容 = std::fs::read_to_string(&パス).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(&パス, 誤り))?;
-        モジュール構造の違反一覧.extend(モジュール構造の一致検査::生成する(パス.clone(), &内容).違反一覧());
-        ソース一覧.push((パス, コードだけの行一覧(&内容)));
-    }
-    let mut 違反一覧 = クレート構文検査::生成する(ソース一覧)
-        .すべてのコマンドが列挙型であること()
-        .すべての規則が構造体であること()
-        .すべての結果が列挙型であること()
-        .すべての純粋データが参照と内部可変性を持たないこと()
-        .すべての不変データが可変参照メソッドを持たないこと()
-        .対象の型を決められない実装が自己変更を与えないこと(&対象の型を決められない実装の台帳::登録済みの台帳())
-        .すべての引数オブジェクトが任意の値を持たないこと()
-        .排他の分類を同時に名乗っていないこと()
-        .設計解釈マーカーを別名で取り込んでいないこと()
-        .設計解釈マーカーの実装が正規形であること()
-        .設計解釈マーカーを再公開していないこと()
-        .設計解釈マーカーの実装が波括弧付きのモジュールの中に無いこと()
-        .違反一覧();
-    違反一覧.extend(モジュール構造の違反一覧);
-    Ok(違反一覧)
-}
-
-fn srcの下か(パス: &Path) -> bool {
-    パス.components().any(|部品| matches!(部品, Component::Normal(名前) if 名前 == "src"))
-}
+pub use scan_entry::全ファイルを検査する;
