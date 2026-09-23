@@ -5,7 +5,8 @@ use std::path::{Path, PathBuf};
 
 use super::super::source_lexing::コードだけの行一覧;
 use super::syntax_checker::クレート構文検査;
-use super::token_tree_gate::字句の木の一覧;
+use super::token_tree_gate::{予約語でない名前の生の識別子の違反一覧, 字句の木の一覧};
+use super::whitespace_form_assertion::コードの空白の違反一覧;
 
 /// 原文のまま持つソースの断片。字句の木の一覧を要る正規形の入口が、コードだけの行の一覧と字句の木の一覧の2つを本番の入口(`scan_entry.rs`)と同じ原文から作るために使う。
 pub(super) fn 原文(名前: &str, 内容: &str) -> (PathBuf, String) {
@@ -22,13 +23,12 @@ pub(super) fn 正規形の説明関数を連ねた違反の説明一覧(原文�
         字句の木.原文を数えて足す(パス.clone(), &内容);
         ソース一覧.push((パス, コードだけの行一覧(&内容)));
     }
-    クレート構文検査::生成する(ソース一覧)
+    let 空白の違反一覧 = コードの空白の違反一覧(&ソース一覧);
+    let 違反一覧 = クレート構文検査::生成する(ソース一覧)
         .型の表記が名前で追える形であること()
         .includeを呼んでいないこと()
         .取り込みの別名が宣言の名前を名乗っていないこと()
         .読み切れない宣言が無いこと(&字句の木)
-        .違反一覧()
-        .into_iter()
-        .map(|違反| 違反.説明)
-        .collect()
+        .違反一覧();
+    違反一覧.into_iter().chain(予約語でない名前の生の識別子の違反一覧(&字句の木)).chain(空白の違反一覧).map(|違反| 違反.説明).collect()
 }

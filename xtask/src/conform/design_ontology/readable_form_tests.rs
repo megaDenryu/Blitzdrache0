@@ -85,7 +85,7 @@ fn 右辺の括弧の中にセミコロンを持つ型の別名が包んだ名�
 fn 読み切れる綴りは違反にならない() {
     let ソース一覧 = vec![原文(
         "crates/a/src/x.rs",
-        "use crate::{x::{規則, 他}, y::*};\ntype 別名<T = u8> = Vec<T>;\ntype 関連の宣言 = fn(&mut u8) -> u8;\nimpl 規則 {\n    pub fn 走査する(&self) -> impl Iterator<Item = u8> {\n        [].into_iter()\n    }\n}\n",
+        "use crate::{x::{規則, 他}, y::*};\ntype 別名<T> = Vec<T>;\ntype 関連の宣言 = fn(&mut u8) -> u8;\nimpl 規則 {\n    pub fn 走査する(&self) -> impl Iterator<Item = u8> {\n        [].into_iter()\n    }\n}\n",
     )];
     assert!(正規形の説明関数を連ねた違反の説明一覧(ソース一覧).is_empty());
 }

@@ -78,6 +78,8 @@ mod name_traceable_form_assertion;
 #[cfg(test)]
 mod name_traceable_form_tests;
 #[cfg(test)]
+mod normal_form_counterexample_tests;
+#[cfg(test)]
 mod normal_form_test_entry;
 mod parameter_assertion;
 #[cfg(test)]
@@ -119,5 +121,6 @@ mod use_group_expansion;
 mod use_resolution;
 #[cfg(test)]
 mod use_resolution_tests;
+mod whitespace_form_assertion;
 
 pub use scan_entry::全ファイルを検査する;
