@@ -38,9 +38,10 @@ fn 構文解析_別名でない取り込みは違反にならない() {
 fn 構文解析_modの中のマーカーの実装は違反になる() {
     let ソース一覧 = vec![ソース("crates/a/src/x.rs", "pub struct 位置;\nmod 内側 {\n    impl super::M不変データ for super::位置 {}\n    impl M不変データ for 位置 {}\n}\n")];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
-    assert_eq!(説明一覧.len(), 2);
-    assert!(説明一覧[0].contains(正規形でない実装の違反));
-    assert!(説明一覧[1].contains("設計解釈マーカーの実装をファイルの中の `mod` の中へ置かない"));
+    assert_eq!(説明一覧.len(), 3, "{説明一覧:?}");
+    assert!(説明一覧[0].contains("M不変データ `位置` の同名の定義が複数あり一意に決まらない"));
+    assert!(説明一覧[1].contains(正規形でない実装の違反));
+    assert!(説明一覧[2].contains("設計解釈マーカーの実装をファイルの中の `mod` の中へ置かない"));
 }
 
 #[test]

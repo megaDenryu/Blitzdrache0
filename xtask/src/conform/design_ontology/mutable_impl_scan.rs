@@ -1,10 +1,10 @@
-//! `M不変データ` の型が自己変更を与える根拠を探す検査。全ソースとトレイトの宣言の索引とモジュールの索引を保持し、型名と定義のパスを受けて、最初に見つけた根拠を返す。
+//! `M不変データ` の型が自己変更を与える根拠を探す検査。全ソースとトレイトの宣言の索引とモジュールの索引を保持し、型名と定義の位置のモジュールを受けて、最初に見つけた根拠を返す。
 //! 型に属する実装は、固有の実装とその型を対象にするトレイトの実装と、その型を包む実装(`impl 変更 for Vec<型>`。`impl_syntax/target_type.rs`)である。対象の型の表記(包む実装なら包まれた型の全部)は `implementation_binding.rs` の規則で定義へ結び付け、
 //! 型名が一致するのに定義へ結び付けられない実装と、型の別名を通した実装も、黙って外さず根拠を探す(見つかれば結び付けられない実装という根拠にする)。
 //! 実装の本体の直下の関数と、実装したトレイトの宣言の関数(既定の関数を含む。`trait_declaration_index.rs`)を `function_signature.rs` の規則で見る。対象が可変参照の実装は、関数を1つでも持てば可変とみなす。
 //! 本体の直下のマクロの呼び出し(`body_macro_invocation.rs`)と、別名で取り込んだトレイトと、宣言の本体の直下でマクロを呼ぶトレイトと、走査範囲に宣言が無く走査範囲の外のトレイトでもないトレイト(`implemented_trait.rs`)は、読めないため黙って通さず根拠にする。
 
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use super::binding_outcome::実装の結び付け;
 use super::body_macro_invocation::本体の直下のマクロの呼び出し;
@@ -13,14 +13,15 @@ use super::impl_header::implの見出しを読む;
 use super::impl_syntax::実装の種類;
 use super::implemented_trait::実装したトレイト;
 use super::module_index::モジュールの索引;
+use super::module_path::モジュールパス;
 use super::read_implementation::読んだ実装;
 use super::self_modification_evidence::自己変更の根拠;
 use super::trait_declaration_index::トレイトの宣言の索引;
 
-/// 自己変更の根拠を探す相手の型。型名と、その型の定義を採ったファイルのパスの組である。
+/// 自己変更の根拠を探す相手の型。型名と、その型の定義の位置のモジュール(定義のファイルのモジュールパス + 定義の行を囲む `mod 名 { … }` の並び)の組であり、この組が型の同一性である。
 pub struct 検査する型の定義<'b> {
     pub 型名: &'b str,
-    pub 定義のパス: &'b Path,
+    pub 定義のモジュール: &'b モジュールパス,
 }
 
 pub struct 自己変更の検査<'a> {
