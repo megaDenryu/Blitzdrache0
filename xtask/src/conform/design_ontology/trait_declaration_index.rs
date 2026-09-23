@@ -15,7 +15,6 @@ use super::declaration_prefix::属性と可視性を読み飛ばす;
 use super::function_signature::{本体の直下の関数の署名一覧, 自己変更を問う対象, 関数の署名};
 use super::impl_header::宣言の見出しを読む;
 use super::line_matching::先頭の識別子;
-use super::module_path::enclosing_module::行ごとの囲むモジュールの名前一覧;
 use super::module_path::モジュールパス;
 
 /// 実装が書いたトレイトについて、索引のどの宣言を見るか。宣言したモジュールが決まったものと、決められないため同名の宣言を全部見るクレートの2つを持つ。どちらも空なら、走査範囲に宣言が無い。
@@ -39,8 +38,7 @@ impl トレイトの宣言の索引 {
     pub fn 全ソースから組む(ソース一覧: &[(PathBuf, Vec<String>)]) -> Self {
         let mut 中身の表: HashMap<(モジュールパス, String), トレイトの宣言の中身> = HashMap::new();
         for (パス, 行一覧) in ソース一覧 {
-            let ファイルのモジュール = モジュールパス::ファイルのパスから求める(パス);
-            let 囲むモジュールの一覧 = 行ごとの囲むモジュールの名前一覧(行一覧);
+            let 行ごとの位置 = モジュールパス::ファイルのパスから求める(パス).行ごとの位置のモジュール一覧(行一覧);
             for (開始, 行) in 行一覧.iter().enumerate() {
                 let Some(名前) = トレイトの宣言の名前(行) else {
                     continue;
@@ -48,9 +46,11 @@ impl トレイトの宣言の索引 {
                 let Some(見出し) = 宣言の見出しを読む(行一覧, 開始) else {
                     continue;
                 };
-                let 囲む名前一覧: Vec<&str> = 囲むモジュールの一覧.get(開始).into_iter().flatten().map(String::as_str).collect();
+                let Some(宣言のモジュール) = 行ごとの位置.get(開始) else {
+                    continue;
+                };
                 let 本体 = 見出し.本体の文字列(行一覧);
-                let 中身 = 中身の表.entry((ファイルのモジュール.下へ繋ぐ(&囲む名前一覧), 名前)).or_default();
+                let 中身 = 中身の表.entry((宣言のモジュール.clone(), 名前)).or_default();
                 中身.関数一覧.extend(本体の直下の関数の署名一覧(&本体));
                 中身.本体の直下のマクロ = 中身.本体の直下のマクロ.take().or_else(|| 本体の直下のマクロの呼び出し(&本体));
             }

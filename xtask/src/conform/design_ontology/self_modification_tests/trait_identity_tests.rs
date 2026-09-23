@@ -1,5 +1,5 @@
 //! 自己変更の禁止の試験のうち、実装したトレイトの同一性(宣言のモジュールパス + 名前)を確かめるもの。明示のパス・`use`・`super::`・`self::` と、波括弧付きのモジュールの中の実装と、
-//! 決められない同名のトレイト(glob の先の複数・多段の再公開)を固定する。索引を宣言のクレートと名前の組で引き、候補に宣言が無ければ同名の全宣言へ退避する形は、
+//! 決められない同名のトレイト(glob の先の複数・多段の再公開)と、glob の取り込み元がすべて std のときにローカルの同名の宣言を見ないことを固定する。索引を宣言のクレートと名前の組で引き、候補に宣言が無ければ同名の全宣言へ退避する形は、
 //! `impl 甲::変更 for 規則` を同じクレートの無関係な `乙::変更` の可変の関数で違反にし、ローカルの可変な `trait Display` で `impl std::fmt::Display for 規則` を違反にしていた。
 
 use std::path::PathBuf;
@@ -48,13 +48,18 @@ fn 標準のトレイトの実装はローカルの同名の可変のトレイ�
     let ローカルのdisplay = "trait Display {\n    fn 変える(&mut self) {}\n}\n";
     let 実装の本体 = "{\n    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {\n        Ok(())\n    }\n}\n";
     違反が無い(vec![ソース("crates/a/src/x.rs", &format!("{定義}{ローカルのdisplay}impl std::fmt::Display for 規則 {実装の本体}"))]);
-    for 取り込みと表記 in ["use std::fmt;\nimpl fmt::Display for 規則 ", "use std::fmt::Display;\nimpl Display for 規則 "] {
+    for 取り込みと表記 in ["use std::fmt;\nimpl fmt::Display for 規則 ", "use std::fmt::Display;\nimpl Display for 規則 ", "use std::fmt::*;\nimpl Display for 規則 "] {
         違反が無い(vec![ソース("crates/a/src/t.rs", ローカルのdisplay), ソース("crates/a/src/x.rs", &format!("{取り込みと表記}{実装の本体}{定義}"))]);
     }
+    let 走査範囲のglobも持つ = format!("use std::fmt::*;\nuse crate::t::*;\nimpl Display for 規則 {実装の本体}{定義}");
+    違反が1件だけあり説明が含む(
+        vec![ソース("crates/a/src/t.rs", ローカルのdisplay), ソース("crates/a/src/x.rs", &走査範囲のglobも持つ)],
+        "実装したトレイト `Display` の宣言の関数 `変える`",
+    );
 }
 
 #[test]
-fn 波括弧付きのモジュールの中の実装は位置のモジュールの宣言も見る() {
+fn 波括弧付きのモジュールの中の実装は位置のモジュールの宣言を見る() {
     let 内側 = "mod 丙 {\n    mod 甲 {\n        pub trait 変更 {\n            fn 変える(&mut self) {}\n        }\n    }\n    impl 甲::変更 for crate::x::規則 {}\n}\n";
     let 外側の甲 = "mod 甲 {\n    pub trait 変更 {\n        fn 読む(&self) {}\n    }\n}\n";
     違反が1件だけあり説明が含む(vec![ソース("crates/a/src/x.rs", &format!("{定義}{外側の甲}{内側}"))], 可変の関数の違反);
