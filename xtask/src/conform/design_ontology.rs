@@ -15,8 +15,6 @@
 //! 固有の `impl` の探索も同じ規則で定義に属するファイルだけを見る。入れ子の波括弧の `use`、glob の取り込み、型引数の境界が入れ子の `<` を含むジェネリックな `impl`、フィールドの型の中に間接的に含まれる内部可変性は保証範囲の外である。
 //! `#[path = "..."] mod` は、物理と論理のモジュール構造の一致を確かめるため、型の同一性の推定をそのまま使える(日本語のモジュールは rustc が E0754 で既定の探索を拒むため、この属性を必ず持つ)。
 
-#[cfg(test)]
-mod const_generic_impl_tests;
 mod declaration_brackets;
 mod exclusive_classification_assertion;
 #[cfg(test)]
@@ -26,8 +24,6 @@ mod existence_marker_form_tests;
 mod function_signature;
 pub(crate) mod impl_header;
 mod impl_syntax;
-#[cfg(test)]
-mod impl_target_tests;
 #[cfg(test)]
 mod japanese_module_hierarchy_tests;
 pub(crate) mod line_matching;
@@ -48,8 +44,6 @@ mod module_structure_assertion;
 #[cfg(test)]
 mod module_structure_assertion_tests;
 mod mutable_impl_scan;
-#[cfg(test)]
-mod mutable_self_law_tests;
 mod parameter_assertion;
 #[cfg(test)]
 mod parameter_assertion_tests;
@@ -59,22 +53,22 @@ mod process_marker_form_tests;
 mod pure_data_definition_law;
 mod read_implementation;
 #[cfg(test)]
-mod receiver_form_tests;
-#[cfg(test)]
 mod result_marker_form_tests;
 mod self_modification_evidence;
+#[cfg(test)]
+mod self_modification_tests;
 mod syntax_assertion;
 pub(crate) mod syntax_checker;
 pub(crate) mod syntax_patterns;
 #[cfg(test)]
 mod tests;
 mod trait_declaration_index;
-#[cfg(test)]
-mod trait_default_method_tests;
 pub(crate) mod trait_implementation;
 pub(crate) mod type_definition;
 #[cfg(test)]
 mod type_identity_tests;
+mod unbound_implementation;
+mod unbound_implementation_ledger;
 mod use_resolution;
 #[cfg(test)]
 mod use_resolution_tests;
@@ -87,6 +81,7 @@ use super::violation::違反;
 use crate::file_scan;
 use module_structure_assertion::モジュール構造の一致検査;
 use syntax_checker::クレート構文検査;
+use unbound_implementation_ledger::対象の型を決められない実装の台帳;
 
 pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut ソース一覧 = Vec::new();
@@ -102,6 +97,7 @@ pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の�
         .すべての結果が列挙型であること()
         .すべての純粋データが参照と内部可変性を持たないこと()
         .すべての不変データが可変参照メソッドを持たないこと()
+        .対象の型を決められない実装が自己変更を与えないこと(&対象の型を決められない実装の台帳::登録済みの台帳())
         .すべての引数オブジェクトが任意の値を持たないこと()
         .排他の分類を同時に名乗っていないこと()
         .設計解釈マーカーを別名で取り込んでいないこと()

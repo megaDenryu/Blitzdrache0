@@ -21,7 +21,7 @@ pub struct 検査する型の定義<'b> {
 }
 
 pub struct 自己変更の検査<'a> {
-    ソース一覧: &'a [(PathBuf, Vec<String>)],
+    pub(super) ソース一覧: &'a [(PathBuf, Vec<String>)],
     トレイトの索引: トレイトの宣言の索引,
 }
 

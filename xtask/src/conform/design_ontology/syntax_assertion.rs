@@ -8,6 +8,7 @@ use super::syntax_checker::クレート構文検査;
 use super::syntax_patterns::{Rust型種別, オントロジートレイト};
 use super::trait_implementation::トレイト実装型;
 use super::type_definition::定義ブロックの結果;
+use super::unbound_implementation_ledger::対象の型を決められない実装の台帳;
 
 impl クレート構文検査 {
     pub fn すべてのコマンドが列挙型であること(self) -> Self {
@@ -60,6 +61,14 @@ impl クレート構文検査 {
         for (型, 根拠) in 破れ一覧 {
             self.違反にする(オントロジートレイト::M不変データ, &型, 根拠.説明());
         }
+        self
+    }
+
+    /// 対象の型を決められない実装(全称の実装とマクロの本体の中の実装)が自己変更を与える関数を持たないこと。持つなら台帳に理由が載っていること。台帳の行の陳腐化も違反にする。
+    /// 台帳を引数で受けるのは、試験が行を与えた台帳で除外と陳腐化を確かめるためである。
+    pub fn 対象の型を決められない実装が自己変更を与えないこと(mut self, 台帳: &対象の型を決められない実装の台帳) -> Self {
+        let 検出一覧 = 自己変更の検査::生成する(&self.ソース一覧).対象の型を決められない自己変更の実装一覧();
+        self.違反一覧.extend(台帳.突き合わせる(&検出一覧));
         self
     }
 

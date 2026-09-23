@@ -4,6 +4,7 @@ use std::path::{Path, PathBuf};
 
 use super::super::source_lexing::コードだけの行一覧;
 use super::syntax_checker::クレート構文検査;
+use super::unbound_implementation_ledger::対象の型を決められない実装の台帳;
 
 pub(super) fn ソース(名前: &str, 内容: &str) -> (PathBuf, Vec<String>) {
     (Path::new(名前).to_path_buf(), コードだけの行一覧(内容))
@@ -16,6 +17,7 @@ pub(super) fn 全部の説明関数を連ねた違反の説明一覧(ソース�
         .すべての結果が列挙型であること()
         .すべての純粋データが参照と内部可変性を持たないこと()
         .すべての不変データが可変参照メソッドを持たないこと()
+        .対象の型を決められない実装が自己変更を与えないこと(&対象の型を決められない実装の台帳::登録済みの台帳())
         .すべての引数オブジェクトが任意の値を持たないこと()
         .排他の分類を同時に名乗っていないこと()
         .設計解釈マーカーを別名で取り込んでいないこと()
