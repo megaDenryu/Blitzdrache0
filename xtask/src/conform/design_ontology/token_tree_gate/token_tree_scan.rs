@@ -1,4 +1,4 @@
-//! 1つのファイルの原文を proc-macro2 で字句の木へ変え、項目を始めうる予約語(`impl`・`type`・`use`・`macro_rules!`)の現れと、行の頭の `impl` と `type` の見出しの中身(`header_tokens.rs`)と、生の識別子の現れと、`extern crate` の宣言を数える走査。
+//! 1つのファイルの原文を proc-macro2 で字句の木へ変え、項目を始めうる予約語(`impl`・`type`・`use`・`macro_rules!`)の現れと、行の頭の `impl` と `type` の見出しの中身(`header_tokens.rs`)と、生の識別子の現れと、`extern crate` の宣言と、型引数に属性を持つ `impl` と `type`(`generic_parameter_attribute_assertion.rs`)を数える走査。
 //! 受け取るのは原文、返すのは数えた現れの一覧か、字句の木へ変えられなかった位置か、シバンで始まることである。
 //! 字句の規則(識別子の文字・コメント・文字列・寿命・生の識別子・括弧の対応)は、proc-macro2 が rustc と同じ規則で読む。自前の字句の走査が、識別子の文字の定義とコメントを挟んだ字句の直結とマクロの呼び出しの括弧の対応で、読み落としを繰り返したためである。
 //! トークン木(マクロの呼び出しの引数の群と `macro_rules!` の本体の群)の中では、マクロが字句を並べ替えて展開できるため、すべての現れを数える。`if !(..)` の群もトークン木に数えるが、厳しくなる向きの誤りだけである。
@@ -12,8 +12,9 @@ use std::str::FromStr;
 use proc_macro2::{Ident, TokenStream, TokenTree};
 
 use super::enclosing_group::並びを囲む群;
+use super::generic_parameter_attribute_assertion::型引数に属性を持つ宣言か;
 use super::header_content::見出しの中身;
-use super::header_tokens::{型の別名の見出しを取り出す, 実装の見出しを取り出す};
+use super::header_tokens::行の頭の見出しを取り出す;
 use super::item_keyword_position::{予約語の現れた場所, 項目の予約語};
 use super::line_head::行の頭か;
 use super::preceding_token::直前の字句;
@@ -25,12 +26,13 @@ pub enum ファイルの字句の木 {
     シバンで始まる,
 }
 
-/// 字句の木から数えた、項目を始めうる予約語の現れと、生の識別子の現れと、`extern crate` の宣言の行。並びは原文の中の順である。
+/// 字句の木から数えた、項目を始めうる予約語の現れと、生の識別子の現れと、`extern crate` の宣言の行と、型引数に属性を持つ宣言の行と、行の頭の見出し。並びは原文の中の順である。
 #[derive(Default)]
 pub struct 字句の木から数えた現れ {
     pub 予約語の現れ一覧: Vec<項目を始めうる予約語の現れ>,
     pub 生の識別子一覧: Vec<生の識別子の現れ>,
-    pub 外部クレートの宣言の行一覧: Vec<usize>, // `extern` の直後に `crate` が続く字句の行(1始まり)
+    pub 外部クレートの宣言の行一覧: Vec<usize>,     // `extern` の直後に `crate` が続く字句の行(1始まり)
+    pub 型引数に属性を持つ宣言の行一覧: Vec<usize>, // 型引数の山括弧の中に属性がある `impl` か `type` の字句の行(1始まり)
     pub 行の頭の見出し一覧: Vec<行の頭の見出し>,
 }
 
@@ -96,6 +98,9 @@ impl 字句の木から数えた現れ {
         if 識別子 == "extern" && matches!(字句一覧.get(添字 + 1), Some(TokenTree::Ident(語)) if 語 == "crate") {
             self.外部クレートの宣言の行一覧.push(行番号);
         }
+        if 型引数に属性を持つ宣言か(字句一覧, 添字) {
+            self.型引数に属性を持つ宣言の行一覧.push(行番号);
+        }
         if let Some(名前) = 識別子.to_string().strip_prefix("r#") {
             self.生の識別子一覧.push(生の識別子の現れ { 行番号, 名前: 名前.to_string() });
             return;
@@ -112,12 +117,7 @@ impl 字句の木から数えた現れ {
         };
         let 行の頭か = 行の頭か(字句一覧, 添字, 予約語, 囲み.開いた行);
         if 行の頭か {
-            let 中身 = match 予約語 {
-                項目の予約語::実装 => Some(実装の見出しを取り出す(字句一覧, 添字)),
-                項目の予約語::型の別名 => 型の別名の見出しを取り出す(字句一覧, 添字),
-                項目の予約語::取り込み | 項目の予約語::マクロの定義 => None,
-            };
-            self.行の頭の見出し一覧.extend(中身.map(|中身| 行の頭の見出し { 行番号, 予約語, 中身 }));
+            self.行の頭の見出し一覧.extend(行の頭の見出しを取り出す(字句一覧, 添字, 予約語).map(|中身| 行の頭の見出し { 行番号, 予約語, 中身 }));
         }
         self.予約語の現れ一覧.push(項目を始めうる予約語の現れ { 行番号, 予約語, 場所, 行の頭か });
     }

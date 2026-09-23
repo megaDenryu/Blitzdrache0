@@ -8,8 +8,18 @@ use proc_macro2::{Delimiter, TokenTree};
 
 use super::angle_bracket_scan::{最上位で止める, 最上位のカンマで分ける, 最上位の位置, 記号か, 語か, 高階の寿命の束縛か};
 use super::header_content::見出しの中身;
+use super::item_keyword_position::項目の予約語;
 use super::normalized_token_sequence::正規化した字句の並び;
 use super::type_notation_name::{パスの最後の名前, 対象の型の中身};
+
+/// 並びの添字の行の頭の予約語の後ろの字句から、見出しの中身を取り出す。見出しの中身を持つのは `impl` と `type` だけであり、`use` と `macro_rules!` なら無い。
+pub fn 行の頭の見出しを取り出す(字句一覧: &[TokenTree], 添字: usize, 予約語: 項目の予約語) -> Option<見出しの中身> {
+    match 予約語 {
+        項目の予約語::実装 => Some(実装の見出しを取り出す(字句一覧, 添字)),
+        項目の予約語::型の別名 => 型の別名の見出しを取り出す(字句一覧, 添字),
+        項目の予約語::取り込み | 項目の予約語::マクロの定義 => None,
+    }
+}
 
 /// 並びの添字の `impl` の後ろの字句から、実装の見出しの中身を取り出す。見出しは本体を開く波括弧の群か `where` までである。
 pub fn 実装の見出しを取り出す(字句一覧: &[TokenTree], 添字: usize) -> 見出しの中身 {
