@@ -10,7 +10,6 @@ use super::super::violation::違反;
 use super::declaration_prefix::先頭の属性を読み飛ばす;
 use super::function_signature::自己変更を問う対象;
 use super::impl_header::implの見出しを読む;
-use super::impl_syntax::実装の見出しの構文;
 use super::macro_body::マクロの本体;
 use super::mutable_impl_scan::自己変更の検査;
 use super::read_implementation::読んだ実装;
@@ -49,7 +48,7 @@ impl 自己変更の検査<'_> {
             let Some(見出し) = implの見出しを読む(ファイル.行一覧, 開始) else {
                 continue;
             };
-            let Some(構文) = 実装の見出しの構文::読む(&見出し.表記) else {
+            let Some(構文) = 見出し.構文を読む() else {
                 continue;
             };
             if !構文.全称の実装か() && !マクロの本体一覧.iter().any(|マクロ| マクロ.行を含むか(開始)) {

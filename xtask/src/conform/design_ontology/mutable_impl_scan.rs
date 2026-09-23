@@ -10,7 +10,7 @@ use super::binding_outcome::実装の結び付け;
 use super::body_macro_invocation::本体の直下のマクロの呼び出し;
 use super::function_signature::{本体の直下の関数の署名一覧, 自己変更を問う対象};
 use super::impl_header::implの見出しを読む;
-use super::impl_syntax::{実装の種類, 実装の見出しの構文};
+use super::impl_syntax::実装の種類;
 use super::implemented_trait::実装したトレイト;
 use super::module_index::モジュールの索引;
 use super::read_implementation::読んだ実装;
@@ -55,7 +55,7 @@ impl<'a> 自己変更の検査<'a> {
 
     // 1つの実装が型に属するか、属するかを決められないなら、本体の直下の関数と実装したトレイトの宣言の関数から根拠を探す。全称の実装は別の問いが読む。
     fn 実装の中の根拠(&self, 実装: &読んだ実装, 型: &検査する型の定義) -> Option<自己変更の根拠> {
-        let 構文 = 実装の見出しの構文::読む(&実装.見出し.表記)?;
+        let 構文 = 実装.見出し.構文を読む()?;
         if 構文.全称の実装か() {
             return None;
         }
