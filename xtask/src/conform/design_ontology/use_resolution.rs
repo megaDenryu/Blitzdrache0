@@ -1,6 +1,6 @@
 //! ファイルの `use` 行を読む工程。`use` 文を波括弧の群を1段展開した項目の一覧に分け、型名をどのモジュールから取り込んでいるかを求める。
 //! 受け取るのはそのファイルのモジュールパスと型名とコードだけの行の一覧、返すのは取り込み元のモジュールパスか、取り込んでいないか、`as` の別名のため取り込み元を求められないかである。
-//! `crate::` はクレート名に、`super::` は親に、`self::` は自分のモジュールパスに置き換える。波括弧の群は1段だけ展開し、入れ子の群は展開しない。
+//! `crate::` はクレート名に、`super::` は親に、`self::` は自分のモジュールパスに置き換える。波括弧の群は1段だけ展開し、入れ子の群は展開しない。群の中の `self` は親のパスを名乗る項目にする。
 //! 頭の属性と可視性(`pub`・`pub(crate)`・`pub(super)`・`pub(self)`・`pub(in パス)`)は、どれも `use` の接頭辞として読み飛ばす。
 
 use super::declaration_prefix::属性と可視性を読み飛ばす;
@@ -99,10 +99,20 @@ fn use文一覧(行一覧: &[String]) -> Vec<String> {
 }
 
 // `a::{b, c as d}` を `a::b`・`a::c as d` に展開する。波括弧が無ければ文そのものである。
+// 群の中の `self`(`a::{self, b}`・`a::{self as e}`)は親のパス `a` そのものを名乗る項目にする。`a::self` のまま残すと、`use std::fmt::{self, Display};` の後の `fmt::Display` の起点 `fmt` を取り込んだ名前と読めない。
 fn 項目一覧(文: &str) -> Vec<String> {
     let Some((接頭辞, 残り)) = 文.split_once('{') else {
         return vec![文.trim().to_string()];
     };
+    let 接頭辞 = 接頭辞.trim();
     let 中身 = 残り.rsplit_once('}').map_or(残り, |(中身, _)| 中身);
-    中身.split(',').map(str::trim).filter(|項目| !項目.is_empty()).map(|項目| format!("{}{}", 接頭辞.trim(), 項目)).collect()
+    中身.split(',').map(str::trim).filter(|項目| !項目.is_empty()).map(|項目| 群の項目を繋ぐ(接頭辞, 項目)).collect()
+}
+
+// 群の接頭辞(`a::`)と群の中の1項目を繋ぐ。項目が `self` か `self as 別名` なら、接頭辞の末尾の `::` を落として繋ぐ。
+fn 群の項目を繋ぐ(接頭辞: &str, 項目: &str) -> String {
+    match 項目.strip_prefix("self").filter(|後ろ| 後ろ.is_empty() || 後ろ.starts_with(char::is_whitespace)) {
+        Some(後ろ) => format!("{}{}", 接頭辞.trim_end_matches("::"), 後ろ),
+        None => format!("{接頭辞}{項目}"),
+    }
 }

@@ -43,6 +43,13 @@ fn 標準と外部の依存クレートとpreludeとマーカーのトレイト�
 }
 
 #[test]
+fn 波括弧の群のselfで取り込んだ標準のモジュールから書いたトレイトの実装は違反にならない() {
+    let 内容 = format!("use std::fmt::{{self, Display}};\nuse std::hash::{{self as 要約}};\n{定義}impl fmt::Debug for 規則 {{}}\nimpl Display for 規則 {{}}\nimpl 要約::Hasher for 規則 {{}}\n");
+    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(vec![ソース("crates/a/src/x.rs", &内容)]);
+    assert!(説明一覧.is_empty(), "{説明一覧:?}");
+}
+
+#[test]
 fn 再公開した別名と範囲を限った公開の別名で取り込んだトレイトの実装は違反になる() {
     let 宣言 = || ソース("crates/a/src/t.rs", 読むだけのトレイト);
     let 再公開 = || ソース("crates/a/src/m.rs", "pub use crate::t::変更 as 別名;\n");
