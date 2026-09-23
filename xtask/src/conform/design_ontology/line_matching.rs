@@ -75,12 +75,14 @@ pub fn 先頭の型引数を分ける(表記: &str) -> (&str, &str) {
     ("", "")
 }
 
-/// 型引数の並び(山括弧の内側)から、寿命と定数を除いた型の引数の名前の一覧(`'a, T: Clone, const N: usize` なら `T` だけ)。名前は各引数の先頭の識別子である。
+/// 型引数の並び(山括弧の内側)から、寿命を除いた型引数と定数の引数の名前の一覧(`'a, T: Clone, const N: usize` なら `T` と `N`)。
+/// 名前は、各引数の頭の外側の属性(`#[cfg(..)]`)を読み飛ばした後の先頭の識別子であり、定数の引数なら `const` の後ろの識別子である。属性を読み飛ばすのは、`impl<#[cfg(..)] T: 境界> 変更 for T` の `T` を落とすと全称の実装を見落とすためである。
 pub fn 型の引数の名前一覧(型引数: &str) -> Vec<String> {
     最上位のカンマで分ける(型引数)
         .into_iter()
-        .map(str::trim)
-        .filter(|引数| !引数.starts_with('\'') && !引数.starts_with("const "))
+        .map(先頭の属性を読み飛ばす)
+        .filter(|引数| !引数.starts_with('\''))
+        .map(|引数| 引数.strip_prefix("const").filter(|後ろ| 後ろ.starts_with(char::is_whitespace)).map_or(引数, str::trim_start))
         .map(先頭の識別子)
         .filter(|名前| !名前.is_empty())
         .collect()

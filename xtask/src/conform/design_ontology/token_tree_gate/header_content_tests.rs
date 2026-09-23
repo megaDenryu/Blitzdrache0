@@ -12,6 +12,7 @@ use super::header_content::見出しの中身;
 use super::header_content_reconciliation::見出しの中身が食い違った違反一覧;
 use super::header_tokens::{型の別名の見出しを取り出す, 実装の見出しを取り出す};
 use super::item_keyword_position::項目の予約語;
+use super::normalized_token_sequence::正規化した字句の並び;
 use super::reader_answer::{読み口の答え, 読み口の結末};
 use super::token_tree_scan::行の頭の見出し;
 
@@ -41,6 +42,8 @@ fn 読み口と字句の木は実装の見出しを同じ中身に読む() {
         "impl<L> Service<axum::serve::IncomingStream<'_, L>> for 経路正規化アプリ {}",
         "impl !Send for 規則 {}",
         "impl 変更 for fn(u8) -> 規則 {}",
+        "impl<#[cfg(target_pointer_width = \"64\")] T: M不変データ, #[cfg(test)] const N: usize> 変更 for T {}",
+        "impl 変更 for 包み<{ const fn 一() -> usize where u8: Copy { 1 } 一() }, 規則> {}",
     ] {
         let 読み口 = 見出しの中身::実装の見出しの構文から作る(&実装の見出しの構文::読む(見出し).expect("見出しを読む"));
         let (字句一覧, 添字) = 字句一覧と予約語の添字(見出し, "impl");
@@ -58,6 +61,7 @@ fn 読み口と字句の木は型の別名を同じ中身に読む() {
         "type 同じ·x<T = 規則> = T;",
         "type 射影 = <甲 as 乙>::丙;",
         "type 状態: M状態 + PartialEq<u8>;",
+        "type 配列<#[cfg(test)] T, const N: usize> = [T; N];",
     ] {
         let 読み口 = match 型の別名の宣言を読む(&[宣言.to_string()], 0) {
             宣言を読んだ結末::読めた(読んだ) => Some(見出しの中身::型の別名の宣言から作る(&読んだ)),
@@ -74,11 +78,15 @@ fn 中身が食い違った見出しを違反にする() {
     let 字句の木 = 見出しの中身::実装 {
         トレイトの実装か: false,
         対象の型の名前: Some("型·for".to_string()),
+        対象の型の表記: 正規化した字句の並び::表記から作る("型·for"),
+        可変参照を対象にするか: false,
         型引数の名前一覧: Vec::new(),
     };
     let 読み違い = 見出しの中身::実装 {
         トレイトの実装か: true,
         対象の型の名前: None,
+        対象の型の表記: None,
+        可変参照を対象にするか: false,
         型引数の名前一覧: Vec::new(),
     };
     let 見出し一覧 = [行の頭の見出し {
