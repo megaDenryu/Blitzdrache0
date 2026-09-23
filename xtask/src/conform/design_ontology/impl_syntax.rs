@@ -1,0 +1,84 @@
+//! `impl` の見出しの表記から、実装が対象にする型を読んだ値。
+//! 受け取るのは見出しの表記(`impl` から本体を開く `{` まで。前に `unsafe` があってもよい)、返すのはこの値か、`impl` の見出しでないときの無しである。
+//! 対象の型の名前はパスの最後の要素で読む(`crate::a::規則<T>` の名前は `規則`)。先頭の識別子で読むと `crate`・`self` を型名と取り違えるためである。
+//! 対象が `&mut X`・`&'a mut X`・`Pin<&mut X>` のときは可変参照を対象にする実装として区別する。その実装の関数は、値で受ける `self` でも `X` を書き換えられるためである。
+
+use super::declaration_brackets::{最上位で開いた括弧, 見出しの括弧の深さ};
+use super::line_matching::{implの予約語より後ろ, パスの最後の名前, 先頭の型引数を分ける, 参照の参照先, 可変参照の参照先};
+
+/// 実装が対象にする型。参照と `Pin` を外した後の型の表記と、可変参照を対象にするかを持つ。
+pub struct 実装の対象の型 {
+    表記: String,
+    pub 可変参照か: bool,
+}
+
+pub struct 実装の見出しの構文 {
+    pub 対象: 実装の対象の型,
+}
+
+impl 実装の見出しの構文 {
+    pub fn 読む(表記: &str) -> Option<Self> {
+        let (_, 残り) = 先頭の型引数を分ける(implの予約語より後ろ(表記)?.trim_start());
+        let 宣言 = 本体と境界より前(残り);
+        let 対象の表記 = match 最上位のforの位置(宣言) {
+            Some(位置) => &宣言[位置 + " for ".len()..],
+            None => 宣言,
+        };
+        Some(Self {
+            対象: 実装の対象の型::表記から読む(対象の表記),
+        })
+    }
+}
+
+impl 実装の対象の型 {
+    fn 表記から読む(表記: &str) -> Self {
+        let 表記 = 表記.trim();
+        let (参照先, 可変参照か) = match (可変参照の参照先(表記), 参照の参照先(表記), pinの中身(表記).and_then(可変参照の参照先)) {
+            (Some(参照先), _, _) | (None, None, Some(参照先)) => (参照先, true),
+            (None, Some(参照先), _) => (参照先, false),
+            (None, None, None) => (表記, false),
+        };
+        Self {
+            表記: 参照先.trim().to_string(), 可変参照か
+        }
+    }
+
+    /// 型のパスの最後の要素の名前。定義をたどる鍵である。
+    pub fn 名前(&self) -> &str {
+        パスの最後の名前(&self.表記)
+    }
+
+    /// 型のパスの最後の要素より前の修飾(`crate::a::規則` なら `crate::a`)。修飾の無い型名だけの表記なら無い。
+    pub fn パスの修飾(&self) -> Option<&str> {
+        self.表記.split('<').next().unwrap_or_default().rsplit_once("::").map(|(修飾, _)| 修飾.trim())
+    }
+}
+
+// 見出しの表記から、`where` の境界と本体を開く `{` を除いた宣言の部分。型引数の中の定数式の波括弧は本体と取り違えない。
+fn 本体と境界より前(残り: &str) -> &str {
+    let 残り = 残り.split_once(" where ").map_or(残り, |(宣言, _)| 宣言);
+    let mut 括弧 = 見出しの括弧の深さ::default();
+    let 終わり = 残り.char_indices().find(|(_, 文字)| 括弧.一文字読む(*文字) == 最上位で開いた括弧::本体の波括弧).map_or(残り.len(), |(位置, _)| 位置);
+    残り[..終わり].trim()
+}
+
+// どの括弧の中でもない位置の ` for ` の開始位置。トレイトの型引数(`変更<fn(u8) -> u8>`)の中を探さない。
+fn 最上位のforの位置(宣言: &str) -> Option<usize> {
+    let mut 括弧 = 見出しの括弧の深さ::default();
+    for (位置, 文字) in 宣言.char_indices() {
+        if 括弧.最上位か() && 宣言[位置..].starts_with(" for ") {
+            return Some(位置);
+        }
+        括弧.一文字読む(文字);
+    }
+    None
+}
+
+// `Pin<X>`(`std::pin::Pin<X>` を含む)の中身 `X`。`Pin` でなければ無い。
+fn pinの中身(表記: &str) -> Option<&str> {
+    let (パス, 残り) = 表記.split_once('<')?;
+    if パスの最後の名前(パス) != "Pin" {
+        return None;
+    }
+    残り.strip_suffix('>')
+}

@@ -41,6 +41,8 @@ mod held_field_tests;
 #[cfg(test)]
 mod marker_impl_tests;
 #[cfg(test)]
+mod owner_implementation_tests;
+#[cfg(test)]
 mod real_crates_tests;
 #[cfg(test)]
 mod struct_declaration_tests;

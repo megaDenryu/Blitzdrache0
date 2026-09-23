@@ -40,36 +40,52 @@ pub fn クレート名(パス: &Path) -> &OsStr {
     }
 }
 
-/// `impl 型名 {`・`impl<T> 型名<T> {` の行か。` for ` を含む行はトレイト実装であり、含めない。
+/// `impl` の予約語より後ろの表記。前に `unsafe` があれば読み飛ばす。`impl` の見出しの行でなければ無い。`impl` の見出しの読み口はすべてこの1つを共有する。
+pub fn implの予約語より後ろ(行: &str) -> Option<&str> {
+    let 行 = 行.trim_start();
+    let 行 = 行.strip_prefix("unsafe").filter(|残り| 残り.starts_with(char::is_whitespace)).map_or(行, str::trim_start);
+    let 残り = 行.strip_prefix("impl")?;
+    (残り.starts_with(char::is_whitespace) || 残り.starts_with('<')).then_some(残り)
+}
+
+/// 先頭の型引数(`<...>`)の内側と、それより後ろの表記。先頭が `<` でなければ内側は空である。入れ子の山括弧を数え、`->` の `>` は数えない。閉じなければどちらも空である。
+pub fn 先頭の型引数を分ける(表記: &str) -> (&str, &str) {
+    if !表記.starts_with('<') {
+        return ("", 表記);
+    }
+    let mut 深さ = 0usize;
+    let mut 直前 = None;
+    for (位置, 文字) in 表記.char_indices() {
+        match 文字 {
+            '<' => 深さ += 1,
+            '>' if 直前 != Some('-') => {
+                深さ = 深さ.saturating_sub(1);
+                if 深さ == 0 {
+                    return (&表記[1..位置], &表記[位置 + 1..]);
+                }
+            }
+            _ => {}
+        }
+        直前 = Some(文字);
+    }
+    ("", "")
+}
+
+/// `impl 型名 {`・`impl<T> 型名<T> {` の行か(前に `unsafe` があってもよい)。` for ` を含む行はトレイト実装であり、含めない。型名は先頭の識別子で照らすため、パスで書いた対象(`impl crate::a::型名 {`)は含めない。
 pub fn 固有のimplの宣言か(行: &str, 型名: &str) -> bool {
-    let Some(残り) = 行.trim_start().strip_prefix("impl") else {
+    let Some(残り) = implの予約語より後ろ(行) else {
         return false;
     };
-    if !残り.starts_with(char::is_whitespace) && !残り.starts_with('<') {
-        return false;
-    }
-    let 残り = if 残り.starts_with('<') { 残り.find('>').map_or("", |位置| &残り[位置 + 1..]) } else { 残り };
+    let (_, 残り) = 先頭の型引数を分ける(残り.trim_start());
     let 宣言 = 行.split_once(" where ").map_or(行, |(宣言, _)| 宣言);
     行.contains('{') && !宣言.split_whitespace().any(|語| 語 == "for") && 先頭の識別子(残り.trim_start()) == 型名
 }
 
-/// トレイトの実装の行(`impl トレイト for 型`・`impl<T> トレイト for 型<T>`)の、トレイトを書く位置(前後の空白を除いたもの)。トレイトの実装の行でなければ無い。
+/// トレイトの実装の行(`impl トレイト for 型`・`impl<T> トレイト for 型<T>`・`unsafe impl トレイト for 型`)の、トレイトを書く位置(前後の空白を除いたもの)。トレイトの実装の行でなければ無い。
 pub fn トレイト実装の行のトレイトの位置(行: &str) -> Option<&str> {
-    let 残り = 行.trim_start().strip_prefix("impl")?;
-    if 残り.chars().next().is_some_and(|文字| 文字.is_alphanumeric() || 文字 == '_') {
-        return None;
-    }
-    let 残り = if 残り.starts_with('<') { 残り.find('>').map_or("", |位置| &残り[位置 + 1..]) } else { 残り };
+    let (_, 残り) = 先頭の型引数を分ける(implの予約語より後ろ(行)?.trim_start());
     let 終わり = 残り.find(" for ")?;
     Some(残り[..終わり].trim())
-}
-
-/// トレイトの実装の行が対象にする型の名前(` for ` の後ろの識別子。`impl 表示 for 位置<T> {` なら `位置`)。トレイトの実装の行でなければ無い。
-pub fn トレイト実装の行の対象の型名(行: &str) -> Option<String> {
-    トレイト実装の行のトレイトの位置(行)?;
-    let 位置 = 行.find(" for ")?;
-    let 型名 = 先頭の識別子(行[位置 + " for ".len()..].trim_start());
-    (!型名.is_empty()).then_some(型名)
 }
 
 /// トレイトの実装の行が対象にする型の表記そのもの(` for ` の後ろから本体の `{` または `where` の前まで。`impl<T, E> M結果 for std::result::Result<T, E> {` なら `std::result::Result<T, E>`)。トレイトの実装の行でなければ無い。
@@ -81,7 +97,27 @@ pub fn トレイト実装の行の対象の型の表記(行: &str) -> Option<&st
     Some(残り[..終わり].trim())
 }
 
-/// その型に属する `impl` の宣言の行か。固有の `impl 型名 {` と、その型を対象にするトレイトの実装 `impl トレイト for 型名 {` の両方を数える。
-pub fn 型に属するimplの宣言か(行: &str, 型名: &str) -> bool {
-    固有のimplの宣言か(行, 型名) || トレイト実装の行の対象の型名(行).is_some_and(|対象| 対象 == 型名)
+/// 型やトレイトのパスの最後の要素の名前(`crate::a::規則<T>` なら `規則`、`FnOnce(u8)` なら `FnOnce`)。
+pub fn パスの最後の名前(表記: &str) -> &str {
+    let パス = 表記.split(['<', '(']).next().unwrap_or_default();
+    パス.rsplit("::").next().unwrap_or_default().trim()
+}
+
+/// 可変参照の型(`&mut X`・`&'a mut X`)の参照先 `X` の表記。可変参照の型でなければ無い。
+pub fn 可変参照の参照先(表記: &str) -> Option<&str> {
+    寿命より後ろ(表記)?.strip_prefix("mut").filter(|後ろ| 後ろ.starts_with(char::is_whitespace)).map(str::trim_start)
+}
+
+/// 参照の型(`&X`・`&'a X`・`&mut X`・`&'a mut X`)の参照先 `X` の表記。参照の型でなければ無い。
+pub fn 参照の参照先(表記: &str) -> Option<&str> {
+    可変参照の参照先(表記).or_else(|| 寿命より後ろ(表記))
+}
+
+// 参照の型の `&` と寿命より後ろ(`mut X` か `X`)。参照の型でなければ無い。
+fn 寿命より後ろ(表記: &str) -> Option<&str> {
+    let 残り = 表記.trim_start().strip_prefix('&')?.trim_start();
+    Some(match 残り.strip_prefix('\'') {
+        Some(寿命) => 寿命.trim_start_matches(|文字: char| 文字.is_alphanumeric() || 文字 == '_').trim_start(),
+        None => 残り,
+    })
 }

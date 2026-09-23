@@ -64,4 +64,34 @@ impl モジュールパス {
             (false, false) => Self(format!("{}::{}", self.0, 区切り一覧.join("::"))),
         }
     }
+
+    /// このモジュールに書かれたパスの表記(`crate::a`・`super::a`・`self::a`・外部クレートの `blitz_x::a`)を絶対のモジュールパスにする。
+    /// `crate::` はクレート名に、`super::` は親に、`self::` は自分に置き換え、起点の予約語で始まらないパスはそのまま外部クレートのパスとして組む。
+    pub fn 書かれたパスを絶対にする(&self, パス: &str) -> Self {
+        let mut 区切り一覧 = パス.split("::").map(str::trim).peekable();
+        let 起点 = match 区切り一覧.peek().copied() {
+            Some("crate") => {
+                区切り一覧.next();
+                Some(self.クレート())
+            }
+            Some("self") => {
+                区切り一覧.next();
+                Some(self.clone())
+            }
+            Some("super") => {
+                let mut 現在 = self.clone();
+                while 区切り一覧.peek().copied() == Some("super") {
+                    現在 = 現在.親();
+                    区切り一覧.next();
+                }
+                Some(現在)
+            }
+            _ => None,
+        };
+        let 残り: Vec<&str> = 区切り一覧.collect();
+        match 起点 {
+            Some(起点) => 起点.下へ繋ぐ(&残り),
+            None => Self::区切り一覧から組む(&残り),
+        }
+    }
 }

@@ -29,41 +29,12 @@ impl 取り込み元の問い<'_> {
                 }
                 if 別名.is_none() && パス.rsplit("::").next() == Some(self.型名) {
                     結果 = 取り込み元を求めた結果::取り込んでいる {
-                        モジュールパス: self.絶対のパスにする(パス).親(),
+                        モジュールパス: self.自分のモジュールパス.書かれたパスを絶対にする(パス).親(),
                     };
                 }
             }
         }
         結果
-    }
-
-    // `crate::`・`super::`・`self::` を自分のモジュールパスから絶対のパスへ置き換える。外部クレートのパスはそのままである。
-    fn 絶対のパスにする(&self, パス: &str) -> モジュールパス {
-        let mut 区切り一覧 = パス.split("::").map(str::trim).peekable();
-        let 起点 = match 区切り一覧.peek().copied() {
-            Some("crate") => {
-                区切り一覧.next();
-                Some(self.自分のモジュールパス.クレート())
-            }
-            Some("self") => {
-                区切り一覧.next();
-                Some(self.自分のモジュールパス.clone())
-            }
-            Some("super") => {
-                let mut 現在 = self.自分のモジュールパス.clone();
-                while 区切り一覧.peek().copied() == Some("super") {
-                    現在 = 現在.親();
-                    区切り一覧.next();
-                }
-                Some(現在)
-            }
-            _ => None,
-        };
-        let 残り: Vec<&str> = 区切り一覧.collect();
-        match 起点 {
-            Some(起点) => 起点.下へ繋ぐ(&残り),
-            None => モジュールパス::区切り一覧から組む(&残り),
-        }
     }
 }
 

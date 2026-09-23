@@ -17,12 +17,16 @@
 
 #[cfg(test)]
 mod const_generic_impl_tests;
+mod declaration_brackets;
 mod exclusive_classification_assertion;
 #[cfg(test)]
 mod exclusive_classification_tests;
 #[cfg(test)]
 mod existence_marker_form_tests;
 pub(crate) mod impl_header;
+mod impl_syntax;
+#[cfg(test)]
+mod impl_target_tests;
 #[cfg(test)]
 mod japanese_module_hierarchy_tests;
 pub(crate) mod line_matching;
@@ -51,6 +55,7 @@ mod parameter_assertion_tests;
 #[cfg(test)]
 mod process_marker_form_tests;
 mod pure_data_definition_law;
+mod read_implementation;
 #[cfg(test)]
 mod result_marker_form_tests;
 mod syntax_assertion;
