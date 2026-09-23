@@ -3,7 +3,7 @@
 use std::ffi::OsStr;
 use std::path::{Component, Path};
 
-use super::declaration_brackets::最上位のカンマで分ける;
+use super::declaration_brackets::{最上位のカンマで分ける, 見出しの括弧の深さ};
 use super::declaration_prefix::先頭の属性を読み飛ばす;
 use super::identifier_boundary::識別子の文字か;
 
@@ -52,25 +52,18 @@ pub fn implの予約語より後ろ(行: &str) -> Option<&str> {
     (残り.starts_with(char::is_whitespace) || 残り.starts_with('<')).then_some(残り)
 }
 
-/// 先頭の型引数(`<...>`)の内側と、それより後ろの表記。先頭が `<` でなければ内側は空である。入れ子の山括弧を数え、`->` の `>` は数えない。閉じなければどちらも空である。
+/// 先頭の型引数(`<...>`)の内側と、それより後ろの表記。先頭が `<` でなければ内側は空である。閉じなければどちらも空である。
+/// 括弧の深さは宣言の見出しの数え方(`declaration_brackets.rs`)で数える。入れ子の山括弧を数え、`->` の `>` と、丸括弧と角括弧の中の `<` と `>`(`境界<[u8; (1 < 2) as usize]>`)は数えない。
 pub fn 先頭の型引数を分ける(表記: &str) -> (&str, &str) {
     if !表記.starts_with('<') {
         return ("", 表記);
     }
-    let mut 深さ = 0usize;
-    let mut 直前 = None;
+    let mut 括弧 = 見出しの括弧の深さ::default();
     for (位置, 文字) in 表記.char_indices() {
-        match 文字 {
-            '<' => 深さ += 1,
-            '>' if 直前 != Some('-') => {
-                深さ = 深さ.saturating_sub(1);
-                if 深さ == 0 {
-                    return (&表記[1..位置], &表記[位置 + 1..]);
-                }
-            }
-            _ => {}
+        括弧.括弧として数える(文字);
+        if 文字 == '>' && 括弧.最上位か() {
+            return (&表記[1..位置], &表記[位置 + 1..]);
         }
-        直前 = Some(文字);
     }
     ("", "")
 }

@@ -23,6 +23,7 @@
 
 use super::role::関数の役割;
 use super::unextracted_line::抽出できなかった理由;
+use crate::conform::design_ontology::identifier_boundary::識別子の文字か;
 use crate::design_model::設計概念の識別子;
 
 /// 役割の値に包まれた具体の関数のパス。`キーボード歩行入力::歩行入力を解釈する` なら所有者は `キーボード歩行入力`、名前は `歩行入力を解釈する` である。
@@ -105,12 +106,7 @@ fn パスの区分一覧に分ける(表記: &str) -> Option<Vec<String>> {
     表記.trim().split("::").map(|区分| 識別子か(区分.trim()).then(|| 区分.trim().to_string())).collect()
 }
 
-// Rustの識別子として読める表記か。日本語の識別子を受けるため、判定は英数字であることでなく文字であることで行う。
+// Rustの識別子として読める表記か。識別子の文字の判定は設計オントロジーの検査器と同じ1つの関数(英数字・下線・非ASCIIの文字)に従い、`·` を含む名前を途中で切らない。
 fn 識別子か(表記: &str) -> bool {
     !表記.is_empty() && !表記.starts_with(|文字: char| 文字.is_ascii_digit()) && 表記.chars().all(識別子の文字か)
-}
-
-// Rustの識別子を構成してよい1文字か。
-fn 識別子の文字か(文字: char) -> bool {
-    文字.is_alphanumeric() || 文字 == '_'
 }

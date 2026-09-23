@@ -41,7 +41,7 @@ mod external_trait_ledger;
 mod external_trait_ledger_tests;
 mod external_trait_scan;
 mod function_signature;
-mod identifier_boundary;
+pub(crate) mod identifier_boundary;
 mod impl_body_direct_lines;
 pub(crate) mod impl_header;
 mod impl_syntax;

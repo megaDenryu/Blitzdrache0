@@ -56,10 +56,10 @@ mod tests {
 
     #[test]
     #[allow(clippy::expect_used)]
-    fn 設計オントロジーの検査器は識別子の文字をこの関数の外で判定しない() {
-        let 根 = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src/conform/design_ontology");
-        let mut 原文一覧 = vec![(根.with_extension("rs"), std::fs::read_to_string(根.with_extension("rs")).expect("親のモジュールを読む"))];
-        let mut 未読 = vec![根];
+    fn 設計オントロジーの検査器と設計関係の抽出器は識別子の文字をこの関数の外で判定しない() {
+        let 根一覧 = ["src/conform/design_ontology", "src/design_model"].map(|根| std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(根));
+        let mut 原文一覧: Vec<_> = 根一覧.iter().map(|根| (根.with_extension("rs"), std::fs::read_to_string(根.with_extension("rs")).expect("親のモジュールを読む"))).collect();
+        let mut 未読 = 根一覧.to_vec();
         while let Some(ディレクトリ) = 未読.pop() {
             for 項目 in std::fs::read_dir(&ディレクトリ).expect("ディレクトリを読む") {
                 let パス = 項目.expect("項目を読む").path();
