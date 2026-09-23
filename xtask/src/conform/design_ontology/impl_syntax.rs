@@ -7,9 +7,9 @@ mod target_type;
 #[cfg(test)]
 mod tests;
 
-use super::declaration_brackets::{最上位で開いた括弧, 最上位のカンマで分ける, 見出しの括弧の深さ};
+use super::declaration_brackets::{最上位で開いた括弧, 見出しの括弧の深さ};
 use super::identifier_boundary::識別子として現れる位置一覧;
-use super::line_matching::{implの予約語より後ろ, 先頭の型引数を分ける, 先頭の識別子};
+use super::line_matching::{implの予約語より後ろ, 先頭の型引数を分ける, 先頭の識別子, 型の引数の名前一覧};
 pub use target_form::名前で読めない実装の対象の違反一覧;
 pub use target_type::実装の対象の型;
 
@@ -58,6 +58,11 @@ impl 実装の見出しの構文 {
         matches!(self.種類, 実装の種類::固有の実装) && 先頭の識別子(self.対象.表記()) == 型名
     }
 
+    /// 寿命と定数を除いた型の引数の名前の一覧。
+    pub fn 型引数の名前一覧(&self) -> &[String] {
+        &self.型引数の名前一覧
+    }
+
     /// 対象の型が実装自身の型引数である全称の実装(`impl<T: 境界> トレイト for T`・`for &mut T`)か。検査器は境界を評価できず、対象の型を具体の型へ結び付けられない。
     pub fn 全称の実装か(&self) -> bool {
         self.型引数の名前一覧.iter().any(|名前| 名前 == self.対象.名前())
@@ -90,14 +95,4 @@ fn 最上位のforの位置(宣言: &str) -> Option<usize> {
 // `for` の後ろが高階の寿命の束縛の山括弧(`<'a>`・`<>`)か。実装の対象の型は山括弧で始まれない(関連型の射影は正規形が禁じる)ため、`<` の後ろが寿命か閉じ括弧なら束縛である。
 fn 高階の寿命の束縛か(後ろ: &str) -> bool {
     後ろ.trim_start().strip_prefix('<').is_some_and(|山括弧の中| 山括弧の中.trim_start().starts_with(['\'', '>']))
-}
-
-fn 型の引数の名前一覧(型引数: &str) -> Vec<String> {
-    最上位のカンマで分ける(型引数)
-        .into_iter()
-        .map(str::trim)
-        .filter(|引数| !引数.starts_with('\'') && !引数.starts_with("const "))
-        .map(先頭の識別子)
-        .filter(|名前| !名前.is_empty())
-        .collect()
 }

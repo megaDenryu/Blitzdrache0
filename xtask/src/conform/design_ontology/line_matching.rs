@@ -3,6 +3,7 @@
 use std::ffi::OsStr;
 use std::path::{Component, Path};
 
+use super::declaration_brackets::最上位のカンマで分ける;
 use super::declaration_prefix::先頭の属性を読み飛ばす;
 use super::identifier_boundary::識別子の文字か;
 
@@ -74,10 +75,28 @@ pub fn 先頭の型引数を分ける(表記: &str) -> (&str, &str) {
     ("", "")
 }
 
+/// 型引数の並び(山括弧の内側)から、寿命と定数を除いた型の引数の名前の一覧(`'a, T: Clone, const N: usize` なら `T` だけ)。名前は各引数の先頭の識別子である。
+pub fn 型の引数の名前一覧(型引数: &str) -> Vec<String> {
+    最上位のカンマで分ける(型引数)
+        .into_iter()
+        .map(str::trim)
+        .filter(|引数| !引数.starts_with('\'') && !引数.starts_with("const "))
+        .map(先頭の識別子)
+        .filter(|名前| !名前.is_empty())
+        .collect()
+}
+
 /// 型やトレイトのパスの最後の要素の名前(`crate::a::規則<T>` なら `規則`、`FnOnce(u8)` なら `FnOnce`)。
 pub fn パスの最後の名前(表記: &str) -> &str {
     let パス = 表記.split(['<', '(']).next().unwrap_or_default();
     パス.rsplit("::").next().unwrap_or_default().trim()
+}
+
+/// 表記が1つの識別子(頭に `$` があってもよい)なら、その表記。前後の空白は除く。それ以外(`[規則]`・`dyn 変更`・`&'a 規則`)は名前で読めないとして無い。
+pub fn 名前で読める表記(表記: &str) -> Option<String> {
+    let 表記 = 表記.trim();
+    let 本体 = 表記.strip_prefix('$').unwrap_or(表記);
+    (!本体.is_empty() && 本体.chars().all(識別子の文字か)).then(|| 表記.to_string())
 }
 
 /// 可変参照の型(`&mut X`・`&'a mut X`)の参照先 `X` の表記。可変参照の型でなければ無い。

@@ -9,7 +9,7 @@
 use super::declaration_brackets::{最上位のカンマで分ける, 見出しの括弧の深さ};
 use super::declaration_prefix::属性と可視性を読み飛ばす;
 use super::declaration_reading_outcome::{宣言を読んだ結末, 読めない宣言};
-use super::line_matching::{先頭の型引数を分ける, 先頭の識別子};
+use super::line_matching::{先頭の型引数を分ける, 先頭の識別子, 型の引数の名前一覧};
 use super::macro_metavariable::メタ変数を含むか;
 use super::statement_span::{セミコロンまで繋いだ本文, 宣言を終えるセミコロン};
 
@@ -21,6 +21,11 @@ pub struct 型の別名の宣言 {
 }
 
 impl 型の別名の宣言 {
+    /// 型引数の並びのうち、寿命と定数を除いた型の引数の名前の一覧。
+    pub fn 型引数の名前一覧(&self) -> Vec<String> {
+        型の引数の名前一覧(&self.型引数の並び)
+    }
+
     /// 型引数の並びのうち、既定値(`T = 規則`)を持つ型の引数の表記の一覧。定数の引数(`const N: usize = 3`)と、境界の中の等式(`T: Iterator<Item = u8>`)は数えない。
     pub fn 既定値を持つ型の引数一覧(&self) -> Vec<&str> {
         最上位のカンマで分ける(&self.型引数の並び)
