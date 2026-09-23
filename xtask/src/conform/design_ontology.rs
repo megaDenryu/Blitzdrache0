@@ -23,6 +23,7 @@ mod exclusive_classification_assertion;
 mod exclusive_classification_tests;
 #[cfg(test)]
 mod existence_marker_form_tests;
+mod function_signature;
 pub(crate) mod impl_header;
 mod impl_syntax;
 #[cfg(test)]
@@ -52,12 +53,16 @@ mod mutable_self_law_tests;
 mod parameter_assertion;
 #[cfg(test)]
 mod parameter_assertion_tests;
+mod parameter_form;
 #[cfg(test)]
 mod process_marker_form_tests;
 mod pure_data_definition_law;
 mod read_implementation;
 #[cfg(test)]
+mod receiver_form_tests;
+#[cfg(test)]
 mod result_marker_form_tests;
+mod self_modification_evidence;
 mod syntax_assertion;
 pub(crate) mod syntax_checker;
 pub(crate) mod syntax_patterns;

@@ -13,7 +13,7 @@ const 行一覧: [台帳の行; 11] = [
     台帳の行::構造体("acceptance/judgment_name.rs", "判定の名前", 3, 0, 17),
     台帳の行::構造体("auto_exposure/parse.rs", "自動露出の報告", 0, 16, 0),
     台帳の行::構造体("cloth_xpbd_reference/parse.rs", "参照比較の観測", 1, 17, 1),
-    台帳の行::構造体("conform/design_ontology/syntax_checker.rs", "クレート構文検査", 6, 2, 26), // 可変implの走査を責務ごとに分けた。既存の分散を含む実測値。
+    台帳の行::構造体("conform/design_ontology/syntax_checker.rs", "クレート構文検査", 5, 2, 25), // 自己変更の走査を別の型の自己変更の検査へ移した後の実測値。
     台帳の行::列挙("distant_view/plan.rs", "実行の別", 1, 22, 1),
     台帳の行::構造体("game_fox_tour/map_generation_check/check_root.rs", "検収用のルート", 3, 0, 18),
     台帳の行::構造体("hdr_luminance/statistics.rs", "輝度統計", 0, 11, 0),
