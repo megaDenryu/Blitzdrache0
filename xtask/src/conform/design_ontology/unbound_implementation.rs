@@ -7,6 +7,7 @@
 use std::path::PathBuf;
 
 use super::super::violation::違反;
+use super::declaration_prefix::先頭の属性を読み飛ばす;
 use super::function_signature::自己変更を問う対象;
 use super::impl_header::implの見出しを読む;
 use super::impl_syntax::実装の見出しの構文;
@@ -104,8 +105,8 @@ impl 読んだファイル<'_> {
     }
 }
 
-// 見出しの表記から本体を開く `{` を除き、空白の並びを1つに揃える。
+// 見出しの表記から、前に同じ行で書いた属性と本体を開く `{` を除き、空白の並びを1つに揃える。
 fn 見出しの空白を揃える(表記: &str) -> String {
-    let 表記 = 表記.trim_end();
+    let 表記 = 先頭の属性を読み飛ばす(表記).trim_end();
     表記.strip_suffix('{').unwrap_or(表記).split_whitespace().collect::<Vec<_>>().join(" ")
 }

@@ -3,6 +3,8 @@
 use std::ffi::OsStr;
 use std::path::{Component, Path};
 
+use super::declaration_prefix::先頭の属性を読み飛ばす;
+
 /// 先頭から識別子の文字(英数字・下線・非ASCIIの文字)が続く限りを返す。
 pub fn 先頭の識別子(残り: &str) -> String {
     残り.chars().take_while(|文字| 文字.is_alphanumeric() || *文字 == '_').collect()
@@ -40,9 +42,9 @@ pub fn クレート名(パス: &Path) -> &OsStr {
     }
 }
 
-/// `impl` の予約語より後ろの表記。前に `unsafe` があれば読み飛ばす。`impl` の見出しの行でなければ無い。`impl` の見出しの読み口はすべてこの1つを共有する。
+/// `impl` の予約語より後ろの表記。前に同じ行で書いた属性(`#[allow(x)] impl`)と `unsafe` があれば読み飛ばす。`impl` の見出しの行でなければ無い。`impl` の見出しの読み口はすべてこの1つを共有する。
 pub fn implの予約語より後ろ(行: &str) -> Option<&str> {
-    let 行 = 行.trim_start();
+    let 行 = 先頭の属性を読み飛ばす(行);
     let 行 = 行.strip_prefix("unsafe").filter(|残り| 残り.starts_with(char::is_whitespace)).map_or(行, str::trim_start);
     let 残り = 行.strip_prefix("impl")?;
     (残り.starts_with(char::is_whitespace) || 残り.starts_with('<')).then_some(残り)
