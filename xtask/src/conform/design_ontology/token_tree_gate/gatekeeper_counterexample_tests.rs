@@ -1,5 +1,6 @@
 //! 字句の木の門番と読み口の突き合わせが、これまでの検収が見つけた反例を違反にすることの試験。反例はどれも rustc 1.94.0 でコンパイルが通り、自己変更の禁止を黙って迂回していた。
-//! 反例は、英数字でない非ASCIIの文字を名前に持つマクロの呼び出し(`通す·!`)・コメントや改行を挟んだ予約語(`impl/**/丙`・`impl` の直後の改行・`use` の直後の改行)・同じ行の2つ目の実装・行の途中の `macro_rules!`・`$` の後ろの実装・マクロの引数の前置きの後ろの宣言・式の中の実装である。
+//! 反例は、英数字でない非ASCIIの文字を名前に持つマクロの呼び出し(`通す·!`)・コメントや改行を挟んだ予約語(`impl/**/丙`・`impl` の直後の改行・`use` の直後の改行)・同じ行の2つ目の実装・行の途中の `macro_rules!`・`$` の後ろの実装・マクロの引数の前置きの後ろの宣言・式の中の実装と、
+//! 読み口の余分な答えで数を釣り合わせる形(`->` の次の行の型の位置の `impl`)とシバンで始まるファイル(`#!/usr/bin/env run`・`#!/*`・`#! [..]`)である。
 
 use super::super::normal_form_test_entry::{原文, 正規形の説明関数を連ねた違反の説明一覧};
 use super::super::tests::{ソース, 全部の説明関数を連ねた違反の説明一覧};
@@ -13,6 +14,11 @@ const マクロの引数の前置きの後ろの宣言: &str = "pub trait M不�
 const マクロの本体の中のメタ変数の宣言: &str = "pub trait M不変データ {}\npub trait 変更 {\n    fn 変える(&mut self);\n}\nmod x {\n    pub struct 規則;\n}\nimpl M不変データ for x::規則 {}\nmacro_rules! 取り込む {\n    ($パス:path, $別名:ident) => {\n        use $パス as $別名;\n    };\n}\n取り込む!(crate::x::規則, 法則);\nimpl 変更 for 法則 {\n    fn 変える(&mut self) {}\n}\nmacro_rules! 名付ける {\n    ($元:ty) => {\n        pub type 別の法則 = $元;\n    };\n}\n名付ける!(crate::x::規則);\nimpl 別の変更 for 別の法則 {\n    fn 変える(&mut self) {}\n}\npub trait 別の変更 {\n    fn 変える(&mut self);\n}\n";
 const 式の中の実装: &str = "pub struct 甲(u8);\nconst _: () = { impl 甲 { pub fn 変える(&mut self) { self.0 = 1; } } };\npub fn f() { impl 甲 { pub fn 変える2(&mut self) {} } }\npub fn g() -> u8 { let x = { impl 甲 { pub fn 変える3(&mut self) {} } 1 }; x }\npub fn h(s: &str, _c: impl Fn()) {}\npub fn k() { h(\"ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ\", || { impl 甲 { pub fn 変える4(&mut self) { self.0 = 2; } } }); }\npub fn m() { let _v = vec![{ impl 甲 { pub fn 変える5(&mut self) {} } 1 }]; }\npub fn n(x: u8) -> u8 { match x { 0 => { impl 甲 { pub fn 変える6(&mut self) {} } 1 } _ => 2 } }\n";
 const コメントの後ろの式の中の実装: &str = "pub struct 甲(u8);\npub fn h(_c: impl Fn()) {}\npub fn k() {\n    h(|| {\n        impl 甲 {\n            pub fn 変える(&mut self) {\n                self.0 = 2;\n            }\n        }\n    } /* 注 */);\n}\npub fn k2() {\n    let _x = 1 + /* 注 */ { impl 甲 { pub fn 変える2(&mut self) {} } 2 };\n}\npub fn k3() {\n    h(|| /* 注 */ { impl 甲 { pub fn 変える3(&mut self) {} } });\n}\n";
+const 矢印の次の行の型の位置の実装: &str = "pub trait M不変データ {}\npub struct 甲(pub u8);\nimpl M不変データ for 甲 {}\n#[rustfmt::skip]\npub fn 作る() ->\nimpl Sized { pub trait 書き換え { fn 変える(&mut self); } impl 書き換え for 甲 { fn 変える(&mut self) { self.0 = 1; } }\n    let mut 値 = 甲(0);\n    値.変える();\n    値\n}\n";
+const シバンの次の行の取り込み: &str = "#!/usr/bin/env run\nuse self::規則 as 使う; pub use self::規則 as 法則;\npub type 使うの別名 = 使う;\npub trait M不変データ {}\npub trait 変更 {\n    fn 変える(&mut self);\n}\npub struct 規則(pub u8);\nimpl M不変データ for 規則 {}\nimpl 変更 for 法則 {\n    fn 変える(&mut self) {\n        self.0 = 1;\n    }\n}\n";
+const シバンのブロックコメント: &str = "#!/*\nimpl 変更 for 規則 { fn 変える(&mut self) { self.0 = 1; } }\n// */\npub trait 変更 { fn 変える(&mut self); }\npub struct 規則(pub u8);\npub fn 使う() -> u8 { let mut 値 = 規則(0); 値.変える(); 値.0 }\n";
+const 空白を挟んだ内側の属性: &str =
+    "#! [cfg_attr(rustfmt, rustfmt::skip)] impl 変更 for 規則 { fn 変える(&mut self) { self.0 = 1; } }\npub trait 変更 { fn 変える(&mut self); }\npub struct 規則(pub u8);\npub fn 使う() -> u8 { let mut 値 = 規則(0); 値.変える(); 値.0 }\n";
 const マクロの引数と式の中の宣言: &str = "pub struct 丙(u8);\nmacro_rules! 通す { (& $($t:tt)*) => { $($t)* }; }\n通す!(& impl 丙 { pub fn 変える(&mut self) { self.0 = 1; } });\npub fn k() {\n    let _ = 1 + /* 注 */ { use std::fmt::Display as 表示; impl 丙 { pub fn 変える2(&mut self) {} } 2 };\n}\n";
 
 // 原文1つを本番と同じ入口で読んだ正規形の違反の説明のうち、読み口が読まなかった予約語の違反の説明。
@@ -87,4 +93,20 @@ fn rustfmtが整形しきれない式の中の宣言をすべて違反にする(
     assert_eq!(読まなかった予約語の説明一覧(式の中の実装).len(), 6);
     assert_eq!(読まなかった予約語の説明一覧(コメントの後ろの式の中の実装).len(), 2);
     assert_eq!(読まなかった予約語の説明一覧(マクロの引数と式の中の宣言).len(), 3);
+}
+
+#[test]
+fn 矢印の次の行の型の位置の実装で数を釣り合わせた行を違反にする() {
+    let 説明一覧 = 読まなかった予約語の説明一覧(矢印の次の行の型の位置の実装);
+    assert_eq!(説明一覧.len(), 1, "{説明一覧:?}");
+    assert!(説明一覧[0].contains("(行の頭の現れは0個)") && 説明一覧[0].contains("字句の木は項目を始める位置と数えない"), "{}", 説明一覧[0]);
+}
+
+#[test]
+fn シバンで始まるファイルを違反にし内側の属性は違反にしない() {
+    for 本文 in [シバンの次の行の取り込み, シバンのブロックコメント, 空白を挟んだ内側の属性, "\u{feff}#!/usr/bin/env run\npub struct 甲;\n"] {
+        let 説明一覧 = 正規形の違反の説明一覧(本文);
+        assert!(説明一覧.iter().any(|説明| 説明.contains("シバン(`#!` で始まり3文字目が `[` でない行)で始まる")), "{本文}: {説明一覧:?}");
+    }
+    assert!(正規形の違反の説明一覧("#![allow(dead_code)]\npub struct 甲;\n").is_empty());
 }

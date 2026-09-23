@@ -29,3 +29,20 @@ fn 識別子の文字とforの読み違いの反例を違反にする() {
         assert!(自己変更.iter().any(|説明| 説明.contains("M不変データ `規則` は自分の型への可変参照")), "{対象}: {自己変更:?}");
     }
 }
+
+#[test]
+fn 中点を含む名前の型引数の既定値と固有の実装とwhereを違反にする() {
+    let 既定値 = "pub trait M不変データ {}\npub trait 変更 {\n    fn 変える(&mut self);\n}\npub struct 規則(pub u8);\nimpl M不変データ for 規則 {}\npub type 同じ·x<T = 規則> = T;\nimpl 変更 for 同じ·x {\n    fn 変える(&mut self) {\n        self.0 = 1;\n    }\n}\n";
+    let 説明一覧 = 正規形の説明関数を連ねた違反の説明一覧(vec![原文("crates/a/src/x.rs", 既定値)]);
+    assert!(説明一覧.iter().any(|説明| 説明.contains("型の別名 `同じ·x` の型引数 `T = 規則` が既定値を持つ")), "{説明一覧:?}");
+    for (本文, 型名) in [
+        (
+            "pub struct 規則·where(pub u8);\nimpl M不変データ for 規則·where {}\npub trait 変更 { fn 変える(&mut self); }\nimpl 変更 for 規則·where { fn 変える(&mut self) { self.0 = 1; } }\n",
+            "規則·where",
+        ),
+        ("pub struct 名・前(pub u8);\nimpl M不変データ for 名・前 {}\nimpl 名・前 {\n    pub fn 変える(&mut self) {\n        self.0 = 1;\n    }\n}\n", "名・前"),
+    ] {
+        let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(vec![ソース("crates/a/src/x.rs", 本文)]);
+        assert!(説明一覧.iter().any(|説明| 説明.contains(&format!("M不変データ `{型名}` は自分の型への可変参照"))), "{型名}: {説明一覧:?}");
+    }
+}
