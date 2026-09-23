@@ -18,7 +18,7 @@
 //! 「標準的なファイル配置(`src/a/b.rs` → `a::b`、`mod.rs`・`lib.rs`)から推定したモジュールパスの下へ、定義の行を囲む `mod 名 { … }` の並びを繋いだ定義の位置のモジュール + 型名」であり、実装の位置のモジュールの直下の定義、無ければその位置の `use` 行(`crate::`・`super::`・`self::` と、入れ子を含む波括弧の群)から取り込み元のモジュールパスを求めて、
 //! そのモジュールの直下の定義を採る。定義も明示した取り込み元も無ければ、他のモジュールの同名型へ推測で結び付けず違反にする。実装対象の型の `use ... as` の別名は取り込み元を求められない違反にする。
 //! 自己変更の禁止の探索は、対象がどの型を指すかを名前解決で求めず、マーカーを名乗る型の名前の閉包(`marker_name_closure.rs`)が実装の対象の表記に識別子の境界(`identifier_boundary.rs`)で現れるかで実装を集める(`mutable_impl_scan.rs`)。実装の在り処は問わない。
-//! 同じ名前の別の型の実装も当たるため、その1件は理由を書いた台帳(`name_match_exclusion_ledger.rs`)で除き、台帳の行の陳腐化も違反にする。実装したトレイトの宣言も同じ閉包の名前で引き(`implemented_trait.rs`・`trait_declaration_index.rs`)、宣言の本体の直下でマクロを呼ぶトレイトの実装は、読めないため違反にする。
+//! マーカーの型でない実装も当たるため、その1件は区分と理由を書いた台帳(`name_match_exclusion_ledger.rs`。区分の一覧は `name_match_exclusion_category.rs`)で除き、台帳の行の陳腐化と、一覧に無い区分を名乗る行も違反にする。実装したトレイトの宣言も同じ閉包の名前で引き(`implemented_trait.rs`・`trait_declaration_index.rs`)、宣言の本体の直下でマクロを呼ぶトレイトの実装は、読めないため違反にする。
 //! 型引数の境界が入れ子の `<` を含むジェネリックな `impl`(`impl<T: Into<Vec<u8>>> 型<T>`)は、山括弧の対応を数えて型引数を分けるため読む(`line_matching.rs` の `先頭の型引数を分ける`)。
 //! 2段以上の再公開と glob を重ねた別名、外部のクレートのマクロ・derive・属性マクロが生やす実装、フィールドの型の中に間接的に含まれる内部可変性、rustfmt が整形しない書き方(`#[rustfmt::skip]` の中で見出しを複数行へ崩した形)は保証範囲の外である。
 //! `#[path = "..."] mod` は、物理と論理のモジュール構造の一致を確かめるため、型の同一性の推定をそのまま使える(日本語のモジュールは rustc が E0754 で既定の探索を拒むため、この属性を必ず持つ)。
@@ -64,6 +64,7 @@ mod module_structure_assertion;
 #[cfg(test)]
 mod module_structure_assertion_tests;
 mod mutable_impl_scan;
+mod name_match_exclusion_category;
 mod name_match_exclusion_ledger;
 mod name_matched_implementation;
 mod name_traceable_form_assertion;

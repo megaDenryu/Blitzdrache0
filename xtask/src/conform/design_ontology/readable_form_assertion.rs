@@ -15,7 +15,11 @@ use super::use_resolution::書き出しの行付きの取り込みの項目一�
 impl クレート構文検査 {
     /// `use`・`type`・`impl` の行のうち、検査器が読み切れないものが1つも無いこと。
     pub fn 読み切れない宣言が無いこと(mut self) -> Self {
-        let 該当一覧: Vec<(PathBuf, 読めない宣言の在り処)> = self.ソース一覧.iter().flat_map(|(パス, 行一覧)| ファイルの読み切れない宣言一覧(行一覧).into_iter().map(|在り処| (パス.clone(), 在り処))).collect();
+        let 該当一覧: Vec<(PathBuf, 読めない宣言の在り処)> = self
+            .ソース一覧
+            .iter()
+            .flat_map(|(パス, 行一覧)| ファイルの読み切れない宣言一覧(行一覧).into_iter().map(move |在り処| (パス.clone(), 在り処)))
+            .collect();
         for (パス, 在り処) in 該当一覧 {
             self.違反一覧.push(在り処.違反にする(&パス));
         }
