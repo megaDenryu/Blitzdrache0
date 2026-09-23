@@ -12,7 +12,8 @@
 //! 実装の位置のモジュールの直下に同名の定義が複数あるときと、同じファイルの局所か別の `mod` の定義しか無く `use` も無いときは、一意に決まらないとして違反にする。同じ型が同じ軸の排他の分類(`M不変エンティティ` と `M可変エンティティ`、`MParameter` と `MOptions`)を同時に名乗ることは違反にする。
 //! 自己変更の禁止の検査が対象の型を名前で追えるように、次の正規形を課す。実装の見出しの対象の型と型の別名(`type`)の右辺の先頭が裸のパスであること(関連型の射影 `<A as B>::C` とマクロの呼び出し `名前!(..)` を禁じる)と、
 //! `include!` を呼ばないこと(`name_traceable_form_assertion.rs`)。検査器が名前で引く宣言を別名が横から名乗らないように、`use … as` の別名が走査範囲のトレイトの宣言の名前・取り込まずに書けるトレイトの名前・マーカーを名乗る型の名前のどれも名乗らないことを課す(`import_alias_name_assertion.rs`)。
-//! 実装の対象の型の先頭に `::` を書かないことと、設計解釈マーカーの実装の対象が型名で始まることと(`impl_syntax/target_form.rs`)、`extern crate` を宣言しないこと(`token_tree_gate/extern_crate_assertion.rs`)も課す。
+//! 実装の対象の型の先頭に `::` を書かないことと、設計解釈マーカーの実装の対象が型名で終わり参照か `Pin` で包まないことと(`impl_syntax/target_form.rs`)、`extern crate` を宣言しないこと(`token_tree_gate/extern_crate_assertion.rs`)と、
+//! `impl` と `type` の型引数に属性を書かないこと(`token_tree_gate/generic_parameter_attribute_assertion.rs`)も課す。
 //! 読み口と名前の閉包が名前を字面で照らせるように、生の識別子を予約語の名前だけに使うこと(`token_tree_gate/raw_identifier_assertion.rs`)と、コードの空白を半角空白と改行だけにすること(`whitespace_form_assertion.rs`)と、型の別名の型引数に既定値を書かないこと(`name_traceable_form_assertion.rs`)も課す。
 //! `use`・`type`・`impl`・`macro_rules!` の4つの読み口が読むのは行の頭の宣言だけであるため、原文を proc-macro2 で字句の木へ変えて項目を始めうる予約語を数え(トークン木の外では直前の字句が項目を始めうる字句の閉じた集合に入るものだけ、トークン木の中ではすべて。`token_tree_gate/token_tree_scan.rs`)、
 //! 行の途中の現れと、行の頭で現れと読み口の答えが食い違う行を、どちらの向きでも違反にし(`token_tree_gate/item_keyword_reconciliation.rs`)、行の頭の `impl` と `type` の見出しの中身を字句の木からも取り出して読み口の読みと突き合わせ(`token_tree_gate/header_content_reconciliation.rs`)、

@@ -16,6 +16,8 @@ mod header_content_reconciliation;
 #[cfg(test)]
 mod header_content_tests;
 mod header_tokens;
+#[cfg(test)]
+mod independent_reading_counterexample_tests;
 mod item_keyword_position;
 #[cfg(test)]
 mod item_keyword_position_tests;
