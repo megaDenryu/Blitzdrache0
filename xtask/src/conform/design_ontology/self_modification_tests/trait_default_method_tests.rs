@@ -45,21 +45,34 @@ fn 上位トレイトを辿らなくても明示の実装の収集で違反に�
 }
 
 #[test]
-fn 別名で取り込んだトレイトの実装は黙って通さず違反になる() {
-    違反が1件だけあり説明が含む(
-        vec![
-            ソース("crates/a/src/t.rs", "pub trait 変更 {\n    fn 読む(&self) {}\n}\n"),
-            ソース("crates/a/src/x.rs", "use crate::t::変更 as 別名;\npub struct 規則;\nimpl M不変データ for 規則 {}\nimpl 別名 for 規則 {}\n"),
-        ],
-        "use の別名 `別名` で取り込んだトレイト",
-    );
-}
-
-#[test]
 fn 走査範囲の外のトレイトと可変の関数を持たないトレイトの実装は違反にならない() {
     let ソース一覧 = vec![ソース(
         "crates/a/src/x.rs",
         "pub struct 規則;\nimpl M不変データ for 規則 {}\npub trait 読める {\n    fn 読む(&self) -> u8 {\n        0\n    }\n}\nimpl 読める for 規則 {}\nimpl std::fmt::Display for 規則 {\n    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {\n        Ok(())\n    }\n}\n",
     )];
     assert!(全部の説明関数を連ねた違反の説明一覧(ソース一覧).is_empty());
+}
+
+#[test]
+fn 別名で取り込んだトレイトの実装は名前の閉包で宣言を引いて違反になる() {
+    違反が1件だけあり説明が含む(
+        vec![
+            ソース(
+                "crates/a/src/t.rs",
+                "pub trait 変更 {
+    fn 変える(&mut self) {}
+}
+",
+            ),
+            ソース(
+                "crates/a/src/x.rs",
+                "use crate::t::変更 as 別名;
+pub struct 規則;
+impl M不変データ for 規則 {}
+impl 別名 for 規則 {}
+",
+            ),
+        ],
+        "トレイト `変更` の宣言の関数 `変える`",
+    );
 }

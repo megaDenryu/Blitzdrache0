@@ -16,21 +16,6 @@ impl 取り込みの項目 {
     pub fn 元の名前(&self) -> &str {
         self.パス.rsplit("::").next().unwrap_or_default().trim()
     }
-
-    /// この項目がファイルの中で名乗る名前。別名があれば別名、無ければ元の名前である。
-    pub fn 名乗る名前(&self) -> &str {
-        self.別名.as_deref().unwrap_or_else(|| self.元の名前())
-    }
-
-    /// パスの最後の区切りより前(`crate::a::型` なら `crate::a`)。区切りが1つなら空である。
-    pub fn 親のパス(&self) -> &str {
-        self.パス.rsplit_once("::").map_or("", |(親, _)| 親.trim())
-    }
-
-    /// glob の取り込み(`a::*`)か。
-    pub fn 全部を取り込むか(&self) -> bool {
-        self.元の名前() == "*"
-    }
 }
 
 /// 行の一覧の `use` 文を項目の一覧にし、項目ごとに、その文を書き出した行の0始まりの添字を添える。モジュールの索引が項目を位置のモジュールへ振り分けるために使う。
