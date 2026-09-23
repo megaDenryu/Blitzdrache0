@@ -22,8 +22,8 @@ use super::trait_declaration_index::トレイトの宣言の索引;
 
 pub struct 自己変更の検査<'a> {
     pub(super) ソース一覧: &'a [(PathBuf, Vec<String>)],
-    トレイトの索引: トレイトの宣言の索引,
-    名前の辺一覧: 名前の言い換えの辺一覧,
+    pub(super) トレイトの索引: トレイトの宣言の索引,
+    pub(super) 名前の辺一覧: 名前の言い換えの辺一覧,
 }
 
 impl<'a> 自己変更の検査<'a> {

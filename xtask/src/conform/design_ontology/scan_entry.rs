@@ -6,6 +6,7 @@ use std::path::{Component, Path};
 use super::super::error::規約検査の破れ;
 use super::super::source_lexing::コードだけの行一覧;
 use super::super::violation::違反;
+use super::external_trait_ledger::走査範囲の外のトレイトの台帳;
 use super::module_structure_assertion::モジュール構造の一致検査;
 use super::name_match_exclusion_ledger::名前が当たった別の型の実装の台帳;
 use super::syntax_checker::クレート構文検査;
@@ -26,6 +27,7 @@ pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の�
         .すべての結果が列挙型であること()
         .すべての純粋データが参照と内部可変性を持たないこと()
         .すべての不変データが可変参照メソッドを持たないこと(&名前が当たった別の型の実装の台帳::登録済みの台帳())
+        .マーカーの型が実装する走査範囲の外のトレイトが台帳のとおりであること(&走査範囲の外のトレイトの台帳::登録済みの台帳())
         .対象の型を決められない実装が自己変更を与えないこと(&対象の型を決められない実装の台帳::登録済みの台帳())
         .すべての引数オブジェクトが任意の値を持たないこと()
         .排他の分類を同時に名乗っていないこと()

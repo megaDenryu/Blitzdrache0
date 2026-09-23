@@ -4,6 +4,7 @@
 //! 検査する規則: `Mコマンド` は enum である。`M規則` は struct である。`M結果` を実装する型は enum である(正本 `blitz_design` の `marker.rs` が持つ完全に修飾した `std::result::Result` への包括の実装だけが定義をたどらない特例)。`M不変データ` またはデータの役割(`Mコマンド`・`Mイベント`・`M規則`・`M状態`・`M入力`・`M観測`)を実装する型の定義は
 //! 参照・生ポインタ・内部可変性を持たない(役割の実装から型の定義をたどってその定義に当てる。`impl M不変データ for` の置き場所は問わず、同じ型が複数の役割を持っても違反は1回だけ報告する)。
 //! `M不変データ` を実装する型(データの役割を実装する型をすべて含む)は、固有の `impl`・トレイトの実装(`unsafe impl` を含む)・実装しているトレイトの走査範囲の宣言の既定の関数の受け手と引数に、自分の型への可変参照を持たない(`mutable_impl_scan.rs`)。
+//! マーカーを名乗る型が実装する走査範囲の外のトレイトの名前は、台帳(`external_trait_ledger.rs`)へ登録した名前だけである。検査器はその宣言を読めず既定の関数を検査しないため、検査しないことの論証を台帳が名前ごとに固定する。
 //! 全称の実装とマクロの本体の中の実装と関数は `M不変データ` の型へ結び付けられないため、自分の型への可変参照を持つ関数があれば台帳(`unbound_implementation_ledger.rs`)に理由が無い限り違反にする。本体の直下でマクロを呼ぶ実装と、宣言の本体の直下でマクロを呼ぶトレイトの実装は、読めないため違反にする。`MParameter` を実装する型の定義は `Option<` のフィールドを持たない(関数境界の役割。型の別名を通した `Option` と別の構造体に埋めた `Option` は見ない)。定義が見つからない実装は違反にする。
 //! `crates` 配下の `src` のすべての `mod` の宣言について、宣言された論理のモジュール構造と、対象の物理ファイルから得られる物理のモジュール構造が一致する(`module_declaration.rs` が宣言を抽出し、`module_structure_assertion.rs` が一致を確かめる)。
 //! 設計解釈マーカーの実装は `impl マーカー名 for 型` または `impl blitz_design::マーカー名 for 型` の形に固定する。マーカーの名前を含む正規形でない実装の行(再公開したパスの経由・`::blitz_design::` の絶対パス・`blitz_design :: M不変データ` のようなパスの中の空白)と、
@@ -29,6 +30,10 @@ mod exclusive_classification_assertion;
 mod exclusive_classification_tests;
 #[cfg(test)]
 mod existence_marker_form_tests;
+mod external_trait_ledger;
+#[cfg(test)]
+mod external_trait_ledger_tests;
+mod external_trait_scan;
 mod function_signature;
 mod identifier_boundary;
 pub(crate) mod impl_header;
