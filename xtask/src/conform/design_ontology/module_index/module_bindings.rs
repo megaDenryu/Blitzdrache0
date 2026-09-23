@@ -6,6 +6,7 @@ use std::collections::HashSet;
 
 use super::super::declaration_prefix::属性と可視性を読み飛ばす;
 use super::super::line_matching::先頭の識別子;
+use super::super::module_path::enclosing_module::字句位置の区分;
 use super::super::use_resolution::取り込みの項目;
 use super::file_lexical_position::項目の宣言の名前;
 use super::hiding_names::隠しうる名前の控え;
@@ -19,25 +20,28 @@ pub struct モジュールの名前の束縛 {
 }
 
 impl モジュールの名前の束縛 {
-    /// 直下の1行を足す。`struct`・`enum` の定義ならその型の名前を、条件付きの宣言ならその名前を控える。
-    pub fn 直下の行を足す(&mut self, 行: &str, 条件付きか: bool) {
-        self.型の名前一覧.extend(型の定義の名前(行));
-        if 条件付きか {
-            self.条件付きの名前一覧.extend(項目の宣言の名前(行));
+    /// そのモジュールの1行を、行の区分に応じて足す。直下の `struct`・`enum` の定義ならその型の名前を、直下の条件付きの宣言ならその名前を控え、マクロの呼び出しの中の行は隠しうる名前の控えへ足す。
+    pub fn 行を足す(&mut self, 行: &str, 区分: 字句位置の区分, 条件付きか: bool) {
+        match 区分 {
+            字句位置の区分::モジュールの直下 => {
+                self.型の名前一覧.extend(型の定義の名前(行));
+                self.条件付きの名前一覧.extend(項目の宣言の名前(行).filter(|_| 条件付きか));
+            }
+            字句位置の区分::マクロの呼び出しの中 => self.マクロの呼び出しの中の名前.行を足す(行),
+            字句位置の区分::局所の位置 => {}
         }
     }
 
-    /// 直下の `use` の項目を足す。条件付きなら、その項目が名乗る名前も控える。
-    pub fn 直下の取り込みを足す(&mut self, 項目: 取り込みの項目, 条件付きか: bool) {
-        if 条件付きか {
-            self.条件付きの名前一覧.insert(項目.名乗る名前().to_string());
+    /// そのモジュールの `use` の項目を、書いた行の区分に応じて足す。直下の項目は取り込みに入れ、条件付きならその項目が名乗る名前も控える。マクロの呼び出しの中の項目は隠しうる名前の控えへ足す。
+    pub fn 取り込みを足す(&mut self, 項目: 取り込みの項目, 区分: 字句位置の区分, 条件付きか: bool) {
+        match 区分 {
+            字句位置の区分::モジュールの直下 => {
+                self.条件付きの名前一覧.extend(条件付きか.then(|| 項目.名乗る名前().to_string()));
+                self.取り込みの項目一覧.push(項目);
+            }
+            字句位置の区分::マクロの呼び出しの中 => self.マクロの呼び出しの中の名前.取り込みを足す(項目),
+            字句位置の区分::局所の位置 => {}
         }
-        self.取り込みの項目一覧.push(項目);
-    }
-
-    /// マクロの呼び出しの中に書いた行と `use` の項目を控える先。
-    pub fn マクロの呼び出しの中の名前を控える(&mut self) -> &mut 隠しうる名前の控え {
-        &mut self.マクロの呼び出しの中の名前
     }
 
     pub fn 型を定義しているか(&self, 型名: &str) -> bool {
