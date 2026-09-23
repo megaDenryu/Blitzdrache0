@@ -12,19 +12,21 @@
 //! 実装の位置のモジュールの直下に同名の定義が複数あるときと、同じファイルの局所か別の `mod` の定義しか無く `use` も無いときは、一意に決まらないとして違反にする。同じ型が同じ軸の排他の分類(`M不変エンティティ` と `M可変エンティティ`、`MParameter` と `MOptions`)を同時に名乗ることは違反にする。
 //! 自己変更の禁止の検査が対象の型を名前で追えるように、次の正規形を課す。実装の見出しの対象の型と型の別名(`type`)の右辺の先頭が裸のパスであること(関連型の射影 `<A as B>::C` とマクロの呼び出し `名前!(..)` を禁じる)と、
 //! `include!` を呼ばないこと(`name_traceable_form_assertion.rs`)。検査器が名前で引く宣言を別名が横から名乗らないように、`use … as` の別名が走査範囲のトレイトの宣言の名前・取り込まずに書けるトレイトの名前・マーカーを名乗る型の名前のどれも名乗らないことを課す(`name_uniqueness_assertion.rs`)。
+//! `use`・`type`・`impl` の3つの読み口は「その宣言でない」「読めた」「読み切れない」の3つだけを返し(`declaration_reading_outcome.rs`)、読み切れない綴りを黙って飛ばさず違反にする(`readable_form_assertion.rs`)。
 //! 検査しない規則(コンパイラが強制する): `Mコマンド: M不変データ` 等の上位トレイトの関係、`M不変データ` の `Clone`、関数の役割(境界付きの newtype)の型引数の境界、`遷移成功結果` の型引数の境界。
 //! 保証範囲: 検査は Rust の型意味論でなく構文パターン(`impl トレイト for 型` の行と `struct`/`enum` の定義ブロック)に対して行う。型の定義の探索(純粋データ規約・型種別・`MParameter` が使う)の型の同一性は
-//! 「標準的なファイル配置(`src/a/b.rs` → `a::b`、`mod.rs`・`lib.rs`)から推定したモジュールパスの下へ、定義の行を囲む `mod 名 { … }` の並びを繋いだ定義の位置のモジュール + 型名」であり、実装の位置のモジュールの直下の定義、無ければその位置の `use` 行(`crate::`・`super::`・`self::` と1段の波括弧の群)から取り込み元のモジュールパスを求めて、
+//! 「標準的なファイル配置(`src/a/b.rs` → `a::b`、`mod.rs`・`lib.rs`)から推定したモジュールパスの下へ、定義の行を囲む `mod 名 { … }` の並びを繋いだ定義の位置のモジュール + 型名」であり、実装の位置のモジュールの直下の定義、無ければその位置の `use` 行(`crate::`・`super::`・`self::` と、入れ子を含む波括弧の群)から取り込み元のモジュールパスを求めて、
 //! そのモジュールの直下の定義を採る。定義も明示した取り込み元も無ければ、他のモジュールの同名型へ推測で結び付けず違反にする。実装対象の型の `use ... as` の別名は取り込み元を求められない違反にする。
 //! 自己変更の禁止の探索は、対象がどの型を指すかを名前解決で求めず、マーカーを名乗る型の名前の閉包(`marker_name_closure.rs`)が実装の対象の表記に識別子の境界(`identifier_boundary.rs`)で現れるかで実装を集める(`mutable_impl_scan.rs`)。実装の在り処は問わない。
 //! 同じ名前の別の型の実装も当たるため、その1件は理由を書いた台帳(`name_match_exclusion_ledger.rs`)で除き、台帳の行の陳腐化も違反にする。実装したトレイトの宣言も同じ閉包の名前で引き(`implemented_trait.rs`・`trait_declaration_index.rs`)、宣言の本体の直下でマクロを呼ぶトレイトの実装は、読めないため違反にする。
 //! 型引数の境界が入れ子の `<` を含むジェネリックな `impl`(`impl<T: Into<Vec<u8>>> 型<T>`)は、山括弧の対応を数えて型引数を分けるため読む(`line_matching.rs` の `先頭の型引数を分ける`)。
-//! 入れ子の波括弧の `use`、2段以上の再公開と glob を重ねた別名、外部のクレートのマクロ・derive・属性マクロが生やす実装、フィールドの型の中に間接的に含まれる内部可変性、rustfmt が整形しない書き方(`#[rustfmt::skip]` の中で見出しを複数行へ崩した形)は保証範囲の外である。
+//! 2段以上の再公開と glob を重ねた別名、外部のクレートのマクロ・derive・属性マクロが生やす実装、フィールドの型の中に間接的に含まれる内部可変性、rustfmt が整形しない書き方(`#[rustfmt::skip]` の中で見出しを複数行へ崩した形)は保証範囲の外である。
 //! `#[path = "..."] mod` は、物理と論理のモジュール構造の一致を確かめるため、型の同一性の推定をそのまま使える(日本語のモジュールは rustc が E0754 で既定の探索を拒むため、この属性を必ず持つ)。
 
 mod body_macro_invocation;
 mod declaration_brackets;
 mod declaration_prefix;
+mod declaration_reading_outcome;
 mod exclusive_classification_assertion;
 #[cfg(test)]
 mod exclusive_classification_tests;
@@ -37,6 +39,7 @@ mod external_trait_scan;
 mod function_signature;
 mod identifier_boundary;
 pub(crate) mod impl_header;
+mod impl_keyword_position;
 mod impl_syntax;
 mod implemented_trait;
 #[cfg(test)]
@@ -78,6 +81,9 @@ mod prelude_trait_names;
 mod process_marker_form_tests;
 mod pure_data_definition_law;
 mod read_implementation;
+mod readable_form_assertion;
+#[cfg(test)]
+mod readable_form_tests;
 #[cfg(test)]
 mod result_marker_form_tests;
 mod scan_entry;
@@ -99,6 +105,7 @@ mod type_head_form;
 mod type_identity_tests;
 mod unbound_implementation;
 mod unbound_implementation_ledger;
+mod use_group_expansion;
 mod use_resolution;
 #[cfg(test)]
 mod use_resolution_tests;
