@@ -35,6 +35,14 @@ fn 型を書いた可変の受け手は違反になる() {
 }
 
 #[test]
+fn 属性を付けた可変の受け手と引数は違反になる() {
+    違反になる("    fn 変える(#[allow(unused_mut)] &mut self) {}");
+    違反になる("    fn 変える(#[allow(clippy::needless_pass_by_ref_mut)] &mut self) {}");
+    違反になる("    fn 変える(#[allow(unused)] 対象: &mut Self) {}");
+    違反になる("    fn 変える(#[allow(unused)] #[cfg(test)] &mut self) {}");
+}
+
+#[test]
 fn 複数行にまたがる署名の可変の受け手は違反になる() {
     違反になる("    fn 変える(\n        &mut self,\n        量: u32,\n    ) {}");
 }

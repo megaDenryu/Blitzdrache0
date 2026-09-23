@@ -103,6 +103,11 @@ pub fn パスの最後の名前(表記: &str) -> &str {
     パス.rsplit("::").next().unwrap_or_default().trim()
 }
 
+/// 型やトレイトのパスの最後の要素より前の修飾(`crate::a::規則<T>` なら `crate::a`)。修飾の無い名前だけの表記なら無い。
+pub fn パスの修飾(表記: &str) -> Option<&str> {
+    表記.split(['<', '(']).next().unwrap_or_default().rsplit_once("::").map(|(修飾, _)| 修飾.trim())
+}
+
 /// 可変参照の型(`&mut X`・`&'a mut X`)の参照先 `X` の表記。可変参照の型でなければ無い。
 pub fn 可変参照の参照先(表記: &str) -> Option<&str> {
     寿命より後ろ(表記)?.strip_prefix("mut").filter(|後ろ| 後ろ.starts_with(char::is_whitespace)).map(str::trim_start)

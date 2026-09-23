@@ -55,14 +55,19 @@ pub fn 本体の直下の関数の署名一覧(本体: &str) -> Vec<関数の署
     署名一覧
 }
 
-// `fn 名前<型引数>(引数の並び)` を読む。`fn(` の関数の型(名前を持たない)と、関数でない語は無しである。
-fn 関数の署名を読む(残り: &str) -> Option<関数の署名> {
+/// `fn 名前<型引数>(引数の並び)` で始まる表記を読む。`fn(` の関数の型(名前を持たない)と、関数でない語は無しである。
+/// 名前はマクロの本体の中のメタ変数(`fn $名前(...)`)でもよい。
+pub fn 関数の署名を読む(残り: &str) -> Option<関数の署名> {
     let 名前の前 = 残り.strip_prefix("fn")?;
     if !名前の前.starts_with(char::is_whitespace) {
         return None;
     }
-    let 名前 = 先頭の識別子(名前の前.trim_start());
-    if 名前.is_empty() {
+    let 名前の表記 = 名前の前.trim_start();
+    let 名前 = match 名前の表記.strip_prefix('$') {
+        Some(メタ変数) => format!("${}", 先頭の識別子(メタ変数)),
+        None => 先頭の識別子(名前の表記),
+    };
+    if 名前.trim_start_matches('$').is_empty() {
         return None;
     }
     let mut 括弧 = 見出しの括弧の深さ::default();

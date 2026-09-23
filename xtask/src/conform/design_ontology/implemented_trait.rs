@@ -1,0 +1,72 @@
+//! 実装が書いたトレイト1件(読んだ実装と、トレイトを書いた位置の表記の組)と、その宣言から自己変更の根拠を求める工程。受け取るのはトレイトの宣言の索引とモジュールの索引と自己変更を問う対象、返すのは根拠である。
+//! 宣言の関数が対象へ自己変更を与えるなら、その関数を根拠にする。`use … as` の別名(取り込み元の再公開を1段たどる)を通したトレイトは宣言を引けないため根拠にする。
+//! 索引に宣言が無いトレイトは、次の4つのどれかなら検査しない。(1) `std`・`core`・`alloc` か、実装のクレートの外部の依存クレート(依存の白リストのうち、ワークスペースのクレートでないもの)で始まるパス。
+//! (2) それらのクレートから明示の `use` で取り込んだ名前(`use std::fmt::Display;`)と、それらのクレートのモジュールを取り込んで書いたパス(`use std::fmt;` の後の `fmt::Display`)。
+//! (3) std の prelude と derive で使う名前の固定の一覧。(4) 設計解釈マーカーの名前。(1) から (3) は宣言を読めないが、実在を言語と Cargo が保証する。
+//! (4) はマーカーの宣言が自己変更を与える関数を持たないことを正本 `blitz_design` が定め、その宣言が走査範囲にあるときは索引が先に参照する。
+//! これ以外の索引に無いトレイト(`crate::`・`self::`・`super::` で始まるパスや、ワークスペースのクレートのパス)は宣言を読めないため、黙って通さず根拠にする。
+
+use super::super::dependency_whitelist::外部の依存クレートのパスの名前一覧;
+use super::function_signature::自己変更を問う対象;
+use super::line_matching::{クレート名, パスの修飾, パスの最後の名前};
+use super::module_index::モジュールの索引;
+use super::module_path::モジュールパス;
+use super::read_implementation::読んだ実装;
+use super::self_modification_evidence::自己変更の根拠;
+use super::syntax_patterns::オントロジートレイト;
+use super::trait_declaration_index::{トレイトの宣言の索引, トレイトの宣言を参照した結果};
+
+/// 注意: 取り込まずに書ける std のトレイトの名前を空白で区切って並べた一覧である。Rust 2021 の std の prelude にあるトレイトと、derive で実装を生やす std のトレイト(`Debug`・`Hash`)を置く。
+/// prelude に無い名前をここへ足すと、同名の別のトレイトの実装を宣言を読まずに通すことになる。
+const 取り込まずに書けるトレイトの名前の並び: &str =
+    "Clone Copy Debug Default PartialEq Eq PartialOrd Ord Hash Drop From Into TryFrom TryInto AsRef AsMut Iterator IntoIterator DoubleEndedIterator ExactSizeIterator Extend FromIterator ToString ToOwned Send Sync Sized Unpin Fn FnMut FnOnce";
+
+/// 宣言が走査範囲の外にある標準のクレートの名前。
+const 標準のクレート名一覧: [&str; 3] = ["std", "core", "alloc"];
+
+/// 実装が書いたトレイト。読んだ実装と、トレイトを書いた位置の表記(`変更`・`crate::a::変更<u8>`)の組である。
+pub struct 実装したトレイト<'a> {
+    pub 実装: &'a 読んだ実装<'a>,
+    pub 表記: &'a str,
+}
+
+impl 実装したトレイト<'_> {
+    /// 実装したトレイトの宣言の関数が対象へ自己変更を与えるなら、その根拠。別名を通したトレイトと、宣言を読めないトレイトも根拠にする。
+    pub fn 自己変更の根拠(&self, トレイトの索引: &トレイトの宣言の索引, モジュールの索引: &モジュールの索引<'_>, 対象: &自己変更を問う対象) -> Option<自己変更の根拠> {
+        let 名前 = パスの最後の名前(self.表記);
+        let (パス, 行番号) = (self.実装.パス.to_path_buf(), self.実装.行番号);
+        if self.実装.別名の元の名前(モジュールの索引, パスの修飾(self.表記), 名前).is_some() {
+            return Some(自己変更の根拠::別名で取り込んだトレイト { パス, 行番号, 別名: 名前.to_string() });
+        }
+        match トレイトの索引.宣言を参照する(名前, 対象) {
+            トレイトの宣言を参照した結果::自己変更を与える { 関数名 } => Some(自己変更の根拠::トレイトの宣言の関数 {
+                トレイト名: 名前.to_string(), 関数名
+            }),
+            トレイトの宣言を参照した結果::自己変更を与えない => None,
+            トレイトの宣言を参照した結果::宣言が無い if self.走査範囲の外か(モジュールの索引) => None,
+            トレイトの宣言を参照した結果::宣言が無い => Some(自己変更の根拠::宣言を読めないトレイト {
+                パス,
+                行番号,
+                トレイトの表記: self.表記.to_string(),
+            }),
+        }
+    }
+
+    // 索引に宣言が無くても検査しなくてよいトレイトか(冒頭の4つ)。
+    fn 走査範囲の外か(&self, モジュールの索引: &モジュールの索引<'_>) -> bool {
+        let 名前 = パスの最後の名前(self.表記);
+        if オントロジートレイト::全部の一覧().iter().any(|マーカー| マーカー.名前() == 名前) {
+            return true;
+        }
+        let パス = self.表記.split('<').next().unwrap_or_default().trim().trim_start_matches("::");
+        let 起点 = パス.split("::").next().unwrap_or_default().trim();
+        if 起点 == パス && 取り込まずに書けるトレイトの名前の並び.split_whitespace().any(|書ける名前| 書ける名前 == 名前) {
+            return true;
+        }
+        let 自分 = モジュールパス::ファイルのパスから求める(self.実装.パス);
+        let 取り込んだ項目 = モジュールの索引.取り込みの項目一覧(&自分).iter().find(|項目| 項目.名乗る名前() == 起点);
+        let 起点のクレート = 取り込んだ項目.map_or(起点, |項目| 項目.パス.trim_start_matches("::").split("::").next().unwrap_or_default().trim());
+        let 外部の依存一覧 = 外部の依存クレートのパスの名前一覧(&クレート名(self.実装.パス).to_string_lossy());
+        標準のクレート名一覧.contains(&起点のクレート) || 外部の依存一覧.iter().any(|依存| 依存 == 起点のクレート)
+    }
+}
