@@ -2,7 +2,8 @@
 
 use std::path::PathBuf;
 
-use super::line_matching::{implの見出しを読む, 型に属するimplの宣言か, 波括弧が閉じる行};
+use super::impl_header::implの見出しを読む;
+use super::line_matching::型に属するimplの宣言か;
 use super::syntax_checker::クレート構文検査;
 use super::trait_implementation::トレイト実装型;
 use super::type_definition::{固有implのファイル, 定義ブロックの結果};
@@ -20,8 +21,8 @@ impl クレート構文検査 {
                 .iter()
                 .enumerate()
                 .filter_map(|(開始, _)| implの見出しを読む(行一覧, 開始))
-                .filter(|(見出し, _)| 型に属するimplの宣言か(見出し, &型.型名))
-                .any(|(_, 本体の開始)| 行一覧[本体の開始..=波括弧が閉じる行(行一覧, 本体の開始)].iter().any(|行| 行.contains("&mut self")))
+                .filter(|見出し| 型に属するimplの宣言か(&見出し.表記, &型.型名))
+                .any(|見出し| 行一覧[見出し.本体の開始行..=見出し.本体の終了行].iter().any(|行| 行.contains("&mut self")))
         })
     }
 }

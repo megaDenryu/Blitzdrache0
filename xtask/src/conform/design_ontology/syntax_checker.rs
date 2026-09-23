@@ -5,7 +5,8 @@ use std::collections::HashSet;
 use std::path::PathBuf;
 
 use super::super::violation::違反;
-use super::line_matching::{implの見出しを読む, トレイト実装の行のトレイトの位置, トレイト実装の行の対象の型の表記, 先頭の識別子, 語として現れるか};
+use super::impl_header::implの見出しを読む;
+use super::line_matching::{トレイト実装の行のトレイトの位置, トレイト実装の行の対象の型の表記, 先頭の識別子, 語として現れるか};
 use super::module_path::モジュールパス;
 use super::pure_data_definition_law::定義が破った純粋データの規約の説明一覧;
 use super::syntax_patterns::{self, Rust型種別, オントロジートレイト};
@@ -38,13 +39,13 @@ impl クレート構文検査 {
         let mut 型一覧 = Vec::new();
         for (パス, 行一覧) in &self.ソース一覧 {
             for (添字, _) in 行一覧.iter().enumerate() {
-                let Some((見出し, _)) = implの見出しを読む(行一覧, 添字) else {
+                let Some(見出し) = implの見出しを読む(行一覧, 添字) else {
                     continue;
                 };
-                if !トレイト実装の行のトレイトの位置(&見出し).is_some_and(|位置| 位置 == トレイト.名前() || 位置 == 修飾した名前) {
+                if !トレイト実装の行のトレイトの位置(&見出し.表記).is_some_and(|位置| 位置 == トレイト.名前() || 位置 == 修飾した名前) {
                     continue;
                 }
-                let Some(対象の型の表記) = トレイト実装の行の対象の型の表記(&見出し) else {
+                let Some(対象の型の表記) = トレイト実装の行の対象の型の表記(&見出し.表記) else {
                     continue;
                 };
                 let 型名 = 先頭の識別子(対象の型の表記);

@@ -15,11 +15,14 @@
 //! 固有の `impl` の探索も同じ規則で定義に属するファイルだけを見る。入れ子の波括弧の `use`、glob の取り込み、型引数の境界が入れ子の `<` を含むジェネリックな `impl`、フィールドの型の中に間接的に含まれる内部可変性は保証範囲の外である。
 //! `#[path = "..."] mod` は、物理と論理のモジュール構造の一致を確かめるため、型の同一性の推定をそのまま使える(日本語のモジュールは rustc が E0754 で既定の探索を拒むため、この属性を必ず持つ)。
 
+#[cfg(test)]
+mod const_generic_impl_tests;
 mod exclusive_classification_assertion;
 #[cfg(test)]
 mod exclusive_classification_tests;
 #[cfg(test)]
 mod existence_marker_form_tests;
+pub(crate) mod impl_header;
 #[cfg(test)]
 mod japanese_module_hierarchy_tests;
 pub(crate) mod line_matching;

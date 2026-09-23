@@ -90,8 +90,8 @@ impl<'a> 役割に包まれた関数のパスを読む工程<'a> {
         self.同じファイルの行一覧
             .iter()
             .enumerate()
-            .filter_map(|(開始, _)| crate::conform::design_ontology::line_matching::implの見出しを読む(self.同じファイルの行一覧, 開始))
-            .any(|(見出し, _)| 実装の行が名指す対象か(&見出し, 所有者))
+            .filter_map(|(開始, _)| crate::conform::design_ontology::impl_header::implの見出しを読む(self.同じファイルの行一覧, 開始))
+            .any(|見出し| 実装の行が名指す対象か(&見出し.表記, 所有者))
     }
 }
 

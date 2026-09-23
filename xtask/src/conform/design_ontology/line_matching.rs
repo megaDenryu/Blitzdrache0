@@ -53,29 +53,6 @@ pub fn 固有のimplの宣言か(行: &str, 型名: &str) -> bool {
     行.contains('{') && !宣言.split_whitespace().any(|語| 語 == "for") && 先頭の識別子(残り.trim_start()) == 型名
 }
 
-/// `impl` の開始行から最初の本体の開き括弧までを1行に揃え、本体の開始行とともに返す。
-pub fn implの見出しを読む(行一覧: &[String], 開始: usize) -> Option<(String, usize)> {
-    let 最初の行 = 行一覧.get(開始)?.trim_start();
-    let 残り = 最初の行.strip_prefix("impl")?;
-    if !残り.starts_with(char::is_whitespace) && !残り.starts_with('<') {
-        return None;
-    }
-    let mut 見出し = String::new();
-    for (位置, 行) in 行一覧.iter().enumerate().skip(開始) {
-        let (部分, 本体が始まる) = match 行.split_once('{') {
-            Some((部分, _)) => (部分, true),
-            None => (行.as_str(), false),
-        };
-        見出し.push_str(部分.trim());
-        見出し.push(' ');
-        if 本体が始まる {
-            見出し.push('{');
-            return Some((見出し, 位置));
-        }
-    }
-    None
-}
-
 /// トレイトの実装の行(`impl トレイト for 型`・`impl<T> トレイト for 型<T>`)の、トレイトを書く位置(前後の空白を除いたもの)。トレイトの実装の行でなければ無い。
 pub fn トレイト実装の行のトレイトの位置(行: &str) -> Option<&str> {
     let 残り = 行.trim_start().strip_prefix("impl")?;

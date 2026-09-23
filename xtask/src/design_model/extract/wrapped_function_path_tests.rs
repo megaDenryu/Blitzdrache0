@@ -8,6 +8,14 @@ use super::test_support::{原文から結末を組む, 役割の使用箇所の�
 const 移動のパス: &str = "crates/blitz_esca/src/traveler_movement.rs";
 
 #[test]
+fn 定数ジェネリクスの式を持つトレイト実装は役割の所有者にならない() {
+    let 原文 = 解釈の使用箇所("M解釈関数::生成する(所有者Trait::解釈する)") + "trait 所有者Trait<const N: usize> { fn 解釈する(); }\nimpl 所有者Trait<{ 1 }> for キーボード歩行入力 { fn 解釈する() {} }\n";
+    let 結末 = 原文から結末を組む(&[(移動のパス, &原文)]);
+    assert!(!関係の表記一覧(&結末).iter().any(|表記| 表記.contains("所有者Trait::解釈する")));
+    assert!(結末.関係を落とした抽出の欠落へ写す().在るか());
+}
+
+#[test]
 fn 複数行の固有の実装は役割の所有者として受理する() {
     let 原文 = 解釈の使用箇所("M解釈関数::生成する(新しい所有者::歩行入力を解釈する)") + "pub struct 新しい所有者<T>(T);\nimpl<T> 新しい所有者<T>\nwhere\n    T: Clone,\n{\n    fn 歩行入力を解釈する() {}\n}\n";
     let 結末 = 原文から結末を組む(&[(移動のパス, &原文)]);
