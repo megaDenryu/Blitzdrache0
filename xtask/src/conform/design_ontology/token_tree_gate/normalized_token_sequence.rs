@@ -8,6 +8,8 @@ use std::str::FromStr;
 
 use proc_macro2::{Delimiter, TokenStream, TokenTree};
 
+use super::super::identifier_boundary::識別子の文字か;
+
 /// 空白とコメントの違いを消した字句の並び。
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct 正規化した字句の並び(String);
@@ -22,6 +24,12 @@ impl 正規化した字句の並び {
     pub fn 表記から作る(表記: &str) -> Option<Self> {
         let 木 = TokenStream::from_str(表記).ok()?;
         Some(Self::字句から作る(&木.into_iter().collect::<Vec<_>>()))
+    }
+
+    /// 並びのどこかにマクロの呼び出し(識別子の後ろに `!` と括弧の群が続く並び)があるか。群の中の字句も同じ並びへ開いて持つため、深さによらず当たる。
+    pub fn マクロの呼び出しを含むか(&self) -> bool {
+        let 語一覧: Vec<&str> = self.0.split(' ').collect();
+        語一覧.windows(3).any(|語| matches!(語, [名前, "!", "(" | "[" | "{"] if 名前.starts_with(識別子の文字か)))
     }
 
     /// 違反の説明に書く表記。
@@ -63,5 +71,15 @@ mod tests {
         assert_eq!(正規化した字句の並び::表記から作る("S<'<'>"), 正規化した字句の並び::表記から作る("S<>"));
         assert_ne!(正規化した字句の並び::表記から作る("[u8; 4]"), 正規化した字句の並び::表記から作る("[u8; 5]"));
         assert!(正規化した字句の並び::表記から作る("包み<{ const fn 一() -> usize").is_none());
+    }
+
+    #[test]
+    fn 深さによらずマクロの呼び出しを見つけ否定の演算子と不等号は数えない() {
+        for 表記 in ["型名!()", "Vec<型名!()>", "[a::型名! [ ]; 1]", "包み<(u8, $m!{})>"] {
+            assert!(正規化した字句の並び::表記から作る(表記).is_some_and(|並び| 並び.マクロの呼び出しを含むか()), "{表記}");
+        }
+        for 表記 in ["Vec<規則>", "包み<{ 1 != 2 }>", "fn() -> !", "包み<{ !(true) as usize }>"] {
+            assert!(正規化した字句の並び::表記から作る(表記).is_some_and(|並び| !並び.マクロの呼び出しを含むか()), "{表記}");
+        }
     }
 }

@@ -49,6 +49,16 @@ impl 見出しの中身 {
         }
     }
 
+    /// 実装の対象の型の表記か型の別名の右辺の、どの深さにでもマクロの呼び出しがあるか。字句の木から取り出した中身について、型の表記の中のマクロの呼び出しの正規形(`type_notation_macro_assertion.rs`)が問う。
+    pub fn 型の表記にマクロの呼び出しを含むか(&self) -> bool {
+        let 表記 = match self {
+            Self::実装 { 対象の型の表記, .. } => 対象の型の表記,
+            Self::右辺のある型の別名 { 右辺, .. } => 右辺,
+            Self::右辺の無い型の別名 => return false,
+        };
+        表記.as_ref().is_some_and(正規化した字句の並び::マクロの呼び出しを含むか)
+    }
+
     /// 違反の説明に書く表記。
     pub fn 説明の表記(&self) -> String {
         let 名前 = |名前: &Option<String>| 名前.clone().unwrap_or_else(|| "名前で読めない".to_string());

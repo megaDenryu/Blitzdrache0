@@ -10,10 +10,10 @@
 //! 設計解釈マーカーの実装は `impl マーカー名 for 型` または `impl blitz_design::マーカー名 for 型` の形に固定する。マーカーの名前を含む正規形でない実装の行(再公開したパスの経由・`::blitz_design::` の絶対パス・`blitz_design :: M不変データ` のようなパスの中の空白)と、
 //! `blitz_design` を別名で取り込むこと(`use ... as`)と、`blitz_design` の外で `blitz_design` を公開の `use` で再公開することと、ファイルの中の `mod 名 { ... }` の中にマーカーの実装を置くこと(マーカーの実装の置き場をファイルのモジュールの直下へ固定するため)は違反にする。
 //! 実装の位置のモジュールの直下に同名の定義が複数あるときと、同じファイルの局所か別の `mod` の定義しか無く `use` も無いときは、一意に決まらないとして違反にする。同じ型が同じ軸の排他の分類(`M不変エンティティ` と `M可変エンティティ`、`MParameter` と `MOptions`)を同時に名乗ることは違反にする。
-//! 自己変更の禁止の検査が対象の型を名前で追えるように、次の正規形を課す。実装の見出しの対象の型と型の別名(`type`)の右辺の先頭が裸のパスであること(関連型の射影 `<A as B>::C` とマクロの呼び出し `名前!(..)` を禁じる)と、
+//! 自己変更の禁止の検査が対象の型を名前で追えるように、次の正規形を課す。実装の見出しの対象の型と型の別名(`type`)の右辺の先頭が関連型の射影 `<A as B>::C` でないことと、
 //! `include!` を呼ばないこと(`name_traceable_form_assertion.rs`)。検査器が名前で引く宣言を別名が横から名乗らないように、`use … as` の別名が走査範囲のトレイトの宣言の名前・取り込まずに書けるトレイトの名前・マーカーを名乗る型の名前のどれも名乗らないことを課す(`import_alias_name_assertion.rs`)。
-//! 実装の対象の型の先頭に `::` を書かないことと、設計解釈マーカーの実装の対象が型名で終わり参照か `Pin` で包まないことと(`impl_syntax/target_form.rs`)、`extern crate` を宣言しないこと(`token_tree_gate/extern_crate_assertion.rs`)と、
-//! `impl` と `type` の型引数に属性を書かないこと(`token_tree_gate/generic_parameter_attribute_assertion.rs`)も課す。
+//! 実装の対象の型の先頭に `::` を書かないことと、設計解釈マーカーの実装の対象が型名で終わり、対象の表記のどの深さにも参照と `Pin` を持たないことと(`impl_syntax/target_form.rs`)、`extern crate` を宣言しないこと(`token_tree_gate/extern_crate_assertion.rs`)と、
+//! `impl` と `type` の型引数に属性を書かないこと(`token_tree_gate/generic_parameter_attribute_assertion.rs`)と、実装の対象の型と型の別名の右辺のどの深さでもマクロ `名前!(..)` を呼ばないこと(`token_tree_gate/type_notation_macro_assertion.rs`)も課す。
 //! 読み口と名前の閉包が名前を字面で照らせるように、生の識別子を予約語の名前だけに使うこと(`token_tree_gate/raw_identifier_assertion.rs`)と、コードの空白を半角空白と改行だけにすること(`whitespace_form_assertion.rs`)と、型の別名の型引数に既定値を書かないこと(`name_traceable_form_assertion.rs`)も課す。
 //! `use`・`type`・`impl`・`macro_rules!` の4つの読み口が読むのは行の頭の宣言だけであるため、原文を proc-macro2 で字句の木へ変えて項目を始めうる予約語を数え(トークン木の外では直前の字句が項目を始めうる字句の閉じた集合に入るものだけ、トークン木の中ではすべて。`token_tree_gate/token_tree_scan.rs`)、
 //! 行の途中の現れと、行の頭で現れと読み口の答えが食い違う行を、どちらの向きでも違反にし(`token_tree_gate/item_keyword_reconciliation.rs`)、行の頭の `impl` と `type` の見出しの中身を字句の木からも取り出して読み口の読みと突き合わせ(`token_tree_gate/header_content_reconciliation.rs`)、

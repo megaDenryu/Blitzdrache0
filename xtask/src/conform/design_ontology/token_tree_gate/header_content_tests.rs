@@ -44,6 +44,10 @@ fn 読み口と字句の木は実装の見出しを同じ中身に読む() {
         "impl 変更 for fn(u8) -> 規則 {}",
         "impl<#[cfg(target_pointer_width = \"64\")] T: M不変データ, #[cfg(test)] const N: usize> 変更 for T {}",
         "impl 変更 for 包み<{ const fn 一() -> usize where u8: Copy { 1 } 一() }, 規則> {}",
+        "impl 変更 for Option<&mut 規則> {}",
+        "impl 変更 for (&'a mut 規則, u8) {}",
+        "impl 変更 for Box<&&mut 規則> {}",
+        "impl 変更 for Vec<型名!()> {}",
     ] {
         let 読み口 = 見出しの中身::実装の見出しの構文から作る(&実装の見出しの構文::読む(見出し).expect("見出しを読む"));
         let (字句一覧, 添字) = 字句一覧と予約語の添字(見出し, "impl");
