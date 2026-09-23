@@ -1,12 +1,16 @@
 //! `impl` の見出しの表記を、実装の種類(固有かトレイトの実装か)と実装が対象にする型と型引数の名前へ分けて読んだ値。
 //! 受け取るのは見出しの表記(`impl` から本体を開く `{` まで。前に `unsafe` があってもよい)、返すのはこの値か、`impl` の見出しでないときの無しである。
-//! 実装が対象にする型の読み方は、子のモジュール `impl_syntax/target_type.rs` が持つ。
+//! 実装が対象にする型の読み方は、子のモジュール `impl_syntax/target_type.rs` が持つ。対象の型を名前で読める形へ固定する正規形の検査は `impl_syntax/target_form.rs` が持つ。
 
+mod target_form;
 mod target_type;
+#[cfg(test)]
+mod tests;
 
 use super::declaration_brackets::{最上位で開いた括弧, 最上位のカンマで分ける, 見出しの括弧の深さ};
 use super::identifier_boundary::識別子として現れる位置一覧;
 use super::line_matching::{implの予約語より後ろ, 先頭の型引数を分ける, 先頭の識別子};
+pub use target_form::名前で読めない実装の対象の違反一覧;
 pub use target_type::実装の対象の型;
 
 /// 実装の種類。トレイトの実装はトレイトを書いた位置の表記(`変更`・`crate::a::変更<u8>`)を持つ。
@@ -39,6 +43,19 @@ impl 実装の見出しの構文 {
             対象: 実装の対象の型::表記から読む(対象の表記),
             型引数の名前一覧: 型の引数の名前一覧(型引数),
         })
+    }
+
+    /// トレイトの実装なら、トレイトを書いた位置の表記。固有の実装なら無い。
+    pub fn トレイトの表記(&self) -> Option<&str> {
+        match &self.種類 {
+            実装の種類::固有の実装 => None,
+            実装の種類::トレイトの実装 { トレイトの表記 } => Some(トレイトの表記),
+        }
+    }
+
+    /// 対象の型を名前だけ(パスで修飾しない型名と型引数)で書いた固有の実装で、その型名が `型名` か。`impl 型名 {`・`impl<T> 型名<T> {` が当たり、`impl crate::a::型名 {` は当たらない。
+    pub fn 名前だけで書いた型の固有の実装か(&self, 型名: &str) -> bool {
+        matches!(self.種類, 実装の種類::固有の実装) && 先頭の識別子(self.対象.表記()) == 型名
     }
 
     /// 対象の型が実装自身の型引数である全称の実装(`impl<T: 境界> トレイト for T`・`for &mut T`)か。検査器は境界を評価できず、対象の型を具体の型へ結び付けられない。
@@ -83,33 +100,4 @@ fn 型の引数の名前一覧(型引数: &str) -> Vec<String> {
         .map(先頭の識別子)
         .filter(|名前| !名前.is_empty())
         .collect()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::{実装の種類, 実装の見出しの構文};
-
-    // 見出しを読んだトレイトの表記と対象の型の表記。固有の実装ならトレイトの表記は無い。
-    fn 読んだ組(見出し: &str) -> Option<(Option<String>, String)> {
-        let 構文 = 実装の見出しの構文::読む(見出し)?;
-        let トレイト = match 構文.種類 {
-            実装の種類::固有の実装 => None,
-            実装の種類::トレイトの実装 { トレイトの表記 } => Some(トレイトの表記),
-        };
-        Some((トレイト, 構文.対象.表記().to_string()))
-    }
-
-    #[test]
-    fn 空白を挟まないforとwhereを識別子の境界で読む() {
-        assert_eq!(読んだ組("impl 初期化 for(規則) {"), Some((Some("初期化".to_string()), "規則".to_string())));
-        assert_eq!(読んだ組("impl 初期化 for&mut 規則 {"), Some((Some("初期化".to_string()), "規則".to_string())));
-        assert!(実装の見出しの構文::読む("impl 初期化 for&mut 規則 {").is_some_and(|構文| 構文.対象.可変参照か));
-        assert_eq!(読んだ組("impl<T> 初期化 for 規則<T>where T: Clone {"), Some((Some("初期化".to_string()), "規則<T>".to_string())));
-    }
-
-    #[test]
-    fn 名前の中のforと高階の寿命の束縛はトレイトの実装の区切りと読まない() {
-        assert_eq!(読んだ組("impl forward {"), Some((None, "forward".to_string())));
-        assert_eq!(読んだ組("impl dyn for<'a> Fn(&'a u8) {"), Some((None, "dyn for<'a> Fn(&'a u8)".to_string())));
-    }
 }

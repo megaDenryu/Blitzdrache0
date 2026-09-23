@@ -6,7 +6,7 @@ use std::path::PathBuf;
 
 use super::super::violation::違反;
 use super::impl_header::implの見出しを読む;
-use super::line_matching::{トレイト実装の行のトレイトの位置, トレイト実装の行の対象の型の表記, 先頭の識別子, 語として現れるか};
+use super::line_matching::{先頭の識別子, 語として現れるか};
 use super::module_path::モジュールパス;
 use super::pure_data_definition_law::定義が破った純粋データの規約の説明一覧;
 use super::syntax_patterns::{self, Rust型種別, オントロジートレイト};
@@ -33,26 +33,24 @@ impl クレート構文検査 {
         &self.ソース一覧
     }
 
-    /// `impl トレイト for 型` と `impl<T> トレイト for 型<T>` の行を集める(トレイトを書く位置が正規形の `マーカー名` か `blitz_design::マーカー名` のもの)。
+    /// `impl トレイト for 型` と `impl<T> トレイト for 型<T>` の見出しを集める(トレイトを書く位置が正規形の `マーカー名` か `blitz_design::マーカー名` のもの)。見出しは `実装の見出しの構文` の1つの読みで分ける。
+    /// 型名は対象の型の表記の先頭の識別子である。先頭の識別子が空の実装(`[型]`・`(型, u8)`)は定義をたどれないため集めず、`impl_syntax/target_form.rs` がその実装を違反にする。
     pub fn トレイト実装型一覧(&self, トレイト: オントロジートレイト) -> Vec<トレイト実装型> {
         let 修飾した名前 = format!("blitz_design::{}", トレイト.名前());
         let mut 型一覧 = Vec::new();
         for (パス, 行一覧) in &self.ソース一覧 {
-            for (添字, _) in 行一覧.iter().enumerate() {
-                let Some(見出し) = implの見出しを読む(行一覧, 添字) else {
+            for 添字 in 0..行一覧.len() {
+                let Some(構文) = implの見出しを読む(行一覧, 添字).and_then(|見出し| 見出し.構文を読む()) else {
                     continue;
                 };
-                if !トレイト実装の行のトレイトの位置(&見出し.表記).is_some_and(|位置| 位置 == トレイト.名前() || 位置 == 修飾した名前) {
+                if !構文.トレイトの表記().is_some_and(|位置| 位置 == トレイト.名前() || 位置 == 修飾した名前) {
                     continue;
                 }
-                let Some(対象の型の表記) = トレイト実装の行の対象の型の表記(&見出し.表記) else {
-                    continue;
-                };
-                let 型名 = 先頭の識別子(対象の型の表記);
+                let 型名 = 先頭の識別子(構文.対象.表記());
                 if !型名.is_empty() {
                     型一覧.push(トレイト実装型 {
                         型名,
-                        対象の型の表記: 対象の型の表記.to_string(),
+                        対象の型の表記: 構文.対象.表記().to_string(),
                         パス: パス.clone(),
                         行番号: 添字 + 1,
                     });

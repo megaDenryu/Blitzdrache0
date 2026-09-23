@@ -8,10 +8,11 @@ use super::super::error::規約検査の破れ;
 use super::super::source_lexing::コードだけの行一覧;
 use super::super::violation::違反;
 use super::external_trait_ledger::走査範囲の外のトレイトの台帳;
+use super::impl_syntax::名前で読めない実装の対象の違反一覧;
 use super::module_structure_assertion::モジュール構造の一致検査;
 use super::name_match_exclusion_ledger::名前が当たった別の型の実装の台帳;
 use super::syntax_checker::クレート構文検査;
-use super::token_tree_gate::{予約語でない名前の生の識別子の違反一覧, 字句の木の一覧};
+use super::token_tree_gate::{予約語でない名前の生の識別子の違反一覧, 外部クレートの宣言の違反一覧, 字句の木の一覧};
 use super::unbound_implementation_ledger::対象の型を決められない実装の台帳;
 use super::whitespace_form_assertion::コードの空白の違反一覧;
 use crate::file_scan;
@@ -27,6 +28,7 @@ pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の�
         ソース一覧.push((パス, コードだけの行一覧(&内容)));
     }
     let 空白の違反一覧 = コードの空白の違反一覧(&ソース一覧);
+    let 実装の対象の違反一覧 = 名前で読めない実装の対象の違反一覧(&ソース一覧);
     let mut 違反一覧 = クレート構文検査::生成する(ソース一覧)
         .すべてのコマンドが列挙型であること()
         .すべての規則が構造体であること()
@@ -47,6 +49,8 @@ pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の�
         .読み切れない宣言が無いこと(&字句の木)
         .違反一覧();
     違反一覧.extend(予約語でない名前の生の識別子の違反一覧(&字句の木));
+    違反一覧.extend(外部クレートの宣言の違反一覧(&字句の木));
+    違反一覧.extend(実装の対象の違反一覧);
     違反一覧.extend(空白の違反一覧);
     違反一覧.extend(モジュール構造の違反一覧);
     Ok(違反一覧)

@@ -10,7 +10,7 @@ use super::module_path::モジュールパス;
 /// `impl トレイト for 型` の1件。行番号は1始まりであり、違反の報告がこの行を指す。
 pub struct トレイト実装型 {
     pub 型名: String,           // 対象の型の表記の先頭の識別子。定義をたどる鍵であり、`std::result::Result<T, E>` なら `std` になる
-    pub 対象の型の表記: String, // ` for ` の後ろの表記そのもの(`std::result::Result<T, E>`)
+    pub 対象の型の表記: String, // `実装の見出しの構文` が読んだ対象の型の表記(参照と `Pin` と囲みの丸括弧を外したもの。`std::result::Result<T, E>`)
     pub パス: PathBuf,
     pub 行番号: usize,
 }

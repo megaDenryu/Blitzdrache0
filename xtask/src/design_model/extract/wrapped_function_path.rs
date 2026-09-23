@@ -90,14 +90,9 @@ impl<'a> 役割に包まれた関数のパスを読む工程<'a> {
         self.同じファイルの行一覧
             .iter()
             .enumerate()
-            .filter_map(|(開始, _)| crate::conform::design_ontology::impl_header::implの見出しを読む(self.同じファイルの行一覧, 開始))
-            .any(|見出し| 実装の行が名指す対象か(&見出し.表記, 所有者))
+            .filter_map(|(開始, _)| crate::conform::design_ontology::impl_header::implの見出しを読む(self.同じファイルの行一覧, 開始)?.構文を読む())
+            .any(|構文| 構文.名前だけで書いた型の固有の実装か(所有者))
     }
-}
-
-// 組み立てた見出しが `impl <所有者>` で始まるか。所有者の名前の直後が識別子の文字なら別の型を名指している。
-fn 実装の行が名指す対象か(行: &str, 所有者: &str) -> bool {
-    crate::conform::design_ontology::line_matching::固有のimplの宣言か(行, 所有者)
 }
 
 // 条件3。Rustのパスの起点を表す予約語か。普通の識別子として通すと、実在しないモジュールパスを前へ付けた識別子を組める。

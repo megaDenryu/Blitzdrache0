@@ -74,32 +74,6 @@ pub fn 先頭の型引数を分ける(表記: &str) -> (&str, &str) {
     ("", "")
 }
 
-/// `impl 型名 {`・`impl<T> 型名<T> {` の行か(前に `unsafe` があってもよい)。` for ` を含む行はトレイト実装であり、含めない。型名は先頭の識別子で照らすため、パスで書いた対象(`impl crate::a::型名 {`)は含めない。
-pub fn 固有のimplの宣言か(行: &str, 型名: &str) -> bool {
-    let Some(残り) = implの予約語より後ろ(行) else {
-        return false;
-    };
-    let (_, 残り) = 先頭の型引数を分ける(残り.trim_start());
-    let 宣言 = 行.split_once(" where ").map_or(行, |(宣言, _)| 宣言);
-    行.contains('{') && !宣言.split_whitespace().any(|語| 語 == "for") && 先頭の識別子(残り.trim_start()) == 型名
-}
-
-/// トレイトの実装の行(`impl トレイト for 型`・`impl<T> トレイト for 型<T>`・`unsafe impl トレイト for 型`)の、トレイトを書く位置(前後の空白を除いたもの)。トレイトの実装の行でなければ無い。
-pub fn トレイト実装の行のトレイトの位置(行: &str) -> Option<&str> {
-    let (_, 残り) = 先頭の型引数を分ける(implの予約語より後ろ(行)?.trim_start());
-    let 終わり = 残り.find(" for ")?;
-    Some(残り[..終わり].trim())
-}
-
-/// トレイトの実装の行が対象にする型の表記そのもの(` for ` の後ろから本体の `{` または `where` の前まで。`impl<T, E> M結果 for std::result::Result<T, E> {` なら `std::result::Result<T, E>`)。トレイトの実装の行でなければ無い。
-pub fn トレイト実装の行の対象の型の表記(行: &str) -> Option<&str> {
-    トレイト実装の行のトレイトの位置(行)?;
-    let 位置 = 行.find(" for ")?;
-    let 残り = &行[位置 + " for ".len()..];
-    let 終わり = 残り.find('{').or_else(|| 残り.find(" where ")).unwrap_or(残り.len());
-    Some(残り[..終わり].trim())
-}
-
 /// 型やトレイトのパスの最後の要素の名前(`crate::a::規則<T>` なら `規則`、`FnOnce(u8)` なら `FnOnce`)。
 pub fn パスの最後の名前(表記: &str) -> &str {
     let パス = 表記.split(['<', '(']).next().unwrap_or_default();

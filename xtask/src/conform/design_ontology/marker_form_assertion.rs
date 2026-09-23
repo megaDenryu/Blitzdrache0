@@ -7,7 +7,8 @@
 use std::path::{Path, PathBuf};
 
 use super::super::violation::違反;
-use super::line_matching::{クレート名, トレイト実装の行のトレイトの位置, 波括弧が閉じる行, 語として現れるか};
+use super::impl_header::implの見出しを読む;
+use super::line_matching::{クレート名, 波括弧が閉じる行, 語として現れるか};
 use super::syntax_checker::クレート構文検査;
 use super::syntax_patterns::{self, オントロジートレイト};
 
@@ -35,7 +36,7 @@ impl クレート構文検査 {
     /// `blitz_design` の外のファイルが `blitz_design` を公開の `use` で再公開していないこと。`blitz_design` 自身の `lib.rs` が自分のモジュールを再公開するのは対象でない。
     pub fn 設計解釈マーカーを再公開していないこと(self) -> Self {
         self.行単位の違反を足す(
-            |パス, 行一覧| if blitz_design自身のファイルか(パス) { Vec::new() } else { blitz_designの再公開の行一覧(行一覧) },
+            |パス, 行一覧| if クレート名(パス) == "blitz_design" { Vec::new() } else { blitz_designの再公開の行一覧(行一覧) },
             "設計オントロジー: 設計解釈マーカーを再公開すると、実装の行が正規形でなくなり構文検査が実装を認識できない。`blitz_design` から直接取り込む",
         )
     }
@@ -77,7 +78,8 @@ fn blitz_designの別名の行一覧(行一覧: &[String]) -> Vec<usize> {
     該当
 }
 
-// トレイトを書く位置に設計解釈マーカーの名前が識別子として現れるのに、その位置が `マーカー名` でも `blitz_design::マーカー名` でもない行の番号(1始まり)。`::` の周りの空白は正規形でない。
+// トレイトを書く位置に設計解釈マーカーの名前が識別子として現れるのに、その位置が `マーカー名` でも `blitz_design::マーカー名` でもない見出しの書き出しの行の番号(1始まり)。`::` の周りの空白は正規形でない。
+// トレイトを書く位置は `実装の見出しの構文` の1つの読みで求める。見出しを複数の行へ崩した実装も同じ読みで読む。
 fn 正規形でないマーカー実装の行一覧(行一覧: &[String]) -> Vec<usize> {
     let 名前一覧: Vec<&str> = オントロジートレイト::全部の一覧().into_iter().map(オントロジートレイト::名前).collect();
     let 正規形か = |位置: &str| 名前一覧.iter().any(|名前| 位置 == *名前 || 位置.strip_prefix("blitz_design::") == Some(*名前));
@@ -85,17 +87,11 @@ fn 正規形でないマーカー実装の行一覧(行一覧: &[String]) -> Vec
         let 区切りを空白にした位置 = 位置.replace("::", " ");
         名前一覧.iter().any(|名前| 語として現れるか(&区切りを空白にした位置, 名前))
     };
-    行一覧
-        .iter()
-        .enumerate()
-        .filter_map(|(添字, 行)| トレイト実装の行のトレイトの位置(行).map(|位置| (添字, 位置)))
-        .filter(|(_, 位置)| マーカーを含むか(位置) && !正規形か(位置))
+    (0..行一覧.len())
+        .filter_map(|添字| implの見出しを読む(行一覧, 添字)?.構文を読む()?.トレイトの表記().map(|位置| (添字, 位置.to_string())))
+        .filter(|(_, 位置)| マーカーを含むか(位置.as_str()) && !正規形か(位置.as_str()))
         .map(|(添字, _)| 添字 + 1)
         .collect()
-}
-
-fn blitz_design自身のファイルか(パス: &Path) -> bool {
-    クレート名(パス) == "blitz_design"
 }
 
 // 公開の `use` で始まり `blitz_design` を含む行の番号(1始まり)。
