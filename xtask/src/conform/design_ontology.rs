@@ -11,7 +11,7 @@
 //! `blitz_design` を別名で取り込むこと(`use ... as`)と、`blitz_design` の外で `blitz_design` を公開の `use` で再公開することと、ファイルの中の `mod 名 { ... }` の中にマーカーの実装を置くこと(マーカーの実装の置き場をファイルのモジュールの直下へ固定するため)は違反にする。
 //! 実装の位置のモジュールの直下に同名の定義が複数あるときと、同じファイルの局所か別の `mod` の定義しか無く `use` も無いときは、一意に決まらないとして違反にする。同じ型が同じ軸の排他の分類(`M不変エンティティ` と `M可変エンティティ`、`MParameter` と `MOptions`)を同時に名乗ることは違反にする。
 //! 自己変更の禁止の検査が対象の型を名前で追えるように、次の正規形を課す。実装の見出しの対象の型と型の別名(`type`)の右辺の先頭が裸のパスであること(関連型の射影 `<A as B>::C` とマクロの呼び出し `名前!(..)` を禁じる)と、
-//! `include!` を呼ばないこと(`name_traceable_form_assertion.rs`)。検査器が名前で引く宣言を別名が横から名乗らないように、`use … as` の別名が走査範囲のトレイトの宣言の名前・取り込まずに書けるトレイトの名前・マーカーを名乗る型の名前のどれも名乗らないことを課す(`name_uniqueness_assertion.rs`)。
+//! `include!` を呼ばないこと(`name_traceable_form_assertion.rs`)。検査器が名前で引く宣言を別名が横から名乗らないように、`use … as` の別名が走査範囲のトレイトの宣言の名前・取り込まずに書けるトレイトの名前・マーカーを名乗る型の名前のどれも名乗らないことを課す(`import_alias_name_assertion.rs`)。
 //! `use`・`type`・`impl` の3つの読み口は「その宣言でない」「読めた」「読み切れない」の3つだけを返し(`declaration_reading_outcome.rs`)、読み切れない綴りを黙って飛ばさず違反にする(`readable_form_assertion.rs`)。
 //! 検査しない規則(コンパイラが強制する): `Mコマンド: M不変データ` 等の上位トレイトの関係、`M不変データ` の `Clone`、関数の役割(境界付きの newtype)の型引数の境界、`遷移成功結果` の型引数の境界。
 //! 保証範囲: 検査は Rust の型意味論でなく構文パターン(`impl トレイト for 型` の行と `struct`/`enum` の定義ブロック)に対して行う。型の定義の探索(純粋データ規約・型種別・`MParameter` が使う)の型の同一性は
@@ -42,6 +42,9 @@ pub(crate) mod impl_header;
 mod impl_keyword_position;
 mod impl_syntax;
 mod implemented_trait;
+mod import_alias_name_assertion;
+#[cfg(test)]
+mod import_alias_name_tests;
 #[cfg(test)]
 mod japanese_module_hierarchy_tests;
 pub(crate) mod line_matching;
@@ -70,9 +73,6 @@ mod name_matched_implementation;
 mod name_traceable_form_assertion;
 #[cfg(test)]
 mod name_traceable_form_tests;
-mod name_uniqueness_assertion;
-#[cfg(test)]
-mod name_uniqueness_tests;
 mod parameter_assertion;
 #[cfg(test)]
 mod parameter_assertion_tests;
