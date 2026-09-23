@@ -12,7 +12,7 @@
 //! 実装の位置のモジュールの直下に同名の定義が複数あるときと、同じファイルの局所か別の `mod` の定義しか無く `use` も無いときは、一意に決まらないとして違反にする。同じ型が同じ軸の排他の分類(`M不変エンティティ` と `M可変エンティティ`、`MParameter` と `MOptions`)を同時に名乗ることは違反にする。
 //! 自己変更の禁止の検査が対象の型を名前で追えるように、次の正規形を課す。実装の見出しの対象の型と型の別名(`type`)の右辺の先頭が裸のパスであること(関連型の射影 `<A as B>::C` とマクロの呼び出し `名前!(..)` を禁じる)と、
 //! `include!` を呼ばないこと(`name_traceable_form_assertion.rs`)。検査器が名前で引く宣言を別名が横から名乗らないように、`use … as` の別名が走査範囲のトレイトの宣言の名前・取り込まずに書けるトレイトの名前・マーカーを名乗る型の名前のどれも名乗らないことを課す(`import_alias_name_assertion.rs`)。
-//! `use`・`type`・`impl` の3つの読み口が読むのは行の頭の宣言だけであるため、項目の予約語を行の頭でない位置に書くこと(型の位置の `impl` のように項目を始めない現れは除く。`item_keyword_position.rs`)を違反にし、
+//! `use`・`type`・`impl` の3つの読み口が読むのは行の頭の宣言だけであるため、項目の予約語を行の頭でない位置に書くこと(トークン木の外では直前の字句が項目を始めうる字句の閉じた集合に入るものだけ、トークン木の中ではすべて。`item_keyword_position.rs`)を違反にし、
 //! 行の頭から読み始めて読み切れなかった綴りも黙って飛ばさず違反にする(`declaration_reading_outcome.rs`・`readable_form_assertion.rs`)。
 //! 検査しない規則(コンパイラが強制する): `Mコマンド: M不変データ` 等の上位トレイトの関係、`M不変データ` の `Clone`、関数の役割(境界付きの newtype)の型引数の境界、`遷移成功結果` の型引数の境界。
 //! 保証範囲: 検査は Rust の型意味論でなく構文パターン(`impl トレイト for 型` の行と `struct`/`enum` の定義ブロック)に対して行う。型の定義の探索(純粋データ規約・型種別・`MParameter` が使う)の型の同一性は
@@ -24,7 +24,6 @@
 //! 2段以上の再公開と glob を重ねた別名、外部のクレートのマクロ・derive・属性マクロが生やす実装、フィールドの型の中に間接的に含まれる内部可変性、rustfmt が整形しない書き方(`#[rustfmt::skip]` の中で見出しを複数行へ崩した形)は保証範囲の外である。
 //! `#[path = "..."] mod` は、物理と論理のモジュール構造の一致を確かめるため、型の同一性の推定をそのまま使える(日本語のモジュールは rustc が E0754 で既定の探索を拒むため、この属性を必ず持つ)。
 
-mod attribute_span;
 mod body_macro_invocation;
 mod declaration_brackets;
 mod declaration_prefix;
@@ -46,6 +45,7 @@ mod implemented_trait;
 mod import_alias_name_assertion;
 #[cfg(test)]
 mod import_alias_name_tests;
+mod item_keyword_lexer;
 mod item_keyword_position;
 #[cfg(test)]
 mod item_keyword_position_tests;
@@ -53,6 +53,9 @@ mod item_keyword_position_tests;
 mod japanese_module_hierarchy_tests;
 pub(crate) mod line_matching;
 mod macro_body;
+#[cfg(test)]
+mod macro_declaration_readable_tests;
+mod macro_metavariable;
 pub(crate) mod marker_canonical_file;
 #[cfg(test)]
 mod marker_canonical_form_tests;
@@ -101,10 +104,13 @@ pub(crate) mod syntax_checker;
 pub(crate) mod syntax_patterns;
 #[cfg(test)]
 mod tests;
+mod token_tree_nesting;
 mod trait_declaration_index;
 pub(crate) mod trait_implementation;
 mod trait_name_index;
 mod type_alias_scan;
+#[cfg(test)]
+mod type_alias_scan_tests;
 pub(crate) mod type_definition;
 mod type_head_form;
 #[cfg(test)]

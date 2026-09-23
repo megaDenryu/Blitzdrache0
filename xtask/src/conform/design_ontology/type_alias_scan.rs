@@ -4,12 +4,13 @@
 //! 実装とトレイトの本体の中の関連型(`type Output = Self;`)も同じ形であるため辺になるが、右辺の名前がマーカーの名前と一致したときにだけ効き、そのときは違反の側へ倒れる。
 //! 右辺を持たない関連型の宣言(`type Output;`・`type 状態: M状態 + PartialEq;`)は辺を作らないため、別名の宣言でないと答える。境界の中の等式(`type A: 甲<X = Y>;`)を右辺と読み違えないよう、`=` はどの括弧の中でもない位置のものだけを探す。
 //! rustfmt が長い宣言を `=` の後ろで折るため、宣言を終える `;` まで行を繋いでから読む(`statement_span.rs`)。右辺は括弧の中に `;` を持てる(`[規則; 2]`)ため、どの括弧の中でもない `;` で宣言を終える。
-//! 読み切れない綴り(ファイルの最後まで `;` に届かない・型引数の山括弧が `;` までに閉じない)は黙って飛ばさず、読み切れないと答える。読み口の全域性の検査(`readable_form_assertion.rs`)がそれを違反にする。
+//! 読み切れない綴り(ファイルの最後まで `;` に届かない・`type` の後ろに別名の識別子が無い・型引数の山括弧が `;` までに閉じない・`=` の右辺が空である・右辺にマクロのメタ変数がある)は黙って飛ばさず、読み切れないと答える。読み口の全域性の検査(`readable_form_assertion.rs`)がそれを違反にする。
 
 use super::declaration_brackets::見出しの括弧の深さ;
 use super::declaration_prefix::属性と可視性を読み飛ばす;
 use super::declaration_reading_outcome::{宣言を読んだ結末, 読めない宣言};
 use super::line_matching::{先頭の型引数を分ける, 先頭の識別子};
+use super::macro_metavariable::メタ変数を含むか;
 use super::statement_span::{セミコロンまで繋いだ本文, 宣言を終えるセミコロン};
 
 /// 型の別名の宣言1件。別名と、右辺の表記(末尾の `;` と前後の空白を除いたもの)の組である。
@@ -40,6 +41,7 @@ pub fn 型の別名の宣言を読む(行一覧: &[String], 添字: usize) -> �
     match 最上位の等号より後ろ(型引数より後ろ) {
         None => 宣言を読んだ結末::その宣言でない,
         Some(右辺) if 右辺.trim().is_empty() => 読み切れない(書き出し, "`=` の右辺が空である"),
+        Some(右辺) if メタ変数を含むか(右辺) => 読み切れない(書き出し, "`=` の右辺にマクロのメタ変数がある。展開した先の名前を検査器は知らず、この別名が作る名前の辺を黙って落とす"),
         Some(右辺) => 宣言を読んだ結末::読めた(型の別名の宣言 { 別名, 右辺: 右辺.trim().to_string() }),
     }
 }
@@ -58,64 +60,4 @@ fn 最上位の等号より後ろ(宣言: &str) -> Option<&str> {
         括弧.括弧として数える(文字);
     }
     None
-}
-
-#[cfg(test)]
-mod tests {
-    use super::{型の別名の宣言, 型の別名の宣言を読む, 宣言を読んだ結末};
-
-    fn 原文の書き出しを読む(原文: &str) -> 宣言を読んだ結末<型の別名の宣言> {
-        let 行一覧: Vec<String> = 原文.lines().map(str::to_string).collect();
-        型の別名の宣言を読む(&行一覧, 0)
-    }
-
-    fn 読んだ組(原文: &str) -> Option<(String, String)> {
-        原文の書き出しを読む(原文).読めた値().map(|宣言| (宣言.別名, 宣言.右辺))
-    }
-
-    #[test]
-    fn 属性と可視性と型引数の既定値を剥がして別名と右辺を読む() {
-        assert_eq!(読んだ組("pub(crate) type 短い名前<T> = crate::a::規則<T>;"), Some(("短い名前".to_string(), "crate::a::規則<T>".to_string())));
-        assert_eq!(読んだ組("type 既定値付き<T = u8> = crate::a::規則<T>;"), Some(("既定値付き".to_string(), "crate::a::規則<T>".to_string())));
-        assert_eq!(読んだ組("type 関数の型 = fn(&mut 規則) -> u8;"), Some(("関数の型".to_string(), "fn(&mut 規則) -> u8".to_string())));
-    }
-
-    #[test]
-    fn rustfmtが等号の後ろで折った宣言を次の行と繋いで読む() {
-        assert_eq!(
-            読んだ組(
-                "pub type 折れた別名 =
-    crate::a::規則<T>;"
-            ),
-            Some(("折れた別名".to_string(), "crate::a::規則<T>".to_string()))
-        );
-        assert_eq!(
-            読んだ組(
-                "type 折れた型引数<
-    T,
-> = crate::a::規則<T>;"
-            ),
-            Some(("折れた型引数".to_string(), "crate::a::規則<T>".to_string()))
-        );
-    }
-
-    #[test]
-    fn 右辺の括弧の中のセミコロンで宣言を終えない() {
-        assert_eq!(読んだ組("type 配列 = [規則; 2];"), Some(("配列".to_string(), "[規則; 2]".to_string())));
-    }
-
-    #[test]
-    fn 右辺を持たない関連型の宣言と別の予約語は別名の宣言でない() {
-        assert!(原文の書き出しを読む("typedef 何か = 別の何か;").読めなかった宣言().is_none());
-        assert!(読んだ組("typedef 何か = 別の何か;").is_none());
-        assert!(読んだ組("type 状態: M状態 + PartialEq;").is_none());
-        assert!(読んだ組("type 境界の等式: 甲<X = Y>;").is_none());
-    }
-
-    #[test]
-    fn 読み切れない綴りは読み切れないと答える() {
-        assert!(原文の書き出しを読む("type 途中まで<T>").読めなかった宣言().is_some());
-        assert!(原文の書き出しを読む("type 閉じない<T = 規則;").読めなかった宣言().is_some());
-        assert!(原文の書き出しを読む("type 空の右辺 = ;").読めなかった宣言().is_some());
-    }
 }
