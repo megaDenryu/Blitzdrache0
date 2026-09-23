@@ -13,7 +13,7 @@ use super::super::module_index::モジュールの索引;
 use super::super::module_path::モジュールパス;
 use super::super::read_implementation::読んだ実装;
 use super::super::trait_declaration_index::{トレイトの宣言の索引, 見るトレイトの宣言};
-use super::{globの取り込み元がすべて走査範囲の外のクレートか, 取り込まずに書けるトレイトの名前か};
+use super::scan_range_exclusion::{globの取り込み元がすべて走査範囲の外のクレートか, 取り込まずに書けるトレイトの名前か};
 
 /// 実装が書いたトレイトの宣言の在り処。
 pub enum トレイトの宣言の在り処 {
@@ -43,7 +43,7 @@ pub struct トレイトの宣言の在り処の問い<'a> {
 }
 
 impl トレイトの宣言の在り処の問い<'_> {
-    pub fn 在り処を答える(&self, 索引: &モジュールの索引<'_>, トレイトの索引: &トレイトの宣言の索引) -> トレイトの宣言の在り処 {
+    pub fn 在り処を答える(&self, 索引: &モジュールの索引, トレイトの索引: &トレイトの宣言の索引) -> トレイトの宣言の在り処 {
         let パス = self.表記.split('<').next().unwrap_or_default().trim().trim_start_matches("::");
         let 名前 = パスの最後の名前(パス);
         let 探索 = 名前の在り処の探索 {
