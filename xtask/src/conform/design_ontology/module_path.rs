@@ -5,6 +5,8 @@
 //! `type_definition.rs` が同じファイルの同名の定義の重複を一意に決まらないとして違反にする。
 //! `#[path = "..."] mod` については、`module_structure_assertion.rs` が宣言された論理のモジュールパスとこの推定の一致を確かめるため、この推定はそのままで成り立つ。
 
+pub mod enclosing_module;
+
 use std::path::{Component, Path};
 
 /// Rustのソースのファイルの末尾。モジュールパスの導出がこれを落とし、`module_declaration.rs` の正規形の表記がこれを付ける。

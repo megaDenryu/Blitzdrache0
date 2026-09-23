@@ -1,6 +1,6 @@
 //! 自己変更の禁止の試験のうち、宣言の書き方の違いで読み落とさないことを確かめるもの。同じ行の属性(`#[..] impl`・`#[..] trait`・`#[macro_export] macro_rules!`)・
-//! 同名のトレイトの宣言の複数・`mod 名 { … }` の中のトレイトの宣言・1行に並んだ複数の関数・関数の修飾(`pub(crate)`・`const`・`async`・`unsafe extern "C"`・`#[inline]`)・
-//! 可変参照を対象にする全称の実装・台帳のパスの区切り文字を固定する。
+//! 1行に並んだ複数の関数・関数の修飾(`pub(crate)`・`const`・`async`・`unsafe extern "C"`・`#[inline]`)・可変参照を対象にする全称の実装・台帳のパスの区切り文字を固定する。
+//! `mod 名 { … }` の中の同名のトレイトの宣言の区別は `trait_identity_tests.rs` が固定する。
 
 use std::path::PathBuf;
 
@@ -25,12 +25,6 @@ fn 同じ行の属性を付けた実装とトレイトとマクロは違反に�
         "実装したトレイト `変更` の宣言の関数 `変える`",
     );
     違反が1件だけあり説明が含む("#[macro_export] macro_rules! 生やす {\n    () => {\n        fn 変える(&mut self) {}\n    };\n}\n", "macro_rules! 生やす の fn 変える");
-}
-
-#[test]
-fn 同名のトレイトの宣言の1つが可変ならmodの中の宣言でも違反になる() {
-    let 内容 = format!("{定義}mod 甲 {{\n    pub trait 変更 {{\n        fn 読む(&self) {{}}\n    }}\n}}\nmod 乙 {{\n    pub trait 変更 {{\n        fn 変える(&mut self) {{}}\n    }}\n}}\nimpl 甲::変更 for 規則 {{}}\n");
-    違反が1件だけあり説明が含む(&内容, "実装したトレイト `変更` の宣言の関数 `変える`");
 }
 
 #[test]
