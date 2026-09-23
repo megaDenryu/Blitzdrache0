@@ -3,14 +3,14 @@
 //! 位置で絞ると、検査器が読まない位置に置いた別名が名前の閉包から漏れる。読む位置を広く取ることで漏れた辺が無くなり、増える辺は違反の側へ倒す近似になる。
 //! 実装とトレイトの本体の中の関連型(`type Output = Self;`)も同じ形であるため辺になるが、右辺の名前がマーカーの名前と一致したときにだけ効き、そのときは違反の側へ倒れる。
 //! 右辺を持たない関連型の宣言(`type Output;`・`type 状態: M状態 + PartialEq;`)は辺を作らないため、別名の宣言でないと答える。境界の中の等式(`type A: 甲<X = Y>;`)を右辺と読み違えないよう、`=` はどの括弧の中でもない位置のものだけを探す。
-//! rustfmt が長い宣言を `=` の後ろで折るため、宣言を終える `;` まで行を繋いでから読む(`statement_span.rs`)。
+//! rustfmt が長い宣言を `=` の後ろで折るため、宣言を終える `;` まで行を繋いでから読む(`statement_span.rs`)。右辺は括弧の中に `;` を持てる(`[規則; 2]`)ため、どの括弧の中でもない `;` で宣言を終える。
 //! 読み切れない綴り(ファイルの最後まで `;` に届かない・型引数の山括弧が `;` までに閉じない)は黙って飛ばさず、読み切れないと答える。読み口の全域性の検査(`readable_form_assertion.rs`)がそれを違反にする。
 
 use super::declaration_brackets::見出しの括弧の深さ;
 use super::declaration_prefix::属性と可視性を読み飛ばす;
 use super::declaration_reading_outcome::{宣言を読んだ結末, 読めない宣言};
 use super::line_matching::{先頭の型引数を分ける, 先頭の識別子};
-use super::statement_span::セミコロンまで繋いだ本文;
+use super::statement_span::{セミコロンまで繋いだ本文, 宣言を終えるセミコロン};
 
 /// 型の別名の宣言1件。別名と、右辺の表記(末尾の `;` と前後の空白を除いたもの)の組である。
 pub struct 型の別名の宣言 {
@@ -24,7 +24,7 @@ pub fn 型の別名の宣言を読む(行一覧: &[String], 添字: usize) -> �
     let Some(後ろ) = 属性と可視性を読み飛ばす(書き出し).strip_prefix("type").filter(|後ろ| 後ろ.starts_with(char::is_whitespace)) else {
         return 宣言を読んだ結末::その宣言でない;
     };
-    let Some(宣言) = セミコロンまで繋いだ本文(後ろ, 行一覧.get(添字 + 1..).unwrap_or_default()) else {
+    let Some(宣言) = セミコロンまで繋いだ本文(後ろ, 行一覧.get(添字 + 1..).unwrap_or_default(), 宣言を終えるセミコロン::括弧の外の) else {
         return 読み切れない(書き出し, "`type` の宣言がファイルの最後まで `;` に届かない");
     };
     let 名前の表記 = 宣言.trim_start();
@@ -97,6 +97,11 @@ mod tests {
             ),
             Some(("折れた型引数".to_string(), "crate::a::規則<T>".to_string()))
         );
+    }
+
+    #[test]
+    fn 右辺の括弧の中のセミコロンで宣言を終えない() {
+        assert_eq!(読んだ組("type 配列 = [規則; 2];"), Some(("配列".to_string(), "[規則; 2]".to_string())));
     }
 
     #[test]

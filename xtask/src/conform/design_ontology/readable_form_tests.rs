@@ -71,6 +71,28 @@ fn 閉じない群のuseと読み切れないtypeを違反にする() {
 }
 
 #[test]
+fn 波括弧の無いuseでもセミコロンに届かなければ違反にする() {
+    for (原文, 理由) in [
+        ("pub use crate::a::b\n", "`use` の文がファイルの最後まで `;` で終わっていない"),
+        ("use crate::a::b\npub struct 甲;\n", "展開した項目が1つのパスと別名に読めない"),
+    ] {
+        let 説明一覧 = 正規形の説明関数を連ねた違反の説明一覧(vec![ソース("crates/a/src/x.rs", 原文)]);
+        assert_eq!(説明一覧.len(), 1, "{説明一覧:?}");
+        assert!(説明一覧[0].contains(理由), "{}", 説明一覧[0]);
+    }
+}
+
+#[test]
+fn 右辺の括弧の中にセミコロンを持つ型の別名が包んだ名前の閉包へ入る() {
+    let ソース一覧 = vec![ソース(
+        "crates/a/src/x.rs",
+        "pub struct 規則;\nimpl M不変データ for 規則 {}\nimpl M規則 for 規則 {}\npub trait ローカル {\n    fn 読む(&self) {}\n}\ntype 配列 = [規則; 2];\nimpl ローカル for 配列 {\n    fn 変える(&mut self) {}\n}\n",
+    )];
+    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
+    assert!(説明一覧.iter().any(|説明| 説明.contains("M不変データ `規則` は自分の型への可変参照を受け手か引数に持つ関数を持てません")), "{説明一覧:?}");
+}
+
+#[test]
 fn 読み切れる綴りは違反にならない() {
     let ソース一覧 = vec![ソース(
         "crates/a/src/x.rs",
