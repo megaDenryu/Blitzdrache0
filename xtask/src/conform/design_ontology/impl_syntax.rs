@@ -1,18 +1,20 @@
 //! `impl` の見出しの表記を、実装の種類(固有かトレイトの実装か)と実装が対象にする型と型引数の名前へ分けて読んだ値。
 //! 受け取るのは見出しの表記(`impl` から本体を開く `{` まで。前に `unsafe` があってもよい)、返すのはこの値か、`impl` の見出しでないときの無しである。
 //! 型引数の並びの境界と `where` 句の表記も持つ。自己変更の検査が、境界で具体のマーカーの型を指す実装(`impl<T: DerefMut<Target = 規則>> 変更 for Vec<T>`)を集めるために、対象の表記と別に照らすためである。
-//! 実装が対象にする型の読み方は、子のモジュール `impl_syntax/target_type.rs` が持ち、境界の読み方と照らし方は `impl_syntax/bounds.rs` が持つ。対象の型を名前で読める形へ固定する正規形の検査は `impl_syntax/target_form.rs` が持つ。
+//! 実装が対象にする型の読み方は、子のモジュール `impl_syntax/target_type.rs` が持ち、境界の読み方と照らし方は `impl_syntax/bounds.rs` が持つ。可変の借用を与えるトレイトの名前は `impl_syntax/mutable_borrow_trait.rs` が持つ。関数の署名(`function_signature.rs`)も、境界と `where` 句をこの2つで読む。対象の型を名前で読める形へ固定する正規形の検査は `impl_syntax/target_form.rs` が持つ。
 
 mod bounds;
+mod mutable_borrow_trait;
 mod target_form;
 mod target_type;
 #[cfg(test)]
 mod tests;
 
-use super::declaration_brackets::{最上位で開いた括弧, 見出しの括弧の深さ};
+use super::declaration_brackets::見出しの括弧の深さ;
 use super::identifier_boundary::{識別子として現れるか, 識別子として現れる位置一覧};
 use super::line_matching::{implの予約語より後ろ, パスの最後の名前, 先頭の型引数を分ける, 先頭の識別子, 型の引数の名前一覧};
-use bounds::実装の境界;
+pub use bounds::{実装の境界, 宣言と境界の句に分ける};
+pub use mutable_borrow_trait::{可変の借用を与えるトレイトが現れるか, 可変の借用を与えるトレイトの型引数が名前を指すか};
 pub use target_form::名前で読めない実装の対象の違反一覧;
 pub use target_type::実装の対象の型;
 
@@ -79,29 +81,6 @@ impl 実装の見出しの構文 {
     /// 参照と `Pin` を繰り返し外した後の対象の型の名前。対象の型を決められない実装の自己変更を問う相手の名前である。
     pub fn 外しきった対象の名前(&self) -> &str {
         パスの最後の名前(self.対象.参照とpinを外しきった表記())
-    }
-}
-
-// 見出しの表記の型引数より後ろを、宣言(トレイトと対象)と `where` 句(`where` の後ろから本体を開く `{` の手前まで)に分ける。どちらも、どの括弧の中でもない位置のものだけで切る。
-// 型引数の定数式(`包み<{ const fn 一() -> usize where u8: Copy { 1 } 一() }, 規則>`)の中の `where` で切ると、対象の表記が途中で途切れ、表記に現れる `規則` を自己変更の検査が見落とすためである。
-// `where` は空白の一致でなく識別子の境界で探す。`規則<T>where T: 境界` のように前に空白の無い形も境界として読むためである。
-fn 宣言と境界の句に分ける(残り: &str) -> (&str, &str) {
-    let where一覧 = 識別子として現れる位置一覧(残り, "where");
-    let mut 括弧 = 見出しの括弧の深さ::default();
-    let mut 境界の句の位置 = None;
-    let mut 終わり = 残り.len();
-    for (位置, 文字) in 残り.char_indices() {
-        if 境界の句の位置.is_none() && 括弧.最上位か() && where一覧.contains(&位置) {
-            境界の句の位置 = Some(位置);
-        }
-        if 括弧.一文字読む(文字) == 最上位で開いた括弧::本体の波括弧 {
-            終わり = 位置;
-            break;
-        }
-    }
-    match 境界の句の位置 {
-        Some(位置) => (残り[..位置].trim(), 残り[位置 + "where".len()..終わり].trim()),
-        None => (残り[..終わり].trim(), ""),
     }
 }
 

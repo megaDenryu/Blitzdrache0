@@ -14,6 +14,7 @@ mod name_match_exclusion_tests;
 mod parameter_type_tests;
 mod qualified_bound_name_counterexample_tests;
 mod receiver_form_tests;
+mod signature_bound_counterexample_tests;
 mod trait_argument_exclusion_tests;
 mod trait_body_macro_tests;
 mod trait_default_method_tests;

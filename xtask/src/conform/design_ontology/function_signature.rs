@@ -1,41 +1,24 @@
 //! 実装とトレイトの本体の直下(波括弧の深さ1)にある関数の署名を読み、受け手と引数が自分の型への可変参照かを答える。
 //! 入れ子の関数(メソッドの本体の中の `fn`)と、本体の中の別の `impl` の関数は深さが2以上であるため拾わない。
 //! 引数の並びは、名前の後ろの型引数(`<F: FnOnce(&mut Self)>`)を読み飛ばしてから探す。署名は複数行にまたがってよい(本体の文字列は行を改行で繋いでいる)。
-//! 引数1つが自分の型への可変参照かの規則は `parameter_form.rs` が持つ。
+//! 引数1つが自分の型への可変参照かの規則は `parameter_form.rs` が持つ。関数の型引数の並びの境界と `where` 句と引数の `impl Trait` は、子のモジュール `function_signature/signature_bounds.rs` が読む。
+//! 署名に自己変更を与えるかを問う相手は、子のモジュール `function_signature/self_modification_question.rs` が持つ。
+
+mod self_modification_question;
+mod signature_bounds;
 
 use super::declaration_brackets::{最上位で開いた括弧, 最上位のカンマで分ける, 見出しの括弧の深さ};
 use super::identifier_boundary::識別子の文字か;
 use super::line_matching::先頭の識別子;
 use super::parameter_form::関数の引数;
-use super::self_modification_evidence::名前が当たった場所;
+pub use self_modification_question::自己変更を問う対象;
+pub use signature_bounds::関数の署名の境界;
 
-/// 本体の直下の関数1つの、名前と引数の並び(括弧の中の表記を最上位のカンマで分けたもの)。
+/// 本体の直下の関数1つの、名前と引数の並び(括弧の中の表記を最上位のカンマで分けたもの)と、関数の署名の境界。
 pub struct 関数の署名 {
     pub 名前: String,
     引数一覧: Vec<String>,
-}
-
-/// 自己変更を問う相手。実装の対象の型の名前(全称の実装なら型引数の名前、マクロの中ならメタ変数)と、その実装が可変参照を対象にするかと、名前が見出しのどこに当たったかの組である。
-pub struct 自己変更を問う対象<'a> {
-    pub 型名: &'a str,
-    pub 可変参照を対象にするか: bool, // 対象の表記のどこかに可変参照が現れるか、名前が境界に当たったとき真。真なら値で受ける `self` の関数も自己変更を与える
-    pub 当たった場所: 名前が当たった場所,
-}
-
-impl<'a> 自己変更を問う対象<'a> {
-    /// 対象の型を決められない実装(全称の実装とマクロの本体の中の実装と関数)の自分の型について問う相手。
-    pub fn 決められない対象の型について(型名: &'a str, 可変参照を対象にするか: bool) -> Self {
-        Self {
-            型名,
-            可変参照を対象にするか,
-            当たった場所: 名前が当たった場所::決められない対象の型,
-        }
-    }
-
-    /// その関数が対象の型へ自己変更を与えるか。可変参照を対象にする実装の関数は、受け手の形によらず与える。
-    pub fn 自己変更を与えるか(&self, 関数: &関数の署名) -> bool {
-        self.可変参照を対象にするか || 関数.自分の型への可変参照を持つか(self.型名)
-    }
+    pub 境界: 関数の署名の境界,
 }
 
 impl 関数の署名 {
@@ -95,9 +78,11 @@ pub fn 関数の署名を読む(残り: &str) -> Option<関数の署名> {
             最上位で開いた括弧::無し => {}
         }
     }
-    let 引数の並び = 丸括弧の中身(&名前の前[開き?..])?;
-    let 引数一覧 = 最上位のカンマで分ける(引数の並び).into_iter().map(str::trim).filter(|引数| !引数.is_empty()).map(str::to_string).collect();
-    Some(関数の署名 { 名前, 引数一覧 })
+    let 開き = 開き?;
+    let 引数の並び = 丸括弧の中身(&名前の前[開き..])?;
+    let 引数一覧: Vec<String> = 最上位のカンマで分ける(引数の並び).into_iter().map(str::trim).filter(|引数| !引数.is_empty()).map(str::to_string).collect();
+    let 境界 = 関数の署名の境界::読む(&名前の前[..開き], &引数一覧, &名前の前[開き + 引数の並び.len() + "()".len()..]);
+    Some(関数の署名 { 名前, 引数一覧, 境界 })
 }
 
 // `(` で始まる表記の、対になる `)` までの内側。

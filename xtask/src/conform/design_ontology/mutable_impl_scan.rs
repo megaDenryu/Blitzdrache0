@@ -2,6 +2,9 @@
 //! 検査器は、実装の対象がどの型を指すかを名前解決で求めない。マーカーの名前の閉包(`marker_name_closure.rs`)の名前が、実装の対象の型の表記か、型引数の並びの境界か、`where` 句に識別子の境界(`identifier_boundary.rs`)で現れれば、その実装を検査する。
 //! トレイトの型引数(`impl IndexMut<地点> for 地図`・`impl AddAssign<距離> for 走行の合計`)は照らさない。その実装は別の型のAPIであり、マーカーの型を引数に取る自由関数と同じ範囲にあるためである。
 //! 境界を照らすのは、境界で具体のマーカーの型を指す実装(`impl<T: BorrowMut<規則>> 変更 for Option<T>`)を捕まえる近似である。境界に当たった実装は、境界がその型を指すため、可変参照を対象にする実装と同じく値で受ける `self` の関数も数え、全称の実装でも除かない。
+//! 対象の表記に可変の借用を与えるトレイト(`Box<dyn DerefMut<Target = 規則>>`。`impl_syntax/mutable_borrow_trait.rs`)が現れる実装も、同じく値で受ける `self` の関数を数える。
+//! 見出しに名前が当たらない実装でも、本体の直下の関数か実装したトレイトの宣言の関数の署名の境界(型引数の並びの境界・`where` 句・引数の `impl Trait`)の可変の借用を与えるトレイトの型引数に閉じた名前が現れれば、その関数を根拠にする(`mutable_impl_scan/signature_bound_question.rs`)。
+//! 見出しに名前が当たった実装の関数は、署名の境界の可変の借用を与えるトレイトの型引数が `Self` を指すときも根拠にする(`function_signature/self_modification_question.rs`)。
 //! 境界を別のトレイトの宣言か走査範囲の外のトレイトで包んだ形(`trait 取れる: DerefMut<Target = 規則> {}` を経由した境界)は、型の解決が要るため保証の範囲の外である。
 //! 実装の在り処は問わない。関数の本体の中の実装も、波括弧付きのモジュールの中の実装も、マクロの本体の中の実装も、`#[cfg(..)]` が付いた実装も同じく検査する。
 //! 名前解決をやめたのは、`use`・glob・再公開・別名・cfg・局所の項目・波括弧付きのモジュール・マクロの呼び出しの中を解く解き方に、名前を取りこぼす穴が繰り返し見つかったためである。名前で過大近似すると、その種類の穴が原理的に存在しなくなる。
@@ -9,19 +12,22 @@
 //! 対象の表記のどの深さにでも可変参照が現れる実装(`&mut 規則`・`Option<&mut 規則>`・`(&mut 規則, u8)`)は、関数を1つでも持てば可変とみなす。実装の本体の直下の関数と、実装したトレイトの宣言の関数(既定の関数を含む。`trait_declaration_index.rs`)を `function_signature.rs` の規則で見る。
 //! 本体の直下のマクロの呼び出し(`body_macro_invocation.rs`)と、宣言の本体の直下でマクロを呼ぶトレイトは、生える関数を読めないため黙って通さず根拠にする。
 
+mod signature_bound_question;
+
 use std::path::PathBuf;
 
 use super::body_macro_invocation::本体の直下のマクロの呼び出し;
 use super::function_signature::{本体の直下の関数の署名一覧, 自己変更を問う対象};
 use super::identifier_boundary::識別子として現れるか;
 use super::impl_header::implの見出しを読む;
-use super::impl_syntax::実装の種類;
+use super::impl_syntax::{可変の借用を与えるトレイトが現れるか, 実装の種類};
 use super::implemented_trait::実装したトレイト;
 use super::marker_name_closure::名前の言い換えの辺一覧;
 use super::name_matched_implementation::名前が当たった自己変更の実装;
 use super::read_implementation::読んだ実装;
 use super::self_modification_evidence::{名前が当たった場所, 自己変更の根拠};
 use super::trait_declaration_index::トレイトの宣言の索引;
+use signature_bound_question::署名の境界で名前を問う対象;
 
 pub struct 自己変更の検査<'a> {
     pub(super) ソース一覧: &'a [(PathBuf, Vec<String>)],
@@ -66,17 +72,19 @@ impl<'a> 自己変更の検査<'a> {
     // 対象の表記だけを照らすと、境界で具体のマーカーの型を指す実装(`impl<T: DerefMut<Target = 規則>> 変更 for Vec<T>`)が、`規則` を書き換えるのに検査から落ちる。
     fn 実装の中の根拠(&self, 実装: &読んだ実装, 名前の集合: &[String]) -> Option<自己変更の根拠> {
         let 構文 = 実装.見出し.構文を読む()?;
-        名前の集合.iter().find_map(|名前| {
-            let 境界の場所 = 構文.境界.名前が当たった場所(名前, 構文.型引数の名前一覧());
+        let 見出しの根拠 = 名前の集合.iter().find_map(|名前| {
+            let 境界の場所 = 構文.境界.名前が当たった場所(名前, 構文.型引数の名前一覧().iter().any(|型引数| 型引数 == 名前));
             let 対象に当たるか = !構文.全称の実装か() && 識別子として現れるか(構文.対象.表記(), 名前);
             let 当たった場所 = 境界の場所.or(対象に当たるか.then_some(名前が当たった場所::対象の型の表記))?;
             let 対象 = 自己変更を問う対象 {
                 型名: 名前,
-                可変参照を対象にするか: 構文.対象.可変参照か() || 境界の場所.is_some(),
+                可変参照を対象にするか: 構文.対象.可変参照か() || 可変の借用を与えるトレイトが現れるか(構文.対象.表記()) || 境界の場所.is_some(),
                 当たった場所,
             };
             self.実装が与える自己変更の根拠(実装, &構文.種類, &対象)
-        })
+        });
+        let 署名の境界の問い = 署名の境界で名前を問う対象 { 名前の集合 };
+        見出しの根拠.or_else(|| 署名の境界の問い.実装の中の根拠(実装, &構文.種類, &self.トレイトの索引, &self.名前の辺一覧))
     }
 
     /// 実装の本体の直下の関数・本体の直下のマクロの呼び出し・実装したトレイトの宣言が、対象へ自己変更を与えるなら、その根拠。対象が型に属するかは呼び出し側が確かめる。

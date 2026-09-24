@@ -11,6 +11,7 @@ use super::declaration_brackets::見出しの括弧の深さ;
 use super::declaration_prefix::先頭の属性を読み飛ばす;
 use super::line_matching::{参照の参照先, 可変参照の参照先};
 use mutable_reference_in_type::引数の型の表記;
+pub use mutable_reference_in_type::要素の終わり;
 
 /// 関数の引数1つの表記(`&mut self`・`対象: &mut Self` 等)。
 #[repr(transparent)]
