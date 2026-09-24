@@ -1,5 +1,5 @@
 //! `M不変データ` の自己変更の禁止の試験。受け手と引数の形・引数の型の中の可変参照・宣言の書き方の違い・実装の見出しの読み方・定義の位置のモジュールで数える型の同一性・型を包む実装・
-//! 名前の閉包(`use … as` と `type` の別名の辺)と実装の在り処を問わないこと・名前が当たった別の型の実装の台帳・トレイトの宣言の関数と宣言の本体のマクロ・マクロを通した自己変更・対象の型を決められない実装と台帳・包んだ可変参照と型の表記の中のマクロと型引数の境界の名前の反例・型の別名と関連型が隠した可変参照の反例・トレイトの型引数を照らさないこと・型引数と同じ名前を修飾したパスで境界に書いた反例・実装の見出しの境界の `Self` と引数の `dyn Trait` の反例を、観点ごとのファイルに分けて置く。
+//! 名前の閉包(`use … as` と `type` の別名の辺)と実装の在り処を問わないこと・名前が当たった別の型の実装の台帳・トレイトの宣言の関数と宣言の本体のマクロ・マクロを通した自己変更・対象の型を決められない実装と台帳・包んだ可変参照と型の表記の中のマクロと型引数の境界の名前の反例・型の別名と関連型が隠した可変参照の反例・トレイトの型引数を照らさないこと・型引数と同じ名前を修飾したパスで境界に書いた反例・実装の見出しの境界の `Self` と引数の `dyn Trait` の反例・寿命の名前を予約語の生の識別子にした可変参照の反例を、観点ごとのファイルに分けて置く。
 
 mod alias_hidden_mutable_reference_counterexample_tests;
 mod bound_name_counterexample_tests;
@@ -14,6 +14,7 @@ mod name_closure_tests;
 mod name_match_exclusion_tests;
 mod parameter_type_tests;
 mod qualified_bound_name_counterexample_tests;
+mod raw_lifetime_counterexample_tests;
 mod receiver_form_tests;
 mod signature_bound_counterexample_tests;
 mod trait_argument_exclusion_tests;

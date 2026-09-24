@@ -3,9 +3,10 @@
 //! 自分の型の名前はマクロのメタ変数(`$型`)でもよい。
 //! 関数の型と `Fn` 系のトレイトの引数の丸括弧の中(`fn(&mut Self)`・`FnOnce(&mut Self)`・`impl FnMut(&mut Self)`・`Box<dyn Fn(&mut Self)>`)は数えない。その引数が可変参照を受け取る処理であって、可変参照そのものではないためである。
 //! 除く範囲は、関数の型では `fn` の語から、その語を囲む括弧の中の要素の終わり(同じ深さのカンマか、囲みを閉じる括弧)までであり(戻り値の型を含む)、`Fn`・`FnMut`・`FnOnce` では語から直後の引数の丸括弧を閉じるまでである。
+//! 生の識別子(寿命の `'r#fn` を含む)の `fn` は関数の型を始める語に数えない。数えると `&'r#fn mut Self` の可変参照を除く範囲へ入れて落とす。
 //! `impl` と `dyn` の後ろは除かない。`impl Iterator<Item = &'a mut Self>` と `dyn Iterator<Item = &mut Self>` は、字面に自分の型への可変参照を持つためである。
 
-use super::super::identifier_boundary::識別子の文字か;
+use super::super::identifier_boundary::{生の識別子の接頭辞で終わるか, 識別子の文字か};
 use super::super::line_matching::可変参照の参照先;
 
 const 関数の型を始める語: &str = "fn";
@@ -43,6 +44,10 @@ fn 除く範囲(表記: &str) -> Option<(usize, usize)> {
     for 名前 in 識別子の一覧(表記) {
         let 開始 = 位置 + 表記[位置..].find(名前)?;
         let 語の後ろ = 開始 + 名前.len();
+        if 生の識別子の接頭辞で終わるか(&表記[..開始]) {
+            位置 = 語の後ろ;
+            continue;
+        }
         if 名前 == 関数の型を始める語 {
             return Some((開始, 開始 + 要素の終わり(&表記[開始..])));
         }

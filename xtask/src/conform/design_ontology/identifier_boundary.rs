@@ -24,8 +24,8 @@ pub fn 識別子として現れる位置一覧(表記: &str, 名前: &str) -> Ve
         .collect()
 }
 
-// 表記が生の識別子の接頭辞 `r#` で終わるか(`r` の前が識別子の文字でないとき)。`r#where` と `r#for` の `where` と `for` は予約語でなく識別子の一部であり、`#` を境界と読むと `impl 変更 for r#where` を境界の節と読み違える。
-fn 生の識別子の接頭辞で終わるか(前: &str) -> bool {
+/// 表記が生の識別子の接頭辞 `r#` で終わるか(`r` の前が識別子の文字でないとき)。`r#where` と `r#for` の `where` と `for` は予約語でなく識別子の一部であり、`#` を境界と読むと `impl 変更 for r#where` を境界の節と読み違える。
+pub fn 生の識別子の接頭辞で終わるか(前: &str) -> bool {
     前.strip_suffix("r#").is_some_and(|その前| その前.chars().next_back().is_none_or(|文字| !識別子の文字か(文字)))
 }
 

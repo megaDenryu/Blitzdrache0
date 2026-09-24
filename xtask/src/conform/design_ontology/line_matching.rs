@@ -104,11 +104,31 @@ pub fn 参照の参照先(表記: &str) -> Option<&str> {
     可変参照の参照先(表記).or_else(|| 寿命より後ろ(表記))
 }
 
+/// 寿命の引用符 `'` より後ろの表記から寿命の名前を読み飛ばした残り。生の識別子の寿命(`'r#fn`)は前置きの `r#` も名前の一部として読み飛ばす。
+/// 識別子の文字だけを読み飛ばすと、`&'r#fn mut self` の `r` だけを飛ばし、残りの `#fn mut self` を可変参照と読まないためである。
+pub fn 寿命の名前より後ろ(引用符の後ろ: &str) -> &str {
+    let 名前 = 引用符の後ろ.strip_prefix("r#").filter(|後ろ| 後ろ.starts_with(識別子の文字か)).unwrap_or(引用符の後ろ);
+    名前.trim_start_matches(識別子の文字か)
+}
+
 // 参照の型の `&` と寿命より後ろ(`mut X` か `X`)。参照の型でなければ無い。
 fn 寿命より後ろ(表記: &str) -> Option<&str> {
     let 残り = 表記.trim_start().strip_prefix('&')?.trim_start();
     Some(match 残り.strip_prefix('\'') {
-        Some(寿命) => 寿命.trim_start_matches(識別子の文字か).trim_start(),
+        Some(寿命) => 寿命の名前より後ろ(寿命).trim_start(),
         None => 残り,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{参照の参照先, 可変参照の参照先};
+
+    #[test]
+    fn 生の識別子の寿命も読み飛ばして参照先を読む() {
+        for 寿命 in ["", "'a ", "'static ", "'r#fn ", "'r#impl "] {
+            assert_eq!(可変参照の参照先(&format!("&{寿命}mut Self")), Some("Self"), "{寿命}");
+            assert_eq!(参照の参照先(&format!("&{寿命}Self")), Some("Self"), "{寿命}");
+        }
+    }
 }
