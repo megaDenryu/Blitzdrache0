@@ -19,9 +19,10 @@
 
 use super::outcome::抽出の成果;
 use super::role_usage::{役割の使用箇所を読む工程, 役割の使用箇所を読んだ結果};
-use super::source_group::{型の在り処の問い, 抽出対象のソース群};
+use super::source_group::抽出対象のソース群;
 use super::type_notation::{型の表記の読み取り, 型の表記を読む};
 use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
+use crate::conform::design_ontology::type_definition::型の在り処の問い;
 use crate::design_model::{Rustの項目の種類, 設計概念, 設計概念への参照};
 use crate::design_model::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
 

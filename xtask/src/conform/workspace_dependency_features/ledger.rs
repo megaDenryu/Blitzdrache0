@@ -10,8 +10,8 @@ pub(super) struct 機能台帳の項 {
     pub(super) 機能一覧: &'static [&'static str],
 }
 
-/// 既定機能を切るのはimageとegui-winitとproc-macro2の3件、機能を明示するのはimageとgltfとserde_jsonとserdeとtokioとtower-httpとproc-macro2の7件である。残りは版だけを綴る。
-pub(super) const 機能台帳: [機能台帳の項; 22] = [
+/// 既定機能を切るのはimageとegui-winitの2件、機能を明示するのはimageとgltfとserde_jsonとserdeとtokioとtower-httpの6件である。残りは版だけを綴る。
+pub(super) const 機能台帳: [機能台帳の項; 21] = [
     項を作る("ash", true, &[]),
     項を作る("ash-window", true, &[]),
     項を作る("winit", true, &[]),
@@ -27,7 +27,6 @@ pub(super) const 機能台帳: [機能台帳の項; 22] = [
     項を作る("crossterm", true, &[]),
     項を作る("ctrlc", true, &[]),
     項を作る("win32job", true, &[]),
-    項を作る("proc-macro2", false, &["span-locations"]), // conform の字句の木。既定の proc-macro を切り、常に代替の実装で動かす
     // ゲーム開発用エディター段1で新設。editor_serverのみが依存する
     項を作る("serde", true, &["derive"]),
     項を作る("axum", true, &[]),

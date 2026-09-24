@@ -8,11 +8,12 @@
 //! 実装に本体が在るため、関連型を書き忘れた実装が構文としては存在しうる。
 
 use super::outcome::抽出の成果;
-use super::source_group::{型の在り処の問い, 抽出対象のソース群};
+use super::source_group::抽出対象のソース群;
 use super::type_notation::{型の表記の読み取り, 型の表記を読む};
 use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
 use crate::conform::design_ontology::line_matching::波括弧が閉じる行;
-use crate::conform::design_ontology::syntax_patterns::オントロジートレイト;
+use crate::conform::design_ontology::syntax_patterns::設計解釈マーカー;
+use crate::conform::design_ontology::type_definition::型の在り処の問い;
 use crate::design_model::{Rustの項目の種類, 設計概念};
 use crate::design_model::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
 
@@ -21,7 +22,7 @@ const 識別子の関連型の前置き: &str = "type 識別子";
 
 pub fn エンティティの識別子の関連型から抽出する(ソース群: &抽出対象のソース群) -> 抽出の成果 {
     let mut 成果 = 抽出の成果::default();
-    for 実装 in ソース群.構文検査().トレイト実装型一覧(オントロジートレイト::Mエンティティ) {
+    for 実装 in ソース群.構文検査().設計解釈マーカーの実装一覧(設計解釈マーカー::Mエンティティ) {
         let Some(行一覧) = ソース群.行一覧(&実装.パス) else {
             continue;
         };
@@ -31,11 +32,7 @@ pub fn エンティティの識別子の関連型から抽出する(ソース群
             成果.抽出できなかった行一覧.push(抽出できなかった行::生成する(&実装.パス, 実装.行番号, 理由));
             continue;
         };
-        let (識別子, 欠落) = ソース群.型の識別子を求める(型の在り処の問い {
-            型名: &実装.型名,
-            参照元のパス: &実装.パス,
-            参照元の行番号: 実装.行番号,
-        });
+        let (識別子, 欠落) = ソース群.型の識別子を求める(実装.型の在り処の問い());
         成果.抽出できなかった行一覧.extend(欠落);
         let 目的語の節点 = 設計概念::Rustの項目として生成する(識別子, Rustの項目の種類::型);
         let 目的語 = 目的語の節点.参照を組む();

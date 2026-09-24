@@ -16,9 +16,9 @@ impl Rust型種別 {
     }
 }
 
-/// 検査が照合する `blitz_design` のトレイト。選択肢の名前はトレイトの名前をそのまま写す。
+/// 設計解釈マーカーの一覧。`blitz_design` の `marker.rs` が宣言するマーカーのうち、検査が照合するものを並べる。選択肢の名前はマーカーの名前をそのまま写す。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum オントロジートレイト {
+pub enum 設計解釈マーカー {
     M不変データ,
     Mコマンド,
     Mイベント,
@@ -37,7 +37,7 @@ pub enum オントロジートレイト {
     M結果,
 }
 
-impl オントロジートレイト {
+impl 設計解釈マーカー {
     /// データの役割の軸(`M不変データ` を除く。`M不変データ` はデータの役割の一種でなく、複数のデータの役割が共有する基底の契約である)。正規形・別名・再公開・波括弧付きのモジュールの検査の対象である。
     pub const fn データの役割一覧() -> [Self; 6] {
         [Self::Mコマンド, Self::Mイベント, Self::M規則, Self::M状態, Self::M入力, Self::M観測]
@@ -112,8 +112,8 @@ impl オントロジートレイト {
 }
 
 /// トレイト実装の行の先頭(例: `impl M状態 for `・`impl blitz_design::M状態 for `)。
-pub fn トレイト実装宣言(トレイト: オントロジートレイト) -> [String; 2] {
-    let 名前 = トレイト.名前();
+pub fn トレイト実装宣言(マーカー: 設計解釈マーカー) -> [String; 2] {
+    let 名前 = マーカー.名前();
     [format!("impl {名前} for "), format!("impl blitz_design::{名前} for ")]
 }
 

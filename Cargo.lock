@@ -2961,7 +2961,6 @@ dependencies = [
  "blitz_math",
  "crossterm",
  "ctrlc",
- "proc-macro2",
  "win32job",
 ]
 

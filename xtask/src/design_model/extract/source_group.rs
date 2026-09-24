@@ -11,8 +11,7 @@ use super::unextracted_line::{抽出できなかった理由, 抽出できなか
 use super::本番のソース::本番のソース;
 use crate::conform::design_ontology::module_path::モジュールパス;
 use crate::conform::design_ontology::syntax_checker::クレート構文検査;
-use crate::conform::design_ontology::trait_implementation::トレイト実装型;
-use crate::conform::design_ontology::type_definition::{型の定義を探す, 定義ブロックの結果};
+use crate::conform::design_ontology::type_definition::{型の在り処の問い, 定義ブロックの結果};
 use crate::conform::error::規約検査の破れ;
 use crate::design_model::設計概念の識別子;
 use crate::file_scan;
@@ -81,13 +80,7 @@ impl 抽出対象のソース群 {
     /// 型の名前から節点の識別子を組む。定義をたどれればそのモジュールパスを、たどれなければ空を持たせ、たどれなかった1件を数える。
     /// モジュールパスが空であることが未解決を表す取り決めであり、節点そのものは落とさない。落とすと「関係が無い」と読まれ偽の反証が出る。
     pub fn 型の識別子を求める(&self, 問い: 型の在り処の問い<'_>) -> (設計概念の識別子, Option<抽出できなかった行>) {
-        let 探す対象 = トレイト実装型 {
-            型名: 問い.型名.to_string(),
-            対象の型の表記: 問い.型名.to_string(),
-            パス: 問い.参照元のパス.to_path_buf(),
-            行番号: 問い.参照元の行番号,
-        };
-        match 型の定義を探す(self.ファイル一覧(), &探す対象) {
+        match 問い.型の定義を探す(self.ファイル一覧()) {
             定義ブロックの結果::見つかった { パス, .. } => (設計概念の識別子::Rustの項目として生成する(&self.ファイルのモジュールパス(&パス), 問い.型名), None),
             _ => {
                 let 理由 = 抽出できなかった理由::定義のモジュールパスを解決できなかった { 型名: 問い.型名.to_string() };
@@ -95,13 +88,6 @@ impl 抽出対象のソース群 {
             }
         }
     }
-}
-
-/// ある型の定義がどこに在るかの問い。型の名前と、その名前を書いている行の位置の組である。
-pub struct 型の在り処の問い<'a> {
-    pub 型名: &'a str,
-    pub 参照元のパス: &'a Path,
-    pub 参照元の行番号: usize,
 }
 
 fn srcの下か(パス: &Path) -> bool {

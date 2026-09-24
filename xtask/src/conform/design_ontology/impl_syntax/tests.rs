@@ -16,7 +16,6 @@ fn 読んだ組(見出し: &str) -> Option<(Option<String>, String)> {
 fn 空白を挟まないforとwhereを識別子の境界で読む() {
     assert_eq!(読んだ組("impl 初期化 for(規則) {"), Some((Some("初期化".to_string()), "規則".to_string())));
     assert_eq!(読んだ組("impl 初期化 for&mut 規則 {"), Some((Some("初期化".to_string()), "規則".to_string())));
-    assert!(実装の見出しの構文::読む("impl 初期化 for&mut 規則 {").is_some_and(|構文| 構文.対象.可変参照か()));
     assert_eq!(読んだ組("impl<T> 初期化 for 規則<T>where T: Clone {"), Some((Some("初期化".to_string()), "規則<T>".to_string())));
 }
 
@@ -39,15 +38,5 @@ fn 参照とpinを繰り返し外した対象と属性の付いた型引数を�
     }
     for 見出し in ["impl<T> 変更 for Vec<T> {", "impl<T> 変更 for &mut [T] {", "impl 変更 for &mut 規則 {"] {
         assert!(実装の見出しの構文::読む(見出し).is_some_and(|構文| !構文.全称の実装か()), "{見出し}");
-    }
-}
-
-#[test]
-fn 対象の表記のどの深さの可変参照も可変参照を対象にする実装と読む() {
-    for 見出し in ["impl 変更 for Option<&mut 規則> {", "impl 変更 for (&'a mut 規則, u8) {", "impl 変更 for Box<&&mut 規則> {", "impl 変更 for Pin<&mut 規則> {"] {
-        assert!(実装の見出しの構文::読む(見出し).is_some_and(|構文| 構文.対象.可変参照か()), "{見出し}");
-    }
-    for 見出し in ["impl 変更 for Vec<規則> {", "impl 変更 for &規則 {", "impl 変更 for 包み<fn(&u8)> {", "impl 変更 for Pin<Box<規則>> {"] {
-        assert!(実装の見出しの構文::読む(見出し).is_some_and(|構文| !構文.対象.可変参照か()), "{見出し}");
     }
 }

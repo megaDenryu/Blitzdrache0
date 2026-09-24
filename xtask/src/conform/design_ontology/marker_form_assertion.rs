@@ -10,7 +10,7 @@ use super::super::violation::違反;
 use super::impl_header::implの見出しを読む;
 use super::line_matching::{クレート名, 波括弧が閉じる行, 語として現れるか};
 use super::syntax_checker::クレート構文検査;
-use super::syntax_patterns::{self, オントロジートレイト};
+use super::syntax_patterns::{self, 設計解釈マーカー};
 
 const USE_の接頭辞一覧: [&str; 4] = ["use ", "pub use ", "pub(crate) use ", "pub(super) use "];
 const 公開USE_の接頭辞一覧: [&str; 3] = ["pub use ", "pub(crate) use ", "pub(super) use "];
@@ -81,7 +81,7 @@ fn blitz_designの別名の行一覧(行一覧: &[String]) -> Vec<usize> {
 // トレイトを書く位置に設計解釈マーカーの名前が識別子として現れるのに、その位置が `マーカー名` でも `blitz_design::マーカー名` でもない見出しの書き出しの行の番号(1始まり)。`::` の周りの空白は正規形でない。
 // トレイトを書く位置は `実装の見出しの構文` の1つの読みで求める。見出しを複数の行へ崩した実装も同じ読みで読む。
 fn 正規形でないマーカー実装の行一覧(行一覧: &[String]) -> Vec<usize> {
-    let 名前一覧: Vec<&str> = オントロジートレイト::全部の一覧().into_iter().map(オントロジートレイト::名前).collect();
+    let 名前一覧: Vec<&str> = 設計解釈マーカー::全部の一覧().into_iter().map(設計解釈マーカー::名前).collect();
     let 正規形か = |位置: &str| 名前一覧.iter().any(|名前| 位置 == *名前 || 位置.strip_prefix("blitz_design::") == Some(*名前));
     let マーカーを含むか = |位置: &str| {
         let 区切りを空白にした位置 = 位置.replace("::", " ");
@@ -109,7 +109,7 @@ fn blitz_designの再公開の行一覧(行一覧: &[String]) -> Vec<usize> {
 
 // ファイルの中の `mod 名 {` のブロックの範囲にある、設計解釈マーカーの実装の行の番号(1始まり)。
 fn 波括弧付きのモジュールの中のマーカー実装の行一覧(行一覧: &[String]) -> Vec<usize> {
-    let パターン一覧: Vec<String> = オントロジートレイト::全部の一覧().into_iter().flat_map(syntax_patterns::トレイト実装宣言).collect();
+    let パターン一覧: Vec<String> = 設計解釈マーカー::全部の一覧().into_iter().flat_map(syntax_patterns::トレイト実装宣言).collect();
     let mut 該当 = Vec::new();
     for (開始, 行) in 行一覧.iter().enumerate() {
         let 行 = 行.trim();

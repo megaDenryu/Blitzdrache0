@@ -4,8 +4,8 @@
 //! 入れ子の型の中の `Option`(`Vec<Option<u8>>` は見つかるが、別の構造体のフィールドに埋めた `Option` は見ない)は保証範囲の外である。`MOptions` には課さない。
 
 use super::syntax_checker::クレート構文検査;
-use super::syntax_patterns::オントロジートレイト;
-use super::trait_implementation::トレイト実装型;
+use super::syntax_patterns::設計解釈マーカー;
+use super::trait_implementation::設計解釈マーカーの実装;
 use super::type_definition::定義ブロックの結果;
 
 const 任意の値を持つ違反: &str =
@@ -14,18 +14,18 @@ const 任意の値を持つ違反: &str =
 impl クレート構文検査 {
     /// `MParameter` を実装する型の定義に `Option<` のフィールドが無いこと。定義が見つからない実装は別の違反にする。
     pub fn すべての引数オブジェクトが任意の値を持たないこと(mut self) -> Self {
-        for 型 in self.トレイト実装型一覧(オントロジートレイト::MParameter) {
-            if self.定義が見つからなければ違反にする(オントロジートレイト::MParameter, &型) {
+        for 型 in self.設計解釈マーカーの実装一覧(設計解釈マーカー::MParameter) {
+            if self.定義が見つからなければ違反にする(&型) {
                 continue;
             }
             if self.定義に任意の値を持つか(&型) {
-                self.違反にする(オントロジートレイト::MParameter, &型, 任意の値を持つ違反.to_string());
+                self.違反にする(&型, 任意の値を持つ違反.to_string());
             }
         }
         self
     }
 
-    fn 定義に任意の値を持つか(&self, 型: &トレイト実装型) -> bool {
+    fn 定義に任意の値を持つか(&self, 型: &設計解釈マーカーの実装) -> bool {
         match self.型の定義ブロック(型) {
             定義ブロックの結果::見つかった { 定義, .. } => 定義.contains("Option<"),
             定義ブロックの結果::見つからない | 定義ブロックの結果::複数ある | 定義ブロックの結果::別名のため取り込み元を求められない => false,

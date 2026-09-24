@@ -1,34 +1,7 @@
 //! 同じクレートの別のモジュールに同名の型があるときの、`use` 行からたどった取り込み元による定義の採り方の試験。
-//! 同名の型の実装が名前で検査され台帳の行で除けることは、`self_modification_tests/name_match_exclusion_tests.rs` が固定する。
 //! 型の同一性は定義のモジュールパス + 型名であり、`crate::`・`super::`・波括弧の群を絶対のモジュールパスへ置き換え、`as` の別名は取り込み元を求められない違反にする。
 
 use super::tests::{ソース, 全部の説明関数を連ねた違反の説明一覧};
-#[test]
-fn 構文解析_useで定義のモジュールパスを取り込んだ別ファイルの固有のimplは定義に属する() {
-    let 甲 = ソース(
-        "crates/a/src/x.rs",
-        "pub struct 規則;
-impl M不変データ for 規則 {}
-impl M規則 for 規則 {}
-",
-    );
-    let 乙 = ソース(
-        "crates/a/src/y.rs",
-        "pub struct 規則;
-",
-    );
-    let 丙 = ソース(
-        "crates/a/src/z/w.rs",
-        "use crate::x::規則;
-impl 規則 {
-    pub fn 変える(&mut self) {}
-}
-",
-    );
-    let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(vec![甲, 乙, 丙]);
-    assert_eq!(説明一覧.len(), 1);
-    assert!(説明一覧[0].contains("M不変データ `規則` は自分の型への可変参照を受け手か引数に持つ関数を持てません"));
-}
 
 #[test]
 fn 構文解析_useの波括弧の群とsuperの修飾で取り込んだ定義を採る() {
