@@ -42,9 +42,10 @@ impl 関数の署名の境界 {
         self.型引数と境界の句.可変の借用で名前を指すか(名前) || 可変の借用を与えるトレイトの型引数が名前を指すか(&self.引数の型の中のトレイトの境界, 名前)
     }
 
-    /// 3か所の可変の借用を与えるトレイトの型引数が、`Self` か型名を指すか。
-    pub fn 可変の借用で自分の型を指すか(&self, 型名: &str) -> bool {
-        ["Self", 型名].into_iter().any(|名前| self.可変の借用で名前を指すか(名前))
+    /// 3か所の可変の借用を与えるトレイトの型引数が `Self` か型名を指すか、型引数の並びの境界か `where` 句に `Self` か型名への可変参照が字面で現れるか(`I: Iterator<Item = &'a mut Self>`)。
+    /// 引数の `impl Trait` と `dyn Trait` の中の字面の可変参照は、引数の型の規則(`parameter_form.rs`)が数える。
+    pub fn 境界を通して自分の型を書き換えうるか(&self, 型名: &str) -> bool {
+        ["Self", 型名].into_iter().any(|名前| self.可変の借用で名前を指すか(名前)) || self.型引数と境界の句.自分の型への可変参照を字面に含むか(型名)
     }
 }
 
@@ -62,17 +63,20 @@ mod tests {
             "fn 変える(mut 相手: Box<dyn DerefMut<Target = Self>>) {",
             "fn 変える(相手: &mut dyn DerefMut<Target = Self>) {",
             "fn 変える(mut 相手: Box<dyn DerefMut<Target = 規則>>) {",
+            "fn 変える<'a, I: Iterator<Item = &'a mut Self>>(列: I) {",
+            "fn 変える<I>(列: I) where I: Iterator<Item = &'static mut 規則> {",
         ];
         for 表記 in 境界一覧 {
-            assert!(読む(表記).is_some_and(|境界| 境界.可変の借用で自分の型を指すか("規則")), "{表記}");
+            assert!(読む(表記).is_some_and(|境界| 境界.境界を通して自分の型を書き換えうるか("規則")), "{表記}");
         }
         for 表記 in [
             "fn 並べる() -> impl Iterator<Item = Self> {",
             "fn 比べる<U: PartialEq<Self>>(&self, 相手: &U) -> bool;",
             "fn 使う(処理: impl FnMut(&mut Self)) {",
+            "fn 使う<F: FnOnce(&mut Self)>(処理: F) {",
             "fn 使う(処理: Box<dyn Iterator<Item = Self>>) {",
         ] {
-            assert!(読む(表記).is_some_and(|境界| !境界.可変の借用で自分の型を指すか("規則")), "{表記}");
+            assert!(読む(表記).is_some_and(|境界| !境界.境界を通して自分の型を書き換えうるか("規則")), "{表記}");
         }
         assert!(読む("fn 変える<T>(&mut self) where T: DerefMut<Target = 規則> {").is_some_and(|境界| 境界.可変の借用で名前を指すか("規則")));
         for 表記 in [

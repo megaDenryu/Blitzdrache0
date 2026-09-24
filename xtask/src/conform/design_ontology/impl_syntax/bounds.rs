@@ -8,6 +8,7 @@
 
 use super::super::declaration_brackets::{最上位で開いた括弧, 最上位のカンマで分ける, 見出しの括弧の深さ};
 use super::super::identifier_boundary::識別子として現れる位置一覧;
+use super::super::parameter_form::引数の型の表記;
 use super::super::self_modification_evidence::名前が当たった場所;
 use super::mutable_borrow_trait::可変の借用を与えるトレイトの型引数が名前を指すか;
 
@@ -35,6 +36,11 @@ impl 実装の境界 {
     /// 型引数の並びの境界か `where` 句の、可変の借用を与えるトレイトの型引数が名前を指すか(`U: DerefMut<Target = Self>`)。
     pub fn 可変の借用で名前を指すか(&self, 名前: &str) -> bool {
         [&self.型引数の並びの境界, &self.境界の句].into_iter().any(|表記| 可変の借用を与えるトレイトの型引数が名前を指すか(表記, 名前))
+    }
+
+    /// 型引数の並びの境界か `where` 句に、`Fn` 系のトレイトの引数の丸括弧の外で、自分の型(`Self` か型名)への可変参照が字面で現れるか(`I: Iterator<Item = &'a mut Self>`)。規則は引数の型の表記と同じである。
+    pub fn 自分の型への可変参照を字面に含むか(&self, 型名: &str) -> bool {
+        [&self.型引数の並びの境界, &self.境界の句].into_iter().any(|表記| 引数の型の表記(表記).自分の型への可変参照を含むか(型名))
     }
 }
 

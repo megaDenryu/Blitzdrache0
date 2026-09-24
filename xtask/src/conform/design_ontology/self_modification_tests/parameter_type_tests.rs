@@ -1,5 +1,5 @@
 //! 自己変更の禁止の試験のうち、受け手でない引数の型の中の自分の型への可変参照を確かめるもの。引数の型そのものが `&mut Self` のときだけ数える形は、
-//! `Option<&mut Self>`・`&mut [Self]`・`&mut &mut Self`・`(&mut Self, u8)` を通していた。関数の型とトレイト境界の中は数えず、構造体のパターンの中の `:` で型を区切らないことも固定する。
+//! `Option<&mut Self>`・`&mut [Self]`・`&mut &mut Self`・`(&mut Self, u8)` を通していた。関数の型と `Fn` 系のトレイトの引数の丸括弧の中は数えず、`impl` と `dyn` の後ろ(検収の反例 `impl Iterator<Item = &'a mut Self>`)は数え、構造体のパターンの中の `:` で型を区切らないことも固定する。
 
 use super::super::tests::{ソース, 全部の説明関数を連ねた違反の説明一覧};
 
@@ -21,6 +21,11 @@ fn 引数の型のどこかにある自分の型への可変参照は違反に�
         "    fn 変える(規則 { 値: x }: &mut 規則) {}",
         "    fn 変える(対象: (fn(u8), &mut Self)) {}",
         "    fn 足す(書き先: &mut Vec<Self>) {}",
+        "    pub fn 変える<'a>(列: impl Iterator<Item = &'a mut Self>) {}",
+        "    fn 変える(列: Box<dyn Iterator<Item = &'static mut Self>>) {}",
+        "    fn 変える(処理: impl FnOnce(u8) -> &'static mut Self) {}",
+        "    fn 変える<'a, I: Iterator<Item = &'a mut Self>>(列: I) {}",
+        "    fn 変える<I>(列: I) where I: Iterator<Item = &'static mut 規則> {}",
     ] {
         let 説明一覧 = 規則の固有の実装の違反一覧(本体);
         assert_eq!(説明一覧.len(), 1, "{本体}: {説明一覧:?}");
@@ -34,6 +39,7 @@ fn 関数の型とトレイト境界の中の可変参照と別の型への可�
         "    fn 使う(処理: impl FnOnce(&mut Self)) {}",
         "    fn 使う(処理: fn(&mut Self) -> &mut Self) {}",
         "    fn 使う(処理: Box<dyn Fn(&mut Self) + Send>) {}",
+        "    fn 使う(処理: impl FnMut(&mut Self) -> Option<u8>, 列: impl Iterator<Item = &'static mut u8>) {}",
         "    fn 使う(&self, 書き先: &mut Vec<u8>, 台帳: &mut 規則の台帳) {}",
         "    fn 使う(規則 { 値 }: 規則, 書き先: &mut u8) {}",
     ] {
