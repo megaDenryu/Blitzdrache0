@@ -13,7 +13,7 @@
 //! 自己変更の禁止の検査が対象の型を名前で追えるように、次の正規形を課す。実装の見出しの対象の型と型の別名(`type`)の右辺の先頭が関連型の射影 `<A as B>::C` でないことと、
 //! `include!` を呼ばないこと(`name_traceable_form_assertion.rs`)。検査器が名前で引く宣言を別名が横から名乗らないように、`use … as` の別名が走査範囲のトレイトの宣言の名前・取り込まずに書けるトレイトの名前・マーカーを名乗る型の名前のどれも名乗らないことを課す(`import_alias_name_assertion.rs`)。
 //! 実装の対象の型の先頭に `::` を書かないことと、設計解釈マーカーの実装の対象が型名で終わり、対象の表記のどの深さにも参照と `Pin` を持たないことと(`impl_syntax/target_form.rs`)、`extern crate` を宣言しないこと(`token_tree_gate/extern_crate_assertion.rs`)と、
-//! `impl` と `type` の型引数に属性を書かないこと(`token_tree_gate/generic_parameter_attribute_assertion.rs`)と、実装の対象の型と型の別名の右辺のどの深さでもマクロ `名前!(..)` を呼ばないこと(`token_tree_gate/type_notation_macro_assertion.rs`)と、型の別名と関連型の右辺に関数の型の引数の外で可変参照を書かないこと(`token_tree_gate/alias_mutable_reference_assertion.rs`)も課す。
+//! `impl` と `type` の型引数に属性を書かないこと(`token_tree_gate/generic_parameter_attribute_assertion.rs`)と、実装の見出しの全体(型引数の並び・トレイト・対象の型・`where` 句)と型の別名の宣言の全体のどの深さでもマクロ `名前!(..)` を呼ばないこと(`token_tree_gate/type_notation_macro_assertion.rs`)と、型の別名と関連型の右辺に関数の型の引数の外で可変参照を書かないこと(`token_tree_gate/alias_mutable_reference_assertion.rs`)も課す。
 //! 読み口と名前の閉包が名前を字面で照らせるように、生の識別子を予約語の名前だけに使うこと(`token_tree_gate/raw_identifier_assertion.rs`)と、コードの空白を半角空白と改行だけにすること(`whitespace_form_assertion.rs`)と、型の別名の型引数に既定値を書かないこと(`name_traceable_form_assertion.rs`)も課す。
 //! `use`・`type`・`impl`・`macro_rules!` の4つの読み口が読むのは行の頭の宣言だけであるため、原文を proc-macro2 で字句の木へ変えて項目を始めうる予約語を数え(トークン木の外では直前の字句が項目を始めうる字句の閉じた集合に入るものだけ、トークン木の中ではすべて。`token_tree_gate/token_tree_scan.rs`)、
 //! 行の途中の現れと、行の頭で現れと読み口の答えが食い違う行を、どちらの向きでも違反にし(`token_tree_gate/item_keyword_reconciliation.rs`)、行の頭の `impl` と `type` の見出しの中身を字句の木からも取り出して読み口の読みと突き合わせ(`token_tree_gate/header_content_reconciliation.rs`)、
@@ -22,7 +22,7 @@
 //! 保証範囲: 検査は Rust の型意味論でなく構文パターン(`impl トレイト for 型` の行と `struct`/`enum` の定義ブロック)に対して行う。型の定義の探索(純粋データ規約・型種別・`MParameter` が使う)の型の同一性は
 //! 「標準的なファイル配置(`src/a/b.rs` → `a::b`、`mod.rs`・`lib.rs`)から推定したモジュールパスの下へ、定義の行を囲む `mod 名 { … }` の並びを繋いだ定義の位置のモジュール + 型名」であり、実装の位置のモジュールの直下の定義、無ければその位置の `use` 行(`crate::`・`super::`・`self::` と、入れ子を含む波括弧の群)から取り込み元のモジュールパスを求めて、
 //! そのモジュールの直下の定義を採る。定義も明示した取り込み元も無ければ、他のモジュールの同名型へ推測で結び付けず違反にする。実装対象の型の `use ... as` の別名は取り込み元を求められない違反にする。
-//! 自己変更の禁止の探索は、対象がどの型を指すかを名前解決で求めず、マーカーを名乗る型の名前の閉包(`marker_name_closure.rs`)が実装の対象の表記に識別子の境界(`identifier_boundary.rs`)で現れるかで実装を集める(`mutable_impl_scan.rs`)。実装の在り処は問わない。
+//! 自己変更の禁止の探索は、対象がどの型を指すかを名前解決で求めず、マーカーを名乗る型の名前の閉包(`marker_name_closure.rs`)が実装の対象の表記か型引数の並びの境界か `where` 句に識別子の境界(`identifier_boundary.rs`)で現れるかで実装を集める(`mutable_impl_scan.rs`・`impl_syntax/bounds.rs`)。境界に当たった実装は値で受ける `self` の関数も数える。実装の在り処は問わない。
 //! マーカーの型でない実装も当たるため、その1件は区分と理由を書いた台帳(`name_match_exclusion_ledger.rs`。区分の一覧は `name_match_exclusion_category.rs`)で除き、台帳の行の陳腐化と、一覧に無い区分を名乗る行も違反にする。実装したトレイトの宣言も同じ閉包の名前で引き(`implemented_trait.rs`・`trait_declaration_index.rs`)、宣言の本体の直下でマクロを呼ぶトレイトの実装は、読めないため違反にする。
 //! 型引数の境界が入れ子の `<` を含むジェネリックな `impl`(`impl<T: Into<Vec<u8>>> 型<T>`)は、山括弧の対応を数えて型引数を分けるため読む(`line_matching.rs` の `先頭の型引数を分ける`)。
 //! 2段以上の再公開と glob を重ねた別名、外部のクレートのマクロ・derive・属性マクロが生やす実装、フィールドの型の中に間接的に含まれる内部可変性は保証範囲の外である。`#[rustfmt::skip]` を付けた項目は、字句の木と読み口の突き合わせが同じ規則で読む(`token_tree_gate.rs`)。

@@ -10,11 +10,10 @@ use super::super::impl_syntax::実装の見出しの構文;
 use super::super::type_alias_scan::型の別名の宣言を読む;
 use super::header_content::見出しの中身;
 use super::header_content_reconciliation::見出しの中身が食い違った違反一覧;
-use super::header_tokens::{型の別名の見出しを取り出す, 実装の見出しを取り出す};
+use super::header_tokens::{型の別名の見出しを取り出す, 実装の見出しを取り出す, 行の頭の見出し};
 use super::item_keyword_position::項目の予約語;
 use super::normalized_token_sequence::正規化した字句の並び;
 use super::reader_answer::{読み口の答え, 読み口の結末};
-use super::token_tree_scan::行の頭の見出し;
 
 // 本文を字句の木の並びへ変え、最初に現れる予約語 `予約語` の添字と組にする。
 #[allow(clippy::expect_used)]

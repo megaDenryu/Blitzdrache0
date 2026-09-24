@@ -1,4 +1,4 @@
-//! 1つのファイルの原文を proc-macro2 で字句の木へ変え、項目を始めうる予約語(`impl`・`type`・`use`・`macro_rules!`)の現れと、行の頭の `impl` と `type` の見出しの中身(`header_tokens.rs`)と、生の識別子の現れと、`extern crate` の宣言と、型引数に属性を持つ `impl` と `type`(`generic_parameter_attribute_assertion.rs`)を数える走査。
+//! 1つのファイルの原文を proc-macro2 で字句の木へ変え、項目を始めうる予約語(`impl`・`type`・`use`・`macro_rules!`)の現れと、行の頭の `impl` と `type` の見出しの中身(`header_tokens.rs`)と、生の識別子の現れと、`extern crate` の宣言と、型引数に属性を持つ `impl` と `type`(`generic_parameter_attribute_assertion.rs`)と、見出しの全体でマクロを呼ぶ行の頭の `impl` と `type`(`type_notation_macro_assertion.rs`)を数える走査。
 //! 受け取るのは原文、返すのは数えた現れの一覧か、字句の木へ変えられなかった位置か、シバンで始まることである。
 //! 字句の規則(識別子の文字・コメント・文字列・寿命・生の識別子・括弧の対応)は、proc-macro2 が rustc と同じ規則で読む。自前の字句の走査が、識別子の文字の定義とコメントを挟んだ字句の直結とマクロの呼び出しの括弧の対応で、読み落としを繰り返したためである。
 //! トークン木(マクロの呼び出しの引数の群と `macro_rules!` の本体の群)の中では、マクロが字句を並べ替えて展開できるため、すべての現れを数える。`if !(..)` の群もトークン木に数えるが、厳しくなる向きの誤りだけである。
@@ -13,11 +13,11 @@ use proc_macro2::{Ident, TokenStream, TokenTree};
 
 use super::enclosing_group::並びを囲む群;
 use super::generic_parameter_attribute_assertion::型引数に属性を持つ宣言か;
-use super::header_content::見出しの中身;
-use super::header_tokens::行の頭の見出しを取り出す;
+use super::header_tokens::{行の頭の見出し, 行の頭の見出しを取り出す};
 use super::item_keyword_position::{予約語の現れた場所, 項目の予約語};
 use super::line_head::行の頭か;
 use super::preceding_token::直前の字句;
+use super::type_notation_macro_assertion::見出しでマクロを呼ぶか;
 
 /// 1つのファイルを字句の木へ変えて数えた結末。
 pub enum ファイルの字句の木 {
@@ -26,21 +26,15 @@ pub enum ファイルの字句の木 {
     シバンで始まる,
 }
 
-/// 字句の木から数えた、項目を始めうる予約語の現れと、生の識別子の現れと、`extern crate` の宣言の行と、型引数に属性を持つ宣言の行と、行の頭の見出し。並びは原文の中の順である。
+/// 字句の木から数えた、項目を始めうる予約語の現れと、生の識別子の現れと、`extern crate` の宣言の行と、型引数に属性を持つ宣言の行と、見出しでマクロを呼ぶ宣言の行と、行の頭の見出し。並びは原文の中の順である。
 #[derive(Default)]
 pub struct 字句の木から数えた現れ {
     pub 予約語の現れ一覧: Vec<項目を始めうる予約語の現れ>,
     pub 生の識別子一覧: Vec<生の識別子の現れ>,
-    pub 外部クレートの宣言の行一覧: Vec<usize>,     // `extern` の直後に `crate` が続く字句の行(1始まり)
-    pub 型引数に属性を持つ宣言の行一覧: Vec<usize>, // 型引数の山括弧の中に属性がある `impl` か `type` の字句の行(1始まり)
+    pub 外部クレートの宣言の行一覧: Vec<usize>,       // `extern` の直後に `crate` が続く字句の行(1始まり)
+    pub 型引数に属性を持つ宣言の行一覧: Vec<usize>,   // 型引数の山括弧の中に属性がある `impl` か `type` の字句の行(1始まり)
+    pub 見出しでマクロを呼ぶ宣言の行一覧: Vec<usize>, // 見出しの全体のどこかでマクロを呼ぶ行の頭の `impl` か `type` の字句の行(1始まり)
     pub 行の頭の見出し一覧: Vec<行の頭の見出し>,
-}
-
-/// 行の頭の `impl` と `type` の後ろの字句から取り出した見出しの中身1件。行番号は1始まりである。
-pub struct 行の頭の見出し {
-    pub 行番号: usize,
-    pub 予約語: 項目の予約語,
-    pub 中身: 見出しの中身,
 }
 
 /// 項目を始めうる予約語の現れ1件。行番号は1始まりである。
@@ -117,7 +111,10 @@ impl 字句の木から数えた現れ {
         };
         let 行の頭か = 行の頭か(字句一覧, 添字, 予約語, 囲み.開いた行);
         if 行の頭か {
-            self.行の頭の見出し一覧.extend(行の頭の見出しを取り出す(字句一覧, 添字, 予約語).map(|中身| 行の頭の見出し { 行番号, 予約語, 中身 }));
+            self.行の頭の見出し一覧.extend(行の頭の見出しを取り出す(字句一覧, 添字, 予約語, 行番号));
+            if 見出しでマクロを呼ぶか(字句一覧, 添字, 予約語) {
+                self.見出しでマクロを呼ぶ宣言の行一覧.push(行番号);
+            }
         }
         self.予約語の現れ一覧.push(項目を始めうる予約語の現れ { 行番号, 予約語, 場所, 行の頭か });
     }

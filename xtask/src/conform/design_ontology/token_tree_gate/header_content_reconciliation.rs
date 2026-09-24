@@ -7,8 +7,8 @@
 use std::path::Path;
 
 use super::super::super::violation::違反;
+use super::header_tokens::行の頭の見出し;
 use super::reader_answer::{読み口の答え, 読み口の結末};
-use super::token_tree_scan::行の頭の見出し;
 
 /// 同じ行の同じ予約語の見出しを、読み口と字句の木が違う中身に読んだものの違反一覧。行番号は1始まりであり、並びは読み口の答えの順である。
 pub fn 見出しの中身が食い違った違反一覧(パス: &Path, 見出し一覧: &[行の頭の見出し], 答え一覧: &[読み口の答え]) -> Vec<(usize, 違反)> {

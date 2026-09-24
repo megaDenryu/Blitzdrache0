@@ -12,6 +12,7 @@ use super::impl_header::implの見出しを読む;
 use super::impl_syntax::実装の種類;
 use super::line_matching::パスの最後の名前;
 use super::mutable_impl_scan::自己変更の検査;
+use super::self_modification_evidence::名前が当たった場所;
 use super::syntax_patterns::オントロジートレイト;
 use super::trait_declaration_index::トレイトの宣言を参照した結果;
 
@@ -58,7 +59,9 @@ impl 自己変更の検査<'_> {
             return None;
         }
         let 対象 = 自己変更を問う対象 {
-            型名: &名前, 可変参照を対象にするか: false
+            型名: &名前,
+            可変参照を対象にするか: false,
+            当たった場所: 名前が当たった場所::対象の型の表記,
         };
         matches!(self.トレイトの索引.宣言を参照する(&self.名前の辺一覧.閉包(&名前), &対象), トレイトの宣言を参照した結果::宣言が無い).then_some(名前)
     }
