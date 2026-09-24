@@ -59,6 +59,11 @@ impl 見出しの中身 {
         表記.as_ref().is_some_and(正規化した字句の並び::マクロの呼び出しを含むか)
     }
 
+    /// 型の別名か関連型の右辺の、関数の型の引数の外のどの深さにでも可変参照があるか。型の別名の右辺に可変参照を書かない正規形(`alias_mutable_reference_assertion.rs`)が問う。
+    pub fn 型の別名の右辺に可変参照を含むか(&self) -> bool {
+        matches!(self, Self::右辺のある型の別名 { 右辺: Some(右辺), .. } if 右辺.関数の引数の外に可変参照を含むか())
+    }
+
     /// 違反の説明に書く表記。
     pub fn 説明の表記(&self) -> String {
         let 名前 = |名前: &Option<String>| 名前.clone().unwrap_or_else(|| "名前で読めない".to_string());

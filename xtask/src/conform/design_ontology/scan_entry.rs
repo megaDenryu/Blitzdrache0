@@ -13,7 +13,7 @@ use super::module_structure_assertion::モジュール構造の一致検査;
 use super::name_match_exclusion_ledger::名前が当たった別の型の実装の台帳;
 use super::syntax_checker::クレート構文検査;
 use super::token_tree_gate::{
-    予約語でない名前の生の識別子の違反一覧, 型の表記の中のマクロの呼び出しの違反一覧, 型引数の属性の違反一覧, 外部クレートの宣言の違反一覧, 字句の木の一覧
+    予約語でない名前の生の識別子の違反一覧, 型の別名の右辺の可変参照の違反一覧, 型の表記の中のマクロの呼び出しの違反一覧, 型引数の属性の違反一覧, 外部クレートの宣言の違反一覧, 字句の木の一覧
 };
 use super::unbound_implementation_ledger::対象の型を決められない実装の台帳;
 use super::whitespace_form_assertion::コードの空白の違反一覧;
@@ -54,6 +54,7 @@ pub fn 全ファイルを検査する() -> Result<Vec<違反>, 規約検査の�
     違反一覧.extend(外部クレートの宣言の違反一覧(&字句の木));
     違反一覧.extend(型引数の属性の違反一覧(&字句の木));
     違反一覧.extend(型の表記の中のマクロの呼び出しの違反一覧(&字句の木));
+    違反一覧.extend(型の別名の右辺の可変参照の違反一覧(&字句の木));
     違反一覧.extend(実装の対象の違反一覧);
     違反一覧.extend(空白の違反一覧);
     違反一覧.extend(モジュール構造の違反一覧);
