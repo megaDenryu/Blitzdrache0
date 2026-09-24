@@ -1,7 +1,7 @@
 //! 実装とトレイトの本体の直下(波括弧の深さ1)にある関数の署名を読み、受け手と引数が自分の型への可変参照かを答える。
 //! 入れ子の関数(メソッドの本体の中の `fn`)と、本体の中の別の `impl` の関数は深さが2以上であるため拾わない。
 //! 引数の並びは、名前の後ろの型引数(`<F: FnOnce(&mut Self)>`)を読み飛ばしてから探す。署名は複数行にまたがってよい(本体の文字列は行を改行で繋いでいる)。
-//! 引数1つが自分の型への可変参照かの規則は `parameter_form.rs` が持つ。関数の型引数の並びの境界と `where` 句と引数の `impl Trait` は、子のモジュール `function_signature/signature_bounds.rs` が読む。
+//! 引数1つが自分の型への可変参照かの規則は `parameter_form.rs` が持つ。関数の型引数の並びの境界と `where` 句と引数の `impl Trait` と `dyn Trait` は、子のモジュール `function_signature/signature_bounds.rs` が読む。
 //! 署名に自己変更を与えるかを問う相手は、子のモジュール `function_signature/self_modification_question.rs` が持つ。
 
 mod self_modification_question;
