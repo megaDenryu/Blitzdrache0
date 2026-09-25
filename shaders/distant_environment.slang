@@ -17,7 +17,7 @@ import sun_relative_frame;
 [[vk::binding(2, 0)]] [format("rgba16f")] RWTexture2DArray<float4> distantEnvironment;
 
 // そのフレームの観測点・太陽の高度・明るさの尺度。媒体のシェーダー定数と別に即時定数で渡すのは、
-// 媒体が変わらないまま時刻や空描画方針だけが動くフレームでも、この4つが書き換わるためである。
+// 媒体が変わらないまま時刻や空の描画設定だけが動くフレームでも、この4つが書き換わるためである。
 struct DistantEnvironmentCondition
 {
     float observerRadius;

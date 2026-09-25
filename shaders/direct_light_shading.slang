@@ -64,7 +64,7 @@ float3 localLightTerm(
 // 間接光・方向光・局所光の順に足すのは、この順序が絵の正本だからである(足す順を変えると丸めが変わる)。
 // 間接光の項を引数で受けるのは、その値をどの供給元から得るかが照明問い合わせ契約ごとに違うためである。
 // このモジュールは直接光だけを担い、供給元の枝を1つも知らない
-// (参照: `_doc/設計/放射輝度問い合わせ階層.md`「世界の間接照明方針と契約の2枝(3-Ic)」)。
+// (参照: `_doc/設計/放射輝度問い合わせ階層.md`「世界の間接照明の方式と契約の2枝(3-Ic)」)。
 float3 shadeLitSurface(
     float3 ambientTerm, float3 albedo, float metallic, float roughness,
     float3 normal, float3 viewDir,
