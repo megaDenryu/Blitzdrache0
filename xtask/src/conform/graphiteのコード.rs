@@ -11,8 +11,8 @@
 //! 検査しないこと: 生成物の本文が生成器の出力と一致しているか。これを確かめるのは `cargo graphite generate --check` であり、この木は生成器を持たない。
 //! 参照: CLAUDE.md「ファイル・関数の分割」、`xtask/src/conform/line_count_allowance.rs`(手書きの宣言の区分)。
 
-#[path = "graphiteのコード/対象外にした生成物.rs"]
-mod 対象外にした生成物;
+#[path = "graphiteのコード/対象外にした生成物の報告.rs"]
+mod 対象外にした生成物の報告;
 #[path = "graphiteのコード/手書きの宣言.rs"]
 mod 手書きの宣言;
 #[path = "graphiteのコード/生成物の一覧.rs"]
@@ -25,6 +25,6 @@ mod 生成物の取り込み;
 #[path = "graphiteのコード/生成物の見出し.rs"]
 mod 生成物の見出し;
 
-pub use 対象外にした生成物::対象外にした生成物;
+pub use 対象外にした生成物の報告::対象外にした生成物;
 pub use 手書きの宣言::graphiteの宣言を含むか;
 pub use 生成物の一覧::Graphiteの生成物の一覧;

@@ -4,6 +4,7 @@
 
 use std::path::PathBuf;
 
+use super::super::graphiteのコード::対象外にした生成物;
 use super::scan_entry::原文一覧を検査する;
 
 const 宣言のパス: &str = "crates/blitz_esca/src/置き場の宣言.rs";
@@ -28,7 +29,7 @@ fn 生成物の中の実装には置き場の警告を出さない() {
     let 原文一覧 = vec![(宣言のパス, 宣言の原文.to_string()), (生成物のパス, 生成物の原文(見出し))];
     assert!(警告の出たパス一覧(原文一覧.clone()).is_empty());
     let 報告 = 原文一覧を検査する(原文一覧.into_iter().map(|(パス, 原文)| (PathBuf::from(パス), 原文)).collect());
-    let 外した一覧: Vec<&PathBuf> = 報告.対象外にした生成物一覧().iter().flat_map(|外した生成物| 外した生成物.パス一覧()).collect();
+    let 外した一覧: Vec<&PathBuf> = 報告.対象外にした生成物一覧().iter().flat_map(対象外にした生成物::パス一覧).collect();
     assert_eq!(外した一覧, vec![&PathBuf::from(生成物のパス)], "外した生成物を名前つきで報告する");
 }
 
