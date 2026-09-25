@@ -907,7 +907,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 </figure>
 
 <h4>原則2: 機能非対応は正直に型化する</h4>
-<p>ただし、つまみで吸収できない断絶が1つある: <strong>ハードウェア機能の非対応</strong>である。<a class="term" href="#term-ray-tracing">レイトレーシング</a>非対応のGPUに「レイを減らしたRT」は存在しない。この場合は<em>同じ物理目標(例: この点への<a class="term" href="#term-direct-indirect">間接光</a>)を別の解法(プローブ/<a class="term" href="#term-screen-space">スクリーン空間</a>)で近似する</em>ことになり、「同一方式の解像度違い」では両立しない。このエンジンの流儀に従い、この断絶を無言のフォールバックにせず、<strong>品質段階の型として正直に表す</strong>: どの解法で動いているかは型と計器に現れ、検収は段階ごとに行う。<a class="term" href="#term-radiance-query">radiance query</a>の階層構造(4.2)は、この型化を最初から設計に織り込むための器である。</p>
+<p>ただし、つまみで吸収できない断絶が1つある: <strong>ハードウェア機能の非対応</strong>である。<a class="term" href="#term-ray-tracing">レイトレーシング</a>非対応のGPUに「レイを減らしたRT」は存在しない。この場合は<em>同じ物理目標(例: この点への<a class="term" href="#term-direct-indirect">間接光</a>)を別の解法(プローブ/<a class="term" href="#term-screen-space">スクリーン空間</a>)で近似する</em>ことになり、「同一方式の解像度違い」では両立しない。このエンジンの流儀に従い、この断絶を無言の代替で埋めず、<strong>品質段階の型として正直に表す</strong>: どの解法で動いているかは型と計器に現れ、検収は段階ごとに行う。<a class="term" href="#term-radiance-query">radiance query</a>の階層構造(4.2)は、この型化を最初から設計に織り込むための器である。</p>
 
 <h4>原則3: 効率は品質である</h4>
 <p>「極限性能」は縮退とは独立に、全機種の品質を底上げする。同じ<a class="term" href="#term-frame-budget">16.6ミリ秒</a>から無駄(不要な同期・二重計算・使われない計算資源)を取り除けば、その分を品質に使える。このエンジンの日常の性能規律(計測不要で悪いと分かる無駄を最初から書かない)と計測文化(予算表・<a class="term" href="#term-gpu-instrument">GPU計器</a>・<a class="term" href="#term-p99">p99</a>)は、この意味で品質方針の一部である。低性能機で効くのは高性能機と同じ最適化であることが多い。</p>
