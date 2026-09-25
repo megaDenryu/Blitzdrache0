@@ -45,10 +45,10 @@ fn 座標系を型引数に取る型を集める(原文: &str) -> Vec<String> {
                 型一覧.push(format!("{名前}<座標系{}個>", 型引数一覧.len()));
             }
         }
-        if *行 == "三成分の量を定義する! {" {
-            if let Some(名前) = 行一覧[位置 + 1..].iter().find(|続き| !続き.starts_with("///")).and_then(|続き| 続き.split_once(',')).map(|(名前, _)| 名前.trim()) {
-                型一覧.push(format!("{名前}<座標系1個>"));
-            }
+        if *行 == "三成分の量を定義する! {"
+            && let Some(名前) = 行一覧[位置 + 1..].iter().find(|続き| !続き.starts_with("///")).and_then(|続き| 続き.split_once(',')).map(|(名前, _)| 名前.trim())
+        {
+            型一覧.push(format!("{名前}<座標系1個>"));
         }
     }
     型一覧
