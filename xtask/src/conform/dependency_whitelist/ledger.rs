@@ -8,7 +8,7 @@
 //! (参照: `_doc/設計/世界の形と衝突基盤.md`)。blitz_assembly は部品の接合と組み立ての層であり、
 //! glTFもファイルシステムも知らない純粋計算である(参照: `_doc/設計/部品カタログと接合点.md`「機械強制の手段」)。
 //! blitz_game はゲームロジック層であり、設計正本が許すのは blitz_engine・blitz_math・blitz_design の3つで、blitz_engine は白リストへ
-//! 実依存になった時点で足す(参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「第1段階の定義」)。winit・egui・ashへは依存させない。
+//! 実依存になった時点で足す(参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「10項目の到達点」の1項目めと Issue #137)。winit・egui・ashへは依存させない。
 //! blitz_game の blitz_design は、ゲームロジック層の型へ設計解釈マーカーを付けるための依存である(2026-09-25。Issue #137)。
 //! blitz_design は依存ゼロの最下層であり、blitz_sim と blitz_esca が既に同じ形で依存しているため、依存木の到達範囲を広げない。
 //! xtask の blitz_asset_compiler は置き場とファイル名の文字列の正本を読むためだけの依存であり、検収が写しを
