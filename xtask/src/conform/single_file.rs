@@ -7,11 +7,12 @@
 //! 複数のファイルを突き合わせて初めて判定できる検査は `whole_repository.rs` が持つ。
 //!
 //! 例外が1つある。Graphiteの生成物かどうかは、見出しが名乗る生成元のファイルの原文も読まないと決まらないため、全部の原文を先に読んでから判定する。
-//! 生成物と認めたファイルには、行数・宣言の説明の注釈・参照パスの実在の3検査を当てない(2026-09-26のオーナー裁定。Issue #187)。
-//! 残りの検査(禁止語と絵文字・不正なallowの緩和など)は生成物にも当てる。
+//! 生成物と認めたファイルには、行数・1つの宣言へ2行以上積んだ説明の注釈・参照パスの実在の3検査を当てない(2026-09-26のオーナー裁定。Issue #187)。
+//! 残りの検査(宣言の間のコメントだけの行・禁止語と絵文字・不正なallowの緩和など)は生成物にも当てる。
 
 use std::path::{Path, PathBuf};
 
+use super::declaration_comment_line::説明の注釈の行数の検査;
 use super::error::規約検査の破れ;
 use super::graphiteのコード::{Graphiteの生成物の一覧, 対象外にした生成物};
 use super::report::検査の報告;
@@ -20,7 +21,7 @@ use super::走査した原文の一覧::走査した原文の一覧;
 use super::{allow_lint, declaration_comment_line, doc_reference, drop_impl, ecs_abstract_name, forbidden_strings, line_count, module_import_boundary, rigid_raw_triplet, test_directory_layout, two_tier_fold_boundary};
 
 /// 生成物と認めたファイルから外す検査の名前。報告の行がこの名前で外した検査を名乗る。
-const 生成物から外す検査: &str = "行数・宣言の説明の注釈・参照パスの実在";
+const 生成物から外す検査: &str = "行数・1つの宣言へ2行以上積んだ説明の注釈・参照パスの実在";
 
 pub fn ファイル単位の検査を行う(ファイル一覧: &[PathBuf]) -> Result<検査の報告, 規約検査の破れ> {
     let mut 並び = Vec::with_capacity(ファイル一覧.len());
@@ -43,10 +44,15 @@ fn 一ファイルの違反を集める(パス: &Path, 内容: &str, 生成物: 
     let mut 違反一覧 = Vec::new();
     let 拡張子 = パス.extension().and_then(|拡張子| 拡張子.to_str()).unwrap_or("");
     if 拡張子 == "rs" || 拡張子 == "slang" {
+        let 説明の注釈の行数 = if graphiteの生成物か {
+            説明の注釈の行数の検査::当てない
+        } else {
+            説明の注釈の行数の検査::当てる
+        };
         if !graphiteの生成物か {
             違反一覧.extend(line_count::行数の上限超過を検査する(パス, 内容));
-            違反一覧.extend(declaration_comment_line::宣言の間のコメント行を検査する(パス, 内容));
         }
+        違反一覧.extend(declaration_comment_line::宣言の間のコメント行を検査する(パス, 内容, 説明の注釈の行数));
         違反一覧.extend(forbidden_strings::禁止語と絵文字の混入を検査する(パス, 内容));
         違反一覧.extend(test_directory_layout::試験ファイルの直置きを検査する(パス));
     }
@@ -68,3 +74,7 @@ fn 一ファイルの違反を集める(パス: &Path, 内容: &str, 生成物: 
     }
     違反一覧
 }
+
+#[cfg(test)]
+#[path = "single_file/生成物に当てる検査の試験.rs"]
+mod 生成物に当てる検査の試験;
