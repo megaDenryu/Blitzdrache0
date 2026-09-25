@@ -20,20 +20,20 @@ fn 種を往復する(名前: &str, 種の値: u32) {
         panic!("試験用の乱数の種を復元できなかった");
     };
     assert_eq!(復元した種, 種);
-    let Ok(綴り) = std::fs::read_to_string(パス.join("fox_tour_world").join(種を書き出すファイル名)) else {
+    let Ok(文字列) = std::fs::read_to_string(パス.join("fox_tour_world").join(種を書き出すファイル名)) else {
         panic!("試験用の乱数の種を読めなかった");
     };
-    assert_eq!(綴り, format!("{種の値}\n"));
+    assert_eq!(文字列, format!("{種の値}\n"));
     assert!(std::fs::remove_dir_all(パス).is_ok());
 }
 
 #[test]
-fn 乱数の種0の綴りを往復する() {
+fn 乱数の種0の文字列を往復する() {
     種を往復する("zero", 0);
 }
 
 #[test]
-fn 乱数の種の最大値の綴りを往復する() {
+fn 乱数の種の最大値の文字列を往復する() {
     種を往復する("maximum", u32::MAX);
 }
 

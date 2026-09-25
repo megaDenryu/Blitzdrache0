@@ -13,14 +13,14 @@ use crate::vulkan::headless::ウィンドウなし実行GPU環境;
 use crate::vulkan::transfer::ステージング経由の転送係;
 use crate::xpbd_solver_bench_probe::{XPBDシェーダー一式, XPBD計測の条件, XPBD計測素材};
 
-/// 走らせて読み戻した中身。validationの観測は呼び出し元が環境の破棄の後に採る。
+/// 走らせて読み戻した中身。検証層の観測は呼び出し元が環境の破棄の後に採る。
 pub(crate) struct 読み戻しの中身 {
     pub(crate) 位置: Vec<[f32; 4]>,
     pub(crate) ラグランジュ乗数: Vec<f32>,
     pub(crate) 刻み別のgpu時間: Vec<フレーム別の標本>,
     pub(crate) gpu時間の分布一覧: Vec<(&'static str, パス時間の分布)>,
     pub(crate) バッファの合計バイト数: u64,
-    pub(crate) 一刻みのディスパッチ数: u32,
+    pub(crate) 一刻みの計算の発行数: u32,
 }
 
 impl XPBD計測一式 {
@@ -35,14 +35,14 @@ impl XPBD計測一式 {
         &self, 環境: &ウィンドウなし実行GPU環境, 条件: &XPBD計測の条件, 受け皿: &読み戻しの受け皿, 計測: &mut 刻みごとのGPU計測
     ) -> Result<読み戻しの中身, レンダラーエラー> {
         let device = 環境.device();
-        let mut 一刻みのディスパッチ数 = 0;
+        let mut 一刻みの計算の発行数 = 0;
         for 刻み in &条件.刻みの定数一覧 {
             self.バッファ.定数を書き込む(device, &params::バイト列にする(self.点の数, self.拘束の数, 刻み))?;
             let 一時 = 環境.gpu命令を積み始める()?;
             let プール = 計測.積み始める(一時.積み先());
             let mut グラフ = graph::グラフ::新規();
             let ハンドル = self.登録する(&mut グラフ);
-            一刻みのディスパッチ数 = self.一刻みを積む(&mut グラフ, &ハンドル, 条件.反復回数);
+            一刻みの計算の発行数 = self.一刻みを積む(&mut グラフ, &ハンドル, 条件.反復回数);
             let マッピング = graph::グラフ実行器::生成する(一時.積み先(), プール).グラフを積む(グラフ);
             一時.送信して完了を待つ()?;
             計測.刻みを読み取る(device, マッピング);
@@ -60,7 +60,7 @@ impl XPBD計測一式 {
             刻み別のgpu時間: 計測.刻み別の標本一覧(),
             gpu時間の分布一覧: 計測.分布一覧(),
             バッファの合計バイト数: self.バッファ.方式が使うバイト数(条件.方式),
-            一刻みのディスパッチ数,
+            一刻みの計算の発行数,
         })
     }
 }

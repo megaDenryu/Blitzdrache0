@@ -1,7 +1,7 @@
 import { div, span, input, DivC, InputC, SpanC, LV2HtmlComponentBase, 配線ポート } from 'sengen-ui'
 import type { I配線可能 } from 'sengen-ui'
 import { テンポの下限, テンポの上限 } from '../../../../生成/編集資源契約.ts'
-import { つまみの綴りを数値として読む } from '../パネル/共通/つまみの値.ts'
+import { つまみの文字列を数値として読む } from '../パネル/共通/つまみの値.ts'
 import { テンポのつまみ, テンポの欄 as テンポの欄のスタイル, 項目の名前 } from './スタイル.css.ts'
 
 export interface Iテンポの欄配線 {
@@ -66,7 +66,7 @@ export class テンポの欄 extends LV2HtmlComponentBase implements I配線可�
     }
 
     private _読み取ったテンポ(): number {
-        return Math.round(つまみの綴りを数値として読む(this._つまみ.getValue()))
+        return Math.round(つまみの文字列を数値として読む(this._つまみ.getValue()))
     }
 
     private _ルートを構築する(): DivC {

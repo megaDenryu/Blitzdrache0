@@ -1,7 +1,7 @@
 //! 組み立て中の語の並び。所有するのは積み上げ途中の語の列であり、値として置く語が選択肢に見えないことの
 //! 確認をここに閉じる。どの生成器がどの語を積むかは親が決め、ここは積み方だけを知る。
 //!
-//! パスと綴りで積む口を分けるのは、パスが`OsString`のまま渡せて綴りの検査を要さないためである。
+//! パスと文字列で積む口を分けるのは、パスが`OsString`のまま渡せて文字列の検査を要さないためである。
 
 use std::ffi::OsString;
 use std::path::Path;
@@ -28,10 +28,10 @@ impl 語の並び {
     pub(super) fn 値を足す(&mut self, 選択肢: Option<&'static str>, 役割: &'static str, 値: Option<String>) -> Result<(), 生成器エラー> {
         let Some(語) = 値 else { return Ok(()) };
         if 語.starts_with('-') {
-            return Err(生成器エラー::値が選択肢の綴りに見える { 役割, 綴り: 語 });
+            return Err(生成器エラー::値が選択肢の文字列に見える { 役割, 文字列: 語 });
         }
-        if let Some(綴り) = 選択肢 {
-            self.語を足す(綴り);
+        if let Some(文字列) = 選択肢 {
+            self.語を足す(文字列);
         }
         self.語を足す(&語);
         Ok(())

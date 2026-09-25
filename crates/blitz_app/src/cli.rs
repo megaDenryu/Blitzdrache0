@@ -86,7 +86,7 @@ pub(crate) use object_count::描画対象数;
 pub(crate) use parse::引数を解析する;
 pub(crate) use placement_args::平行移動起動設定;
 pub(crate) use scene_selection::{
-    世界の種別, 地形の夜灯り世界の綴り, 地形世界の種別, 小物世界の種別, 差し替える生成物の対, 植生の検収世界の種別, 石の小屋の屋内の小物世界の綴り, 起動時シーン
+    世界の種別, 地形の夜灯り世界のシーン名, 地形世界の種別, 小物世界の種別, 差し替える生成物の対, 植生の検収世界の種別, 石の小屋の屋内の小物世界のシーン名, 起動時シーン
 };
 pub(crate) use screen_pixel_args::画面画素位置;
 pub(crate) use shadow_args::シャドウ計測起動設定;

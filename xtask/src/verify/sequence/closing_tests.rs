@@ -32,7 +32,7 @@ fn 起動できない段の破れの本文と最後のログのパスがログ�
     let ログの中身 = std::fs::read_to_string(&ログのパス).unwrap();
     drop(実行係);
     std::fs::remove_file(&ログのパス).unwrap();
-    // ExitCodeは値どうしの比較を持たないため、デバッグの綴りで突き合わせる。
+    // ExitCodeは値どうしの比較を持たないため、デバッグの文字列で突き合わせる。
     assert_eq!(format!("{終了コード:?}"), format!("{:?}", ExitCode::FAILURE), "内部の破れを失敗として返していない");
     assert!(ログの中身.contains("段の子プロセスを起動できなかった"), "ログを開いた後の破れの本文がログの外へ逃げている: {ログの中身}");
     assert_eq!(ログの中身.lines().last().unwrap(), format!("[xtask] ログ: {}", ログのパス.display()), "最後の行がログのパスになっていない: {ログの中身}");

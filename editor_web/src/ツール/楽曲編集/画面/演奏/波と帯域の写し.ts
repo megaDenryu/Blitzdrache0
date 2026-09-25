@@ -1,7 +1,7 @@
 import { 濾波の種類, 発振の波形 } from 'SengenAudio'
 import type { 波の形, 通す帯域 } from '../../編集モデル/index.ts'
 
-// 編集モデルが持つ日本語の綴りを、SengenAudioの値オブジェクトへ写す。写しはこの2つの工程だけが持つ。
+// 編集モデルが持つ日本語の文字列を、SengenAudioの値オブジェクトへ写す。写しはこの2つの工程だけが持つ。
 export function 波の形を発振の波形へ写す(形: 波の形): 発振の波形 {
     switch (形) {
         case '正弦':

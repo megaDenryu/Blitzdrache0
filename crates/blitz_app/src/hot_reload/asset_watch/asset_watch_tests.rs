@@ -11,7 +11,7 @@ mod fixture;
 use blitz_engine::surface_layer_textures::地表層テクスチャ集の読み口;
 use blitz_engine::アセットID;
 
-use self::fixture::{一式を書き出す, 試験の世界の種別, 試験の置き場を用意する, 起動時シーンの安定IDの綴り};
+use self::fixture::{一式を書き出す, 試験の世界の種別, 試験の置き場を用意する, 起動時シーンの安定IDの文字列};
 use super::アセット監視状態を構築する;
 use crate::runtime_assets::実行時アセットの置き場;
 
@@ -42,8 +42,8 @@ fn タイルを外して焼き直すと再読込が持たない世界を運ぶ()
 }
 
 fn 監視状態を作る(ディレクトリ: &std::path::Path) -> super::アセット監視状態 {
-    let 置き場 = 実行時アセットの置き場::綴りから生成する(ディレクトリ.to_str().unwrap());
+    let 置き場 = 実行時アセットの置き場::文字列から生成する(ディレクトリ.to_str().unwrap());
     let カタログ = 置き場.カタログのファイル().読み込む().unwrap();
-    let id = アセットID::生成する(起動時シーンの安定IDの綴り).unwrap();
+    let id = アセットID::生成する(起動時シーンの安定IDの文字列).unwrap();
     アセット監視状態を構築する(置き場, カタログ, id)
 }

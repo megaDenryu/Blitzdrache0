@@ -58,6 +58,6 @@ pub const 全接合種別: [接合種別; 21] = [
 
 impl fmt::Display for 接合種別 {
     fn fmt(&self, 出力: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(出力, "{}", self.綴り())
+        write!(出力, "{}", self.文字列())
     }
 }

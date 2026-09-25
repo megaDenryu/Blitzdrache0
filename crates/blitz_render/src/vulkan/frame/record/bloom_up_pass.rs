@@ -24,8 +24,8 @@ pub(super) fn 光のにじみ拡大パスを宣言する<'a>(段: usize, 小さ�
             深度: None,
             クリア指定: fullscreen_draw::黒クリア(),
         },
-        move |文脈| {
-            fullscreen_draw::コマンドを積む(文脈.積み先(), pipeline, layout, set, 寸法, None);
+        move |積み先と取り出し口| {
+            fullscreen_draw::コマンドを積む(積み先と取り出し口.積み先(), pipeline, layout, set, 寸法, None);
         },
     )
 }

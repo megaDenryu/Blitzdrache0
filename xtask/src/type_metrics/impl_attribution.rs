@@ -24,7 +24,7 @@ impl 定義の候補が複数ある実装ブロック {
         Self { ファイル, 型名, 候補一覧 }
     }
 
-    pub fn 候補の綴り(&self) -> String {
+    pub fn 候補の文字列(&self) -> String {
         self.候補一覧.iter().map(型の所在::to_string).collect::<Vec<String>>().join(" / ")
     }
 }

@@ -23,7 +23,7 @@ mod multiscatter_descriptor;
 pub(crate) mod pass;
 /// 遠方環境の生成も同じ「ディスクリプタ1つと即時定数の枠」のコンピュートパイプラインを組むため、`vulkan`の中から見える。
 pub(in crate::vulkan) mod pipeline;
-/// 遠方環境の読み戻し検査も同じvalidationの観測を返すため、`vulkan`の中から見える。
+/// 遠方環境の読み戻し検査も同じ検証層の観測を返すため、`vulkan`の中から見える。
 pub(in crate::vulkan) mod probe;
 /// 遠方環境の読み戻しも同じ半精度4成分の受け皿を使うため、`vulkan`の中から見える。
 pub(in crate::vulkan) mod readback_buffer;

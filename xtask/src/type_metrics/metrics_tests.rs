@@ -17,9 +17,9 @@ fn 定義(型名: &str, 分量: 宣言の分量) -> 観測 {
     観測::型定義 { 型名, 分量 }
 }
 
-fn 実装(経路の綴り: &str, メソッド数: usize) -> 観測 {
+fn 実装(経路の文字列: &str, メソッド数: usize) -> 観測 {
     観測::実装ブロック {
-        自己型の経路: 自己型の経路::綴りから生成する(経路の綴り),
+        自己型の経路: 自己型の経路::文字列から生成する(経路の文字列),
         メソッド数,
     }
 }
@@ -54,9 +54,9 @@ fn 同じ名前の型が2つあれば別々の型として数える() {
     ];
     let 一覧 = 集計する(&観測).型ごとの計測一覧;
     assert_eq!(一覧.len(), 2);
-    let 綴り一覧: Vec<String> = 一覧.iter().map(|計測| format!("{}:{}", 計測.所在, 計測.宣言の件数())).collect();
-    assert!(綴り一覧.contains(&"crates/blitz_app/src/cli/types.rs::起動設定:40".to_string()));
-    assert!(綴り一覧.contains(&"xtask/src/smoke/launch_setting.rs::起動設定:10".to_string()));
+    let 文字列一覧: Vec<String> = 一覧.iter().map(|計測| format!("{}:{}", 計測.所在, 計測.宣言の件数())).collect();
+    assert!(文字列一覧.contains(&"crates/blitz_app/src/cli/types.rs::起動設定:40".to_string()));
+    assert!(文字列一覧.contains(&"xtask/src/smoke/launch_setting.rs::起動設定:10".to_string()));
 }
 
 /// `#[cfg]`で切り替わる同名の定義が同じファイルに並ぶ形である。後から現れた定義で上書きすると、

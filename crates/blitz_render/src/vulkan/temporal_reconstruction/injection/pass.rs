@@ -40,11 +40,11 @@ pub(crate) fn 合成入力の注入を作る<'a>(書き戻し先: 合成入力�
         Vec::new(),
         Vec::new(),
         パス種別::転送,
-        move |文脈| 合成入力の画像のコピーを積む(文脈, 書き戻し先, 入力),
+        move |積み先と取り出し口| 合成入力の画像のコピーを積む(積み先と取り出し口, 書き戻し先, 入力),
     )
 }
 
-fn 合成入力の画像のコピーを積む(文脈: &GPU命令の積み先と宣言済み資源の取り出し口, 書き戻し先: 合成入力の書き戻し先, 入力: 合成入力の注入入力) {
+fn 合成入力の画像のコピーを積む(積み先と取り出し口: &GPU命令の積み先と宣言済み資源の取り出し口, 書き戻し先: 合成入力の書き戻し先, 入力: 合成入力の注入入力) {
     let 色の面 = vk::ImageAspectFlags::COLOR;
     let 組一覧 = [
         (書き戻し先.今のフレームの色, 入力.今のフレームの色, 色の面),
@@ -53,12 +53,14 @@ fn 合成入力の画像のコピーを積む(文脈: &GPU命令の積み先と�
         (書き戻し先.深度, 入力.深度, vk::ImageAspectFlags::DEPTH),
     ];
     for (ハンドル, バッファ, 面) in 組一覧 {
-        バッファから画像へ一枚をコピーする(文脈, ハンドル, バッファ, 面, 入力.寸法);
+        バッファから画像へ一枚をコピーする(積み先と取り出し口, ハンドル, バッファ, 面, 入力.寸法);
     }
 }
 
-fn バッファから画像へ一枚をコピーする(文脈: &GPU命令の積み先と宣言済み資源の取り出し口, ハンドル: 画像ハンドル, バッファ: vk::Buffer, 面: vk::ImageAspectFlags, 寸法: vk::Extent2D) {
-    let 画像 = 文脈.宣言済みの画像を参照する(ハンドル);
+fn バッファから画像へ一枚をコピーする(
+    積み先と取り出し口: &GPU命令の積み先と宣言済み資源の取り出し口, ハンドル: 画像ハンドル, バッファ: vk::Buffer, 面: vk::ImageAspectFlags, 寸法: vk::Extent2D
+) {
+    let 画像 = 積み先と取り出し口.宣言済みの画像を参照する(ハンドル);
     let 領域 = vk::BufferImageCopy::default()
         .image_subresource(vk::ImageSubresourceLayers::default().aspect_mask(面).mip_level(0).base_array_layer(0).layer_count(1))
         .image_extent(vk::Extent3D {
@@ -70,9 +72,9 @@ fn バッファから画像へ一枚をコピーする(文脈: &GPU命令の積�
     // 安全性: command_bufferは記録中、対象の画像はグラフの導いたバリアでTRANSFER_DST_OPTIMALへ遷移済み、
     // バッファは同じ寸法の成分列で確保済みである(`合成入力の注入一式::生成する`が同じ寸法から作る)。
     unsafe {
-        文脈
+        積み先と取り出し口
             .積み先()
             .論理デバイス()
-            .cmd_copy_buffer_to_image(文脈.積み先().コマンドバッファ(), バッファ, 画像, vk::ImageLayout::TRANSFER_DST_OPTIMAL, &領域一覧);
+            .cmd_copy_buffer_to_image(積み先と取り出し口.積み先().コマンドバッファ(), バッファ, 画像, vk::ImageLayout::TRANSFER_DST_OPTIMAL, &領域一覧);
     }
 }

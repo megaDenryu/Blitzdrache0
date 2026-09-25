@@ -15,7 +15,7 @@ impl アプリの起動 {
         self.終了済みか = true;
         let 終了状態 = self.コマンド.status().map_err(|誤り| 検収エラー::アプリを起こせなかった {
             実行名: self.実行名.clone(),
-            起こし方: self.起こし方.表示の綴り(),
+            起こし方: self.起こし方.表示用の表記(),
             誤り,
         })?;
         if 終了状態.success() {
@@ -32,7 +32,7 @@ impl アプリの起動 {
         self.終了済みか = true;
         let 出力 = self.コマンド.output().map_err(|誤り| 検収エラー::アプリを起こせなかった {
             実行名: self.実行名.clone(),
-            起こし方: self.起こし方.表示の綴り(),
+            起こし方: self.起こし方.表示用の表記(),
             誤り,
         })?;
         let 報告 = 終了時報告::取り込む(&self.実行名, String::from_utf8_lossy(&出力.stdout).into_owned(), String::from_utf8_lossy(&出力.stderr).into_owned());

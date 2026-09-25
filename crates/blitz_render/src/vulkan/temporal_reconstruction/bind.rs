@@ -20,7 +20,7 @@ impl 時間再構成一式 {
     /// 注意: 今のフレームの色と動きベクトルのレイアウトは`画像用途::シェーダー読み画素段`が導く
     /// SHADER_READ_ONLY_OPTIMALと、履歴のレイアウトは`画像用途::履歴の画素段参照`が導くGENERALと、
     /// 深度のレイアウトは`画像用途::深度シェーダー読み`が導くDEPTH_READ_ONLY_OPTIMALと一致させる。
-    /// 食い違うとvalidationがディスクリプタのレイアウト不一致を報告する。
+    /// 食い違うと検証層がディスクリプタのレイアウト不一致を報告する。
     fn 一つのセットを束縛する(&self, device: &ash::Device, 深度ビュー: vk::ImageView, 読み添字: usize) {
         self.ディスクリプタ.セット一覧[読み添字].書き込み先(device).並びの位置ごとに結ぶ([
             読み取る画像(self.画像組.今のフレームの色.画像ビュー, vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL),

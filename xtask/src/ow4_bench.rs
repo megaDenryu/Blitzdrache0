@@ -22,8 +22,8 @@ use crate::verify::検証の出力の置き場名;
 
 const 出力ディレクトリ: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("ow4_bench");
 const シェーダーコピー先: 検証の出力の置き場名 = 検証の出力の置き場名::生成する("ow4_bench_shaders");
-const 起動時シーンの綴り: &str = "terrain_origin";
-const 起動時シーン: crate::acceptance::検収シーン名 = crate::acceptance::検収シーン名::生成する(起動時シーンの綴り);
+const 起動時シーンの名前: &str = "terrain_origin";
+const 起動時シーン: crate::acceptance::検収シーン名 = crate::acceptance::検収シーン名::生成する(起動時シーンの名前);
 const 先読み半径: &str = "2";
 
 /// 静止先読み120、往復80、整定120の合計。先頭120フレームは集計から除かれるため、標本は往復と整定の200フレームである。
@@ -45,7 +45,7 @@ pub fn 植生密度別に性能を計測する(引数一覧: &[String]) -> ExitC
             table::表示する(&結果一覧);
             budget::表示する(&結果一覧);
             let 件数 = 結果一覧.len();
-            println!("[xtask] ow4-bench成功: 物量点{件数}件を各{反復回数}回、validationレイヤー有効のデバッグ実行が全物量点で0件");
+            println!("[xtask] ow4-bench成功: 物量点{件数}件を各{反復回数}回、検証層を有効にしたデバッグ実行が全物量点で0件");
             ExitCode::SUCCESS
         }
         Err(理由) => {

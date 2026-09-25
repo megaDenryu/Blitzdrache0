@@ -1,4 +1,4 @@
-//! 候補として振る1つの軸。担当するのは、軸の綴りの読み取りと、値を添えた候補の組み立てと、
+//! 候補として振る1つの軸。担当するのは、軸の文字列の読み取りと、値を添えた候補の組み立てと、
 //! `blitz_app`へ渡す起動指定への変換である。
 //!
 //! αとβを1つの型の2つの選択肢で表すのは、設計の正本が「αとβを同時に変えない」と定めるためである。
@@ -9,10 +9,10 @@
 use super::argument_error::影の欠落計器の引数の破れ;
 use super::distance::距離メートル;
 
-const 最大影距離の綴り: &str = "--max-shadow-distance";
-const 影の視距離の綴り: &str = "--shadow-caster-range";
+const 最大影距離の文字列: &str = "--max-shadow-distance";
+const 影の視距離の文字列: &str = "--shadow-caster-range";
 
-/// 候補で振る軸そのもの。距離を持たない側であり、綴りの読み取りと、構図が受け入れるかの判定に使う。
+/// 候補で振る軸そのもの。距離を持たない側であり、文字列の読み取りと、構図が受け入れるかの判定に使う。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum 計測軸 {
     最大影距離, // α。多段設定の最大影距離を差し替える
@@ -22,23 +22,23 @@ pub(super) enum 計測軸 {
 impl 計測軸 {
     pub(super) const 全軸: [Self; 2] = [Self::最大影距離, Self::影の視距離];
 
-    pub(super) fn 綴り(self) -> &'static str {
+    pub(super) fn 文字列(self) -> &'static str {
         match self {
-            Self::最大影距離 => 最大影距離の綴り,
-            Self::影の視距離 => 影の視距離の綴り,
+            Self::最大影距離 => 最大影距離の文字列,
+            Self::影の視距離 => 影の視距離の文字列,
         }
     }
 
-    pub(super) fn 綴りから読む(語: &str) -> Option<Self> {
-        Self::全軸.into_iter().find(|軸| 軸.綴り() == 語)
+    pub(super) fn 文字列から読む(語: &str) -> Option<Self> {
+        Self::全軸.into_iter().find(|軸| 軸.文字列() == 語)
     }
 
-    pub(super) fn 綴りを並べる(軸一覧: &[Self]) -> String {
-        軸一覧.iter().map(|軸| format!("{} メートル", 軸.綴り())).collect::<Vec<String>>().join(" または ")
+    pub(super) fn 文字列を並べる(軸一覧: &[Self]) -> String {
+        軸一覧.iter().map(|軸| format!("{} メートル", 軸.文字列())).collect::<Vec<String>>().join(" または ")
     }
 
-    pub(super) fn 値を添える(self, 綴り: &str) -> Result<候補の計測指定, 影の欠落計器の引数の破れ> {
-        let 距離 = 距離メートル::生成する(綴り)?;
+    pub(super) fn 値を添える(self, 文字列: &str) -> Result<候補の計測指定, 影の欠落計器の引数の破れ> {
+        let 距離 = 距離メートル::生成する(文字列)?;
         Ok(match self {
             Self::最大影距離 => 候補の計測指定::最大影距離(距離),
             Self::影の視距離 => 候補の計測指定::影の視距離(距離),
@@ -60,16 +60,16 @@ impl 候補の計測指定 {
         }
     }
 
-    pub(super) fn 綴り(&self) -> &'static str {
-        self.軸().綴り()
+    pub(super) fn 文字列(&self) -> &'static str {
+        self.軸().文字列()
     }
 
-    pub(super) fn 距離の綴り(&self) -> &str {
+    pub(super) fn 距離の文字列(&self) -> &str {
         let (Self::最大影距離(距離) | Self::影の視距離(距離)) = self;
-        距離.綴り()
+        距離.文字列()
     }
 
     pub(super) fn 起動指定へ写す(&self) -> Vec<String> {
-        vec![self.綴り().to_string(), self.距離の綴り().to_string()]
+        vec![self.文字列().to_string(), self.距離の文字列().to_string()]
     }
 }

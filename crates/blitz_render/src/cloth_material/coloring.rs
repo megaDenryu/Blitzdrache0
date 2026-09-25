@@ -11,7 +11,7 @@ pub const 布の彩色の色数上限: u32 = 12;
 
 pub(super) const 拘束1件のバイト数: usize = 16;
 
-/// 彩色の1色が占める、拘束の並びの中の連続した区間。GPUのディスパッチ1回分であり、プッシュ定数で運ぶ。
+/// 彩色の1色が占める、拘束の並びの中の連続した区間。GPUの計算の発行1回分であり、プッシュ定数で運ぶ。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct 布の彩色の区間 {
     pub 開始: u32,

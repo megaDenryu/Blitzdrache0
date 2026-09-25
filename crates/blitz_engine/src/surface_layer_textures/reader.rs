@@ -5,7 +5,7 @@
 //! 世界で地表が塗り分けられない理由が読み取れなくなるためである。
 
 use super::load_error::地表層テクスチャ集読込エラー;
-use super::stable_id::世界の地表層テクスチャ集の安定IDの綴り;
+use super::stable_id::世界の地表層テクスチャ集の安定IDの文字列;
 use super::texture_set::地表層テクスチャ集;
 use crate::asset::runtime_format::実行時形式から地表層テクスチャ集を読む;
 use crate::asset::{アセットID, カタログ, 実行時形式のファイル};
@@ -18,7 +18,7 @@ pub enum 地表層テクスチャ集の読み口 {
 
 impl 地表層テクスチャ集の読み口 {
     pub fn カタログから読み込む(カタログ: &カタログ) -> Result<Self, 地表層テクスチャ集読込エラー> {
-        let id = アセットID::生成する(世界の地表層テクスチャ集の安定IDの綴り)?;
+        let id = アセットID::生成する(世界の地表層テクスチャ集の安定IDの文字列)?;
         let Some(パス) = カタログ.パスを参照する(&id) else {
             return Ok(Self::テクスチャ集を持たない世界);
         };

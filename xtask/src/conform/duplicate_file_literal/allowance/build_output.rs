@@ -1,4 +1,4 @@
-//! ビルド時に焼いて、そのままビルド時に取り込む成果物の対かの判定。受け取るのは綴りと出現の並び、
+//! ビルド時に焼いて、そのままビルド時に取り込む成果物の対かの判定。受け取るのは文字列と出現の並び、
 //! 返すのはこの検査が重ねて見る必要のない対かどうかである。
 //!
 //! 台帳へ1件ずつ載せずに規則で許すのは、この対の食い違いを機械が既に捉えているからである。
@@ -16,8 +16,8 @@ use crate::conform::duplicate_file_literal::出現箇所;
 const 取り込む成果物の拡張子: &str = ".spv";
 const ビルドスクリプトの置き場: &str = "build_support";
 
-pub(in crate::conform::duplicate_file_literal) fn 焼いてそのまま取り込む対か(綴り: &str, 出現一覧: &[&出現箇所]) -> bool {
-    if !綴り.ends_with(取り込む成果物の拡張子) {
+pub(in crate::conform::duplicate_file_literal) fn 焼いてそのまま取り込む対か(文字列: &str, 出現一覧: &[&出現箇所]) -> bool {
+    if !文字列.ends_with(取り込む成果物の拡張子) {
         return false;
     }
     let (焼く側, ほか): (Vec<&&出現箇所>, Vec<&&出現箇所>) = 出現一覧.iter().partition(|出現| ビルドスクリプトの中か(&出現.パス));

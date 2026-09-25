@@ -1,4 +1,4 @@
-//! debug utilsメッセンジャー。validationのエラー・警告を検証カウンタへ集計し、
+//! debug utilsメッセンジャー。検証層のエラー・警告を検証カウンタへ集計し、
 //! メッセージ全文をstderrへ出力する。
 
 use std::ffi::c_void;
@@ -56,7 +56,7 @@ unsafe extern "system" fn コールバック(_severity: vk::DebugUtilsMessageSev
         if let Some(データ) = data.as_ref() {
             let メッセージ = データ.message_as_c_str().map(|c| c.to_string_lossy());
             if let Some(メッセージ) = メッセージ {
-                eprintln!("[validation] {メッセージ}");
+                eprintln!("[検証層] {メッセージ}");
             }
         }
     }

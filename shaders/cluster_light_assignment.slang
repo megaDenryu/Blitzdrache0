@@ -64,7 +64,7 @@ void computeMain(uint3 threadIdentifier : SV_DispatchThreadID)
     for (uint lightIndex = 0; lightIndex < clusterAssignmentHeader.localLightCount; lightIndex++)
     {
         LocalLightRecord record = clusterAssignmentLocalLights[lightIndex];
-        // 光種の枝を明示する。種別を読まずに球の判定を当てると、光種が増えたときに別の種別の光が
+        // 光種ごとの分岐を明示する。種別を読まずに球の判定を当てると、光種が増えたときに別の種別の光が
         // 点光と同じ範囲で黙って割り当てられる。
         if (record.kind.x != localLightKindPoint)
         {

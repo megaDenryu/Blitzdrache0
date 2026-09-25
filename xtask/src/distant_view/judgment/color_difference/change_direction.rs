@@ -26,7 +26,7 @@ impl 色の動く向き {
         }
     }
 
-    pub(in crate::distant_view) fn 綴り(self) -> &'static str {
+    pub(in crate::distant_view) fn 文字列(self) -> &'static str {
         match self {
             Self::暗化 => "暗化",
             Self::明化 => "明化",
@@ -53,9 +53,9 @@ impl 発生源の変化の向き {
         }
     }
 
-    pub(in crate::distant_view) fn 綴り(self) -> String {
+    pub(in crate::distant_view) fn 文字列(self) -> String {
         match self {
-            Self::一方向(向き) => format!("一方向の{}", 向き.綴り()),
+            Self::一方向(向き) => format!("一方向の{}", 向き.文字列()),
             Self::増加と減少の混在 => "増加と減少の混在".to_string(),
         }
     }

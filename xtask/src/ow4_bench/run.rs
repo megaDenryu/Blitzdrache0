@@ -14,7 +14,7 @@ use super::condition::計測条件;
 use super::error::物量計測エラー;
 use super::gpu_table::GPU時間;
 use super::measure::{CPU区間一式, Vulkan確保};
-use launch_arguments::{上限の綴り, 引数を作る};
+use launch_arguments::{上限の文字列, 引数を作る};
 
 mod launch_arguments;
 
@@ -36,7 +36,7 @@ pub(super) struct 一回の実行 {
 }
 
 pub(super) fn 走らせる(出力先: &Path, 名前: &str, アセットルート: &Path, シェーダー入口: &Path, 条件: &計測条件) -> Result<一回の実行, 物量計測エラー> {
-    let 上限 = 上限の綴り();
+    let 上限 = 上限の文字列();
     let 引数一覧 = 引数を作る(アセットルート, シェーダー入口, &上限, 条件);
     起動引数で走らせる(出力先, 名前, &引数一覧)
 }

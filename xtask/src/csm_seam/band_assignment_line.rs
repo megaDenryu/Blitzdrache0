@@ -5,8 +5,8 @@
 //! 4つの距離区分は現れ、境界の段差も出る。判定はどちらでも通ってしまい、「再配分を検収したつもりで
 //! 再配分前の絵を見ていた」ことに誰も気づかない。分け方は行にしか現れないので、行で確かめる。
 //!
-//! 注意: 見出しの綴りは`crates/blitz_app/src/reports/shadow_band_assignment.rs`との契約であり、
-//! `cargo xtask conform`の綴りの台帳が両側を結んでいる。
+//! 注意: 見出しの文言は`crates/blitz_app/src/reports/shadow_band_assignment.rs`との契約であり、
+//! `cargo xtask conform`の文字列の台帳が両側を結んでいる。
 
 use super::composition::継ぎ目を見る構図;
 use crate::acceptance::{判定の名前, 判定の破れ, 終了時報告};

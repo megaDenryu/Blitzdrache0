@@ -1,8 +1,8 @@
-//! 1回の実行で振る軸そのものと、その綴り。担当するのは軸の一覧と、綴りと軸の相互の変換である。
+//! 1回の実行で振る軸そのものと、その文字列。担当するのは軸の一覧と、文字列と軸の相互の変換である。
 //!
-//! 綴りを網羅的な`match`で持つのは、軸を1つ足したときに綴りの追加をコンパイラへ強制させるためである。
+//! 文字列を網羅的な`match`で持つのは、軸を1つ足したときに文字列の追加をコンパイラへ強制させるためである。
 //! 選べる軸の一覧だけは配列で持つため、足した軸を`全軸`へ入れ忘れると選べないままになる。
-//! この抜けは下のテストが綴りの往復で捕まえる。
+//! この抜けは下のテストが文字列の往復で捕まえる。
 
 use crate::shadow_probe::error::律速切り分けの計測エラー;
 
@@ -23,9 +23,9 @@ impl 振る軸 {
     /// 引数で選べる軸の一覧。使い方の表示もこの並びで出す。
     pub(in crate::shadow_probe) const 全軸: [Self; 8] = [Self::解像度, Self::キャスター, Self::余白, Self::視点, Self::頂点, Self::太陽高度, Self::最大影距離, Self::影の視距離];
 
-    /// 軸を選ぶ引数の綴り。生値と実行ログの置き場になる軸ごとのディレクトリ名にも同じ綴りを使う。
+    /// 軸を選ぶ引数の文字列。生値と実行ログの置き場になる軸ごとのディレクトリ名にも同じ文字列を使う。
     /// 軸を続けて回しても前の軸の証拠を上書きせず、実行したコマンドと残った証拠の場所を読み手が1対1で結べる。
-    pub(in crate::shadow_probe) fn 綴り(self) -> &'static str {
+    pub(in crate::shadow_probe) fn 文字列(self) -> &'static str {
         match self {
             Self::解像度 => "resolution",
             Self::キャスター => "casters",
@@ -39,30 +39,31 @@ impl 振る軸 {
     }
 }
 
-pub(in crate::shadow_probe) fn 綴りから読む(語: &str) -> Result<振る軸, 律速切り分けの計測エラー> {
-    振る軸::全軸.into_iter().find(|軸| 軸.綴り() == 語).ok_or_else(|| 律速切り分けの計測エラー::知らない軸を渡された {
-        語: 語.to_string(), 選べる軸: 綴りを並べる()
+pub(in crate::shadow_probe) fn 文字列から読む(語: &str) -> Result<振る軸, 律速切り分けの計測エラー> {
+    振る軸::全軸.into_iter().find(|軸| 軸.文字列() == 語).ok_or_else(|| 律速切り分けの計測エラー::知らない軸を渡された {
+        語: 語.to_string(),
+        選べる軸: 文字列を並べる(),
     })
 }
 
-pub(in crate::shadow_probe) fn 綴りを並べる() -> String {
-    振る軸::全軸.iter().map(|軸| 軸.綴り()).collect::<Vec<&str>>().join(" / ")
+pub(in crate::shadow_probe) fn 文字列を並べる() -> String {
+    振る軸::全軸.iter().map(|軸| 軸.文字列()).collect::<Vec<&str>>().join(" / ")
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    /// 綴りが往復し、かつ重複しないこと。軸を足して`全軸`へ入れ忘れると往復が壊れる。
+    /// 文字列が往復し、かつ重複しないこと。軸を足して`全軸`へ入れ忘れると往復が壊れる。
     #[test]
-    fn 全軸の綴りは往復して重複しない() {
+    fn 全軸の文字列は往復して重複しない() {
         for 軸 in 振る軸::全軸 {
-            assert_eq!(綴りから読む(軸.綴り()).ok(), Some(軸));
+            assert_eq!(文字列から読む(軸.文字列()).ok(), Some(軸));
         }
-        let mut 綴り一覧: Vec<&str> = 振る軸::全軸.iter().map(|軸| 軸.綴り()).collect();
-        綴り一覧.sort_unstable();
-        let 件数 = 綴り一覧.len();
-        綴り一覧.dedup();
-        assert_eq!(綴り一覧.len(), 件数);
+        let mut 文字列一覧: Vec<&str> = 振る軸::全軸.iter().map(|軸| 軸.文字列()).collect();
+        文字列一覧.sort_unstable();
+        let 件数 = 文字列一覧.len();
+        文字列一覧.dedup();
+        assert_eq!(文字列一覧.len(), 件数);
     }
 }

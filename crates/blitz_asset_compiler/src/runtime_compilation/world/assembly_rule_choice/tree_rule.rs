@@ -51,18 +51,18 @@ pub(super) fn 樫の木の規則() -> Result<組み立て規則, String> {
 
 fn 節ごとの枝の候補を組む() -> Result<節ごとの枝の候補, String> {
     let mut 候補一覧 = Vec::with_capacity(生え口の名前一覧.len());
-    for 綴り in 生え口の名前一覧 {
+    for 文字列 in 生え口の名前一覧 {
         候補一覧.push(節の枝::生やす {
-            生え口: 接合点名を確かめる(綴り)?
+            生え口: 接合点名を確かめる(文字列)?
         });
     }
     節ごとの枝の候補::生成する(候補一覧).map_err(|誤り| 誤り.to_string())
 }
 
-fn 接合点名を確かめる(綴り: &str) -> Result<接合点名, String> {
-    接合点名::生成する(綴り).map_err(|誤り| 誤り.to_string())
+fn 接合点名を確かめる(文字列: &str) -> Result<接合点名, String> {
+    接合点名::生成する(文字列).map_err(|誤り| 誤り.to_string())
 }
 
-fn 部品識別子を確かめる(綴り: &str) -> Result<部品ID, String> {
-    部品ID::生成する(綴り).map_err(|誤り| 誤り.to_string())
+fn 部品識別子を確かめる(文字列: &str) -> Result<部品ID, String> {
+    部品ID::生成する(文字列).map_err(|誤り| 誤り.to_string())
 }

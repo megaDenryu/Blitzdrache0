@@ -6,7 +6,7 @@ describe('タブ識別子の相互変換テスト', () => {
     it('チャンク座標からタブ識別子を生成し正しく座標を復元できること', () => {
         const 座標 = { x: 2, z: 3 }
         const 識別子 = タブ識別子.チャンクから生成する(座標)
-        assert.strictEqual(識別子.綴り(), 'チャンク_2_3')
+        assert.strictEqual(識別子.文字列(), 'チャンク_2_3')
 
         const 復元 = 識別子.チャンク座標を復元する()
         assert.ok(復元 !== null)
@@ -17,7 +17,7 @@ describe('タブ識別子の相互変換テスト', () => {
     it('負の座標を含むチャンク座標でも往復できること', () => {
         const 座標 = { x: -1, z: -4 }
         const 識別子 = タブ識別子.チャンクから生成する(座標)
-        assert.strictEqual(識別子.綴り(), 'チャンク_-1_-4')
+        assert.strictEqual(識別子.文字列(), 'チャンク_-1_-4')
 
         const 復元 = 識別子.チャンク座標を復元する()
         assert.ok(復元 !== null)
@@ -25,14 +25,14 @@ describe('タブ識別子の相互変換テスト', () => {
         assert.strictEqual(復元.z, -4)
     })
 
-    it('大域世界タブ識別子や不正な綴りではnullを返すこと', () => {
+    it('大域世界タブ識別子や不正な文字列ではnullを返すこと', () => {
         assert.strictEqual(タブ識別子.大域世界().チャンク座標を復元する(), null)
-        assert.strictEqual(タブ識別子.綴りから復元する('unknown_tab').チャンク座標を復元する(), null)
-        assert.strictEqual(タブ識別子.綴りから復元する('チャンク_abc_def').チャンク座標を復元する(), null)
+        assert.strictEqual(タブ識別子.文字列から復元する('unknown_tab').チャンク座標を復元する(), null)
+        assert.strictEqual(タブ識別子.文字列から復元する('チャンク_abc_def').チャンク座標を復元する(), null)
     })
 
     it('マテリアルタブ識別子はチャンク座標を持たないこと', () => {
-        assert.strictEqual(タブ識別子.マテリアル().綴り(), 'マテリアル')
+        assert.strictEqual(タブ識別子.マテリアル().文字列(), 'マテリアル')
         assert.strictEqual(タブ識別子.マテリアル().チャンク座標を復元する(), null)
     })
 })

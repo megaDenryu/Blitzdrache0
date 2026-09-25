@@ -10,18 +10,20 @@ use crate::vulkan::material_table::generation_record::世代内材質レコー�
 use crate::vulkan::material_table::material_id::大域材質ID;
 use crate::vulkan::material_table::texture_role::材質テクスチャ役割;
 
-use super::fallback_slots::正準フォールバック解決;
+use super::fallback_slots::正準の既定テクスチャの解決;
 
-pub(super) fn 梱包した材質レコードの整合を検証する(材質id: 大域材質ID, レコード: &世代内材質レコード, フォールバック: &正準フォールバック解決) -> Result<(), 材質資源表エラー> {
+pub(super) fn 梱包した材質レコードの整合を検証する(
+    材質id: 大域材質ID, レコード: &世代内材質レコード, 正準の既定テクスチャ: &正準の既定テクスチャの解決
+) -> Result<(), 材質資源表エラー> {
     for 係数 in レコード.全係数() {
         if !係数.is_finite() || !(0.0..=1.0).contains(&係数) {
             return Err(材質資源表エラー::係数の範囲外 { 材質id: 材質id.値(), 係数 });
         }
     }
     for 役割 in 材質テクスチャ役割::全役割 {
-        let フォールバックのスロット = フォールバック.用途で引く(役割.正準フォールバック用途());
+        let 既定テクスチャのスロット = 正準の既定テクスチャ.用途で引く(役割.正準の既定テクスチャの用途());
         let 実際のスロット = レコード.スロット(役割);
-        let 解決済みか = 実際のスロット != フォールバックのスロット;
+        let 解決済みか = 実際のスロット != 既定テクスチャのスロット;
         if レコード.特徴集合().役割を持つか(役割) != 解決済みか {
             return Err(材質資源表エラー::特徴ビットとスロットの不整合 { 材質id: 材質id.値() });
         }

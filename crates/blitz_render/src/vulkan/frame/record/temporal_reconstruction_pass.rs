@@ -43,8 +43,8 @@ pub(super) fn 時間再構成パスを宣言する<'a>(ハンドル: 時間再�
             深度: None,
             クリア指定: fullscreen_draw::黒クリア(),
         },
-        move |文脈| {
-            fullscreen_draw::コマンドを積む(文脈.積み先(), 入力.pipeline, 入力.layout, 入力.セット, 寸法, Some(&入力.即時定数));
+        move |積み先と取り出し口| {
+            fullscreen_draw::コマンドを積む(積み先と取り出し口.積み先(), 入力.pipeline, 入力.layout, 入力.セット, 寸法, Some(&入力.即時定数));
         },
     )
 }

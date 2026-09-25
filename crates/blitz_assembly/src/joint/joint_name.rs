@@ -9,27 +9,27 @@ use super::error::接合点エラー;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct 接合点名 {
-    綴り: String,
+    文字列: String,
 }
 
 impl 接合点名 {
-    /// 空の名前を拒む。前後の空白は落とす。Blenderの生成スクリプトが綴りを組み立てる過程で
+    /// 空の名前を拒む。前後の空白は落とす。Blenderの生成スクリプトが文字列を組み立てる過程で
     /// 空白が混ざることがあり、それを別名として扱うと一意性の検査が空振りする。
-    pub fn 生成する(綴り: &str) -> Result<Self, 接合点エラー> {
-        let 整えた綴り = 綴り.trim();
-        if 整えた綴り.is_empty() {
+    pub fn 生成する(文字列: &str) -> Result<Self, 接合点エラー> {
+        let 整えた文字列 = 文字列.trim();
+        if 整えた文字列.is_empty() {
             return Err(接合点エラー::名前が空);
         }
-        Ok(Self { 綴り: 整えた綴り.to_string() })
+        Ok(Self { 文字列: 整えた文字列.to_string() })
     }
 
-    pub fn 綴り(&self) -> &str {
-        &self.綴り
+    pub fn 文字列(&self) -> &str {
+        &self.文字列
     }
 }
 
 impl fmt::Display for 接合点名 {
     fn fmt(&self, 出力: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(出力, "{}", self.綴り)
+        write!(出力, "{}", self.文字列)
     }
 }

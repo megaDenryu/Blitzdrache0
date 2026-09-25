@@ -20,6 +20,6 @@ pub(super) fn 遠景容量を確かめる(報告: &str, 広がり: 世界の広�
 
 fn 数を読む(報告: &str, 見出し: &str) -> Result<u64, String> {
     let 後ろ = 報告.split_once(見出し).map(|(_, 後ろ)| 後ろ).ok_or_else(|| format!("報告に{見出し}が無い"))?;
-    let 綴り = 後ろ.split_whitespace().next().ok_or_else(|| format!("{見出し}の値が無い"))?;
-    綴り.parse::<u64>().map_err(|誤り| format!("{見出し}{綴り}を数にできない: {誤り}"))
+    let 文字列 = 後ろ.split_whitespace().next().ok_or_else(|| format!("{見出し}の値が無い"))?;
+    文字列.parse::<u64>().map_err(|誤り| format!("{見出し}{文字列}を数にできない: {誤り}"))
 }

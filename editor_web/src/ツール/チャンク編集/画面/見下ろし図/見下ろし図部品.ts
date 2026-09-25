@@ -8,9 +8,9 @@ import { 見下ろし図の視点 } from './見下ろし図の視点.ts'
 import type { 下地の配色 } from './下地の配色.ts'
 import { コンテナ } from './見下ろし図スタイル.css.ts'
 
-// 下地の上に重ねて描く手順。等高線・粗マスの重ね描きがここへ登録される。文脈の座標はCSS画素であり、
+// 下地の上に重ねて描く手順。等高線・粗マスの重ね描きがここへ登録される。キャンバスへ描く口の座標はCSS画素であり、
 // ワールド座標からの変換に視点を使う。
-export type 見下ろし図の重ね描き = (文脈: CanvasRenderingContext2D, 視点: 見下ろし図の視点) => void
+export type 見下ろし図の重ね描き = (キャンバスへ描く口: CanvasRenderingContext2D, 視点: 見下ろし図の視点) => void
 
 // 1チャンクを真上から見た二次元の編集面(設計正本の語彙「見下ろし図」)。キャンバス部品・視点・下地を束ね、
 // 高さ場と地表材質を受け取って下地を作り直し、ズームに応じて下地を拡大してチャンクの外枠を描く。
@@ -96,9 +96,9 @@ export class 見下ろし図部品 extends LV2HtmlComponentBase implements I配�
     public 再描画する(): void {
         const 視点 = this._視点
         if (視点 === null) return
-        this._キャンバス.描く((文脈) => {
-            this._下地.描く(文脈, 視点)
-            for (const 手順 of this._重ね描き一覧) 手順(文脈, 視点)
+        this._キャンバス.描く((キャンバスへ描く口) => {
+            this._下地.描く(キャンバスへ描く口, 視点)
+            for (const 手順 of this._重ね描き一覧) 手順(キャンバスへ描く口, 視点)
         })
     }
 

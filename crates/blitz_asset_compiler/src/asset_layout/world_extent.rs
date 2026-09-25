@@ -75,6 +75,6 @@ impl 世界の広がり {
     }
 
     pub fn 焼き方の指定を組み立てる(self, 世界名: 世界のディレクトリ名) -> String {
-        format!("{} east_chunks={} south_chunks={}", 世界名.綴りを見せる(), self.東西チャンク数, self.南北チャンク数)
+        format!("{} east_chunks={} south_chunks={}", 世界名.文字列を見せる(), self.東西チャンク数, self.南北チャンク数)
     }
 }

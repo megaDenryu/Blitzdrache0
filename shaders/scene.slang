@@ -2,7 +2,7 @@
 // 方向光の多段シャドウマップ(照明問い合わせのセットの比較サンプラー、PCF 3x3)の合成(判断23〜26・35)。
 // 参照: `_doc/開発スレッド/開発スレッド_2026-07-20_M0実装.md`。シェーダー内識別子はASCII。
 // 頂点段はこの1本を両方の契約が共有する。遠方環境の契約の画素段は`scene_distant_environment.slang`にあり、
-// 表面値の組み立ては`scene_surface.slang`、診断の枝は`scene_diagnostic.slang`を両方が取り込む。
+// 表面値の組み立ては`scene_surface.slang`、診断の経路は`scene_diagnostic.slang`を両方が取り込む。
 // PBR関数群は`pbr.slang`、直接光の列挙と合成は`direct_light_shading.slang`、距離区分の選択と境界ブレンドは`cascade_shadow.slang`にある。
 // ビューの定数は`view_uniform.slang`、影の定数は`cascade_shadow_uniform.slang`、直接光と定数間接近似は`lighting_query.slang`が唯一の宣言を持つ。
 // 材質の係数とテクスチャスロットは`material_record.slang`のストレージバッファにあり、どの1件を読むかは

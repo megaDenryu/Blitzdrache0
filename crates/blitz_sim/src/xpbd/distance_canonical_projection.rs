@@ -20,7 +20,7 @@ use super::distance_projection_result::距離拘束の一回の射影の結果;
 use super::lagrange_multiplier::ラグランジュ乗数;
 use super::rest_length::静止長;
 
-// 2点の距離の下限の値(メートル)。裸の数で置くのは、GPUの写し(`shaders/xpbd_projection.slang`と`shaders/xpbd_bending_projection.slang`)が同じ綴りの定数を持ち、`cargo xtask conform`が値を突き合わせるためである。
+// 2点の距離の下限の値(メートル)。裸の数で置くのは、GPUの写し(`shaders/xpbd_projection.slang`と`shaders/xpbd_bending_projection.slang`)が同じ表記の定数を持ち、`cargo xtask conform`が値を突き合わせるためである。
 const 向きが定まる最小の距離のメートル: f32 = 1.0e-6;
 
 // 2点の距離がこれより短いと単位向きを作らない。面の曲げ拘束の共有する辺の下限もこれである。

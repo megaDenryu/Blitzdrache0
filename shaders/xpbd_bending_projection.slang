@@ -9,7 +9,7 @@
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 // 共有する辺の長さ(メートル)の下限。CPU正本の`向きが定まる最小の距離のメートル`(距離拘束と同じ)の写しであり、`cargo xtask conform`が突き合わせる。
-// 長さの2乗でなく長さで比べるのは、CPU正本と同じ演算の順にし、定数の綴りをそのまま突き合わせられるようにするためである。
+// 長さの2乗でなく長さで比べるのは、CPU正本と同じ演算の順にし、定数の表記をそのまま突き合わせられるようにするためである。
 static const float minimumEdgeLength = 1e-6;
 // 三角形の面積ベクトルの長さ(面積の2倍。平方メートル)の下限。CPU正本の`面が定まる最小の面積の平方メートル`の写しであり、`cargo xtask conform`が突き合わせる。
 static const float minimumAreaVectorLength = 1e-12;

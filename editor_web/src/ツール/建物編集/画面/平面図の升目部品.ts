@@ -40,7 +40,7 @@ export class 平面図の升目部品 extends LV2HtmlComponentBase {
         super()
         const 触れるか = 見取り.宣言 !== undefined || 見取り.升目を置けない理由 === undefined
         const 中央 = div({ class: 升目中央 })
-            .child(span({ text: 見取り.宣言 === undefined ? `${見取り.座標.横},${見取り.座標.奥}` : 中央の綴り(見取り.宣言) }))
+            .child(span({ text: 見取り.宣言 === undefined ? `${見取り.座標.横},${見取り.座標.奥}` : 中央の文字列(見取り.宣言) }))
             .setTooltip(中央の説明(見取り))
             .setAttribute('data-升目あり', String(見取り.宣言 !== undefined))
             .setAttribute('data-根', String(見取り.根か))
@@ -74,7 +74,7 @@ export class 平面図の升目部品 extends LV2HtmlComponentBase {
     }
 }
 
-// 置けない事情の綴りは`格子の成り立ちの判定`が持つ1つの正本であり、ここでは括弧に入れて添えるだけである。
+// 置けない事情の文字列は`格子の成り立ちの判定`が持つ1つの正本であり、ここでは括弧に入れて添えるだけである。
 function 中央の説明(見取り: I升目の見取り): string {
     const 位置 = `横${見取り.座標.横}・奥${見取り.座標.奥}・階${見取り.座標.階}`
     if (見取り.宣言 !== undefined || 見取り.升目を置けない理由 === undefined) return 位置
@@ -92,7 +92,7 @@ function 飾りの説明(値: はめ口の値 | undefined): string {
     return 飾り.種類 === '煙突を立てる' ? `・煙突を立てる(${飾り.値.段数}段)` : `・${飾り.種類}`
 }
 
-function 中央の綴り(宣言: 升目の宣言): string {
+function 中央の文字列(宣言: 升目の宣言): string {
     const 床 = 宣言.床 === '張る' ? '床' : ''
     const 屋根 = 宣言.屋根 === '載せる' ? '屋根' : ''
     return `${床}${屋根}` === '' ? '骨格' : `${床}${屋根}`

@@ -21,6 +21,6 @@ async function main(): Promise<void> {
 
 main().catch((原因: unknown) => {
     const メッセージ = 原因 instanceof Error ? 原因.message : String(原因)
-    console.error(`ヘッドレス適用失敗: ${メッセージ}`)
+    console.error(`ブラウザなしの適用に失敗した: ${メッセージ}`)
     process.exit(1)
 })

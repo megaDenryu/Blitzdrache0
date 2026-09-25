@@ -75,8 +75,8 @@ impl 段階A1の場面からの一つの変更 {
         }
     }
 
-    /// 見出しへ足す綴り。変更が無ければ空である。
-    pub(super) fn 綴り(&self) -> String {
+    /// 見出しへ足す文字列。変更が無ければ空である。
+    pub(super) fn 文字列(&self) -> String {
         match self {
             Self::無し => String::new(),
             Self::細分数を十六にする => "_細分16本".to_owned(),

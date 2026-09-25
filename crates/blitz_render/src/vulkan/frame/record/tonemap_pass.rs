@@ -24,12 +24,12 @@ pub(super) fn 明るさの圧縮パスを宣言する<'a>(
             深度: None,
             クリア指定: fullscreen_draw::黒クリア(),
         },
-        move |文脈| {
+        move |積み先と取り出し口| {
             let mut 露出バイト列 = [0u8; 12];
             露出バイト列[0..4].copy_from_slice(&入力.露出.to_le_bytes());
             露出バイト列[4..8].copy_from_slice(&入力.芸術的バイアスの補正段.to_le_bytes());
             露出バイト列[8..12].copy_from_slice(&入力.自動か.to_le_bytes());
-            fullscreen_draw::コマンドを積む(文脈.積み先(), 入力.パイプライン, 入力.レイアウト, 入力.ディスクリプタセット, 寸法, Some(&露出バイト列));
+            fullscreen_draw::コマンドを積む(積み先と取り出し口.積み先(), 入力.パイプライン, 入力.レイアウト, 入力.ディスクリプタセット, 寸法, Some(&露出バイト列));
         },
     )
 }

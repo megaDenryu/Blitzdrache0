@@ -1,4 +1,4 @@
-//! 楽曲IDの値オブジェクト。楽曲1件の置き場のファイル名になる名乗りであり、空の綴りと
+//! 楽曲IDの値オブジェクト。楽曲1件の置き場のファイル名になる名乗りであり、空の文字列と
 //! ファイル名として使えない文字を持てない。JSONは裸の文字列として持つが、読み取りは生成の検査を必ず通す。
 //!
 //! ファイルの中の名乗りと置き場のファイル名が食い違うものは保管庫の読みが拒む
@@ -15,18 +15,18 @@ const ファイル名として使えない文字一覧: [char; 9] = ['/', '\\', 
 pub struct 楽曲ID(String);
 
 impl 楽曲ID {
-    pub fn 生成する(綴り: impl Into<String>) -> Result<Self, 資源検証エラー> {
-        let 綴り = 綴り.into();
-        if 綴り.trim().is_empty() {
+    pub fn 生成する(文字列: impl Into<String>) -> Result<Self, 資源検証エラー> {
+        let 文字列 = 文字列.into();
+        if 文字列.trim().is_empty() {
             return Err(資源検証エラー::識別子が空);
         }
-        if let Some(文字) = 綴り.chars().find(|文字| ファイル名として使えない文字か(*文字)) {
-            return Err(資源検証エラー::識別子にファイル名として使えない文字がある { 値: 綴り, 文字 });
+        if let Some(文字) = 文字列.chars().find(|文字| ファイル名として使えない文字か(*文字)) {
+            return Err(資源検証エラー::識別子にファイル名として使えない文字がある { 値: 文字列, 文字 });
         }
-        Ok(Self(綴り))
+        Ok(Self(文字列))
     }
 
-    pub fn 綴り(&self) -> &str {
+    pub fn 文字列(&self) -> &str {
         &self.0
     }
 }
@@ -38,13 +38,13 @@ fn ファイル名として使えない文字か(文字: char) -> bool {
 
 impl std::fmt::Display for 楽曲ID {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        formatter.write_str(self.綴り())
+        formatter.write_str(self.文字列())
     }
 }
 
 impl<'de> Deserialize<'de> for 楽曲ID {
     fn deserialize<入力元: Deserializer<'de>>(入力元: 入力元) -> Result<Self, 入力元::Error> {
-        let 綴り = String::deserialize(入力元)?;
-        Self::生成する(綴り).map_err(serde::de::Error::custom)
+        let 文字列 = String::deserialize(入力元)?;
+        Self::生成する(文字列).map_err(serde::de::Error::custom)
     }
 }

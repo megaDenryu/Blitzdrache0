@@ -7,7 +7,7 @@
 export type 建物定義ID = string & { readonly __brand: '建物定義ID' }
 
 // 空文字はどの建物定義も指さない無効値であり、生成時に拒む(無言のデフォルト適用を避ける)。
-export function 建物定義IDを生成する(綴り: string): 建物定義ID {
-    if (綴り === '') throw new Error('建物定義IDは空文字を受け付けない')
-    return 綴り as 建物定義ID
+export function 建物定義IDを生成する(文字列: string): 建物定義ID {
+    if (文字列 === '') throw new Error('建物定義IDは空文字を受け付けない')
+    return 文字列 as 建物定義ID
 }

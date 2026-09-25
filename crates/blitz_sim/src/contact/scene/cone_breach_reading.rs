@@ -29,7 +29,7 @@ impl 円錐を超えた接触点集合の読み取り {
     }
 
     /// 表へ綴る形。比は ‖Σλ_t‖ ÷ Σλ_n であり、超過の倍率は ‖Σλ_t‖ ÷ 円錐の半径である。
-    pub(super) fn 綴り(&self) -> String {
+    pub(super) fn 文字列(&self) -> String {
         let 比 = if self.法線の乗数の合計 > 0.0 { self.接線の合力の大きさ / self.法線の乗数の合計 } else { 0.0 };
         let 超過の倍率 = if self.円錐の半径 > 0.0 { self.接線の合力の大きさ / self.円錐の半径 } else { 0.0 };
         format!(

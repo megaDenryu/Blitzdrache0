@@ -51,7 +51,7 @@ impl 一刻みの休止の質の読み取り {
     }
 
     /// 刻み1本の要約。
-    pub(super) fn 要約の綴り(&self) -> String {
+    pub(super) fn 要約の文字列(&self) -> String {
         let 速さの最大 = self.箱ごと.iter().map(|箱| 箱.速さ).fold(0.0, f32::max);
         let 角速度の最大 = self.箱ごと.iter().map(|箱| 箱.角速度の大きさ).fold(0.0, f32::max);
         let 休止した数 = self.箱ごと.iter().filter(|箱| 箱.休止しているか).count();
@@ -63,7 +63,7 @@ impl 一刻みの休止の質の読み取り {
     }
 
     /// 箱1つずつの行。
-    pub(super) fn 箱ごとの綴り(&self) -> Vec<String> {
+    pub(super) fn 箱ごとの文字列(&self) -> Vec<String> {
         self.箱ごと
             .iter()
             .enumerate()

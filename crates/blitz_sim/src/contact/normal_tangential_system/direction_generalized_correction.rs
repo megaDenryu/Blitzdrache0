@@ -26,7 +26,7 @@ pub(in crate::contact) struct 剛体の一般化自由度へ入る補正の大�
 
 impl 剛体の一般化自由度へ入る補正の大きさ {
     /// 表へ綴る形。
-    pub(in crate::contact) fn 綴り(&self) -> String {
+    pub(in crate::contact) fn 文字列(&self) -> String {
         format!("並進={:.4e} 回転={:.4e}", self.並進の長さ.値(), self.回転の大きさ.値())
     }
 }

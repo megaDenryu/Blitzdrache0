@@ -39,7 +39,7 @@ impl 検収画像 {
     }
 
     pub(super) fn 同じ寸法を課す(&self, 相手: &Self) -> Result<(), 判定の破れ> {
-        突き合わせる二枚の絵の寸法.綴りの一致を課す(&相手.寸法の綴り(), &self.寸法の綴り())
+        突き合わせる二枚の絵の寸法.文字列の一致を課す(&相手.寸法の文字列(), &self.寸法の文字列())
     }
 
     pub(super) fn 画素数(&self) -> usize {
@@ -58,7 +58,7 @@ impl 検収画像 {
         self.深度.iter().filter(|値| !値.is_finite()).count()
     }
 
-    fn 寸法の綴り(&self) -> String {
+    fn 寸法の文字列(&self) -> String {
         format!("幅{}・高さ{}", self.幅, self.高さ)
     }
 }

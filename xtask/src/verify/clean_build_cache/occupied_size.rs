@@ -11,7 +11,7 @@ use std::path::Path;
 use super::error::掃除の破れ;
 
 const 単位の刻み: u64 = 1024;
-const 単位の綴り一覧: [&str; 5] = ["バイト", "KB", "MB", "GB", "TB"];
+const 単位の文字列一覧: [&str; 5] = ["バイト", "KB", "MB", "GB", "TB"];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(transparent)]
@@ -57,11 +57,11 @@ impl std::fmt::Display for 占める容量 {
     fn fmt(&self, 書き手: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut 位取り = 1u64;
         let mut 単位の添字 = 0;
-        while 単位の添字 + 1 < 単位の綴り一覧.len() && self.0 / 位取り >= 単位の刻み {
+        while 単位の添字 + 1 < 単位の文字列一覧.len() && self.0 / 位取り >= 単位の刻み {
             位取り *= 単位の刻み;
             単位の添字 += 1;
         }
-        let 単位 = 単位の綴り一覧[単位の添字];
+        let 単位 = 単位の文字列一覧[単位の添字];
         if 単位の添字 == 0 {
             return write!(書き手, "{}{単位}", self.0);
         }

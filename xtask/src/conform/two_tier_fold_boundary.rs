@@ -3,22 +3,22 @@
 //! 読み口(基準原点を選ぶための粗い位置)を呼んでよいのは、衝突の問い合わせの基準原点のモジュール(`contact/query_origin/`)だけである。
 //! それ以外のファイルにどちらかの口の呼び出しが現れたら、CPUの物理の途中で2段を1本の単精度へ落とす経路が入ったことになる。
 //! Rustの可視性は先祖のモジュールへしか絞れず、境界が別のモジュールの木にあるため、可視性の代わりにこの検査が限定を課す。
-//! 注意: 検出パターンの綴りをこのファイルに連続して書くと自分自身を違反として検出するため、分割リテラルの連結で回避する。
+//! 注意: 検出パターンの文字列をこのファイルに連続して書くと自分自身を違反として検出するため、分割リテラルの連結で回避する。
 
 use std::path::Path;
 
 use super::source_lexing::コードだけの行一覧;
 use super::violation::違反;
 
-// 口1つの綴りと、その口を呼んでよいファイル(リポジトリルートからの相対パス。型の定義と試験を含む)と、違反の文言。
+// 口1つの文字列と、その口を呼んでよいファイル(リポジトリルートからの相対パス。型の定義と試験を含む)と、違反の文言。
 struct 限定する口 {
-    綴り: &'static str,
+    文字列: &'static str,
     許可するファイル一覧: &'static [&'static str],
     違反の文言: &'static str,
 }
 
 const 畳む口: 限定する口 = 限定する口 {
-    綴り: concat!("境界用に", "畳んだ位置"),
+    文字列: concat!("境界用に", "畳んだ位置"),
     許可するファイル一覧: &[
         "crates/blitz_math/src/frame/two_tier_position.rs",
         "crates/blitz_math/src/frame/two_tier_position_tests.rs",
@@ -30,7 +30,7 @@ const 畳む口: 限定する口 = 限定する口 {
 };
 
 const 読み口: 限定する口 = 限定する口 {
-    綴り: concat!("基準原点を選ぶ", "ための粗い位置"),
+    文字列: concat!("基準原点を選ぶ", "ための粗い位置"),
     許可するファイル一覧: &[
         "crates/blitz_math/src/frame/two_tier_position_algebra.rs",
         "crates/blitz_math/src/frame/two_tier_position_tests.rs",
@@ -41,8 +41,8 @@ const 読み口: 限定する口 = 限定する口 {
 
 impl 限定する口 {
     fn 許可するファイルか(&self, パス: &Path) -> bool {
-        let 綴り = パス.to_string_lossy().replace('\\', "/");
-        self.許可するファイル一覧.iter().any(|許可| if 許可.ends_with('/') { 綴り.contains(許可) } else { 綴り.ends_with(許可) })
+        let 文字列 = パス.to_string_lossy().replace('\\', "/");
+        self.許可するファイル一覧.iter().any(|許可| if 許可.ends_with('/') { 文字列.contains(許可) } else { 文字列.ends_with(許可) })
     }
 
     fn 検査する(&self, パス: &Path, 内容: &str) -> Vec<違反> {
@@ -52,7 +52,7 @@ impl 限定する口 {
         コードだけの行一覧(内容)
             .iter()
             .enumerate()
-            .filter(|(_, 行)| 行.contains(self.綴り))
+            .filter(|(_, 行)| 行.contains(self.文字列))
             .map(|(添字, _)| 違反::行単位(パス.to_path_buf(), 添字 + 1, self.違反の文言.to_string()))
             .collect()
     }
@@ -69,7 +69,7 @@ mod tests {
     use super::*;
 
     fn 呼び出しの原文(口: &限定する口) -> String {
-        format!("let 位置 = 配置.重心の位置().{}();\n", 口.綴り)
+        format!("let 位置 = 配置.重心の位置().{}();\n", 口.文字列)
     }
 
     #[test]
@@ -93,8 +93,8 @@ mod tests {
     }
 
     #[test]
-    fn コメントの中の綴りは数えない() {
-        let 原文 = format!("// {} と {} は境界だけが読む\nlet a = 1;\n", 畳む口.綴り, 読み口.綴り);
+    fn コメントの中の文字列は数えない() {
+        let 原文 = format!("// {} と {} は境界だけが読む\nlet a = 1;\n", 畳む口.文字列, 読み口.文字列);
         assert!(二段の位置の口を検査する(Path::new("crates/blitz_sim/src/contact/pipeline/substep_predict.rs"), &原文).is_empty());
     }
 }

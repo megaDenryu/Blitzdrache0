@@ -907,7 +907,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 </figure>
 
 <h4>原則2: 機能非対応は正直に型化する</h4>
-<p>ただし、つまみで吸収できない断絶が1つある: <strong>ハードウェア機能の非対応</strong>である。<a class="term" href="#term-ray-tracing">レイトレーシング</a>非対応のGPUに「レイを減らしたRT」は存在しない。この場合は<em>同じ物理目標(例: この点への<a class="term" href="#term-direct-indirect">間接光</a>)を別の解法(プローブ/<a class="term" href="#term-screen-space">スクリーン空間</a>)で近似する</em>ことになり、「同一方式の解像度違い」では両立しない。このエンジンの流儀に従い、この断絶を無言のフォールバックにせず、<strong>品質段階の型として正直に表す</strong>: どの解法で動いているかは型と計器に現れ、検収は段階ごとに行う。<a class="term" href="#term-radiance-query">radiance query</a>の階層構造(4.2)は、この型化を最初から設計に織り込むための器である。</p>
+<p>ただし、つまみで吸収できない断絶が1つある: <strong>ハードウェア機能の非対応</strong>である。<a class="term" href="#term-ray-tracing">レイトレーシング</a>非対応のGPUに「レイを減らしたRT」は存在しない。この場合は<em>同じ物理目標(例: この点への<a class="term" href="#term-direct-indirect">間接光</a>)を別の解法(プローブ/<a class="term" href="#term-screen-space">スクリーン空間</a>)で近似する</em>ことになり、「同一方式の解像度違い」では両立しない。このエンジンの流儀に従い、この断絶を無言の代替で埋めず、<strong>品質段階の型として正直に表す</strong>: どの解法で動いているかは型と計器に現れ、検収は段階ごとに行う。<a class="term" href="#term-radiance-query">radiance query</a>の階層構造(4.2)は、この型化を最初から設計に織り込むための器である。</p>
 
 <h4>原則3: 効率は品質である</h4>
 <p>「極限性能」は縮退とは独立に、全機種の品質を底上げする。同じ<a class="term" href="#term-frame-budget">16.6ミリ秒</a>から無駄(不要な同期・二重計算・使われない計算資源)を取り除けば、その分を品質に使える。このエンジンの日常の性能規律(計測不要で悪いと分かる無駄を最初から書かない)と計測文化(予算表・<a class="term" href="#term-gpu-instrument">GPU計器</a>・<a class="term" href="#term-p99">p99</a>)は、この意味で品質方針の一部である。低性能機で効くのは高性能機と同じ最適化であることが多い。</p>
@@ -915,7 +915,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <!-- ============================================================ -->
 <h2 id="s8">8. 能力予算と着手順</h2>
 
-<p>最後に、この野心をどの順で作るかの提案である。並びは依存関係順(先行が後続の前提になる順)であり、規模順でも重要度順でもない。フェーズ2計画の既存マイルストーン(OW/SIM/CHAR/UI)との接続を併記する。</p>
+<p>最後に、この野心をどの順で作るかの提案である。並びは依存関係順(先行が後続の前提になる順)であり、規模順でも重要度順でもない。フェーズ2計画の既存の節目(OW/SIM/CHAR/UI)との接続を併記する。</p>
 
 <h4>判断の枠組みへの提案: 品質駆動の着手条件</h4>
 <p>現在の性能アーキテクチャ方針の着手条件は全て性能駆動(計測で<a class="term" href="#term-rate-limiting">律速</a>が実証されたとき)である。これに<strong>品質駆動(品質目標がその方式を要求すると裁定されたとき)</strong>を第二の着手条件として追加することを提案する。大気の<a class="term" href="#term-lut">ベイク済み画像</a>への置換(計測上は問題が無いのに品質目標が方式を要求した例)を一般化するものである。どちらの駆動で着手したかを記録すれば、判断の追跡可能性も保たれる。</p>
@@ -932,7 +932,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr><td>6</td><td><strong><a class="term" href="#term-probe">プローブ</a>GI → radiance query階層の成立</strong></td><td>順1(a)の設計と順2のTAA(<a class="term" href="#term-denoiser">デノイズ</a>)が前提</td><td>新規(GIの第2段)</td></tr>
 <tr><td>7</td><td><strong><a class="term" href="#term-hitch">ヒッチレス</a>化(<a class="term" href="#term-async-queue">非同期転送</a>)+<a class="term" href="#term-job-system">ジョブシステム</a></strong>(並行可能: 描画系と独立)</td><td>品質駆動での前倒し候補。視界距離の制定とセット</td><td>OW2拡張/軸6</td></tr>
 <tr><td>8</td><td><strong><a class="term" href="#term-temporal-upscaler">時間的アップスケーラ</a>+<a class="term" href="#term-dynamic-resolution-vrs">動的解像度</a></strong></td><td>TAA基盤の発展。<a class="term" href="#term-graceful-degradation">縮退設計</a>の主受け皿</td><td>新規</td></tr>
-<tr><td>9</td><td><strong>SIM0/SIM1・CHAR0系</strong>(<a class="term" href="#term-material">材質</a>拡張・髪/<a class="term" href="#term-sss">SSS</a>・動作品質は既計画のマイルストーンで)</td><td>順1(b)の材質境界が前提。非同期コンピュートの主客</td><td>SIM0/SIM1/CHAR0</td></tr>
+<tr><td>9</td><td><strong>SIM0/SIM1・CHAR0系</strong>(<a class="term" href="#term-material">材質</a>拡張・髪/<a class="term" href="#term-sss">SSS</a>・動作品質は既計画の節目で)</td><td>順1(b)の材質境界が前提。非同期コンピュートの主客</td><td>SIM0/SIM1/CHAR0</td></tr>
 <tr><td>10</td><td><strong>野心枠の審査</strong>: <a class="term" href="#term-virtual-geometry">仮想化ジオメトリ</a>+<a class="term" href="#term-virtual-texture">仮想テクスチャ</a> / <a class="term" href="#term-surface-cache">表面キャッシュ</a>+RTハイブリッド / 体積雲</td><td>実アセット方針・<a class="term" href="#term-representative-scene">代表シーン</a>の成立後に採用審査(能力は目録に定義済み)</td><td>新規(審査から)</td></tr>
 </table>
 </div>
@@ -1115,7 +1115,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 <tr id="term-origin-invariance"><td>原点移動不変性</td><td>世界全体へkm級の大域平行移動を加えても、読み戻した絵がバイト単位で一致する性質。<code>cargo xtask origin-invariance</code>が機械検査する。</td></tr>
 <tr id="term-acceptance-entry"><td>検収入口</td><td>ある性質を判定して合否を出す、xtaskへ登録した実行コマンド。絵の読み戻し・計数・GPU時間などを機械で判定する。</td></tr>
 <tr id="term-gpu-instrument"><td>GPU計器</td><td>パス別・距離区分別のGPU実行時間をタイムスタンプで採り、予算と突き合わせるための計測機構。</td></tr>
-<tr id="term-checkpoint"><td>定点</td><td>マイルストーンの完了時に必ず実行する点検の組。予算表の更新と差分の検出、設計文書と実装の一致確認などからなる。</td></tr>
+<tr id="term-checkpoint"><td>定点</td><td>節目の完了時に必ず実行する点検の組。予算表の更新と差分の検出、設計文書と実装の一致確認などからなる。</td></tr>
 <tr id="term-vertical-slice"><td>縦切り</td><td>1つの能力を、端から端まで最小の構成で通して動かす進め方。暫定の方式で通した部分は縦切りの暫定と位置づけ、本番方式への置換の段を計画へ入れる。</td></tr>
 <tr id="term-dod"><td>DoD<span class="etym">Definition of Done = 直訳「完了の定義」</span><span class="mean">意訳: 「終わった」と言ってよい条件の明文化</span></td><td>その作業が完了したと言える条件。本プロジェクトは機械で判定できる形に書く。</td></tr>
 <tr id="term-artifact"><td>アーティファクト(描画の破綻)<span class="etym">artifact = 直訳「人工物」。医療画像などで「本物でない、処理が作ってしまった偽の模様」を指す用語</span><span class="mean">意訳: 計算のせいで出る偽物の模様。ちらつき・縞・にじみ・残像の総称</span></td><td>本来そこに無いはずの見た目の欠陥。ちらつき・縞・にじみ・残像などの総称。</td></tr>
@@ -1150,7 +1150,7 @@ a.term:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 
 <p><strong>第2段: 放射照度(ほうしゃしょうど) <math><mi>E</mi></math> [W/m²]。</strong>面が受け取る放射束の面積密度である。「この机の1平方メートルに毎秒何ジュール届いているか」。日焼けの度合いやソーラーパネルの発電量を決めるのはこの量である。ただしまだ「どの方向から来たか」を区別しない: 真上からの1Wも、あらゆる方向からかき集めた1Wも、同じ<math><mi>E</mi><mo>=</mo><mn>1</mn><mspace width="0.15em"/><mtext>W/m²</mtext></math>である。</p>
 
-<p><strong>寄り道: 立体角(りったいかく) [sr]。</strong>「方向の広がり」を数える量が要る。平面の角度(ラジアン)が円弧の長さ/半径であるのと同様に、立体角は<strong>球面上の面積/半径の2乗</strong>で定義する。単位はステラジアン(sr)。全方向(球面全体)は <math><mfrac><mrow><mn>4</mn><mi>π</mi><msup><mi>r</mi><mn>2</mn></msup></mrow><msup><mi>r</mi><mn>2</mn></msup></mfrac><mo>=</mo><mn>4</mn><mi>π</mi></math> sr、半球(表面から見える空の全部)は <math><mn>2</mn><mi>π</mi></math> sr である。枝を伸ばした親指の先はおよそ0.00006srで、太陽と満月はどちらも偶然ほぼ同じ0.00006sr程度に見える(だから日食が起こる)。</p>
+<p><strong>寄り道: 立体角(りったいかく) [sr]。</strong>「方向の広がり」を数える量が要る。平面の角度(ラジアン)が円弧の長さ/半径であるのと同様に、立体角は<strong>球面上の面積/半径の2乗</strong>で定義する。単位はステラジアン(sr)。全方向(球面全体)は <math><mfrac><mrow><mn>4</mn><mi>π</mi><msup><mi>r</mi><mn>2</mn></msup></mrow><msup><mi>r</mi><mn>2</mn></msup></mfrac><mo>=</mo><mn>4</mn><mi>π</mi></math> sr、半球(表面から見える空の全部)は <math><mn>2</mn><mi>π</mi></math> sr である。腕を伸ばした親指の先はおよそ0.00006srで、太陽と満月はどちらも偶然ほぼ同じ0.00006sr程度に見える(だから日食が起こる)。</p>
 
 <figure>
 <svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="立体角の定義の図">

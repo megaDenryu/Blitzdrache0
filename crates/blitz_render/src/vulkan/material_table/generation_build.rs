@@ -11,7 +11,7 @@ mod residency;
 use crate::error::レンダラーエラー;
 
 use super::capacity::テクスチャ表レイアウト容量;
-use super::fallback_usage::正準フォールバック用途;
+use super::fallback_usage::正準の既定テクスチャの用途;
 use super::generation::資源表世代;
 use super::generation_id::資源表世代ID;
 use super::pack_input::梱包対象材質;
@@ -28,13 +28,13 @@ pub(in crate::vulkan::material_table) fn 資源表世代を構築する<供給�
     レイアウト容量: テクスチャ表レイアウト容量,
     材質一覧: &[梱包対象材質<'_>],
 ) -> 構築結果<供給元> {
-    let フォールバック枚数 = u32::try_from(正準フォールバック用途::全用途.len()).unwrap_or_else(|_| panic!("正準フォールバックの用途数がu32に収まらない"));
-    let 必要枚数 = 必要枚数を数える(材質一覧, フォールバック枚数);
+    let 正準の既定テクスチャの枚数 = u32::try_from(正準の既定テクスチャの用途::全用途.len()).unwrap_or_else(|_| panic!("正準の既定テクスチャの用途数がu32に収まらない"));
+    let 必要枚数 = 必要枚数を数える(材質一覧, 正準の既定テクスチャの枚数);
     let 常駐枚数 = 世代の常駐枚数::確かめる(必要枚数, レイアウト容量)?;
 
     let mut 画像集合 = Vec::new();
     let 結果 = residency::材質一覧の画像を常駐させて台帳を組み立てる(供給元, &mut 画像集合, 常駐枚数, 材質一覧)
-        .and_then(|常駐| packer::材質一覧を梱包する(材質一覧, &常駐.台帳, &常駐.フォールバック).map_err(レンダラーエラー::from))
+        .and_then(|常駐| packer::材質一覧を梱包する(材質一覧, &常駐.台帳, &常駐.正準の既定テクスチャ).map_err(レンダラーエラー::from))
         .and_then(|梱包| {
             let 付属資源 = 供給元.世代を仕上げる(&画像集合, &梱包.レコード列)?;
             Ok((梱包, 付属資源))

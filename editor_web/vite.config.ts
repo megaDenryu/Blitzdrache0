@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [vanillaExtractPlugin()],
   resolve: {
     alias: {
-      // VscodeShellLayout内部の全ファイルが `sengen-ui` という綴りで取り込むため、
+      // VscodeShellLayout内部の全ファイルが `sengen-ui` という表記で取り込むため、
       // このアライアス名も揃える（参照: VscodeShellLayout/README.md「利用方法」前提3）。
       'sengen-ui': path.resolve(__dirname, 'submodules/SengenUI'),
       VscodeShellLayout: path.resolve(__dirname, 'submodules/VscodeShellLayout/src/index.ts'),

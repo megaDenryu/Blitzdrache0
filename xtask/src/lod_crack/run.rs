@@ -28,7 +28,7 @@ pub(super) fn 実行環境を作る(出力ディレクトリ: PathBuf) -> Result
 pub(super) fn 起動指定を組み立てる(条件: &検査条件) -> アプリの起動指定 {
     let (x1, z1) = 条件.一方;
     let (x2, z2) = 条件.他方;
-    let 組の綴り = [x1.to_string(), z1.to_string(), 条件.一方段.to_string(), x2.to_string(), z2.to_string(), 条件.他方段.to_string()];
+    let 組の文字列 = [x1.to_string(), z1.to_string(), 条件.一方段.to_string(), x2.to_string(), z2.to_string(), 条件.他方段.to_string()];
     let 指定 = アプリの起動指定::シーンと枚数を決める(シーン名, フレーム数)
         .選択肢を足す("--streaming")
         .値を持つ選択肢を足す("--streaming-preload-radius", 先読み半径)
@@ -36,7 +36,7 @@ pub(super) fn 起動指定を組み立てる(条件: &検査条件) -> アプリ
         .値を持つ選択肢を足す("--streaming-vram-limit", 容量上限バイト)
         .選択肢をまとめて足す(&背景と光を外す選択肢)
         .選択肢を足す("--lod-crack-pair")
-        .選択肢をまとめて足す(&組の綴り.each_ref().map(String::as_str));
+        .選択肢をまとめて足す(&組の文字列.each_ref().map(String::as_str));
     let Some((欠落x, 欠落z)) = 条件.欠落 else {
         return 指定;
     };

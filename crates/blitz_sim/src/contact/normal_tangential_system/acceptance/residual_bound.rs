@@ -31,7 +31,7 @@ impl 残差と受理の許容差 {
 
     /// 表へ綴る形「残差/許容差(比)」。診断の計器だけが読む。
     #[cfg(test)]
-    pub fn 綴り(&self) -> String {
+    pub fn 文字列(&self) -> String {
         format!("{:.3e}/{:.3e}(比{:.2})", self.残差.値(), self.許容差.値(), self.許容差に対する比())
     }
 

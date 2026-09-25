@@ -25,7 +25,7 @@ use super::背景と光を外す選択肢;
 use crate::acceptance::{アプリの起動指定, 描画フレーム数};
 
 const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(360);
-pub(in crate::csm_seam) const 大規模世界のシーン名の綴り: &str = "terrain_fox_tour";
+pub(in crate::csm_seam) const 大規模世界のシーン名の文字列: &str = "terrain_fox_tour";
 const 先読み半径: &str = "8";
 const 容量上限バイト: &str = "536870912";
 const カメラ方位度: &str = "180";

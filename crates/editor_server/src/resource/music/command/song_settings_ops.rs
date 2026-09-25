@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::resource::music::value_range::{テンポの上限, テンポの下限};
 use crate::resource::numeric_check::整数が範囲内であることを確かめる;
-use crate::resource::text_check::綴りが空でないことを確かめる;
+use crate::resource::text_check::文字列が空でないことを確かめる;
 use crate::resource::validation_error::資源検証エラー;
 use crate::resource::ミキサー設定;
 
@@ -47,6 +47,6 @@ impl ミキサー設定を変える {
 
 impl 楽曲の表示名を変える {
     pub(super) fn 検証する(&self) -> Result<(), 資源検証エラー> {
-        綴りが空でないことを確かめる("楽曲編集コマンド.新しい表示名", &self.新しい表示名)
+        文字列が空でないことを確かめる("楽曲編集コマンド.新しい表示名", &self.新しい表示名)
     }
 }

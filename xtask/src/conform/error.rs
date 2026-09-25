@@ -36,7 +36,7 @@ pub enum 規約検査の破れ {
     定数の値を数として読めない {
         パス: &'static str,
         前置き: &'static str,
-        綴り: String,
+        文字列: String,
         誤り: std::num::ParseFloatError,
     },
     束縛番号を読めない {
@@ -62,7 +62,7 @@ pub enum 規約検査の破れ {
     見本の宣言の値を数として読めない {
         パス: &'static str,
         宣言名: &'static str,
-        綴り: String,
+        文字列: String,
         誤り: std::num::ParseFloatError,
     },
     見本の宣言に値が1つも無い {

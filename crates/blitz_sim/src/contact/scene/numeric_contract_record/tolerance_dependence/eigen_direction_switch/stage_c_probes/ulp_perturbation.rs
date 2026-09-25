@@ -12,14 +12,14 @@
 use crate::contact::scene::substep_harness::一つの箱と静的な直方体の場面;
 use crate::rigid_body::{姿勢, 配置};
 
-/// 1刻みの摂動を入れた結果。入れられなかったときは理由を綴りで持つ。
+/// 1刻みの摂動を入れた結果。入れられなかったときは理由を文字列で持つ。
 pub(super) enum 一刻みの摂動の入り方 {
     入った { 成分の番号: usize, 入れる前: f32, 入れた後: f32 },
     入らなかった(&'static str),
 }
 
 impl 一刻みの摂動の入り方 {
-    pub(super) fn 綴り(&self) -> String {
+    pub(super) fn 文字列(&self) -> String {
         match self {
             Self::入った { 成分の番号, 入れる前, 入れた後 } => format!(
                 "姿勢の成分{成分の番号}へ1刻み入った 入れる前={入れる前:.9e}(0x{:08x}) 入れた後={入れた後:.9e}(0x{:08x}) 角にすると約{:.4e}ラジアン",

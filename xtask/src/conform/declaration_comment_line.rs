@@ -50,9 +50,9 @@ fn 宣言の前のコメントの違反の文言を求める(内訳一覧: &[行
 
 /// 構造体・列挙の宣言が波括弧を開く行かを判定する。タプル構造体と型別名は波括弧を持たないため掛からない。
 fn 宣言ブロックの開きか(コード行: &str) -> bool {
-    let 綴り = コード行.trim_start();
-    let 綴り = 綴り.strip_prefix("pub").map_or(綴り, |残り| 残り.trim_start_matches(|文字| 文字 != ' ').trim_start());
-    (綴り.starts_with("struct ") || 綴り.starts_with("enum ")) && コード行.trim_end().ends_with('{')
+    let 文字列 = コード行.trim_start();
+    let 文字列 = 文字列.strip_prefix("pub").map_or(文字列, |残り| 残り.trim_start_matches(|文字| 文字 != ' ').trim_start());
+    (文字列.starts_with("struct ") || 文字列.starts_with("enum ")) && コード行.trim_end().ends_with('{')
 }
 
 /// コメントだけの行のうち、直後に宣言が続くものを判定の対象とする。直後が空行や閉じ括弧のものは宣言の並びを割らない。

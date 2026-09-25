@@ -29,20 +29,20 @@ export const 当たりの半径画素 = 6
 
 const 高さの文字のフォント = `${重ね描きの寸法.文字の大きさ画素}px sans-serif`
 
-export function 高さの文字を描く(文脈: CanvasRenderingContext2D, 文: string, x: number, y: number): void {
-    文脈.font = 高さの文字のフォント
-    文脈.textBaseline = 'middle'
-    文脈.textAlign = 'center'
-    文脈.lineWidth = 3
-    文脈.strokeStyle = 重ね描きの配色.高さの文字の縁
-    文脈.strokeText(文, x, y)
-    文脈.fillStyle = 重ね描きの配色.高さの文字
-    文脈.fillText(文, x, y)
+export function 高さの文字を描く(キャンバスへ描く口: CanvasRenderingContext2D, 文: string, x: number, y: number): void {
+    キャンバスへ描く口.font = 高さの文字のフォント
+    キャンバスへ描く口.textBaseline = 'middle'
+    キャンバスへ描く口.textAlign = 'center'
+    キャンバスへ描く口.lineWidth = 3
+    キャンバスへ描く口.strokeStyle = 重ね描きの配色.高さの文字の縁
+    キャンバスへ描く口.strokeText(文, x, y)
+    キャンバスへ描く口.fillStyle = 重ね描きの配色.高さの文字
+    キャンバスへ描く口.fillText(文, x, y)
 }
 
 // 文が最大幅画素に収まるかを判定する。粗マスの高さの数字は、ズームが小さく粗マスの描画幅が狭いときに
 // 文字だけが升からはみ出して読みにくくなるため、描く前にここで確かめる。
-export function 高さの文字が収まるか(文脈: CanvasRenderingContext2D, 文: string, 最大幅画素: number): boolean {
-    文脈.font = 高さの文字のフォント
-    return 文脈.measureText(文).width <= 最大幅画素
+export function 高さの文字が収まるか(キャンバスへ描く口: CanvasRenderingContext2D, 文: string, 最大幅画素: number): boolean {
+    キャンバスへ描く口.font = 高さの文字のフォント
+    return キャンバスへ描く口.measureText(文).width <= 最大幅画素
 }

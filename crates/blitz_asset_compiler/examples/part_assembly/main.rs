@@ -78,7 +78,7 @@ fn 境界箱を全件読む(パス一覧: &[PathBuf]) -> Result<BTreeMap<String,
         let ファイル = 部品のglTFのファイル::生成する(パス);
         let 識別子 = ファイル.部品idを作る().map_err(|誤り| 誤り.to_string())?;
         let 箱 = ファイル.境界箱を読み取る().map_err(|誤り| 誤り.to_string())?;
-        表.insert(識別子.綴り().to_string(), 箱);
+        表.insert(識別子.文字列().to_string(), 箱);
     }
     Ok(表)
 }

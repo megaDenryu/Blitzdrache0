@@ -12,7 +12,7 @@ use super::source_fixture::道具が作る初期の格子;
 #[test]
 fn 道具が作る初期の格子は保存の検査を通る() {
     let 定義 = 道具が作る初期の格子("grid_initial").格子由来の建物定義へ解く().unwrap();
-    assert_eq!(定義.識別子().綴り(), "grid_initial");
+    assert_eq!(定義.識別子().文字列(), "grid_initial");
     assert_eq!(定義.格子().升目の数(), 1);
 }
 

@@ -33,9 +33,9 @@ fn 公開完了印の内容を変える(先: &Path) -> Result<(), 起動エラ�
 }
 
 fn 一時ファイルのパス(先: &Path) -> PathBuf {
-    let mut 綴り = 先.as_os_str().to_os_string();
-    綴り.push(実行時アセットの公開完了印::公開前の一時ファイル接尾辞());
-    PathBuf::from(綴り)
+    let mut 文字列 = 先.as_os_str().to_os_string();
+    文字列.push(実行時アセットの公開完了印::公開前の一時ファイル接尾辞());
+    PathBuf::from(文字列)
 }
 
 fn 書き換え失敗(先: &Path, 誤り: std::io::Error) -> 起動エラー {

@@ -80,9 +80,9 @@ fn 描画する(起動設定: cli::起動設定) -> Result<ExitCode, 起動エ�
     終了処理する(アプリ)
 }
 
-/// 検収がvalidationの件数を読むための見出し。綴りは`xtask/src/validation_count.rs`の写しと一致していなければならず、
-/// 食い違いは`cargo xtask conform`の綴りの契約の検査が拒む。
-const 検証層の指摘件数の見出し: &str = "validationエラー・警告合計件数:";
+/// 検収が検証層の件数を読むための見出し。文字列は`xtask/src/validation_count.rs`の写しと一致していなければならず、
+/// 食い違いは`cargo xtask conform`の文言の契約の検査が拒む。
+const 検証層の指摘件数の見出し: &str = "検証層のエラー・警告合計件数:";
 
 fn 終了処理する(mut アプリ: アプリ) -> Result<ExitCode, 起動エラー> {
     let 検証カウンタ = アプリ.検証カウンタを取得する();

@@ -1,6 +1,6 @@
-//! パス別GPU時間の表のコンソール出力。担当するのは行の綴りと、1区間ぶんの分布をどう並べるかである。
+//! パス別GPU時間の表のコンソール出力。担当するのは行の文言と、1区間ぶんの分布をどう並べるかである。
 //! 距離区分別の合計は`shadow_gpu_time`が求める。
-//! 行の綴りは`xtask/src/ow4_bench/gpu_table.rs`と`xtask/src/sky_lut`が読むため、変えるときはそちらも同時に直す。
+//! 行の文言は`xtask/src/ow4_bench/gpu_table.rs`と`xtask/src/sky_lut`が読むため、変えるときはそちらも同時に直す。
 
 use super::shadow_gpu_time;
 

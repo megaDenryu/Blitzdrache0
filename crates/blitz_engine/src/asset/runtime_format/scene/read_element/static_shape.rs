@@ -32,9 +32,9 @@ pub(in crate::asset::runtime_format::scene) fn 版7の静的物理形状を読�
 }
 
 fn 衝突対象を読む(入力: &mut 読取位置<'_>) -> Result<静的な衝突対象, アセット実行時形式エラー> {
-    let 綴りの長さ = 入力.usize()?;
-    let 綴り = std::str::from_utf8(入力.バイト列(綴りの長さ)?).map_err(|_| アセット実行時形式エラー::不正な文字列)?;
-    let 安定識別子 = 衝突対象の安定識別子::生成する(綴り)?;
+    let 文字列の長さ = 入力.usize()?;
+    let 文字列 = std::str::from_utf8(入力.バイト列(文字列の長さ)?).map_err(|_| アセット実行時形式エラー::不正な文字列)?;
+    let 安定識別子 = 衝突対象の安定識別子::生成する(文字列)?;
     let 子形状数 = 入力.件数(子形状長)?;
     let mut 子形状一覧 = Vec::with_capacity(子形状数);
     for _ in 0..子形状数 {

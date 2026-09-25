@@ -38,7 +38,7 @@ mod triangle_location;
 pub use blitz_collision::height_field::{カプセルの掃引の問い合わせエラー, 升目の三角形, 升目の隅, 地表に触れた特徴, 掃引で動けた割合, 線分の問い合わせエラー, 線分の媒介変数};
 pub use capsule_contact::{カプセルと地表の接触, 掃引したカプセルが最初に触れる地表};
 pub use capsule_query_result::掃引したカプセルが最初に触れる地表の問い合わせ結果;
-pub use distant_stable_id::世界の遠景地形の安定IDの綴り;
+pub use distant_stable_id::世界の遠景地形の安定IDの文字列;
 pub use error::高さ場エラー;
 pub use field::高さ場;
 pub use ground_surface::世界の地表の面;
@@ -49,7 +49,7 @@ pub use reader::高さ場の読み口;
 pub use segment_hit::{線分が最初に当たる地表, 線分と地表の当たり};
 pub use segment_query_result::線分が最初に当たる地表の問い合わせ結果;
 pub use specification::高さ場諸元;
-pub use stable_id::世界の高さ場の安定IDの綴り;
+pub use stable_id::世界の高さ場の安定IDの文字列;
 pub use triangle_location::地表の三角形の所在;
 
 pub use crate::asset::{実行時形式から高さ場を読む, 高さ場を実行時形式へ格納する, 高さ場実行時形式エラー};

@@ -24,16 +24,16 @@ export interface Iキャンバス部品配線 {
 // 外へは寸法合わせ・描く・ポインタ事象の配線だけを見せる(設計正本の判断6)。
 // 描く側の座標はCSS画素であり、デバイスピクセル比による拡大は setTransform でこの部品が吸収する。
 export class キャンバス部品 extends CanvasC {
-    private readonly _文脈: CanvasRenderingContext2D
+    private readonly _キャンバスへ描く口: CanvasRenderingContext2D
     private _ピクセル比: number = 1
     private _幅: number = 0
     private _高さ: number = 0
 
     public constructor() {
         super({ class: キャンバス })
-        const 文脈 = this.getContext2D()
-        if (文脈 === null) throw new Error('canvas要素から2Dの描画文脈を取得できない')
-        this._文脈 = 文脈
+        const キャンバスへ描く口 = this.getContext2D()
+        if (キャンバスへ描く口 === null) throw new Error('canvas要素から2Dの描く口を取得できない')
+        this._キャンバスへ描く口 = キャンバスへ描く口
     }
 
     public get 幅(): number {
@@ -57,12 +57,12 @@ export class キャンバス部品 extends CanvasC {
         return this.dom.element.getBoundingClientRect()
     }
 
-    // 描画手順は全面を消した後の文脈を受け取る。setTransform で毎回リセットするため、手順の中で
+    // 描画手順は全面を消した後のキャンバスへ描く口を受け取る。setTransform で毎回リセットするため、手順の中で
     // 変換を積んでも次の描画へ持ち越さない。
-    public 描く(描画手順: (文脈: CanvasRenderingContext2D) => void): void {
-        this._文脈.setTransform(this._ピクセル比, 0, 0, this._ピクセル比, 0, 0)
-        this._文脈.clearRect(0, 0, this._幅, this._高さ)
-        描画手順(this._文脈)
+    public 描く(描画手順: (キャンバスへ描く口: CanvasRenderingContext2D) => void): void {
+        this._キャンバスへ描く口.setTransform(this._ピクセル比, 0, 0, this._ピクセル比, 0, 0)
+        this._キャンバスへ描く口.clearRect(0, 0, this._幅, this._高さ)
+        描画手順(this._キャンバスへ描く口)
     }
 
     // 購読を解除する関数を返す。部品の delete では解除しないため、配線した側が寿命を管理する。

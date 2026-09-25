@@ -47,7 +47,7 @@ impl 円錐の比の振れ {
     }
 
     /// 表へ綴る形。1本も数えていなければそう綴る。
-    pub(super) fn 綴り(&self) -> String {
+    pub(super) fn 文字列(&self) -> String {
         if self.数えた細分 == 0 {
             return "数えた細分=0本".to_owned();
         }

@@ -12,7 +12,7 @@ fn 既定計画は長軸八キロ経路と現行読込設定を渡す() {
     assert!(語.contains("--streaming-completion-capacity 4"));
     assert!(語.contains("--streaming-route-start-south-meters -4000"));
     assert!(語.contains("--streaming-route-end-south-meters 4000"));
-    assert!(語.contains(&format!("--scene {}", crate::fox_tour_launch::シーン名.綴り())));
+    assert!(語.contains(&format!("--scene {}", crate::fox_tour_launch::シーン名.文字列())));
     assert_eq!(引数.iter().filter(|語| 語.as_str() == "--asset-root").count(), 1);
     let 追加 = ストリーミング計測の起動引数を作る(&大規模世界の計測指定::default(), Path::new("shader.slang"));
     assert!(追加.iter().any(|語| 語 == "--streaming"));

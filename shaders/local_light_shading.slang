@@ -65,7 +65,7 @@ public struct LocalLightQuery
     }
 
     // n件目の光がその表面へ届ける向きと放射。点光でない光種は偽を返して読み飛ばさせる。
-    // 光種の枝を明示するのは、種別を読まずに点光の式を当てると、光種が増えたときに新しい種別の光を黙って
+    // 光種ごとの分岐を明示するのは、種別を読まずに点光の式を当てると、光種が増えたときに新しい種別の光を黙って
     // 点光の減衰で照らしてしまうためである。
     public bool sampleAt(uint slot, float3 relativePosition, out LocalLightSample result)
     {
@@ -88,7 +88,7 @@ public struct LocalLightQuery
         result.directionToLight = toLight / lightDistance;
         result.radiance = record.colorAndIntensity.rgb * record.colorAndIntensity.w / (squaredDistance + localLightSquaredDistanceEpsilon) * window;
         // 影を落とす灯だけが立方体を1つ占める。影なしの灯は立方体を持たないため、添字を読まずに素通りする
-        // (番兵の添字で影なしを表さない形の実効がこの枝である)。
+        // (番兵の添字で影なしを表さない形の実効がこの分岐である)。
         if (record.hasShadow != 0)
         {
             result.radiance *= pointLightShadowFactor(

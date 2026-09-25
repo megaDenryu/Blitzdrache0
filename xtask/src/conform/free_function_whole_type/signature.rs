@@ -37,29 +37,29 @@ fn 次の深さ(現在: usize, 行: &str) -> usize {
     })
 }
 
-/// 引数の並びは複数行へ折り返されるため、丸括弧が釣り合うまで行をつなげて1つの綴りにする。
+/// 引数の並びは複数行へ折り返されるため、丸括弧が釣り合うまで行をつなげて1つの文字列にする。
 fn 署名を読み取る(行一覧: &[String], 開始添字: usize) -> Option<自由関数の署名> {
-    let mut 綴り = String::new();
+    let mut 文字列 = String::new();
     for 行 in 行一覧.iter().skip(開始添字).take(署名を読む行数の上限) {
-        綴り.push_str(行.trim());
-        綴り.push(' ');
-        let 残り = 修飾子を取り除く(&綴り).strip_prefix("fn ")?.trim_start();
+        文字列.push_str(行.trim());
+        文字列.push(' ');
+        let 残り = 修飾子を取り除く(&文字列).strip_prefix("fn ")?.trim_start();
         let 関数名: String = 残り.chars().take_while(|文字| 文字.is_alphanumeric() || *文字 == '_').collect();
-        let Some(引数の綴り) = 残り.get(関数名.len()..).and_then(ジェネリクスを飛ばす).and_then(丸括弧の中身) else {
+        let Some(引数の文字列) = 残り.get(関数名.len()..).and_then(ジェネリクスを飛ばす).and_then(丸括弧の中身) else {
             continue;
         };
         return Some(自由関数の署名 {
             行番号: 開始添字 + 1,
             関数名,
-            引数一覧: 引数へ分ける(&引数の綴り),
+            引数一覧: 引数へ分ける(&引数の文字列),
         });
     }
     None
 }
 
 /// 関数名に続く型引数の並びを読み飛ばす。境界の中の`->`は閉じ括弧と区別できないため、直前の文字で除く。
-fn ジェネリクスを飛ばす(綴り: &str) -> Option<&str> {
-    let 整形 = 綴り.trim_start();
+fn ジェネリクスを飛ばす(文字列: &str) -> Option<&str> {
+    let 整形 = 文字列.trim_start();
     if !整形.starts_with('<') {
         return Some(整形);
     }
@@ -81,16 +81,16 @@ fn ジェネリクスを飛ばす(綴り: &str) -> Option<&str> {
     None
 }
 
-fn 丸括弧の中身(綴り: &str) -> Option<String> {
-    let 開始 = 綴り.find('(')?;
+fn 丸括弧の中身(文字列: &str) -> Option<String> {
+    let 開始 = 文字列.find('(')?;
     let mut 深さ = 0usize;
-    for (位置, 文字) in 綴り.get(開始..)?.char_indices() {
+    for (位置, 文字) in 文字列.get(開始..)?.char_indices() {
         match 文字 {
             '(' => 深さ += 1,
             ')' => {
                 深さ = 深さ.saturating_sub(1);
                 if 深さ == 0 {
-                    return 綴り.get(開始 + 1..開始 + 位置).map(str::to_string);
+                    return 文字列.get(開始 + 1..開始 + 位置).map(str::to_string);
                 }
             }
             _ => {}

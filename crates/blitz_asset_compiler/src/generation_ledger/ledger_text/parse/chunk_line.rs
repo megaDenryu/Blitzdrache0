@@ -27,15 +27,15 @@ pub(super) fn チャンクの行一覧を読む(行一覧: &[&str]) -> Result<BT
 fn 一行を読む(行番号: usize, 行: &str) -> Result<(チャンク座標, 内容ハッシュ), 生成台帳エラー> {
     let 欄一覧: Vec<&str> = 行.split_whitespace().collect();
     let 行不正 = || 生成台帳エラー::行を読めない { 行番号, 内容: 行.to_string() };
-    let [名前, 東の綴り, 南の綴り, ハッシュの綴り] = 欄一覧.as_slice() else {
+    let [名前, 東の文字列, 南の文字列, ハッシュの文字列] = 欄一覧.as_slice() else {
         return Err(行不正());
     };
-    let (Ok(東), Ok(南)) = (東の綴り.parse::<i32>(), 南の綴り.parse::<i32>()) else {
+    let (Ok(東), Ok(南)) = (東の文字列.parse::<i32>(), 南の文字列.parse::<i32>()) else {
         return Err(行不正());
     };
     if *名前 != チャンクの欄 {
         return Err(行不正());
     }
-    let ハッシュ = 内容ハッシュ::十六進の綴りから復元する(ハッシュの綴り).ok_or_else(行不正)?;
+    let ハッシュ = 内容ハッシュ::十六進の文字列から復元する(ハッシュの文字列).ok_or_else(行不正)?;
     Ok((チャンク座標::生成する(東, 南), ハッシュ))
 }

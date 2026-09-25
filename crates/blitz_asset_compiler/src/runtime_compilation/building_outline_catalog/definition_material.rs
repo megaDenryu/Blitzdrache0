@@ -48,7 +48,7 @@ impl 建物定義の材料 {
         }
     }
 
-    pub(crate) fn 識別子の綴り(&self) -> &str {
-        self.識別子.綴り()
+    pub(crate) fn 識別子の文字列(&self) -> &str {
+        self.識別子.文字列()
     }
 }

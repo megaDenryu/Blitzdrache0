@@ -7,7 +7,7 @@
 //! 参照: `_doc/設計/クラスタ多光源と点光源の影.md`「第5段階(点光源の影)が足す検収」
 //!
 //! 注意: ファイル名は`crates/blitz_asset_compiler/src/runtime_compilation/world/night_lights_declaration.rs`が
-//! 宣言するソース相対パスと同じ綴りでなければならない。食い違うとカタログ未登録という遠い場所の失敗になる。
+//! 宣言するソース相対パスと同じ文字列でなければならない。食い違うとカタログ未登録という遠い場所の失敗になる。
 
 use std::path::Path;
 

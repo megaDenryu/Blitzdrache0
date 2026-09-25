@@ -53,7 +53,7 @@ fn 引数を尋ねる(項目: &コマンド項目) -> Vec<String> {
         return Vec::new();
     }
     println!();
-    println!("使い方: cargo xtask {} {}", 項目.ascii名(), 項目.引数の構文().綴り());
+    println!("使い方: cargo xtask {} {}", 項目.ascii名(), 項目.引数の構文().文字列());
     println!("引数を1件ずつ聞く。空Enterで省ける引数は省いたまま次へ進む。");
     argument_form::引数フォーム::生成する(argument_form::標準入力の読み手::生成する()).語一覧を尋ねる(定義一覧)
 }

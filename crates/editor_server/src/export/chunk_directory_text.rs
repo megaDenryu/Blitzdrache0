@@ -4,7 +4,7 @@
 //! あるが`pub(crate)`でexamplesの外から届かない)ため、この書き手をここへ置く。書式が読み手とずれないことは
 //! `tests/source_asset_export_http.rs`で、書き出した本文を実際に`チャンク目録ソースを読み込む`へ通す往復試験として検査する。
 
-/// チャンク目録ソースの`chunk_directory.txt`というファイル名。この綴りが2箇所目になる理由は
+/// チャンク目録ソースの`chunk_directory.txt`というファイル名。この文字列が2箇所目になる理由は
 /// `xtask/src/conform/duplicate_file_literal/allowance/table.rs`に記した
 /// (blitz_asset_compilerの正本定数は`pub(super)`で非公開であり、editor_serverから届かない)。
 pub(super) const ファイル名: &str = "chunk_directory.txt";

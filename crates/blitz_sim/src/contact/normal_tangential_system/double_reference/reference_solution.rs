@@ -59,8 +59,8 @@ impl 倍精度の参照の結末 {
         }
     }
 
-    /// 結末を1語で表す綴り。診断の表が単精度の側の結末と並べて綴る。
-    pub(in crate::contact) fn 結末の綴り(&self) -> &'static str {
+    /// 結末を1語で表す文字列。診断の表が単精度の側の結末と並べて綴る。
+    pub(in crate::contact) fn 結末の文字列(&self) -> &'static str {
         match self {
             Self::解が定まった(_) => "定まった",
             Self::相補条件を満たす有効集合が無い => "相補条件を満たす有効集合が無い",

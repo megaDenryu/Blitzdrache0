@@ -38,6 +38,6 @@ struct DirectionalLightRecord
     uint4 visibility;
 };
 
-// 可視性の種別。番兵の添字で「影なし」を表さず、種別そのもので枝を分ける。
+// 可視性の種別。番兵の添字で「影なし」を表さず、種別そのもので分岐する。
 static const uint directionalVisibilityNone = 0;
 static const uint directionalVisibilityCascadedShadow = 1;

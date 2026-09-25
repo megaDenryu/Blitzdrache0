@@ -28,16 +28,16 @@ pub(in crate::vulkan) fn 表の書き込みパスを作る(パス名: &'static s
 }
 
 fn 転送パスを作る(パス名: &'static str, 画像: graph::画像ハンドル, 段ごとの範囲: Vec<vk::Extent3D>, 層数: u32, 元: vk::Buffer, テクセルのバイト数: u64) -> graph::パス宣言<'static> {
-    graph::パス宣言::生成する(パス名, Vec::new(), vec![(画像, graph::画像用途::転送先)], Vec::new(), Vec::new(), graph::パス種別::転送, move |文脈| {
-        let 画像ハンドル = 文脈.宣言済みの画像を参照する(画像);
+    graph::パス宣言::生成する(パス名, Vec::new(), vec![(画像, graph::画像用途::転送先)], Vec::new(), Vec::new(), graph::パス種別::転送, move |積み先と取り出し口| {
+        let 画像ハンドル = 積み先と取り出し口.宣言済みの画像を参照する(画像);
         let 領域 = 領域を並べる(&段ごとの範囲, 層数, テクセルのバイト数);
         // 安全性: command_bufferは記録中、画像はTRANSFER_DST_OPTIMALへ遷移済み(用途宣言からグラフが導く)、
         // 元バッファは全段の全層ぶんのテクセル数の容量で確保し中身を書き終えている。
         unsafe {
-            文脈
+            積み先と取り出し口
                 .積み先()
                 .論理デバイス()
-                .cmd_copy_buffer_to_image(文脈.積み先().コマンドバッファ(), 元, 画像ハンドル, vk::ImageLayout::TRANSFER_DST_OPTIMAL, &領域);
+                .cmd_copy_buffer_to_image(積み先と取り出し口.積み先().コマンドバッファ(), 元, 画像ハンドル, vk::ImageLayout::TRANSFER_DST_OPTIMAL, &領域);
         }
     })
 }

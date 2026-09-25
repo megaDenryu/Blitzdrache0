@@ -6,7 +6,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::super::numeric_check::整数が範囲内であることを確かめる;
-use super::super::text_check::綴りが空でないことを確かめる;
+use super::super::text_check::文字列が空でないことを確かめる;
 use super::super::validation_error::資源検証エラー;
 use super::chord_progression::コード進行;
 use super::mixer::ミキサー設定;
@@ -48,7 +48,7 @@ impl 楽曲 {
                 対応: 楽曲の現在の形式版,
             });
         }
-        綴りが空でないことを確かめる("楽曲.表示名", &self.表示名)?;
+        文字列が空でないことを確かめる("楽曲.表示名", &self.表示名)?;
         整数が範囲内であることを確かめる("楽曲.テンポ", i64::from(self.テンポ), i64::from(テンポの下限), i64::from(テンポの上限))?;
         self.ミキサー設定.検証する()?;
         let 進行の名簿 = 進行の名簿::独自進行一覧から組み立てる(&self.独自進行一覧)?;

@@ -21,7 +21,7 @@ impl 建物外形カタログ {
 }
 
 fn 定義を検証する(定義: &建物外形定義, 識別子一覧: &mut HashSet<String>) -> Result<(), 建物外形カタログ読み込みエラー> {
-    if !識別子一覧.insert(定義.識別子.綴り().to_string()) {
+    if !識別子一覧.insert(定義.識別子.文字列().to_string()) {
         return Err(検証不正のエラーを作る(format!("建物識別子が重複している: {:?}", 定義.識別子)));
     }
     if 定義.表示名.is_empty() || 定義.部品の識別子一覧.is_empty() {

@@ -21,7 +21,7 @@ pub(super) fn 記述する() -> (vk::VertexInputBindingDescription, [vk::VertexI
 }
 
 /// 布描画用: 同じ48バイトレイアウトから位置・法線・uvの3属性だけを宣言する(判断54)。
-/// 布シェーダーは接線を消費しないため、宣言すると未消費属性のvalidation警告になる。
+/// 布シェーダーは接線を消費しないため、宣言すると未消費属性の検証層の警告になる。
 pub(super) fn 布用記述する() -> (vk::VertexInputBindingDescription, Vec<vk::VertexInputAttributeDescription>) {
     let (バインド記述, 全属性) = 記述する();
     let uv = 全属性[3].location(2);

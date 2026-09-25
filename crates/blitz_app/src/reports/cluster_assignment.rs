@@ -1,8 +1,8 @@
-//! クラスタの選別が作った割り当ての統計の1行出力。担当するのは行の綴りだけであり、数えるのはレンダラーの側である。
+//! クラスタの選別が作った割り当ての統計の1行出力。担当するのは行の文言だけであり、数えるのはレンダラーの側である。
 //!
 //! 1行へまとめるのは、検収の入口が語頭で行を見つけて名前付きの数を読むためである
 //! (`xtask/src/report_parse/line_read.rs`の`名前付きの数を読む`が読む形)。
-//! 行の綴りを変えるときは`xtask/src/cluster_lights/assignment.rs`も同時に直す。
+//! 行の文言を変えるときは`xtask/src/cluster_lights/assignment.rs`も同時に直す。
 
 use blitz_render::clustered_lighting::クラスタ選別の割り当て統計;
 

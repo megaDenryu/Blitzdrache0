@@ -20,8 +20,8 @@ impl 描画フレーム数 {
         self.0
     }
 
-    /// アプリの`--frames`へ渡す綴り。生の綴りへ戻るのはここだけである。
-    pub(super) fn 綴り(self) -> String {
+    /// アプリの`--frames`へ渡す文字列。生の文字列へ戻るのはここだけである。
+    pub(super) fn 文字列(self) -> String {
         self.0.to_string()
     }
 }

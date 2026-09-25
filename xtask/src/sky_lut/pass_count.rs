@@ -1,5 +1,5 @@
 //! 大気のベイク済み画像生成パス数の報告行を読む工程。受け取るのは終了時報告と条件の名前、返すのはフレームごとの本数の列である。
-//! 行の綴りは`crates/blitz_app/src/reports/atmosphere_passes.rs`の出力と一致させている。
+//! 行の文言は`crates/blitz_app/src/reports/atmosphere_passes.rs`の出力と一致させている。
 
 #[cfg(test)]
 mod reading_tests;
@@ -46,17 +46,17 @@ pub(super) fn 読む(報告: &終了時報告, 条件名: &str) -> Result<生成
 }
 
 fn 列を読む(行: &報告の行, 条件名: &str) -> Result<Vec<u32>, 検収エラー> {
-    let 綴り = 行.鍵に結ばれた綴り(&列の鍵, 値の結ばれ方)?;
-    if 綴り.is_empty() {
+    let 文字列 = 行.鍵に結ばれた文字列(&列の鍵, 値の結ばれ方)?;
+    if 文字列.is_empty() {
         return Err(列の要素の判定名(条件名).あるはずのものが無い破れ().into());
     }
     let mut 一覧 = Vec::new();
-    for 語 in 綴り.split(',') {
+    for 語 in 文字列.split(',') {
         一覧.push(列の要素の判定名(条件名).材料を数として読む(語)?);
     }
     Ok(一覧)
 }
 
 fn 列の要素の判定名(条件名: &str) -> 判定の名前 {
-    判定の名前::組み立てた綴りから生成する(format!("{条件名}の{見出し}の列の要素"))
+    判定の名前::組み立てた文字列から生成する(format!("{条件名}の{見出し}の列の要素"))
 }

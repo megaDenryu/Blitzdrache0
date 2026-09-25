@@ -7,8 +7,8 @@
 //! 据え置いた対象は焼く工程を通らないため0体として積み上がる。したがって2つの数の一致を課してよいのは、
 //! 据え置いたチャンクが0本の実行だけである。この前提は検収の側が焼き直しの報告の行を読んで確かめる。
 //!
-//! 注意: 報告の行の綴りは`xtask/src/game_fox_tour/map_generation_check/compile_report.rs`が読み取る側として
-//! 同じものを持つ。両側にあることは`cargo xtask conform`の綴りの契約の検査が守る。
+//! 注意: 報告の行の文言は`xtask/src/game_fox_tour/map_generation_check/compile_report.rs`が読み取る側として
+//! 同じものを持つ。両側にあることは`cargo xtask conform`の文言の契約の検査が守る。
 
 use crate::{種類ごとの置いた個体の数, 置いた個体の数};
 
@@ -41,8 +41,8 @@ impl 置いた個体の勘定 {
     /// 種類ごとの内訳の行。**合計だけでは木と岩の取り分が分からない。** 散らした種類が1つも無い実行では
     /// 「なし」と綴る。行そのものを出さない形にすると、読む側が「内訳が0件」と「行を出し忘れた」を区別できない。
     pub(super) fn 内訳の行を作る(&self) -> String {
-        let 綴り一覧: Vec<String> = self.種類ごとの内訳.名前の順に並べる().iter().map(|(名前, 数)| format!("{}={}", 名前.綴り(), 数.値())).collect();
-        let 中身 = if 綴り一覧.is_empty() { "なし".to_string() } else { 綴り一覧.join(" ") };
+        let 文字列一覧: Vec<String> = self.種類ごとの内訳.名前の順に並べる().iter().map(|(名前, 数)| format!("{}={}", 名前.文字列(), 数.値())).collect();
+        let 中身 = if 文字列一覧.is_empty() { "なし".to_string() } else { 文字列一覧.join(" ") };
         format!("種類ごとの置いた個体: {中身}")
     }
 }

@@ -1,5 +1,5 @@
 //! アプリの終了時報告を1つの計数報告へ写す工程。受け取るのは終了時報告、返すのは計数報告である。
-//! 行の綴りは`crates/blitz_app/src/reports/draw_issue.rs`の出力と一致させている。
+//! 行の文言は`crates/blitz_app/src/reports/draw_issue.rs`の出力と一致させている。
 
 use super::line_read::{値を読む, 名前付きの数を読む, 添字付きの数を読む};
 use super::{パス別描画発行, 可視個体の選別の計数, 計数報告, 距離区分数};

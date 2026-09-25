@@ -54,7 +54,7 @@ fn 数を集める(本文: &str, 宣言名: &'static str, パス: &'static str) 
             continue;
         }
         一覧.push(語.parse::<f64>().map_err(|誤り| 規約検査の破れ::見本の宣言の値を数として読めない {
-            パス, 宣言名, 綴り: 語.to_string(), 誤り
+            パス, 宣言名, 文字列: 語.to_string(), 誤り
         })?);
     }
     if 一覧.is_empty() {
