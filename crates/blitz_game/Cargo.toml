@@ -4,6 +4,7 @@ edition.workspace = true
 version.workspace = true
 
 [dependencies]
+blitz_design = { path = "../blitz_design" }
 blitz_math = { path = "../blitz_math" }
 
 [lints]

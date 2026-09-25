@@ -7,8 +7,10 @@
 //! 世界もチャンクもアセットもGPUも知らない純粋な数学であることを、文書でなくこの表で守る
 //! (参照: `_doc/設計/世界の形と衝突基盤.md`)。blitz_assembly は部品の接合と組み立ての層であり、
 //! glTFもファイルシステムも知らない純粋計算である(参照: `_doc/設計/部品カタログと接合点.md`「機械強制の手段」)。
-//! blitz_game はゲームロジック層であり、設計正本が許すのは blitz_engine と blitz_math の2つで、白リストへは
+//! blitz_game はゲームロジック層であり、設計正本が許すのは blitz_engine・blitz_math・blitz_design の3つで、blitz_engine は白リストへ
 //! 実依存になった時点で足す(参照: `_doc/設計/ゲーム制作アーキテクチャ.md`「第1段階の定義」)。winit・egui・ashへは依存させない。
+//! blitz_game の blitz_design は、ゲームロジック層の型へ設計解釈マーカーを付けるための依存である(2026-09-25。Issue #137)。
+//! blitz_design は依存ゼロの最下層であり、blitz_sim と blitz_esca が既に同じ形で依存しているため、依存木の到達範囲を広げない。
 //! xtask の blitz_asset_compiler は置き場とファイル名の文字列の正本を読むためだけの依存であり、検収が写しを
 //! 持たないための例外である。xtask の blitz_math はパーセンタイル値の求め方の正本を読むための同じ形の例外であり、
 //! 検収が測る値と計器が報告する値を同じ式で求めるために足した。写しを持つと、同じ「95パーセンタイル値」という
@@ -30,7 +32,7 @@
 //! 判断1の機械強制である(参照: `_doc/設計/剛体の状態と接触.md`「判断1」)。blitz_sim は引き続き blitz_engine・
 //! blitz_render・blitz_app を知らず、この表がそれを課す。
 //! blitz_design は「Rust上の型が設計上何として解釈されるか」を宣言する共通の設計語彙であり、依存ゼロの最下層である。
-//! シミュレーションもEsca世界も知らないことをこの表が課し、逆向きに blitz_sim と blitz_esca の行へ書くことがその利用を許す。
+//! シミュレーションもEsca世界もゲームロジック層も知らないことをこの表が課し、逆向きに blitz_sim と blitz_esca と blitz_game の行へ書くことがその利用を許す。
 //! blitz_esca はゲーム『Esca』のロジック層であり、blitz_design・blitz_math・thiserror 以外を知らない(参照: `_doc/設計/Esca/設計正本.md`)。
 //! blitz_design_verification は設計の命題と検証の共通語彙の正本であり、通常依存は blitz_design だけである。ドメインのクレートも xtask も知らない
 //! (参照: `_doc/設計/設計オントロジー.md` 第7節から第10節)。**xtask のこのクレートへの依存は、命題と証拠の正本を二重化しないための例外である。**
@@ -52,7 +54,7 @@ pub(super) const 白リスト: [(&str, &[&str]); 15] = [
     ("blitz_render", &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"]),
     ("blitz_sim", &["blitz_collision", "blitz_design", "blitz_math", "thiserror"]), // 判断51: 手法の数学のみ。接触点集合を読むためだけにblitz_collisionを許す
     ("blitz_ecs", &["thiserror"]),                                                  // 個体群の基盤。具体ゲームも物理も描画も知らない
-    ("blitz_game", &["blitz_math"]),                                                // ゲームロジック層。許すのは blitz_engine と blitz_math だけ
+    ("blitz_game", &["blitz_design", "blitz_math"]),                                // ゲームロジック層。設計解釈マーカーのためにblitz_designを許す
     ("blitz_esca", &["blitz_design", "blitz_math", "thiserror"]),                   // ゲーム『Esca』のロジック層
     (
         "blitz_app",
