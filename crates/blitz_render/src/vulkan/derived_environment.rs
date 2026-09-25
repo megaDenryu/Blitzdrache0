@@ -75,7 +75,7 @@ impl 派生表現一式 {
         self.解像度.反射率積分表
     }
 
-    /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この一式は`描画の処理位置の資源`の1段として呼ばれる(GPU待機済み)。
+    /// 前提: レンダラー全体の破棄順は renderer/destroy.rs が持ち、この一式は`描画段階資源`の1段として呼ばれる(GPU待機済み)。
     pub(in crate::vulkan) fn 破棄する(&self, device: &GPUデバイス) {
         self.パイプライン.破棄する(device);
         self.ディスクリプタ.破棄する(device);

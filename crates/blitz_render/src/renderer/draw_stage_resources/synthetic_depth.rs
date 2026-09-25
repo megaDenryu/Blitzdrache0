@@ -4,13 +4,13 @@
 //! 触れるフィールドは`合成深度の注入`1つに限る。据える呼び出しはGPUが資源を使っていない時点で行われることを
 //! 呼び出し元が保証し、この工程は古い資源を片付けてから新しい資源へ入れ替える。
 
-use super::描画の処理位置の資源;
+use super::描画段階資源;
 use crate::error::レンダラーエラー;
 use crate::local_visibility::深度画像;
 use crate::vulkan::allocator::GPU資源の確保係;
 use crate::vulkan::depth_injection::{合成深度の注入一式, 合成深度の注入入力};
 
-impl 描画の処理位置の資源 {
+impl 描画段階資源 {
     /// 前提: 呼び出し元がGPUの全作業完了を待ってから呼ぶ(古い資源を破棄するため)。
     /// 深度画像の寸法が画面と一致することも呼び出し元が確かめている。
     pub(in crate::renderer) fn 合成深度の注入を据える(&mut self, 確保係: &GPU資源の確保係<'_>, 深度画像: &深度画像) -> Result<(), レンダラーエラー> {
