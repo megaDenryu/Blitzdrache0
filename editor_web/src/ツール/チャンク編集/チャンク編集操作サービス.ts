@@ -7,7 +7,7 @@ import type { チャンク編集同期サービス } from './チャンク編集�
 import type { 編集モード } from './画面/index.ts'
 import { 見下ろし図で編集するモードか } from './画面/パネル/モード切替/モード定義.ts'
 
-// 操作コマンドの適用・取り消しおよびドメイン操作のディスパッチを担当するサービス。
+// 操作コマンドの適用・取り消しおよびドメイン操作の振り分けを担当するサービス。
 export class チャンク編集操作サービス {
     private readonly _建物定義: Map<建物定義ID, 建物外形定義> = new Map()
     public constructor(

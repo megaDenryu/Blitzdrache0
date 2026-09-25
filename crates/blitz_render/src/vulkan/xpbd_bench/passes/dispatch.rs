@@ -7,7 +7,7 @@ use crate::vulkan::graph::{グラフ, バッファハンドル, バッファ用�
 
 const 班のスレッド数: u32 = 64;
 
-/// 1回のディスパッチの束縛。パイプラインごとに変わるのはパイプラインとスレッド数だけである。
+/// 1回の計算の発行の束縛。パイプラインごとに変わるのはパイプラインとスレッド数だけである。
 #[derive(Clone, Copy)]
 pub(super) struct 発行の束縛 {
     pub(super) レイアウト: vk::PipelineLayout,
