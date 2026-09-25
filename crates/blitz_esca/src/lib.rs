@@ -22,7 +22,7 @@ pub mod walking_direction;
 mod tests;
 
 pub use elapsed_time::{経過時間, 経過時間の生成の失敗};
-pub use ontology::{M遷移関数, 遷移成功結果};
+pub use ontology::{M遷移関数, 遷移失敗結果, 遷移成功結果};
 pub use transition_parameter::遷移パラメータ;
 pub use traveler::{旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則, 移動の変位};
 pub use traveler_boundary::{境界制限結果, 移動可能範囲, 移動可能範囲の指定};
