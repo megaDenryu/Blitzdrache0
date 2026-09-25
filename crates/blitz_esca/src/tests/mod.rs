@@ -17,6 +17,8 @@ mod traveler_input_tests;
 mod traveler_invariant_tests;
 mod traveler_tests;
 mod walking_direction_tests;
+#[path = "刻みの区間の精度の試験.rs"]
+mod 刻みの区間の精度の試験;
 #[path = "地点と経路の試料.rs"]
 mod 地点と経路の試料;
 #[path = "時刻と時間帯と地図の試験.rs"]
