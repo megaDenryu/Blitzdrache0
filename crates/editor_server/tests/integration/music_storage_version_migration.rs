@@ -1,4 +1,4 @@
-//! `ファイル保管庫`が楽曲の版ごとの正本(形式版を持たない旧版・形式版1・現在の形式版2・未対応の新しい版)を
+//! `ファイル保管庫`が楽曲の版ごとの正本(形式版を持たない旧版・形式版1・小節数の欄が欠けた形式版2・現在の形式版2・未対応の新しい版)を
 //! 読むときの挙動を確かめる。
 #![allow(clippy::unwrap_used)]
 #![allow(non_snake_case)]
@@ -35,6 +35,20 @@ fn 形式版1の正本はパターンへ既定の小節数を補って読める(
     assert_eq!(読んだ楽曲.形式版, editor_server::楽曲の現在の形式版);
     assert_eq!(読んだ楽曲.パターン一覧[0].小節数, editor_server::新しいパターンの既定の小節数);
     assert_eq!(読んだ楽曲, crate::common::楽曲の例());
+}
+
+#[test]
+fn 小節数の欄が欠けた形式版2の正本は形式版1として移行せず読みが拒む() {
+    let (一時, 保管庫) = crate::common::保管庫を作る("music_format_version_2_without_bar_count");
+    let mut 欠けた形式版2のjson = serde_json::to_value(crate::common::楽曲の例()).unwrap();
+    for パターン in 欠けた形式版2のjson["パターン一覧"].as_array_mut().unwrap() {
+        パターン.as_object_mut().unwrap().remove("小節数").unwrap();
+    }
+    let 置き場 = 一時.ルート().join("editor_data").join("楽曲");
+    std::fs::create_dir_all(&置き場).unwrap();
+    std::fs::write(置き場.join("試験の楽曲.json"), serde_json::to_string_pretty(&欠けた形式版2のjson).unwrap()).unwrap();
+
+    assert!(保管庫.楽曲を読む(&crate::common::名乗りを作る("試験の楽曲")).is_err());
 }
 
 #[test]

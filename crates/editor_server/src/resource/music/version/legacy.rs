@@ -8,8 +8,8 @@ use super::super::mixer::ミキサー設定;
 use super::super::music_id::楽曲ID;
 use super::super::section::曲の節;
 use super::super::track::トラック定義;
-use super::super::{楽曲, 楽曲の現在の形式版};
-use super::format_1::{形式版1のパターン, 形式版1の楽曲};
+use super::super::楽曲;
+use super::format_1::{形式版1のパターン, 形式版1の形式版の数値, 形式版1の楽曲};
 
 /// 形式版を持たない旧版の楽曲とは、楽曲の資源に形式版の欄を足す前に保存された`楽曲/<楽曲ID>.json`の形のことである。
 #[derive(Debug, Clone, PartialEq, Deserialize)]
@@ -25,10 +25,10 @@ pub struct 形式版を持たない旧版の楽曲 {
 }
 
 impl 形式版を持たない旧版の楽曲 {
-    /// 形式版の欄だけが無い版であるため、現在の形式版を名指しで置いてから形式版1の変換へ経由する。
+    /// 形式版の欄だけが無い版であるため、形式版1の数値を名指しで置いてから形式版1の変換へ経由する。
     pub fn 現在の形へ変換する(self) -> 楽曲 {
         形式版1の楽曲 {
-            形式版: 楽曲の現在の形式版,
+            形式版: 形式版1の形式版の数値,
             名乗り: self.名乗り,
             表示名: self.表示名,
             テンポ: self.テンポ,

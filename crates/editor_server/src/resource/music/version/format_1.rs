@@ -15,6 +15,9 @@ use super::super::track_grid::トラックの格子;
 use super::super::value_range::新しいパターンの既定の小節数;
 use super::super::{楽曲, 楽曲の現在の形式版};
 
+/// 形式版1の形式版の数値。欄の形が形式版1に当てはまっても、この数値でないファイルは形式版1として扱わない。
+pub(super) const 形式版1の形式版の数値: u32 = 1;
+
 /// 形式版1のパターンとは、パターンが小節数の欄を持つ前の形のことである。32ステップの格子は小節数2として移行する。
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 pub struct 形式版1のパターン {
