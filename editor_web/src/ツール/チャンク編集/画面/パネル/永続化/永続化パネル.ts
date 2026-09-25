@@ -1,11 +1,10 @@
 import { div, DivC, LV2HtmlComponentBase } from 'sengen-ui'
-import type { 進行状況表示パネル } from '../../../永続化パネル操作.ts'
 import { 永続化の操作列 } from './永続化の操作列.ts'
 import { 永続化枠 } from './スタイル.css.ts'
 
 // 保存・読み込みの操作ボタンと現在の通信結果・エラー文言を表示するパネル。
 // 振る舞いは永続化の操作列が持ち、ここは右サイドバーの枠の見た目だけを持って委譲する。
-export class 永続化パネル extends LV2HtmlComponentBase implements 進行状況表示パネル {
+export class 永続化パネル extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     private readonly _操作列: 永続化の操作列 = new 永続化の操作列()
 

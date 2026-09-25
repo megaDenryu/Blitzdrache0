@@ -1,11 +1,11 @@
 import { button, div, span, ButtonC, DivC, SpanC, LV2HtmlComponentBase } from 'sengen-ui'
-import type { 進行状況表示パネル } from '../../../永続化パネル操作.ts'
 import { 操作列枠, アクションボタン, 副アクションボタン, 状態メッセージ, エラー状態メッセージ } from './永続化の操作列.css.ts'
 
 // 保存・読み込みのボタンと通信結果・エラー文言の表示をひとまとめにした最小の並び。
 // 永続化パネル(チャンク編集の右サイドバーの枠)と楽曲名の欄(名前の行)がこれを
 // 1フィールドで保持し、置き場ごとの見た目は各自の外側の枠のスタイルで調整する。
-export class 永続化の操作列 extends LV2HtmlComponentBase implements 進行状況表示パネル {
+// 進行状況表示パネルの形は構造的な型の一致で満たす。画面の層はツールルートの型を取り込めないため implements を書かない。
+export class 永続化の操作列 extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
     private readonly _保存ボタン: ButtonC
     private readonly _読込ボタン: ButtonC
