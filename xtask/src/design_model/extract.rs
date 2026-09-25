@@ -66,12 +66,16 @@ mod フレーム型の定義の原文の読み取り;
 #[path = "extract/役割の型引数の入れ子の試験.rs"]
 mod 役割の型引数の入れ子の試験;
 #[cfg(test)]
+#[path = "extract/抽出した設計関係グラフと抽出の欠けの試験.rs"]
+mod 抽出した設計関係グラフと抽出の欠けの試験;
+#[cfg(test)]
 #[path = "extract/本番の範囲の試験.rs"]
 mod 本番の範囲の試験;
 #[cfg(test)]
 #[path = "extract/表記が名指す型の試験.rs"]
 mod 表記が名指す型の試験;
 
+pub use marker_concept::設計解釈マーカーを指す参照か;
 pub use out_of_range_syntax::保証範囲の外の構文;
 pub use outcome::抽出した設計関係グラフと抽出の欠け;
 pub use unextracted_line::{抽出できなかった理由, 抽出できなかった行};
