@@ -75,5 +75,8 @@ mod use_group_expansion;
 mod use_resolution;
 #[cfg(test)]
 mod use_resolution_tests;
+#[cfg(test)]
+#[path = "design_ontology/生成物の中の実装の置き場の試験.rs"]
+mod 生成物の中の実装の置き場の試験;
 
 pub use scan_entry::全ファイルを検査する;

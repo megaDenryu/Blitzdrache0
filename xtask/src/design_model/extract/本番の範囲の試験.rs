@@ -75,3 +75,35 @@ fn 外部の一括取り込みを別のモジュールの唯一の同名型へ�
     assert!(!結果.グラフ.関係一覧().iter().any(|関係| 関係.目的語.識別子().モジュールパス == "blitz_esca::other"));
     assert!(結果.抽出できなかった行一覧.iter().any(|行| 行.理由.説明().contains("Foo")));
 }
+
+// Graphiteの生成物を取り込む宣言のファイルと、その生成物の対。生成物の見出しの2行目が名乗る生成元は宣言のファイルである。
+fn graphiteの宣言と生成物(生成物の一行目: &str) -> Vec<(PathBuf, String)> {
+    let 末尾 = crate::conform::design_ontology::module_path::ソースのファイルの末尾;
+    vec![
+        (PathBuf::from(format!("crates/blitz_esca/src/lib{末尾}")), "#[path = \"抽出の宣言.rs\"]\npub mod 抽出の宣言;\n".to_string()),
+        (
+            PathBuf::from("crates/blitz_esca/src/抽出の宣言.rs"),
+            "pub struct 仮の地点;\nimpl M不変データ for 仮の地点 {}\n#[allow(non_snake_case)]\npub mod 抽出の網 {\n    include!(\"generated/抽出の網.rs\");\n}\ngraphite::dynamic_graph_schema! {\n    generated = \"generated/抽出の網.rs\";\n    schema 抽出の網 { node 仮の地点; }\n}\n".to_string(),
+        ),
+        (
+            PathBuf::from("crates/blitz_esca/src/generated/抽出の網.rs"),
+            format!("{生成物の一行目}\n// 生成元: src/抽出の宣言.rs:7\n// 再生成: 案内\n\npub struct 生成物の型;\nimpl M不変データ for 生成物の型 {{}}\n"),
+        ),
+    ]
+}
+
+#[test]
+fn graphiteの生成物を取り込むモジュールは辿らず明示して除外した行として数える() {
+    let 結果 = super::ソース群から抽出する(&抽出対象のソース群::原文一覧から生成する(graphiteの宣言と生成物("// このファイルは Graphite が生成したため手編集しないこと。")));
+    assert!(!結果.関係を落とした抽出の欠落へ写す().在るか(), "生成物の取り込みを関係の欠落として数えない");
+    assert!(結果.抽出できなかった行一覧.iter().any(|行| 行.行番号 == 4 && 行.理由.種別の呼び名() == "Graphiteの生成物の取り込みである"));
+    assert!(!結果.グラフ.概念一覧().iter().any(|概念| 概念.識別子().名前 == "生成物の型"), "生成物の中身は設計概念の抽出の対象でない");
+    assert!(結果.グラフ.概念一覧().iter().any(|概念| 概念.識別子().名前 == "仮の地点"), "宣言のファイルの手書きの型は抽出する");
+}
+
+#[test]
+fn 見出しの無いファイルを取り込むモジュールは辿れない欠落のまま残す() {
+    let 結果 = super::ソース群から抽出する(&抽出対象のソース群::原文一覧から生成する(graphiteの宣言と生成物("// 手書きのファイル")));
+    assert!(結果.関係を落とした抽出の欠落へ写す().在るか());
+    assert!(結果.抽出できなかった行一覧.iter().any(|行| 行.行番号 == 4 && 行.理由.説明().contains("モジュールの本体")));
+}

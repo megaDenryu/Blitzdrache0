@@ -33,7 +33,9 @@
 //! blitz_render・blitz_app を知らず、この表がそれを課す。
 //! blitz_design は「Rust上の型が設計上何として解釈されるか」を宣言する共通の設計語彙であり、依存ゼロの最下層である。
 //! シミュレーションもEsca世界もゲームロジック層も知らないことをこの表が課し、逆向きに blitz_sim と blitz_esca と blitz_game の行へ書くことがその利用を許す。
-//! blitz_esca はゲーム『Esca』のロジック層であり、blitz_design・blitz_math・thiserror 以外を知らない(参照: `_doc/設計/Esca/設計正本.md`)。
+//! blitz_esca はゲーム『Esca』のロジック層であり、blitz_design・blitz_math・thiserror・graphite 以外を知らない(参照: `_doc/設計/Esca/設計正本.md`)。
+//! blitz_esca の graphite は、Escaの地点と経路の表現を、Rustの型で検査される型付きのグラフで書くための依存である(2026-09-26。Issue #187 の作業C)。
+//! 許可を先に置き、依存そのものは作業Gで足す。ゲームエンジンの内側の基盤のクレートへは許可しない(Issue #187 のオーナーの方針)。
 //! blitz_design_verification は設計の命題と検証の共通語彙の正本であり、通常依存は blitz_design だけである。ドメインのクレートも xtask も知らない
 //! (参照: `_doc/設計/設計オントロジー.md` 第7節から第10節)。**xtask のこのクレートへの依存は、命題と証拠の正本を二重化しないための例外である。**
 //! 構造の検証は xtask が抽出したグラフの上で走り、振る舞いの有限全数の検証はドメイン側の試験が実物の遷移関数を呼んで走る。
@@ -55,7 +57,7 @@ pub(super) const 白リスト: [(&str, &[&str]); 15] = [
     ("blitz_sim", &["blitz_collision", "blitz_design", "blitz_math", "thiserror"]), // 判断51: 手法の数学のみ。接触点集合を読むためだけにblitz_collisionを許す
     ("blitz_ecs", &["thiserror"]),                                                  // 個体群の基盤。具体ゲームも物理も描画も知らない
     ("blitz_game", &["blitz_design", "blitz_math"]),                                // ゲームロジック層。設計解釈マーカーのためにblitz_designを許す
-    ("blitz_esca", &["blitz_design", "blitz_math", "thiserror"]),                   // ゲーム『Esca』のロジック層
+    ("blitz_esca", &["blitz_design", "blitz_math", "thiserror", "graphite"]),       // ゲーム『Esca』のロジック層。地点と経路の型付きのグラフのためにgraphiteを許す
     (
         "blitz_app",
         &["blitz_engine", "blitz_game", "blitz_math", "blitz_render", "blitz_sim", "winit", "raw-window-handle", "thiserror", "egui", "egui-winit"],
