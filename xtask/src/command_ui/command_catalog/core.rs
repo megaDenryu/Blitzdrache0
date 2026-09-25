@@ -14,7 +14,7 @@ pub(super) const 一覧: &[コマンド項目] = &[
     ),
     コマンド項目::引数なしで生成する(
         "Graphiteの生成物の照合",
-        "  graphite-check   Graphiteに依存するパッケージごとに cargo graphite generate --check を実行し、生成物が宣言から生成し直した結果と一致することを確かめる (生成器が無いか古いときは入れ直す手順を表示して失敗する)",
+        "  graphite-check   Graphiteに依存するパッケージごとに cargo graphite generate --check を実行し、生成物が宣言から生成し直した結果と一致することを確かめる (生成物を持つパッケージが対象から漏れたときと、生成器が Cargo.lock の固定の版から入れられていないときは、Cargo.lock の版を含む入れ直しのコマンドを表示して失敗する)",
     ),
     コマンド項目::引数なしで生成する(
         "設計の命題の検証",
