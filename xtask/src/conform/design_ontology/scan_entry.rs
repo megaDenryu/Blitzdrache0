@@ -10,6 +10,7 @@ use super::super::error::規約検査の破れ;
 use super::super::graphiteのコード::{Graphiteの生成物の一覧, 対象外にした生成物};
 use super::super::report::検査の報告;
 use super::super::source_lexing::コードだけの行一覧;
+use super::super::走査した原文の一覧::走査した原文の一覧;
 use super::module_structure_assertion::モジュール構造の一致検査;
 use super::syntax_checker::クレート構文検査;
 use crate::file_scan;
@@ -28,12 +29,13 @@ pub fn 全ファイルを検査する() -> Result<検査の報告, 規約検査�
 
 /// 読み終えた原文の一覧を検査する。ファイルを読む境界から分けるのは、試験が原文を組んで同じ工程を通すためである。
 pub(super) fn 原文一覧を検査する(原文一覧: Vec<(PathBuf, String)>) -> 検査の報告 {
+    let 原文一覧 = 走査した原文の一覧::生成する(原文一覧);
     let 生成物 = Graphiteの生成物の一覧::原文一覧から見分ける(&原文一覧);
     let mut モジュール構造の違反一覧 = Vec::new();
     let mut ソース一覧 = Vec::new();
-    for (パス, 内容) in 原文一覧 {
-        モジュール構造の違反一覧.extend(モジュール構造の一致検査::生成する(パス.clone(), &内容).違反一覧());
-        ソース一覧.push((パス, コードだけの行一覧(&内容)));
+    for (パス, 内容) in 原文一覧.並び() {
+        モジュール構造の違反一覧.extend(モジュール構造の一致検査::生成する(パス.to_path_buf(), 内容).違反一覧());
+        ソース一覧.push((パス.to_path_buf(), コードだけの行一覧(内容)));
     }
     let 検査 = クレート構文検査::生成する(ソース一覧);
     let mut 警告一覧 = 検査.設計解釈マーカーを実装した型の定義のファイルの外にある実装の警告一覧();

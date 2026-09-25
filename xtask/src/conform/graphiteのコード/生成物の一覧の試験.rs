@@ -3,6 +3,7 @@
 
 use std::path::{Path, PathBuf};
 
+use super::super::走査した原文の一覧::走査した原文の一覧;
 use super::Graphiteの生成物の一覧;
 
 const 生成元のパス: &str = "crates/blitz_esca/src/仮の経路網.rs";
@@ -16,7 +17,7 @@ fn 見出し付きの原文(生成元の行: &str) -> String {
 
 fn 一覧を組む(原文一覧: &[(&str, String)]) -> Graphiteの生成物の一覧 {
     let 組んだ一覧: Vec<(PathBuf, String)> = 原文一覧.iter().map(|(パス, 原文)| (PathBuf::from(パス), 原文.clone())).collect();
-    Graphiteの生成物の一覧::原文一覧から見分ける(&組んだ一覧)
+    Graphiteの生成物の一覧::原文一覧から見分ける(&走査した原文の一覧::生成する(組んだ一覧))
 }
 
 #[test]

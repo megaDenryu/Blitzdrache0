@@ -49,6 +49,8 @@ mod warning;
 mod whole_repository;
 mod wording_contract;
 mod workspace_dependency_features;
+#[path = "走査した原文の一覧.rs"]
+pub(crate) mod 走査した原文の一覧;
 
 use std::process::ExitCode;
 

@@ -10,6 +10,7 @@ use crate::conform::design_ontology::module_declaration::{モジュール宣言,
 use crate::conform::design_ontology::module_declaration_extract::モジュール宣言の抽出;
 use crate::conform::design_ontology::module_path::ソースのファイルの末尾;
 use crate::conform::graphiteのコード::Graphiteの生成物の一覧;
+use crate::conform::走査した原文の一覧::{斜線で揃えたパス, 走査した原文の一覧};
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
@@ -20,7 +21,7 @@ pub struct 本番のソース {
 
 /// 適用範囲のクレートの原文と、その中のGraphiteの生成物の一覧。モジュールの宣言1つがどこへ辿れるかを答える。
 struct 適用範囲の原文 {
-    原文一覧: Vec<(PathBuf, String)>,
+    原文一覧: 走査した原文の一覧,
     生成物: Graphiteの生成物の一覧,
 }
 
@@ -41,10 +42,10 @@ impl 本番のソース {
             行一覧: Vec::new(), 欠落一覧: Vec::new()
         };
         while let Some(パス) = 待ち.pop() {
-            if !済み.insert(パス.clone()) {
+            if !済み.insert(斜線で揃えたパス::生成する(&パス)) {
                 continue;
             }
-            let Some(原文) = 範囲.原文(&パス) else {
+            let Some(原文) = 範囲.原文一覧.パスで探す(&パス) else {
                 continue;
             };
             let (mut 行一覧, 欠落) = 本番の行を選ぶ(&パス, 原文);
@@ -74,13 +75,9 @@ impl 本番のソース {
 
 impl 適用範囲の原文 {
     fn 生成する(原文一覧: Vec<(PathBuf, String)>) -> Self {
-        let 原文一覧: Vec<_> = 原文一覧.into_iter().filter(|(パス, _)| 適用範囲のクレートのパスか(パス)).collect();
+        let 原文一覧 = 走査した原文の一覧::生成する(原文一覧.into_iter().filter(|(パス, _)| 適用範囲のクレートのパスか(パス)).collect());
         let 生成物 = Graphiteの生成物の一覧::原文一覧から見分ける(&原文一覧);
         Self { 原文一覧, 生成物 }
-    }
-
-    fn 原文(&self, パス: &Path) -> Option<&str> {
-        self.原文一覧.iter().find(|(候補, _)| 候補 == パス).map(|(_, 原文)| 原文.as_str())
     }
 
     /// 試験の項目の宣言は本番の項目でない。生成物の取り込みは明示して除外し、本体が別ファイルに在ればそれを辿り、どちらでもなければ辿れない。
@@ -106,10 +103,10 @@ impl 適用範囲の原文 {
     /// 宣言の本体が在るファイル。既定の探索に任せた宣言は `<名前>.rs` が無ければ `<名前>/mod.rs` を探す。明示した置き場は読み替えない。
     fn 本体の在るファイル(&self, 宣言: &モジュール宣言) -> Option<PathBuf> {
         let 子 = 宣言.対象の物理ファイル()?;
-        if self.原文(&子).is_some() {
+        if self.原文一覧.パスで探す(&子).is_some() {
             return Some(子);
         }
         let 読み替えた子 = 子.with_extension("").join(format!("mod{ソースのファイルの末尾}"));
-        (宣言.置き場の指定 == 置き場の指定::既定の探索に任せる && self.原文(&読み替えた子).is_some()).then_some(読み替えた子)
+        (宣言.置き場の指定 == 置き場の指定::既定の探索に任せる && self.原文一覧.パスで探す(&読み替えた子).is_some()).then_some(読み替えた子)
     }
 }

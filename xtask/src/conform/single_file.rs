@@ -16,20 +16,22 @@ use super::error::規約検査の破れ;
 use super::graphiteのコード::{Graphiteの生成物の一覧, 対象外にした生成物};
 use super::report::検査の報告;
 use super::violation::違反;
+use super::走査した原文の一覧::走査した原文の一覧;
 use super::{allow_lint, declaration_comment_line, doc_reference, drop_impl, ecs_abstract_name, forbidden_strings, line_count, module_import_boundary, rigid_raw_triplet, test_directory_layout, two_tier_fold_boundary};
 
 /// 生成物と認めたファイルから外す検査の名前。報告の行がこの名前で外した検査を名乗る。
 const 生成物から外す検査: &str = "行数・宣言の説明の注釈・参照パスの実在";
 
 pub fn ファイル単位の検査を行う(ファイル一覧: &[PathBuf]) -> Result<検査の報告, 規約検査の破れ> {
-    let mut 原文一覧 = Vec::with_capacity(ファイル一覧.len());
+    let mut 並び = Vec::with_capacity(ファイル一覧.len());
     for パス in ファイル一覧 {
         let 内容 = std::fs::read_to_string(パス).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(パス, 誤り))?;
-        原文一覧.push((パス.clone(), 内容));
+        並び.push((パス.clone(), 内容));
     }
+    let 原文一覧 = 走査した原文の一覧::生成する(並び);
     let 生成物 = Graphiteの生成物の一覧::原文一覧から見分ける(&原文一覧);
     let mut 違反一覧 = 生成物.結び付かない見出しの違反一覧();
-    for (パス, 内容) in &原文一覧 {
+    for (パス, 内容) in 原文一覧.並び() {
         違反一覧.extend(一ファイルの違反を集める(パス, 内容, &生成物));
     }
     let 外した生成物 = 対象外にした生成物::生成する(生成物から外す検査, 生成物.生成物一覧().to_vec());
