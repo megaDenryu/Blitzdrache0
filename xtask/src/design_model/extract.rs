@@ -60,6 +60,9 @@ mod wrapped_function_path_tests;
 #[path = "extract/フレーム型の一覧の実物との突き合わせの試験.rs"]
 mod フレーム型の一覧の実物との突き合わせの試験;
 #[cfg(test)]
+#[path = "extract/フレーム型の定義の原文の読み取り.rs"]
+mod フレーム型の定義の原文の読み取り;
+#[cfg(test)]
 #[path = "extract/役割の型引数の入れ子の試験.rs"]
 mod 役割の型引数の入れ子の試験;
 #[cfg(test)]

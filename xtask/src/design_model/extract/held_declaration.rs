@@ -11,7 +11,7 @@ use std::path::Path;
 use super::declaration_body_line::{本体の行の読み取り, 本体の行を読む};
 use super::out_of_range_syntax::保証範囲の外の構文;
 use super::outcome::抽出の成果;
-use super::source_group::抽出対象のソース群;
+use super::source_group::{名指す型の在り処の問い, 抽出対象のソース群};
 use super::struct_declaration::{型定義の宣言, 本体の並べ方};
 use super::type_notation::{型の表記の読み取り, 型の表記を読む};
 use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
@@ -88,7 +88,11 @@ impl 宣言1件の工程<'_> {
 
     // 名指す型から定義の在り処を求め、節点と `保持する` の辺を成果へ足す。
     fn 解決した型へ1本を出す(&self, 名指す型: &表記が名指す型, 行番号: usize, 成果: &mut 抽出の成果) {
-        let (目的語の識別子, 解決できなかった行) = self.ソース群.名指す型の識別子を求める(名指す型, self.パス, 行番号);
+        let (目的語の識別子, 解決できなかった行) = self.ソース群.名指す型の識別子を求める(名指す型の在り処の問い {
+            名指す型,
+            参照元のパス: self.パス,
+            参照元の行番号: 行番号,
+        });
         成果.抽出できなかった行一覧.extend(解決できなかった行);
         let 目的語の節点 = 設計概念::Rustの項目として生成する(目的語の識別子, Rustの項目の種類::型);
         let 目的語 = 目的語の節点.参照を組む();
