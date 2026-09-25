@@ -12,7 +12,7 @@ const 項目一覧: [未是正の自由関数; 20] = [
     未是正の自由関数::生成する("draw_execute/prepare.rs", "実行する", "レンダラー"),
     未是正の自由関数::生成する("draw_execute/prepare.rs", "資源表世代のフェンス通過を記録する", "レンダラー"),
     未是正の自由関数::生成する("draw_execute/submit.rs", "実行する", "レンダラー"),
-    未是正の自由関数::生成する("draw_stage_resources/create/optional_stages.rs", "大気の上へ積む", "任意の処理位置の資源"),
+    未是正の自由関数::生成する("draw_stage_resources/create/optional_stages.rs", "大気の上へ積む", "任意段階の資源"),
     未是正の自由関数::生成する("draw_stage_resources/create/optional_stages.rs", "大気の上へ積む", "生成要求"),
     未是正の自由関数::生成する("draw_stage_resources/create/optional_stages.rs", "布シャドウを生成する", "生成要求"),
     未是正の自由関数::生成する("draw_stage_resources/create/optional_stages.rs", "組み立てる", "生成要求"),
