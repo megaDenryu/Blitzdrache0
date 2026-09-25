@@ -5,10 +5,10 @@
 use super::bending_constraint::曲げ拘束;
 use super::distance_constraint::距離拘束の種類;
 use super::generate::布を生成する;
-use super::spec::布仕様;
+use super::spec::布の生成条件;
 
-fn 試験用仕様(一辺粒子数: u32) -> 布仕様 {
-    布仕様::生成する(一辺粒子数, 1.0, 10.0, [0.0, 0.0, 0.0]).unwrap()
+fn 試験用仕様(一辺粒子数: u32) -> 布の生成条件 {
+    布の生成条件::生成する(一辺粒子数, 1.0, 10.0, [0.0, 0.0, 0.0]).unwrap()
 }
 
 #[test]

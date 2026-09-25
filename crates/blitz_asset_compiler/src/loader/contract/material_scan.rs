@@ -7,7 +7,7 @@
 
 use blitz_engine::金属粗さPBRデータ;
 
-use crate::texture_storage::テクスチャ格納方針;
+use crate::texture_storage::テクスチャ格納の方式;
 
 use super::super::material;
 use super::inspection::開いた文書の契約検査;
@@ -16,7 +16,7 @@ use super::target::{名前を写す, 対象位置};
 
 /// 契約検査が読むときに渡す格納方針。この検査が見るのはソースを復号できるかと係数の範囲であり、
 /// どの格納形式で焼くかは検査の対象でないため、符号化の要らない非圧縮を選ぶ。
-const 契約検査の格納方針: テクスチャ格納方針 = テクスチャ格納方針::全てRGBA8;
+const 契約検査の格納方針: テクスチャ格納の方式 = テクスチャ格納の方式::全てRGBA8;
 
 impl 開いた文書の契約検査<'_> {
     pub(super) fn 材質スロットごとのマテリアルを検査する(&mut self, 材質スロット一覧: &[材質スロットの参照<'_>]) {

@@ -13,7 +13,7 @@ const 行一覧: [台帳の行; 11] = [
     台帳の行::構造体("acceptance/judgment_name.rs", "判定の名前", 3, 0, 17),
     台帳の行::構造体("auto_exposure/parse.rs", "自動露出の報告", 0, 16, 0),
     台帳の行::構造体("cloth_xpbd_reference/parse.rs", "参照比較の観測", 1, 17, 1),
-    台帳の行::構造体("conform/design_ontology/syntax_checker.rs", "クレート構文検査", 4, 2, 17),
+    台帳の行::構造体("conform/design_ontology/syntax_checker.rs", "クレート構文検査", 6, 2, 26), // 自己変更の禁止の検査を外し、設計解釈マーカーを実装した型の実装の置き場の警告(2つのメソッド)を足した後の実測値。説明関数は観点ごとにファイルを分けるため、1つ足すと実装ファイル数とメソッド総数が1つずつ増える。
     台帳の行::列挙("distant_view/plan.rs", "実行の別", 1, 22, 1),
     台帳の行::構造体("game_fox_tour/map_generation_check/check_root.rs", "検収用のルート", 3, 0, 18),
     台帳の行::構造体("hdr_luminance/statistics.rs", "輝度統計", 0, 11, 0),

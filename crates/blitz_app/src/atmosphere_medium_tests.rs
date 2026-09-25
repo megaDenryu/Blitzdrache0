@@ -2,13 +2,13 @@
 
 #![allow(clippy::unwrap_used)]
 
-use blitz_engine::sky::atmosphere::大気媒体方針;
+use blitz_engine::sky::atmosphere::大気媒体の物理定数;
 use blitz_render::atmosphere::大気散乱媒体;
 
 use crate::atmosphere_medium::大気散乱媒体へ写す;
 
 fn 地球標準の媒体() -> 大気散乱媒体 {
-    大気散乱媒体へ写す(&大気媒体方針::地球標準()).unwrap()
+    大気散乱媒体へ写す(&大気媒体の物理定数::地球標準()).unwrap()
 }
 
 fn 成分の値(成分: &[blitz_math::逆メートル; 3]) -> [f32; 3] {

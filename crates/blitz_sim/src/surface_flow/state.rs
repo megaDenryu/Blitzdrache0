@@ -1,8 +1,8 @@
 //! 表面流格子の不変状態。時間発展は新しい状態を返す。
 
 use super::cell::表面セル;
-use super::error::表面流仕様エラー;
-use super::spec::表面流仕様;
+use super::error::表面流の計算条件エラー;
+use super::spec::表面流の計算条件;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct 表面流状態 {
@@ -11,7 +11,7 @@ pub struct 表面流状態 {
 }
 
 impl 表面流状態 {
-    pub fn 空で生成する(仕様: &表面流仕様) -> Self {
+    pub fn 空で生成する(仕様: &表面流の計算条件) -> Self {
         let [列数, 行数] = 仕様.格子寸法();
         let 件数 = usizeへ(列数) * usizeへ(行数);
         Self {
@@ -20,9 +20,9 @@ impl 表面流状態 {
         }
     }
 
-    pub fn 液膜を設定する(&self, 座標: [u32; 2], 液膜厚さ: f32) -> Result<Self, 表面流仕様エラー> {
+    pub fn 液膜を設定する(&self, 座標: [u32; 2], 液膜厚さ: f32) -> Result<Self, 表面流の計算条件エラー> {
         if !液膜厚さ.is_finite() || 液膜厚さ < 0.0 {
-            return Err(表面流仕様エラー::液膜厚さが不正 { 指定値: 液膜厚さ });
+            return Err(表面流の計算条件エラー::液膜厚さが不正 { 指定値: 液膜厚さ });
         }
         let mut 次 = self.clone();
         let 添字 = self.添字を得る(座標)?;
@@ -31,14 +31,14 @@ impl 表面流状態 {
         Ok(次)
     }
 
-    pub fn 液膜分布で生成する(仕様: &表面流仕様, 液膜厚さを得る: impl Fn([u32; 2]) -> f32) -> Result<Self, 表面流仕様エラー> {
+    pub fn 液膜分布で生成する(仕様: &表面流の計算条件, 液膜厚さを得る: impl Fn([u32; 2]) -> f32) -> Result<Self, 表面流の計算条件エラー> {
         let [列数, 行数] = 仕様.格子寸法();
         let mut セル一覧 = Vec::with_capacity(usizeへ(列数) * usizeへ(行数));
         for 行 in 0..行数 {
             for 列 in 0..列数 {
                 let 液膜厚さ = 液膜厚さを得る([列, 行]);
                 if !液膜厚さ.is_finite() || 液膜厚さ < 0.0 {
-                    return Err(表面流仕様エラー::液膜厚さが不正 { 指定値: 液膜厚さ });
+                    return Err(表面流の計算条件エラー::液膜厚さが不正 { 指定値: 液膜厚さ });
                 }
                 セル一覧.push(表面セル::生成する(液膜厚さ, [0.0, 0.0]));
             }
@@ -46,7 +46,7 @@ impl 表面流状態 {
         Ok(Self::構築する([列数, 行数], セル一覧))
     }
 
-    pub fn セル(&self, 座標: [u32; 2]) -> Result<表面セル, 表面流仕様エラー> {
+    pub fn セル(&self, 座標: [u32; 2]) -> Result<表面セル, 表面流の計算条件エラー> {
         self.添字を得る(座標).map(|添字| self.セル一覧[添字])
     }
 
@@ -64,10 +64,10 @@ impl 表面流状態 {
         Self { 格子寸法, セル一覧 }
     }
 
-    fn 添字を得る(&self, [列, 行]: [u32; 2]) -> Result<usize, 表面流仕様エラー> {
+    fn 添字を得る(&self, [列, 行]: [u32; 2]) -> Result<usize, 表面流の計算条件エラー> {
         let [列数, 行数] = self.格子寸法;
         if 列 >= 列数 || 行 >= 行数 {
-            return Err(表面流仕様エラー::セル座標が範囲外 { 列, 行 });
+            return Err(表面流の計算条件エラー::セル座標が範囲外 { 列, 行 });
         }
         Ok(usizeへ(行) * usizeへ(列数) + usizeへ(列))
     }

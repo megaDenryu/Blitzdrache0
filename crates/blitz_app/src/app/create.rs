@@ -1,5 +1,5 @@
 //! CLI起動設定からアプリの初期状態を構築する。世界の描画の組み立て方の決定は`world_composition`が持ち、
-//! 時間進行方針の組み立ては`time_advance_policy`が持つ。
+//! 時間進行の構成値の組み立ては`time_advance_policy`が持つ。
 
 mod time_advance_policy;
 mod world_composition;
@@ -11,7 +11,7 @@ use super::{streaming, アプリ};
 use crate::cli::起動設定;
 use crate::error::起動エラー;
 use crate::hot_reload::ホットリローダー;
-use crate::input::{カメラ操作の適用方針, 入力状態};
+use crate::input::{カメラ操作の適用の方式, 入力状態};
 use blitz_render::クリアカラー;
 
 impl アプリ {
@@ -55,9 +55,9 @@ impl アプリ {
             )),
             大域ずらし量,
             描画対象の並べ方: 起動設定.描画対象の並べ方,
-            入力状態: 入力状態::生成する(カメラ操作の適用方針::起動モードから決める(起動設定.モード)),
+            入力状態: 入力状態::生成する(カメラ操作の適用の方式::起動モードから決める(起動設定.モード)),
             世界実行: crate::world_execution::世界実行::起動設定から作る(起動設定.遊ぶゲーム, 起動設定.モード),
-            時間進行: super::time_step::時間進行配線::起動モードから作る(起動設定.モード, time_advance_policy::時間進行方針を組む()),
+            時間進行: super::time_step::時間進行配線::起動モードから作る(起動設定.モード, time_advance_policy::時間進行の構成値を組む()),
             クリア色,
             天空,
             世界の描画構成,

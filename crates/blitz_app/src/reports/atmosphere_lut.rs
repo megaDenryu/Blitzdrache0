@@ -13,8 +13,8 @@ mod representative_line;
 mod rows;
 mod run_rows;
 mod statistics;
-use blitz_engine::sky::atmosphere::大気媒体方針;
-use blitz_engine::sky::空描画方針;
+use blitz_engine::sky::atmosphere::大気媒体の物理定数;
+use blitz_engine::sky::空の描画設定;
 use blitz_render::atmosphere::{スカイビュー観測条件, 多重散乱表, 大気のベイク済み画像の解像度, 天頂余弦, 空中遠近ボリュームの材料, 透過率表};
 use report_error::大気のベイク済み画像報告エラー;
 use std::process::ExitCode;
@@ -32,9 +32,9 @@ pub(crate) fn 大気のベイク済み画像表を出す() -> ExitCode {
 }
 fn 報告する() -> Result<(), 大気のベイク済み画像報告エラー> {
     let シェーダー = crate::embedded_shaders::埋め込み大気のベイク済み画像シェーダーを生成する()?;
-    let 媒体 = crate::atmosphere_medium::大気散乱媒体へ写す(&大気媒体方針::地球標準())?;
+    let 媒体 = crate::atmosphere_medium::大気散乱媒体へ写す(&大気媒体の物理定数::地球標準())?;
     let 解像度 = 大気のベイク済み画像の解像度::既定値();
-    let 観測高度 = 空描画方針::既定値().観測高度();
+    let 観測高度 = 空の描画設定::既定値().観測高度();
     let 観測条件 = スカイビュー観測条件::生成する(観測高度, 天頂余弦::生成する(検査する太陽天頂余弦)?)?;
     let 空中遠近条件 = aerial_condition::空中遠近の観測条件を組み立てる(観測高度, 検査する太陽天頂余弦)?;
     println!(

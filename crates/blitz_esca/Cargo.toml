@@ -8,5 +8,11 @@ blitz_design = { path = "../blitz_design" }
 blitz_math = { path = "../blitz_math" }
 thiserror = { workspace = true }
 
+# 振る舞いの命題の有限全数の検証を、試験からこのクレートの実物の遷移関数へ当てるための依存である(Issue #174 のオーナー裁定)。
+# 成果物へは入らないため開発用の依存に置く。逆向き(blitz_design_verificationがこのクレートを知ること)は白リストが禁じており、
+# 検証の語彙がドメインを知らないことをその表が守る。
+[dev-dependencies]
+blitz_design_verification = { path = "../blitz_design_verification" }
+
 [lints]
 workspace = true

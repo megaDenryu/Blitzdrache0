@@ -1,98 +1,65 @@
-//! ファイルの `use` 行が型名をどのモジュールから取り込んでいるかを求める工程。呼び出し連鎖の中の独立した工程であり、受け取るのはそのファイルのモジュールパスと型名と
-//! コードだけの行の一覧、返すのは取り込み元のモジュールパスか、取り込んでいないか、`as` の別名のため取り込み元を求められないかである。
-//! `crate::` はクレート名に、`super::` は親に、`self::` は自分のモジュールパスに置き換える。波括弧の群は1段だけ展開し、入れ子の群は展開しない。
+//! ファイルの `use` 行を読む工程。`use` 文を波括弧の群を入れ子ごと展開した項目の一覧に分ける。受け取るのはコードだけの行の一覧、返すのは読めた項目の一覧である。
+//! 群の展開そのものは `use_group_expansion.rs` が持つ。書かれたパスを絶対のモジュールパスにするのは、項目を読む側(`module_path.rs`)である。
+//! 項目には、その `use` 文を書き出した行の添字を添える(取り込み元の探索が項目を位置のモジュールへ振り分けるためである)。
+//! 頭の属性と可視性(`pub`・`pub(crate)`・`pub(super)`・`pub(self)`・`pub(in パス)`)は、どれも `use` の接頭辞として読み飛ばす。
+//! 文は書き出しの行から最初の `;` までである(`use` の木は `;` を持てない)。読み切れない文(ファイルの最後まで `;` に届かない文と、展開しきれない群と、1つのパスと別名に読めない項目と、別名かパスの最後の名前が `$crate` 以外のマクロのメタ変数を含む項目)は、取り込み元の候補にしない。
+//! 候補にしなくても検査は黙って通らない。その型名の取り込み元が求まらず、実装の位置のモジュールの直下にも定義が無ければ、型の定義の探索が「定義が見つからない」違反を出すためである。
 
-use super::module_path::モジュールパス;
+use super::declaration_prefix::属性と可視性を読み飛ばす;
+use super::macro_metavariable::メタ変数を含むか;
+use super::statement_span::セミコロンまで繋いだ本文;
+use super::use_group_expansion::群を展開した項目一覧;
 
-/// `use` 行から取り込み元を求めた結果。
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum 取り込み元を求めた結果 {
-    取り込んでいない,
-    取り込んでいる { モジュールパス: モジュールパス },
-    別名のため取り込み元を求められない,
+/// `use` 文を展開した1項目。書かれたパス(`crate::a::型`・`a::*`)と、`as` の別名を持つ。
+pub struct 取り込みの項目 {
+    pub パス: String,
+    pub 別名: Option<String>,
 }
 
-/// あるファイルの中で型名がどこから来たかの問い。自分のモジュールパスと型名の組である。
-pub struct 取り込み元の問い<'a> {
-    pub 自分のモジュールパス: &'a モジュールパス,
-    pub 型名: &'a str,
+/// 1つのファイルの中の取り込みの項目1件の在り処。書き出しの行はその `use` 文を書き出した行の0始まりの添字である。
+pub struct 取り込みの項目の在り処 {
+    pub 書き出しの行: usize,
+    pub 項目: 取り込みの項目,
 }
 
-impl 取り込み元の問い<'_> {
-    pub fn 行一覧から取り込み元を求める(&self, 行一覧: &[String]) -> 取り込み元を求めた結果 {
-        let mut 結果 = 取り込み元を求めた結果::取り込んでいない;
-        for 文 in use文一覧(行一覧) {
-            for 項目 in 項目一覧(&文) {
-                let (パス, 別名) = 項目.split_once(" as ").map_or((項目.as_str(), None), |(パス, 別名)| (パス.trim(), Some(別名.trim())));
-                if 別名 == Some(self.型名) {
-                    return 取り込み元を求めた結果::別名のため取り込み元を求められない;
-                }
-                if 別名.is_none() && パス.rsplit("::").next() == Some(self.型名) {
-                    結果 = 取り込み元を求めた結果::取り込んでいる {
-                        モジュールパス: self.絶対のパスにする(パス).親(),
-                    };
-                }
-            }
-        }
-        結果
-    }
-
-    // `crate::`・`super::`・`self::` を自分のモジュールパスから絶対のパスへ置き換える。外部クレートのパスはそのままである。
-    fn 絶対のパスにする(&self, パス: &str) -> モジュールパス {
-        let mut 区切り一覧 = パス.split("::").map(str::trim).peekable();
-        let 起点 = match 区切り一覧.peek().copied() {
-            Some("crate") => {
-                区切り一覧.next();
-                Some(self.自分のモジュールパス.クレート())
-            }
-            Some("self") => {
-                区切り一覧.next();
-                Some(self.自分のモジュールパス.clone())
-            }
-            Some("super") => {
-                let mut 現在 = self.自分のモジュールパス.clone();
-                while 区切り一覧.peek().copied() == Some("super") {
-                    現在 = 現在.親();
-                    区切り一覧.next();
-                }
-                Some(現在)
-            }
-            _ => None,
+impl 取り込みの項目 {
+    /// 展開した1項目の表記(`a::b as c`)を、パスと別名へ分けて読む。パスか別名が空か空白を含むなら、1つの項目に読めないため無い。
+    fn 表記から読む(表記: &str) -> Option<Self> {
+        let (パス, 別名) = match 表記.split_once(" as ") {
+            Some((パス, 別名)) => (パス.trim(), Some(別名.trim())),
+            None => (表記.trim(), None),
         };
-        let 残り: Vec<&str> = 区切り一覧.collect();
-        match 起点 {
-            Some(起点) => 起点.下へ繋ぐ(&残り),
-            None => モジュールパス::区切り一覧から組む(&残り),
-        }
+        let 一語か = |綴り: &str| !綴り.is_empty() && !綴り.contains(char::is_whitespace);
+        (一語か(パス) && 別名.is_none_or(一語か)).then(|| Self {
+            パス: パス.to_string(),
+            別名: 別名.map(str::to_string),
+        })
+    }
+
+    // 取り込み元の候補を決める2つの名前(別名とパスの最後の名前)のどちらかが、`$crate` 以外のマクロのメタ変数を含むか。
+    fn 名前にメタ変数を含むか(&self) -> bool {
+        self.別名.as_deref().is_some_and(メタ変数を含むか) || メタ変数を含むか(self.元の名前())
+    }
+
+    /// パスの最後の区切り(取り込んだ元の名前。glob の取り込みなら `*`)。
+    pub fn 元の名前(&self) -> &str {
+        self.パス.rsplit("::").next().unwrap_or_default().trim()
     }
 }
 
-// `use ` から `;` までを1つの文にする。複数の行にまたがる文は空白で繋ぐ。
-fn use文一覧(行一覧: &[String]) -> Vec<String> {
-    let mut 文一覧 = Vec::new();
-    let mut 途中: Option<String> = None;
-    for 行 in 行一覧 {
-        let 行 = 行.trim();
-        if let Some(続き) = 途中.as_mut() {
-            続き.push(' ');
-            続き.push_str(行);
-        } else if let Some(本文) = ["use ", "pub use ", "pub(crate) use ", "pub(super) use "].iter().find_map(|接頭辞| 行.strip_prefix(接頭辞)) {
-            途中 = Some(本文.to_string());
-        } else {
-            continue;
-        }
-        if let Some(文) = 途中.take_if(|_| 行.ends_with(';')) {
-            文一覧.push(文.trim_end_matches(';').trim().to_string());
-        }
-    }
-    文一覧
+/// 行の一覧の `use` 文を読み、読めた文の項目を書き出しの行と組にして並べる。読み切れない文は候補にしない。
+pub fn 書き出しの行付きの取り込みの項目一覧(行一覧: &[String]) -> Vec<取り込みの項目の在り処> {
+    (0..行一覧.len())
+        .filter_map(|添字| 取り込みの文を読む(行一覧, 添字).map(|項目一覧| (添字, 項目一覧)))
+        .flat_map(|(添字, 項目一覧)| 項目一覧.into_iter().map(move |項目| 取り込みの項目の在り処 { 書き出しの行: 添字, 項目 }))
+        .collect()
 }
 
-// `a::{b, c as d}` を `a::b`・`a::c as d` に展開する。波括弧が無ければ文そのものである。
-fn 項目一覧(文: &str) -> Vec<String> {
-    let Some((接頭辞, 残り)) = 文.split_once('{') else {
-        return vec![文.trim().to_string()];
-    };
-    let 中身 = 残り.rsplit_once('}').map_or(残り, |(中身, _)| 中身);
-    中身.split(',').map(str::trim).filter(|項目| !項目.is_empty()).map(|項目| format!("{}{}", 接頭辞.trim(), 項目)).collect()
+// 添字の行が `use` 文を書き出すなら、最初の `;` まで行を繋いで波括弧の群を展開した項目の一覧。`use` 文でないときと、読み切れない文のときは無い。
+fn 取り込みの文を読む(行一覧: &[String], 添字: usize) -> Option<Vec<取り込みの項目>> {
+    let 書き出し = 行一覧.get(添字).map_or("", String::as_str).trim();
+    let 残り = 属性と可視性を読み飛ばす(書き出し).strip_prefix("use ")?;
+    let 本文 = セミコロンまで繋いだ本文(残り, 行一覧.get(添字 + 1..).unwrap_or_default())?;
+    let 項目一覧 = 群を展開した項目一覧(&本文).ok()?.iter().map(|表記| 取り込みの項目::表記から読む(表記)).collect::<Option<Vec<_>>>()?;
+    (!項目一覧.iter().any(取り込みの項目::名前にメタ変数を含むか)).then_some(項目一覧)
 }

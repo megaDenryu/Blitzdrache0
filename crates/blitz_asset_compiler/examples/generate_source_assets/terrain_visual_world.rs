@@ -32,7 +32,7 @@ const 辺分割数: u16 = 64;
 /// 隣接チャンクと重ねる縁の幅。中央差分で法線を求めるのに前後1点あれば足りる。
 const 重なり幅: u8 = 1;
 
-/// 目視見本のシーンを指す安定ID。`terrain`で始めることが、この世界の空方針と間接照明方針を天空の遠方環境にする。
+/// 目視見本のシーンを指す安定ID。`terrain`で始めることが、この世界の空の宣言と間接照明方針を天空の遠方環境にする。
 /// 参照: `crates/blitz_app/src/app/time_of_day/scene_policy.rs`
 const シーン名: &str = "terrain_visual";
 

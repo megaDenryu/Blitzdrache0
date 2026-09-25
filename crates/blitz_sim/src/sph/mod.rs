@@ -10,7 +10,7 @@ mod step;
 mod step_tests;
 
 pub use density::粒子法流体の密度を計算する;
-pub use error::粒子法流体仕様エラー;
+pub use error::粒子法流体の計算条件エラー;
 pub use particle::流体粒子;
-pub use spec::粒子法流体仕様;
+pub use spec::粒子法流体の計算条件;
 pub use step::粒子法流体を一ステップ進める;

@@ -7,7 +7,7 @@ use blitz_math::{キログラム, メートル, ワールド, 位置, 秒};
 
 use super::pipeline_def::剛体の接触の一刻みの工程;
 use super::pipeline_history::接触履歴の保持;
-use super::pipeline_policy::接触の品質と時間方針;
+use super::pipeline_policy::接触の品質と時間の構成値;
 use super::pipeline_solver::接触の解法ソルバー;
 use super::pipeline_space::接触の空間と世界;
 use crate::constraint_graph::一様な加速度;
@@ -58,7 +58,7 @@ pub(super) fn テスト工程を作る(細分の数: u32) -> (剛体の接触の
     let 速度段階 = 接触の速度段階::生成する(細分幅, blitz_math::メートル毎秒::生成する(0.01));
     let 空間索引 = 動く形の空間索引::ゆとりの幅から生成する(箱に持たせるゆとりの幅::人型と家具の大きさに見合う既定の幅());
 
-    let Ok(方針) = 接触の品質と時間方針::生成する(基本幅, n, 細分幅, 品質, 混合則) else {
+    let Ok(方針) = 接触の品質と時間の構成値::生成する(基本幅, n, 細分幅, 品質, 混合則) else {
         panic!("休止の閾値を細分の本数へ写せない刻み幅である");
     };
     let mut 工程 = 剛体の接触の一刻みの工程::生成する(方針, 接触の空間と世界::生成する(空間索引), 接触履歴の保持::見込みの接触点の数で生成する(8), 接触の解法ソルバー::生成する(予測器, 速度段階));

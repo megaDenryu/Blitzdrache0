@@ -18,7 +18,7 @@ pub(in crate::renderer::scene_draw_resources) use descriptor_pick::対象のデ�
 
 pub(super) struct チャンク描画資源 {
     id: 描画束ID, // 呼び出し元が与えた識別子。解除するときはこの値で対象を特定する
-    影方針: crate::描画束の影方針,
+    影方針: crate::描画束の影の出し方,
     描画対象資源一覧: Vec<描画対象資源>,
     単一個体用可視id列: 可視ID列バッファ, // 値0だけの可視ID列。内容は生成後に変えない
     ディスクリプタ: 描画対象ディスクリプタプール,
@@ -33,7 +33,7 @@ impl チャンク描画資源 {
         self.描画対象資源一覧.len()
     }
 
-    pub(super) fn 影方針(&self) -> crate::描画束の影方針 {
+    pub(super) fn 影方針(&self) -> crate::描画束の影の出し方 {
         self.影方針
     }
 

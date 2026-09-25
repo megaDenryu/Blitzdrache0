@@ -81,7 +81,7 @@ pub use surface_material::layer_texture_set::{
 };
 pub use surface_material::weights::{地表層の数, 地表材質の重み格子, 地表材質の重み格子を格納する, 地表材質の重み格子を読み込む, 地表材質の重み格子エラー, 地表材質の重み格子諸元};
 pub use texture_storage::{
-    rgba8の縮小段をbc1のバイト列へ符号化する, srgbの色として縦横を半分に縮める, srgbの色として縮小段の連なりを作る, srgbの色の全段をbc1のバイト列へ符号化する, テクスチャ格納方針, 方針と役割に従って原寸を格納済みテクスチャへ焼く, 材質テクスチャ役割,
+    rgba8の縮小段をbc1のバイト列へ符号化する, srgbの色として縦横を半分に縮める, srgbの色として縮小段の連なりを作る, srgbの色の全段をbc1のバイト列へ符号化する, テクスチャ格納の方式, 方針と役割に従って原寸を格納済みテクスチャへ焼く, 材質テクスチャ役割,
 };
 pub use uniform_scale::寸法を合わせる一様倍率;
 pub use vegetation::同居植生の指定;

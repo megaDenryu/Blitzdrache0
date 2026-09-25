@@ -1,0 +1,61 @@
+//! 実装が対象にする型(`impl` の見出しの ` for ` の後ろか、固有の実装の型の表記)を読んだ値。参照と `Pin` を外した後の型の表記を持つ。
+//! 対象の型の名前はパスの最後の要素で読む(`crate::a::規則<T>` の名前は `規則`)。先頭の識別子で読むと `crate`・`self` を型名と取り違えるためである。
+//! 対象を丸括弧で囲んだ型(`impl 変更 for (規則)`)は、囲みを外した型と同じ型であるため、外してから読む。要素が2つ以上のタプル(`(規則, u8)`)は外さない。
+
+use super::super::declaration_brackets::最上位のカンマで分ける;
+use super::super::line_matching::{パスの最後の名前, 参照の参照先, 可変参照の参照先};
+
+/// 実装が対象にする型。参照と `Pin` を外した後の型の表記を持つ。
+pub struct 実装の対象の型 {
+    表記: String,
+}
+
+impl 実装の対象の型 {
+    pub(super) fn 表記から読む(表記: &str) -> Self {
+        let 表記 = 丸括弧を外す(表記);
+        let 参照先 = 参照の参照先(表記).or_else(|| pinの中身(表記).and_then(可変参照の参照先)).unwrap_or(表記);
+        Self {
+            表記: 丸括弧を外す(参照先).to_string()
+        }
+    }
+
+    /// 参照と `Pin<..>` と囲みの丸括弧を、外せなくなるまで繰り返し外した表記(`&mut &mut T`・`Pin<&mut T>`・`&(T)` なら `T`)。全称の実装の判定が使う。
+    pub fn 参照とpinを外しきった表記(&self) -> &str {
+        let mut 表記 = self.表記.as_str();
+        while let Some(中) = 参照の参照先(表記).or_else(|| pinの中身(表記)) {
+            表記 = 丸括弧を外す(中);
+        }
+        表記
+    }
+
+    /// 参照と `Pin` と囲みの丸括弧を外した後の型の表記そのもの。
+    pub fn 表記(&self) -> &str {
+        &self.表記
+    }
+
+    /// 型のパスの最後の要素の名前。定義をたどる鍵である。
+    pub fn 名前(&self) -> &str {
+        パスの最後の名前(&self.表記)
+    }
+}
+
+// 表記を囲む丸括弧を、中が1つの型である限り外す(`((規則))` は `規則`)。単位型 `()` とタプルは外さない。
+fn 丸括弧を外す(表記: &str) -> &str {
+    let mut 表記 = 表記.trim();
+    while let Some(中) = 表記.strip_prefix('(').and_then(|残り| 残り.strip_suffix(')')) {
+        if 中.trim().is_empty() || 最上位のカンマで分ける(中).len() > 1 {
+            break;
+        }
+        表記 = 中.trim();
+    }
+    表記
+}
+
+// `Pin<X>`(`std::pin::Pin<X>` を含む)の中身 `X`。`Pin` でなければ無い。
+fn pinの中身(表記: &str) -> Option<&str> {
+    let (パス, 残り) = 表記.split_once('<')?;
+    if パスの最後の名前(パス) != "Pin" {
+        return None;
+    }
+    残り.strip_suffix('>')
+}

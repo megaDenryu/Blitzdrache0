@@ -3,9 +3,13 @@
 use std::ffi::OsStr;
 use std::path::{Component, Path};
 
+use super::declaration_brackets::{最上位のカンマで分ける, 見出しの括弧の深さ};
+use super::declaration_prefix::先頭の属性を読み飛ばす;
+use super::identifier_boundary::識別子の文字か;
+
 /// 先頭から識別子の文字(英数字・下線・非ASCIIの文字)が続く限りを返す。
 pub fn 先頭の識別子(残り: &str) -> String {
-    残り.chars().take_while(|文字| 文字.is_alphanumeric() || *文字 == '_').collect()
+    残り.chars().take_while(|文字| 識別子の文字か(*文字)).collect()
 }
 
 /// `語` が行の中に、前が行頭・空白・`)` で、後ろが識別子の続きでない形で現れるか。
@@ -40,42 +44,91 @@ pub fn クレート名(パス: &Path) -> &OsStr {
     }
 }
 
-/// `impl 型名 {`・`impl<T> 型名<T> {` の行か。` for ` を含む行はトレイト実装であり、含めない。
-pub fn 固有のimplの宣言か(行: &str, 型名: &str) -> bool {
-    let 残り = 行.trim_start().strip_prefix("impl").unwrap_or_default();
-    let 残り = if 残り.starts_with('<') { 残り.find('>').map_or("", |位置| &残り[位置 + 1..]) } else { 残り };
-    !行.contains(" for ") && 先頭の識別子(残り.trim_start()) == 型名
+/// `impl` の予約語より後ろの表記。前に同じ行で書いた属性(`#[allow(x)] impl`)と `unsafe` があれば読み飛ばす。`impl` の見出しの行でなければ無い。`impl` の見出しの読み口はすべてこの1つを共有する。
+pub fn implの予約語より後ろ(行: &str) -> Option<&str> {
+    let 行 = 先頭の属性を読み飛ばす(行);
+    let 行 = 行.strip_prefix("unsafe").filter(|残り| 残り.starts_with(char::is_whitespace)).map_or(行, str::trim_start);
+    let 残り = 行.strip_prefix("impl")?;
+    (残り.starts_with(char::is_whitespace) || 残り.starts_with('<')).then_some(残り)
 }
 
-/// トレイトの実装の行(`impl トレイト for 型`・`impl<T> トレイト for 型<T>`)の、トレイトを書く位置(前後の空白を除いたもの)。トレイトの実装の行でなければ無い。
-pub fn トレイト実装の行のトレイトの位置(行: &str) -> Option<&str> {
-    let 残り = 行.trim_start().strip_prefix("impl")?;
-    if 残り.chars().next().is_some_and(|文字| 文字.is_alphanumeric() || 文字 == '_') {
-        return None;
+/// 先頭の型引数(`<...>`)の内側と、それより後ろの表記。先頭が `<` でなければ内側は空である。閉じなければどちらも空である。
+/// 括弧の深さは宣言の見出しの数え方(`declaration_brackets.rs`)で数える。入れ子の山括弧を数え、`->` の `>` と、丸括弧と角括弧の中の `<` と `>`(`境界<[u8; (1 < 2) as usize]>`)は数えない。
+pub fn 先頭の型引数を分ける(表記: &str) -> (&str, &str) {
+    if !表記.starts_with('<') {
+        return ("", 表記);
     }
-    let 残り = if 残り.starts_with('<') { 残り.find('>').map_or("", |位置| &残り[位置 + 1..]) } else { 残り };
-    let 終わり = 残り.find(" for ")?;
-    Some(残り[..終わり].trim())
+    let mut 括弧 = 見出しの括弧の深さ::default();
+    for (位置, 文字) in 表記.char_indices() {
+        括弧.括弧として数える(文字);
+        if 文字 == '>' && 括弧.最上位か() {
+            return (&表記[1..位置], &表記[位置 + 1..]);
+        }
+    }
+    ("", "")
 }
 
-/// トレイトの実装の行が対象にする型の名前(` for ` の後ろの識別子。`impl 表示 for 位置<T> {` なら `位置`)。トレイトの実装の行でなければ無い。
-pub fn トレイト実装の行の対象の型名(行: &str) -> Option<String> {
-    トレイト実装の行のトレイトの位置(行)?;
-    let 位置 = 行.find(" for ")?;
-    let 型名 = 先頭の識別子(行[位置 + " for ".len()..].trim_start());
-    (!型名.is_empty()).then_some(型名)
+/// 型引数の並び(山括弧の内側)から、寿命を除いた型引数と定数の引数の名前の一覧(`'a, T: Clone, const N: usize` なら `T` と `N`)。
+/// 名前は、各引数の頭の外側の属性(`#[cfg(..)]`)を読み飛ばした後の先頭の識別子であり、定数の引数なら `const` の後ろの識別子である。属性を読み飛ばすのは、`impl<#[cfg(..)] T: 境界> トレイト for T` の `T` を落とすと全称の実装を見落とすためである。
+pub fn 型の引数の名前一覧(型引数: &str) -> Vec<String> {
+    最上位のカンマで分ける(型引数)
+        .into_iter()
+        .map(先頭の属性を読み飛ばす)
+        .filter(|引数| !引数.starts_with('\''))
+        .map(|引数| 引数.strip_prefix("const").filter(|後ろ| 後ろ.starts_with(char::is_whitespace)).map_or(引数, str::trim_start))
+        .map(先頭の識別子)
+        .filter(|名前| !名前.is_empty())
+        .collect()
 }
 
-/// トレイトの実装の行が対象にする型の表記そのもの(` for ` の後ろから本体の `{` または `where` の前まで。`impl<T, E> M結果 for std::result::Result<T, E> {` なら `std::result::Result<T, E>`)。トレイトの実装の行でなければ無い。
-pub fn トレイト実装の行の対象の型の表記(行: &str) -> Option<&str> {
-    トレイト実装の行のトレイトの位置(行)?;
-    let 位置 = 行.find(" for ")?;
-    let 残り = &行[位置 + " for ".len()..];
-    let 終わり = 残り.find('{').or_else(|| 残り.find(" where ")).unwrap_or(残り.len());
-    Some(残り[..終わり].trim())
+/// 型やトレイトのパスの最後の要素の名前(`crate::a::規則<T>` なら `規則`、`FnOnce(u8)` なら `FnOnce`)。
+pub fn パスの最後の名前(表記: &str) -> &str {
+    let パス = 表記.split(['<', '(']).next().unwrap_or_default();
+    パス.rsplit("::").next().unwrap_or_default().trim()
 }
 
-/// その型に属する `impl` の宣言の行か。固有の `impl 型名 {` と、その型を対象にするトレイトの実装 `impl トレイト for 型名 {` の両方を数える。
-pub fn 型に属するimplの宣言か(行: &str, 型名: &str) -> bool {
-    固有のimplの宣言か(行, 型名) || トレイト実装の行の対象の型名(行).is_some_and(|対象| 対象 == 型名)
+/// 表記が1つの識別子(頭に `$` があってもよい)なら、その表記。前後の空白は除く。それ以外(`[規則]`・`dyn 変更`・`&'a 規則`)は名前で読めないとして無い。
+pub fn 名前で読める表記(表記: &str) -> Option<String> {
+    let 表記 = 表記.trim();
+    let 本体 = 表記.strip_prefix('$').unwrap_or(表記);
+    (!本体.is_empty() && 本体.chars().all(識別子の文字か)).then(|| 表記.to_string())
+}
+
+/// 可変参照の型(`&mut X`・`&'a mut X`)の参照先 `X` の表記。可変参照の型でなければ無い。
+pub fn 可変参照の参照先(表記: &str) -> Option<&str> {
+    寿命より後ろ(表記)?.strip_prefix("mut").filter(|後ろ| 後ろ.starts_with(char::is_whitespace)).map(str::trim_start)
+}
+
+/// 参照の型(`&X`・`&'a X`・`&mut X`・`&'a mut X`)の参照先 `X` の表記。参照の型でなければ無い。
+pub fn 参照の参照先(表記: &str) -> Option<&str> {
+    可変参照の参照先(表記).or_else(|| 寿命より後ろ(表記))
+}
+
+/// 寿命の引用符 `'` より後ろの表記から寿命の名前を読み飛ばした残り。生の識別子の寿命(`'r#fn`)は前置きの `r#` も名前の一部として読み飛ばす。
+/// 識別子の文字だけを読み飛ばすと、`&'r#fn mut self` の `r` だけを飛ばし、残りの `#fn mut self` を可変参照と読まないためである。
+pub fn 寿命の名前より後ろ(引用符の後ろ: &str) -> &str {
+    let 名前 = 引用符の後ろ.strip_prefix("r#").filter(|後ろ| 後ろ.starts_with(識別子の文字か)).unwrap_or(引用符の後ろ);
+    名前.trim_start_matches(識別子の文字か)
+}
+
+// 参照の型の `&` と寿命より後ろ(`mut X` か `X`)。参照の型でなければ無い。
+fn 寿命より後ろ(表記: &str) -> Option<&str> {
+    let 残り = 表記.trim_start().strip_prefix('&')?.trim_start();
+    Some(match 残り.strip_prefix('\'') {
+        Some(寿命) => 寿命の名前より後ろ(寿命).trim_start(),
+        None => 残り,
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{参照の参照先, 可変参照の参照先};
+
+    #[test]
+    fn 生の識別子の寿命も読み飛ばして参照先を読む() {
+        for 寿命 in ["", "'a ", "'static ", "'r#fn ", "'r#impl "] {
+            assert_eq!(可変参照の参照先(&format!("&{寿命}mut Self")), Some("Self"), "{寿命}");
+            assert_eq!(参照の参照先(&format!("&{寿命}Self")), Some("Self"), "{寿命}");
+        }
+    }
 }

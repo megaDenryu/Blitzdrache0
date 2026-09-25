@@ -2,7 +2,7 @@
 
 use thiserror::Error;
 
-/// 布仕様の検証・布データ構築で起こりうる失敗。
+/// 布の生成条件の検証・布データ構築で起こりうる失敗。
 #[derive(Debug, Clone, Copy, PartialEq, Error)]
 pub enum 布生成エラー {
     #[error("一辺粒子数は2以上でなければならない(指定値: {指定値})")]

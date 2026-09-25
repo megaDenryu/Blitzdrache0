@@ -6,7 +6,7 @@ use blitz_math::{キログラム, ニュートン秒, メートル, メートル
 
 use super::pipeline_def::剛体の接触の一刻みの工程;
 use super::pipeline_history::接触履歴の保持;
-use super::pipeline_policy::接触の品質と時間方針;
+use super::pipeline_policy::接触の品質と時間の構成値;
 use super::pipeline_solver::接触の解法ソルバー;
 use super::pipeline_space::接触の空間と世界;
 use crate::constraint_graph::一様な加速度;
@@ -79,7 +79,7 @@ fn 重力も接触の物性も持たない細分数4の工程を組む() -> 剛�
     let Ok(混合則) = 混合則の組み立て::生成する().組み立てる() else {
         panic!("空の混合則を組み立てられない");
     };
-    let Ok(方針) = 接触の品質と時間方針::生成する(基本幅, n, 細分幅, 品質, 混合則) else {
+    let Ok(方針) = 接触の品質と時間の構成値::生成する(基本幅, n, 細分幅, 品質, 混合則) else {
         panic!("休止の閾値を細分の本数へ写せない刻み幅である");
     };
     let 予測器 = 細分の予測器::生成する(細分幅, 一様な加速度::零(), ジャイロ項の扱い::陰的に一段解く);

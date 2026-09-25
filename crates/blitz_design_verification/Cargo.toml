@@ -1,0 +1,13 @@
+[package]
+name = "blitz_design_verification"
+edition.workspace = true
+version.workspace = true
+
+# 通常依存は blitz_design だけである(Issue #174 のオーナー裁定)。命題と証拠の正本を1つに保つためのクレートであり、
+# ドメインのクレートも xtask も知らない。ドメイン側はこのクレートを dev-dependencies で使い、
+# 逆向きの依存(このクレートがドメインを知ること)は白リストが禁じる。
+[dependencies]
+blitz_design = { path = "../blitz_design" }
+
+[lints]
+workspace = true
