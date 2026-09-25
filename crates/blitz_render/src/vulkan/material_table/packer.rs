@@ -23,7 +23,7 @@ use super::record_index::材質レコード添字;
 use super::texture_registry::テクスチャ台帳;
 use super::texture_role::{役割の数, 材質テクスチャ役割};
 use super::texture_slot::テクスチャスロット;
-use fallback_slots::正準フォールバック解決;
+use fallback_slots::正準の既定テクスチャの解決;
 
 pub(in crate::vulkan::material_table) struct 梱包結果 {
     pub(in crate::vulkan::material_table) レコード列: Vec<世代内材質レコード>,
@@ -31,14 +31,14 @@ pub(in crate::vulkan::material_table) struct 梱包結果 {
 }
 
 pub(in crate::vulkan::material_table) fn 材質一覧を梱包する(
-    材質一覧: &[梱包対象材質<'_>], 台帳: &テクスチャ台帳, フォールバック: &正準フォールバック解決
+    材質一覧: &[梱包対象材質<'_>], 台帳: &テクスチャ台帳, 正準の既定テクスチャ: &正準の既定テクスチャの解決
 ) -> Result<梱包結果, 材質資源表エラー> {
     let mut レコード列 = Vec::with_capacity(材質一覧.len());
     let mut 材質別解決 = HashMap::with_capacity(材質一覧.len());
     for 材質 in 材質一覧 {
         let 添字番号 = u32::try_from(レコード列.len()).unwrap_or_else(|_| panic!("材質レコードの件数がu32に収まらない"));
-        let (レコード, 変種キー) = 一件を梱包する(材質, 台帳, フォールバック)?;
-        validate::梱包した材質レコードの整合を検証する(材質.材質id(), &レコード, フォールバック)?;
+        let (レコード, 変種キー) = 一件を梱包する(材質, 台帳, 正準の既定テクスチャ)?;
+        validate::梱包した材質レコードの整合を検証する(材質.材質id(), &レコード, 正準の既定テクスチャ)?;
         let 解決 = 世代内材質解決::生成する(材質レコード添字::生成する(添字番号), 変種キー);
         if 材質別解決.insert(材質.材質id(), 解決).is_some() {
             return Err(材質資源表エラー::材質IDの重複 { 材質id: 材質.材質id().値() });
@@ -53,10 +53,10 @@ pub(in crate::vulkan::material_table) fn 材質一覧を梱包する(
 /// 台帳に無いIDは世代の構築が常駐させ損ねた場合だけであり、材質の入力の誤りではない。
 /// 表面描画状態が常に不透明両面なのは、実物のシーンのパイプラインがカリングを無効にしており、現行の入力境界がそれ以外を実行時形式へ運ばないためである(参照: `material_variant`)。
 fn 一件を梱包する(
-    材質: &梱包対象材質<'_>, 台帳: &テクスチャ台帳, フォールバック: &正準フォールバック解決
+    材質: &梱包対象材質<'_>, 台帳: &テクスチャ台帳, 正準の既定テクスチャ: &正準の既定テクスチャの解決
 ) -> Result<(世代内材質レコード, crate::vulkan::material_variant::材質変種キー), 材質資源表エラー> {
     let mut 有無 = [false; 役割の数];
-    let mut 役割別スロット: [テクスチャスロット; 役割の数] = std::array::from_fn(|添字| フォールバック.用途で引く(材質テクスチャ役割::全役割[添字].正準フォールバック用途()));
+    let mut 役割別スロット: [テクスチャスロット; 役割の数] = std::array::from_fn(|添字| 正準の既定テクスチャ.用途で引く(材質テクスチャ役割::全役割[添字].正準の既定テクスチャの用途()));
     for 役割 in 材質テクスチャ役割::全役割 {
         let Some(指定) = 材質.役割の指定(役割) else {
             continue;

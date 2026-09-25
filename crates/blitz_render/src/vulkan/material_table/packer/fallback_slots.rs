@@ -5,19 +5,19 @@
 //! 世代ごとに発番の順番が変わってもよく、外はスロットの値を知らずに済む。
 //! 生成は世代の構築が行う(画像を常駐させた本人がスロットを持つため)。
 
-use crate::vulkan::material_table::fallback_usage::正準フォールバック用途;
+use crate::vulkan::material_table::fallback_usage::正準の既定テクスチャの用途;
 use crate::vulkan::material_table::texture_slot::テクスチャスロット;
 
-pub(in crate::vulkan::material_table) struct 正準フォールバック解決 {
-    用途別スロット: [テクスチャスロット; 正準フォールバック用途::全用途.len()], // `正準フォールバック用途::全用途`と同じ並びで持つ
+pub(in crate::vulkan::material_table) struct 正準の既定テクスチャの解決 {
+    用途別スロット: [テクスチャスロット; 正準の既定テクスチャの用途::全用途.len()], // `正準フォールバック用途::全用途`と同じ並びで持つ
 }
 
-impl 正準フォールバック解決 {
-    pub(in crate::vulkan::material_table) const fn 生成する(用途別スロット: [テクスチャスロット; 正準フォールバック用途::全用途.len()]) -> Self {
+impl 正準の既定テクスチャの解決 {
+    pub(in crate::vulkan::material_table) const fn 生成する(用途別スロット: [テクスチャスロット; 正準の既定テクスチャの用途::全用途.len()]) -> Self {
         Self { 用途別スロット }
     }
 
-    pub(super) fn 用途で引く(&self, 用途: 正準フォールバック用途) -> テクスチャスロット {
+    pub(super) fn 用途で引く(&self, 用途: 正準の既定テクスチャの用途) -> テクスチャスロット {
         self.用途別スロット[用途.配列添字()]
     }
 }

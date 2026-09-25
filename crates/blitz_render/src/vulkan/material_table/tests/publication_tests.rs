@@ -12,7 +12,7 @@ use crate::vulkan::material_table::generation_id::資源表世代ID;
 use crate::vulkan::material_table::ledger::資源表世代台帳;
 
 use super::fixture::検査用供給元;
-use super::material_fixture::{フォールバックと1枚だけの容量, 余裕のあるレイアウト容量, 検査用素材, 画像を選んだ材質};
+use super::material_fixture::{余裕のあるレイアウト容量, 検査用素材, 正準の既定テクスチャと1枚だけの容量, 画像を選んだ材質};
 
 fn 世代を作る(供給元: &mut 検査用供給元, 世代id: 資源表世代ID) -> crate::vulkan::material_table::generation::資源表世代<u32, ()> {
     資源表世代を構築する(供給元, 世代id, 余裕のあるレイアウト容量(), &[]).unwrap()
@@ -62,7 +62,7 @@ fn 構築に失敗した後は次の番号を発行して公開できる() {
 fn 容量超過で登録が拒まれた後も次の世代を作り直して公開できる() {
     let 素材 = 検査用素材(テクスチャ用途::色);
     let 別素材 = 検査用素材(テクスチャ用途::線形データ);
-    let 容量 = フォールバックと1枚だけの容量();
+    let 容量 = 正準の既定テクスチャと1枚だけの容量();
     let mut 供給元 = 検査用供給元::常に成功する();
     let mut 台帳 = 資源表世代台帳::最初の世代を公開する(資源表世代を構築する(&mut 供給元, 資源表世代ID::最初(), 容量, &[]).unwrap());
 

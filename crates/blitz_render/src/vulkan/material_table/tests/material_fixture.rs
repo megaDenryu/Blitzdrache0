@@ -6,7 +6,7 @@
 use crate::descriptor_indexing_limits::ディスクリプタ索引上限;
 use crate::texture_material::{テクスチャ用途, テクスチャ素材};
 use crate::vulkan::material_table::capacity::テクスチャ表レイアウト容量;
-use crate::vulkan::material_table::fallback_usage::正準フォールバック用途;
+use crate::vulkan::material_table::fallback_usage::正準の既定テクスチャの用途;
 use crate::vulkan::material_table::stage_reserve::画素段の予約枠;
 use crate::vulkan::material_table::{image_id::画像ID, material_id::大域材質ID, pack_input::梱包対象材質, texture_id::テクスチャID, texture_spec::テクスチャ指定};
 use crate::vulkan::material_variant::シェーディングモデル種別;
@@ -22,9 +22,9 @@ pub(super) fn 余裕のあるレイアウト容量() -> テクスチャ表レイ
 }
 
 /// 正準フォールバックの全用途に加えてテクスチャ1枚だけが入る容量。2枚目の固有テクスチャで超過する。
-pub(super) fn フォールバックと1枚だけの容量() -> テクスチャ表レイアウト容量 {
+pub(super) fn 正準の既定テクスチャと1枚だけの容量() -> テクスチャ表レイアウト容量 {
     let 上限 = ディスクリプタ索引上限::生成する(100, 100, 100);
-    let 枚数 = u32::try_from(正準フォールバック用途::全用途.len()).unwrap() + 1;
+    let 枚数 = u32::try_from(正準の既定テクスチャの用途::全用途.len()).unwrap() + 1;
     テクスチャ表レイアウト容量::決める(上限, 画素段の予約枠::現行のシーン画素段(), 枚数).unwrap()
 }
 

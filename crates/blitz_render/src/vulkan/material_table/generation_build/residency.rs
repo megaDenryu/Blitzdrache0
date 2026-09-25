@@ -4,9 +4,9 @@
 //! 不変条件: 画像を列へ足す順番と台帳が発番するスロットの番号は常に一致する。ここが唯一その2つを同時に進める場所である。
 
 use crate::error::レンダラーエラー;
-use crate::vulkan::material_table::fallback_usage::正準フォールバック用途;
+use crate::vulkan::material_table::fallback_usage::正準の既定テクスチャの用途;
 use crate::vulkan::material_table::pack_input::梱包対象材質;
-use crate::vulkan::material_table::packer::fallback_slots::正準フォールバック解決;
+use crate::vulkan::material_table::packer::fallback_slots::正準の既定テクスチャの解決;
 use crate::vulkan::material_table::residency_count::世代の常駐枚数;
 use crate::vulkan::material_table::supplier::常駐テクスチャ供給元;
 use crate::vulkan::material_table::texture_registry::{スロットの引き当て, テクスチャ台帳};
@@ -15,7 +15,7 @@ use crate::vulkan::material_table::texture_slot::テクスチャスロット;
 
 pub(super) struct 常駐の結果 {
     pub(super) 台帳: テクスチャ台帳,
-    pub(super) フォールバック: 正準フォールバック解決,
+    pub(super) 正準の既定テクスチャ: 正準の既定テクスチャの解決,
 }
 
 pub(super) fn 材質一覧の画像を常駐させて台帳を組み立てる<供給元: 常駐テクスチャ供給元>(
@@ -25,7 +25,7 @@ pub(super) fn 材質一覧の画像を常駐させて台帳を組み立てる<�
     材質一覧: &[梱包対象材質<'_>],
 ) -> Result<常駐の結果, レンダラーエラー> {
     let mut 台帳 = テクスチャ台帳::新規();
-    let フォールバック = フォールバックを常駐させる(供給元, 画像集合, &mut 台帳, 常駐枚数)?;
+    let 正準の既定テクスチャ = 正準の既定テクスチャを常駐させる(供給元, 画像集合, &mut 台帳, 常駐枚数)?;
     for 材質 in 材質一覧 {
         for 役割 in 材質テクスチャ役割::全役割 {
             let Some(指定) = 材質.役割の指定(役割) else {
@@ -36,24 +36,24 @@ pub(super) fn 材質一覧の画像を常駐させて台帳を組み立てる<�
             }
         }
     }
-    Ok(常駐の結果 { 台帳, フォールバック })
+    Ok(常駐の結果 { 台帳, 正準の既定テクスチャ })
 }
 
 /// フォールバックを先に常駐させるのは、材質が1件も無い世代でも表が実在する画像だけを持つ状態にするためである。
-fn フォールバックを常駐させる<供給元: 常駐テクスチャ供給元>(
+fn 正準の既定テクスチャを常駐させる<供給元: 常駐テクスチャ供給元>(
     供給元: &mut 供給元,
     画像集合: &mut Vec<供給元::常駐画像>,
     台帳: &mut テクスチャ台帳,
     常駐枚数: 世代の常駐枚数,
-) -> Result<正準フォールバック解決, レンダラーエラー> {
-    let mut 用途別スロット = Vec::with_capacity(正準フォールバック用途::全用途.len());
-    for 用途 in 正準フォールバック用途::全用途 {
+) -> Result<正準の既定テクスチャの解決, レンダラーエラー> {
+    let mut 用途別スロット = Vec::with_capacity(正準の既定テクスチャの用途::全用途.len());
+    for 用途 in 正準の既定テクスチャの用途::全用途 {
         let スロット = 台帳.台帳外のスロットを発番する(常駐枚数)?;
         積んで並びを確かめる(供給元, 画像集合, スロット, &用途.素材を作る())?;
         用途別スロット.push(スロット);
     }
-    let 用途別スロット: [テクスチャスロット; 正準フォールバック用途::全用途.len()] = 用途別スロット.try_into().unwrap_or_else(|_| panic!("正準フォールバックの用途数とスロット数が食い違った"));
-    Ok(正準フォールバック解決::生成する(用途別スロット))
+    let 用途別スロット: [テクスチャスロット; 正準の既定テクスチャの用途::全用途.len()] = 用途別スロット.try_into().unwrap_or_else(|_| panic!("正準フォールバックの用途数とスロット数が食い違った"));
+    Ok(正準の既定テクスチャの解決::生成する(用途別スロット))
 }
 
 fn 積んで並びを確かめる<供給元: 常駐テクスチャ供給元>(

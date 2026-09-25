@@ -4,7 +4,7 @@
 #![allow(clippy::unwrap_used)]
 
 use crate::texture_material::テクスチャ用途;
-use crate::vulkan::material_table::fallback_usage::正準フォールバック用途;
+use crate::vulkan::material_table::fallback_usage::正準の既定テクスチャの用途;
 use crate::vulkan::material_table::generation::資源表世代;
 use crate::vulkan::material_table::generation_build::資源表世代を構築する;
 use crate::vulkan::material_table::generation_id::資源表世代ID;
@@ -41,12 +41,12 @@ fn テクスチャ無しの材質は用途ごとの実在スロットを指し�
     let mut 重複除去 = 役割別スロット(レコード);
     重複除去.sort_unstable();
     重複除去.dedup();
-    assert_eq!(重複除去.len(), 正準フォールバック用途::全用途.len(), "用途ごとに別の既定テクスチャを指す");
+    assert_eq!(重複除去.len(), 正準の既定テクスチャの用途::全用途.len(), "用途ごとに別の既定テクスチャを指す");
     assert_eq!(役割別スロット(レコード), 役割別スロット(レコードを引く(&世代, 2)), "同じ世代の中では用途ごとのフォールバックは1つに定まる");
 }
 
 #[test]
-fn テクスチャ有りの役割だけビットが立ちフォールバックと違うスロットを指す() {
+fn テクスチャ有りの役割だけビットが立ち正準の既定テクスチャと違うスロットを指す() {
     let 素材 = 検査用素材(テクスチャ用途::色);
     let mut 供給元 = 検査用供給元::常に成功する();
     let 材質一覧 = [材質を作る(1, Some(&素材)), 材質を作る(2, None)];
