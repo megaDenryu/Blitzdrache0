@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import { テンポの上限, テンポの下限, パターンのステップ数 } from '../../../生成/編集資源契約.ts'
+import { テンポの上限, テンポの下限, 小節あたりのステップ数 } from '../../../生成/編集資源契約.ts'
 import {
     パターン格子を進行に合わせて掃除する,
     初期楽曲を生成する,
@@ -41,7 +41,7 @@ describe('見本の曲', () => {
         for (const [位置, トラック格子] of パターン.格子.entries()) {
             assert.strictEqual(トラック格子.行一覧.length, 楽曲.トラック構成[位置].音の並び.値.length)
             for (const 行 of トラック格子.行一覧) {
-                assert.strictEqual(行.length, パターンのステップ数)
+                assert.strictEqual(行.length, パターン.小節数 * 小節あたりのステップ数)
                 for (const セル値 of 行) {
                     assert.ok(Number.isInteger(セル値) && セル値 >= 0 && セル値 <= 4, `セル値=${セル値}`)
                 }
