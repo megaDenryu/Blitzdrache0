@@ -6,7 +6,7 @@
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
 
 // 2点の距離(メートル)の下限。CPU正本の`向きが定まる最小の距離のメートル`の写しであり、`cargo xtask conform`が突き合わせる。
-// 距離の2乗でなく距離で比べるのは、CPU正本と同じ演算の順にし、定数の綴りをそのまま突き合わせられるようにするためである。
+// 距離の2乗でなく距離で比べるのは、CPU正本と同じ演算の順にし、定数の表記をそのまま突き合わせられるようにするためである。
 static const float minimumDistance = 1e-6;
 
 struct DistanceProjection

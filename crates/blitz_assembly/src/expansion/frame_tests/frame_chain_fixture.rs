@@ -15,7 +15,7 @@ use super::frame_bay_joint_fixture::はめ口の宣言一覧;
 use super::frame_fixture::{名前, 識別子};
 use super::frame_rule_fixture::壁をはめる候補;
 
-/// 骨格の部品の綴り。試験が骨格と壁と屋根を数え分けるために使う。
+/// 骨格の部品の識別子。試験が骨格と壁と屋根を数え分けるために使う。
 pub(super) const 骨格の文字列: &str = "一間四方の骨格";
 pub(super) const 屋根の文字列: &str = "切妻屋根";
 pub(super) const 床板の文字列: &str = "床板";

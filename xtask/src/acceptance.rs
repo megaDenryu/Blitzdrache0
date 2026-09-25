@@ -12,7 +12,7 @@
 //! その置き場は`readback_dump`、
 //! 書き出された寸法の読み取りは`readback_size`、報告の1行と区画は`report_line`と`report_section`、
 //! アプリが読む実行時形式の置き場は`runtime_asset_root`、アプリの終了時報告は`exit_report`、
-//! 起こし方の綴りは`app_executable`、1回ぶんの起動の組み立てと実行は`app_launch`、
+//! 起こし方の文字列は`app_executable`、1回ぶんの起動の組み立てと実行は`app_launch`、
 //! 起動へ渡すシーンは`scene_name`、枚数は`frame_count`、それらと選択肢を束ねた指定は`launch_specification`、
 //! 判定を名指す名前とその名前が課す比べは`judgment_name`が、判定が比べる値は`judgment_value`が、
 //! 画像の寸法と画素の位置は`pixel_geometry`が、画素の数どうしの比は`pixel_ratio`が、1回の実行を指す名前は`run_name`が、

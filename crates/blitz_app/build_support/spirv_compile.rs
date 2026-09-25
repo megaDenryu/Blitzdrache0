@@ -23,7 +23,7 @@ const エントリ一覧: [エントリ指定; 2] = [
 ];
 
 /// `scene.slang`以外のシーンの画素段。ソースのファイル名と焼き上がりの名前の対応をここが正本として持つ。
-/// ホットリロードの側は同じ綴りを別に持つ(出力先が一時ディレクトリで別物であり、寄せると片方の意味が壊れる)。
+/// ホットリロードの側は同じ文字列を別に持つ(出力先が一時ディレクトリで別物であり、寄せると片方の意味が壊れる)。
 const 残りのシーンの画素段: [(&str, &str); 3] = [
     ("scene_distant_environment.slang", "scene_distant_environment_fragment.spv"),
     ("scene_surface_layer.slang", "scene_surface_layer_fragment.spv"),

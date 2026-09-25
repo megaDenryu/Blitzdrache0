@@ -6,7 +6,7 @@
 //! ほとんど変わらないため、時刻にも量子化にも依らずこの破れを落とせる判定は数そのものの照合だけである。
 //!
 //! 最小と最大の両方に一致を課すのは、実行の途中で1フレームだけ別の距離が混じった場合も落とすためである。
-//! 行の綴りは`crates/blitz_app/src/reports/aerial_farthest_distance.rs`の出力と一致させている。
+//! 行の文言は`crates/blitz_app/src/reports/aerial_farthest_distance.rs`の出力と一致させている。
 
 use crate::acceptance::{判定の名前, 検収エラー, 終了時報告};
 use crate::report_heading::報告の見出し;

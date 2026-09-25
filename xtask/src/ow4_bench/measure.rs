@@ -1,6 +1,6 @@
 //! 1回の実行の終了時報告から、物量計測が見る計器を取り出す工程。受け取るのは終了時報告、返すのはCPU区間・Vulkan確保・
 //! 世界メートル毎テクセルである。計数とストリーミング要約は既存の読み取りがあり、GPU時間の表は`gpu_table`が持つ。
-//! 区間名の綴りは`crates/blitz_app/src/reports.rs`の出力と一致させている。
+//! 区間名の文字列は`crates/blitz_app/src/reports.rs`の出力と一致させている。
 
 use crate::acceptance::{報告の区画, 報告の行, 検収エラー, 終了時報告};
 use crate::report_heading::報告の見出し;

@@ -1,5 +1,5 @@
 //! 大気のベイク済み画像生成パス数の報告行を読む工程。受け取るのは終了時報告と条件の名前、返すのはフレームごとの本数の列である。
-//! 行の綴りは`crates/blitz_app/src/reports/atmosphere_passes.rs`の出力と一致させている。
+//! 行の文言は`crates/blitz_app/src/reports/atmosphere_passes.rs`の出力と一致させている。
 
 #[cfg(test)]
 mod reading_tests;

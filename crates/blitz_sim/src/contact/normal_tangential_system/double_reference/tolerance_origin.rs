@@ -34,7 +34,7 @@ impl 参照計算の許容差の由来 {
         }
     }
 
-    /// 表へ書く由来の綴り。
+    /// 表へ書く由来の文字列。
     pub(in crate::contact) fn 文字列(&self) -> &'static str {
         match self {
             Self::倍精度の表現の刻みから導く => "倍精度の刻み",

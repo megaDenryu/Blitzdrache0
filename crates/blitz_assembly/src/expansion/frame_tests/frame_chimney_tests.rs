@@ -17,7 +17,7 @@ use super::frame_chimney_joint_fixture::煙突の一段の丈;
 use super::frame_ornament_fixture::背面へ必ず煙突を立てる規則;
 use super::frame_rule_fixture::規則と種で展開する;
 
-/// 煙突の部品の綴り。試験が段数を数えるために使う。
+/// 煙突の部品の識別子。試験が段数を数えるために使う。
 const 煙突の文字列: &str = "煙突";
 
 /// 積み足すものを1件も持たない煙突は、壁へ差し込んだ1段目だけで終わる。

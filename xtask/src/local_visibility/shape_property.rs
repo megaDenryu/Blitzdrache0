@@ -13,7 +13,7 @@ use super::parse::形の行;
 use super::tolerance;
 use crate::acceptance::{判定の名前, 判定の破れ};
 
-/// 判定できる形の名前。正本は`crates/blitz_app/src/reports/local_visibility.rs`が出す綴りである。
+/// 判定できる形の名前。正本は`crates/blitz_app/src/reports/local_visibility.rs`が出す文字列である。
 const 判定できる形の名前: &str = "平面・段差・球・凹面のいずれか";
 
 pub(super) fn 形の性質を検査する(行: &形の行) -> Result<(), 判定の破れ> {

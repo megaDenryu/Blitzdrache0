@@ -1,5 +1,5 @@
-//! 参照比較の報告の行の綴り。鍵は`鍵=値`の形で並べ、xtaskの検収(`xtask/src/cloth_xpbd_reference/parse.rs`)が同じ綴りで読む。
-//! 綴りの契約は`cargo xtask conform`の台帳(`xtask/src/conform/wording_contract/table/cloth_xpbd_reference.rs`)が守る。
+//! 参照比較の報告の行の文言。鍵は`鍵=値`の形で並べ、xtaskの検収(`xtask/src/cloth_xpbd_reference/parse.rs`)が同じ文字列で読む。
+//! 文言の契約は`cargo xtask conform`の台帳(`xtask/src/conform/wording_contract/table/cloth_xpbd_reference.rs`)が守る。
 
 use blitz_sim::布の参照計算;
 

@@ -2,7 +2,7 @@ import { style } from '@vanilla-extract/css'
 import { エディターCSS変数 } from '../../../../境界/index.ts'
 
 // 三次元表示の枠。建物の形が編集の主役であるため、エディタ領域の中で与えられた箱を丸ごと埋める
-// (高さを綴りで固定しない)。参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断14」
+// (高さを値で固定しない)。参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断14」
 export const 三次元の枠 = style({
     position: 'relative',
     width: '100%',

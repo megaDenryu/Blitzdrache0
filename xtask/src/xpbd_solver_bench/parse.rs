@@ -1,6 +1,6 @@
 //! 終了時報告から1標本ぶんの値を取り出す工程。受け取るのは終了時報告と実行番号と条件、返すのは区間ごとの分布と方式の観測を持つ標本である。
 //!
-//! 行の綴りは`crates/blitz_app/src/reports/xpbd_solver_bench/lines.rs`の出力と一致させ、GPU時間の表の読み方は
+//! 行の文言は`crates/blitz_app/src/reports/xpbd_solver_bench/lines.rs`の出力と一致させ、GPU時間の表の読み方は
 //! `depth_prepass_cost`と同じである(「平均 (p50 X / p95 Y / 標本N)」)。方式の観測の行は「見出し 鍵=値 鍵=値 …」の形である。
 //! 積むはずの区間が欠けていたら失敗にする。「測ろうとした方式と実際に走った方式が違う」ことを意味するためである。
 

@@ -15,7 +15,7 @@ use crate::verify::検証の出力ルート;
 const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(12);
 const 共通の選択肢: [&str; 4] = ["--unlit", "--no-post", "--report-draw-issue", "--report-memory"];
 
-/// 2条件のシーンの綴り。書き出しの基準名にも同じ綴りを使い、絵のファイル名からどちらの条件かが読めるようにする。
+/// 2条件のシーンの文字列。書き出しの基準名にも同じ文字列を使い、絵のファイル名からどちらの条件かが読めるようにする。
 const 二材質のシーンの名前: &str = "multi_material_two";
 const 単一材質のシーンの名前: &str = "multi_material_one";
 

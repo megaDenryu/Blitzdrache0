@@ -75,7 +75,7 @@ impl 段階A1の場面からの一つの変更 {
         }
     }
 
-    /// 見出しへ足す綴り。変更が無ければ空である。
+    /// 見出しへ足す文字列。変更が無ければ空である。
     pub(super) fn 文字列(&self) -> String {
         match self {
             Self::無し => String::new(),

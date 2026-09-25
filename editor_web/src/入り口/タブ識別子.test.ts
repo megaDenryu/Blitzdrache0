@@ -25,7 +25,7 @@ describe('タブ識別子の相互変換テスト', () => {
         assert.strictEqual(復元.z, -4)
     })
 
-    it('大域世界タブ識別子や不正な綴りではnullを返すこと', () => {
+    it('大域世界タブ識別子や不正な文字列ではnullを返すこと', () => {
         assert.strictEqual(タブ識別子.大域世界().チャンク座標を復元する(), null)
         assert.strictEqual(タブ識別子.文字列から復元する('unknown_tab').チャンク座標を復元する(), null)
         assert.strictEqual(タブ識別子.文字列から復元する('チャンク_abc_def').チャンク座標を復元する(), null)

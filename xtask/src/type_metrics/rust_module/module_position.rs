@@ -42,7 +42,7 @@ impl モジュールの位置 {
     }
 }
 
-/// `x/mod.rs`の子は`x/`配下であり、`x/y.rs`の子は`x/y/`配下である。Rustのモジュールの綴り方に従う。
+/// `x/mod.rs`の子は`x/`配下であり、`x/y.rs`の子は`x/y/`配下である。Rustのモジュールの書き方に従う。
 fn 子のモジュールのディレクトリを求める(定義ファイル: &Path) -> PathBuf {
     let 親 = 定義ファイル.parent().unwrap_or(Path::new("")).to_path_buf();
     let Some(語幹) = 定義ファイル.file_stem().and_then(|語幹| 語幹.to_str()) else {

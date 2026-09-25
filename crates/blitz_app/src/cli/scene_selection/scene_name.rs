@@ -1,12 +1,12 @@
-//! 起動時シーンの綴りの正本。担当するのは、blitz_appが名前で方針を分けるすべての綴りと、群を括る接頭辞を
-//! 1箇所へ持つことである。綴りから世界の種別を解く工程は`parse`が持つ。
+//! 起動時シーンの文字列の正本。担当するのは、blitz_appが名前で方針を分けるすべての文字列と、群を括る接頭辞を
+//! 1箇所へ持つことである。文字列から世界の種別を解く工程は`parse`が持つ。
 //!
 //! 台帳を工程から分けるのは、世界が増えるたびにこの一覧だけが伸び、見分けの工程と押し合うためである。
 //! アセットコンパイラ側で世界ごとの台帳を`argument_name`と`directory_source_path`へ分けているのと同じ分け方である。
 //!
-//! 綴りは実行時アセットの安定IDそのものであり、アセット側の宣言と同じ文字列でなければ読み込みが失敗する。
+//! 文字列は実行時アセットの安定IDそのものであり、アセット側の宣言と同じ文字列でなければ読み込みが失敗する。
 
-/// `--scene`の指定が無い起動が読むシーンの綴り。
+/// `--scene`の指定が無い起動が読むシーンの文字列。
 pub(super) const 平面板のシーン名: &str = "quad";
 pub(super) const ヘルメットのシーン名: &str = "helmet";
 pub(super) const 影の検収世界のシーン名: &str = "shadow_scene";
@@ -26,7 +26,7 @@ pub(super) const 地形のエディター世界のシーン名: &str = "terrain_
 pub(crate) const 地形の夜灯り世界のシーン名: &str = "terrain_night_lights";
 /// 参照: `crates/blitz_asset_compiler/examples/generate_source_assets/village_world.rs`
 pub(super) const 集落の小物世界のシーン名: &str = "prop_village";
-/// 10軒の世界と100軒の世界が同じ綴りのシーンを持つ。地面も規則も同じであり、違うのは焼いた件数だけである。
+/// 10軒の世界と100軒の世界が同じ文字列のシーンを持つ。地面も規則も同じであり、違うのは焼いた件数だけである。
 /// 参照: `crates/blitz_asset_compiler/examples/generate_source_assets/part_house_row_world.rs`
 pub(super) const 部品で組んだ家の並びの小物世界のシーン名: &str = "prop_part_house_row";
 /// 参照: `crates/blitz_asset_compiler/examples/generate_source_assets/part_tree_row_world.rs`
@@ -37,7 +37,7 @@ pub(super) const 部品で組んだ一間四方の骨格の並びの小物世界
 /// 参照: `crates/blitz_asset_compiler/examples/generate_source_assets/stone_hut_world.rs`
 pub(crate) const 石の小屋の屋内の小物世界のシーン名: &str = "prop_stone_hut_interior";
 
-/// 床を群と同居させた植生の検収世界の綴り。どれも同じ方向光の向きを使う。
+/// 床を群と同居させた植生の検収世界の文字列。どれも同じ方向光の向きを使う。
 pub(super) const 床を同居させた植生の検収世界のシーン名一覧: [&str; 3] = ["vegetation_cull", "vegetation_shadow_range", "vegetation_single"];
 
 pub(super) const 植生の検収世界の接頭辞: &str = "vegetation_";

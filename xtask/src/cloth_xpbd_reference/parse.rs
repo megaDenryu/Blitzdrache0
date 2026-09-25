@@ -1,5 +1,5 @@
 //! 終了時報告から参照比較の観測を読む工程。受け取るのは終了時報告、返すのは題材と差と拘束違反の観測である。
-//! 行の綴りは`crates/blitz_app/src/reports/cloth_xpbd_reference/lines.rs`の出力と一致させ、行はどれも「見出し 鍵=値 鍵=値 …」の形である。
+//! 行の文言は`crates/blitz_app/src/reports/cloth_xpbd_reference/lines.rs`の出力と一致させ、行はどれも「見出し 鍵=値 鍵=値 …」の形である。
 //! 差の行が無い実行は、参照計算が再現できない条件(自己衝突・読み戻しの失敗)へ入ったことを意味し、その不在が失敗として現れる。
 
 use crate::acceptance::{報告の行, 検収エラー, 終了時報告};

@@ -30,7 +30,7 @@ impl 実行時形式のファイル {
     }
 
     /// このファイルが並ぶディレクトリ。カタログが生成物の相対パスを解決する基準になる。
-    /// 親を持たない綴りは今の場所に並ぶものとして扱う。
+    /// 親を持たない文字列は今の場所に並ぶものとして扱う。
     pub(crate) fn 並ぶディレクトリ(&self) -> PathBuf {
         self.0.parent().map(Path::to_path_buf).unwrap_or_else(|| PathBuf::from("."))
     }

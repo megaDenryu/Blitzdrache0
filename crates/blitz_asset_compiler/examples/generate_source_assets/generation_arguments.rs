@@ -1,6 +1,6 @@
 //! 起動引数から「何をどこへ書き出すか」を読む工程。受け取るのは引数の並び、返すのは書き出す対象の判別共用体である。
 //!
-//! 知らない引数を無視せず失敗にするのは、綴りを打ち間違えた実行が検証用の世界一式の書き直しへ黙って落ちるためである。
+//! 知らない引数を無視せず失敗にするのは、文字列を打ち間違えた実行が検証用の世界一式の書き直しへ黙って落ちるためである。
 //! ソースルートを引数で受け取るのは、決定性の検収が同じ種から2つの別のルートへ書き出して突き合わせるためであり、
 //! 大規模世界のソースをgitの管理外のルートへ置くためでもある。
 //! 参照: `_doc/設計/大規模世界の生成と遠景.md`
@@ -9,12 +9,12 @@ use std::path::PathBuf;
 
 use blitz_asset_compiler::{ソースルート, マップ生成の乱数の種, 世界の広がり};
 
-/// 種を導く選択肢の綴り。綴りは`xtask/src/gen_game_map.rs`にも同じものがある。
+/// 種を導く選択肢の文字列。文字列は`xtask/src/gen_game_map.rs`にも同じものがある。
 const 種の選択肢の文字列: &str = "--game-map-seed";
 
-/// ソースルートを導く選択肢の綴り。綴りは`xtask/src/gen_game_map.rs`にも同じものがある。
+/// ソースルートを導く選択肢の文字列。文字列は`xtask/src/gen_game_map.rs`にも同じものがある。
 const ソースルートの選択肢の文字列: &str = "--source-root";
-/// 次の2つの綴りはxtask側の呼び出し境界`xtask/src/asset_generator/arguments/source_assets.rs`にも置く。
+/// 次の2つの文字列はxtask側の呼び出し境界`xtask/src/asset_generator/arguments/source_assets.rs`にも置く。
 const 東西チャンク数の選択肢の文字列: &str = "--world-east-chunks";
 const 南北チャンク数の選択肢の文字列: &str = "--world-south-chunks";
 

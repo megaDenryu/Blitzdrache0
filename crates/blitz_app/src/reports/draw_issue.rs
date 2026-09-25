@@ -1,5 +1,5 @@
 //! 描画発行の内訳と段の切替回数のコンソール出力。`--report-draw-issue`が指定されたときだけ呼ばれる。
-//! 行の綴りは検収の`xtask/src/report_parse.rs`が読むため、既存の行を書き換えるとそちらも同時に直す必要がある。
+//! 行の文言は検収の`xtask/src/report_parse.rs`が読むため、既存の行を書き換えるとそちらも同時に直す必要がある。
 //! GPU資源の束縛と材質資源表の計器の行は`binding_metrics`が持つ。
 
 pub(crate) use binding_metrics::{セット別束縛回数を表示する, 材質資源表の要約を表示する};

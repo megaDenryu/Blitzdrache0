@@ -17,7 +17,7 @@ use super::frame_attached_joint_fixture::{出窓の壁面差込口, 壁の外枠
 use super::frame_bay_joint_fixture::骨格の接合点一覧;
 use super::frame_chimney_joint_fixture::煙突の接合点一覧;
 
-/// 壁3種の綴りと、扉の吊り元を持つかどうか。実データの材質スロットは平壁が2・窓壁が3・扉枠付きの壁が2である。
+/// 壁3種の文字列と、扉の吊り元を持つかどうか。実データの材質スロットは平壁が2・窓壁が3・扉枠付きの壁が2である。
 pub(super) const 壁の宣言一覧: [(&str, bool); 3] = [("平壁", false), ("窓壁", false), ("扉枠付きの壁", true)];
 
 pub(super) fn 識別子(文字列: &str) -> 部品ID {

@@ -1,7 +1,7 @@
 //! 差し替えの前後の3つの要求の判定。受け取るのは差し替えを挟んだ1回の実行、返すのは合否と実測の要約である。
 //!
 //! 成功の行を数えるのは、絵が動かないことだけでは「差し替えが1度も起きなかった実行」と区別できないためである。
-//! 行の綴りは`crates/blitz_app/src/app/resource_wiring/hot_reload_check.rs`の出力と一致させている。
+//! 行の文言は`crates/blitz_app/src/app/resource_wiring/hot_reload_check.rs`の出力と一致させている。
 
 use crate::acceptance::{判定の名前, 判定の破れ, 検収の1回の実行, 検収エラー, 終了時報告, 読み戻し画像};
 use crate::report_heading::報告の見出し;

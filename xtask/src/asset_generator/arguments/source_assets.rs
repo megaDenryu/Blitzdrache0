@@ -8,7 +8,7 @@ use crate::asset_generator::error::生成器エラー;
 
 const 種の選択肢の文字列: &str = "--game-map-seed";
 const ソースルートの選択肢の文字列: &str = "--source-root";
-/// 次の2つの綴りは生成器側の解析境界`crates/blitz_asset_compiler/examples/generate_source_assets/generation_arguments.rs`にも置く。
+/// 次の2つの文字列は生成器側の解析境界`crates/blitz_asset_compiler/examples/generate_source_assets/generation_arguments.rs`にも置く。
 const 東西チャンク数の選択肢の文字列: &str = "--world-east-chunks";
 const 南北チャンク数の選択肢の文字列: &str = "--world-south-chunks";
 

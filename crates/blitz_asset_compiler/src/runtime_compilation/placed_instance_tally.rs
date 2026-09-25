@@ -7,8 +7,8 @@
 //! 据え置いた対象は焼く工程を通らないため0体として積み上がる。したがって2つの数の一致を課してよいのは、
 //! 据え置いたチャンクが0本の実行だけである。この前提は検収の側が焼き直しの報告の行を読んで確かめる。
 //!
-//! 注意: 報告の行の綴りは`xtask/src/game_fox_tour/map_generation_check/compile_report.rs`が読み取る側として
-//! 同じものを持つ。両側にあることは`cargo xtask conform`の綴りの契約の検査が守る。
+//! 注意: 報告の行の文言は`xtask/src/game_fox_tour/map_generation_check/compile_report.rs`が読み取る側として
+//! 同じものを持つ。両側にあることは`cargo xtask conform`の文言の契約の検査が守る。
 
 use crate::{種類ごとの置いた個体の数, 置いた個体の数};
 

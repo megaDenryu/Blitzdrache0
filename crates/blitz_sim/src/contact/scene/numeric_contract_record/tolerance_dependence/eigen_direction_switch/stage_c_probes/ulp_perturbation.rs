@@ -12,7 +12,7 @@
 use crate::contact::scene::substep_harness::一つの箱と静的な直方体の場面;
 use crate::rigid_body::{姿勢, 配置};
 
-/// 1刻みの摂動を入れた結果。入れられなかったときは理由を綴りで持つ。
+/// 1刻みの摂動を入れた結果。入れられなかったときは理由を文字列で持つ。
 pub(super) enum 一刻みの摂動の入り方 {
     入った { 成分の番号: usize, 入れる前: f32, 入れた後: f32 },
     入らなかった(&'static str),

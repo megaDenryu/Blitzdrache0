@@ -17,7 +17,7 @@ use super::archetype_identity::原型の識別;
 use super::world::assembled_scatter_declaration::部品で組む散布の宣言;
 use super::world::part_row_declaration::部品で組んだ並びの宣言;
 
-/// 地形チャンクへ同居させる植生の宣言。原型を安定IDの綴りで指すのは、`ソース種別`を`Copy`のまま保つためである。
+/// 地形チャンクへ同居させる植生の宣言。原型を安定IDの文字列で指すのは、`ソース種別`を`Copy`のまま保つためである。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) struct 同居植生宣言 {
     pub(super) 原型の安定id: &'static str,
@@ -25,7 +25,7 @@ pub(super) struct 同居植生宣言 {
 }
 
 /// 地面へ置く原型1つ分の宣言。持つのは「どの原型か」と「どう置くか」の2つだけである。
-/// 原型を綴りで指すのは、`ソース種別`を`Copy`のまま保つためである。
+/// 原型を文字列で指すのは、`ソース種別`を`Copy`のまま保つためである。
 /// 参照: `crates/blitz_asset_compiler/src/runtime_compilation/archetype_identity.rs`
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct 原型と置き方の宣言 {

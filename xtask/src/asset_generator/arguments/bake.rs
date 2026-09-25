@@ -11,7 +11,7 @@ use crate::asset_generator::error::生成器エラー;
 use crate::asset_generator::planting_count::同居植生の個体数;
 use crate::asset_generator::world_name::世界名;
 
-/// テクスチャ格納の方式を選ぶ綴り。生成器側の解析境界にも同じ綴りがある。
+/// テクスチャ格納の方式を選ぶ文字列。生成器側の解析境界にも同じ文字列がある。
 const テクスチャ格納の方式の選択肢の文字列: &str = "--texture-storage-policy";
 
 /// 焼くときに渡す材料一式。

@@ -1,5 +1,5 @@
 //! 固定構図の採取・対照の焼き付け・判定・計画表示の別と、その別ごとの採取条件。
-//! プロセス境界の綴りとの対応は`argument_name`が、採取1回ぶんの条件は`capture_condition`が持つ。
+//! プロセス境界の文字列との対応は`argument_name`が、採取1回ぶんの条件は`capture_condition`が持つ。
 
 mod argument_name;
 mod capture_condition;

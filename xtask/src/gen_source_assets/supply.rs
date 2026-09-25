@@ -14,7 +14,7 @@
 //! ソースルートと生成器の起こし方を対で持つのは、見る場所と書く場所が食い違うと「生成しても揃わない」形になる
 //! ためである。実物の起こし方は既定のソースルート(`assets`)へ書くため、`既定のソースルートで作る`だけがその対を作る。
 //! 欠けの数え上げは`buffer_group`が、揃っているかを見るのと起こす理由の判定は`buffer_presence`が、
-//! 起こし方は`generator_launch`が、文書の綴りは`document_path`が、破れの型は`error`が持つ。
+//! 起こし方は`generator_launch`が、文書の文字列は`document_path`が、破れの型は`error`が持つ。
 
 mod buffer_group;
 mod buffer_presence;

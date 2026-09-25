@@ -10,7 +10,7 @@ use blitz_engine::temporal_reconstruction::時間再構成方式;
 use super::{scene_policy, 種別を解く};
 use crate::cli::temporal_reconstruction_settings::時間再構成方式の起動上書き;
 
-/// 定数近似のままである世界の綴り。天空の遠方環境を選ぶ2つの世界の裏返しである。
+/// 定数近似のままである世界の文字列。天空の遠方環境を選ぶ2つの世界の裏返しである。
 const 定数近似の世界の名前一覧: [&str; 10] = [
     "quad",
     "helmet",

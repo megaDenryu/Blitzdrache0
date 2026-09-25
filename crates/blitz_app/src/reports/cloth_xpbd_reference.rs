@@ -1,7 +1,7 @@
 //! 布のXPBDの参照比較の報告(Issue #36「検証」)。終了時にGPUから読み戻した布の粒子とラグランジュ乗数を、同じ初期条件・同じ刻み数・
 //! 同じ反復回数で回したCPUの参照計算(正典式)と突き合わせ、機械可読な行として標準出力へ出す。
 //! 判定は`cargo xtask cloth-xpbd-reference`がこの出力を読んで行い、ここは事実の行だけを出す。
-//! 突き合わせは`comparison`、反復回数と刻み幅を変えたときの硬さは`stiffness`、曲げのコンプライアンスを変えたときの硬さは`bending_stiffness`、行の綴りは`lines`が持つ。
+//! 突き合わせは`comparison`、反復回数と刻み幅を変えたときの硬さは`stiffness`、曲げのコンプライアンスを変えたときの硬さは`bending_stiffness`、行の文言は`lines`が持つ。
 
 mod bending_stiffness;
 mod comparison;
