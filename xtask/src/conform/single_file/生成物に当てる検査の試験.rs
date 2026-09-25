@@ -7,11 +7,11 @@ use super::super::graphiteのコード::Graphiteの生成物の一覧;
 use super::super::走査した原文の一覧::走査した原文の一覧;
 use super::一ファイルの違反を集める;
 
-const 生成元のパス: &str = "crates/blitz_esca/src/仮の経路網.rs";
-const 生成物のパス: &str = "crates/blitz_esca/src/generated/経路網.rs";
-const 手書きのパス: &str = "crates/blitz_esca/src/手書き.rs";
+const 生成元のパス: &str = "crates/blitz_esca/src/仮の区域網の宣言.rs";
+const 生成物のパス: &str = "crates/blitz_esca/src/generated/区域網.rs";
+const 手書きのパス: &str = "crates/blitz_esca/src/手書きの区域.rs";
 
-const 宣言の原文: &str = "pub mod 経路網 {\n    include!(\"generated/経路網.rs\");\n}\n\ngraphite::dynamic_graph_schema! {\n    generated = \"generated/経路網.rs\";\n    schema 経路網 { node 仮の地点; }\n}\n";
+const 宣言の原文: &str = "pub mod 区域網 {\n    include!(\"generated/区域網.rs\");\n}\n\ngraphite::dynamic_graph_schema! {\n    generated = \"generated/区域網.rs\";\n    schema 区域網 { node 仮の地点; }\n}\n";
 
 /// 1つの宣言へ積んだ2行目の説明の注釈(本文の3行目)と宣言の間のコメントだけの行(本文の5行目)を持ち、コードの行が100行を超える本文。
 fn 本文() -> String {
@@ -28,7 +28,7 @@ fn 違反を集める(パス: &str, 原文: &str, 生成物: &Graphiteの生成�
 
 #[test]
 fn 生成物には宣言の間のコメントだけの行だけを違反とし説明の注釈の行数と行数は当てない() {
-    let 生成物の原文 = format!("// このファイルは Graphite が生成したため手編集しないこと。\n// 生成元: src/仮の経路網.rs:5\n\n{}", 本文());
+    let 生成物の原文 = format!("// このファイルは Graphite が生成したため手編集しないこと。\n// 生成元: src/仮の区域網の宣言.rs:5\n\n{}", 本文());
     let 一覧 = 走査した原文の一覧::生成する(vec![(PathBuf::from(生成元のパス), 宣言の原文.to_string()), (PathBuf::from(生成物のパス), 生成物の原文.clone())]);
     let 生成物 = Graphiteの生成物の一覧::原文一覧から見分ける(&一覧);
     assert!(生成物.生成物か(Path::new(生成物のパス)));

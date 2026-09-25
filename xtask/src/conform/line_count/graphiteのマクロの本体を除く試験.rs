@@ -17,13 +17,13 @@ fn graphiteの宣言を含む原文(外の行数: usize, 本体の行数: usize)
 #[test]
 fn graphiteのマクロの本体の行は数えずマクロの外の行が百行以内なら違反にしない() {
     let 原文 = graphiteの宣言を含む原文(上限行数, 300);
-    assert!(行数の上限超過を検査する(Path::new("crates/x/src/経路網.rs"), &原文).is_empty());
+    assert!(行数の上限超過を検査する(Path::new("crates/x/src/行数の試験の宣言.rs"), &原文).is_empty());
 }
 
 #[test]
 fn graphiteのマクロの外の行が百行を超えたら違反にし除いた行数を添える() {
     let 原文 = graphiteの宣言を含む原文(上限行数 + 1, 300);
-    let 違反一覧 = 行数の上限超過を検査する(Path::new("crates/x/src/経路網.rs"), &原文);
+    let 違反一覧 = 行数の上限超過を検査する(Path::new("crates/x/src/行数の試験の宣言.rs"), &原文);
     assert_eq!(違反一覧.len(), 1);
     assert!(違反一覧[0].説明.contains("コードの行が101行"), "{}", 違反一覧[0].説明);
     assert!(違反一覧[0].説明.contains("本体の300行を除いて"), "{}", 違反一覧[0].説明);
