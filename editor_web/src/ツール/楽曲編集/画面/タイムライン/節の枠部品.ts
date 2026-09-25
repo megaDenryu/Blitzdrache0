@@ -2,6 +2,7 @@ import { div, span, DivC, LV2HtmlComponentBase, 配線ポート } from 'sengen-u
 import type { I配線可能 } from 'sengen-ui'
 import type { 曲の節 } from '../../../../生成/編集資源契約.ts'
 import { 節の繰り返し回数選択欄 } from '../パネル/共通/節の繰り返し回数選択欄.ts'
+import type { カード位置 } from '../../編集モデル/index.ts'
 import type { カード部品 } from './カード部品.ts'
 import { 節の操作ボタン群 } from './節の操作ボタン群.ts'
 import type { 節の操作の押せるか } from './節の操作の押せるかを計算する.ts'
@@ -16,24 +17,24 @@ export interface I節の枠配線 {
 // 同じ節に属するカードを括る枠。見出しにパターンの表示名と繰り返し回数選択欄を出し、
 // 削除・複製・前後挿入・前後移動の6つの操作をすべてここへ集める(カードは選択だけを受け持つ、issue #87)。
 // 繰り返し回数選択欄は曲構成パネルの節の詳細と同じ部品を使い回す(issue #92)。
-// 保持する情報は節の位置と見出しの文言だけに閉じ、中身のカードの列は外から受け取る
+// 保持する情報は先頭カードの位置と見出しの文言だけに閉じ、中身のカードの列は外から受け取る
 // (issue #87で育つパターンの枠を見据え、いま持つ情報を最小に保つ)。
 export class 節の枠部品 extends LV2HtmlComponentBase implements I配線可能<I節の枠配線> {
     protected _componentRoot: DivC
-    public readonly 節の位置: number
+    public readonly 先頭カードの位置: カード位置
     private readonly _配線: 配線ポート<I節の枠配線> = new 配線ポート<I節の枠配線>('節の枠部品')
     private readonly _操作ボタン群: 節の操作ボタン群
     private readonly _回数選択: 節の繰り返し回数選択欄
 
     public constructor(
-        節の位置: number,
+        先頭カードの位置: カード位置,
         見出しの文言: string,
         節: 曲の節,
         カード部品列: readonly カード部品[],
         押せるか: 節の操作の押せるか,
     ) {
         super()
-        this.節の位置 = 節の位置
+        this.先頭カードの位置 = 先頭カードの位置
         this._操作ボタン群 = new 節の操作ボタン群(押せるか)
         this._回数選択 = new 節の繰り返し回数選択欄(節)
         const 見出し = div({ class: 節の枠見出し }).childs([

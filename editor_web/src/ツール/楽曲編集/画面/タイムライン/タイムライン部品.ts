@@ -11,7 +11,7 @@ import {
 import type { 再生位置 } from '../演奏/index.ts'
 import { カード部品 } from './カード部品.ts'
 import { 節の枠部品 } from './節の枠部品.ts'
-import { 節の枠一覧を組み立てる, 節の枠一覧を配線する } from './節の枠一覧を組み立てる.ts'
+import { 節の枠一覧を組み立てる } from './節の枠一覧を組み立てる.ts'
 import type { 節の操作の種類 } from './節の操作の種類.ts'
 import { タイムラインの再生印 } from './タイムラインの再生印.ts'
 import { 末尾へ追加ボタン } from './末尾へ追加ボタン.ts'
@@ -44,6 +44,7 @@ export class タイムライン部品 extends LV2HtmlComponentBase implements I�
     public 配線する(配線: Iタイムライン配線): this {
         this._配線.配線する(配線)
         this._カード列を配線する()
+        this._節の枠一覧を配線する()
         return this
     }
 
@@ -70,14 +71,7 @@ export class タイムライン部品 extends LV2HtmlComponentBase implements I�
         this._再生印.リセットする(選択中の添字)
         this._componentRoot.child(this._追加ボタン.選択中パターンを反映する(選択中パターンの名乗り))
         this._カード列を配線する()
-        if (this._配線.配線済みか) {
-            節の枠一覧を配線する(
-                this._節の枠一覧,
-                this._カード列,
-                (位置, 種類) => this._配線.先.on枠操作(位置, 種類),
-                (節の位置, 新しい繰り返し回数) => this._配線.先.on節の繰り返し回数変更(節の位置, 新しい繰り返し回数),
-            )
-        }
+        this._節の枠一覧を配線する()
     }
 
     // 音声の時計から導いた再生位置が、いま鳴っているカードのどれに当たるかを求める(画面から呼ばれる)。
@@ -101,6 +95,17 @@ export class タイムライン部品 extends LV2HtmlComponentBase implements I�
         if (!this._配線.配線済みか) return
         for (const カード of this._カード部品一覧) {
             カード.配線する({ onクリック: () => this._配線.先.onカード選択(カード.位置) })
+        }
+    }
+
+    // 枠は先頭カードの位置を渡し、操作の基準の解決(選択中のカードが同じ節にあるならそちら)はハンドラが行う。
+    private _節の枠一覧を配線する(): void {
+        if (!this._配線.配線済みか) return
+        for (const 枠 of this._節の枠一覧) {
+            枠.配線する({
+                on操作: (種類) => this._配線.先.on枠操作(枠.先頭カードの位置, 種類),
+                on繰り返し回数変更: (新しい繰り返し回数) => this._配線.先.on節の繰り返し回数変更(枠.先頭カードの位置.節の位置, 新しい繰り返し回数),
+            })
         }
     }
 }
