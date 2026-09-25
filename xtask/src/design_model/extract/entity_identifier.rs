@@ -8,12 +8,12 @@
 //! 実装に本体が在るため、関連型を書き忘れた実装が構文としては存在しうる。
 
 use super::outcome::抽出の成果;
-use super::source_group::抽出対象のソース群;
+use super::source_group::{名指す型の在り処の問い, 抽出対象のソース群};
 use super::type_notation::{型の表記の読み取り, 型の表記を読む};
 use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
+use super::表記が名指す型::表記が名指す型;
 use crate::conform::design_ontology::line_matching::波括弧が閉じる行;
 use crate::conform::design_ontology::syntax_patterns::設計解釈マーカー;
-use crate::conform::design_ontology::type_definition::型の在り処の問い;
 use crate::design_model::{Rustの項目の種類, 設計概念};
 use crate::design_model::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
 
@@ -27,7 +27,7 @@ pub fn エンティティの識別子の関連型から抽出する(ソース群
             continue;
         };
         let 開始 = 実装.行番号.saturating_sub(1);
-        let Some((位置, 識別子の型名)) = 識別子の関連型を探す(行一覧, 開始) else {
+        let Some((位置, 識別子の型)) = 識別子の関連型を探す(行一覧, 開始) else {
             let 理由 = 抽出できなかった理由::エンティティの識別子の関連型が無い { 型名: 実装.型名.clone() };
             成果.抽出できなかった行一覧.push(抽出できなかった行::生成する(&実装.パス, 実装.行番号, 理由));
             continue;
@@ -36,12 +36,11 @@ pub fn エンティティの識別子の関連型から抽出する(ソース群
         成果.抽出できなかった行一覧.extend(欠落);
         let 目的語の節点 = 設計概念::Rustの項目として生成する(識別子, Rustの項目の種類::型);
         let 目的語 = 目的語の節点.参照を組む();
-        let 問い = 型の在り処の問い {
-            型名: &識別子の型名,
+        let (主語の識別子, 解決できなかった行) = ソース群.名指す型の識別子を求める(名指す型の在り処の問い {
+            名指す型: &識別子の型,
             参照元のパス: &実装.パス,
             参照元の行番号: 位置 + 1,
-        };
-        let (主語の識別子, 解決できなかった行) = ソース群.型の識別子を求める(問い);
+        });
         成果.抽出できなかった行一覧.extend(解決できなかった行);
         let 主語の節点 = 設計概念::Rustの項目として生成する(主語の識別子, Rustの項目の種類::型);
         let 主語 = 主語の節点.参照を組む();
@@ -61,13 +60,13 @@ pub fn エンティティの識別子の関連型から抽出する(ソース群
     成果
 }
 
-// `impl Mエンティティ for 型` の本体から `type 識別子 = 型;` の行の位置と右辺の型の名前を探す。
-fn 識別子の関連型を探す(行一覧: &[String], 開始: usize) -> Option<(usize, String)> {
+// `impl Mエンティティ for 型` の本体から `type 識別子 = 型;` の行の位置と右辺が名指す型を探す。
+fn 識別子の関連型を探す(行一覧: &[String], 開始: usize) -> Option<(usize, 表記が名指す型)> {
     let 終了 = 波括弧が閉じる行(行一覧, 開始);
     (開始..=終了).find_map(|位置| {
         let 右辺 = 行一覧[位置].trim().strip_prefix(識別子の関連型の前置き)?.trim_start().strip_prefix('=')?;
         match 型の表記を読む(右辺.trim().trim_end_matches(';')) {
-            型の表記の読み取り::設計概念である(型名) => Some((位置, 型名)),
+            型の表記の読み取り::設計概念である(名指す型) => Some((位置, 名指す型)),
             型の表記の読み取り::プリミティブである | 型の表記の読み取り::保証範囲の外(_) => None,
         }
     })

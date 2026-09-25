@@ -1,5 +1,6 @@
 //! 表示距離の決定: カメラの遮蔽と復帰が1描画に1度答える、表示距離とその判定の対。
 
+use blitz_design::{M不変データ, M値オブジェクト};
 use blitz_math::メートル;
 
 use crate::occlusion_verdict::遮蔽の判定;
@@ -9,6 +10,9 @@ pub struct 表示距離の決定 {
     表示距離: メートル,
     判定: 遮蔽の判定,
 }
+
+impl M不変データ for 表示距離の決定 {}
+impl M値オブジェクト for 表示距離の決定 {}
 
 impl 表示距離の決定 {
     pub(crate) fn 生成する(表示距離: メートル, 判定: 遮蔽の判定) -> Self {

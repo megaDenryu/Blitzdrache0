@@ -46,7 +46,6 @@ mod operation_axis;
 mod planar_test_world;
 #[cfg(test)]
 mod planar_test_world_tests;
-mod player_move;
 #[cfg(test)]
 mod player_move_facing_tests;
 #[cfg(test)]
@@ -55,7 +54,6 @@ mod player_placement;
 mod player_state;
 mod previous_display_distance;
 mod progress_stage;
-mod stage_transition;
 #[cfg(test)]
 mod stage_transition_tests;
 mod sweep_answer;

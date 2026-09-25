@@ -2,6 +2,7 @@
 //! 前へ進む向きを受け取るのは、その向きをカメラの方位から決めるのがコンポジションルートの配線であり、
 //! ゲームロジック層がカメラの型を1つも知らないためである。
 
+use blitz_design::{MParameter, M不変データ};
 use blitz_math::秒;
 
 use crate::forward_azimuth::前へ進む向きの方位角;
@@ -13,3 +14,6 @@ pub struct 一刻みの移動の入力 {
     pub 刻み: 秒,
     pub 前へ進む向き: 前へ進む向きの方位角,
 }
+
+impl M不変データ for 一刻みの移動の入力 {}
+impl MParameter for 一刻みの移動の入力 {}

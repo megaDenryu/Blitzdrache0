@@ -7,6 +7,7 @@
 //! 接地判定を行わないのは、面から離れて行く途中で足元の下の面を拾い、飛び上がった直後に着地させないためである。
 //! 参照: `_doc/設計/キャラクターの移動とカメラ.md`「判断5」「判断6」
 
+use blitz_design::{M不変データ, M値オブジェクト};
 use blitz_math::{メートル毎秒, ワールド, 変位};
 
 use super::body_motion::胴体の移動;
@@ -16,11 +17,15 @@ use super::movement_state::移動状態;
 use super::stick_vector::世界の軸で見た倒し量;
 
 // この刻みに掃引する動き。
+#[derive(Clone, PartialEq)]
 pub(crate) struct 望みの動き {
     pub(crate) 速度: 胴体の速度,
     pub(crate) 変位: 変位<ワールド>,
     pub(crate) 接地判定を行うか: bool,
 }
+
+impl M不変データ for 望みの動き {}
+impl M値オブジェクト for 望みの動き {}
 
 impl 胴体の移動 {
     pub(crate) fn 望みの動きを求める(&self, 状態: 移動状態, 入力: &一刻みの移動の入力) -> 望みの動き {

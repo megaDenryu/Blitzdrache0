@@ -5,11 +5,15 @@
 
 use std::fmt;
 
+use blitz_design::{M不変データ, M値オブジェクト};
 use blitz_math::{倍精度の無次元量を単精度へ狭める, 単位変換エラー};
 
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 #[repr(transparent)]
 pub struct 動けた割合(f32);
+
+impl M不変データ for 動けた割合 {}
+impl M値オブジェクト for 動けた割合 {}
 
 /// 動けた割合として受理できない値の理由。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -17,6 +21,9 @@ pub enum 動けた割合エラー {
     範囲外,                               // 0以上1以下の有限値でない
     単精度へ狭められない(単位変換エラー), // 倍精度の値を単精度へ狭めた結果が有限でない
 }
+
+impl M不変データ for 動けた割合エラー {}
+impl M値オブジェクト for 動けた割合エラー {}
 
 impl fmt::Display for 動けた割合エラー {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {

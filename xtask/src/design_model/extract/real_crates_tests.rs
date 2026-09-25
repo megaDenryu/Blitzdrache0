@@ -10,12 +10,12 @@
 
 use std::path::PathBuf;
 
-use super::outcome::抽出の結末;
+use super::outcome::抽出した設計関係グラフと抽出の欠け;
 use super::source_group::抽出対象のソース群;
 use crate::file_scan;
 
-// 実物の `crates` を走査して抽出の結末を組む。
-fn 実物のcratesから結末を組む() -> 抽出の結末 {
+// 実物の `crates` を走査して抽出の結果を組む。
+fn 実物のcratesから結果を組む() -> 抽出した設計関係グラフと抽出の欠け {
     let ルート = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..").join("crates");
     let Some(ルートの表記) = ルート.to_str().map(str::to_string) else {
         panic!("走査のルートのパスを文字列として読めない: 不変条件「リポジトリのパスはUTF-8である」が破れた");
@@ -37,8 +37,8 @@ fn 実物のcratesから結末を組む() -> 抽出の結末 {
 
 #[test]
 fn 実物のcratesを走査するとマーカーの実装から下位型である関係が出る() {
-    let 結末 = 実物のcratesから結末を組む();
-    let 表記一覧: Vec<String> = 結末.グラフ.関係一覧().iter().map(|関係| 関係.表記()).collect();
+    let 結果 = 実物のcratesから結果を組む();
+    let 表記一覧: Vec<String> = 結果.グラフ.関係一覧().iter().map(|関係| 関係.表記()).collect();
     assert!(
         表記一覧.contains(&"blitz_esca::traveler::旅行者の現在地 下位型である blitz_design::marker::M状態".to_string()),
         "実物の `impl M状態 for 旅行者の現在地` から関係が出ていない: {}件",
@@ -48,8 +48,8 @@ fn 実物のcratesを走査するとマーカーの実装から下位型であ�
 
 #[test]
 fn 実物の3件の役割の使用箇所は受理の条件を満たし処理の節点になる() {
-    let 結末 = 実物のcratesから結末を組む();
-    let 表記一覧: Vec<String> = 結末.グラフ.概念一覧().iter().map(|概念| 概念.識別子().表記()).collect();
+    let 結果 = 実物のcratesから結果を組む();
+    let 表記一覧: Vec<String> = 結果.グラフ.概念一覧().iter().map(|概念| 概念.識別子().表記()).collect();
     for 期待 in [
         "blitz_esca::traveler_input::キーボード歩行入力::歩行入力を解釈する",
         "blitz_esca::traveler_movement::旅行者の現在地::歩行を遷移する",
@@ -61,29 +61,29 @@ fn 実物の3件の役割の使用箇所は受理の条件を満たし処理の�
 
 #[test]
 fn 実物のタプル構造体が包む型へ保持する関係が出る() {
-    let 結末 = 実物のcratesから結末を組む();
-    let 表記一覧: Vec<String> = 結末.グラフ.関係一覧().iter().map(|関係| 関係.表記()).collect();
+    let 結果 = 実物のcratesから結果を組む();
+    let 表記一覧: Vec<String> = 結果.グラフ.関係一覧().iter().map(|関係| 関係.表記()).collect();
     assert!(表記一覧.contains(&"blitz_esca::elapsed_time::経過時間 保持する 秒".to_string()));
-    assert!(!結末.グラフ.概念一覧().iter().any(|概念| 概念.識別子().モジュールパス.contains("::tests")));
+    assert!(!結果.グラフ.概念一覧().iter().any(|概念| 概念.識別子().モジュールパス.contains("::tests")));
 }
 
 #[test]
 fn 実物のcratesに抽出器の保証範囲の外の構文が1件も無い() {
-    let 結末 = 実物のcratesから結末を組む();
-    let 範囲の外一覧: Vec<String> = 結末.抽出できなかった行一覧.iter().filter(|行| 行.理由.保証範囲の外の構文を採る().is_some()).map(|行| 行.表記()).collect();
+    let 結果 = 実物のcratesから結果を組む();
+    let 範囲の外一覧: Vec<String> = 結果.抽出できなかった行一覧.iter().filter(|行| 行.理由.保証範囲の外の構文を採る().is_some()).map(|行| 行.表記()).collect();
     assert!(範囲の外一覧.is_empty(), "保証範囲の外の構文が在る(cargo xtask conform が違反として落とす): {範囲の外一覧:?}");
 }
 
 #[test]
 fn 実物のcratesに関係を落とした抽出の欠落が1件も無い() {
-    let 欠落 = 実物のcratesから結末を組む().関係を落とした抽出の欠落へ写す();
+    let 欠落 = 実物のcratesから結果を組む().関係を落とした抽出の欠落へ写す();
     assert!(!欠落.在るか(), "{}", 欠落.説明());
 }
 
 #[test]
 fn 実物の遷移関数は遷移パラメータを消費し失敗の型を生成する() {
-    let 結末 = 実物のcratesから結末を組む();
-    let 表記一覧: Vec<String> = 結末.グラフ.関係一覧().iter().map(|関係| 関係.表記()).collect();
+    let 結果 = 実物のcratesから結果を組む();
+    let 表記一覧: Vec<String> = 結果.グラフ.関係一覧().iter().map(|関係| 関係.表記()).collect();
     let 主語 = "blitz_esca::traveler_movement::旅行者の現在地::歩行を遷移する";
     for 期待 in [
         format!("{主語} 消費する blitz_esca::transition_parameter::遷移パラメータ"),

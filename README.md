@@ -33,7 +33,7 @@ glTF・画像 → blitz_asset_compiler → アセット実行時形式 → blitz
 | `crates/blitz_ecs` | ゲーム世界の個体群の基盤。実行時個体IDと生存台帳、個体構成要素の置き場と問い合わせ | unsafe禁止。thiserror以外に依存しない |
 | `crates/blitz_engine` | シーン・アセット・マテリアル。描画内容をレンダーグラフへ翻訳 | unsafe禁止。ash に依存しない |
 | `crates/blitz_esca` | ゲーム『Esca』のロジック層。旅行者の現在地・意図・出来事・歩行の規則・移動可能範囲 | unsafe禁止。blitz_design と blitz_math と thiserror 以外に依存しない |
-| `crates/blitz_game` | ゲームロジック層。クソゲー1本目「キツネの場所巡り」の状態・進行・操作の意味付け | unsafe禁止。blitz_math以外に依存しない |
+| `crates/blitz_game` | ゲームロジック層。クソゲー1本目「キツネの場所巡り」の状態・進行・操作の意味付け | unsafe禁止。blitz_math と blitz_design 以外に依存しない |
 | `crates/blitz_math` | 座標系フレームと単位を区別する数学型 | unsafe禁止。glam型を公開APIへ露出しない |
 | `crates/blitz_render` | レンダーグラフ + リソースシステム。Vulkan の unsafe をここに封じ込め | 公開APIに ash の型を露出しない |
 | `crates/blitz_sim` | 布・介入・表面流・SPHの数学とGPUバッファレイアウト | unsafe禁止。ashとblitz_renderに依存しない |

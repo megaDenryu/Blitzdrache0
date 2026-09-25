@@ -9,12 +9,16 @@
 //! 経路が面へ向かわない(かすめる)接触では戻る割合が無限に育つため、一歩も動かないところで止める。
 //! 参照: `_doc/設計/キャラクターの移動とカメラ.md`「判断6」、`_doc/計画/ユビキタス言語.md`「接触余白」
 
+use blitz_design::{M不変データ, M値オブジェクト};
 use blitz_math::{メートル, ワールド, 変位, 方向};
 
 use crate::moved_fraction::動けた割合;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 接触余白(メートル);
+
+impl M不変データ for 接触余白 {}
+impl M値オブジェクト for 接触余白 {}
 
 impl 接触余白 {
     pub fn 生成する(余白: メートル) -> Self {

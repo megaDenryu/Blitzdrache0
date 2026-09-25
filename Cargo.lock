@@ -273,6 +273,7 @@ dependencies = [
 name = "blitz_game"
 version = "0.1.0"
 dependencies = [
+ "blitz_design",
  "blitz_math",
 ]
 
