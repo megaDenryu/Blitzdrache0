@@ -50,6 +50,7 @@ mod scan_tests;
 mod type_location;
 mod type_path;
 
+use std::path::PathBuf;
 use std::process::ExitCode;
 
 use crate::file_scan;
@@ -84,11 +85,16 @@ pub fn 型ごとの分量を計測する() -> ExitCode {
 /// 走査対象のRustファイルを1本ずつ読み、ファイルごとの観測へ写す。conformの台帳検査と自由関数の検査が
 /// 同じ走査を使うため、コマンドの表示から切り離してここを共通の入口にしている。
 pub fn ファイル別の観測を集める() -> Result<Vec<ファイルの観測>, 型計測の破れ> {
+    Ok(走査対象の原文を集める()?.into_iter().map(|(パス, 内容)| ファイルの観測::ファイルの内容から生成する(パス, &内容)).collect())
+}
+
+/// 走査対象のRustファイルを1本ずつ読み、パスと原文の対を並べる。型ごとの分量の台帳の検査が、Graphiteの生成物を見出しで見分けるために原文を要る。
+pub fn 走査対象の原文を集める() -> Result<Vec<(PathBuf, String)>, 型計測の破れ> {
     let ファイル一覧 = file_scan::対象ファイル一覧を集める(&走査対象ディレクトリ一覧, &["rs"])?;
-    let mut 結果 = Vec::new();
+    let mut 結果 = Vec::with_capacity(ファイル一覧.len());
     for パス in ファイル一覧 {
         let 内容 = std::fs::read_to_string(&パス).map_err(|誤り| 型計測の破れ::計測対象のファイルを読めなかった { パス: パス.clone(), 誤り })?;
-        結果.push(ファイルの観測::ファイルの内容から生成する(パス, &内容));
+        結果.push((パス, 内容));
     }
     Ok(結果)
 }
