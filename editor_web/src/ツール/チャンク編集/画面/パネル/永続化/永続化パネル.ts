@@ -6,7 +6,7 @@ import { 永続化枠 } from './スタイル.css.ts'
 // 振る舞いは永続化の操作列が持ち、ここは右サイドバーの枠の見た目だけを持って委譲する。
 export class 永続化パネル extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
-    private readonly _操作列: 永続化の操作列 = new 永続化の操作列()
+    private readonly _操作列: 永続化の操作列 = 永続化の操作列.サイドバーの枠に置く形で作る()
 
     public constructor() {
         super()
