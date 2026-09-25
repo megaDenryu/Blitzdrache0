@@ -71,7 +71,7 @@ float3 distantEnvironmentIndirect(
 }
 
 // 布の表面が受け取る間接光の色。布は金属でないため取り分を掛けず、拡散照度をそのままLambertの規約で割る
-// (参照: `_doc/設計/放射輝度問い合わせ階層.md`「世界の間接照明の方式と契約の2枝(3-Ic)」)。
+// (参照: `_doc/設計/放射輝度問い合わせ階層.md`「世界の間接照明の方式と契約の2つの選択肢(3-Ic)」)。
 // 返すのはベースカラーを掛ける前の値であり、掛けるのは呼び出し元である。
 float3 distantEnvironmentClothIndirect(float3 worldNormal, float3 sunDirection)
 {

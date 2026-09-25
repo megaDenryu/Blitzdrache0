@@ -10,7 +10,7 @@ import lighting_query;
 import local_light_shading;
 import pbr;
 
-// その方向光の遮蔽をどう判定するかは光ごとの可視性の種別が決める。影なしの枝では比較サンプリング自体を行わない。
+// その方向光の遮蔽をどう判定するかは光ごとの可視性の種別が決める。影なしの場合は比較サンプリング自体を行わない。
 float directionalVisibilityFactor(DirectionalLightRecord record, float3 relativePosition, float viewDepth)
 {
     if (record.visibility.x != directionalVisibilityCascadedShadow)
@@ -63,8 +63,8 @@ float3 localLightTerm(
 
 // 間接光・方向光・局所光の順に足すのは、この順序が絵の正本だからである(足す順を変えると丸めが変わる)。
 // 間接光の項を引数で受けるのは、その値をどの供給元から得るかが照明問い合わせ契約ごとに違うためである。
-// このモジュールは直接光だけを担い、供給元の枝を1つも知らない
-// (参照: `_doc/設計/放射輝度問い合わせ階層.md`「世界の間接照明の方式と契約の2枝(3-Ic)」)。
+// このモジュールは直接光だけを担い、供給元の選択肢を1つも知らない
+// (参照: `_doc/設計/放射輝度問い合わせ階層.md`「世界の間接照明の方式と契約の2つの選択肢(3-Ic)」)。
 float3 shadeLitSurface(
     float3 ambientTerm, float3 albedo, float metallic, float roughness,
     float3 normal, float3 viewDir,
