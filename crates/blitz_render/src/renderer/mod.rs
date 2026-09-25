@@ -85,7 +85,7 @@ pub struct レンダラー {
     パイプライン台帳: vulkan::pipeline_ledger::材質描画族パイプライン台帳, // 材質を読む描画族のパイプライン状態オブジェクトの台帳
     スキニング: Option<vulkan::skinning::スキニング一式>,                  // スキン付きシーンのときのみ`Some`(判断44)
     布: Option<vulkan::cloth::布一式>,                                     // 布付き起動のときのみ`Some`(判断52〜54)
-    ポスト処理: Option<vulkan::post_process::ポスト処理一式>,              // フレーム構成にポスト処理段階があるときのみ`Some`(判断38・39)
+    ポスト処理: Option<vulkan::post_process::ポスト処理一式>,              // フレーム構成にポスト処理の処理位置があるときのみ`Some`(判断38・39)
     局所可視性: vulkan::local_visibility::局所可視性一式,
     時間再構成: vulkan::temporal_reconstruction::時間再構成一式, // 時間再構成の方式と、画面寸法に連動する3枚の所有者
     粒子: Option<vulkan::particles::粒子リソース一式>,           // `--particles`指定時のみ`Some`(判断29)
