@@ -83,6 +83,7 @@ export {
 export {
     楽器の音色を求める,
     音色を持つ楽器一覧,
+    音の並びへ割り当てられる楽器一覧を求める,
 } from './楽器の音色/index.ts'
 export type * from './楽器の音色/音色の作り方.ts'
 export {
