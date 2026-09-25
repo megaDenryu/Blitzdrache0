@@ -17,7 +17,7 @@ pub(super) fn graphiteに依存するか(本文: &str) -> bool {
         }
         if 行.starts_with('[') {
             節 = 節の種類::見出しから読む(行);
-            if 節 == 節の種類::graphiteの依存の表 {
+            if 節 == 節の種類::Graphiteの依存の表 {
                 return true;
             }
             continue;
@@ -27,7 +27,7 @@ pub(super) fn graphiteに依存するか(本文: &str) -> bool {
         };
         let 鍵 = 鍵.trim().trim_matches('"');
         let 依存する = match 節 {
-            節の種類::依存の節でない | 節の種類::graphiteの依存の表 => false,
+            節の種類::依存の節でない | 節の種類::Graphiteの依存の表 => false,
             節の種類::依存の節 => 鍵.split('.').next() == Some(依存の名前) || パッケージ名としてgraphiteを名乗るか(値),
             節の種類::別名の依存の表 => 鍵 == "package" && 値.trim().trim_matches('"') == 依存の名前,
         };
@@ -43,7 +43,7 @@ pub(super) fn graphiteに依存するか(本文: &str) -> bool {
 enum 節の種類 {
     依存の節でない,
     依存の節,
-    graphiteの依存の表,
+    Graphiteの依存の表,
     別名の依存の表,
 }
 
@@ -56,7 +56,7 @@ impl 節の種類 {
         };
         match 節の名前一覧.get(依存の節の位置 + 1) {
             None => Self::依存の節,
-            Some(&名前) if 名前 == 依存の名前 => Self::graphiteの依存の表,
+            Some(&名前) if 名前 == 依存の名前 => Self::Graphiteの依存の表,
             Some(_) => Self::別名の依存の表,
         }
     }

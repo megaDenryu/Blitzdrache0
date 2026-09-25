@@ -15,7 +15,7 @@ pub(super) struct 入れた生成器の確かめ {
 impl 入れた生成器の確かめ {
     pub(super) fn 環境から組む() -> Result<Self, Graphiteの生成物の照合の失敗> {
         let ホームのcargoの置き場 = || std::env::var_os("USERPROFILE").or_else(|| std::env::var_os("HOME")).map(|ホーム| Path::new(&ホーム).join(".cargo"));
-        let cargoの置き場 = std::env::var_os("CARGO_HOME").map(PathBuf::from).or_else(ホームのcargoの置き場).ok_or(Graphiteの生成物の照合の失敗::cargoの置き場が分からない)?;
+        let cargoの置き場 = std::env::var_os("CARGO_HOME").map(PathBuf::from).or_else(ホームのcargoの置き場).ok_or(Graphiteの生成物の照合の失敗::Cargoの置き場が分からない)?;
         Ok(Self {
             依存の版を固定したファイル: PathBuf::from(依存の版を固定したファイルの名前),
             入れた道具の記録: cargoの置き場.join(入れた道具の記録のファイル名),

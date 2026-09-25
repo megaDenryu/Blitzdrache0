@@ -10,7 +10,7 @@ use super::生成器の版::生成器の版の食い違い;
 pub(super) enum Graphiteの生成物の照合の失敗 {
     ファイルを読めなかった { パス: String, 誤り: std::io::Error },
     原文を読めなかった { 破れ: String },
-    cargoの置き場が分からない,
+    Cargoの置き場が分からない,
     コマンドを起動できなかった { コマンド: &'static str, 誤り: std::io::Error },
     生成物を持つパッケージが照合の対象に無い { パッケージ一覧: Vec<PathBuf> },
     固定の版が無い,
@@ -23,7 +23,7 @@ impl std::fmt::Display for Graphiteの生成物の照合の失敗 {
         match self {
             Self::ファイルを読めなかった { パス, 誤り } => write!(書き先, "{パス} を読めなかった({誤り})"),
             Self::原文を読めなかった { 破れ } => write!(書き先, "Graphiteの生成物を見分けるための原文を読めなかった({破れ})"),
-            Self::cargoの置き場が分からない => write!(書き先, "cargo の置き場が分からない(環境変数 CARGO_HOME も USERPROFILE も HOME も無い)。入れた生成器の記録を読めない"),
+            Self::Cargoの置き場が分からない => write!(書き先, "cargo の置き場が分からない(環境変数 CARGO_HOME も USERPROFILE も HOME も無い)。入れた生成器の記録を読めない"),
             Self::コマンドを起動できなかった { コマンド, 誤り } => write!(書き先, "{コマンド} を起動できなかった({誤り})"),
             Self::生成物を持つパッケージが照合の対象に無い { パッケージ一覧 } => {
                 let 表記一覧: Vec<String> = パッケージ一覧.iter().map(|パッケージ| パッケージ.display().to_string()).collect();

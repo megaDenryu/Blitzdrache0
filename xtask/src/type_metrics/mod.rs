@@ -49,8 +49,8 @@ mod scan;
 mod scan_tests;
 mod type_location;
 mod type_path;
-#[path = "生成物を除いた観測.rs"]
-mod 生成物を除いた観測;
+#[path = "生成物の除外.rs"]
+mod 生成物の除外;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -67,7 +67,7 @@ pub use metrics::{型計測, 走査範囲の型計測, 集計する};
 pub use observation::観測;
 pub use rust_module::モジュールの位置;
 pub use type_location::型の所在;
-pub use 生成物を除いた観測::生成物を除いた観測;
+pub use 生成物の除外::生成物を除いた観測;
 
 const 走査対象ディレクトリ一覧: [&str; 2] = ["crates", "xtask/src"];
 const 表示件数: usize = 20;
