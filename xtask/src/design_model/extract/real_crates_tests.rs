@@ -16,7 +16,7 @@ use crate::design_model::設計概念への参照;
 use crate::file_scan;
 
 // 実物の `crates` を走査して抽出の結果を組む。
-fn 実物のcratesから結果を組む() -> 抽出した設計関係グラフと抽出の欠け {
+pub(super) fn 実物のcratesから結果を組む() -> 抽出した設計関係グラフと抽出の欠け {
     let ルート = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..").join("crates");
     let Some(ルートの表記) = ルート.to_str().map(str::to_string) else {
         panic!("走査のルートのパスを文字列として読めない: 不変条件「リポジトリのパスはUTF-8である」が破れた");
