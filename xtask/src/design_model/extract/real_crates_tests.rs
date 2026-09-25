@@ -10,12 +10,12 @@
 
 use std::path::PathBuf;
 
-use super::outcome::抽出の結果;
+use super::outcome::抽出した設計関係グラフと抽出の欠け;
 use super::source_group::抽出対象のソース群;
 use crate::file_scan;
 
 // 実物の `crates` を走査して抽出の結果を組む。
-fn 実物のcratesから結果を組む() -> 抽出の結果 {
+fn 実物のcratesから結果を組む() -> 抽出した設計関係グラフと抽出の欠け {
     let ルート = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..").join("crates");
     let Some(ルートの表記) = ルート.to_str().map(str::to_string) else {
         panic!("走査のルートのパスを文字列として読めない: 不変条件「リポジトリのパスはUTF-8である」が破れた");

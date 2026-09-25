@@ -1,11 +1,11 @@
 //! 抽出の全規則が同じ本番の範囲を使うことと、名前の推測をしないことを固定する。
 use super::source_group::抽出対象のソース群;
-use super::test_support::{原文から結果を組む, 関係の表記一覧};
+use super::test_support::{原文から設計関係グラフと抽出の欠けを組む, 関係の表記一覧};
 use std::path::PathBuf;
 
 #[test]
 fn 範囲外のクレートはマーカーも関係も供給しない() {
-    let 結果 = 原文から結果を組む(&[("crates/blitz_sim/src/entry.rs", "struct A { b: B }\nstruct B;\nimpl M不変データ for A {}\nimpl M不変データ for B {}\npub trait M局所: M状態 {}\n")]);
+    let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_sim/src/entry.rs", "struct A { b: B }\nstruct B;\nimpl M不変データ for A {}\nimpl M不変データ for B {}\npub trait M局所: M状態 {}\n")]);
     assert!(結果.グラフ.関係一覧().is_empty());
     assert!(!結果.グラフ.概念一覧().iter().any(|概念| 概念.識別子().クレート名() == "blitz_sim"));
 }
@@ -33,14 +33,14 @@ fn 試験のモジュールと子孫と直書きの試験型は本番の母集�
 
 #[test]
 fn 解釈できない条件付きコンパイルは欠落になる() {
-    let 結果 = 原文から結果を組む(&[("crates/blitz_esca/src/entry.rs", "#[cfg(any(test, feature = \"試験\"))]\nstruct 条件型;\nimpl M状態 for 条件型 {}\n")]);
+    let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_esca/src/entry.rs", "#[cfg(any(test, feature = \"試験\"))]\nstruct 条件型;\nimpl M状態 for 条件型 {}\n")]);
     assert!(結果.グラフ.関係一覧().is_empty());
     assert!(結果.関係を落とした抽出の欠落へ写す().在るか());
 }
 
 #[test]
 fn 本番の子モジュールを辿れなければ欠落になる() {
-    let 結果 = 原文から結果を組む(&[("crates/blitz_esca/src/entry.rs", "mod 見つからない;\nstruct A;\nimpl M状態 for A {}\n")]);
+    let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_esca/src/entry.rs", "mod 見つからない;\nstruct A;\nimpl M状態 for A {}\n")]);
     assert!(結果.グラフ.関係一覧().is_empty());
     assert!(結果.抽出できなかった行一覧.iter().any(|行| 行.理由.説明().contains("モジュールの本体")));
 }
@@ -64,14 +64,14 @@ fn 明示した置き場が無いとき別の本体へ読み替えない() {
 
 #[test]
 fn 試験の属性と項目が同じ行にあれば本番の項目を黙って消さない() {
-    let 結果 = 原文から結果を組む(&[("crates/blitz_esca/src/entry.rs", "#[cfg(test)] struct 試験; struct 本番;\nimpl M状態 for 本番 {}\n")]);
+    let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_esca/src/entry.rs", "#[cfg(test)] struct 試験; struct 本番;\nimpl M状態 for 本番 {}\n")]);
     assert!(結果.グラフ.関係一覧().is_empty());
     assert!(結果.関係を落とした抽出の欠落へ写す().在るか());
 }
 
 #[test]
 fn 外部の一括取り込みを別のモジュールの唯一の同名型へ写さない() {
-    let 結果 = 原文から結果を組む(&[("crates/blitz_esca/src/holder.rs", "use dependency::*;\nstruct Holder {\n    value: Foo,\n}\n"), ("crates/blitz_esca/src/other.rs", "struct Foo;\n")]);
+    let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_esca/src/holder.rs", "use dependency::*;\nstruct Holder {\n    value: Foo,\n}\n"), ("crates/blitz_esca/src/other.rs", "struct Foo;\n")]);
     assert!(!結果.グラフ.関係一覧().iter().any(|関係| 関係.目的語.識別子().モジュールパス == "blitz_esca::other"));
     assert!(結果.抽出できなかった行一覧.iter().any(|行| 行.理由.説明().contains("Foo")));
 }
