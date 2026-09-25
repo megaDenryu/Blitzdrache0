@@ -17,6 +17,10 @@ pub mod traveler_error;
 pub mod traveler_input;
 pub mod traveler_movement;
 pub mod walking_direction;
+#[path = "地点と経路.rs"]
+pub mod 地点と経路;
+#[path = "時刻.rs"]
+pub mod 時刻;
 
 #[cfg(test)]
 mod tests;
@@ -31,3 +35,4 @@ pub use traveler_error::{旅行者の現在地の生成の失敗, 歩行の規�
 pub use traveler_input::キーボード歩行入力;
 pub use traveler_movement::{旅行者の描画位置, 歩行遷移の規則};
 pub use walking_direction::歩行方向;
+pub use 時刻::{世界の時刻, 世界の時刻の生成の失敗};

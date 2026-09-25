@@ -11,7 +11,7 @@ pub(super) struct 機能台帳の項 {
 }
 
 /// 既定機能を切るのはimageとegui-winitの2件、機能を明示するのはimageとgltfとserde_jsonとserdeとtokioとtower-httpの6件である。残りは版だけを綴る。
-pub(super) const 機能台帳: [機能台帳の項; 21] = [
+pub(super) const 機能台帳: [機能台帳の項; 22] = [
     項を作る("ash", true, &[]),
     項を作る("ash-window", true, &[]),
     項を作る("winit", true, &[]),
@@ -34,6 +34,7 @@ pub(super) const 機能台帳: [機能台帳の項; 21] = [
     項を作る("tower", true, &[]),
     項を作る("tower-http", true, &["fs"]),
     項を作る("ts-rs", true, &[]),
+    項を作る("graphite", true, &[]), // Issue #187 で新設。blitz_escaのみが依存するgit依存であり、版を綴らない
 ];
 
 pub(super) const fn 項を作る(依存名: &'static str, 既定機能を使うか: bool, 機能一覧: &'static [&'static str]) -> 機能台帳の項 {
