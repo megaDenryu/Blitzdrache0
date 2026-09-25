@@ -1,4 +1,4 @@
-//! 設計の命題と検証の共通語彙の正本(Issue #174 のオーナー裁定の案B)。設計概念・設計関係・設計関係グラフ・命題・検証器・証拠・遷移モデル・
+//! 設計の命題と検証の共通語彙の正本(Issue #174 のオーナー裁定の案B)。設計概念・設計関係・分類・設計関係グラフ・命題・検証器・証拠・遷移モデル・
 //! 有限全数の検証と、ドメインの側が実装する数え上げの契約を持つ。
 //!
 //! **このクレートはドメインのクレートも `xtask` も知らない。** 通常依存は `blitz_design` だけである。Rustのソースを読んで
@@ -34,6 +34,8 @@ mod relation_graph_tests;
 mod specification;
 mod transition_model;
 mod verifier;
+#[path = "分類.rs"]
+mod 分類;
 
 pub use atom::{原子命題, 項};
 pub use concept::{Rustの項目の種類, 設計概念, 設計概念の名前空間, 設計概念の種類, 設計概念の識別子, 設計概念への参照};
@@ -44,9 +46,10 @@ pub use exhaustive::有限全数の検証器;
 pub use extraction_loss::{落とした理由ごとの件数, 関係を落とした抽出の欠落};
 pub use law::{排他の推論規則, 推論規則, 普遍命題としての法則};
 pub use proposition::{命題, 非空の命題一覧, 非空の命題一覧の生成の失敗};
-pub use quantification::{マーカーの名乗り方, 対象集合, 束縛の割り当て, 束縛変数};
+pub use quantification::{対象集合, 束縛の割り当て, 束縛変数};
 pub use relation::{抽出の出どころ, 抽出元の構文, 設計関係, 設計関係の種類};
 pub use relation_graph::{同一性の衝突, 組み立てた設計関係グラフと同一性の衝突, 設計関係グラフ};
 pub use specification::{名前付きの命題, 命題の集合, 検証の集計};
 pub use transition_model::{到達可能な状態一覧, 遷移, 遷移の材料, 遷移の識別子, 遷移モデル};
 pub use verifier::{列挙した対象, 原子と対象集合の解き手, 命題の検証器, 構造の検証器, 結合を解く工程};
+pub use 分類::{マーカーの実装の事実, 上位トレイトの宣言の事実, 事実の出どころ, 分類の事実, 節点の分類};

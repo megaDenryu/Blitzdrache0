@@ -1,12 +1,12 @@
 //! 抽出の全規則が同じ本番の範囲を使うことと、名前の推測をしないことを固定する。
 use super::source_group::抽出対象のソース群;
-use super::test_support::{原文から設計関係グラフと抽出の欠けを組む, 関係の表記一覧};
+use super::test_support::{分類の事実の表記一覧, 原文から設計関係グラフと抽出の欠けを組む, 関係の表記一覧};
 use std::path::PathBuf;
 
 #[test]
 fn 範囲外のクレートはマーカーも関係も供給しない() {
     let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_sim/src/entry.rs", "struct A { b: B }\nstruct B;\nimpl M不変データ for A {}\nimpl M不変データ for B {}\npub trait M局所: M状態 {}\n")]);
-    assert!(結果.グラフ.関係一覧().is_empty());
+    assert!(結果.グラフ.関係一覧().is_empty() && 分類の事実の表記一覧(&結果).is_empty());
     assert!(!結果.グラフ.概念一覧().iter().any(|概念| 概念.識別子().クレート名() == "blitz_sim"));
 }
 
@@ -26,22 +26,22 @@ fn 試験のモジュールと子孫と直書きの試験型は本番の母集�
         (PathBuf::from("crates/blitz_esca/src/未使用.rs"), "struct 未使用;\nimpl Mエンティティ for 未使用 {}\n".to_string()),
     ];
     let 結果 = super::ソース群から抽出する(&抽出対象のソース群::原文一覧から生成する(原文一覧));
-    let 関係 = 関係の表記一覧(&結果);
-    assert_eq!(関係, vec!["blitz_esca::本番::本番型 下位型である blitz_design::marker::M不変データ"]);
+    assert!(関係の表記一覧(&結果).is_empty(), "{:?}", 関係の表記一覧(&結果));
+    assert_eq!(分類の事実の表記一覧(&結果), vec!["blitz_esca::本番::本番型 は blitz_design::marker::M不変データ を実装する"]);
     assert!(!結果.グラフ.概念一覧().iter().any(|概念| 概念.識別子().名前 == "試験型"));
 }
 
 #[test]
 fn 解釈できない条件付きコンパイルは欠落になる() {
     let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_esca/src/entry.rs", "#[cfg(any(test, feature = \"試験\"))]\nstruct 条件型;\nimpl M状態 for 条件型 {}\n")]);
-    assert!(結果.グラフ.関係一覧().is_empty());
+    assert!(結果.グラフ.関係一覧().is_empty() && 分類の事実の表記一覧(&結果).is_empty());
     assert!(結果.関係を落とした抽出の欠落へ写す().在るか());
 }
 
 #[test]
 fn 本番の子モジュールを辿れなければ欠落になる() {
     let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_esca/src/entry.rs", "mod 見つからない;\nstruct A;\nimpl M状態 for A {}\n")]);
-    assert!(結果.グラフ.関係一覧().is_empty());
+    assert!(結果.グラフ.関係一覧().is_empty() && 分類の事実の表記一覧(&結果).is_empty());
     assert!(結果.抽出できなかった行一覧.iter().any(|行| 行.理由.説明().contains("モジュールの本体")));
 }
 
@@ -58,14 +58,14 @@ fn 明示した置き場が無いとき別の本体へ読み替えない() {
         ),
     ];
     let 結果 = super::ソース群から抽出する(&抽出対象のソース群::原文一覧から生成する(原文一覧));
-    assert!(結果.グラフ.関係一覧().is_empty());
+    assert!(結果.グラフ.関係一覧().is_empty() && 分類の事実の表記一覧(&結果).is_empty());
     assert!(結果.関係を落とした抽出の欠落へ写す().在るか());
 }
 
 #[test]
 fn 試験の属性と項目が同じ行にあれば本番の項目を黙って消さない() {
     let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_esca/src/entry.rs", "#[cfg(test)] struct 試験; struct 本番;\nimpl M状態 for 本番 {}\n")]);
-    assert!(結果.グラフ.関係一覧().is_empty());
+    assert!(結果.グラフ.関係一覧().is_empty() && 分類の事実の表記一覧(&結果).is_empty());
     assert!(結果.関係を落とした抽出の欠落へ写す().在るか());
 }
 

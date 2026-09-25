@@ -10,7 +10,7 @@ use crate::{設計概念への参照, 設計関係の種類, 関係を落とし�
 use super::super::super::atom::{原子命題, 項};
 use super::super::super::evidence::{未決定の理由, 検証結果};
 use super::super::super::proposition::命題;
-use super::super::super::quantification::{マーカーの名乗り方, 対象集合, 束縛変数};
+use super::super::super::quantification::{対象集合, 束縛変数};
 use super::super::{命題の検証器, 構造の検証器};
 use super::{型の参照, 小さなグラフ, 関係の原子};
 
@@ -32,8 +32,7 @@ fn 対象集合が空の全称は証明済みにならず未決定になる() {
     let 全称 = 命題::全称を組む(
         束縛変数::生成する("t"),
         対象集合::マーカーを持つ設計概念 {
-            マーカー名: "Mエンティティ".to_string(),
-            名乗り方: マーカーの名乗り方::実装した型,
+            マーカー名: "Mエンティティ".to_string()
         },
         関係の原子(型の参照("旅行者"), 設計関係の種類::保持する, 型の参照("旅行者ID")),
     );

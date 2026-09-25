@@ -12,6 +12,7 @@ use std::path::PathBuf;
 
 use super::outcome::抽出した設計関係グラフと抽出の欠け;
 use super::source_group::抽出対象のソース群;
+use crate::design_model::設計概念への参照;
 use crate::file_scan;
 
 // 実物の `crates` を走査して抽出の結果を組む。
@@ -36,14 +37,17 @@ fn 実物のcratesから結果を組む() -> 抽出した設計関係グラフ�
 }
 
 #[test]
-fn 実物のcratesを走査するとマーカーの実装から下位型である関係が出る() {
+fn 実物のcratesを走査するとマーカーの実装の事実が出て分類が上位トレイトの宣言で閉じる() {
     let 結果 = 実物のcratesから結果を組む();
-    let 表記一覧: Vec<String> = 結果.グラフ.関係一覧().iter().map(|関係| 関係.表記()).collect();
+    let 表記一覧: Vec<String> = 結果.グラフ.分類を貸す().事実を貸す().マーカーの実装一覧().iter().map(|実装| 実装.表記()).collect();
     assert!(
-        表記一覧.contains(&"blitz_esca::traveler::旅行者の現在地 下位型である blitz_design::marker::M状態".to_string()),
-        "実物の `impl M状態 for 旅行者の現在地` から関係が出ていない: {}件",
+        表記一覧.contains(&"blitz_esca::traveler::旅行者の現在地 は blitz_design::marker::M状態 を実装する".to_string()),
+        "実物の `impl M状態 for 旅行者の現在地` から事実が出ていない: {}件",
         表記一覧.len()
     );
+    let 現在地 = 設計概念への参照::型として生成する("blitz_esca::traveler", "旅行者の現在地");
+    let 不変データ = 設計概念への参照::トレイトとして生成する("blitz_design::marker", "M不変データ");
+    assert!(結果.グラフ.分類を貸す().分類がトレイトを含むか(&現在地, &不変データ), "実物の `trait M状態: M不変データ` で分類が閉じていない");
 }
 
 #[test]
