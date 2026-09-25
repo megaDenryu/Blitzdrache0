@@ -1,8 +1,13 @@
 //! 問い合わせ件数: 1刻みの中で世界の形を尋ねる口へ渡した問いの数。性能予算(1刻み最大7件)と突き合わせる計器の値である。
 
+use blitz_design::{M不変データ, M値オブジェクト};
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
 pub struct 問い合わせ件数(u32);
+
+impl M不変データ for 問い合わせ件数 {}
+impl M値オブジェクト for 問い合わせ件数 {}
 
 impl 問い合わせ件数 {
     pub fn 零() -> Self {

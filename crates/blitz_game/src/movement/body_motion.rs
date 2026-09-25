@@ -6,6 +6,7 @@
 //! 動かなかったことを観測へ数える。
 //! 参照: `_doc/設計/キャラクターの移動とカメラ.md`「判断6」「判断7」「判断13」
 
+use blitz_design::{M不変データ, M規則};
 use blitz_math::{ラジアン毎秒, 大域ワールド位置};
 
 use super::fall_jump_rules::落下とジャンプの規則;
@@ -23,12 +24,16 @@ use crate::world_shape_port::世界の形を尋ねる口;
 
 const 掃引と滑りの反復の上限: u32 = 3; // 判断6
 
+#[derive(Clone)]
 pub struct 胴体の移動 {
     速さ: 速さの規則,
     落下とジャンプ: 落下とジャンプの規則,
     接地: 接地の規則,
     段差: 段差の持ち上げの規則,
 }
+
+impl M不変データ for 胴体の移動 {}
+impl M規則 for 胴体の移動 {}
 
 impl 胴体の移動 {
     pub fn 初版の値で生成する() -> Self {

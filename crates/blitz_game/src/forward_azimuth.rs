@@ -7,6 +7,7 @@
 //!
 //! 型で包むのは、同じラジアンでも「前がどちらか」と「太陽がどちらか」では混ぜてはならない量だからである。
 
+use blitz_design::{M不変データ, M値オブジェクト};
 use blitz_math::ラジアン;
 
 use crate::facing_azimuth::動く個体が向いている方位角;
@@ -15,6 +16,9 @@ use crate::horizontal_unit_vector::水平面の単位ベクトル;
 /// 「前へ進む」操作が指す向きの方位角。
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 前へ進む向きの方位角(ラジアン);
+
+impl M不変データ for 前へ進む向きの方位角 {}
+impl M値オブジェクト for 前へ進む向きの方位角 {}
 
 impl 前へ進む向きの方位角 {
     pub fn 生成する(角: ラジアン) -> Self {
