@@ -21,7 +21,7 @@ fn 辺(主語: &設計概念への参照, 種類: 設計関係の種類, 目的�
         種類,
         目的語: 目的語.clone(),
         出どころ: 抽出の出どころ {
-            パス: PathBuf::from("crates/blitz_esca/src/lib.rs"),
+            パス: PathBuf::from("crates/blitz_esca/src/試験の辺の出どころ.rs"),
             行番号: 1,
             構文,
         },

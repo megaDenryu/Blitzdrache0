@@ -11,7 +11,7 @@ use super::unextracted_line::{抽出できなかった理由, 抽出できなか
 
 #[test]
 fn 保証範囲の外の構文の件数は他の理由で抽出できなかった行を数えない() {
-    let パス = PathBuf::from("crates/blitz_esca/src/lib.rs");
+    let パス = PathBuf::from("crates/blitz_esca/src/試験の抽出できなかった行.rs");
     let 範囲の外 = 抽出できなかった理由::保証範囲の外の構文である {
         構文: 保証範囲の外の構文::トレイトの宣言がwhere節を持つ { トレイト名: "M状態".to_string() },
     };
