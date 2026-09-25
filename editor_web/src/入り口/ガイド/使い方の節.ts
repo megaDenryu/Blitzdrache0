@@ -1,7 +1,7 @@
 import { div, span, p, DivC } from 'sengen-ui'
 import { セクション, セクション見出し, 段落, 手順リスト, コード欄 } from './スタイル.css.ts'
 
-const ヘッドレス実行コマンド = 'node --experimental-transform-types src/ヘッドレス/編集コマンド一括適用.ts <コマンドJSONのパス>'
+const ブラウザなしで適用するコマンド = 'node --experimental-transform-types src/ヘッドレス/編集コマンド一括適用.ts <コマンドJSONのパス>'
 const ゲーム起動コマンド = 'cargo xtask play-editor-world'
 const 建物単体検証コマンド = 'cargo xtask bake-building <建物定義ID>'
 
@@ -83,7 +83,7 @@ export function AIからの操作の節を組み立てる(): DivC {
             class: 段落,
             text: 'AIは画面を持たずにこのエディターを操作できる。編集コマンドの列をJSONファイルへ書き出し、editor_webディレクトリで次の1行を実行すると、人がボタンやブラシで操作したのと同じ適用実装が同じコマンドを適用する。画面を持つ入り口と画面を持たない入り口は、同じ編集モデルと同じ操作コマンドの適用処理を呼んでいるだけであり、意味の異なる別実装ではない。',
         }),
-        span({ class: コード欄, text: ヘッドレス実行コマンド }),
+        span({ class: コード欄, text: ブラウザなしで適用するコマンド }),
     ])
 }
 
