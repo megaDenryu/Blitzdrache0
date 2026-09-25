@@ -14,7 +14,7 @@ use crate::shape::{形の局所座標の位置, 形の局所座標の変位};
 
 use super::clip_plane::参照面の側の平面;
 use super::clip_polygon::切り抜き中の多角形;
-use super::clip_reference_feature::参照面の辺で切り取った点の特徴の文字列;
+use super::clip_reference_feature::参照面の辺で切り取った点の特徴;
 use super::error::接触点集合の問い合わせエラー;
 use super::generation_margin::接触生成の余白メートル;
 use super::penetration_depth::符号付き貫通量メートル;
@@ -22,7 +22,7 @@ use super::penetration_depth::符号付き貫通量メートル;
 // 参照面を囲む側の平面の最大の数。直方体の面が4つ、三角形が3つである。
 const 側の平面の最大の数: usize = 4;
 
-pub(super) struct 参照の面の枠<参照側の特徴: 参照面の辺で切り取った点の特徴の文字列> {
+pub(super) struct 参照の面の枠<参照側の特徴: 参照面の辺で切り取った点の特徴> {
     面の基準点: 形の局所座標の位置,
     面の外向きの単位法線: 形の局所座標の変位,
     面そのものの特徴: 参照側の特徴,
@@ -30,7 +30,7 @@ pub(super) struct 参照の面の枠<参照側の特徴: 参照面の辺で切�
     側の平面の件数: usize,
 }
 
-impl<参照側の特徴: 参照面の辺で切り取った点の特徴の文字列> 参照の面の枠<参照側の特徴> {
+impl<参照側の特徴: 参照面の辺で切り取った点の特徴> 参照の面の枠<参照側の特徴> {
     pub(super) fn 生成する(
         面の基準点: 形の局所座標の位置, 面の外向きの単位法線: 形の局所座標の変位, 面そのものの特徴: 参照側の特徴, 側の平面: [Option<参照面の側の平面<参照側の特徴>>; 側の平面の最大の数], 側の平面の件数: usize
     ) -> Self {
