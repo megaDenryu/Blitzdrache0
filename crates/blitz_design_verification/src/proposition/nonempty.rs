@@ -11,7 +11,7 @@
 //! 参照: `_doc/設計/設計オントロジー.md` 第7節。
 
 use std::error::Error;
-use std::fmt::{Display, Formatter, Result as 整形の結末};
+use std::fmt::{Display, Formatter, Result as 整形の結果};
 
 use super::命題;
 
@@ -28,7 +28,7 @@ pub enum 非空の命題一覧の生成の失敗 {
 }
 
 impl 非空の命題一覧 {
-    /// 命題の並びから生成する。0件なら失敗を返す。`collect()` の結果のように、件数が書いた時点で決まらない並びはこの口を通す。
+    /// 命題の並びから生成する。0件なら失敗を返す。`collect()` の結果のように、件数が書いた時点で決まらない並びはこの関数を通す。
     pub fn 生成する(項一覧: Vec<命題>) -> Result<Self, 非空の命題一覧の生成の失敗> {
         if 項一覧.is_empty() {
             return Err(非空の命題一覧の生成の失敗::並びが空である);
@@ -55,7 +55,7 @@ impl 非空の命題一覧 {
 }
 
 impl Display for 非空の命題一覧の生成の失敗 {
-    fn fmt(&self, 整形先: &mut Formatter<'_>) -> 整形の結末 {
+    fn fmt(&self, 整形先: &mut Formatter<'_>) -> 整形の結果 {
         match self {
             Self::並びが空である => write!(整形先, "命題の並びが0件である(連言・選言・推論規則の前提は1件以上の命題を持たなければならない)"),
         }
