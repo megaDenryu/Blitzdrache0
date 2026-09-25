@@ -9,7 +9,7 @@ Blitzdrache0で読むものは次の6つである。すべて絶対パスで読�
 3. `_doc/計画/ユビキタス言語.md`（用語定義。命名と文章の判断はここを正本にする）
 4. `.claude/global-reference/deprecated_words.csv`（オーナーが使うなと裁定した語のうち、全リポジトリ共通のもの。正本は`~/.claude/shared-knowledge/deprecated_words.csv`）
 5. `_doc/計画/deprecated_words.csv`（オーナーが使うなと裁定した語のうち、このリポジトリに固有のもの）
-6. `_doc/計画/裁定待ちユビキタス言語.md`（裁定をまだ受けていない語。ここにある語は案であり、合意済みの語彙ではない）
+6. `_doc/計画/pending_ubiquitous_language.md`（裁定をまだ受けていない語。ここにある語は案であり、合意済みの語彙ではない）
 
 作業の種類によって、次も読む。
 
