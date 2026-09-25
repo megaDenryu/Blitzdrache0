@@ -2,7 +2,7 @@
 //! 参照: CLAUDE.md「ファイル・関数の分割」「型安全性」「依存の設計」。
 
 mod allow_lint;
-mod cargo_toml_parse;
+pub(crate) mod cargo_toml_parse;
 mod declaration_comment_line;
 mod dependency_whitelist;
 mod depth_contract;

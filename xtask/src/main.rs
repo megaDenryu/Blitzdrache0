@@ -40,6 +40,8 @@ mod game_fox_tour;
 mod gen_atmosphere_reference;
 mod gen_game_map;
 mod gen_source_assets;
+#[path = "graphiteの生成物の照合.rs"]
+mod graphiteの生成物の照合;
 mod hdr_luminance;
 mod ibl_step;
 mod indirect_cost;
