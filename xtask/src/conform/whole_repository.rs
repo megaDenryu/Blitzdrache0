@@ -31,10 +31,10 @@ pub fn 複数ファイルを横断する検査の違反一覧を集める() -> R
     違反一覧.extend(removed_slot_material_set::全ファイルを検査する()?);
     違反一覧.extend(reload_without_device_wait::シーン差し替えのgpu全作業完了待ちを検査する()?);
     違反一覧.extend(single_lighting_slot_write::照明問い合わせスロットへの書き込み元を検査する()?);
-    違反一覧.extend(free_function_whole_type::全ファイルの自由関数を検査する()?);
     違反一覧.extend(verify_output_place::全ファイルを検査する()?);
     違反一覧.extend(extractable_normal_form::全ソースを検査する()?);
     Ok(検査の報告::生成する(違反一覧, Vec::new())
         .合わせる(type_metrics_ledger::全型の分量を台帳と照合する()?)
+        .合わせる(free_function_whole_type::全ファイルの自由関数を検査する()?)
         .合わせる(design_ontology::全ファイルを検査する()?))
 }
