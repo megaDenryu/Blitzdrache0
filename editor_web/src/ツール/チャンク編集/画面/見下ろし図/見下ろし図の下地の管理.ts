@@ -55,9 +55,9 @@ export class 見下ろし図の下地の管理 {
         const キャンバス = this._下地キャンバス ?? document.createElement('canvas')
         キャンバス.width = 画像.幅
         キャンバス.height = 画像.高さ
-        const 文脈 = キャンバス.getContext('2d')
-        if (文脈 === null) throw new Error('下地のcanvas要素から2Dの描画文脈を取得できない')
-        文脈.putImageData(new ImageData(画像.画素, 画像.幅, 画像.高さ), 0, 0)
+        const キャンバスへ描く口 = キャンバス.getContext('2d')
+        if (キャンバスへ描く口 === null) throw new Error('下地のcanvas要素から2Dの描画文脈を取得できない')
+        キャンバスへ描く口.putImageData(new ImageData(画像.画素, 画像.幅, 画像.高さ), 0, 0)
         this._下地キャンバス = キャンバス
         this._作り直しが要る = false
         return true
@@ -65,18 +65,18 @@ export class 見下ろし図の下地の管理 {
 
     // 下地の画素は格子点の上に中心が来るよう、チャンクの範囲を格子間隔の半分だけ外へ広げた矩形へ拡大して描く。
     // 格子1点が1画素の意味を保つため補間はしない。外枠はチャンクの範囲そのものに引く。
-    public 描く(文脈: CanvasRenderingContext2D, 視点: 見下ろし図の視点): void {
+    public 描く(キャンバスへ描く口: CanvasRenderingContext2D, 視点: 見下ろし図の視点): void {
         if (this._高さ場 === null || this._下地キャンバス === null) return
         const 半分 = this._高さ場.一辺のメートル / 2
         const 半格子 = this._高さ場.格子間隔 / 2
         const 左上 = 視点.ワールドから画素へ({ x: -半分 - 半格子, z: -半分 - 半格子 })
         const 右下 = 視点.ワールドから画素へ({ x: 半分 + 半格子, z: 半分 + 半格子 })
-        文脈.imageSmoothingEnabled = false
-        文脈.drawImage(this._下地キャンバス, 左上.x, 左上.y, 右下.x - 左上.x, 右下.y - 左上.y)
+        キャンバスへ描く口.imageSmoothingEnabled = false
+        キャンバスへ描く口.drawImage(this._下地キャンバス, 左上.x, 左上.y, 右下.x - 左上.x, 右下.y - 左上.y)
         const 枠の左上 = 視点.ワールドから画素へ({ x: -半分, z: -半分 })
         const 枠の右下 = 視点.ワールドから画素へ({ x: 半分, z: 半分 })
-        文脈.strokeStyle = 外枠の色
-        文脈.lineWidth = 外枠の太さ
-        文脈.strokeRect(枠の左上.x, 枠の左上.y, 枠の右下.x - 枠の左上.x, 枠の右下.y - 枠の左上.y)
+        キャンバスへ描く口.strokeStyle = 外枠の色
+        キャンバスへ描く口.lineWidth = 外枠の太さ
+        キャンバスへ描く口.strokeRect(枠の左上.x, 枠の左上.y, 枠の右下.x - 枠の左上.x, 枠の右下.y - 枠の左上.y)
     }
 }

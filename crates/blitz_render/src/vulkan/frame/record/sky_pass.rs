@@ -27,8 +27,8 @@ pub(super) fn 空パスを宣言する<'a>(
             深度: Some(深度アタッチメント::カメラ(深度)),
             クリア指定: クリア指定::ロードする,
         },
-        move |文脈| {
-            let 積み先 = 文脈.積み先();
+        move |積み先と取り出し口| {
+            let 積み先 = 積み先と取り出し口.積み先();
             let device = 積み先.論理デバイス();
             let command_buffer = 積み先.コマンドバッファ();
             let viewport一覧 = [vk::Viewport::default()

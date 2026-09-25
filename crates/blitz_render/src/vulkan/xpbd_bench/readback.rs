@@ -45,13 +45,13 @@ impl 読み戻しの受け皿 {
             vec![(点, バッファ用途::転送元), (乗数, バッファ用途::転送元)],
             Vec::new(),
             パス種別::転送,
-            move |文脈| {
-                let device = 文脈.積み先().論理デバイス();
-                let command_buffer = 文脈.積み先().コマンドバッファ();
+            move |積み先と取り出し口| {
+                let device = 積み先と取り出し口.積み先().論理デバイス();
+                let command_buffer = 積み先と取り出し口.積み先().コマンドバッファ();
                 // 安全性: command_bufferは記録中、転送元は用途の宣言からグラフがバリアを導き、受け皿は同じ長さで確保済みである。
                 unsafe {
-                    device.cmd_copy_buffer(command_buffer, 文脈.宣言済みのバッファを参照する(点), 位置の受け, &[vk::BufferCopy::default().size(点のバイト数)]);
-                    device.cmd_copy_buffer(command_buffer, 文脈.宣言済みのバッファを参照する(乗数), 乗数の受け, &[vk::BufferCopy::default().size(乗数のバイト数)]);
+                    device.cmd_copy_buffer(command_buffer, 積み先と取り出し口.宣言済みのバッファを参照する(点), 位置の受け, &[vk::BufferCopy::default().size(点のバイト数)]);
+                    device.cmd_copy_buffer(command_buffer, 積み先と取り出し口.宣言済みのバッファを参照する(乗数), 乗数の受け, &[vk::BufferCopy::default().size(乗数のバイト数)]);
                 }
             },
         ));

@@ -17,18 +17,18 @@ pub(super) fn 遠方環境のコピーパスを作る(画像: graph::画像ハ�
         Vec::new(),
         Vec::new(),
         graph::パス種別::転送,
-        move |文脈| {
-            let 画像ハンドル = 文脈.宣言済みの画像を参照する(画像);
+        move |積み先と取り出し口| {
+            let 画像ハンドル = 積み先と取り出し口.宣言済みの画像を参照する(画像);
             let 領域 = [vk::BufferImageCopy::default()
                 .image_subresource(vk::ImageSubresourceLayers::default().aspect_mask(vk::ImageAspectFlags::COLOR).mip_level(0).base_array_layer(0).layer_count(層数))
                 .image_extent(一層の範囲)];
             // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ遷移済み(用途宣言からグラフが導く)、
             // 受けバッファは全層ぶんのテクセル数の容量で確保済みである。
             unsafe {
-                文脈
+                積み先と取り出し口
                     .積み先()
                     .論理デバイス()
-                    .cmd_copy_image_to_buffer(文脈.積み先().コマンドバッファ(), 画像ハンドル, vk::ImageLayout::TRANSFER_SRC_OPTIMAL, 受け, &領域);
+                    .cmd_copy_image_to_buffer(積み先と取り出し口.積み先().コマンドバッファ(), 画像ハンドル, vk::ImageLayout::TRANSFER_SRC_OPTIMAL, 受け, &領域);
             }
         },
     )

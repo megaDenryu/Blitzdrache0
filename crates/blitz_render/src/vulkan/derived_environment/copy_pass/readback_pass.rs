@@ -11,16 +11,16 @@ use super::{四成分テクセルのバイト数, 層の部分範囲};
 use crate::vulkan::graph;
 
 pub(in crate::vulkan) fn 立方体の読み戻しを作る(パス名: &'static str, 画像: graph::画像ハンドル, 段ごとの範囲: Vec<vk::Extent3D>, 層数: u32, 受け: vk::Buffer) -> graph::パス宣言<'static> {
-    graph::パス宣言::生成する(パス名, vec![(画像, graph::画像用途::転送元)], Vec::new(), Vec::new(), Vec::new(), graph::パス種別::転送, move |文脈| {
-        let 画像ハンドル = 文脈.宣言済みの画像を参照する(画像);
+    graph::パス宣言::生成する(パス名, vec![(画像, graph::画像用途::転送元)], Vec::new(), Vec::new(), Vec::new(), graph::パス種別::転送, move |積み先と取り出し口| {
+        let 画像ハンドル = 積み先と取り出し口.宣言済みの画像を参照する(画像);
         let 領域一覧 = 段ごとの領域を並べる(&段ごとの範囲, 層数);
         // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ遷移済み(用途宣言からグラフが導く)、
         // 受けバッファは全段全層ぶんのテクセル数の容量で確保済みである。
         unsafe {
-            文脈
+            積み先と取り出し口
                 .積み先()
                 .論理デバイス()
-                .cmd_copy_image_to_buffer(文脈.積み先().コマンドバッファ(), 画像ハンドル, vk::ImageLayout::TRANSFER_SRC_OPTIMAL, 受け, &領域一覧);
+                .cmd_copy_image_to_buffer(積み先と取り出し口.積み先().コマンドバッファ(), 画像ハンドル, vk::ImageLayout::TRANSFER_SRC_OPTIMAL, 受け, &領域一覧);
         }
     })
 }
@@ -33,15 +33,15 @@ pub(in crate::vulkan) fn 表の読み戻しを作る(画像: graph::画像ハン
         Vec::new(),
         Vec::new(),
         graph::パス種別::転送,
-        move |文脈| {
-            let 画像ハンドル = 文脈.宣言済みの画像を参照する(画像);
+        move |積み先と取り出し口| {
+            let 画像ハンドル = 積み先と取り出し口.宣言済みの画像を参照する(画像);
             let 領域 = [vk::BufferImageCopy::default().image_subresource(層の部分範囲(0, 1)).image_extent(範囲)];
             // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ遷移済み、受けバッファは全テクセルの容量で確保済みである。
             unsafe {
-                文脈
+                積み先と取り出し口
                     .積み先()
                     .論理デバイス()
-                    .cmd_copy_image_to_buffer(文脈.積み先().コマンドバッファ(), 画像ハンドル, vk::ImageLayout::TRANSFER_SRC_OPTIMAL, 受け, &領域);
+                    .cmd_copy_image_to_buffer(積み先と取り出し口.積み先().コマンドバッファ(), 画像ハンドル, vk::ImageLayout::TRANSFER_SRC_OPTIMAL, 受け, &領域);
             }
         },
     )
