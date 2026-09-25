@@ -29,7 +29,7 @@ impl 細分を綴る窓 {
     }
 
     /// 表の見出しへ綴る形。
-    pub(super) fn 綴り(&self) -> String {
+    pub(super) fn 文字列(&self) -> String {
         let (始まり, 終わり) = self.始まりと終わり();
         let 読み方 = match self {
             Self::円錐と退避だけを綴る { .. } => "円錐と退避だけ",

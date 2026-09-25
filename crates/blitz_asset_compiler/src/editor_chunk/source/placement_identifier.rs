@@ -21,29 +21,29 @@ pub(crate) enum 配置識別子のエラー {
 
 impl 配置識別子 {
     /// 前後の空白を落とした綴りだけを持つ。落とした結果が空なら型付きエラーで拒む。
-    pub(crate) fn 綴りを正準化して生成する(綴り: &str) -> Result<Self, 配置識別子のエラー> {
-        let 正準の綴り = 綴り.trim();
-        if 正準の綴り.is_empty() {
+    pub(crate) fn 文字列を正準化して生成する(文字列: &str) -> Result<Self, 配置識別子のエラー> {
+        let 正準の文字列 = 文字列.trim();
+        if 正準の文字列.is_empty() {
             return Err(配置識別子のエラー::正準化すると空になる);
         }
-        Ok(Self(正準の綴り.to_string()))
+        Ok(Self(正準の文字列.to_string()))
     }
 
     /// 包んでいる正準の綴りそのもの。重複の判定と、下流の種・描画・物理がこの値を読む。
-    pub(crate) fn 綴り(&self) -> &str {
+    pub(crate) fn 文字列(&self) -> &str {
         &self.0
     }
 }
 
 impl std::fmt::Display for 配置識別子 {
     fn fmt(&self, 出力: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        出力.write_str(self.綴り())
+        出力.write_str(self.文字列())
     }
 }
 
 impl<'de> Deserialize<'de> for 配置識別子 {
     fn deserialize<入力元: Deserializer<'de>>(入力元: 入力元) -> Result<Self, 入力元::Error> {
-        let 綴り = String::deserialize(入力元)?;
-        Self::綴りを正準化して生成する(&綴り).map_err(serde::de::Error::custom)
+        let 文字列 = String::deserialize(入力元)?;
+        Self::文字列を正準化して生成する(&文字列).map_err(serde::de::Error::custom)
     }
 }

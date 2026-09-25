@@ -8,13 +8,13 @@
 
 use blitz_assembly::{接合点名, 部品ID};
 
-const 骨格の綴り: &str = "Mod_Frame_Bay_Single";
-const 平壁の綴り: &str = "Mod_Wall_HalfTimber_Solid";
-const 窓壁の綴り: &str = "Mod_Wall_HalfTimber_Window";
-const 扉枠付きの壁の綴り: &str = "Mod_Wall_HalfTimber_DoorFrame";
-const 切妻屋根の綴り: &str = "Mod_Frame_Roof_Gable";
-const 床板の綴り: &str = "Mod_Frame_Floor";
-const 出窓の綴り: &str = "Mod_Tavern_Oriel_F2";
+const 骨格の文字列: &str = "Mod_Frame_Bay_Single";
+const 平壁の文字列: &str = "Mod_Wall_HalfTimber_Solid";
+const 窓壁の文字列: &str = "Mod_Wall_HalfTimber_Window";
+const 扉枠付きの壁の文字列: &str = "Mod_Wall_HalfTimber_DoorFrame";
+const 切妻屋根の文字列: &str = "Mod_Frame_Roof_Gable";
+const 床板の文字列: &str = "Mod_Frame_Floor";
+const 出窓の文字列: &str = "Mod_Tavern_Oriel_F2";
 
 /// はめ口へ入れる壁の種類。壁3種の外枠は同じ位置と姿勢と寸法で宣言されているため、
 /// 接合には現れず、違うのはメッシュと材質スロットの数だけである。
@@ -28,31 +28,31 @@ pub(super) enum はめる壁の種類 {
 impl はめる壁の種類 {
     pub(super) fn 部品id(self) -> Result<部品ID, String> {
         部品idを作る(match self {
-            Self::平壁 => 平壁の綴り,
-            Self::窓壁 => 窓壁の綴り,
-            Self::扉枠付きの壁 => 扉枠付きの壁の綴り,
+            Self::平壁 => 平壁の文字列,
+            Self::窓壁 => 窓壁の文字列,
+            Self::扉枠付きの壁 => 扉枠付きの壁の文字列,
         })
     }
 }
 
 pub(super) fn 骨格の部品id() -> Result<部品ID, String> {
-    部品idを作る(骨格の綴り)
+    部品idを作る(骨格の文字列)
 }
 
 /// 1ベイぶんの切妻屋根。宣言する接合点は下面積層1件だけであり、骨格の上面へ載ることしかできない。
 pub(super) fn 切妻屋根の部品id() -> Result<部品ID, String> {
-    部品idを作る(切妻屋根の綴り)
+    部品idを作る(切妻屋根の文字列)
 }
 
 /// 1ベイぶんの床板。宣言する接合点は床の外枠1件だけであり、骨格の床のはめ口へ収まることしかできない。
 pub(super) fn 床板の部品id() -> Result<部品ID, String> {
-    部品idを作る(床板の綴り)
+    部品idを作る(床板の文字列)
 }
 
 /// 壁の外面へ付ける飾りとして一体型の家から流用する出窓。壁面差込を宣言しており、
 /// 壁3種が新しく持った外面の飾り取付と噛み合う。
 pub(super) fn 出窓の部品id() -> Result<部品ID, String> {
-    部品idを作る(出窓の綴り)
+    部品idを作る(出窓の文字列)
 }
 
 /// 壁3種が共通で持つ、外面の中心の取付面。骨格のはめ口と向かい合う外枠の裏側にあたる。
@@ -90,10 +90,10 @@ pub(super) fn 床の外枠の接合点名() -> Result<接合点名, String> {
     接合点名を作る("床の外枠")
 }
 
-pub(super) fn 接合点名を作る(綴り: &str) -> Result<接合点名, String> {
-    接合点名::生成する(綴り).map_err(|誤り| 誤り.to_string())
+pub(super) fn 接合点名を作る(文字列: &str) -> Result<接合点名, String> {
+    接合点名::生成する(文字列).map_err(|誤り| 誤り.to_string())
 }
 
-pub(super) fn 部品idを作る(綴り: &str) -> Result<部品ID, String> {
-    部品ID::生成する(綴り).map_err(|誤り| 誤り.to_string())
+pub(super) fn 部品idを作る(文字列: &str) -> Result<部品ID, String> {
+    部品ID::生成する(文字列).map_err(|誤り| 誤り.to_string())
 }

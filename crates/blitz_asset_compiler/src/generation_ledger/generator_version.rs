@@ -24,8 +24,8 @@ impl 生成器の版 {
         blitz_engine::世界の生成器の版::生成する(self.0)
     }
 
-    pub(super) fn 十進の綴りから復元する(綴り: &str) -> Result<Self, 生成台帳エラー> {
-        綴り.parse::<u32>().map(Self).map_err(|_| 生成台帳エラー::未対応の版である(綴り.to_string()))
+    pub(super) fn 十進の文字列から復元する(文字列: &str) -> Result<Self, 生成台帳エラー> {
+        文字列.parse::<u32>().map(Self).map_err(|_| 生成台帳エラー::未対応の版である(文字列.to_string()))
     }
 }
 

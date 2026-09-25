@@ -19,7 +19,7 @@ pub(super) enum 一刻みの摂動の入り方 {
 }
 
 impl 一刻みの摂動の入り方 {
-    pub(super) fn 綴り(&self) -> String {
+    pub(super) fn 文字列(&self) -> String {
         match self {
             Self::入った { 成分の番号, 入れる前, 入れた後 } => format!(
                 "姿勢の成分{成分の番号}へ1刻み入った 入れる前={入れる前:.9e}(0x{:08x}) 入れた後={入れた後:.9e}(0x{:08x}) 角にすると約{:.4e}ラジアン",

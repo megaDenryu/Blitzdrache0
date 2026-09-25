@@ -10,7 +10,7 @@ use super::ground_surface_query_result::地表の面の問い合わせ結果;
 use super::load_error::高さ場読込エラー;
 use super::query_result::地表高さの問い合わせ結果;
 use super::segment_query_result::線分が最初に当たる地表の問い合わせ結果;
-use super::stable_id::世界の高さ場の安定IDの綴り;
+use super::stable_id::世界の高さ場の安定IDの文字列;
 use crate::asset::{アセットID, カタログ, 実行時形式から高さ場を読む, 実行時形式のファイル};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -24,7 +24,7 @@ impl 高さ場の読み口 {
     /// 登録があってファイルが読めない、あるいは形式が壊れている場合は型付きエラーにする。無言で持たない世界へ落とすと、
     /// 高さ場を焼いたはずの世界でキツネが地面へ沈む理由が読み取れなくなるためである。
     pub fn カタログから読み込む(カタログ: &カタログ) -> Result<Self, 高さ場読込エラー> {
-        let id = アセットID::生成する(世界の高さ場の安定IDの綴り)?;
+        let id = アセットID::生成する(世界の高さ場の安定IDの文字列)?;
         let Some(パス) = カタログ.パスを参照する(&id) else {
             return Ok(Self::高さ場を持たない世界);
         };

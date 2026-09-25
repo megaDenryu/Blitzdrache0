@@ -11,7 +11,7 @@ use super::violation::違反;
 
 const 対象クレート: &str = "blitz_sim";
 const 対象ディレクトリ一覧: [&str; 3] = ["rigid_body", "rigid_xpbd", "contact"];
-const 三つ組の綴り: &str = concat!("[f32", "; 3]");
+const 三つ組の文字列: &str = concat!("[f32", "; 3]");
 
 fn 剛体のモジュール群か(パス: &Path) -> bool {
     let 部品一覧: Vec<&std::ffi::OsStr> = パス.components().map(|部品| 部品.as_os_str()).collect();
@@ -25,7 +25,7 @@ pub fn 剛体の単精度3つ組宣言を検査する(パス: &Path, 内容: &st
     コードだけの行一覧(内容)
         .iter()
         .enumerate()
-        .filter(|(_, 行)| 行.contains(三つ組の綴り))
+        .filter(|(_, 行)| 行.contains(三つ組の文字列))
         .map(|(添字, _)| 違反::行単位(パス.to_path_buf(), 添字 + 1, "剛体のモジュール群で単精度の3つ組を宣言している(座標系と単位を持つ型で持つ)".to_string()))
         .collect()
 }
@@ -45,7 +45,7 @@ mod tests {
     }
 
     #[test]
-    fn コメントの中の綴りは数えない() {
+    fn コメントの中の文字列は数えない() {
         let 原文 = concat!("// [f32", "; 3] は使わない\nlet a = 1;\n");
         assert!(剛体の単精度3つ組宣言を検査する(Path::new("crates/blitz_sim/src/rigid_body/body.rs"), 原文).is_empty());
     }

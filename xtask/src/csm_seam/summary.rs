@@ -9,7 +9,7 @@
 use std::path::Path;
 
 use super::composition::継ぎ目を見る構図;
-use super::judgment::{境界の実在, 境界の段差, 対象から外した境界の綴り};
+use super::judgment::{境界の実在, 境界の段差, 対象から外した境界の文字列};
 
 pub(super) struct 検収の実測<'実測> {
     pub(super) 分け方: &'実測 str,
@@ -30,7 +30,7 @@ pub(super) fn 検収の要約を組み立てる(構図: 継ぎ目を見る構図
         実測.四区分の成立,
         実測.境界の影,
         段差の記述(実測),
-        対象から外した境界の綴り(実測.境界の実在),
+        対象から外した境界の文字列(実測.境界の実在),
         実測.本番の絵のパス.display(),
         実測.可視化画像のパス.display()
     )

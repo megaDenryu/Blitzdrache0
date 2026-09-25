@@ -9,26 +9,26 @@ use super::error::カタログエラー;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct 部品ID {
-    綴り: String,
+    文字列: String,
 }
 
 impl 部品ID {
     /// 空の識別子を拒む。前後の空白は落とす。
-    pub fn 生成する(綴り: &str) -> Result<Self, カタログエラー> {
-        let 整えた綴り = 綴り.trim();
-        if 整えた綴り.is_empty() {
+    pub fn 生成する(文字列: &str) -> Result<Self, カタログエラー> {
+        let 整えた文字列 = 文字列.trim();
+        if 整えた文字列.is_empty() {
             return Err(カタログエラー::部品IDが空);
         }
-        Ok(Self { 綴り: 整えた綴り.to_string() })
+        Ok(Self { 文字列: 整えた文字列.to_string() })
     }
 
-    pub fn 綴り(&self) -> &str {
-        &self.綴り
+    pub fn 文字列(&self) -> &str {
+        &self.文字列
     }
 }
 
 impl fmt::Display for 部品ID {
     fn fmt(&self, 出力: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(出力, "{}", self.綴り)
+        write!(出力, "{}", self.文字列)
     }
 }

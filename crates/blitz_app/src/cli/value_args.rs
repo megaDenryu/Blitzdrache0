@@ -24,7 +24,7 @@ pub(super) fn benchmark_frames引数を処理する(引数: &mut Iter<String>) -
 }
 
 pub(super) fn scene引数を処理する(引数: &mut Iter<String>) -> Result<super::起動時シーン, 起動引数エラー> {
-    super::起動時シーン::綴りから解析する(次の値を読む(引数, "--scene", 起動引数エラー::シーン名不正)?)
+    super::起動時シーン::文字列から解析する(次の値を読む(引数, "--scene", 起動引数エラー::シーン名不正)?)
 }
 
 pub(super) fn object_count引数を処理する(引数: &mut Iter<String>) -> Result<描画対象数, 起動引数エラー> {

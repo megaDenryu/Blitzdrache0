@@ -15,7 +15,7 @@ pub use comparable::判定で比べられる値;
 pub enum 判定が比べる値 {
     件数(u64),
     実数(f64),
-    綴り(String),
+    文字列(String),
 }
 
 impl fmt::Display for 判定が比べる値 {
@@ -23,7 +23,7 @@ impl fmt::Display for 判定が比べる値 {
         match self {
             Self::件数(値) => write!(書き手, "{値}"),
             Self::実数(値) => write!(書き手, "{値}"),
-            Self::綴り(値) => write!(書き手, "{値}"),
+            Self::文字列(値) => write!(書き手, "{値}"),
         }
     }
 }

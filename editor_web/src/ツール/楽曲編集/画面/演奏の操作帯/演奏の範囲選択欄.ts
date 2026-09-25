@@ -28,10 +28,10 @@ export class 演奏の範囲選択欄 extends SelectC {
 
     // 選ばれた綴りはこの欄が出した選択肢のものしか来ないため、外れた綴りは配線の誤りとして失敗させる。
     public 選ばれた範囲(): 演奏の範囲 {
-        const 綴り = this.getValue()
+        const 文字列 = this.getValue()
         for (const 候補 of 演奏の範囲の一覧) {
-            if (候補 === 綴り) return 候補
+            if (候補 === 文字列) return 候補
         }
-        throw new Error(`演奏の範囲として選べない綴りが選ばれています: ${綴り}`)
+        throw new Error(`演奏の範囲として選べない綴りが選ばれています: ${文字列}`)
     }
 }

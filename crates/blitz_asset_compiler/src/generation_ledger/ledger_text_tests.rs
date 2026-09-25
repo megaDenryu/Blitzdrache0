@@ -20,7 +20,7 @@ use super::map_seed::{マップ生成の乱数の種, 種の由来};
 /// 期待する並びは東(x)を先、南(z)を後に見る辞書式である。
 const 挿入する順の座標一覧: [(i32, i32); 4] = [(1, -1), (-1, 2), (1, -2), (-1, -1)];
 
-const 期待する台帳の綴り: &str = "blitz_generation_ledger 1\n\
+const 期待する台帳の文字列: &str = "blitz_generation_ledger 1\n\
 seed 20260810\n\
 generator_version 7\n\
 generator_image dd041024dfeb38eb\n\
@@ -31,7 +31,7 @@ chunk 1 -2 4476609c79f9b72b\n\
 chunk 1 -1 4476609c79f9b72b\n";
 
 #[test]
-fn 台帳の綴りが固定の書式と一致する() {
+fn 台帳の文字列が固定の書式と一致する() {
     let 見出し = 生成台帳の見出し::読み取った値から組み立てる(
         種の由来::種から焼いた(マップ生成の乱数の種::生成する(20260810)),
         生成器の版::生成する(7),
@@ -42,26 +42,26 @@ fn 台帳の綴りが固定の書式と一致する() {
     for (東, 南) in 挿入する順の座標一覧 {
         記録.insert(チャンク座標::生成する(東, 南), 内容ハッシュ::バイト列から求める(b"chunk source"));
     }
-    assert_eq!(生成台帳の本文::組み立てる(見出し, &記録).綴り(), 期待する台帳の綴り);
+    assert_eq!(生成台帳の本文::組み立てる(見出し, &記録).文字列(), 期待する台帳の文字列);
 }
 
 /// 種を持たない台帳の綴りも固定する。欄を空にせず`none`と書くのは、種の欄が消えると行の位置が動くためである。
 #[test]
-fn 種を持たない台帳の綴りが固定の書式と一致する() {
+fn 種を持たない台帳の文字列が固定の書式と一致する() {
     let 見出し = 生成台帳の見出し::読み取った値から組み立てる(
         種の由来::種を持たない,
         生成器の版::生成する(1),
         内容ハッシュ::バイト列から求める(b"generator image"),
         内容ハッシュ::バイト列から求める(b"bake options"),
     );
-    let 綴り = 生成台帳の本文::組み立てる(見出し, &BTreeMap::new());
-    assert_eq!(綴り.綴り(), "blitz_generation_ledger 1\nseed none\ngenerator_version 1\ngenerator_image dd041024dfeb38eb\nbake_options 4fb560225adbe2fe\n");
+    let 文字列 = 生成台帳の本文::組み立てる(見出し, &BTreeMap::new());
+    assert_eq!(文字列.文字列(), "blitz_generation_ledger 1\nseed none\ngenerator_version 1\ngenerator_image dd041024dfeb38eb\nbake_options 4fb560225adbe2fe\n");
 }
 
 /// 固定した綴りが今の解析でそのまま読めることも確かめる。書式だけを変えて解析を直し忘れる退行を止める。
 #[test]
-fn 固定の書式の綴りを今の解析が読める() {
-    let 中身 = 生成台帳の本文::読み取った綴りから作る(期待する台帳の綴り.to_string()).解析する().unwrap();
+fn 固定の書式の文字列を今の解析が読める() {
+    let 中身 = 生成台帳の本文::読み取った文字列から作る(期待する台帳の文字列.to_string()).解析する().unwrap();
     assert_eq!(中身.チャンクごとの内容ハッシュ.len(), 挿入する順の座標一覧.len());
     assert!(中身.チャンクごとの内容ハッシュ.contains_key(&チャンク座標::生成する(1, -2)));
 }

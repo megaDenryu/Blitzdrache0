@@ -10,7 +10,7 @@ use super::alternative_discard_rule::本番の代わりに置く右辺の向き�
 
 impl 本番の代わりに置く右辺の向きの捨て方 {
     /// 表の見出しへ綴る形。閾値も綴るのは、同じ規則を閾値だけ振って並べる計器が在るためである。
-    pub(in crate::contact) fn 綴り(&self) -> String {
+    pub(in crate::contact) fn 文字列(&self) -> String {
         match *self {
             Self::増分が大きい向きを捨てる { 増分の倍率 } => {
                 format!("増分の大きさで捨てる_倍率{増分の倍率}")

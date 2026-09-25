@@ -41,10 +41,10 @@ impl 組み立ての正解表のファイル {
     }
 
     pub fn 正解表を読み取る(&self) -> Result<正解表, 正解表の読み込みエラー> {
-        let 綴り = std::fs::read_to_string(&self.パス).map_err(|誤り| 正解表の読み込みエラー::ファイルを読めない {
+        let 文字列 = std::fs::read_to_string(&self.パス).map_err(|誤り| 正解表の読み込みエラー::ファイルを読めない {
             パス: self.パス.display().to_string(), 誤り
         })?;
-        let 本体: Value = serde_json::from_str(&綴り).map_err(|誤り| 正解表の読み込みエラー::正解表のJSONを解けない(誤り.to_string()))?;
+        let 本体: Value = serde_json::from_str(&文字列).map_err(|誤り| 正解表の読み込みエラー::正解表のJSONを解けない(誤り.to_string()))?;
         座標系を確かめる(&本体)?;
         let 組み立て = 組み立ての識別子を読む(&本体)?;
         let 姿勢の配列 = 本体
@@ -61,11 +61,11 @@ impl 組み立ての正解表のファイル {
 }
 
 fn 座標系を確かめる(本体: &Value) -> Result<(), 正解表の読み込みエラー> {
-    let 綴り = 文字列を読む(本体, 座標系のキー)?;
-    if 綴り == 受け取る座標系 {
+    let 文字列 = 文字列を読む(本体, 座標系のキー)?;
+    if 文字列 == 受け取る座標系 {
         return Ok(());
     }
-    Err(正解表の読み込みエラー::座標系がglTFでない { 綴り: 綴り.to_string() })
+    Err(正解表の読み込みエラー::座標系がglTFでない { 文字列: 文字列.to_string() })
 }
 
 fn 姿勢1件を読む(項目: &Value) -> Result<正解の姿勢, 正解表の読み込みエラー> {

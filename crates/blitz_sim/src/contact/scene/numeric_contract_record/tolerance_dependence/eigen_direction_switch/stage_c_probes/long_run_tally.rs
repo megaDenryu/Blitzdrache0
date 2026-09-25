@@ -35,12 +35,12 @@ impl 長い走行の溜まり {
     }
 
     /// 1細分の円錐の超過を数える。超えた側と綴りをそのまま出す。
-    pub(super) fn 一細分の超過を数える(&mut self, 番号: usize, 走行: &str, 綴り: &str) {
+    pub(super) fn 一細分の超過を数える(&mut self, 番号: usize, 走行: &str, 文字列: &str) {
         self.超えた延べ数 += 1;
         if self.最初に超えた細分.is_none() {
             self.最初に超えた細分 = Some(番号);
         }
-        println!("  L [{}] 細分{番号} {走行} {綴り}", self.見出し);
+        println!("  L [{}] 細分{番号} {走行} {文字列}", self.見出し);
     }
 
     /// 走り終えた後の要約。

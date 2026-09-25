@@ -13,8 +13,8 @@ use crate::conform::error::規約検査の破れ;
 use crate::conform::source_lexing::コードだけの行一覧;
 use crate::conform::violation::違反;
 
-const 定義の綴り: [&str; 2] = ["macro_rules!", concat!("include_", "bytes")];
-const 取り込みの綴り: [&str; 2] = ["use ", concat!("include_", "bytes")];
+const 定義の文字列: [&str; 2] = ["macro_rules!", concat!("include_", "bytes")];
+const 取り込みの文字列: [&str; 2] = ["use ", concat!("include_", "bytes")];
 const 禁じる理由: &str = "組み込みの取り込みの名前を奪う宣言である(ビルド時の成果物の綴りを許す規則の根拠を壊すため禁じる)";
 
 pub(super) fn 全ファイルを検査する(ファイル一覧: &[PathBuf]) -> Result<Vec<違反>, 規約検査の破れ> {
@@ -37,5 +37,5 @@ pub(super) fn ファイル1つを検査する(パス: &Path, 内容: &str) -> Ve
 }
 
 fn 名前を奪う宣言か(行: &str) -> bool {
-    [定義の綴り, 取り込みの綴り].iter().any(|綴り一覧| 綴り一覧.iter().all(|綴り| 行.contains(綴り)))
+    [定義の文字列, 取り込みの文字列].iter().any(|文字列一覧| 文字列一覧.iter().all(|文字列| 行.contains(文字列)))
 }

@@ -38,7 +38,7 @@ impl モジュールのディレクトリ {
 
     /// このディレクトリのモジュールの本体になりうるファイルの綴り。`x`のモジュールは`x.rs`か`x/mod.rs`に書かれ、
     /// クレートの根なら`lib.rs`か`main.rs`である。走査で見つけた定義ファイルと突き合わせるためだけに使う。
-    pub fn 本体になりうるファイルの綴り一覧(&self) -> Vec<String> {
+    pub fn 本体になりうるファイルの文字列一覧(&self) -> Vec<String> {
         let mut 一覧 = vec![format!("{}.rs", self.0)];
         一覧.extend(モジュールの本体の語幹一覧.iter().map(|語幹| format!("{}/{語幹}.rs", self.0)));
         一覧
@@ -69,9 +69,9 @@ mod tests {
 
     #[test]
     fn 本体になりうるファイルは語幹の分だけ挙がる() {
-        let 綴り一覧 = モジュールのディレクトリ::パスから生成する(Path::new("a/src/far")).本体になりうるファイルの綴り一覧();
-        assert!(綴り一覧.contains(&"a/src/far.rs".to_string()));
-        assert!(綴り一覧.contains(&"a/src/far/mod.rs".to_string()));
-        assert!(綴り一覧.contains(&"a/src/far/lib.rs".to_string()));
+        let 文字列一覧 = モジュールのディレクトリ::パスから生成する(Path::new("a/src/far")).本体になりうるファイルの文字列一覧();
+        assert!(文字列一覧.contains(&"a/src/far.rs".to_string()));
+        assert!(文字列一覧.contains(&"a/src/far/mod.rs".to_string()));
+        assert!(文字列一覧.contains(&"a/src/far/lib.rs".to_string()));
     }
 }

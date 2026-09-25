@@ -17,7 +17,7 @@ pub(super) struct 接点 {
     pub(super) 契約: &'static 深度契約,
     pub(super) 項目: &'static str,
     pub(super) パス: &'static str,
-    pub(super) 期待する綴り: &'static str,
+    pub(super) 期待する文字列: &'static str,
 }
 
 pub(super) const カメラ深度: 深度契約 = 深度契約 {

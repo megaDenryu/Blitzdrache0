@@ -10,12 +10,12 @@ describe('ベイの刻みの綴りの正本', () => {
     const 建物編集の根 = dirname(dirname(fileURLToPath(import.meta.url)))
 
     it('2.0と2.6の綴りはベイの寸法だけが持つ', () => {
-        const 綴りを持つファイル = tsファイルを数え上げる(建物編集の根).filter((パス) => {
+        const 値を書いたファイル = tsファイルを数え上げる(建物編集の根).filter((パス) => {
             const 本文 = readFileSync(パス, 'utf8')
             return /(^|[^.\d])2\.6(?![\d])/.test(本文) || /(^|[^.\d])2\.0(?![\d])/.test(本文)
         })
         deepStrictEqual(
-            綴りを持つファイル.map((パス) => パス.split(/[\\/]/).pop()),
+            値を書いたファイル.map((パス) => パス.split(/[\\/]/).pop()),
             ['ベイの寸法.ts'],
         )
     })

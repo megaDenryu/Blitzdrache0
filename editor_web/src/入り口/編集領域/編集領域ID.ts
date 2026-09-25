@@ -6,7 +6,7 @@
 export type 編集領域ID = string & { readonly __brand: '編集領域ID' }
 
 // 空文字はどの編集領域も指さない無効値であり、生成時に拒む(無言のデフォルト適用を避ける)。
-export function 編集領域IDを生成する(綴り: string): 編集領域ID {
-    if (綴り === '') throw new Error('編集領域IDは空文字を受け付けない')
-    return 綴り as 編集領域ID
+export function 編集領域IDを生成する(文字列: string): 編集領域ID {
+    if (文字列 === '') throw new Error('編集領域IDは空文字を受け付けない')
+    return 文字列 as 編集領域ID
 }

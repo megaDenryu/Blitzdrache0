@@ -13,30 +13,30 @@ use super::error::静的物理形状エラー;
 /// チャンクの中で1つの静的な衝突対象を指す、正準化済みの綴り。
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct 衝突対象の安定識別子 {
-    綴り: String,
+    文字列: String,
 }
 
 impl 衝突対象の安定識別子 {
     /// 空の綴りと、正準でない綴り(前後に空白が付いたもの)を拒む。落とさずに拒むのは、正準化がここより上流で
     /// 済んでおり、ここで黙って落とすと重複の判定を通った綴りと焼き上がりの綴りが食い違うためである。
-    pub fn 生成する(綴り: &str) -> Result<Self, 静的物理形状エラー> {
-        if 綴り.is_empty() {
+    pub fn 生成する(文字列: &str) -> Result<Self, 静的物理形状エラー> {
+        if 文字列.is_empty() {
             return Err(静的物理形状エラー::安定識別子が空);
         }
-        if 綴り != 綴り.trim() {
+        if 文字列 != 文字列.trim() {
             return Err(静的物理形状エラー::安定識別子が前後に空白を持つ);
         }
-        Ok(Self { 綴り: 綴り.to_string() })
+        Ok(Self { 文字列: 文字列.to_string() })
     }
 
     /// 包んでいる綴りそのもの。実行時形式へ書き出す境界と問い合わせの答えが読む。
-    pub fn 綴り(&self) -> &str {
-        &self.綴り
+    pub fn 文字列(&self) -> &str {
+        &self.文字列
     }
 }
 
 impl fmt::Display for 衝突対象の安定識別子 {
     fn fmt(&self, 出力: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(出力, "{}", self.綴り)
+        write!(出力, "{}", self.文字列)
     }
 }

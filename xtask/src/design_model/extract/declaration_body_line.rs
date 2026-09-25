@@ -26,17 +26,17 @@ pub enum 本体の行の読み取り {
 
 /// 本体の1行を読む。宣言の行は、1行に収めた本体を読むために波括弧の後ろだけを見る。
 pub fn 本体の行を読む(行: &str, 宣言の行か: bool) -> 本体の行の読み取り {
-    let 綴り = 行.trim();
-    if 綴り.is_empty() || 綴り.starts_with('#') {
+    let 文字列 = 行.trim();
+    if 文字列.is_empty() || 文字列.starts_with('#') {
         return 本体の行の読み取り::フィールドを持たない;
     }
-    if let Some((_, 波括弧の後ろ)) = 綴り.split_once('{') {
+    if let Some((_, 波括弧の後ろ)) = 文字列.split_once('{') {
         return 波括弧の中身を読む(波括弧の後ろ);
     }
     if 宣言の行か {
         return 本体の行の読み取り::フィールドを持たない;
     }
-    記述を読む(綴り.trim_end_matches(',').trim())
+    記述を読む(文字列.trim_end_matches(',').trim())
 }
 
 // 波括弧の後ろから閉じ括弧までを、読点で区切って1件ずつ読む。

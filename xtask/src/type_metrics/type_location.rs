@@ -23,7 +23,7 @@ impl 型の所在 {
     /// 台帳の綴りと突き合わせられるよう斜線へ揃える。
     pub fn 走査したファイルから生成する(ファイル: &Path, 型名: &str) -> Self {
         Self {
-            定義ファイル: ファイルの綴りへ揃える(ファイル),
+            定義ファイル: ファイルの文字列へ揃える(ファイル),
             型名: 型名.to_string(),
         }
     }
@@ -43,13 +43,13 @@ impl 型の所在 {
     }
 
     /// 経路の解決が出したファイルの綴りと突き合わせるための綴り。区切りは斜線へ揃えてある。
-    pub fn 定義ファイルの綴り(&self) -> &str {
+    pub fn 定義ファイルの文字列(&self) -> &str {
         &self.定義ファイル
     }
 }
 
 /// 走査で得たパスを、台帳と経路の解決が使う斜線区切りの綴りへ揃える。実行環境で区切り文字が変わるためである。
-pub fn ファイルの綴りへ揃える(ファイル: &Path) -> String {
+pub fn ファイルの文字列へ揃える(ファイル: &Path) -> String {
     ファイル.to_string_lossy().replace('\\', "/")
 }
 
@@ -65,13 +65,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn 綴りはファイルと型名を二重コロンで分ける() {
+    fn 文字列はファイルと型名を二重コロンで分ける() {
         let 所在 = 型の所在::区画の根と相対パスから生成する("crates/blitz_app/src", "cli/types.rs", "起動設定");
         assert_eq!(所在.to_string(), "crates/blitz_app/src/cli/types.rs::起動設定");
     }
 
     #[test]
-    fn 逆斜線の区切りでも台帳の綴りと一致する() {
+    fn 逆斜線の区切りでも台帳の文字列と一致する() {
         let 走査 = 型の所在::走査したファイルから生成する(Path::new(r"xtask\src\smoke\launch_setting.rs"), "起動設定");
         assert_eq!(走査, 型の所在::区画の根と相対パスから生成する("xtask/src", "smoke/launch_setting.rs", "起動設定"));
     }

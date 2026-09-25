@@ -15,7 +15,7 @@ use crate::contact::scene::substep_harness::一つの箱と静的な直方体の
 /// 段階Bの表90の、代わりの捨て方が回し0度の細分0で剛体へ入れた回転。
 pub(super) const 摂動の角のラジアン: f32 = 1.8531e-11;
 /// 回す軸。段階Bは向きごとの回転の軸を綴っていないため、固定した軸を選んだ。
-pub(super) const 摂動を回す軸の綴り: &str = "ワールドの鉛直軸(+y)";
+pub(super) const 摂動を回す軸の文字列: &str = "ワールドの鉛直軸(+y)";
 
 /// 摂動が単精度の姿勢を動かしたか。
 pub(super) enum 摂動が姿勢を動かしたか {
@@ -24,7 +24,7 @@ pub(super) enum 摂動が姿勢を動かしたか {
 }
 
 impl 摂動が姿勢を動かしたか {
-    pub(super) fn 綴り(&self) -> &'static str {
+    pub(super) fn 文字列(&self) -> &'static str {
         match self {
             Self::動かした => "摂動が姿勢を動かした",
             Self::丸めで消えた => "摂動が単精度の丸めで消えた(配置が1ビットも動いていない)",

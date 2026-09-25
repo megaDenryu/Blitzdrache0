@@ -16,10 +16,10 @@ impl super::ソースアセット書き出しコマンド {
     pub(super) fn チャンクが使う建物の格子を集める(&self, 建物一覧: &[建物の配置]) -> Result<Vec<建物の格子ソース>, 書き出しエラー> {
         let mut 一覧: Vec<建物の格子ソース> = Vec::new();
         for 建物 in 建物一覧 {
-            if 一覧.iter().any(|格子| 格子.建物定義ID.綴り() == 建物.建物定義ID.綴り()) {
+            if 一覧.iter().any(|格子| 格子.建物定義ID.文字列() == 建物.建物定義ID.文字列()) {
                 continue;
             }
-            let 識別子 = blitz_asset_compiler::建物定義ID::生成する(建物.建物定義ID.綴り()).map_err(書き出しエラー::建物の格子を読めない)?;
+            let 識別子 = blitz_asset_compiler::建物定義ID::生成する(建物.建物定義ID.文字列()).map_err(書き出しエラー::建物の格子を読めない)?;
             if let Some(ソース) = self.建物の格子の台帳().格子ソースを識別子で引く(&識別子) {
                 一覧.push(ソース.clone());
             }

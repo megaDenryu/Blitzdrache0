@@ -10,12 +10,12 @@ use crate::acceptance::error::{報告の読み取りの破れ, 検収エラー};
 use crate::report_heading::報告の見出し;
 
 /// 項が1つも無いことをアプリが綴る語。
-const 項が無いことの綴り: &str = "なし";
+const 項が無いことの文字列: &str = "なし";
 
 impl 報告の行 {
     pub fn 見出しに続く添字順の数一覧<数: std::str::FromStr>(&self, 見出し: &報告の見出し) -> Result<Vec<数>, 検収エラー> {
         let 本文 = 見出し.見出しに続く本文(self.原文());
-        if 本文 == 項が無いことの綴り {
+        if 本文 == 項が無いことの文字列 {
             return Ok(Vec::new());
         }
         let mut 一覧 = Vec::new();

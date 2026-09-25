@@ -40,7 +40,7 @@ export class 平面図の升目部品 extends LV2HtmlComponentBase {
         super()
         const 触れるか = 見取り.宣言 !== undefined || 見取り.升目を置けない理由 === undefined
         const 中央 = div({ class: 升目中央 })
-            .child(span({ text: 見取り.宣言 === undefined ? `${見取り.座標.横},${見取り.座標.奥}` : 中央の綴り(見取り.宣言) }))
+            .child(span({ text: 見取り.宣言 === undefined ? `${見取り.座標.横},${見取り.座標.奥}` : 中央の文字列(見取り.宣言) }))
             .setTooltip(中央の説明(見取り))
             .setAttribute('data-升目あり', String(見取り.宣言 !== undefined))
             .setAttribute('data-根', String(見取り.根か))
@@ -92,7 +92,7 @@ function 飾りの説明(値: はめ口の値 | undefined): string {
     return 飾り.種類 === '煙突を立てる' ? `・煙突を立てる(${飾り.値.段数}段)` : `・${飾り.種類}`
 }
 
-function 中央の綴り(宣言: 升目の宣言): string {
+function 中央の文字列(宣言: 升目の宣言): string {
     const 床 = 宣言.床 === '張る' ? '床' : ''
     const 屋根 = 宣言.屋根 === '載せる' ? '屋根' : ''
     return `${床}${屋根}` === '' ? '骨格' : `${床}${屋根}`

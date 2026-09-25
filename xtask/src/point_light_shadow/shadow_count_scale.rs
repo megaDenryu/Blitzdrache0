@@ -19,9 +19,9 @@ pub(super) fn 影付きの件数を振って点光源の影の計器を採る(�
 
 fn 影付きの一件数で計器を採る(実行環境: &描画検収の実行環境, 影付きの件数: u64) -> Result<点光源の影の計器, 検収エラー> {
     let 件数文字列 = 影付きの件数.to_string();
-    let 実行名の綴り = format!("hut_instrument_x{影付きの件数}");
+    let 実行名の文字列 = format!("hut_instrument_x{影付きの件数}");
     let 結果 = 実行環境.描いて読み戻す(
-        検収の実行名::生成する(&実行名の綴り)?,
+        検収の実行名::生成する(&実行名の文字列)?,
         &run::起動指定を組み立てる(world::屋内のシーン, world::計測の枚数, &["--point-light-shadow-count", &件数文字列, "--report-gpu-times", "--report-draw-issue", "--report-memory"]),
     )?;
     点光源の影の計器を取り出す(結果.報告(), 影付きの件数)

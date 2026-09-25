@@ -54,8 +54,8 @@ impl 場所巡りの世界のソース書き出し {
         Ok(地面.勘定)
     }
 
-    pub(crate) fn 表示の綴り(&self) -> std::path::Display<'_> {
-        self.ソースディレクトリ.表示の綴り()
+    pub(crate) fn 表示用の表記(&self) -> std::path::Display<'_> {
+        self.ソースディレクトリ.表示用の表記()
     }
 
     fn 目印の柱を書き出す(&self) -> Result<(), String> {

@@ -9,14 +9,14 @@
 /// 1ファイルの原文の形の契約。在るべき綴りは全部がコメントでない行に在ること、在ってはならない綴りは1つも無いことを求める。
 pub(super) struct 原文の形の契約 {
     pub(super) パス: &'static str,
-    pub(super) 在るべき綴り一覧: &'static [&'static str],
-    pub(super) 在ってはならない綴り一覧: &'static [&'static str],
+    pub(super) 在るべき文字列一覧: &'static [&'static str],
+    pub(super) 在ってはならない文字列一覧: &'static [&'static str],
     pub(super) 守るもの: &'static str, // 違反の説明に添える、この形が守る契約の1文
 }
 
 pub(super) const 契約一覧: [原文の形の契約; 1] = [原文の形の契約 {
     パス: "shaders/xpbd_bending_projection.slang",
-    在るべき綴り一覧: &["float violation = wrapToShortestArc(angle - restAngle);"],
-    在ってはならない綴り一覧: &["if (abs(violation) > pi)"],
+    在るべき文字列一覧: &["float violation = wrapToShortestArc(angle - restAngle);"],
+    在ってはならない文字列一覧: &["if (abs(violation) > pi)"],
     守るもの: "拘束違反の弧の畳みは条件分岐で挟まずに常に通す。挟むとちょうど半周でCPUと補正の向きが反転する",
 }];

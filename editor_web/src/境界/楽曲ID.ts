@@ -6,7 +6,7 @@
 export type 楽曲ID = string & { readonly __brand: '楽曲ID' }
 
 // 空文字はどの楽曲定義も指さない無効値であり、生成時に拒む(無言のデフォルト適用を避ける)。
-export function 楽曲IDを生成する(綴り: string): 楽曲ID {
-    if (綴り === '') throw new Error('楽曲IDは空文字を受け付けない')
-    return 綴り as 楽曲ID
+export function 楽曲IDを生成する(文字列: string): 楽曲ID {
+    if (文字列 === '') throw new Error('楽曲IDは空文字を受け付けない')
+    return 文字列 as 楽曲ID
 }

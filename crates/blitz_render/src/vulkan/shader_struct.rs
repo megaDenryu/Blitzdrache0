@@ -66,9 +66,9 @@ fn フィールドを読む(行: &str) -> Result<(String, usize), シェーダ�
     let Some((名前, 添字部)) = 宣言子.split_once('[') else {
         return Ok(((*宣言子).to_string(), 単位バイト数));
     };
-    let 要素数の綴り = 添字部.trim_end_matches(']');
-    let 個数: usize = 要素数の綴り.parse().map_err(|誤り| シェーダー構造体の読み取りの破れ::配列の要素数を数として読めない {
-        綴り: 要素数の綴り.to_string(), 誤り
+    let 要素数の文字列 = 添字部.trim_end_matches(']');
+    let 個数: usize = 要素数の文字列.parse().map_err(|誤り| シェーダー構造体の読み取りの破れ::配列の要素数を数として読めない {
+        文字列: 要素数の文字列.to_string(), 誤り
     })?;
     Ok((名前.to_string(), 単位バイト数 * 個数))
 }

@@ -23,8 +23,8 @@ use super::tree_parts::{幹の指定, 枝の指定, 葉房の指定};
 use super::tree_rule::木の規則;
 use super::trunk_segment::幹の節数;
 
-pub(super) fn 名前(綴り: &str) -> 接合点名 {
-    接合点名::生成する(綴り).unwrap()
+pub(super) fn 名前(文字列: &str) -> 接合点名 {
+    接合点名::生成する(文字列).unwrap()
 }
 
 pub(super) fn 根の配置() -> 個体配置 {
@@ -57,7 +57,7 @@ pub(super) fn 葉房の指定を作る() -> 葉房の指定 {
 
 /// 3つの生え口のどれかから必ず枝を出す候補。どの節にも枝が1本付く。
 pub(super) fn 必ず枝を出す候補() -> 節ごとの枝の候補 {
-    let 候補一覧 = ["生え口1", "生え口2", "生え口3"].into_iter().map(|綴り| 節の枝::生やす { 生え口: 名前(綴り) }).collect();
+    let 候補一覧 = ["生え口1", "生え口2", "生え口3"].into_iter().map(|文字列| 節の枝::生やす { 生え口: 名前(文字列) }).collect();
     節ごとの枝の候補::生成する(候補一覧).unwrap()
 }
 

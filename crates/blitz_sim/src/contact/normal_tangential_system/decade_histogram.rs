@@ -30,7 +30,7 @@ impl 桁ごとの度数 {
     }
 
     /// 表へ綴る形。「1e-8未満:9 1e-8台:13 ...」のように桁の見出しと度数を並べる。
-    pub(in crate::contact) fn 綴り(&self) -> String {
+    pub(in crate::contact) fn 文字列(&self) -> String {
         (0..self.度数.len()).map(|番号| format!("{}:{}", self.桁の見出し(番号), self.度数[番号])).collect::<Vec<_>>().join(" ")
     }
 

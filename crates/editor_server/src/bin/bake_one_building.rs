@@ -12,8 +12,8 @@ use editor_server::{
 
 fn main() -> std::process::ExitCode {
     match 一棟検証の世界ソースを書き出す() {
-        Ok(綴り) => {
-            println!("一棟検証の世界のソース: {綴り}");
+        Ok(文字列) => {
+            println!("一棟検証の世界のソース: {文字列}");
             std::process::ExitCode::SUCCESS
         }
         Err(誤り) => {

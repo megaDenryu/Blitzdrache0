@@ -63,8 +63,8 @@ impl 固有値を最大で割った相対値の広がり {
     }
 
     /// 表へ綴る形。
-    pub(in crate::contact) fn 綴り(&self) -> String {
-        let 桁 = self.桁ごとの度数.綴り();
+    pub(in crate::contact) fn 文字列(&self) -> String {
+        let 桁 = self.桁ごとの度数.文字列();
         let 帯 = match self.閾値を置ける帯() {
             Some((下端, 上端)) => format!("{下端:.3e}〜{上端:.3e}(桁の幅{:.2})", (上端 / 下端).log10()),
             None => "無し(隙間が重ならない)".to_owned(),

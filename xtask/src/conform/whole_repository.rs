@@ -22,7 +22,7 @@ pub fn 複数ファイルを横断する検査の違反一覧を集める() -> R
     違反一覧.extend(shader_binding::全束縛番号を検査する()?);
     違反一覧.extend(shader_form::全シェーダーの原文の形を検査する()?);
     違反一覧.extend(duplicate_file_literal::全ファイルを検査する()?);
-    違反一覧.extend(wording_contract::全綴りを検査する()?);
+    違反一覧.extend(wording_contract::全文言を検査する()?);
     違反一覧.extend(sample_bodies_consistency::全宣言を検査する()?);
     違反一覧.extend(shader_uniform_alias::全シェーダーを検査する()?);
     違反一覧.extend(lighting_query_declaration::全シェーダーを検査する()?);

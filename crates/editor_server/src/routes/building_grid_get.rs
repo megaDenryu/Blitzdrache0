@@ -4,8 +4,8 @@ use axum::{Json, extract::Path, extract::State, response::IntoResponse, response
 
 use crate::{failure_response::失敗応答を組み立てる, server_state::サーバー状態};
 
-pub async fn 建物の格子を返す(State(状態): State<サーバー状態>, Path(識別子の綴り): Path<String>) -> Response {
-    let 識別子 = match crate::resource::建物定義ID::生成する(識別子の綴り) {
+pub async fn 建物の格子を返す(State(状態): State<サーバー状態>, Path(識別子の文字列): Path<String>) -> Response {
+    let 識別子 = match crate::resource::建物定義ID::生成する(識別子の文字列) {
         Ok(識別子) => 識別子,
         Err(誤り) => {
             return 失敗応答を組み立てる(axum::http::StatusCode::BAD_REQUEST, "識別子エラー", 誤り.to_string());

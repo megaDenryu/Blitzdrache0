@@ -108,7 +108,7 @@ impl 単精度の解の内訳 {
     }
 
     /// 勝った有効集合を第k番のビットが第k番の接触点として綴った文字列。ビット並びを生の数へ剥がすのはこの表示だけである。
-    pub(in crate::contact) fn 有効集合の綴り(&self) -> String {
+    pub(in crate::contact) fn 有効集合の文字列(&self) -> String {
         format!("{:#010b}", self.有効集合.ビット並び())
     }
 

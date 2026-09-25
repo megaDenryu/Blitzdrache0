@@ -67,7 +67,7 @@ fn 建物定義を実体から組み立てる(外部ルート: &外部ソース�
 fn 据えた部品の識別子一覧を作る(配置表: &部品ごとの配置表) -> Vec<String> {
     let mut 一覧: Vec<String> = Vec::new();
     for 据えた in 配置表.据えた順() {
-        let 識別子 = 据えた.識別子().綴り().to_string();
+        let 識別子 = 据えた.識別子().文字列().to_string();
         if !一覧.contains(&識別子) {
             一覧.push(識別子);
         }

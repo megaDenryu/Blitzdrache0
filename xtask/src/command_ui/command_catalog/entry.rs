@@ -61,11 +61,11 @@ impl コマンド項目 {
     /// この部分だけで突き合わせる(日本語の説明の中の綴りは引数の宣言ではないため見ない)。
     pub(crate) fn 引数の構文(&self) -> 引数の構文 {
         let 続き = self.使い方の行().strip_prefix(self.ascii名()).unwrap_or("");
-        let 綴り = match 続き.split_once("  ") {
+        let 文字列 = match 続き.split_once("  ") {
             Some((構文, _)) => 構文.trim(),
             None => 続き.trim(),
         };
-        引数の構文::生成する(綴り)
+        引数の構文::生成する(文字列)
     }
 
     /// メニューの一覧行に載せる要約。先頭のASCIIコマンド名を取り除いた残り(引数の構文と日本語の説明)を

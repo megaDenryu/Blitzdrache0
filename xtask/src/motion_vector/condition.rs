@@ -19,7 +19,7 @@ impl 条件 {
     }
 
     /// 失敗の文面がこの実行を名指すための綴り。ファイル名にもなるためASCIIで保つ。
-    pub(super) const fn 実行名の綴り(self) -> &'static str {
+    pub(super) const fn 実行名の文字列(self) -> &'static str {
         match self {
             Self::カメラを止める => "camera_still",
             Self::カメラを動かす => "camera_moving",

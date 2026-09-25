@@ -14,13 +14,13 @@ use std::fmt;
 pub struct 報告の見出し(Cow<'static, str>);
 
 impl 報告の見出し {
-    pub const fn 定数から生成する(綴り: &'static str) -> Self {
-        Self(Cow::Borrowed(綴り))
+    pub const fn 定数から生成する(文字列: &'static str) -> Self {
+        Self(Cow::Borrowed(文字列))
     }
 
     /// 実行時に組み立てた綴りから作る。パス名や距離区分の番号を含む見出しがこの口を通る。
-    pub fn 組み立てた綴りから生成する(綴り: String) -> Self {
-        Self(Cow::Owned(綴り))
+    pub fn 組み立てた文字列から生成する(文字列: String) -> Self {
+        Self(Cow::Owned(文字列))
     }
 
     /// その行がこの見出しで始まるか。字下げは落としてから見る。報告は入れ子の深さで字下げされるためである。

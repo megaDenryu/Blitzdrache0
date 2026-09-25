@@ -4,8 +4,8 @@
 //! ファイルの中の名前が食い違うためであり、どちらも「どの定義か」を経路から言えない。
 
 const 段の区切り: &str = "::";
-const 改名の綴り: &str = " as ";
-const 全部を持ち込む綴り: &str = "*";
+const 改名の文字列: &str = " as ";
+const 全部を持ち込む文字列: &str = "*";
 
 pub fn 取り込みの項を経路へ展開する(前置き: &str, 項: &str) -> Vec<String> {
     let 項 = 項.trim();
@@ -23,7 +23,7 @@ pub fn 取り込みの項を経路へ展開する(前置き: &str, 項: &str) ->
 }
 
 fn 単独の項を経路にする(前置き: &str, 項: &str) -> Vec<String> {
-    if 項.is_empty() || 項.contains(改名の綴り) || 項.ends_with(全部を持ち込む綴り) {
+    if 項.is_empty() || 項.contains(改名の文字列) || 項.ends_with(全部を持ち込む文字列) {
         return Vec::new();
     }
     vec![前置きと続きを繋いで経路にする(前置き, 項)]

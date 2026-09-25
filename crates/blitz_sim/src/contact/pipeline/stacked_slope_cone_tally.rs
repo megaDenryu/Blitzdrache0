@@ -41,7 +41,7 @@ impl 接触の対の乗数の集計 {
         }
     }
 
-    pub(super) fn 綴り(&self) -> String {
+    pub(super) fn 文字列(&self) -> String {
         let 比 = if self.法線の乗数の合計 == 0.0 {
             f32::NAN
         } else {
@@ -76,7 +76,7 @@ impl 静止の解が要求する乗数 {
         }
     }
 
-    pub(super) fn 綴り(&self) -> String {
+    pub(super) fn 文字列(&self) -> String {
         format!(
             "[静止の解が要求する乗数] 下の箱と上の箱の対: 法線={:.4e} 接線={:.4e} 比={:.4} / 床と下の箱の対: 法線={:.4e} 接線={:.4e} 比={:.4}",
             self.上の対の法線,

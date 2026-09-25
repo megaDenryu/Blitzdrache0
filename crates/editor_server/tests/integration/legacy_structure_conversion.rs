@@ -59,7 +59,7 @@ fn 旧版の家屋は一間四方の家の定義IDへ移行する() {
     std::fs::write(&構造パス, serde_json::to_vec_pretty(&建物種別を持つ旧版のチャンク構造のjson("家屋")).unwrap()).unwrap();
 
     let 読み込み結果 = 保管庫.チャンクの構造を読む(座標).unwrap().unwrap();
-    assert_eq!(読み込み結果.建物一覧[0].建物定義ID.綴り(), crate::common::一間四方の家の識別子);
+    assert_eq!(読み込み結果.建物一覧[0].建物定義ID.文字列(), crate::common::一間四方の家の識別子);
 }
 
 #[test]

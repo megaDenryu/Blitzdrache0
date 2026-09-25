@@ -43,7 +43,7 @@ impl にじみへ光を出す画素の増減 {
         発生源の変化の向き::増減の数から決める(self.増えた, self.減った)
     }
 
-    pub(super) fn 診断の綴り(&self) -> String {
+    pub(super) fn 診断の文字列(&self) -> String {
         format!("にじみへ光を出すようになった発生源が{}画素・出さなくなった発生源が{}画素", self.増えた, self.減った)
     }
 }

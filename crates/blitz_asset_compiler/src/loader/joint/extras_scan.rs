@@ -13,10 +13,10 @@ const 接合点のキー: &str = "接合点";
 
 /// extrasが無い、または接合点のキーが無いときは空の並びを返す。
 pub(super) fn 接合点の宣言の並びを取り出す(ノード: &gltf::Node<'_>) -> Result<Vec<Value>, 接合点読み取りエラー> {
-    let Some(宣言の綴り) = ノード.extras().as_ref() else {
+    let Some(宣言の文字列) = ノード.extras().as_ref() else {
         return Ok(Vec::new());
     };
-    let 解いた値: Value = serde_json::from_str(宣言の綴り.get()).map_err(|誤り| 接合点読み取りエラー::宣言のJSONを解けない { 誤り: 誤り.to_string() })?;
+    let 解いた値: Value = serde_json::from_str(宣言の文字列.get()).map_err(|誤り| 接合点読み取りエラー::宣言のJSONを解けない { 誤り: 誤り.to_string() })?;
     let Some(宣言) = 解いた値.get(接合点のキー) else {
         return Ok(Vec::new());
     };

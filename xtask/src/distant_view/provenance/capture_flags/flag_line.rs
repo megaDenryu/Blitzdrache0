@@ -6,7 +6,7 @@
 
 use std::path::{Path, PathBuf};
 
-use super::on_off::入切の綴りを読む;
+use super::on_off::入切の文字列を読む;
 use super::旗の行の前置き;
 use crate::distant_view::error::採取の読み取りの破れ;
 
@@ -28,15 +28,15 @@ impl 採取の旗の行 {
     }
 
     pub(super) fn 入切を読む(&self, 前置き: &'static str) -> Result<bool, 採取の読み取りの破れ> {
-        let 綴り = self
+        let 文字列 = self
             .本文
             .split_whitespace()
             .find_map(|語| 語.strip_prefix(前置き))
             .ok_or_else(|| 採取の読み取りの破れ::採取の旗に欄が無い { パス: self.パス.clone(), 欄: 前置き })?;
-        入切の綴りを読む(綴り).ok_or_else(|| 採取の読み取りの破れ::採取の旗の欄が入でも切でもない {
+        入切の文字列を読む(文字列).ok_or_else(|| 採取の読み取りの破れ::採取の旗の欄が入でも切でもない {
             パス: self.パス.clone(),
             欄: 前置き,
-            綴り: 綴り.to_string(),
+            文字列: 文字列.to_string(),
         })
     }
 

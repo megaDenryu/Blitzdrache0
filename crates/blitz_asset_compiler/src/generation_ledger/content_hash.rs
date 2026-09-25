@@ -50,12 +50,12 @@ impl 内容ハッシュ {
     }
 
     /// 台帳のテキストへ書くときの綴り。桁を16に固定するのは、行の見た目が値によって揺れないためである。
-    pub fn 十六進の綴りを作る(self) -> String {
+    pub fn 十六進の文字列を作る(self) -> String {
         format!("{:016x}", self.0)
     }
 
-    pub fn 十六進の綴りから復元する(綴り: &str) -> Option<Self> {
-        u64::from_str_radix(綴り, 16).ok().map(Self)
+    pub fn 十六進の文字列から復元する(文字列: &str) -> Option<Self> {
+        u64::from_str_radix(文字列, 16).ok().map(Self)
     }
 }
 

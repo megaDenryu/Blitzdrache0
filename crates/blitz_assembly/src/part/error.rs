@@ -27,7 +27,7 @@ impl fmt::Display for 対の不足 {
             self.部品の識別子,
             self.接合点の名前,
             self.種別,
-            self.種別.噛み合う相手の綴り()
+            self.種別.噛み合う相手の文字列()
         )
     }
 }

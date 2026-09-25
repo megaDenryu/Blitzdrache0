@@ -9,7 +9,7 @@ use super::許可域外の色差;
 
 impl 許可域外の色差 {
     /// 差の分布の1行。
-    pub(in crate::distant_view::judgment) fn 分布の綴り(&self, 足跡: &にじみの足跡) -> String {
+    pub(in crate::distant_view::judgment) fn 分布の文字列(&self, 足跡: &にじみの足跡) -> String {
         let 最大階調差 = self.一覧.iter().map(|画素| 画素.最大階調差).max().unwrap_or(0);
         let 最大距離 = self.一覧.iter().map(|画素| 足跡.発生源からの距離(画素.添字)).max().unwrap_or(0);
         let 発生源から十画素以内 = self.一覧.iter().filter(|画素| 足跡.発生源からの距離(画素.添字) <= 10).count();

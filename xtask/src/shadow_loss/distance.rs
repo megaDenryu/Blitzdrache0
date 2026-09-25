@@ -6,23 +6,23 @@
 use super::argument_error::影の欠落計器の引数の破れ;
 
 pub(super) struct 距離メートル {
-    綴り: String,
+    文字列: String,
     値: f64,
 }
 
 impl 距離メートル {
     /// 0以下と非有限を拒むのは、どちらも「影を落とす個体が1体も無い」か「比較が常に偽になる」のどちらかになり、
     /// 距離の水準として意味を持たないためである。
-    pub(super) fn 生成する(綴り: &str) -> Result<Self, 影の欠落計器の引数の破れ> {
-        let 値 = 綴り.parse::<f64>().map_err(|誤り| 影の欠落計器の引数の破れ::距離を数として読めない { 綴り: 綴り.to_string(), 誤り })?;
+    pub(super) fn 生成する(文字列: &str) -> Result<Self, 影の欠落計器の引数の破れ> {
+        let 値 = 文字列.parse::<f64>().map_err(|誤り| 影の欠落計器の引数の破れ::距離を数として読めない { 文字列: 文字列.to_string(), 誤り })?;
         if !値.is_finite() || 値 <= 0.0 {
-            return Err(影の欠落計器の引数の破れ::距離が正の有限値でない { 綴り: 綴り.to_string() });
+            return Err(影の欠落計器の引数の破れ::距離が正の有限値でない { 文字列: 文字列.to_string() });
         }
-        Ok(Self { 綴り: 綴り.to_string(), 値 })
+        Ok(Self { 文字列: 文字列.to_string(), 値 })
     }
 
-    pub(super) fn 綴り(&self) -> &str {
-        &self.綴り
+    pub(super) fn 文字列(&self) -> &str {
+        &self.文字列
     }
 
     pub(super) fn 値(&self) -> f64 {

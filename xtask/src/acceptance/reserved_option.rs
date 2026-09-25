@@ -11,14 +11,14 @@ use super::draw_end::描き終わりの決め方;
 use super::dump_format::書き出しの形式;
 
 /// その綴りが型の組み立てる選択肢か。汎用の口はこれが真の綴りを拒む。
-pub(super) fn 予約された選択肢か(綴り: &str) -> bool {
-    予約された選択肢の綴り一覧().into_iter().any(|予約| 予約 == 綴り)
+pub(super) fn 予約された選択肢か(文字列: &str) -> bool {
+    予約された選択肢の文字列一覧().into_iter().any(|予約| 予約 == 文字列)
 }
 
 /// 予約された選択肢の綴りの全部。失敗の文面が「何が予約されているか」を並べるためにも読む。
-pub(super) fn 予約された選択肢の綴り一覧() -> Vec<&'static str> {
-    let mut 一覧 = vec![super::launch_specification::シーンの選択肢の綴り, super::app_launch::読む世界の置き場の選択肢の綴り];
-    一覧.extend(描き終わりの決め方::選択肢の綴り一覧());
-    一覧.extend(書き出しの形式::選択肢の綴り一覧());
+pub(super) fn 予約された選択肢の文字列一覧() -> Vec<&'static str> {
+    let mut 一覧 = vec![super::launch_specification::シーンの選択肢の文字列, super::app_launch::読む世界の置き場の選択肢の文字列];
+    一覧.extend(描き終わりの決め方::選択肢の文字列一覧());
+    一覧.extend(書き出しの形式::選択肢の文字列一覧());
     一覧
 }

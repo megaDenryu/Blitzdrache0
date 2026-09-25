@@ -17,7 +17,7 @@ use crate::conform::source_lexing;
 use crate::conform::violation::違反;
 
 /// 注意: 載せてよいのは、対象の綴りを列挙する検査の台帳だけである。
-const 対象の綴りを列挙する台帳一覧: [&str; 57] = [
+const 対象の文字列を列挙する台帳一覧: [&str; 57] = [
     "xtask/src/conform/depth_contract/table/camera.rs",
     "xtask/src/conform/depth_contract/table/camera_compare.rs",
     "xtask/src/conform/depth_contract/table/shadow.rs",
@@ -83,16 +83,16 @@ fn 一覧の表記へ揃える(パス: &Path) -> String {
 }
 
 pub(super) fn 台帳のファイルか(パス: &Path) -> bool {
-    対象の綴りを列挙する台帳一覧.contains(&一覧の表記へ揃える(パス).as_str())
+    対象の文字列を列挙する台帳一覧.contains(&一覧の表記へ揃える(パス).as_str())
 }
 
 /// 一覧に載っているのに台帳でなくなったファイルを違反として報告し、一覧からの削除を強制する。
 /// 台帳であることの印は、対象の綴り(ファイル名らしい文字列リテラル)を1つ以上列挙していることである。
 pub(super) fn 一覧の陳腐化を検査する() -> Result<Vec<違反>, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
-    for 台帳 in 対象の綴りを列挙する台帳一覧 {
+    for 台帳 in 対象の文字列を列挙する台帳一覧 {
         let 内容 = std::fs::read_to_string(Path::new(台帳)).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(Path::new(台帳), 誤り))?;
-        if !対象の綴りを列挙しているか(&内容) {
+        if !対象の文字列を列挙しているか(&内容) {
             違反一覧.push(違反::ファイル単位(
                 PathBuf::from(台帳),
                 "台帳の一覧に載っているが、対象の綴りを1つも列挙していない(台帳でなくなったので一覧から削除する)".to_string(),
@@ -102,6 +102,6 @@ pub(super) fn 一覧の陳腐化を検査する() -> Result<Vec<違反>, 規約�
     Ok(違反一覧)
 }
 
-fn 対象の綴りを列挙しているか(内容: &str) -> bool {
+fn 対象の文字列を列挙しているか(内容: &str) -> bool {
     source_lexing::文字列リテラル一覧(内容).iter().any(|断片| extract::拡張子を含むか(&断片.中身))
 }

@@ -11,10 +11,10 @@ export class 編集領域の名乗り {
         public readonly アイコンの文字: string,
     ) {}
 
-    public static 生成する(識別子の綴り: string, 表示名: string, アイコンの文字: string): 編集領域の名乗り {
+    public static 生成する(識別子の文字列: string, 表示名: string, アイコンの文字: string): 編集領域の名乗り {
         if (表示名 === '') throw new Error('編集領域の表示名は空文字を受け付けない')
         if (アイコンの文字 === '') throw new Error('編集領域のアイコンの文字は空文字を受け付けない')
-        return new 編集領域の名乗り(編集領域IDを生成する(識別子の綴り), 表示名, アイコンの文字)
+        return new 編集領域の名乗り(編集領域IDを生成する(識別子の文字列), 表示名, アイコンの文字)
     }
 }
 

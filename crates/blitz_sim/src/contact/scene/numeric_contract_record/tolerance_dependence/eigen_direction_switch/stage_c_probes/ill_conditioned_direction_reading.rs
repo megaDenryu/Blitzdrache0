@@ -29,7 +29,7 @@ impl 条件の悪い向き一本の読み取り {
     }
 
     /// 表へ綴る形。
-    pub(super) fn 綴り(&self) -> String {
+    pub(super) fn 文字列(&self) -> String {
         format!(
             "細分{} 向き{} λ/λ_max={:.4e} |β_k|/δ_k={:.4e} 並進={:.4e} 回転={:.4e} 最も強い向きの並進への比={:.4e}",
             self.細分の番号,

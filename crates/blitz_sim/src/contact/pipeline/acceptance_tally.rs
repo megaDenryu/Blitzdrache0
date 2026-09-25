@@ -57,7 +57,7 @@ impl 受理の破れの数え {
     }
 
     /// 表へ綴る形。
-    pub(super) fn 綴り(&self) -> String {
+    pub(super) fn 文字列(&self) -> String {
         format!(
             "受理の破れ{}(A積まなかった点{} B1積んだ接線の行{} B2相補条件{} B4捨てた成分{} 比の最大{:.3})",
             self.延べ数(),

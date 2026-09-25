@@ -14,22 +14,22 @@ pub(super) enum 描き終わりの決め方 {
 }
 
 /// 枚数をアプリへ渡す選択肢の綴り。生の綴りが在るのはこの2行だけである。
-const 枚数の選択肢の綴り: &str = "--frames";
-const 計測の枚数の選択肢の綴り: &str = "--benchmark-frames";
+const 枚数の選択肢の文字列: &str = "--frames";
+const 計測の枚数の選択肢の文字列: &str = "--benchmark-frames";
 
 impl 描き終わりの決め方 {
     /// この型が組み立てる選択肢の綴り。汎用の口が同じ綴りを積むことを拒むために読まれる。
-    pub(super) fn 選択肢の綴り一覧() -> [&'static str; 2] {
-        [枚数の選択肢の綴り, 計測の枚数の選択肢の綴り]
+    pub(super) fn 選択肢の文字列一覧() -> [&'static str; 2] {
+        [枚数の選択肢の文字列, 計測の枚数の選択肢の文字列]
     }
 
     pub(super) fn 引数列へ足す(&self, 並び: &mut Vec<OsString>) {
-        let (綴り, フレーム数) = match self {
-            Self::枚数を描き切る(フレーム数) => (枚数の選択肢の綴り, フレーム数),
-            Self::計測の枚数を描き切る(フレーム数) => (計測の枚数の選択肢の綴り, フレーム数),
+        let (文字列, フレーム数) = match self {
+            Self::枚数を描き切る(フレーム数) => (枚数の選択肢の文字列, フレーム数),
+            Self::計測の枚数を描き切る(フレーム数) => (計測の枚数の選択肢の文字列, フレーム数),
             Self::人が終えるまで描き続ける => return,
         };
-        並び.push(OsString::from(綴り));
-        並び.push(OsString::from(フレーム数.綴り()));
+        並び.push(OsString::from(文字列));
+        並び.push(OsString::from(フレーム数.文字列()));
     }
 }

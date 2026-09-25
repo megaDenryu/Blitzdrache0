@@ -56,25 +56,25 @@ export function 続くステップ数の選択肢一覧を組み立てる(選ば
 // 以下の復元は、上の組み立てが出した綴りしか受け取らない。読めない綴りは画面の配線の誤りであり、
 // 既定値で埋めると誤った和音が黙って保存されるため失敗させる。
 
-export function 綴りから根音を復元する(綴り: string): number {
-    const 根音 = Number.parseInt(綴り, 10)
+export function 文字列から根音を復元する(文字列: string): number {
+    const 根音 = Number.parseInt(文字列, 10)
     if (!Number.isInteger(根音) || 根音 < 和音の根音の下限 || 根音 > 和音の根音の上限) {
-        throw new Error(`和音の根音として読めない綴りです: ${綴り}`)
+        throw new Error(`和音の根音として読めない綴りです: ${文字列}`)
     }
     return 根音
 }
 
-export function 綴りから和音の種類を復元する(綴り: string): 和音の種類 {
+export function 文字列から和音の種類を復元する(文字列: string): 和音の種類 {
     for (const 種類 of 和音の種類一覧) {
-        if (種類 === 綴り) return 種類
+        if (種類 === 文字列) return 種類
     }
-    throw new Error(`和音の種類として読めない綴りです: ${綴り}`)
+    throw new Error(`和音の種類として読めない綴りです: ${文字列}`)
 }
 
-export function 綴りから続くステップ数を復元する(綴り: string): number {
-    const ステップ数 = Number.parseInt(綴り, 10)
+export function 文字列から続くステップ数を復元する(文字列: string): number {
+    const ステップ数 = Number.parseInt(文字列, 10)
     if (!Number.isInteger(ステップ数) || ステップ数 < 和音の続くステップ数の下限 || ステップ数 > 和音の続くステップ数の上限) {
-        throw new Error(`和音の続くステップ数として読めない綴りです: ${綴り}`)
+        throw new Error(`和音の続くステップ数として読めない綴りです: ${文字列}`)
     }
     return ステップ数
 }

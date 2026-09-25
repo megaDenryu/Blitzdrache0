@@ -36,17 +36,17 @@ fn シーンを汎用の口から積むと落ちる() {
 
 #[test]
 fn 枚数を汎用の口から積むと落ちる() {
-    for 綴り in ["--frames", "--benchmark-frames"] {
-        let 指定 = 指定を始める().値を持つ選択肢を足す(綴り, "0");
-        assert!(並べてみる(&指定).is_err(), "型が組み立てる{綴り}を汎用の口から上書きできた");
+    for 文字列 in ["--frames", "--benchmark-frames"] {
+        let 指定 = 指定を始める().値を持つ選択肢を足す(文字列, "0");
+        assert!(並べてみる(&指定).is_err(), "型が組み立てる{文字列}を汎用の口から上書きできた");
     }
 }
 
 #[test]
 fn 世界の置き場と書き出し先を汎用の口から積むと落ちる() {
-    for 綴り in ["--asset-root", "--dump-frame", "--dump-hdr-frame", "--dump-depth-frame"] {
-        let 指定 = 指定を始める().パスを値に持つ選択肢を足す(綴り, &検証の出力ルート::既定().名前が指す置き場(試験が書き出す置き場));
-        assert!(並べてみる(&指定).is_err(), "型が組み立てる{綴り}を汎用の口から上書きできた");
+    for 文字列 in ["--asset-root", "--dump-frame", "--dump-hdr-frame", "--dump-depth-frame"] {
+        let 指定 = 指定を始める().パスを値に持つ選択肢を足す(文字列, &検証の出力ルート::既定().名前が指す置き場(試験が書き出す置き場));
+        assert!(並べてみる(&指定).is_err(), "型が組み立てる{文字列}を汎用の口から上書きできた");
     }
 }
 
@@ -61,7 +61,7 @@ fn まとめて足す口も予約された選択肢を拒む() {
 fn 失敗の文面は予約の一覧を並べる() {
     let 指定 = 指定を始める().選択肢を足す("--scene");
     let 文面 = 並べてみる(&指定).unwrap_err().to_string();
-    for 綴り in ["--scene", "--frames", "--benchmark-frames", "--asset-root", "--dump-frame", "--dump-hdr-frame", "--dump-depth-frame"] {
-        assert!(文面.contains(綴り), "失敗の文面に{綴り}が無い: {文面}");
+    for 文字列 in ["--scene", "--frames", "--benchmark-frames", "--asset-root", "--dump-frame", "--dump-hdr-frame", "--dump-depth-frame"] {
+        assert!(文面.contains(文字列), "失敗の文面に{文字列}が無い: {文面}");
     }
 }

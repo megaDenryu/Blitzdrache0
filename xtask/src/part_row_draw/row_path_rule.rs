@@ -17,12 +17,12 @@
 use blitz_asset_compiler::実行時形式のアセットの拡張子 as 実行時形式の拡張子;
 
 /// この綴りが、実行時形式のファイル1件を指しているか。ディレクトリを指す綴りは偽になる。
-pub(super) const fn 実行時形式のファイルを指すか(綴り: &str) -> bool {
-    綴りの末尾が一致するか(綴り, 実行時形式の拡張子)
+pub(super) const fn 実行時形式のファイルを指すか(文字列: &str) -> bool {
+    文字列の末尾が一致するか(文字列, 実行時形式の拡張子)
 }
 
-const fn 綴りの末尾が一致するか(綴り: &str, 末尾: &str) -> bool {
-    let (本体, 期待) = (綴り.as_bytes(), 末尾.as_bytes());
+const fn 文字列の末尾が一致するか(文字列: &str, 末尾: &str) -> bool {
+    let (本体, 期待) = (文字列.as_bytes(), 末尾.as_bytes());
     if 本体.len() < 期待.len() {
         return false;
     }

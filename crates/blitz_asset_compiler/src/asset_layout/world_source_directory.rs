@@ -22,7 +22,7 @@ pub struct 世界のソースディレクトリ(生成の出力ルート);
 
 impl 世界のソースディレクトリ {
     pub(super) fn ソースルートの下に作る(ソースルートのパス: &Path, 名前: 世界のディレクトリ名) -> Self {
-        Self(生成の出力ルート::生成する(ソースルートのパス.join(名前.綴り())))
+        Self(生成の出力ルート::生成する(ソースルートのパス.join(名前.文字列())))
     }
 
     /// ディレクトリを作ってから返す。書き出す側は最初にこれを通り、読む側は通らない。
@@ -54,7 +54,7 @@ impl 世界のソースディレクトリ {
         std::fs::write(&パス, バイト列).map_err(|誤り| アセット配置エラー::ファイルへ書き出せなかった { パス, 事由: 誤り.to_string() })
     }
 
-    pub(super) fn 直下のファイルを綴りとして読む(&self, ファイル名: &str) -> Result<String, アセット配置エラー> {
+    pub(super) fn 直下のファイルを文字列として読む(&self, ファイル名: &str) -> Result<String, アセット配置エラー> {
         let パス = self.直下のファイルのパス(ファイル名);
         std::fs::read_to_string(&パス).map_err(|誤り| アセット配置エラー::ファイルを読めなかった { パス, 事由: 誤り.to_string() })
     }
@@ -64,8 +64,8 @@ impl 世界のソースディレクトリ {
         &self.0
     }
 
-    pub(super) fn 表示の綴り(&self) -> std::path::Display<'_> {
-        self.0.表示の綴り()
+    pub(super) fn 表示用の表記(&self) -> std::path::Display<'_> {
+        self.0.表示用の表記()
     }
 
     pub(super) fn ファイル走査へ貸すディレクトリ(&self) -> &Path {

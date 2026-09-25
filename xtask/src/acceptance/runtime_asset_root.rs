@@ -16,7 +16,7 @@ impl 実行時アセットルート {
     }
 
     /// アプリの`--asset-root`へ渡す綴り。プロセス境界へ生のパスが出る唯一の場所である。
-    pub(super) fn 起動引数として渡す綴り(&self) -> &Path {
+    pub(super) fn 起動引数として渡す文字列(&self) -> &Path {
         &self.0
     }
 }

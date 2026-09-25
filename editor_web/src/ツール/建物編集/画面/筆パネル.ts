@@ -60,9 +60,9 @@ export class 筆パネル extends LV2HtmlComponentBase {
     }
 }
 
-function この筆のボタン(綴り: string, 選んでいるか: boolean, 押されたら: () => void): DivC {
-    return div({ class: 選択ボタン, text: 綴り })
-        .setTooltip(綴り)
+function この筆のボタン(文字列: string, 選んでいるか: boolean, 押されたら: () => void): DivC {
+    return div({ class: 選択ボタン, text: 文字列 })
+        .setTooltip(文字列)
         .setAttribute('data-selected', String(選んでいるか))
         .onClick(押されたら)
 }

@@ -11,7 +11,7 @@ mod verdict_names;
 use super::band_map::距離区分の地図;
 use super::影画素数の下限;
 use crate::acceptance::判定の破れ;
-pub(in crate::csm_seam) use existing_boundary::{境界ごとに数える, 境界の実在, 対象から外した境界の綴り, 継ぎ目を見られる境界があることを検査する};
+pub(in crate::csm_seam) use existing_boundary::{境界ごとに数える, 境界の実在, 対象から外した境界の文字列, 継ぎ目を見られる境界があることを検査する};
 pub(in crate::csm_seam) use luminance_step::{境界の段差, 実在する境界の輝度段差を検査する};
 use verdict_names::{境界の近傍の判定名, 距離区分の受光画素の判定名, 距離区分の影の画素の判定名};
 

@@ -15,25 +15,25 @@ pub(crate) struct 検証の出力のファイル名(&'static str);
 impl 検証の出力のファイル名 {
     /// 注意: 破れたときに`panic!`へ落ちるのは、この関数がコンパイル時の定数にしか適用されず、
     /// 破れが到達したらプログラムのバグだからである。破れの綴りは定数の定義位置がそのまま指す。
-    pub(crate) const fn 生成する(綴り: &'static str) -> Self {
-        if spelling::空か(綴り) {
+    pub(crate) const fn 生成する(文字列: &'static str) -> Self {
+        if spelling::空か(文字列) {
             panic!("検証の出力のファイル名が空である");
         }
-        if spelling::区切りを含むか(綴り) {
+        if spelling::区切りを含むか(文字列) {
             panic!("検証の出力のファイル名が区切りを含み、置き場の直下の1つのファイルを指していない");
         }
-        if spelling::場所を指す綴りか(綴り) {
+        if spelling::場所を指す文字列か(文字列) {
             panic!("検証の出力のファイル名が場所を指す綴りであり、ファイルを1つも指していない");
         }
-        if spelling::コロンを含むか(綴り) {
+        if spelling::コロンを含むか(文字列) {
             panic!("検証の出力のファイル名がコロンを含み、Windowsの連結で基準のディレクトリを置き換える");
         }
-        Self(綴り)
+        Self(文字列)
     }
 
     /// 人へ見せる綴りと、名前を綴りでしか受け取れない口へ渡す綴り。パスを組む口ではない。
     /// パスは`検証の出力ルート`が組む。
-    pub(crate) const fn 綴りを見せる(self) -> &'static str {
+    pub(crate) const fn 文字列を見せる(self) -> &'static str {
         self.0
     }
 }

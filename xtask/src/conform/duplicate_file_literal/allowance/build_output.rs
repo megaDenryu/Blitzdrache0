@@ -16,8 +16,8 @@ use crate::conform::duplicate_file_literal::出現箇所;
 const 取り込む成果物の拡張子: &str = ".spv";
 const ビルドスクリプトの置き場: &str = "build_support";
 
-pub(in crate::conform::duplicate_file_literal) fn 焼いてそのまま取り込む対か(綴り: &str, 出現一覧: &[&出現箇所]) -> bool {
-    if !綴り.ends_with(取り込む成果物の拡張子) {
+pub(in crate::conform::duplicate_file_literal) fn 焼いてそのまま取り込む対か(文字列: &str, 出現一覧: &[&出現箇所]) -> bool {
+    if !文字列.ends_with(取り込む成果物の拡張子) {
         return false;
     }
     let (焼く側, ほか): (Vec<&&出現箇所>, Vec<&&出現箇所>) = 出現一覧.iter().partition(|出現| ビルドスクリプトの中か(&出現.パス));

@@ -20,7 +20,7 @@ use super::heading::生成台帳の見出し;
 pub(super) const 形式名: &str = "blitz_generation_ledger";
 pub(super) const 対応版: &str = "1";
 pub(super) const 種の欄: &str = "seed";
-pub(super) const 種を持たないときの綴り: &str = "none";
+pub(super) const 種を持たないときの文字列: &str = "none";
 pub(super) const 生成器の版の欄: &str = "generator_version";
 pub(super) const 生成器の実行ファイルの欄: &str = "generator_image";
 pub(super) const 焼き方の指定の欄: &str = "bake_options";
@@ -41,8 +41,8 @@ impl 生成台帳の本文 {
     }
 
     /// ファイルから読んだ綴りを本文として受け取る。形式の検査は`解析する`が行うため、ここでは形を問わない。
-    pub(super) fn 読み取った綴りから作る(綴り: String) -> Self {
-        Self(綴り)
+    pub(super) fn 読み取った文字列から作る(文字列: String) -> Self {
+        Self(文字列)
     }
 
     pub(super) fn 解析する(&self) -> Result<台帳のテキストが表す中身, 生成台帳エラー> {
@@ -50,7 +50,7 @@ impl 生成台帳の本文 {
     }
 
     /// 書き出す側だけが綴りへ戻す。ファイルへ書く1箇所のための口である。
-    pub(super) fn 綴り(&self) -> &str {
+    pub(super) fn 文字列(&self) -> &str {
         &self.0
     }
 }

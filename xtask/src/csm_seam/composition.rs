@@ -51,10 +51,10 @@ impl 継ぎ目を見る構図 {
     }
 
     /// 開く世界の綴りと時刻。由来がそのまま書き、人が絵と突き合わせられるようにする。
-    pub(super) fn シーン名の綴り(self) -> &'static str {
+    pub(super) fn シーン名の文字列(self) -> &'static str {
         match self {
-            Self::検証用地形世界 => super::run::検証用地形世界のシーン名の綴り,
-            Self::大規模世界 => super::run::large_world_options::大規模世界のシーン名の綴り,
+            Self::検証用地形世界 => super::run::検証用地形世界のシーン名の文字列,
+            Self::大規模世界 => super::run::large_world_options::大規模世界のシーン名の文字列,
         }
     }
 

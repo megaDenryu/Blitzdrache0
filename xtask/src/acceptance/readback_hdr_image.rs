@@ -69,7 +69,7 @@ impl 圧縮前のHDR画像 {
     }
 
     /// 誤りの文面へ埋める寸法の綴り。2枚の寸法が違うことを言う判定がこれを使う。
-    pub fn 寸法の綴り(&self) -> String {
+    pub fn 寸法の文字列(&self) -> String {
         format!("{}×{}", self.幅.画素数(), self.高さ.画素数())
     }
 

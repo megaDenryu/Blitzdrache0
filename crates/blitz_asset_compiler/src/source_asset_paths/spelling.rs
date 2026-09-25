@@ -12,51 +12,51 @@ const 逆斜線: u8 = b'\\';
 const コロン: u8 = b':';
 const 点: u8 = b'.';
 
-pub(super) const fn 空か(綴り: &str) -> bool {
-    綴り.is_empty()
+pub(super) const fn 空か(文字列: &str) -> bool {
+    文字列.is_empty()
 }
 
-pub(super) const fn 斜線を含むか(綴り: &str) -> bool {
-    指定のバイトを含むか(綴り, 斜線)
+pub(super) const fn 斜線を含むか(文字列: &str) -> bool {
+    指定のバイトを含むか(文字列, 斜線)
 }
 
-pub(super) const fn 逆斜線を含むか(綴り: &str) -> bool {
-    指定のバイトを含むか(綴り, 逆斜線)
+pub(super) const fn 逆斜線を含むか(文字列: &str) -> bool {
+    指定のバイトを含むか(文字列, 逆斜線)
 }
 
-pub(super) const fn コロンを含むか(綴り: &str) -> bool {
-    指定のバイトを含むか(綴り, コロン)
+pub(super) const fn コロンを含むか(文字列: &str) -> bool {
+    指定のバイトを含むか(文字列, コロン)
 }
 
-pub(super) const fn 斜線で始まるか(綴り: &str) -> bool {
-    let バイト列 = 綴り.as_bytes();
+pub(super) const fn 斜線で始まるか(文字列: &str) -> bool {
+    let バイト列 = 文字列.as_bytes();
     !バイト列.is_empty() && バイト列[0] == 斜線
 }
 
-pub(super) const fn 斜線で終わるか(綴り: &str) -> bool {
-    let バイト列 = 綴り.as_bytes();
+pub(super) const fn 斜線で終わるか(文字列: &str) -> bool {
+    let バイト列 = 文字列.as_bytes();
     !バイト列.is_empty() && バイト列[バイト列.len() - 1] == 斜線
 }
 
 /// 区切りが2つ続いて間に何も無い所を含むか。
-pub(super) const fn 空の成分を含むか(綴り: &str) -> bool {
-    連なる同じバイトを含むか(綴り, 斜線)
+pub(super) const fn 空の成分を含むか(文字列: &str) -> bool {
+    連なる同じバイトを含むか(文字列, 斜線)
 }
 
 /// 点が2つ続く所を含むか。成分が`..`だけのときソースルートの外へ出るため、点の連なりをまとめて拒む。
 /// 成分の切れ目を見ずにまとめるのは、ソースアセットの綴りに点を2つ続ける正当な用途が1つも無いためである。
-pub(super) const fn 連なる点を含むか(綴り: &str) -> bool {
-    連なる同じバイトを含むか(綴り, 点)
+pub(super) const fn 連なる点を含むか(文字列: &str) -> bool {
+    連なる同じバイトを含むか(文字列, 点)
 }
 
-/// 今の場所を指す綴りか。ファイルを1つも指さない綴りである。
-pub(super) const fn 今の場所を指す綴りか(綴り: &str) -> bool {
-    let バイト列 = 綴り.as_bytes();
+/// 今の場所を指す文字列か。ファイルを1つも指さない綴りである。
+pub(super) const fn 今の場所を指す文字列か(文字列: &str) -> bool {
+    let バイト列 = 文字列.as_bytes();
     バイト列.len() == 1 && バイト列[0] == 点
 }
 
-const fn 指定のバイトを含むか(綴り: &str, 印: u8) -> bool {
-    let バイト列 = 綴り.as_bytes();
+const fn 指定のバイトを含むか(文字列: &str, 印: u8) -> bool {
+    let バイト列 = 文字列.as_bytes();
     let mut 位置 = 0;
     while 位置 < バイト列.len() {
         if バイト列[位置] == 印 {
@@ -67,8 +67,8 @@ const fn 指定のバイトを含むか(綴り: &str, 印: u8) -> bool {
     false
 }
 
-const fn 連なる同じバイトを含むか(綴り: &str, 印: u8) -> bool {
-    let バイト列 = 綴り.as_bytes();
+const fn 連なる同じバイトを含むか(文字列: &str, 印: u8) -> bool {
+    let バイト列 = 文字列.as_bytes();
     let mut 位置 = 1;
     while 位置 < バイト列.len() {
         if バイト列[位置] == 印 && バイト列[位置 - 1] == 印 {

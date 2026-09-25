@@ -8,8 +8,8 @@ pub(super) fn 入切(使うか: bool) -> &'static str {
 }
 
 /// 2状態のどちらでもない綴りは読み取れないものとして返す。読み取れないことの扱いは呼び出し側が決める。
-pub(super) fn 入切の綴りを読む(綴り: &str) -> Option<bool> {
-    match 綴り {
+pub(super) fn 入切の文字列を読む(文字列: &str) -> Option<bool> {
+    match 文字列 {
         "on" => Some(true),
         "off" => Some(false),
         _ => None,

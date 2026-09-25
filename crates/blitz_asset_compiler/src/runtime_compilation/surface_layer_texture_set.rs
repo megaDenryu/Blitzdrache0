@@ -5,7 +5,7 @@
 //! (綴りは`crates/blitz_engine/src/surface_layer_textures/stable_id.rs`が持ち、ここはそれを参照する)。
 //! 高さ場と同じく、チャンク目録には載らない。1つの座標へ1つのアセットしか持てない目録に、世界全体を覆う1枚は入らない。
 
-use blitz_engine::surface_layer_textures::世界の地表層テクスチャ集の安定IDの綴り;
+use blitz_engine::surface_layer_textures::世界の地表層テクスチャ集の安定IDの文字列;
 use blitz_engine::アセットID;
 
 use crate::{地表層タイルの置き場, 地表層テクスチャ集アセットをコンパイルする, 地表材質の層割当};
@@ -14,7 +14,7 @@ use super::compilation::実行時アセットのコンパイル;
 
 impl 実行時アセットのコンパイル {
     pub(super) fn 地表層テクスチャ集を焼いて登録する(&mut self, 層割当: &地表材質の層割当) -> Result<(), crate::実行時アセットのコンパイルエラー> {
-        let id = アセットID::生成する(世界の地表層テクスチャ集の安定IDの綴り).map_err(crate::実行時アセットのコンパイルエラー::ソースが不正)?;
+        let id = アセットID::生成する(世界の地表層テクスチャ集の安定IDの文字列).map_err(crate::実行時アセットのコンパイルエラー::ソースが不正)?;
         let 置き場 = 地表層タイルの置き場::ソースルートの下に作る(&self.ソースルート);
         let 結果 = 地表層テクスチャ集アセットをコンパイルする(&置き場, 層割当, self.テクスチャ格納の方式).map_err(|誤り| crate::実行時アセットのコンパイルエラー::ソースが不正(format!("{id}: {誤り}")))?;
         let 実行時パス = self.出力ルート.アセットを書き出す(&id, &結果.実行時バイト列).map_err(crate::実行時アセットのコンパイルエラー::入出力に失敗)?;

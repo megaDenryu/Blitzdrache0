@@ -12,21 +12,21 @@ const 逆斜線: u8 = b'\\';
 const コロン: u8 = b':';
 const 点: u8 = b'.';
 
-pub(super) const fn 空か(綴り: &str) -> bool {
-    綴り.is_empty()
+pub(super) const fn 空か(文字列: &str) -> bool {
+    文字列.is_empty()
 }
 
-pub(super) const fn 区切りを含むか(綴り: &str) -> bool {
-    指定のバイトを含むか(綴り, 斜線) || 指定のバイトを含むか(綴り, 逆斜線)
+pub(super) const fn 区切りを含むか(文字列: &str) -> bool {
+    指定のバイトを含むか(文字列, 斜線) || 指定のバイトを含むか(文字列, 逆斜線)
 }
 
-pub(super) const fn コロンを含むか(綴り: &str) -> bool {
-    指定のバイトを含むか(綴り, コロン)
+pub(super) const fn コロンを含むか(文字列: &str) -> bool {
+    指定のバイトを含むか(文字列, コロン)
 }
 
 /// 点だけ、または点が2つ続く所を含むか。どちらも親や今の場所を指し、木の下の1つの置き場を指さない。
-pub(super) const fn 場所を指す綴りか(綴り: &str) -> bool {
-    let バイト列 = 綴り.as_bytes();
+pub(super) const fn 場所を指す文字列か(文字列: &str) -> bool {
+    let バイト列 = 文字列.as_bytes();
     if バイト列.len() == 1 && バイト列[0] == 点 {
         return true;
     }
@@ -40,8 +40,8 @@ pub(super) const fn 場所を指す綴りか(綴り: &str) -> bool {
     false
 }
 
-const fn 指定のバイトを含むか(綴り: &str, 印: u8) -> bool {
-    let バイト列 = 綴り.as_bytes();
+const fn 指定のバイトを含むか(文字列: &str, 印: u8) -> bool {
+    let バイト列 = 文字列.as_bytes();
     let mut 位置 = 0;
     while 位置 < バイト列.len() {
         if バイト列[位置] == 印 {

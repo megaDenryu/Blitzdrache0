@@ -56,7 +56,7 @@ impl 標準サンプルの取得対象 {
             eprintln!("[xtask] 取得先ディレクトリの作成に失敗: {誤り}");
             return ExitCode::FAILURE;
         }
-        let 取得元url = format!("{}/{}", self.取得元ディレクトリurl, self.取得先相対パス.末尾のファイル名().綴りを見せる());
+        let 取得元url = format!("{}/{}", self.取得元ディレクトリurl, self.取得先相対パス.末尾のファイル名().文字列を見せる());
         println!("[xtask] curl.exe -L -f -o {} {} を実行", 取得先パス.display(), 取得元url);
         let 起動結果 = Command::new("curl.exe").args(["-L", "-f", "-o"]).arg(&取得先パス).arg(&取得元url).status();
         self.取得の結果を告げる(起動結果, &取得先パス)

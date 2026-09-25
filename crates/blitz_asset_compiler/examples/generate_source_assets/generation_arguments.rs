@@ -10,13 +10,13 @@ use std::path::PathBuf;
 use blitz_asset_compiler::{ソースルート, マップ生成の乱数の種, 世界の広がり};
 
 /// 種を導く選択肢の綴り。綴りは`xtask/src/gen_game_map.rs`にも同じものがある。
-const 種の選択肢の綴り: &str = "--game-map-seed";
+const 種の選択肢の文字列: &str = "--game-map-seed";
 
 /// ソースルートを導く選択肢の綴り。綴りは`xtask/src/gen_game_map.rs`にも同じものがある。
-const ソースルートの選択肢の綴り: &str = "--source-root";
+const ソースルートの選択肢の文字列: &str = "--source-root";
 /// 次の2つの綴りはxtask側の呼び出し境界`xtask/src/asset_generator/arguments/source_assets.rs`にも置く。
-const 東西チャンク数の選択肢の綴り: &str = "--world-east-chunks";
-const 南北チャンク数の選択肢の綴り: &str = "--world-south-chunks";
+const 東西チャンク数の選択肢の文字列: &str = "--world-east-chunks";
+const 南北チャンク数の選択肢の文字列: &str = "--world-south-chunks";
 
 /// ソースルートを指定しなかったときの行き先。リポジトリへ収めた検証用の世界の置き場である。
 const 既定のソースルート: &str = "assets";
@@ -40,19 +40,19 @@ pub(crate) fn 引数一覧から書き出す対象を読む(引数一覧: &[Stri
     let mut ソースルートのパス = PathBuf::from(既定のソースルート);
     let mut 残りの引数 = 引数一覧;
     loop {
-        let [綴り, 値, 続き @ ..] = 残りの引数 else {
+        let [文字列, 値, 続き @ ..] = 残りの引数 else {
             break;
         };
-        if 綴り == 種の選択肢の綴り {
+        if 文字列 == 種の選択肢の文字列 {
             読んだ種 = Some(種を解析する(値)?);
-        } else if 綴り == ソースルートの選択肢の綴り {
+        } else if 文字列 == ソースルートの選択肢の文字列 {
             ソースルートのパス = PathBuf::from(値);
-        } else if 綴り == 東西チャンク数の選択肢の綴り {
-            東西チャンク数 = Some(チャンク数を解析する(綴り, 値)?);
-        } else if 綴り == 南北チャンク数の選択肢の綴り {
-            南北チャンク数 = Some(チャンク数を解析する(綴り, 値)?);
+        } else if 文字列 == 東西チャンク数の選択肢の文字列 {
+            東西チャンク数 = Some(チャンク数を解析する(文字列, 値)?);
+        } else if 文字列 == 南北チャンク数の選択肢の文字列 {
+            南北チャンク数 = Some(チャンク数を解析する(文字列, 値)?);
         } else {
-            return Err(format!("知らない引数である: {綴り}(選べるのは種・ソースルート・東西チャンク数・南北チャンク数である)"));
+            return Err(format!("知らない引数である: {文字列}(選べるのは種・ソースルート・東西チャンク数・南北チャンク数である)"));
         }
         残りの引数 = 続き;
     }
@@ -60,7 +60,7 @@ pub(crate) fn 引数一覧から書き出す対象を読む(引数一覧: &[Stri
         return Err(format!("{}に続く値が無い", 残りの引数.join(" ")));
     }
     let Some(種) = 読んだ種 else {
-        return Err(format!("{種の選択肢の綴り}と種の値が要る"));
+        return Err(format!("{種の選択肢の文字列}と種の値が要る"));
     };
     let 広がり = 広がりを組み立てる(東西チャンク数, 南北チャンク数)?;
     Ok(書き出す対象::場所巡りの世界 {
@@ -78,12 +78,12 @@ fn 広がりを組み立てる(東西: Option<u16>, 南北: Option<u16>) -> Resu
     match (東西, 南北) {
         (None, None) => Ok(世界の広がり::場所巡りの既定値()),
         (Some(東西), Some(南北)) => 世界の広がり::生成する(東西, 南北).map_err(|誤り| 誤り.to_string()),
-        _ => Err(format!("{東西チャンク数の選択肢の綴り}と{南北チャンク数の選択肢の綴り}は一緒に指定する")),
+        _ => Err(format!("{東西チャンク数の選択肢の文字列}と{南北チャンク数の選択肢の文字列}は一緒に指定する")),
     }
 }
 
 fn 種を解析する(値: &str) -> Result<マップ生成の乱数の種, String> {
     値.parse::<u32>()
         .map(マップ生成の乱数の種::生成する)
-        .map_err(|誤り| format!("{種の選択肢の綴り}の値を32ビットの非負整数として読めない({値}): {誤り}"))
+        .map_err(|誤り| format!("{種の選択肢の文字列}の値を32ビットの非負整数として読めない({値}): {誤り}"))
 }

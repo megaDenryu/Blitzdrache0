@@ -28,10 +28,10 @@ impl 語の並び {
     pub(super) fn 値を足す(&mut self, 選択肢: Option<&'static str>, 役割: &'static str, 値: Option<String>) -> Result<(), 生成器エラー> {
         let Some(語) = 値 else { return Ok(()) };
         if 語.starts_with('-') {
-            return Err(生成器エラー::値が選択肢の綴りに見える { 役割, 綴り: 語 });
+            return Err(生成器エラー::値が選択肢の文字列に見える { 役割, 文字列: 語 });
         }
-        if let Some(綴り) = 選択肢 {
-            self.語を足す(綴り);
+        if let Some(文字列) = 選択肢 {
+            self.語を足す(文字列);
         }
         self.語を足す(&語);
         Ok(())

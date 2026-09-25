@@ -82,14 +82,14 @@ fn 型引数を読む<'a>(名前: &str, 名前の後ろ: &'a str) -> Result<(Vec
 
 // 型引数より後ろの綴りから本体の並べ方を読む。`{` で開くか、`(...)` と `;` で閉じるか、`;` だけで閉じるかの3つが保証範囲である。
 fn 本体の並べ方を読む(名前: &str, 型引数の後ろ: &str) -> 本体の並べ方 {
-    let 綴り = 型引数の後ろ.trim();
-    if 綴り.starts_with('{') {
+    let 文字列 = 型引数の後ろ.trim();
+    if 文字列.starts_with('{') {
         return 本体の並べ方::名前付きのフィールド;
     }
-    if 綴り == ";" {
+    if 文字列 == ";" {
         return 本体の並べ方::フィールドを持たない;
     }
-    let 括弧の中身 = 綴り.strip_prefix('(').and_then(|残り| 残り.trim_end().strip_suffix(';')).and_then(|残り| 残り.trim_end().strip_suffix(')'));
+    let 括弧の中身 = 文字列.strip_prefix('(').and_then(|残り| 残り.trim_end().strip_suffix(';')).and_then(|残り| 残り.trim_end().strip_suffix(')'));
     let Some(括弧の中身) = 括弧の中身 else {
         return 本体の並べ方::保証範囲の外(保証範囲の外の構文::型定義の宣言が1行に収まっていない { 型名: 名前.to_string() });
     };

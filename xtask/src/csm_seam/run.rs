@@ -29,8 +29,8 @@ use super::composition::継ぎ目を見る構図;
 use crate::acceptance::{アプリの起こし方, アプリの起動指定, 実行時アセットルート, 描画フレーム数, 描画検収の実行環境, 検収エラー, 検収シーン名, 画素の番号, 読み戻し画像};
 use crate::verify::検証の出力ルート;
 
-pub(super) const 検証用地形世界のシーン名の綴り: &str = "terrain_origin";
-const シーン名: 検収シーン名 = 検収シーン名::生成する(検証用地形世界のシーン名の綴り);
+pub(super) const 検証用地形世界のシーン名の文字列: &str = "terrain_origin";
+const シーン名: 検収シーン名 = 検収シーン名::生成する(検証用地形世界のシーン名の文字列);
 const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(160);
 const 先読み半径: &str = "2";
 const 容量上限バイト: &str = "16777216";

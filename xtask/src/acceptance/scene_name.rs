@@ -11,19 +11,19 @@ pub struct 検収シーン名(&'static str);
 impl 検収シーン名 {
     /// 注意: 空の綴りと空白を含む綴りは、コマンドの引数として1語にならず別の引数と混ざる。
     /// 綴りは原文のリテラルであるため、破れは書き誤りであり、定数として使う限りコンパイル時に落ちる。
-    pub const fn 生成する(綴り: &'static str) -> Self {
-        assert!(!綴り.is_empty(), "検収シーン名が空である");
-        let バイト列 = 綴り.as_bytes();
+    pub const fn 生成する(文字列: &'static str) -> Self {
+        assert!(!文字列.is_empty(), "検収シーン名が空である");
+        let バイト列 = 文字列.as_bytes();
         let mut 位置 = 0;
         while 位置 < バイト列.len() {
             assert!(!バイト列[位置].is_ascii_whitespace(), "検収シーン名が空白を含む");
             位置 += 1;
         }
-        Self(綴り)
+        Self(文字列)
     }
 
     /// アプリの`--scene`へ渡す綴り。生の綴りへ戻るのはここだけである。
-    pub(crate) fn 綴り(self) -> &'static str {
+    pub(crate) fn 文字列(self) -> &'static str {
         self.0
     }
 }

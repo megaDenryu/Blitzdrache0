@@ -20,7 +20,7 @@ impl 同居植生の個体数 {
 
     /// 注意: 生成器へ渡す語へ戻る口である。呼べるのは生成の引数を組む器の内側だけであり、
     /// 人へ見せる行は`Display`を通る。
-    pub(super) fn 引数の綴り(self) -> String {
+    pub(super) fn 引数の文字列(self) -> String {
         self.0.to_string()
     }
 }

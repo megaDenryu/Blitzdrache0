@@ -14,12 +14,12 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
 use build_output::焼いてそのまま取り込む対か;
-use table::{台帳のファイル, 寄せられない綴り, 領域一覧};
+use table::{台帳のファイル, 寄せられない文字列, 領域一覧};
 
 use super::出現箇所;
 use crate::conform::violation::違反;
 
-impl 寄せられない綴り {
+impl 寄せられない文字列 {
     fn 現れてよい場所か(&self, パス: &Path) -> bool {
         self.現れてよい場所一覧.contains(&台帳の表記へ揃える(パス).as_str())
     }
@@ -30,29 +30,29 @@ fn 台帳の表記へ揃える(パス: &Path) -> String {
     パス.to_string_lossy().replace('\\', "/")
 }
 
-pub(super) fn 既知の寄せられない綴りか(綴り: &str, 出現一覧: &[&出現箇所]) -> bool {
-    let 台帳が許す = 領域一覧.iter().copied().flatten().any(|許容| 許容.綴り == 綴り && 出現一覧.iter().all(|出現| 許容.現れてよい場所か(&出現.パス)));
-    台帳が許す || 焼いてそのまま取り込む対か(綴り, 出現一覧)
+pub(super) fn 既知の寄せられない文字列か(文字列: &str, 出現一覧: &[&出現箇所]) -> bool {
+    let 台帳が許す = 領域一覧.iter().copied().flatten().any(|許容| 許容.文字列 == 文字列 && 出現一覧.iter().all(|出現| 許容.現れてよい場所か(&出現.パス)));
+    台帳が許す || 焼いてそのまま取り込む対か(文字列, 出現一覧)
 }
 
 /// 台帳が挙げた場所から綴りが消えていたら違反として報告し、台帳からの削除を強制する。
 /// これがないと是正済みの項目が残り続け、次に同じ綴りを2箇所へ書いたときに見逃す穴になる。
-pub(super) fn 台帳の陳腐化を検査する(綴りごとの出現場所: &BTreeMap<String, BTreeSet<String>>) -> Vec<違反> {
+pub(super) fn 台帳の陳腐化を検査する(文字列ごとの出現場所: &BTreeMap<String, BTreeSet<String>>) -> Vec<違反> {
     let 空の場所 = BTreeSet::new();
     領域一覧
         .iter()
         .copied()
         .flatten()
         .flat_map(|許容| {
-            let 出現場所 = 綴りごとの出現場所.get(許容.綴り).unwrap_or(&空の場所);
+            let 出現場所 = 文字列ごとの出現場所.get(許容.文字列).unwrap_or(&空の場所);
             許容.現れてよい場所一覧.iter().filter(move |場所| !出現場所.contains(**場所)).map(move |場所| 場所を失った違反(許容, 場所))
         })
         .collect()
 }
 
-fn 場所を失った違反(許容: &寄せられない綴り, 場所: &str) -> 違反 {
+fn 場所を失った違反(許容: &寄せられない文字列, 場所: &str) -> 違反 {
     違反::ファイル単位(
         PathBuf::from(台帳のファイル),
-        format!("台帳が許した綴り「{}」が{場所}に無い(台帳の場所を直すか、綴りごと台帳から削除する。載せた理由は「{}」)", 許容.綴り, 許容.寄せられない理由),
+        format!("台帳が許した綴り「{}」が{場所}に無い(台帳の場所を直すか、綴りごと台帳から削除する。載せた理由は「{}」)", 許容.文字列, 許容.寄せられない理由),
     )
 }

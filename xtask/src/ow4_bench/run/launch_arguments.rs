@@ -8,12 +8,12 @@
 use std::path::Path;
 
 use super::super::condition::計測条件;
-use super::super::{フレーム数, 上限バイト数, 先読み半径, 起動時シーンの綴り};
+use super::super::{フレーム数, 上限バイト数, 先読み半径, 起動時シーンの名前};
 
 pub(super) fn 引数を作る(アセットルート: &Path, シェーダー入口: &Path, 上限: &str, 条件: &計測条件) -> Vec<String> {
     let 固定 = [
         "--scene",
-        起動時シーンの綴り,
+        起動時シーンの名前,
         "--streaming",
         "--streaming-preload-radius",
         先読み半径,
@@ -40,6 +40,6 @@ pub(super) fn 引数を作る(アセットルート: &Path, シェーダー入�
 }
 
 /// この計測が使う上限バイト数。RAMとVRAMの両方へ同じ値を渡す。
-pub(super) fn 上限の綴り() -> String {
+pub(super) fn 上限の文字列() -> String {
     上限バイト数.to_string()
 }

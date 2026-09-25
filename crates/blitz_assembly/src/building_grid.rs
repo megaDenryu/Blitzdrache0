@@ -54,6 +54,6 @@ pub use grid_builder::ベイ格子の組み手;
 pub use opening_fill::{はめ口の値, 壁の種類};
 pub use ornament::{壁の外面へ付ける飾り, 煙突の段数};
 pub use part_role::骨格方式の部品の役割;
-pub use part_spelling::骨格方式の部品の綴り;
-pub use part_spelling_builder::骨格方式の部品の綴りの組み手;
+pub use part_spelling::骨格方式の役割ごとの部品の識別子;
+pub use part_spelling_builder::骨格方式の役割ごとの部品の識別子の組み手;
 pub use side_face::升目の側面;

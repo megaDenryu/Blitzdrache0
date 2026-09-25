@@ -104,9 +104,9 @@ impl 使い捨ての場面 {
     }
 
     /// 指紋の台帳を、在るが読めない綴りにする。読めない台帳を無い台帳と同じに扱うことを見る検査が呼ぶ。
-    pub(super) fn 指紋の台帳の綴りを壊す(&self, 壊れた綴り: &str) -> std::io::Result<()> {
+    pub(super) fn 指紋の台帳の文字列を壊す(&self, 壊れた文字列: &str) -> std::io::Result<()> {
         let 台帳 = 生成の指紋の台帳::ソースルートの下を指す(&ソースルート::生成する(self.パス.clone()));
-        std::fs::write(台帳.書き込み先のパス(), 壊れた綴り)
+        std::fs::write(台帳.書き込み先のパス(), 壊れた文字列)
     }
 
     pub(super) fn 片づける(self) -> std::io::Result<()> {

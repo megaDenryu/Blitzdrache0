@@ -8,19 +8,19 @@
 use blitz_asset_compiler::テクスチャ格納の方式;
 
 /// 方針の指定を導く選択肢の綴り。この綴りの直後の1語が方針の名前である。
-const 選択肢の綴り: &str = "--texture-storage-policy";
+const 選択肢の文字列: &str = "--texture-storage-policy";
 
-const 全てRGBA8の綴り: &str = "all_rgba8";
-const ベースカラーのブロック圧縮の綴り: &str = "block_compressed_base_color";
+const 全てRGBA8の文字列: &str = "all_rgba8";
+const ベースカラーのブロック圧縮の文字列: &str = "block_compressed_base_color";
 
-const 有効な綴り: [&str; 2] = [全てRGBA8の綴り, ベースカラーのブロック圧縮の綴り];
+const 有効な文字列: [&str; 2] = [全てRGBA8の文字列, ベースカラーのブロック圧縮の文字列];
 
 /// 引数一覧から方針の指定を取り除き、指定があればその方針と残りの引数を返す。
 pub(super) fn 引数一覧から方針の指定を取り出す(引数一覧: &[String]) -> Result<(Option<テクスチャ格納の方式>, Vec<String>), String> {
-    let Some(選択肢の位置) = 引数一覧.iter().position(|引数| 引数 == 選択肢の綴り) else {
+    let Some(選択肢の位置) = 引数一覧.iter().position(|引数| 引数 == 選択肢の文字列) else {
         return Ok((None, 引数一覧.to_vec()));
     };
-    let 名前 = 引数一覧.get(選択肢の位置 + 1).ok_or_else(|| format!("{選択肢の綴り}の直後に方針の名前が無い(有効な値は{})", 有効な綴り.join("と")))?;
+    let 名前 = 引数一覧.get(選択肢の位置 + 1).ok_or_else(|| format!("{選択肢の文字列}の直後に方針の名前が無い(有効な値は{})", 有効な文字列.join("と")))?;
     let 方針 = 名前からテクスチャ格納の方式を解析する(名前)?;
     let mut 残り = 引数一覧[..選択肢の位置].to_vec();
     残り.extend_from_slice(&引数一覧[選択肢の位置 + 2..]);
@@ -29,8 +29,8 @@ pub(super) fn 引数一覧から方針の指定を取り出す(引数一覧: &[S
 
 fn 名前からテクスチャ格納の方式を解析する(名前: &str) -> Result<テクスチャ格納の方式, String> {
     match 名前 {
-        全てRGBA8の綴り => Ok(テクスチャ格納の方式::全てRGBA8),
-        ベースカラーのブロック圧縮の綴り => Ok(テクスチャ格納の方式::ベースカラーのブロック圧縮),
-        他 => Err(format!("未知のテクスチャ格納の方式である: {他}(有効な値は{})", 有効な綴り.join("と"))),
+        全てRGBA8の文字列 => Ok(テクスチャ格納の方式::全てRGBA8),
+        ベースカラーのブロック圧縮の文字列 => Ok(テクスチャ格納の方式::ベースカラーのブロック圧縮),
+        他 => Err(format!("未知のテクスチャ格納の方式である: {他}(有効な値は{})", 有効な文字列.join("と"))),
     }
 }

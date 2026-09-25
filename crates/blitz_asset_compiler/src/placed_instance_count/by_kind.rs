@@ -17,11 +17,11 @@ use crate::error::アセットコンパイルエラー;
 pub struct 散らした種類の名前(String);
 
 impl 散らした種類の名前 {
-    pub fn 綴りから生成する(綴り: &str) -> Self {
-        Self(綴り.to_string())
+    pub fn 文字列から生成する(文字列: &str) -> Self {
+        Self(文字列.to_string())
     }
 
-    pub fn 綴り(&self) -> &str {
+    pub fn 文字列(&self) -> &str {
         &self.0
     }
 }

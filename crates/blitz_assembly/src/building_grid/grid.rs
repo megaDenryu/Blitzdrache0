@@ -11,7 +11,7 @@ use crate::expansion::組み立て手順;
 
 use super::cell_coordinate::升目の座標;
 use super::cell_table::升目の表;
-use super::part_spelling::骨格方式の部品の綴り;
+use super::part_spelling::骨格方式の役割ごとの部品の識別子;
 use super::recipe_conversion::組み立て手順への写し取り;
 use super::spanning_tree::升目をつなぐ木;
 
@@ -38,8 +38,8 @@ impl ベイ格子 {
 
     /// 名指した綴りの部品で、この格子の組み立て手順を作る。接合点の宣言を1つも読まない純粋計算であり、
     /// 同じ格子と同じ綴りからは常に同じ手順が出る。
-    pub fn 組み立て手順へ写す(&self, 部品の綴り: &骨格方式の部品の綴り) -> 組み立て手順 {
-        組み立て手順への写し取り::格子と綴りから写し取る(self, 部品の綴り)
+    pub fn 組み立て手順へ写す(&self, 部品の識別子: &骨格方式の役割ごとの部品の識別子) -> 組み立て手順 {
+        組み立て手順への写し取り::格子と部品の識別子から写し取る(self, 部品の識別子)
     }
 
     pub(super) fn 升目の表(&self) -> &升目の表 {

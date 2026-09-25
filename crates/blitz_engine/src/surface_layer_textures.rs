@@ -20,7 +20,7 @@ pub use error::地表層テクスチャ集エラー;
 pub use layer_index::地表層ごとの材質索引;
 pub use load_error::地表層テクスチャ集読込エラー;
 pub use reader::地表層テクスチャ集の読み口;
-pub use stable_id::世界の地表層テクスチャ集の安定IDの綴り;
+pub use stable_id::世界の地表層テクスチャ集の安定IDの文字列;
 pub use texture_set::地表層テクスチャ集;
 pub use tile::地表層のタイル;
 

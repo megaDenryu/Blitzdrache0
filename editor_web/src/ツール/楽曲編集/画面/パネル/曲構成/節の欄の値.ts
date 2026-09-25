@@ -29,10 +29,10 @@ export function 節の繰り返し回数の選択肢一覧を組み立てる(節
 }
 
 // 選ばれた綴りは上の組み立てが出したものしか来ないため、範囲の外は既定値で埋めずに失敗させる。
-export function 綴りから繰り返し回数を復元する(綴り: string): number {
-    const 回数 = Number.parseInt(綴り, 10)
+export function 文字列から繰り返し回数を復元する(文字列: string): number {
+    const 回数 = Number.parseInt(文字列, 10)
     if (!Number.isInteger(回数) || 回数 < 曲の節の繰り返し回数の下限 || 回数 > 曲の節の繰り返し回数の上限) {
-        throw new Error(`曲の節の繰り返し回数として読めない綴りです: ${綴り}`)
+        throw new Error(`曲の節の繰り返し回数として読めない綴りです: ${文字列}`)
     }
     return 回数
 }

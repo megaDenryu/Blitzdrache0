@@ -10,19 +10,19 @@
 use super::side_by_side_fixture::側面で接する箱の列の場面を作る;
 use crate::contact::contact_batches::接触拘束の二つのバッチ;
 
-const 綴り始める刻み: usize = 690;
-const 綴り終える刻み: usize = 745;
+const 書き始める刻み: usize = 690;
+const 書き終える刻み: usize = 745;
 
 #[test]
 #[ignore = "計器であり合否を判定しない。実行は --ignored --nocapture を付ける"]
 fn 側面で接する二つの箱の島の分割と静穏の四条件を綴る() {
     let (mut 工程, mut 台帳, 箱一覧) = 側面で接する箱の列の場面を作る(2);
     println!("刻み | 側面の接触が在る細分 | 錨を置き直した細分 | 滑走中の細分 | 左: 静穏 休止 | 右: 静穏 休止");
-    for 刻み in 0..=綴り終える刻み {
+    for 刻み in 0..=書き終える刻み {
         let Ok(細分ごと) = 工程.一刻み進めて細分ごとのバッチを返す(&mut 台帳) else {
             panic!("刻み {刻み} で一刻み進めるエラー");
         };
-        if 刻み < 綴り始める刻み {
+        if 刻み < 書き始める刻み {
             continue;
         }
         let 側面の接触 = 細分ごと.iter().filter(|バッチ| !バッチ.剛体どうしの接触拘束().is_empty()).count();

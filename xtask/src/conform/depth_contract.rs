@@ -15,7 +15,7 @@ pub(super) fn 全接点を検査する() -> Result<Vec<違反>, 規約検査の�
     for 接点 in table::全接点() {
         let パス = Path::new(接点.パス);
         let 内容 = std::fs::read_to_string(パス).map_err(|誤り| 規約検査の破れ::ファイルを読めなかった(パス, 誤り))?;
-        if !指定の綴りがあるか(&内容, 接点.期待する綴り) {
+        if !指定の文字列があるか(&内容, 接点.期待する文字列) {
             違反一覧.push(違反::ファイル単位(
                 PathBuf::from(接点.パス),
                 format!(
@@ -28,8 +28,8 @@ pub(super) fn 全接点を検査する() -> Result<Vec<違反>, 規約検査の�
     Ok(違反一覧)
 }
 
-fn 指定の綴りがあるか(内容: &str, 期待する綴り: &str) -> bool {
-    空白を均す(内容).contains(&空白を均す(期待する綴り))
+fn 指定の文字列があるか(内容: &str, 期待する文字列: &str) -> bool {
+    空白を均す(内容).contains(&空白を均す(期待する文字列))
 }
 
 fn 空白を均す(内容: &str) -> String {

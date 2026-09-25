@@ -23,12 +23,12 @@ impl 世界のディレクトリ名 {
         Ok(Self(名前))
     }
 
-    pub(super) fn 綴り(self) -> &'static str {
+    pub(super) fn 文字列(self) -> &'static str {
         self.0
     }
 
     /// 生成台帳の見出しへ焼き方の指定として載せるための綴り。パスを組む口ではない。
-    pub fn 綴りを見せる(self) -> &'static str {
+    pub fn 文字列を見せる(self) -> &'static str {
         self.0
     }
 }

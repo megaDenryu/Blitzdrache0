@@ -10,7 +10,7 @@ use crate::acceptance::{判定の名前, 判定の破れ};
 pub(super) const 時刻の選択肢: &str = "--time-of-day";
 
 const 選択肢に続く値: 判定の名前 = 判定の名前::定数から生成する("--time-of-dayの後ろに置く一日内秒の値");
-const 選択肢へ渡された綴り: 判定の名前 = 判定の名前::定数から生成する("--time-of-dayへ渡された一日内秒の綴り");
+const 選択肢へ渡された文字列: 判定の名前 = 判定の名前::定数から生成する("--time-of-dayへ渡された一日内秒の綴り");
 
 /// `--time-of-day <秒>`があればその値を返す。指定が無ければ世界の方針の既定時刻(11時)で走る。
 pub(super) fn 一日内秒を読む(引数一覧: &[String]) -> Result<Option<String>, 判定の破れ> {
@@ -20,6 +20,6 @@ pub(super) fn 一日内秒を読む(引数一覧: &[String]) -> Result<Option<St
     let Some(値) = 引数一覧.get(位置 + 1) else {
         return Err(選択肢に続く値.あるはずのものが無い破れ());
     };
-    let _: f64 = 選択肢へ渡された綴り.材料を数として読む(値)?;
+    let _: f64 = 選択肢へ渡された文字列.材料を数として読む(値)?;
     Ok(Some(値.clone()))
 }

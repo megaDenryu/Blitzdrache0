@@ -13,10 +13,10 @@ export interface I文書の表示名の届け先 {
 export class タブ見出しを文書の表示名へ追随させる implements I文書の表示名の届け先 {
     public constructor(
         private readonly _シェル: 外殻レイアウト,
-        private readonly _タブの綴り: string,
+        private readonly _タブの文字列: string,
     ) {}
 
     public 表示名が変わった(新しい表示名: string): void {
-        this._シェル.タブのラベルを変える(this._タブの綴り, 新しい表示名)
+        this._シェル.タブのラベルを変える(this._タブの文字列, 新しい表示名)
     }
 }

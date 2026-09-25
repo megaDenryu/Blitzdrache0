@@ -9,8 +9,8 @@
 use super::tower_fixture::箱の塔の場面を作る;
 use crate::rigid_body::{剛体の台帳, 剛体の識別子};
 
-const 綴り始める刻み: usize = 103;
-const 綴り終える刻み: usize = 107;
+const 書き始める刻み: usize = 103;
+const 書き終える刻み: usize = 107;
 const 綴る第1の剛体の添字: usize = 3;
 const 綴る第2の剛体の添字: usize = 4;
 
@@ -18,11 +18,11 @@ const 綴る第2の剛体の添字: usize = 4;
 #[ignore = "計器であり合否を判定しない。実行は --ignored --nocapture を付ける"]
 fn 塔の余白の内側の点が連立方程式へどう効いたかを綴る() {
     let (mut 工程, mut 台帳, 箱id一覧, _) = 箱の塔の場面を作る(10, false);
-    for 刻み in 0..=綴り終える刻み {
+    for 刻み in 0..=書き終える刻み {
         let Ok(細分ごと) = 工程.一刻み進めて細分ごとのバッチを返す(&mut 台帳) else {
             panic!("刻み {刻み} で一刻み進めるエラー");
         };
-        if 刻み < 綴り始める刻み {
+        if 刻み < 書き始める刻み {
             continue;
         }
         println!("--- 刻み {刻み} 高さ {:?}", 各段の重心の高さ(&台帳, &箱id一覧));

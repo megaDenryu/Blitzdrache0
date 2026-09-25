@@ -20,15 +20,15 @@ impl 退避の理由の内訳 {
         Self { 理由ごとの延べ数: BTreeMap::new() }
     }
 
-    fn 一件を数える(&mut self, 結末の綴り: &'static str) {
-        *self.理由ごとの延べ数.entry(結末の綴り).or_insert(0) += 1;
+    fn 一件を数える(&mut self, 結末の文字列: &'static str) {
+        *self.理由ごとの延べ数.entry(結末の文字列).or_insert(0) += 1;
     }
 
     fn 延べ数(&self) -> usize {
         self.理由ごとの延べ数.values().sum()
     }
 
-    fn 綴り(&self) -> String {
+    fn 文字列(&self) -> String {
         let 内訳: Vec<String> = self.理由ごとの延べ数.iter().map(|(理由, 数)| format!("{理由}={数}")).collect();
         format!("退避{}[{}]", self.延べ数(), 内訳.join(" "))
     }
@@ -49,7 +49,7 @@ pub(in crate::contact::scene::numeric_contract_record::tolerance_dependence) fn 
     for 番号 in 0..本数 {
         let 記録 = 場面.記録しながら一細分進める(番号, &条件, false);
         for (_, 読み取り) in &記録.解けなかった連立方程式 {
-            内訳.一件を数える(読み取り.結末の綴り);
+            内訳.一件を数える(読み取り.結末の文字列);
         }
     }
     let 変位 = 場面.坂に沿った変位(初めの重心, &条件);
@@ -58,8 +58,8 @@ pub(in crate::contact::scene::numeric_contract_record::tolerance_dependence) fn 
     println!(
         "  分類 [{}_{}] {分類を見る刻み数}刻み {分類} 変位={変位:.3e} {} 置き直し{}",
         場合.見出し(),
-        適用規則.綴り(),
-        内訳.綴り(),
+        適用規則.文字列(),
+        内訳.文字列(),
         場面.錨を置き直した細分の延べ数
     );
 }

@@ -13,35 +13,35 @@ use crate::conform::violation::違反;
 
 pub(super) struct 検査の集計 {
     違反一覧: Vec<違反>,
-    綴りごとの出現場所: BTreeMap<String, BTreeSet<String>>,
+    文字列ごとの出現場所: BTreeMap<String, BTreeSet<String>>,
 }
 
 impl 検査の集計 {
     pub(super) fn 新しく作る() -> Self {
         Self {
             違反一覧: Vec::new(),
-            綴りごとの出現場所: BTreeMap::new(),
+            文字列ごとの出現場所: BTreeMap::new(),
         }
     }
 
-    pub(super) fn 綴り1つを見る(&mut self, 綴り: &str, 出現箇所一覧: &[出現箇所]) {
+    pub(super) fn 文字列1つを見る(&mut self, 文字列: &str, 出現箇所一覧: &[出現箇所]) {
         let 台帳でない出現: Vec<&出現箇所> = 出現箇所一覧.iter().filter(|出現箇所| !self_reference::台帳のファイルか(&出現箇所.パス)).collect();
         let ファイルごとの初出 = ファイルごとの初出を採る(&台帳でない出現);
-        self.綴りごとの出現場所.insert(綴り.to_string(), ファイルごとの初出.keys().cloned().collect());
-        if ファイルごとの初出.len() < 2 || allowance::既知の寄せられない綴りか(綴り, &台帳でない出現) {
+        self.文字列ごとの出現場所.insert(文字列.to_string(), ファイルごとの初出.keys().cloned().collect());
+        if ファイルごとの初出.len() < 2 || allowance::既知の寄せられない文字列か(文字列, &台帳でない出現) {
             return;
         }
         self.違反一覧.extend(ファイルごとの初出.values().map(|出現箇所| {
             違反::行単位(
                 出現箇所.パス.clone(),
                 出現箇所.行番号,
-                format!("ファイル名らしい綴り「{綴り}」が{}つのファイルに書かれている(正本を1箇所へ寄せる)", ファイルごとの初出.len()),
+                format!("ファイル名らしい綴り「{文字列}」が{}つのファイルに書かれている(正本を1箇所へ寄せる)", ファイルごとの初出.len()),
             )
         }));
     }
 
     pub(super) fn 違反一覧にする(mut self) -> Vec<違反> {
-        self.違反一覧.extend(allowance::台帳の陳腐化を検査する(&self.綴りごとの出現場所));
+        self.違反一覧.extend(allowance::台帳の陳腐化を検査する(&self.文字列ごとの出現場所));
         self.違反一覧
     }
 }

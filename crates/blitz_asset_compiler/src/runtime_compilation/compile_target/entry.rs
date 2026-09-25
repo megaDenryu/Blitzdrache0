@@ -43,7 +43,7 @@ impl コンパイル対象 {
         Ok(PathBuf::from(ファイル名))
     }
 
-    pub(crate) fn 表示の綴り(&self) -> std::path::Display<'_> {
+    pub(crate) fn 表示用の表記(&self) -> std::path::Display<'_> {
         self.出力パス.display()
     }
 }

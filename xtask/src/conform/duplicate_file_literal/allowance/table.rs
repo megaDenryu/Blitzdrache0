@@ -10,11 +10,11 @@ pub(super) const 台帳のファイル: &str = "xtask/src/conform/duplicate_file
 
 /// 寄せられない綴り1件。理由を綴りと並べて持つのは、台帳を減らすときに
 /// 「何が変われば消せるのか」を読み手が判断できるようにするためである。
-pub(super) struct 寄せられない綴り {
-    pub(super) 綴り: &'static str,
+pub(super) struct 寄せられない文字列 {
+    pub(super) 文字列: &'static str,
     pub(super) 現れてよい場所一覧: &'static [&'static str], // ここに無い場所へ書かれたら許さず、ここから消えたら陳腐化として報告する
     pub(super) 寄せられない理由: &'static str,
 }
 
 /// 領域ごとの台帳。並びは検査の順にだけ効く。
-pub(super) const 領域一覧: [&[寄せられない綴り]; 2] = [&shader_files::一覧, &other_files::一覧];
+pub(super) const 領域一覧: [&[寄せられない文字列]; 2] = [&shader_files::一覧, &other_files::一覧];

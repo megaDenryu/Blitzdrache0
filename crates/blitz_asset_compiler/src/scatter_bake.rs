@@ -19,25 +19,25 @@ pub enum 散布の焼き方 {
 }
 
 /// 引数の並びでこの指定を導く綴り。値を続けず、在ることが「焼かない」を意味する。
-const 選択肢の綴り: &str = "--no-scatter";
+const 選択肢の文字列: &str = "--no-scatter";
 
 impl 散布の焼き方 {
     /// 引数の並びからこの指定を取り除き、指定と残りの引数を返す。綴りが無ければ既定の「焼く」である。
     pub fn 引数一覧から取り出す(引数一覧: &[String]) -> (Self, Vec<String>) {
-        let 残り: Vec<String> = 引数一覧.iter().filter(|引数| 引数.as_str() != 選択肢の綴り).cloned().collect();
+        let 残り: Vec<String> = 引数一覧.iter().filter(|引数| 引数.as_str() != 選択肢の文字列).cloned().collect();
         if 残り.len() == 引数一覧.len() { (Self::焼く, 残り) } else { (Self::焼かない, 残り) }
     }
 
     /// 焼かせない側が引数の並びへ足す綴り。焼くときは1語も足さない。
-    pub fn 引数へ足す綴り(self) -> Option<&'static str> {
+    pub fn 引数へ足す文字列(self) -> Option<&'static str> {
         match self {
             Self::焼く => None,
-            Self::焼かない => Some(選択肢の綴り),
+            Self::焼かない => Some(選択肢の文字列),
         }
     }
 
     /// 焼き方の指定の綴りへ載せる語。生成台帳の見出しの一部になる。
-    pub fn 台帳へ載せる綴り(self) -> &'static str {
+    pub fn 台帳へ載せる文字列(self) -> &'static str {
         match self {
             Self::焼く => "焼く",
             Self::焼かない => "焼かない",
@@ -61,7 +61,7 @@ mod tests {
     use super::散布の焼き方;
 
     #[test]
-    fn 綴りが無ければ焼く() {
+    fn 文字列が無ければ焼く() {
         let 引数 = vec!["assets".to_string(), "target/x".to_string()];
         let (焼き方, 残り) = 散布の焼き方::引数一覧から取り出す(&引数);
         assert_eq!(焼き方, 散布の焼き方::焼く);
@@ -69,7 +69,7 @@ mod tests {
     }
 
     #[test]
-    fn 綴りが在れば焼かず引数から取り除く() {
+    fn 文字列が在れば焼かず引数から取り除く() {
         let 引数 = vec!["assets".to_string(), "--no-scatter".to_string(), "target/x".to_string()];
         let (焼き方, 残り) = 散布の焼き方::引数一覧から取り出す(&引数);
         assert_eq!(焼き方, 散布の焼き方::焼かない);
@@ -77,9 +77,9 @@ mod tests {
     }
 
     #[test]
-    fn 足す綴りと取り出しが往復する() {
+    fn 足す文字列と取り出しが往復する() {
         for 焼き方 in [散布の焼き方::焼く, 散布の焼き方::焼かない] {
-            let 引数: Vec<String> = 焼き方.引数へ足す綴り().into_iter().map(str::to_string).collect();
+            let 引数: Vec<String> = 焼き方.引数へ足す文字列().into_iter().map(str::to_string).collect();
             assert_eq!(散布の焼き方::引数一覧から取り出す(&引数).0, 焼き方);
         }
     }

@@ -7,7 +7,7 @@ use crate::acceptance::{検収の実行名, 終了時報告};
 
 #[test]
 fn 全ての実行の別を一つずつ受け付ける() {
-    for (綴り, 期待) in [
+    for (文字列, 期待) in [
         ("--capture-reference", 実行の別::対照を採る),
         ("--capture-candidate", 実行の別::候補を採る),
         ("--capture-reference-no-ssao", 実行の別::Ssaoなし対照を採る),
@@ -23,7 +23,7 @@ fn 全ての実行の別を一つずつ受け付ける() {
         ("--print-plan", 実行の別::計画を表示する),
         ("--judge", 実行の別::判定する),
     ] {
-        assert_eq!(引数を読む(&[綴り.to_string()]).unwrap(), 期待);
+        assert_eq!(引数を読む(&[文字列.to_string()]).unwrap(), 期待);
     }
 }
 

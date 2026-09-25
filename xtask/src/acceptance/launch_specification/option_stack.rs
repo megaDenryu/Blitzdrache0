@@ -11,26 +11,26 @@ use super::アプリの起動指定;
 
 impl アプリの起動指定 {
     /// 値を持たない選択肢を1つ足す。
-    pub fn 選択肢を足す(self, 綴り: &str) -> Self {
-        self.名前として積む(綴り)
+    pub fn 選択肢を足す(self, 文字列: &str) -> Self {
+        self.名前として積む(文字列)
     }
 
     /// 値を持たない選択肢をまとめて足す。条件ごとの並びを1つの配列で持つ入口のための口である。
-    pub fn 選択肢をまとめて足す(self, 綴り一覧: &[&str]) -> Self {
-        綴り一覧.iter().fold(self, |指定, 綴り| 指定.名前として積む(綴り))
+    pub fn 選択肢をまとめて足す(self, 文字列一覧: &[&str]) -> Self {
+        文字列一覧.iter().fold(self, |指定, 文字列| 指定.名前として積む(文字列))
     }
 
     /// 値を1つ取る選択肢を足す。選択肢とその値を離して足せる口を作らないのは、
     /// 値だけが抜けた指定が組み上がるとアプリ側で別の選択肢の値として読まれるためである。
-    pub fn 値を持つ選択肢を足す(self, 綴り: &str, 値: &str) -> Self {
-        let mut 指定 = self.名前として積む(綴り);
+    pub fn 値を持つ選択肢を足す(self, 文字列: &str, 値: &str) -> Self {
+        let mut 指定 = self.名前として積む(文字列);
         指定.追加の選択肢.push(OsString::from(値));
         指定
     }
 
     /// 値にパスを取る選択肢を足す。綴りへ写さずに渡すのは、写せない綴りのパスを黙って落とさないためである。
-    pub fn パスを値に持つ選択肢を足す(self, 綴り: &str, 値: &Path) -> Self {
-        let mut 指定 = self.名前として積む(綴り);
+    pub fn パスを値に持つ選択肢を足す(self, 文字列: &str, 値: &Path) -> Self {
+        let mut 指定 = self.名前として積む(文字列);
         指定.追加の選択肢.push(値.as_os_str().to_os_string());
         指定
     }
@@ -39,13 +39,13 @@ impl アプリの起動指定 {
     ///
     /// 注意: 今のところ読み手は回帰検査だけである。本体の経路から呼ばれるまでは`cfg(test)`で閉じる。
     #[cfg(test)]
-    pub fn 選択肢を含むか(&self, 綴り: &str) -> bool {
-        self.追加の選択肢.iter().any(|積んだ綴り| 積んだ綴り == 綴り)
+    pub fn 選択肢を含むか(&self, 文字列: &str) -> bool {
+        self.追加の選択肢.iter().any(|積んだ文字列| 積んだ文字列 == 文字列)
     }
 
     /// 1語積む。積まれた語が型の組み立てる選択肢かどうかは、完成させる操作が渡す先で見る。
-    fn 名前として積む(mut self, 綴り: &str) -> Self {
-        self.追加の選択肢.push(OsString::from(綴り));
+    fn 名前として積む(mut self, 文字列: &str) -> Self {
+        self.追加の選択肢.push(OsString::from(文字列));
         self
     }
 }

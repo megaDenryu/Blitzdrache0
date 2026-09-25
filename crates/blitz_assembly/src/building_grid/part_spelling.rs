@@ -1,4 +1,4 @@
-//! 骨格方式の部品の綴り: 8つの役割それぞれに部品の識別子が定まった表。
+//! 骨格方式の役割ごとの部品の識別子: 8つの役割それぞれに部品の識別子が定まった表。
 //!
 //! 綴りを格子の側が持たず呼び出し側から預かるのは、Blender側が部品へ与えた名前の正本が
 //! `crates/blitz_asset_compiler/examples/part_assembly/frame_bay_spelling.rs`にあるためである。
@@ -12,11 +12,11 @@ use crate::part::部品ID;
 use super::part_role::骨格方式の部品の役割;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct 骨格方式の部品の綴り {
+pub struct 骨格方式の役割ごとの部品の識別子 {
     役割ごとの識別子: [部品ID; 8],
 }
 
-impl 骨格方式の部品の綴り {
+impl 骨格方式の役割ごとの部品の識別子 {
     /// 組み手が8つの役割の充足を確かめてから呼ぶ口。並びの添字は役割の添字である。
     pub(super) fn 揃った並びから生成する(役割ごとの識別子: [部品ID; 8]) -> Self {
         Self { 役割ごとの識別子 }

@@ -7,9 +7,9 @@ use crate::acceptance::{実行時アセットルート, 検収シーン名};
 use crate::verify::{検証の出力のファイル名, 検証の出力ルート};
 use crate::world_setup::{検収世界の用意, 検収世界の用意の破れ};
 
-const シーン名の綴り: &str = "terrain_visual";
+const シーン名の文字列: &str = "terrain_visual";
 
-pub const 目視見本世界のシーン名: 検収シーン名 = 検収シーン名::生成する(シーン名の綴り);
+pub const 目視見本世界のシーン名: 検収シーン名 = 検収シーン名::生成する(シーン名の文字列);
 
 /// 目視見本の実行時形式。この世界だけの出力ルートへ焼かれる。
 const 用意: 検収世界の用意 = 検収世界の用意::生成する("目視見本", crate::compile_assets::目視見本の世界の実行時形式の置き場, 検証の出力のファイル名::生成する("terrain_visual.blitzasset"));

@@ -10,12 +10,12 @@ export function 役割の凡例を作る(): DivC {
 
 function この役割の凡例を作る(役割: 立体の役割): DivC {
     return div({ class: 凡例の1件 }).childs([
-        div({ class: 凡例の色見本 }).setStyleCSS({ backgroundColor: 十六進の色綴りへ写す(役割の識別色を引く(役割)) }),
+        div({ class: 凡例の色見本 }).setStyleCSS({ backgroundColor: 十六進の色の文字列へ写す(役割の識別色を引く(役割)) }),
         span({ text: 役割 }),
     ])
 }
 
 // 三次元の材質が受け取る数の色を、CSSが読む綴りへ写す。色の値の正本は`役割の識別色`の1つである。
-function 十六進の色綴りへ写す(色: number): string {
+function 十六進の色の文字列へ写す(色: number): string {
     return `#${色.toString(16).padStart(6, '0')}`
 }

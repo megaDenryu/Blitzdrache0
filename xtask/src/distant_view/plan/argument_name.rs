@@ -9,10 +9,10 @@ pub(in crate::distant_view) fn 引数を読む(引数一覧: &[String]) -> Resul
     let [引数] = 引数一覧 else {
         return Err(遠景構図の検収エラー::引数が不正(引数一覧.join(" ")));
     };
-    綴りから選ぶ(引数).ok_or_else(|| 遠景構図の検収エラー::引数が不正(引数一覧.join(" ")))
+    文字列から選ぶ(引数).ok_or_else(|| 遠景構図の検収エラー::引数が不正(引数一覧.join(" ")))
 }
 
-fn 綴りから選ぶ(引数: &str) -> Option<実行の別> {
+fn 文字列から選ぶ(引数: &str) -> Option<実行の別> {
     Some(match 引数 {
         "--capture-reference" => 実行の別::対照を採る,
         "--capture-candidate" => 実行の別::候補を採る,

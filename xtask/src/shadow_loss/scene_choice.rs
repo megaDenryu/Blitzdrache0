@@ -23,7 +23,7 @@ pub(super) enum 構図 {
 impl 構図 {
     pub(super) const 全構図: [Self; 2] = [Self::地形, Self::影視距離の検収];
 
-    pub(super) fn 綴り(self) -> &'static str {
+    pub(super) fn 文字列(self) -> &'static str {
         match self {
             Self::地形 => "terrain",
             Self::影視距離の検収 => "range",
@@ -76,14 +76,14 @@ impl 構図 {
     }
 }
 
-pub(super) fn 綴りから読む(語: &str) -> Result<構図, 影の欠落計器の引数の破れ> {
+pub(super) fn 文字列から読む(語: &str) -> Result<構図, 影の欠落計器の引数の破れ> {
     let 知らない構図 = || 影の欠落計器の引数の破れ::知らない構図を渡された {
         語: 語.to_string(),
-        選べる構図: 綴りを並べる(),
+        選べる構図: 文字列を並べる(),
     };
-    構図::全構図.into_iter().find(|構図| 構図.綴り() == 語).ok_or_else(知らない構図)
+    構図::全構図.into_iter().find(|構図| 構図.文字列() == 語).ok_or_else(知らない構図)
 }
 
-pub(super) fn 綴りを並べる() -> String {
-    構図::全構図.iter().map(|構図| 構図.綴り()).collect::<Vec<&str>>().join(" / ")
+pub(super) fn 文字列を並べる() -> String {
+    構図::全構図.iter().map(|構図| 構図.文字列()).collect::<Vec<&str>>().join(" / ")
 }

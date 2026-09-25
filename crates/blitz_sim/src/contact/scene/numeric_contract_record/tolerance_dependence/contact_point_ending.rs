@@ -24,7 +24,7 @@ pub(super) struct 接触点一つの細分の終わりの読み取り {
 
 impl 接触点一つの細分の終わりの読み取り {
     /// 表へ綴る形。
-    pub(super) fn 綴り(&self) -> String {
+    pub(super) fn 文字列(&self) -> String {
         format!(
             "特徴={:?} |C_t|={:.4e} λ_t={:.4e} λ_n={:.4e} 置き直した={} 滑走中={}",
             self.特徴の識別, self.錨からの接線変位の長さ, self.接線のラグランジュ乗数の大きさ, self.法線のラグランジュ乗数, self.錨を置き直したか, self.滑走中か

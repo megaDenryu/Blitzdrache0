@@ -24,7 +24,7 @@ use super::launch_arguments::完成した起動引数;
 use super::scene_name::検収シーン名;
 
 /// シーンをアプリへ渡す選択肢の綴り。生の綴りが在るのはこの1行だけである。
-pub(super) const シーンの選択肢の綴り: &str = "--scene";
+pub(super) const シーンの選択肢の文字列: &str = "--scene";
 
 pub struct アプリの起動指定 {
     シーン名: 検収シーン名,

@@ -13,12 +13,12 @@ use blitz_engine::sky::世界の空の宣言;
 use super::scene_policy;
 use crate::cli::{世界の種別, 空の起動指定, 起動時シーン};
 
-fn 種別を解く(綴り: &str) -> 世界の種別 {
-    起動時シーン::綴りから解析する(綴り).unwrap().種別()
+fn 種別を解く(文字列: &str) -> 世界の種別 {
+    起動時シーン::文字列から解析する(文字列).unwrap().種別()
 }
 
-fn 空方針(綴り: &str, 指定: 空の起動指定) -> 世界の空の宣言 {
-    scene_policy::世界の空の宣言を決める(種別を解く(綴り), 指定)
+fn 空方針(文字列: &str, 指定: 空の起動指定) -> 世界の空の宣言 {
+    scene_policy::世界の空の宣言を決める(種別を解く(文字列), 指定)
 }
 
 fn 空ありか(方針: 世界の空の宣言) -> bool {
@@ -28,8 +28,8 @@ fn 空ありか(方針: 世界の空の宣言) -> bool {
 #[test]
 fn 地形世界だけが空を持ち検証世界は持たない() {
     assert!(空ありか(空方針("terrain_origin", 空の起動指定::方針に従う)));
-    for 綴り in ["quad", "helmet", "shadow_scene", "fox", "vegetation_cull"] {
-        assert!(!空ありか(空方針(綴り, 空の起動指定::方針に従う)), "{綴り}");
+    for 文字列 in ["quad", "helmet", "shadow_scene", "fox", "vegetation_cull"] {
+        assert!(!空ありか(空方針(文字列, 空の起動指定::方針に従う)), "{文字列}");
     }
 }
 

@@ -7,7 +7,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::reference_resolution::コマンドの指し先の解決係;
-use crate::resource::text_check::綴りが空でないことを確かめる;
+use crate::resource::text_check::文字列が空でないことを確かめる;
 use crate::resource::validation_error::資源検証エラー;
 use crate::resource::{コード進行参照, パターンID};
 
@@ -50,7 +50,7 @@ pub struct パターンの表示名を変える {
 impl パターンを追加する {
     pub(super) fn 検証する(&self, 解決係: &コマンドの指し先の解決係<'_>) -> Result<(), 資源検証エラー> {
         解決係.名乗りが未使用であることを確かめる(&self.名乗り)?;
-        綴りが空でないことを確かめる("楽曲編集コマンド.表示名", &self.表示名)?;
+        文字列が空でないことを確かめる("楽曲編集コマンド.表示名", &self.表示名)?;
         解決係.進行の参照が解決できることを確かめる(&self.進行の参照)
     }
 }
@@ -71,6 +71,6 @@ impl パターンの進行を変える {
 impl パターンの表示名を変える {
     pub(super) fn 検証する(&self, 解決係: &コマンドの指し先の解決係<'_>) -> Result<(), 資源検証エラー> {
         解決係.パターンを引く(&self.名乗り)?;
-        綴りが空でないことを確かめる("楽曲編集コマンド.新しい表示名", &self.新しい表示名)
+        文字列が空でないことを確かめる("楽曲編集コマンド.新しい表示名", &self.新しい表示名)
     }
 }

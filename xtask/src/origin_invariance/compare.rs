@@ -33,7 +33,7 @@ pub(super) fn 不合格にする(名前: &'static str, 理由: String) -> 判定
 
 fn 比較する(左: &読み戻し画像, 右: &読み戻し画像) -> 比較 {
     if !左.寸法が同じか(右) {
-        return 比較::形が違う(format!("寸法が違う: {} と {}", 左.寸法の綴り(), 右.寸法の綴り()));
+        return 比較::形が違う(format!("寸法が違う: {} と {}", 左.寸法の文字列(), 右.寸法の文字列()));
     }
     let 差分一覧: Vec<usize> = 左.バイト列().iter().zip(右.バイト列().iter()).enumerate().filter_map(|(添字, (左値, 右値))| (左値 != 右値).then_some(添字)).collect();
     match 差分一覧.first() {

@@ -29,7 +29,7 @@ impl 取り込みの項目 {
             Some((パス, 別名)) => (パス.trim(), Some(別名.trim())),
             None => (表記.trim(), None),
         };
-        let 一語か = |綴り: &str| !綴り.is_empty() && !綴り.contains(char::is_whitespace);
+        let 一語か = |文字列: &str| !文字列.is_empty() && !文字列.contains(char::is_whitespace);
         (一語か(パス) && 別名.is_none_or(一語か)).then(|| Self {
             パス: パス.to_string(),
             別名: 別名.map(str::to_string),

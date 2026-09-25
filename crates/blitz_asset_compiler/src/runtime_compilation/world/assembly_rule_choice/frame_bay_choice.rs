@@ -21,41 +21,41 @@ const 食い込ませる量: f32 = 0.02;
 /// 壁3種が共通で持つ、骨格のはめ口と噛み合う接合点の名前。
 const 壁の外枠: &str = "壁の外枠";
 
-pub(super) const 骨格の綴り: &str = "Mod_Frame_Bay_Single";
-pub(super) const 平壁の綴り: &str = "Mod_Wall_HalfTimber_Solid";
-pub(super) const 窓壁の綴り: &str = "Mod_Wall_HalfTimber_Window";
-pub(super) const 扉枠付きの壁の綴り: &str = "Mod_Wall_HalfTimber_DoorFrame";
-pub(super) const 切妻屋根の綴り: &str = "Mod_Frame_Roof_Gable";
-pub(super) const 床板の綴り: &str = "Mod_Frame_Floor";
-pub(super) const 出窓の綴り: &str = "Mod_Tavern_Oriel_F2";
-pub(super) const 煙突の綴り: &str = "Mod_Frame_Chimney_Segment";
+pub(super) const 骨格の文字列: &str = "Mod_Frame_Bay_Single";
+pub(super) const 平壁の文字列: &str = "Mod_Wall_HalfTimber_Solid";
+pub(super) const 窓壁の文字列: &str = "Mod_Wall_HalfTimber_Window";
+pub(super) const 扉枠付きの壁の文字列: &str = "Mod_Wall_HalfTimber_DoorFrame";
+pub(super) const 切妻屋根の文字列: &str = "Mod_Frame_Roof_Gable";
+pub(super) const 床板の文字列: &str = "Mod_Frame_Floor";
+pub(super) const 出窓の文字列: &str = "Mod_Tavern_Oriel_F2";
+pub(super) const 煙突の文字列: &str = "Mod_Frame_Chimney_Segment";
 
 /// 候補が1つだけのはめ口。その面には必ずその壁が入り、外面には何も付かない。
-pub(super) fn 必ず入れるはめ口(はめ口の綴り: &str, 部品の綴り: &str) -> Result<はめ口の指定, String> {
-    指定を組む(はめ口の綴り, vec![壁をはめる(部品の綴り, 飾りを付けない()?)?])
+pub(super) fn 必ず入れるはめ口(はめ口の文字列: &str, 部品の識別子: &str) -> Result<はめ口の指定, String> {
+    指定を組む(はめ口の文字列, vec![壁をはめる(部品の識別子, 飾りを付けない()?)?])
 }
 
 /// 候補が1つだけのはめ口で、入った壁の外面へ必ず出窓が差し込まれる。
 /// **候補を1つに固定するのは、絵に写ったものが突き合わせで確かめた組み立てと同じであることを言えるようにするためである。**
-pub(super) fn 外面へ出窓を差し込むはめ口(はめ口の綴り: &str, 部品の綴り: &str) -> Result<はめ口の指定, String> {
-    指定を組む(はめ口の綴り, vec![壁をはめる(部品の綴り, 出窓を必ず差し込む()?)?])
+pub(super) fn 外面へ出窓を差し込むはめ口(はめ口の文字列: &str, 部品の識別子: &str) -> Result<はめ口の指定, String> {
+    指定を組む(はめ口の文字列, vec![壁をはめる(部品の識別子, 出窓を必ず差し込む()?)?])
 }
 
 /// 候補が1つだけのはめ口で、入った壁の外面へ必ず煙突が立つ。**煙突は葉でなく、1段目の上へさらに段が積まれる。**
-pub(super) fn 外面へ煙突を立てるはめ口(はめ口の綴り: &str, 部品の綴り: &str) -> Result<はめ口の指定, String> {
-    指定を組む(はめ口の綴り, vec![壁をはめる(部品の綴り, 煙突を必ず立てる()?)?])
+pub(super) fn 外面へ煙突を立てるはめ口(はめ口の文字列: &str, 部品の識別子: &str) -> Result<はめ口の指定, String> {
+    指定を組む(はめ口の文字列, vec![壁をはめる(部品の識別子, 煙突を必ず立てる()?)?])
 }
 
 /// 何も入れないか平壁か窓壁かを3分の1ずつで引くはめ口。候補の数がそのまま割合を決める。
-pub(super) fn 選べるはめ口(はめ口の綴り: &str) -> Result<はめ口の指定, String> {
-    let 候補一覧 = vec![はめ口へ入れるもの::入れない, 壁をはめる(平壁の綴り, 飾りを付けない()?)?, 壁をはめる(窓壁の綴り, 飾りを付けない()?)?];
-    指定を組む(はめ口の綴り, 候補一覧)
+pub(super) fn 選べるはめ口(はめ口の文字列: &str) -> Result<はめ口の指定, String> {
+    let 候補一覧 = vec![はめ口へ入れるもの::入れない, 壁をはめる(平壁の文字列, 飾りを付けない()?)?, 壁をはめる(窓壁の文字列, 飾りを付けない()?)?];
+    指定を組む(はめ口の文字列, 候補一覧)
 }
 
 /// 骨格の上面へ屋根を載せる候補。屋根が宣言する接合点は下面積層1件だけであり、その上へ継げるものは無い。
 pub(super) fn 屋根を載せる候補() -> Result<骨格へ継ぎ足すもの, String> {
     Ok(骨格へ継ぎ足すもの::屋根を載せる {
-        部品: 部品識別子を確かめる(切妻屋根の綴り)?,
+        部品: 部品識別子を確かめる(切妻屋根の文字列)?,
         下面: 接合点名を確かめる("屋根の下面")?,
     })
 }
@@ -64,27 +64,27 @@ pub(super) fn 屋根を載せる候補() -> Result<骨格へ継ぎ足すもの, 
 /// 食い込ませる量を持たないのは、床のはめ口と床の外枠が面の向かい合う隣接であり、重なる面をそもそも持たないためである。
 pub(super) fn 床を張る宣言() -> Result<骨格へ張る床, String> {
     Ok(骨格へ張る床::床を張る {
-        部品: 部品識別子を確かめる(床板の綴り)?,
+        部品: 部品識別子を確かめる(床板の文字列)?,
         床のはめ口: 接合点名を確かめる("床のはめ口")?,
         床の外枠: 接合点名を確かめる("床の外枠")?,
     })
 }
 
-pub(super) fn 接合点名を確かめる(綴り: &str) -> Result<接合点名, String> {
-    接合点名::生成する(綴り).map_err(|誤り| 誤り.to_string())
+pub(super) fn 接合点名を確かめる(文字列: &str) -> Result<接合点名, String> {
+    接合点名::生成する(文字列).map_err(|誤り| 誤り.to_string())
 }
 
-pub(super) fn 部品識別子を確かめる(綴り: &str) -> Result<部品ID, String> {
-    部品ID::生成する(綴り).map_err(|誤り| 誤り.to_string())
+pub(super) fn 部品識別子を確かめる(文字列: &str) -> Result<部品ID, String> {
+    部品ID::生成する(文字列).map_err(|誤り| 誤り.to_string())
 }
 
-fn 指定を組む(はめ口の綴り: &str, 候補一覧: Vec<はめ口へ入れるもの>) -> Result<はめ口の指定, String> {
-    はめ口の指定::生成する(接合点名を確かめる(はめ口の綴り)?, 候補一覧).map_err(|誤り| 誤り.to_string())
+fn 指定を組む(はめ口の文字列: &str, 候補一覧: Vec<はめ口へ入れるもの>) -> Result<はめ口の指定, String> {
+    はめ口の指定::生成する(接合点名を確かめる(はめ口の文字列)?, 候補一覧).map_err(|誤り| 誤り.to_string())
 }
 
-fn 壁をはめる(部品の綴り: &str, 外面の飾り: 壁の外面の飾りの指定) -> Result<はめ口へ入れるもの, String> {
+fn 壁をはめる(部品の識別子: &str, 外面の飾り: 壁の外面の飾りの指定) -> Result<はめ口へ入れるもの, String> {
     Ok(はめ口へ入れるもの::壁をはめる {
-        部品: 部品識別子を確かめる(部品の綴り)?,
+        部品: 部品識別子を確かめる(部品の識別子)?,
         外枠: 接合点名を確かめる(壁の外枠)?,
         法線方向のずらし: 法線方向のずらし::食い込ませる量から生成する(メートル::生成する(食い込ませる量)).map_err(|誤り| 誤り.to_string())?,
         外面の飾り,

@@ -5,7 +5,7 @@
 
 const 経路の終端文字: [char; 4] = ['<', '{', ' ', '('];
 
-pub fn 実装対象の経路の綴り(行: &str) -> Option<String> {
+pub fn 実装対象の経路の文字列(行: &str) -> Option<String> {
     let 整形 = 行.trim();
     if 整形.starts_with("//") {
         return None;
@@ -16,8 +16,8 @@ pub fn 実装対象の経路の綴り(行: &str) -> Option<String> {
     }
     let 型部 = ジェネリクス引数を飛ばす(残り.trim_start());
     let 対象 = 型部.rsplit_once(" for ").map_or(型部, |(_, 後ろ)| 後ろ);
-    let 綴り = 経路を切り出す(対象);
-    if 綴り.is_empty() { None } else { Some(綴り) }
+    let 文字列 = 経路を切り出す(対象);
+    if 文字列.is_empty() { None } else { Some(文字列) }
 }
 
 /// `impl<'a, T: Into<U>>` の山括弧を釣り合いで数えて読み飛ばす。
@@ -53,26 +53,26 @@ mod tests {
 
     #[test]
     fn 固有implの対象を読み取る() {
-        assert_eq!(実装対象の経路の綴り("impl レンダラー {").unwrap(), "レンダラー");
+        assert_eq!(実装対象の経路の文字列("impl レンダラー {").unwrap(), "レンダラー");
     }
 
     #[test]
     fn トレイト実装はforの後ろを対象にする() {
-        assert_eq!(実装対象の経路の綴り("impl fmt::Display for 違反 {").unwrap(), "違反");
+        assert_eq!(実装対象の経路の文字列("impl fmt::Display for 違反 {").unwrap(), "違反");
     }
 
     #[test]
     fn 段を書いた実装対象は段ごと読み取る() {
-        assert_eq!(実装対象の経路の綴り("impl crate::far::設定 {").unwrap(), "crate::far::設定");
+        assert_eq!(実装対象の経路の文字列("impl crate::far::設定 {").unwrap(), "crate::far::設定");
     }
 
     #[test]
     fn ジェネリクス引数を飛ばして対象を読み取る() {
-        assert_eq!(実装対象の経路の綴り("impl<'a, T: Into<u32>> 台帳<T> {").unwrap(), "台帳");
+        assert_eq!(実装対象の経路の文字列("impl<'a, T: Into<u32>> 台帳<T> {").unwrap(), "台帳");
     }
 
     #[test]
     fn implで始まる識別子は対象外() {
-        assert!(実装対象の経路の綴り("implicit = 1;").is_none());
+        assert!(実装対象の経路の文字列("implicit = 1;").is_none());
     }
 }

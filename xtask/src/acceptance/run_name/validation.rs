@@ -32,8 +32,8 @@ pub(super) const fn 使ってよい文字か(文字: u8) -> bool {
 }
 
 /// 破れがあればそれを返す。無ければ値なしを返す。
-pub(super) const fn 確かめる(綴り: &str) -> Option<実行名の破れ> {
-    let バイト列 = 綴り.as_bytes();
+pub(super) const fn 確かめる(文字列: &str) -> Option<実行名の破れ> {
+    let バイト列 = 文字列.as_bytes();
     if バイト列.is_empty() {
         return Some(実行名の破れ::空である);
     }
@@ -50,10 +50,10 @@ pub(super) const fn 確かめる(綴り: &str) -> Option<実行名の破れ> {
     None
 }
 
-const fn 予約された装置の名前か(綴り: &[u8]) -> bool {
+const fn 予約された装置の名前か(文字列: &[u8]) -> bool {
     let mut 番号 = 0;
     while 番号 < 予約された装置の名前.len() {
-        if 大文字小文字を無視して等しいか(綴り, 予約された装置の名前[番号].as_bytes()) {
+        if 大文字小文字を無視して等しいか(文字列, 予約された装置の名前[番号].as_bytes()) {
             return true;
         }
         番号 += 1;

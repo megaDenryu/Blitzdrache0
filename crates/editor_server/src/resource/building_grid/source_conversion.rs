@@ -20,7 +20,7 @@ impl 建物の格子 {
     pub(crate) fn ソースの形へ写す(&self) -> Result<建物の格子ソース, String> {
         Ok(建物の格子ソース {
             形式版: self.形式版,
-            建物定義ID: blitz_asset_compiler::建物定義ID::生成する(self.建物定義ID.綴り())?,
+            建物定義ID: blitz_asset_compiler::建物定義ID::生成する(self.建物定義ID.文字列())?,
             表示名: self.表示名.clone(),
             入口のローカル方向: 建物の入口方向ソース {
                 x: self.入口のローカル方向.x,

@@ -20,8 +20,8 @@ pub struct 自己型の経路 {
 }
 
 impl 自己型の経路 {
-    pub fn 綴りから生成する(綴り: &str) -> Self {
-        let mut 段一覧: Vec<String> = 綴り.split(段の区切り).map(str::to_string).collect();
+    pub fn 文字列から生成する(文字列: &str) -> Self {
+        let mut 段一覧: Vec<String> = 文字列.split(段の区切り).map(str::to_string).collect();
         let 型名 = 段一覧.pop().unwrap_or_default();
         Self { 前置きの段一覧: 段一覧, 型名 }
     }
@@ -44,7 +44,7 @@ impl 自己型の経路 {
             return Vec::new();
         };
         let 到達 = 残りの段一覧.iter().fold(起点, |ディレクトリ, 段| ディレクトリ.子のモジュールへ進む(段));
-        到達.本体になりうるファイルの綴り一覧()
+        到達.本体になりうるファイルの文字列一覧()
     }
 
     fn 起点と残りの段(&self, 位置: &モジュールの位置) -> Option<(モジュールのディレクトリ, &[String])> {
@@ -70,13 +70,13 @@ impl 自己型の経路 {
 mod tests {
     use super::*;
 
-    fn 候補(綴り: &str, ファイル: &str) -> Vec<String> {
-        自己型の経路::綴りから生成する(綴り).定義ファイルの候補一覧(Path::new(ファイル))
+    fn 候補(文字列: &str, ファイル: &str) -> Vec<String> {
+        自己型の経路::文字列から生成する(文字列).定義ファイルの候補一覧(Path::new(ファイル))
     }
 
     #[test]
     fn 短い名前だけの経路は場所を決められない() {
-        let 経路 = 自己型の経路::綴りから生成する("設定");
+        let 経路 = 自己型の経路::文字列から生成する("設定");
         assert_eq!(経路.型名(), "設定");
         assert!(!経路.経路を明示しているか());
         assert!(候補("設定", "a/src/near/impl.rs").is_empty());

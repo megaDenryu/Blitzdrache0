@@ -19,17 +19,17 @@ pub struct 判定の名前(Cow<'static, str>);
 
 impl 判定の名前 {
     /// 原文のリテラルから作る。名前が空であることは書き誤りであるため、定数として使う限りコンパイル時に落ちる。
-    pub const fn 定数から生成する(綴り: &'static str) -> Self {
-        assert!(!綴り.is_empty(), "判定の名前が空である");
-        Self(Cow::Borrowed(綴り))
+    pub const fn 定数から生成する(文字列: &'static str) -> Self {
+        assert!(!文字列.is_empty(), "判定の名前が空である");
+        Self(Cow::Borrowed(文字列))
     }
 
     /// 実行時に組み立てた綴りから作る。パス名や区間名を含む判定がこの口を通る。
     ///
     /// 注意: 名前の無い判定は破れの文面が何も名指せないため、空の綴りは到達したらバグとして落とす。
-    pub fn 組み立てた綴りから生成する(綴り: String) -> Self {
-        assert!(!綴り.is_empty(), "判定の名前が空である");
-        Self(Cow::Owned(綴り))
+    pub fn 組み立てた文字列から生成する(文字列: String) -> Self {
+        assert!(!文字列.is_empty(), "判定の名前が空である");
+        Self(Cow::Owned(文字列))
     }
 
     /// 名前と種類を1つの破れへ組む。比べで表せない破れ(綴りの食い違い等)を課す側がこの口を通る。
@@ -46,7 +46,7 @@ impl 判定の名前 {
     pub fn 材料を数として読む<数: std::str::FromStr>(&self, 材料: &str) -> Result<数, 判定の破れ> {
         材料.parse().map_err(|_| {
             self.破れを組む(判定の破れの種類::材料を数として読めない {
-                材料: 判定が比べる値::綴り(材料.to_string())
+                材料: 判定が比べる値::文字列(材料.to_string()),
             })
         })
     }

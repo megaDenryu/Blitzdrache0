@@ -42,12 +42,12 @@ export class 世界エクスプローラー extends LV2HtmlComponentBase impleme
     }
 
     public 前面のタブに合わせて選択表示する(タブ: タブ識別子): void {
-        const 綴り = タブ.綴り()
-        if (綴り === タブ識別子.大域世界().綴り()) {
+        const 文字列 = タブ.文字列()
+        if (文字列 === タブ識別子.大域世界().文字列()) {
             this._大域世界ノード.setAttribute('data-selected', 'true')
             return
         }
-        if (綴り === タブ識別子.マテリアル().綴り()) {
+        if (文字列 === タブ識別子.マテリアル().文字列()) {
             this._マテリアルノード.setAttribute('data-selected', 'true')
             return
         }

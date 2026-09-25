@@ -54,7 +54,7 @@ impl 接合面の実寸 {
     }
 
     /// 破れの文面へ載せる寸法の綴り。形によって長さの数が違うため、形の側が綴りを持つ。
-    pub(super) fn 綴り(self) -> String {
+    pub(super) fn 文字列(self) -> String {
         match self {
             Self::矩形 { 幅, 高さ } => format!("矩形{}かける{}", 幅.値(), 高さ.値()),
             Self::円 { 直径 } => format!("円の直径{}", 直径.値()),

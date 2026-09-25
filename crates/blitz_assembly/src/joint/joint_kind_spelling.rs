@@ -12,7 +12,7 @@ use super::joint_kind::{全接合種別, 接合種別};
 
 impl 接合種別 {
     /// extrasが綴る文字列。
-    pub fn 綴り(self) -> &'static str {
+    pub fn 文字列(self) -> &'static str {
         match self {
             Self::上面積層 => "上面積層",
             Self::下面積層 => "下面積層",
@@ -40,7 +40,7 @@ impl 接合種別 {
 
     /// 未知の綴りは型付きエラーで拒み、文字列のまま持ち回らない。綴りを誤った部品が黙って組み立てへ流れると、
     /// 対の相手が見つからない理由が「綴り違い」なのか「部品の不足」なのか読み手に分からなくなる。
-    pub fn 綴りから読み取る(綴り: &str) -> Result<Self, 接合点エラー> {
-        全接合種別.into_iter().find(|種別| 種別.綴り() == 綴り).ok_or_else(|| 接合点エラー::未知の接合種別 { 綴り: 綴り.to_string() })
+    pub fn 文字列から読み取る(文字列: &str) -> Result<Self, 接合点エラー> {
+        全接合種別.into_iter().find(|種別| 種別.文字列() == 文字列).ok_or_else(|| 接合点エラー::未知の接合種別 { 文字列: 文字列.to_string() })
     }
 }

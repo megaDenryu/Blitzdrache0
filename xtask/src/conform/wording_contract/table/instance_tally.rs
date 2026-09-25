@@ -11,23 +11,23 @@
 //! 種類ごとの置いた個体の行は、合計では読めない木と岩の取り分を出す。1本が幹と選択肢と葉房の複数の部品になる散布が
 //! 入ったため、合計だけでは木を1本増やすと何体増えるのかを外から読めない。
 
-use super::綴りの契約;
+use super::文言の契約;
 
-pub(super) const 綴り一覧: [綴りの契約; 4] = [
-    綴りの契約 {
-        綴り: "個体数の合計=",
+pub(super) const 文言一覧: [文言の契約; 4] = [
+    文言の契約 {
+        文言: "個体数の合計=",
         現れるファイル一覧: &["crates/blitz_asset_compiler/src/runtime_compilation/instance_tally.rs", "xtask/src/game_fox_tour/map_generation_check/compile_report.rs"],
     },
-    綴りの契約 {
-        綴り: "種類ごとの置いた個体:",
+    文言の契約 {
+        文言: "種類ごとの置いた個体:",
         現れるファイル一覧: &["crates/blitz_asset_compiler/src/runtime_compilation/placed_instance_tally.rs", "xtask/src/game_fox_tour/map_generation_check/tally_agreement.rs"],
     },
-    綴りの契約 {
-        綴り: "置いた個体の合計=",
+    文言の契約 {
+        文言: "置いた個体の合計=",
         現れるファイル一覧: &["crates/blitz_asset_compiler/src/runtime_compilation/placed_instance_tally.rs", "xtask/src/game_fox_tour/map_generation_check/compile_report.rs"],
     },
-    綴りの契約 {
-        綴り: "据え置いたチャンク数=",
+    文言の契約 {
+        文言: "据え置いたチャンク数=",
         現れるファイル一覧: &["crates/blitz_asset_compiler/src/generation_ledger/rebake_tally.rs", "xtask/src/game_fox_tour/map_generation_check/compile_report.rs"],
     },
 ];

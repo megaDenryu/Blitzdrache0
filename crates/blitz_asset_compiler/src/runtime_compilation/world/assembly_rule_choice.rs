@@ -27,7 +27,7 @@ use super::super::archetype_identity::原型の識別;
 
 /// ベイ格子の変換と建物外形カタログの組み立てが使う口。綴りと部品の一覧の正本はこの束の中にあり、
 /// 呼び出し側が自分で綴りを書かないようにここから配る。
-pub(crate) use frame_bay_part_spelling::骨格方式の部品の綴りを組む;
+pub(crate) use frame_bay_part_spelling::骨格方式の役割ごとの部品の識別子を組む;
 pub(crate) use part_list::骨格方式の全部品の一覧;
 
 /// どの規則で1件を組むか。
@@ -46,7 +46,7 @@ pub(crate) enum 部品の組み立て規則の種類 {
 impl 部品の組み立て規則の種類 {
     /// 報告の内訳へ載せるこの種類の名前。人が読んで何を散らしたのかが分かる語を使う。
     pub(crate) fn 名前(self) -> 散らした種類の名前 {
-        散らした種類の名前::綴りから生成する(match self {
+        散らした種類の名前::文字列から生成する(match self {
             Self::酒場宿屋 => "酒場宿屋",
             Self::樫の木 => "樫の木",
             Self::一間四方の骨格 => "一間四方の骨格",

@@ -53,7 +53,7 @@ impl 保持と滑走の分類 {
     }
 
     /// 表へ書く分類の綴り。
-    pub(super) fn 綴り(&self) -> &'static str {
+    pub(super) fn 文字列(&self) -> &'static str {
         if self.保持しているか() { "保持" } else { "滑走" }
     }
 }

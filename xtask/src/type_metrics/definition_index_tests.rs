@@ -6,42 +6,42 @@
 //! 実装ブロック自身のファイルに同名の定義がある形も同じ理由で並べる。同じファイルの定義を経路より先に
 //! 確定根拠にする実装は、`impl crate::far::def::設定`をそのファイルの`設定`へ誤って加算するためである。
 
-use super::definition_index_test_material::{実装ブロック1件を引き当てる, 決まった所在の綴り, 設定を定義したファイル一覧から索引を組む};
+use super::definition_index_test_material::{実装ブロック1件を引き当てる, 決まった所在の文字列, 設定を定義したファイル一覧から索引を組む};
 use super::impl_attribution::実装ブロックの引き当て;
 
 #[test]
 fn 定義が走査に無ければ実装ブロックのファイルを所在にする() {
     let 索引 = 設定を定義したファイル一覧から索引を組む(&[]);
     let 引き当て = 実装ブロック1件を引き当てる(&索引, "a/src/alias.rs", "設定", "");
-    assert_eq!(決まった所在の綴り(引き当て), "a/src/alias.rs::設定");
+    assert_eq!(決まった所在の文字列(引き当て), "a/src/alias.rs::設定");
 }
 
 #[test]
 fn 同じ名前の定義が1件だけなら離れたファイルのimplでもその定義へ帰属する() {
     let 索引 = 設定を定義したファイル一覧から索引を組む(&["a/src/far/def.rs"]);
     let 引き当て = 実装ブロック1件を引き当てる(&索引, "a/src/near/impl.rs", "設定", "");
-    assert_eq!(決まった所在の綴り(引き当て), "a/src/far/def.rs::設定");
+    assert_eq!(決まった所在の文字列(引き当て), "a/src/far/def.rs::設定");
 }
 
 #[test]
 fn 実装対象の経路が指す定義へ帰属しファイルの近さでは選ばない() {
     let 索引 = 設定を定義したファイル一覧から索引を組む(&["a/src/near/def.rs", "a/src/far/def.rs"]);
     let 引き当て = 実装ブロック1件を引き当てる(&索引, "a/src/near/impl.rs", "crate::far::def::設定", "");
-    assert_eq!(決まった所在の綴り(引き当て), "a/src/far/def.rs::設定");
+    assert_eq!(決まった所在の文字列(引き当て), "a/src/far/def.rs::設定");
 }
 
 #[test]
 fn 取り込んだ経路が指す定義へ帰属しファイルの近さでは選ばない() {
     let 索引 = 設定を定義したファイル一覧から索引を組む(&["a/src/near/def.rs", "a/src/far/def.rs"]);
     let 引き当て = 実装ブロック1件を引き当てる(&索引, "a/src/near/impl.rs", "設定", "use crate::far::def::設定;\n");
-    assert_eq!(決まった所在の綴り(引き当て), "a/src/far/def.rs::設定");
+    assert_eq!(決まった所在の文字列(引き当て), "a/src/far/def.rs::設定");
 }
 
 #[test]
 fn 同じファイルに定義があっても経路が別の定義を指せばそちらへ帰属する() {
     let 索引 = 設定を定義したファイル一覧から索引を組む(&["a/src/near/def.rs", "a/src/far/def.rs"]);
     let 引き当て = 実装ブロック1件を引き当てる(&索引, "a/src/near/def.rs", "crate::far::def::設定", "");
-    assert_eq!(決まった所在の綴り(引き当て), "a/src/far/def.rs::設定");
+    assert_eq!(決まった所在の文字列(引き当て), "a/src/far/def.rs::設定");
 }
 
 #[test]
@@ -51,7 +51,7 @@ fn 経路が定義の在り処まで書かれていなければ引き当てず�
     let 実装ブロックの引き当て::定義の候補を1つに絞れない(実装ブロック) = 引き当て else {
         panic!("経路が定義のファイルを指していないのに1つへ絞った");
     };
-    assert_eq!(実装ブロック.候補の綴り(), "a/src/near/def.rs::設定 / a/src/far/def.rs::設定");
+    assert_eq!(実装ブロック.候補の文字列(), "a/src/near/def.rs::設定 / a/src/far/def.rs::設定");
 }
 
 #[test]
@@ -76,12 +76,12 @@ fn 経路も取り込みも無ければ引き当てず候補を返す() {
 fn 同じファイルに同名の定義が2つあっても所在は1つなので引き当ては迷わない() {
     let 索引 = 設定を定義したファイル一覧から索引を組む(&["a/src/def.rs", "a/src/def.rs"]);
     let 引き当て = 実装ブロック1件を引き当てる(&索引, "a/src/def.rs", "設定", "");
-    assert_eq!(決まった所在の綴り(引き当て), "a/src/def.rs::設定");
+    assert_eq!(決まった所在の文字列(引き当て), "a/src/def.rs::設定");
 }
 
 #[test]
 fn 実装ブロックと同じファイルの定義は自己型も取り込みも場所を決めていないときだけ根拠になる() {
     let 索引 = 設定を定義したファイル一覧から索引を組む(&["a/src/near/def.rs", "a/src/far/def.rs"]);
     let 引き当て = 実装ブロック1件を引き当てる(&索引, "a/src/near/def.rs", "設定", "");
-    assert_eq!(決まった所在の綴り(引き当て), "a/src/near/def.rs::設定");
+    assert_eq!(決まった所在の文字列(引き当て), "a/src/near/def.rs::設定");
 }

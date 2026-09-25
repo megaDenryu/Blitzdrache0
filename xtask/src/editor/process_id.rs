@@ -17,15 +17,15 @@ impl プロセス番号 {
     /// 木ごと終わらせる標準の道具は`taskkill /T`だけであるため、外部プログラムとして呼ぶ。
     /// 出力を捨てるのは、道具が出す英語の行を検収の読み手へ流さないためである。
     pub(crate) fn この番号を根とする木を終わらせる(self) {
-        let 番号の綴り = self.0.to_string();
+        let 番号の文字列 = self.0.to_string();
         let 結果 = if cfg!(windows) {
-            Command::new("taskkill").args(["/T", "/F", "/PID", &番号の綴り]).output()
+            Command::new("taskkill").args(["/T", "/F", "/PID", &番号の文字列]).output()
         } else {
             // Unixには木ごと終わらせる標準の道具が無いため、番号1つを終わらせる。
-            Command::new("kill").args(["-TERM", &番号の綴り]).output()
+            Command::new("kill").args(["-TERM", &番号の文字列]).output()
         };
         if let Err(原因) = 結果 {
-            println!("プロセス{番号の綴り}を終わらせる道具を呼べない: {原因}");
+            println!("プロセス{番号の文字列}を終わらせる道具を呼べない: {原因}");
         }
     }
 }

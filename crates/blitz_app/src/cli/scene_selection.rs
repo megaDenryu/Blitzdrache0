@@ -13,7 +13,7 @@ mod scene_selection_tests;
 mod world_kind;
 
 pub(crate) use rewrite_pair::差し替える生成物の対;
-pub(crate) use scene_name::{地形の夜灯り世界の綴り, 石の小屋の屋内の小物世界の綴り};
+pub(crate) use scene_name::{地形の夜灯り世界のシーン名, 石の小屋の屋内の小物世界のシーン名};
 pub(crate) use world_kind::{世界の種別, 地形世界の種別, 小物世界の種別, 植生の検収世界の種別};
 
 use blitz_engine::アセットID;
@@ -28,17 +28,17 @@ pub(crate) struct 起動時シーン {
 
 impl 起動時シーン {
     /// `--scene`の綴りから起動時シーンを解く。空の綴りは安定idになれないため、ここで型付きの失敗になる。
-    pub(crate) fn 綴りから解析する(綴り: &str) -> Result<Self, 起動引数エラー> {
-        let 安定id = アセットID::生成する(綴り).map_err(|誤り| 起動引数エラー::シーン名不正(誤り.to_string()))?;
+    pub(crate) fn 文字列から解析する(文字列: &str) -> Result<Self, 起動引数エラー> {
+        let 安定id = アセットID::生成する(文字列).map_err(|誤り| 起動引数エラー::シーン名不正(誤り.to_string()))?;
         Ok(Self {
             安定id,
-            種別: parse::綴りから世界の種別を見分ける(綴り),
+            種別: parse::文字列から世界の種別を見分ける(文字列),
         })
     }
 
     /// `--scene`の指定が無い起動が読むシーン。
     pub(crate) fn 既定() -> Self {
-        Self::綴りから解析する(scene_name::平面板の綴り).unwrap_or_else(|誤り| panic!("既定のシーンの綴りの定数が不正だった: {誤り}"))
+        Self::文字列から解析する(scene_name::平面板のシーン名).unwrap_or_else(|誤り| panic!("既定のシーンの綴りの定数が不正だった: {誤り}"))
     }
 
     pub(crate) fn 安定id(&self) -> &アセットID {

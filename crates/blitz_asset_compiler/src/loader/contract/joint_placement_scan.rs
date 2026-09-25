@@ -14,7 +14,7 @@ use super::target::対象位置;
 
 impl 開いた文書の契約検査<'_> {
     pub(super) fn 接合点の名前が一意であることを検査する(&mut self, 読み取り: &部品の接合点の読み取り) {
-        let 名前一覧: Vec<String> = 読み取り.宣言ごとの結果().iter().filter_map(|成否| 成否.読めた接合点()).map(|接合点| 接合点.名前().綴り().to_string()).collect();
+        let 名前一覧: Vec<String> = 読み取り.宣言ごとの結果().iter().filter_map(|成否| 成否.読めた接合点()).map(|接合点| 接合点.名前().文字列().to_string()).collect();
         for (添字, 名前) in 名前一覧.iter().enumerate() {
             if !名前一覧[..添字].contains(名前) {
                 continue;
@@ -43,7 +43,7 @@ impl 開いた文書の契約検査<'_> {
             self.違反を記す(
                 対象位置::接合点 {
                     添字,
-                    名前: Some(接合点.名前().綴り().to_string()),
+                    名前: Some(接合点.名前().文字列().to_string()),
                 },
                 format!("接合点の位置{成分:?}がメッシュの境界箱の外にある。宣言と実物が食い違っている"),
                 "Blender側で接合点の位置をメッシュの境界箱の内側か面上へ置き直す。glTFの座標系(Yが上)へ変換してから載せているかも確かめる",

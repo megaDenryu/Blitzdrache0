@@ -31,7 +31,7 @@ fn 閉じの波括弧が無い符号位置は原文のまま残す() {
 }
 
 #[test]
-fn 逃がしで書いた綴りと素の綴りが同じ中身になる() {
+fn 逃がしで書いた文字列と素の文字列が同じ中身になる() {
     assert_eq!(逃がしを復号する(r"shaders/scene\x2eslang"), "shaders/scene.slang");
 }
 

@@ -2,7 +2,7 @@
 //! 役割を持つパスの型。配下のファイルパスの導出と、一時ファイル経由での原子的な書き込みを
 //! この型のメソッドの1箇所へ閉じる(参照: グローバルCLAUDE.md「役割の型は自分の配置を知る」)。
 //! 書き込みの技法自体(一時ファイルへ書いてから改名)は`storage::file_repository`の保存規律と
-//! 同じであり、綴り(".tmp")を2箇所へ書かないよう`crate::atomic_file_write`へ寄せてある。
+//! 同じであり、文字列(".tmp")を2箇所へ書かないよう`crate::atomic_file_write`へ寄せてある。
 
 use std::path::PathBuf;
 
@@ -17,10 +17,10 @@ pub struct 世界ソース出力先(PathBuf);
 
 impl 世界ソース出力先 {
     pub fn 生成する(リポジトリルート: &リポジトリルート, 世界名: &出力世界名) -> Self {
-        Self(リポジトリルート.パス().join(アセットの親ディレクトリ名).join(世界名.綴り()))
+        Self(リポジトリルート.パス().join(アセットの親ディレクトリ名).join(世界名.文字列()))
     }
 
-    pub fn 表示の綴り(&self) -> String {
+    pub fn 表示用の表記(&self) -> String {
         self.0.to_string_lossy().into_owned()
     }
 

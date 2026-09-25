@@ -14,8 +14,8 @@ use crate::acceptance::{アプリの起こし方, アプリの起動指定, 実�
 use crate::verify::検証の出力ルート;
 
 const フレーム数: 描画フレーム数 = 描画フレーム数::生成する(12);
-pub(super) const シーンの綴り: &str = "indirect_probe";
-const シーン名: 検収シーン名 = 検収シーン名::生成する(シーンの綴り);
+pub(super) const シーンの名前: &str = "indirect_probe";
+const シーン名: 検収シーン名 = 検収シーン名::生成する(シーンの名前);
 
 /// そのフレームで解析入力を注入するかどうか。注入しない実行は大気から焼いた遠方環境で描く。
 pub(super) enum 注入の指定<'a> {

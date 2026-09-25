@@ -25,7 +25,7 @@ pub enum 接合の様式 {
 }
 
 impl 接合の様式 {
-    pub fn 綴り(self) -> &'static str {
+    pub fn 文字列(self) -> &'static str {
         match self {
             Self::一致 => "一致",
             Self::包含 { .. } => "包含",

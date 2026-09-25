@@ -11,7 +11,7 @@ use super::{scene_policy, 種別を解く};
 use crate::cli::temporal_reconstruction_settings::時間再構成方式の起動上書き;
 
 /// 定数近似のままである世界の綴り。天空の遠方環境を選ぶ2つの世界の裏返しである。
-const 定数近似の世界の綴り一覧: [&str; 10] = [
+const 定数近似の世界の名前一覧: [&str; 10] = [
     "quad",
     "helmet",
     "shadow_scene",
@@ -24,31 +24,31 @@ const 定数近似の世界の綴り一覧: [&str; 10] = [
     "prop_village",
 ];
 
-fn 間接照明方針(綴り: &str) -> 世界の間接照明の方式 {
-    scene_policy::世界の間接照明の方式を決める(種別を解く(綴り))
+fn 間接照明方針(文字列: &str) -> 世界の間接照明の方式 {
+    scene_policy::世界の間接照明の方式を決める(種別を解く(文字列))
 }
 
-fn 宣言に従う時間再構成方式(綴り: &str) -> 時間再構成方式 {
-    scene_policy::世界の時間再構成方式を決める(種別を解く(綴り), 時間再構成方式の起動上書き::宣言に従う)
+fn 宣言に従う時間再構成方式(文字列: &str) -> 時間再構成方式 {
+    scene_policy::世界の時間再構成方式を決める(種別を解く(文字列), 時間再構成方式の起動上書き::宣言に従う)
 }
 
 #[test]
 fn 天空の遠方環境を選ぶのは地形世界と間接照明の検収世界である() {
-    for 綴り in ["indirect_probe", "terrain_origin"] {
-        assert_eq!(間接照明方針(綴り), 世界の間接照明の方式::天空の遠方環境, "{綴り}");
+    for 文字列 in ["indirect_probe", "terrain_origin"] {
+        assert_eq!(間接照明方針(文字列), 世界の間接照明の方式::天空の遠方環境, "{文字列}");
     }
-    for 綴り in 定数近似の世界の綴り一覧 {
-        assert_eq!(間接照明方針(綴り), 世界の間接照明の方式::定数近似, "{綴り}");
+    for 文字列 in 定数近似の世界の名前一覧 {
+        assert_eq!(間接照明方針(文字列), 世界の間接照明の方式::定数近似, "{文字列}");
     }
 }
 
 #[test]
 fn 履歴混合を選ぶのは地形世界だけである() {
-    for 綴り in ["terrain_origin", "terrain_visual"] {
-        assert_eq!(宣言に従う時間再構成方式(綴り), 時間再構成方式::履歴混合, "{綴り}");
+    for 文字列 in ["terrain_origin", "terrain_visual"] {
+        assert_eq!(宣言に従う時間再構成方式(文字列), 時間再構成方式::履歴混合, "{文字列}");
     }
-    for 綴り in ["quad", "helmet", "shadow_scene", "fox", "indirect_probe", "vegetation_cull"] {
-        assert_eq!(宣言に従う時間再構成方式(綴り), 時間再構成方式::使わない, "{綴り}");
+    for 文字列 in ["quad", "helmet", "shadow_scene", "fox", "indirect_probe", "vegetation_cull"] {
+        assert_eq!(宣言に従う時間再構成方式(文字列), 時間再構成方式::使わない, "{文字列}");
     }
 }
 

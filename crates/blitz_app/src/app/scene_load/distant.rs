@@ -6,7 +6,7 @@ use super::{シーンをレンダラー入力に変換する, 束の描画入力
 use crate::error::起動エラー;
 
 pub(in crate::app) fn 遠景を読み込んで変換する(カタログ: &カタログ, 材料: super::シーンを描画入力へ写す材料<'_>) -> Result<Option<(シーンデータ, 束の描画入力)>, 起動エラー> {
-    let id = アセットID::生成する(blitz_engine::height_field::世界の遠景地形の安定IDの綴り)?;
+    let id = アセットID::生成する(blitz_engine::height_field::世界の遠景地形の安定IDの文字列)?;
     let Some(ファイル) = 実行時シーンのファイル::カタログの安定idから作る(カタログ, &id) else {
         return Ok(None);
     };

@@ -7,38 +7,38 @@
 
 #[derive(Clone, Copy)]
 pub(crate) struct 引数の構文 {
-    綴り: &'static str,
+    文字列: &'static str,
 }
 
 impl 引数の構文 {
-    pub(crate) const fn 生成する(綴り: &'static str) -> Self {
-        Self { 綴り }
+    pub(crate) const fn 生成する(文字列: &'static str) -> Self {
+        Self { 文字列 }
     }
 
     /// 引数を1つも解釈しないコマンドの構文は空になる。
     #[cfg(test)]
     pub(crate) fn 空か(self) -> bool {
-        self.綴り.is_empty()
+        self.文字列.is_empty()
     }
 
     /// 使い方の表示に出す綴りそのもの。生の文字列へ戻すのはこの1箇所だけである。
-    pub(crate) fn 綴り(self) -> &'static str {
-        self.綴り
+    pub(crate) fn 文字列(self) -> &'static str {
+        self.文字列
     }
 
     /// 構文の中で名指しされている引数の綴りを、現れた順に全部並べる。位置で意味が決まる引数は
     /// 名指しされないため、ここには現れない。
     #[cfg(test)]
-    pub(crate) fn 名指しされた引数の綴り一覧(self) -> Vec<&'static str> {
-        let mut 綴り一覧 = Vec::new();
-        let mut 残り = self.綴り;
+    pub(crate) fn 名指しされた引数の文字列一覧(self) -> Vec<&'static str> {
+        let mut 文字列一覧 = Vec::new();
+        let mut 残り = self.文字列;
         while let Some(位置) = 残り.find("--") {
             let 続き = &残り[位置..];
             let 終わり = 続き.find(|文字: char| 文字 != '-' && !文字.is_ascii_alphanumeric()).unwrap_or(続き.len());
-            綴り一覧.push(&続き[..終わり]);
+            文字列一覧.push(&続き[..終わり]);
             残り = &続き[終わり..];
         }
-        綴り一覧
+        文字列一覧
     }
 }
 
@@ -49,18 +49,18 @@ mod tests {
     #[test]
     fn 引数を取らない構文は空になる() {
         assert!(引数の構文::生成する("").空か());
-        assert!(引数の構文::生成する("").名指しされた引数の綴り一覧().is_empty());
+        assert!(引数の構文::生成する("").名指しされた引数の文字列一覧().is_empty());
     }
 
     #[test]
     fn 角括弧に囲まれた名前も取り出す() {
         let 構文 = 引数の構文::生成する("[--large-world] [--frames <数>]");
-        assert_eq!(構文.名指しされた引数の綴り一覧(), ["--large-world", "--frames"]);
+        assert_eq!(構文.名指しされた引数の文字列一覧(), ["--large-world", "--frames"]);
     }
 
     #[test]
     fn 位置で渡す見出しは名指しに数えない() {
         let 構文 = 引数の構文::生成する("<部品名> [--out <経路>]");
-        assert_eq!(構文.名指しされた引数の綴り一覧(), ["--out"]);
+        assert_eq!(構文.名指しされた引数の文字列一覧(), ["--out"]);
     }
 }

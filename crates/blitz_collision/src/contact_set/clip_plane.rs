@@ -23,17 +23,17 @@ use crate::shape::{形の局所座標の位置, 形の局所座標の変位};
 
 use super::clip_feature_pair::切り抜きの特徴の対;
 use super::clip_polygon::{切り抜き中の多角形, 多角形の頂点};
-use super::clip_reference_feature::参照面の辺で切り取った点の特徴の綴り;
+use super::clip_reference_feature::参照面の辺で切り取った点の特徴の文字列;
 use super::error::接触点集合の問い合わせエラー;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct 参照面の側の平面<参照側の特徴: 参照面の辺で切り取った点の特徴の綴り> {
+pub(super) struct 参照面の側の平面<参照側の特徴: 参照面の辺で切り取った点の特徴の文字列> {
     基準点: 形の局所座標の位置,
     内向きの法線: 形の局所座標の変位,
     切り取る辺: 参照側の特徴::参照面を囲む辺,
 }
 
-impl<参照側の特徴: 参照面の辺で切り取った点の特徴の綴り> 参照面の側の平面<参照側の特徴> {
+impl<参照側の特徴: 参照面の辺で切り取った点の特徴の文字列> 参照面の側の平面<参照側の特徴> {
     pub(super) fn 生成する(基準点: 形の局所座標の位置, 内向きの法線: 形の局所座標の変位, 切り取る辺: 参照側の特徴::参照面を囲む辺) -> Self {
         Self {
             基準点, 内向きの法線, 切り取る辺

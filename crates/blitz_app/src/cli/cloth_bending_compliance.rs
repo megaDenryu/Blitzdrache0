@@ -9,8 +9,8 @@ use super::argument_error::起動引数エラー;
 pub(crate) struct 布の曲げのコンプライアンス指定(f32);
 
 impl 布の曲げのコンプライアンス指定 {
-    pub(crate) fn 綴りから解析する(綴り: &str) -> Result<Self, 起動引数エラー> {
-        let 値: f32 = 綴り.parse().map_err(|_| 起動引数エラー::布の曲げのコンプライアンス不正(format!("数として読めない({綴り})")))?;
+    pub(crate) fn 文字列から解析する(文字列: &str) -> Result<Self, 起動引数エラー> {
+        let 値: f32 = 文字列.parse().map_err(|_| 起動引数エラー::布の曲げのコンプライアンス不正(format!("数として読めない({文字列})")))?;
         if !値.is_finite() || 値 < 0.0 {
             return Err(起動引数エラー::布の曲げのコンプライアンス不正(format!("0以上の有限値でない({値})")));
         }

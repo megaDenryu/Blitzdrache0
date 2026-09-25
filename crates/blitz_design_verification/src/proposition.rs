@@ -114,7 +114,7 @@ impl 命題 {
 
     /// 連言と選言の並びを、区切りの語で繋いだ1行へ綴る。
     fn 並びを綴る(項一覧: &[Self], 区切り: &str) -> String {
-        let 綴り一覧: Vec<String> = 項一覧.iter().map(|項| format!("({})", 項.表記())).collect();
-        綴り一覧.join(区切り)
+        let 文字列一覧: Vec<String> = 項一覧.iter().map(|項| format!("({})", 項.表記())).collect();
+        文字列一覧.join(区切り)
     }
 }
