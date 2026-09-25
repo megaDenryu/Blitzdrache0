@@ -31,6 +31,8 @@ mod wrapped_function_path;
 mod 本番のソース;
 #[path = "extract/本番の行.rs"]
 mod 本番の行;
+#[path = "extract/表記が名指す型.rs"]
+mod 表記が名指す型;
 
 #[cfg(test)]
 mod entity_identifier_tests;
@@ -55,8 +57,14 @@ mod type_notation_tests;
 #[cfg(test)]
 mod wrapped_function_path_tests;
 #[cfg(test)]
+#[path = "extract/フレーム型の一覧の実物との突き合わせの試験.rs"]
+mod フレーム型の一覧の実物との突き合わせの試験;
+#[cfg(test)]
 #[path = "extract/本番の範囲の試験.rs"]
 mod 本番の範囲の試験;
+#[cfg(test)]
+#[path = "extract/表記が名指す型の試験.rs"]
+mod 表記が名指す型の試験;
 
 pub use out_of_range_syntax::保証範囲の外の構文;
 pub use outcome::抽出の結末;
