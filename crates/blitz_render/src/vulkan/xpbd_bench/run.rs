@@ -13,7 +13,7 @@ use crate::vulkan::headless::ウィンドウなし実行GPU環境;
 use crate::vulkan::transfer::ステージング経由の転送係;
 use crate::xpbd_solver_bench_probe::{XPBDシェーダー一式, XPBD計測の条件, XPBD計測素材};
 
-/// 走らせて読み戻した中身。validationの観測は呼び出し元が環境の破棄の後に採る。
+/// 走らせて読み戻した中身。検証層の観測は呼び出し元が環境の破棄の後に採る。
 pub(crate) struct 読み戻しの中身 {
     pub(crate) 位置: Vec<[f32; 4]>,
     pub(crate) ラグランジュ乗数: Vec<f32>,

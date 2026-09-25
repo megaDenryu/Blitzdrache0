@@ -16,7 +16,7 @@ struct Particle
 // binding3: コンピュートは読み書き(RWStructuredBuffer)、頂点は読み取りのみ
 // (StructuredBuffer)。同じdescriptor type(storage buffer)なので同一bindingを
 // 指せる。頂点側をRWStructuredBufferにすると`vertexPipelineStoresAndAtomics`
-// 機能が無効な環境でNonWritable違反のvalidationエラーになるため型を分ける。
+// 機能が無効な環境でNonWritable違反の検証層のエラーになるため型を分ける。
 [[vk::binding(3, 0)]]
 RWStructuredBuffer<Particle> particlesRW;
 

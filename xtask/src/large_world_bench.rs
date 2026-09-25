@@ -24,7 +24,7 @@ pub(crate) fn 大規模世界の固定経路を計測する(引数一覧: &[Stri
     }
     match crate::ow4_bench::大規模世界を測る(&指定) {
         Ok(()) => {
-            println!("[xtask] large-world-bench成功: validation 0件、3回の計測完了");
+            println!("[xtask] large-world-bench成功: 検証層の指摘0件、3回の計測完了");
             ExitCode::SUCCESS
         }
         Err(理由) => {

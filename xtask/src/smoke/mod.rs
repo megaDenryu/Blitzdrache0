@@ -38,6 +38,6 @@ pub fn スモークを実行する() -> ExitCode {
         return ExitCode::FAILURE;
     }
 
-    println!("[xtask] smoke成功: validation・ピクセル判定・ホットリロードすべて成功で終了した");
+    println!("[xtask] smoke成功: 検証層の検査・ピクセル判定・ホットリロードすべて成功で終了した");
     ExitCode::SUCCESS
 }

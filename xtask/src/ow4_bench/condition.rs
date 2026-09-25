@@ -66,7 +66,7 @@ pub(super) fn 描画の起動指定(描画: 描画条件) -> &'static [&'static 
     }
 }
 
-/// 時刻の起動指定。計測本体とvalidation検査の両方が同じ語を渡すため、作る場所を1つにする。
+/// 時刻の起動指定。計測本体と検証層の検査の両方が同じ語を渡すため、作る場所を1つにする。
 pub(super) fn 時刻の起動指定(条件: &計測条件) -> Vec<String> {
     let Some(秒) = 条件.一日内時刻の秒 else { return Vec::new() };
     vec!["--time-of-day".to_string(), 秒.to_string()]

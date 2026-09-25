@@ -19,7 +19,7 @@ pub(super) fn 読み取る(報告: &終了時報告) -> Result<計測値, 検収
 impl 計測値 {
     pub(super) fn 要約文(&self) -> String {
         format!(
-            "読込{}件、解除{}件、最大台帳{}件、LOD変更{}フレーム、変更時読込{}件、最終{}段、RAM {} bytes、VRAM {} bytes、validation {}件",
+            "読込{}件、解除{}件、最大台帳{}件、LOD変更{}フレーム、変更時読込{}件、最終{}段、RAM {} bytes、VRAM {} bytes、検証層の指摘{}件",
             self.要約.ディスク読込件数,
             self.要約.gpu解除件数,
             self.要約.最大台帳登録数,

@@ -45,7 +45,7 @@ pub fn 植生密度別に性能を計測する(引数一覧: &[String]) -> ExitC
             table::表示する(&結果一覧);
             budget::表示する(&結果一覧);
             let 件数 = 結果一覧.len();
-            println!("[xtask] ow4-bench成功: 物量点{件数}件を各{反復回数}回、validationレイヤー有効のデバッグ実行が全物量点で0件");
+            println!("[xtask] ow4-bench成功: 物量点{件数}件を各{反復回数}回、検証層を有効にしたデバッグ実行が全物量点で0件");
             ExitCode::SUCCESS
         }
         Err(理由) => {
