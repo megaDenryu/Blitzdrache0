@@ -32,7 +32,7 @@ export class キャンバス部品 extends CanvasC {
     public constructor() {
         super({ class: キャンバス })
         const キャンバスへ描く口 = this.getContext2D()
-        if (キャンバスへ描く口 === null) throw new Error('canvas要素から2Dの描画文脈を取得できない')
+        if (キャンバスへ描く口 === null) throw new Error('canvas要素から2Dの描く口を取得できない')
         this._キャンバスへ描く口 = キャンバスへ描く口
     }
 
@@ -57,7 +57,7 @@ export class キャンバス部品 extends CanvasC {
         return this.dom.element.getBoundingClientRect()
     }
 
-    // 描画手順は全面を消した後の文脈を受け取る。setTransform で毎回リセットするため、手順の中で
+    // 描画手順は全面を消した後のキャンバスへ描く口を受け取る。setTransform で毎回リセットするため、手順の中で
     // 変換を積んでも次の描画へ持ち越さない。
     public 描く(描画手順: (キャンバスへ描く口: CanvasRenderingContext2D) => void): void {
         this._キャンバスへ描く口.setTransform(this._ピクセル比, 0, 0, this._ピクセル比, 0, 0)

@@ -56,7 +56,7 @@ export class 見下ろし図の下地の管理 {
         キャンバス.width = 画像.幅
         キャンバス.height = 画像.高さ
         const キャンバスへ描く口 = キャンバス.getContext('2d')
-        if (キャンバスへ描く口 === null) throw new Error('下地のcanvas要素から2Dの描画文脈を取得できない')
+        if (キャンバスへ描く口 === null) throw new Error('下地のcanvas要素から2Dの描く口を取得できない')
         キャンバスへ描く口.putImageData(new ImageData(画像.画素, 画像.幅, 画像.高さ), 0, 0)
         this._下地キャンバス = キャンバス
         this._作り直しが要る = false
