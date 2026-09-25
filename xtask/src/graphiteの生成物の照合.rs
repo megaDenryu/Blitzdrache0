@@ -18,7 +18,7 @@ mod 照合の失敗;
 /// 生成器を入れる・入れ直すコマンド。生成器が無いときと照合が落ちたときの両方で表示する。
 const 生成器を入れ直すコマンド: &str = "cargo install --git https://github.com/megaDenryu/Graphite graphite-cli";
 
-pub fn Graphiteの生成物を照合する() -> ExitCode {
+pub fn 生成物を宣言から生成し直した結果と照合する() -> ExitCode {
     match Graphiteの生成物の照合::リポジトリから組む().全部のパッケージを照合する() {
         Ok(()) => ExitCode::SUCCESS,
         Err(失敗) => {

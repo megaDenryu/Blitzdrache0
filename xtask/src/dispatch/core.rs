@@ -10,7 +10,7 @@ pub(super) fn 中核コマンドを割り当てる(名前: &str, 引数一覧: &
     match 名前 {
         "verify" => Some(verify::検証列を実行する()),
         "conform" => Some(conform::規約を検査する()),
-        "graphite-check" => Some(graphiteの生成物の照合::Graphiteの生成物を照合する()),
+        "graphite-check" => Some(graphiteの生成物の照合::生成物を宣言から生成し直した結果と照合する()),
         "design-verify" => Some(design_verify::設計の命題を検証する()),
         "type-metrics" => Some(type_metrics::型ごとの分量を計測する()),
         "smoke" => Some(smoke::スモークを実行する()),
