@@ -30,7 +30,7 @@ pub(super) fn 楽曲の一覧を読む(ディレクトリ: &編集データデ�
 }
 
 /// 保存済みのJSONは形式版の欄を持たない旧版のこともあるため、版を判別してから現在の形へ変換する
-/// (参照: `resource/music/version.rs`)。
+/// (参照: `resource/music/version/mod.rs`)。
 pub(super) fn 楽曲を読む(ディレクトリ: &編集データディレクトリ, 名乗り: &楽曲ID) -> Result<Option<楽曲>, 読み込みエラー> {
     let 読み込んだ版: Option<読み込んだ楽曲の版> = json構造体を読む(&ディレクトリ.楽曲パス(名乗り))?;
     match 読み込んだ版.map(読み込んだ楽曲の版::現在の形へ変換する).transpose()? {
