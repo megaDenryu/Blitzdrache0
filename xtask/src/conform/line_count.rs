@@ -1,10 +1,13 @@
 //! 行数検査: .rs / .slang / .ts の各ファイルのコードの行を数える。
 //! 数えるのはコードの行だけであり、空行とコメントだけの行は数えない。
+//! Rustのファイルでは、利用者が手で書くGraphiteのマクロの本体の行を数えから除く(2026-09-26のオーナー裁定。Issue #187)。
+//! 除いた行があれば、違反の説明に除いた行数を添える。数えた行数だけを見せると、原文の行数と食い違う理由が読み手に分からないためである。
 //! 何行まで許すかの判定と、超過を許したファイルの台帳は `line_count_allowance` が持つ。
 //! 参照: グローバルCLAUDE.md「1ファイル100行の原則と分割の質」の分割してよいかの判定、条2。
 
 use std::path::Path;
 
+use super::graphiteのコード::Graphiteのマクロの本体の行;
 use super::line_count_allowance::数えた行数を台帳と突き合わせる;
 use super::source_lexing::行ごとの内訳;
 use super::violation::違反;
@@ -21,8 +24,28 @@ pub fn 生成ファイルか(パス: &Path) -> bool {
 }
 
 pub fn 行数の上限超過を検査する(パス: &Path, 内容: &str) -> Vec<違反> {
-    数えた行数を台帳と突き合わせる(パス, 行数を数える(内容), 内容)
+    let 本体の行数 = if パス.extension().is_some_and(|拡張子| 拡張子 == "rs") {
+        graphiteのマクロの本体のコードの行を数える(内容)
+    } else {
+        0
+    };
+    let mut 違反一覧 = 数えた行数を台帳と突き合わせる(パス, 行数を数える(内容).saturating_sub(本体の行数));
+    if 本体の行数 > 0 {
+        for 違反 in &mut 違反一覧 {
+            違反.説明.push_str(&format!("(Graphiteのマクロの本体の{本体の行数}行を除いて数えた)"));
+        }
+    }
+    違反一覧
 }
+
+fn graphiteのマクロの本体のコードの行を数える(内容: &str) -> usize {
+    let 本体 = Graphiteのマクロの本体の行::原文から読む(内容);
+    行ごとの内訳(内容).iter().enumerate().filter(|(添字, 内訳)| 内訳.コードを含む && 本体.含むか(添字 + 1)).count()
+}
+
+#[cfg(test)]
+#[path = "line_count/graphiteのマクロの本体を除く試験.rs"]
+mod graphiteのマクロの本体を除く試験;
 
 #[cfg(test)]
 #[allow(clippy::unwrap_used)]
