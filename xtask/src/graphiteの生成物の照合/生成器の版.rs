@@ -44,7 +44,7 @@ impl Graphiteの固定の版 {
 
     /// この版の生成器を入れる(入れ直す)コマンド。同じ名前の道具が別の出どころで入っていても置き換えるため `--force` を付ける。
     pub(super) fn 生成器を入れるコマンド(&self) -> String {
-        format!("cargo install --git {生成器のリポジトリ} --rev {} graphite-cli --force", self.0)
+        format!("cargo install --git {生成器のリポジトリ} --rev {} graphite-cli --force", self.コミット())
     }
 
     /// 入れた道具の記録の本文から graphite-cli の出どころを探し、そのコミットがこの版と一致するかを確かめる。
@@ -53,7 +53,7 @@ impl Graphiteの固定の版 {
             return Err(生成器の版の食い違い::記録に生成器が無い);
         };
         match git由来のコミット(出どころ) {
-            Some(コミット) if コミット == self.0 => Ok(()),
+            Some(コミット) if コミット == self.コミット() => Ok(()),
             Some(_) => Err(生成器の版の食い違い::コミットが違う {
                 入れた出どころ: 出どころ.to_string()
             }),
