@@ -61,7 +61,7 @@ pub use exposure_stop::露出補正段;
 pub use indirect_lighting_policy::世界の間接照明の方式;
 pub use radiance_color::放射輝度色;
 pub use representative_zenith_cosine::代表天頂余弦;
-pub use scene_policy::空と太陽の設定一式;
+pub use scene_policy::空と太陽の設定;
 pub use shadow_validity::影の有効性;
 pub use sky_draw_policy::空の描画設定;
 pub use sky_error::天空状態エラー;

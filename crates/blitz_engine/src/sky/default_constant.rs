@@ -5,5 +5,5 @@
 use super::天空状態エラー;
 
 pub(super) fn 確定値<T>(結果: Result<T, 天空状態エラー>) -> T {
-    結果.unwrap_or_else(|誤り| panic!("空と太陽の設定一式の既定値が値域を外れている: {誤り}"))
+    結果.unwrap_or_else(|誤り| panic!("空と太陽の設定の既定値が値域を外れている: {誤り}"))
 }
