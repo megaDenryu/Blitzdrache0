@@ -90,7 +90,7 @@ impl 分類の事実 {
     pub(crate) fn 端点に節点が在るものだけを残す(self, 節点が在るか: impl Fn(&設計概念への参照) -> bool) -> (Self, Vec<設計概念への参照>) {
         let mut 節点が無い端点一覧 = Vec::new();
         let mut 端点を確かめる = |端点一覧: [&設計概念への参照; 2]| {
-            let 無い端点: Vec<設計概念への参照> = 端点一覧.into_iter().filter(|端点| !節点が在るか(*端点)).cloned().collect();
+            let 無い端点: Vec<設計概念への参照> = 端点一覧.into_iter().filter(|端点| !節点が在るか(端点)).cloned().collect();
             let 揃っているか = 無い端点.is_empty();
             節点が無い端点一覧.extend(無い端点);
             揃っているか

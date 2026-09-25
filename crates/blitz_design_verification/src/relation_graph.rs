@@ -85,7 +85,7 @@ impl 設計関係グラフ {
             .iter()
             .flat_map(|関係| [&関係.主語, &関係.目的語])
             .chain(分類の欠けた端点一覧.iter())
-            .filter(|端点| !節点が在るか(*端点) && 端点の済み.insert((*端点).clone()))
+            .filter(|端点| !節点が在るか(端点) && 端点の済み.insert((*端点).clone()))
             .cloned()
             .collect();
         let 関係一覧 = 関係一覧.into_iter().filter(|関係| 節点が在るか(&関係.主語) && 節点が在るか(&関係.目的語)).collect();
