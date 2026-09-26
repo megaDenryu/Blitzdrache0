@@ -39,19 +39,19 @@ impl M規則 for 規則 {}
 fn 構文解析_impl_mdto_forが無く役割の実装だけの型にも純粋データ規約を当てる() {
     let ソース一覧 = vec![ソース(
         "crates/a/src/x.rs",
-        "pub enum 意図<'a> {\n    向く(&'a f32),\n}\nimpl Mコマンド for 意図<'_> {}\npub struct 信号 {\n    値: std::cell::Cell<u8>,\n}\nimpl Mデバイス生入力 for 信号 {}\n",
+        "pub enum 意図<'a> {\n    向く(&'a f32),\n}\nimpl Mコマンド for 意図<'_> {}\npub struct 信号 {\n    値: std::cell::Cell<u8>,\n}\nimpl M解釈前の入力 for 信号 {}\n",
     )];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 2);
     assert!(説明一覧[0].contains("Mコマンド `意図` の定義は参照(&)を持てません"));
-    assert!(説明一覧[1].contains("Mデバイス生入力 `信号` の定義は内部可変性 `Cell` を持てません"));
+    assert!(説明一覧[1].contains("M解釈前の入力 `信号` の定義は内部可変性 `Cell` を持てません"));
 }
 
 #[test]
 fn 構文解析_同じ型が複数の役割を持っても純粋データ規約の違反は1回だけ報告する() {
     let ソース一覧 = vec![ソース(
         "crates/a/src/x.rs",
-        "pub struct 位置 {\n    値: std::cell::RefCell<f32>,\n}\nimpl M不変データ for 位置 {}\nimpl M状態 for 位置 {}\nimpl Mデバイス生入力 for 位置 {}\n",
+        "pub struct 位置 {\n    値: std::cell::RefCell<f32>,\n}\nimpl M不変データ for 位置 {}\nimpl M状態 for 位置 {}\nimpl M解釈前の入力 for 位置 {}\n",
     )];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);
     assert_eq!(説明一覧.len(), 1);
