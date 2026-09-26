@@ -9,8 +9,8 @@ use blitz_design::M不変データ;
 
 use super::区域の形::区域;
 use super::図式::地点と経路の図式::{Graph, 地点Id, 経路Id};
+use super::地図の失敗::地図の生成の失敗;
 use super::地図の検証::未検証の地図;
-use super::地図の生成の失敗::地図の生成の失敗;
 use super::封鎖できる経路::封鎖できる経路の識別子;
 use super::積み荷::経路の積み荷;
 use super::識別子::{地点の識別子, 経路の識別子};

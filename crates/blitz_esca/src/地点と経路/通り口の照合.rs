@@ -7,7 +7,7 @@
 use std::collections::BTreeMap;
 
 use super::図式::地点と経路の図式::経路Ref;
-use super::地図の生成の失敗::地図の生成の失敗;
+use super::地図の失敗::地図の生成の失敗;
 use super::識別子::経路の識別子;
 use super::通り口::{区域の辺の所在, 区域の辺の番号, 確かめた通り口};
 
