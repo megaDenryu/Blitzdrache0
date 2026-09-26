@@ -1,13 +1,13 @@
 // このファイルは Graphite が生成したため手編集しないこと。
-// 生成元: src/地点と経路/図式.rs:25
+// 生成元: src/地点と経路/図式.rs:39
 // 再生成: パッケージのディレクトリで cargo graphite generate を実行してください (Graphite リポジトリ自身の開発では cargo xtask generate)
 
 #[allow(unused_imports)]
 use super::*;
 #[doc(hidden)]
 pub(super) const __GRAPHITE_SCHEMA_FINGERPRINT: [u64; 4] = [
-    188105804555868394u64, 11071486581159505625u64, 5811251637526133488u64,
-    16597272256562868644u64,
+    13983235398047299569u64, 11774044384770531170u64, 16793110791686526679u64,
+    10080532958373196867u64,
 ];
 /// `地点` ノードの公開ID。
 ///
@@ -16,7 +16,7 @@ pub(super) const __GRAPHITE_SCHEMA_FINGERPRINT: [u64; 4] = [
 pub struct 地点Id(pub String);
 /// `経路` 辺の公開ID。
 ///
-/// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+/// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct 経路Id(pub String);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -31,40 +31,40 @@ pub struct __地点NamedPosition(__地点InternalPosition, u64);
 pub struct __経路NamedPosition(__経路InternalPosition, u64);
 /// 構築時に組み立てる `経路` 辺の値。
 ///
-/// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+/// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
 pub struct 経路 {
     endpoints: graphite::UnorderedPair<地点Id>,
     /// この辺が運ぶ積み荷。
-    pub 予定: 経路の開閉の予定,
+    pub 積み荷: 経路の積み荷,
 }
 impl 経路 {
     /// 両端の公開IDと積み荷から構築用の辺値を作る。両端の順序は保たない。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
-    pub fn new(a: 地点Id, b: 地点Id, payload: 経路の開閉の予定) -> Self {
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
+    pub fn new(a: 地点Id, b: 地点Id, payload: 経路の積み荷) -> Self {
         Self {
             endpoints: graphite::UnorderedPair::new(a, b),
-            予定: payload,
+            積み荷: payload,
         }
     }
     /// この辺値の両端の公開IDを順序なし対として借用する。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
     pub fn endpoints(&self) -> (&地点Id, &地点Id) {
         self.endpoints.endpoints()
     }
     /// この辺値が運ぶ積み荷を借用する。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
-    pub fn payload(&self) -> &経路の開閉の予定 {
-        &self.予定
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
+    pub fn payload(&self) -> &経路の積み荷 {
+        &self.積み荷
     }
 }
-impl graphite::UndirectedEdgeLiteral<地点Id, 経路の開閉の予定> for 経路 {
+impl graphite::UndirectedEdgeLiteral<地点Id, 経路の積み荷> for 経路 {
     fn from_graph_literal(
         a: 地点Id,
         b: 地点Id,
-        payload: 経路の開閉の予定,
+        payload: 経路の積み荷,
     ) -> Self {
         Self::new(a, b, payload)
     }
@@ -78,7 +78,7 @@ impl std::fmt::Debug for 経路 {
 #[derive(Clone)]
 struct __経路Record {
     endpoints: graphite::UnorderedPair<__地点InternalPosition>,
-    予定: 経路の開閉の予定,
+    積み荷: 経路の積み荷,
 }
 /// 凍結時の図式適合検査が見つけた違反。
 ///
@@ -193,7 +193,7 @@ impl Graph {
     }
     /// 公開IDから完成済みグラフ上の辺個体を平均 O(1) で引く。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
     pub fn 経路_by_id<'graph>(
         &'graph self,
         id: &経路Id,
@@ -205,22 +205,22 @@ impl Graph {
     }
     /// 辺の構造を保ったまま積み荷だけを可変借用する。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
     pub fn 経路_payload_mut(
         &mut self,
         id: &経路Id,
-    ) -> Option<&mut 経路の開閉の予定> {
-        self.経路.get_mut(id).map(|record: &mut __経路Record| &mut record.予定)
+    ) -> Option<&mut 経路の積み荷> {
+        self.経路.get_mut(id).map(|record: &mut __経路Record| &mut record.積み荷)
     }
     /// この種別の辺の公開IDを挿入順に走査する。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
     pub fn 経路_ids<'graph>(&'graph self) -> impl Iterator<Item = &'graph 経路Id> {
         self.経路.ids()
     }
     /// この種別の辺個体を挿入順に走査する。追加確保はしない。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
     pub fn 経路_iter<'graph>(
         &'graph self,
     ) -> impl Iterator<Item = 経路Ref<'graph>> + 'graph {
@@ -233,7 +233,7 @@ impl Graph {
     }
     /// この種別の辺の件数を返す。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
     pub fn 経路_len(&self) -> usize {
         self.経路.len()
     }
@@ -275,7 +275,7 @@ impl Graph {
 }
 /// 完成済みグラフ上の無向辺個体。
 ///
-/// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+/// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
 #[derive(Clone, Copy)]
 pub struct 経路Ref<'graph> {
     graph: &'graph Graph,
@@ -292,7 +292,7 @@ impl<'graph> 経路Ref<'graph> {
     }
     /// この辺個体の公開IDを借用する。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
     pub fn id(self) -> &'graph 経路Id {
         let Some((id, _)) = self.graph.経路.get_at(self.internal_position.0) else {
             panic!(
@@ -303,7 +303,7 @@ impl<'graph> 経路Ref<'graph> {
     }
     /// この辺個体の両端を順序なし対として返す。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
     pub fn endpoints(self) -> (地点Ref<'graph>, 地点Ref<'graph>) {
         let (first, second) = self.record().endpoints.endpoints();
         (
@@ -319,15 +319,15 @@ impl<'graph> 経路Ref<'graph> {
     }
     /// この辺個体が運ぶ積み荷を役割名で借用する。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
-    pub fn 予定(self) -> &'graph 経路の開閉の予定 {
-        &self.record().予定
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
+    pub fn 積み荷(self) -> &'graph 経路の積み荷 {
+        &self.record().積み荷
     }
     /// この辺個体が運ぶ積み荷を、役割名によらない固定名で借用する。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
-    pub fn payload(self) -> &'graph 経路の開閉の予定 {
-        &self.record().予定
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
+    pub fn payload(self) -> &'graph 経路の積み荷 {
+        &self.record().積み荷
     }
 }
 impl<'graph> std::fmt::Debug for 経路Ref<'graph> {
@@ -491,7 +491,7 @@ impl<'graph> 地点Ref<'graph> {
     }
     /// 接続辺を O(1) で参照し、追加確保なしで挿入順に走査する。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
     pub fn 経路_incident(self) -> impl Iterator<Item = 経路Ref<'graph>> + 'graph {
         let positions = self.graph.経路_index.get(self.internal_position.0);
         positions
@@ -504,7 +504,7 @@ impl<'graph> 地点Ref<'graph> {
     }
     /// 順序なし端点対を平均 O(1)、追加確保なしで検索する。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
     pub fn 経路_try_between(
         self,
         other: 地点Ref<'graph>,
@@ -542,7 +542,7 @@ impl<'graph> 地点Ref<'graph> {
     /// 2つの参照が異なる `Graph` から得られた場合にパニックする。
     /// パニックを避けたい場合は対の [`Self::経路_try_between`] を使う。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
     pub fn 経路_between(
         self,
         other: 地点Ref<'graph>,
@@ -655,7 +655,7 @@ impl Builder {
     }
     /// この種別の辺を公開IDと辺値の組で追加する。検査は凍結時に行う。
     ///
-    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[予定: 経路の開閉の予定]- 地点`
+    /// 宣言: `src/地点と経路/図式.rs` の `edge 経路 = 地点 -[積み荷: 経路の積み荷]- 地点`
     pub fn 経路(&mut self, id: 経路Id, value: 経路) -> &mut Self {
         self.経路.push((id, value));
         self
@@ -807,7 +807,7 @@ impl Builder {
                 __violations.push(Violation::経路DuplicateKey(id));
                 continue;
             }
-            let 経路 { endpoints, 予定 } = value;
+            let 経路 { endpoints, 積み荷 } = value;
             let (p0, p1) = endpoints.endpoints();
             let p0 = p0.clone();
             let p1 = p1.clone();
@@ -860,7 +860,7 @@ impl Builder {
                                 first_position,
                                 second_position,
                             ),
-                            予定,
+                            積み荷,
                         },
                     );
                 debug_assert!(inserted, "重複辺IDは挿入前に除外済み");
