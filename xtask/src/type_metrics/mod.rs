@@ -49,7 +49,10 @@ mod scan;
 mod scan_tests;
 mod type_location;
 mod type_path;
+#[path = "生成物の除外.rs"]
+mod 生成物の除外;
 
+use std::path::PathBuf;
 use std::process::ExitCode;
 
 use crate::file_scan;
@@ -64,14 +67,16 @@ pub use metrics::{型計測, 走査範囲の型計測, 集計する};
 pub use observation::観測;
 pub use rust_module::モジュールの位置;
 pub use type_location::型の所在;
+pub use 生成物の除外::生成物を除いた観測;
 
 const 走査対象ディレクトリ一覧: [&str; 2] = ["crates", "xtask/src"];
 const 表示件数: usize = 20;
 
 pub fn 型ごとの分量を計測する() -> ExitCode {
-    match ファイル別の観測を集める() {
-        Ok(ファイル別観測) => {
-            report::上位を表示する(&集計する(&ファイル別観測), 表示件数);
+    match 生成物を除いた観測::走査対象から集める() {
+        Ok(観測) => {
+            report::上位を表示する(&集計する(&観測.観測一覧), 表示件数);
+            report::除いた生成物を表示する(&観測.除いた生成物一覧);
             ExitCode::SUCCESS
         }
         Err(誤り) => {
@@ -81,14 +86,14 @@ pub fn 型ごとの分量を計測する() -> ExitCode {
     }
 }
 
-/// 走査対象のRustファイルを1本ずつ読み、ファイルごとの観測へ写す。conformの台帳検査と自由関数の検査が
-/// 同じ走査を使うため、コマンドの表示から切り離してここを共通の入口にしている。
-pub fn ファイル別の観測を集める() -> Result<Vec<ファイルの観測>, 型計測の破れ> {
+/// 走査対象のRustファイルを1本ずつ読み、パスと原文の対を並べる。Graphiteの生成物を見出しで見分けるために原文を要るため、観測へ写す前の段で返す。
+/// 計測とconformの台帳検査と自由関数の検査は、これを `生成物を除いた観測` へ通してから使う。
+pub fn 走査対象の原文を集める() -> Result<Vec<(PathBuf, String)>, 型計測の破れ> {
     let ファイル一覧 = file_scan::対象ファイル一覧を集める(&走査対象ディレクトリ一覧, &["rs"])?;
-    let mut 結果 = Vec::new();
+    let mut 結果 = Vec::with_capacity(ファイル一覧.len());
     for パス in ファイル一覧 {
         let 内容 = std::fs::read_to_string(&パス).map_err(|誤り| 型計測の破れ::計測対象のファイルを読めなかった { パス: パス.clone(), 誤り })?;
-        結果.push(ファイルの観測::ファイルの内容から生成する(パス, &内容));
+        結果.push((パス, 内容));
     }
     Ok(結果)
 }

@@ -30,7 +30,10 @@ impl 排他の推論規則 {
         let 命題::含意 { 前件, 後件 } = 本体.as_ref() else {
             return None;
         };
-        let 命題::原子(原子命題::発生する { 遷移, イベント }) = 後件.as_ref() else {
+        let 命題::原子(原子) = 後件.as_ref() else {
+            return None;
+        };
+        let 原子命題::発生する { 遷移, イベント } = 原子.as_ref() else {
             return None;
         };
         if *遷移 != 項::束縛変数(束縛.clone()) || *イベント != 項::名指した概念(self.一方.clone()) {

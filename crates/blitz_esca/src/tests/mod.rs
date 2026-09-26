@@ -17,3 +17,19 @@ mod traveler_input_tests;
 mod traveler_invariant_tests;
 mod traveler_tests;
 mod walking_direction_tests;
+#[path = "刻みの区間の精度の試験.rs"]
+mod 刻みの区間の精度の試験;
+#[path = "地点と経路の試料.rs"]
+mod 地点と経路の試料;
+#[path = "時刻と時間帯と地図の試験.rs"]
+mod 時刻と時間帯と地図の試験;
+#[path = "経路の開閉の出来事と予定の試験.rs"]
+mod 経路の開閉の出来事と予定の試験;
+#[path = "経路の開閉の数え上げ.rs"]
+mod 経路の開閉の数え上げ;
+#[path = "経路の開閉の数え上げの試験.rs"]
+mod 経路の開閉の数え上げの試験;
+#[path = "経路の開閉の状態の作り方の試験.rs"]
+mod 経路の開閉の状態の作り方の試験;
+#[path = "経路の開閉の遷移の試験.rs"]
+mod 経路の開閉の遷移の試験;

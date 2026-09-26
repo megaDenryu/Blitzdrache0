@@ -17,12 +17,16 @@ pub mod traveler_error;
 pub mod traveler_input;
 pub mod traveler_movement;
 pub mod walking_direction;
+#[path = "地点と経路.rs"]
+pub mod 地点と経路;
+#[path = "時刻.rs"]
+pub mod 時刻;
 
 #[cfg(test)]
 mod tests;
 
 pub use elapsed_time::{経過時間, 経過時間の生成の失敗};
-pub use ontology::{M遷移関数, 遷移成功結果};
+pub use ontology::{M遷移関数, 遷移失敗結果, 遷移成功結果};
 pub use transition_parameter::遷移パラメータ;
 pub use traveler::{旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則, 移動の変位};
 pub use traveler_boundary::{境界制限結果, 移動可能範囲, 移動可能範囲の指定};
@@ -31,3 +35,4 @@ pub use traveler_error::{旅行者の現在地の生成の失敗, 歩行の規�
 pub use traveler_input::キーボード歩行入力;
 pub use traveler_movement::{旅行者の描画位置, 歩行遷移の規則};
 pub use walking_direction::歩行方向;
+pub use 時刻::{世界の時刻, 世界の時刻の生成の失敗};

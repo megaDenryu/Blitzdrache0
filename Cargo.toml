@@ -66,6 +66,9 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "fs"] }
 tower = "0.5"
 tower-http = { version = "0.6", features = ["fs"] }
 ts-rs = "12"
+# 参照: README「利用ライブラリ」graphite の採用審査(Issue #187)。Escaの地点と経路のグラフを型付きのグラフで書く専用、blitz_escaのみが依存する
+# crates.ioへ未公開のためgit依存であり、版はCargo.lockが固定する
+graphite = { git = "https://github.com/megaDenryu/Graphite" }
 
 [profile.dev]
 # シェーダー・アセット処理はデバッグビルドでも最適化がないと遅すぎるため、依存クレートのみ最適化

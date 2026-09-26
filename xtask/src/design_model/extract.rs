@@ -1,7 +1,8 @@
-//! 設計関係の抽出の入口。`crates` 配下のソースを1度走査し、5つの抽出の規則を順に当てて抽出の結果を組む。
+//! 設計関係の抽出の入口。`crates` 配下のソースを1度走査し、5つの抽出の規則を順に当てて分類の事実とプリミティブな事実を集め、
+//! 事実の上で定義の式(`blitz_design_verification`)を評価して設計関係と保持する関係を導き、抽出の結果を組む(Issue #193 の段階2)。
 //!
 //! 規則の順序は、同じ識別子へ種類の違う概念が来たときにどちらが先かを決める順序である。上位トレイトの宣言(規則1)と
-//! マーカーの実装(規則2)がトレイトの節点を先に置き、役割の型引数(規則5)が処理の節点を置き、残りが型の節点になる。
+//! マーカーの実装(規則2)がトレイトの節点を先に置き、事実が立てる節点(関数の役割の宣言の処理・型の定義)、導いた関係の端点の順に続く。
 //! 重複のまとめと同一性の衝突の検出は `設計関係グラフ::生成する` が行い、種類が違うものは順序で決着させずに両方を節点として残す。
 //! 先に現れた方を採るまとめを入口が期待してはならない。
 //!
@@ -24,15 +25,12 @@ mod source_group;
 mod struct_declaration;
 mod supertrait;
 mod trait_declaration;
-mod type_notation;
 mod unextracted_line;
 mod wrapped_function_path;
 #[path = "extract/本番のソース.rs"]
 mod 本番のソース;
 #[path = "extract/本番の行.rs"]
 mod 本番の行;
-#[path = "extract/表記が名指す型.rs"]
-mod 表記が名指す型;
 
 #[cfg(test)]
 mod entity_identifier_tests;
@@ -53,8 +51,6 @@ mod supertrait_tests;
 #[cfg(test)]
 mod test_support;
 #[cfg(test)]
-mod type_notation_tests;
-#[cfg(test)]
 mod wrapped_function_path_tests;
 #[cfg(test)]
 #[path = "extract/フレーム型の一覧の実物との突き合わせの試験.rs"]
@@ -66,14 +62,21 @@ mod フレーム型の定義の原文の読み取り;
 #[path = "extract/役割の型引数の入れ子の試験.rs"]
 mod 役割の型引数の入れ子の試験;
 #[cfg(test)]
+#[path = "extract/抽出した設計関係グラフと抽出の欠けの試験.rs"]
+mod 抽出した設計関係グラフと抽出の欠けの試験;
+#[cfg(test)]
 #[path = "extract/本番の範囲の試験.rs"]
 mod 本番の範囲の試験;
 #[cfg(test)]
 #[path = "extract/表記が名指す型の試験.rs"]
 mod 表記が名指す型の試験;
 
+#[cfg(test)]
+pub use marker_concept::{設計解釈マーカーの参照, 設計解釈マーカーの正本のモジュールパス};
+pub use ontology_scope::{ドメインのクレートか, ドメインのクレートの名前一覧};
 pub use out_of_range_syntax::保証範囲の外の構文;
 pub use outcome::抽出した設計関係グラフと抽出の欠け;
+pub use role::関数の役割の型か意味型の見分け;
 pub use unextracted_line::{抽出できなかった理由, 抽出できなかった行};
 
 use crate::conform::error::規約検査の破れ;
@@ -95,5 +98,5 @@ fn ソース群から抽出する(ソース群: &抽出対象のソース群) ->
     成果.併せる(function_role::関数の役割の型引数から抽出する(ソース群));
     成果.併せる(entity_identifier::エンティティの識別子の関連型から抽出する(ソース群));
     成果.併せる(held_field::構造体のフィールドから抽出する(ソース群));
-    成果.設計関係グラフと抽出の欠けを組む()
+    成果.設計関係グラフと抽出の欠けを組む(ソース群)
 }

@@ -3,10 +3,21 @@
 
 use std::path::Path;
 
-use super::宣言の間のコメント行を検査する;
+use super::{宣言の間のコメント行を検査する, 説明の注釈の行数の検査};
 
 fn 違反の行番号(内容: &str) -> Vec<usize> {
-    宣言の間のコメント行を検査する(Path::new("試験.rs"), 内容).into_iter().filter_map(|違反| 違反.行番号).collect()
+    宣言の間のコメント行を検査する(Path::new("試験.rs"), 内容, 説明の注釈の行数の検査::当てる).into_iter().filter_map(|違反| 違反.行番号).collect()
+}
+
+fn 説明の注釈の行数を当てない違反の行番号(内容: &str) -> Vec<usize> {
+    宣言の間のコメント行を検査する(Path::new("試験.rs"), 内容, 説明の注釈の行数の検査::当てない).into_iter().filter_map(|違反| 違反.行番号).collect()
+}
+
+#[test]
+fn 説明の注釈の行数を当てなくてもコメントだけの行は違反とする() {
+    let 原文 = "struct 型 {\n    /// 一行目\n    /// 二行目\n    甲: u32,\n    // 説明\n    乙: u32,\n}\n";
+    assert_eq!(説明の注釈の行数を当てない違反の行番号(原文), vec![5]);
+    assert_eq!(違反の行番号(原文), vec![3, 5]);
 }
 
 #[test]
