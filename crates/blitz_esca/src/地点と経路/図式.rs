@@ -7,8 +7,8 @@
 
 use blitz_design::M不変データ;
 
-use super::区域::区域;
-use super::経路の積み荷::経路の積み荷;
+use super::区域の形::区域;
+use super::積み荷::経路の積み荷;
 
 /// 地点と経路のグラフの節点の値。地点が世界のどの範囲かを表す区域を持つ。地点の同一性は図式の識別子が担う。
 #[derive(Debug, Clone, PartialEq)]

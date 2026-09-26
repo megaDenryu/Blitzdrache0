@@ -4,13 +4,13 @@
 
 use blitz_design::M不変データ;
 
-use super::識別子::経路の識別子;
+use super::封鎖できる経路::封鎖できる経路の識別子;
 
 /// 経路の開閉の状態を作るための指定。検証は規則が自分の地図で行う。
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct 経路の開閉の状態の指定 {
-    pub 閉じている経路: Vec<経路の識別子>,
-    pub 出来事が触れた経路: Vec<経路の識別子>,
+    pub 閉じている経路: Vec<封鎖できる経路の識別子>,
+    pub 出来事が触れた経路: Vec<封鎖できる経路の識別子>,
 }
 
 impl M不変データ for 経路の開閉の状態の指定 {}

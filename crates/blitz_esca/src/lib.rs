@@ -19,6 +19,12 @@ pub mod traveler_movement;
 pub mod walking_direction;
 #[path = "地点と経路.rs"]
 pub mod 地点と経路;
+#[path = "居場所.rs"]
+pub mod 居場所;
+#[path = "平面の幾何.rs"]
+pub mod 平面の幾何;
+#[path = "旅の一刻み.rs"]
+pub mod 旅の一刻み;
 #[path = "時刻.rs"]
 pub mod 時刻;
 
@@ -31,8 +37,10 @@ pub use transition_parameter::遷移パラメータ;
 pub use traveler::{旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則, 移動の変位};
 pub use traveler_boundary::{境界制限結果, 移動可能範囲, 移動可能範囲の指定};
 pub use traveler_boundary_error::{移動可能範囲の生成の失敗, 移動可能範囲の軸};
-pub use traveler_error::{旅行者の現在地の生成の失敗, 歩行の規則の生成の失敗};
+pub use traveler_error::{旅行者の現在地の生成の失敗, 歩行の失敗, 歩行の規則の生成の失敗};
 pub use traveler_input::キーボード歩行入力;
 pub use traveler_movement::{旅行者の描画位置, 歩行遷移の規則};
 pub use walking_direction::歩行方向;
+pub use 居場所::旅行者の居場所;
+pub use 旅の一刻み::{旅の一刻みの入力, 旅の一刻みの失敗, 旅の一刻みの結果, 旅の進行, 旅の進行の指定};
 pub use 時刻::{世界の時刻, 世界の時刻の生成の失敗};
