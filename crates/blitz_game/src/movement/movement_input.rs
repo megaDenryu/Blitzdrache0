@@ -10,10 +10,28 @@ use crate::game_intent::ゲームの操作意図;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 一刻みの移動の入力 {
-    pub 意図: ゲームの操作意図,
-    pub 刻み: 秒,
-    pub 前へ進む向き: 前へ進む向きの方位角,
+    意図: ゲームの操作意図,
+    刻み: 秒,
+    前へ進む向き: 前へ進む向きの方位角,
 }
 
 impl M不変データ for 一刻みの移動の入力 {}
 impl MParameter for 一刻みの移動の入力 {}
+
+impl 一刻みの移動の入力 {
+    pub fn 生成する(意図: ゲームの操作意図, 刻み: 秒, 前へ進む向き: 前へ進む向きの方位角) -> Self {
+        Self { 意図, 刻み, 前へ進む向き }
+    }
+
+    pub fn 意図(&self) -> ゲームの操作意図 {
+        self.意図
+    }
+
+    pub fn 刻み(&self) -> 秒 {
+        self.刻み
+    }
+
+    pub fn 前へ進む向き(&self) -> 前へ進む向きの方位角 {
+        self.前へ進む向き
+    }
+}

@@ -9,12 +9,13 @@ use crate::traveler::旅行者の意図;
 use crate::walking_direction::歩行方向;
 
 /// キーボードの上下左右キー押下状態を表す生シグナルDTO。ゲーム意味論を持たず、物理的な押下状態のみを保持する。
+/// 同じ真偽の4つを位置の引数で受ける生成の口を置かず、何も押していない既定の値からキーごとの口で1つずつ置き換えるのは、取り違えても型が通るためである。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct キーボード歩行入力 {
-    pub 上: bool,
-    pub 下: bool,
-    pub 左: bool,
-    pub 右: bool,
+    上: bool,
+    下: bool,
+    左: bool,
+    右: bool,
 }
 
 impl M不変データ for キーボード歩行入力 {}
@@ -22,6 +23,38 @@ impl M解釈前の入力 for キーボード歩行入力 {}
 impl M生入力 for キーボード歩行入力 {}
 
 impl キーボード歩行入力 {
+    pub fn 上を押しているかを置き換えた入力(self, 押しているか: bool) -> Self {
+        Self { 上: 押しているか, ..self }
+    }
+
+    pub fn 下を押しているかを置き換えた入力(self, 押しているか: bool) -> Self {
+        Self { 下: 押しているか, ..self }
+    }
+
+    pub fn 左を押しているかを置き換えた入力(self, 押しているか: bool) -> Self {
+        Self { 左: 押しているか, ..self }
+    }
+
+    pub fn 右を押しているかを置き換えた入力(self, 押しているか: bool) -> Self {
+        Self { 右: 押しているか, ..self }
+    }
+
+    pub fn 上(&self) -> bool {
+        self.上
+    }
+
+    pub fn 下(&self) -> bool {
+        self.下
+    }
+
+    pub fn 左(&self) -> bool {
+        self.左
+    }
+
+    pub fn 右(&self) -> bool {
+        self.右
+    }
+
     // 東西の軸の倒し量(-1・0・1)。右が正であり、左右が両方押されていれば相殺して0である。
     pub(crate) fn 東西の倒し量(&self) -> f32 {
         match (self.右, self.左) {

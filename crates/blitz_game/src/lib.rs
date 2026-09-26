@@ -70,7 +70,7 @@ mod world_shape_port;
 pub use body_capsule::胴体カプセル;
 pub use camera_occlusion::カメラの遮蔽と復帰;
 pub use camera_occlusion_input::遮蔽の判定の入力;
-pub use confirmed_input::確定済みの操作入力;
+pub use confirmed_input::{押した瞬間の操作の入力, 押下が続く操作の入力, 確定済みの操作入力};
 pub use destination::目的地;
 pub use display_distance_decision::表示距離の決定;
 pub use facing_azimuth::動く個体が向いている方位角;
