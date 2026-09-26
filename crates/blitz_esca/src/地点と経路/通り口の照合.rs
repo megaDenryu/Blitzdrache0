@@ -6,6 +6,8 @@
 
 use std::collections::BTreeMap;
 
+use blitz_design::{M不変データ, M値オブジェクト};
+
 use super::図式::地点と経路の図式::経路Ref;
 use super::地図の失敗::地図の生成の失敗;
 use super::識別子::経路の識別子;
@@ -17,6 +19,9 @@ pub(super) struct 通り口の辺の当て方 {
     pub(super) 一方の区域の辺: 区域の辺の番号,
     pub(super) もう一方の区域の辺: 区域の辺の番号,
 }
+
+impl M不変データ for 通り口の辺の当て方 {}
+impl M値オブジェクト for 通り口の辺の当て方 {}
 
 impl 通り口の辺の当て方 {
     /// 通り口の指定の2つの番号を、そのままの向きと入れ替えた向きで両端の区域へ当て、共有する辺になる向きを1つに決める。
