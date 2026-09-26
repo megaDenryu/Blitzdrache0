@@ -11,8 +11,8 @@ use super::marker_concept::設計解釈マーカーの参照;
 use super::outcome::抽出の成果;
 use super::source_group::抽出対象のソース群;
 use super::抽出できなかった行;
-use crate::conform::design_ontology::syntax_patterns::設計解釈マーカー;
 use crate::conform::design_ontology::trait_implementation::設計解釈マーカーの実装;
+use crate::conform::design_ontology::設計解釈マーカーの一覧::設計解釈マーカー;
 use crate::design_model::{Rustの項目の種類, 設計概念, 設計概念の識別子};
 use blitz_design_verification::{マーカーの実装の事実, 事実の出どころ};
 

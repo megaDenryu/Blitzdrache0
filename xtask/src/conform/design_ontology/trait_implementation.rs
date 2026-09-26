@@ -5,8 +5,8 @@ use std::path::PathBuf;
 
 use super::marker_canonical_file::設計解釈マーカーの正本のファイルか;
 use super::module_path::モジュールパス;
-use super::syntax_patterns::設計解釈マーカー;
 use super::type_definition::型の在り処の問い;
+use super::設計解釈マーカーの一覧::設計解釈マーカー;
 
 /// 設計解釈マーカーの実装(`impl マーカー for 型`)の1件。行番号は1始まりであり、違反の報告がこの行を指す。
 pub struct 設計解釈マーカーの実装 {
