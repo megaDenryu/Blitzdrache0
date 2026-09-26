@@ -14,9 +14,9 @@ use super::super::warning::警告;
 use super::impl_header::implの見出しを読む;
 use super::line_matching::クレート名;
 use super::syntax_checker::クレート構文検査;
-use super::syntax_patterns::設計解釈マーカー;
 use super::trait_implementation::設計解釈マーカーの実装;
 use super::type_definition::定義ブロックの結果;
+use super::設計解釈マーカーの一覧::設計解釈マーカー;
 
 /// 設計解釈マーカーを実装した型1つの、定義のファイルと実装した設計解釈マーカー。同じクレートに同じ名前の型が複数あれば、定義のファイルも複数並ぶ。
 #[derive(Default)]

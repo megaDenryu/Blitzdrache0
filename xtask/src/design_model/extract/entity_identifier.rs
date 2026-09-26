@@ -12,7 +12,7 @@ use super::outcome::抽出の成果;
 use super::source_group::抽出対象のソース群;
 use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
 use crate::conform::design_ontology::line_matching::波括弧が閉じる行;
-use crate::conform::design_ontology::syntax_patterns::設計解釈マーカー;
+use crate::conform::design_ontology::設計解釈マーカーの一覧::設計解釈マーカー;
 use crate::design_model::{Rustの項目の種類, 設計概念への参照};
 use blitz_design_verification::{エンティティの識別子の関連型の事実, 事実の出どころ, 型の表記};
 

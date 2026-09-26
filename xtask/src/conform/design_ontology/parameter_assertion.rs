@@ -4,9 +4,9 @@
 //! 入れ子の型の中の `Option`(`Vec<Option<u8>>` は見つかるが、別の構造体のフィールドに埋めた `Option` は見ない)は保証範囲の外である。`MOptions` には課さない。
 
 use super::syntax_checker::クレート構文検査;
-use super::syntax_patterns::設計解釈マーカー;
 use super::trait_implementation::設計解釈マーカーの実装;
 use super::type_definition::定義ブロックの結果;
+use super::設計解釈マーカーの一覧::設計解釈マーカー;
 
 const 任意の値を持つ違反: &str =
     "の定義は `Option<` のフィールドを持てません。`MParameter` は必須入力の束である。値が無い状態がドメイン上の必須入力なら、`Option<T>` を置かずにその意味を表す専用の型か列挙へ持ち上げる。任意の指定を束ねるなら `MOptions` を使う";

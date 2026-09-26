@@ -3,9 +3,10 @@
 
 use super::super::violation::違反;
 use super::syntax_checker::クレート構文検査;
-use super::syntax_patterns::{Rust型種別, 設計解釈マーカー};
+use super::syntax_patterns::Rust型種別;
 use super::trait_implementation::設計解釈マーカーの実装;
 use super::type_definition::定義ブロックの結果;
+use super::設計解釈マーカーの一覧::設計解釈マーカー;
 
 impl クレート構文検査 {
     pub fn すべてのコマンドが列挙型であること(self) -> Self {

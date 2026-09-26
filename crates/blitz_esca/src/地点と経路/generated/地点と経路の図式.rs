@@ -1,5 +1,5 @@
 // このファイルは Graphite が生成したため手編集しないこと。
-// 生成元: src/地点と経路/図式.rs:39
+// 生成元: src/地点と経路/図式.rs:40
 // 再生成: パッケージのディレクトリで cargo graphite generate を実行してください (Graphite リポジトリ自身の開発では cargo xtask generate)
 
 #[allow(unused_imports)]

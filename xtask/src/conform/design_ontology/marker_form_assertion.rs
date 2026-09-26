@@ -10,7 +10,8 @@ use super::super::violation::違反;
 use super::impl_header::implの見出しを読む;
 use super::line_matching::{クレート名, 波括弧が閉じる行, 語として現れるか};
 use super::syntax_checker::クレート構文検査;
-use super::syntax_patterns::{self, 設計解釈マーカー};
+use super::syntax_patterns;
+use super::設計解釈マーカーの一覧::設計解釈マーカー;
 
 const USE_の接頭辞一覧: [&str; 4] = ["use ", "pub use ", "pub(crate) use ", "pub(super) use "];
 const 公開USE_の接頭辞一覧: [&str; 3] = ["pub use ", "pub(crate) use ", "pub(super) use "];

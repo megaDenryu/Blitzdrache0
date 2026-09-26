@@ -9,8 +9,9 @@ use super::impl_header::implの見出しを読む;
 use super::line_matching::{名前で読める表記, 語として現れるか};
 use super::module_path::モジュールパス;
 use super::pure_data_definition_law::定義が破った純粋データの規約の説明一覧;
-use super::syntax_patterns::{self, Rust型種別, 設計解釈マーカー};
+use super::syntax_patterns::{self, Rust型種別};
 use super::type_definition::定義ブロックの結果;
+use super::設計解釈マーカーの一覧::設計解釈マーカー;
 
 use super::trait_implementation::設計解釈マーカーの実装;
 

@@ -5,7 +5,7 @@
 //! 図式に `#[derive(Clone)]` を付けるのは、完成したグラフを `M不変データ` の地図(`地点と経路のグラフ`)として複製できるようにするためである。
 //! 生成物はGraphiteの生成器(`cargo graphite generate`)が書き、手で編集しない。参照: `_doc/設計/Esca/設計正本.md` 5節。
 
-use blitz_design::M不変データ;
+use blitz_design::{M不変データ, M値オブジェクト};
 
 use super::区域の形::区域;
 use super::積み荷::経路の積み荷;
@@ -17,6 +17,7 @@ pub struct 地点 {
 }
 
 impl M不変データ for 地点 {}
+impl M値オブジェクト for 地点 {}
 
 impl 地点 {
     pub fn 区域で生成する(区域: 区域) -> Self {

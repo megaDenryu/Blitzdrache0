@@ -5,7 +5,7 @@
 //! 設計語彙のクレートの名前は `ontology_scope` だけが持ち、ここではその名前にモジュールの名前を足してモジュールパスを組む。
 
 use super::ontology_scope::設計語彙のクレート;
-use crate::conform::design_ontology::syntax_patterns::設計解釈マーカー;
+use crate::conform::design_ontology::設計解釈マーカーの一覧::設計解釈マーカー;
 use crate::design_model::{設計概念, 設計概念の識別子, 設計概念への参照};
 
 /// 設計語彙のクレートの中で、設計解釈マーカーの正本を定義するモジュールの名前。
