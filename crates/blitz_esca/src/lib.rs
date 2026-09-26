@@ -21,10 +21,10 @@ pub mod 地点と経路;
 pub mod 居場所;
 #[path = "平面の幾何.rs"]
 pub mod 平面の幾何;
-#[path = "旅の一刻み.rs"]
-pub mod 旅の一刻み;
 #[path = "時刻.rs"]
 pub mod 時刻;
+#[path = "経路の開閉と旅行者の歩行.rs"]
+pub mod 経路の開閉と旅行者の歩行;
 
 #[cfg(test)]
 mod tests;
@@ -38,5 +38,7 @@ pub use traveler_input::キーボード歩行入力;
 pub use traveler_movement::{旅行者の描画位置, 歩行遷移の規則};
 pub use walking_direction::歩行方向;
 pub use 居場所::旅行者の居場所;
-pub use 旅の一刻み::{旅の一刻みの入力, 旅の一刻みの失敗, 旅の一刻みの結果, 旅の進行, 旅の進行の指定};
 pub use 時刻::{世界の時刻, 世界の時刻の生成の失敗};
+pub use 経路の開閉と旅行者の歩行::{
+    経路の開閉と旅行者の歩行の更新の失敗, 経路の開閉と旅行者の歩行の更新の結果, 経路の開閉と旅行者の歩行の更新への入力, 経路の開閉と旅行者の歩行の進行, 経路の開閉と旅行者の歩行の進行の指定
+};
