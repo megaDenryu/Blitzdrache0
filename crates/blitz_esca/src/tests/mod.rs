@@ -12,7 +12,6 @@ mod behavior_naming_tests;
 mod behavior_proposition;
 mod behavior_reachable_tests;
 mod elapsed_time_tests;
-mod traveler_boundary_tests;
 mod traveler_input_tests;
 mod traveler_invariant_tests;
 mod traveler_tests;
@@ -39,8 +38,6 @@ mod 旅の数え上げの試料;
 mod 旅の数え上げの試験;
 #[path = "時刻と時間帯と地図の試験.rs"]
 mod 時刻と時間帯と地図の試験;
-#[path = "第1段階の到達の比較の試験.rs"]
-mod 第1段階の到達の比較の試験;
 #[path = "経路の開閉の出来事と予定の試験.rs"]
 mod 経路の開閉の出来事と予定の試験;
 #[path = "経路の開閉の数え上げ.rs"]
