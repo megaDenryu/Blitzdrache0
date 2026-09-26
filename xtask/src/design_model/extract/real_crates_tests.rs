@@ -42,13 +42,13 @@ fn 実物のcratesを走査するとマーカーの実装の事実が出て分�
     let 結果 = 実物のcratesから結果を組む();
     let 表記一覧: Vec<String> = 結果.グラフ.分類を貸す().事実を貸す().マーカーの実装一覧().iter().map(|実装| 実装.表記()).collect();
     assert!(
-        表記一覧.contains(&"blitz_esca::traveler::旅行者の現在地 は blitz_design::marker::M状態 を実装する".to_string()),
-        "実物の `impl M状態 for 旅行者の現在地` から事実が出ていない: {}件",
+        表記一覧.contains(&"blitz_esca::居場所::旅行者の居場所 は blitz_design::marker::M状態 を実装する".to_string()),
+        "実物の `impl M状態 for 旅行者の居場所` から事実が出ていない: {}件",
         表記一覧.len()
     );
-    let 現在地 = 設計概念への参照::型として生成する("blitz_esca::traveler", "旅行者の現在地");
+    let 居場所 = 設計概念への参照::型として生成する("blitz_esca::居場所", "旅行者の居場所");
     let 不変データ = 設計概念への参照::トレイトとして生成する("blitz_design::marker", "M不変データ");
-    assert!(結果.グラフ.分類を貸す().分類がトレイトを含むか(&現在地, &不変データ), "実物の `trait M状態: M不変データ` で分類が閉じていない");
+    assert!(結果.グラフ.分類を貸す().分類がトレイトを含むか(&居場所, &不変データ), "実物の `trait M状態: M不変データ` で分類が閉じていない");
 }
 
 #[test]
@@ -57,8 +57,8 @@ fn 実物の3件の役割の使用箇所は受理の条件を満たし処理の�
     let 表記一覧: Vec<String> = 結果.グラフ.概念一覧().iter().map(|概念| 概念.識別子().表記()).collect();
     for 期待 in [
         "blitz_esca::traveler_input::キーボード歩行入力::歩行入力を解釈する",
-        "blitz_esca::traveler_movement::旅行者の現在地::歩行を遷移する",
-        "blitz_esca::traveler_movement::旅行者の現在地::描画位置を射影する",
+        "blitz_esca::居場所::旅行者の居場所::歩行を遷移する",
+        "blitz_esca::居場所::旅行者の居場所::描画位置を射影する",
     ] {
         assert!(表記一覧.iter().any(|表記| 表記 == 期待), "{期待} が処理の節点として立っていない");
     }
@@ -89,11 +89,8 @@ fn 実物のcratesに関係を落とした抽出の欠落が1件も無い() {
 fn 実物の遷移関数は遷移パラメータを消費し失敗の型を生成する() {
     let 結果 = 実物のcratesから結果を組む();
     let 表記一覧 = super::test_support::関係の表記一覧(&結果);
-    let 主語 = "blitz_esca::traveler_movement::旅行者の現在地::歩行を遷移する";
-    for 期待 in [
-        format!("{主語} 消費する blitz_esca::transition_parameter::遷移パラメータ"),
-        format!("{主語} 生成する blitz_esca::traveler_error::旅行者の現在地の生成の失敗"),
-    ] {
+    let 主語 = "blitz_esca::居場所::旅行者の居場所::歩行を遷移する";
+    for 期待 in [format!("{主語} 消費する blitz_esca::transition_parameter::遷移パラメータ"), format!("{主語} 生成する blitz_esca::traveler_error::歩行の失敗")] {
         assert!(表記一覧.contains(&期待), "{期待} が無い");
     }
 }
