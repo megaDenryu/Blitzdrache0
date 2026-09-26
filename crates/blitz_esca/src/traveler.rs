@@ -36,6 +36,7 @@ pub struct 移動の変位 {
 }
 
 impl M不変データ for 移動の変位 {}
+impl M値オブジェクト for 移動の変位 {}
 
 impl M不変データ for 旅行者の現在地 {}
 impl M値オブジェクト for 旅行者の現在地 {}
