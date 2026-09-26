@@ -21,7 +21,7 @@ impl M不変データ for 区域の中の移動の指定 {}
 pub struct 区域の中の移動の結果 {
     pub 地点: 地点の識別子,
     pub 到達点: 平面の点,
-    pub 遮られた: bool,
+    pub 遮られたか: bool,
 }
 
 impl M不変データ for 区域の中の移動の結果 {}
