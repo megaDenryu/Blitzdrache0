@@ -76,7 +76,7 @@ pub use marker_concept::{設計解釈マーカーの参照, 設計解釈マー�
 pub use ontology_scope::{ドメインのクレートか, ドメインのクレートの名前一覧};
 pub use out_of_range_syntax::保証範囲の外の構文;
 pub use outcome::抽出した設計関係グラフと抽出の欠け;
-pub use role::関数の役割の型か意味型を指す参照か;
+pub use role::関数の役割の型か意味型の見分け;
 pub use unextracted_line::{抽出できなかった理由, 抽出できなかった行};
 
 use crate::conform::error::規約検査の破れ;

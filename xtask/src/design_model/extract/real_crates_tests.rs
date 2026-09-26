@@ -11,6 +11,7 @@
 use std::path::PathBuf;
 
 use super::outcome::抽出した設計関係グラフと抽出の欠け;
+use super::role::{関数の役割の型か意味型の見分け, 関数の役割の定義の在り処};
 use super::source_group::抽出対象のソース群;
 use crate::design_model::設計概念への参照;
 use crate::file_scan;
@@ -100,7 +101,7 @@ fn 実物の遷移関数は遷移パラメータを消費し失敗の型を生�
 #[test]
 fn 実物の関数の役割の型と意味型は宣言したモジュールパスの型の節点として立つ() {
     let 結果 = 実物のcratesから結果を組む();
-    let 当たった表記一覧: Vec<String> = 結果.グラフ.概念一覧().iter().map(|概念| 概念.参照を組む()).filter(super::role::関数の役割の型か意味型を指す参照か).map(|参照| 参照.表記()).collect();
-    let 期待の件数: usize = blitz_design_verification::関数の役割::全部の一覧().into_iter().map(|役割| 1 + super::role::伴う意味型の名前一覧(役割).len()).sum();
+    let 当たった表記一覧: Vec<String> = 結果.グラフ.概念一覧().iter().map(|概念| 概念.参照を組む()).filter(|参照| 参照.関数の役割の型か意味型を指す参照か()).map(|参照| 参照.表記()).collect();
+    let 期待の件数: usize = blitz_design_verification::関数の役割::全部の一覧().into_iter().map(|役割| 1 + 役割.伴う意味型の名前一覧().len()).sum();
     assert_eq!(当たった表記一覧.len(), 期待の件数, "役割の型か意味型の定義の場所が `role` の宣言と食い違っている: {当たった表記一覧:?}");
 }
