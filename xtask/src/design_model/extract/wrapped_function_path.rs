@@ -21,10 +21,10 @@
 //! 所有者を持つのは、`旅行者の現在地::更新する` と `世界::更新する` が名前だけでは同じになるためである。
 //! 関連関数のパスは所有する型の名前まで含めて初めて処理の同一性になる。
 
-use super::role::関数の役割;
 use super::unextracted_line::抽出できなかった理由;
 use crate::conform::design_ontology::identifier_boundary::識別子の文字か;
 use crate::design_model::設計概念の識別子;
+use blitz_design_verification::関数の役割;
 
 /// 役割の値に包まれた具体の関数のパス。`キーボード歩行入力::歩行入力を解釈する` なら所有者は `キーボード歩行入力`、名前は `歩行入力を解釈する` である。
 #[derive(Debug, Clone, PartialEq, Eq)]

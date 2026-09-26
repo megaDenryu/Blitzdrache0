@@ -66,7 +66,7 @@ fn 実物の3件の役割の使用箇所は受理の条件を満たし処理の�
 #[test]
 fn 実物のタプル構造体が包む型へ保持する関係が出る() {
     let 結果 = 実物のcratesから結果を組む();
-    let 表記一覧: Vec<String> = 結果.グラフ.関係一覧().iter().map(|関係| 関係.表記()).collect();
+    let 表記一覧 = super::test_support::関係の表記一覧(&結果);
     assert!(表記一覧.contains(&"blitz_esca::elapsed_time::経過時間 保持する 秒".to_string()));
     assert!(!結果.グラフ.概念一覧().iter().any(|概念| 概念.識別子().モジュールパス.contains("::tests")));
 }
@@ -87,7 +87,7 @@ fn 実物のcratesに関係を落とした抽出の欠落が1件も無い() {
 #[test]
 fn 実物の遷移関数は遷移パラメータを消費し失敗の型を生成する() {
     let 結果 = 実物のcratesから結果を組む();
-    let 表記一覧: Vec<String> = 結果.グラフ.関係一覧().iter().map(|関係| 関係.表記()).collect();
+    let 表記一覧 = super::test_support::関係の表記一覧(&結果);
     let 主語 = "blitz_esca::traveler_movement::旅行者の現在地::歩行を遷移する";
     for 期待 in [
         format!("{主語} 消費する blitz_esca::transition_parameter::遷移パラメータ"),
@@ -101,6 +101,6 @@ fn 実物の遷移関数は遷移パラメータを消費し失敗の型を生�
 fn 実物の関数の役割の型と意味型は宣言したモジュールパスの型の節点として立つ() {
     let 結果 = 実物のcratesから結果を組む();
     let 当たった表記一覧: Vec<String> = 結果.グラフ.概念一覧().iter().map(|概念| 概念.参照を組む()).filter(super::role::関数の役割の型か意味型を指す参照か).map(|参照| 参照.表記()).collect();
-    let 期待の件数: usize = super::role::関数の役割::全部の一覧().iter().map(|役割| 1 + 役割.伴う意味型の名前一覧().len()).sum();
+    let 期待の件数: usize = blitz_design_verification::関数の役割::全部の一覧().into_iter().map(|役割| 1 + super::role::伴う意味型の名前一覧(役割).len()).sum();
     assert_eq!(当たった表記一覧.len(), 期待の件数, "役割の型か意味型の定義の場所が `role` の宣言と食い違っている: {当たった表記一覧:?}");
 }

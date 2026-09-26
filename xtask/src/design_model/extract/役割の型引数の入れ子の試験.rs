@@ -4,6 +4,7 @@
 
 use super::out_of_range_syntax::保証範囲の外の構文;
 use super::test_support::{原文から設計関係グラフと抽出の欠けを組む, 役割の使用箇所の試験が使う型の定義, 抽出できなかった理由の説明一覧, 関係の表記一覧};
+use blitz_design_verification::型の表記を読めない理由;
 
 const 移動のパス: &str = "crates/blitz_esca/src/traveler_movement.rs";
 const 前置き: &str = "blitz_esca::traveler_movement::";
@@ -68,8 +69,8 @@ fn 型引数の中の戻り値の矢印は型引数を閉じず関数ポイン�
     let 構文一覧: Vec<&保証範囲の外の構文> = 結果.抽出できなかった行一覧.iter().filter_map(|行| 行.理由.保証範囲の外の構文を採る()).collect();
     assert_eq!(
         構文一覧,
-        vec![&保証範囲の外の構文::型の表記がRustのパスでない {
+        vec![&保証範囲の外の構文::型の表記を読めない(型の表記を読めない理由::型の表記がRustのパスでない {
             表記: "fn(&旅行者の現在地) -> 旅行者の出来事".to_string()
-        }]
+        })]
     );
 }
