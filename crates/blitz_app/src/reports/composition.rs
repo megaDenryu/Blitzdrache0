@@ -27,8 +27,8 @@ pub(crate) fn 描画視点構成を表示する(視点数: usize) {
 
 pub(crate) fn フレーム構成を表示する(構成: &blitz_render::フレーム構成) {
     println!("フレーム構成:");
-    for 段階 in 構成.段階一覧() {
-        println!("  {}", 段階.名称());
+    for 処理位置 in 構成.処理位置の一覧() {
+        println!("  {}", 処理位置.名称());
     }
 }
 

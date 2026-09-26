@@ -5,7 +5,7 @@ use ash::vk;
 
 use crate::auto_exposure::自動露出の設定;
 use crate::error::レンダラーエラー;
-use crate::frame_composition::{フレーム構成, フレーム段階};
+use crate::frame_composition::{フレームの処理位置, フレーム構成};
 use crate::renderer::presentation::提示;
 use crate::shader_bundle::シェーダー束;
 use crate::vulkan::hdr_target::HDR形式;
@@ -19,7 +19,7 @@ pub(super) enum 描画先構成 {
 
 impl 描画先構成 {
     pub(super) fn 決める(フレーム構成: フレーム構成) -> Self {
-        if フレーム構成.含むか(フレーム段階::光のにじみと明るさの圧縮) {
+        if フレーム構成.含むか(フレームの処理位置::光のにじみと明るさの圧縮) {
             Self::HDR中間画像を経由する
         } else {
             Self::スワップチェーンへ直接描く

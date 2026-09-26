@@ -81,11 +81,11 @@ pub struct レンダラー {
     照明問い合わせ資源: vulkan::lighting_query::照明問い合わせ資源束, // 照明問い合わせのセット(set3)の資源の所有者
     フレーム進行: frame_progress::フレーム進行,                       // フレームスロットで参照する資源と巡回状態の束
     フレーム構成: フレーム構成,
-    描画段階資源: draw_stage_resources::描画段階資源,                      // 各描画段階が束縛するパイプラインとレイアウトの束
+    描画段階資源: draw_stage_resources::描画段階資源,                      // 空・大気・遠方環境・布シャドウなど7つの資源の置き場(issue #189)
     パイプライン台帳: vulkan::pipeline_ledger::材質描画族パイプライン台帳, // 材質を読む描画族のパイプライン状態オブジェクトの台帳
     スキニング: Option<vulkan::skinning::スキニング一式>,                  // スキン付きシーンのときのみ`Some`(判断44)
     布: Option<vulkan::cloth::布一式>,                                     // 布付き起動のときのみ`Some`(判断52〜54)
-    ポスト処理: Option<vulkan::post_process::ポスト処理一式>,              // フレーム構成にポスト処理段階があるときのみ`Some`(判断38・39)
+    ポスト処理: Option<vulkan::post_process::ポスト処理一式>,              // フレーム構成にポスト処理の処理位置があるときのみ`Some`(判断38・39)
     局所可視性: vulkan::local_visibility::局所可視性一式,
     時間再構成: vulkan::temporal_reconstruction::時間再構成一式, // 時間再構成の方式と、画面寸法に連動する3枚の所有者
     粒子: Option<vulkan::particles::粒子リソース一式>,           // `--particles`指定時のみ`Some`(判断29)

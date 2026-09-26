@@ -2,21 +2,21 @@
 //! 4つの`Option`を束ねた組である。段階を持たない構成では`None`が「その段階を積まない」ことを型で表す。
 //!
 //! ここが持つのは4つの資源の生成順と、途中で失敗したときの巻き戻し順である。順序が意味を持つのは、
-//! 空段階の標本ディスクリプタも遠方環境の生成ディスクリプタも大気のベイク済み画像の画像ビューと媒体の
+//! 空の処理位置の標本ディスクリプタも遠方環境の生成ディスクリプタも大気のベイク済み画像の画像ビューと媒体の
 //! シェーダー定数を結ぶためであり、大気を先に作って最後に片付ける必要がある。
-//! 資源ごとの作り方は、空段階の有無で決まる2つを`sky_stage`、契約で決まる遠方環境を`distant_environment`が持つ。
+//! 資源ごとの作り方は、空の処理位置の有無で決まる2つを`sky_stage`、契約で決まる遠方環境を`distant_environment`が持つ。
 
 mod distant_environment;
 mod sky_stage;
 
 use super::生成要求;
 use crate::error::レンダラーエラー;
-use crate::frame_composition::フレーム段階;
+use crate::frame_composition::フレームの処理位置;
 use crate::vulkan;
-use crate::vulkan::sky_stage::空段階資源;
+use crate::vulkan::sky_stage::空の処理位置の資源;
 
 pub(super) struct 任意段階の資源 {
-    pub(super) 空: Option<空段階資源>,
+    pub(super) 空: Option<空の処理位置の資源>,
     pub(super) 大気のベイク済み画像: Option<vulkan::atmosphere_lut::大気のベイク済み画像一式>,
     pub(super) 遠方環境の照明: Option<vulkan::indirect_lighting::遠方環境の照明資源>,
     pub(super) 布シャドウ: Option<vulkan::cloth_shadow::布シャドウ資源>,
@@ -66,9 +66,9 @@ fn 大気の上へ積む(要求: &生成要求<'_>, 資源: &mut 任意段階の
     Ok(())
 }
 
-/// 布専用シャドウ経路はフレーム構成に布シミュレーション段階があるときだけ作る。無い構成では`None`が「布を描かない」ことを型で表す。
+/// 布専用シャドウ経路はフレーム構成に布シミュレーションの処理位置があるときだけ作る。無い構成では`None`が「布を描かない」ことを型で表す。
 fn 布シャドウを生成する(要求: &生成要求<'_>) -> Result<Option<vulkan::cloth_shadow::布シャドウ資源>, レンダラーエラー> {
-    if !要求.構成.含むか(フレーム段階::布シミュレーション) {
+    if !要求.構成.含むか(フレームの処理位置::布シミュレーション) {
         return Ok(None);
     }
     Ok(Some(vulkan::cloth_shadow::布シャドウ資源::生成する(要求.確保係, 要求.セットレイアウト.ビューとパス(), &要求.シェーダー.布.シャドウ)?))

@@ -7,13 +7,12 @@ import { 楽曲履歴適用サービス } from './操作コマンド/楽曲履�
 import { 楽曲名の変更の反映 } from './楽曲名の変更の反映.ts'
 import { 楽曲編集UI状態 } from './楽曲編集UI状態.ts'
 import { 升目の発音, 演奏サービス, 楽曲インスペクターパネル, 楽曲編集画面 } from './画面/index.ts'
-import { 楽曲編集状態, 初期楽曲を生成する } from './編集モデル/index.ts'
+import { 楽曲編集状態, 初期楽曲を生成する, 開いた楽曲の演奏の範囲を決める } from './編集モデル/index.ts'
 import { 楽曲編集イベントを配線する } from './楽曲編集配線.ts'
 import { 楽曲編集の表示の同期, type I楽曲の表示名の届け先 } from './表示の同期.ts'
-import { 起動時に楽曲を読み込む } from './楽曲起動時読込.ts'
 
 // 楽曲1件の打ち込み格子・和音の帯・演奏・永続化を編集する文書タブのツールルート。
-// 設定の一式は インスペクター として外殻の右サイドバーへ渡る(設計正本の判断14)。
+// 設定は インスペクター として外殻の右サイドバーへ渡る(参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断14」)。
 // 三次元ビューを持たないため、寸法と前面背面の契約は空実装で満たす。
 export class 楽曲編集ツール extends LV2HtmlComponentBase {
     protected _componentRoot: DivC
@@ -59,7 +58,7 @@ export class 楽曲編集ツール extends LV2HtmlComponentBase {
             表示名の編集: this.表示名の編集,
             楽曲ID,
         })
-        void 起動時に楽曲を読み込む(this.画面, this.状態, this.接続, 楽曲ID, this.同期)
+        void this._起動時に楽曲を読み込む(楽曲ID)
     }
 
     public 寸法を合わせる(): void {}
@@ -73,5 +72,26 @@ export class 楽曲編集ツール extends LV2HtmlComponentBase {
         this.演奏.破棄する()
         this.画面.delete()
         super.delete()
+    }
+
+    // ツール起動時にサーバーから楽曲データを非同期に読み込み、画面へ反映する。
+    private async _起動時に楽曲を読み込む(楽曲ID: 楽曲ID): Promise<void> {
+        try {
+            const 結果 = await this.接続.楽曲を読む(楽曲ID)
+            if (結果.種別 === '成功') {
+                this.状態.状態を上書きする(結果.値)
+                this.演奏.演奏の範囲を変える(開いた楽曲の演奏の範囲を決める(結果.値))
+                this.画面.楽曲名.永続化.状態文言を更新する('読込完了(起動時)', false)
+            } else if (結果.種別 === '無し') {
+                this.画面.楽曲名.永続化.状態文言を更新する('未保存: 初期楽曲を表示中', false)
+            } else {
+                this.画面.楽曲名.永続化.状態文言を更新する(`起動時読込失敗: ${結果.エラー.種別} ${結果.エラー.説明}`, true)
+            }
+        } catch (原因: unknown) {
+            const メッセージ = 原因 instanceof Error ? 原因.message : String(原因)
+            this.画面.楽曲名.永続化.状態文言を更新する(`起動時読込失敗: ${メッセージ}`, true)
+        }
+        this.同期.再構築する()
+        this.画面.再生位置を示す(null, this.演奏.再生中か, this.演奏.演奏の範囲)
     }
 }
