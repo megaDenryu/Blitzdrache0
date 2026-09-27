@@ -5,8 +5,8 @@
 
 use super::test_support::{原文から設計関係グラフと抽出の欠けを組む, 役割の使用箇所の試験が使う型の定義, 概念の表記一覧, 関係の表記一覧};
 
-const 移動のパス: &str = "crates/blitz_esca/src/traveler_movement.rs";
-const 前置き: &str = "blitz_esca::traveler_movement::";
+const 移動のパス: &str = "crates/blitz_esca/src/歩行の遷移.rs";
+const 前置き: &str = "blitz_esca::歩行の遷移::";
 
 fn 遷移の使用箇所() -> String {
     役割の使用箇所の試験が使う型の定義() + "pub const 旅行者の移動: M遷移関数<旅行者の現在地, 旅行者の意図, 歩行の規則, 旅行者の出来事, 現在地の生成の失敗> = M遷移関数::生成する(旅行者の現在地::歩行を遷移する);\n"

@@ -8,7 +8,7 @@
 use std::path::Path;
 
 /// 設計解釈マーカーの正本のファイルの、末尾の3部品ぶんのパス。リポジトリのルートからの前置きは問わない。
-const 設計解釈マーカーの正本のファイルの末尾のパス: &str = "blitz_design/src/marker.rs";
+const 設計解釈マーカーの正本のファイルの末尾のパス: &str = "blitz_design/src/設計解釈マーカー.rs";
 
 /// そのパスが設計解釈マーカーの正本のファイルを指すか。
 pub fn 設計解釈マーカーの正本のファイルか(パス: &Path) -> bool {
@@ -21,7 +21,7 @@ mod tests {
 
     #[test]
     fn 正本のファイルのパスだけを正本と答える() {
-        assert!(設計解釈マーカーの正本のファイルか(Path::new("crates/blitz_design/src/marker.rs")));
+        assert!(設計解釈マーカーの正本のファイルか(Path::new("crates/blitz_design/src/設計解釈マーカー.rs")));
         assert!(!設計解釈マーカーの正本のファイルか(Path::new("crates/blitz_design/src/function_role.rs")));
         assert!(!設計解釈マーカーの正本のファイルか(Path::new("crates/blitz_esca/src/marker.rs")));
     }

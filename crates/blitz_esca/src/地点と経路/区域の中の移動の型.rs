@@ -9,25 +9,61 @@ use crate::平面の幾何::点と線分::平面の点;
 /// 区域の中の移動の指定。旅行者がいる地点と、その地点の区域の閉包の中の始点と、動こうとする終点を持つ。
 #[derive(Debug, Clone, PartialEq)]
 pub struct 区域の中の移動の指定 {
-    pub 地点: 地点の識別子,
-    pub 始点: 平面の点,
-    pub 終点: 平面の点,
+    地点: 地点の識別子,
+    始点: 平面の点,
+    終点: 平面の点,
 }
 
 impl M不変データ for 区域の中の移動の指定 {}
 impl MParameter for 区域の中の移動の指定 {}
 impl M値オブジェクト for 区域の中の移動の指定 {}
 
+impl 区域の中の移動の指定 {
+    pub fn 生成する(地点: 地点の識別子, 始点: 平面の点, 終点: 平面の点) -> Self {
+        Self { 地点, 始点, 終点 }
+    }
+
+    pub fn 地点(&self) -> &地点の識別子 {
+        &self.地点
+    }
+
+    pub fn 始点(&self) -> 平面の点 {
+        self.始点
+    }
+
+    pub fn 終点(&self) -> 平面の点 {
+        self.終点
+    }
+}
+
 /// 区域の中の移動の結果。着いた地点と、着いた点と、途中で境目に遮られたかを持つ。
 #[derive(Debug, Clone, PartialEq)]
 pub struct 区域の中の移動の結果 {
-    pub 地点: 地点の識別子,
-    pub 到達点: 平面の点,
-    pub 遮られたか: bool,
+    地点: 地点の識別子,
+    到達点: 平面の点,
+    遮られたか: bool,
 }
 
 impl M不変データ for 区域の中の移動の結果 {}
 impl M値オブジェクト for 区域の中の移動の結果 {}
+
+impl 区域の中の移動の結果 {
+    pub fn 生成する(地点: 地点の識別子, 到達点: 平面の点, 遮られたか: bool) -> Self {
+        Self { 地点, 到達点, 遮られたか }
+    }
+
+    pub fn 地点(&self) -> &地点の識別子 {
+        &self.地点
+    }
+
+    pub fn 到達点(&self) -> 平面の点 {
+        self.到達点
+    }
+
+    pub fn 遮られたか(&self) -> bool {
+        self.遮られたか
+    }
+}
 
 /// 区域の中の移動を始められなかった理由。
 #[derive(Debug, Clone, PartialEq, thiserror::Error)]

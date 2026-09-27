@@ -3,10 +3,10 @@
 
 use blitz_engine::height_field::高さ場の読み口;
 
-use super::camera_wiring::プレイヤーカメラの配線;
 use super::game::ゲーム配線;
-use super::movement_record::移動の観測の記録;
+use super::カメラの配線::プレイヤーカメラの配線;
 use super::世界実行;
+use super::観測の記録::移動の観測の記録;
 use crate::cli::{起動モード, 遊ぶゲームの指定};
 use crate::input::ゲーム操作の適用の方式;
 

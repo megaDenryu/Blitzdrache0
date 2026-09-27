@@ -1,11 +1,11 @@
 //! 胴体の移動の接触余白の検査。鋭角の2面の角で両面から半径以上離れて止まり振動しないことと、壁に隙間なく触れた足元から
 //! 壁に沿って歩き出せることを固定する。静止と据え直しの検査は`body_motion_rest_tests`にある。
-//! 世界と刻む手順の助けは`body_motion_test_fixture`にある。
+//! 世界と刻む手順の助けは`胴体の移動の試験の助け`にある。
 
 use blitz_math::{ラジアン, 大域メートル, 大域ワールド位置};
 
-use super::body_motion_test_fixture::{入力, 刻む, 前へ倒す, 床の上で接地した状態, 最も離れた成分の差};
 use super::movement_state::移動状態;
+use super::胴体の移動の試験の助け::{入力, 刻む, 前へ倒す, 床の上で接地した状態, 最も離れた成分の差};
 use crate::horizontal_unit_vector::水平面の単位ベクトル;
 use crate::planar_test_world::平面と段と壁の世界;
 

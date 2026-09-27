@@ -1,13 +1,13 @@
 //! 胴体の移動の静止と据え直しの検査。床と斜面に立ったまま静止して位置がずれないことと、斜面へ食い込んだ足元が面の上へ
 //! 出ることを固定する。角と壁の接触余白の検査は`body_motion_margin_tests`にある。
-//! 世界と刻む手順の助けは`body_motion_test_fixture`にある。
+//! 世界と刻む手順の助けは`胴体の移動の試験の助け`にある。
 
 use blitz_math::{ラジアン, 大域メートル};
 
-use super::body_motion_test_fixture::{入力, 刻む, 大域位置, 床の上で接地した状態, 最も離れた成分の差};
 use super::movement_state::移動状態;
-use crate::game_intent::ゲームの操作意図;
+use super::胴体の移動の試験の助け::{入力, 刻む, 大域位置, 床の上で接地した状態, 最も離れた成分の差};
 use crate::planar_test_world::平面と段と壁の世界;
+use crate::操作意図::ゲームの操作意図;
 
 #[test]
 fn 床に立ったまま静止しても位置がずれない() {

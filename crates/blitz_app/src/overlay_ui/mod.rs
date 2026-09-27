@@ -5,7 +5,6 @@
 
 mod font_setup;
 mod frame_time;
-mod game_instrument_panel;
 mod game_screen;
 mod mesh_convert;
 mod overlay_content;
@@ -14,6 +13,8 @@ mod scissor_convert;
 mod texture_id_map;
 mod texture_mirror;
 mod texture_sync;
+#[path = "ゲームの計器の面.rs"]
+mod ゲームの計器の面;
 
 pub(crate) mod stats;
 

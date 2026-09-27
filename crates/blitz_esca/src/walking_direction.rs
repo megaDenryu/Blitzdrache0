@@ -5,7 +5,7 @@
 
 use blitz_design::{M不変データ, M値オブジェクト};
 
-use crate::traveler_input::キーボード歩行入力;
+use crate::キーボードの入力::キーボード歩行入力;
 
 /// 正規化済みの歩く向き。東の比率と北の比率の二乗和は1である。
 #[derive(Debug, Clone, Copy, PartialEq)]

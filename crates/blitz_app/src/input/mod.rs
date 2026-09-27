@@ -10,20 +10,26 @@ mod camera_intent_policy;
 #[cfg(test)]
 mod camera_intent_tests;
 mod confirm;
-#[cfg(test)]
-mod game_input_tests;
-mod game_intent_policy;
-mod game_key_state;
 mod ingest;
+#[path = "ゲーム操作のキー.rs"]
+mod ゲーム操作のキー;
 #[cfg(test)]
-mod tick_confirm_order_tests;
-mod tick_distribution;
+#[path = "ゲーム操作のキーの確定の試験.rs"]
+mod ゲーム操作のキーの確定の試験;
+#[path = "ゲーム操作の適用.rs"]
+mod ゲーム操作の適用;
 #[cfg(test)]
-mod tick_distribution_tests;
+#[path = "刻みと入力の確定の順序の試験.rs"]
+mod 刻みと入力の確定の順序の試験;
+#[path = "操作入力の配り.rs"]
+mod 操作入力の配り;
+#[cfg(test)]
+#[path = "操作入力の配りの試験.rs"]
+mod 操作入力の配りの試験;
 
 pub(crate) use camera_intent_policy::カメラ操作の適用の方式;
-pub(crate) use game_intent_policy::ゲーム操作の適用の方式;
-pub(crate) use tick_distribution::刻みごとの操作入力;
+pub(crate) use ゲーム操作の適用::ゲーム操作の適用の方式;
+pub(crate) use 操作入力の配り::刻みごとの操作入力;
 
 use blitz_engine::カメラの操作意図;
 use blitz_game::確定済みの操作入力;
@@ -46,8 +52,8 @@ pub(crate) struct 入力状態 {
     s押下中: bool,
     q押下中: bool,
     e押下中: bool,
-    カメラ操作の方針: カメラ操作の適用の方式,               // カメラ操作を適用するかどうか
-    ゲーム操作のキー: game_key_state::ゲーム操作のキー状態, // ゲーム操作に割り当てたキーの押下状態
+    カメラ操作の方針: カメラ操作の適用の方式,                 // カメラ操作を適用するかどうか
+    ゲーム操作のキー: ゲーム操作のキー::ゲーム操作のキー状態, // ゲーム操作に割り当てたキーの押下状態
 }
 
 impl 入力状態 {
@@ -68,11 +74,11 @@ impl 入力状態 {
             q押下中: false,
             e押下中: false,
             カメラ操作の方針,
-            ゲーム操作のキー: game_key_state::ゲーム操作のキー状態::default(),
+            ゲーム操作のキー: ゲーム操作のキー::ゲーム操作のキー状態::default(),
         }
     }
 
-    /// このフレームぶんのゲームの操作入力を確定する。決定と取り消しは押し下げが届いたフレームだけ真になる。
+    /// このフレームぶんのゲームの操作入力を確定する。決定とキャンセルは押し下げが届いたフレームだけ真になる。
     /// 意味付け(ゲームの操作意図への写像)はゲーム側が持つため、ここが返すのは確定済みの操作入力までである。
     pub(crate) fn ゲームの操作入力を確定する(&mut self) -> 確定済みの操作入力 {
         self.ゲーム操作のキー.確定する()

@@ -1,4 +1,4 @@
-//! `M結果` の構文の法則(結果は判別型である)を固定する試験。正本 `blitz_design` の `marker.rs` が持つ完全に修飾した `std::result::Result` への包括の実装だけが定義をたどらない特例であり、独自の `enum` は許し、独自の `struct` は名前が `Result` でも正本のファイルにあっても違反にする。
+//! `M結果` の構文の法則(結果は判別型である)を固定する試験。正本 `blitz_design` の `設計解釈マーカー.rs` が持つ完全に修飾した `std::result::Result` への包括の実装だけが定義をたどらない特例であり、独自の `enum` は許し、独自の `struct` は名前が `Result` でも正本のファイルにあっても違反にする。
 //! `M結果` は上位トレイトを持たないため、純粋データ規約は課さない。正規形の検査の対象には入る。
 
 use super::marker_form_tests::正規形でない実装の違反;
@@ -9,7 +9,7 @@ const 列挙型が必要の違反: &str = "M結果 `何かの結果` は enum �
 #[test]
 fn 構文解析_正本の完全に修飾した標準のresultへのm結果の包括の実装だけは定義をたどらず違反にならない() {
     let ソース一覧 = vec![ソース(
-        "crates/blitz_design/src/marker.rs",
+        "crates/blitz_design/src/設計解釈マーカー.rs",
         "pub trait M結果 {}
 impl<T, E> M結果 for std::result::Result<T, E> {}
 ",
@@ -20,7 +20,7 @@ impl<T, E> M結果 for std::result::Result<T, E> {}
 #[test]
 fn 構文解析_正本のファイルに置いたresultという名前の独自の構造体への包括の実装は特例にならず列挙型が必要の違反になる() {
     let ソース一覧 = vec![ソース(
-        "crates/blitz_design/src/marker.rs",
+        "crates/blitz_design/src/設計解釈マーカー.rs",
         "pub struct Result<T, E> { pub 成功: T, pub 失敗: E }
 impl<T, E> M結果 for Result<T, E> {}
 ",

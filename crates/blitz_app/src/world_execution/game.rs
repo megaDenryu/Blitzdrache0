@@ -13,27 +13,31 @@
 
 mod confirmed_player;
 mod fox_player;
-mod fox_tour;
 mod ground;
-mod scripted_operation;
-#[cfg(test)]
-mod scripted_operation_tests;
 mod supply;
-mod tick;
 mod tick_decision;
 mod walk_only;
+#[path = "game/キツネの場所巡り.rs"]
+mod キツネの場所巡り;
+#[path = "game/固定刻みの振り分け.rs"]
+mod 固定刻みの振り分け;
+#[path = "game/操作の台本.rs"]
+mod 操作の台本;
+#[cfg(test)]
+#[path = "game/操作の台本の試験.rs"]
+mod 操作の台本の試験;
 
 pub(super) use confirmed_player::刻み境界で確定したプレイヤー;
-#[cfg(test)] // 刻み結果の検査だけが台本の区切りを読み、非テストのビルドでは使われない
-pub(super) use scripted_operation::終了を決める刻みの番号;
 pub(super) use tick_decision::この刻みで規則が行うこと;
+#[cfg(test)] // 刻み結果の検査だけが台本の区切りを読み、非テストのビルドでは使われない
+pub(super) use 操作の台本::終了を決める刻みの番号;
 
 use super::entity_ledger::ゲーム状態の台帳;
 use crate::cli::遊ぶゲームの指定;
 
 pub(super) enum ゲーム配線 {
-    ゲームを遊ばない,                                   // --gameの指定が無い起動
-    キツネの場所巡り(fox_tour::キツネの場所巡りの配線), // クソゲー1本目を回す起動
+    ゲームを遊ばない,                                           // --gameの指定が無い起動
+    キツネの場所巡り(キツネの場所巡り::キツネの場所巡りの配線), // クソゲー1本目を回す起動
     歩くだけ(walk_only::歩くだけの配線),
 }
 
@@ -41,7 +45,7 @@ impl ゲーム配線 {
     pub(super) fn 起動設定から作る(遊ぶゲーム: 遊ぶゲームの指定) -> Self {
         match 遊ぶゲーム {
             遊ぶゲームの指定::ゲームを遊ばない => Self::ゲームを遊ばない,
-            遊ぶゲームの指定::キツネの場所巡り(操作の出どころ) => Self::キツネの場所巡り(fox_tour::キツネの場所巡りの配線::生成する(操作の出どころ)),
+            遊ぶゲームの指定::キツネの場所巡り(操作の出どころ) => Self::キツネの場所巡り(キツネの場所巡り::キツネの場所巡りの配線::生成する(操作の出どころ)),
             遊ぶゲームの指定::歩くだけ => Self::歩くだけ(walk_only::歩くだけの配線::生成する()),
         }
     }

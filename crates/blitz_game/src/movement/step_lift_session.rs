@@ -15,7 +15,7 @@ use blitz_math::{メートル, ワールド, 変位, 大域ワールド位置, �
 use super::downward_probe::下へ探った答え;
 use super::ground_probe::接地の規則;
 use super::query_count::問い合わせ件数;
-use super::step_lift::持ち上げの答え;
+use super::段差の持ち上げ::持ち上げの答え;
 use crate::body_capsule::胴体カプセル;
 use crate::sweep_completeness::掃引の完全性;
 use crate::sweep_hit::掃引が最初に触れる面;

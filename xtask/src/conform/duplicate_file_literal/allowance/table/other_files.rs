@@ -3,10 +3,11 @@
 use super::寄せられない文字列;
 
 const ビルドスクリプトとの契約: &str = "blitz_appのビルドスクリプトが読む入力の名前であり、本体も同じ入力を実行中に読む。build_supportはビルドスクリプトのモジュールで本体から参照できないため、両側が同じ文字列を持つほかない";
+const 正本のファイルを名指す検査: &str = "blitz_designはRustの規則により日本語のモジュールを #[path] でファイル名を書いて宣言するほかなく、xtaskの設計オントロジーの検査はマーカーの正本をファイルのパスで見分ける。xtaskはblitz_designのソースの置き場を定数として参照できないため、両側が同じ文字列を持つほかない";
 const 書き手が非公開: &str = "blitz_asset_compilerのworld_source_directoryが持つ正本の定数はpub(super)で非公開であり、editor_serverクレートとxtaskから届かない。blitz_*クレート本体の変更はゲーム開発用エディター段の対象外(参照: `_doc/設計/ゲーム開発用エディター基盤.md`「判断5」)であるため、書き手の側に同じ文字列を独立に持つ";
 
 /// 注意: この一覧への追加は、正本を1箇所へ寄せられないと示せたときだけ許す。減らす方向にのみ動かす。
-pub(super) const 一覧: [寄せられない文字列; 2] = [
+pub(super) const 一覧: [寄せられない文字列; 3] = [
     寄せられない文字列 {
         文字列: "slangc.exe",
         現れてよい場所一覧: &["crates/blitz_app/build_support/slangc_locate.rs", "crates/blitz_app/src/hot_reload/slangc.rs"],
@@ -20,5 +21,10 @@ pub(super) const 一覧: [寄せられない文字列; 2] = [
             "xtask/src/material_check/surface_layer_draw/world_source.rs",
         ],
         寄せられない理由: 書き手が非公開,
+    },
+    寄せられない文字列 {
+        文字列: "設計解釈マーカー.rs",
+        現れてよい場所一覧: &["crates/blitz_design/src/lib.rs", "xtask/src/conform/design_ontology/marker_canonical_file.rs"],
+        寄せられない理由: 正本のファイルを名指す検査,
     },
 ];

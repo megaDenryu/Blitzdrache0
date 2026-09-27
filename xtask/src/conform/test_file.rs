@@ -7,7 +7,7 @@ use std::path::Path;
 
 use super::allow_lint::パスがテストまたは例か;
 
-/// ディレクトリと`_tests.rs`に加えて、モジュールの試験だけを収めた`tests.rs`も試験のためのファイルとみなす。
+/// ディレクトリと`_tests.rs`と`〜の試験.rs`に加えて、モジュールの試験だけを収めた`tests.rs`も試験のためのファイルとみなす。
 pub fn 試験のためのファイルか(パス: &Path) -> bool {
     パスがテストまたは例か(パス) || パス.file_name().is_some_and(|名前| 名前 == "tests.rs")
 }
@@ -20,6 +20,7 @@ mod tests {
     fn 試験のためのファイルを見分ける() {
         assert!(試験のためのファイルか(Path::new("xtask/src/conform/free_function_whole_type/tests.rs")));
         assert!(試験のためのファイルか(Path::new("crates/blitz_render/src/renderer/origin_tests.rs")));
+        assert!(試験のためのファイルか(Path::new("xtask/src/design_model/extract/表記が名指す型の試験.rs")));
         assert!(試験のためのファイルか(Path::new("crates/editor_server/tests/common/mod.rs")));
         assert!(!試験のためのファイルか(Path::new("crates/blitz_app/src/app/mod.rs")));
     }

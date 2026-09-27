@@ -18,9 +18,9 @@ use super::旅行者の歩行を数え上げる領域;
 use crate::tests::behavior_identity::現在地のビット表現;
 use crate::tests::behavior_landmark::{広場の内側と同じマスに載る現在地, 広場の内側の現在地, 広場の東の端の現在地};
 use crate::tests::behavior_naming::{旅行者の出来事を名指す, 旅行者の意図を名指す, 旅行者の現在地を名指す, 歩行遷移の規則を名指す};
-use crate::traveler::{旅行者の出来事, 旅行者の意図};
 use crate::walking_direction::歩行方向;
 use crate::居場所::旅行者の居場所;
+use crate::旅行者::{旅行者の出来事, 旅行者の意図};
 
 impl 有限に数え上げられる領域 for 旅行者の歩行を数え上げる領域 {
     type 状態 = 旅行者の居場所;

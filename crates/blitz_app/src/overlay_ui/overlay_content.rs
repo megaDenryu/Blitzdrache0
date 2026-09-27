@@ -5,7 +5,7 @@
 
 use super::game_screen::ゲーム画面の表示内容;
 use super::stats::開発UI統計;
-use super::{game_instrument_panel, game_screen, panel};
+use super::{game_screen, panel, ゲームの計器の面};
 use crate::world_execution::contract::移動とカメラの計器;
 
 pub(crate) struct 画面へ重ねる内容 {
@@ -28,7 +28,7 @@ impl 画面へ重ねる内容 {
         if 開発パネルを表示するか {
             panel::内容を描く(ctx, &self.開発パネルの統計, 露出, ブレンド);
             if let Some(計器) = &self.移動とカメラの計器 {
-                game_instrument_panel::内容を描く(ctx, 計器);
+                ゲームの計器の面::内容を描く(ctx, 計器);
             }
         }
     }

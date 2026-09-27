@@ -18,7 +18,7 @@ pub struct 設計解釈マーカーの実装 {
 }
 
 impl 設計解釈マーカーの実装 {
-    /// 正本 `blitz_design` の `marker.rs` が持つ、完全に修飾した標準の `std::result::Result<T, E>` への `M結果` の包括の実装か。標準の `Result` は `crates` 配下に定義を持たないため、この1箇所だけを定義をたどらない特例にする。
+    /// 正本 `blitz_design` の `設計解釈マーカー.rs` が持つ、完全に修飾した標準の `std::result::Result<T, E>` への `M結果` の包括の実装か。標準の `Result` は `crates` 配下に定義を持たないため、この1箇所だけを定義をたどらない特例にする。
     /// 対象の型の表記が `std::result::Result` で始まることで判定するのは、型名が `Result` であることや正本のファイルにあることでは、同名の独自の型(正本のファイルに置いたものを含む)が特例を偽装できるためである。
     pub fn 正本の標準resultへの包括の実装か(&self) -> bool {
         self.マーカー == 設計解釈マーカー::M結果 && 設計解釈マーカーの正本のファイルか(&self.パス) && (self.対象の型の表記 == "std::result::Result" || self.対象の型の表記.starts_with("std::result::Result<"))

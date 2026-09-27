@@ -12,9 +12,13 @@ pub fn 不正allowを含むか(行: &str) -> Option<&'static str> {
     検出パターン一覧.iter().find(|パターン| 行.contains(*パターン)).copied()
 }
 
+// 試験だけを収めたファイルの名前の末尾。英語の名前の`_tests.rs`と、リポジトリが試験のファイルへ付ける日本語の名前の`〜の試験.rs`の2つである。
+// 日本語の側を認めるのは、`_tests.rs`を`〜の試験.rs`へ改めたファイルが、名前を変えただけで試験の外として扱われないためである。
+const 試験のファイル名の末尾一覧: [&str; 2] = ["_tests.rs", "の試験.rs"];
+
 pub fn パスがテストまたは例か(パス: &Path) -> bool {
     let ディレクトリで許容されるか = パス.components().any(|部品| matches!(部品, Component::Normal(名前) if 名前 == "tests" || 名前 == "examples"));
-    let ファイル名で許容されるか = パス.file_name().and_then(|名前| 名前.to_str()).is_some_and(|名前| 名前.ends_with("_tests.rs"));
+    let ファイル名で許容されるか = パス.file_name().and_then(|名前| 名前.to_str()).is_some_and(|名前| 試験のファイル名の末尾一覧.iter().any(|末尾| 名前.ends_with(末尾)));
     ディレクトリで許容されるか || ファイル名で許容されるか
 }
 
@@ -61,5 +65,20 @@ mod tests {
     fn _testsで終わるファイル名なら許容する() {
         let 内容 = "#![allow(clippy::expect_used)]";
         assert!(不正なallowの緩和を検査する(Path::new("crates/foo/barrier_derivation/barrier_derivation_tests.rs"), 内容).is_empty());
+    }
+
+    #[test]
+    fn の試験で終わるファイル名なら許容する() {
+        let 内容 = "#![allow(clippy::unwrap_used)]";
+        assert!(不正なallowの緩和を検査する(Path::new("crates/blitz_app/src/world_execution/刻み結果の試験.rs"), 内容).is_empty());
+    }
+
+    // 反証: 名前の途中に「試験」を含むだけのファイルまで許すと、本番のファイルの緩和が試験の名目で通る。
+    #[test]
+    fn 試験を名前の途中に含むだけのファイルは違反() {
+        let 内容 = "#![allow(clippy::unwrap_used)]";
+        for パス in ["crates/foo/src/試験の手順.rs", "crates/foo/src/試験.rs", "crates/foo/src/受理の試験の材料.rs"] {
+            assert_eq!(不正なallowの緩和を検査する(Path::new(パス), 内容).len(), 1, "{パス}");
+        }
     }
 }

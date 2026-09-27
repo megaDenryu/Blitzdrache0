@@ -3,8 +3,8 @@
 use blitz_design::{M不変データ, M値オブジェクト};
 use blitz_math::大域ワールド位置;
 
-use super::movement_observation::移動の観測;
 use super::movement_state::移動状態;
+use super::観測::移動の観測;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 一刻みの移動の結果 {

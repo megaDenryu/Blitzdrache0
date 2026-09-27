@@ -2,7 +2,7 @@
 
 use super::test_support::{分類の事実の表記一覧, 原文から設計関係グラフと抽出の欠けを組む, 抽出できなかった理由の説明一覧, 関係の表記一覧};
 
-const 正本のパス: &str = "crates/blitz_design/src/marker.rs";
+const 正本のパス: &str = "crates/blitz_design/src/設計解釈マーカー.rs";
 
 #[test]
 fn 正本のトレイトの宣言の上位トレイトから上位トレイトの宣言の事実が出る() {
@@ -10,10 +10,10 @@ fn 正本のトレイトの宣言の上位トレイトから上位トレイト�
     let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[(正本のパス, 原文)]);
     let 表記一覧 = 分類の事実の表記一覧(&結果);
     for 期待 in [
-        "blitz_design::marker::M不変データ は Clone を上位トレイトに持つ",
-        "blitz_design::marker::M状態 は blitz_design::marker::M不変データ を上位トレイトに持つ",
-        "blitz_design::marker::M値オブジェクト は blitz_design::marker::M不変データ を上位トレイトに持つ",
-        "blitz_design::marker::M値オブジェクト は PartialEq を上位トレイトに持つ",
+        "blitz_design::設計解釈マーカー::M不変データ は Clone を上位トレイトに持つ",
+        "blitz_design::設計解釈マーカー::M状態 は blitz_design::設計解釈マーカー::M不変データ を上位トレイトに持つ",
+        "blitz_design::設計解釈マーカー::M値オブジェクト は blitz_design::設計解釈マーカー::M不変データ を上位トレイトに持つ",
+        "blitz_design::設計解釈マーカー::M値オブジェクト は PartialEq を上位トレイトに持つ",
     ] {
         assert!(表記一覧.contains(&期待.to_string()), "{期待} が無い: {表記一覧:?}");
     }
@@ -30,7 +30,7 @@ fn 上位トレイトを持たないマーカーの宣言からは事実が出�
 fn 正本の外でマーカーを継ぐトレイトの宣言からも事実が出る() {
     let 原文 = "pub trait M旅程: M状態 {}\n";
     let 表記一覧 = 分類の事実の表記一覧(&原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_esca/src/ontology.rs", 原文)]));
-    assert_eq!(表記一覧, vec!["blitz_esca::ontology::M旅程 は blitz_design::marker::M状態 を上位トレイトに持つ".to_string()]);
+    assert_eq!(表記一覧, vec!["blitz_esca::ontology::M旅程 は blitz_design::設計解釈マーカー::M状態 を上位トレイトに持つ".to_string()]);
 }
 
 #[test]

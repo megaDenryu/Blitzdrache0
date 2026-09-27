@@ -15,7 +15,7 @@ use crate::design_model::{
 
 use super::{構造の法則の命題の集合を組む, 設計関係へ参加する法則を組む};
 
-const 型のモジュール: &str = "blitz_esca::traveler";
+const 型のモジュール: &str = "blitz_esca::旅行者";
 
 /// `旅行者` が `Mエンティティ` を実装し、識別するの辺を持つかどうかだけが違うグラフ。
 fn エンティティを1件持つグラフ(識別するの辺を持つか: bool) -> 設計関係グラフ {
@@ -25,7 +25,7 @@ fn エンティティを1件持つグラフ(識別するの辺を持つか: bool
         型: 旅行者.clone(),
         マーカー: 設計解釈マーカーの参照("Mエンティティ"),
         出どころ: 事実の出どころ {
-            パス: PathBuf::from("crates/blitz_esca/src/traveler.rs"),
+            パス: PathBuf::from("crates/blitz_esca/src/旅行者.rs"),
             行番号: 1,
         },
     };
@@ -34,7 +34,7 @@ fn エンティティを1件持つグラフ(識別するの辺を持つか: bool
         種類: 設計関係の種類::識別する,
         目的語: 旅行者,
         出どころ: 抽出の出どころ {
-            パス: PathBuf::from("crates/blitz_esca/src/traveler.rs"),
+            パス: PathBuf::from("crates/blitz_esca/src/旅行者.rs"),
             行番号: 2,
             構文: 抽出元の構文::エンティティの識別子の関連型,
         },
