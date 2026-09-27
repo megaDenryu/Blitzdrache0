@@ -27,6 +27,8 @@ mod supertrait;
 mod trait_declaration;
 mod unextracted_line;
 mod wrapped_function_path;
+#[path = "extract/折れた役割の宣言.rs"]
+mod 折れた役割の宣言;
 #[path = "extract/本番のソース.rs"]
 mod 本番のソース;
 #[path = "extract/本番の行.rs"]

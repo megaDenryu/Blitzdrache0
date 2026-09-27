@@ -20,7 +20,7 @@
 //! `#[path = "..."] mod` は、物理と論理のモジュール構造の一致を確かめるため、型の同一性の推定をそのまま使える(日本語のモジュールは rustc が E0754 で既定の探索を拒むため、この属性を必ず持つ)。
 
 mod declaration_brackets;
-mod declaration_prefix;
+pub(crate) mod declaration_prefix;
 #[cfg(test)]
 mod exclusive_classification_tests;
 #[cfg(test)]
@@ -60,7 +60,7 @@ mod pure_data_definition_law;
 #[cfg(test)]
 mod result_marker_form_tests;
 mod scan_entry;
-mod statement_span;
+pub(crate) mod statement_span;
 mod syntax_assertion;
 pub(crate) mod syntax_checker;
 pub(crate) mod syntax_patterns;
@@ -74,6 +74,9 @@ mod use_group_expansion;
 mod use_resolution;
 #[cfg(test)]
 mod use_resolution_tests;
+#[cfg(test)]
+#[path = "design_ontology/再公開と相対の取り込みの試験.rs"]
+mod 再公開と相対の取り込みの試験;
 #[path = "design_ontology/分類の排他と網羅の検査.rs"]
 mod 分類の排他と網羅の検査;
 #[cfg(test)]
