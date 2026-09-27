@@ -6,7 +6,7 @@
 
 #![allow(clippy::expect_used)]
 
-use blitz_design::{Mイベント, Mコマンド, M不変データ, M状態};
+use blitz_design::{Mイベント, Mコマンド, M不変データ, M状態, M遷移が受け取る命令};
 
 use super::behavior_bits::単精度のビットの並び;
 use super::地点と経路の試料::{北の真ん中の辺, 区域の一辺, 南の真ん中の辺, 東の真ん中の辺, 正方形の区域, 西の真ん中の辺, 通り口};
@@ -51,6 +51,7 @@ pub enum 旅のコマンド {
 
 impl M不変データ for 旅のコマンド {}
 impl Mコマンド for 旅のコマンド {}
+impl M遷移が受け取る命令 for 旅のコマンド {}
 
 /// 領域の出来事。開閉の出来事か旅行者の出来事である。
 #[derive(Debug, Clone, PartialEq, Eq)]
