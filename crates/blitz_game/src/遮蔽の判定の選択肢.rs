@@ -1,6 +1,6 @@
 //! 遮蔽の判定: カメラの遮蔽と復帰がその描画で表示距離をどう決めたかの選択肢。計器が読み、表示距離の決定と一緒に運ぶ。
 
-use blitz_design::{M不変データ, M観測};
+use blitz_design::{M不変データ, M値オブジェクト, M観測};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum 遮蔽の判定 {
@@ -10,4 +10,5 @@ pub enum 遮蔽の判定 {
 }
 
 impl M不変データ for 遮蔽の判定 {}
+impl M値オブジェクト for 遮蔽の判定 {}
 impl M観測 for 遮蔽の判定 {}
