@@ -6,9 +6,9 @@
 use blitz_math::メートル;
 
 use super::一つの区域の試料::{現在地, 経過, 長方形の端};
-use crate::ontology::遷移成功結果;
 use crate::walking_direction::歩行方向;
 use crate::旅行者::{旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則};
+use blitz_design::遷移成功結果;
 
 // 境界に届かない、東西と南北に2000メートルの広場。
 fn 広い広場() -> 長方形の端 {
