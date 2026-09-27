@@ -10,7 +10,7 @@ mod 下への探り;
 #[path = "移動/世界の軸の倒し量.rs"]
 mod 世界の軸の倒し量;
 #[path = "移動/動き方.rs"]
-pub(crate) mod 動き方;
+mod 動き方;
 #[path = "移動/問い合わせの数.rs"]
 mod 問い合わせの数;
 #[path = "移動/掃引と滑り.rs"]
@@ -47,14 +47,14 @@ mod 段差を越える試験;
 #[path = "移動/滑りの答えの型.rs"]
 mod 滑りの答えの型;
 #[path = "移動/移動の入力.rs"]
-pub(crate) mod 移動の入力;
+mod 移動の入力;
 #[path = "移動/移動の結果.rs"]
 mod 移動の結果;
 #[cfg(test)]
 #[path = "移動/稜を越える試験.rs"]
 mod 稜を越える試験;
 #[path = "移動/胴体の移動の規則.rs"]
-pub(crate) mod 胴体の移動の規則;
+mod 胴体の移動の規則;
 #[cfg(test)]
 #[path = "移動/胴体の移動の試験.rs"]
 mod 胴体の移動の試験;
@@ -64,7 +64,7 @@ mod 胴体の移動の試験の助け;
 #[path = "移動/落下とジャンプ.rs"]
 mod 落下とジャンプ;
 #[path = "移動/観測.rs"]
-pub(crate) mod 観測;
+mod 観測;
 #[path = "移動/速さ.rs"]
 mod 速さ;
 #[path = "移動/速度.rs"]

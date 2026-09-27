@@ -9,7 +9,7 @@
 
 use blitz_design::{Mコマンドで決まる遷移関数, M不変データ, M値オブジェクト, M状態};
 
-use crate::操作意図の命令::進行::進行の操作;
+use crate::操作意図の命令::進行の操作;
 
 /// ゲームの進行がどの段階にあるか。`終了確認中`は終了してよいかを尋ねている段階である。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

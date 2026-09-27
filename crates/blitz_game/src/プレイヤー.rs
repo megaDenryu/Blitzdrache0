@@ -11,10 +11,10 @@ use blitz_math::大域メートル;
 use crate::世界の形::{世界の形を尋ねる口, 失敗しない代表の口};
 use crate::位置と向き::プレイヤーの位置と向き;
 use crate::向いている方位角::動く個体が向いている方位角;
-use crate::移動::動き方::移動状態;
-use crate::移動::移動の入力::一刻みの移動の入力;
-use crate::移動::胴体の移動の規則::胴体の移動;
-use crate::移動::観測::移動の観測;
+use crate::移動::一刻みの移動の入力;
+use crate::移動::移動の観測;
+use crate::移動::移動状態;
+use crate::移動::胴体の移動;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct プレイヤーの状態 {
