@@ -6,8 +6,8 @@ use super::out_of_range_syntax::保証範囲の外の構文;
 use super::test_support::{原文から設計関係グラフと抽出の欠けを組む, 役割の使用箇所の試験が使う型の定義, 抽出できなかった理由の説明一覧, 関係の表記一覧};
 use blitz_design_verification::型の表記を読めない理由;
 
-const 移動のパス: &str = "crates/blitz_esca/src/歩行の遷移.rs";
-const 前置き: &str = "blitz_esca::歩行の遷移::";
+const 移動のパス: &str = "crates/blitz_esca/src/traveler_movement.rs";
+const 前置き: &str = "blitz_esca::traveler_movement::";
 
 #[test]
 fn 型引数の可変長の配列は保持する関係と同じく剥がして中身へ関係を出す() {

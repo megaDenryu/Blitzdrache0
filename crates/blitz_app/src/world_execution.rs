@@ -50,6 +50,7 @@ mod world_shape_port_tests;
 #[path = "world_execution/カメラの配線.rs"]
 mod カメラの配線;
 #[cfg(test)]
+#[allow(clippy::unwrap_used)]
 #[path = "world_execution/刻み結果の試験.rs"]
 mod 刻み結果の試験;
 #[path = "world_execution/固定刻みの入口.rs"]
