@@ -58,7 +58,7 @@ mod 固定刻みの入口;
 #[path = "world_execution/観測の記録.rs"]
 mod 観測の記録;
 
-pub(crate) use step_seconds::ゲーム更新の一刻みの秒;
+pub(crate) use step_seconds::ゲーム更新の刻みの長さ;
 
 use blitz_engine::height_field::高さ場の読み口;
 
