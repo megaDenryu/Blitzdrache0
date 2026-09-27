@@ -7,7 +7,10 @@ use super::entry::コマンド項目;
 use crate::verify::消さずに一覧だけ出す旗;
 
 pub(super) const 一覧: &[コマンド項目] = &[
-    コマンド項目::引数なしで生成する("検証の標準列", "  verify           検証の標準列 (conform -> graphite-check -> fmt --check -> check -> clippy -D warnings -> test) を実行する"),
+    コマンド項目::引数なしで生成する(
+        "検証の標準列",
+        "  verify           検証の標準列 (conform -> design-verify -> graphite-check -> fmt --check -> check -> clippy -D warnings -> test) を実行する",
+    ),
     コマンド項目::引数なしで生成する(
         "規約適合の機械検査",
         "  conform          規約適合の機械検査 (100行制限/禁止文字列/不正allow/依存白リスト/参照パス実在/節参照実在/vulkan配下のDrop実装禁止)",
