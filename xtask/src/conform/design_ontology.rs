@@ -74,6 +74,13 @@ mod use_group_expansion;
 mod use_resolution;
 #[cfg(test)]
 mod use_resolution_tests;
+#[path = "design_ontology/コマンドだけを並べた引数オブジェクトの検査.rs"]
+mod コマンドだけを並べた引数オブジェクトの検査;
+#[cfg(test)]
+#[path = "design_ontology/コマンドだけを並べた引数オブジェクトの検査の試験.rs"]
+mod コマンドだけを並べた引数オブジェクトの検査の試験;
+#[path = "design_ontology/フィールドの行.rs"]
+mod フィールドの行;
 #[cfg(test)]
 #[path = "design_ontology/再公開と相対の取り込みの試験.rs"]
 mod 再公開と相対の取り込みの試験;
@@ -84,6 +91,8 @@ mod 命令の組の検査;
 #[cfg(test)]
 #[path = "design_ontology/命令の組の検査の試験.rs"]
 mod 命令の組の検査の試験;
+#[path = "design_ontology/構造体のフィールドの読み取り.rs"]
+mod 構造体のフィールドの読み取り;
 #[cfg(test)]
 #[path = "design_ontology/生成物の中の実装の置き場の試験.rs"]
 mod 生成物の中の実装の置き場の試験;
