@@ -7,16 +7,16 @@ use super::動き方::移動状態;
 use super::観測::移動の観測;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct 一刻みの移動の結果 {
+pub struct 胴体の移動の結果 {
     足元: 大域ワールド位置,
     移動状態: 移動状態,
     観測: 移動の観測,
 }
 
-impl M不変データ for 一刻みの移動の結果 {}
-impl M値オブジェクト for 一刻みの移動の結果 {}
+impl M不変データ for 胴体の移動の結果 {}
+impl M値オブジェクト for 胴体の移動の結果 {}
 
-impl 一刻みの移動の結果 {
+impl 胴体の移動の結果 {
     pub(crate) fn 生成する(足元: 大域ワールド位置, 移動状態: 移動状態, 観測: 移動の観測) -> Self {
         Self { 足元, 移動状態, 観測 }
     }
