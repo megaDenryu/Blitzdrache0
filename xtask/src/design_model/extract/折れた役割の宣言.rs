@@ -3,10 +3,11 @@
 //!
 //! 関数の役割の宣言は型引数が6つあり、日本語の識別子は表示の幅を2つ使うため、宣言の1行はこの幅へ容易に届く。
 //! 1行しか読まないと、折れた正当な宣言を「右辺が役割の生成する呼び出しでない」として落とし、関係を落とした抽出の欠落になる。
-//! 繋ぐのは `const` の文だけである。役割の宣言の正規形は `const _: 役割<..> = 役割::生成する(..);` であり、他の位置(戻り値の型・フィールドの型注釈)は
+//! 繋ぐのは `const 名前: 型 = ..` の定数の宣言だけである(`const fn` と `const { .. }` のブロックは繋がない)。役割の宣言の正規形は `const _: 役割<..> = 役割::生成する(..);` であり、他の位置(戻り値の型・フィールドの型注釈)は
 //! 繋いでも右辺を持たないため、同じ行の読み方で落ちる。文の続きの行は同じ文の一部であり、別の使用箇所として読まない。
 
 use crate::conform::design_ontology::declaration_prefix::属性と可視性を読み飛ばす;
+use crate::conform::design_ontology::identifier_boundary::識別子の文字か;
 use crate::conform::design_ontology::statement_span::セミコロンまで繋いだ本文;
 
 /// 複数の行へ折れた `const` の文を1行へ繋いだもの。
@@ -20,7 +21,7 @@ impl 折れた役割の宣言 {
     /// ファイルの最後まで `;` が現れない文も無しであり、そのときは行の読み方が書き出しの1行を読んで落とす(黙って読み飛ばさない)。
     pub fn 書き出しの行から繋ぐ(行一覧: &[String], 添字: usize) -> Option<Self> {
         let 書き出し = 行一覧.get(添字)?;
-        if !属性と可視性を読み飛ばす(書き出し.trim()).starts_with("const ") || 書き出し.contains(';') {
+        if !定数の宣言の書き出しか(書き出し) || 書き出し.contains(';') {
             return None;
         }
         let 続き = 行一覧.get(添字 + 1..).unwrap_or_default();
@@ -28,4 +29,13 @@ impl 折れた役割の宣言 {
         let 行の数 = 1 + 続き.iter().position(|行| 行.contains(';'))? + 1;
         Some(Self { 本文, 行の数 })
     }
+}
+
+// その行が `const 名前: 型 = ...` の定数の宣言を書き出すか。`const fn` と `const { .. }` のブロックは定数の宣言でなく、繋がない。
+fn 定数の宣言の書き出しか(行: &str) -> bool {
+    let Some(名前から後ろ) = 属性と可視性を読み飛ばす(行.trim()).strip_prefix("const ") else {
+        return false;
+    };
+    let 名前の後ろ = 名前から後ろ.trim_start().trim_start_matches(|文字: char| 文字 == '_' || 識別子の文字か(文字));
+    名前の後ろ.len() < 名前から後ろ.trim_start().len() && 名前の後ろ.trim_start().starts_with(':')
 }
