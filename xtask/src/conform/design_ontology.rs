@@ -89,6 +89,9 @@ mod 共有の指し先の検査の試験;
 #[path = "design_ontology/共有の指し先の表記.rs"]
 mod 共有の指し先の表記;
 #[cfg(test)]
+#[path = "design_ontology/共有の指し先の表記の試験.rs"]
+mod 共有の指し先の表記の試験;
+#[cfg(test)]
 #[path = "design_ontology/再公開と相対の取り込みの試験.rs"]
 mod 再公開と相対の取り込みの試験;
 #[path = "design_ontology/分類の排他と網羅の検査.rs"]
