@@ -7,7 +7,8 @@ use blitz_design::{MParameter, M不変データ};
 use blitz_math::秒;
 
 use crate::前へ進む向き::前へ進む向きの方位角;
-use crate::操作意図の命令::{ジャンプの操作, 水平移動の操作};
+use crate::操作意図の命令::ジャンプ::ジャンプの操作;
+use crate::操作意図の命令::水平移動::水平移動の操作;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 一刻みの移動の入力 {
