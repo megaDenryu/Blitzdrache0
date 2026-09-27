@@ -7,8 +7,8 @@
 use blitz_design::{Mコマンド, M不変データ, M解釈関数};
 
 use super::両軸::両軸の倒し量;
-use crate::confirmed_input::確定済みの操作入力;
 use crate::operation_axis::操作軸の倒し量;
+use crate::確定済みの入力::確定済みの操作入力;
 
 /// 胴体を水平にどう動かすかの命令。歩くと走るは両軸の倒し量を持つ。
 #[derive(Debug, Clone, Copy, PartialEq)]

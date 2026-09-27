@@ -11,7 +11,7 @@ use super::ゲーム配線;
 use crate::app::固定刻みの番号;
 use crate::overlay_ui::ゲーム画面の表示内容;
 use crate::world_execution::contract::ゲーム進行の要約;
-use crate::world_execution::movement_record::移動の観測の記録;
+use crate::world_execution::観測の記録::移動の観測の記録;
 
 impl ゲーム配線 {
     pub(in crate::world_execution) fn 刻み境界で確定したプレイヤーの大域位置(&self) -> Option<大域ワールド位置> {

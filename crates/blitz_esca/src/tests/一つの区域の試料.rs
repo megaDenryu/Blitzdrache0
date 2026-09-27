@@ -9,12 +9,12 @@ use blitz_math::{メートル, 秒};
 
 use crate::elapsed_time::経過時間;
 use crate::transition_parameter::遷移パラメータ;
-use crate::traveler::{旅行者の現在地, 歩行の規則};
-use crate::traveler_movement::歩行遷移の規則;
 use crate::地点と経路::地点と経路の図式::地点Id;
 use crate::地点と経路::{区域, 区域の指定, 区域の空間制約, 区域の頂点, 地点, 地点と経路のグラフ, 地点と経路の図式, 経路の開閉の規則};
 use crate::居場所::旅行者の居場所;
+use crate::旅行者::{旅行者の現在地, 歩行の規則};
 use crate::時刻::世界の時刻;
+use crate::歩行の遷移::歩行遷移の規則;
 
 /// 長方形の東と北の最小と最大。
 pub struct 長方形の端 {

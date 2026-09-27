@@ -1,12 +1,12 @@
 //! カメラの遮蔽の検査。平面と段と壁の世界で、遮蔽があれば表示距離が縮むこと・縮む向きが即時であること・
 //! 評価できない描画は基準を保つこと・下限を割らないことを固定する。復帰とズームの検査は `camera_recovery_tests` にある。
-//! 構図は `camera_occlusion_test_fixture` を見る。
+//! 構図は `遮蔽の試験の構図` を見る。
 
 use blitz_math::{メートル, 大域メートル};
 
-use crate::camera_occlusion_test_fixture::{入力, 南4メートルに壁のある世界, 壁の無い世界, 描いた, 決める};
 use crate::occlusion_verdict::遮蔽の判定;
 use crate::previous_display_distance::前の描画の表示距離;
+use crate::遮蔽の試験の構図::{入力, 南4メートルに壁のある世界, 壁の無い世界, 描いた, 決める};
 
 /// 反証: 遮蔽で表示距離を縮めなければ、視点が壁の向こうへ出て地形や建物がカメラを覆う。
 #[test]

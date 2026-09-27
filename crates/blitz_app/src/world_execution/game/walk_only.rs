@@ -14,10 +14,10 @@ use blitz_engine::height_field::高さ場の読み口;
 use blitz_game::{プレイヤーの位置と向き, 一刻みの移動の入力, 歩くだけのゲームの状態, 移動状態};
 use blitz_math::大域ワールド位置;
 
-use super::fox_tour::facing::キツネが読込時に向いている方位角;
+use super::キツネの場所巡り::facing::キツネが読込時に向いている方位角;
 use crate::world_execution::contract::{世界の形を尋ねる口の実装エラー, 読込済みチャンクの形の出どころ};
-use crate::world_execution::movement_record::移動の観測の記録;
 use crate::world_execution::world_shape_port::エンジンの問い合わせを包んだ世界の形を尋ねる口;
+use crate::world_execution::観測の記録::移動の観測の記録;
 
 pub(in crate::world_execution) struct 歩くだけの配線 {
     状態: 歩くだけのゲームの状態,

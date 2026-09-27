@@ -14,7 +14,6 @@
 //! 起動時と必要時の高さ場と動く個体の宣言は`height_field`、終了時の要約は`draw`と同じ抽出の面に置く。
 
 mod camera_system;
-mod camera_wiring;
 #[cfg(test)]
 mod camera_wiring_test_ports;
 #[cfg(test)]
@@ -28,7 +27,6 @@ mod game;
 mod ground_height;
 mod height_field;
 mod instrument;
-mod movement_record;
 #[cfg(test)]
 mod no_game_launch_tests;
 mod query_count_distribution;
@@ -39,27 +37,33 @@ mod step_time_distribution;
 #[cfg(test)]
 mod step_time_distribution_tests;
 mod summary;
-mod tick;
 #[cfg(test)]
 mod tick_confirmation_tests;
 #[cfg(test)]
 mod tick_input_tests;
-#[cfg(test)]
-mod tick_result_tests;
 mod tick_stage;
 #[cfg(test)]
 mod tick_stage_tests;
 mod world_shape_port;
 #[cfg(test)]
 mod world_shape_port_tests;
+#[path = "world_execution/カメラの配線.rs"]
+mod カメラの配線;
+#[cfg(test)]
+#[path = "world_execution/刻み結果の試験.rs"]
+mod 刻み結果の試験;
+#[path = "world_execution/固定刻みの入口.rs"]
+mod 固定刻みの入口;
+#[path = "world_execution/観測の記録.rs"]
+mod 観測の記録;
 
 pub(crate) use step_seconds::ゲーム更新の一刻みの秒;
 
 use blitz_engine::height_field::高さ場の読み口;
 
-use camera_wiring::プレイヤーカメラの配線;
 use entity_ledger::ゲーム状態の台帳;
-use movement_record::移動の観測の記録;
+use カメラの配線::プレイヤーカメラの配線;
+use 観測の記録::移動の観測の記録;
 
 use crate::input::ゲーム操作の適用の方式;
 

@@ -5,7 +5,7 @@
 
 use blitz_design::{Mコマンド, M不変データ, M解釈関数};
 
-use crate::confirmed_input::確定済みの操作入力;
+use crate::確定済みの入力::確定済みの操作入力;
 
 /// 進行段階を動かす命令。キャンセルするは終了確認を開くか閉じ、決定するは始めるか終了を決める。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

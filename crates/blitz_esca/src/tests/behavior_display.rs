@@ -6,7 +6,7 @@
 
 use blitz_math::メートル;
 
-use crate::traveler::旅行者の現在地;
+use crate::旅行者::旅行者の現在地;
 
 /// 現在地を粗く表記するときのマスの一辺。位置をこの一辺で割った番号が表記に入る。
 #[derive(Debug, Clone, Copy, PartialEq)]

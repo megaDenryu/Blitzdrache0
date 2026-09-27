@@ -5,9 +5,7 @@
 use blitz_design::{MParameter, M不変データ, M値オブジェクト};
 
 use super::経路の開閉と旅行者の歩行の進行;
-use crate::traveler::{旅行者の出来事, 旅行者の意図, 歩行の規則};
 use crate::traveler_error::歩行の失敗;
-use crate::traveler_movement::歩行遷移の規則;
 use crate::地点と経路::指定の失敗::経路の指定の失敗;
 use crate::地点と経路::空間制約::区域の空間制約;
 use crate::地点と経路::開閉の出来事::経路の開閉の出来事;
@@ -15,6 +13,8 @@ use crate::地点と経路::開閉の命令::経路の開閉の命令;
 use crate::地点と経路::開閉の状態::経路の開閉の状態;
 use crate::地点と経路::開閉の規則::経路の開閉の規則;
 use crate::居場所::旅行者の居場所;
+use crate::旅行者::{旅行者の出来事, 旅行者の意図, 歩行の規則};
+use crate::歩行の遷移::歩行遷移の規則;
 
 /// 経路の開閉と旅行者の歩行の進行を始めるための指定。開閉の状態は、その規則から作ったものを渡す。
 #[derive(Clone)]

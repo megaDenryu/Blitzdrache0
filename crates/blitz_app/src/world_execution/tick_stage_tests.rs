@@ -14,8 +14,8 @@ use blitz_math::ラジアン;
 
 use super::contract::{刻み入力, 読込済みチャンクの形の出どころ};
 use super::game::{この刻みで規則が行うこと, ゲーム配線};
-use super::movement_record::移動の観測の記録;
 use super::世界実行;
+use super::観測の記録::移動の観測の記録;
 use crate::app::固定刻みの番号;
 use crate::cli::{ゲーム操作の出どころ, 起動モード, 遊ぶゲームの指定};
 use crate::input::刻みごとの操作入力;

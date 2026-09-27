@@ -3,7 +3,7 @@
 
 use blitz_design::{Mコマンド, M不変データ, M解釈関数};
 
-use crate::confirmed_input::確定済みの操作入力;
+use crate::確定済みの入力::確定済みの操作入力;
 
 /// 胴体をジャンプさせるかの命令。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

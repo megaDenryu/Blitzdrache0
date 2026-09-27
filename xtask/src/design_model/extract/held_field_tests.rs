@@ -3,14 +3,14 @@
 
 use super::test_support::{原文から設計関係グラフと抽出の欠けを組む, 抽出できなかった理由の説明一覧, 概念の表記一覧, 関係の表記一覧};
 
-const 旅行者のパス: &str = "crates/blitz_esca/src/traveler.rs";
+const 旅行者のパス: &str = "crates/blitz_esca/src/旅行者.rs";
 
 #[test]
 fn 構造体のフィールドから保持する関係が出てプリミティブは出ない() {
     let 原文 = "pub struct 旅行者ID {\n    値: u64,\n}\n\npub struct 旅行者の現在地 {\n    東: f32,\n}\n\npub struct 旅行者 {\n    識別子: 旅行者ID,\n    現在地: 旅行者の現在地,\n    歩数: u32,\n}\n";
     let 表記一覧 = 関係の表記一覧(&原文から設計関係グラフと抽出の欠けを組む(&[(旅行者のパス, 原文)]));
-    assert!(表記一覧.contains(&"blitz_esca::traveler::旅行者 保持する blitz_esca::traveler::旅行者ID".to_string()), "{表記一覧:?}");
-    assert!(表記一覧.contains(&"blitz_esca::traveler::旅行者 保持する blitz_esca::traveler::旅行者の現在地".to_string()), "{表記一覧:?}");
+    assert!(表記一覧.contains(&"blitz_esca::旅行者::旅行者 保持する blitz_esca::旅行者::旅行者ID".to_string()), "{表記一覧:?}");
+    assert!(表記一覧.contains(&"blitz_esca::旅行者::旅行者 保持する blitz_esca::旅行者::旅行者の現在地".to_string()), "{表記一覧:?}");
     assert!(!表記一覧.iter().any(|表記| 表記.contains("u32") || 表記.contains("u64") || 表記.contains("f32")), "{表記一覧:?}");
 }
 
@@ -18,14 +18,14 @@ fn 構造体のフィールドから保持する関係が出てプリミティ�
 fn 外側の包みを剥がして中身へ保持する関係が出る() {
     let 原文 = "pub enum 旅行者の出来事 {\n    周囲を観察した,\n}\n\npub struct 旅程 {\n    通った道: Vec<旅行者の出来事>,\n}\n";
     let 表記一覧 = 関係の表記一覧(&原文から設計関係グラフと抽出の欠けを組む(&[(旅行者のパス, 原文)]));
-    assert!(表記一覧.contains(&"blitz_esca::traveler::旅程 保持する blitz_esca::traveler::旅行者の出来事".to_string()), "{表記一覧:?}");
+    assert!(表記一覧.contains(&"blitz_esca::旅行者::旅程 保持する blitz_esca::旅行者::旅行者の出来事".to_string()), "{表記一覧:?}");
 }
 
 #[test]
 fn 列挙の選択肢の名前付きの本体からも保持する関係が出る() {
     let 原文 = "pub struct 歩行方向 {\n    東: f32,\n}\n\npub enum 旅行者の意図 {\n    静止,\n    歩く { 方向: 歩行方向 },\n}\n";
     let 表記一覧 = 関係の表記一覧(&原文から設計関係グラフと抽出の欠けを組む(&[(旅行者のパス, 原文)]));
-    assert!(表記一覧.contains(&"blitz_esca::traveler::旅行者の意図 保持する blitz_esca::traveler::歩行方向".to_string()), "{表記一覧:?}");
+    assert!(表記一覧.contains(&"blitz_esca::旅行者::旅行者の意図 保持する blitz_esca::旅行者::歩行方向".to_string()), "{表記一覧:?}");
 }
 
 #[test]
@@ -59,7 +59,7 @@ fn タプル構造体の位置で並べたフィールドから保持する関�
     let 原文 = "pub struct 一辺の長さ {\n    値: f32,\n}\n\npub struct 現在地を名指すマスの一辺(一辺の長さ);\n";
     let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[(旅行者のパス, 原文)]);
     let 表記一覧 = 関係の表記一覧(&結果);
-    assert!(表記一覧.contains(&"blitz_esca::traveler::現在地を名指すマスの一辺 保持する blitz_esca::traveler::一辺の長さ".to_string()), "{表記一覧:?}");
+    assert!(表記一覧.contains(&"blitz_esca::旅行者::現在地を名指すマスの一辺 保持する blitz_esca::旅行者::一辺の長さ".to_string()), "{表記一覧:?}");
     assert!(!結果.関係を落とした抽出の欠落へ写す().在るか(), "{}", 結果.関係を落とした抽出の欠落へ写す().説明());
 }
 
@@ -103,7 +103,7 @@ fn 属性の行と選択肢の名前だけの行は欠落にも抽出できな�
 #[test]
 fn 定義をたどれない型は節点として残り抽出できなかった行として数える() {
     let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[(旅行者のパス, "pub struct 旅行者 {\n    現在地: 未知の型,\n}\n")]);
-    assert!(関係の表記一覧(&結果).contains(&"blitz_esca::traveler::旅行者 保持する 未知の型".to_string()), "{:?}", 関係の表記一覧(&結果));
+    assert!(関係の表記一覧(&結果).contains(&"blitz_esca::旅行者::旅行者 保持する 未知の型".to_string()), "{:?}", 関係の表記一覧(&結果));
     assert!(概念の表記一覧(&結果).contains(&"未知の型".to_string()), "{:?}", 概念の表記一覧(&結果));
     let 説明一覧 = 抽出できなかった理由の説明一覧(&結果);
     assert_eq!(説明一覧, vec!["`未知の型` の定義をたどれずモジュールパスを空にした".to_string()]);

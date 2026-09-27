@@ -16,9 +16,10 @@
 #![warn(missing_docs)]
 
 mod function_role;
-mod marker;
+#[path = "設計解釈マーカー.rs"]
+mod 設計解釈マーカー;
 
 pub use function_role::{M射影関数, M解釈関数};
-pub use marker::{
-    MOptions, MParameter, Mイベント, Mエンティティ, Mエンティティ識別子, Mコマンド, M不変エンティティ, M不変データ, M中間入力, M値オブジェクト, M可変エンティティ, M工程, M状態, M生入力, M結果, M規則, M観測, M解釈前の入力
+pub use 設計解釈マーカー::{
+    MOptions, MParameter, Mイベント, Mエンティティ, Mエンティティ識別子, Mコマンド, M不変エンティティ, M不変データ, M中間入力, M値オブジェクト, M可変エンティティ, M工程, M状態, M生入力, M結果, M規則, M観測, M解釈前の入力,
 };

@@ -11,12 +11,12 @@ use blitz_design::{M不変データ, M射影関数, M状態};
 
 use crate::ontology::{M遷移関数, 遷移失敗結果, 遷移成功結果};
 use crate::transition_parameter::遷移パラメータ;
-use crate::traveler::{旅行者の出来事, 旅行者の意図, 旅行者の現在地, 移動の変位};
 use crate::traveler_error::歩行の失敗;
-use crate::traveler_movement::{旅行者の描画位置, 歩行遷移の規則};
 use crate::walking_direction::歩行方向;
 use crate::地点と経路::区域の中の移動の型::区域の中の移動の指定;
 use crate::地点と経路::識別子::地点の識別子;
+use crate::旅行者::{旅行者の出来事, 旅行者の意図, 旅行者の現在地, 移動の変位};
+use crate::歩行の遷移::{旅行者の描画位置, 歩行遷移の規則};
 
 /// 旅行者がいる地点と、その地点の区域の中の現在地。
 #[derive(Debug, Clone, PartialEq)]

@@ -13,11 +13,11 @@
 use blitz_design::M工程;
 
 use crate::transition_parameter::遷移パラメータ;
-use crate::traveler_movement::歩行遷移の規則;
 use crate::地点と経路::指定の失敗::経路の指定の失敗;
 use crate::地点と経路::開閉の状態::経路の開閉の状態;
 use crate::地点と経路::開閉の規則::経路の開閉の規則;
 use crate::居場所::旅行者の居場所;
+use crate::歩行の遷移::歩行遷移の規則;
 
 #[path = "経路の開閉と旅行者の歩行/経路の開閉と旅行者の歩行の更新の型.rs"]
 mod 経路の開閉と旅行者の歩行の更新の型;

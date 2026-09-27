@@ -10,11 +10,11 @@
 use blitz_math::{メートル毎秒, 大域メートル};
 
 use super::一つの区域の試料::{一つの区域の広場, 現在地, 経過, 長方形の端};
-use crate::traveler::{旅行者の意図, 歩行の規則};
-use crate::traveler_input::キーボード歩行入力;
-use crate::traveler_movement::歩行遷移の規則;
 use crate::walking_direction::歩行方向;
+use crate::キーボードの入力::キーボード歩行入力;
 use crate::居場所::旅行者の居場所;
+use crate::旅行者::{旅行者の意図, 歩行の規則};
+use crate::歩行の遷移::歩行遷移の規則;
 
 const 越える長さの許容幅に対する比一覧: [f64; 7] = [0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0]; // 0.5・1・2倍に、その間と外側を足す
 const 座標の大きさ一覧: [f32; 2] = [100.0, 1000.0];

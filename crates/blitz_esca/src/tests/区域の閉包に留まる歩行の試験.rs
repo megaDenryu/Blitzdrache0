@@ -9,10 +9,10 @@
 use blitz_math::メートル毎秒;
 
 use super::一つの区域の試料::{一つの区域の広場, 現在地, 経過};
-use crate::traveler::{旅行者の出来事, 旅行者の意図, 歩行の規則};
-use crate::traveler_input::キーボード歩行入力;
 use crate::walking_direction::歩行方向;
+use crate::キーボードの入力::キーボード歩行入力;
 use crate::居場所::旅行者の居場所;
+use crate::旅行者::{旅行者の出来事, 旅行者の意図, 歩行の規則};
 
 const 原点: f32 = 1000.0; // 区域を置く座標の大きさ。境界の許容幅が約1ミリメートルになる
 const 速さ一覧: [f32; 4] = [0.37, 1.3, 3.7, 7.1];

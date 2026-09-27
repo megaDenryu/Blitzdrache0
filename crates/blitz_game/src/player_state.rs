@@ -11,8 +11,8 @@ use crate::movement::一刻みの移動の入力;
 use crate::movement::移動の観測;
 use crate::movement::移動状態;
 use crate::movement::胴体の移動;
-use crate::player_placement::プレイヤーの位置と向き;
 use crate::world_shape_port::世界の形を尋ねる口;
+use crate::位置と向き::プレイヤーの位置と向き;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct プレイヤーの状態 {

@@ -16,10 +16,10 @@ use super::behavior_landmark::広場の端のメートル;
 use super::behavior_naming::{旅行者の意図を名指す, 旅行者の現在地を名指す};
 use super::一つの区域の試料::{経過, 長方形の端};
 use crate::transition_parameter::遷移パラメータ;
-use crate::traveler::{旅行者の意図, 旅行者の現在地, 歩行の規則};
-use crate::traveler_movement::歩行遷移の規則;
 use crate::walking_direction::歩行方向;
 use crate::居場所::旅行者の居場所;
+use crate::旅行者::{旅行者の意図, 旅行者の現在地, 歩行の規則};
+use crate::歩行の遷移::歩行遷移の規則;
 
 // 1回の遷移に与える経過時間の秒数。標準の速さ3メートル毎秒との積が3メートルであり、広場の端の整数分の1になる。
 const 一回の遷移の秒数: f32 = 1.0;

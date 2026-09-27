@@ -7,12 +7,12 @@ use blitz_math::{メートル, メートル毎秒};
 
 use super::一つの区域の試料::{現在地, 経過, 長方形の端};
 use crate::ontology::M遷移関数;
-use crate::traveler::{旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則};
 use crate::traveler_error::{旅行者の現在地の生成の失敗, 歩行の失敗, 歩行の規則の生成の失敗};
-use crate::traveler_movement::歩行遷移の規則;
 use crate::walking_direction::歩行方向;
 use crate::地点と経路::区域の中の移動の失敗;
 use crate::居場所::旅行者の居場所;
+use crate::旅行者::{旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則};
+use crate::歩行の遷移::歩行遷移の規則;
 
 #[test]
 fn 歩行の規則_速さは有限な0以上の数値だけを受け入れる() {

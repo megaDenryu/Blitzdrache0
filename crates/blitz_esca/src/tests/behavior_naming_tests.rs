@@ -14,8 +14,8 @@ use blitz_math::メートル;
 use super::behavior_display::現在地の粗い表記のマスの一辺;
 use super::behavior_identity::現在地のビット表現;
 use super::behavior_naming::{旅行者の意図を名指す, 旅行者の現在地を名指す};
-use crate::traveler::{旅行者の意図, 旅行者の現在地};
 use crate::walking_direction::歩行方向;
+use crate::旅行者::{旅行者の意図, 旅行者の現在地};
 
 fn 現在地(東: f32, 北: f32) -> 旅行者の現在地 {
     旅行者の現在地::生成する(メートル::生成する(東), メートル::生成する(北)).unwrap()

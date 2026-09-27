@@ -2,7 +2,7 @@
 
 use blitz_math::大域ワールド位置;
 
-use super::fox_tour::facing::{キツネが読込時に向いている方位角, 世界での向きを読込時からの回転角へ写す};
+use super::キツネの場所巡り::facing::{キツネが読込時に向いている方位角, 世界での向きを読込時からの回転角へ写す};
 use crate::app::scene_load::起動時シーンの束ID;
 use crate::world_execution::entity_id::エンティティID;
 use crate::world_execution::entity_ledger::{ゲーム状態の台帳, 動く個体の描画先};

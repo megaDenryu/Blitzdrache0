@@ -11,7 +11,7 @@ use blitz_game::プレイヤーの位置と向き;
 use blitz_math::大域ワールド位置;
 use blitz_render::frame_input::読込時の向きから天頂軸まわりに回す角;
 
-use super::fox_tour::facing::世界での向きを読込時からの回転角へ写す;
+use super::キツネの場所巡り::facing::世界での向きを読込時からの回転角へ写す;
 use crate::world_execution::entity_id::エンティティID;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
