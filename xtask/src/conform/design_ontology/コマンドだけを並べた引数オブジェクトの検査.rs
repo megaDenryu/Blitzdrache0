@@ -7,6 +7,7 @@
 use std::collections::HashSet;
 
 use super::syntax_checker::クレート構文検査;
+use super::構造体のフィールドの読み取り::構造体のフィールドの読み手;
 use super::設計解釈マーカーの一覧::設計解釈マーカー;
 
 const コマンドだけを並べた違反: &str =
@@ -15,15 +16,16 @@ const コマンドだけを並べた違反: &str =
 impl クレート構文検査 {
     /// `MParameter` を名乗る構造体のフィールドが、どれも `Mコマンド` を名乗る型でないこと。
     pub fn コマンドだけを並べた構造体が必須入力の束を名乗っていないこと(mut self) -> Self {
-        let コマンドの同一性一覧 = self.コマンドの同一性一覧();
         let 命令の組の同一性一覧: HashSet<_> = self.設計解釈マーカーの実装一覧(設計解釈マーカー::M命令の組).iter().map(|型| self.型の同一性(型)).collect();
-        for 型 in self.設計解釈マーカーの実装一覧(設計解釈マーカー::MParameter) {
-            if 命令の組の同一性一覧.contains(&self.型の同一性(&型)) {
-                continue;
-            }
-            if self.構造体のフィールドを読む(&型, &コマンドの同一性一覧).どのフィールドもコマンドか() {
-                self.違反にする(&型, コマンドだけを並べた違反.to_string());
-            }
+        let 読み手 = 構造体のフィールドの読み手::生成する(&self);
+        let 違反の型一覧: Vec<_> = self
+            .設計解釈マーカーの実装一覧(設計解釈マーカー::MParameter)
+            .into_iter()
+            .filter(|型| !命令の組の同一性一覧.contains(&self.型の同一性(型)))
+            .filter(|型| 読み手.構造体のフィールドを読む(型).どのフィールドもコマンドか())
+            .collect();
+        for 型 in 違反の型一覧 {
+            self.違反にする(&型, コマンドだけを並べた違反.to_string());
         }
         self
     }
