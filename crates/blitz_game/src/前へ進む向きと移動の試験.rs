@@ -4,14 +4,14 @@
 
 use blitz_math::{ラジアン, 大域メートル, 大域ワールド位置, 秒};
 
-use crate::facing_azimuth::動く個体が向いている方位角;
-use crate::forward_azimuth::前へ進む向きの方位角;
-use crate::movement::一刻みの移動の入力;
-use crate::planar_test_world::平面と段と壁の世界;
-use crate::player_state::プレイヤーの状態;
+use crate::プレイヤー::プレイヤーの状態;
+use crate::前へ進む向き::前へ進む向きの方位角;
+use crate::向いている方位角::動く個体が向いている方位角;
 use crate::操作意図::ゲームの操作意図;
 use crate::操作意図の命令::{ジャンプの操作, 水平移動の操作};
+use crate::検査用の世界::平面と段と壁の世界;
 use crate::確定済みの入力::{押した瞬間の操作の入力, 押下が続く操作の入力, 確定済みの操作入力};
+use crate::移動::一刻みの移動の入力;
 
 const 一刻み: f32 = 1.0 / 60.0;
 /// 位置の比較に許す誤差。1刻みで進む距離が約0.067メートルであるため、この幅は向きの取り違えを見逃さない。

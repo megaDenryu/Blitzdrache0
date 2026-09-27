@@ -8,17 +8,17 @@
 use blitz_design::{M不変データ, M射影関数, M状態};
 use blitz_math::大域ワールド位置;
 
-use crate::facing_azimuth::動く個体が向いている方位角;
-use crate::ground_height::足元の地面の高さ;
-use crate::movement::一刻みの移動の入力;
-use crate::movement::移動の観測;
-use crate::movement::移動状態;
-use crate::player_state::プレイヤーの状態;
-use crate::tour_progress::場所巡りの進行;
-use crate::tour_route::場所巡りの道順;
-use crate::world_shape_port::世界の形を尋ねる口;
+use crate::プレイヤー::プレイヤーの状態;
+use crate::世界の形::世界の形を尋ねる口;
+use crate::向いている方位角::動く個体が向いている方位角;
+use crate::巡りの進行::場所巡りの進行;
 use crate::操作意図の命令::進行の操作;
+use crate::移動::一刻みの移動の入力;
+use crate::移動::移動の観測;
+use crate::移動::移動状態;
+use crate::足元の地面::足元の地面の高さ;
 use crate::進行段階::ゲームの進行段階;
+use crate::道順::場所巡りの道順;
 
 /// 場所を巡るゲームが1刻みごとに更新する状態一式。
 #[derive(Debug, Clone, Copy, PartialEq)]

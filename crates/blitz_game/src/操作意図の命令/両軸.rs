@@ -2,7 +2,7 @@
 
 use blitz_design::{M不変データ, M値オブジェクト};
 
-use crate::operation_axis::操作軸の倒し量;
+use crate::操作軸::操作軸の倒し量;
 
 /// 前後と左右の2軸の倒し量の組。前後は正が前(北へ向かう向き)、左右は正が右(東へ向かう向き)である。
 #[derive(Debug, Clone, Copy, PartialEq)]

@@ -8,6 +8,6 @@ use super::定数の組;
 pub(super) const 定数一覧: [定数の組; 1] = [定数の組 {
     正本パス: "crates/blitz_collision/src/solver/approach.rs",
     正本の前置き: "const 平行とみなす余弦の幅: f64 = ",
-    写しパス: "crates/blitz_game/src/half_space_face.rs",
+    写しパス: "crates/blitz_game/src/半空間.rs",
     写しの前置き: "pub(super) const 平行とみなす余弦の幅: f64 = ",
 }];

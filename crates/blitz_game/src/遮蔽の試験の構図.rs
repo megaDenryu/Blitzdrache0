@@ -4,11 +4,11 @@
 
 use blitz_math::{メートル, 大域メートル, 大域ワールド位置, 秒};
 
-use crate::occlusion_verdict::遮蔽の判定;
-use crate::planar_test_world::平面と段と壁の世界;
-use crate::previous_display_distance::前の描画の表示距離;
+use crate::前の描画::前の描画の表示距離;
+use crate::検査用の世界::平面と段と壁の世界;
 use crate::遮蔽と復帰::カメラの遮蔽と復帰;
 use crate::遮蔽の入力::遮蔽の判定の入力;
+use crate::遮蔽の判定の選択肢::遮蔽の判定;
 
 pub(crate) const 一刻み: f32 = 1.0 / 60.0;
 

@@ -7,7 +7,7 @@
 use blitz_design::{MParameter, M不変データ};
 use blitz_math::{メートル, 大域ワールド位置, 秒};
 
-use crate::previous_display_distance::前の描画の表示距離;
+use crate::前の描画::前の描画の表示距離;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct 遮蔽の判定の入力 {

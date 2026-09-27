@@ -11,12 +11,12 @@
 use blitz_design::{M不変データ, M規則};
 use blitz_math::{メートル, メートル毎秒, 大域メートル, 大域ワールド位置};
 
-use crate::display_distance_decision::表示距離の決定;
-use crate::occlusion_verdict::遮蔽の判定;
-use crate::sweep_completeness::掃引の完全性;
-use crate::sweep_hit::掃引が最初に触れる面;
-use crate::world_shape_port::世界の形を尋ねる口;
+use crate::世界の形::世界の形を尋ねる口;
+use crate::完全性::掃引の完全性;
+use crate::最初に触れる面::掃引が最初に触れる面;
+use crate::表示距離::表示距離の決定;
 use crate::遮蔽の入力::遮蔽の判定の入力;
+use crate::遮蔽の判定の選択肢::遮蔽の判定;
 
 const 初版の球の半径メートル: f32 = 0.25;
 const 初版の復帰の速さメートル毎秒: f32 = 8.0;

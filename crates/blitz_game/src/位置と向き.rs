@@ -11,9 +11,9 @@
 use blitz_design::{M不変データ, M値オブジェクト};
 use blitz_math::{ラジアン毎秒, 大域メートル, 大域ワールド位置};
 
-use crate::facing_azimuth::動く個体が向いている方位角;
-use crate::movement::一刻みの移動の入力;
-use crate::movement::世界の軸で見た倒し量;
+use crate::向いている方位角::動く個体が向いている方位角;
+use crate::移動::一刻みの移動の入力;
+use crate::移動::世界の軸で見た倒し量;
 
 /// プレイヤーの立ち位置と姿勢の対。
 #[derive(Debug, Clone, Copy, PartialEq)]
