@@ -86,13 +86,18 @@ fn 実物のcratesに関係を落とした抽出の欠落が1件も無い() {
 }
 
 #[test]
-fn 実物の遷移関数は遷移パラメータを消費し失敗の型を生成する() {
+fn 実物の失敗しない遷移関数は遷移パラメータを消費し失敗の位置からは関係を導かない() {
     let 結果 = 実物のcratesから結果を組む();
     let 表記一覧 = super::test_support::関係の表記一覧(&結果);
     let 主語 = "blitz_esca::居場所::旅行者の居場所::歩行を遷移する";
-    for 期待 in [format!("{主語} 消費する blitz_esca::transition_parameter::遷移パラメータ"), format!("{主語} 生成する blitz_esca::traveler_error::歩行の失敗")] {
-        assert!(表記一覧.contains(&期待), "{期待} が無い");
-    }
+    let 期待 = format!("{主語} 消費する blitz_esca::transition_parameter::遷移パラメータ");
+    assert!(表記一覧.contains(&期待), "{期待} が無い");
+    let 生成する先一覧: Vec<&String> = 表記一覧.iter().filter(|表記| 表記.starts_with(&format!("{主語} 生成する "))).collect();
+    assert!(生成する先一覧.iter().all(|表記| !表記.contains("Infallible")), "値を持たない失敗の型が生成する先の節点になった: {生成する先一覧:?}");
+    assert!(
+        生成する先一覧.iter().any(|表記| 表記.ends_with("旅行者の居場所") || 表記.ends_with("旅行者の出来事")),
+        "失敗の位置を外したことで次の状態と出来事の生成まで落ちた: {生成する先一覧:?}"
+    );
 }
 
 #[test]

@@ -33,7 +33,7 @@ mod tests;
 
 pub use elapsed_time::{経過時間, 経過時間の生成の失敗};
 pub use transition_parameter::遷移パラメータ;
-pub use traveler_error::{旅行者の現在地の生成の失敗, 歩行の失敗, 歩行の規則の生成の失敗};
+pub use traveler_error::{旅行者の現在地の生成の失敗, 歩行の規則の生成の失敗};
 pub use walking_direction::歩行方向;
 pub use キーボードの入力::キーボード歩行入力;
 pub use 居場所::旅行者の居場所;
