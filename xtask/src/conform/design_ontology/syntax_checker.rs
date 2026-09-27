@@ -8,21 +8,33 @@ use super::super::violation::違反;
 use super::impl_header::implの見出しを読む;
 use super::line_matching::{名前で読める表記, 語として現れるか};
 use super::module_path::モジュールパス;
+use super::module_path::在るモジュールの一覧::在るモジュールの一覧;
 use super::pure_data_definition_law::定義が破った純粋データの規約の説明一覧;
 use super::syntax_patterns::{self, Rust型種別};
-use super::type_definition::定義ブロックの結果;
+use super::type_definition::{型の在り処の問い, 定義ブロックの結果};
 use super::設計解釈マーカーの一覧::設計解釈マーカー;
 
 use super::trait_implementation::設計解釈マーカーの実装;
 
 pub struct クレート構文検査 {
     pub(super) ソース一覧: Vec<(PathBuf, Vec<String>)>,
+    在るモジュール: 在るモジュールの一覧, // ソース一覧から構築時に1度だけ組む。型の定義の探索が問いのたびに使う
     pub(super) 違反一覧: Vec<違反>,
 }
 
 impl クレート構文検査 {
-    pub const fn 生成する(ソース一覧: Vec<(PathBuf, Vec<String>)>) -> Self {
-        Self { ソース一覧, 違反一覧: Vec::new() }
+    pub fn 生成する(ソース一覧: Vec<(PathBuf, Vec<String>)>) -> Self {
+        let 在るモジュール = 在るモジュールの一覧::ソース一覧から集める(&ソース一覧);
+        Self {
+            ソース一覧,
+            在るモジュール,
+            違反一覧: Vec::new(),
+        }
+    }
+
+    /// 走査したソースから、問いが指す型の定義を探す。在るモジュールの一覧は構築時に組んだものを使い回す。
+    pub fn 型の在り処を探す(&self, 問い: &型の在り処の問い<'_>) -> 定義ブロックの結果 {
+        問い.型の定義を探す(&self.ソース一覧, &self.在るモジュール)
     }
 
     pub fn 違反一覧(self) -> Vec<違反> {
@@ -89,7 +101,7 @@ impl クレート構文検査 {
 
     /// 型の定義(直前の属性の行を含む)。実装の位置のモジュールの直下の定義、無ければ `use` で取り込んだモジュールの直下の定義を採り、決まらなければその旨を返す(`type_definition.rs`)。
     pub fn 型の定義ブロック(&self, 型: &設計解釈マーカーの実装) -> 定義ブロックの結果 {
-        型.型の在り処の問い().型の定義を探す(&self.ソース一覧)
+        self.型の在り処を探す(&型.型の在り処の問い())
     }
 
     /// 採った定義が `種別` のキーワードで始まるか。定義が一意に決まらないときは偽である。
