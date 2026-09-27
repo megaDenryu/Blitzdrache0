@@ -15,7 +15,7 @@ use super::body_velocity::胴体の速度;
 use super::movement_input::一刻みの移動の入力;
 use super::movement_state::移動状態;
 use super::stick_vector::世界の軸で見た倒し量;
-use crate::操作意図の命令::跳躍の操作;
+use crate::操作意図の命令::ジャンプの操作;
 
 // この刻みに掃引する動き。
 #[derive(Clone, PartialEq)]
@@ -49,7 +49,7 @@ impl 胴体の移動 {
         match 状態 {
             移動状態::接地中 { 接地面の単位法線 } => {
                 let 水平 = 倒し.速さを掛ける(self.速さ().接地中の速さ(水平移動.走るか()));
-                if 入力.跳躍の操作() == 跳躍の操作::跳ぶ {
+                if 入力.ジャンプの操作() == ジャンプの操作::ジャンプする {
                     let 速度 = 胴体の速度::生成する(水平, self.落下とジャンプ().ジャンプの初速());
                     return 望みの動き {
                         速度,

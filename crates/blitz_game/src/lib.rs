@@ -100,4 +100,4 @@ pub use tour_progress::場所巡りの進行;
 pub use tour_route::場所巡りの道順;
 pub use walk_only_state::歩くだけのゲームの状態;
 pub use world_shape_port::世界の形を尋ねる口;
-pub use 操作意図の命令::{両軸の倒し量, 水平移動の操作, 跳躍の操作, 進行の操作};
+pub use 操作意図の命令::{ジャンプの操作, 両軸の倒し量, 水平移動の操作, 進行の操作};
