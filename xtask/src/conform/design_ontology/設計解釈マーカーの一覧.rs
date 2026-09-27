@@ -85,13 +85,14 @@ impl 設計解釈マーカー {
             .collect()
     }
 
-    /// 同じ軸の排他の分類の組。同じ型が組の両方を名乗ることは意味として同時に成り立たない。
-    pub const fn 排他の分類の組一覧() -> [(Self, Self); 4] {
+    /// 排他の分類の組。同じ型が組の両方を名乗ることは意味として同時に成り立たない。最後の組だけは軸をまたぐ(`Mコマンド` だけを並べた構造体は `MParameter` でなく `M命令の組` を名乗る)。
+    pub const fn 排他の分類の組一覧() -> [(Self, Self); 5] {
         [
             (Self::M不変エンティティ, Self::M可変エンティティ),
             (Self::MParameter, Self::MOptions),
             (Self::M生入力, Self::M中間入力),
             (Self::Mコマンド, Self::M命令の組),
+            (Self::M命令の組, Self::MParameter),
         ]
     }
 
