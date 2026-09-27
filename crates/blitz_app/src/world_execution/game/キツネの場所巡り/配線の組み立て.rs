@@ -3,8 +3,8 @@
 
 use blitz_math::大域ワールド位置;
 
-use super::facing::キツネが読込時に向いている方位角;
 use super::キツネの場所巡りの配線;
+use super::読込時の向き::キツネが読込時に向いている方位角;
 use crate::cli::ゲーム操作の出どころ;
 
 impl キツネの場所巡りの配線 {
