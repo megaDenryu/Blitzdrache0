@@ -7,7 +7,7 @@ use std::path::PathBuf;
 use super::super::line_matching::{波括弧が閉じる行, 語として現れるか};
 use super::super::module_path::enclosing_module::行の字句位置;
 use super::super::module_path::モジュールパス;
-use super::{定義の探索の材料, 探す定義の宣言};
+use super::{定義の探索の材料, 探す定義の宣言の種類};
 
 pub struct 同名の定義の候補 {
     pub 定義: String,
@@ -17,7 +17,7 @@ pub struct 同名の定義の候補 {
 
 impl 同名の定義の候補 {
     /// 全ソースから、その名前の探す宣言(型なら `struct`・`enum`、トレイトなら `trait`)の定義を全部集める。同じファイルに2つ以上あればその分だけ並ぶ(黙って最初の1つを採らない)。
-    pub fn 全ソースから集める(材料: &定義の探索の材料, 型名: &str, 宣言: 探す定義の宣言) -> Vec<Self> {
+    pub fn 全ソースから集める(材料: &定義の探索の材料, 型名: &str, 宣言: 探す定義の宣言の種類) -> Vec<Self> {
         let シグネチャ = 宣言.シグネチャ一覧(型名);
         let mut 候補一覧 = Vec::new();
         for ファイル in 材料.ファイル一覧() {

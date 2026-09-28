@@ -13,7 +13,7 @@ use super::super::module_path::enclosing_module::{字句位置の区分, 行の�
 use super::super::module_path::モジュールパス;
 use super::definition_candidate::同名の定義の候補;
 use super::import_origin::{取り込み元の問い, 取り込み元を求めた結果};
-use super::{定義の探索の材料, 定義ブロックの結果, 探す定義の宣言};
+use super::{定義の探索の材料, 定義ブロックの結果, 探す定義の宣言の種類};
 
 /// 再公開をたどる段数の上限。
 pub const 再公開をたどる段数の上限: usize = 8;
@@ -22,7 +22,7 @@ pub const 再公開をたどる段数の上限: usize = 8;
 pub struct 再公開をたどる探索<'a> {
     pub 材料: &'a 定義の探索の材料,
     pub 型名: &'a str,
-    pub 宣言: 探す定義の宣言,
+    pub 宣言: 探す定義の宣言の種類,
 }
 
 impl 再公開をたどる探索<'_> {
