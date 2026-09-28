@@ -17,7 +17,7 @@ use crate::conform::source_lexing;
 use crate::conform::violation::違反;
 
 /// 注意: 載せてよいのは、対象の文字列を列挙する検査の台帳だけである。
-const 対象の文字列を列挙する台帳一覧: [&str; 57] = [
+const 対象の文字列を列挙する台帳一覧: [&str; 58] = [
     "xtask/src/conform/depth_contract/table/camera.rs",
     "xtask/src/conform/depth_contract/table/camera_compare.rs",
     "xtask/src/conform/depth_contract/table/shadow.rs",
@@ -25,6 +25,7 @@ const 対象の文字列を列挙する台帳一覧: [&str; 57] = [
     "xtask/src/conform/duplicate_file_literal/allowance/table.rs",
     "xtask/src/conform/duplicate_file_literal/allowance/table/other_files.rs",
     "xtask/src/conform/duplicate_file_literal/allowance/table/shader_files.rs",
+    "xtask/src/conform/duplicate_file_literal/self_reference.rs",
     "xtask/src/conform/free_function_whole_type/ledger/table/blitz_app_app.rs",
     "xtask/src/conform/free_function_whole_type/ledger/table/blitz_app_other.rs",
     "xtask/src/conform/free_function_whole_type/ledger/table/blitz_render_other.rs",
