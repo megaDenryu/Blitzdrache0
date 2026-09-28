@@ -14,7 +14,7 @@ use super::抽出の成果と欠け::抽出の成果;
 use crate::conform::design_ontology::trait_implementation::設計解釈マーカーの実装;
 use crate::conform::design_ontology::設計解釈マーカーの一覧::設計解釈マーカー;
 use crate::design_model::{Rustの項目の種類, 設計概念, 設計概念の識別子};
-use blitz_design_verification::{マーカーの実装の事実, 事実の出どころ, 落とした事実の種類};
+use blitz_design_verification::{マーカーの実装の事実, 事実の出どころ};
 
 pub fn 設計解釈マーカーの実装から抽出する(ソース群: &抽出対象のソース群) -> 抽出の成果 {
     let mut 成果 = 抽出の成果::default();
@@ -42,5 +42,5 @@ fn 実装の対象の識別子(ソース群: &抽出対象のソース群, 実�
         // 標準の `Result` は `crates` 配下に定義が無いため、定義をたどらず標準ライブラリの表記そのものから節点を組む。
         return (設計概念の識別子::Rustの項目として生成する("std::result", "Result"), None);
     }
-    ソース群.実装の対象の型の識別子を求める(実装.型の在り処の問い(), 落とした事実の種類::分類の事実)
+    ソース群.型の識別子を求める(実装.型の在り処の問い())
 }
