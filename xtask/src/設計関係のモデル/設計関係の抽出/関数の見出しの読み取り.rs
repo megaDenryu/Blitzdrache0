@@ -6,11 +6,12 @@
 //! 型の表記は書いたままの書かれた文字列で返し、何を名指すかは定義の式の署名の読み方が決める。
 
 use crate::conform::設計オントロジーの規約検査::declaration_brackets::{最上位で開いた括弧, 見出しの括弧の深さ};
+use crate::conform::設計オントロジーの規約検査::identifier_boundary::識別子として現れる位置一覧;
 use crate::conform::設計オントロジーの規約検査::line_matching::{先頭の型引数を分ける, 先頭の識別子, 型の引数の名前一覧};
 use crate::conform::設計オントロジーの規約検査::属性と可視性の前置き::属性と可視性を読み飛ばす;
 
 #[path = "関数の見出しの読み取り/型引数の境界の読み取り.rs"]
-mod 型引数の境界の読み取り;
+pub mod 型引数の境界の読み取り;
 
 use super::関数の引数の読み取り::引数を読む;
 use blitz_design_verification::{受け手の種類, 型引数の境界};
@@ -73,7 +74,7 @@ pub fn 関数の見出しを読む(行一覧: &[String], 開始: usize) -> Resul
     Ok(読んだ関数の見出し {
         名前,
         型引数名一覧: 型の引数の名前一覧(型引数),
-        型引数の境界一覧: 型引数の境界を読む(型引数),
+        型引数の境界一覧: 型引数の境界を読む(型引数, where句を読む(引数より後ろ)),
         受け手,
         引数の表記一覧,
         戻り値の表記: 戻り値を読む(引数より後ろ),
@@ -110,12 +111,14 @@ fn 丸括弧の中と後ろに分ける(表記: &str) -> Option<(&str, &str)> {
     None
 }
 
-// `)` より後ろから戻り値の型の表記。`->` が無ければ無しであり、どの括弧の中でもない `where` の手前までを採る。
+// `)` より後ろから戻り値の型の表記。`->` が無ければ無しであり、`where` の手前までを採る。
 fn 戻り値を読む(引数より後ろ: &str) -> Option<String> {
     let 型と境界 = 引数より後ろ.trim_start().strip_prefix("->")?;
-    let 終わり = crate::conform::設計オントロジーの規約検査::identifier_boundary::識別子として現れる位置一覧(型と境界, "where")
-        .into_iter()
-        .next()
-        .unwrap_or(型と境界.len());
+    let 終わり = 識別子として現れる位置一覧(型と境界, "where").into_iter().next().unwrap_or(型と境界.len());
     Some(型と境界[..終わり].trim().to_string()).filter(|型| !型.is_empty())
+}
+
+// `)` より後ろから `where` 句(`where` より後ろ)。`where` が無ければ空である。
+fn where句を読む(引数より後ろ: &str) -> &str {
+    識別子として現れる位置一覧(引数より後ろ, "where").into_iter().next().map_or("", |位置| 引数より後ろ[位置 + "where".len()..].trim())
 }

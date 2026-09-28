@@ -12,6 +12,8 @@
 mod definition_candidate;
 #[path = "type_definition/import_origin.rs"]
 mod import_origin;
+#[path = "type_definition/修飾したパスの解決.rs"]
+mod 修飾したパスの解決;
 #[path = "type_definition/再公開の追跡.rs"]
 mod 再公開の追跡;
 
@@ -22,6 +24,7 @@ use super::module_path::在るモジュールの一覧::在るモジュールの
 use super::syntax_patterns;
 use definition_candidate::同名の定義の候補;
 use import_origin::{取り込み元の問い, 取り込み元を求めた結果};
+pub use 修飾したパスの解決::修飾したパスを探した結果;
 use 再公開の追跡::{再公開をたどる探索, 再公開をたどる段数の上限};
 
 /// ある型の定義がどこに在るかの問い。型の名前と、その名前を書いている行の位置の組である。
