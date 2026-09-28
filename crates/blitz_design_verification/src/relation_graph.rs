@@ -22,10 +22,10 @@ use super::concept::{設計概念, 設計概念の種類, 設計概念の識別�
 use super::relation::{プリミティブな関係, 設計関係};
 use crate::{分類の事実, 節点の分類};
 
-#[path = "relation_graph/プリミティブな関係の一覧.rs"]
-mod プリミティブな関係の一覧;
+#[path = "relation_graph/プリミティブな関係の問い.rs"]
+mod プリミティブな関係の問い;
 
-pub use プリミティブな関係の一覧::プリミティブな関係の一覧;
+pub use プリミティブな関係の問い::プリミティブな関係の一覧;
 #[path = "relation_graph/節点の問い.rs"]
 mod 節点の問い;
 #[path = "relation_graph/経路.rs"]
