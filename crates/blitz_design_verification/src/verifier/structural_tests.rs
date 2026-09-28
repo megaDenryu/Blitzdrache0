@@ -19,8 +19,8 @@ mod 対象集合の列挙の試験;
 mod 量化の同一性;
 #[path = "structural_tests/関係の欠落と量化.rs"]
 mod 関係の欠落と量化;
-#[path = "structural_tests/関係の種類ごとの弱め方.rs"]
-mod 関係の種類ごとの弱め方;
+#[path = "structural_tests/関係の種類ごとの弱め方の試験.rs"]
+mod 関係の種類ごとの弱め方の試験;
 #[path = "structural_tests/関係を落とした抽出の欠落の試験.rs"]
 mod 関係を落とした抽出の欠落の試験;
 
