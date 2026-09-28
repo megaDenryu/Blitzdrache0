@@ -7,9 +7,9 @@
 use super::error::規約検査の破れ;
 use super::report::検査の報告;
 use super::{
-    dependency_whitelist, depth_contract, doc_section, duplicate_file_literal, extractable_normal_form, free_function_whole_type, lighting_query_declaration, reload_without_device_wait, removed_object_uniform, removed_slot_material_set,
-    removed_view_pass_lighting, sample_bodies_consistency, shader_binding, shader_constant, shader_form, shader_uniform_alias, single_lighting_slot_write, type_metrics_ledger, verify_output_place, wording_contract, workspace_dependency_features,
-    射影関数の宣言の検査, 設計オントロジーの規約検査,
+    dependency_whitelist, depth_contract, doc_section, duplicate_file_literal, free_function_whole_type, lighting_query_declaration, reload_without_device_wait, removed_object_uniform, removed_slot_material_set, removed_view_pass_lighting,
+    sample_bodies_consistency, shader_binding, shader_constant, shader_form, shader_uniform_alias, single_lighting_slot_write, type_metrics_ledger, verify_output_place, wording_contract, workspace_dependency_features, 射影関数の宣言の検査,
+    抽出器が受理する正規形の検査, 設計オントロジーの規約検査,
 };
 use crate::設計関係のモデル::設計関係グラフを抽出する;
 
@@ -34,7 +34,7 @@ pub fn 複数ファイルを横断する検査の違反一覧を集める() -> R
     違反一覧.extend(single_lighting_slot_write::照明問い合わせスロットへの書き込み元を検査する()?);
     違反一覧.extend(verify_output_place::全ファイルを検査する()?);
     let 抽出したもの = 設計関係グラフを抽出する()?;
-    違反一覧.extend(extractable_normal_form::抽出したものを検査する(&抽出したもの));
+    違反一覧.extend(抽出器が受理する正規形の検査::抽出したものを検査する(&抽出したもの));
     違反一覧.extend(射影関数の宣言の検査::抽出したものを検査する(&抽出したもの));
     Ok(検査の報告::生成する(違反一覧, Vec::new())
         .合わせる(type_metrics_ledger::全型の分量を台帳と照合する()?)

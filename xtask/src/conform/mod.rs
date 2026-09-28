@@ -12,7 +12,6 @@ mod drop_impl;
 mod duplicate_file_literal;
 mod ecs_abstract_name;
 pub(crate) mod error;
-mod extractable_normal_form;
 mod forbidden_strings;
 mod free_function_whole_type;
 #[path = "graphiteのコード.rs"]
@@ -44,7 +43,6 @@ mod type_metrics_ledger;
 mod verify_output_place;
 mod violation;
 mod warning;
-mod whole_repository;
 mod wording_contract;
 mod workspace_dependency_features;
 #[path = "射影関数の宣言の検査.rs"]
@@ -52,8 +50,12 @@ mod 射影関数の宣言の検査;
 #[cfg(test)]
 #[path = "射影関数の宣言の検査の試験.rs"]
 mod 射影関数の宣言の検査の試験;
+#[path = "抽出器が受理する正規形の検査.rs"]
+mod 抽出器が受理する正規形の検査;
 #[path = "行数の超過を許す台帳.rs"]
 mod 行数の超過を許す台帳;
+#[path = "複数のファイルを横断する検査.rs"]
+mod 複数のファイルを横断する検査;
 #[path = "設計オントロジーの規約検査.rs"]
 pub(crate) mod 設計オントロジーの規約検査;
 #[path = "走査した原文の一覧.rs"]
@@ -82,5 +84,5 @@ pub fn 規約を検査する() -> ExitCode {
 /// 段ごとに終了コードへの写し方を書き分けない。
 fn 全違反を集める() -> Result<検査の報告, 規約検査の破れ> {
     let ファイル一覧 = file_scan::対象ファイル一覧を集める(&検査対象ディレクトリ一覧, &検査対象拡張子一覧)?;
-    Ok(single_file::ファイル単位の検査を行う(&ファイル一覧)?.合わせる(whole_repository::複数ファイルを横断する検査の違反一覧を集める()?))
+    Ok(single_file::ファイル単位の検査を行う(&ファイル一覧)?.合わせる(複数のファイルを横断する検査::複数ファイルを横断する検査の違反一覧を集める()?))
 }
