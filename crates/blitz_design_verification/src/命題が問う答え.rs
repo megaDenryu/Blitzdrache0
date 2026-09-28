@@ -6,10 +6,10 @@
 //! 食い違い、検証器が弱める答えと合否が数える答えがずれるため、対応をここに1つだけ置く。
 //! 参照: `_doc/設計/設計オントロジー.md` 第9節。
 
-use super::atom::原子命題;
 use super::proposition::命題;
 use super::quantification::対象集合;
 use super::specification::命題の集合;
+use super::原子命題の定義::原子命題;
 use super::欠落が弱める答えの定義::欠落が弱める答え;
 
 impl 原子命題 {

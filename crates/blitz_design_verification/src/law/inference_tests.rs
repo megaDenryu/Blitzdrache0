@@ -7,10 +7,10 @@
 
 use crate::設計概念への参照;
 
-use super::super::atom::{原子命題, 項};
 use super::super::evidence::{反例, 未決定の理由, 検証の方式, 検証結果, 証拠};
 use super::super::proposition::{命題, 非空の命題一覧, 非空の命題一覧の生成の失敗};
 use super::super::verifier::命題の検証器;
+use super::super::原子命題の定義::{原子命題, 項};
 use super::推論規則;
 
 /// 否定の命題を構文検査で、それ以外を有限全数で示す検証器。前提ごとに違う方式が立つ状況を作るために置く。

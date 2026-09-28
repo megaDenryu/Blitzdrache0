@@ -5,9 +5,9 @@
 
 use crate::{プリミティブな関係の種類, 欠落が弱める答え, 落とした理由ごとの件数, 設計関係の種類, 関係を落とした抽出の欠落};
 
-use super::super::super::atom::{原子命題, 項};
 use super::super::super::evidence::{未決定の理由, 検証結果};
 use super::super::super::proposition::命題;
+use super::super::super::原子命題の定義::{原子命題, 項};
 use super::super::{命題の検証器, 構造の検証器};
 use super::{保持の原子, 型の参照, 小さなグラフ, 関係の原子};
 

@@ -4,10 +4,10 @@
 
 use crate::{設計関係の種類, 関係を落とした抽出の欠落};
 
-use super::super::super::atom::{原子命題, 項};
 use super::super::super::evidence::検証結果;
 use super::super::super::proposition::命題;
 use super::super::super::quantification::{対象集合, 束縛変数};
+use super::super::super::原子命題の定義::{原子命題, 項};
 use super::super::{命題の検証器, 構造の検証器};
 use super::{保持が二段のグラフ, 保持の原子, 型の参照, 小さなグラフ, 関係の原子};
 

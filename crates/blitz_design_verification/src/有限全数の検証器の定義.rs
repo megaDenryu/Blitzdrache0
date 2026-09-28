@@ -20,10 +20,13 @@
 //! 論理の結合の規則はこの木に書かず、`verifier` の結合を解く工程へ委譲する(規則を2箇所へ書き写さないため)。
 //! 参照: `_doc/設計/設計オントロジー.md` 第9節。
 
+#[path = "有限全数の検証器の定義/atom_answer.rs"]
 mod atom_answer;
 #[cfg(test)]
+#[path = "有限全数の検証器の定義/exhaustive_tests.rs"]
 mod exhaustive_tests;
-mod solver;
+#[path = "有限全数の検証器の定義/原子と対象集合の解き手の実装.rs"]
+mod 原子と対象集合の解き手の実装;
 
 use crate::transition_model::{遷移, 遷移モデル};
 use crate::{探索が組んだ遷移モデルと網羅性, 数え上げの網羅性, 束縛の割り当て};

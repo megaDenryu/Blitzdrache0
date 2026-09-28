@@ -16,9 +16,9 @@ use std::path::PathBuf;
 
 use super::concept::設計概念への参照;
 
-#[path = "relation/プリミティブな関係の定義.rs"]
+#[path = "設計関係の定義/プリミティブな関係の定義.rs"]
 mod プリミティブな関係の定義;
-#[path = "relation/導出の根拠の定義.rs"]
+#[path = "設計関係の定義/導出の根拠の定義.rs"]
 mod 導出の根拠の定義;
 
 pub use プリミティブな関係の定義::{プリミティブな関係, プリミティブな関係の種類};

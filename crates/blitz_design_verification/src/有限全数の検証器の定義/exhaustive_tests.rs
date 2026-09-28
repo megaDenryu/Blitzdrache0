@@ -7,9 +7,13 @@
 //! 純粋な計算だけであり外部とのやり取りを持たないため、`tests/` へ実行ファイルを増やさず `src` の中に置く
 //! (CLAUDE.md「ファイル・関数の分割」のクレートの `tests/` の直下についての条)。
 
+#[path = "exhaustive_tests/asymmetry_tests.rs"]
 mod asymmetry_tests;
+#[path = "exhaustive_tests/exploration_tests.rs"]
 mod exploration_tests;
+#[path = "exhaustive_tests/fixture.rs"]
 mod fixture;
+#[path = "exhaustive_tests/representative_tests.rs"]
 mod representative_tests;
 #[path = "exhaustive_tests/遷移の同一性.rs"]
 mod 遷移の同一性;

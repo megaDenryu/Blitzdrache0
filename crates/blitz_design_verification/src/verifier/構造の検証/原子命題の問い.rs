@@ -21,9 +21,9 @@ use 関係の問い方の定義::{問う辺, 関係の問いの答え, 関係の
 
 use crate::{欠落が弱める答え, 設計概念の種類, 設計概念への参照};
 
-use super::super::super::atom::{原子命題, 項};
 use super::super::super::evidence::{未決定の理由, 検証結果};
 use super::super::super::quantification::束縛の割り当て;
+use super::super::super::原子命題の定義::{原子命題, 項};
 use super::構造の検証器;
 
 impl 構造の検証器<'_> {

@@ -10,7 +10,9 @@
 //!
 //! 名指しの実装は子モジュールに置く(CLAUDE.md「切り出しの根拠義務」の5号の、名前の付く工程の分離)。
 
+#[path = "naming_choice_domain/enumeration.rs"]
 mod enumeration;
+#[path = "naming_choice_domain/naming.rs"]
 mod naming;
 
 use blitz_design::{Mイベント, Mコマンド, M不変データ, M状態, M遷移が受け取る命令};

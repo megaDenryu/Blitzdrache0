@@ -8,6 +8,7 @@
 //! 失敗した遷移が元の状態を書き換えて返したことの検出を `元の状態を書き換えた遷移の検出` が見る。
 //! 網羅性を黙って全件と名乗らせないことがどの試験の目的でもある。
 
+#[path = "exploration_tests/traversal_tests.rs"]
 mod traversal_tests;
 #[path = "exploration_tests/元の状態を書き換えた遷移の検出.rs"]
 mod 元の状態を書き換えた遷移の検出;

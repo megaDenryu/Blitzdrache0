@@ -18,16 +18,16 @@
 use std::collections::{HashMap, HashSet, hash_map::Entry};
 
 use super::concept::{設計概念, 設計概念の種類, 設計概念の識別子, 設計概念への参照};
-use super::relation::{プリミティブな関係, 設計関係};
+use super::設計関係の定義::{プリミティブな関係, 設計関係};
 use crate::{分類の事実, 節点の分類};
 
-#[path = "relation_graph/プリミティブな関係の問い.rs"]
+#[path = "設計関係グラフの定義/プリミティブな関係の問い.rs"]
 mod プリミティブな関係の問い;
-#[path = "relation_graph/節点の問い.rs"]
+#[path = "設計関係グラフの定義/節点の問い.rs"]
 mod 節点の問い;
-#[path = "relation_graph/経路.rs"]
+#[path = "設計関係グラフの定義/経路.rs"]
 mod 経路;
-#[path = "relation_graph/設計関係の問い.rs"]
+#[path = "設計関係グラフの定義/設計関係の問い.rs"]
 mod 設計関係の問い;
 
 pub use self::{プリミティブな関係の問い::プリミティブな関係の一覧, 節点の問い::節点の一覧, 経路::経路の答え};

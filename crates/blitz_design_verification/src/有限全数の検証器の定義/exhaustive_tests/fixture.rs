@@ -7,10 +7,15 @@
 //!
 //! 実ゲームの振る舞いの命題は、ドメインのクレートの試験が `有限に数え上げられる領域` を実装し、実物の遷移関数を呼んで検証する。
 
+#[path = "fixture/concepts.rs"]
 mod concepts;
+#[path = "fixture/countable_domain.rs"]
 mod countable_domain;
+#[path = "fixture/identity_domain.rs"]
 mod identity_domain;
+#[path = "fixture/naming_choice_domain.rs"]
 mod naming_choice_domain;
+#[path = "fixture/proposition.rs"]
 mod proposition;
 #[path = "fixture/元の状態を書き換える題材.rs"]
 mod 元の状態を書き換える題材;

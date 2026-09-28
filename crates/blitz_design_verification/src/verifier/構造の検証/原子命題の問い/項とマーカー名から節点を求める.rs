@@ -11,9 +11,9 @@
 
 use crate::設計概念への参照;
 
-use super::super::super::super::atom::項;
 use super::super::super::super::evidence::未決定の理由;
 use super::super::super::super::quantification::束縛の割り当て;
+use super::super::super::super::原子命題の定義::項;
 use super::super::構造の検証器;
 
 impl 構造の検証器<'_> {

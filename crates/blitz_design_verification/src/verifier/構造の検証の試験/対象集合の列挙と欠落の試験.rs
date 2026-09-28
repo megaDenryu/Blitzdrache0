@@ -9,10 +9,10 @@ use crate::{
     プリミティブな関係の種類, マーカーの実装の事実, 事実の出どころ, 分類の事実, 欠落が弱める答え, 落とした理由ごとの件数, 設計概念, 設計関係の種類, 設計関係グラフ, 関係を落とした抽出の欠落
 };
 
-use super::super::super::atom::{原子命題, 項};
 use super::super::super::evidence::検証結果;
 use super::super::super::proposition::命題;
 use super::super::super::quantification::{対象集合, 束縛変数};
+use super::super::super::原子命題の定義::{原子命題, 項};
 use super::super::{命題の検証器, 構造の検証器};
 use super::{トレイトの参照, 型の参照, 関係};
 

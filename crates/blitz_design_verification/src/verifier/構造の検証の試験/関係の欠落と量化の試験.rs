@@ -2,10 +2,10 @@
 
 use crate::{分類の事実, 設計概念, 設計関係の種類, 設計関係グラフ, 関係を落とした抽出の欠落};
 
-use super::super::super::atom::{原子命題, 項};
 use super::super::super::evidence::{未決定の理由, 検証結果};
 use super::super::super::proposition::命題;
 use super::super::super::quantification::{対象集合, 束縛変数};
+use super::super::super::原子命題の定義::{原子命題, 項};
 use super::super::{命題の検証器, 構造の検証器};
 use super::{型の参照, 関係};
 

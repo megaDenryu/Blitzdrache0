@@ -12,8 +12,8 @@ mod nonempty_tests;
 
 pub use nonempty::{非空の命題一覧, 非空の命題一覧の生成の失敗};
 
-use super::atom::原子命題;
 use super::quantification::{対象集合, 束縛変数};
+use super::原子命題の定義::原子命題;
 
 /// 設計について真偽を問う式。
 #[derive(Debug, Clone, PartialEq, Eq)]

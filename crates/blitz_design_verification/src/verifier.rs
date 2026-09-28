@@ -22,10 +22,10 @@ mod 構造の検証の試験;
 
 use crate::{数え上げの網羅性, 設計概念への参照};
 
-use super::atom::原子命題;
 use super::evidence::{未決定の理由, 検証の方式, 検証結果};
 use super::proposition::命題;
 use super::quantification::{対象集合, 束縛の割り当て};
+use super::原子命題の定義::原子命題;
 
 pub use combination::結合を解く工程;
 pub use 構造の検証::構造の検証器;

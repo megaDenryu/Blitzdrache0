@@ -14,10 +14,10 @@ mod 対象集合の列挙;
 
 use crate::{設計関係グラフ, 関係を落とした抽出の欠落};
 
-use super::super::atom::原子命題;
 use super::super::evidence::{未決定の理由, 検証の方式, 検証結果};
 use super::super::proposition::命題;
 use super::super::quantification::{対象集合, 束縛の割り当て};
+use super::super::原子命題の定義::原子命題;
 use super::{列挙した対象, 原子と対象集合の解き手, 命題の検証器, 結合を解く工程};
 
 /// 設計関係グラフだけを相手にする検証器。振る舞いの原子命題は解かず未決定で答える。
