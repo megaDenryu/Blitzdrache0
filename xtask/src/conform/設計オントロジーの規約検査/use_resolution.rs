@@ -41,7 +41,7 @@ impl 取り込みの項目 {
         self.別名.as_deref().is_some_and(メタ変数を含むか) || メタ変数を含むか(self.元の名前())
     }
 
-    /// パスの最後の区切り(取り込んだ元の名前。glob の取り込みなら `*`)。
+    /// パスの最後の区切り(取り込んだ元の名前。一括取り込みなら `*`)。
     pub fn 元の名前(&self) -> &str {
         self.パス.rsplit("::").next().unwrap_or_default().trim()
     }
