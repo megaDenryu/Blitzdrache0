@@ -24,6 +24,8 @@ mod 探す定義の宣言の種類の定義;
 mod 探索の材料;
 #[path = "type_definition/標準ライブラリの名前.rs"]
 mod 標準ライブラリの名前;
+#[path = "type_definition/標準ライブラリの名前の表.rs"]
+mod 標準ライブラリの名前の表;
 
 use std::path::{Path, PathBuf};
 

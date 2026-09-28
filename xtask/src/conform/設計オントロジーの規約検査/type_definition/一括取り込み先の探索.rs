@@ -16,7 +16,7 @@ use super::definition_candidate::同名の定義の候補;
 use super::import_origin::{取り込み元の問い, 取り込み元を求めた結果};
 use super::再公開の追跡::{モジュールを持ちうるか, 再公開をたどる探索, 再公開をたどる段数の上限};
 use super::定義ブロックの結果;
-use super::標準ライブラリの名前::標準ライブラリのモジュールか;
+use super::標準ライブラリの名前の表::標準ライブラリのモジュールか;
 
 /// 一括取り込みの取り込み元のモジュール1つについて、探す名前がそこから持ち込まれるかの答え。
 #[derive(Debug, Clone, PartialEq, Eq)]
