@@ -3,7 +3,7 @@
 //! このファイルはコードの行が100行を超える。Rustがクレートの根の `mod` の宣言を1つのファイルへ集めることを要求するため、
 //! コマンドを1つ足すたびに下の並びが1行ずつ伸びるからである。並びは1つのデータを成す宣言であり、行数で切ると
 //! どのコマンドが在るかを1画面で読めるという一覧性そのものが壊れるため分割しない。
-//! 参照: `xtask/src/conform/line_count_allowance.rs`(超過を許す台帳)、CLAUDE.md「100行超過の再設計と台帳の現状」。
+//! 参照: `xtask/src/conform/行数の超過を許す台帳.rs`(超過を許す台帳)、CLAUDE.md「100行超過の再設計と台帳の現状」。
 mod acceptance;
 mod asset_generator;
 mod atmosphere_lut;

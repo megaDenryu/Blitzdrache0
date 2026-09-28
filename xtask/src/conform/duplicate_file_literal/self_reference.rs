@@ -33,7 +33,7 @@ const 対象の文字列を列挙する台帳一覧: [&str; 57] = [
     "xtask/src/conform/free_function_whole_type/ledger/table/other_crates.rs",
     "xtask/src/conform/free_function_whole_type/ledger/table/xtask.rs",
     "xtask/src/conform/lighting_query_declaration/table.rs",
-    "xtask/src/conform/line_count_allowance.rs",
+    "xtask/src/conform/行数の超過を許す台帳.rs",
     "xtask/src/conform/module_import_boundary/table.rs",
     "xtask/src/conform/shader_binding/table/cloth_set.rs",
     "xtask/src/conform/shader_binding/table/geometry_set.rs",
