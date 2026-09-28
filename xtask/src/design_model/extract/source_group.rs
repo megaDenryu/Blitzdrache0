@@ -7,7 +7,7 @@
 
 use std::path::{Component, Path, PathBuf};
 
-use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
+use super::抽出できなかった行の定義::{抽出できなかった理由, 抽出できなかった行};
 use super::本番のソース::本番のソース;
 use crate::conform::design_ontology::module_path::モジュールパス;
 use crate::conform::design_ontology::syntax_checker::クレート構文検査;

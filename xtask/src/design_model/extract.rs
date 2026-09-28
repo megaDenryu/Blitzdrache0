@@ -17,7 +17,6 @@ mod marker_concept;
 mod marker_impl;
 mod ontology_scope;
 mod out_of_range_syntax;
-mod outcome;
 mod positional_types;
 mod role;
 mod role_usage;
@@ -25,12 +24,15 @@ mod source_group;
 mod struct_declaration;
 mod supertrait;
 mod trait_declaration;
-mod unextracted_line;
 mod wrapped_function_path;
 #[path = "extract/折れた役割の宣言.rs"]
 mod 折れた役割の宣言;
 #[path = "extract/抽出できなかった理由の区分の定義.rs"]
 mod 抽出できなかった理由の区分の定義;
+#[path = "extract/抽出できなかった行の定義.rs"]
+mod 抽出できなかった行の定義;
+#[path = "extract/抽出の成果と欠け.rs"]
+mod 抽出の成果と欠け;
 #[path = "extract/本番のソース.rs"]
 mod 本番のソース;
 #[path = "extract/本番の行.rs"]
@@ -88,13 +90,13 @@ mod 表記が名指す型の試験;
 pub use marker_concept::{設計解釈マーカーの参照, 設計解釈マーカーの正本のモジュールパス};
 pub use ontology_scope::{ドメインのクレートか, ドメインのクレートの名前一覧};
 pub use out_of_range_syntax::保証範囲の外の構文;
-pub use outcome::抽出した設計関係グラフと抽出の欠け;
 pub use role::関数の役割の型か意味型の見分け;
-pub use unextracted_line::{抽出できなかった理由, 抽出できなかった行};
+pub use 抽出できなかった行の定義::{抽出できなかった理由, 抽出できなかった行};
+pub use 抽出の成果と欠け::抽出した設計関係グラフと抽出の欠け;
 
 use crate::conform::error::規約検査の破れ;
-use outcome::抽出の成果;
 use source_group::抽出対象のソース群;
+use 抽出の成果と欠け::抽出の成果;
 
 /// `crates` 配下のソースから設計関係グラフを抽出する。返すのはグラフと、抽出できなかった行の一覧の対である。
 pub fn 設計関係グラフを抽出する() -> Result<抽出した設計関係グラフと抽出の欠け, 規約検査の破れ> {

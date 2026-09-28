@@ -10,9 +10,9 @@ use std::path::Path;
 
 use super::declaration_body_line::{本体の行の読み取り, 本体の行を読む};
 use super::out_of_range_syntax::保証範囲の外の構文;
-use super::outcome::抽出の成果;
 use super::struct_declaration::{型定義の宣言, 本体の並べ方};
-use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
+use super::抽出できなかった行の定義::{抽出できなかった理由, 抽出できなかった行};
+use super::抽出の成果と欠け::抽出の成果;
 use crate::conform::design_ontology::line_matching::波括弧が閉じる行;
 use crate::design_model::設計概念への参照;
 use blitz_design_verification::{フィールドの型の表記の事実, 事実の出どころ, 型の表記};

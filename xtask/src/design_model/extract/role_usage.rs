@@ -18,8 +18,8 @@ use crate::conform::design_ontology::declaration_prefix::属性と可視性を�
 
 use super::out_of_range_syntax::保証範囲の外の構文;
 use super::positional_types::{位置で並べた型の一覧, 戻り値の矢印の不等号か};
-use super::unextracted_line::抽出できなかった理由;
 use super::wrapped_function_path::{役割に包まれた関数のパス, 役割に包まれた関数のパスを読む工程};
+use super::抽出できなかった行の定義::抽出できなかった理由;
 use blitz_design_verification::{型の表記を読めない理由, 関数の役割};
 
 /// 1行から役割の使用箇所を読んだ結果。

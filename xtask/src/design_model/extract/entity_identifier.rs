@@ -8,9 +8,9 @@
 //! `type 識別子 =` の行が無い実装は `抽出できなかった行` として数える。`Mエンティティ` はメソッドを持つ唯一のマーカーであり、
 //! 実装に本体が在るため、関連型を書き忘れた実装が構文としては存在しうる。右辺の表記を読めるかは定義の式が決め、読めなければ定義の式の欠けとして数える。
 
-use super::outcome::抽出の成果;
 use super::source_group::抽出対象のソース群;
-use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
+use super::抽出できなかった行の定義::{抽出できなかった理由, 抽出できなかった行};
+use super::抽出の成果と欠け::抽出の成果;
 use crate::conform::design_ontology::line_matching::波括弧が閉じる行;
 use crate::conform::design_ontology::設計解釈マーカーの一覧::設計解釈マーカー;
 use crate::design_model::{Rustの項目の種類, 設計概念への参照};

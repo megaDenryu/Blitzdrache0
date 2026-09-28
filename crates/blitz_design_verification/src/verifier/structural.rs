@@ -8,7 +8,8 @@
 //! 参照: `_doc/設計/設計オントロジー.md` 第9節。
 
 mod atom;
-mod target_set;
+#[path = "structural/対象集合の列挙.rs"]
+mod 対象集合の列挙;
 
 use crate::{設計関係グラフ, 関係を落とした抽出の欠落};
 

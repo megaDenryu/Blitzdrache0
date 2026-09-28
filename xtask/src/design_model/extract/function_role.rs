@@ -14,11 +14,11 @@
 //! 型引数は生の `fn f(a: A) -> B` から読まない。読むと関数の引数と戻り値という言語の形がそのまま設計の意味になり、
 //! 設計として説明可能かを問う力を失う。読むのは役割の型の使用箇所の型引数だけである。
 
-use super::outcome::抽出の成果;
 use super::role_usage::{役割の使用箇所を読む工程, 役割の使用箇所を読んだ結果};
 use super::source_group::抽出対象のソース群;
-use super::unextracted_line::抽出できなかった行;
 use super::折れた役割の宣言::折れた役割の宣言;
+use super::抽出できなかった行の定義::抽出できなかった行;
+use super::抽出の成果と欠け::抽出の成果;
 use crate::design_model::{Rustの項目の種類, 設計概念};
 use blitz_design_verification::{事実の出どころ, 型の表記, 関数の役割の宣言の事実};
 

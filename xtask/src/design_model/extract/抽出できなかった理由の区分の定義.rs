@@ -10,7 +10,7 @@
 use blitz_design_verification::落とした事実の種類;
 
 use super::out_of_range_syntax::保証範囲の外の構文;
-use super::unextracted_line::抽出できなかった理由;
+use super::抽出できなかった行の定義::抽出できなかった理由;
 
 /// 抽出できなかった理由が属する区分。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

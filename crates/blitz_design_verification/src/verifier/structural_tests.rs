@@ -6,19 +6,21 @@
 #![allow(clippy::unwrap_used)]
 
 mod collision_kind_tests;
-mod extraction_loss_tests;
 mod path_tests;
 mod relation_tests;
-mod target_set_tests;
 mod undecided_tests;
 #[path = "structural_tests/マーカーを持つの定義域.rs"]
 mod マーカーを持つの定義域;
+#[path = "structural_tests/対象集合の列挙の試験.rs"]
+mod 対象集合の列挙の試験;
 #[path = "structural_tests/量化の同一性.rs"]
 mod 量化の同一性;
 #[path = "structural_tests/関係の欠落と量化.rs"]
 mod 関係の欠落と量化;
 #[path = "structural_tests/関係の種類ごとの弱め方.rs"]
 mod 関係の種類ごとの弱め方;
+#[path = "structural_tests/関係を落とした抽出の欠落の試験.rs"]
+mod 関係を落とした抽出の欠落の試験;
 
 use std::path::PathBuf;
 

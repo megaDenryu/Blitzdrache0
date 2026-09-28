@@ -10,9 +10,9 @@
 
 use std::path::PathBuf;
 
-use super::outcome::抽出した設計関係グラフと抽出の欠け;
 use super::role::{関数の役割の型か意味型の見分け, 関数の役割の定義の在り処};
 use super::source_group::抽出対象のソース群;
+use super::抽出の成果と欠け::抽出した設計関係グラフと抽出の欠け;
 use crate::design_model::設計概念への参照;
 use crate::file_scan;
 

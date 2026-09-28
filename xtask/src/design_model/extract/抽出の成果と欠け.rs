@@ -14,13 +14,13 @@
 //! 反転して証明済みになるため、この値は欠落を検証器へ渡せる形へ写すメソッドを持つ。
 
 #[cfg(test)]
-#[path = "outcome/欠落が弱める答えの写しの試験.rs"]
+#[path = "抽出の成果と欠け/欠落が弱める答えの写しの試験.rs"]
 mod 欠落が弱める答えの写しの試験;
 
 use super::marker_concept::設計解釈マーカーの参照一覧;
 use super::source_group::抽出対象のソース群;
-use super::unextracted_line::{抽出できなかった行, 読めなかった箇所};
 use super::抽出できなかった理由の区分の定義::{ソースで読めなかった事実, 抽出できなかった理由の区分};
+use super::抽出できなかった行の定義::{抽出できなかった行, 読めなかった箇所};
 use crate::design_model::同一性の衝突;
 use crate::design_model::設計概念;
 use crate::design_model::設計関係グラフ;

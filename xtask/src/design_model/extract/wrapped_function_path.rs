@@ -21,7 +21,7 @@
 //! 所有者を持つのは、`旅行者の現在地::更新する` と `世界::更新する` が名前だけでは同じになるためである。
 //! 関連関数のパスは所有する型の名前まで含めて初めて処理の同一性になる。
 
-use super::unextracted_line::抽出できなかった理由;
+use super::抽出できなかった行の定義::抽出できなかった理由;
 use crate::conform::design_ontology::identifier_boundary::識別子の文字か;
 use crate::design_model::設計概念の識別子;
 use blitz_design_verification::関数の役割;

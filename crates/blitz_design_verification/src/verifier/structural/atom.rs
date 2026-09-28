@@ -10,10 +10,11 @@
 
 mod evidence_building;
 mod node_lookup;
-mod relation_question;
+#[path = "atom/関係の問い方の定義.rs"]
+mod 関係の問い方の定義;
 
 use evidence_building::{設計関係が無い反例, 設計関係を1件見た証拠};
-use relation_question::{問う辺, 関係の問い方};
+use 関係の問い方の定義::{問う辺, 関係の問い方};
 
 use crate::{欠落が弱める答え, 設計概念の種類};
 

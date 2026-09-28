@@ -6,8 +6,8 @@
 use std::path::PathBuf;
 
 use super::out_of_range_syntax::保証範囲の外の構文;
-use super::outcome::抽出した設計関係グラフと抽出の欠け;
-use super::unextracted_line::{抽出できなかった理由, 抽出できなかった行};
+use super::抽出できなかった行の定義::{抽出できなかった理由, 抽出できなかった行};
+use super::抽出の成果と欠け::抽出した設計関係グラフと抽出の欠け;
 
 #[test]
 fn 保証範囲の外の構文の件数は他の理由で抽出できなかった行を数えない() {
