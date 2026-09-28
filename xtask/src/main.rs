@@ -27,7 +27,6 @@ mod day_moment;
 mod depth_prepass_cost;
 mod derived_environment;
 mod design_model;
-mod design_verify;
 mod dispatch;
 mod distant_environment;
 mod distant_view;
@@ -105,6 +104,8 @@ mod visual_sample_world;
 mod watch_assets;
 mod world_setup;
 mod xpbd_solver_bench;
+#[path = "設計の検証.rs"]
+mod 設計の検証;
 fn main() -> std::process::ExitCode {
     dispatch::コマンド行の引数を割り当てる()
 }

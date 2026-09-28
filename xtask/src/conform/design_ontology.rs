@@ -30,7 +30,6 @@ mod exclusive_classification_tests;
 mod existence_marker_form_tests;
 pub(crate) mod identifier_boundary;
 pub(crate) mod impl_header;
-mod impl_syntax;
 #[cfg(test)]
 mod japanese_module_hierarchy_tests;
 pub(crate) mod line_matching;
@@ -109,6 +108,8 @@ mod 命令の組の検査;
 #[cfg(test)]
 #[path = "design_ontology/命令の組の検査の試験.rs"]
 mod 命令の組の検査の試験;
+#[path = "design_ontology/実装の見出しの読み方.rs"]
+mod 実装の見出しの読み方;
 #[path = "design_ontology/属性と可視性の前置き.rs"]
 pub(crate) mod 属性と可視性の前置き;
 #[path = "design_ontology/構造体のフィールドの読み取り.rs"]

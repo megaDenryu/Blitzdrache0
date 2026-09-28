@@ -25,13 +25,15 @@ use blitz_design_verification::{命題の集合, 検証の集計, 構造の検�
 use crate::design_model::設計関係グラフを抽出する;
 use 設計の検証の合否::検証結果の件数;
 
-mod extraction_report;
-mod structural_law;
-#[path = "design_verify/設計の検証の合否.rs"]
+#[path = "設計の検証/抽出の内訳の表示.rs"]
+mod 抽出の内訳の表示;
+#[path = "設計の検証/構造の法則.rs"]
+mod 構造の法則;
+#[path = "設計の検証/設計の検証の合否.rs"]
 mod 設計の検証の合否;
-#[path = "design_verify/設計関係への参加の計測.rs"]
+#[path = "設計の検証/設計関係への参加の計測.rs"]
 mod 設計関係への参加の計測;
-#[path = "design_verify/関数の署名の計測.rs"]
+#[path = "設計の検証/関数の署名の計測.rs"]
 mod 関数の署名の計測;
 
 pub fn 設計の命題を検証する() -> ExitCode {
@@ -44,8 +46,8 @@ pub fn 設計の命題を検証する() -> ExitCode {
     };
     let mut 件数 = 検証結果の件数::default();
     println!("[xtask] design-verify: 設計関係グラフの内訳");
-    extraction_report::抽出の内訳を表示する(&抽出したもの);
-    let 命題の集合 = structural_law::構造の法則の命題の集合を組む();
+    抽出の内訳の表示::抽出の内訳を表示する(&抽出したもの);
+    let 命題の集合 = 構造の法則::構造の法則の命題の集合を組む();
     let 欠落 = 抽出したもの.関係を落とした抽出の欠落へ写す();
     let 問う答えを弱める件数 = 件数.命題が問う答えを弱める欠落を取り込む(&欠落, &命題の集合);
     欠落の件数を表示する(&欠落, &命題の集合, 問う答えを弱める件数);

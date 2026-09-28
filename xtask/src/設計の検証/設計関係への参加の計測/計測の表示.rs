@@ -11,7 +11,7 @@ use std::fmt;
 
 use blitz_design_verification::欠落が弱める答え;
 
-use super::super::extraction_report::種類の呼び名;
+use super::super::抽出の内訳の表示::種類の呼び名;
 use super::母集団を採った内訳;
 use super::{参加していない理由, 案ごとの計測, 設計関係への参加の計測};
 

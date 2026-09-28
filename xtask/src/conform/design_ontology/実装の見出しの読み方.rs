@@ -1,10 +1,13 @@
 //! `impl` の見出しの表記を、実装の種類(固有かトレイトの実装か)と実装が対象にする型と型引数の名前へ分けて読んだ値。
 //! 受け取るのは見出しの表記(`impl` から本体を開く `{` まで。前に `unsafe` があってもよい)、返すのはこの値か、`impl` の見出しでないときの無しである。
-//! 実装が対象にする型の読み方は、子のモジュール `impl_syntax/target_type.rs` が持ち、`where` 句を宣言から切り離す読み方は `impl_syntax/bounds.rs` が持つ。
+//! 実装が対象にする型の読み方は、子のモジュール `実装の見出しの読み方/target_type.rs` が持ち、`where` 句を宣言から切り離す読み方は `実装の見出しの読み方/bounds.rs` が持つ。
 
+#[path = "実装の見出しの読み方/bounds.rs"]
 mod bounds;
+#[path = "実装の見出しの読み方/target_type.rs"]
 mod target_type;
 #[cfg(test)]
+#[path = "実装の見出しの読み方/tests.rs"]
 mod tests;
 
 use super::declaration_brackets::見出しの括弧の深さ;
