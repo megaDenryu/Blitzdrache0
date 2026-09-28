@@ -83,7 +83,7 @@ impl<'a> 役割に包まれた関数のパスを読む工程<'a> {
             return Err(落ちた());
         }
         let (引数, _) = 開き括弧の後ろ.rsplit_once(')').ok_or_else(落ちた)?;
-        Ok(引数.trim().to_string())
+        Ok(引数.trim().trim_end_matches(',').trim_end().to_string())
     }
 
     // 条件4。所有者の型を対象にする `impl` の宣言が同じファイルに在るか。

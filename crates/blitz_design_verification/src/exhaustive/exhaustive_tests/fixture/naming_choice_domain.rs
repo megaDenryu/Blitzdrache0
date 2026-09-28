@@ -13,7 +13,7 @@
 mod enumeration;
 mod naming;
 
-use blitz_design::{Mイベント, Mコマンド, M不変データ, M状態};
+use blitz_design::{Mイベント, Mコマンド, M不変データ, M状態, M遷移が受け取る命令};
 
 /// fixtureの名前の空間。Rustのソースから抽出した概念と混ざらないようにこの表記だけをここへ入れる。
 pub(super) const 地点の名前の空間: &str = "名指しを選ぶ領域のfixture";
@@ -78,6 +78,7 @@ impl M不変データ for 地点 {}
 impl M状態 for 地点 {}
 impl M不変データ for 地点の操作 {}
 impl Mコマンド for 地点の操作 {}
+impl M遷移が受け取る命令 for 地点の操作 {}
 impl M不変データ for 地点の出来事 {}
 impl Mイベント for 地点の出来事 {}
 

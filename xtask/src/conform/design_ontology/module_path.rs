@@ -8,6 +8,8 @@
 pub mod enclosing_module;
 #[cfg(test)]
 mod enclosing_module_tests;
+#[path = "module_path/在るモジュールの一覧.rs"]
+pub mod 在るモジュールの一覧;
 
 use std::path::{Component, Path};
 

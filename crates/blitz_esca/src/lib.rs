@@ -8,7 +8,6 @@
 #![forbid(unsafe_code)]
 
 pub mod elapsed_time;
-pub mod ontology;
 pub mod transition_parameter;
 pub mod traveler_error;
 pub mod walking_direction;
@@ -33,9 +32,8 @@ pub mod 経路の開閉と旅行者の歩行;
 mod tests;
 
 pub use elapsed_time::{経過時間, 経過時間の生成の失敗};
-pub use ontology::{M遷移関数, 遷移失敗結果, 遷移成功結果};
 pub use transition_parameter::遷移パラメータ;
-pub use traveler_error::{旅行者の現在地の生成の失敗, 歩行の失敗, 歩行の規則の生成の失敗};
+pub use traveler_error::{旅行者の現在地の生成の失敗, 歩行の規則の生成の失敗};
 pub use walking_direction::歩行方向;
 pub use キーボードの入力::キーボード歩行入力;
 pub use 居場所::旅行者の居場所;
@@ -43,5 +41,5 @@ pub use 旅行者::{旅行者の出来事, 旅行者の意図, 旅行者の現�
 pub use 時刻::{世界の時刻, 世界の時刻の生成の失敗};
 pub use 歩行の遷移::{旅行者の描画位置, 歩行遷移の規則};
 pub use 経路の開閉と旅行者の歩行::{
-    経路の開閉と旅行者の歩行の更新の失敗, 経路の開閉と旅行者の歩行の更新の結果, 経路の開閉と旅行者の歩行の更新への入力, 経路の開閉と旅行者の歩行の進行, 経路の開閉と旅行者の歩行の進行の指定
+    経路の開閉と旅行者の歩行の出来事, 経路の開閉と旅行者の歩行の更新への入力, 経路の開閉と旅行者の歩行の状態, 経路の開閉と旅行者の歩行の規則
 };

@@ -7,56 +7,52 @@
 
 #![forbid(unsafe_code)]
 
-mod body_capsule;
-#[cfg(test)]
-mod camera_occlusion_tests;
-#[cfg(test)]
-mod camera_recovery_tests;
-#[cfg(test)]
-mod crest_edge;
-mod destination;
-mod display_distance_decision;
-mod facing_azimuth;
-#[cfg(test)]
-mod facing_azimuth_tests;
-mod forward_azimuth;
-mod fox_tour_route;
-mod ground_height;
-#[cfg(test)]
-mod ground_height_tests;
-#[cfg(test)]
-mod half_space_face;
-mod horizontal_unit_vector;
-mod moved_fraction;
-mod movement;
-mod occlusion_verdict;
-mod operation_axis;
-#[cfg(test)]
-mod planar_test_world;
-#[cfg(test)]
-mod planar_test_world_tests;
-mod player_state;
-mod previous_display_distance;
-mod sweep_answer;
-mod sweep_completeness;
-mod sweep_contact;
-mod sweep_hit;
-mod tour_progress;
-#[cfg(test)]
-mod tour_progress_tests;
-mod tour_route;
-mod walk_only_state;
-mod world_shape_port;
+#[path = "キツネの場所巡りの道順.rs"]
+mod キツネの場所巡りの道順;
 #[path = "ゲームの状態.rs"]
 mod ゲームの状態;
 #[cfg(test)]
 #[path = "ゲームの状態の試験.rs"]
 mod ゲームの状態の試験;
+#[path = "プレイヤー.rs"]
+mod プレイヤー;
+#[path = "世界の形.rs"]
+mod 世界の形;
 #[path = "位置と向き.rs"]
 mod 位置と向き;
+#[path = "前の描画.rs"]
+mod 前の描画;
+#[path = "前へ進む向き.rs"]
+mod 前へ進む向き;
 #[cfg(test)]
 #[path = "前へ進む向きと移動の試験.rs"]
 mod 前へ進む向きと移動の試験;
+#[cfg(test)]
+#[path = "半空間.rs"]
+mod 半空間;
+#[path = "向いている方位角.rs"]
+mod 向いている方位角;
+#[cfg(test)]
+#[path = "向いている方位角の試験.rs"]
+mod 向いている方位角の試験;
+#[path = "完全性.rs"]
+mod 完全性;
+#[path = "巡りの進行.rs"]
+mod 巡りの進行;
+#[cfg(test)]
+#[path = "巡りの進行の試験.rs"]
+mod 巡りの進行の試験;
+#[path = "巡る目的地.rs"]
+mod 巡る目的地;
+#[cfg(test)]
+#[path = "復帰とズームの試験.rs"]
+mod 復帰とズームの試験;
+#[path = "掃引で動けた割合.rs"]
+mod 掃引で動けた割合;
+#[path = "掃引の答えの対.rs"]
+mod 掃引の答えの対;
+#[path = "接触.rs"]
+mod 接触;
 #[path = "操作意図.rs"]
 mod 操作意図;
 #[path = "操作意図の命令.rs"]
@@ -64,53 +60,88 @@ mod 操作意図の命令;
 #[cfg(test)]
 #[path = "操作意図の試験.rs"]
 mod 操作意図の試験;
+#[path = "操作軸.rs"]
+mod 操作軸;
+#[path = "最初に触れる面.rs"]
+mod 最初に触れる面;
+#[cfg(test)]
+#[path = "検査用の世界.rs"]
+mod 検査用の世界;
+#[cfg(test)]
+#[path = "検査用の世界の試験.rs"]
+mod 検査用の世界の試験;
+#[path = "歩くだけのゲーム.rs"]
+mod 歩くだけのゲーム;
+#[path = "水平面の向き.rs"]
+mod 水平面の向き;
 #[path = "確定済みの入力.rs"]
 mod 確定済みの入力;
+#[path = "移動.rs"]
+mod 移動;
 #[cfg(test)]
 #[path = "移動と向きの試験.rs"]
 mod 移動と向きの試験;
+#[cfg(test)]
+#[path = "稜線.rs"]
+mod 稜線;
+#[path = "胴体の形.rs"]
+mod 胴体の形;
+#[path = "表示距離.rs"]
+mod 表示距離;
+#[path = "足元の地面.rs"]
+mod 足元の地面;
+#[cfg(test)]
+#[path = "足元の地面の試験.rs"]
+mod 足元の地面の試験;
 #[path = "進行段階.rs"]
 mod 進行段階;
 #[cfg(test)]
 #[path = "進行段階の遷移の試験.rs"]
 mod 進行段階の遷移の試験;
+#[path = "道順.rs"]
+mod 道順;
 #[path = "遮蔽と復帰.rs"]
 mod 遮蔽と復帰;
 #[path = "遮蔽の入力.rs"]
 mod 遮蔽の入力;
+#[path = "遮蔽の判定の選択肢.rs"]
+mod 遮蔽の判定の選択肢;
+#[cfg(test)]
+#[path = "遮蔽の試験.rs"]
+mod 遮蔽の試験;
 #[cfg(test)]
 #[path = "遮蔽の試験の構図.rs"]
 mod 遮蔽の試験の構図;
 
-pub use body_capsule::胴体カプセル;
-pub use destination::目的地;
-pub use display_distance_decision::表示距離の決定;
-pub use facing_azimuth::動く個体が向いている方位角;
-pub use forward_azimuth::前へ進む向きの方位角;
-pub use fox_tour_route::キツネの場所巡りの道順を作る;
-pub use ground_height::足元の地面の高さ;
-pub use horizontal_unit_vector::水平面の単位ベクトル;
-pub use moved_fraction::{動けた割合, 動けた割合エラー};
-pub use movement::{
-    一刻みの移動の入力, 一刻みの移動の結果, 世界の軸で見た倒し量, 問い合わせ件数, 接地の規則, 接触余白, 段差の持ち上げの規則, 水平の速度, 移動の観測, 移動状態, 胴体の移動, 胴体の速度, 落下とジャンプの規則, 速さの規則
-};
-pub use occlusion_verdict::遮蔽の判定;
-pub use operation_axis::操作軸の倒し量;
-pub use player_state::プレイヤーの状態;
-pub use previous_display_distance::前の描画の表示距離;
-pub use sweep_answer::掃引の答え;
-pub use sweep_completeness::掃引の完全性;
-pub use sweep_contact::掃引の接触;
-pub use sweep_hit::掃引が最初に触れる面;
-pub use tour_progress::場所巡りの進行;
-pub use tour_route::場所巡りの道順;
-pub use walk_only_state::歩くだけのゲームの状態;
-pub use world_shape_port::世界の形を尋ねる口;
+pub use キツネの場所巡りの道順::キツネの場所巡りの道順を作る;
 pub use ゲームの状態::場所巡りのゲームの状態;
+pub use プレイヤー::プレイヤーの状態;
+pub use 世界の形::世界の形を尋ねる口;
 pub use 位置と向き::プレイヤーの位置と向き;
+pub use 前の描画::前の描画の表示距離;
+pub use 前へ進む向き::前へ進む向きの方位角;
+pub use 向いている方位角::動く個体が向いている方位角;
+pub use 完全性::掃引の完全性;
+pub use 巡りの進行::場所巡りの進行;
+pub use 巡る目的地::目的地;
+pub use 掃引で動けた割合::{動けた割合, 動けた割合エラー};
+pub use 掃引の答えの対::掃引の答え;
+pub use 接触::掃引の接触;
 pub use 操作意図::ゲームの操作意図;
-pub use 操作意図の命令::{ジャンプの操作, 両軸の倒し量, 水平移動の操作, 進行の操作};
+pub use 操作意図の命令::{ジャンプの操作, 両軸の倒し量, 水平移動の操作, 胴体の移動の命令の組, 進行の操作};
+pub use 操作軸::操作軸の倒し量;
+pub use 最初に触れる面::掃引が最初に触れる面;
+pub use 歩くだけのゲーム::歩くだけのゲームの状態;
+pub use 水平面の向き::水平面の単位ベクトル;
 pub use 確定済みの入力::{押した瞬間の操作の入力, 押下が続く操作の入力, 確定済みの操作入力};
+pub use 移動::{
+    世界の軸で見た倒し量, 問い合わせ件数, 接地の規則, 接触余白, 段差の持ち上げの規則, 水平の速度, 移動の観測, 移動状態, 胴体の移動, 胴体の移動の結果, 胴体の移動の遷移パラメータ, 胴体の速度, 落下とジャンプの規則, 速さの規則
+};
+pub use 胴体の形::胴体カプセル;
+pub use 表示距離::表示距離の決定;
+pub use 足元の地面::足元の地面の高さ;
 pub use 進行段階::{ゲームの進行段階, 終了確認から戻る段階};
+pub use 道順::場所巡りの道順;
 pub use 遮蔽と復帰::カメラの遮蔽と復帰;
 pub use 遮蔽の入力::遮蔽の判定の入力;
+pub use 遮蔽の判定の選択肢::遮蔽の判定;

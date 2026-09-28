@@ -6,8 +6,8 @@
 use super::*;
 #[doc(hidden)]
 pub(super) const __GRAPHITE_SCHEMA_FINGERPRINT: [u64; 4] = [
-    13983235398047299569u64, 11774044384770531170u64, 16793110791686526679u64,
-    10080532958373196867u64,
+    16254215208916110353u64, 2590492878942778142u64, 2037936642841927191u64,
+    15822186187143561731u64,
 ];
 /// `地点` ノードの公開ID。
 ///
@@ -75,7 +75,6 @@ impl std::fmt::Debug for 経路 {
     }
 }
 #[allow(dead_code)]
-#[derive(Clone)]
 struct __経路Record {
     endpoints: graphite::UnorderedPair<__地点InternalPosition>,
     積み荷: 経路の積み荷,
@@ -128,7 +127,6 @@ impl std::error::Error for Violation {}
 /// `&mut Graph` を要求する種別APIから更新できる。
 ///
 /// 宣言: `src/地点と経路/図式.rs` の `schema 地点と経路の図式`
-#[derive(Clone)]
 pub struct Graph {
     __graphite_node_地点: graphite::KeyedTable<地点Id, super::地点>,
     経路: graphite::KeyedTable<経路Id, __経路Record>,

@@ -11,7 +11,7 @@ const モジュールの根: &str = "crates";
 const 行一覧: [台帳の行; 3] = [
     台帳の行::列挙("blitz_assembly/src/joint/joint_kind.rs", "接合種別", 4, 21, 7),
     台帳の行::構造体("blitz_design_verification/src/verifier/structural.rs", "構造の検証器", 4, 2, 19),
-    台帳の行::構造体("blitz_game/src/planar_test_world.rs", "平面と段と壁の世界", 3, 3, 19),
+    台帳の行::構造体("blitz_game/src/検査用の世界.rs", "平面と段と壁の世界", 3, 3, 19),
 ];
 
 pub fn 一覧() -> 区画の一覧 {

@@ -27,6 +27,8 @@ mod supertrait;
 mod trait_declaration;
 mod unextracted_line;
 mod wrapped_function_path;
+#[path = "extract/折れた役割の宣言.rs"]
+mod 折れた役割の宣言;
 #[path = "extract/本番のソース.rs"]
 mod 本番のソース;
 #[path = "extract/本番の行.rs"]
@@ -58,6 +60,12 @@ mod フレーム型の一覧の実物との突き合わせの試験;
 #[cfg(test)]
 #[path = "extract/フレーム型の定義の原文の読み取り.rs"]
 mod フレーム型の定義の原文の読み取り;
+#[cfg(test)]
+#[path = "extract/同じ文の複数の役割の使用の試験.rs"]
+mod 同じ文の複数の役割の使用の試験;
+#[cfg(test)]
+#[path = "extract/形を縮めた遷移と問い合わせの役割の使用箇所の試験.rs"]
+mod 形を縮めた遷移と問い合わせの役割の使用箇所の試験;
 #[cfg(test)]
 #[path = "extract/役割の型引数の入れ子の試験.rs"]
 mod 役割の型引数の入れ子の試験;

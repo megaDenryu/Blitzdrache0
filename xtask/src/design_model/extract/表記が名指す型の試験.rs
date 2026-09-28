@@ -52,14 +52,14 @@ fn 座標系の並びの空白を整えた表記を同一性の名前にする()
 #[test]
 fn 構造体と列挙のフィールドに書いたフレーム型から座標系ごとに別の型への保持するが出る() {
     let 原文 = "pub struct 望みの動き {\n    変位: 変位<ワールド>,\n    戻る変位: Option<変位<ローカル>>,\n    法線一覧: Vec<方向<ワールド>>,\n}\n\npub enum 移動状態 {\n    接地中 { 接地面の単位法線: 方向<ワールド> },\n    前へ掃引する(変換<ローカル, ワールド>),\n}\n";
-    let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_game/src/movement/desired_motion.rs", 原文)]);
+    let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_game/src/移動/望みの動きの算出.rs", 原文)]);
     let 表記一覧 = 関係の表記一覧(&結果);
     for 期待 in [
-        "blitz_game::movement::desired_motion::望みの動き 保持する 変位<ワールド>",
-        "blitz_game::movement::desired_motion::望みの動き 保持する 変位<ローカル>",
-        "blitz_game::movement::desired_motion::望みの動き 保持する 方向<ワールド>",
-        "blitz_game::movement::desired_motion::移動状態 保持する 方向<ワールド>",
-        "blitz_game::movement::desired_motion::移動状態 保持する 変換<ローカル, ワールド>",
+        "blitz_game::移動::望みの動きの算出::望みの動き 保持する 変位<ワールド>",
+        "blitz_game::移動::望みの動きの算出::望みの動き 保持する 変位<ローカル>",
+        "blitz_game::移動::望みの動きの算出::望みの動き 保持する 方向<ワールド>",
+        "blitz_game::移動::望みの動きの算出::移動状態 保持する 方向<ワールド>",
+        "blitz_game::移動::望みの動きの算出::移動状態 保持する 変換<ローカル, ワールド>",
     ] {
         assert!(表記一覧.contains(&期待.to_string()), "{期待} が無い: {表記一覧:?}");
     }
@@ -73,14 +73,14 @@ fn 構造体と列挙のフィールドに書いたフレーム型から座標�
 
 #[test]
 fn フレーム型の座標系が宣言の型引数なら関係を出さず型引数として数える() {
-    let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_game/src/movement/desired_motion.rs", "pub struct 包み<空間種: 空間> {\n    変位: 変位<空間種>,\n}\n")]);
+    let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_game/src/移動/望みの動きの算出.rs", "pub struct 包み<空間種: 空間> {\n    変位: 変位<空間種>,\n}\n")]);
     assert!(!関係の表記一覧(&結果).iter().any(|表記| 表記.contains("保持する")), "{:?}", 関係の表記一覧(&結果));
     assert_eq!(抽出できなかった理由の説明一覧(&結果), vec!["`空間種` は定義の宣言が導入した型引数であり設計概念ではない".to_string()]);
 }
 
 #[test]
 fn 一覧に無い総称の型は保持するを出さず関係の欠落として数える() {
-    let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_game/src/movement/desired_motion.rs", "pub struct 描画の材料 {\n    形: Handle<メッシュ>,\n}\n")]);
+    let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_game/src/移動/望みの動きの算出.rs", "pub struct 描画の材料 {\n    形: Handle<メッシュ>,\n}\n")]);
     assert!(!関係の表記一覧(&結果).iter().any(|表記| 表記.contains("保持する")), "{:?}", 関係の表記一覧(&結果));
     assert_eq!(結果.関係を落とした抽出の欠落へ写す().合計の件数(), 1, "{}", 結果.関係を落とした抽出の欠落へ写す().説明());
 }

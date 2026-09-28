@@ -86,19 +86,29 @@ fn 実物のcratesに関係を落とした抽出の欠落が1件も無い() {
 }
 
 #[test]
-fn 実物の遷移関数は遷移パラメータを消費し失敗の型を生成する() {
+fn 実物の失敗しない遷移関数は遷移パラメータを消費し失敗の位置からは関係を導かない() {
     let 結果 = 実物のcratesから結果を組む();
     let 表記一覧 = super::test_support::関係の表記一覧(&結果);
     let 主語 = "blitz_esca::居場所::旅行者の居場所::歩行を遷移する";
-    for 期待 in [format!("{主語} 消費する blitz_esca::transition_parameter::遷移パラメータ"), format!("{主語} 生成する blitz_esca::traveler_error::歩行の失敗")] {
-        assert!(表記一覧.contains(&期待), "{期待} が無い");
-    }
+    let 期待 = format!("{主語} 消費する blitz_esca::transition_parameter::遷移パラメータ");
+    assert!(表記一覧.contains(&期待), "{期待} が無い");
+    let 生成する先一覧: Vec<&String> = 表記一覧.iter().filter(|表記| 表記.starts_with(&format!("{主語} 生成する "))).collect();
+    assert!(生成する先一覧.iter().all(|表記| !表記.contains("Infallible")), "値を持たない失敗の型が生成する先の節点になった: {生成する先一覧:?}");
+    assert!(
+        生成する先一覧.iter().any(|表記| 表記.ends_with("旅行者の居場所") || 表記.ends_with("旅行者の出来事")),
+        "失敗の位置を外したことで次の状態と出来事の生成まで落ちた: {生成する先一覧:?}"
+    );
 }
 
 #[test]
 fn 実物の関数の役割の型と意味型は宣言したモジュールパスの型の節点として立つ() {
     let 結果 = 実物のcratesから結果を組む();
     let 当たった表記一覧: Vec<String> = 結果.グラフ.概念一覧().iter().map(|概念| 概念.参照を組む()).filter(|参照| 参照.関数の役割の型か意味型を指す参照か()).map(|参照| 参照.表記()).collect();
-    let 期待の件数: usize = blitz_design_verification::関数の役割::全部の一覧().into_iter().map(|役割| 1 + 役割.伴う意味型の名前一覧().len()).sum();
+    // 同じ意味型を2つの役割が伴うこと(問い合わせを伴う2つの遷移の成功結果)があるため、モジュールパスと名前の組で重複を1つにまとめて数える。
+    let 期待の件数 = blitz_design_verification::関数の役割::全部の一覧()
+        .into_iter()
+        .flat_map(|役割| std::iter::once(役割.名前()).chain(役割.伴う意味型の名前一覧().iter().copied()).map(move |名前| (役割.役割の型を定義するモジュールのパス(), 名前)))
+        .collect::<std::collections::HashSet<_>>()
+        .len();
     assert_eq!(当たった表記一覧.len(), 期待の件数, "役割の型か意味型の定義の場所が `role` の宣言と食い違っている: {当たった表記一覧:?}");
 }
