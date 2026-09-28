@@ -35,7 +35,7 @@ pub fn where句の述語を読む(where句: &str) -> Vec<(String, Vec<String>)> 
         .map(|述語| 高階の寿命の束縛を読み飛ばす(述語.trim()))
         .filter_map(|述語| {
             let 名前 = 先頭の識別子(述語);
-            let 境界 = 述語[名前.len()..].trim_start().strip_prefix(':')?;
+            let 境界 = 述語[名前.len()..].trim_start().strip_prefix(':').filter(|後ろ| !後ろ.starts_with(':'))?;
             (!名前.is_empty()).then(|| (名前, 最上位の足し算で分ける(境界)))
         })
         .collect()
