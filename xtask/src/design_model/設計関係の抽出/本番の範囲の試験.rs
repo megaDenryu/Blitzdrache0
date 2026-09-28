@@ -72,7 +72,7 @@ fn 試験の属性と項目が同じ行にあれば本番の項目を黙って�
 #[test]
 fn 外部の一括取り込みを別のモジュールの唯一の同名型へ写さない() {
     let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[("crates/blitz_esca/src/holder.rs", "use dependency::*;\nstruct Holder {\n    value: Foo,\n}\n"), ("crates/blitz_esca/src/other.rs", "struct Foo;\n")]);
-    assert!(!結果.グラフ.保持する関係一覧().iter().any(|関係| 関係.目的語.識別子().モジュールパス == "blitz_esca::other"));
+    assert!(!結果.グラフ.プリミティブな関係を貸す().全件().iter().any(|関係| 関係.目的語.識別子().モジュールパス == "blitz_esca::other"));
     assert!(結果.抽出できなかった行一覧.iter().any(|行| 行.理由.説明().contains("Foo")));
 }
 
