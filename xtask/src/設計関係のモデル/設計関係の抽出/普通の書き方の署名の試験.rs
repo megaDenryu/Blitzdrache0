@@ -65,6 +65,26 @@ fn useで取り込んだ標準ライブラリのモジュールを通したパ�
     assert!(!表記一覧.iter().any(|表記| 表記.ends_with("Result") || 表記.ends_with("Formatter")), "{表記一覧:?}");
 }
 
+// 反証: 修飾の無い名前を定義の探索だけで解決すると、`use std::fmt::Display;` の後の `Display` と、取り込まずに書いたプレリュードの `Iterator` が、
+// `std::fmt::Display` と書いたときと違ってモジュールパスの空の節点になる。
+#[test]
+fn useで標準ライブラリから取り込んだ名前とプレリュードのトレイトは修飾して書いたときと同じく関係を作らない() {
+    let 原文 = "use std::fmt::Display;
+
+pub fn 見せる(値: &dyn Display) -> impl Display {
+    todo!()
+}
+
+pub fn 並べる() -> impl Iterator<Item = u8> {
+    todo!()
+}
+";
+    let 結果 = 抽出する(原文);
+    let 表記一覧 = 関係の表記一覧(&結果);
+    assert!(!表記一覧.iter().any(|表記| 表記.ends_with("Display") || 表記.ends_with("Iterator")), "{表記一覧:?}");
+    assert!(結果.抽出できなかった行一覧.is_empty(), "{:?}", 結果.抽出できなかった行一覧);
+}
+
 // 反証: 修飾を読まないと、`use crate::形;` の後の `形::地図` と `crate::形::地図` が地図の定義へたどり着かない。
 #[test]
 fn useで取り込んだクレートのモジュールと起点の予約語を通したパスは定義へたどり着く() {
