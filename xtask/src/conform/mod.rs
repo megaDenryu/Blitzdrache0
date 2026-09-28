@@ -6,7 +6,6 @@ pub(crate) mod cargo_toml_parse;
 mod declaration_comment_line;
 mod dependency_whitelist;
 mod depth_contract;
-pub(crate) mod design_ontology;
 mod doc_reference;
 mod doc_section;
 mod drop_impl;
@@ -20,7 +19,6 @@ mod free_function_whole_type;
 pub(crate) mod graphiteのコード;
 mod lighting_query_declaration;
 mod line_count;
-mod line_count_allowance;
 mod module_import_boundary;
 mod particle_reference;
 mod reload_without_device_wait;
@@ -49,6 +47,10 @@ mod warning;
 mod whole_repository;
 mod wording_contract;
 mod workspace_dependency_features;
+#[path = "行数の超過を許す台帳.rs"]
+mod 行数の超過を許す台帳;
+#[path = "設計オントロジーの規約検査.rs"]
+pub(crate) mod 設計オントロジーの規約検査;
 #[path = "走査した原文の一覧.rs"]
 pub(crate) mod 走査した原文の一覧;
 

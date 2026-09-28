@@ -2,7 +2,7 @@
 
 use std::path::Path;
 
-use super::super::line_count_allowance::上限行数;
+use super::super::行数の超過を許す台帳::上限行数;
 use super::行数の上限超過を検査する;
 
 /// マクロの外に `外の行数` 行、schemaの本体に `本体の行数` 行のコードを持つRustの原文。開きと閉じの区切り記号の行はマクロの外に数える。

@@ -22,7 +22,7 @@ use std::process::ExitCode;
 
 use blitz_design_verification::{命題の集合, 検証の集計, 構造の検証器, 関係を落とした抽出の欠落};
 
-use crate::design_model::設計関係グラフを抽出する;
+use crate::設計関係のモデル::設計関係グラフを抽出する;
 use 設計の検証の合否::検証結果の件数;
 
 #[path = "設計の検証/抽出の内訳の表示.rs"]

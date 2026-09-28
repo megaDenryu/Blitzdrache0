@@ -8,7 +8,7 @@ mod 構造の法則が問う答えの試験;
 
 use blitz_design_verification::{命題, 命題の検証器, 構造の検証器, 関係を落とした抽出の欠落};
 
-use crate::design_model::設計関係の種類;
+use crate::設計関係のモデル::設計関係の種類;
 
 use super::存在理由の公理の試験のグラフ::{グラフ, 使われ方};
 use super::構造の法則の命題の集合を組む;

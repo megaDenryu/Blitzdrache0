@@ -20,7 +20,7 @@ mod tests {
     fn 試験のためのファイルを見分ける() {
         assert!(試験のためのファイルか(Path::new("xtask/src/conform/free_function_whole_type/tests.rs")));
         assert!(試験のためのファイルか(Path::new("crates/blitz_render/src/renderer/origin_tests.rs")));
-        assert!(試験のためのファイルか(Path::new("xtask/src/design_model/設計関係の抽出/表記が名指す型の試験.rs")));
+        assert!(試験のためのファイルか(Path::new("xtask/src/設計関係のモデル/設計関係の抽出/表記が名指す型の試験.rs")));
         assert!(試験のためのファイルか(Path::new("crates/editor_server/tests/common/mod.rs")));
         assert!(!試験のためのファイルか(Path::new("crates/blitz_app/src/app/mod.rs")));
     }

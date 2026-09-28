@@ -7,9 +7,9 @@
 use super::error::規約検査の破れ;
 use super::report::検査の報告;
 use super::{
-    dependency_whitelist, depth_contract, design_ontology, doc_section, duplicate_file_literal, extractable_normal_form, free_function_whole_type, lighting_query_declaration, reload_without_device_wait, removed_object_uniform,
-    removed_slot_material_set, removed_view_pass_lighting, sample_bodies_consistency, shader_binding, shader_constant, shader_form, shader_uniform_alias, single_lighting_slot_write, type_metrics_ledger, verify_output_place, wording_contract,
-    workspace_dependency_features,
+    dependency_whitelist, depth_contract, doc_section, duplicate_file_literal, extractable_normal_form, free_function_whole_type, lighting_query_declaration, reload_without_device_wait, removed_object_uniform, removed_slot_material_set,
+    removed_view_pass_lighting, sample_bodies_consistency, shader_binding, shader_constant, shader_form, shader_uniform_alias, single_lighting_slot_write, type_metrics_ledger, verify_output_place, wording_contract, workspace_dependency_features,
+    設計オントロジーの規約検査,
 };
 
 pub fn 複数ファイルを横断する検査の違反一覧を集める() -> Result<検査の報告, 規約検査の破れ> {
@@ -36,5 +36,5 @@ pub fn 複数ファイルを横断する検査の違反一覧を集める() -> R
     Ok(検査の報告::生成する(違反一覧, Vec::new())
         .合わせる(type_metrics_ledger::全型の分量を台帳と照合する()?)
         .合わせる(free_function_whole_type::全ファイルの自由関数を検査する()?)
-        .合わせる(design_ontology::全ファイルを検査する()?))
+        .合わせる(設計オントロジーの規約検査::全ファイルを検査する()?))
 }

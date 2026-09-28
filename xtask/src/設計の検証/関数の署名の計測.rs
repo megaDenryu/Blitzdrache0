@@ -15,7 +15,7 @@ mod 関数の署名の計測の表示;
 #[path = "関数の署名の計測/関数の署名の計測の試験.rs"]
 mod 関数の署名の計測の試験;
 
-use crate::design_model::抽出した設計関係グラフと抽出の欠け;
+use crate::設計関係のモデル::抽出した設計関係グラフと抽出の欠け;
 use blitz_design_verification::受け手の種類;
 
 pub use 手がかり::遷移の形の手がかり;
