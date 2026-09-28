@@ -11,87 +11,109 @@
 //! このファイルは子のモジュールの宣言の並びと抽出の入口(2つの関数)を1つに統合しており、100行を超える。Rustが子のモジュールの宣言を親のファイルへ集めることを要求し、
 //! 日本語のモジュール名は宣言ごとに `#[path]` の1行を要するためである。宣言の並びを中間のモジュールへ移すと、行数のためだけの分割になり、入口が当てる規則と子の並びを1か所で読めなくなる。
 
+#[path = "設計関係の抽出/entity_identifier.rs"]
 mod entity_identifier;
+#[path = "設計関係の抽出/function_role.rs"]
 mod function_role;
+#[path = "設計関係の抽出/held_declaration.rs"]
 mod held_declaration;
+#[path = "設計関係の抽出/held_field.rs"]
 mod held_field;
+#[path = "設計関係の抽出/marker_concept.rs"]
 mod marker_concept;
+#[path = "設計関係の抽出/marker_impl.rs"]
 mod marker_impl;
+#[path = "設計関係の抽出/ontology_scope.rs"]
 mod ontology_scope;
+#[path = "設計関係の抽出/out_of_range_syntax.rs"]
 mod out_of_range_syntax;
+#[path = "設計関係の抽出/positional_types.rs"]
 mod positional_types;
+#[path = "設計関係の抽出/role.rs"]
 mod role;
+#[path = "設計関係の抽出/source_group.rs"]
 mod source_group;
+#[path = "設計関係の抽出/supertrait.rs"]
 mod supertrait;
+#[path = "設計関係の抽出/wrapped_function_path.rs"]
 mod wrapped_function_path;
-#[path = "extract/トレイトの宣言の行.rs"]
+#[path = "設計関係の抽出/トレイトの宣言の行.rs"]
 mod トレイトの宣言の行;
-#[path = "extract/型定義の宣言の行.rs"]
+#[path = "設計関係の抽出/型定義の宣言の行.rs"]
 mod 型定義の宣言の行;
-#[path = "extract/型定義の本体の行.rs"]
+#[path = "設計関係の抽出/型定義の本体の行.rs"]
 mod 型定義の本体の行;
-#[path = "extract/役割の使用箇所.rs"]
+#[path = "設計関係の抽出/役割の使用箇所.rs"]
 mod 役割の使用箇所;
-#[path = "extract/折れた役割の宣言.rs"]
+#[path = "設計関係の抽出/折れた役割の宣言.rs"]
 mod 折れた役割の宣言;
-#[path = "extract/抽出できなかった理由の区分の定義.rs"]
+#[path = "設計関係の抽出/抽出できなかった理由の区分の定義.rs"]
 mod 抽出できなかった理由の区分の定義;
-#[path = "extract/抽出できなかった行の定義.rs"]
+#[path = "設計関係の抽出/抽出できなかった行の定義.rs"]
 mod 抽出できなかった行の定義;
-#[path = "extract/抽出の成果と欠け.rs"]
+#[path = "設計関係の抽出/抽出の成果と欠け.rs"]
 mod 抽出の成果と欠け;
-#[path = "extract/本番のソース.rs"]
+#[path = "設計関係の抽出/本番のソース.rs"]
 mod 本番のソース;
-#[path = "extract/本番の行.rs"]
+#[path = "設計関係の抽出/本番の行.rs"]
 mod 本番の行;
 
 #[cfg(test)]
+#[path = "設計関係の抽出/entity_identifier_tests.rs"]
 mod entity_identifier_tests;
 #[cfg(test)]
+#[path = "設計関係の抽出/function_role_tests.rs"]
 mod function_role_tests;
 #[cfg(test)]
+#[path = "設計関係の抽出/held_field_tests.rs"]
 mod held_field_tests;
 #[cfg(test)]
+#[path = "設計関係の抽出/marker_impl_tests.rs"]
 mod marker_impl_tests;
 #[cfg(test)]
+#[path = "設計関係の抽出/owner_implementation_tests.rs"]
 mod owner_implementation_tests;
 #[cfg(test)]
+#[path = "設計関係の抽出/real_crates_tests.rs"]
 mod real_crates_tests;
 #[cfg(test)]
+#[path = "設計関係の抽出/supertrait_tests.rs"]
 mod supertrait_tests;
 #[cfg(test)]
+#[path = "設計関係の抽出/test_support.rs"]
 mod test_support;
 #[cfg(test)]
+#[path = "設計関係の抽出/wrapped_function_path_tests.rs"]
 mod wrapped_function_path_tests;
 #[cfg(test)]
-#[path = "extract/フレーム型の一覧の実物との突き合わせの試験.rs"]
+#[path = "設計関係の抽出/フレーム型の一覧の実物との突き合わせの試験.rs"]
 mod フレーム型の一覧の実物との突き合わせの試験;
 #[cfg(test)]
-#[path = "extract/フレーム型の定義の原文の読み取り.rs"]
+#[path = "設計関係の抽出/フレーム型の定義の原文の読み取り.rs"]
 mod フレーム型の定義の原文の読み取り;
 #[cfg(test)]
-#[path = "extract/可視性の前置きを持つ宣言の試験.rs"]
+#[path = "設計関係の抽出/可視性の前置きを持つ宣言の試験.rs"]
 mod 可視性の前置きを持つ宣言の試験;
 #[cfg(test)]
-#[path = "extract/同じ文の複数の役割の使用の試験.rs"]
+#[path = "設計関係の抽出/同じ文の複数の役割の使用の試験.rs"]
 mod 同じ文の複数の役割の使用の試験;
 #[cfg(test)]
-#[path = "extract/型定義の宣言の行の試験.rs"]
+#[path = "設計関係の抽出/型定義の宣言の行の試験.rs"]
 mod 型定義の宣言の行の試験;
 #[cfg(test)]
-#[path = "extract/形を縮めた遷移と問い合わせの役割の使用箇所の試験.rs"]
+#[path = "設計関係の抽出/形を縮めた遷移と問い合わせの役割の使用箇所の試験.rs"]
 mod 形を縮めた遷移と問い合わせの役割の使用箇所の試験;
 #[cfg(test)]
-#[path = "extract/役割の型引数の入れ子の試験.rs"]
+#[path = "設計関係の抽出/役割の型引数の入れ子の試験.rs"]
 mod 役割の型引数の入れ子の試験;
 #[cfg(test)]
-#[path = "extract/抽出した設計関係グラフと抽出の欠けの試験.rs"]
+#[path = "設計関係の抽出/抽出した設計関係グラフと抽出の欠けの試験.rs"]
 mod 抽出した設計関係グラフと抽出の欠けの試験;
 #[cfg(test)]
-#[path = "extract/本番の範囲の試験.rs"]
+#[path = "設計関係の抽出/本番の範囲の試験.rs"]
 mod 本番の範囲の試験;
 #[cfg(test)]
-#[path = "extract/表記が名指す型の試験.rs"]
+#[path = "設計関係の抽出/表記が名指す型の試験.rs"]
 mod 表記が名指す型の試験;
 
 #[cfg(test)]
