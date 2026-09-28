@@ -35,6 +35,11 @@ mod transition_model;
 mod verifier;
 #[path = "分類.rs"]
 mod 分類;
+#[path = "命題が問う答え.rs"]
+mod 命題が問う答え;
+#[cfg(test)]
+#[path = "命題が問う答えの試験.rs"]
+mod 命題が問う答えの試験;
 #[path = "導出.rs"]
 mod 導出;
 #[path = "欠落が弱める答えの定義.rs"]
