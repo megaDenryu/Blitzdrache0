@@ -30,6 +30,8 @@ pub use プリミティブな関係の問い::プリミティブな関係の一�
 mod 節点の問い;
 #[path = "relation_graph/経路.rs"]
 mod 経路;
+
+pub use 経路::経路の答え;
 #[path = "relation_graph/設計関係の問い.rs"]
 mod 設計関係の問い;
 
