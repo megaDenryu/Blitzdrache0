@@ -7,7 +7,7 @@ use std::path::PathBuf;
 use super::super::line_matching::{波括弧が閉じる行, 語として現れるか};
 use super::super::module_path::enclosing_module::行の字句位置;
 use super::super::module_path::モジュールパス;
-use super::探す定義の宣言;
+use super::{定義の探索の材料, 探す定義の宣言};
 
 pub struct 同名の定義の候補 {
     pub 定義: String,
@@ -17,20 +17,16 @@ pub struct 同名の定義の候補 {
 
 impl 同名の定義の候補 {
     /// 全ソースから、その名前の探す宣言(型なら `struct`・`enum`、トレイトなら `trait`)の定義を全部集める。同じファイルに2つ以上あればその分だけ並ぶ(黙って最初の1つを採らない)。
-    pub fn 全ソースから集める(ソース一覧: &[(PathBuf, Vec<String>)], 型名: &str, 宣言: 探す定義の宣言) -> Vec<Self> {
+    pub fn 全ソースから集める(材料: &定義の探索の材料, 型名: &str, 宣言: 探す定義の宣言) -> Vec<Self> {
         let シグネチャ = 宣言.シグネチャ一覧(型名);
         let mut 候補一覧 = Vec::new();
-        for (パス, 行一覧) in ソース一覧 {
-            let 開始一覧: Vec<usize> = 行一覧.iter().enumerate().filter(|(_, 行)| シグネチャ.iter().any(|宣言| 語として現れるか(行, 宣言))).map(|(開始, _)| 開始).collect();
-            if 開始一覧.is_empty() {
-                continue;
-            }
-            let 字句位置一覧 = モジュールパス::ファイルのパスから求める(パス).行ごとの字句位置一覧(行一覧);
-            候補一覧.extend(開始一覧.into_iter().filter_map(|開始| {
+        for ファイル in 材料.ファイル一覧() {
+            let 開始一覧 = ファイル.行一覧.iter().enumerate().filter(|(_, 行)| シグネチャ.iter().any(|宣言| 語として現れるか(行, 宣言))).map(|(開始, _)| 開始);
+            候補一覧.extend(開始一覧.filter_map(|開始| {
                 Some(Self {
-                    定義: 定義ブロック(行一覧, 開始),
-                    パス: パス.clone(),
-                    位置: 字句位置一覧.get(開始)?.clone(),
+                    定義: 定義ブロック(ファイル.行一覧, 開始),
+                    パス: ファイル.パス.to_path_buf(),
+                    位置: ファイル.字句位置一覧.get(開始)?.clone(),
                 })
             }));
         }
