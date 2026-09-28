@@ -47,6 +47,11 @@ mod warning;
 mod whole_repository;
 mod wording_contract;
 mod workspace_dependency_features;
+#[path = "射影関数の宣言の検査.rs"]
+mod 射影関数の宣言の検査;
+#[cfg(test)]
+#[path = "射影関数の宣言の検査の試験.rs"]
+mod 射影関数の宣言の検査の試験;
 #[path = "行数の超過を許す台帳.rs"]
 mod 行数の超過を許す台帳;
 #[path = "設計オントロジーの規約検査.rs"]

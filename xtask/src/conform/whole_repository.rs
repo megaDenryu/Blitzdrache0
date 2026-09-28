@@ -1,7 +1,7 @@
 //! ファイル1つを見るだけでは判定できない検査をまとめて走らせる工程。受け取るのは無し、
 //! 返すのは違反と警告の報告か、検査自体を実行できなかった理由である。
 //!
-//! ここに集めるのは、依存の白リスト・依存の機能一覧の台帳・文書の節参照・正本と写しが同じ値を持つべき定数の一致・束縛番号の正本と写しの一致・シェーダーの原文に在るべき文字列と在ってはならない文字列・報告の行の文言の契約・ファイル名らしい文字列の重複・材質見本の宣言の写しの一致・シェーダー定数の宣言箇所・照明問い合わせのセットの宣言箇所・廃止した語・型ごとの分量の台帳・検証の出力が載る木を指す文字列の置き場・設計オントロジーの法則(警告を1つ含む)・設計関係の抽出器が受理する正規形のRustの構文である。
+//! ここに集めるのは、依存の白リスト・依存の機能一覧の台帳・文書の節参照・正本と写しが同じ値を持つべき定数の一致・束縛番号の正本と写しの一致・シェーダーの原文に在るべき文字列と在ってはならない文字列・報告の行の文言の契約・ファイル名らしい文字列の重複・材質見本の宣言の写しの一致・シェーダー定数の宣言箇所・照明問い合わせのセットの宣言箇所・廃止した語・型ごとの分量の台帳・検証の出力が載る木を指す文字列の置き場・設計オントロジーの法則(警告を1つ含む)・設計関係の抽出器が受理する正規形のRustの構文・射影関数の宣言の形である。
 //! どれも複数のファイルを突き合わせて初めて判定でき、走査中の1ファイルからは答えが出ない。
 
 use super::error::規約検査の破れ;
@@ -9,8 +9,9 @@ use super::report::検査の報告;
 use super::{
     dependency_whitelist, depth_contract, doc_section, duplicate_file_literal, extractable_normal_form, free_function_whole_type, lighting_query_declaration, reload_without_device_wait, removed_object_uniform, removed_slot_material_set,
     removed_view_pass_lighting, sample_bodies_consistency, shader_binding, shader_constant, shader_form, shader_uniform_alias, single_lighting_slot_write, type_metrics_ledger, verify_output_place, wording_contract, workspace_dependency_features,
-    設計オントロジーの規約検査,
+    射影関数の宣言の検査, 設計オントロジーの規約検査,
 };
+use crate::設計関係のモデル::設計関係グラフを抽出する;
 
 pub fn 複数ファイルを横断する検査の違反一覧を集める() -> Result<検査の報告, 規約検査の破れ> {
     let mut 違反一覧 = Vec::new();
@@ -32,7 +33,9 @@ pub fn 複数ファイルを横断する検査の違反一覧を集める() -> R
     違反一覧.extend(reload_without_device_wait::シーン差し替えのgpu全作業完了待ちを検査する()?);
     違反一覧.extend(single_lighting_slot_write::照明問い合わせスロットへの書き込み元を検査する()?);
     違反一覧.extend(verify_output_place::全ファイルを検査する()?);
-    違反一覧.extend(extractable_normal_form::全ソースを検査する()?);
+    let 抽出したもの = 設計関係グラフを抽出する()?;
+    違反一覧.extend(extractable_normal_form::抽出したものを検査する(&抽出したもの));
+    違反一覧.extend(射影関数の宣言の検査::抽出したものを検査する(&抽出したもの));
     Ok(検査の報告::生成する(違反一覧, Vec::new())
         .合わせる(type_metrics_ledger::全型の分量を台帳と照合する()?)
         .合わせる(free_function_whole_type::全ファイルの自由関数を検査する()?)
