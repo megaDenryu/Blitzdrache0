@@ -5,6 +5,7 @@
 //! 宣言が1行に収まっていない形と、型引数に入れ子の型引数がある形と、`where` 節を持つ形は、黙って読み飛ばさずに保証範囲の外と答える。
 //! `where` 節を読めないまま上位トレイトを0件として返すと、そこに書かれた上位トレイトの関係が、関係も欠落も無いまま静かに消えるためである。
 
+use crate::conform::design_ontology::declaration_prefix::属性と可視性を読み飛ばす;
 use crate::conform::design_ontology::line_matching::先頭の識別子;
 
 use super::out_of_range_syntax::保証範囲の外の構文;
@@ -29,7 +30,7 @@ pub enum トレイトの宣言の読み取り {
 
 /// その行が `trait` の宣言なら、名前と上位トレイトの一覧を読む。
 pub fn トレイトの宣言を読む(行: &str) -> トレイトの宣言の読み取り {
-    let Some(残り) = 可視性を落とす(行.trim()).strip_prefix("trait ") else {
+    let Some(残り) = unsafeの前置きを落とす(属性と可視性を読み飛ばす(行.trim())).strip_prefix("trait ") else {
         return トレイトの宣言の読み取り::宣言でない;
     };
     let 残り = 残り.trim_start();
@@ -73,13 +74,9 @@ fn 宣言として読む(名前: String, 型引数の後ろ: &str) -> トレイ�
     })
 }
 
-// `pub`・`pub(crate)`・`pub(super)`・`unsafe` の前置きを落とす。
-fn 可視性を落とす(行: &str) -> &str {
-    let mut 残り = 行;
-    for 前置き in ["pub(crate) ", "pub(super) ", "pub ", "unsafe "] {
-        残り = 残り.strip_prefix(前置き).unwrap_or(残り).trim_start();
-    }
-    残り
+// 可視性の後ろの `unsafe` の前置きを落とす。
+fn unsafeの前置きを落とす(可視性の後ろ: &str) -> &str {
+    可視性の後ろ.strip_prefix("unsafe ").map_or(可視性の後ろ, str::trim_start)
 }
 
 // 本体の前の `: A + B` から上位トレイトの表記を読む。`:` が無ければ上位トレイトは無い。

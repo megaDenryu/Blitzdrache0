@@ -8,6 +8,7 @@
 //! 宣言が1行に収まっていない形と、型引数に入れ子の型引数がある形は、黙って読み飛ばさずに保証範囲の外と答える。
 //! 本体の1行の読み取りは `declaration_body_line` が持つ。受け取る文字列が宣言の見出しと本体の行で違うためである。
 
+use crate::conform::design_ontology::declaration_prefix::属性と可視性を読み飛ばす;
 use crate::conform::design_ontology::line_matching::先頭の識別子;
 
 use super::out_of_range_syntax::保証範囲の外の構文;
@@ -36,7 +37,7 @@ pub enum 本体の並べ方 {
 
 /// その行が `struct` または `enum` の宣言なら、名前と型引数の名前と本体の並べ方を読む。
 pub fn 型定義の宣言を読む(行: &str) -> Option<型定義の宣言> {
-    let 前置きを落とした = 可視性を落とす(行.trim());
+    let 前置きを落とした = 属性と可視性を読み飛ばす(行.trim());
     let 残り = ["struct ", "enum "].iter().find_map(|種別| 前置きを落とした.strip_prefix(種別))?.trim_start();
     let 名前 = 先頭の識別子(残り);
     if 名前.is_empty() {
@@ -55,15 +56,6 @@ pub fn 型定義の宣言を読む(行: &str) -> Option<型定義の宣言> {
             型引数名一覧,
         },
     })
-}
-
-/// `pub`・`pub(crate)`・`pub(super)` の前置きを落とす。本体の行のフィールドの可視性も同じ前置きを持つ。
-pub fn 可視性を落とす(記述: &str) -> &str {
-    let mut 残り = 記述;
-    for 前置き in ["pub(crate) ", "pub(super) ", "pub "] {
-        残り = 残り.strip_prefix(前置き).unwrap_or(残り).trim_start();
-    }
-    残り
 }
 
 // 名前の後ろから、型引数の名前の一覧と、型引数より後ろの文字列を読む。

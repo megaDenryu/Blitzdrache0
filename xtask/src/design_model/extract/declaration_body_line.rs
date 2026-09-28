@@ -6,10 +6,10 @@
 //! フィールドを持たない行として明示して外すのは、属性の行(`#[...]`)・閉じ括弧だけの行・フィールドを持たない選択肢の名前だけの行の3つである。
 //! どれも外す条件を書き下せており、その位置に設計関係は初めから無い。これに当たらない読めない行は、黙って読み飛ばさずに保証範囲の外と答える。
 
+use crate::conform::design_ontology::declaration_prefix::属性と可視性を読み飛ばす;
 use crate::conform::design_ontology::line_matching::先頭の識別子;
 
 use super::positional_types::位置で並べた型の一覧;
-use super::struct_declaration::可視性を落とす;
 
 /// 本体の1行を読んだ答え。
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -58,7 +58,7 @@ fn 波括弧の中身を読む(波括弧の後ろ: &str) -> 本体の行の読�
 
 // 1件の記述を読む。`名前: 型` と `名前(型, 型)` と名前だけの3つが保証範囲である。
 fn 記述を読む(記述: &str) -> 本体の行の読み取り {
-    let 記述 = 可視性を落とす(記述.trim());
+    let 記述 = 属性と可視性を読み飛ばす(記述.trim());
     if 記述.is_empty() || 記述 == "}" || 記述 == ")" {
         return 本体の行の読み取り::フィールドを持たない;
     }

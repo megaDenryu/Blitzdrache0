@@ -14,6 +14,8 @@
 //! 理由を2つに分ける。`<` に対応する `>` が同じ行に無い行は、その事実を名指す理由で数え、閉じた型引数の中の深さが合わない行は、
 //! 型引数の表記がRustのパスとして読めない理由で数える。
 
+use crate::conform::design_ontology::declaration_prefix::属性と可視性を読み飛ばす;
+
 use super::out_of_range_syntax::保証範囲の外の構文;
 use super::positional_types::{位置で並べた型の一覧, 戻り値の矢印の不等号か};
 use super::unextracted_line::抽出できなかった理由;
@@ -83,10 +85,7 @@ impl<'a> 役割の使用箇所を読む工程<'a> {
 
 // 役割の型自身を宣言または実装する行か。使用箇所ではないため対象外にする。
 fn 役割自身の宣言の行か(行: &str) -> bool {
-    let mut 残り = 行.trim();
-    for 前置き in ["pub(crate) ", "pub(super) ", "pub "] {
-        残り = 残り.strip_prefix(前置き).unwrap_or(残り).trim_start();
-    }
+    let 残り = 属性と可視性を読み飛ばす(行.trim());
     ["struct ", "enum ", "trait ", "type ", "impl"].iter().any(|前置き| 残り.starts_with(前置き))
 }
 
