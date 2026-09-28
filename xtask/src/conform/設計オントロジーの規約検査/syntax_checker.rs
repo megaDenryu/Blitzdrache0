@@ -50,7 +50,7 @@ impl クレート構文検査 {
         let mut 型一覧 = Vec::new();
         for (パス, 行一覧) in self.ソース一覧() {
             for 添字 in 0..行一覧.len() {
-                let Some(構文) = implの見出しを読む(行一覧, 添字).and_then(|見出し| 見出し.構文を読む()) else {
+                let Some(構文) = implの見出しを読む(行一覧, 添字).map(|見出し| 見出し.構文を取り出す()) else {
                     continue;
                 };
                 if !構文.トレイトの表記().is_some_and(|位置| 位置 == マーカー.名前() || 位置 == 修飾した名前) {
