@@ -14,6 +14,10 @@ const 形のパス: &str = "crates/blitz_game/src/形.rs";
 
 const 形の原文: &str = "pub struct 地図 {\n    広さ: u8,\n}\n";
 
+const 束のパス: &str = "crates/blitz_game/src/束.rs";
+
+const 束の原文: &str = "pub use crate::形::*;\n";
+
 // 使う側の原文を、変換と形と束のモジュールと並べて抽出し、関係を落とした抽出の欠落の件数と関係の表記一覧と抽出できなかった理由の呼び名の一覧を返す。
 fn 抽出する(使う側の原文: &str) -> (usize, Vec<String>, Vec<&'static str>) {
     let 結果 = 原文から設計関係グラフと抽出の欠けを組む(&[(試験のパス, 使う側の原文), (変換のパス, 変換の原文), (形のパス, 形の原文), (束のパス, 束の原文)]);
