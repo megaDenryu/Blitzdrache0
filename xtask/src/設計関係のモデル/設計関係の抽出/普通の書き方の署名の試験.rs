@@ -60,7 +60,7 @@ fn useで取り込んだ標準ライブラリのモジュールを通したパ�
     assert!(!表記一覧.iter().any(|表記| 表記.ends_with("Result") || 表記.ends_with("Formatter")), "{表記一覧:?}");
 }
 
-// 反証: 修飾の無い名前を定義の探索だけで解決すると、`use std::fmt::Display;` の後の `Display` と、取り込まずに書いたプレリュードの `Iterator` が、
+// 反証: 修飾の無い名前を同じクレートの定義の探索だけで答えると、`use std::fmt::Display;` の後の `Display` と、取り込まずに書いたプレリュードの `Iterator` が、
 // `std::fmt::Display` と書いたときと違ってモジュールパスの空の節点になる。
 #[test]
 fn useで標準ライブラリから取り込んだ名前とプレリュードのトレイトは修飾して書いたときと同じく関係を作らない() {
