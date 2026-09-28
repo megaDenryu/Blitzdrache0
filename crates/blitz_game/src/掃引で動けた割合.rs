@@ -26,7 +26,7 @@ impl M不変データ for 動けた割合エラー {}
 impl M値オブジェクト for 動けた割合エラー {}
 
 impl fmt::Display for 動けた割合エラー {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::範囲外 => write!(formatter, "動けた割合が0以上1以下の有限値でない"),
             Self::単精度へ狭められない(誤り) => write!(formatter, "動けた割合を単精度へ狭められない: {誤り}"),
