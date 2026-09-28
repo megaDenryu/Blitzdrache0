@@ -20,7 +20,7 @@ use std::path::{Path, PathBuf};
 
 use blitz_design_verification::{名指せなかった変数の位置, 導出の欠け, 導出の欠けの理由, 頭の関係};
 
-use super::out_of_range_syntax::保証範囲の外の構文;
+use super::保証範囲の外の構文の定義::保証範囲の外の構文;
 
 /// 抽出できなかった行の1件。
 #[derive(Debug, Clone, PartialEq, Eq)]

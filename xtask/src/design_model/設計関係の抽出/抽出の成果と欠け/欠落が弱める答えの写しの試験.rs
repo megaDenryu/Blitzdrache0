@@ -3,8 +3,8 @@
 
 use std::path::PathBuf;
 
-use super::super::test_support::原文から設計関係グラフと抽出の欠けを組む;
 use super::super::抽出できなかった行の定義::抽出できなかった行;
+use super::super::抽出の試験の段取り::原文から設計関係グラフと抽出の欠けを組む;
 use super::抽出した設計関係グラフと抽出の欠け;
 use blitz_design_verification::{事実の出どころ, 型の表記を読めない理由, 導出の欠け, 導出の欠けの理由, 欠落が弱める答え, 設計関係の種類, 頭の関係};
 

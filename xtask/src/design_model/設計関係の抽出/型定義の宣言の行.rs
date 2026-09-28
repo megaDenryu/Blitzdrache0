@@ -11,8 +11,8 @@
 use crate::conform::design_ontology::line_matching::先頭の識別子;
 use crate::conform::design_ontology::属性と可視性の前置き::属性と可視性を読み飛ばす;
 
-use super::out_of_range_syntax::保証範囲の外の構文;
 use super::positional_types::位置で並べた型の一覧;
+use super::保証範囲の外の構文の定義::保証範囲の外の構文;
 
 /// `struct` または `enum` の宣言1件。
 #[derive(Debug, Clone, PartialEq, Eq)]

@@ -3,20 +3,20 @@
 
 #![allow(clippy::unwrap_used)]
 
-#[path = "構造の検証の試験/collision_kind_tests.rs"]
-mod collision_kind_tests;
-#[path = "構造の検証の試験/path_tests.rs"]
-mod path_tests;
-#[path = "構造の検証の試験/relation_tests.rs"]
-mod relation_tests;
-#[path = "構造の検証の試験/undecided_tests.rs"]
-mod undecided_tests;
 #[path = "構造の検証の試験/マーカーを持つの定義域の試験.rs"]
 mod マーカーを持つの定義域の試験;
+#[path = "構造の検証の試験/偽で答えない未決定の試験.rs"]
+mod 偽で答えない未決定の試験;
+#[path = "構造の検証の試験/同一性の衝突の試験.rs"]
+mod 同一性の衝突の試験;
 #[path = "構造の検証の試験/対象集合の列挙と欠落の試験.rs"]
 mod 対象集合の列挙と欠落の試験;
 #[path = "構造の検証の試験/対象集合の列挙の試験.rs"]
 mod 対象集合の列挙の試験;
+#[path = "構造の検証の試験/直接の辺と経路の試験.rs"]
+mod 直接の辺と経路の試験;
+#[path = "構造の検証の試験/肯定と否定と量化の反例の試験.rs"]
+mod 肯定と否定と量化の反例の試験;
 #[path = "構造の検証の試験/試験のグラフと命題の段取り.rs"]
 mod 試験のグラフと命題の段取り;
 #[path = "構造の検証の試験/量化の同一性の試験.rs"]

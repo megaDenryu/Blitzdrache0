@@ -21,9 +21,9 @@ mod 欠落が弱める答えの写しの試験;
 mod 規則の本体の途中の未解決の試験;
 
 use super::marker_concept::設計解釈マーカーの参照一覧;
-use super::source_group::抽出対象のソース群;
 use super::抽出できなかった理由の区分の定義::{ソースで読めなかった事実, 抽出できなかった理由の区分};
 use super::抽出できなかった行の定義::{抽出できなかった行, 読めなかった箇所};
+use super::抽出対象のソース群の定義::抽出対象のソース群;
 use crate::design_model::同一性の衝突;
 use crate::design_model::設計概念;
 use crate::design_model::設計関係グラフ;

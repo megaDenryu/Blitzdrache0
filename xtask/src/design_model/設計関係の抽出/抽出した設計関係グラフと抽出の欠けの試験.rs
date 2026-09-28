@@ -5,7 +5,7 @@
 
 use std::path::PathBuf;
 
-use super::out_of_range_syntax::保証範囲の外の構文;
+use super::保証範囲の外の構文の定義::保証範囲の外の構文;
 use super::抽出できなかった行の定義::{抽出できなかった理由, 抽出できなかった行};
 use super::抽出の成果と欠け::抽出した設計関係グラフと抽出の欠け;
 

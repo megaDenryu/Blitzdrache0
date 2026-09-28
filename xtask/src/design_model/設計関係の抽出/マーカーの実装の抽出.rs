@@ -8,9 +8,9 @@
 //! グラフの組み立てが `節点の分類` として計算する。抽出器が閉包を先に取らないのは、公理の正本を上位トレイトの宣言の事実1つに保つためである。
 
 use super::marker_concept::設計解釈マーカーの参照;
-use super::source_group::抽出対象のソース群;
 use super::抽出できなかった行;
 use super::抽出の成果と欠け::抽出の成果;
+use super::抽出対象のソース群の定義::抽出対象のソース群;
 use crate::conform::design_ontology::trait_implementation::設計解釈マーカーの実装;
 use crate::conform::design_ontology::設計解釈マーカーの一覧::設計解釈マーカー;
 use crate::design_model::{Rustの項目の種類, 設計概念, 設計概念の識別子};

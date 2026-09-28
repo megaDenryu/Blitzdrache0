@@ -11,8 +11,8 @@
 use std::path::PathBuf;
 
 use super::role::{関数の役割の型か意味型の見分け, 関数の役割の定義の在り処};
-use super::source_group::抽出対象のソース群;
 use super::抽出の成果と欠け::抽出した設計関係グラフと抽出の欠け;
+use super::抽出対象のソース群の定義::抽出対象のソース群;
 use crate::design_model::設計概念への参照;
 use crate::file_scan;
 
@@ -67,7 +67,7 @@ fn 実物の3件の役割の使用箇所は受理の条件を満たし処理の�
 #[test]
 fn 実物のタプル構造体が包む型へ保持する関係が出る() {
     let 結果 = 実物のcratesから結果を組む();
-    let 表記一覧 = super::test_support::関係の表記一覧(&結果);
+    let 表記一覧 = super::抽出の試験の段取り::関係の表記一覧(&結果);
     assert!(表記一覧.contains(&"blitz_esca::elapsed_time::経過時間 保持する 秒".to_string()));
     assert!(!結果.グラフ.概念一覧().iter().any(|概念| 概念.識別子().モジュールパス.contains("::tests")));
 }
@@ -88,7 +88,7 @@ fn 実物のcratesに関係を落とした抽出の欠落が1件も無い() {
 #[test]
 fn 実物の失敗しない遷移関数は遷移パラメータを消費し失敗の位置からは関係を導かない() {
     let 結果 = 実物のcratesから結果を組む();
-    let 表記一覧 = super::test_support::関係の表記一覧(&結果);
+    let 表記一覧 = super::抽出の試験の段取り::関係の表記一覧(&結果);
     let 主語 = "blitz_esca::居場所::旅行者の居場所::歩行を遷移する";
     let 期待 = format!("{主語} 消費する blitz_esca::transition_parameter::遷移パラメータ");
     assert!(表記一覧.contains(&期待), "{期待} が無い");

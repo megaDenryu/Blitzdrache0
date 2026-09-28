@@ -10,7 +10,7 @@
 
 use blitz_design_verification::{落とした事実の種類, 頭の関係};
 
-use super::out_of_range_syntax::保証範囲の外の構文;
+use super::保証範囲の外の構文の定義::保証範囲の外の構文;
 use super::抽出できなかった行の定義::抽出できなかった理由;
 
 /// 抽出できなかった理由が属する区分。
