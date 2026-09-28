@@ -12,7 +12,7 @@ fn 行一覧を作る<const 件数: usize>(行一覧: [&str; 件数]) -> [String
 fn 定数式が閉じた行からでも本体を開く波括弧までを読む() {
     let 行一覧 = 行一覧を作る(["impl<T> 規則<T> where T: 境界<{", "1 }> {", "fn 変える(&mut self) {}", "}"]);
     let 見出し = implの見出しを読む(&行一覧, 0).expect("実装の見出しを読む");
-    assert_eq!(見出し.表記, "impl<T> 規則<T> where T: 境界<{ 1 }> {");
+    assert_eq!(見出し.表記(), "impl<T> 規則<T> where T: 境界<{ 1 }> {");
 }
 
 #[test]
