@@ -35,7 +35,7 @@ impl クレート構文検査 {
     pub fn 共有の指し先を別名にしていないこと(mut self) -> Self {
         let 対象のクレート一覧: HashSet<OsString> = self.純粋データ規約の対象一覧().iter().map(|型| クレート名(&型.パス).to_os_string()).collect();
         let 該当一覧: Vec<(PathBuf, usize)> = self
-            .ソース一覧
+            .ソース一覧()
             .iter()
             .filter(|(パス, _)| 対象のクレート一覧.contains(クレート名(パス)))
             .flat_map(|(パス, 行一覧)| 共有の指し先の別名の行一覧(行一覧).into_iter().map(|行番号| (パス.clone(), 行番号)))

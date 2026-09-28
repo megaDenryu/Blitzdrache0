@@ -52,7 +52,7 @@ impl クレート構文検査 {
 
     // 各ファイルから `行を選ぶ` が返した行番号(1始まり)の全部を、同じ説明の行単位の違反として足す。渡すのは純粋な選択の関数である。
     fn 行単位の違反を足す(mut self, 行を選ぶ: fn(&Path, &[String]) -> Vec<usize>, 説明: &str) -> Self {
-        let 該当する行一覧: Vec<(PathBuf, usize)> = self.ソース一覧.iter().flat_map(|(パス, 行一覧)| 行を選ぶ(パス, 行一覧).into_iter().map(|行番号| (パス.clone(), 行番号))).collect();
+        let 該当する行一覧: Vec<(PathBuf, usize)> = self.ソース一覧().iter().flat_map(|(パス, 行一覧)| 行を選ぶ(パス, 行一覧).into_iter().map(|行番号| (パス.clone(), 行番号))).collect();
         for (パス, 行番号) in 該当する行一覧 {
             self.違反一覧.push(違反::行単位(パス, 行番号, 説明.to_string()));
         }

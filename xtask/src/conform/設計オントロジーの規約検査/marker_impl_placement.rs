@@ -70,7 +70,7 @@ impl クレート構文検査 {
     pub fn 設計解釈マーカーを実装した型の定義のファイルの外にある実装の警告一覧(&self) -> Vec<警告> {
         let 置き場 = self.設計解釈マーカーを実装した型の定義の置き場を作る();
         let mut 警告一覧 = Vec::new();
-        for (パス, 行一覧) in &self.ソース一覧 {
+        for (パス, 行一覧) in self.ソース一覧() {
             for 添字 in 0..行一覧.len() {
                 let Some(構文) = implの見出しを読む(行一覧, 添字).and_then(|見出し| 見出し.構文を読む()) else {
                     continue;
