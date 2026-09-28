@@ -14,7 +14,7 @@
 
 use super::marker_concept::{設計解釈マーカーの名前か, 設計解釈マーカーの識別子};
 use super::source_group::抽出対象のソース群;
-use super::trait_declaration::{トレイトの宣言の読み取り, トレイトの宣言を読む};
+use super::トレイトの宣言の行::{トレイトの宣言の読み取り, トレイトの宣言を読む};
 use super::抽出できなかった行の定義::{抽出できなかった理由, 抽出できなかった行};
 use super::抽出の成果と欠け::抽出の成果;
 use crate::conform::design_ontology::marker_canonical_file::設計解釈マーカーの正本のファイルか;

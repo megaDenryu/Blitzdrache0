@@ -6,10 +6,10 @@
 //! 同じモジュールの別の宣言の型引数が同じ表記へ潰れて1つの節点へ合流し、グラフが意味を失う。
 //!
 //! 宣言が1行に収まっていない形と、型引数に入れ子の型引数がある形は、黙って読み飛ばさずに保証範囲の外と答える。
-//! 本体の1行の読み取りは `declaration_body_line` が持つ。受け取る文字列が宣言の見出しと本体の行で違うためである。
+//! 本体の1行の読み取りは `型定義の本体の行` が持つ。受け取る文字列が宣言の見出しと本体の行で違うためである。
 
-use crate::conform::design_ontology::declaration_prefix::属性と可視性を読み飛ばす;
 use crate::conform::design_ontology::line_matching::先頭の識別子;
+use crate::conform::design_ontology::属性と可視性の前置き::属性と可視性を読み飛ばす;
 
 use super::out_of_range_syntax::保証範囲の外の構文;
 use super::positional_types::位置で並べた型の一覧;

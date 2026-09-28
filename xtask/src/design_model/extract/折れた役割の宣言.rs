@@ -6,9 +6,9 @@
 //! 繋ぐのは `const 名前: 型 = ..` の定数の宣言だけである(`const fn` と `const { .. }` のブロックは繋がない)。役割の宣言の正規形は `const _: 役割<..> = 役割::生成する(..);` であり、他の位置(戻り値の型・フィールドの型注釈)は
 //! 繋いでも右辺を持たないため、同じ行の読み方で落ちる。文の続きの行は同じ文の一部であり、別の使用箇所として読まない。
 
-use crate::conform::design_ontology::declaration_prefix::属性と可視性を読み飛ばす;
 use crate::conform::design_ontology::identifier_boundary::識別子の文字か;
 use crate::conform::design_ontology::statement_span::セミコロンまで繋いだ本文;
+use crate::conform::design_ontology::属性と可視性の前置き::属性と可視性を読み飛ばす;
 
 /// 複数の行へ折れた `const` の文を1行へ繋いだもの。
 pub struct 折れた役割の宣言 {

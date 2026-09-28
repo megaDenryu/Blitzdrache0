@@ -4,8 +4,8 @@ use std::ffi::OsStr;
 use std::path::{Component, Path};
 
 use super::declaration_brackets::{最上位のカンマで分ける, 見出しの括弧の深さ};
-use super::declaration_prefix::先頭の属性を読み飛ばす;
 use super::identifier_boundary::識別子の文字か;
+use super::属性と可視性の前置き::先頭の属性を読み飛ばす;
 
 /// 先頭から識別子の文字(英数字・下線・非ASCIIの文字)が続く限りを返す。
 pub fn 先頭の識別子(残り: &str) -> String {

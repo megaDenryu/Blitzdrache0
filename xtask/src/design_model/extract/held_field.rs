@@ -13,7 +13,7 @@
 
 use super::held_declaration::宣言1件の工程;
 use super::source_group::抽出対象のソース群;
-use super::struct_declaration::型定義の宣言を読む;
+use super::型定義の宣言の行::型定義の宣言を読む;
 use super::抽出できなかった行の定義::{抽出できなかった理由, 抽出できなかった行};
 use super::抽出の成果と欠け::抽出の成果;
 use crate::design_model::{Rustの項目の種類, 設計概念, 設計概念の識別子};

@@ -14,7 +14,7 @@
 //! 理由を2つに分ける。`<` に対応する `>` が同じ行に無い行は、その事実を名指す理由で数え、閉じた型引数の中の深さが合わない行は、
 //! 型引数の表記がRustのパスとして読めない理由で数える。
 
-use crate::conform::design_ontology::declaration_prefix::属性と可視性を読み飛ばす;
+use crate::conform::design_ontology::属性と可視性の前置き::属性と可視性を読み飛ばす;
 
 use super::out_of_range_syntax::保証範囲の外の構文;
 use super::positional_types::{位置で並べた型の一覧, 戻り値の矢印の不等号か};

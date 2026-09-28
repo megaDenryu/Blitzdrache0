@@ -7,8 +7,10 @@
 //! 先に現れた方を採るまとめを入口が期待してはならない。
 //!
 //! 入口が走査を1度だけ行うのは、規則ごとに走査すると同じファイルの読み取りが5回走り、規則の間で読み取りの結果が食い違いうるためである。
+//!
+//! このファイルは子のモジュールの宣言の並びと抽出の入口(2つの関数)を1つに統合しており、100行を超える。Rustが子のモジュールの宣言を親のファイルへ集めることを要求し、
+//! 日本語のモジュール名は宣言ごとに `#[path]` の1行を要するためである。宣言の並びを中間のモジュールへ移すと、行数のためだけの分割になり、入口が当てる規則と子の並びを1か所で読めなくなる。
 
-mod declaration_body_line;
 mod entity_identifier;
 mod function_role;
 mod held_declaration;
@@ -19,12 +21,17 @@ mod ontology_scope;
 mod out_of_range_syntax;
 mod positional_types;
 mod role;
-mod role_usage;
 mod source_group;
-mod struct_declaration;
 mod supertrait;
-mod trait_declaration;
 mod wrapped_function_path;
+#[path = "extract/トレイトの宣言の行.rs"]
+mod トレイトの宣言の行;
+#[path = "extract/型定義の宣言の行.rs"]
+mod 型定義の宣言の行;
+#[path = "extract/型定義の本体の行.rs"]
+mod 型定義の本体の行;
+#[path = "extract/役割の使用箇所.rs"]
+mod 役割の使用箇所;
 #[path = "extract/折れた役割の宣言.rs"]
 mod 折れた役割の宣言;
 #[path = "extract/抽出できなかった理由の区分の定義.rs"]
@@ -51,8 +58,6 @@ mod owner_implementation_tests;
 #[cfg(test)]
 mod real_crates_tests;
 #[cfg(test)]
-mod struct_declaration_tests;
-#[cfg(test)]
 mod supertrait_tests;
 #[cfg(test)]
 mod test_support;
@@ -70,6 +75,9 @@ mod 可視性の前置きを持つ宣言の試験;
 #[cfg(test)]
 #[path = "extract/同じ文の複数の役割の使用の試験.rs"]
 mod 同じ文の複数の役割の使用の試験;
+#[cfg(test)]
+#[path = "extract/型定義の宣言の行の試験.rs"]
+mod 型定義の宣言の行の試験;
 #[cfg(test)]
 #[path = "extract/形を縮めた遷移と問い合わせの役割の使用箇所の試験.rs"]
 mod 形を縮めた遷移と問い合わせの役割の使用箇所の試験;

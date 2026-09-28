@@ -14,11 +14,11 @@ use std::path::PathBuf;
 use blitz_design_verification::標準の共有の包みの綴りか;
 
 use super::super::violation::違反;
-use super::declaration_prefix::属性と可視性を読み飛ばす;
 use super::identifier_boundary::{識別子として現れる位置一覧, 識別子の文字か};
 use super::line_matching::クレート名;
 use super::syntax_checker::クレート構文検査;
 use super::use_resolution::{取り込みの文の読み取り, 取り込みの項目, 書き出しの行付きの取り込みの文一覧};
+use super::属性と可視性の前置き::属性と可視性を読み飛ばす;
 
 /// 標準ライブラリの外から持ち込んではならない共有の指し先の名前。
 const 共有の指し先の名前一覧: [&str; 3] = ["Arc", "Rc", "Weak"];

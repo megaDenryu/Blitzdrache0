@@ -5,8 +5,8 @@
 //! 宣言が1行に収まっていない形と、型引数に入れ子の型引数がある形と、`where` 節を持つ形は、黙って読み飛ばさずに保証範囲の外と答える。
 //! `where` 節を読めないまま上位トレイトを0件として返すと、そこに書かれた上位トレイトの関係が、関係も欠落も無いまま静かに消えるためである。
 
-use crate::conform::design_ontology::declaration_prefix::属性と可視性を読み飛ばす;
 use crate::conform::design_ontology::line_matching::先頭の識別子;
+use crate::conform::design_ontology::属性と可視性の前置き::属性と可視性を読み飛ばす;
 
 use super::out_of_range_syntax::保証範囲の外の構文;
 

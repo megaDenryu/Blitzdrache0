@@ -8,9 +8,9 @@
 
 use std::path::Path;
 
-use super::declaration_body_line::{本体の行の読み取り, 本体の行を読む};
 use super::out_of_range_syntax::保証範囲の外の構文;
-use super::struct_declaration::{型定義の宣言, 本体の並べ方};
+use super::型定義の宣言の行::{型定義の宣言, 本体の並べ方};
+use super::型定義の本体の行::{本体の行の読み取り, 本体の行を読む};
 use super::抽出できなかった行の定義::{抽出できなかった理由, 抽出できなかった行};
 use super::抽出の成果と欠け::抽出の成果;
 use crate::conform::design_ontology::line_matching::波括弧が閉じる行;

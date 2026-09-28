@@ -11,10 +11,10 @@ use std::ffi::OsString;
 use std::path::PathBuf;
 
 use super::super::violation::違反;
-use super::declaration_prefix::属性と可視性を読み飛ばす;
 use super::identifier_boundary::識別子として現れる位置一覧;
 use super::line_matching::クレート名;
 use super::syntax_checker::クレート構文検査;
+use super::属性と可視性の前置き::属性と可視性を読み飛ばす;
 
 /// 別名にしてはならない共有の指し先の名前。
 const 共有の指し先の名前一覧: [&str; 3] = ["Arc", "Rc", "Weak"];
