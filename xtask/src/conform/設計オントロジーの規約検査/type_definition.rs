@@ -12,8 +12,8 @@
 mod definition_candidate;
 #[path = "type_definition/import_origin.rs"]
 mod import_origin;
-#[path = "type_definition/一括取り込み先の探索.rs"]
-mod 一括取り込み先の探索;
+#[path = "type_definition/一括取り込み元の探索.rs"]
+mod 一括取り込み元の探索;
 #[path = "type_definition/修飾したパスの定義の探索.rs"]
 mod 修飾したパスの定義の探索;
 #[path = "type_definition/再公開の追跡.rs"]
