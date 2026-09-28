@@ -30,3 +30,12 @@ fn dynの目的語は定義をたどれたトレイトの節点になる() {
     assert!(表記一覧.contains(&"blitz_esca::旅行者::使う 引数に取る blitz_esca::旅行者::世界の形".to_string()), "{表記一覧:?}");
     assert_eq!(節点のモジュールパス一覧(&結果, "世界の形", 設計概念の種類::トレイト), vec!["blitz_esca::旅行者".to_string()]);
 }
+
+// 反証: 所有者の型の表記を署名の読み方で読むと、`Vec<中身>` の包みを剥がし、組を2つの型へ分けて、`中身` がどちらの実装の関数も関連関数として持つことになる。
+#[test]
+fn 実装の対象の型を包みを剥がさず1つの型として持ち主にする() {
+    let 結果 = 抽出する("pub struct 中身 {\n    値: f32,\n}\n\npub trait 読める {\n    fn 読む(&self);\n}\n\nimpl 読める for Vec<中身> {\n    fn 読む(&self) {}\n}\n\nimpl 読める for (中身, 中身) {\n    fn 読む(&self) {}\n}\n");
+    let 表記一覧 = 関係の表記一覧(&結果);
+    assert!(!表記一覧.iter().any(|表記| 表記.starts_with("blitz_esca::旅行者::中身 関連関数として持つ")), "{表記一覧:?}");
+    assert!(表記一覧.iter().any(|表記| 表記.starts_with("Vec 関連関数として持つ")), "{表記一覧:?}");
+}
