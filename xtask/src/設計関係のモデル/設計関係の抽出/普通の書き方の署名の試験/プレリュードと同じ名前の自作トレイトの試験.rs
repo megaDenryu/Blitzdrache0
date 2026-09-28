@@ -22,14 +22,14 @@ fn 抽出する(使う側の原文: &str) -> (usize, Vec<String>, Vec<&'static s
 }
 
 #[test]
-fn 同じファイルに定義した自作のFromへたどり着く() {
+fn 同じファイルに定義した同名の自作トレイトへたどり着く() {
     let (欠落の件数, 表記一覧, _) = 抽出する("pub trait From {}\n\npub fn 使う(値: &dyn From) {}\n");
     assert_eq!(欠落の件数, 0);
     assert!(表記一覧.contains(&"blitz_game::試験::使う 引数に取る blitz_game::試験::From".to_string()), "{表記一覧:?}");
 }
 
 #[test]
-fn 名前で取り込んだ自作のFromへたどり着く() {
+fn 名前で取り込んだ同名の自作トレイトへたどり着く() {
     let (欠落の件数, 表記一覧, _) = 抽出する("use crate::変換::From;\n\npub fn 使う(値: &dyn From) {}\n");
     assert_eq!(欠落の件数, 0);
     assert!(表記一覧.contains(&"blitz_game::試験::使う 引数に取る blitz_game::変換::From".to_string()), "{表記一覧:?}");
@@ -37,7 +37,7 @@ fn 名前で取り込んだ自作のFromへたどり着く() {
 
 // 反証: プレリュードの名前であることだけで標準ライブラリと答えると、glob の取り込みが持ち込んだ自作の `From` への関係を落とす。
 #[test]
-fn globの取り込みで持ち込んだ自作のFromへたどり着く() {
+fn globの取り込みで持ち込んだ同名の自作トレイトへたどり着く() {
     let (欠落の件数, 表記一覧, _) = 抽出する("use crate::変換::*;\n\npub fn 使う(値: &dyn From) {}\n");
     assert_eq!(欠落の件数, 0);
     assert!(表記一覧.contains(&"blitz_game::試験::使う 引数に取る blitz_game::変換::From".to_string()), "{表記一覧:?}");
