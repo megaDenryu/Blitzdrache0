@@ -16,6 +16,7 @@ Blitzdrache0で読むものは次の6つである。すべて絶対パスで読�
 - エディター・編集画面・可視化を作る、または直す: `.claude/skills/エディター制作/SKILL.md`
 - 新しいサブシステム・新機能を書き始める: `.claude/skills/アーキテクチャ先行/SKILL.md` と `.claude/skills/layer-roles/SKILL.md`
 - 長い文書を書く、または直す: `.claude/skills/doc-writing/SKILL.md`
+- インターフェースの文書(利用者向けの説明書・層の API の説明書)を作る、または振る舞いを変える依頼を受ける: `.claude/skills/インターフェース文書/SKILL.md`
 - 仕組み・問題・判断の理由をユーザーへ説明する、報告を書く: `.claude/skills/説明の組み立て/SKILL.md`
 - 英語の語を日本語の識別子・文章へ訳す: `.claude/skills/訳語の選び方/SKILL.md`
 - スキルを作る、または直す: `.claude/skills/スキルの書き方/SKILL.md`
