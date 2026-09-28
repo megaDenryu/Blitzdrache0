@@ -16,18 +16,22 @@ mod import_origin;
 mod 修飾したパスの解決;
 #[path = "type_definition/再公開の追跡.rs"]
 mod 再公開の追跡;
+#[path = "type_definition/探す定義の宣言の定義.rs"]
+mod 探す定義の宣言の定義;
 #[path = "type_definition/探索の材料.rs"]
 mod 探索の材料;
+#[path = "type_definition/標準ライブラリの名前.rs"]
+mod 標準ライブラリの名前;
 
 use std::path::{Path, PathBuf};
 
 use super::module_path::モジュールパス;
 use super::module_path::在るモジュールの一覧::在るモジュールの一覧;
-use super::syntax_patterns;
 use definition_candidate::同名の定義の候補;
 use import_origin::{取り込み元の問い, 取り込み元を求めた結果};
 pub use 修飾したパスの解決::修飾したパスを探した結果;
 use 再公開の追跡::{再公開をたどる探索, 再公開をたどる段数の上限};
+pub use 探す定義の宣言の定義::探す定義の宣言;
 pub use 探索の材料::定義の探索の材料;
 
 /// ある型の定義がどこに在るかの問い。型の名前と、その名前を書いている行の位置の組である。
@@ -35,23 +39,6 @@ pub struct 型の在り処の問い<'a> {
     pub 型名: &'a str,
     pub 参照元のパス: &'a Path,
     pub 参照元の行番号: usize,
-}
-
-/// 探す定義の宣言の種類。型は `struct` と `enum`、トレイトは `trait` の宣言を探す。
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum 探す定義の宣言 {
-    型,
-    トレイト,
-}
-
-impl 探す定義の宣言 {
-    /// その名前の定義の見出しとして照らす宣言の並び(`struct 名前`・`enum 名前` か `trait 名前`)。
-    pub fn シグネチャ一覧(self, 名前: &str) -> Vec<String> {
-        match self {
-            Self::型 => syntax_patterns::型定義のシグネチャ(名前).to_vec(),
-            Self::トレイト => vec![format!("trait {名前}")],
-        }
-    }
 }
 
 /// 型の定義の探索の結果。
