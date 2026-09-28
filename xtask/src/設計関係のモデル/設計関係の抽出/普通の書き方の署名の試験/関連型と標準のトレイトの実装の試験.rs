@@ -29,41 +29,7 @@ fn 実装の本体に宣言の無い自分の型の関連型は読めない表�
 // 修飾して書いたトレイト・`use` で取り込んだトレイト・プレリュードのトレイトのどれも、明示して除外した件数に数え、欠落にしない。
 #[test]
 fn 標準ライブラリのトレイトの実装の関数は署名を読まず明示して除外する() {
-    let 原文 = "use std::fmt;
-use std::ops::Add;
-
-pub struct 居場所 {
-    番号: u8,
-}
-
-impl Clone for 居場所 {
-    fn clone(&self) -> Self {
-        todo!()
-    }
-}
-
-impl Add for 居場所 {
-    type Output = Self;
-
-    fn add(self, 他: Self) -> Self::Output {
-        todo!()
-    }
-}
-
-impl fmt::Display for 居場所 {
-    fn fmt(&self, 書き先: &mut fmt::Formatter<'_>) -> fmt::Result {
-        todo!()
-    }
-}
-
-impl std::iter::Iterator for 居場所 {
-    type Item = u8;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        todo!()
-    }
-}
-";
+    let 原文 = "use std::fmt;\nuse std::ops::Add;\n\npub struct 居場所 {\n    番号: u8,\n}\n\nimpl Clone for 居場所 {\n    fn clone(&self) -> Self {\n        todo!()\n    }\n}\n\nimpl Add for 居場所 {\n    type Output = Self;\n\n    fn add(self, 他: Self) -> Self::Output {\n        todo!()\n    }\n}\n\nimpl fmt::Display for 居場所 {\n    fn fmt(&self, 書き先: &mut fmt::Formatter<'_>) -> fmt::Result {\n        todo!()\n    }\n}\n\nimpl std::iter::Iterator for 居場所 {\n    type Item = u8;\n\n    fn next(&mut self) -> Option<Self::Item> {\n        todo!()\n    }\n}\n";
     let 表記一覧 = 欠落無しで関係を読む(原文);
     assert!(!表記一覧.iter().any(|表記| ["clone", "add", "fmt", "next"].iter().any(|名前| 表記.contains(&format!("::{名前}")))), "{表記一覧:?}");
     let 除外の件数 = 抽出する(原文).抽出できなかった行一覧.iter().filter(|行| 行.理由.種別の呼び名() == "標準ライブラリのトレイトの実装の関数である").count();
@@ -73,20 +39,7 @@ impl std::iter::Iterator for 居場所 {
 // 反証: トレイトの実装の関数を一律に除外すると、このクレートで宣言したトレイトの実装の関数まで署名を失う。
 #[test]
 fn このクレートのトレイトの実装の関数は署名を読む() {
-    let 原文 = "pub struct 居場所 {
-    番号: u8,
-}
-
-pub trait 進められる {
-    fn 進めた(self) -> Self;
-}
-
-impl 進められる for 居場所 {
-    fn 進めた(self) -> Self {
-        todo!()
-    }
-}
-";
+    let 原文 = "pub struct 居場所 {\n    番号: u8,\n}\n\npub trait 進められる {\n    fn 進めた(self) -> Self;\n}\n\nimpl 進められる for 居場所 {\n    fn 進めた(self) -> Self {\n        todo!()\n    }\n}\n";
     let 表記一覧 = 欠落無しで関係を読む(原文);
     assert!(表記一覧.iter().any(|表記| 表記.contains("居場所::進められる::進めた そのまま返す blitz_game::試験::居場所")), "{表記一覧:?}");
 }

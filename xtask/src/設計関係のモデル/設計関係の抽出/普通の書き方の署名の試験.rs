@@ -47,17 +47,7 @@ fn 実装の見出しの型引数の境界とwhere句を読む() {
 // 関数の署名の側の欠落はその1件のほかに出ないことを見る。
 #[test]
 fn トレイトの見出しの次の行以降へ折ったwhere句の境界を読む() {
-    let 結果 = 抽出する(
-        "pub trait 口 {}
-
-pub trait 読み手<T>
-where
-    T: 口,
-{
-    fn 読む(&self, 値: &T);
-}
-",
-    );
+    let 結果 = 抽出する("pub trait 口 {}\n\npub trait 読み手<T>\nwhere\n    T: 口,\n{\n    fn 読む(&self, 値: &T);\n}\n");
     let 表記一覧 = 関係の表記一覧(&結果);
     assert!(表記一覧.contains(&"blitz_game::試験::読み手::読む 引数に取る blitz_game::試験::口".to_string()), "{表記一覧:?}");
     let 署名の側の行一覧: Vec<_> = 結果.抽出できなかった行一覧.iter().filter(|行| !行.理由.種別の呼び名().starts_with("トレイトの宣言")).collect();
@@ -76,16 +66,7 @@ fn useで取り込んだ標準ライブラリのモジュールを通したパ�
 // `std::fmt::Display` と書いたときと違ってモジュールパスの空の節点になる。
 #[test]
 fn useで標準ライブラリから取り込んだ名前とプレリュードのトレイトは修飾して書いたときと同じく関係を作らない() {
-    let 原文 = "use std::fmt::Display;
-
-pub fn 見せる(値: &dyn Display) -> impl Display {
-    todo!()
-}
-
-pub fn 並べる() -> impl Iterator<Item = u8> {
-    todo!()
-}
-";
+    let 原文 = "use std::fmt::Display;\n\npub fn 見せる(値: &dyn Display) -> impl Display {\n    todo!()\n}\n\npub fn 並べる() -> impl Iterator<Item = u8> {\n    todo!()\n}\n";
     let 結果 = 抽出する(原文);
     let 表記一覧 = 関係の表記一覧(&結果);
     assert!(!表記一覧.iter().any(|表記| 表記.ends_with("Display") || 表記.ends_with("Iterator")), "{表記一覧:?}");

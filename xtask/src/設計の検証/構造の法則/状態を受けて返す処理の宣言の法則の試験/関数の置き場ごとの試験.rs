@@ -45,20 +45,7 @@ fn 状態を包みやトレイトの中に入れて返す関数は前件に当�
 // 反証: 標準ライブラリのトレイトの実装の関数を前件に当てると、手で書いた `Clone` や `Add` の実装に遷移の宣言を求める。
 #[test]
 fn 標準ライブラリのトレイトの実装で状態を受けて返す関数は前件に当たらない() {
-    let 原文 = "impl Clone for 状態 {
-    fn clone(&self) -> Self {
-        todo!()
-    }
-}
-
-impl std::ops::Add for 状態 {
-    type Output = Self;
-
-    fn add(self, 他: Self) -> Self {
-        todo!()
-    }
-}
-";
+    let 原文 = "impl Clone for 状態 {\n    fn clone(&self) -> Self {\n        todo!()\n    }\n}\n\nimpl std::ops::Add for 状態 {\n    type Output = Self;\n\n    fn add(self, 他: Self) -> Self {\n        todo!()\n    }\n}\n";
     let 結果 = 宣言済みの関数へ足して検証する(原文);
     assert!(結果.証明済みか(), "{}", 結果.表記());
 }
@@ -66,14 +53,7 @@ impl std::ops::Add for 状態 {
 // 反証: 前件が引数を包みとトレイトの中まで受け取ると数えると、候補の中から1つを選ぶ関数と、状態を作る関数を受け取る関数にまで遷移の宣言を求める。
 #[test]
 fn 状態を包みやトレイトの中に入れて受け取る関数は前件に当たらない() {
-    let 原文 = "pub fn 選ぶ(候補: &[状態]) -> 状態 {
-    todo!()
-}
-
-pub fn 作る(作り方: impl Fn(u8) -> 状態, 見本: Vec<状態>) -> 状態 {
-    todo!()
-}
-";
+    let 原文 = "pub fn 選ぶ(候補: &[状態]) -> 状態 {\n    todo!()\n}\n\npub fn 作る(作り方: impl Fn(u8) -> 状態, 見本: Vec<状態>) -> 状態 {\n    todo!()\n}\n";
     let 結果 = 宣言済みの関数へ足して検証する(原文);
     assert!(結果.証明済みか(), "{}", 結果.表記());
 }
