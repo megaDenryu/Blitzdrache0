@@ -29,6 +29,8 @@ mod unextracted_line;
 mod wrapped_function_path;
 #[path = "extract/折れた役割の宣言.rs"]
 mod 折れた役割の宣言;
+#[path = "extract/抽出できなかった理由の区分の定義.rs"]
+mod 抽出できなかった理由の区分の定義;
 #[path = "extract/本番のソース.rs"]
 mod 本番のソース;
 #[path = "extract/本番の行.rs"]

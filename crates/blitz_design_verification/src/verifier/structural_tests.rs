@@ -17,6 +17,8 @@ mod マーカーを持つの定義域;
 mod 量化の同一性;
 #[path = "structural_tests/関係の欠落と量化.rs"]
 mod 関係の欠落と量化;
+#[path = "structural_tests/関係の種類ごとの弱め方.rs"]
+mod 関係の種類ごとの弱め方;
 
 use std::path::PathBuf;
 
