@@ -23,7 +23,7 @@
 //! このファイルが100行を超えるのは、Rustが子のモジュールの宣言を親のファイルへ集めることを要求し、日本語のモジュール名は宣言ごとに `#[path]` の1行を要するためである。
 //! 並びは子のモジュールの宣言的な一覧であり、中間のモジュールへ分けると一覧性が壊れ、長さだけを理由にした分割になる。
 
-mod declaration_brackets;
+pub(crate) mod declaration_brackets;
 #[cfg(test)]
 mod exclusive_classification_tests;
 #[cfg(test)]
