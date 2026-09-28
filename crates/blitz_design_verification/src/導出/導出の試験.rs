@@ -28,7 +28,7 @@ const 置き場: &str = "blitz_esca::traveler";
 struct 表で答える解決(&'static [&'static str]);
 
 impl 型の名前の解決 for 表で答える解決 {
-    fn 定義のモジュールパスを求める(&self, 型名: &str, _参照元: &事実の出どころ) -> Option<String> {
+    fn 定義のモジュールパスを求める(&self, 型名: &str, _種類: crate::Rustの項目の種類, _参照元: &事実の出どころ) -> Option<String> {
         self.0.contains(&型名).then(|| 置き場.to_string())
     }
 }

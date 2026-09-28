@@ -16,7 +16,7 @@ use super::super::module_path::モジュールパス;
 use super::super::module_path::在るモジュールの一覧::在るモジュールの一覧;
 use super::definition_candidate::同名の定義の候補;
 use super::import_origin::{取り込み元の問い, 取り込み元を求めた結果};
-use super::定義ブロックの結果;
+use super::{定義ブロックの結果, 探す定義の宣言};
 
 /// 再公開をたどる段数の上限。
 pub const 再公開をたどる段数の上限: usize = 8;
@@ -26,12 +26,13 @@ pub struct 再公開をたどる探索<'a> {
     pub ソース一覧: &'a [(PathBuf, Vec<String>)],
     pub 在るモジュール: &'a 在るモジュールの一覧,
     pub 型名: &'a str,
+    pub 宣言: 探す定義の宣言,
 }
 
 impl 再公開をたどる探索<'_> {
     /// そのモジュールの直下の定義を採り、無ければそのモジュールの直下の取り込みをたどる。
     pub fn モジュールから定義をたどる(&self, モジュール: &モジュールパス, 残りの段数: usize) -> 定義ブロックの結果 {
-        let 候補一覧 = 同名の定義の候補::全ソースから集める(self.ソース一覧, self.型名).into_iter().filter(|候補| 候補.モジュールの直下にあるか(モジュール));
+        let 候補一覧 = 同名の定義の候補::全ソースから集める(self.ソース一覧, self.型名, self.宣言).into_iter().filter(|候補| 候補.モジュールの直下にあるか(モジュール));
         let 結果 = 定義ブロックの結果::候補から1つ採る(候補一覧);
         if 結果 != 定義ブロックの結果::見つからない || 残りの段数 == 0 {
             return 結果;

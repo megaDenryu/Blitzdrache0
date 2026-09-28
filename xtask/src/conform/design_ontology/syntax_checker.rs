@@ -11,7 +11,7 @@ use super::module_path::モジュールパス;
 use super::module_path::在るモジュールの一覧::在るモジュールの一覧;
 use super::pure_data_definition_law::定義が破った純粋データの規約の説明一覧;
 use super::syntax_patterns::{self, Rust型種別};
-use super::type_definition::{型の在り処の問い, 定義ブロックの結果};
+use super::type_definition::{型の在り処の問い, 定義ブロックの結果, 探す定義の宣言};
 use super::設計解釈マーカーの一覧::設計解釈マーカー;
 
 use super::trait_implementation::設計解釈マーカーの実装;
@@ -35,6 +35,11 @@ impl クレート構文検査 {
     /// 走査したソースから、問いが指す型の定義を探す。在るモジュールの一覧は構築時に組んだものを使い回す。
     pub fn 型の在り処を探す(&self, 問い: &型の在り処の問い<'_>) -> 定義ブロックの結果 {
         問い.型の定義を探す(&self.ソース一覧, &self.在るモジュール)
+    }
+
+    /// 走査したソースから、問いが指す名前のトレイトの定義を探す。型の定義と同じ探し方で `trait` の宣言を探す。
+    pub fn トレイトの在り処を探す(&self, 問い: &型の在り処の問い<'_>) -> 定義ブロックの結果 {
+        問い.定義を探す(探す定義の宣言::トレイト, &self.ソース一覧, &self.在るモジュール)
     }
 
     pub fn 違反一覧(self) -> Vec<違反> {

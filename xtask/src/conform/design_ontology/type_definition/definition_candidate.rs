@@ -1,4 +1,4 @@
-//! 型の定義の探索(`type_definition.rs`)が採りうる、同じ名前の `struct`・`enum` の定義1件。定義ブロック(直前の属性の行を含む)と、そのファイルのパスと、定義の行の頭の字句位置を持つ。
+//! 型の定義の探索(`type_definition.rs`)が採りうる、同じ名前の `struct`・`enum` の定義か `trait` の定義1件。定義ブロック(直前の属性の行を含む)と、そのファイルのパスと、定義の行の頭の字句位置を持つ。
 //! 字句位置を持つのは、型の同一性の片方である定義のモジュールを、ファイルから推定したモジュールパスでなく、定義の行を囲む `mod 名 { … }` の並びまで繋いだ位置のモジュールで数えるためである。
 //! 同じファイルの `mod 内 { pub struct 規則; }` とファイルの直下の `struct 規則;` は別の型であり、関数の本体などの局所の位置の `struct 規則;` はモジュールの型の定義ではない。
 
@@ -7,7 +7,7 @@ use std::path::PathBuf;
 use super::super::line_matching::{波括弧が閉じる行, 語として現れるか};
 use super::super::module_path::enclosing_module::行の字句位置;
 use super::super::module_path::モジュールパス;
-use super::super::syntax_patterns;
+use super::探す定義の宣言;
 
 pub struct 同名の定義の候補 {
     pub 定義: String,
@@ -16,9 +16,9 @@ pub struct 同名の定義の候補 {
 }
 
 impl 同名の定義の候補 {
-    /// 全ソースから、その名前の `struct`・`enum` の定義を全部集める。同じファイルに2つ以上あればその分だけ並ぶ(黙って最初の1つを採らない)。
-    pub fn 全ソースから集める(ソース一覧: &[(PathBuf, Vec<String>)], 型名: &str) -> Vec<Self> {
-        let シグネチャ = syntax_patterns::型定義のシグネチャ(型名);
+    /// 全ソースから、その名前の探す宣言(型なら `struct`・`enum`、トレイトなら `trait`)の定義を全部集める。同じファイルに2つ以上あればその分だけ並ぶ(黙って最初の1つを採らない)。
+    pub fn 全ソースから集める(ソース一覧: &[(PathBuf, Vec<String>)], 型名: &str, 宣言: 探す定義の宣言) -> Vec<Self> {
+        let シグネチャ = 宣言.シグネチャ一覧(型名);
         let mut 候補一覧 = Vec::new();
         for (パス, 行一覧) in ソース一覧 {
             let 開始一覧: Vec<usize> = 行一覧.iter().enumerate().filter(|(_, 行)| シグネチャ.iter().any(|宣言| 語として現れるか(行, 宣言))).map(|(開始, _)| 開始).collect();
