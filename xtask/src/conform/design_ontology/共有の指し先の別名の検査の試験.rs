@@ -31,6 +31,22 @@ fn 構文解析_共有の指し先を右辺に持つtypeの別名は別のファ
 }
 
 #[test]
+fn 構文解析_可視性の修飾をどう書いても別名の文として読む() {
+    for 前置き in [
+        "pub(in crate::x) use std::rc::Rc as 共有;
+",
+        "pub(self) type 共有<T> = Rc<T>;
+",
+        "#[allow(unused)] pub(in super::y) type 共有<T> = Rc<T>;
+",
+    ] {
+        let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(vec![ソース("crates/a/src/x.rs", &別名を置いて地図を持つ規則(前置き, "共有<地図>"))]);
+        assert_eq!(説明一覧.len(), 1, "{前置き}: {説明一覧:?}");
+        assert!(説明一覧[0].contains(別名の違反), "{説明一覧:?}");
+    }
+}
+
+#[test]
 fn 構文解析_別名にしない取り込みと名前の一部だけが一致する別名は違反にならない() {
     let 前置き = "use std::sync::Arc;\nuse crate::設定::Arcの設定 as 設定;\ntype 地図の件数 = u8;\n";
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(vec![ソース("crates/a/src/x.rs", &別名を置いて地図を持つ規則(前置き, "Arc<地図>"))]);
