@@ -14,7 +14,7 @@ use super::module_path::モジュールパス;
 use super::syntax_checker::クレート構文検査;
 use super::syntax_patterns::{Rust型種別, 型宣言の開始};
 use super::trait_implementation::設計解釈マーカーの実装;
-use super::type_definition::{型の在り処の問い, 定義ブロックの結果};
+use super::type_definition::{型の在り処の問い, 定義ブロックの結果, 探す定義の宣言};
 use super::フィールドの行::フィールドの名前と型の表記;
 use super::設計解釈マーカーの一覧::設計解釈マーカー;
 
@@ -109,7 +109,7 @@ impl<'a> 構造体のフィールドの読み手<'a> {
             参照元のパス: パス,
             参照元の行番号: 添字 + 1,
         };
-        let モジュール = match self.検査.型の在り処を探す(&問い) {
+        let モジュール = match self.検査.定義の在り処を探す(&問い, 探す定義の宣言::型) {
             定義ブロックの結果::見つかった { モジュール, .. } => モジュール,
             定義ブロックの結果::見つからない | 定義ブロックの結果::複数ある | 定義ブロックの結果::別名のため取り込み元を求められない => {
                 return フィールドの判定::定義を一意にたどれない { 名前: 名前.to_string(), 型名 };
