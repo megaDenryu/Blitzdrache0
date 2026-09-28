@@ -11,6 +11,8 @@ mod relation_tests;
 mod undecided_tests;
 #[path = "structural_tests/マーカーを持つの定義域.rs"]
 mod マーカーを持つの定義域;
+#[path = "structural_tests/対象集合の列挙と欠落の試験.rs"]
+mod 対象集合の列挙と欠落の試験;
 #[path = "structural_tests/対象集合の列挙の試験.rs"]
 mod 対象集合の列挙の試験;
 #[path = "structural_tests/量化の同一性.rs"]
