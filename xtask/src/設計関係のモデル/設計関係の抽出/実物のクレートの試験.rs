@@ -91,11 +91,11 @@ fn 実物のcratesに関係を落とした抽出の欠落が1件も無い() {
 }
 
 #[test]
-fn 実物の失敗しない遷移関数は遷移パラメータを消費し失敗の位置からは関係を導かない() {
+fn 実物の失敗しない遷移関数は遷移パラメータを変換用の素材にし失敗の位置からは関係を導かない() {
     let 結果 = 実物のcratesから結果を組む();
     let 表記一覧 = super::抽出の試験の段取り::関係の表記一覧(&結果);
     let 主語 = "blitz_esca::居場所::旅行者の居場所::歩行を遷移する";
-    let 期待 = format!("{主語} 消費する blitz_esca::transition_parameter::遷移パラメータ");
+    let 期待 = format!("{主語} 変換用の素材にする blitz_esca::transition_parameter::遷移パラメータ");
     assert!(表記一覧.contains(&期待), "{期待} が無い");
     let 生成する先一覧: Vec<&String> = 表記一覧.iter().filter(|表記| 表記.starts_with(&format!("{主語} 生成する "))).collect();
     assert!(生成する先一覧.iter().all(|表記| !表記.contains("Infallible")), "値を持たない失敗の型が生成する先の節点になった: {生成する先一覧:?}");
