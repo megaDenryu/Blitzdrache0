@@ -103,6 +103,8 @@ mod visual_sample_world;
 mod watch_assets;
 mod world_setup;
 mod xpbd_solver_bench;
+#[path = "裁定待ちの語の短い版.rs"]
+mod 裁定待ちの語の短い版;
 #[path = "設計の検証.rs"]
 mod 設計の検証;
 #[path = "設計関係のモデル.rs"]

@@ -1,10 +1,10 @@
 //! 検証・規約系コマンドの割り当て。command_catalogの`core`分類と同じ範囲(検証列・規約検査・Graphiteの生成物の照合・設計の命題の検証・
-//! 型計測・起動スモーク確認・ビルドの中間データの掃除・対話メニューの8件)を担当する。
+//! 型計測・起動スモーク確認・ビルドの中間データの掃除・対話メニュー・裁定待ちの語の短い版の生成の9件)を担当する。
 
 use std::process::ExitCode;
 
 use crate::command_ui::menu;
-use crate::{conform, graphiteの生成物の照合, smoke, type_metrics, verify, 設計の検証};
+use crate::{conform, graphiteの生成物の照合, smoke, type_metrics, verify, 裁定待ちの語の短い版, 設計の検証};
 
 pub(super) fn 中核コマンドを割り当てる(名前: &str, 引数一覧: &[String]) -> Option<ExitCode> {
     match 名前 {
@@ -16,6 +16,7 @@ pub(super) fn 中核コマンドを割り当てる(名前: &str, 引数一覧: &
         "smoke" => Some(smoke::スモークを実行する()),
         "clean-build-cache" => Some(verify::ビルドの中間データを掃除する(引数一覧)),
         "menu" => Some(menu::対話メニューを起動する()),
+        "gen-pending-short-definitions" => Some(裁定待ちの語の短い版::短い版を生成する()),
         _ => None,
     }
 }
