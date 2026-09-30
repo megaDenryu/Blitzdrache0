@@ -63,9 +63,17 @@ fn 上位トレイトを読む(見出し: &str, 名前: &str) -> Option<Vec<Stri
     let 境界 = 宣言.strip_prefix(':').unwrap_or_default();
     let 自分への述語の境界 = 最上位のカンマで分ける(where句)
         .into_iter()
-        .filter_map(|述語| Some(述語.trim().strip_prefix("Self")?.trim_start().strip_prefix(':').filter(|後ろ| !後ろ.starts_with(':'))?.to_string()));
+        .filter_map(|述語| Some(高階の寿命の束縛を読み飛ばす(述語.trim()).strip_prefix("Self")?.trim_start().strip_prefix(':').filter(|後ろ| !後ろ.starts_with(':'))?.to_string()));
     let 境界一覧 = std::iter::once(境界.to_string()).chain(自分への述語の境界).flat_map(|境界| 最上位の足し算で分ける(&境界));
     Some(境界一覧.filter(|表記| !表記.starts_with('\'')).collect())
+}
+
+// 述語の頭の高階の寿命の束縛 `for<'a>` を読み飛ばす。無ければそのままである。`where for<'a> Self: B<'a>` も自分へ課した境界であるため、束縛を外してから左辺を読む。
+fn 高階の寿命の束縛を読み飛ばす(述語: &str) -> &str {
+    match 述語.strip_prefix("for").map(str::trim_start).filter(|後ろ| 後ろ.starts_with('<')) {
+        Some(後ろ) => 先頭の型引数を分ける(後ろ).1.trim_start(),
+        None => 述語,
+    }
 }
 
 // 境界の並びを、どの括弧の中でもない `+` で分け、空でない部分を並べる。`->` の `>` は山括弧を閉じない。
