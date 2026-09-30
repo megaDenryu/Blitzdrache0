@@ -3,7 +3,7 @@
 //! このファイルはコードの行が100行を超える。Rustがクレートの根の `mod` の宣言を1つのファイルへ集めることを要求するため、
 //! コマンドを1つ足すたびに下の並びが1行ずつ伸びるからである。並びは1つのデータを成す宣言であり、行数で切ると
 //! どのコマンドが在るかを1画面で読めるという一覧性そのものが壊れるため分割しない。
-//! 参照: `xtask/src/conform/line_count_allowance.rs`(超過を許す台帳)、CLAUDE.md「100行超過の再設計と台帳の現状」。
+//! 参照: `xtask/src/conform/行数の超過を許す台帳.rs`(超過を許す台帳)、CLAUDE.md「100行超過の再設計と台帳の現状」。
 mod acceptance;
 mod asset_generator;
 mod atmosphere_lut;
@@ -26,8 +26,6 @@ mod damage_band;
 mod day_moment;
 mod depth_prepass_cost;
 mod derived_environment;
-mod design_model;
-mod design_verify;
 mod dispatch;
 mod distant_environment;
 mod distant_view;
@@ -105,6 +103,12 @@ mod visual_sample_world;
 mod watch_assets;
 mod world_setup;
 mod xpbd_solver_bench;
+#[path = "裁定待ちの語の短い版.rs"]
+mod 裁定待ちの語の短い版;
+#[path = "設計の検証.rs"]
+mod 設計の検証;
+#[path = "設計関係のモデル.rs"]
+mod 設計関係のモデル;
 fn main() -> std::process::ExitCode {
     dispatch::コマンド行の引数を割り当てる()
 }

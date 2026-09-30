@@ -24,7 +24,7 @@ pub(super) const 一覧: [寄せられない文字列; 3] = [
     },
     寄せられない文字列 {
         文字列: "設計解釈マーカー.rs",
-        現れてよい場所一覧: &["crates/blitz_design/src/lib.rs", "xtask/src/conform/design_ontology/marker_canonical_file.rs"],
+        現れてよい場所一覧: &["crates/blitz_design/src/lib.rs", "xtask/src/conform/設計オントロジーの規約検査/marker_canonical_file.rs"],
         寄せられない理由: 正本のファイルを名指す検査,
     },
 ];

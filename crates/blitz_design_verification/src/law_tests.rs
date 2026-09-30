@@ -6,12 +6,12 @@
 
 use crate::設計概念への参照;
 
-use super::atom::{原子命題, 項};
 use super::evidence::{未決定の理由, 検証の方式, 検証結果, 証拠};
 use super::law::{排他の推論規則, 推論規則};
 use super::proposition::{命題, 非空の命題一覧};
 use super::quantification::{対象集合, 束縛変数};
 use super::verifier::命題の検証器;
+use super::原子命題の定義::{原子命題, 項};
 
 /// 渡された命題を無条件に証明済みで答える検証器。前提が成立している状況だけを作るために置く。
 struct 常に証明済みで答える検証器;

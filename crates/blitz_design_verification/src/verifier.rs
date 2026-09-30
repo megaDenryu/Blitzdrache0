@@ -11,22 +11,24 @@
 
 mod combination;
 mod quantified_results;
-mod structural;
-#[cfg(test)]
-mod structural_tests;
 mod three_valued;
 #[cfg(test)]
 mod three_valued_tests;
+#[path = "verifier/構造の検証.rs"]
+mod 構造の検証;
+#[cfg(test)]
+#[path = "verifier/構造の検証の試験.rs"]
+mod 構造の検証の試験;
 
 use crate::{数え上げの網羅性, 設計概念への参照};
 
-use super::atom::原子命題;
 use super::evidence::{未決定の理由, 検証の方式, 検証結果};
 use super::proposition::命題;
 use super::quantification::{対象集合, 束縛の割り当て};
+use super::原子命題の定義::原子命題;
 
 pub use combination::結合を解く工程;
-pub use structural::構造の検証器;
+pub use 構造の検証::構造の検証器;
 
 /// 命題1つを受けて3値で答えるメソッド。
 pub trait 命題の検証器 {

@@ -8,7 +8,7 @@
 
 use crate::設計概念への参照;
 
-use super::super::atom::{原子命題, 項};
+use super::super::原子命題の定義::{原子命題, 項};
 use super::{命題, 非空の命題一覧, 非空の命題一覧の生成の失敗};
 
 fn 原子1件() -> 命題 {
