@@ -2,9 +2,9 @@
 //! 句点が無い定義は、定義の全体を1文とみなす。
 
 #[derive(Clone, Copy)]
-pub(super) struct 定義の最初の文<'a>(&'a str);
+pub(super) struct 定義文の最初の文<'a>(&'a str);
 
-impl<'a> 定義の最初の文<'a> {
+impl<'a> 定義文の最初の文<'a> {
     pub(super) fn 定義から切り出す(定義: &'a str) -> Self {
         let mut 括弧の深さ = 0_usize;
         let mut コードの中か = false;
