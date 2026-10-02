@@ -39,6 +39,6 @@ fn 可視性の後ろのunsafeを落としてトレイトの宣言を読む() {
     let トレイトの宣言の読み取り::読めた(宣言) = トレイトの宣言を読む(&["pub(in crate::x) unsafe trait 印: M不変データ {}".to_string()], 0) else {
         panic!("トレイトの宣言として読めなかった");
     };
-    assert_eq!(宣言.名前, "印");
-    assert_eq!(宣言.上位トレイト一覧, vec!["M不変データ".to_string()]);
+    assert_eq!(宣言.名前(), "印");
+    assert_eq!(宣言.上位トレイト一覧(), vec!["M不変データ".to_string()]);
 }

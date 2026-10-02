@@ -15,8 +15,8 @@ use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
 pub struct 本番のソース {
-    pub 行一覧: Vec<(PathBuf, Vec<String>)>,
-    pub 欠落一覧: Vec<抽出できなかった行>,
+    行一覧: Vec<(PathBuf, Vec<String>)>,
+    欠落一覧: Vec<抽出できなかった行>,
 }
 
 /// 適用範囲のクレートの原文と、その中のGraphiteの生成物の一覧。モジュールの宣言1つがどこへ辿れるかを答える。
@@ -70,6 +70,11 @@ impl 本番のソース {
         }
         本番.行一覧.sort_by(|左, 右| 左.0.cmp(&右.0));
         本番
+    }
+
+    /// 辿れたファイルごとの本番の行と、選別で落とした行を、所有権ごと2つへ分ける。抽出対象のソース群がそれぞれを複製せずに受け取るために使う。
+    pub fn 行一覧と欠落一覧へ分ける(self) -> (Vec<(PathBuf, Vec<String>)>, Vec<抽出できなかった行>) {
+        (self.行一覧, self.欠落一覧)
     }
 }
 

@@ -94,9 +94,6 @@ fn 本体を開く波括弧に届かないトレイトの見出しは欠落と�
 #[test]
 fn 高階の寿命の束縛を持つwhere句の述語から上位トレイトを読む() {
     let 行一覧 = vec!["trait A where for<'a> Self: B<'a> {".to_string(), "}".to_string()];
-    let 期待 = トレイトの宣言 {
-        名前: "A".to_string(),
-        上位トレイト一覧: vec!["B<'a>".to_string()],
-    };
+    let 期待 = トレイトの宣言::生成する("A".to_string(), vec!["B<'a>".to_string()]);
     assert_eq!(トレイトの宣言を読む(&行一覧, 0), トレイトの宣言の読み取り::読めた(期待));
 }

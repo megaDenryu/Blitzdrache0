@@ -12,8 +12,8 @@ use crate::conform::設計オントロジーの規約検査::属性と可視性�
 
 /// 複数の行へ折れた `const` の文を1行へ繋いだもの。
 pub struct 折れた役割の宣言 {
-    pub 本文: String,
-    pub 行の数: usize,
+    本文: String,  // `;` の手前までを1行へ繋いだ文
+    行の数: usize, // その文が占める行の数
 }
 
 impl 折れた役割の宣言 {
@@ -28,6 +28,16 @@ impl 折れた役割の宣言 {
         let 本文 = セミコロンまで繋いだ本文(書き出し, 続き)?;
         let 行の数 = 1 + 続き.iter().position(|行| 行.contains(';'))? + 1;
         Some(Self { 本文, 行の数 })
+    }
+
+    /// `;` の手前までを1行へ繋いだ文を読む。
+    pub fn 本文(&self) -> &str {
+        &self.本文
+    }
+
+    /// その文が占める行の数を読む。
+    pub fn 行の数(&self) -> usize {
+        self.行の数
     }
 }
 
