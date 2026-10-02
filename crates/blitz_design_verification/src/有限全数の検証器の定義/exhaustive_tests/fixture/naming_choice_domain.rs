@@ -5,8 +5,8 @@
 //!
 //! 状態の同一性は常に地点そのものでありまとめない。まとめるかどうかを名指しの側だけで選べるようにしてあるのは、
 //! 異なる値に同じ名指しを与えたことが、異なる状態に同じ同一性を与えたこととは別の欠陥であることを試験が見るためである。
-//! 繋いだ表記が紛れる名前を選べるのは、遷移の識別子が前状態と入力を1本の文字列へ連結しないことを見るためである
-//! 参照: `crates/blitz_design_verification/src/transition_model/transition_identifier.rs`。
+//! 繋いだ表記が紛れる名前を選べるのは、状態遷移の識別子が前状態と入力を1本の文字列へ連結しないことを見るためである
+//! 参照: `crates/blitz_design_verification/src/状態遷移モデルの定義/状態遷移の識別子の定義.rs`。
 //!
 //! 名指しの実装は子モジュールに置く(CLAUDE.md「切り出しの根拠義務」の5号の、名前の付く工程の分離)。
 
@@ -15,7 +15,7 @@ mod enumeration;
 #[path = "naming_choice_domain/naming.rs"]
 mod naming;
 
-use blitz_design::{Mイベント, Mコマンド, M不変データ, M状態, M遷移が受け取る命令};
+use blitz_design::{Mイベント, Mコマンド, M不変データ, M状態, M状態遷移が受け取る命令};
 
 /// fixtureの名前の空間。Rustのソースから抽出した概念と混ざらないようにこの表記だけをここへ入れる。
 pub(super) const 地点の名前の空間: &str = "名指しを選ぶ領域のfixture";
@@ -80,7 +80,7 @@ impl M不変データ for 地点 {}
 impl M状態 for 地点 {}
 impl M不変データ for 地点の操作 {}
 impl Mコマンド for 地点の操作 {}
-impl M遷移が受け取る命令 for 地点の操作 {}
+impl M状態遷移が受け取る命令 for 地点の操作 {}
 impl M不変データ for 地点の出来事 {}
 impl Mイベント for 地点の出来事 {}
 

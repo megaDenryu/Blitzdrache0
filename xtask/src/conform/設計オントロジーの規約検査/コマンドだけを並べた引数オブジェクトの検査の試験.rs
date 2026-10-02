@@ -3,7 +3,7 @@
 
 use super::tests::{ソース, 全部の説明関数を連ねた違反の説明一覧};
 
-const コマンド2つの定義: &str = "#[derive(Clone)]\npub enum 経路の命令 {\n    命令が無い,\n}\nimpl M不変データ for 経路の命令 {}\nimpl M遷移が受け取る命令 for 経路の命令 {}\nimpl Mコマンド for 経路の命令 {}\n#[derive(Clone)]\npub enum 旅行者の意図 {\n    静止,\n}\nimpl M不変データ for 旅行者の意図 {}\nimpl M遷移が受け取る命令 for 旅行者の意図 {}\nimpl Mコマンド for 旅行者の意図 {}\n";
+const コマンド2つの定義: &str = "#[derive(Clone)]\npub enum 経路の命令 {\n    命令が無い,\n}\nimpl M不変データ for 経路の命令 {}\nimpl M状態遷移が受け取る命令 for 経路の命令 {}\nimpl Mコマンド for 経路の命令 {}\n#[derive(Clone)]\npub enum 旅行者の意図 {\n    静止,\n}\nimpl M不変データ for 旅行者の意図 {}\nimpl M状態遷移が受け取る命令 for 旅行者の意図 {}\nimpl Mコマンド for 旅行者の意図 {}\n";
 
 fn 引数オブジェクトを足した違反の説明一覧(定義: &str, 追加の実装: &str) -> Vec<String> {
     let 内容 = format!("{コマンド2つの定義}{定義}impl M不変データ for 更新への入力 {{}}\nimpl MParameter for 更新への入力 {{}}\n{追加の実装}");
@@ -26,7 +26,7 @@ fn 構文解析_コマンドでない値を含む必須入力の束は違反に�
 
 #[test]
 fn 構文解析_命令の組も名乗る型は排他の検査だけが報告する() {
-    let 追加の実装 = "impl M遷移が受け取る命令 for 更新への入力 {}\nimpl M命令の組 for 更新への入力 {}\n";
+    let 追加の実装 = "impl M状態遷移が受け取る命令 for 更新への入力 {}\nimpl M命令の組 for 更新への入力 {}\n";
     let 説明一覧 = 引数オブジェクトを足した違反の説明一覧("#[derive(Clone)]\npub struct 更新への入力 {\n    開閉の命令: 経路の命令,\n}\n", 追加の実装);
     assert_eq!(説明一覧.len(), 1, "{説明一覧:?}");
     assert!(説明一覧[0].contains("は `M命令の組` も名乗っている"), "{説明一覧:?}");

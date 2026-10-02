@@ -34,9 +34,9 @@ impl<T, E> M結果 for Result<T, E> {}
 fn 構文解析_独自の列挙型へのm結果の実装は純粋データ規約と可変参照メソッドの禁止を課されず成立する() {
     let ソース一覧 = vec![ソース(
         "crates/a/src/x.rs",
-        "pub enum 遷移の帰結<'a> { 成功(&'a u32), 失敗, 評価不能 }
-impl M結果 for 遷移の帰結<'_> {}
-impl 遷移の帰結<'_> { pub fn 失敗にする(&mut self) {} }
+        "pub enum 状態遷移の帰結<'a> { 成功(&'a u32), 失敗, 評価不能 }
+impl M結果 for 状態遷移の帰結<'_> {}
+impl 状態遷移の帰結<'_> { pub fn 失敗にする(&mut self) {} }
 ",
     )];
     assert!(全部の説明関数を連ねた違反の説明一覧(ソース一覧).is_empty());
@@ -96,11 +96,11 @@ impl M結果 for Result {}
 fn 構文解析_m結果の再公開したパスを経由した実装は違反になる() {
     let ソース一覧 = vec![ソース(
         "crates/a/src/x.rs",
-        "pub enum 遷移の帰結 {
+        "pub enum 状態遷移の帰結 {
     成功,
     失敗,
 }
-impl design_alias::M結果 for 遷移の帰結 {}
+impl design_alias::M結果 for 状態遷移の帰結 {}
 ",
     )];
     let 説明一覧 = 全部の説明関数を連ねた違反の説明一覧(ソース一覧);

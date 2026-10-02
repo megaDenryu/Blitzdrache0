@@ -8,15 +8,15 @@ use blitz_math::方向エラー;
 
 use crate::contact::generation_error::接触拘束の生成エラー;
 use crate::contact::history::接触の履歴エラー;
-use crate::rigid_body::{剛体の識別子, 剛体エラー, 運動種別の遷移エラー};
+use crate::rigid_body::{剛体の識別子, 剛体エラー, 運動種別の状態遷移エラー};
 
 #[derive(Debug, Error)]
 pub enum 接触の工程エラー {
     #[error("剛体エラー: {0}")]
     剛体エラー(#[from] 剛体エラー),
 
-    #[error("運動種別の遷移エラー: {0}")]
-    運動種別の遷移エラー(#[from] 運動種別の遷移エラー),
+    #[error("運動種別の状態遷移エラー: {0}")]
+    運動種別の状態遷移エラー(#[from] 運動種別の状態遷移エラー),
 
     #[error("接触拘束の生成エラー: {0}")]
     接触拘束の生成エラー(#[from] 接触拘束の生成エラー),

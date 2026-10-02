@@ -3,7 +3,7 @@
 
 use super::抽出の試験の段取り::{原文から設計関係グラフと抽出の欠けを組む, 解釈の使用箇所, 関係の表記一覧};
 
-const 移動のパス: &str = "crates/blitz_esca/src/歩行の遷移.rs";
+const 移動のパス: &str = "crates/blitz_esca/src/歩行の状態遷移.rs";
 
 #[test]
 fn 定数ジェネリクスの式を持つトレイト実装は役割の所有者にならない() {

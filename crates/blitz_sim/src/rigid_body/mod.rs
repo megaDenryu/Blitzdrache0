@@ -58,6 +58,6 @@ pub use placement::配置;
 pub use principal_inertia::{主慣性, 主慣性と主軸};
 pub use quiet_substep_run::静穏が続いた細分の本数;
 pub use step_input::{一刻みの入力, 一度だけ適用する衝撃};
-pub use transition_error::運動種別の遷移エラー;
-pub use transition_reservation::運動種別の遷移の予約;
+pub use transition_error::運動種別の状態遷移エラー;
+pub use transition_reservation::運動種別の状態遷移の予約;
 pub use wake_reason::休止から起きた理由;

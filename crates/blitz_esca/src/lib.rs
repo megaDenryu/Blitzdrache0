@@ -23,8 +23,8 @@ pub mod 平面の幾何;
 pub mod 旅行者;
 #[path = "時刻.rs"]
 pub mod 時刻;
-#[path = "歩行の遷移.rs"]
-pub mod 歩行の遷移;
+#[path = "歩行の状態遷移.rs"]
+pub mod 歩行の状態遷移;
 #[path = "経路の開閉と旅行者の歩行.rs"]
 pub mod 経路の開閉と旅行者の歩行;
 
@@ -32,14 +32,14 @@ pub mod 経路の開閉と旅行者の歩行;
 mod tests;
 
 pub use elapsed_time::{経過時間, 経過時間の生成の失敗};
-pub use transition_parameter::遷移パラメータ;
+pub use transition_parameter::状態遷移パラメータ;
 pub use traveler_error::{旅行者の現在地の生成の失敗, 歩行の規則の生成の失敗};
 pub use walking_direction::歩行方向;
 pub use キーボードの入力::キーボード歩行入力;
 pub use 居場所::旅行者の居場所;
 pub use 旅行者::{旅行者の出来事, 旅行者の意図, 旅行者の現在地, 歩行の規則, 移動の変位};
 pub use 時刻::{世界の時刻, 世界の時刻の生成の失敗};
-pub use 歩行の遷移::{旅行者の描画位置, 歩行遷移の規則};
+pub use 歩行の状態遷移::{旅行者の描画位置, 歩行の状態遷移の規則};
 pub use 経路の開閉と旅行者の歩行::{
     経路の開閉と旅行者の歩行の出来事, 経路の開閉と旅行者の歩行の更新への入力, 経路の開閉と旅行者の歩行の状態, 経路の開閉と旅行者の歩行の規則
 };

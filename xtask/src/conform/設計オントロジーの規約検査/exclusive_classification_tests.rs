@@ -27,8 +27,9 @@ fn 構文解析_mparameterとmoptionsを同時に名乗る型は違反になる(
 
 #[test]
 fn 構文解析_排他の分類の片方だけを名乗る型は違反にならない() {
-    let 内容 =
-        format!("{識別子付きの旅行者}impl M可変エンティティ for 旅行者 {{}}\n#[derive(Clone)]\npub struct 遷移パラメータ {{\n    pub 経過時間: 経過時間,\n}}\nimpl M不変データ for 遷移パラメータ {{}}\nimpl MParameter for 遷移パラメータ {{}}\n");
+    let 内容 = format!(
+        "{識別子付きの旅行者}impl M可変エンティティ for 旅行者 {{}}\n#[derive(Clone)]\npub struct 状態遷移パラメータ {{\n    pub 経過時間: 経過時間,\n}}\nimpl M不変データ for 状態遷移パラメータ {{}}\nimpl MParameter for 状態遷移パラメータ {{}}\n"
+    );
     assert!(全部の説明関数を連ねた違反の説明一覧(vec![ソース("crates/a/src/x.rs", &内容)]).is_empty());
 }
 
