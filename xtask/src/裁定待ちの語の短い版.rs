@@ -4,8 +4,8 @@
 //! 元の一覧は箇条書きの項目と、列の違う表が混ざる。読めない行を1件でも見つけたら、短い版を書かずに失敗で終わる。
 //! 短い版が古くなっていないかは `cargo xtask conform` が確かめる(`xtask/src/conform/裁定待ちの語の短い版の古さの検査.rs`)。
 
-#[path = "裁定待ちの語の短い版/ファイルの置き場.rs"]
-mod ファイルの置き場;
+#[path = "裁定待ちの語の短い版/マス.rs"]
+mod マス;
 #[path = "裁定待ちの語の短い版/元の一覧.rs"]
 mod 元の一覧;
 #[cfg(test)]
@@ -13,6 +13,8 @@ mod 元の一覧;
 mod 元の一覧の読み取りの試験;
 #[path = "裁定待ちの語の短い版/元の一覧の読み手.rs"]
 mod 元の一覧の読み手;
+#[path = "裁定待ちの語の短い版/区切られたドメインの宣言.rs"]
+mod 区切られたドメインの宣言;
 #[path = "裁定待ちの語の短い版/区切られたドメインの表記.rs"]
 mod 区切られたドメインの表記;
 #[path = "裁定待ちの語の短い版/原文の塊.rs"]
@@ -22,47 +24,54 @@ mod 定義文の最初の文;
 #[cfg(test)]
 #[path = "裁定待ちの語の短い版/文の読み取りの試験.rs"]
 mod 文の読み取りの試験;
-#[path = "裁定待ちの語の短い版/短い版の組み立て.rs"]
-mod 短い版の組み立て;
 #[path = "裁定待ちの語の短い版/生成した結果.rs"]
 mod 生成した結果;
+#[path = "裁定待ちの語の短い版/短い版の組み立て.rs"]
+mod 短い版の組み立て;
+#[path = "裁定待ちの語の短い版/箇条書きの項目.rs"]
+mod 箇条書きの項目;
+#[path = "裁定待ちの語の短い版/表の語.rs"]
+mod 表の語;
 #[path = "裁定待ちの語の短い版/表の読み取り.rs"]
 mod 表の読み取り;
 #[path = "裁定待ちの語の短い版/裁定待ちの語.rs"]
 mod 裁定待ちの語;
+#[path = "裁定待ちの語の短い版/裁定待ちの語のファイル.rs"]
+pub(crate) mod 裁定待ちの語のファイル;
+#[path = "裁定待ちの語の短い版/語を載せない節.rs"]
+mod 語を載せない節;
 #[path = "裁定待ちの語の短い版/読めなかった行.rs"]
 mod 読めなかった行;
 
 use std::process::ExitCode;
 
-pub(crate) use ファイルの置き場::裁定待ちの語のファイルの置き場;
 pub(crate) use 生成した結果::短い定義一覧を書けない理由;
 
 /// 生成のコマンドの名前。短い版の冒頭と、古さの検査の違反の文言がこの名前で生成し直す方法を案内する。
 pub(crate) const 生成のコマンド: &str = "cargo xtask gen-pending-short-definitions";
 
 pub fn 短い版を生成する() -> ExitCode {
-    let 置き場 = 裁定待ちの語のファイルの置き場::リポジトリの根からの既定();
-    let 元の一覧 = match 置き場.元の一覧を読む() {
+    let ファイル = 裁定待ちの語のファイル::裁定待ちの語のファイル::リポジトリの根からの既定();
+    let 元の一覧 = match ファイル.元の一覧を読む() {
         Ok(元の一覧) => 元の一覧,
         Err(誤り) => {
-            eprintln!("[xtask] gen-pending-short-definitions: {} を読めなかった: {誤り}", 置き場.元の一覧のパス().display());
+            eprintln!("[xtask] gen-pending-short-definitions: {} を読めなかった: {誤り}", ファイル.裁定待ちの語の一覧のパス().display());
             return ExitCode::FAILURE;
         }
     };
     let 生成した結果 = 元の一覧.短い版を組む();
     println!("[xtask] 元の一覧から読んだ語: {}件、短い版に書いた語: {}件", 生成した結果.読んだ語の数(), 生成した結果.短い版().語の数を数える());
     if let Err(理由) = 生成した結果.短い版を書いてよいかを確かめる() {
-        eprintln!("[xtask] gen-pending-short-definitions: {} から短い版を書かなかった: {理由}", 置き場.元の一覧のパス().display());
+        eprintln!("[xtask] gen-pending-short-definitions: {} から短い版を書かなかった: {理由}", ファイル.裁定待ちの語の一覧のパス().display());
         return ExitCode::FAILURE;
     }
-    match 置き場.短い版を書く(生成した結果.短い版()) {
+    match ファイル.短い版を書く(生成した結果.短い版()) {
         Ok(()) => {
-            println!("[xtask] {} を書いた", 置き場.短い版のパス().display());
+            println!("[xtask] {} を書いた", ファイル.裁定待ちの語の短い定義のパス().display());
             ExitCode::SUCCESS
         }
         Err(誤り) => {
-            eprintln!("[xtask] gen-pending-short-definitions: {} を書けなかった: {誤り}", 置き場.短い版のパス().display());
+            eprintln!("[xtask] gen-pending-short-definitions: {} を書けなかった: {誤り}", ファイル.裁定待ちの語の短い定義のパス().display());
             ExitCode::FAILURE
         }
     }
