@@ -1,4 +1,4 @@
-//! 縮小段チェーン生成中の各レベルのレイアウト遷移バリア(synchronization2)。
+//! 縮小段チェーン生成中の各レベルのレイアウト切り替えバリア(synchronization2)。
 
 use ash::vk;
 
@@ -24,7 +24,7 @@ fn 積む(積み先: GPU命令の積み先<'_>, バリア: vk::ImageMemoryBarrie
 /// mip1以降なら前段のblit(BLIT段)であり、呼び出し側でどちらか判別しない。
 /// `ALL_TRANSFER`(COPY/BLIT両方を包含)をsrcStageMaskにすることで、
 /// 実際の書き手がどちらであっても同期スコープに含める。
-pub(super) fn レベルをsrcへ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image, レベル: u32) {
+pub(super) fn レベルをsrcへ切り替える(積み先: GPU命令の積み先<'_>, image: vk::Image, レベル: u32) {
     let バリア = vk::ImageMemoryBarrier2::default()
         .src_stage_mask(vk::PipelineStageFlags2::ALL_TRANSFER)
         .src_access_mask(vk::AccessFlags2::TRANSFER_WRITE)
@@ -40,7 +40,7 @@ pub(super) fn レベルをsrcへ遷移する(積み先: GPU命令の積み先<'_
 }
 
 /// TRANSFER_SRC_OPTIMAL(blit元として使用済み) → SHADER_READ_ONLY_OPTIMAL。
-pub(super) fn レベルをshader_readへ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image, レベル: u32) {
+pub(super) fn レベルをshader_readへ切り替える(積み先: GPU命令の積み先<'_>, image: vk::Image, レベル: u32) {
     let バリア = vk::ImageMemoryBarrier2::default()
         .src_stage_mask(vk::PipelineStageFlags2::BLIT)
         .src_access_mask(vk::AccessFlags2::TRANSFER_READ)
@@ -59,9 +59,9 @@ pub(super) fn レベルをshader_readへ遷移する(積み先: GPU命令の積�
 /// ならない) → SHADER_READ_ONLY_OPTIMAL。
 ///
 /// 注意: mip数が1(縮小段無し)ならこのレベルはmip0そのものでCOPY段の書き込み、
-/// mip数が2以上ならblit(BLIT段)の書き込み。`レベルをsrcへ遷移する`と同じ理由で
+/// mip数が2以上ならblit(BLIT段)の書き込み。`レベルをsrcへ切り替える`と同じ理由で
 /// `ALL_TRANSFER`を使う。
-pub(super) fn 最終レベルをshader_readへ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image, レベル: u32) {
+pub(super) fn 最終レベルをshader_readへ切り替える(積み先: GPU命令の積み先<'_>, image: vk::Image, レベル: u32) {
     let バリア = vk::ImageMemoryBarrier2::default()
         .src_stage_mask(vk::PipelineStageFlags2::ALL_TRANSFER)
         .src_access_mask(vk::AccessFlags2::TRANSFER_WRITE)

@@ -43,7 +43,7 @@ pub(super) fn 空パスを宣言する<'a>(
                 extent: 寸法,
             }];
             // 安全性: command_bufferは記録中で、pipelineとディスクリプタセットは互換の組として生成済み。
-            // 同期とレイアウト遷移はグラフ実行器が担う。
+            // 同期とレイアウト切り替えはグラフ実行器が担う。
             unsafe {
                 device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.pipeline);
                 device.cmd_set_viewport(command_buffer, 0, &viewport一覧);

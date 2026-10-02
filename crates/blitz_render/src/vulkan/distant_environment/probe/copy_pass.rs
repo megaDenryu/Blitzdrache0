@@ -22,7 +22,7 @@ pub(super) fn 遠方環境のコピーパスを作る(画像: graph::画像ハ�
             let 領域 = [vk::BufferImageCopy::default()
                 .image_subresource(vk::ImageSubresourceLayers::default().aspect_mask(vk::ImageAspectFlags::COLOR).mip_level(0).base_array_layer(0).layer_count(層数))
                 .image_extent(一層の範囲)];
-            // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ遷移済み(用途宣言からグラフが導く)、
+            // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ切り替え済み(用途宣言からグラフが導く)、
             // 受けバッファは全層ぶんのテクセル数の容量で確保済みである。
             unsafe {
                 積み先と取り出し口

@@ -1,4 +1,4 @@
-//! 材質テクスチャの転送が積む、画像レイアウト遷移バリアの組み立て。担当する工程は
+//! 材質テクスチャの転送が積む、画像レイアウト切り替えバリアの組み立て。担当する工程は
 //! 「全縮小段レベルを転送先レイアウトへ移すバリアと、コピーで積み終えた全レベルを読み取り専用へ移すバリアを積む」ことであり、
 //! 受け取るのは積み先のコマンドバッファと画像と縮小段の数、積んだ後に返すものは無い。
 //!
@@ -17,7 +17,7 @@ fn 全レベルの部分範囲(縮小段数: u32) -> vk::ImageSubresourceRange {
         .layer_count(1)
 }
 
-pub(super) fn 全レベルを転送先レイアウトへ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image, 縮小段数: u32) {
+pub(super) fn 全レベルを転送先レイアウトへ切り替える(積み先: GPU命令の積み先<'_>, image: vk::Image, 縮小段数: u32) {
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
     let 部分範囲 = 全レベルの部分範囲(縮小段数);
@@ -44,7 +44,7 @@ pub(super) fn 全レベルを転送先レイアウトへ遷移する(積み先: 
 /// TRANSFER_DST_OPTIMAL(全段をコピーで書き込み済み) → SHADER_READ_ONLY_OPTIMAL。
 /// 全段をファイルから転送する積み方だけが使う。段ごとに分けず1回で移すのは、この積み方ではどの段もblitの元にならず、
 /// 段と段の間に順序の依存が1つも無いためである。
-pub(super) fn 全レベルをshader_readへ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image, 縮小段数: u32) {
+pub(super) fn 全レベルをshader_readへ切り替える(積み先: GPU命令の積み先<'_>, image: vk::Image, 縮小段数: u32) {
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
     let バリア = vk::ImageMemoryBarrier2::default()

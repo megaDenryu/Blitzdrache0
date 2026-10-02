@@ -46,7 +46,7 @@ fn コマンドを積む(積み先: GPU命令の積み先<'_>, 入力: &空中�
     let セット一覧 = [入力.シーンセット, 入力.合成セット];
     let 最遠距離バイト列 = 入力.最遠距離.to_le_bytes();
     // 安全性: command_bufferは記録中で、pipelineとlayoutとセットは互換の組として生成済み。即時定数の
-    // バイト数はlayoutのFRAGMENT範囲宣言(実数1つ)と一致する。同期とレイアウト遷移はグラフ実行器が担う。
+    // バイト数はlayoutのFRAGMENT範囲宣言(実数1つ)と一致する。同期とレイアウト切り替えはグラフ実行器が担う。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, 入力.pipeline);
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);

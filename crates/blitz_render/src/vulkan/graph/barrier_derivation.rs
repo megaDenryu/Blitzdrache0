@@ -13,7 +13,7 @@ use super::state::画像状態;
 use super::usage::image_usage_mapping::{書き込みを含むか, 状態へ写像する};
 use super::usage::画像用途;
 
-/// 1つの画像ハンドルに対する遷移(前状態→今状態)。
+/// 1つの画像ハンドルに対する配置切り替え(前状態→今状態)。
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) struct 画像バリア記述 {
     pub(crate) ハンドル: 画像ハンドル,
@@ -21,16 +21,16 @@ pub(crate) struct 画像バリア記述 {
     pub(crate) 今: 画像状態,
 }
 
-/// バリアの発行地点: あるパスの直前、またはグラフ終端(最終用途への遷移)。
+/// バリアの発行地点: あるパスの直前、またはグラフ終端(最終用途への配置切り替え)。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum 遷移地点 {
+pub(crate) enum 配置切り替え位置 {
     パスの前 { 名前: &'static str },
     グラフ終端,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct 地点別バリア {
-    pub(crate) 地点: 遷移地点,
+    pub(crate) 地点: 配置切り替え位置,
     pub(crate) バリア一覧: Vec<画像バリア記述>,
 }
 
@@ -42,14 +42,14 @@ pub(crate) fn バリアを導出する(初期状態: &HashMap<画像ハンドル
     for パス in パス列 {
         let バリア一覧 = パス.読み画像.iter().chain(パス.書き画像.iter()).filter_map(|&(ハンドル, 用途)| 差分を計算する(&mut 現在状態, ハンドル, 用途)).collect();
         結果.push(地点別バリア {
-            地点: 遷移地点::パスの前 { 名前: パス.名前 },
+            地点: 配置切り替え位置::パスの前 { 名前: パス.名前 },
             バリア一覧,
         });
     }
 
     let 終端バリア一覧 = 最終用途.iter().filter_map(|&(ハンドル, 用途)| 差分を計算する(&mut 現在状態, ハンドル, 用途)).collect();
     結果.push(地点別バリア {
-        地点: 遷移地点::グラフ終端,
+        地点: 配置切り替え位置::グラフ終端,
         バリア一覧: 終端バリア一覧,
     });
 

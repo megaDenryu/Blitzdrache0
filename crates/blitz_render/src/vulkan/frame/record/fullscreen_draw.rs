@@ -26,7 +26,7 @@ pub(super) fn コマンドを積む(積み先: GPU命令の積み先<'_>, pipeli
     }];
     let ディスクリプタセット一覧 = [ディスクリプタセット];
 
-    // 安全性: 上記前提のとおり。バインドとドローだけで、同期・レイアウト遷移はグラフ実行器が担う。
+    // 安全性: 上記前提のとおり。バインドとドローだけで、同期・レイアウト切り替えはグラフ実行器が担う。
     unsafe {
         device.cmd_bind_pipeline(command_buffer, vk::PipelineBindPoint::GRAPHICS, pipeline);
         device.cmd_set_viewport(command_buffer, 0, &viewport一覧);

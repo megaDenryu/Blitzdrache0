@@ -1,4 +1,4 @@
-// 多段シャドウの距離区分の選択と境界ブレンド。深度で参照する距離区分を決め、遷移域では2つの距離区分を混ぜる。
+// 多段シャドウの距離区分の選択と境界ブレンド。深度で参照する距離区分を決め、ブレンド域では2つの距離区分を混ぜる。
 // 注意: この式は`crates/blitz_render/src/cascade/blend.rs`の`距離区分を選ぶ`の写しである。
 // 単調で和が1になることのユニットテストはRust側が持ち、ここが正本から外れると境界に段差として現れる。
 // 注意: シェーダー内識別子はASCII(CLAUDE.md「命名」)。
@@ -14,7 +14,7 @@ struct CascadeBlend
     float primaryWeight;
 };
 
-// splitDepths.xyzが距離区分の境界、transitionWidths.xyzが境界の手前に置く遷移域の幅である。
+// splitDepths.xyzが距離区分の境界、transitionWidths.xyzが境界の手前に置くブレンド域の幅である。
 CascadeBlend selectCascadeBlend(float viewDepth, float3 splitDepths, float3 transitionWidths)
 {
     CascadeBlend blend;
@@ -44,7 +44,7 @@ CascadeBlend selectCascadeBlend(float viewDepth, float3 splitDepths, float3 tran
     return blend;
 }
 
-// 距離区分を選び、遷移域なら2枚のシャドウマップを参照して重みで混ぜる。遷移域の外では1枚しか参照しない。
+// 距離区分を選び、ブレンド域なら2枚のシャドウマップを参照して重みで混ぜる。ブレンド域の外では1枚しか参照しない。
 float computeCascadedShadowFactor(
     float3 relativePosition, float viewDepth,
     float4x4 cascadeLightViewProjection[cascadeCount], float3 splitDepths, float3 transitionWidths,

@@ -1,6 +1,6 @@
 //! vkCmdBlitImageの連鎖による縮小段チェーン生成。各段でTRANSFER_DST→TRANSFER_SRCの
 //! バリア(`mip_barrier`)を積んでからLINEARフィルタでblitし、blit元として使い終えた
-//! レベルはSHADER_READ_ONLY_OPTIMALへ遷移する(判断20)。
+//! レベルはSHADER_READ_ONLY_OPTIMALへ切り替わる(判断20)。
 //!
 //! 注意: blitの元/先の寸法は素材の段の寸法と同じ算術(`level_extent`)で求める。1x1到達後も
 //! この算術が1を返し続けるため、途中でサイズが0になる事故を避けられる。
@@ -14,11 +14,11 @@ use crate::vulkan::command_sink::GPU命令の積み先;
 
 pub(super) fn 縮小段チェーンを積む(積み先: GPU命令の積み先<'_>, image: vk::Image, 幅: u32, 高さ: u32, mip数: u32) {
     for mip in 1..mip数 {
-        mip_barrier::レベルをsrcへ遷移する(積み先, image, mip - 1);
+        mip_barrier::レベルをsrcへ切り替える(積み先, image, mip - 1);
         blitを積む(積み先, image, 幅, 高さ, mip);
-        mip_barrier::レベルをshader_readへ遷移する(積み先, image, mip - 1);
+        mip_barrier::レベルをshader_readへ切り替える(積み先, image, mip - 1);
     }
-    mip_barrier::最終レベルをshader_readへ遷移する(積み先, image, mip数 - 1);
+    mip_barrier::最終レベルをshader_readへ切り替える(積み先, image, mip数 - 1);
 }
 
 fn blitを積む(積み先: GPU命令の積み先<'_>, image: vk::Image, 幅: u32, 高さ: u32, mip: u32) {
@@ -32,7 +32,7 @@ fn blitを積む(積み先: GPU命令の積み先<'_>, image: vk::Image, 幅: u3
         .dst_subresource(vk::ImageSubresourceLayers::default().aspect_mask(vk::ImageAspectFlags::COLOR).mip_level(mip).base_array_layer(0).layer_count(1))
         .dst_offsets([vk::Offset3D::default(), vk::Offset3D { x: 先寸法.0, y: 先寸法.1, z: 1 }]);
     // 安全性: command_bufferは記録中で、imageはこの直前のバリアでsrc/dstとも
-    // 適切なレイアウトへ遷移済み。
+    // 適切なレイアウトへ切り替え済み。
     unsafe {
         device.cmd_blit_image(command_buffer, image, vk::ImageLayout::TRANSFER_SRC_OPTIMAL, image, vk::ImageLayout::TRANSFER_DST_OPTIMAL, &[blit], vk::Filter::LINEAR);
     }

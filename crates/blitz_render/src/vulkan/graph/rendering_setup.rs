@@ -48,7 +48,7 @@ pub(super) fn 動的レンダリングを開始する(積み先: GPU命令の積
     }
 
     // 安全性: command_bufferは記録中で、各画像は直前のバリア発行でOPTIMALレイアウトへ
-    // 遷移済み。
+    // 切り替え済み。
     unsafe { 積み先.論理デバイス().cmd_begin_rendering(積み先.コマンドバッファ(), &rendering_info) };
 }
 

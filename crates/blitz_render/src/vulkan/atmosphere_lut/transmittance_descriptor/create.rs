@@ -52,7 +52,7 @@ fn プールを作る(device: &ash::Device) -> Result<vk::DescriptorPool, レン
     Ok(unsafe { device.create_descriptor_pool(&create_info, None)? })
 }
 
-/// 注意: ストレージ画像のレイアウトはGENERALである。レンダーグラフの画像用途「コンピュート書き」が同じレイアウトへ遷移させており、
+/// 注意: ストレージ画像のレイアウトはGENERALである。レンダーグラフの画像用途「コンピュート書き」が同じレイアウトへ切り替えており、
 /// ここの値とバリアの導出先が食い違うと検証層がレイアウト不一致を報告する。
 fn 書き込む(device: &ash::Device, セット: &宣言から割り当てたセット<2>, シェーダー定数: vk::Buffer, 書き込み先: vk::ImageView) {
     セット.書き込み先(device).並びの位置ごとに結ぶ([

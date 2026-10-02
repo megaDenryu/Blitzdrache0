@@ -1,4 +1,4 @@
-//! UIテクスチャの唯一の縮小段レベルに対するレイアウト遷移バリア2つ
+//! UIテクスチャの唯一の縮小段レベルに対するレイアウト切り替えバリア2つ
 //! (UNDEFINED→TRANSFER_DST、TRANSFER_DST→SHADER_READ_ONLY)。
 
 use ash::vk;
@@ -9,7 +9,7 @@ fn 部分範囲() -> vk::ImageSubresourceRange {
     vk::ImageSubresourceRange::default().aspect_mask(vk::ImageAspectFlags::COLOR).base_mip_level(0).level_count(1).base_array_layer(0).layer_count(1)
 }
 
-pub(super) fn 画像を転送先レイアウトへ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image) {
+pub(super) fn 画像を転送先レイアウトへ切り替える(積み先: GPU命令の積み先<'_>, image: vk::Image) {
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
     let バリア = vk::ImageMemoryBarrier2::default()
@@ -29,7 +29,7 @@ pub(super) fn 画像を転送先レイアウトへ遷移する(積み先: GPU命
     unsafe { device.cmd_pipeline_barrier2(command_buffer, &依存情報) };
 }
 
-pub(super) fn 画像をシェーダー読み取り専用レイアウトへ遷移する(積み先: GPU命令の積み先<'_>, image: vk::Image) {
+pub(super) fn 画像をシェーダー読み取り専用レイアウトへ切り替える(積み先: GPU命令の積み先<'_>, image: vk::Image) {
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
     let バリア = vk::ImageMemoryBarrier2::default()

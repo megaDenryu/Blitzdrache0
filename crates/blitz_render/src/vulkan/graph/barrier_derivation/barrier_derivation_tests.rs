@@ -7,7 +7,7 @@ mod difference_tests;
 
 use std::collections::HashMap;
 
-use super::{バリアを導出する, 遷移地点};
+use super::{バリアを導出する, 配置切り替え位置};
 use crate::vulkan::graph::handle::画像ハンドル;
 use crate::vulkan::graph::initial_state::{前フレーム深度書き込み直後状態, 取得直後の色画像状態};
 use crate::vulkan::graph::pass_resource_usage::パスリソース使用;
@@ -49,20 +49,20 @@ fn シーン描画から読み戻しコピー提示までの3パス列で期待�
     assert_eq!(結果.len(), 3, "パス数2 + グラフ終端で3地点になるはず");
 
     let シーン描画前 = &結果[0];
-    assert_eq!(シーン描画前.地点, 遷移地点::パスの前 { 名前: "シーン描画" });
-    assert_eq!(シーン描画前.バリア一覧.len(), 2, "カラー・深度の両方が初回遷移するはず");
-    let カラー遷移 = シーン描画前.バリア一覧.iter().find(|バリア| バリア.ハンドル == カラー).expect("カラーの遷移が見つからない");
-    assert_eq!(カラー遷移.前.layout, ash::vk::ImageLayout::UNDEFINED, "初回はUNDEFINEDから開始する");
-    assert_eq!(カラー遷移.今.layout, ash::vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL);
+    assert_eq!(シーン描画前.地点, 配置切り替え位置::パスの前 { 名前: "シーン描画" });
+    assert_eq!(シーン描画前.バリア一覧.len(), 2, "カラー・深度の両方が初回に配置が切り替わるはず");
+    let カラーの配置切り替え = シーン描画前.バリア一覧.iter().find(|バリア| バリア.ハンドル == カラー).expect("カラーの配置切り替えが見つからない");
+    assert_eq!(カラーの配置切り替え.前.layout, ash::vk::ImageLayout::UNDEFINED, "初回はUNDEFINEDから開始する");
+    assert_eq!(カラーの配置切り替え.今.layout, ash::vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL);
 
     let コピー前 = &結果[1];
-    assert_eq!(コピー前.地点, 遷移地点::パスの前 { 名前: "読み戻しコピー" });
-    assert_eq!(コピー前.バリア一覧.len(), 1, "コピー前はカラーのみ書き→読みで遷移する");
+    assert_eq!(コピー前.地点, 配置切り替え位置::パスの前 { 名前: "読み戻しコピー" });
+    assert_eq!(コピー前.バリア一覧.len(), 1, "コピー前はカラーのみ書き→読みで切り替わる");
     assert_eq!(コピー前.バリア一覧[0].ハンドル, カラー);
     assert_eq!(コピー前.バリア一覧[0].今.layout, ash::vk::ImageLayout::TRANSFER_SRC_OPTIMAL);
 
     let 終端 = &結果[2];
-    assert_eq!(終端.地点, 遷移地点::グラフ終端);
-    assert_eq!(終端.バリア一覧.len(), 1, "終端はカラーのみ提示へ遷移する(深度は提示しない)");
+    assert_eq!(終端.地点, 配置切り替え位置::グラフ終端);
+    assert_eq!(終端.バリア一覧.len(), 1, "終端はカラーのみ提示へ切り替える(深度は提示しない)");
     assert_eq!(終端.バリア一覧[0].今.layout, ash::vk::ImageLayout::PRESENT_SRC_KHR);
 }

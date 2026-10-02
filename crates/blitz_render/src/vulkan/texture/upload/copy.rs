@@ -18,7 +18,7 @@ pub(super) fn 原寸の段を画像へコピーする(積み先: GPU命令の積
     let device = 積み先.論理デバイス();
     let command_buffer = 積み先.コマンドバッファ();
     let 領域 = コピー領域を組み立てる(0, 0, 幅, 高さ);
-    // 安全性: command_bufferは積み込み中。imageはTRANSFER_DST_OPTIMALへ遷移済み。
+    // 安全性: command_bufferは積み込み中。imageはTRANSFER_DST_OPTIMALへ切り替え済み。
     // ステージングバッファは呼び出し元が原寸の画素列と同じ長さで確保・書き込み済み。
     unsafe {
         device.cmd_copy_buffer_to_image(command_buffer, ステージングバッファ, image, vk::ImageLayout::TRANSFER_DST_OPTIMAL, &[領域]);
@@ -38,7 +38,7 @@ pub(super) fn 全段を画像へコピーする(積み先: GPU命令の積み先
         let 段のバイト数 = vk::DeviceSize::try_from(バイト列.len()).unwrap_or_else(|_| panic!("縮小段{段番号}のバイト数が64ビットに収まらない"));
         開始位置 += 段のバイト数;
     }
-    // 安全性: command_bufferは積み込み中。imageは全レベルがTRANSFER_DST_OPTIMALへ遷移済み。
+    // 安全性: command_bufferは積み込み中。imageは全レベルがTRANSFER_DST_OPTIMALへ切り替え済み。
     // 領域一覧の開始位置と長さの総和は、呼び出し元が同じ段の列から確保・書き込んだステージングバッファの容量に一致する。
     unsafe {
         device.cmd_copy_buffer_to_image(command_buffer, ステージングバッファ, image, vk::ImageLayout::TRANSFER_DST_OPTIMAL, &領域一覧);

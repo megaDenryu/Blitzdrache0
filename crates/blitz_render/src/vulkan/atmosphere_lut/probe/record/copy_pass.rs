@@ -14,7 +14,7 @@ pub(super) fn コピーパスを作る(名前: &'static str, 画像: graph::画�
         let 領域 = [vk::BufferImageCopy::default()
             .image_subresource(vk::ImageSubresourceLayers::default().aspect_mask(vk::ImageAspectFlags::COLOR).mip_level(0).base_array_layer(0).layer_count(1))
             .image_extent(範囲)];
-        // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ遷移済み(用途宣言からグラフが導く)、
+        // 安全性: command_bufferは記録中、画像はTRANSFER_SRC_OPTIMALへ切り替え済み(用途宣言からグラフが導く)、
         // 受けバッファはテクセル数ぶんの容量で確保済みである。
         unsafe {
             積み先と取り出し口

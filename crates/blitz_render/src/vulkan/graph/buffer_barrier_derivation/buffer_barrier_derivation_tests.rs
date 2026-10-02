@@ -39,15 +39,15 @@ fn コンピュートで書いてから読む(読み用途: バッファ用途) 
 }
 
 #[test]
-fn コンピュート書きから頂点段シェーダー読みへの遷移でバリアが出る() {
+fn コンピュート書きから頂点段シェーダー読みへの切り替えでバリアが出る() {
     let 結果 = コンピュートで書いてから読む(バッファ用途::頂点段シェーダー読み);
 
     assert_eq!(結果.len(), 2, "パスごとに1エントリ(グラフ終端は無い)になるはず");
-    assert_eq!(結果[0].len(), 1, "初回は前フレーム読み直後→コンピュート書きで遷移するはず");
+    assert_eq!(結果[0].len(), 1, "初回は前フレーム読み直後→コンピュート書きで切り替わるはず");
     assert_eq!(結果[0][0].今.access, ash::vk::AccessFlags2::SHADER_STORAGE_WRITE);
     assert_eq!(結果[0][0].今.stage, ash::vk::PipelineStageFlags2::COMPUTE_SHADER);
 
-    assert_eq!(結果[1].len(), 1, "コンピュート書き→頂点段シェーダー読みで遷移するはず(書きが絡む)");
+    assert_eq!(結果[1].len(), 1, "コンピュート書き→頂点段シェーダー読みで切り替わるはず(書きが絡む)");
     assert_eq!(結果[1][0].今.access, ash::vk::AccessFlags2::SHADER_STORAGE_READ);
     assert_eq!(結果[1][0].今.stage, ash::vk::PipelineStageFlags2::VERTEX_SHADER);
 }
@@ -55,11 +55,11 @@ fn コンピュート書きから頂点段シェーダー読みへの遷移で�
 /// クラスタの選別が書いた格子と光添字列を、同じフレームのシーン描画が画素段で読む形である。
 /// 読み宣言を落としても検証層は競合を報告しないため、導出そのものをここで固定する。
 #[test]
-fn コンピュート書きから画素段シェーダー読みへの遷移でバリアが出る() {
+fn コンピュート書きから画素段シェーダー読みへの切り替えでバリアが出る() {
     let 結果 = コンピュートで書いてから読む(バッファ用途::画素段シェーダー読み);
 
     assert_eq!(結果.len(), 2, "パスごとに1エントリ(グラフ終端は無い)になるはず");
-    assert_eq!(結果[1].len(), 1, "コンピュート書き→画素段シェーダー読みで遷移するはず(書きが絡む)");
+    assert_eq!(結果[1].len(), 1, "コンピュート書き→画素段シェーダー読みで切り替わるはず(書きが絡む)");
     assert_eq!(結果[1][0].前.stage, ash::vk::PipelineStageFlags2::COMPUTE_SHADER);
     assert_eq!(結果[1][0].前.access, ash::vk::AccessFlags2::SHADER_STORAGE_WRITE);
     assert_eq!(結果[1][0].今.access, ash::vk::AccessFlags2::SHADER_STORAGE_READ);
