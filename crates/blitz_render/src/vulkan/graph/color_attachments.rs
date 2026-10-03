@@ -9,6 +9,7 @@
 //! (`blitz_engine::temporal_reconstruction::動きベクトル::動いていない`)、ジオメトリも空も書かなかった画素へ
 //! この値が残ることは意味の上で正しい。
 
+use arrayvec::ArrayVec;
 use ash::vk;
 
 use super::handle::画像ハンドル;
@@ -46,19 +47,17 @@ impl カラー添付列 {
     /// 注意: 添付のレイアウトは選択肢ごとに違う。動きベクトルは毎フレーム消去して書く画像であるためカラー添付の
     /// 最適レイアウトを取り、履歴はフレームをまたいで中身を保つためGENERALに固定してある
     /// (`画像用途::履歴のカラー出力`が導くレイアウトと同じ値でなければならない)。
-    pub(super) fn 記述を並べる(self, レジストリ: &画像レジストリ, ロード操作: vk::AttachmentLoadOp, 色のクリア値: vk::ClearValue) -> Vec<vk::RenderingAttachmentInfo<'static>> {
+    pub(super) fn 記述を並べる(self, レジストリ: &画像レジストリ, ロード操作: vk::AttachmentLoadOp, 色のクリア値: vk::ClearValue) -> ArrayVec<vk::RenderingAttachmentInfo<'static>, 2> {
         let 添付の最適 = vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL;
         let 動いていない値 = vk::ClearValue {
             color: vk::ClearColorValue { float32: [0.0; 4] },
         };
         let 色の記述 = |色| 記述を作る(レジストリ, 色, ロード操作, 色のクリア値, 添付の最適);
         match self {
-            Self::無し => Vec::new(),
-            Self::色だけ(色) => vec![色の記述(色)],
-            Self::色と動きベクトル { 色, 動きベクトル } => {
-                vec![色の記述(色), 記述を作る(レジストリ, 動きベクトル, ロード操作, 動いていない値, 添付の最適)]
-            }
-            Self::色と履歴 { 色, 履歴 } => vec![色の記述(色), 記述を作る(レジストリ, 履歴, ロード操作, 色のクリア値, vk::ImageLayout::GENERAL)],
+            Self::無し => ArrayVec::new(),
+            Self::色だけ(色) => [色の記述(色)].into_iter().collect(),
+            Self::色と動きベクトル { 色, 動きベクトル } => [色の記述(色), 記述を作る(レジストリ, 動きベクトル, ロード操作, 動いていない値, 添付の最適)].into_iter().collect(),
+            Self::色と履歴 { 色, 履歴 } => [色の記述(色), 記述を作る(レジストリ, 履歴, ロード操作, 色のクリア値, vk::ImageLayout::GENERAL)].into_iter().collect(),
         }
     }
 }

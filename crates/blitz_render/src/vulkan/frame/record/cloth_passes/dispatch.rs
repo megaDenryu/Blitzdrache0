@@ -1,6 +1,7 @@
 //! 1つの布コンピュートパスをレンダーグラフへ登録する。拘束の工程だけがプッシュ定数(拘束の区間: 開始・本数・乗数の開始)を伴う。
 //! 班のスレッド数は布のシェーダーの`numthreads`と同じ値であり、`cargo xtask conform`が`cloth_constraint.slang`の写しと突き合わせる。
 
+use arrayvec::ArrayVec;
 use ash::vk;
 
 use crate::cloth_material::布の彩色の区間;
@@ -32,8 +33,8 @@ impl 拘束の区間の指定 {
 /// 1本のパスの発行の指定。読み書きの宣言はバリアの導出だけが読む。
 pub(super) struct 発行の指定 {
     pub(super) 名前: &'static str,
-    pub(super) 読み: Vec<(バッファハンドル, バッファ用途)>,
-    pub(super) 書き: Vec<(バッファハンドル, バッファ用途)>,
+    pub(super) 読み: ArrayVec<(バッファハンドル, バッファ用途), 2>,
+    pub(super) 書き: ArrayVec<(バッファハンドル, バッファ用途), 2>,
     pub(super) pipeline: vk::Pipeline,
     pub(super) スレッド数: u32,
     pub(super) 色の区間: Option<拘束の区間の指定>, // 拘束の工程だけがプッシュ定数で運ぶ

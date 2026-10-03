@@ -5,8 +5,9 @@ use super::clear_spec::クリア指定;
 use super::color_attachments::カラー添付列;
 use super::context::GPU命令の積み先と宣言済み資源の取り出し口;
 use super::depth_attachment::深度アタッチメント;
-use super::handle::{バッファハンドル, 画像ハンドル};
-use super::usage::{バッファ用途, 画像用途};
+use super::handle::画像ハンドル;
+use super::usage::画像用途;
+use super::バッファ用途列::バッファ用途列;
 
 /// グラフィックス/コンピュート/転送のパス種別。begin/end renderingの要否と
 /// アタッチメント構成をここから実行器が導く（クロージャはバインド+ドローだけを書く）。
@@ -28,8 +29,8 @@ pub(crate) struct パス宣言<'a> {
     pub(crate) 名前: &'static str,
     pub(crate) 読み画像: Vec<(画像ハンドル, 画像用途)>,
     pub(crate) 書き画像: Vec<(画像ハンドル, 画像用途)>,
-    pub(crate) 読みバッファ: Vec<(バッファハンドル, バッファ用途)>,
-    pub(crate) 書きバッファ: Vec<(バッファハンドル, バッファ用途)>,
+    pub(crate) 読みバッファ: バッファ用途列,
+    pub(crate) 書きバッファ: バッファ用途列,
     pub(crate) 種別: パス種別,
     pub(crate) gpu命令をコマンドバッファへ積む: Box<dyn FnOnce(&GPU命令の積み先と宣言済み資源の取り出し口) + 'a>,
 }
@@ -40,8 +41,8 @@ impl<'a> パス宣言<'a> {
         名前: &'static str,
         読み画像: Vec<(画像ハンドル, 画像用途)>,
         書き画像: Vec<(画像ハンドル, 画像用途)>,
-        読みバッファ: Vec<(バッファハンドル, バッファ用途)>,
-        書きバッファ: Vec<(バッファハンドル, バッファ用途)>,
+        読みバッファ: impl Into<バッファ用途列>,
+        書きバッファ: impl Into<バッファ用途列>,
         種別: パス種別,
         gpu命令をコマンドバッファへ積む: impl FnOnce(&GPU命令の積み先と宣言済み資源の取り出し口) + 'a,
     ) -> Self {
@@ -52,20 +53,10 @@ impl<'a> パス宣言<'a> {
             名前,
             読み画像,
             書き画像,
-            読みバッファ,
-            書きバッファ,
+            読みバッファ: 読みバッファ.into(),
+            書きバッファ: 書きバッファ.into(),
             種別,
             gpu命令をコマンドバッファへ積む: Box::new(gpu命令をコマンドバッファへ積む),
         }
-    }
-
-    /// このパスが宣言している画像ハンドル(読み+書き)の一覧。GPU命令の積み先と宣言済み資源の取り出し口の参照許可リストに使う。
-    pub(crate) fn 宣言済み画像一覧(&self) -> Vec<画像ハンドル> {
-        self.読み画像.iter().chain(self.書き画像.iter()).map(|&(ハンドル, _)| ハンドル).collect()
-    }
-
-    /// このパスが宣言しているバッファハンドル(読み+書き)の一覧。GPU命令の積み先と宣言済み資源の取り出し口の参照許可リストに使う。
-    pub(crate) fn 宣言済みバッファ一覧(&self) -> Vec<バッファハンドル> {
-        self.読みバッファ.iter().chain(self.書きバッファ.iter()).map(|&(ハンドル, _)| ハンドル).collect()
     }
 }
