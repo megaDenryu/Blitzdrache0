@@ -31,6 +31,7 @@ as_conversions = "deny"
 # 依存はワークスペースで一元管理し、各クレートは workspace = true で参照する。
 # どの層がどの外部依存に触れるかを Cargo.toml の差分だけで監査できるようにするため。
 [workspace.dependencies]
+arrayvec = "0.7.8"
 ash = "0.38"
 ash-window = "0.13"
 winit = "0.30"

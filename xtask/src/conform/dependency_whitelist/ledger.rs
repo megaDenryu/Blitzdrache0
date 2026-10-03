@@ -53,7 +53,7 @@ pub(super) const 白リスト: [(&str, &[&str]); 15] = [
         "blitz_asset_compiler",
         &["blitz_assembly", "blitz_collision", "blitz_engine", "blitz_math", "gltf", "image", "rayon", "serde", "serde_json", "thiserror"],
     ),
-    ("blitz_render", &["ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"]),
+    ("blitz_render", &["arrayvec", "ash", "ash-window", "raw-window-handle", "glam", "thiserror", "blitz_math"]),
     ("blitz_sim", &["blitz_collision", "blitz_design", "blitz_math", "thiserror"]), // 判断51: 手法の数学のみ。接触点集合を読むためだけにblitz_collisionを許す
     ("blitz_ecs", &["thiserror"]),                                                  // 個体群の基盤。具体ゲームも物理も描画も知らない
     ("blitz_game", &["blitz_design", "blitz_math"]),                                // ゲームロジック層。設計解釈マーカーのためにblitz_designを許す

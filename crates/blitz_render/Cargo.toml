@@ -10,6 +10,7 @@ workspace = true
 # unsafe な Vulkan 呼び出しはこのクレートの実装内部に封じ込め、
 # 公開APIからは ash の型を一切露出しない。
 [dependencies]
+arrayvec = { workspace = true }
 ash = { workspace = true }
 ash-window = { workspace = true }
 raw-window-handle = { workspace = true }

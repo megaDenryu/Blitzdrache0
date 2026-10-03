@@ -29,7 +29,7 @@ const 検証列の手順一覧: [(&str, &[&str]); 4] = [
     ("fmt", &["fmt", "--all", "--check"]),
     ("check", &["check", "--workspace"]),
     ("clippy", &["clippy", "--all-targets", "--features", "editor_server/typescript", "--", "-D", "warnings"]),
-    ("test", &["test", "--workspace", "--features", "editor_server/typescript"]),
+    ("test", &["test", "--workspace", "--no-fail-fast", "--features", "editor_server/typescript"]),
 ];
 
 pub struct 検証列の実行係 {

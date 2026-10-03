@@ -11,7 +11,8 @@ pub(super) struct 機能台帳の項 {
 }
 
 /// 既定機能を切るのはimageとegui-winitの2件、機能を明示するのはimageとgltfとserde_jsonとserdeとtokioとtower-httpの6件である。残りは版だけを綴る。
-pub(super) const 機能台帳: [機能台帳の項; 22] = [
+pub(super) const 機能台帳: [機能台帳の項; 23] = [
+    項を作る("arrayvec", true, &[]),
     項を作る("ash", true, &[]),
     項を作る("ash-window", true, &[]),
     項を作る("winit", true, &[]),

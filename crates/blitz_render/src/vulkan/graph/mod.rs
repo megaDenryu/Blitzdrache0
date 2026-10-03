@@ -25,6 +25,8 @@ mod rendering_setup;
 mod state;
 mod timestamp_write;
 mod usage;
+#[path = "バッファ用途列.rs"]
+mod バッファ用途列;
 
 pub(crate) use aspect::画像アスペクト;
 pub(crate) use builder::グラフ;

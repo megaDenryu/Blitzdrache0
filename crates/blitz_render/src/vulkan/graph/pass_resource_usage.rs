@@ -6,22 +6,22 @@ use super::pass::パス宣言;
 use super::usage::{バッファ用途, 画像用途};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct パスリソース使用 {
+pub(crate) struct パスリソース使用<'a> {
     pub(crate) 名前: &'static str,
-    pub(crate) 読み画像: Vec<(画像ハンドル, 画像用途)>,
-    pub(crate) 書き画像: Vec<(画像ハンドル, 画像用途)>,
-    pub(crate) 読みバッファ: Vec<(バッファハンドル, バッファ用途)>,
-    pub(crate) 書きバッファ: Vec<(バッファハンドル, バッファ用途)>,
+    pub(crate) 読み画像: &'a [(画像ハンドル, 画像用途)],
+    pub(crate) 書き画像: &'a [(画像ハンドル, 画像用途)],
+    pub(crate) 読みバッファ: &'a [(バッファハンドル, バッファ用途)],
+    pub(crate) 書きバッファ: &'a [(バッファハンドル, バッファ用途)],
 }
 
-impl<'a> From<&パス宣言<'a>> for パスリソース使用 {
-    fn from(パス: &パス宣言<'a>) -> Self {
+impl<'a> From<&'a パス宣言<'_>> for パスリソース使用<'a> {
+    fn from(パス: &'a パス宣言<'_>) -> Self {
         Self {
             名前: パス.名前,
-            読み画像: パス.読み画像.clone(),
-            書き画像: パス.書き画像.clone(),
-            読みバッファ: パス.読みバッファ.clone(),
-            書きバッファ: パス.書きバッファ.clone(),
+            読み画像: &パス.読み画像,
+            書き画像: &パス.書き画像,
+            読みバッファ: &パス.読みバッファ,
+            書きバッファ: &パス.書きバッファ,
         }
     }
 }

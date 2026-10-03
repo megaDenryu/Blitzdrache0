@@ -36,7 +36,9 @@ pub(super) fn hdr集計パスを宣言する<'a>(hdr: 画像ハンドル, ヒス
         パス種別::コンピュート,
         move |積み先と取り出し口| {
             let _ = 積み先と取り出し口.宣言済みのバッファを参照する(ヒストグラム);
-            let 定数: Vec<u8> = [寸法.width, 寸法.height].iter().flat_map(|値| 値.to_le_bytes()).collect();
+            let mut 定数 = [0u8; 8];
+            定数[..4].copy_from_slice(&寸法.width.to_le_bytes());
+            定数[4..].copy_from_slice(&寸法.height.to_le_bytes());
             let 班数 = [寸法.width.div_ceil(集計の班の一辺), 寸法.height.div_ceil(集計の班の一辺), 1];
             コンピュートを積む(積み先と取り出し口, 入力.集計パイプライン, 入力.集計レイアウト, 入力.セット, &定数, 班数);
         },
@@ -53,7 +55,10 @@ pub(super) fn 露出導出と適応パスを宣言する<'a>(ヒストグラム:
         パス種別::コンピュート,
         move |積み先と取り出し口| {
             let _ = 積み先と取り出し口.宣言済みのバッファを参照する(露出状態);
-            let 定数: Vec<u8> = 入力.導出の即時定数.iter().flat_map(|値| 値.to_le_bytes()).collect();
+            let mut 定数 = [0u8; 24];
+            for (バイト, 値) in 定数.chunks_exact_mut(4).zip(入力.導出の即時定数) {
+                バイト.copy_from_slice(&値.to_le_bytes());
+            }
             コンピュートを積む(積み先と取り出し口, 入力.導出パイプライン, 入力.導出レイアウト, 入力.セット, &定数, [1, 1, 1]);
         },
     )
