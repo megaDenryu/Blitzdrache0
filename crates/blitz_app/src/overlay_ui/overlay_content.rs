@@ -9,7 +9,7 @@ use super::{game_screen, panel, ゲームの計器の面};
 use crate::world_execution::contract::移動とカメラの計器;
 
 pub(crate) struct 画面へ重ねる内容 {
-    pub(crate) 開発パネルの統計: 開発UI統計,                   // パネルを表示しないフレームでも作るのは、計器の取り出しがフレームの決まった位置にあり、表示の有無で読む時点を変えないため
+    pub(crate) 開発パネルの統計: Option<開発UI統計>,           // パネルを表示するフレームだけ分布を導出する
     pub(crate) ゲーム画面: Option<ゲーム画面の表示内容>,       // ゲームを遊ばない起動ではNoneであり、eguiはゲームの画面を1つも描かない
     pub(crate) 移動とカメラの計器: Option<移動とカメラの計器>, // ゲームを遊ばない起動ではNoneであり、開発パネルと一緒に表示を切り替える
 }
@@ -26,7 +26,10 @@ impl 画面へ重ねる内容 {
             game_screen::内容を描く(ctx, 表示内容);
         }
         if 開発パネルを表示するか {
-            panel::内容を描く(ctx, &self.開発パネルの統計, 露出, ブレンド);
+            let Some(統計) = &self.開発パネルの統計 else {
+                panic!("表示する開発パネルの統計が採られていない");
+            };
+            panel::内容を描く(ctx, 統計, 露出, ブレンド);
             if let Some(計器) = &self.移動とカメラの計器 {
                 ゲームの計器の面::内容を描く(ctx, 計器);
             }

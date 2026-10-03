@@ -32,11 +32,10 @@ impl パス時間の窓 {
     }
 
     pub(crate) fn 追加する(&mut self, 値ミリ秒: f64) {
+        let 古い値 = (self.値一覧.len() == 窓サイズ).then(|| self.値一覧.pop_front()).flatten();
         self.値一覧.push_back(値ミリ秒);
         self.合計 += 値ミリ秒;
-        if self.値一覧.len() > 窓サイズ
-            && let Some(古い値) = self.値一覧.pop_front()
-        {
+        if let Some(古い値) = 古い値 {
             self.合計 -= 古い値;
         }
     }
@@ -48,8 +47,11 @@ impl パス時間の窓 {
         if 件数 == 0 {
             return パス時間の分布::生成する(0.0, 0.0, 0.0, 0);
         }
-        let mut 値の写し: Vec<f64> = self.値一覧.iter().copied().collect();
-        let 標本列 = 昇順に並べた標本列::並べ替えて生成する(&mut 値の写し);
+        let mut 値の写し = [0.0; 窓サイズ];
+        for (写し, 値) in 値の写し.iter_mut().zip(&self.値一覧) {
+            *写し = *値;
+        }
+        let 標本列 = 昇順に並べた標本列::並べ替えて生成する(&mut 値の写し[..件数]);
         let 件数u16 = u16::try_from(件数).unwrap_or_else(|_| panic!("窓の標本数がu16に収まらない: {件数}"));
         パス時間の分布::生成する(self.合計 / f64::from(件数u16), 順位の値(&標本列, 50.0), 順位の値(&標本列, 95.0), 件数)
     }
@@ -59,3 +61,7 @@ impl パス時間の窓 {
 fn 順位の値(標本列: &昇順に並べた標本列<'_, f64>, 順位: f32) -> f64 {
     標本列.パーセンタイル値を求める(パーセンタイル順位::百分率から生成する(順位), 添字を選ぶ規則).unwrap_or(0.0)
 }
+
+#[cfg(test)]
+#[path = "pass_time_window/検証.rs"]
+mod 検証;
