@@ -29,7 +29,7 @@ fn プリミティブは設計概念にしない() {
 
 #[test]
 fn 値を持たない標準の型は修飾まで一致するときだけ設計概念にしない() {
-    for 表記 in ["std::convert::Infallible", "core::convert::Infallible"] {
+    for 表記 in ["std::convert::Infallible", "core::convert::Infallible", "std::marker::PhantomData<イベント>", "core::marker::PhantomData<状態>"] {
         assert_eq!(型の表記を読む(表記), 型の表記の読み取り::値を持たない型である, "{表記}");
     }
     let 別の定義 = "別の::Infallible";
@@ -45,7 +45,7 @@ fn 配列とタプルと関数ポインタと特性の表記は保証範囲の�
 
 #[test]
 fn 剥がす包みでもフレーム型でもないジェネリクスは型引数の形に依らず保証範囲の外である() {
-    for 表記 in ["HashMap<旅行者ID, 旅行者>", "Handle<メッシュ>", "Vec<Handle<メッシュ>>", "区間<ワールド>"] {
+    for 表記 in ["HashMap<旅行者ID, 旅行者>", "Handle<メッシュ>", "Vec<Handle<メッシュ>>", "区間<ワールド>", "別の::PhantomData<状態>", "PhantomData<状態>"] {
         assert_eq!(
             型の表記を読む(表記),
             型の表記の読み取り::保証範囲の外(型の表記を読めない理由::型の表記が剥がす包みでないジェネリクスである { 表記: 表記.to_string() }),
