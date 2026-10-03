@@ -11,7 +11,7 @@ use crate::vulkan;
 
 impl レンダラー {
     #[allow(clippy::type_complexity)]
-    pub(super) fn メッシュ列を結合する(&self, メッシュ一覧: &[&UIメッシュ], 寸法: vk::Extent2D) -> (Vec<UI頂点>, Vec<u32>, Vec<vulkan::frame::UI描画項目>) {
+    pub(super) fn メッシュ列を結合する<'a>(&self, メッシュ一覧: impl Iterator<Item = &'a UIメッシュ>, 寸法: vk::Extent2D) -> (Vec<UI頂点>, Vec<u32>, Vec<vulkan::frame::UI描画項目>) {
         let mut 頂点一覧結合 = Vec::new();
         let mut インデックス一覧結合 = Vec::new();
         let mut 項目一覧 = Vec::new();
